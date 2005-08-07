@@ -91,11 +91,11 @@ struct ResourceContext {
 
 struct MetaResource {
 	int16 sceneIndex;
-	int16 obectCount;
+	int16 objectCount;
 	int32 field_4;
 	int32 field_8;
 	int32 mainSpritesID;
-	int32 objectResourceID;
+	int32 objectsResourceID;
 	int16 actorCount;
 	int32 field_16;
 	int32 actorsResourceID;
@@ -148,7 +148,8 @@ public:
 
 	ResourceData *getResourceData(ResourceContext *context, uint32 resourceId) const {
 		if (!validResourceId(context, resourceId)) {
-			error("Resource::getResourceData() wrong resourceId %d", resourceId);
+			warning("Resource::getResourceData() wrong resourceId %d", resourceId);
+			assert(0);
 		}
 		return &context->table[resourceId];
 	}
@@ -162,6 +163,8 @@ private:
 	bool loadMacContext(ResourceContext *context);
 	bool loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
 
+
+public:
 	MetaResource _metaResource;
 };
 

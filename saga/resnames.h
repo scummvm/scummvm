@@ -36,6 +36,7 @@ namespace Saga {
 
 #define RID_IHNM_SCENE_LUT  1272
 #define RID_IHNM_SCRIPT_LUT 29
+#define RID_IHNM_SFX_LUT 265
 
 #define RID_IHNMDEMO_SCENE_LUT  286
 #define RID_IHNMDEMO_SCRIPT_LUT 18

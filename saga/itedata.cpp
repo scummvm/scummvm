@@ -24,6 +24,8 @@
 // Actor and Object data tables
 #include "saga/saga.h"
 #include "saga/itedata.h"
+#include "saga/resnames.h"
+#include "saga/sndres.h"
 
 namespace Saga {
 
@@ -263,5 +265,74 @@ ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT] = {
 	{ 26,  12,  496,  368,  0, 76, 31, 0           }, // Coil of Rope from Quarry
 	{ 54, 281,  620,  352,  0, 80, 46, 0           }  // Orb of Storms in Dam Lab
 };
+
+FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
+	{ FX_DOOR_OPEN,    127 },
+	{ FX_DOOR_CLOSE,   127 },
+	{ FX_RUSH_WATER,    63 }, // Floppy volume: 127
+	{ FX_RUSH_WATER,    26 }, // Floppy volume: 40
+	{ FX_CRICKET,       64 },
+	{ FX_PORTICULLIS,   84 }, // Floppy volume: 127
+	{ FX_CLOCK_1,       64 },
+	{ FX_CLOCK_2,       64 },
+	{ FX_DAM_MACHINE,   64 },
+	{ FX_DAM_MACHINE,   40 },
+	{ FX_HUM1,          64 },
+	{ FX_HUM2,          64 },
+	{ FX_HUM3,          64 },
+	{ FX_HUM4,          64 },
+	{ FX_WATER_LOOP_S,  32 }, // Floppy volume: 64
+	{ FX_SURF,          42 }, // Floppy volume: 127
+	{ FX_SURF,          32 }, // Floppy volume: 64
+	{ FX_FIRELOOP,      64 }, // Floppy volume: 96
+	{ FX_SCRAPING,      84 }, // Floppy volume: 127
+	{ FX_BEE_SWARM,     64 }, // Floppy volume: 96
+	{ FX_BEE_SWARM,     26 }, // Floppy volume: 40
+	{ FX_SQUEAKBOARD,   64 },
+	{ FX_KNOCK,        127 },
+	{ FX_COINS,         32 }, // Floppy volume: 48
+	{ FX_STORM,         84 }, // Floppy volume: 127
+	{ FX_DOOR_CLOSE_2,  84 }, // Floppy volume: 127
+	{ FX_ARCWELD,       84 }, // Floppy volume: 127
+	{ FX_RETRACT_ORB,  127 },
+	{ FX_DRAGON,       127 },
+	{ FX_SNORES,       127 },
+	{ FX_SPLASH,       127 },
+	{ FX_LOBBY_DOOR,   127 },
+	{ FX_CHIRP_LOOP,    26 }, // Floppy volume: 40
+	{ FX_DOOR_CREAK,    96 },
+	{ FX_SPOON_DIG,     64 },
+	{ FX_CROW,          96 },
+	{ FX_COLDWIND,      42 }, // Floppy volume: 64
+	{ FX_TOOL_SND_1,    96 },
+	{ FX_TOOL_SND_2,   127 },
+	{ FX_TOOL_SND_3,    64 },
+	{ FX_DOOR_METAL,    96 },
+	{ FX_WATER_LOOP_S,  32 },
+	{ FX_WATER_LOOP_L,  32 }, // Floppy volume: 64
+	{ FX_DOOR_OPEN_2,  127 },
+	{ FX_JAIL_DOOR,     64 },
+	{ FX_KILN_FIRE,     53 }, // Floppy volume: 80
+
+	// Only in the CD version
+	{ FX_CROWD_01,      64 },
+	{ FX_CROWD_02,      64 },
+	{ FX_CROWD_03,      64 },
+	{ FX_CROWD_04,      64 },
+	{ FX_CROWD_05,      64 },
+	{ FX_CROWD_06,      64 },
+	{ FX_CROWD_07,      64 },
+	{ FX_CROWD_08,      64 },
+	{ FX_CROWD_09,      64 },
+	{ FX_CROWD_10,      64 },
+	{ FX_CROWD_11,      64 },
+	{ FX_CROWD_12,      64 },
+	{ FX_CROWD_13,      64 },
+	{ FX_CROWD_14,      64 },
+	{ FX_CROWD_15,      64 },
+	{ FX_CROWD_16,      64 },
+	{ FX_CROWD_17,      64 }
+};
+
 
 } // End of namespace Saga

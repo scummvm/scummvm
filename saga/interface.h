@@ -375,6 +375,9 @@ private:
 		}
 	}
 
+public:
+	SpriteList _defPortraits;
+
 private:
 	SagaEngine *_vm;
 
@@ -385,7 +388,6 @@ private:
 	InterfacePanel _conversePanel;
 	PanelButton *_converseUpButton;
 	PanelButton *_converseDownButton;
-	SpriteList _defPortraits;
 	SpriteList _scenePortraits;
 	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
 	InterfacePanel _optionPanel;

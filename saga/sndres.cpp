@@ -25,6 +25,8 @@
 
 #include "saga/saga.h"
 
+#include "saga/itedata.h"
+#include "saga/resnames.h"
 #include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"
@@ -49,6 +51,47 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	_voiceSerial = -1;
 
 	setVoiceBank(0);
+
+	if (_vm->getGameType() == GType_ITE) {
+		_fxTable = ITE_SfxTable;
+		_fxTableLen = ITE_SFXCOUNT;
+	} else {
+		ResourceContext *resourceContext;
+
+		resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+		if (resourceContext == NULL) {
+			error("Resource::loadGlobalResources() resource context not found");
+		}
+
+		byte *resourcePointer;
+		size_t resourceLength;
+
+		_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
+								 resourcePointer, resourceLength);
+
+		if (resourceLength == 0) {
+			error("Sndres::SndRes can't read SfxIDs table");
+		}
+
+		_fxTableIDsLen = resourceLength / 2;
+		_fxTableIDs = (int16 *)malloc(_fxTableIDsLen * sizeof(int16));
+
+		MemoryReadStream metaS(resourcePointer, resourceLength);
+		for (int i = 0; i < _fxTableIDsLen; i++)
+			_fxTableIDs[i] = metaS.readSint16LE();
+
+		free(resourcePointer);
+
+		_fxTable = 0;
+		_fxTableLen = 0;
+	}
+}
+
+SndRes::~SndRes() {
+	if (_vm->getGameType() == GType_IHNM) {
+		free(_fxTable);
+		free(_fxTableIDs);
+	}
 }
 
 void SndRes::setVoiceBank(int serial)

@@ -342,6 +342,7 @@ public:
 	Location partialTarget;
 	int32 walkFrameSequence;
 
+public:
 	void saveState(Common::OutSaveFile *out) {
 		int i = 0;
 		CommonObjectData::saveState(out);
@@ -582,6 +583,8 @@ public:
 	void freeList();
 	void loadList(int actorsEntrance, int actorCount, int actorsResourceID,
 				  int protagStatesCount, int protagStatesResourceID);
+	void freeObjList();
+	void loadObjList(int objectCount, int objectsResourceID);
 
 private:
 	bool loadActorResources(ActorData *actor);
@@ -643,12 +646,16 @@ public:
 	ActorData *_centerActor;
 	ActorData *_protagonist;
 	int _handleActionDiv;
+
 protected:
 	SpeechData _activeSpeech;
 	int _protagState;
 	bool _dragonHunt;
 
 private:
+	ActorFrameSequence *_protagStates;
+	int _protagStatesCount;
+
 //path stuff
 	struct PathNode {
 		Point point;

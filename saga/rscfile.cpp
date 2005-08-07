@@ -25,7 +25,9 @@
 #include "saga/saga.h"
 
 #include "saga/actor.h"
+#include "saga/interface.h"
 #include "saga/rscfile.h"
+#include "saga/sndres.h"
 #include "saga/stream.h"
 
 namespace Saga {
@@ -432,7 +434,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	//if (module.voiceLUT)
 	//	free module.voiceLUT;
 
-	// TODO: close chapeter context, or rather reassign it in our case
+	// TODO: close chapter context, or rather reassign it in our case
 
 	ResourceContext *resourceContext;
 
@@ -448,16 +450,17 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 								 resourcePointer, resourceLength);
 
 	if (resourceLength == 0) {
-		error("Resource::loadGlobalResources wrong resource");
+		error("Resource::loadGlobalResources wrong metaResource");
 	}
+
 	MemoryReadStream metaS(resourcePointer, resourceLength);
 
 	_metaResource.sceneIndex = metaS.readSint16LE();
-	_metaResource.obectCount = metaS.readSint16LE();
+	_metaResource.objectCount = metaS.readSint16LE();
 	_metaResource.field_4 = metaS.readSint32LE();
 	_metaResource.field_8 = metaS.readSint32LE();
 	_metaResource.mainSpritesID = metaS.readSint32LE();
-	_metaResource.objectResourceID = metaS.readSint32LE();
+	_metaResource.objectsResourceID = metaS.readSint32LE();
 	_metaResource.actorCount = metaS.readSint16LE();
 	_metaResource.field_16 = metaS.readSint32LE();
 	_metaResource.actorsResourceID = metaS.readSint32LE();
@@ -477,6 +480,80 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_actor->_protagonist->sceneNumber = _metaResource.sceneIndex;
 
+	// TODO: field_16
+
+	if (chapter >= _vm->_sndRes->_fxTableIDsLen) {
+		error("Chapter ID exceeds fxTableIDs length");
+	}
+
+	debug(0, "Going to read %d of %d", chapter, _vm->_sndRes->_fxTableIDs[chapter]);
+	_vm->_resource->loadResource(resourceContext, _vm->_sndRes->_fxTableIDs[chapter],
+								 resourcePointer, resourceLength);
+
+	if (resourceLength == 0) {
+		error("Resource::loadGlobalResources Can't load sound effects for current track");
+	}
+
+	free(_vm->_sndRes->_fxTable);
+	
+	_vm->_sndRes->_fxTableLen = resourceLength / 4;
+	_vm->_sndRes->_fxTable = (FxTable *)malloc(sizeof(FxTable) * _vm->_sndRes->_fxTableLen);
+
+	MemoryReadStream fxS(resourcePointer, resourceLength);
+
+	for (int i = 0; i < _vm->_sndRes->_fxTableLen; i++) {
+		_vm->_sndRes->_fxTable[i].res = fxS.readSint16LE();
+		_vm->_sndRes->_fxTable[i].vol = fxS.readSint16LE();
+	}
+
+	_vm->_interface->_defPortraits.freeMem();
+	_vm->_sprite->loadList(_metaResource.protagFaceSpritesID, _vm->_interface->_defPortraits);
+
+	// TODO: field_4
+
+	// TODO: field_8
+
+	_vm->_sprite->_mainSprites.freeMem();
+	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);
+
+	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);
+
+	// TODO: cutawayList
+
+	// TODO: songTable
+
+	switch (chapter) {
+	case 1:
+		// chapterRes = "voices1.res"
+		// hackVoiceTableListID = 23
+		break;
+	case 2:
+		// chapterRes = "voices2.res"
+		// hackVoiceTableListID = 24
+		break;
+	case 3:
+		// chapterRes = "voices3.res"
+		// hackVoiceTableListID = 25
+		break;
+	case 4:
+		// chapterRes = "voices4.res"
+		// hackVoiceTableListID = 26
+		break;
+	case 5:
+		// chapterRes = "voices5.res"
+		// hackVoiceTableListID = 27
+		break;
+	case 6:
+		// chapterRes = "voices6.res"
+		// hackVoiceTableListID = 28
+		break;
+	case 7:
+		break;
+	case 8:
+		// chapterRes = "voicess.res"
+		// hackVoiceTableListID = 22
+		break;
+	}
 	
 }
 

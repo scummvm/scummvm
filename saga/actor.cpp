@@ -184,6 +184,9 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_debugPointsAlloced = _debugPointsCount = 0;
 #endif
 
+	_protagStates = 0;
+	_protagStatesCount = 0;
+
 	_pathNodeList = _newPathNodeList = NULL;
 	_pathList = NULL;
 	_pathDirectionList = NULL;
@@ -390,8 +393,9 @@ void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, i
 	
 	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
 		
+	_actorsCount = actorCount;
+
 	MemoryReadStream actorS(actorListData, actorListLength);
-	_actorsCount = actorListLength / ACTOR_INHM_SIZE;
 	
 	_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
 	for (i = 0; i < _actorsCount; i++) {
@@ -442,6 +446,8 @@ void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, i
 	}
 	free(actorListData);
 
+	_actors[actorsEntrance]->flags |= kProtagonist | kExtended;
+
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
 		if (actor->flags & kExtended) {
@@ -451,7 +457,93 @@ void Actor::loadList(int actorsEntrance, int actorCount, int actorsResourceID, i
 			}
 		}
 	}
-//TODO: protagonist stuff
+
+	_centerActor = _protagonist = _actors[actorsEntrance];
+	_protagState = 0;
+
+	if (protagStatesResourceID) {
+		free(_protagStates);
+
+		_protagStates = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * protagStatesCount);
+
+		byte *resourcePointer;
+		size_t resourceLength;
+
+		_vm->_resource->loadResource(_actorContext, protagStatesResourceID,
+									 resourcePointer, resourceLength);
+
+
+		MemoryReadStream statesS(resourcePointer, resourceLength);
+		
+		for (i = 0; i < protagStatesCount; i++) {
+			for (int j = 0; j < ACTOR_DIRECTIONS_COUNT; j++) {
+				_protagStates[i].directions[j].frameIndex = statesS.readUint16LE();
+				_protagStates[i].directions[j].frameCount = statesS.readUint16LE();
+			}
+		}
+		free(resourcePointer);
+
+		_protagonist->frames = &_protagStates[_protagState];
+	}
+
+	_protagStatesCount = protagStatesCount;
+}
+
+void Actor::freeObjList() {
+	int i;
+	ObjectData *object;
+	for (i = 0; i < _objsCount; i++) {
+		object = _objs[i];
+		delete object;
+	}
+	free(_objs);
+	_objs = NULL;
+	_objsCount = 0;
+}
+
+void Actor::loadObjList(int objectCount, int objectsResourceID) {
+	int i;
+	ObjectData *object;
+	byte* objectListData;
+	size_t objectListLength;
+	freeObjList();
+	
+	_vm->_resource->loadResource(_actorContext, objectsResourceID, objectListData, objectListLength);
+		
+	_objsCount = objectCount;
+
+	MemoryReadStream objectS(objectListData, objectListLength);
+	
+	_objs = (ObjectData **)malloc(_objsCount * sizeof(*_objs));
+	for (i = 0; i < _objsCount; i++) {
+		object = _objs[i] = new ObjectData();
+		object->id = objectIndexToId(kGameObjectObject, i);
+		object->index = i;
+		debug(9, "init object id=%d index=%d", object->id, object->index);
+		objectS.readUint32LE(); //next displayed	
+		objectS.readByte(); //type
+		object->flags = objectS.readByte();
+		object->nameIndex = objectS.readUint16LE();
+		object->sceneNumber = objectS.readUint32LE();
+		object->location.fromStream(objectS);
+		object->screenPosition.x = objectS.readUint16LE();
+		object->screenPosition.y = objectS.readUint16LE();
+		object->screenScale = objectS.readUint16LE();
+		object->screenDepth = objectS.readUint16LE();
+		objectS.readUint32LE(); // object->frameListResourceId
+		object->spriteListResourceId = objectS.readUint32LE();
+		object->scriptEntrypointNumber = objectS.readUint32LE();
+		objectS.readByte();
+		objectS.readByte();
+		objectS.readByte();
+		objectS.readByte();
+		objectS.readUint16LE(); //LEFT
+		objectS.readUint16LE(); //RIGHT
+		objectS.readUint16LE(); //TOP
+		objectS.readUint16LE(); //BOTTOM
+		object->interactBits = objectS.readUint16LE();
+	}
+	free(objectListData);
 }
 
 void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
@@ -624,6 +716,9 @@ bool Actor::validFollowerLocation(const Location &location) {
 
 void Actor::setProtagState(int state) {
 	_protagState = state;
+
+	if (_vm->getGameType() == GType_IHNM)
+		_protagonist->frames = &_protagStates[state];
 }
 
 void Actor::updateActorsScene(int actorsEntrance) {
@@ -634,11 +729,6 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	Location possibleLocation;
 	Point delta;
 	const SceneEntry *sceneEntry;
-
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Actors aren't implemented for IHNM yet");
-		return;
-	}
 
 	if (_vm->_scene->currentSceneNumber() == 0) {
 		error("Actor::updateActorsScene _vm->_scene->currentSceneNumber() == 0");
@@ -768,7 +858,7 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 		error("Actor::getActorFrameRange Wrong actorId 0x%X", actorId);
 
 	if (frameType >= actor->framesCount)
-		error("Actor::getActorFrameRange Wrong frameType 0x%X actorId 0x%X", frameType, actorId);
+		error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->framesCount, actorId);
 
 	if ((actor->facingDirection < kDirUp) || (actor->facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->facingDirection, actorId);
@@ -932,6 +1022,11 @@ void Actor::handleActions(int msec, bool setup) {
 
 /*		if (actor->index == 2)
 			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);*/
+
+		if (_vm->getGameType() == GType_IHNM) {
+			if (actor->spriteList.spriteCount == 0)
+				continue;
+		}
 
 		switch (actor->currentAction) {
 		case kActionWait:
@@ -1868,11 +1963,6 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	int i;
 	int16 dist;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Actors aren't implemented for IHNM yet");
-		return;
-	}
-
 	actor = getActor(actorId);
 	calcScreenPosition(actor);
 	for (i = 0; i < stringsCount; i++) {
@@ -1925,11 +2015,6 @@ void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int st
 
 void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount, int speechFlags, int sampleResourceId) {
 	int i;
-
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Actors aren't implemented for IHNM yet");
-		return;
-	}
 
 	for (i = 0; i < actorIdsCount; i++) {
 		ActorData *actor;

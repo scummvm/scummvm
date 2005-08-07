@@ -338,7 +338,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				error("Script::runThread() Invalid script function number (%d)", functionNumber);
 			}
 
-			debug(8, "Calling 0x%X %s argCount=%i", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName, argumentsCount);
+			debug(8, "Calling #%d %s argCount=%i", functionNumber, _scriptFunctionsList[functionNumber].scriptFunctionName, argumentsCount);
 			scriptFunction = _scriptFunctionsList[functionNumber].scriptFunction;
 			checkStackTopIndex = thread->_stackTopIndex + argumentsCount;
 			disContinue = false;
@@ -611,6 +611,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				int16 first;
 				const char *strings[ACTOR_SPEECH_STRING_MAX];
 
+				if (_vm->getGameType() == GType_IHNM) {
+					warning("STUB: opSpeak");
+					break;
+				}
+					
 				if (_vm->_actor->isSpeaking()) {
 					thread->wait(kWaitTypeSpeech);
 					return false;

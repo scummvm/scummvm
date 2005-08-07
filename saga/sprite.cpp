@@ -51,7 +51,8 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		memoryError("Sprite::Sprite");
 	}
 
-	loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
+	if (_vm->getGameType() == GType_ITE)
+		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 }
 
 Sprite::~Sprite(void) {

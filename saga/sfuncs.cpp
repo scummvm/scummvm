@@ -237,7 +237,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(SF_stub),
 		OPCODE(SF_stub),
 		OPCODE(sfDebugShowData),
-		OPCODE(SF_stub),
+		OPCODE(sfWaitFramesEsc),
 		OPCODE(SF_stub),
 		OPCODE(SF_stub)
 	};
@@ -1098,11 +1098,6 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	debug(1, "sfPlaceActor(id = %d, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actorLocation.x,
 		  actorLocation.y, actorDirection, frameType, frameOffset);
 
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Actors aren't implemented for IHNM yet");
-		return;
-	}
-
 	actor = _vm->_actor->getActor(actorId);
 	actor->location.x = actorLocation.x;
 	actor->location.y = actorLocation.y;
@@ -1728,95 +1723,16 @@ void Script::sfEnableEscape(SCRIPTFUNC_PARAMS) {
 	}
 }
 
-static struct {
-	int res;
-	int vol;
-} sfxTable[] = {
-	{ FX_DOOR_OPEN,    127 },
-	{ FX_DOOR_CLOSE,   127 },
-	{ FX_RUSH_WATER,    63 }, // Floppy volume: 127
-	{ FX_RUSH_WATER,    26 }, // Floppy volume: 40
-	{ FX_CRICKET,       64 },
-	{ FX_PORTICULLIS,   84 }, // Floppy volume: 127
-	{ FX_CLOCK_1,       64 },
-	{ FX_CLOCK_2,       64 },
-	{ FX_DAM_MACHINE,   64 },
-	{ FX_DAM_MACHINE,   40 },
-	{ FX_HUM1,          64 },
-	{ FX_HUM2,          64 },
-	{ FX_HUM3,          64 },
-	{ FX_HUM4,          64 },
-	{ FX_WATER_LOOP_S,  32 }, // Floppy volume: 64
-	{ FX_SURF,          42 }, // Floppy volume: 127
-	{ FX_SURF,          32 }, // Floppy volume: 64
-	{ FX_FIRELOOP,      64 }, // Floppy volume: 96
-	{ FX_SCRAPING,      84 }, // Floppy volume: 127
-	{ FX_BEE_SWARM,     64 }, // Floppy volume: 96
-	{ FX_BEE_SWARM,     26 }, // Floppy volume: 40
-	{ FX_SQUEAKBOARD,   64 },
-	{ FX_KNOCK,        127 },
-	{ FX_COINS,         32 }, // Floppy volume: 48
-	{ FX_STORM,         84 }, // Floppy volume: 127
-	{ FX_DOOR_CLOSE_2,  84 }, // Floppy volume: 127
-	{ FX_ARCWELD,       84 }, // Floppy volume: 127
-	{ FX_RETRACT_ORB,  127 },
-	{ FX_DRAGON,       127 },
-	{ FX_SNORES,       127 },
-	{ FX_SPLASH,       127 },
-	{ FX_LOBBY_DOOR,   127 },
-	{ FX_CHIRP_LOOP,    26 }, // Floppy volume: 40
-	{ FX_DOOR_CREAK,    96 },
-	{ FX_SPOON_DIG,     64 },
-	{ FX_CROW,          96 },
-	{ FX_COLDWIND,      42 }, // Floppy volume: 64
-	{ FX_TOOL_SND_1,    96 },
-	{ FX_TOOL_SND_2,   127 },
-	{ FX_TOOL_SND_3,    64 },
-	{ FX_DOOR_METAL,    96 },
-	{ FX_WATER_LOOP_S,  32 },
-	{ FX_WATER_LOOP_L,  32 }, // Floppy volume: 64
-	{ FX_DOOR_OPEN_2,  127 },
-	{ FX_JAIL_DOOR,     64 },
-	{ FX_KILN_FIRE,     53 }, // Floppy volume: 80
-
-	// Only in the CD version
-	{ FX_CROWD_01,      64 },
-	{ FX_CROWD_02,      64 },
-	{ FX_CROWD_03,      64 },
-	{ FX_CROWD_04,      64 },
-	{ FX_CROWD_05,      64 },
-	{ FX_CROWD_06,      64 },
-	{ FX_CROWD_07,      64 },
-	{ FX_CROWD_08,      64 },
-	{ FX_CROWD_09,      64 },
-	{ FX_CROWD_10,      64 },
-	{ FX_CROWD_11,      64 },
-	{ FX_CROWD_12,      64 },
-	{ FX_CROWD_13,      64 },
-	{ FX_CROWD_14,      64 },
-	{ FX_CROWD_15,      64 },
-	{ FX_CROWD_16,      64 },
-	{ FX_CROWD_17,      64 }
-};
-
 // Script function #70 (0x46)
 void Script::sfPlaySound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		int16 param2 = thread->pop();
-
-		// Here sfxTable comes from Resource #265
-		debug(0, "STUB: sfPlaySound(%d, %d)", param, param2);
-		return;
-	}
-
-	if (param >= 0 && param < ARRAYSIZE(sfxTable)) {
-		res = sfxTable[param].res;
+	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
+		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getFeatures() & GF_CD_FX)
 			res -= 14;
-		_vm->_sndRes->playSound(res, sfxTable[param].vol, false);
+		_vm->_sndRes->playSound(res, _vm->_sndRes->_fxTable[param].vol, false);
 	} else {
 		_vm->_sound->stopSound();
 	}
@@ -1827,20 +1743,12 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		int16 param2 = thread->pop();
-
-		// Here sfxTable comes from Resource #265
-		debug(0, "STUB: sfPlayLoopedSound(%d, %d)", param, param2);
-		return;
-	}
-
-	if (param >= 0 && param < ARRAYSIZE(sfxTable)) {
-		res = sfxTable[param].res;
+	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
+		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getFeatures() & GF_CD_FX)
 			res -= 14;
 
-		_vm->_sndRes->playSound(res, sfxTable[param].vol, true);
+		_vm->_sndRes->playSound(res, _vm->_sndRes->_fxTable[param].vol, true);
 	} else {
 		_vm->_sound->stopSound();
 	}
@@ -1977,10 +1885,11 @@ void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+	int16 chapter = thread->pop();
+	int16 sceneNumber = thread->pop();
+	int16 actorsEntrance = thread->pop();
 
-	debug(0, "STUB: sfVsetTrack(), %d args", nArgs);
+	_vm->_scene->changeScene(sceneNumber, actorsEntrance, kTransitionFade, chapter);
 }
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
@@ -1990,6 +1899,10 @@ void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
 	snprintf(buf, 50, "Reached breakpoint %d", param);
 
 	_vm->_interface->setStatusText(buf);
+}
+
+void Script::sfWaitFramesEsc(SCRIPTFUNC_PARAMS) {
+	thread->_returnValue = 0;
 }
 
 void Script::sfNull(SCRIPTFUNC_PARAMS) {

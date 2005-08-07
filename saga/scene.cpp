@@ -418,7 +418,10 @@ static struct SceneSubstitutes {
 };
 
 void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter) {
-	// This is used for latter demos where all places on world map except
+
+	debug(5, "Scene::changeScene(%d, %d, %d, %d)", sceneNumber, actorsEntrance, transitionType, chapter);
+
+	// This is used for latter ITE demos where all places on world map except
 	// Tent Faire are substituted with LBM picture and short description
 	if (_vm->getFeatures() & GF_SCENE_SUBSTITUTES) {
 		for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
@@ -627,12 +630,18 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			return;
 		}
 	}
-//
+
 	if (_sceneLoaded) {
 		error("Scene::loadScene(): Error, a scene is already loaded");
 	}
 
 	_loadDescription = true;
+
+	if (_vm->getGameType() == GType_IHNM) {
+		if (loadSceneParams->loadFlag == kLoadBySceneNumber) // When will we get rid of it?
+			if (loadSceneParams->sceneDescriptor <= 0)
+				loadSceneParams->sceneDescriptor = _vm->_resource->_metaResource.sceneIndex;
+	}
 
 	switch (loadSceneParams->loadFlag) {
 	case kLoadByResourceId:
@@ -655,7 +664,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		break;
 	}
 
-	debug(3, "Loading scene number %u:", _sceneNumber);
+	debug(3, "Loading scene number %d:", _sceneNumber);
 
 	// Load scene descriptor and resource list resources
 	if (_loadDescription) {

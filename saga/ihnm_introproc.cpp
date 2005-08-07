@@ -99,7 +99,7 @@ int Scene::IHNMStartProc() {
 	}
 
 	firstScene.loadFlag = kLoadBySceneNumber;
-	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
+	firstScene.sceneDescriptor = -1;
 	firstScene.sceneDescription = NULL;
 	firstScene.sceneSkipTarget = true;
 	firstScene.sceneProc = NULL;

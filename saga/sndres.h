@@ -26,6 +26,7 @@
 #ifndef SAGA_SNDRES_H_
 #define SAGA_SNDRES_H_
 
+#include "saga/itedata.h"
 #include "saga/sound.h"
 
 namespace Saga {
@@ -34,12 +35,20 @@ class SndRes {
 public:
 
 	SndRes(SagaEngine *vm);
+	~SndRes();
 
 	int loadSound(uint32 resourceId);
 	void playSound(uint32 resourceId, int volume, bool loop);
 	void playVoice(uint32 resourceId);
 	int getVoiceLength(uint32 resourceId);
 	void setVoiceBank(int serial);
+
+	FxTable *_fxTable;
+	int _fxTableLen;
+
+	int16 *_fxTableIDs;
+	int _fxTableIDsLen;
+
  private:
 	bool load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader);
 	bool loadVocSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
