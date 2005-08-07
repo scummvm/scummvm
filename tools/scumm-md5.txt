@@ -186,6 +186,7 @@ Day Of The Tentacle
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
 	Demo	DOS	en	c83079157ec765a28de445aec9768d60	dottdemo
 	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	dottdemo	Simon Krumrein, sev
+	Demo	DOS	fr	17fa250eb72dae2dad511ba79c0b6b0a	dottdemo	cyx
 
 Sam &amp; Max
 	Non-Talkie	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
