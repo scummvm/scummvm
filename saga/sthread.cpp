@@ -266,10 +266,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->push((*addr) & iparam1 ? 1 : 0);
 			break;
 		CASEOP(opGetInt)
-			iparam2 = scriptS.readByte();
-			addr = thread->baseAddress(iparam2);
+			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
-			debug(0, "%d %d %d", *((uint16*)addr), iparam2, iparam1);
 			addr += iparam1;
 			thread->push(*((uint16*)addr));
 			debug(8, "0x%X", *((uint16*)addr));

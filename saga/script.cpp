@@ -414,7 +414,6 @@ void Script::doVerb() {
 		} else {
 			if (objectType & (kGameObjectActor | kGameObjectObject)) {
 				scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[0]);
-				debug(0, "%d", scriptEntrypointNumber);
 
 				if ((objectType == kGameObjectActor) && !(_vm->_actor->getObjectFlags(_pendingObject[0]) & (kFollower|kProtagonist|kExtended))) {
 					scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
