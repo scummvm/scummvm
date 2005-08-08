@@ -501,7 +501,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		MemoryReadStream statesS(resourcePointer, resourceLength);
 		
 		for (i = 0; i < protagStatesCount; i++) {
-			for (int j = 0; j < ACTOR_DIRECTIONS_COUNT; j++) {
+			for (j = 0; j < ACTOR_DIRECTIONS_COUNT; j++) {
 				_protagStates[i].directions[j].frameIndex = statesS.readUint16LE();
 				_protagStates[i].directions[j].frameCount = statesS.readUint16LE();
 			}
