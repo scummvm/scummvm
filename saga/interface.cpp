@@ -573,6 +573,11 @@ void Interface::draw() {
 				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
 			}
 		}
+
+		// Mac panel background has one line skipped, so overdraw it
+		if (_vm->getFeatures() & GF_MAC_RESOURCES) {
+			backBuffer->drawLine(51, 151, 165, 151, 0);
+		}
 	} else if (_panelMode == kPanelConverse) {
 		_conversePanel.getRect(rect);
 		backBuffer->blit(rect, _conversePanel.image);
