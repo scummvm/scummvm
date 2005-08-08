@@ -377,10 +377,16 @@ void Actor::freeActorList() {
 }
 
 void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
-	int i;
+	int i, j;
 	ActorData *actor;
 	byte* actorListData;
 	size_t actorListLength;
+	byte walk[128];
+	byte acv[6];
+	int movementSpeed;
+	int walkStepIndex;
+	int walkStepCount;
+
 	freeActorList();
 	
 	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
@@ -428,17 +434,40 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor->frameNumber = actorS.readUint16LE();
 		actor->finalTarget.fromStream(actorS);
 		actor->partialTarget.fromStream(actorS);
-		actorS.readUint16LE(); //movement speed
-		actorS.seek(128, SEEK_CUR);
-		actorS.readByte();//walkStepIndex
-		actorS.readByte();//walkStepCount
+		movementSpeed = actorS.readUint16LE(); //movement speed
+		if (movementSpeed) {
+			error("Actor::loadActorList movementSpeed != 0");
+		}
+		actorS.read(walk, 128);
+		for (j = 0; j < 128; j++) {
+			if (walk[j]) {
+				error("Actor::loadActorList walk[128] != 0");
+			}
+		}
+		//actorS.seek(128, SEEK_CUR);
+		walkStepIndex = actorS.readByte();//walkStepIndex
+		if (walkStepIndex) {
+			error("Actor::loadActorList walkStepIndex != 0");
+		}
+		walkStepCount = actorS.readByte();//walkStepCount
+		if (walkStepCount) {
+			error("Actor::loadActorList walkStepCount != 0");
+		}
+		//no need to check pointers
 		actorS.readUint32LE(); //sprites
 		actorS.readUint32LE(); //frames
 		actorS.readUint32LE(); //last zone
 		actor->targetObject = actorS.readUint16LE();
 		actor->actorFlags = actorS.readUint16LE();
+		//no need to check pointers
 		actorS.readUint32LE(); //next in scene
-		actorS.seek(6, SEEK_CUR); //action vars
+		actorS.read(acv, 6);
+		for (j = 0; j < 6; j++) {
+			if (walk[j]) {
+				error("Actor::loadActorList acv[6] != 0");
+			}
+		}
+//		actorS.seek(6, SEEK_CUR); //action vars
 	}
 	free(actorListData);
 
@@ -499,6 +528,7 @@ void Actor::freeObjList() {
 
 void Actor::loadObjList(int objectCount, int objectsResourceID) {
 	int i;
+	int frameListResourceId;
 	ObjectData *object;
 	byte* objectListData;
 	size_t objectListLength;
@@ -526,7 +556,10 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 		object->screenPosition.y = objectS.readUint16LE();
 		object->screenScale = objectS.readUint16LE();
 		object->screenDepth = objectS.readUint16LE();
-		objectS.readUint32LE(); // object->frameListResourceId
+		frameListResourceId = objectS.readUint32LE(); // object->frameListResourceId
+		if (frameListResourceId) {
+			error("Actor::loadObjList frameListResourceId != 0");
+		}
 		object->spriteListResourceId = objectS.readUint32LE();
 		object->scriptEntrypointNumber = objectS.readUint32LE();
 		objectS.readByte();
