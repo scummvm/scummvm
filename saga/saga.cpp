@@ -63,32 +63,6 @@ static const GameSettings saga_games[] = {
 	{0, 0, 0}
 };
 
-static const char *interfaceTextStrings[][42] = {
-	{
-		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
-		"Close", "Use", "Give", "Options", "Test",
-		"Demo", "Help", "Quit Game", "Fast", "Slow",
-		"On", "Off", "Continue Playing", "Load", "Save",
-		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
-		"Quit", "OK", "Mid", "Click",
-		"10%", "20%", "30%", "40%", "50%",
-		"60%", "70%", "80%", "90%", "Max", "Quit the Game?", "Load Successful!",
-		"Enter Save Game Name"
-	},
-	// German
-	{
-		"Gehe zu", "Schau an", "Nimm", "Rede mit", "\231ffne",
-		"Schlie$e", "Benutze", "Gib", "Optionen", "Test",
-		"Demo", "Hilfe", "Spiel beenden", "S", "L",
-		"An", "Aus", "Weiterspielen", "Laden", "Sichern",
-		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
-		"Beenden", NULL, "M", "Klick",
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL, "Spiel beenden?", "Spielstand geladen!",
-		"Bitte Namen eingeben"
-	}
-};
-
 GameList Engine_SAGA_gameList() {
 	GameList games;
 	const GameSettings *g = saga_games;
@@ -420,9 +394,9 @@ const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
 	int lang = getFeatures() & GF_LANG_DE ? 1 : 0;
 
-	string = interfaceTextStrings[lang][textStringId];
+	string = ITEinterfaceTextStrings[lang][textStringId];
 	if (!string)
-		string = interfaceTextStrings[0][textStringId];
+		string = ITEinterfaceTextStrings[0][textStringId];
 
 	return string;
 }

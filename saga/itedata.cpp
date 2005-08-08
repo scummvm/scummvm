@@ -334,5 +334,32 @@ FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 	{ FX_CROWD_17,      64 }
 };
 
+const char *ITEinterfaceTextStrings[][44] = {
+	{
+		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
+		"Close", "Use", "Give", "Options", "Test",
+		"Demo", "Help", "Quit Game", "Fast", "Slow",
+		"On", "Off", "Continue Playing", "Load", "Save",
+		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
+		"Quit", "OK", "Mid", "Click", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		"70%", "80%", "90%", "Max", "Quit the Game?",
+		"Load Successful!", "Enter Save Game Name", "Give %s to %s", "Use %s with %s"
+		
+	},
+	// German
+	{
+		"Gehe zu", "Schau an", "Nimm", "Rede mit", "\231ffne",
+		"Schlie$e", "Benutze", "Gib", "Optionen", "Test",
+		"Demo", "Hilfe", "Spiel beenden", "S", "L",
+		"An", "Aus", "Weiterspielen", "Laden", "Sichern",
+		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
+		"Beenden", NULL, "M", "Klick", NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, "Spiel beenden?",
+		"Spielstand geladen!", "Bitte Namen eingeben", "Gib %s zu %s", "Benutze %s mit %s"
+	}
+};
+
 
 } // End of namespace Saga

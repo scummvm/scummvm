@@ -321,11 +321,11 @@ void Script::showVerb(int statusColor) {
 	}
 
 	if (_leftButtonVerb == kVerbGive) {
-		snprintf(statusString, STATUS_TEXT_LEN, "Give %s to %s", object1Name, object2Name);
+		snprintf(statusString, STATUS_TEXT_LEN, _vm->getTextString(42), object1Name, object2Name);
 		_vm->_interface->setStatusText(statusString, statusColor);
 	} else {
 		if (_leftButtonVerb == kVerbUse) {
-			snprintf(statusString, STATUS_TEXT_LEN, "Use %s with %s", object1Name, object2Name);
+			snprintf(statusString, STATUS_TEXT_LEN, _vm->getTextString(43), object1Name, object2Name);
 			_vm->_interface->setStatusText(statusString, statusColor);
 		} else {
 			snprintf(statusString, STATUS_TEXT_LEN, "%s %s", verbName, object1Name);
