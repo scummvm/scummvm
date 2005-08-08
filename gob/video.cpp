@@ -233,7 +233,6 @@ void vid_drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			bottom -= destBottom - dest->height + 1;
 	}
 
-//	pDrawSprite(source, dest, left, top, right, bottom, x, y, transp);
 	_videoDriver->drawSprite(source, dest, left, top, right, bottom, x, y, transp);
 }
 
@@ -267,7 +266,6 @@ void vid_fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 b
 		bottom = vid_clampValue(bottom, dest->height);
 	}
 
-//	pFillRect(dest, left, top, right, bottom, color);
 	_videoDriver->fillRect(dest, left, top, right, bottom, color);
 }
 
@@ -277,7 +275,6 @@ void vid_drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, int
 		return;
 	}
 
-//	pDrawLine(dest, x0, y0, x1, y1, color);
 	_videoDriver->drawLine(dest, x0, y0, x1, y1, color);
 }
 
@@ -285,14 +282,12 @@ void vid_putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
 	if (x < 0 || y < 0 || x >= dest->width || y >= dest->height)
 		return;
 
-//	pPutPixel(x, y, color, dest);
 	_videoDriver->putPixel(x, y, color, dest);
 }
 
 void vid_drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, int16 color1,
 	    int16 color2, int16 transp, SurfaceDesc * dest) {
 
-//	pDrawLetter(item, x, y, fontDesc, color1, color2, transp, dest);
 	_videoDriver->drawLetter(item, x, y, fontDesc, color1, color2, transp, dest);
 }
 
@@ -310,7 +305,6 @@ void vid_drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int1
 		error("vid_drawPackedSprite: Vide mode 0x%x is not fully supported!",
 		    dest->vidMode & 0x7f);
 
-//	pDrawPackedSprite(sprBuf, width, height, x, y, transp, dest);
 	_videoDriver->drawPackedSprite(sprBuf, width, height, x, y, transp, dest);
 }
 
@@ -406,8 +400,6 @@ void vid_initPrimary(int16 mode) {
 	oldMode = mode;
 	if (mode != 3)
 		vid_initDriver(mode);
-
-	needDriverInit = 1;
 
 	if (mode != 3) {
 		vid_initSurfDesc(mode, 320, 200, PRIMARY_SURFACE);
@@ -549,8 +541,6 @@ char vid_spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 }
 
 void vid_setHandlers() {
-	//pDrawPacked = &vid_spriteUncompressor;
-	pFileHandler = 0;
 	setAllPalette = 1;
 }
 

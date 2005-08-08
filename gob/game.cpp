@@ -71,7 +71,7 @@ int16 game_collStackElemSizes[3];
 int16 game_mouseButtons = 0;
 
 // Capture
-static Rectangle game_captureStack[20];
+static Common::Rect game_captureStack[20];
 static int16 game_captureCount = 0;
 
 Snd_SoundDesc *game_soundSamples[20];
@@ -323,8 +323,8 @@ void game_capturePush(int16 left, int16 top, int16 width, int16 height) {
 
 	game_captureStack[game_captureCount].left = left;
 	game_captureStack[game_captureCount].top = top;
-	game_captureStack[game_captureCount].width = width;
-	game_captureStack[game_captureCount].height = height;
+	game_captureStack[game_captureCount].right = left + width;
+	game_captureStack[game_captureCount].bottom = top + height;
 
 	draw_spriteTop = top;
 	draw_spriteBottom = height;
@@ -356,9 +356,10 @@ void game_capturePop(char doDraw) {
 	if (doDraw) {
 		draw_destSpriteX = game_captureStack[game_captureCount].left;
 		draw_destSpriteY = game_captureStack[game_captureCount].top;
-		draw_spriteRight = game_captureStack[game_captureCount].width;
+		draw_spriteRight =
+		    game_captureStack[game_captureCount].width();
 		draw_spriteBottom =
-		    game_captureStack[game_captureCount].height;
+		    game_captureStack[game_captureCount].height();
 
 		draw_transparency = 0;
 		draw_sourceSurface = 30 + game_captureCount;
@@ -1646,10 +1647,8 @@ void game_prepareStart(void) {
 	}
 
 	draw_cursorAnimLow[1] = 0;
-	trySmallForBig = 1;
 	draw_cursorSprites = vid_initSurfDesc(videoMode, 32, 16, 2);
 	draw_cursorBack = vid_initSurfDesc(videoMode, 16, 16, 0);
-	trySmallForBig = 0;
 	draw_renderFlags = 0;
 	draw_backDeltaX = 0;
 	draw_backDeltaY = 0;

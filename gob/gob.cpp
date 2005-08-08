@@ -248,11 +248,8 @@ int GobEngine::init(GameDetector &detector) {
 		_system->openCD(cd_num);
 
 	debugFlag = 1;
-	breakSet = 0;
 	doRangeClamp = 1;
-	trySmallForBig = 0;
 
-	checkMemFlag = 0;
 	videoMode = 0x13;
 	snd_soundPort = 1;
 	useMouse = 1;

@@ -45,13 +45,12 @@ extern int16 disableVideoCfg;
 
 #define VIDMODE_CGA	0x05
 #define VIDMODE_EGA	0x0d
-#define VIDMODE_VGA 0x13
+#define VIDMODE_VGA	0x13
 #define VIDMODE_HER	7
 
 extern uint16 presentSound;
 extern uint16 soundFlags;
 extern int16 disableSoundCfg;
-//extern int16 blasterPort;
 
 #define PROAUDIO_FLAG	0x10
 #define ADLIB_FLAG		0x08
@@ -76,12 +75,6 @@ extern uint16 language;
 #define ESCAPE	0x001b
 #define ENTER	0x000d
 
-/* Configuration */
-extern char batFileName[8];
-
-/* Init */
-extern int16 requiredSpace;
-
 /* Timer variables */
 extern int32 startTime;
 extern char timer_enabled;
@@ -98,16 +91,8 @@ extern int16 mouseYShift;
 extern int16 mouseMaxCol;
 extern int16 mouseMaxRow;
 
-/* Memory */
-extern int16 allocatedBlocks[2];
-extern char *heapHeads[2];
-extern int32 heapSize;
-extern char *heapFence;
-extern char inAllocSub;
-
 /* Timer and delays */
 extern int16 delayTime;
-extern int16 fastComputer;
 
 /* Joystick */
 extern char useJoystick;
@@ -115,7 +100,6 @@ extern char useJoystick;
 /* Files */
 #define MAX_FILES	30
 
-extern int16 filesCount;
 extern Common::File filesHandles[MAX_FILES];
 
 /* Data files */
@@ -144,8 +128,6 @@ extern int16 primaryHeight;
 
 extern int16 doRangeClamp;
 
-extern DrawPackedSpriteFunc pDrawPacked;
-
 extern char redPalette[256];
 extern char greenPalette[256];
 extern char bluePalette[256];
@@ -156,17 +138,9 @@ extern SurfaceDesc *curPrimaryDesc;
 extern SurfaceDesc *allocatedPrimary;
 
 extern int16 oldMode;
-extern int16 needDriverInit;
 extern char dontSetPalette;
 
 extern PalDesc *pPaletteDesc;
-
-typedef void (*FileHandler) (char *path);
-extern FileHandler pFileHandler;
-
-	//extern void interrupt(*oldInt5Handler) (void);
-	//extern void interrupt(*oldInt0Handler) (void);
-	//extern void interrupt(*oldInt1bHandler) (void);
 
 extern int16 unusedPalette1[18];
 extern int16 unusedPalette2[16];
@@ -174,12 +148,8 @@ extern Color vgaPalette[16];
 extern PalDesc paletteStruct;
 
 extern int16 debugFlag;
-extern int16 breakSet;
 extern int16 inVM;
 extern int16 colorCount;
-
-extern int16 trySmallForBig;
-extern int16 checkMemFlag;
 
 extern char inter_resStr[200];
 extern int32 inter_resVal;
@@ -193,13 +163,6 @@ extern int16 inter_mouseY;
 
 extern char *tmpPalBuffer;
 
-typedef struct Rectangle {
-	int16 left;
-	int16 top;
-	int16 width;
-	int16 height;
-} Rectangle;
-
-}				// End of namespace Gob
+} // End of namespace Gob
 
 #endif

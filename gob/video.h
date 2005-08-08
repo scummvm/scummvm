@@ -70,26 +70,7 @@ public:
 	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) = 0;
 };
 
-
-typedef void (*FillRectFunc) (SurfaceDesc * desc, int16 left, int16 top, int16 right,
-    int16 bottom, int16 color);
-typedef void (*DrawSpriteFunc) (SurfaceDesc * source, SurfaceDesc * dest,
-    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
-typedef void (*PutPixelFunc) (int16 x, int16 y, int16 color, SurfaceDesc * desc);
-typedef void (*XorRectFunc) (SurfaceDesc * desc, int16 left, int16 top, int16 right,
-    int16 bottom);
-typedef void (*SetXorValFunc) (int16 val);
-typedef void (*DrawLineFunc) (SurfaceDesc * desc, int16 x0, int16 y0, int16 x1,
-    int16 y1, int16 color);
-typedef void (*DrawLetterFunc) (char item, int16 x, int16 y, FontDesc * fontDesc,
-    int16 color1, int16 color2, int16 transp, SurfaceDesc * dest);
-typedef char (*DrawPackedSpriteFunc) (byte *sprBuf, int16 width, int16 height,
-    int16 x, int16 y, int16 transp, SurfaceDesc * dest);
-
 #define GDR_VERSION	4
-
-#define SET_SEG(ptr,seg)	(((unsigned*)(ptr))[1] = (seg))
-
 
 #define PRIMARY_SURFACE		0x80
 #define RETURN_PRIMARY		0x01

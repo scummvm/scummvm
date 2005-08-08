@@ -59,12 +59,6 @@ int16 mouseMaxRow = 200;
 uint16 disableLangCfg = 0x8000;
 uint16 language = 0x8000;
 
-/* Configuration */
-char batFileName[8];
-
-/* */
-int16 requiredSpace = 0;
-
 /* Timer variables */
 int32 startTime = 0;
 char timer_enabled = 1;
@@ -73,25 +67,13 @@ int16 timer_delta = 1000;
 int16 frameWaitTime = 0;
 int32 startFrameTime = 0;
 
-/* Memory */
-int16 allocatedBlocks[2] = { 0, 0 };
-char *heapHeads[2] = { 0, 0 };
-char *heapFence = 0;
-int32 heapSize = 10000000;
-char inAllocSub = 0;
-
-/* Runtime */
-//CleanupFuncPtr soundCleanup = 0;
-
 /* Timer and delays */
 int16 delayTime = 0;
-int16 fastComputer = 1;
 
 /* Joystick */
 char useJoystick = 1;
 
 /* Files */
-int16 filesCount = 0;
 Common::File filesHandles[MAX_FILES];
 
 /* Data files */
@@ -104,7 +86,6 @@ int32 chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
 char isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
 int32 packedSize = 0;
 
-
 int16 sprAllocated = 0;
 
 SurfaceDesc primarySurfDesc;
@@ -115,8 +96,6 @@ int16 primaryHeight;
 
 int16 doRangeClamp = 0;
 
-DrawPackedSpriteFunc pDrawPacked;
-
 char redPalette[256];
 char greenPalette[256];
 char bluePalette[256];
@@ -124,14 +103,11 @@ char bluePalette[256];
 int16 setAllPalette = 0;
 
 int16 oldMode = 3;
-int16 needDriverInit = 1;
 char dontSetPalette = 0;
 SurfaceDesc *curPrimaryDesc = 0;
 SurfaceDesc *allocatedPrimary = 0;
 
 PalDesc *pPaletteDesc = 0;
-
-FileHandler pFileHandler = 0;
 
 int16 unusedPalette1[18] = {
 	0, 0x0b, 0, (int16)0x5555, (int16)0xAAAA, (int16)0xFFFF, 0, (int16)0x5555,
@@ -165,14 +141,8 @@ Color vgaPalette[16] = {
 PalDesc paletteStruct;
 
 int16 debugFlag = 0;
-int16 breakSet = 0;
 int16 inVM = 0;
 int16 colorCount = 16;
-
-int16 slowCD = 0;
-int16 checkMemFlag = 0;
-
-int16 trySmallForBig = 0;
 
 char inter_resStr[200];
 int32 inter_resVal = 0;

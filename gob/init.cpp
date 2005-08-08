@@ -67,8 +67,6 @@ void init_soundVideo(int32 smallHeap, int16 flag) {
 		error("init_soundVideo: Video mode 0x%x is not supported!",
 		    videoMode);
 
-	pFileHandler = 0;
-
 	//if ((flag & 4) == 0)
 	//	vid_findVideo();
 
@@ -79,14 +77,12 @@ void init_soundVideo(int32 smallHeap, int16 flag) {
 	presentSound = 0; // FIXME: sound is not supported yet
 
 	sprAllocated = 0;
-	filesCount = 0;
 	timer_enableTimer();
 
 	// snd_setResetTimerFlag(debugFlag); // TODO
 
 	if (videoMode == 0x13)
 		colorCount = 256;
-	fastComputer = 1;
 
 	pPaletteDesc = &paletteStruct;
 	pPaletteDesc->vgaPal = vgaPalette;
@@ -125,30 +121,15 @@ void init_cleanup(void) {
 	snd_speakerOff();
 
 	data_closeDataFile();
-	if (filesCount != 0)
-		error("init_cleanup: Error! Opened files lef: %d", filesCount);
 
 	if (sprAllocated != 0)
 		error("init_cleanup: Error! Allocated sprites left: %d",
 		    sprAllocated);
 
-	if (allocatedBlocks[0] != 0)
-		error("init_cleanup: Error! Allocated blocks in heap 0 left: %d",
-		    allocatedBlocks[0]);
-
-	if (allocatedBlocks[1] != 0)
-		error("init_cleanup: Error! Allocated blocks in heap 1 left: %d",
-		    allocatedBlocks[1]);
-
 	snd_stopSound(0);
 	keyboard_release();
-	//free(heapHeads);
 	g_system->quit();
 }
-
-/*static void init_hardErrHandler(void) {
-	hardretn(-1);
-}*/
 
 void init_initGame(char *totName) {
 	int16 handle2;
@@ -175,9 +156,6 @@ memBlocks	= word ptr -2*/
 
 	disableVideoCfg = 0x11;
 	disableMouseCfg = 0x15;
-	//reqRAMParag = 570;
-	//requiredSpace = 10;
-	strcpy(batFileName, "go");
 	init_soundVideo(1000, 1);
 
 	handle2 = data_openData("intro.stk");
@@ -190,7 +168,6 @@ memBlocks	= word ptr -2*/
 
 	vid_setHandlers();
 	vid_initPrimary(videoMode);
-//      harderr(&init_hardErrHandler);
 	mouseXShift = 1;
 	mouseYShift = 1;
 
