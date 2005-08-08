@@ -424,7 +424,7 @@ void LogicHEfunshop::op_1004(int32 *args) {
 
 	for (i = 0; i <= 6; i += 2) {
 		at = atan2(data[i + 1], data[i]);
-		sq = hypot(data[i + 1], data[i]);
+		sq = sqrt(data[i + 1] * data[i + 1] + data[i] * data[i]);
 
 		if (at <= 0)
 			at += 2 * PI;
