@@ -417,10 +417,10 @@ int Events::handleOneShot(EVENT *event) {
 				break;
 			}
 
-			sthread->_threadVars[kThreadVarAction] = TO_LE_16(event->param3);
-			sthread->_threadVars[kThreadVarObject] = TO_LE_16(event->param4);
-			sthread->_threadVars[kThreadVarWithObject] = TO_LE_16(event->param5);
-			sthread->_threadVars[kThreadVarActor] = TO_LE_16(event->param6);
+			sthread->_threadVars[kThreadVarAction] = event->param3;
+			sthread->_threadVars[kThreadVarObject] = event->param4;
+			sthread->_threadVars[kThreadVarWithObject] = event->param5;
+			sthread->_threadVars[kThreadVarActor] = event->param6;
 
 			if (event->op == EVENT_EXEC_BLOCKING)
 				_vm->_script->completeThread();
