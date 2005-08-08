@@ -1574,7 +1574,7 @@ static void ShutUpActor() {
 static void GetPointSector(void) {
 	lua_Object xparam, yparam, zparam;
 	Sector *result;
-	float x, y, z;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
 	
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: GetPointSector");

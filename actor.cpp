@@ -116,7 +116,7 @@ bool Actor::isTurning() const {
 void Actor::walkForward() {
 	float dist = g_engine->perSecond(_walkRate);
 	float yaw_rad = _yaw * (M_PI / 180), pitch_rad = _pitch * (M_PI / 180);
-	float yaw;
+	//float yaw;
 	Vector3d forwardVec(-std::sin(yaw_rad) * std::cos(pitch_rad),
 		std::cos(yaw_rad) * std::cos(pitch_rad),
 		std::sin(pitch_rad));

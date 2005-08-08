@@ -20,6 +20,10 @@
 
 #include <cmath>
 
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
+
 class Vector3d {
 public:
 	float _coords[3];		// Make sure this stays as an array so
@@ -90,7 +94,7 @@ public:
 		float yaw;
 		
 		// find the angle on the upper half of the unit circle
-		yaw = std::acos(a) * (180.0f / M_PI);
+		yaw = std::acos(a) * (180.0f / (float)PI);
 		if (b < 0.0f)
 			// adjust for the lower half of the unit circle
 			return 360.0f - yaw;

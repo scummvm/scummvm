@@ -247,7 +247,7 @@ void Smush::handleFramesHeader() {
 bool Smush::setupAnim(const char *file, int x, int y) {
 	uint32 tag;
 	int32 size;
-  int16 flags;
+	int16 flags;
 
 	if (!_file.open(file))
 		return false;
@@ -284,8 +284,8 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	// Output information for checking out the flags
 	if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
 		printf("SMUSH Flags:");
-		for(int i=0;i<16;i++)
-			printf(" %d", (flags & ((int) pow(2, i))) != 0);
+		for(int i = 0; i < 16; i++)
+			printf(" %d", (flags & ((int)pow(2.0f, i))) != 0);
 		printf("\n");
 	}
 	_videoLooping = SMUSH_LOOPMOVIE(flags);
