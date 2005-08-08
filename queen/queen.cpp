@@ -50,6 +50,9 @@
 
 #include "sound/mididrv.h"
 
+#ifdef _WIN32_WCE
+bool isSmartphone();
+#endif
 
 /* Flight of the Amazon Queen */
 static const GameSettings queen_setting[] = {
