@@ -5,7 +5,6 @@
 	Name="saga"
 	ProjectGUID="{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}"
 	Keyword="Win32Proj"
-	SignManifests="true"
 	>
 	<Platforms>
 		<Platform
@@ -317,10 +316,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\saga\rscfile_mod.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\saga.cpp"
 			>
 		</File>
@@ -346,10 +341,6 @@
 		</File>
 		<File
 			RelativePath="..\..\saga\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\sdebug.cpp"
 			>
 		</File>
 		<File
@@ -389,15 +380,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\saga\text.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\saga\text.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\saga\transitions.cpp"
 			>
 		</File>
 	</Files>

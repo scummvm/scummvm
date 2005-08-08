@@ -5,7 +5,6 @@
 	Name="common"
 	ProjectGUID="{597FE83A-0345-4D75-98F8-30E8B6FC56C9}"
 	Keyword="Win32Proj"
-	SignManifests="true"
 	>
 	<Platforms>
 		<Platform
@@ -221,6 +220,10 @@
 			</File>
 			<File
 				RelativePath="..\..\common\debugger.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\endian.h"
 				>
 			</File>
 			<File
@@ -943,6 +946,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\fontman.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\ilbm.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\ilbm.h"
 				>
 			</File>
 			<File
