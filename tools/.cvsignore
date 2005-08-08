@@ -3,6 +3,9 @@ delua
 imc2wav
 int2flt
 mat2ppm
-unlab
-vima
 set2fig
+unlab
+util
+vima
+*.o
+*.d
