@@ -305,63 +305,71 @@ bool Actor::loadActorResources(ActorData *actor) {
 	size_t resourceLength;
 	int framesCount;
 	ActorFrameSequence *framesPointer;
-	int lastFrame;
+	int lastFrame = 0;
 	int i, orient;
 	int resourceId;
+	bool gotSomething = false;
 
-	if (actor->frameListResourceId == 0) {
-		warning("Frame List ID = 0 for actor index %d", actor->index);
-		return true;
-	}
+	if (actor->frameListResourceId) {
+		debug(9, "Loading frame resource id %d", actor->frameListResourceId);
+		_vm->_resource->loadResource(_actorContext, actor->frameListResourceId, resourcePointer, resourceLength);
 
-	debug(9, "Loading frame resource id %d", actor->frameListResourceId);
-	_vm->_resource->loadResource(_actorContext, actor->frameListResourceId, resourcePointer, resourceLength);
+		framesCount = resourceLength / 16;
+		debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, resourceLength);
 
-	framesCount = resourceLength / 16;
-	debug(9, "Frame resource contains %d frames", framesCount);
+		framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
+		if (framesPointer == NULL) {
+			memoryError("Actor::loadActorResources");
+		}
 
-	framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
-	if (framesPointer == NULL) {
-		memoryError("Actor::loadActorResources");
-	}
+		MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
-
-	lastFrame = 0;
-
-	for (i = 0; i < framesCount; i++) {
-		for (orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
-			// Load all four orientations
-			framesPointer[i].directions[orient].frameIndex = readS.readUint16();
-			framesPointer[i].directions[orient].frameCount = readS.readSint16();
-			if (framesPointer[i].directions[orient].frameCount < 0)
-				warning("frameCount < 0", framesPointer[i].directions[orient].frameCount);
-			if (framesPointer[i].directions[orient].frameIndex > lastFrame) {
-				lastFrame = framesPointer[i].directions[orient].frameIndex;
+		for (i = 0; i < framesCount; i++) {
+			for (orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
+				// Load all four orientations
+				framesPointer[i].directions[orient].frameIndex = readS.readUint16();
+				framesPointer[i].directions[orient].frameCount = readS.readSint16();
+				if (framesPointer[i].directions[orient].frameCount < 0)
+					warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
+				if (framesPointer[i].directions[orient].frameIndex > lastFrame) {
+					lastFrame = framesPointer[i].directions[orient].frameIndex;
+				}
 			}
 		}
+
+		free(resourcePointer);
+
+		actor->frames = framesPointer;
+		actor->framesCount = framesCount;
+
+		gotSomething = true;
+	} else {
+		warning("Frame List ID = 0 for actor index %d", actor->index);
 	}
 
-	free(resourcePointer);
-
-	actor->frames = framesPointer;
-	actor->framesCount = framesCount;
 
 	resourceId = actor->spriteListResourceId;
-	debug(9, "Loading sprite resource id %d", resourceId);
 
-	_vm->_sprite->loadList(resourceId, actor->spriteList);
+	if (resourceId) {
+		debug(9, "Loading sprite resource id %d", resourceId);
 
-	i = actor->spriteList.spriteCount;
-	if ((actor->flags & kExtended)) {  // may be it's ITE specific ?
-		while ((lastFrame >= actor->spriteList.spriteCount)) {
-			resourceId++;
-			debug(9, "Appending to sprite list %d", resourceId);
-			_vm->_sprite->loadList(resourceId, actor->spriteList);
+		_vm->_sprite->loadList(resourceId, actor->spriteList);
+
+		i = actor->spriteList.spriteCount;
+		if (actor->flags & kExtended) {
+			while ((lastFrame >= actor->spriteList.spriteCount)) {
+				resourceId++;
+				debug(9, "Appending to sprite list %d", resourceId);
+				_vm->_sprite->loadList(resourceId, actor->spriteList);
+			}
 		}
+
+		gotSomething = true;
+	} else {
+		warning("Sprite List ID = 0 for actor index %d", actor->index);
 	}
 
-	return true;
+	return gotSomething;
 }
 
 void Actor::freeActorList() {
@@ -415,8 +423,9 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor->screenPosition.y = actorS.readUint16LE();
 		actor->screenScale = actorS.readUint16LE();
 		actor->screenDepth = actorS.readUint16LE();
-		actor->frameListResourceId = actorS.readUint32LE();
 		actor->spriteListResourceId = actorS.readUint32LE();
+		actor->frameListResourceId = actorS.readUint32LE();
+		debug(0, "%d: %d, %d", i, actor->spriteListResourceId, actor->frameListResourceId);
 		actor->scriptEntrypointNumber = actorS.readUint32LE();
 		actorS.readByte();
 		actorS.readByte();
@@ -445,13 +454,13 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 			}
 		}
 		//actorS.seek(128, SEEK_CUR);
-		walkStepIndex = actorS.readByte();//walkStepIndex
-		if (walkStepIndex) {
-			error("Actor::loadActorList walkStepIndex != 0");
-		}
 		walkStepCount = actorS.readByte();//walkStepCount
 		if (walkStepCount) {
 			error("Actor::loadActorList walkStepCount != 0");
+		}
+		walkStepIndex = actorS.readByte();//walkStepIndex
+		if (walkStepIndex) {
+			error("Actor::loadActorList walkStepIndex != 0");
 		}
 		//no need to check pointers
 		actorS.readUint32LE(); //sprites
@@ -463,8 +472,8 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actorS.readUint32LE(); //next in scene
 		actorS.read(acv, 6);
 		for (j = 0; j < 6; j++) {
-			if (walk[j]) {
-				error("Actor::loadActorList acv[6] != 0");
+			if (acv[j]) {
+				error("Actor::loadActorList acv[%d] != 0", j);
 			}
 		}
 //		actorS.seek(6, SEEK_CUR); //action vars
@@ -476,10 +485,12 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
 		if (actor->flags & kExtended) {
-			actor->disabled = !loadActorResources(actor);
+			loadActorResources(actor);
+
 			if (actor->disabled) {
 				warning("Disabling actor Id=%d index=%d", actor->id, actor->index);
 			}
+			break;
 		}
 	}
 
@@ -556,11 +567,11 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 		object->screenPosition.y = objectS.readUint16LE();
 		object->screenScale = objectS.readUint16LE();
 		object->screenDepth = objectS.readUint16LE();
+		object->spriteListResourceId = objectS.readUint32LE();
 		frameListResourceId = objectS.readUint32LE(); // object->frameListResourceId
 		if (frameListResourceId) {
 			error("Actor::loadObjList frameListResourceId != 0");
 		}
-		object->spriteListResourceId = objectS.readUint32LE();
 		object->scriptEntrypointNumber = objectS.readUint32LE();
 		objectS.readByte();
 		objectS.readByte();
@@ -1539,7 +1550,7 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	}
 
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
-		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X", commonObjectData->id);
+		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X (%d)", commonObjectData->id, frameNumber);
 		return false;
 	}
 	return true;
