@@ -57,7 +57,11 @@ ScriptThread *Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 	newThread->_moduleBaseSize = _modules[scriptModuleNumber].moduleBaseSize;
 
 	newThread->_strings = &_modules[scriptModuleNumber].strings;
-	newThread->_voiceLUT = &_modules[scriptModuleNumber].voiceLUT;
+
+	if (_vm->getGameType() == GType_IHNM)
+		newThread->_voiceLUT = &_globalVoiceLUT;
+	else
+		newThread->_voiceLUT = &_modules[scriptModuleNumber].voiceLUT;
 
 	return newThread;
 }
@@ -611,11 +615,6 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				int16 first;
 				const char *strings[ACTOR_SPEECH_STRING_MAX];
 
-				if (_vm->getGameType() == GType_IHNM) {
-					warning("STUB: opSpeak");
-					break;
-				}
-					
 				if (_vm->_actor->isSpeaking()) {
 					thread->wait(kWaitTypeSpeech);
 					return false;
@@ -650,10 +649,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 					}
 				}
 
-				if (_vm->getGameType() == GType_ITE) {
-					if (sampleResourceId <= 0 || sampleResourceId > 4000) {
-						sampleResourceId = -1;
-					}
+				if (sampleResourceId < 0 || sampleResourceId > 4000) {
+					sampleResourceId = -1;
 				}
 
 				_vm->_actor->actorSpeech(actorId, strings, stringsCount, sampleResourceId, speechFlags);

@@ -52,8 +52,6 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	size_t stringsLength;
 
 	//initialize member variables
-	_voiceLUTPresent = false;
-
 	_abortEnabled = true;
 	_skipSpeeches = false;
 	_conversingThread = NULL;
@@ -117,11 +115,6 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 		_modules[i].scriptResourceId = scriptS.readUint16();
 		_modules[i].stringsResourceId = scriptS.readUint16();
 		_modules[i].voicesResourceId = scriptS.readUint16();
-
-		if (_modules[i].voicesResourceId > 0) {
-			_voiceLUTPresent = true;
-		}
-
 
 		// Skip the unused portion of the structure
 		for (j = scriptS.pos(); j < prevTell + _modulesLUTEntryLen; j++) {
@@ -194,7 +187,7 @@ void Script::loadModule(int scriptModuleNumber) {
 	if (_modules[scriptModuleNumber].voicesResourceId > 0) {
 		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourcePointer, resourceLength);
 
-		loadModuleVoiceLUT(_modules[scriptModuleNumber], resourcePointer, resourceLength);
+		loadVoiceLUT(_modules[scriptModuleNumber].voiceLUT, resourcePointer, resourceLength);
 		free(resourcePointer);
 	}
 
@@ -266,23 +259,20 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 	}
 }
 
-void Script::loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer, size_t resourceLength) {
+void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_t resourceLength) {
 	uint16 i;
 
-	module.voiceLUT.voicesCount = resourceLength / 2;
-	if (module.voiceLUT.voicesCount != module.strings.stringsCount) {
-		error("Script::loadModuleVoiceLUT() Voice LUT entries do not match strings entries");
-	}
+	voiceLUT.voicesCount = resourceLength / 2;
 
-	module.voiceLUT.voices = (uint16 *)malloc(module.voiceLUT.voicesCount * sizeof(*module.voiceLUT.voices));
-	if (module.voiceLUT.voices == NULL) {
-		error("Script::loadModuleVoiceLUT() not enough memory");
+	voiceLUT.voices = (uint16 *)malloc(voiceLUT.voicesCount * sizeof(*voiceLUT.voices));
+	if (voiceLUT.voices == NULL) {
+		error("Script::loadVoiceLUT() not enough memory");
 	}
 
 	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, _scriptContext->isBigEndian);
 
-	for (i = 0; i < module.voiceLUT.voicesCount; i++) {
-		module.voiceLUT.voices[i] = scriptS.readUint16();
+	for (i = 0; i < voiceLUT.voicesCount; i++) {
+		voiceLUT.voices[i] = scriptS.readUint16();
 	}
 }
 

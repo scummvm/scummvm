@@ -216,7 +216,11 @@ struct VoiceLUT {
 	uint16 voicesCount;
 	uint16 *voices;
 	void freeMem() {
+		voicesCount = 0;
 		free(voices);
+	}
+	VoiceLUT() {
+		memset(this, 0, sizeof(*this));
 	}
 };
 
@@ -356,8 +360,6 @@ public:
 	void loadModule(int scriptModuleNumber);
 	void freeModules();
 
-	bool isVoiceLUTPresent() const { return _voiceLUTPresent; }
-
 	void doVerb();
 	void showVerb(int statusColor = -1);
 	void setVerb(int verb);
@@ -384,7 +386,6 @@ public:
 
 private:
 	SagaEngine *_vm;
-	bool _voiceLUTPresent;
 	ResourceContext *_scriptContext;
 
 	uint16 _modulesLUTEntryLen;
@@ -422,6 +423,8 @@ public:
 	bool _skipSpeeches;
 	bool _abortEnabled;
 
+	VoiceLUT _globalVoiceLUT;
+
 public:
 	ScriptThread *createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
 	int executeThread(ScriptThread *thread, int entrypointNumber);
@@ -433,9 +436,10 @@ public:
 	void wakeUpThreads(int waitType);
 	void wakeUpThreadsDelayed(int waitType, int sleepTime);
 
+	void loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_t resourceLength);
+
 private:
 	void loadModuleBase(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
-	void loadModuleVoiceLUT(ModuleData &module, const byte *resourcePointer, size_t resourceLength);
 
 	// runThread returns true if we should break running of other threads
 	bool runThread(ScriptThread *thread, uint instructionLimit);

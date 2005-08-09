@@ -527,7 +527,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	640, 480,	// logical width&height
 
 	0,			// scene path y offset
-	328,		// scene height
+	304,		// scene height
 
 	0,			// status x offset
 	304,		// status y offset
@@ -535,9 +535,9 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	24,			// status height
 	8,			// status text y offset
 	186,		// status text color
-	11,			// status BG color
-	0,0,		// save reminder pos
-	0,0,		// save reminder w&h
+	250,		// status BG color
+	616, 304,	// save reminder pos
+	24, 24,		// save reminder w&h
 	0,0,		// save reminder sprite numbers
 
 	253,		// verb text color
