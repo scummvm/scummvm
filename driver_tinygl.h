@@ -89,10 +89,7 @@ protected:
 private:
 	ZBuffer *_zb;
 	SDL_Surface *_screen;
-	SDL_Surface *_smushSurface;
-	SDL_Surface *_zbufferSurface;
-	byte *_fullScreenBitmapData;
-	byte *_fullScreenZBitmapData;
+	byte *_smushBitmap;
 	int _smushWidth;
 	int _smushHeight;
 };

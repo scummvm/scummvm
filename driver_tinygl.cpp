@@ -95,11 +95,13 @@ static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx
 
 DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	uint32 flags = SDL_HWSURFACE;
+
 	if (fullscreen)
 		flags |= SDL_FULLSCREEN;
 	_screen = SDL_SetVideoMode(screenW, screenH, screenBPP, flags);
 	if (_screen == NULL)
 		error("Could not initialize video");
+
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_screenBPP = screenBPP;
@@ -107,18 +109,11 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 
 	SDL_WM_SetCaption("Residual: Modified TinyGL - Software Renderer", "Residual");
 
-	byte *frameBuffer = (byte *)_screen->pixels;
-	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, 0, NULL, NULL, frameBuffer);
+	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, 0, NULL, NULL, _screen->pixels);
 	tglInit(_zb);
-
-	_zbufferSurface = SDL_CreateRGBSurfaceFrom(_zb->zbuf, screenW, screenH, 16, screenW * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-	_fullScreenBitmapData = NULL;
-	_fullScreenZBitmapData = NULL;
-	_smushSurface = NULL;
 }
 
 DriverTinyGL::~DriverTinyGL() {
-	SDL_FreeSurface(_zbufferSurface);
 	tglClose();
 	ZB_close(_zb);
 }
@@ -154,10 +149,11 @@ void DriverTinyGL::positionCamera(Vector3d pos, Vector3d interest) {
 		up_vec = Vector3d(0, 1, 0);
 
 	lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
-  }
+}
 
 void DriverTinyGL::clearScreen() {
-	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
+	memset(_zb->pbuf, 0, 640 * 480 * 2);
+	memset(_zb->zbuf, 0, 640 * 480 * 2);
 }
 
 void DriverTinyGL::flipBuffer() {
@@ -308,33 +304,63 @@ void DriverTinyGL::createBitmap(Bitmap *bitmap) {
 	}
 }
 
-void DriverTinyGL::drawBitmap(const Bitmap *bitmap) {
-	SDL_Surface *tmpSurface = NULL;
-	SDL_Rect srcRect, dstRect;
+void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool trans) {
+	int srcPitch = width * 2;
+	int dstPitch = 640 * 2;
+	int srcX, srcY;
+	int l, r;
 
-	srcRect.x = 0;
-	srcRect.y = 0;
-	srcRect.w = bitmap->width();
-	srcRect.h = bitmap->height();
-	dstRect.x = bitmap->x();
-	dstRect.y = bitmap->y();
-	dstRect.w = bitmap->width();
-	dstRect.h = bitmap->height();
-
-	if (bitmap->_format == 1) {
-		char *tmp = bitmap->_data[bitmap->_currImage - 1];
-		tmpSurface = SDL_CreateRGBSurfaceFrom(tmp, bitmap->width(), bitmap->height(),
-			16, bitmap->width() * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-		SDL_SetColorKey(tmpSurface, SDL_SRCCOLORKEY, 0xf81f);
-		SDL_BlitSurface(tmpSurface, &srcRect, _screen, &dstRect);
-		SDL_FreeSurface(tmpSurface);
+	if (x < 0) {
+		x = 0;
+		srcX = -x;
 	} else {
-		char *tmp = bitmap->_data[bitmap->_currImage - 1];
-		tmpSurface = SDL_CreateRGBSurfaceFrom(tmp, bitmap->width(), bitmap->height(),
-			16, bitmap->width() * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-		SDL_BlitSurface(tmpSurface, &srcRect, _zbufferSurface, &dstRect);
-		SDL_FreeSurface(tmpSurface);
+		srcX = 0;
 	}
+	if (y < 0) {
+		y = 0;
+		srcY = -y;
+	} else {
+		srcY = 0;
+	}
+
+	if (x + width > 639)
+		width -= (x + width) - 639;
+
+	if (y + height > 479)
+		height -= (y + height) - 479;
+
+	dst += (x + (y * 640)) * 2;
+	src += (srcX + (srcY * width)) * 2;
+	
+	int copyWidth = width * 2;
+
+	if (!trans) {
+		for (l = 0; l < height; l++) {
+			memcpy(dst, src, copyWidth);
+			dst += dstPitch;
+			src += srcPitch;
+		}
+	} else {
+		for (l = 0; l < height; l++) {
+			for (r = 0; r < width * 2; r += 2) {
+				uint16 pixel = READ_LE_UINT16(src + r);
+				if (pixel != 0xf81f)
+					WRITE_LE_UINT16(dst + r, pixel);
+			}
+			dst += dstPitch;
+			src += srcPitch;
+		}
+	}
+}
+
+void DriverTinyGL::drawBitmap(const Bitmap *bitmap) {
+	assert(bitmap->_currImage > 0);
+	if (bitmap->_format == 1)
+		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->_data[bitmap->_currImage - 1],
+			bitmap->x(), bitmap->y(), bitmap->width(), bitmap->height(), true);
+	else
+		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->_data[bitmap->_currImage - 1],
+			bitmap->x(), bitmap->y(), bitmap->width(), bitmap->height(), false);
 }
 
 void DriverTinyGL::destroyBitmap(Bitmap *) { }
@@ -393,25 +419,16 @@ void DriverTinyGL::destroyMaterial(Material *material) {
 void DriverTinyGL::prepareSmushFrame(int width, int height, byte *bitmap) {
 	_smushWidth = width;
 	_smushHeight = height;
-	if (_smushSurface) {
-		SDL_FreeSurface(_smushSurface);
-		_smushSurface = NULL;
-	}
-	_smushSurface = SDL_CreateRGBSurfaceFrom(bitmap, _smushWidth, _smushHeight, 16, _smushWidth * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
+	_smushBitmap = bitmap;
 }
 
 void DriverTinyGL::drawSmushFrame(int offsetX, int offsetY) {
-	SDL_Rect srcRect, dstRect;
-	srcRect.x = 0;
-	srcRect.y = 0;
-	srcRect.w = _smushWidth;
-	srcRect.h = _smushHeight;
-	dstRect.x = offsetX;
-	dstRect.y = offsetY;
-	dstRect.w = _smushWidth;
-	dstRect.h = _smushHeight;
-
-	SDL_BlitSurface(_smushSurface, &srcRect, _screen, &dstRect);
+	if (_smushWidth == 640 && _smushHeight == 480) {
+		memcpy(_zb->pbuf, _smushBitmap, 640 * 480 * 2);
+	} else {
+		TinyGLBlit((byte *)_zb->pbuf, _smushBitmap, offsetX, offsetY,
+			_smushWidth, _smushHeight, false);
+	}
 }
 
 void DriverTinyGL::loadEmergFont() {
@@ -448,33 +465,20 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 		}
 	}
 
-	handle->surface = SDL_CreateRGBSurfaceFrom(handle->bitmapData, width, height, 16, width * 2, 0x0000f800, 0x000007e0, 0x0000001f, 0x00000000);
-
 	return handle;
 }
 
 void DriverTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
-	SDL_Rect srcRect, dstRect;
-	srcRect.x = 0;
-	srcRect.y = 0;
-	srcRect.w = handle->width;
-	srcRect.h = handle->height;
-	dstRect.x = x;
-	dstRect.y = y;
-	dstRect.w = handle->width;
-	dstRect.h = handle->height;
-
-	SDL_SetColorKey((SDL_Surface *)handle->surface, SDL_SRCCOLORKEY, 0xf81f);
-	SDL_BlitSurface((SDL_Surface *)handle->surface, &srcRect, _screen, &dstRect);
+	TinyGLBlit((byte *)_zb->pbuf, (byte *)handle->bitmapData, x, y, handle->width, handle->height, true);
 }
 
 void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
 	delete[] handle->bitmapData;
-	SDL_FreeSurface((SDL_Surface *)handle->surface);
 }
 
 Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	uint16 *buffer = new uint16[w * h];
+	uint16 *src = (uint16 *)_zb->pbuf;
 	assert(buffer);
 
 	float step_x = 640.0 / w;
@@ -482,7 +486,7 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	int step = 0;
 	for (float y = 0; y < 479; y += step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			buffer[step++] = *((uint16 *)(_screen->pixels) + (int)y * 640 + (int)x); 
+			buffer[step++] = *(src + (int)y * 640 + (int)x); 
 		}
 	}
 
@@ -495,7 +499,7 @@ void DriverTinyGL::drawDim() {
 }
 
 void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
-	uint16 *dst = (uint16 *)_screen->pixels;
+	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getX1();
 	int x2 = primitive->getX2();
 	int y1 = primitive->getY1();
@@ -527,7 +531,7 @@ void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
 }
 
 void DriverTinyGL::drawLine(PrimitiveObject *primitive) {
-	uint16 *dst = (uint16 *)_screen->pixels;
+	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getX1();
 	int x2 = primitive->getX2();
 	int y1 = primitive->getY1();
