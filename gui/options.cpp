@@ -571,19 +571,12 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
 	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
 
-	// Create file browser dialogs
-	_dirBrowser = new BrowserDialog("Select directory for savegames", true);
-	_fileBrowser = new BrowserDialog("Select SoundFont", false);
-
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();
 #endif
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
-	delete _dirBrowser;
-	delete _fileBrowser;
-
 #ifdef SMALL_SCREEN_DEVICE
 	delete _keysDialog;
 #endif
@@ -639,31 +632,37 @@ void GlobalOptionsDialog::close() {
 
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kChooseSaveDirCmd:
-		if (_dirBrowser->runModal() > 0) {
+	case kChooseSaveDirCmd: {
+		BrowserDialog browser("Select directory for savegames", true);
+		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_dirBrowser->getResult());
+			FilesystemNode dir(browser.getResult());
 			_savePath->setLabel(dir.path());
 			draw();
 			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
-	case kChooseExtraDirCmd:
-		if (_dirBrowser->runModal() > 0) {
+	}
+	case kChooseExtraDirCmd: {
+		BrowserDialog browser("Select directory for extra files", true);
+		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode dir(_dirBrowser->getResult());
+			FilesystemNode dir(browser.getResult());
 			_extraPath->setLabel(dir.path());
 			draw();
 		}
 		break;
-	case kChooseSoundFontCmd:
-		if (_fileBrowser->runModal() > 0) {
+	}
+	case kChooseSoundFontCmd: {
+		BrowserDialog browser("Select SoundFont", false);
+		if (browser.runModal() > 0) {
 			// User made his choice...
-			FilesystemNode file(_fileBrowser->getResult());
+			FilesystemNode file(browser.getResult());
 			_soundFont->setLabel(file.path());
 			draw();
 		}
 		break;
+	}
 #ifdef SMALL_SCREEN_DEVICE
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();

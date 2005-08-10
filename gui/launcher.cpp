@@ -409,7 +409,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for the game
 	case kCmdGameBrowser: {
-		BrowserDialog browser("Select additional game directory", true);
+		BrowserDialog browser("Select directory with game data", true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());

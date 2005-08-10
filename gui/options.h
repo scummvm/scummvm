@@ -118,8 +118,6 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:
-	BrowserDialog *_dirBrowser;
-	BrowserDialog *_fileBrowser;
 #ifdef SMALL_SCREEN_DEVICE
 	KeysDialog *_keysDialog;
 #endif
