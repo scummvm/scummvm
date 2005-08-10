@@ -86,10 +86,10 @@ int Scene::ITEStartProc() {
 	return SUCCESS;
 }
 
-EVENT *Scene::ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
+Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
 	TextListEntry textEntry;
 	TextListEntry *entry;
-	EVENT event;
+	Event event;
 	int voice_len;
 	int i;
 
@@ -161,7 +161,7 @@ enum {
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
 
-EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
+Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
 	int game;
 	Common::Language lang;
 
@@ -225,8 +225,8 @@ EVENT *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 	TextListEntry textEntry;
 	TextListEntry *entry;
-	EVENT event;
-	EVENT *q_event = NULL;
+	Event event;
+	Event *q_event = NULL;
 
 	textEntry.color = 255;
 	textEntry.effectColor = 0;
@@ -292,8 +292,8 @@ int Scene::SC_ITEIntroAnimProc(int param, void *refCon) {
 
 // Handles the introductory Dreamer's Guild / NWC logo animation scene.
 int Scene::ITEIntroAnimProc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:{
@@ -373,8 +373,8 @@ int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
 
 // Handles first introductory cave painting scene
 int Scene::ITEIntroCave1Proc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	static const INTRO_DIALOGUE dialogue[][4] = {
@@ -461,8 +461,8 @@ int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
 
 // Handles second introductory cave painting scene
 int Scene::ITEIntroCave2Proc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	static const INTRO_DIALOGUE dialogue[][3] = {
@@ -545,8 +545,8 @@ int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
 
 // Handles third introductory cave painting scene
 int Scene::ITEIntroCave3Proc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	static const INTRO_DIALOGUE dialogue[][3] = {
@@ -629,8 +629,8 @@ int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
 
 // Handles fourth introductory cave painting scene
 int Scene::ITEIntroCave4Proc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
 	static const INTRO_DIALOGUE dialogue[][4] = {
@@ -722,8 +722,8 @@ int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
 
 // Handles intro title scene (valley overlook)
 int Scene::ITEIntroValleyProc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	static const INTRO_CREDIT credits[] = {
 		{EN_USA, kITEAny, kCHeader, "Producer"},
@@ -828,8 +828,8 @@ int Scene::SC_ITEIntroTreeHouseProc(int param, void *refCon) {
 
 // Handles second intro credit screen (treehouse view)
 int Scene::ITEIntroTreeHouseProc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	static const INTRO_CREDIT credits1[] = {
 		{EN_USA, kITEAny, kCHeader, "Game Design"},
@@ -917,8 +917,8 @@ int Scene::SC_ITEIntroFairePathProc(int param, void *refCon) {
 
 // Handles third intro credit screen (path to puzzle tent)
 int Scene::ITEIntroFairePathProc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	static const INTRO_CREDIT credits1[] = {
 		{EN_USA, kITEAny, kCHeader, "Programming"},
@@ -995,9 +995,9 @@ int Scene::SC_ITEIntroFaireTentProc(int param, void *refCon) {
 
 // Handles fourth intro credit screen (treehouse view)
 int Scene::ITEIntroFaireTentProc(int param) {
-	EVENT event;
-	EVENT *q_event;
-	EVENT *q_event_start;
+	Event event;
+	Event *q_event;
+	Event *q_event_start;
 
 	switch (param) {
 	case SCENE_BEGIN:

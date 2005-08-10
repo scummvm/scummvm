@@ -373,7 +373,7 @@ void Script::doVerb() {
 	int scriptEntrypointNumber = 0;
 	int scriptModuleNumber = 0;
 	int objectType;
-	EVENT event;
+	Event event;
 	const char *excuseText;
 	int excuseSampleResourceId;
 	const HitZone *hitZone;

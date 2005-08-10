@@ -1186,7 +1186,7 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 		HitZone *hitZone;
 		ActorData *a;
 		ObjectData *o;
-		EVENT event;
+		Event event;
 
 		switch (objectTypeId(obj)) {
 		case kGameObjectHitZone:

@@ -117,8 +117,8 @@ int Scene::SC_IHNMIntroMovieProc1(int param, void *refCon) {
 }
 
 int Scene::IHNMIntroMovieProc1(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:
@@ -155,8 +155,8 @@ int Scene::SC_IHNMIntroMovieProc2(int param, void *refCon) {
 }
 
 int Scene::IHNMIntroMovieProc2(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	PalEntry *pal;
 
 	static PalEntry current_pal[PAL_ENTRIES];
@@ -241,8 +241,8 @@ int Scene::SC_IHNMIntroMovieProc3(int param, void *refCon) {
 }
 
 int Scene::IHNMIntroMovieProc3(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	PalEntry *pal;
 	static PalEntry current_pal[PAL_ENTRIES];
 
@@ -327,8 +327,8 @@ int Scene::SC_IHNMHateProc(int param, void *refCon) {
 }
 
 int Scene::IHNMHateProc(int param) {
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	switch (param) {
 	case SCENE_BEGIN:

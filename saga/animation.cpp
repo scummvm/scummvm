@@ -125,7 +125,7 @@ void Anim::setCycles(uint16 animId, int cycles) {
 }
 
 void Anim::play(uint16 animId, int vectorTime, bool playing) {
-	EVENT event;
+	Event event;
 	Surface *backGroundSurface;
 
 	byte *displayBuffer;

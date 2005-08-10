@@ -115,7 +115,7 @@ enum EVENT_PARAMS {
 	SET_PALETTE
 };
 
-struct EVENT {
+struct Event {
 	unsigned int type;
 	unsigned int code; // Event operation category & flags
 	int op;            // Event operation
@@ -130,13 +130,13 @@ struct EVENT {
 	long duration;     // Duration of event
 	long d_reserved;
 
-	EVENT *chain;    // Event chain (For consecutive events)
-	EVENT() {
+	Event *chain;    // Event chain (For consecutive events)
+	Event() {
 		memset(this, 0, sizeof(*this));
 	}
 };
 
-typedef SortedList<EVENT> EventList;
+typedef SortedList<Event> EventList;
 
 #define EVENT_WARNINGCOUNT 1000
 #define EVENT_MASK 0x00FF
@@ -155,16 +155,16 @@ class Events {
 	int handleEvents(long msec);
 	int clearList();
 	int freeList();
-	EVENT *queue(EVENT *event);
-	EVENT *chain(EVENT *headEvent, EVENT *addEvent);
+	Event *queue(Event *event);
+	Event *chain(Event *headEvent, Event *addEvent);
 
  private:
-	int handleContinuous(EVENT * event);
-	int handleOneShot(EVENT * event);
-	int handleInterval(EVENT * event);
-	int handleImmediate(EVENT *event);
+	int handleContinuous(Event * event);
+	int handleOneShot(Event * event);
+	int handleInterval(Event * event);
+	int handleImmediate(Event *event);
 	int processEventTime(long msec);
-	int initializeEvent(EVENT * event);
+	int initializeEvent(Event * event);
 
  private:
 	SagaEngine *_vm;

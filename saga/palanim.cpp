@@ -119,7 +119,7 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 }
 
 int PalAnim::cycleStart() {
-	EVENT event;
+	Event event;
 
 	if (!_loaded) {
 		return FAILURE;
@@ -144,7 +144,7 @@ int PalAnim::cycleStep(int vectortime) {
 	uint16 cycle;
 	uint16 cycle_limit;
 
-	EVENT event;
+	Event event;
 
 	if (!_loaded) {
 		return FAILURE;

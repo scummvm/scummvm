@@ -354,7 +354,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	ActorData *actor;
 	ObjectData *obj;
 	const HitZone *hitZone;
-	EVENT event;
+	Event event;
 
 	objectId = thread->pop();
 	action = thread->pop();
@@ -1234,8 +1234,8 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	static PalEntry cur_pal[PAL_ENTRIES];
 	PalEntry *pal;
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	if (_vm->getGameType() == GType_IHNM) {
 		warning("Psychic profile is not implemented");
@@ -1340,8 +1340,8 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	static PalEntry cur_pal[PAL_ENTRIES];
 	PalEntry *pal;
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 
 	thread->wait(kWaitTypePlacard);
 

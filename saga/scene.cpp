@@ -251,7 +251,7 @@ void Scene::drawTextList(Surface *ds) {
 void Scene::startScene() {
 	SceneQueueList::iterator queueIterator;
 	LoadSceneParams *sceneQueue;
-	EVENT event;
+	Event event;
 
 	if (_sceneLoaded) {
 		error("Scene::start(): Error: Can't start game...scene already loaded");
@@ -596,8 +596,8 @@ void Scene::initDoorsState() {
 
 void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	size_t i;
-	EVENT event;
-	EVENT *q_event;
+	Event event;
+	Event *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
 	
 	if ((_vm->getGameType() == GType_IHNM) && (loadSceneParams->chapter != NO_CHAPTER_CHANGE)) {

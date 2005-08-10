@@ -38,7 +38,7 @@ namespace Saga {
 
 class ObjectMap;
 
-struct EVENT;
+struct Event;
 
 enum SceneFlags {
 	kSceneFlagISO        = 1,
@@ -334,8 +334,8 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 
  private:
-	EVENT *ITEQueueDialogue(EVENT *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]);
-	EVENT *ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
+	Event *ITEQueueDialogue(Event *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]);
+	Event *ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
 	int ITEIntroAnimProc(int param);
 	int ITEIntroCave1Proc(int param);
 	int ITEIntroCave2Proc(int param);

@@ -56,7 +56,7 @@ Events::~Events(void) {
 // First advances event times, then processes each event with the appropriate
 //  handler depending on the type of event.
 int Events::handleEvents(long msec) {
-	EVENT *event_p;
+	Event *event_p;
 
 	long delta_time;
 	int result;
@@ -66,7 +66,7 @@ int Events::handleEvents(long msec) {
 
 	// Process each event in list
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
-		event_p = (EVENT *)eventi.operator->();
+		event_p = (Event *)eventi.operator->();
 
 		// Call the appropriate event handler for the specific event type
 		switch (event_p->type) {
@@ -98,14 +98,14 @@ int Events::handleEvents(long msec) {
 		if ((result == EVENT_DELETE) || (result == EVENT_INVALIDCODE)) {
 			// If there is no event chain, delete the base event.
 			if (event_p->chain == NULL) {
-				eventi=_eventList.eraseAndPrev(eventi);
+				eventi = _eventList.eraseAndPrev(eventi);
 			} else {
 				// If there is an event chain present, move the next event
 				// in the chain up, adjust it by the previous delta time,
 				// and reprocess the event  */
 				delta_time = event_p->time;
-				EVENT *from_chain=event_p->chain;
-				memcpy(event_p, from_chain,sizeof(*event_p));
+				Event *from_chain = event_p->chain;
+				memcpy(event_p, from_chain, sizeof(*event_p));
 				free(from_chain);
 
 				event_p->time += delta_time;
@@ -119,7 +119,7 @@ int Events::handleEvents(long msec) {
 	return SUCCESS;
 }
 
-int Events::handleContinuous(EVENT *event) {
+int Events::handleContinuous(Event *event) {
 	double event_pc = 0.0; // Event completion percentage
 	int event_done = 0;
 
@@ -203,7 +203,7 @@ int Events::handleContinuous(EVENT *event) {
 	return EVENT_CONTINUE;
 }
 
-int Events::handleImmediate(EVENT *event) {
+int Events::handleImmediate(Event *event) {
 	double event_pc = 0.0; // Event completion percentage
 	bool event_done = false;
 
@@ -262,7 +262,7 @@ int Events::handleImmediate(EVENT *event) {
 	return EVENT_BREAK;
 }
 
-int Events::handleOneShot(EVENT *event) {
+int Events::handleOneShot(Event *event) {
 	Surface *backBuffer;
 	ScriptThread *sthread;
 	Rect rect;
@@ -468,14 +468,14 @@ int Events::handleOneShot(EVENT *event) {
 	return EVENT_DELETE;
 }
 
-int Events::handleInterval(EVENT *event) {
+int Events::handleInterval(Event *event) {
 	return EVENT_DELETE;
 }
 
 // Schedules an event in the event list; returns a pointer to the scheduled
 // event suitable for chaining if desired.
-EVENT *Events::queue(EVENT *event) {
-	EVENT *queuedEvent;
+Event *Events::queue(Event *event) {
+	Event *queuedEvent;
 
 	queuedEvent = _eventList.pushBack(*event).operator->();
 	initializeEvent(queuedEvent);
@@ -485,24 +485,24 @@ EVENT *Events::queue(EVENT *event) {
 
 // Places a 'add_event' on the end of an event chain given by 'head_event'
 // (head_event may be in any position in the event chain)
-EVENT *Events::chain(EVENT *headEvent, EVENT *addEvent) {
+Event *Events::chain(Event *headEvent, Event *addEvent) {
 	if (headEvent == NULL) {
 		return queue(addEvent);
 	}
 
-	EVENT *walkEvent;
+	Event *walkEvent;
 	for (walkEvent = headEvent; walkEvent->chain != NULL; walkEvent = walkEvent->chain) {
 		continue;
 	}
 
-	walkEvent->chain = (EVENT *)malloc(sizeof(*walkEvent->chain));
+	walkEvent->chain = (Event *)malloc(sizeof(*walkEvent->chain));
 	*walkEvent->chain = *addEvent;
 	initializeEvent(walkEvent->chain);
 
 	return walkEvent->chain;
 }
 
-int Events::initializeEvent(EVENT *event) {
+int Events::initializeEvent(Event *event) {
 	event->chain = NULL;
 	switch (event->type) {
 	case ONESHOT_EVENT:
@@ -522,13 +522,13 @@ int Events::initializeEvent(EVENT *event) {
 }
 
 int Events::clearList() {
-	EVENT *chain_walk;
-	EVENT *next_chain;
-	EVENT *event_p;
+	Event *chain_walk;
+	Event *next_chain;
+	Event *event_p;
 
 	// Walk down event list
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
-		event_p = (EVENT *)eventi.operator->();
+		event_p = (Event *)eventi.operator->();
 
 		// Only remove events not marked NODESTROY (engine events)
 		if (!(event_p->code & NODESTROY)) {
@@ -546,14 +546,14 @@ int Events::clearList() {
 
 // Removes all events from the list (even NODESTROY)
 int Events::freeList() {
-	EVENT *chain_walk;
-	EVENT *next_chain;
-	EVENT *event_p;
+	Event *chain_walk;
+	Event *next_chain;
+	Event *event_p;
 
 	// Walk down event list
 	EventList::iterator eventi = _eventList.begin();
 	while (eventi != _eventList.end()) {
-		event_p = (EVENT *)eventi.operator->();
+		event_p = (Event *)eventi.operator->();
 
 		// Remove any events chained off this one */
 		for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
@@ -568,11 +568,11 @@ int Events::freeList() {
 
 // Walks down the event list, updating event times by 'msec'.
 int Events::processEventTime(long msec) {
-	EVENT *event_p;
+	Event *event_p;
 	uint16 event_count = 0;
 
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
-		event_p = (EVENT *)eventi.operator->();
+		event_p = (Event *)eventi.operator->();
 
 		event_p->time -= msec;
 		event_count++;

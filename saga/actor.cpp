@@ -598,7 +598,7 @@ void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 }
 
 void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped) {
-	EVENT event;
+	Event event;
 
 	if (actor != _protagonist) {
 		return;
@@ -2093,7 +2093,7 @@ void Actor::abortSpeech() {
 void Actor::moveDragon(ActorData *actor) {
 	int16 dir0, dir1, dir2, dir3;
 	int16 moveType;
-	EVENT event;
+	Event event;
 	const DragonMove *dragonMove;
 
 	if ((actor->actionCycle < 0) ||
