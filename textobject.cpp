@@ -151,8 +151,9 @@ void TextObject::createBitmap() {
 		}
 		//printf("creating textobject: %s\nheight: %d\nwidth: %d\n", currentLine.c_str(), _bitmapHeight[j], _bitmapWidth[j]);
 
-		_textBitmap = new uint8[_bitmapHeightPtr[j] * _bitmapWidthPtr[j]];
-		memset(_textBitmap, 0, _bitmapHeightPtr[j] * _bitmapWidthPtr[j]);
+		// Due to the size of charWidth we need to allocate one more byte than we plan on using
+		_textBitmap = new uint8[_bitmapHeightPtr[j] * _bitmapWidthPtr[j] + 1];
+		memset(_textBitmap, 0, _bitmapHeightPtr[j] * _bitmapWidthPtr[j] + 1);
 
 		// Fill bitmap
 		int offset = 0;

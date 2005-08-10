@@ -469,7 +469,7 @@ void DriverTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 }
 
 void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
-	delete handle->bitmapData;
+	delete[] handle->bitmapData;
 	SDL_FreeSurface((SDL_Surface *)handle->surface);
 }
 

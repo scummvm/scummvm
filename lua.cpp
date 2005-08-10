@@ -2042,15 +2042,28 @@ static void luaFileFindNext() {
 #else
 		do {
 			de = readdir(g_searchFile);
-			if (de)
-				found = true;
-		} while (de && (de->d_type == 6/* DT_DIR ? */));
+			if (de) {
+				// If the 'extension' is a wildcard pattern then check only the extensions,
+				// otherwise check the entire filename
+				if (g_find_file_data[0] == '*' && g_find_file_data[1] == '.') {
+					char *c = strrchr(de->d_name, '.');
+					
+					if (c != NULL && !strcasecmp(c, &g_find_file_data[1])) {
+						found = true;
+						break;
+					}
+				} else if (!strcasecmp(de->d_name, g_find_file_data)) {
+					found = true;
+					break;
+				}
+			}
+		} while (de);
 #endif
 
 #ifdef _WIN32
 		if (g_find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 #else
-		if (de->d_type == 6/* DT_DIR ? */)
+		if (!de)
 #endif
 			found = false;
 	}
@@ -2067,7 +2080,7 @@ static void luaFileFindNext() {
 }
 
 static void luaFileFindFirst() {
-	char path[255], *extension;
+	char *path, *extension;
 	lua_Object pathObj;
 
 	DEBUG_FUNCTION();
@@ -2075,20 +2088,22 @@ static void luaFileFindFirst() {
 	pathObj = lua_getparam(2);
 	FileFindDispose();
 
-	if (!lua_isnil(pathObj)) {
-		sprintf(path, "%s/%s", lua_getstring(pathObj), extension);
-	} else {
-		sprintf(path, "%s", extension);
-	}
-
+	if (lua_isnil(pathObj))
+		path = ".";
+	else
+		path = lua_getstring(pathObj);
+	
 #ifdef _WIN32
 	std::string dir_strWin32 = path;
+	dir_strWin32 += "/";
+	dir_strWin32 += extension;
 	g_searchFile = FindFirstFile(dir_strWin32.c_str(), &g_find_file_data);
 	g_firstFind = true;
 	if (g_searchFile == INVALID_HANDLE_VALUE)
 		g_searchFile = NULL;
 #else
 	g_searchFile = opendir(path);
+	strcpy(g_find_file_data, extension);
 #endif
 
 	if (g_searchFile) {
@@ -2183,6 +2198,11 @@ static void BlastImage() {
 	int x, y;
 	
 	DEBUG_FUNCTION();
+	// Allow displaying a null image to fail gracefully.
+	// Once main_menu:cancel is handled better this should
+	// be unnecessary.
+	if (lua_isnil(lua_getparam(1)))
+		return;
 	bitmap = check_bitmapobject(1);
 	x = check_int(2);
 	y = check_int(3);
@@ -2294,6 +2314,21 @@ static void Exit() {
 		error("Unable to push exit event!");
 }
 
+/* This function acts as a wrapper around the actual
+ * cancel operation, which fails if the second parameter
+ * passed to it is not 'nil'
+ */
+static void cancelHandler() {
+	lua_Object menuTable, cancelFunction;
+	
+	stubWarning("cancelHandler");
+	menuTable = lua_getparam(1);
+	cancelFunction = getTableValue(menuTable, "cancel_orig");
+	lua_pushobject(menuTable);
+	lua_pushnil();
+	lua_callfunction(cancelFunction);
+}
+
 /* This function provides all of the menu
  * handling that has been observed
  */
@@ -2343,8 +2378,13 @@ static void menuHandler() {
 		itemTable = getTableValue(menuTable, "active_menu");
 	} else if (!lua_isnil(getTableValue(menuTable, "num_choices"))) {
 		// Exit Menu
-		int current_choice = atoi(lua_getstring(getTableValue(menuTable, "current_choice")));
+		lua_Object currentChoice = getTableValue(menuTable, "current_choice");
 		int num_choices = atoi(lua_getstring(getTableValue(menuTable, "num_choices")));
+		int current_choice;
+		
+		if (lua_isnil(currentChoice))
+			return; // if the current choice is 'nil' then there are no choices
+		current_choice = atoi(lua_getstring(currentChoice));
 		
 		if (key == SDLK_RIGHT)
 			current_choice++;
@@ -2382,6 +2422,20 @@ static void menuHandler() {
 		warning("Unhandled type of menu!");
 		return;
 	}
+	
+	if (lua_isnil(getTableValue(menuTable, "cancel_orig"))) {
+		lua_Object cancelFunction = getTableValue(menuTable, "cancel");
+		// Install Alternative Cancel Handler
+		lua_pushobject(menuTable);
+		lua_pushstring(const_cast<char *>("cancel"));
+		lua_pushcfunction(cancelHandler);
+		lua_settable();
+		// Store the old Cancel Handler
+		lua_pushobject(menuTable);
+		lua_pushstring(const_cast<char *>("cancel_orig"));
+		lua_pushobject(cancelFunction);
+		lua_settable();
+	}
 
 	// get the current item
 	menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
@@ -2391,13 +2445,6 @@ static void menuHandler() {
 	if (key == SDLK_RETURN && strmatch(itemText(itemTable, menuItem), "/sytx247/"))
 		key = SDLK_ESCAPE;
 
-	// hack the "&Quit" command so it actually works
-	// (at this time it cannot open the exit menu on top of the normal one)
-	if (key == SDLK_RETURN && strmatch(itemText(itemTable, menuItem), "/sytx248/")) {
-		Exit();
-		return;
-	}
-	
 	/* if we're running the menu then we need to manually handle
 	 * a lot of the operations necessary to use the menu
 	 */
@@ -2421,16 +2468,20 @@ static void menuHandler() {
 		case SDLK_DOWN:
 			do {
 				menuItem++;
-				if (menuItem > menuItems)
-					return;
+				if (menuItem > menuItems) {
+					menuItem = 1;
+					break;
+				}
 			} while (itemDisabled(itemTable, menuItem));
 			menuChanged = true;
 			break;
 		case SDLK_UP:
 			do {
 				menuItem--;
-				if (menuItem < 1)
-					return;
+				if (menuItem < 1) {
+					menuItem = menuItems;
+					break;
+				}
 			} while (itemDisabled(itemTable, menuItem));
 			menuChanged = true;
 			break;
@@ -2438,6 +2489,12 @@ static void menuHandler() {
 			sliderValue = -1;
 			break;
 		case SDLK_RIGHT:
+			sliderValue = 1;
+			break;
+		case SDLK_RETURN:
+			// Allow the return key to act as a "slide right" operation,
+			// this actually isn't supposed to do anything for normal
+			// sliders but handling more is better than less.
 			sliderValue = 1;
 			break;
 	}
@@ -2969,6 +3026,12 @@ static void GetSaveGameData() {
 	int strSize;
 	int count = 0;
 
+	// Get the name of the saved game
+	lua_pushobject(result);
+	lua_pushnumber(count++);
+	lua_pushstring(filename); // TODO: Use an actual stored name
+	lua_settable();
+	
 	for (;;) {
 		if (dataSize <= 0)
 			break;

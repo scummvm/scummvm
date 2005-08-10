@@ -234,6 +234,7 @@ extern bool g_firstFind;
 
 #else
 
+extern char g_find_file_data[100];
 extern DIR *g_searchFile;
 
 #endif

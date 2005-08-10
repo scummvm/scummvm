@@ -49,6 +49,10 @@ Registry::Registry() : _dirty(false) {
 }
 
 const char *Registry::get(const char *key, const char *defval) const {
+	// GrimDataDir is an alias for DataDir for our purposes
+	if (!strcmp(key, "GrimDataDir"))
+		key = "DataDir";
+	
 	Group::const_iterator i = _settings.find(key);
 	if (i == _settings.end())
 		return defval;

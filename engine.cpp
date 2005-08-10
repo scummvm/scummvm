@@ -44,6 +44,7 @@ bool g_firstFind;
 
 #else
 
+char g_find_file_data[100];
 DIR *g_searchFile;
 
 #endif
