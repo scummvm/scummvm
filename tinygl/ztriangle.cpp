@@ -278,8 +278,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 {						\
    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
      if (ZCMP(zz,pz[_a])) {				\
-	   PIXEL pixel = *(PIXEL *)((char *)texture+ \
-               (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));\
+          PIXEL pixel = *(PIXEL *)((char *)texture+ \
+             (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));\
        unsigned int c_r = (pixel & 0xF800) >> 9;    \
        unsigned int c_g = (pixel & 0x07E0) >> 4;    \
        unsigned int c_b = (pixel & 0x001F) << 2;    \
