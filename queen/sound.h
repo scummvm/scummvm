@@ -138,7 +138,7 @@ public:
 };
 #endif
 
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 class OGGSound : public Sound {
 public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};

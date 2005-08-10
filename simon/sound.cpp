@@ -183,7 +183,7 @@ void MP3Sound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 }
 #endif
 
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 class VorbisSound : public BaseSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base) {};
@@ -271,7 +271,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 		}
 	}
 #endif
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 	if (!_voice && gss->vorbis_filename && gss->vorbis_filename[0]) {
 		file->open(gss->vorbis_filename);
 		if (file->isOpen()) {
@@ -323,7 +323,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 			}
 		}
 #endif
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 		if (!_effects && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
 			file->open(gss->vorbis_effects_filename);
 			if (file->isOpen()) {

@@ -100,7 +100,7 @@ MoviePlayer::~MoviePlayer(void) {
  * @param id the id of the file
  */
 void MoviePlayer::play(uint32 id) {
-#if defined(USE_MPEG2) && defined(USE_VORBIS)
+#if defined(USE_MPEG2) && (defined(USE_VORBIS) || defined(USE_TREMOR))
 	AnimationState *anim = new AnimationState(_scr, _snd, _sys);
 	AudioStream *stream = NULL;
 	if (SwordEngine::_systemVars.cutscenePackVersion == 1) {
@@ -166,7 +166,7 @@ void MoviePlayer::play(uint32 id) {
 	while (!anim->soundFinished())
 		_sys->delayMillis(100);
 	delete anim;
-#endif // USE_MPEG2 && USE_VORBIS
+#endif // USE_MPEG2 && (USE_VORBIS || USE_TREMOR)
 }
 
 void MoviePlayer::insertOverlay(OverlayColor *buf, uint8 *ovl, OverlayColor *pal) {

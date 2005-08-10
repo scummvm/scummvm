@@ -94,7 +94,7 @@ void Engine::checkCD() {
 	// If we can find a compressed audio track, then it should be ok even
 	// if it's running from CD.
 
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 	if (Common::File::exists("track1.ogg"))
 		return;
 #endif

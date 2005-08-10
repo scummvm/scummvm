@@ -114,7 +114,7 @@ AudioStream *MusicHandle::createAudioSource(void) {
 	case MusicMp3:
 		return makeMP3Stream(&_file, _file.size());
 #endif
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 	case MusicVorbis:
 		return makeVorbisStream(&_file, _file.size());
 #endif
@@ -138,7 +138,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (_file.open(fileName))
 		_musicMode = MusicMp3;
 #endif
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 	if (!_file.isOpen()) { // mp3 doesn't exist (or not compiled with MAD support)
 		sprintf(fileName, "%s.ogg", fileBase);
 		if (_file.open(fileName))

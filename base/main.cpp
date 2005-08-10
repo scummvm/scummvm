@@ -97,6 +97,9 @@ const char *gScummVMVersion = "0.8.0CVS";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
 const char *gScummVMFullVersion = "ScummVM 0.8.0CVS (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFeatures = ""
+#ifdef USE_TREMOR
+	"Tremor "
+#endif
 #ifdef USE_VORBIS
 	"Vorbis "
 #endif

@@ -168,16 +168,12 @@ VorbisTrackInfo::~VorbisTrackInfo() {
 	}
 }
 
-#ifdef CHUNKSIZE
-#define VORBIS_TREMOR
-#endif
-
 void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
 
 	bool err = openTrack();
 	assert(!err);
 
-#ifdef VORBIS_TREMOR
+#ifdef USE_TREMOR
 	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #else
 	ov_time_seek(&_ov_file, startFrame / 75.0);
@@ -234,12 +230,6 @@ public:
 
 };
 
-
-#ifdef CHUNKSIZE
-#define VORBIS_TREMOR
-#endif
-
-
 VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration, bool deleteFileAfterUse)
 	: _ov_file(file),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)),
@@ -290,7 +280,7 @@ void VorbisInputStream::refill() {
 
 	while (len_left > 0 && _end_pos > ov_pcm_tell(_ov_file)) {
 		long result = ov_read(_ov_file, read_pos, len_left,
-#ifndef VORBIS_TREMOR
+#ifndef USE_TREMOR
 #ifdef SCUMM_BIG_ENDIAN
 						1,
 #else

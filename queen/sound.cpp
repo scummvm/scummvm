@@ -60,7 +60,7 @@ Sound *Sound::giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression)
 #endif
 		break;
 	case COMPRESSION_OGG:
-#ifndef USE_VORBIS
+#if !defined(USE_VORBIS) && !defined(USE_TREMOR)
 		warning("Using OGG compressed datafile, but OGG support not compiled in");
 		return new SilentSound(mixer, vm);
 #else
@@ -205,7 +205,7 @@ void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
 }
 #endif
 
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 void OGGSound::sfxPlay(const char *name, bool isSpeech) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);

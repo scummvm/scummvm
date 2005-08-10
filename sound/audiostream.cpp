@@ -44,13 +44,13 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 #ifdef USE_FLAC
 	{ "Flac",			"flac", makeFlacStream },
 	{ "Flac",			"fla",  makeFlacStream },
-#endif // #ifdef USE_FLAC
-#ifdef USE_VORBIS
+#endif
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 	{ "Ogg Vorbis",		"ogg",  makeVorbisStream },
-#endif // #ifdef USE_VORBIS
+#endif
 #ifdef USE_MAD
 	{ "Mpeg Layer 3",	"mp3",  makeMP3Stream },
-#endif // #ifdef USE_MAD
+#endif
 
 	{ NULL, NULL, NULL } // Terminator
 };

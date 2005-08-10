@@ -46,13 +46,13 @@ static const TrackFormat TRACK_FORMATS[] = {
 	/* decoderName,		openTrackFunction */
 #ifdef USE_FLAC
 	{ "Flac",			getFlacTrack },
-#endif // #ifdef USE_FLAC
-#ifdef USE_VORBIS
+#endif
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 	{ "Ogg Vorbis",		getVorbisTrack },
-#endif // #ifdef USE_VORBIS
+#endif
 #ifdef USE_MAD
 	{ "Mpeg Layer 3",	getMP3Track },
-#endif // #ifdef USE_MAD
+#endif
 
 	{ NULL, NULL } // Terminator
 };

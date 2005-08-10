@@ -588,7 +588,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 			if (!len) {
 				sprintf(fileName, "%s_reg%03d.ogg", soundHandle->name, region);
 				cmpFile = soundHandle->bundle->getFile(fileName, offs, len);
-#ifndef USE_VORBIS
+#if !defined(USE_VORBIS) && !defined(USE_TREMOR)
 				if (len)
 					error("Vorbis library compiled support needed!");
 #endif
@@ -596,7 +596,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 				oggMode = true;
 			}
 			if (!soundHandle->compressedStream) {
-#ifdef USE_VORBIS
+#if defined(USE_VORBIS) || defined(USE_TREMOR)
 				if (oggMode)
 					soundHandle->compressedStream = makeVorbisStream(cmpFile, len);
 #endif

@@ -792,7 +792,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 	#endif
 			break;
 		case kVorbisMode:
-	#ifdef USE_VORBIS
+	#if defined(USE_VORBIS) || defined(USE_TREMOR)
 			assert(size > 0);
 			input = makeVorbisStream(_sfxFile, size);
 	#endif
@@ -1124,7 +1124,7 @@ ScummFile *Sound::openSfxFile() {
 	#ifdef USE_FLAC
 		{ "sof", kFlacMode },
 	#endif
-	#ifdef USE_VORBIS
+	#if defined(USE_VORBIS) || defined(USE_TREMOR)
 		{ "sog", kVorbisMode },
 	#endif
 	#ifdef USE_MAD
