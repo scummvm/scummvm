@@ -191,12 +191,12 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 
 #define CREDIT_DURATION1 4000
 
-struct INTRO_DIALOGUE {
+struct IntroDialogue {
 	uint32 i_voice_rn;
 	const char *i_str;
 };
 
-struct INTRO_CREDIT {
+struct IntroCredit {
 	Common::Language lang;
 	int game;
 	int type;
@@ -334,8 +334,8 @@ class Scene {
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
 
  private:
-	Event *ITEQueueDialogue(Event *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]);
-	Event *ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]);
+	Event *ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialogue dialogue[]);
+	Event *ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
 	int ITEIntroCave1Proc(int param);
 	int ITEIntroCave2Proc(int param);

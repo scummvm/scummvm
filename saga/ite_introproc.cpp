@@ -86,7 +86,7 @@ int Scene::ITEStartProc() {
 	return SUCCESS;
 }
 
-Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const INTRO_DIALOGUE dialogue[]) {
+Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialogue dialogue[]) {
 	TextListEntry textEntry;
 	TextListEntry *entry;
 	Event event;
@@ -161,7 +161,7 @@ enum {
 // Queue a page of credits text. The original interpreter did word-wrapping
 // automatically. We currently don't.
 
-Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const INTRO_CREDIT credits[]) {
+Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
 	int game;
 	Common::Language lang;
 
@@ -377,7 +377,7 @@ int Scene::ITEIntroCave1Proc(int param) {
 	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
-	static const INTRO_DIALOGUE dialogue[][4] = {
+	static const IntroDialogue dialogue[][4] = {
 		{ { // English
 			RID_CAVE_VOICE_0,
 			"We see the sky, we see the land, we see the water, "
@@ -465,7 +465,7 @@ int Scene::ITEIntroCave2Proc(int param) {
 	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
-	static const INTRO_DIALOGUE dialogue[][3] = {
+	static const IntroDialogue dialogue[][3] = {
 		{ { // English
 			RID_CAVE_VOICE_4,
 			"The humans also knew the Secret of Life, and they "
@@ -549,7 +549,7 @@ int Scene::ITEIntroCave3Proc(int param) {
 	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
-	static const INTRO_DIALOGUE dialogue[][3] = {
+	static const IntroDialogue dialogue[][3] = {
 		{ { // English
 			RID_CAVE_VOICE_7,
 			"They taught us how to use our hands, and how to "
@@ -633,7 +633,7 @@ int Scene::ITEIntroCave4Proc(int param) {
 	Event *q_event;
 	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
 
-	static const INTRO_DIALOGUE dialogue[][4] = {
+	static const IntroDialogue dialogue[][4] = {
 		{ { // English
 			RID_CAVE_VOICE_10,
 			"And now we see the sky, the land, and the water that "
@@ -725,7 +725,7 @@ int Scene::ITEIntroValleyProc(int param) {
 	Event event;
 	Event *q_event;
 
-	static const INTRO_CREDIT credits[] = {
+	static const IntroCredit credits[] = {
 		{EN_USA, kITEAny, kCHeader, "Producer"},
 		{DE_DEU, kITEAny, kCHeader, "Produzent"},
 		{UNK_LANG, kITEAny, kCText, "Walter Hochbrueckner"},
@@ -831,7 +831,7 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	Event event;
 	Event *q_event;
 
-	static const INTRO_CREDIT credits1[] = {
+	static const IntroCredit credits1[] = {
 		{EN_USA, kITEAny, kCHeader, "Game Design"},
 		{DE_DEU, kITEAny, kCHeader, "Spielentwurf"},
 		{UNK_LANG, kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
@@ -845,7 +845,7 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
-	static const INTRO_CREDIT credits2[] = {
+	static const IntroCredit credits2[] = {
 		{UNK_LANG, kITEWyrmKeep, kCHeader, "Art Direction"},
 		{UNK_LANG, kITEWyrmKeep, kCText, "Allison Hershey"},
 		{EN_USA, kITEAny, kCHeader, "Art"},
@@ -920,7 +920,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 	Event event;
 	Event *q_event;
 
-	static const INTRO_CREDIT credits1[] = {
+	static const IntroCredit credits1[] = {
 		{EN_USA, kITEAny, kCHeader, "Programming"},
 		{DE_DEU, kITEAny, kCHeader, "Programmiert von"},
 		{UNK_LANG, kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
@@ -937,7 +937,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 
 	int n_credits1 = ARRAYSIZE(credits1);
 
-	static const INTRO_CREDIT credits2[] = {
+	static const IntroCredit credits2[] = {
 		{EN_USA, kITEAny, kCHeader, "Directed by"},
 		{DE_DEU, kITEAny, kCHeader, "Regie"},
 		{UNK_LANG, kITEAny, kCText, "Talin"}

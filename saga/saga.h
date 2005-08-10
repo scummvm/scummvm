@@ -242,11 +242,6 @@ struct StringsTable {
 	}
 };
 
-struct CLICKAREA {
-	int n_points;
-	Point *points;
-};
-
 enum GameIds {
 	// Dreamers Guild
 	GID_ITE_DEMO_G = 0,

@@ -64,13 +64,13 @@ int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {
 
 	debug(3, "PalAnim::loadPalAnim(): Loading %d PALANIM entries.", _entryCount);
 
-	test_p = calloc(_entryCount, sizeof(PALANIM_ENTRY));
+	test_p = calloc(_entryCount, sizeof(PalanimEntry));
 	if (test_p == NULL) {
 		warning("PalAnim::loadPalAnim(): Allocation failure");
 		return MEM;
 	}
 
-	_entries = (PALANIM_ENTRY *)test_p;
+	_entries = (PalanimEntry *)test_p;
 
 	for (i = 0; i < _entryCount; i++) {
 		int color_count;

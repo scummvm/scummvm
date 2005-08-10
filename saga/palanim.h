@@ -30,15 +30,12 @@ namespace Saga {
 
 #define PALANIM_CYCLETIME 100
 
-struct PALANIM_ENTRY {
+struct PalanimEntry {
 	uint16 pal_count;
 	uint16 color_count;
 	uint16 cycle;
 	byte *pal_index;
 	Color *colors;
-};
-
-struct PALANIM_DATA {
 };
 
 class PalAnim {
@@ -56,7 +53,7 @@ class PalAnim {
 
 	bool _loaded;
 	uint16 _entryCount;
-	PALANIM_ENTRY *_entries;
+	PalanimEntry *_entries;
 };
 
 } // End of namespace Saga
