@@ -426,6 +426,13 @@ void inter_drawOperations(void) {
 	case 33:
 		if (_vm->_features & GF_GOB1) {
 			// Used in gob1 CD
+
+			// Some scripts busy-wait while calling this opcode.
+			// This is a very nasty thing to do, so let's add a
+			// short delay here. It's probably a safe thing to do.
+
+			util_longDelay(1);
+
 			int pos = cd_getTrackPos();
 			if (pos == -1)
 				pos = 32767;

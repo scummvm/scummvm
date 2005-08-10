@@ -61,7 +61,6 @@ uint16 language = 0x8000;
 
 /* Timer variables */
 int32 startTime = 0;
-char timer_enabled = 1;
 int16 timer_delta = 1000;
 
 int16 frameWaitTime = 0;

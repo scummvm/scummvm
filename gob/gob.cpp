@@ -274,6 +274,12 @@ int GobEngine::init(GameDetector &detector) {
 		break;
 	}
 
+	// FIXME: This is the ugly way of reducing redraw overhead. It works
+	//        well for 320x200 but it's unclear how well it will work for
+	//        640x480.
+
+	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
 	return 0;
 }
 

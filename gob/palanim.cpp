@@ -188,7 +188,6 @@ void pal_fade(PalDesc *palDesc, int16 fade, int16 allColors) {
 	}
 
 	if (allColors == 0) {
-
 		do {
 			if (tmpPalBuffer == 0)
 				vid_waitRetrace(videoMode);
@@ -206,7 +205,6 @@ void pal_fade(PalDesc *palDesc, int16 fade, int16 allColors) {
 	}
 
 	if (allColors == 1) {
-
 		do {
 			vid_waitRetrace(videoMode);
 			stop = pal_fadeStep(1);

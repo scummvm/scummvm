@@ -286,7 +286,7 @@ void vid_putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
 }
 
 void vid_drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, int16 color1,
-	    int16 color2, int16 transp, SurfaceDesc * dest) {
+	    int16 color2, int16 transp, SurfaceDesc *dest) {
 
 	_videoDriver->drawLetter(item, x, y, fontDesc, color1, color2, transp, dest);
 }

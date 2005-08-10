@@ -389,7 +389,8 @@ int16 scen_loadAnim(char search) {
 	int16 sprIndex;
 
 	if (cd_globFlag) {
-		while (cd_getTrackPos() != -1);
+		while (cd_getTrackPos() != -1)
+		    util_longDelay(50);
 
 		cd_globFlag = false;
 	}

@@ -244,23 +244,15 @@ void util_setFrameRate(int16 rate) {
 void util_waitEndFrame() {
 	int32 time;
 
-	if (pPrimarySurfDesc) {
-		g_system->copyRectToScreen(pPrimarySurfDesc->vidPtr, 320, 0, 0, 320, 200);
-		g_system->updateScreen();
-	}
+	vid_waitRetrace(videoMode);
 
 	time = util_getTimeKey() - startFrameTime;
 	if (time > 1000 || time < 0) {
 		startFrameTime = util_getTimeKey();
 		return;
 	}
-	if (timer_enabled) {
-		do {
-			time = util_getTimeKey();
-		} while (time - startFrameTime < frameWaitTime);
-	} else {
-		if (frameWaitTime - time > 0)
-			util_delay(frameWaitTime - time);
+	if (frameWaitTime - time > 0) {
+		util_delay(frameWaitTime - time);
 	}
 	startFrameTime = util_getTimeKey();
 }
@@ -502,6 +494,7 @@ void util_waitMouseRelease(char drawMouse) {
 		game_checkKeys(&mouseX, &mouseY, &buttons, drawMouse);
 		if (drawMouse != 0)
 			draw_animateCursor(2);
+		util_delay(10);
 	} while (buttons != 0);
 }
 

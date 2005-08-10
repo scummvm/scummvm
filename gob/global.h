@@ -77,7 +77,6 @@ extern uint16 language;
 
 /* Timer variables */
 extern int32 startTime;
-extern char timer_enabled;
 extern int16 timer_delta;
 
 extern int16 frameWaitTime;

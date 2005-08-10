@@ -684,6 +684,8 @@ int16 game_checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 		if (handleMouse != 0)
 			draw_animateCursor(-1);
 
+		util_delay(10);
+
 		snd_loopSounds();
 	}
 }
@@ -1247,6 +1249,7 @@ void game_collisionsBlock(void) {
 
 		case 20:
 			collResId = curCmd;
+			// Fall through to case 2
 
 		case 2:
 			key = inter_load16();

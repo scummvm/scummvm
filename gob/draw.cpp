@@ -653,8 +653,6 @@ void draw_animateCursor(int16 cursor) {
 			draw_cursorIndex = cursorIndex;
 		} else {
 			vid_waitRetrace(videoMode);
-			if (minY < 50)
-				util_delay(5);
 		}
 
 		vid_drawSprite(draw_backSurface, draw_frontSurface,
