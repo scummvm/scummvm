@@ -47,8 +47,8 @@
 namespace Saga {
 
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
-	int p1 = obj1->location.y - obj1->location.z;
-	int p2 = obj2->location.y - obj2->location.z;
+	int p1 = obj1->_location.y - obj1->_location.z;
+	int p2 = obj2->_location.y - obj2->_location.z;
 	if (p1 == p2)
 		return 0;
 	if (p1 < p2)
@@ -57,8 +57,8 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 }
 
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
-	int p1 = -obj1->location.u() - obj1->location.v() - obj1->location.z;
-	int p2 = -obj2->location.u() - obj2->location.v() - obj2->location.z;
+	int p1 = -obj1->_location.u() - obj1->_location.v() - obj1->_location.z;
+	int p2 = -obj2->_location.u() - obj2->_location.v() - obj2->_location.z;
 	//TODO:  for kObjNotFlat obj Height*3 of sprite should be added to p1 and p2
 	//if (validObjId(obj1->id)) {
 
@@ -230,52 +230,52 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
 		for (i = 0; i < _actorsCount; i++) {
 			actor = _actors[i] = new ActorData();
-			actor->id = actorIndexToId(i);
-			actor->index = i;
-			debug(9, "init actor id=%d index=%d", actor->id, actor->index);
-			actor->nameIndex = ITE_ActorTable[i].nameIndex;
-			actor->scriptEntrypointNumber = ITE_ActorTable[i].scriptEntrypointNumber;
-			actor->spriteListResourceId = ITE_ActorTable[i].spriteListResourceId;
-			actor->frameListResourceId = ITE_ActorTable[i].frameListResourceId;
-			actor->speechColor = ITE_ActorTable[i].speechColor;
-			actor->sceneNumber = ITE_ActorTable[i].sceneIndex;
-			actor->flags = ITE_ActorTable[i].flags;
-			actor->currentAction = ITE_ActorTable[i].currentAction;
-			actor->facingDirection = ITE_ActorTable[i].facingDirection;
-			actor->actionDirection = ITE_ActorTable[i].actionDirection;
+			actor->_id = actorIndexToId(i);
+			actor->_index = i;
+			debug(9, "init actor id=%d index=%d", actor->_id, actor->_index);
+			actor->_nameIndex = ITE_ActorTable[i].nameIndex;
+			actor->_scriptEntrypointNumber = ITE_ActorTable[i].scriptEntrypointNumber;
+			actor->_spriteListResourceId = ITE_ActorTable[i].spriteListResourceId;
+			actor->_frameListResourceId = ITE_ActorTable[i].frameListResourceId;
+			actor->_speechColor = ITE_ActorTable[i].speechColor;
+			actor->_sceneNumber = ITE_ActorTable[i].sceneIndex;
+			actor->_flags = ITE_ActorTable[i].flags;
+			actor->_currentAction = ITE_ActorTable[i].currentAction;
+			actor->_facingDirection = ITE_ActorTable[i].facingDirection;
+			actor->_actionDirection = ITE_ActorTable[i].actionDirection;
 
-			actor->location.x = ITE_ActorTable[i].x;
-			actor->location.y = ITE_ActorTable[i].y;
-			actor->location.z = ITE_ActorTable[i].z;
+			actor->_location.x = ITE_ActorTable[i].x;
+			actor->_location.y = ITE_ActorTable[i].y;
+			actor->_location.z = ITE_ActorTable[i].z;
 
-			actor->disabled = !loadActorResources(actor);
-			if (actor->disabled) {
-				warning("Disabling actor Id=%d index=%d", actor->id, actor->index);
+			actor->_disabled = !loadActorResources(actor);
+			if (actor->_disabled) {
+				warning("Disabling actor Id=%d index=%d", actor->_id, actor->_index);
 			}
 		}
 		_objsCount = ITE_OBJECTCOUNT;
 		_objs = (ObjectData **)malloc(_objsCount * sizeof(*_objs));
 		for (i = 0; i < _objsCount; i++) {
 			obj = _objs[i] = new ObjectData();
-			obj->id = objIndexToId(i);
-			obj->index = i;
-			debug(9, "init obj id=%d index=%d", obj->id, obj->index);
-			obj->nameIndex = ITE_ObjectTable[i].nameIndex;
-			obj->scriptEntrypointNumber = ITE_ObjectTable[i].scriptEntrypointNumber;
-			obj->spriteListResourceId = ITE_ObjectTable[i].spriteListResourceId;
-			obj->sceneNumber = ITE_ObjectTable[i].sceneIndex;
-			obj->interactBits = ITE_ObjectTable[i].interactBits;
+			obj->_id = objIndexToId(i);
+			obj->_index = i;
+			debug(9, "init obj id=%d index=%d", obj->_id, obj->_index);
+			obj->_nameIndex = ITE_ObjectTable[i].nameIndex;
+			obj->_scriptEntrypointNumber = ITE_ObjectTable[i].scriptEntrypointNumber;
+			obj->_spriteListResourceId = ITE_ObjectTable[i].spriteListResourceId;
+			obj->_sceneNumber = ITE_ObjectTable[i].sceneIndex;
+			obj->_interactBits = ITE_ObjectTable[i].interactBits;
 
-			obj->location.x = ITE_ObjectTable[i].x;
-			obj->location.y = ITE_ObjectTable[i].y;
-			obj->location.z = ITE_ObjectTable[i].z;
+			obj->_location.x = ITE_ObjectTable[i].x;
+			obj->_location.y = ITE_ObjectTable[i].y;
+			obj->_location.z = ITE_ObjectTable[i].z;
 		}
 	} else {
 		// TODO. This is causing problems for SYMBIAN os as it does n't like a static class here
 		ActorData dummyActor;
 
-		dummyActor.frames = NULL;
-		dummyActor.walkStepsPoints = NULL;
+		dummyActor._frames = NULL;
+		dummyActor._walkStepsPoints = NULL;
 
 		_protagonist = &dummyActor;
 	}
@@ -310,9 +310,9 @@ bool Actor::loadActorResources(ActorData *actor) {
 	int resourceId;
 	bool gotSomething = false;
 
-	if (actor->frameListResourceId) {
-		debug(9, "Loading frame resource id %d", actor->frameListResourceId);
-		_vm->_resource->loadResource(_actorContext, actor->frameListResourceId, resourcePointer, resourceLength);
+	if (actor->_frameListResourceId) {
+		debug(9, "Loading frame resource id %d", actor->_frameListResourceId);
+		_vm->_resource->loadResource(_actorContext, actor->_frameListResourceId, resourcePointer, resourceLength);
 
 		framesCount = resourceLength / 16;
 		debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, resourceLength);
@@ -339,34 +339,34 @@ bool Actor::loadActorResources(ActorData *actor) {
 
 		free(resourcePointer);
 
-		actor->frames = framesPointer;
-		actor->framesCount = framesCount;
+		actor->_frames = framesPointer;
+		actor->_framesCount = framesCount;
 
 		gotSomething = true;
 	} else {
-		warning("Frame List ID = 0 for actor index %d", actor->index);
+		warning("Frame List ID = 0 for actor index %d", actor->_index);
 	}
 
 
-	resourceId = actor->spriteListResourceId;
+	resourceId = actor->_spriteListResourceId;
 
 	if (resourceId) {
 		debug(9, "Loading sprite resource id %d", resourceId);
 
-		_vm->_sprite->loadList(resourceId, actor->spriteList);
+		_vm->_sprite->loadList(resourceId, actor->_spriteList);
 
-		i = actor->spriteList.spriteCount;
-		if (actor->flags & kExtended) {
-			while ((lastFrame >= actor->spriteList.spriteCount)) {
+		i = actor->_spriteList.spriteCount;
+		if (actor->_flags & kExtended) {
+			while ((lastFrame >= actor->_spriteList.spriteCount)) {
 				resourceId++;
 				debug(9, "Appending to sprite list %d", resourceId);
-				_vm->_sprite->loadList(resourceId, actor->spriteList);
+				_vm->_sprite->loadList(resourceId, actor->_spriteList);
 			}
 		}
 
 		gotSomething = true;
 	} else {
-		warning("Sprite List ID = 0 for actor index %d", actor->index);
+		warning("Sprite List ID = 0 for actor index %d", actor->_index);
 	}
 
 	return gotSomething;
@@ -410,23 +410,23 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i] = new ActorData();
-		actor->id = actorIndexToId(i);
-		actor->index = i;
-		debug(9, "init actor id=%d index=%d", actor->id, actor->index);
+		actor->_id = actorIndexToId(i);
+		actor->_index = i;
+		debug(9, "init actor id=%d index=%d", actor->_id, actor->_index);
 		actorS.readUint32LE(); //next displayed	
 		actorS.readByte(); //type
-		actor->flags = actorS.readByte();
-		actor->nameIndex = actorS.readUint16LE();
-		actor->sceneNumber = actorS.readUint32LE();
-		actor->location.fromStream(actorS);
-		actor->screenPosition.x = actorS.readUint16LE();
-		actor->screenPosition.y = actorS.readUint16LE();
-		actor->screenScale = actorS.readUint16LE();
-		actor->screenDepth = actorS.readUint16LE();
-		actor->spriteListResourceId = actorS.readUint32LE();
-		actor->frameListResourceId = actorS.readUint32LE();
-		debug(0, "%d: %d, %d", i, actor->spriteListResourceId, actor->frameListResourceId);
-		actor->scriptEntrypointNumber = actorS.readUint32LE();
+		actor->_flags = actorS.readByte();
+		actor->_nameIndex = actorS.readUint16LE();
+		actor->_sceneNumber = actorS.readUint32LE();
+		actor->_location.fromStream(actorS);
+		actor->_screenPosition.x = actorS.readUint16LE();
+		actor->_screenPosition.y = actorS.readUint16LE();
+		actor->_screenScale = actorS.readUint16LE();
+		actor->_screenDepth = actorS.readUint16LE();
+		actor->_spriteListResourceId = actorS.readUint32LE();
+		actor->_frameListResourceId = actorS.readUint32LE();
+		debug(0, "%d: %d, %d", i, actor->_spriteListResourceId, actor->_frameListResourceId);
+		actor->_scriptEntrypointNumber = actorS.readUint32LE();
 		actorS.readByte();
 		actorS.readByte();
 		actorS.readByte();
@@ -435,14 +435,14 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actorS.readUint16LE(); //RIGHT
 		actorS.readUint16LE(); //TOP
 		actorS.readUint16LE(); //BOTTOM
-		actor->speechColor = actorS.readByte();
-		actor->currentAction = actorS.readByte();
-		actor->facingDirection = actorS.readByte();
-		actor->actionDirection = actorS.readByte();
-		actor->actionCycle = actorS.readUint16LE();
-		actor->frameNumber = actorS.readUint16LE();
-		actor->finalTarget.fromStream(actorS);
-		actor->partialTarget.fromStream(actorS);
+		actor->_speechColor = actorS.readByte();
+		actor->_currentAction = actorS.readByte();
+		actor->_facingDirection = actorS.readByte();
+		actor->_actionDirection = actorS.readByte();
+		actor->_actionCycle = actorS.readUint16LE();
+		actor->_frameNumber = actorS.readUint16LE();
+		actor->_finalTarget.fromStream(actorS);
+		actor->_partialTarget.fromStream(actorS);
 		movementSpeed = actorS.readUint16LE(); //movement speed
 		if (movementSpeed) {
 			error("Actor::loadActorList movementSpeed != 0");
@@ -466,8 +466,8 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actorS.readUint32LE(); //sprites
 		actorS.readUint32LE(); //frames
 		actorS.readUint32LE(); //last zone
-		actor->targetObject = actorS.readUint16LE();
-		actor->actorFlags = actorS.readUint16LE();
+		actor->_targetObject = actorS.readUint16LE();
+		actor->_actorFlags = actorS.readUint16LE();
 		//no need to check pointers
 		actorS.readUint32LE(); //next in scene
 		actorS.read(acv, 6);
@@ -480,15 +480,15 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	}
 	free(actorListData);
 
-	_actors[protagonistIdx]->flags |= kProtagonist | kExtended;
+	_actors[protagonistIdx]->_flags |= kProtagonist | kExtended;
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->flags & kExtended) {
+		if (actor->_flags & kExtended) {
 			loadActorResources(actor);
 
-			if (actor->disabled) {
-				warning("Disabling actor Id=%d index=%d", actor->id, actor->index);
+			if (actor->_disabled) {
+				warning("Disabling actor Id=%d index=%d", actor->_id, actor->_index);
 			}
 			break;
 		}
@@ -519,7 +519,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		}
 		free(resourcePointer);
 
-		_protagonist->frames = &_protagStates[_protagState];
+		_protagonist->_frames = &_protagStates[_protagState];
 	}
 
 	_protagStatesCount = protagStatesCount;
@@ -554,25 +554,25 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 	_objs = (ObjectData **)malloc(_objsCount * sizeof(*_objs));
 	for (i = 0; i < _objsCount; i++) {
 		object = _objs[i] = new ObjectData();
-		object->id = objectIndexToId(kGameObjectObject, i);
-		object->index = i;
-		debug(9, "init object id=%d index=%d", object->id, object->index);
+		object->_id = objectIndexToId(kGameObjectObject, i);
+		object->_index = i;
+		debug(9, "init object id=%d index=%d", object->_id, object->_index);
 		objectS.readUint32LE(); //next displayed	
 		objectS.readByte(); //type
-		object->flags = objectS.readByte();
-		object->nameIndex = objectS.readUint16LE();
-		object->sceneNumber = objectS.readUint32LE();
-		object->location.fromStream(objectS);
-		object->screenPosition.x = objectS.readUint16LE();
-		object->screenPosition.y = objectS.readUint16LE();
-		object->screenScale = objectS.readUint16LE();
-		object->screenDepth = objectS.readUint16LE();
-		object->spriteListResourceId = objectS.readUint32LE();
-		frameListResourceId = objectS.readUint32LE(); // object->frameListResourceId
+		object->_flags = objectS.readByte();
+		object->_nameIndex = objectS.readUint16LE();
+		object->_sceneNumber = objectS.readUint32LE();
+		object->_location.fromStream(objectS);
+		object->_screenPosition.x = objectS.readUint16LE();
+		object->_screenPosition.y = objectS.readUint16LE();
+		object->_screenScale = objectS.readUint16LE();
+		object->_screenDepth = objectS.readUint16LE();
+		object->_spriteListResourceId = objectS.readUint32LE();
+		frameListResourceId = objectS.readUint32LE(); // object->_frameListResourceId
 		if (frameListResourceId) {
 			error("Actor::loadObjList frameListResourceId != 0");
 		}
-		object->scriptEntrypointNumber = objectS.readUint32LE();
+		object->_scriptEntrypointNumber = objectS.readUint32LE();
 		objectS.readByte();
 		objectS.readByte();
 		objectS.readByte();
@@ -581,7 +581,7 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 		objectS.readUint16LE(); //RIGHT
 		objectS.readUint16LE(); //TOP
 		objectS.readUint16LE(); //BOTTOM
-		object->interactBits = objectS.readUint16LE();
+		object->_interactBits = objectS.readUint16LE();
 	}
 	free(objectListData);
 }
@@ -589,7 +589,7 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 void Actor::takeExit(uint16 actorId, const HitZone *hitZone) {
 	ActorData *actor;
 	actor = getActor(actorId);
-	actor->lastZone = NULL;
+	actor->_lastZone = NULL;
 
 	_vm->_scene->changeScene(hitZone->getSceneNumber(), hitZone->getActorsEntrance(), kTransitionNoFade);
 	if (_vm->_interface->getMode() != kPanelSceneSubstitute) {
@@ -609,16 +609,16 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 
 	if (!exit) {
 		if (hitZone->getFlags() & kHitZoneAutoWalk) {
-			actor->currentAction = kActionWalkDir;
-			actor->actionDirection = actor->facingDirection = hitZone->getDirection();
-			actor->walkFrameSequence = kFrameWalk;
+			actor->_currentAction = kActionWalkDir;
+			actor->_actionDirection = actor->_facingDirection = hitZone->getDirection();
+			actor->_walkFrameSequence = kFrameWalk;
 			return;
 		}
 	} else if (!(hitZone->getFlags() & kHitZoneAutoWalk)) {
 		return;
 	}
 	if (hitZone->getFlags() & kHitZoneExit) {
-		takeExit(actor->id, hitZone);
+		takeExit(actor->_id, hitZone);
 	} else if (hitZone->getScriptNumber() > 0) {
 		event.type = ONESHOT_EVENT;
 		event.code = SCRIPT_EVENT;
@@ -660,10 +660,10 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 	if (objectId != ID_NOTHING) {
 		if (validActorId(objectId)) {
 			actor = getActor(objectId);
-			location.addXY(actor->location);
+			location.addXY(actor->_location);
 		} else if (validObjId(objectId)) {
 			obj = getObj(objectId);
-			location.addXY(obj->location);
+			location.addXY(obj->_location);
 		}
 	}
 }
@@ -674,19 +674,19 @@ void Actor::actorFaceTowardsPoint(uint16 actorId, const Location &toLocation) {
 	//debug (8, "Actor::actorFaceTowardsPoint actorId=%i", actorId);
 	actor = getActor(actorId);
 
-	toLocation.delta(actor->location, delta);
+	toLocation.delta(actor->_location, delta);
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		if (delta.u() > 0) {
-			actor->facingDirection = (delta.v() > 0) ? kDirUp : kDirRight;
+			actor->_facingDirection = (delta.v() > 0) ? kDirUp : kDirRight;
 		} else {
-			actor->facingDirection = (delta.v() > 0) ? kDirLeft : kDirDown;
+			actor->_facingDirection = (delta.v() > 0) ? kDirLeft : kDirDown;
 		}
 	} else {
 		if (ABS(delta.y) > ABS(delta.x * 2)) {
-			actor->facingDirection = (delta.y > 0) ? kDirDown : kDirUp;
+			actor->_facingDirection = (delta.y > 0) ? kDirDown : kDirUp;
 		} else {
-			actor->facingDirection = (delta.x > 0) ? kDirRight : kDirLeft;
+			actor->_facingDirection = (delta.x > 0) ? kDirRight : kDirLeft;
 		}
 	}
 }
@@ -697,10 +697,10 @@ void Actor::actorFaceTowardsObject(uint16 actorId, uint16 objectId) {
 
 	if (validActorId(objectId)) {
 		actor = getActor(objectId);
-		actorFaceTowardsPoint(actorId, actor->location);
+		actorFaceTowardsPoint(actorId, actor->_location);
 	} else if (validObjId(objectId)) {
 		obj = getObj(objectId);
-		actorFaceTowardsPoint(actorId, obj->location);
+		actorFaceTowardsPoint(actorId, obj->_location);
 	}
 }
 
@@ -713,7 +713,7 @@ ObjectData *Actor::getObj(uint16 objId) {
 
 	obj = _objs[objIdToIndex(objId)];
 
-	if (obj->disabled)
+	if (obj->_disabled)
 		error("Actor::getObj disabled objId 0x%X", objId);
 
 	return obj;
@@ -736,7 +736,7 @@ ActorData *Actor::getActor(uint16 actorId) {
 
 	actor = _actors[actorIdToIndex(actorId)];
 
-	if (actor->disabled)
+	if (actor->_disabled)
 		error("Actor::getActor disabled actorId 0x%X", actorId);
 
 	return actor;
@@ -758,7 +758,7 @@ void Actor::setProtagState(int state) {
 	_protagState = state;
 
 	if (_vm->getGameType() == GType_IHNM)
-		_protagonist->frames = &_protagStates[state];
+		_protagonist->_frames = &_protagStates[state];
 }
 
 void Actor::updateActorsScene(int actorsEntrance) {
@@ -781,24 +781,24 @@ void Actor::updateActorsScene(int actorsEntrance) {
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		actor->inScene = false;
-		if (actor->disabled) {
+		actor->_inScene = false;
+		if (actor->_disabled) {
 			continue;
 		}
-		if ((actor->flags & (kProtagonist | kFollower)) || (i == 0)) {
-			if (actor->flags & kProtagonist) {
-				actor->finalTarget = actor->location;
+		if ((actor->_flags & (kProtagonist | kFollower)) || (i == 0)) {
+			if (actor->_flags & kProtagonist) {
+				actor->_finalTarget = actor->_location;
 				_centerActor = _protagonist = actor;
 			} else if (_vm->getGameType() == GType_ITE && 
 					   _vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 				continue;
 			}
 
-			actor->sceneNumber = _vm->_scene->currentSceneNumber();
+			actor->_sceneNumber = _vm->_scene->currentSceneNumber();
 		}
-		if (actor->sceneNumber == _vm->_scene->currentSceneNumber()) {
-			actor->inScene = true;
-			actor->actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
+		if (actor->_sceneNumber == _vm->_scene->currentSceneNumber()) {
+			actor->_inScene = true;
+			actor->_actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
 		}
 	}
 
@@ -811,16 +811,16 @@ void Actor::updateActorsScene(int actorsEntrance) {
 
 		sceneEntry = _vm->_scene->_entryList.getEntry(actorsEntrance);
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			_protagonist->location = sceneEntry->location;
+			_protagonist->_location = sceneEntry->location;
 		} else {
-			_protagonist->location.x = sceneEntry->location.x * ACTOR_LMULT;
-			_protagonist->location.y = sceneEntry->location.y * ACTOR_LMULT;
-			_protagonist->location.z = sceneEntry->location.z * ACTOR_LMULT;
+			_protagonist->_location.x = sceneEntry->location.x * ACTOR_LMULT;
+			_protagonist->_location.y = sceneEntry->location.y * ACTOR_LMULT;
+			_protagonist->_location.z = sceneEntry->location.z * ACTOR_LMULT;
 		}
-		_protagonist->facingDirection = _protagonist->actionDirection = sceneEntry->facing;
+		_protagonist->_facingDirection = _protagonist->_actionDirection = sceneEntry->facing;
 	}
 
-	_protagonist->currentAction = kActionWait;
+	_protagonist->_currentAction = kActionWait;
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		//nothing?
@@ -828,24 +828,24 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		_vm->_scene->initDoorsState(); //TODO: move to _scene
 	}
 
-	followerDirection = _protagonist->facingDirection + 3;
+	followerDirection = _protagonist->_facingDirection + 3;
 	calcScreenPosition(_protagonist);
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->flags & (kFollower)) {
-			actor->facingDirection = actor->actionDirection = _protagonist->facingDirection;
-			actor->currentAction = kActionWait;
-			actor->walkStepsCount = actor->walkStepIndex = 0;
-			actor->location.z = _protagonist->location.z;
+		if (actor->_flags & (kFollower)) {
+			actor->_facingDirection = actor->_actionDirection = _protagonist->_facingDirection;
+			actor->_currentAction = kActionWait;
+			actor->_walkStepsCount = actor->_walkStepIndex = 0;
+			actor->_location.z = _protagonist->_location.z;
 
 
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				_vm->_isoMap->placeOnTileMap(_protagonist->location, actor->location, 3, followerDirection & 0x07);
+				_vm->_isoMap->placeOnTileMap(_protagonist->_location, actor->_location, 3, followerDirection & 0x07);
 			} else {
 				followerDirection &= 0x07;
 
-				possibleLocation = _protagonist->location;
+				possibleLocation = _protagonist->_location;
 
 
 				delta.x = directionLUT[followerDirection][0];
@@ -876,7 +876,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 					}
 				}
 
-				actor->location = possibleLocation;
+				actor->_location = possibleLocation;
 			}
 			followerDirection += 2;
 		}
@@ -894,17 +894,17 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	int fourDirection;
 
 	actor = getActor(actorId);
-	if (actor->disabled)
+	if (actor->_disabled)
 		error("Actor::getActorFrameRange Wrong actorId 0x%X", actorId);
 
-	if (frameType >= actor->framesCount)
-		error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->framesCount, actorId);
+	if (frameType >= actor->_framesCount)
+		error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
 
-	if ((actor->facingDirection < kDirUp) || (actor->facingDirection > kDirUpLeft))
-		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->facingDirection, actorId);
+	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
+		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
 
-	fourDirection = actorDirectectionsLUT[actor->facingDirection];
-	return &actor->frames[frameType].directions[fourDirection];
+	fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+	return &actor->_frames[frameType].directions[fourDirection];
 }
 
 void Actor::handleSpeech(int msec) {
@@ -934,7 +934,7 @@ void Actor::handleSpeech(int msec) {
 			if (_activeSpeech.actorIds[0] != 0) {
 				actor = getActor(_activeSpeech.actorIds[0]);
 				if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
-					actor->currentAction = kActionWait;
+					actor->_currentAction = kActionWait;
 				}
 			}
 		}
@@ -997,8 +997,8 @@ void Actor::handleSpeech(int msec) {
 	if (_activeSpeech.actorIds[0] != 0) {
 		actor = getActor(_activeSpeech.actorIds[0]);
 		if (!(_activeSpeech.speechFlags & kSpeakNoAnimate)) {
-			actor->currentAction = kActionSpeak;
-			actor->actionCycle = _vm->_rnd.getRandomNumber(63);
+			actor->_currentAction = kActionSpeak;
+			actor->_actionCycle = _vm->_rnd.getRandomNumber(63);
 		}
 	}
 
@@ -1023,7 +1023,7 @@ void Actor::handleSpeech(int msec) {
 				_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
 			}
 
-			height2 =  actor->screenPosition.y - 50;
+			height2 =  actor->_screenPosition.y - 50;
 			_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
 		} else {
 			_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
@@ -1052,7 +1052,7 @@ void Actor::handleActions(int msec, bool setup) {
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (!actor->inScene)
+		if (!actor->_inScene)
 			continue;
 
 		if ((_vm->getGameType() == GType_ITE) && (i == ACTOR_DRAGON_INDEX)) {
@@ -1060,78 +1060,75 @@ void Actor::handleActions(int msec, bool setup) {
 			continue;
 		}
 
-/*		if (actor->index == 2)
-			debug(9, "Action: %d Flags: %x", actor->currentAction, actor->flags);*/
-
 		if (_vm->getGameType() == GType_IHNM) {
-			if (actor->spriteList.spriteCount == 0)
+			if (actor->_spriteList.spriteCount == 0)
 				continue;
 		}
 
-		switch (actor->currentAction) {
+		switch (actor->_currentAction) {
 		case kActionWait:
-			if (!setup && (actor->flags & kFollower)) {
+			if (!setup && (actor->_flags & kFollower)) {
 				followProtagonist(actor);
-				if (actor->currentAction != kActionWait)
+				if (actor->_currentAction != kActionWait)
 					break;
 			}
 
-			if (actor->targetObject != ID_NOTHING) {
-				actorFaceTowardsObject(actor->id, actor->targetObject);
+			if (actor->_targetObject != ID_NOTHING) {
+				actorFaceTowardsObject(actor->_id, actor->_targetObject);
 			}
 
-			if (actor->flags & kCycle) {
-				frameRange = getActorFrameRange(actor->id, kFrameStand);
+			if (actor->_flags & kCycle) {
+				frameRange = getActorFrameRange(actor->_id, kFrameStand);
 				if (frameRange->frameCount > 0) {
-					actor->actionCycle++;
-					actor->actionCycle = (actor->actionCycle) % frameRange->frameCount;
+					actor->_actionCycle++;
+					actor->_actionCycle = (actor->_actionCycle) % frameRange->frameCount;
 				} else {
-					actor->actionCycle = 0;
+					actor->_actionCycle = 0;
 				}
-				actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 				break;
 			}
 
-			if ((actor->actionCycle & 3) == 0) {
+			if ((actor->_actionCycle & 3) == 0) {
 				actor->cycleWrap(100);
 
-				frameRange = getActorFrameRange(actor->id, kFrameWait);
-				if ((frameRange->frameCount < 1 || actor->actionCycle > 33))
-					frameRange = getActorFrameRange(actor->id, kFrameStand);
+				frameRange = getActorFrameRange(actor->_id, kFrameWait);
+				if ((frameRange->frameCount < 1 || actor->_actionCycle > 33))
+					frameRange = getActorFrameRange(actor->_id, kFrameStand);
 
 				if (frameRange->frameCount) {
-					actor->frameNumber = frameRange->frameIndex + (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
+					actor->_frameNumber = frameRange->frameIndex + (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
 				} else {
-					actor->frameNumber = frameRange->frameIndex;
+					actor->_frameNumber = frameRange->frameIndex;
 				}
 			}
-			actor->actionCycle++;
+			actor->_actionCycle++;
 			break;
 
 		case kActionWalkToPoint:
 		case kActionWalkToLink:
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				actor->partialTarget.delta(actor->location, delta);
+				actor->_partialTarget.delta(actor->_location, delta);
 
 				while ((delta.u() == 0) && (delta.v() == 0)) {
 
 					if ((actor == _protagonist) && (_vm->mouseButtonPressed())) {
 						_vm->_isoMap->screenPointToTileCoords(_vm->mousePos(), pickLocation);
 
-						if (!actorWalkTo(_protagonist->id, pickLocation)) {
+						if (!actorWalkTo(_protagonist->_id, pickLocation)) {
 							break;
 						}
-					} else if (!_vm->_isoMap->nextTileTarget(actor) && !actorEndWalk(actor->id, true)) {
+					} else if (!_vm->_isoMap->nextTileTarget(actor) && !actorEndWalk(actor->_id, true)) {
 						break;
 					}
 
-					actor->partialTarget.delta(actor->location, delta);
-					actor->partialTarget.z = 0;
+					actor->_partialTarget.delta(actor->_location, delta);
+					actor->_partialTarget.z = 0;
 				}
 
-				if (actor->flags & kFastest) {
+				if (actor->_flags & kFastest) {
 					speed = 8;
-				} else if (actor->flags & kFaster) {
+				} else if (actor->_flags & kFaster) {
 					speed = 6;
 				} else {
 					speed = 4;
@@ -1141,7 +1138,7 @@ void Actor::handleActions(int msec, bool setup) {
 					speed = 2;
 				}
 
-				if ((actor->actionDirection == 2) || (actor->actionDirection == 6)) {
+				if ((actor->_actionDirection == 2) || (actor->_actionDirection == 6)) {
 					speed = speed / 2;
 				}
 
@@ -1165,37 +1162,37 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 				}
 
-				actor->location.add(addDelta);
+				actor->_location.add(addDelta);
 			} else {
-				actor->partialTarget.delta(actor->location, delta);
+				actor->_partialTarget.delta(actor->_location, delta);
 
 				while ((delta.x == 0) && (delta.y == 0)) {
 
-					if (actor->walkStepIndex >= actor->walkStepsCount) {
-						actorEndWalk(actor->id, true);
+					if (actor->_walkStepIndex >= actor->_walkStepsCount) {
+						actorEndWalk(actor->_id, true);
 						break;
 					}
 
-					actor->partialTarget.fromScreenPoint(actor->walkStepsPoints[actor->walkStepIndex++]);
-					if (actor->partialTarget.x > 224 * 2 * ACTOR_LMULT) {
-						actor->partialTarget.x -= 256 * 2 * ACTOR_LMULT;
+					actor->_partialTarget.fromScreenPoint(actor->_walkStepsPoints[actor->_walkStepIndex++]);
+					if (actor->_partialTarget.x > 224 * 2 * ACTOR_LMULT) {
+						actor->_partialTarget.x -= 256 * 2 * ACTOR_LMULT;
 					}
 
-					actor->partialTarget.delta(actor->location, delta);
+					actor->_partialTarget.delta(actor->_location, delta);
 
 					if (ABS(delta.y) > ABS(delta.x)) {
-						actor->actionDirection = delta.y > 0 ? kDirDown : kDirUp;
+						actor->_actionDirection = delta.y > 0 ? kDirDown : kDirUp;
 					} else {
-						actor->actionDirection = delta.x > 0 ? kDirRight : kDirLeft;
+						actor->_actionDirection = delta.x > 0 ? kDirRight : kDirLeft;
 					}
 				}
 
-				speed = (ACTOR_LMULT * 2 * actor->screenScale + 63) / 256;
+				speed = (ACTOR_LMULT * 2 * actor->_screenScale + 63) / 256;
 				if (speed < 1) {
 					speed = 1;
 				}
 
-				if ((actor->actionDirection == kDirUp) || (actor->actionDirection == kDirDown)) {
+				if ((actor->_actionDirection == kDirUp) || (actor->_actionDirection == kDirDown)) {
 					addDelta.y = clamp(-speed, delta.y, speed);
 					if (addDelta.y == delta.y) {
 						addDelta.x = delta.x;
@@ -1203,7 +1200,7 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.x = delta.x * addDelta.y;
 						addDelta.x += (addDelta.x > 0) ? (delta.y / 2) : (-delta.y / 2);
 						addDelta.x /= delta.y;
-						actor->facingDirection = actor->actionDirection;
+						actor->_facingDirection = actor->_actionDirection;
 					}
 				} else {
 					addDelta.x = clamp(-2 * speed, delta.x, 2 * speed);
@@ -1213,74 +1210,74 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.y = delta.y * addDelta.x;
 						addDelta.y += (addDelta.y > 0) ? (delta.x / 2) : (-delta.x / 2);
 						addDelta.y /= delta.x;
-						actor->facingDirection = actor->actionDirection;
+						actor->_facingDirection = actor->_actionDirection;
 					}
 				}
 
-				actor->location.add(addDelta);
+				actor->_location.add(addDelta);
 			}
 
-			if (actor->actorFlags & kActorBackwards) {
-				actor->facingDirection = (actor->actionDirection + 4) & 7;
-				actor->actionCycle--;
+			if (actor->_actorFlags & kActorBackwards) {
+				actor->_facingDirection = (actor->_actionDirection + 4) & 7;
+				actor->_actionCycle--;
 			} else {
-				actor->actionCycle++;
+				actor->_actionCycle++;
 			}
 
-			frameRange = getActorFrameRange(actor->id, actor->walkFrameSequence);
+			frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
 
-			if (actor->actionCycle < 0) {
-				actor->actionCycle = frameRange->frameCount - 1;
-			} else if (actor->actionCycle >= frameRange->frameCount) {
-				actor->actionCycle = 0;
+			if (actor->_actionCycle < 0) {
+				actor->_actionCycle = frameRange->frameCount - 1;
+			} else if (actor->_actionCycle >= frameRange->frameCount) {
+				actor->_actionCycle = 0;
 			}
 
-			actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+			actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			break;
 
 		case kActionWalkDir:
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				actor->location.u() += tileDirectionLUT[actor->actionDirection][0];
-				actor->location.v() += tileDirectionLUT[actor->actionDirection][1];
+				actor->_location.u() += tileDirectionLUT[actor->_actionDirection][0];
+				actor->_location.v() += tileDirectionLUT[actor->_actionDirection][1];
 
-				frameRange = getActorFrameRange(actor->id, actor->walkFrameSequence);
+				frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
 
-				actor->actionCycle++;
+				actor->_actionCycle++;
 				actor->cycleWrap(frameRange->frameCount);
-				actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			} else {
-				actor->location.x += directionLUT[actor->actionDirection][0] * 2;
-				actor->location.y += directionLUT[actor->actionDirection][1] * 2;
+				actor->_location.x += directionLUT[actor->_actionDirection][0] * 2;
+				actor->_location.y += directionLUT[actor->_actionDirection][1] * 2;
 
-				frameRange = getActorFrameRange(actor->id, actor->walkFrameSequence);
-				actor->actionCycle++;
+				frameRange = getActorFrameRange(actor->_id, actor->_walkFrameSequence);
+				actor->_actionCycle++;
 				actor->cycleWrap(frameRange->frameCount);
-				actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+				actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			}
 			break;
 
 		case kActionSpeak:
-			actor->actionCycle++;
+			actor->_actionCycle++;
 			actor->cycleWrap(64);
 
-			frameRange = getActorFrameRange(actor->id, kFrameGesture);
-			if (actor->actionCycle >= frameRange->frameCount) {
-				if (actor->actionCycle & 1)
+			frameRange = getActorFrameRange(actor->_id, kFrameGesture);
+			if (actor->_actionCycle >= frameRange->frameCount) {
+				if (actor->_actionCycle & 1)
 					break;
-				frameRange = getActorFrameRange(actor->id, kFrameSpeak);
+				frameRange = getActorFrameRange(actor->_id, kFrameSpeak);
 
 				state = (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount);
 
 				if (state == 0) {
-					frameRange = getActorFrameRange(actor->id, kFrameStand);
+					frameRange = getActorFrameRange(actor->_id, kFrameStand);
 				} else {
 					state--;
 				}
 			} else {
-				state = actor->actionCycle;
+				state = actor->_actionCycle;
 			}
 
-			actor->frameNumber = frameRange->frameIndex + state;
+			actor->_frameNumber = frameRange->frameIndex + state;
 			break;
 
 		case kActionAccept:
@@ -1289,115 +1286,115 @@ void Actor::handleActions(int msec, bool setup) {
 
 		case kActionCycleFrames:
 		case kActionPongFrames:
-			if (actor->cycleTimeCount > 0) {
-				actor->cycleTimeCount--;
+			if (actor->_cycleTimeCount > 0) {
+				actor->_cycleTimeCount--;
 				break;
 			}
 
-			actor->cycleTimeCount = actor->cycleDelay;
-			actor->actionCycle++;
+			actor->_cycleTimeCount = actor->_cycleDelay;
+			actor->_actionCycle++;
 
-			frameRange = getActorFrameRange(actor->id, actor->cycleFrameSequence);
+			frameRange = getActorFrameRange(actor->_id, actor->_cycleFrameSequence);
 
-			if (actor->currentAction == kActionPongFrames) {
-				if (actor->actionCycle >= frameRange->frameCount * 2 - 2) {
-					if (actor->actorFlags & kActorContinuous) {
-						actor->actionCycle = 0;
+			if (actor->_currentAction == kActionPongFrames) {
+				if (actor->_actionCycle >= frameRange->frameCount * 2 - 2) {
+					if (actor->_actorFlags & kActorContinuous) {
+						actor->_actionCycle = 0;
 					} else {
-						actor->currentAction = kActionFreeze;
+						actor->_currentAction = kActionFreeze;
 						break;
 					}
 				}
 
-				state = actor->actionCycle;
+				state = actor->_actionCycle;
 				if (state >= frameRange->frameCount) {
 					state = frameRange->frameCount * 2 - 2 - state;
 				}
 			} else {
-				if (actor->actionCycle >= frameRange->frameCount) {
-					if (actor->actorFlags & kActorContinuous) {
-						actor->actionCycle = 0;
+				if (actor->_actionCycle >= frameRange->frameCount) {
+					if (actor->_actorFlags & kActorContinuous) {
+						actor->_actionCycle = 0;
 					} else {
-						actor->currentAction = kActionFreeze;
+						actor->_currentAction = kActionFreeze;
 						break;
 					}
 				}
-				state = actor->actionCycle;
+				state = actor->_actionCycle;
 			}
 
-			if (frameRange->frameCount && (actor->actorFlags & kActorRandom)) {
+			if (frameRange->frameCount && (actor->_actorFlags & kActorRandom)) {
 				state = _vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
 			}
 
-			if (actor->actorFlags & kActorBackwards) {
-				actor->frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
+			if (actor->_actorFlags & kActorBackwards) {
+				actor->_frameNumber = frameRange->frameIndex + frameRange->frameCount - 1 - state;
 			} else {
-				actor->frameNumber = frameRange->frameIndex + state;
+				actor->_frameNumber = frameRange->frameIndex + state;
 			}
 			break;
 
 		case kActionFall:
-			if (actor->actionCycle > 0) {
-				framesLeft = actor->actionCycle--;
-				actor->finalTarget.delta(actor->location, delta);
+			if (actor->_actionCycle > 0) {
+				framesLeft = actor->_actionCycle--;
+				actor->_finalTarget.delta(actor->_location, delta);
 				delta.x /= framesLeft;
 				delta.y /= framesLeft;
-				actor->location.addXY(delta);
-				actor->fallVelocity += actor->fallAcceleration;
-				actor->fallPosition += actor->fallVelocity;
-				actor->location.z = actor->fallPosition >> 4;
+				actor->_location.addXY(delta);
+				actor->_fallVelocity += actor->_fallAcceleration;
+				actor->_fallPosition += actor->_fallVelocity;
+				actor->_location.z = actor->_fallPosition >> 4;
 			} else {
-				actor->location = actor->finalTarget;
-				actor->currentAction = kActionFreeze;
+				actor->_location = actor->_finalTarget;
+				actor->_currentAction = kActionFreeze;
 				_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 			}
 			break;
 
 		case kActionClimb:
-			actor->cycleDelay++;
-			if (actor->cycleDelay & 3) {
+			actor->_cycleDelay++;
+			if (actor->_cycleDelay & 3) {
 				break;
 			}
 
-			if (actor->location.z >= actor->finalTarget.z + ACTOR_CLIMB_SPEED) {
-				actor->location.z -= ACTOR_CLIMB_SPEED;
-				actor->actionCycle--;
-			} else if (actor->location.z <= actor->finalTarget.z - ACTOR_CLIMB_SPEED) {
-				actor->location.z += ACTOR_CLIMB_SPEED;
-				actor->actionCycle++;
+			if (actor->_location.z >= actor->_finalTarget.z + ACTOR_CLIMB_SPEED) {
+				actor->_location.z -= ACTOR_CLIMB_SPEED;
+				actor->_actionCycle--;
+			} else if (actor->_location.z <= actor->_finalTarget.z - ACTOR_CLIMB_SPEED) {
+				actor->_location.z += ACTOR_CLIMB_SPEED;
+				actor->_actionCycle++;
 			} else {
-				actor->location.z = actor->finalTarget.z;
-				actor->currentAction = kActionFreeze;
+				actor->_location.z = actor->_finalTarget.z;
+				actor->_currentAction = kActionFreeze;
 				_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 			}
 
-			frameRange = getActorFrameRange(actor->id, actor->cycleFrameSequence);
+			frameRange = getActorFrameRange(actor->_id, actor->_cycleFrameSequence);
 
-			if (actor->actionCycle < 0) {
-				actor->actionCycle = frameRange->frameCount - 1;
+			if (actor->_actionCycle < 0) {
+				actor->_actionCycle = frameRange->frameCount - 1;
 			}
 			actor->cycleWrap(frameRange->frameCount);
-			actor->frameNumber = frameRange->frameIndex + actor->actionCycle;
+			actor->_frameNumber = frameRange->frameIndex + actor->_actionCycle;
 			break;
 		}
 
-		if ((actor->currentAction >= kActionWalkToPoint) && (actor->currentAction <= kActionWalkDir)) {
+		if ((actor->_currentAction >= kActionWalkToPoint) && (actor->_currentAction <= kActionWalkDir)) {
 			hitZone = NULL;
 
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
-				actor->location.toScreenPointUV(hitPoint);
+				actor->_location.toScreenPointUV(hitPoint);
 			} else {
-				actor->location.toScreenPointXY(hitPoint);
+				actor->_location.toScreenPointXY(hitPoint);
 			}
 			hitZoneIndex = _vm->_scene->_actionMap->hitTest(hitPoint);
 			if (hitZoneIndex != -1) {
 				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
 			}
 
-			if (hitZone != actor->lastZone) {
-				if (actor->lastZone)
-					stepZoneAction( actor, actor->lastZone, true, false);
-				actor->lastZone = hitZone;
+			if (hitZone != actor->_lastZone) {
+				if (actor->_lastZone)
+					stepZoneAction( actor, actor->_lastZone, true, false);
+				actor->_lastZone = hitZone;
 				if (hitZone)
 					stepZoneAction( actor, hitZone, false, false);
 			}
@@ -1433,32 +1430,32 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 	int beginSlope, endSlope, middle;
 	bool result;
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
-		_vm->_isoMap->tileCoordsToScreenPoint(commonObjectData->location, commonObjectData->screenPosition);
-		commonObjectData->screenScale = 256;
+		_vm->_isoMap->tileCoordsToScreenPoint(commonObjectData->_location, commonObjectData->_screenPosition);
+		commonObjectData->_screenScale = 256;
 	} else {
-		middle = _vm->getSceneHeight() - commonObjectData->location.y / ACTOR_LMULT;
+		middle = _vm->getSceneHeight() - commonObjectData->_location.y / ACTOR_LMULT;
 
 		_vm->_scene->getSlopes(beginSlope, endSlope);
 
-		commonObjectData->screenDepth = (14 * middle) / endSlope + 1;
+		commonObjectData->_screenDepth = (14 * middle) / endSlope + 1;
 
 		if (middle <= beginSlope) {
-			commonObjectData->screenScale = 256;
+			commonObjectData->_screenScale = 256;
 		} else if (middle >= endSlope) {
-			commonObjectData->screenScale = 1;
+			commonObjectData->_screenScale = 1;
 		} else {
 			middle -= beginSlope;
 			endSlope -= beginSlope;
-			commonObjectData->screenScale = 256 - (middle * 256) / endSlope;
+			commonObjectData->_screenScale = 256 - (middle * 256) / endSlope;
 		}
 
-		commonObjectData->location.toScreenPointXYZ(commonObjectData->screenPosition);
+		commonObjectData->_location.toScreenPointXYZ(commonObjectData->_screenPosition);
 	}
 
-	result = commonObjectData->screenPosition.x > -64 &&
-			commonObjectData->screenPosition.x < _vm->getDisplayWidth() + 64 &&
-			commonObjectData->screenPosition.y > -64 &&
-			commonObjectData->screenPosition.y < _vm->getSceneHeight() + 64;
+	result = commonObjectData->_screenPosition.x > -64 &&
+			commonObjectData->_screenPosition.x < _vm->getDisplayWidth() + 64 &&
+			commonObjectData->_screenPosition.y > -64 &&
+			commonObjectData->_screenPosition.y < _vm->getSceneHeight() + 64;
 
 	return result;
 }
@@ -1489,8 +1486,8 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 		if (!getSpriteParams(drawObject, frameNumber, spriteList)) {
 			continue;
 		}
-		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, testPoint)) {
-			return drawObject->id;
+		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, testPoint)) {
+			return drawObject->_id;
 		}
 	}
 	return ID_NOTHING;
@@ -1511,7 +1508,7 @@ void Actor::createDrawOrderList() {
 	_drawOrderList.clear();
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (!actor->inScene)
+		if (!actor->_inScene)
 			continue;
 
 		if (calcScreenPosition(actor)) {
@@ -1521,10 +1518,10 @@ void Actor::createDrawOrderList() {
 
 	for (i = 0; i < _objsCount; i++) {
 		obj = _objs[i];
-		if (obj->disabled)
+		if (obj->_disabled)
 			continue;
 
-		if (obj->sceneNumber != _vm->_scene->currentSceneNumber())
+		if (obj->_sceneNumber != _vm->_scene->currentSceneNumber())
 			 continue;
 
 		if (calcScreenPosition(obj)) {
@@ -1535,22 +1532,22 @@ void Actor::createDrawOrderList() {
 
 bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList) {
 	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
-		if (!(commonObjectData->flags & kProtagonist)){
+		if (!(commonObjectData->_flags & kProtagonist)){
 //			warning("not protagonist");
 			return false;
 		}
 		frameNumber = 8;
 		spriteList = &_vm->_sprite->_mainSprites;
-	} else if (validActorId(commonObjectData->id)) {
-		spriteList = &((ActorData *)commonObjectData)->spriteList;
-		frameNumber = ((ActorData *)commonObjectData)->frameNumber;
-	} else if (validObjId(commonObjectData->id)) {
+	} else if (validActorId(commonObjectData->_id)) {
+		spriteList = &((ActorData *)commonObjectData)->_spriteList;
+		frameNumber = ((ActorData *)commonObjectData)->_frameNumber;
+	} else if (validObjId(commonObjectData->_id)) {
 		spriteList = &_vm->_sprite->_mainSprites;
-		frameNumber = commonObjectData->spriteListResourceId;
+		frameNumber = commonObjectData->_spriteListResourceId;
 	}
 
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
-		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X (%d)", commonObjectData->id, frameNumber);
+		warning("Actor::getSpriteParams frameNumber invalid for object id 0x%X (%d)", commonObjectData->_id, frameNumber);
 		return false;
 	}
 	return true;
@@ -1584,9 +1581,9 @@ void Actor::drawActors() {
 		}
 
 		if (_vm->_scene->getFlags() & kSceneFlagISO) {
-			_vm->_isoMap->drawSprite(backBuffer, *spriteList, frameNumber, drawObject->location, drawObject->screenPosition, drawObject->screenScale);
+			_vm->_isoMap->drawSprite(backBuffer, *spriteList, frameNumber, drawObject->_location, drawObject->_screenPosition, drawObject->_screenScale);
 		} else {
-			_vm->_sprite->drawOccluded(backBuffer, _vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->screenPosition, drawObject->screenScale, drawObject->screenDepth);
+			_vm->_sprite->drawOccluded(backBuffer, _vm->_scene->getSceneClip(),*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, drawObject->_screenDepth);
 		}
 	}
 
@@ -1623,8 +1620,8 @@ void Actor::drawSpeech(void) {
 			actor = getActor(_activeSpeech.actorIds[i]);
 			calcScreenPosition(actor);
 
-			textPoint.x = clamp( 10, actor->screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
-			textPoint.y = clamp( 10, actor->screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
+			textPoint.x = clamp( 10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
+			textPoint.y = clamp( 10, actor->_screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
 
 			_vm->_font->textDraw(kMediumFont, backBuffer, _activeSpeech.strings[0], textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
@@ -1650,8 +1647,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 
 	assert(_protagonist);
 
-	actor->flags &= ~(kFaster | kFastest);
-	protagonistLocation = _protagonist->location;
+	actor->_flags &= ~(kFaster | kFastest);
+	protagonistLocation = _protagonist->_location;
 	calcScreenPosition(_protagonist);
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
@@ -1659,19 +1656,19 @@ bool Actor::followProtagonist(ActorData *actor) {
 		prefV = 60;
 
 
-		actor->location.delta(protagonistLocation, delta);
+		actor->_location.delta(protagonistLocation, delta);
 
-		if (actor->id == actorIndexToId(2)) {
+		if (actor->_id == actorIndexToId(2)) {
 			prefU = prefV = 48;
 		}
 
 		if ((delta.u() > prefU) || (delta.u() < -prefU) || (delta.v() > prefV) || (delta.v() < -prefV)) {
 
 			if ((delta.u() > prefU * 2) || (delta.u() < -prefU * 2) || (delta.v() > prefV * 2) || (delta.v() < -prefV * 2)) {
-				actor->flags |= kFaster;
+				actor->_flags |= kFaster;
 
 				if ((delta.u() > prefU * 3) || (delta.u() < -prefU*3) || (delta.v() > prefV * 3) || (delta.v() < -prefV * 3)) {
-					actor->flags |= kFastest;
+					actor->_flags |= kFastest;
 				}
 			}
 
@@ -1685,14 +1682,14 @@ bool Actor::followProtagonist(ActorData *actor) {
 			newLocation.v() = newV + _vm->_rnd.getRandomNumber(prefV - 1) - prefV / 2;
 			newLocation.z = 0;
 
-			return actorWalkTo(actor->id, newLocation);
+			return actorWalkTo(actor->_id, newLocation);
 		}
 
 	} else {
-		prefer1.x = (100 * _protagonist->screenScale) >> 8;
-		prefer1.y = (50 * _protagonist->screenScale) >> 8;
+		prefer1.x = (100 * _protagonist->_screenScale) >> 8;
+		prefer1.y = (50 * _protagonist->_screenScale) >> 8;
 
-		if (_protagonist->currentAction == kActionWalkDir) {
+		if (_protagonist->_currentAction == kActionWalkDir) {
 			prefer1.x /= 2;
 		}
 
@@ -1709,23 +1706,23 @@ bool Actor::followProtagonist(ActorData *actor) {
 		prefer3.x = prefer1.x + prefer1.x / 2;
 		prefer3.y = prefer1.y + prefer1.y / 2;
 
-		actor->location.delta(protagonistLocation, delta);
+		actor->_location.delta(protagonistLocation, delta);
 
 		protagonistBGMaskType = 0;
-		if (_vm->_scene->isBGMaskPresent() && _vm->_scene->validBGMaskPoint(_protagonist->screenPosition)) {
-			protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->screenPosition);
+		if (_vm->_scene->isBGMaskPresent() && _vm->_scene->validBGMaskPoint(_protagonist->_screenPosition)) {
+			protagonistBGMaskType = _vm->_scene->getBGMaskType(_protagonist->_screenPosition);
 		}
 
 		if ((_vm->_rnd.getRandomNumber(7) & 0x7) == 0) // 1/8th chance
-			actor->actorFlags &= ~kActorNoFollow;
+			actor->_actorFlags &= ~kActorNoFollow;
 
-		if (actor->actorFlags & kActorNoFollow) {
+		if (actor->_actorFlags & kActorNoFollow) {
 			return false;
 		}
 
 		if ((delta.x > prefer2.x) || (delta.x < -prefer2.x) ||
 			(delta.y > prefer2.y) || (delta.y < -prefer2.y) ||
-			((_protagonist->currentAction == kActionWait) &&
+			((_protagonist->_currentAction == kActionWait) &&
 			(delta.x * 2 < prefer1.x) && (delta.x * 2 > -prefer1.x) &&
 			(delta.y < prefer1.y) && (delta.y > -prefer1.y))) {
 
@@ -1750,7 +1747,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 
 				newLocation.x = clamp(-31*4, newLocation.x, (_vm->getDisplayWidth() + 31) * 4); //fixme
 
-				return actorWalkTo(actor->id, newLocation);
+				return actorWalkTo(actor->_id, newLocation);
 			}
 	}
 	return false;
@@ -1764,25 +1761,25 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	Point testPoint;
 
 	actor = getActor(actorId);
-	actor->actorFlags &= ~kActorBackwards;
+	actor->_actorFlags &= ~kActorBackwards;
 
-	if (actor->location.distance(actor->finalTarget) > 8 && (actor->flags & kProtagonist) && recurse && !(actor->actorFlags & kActorNoCollide)) {
-		actor->actorFlags |= kActorNoCollide;
-		return actorWalkTo(actorId, actor->finalTarget);
+	if (actor->_location.distance(actor->_finalTarget) > 8 && (actor->_flags & kProtagonist) && recurse && !(actor->_actorFlags & kActorNoCollide)) {
+		actor->_actorFlags |= kActorNoCollide;
+		return actorWalkTo(actorId, actor->_finalTarget);
 	}
 
-	actor->currentAction = kActionWait;
-	if (actor->actorFlags & kActorFinalFace) {
-		actor->facingDirection = actor->actionDirection = (actor->actorFlags >> 6) & 0x07; //?
+	actor->_currentAction = kActionWait;
+	if (actor->_actorFlags & kActorFinalFace) {
+		actor->_facingDirection = actor->_actionDirection = (actor->_actorFlags >> 6) & 0x07; //?
 	}
 
-	actor->actorFlags &= ~(kActorNoCollide | kActorCollided | kActorFinalFace | kActorFacingMask);
-	actor->flags &= ~(kFaster | kFastest);
+	actor->_actorFlags &= ~(kActorNoCollide | kActorCollided | kActorFinalFace | kActorFacingMask);
+	actor->_flags &= ~(kFaster | kFastest);
 
 	if (actor == _protagonist) {
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 		if (_vm->_script->_pendingVerb == kVerbWalkTo) {
-			actor->location.toScreenPointUV(testPoint);
+			actor->_location.toScreenPointUV(testPoint);
 			hitZoneIndex = _vm->_scene->_actionMap->hitTest(testPoint);
 			if (hitZoneIndex != -1) {
 				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
@@ -1794,7 +1791,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 			_vm->_script->doVerb();
 		}
 	} else {
-		if (recurse && (actor->flags & kFollower))
+		if (recurse && (actor->_flags & kFollower))
 			walkMore = followProtagonist(actor);
 
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
@@ -1829,31 +1826,31 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 
-		if ((_vm->getGameType() == GType_ITE) && (actor->index == ACTOR_DRAGON_INDEX)) {
+		if ((_vm->getGameType() == GType_ITE) && (actor->_index == ACTOR_DRAGON_INDEX)) {
 			return false;
 		}
 
-		actor->finalTarget = toLocation;
-		actor->walkStepsCount = 0;
-		_vm->_isoMap->findTilePath(actor, actor->location, toLocation);
+		actor->_finalTarget = toLocation;
+		actor->_walkStepsCount = 0;
+		_vm->_isoMap->findTilePath(actor, actor->_location, toLocation);
 
 
-		if ((actor->walkStepsCount == 0) && (actor->flags & kProtagonist)) {
-			actor->actorFlags |= kActorNoCollide;
-			_vm->_isoMap->findTilePath(actor, actor->location, toLocation);
+		if ((actor->_walkStepsCount == 0) && (actor->_flags & kProtagonist)) {
+			actor->_actorFlags |= kActorNoCollide;
+			_vm->_isoMap->findTilePath(actor, actor->_location, toLocation);
 		}
 
-		actor->walkStepIndex = 0;
+		actor->_walkStepIndex = 0;
 		if (_vm->_isoMap->nextTileTarget(actor)) {
-			actor->currentAction = kActionWalkToPoint;
-			actor->walkFrameSequence = kFrameWalk;
+			actor->_currentAction = kActionWalkToPoint;
+			actor->_walkFrameSequence = kFrameWalk;
 		} else {
 			actorEndWalk( actorId, false);
 			return false;
 		}
 	} else {
 
-		actor->location.toScreenPointXY(pointFrom);
+		actor->_location.toScreenPointXY(pointFrom);
 		pointFrom.x &= ~1;
 
 		extraStartNode = _vm->_scene->offscreenPath(pointFrom);
@@ -1865,8 +1862,8 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 		if (_vm->_scene->isBGMaskPresent()) {
 
-			if ((((actor->currentAction >= kActionWalkToPoint) &&
-				(actor->currentAction <= kActionWalkDir)) || (actor == _protagonist)) &&
+			if ((((actor->_currentAction >= kActionWalkToPoint) &&
+				(actor->_currentAction <= kActionWalkDir)) || (actor == _protagonist)) &&
 				!_vm->_scene->canWalk(pointFrom)) {
 				for (i = 1; i < 8; i++) {
 					pointAdd = pointFrom;
@@ -1896,19 +1893,19 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				}
 			}
 
-			if (!(actor->actorFlags & kActorNoCollide)) {
-				collision.x = ACTOR_COLLISION_WIDTH * actor->screenScale / (256 * 2);
-				collision.y = ACTOR_COLLISION_HEIGHT * actor->screenScale / (256 * 2);
+			if (!(actor->_actorFlags & kActorNoCollide)) {
+				collision.x = ACTOR_COLLISION_WIDTH * actor->_screenScale / (256 * 2);
+				collision.y = ACTOR_COLLISION_HEIGHT * actor->_screenScale / (256 * 2);
 
 				_barrierCount = 0;
 
 				for (i = 0; (i < _actorsCount) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
 					anotherActor = _actors[i];
-					if (!anotherActor->inScene) continue;
+					if (!anotherActor->_inScene) continue;
 					if (anotherActor == actor ) continue;
 
 
-					anotherActorScreenPosition = anotherActor->screenPosition;
+					anotherActorScreenPosition = anotherActor->_screenPosition;
 					testBox.left = (anotherActorScreenPosition.x - collision.x) & ~1;
 					testBox.right = (anotherActorScreenPosition.x + collision.x) & ~1 + 1;
 					testBox.top = anotherActorScreenPosition.y - collision.y;
@@ -1939,27 +1936,27 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 
 			pointBest = pointTo;
-			actor->walkStepsCount = 0;
+			actor->_walkStepsCount = 0;
 			findActorPath(actor, pointFrom, pointTo);
 
-			if (actor->walkStepsCount == 0) {
-				error("actor->walkStepsCount == 0");
+			if (actor->_walkStepsCount == 0) {
+				error("actor->_walkStepsCount == 0");
 			}
 
 			if (extraStartNode) {
-				actor->walkStepIndex = 0;
+				actor->_walkStepIndex = 0;
 			} else {
-				actor->walkStepIndex = 1;
+				actor->_walkStepIndex = 1;
 			}
 
 			if (extraEndNode) {
 				toLocation.toScreenPointXY(tempPoint);
-				actor->walkStepsCount--;
+				actor->_walkStepsCount--;
 				actor->addWalkStepPoint(tempPoint);
 			}
 
 
-			pointBest = actor->walkStepsPoints[actor->walkStepsCount - 1];
+			pointBest = actor->_walkStepsPoints[actor->_walkStepsCount - 1];
 
 			delta.x = ABS(pointFrom.x - pointTo.x);
 			delta.y = ABS(pointFrom.y - pointTo.y);
@@ -1967,31 +1964,31 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			bestDelta.x = ABS(pointBest.x - pointTo.x);
 			bestDelta.y = ABS(pointBest.y - pointTo.y);
 
-			if (delta.x + delta.y <= bestDelta.x + bestDelta.y && (actor->flags & kFollower)) {
-				actor->actorFlags |= kActorNoFollow;
+			if (delta.x + delta.y <= bestDelta.x + bestDelta.y && (actor->_flags & kFollower)) {
+				actor->_actorFlags |= kActorNoFollow;
 			}
 
 			if (pointBest == pointFrom) {
-				actor->walkStepsCount = 0;
+				actor->_walkStepsCount = 0;
 			}
 		} else {
-			actor->walkStepsCount = 0;
+			actor->_walkStepsCount = 0;
 			actor->addWalkStepPoint(pointTo);
-			actor->walkStepIndex = 0;
+			actor->_walkStepIndex = 0;
 		}
 
-		actor->partialTarget = actor->location;
-		actor->finalTarget = toLocation;
-		if (actor->walkStepsCount == 0) {
+		actor->_partialTarget = actor->_location;
+		actor->_finalTarget = toLocation;
+		if (actor->_walkStepsCount == 0) {
 			actorEndWalk(actorId, false);
 			return false;
 		} else {
-			if (actor->flags & kProtagonist) {
-				_actors[1]->actorFlags &= ~kActorNoFollow; // TODO: mark all actors with kFollower flag, not only 1 and 2
-				_actors[2]->actorFlags &= ~kActorNoFollow;
+			if (actor->_flags & kProtagonist) {
+				_actors[1]->_actorFlags &= ~kActorNoFollow; // TODO: mark all actors with kFollower flag, not only 1 and 2
+				_actors[2]->_actorFlags &= ~kActorNoFollow;
 			}
-			actor->currentAction = (actor->walkStepsCount >= ACTOR_MAX_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
-			actor->walkFrameSequence = kFrameWalk;
+			actor->_currentAction = (actor->_walkStepsCount >= ACTOR_MAX_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
+			actor->_walkFrameSequence = kFrameWalk;
 		}
 
 	}
@@ -2013,17 +2010,17 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = actorId;
-	_activeSpeech.speechColor[0] = actor->speechColor;
+	_activeSpeech.speechColor[0] = actor->_speechColor;
 	_activeSpeech.outlineColor[0] = kITEColorBlack;
 	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 
-	dist = MIN(actor->screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->screenPosition.x );
+	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->_screenPosition.x );
 	dist = clamp( 60, dist, 150 );
 
-	_activeSpeech.speechBox.left = actor->screenPosition.x - dist;
-	_activeSpeech.speechBox.right = actor->screenPosition.x + dist;
+	_activeSpeech.speechBox.left = actor->_screenPosition.x - dist;
+	_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;
 
 	if (_activeSpeech.speechBox.left < 10) {
 		_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left;
@@ -2061,7 +2058,7 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 
 		actor = getActor(actorIds[i]);
 		_activeSpeech.actorIds[i] = actorIds[i];
-		_activeSpeech.speechColor[i] = actor->speechColor;
+		_activeSpeech.speechColor[i] = actor->_speechColor;
 		_activeSpeech.outlineColor[i] = 0; // disable outline
 	}
 	_activeSpeech.actorsCount = actorIdsCount;
@@ -2096,12 +2093,12 @@ void Actor::moveDragon(ActorData *actor) {
 	Event event;
 	const DragonMove *dragonMove;
 
-	if ((actor->actionCycle < 0) ||
-		((actor->actionCycle == 0) && (actor->dragonMoveType >= ACTOR_DRAGON_TURN_MOVES))) {
+	if ((actor->_actionCycle < 0) ||
+		((actor->_actionCycle == 0) && (actor->_dragonMoveType >= ACTOR_DRAGON_TURN_MOVES))) {
 
 		moveType = kDragonMoveInvalid;
-		if (actor->location.distance(_protagonist->location) < 24) {
-			if (_dragonHunt && (_protagonist->currentAction != kActionFall)) {
+		if (actor->_location.distance(_protagonist->_location) < 24) {
+			if (_dragonHunt && (_protagonist->_currentAction != kActionFall)) {
 				event.type = ONESHOT_EVENT;
 				event.code = SCRIPT_EVENT;
 				event.op = EVENT_EXEC_NONBLOCKING;
@@ -2120,216 +2117,216 @@ void Actor::moveDragon(ActorData *actor) {
 			_dragonHunt = true;
 		}
 
-		if (actor->walkStepIndex + 2 > actor->walkStepsCount) {
+		if (actor->_walkStepIndex + 2 > actor->_walkStepsCount) {
 
-			_vm->_isoMap->findDragonTilePath(actor, actor->location, _protagonist->location, actor->actionDirection);
+			_vm->_isoMap->findDragonTilePath(actor, actor->_location, _protagonist->_location, actor->_actionDirection);
 
-			if (actor->walkStepsCount == 0) {
-				_vm->_isoMap->findDragonTilePath(actor, actor->location, _protagonist->location, 0);
+			if (actor->_walkStepsCount == 0) {
+				_vm->_isoMap->findDragonTilePath(actor, actor->_location, _protagonist->_location, 0);
 			}
 
-			if (actor->walkStepsCount < 2) {
+			if (actor->_walkStepsCount < 2) {
 				return;
 			}
 
-			actor->partialTarget = actor->location;
-			actor->finalTarget = _protagonist->location;
-			actor->walkStepIndex = 0;
+			actor->_partialTarget = actor->_location;
+			actor->_finalTarget = _protagonist->_location;
+			actor->_walkStepIndex = 0;
 		}
 
-		dir0 = actor->actionDirection;
-		dir1 = actor->tileDirections[actor->walkStepIndex++];
-		dir2 = actor->tileDirections[actor->walkStepIndex];
-		dir3 = actor->tileDirections[actor->walkStepIndex + 1];
+		dir0 = actor->_actionDirection;
+		dir1 = actor->_tileDirections[actor->_walkStepIndex++];
+		dir2 = actor->_tileDirections[actor->_walkStepIndex];
+		dir3 = actor->_tileDirections[actor->_walkStepIndex + 1];
 
 		if (dir0 != dir1){
-			actor->actionDirection = dir0 = dir1;
+			actor->_actionDirection = dir0 = dir1;
 		}
 
-		actor->location = actor->partialTarget;
+		actor->_location = actor->_partialTarget;
 
 		if ((dir1 != dir2) && (dir1 == dir3)) {
 			switch (dir1) {
 			case kDirUpLeft:
-				actor->partialTarget.v() += 16;
+				actor->_partialTarget.v() += 16;
 				moveType = kDragonMoveUpLeft;
 				break;
 			case kDirDownLeft:
-				actor->partialTarget.u() -= 16;
+				actor->_partialTarget.u() -= 16;
 				moveType = kDragonMoveDownLeft;
 				break;
 			case kDirDownRight:
-				actor->partialTarget.v() -= 16;
+				actor->_partialTarget.v() -= 16;
 				moveType = kDragonMoveDownRight;
 				break;
 			case kDirUpRight:
-				actor->partialTarget.u() += 16;
+				actor->_partialTarget.u() += 16;
 				moveType = kDragonMoveUpRight;
 				break;
 			}
 
 			switch (dir2) {
 			case kDirUpLeft:
-				actor->partialTarget.v() += 16;
+				actor->_partialTarget.v() += 16;
 				break;
 			case kDirDownLeft:
-				actor->partialTarget.u() -= 16;
+				actor->_partialTarget.u() -= 16;
 				break;
 			case kDirDownRight:
-				actor->partialTarget.v() -= 16;
+				actor->_partialTarget.v() -= 16;
 				break;
 			case kDirUpRight:
-				actor->partialTarget.u() += 16;
+				actor->_partialTarget.u() += 16;
 				break;
 			}
 
-			actor->walkStepIndex++;
+			actor->_walkStepIndex++;
 		} else {
 			switch (dir1) {
 			case kDirUpLeft:
-				actor->partialTarget.v() += 16;
+				actor->_partialTarget.v() += 16;
 				switch (dir2) {
 				case kDirDownLeft:
 					moveType = kDragonMoveUpLeft_Left;
-					actor->partialTarget.u() -= 16;
+					actor->_partialTarget.u() -= 16;
 					break;
 				case kDirUpLeft:
 					moveType = kDragonMoveUpLeft;
 					break;
 				case kDirUpRight:
-					actor->partialTarget.u() += 16;
+					actor->_partialTarget.u() += 16;
 					moveType = kDragonMoveUpLeft_Right;
 					break;
 				default:
-					actor->actionDirection = dir1;
-					actor->walkStepsCount = 0;
+					actor->_actionDirection = dir1;
+					actor->_walkStepsCount = 0;
 					break;
 				}
 				break;
 			case kDirDownLeft:
-				actor->partialTarget.u() -= 16;
+				actor->_partialTarget.u() -= 16;
 				switch (dir2) {
 				case kDirDownRight:
 					moveType = kDragonMoveDownLeft_Left;
-					actor->partialTarget.v() -= 16;
+					actor->_partialTarget.v() -= 16;
 					break;
 				case kDirDownLeft:
 					moveType = kDragonMoveDownLeft;
 					break;
 				case kDirUpLeft:
 					moveType = kDragonMoveDownLeft_Right;
-					actor->partialTarget.v() += 16;
+					actor->_partialTarget.v() += 16;
 					break;
 				default:
-					actor->actionDirection = dir1;
-					actor->walkStepsCount = 0;
+					actor->_actionDirection = dir1;
+					actor->_walkStepsCount = 0;
 					break;
 				}
 				break;
 			case kDirDownRight:
-				actor->partialTarget.v() -= 16;
+				actor->_partialTarget.v() -= 16;
 				switch (dir2) {
 				case kDirUpRight:
 					moveType = kDragonMoveDownRight_Left;
-					actor->partialTarget.u() += 16;
+					actor->_partialTarget.u() += 16;
 					break;
 				case kDirDownRight:
 					moveType = kDragonMoveDownRight;
 					break;
 				case kDirDownLeft:
 					moveType = kDragonMoveDownRight_Right;
-					actor->partialTarget.u() -= 16;
+					actor->_partialTarget.u() -= 16;
 					break;
 				default:
-					actor->actionDirection = dir1;
-					actor->walkStepsCount = 0;
+					actor->_actionDirection = dir1;
+					actor->_walkStepsCount = 0;
 					break;
 				}
 				break;
 			case kDirUpRight:
-				actor->partialTarget.u() += 16;
+				actor->_partialTarget.u() += 16;
 				switch (dir2) {
 				case kDirUpLeft:
 					moveType = kDragonMoveUpRight_Left;
-					actor->partialTarget.v() += 16;
+					actor->_partialTarget.v() += 16;
 					break;
 				case kDirUpRight:
 					moveType = kDragonMoveUpRight;
 					break;
 				case kDirDownRight:
 					moveType = kDragonMoveUpRight_Right;
-					actor->partialTarget.v() -= 16;
+					actor->_partialTarget.v() -= 16;
 					break;
 				default:
-					actor->actionDirection = dir1;
-					actor->walkStepsCount = 0;
+					actor->_actionDirection = dir1;
+					actor->_walkStepsCount = 0;
 					break;
 				}
 				break;
 
 			default:
-				actor->actionDirection = dir1;
-				actor->walkStepsCount = 0;
+				actor->_actionDirection = dir1;
+				actor->_walkStepsCount = 0;
 				break;
 			}
 		}
 
-		actor->dragonMoveType = moveType;
+		actor->_dragonMoveType = moveType;
 
 		if (moveType >= ACTOR_DRAGON_TURN_MOVES) {
-			actor->dragonStepCycle = 0;
-			actor->actionCycle = 4;
-			actor->walkStepIndex++;
+			actor->_dragonStepCycle = 0;
+			actor->_actionCycle = 4;
+			actor->_walkStepIndex++;
 		} else {
-			actor->actionCycle = 4;
+			actor->_actionCycle = 4;
 		}
 	}
 
-	actor->actionCycle--;
+	actor->_actionCycle--;
 
-	if ((actor->walkStepsCount < 1) || (actor->actionCycle < 0)) {
+	if ((actor->_walkStepsCount < 1) || (actor->_actionCycle < 0)) {
 		return;
 	}
 
-	if (actor->dragonMoveType < ACTOR_DRAGON_TURN_MOVES) {
+	if (actor->_dragonMoveType < ACTOR_DRAGON_TURN_MOVES) {
 
-		actor->dragonStepCycle++;
-		if (actor->dragonStepCycle >= 7) {
-			actor->dragonStepCycle = 0;
+		actor->_dragonStepCycle++;
+		if (actor->_dragonStepCycle >= 7) {
+			actor->_dragonStepCycle = 0;
 		}
 
-		actor->dragonBaseFrame = actor->dragonMoveType * 7;
+		actor->_dragonBaseFrame = actor->_dragonMoveType * 7;
 
-		if (actor->location.u() > actor->partialTarget.u() + 3) {
-			actor->location.u() -= 4;
-		} else if (actor->location.u() < actor->partialTarget.u() - 3) {
-			actor->location.u() += 4;
+		if (actor->_location.u() > actor->_partialTarget.u() + 3) {
+			actor->_location.u() -= 4;
+		} else if (actor->_location.u() < actor->_partialTarget.u() - 3) {
+			actor->_location.u() += 4;
 		} else {
-			actor->location.u() = actor->partialTarget.u();
+			actor->_location.u() = actor->_partialTarget.u();
 		}
 
-		if (actor->location.v() > actor->partialTarget.v() + 3) {
-			actor->location.v() -= 4;
-		} else if (actor->location.v() < actor->partialTarget.v() - 3) {
-			actor->location.v() += 4;
+		if (actor->_location.v() > actor->_partialTarget.v() + 3) {
+			actor->_location.v() -= 4;
+		} else if (actor->_location.v() < actor->_partialTarget.v() - 3) {
+			actor->_location.v() += 4;
 		} else {
-			actor->location.v() = actor->partialTarget.v();
+			actor->_location.v() = actor->_partialTarget.v();
 		}
 	} else {
-		dragonMove = &dragonMoveTable[actor->dragonMoveType];
-		actor->dragonBaseFrame = dragonMove->baseFrame;
+		dragonMove = &dragonMoveTable[actor->_dragonMoveType];
+		actor->_dragonBaseFrame = dragonMove->baseFrame;
 
 
-		actor->location.u() = actor->partialTarget.u() - dragonMove->offset[actor->actionCycle][0];
-		actor->location.v() = actor->partialTarget.v() - dragonMove->offset[actor->actionCycle][1];
+		actor->_location.u() = actor->_partialTarget.u() - dragonMove->offset[actor->_actionCycle][0];
+		actor->_location.v() = actor->_partialTarget.v() - dragonMove->offset[actor->_actionCycle][1];
 
-		actor->dragonStepCycle++;
-		if (actor->dragonStepCycle >= 3) {
-			actor->dragonStepCycle = 3;
+		actor->_dragonStepCycle++;
+		if (actor->_dragonStepCycle >= 3) {
+			actor->_dragonStepCycle = 3;
 		}
 	}
 
-	actor->frameNumber = actor->dragonBaseFrame + actor->dragonStepCycle;
+	actor->_frameNumber = actor->_dragonBaseFrame + actor->_dragonStepCycle;
 }
 
 void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point &toPoint) {
@@ -2343,7 +2340,7 @@ void Actor::findActorPath(ActorData *actor, const Point &fromPoint, const Point 
 	_debugPointsCount = 0;
 #endif
 
-	actor->walkStepsCount = 0;
+	actor->_walkStepsCount = 0;
 	if (fromPoint == toPoint) {
 		actor->addWalkStepPoint(toPoint);
 		return;

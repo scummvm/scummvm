@@ -239,43 +239,43 @@ struct Location {
 class CommonObjectData {
 public:
 //constant
-	bool disabled;					// disabled in init section
-	int32 index;					// index in local array
-	uint16 id;						// object id
-	int32 scriptEntrypointNumber;	// script entrypoint number
+	bool _disabled;					// disabled in init section
+	int32 _index;					// index in local array
+	uint16 _id;						// object id
+	int32 _scriptEntrypointNumber;	// script entrypoint number
 
 //variables
-	uint16 flags;				// initial flags
-	int32 nameIndex;			// index in name string list
-	int32 sceneNumber;			// scene
-	int32 spriteListResourceId;	// sprite list resource id
+	uint16 _flags;				// initial flags
+	int32 _nameIndex;			// index in name string list
+	int32 _sceneNumber;			// scene
+	int32 _spriteListResourceId;	// sprite list resource id
 
-	Location location;			// logical coordinates
-	Point screenPosition;		// screen coordinates
-	int32 screenDepth;			//
-	int32 screenScale;			//
+	Location _location;			// logical coordinates
+	Point _screenPosition;		// screen coordinates
+	int32 _screenDepth;			//
+	int32 _screenScale;			//
 	
 	void saveState(Common::OutSaveFile *out) {
-		out->writeUint16LE(flags);
-		out->writeSint32LE(nameIndex);
-		out->writeSint32LE(sceneNumber);
-		out->writeSint32LE(spriteListResourceId);
-		location.saveState(out);
-		out->writeSint16LE(screenPosition.x);
-		out->writeSint16LE(screenPosition.y);
-		out->writeSint32LE(screenDepth);
-		out->writeSint32LE(screenScale);
+		out->writeUint16LE(_flags);
+		out->writeSint32LE(_nameIndex);
+		out->writeSint32LE(_sceneNumber);
+		out->writeSint32LE(_spriteListResourceId);
+		_location.saveState(out);
+		out->writeSint16LE(_screenPosition.x);
+		out->writeSint16LE(_screenPosition.y);
+		out->writeSint32LE(_screenDepth);
+		out->writeSint32LE(_screenScale);
 	}
 	void loadState(Common::InSaveFile *in) {
-		flags = in->readUint16LE();
-		nameIndex = in->readSint32LE();
-		sceneNumber = in->readSint32LE();
-		spriteListResourceId = in->readSint32LE();
-		location.loadState(in);
-		screenPosition.x = in->readSint16LE();
-		screenPosition.y = in->readSint16LE();
-		screenDepth = in->readSint32LE();
-		screenScale = in->readSint32LE();
+		_flags = in->readUint16LE();
+		_nameIndex = in->readSint32LE();
+		_sceneNumber = in->readSint32LE();
+		_spriteListResourceId = in->readSint32LE();
+		_location.loadState(in);
+		_screenPosition.x = in->readSint16LE();
+		_screenPosition.y = in->readSint16LE();
+		_screenDepth = in->readSint32LE();
+		_screenScale = in->readSint32LE();
 	}
 };
 
@@ -286,7 +286,7 @@ typedef SortedList<CommonObjectDataPointer> CommonObjectOrderList;
 class ObjectData: public CommonObjectData {
 public:
 	//constant
-	uint16 interactBits;
+	uint16 _interactBits;
 	ObjectData() {
 		memset(this, 0, sizeof(*this));
 	}
@@ -295,179 +295,179 @@ public:
 class ActorData: public CommonObjectData {
 public:
 	//constant
-	SpriteList spriteList;		// sprite list data
+	SpriteList _spriteList;		// sprite list data
 
-	ActorFrameSequence *frames;	// Actor's frames
-	int framesCount;			// Actor's frames count
-	int frameListResourceId;	// Actor's frame list resource id
+	ActorFrameSequence *_frames;	// Actor's frames
+	int _framesCount;			// Actor's frames count
+	int _frameListResourceId;	// Actor's frame list resource id
 
-	byte speechColor;			// Actor dialogue color
+	byte _speechColor;			// Actor dialogue color
 	//
-	bool inScene;
+	bool _inScene;
 
 	//variables
-	uint16 actorFlags;			// dynamic flags
-	int32 currentAction;			// ActorActions type
-	int32 facingDirection;		// orientation
-	int32 actionDirection;
-	int32 actionCycle;
-	uint16 targetObject;
-	const HitZone *lastZone;
+	uint16 _actorFlags;			// dynamic flags
+	int32 _currentAction;			// ActorActions type
+	int32 _facingDirection;		// orientation
+	int32 _actionDirection;
+	int32 _actionCycle;
+	uint16 _targetObject;
+	const HitZone *_lastZone;
 
-	int32 cycleFrameSequence;
-	uint8 cycleDelay;
-	uint8 cycleTimeCount;
-	uint8 cycleFlags;
+	int32 _cycleFrameSequence;
+	uint8 _cycleDelay;
+	uint8 _cycleTimeCount;
+	uint8 _cycleFlags;
 
-	int16 fallVelocity;
-	int16 fallAcceleration;
-	int16 fallPosition;
+	int16 _fallVelocity;
+	int16 _fallAcceleration;
+	int16 _fallPosition;
 
-	uint8 dragonBaseFrame;
-	uint8 dragonStepCycle;
-	uint8 dragonMoveType;
+	uint8 _dragonBaseFrame;
+	uint8 _dragonStepCycle;
+	uint8 _dragonMoveType;
 
-	int32 frameNumber;			// current frame number
+	int32 _frameNumber;			// current frame number
 
-	int32 tileDirectionsAlloced;
-	byte *tileDirections;
+	int32 _tileDirectionsAlloced;
+	byte *_tileDirections;
 
-	int32 walkStepsAlloced;
-	Point *walkStepsPoints;
+	int32 _walkStepsAlloced;
+	Point *_walkStepsPoints;
 
-	int32 walkStepsCount;
-	int32 walkStepIndex;
+	int32 _walkStepsCount;
+	int32 _walkStepIndex;
 
-	Location finalTarget;
-	Location partialTarget;
-	int32 walkFrameSequence;
+	Location _finalTarget;
+	Location _partialTarget;
+	int32 _walkFrameSequence;
 
 public:
 	void saveState(Common::OutSaveFile *out) {
 		int i = 0;
 		CommonObjectData::saveState(out);
-		out->writeUint16LE(actorFlags);
-		out->writeSint32LE(currentAction);
-		out->writeSint32LE(facingDirection);
-		out->writeSint32LE(actionDirection);
-		out->writeSint32LE(actionCycle);
-		out->writeUint16LE(targetObject);
+		out->writeUint16LE(_actorFlags);
+		out->writeSint32LE(_currentAction);
+		out->writeSint32LE(_facingDirection);
+		out->writeSint32LE(_actionDirection);
+		out->writeSint32LE(_actionCycle);
+		out->writeUint16LE(_targetObject);
 
-		out->writeSint32LE(cycleFrameSequence);
-		out->writeByte(cycleDelay);
-		out->writeByte(cycleTimeCount);
-		out->writeByte(cycleFlags);
-		out->writeSint16LE(fallVelocity);
-		out->writeSint16LE(fallAcceleration);
-		out->writeSint16LE(fallPosition);
-		out->writeByte(dragonBaseFrame);
-		out->writeByte(dragonStepCycle);
-		out->writeByte(dragonMoveType);
-		out->writeSint32LE(frameNumber);
+		out->writeSint32LE(_cycleFrameSequence);
+		out->writeByte(_cycleDelay);
+		out->writeByte(_cycleTimeCount);
+		out->writeByte(_cycleFlags);
+		out->writeSint16LE(_fallVelocity);
+		out->writeSint16LE(_fallAcceleration);
+		out->writeSint16LE(_fallPosition);
+		out->writeByte(_dragonBaseFrame);
+		out->writeByte(_dragonStepCycle);
+		out->writeByte(_dragonMoveType);
+		out->writeSint32LE(_frameNumber);
 
-		out->writeSint32LE(tileDirectionsAlloced);
-		for (i = 0; i < tileDirectionsAlloced; i++) {
-			out->writeByte(tileDirections[i]);
+		out->writeSint32LE(_tileDirectionsAlloced);
+		for (i = 0; i < _tileDirectionsAlloced; i++) {
+			out->writeByte(_tileDirections[i]);
 		}
 
-		out->writeSint32LE(walkStepsAlloced);
-		for (i = 0; i < walkStepsAlloced; i++) {
-			out->writeSint16LE(walkStepsPoints[i].x);
-			out->writeSint16LE(walkStepsPoints[i].y);
+		out->writeSint32LE(_walkStepsAlloced);
+		for (i = 0; i < _walkStepsAlloced; i++) {
+			out->writeSint16LE(_walkStepsPoints[i].x);
+			out->writeSint16LE(_walkStepsPoints[i].y);
 		}
 
-		out->writeSint32LE(walkStepsCount);
-		out->writeSint32LE(walkStepIndex);
-		finalTarget.saveState(out);
-		partialTarget.saveState(out);
-		out->writeSint32LE(walkFrameSequence);
+		out->writeSint32LE(_walkStepsCount);
+		out->writeSint32LE(_walkStepIndex);
+		_finalTarget.saveState(out);
+		_partialTarget.saveState(out);
+		out->writeSint32LE(_walkFrameSequence);
 	}
 
 	void loadState(uint32 version, Common::InSaveFile *in) {
 		int i = 0;
 		CommonObjectData::loadState(in);
-		actorFlags = in->readUint16LE();
-		currentAction = in->readSint32LE();
-		facingDirection = in->readSint32LE();
-		actionDirection = in->readSint32LE();
-		actionCycle = in->readSint32LE();
-		targetObject = in->readUint16LE();
+		_actorFlags = in->readUint16LE();
+		_currentAction = in->readSint32LE();
+		_facingDirection = in->readSint32LE();
+		_actionDirection = in->readSint32LE();
+		_actionCycle = in->readSint32LE();
+		_targetObject = in->readUint16LE();
 
-		lastZone = NULL;
-		cycleFrameSequence = in->readSint32LE();
-		cycleDelay = in->readByte();
-		cycleTimeCount = in->readByte();
-		cycleFlags = in->readByte();
+		_lastZone = NULL;
+		_cycleFrameSequence = in->readSint32LE();
+		_cycleDelay = in->readByte();
+		_cycleTimeCount = in->readByte();
+		_cycleFlags = in->readByte();
 		if (version > 1) {
-			fallVelocity = in->readSint16LE();
-			fallAcceleration = in->readSint16LE();
-			fallPosition = in->readSint16LE();
+			_fallVelocity = in->readSint16LE();
+			_fallAcceleration = in->readSint16LE();
+			_fallPosition = in->readSint16LE();
 		} else {
-			fallVelocity = fallAcceleration = fallPosition = 0;
+			_fallVelocity = _fallAcceleration = _fallPosition = 0;
 		}
 		if (version > 2) {
-			dragonBaseFrame = in->readByte();
-			dragonStepCycle = in->readByte();
-			dragonMoveType = in->readByte();
+			_dragonBaseFrame = in->readByte();
+			_dragonStepCycle = in->readByte();
+			_dragonMoveType = in->readByte();
 		} else {
-			dragonBaseFrame = dragonStepCycle = dragonMoveType = 0;
+			_dragonBaseFrame = _dragonStepCycle = _dragonMoveType = 0;
 		}
 
-		frameNumber = in->readSint32LE();
+		_frameNumber = in->readSint32LE();
 
 
 		setTileDirectionsSize(in->readSint32LE(), true);
-		for (i = 0; i < tileDirectionsAlloced; i++) {
-			tileDirections[i] = in->readByte();
+		for (i = 0; i < _tileDirectionsAlloced; i++) {
+			_tileDirections[i] = in->readByte();
 		}
 
 		setWalkStepsPointsSize(in->readSint32LE(), true);
-		for (i = 0; i < walkStepsAlloced; i++) {
-			walkStepsPoints[i].x = in->readSint16LE();
-			walkStepsPoints[i].y = in->readSint16LE();
+		for (i = 0; i < _walkStepsAlloced; i++) {
+			_walkStepsPoints[i].x = in->readSint16LE();
+			_walkStepsPoints[i].y = in->readSint16LE();
 		}
 
-		walkStepsCount = in->readSint32LE();
-		walkStepIndex = in->readSint32LE();
-		finalTarget.loadState(in);
-		partialTarget.loadState(in);
-		walkFrameSequence = in->readSint32LE();
+		_walkStepsCount = in->readSint32LE();
+		_walkStepIndex = in->readSint32LE();
+		_finalTarget.loadState(in);
+		_partialTarget.loadState(in);
+		_walkFrameSequence = in->readSint32LE();
 	}
 
 	void setTileDirectionsSize(int size, bool forceRealloc) {
-		if ((size <= tileDirectionsAlloced) && !forceRealloc) {
+		if ((size <= _tileDirectionsAlloced) && !forceRealloc) {
 			return;
 		}
-		tileDirectionsAlloced = size;
-		tileDirections = (byte*)realloc(tileDirections, tileDirectionsAlloced * sizeof(*tileDirections));
+		_tileDirectionsAlloced = size;
+		_tileDirections = (byte*)realloc(_tileDirections, _tileDirectionsAlloced * sizeof(*_tileDirections));
 	}
 
 	void cycleWrap(int cycleLimit) {
-		if (actionCycle >= cycleLimit)
-			actionCycle = 0;
+		if (_actionCycle >= cycleLimit)
+			_actionCycle = 0;
 	}
 
 	void setWalkStepsPointsSize(int size, bool forceRealloc) {
-		if ((size <= walkStepsAlloced) && !forceRealloc) {
+		if ((size <= _walkStepsAlloced) && !forceRealloc) {
 			return;
 		}
-		walkStepsAlloced = size;
-		walkStepsPoints = (Point*)realloc(walkStepsPoints, walkStepsAlloced * sizeof(*walkStepsPoints));
+		_walkStepsAlloced = size;
+		_walkStepsPoints = (Point*)realloc(_walkStepsPoints, _walkStepsAlloced * sizeof(*_walkStepsPoints));
 	}
 
 	void addWalkStepPoint(const Point &point) {
-		setWalkStepsPointsSize(walkStepsCount + 1, false);
-		walkStepsPoints[walkStepsCount++] = point;
+		setWalkStepsPointsSize(_walkStepsCount + 1, false);
+		_walkStepsPoints[_walkStepsCount++] = point;
 	}
 
 	ActorData() {
 		memset(this, 0, sizeof(*this));
 	}
 	~ActorData() {
-		free(frames);
-		free(tileDirections);
-		free(walkStepsPoints);
-		spriteList.freeMem();
+		free(_frames);
+		free(_tileDirections);
+		free(_walkStepsPoints);
+		_spriteList.freeMem();
 	}
 };
 
@@ -531,7 +531,7 @@ public:
 		if (!(objectType & (kGameObjectObject | kGameObjectActor))) {
 			error("Actor::getObjectScriptEntrypointNumber wrong id 0x%X", id);
 		}
-		return (objectType == kGameObjectObject) ? getObj(id)->scriptEntrypointNumber : getActor(id)->scriptEntrypointNumber;
+		return (objectType == kGameObjectObject) ? getObj(id)->_scriptEntrypointNumber : getActor(id)->_scriptEntrypointNumber;
 	}
 	int getObjectFlags(uint16 id) {
 		int objectType;
@@ -539,7 +539,7 @@ public:
 		if (!(objectType & (kGameObjectObject | kGameObjectActor))) {
 			error("Actor::getObjectFlags wrong id 0x%X", id);
 		}
-		return (objectType == kGameObjectObject) ? getObj(id)->flags : getActor(id)->flags;
+		return (objectType == kGameObjectObject) ? getObj(id)->_flags : getActor(id)->_flags;
 	}
 
 	void direct(int msec);

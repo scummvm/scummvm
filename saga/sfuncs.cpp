@@ -273,8 +273,8 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
 	ObjectData *obj;
 	obj = _vm->_actor->getObj(objectId);
-	if (obj->sceneNumber != ITE_SCENE_INV) {
-		obj->sceneNumber = ITE_SCENE_INV;
+	if (obj->_sceneNumber != ITE_SCENE_INV) {
+		obj->_sceneNumber = ITE_SCENE_INV;
 		//4debug for (int j=0;j<17;j++)
 		_vm->_interface->addToInventory(objectId);
 	}
@@ -287,7 +287,7 @@ void Script::sfIsCarried(SCRIPTFUNC_PARAMS) {
 	CommonObjectData *object;
 	if (_vm->_actor->validObjId(objectId)) {
 		object = _vm->_actor->getObj(objectId);
-		thread->_returnValue = (object->sceneNumber == ITE_SCENE_INV) ? 1 : 0;
+		thread->_returnValue = (object->_sceneNumber == ITE_SCENE_INV) ? 1 : 0;
 	} else {
 		thread->_returnValue = 0;
 	}
@@ -330,9 +330,9 @@ void Script::sfScriptWalkTo(SCRIPTFUNC_PARAMS) {
 	actorLocation.y = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actorLocation.z = actor->location.z;
+	actorLocation.z = actor->_location.z;
 
-	actor->flags &= ~kFollower;
+	actor->_flags &= ~kFollower;
 
 	if (_vm->_actor->actorWalkTo(actorId, actorLocation)) {
 		thread->waitWalk(actor);
@@ -364,7 +364,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	switch (objectTypeId(objectId)) {
 		case kGameObjectObject:
 			obj = _vm->_actor->getObj(objectId);
-			scriptEntryPointNumber = obj->scriptEntrypointNumber;
+			scriptEntryPointNumber = obj->_scriptEntrypointNumber;
 			if (scriptEntryPointNumber <= 0) {
 				return;
 			}
@@ -372,11 +372,11 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			break;
 		case kGameObjectActor:
 			actor = _vm->_actor->getActor(objectId);
-			scriptEntryPointNumber = actor->scriptEntrypointNumber;
+			scriptEntryPointNumber = actor->_scriptEntrypointNumber;
 			if (scriptEntryPointNumber <= 0) {
 				return;
 			}
-			if (actor->flags & (kProtagonist | kFollower)) {
+			if (actor->_flags & (kProtagonist | kFollower)) {
 				moduleNumber = 0;
 			} else {
 				moduleNumber = _vm->_scene->getScriptModuleNumber();
@@ -422,8 +422,8 @@ void Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 	actorDirection =  thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actor->facingDirection = actor->actionDirection = actorDirection;
-	actor->targetObject = ID_NOTHING;
+	actor->_facingDirection = actor->_actionDirection = actorDirection;
+	actor->_targetObject = ID_NOTHING;
 }
 
 // Script function #9 (0x09)
@@ -508,7 +508,7 @@ void Script::sfFaceTowards(SCRIPTFUNC_PARAMS) {
 	targetObject = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actor->targetObject = targetObject;
+	actor->_targetObject = targetObject;
 }
 
 // Script function #15 (0x0F)
@@ -526,12 +526,12 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 	debug(1, "sfSetFollower(%d, %d) [%d]", actorId, targetObject, _vm->_actor->actorIdToIndex(actorId));
 
 	actor = _vm->_actor->getActor(actorId);
-	actor->targetObject = targetObject;
+	actor->_targetObject = targetObject;
 	if (targetObject != ID_NOTHING) {
-		actor->flags |= kFollower;
-		actor->actorFlags &= ~kActorNoFollow;
+		actor->_flags |= kFollower;
+		actor->_actorFlags &= ~kActorNoFollow;
 	} else {
-		actor->flags &= ~kFollower;
+		actor->_flags &= ~kFollower;
 	}
 }
 
@@ -577,7 +577,7 @@ void Script::sfSetObjImage(SCRIPTFUNC_PARAMS) {
 	spriteId = thread->pop();
 
 	obj = _vm->_actor->getObj(objectId);
-	obj->spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+	obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
 	_vm->_interface->refreshInventory();
 }
 
@@ -593,7 +593,7 @@ void Script::sfSetObjName(SCRIPTFUNC_PARAMS) {
 	nameIdx = thread->pop();
 
 	obj = _vm->_actor->getObj(objectId);
-	obj->nameIndex = nameIdx;
+	obj->_nameIndex = nameIdx;
 }
 
 // Script function #19 (0x13)
@@ -607,9 +607,9 @@ void Script::sfGetObjImage(SCRIPTFUNC_PARAMS) {
 	obj = _vm->_actor->getObj(objectId);
 
 	if (_vm->getGameType() == GType_IHNM)
-		thread->_returnValue = obj->spriteListResourceId;
+		thread->_returnValue = obj->_spriteListResourceId;
 	else
-		thread->_returnValue = obj->spriteListResourceId - OBJ_SPRITE_BASE;
+		thread->_returnValue = obj->_spriteListResourceId - OBJ_SPRITE_BASE;
 }
 
 // Script function #20 (0x14)
@@ -709,9 +709,9 @@ void Script::sfScriptWalkToAsync(SCRIPTFUNC_PARAMS) {
 	actorLocation.y = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actorLocation.z = actor->location.z;
+	actorLocation.z = actor->_location.z;
 
-	actor->flags &= ~kFollower;
+	actor->_flags &= ~kFollower;
 
 	_vm->_actor->actorWalkTo(actorId, actorLocation);
 }
@@ -732,7 +732,7 @@ void Script::sfEnableZone(SCRIPTFUNC_PARAMS) {
 		hitZone->setFlag(kHitZoneEnabled);
 	} else {
 		hitZone->clearFlag(kHitZoneEnabled);
-		_vm->_actor->_protagonist->lastZone = NULL;
+		_vm->_actor->_protagonist->_lastZone = NULL;
 	}
 }
 
@@ -752,8 +752,8 @@ void Script::sfSetActorState(SCRIPTFUNC_PARAMS) {
 	if ((currentAction >= kActionWalkToPoint) && (currentAction <= kActionWalkToPoint)) {
 		wakeUpActorThread(kWaitTypeWalk, actor);
 	}
-	actor->currentAction = currentAction;
-	actor->actorFlags &= ~kActorBackwards;
+	actor->_currentAction = currentAction;
+	actor->_actorFlags &= ~kActorBackwards;
 }
 
 // Script function #30 (0x1E) nonblocking
@@ -773,13 +773,13 @@ void Script::sfScriptMoveTo(SCRIPTFUNC_PARAMS) {
 	if (_vm->_actor->validActorId(objectId)) {
 		actor = _vm->_actor->getActor(objectId);
 
-		actor->location.x = location.x;
-		actor->location.y = location.y;
+		actor->_location.x = location.x;
+		actor->_location.y = location.y;
 	} else {
 		if (_vm->_actor->validObjId(objectId)) {
 			obj = _vm->_actor->getObj(objectId);
-			obj->location.x = location.x;
-			obj->location.y = location.y;
+			obj->_location.x = location.x;
+			obj->_location.y = location.y;
 		}
 	}
 }
@@ -810,19 +810,19 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 
 	obj = _vm->_actor->getObj(objectId);
 
-	if (obj->sceneNumber == ITE_SCENE_INV) {
+	if (obj->_sceneNumber == ITE_SCENE_INV) {
 		_vm->_interface->removeFromInventory(objectId);
 	}
 
-	obj->sceneNumber = _vm->_scene->currentSceneNumber();
+	obj->_sceneNumber = _vm->_scene->currentSceneNumber();
 
 	if (_vm->getGameType() == GType_IHNM)
-		obj->spriteListResourceId = spriteId;
+		obj->_spriteListResourceId = spriteId;
 	else
-		obj->spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
 
-	obj->location.x = x;
-	obj->location.y = y;
+	obj->_location.x = x;
+	obj->_location.y = y;
 }
 
 // Script function #33 (0x21)
@@ -849,15 +849,15 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 	actor1 = _vm->_actor->getActor(actorId1);
 	actor2 = _vm->_actor->getActor(actorId2);
 
-	SWAP(actor1->location, actor2->location);
+	SWAP(actor1->_location, actor2->_location);
 
-	if (actor1->flags & kProtagonist) {
-		actor1->flags &= ~kProtagonist;
-		actor2->flags |= kProtagonist;
+	if (actor1->_flags & kProtagonist) {
+		actor1->_flags &= ~kProtagonist;
+		actor2->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor2;
-	} else if (actor2->flags & kProtagonist) {
-		actor2->flags &= ~kProtagonist;
-		actor1->flags |= kProtagonist;
+	} else if (actor2->_flags & kProtagonist) {
+		actor2->_flags &= ~kProtagonist;
+		actor1->_flags |= kProtagonist;
 		_vm->_actor->_protagonist = _vm->_actor->_centerActor = actor1;
 	}
 
@@ -922,21 +922,21 @@ void Script::sfScriptWalk(SCRIPTFUNC_PARAMS) {
 	walkFlags = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actorLocation.z = actor->location.z;
+	actorLocation.z = actor->_location.z;
 
 	_vm->_actor->realLocation(actorLocation, ID_NOTHING, walkFlags);
 
-	actor->flags &= ~kFollower;
+	actor->_flags &= ~kFollower;
 
 	if (_vm->_actor->actorWalkTo(actorId, actorLocation) && !(walkFlags & kWalkAsync)) {
 		thread->waitWalk(actor);
 	}
 
 	if (walkFlags & kWalkBackPedal) {
-		actor->actorFlags |= kActorBackwards;
+		actor->_actorFlags |= kActorBackwards;
 	}
 
-	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
+	actor->_actorFlags = (actor->_actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
 }
 
 // Script function #37 (0x25) nonblocking
@@ -959,27 +959,27 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	actor = _vm->_actor->getActor(actorId);
 
 	if (flags & kCyclePong) {
-		actor->currentAction = kActionPongFrames;
+		actor->_currentAction = kActionPongFrames;
 	} else {
-		actor->currentAction = kActionCycleFrames;
+		actor->_currentAction = kActionCycleFrames;
 	}
 
-	actor->actorFlags &= ~(kActorContinuous | kActorRandom | kActorBackwards);
+	actor->_actorFlags &= ~(kActorContinuous | kActorRandom | kActorBackwards);
 
 	if (!(flags & kCycleOnce)) {
-		actor->actorFlags |= kActorContinuous;
+		actor->_actorFlags |= kActorContinuous;
 	}
 	if (flags & kCycleRandom) {
-		actor->actorFlags |= kActorRandom;
+		actor->_actorFlags |= kActorRandom;
 	}
 	if (flags & kCycleReverse) {
-		actor->actorFlags |= kActorBackwards;
+		actor->_actorFlags |= kActorBackwards;
 	}
 
-	actor->cycleFrameSequence	= cycleFrameSequence;
-	actor->cycleTimeCount = 0;
-	actor->cycleDelay = cycleDelay;
-	actor->actionCycle = 0;
+	actor->_cycleFrameSequence	= cycleFrameSequence;
+	actor->_cycleTimeCount = 0;
+	actor->_cycleDelay = cycleDelay;
+	actor->_actionCycle = 0;
 
 }
 
@@ -1002,10 +1002,10 @@ void Script::sfSetFrame(SCRIPTFUNC_PARAMS) {
 
 	frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 
-	actor->frameNumber = frameRange->frameIndex + frameOffset;
+	actor->_frameNumber = frameRange->frameIndex + frameOffset;
 
-	if (actor->currentAction != kActionFall) {
-		actor->currentAction = kActionFreeze;
+	if (actor->_currentAction != kActionFall) {
+		actor->_currentAction = kActionFreeze;
 	}
 }
 
@@ -1065,11 +1065,11 @@ void Script::sfScriptSpecialWalk(SCRIPTFUNC_PARAMS) {
 	walkFrameSequence =  thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actorLocation.z = actor->location.z;
+	actorLocation.z = actor->_location.z;
 
 	_vm->_actor->actorWalkTo(actorId, actorLocation);
 
-	actor->walkFrameSequence = walkFrameSequence;
+	actor->_walkFrameSequence = walkFrameSequence;
 }
 
 // Script function #43 (0x2B) nonblocking
@@ -1099,9 +1099,9 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 		  actorLocation.y, actorDirection, frameType, frameOffset);
 
 	actor = _vm->_actor->getActor(actorId);
-	actor->location.x = actorLocation.x;
-	actor->location.y = actorLocation.y;
-	actor->facingDirection = actor->actionDirection = actorDirection;
+	actor->_location.x = actorLocation.x;
+	actor->_location.y = actorLocation.y;
+	actor->_facingDirection = actor->_actionDirection = actorDirection;
 
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
@@ -1110,13 +1110,13 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 			error("Wrong frameOffset 0x%X", frameOffset);
 		}
 
-		actor->frameNumber = frameRange->frameIndex + frameOffset;
-		actor->currentAction = kActionFreeze;
+		actor->_frameNumber = frameRange->frameIndex + frameOffset;
+		actor->_currentAction = kActionFreeze;
 	} else {
-		actor->currentAction = kActionWait;
+		actor->_currentAction = kActionWait;
 	}
 
-	actor->targetObject = ID_NOTHING;
+	actor->_targetObject = ID_NOTHING;
 
 }
 
@@ -1148,21 +1148,21 @@ void Script::sfScriptWalkRelative(SCRIPTFUNC_PARAMS) {
 	walkFlags =  thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actorLocation.z = actor->location.z;
+	actorLocation.z = actor->_location.z;
 
 	_vm->_actor->realLocation(actorLocation, objectId, walkFlags);
 
-	actor->flags &= ~kFollower;
+	actor->_flags &= ~kFollower;
 
 	if (_vm->_actor->actorWalkTo(actorId, actorLocation) && !(walkFlags & kWalkAsync)) {
 		thread->waitWalk(actor);
 	}
 
 	if (walkFlags & kWalkBackPedal) {
-		actor->actorFlags |= kActorBackwards;
+		actor->_actorFlags |= kActorBackwards;
 	}
 
-	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
+	actor->_actorFlags = (actor->_actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
 }
 
 // Script function #46 (0x2E)
@@ -1185,13 +1185,13 @@ void Script::sfScriptMoveRelative(SCRIPTFUNC_PARAMS) {
 	walkFlags =  thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actorLocation.z = actor->location.z;
+	actorLocation.z = actor->_location.z;
 
 	_vm->_actor->realLocation(actorLocation, objectId, walkFlags);
 
 
-	actor->location = actorLocation;
-	actor->actorFlags = (actor->actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
+	actor->_location = actorLocation;
+	actor->_actorFlags = (actor->_actorFlags & ~kActorFacingMask) | (walkFlags & kActorFacingMask);
 }
 
 // Script function #47 (0x2F)
@@ -1449,15 +1449,15 @@ void Script::sfThrowActor(SCRIPTFUNC_PARAMS) {
 	flags = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	location.z = actor->location.z;
-	actor->currentAction = kActionFall;
-	actor->actionCycle = actionCycle;
-	actor->fallAcceleration	= -20;
-	actor->fallVelocity = - (actor->fallAcceleration * actor->actionCycle) / 2;
-	actor->fallPosition	= actor->location.z << 4;
+	location.z = actor->_location.z;
+	actor->_currentAction = kActionFall;
+	actor->_actionCycle = actionCycle;
+	actor->_fallAcceleration	= -20;
+	actor->_fallVelocity = - (actor->_fallAcceleration * actor->_actionCycle) / 2;
+	actor->_fallPosition	= actor->_location.z << 4;
 
-	actor->finalTarget = location;
-	actor->actionCycle--;
+	actor->_finalTarget = location;
+	actor->_actionCycle--;
 	if (!(flags & kWalkAsync)) {
 		thread->waitWalk(actor);
 	}
@@ -1473,9 +1473,9 @@ void Script::sfWaitWalk(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	actor = _vm->_actor->getActor(actorId);
 
-	if ((actor->currentAction == kActionWalkToPoint) ||
-		(actor->currentAction == kActionWalkToLink) ||
-		(actor->currentAction == kActionFall)) {
+	if ((actor->_currentAction == kActionWalkToPoint) ||
+		(actor->_currentAction == kActionWalkToLink) ||
+		(actor->_currentAction == kActionFall)) {
 			thread->waitWalk(actor);
 	}
 }
@@ -1496,7 +1496,7 @@ void Script::sfChangeActorScene(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	sceneNumber = thread->pop();
 	actor = _vm->_actor->getActor(actorId);
-	actor->sceneNumber = sceneNumber;
+	actor->_sceneNumber = sceneNumber;
 }
 
 // Script function #56 (0x38)
@@ -1517,11 +1517,11 @@ void Script::sfScriptClimb(SCRIPTFUNC_PARAMS) {
 	flags = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
-	actor->finalTarget.z = z;
-	actor->flags &= ~kFollower;
-	actor->actionCycle = 1;
-	actor->cycleFrameSequence = cycleFrameSequence;
-	actor->currentAction = kActionClimb;
+	actor->_finalTarget.z = z;
+	actor->_flags &= ~kFollower;
+	actor->_actionCycle = 1;
+	actor->_cycleFrameSequence = cycleFrameSequence;
+	actor->_currentAction = kActionClimb;
 	if (!(flags & kWalkAsync)) {
 		thread->waitWalk(actor);
 	}
@@ -1558,11 +1558,11 @@ void Script::sfSetActorZ(SCRIPTFUNC_PARAMS) {
 
 	if (_vm->_actor->validActorId(objectId)) {
 		actor = _vm->_actor->getActor(objectId);
-		actor->location.z = z;
+		actor->_location.z = z;
 	} else {
 		if (_vm->_actor->validObjId(objectId)) {
 			obj = _vm->_actor->getObj(objectId);
-			obj->location.z = z;
+			obj->_location.z = z;
 		}
 	}
 }
@@ -1607,7 +1607,7 @@ void Script::sfGetActorX(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	actor = _vm->_actor->getActor(actorId);
 
-	thread->_returnValue = actor->location.x >> 2;
+	thread->_returnValue = actor->_location.x >> 2;
 }
 
 // Script function #61 (0x3D)
@@ -1619,7 +1619,7 @@ void Script::sfGetActorY(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	actor = _vm->_actor->getActor(actorId);
 
-	thread->_returnValue = actor->location.y >> 2;
+	thread->_returnValue = actor->_location.y >> 2;
 }
 
 // Script function #62 (0x3E)
@@ -1663,9 +1663,9 @@ void Script::sfPickClimbOutPos(SCRIPTFUNC_PARAMS) {
 		v = (_vm->_rnd.getRandomNumber(63) & 63) + 40;
 		t = _vm->_isoMap->getTileIndex(u, v, 6);
 		if (t == 65) {
-			protagonist->location.u() = (u << 4) + 4;
-			protagonist->location.v() = (v << 4) + 4;
-			protagonist->location.z = 48;
+			protagonist->_location.u() = (u << 4) + 4;
+			protagonist->_location.v() = (v << 4) + 4;
+			protagonist->_location.z = 48;
 			break;
 		}
 
@@ -1678,22 +1678,22 @@ void Script::sfTossRif(SCRIPTFUNC_PARAMS) {
 	uint16 direction;
 	ActorData *protagonist = _vm->_actor->_protagonist;
 
-	uc = protagonist->location.u() >> 4;
-	vc = protagonist->location.v() >> 4;
+	uc = protagonist->_location.u() >> 4;
+	vc = protagonist->_location.v() >> 4;
 	if (_vm->_isoMap->findNearestChasm(uc, vc, direction)) {
 		uc <<= 4;
 		vc <<= 4;
-		protagonist->facingDirection = direction;
+		protagonist->_facingDirection = direction;
 
-		protagonist->finalTarget.u() = uc;
-		protagonist->finalTarget.v() = vc;
-		protagonist->finalTarget.z = -40;
-		protagonist->currentAction = kActionFall;
-		protagonist->actionCycle = 24;
-		protagonist->fallAcceleration = - 20;
-		protagonist->fallVelocity = - (protagonist->fallAcceleration * 16) / 2 - (44 / 12);
-		protagonist->fallPosition = protagonist->location.z << 4;
-		protagonist->actionCycle--;
+		protagonist->_finalTarget.u() = uc;
+		protagonist->_finalTarget.v() = vc;
+		protagonist->_finalTarget.z = -40;
+		protagonist->_currentAction = kActionFall;
+		protagonist->_actionCycle = 24;
+		protagonist->_fallAcceleration = - 20;
+		protagonist->_fallVelocity = - (protagonist->_fallAcceleration * 16) / 2 - (44 / 12);
+		protagonist->_fallPosition = protagonist->_location.z << 4;
+		protagonist->_actionCycle--;
 	}
 }
 

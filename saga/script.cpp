@@ -514,10 +514,10 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 	_vm->_actor->abortSpeech();
 
-	if ((_vm->_actor->_protagonist->currentAction != kActionWait) &&
-		(_vm->_actor->_protagonist->currentAction != kActionFreeze) &&
-		(_vm->_actor->_protagonist->currentAction != kActionWalkToLink) &&
-		(_vm->_actor->_protagonist->currentAction != kActionWalkToPoint)) {
+	if ((_vm->_actor->_protagonist->_currentAction != kActionWait) &&
+		(_vm->_actor->_protagonist->_currentAction != kActionFreeze) &&
+		(_vm->_actor->_protagonist->_currentAction != kActionWalkToLink) &&
+		(_vm->_actor->_protagonist->_currentAction != kActionWalkToPoint)) {
 		return;
 	}
 	if (_pendingVerb > kVerbNone) {
@@ -567,7 +567,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 			if (_vm->_scene->getFlags() & kSceneFlagISO) {
 				pickLocation.u() = specialPoint.x;
 				pickLocation.v() = specialPoint.y;
-				pickLocation.z = _vm->_actor->_protagonist->location.z;
+				pickLocation.z = _vm->_actor->_protagonist->_location.z;
 			} else {
 				pickLocation.fromScreenPoint(specialPoint);
 			}
@@ -616,7 +616,7 @@ void Script::whichObject(const Point& mousePoint) {
 	_leftButtonVerb = _currentVerb;
 	newRightButtonVerb = kVerbNone;
 
-	if (_vm->_actor->_protagonist->currentAction != kActionWalkDir) {
+	if (_vm->_actor->_protagonist->_currentAction != kActionWalkDir) {
 		if (_vm->getSceneHeight() >= mousePoint.y) {
 			newObjectId = _vm->_actor->hitTest(mousePoint, true);
 
@@ -640,7 +640,7 @@ void Script::whichObject(const Point& mousePoint) {
 						(_currentVerb == kVerbOpen) ||
 						(_currentVerb == kVerbClose) ||
 						((_currentVerb == kVerbGive) && !_firstObjectSet) ||
-						((_currentVerb == kVerbUse) && !(actor->flags & kFollower))) {
+						((_currentVerb == kVerbUse) && !(actor->_flags & kFollower))) {
 							objectId = ID_NOTHING;
 							newObjectId = ID_NOTHING;
 						}
@@ -652,7 +652,7 @@ void Script::whichObject(const Point& mousePoint) {
 				pickPoint = mousePoint;
 
 				if (_vm->_scene->getFlags() & kSceneFlagISO) {
-					pickPoint.y -= _vm->_actor->_protagonist->location.z;
+					pickPoint.y -= _vm->_actor->_protagonist->_location.z;
 					_vm->_isoMap->screenPointToTileCoords(pickPoint, pickLocation);
 					pickLocation.toScreenPointUV(pickPoint);
 				}
@@ -705,7 +705,7 @@ void Script::whichObject(const Point& mousePoint) {
 					if (objectId != 0) {
 						obj = _vm->_actor->getObj(objectId);
 						newRightButtonVerb = kVerbLookAt;
-						if (obj->interactBits & kObjUseWith) {
+						if (obj->_interactBits & kObjUseWith) {
 							objectFlags = kObjUseWith;
 						}
 					}

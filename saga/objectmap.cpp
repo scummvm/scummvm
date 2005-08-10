@@ -227,7 +227,7 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 	pickPoint = testPoint;
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		assert(_vm->_actor->_protagonist);
-		pickPoint.y -= _vm->_actor->_protagonist->location.z;
+		pickPoint.y -= _vm->_actor->_protagonist->_location.z;
 		_vm->_isoMap->screenPointToTileCoords(pickPoint, pickLocation);
 		pickLocation.toScreenPointUV(pickPoint);
 	}

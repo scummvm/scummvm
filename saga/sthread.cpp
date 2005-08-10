@@ -148,7 +148,7 @@ void Script::executeThreads(uint msec) {
 				{
 					ActorData *actor;
 					actor = (ActorData *)thread->_threadObj;
-					if (actor->currentAction == kActionWait) {
+					if (actor->_currentAction == kActionWait) {
 						thread->_flags &= ~kTFlagWaiting;
 					}
 				}

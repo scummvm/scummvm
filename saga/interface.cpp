@@ -210,7 +210,7 @@ int Interface::activate() {
 	if (!_active) {
 		_active = true;
 		_vm->_script->_skipSpeeches = false;
-		_vm->_actor->_protagonist->targetObject = ID_NOTHING;
+		_vm->_actor->_protagonist->_targetObject = ID_NOTHING;
 		_vm->_gfx->showCursor(true);
 		unlockMode();
 		if (_panelMode == kPanelMain){
@@ -1197,12 +1197,12 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 
 		case kGameObjectActor:
 			a = _vm->_actor->getActor(obj);
-			script = a->scriptEntrypointNumber;
+			script = a->_scriptEntrypointNumber;
 			break;
 
 		case kGameObjectObject:
 			o = _vm->_actor->getObj(obj);
-			script = o->scriptEntrypointNumber;
+			script = o->_scriptEntrypointNumber;
 			break;
 		}
 
@@ -1465,7 +1465,7 @@ void Interface::handleMainClick(const Point& mousePoint) {
 				_vm->_script->hitObject(_vm->leftMouseButtonPressed());
 			}
 			if (_vm->_script->_pendingVerb) {
-				_vm->_actor->_protagonist->currentAction = kActionWait;
+				_vm->_actor->_protagonist->_currentAction = kActionWait;
 				_vm->_script->doVerb();
 			}
 		}
@@ -1646,7 +1646,7 @@ void Interface::drawInventory(Surface *backBuffer) {
 
 		if (ci < _inventoryCount) {
 			obj = _vm->_actor->getObj(_inventory[ci]);
-			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, obj->spriteListResourceId, rect, 256);
+			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, obj->_spriteListResourceId, rect, 256);
 		}
 
 		ci++;

@@ -478,7 +478,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 						  _metaResource.actorsResourceID, _metaResource.protagStatesCount,
 						  _metaResource.protagStatesResourceID);
 
-	_vm->_actor->_protagonist->sceneNumber = _metaResource.sceneIndex;
+	_vm->_actor->_protagonist->_sceneNumber = _metaResource.sceneIndex;
 
 	// TODO: field_16
 

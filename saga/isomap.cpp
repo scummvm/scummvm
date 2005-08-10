@@ -283,7 +283,7 @@ void IsoMap::adjustScroll(bool jump) {
 	Point maxScrollPos;
 
 
-	tileCoordsToScreenPoint(_vm->_actor->_centerActor->location, playerPoint);
+	tileCoordsToScreenPoint(_vm->_actor->_centerActor->_location, playerPoint);
 
 	if (_vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 		_mapPosition.x = (playerPoint.x + _viewScroll.x) * 30 / 100 - (381);
@@ -327,7 +327,7 @@ void IsoMap::adjustScroll(bool jump) {
 		uint16 objectId;
 		objectId = _vm->_actor->objIndexToId(ITE_OBJ_MAP);
 		obj = _vm->_actor->getObj(objectId);
-		if (obj->sceneNumber != ITE_SCENE_INV) {
+		if (obj->_sceneNumber != ITE_SCENE_INV) {
 			_viewScroll.x = 1552 + 8;
 			_viewScroll.y = 1456 + 8;
 		}
@@ -1093,7 +1093,7 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 
 #define TEST_TILE_EPILOG(index)									\
 	} else {													\
-		if (_vm->_actor->_protagonist->location.z > 0) {		\
+		if (_vm->_actor->_protagonist->_location.z > 0) {		\
 			terraComp[index] = SAGA_IMPASSABLE;					\
 		}														\
 	}
@@ -1192,16 +1192,16 @@ void IsoMap::placeOnTileMap(const Location &start, Location &result, int16 dista
 	bestU = SAGA_SEARCH_CENTER;
 	bestV = SAGA_SEARCH_CENTER;
 
-	_platformHeight = _vm->_actor->_protagonist->location.z / 8;
+	_platformHeight = _vm->_actor->_protagonist->_location.z / 8;
 
 	memset( &_searchArray, 0, sizeof(_searchArray));
 
 	for (i = 0; i < _vm->_actor->_actorsCount; i++) {
 		actor = _vm->_actor->_actors[i];
-		if (!actor->inScene) continue;
+		if (!actor->_inScene) continue;
 
-		u = (actor->location.u() >> 4) - uBase;
-		v = (actor->location.v() >> 4) - vBase;
+		u = (actor->_location.u() >> 4) - uBase;
+		v = (actor->_location.v() >> 4) - vBase;
 		if ((u >= 0) && (u < SAGA_SEARCH_DIAMETER) &&
 			(v >= 0) && (v < SAGA_SEARCH_DIAMETER) &&
 			((u != SAGA_SEARCH_CENTER) || (v != SAGA_SEARCH_CENTER))) {
@@ -1360,7 +1360,7 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 	uFinish = (end.u() >> 4) - uBase;
 	vFinish = (end.v() >> 4) - vBase;
 
-	_platformHeight = _vm->_actor->_protagonist->location.z / 8;
+	_platformHeight = _vm->_actor->_protagonist->_location.z / 8;
 
 	memset( &_dragonSearchArray, 0, sizeof(_dragonSearchArray));
 
@@ -1475,10 +1475,10 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 		i = 64;
 	}*/
 
-	actor->walkStepsCount = i;
+	actor->_walkStepsCount = i;
 	if (i) {
 		actor->setTileDirectionsSize(i, false);
-		memcpy(actor->tileDirections, res, i );
+		memcpy(actor->_tileDirections, res, i );
 	}
 
 }
@@ -1516,21 +1516,21 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 	uFinish = (end.u() >> 4) - uBase;
 	vFinish = (end.v() >> 4) - vBase;
 
-	_platformHeight = _vm->_actor->_protagonist->location.z / 8;
+	_platformHeight = _vm->_actor->_protagonist->_location.z / 8;
 
 
 
 	memset( &_searchArray, 0, sizeof(_searchArray));
 
-	if (!(actor->actorFlags & kActorNoCollide) &&
+	if (!(actor->_actorFlags & kActorNoCollide) &&
 		(_vm->_scene->currentSceneResourceId() != RID_ITE_OVERMAP_SCENE)) {
 			for (i = 0; i < _vm->_actor->_actorsCount; i++) {
 				other = _vm->_actor->_actors[i];
-				if (!other->inScene) continue;
-				if (other==actor) continue;
+				if (!other->_inScene) continue;
+				if (other == actor) continue;
 
-				u = (other->location.u() >> 4) - uBase;
-				v = (other->location.v() >> 4) - vBase;
+				u = (other->_location.u() >> 4) - uBase;
+				v = (other->_location.v() >> 4) - vBase;
 				if ((u >= 1) && (u < SAGA_SEARCH_DIAMETER) &&
 					(v >= 1) && (v < SAGA_SEARCH_DIAMETER) &&
 					((u != SAGA_SEARCH_CENTER) || (v != SAGA_SEARCH_CENTER))) {
@@ -1607,10 +1607,10 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 /*	if (i > 64) {
 		i = 64;
 	}*/
-	actor->walkStepsCount = i;
+	actor->_walkStepsCount = i;
 	if (i) {
 		actor->setTileDirectionsSize(i, false);
-		memcpy(actor->tileDirections, res, i );
+		memcpy(actor->_tileDirections, res, i );
 	}
 }
 
@@ -1641,30 +1641,30 @@ static const int16 directions[8][2] = {
 bool IsoMap::nextTileTarget(ActorData* actor) {
 	uint16 dir;
 
-	if (actor->walkStepIndex >= actor->walkStepsCount) {
+	if (actor->_walkStepIndex >= actor->_walkStepsCount) {
 		return false;
 	}
 
 
-	actor->actionDirection = dir = actor->tileDirections[actor->walkStepIndex++];
+	actor->_actionDirection = dir = actor->_tileDirections[actor->_walkStepIndex++];
 
-	actor->partialTarget.u() =
-		(actor->location.u() & ~0x0f) + 8 + directions[dir][0];
+	actor->_partialTarget.u() =
+		(actor->_location.u() & ~0x0f) + 8 + directions[dir][0];
 
-	actor->partialTarget.v() =
-		(actor->location.v() & ~0x0f) + 8 + directions[dir][1];
+	actor->_partialTarget.v() =
+		(actor->_location.v() & ~0x0f) + 8 + directions[dir][1];
 
 
 	if (dir == 0) {
-		actor->facingDirection = kDirUp;
+		actor->_facingDirection = kDirUp;
 	} else {
 		if (dir == 4) {
-			actor->facingDirection = kDirDown;
+			actor->_facingDirection = kDirDown;
 		} else {
 			if (dir < 4) {
-				actor->facingDirection = kDirRight;
+				actor->_facingDirection = kDirRight;
 			} else {
-				actor->facingDirection = kDirLeft;
+				actor->_facingDirection = kDirLeft;
 			}
 		}
 	}
@@ -1683,11 +1683,11 @@ void IsoMap::screenPointToTileCoords(const Point &position, Location &location) 
 	}
 
 	x = mPos.x + _viewScroll.x - (128 * SAGA_TILEMAP_W) - 16;
-	y = mPos.y + _viewScroll.y - (128 * SAGA_TILEMAP_W) + _vm->_actor->_protagonist->location.z;
+	y = mPos.y + _viewScroll.y - (128 * SAGA_TILEMAP_W) + _vm->_actor->_protagonist->_location.z;
 
 	location.u() = (x - y * 2) >> 1;
 	location.v() = - (x + y * 2) >> 1;
-	location.z = _vm->_actor->_protagonist->location.z;
+	location.z = _vm->_actor->_protagonist->_location.z;
 }
 
 } // End of namespace Saga

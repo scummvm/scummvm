@@ -376,11 +376,11 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 	switch (objectTypeId(objectId)) {
 	case kGameObjectObject:
 		obj = _actor->getObj(objectId);
-		return _script->_mainStrings.getString(obj->nameIndex);
+		return _script->_mainStrings.getString(obj->_nameIndex);
 		break;
 	case kGameObjectActor:
 		actor = _actor->getActor(objectId);
-		return _actor->_actorsStrings.getString(actor->nameIndex);
+		return _actor->_actorsStrings.getString(actor->_nameIndex);
 		break;
 	case kGameObjectHitZone:
 		hitZone = _scene->_objectMap->getHitZone(objectIdToIndex(objectId));
