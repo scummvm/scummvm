@@ -29,10 +29,8 @@
 #include "imuse/imuse_sndmgr.h"
 #include "imuse/imuse_mcmp_mgr.h"
 
-// When Manny goes for Glottis' heart in the Petrified Forest we need
-// at least 16 tracks (sp.set)
 #define MAX_IMUSE_TRACKS 16
-#define MAX_IMUSE_FADETRACKS 8
+#define MAX_IMUSE_FADETRACKS 16
 
 struct ImuseTable {
 	byte opcode;
