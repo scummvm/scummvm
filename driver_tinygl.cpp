@@ -23,10 +23,6 @@
 #include "tinygl/gl.h"
 #include "tinygl/zgl.h"
 
-// enable define below to turn on lights without texture mapping,
-// TinyGL doesn't support texture mapping with lights currently
-//#define TURN_ON_LIGTHS_WITHOUT_TEXTURES
-
 // func below is from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,
 		TGLfloat centery, TGLfloat centerz, TGLfloat upx, TGLfloat upy, TGLfloat upz) {
@@ -165,9 +161,7 @@ bool DriverTinyGL::isHardwareAccelerated() {
 }
 
 void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
-#ifndef TURN_ON_LIGTHS_WITHOUT_TEXTURES
 	tglEnable(TGL_TEXTURE_2D);
-#endif
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
 	tglTranslatef(pos.x(), pos.y(), pos.z());
