@@ -238,11 +238,15 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 {
     PIXEL *texture;
     float fdzdx,fndzdx,ndszdx,ndtzdx;
+    int _drgbdx;
 
 #define INTERP_Z
+#define INTERP_RGB
 #define INTERP_STZ
 
 #define NB_INTERP 8
+
+#define SAR_RND_TO_ZERO(v,n) (v / (1<<n))
 
 #define DRAW_INIT()				\
 {						\
@@ -251,6 +255,9 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   fndzdx=NB_INTERP * fdzdx;\
   ndszdx=NB_INTERP * dszdx;\
   ndtzdx=NB_INTERP * dtzdx;\
+  _drgbdx=(SAR_RND_TO_ZERO(drdx,6) << 22) & 0xFFC00000;		\
+  _drgbdx|=SAR_RND_TO_ZERO(dgdx,5) & 0x000007FF;		\
+  _drgbdx|=(SAR_RND_TO_ZERO(dbdx,7) << 12) & 0x001FF000; 	\
 }
 
 
@@ -278,14 +285,19 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 {						\
    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
      if (ZCMP(zz,pz[_a])) {				\
+       tmp=rgb & 0xF81F07E0;			\
+	   unsigned int light = tmp | (tmp >> 16); \
        PIXEL pixel = *(PIXEL *)((char *)texture+ \
           (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));\
        unsigned int c_r = (pixel & 0xF800) >> 9;    \
        unsigned int c_g = (pixel & 0x07E0) >> 4;    \
        unsigned int c_b = (pixel & 0x001F) << 2;    \
-       c_r = (c_r + (p2->r>>9)); \
-       c_g = (c_g + (p2->g>>9)); \
-       c_b = (c_b + (p2->b>>9)); \
+       unsigned int l_r = (light & 0xF800) >> 9;    \
+       unsigned int l_g = (light & 0x07E0) >> 4;    \
+       unsigned int l_b = (light & 0x001F) << 2;    \
+       c_r = (c_r + l_r); \
+       c_g = (c_g + l_g); \
+       c_b = (c_b + l_b); \
        pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3); \
        pp[_a]=pixel;            \
        pz[_a]=zz;				\
@@ -293,6 +305,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
     z+=dzdx;					\
     s+=dsdx;					\
     t+=dtdx;					\
+    rgb=(rgb+drgbdx) & ( ~ 0x00200800);		\
 }
 
 #endif
@@ -301,7 +314,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 {						\
   register unsigned short *pz;		\
   register PIXEL *pp;		\
-  register unsigned int s,t,z,zz;	\
+  register unsigned int s,t,z,zz,rgb,drgbdx;	\
   register int n,dsdx,dtdx;		\
   float sz,tz,fz,zinv; \
   n=(x2>>16)-x1;                             \
@@ -312,6 +325,10 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   z=z1;						\
   sz=sz1;\
   tz=tz1;\
+  rgb=(r1 << 16) & 0xFFC00000;						   \
+  rgb|=(g1 >> 5) & 0x000007FF;						   \
+  rgb|=(b1 << 5) & 0x001FF000;						   \
+  drgbdx=_drgbdx;							   \
   while (n>=(NB_INTERP-1)) {						   \
     {\
       float ss,tt;\

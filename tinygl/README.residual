@@ -6,3 +6,4 @@ The changes made from the original version of TinyGL 0.4 are:
 * Changed includes paths in source files.
 * Added needed type cast and fixes for proper compile.
 * Added 't/T' prefix to prevent OpenGl names duplication.
+* Added light shading texture mapping mode.
