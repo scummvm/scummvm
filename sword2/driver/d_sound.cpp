@@ -51,7 +51,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 	#ifdef USE_MAD
 			{ "cl3", kMP3Mode },
 	#endif
-	#if defined(USE_VORBIS) || defined(USE_TREMOR)
+	#ifdef USE_VORBIS
 			{ "clg", kVorbisMode },
 	#endif
 	#ifdef USE_FLAC
@@ -135,7 +135,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 	case kMP3Mode:
 		return makeMP3Stream(fh->file, enc_len);
 #endif
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 	case kVorbisMode:
 		return makeVorbisStream(fh->file, enc_len);
 #endif

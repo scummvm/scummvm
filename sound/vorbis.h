@@ -25,7 +25,7 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 
 class AudioStream;
 class DigitalTrackInfo;

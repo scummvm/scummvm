@@ -945,6 +945,7 @@ cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
   _def_tremor='#define USE_TREMOR'
+  _def_vorbis='#define USE_VORBIS'
   LIBS="$LIBS $TREMOR_LIBS -lvorbisidec"
   INCLUDES="$INCLUDES $TREMOR_CFLAGS"
 else

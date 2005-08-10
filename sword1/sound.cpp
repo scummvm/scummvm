@@ -203,7 +203,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_waveVolPos = 0;
 		}
 #endif
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 		else if (_cowMode == CowVorbis) {
 			_cowFile.seek(index);
 			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speechHandle, makeVorbisStream(&_cowFile, sampleSize), SOUND_SPEECH_ID, speechVol, speechPan);
@@ -329,7 +329,7 @@ void Sound::initCowSystem(void) {
 		_cowMode = CowMp3;
 	}
 #endif
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 	if (!_cowFile.isOpen()) {
 		sprintf(cowName, "SPEECH%d.CLV", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);

@@ -45,7 +45,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ "Flac",			"flac", makeFlacStream },
 	{ "Flac",			"fla",  makeFlacStream },
 #endif
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 	{ "Ogg Vorbis",		"ogg",  makeVorbisStream },
 #endif
 #ifdef USE_MAD

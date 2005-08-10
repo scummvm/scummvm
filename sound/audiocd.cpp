@@ -47,7 +47,7 @@ static const TrackFormat TRACK_FORMATS[] = {
 #ifdef USE_FLAC
 	{ "Flac",			getFlacTrack },
 #endif
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 	{ "Ogg Vorbis",		getVorbisTrack },
 #endif
 #ifdef USE_MAD

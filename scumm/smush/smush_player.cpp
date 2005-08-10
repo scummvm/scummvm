@@ -1199,7 +1199,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	if (i == NULL) {
 		error("invalid filename : %s", filename);
 	}
-#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_TREMOR)
+#if defined(USE_MAD) || defined(USE_VORBIS)
 	char fname[260];
 #endif
 #ifdef USE_MAD
@@ -1213,7 +1213,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 		return;
 	}
 #endif
-#if defined(USE_VORBIS) || defined(USE_TREMOR)
+#ifdef USE_VORBIS
 	memcpy(fname, filename, i - filename);
 	strcpy(fname + (i - filename), ".ogg");
 	_compressedFile.open(fname);

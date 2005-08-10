@@ -75,7 +75,7 @@ DEFINES 		= 	-D__GP32__
 DEFINES			+=	-DNONSTANDARD_PORT
 
 # Support Vorbis Tremor Patches.
-#DEFINES		+=	-DVORBIS_TREMOR
+#DEFINES		+=	-DUSE_TREMOR
 
 # Support LIBMAD Patches.
 #DEFINES		+=	-DGP32_MADMP3
