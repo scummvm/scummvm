@@ -94,7 +94,7 @@
 class BitmapComponent : public Costume::Component {
 public:
 	BitmapComponent(Costume::Component *parent, int parentID, const char *filename, char *tag);
-	void setMapName(char *map) { }
+	void setMapName(char */*map*/) { }
 	void setKey(int val);
 
 private:
