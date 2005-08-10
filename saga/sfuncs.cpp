@@ -209,8 +209,8 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfRand),
 		OPCODE(sfFadeMusic),
 		OPCODE(sfNull),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
+		OPCODE(sf74),
+		OPCODE(sf75),
 		OPCODE(sfScriptStartCutAway),
 		OPCODE(sfReturnFromCutAway),
 		OPCODE(sfEndCutAway),
@@ -218,28 +218,28 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfResetMouseClicks),
 		OPCODE(sfWaitFrames),
 		OPCODE(sfScriptFade),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
+		OPCODE(sf83),
+		OPCODE(sf84),
+		OPCODE(sf85),
 		OPCODE(sfSetActorZ),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
+		OPCODE(sf87),
+		OPCODE(sf88),
+		OPCODE(sf89),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
-		OPCODE(SF_stub),
 		OPCODE(sfNull),
 		OPCODE(sfDemoIsInteractive),
 		OPCODE(sfVsetTrack),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub),
+		OPCODE(sf95),
+		OPCODE(sf96),
+		OPCODE(sf97),
+		OPCODE(sf98),
+		OPCODE(sf99),
+		OPCODE(sfSetSpeechBox),
 		OPCODE(sfDebugShowData),
 		OPCODE(sfWaitFramesEsc),
-		OPCODE(SF_stub),
-		OPCODE(SF_stub)
+		OPCODE(sf103),
+		OPCODE(sf104)
 	};
 	if (_vm->getGameType() == GType_IHNM)
 		_scriptFunctionsList = IHNMscriptFunctionsList;
@@ -666,10 +666,9 @@ void Script::sfSetBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 
 // Script function #24 (0x18)
 void Script::SF_cycleColors(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+	SF_stub("SF_cycleColors", thread, nArgs);
 
-	error("STUB: SF_cycleColors(), %d args", nArgs);
+	error("Please, report this to sev");
 }
 
 // Script function #25 (0x19)
@@ -1399,15 +1398,11 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-	warning("STUB: sfPsychicProfile()");
+	SF_stub("sfPsychicProfile", thread, nArgs);
 }
 
 void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-	warning("STUB: sfPsychicProfileOff()");
+	SF_stub("sfPsychicProfileOff", thread, nArgs);
 }
 
 // Script function #50 (0x32)
@@ -1823,53 +1818,64 @@ void Script::finishDialog(int replyID, int flags, int bitOffset) {
 	wakeUpThreads(kWaitTypeDialogBegin);
 }
 
-void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::sf74(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf74", thread, nArgs);
+}
 
-	debug(0, "STUB: sfScriptStartCutAway(), %d args", nArgs);
+void Script::sf75(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf75", thread, nArgs);
+}
+
+void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfScriptStartCutAway", thread, nArgs);
 }
 
 void Script::sfReturnFromCutAway(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: sfReturnFromCutAway(), %d args", nArgs);
+	SF_stub("sfReturnFromCutAway", thread, nArgs);
 }
 
 void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: sfEndCutAway(), %d args", nArgs);
+	SF_stub("sfEndCutAway", thread, nArgs);
 }
 
 void Script::sfGetMouseClicks(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: sfGetMouseClicks(), %d args", nArgs);
+	SF_stub("sfGetMouseClicks", thread, nArgs);
 }
 
 void Script::sfResetMouseClicks(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: sfResetMouseClicks(), %d args", nArgs);
+	SF_stub("sfResetMouseClicks", thread, nArgs);
 }
 
 void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
-
-	debug(0, "STUB: sfWaitFrames(), %d args", nArgs);
+	SF_stub("sfWaitFrames", thread, nArgs);
 }
 
 void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+	SF_stub("sfScriptFade", thread, nArgs);
+}
 
-	debug(0, "STUB: sfScriptFade(), %d args", nArgs);
+void Script::sf83(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf83", thread, nArgs);
+}
+
+void Script::sf84(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf84", thread, nArgs);
+}
+
+void Script::sf85(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf85", thread, nArgs);
+}
+
+void Script::sf87(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf87", thread, nArgs);
+}
+
+void Script::sf88(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf88", thread, nArgs);
+}
+
+void Script::sf89(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf89", thread, nArgs);
 }
 
 void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {
@@ -1892,6 +1898,40 @@ void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->changeScene(sceneNumber, actorsEntrance, kTransitionFade, chapter);
 }
 
+void Script::sf95(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf95", thread, nArgs);
+}
+
+void Script::sf96(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf96", thread, nArgs);
+}
+
+void Script::sf97(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf97", thread, nArgs);
+}
+
+void Script::sf98(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf98", thread, nArgs);
+}
+
+void Script::sf99(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf99", thread, nArgs);
+}
+
+void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {
+	int16 param1 = thread->pop();
+	int16 param2 = thread->pop();
+	int16 param3 = thread->pop();
+	int16 param4 = thread->pop();
+
+	_vm->_actor->_speechBoxScript.left = param1;
+	_vm->_actor->_speechBoxScript.top = param2;
+	_vm->_actor->_speechBoxScript.setWidth(param3);
+	_vm->_actor->_speechBoxScript.setHeight(param4);
+
+	debug(0, "STUB: sfSetSpeechBox(%d, %d, %d, %d)", param1, param2, param3, param4);
+}
+
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	char buf[50];
@@ -1903,6 +1943,16 @@ void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
 
 void Script::sfWaitFramesEsc(SCRIPTFUNC_PARAMS) {
 	thread->_returnValue = 0;
+
+	debug(0, "STUB: sfWaitFramesEsc()");
+}
+
+void Script::sf103(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf103", thread, nArgs);
+}
+
+void Script::sf104(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf104", thread, nArgs);
 }
 
 void Script::sfNull(SCRIPTFUNC_PARAMS) {
@@ -1910,11 +1960,19 @@ void Script::sfNull(SCRIPTFUNC_PARAMS) {
 		thread->pop();
 }
 
-void Script::SF_stub(SCRIPTFUNC_PARAMS) {
-	for (int i = 0; i < nArgs; i++)
-		thread->pop();
+void Script::SF_stub(const char *name, ScriptThread *thread, int nArgs) {
+	char buf[256], buf1[100];
 
-	debug(0, "STUB: SF_stub(), %d args", nArgs);
+	snprintf(buf, 256, "STUB: %s(", name);
+
+	for (int i = 0; i < nArgs; i++) {
+		snprintf(buf1, 100, "%d", thread->pop());
+		strncat(buf, buf1, 256);
+		if (i + 1 < nArgs)
+			strncat(buf, ", ", 256);
+	}
+
+	debug(0, "%s)", buf);
 }
 
 } // End of namespace Saga

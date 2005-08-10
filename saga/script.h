@@ -551,11 +551,28 @@ private:
 	void sfDemoIsInteractive(SCRIPTFUNC_PARAMS);
 	void sfVsetTrack(SCRIPTFUNC_PARAMS);
 	void sfDebugShowData(SCRIPTFUNC_PARAMS);
-	void SF_stub(SCRIPTFUNC_PARAMS);
 	void sfNull(SCRIPTFUNC_PARAMS);
 	void sfWaitFramesEsc(SCRIPTFUNC_PARAMS);
 	void sfPsychicProfile(SCRIPTFUNC_PARAMS);
 	void sfPsychicProfileOff(SCRIPTFUNC_PARAMS);
+	void sfSetSpeechBox(SCRIPTFUNC_PARAMS);
+	void sf74(SCRIPTFUNC_PARAMS);
+	void sf75(SCRIPTFUNC_PARAMS);
+	void sf83(SCRIPTFUNC_PARAMS);
+	void sf84(SCRIPTFUNC_PARAMS);
+	void sf85(SCRIPTFUNC_PARAMS);
+	void sf87(SCRIPTFUNC_PARAMS);
+	void sf88(SCRIPTFUNC_PARAMS);
+	void sf89(SCRIPTFUNC_PARAMS);
+	void sf95(SCRIPTFUNC_PARAMS);
+	void sf96(SCRIPTFUNC_PARAMS);
+	void sf97(SCRIPTFUNC_PARAMS);
+	void sf98(SCRIPTFUNC_PARAMS);
+	void sf99(SCRIPTFUNC_PARAMS);
+	void sf103(SCRIPTFUNC_PARAMS);
+	void sf104(SCRIPTFUNC_PARAMS);
+
+	void SF_stub(const char *name, ScriptThread *thread, int nArgs);
 };
 
 } // End of namespace Saga

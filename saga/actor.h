@@ -647,6 +647,8 @@ public:
 	ActorData *_protagonist;
 	int _handleActionDiv;
 
+	Rect _speechBoxScript;
+
 protected:
 	SpeechData _activeSpeech;
 	int _protagState;
