@@ -534,7 +534,7 @@ void Engine::setSceneLock(const char *name, bool lockStatus) {
 		return;
 	}
 	// Change the locking status
-	scene->locked = lockStatus;
+	scene->_locked = lockStatus;
 }
 
 void Engine::setScene(const char *name) {
@@ -553,7 +553,7 @@ void Engine::setScene(const char *name) {
 	registerScene(_currScene);
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after creating the new one
-	if (lastScene != NULL && !lastScene->locked) {
+	if (lastScene != NULL && !lastScene->_locked) {
 		removeScene(lastScene);
 		delete lastScene;
 	}
@@ -566,7 +566,7 @@ void Engine::setScene(Scene *scene) {
 	_currScene = scene;
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after setting the new one
-	if (lastScene != NULL && !lastScene->locked) {
+	if (lastScene != NULL && !lastScene->_locked) {
 		removeScene(lastScene);
 		delete lastScene;
 	}

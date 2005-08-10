@@ -47,11 +47,7 @@ public:
 				continue;
 			// Needs to handle Main Models (pigeons) and normal Models
 			// (when Manny climbs the rope)
-			if (
-std::memcmp(_components[i]->tag(), "mmdl", 4) == 0
-			 || 
-std::memcmp(_components[i]->tag(), "mat ", 4) == 0
-)
+			if (std::memcmp(_components[i]->tag(), "mmdl", 4) == 0 || std::memcmp(_components[i]->tag(), "mat ", 4) == 0)
 				_components[i]->setMapName(_colormap);
 		}
 	}

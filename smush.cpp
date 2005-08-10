@@ -157,8 +157,8 @@ void Smush::handleFrame() {
 		_file.read(data, size);
 		anno = (char *)data;
 		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER)-1) == 0) {
-			char *annoData = anno + sizeof(ANNO_HEADER);
-			
+			//char *annoData = anno + sizeof(ANNO_HEADER);
+
 			// Examples:
 			//  Water streaming around boat from Manny's balcony
 			//  MakeAnim animation type 'Bl16' parameters: 10000;12000;100;1;0;0;0;0;25;0;

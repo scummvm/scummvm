@@ -68,8 +68,8 @@ public:
 	void drawBitmap();
 
 	Bitmap *getScreenshot(int w, int h);
-	void enableDim(int x, int y, int w, int h) { _dim = true; }
-	void disableDim(int x, int y, int w, int h) { _dim = false; }
+	void enableDim(int /*x*/, int /*y*/, int /*w*/, int /*h*/) { _dim = true; }
+	void disableDim(int /*x*/, int /*y*/, int /*w*/, int /*h*/) { _dim = false; }
 
 	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 	void loadEmergFont();

@@ -121,7 +121,7 @@ public:
 		float _intensity, _umbraangle, _penumbraangle;
 	};
 
-	bool locked;
+	bool _locked;
 
 private:
 

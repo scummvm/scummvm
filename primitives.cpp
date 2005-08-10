@@ -53,7 +53,7 @@ void PrimitiveObject::createRectangle(int x1, int x2, int y1, int y2, Color colo
 	_type = 1;
 }
 
-void PrimitiveObject::createBitmap(Bitmap *bitmap, int x, int y, bool transparent) {
+void PrimitiveObject::createBitmap(Bitmap *bitmap, int x, int y, bool /*transparent*/) {
 	_type = 2;
 	_bitmap = bitmap;
 	_bitmap->setX(x);

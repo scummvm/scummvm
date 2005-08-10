@@ -29,9 +29,8 @@ TextObjectDefaults textObjectDefaults;
 
 TextObject::TextObject() :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
-		_font(NULL), _textBitmap(NULL), _bitmapWidthPtr(NULL),
-		_bitmapHeightPtr(NULL), _disabled(false), _textObjectHandle(NULL),
-		_numberLines(1) {
+		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
+		_bitmapWidthPtr(NULL), _bitmapHeightPtr(NULL), _textObjectHandle(NULL) {
 	memset(_textID, 0, sizeof(_textID));
 	_fgColor._vals[0] = 0;
 	_fgColor._vals[1] = 0;

@@ -31,7 +31,7 @@
 #include <cmath>
 
 Scene::Scene(const char *name, const char *buf, int len) :
-		_name(name), locked(false) {
+		_locked(false), _name(name) {
 	TextSplitter ts(buf, len);
 	char tempBuf[256];
 

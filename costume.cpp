@@ -124,7 +124,7 @@ public:
 	~ModelComponent();
 
 	Model::HierNode *hierarchy() { return _hier; }
-void draw();
+	void draw();
 
 protected:
 	char *_colormap;
@@ -206,8 +206,8 @@ void BitmapComponent::setKey(int val) {
 }
 
 ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const char *filename, char *tag) :
-		Costume::Component(parent, parentID, tag), _filename(filename), _obj(NULL), _cmap(NULL),
-		_colormap(DEFAULT_COLORMAP), _hier(NULL) {
+		Costume::Component(parent, parentID, tag), _colormap(DEFAULT_COLORMAP), _filename(filename),
+		_obj(NULL), _cmap(NULL), _hier(NULL) {
 	const char *comma = std::strchr(filename, ',');
 	
 	// Can be called with a comma and a numeric parameter afterward, but
@@ -626,7 +626,7 @@ void SoundComponent::reset() {
 }
 
 Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :
-		_fname(filename), _colormap(DEFAULT_COLORMAP) {
+		_colormap(DEFAULT_COLORMAP), _fname(filename) {
 	TextSplitter ts(data, len);
 	
 	ts.expectString("costume v0.1");
@@ -729,7 +729,7 @@ void Costume::Component::setParent(Component *newParent) {
 }
 
 // Should initialize the status variables so the chore can't play unexpectedly
-Costume::Chore::Chore() : _playing(false), _hasPlayed(false), _looping(false), _currTime(-1) {
+Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1) {
 }
 
 void Costume::Chore::load(Costume *owner, TextSplitter &ts) {

@@ -533,7 +533,7 @@ void DriverTinyGL::drawLine(PrimitiveObject *primitive) {
 	int y1 = primitive->getY1();
 	int y2 = primitive->getY2();
 	float m = (y2 - y1) / (x2 - x1);
-	int b = -m * x1 + y1;
+	int b = (int)(-m * x1 + y1);
 
 	Color color = primitive->getColor();
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);

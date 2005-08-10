@@ -33,6 +33,7 @@ class Bitmap;
 class Driver {
 public:
 	Driver() { ; }
+	virtual ~Driver() { ; }
 	Driver(int screenW, int screenH, int screenBPP, bool fullscreen = false) {
 		_screenWidth = screenW;
 		_screenHeight = screenH;

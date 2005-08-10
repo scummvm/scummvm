@@ -32,12 +32,12 @@
 #include <cstring>
 
 Actor::Actor(const char *name) :
-		_name(name), _talkColor(255, 255, 255), _pos(0, 0, 0),
+		_name(name), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk
 		_pitch(0), _yaw(0), _roll(0), _walkRate(1.0f), _turnRate(100.0f),
-		_reflectionAngle(80), _setName(""),
+		_reflectionAngle(80),
 		_visible(true), _lipSynch(NULL), _turning(false), _walking(false),
 		_restCostume(NULL), _restChore(-1),
 		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
@@ -588,7 +588,7 @@ void Actor::draw() {
 }
 
 // "Undraw objects" (handle objects for actors that may not be on screen)
-void Actor::undraw(bool visible) {
+void Actor::undraw(bool /*visible*/) {
 	if (!talking() || !g_imuse->isVoicePlaying())
 		shutUp();
 }
