@@ -892,13 +892,16 @@ void Actor::updateActorsScene(int actorsEntrance) {
 ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	ActorData *actor;
 	int fourDirection;
+	static ActorFrameRange def = {0, 0};
 
 	actor = getActor(actorId);
 	if (actor->_disabled)
 		error("Actor::getActorFrameRange Wrong actorId 0x%X", actorId);
 
-	if (frameType >= actor->_framesCount)
-		error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+	if (frameType >= actor->_framesCount) {
+		warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+		return &def;
+	}
 
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);

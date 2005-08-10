@@ -228,17 +228,17 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 #define CASEOP(opName)	case opName:												\
 							if (operandChar == opName) {							\
 								operandName = #opName;								\
-								debug(8, operandName);								\
+								debug(2, operandName);								\
 								_vm->_console->DebugPrintf("%s\n", operandName);	\
 							}
 
-//		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
+		debug(8, "Executing thread offset: %lu (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
 		operandName="";
 		switch (operandChar) {
 		CASEOP(opNextBlock)
 			// Some sort of "jump to the start of the next memory
 			// page" instruction, I think.
-			thread->_instructionOffset = 1024 * ((thread->_instructionOffset / 1024) + 1);
+			thread->_instructionOffset = (((thread->_instructionOffset) >> 10) + 1) << 10;
 			break;
 
 // STACK INSTRUCTIONS
@@ -614,6 +614,9 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				int sampleResourceId = -1;
 				int16 first;
 				const char *strings[ACTOR_SPEECH_STRING_MAX];
+
+				if (_vm->getGameType() == GType_IHNM)
+					break;
 
 				if (_vm->_actor->isSpeaking()) {
 					thread->wait(kWaitTypeSpeech);
