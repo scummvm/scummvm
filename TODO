@@ -416,6 +416,10 @@ SAGA
  * Support for Dream Guild's Mac ITE
  * Support IHNM
 
+GOBLINS
+=======
+* Use ScummVM's backend functions for handling the mouse cursor.
+
 #######################################################################
 # Backends
 #######################################################################
