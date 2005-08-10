@@ -262,9 +262,9 @@ void Scene::startScene() {
 	}
 
 	// Hide cursor during intro
-	event.type = ONESHOT_EVENT;
-	event.code = CURSOR_EVENT;
-	event.op = EVENT_HIDE;
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventHide;
 	_vm->_events->queue(&event);
 
 	switch (_vm->getGameType()) {
@@ -717,9 +717,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	//fix placard bug
 	//i guess we should remove RF_PLACARD flag - and use _interface->getMode()
-	event.type = ONESHOT_EVENT;
-	event.code = GRAPHICS_EVENT;
-	event.op = EVENT_CLEARFLAG;
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventClearFlag;
 	event.param = RF_PLACARD;
 
 	q_event = _vm->_events->chain(q_event, &event);
@@ -730,28 +730,28 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		// Fade to black out
 		_vm->_gfx->getCurrentPal(current_pal);
-		event.type = IMMEDIATE_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
 		event.time = 0;
 		event.duration = kNormalFadeDuration;
 		event.data = current_pal;
 		q_event = _vm->_events->queue(&event);
 
 		// set fade mode
-		event.type = IMMEDIATE_EVENT;
-		event.code = INTERFACE_EVENT;
-		event.op = EVENT_SET_FADE_MODE;
+		event.type = kEvTImmediate;
+		event.code = kInterfaceEvent;
+		event.op = kEventSetFadeMode;
 		event.param = kNoFade;
 		event.time = 0;
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Display scene background, but stay with black palette
-		event.type = IMMEDIATE_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = NO_SET_PALETTE;
+		event.type = kEvTImmediate;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPNoSetPalette;
 		event.time = 0;
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
@@ -760,9 +760,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	// Start the scene pre script, but stay with black palette
 	if (_sceneDescription.startScriptEntrypointNumber > 0) {
-		event.type = ONESHOT_EVENT;
-		event.code = SCRIPT_EVENT;
-		event.op = EVENT_EXEC_BLOCKING;
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventExecBlocking;
 		event.time = 0;
 		event.param = _sceneDescription.scriptModuleNumber;
 		event.param2 = _sceneDescription.startScriptEntrypointNumber;
@@ -777,18 +777,18 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	if (loadSceneParams->transitionType == kTransitionFade) {
 
 		// set fade mode
-		event.type = IMMEDIATE_EVENT;
-		event.code = INTERFACE_EVENT;
-		event.op = EVENT_SET_FADE_MODE;
+		event.type = kEvTImmediate;
+		event.code = kInterfaceEvent;
+		event.op = kEventSetFadeMode;
 		event.param = kFadeIn;
 		event.time = 0;
 		event.duration = 0;
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade in from black to the scene background palette
-		event.type = IMMEDIATE_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_BLACKTOPAL;
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
 		event.time = 0;
 		event.duration = kNormalFadeDuration;
 		event.data = _bg.pal;
@@ -796,9 +796,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// set fade mode
-		event.type = IMMEDIATE_EVENT;
-		event.code = INTERFACE_EVENT;
-		event.op = EVENT_SET_FADE_MODE;
+		event.type = kEvTImmediate;
+		event.code = kInterfaceEvent;
+		event.op = kEventSetFadeMode;
 		event.param = kNoFade;
 		event.time = 0;
 		event.duration = 0;
@@ -816,61 +816,61 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_sound->stopSound();
 
 		if (_sceneDescription.musicResourceId >= 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = MUSIC_EVENT;
+			event.type = kEvTOneshot;
+			event.code = kMusicEvent;
 			event.param = _sceneDescription.musicResourceId;
 			event.param2 = MUSIC_DEFAULT;
-			event.op = EVENT_PLAY;
+			event.op = kEventPlay;
 			event.time = 0;
 
 			_vm->_events->queue(&event);
 		} else {
-			event.type = ONESHOT_EVENT;
-			event.code = MUSIC_EVENT;
-			event.op = EVENT_STOP;
+			event.type = kEvTOneshot;
+			event.code = kMusicEvent;
+			event.op = kEventStop;
 			event.time = 0;
 
 			_vm->_events->queue(&event);
 		}
 
 		// Set scene background
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = SET_PALETTE;
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPSetPalette;
 		event.time = 0;
 
 		_vm->_events->queue(&event);
 
 		if (getFlags() & kSceneFlagShowCursor) {
 			// Activate user interface
-			event.type = ONESHOT_EVENT;
-			event.code = INTERFACE_EVENT;
-			event.op = EVENT_ACTIVATE;
+			event.type = kEvTOneshot;
+			event.code = kInterfaceEvent;
+			event.op = kEventActivate;
 			event.time = 0;
 
 			_vm->_events->queue(&event);
 		}
 
 		// Begin palette cycle animation if present
-		event.type = ONESHOT_EVENT;
-		event.code = PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
 		event.time = 0;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Show cursor
-		event.type = ONESHOT_EVENT;
-		event.code = CURSOR_EVENT;
-		event.op = EVENT_SHOW;
+		event.type = kEvTOneshot;
+		event.code = kCursorEvent;
+		event.op = kEventShow;
 		_vm->_events->chain(q_event, &event);
 
 		// Start the scene main script
 		if (_sceneDescription.sceneScriptEntrypointNumber > 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = SCRIPT_EVENT;
-			event.op = EVENT_EXEC_NONBLOCKING;
+			event.type = kEvTOneshot;
+			event.code = kScriptEvent;
+			event.op = kEventExecNonBlocking;
 			event.time = 0;
 			event.param = _sceneDescription.scriptModuleNumber;
 			event.param2 = _sceneDescription.sceneScriptEntrypointNumber;

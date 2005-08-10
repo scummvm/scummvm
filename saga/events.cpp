@@ -71,31 +71,31 @@ int Events::handleEvents(long msec) {
 		// Call the appropriate event handler for the specific event type
 		switch (event_p->type) {
 
-		case ONESHOT_EVENT:
+		case kEvTOneshot:
 			result = handleOneShot(event_p);
 			break;
 
-		case CONTINUOUS_EVENT:
+		case kEvTContinuous:
 			result = handleContinuous(event_p);
 			break;
 
-		case INTERVAL_EVENT:
+		case kEvTInterval:
 			result = handleInterval(event_p);
 			break;
 
-		case IMMEDIATE_EVENT:
+		case kEvTImmediate:
 			result = handleImmediate(event_p);
 			break;
 
 		default:
-			result = EVENT_INVALIDCODE;
+			result = kEvStInvalidCode;
 			warning("Invalid event code encountered");
 			break;
 		}
 
 		// Process the event appropriately based on result code from
 		// handler
-		if ((result == EVENT_DELETE) || (result == EVENT_INVALIDCODE)) {
+		if ((result == kEvStDelete) || (result == kEvStInvalidCode)) {
 			// If there is no event chain, delete the base event.
 			if (event_p->chain == NULL) {
 				eventi = _eventList.eraseAndPrev(eventi);
@@ -111,7 +111,7 @@ int Events::handleEvents(long msec) {
 				event_p->time += delta_time;
 				--eventi;
 			}
-		} else if (result == EVENT_BREAK) {
+		} else if (result == kEvStBreak) {
 			break;
 		}
 	}
@@ -140,30 +140,30 @@ int Events::handleContinuous(Event *event) {
 
 	if (event_pc < 0.0) {
 		// Event not signaled, skip it
-		return EVENT_CONTINUE;
-	} else if (!(event->code & SIGNALED)) {
+		return kEvStContinue;
+	} else if (!(event->code & kEvFSignaled)) {
 		// Signal event
-		event->code |= SIGNALED;
+		event->code |= kEvFSignaled;
 		event_pc = 0.0;
 	}
 
 	switch (event->code & EVENT_MASK) {
-	case PAL_EVENT:
+	case kPalEvent:
 		switch (event->op) {
-		case EVENT_BLACKTOPAL:
+		case kEventBlackToPal:
 			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
 
-		case EVENT_PALTOBLACK:
+		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
 		default:
 			break;
 		}
 		break;
-	case TRANSITION_EVENT:
+	case kTransitionEvent:
 		switch (event->op) {
-		case EVENT_DISSOLVE:
+		case kEventDissolve:
 			backGroundSurface = _vm->_render->getBackGroundSurface();
 			_vm->_scene->getBGInfo(bgInfo);
 			rect.left = rect.top = 0;
@@ -171,7 +171,7 @@ int Events::handleContinuous(Event *event) {
 			rect.bottom = bgInfo.bounds.height();
 			backGroundSurface->transitionDissolve(bgInfo.buffer, rect, 0, event_pc);
 			break;
-		case EVENT_DISSOLVE_BGMASK:
+		case kEventDissolveBGMask:
 			// we dissolve it centered.
 			// set flag of Dissolve to 1. It is a hack to simulate zero masking.
 			int w, h;
@@ -197,10 +197,10 @@ int Events::handleContinuous(Event *event) {
 	}
 
 	if (event_done) {
-		return EVENT_DELETE;
+		return kEvStDelete;
 	}
 
-	return EVENT_CONTINUE;
+	return kEvStContinue;
 }
 
 int Events::handleImmediate(Event *event) {
@@ -223,30 +223,30 @@ int Events::handleImmediate(Event *event) {
 
 	if (event_pc < 0.0) {
 		// Event not signaled, skip it
-		return EVENT_BREAK;
-	} else if (!(event->code & SIGNALED)) {
+		return kEvStBreak;
+	} else if (!(event->code & kEvFSignaled)) {
 		// Signal event
-		event->code |= SIGNALED;
+		event->code |= kEvFSignaled;
 		event_pc = 0.0;
 	}
 
 	switch (event->code & EVENT_MASK) {
-	case PAL_EVENT:
+	case kPalEvent:
 		switch (event->op) {
-		case EVENT_BLACKTOPAL:
+		case kEventBlackToPal:
 			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
 
-		case EVENT_PALTOBLACK:
+		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
 		default:
 			break;
 		}
 		break;
-	case SCRIPT_EVENT:
-	case BG_EVENT:
-	case INTERFACE_EVENT:
+	case kScriptEvent:
+	case kBgEvent:
+	case kInterfaceEvent:
 		handleOneShot(event);
 		event_done = true;
 		break;
@@ -256,10 +256,10 @@ int Events::handleImmediate(Event *event) {
 	}
 
 	if (event_done) {
-		return EVENT_DELETE;
+		return kEvStDelete;
 	}
 
-	return EVENT_BREAK;
+	return kEvStBreak;
 }
 
 int Events::handleOneShot(Event *event) {
@@ -269,18 +269,18 @@ int Events::handleOneShot(Event *event) {
 
 
 	if (event->time > 0) {
-		return EVENT_CONTINUE;
+		return kEvStContinue;
 	}
 
 	// Event has been signaled
 
 	switch (event->code & EVENT_MASK) {
-	case TEXT_EVENT:
+	case kTextEvent:
 		switch (event->op) {
-		case EVENT_DISPLAY:
+		case kEventDisplay:
 			((TextListEntry *)event->data)->display = true;
 			break;
-		case EVENT_REMOVE:
+		case kEventRemove:
 			_vm->_scene->_textList.remove((TextListEntry *)event->data);
 			break;
 		default:
@@ -288,20 +288,20 @@ int Events::handleOneShot(Event *event) {
 		}
 
 		break;
-	case SOUND_EVENT:
+	case kSoundEvent:
 		_vm->_sound->stopSound();
-		if (event->op == EVENT_PLAY)
+		if (event->op == kEventPlay)
 			_vm->_sndRes->playSound(event->param, event->param2, event->param3 != 0);
 		break;
-	case VOICE_EVENT:
+	case kVoiceEvent:
 		_vm->_sndRes->playVoice(event->param);
 		break;
-	case MUSIC_EVENT:
+	case kMusicEvent:
 		_vm->_music->stop();
-		if (event->op == EVENT_PLAY)
+		if (event->op == kEventPlay)
 			_vm->_music->play(event->param, (MusicFlags)event->param2);
 		break;
-	case BG_EVENT:
+	case kBgEvent:
 		{
 			Surface *backGroundSurface;
 			BGInfo bgInfo;
@@ -331,7 +331,7 @@ int Events::handleOneShot(Event *event) {
 					backGroundSurface->drawRect(rect4, kITEColorBlack);
 				}
 
-				if (event->param == SET_PALETTE) {
+				if (event->param == kEvPSetPalette) {
 					PalEntry *palPointer;
 					_vm->_scene->getBGPal(palPointer);
 					_vm->_gfx->setPalette(palPointer);
@@ -339,76 +339,76 @@ int Events::handleOneShot(Event *event) {
 			}
 		}
 		break;
-	case ANIM_EVENT:
+	case kAnimEvent:
 		switch (event->op) {
-		case EVENT_PLAY:
+		case kEventPlay:
 			_vm->_anim->play(event->param, event->time, true);
 			break;
-		case EVENT_STOP:
+		case kEventStop:
 			_vm->_anim->stop(event->param);
 			break;
-		case EVENT_FRAME:
+		case kEventFrame:
 			_vm->_anim->play(event->param, event->time, false);
 			break;
-		case EVENT_SETFLAG:
+		case kEventSetFlag:
 			_vm->_anim->setFlag(event->param, event->param2);
 			break;
-		case EVENT_CLEARFLAG:
+		case kEventClearFlag:
 			_vm->_anim->clearFlag(event->param, event->param2);
 			break;
 		default:
 			break;
 		}
 		break;
-	case SCENE_EVENT:
+	case kSceneEvent:
 		switch (event->op) {
-		case EVENT_END:
+		case kEventEnd:
 			_vm->_scene->nextScene();
-			return EVENT_BREAK;
+			return kEvStBreak;
 			break;
 		default:
 			break;
 		}
 		break;
-	case PALANIM_EVENT:
+	case kPalAnimEvent:
 		switch (event->op) {
-		case EVENT_CYCLESTART:
+		case kEventCycleStart:
 			_vm->_palanim->cycleStart();
 			break;
-		case EVENT_CYCLESTEP:
+		case kEventCycleStep:
 			_vm->_palanim->cycleStep(event->time);
 			break;
 		default:
 			break;
 		}
 		break;
-	case INTERFACE_EVENT:
+	case kInterfaceEvent:
 		switch (event->op) {
-		case EVENT_ACTIVATE:
+		case kEventActivate:
 			_vm->_interface->activate();
 			break;
-		case EVENT_DEACTIVATE:
+		case kEventDeactivate:
 			_vm->_interface->deactivate();
 			break;
-		case EVENT_SET_STATUS:
+		case kEventSetStatus:
 			_vm->_interface->setStatusText((const char*)event->data);
 			_vm->_interface->drawStatusBar();
 			break;
-		case EVENT_CLEAR_STATUS:
+		case kEventClearStatus:
 			_vm->_interface->setStatusText("");
 			_vm->_interface->drawStatusBar();
 			break;
-		case EVENT_SET_FADE_MODE:
+		case kEventSetFadeMode:
 			_vm->_interface->setFadeMode(event->param);
 			break;
 		default:
 			break;
 		}
 		break;
-	case SCRIPT_EVENT:
+	case kScriptEvent:
 		switch (event->op) {
-		case EVENT_EXEC_BLOCKING:
-		case EVENT_EXEC_NONBLOCKING:
+		case kEventExecBlocking:
+		case kEventExecNonBlocking:
 			debug(6, "Exec module number %d script entry number %d", event->param, event->param2);
 
 			sthread = _vm->_script->createThread(event->param, event->param2);
@@ -422,40 +422,40 @@ int Events::handleOneShot(Event *event) {
 			sthread->_threadVars[kThreadVarWithObject] = event->param5;
 			sthread->_threadVars[kThreadVarActor] = event->param6;
 
-			if (event->op == EVENT_EXEC_BLOCKING)
+			if (event->op == kEventExecBlocking)
 				_vm->_script->completeThread();
 
 			break;
-		case EVENT_THREAD_WAKE:
+		case kEventThreadWake:
 			_vm->_script->wakeUpThreads(event->param);
 			break;
 		}
 		break;
-	case CURSOR_EVENT:
+	case kCursorEvent:
 		switch (event->op) {
-		case EVENT_SHOW:
+		case kEventShow:
 			_vm->_gfx->showCursor(true);
 			break;
-		case EVENT_HIDE:
+		case kEventHide:
 			_vm->_gfx->showCursor(false);
 			break;
 		default:
 			break;
 		}
 		break;
-	case GRAPHICS_EVENT:
+	case kGraphicsEvent:
 		switch (event->op) {
-		case EVENT_FILL_RECT:
+		case kEventFillRect:
 			rect.top = event->param2;
 			rect.bottom = event->param3;
 			rect.left = event->param4;
 			rect.right = event->param5;
 			((Surface *)event->data)->drawRect(rect, event->param);
 			break;
-		case EVENT_SETFLAG:
+		case kEventSetFlag:
 			_vm->_render->setFlag(event->param);
 			break;
-		case EVENT_CLEARFLAG:
+		case kEventClearFlag:
 			_vm->_render->clearFlag(event->param);
 			break;
 		default:
@@ -465,11 +465,11 @@ int Events::handleOneShot(Event *event) {
 		break;
 	}
 
-	return EVENT_DELETE;
+	return kEvStDelete;
 }
 
 int Events::handleInterval(Event *event) {
-	return EVENT_DELETE;
+	return kEvStDelete;
 }
 
 // Schedules an event in the event list; returns a pointer to the scheduled
@@ -505,13 +505,13 @@ Event *Events::chain(Event *headEvent, Event *addEvent) {
 int Events::initializeEvent(Event *event) {
 	event->chain = NULL;
 	switch (event->type) {
-	case ONESHOT_EVENT:
+	case kEvTOneshot:
 		break;
-	case CONTINUOUS_EVENT:
-	case IMMEDIATE_EVENT:
+	case kEvTContinuous:
+	case kEvTImmediate:
 		event->time += event->duration;
 		break;
-	case INTERVAL_EVENT:
+	case kEvTInterval:
 		break;
 	default:
 		return FAILURE;
@@ -530,8 +530,8 @@ int Events::clearList() {
 	for (EventList::iterator eventi = _eventList.begin(); eventi != _eventList.end(); ++eventi) {
 		event_p = (Event *)eventi.operator->();
 
-		// Only remove events not marked NODESTROY (engine events)
-		if (!(event_p->code & NODESTROY)) {
+		// Only remove events not marked kEvFNoDestory (engine events)
+		if (!(event_p->code & kEvFNoDestory)) {
 			// Remove any events chained off this one */
 			for (chain_walk = event_p->chain; chain_walk != NULL; chain_walk = next_chain) {
 				next_chain = chain_walk->chain;
@@ -544,7 +544,7 @@ int Events::clearList() {
 	return SUCCESS;
 }
 
-// Removes all events from the list (even NODESTROY)
+// Removes all events from the list (even kEvFNoDestory)
 int Events::freeList() {
 	Event *chain_walk;
 	Event *next_chain;
@@ -577,7 +577,7 @@ int Events::processEventTime(long msec) {
 		event_p->time -= msec;
 		event_count++;
 
-		if (event_p->type == IMMEDIATE_EVENT)
+		if (event_p->type == kEvTImmediate)
 			break;
 
 		if (event_count > EVENT_WARNINGCOUNT) {

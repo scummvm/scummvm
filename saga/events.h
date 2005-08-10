@@ -31,88 +31,88 @@
 namespace Saga {
 
 enum EventTypes {
-	ONESHOT_EVENT,    // Event takes no time
-	CONTINUOUS_EVENT, // Event takes time; next event starts immediately
-	INTERVAL_EVENT,   // Not yet implemented
-	IMMEDIATE_EVENT   // Event takes time; next event starts when event is done
+	kEvTOneshot,    // Event takes no time
+	kEvTContinuous, // Event takes time; next event starts immediately
+	kEvTInterval,   // Not yet implemented
+	kEvTImmediate   // Event takes time; next event starts when event is done
 };
 
-enum EVENT_FLAGS {
-	SIGNALED = 0x8000,
-	NODESTROY = 0x4000
+enum EventFlags {
+	kEvFSignaled = 0x8000,
+	kEvFNoDestory = 0x4000
 };
 
 enum EventCodes {
-	BG_EVENT = 1,
-	ANIM_EVENT,
-	MUSIC_EVENT,
-	VOICE_EVENT,
-	SOUND_EVENT,
-	SCENE_EVENT,
-	TEXT_EVENT,
-	PAL_EVENT,
-	PALANIM_EVENT,
-	TRANSITION_EVENT,
-	INTERFACE_EVENT,
-	ACTOR_EVENT,
-	SCRIPT_EVENT,
-	CURSOR_EVENT,
-	GRAPHICS_EVENT
+	kBgEvent = 1,
+	kAnimEvent,
+	kMusicEvent,
+	kVoiceEvent,
+	kSoundEvent,
+	kSceneEvent,
+	kTextEvent,
+	kPalEvent,
+	kPalAnimEvent,
+	kTransitionEvent,
+	kInterfaceEvent,
+	kActorEvent,
+	kScriptEvent,
+	kCursorEvent,
+	kGraphicsEvent
 };
 
-enum EVENT_OPS {
+enum EventOps {
 	// INSTANTANEOUS events
 	// BG events
-	EVENT_DISPLAY = 1,
+	kEventDisplay = 1,
 	// ANIM events
-	// EVENT_PLAY = 1, // reused
-	// EVENT_STOP = 2, // reused
-	EVENT_FRAME = 3,
-	EVENT_SETFLAG = 4,
-	EVENT_CLEARFLAG = 5,
+	// kEventPlay = 1, // reused
+	// kEventStop = 2, // reused
+	kEventFrame = 3,
+	kEventSetFlag = 4,
+	kEventClearFlag = 5,
 	// MUISC & SOUND events
-	EVENT_PLAY = 1,
-	EVENT_STOP = 2,
+	kEventPlay = 1,
+	kEventStop = 2,
 	// SCENE events
-	EVENT_END = 2,
+	kEventEnd = 2,
 	// TEXT events
-	EVENT_HIDE = 2,
-	EVENT_REMOVE = 3,
+	kEventHide = 2,
+	kEventRemove = 3,
 	// PALANIM events
-	EVENT_CYCLESTART = 1,
-	EVENT_CYCLESTEP = 2,
+	kEventCycleStart = 1,
+	kEventCycleStep = 2,
 	// INTERFACE events
-	EVENT_ACTIVATE = 1,
-	EVENT_DEACTIVATE = 2,
-	EVENT_SET_STATUS = 3,
-	EVENT_CLEAR_STATUS = 4,
-	EVENT_SET_FADE_MODE = 5,
+	kEventActivate = 1,
+	kEventDeactivate = 2,
+	kEventSetStatus = 3,
+	kEventClearStatus = 4,
+	kEventSetFadeMode = 5,
 	// ACTOR events
-	EVENT_MOVE = 1,
+	kEventMove = 1,
 	// SCRIPT events
-	EVENT_EXEC_BLOCKING = 1,
-	EVENT_EXEC_NONBLOCKING = 2,
-	EVENT_THREAD_WAKE = 3,
+	kEventExecBlocking = 1,
+	kEventExecNonBlocking = 2,
+	kEventThreadWake = 3,
 	// CURSOR events
-	EVENT_SHOW = 1,
-	// EVENT_HIDE = 2, // reused
+	kEventShow = 1,
+	// kEventHide = 2, // reused
 	// GRAPHICS events
-	EVENT_FILL_RECT = 1,
-	// EVENT_SETFLAG = 4, // reused
-	// EVENT_CLEARFLAG = 5, // reused
+	kEventFillRect = 1,
+	// kEventSetFlag = 4, // reused
+	// kEventClearFlag = 5, // reused
 
 	// CONTINUOUS events
 	// PALETTE events
-	EVENT_PALTOBLACK = 1,
-	EVENT_BLACKTOPAL = 2,
+	kEventPalToBlack = 1,
+	kEventBlackToPal = 2,
 	// TRANSITION events
-	EVENT_DISSOLVE = 1,
-	EVENT_DISSOLVE_BGMASK = 2
+	kEventDissolve = 1,
+	kEventDissolveBGMask = 2
 };
 
-enum EVENT_PARAMS {
-	NO_SET_PALETTE,
-	SET_PALETTE
+enum EventParams {
+	kEvPNoSetPalette,
+	kEvPSetPalette
 };
 
 struct Event {
@@ -142,10 +142,10 @@ typedef SortedList<Event> EventList;
 #define EVENT_MASK 0x00FF
 
 enum EventStatusCode {
-	EVENT_INVALIDCODE = 0,
-	EVENT_DELETE,
-	EVENT_CONTINUE,
-	EVENT_BREAK
+	kEvStInvalidCode = 0,
+	kEvStDelete,
+	kEvStContinue,
+	kEvStBreak
 };
 
 class Events {

@@ -620,9 +620,9 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 	if (hitZone->getFlags() & kHitZoneExit) {
 		takeExit(actor->_id, hitZone);
 	} else if (hitZone->getScriptNumber() > 0) {
-		event.type = ONESHOT_EVENT;
-		event.code = SCRIPT_EVENT;
-		event.op = EVENT_EXEC_NONBLOCKING;
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventExecNonBlocking;
 		event.time = 0;
 		event.param = _vm->_scene->getScriptModuleNumber(); // module number
 		event.param2 = hitZone->getScriptNumber();			// script entry point number
@@ -2099,9 +2099,9 @@ void Actor::moveDragon(ActorData *actor) {
 		moveType = kDragonMoveInvalid;
 		if (actor->_location.distance(_protagonist->_location) < 24) {
 			if (_dragonHunt && (_protagonist->_currentAction != kActionFall)) {
-				event.type = ONESHOT_EVENT;
-				event.code = SCRIPT_EVENT;
-				event.op = EVENT_EXEC_NONBLOCKING;
+				event.type = kEvTOneshot;
+				event.code = kScriptEvent;
+				event.op = kEventExecNonBlocking;
 				event.time = 0;
 				event.param = _vm->_scene->getScriptModuleNumber(); // module number
 				event.param2 = ACTOR_EXP_KNOCK_RIF;			// script entry point number

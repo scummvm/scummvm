@@ -416,9 +416,9 @@ void Script::doVerb() {
 
 	if (scriptEntrypointNumber > 0) {
 
-		event.type = ONESHOT_EVENT;
-		event.code = SCRIPT_EVENT;
-		event.op = EVENT_EXEC_NONBLOCKING;
+		event.type = kEvTOneshot;
+		event.code = kScriptEvent;
+		event.op = kEventExecNonBlocking;
 		event.time = 0;
 		event.param = scriptModuleNumber;
 		event.param2 = scriptEntrypointNumber;

@@ -125,9 +125,9 @@ int PalAnim::cycleStart() {
 		return FAILURE;
 	}
 
-	event.type = ONESHOT_EVENT;
-	event.code = PALANIM_EVENT;
-	event.op = EVENT_CYCLESTEP;
+	event.type = kEvTOneshot;
+	event.code = kPalAnimEvent;
+	event.op = kEventCycleStep;
 	event.time = PALANIM_CYCLETIME;
 
 	_vm->_events->queue(&event);
@@ -172,9 +172,9 @@ int PalAnim::cycleStep(int vectortime) {
 
 	_vm->_gfx->setPalette(pal);
 
-	event.type = ONESHOT_EVENT;
-	event.code = PALANIM_EVENT;
-	event.op = EVENT_CYCLESTEP;
+	event.type = kEvTOneshot;
+	event.code = kPalAnimEvent;
+	event.op = kEventCycleStep;
 	event.time = vectortime + PALANIM_CYCLETIME;
 
 	_vm->_events->queue(&event);

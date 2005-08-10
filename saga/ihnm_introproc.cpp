@@ -124,10 +124,10 @@ int Scene::IHNMIntroMovieProc1(int param) {
 	case SCENE_BEGIN:
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = SET_PALETTE;
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPSetPalette;
 		event.time = 0;
 
 		q_event = _vm->_events->queue(&event);
@@ -135,9 +135,9 @@ int Scene::IHNMIntroMovieProc1(int param) {
 		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
 		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
 
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
@@ -166,9 +166,9 @@ int Scene::IHNMIntroMovieProc2(int param) {
 		// Fade to black out of the intro CyberDreams logo anim
 		_vm->_gfx->getCurrentPal(current_pal);
 
-		event.type = CONTINUOUS_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
 		event.time = 0;
 		event.duration = IHNM_PALFADE_TIME;
 		event.data = current_pal;
@@ -177,10 +177,10 @@ int Scene::IHNMIntroMovieProc2(int param) {
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it but don't set palette
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = NO_SET_PALETTE;
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPNoSetPalette;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -191,9 +191,9 @@ int Scene::IHNMIntroMovieProc2(int param) {
 		// palette fades. We don't have to, but I think it looks better
 		// that way.
 
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
@@ -202,9 +202,9 @@ int Scene::IHNMIntroMovieProc2(int param) {
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(pal);
 
-		event.type = CONTINUOUS_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_BLACKTOPAL;
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
 		event.time = 0;
 		event.duration = IHNM_PALFADE_TIME;
 		event.data = pal;
@@ -212,9 +212,9 @@ int Scene::IHNMIntroMovieProc2(int param) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Fade to black after looping animation for a while
-		event.type = CONTINUOUS_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
 		event.time = IHNM_DGLOGO_TIME;
 		event.duration = IHNM_PALFADE_TIME;
 		event.data = pal;
@@ -222,9 +222,9 @@ int Scene::IHNMIntroMovieProc2(int param) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue end of scene
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -251,9 +251,9 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		// Fade to black out of the intro DG logo anim
 		_vm->_gfx->getCurrentPal(current_pal);
 
-		event.type = CONTINUOUS_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_PALTOBLACK;
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
 		event.time = 0;
 		event.duration = IHNM_PALFADE_TIME;
 		event.data = current_pal;
@@ -265,21 +265,21 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		// In the GM file, this music also appears as tracks 7, 13, 19,
 		// 25 and 31, but only track 1 sounds right with the FM music.
 
-		event.type = ONESHOT_EVENT;
-		event.code = MUSIC_EVENT;
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
 		event.param = 1;
 		event.param2 = MUSIC_NORMAL;
-		event.op = EVENT_PLAY;
+		event.op = kEventPlay;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Background for intro scene is the first frame of the intro
 		// animation; display it but don't set palette
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = NO_SET_PALETTE;
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPNoSetPalette;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -287,18 +287,18 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		// Fade in from black to the scene background palette
 		_vm->_scene->getBGPal(pal);
 
-		event.type = CONTINUOUS_EVENT;
-		event.code = PAL_EVENT;
-		event.op = EVENT_BLACKTOPAL;
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
 		event.time = 0;
 		event.duration = IHNM_PALFADE_TIME;
 		event.data = pal;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
@@ -308,9 +308,9 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		// TODO: I've increased the delay so the speech won't start
 		// until the music has ended. Could someone verify if that's
 		// the correct behaviour?
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -335,47 +335,47 @@ int Scene::IHNMHateProc(int param) {
 		_vm->_anim->setCycles(0, -1);
 
 		// Start "hate" animation
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
 		q_event = _vm->_events->queue(&event);
 
 		// More music
-		event.type = ONESHOT_EVENT;
-		event.code = MUSIC_EVENT;
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
 		event.param = 32;
 		event.param2 = MUSIC_LOOP;
-		event.op = EVENT_PLAY;
+		event.op = kEventPlay;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = SET_PALETTE;
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPSetPalette;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Play voice
-		event.type = ONESHOT_EVENT;
-		event.code = VOICE_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kVoiceEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Background sound
-		event.type = ONESHOT_EVENT;
-		event.code = SOUND_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kSoundEvent;
+		event.op = kEventPlay;
 		event.param = 260;
 		event.param2 = 255;	// FIXME: Verify volume
 		event.param3 = SOUND_LOOP;
@@ -384,17 +384,17 @@ int Scene::IHNMHateProc(int param) {
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// End background sound after the voice has finished
-		event.type = ONESHOT_EVENT;
-		event.code = SOUND_EVENT;
-		event.op = EVENT_STOP;
+		event.type = kEvTOneshot;
+		event.code = kSoundEvent;
+		event.op = kEventStop;
 		event.time = _vm->_sndRes->getVoiceLength(0);
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// End scene after the voice has finished
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);

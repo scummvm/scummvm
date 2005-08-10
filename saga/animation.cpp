@@ -183,9 +183,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 			if (anim->flags & ANIM_ENDSCENE) {
 				// This animation ends the scene
-				event.type = ONESHOT_EVENT;
-				event.code = SCENE_EVENT;
-				event.op = EVENT_END;
+				event.type = kEvTOneshot;
+				event.code = kSceneEvent;
+				event.op = kEventEnd;
 				event.time = anim->frameTime + vectorTime;
 				_vm->_events->queue(&event);
 			}
@@ -207,9 +207,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		frameTime = anim->frameTime + vectorTime;
 	}
 
-	event.type = ONESHOT_EVENT;
-	event.code = ANIM_EVENT;
-	event.op = EVENT_FRAME;
+	event.type = kEvTOneshot;
+	event.code = kAnimEvent;
+	event.op = kEventFrame;
 	event.param = animId;
 	event.time = frameTime;
 

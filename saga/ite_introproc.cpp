@@ -109,18 +109,18 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 		entry = _vm->_scene->_textList.addEntry(textEntry);
 
 		// Display text
-		event.type = ONESHOT_EVENT;
-		event.code = TEXT_EVENT;
-		event.op = EVENT_DISPLAY;
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventDisplay;
 		event.data = entry;
 		event.time = (i == 0) ? 0 : VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Play voice
-		event.type = ONESHOT_EVENT;
-		event.code = VOICE_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kVoiceEvent;
+		event.op = kEventPlay;
 		event.param = dialogue[i].i_voice_rn;
 		event.time = 0;
 
@@ -132,9 +132,9 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 		}
 
 		// Remove text
-		event.type = ONESHOT_EVENT;
-		event.code = TEXT_EVENT;
-		event.op = EVENT_REMOVE;
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventRemove;
 		event.data = entry;
 		event.time = voice_len;
 
@@ -263,18 +263,18 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 		entry = _vm->_scene->_textList.addEntry(textEntry);
 
 		// Display text
-		event.type = ONESHOT_EVENT;
-		event.code = TEXT_EVENT;
-		event.op = EVENT_DISPLAY;
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventDisplay;
 		event.data = entry;
 		event.time = delta_time;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Remove text
-		event.type = ONESHOT_EVENT;
-		event.code = TEXT_EVENT;
-		event.op = EVENT_REMOVE;
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventRemove;
 		event.data = entry;
 		event.time = duration;
 
@@ -299,10 +299,10 @@ int Scene::ITEIntroAnimProc(int param) {
 	case SCENE_BEGIN:{
 		// Background for intro scene is the first frame of the
 		// intro animation; display it and set the palette
-		event.type = ONESHOT_EVENT;
-		event.code = BG_EVENT;
-		event.op = EVENT_DISPLAY;
-		event.param = SET_PALETTE;
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPSetPalette;
 		event.time = 0;
 
 		q_event = _vm->_events->queue(&event);
@@ -338,20 +338,20 @@ int Scene::ITEIntroAnimProc(int param) {
 		debug(3, "Beginning animation playback.");
 
 		// Begin the animation
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue intro music playback
-		event.type = ONESHOT_EVENT;
-		event.code = MUSIC_EVENT;
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
 		event.param = MUSIC_1;
 		event.param2 = MUSIC_LOOP;
-		event.op = EVENT_PLAY;
+		event.op = kEventPlay;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -426,9 +426,9 @@ int Scene::ITEIntroCave1Proc(int param) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Begin palette cycling animation for candles
-		event.type = ONESHOT_EVENT;
-		event.code = PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
 		event.time = 0;
 
 		q_event = _vm->_events->queue(&event);
@@ -437,9 +437,9 @@ int Scene::ITEIntroCave1Proc(int param) {
 		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -502,18 +502,18 @@ int Scene::ITEIntroCave2Proc(int param) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
-		event.type = ONESHOT_EVENT;
-		event.code = PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -522,9 +522,9 @@ int Scene::ITEIntroCave2Proc(int param) {
 		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -586,18 +586,18 @@ int Scene::ITEIntroCave3Proc(int param) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
-		event.type = ONESHOT_EVENT;
-		event.code = PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -606,9 +606,9 @@ int Scene::ITEIntroCave3Proc(int param) {
 		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -679,18 +679,18 @@ int Scene::ITEIntroCave4Proc(int param) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
-		event.type = ONESHOT_EVENT;
-		event.code = PALANIM_EVENT;
-		event.op = EVENT_CYCLESTART;
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -699,9 +699,9 @@ int Scene::ITEIntroCave4Proc(int param) {
 		q_event = ITEQueueDialogue(q_event, n_dialogues, dialogue[lang]);
 
 		// End scene after last dialogue over
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = VOICE_PAD;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -745,9 +745,9 @@ int Scene::ITEIntroValleyProc(int param) {
 		// Begin title screen background animation
 		_vm->_anim->setCycles(0, -1);
 
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
@@ -756,46 +756,46 @@ int Scene::ITEIntroValleyProc(int param) {
 		// Begin ITE title theme music
 		_vm->_music->stop();
 
-		event.type = ONESHOT_EVENT;
-		event.code = MUSIC_EVENT;
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
 		event.param = MUSIC_2;
 		event.param2 = MUSIC_NORMAL;
-		event.op = EVENT_PLAY;
+		event.op = kEventPlay;
 		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Pause animation before logo
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_STOP;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventStop;
 		event.param = 0;
 		event.time = 3000;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Display logo
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE_BGMASK;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolveBGMask;
 		event.time = 0;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Remove logo
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 3000;
 		event.duration = LOGO_DISSOLVE_DURATION;
 
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Unpause animation before logo
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.time = 0;
 		event.param = 0;
 
@@ -805,9 +805,9 @@ int Scene::ITEIntroValleyProc(int param) {
 		q_event = ITEQueueCredits(9000, CREDIT_DURATION1, n_credits, credits);
 
 		// End scene after credit display
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = 1000;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -868,9 +868,9 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
@@ -880,9 +880,9 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 			// Begin title screen background animation
 			_vm->_anim->setFrameTime(0, 100);
 
-			event.type = ONESHOT_EVENT;
-			event.code = ANIM_EVENT;
-			event.op = EVENT_PLAY;
+			event.type = kEvTOneshot;
+			event.code = kAnimEvent;
+			event.op = kEventPlay;
 			event.param = 0;
 			event.time = 0;
 
@@ -894,9 +894,9 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		q_event = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = 1000;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -948,9 +948,9 @@ int Scene::ITEIntroFairePathProc(int param) {
 	switch (param) {
 	case SCENE_BEGIN:
 		// Start 'dissolve' transition to new scene background
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
@@ -959,9 +959,9 @@ int Scene::ITEIntroFairePathProc(int param) {
 		// Begin title screen background animation
 		_vm->_anim->setCycles(0, -1);
 
-		event.type = ONESHOT_EVENT;
-		event.code = ANIM_EVENT;
-		event.op = EVENT_PLAY;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
 
@@ -972,9 +972,9 @@ int Scene::ITEIntroFairePathProc(int param) {
 		q_event = ITEQueueCredits(DISSOLVE_DURATION + 7000, CREDIT_DURATION1, n_credits2, credits2);
 
 		// End scene after credit display
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = 1000;
 
 		q_event = _vm->_events->chain(q_event, &event);
@@ -1003,18 +1003,18 @@ int Scene::ITEIntroFaireTentProc(int param) {
 	case SCENE_BEGIN:
 
 		// Start 'dissolve' transition to new scene background
-		event.type = CONTINUOUS_EVENT;
-		event.code = TRANSITION_EVENT;
-		event.op = EVENT_DISSOLVE;
+		event.type = kEvTContinuous;
+		event.code = kTransitionEvent;
+		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 
 		q_event_start = _vm->_events->queue(&event);
 
 		// End scene after momentary pause
-		event.type = ONESHOT_EVENT;
-		event.code = SCENE_EVENT;
-		event.op = EVENT_END;
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
 		event.time = 5000;
 		q_event = _vm->_events->chain(q_event_start, &event);
 		break;

@@ -1207,9 +1207,9 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 		}
 
 		if (script > 0) {
-			event.type = ONESHOT_EVENT;
-			event.code = SCRIPT_EVENT;
-			event.op = EVENT_EXEC_NONBLOCKING;
+			event.type = kEvTOneshot;
+			event.code = kScriptEvent;
+			event.op = kEventExecNonBlocking;
 			event.time = 0;
 			event.param = _vm->_scene->getScriptModuleNumber();
 			event.param2 = script;

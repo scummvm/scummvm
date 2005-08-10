@@ -396,9 +396,9 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			error("Script::sfScriptDoAction wrong object type");
 	}
 
-	event.type = ONESHOT_EVENT;
-	event.code = SCRIPT_EVENT;
-	event.op = EVENT_EXEC_NONBLOCKING;
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventExecNonBlocking;
 	event.time = 0;
 	event.param = moduleNumber;
 	event.param2 = scriptEntryPointNumber;
@@ -1249,39 +1249,39 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	stringId = thread->pop();
 
-	event.type = ONESHOT_EVENT;
-	event.code = CURSOR_EVENT;
-	event.op = EVENT_HIDE;
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventHide;
 
 	q_event = _vm->_events->queue(&event);
 
 	_vm->_gfx->getCurrentPal(cur_pal);
 
-	event.type = IMMEDIATE_EVENT;
-	event.code = PAL_EVENT;
-	event.op = EVENT_PALTOBLACK;
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = INTERFACE_EVENT;
-	event.op = EVENT_CLEAR_STATUS;
+	event.type = kEvTOneshot;
+	event.code = kInterfaceEvent;
+	event.op = kEventClearStatus;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = GRAPHICS_EVENT;
-	event.op = EVENT_SETFLAG;
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventSetFlag;
 	event.param = RF_PLACARD;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = GRAPHICS_EVENT;
-	event.op = EVENT_FILL_RECT;
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventFillRect;
 	event.data = backBuffer;
 	event.param = 138;
 	event.param2 = 0;
@@ -1309,27 +1309,27 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	_placardTextEntry = _vm->_scene->_textList.addEntry(textEntry);
 
-	event.type = ONESHOT_EVENT;
-	event.code = TEXT_EVENT;
-	event.op = EVENT_DISPLAY;
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventDisplay;
 	event.data = _placardTextEntry;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
 	_vm->_scene->getBGPal(pal);
 
-	event.type = IMMEDIATE_EVENT;
-	event.code = PAL_EVENT;
-	event.op = EVENT_BLACKTOPAL;
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = pal;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = SCRIPT_EVENT;
-	event.op = EVENT_THREAD_WAKE;
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
 
 	q_event = _vm->_events->chain(q_event, &event);
@@ -1349,49 +1349,49 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 
 	_vm->_gfx->getCurrentPal(cur_pal);
 
-	event.type = IMMEDIATE_EVENT;
-	event.code = PAL_EVENT;
-	event.op = EVENT_PALTOBLACK;
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
 
 	q_event = _vm->_events->queue(&event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = GRAPHICS_EVENT;
-	event.op = EVENT_CLEARFLAG;
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventClearFlag;
 	event.param = RF_PLACARD;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = TEXT_EVENT;
-	event.op = EVENT_REMOVE;
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventRemove;
 	event.data = _placardTextEntry;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
 	_vm->_scene->getBGPal(pal);
 
-	event.type = IMMEDIATE_EVENT;
-	event.code = PAL_EVENT;
-	event.op = EVENT_BLACKTOPAL;
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = pal;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = CURSOR_EVENT;
-	event.op = EVENT_SHOW;
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventShow;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = ONESHOT_EVENT;
-	event.code = SCRIPT_EVENT;
-	event.op = EVENT_THREAD_WAKE;
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
 
 	q_event = _vm->_events->chain(q_event, &event);
