@@ -1727,7 +1727,10 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	byte *backbuff_ptr, *bgbak_ptr;
 	int numLinesToProcess;
 
-	if (bottom >= vs->h)
+	if (top < 0)
+		top = 0;
+
+	if (bottom > vs->h)
 		bottom = vs->h;
 
 	if (top >= bottom)
