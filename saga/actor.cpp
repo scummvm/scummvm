@@ -647,7 +647,7 @@ void Actor::realLocation(Location &location, uint16 objectId, uint16 walkFlags) 
 			distance = location.y;
 
 			location.u() = (angleLUT[angle][0] * distance) >> 8;
-			location.v() = (angleLUT[angle][1] * distance) >> 8;
+			location.v() = -(angleLUT[angle][1] * distance) >> 8;
 		} else {
 			angle = location.x & 15;
 			distance = location.y;

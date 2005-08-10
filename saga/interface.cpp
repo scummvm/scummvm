@@ -62,6 +62,9 @@ static int verbTypeToTextStringsIdLUT[kVerbTypesMax] = {
 	-1,
 	-1,
 	-1,
+	-1,
+	-1,
+	-1,
 	-1
 };
 
@@ -1213,7 +1216,7 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 			event.time = 0;
 			event.param = _vm->_scene->getScriptModuleNumber();
 			event.param2 = script;
-			event.param3 = kVerbIHNMUse;		// Action
+			event.param3 = kVerbUse;		// Action
 			event.param4 = obj;	// Object
 			event.param5 = 0;	// With Object
 			event.param6 = obj;		// Actor
@@ -1882,7 +1885,7 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 		for (i = len; i >= 0; i--) {
 			c = _converseWorkString[i];
 
-			if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kSmallFont, _converseWorkString, i, kFontNormal) <= CONVERSE_MAX_TEXT_WIDTH)) {
+			if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kSmallFont, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth)) {
 				break;
 			}
 		}
@@ -1923,7 +1926,7 @@ void Interface::converseDisplayText() {
 
 	_converseStartPos = 0;
 
-	end = _converseTextCount - CONVERSE_TEXT_LINES;
+	end = _converseTextCount - _vm->getDisplayInfo().converseTextLines;
 
 	if (end < 0)
 		end = 0;
@@ -1953,7 +1956,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 	char bullet[2] = {
 		(char)0xb7, 0
 	};
-	Rect rect(8, CONVERSE_TEXT_LINES * CONVERSE_TEXT_HEIGHT);
+	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
 	Point textPoint;
 
 	assert(_conversePanel.buttonsCount >= 6);
@@ -1966,7 +1969,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 
 	ds->drawRect(rect, kITEColorDarkGrey); //fill bullet place
 
-	for (int i = 0; i < CONVERSE_TEXT_LINES; i++) {
+	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;
 
 		if (_converseTextCount <= relPos) {

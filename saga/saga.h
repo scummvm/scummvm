@@ -413,6 +413,9 @@ struct GameDisplayInfo {
 	int mainPanelButtonsCount;
 	PanelButton *mainPanelButtons;
 
+	int converseMaxTextWidth;
+	int converseTextHeight;
+	int converseTextLines;
 	int converseUpButtonIndex;
 	int converseDownButtonIndex;
 

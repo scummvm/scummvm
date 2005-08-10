@@ -37,6 +37,15 @@
 #include "saga/scene.h"
 #include "saga/resnames.h"
 
+#define ITE_CONVERSE_MAX_TEXT_WIDTH (256 - 60)
+#define ITE_CONVERSE_TEXT_HEIGHT	10
+#define ITE_CONVERSE_TEXT_LINES     4
+
+//TODO: ihnm
+#define IHNM_CONVERSE_MAX_TEXT_WIDTH (256 - 60)
+#define IHNM_CONVERSE_TEXT_HEIGHT	10
+#define IHNM_CONVERSE_TEXT_LINES	10
+
 namespace Saga {
 
 static int detectGame(const FSList &fslist, bool mode = false, int start = -1);
@@ -66,10 +75,10 @@ static PanelButton ITE_MainPanelButtons[] = {
 };
 
 static PanelButton ITE_ConversePanelButtons[] = {
-	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 0, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
-	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 1, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
-	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 2, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
-	{kPanelButtonConverseText,	52,6 + CONVERSE_TEXT_HEIGHT * 3, CONVERSE_MAX_TEXT_WIDTH,CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + ITE_CONVERSE_TEXT_HEIGHT * 0, ITE_CONVERSE_MAX_TEXT_WIDTH,ITE_CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + ITE_CONVERSE_TEXT_HEIGHT * 1, ITE_CONVERSE_MAX_TEXT_WIDTH,ITE_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + ITE_CONVERSE_TEXT_HEIGHT * 2, ITE_CONVERSE_MAX_TEXT_WIDTH,ITE_CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
+	{kPanelButtonConverseText,	52,6 + ITE_CONVERSE_TEXT_HEIGHT * 3, ITE_CONVERSE_MAX_TEXT_WIDTH,ITE_CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
 	{kPanelButtonArrow,			257,6,	9,6,	-1,'u',0,	0,4,2},
 	{kPanelButtonArrow,			257,41,	9,6,	1,'d',0,	1,5,3},
 };
@@ -145,6 +154,9 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	ARRAYSIZE(ITE_MainPanelButtons),
 	ITE_MainPanelButtons,
 
+	ITE_CONVERSE_MAX_TEXT_WIDTH,
+	ITE_CONVERSE_TEXT_HEIGHT,
+	ITE_CONVERSE_TEXT_LINES,
 	4, 5,			// converse Up & Down button indexies
 	0, 148,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
@@ -499,11 +511,38 @@ static GamePatchDescription ITELinPatch_Files[] = {
 // IHNM section
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	{kPanelButtonVerb, 0,0, 0,0, kVerbWalkTo,' ',0, 0,0,0}, //TODO
+	{kPanelButtonVerb,		106,13,		114,30,	kVerbWalkTo,'w',0,	0,0,0}, //TODO: verb Sprite Numbers
+	{kPanelButtonVerb,		106,45,		114,30,	kVerbLookAt,'l',0,	0,0,0},
+	{kPanelButtonVerb,		106,77,		114,30, kVerbTake,'k',0,	0,0,0},
+	{kPanelButtonVerb,		106,109,	114,30, kVerbUse,'u',0,		0,0,0},
+	{kPanelButtonVerb,		223,13,		114,30, kVerbTalkTo,'t',0,	0,0,0},
+	{kPanelButtonVerb,		223,45,		114,30, kVerbSwallow,'s',0,	0,0,0},
+	{kPanelButtonVerb,		223,77,		114,30, kVerbGive,'g',0,	0,0,0},
+	{kPanelButtonVerb,		223,109,	114,30, kVerbPush,'p',0,	0,0,0},
+	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
+	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0}
+//TODO:inventory
+/*
+	{kPanelButtonInventory,	181 + 32*0,6,	27,18,	0,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*1,6,	27,18,	1,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*2,6,	27,18,	2,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*3,6,	27,18,	3,'-',0,	0,0,0},
+
+	{kPanelButtonInventory,	181 + 32*0,27,	27,18,	4,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*1,27,	27,18,	5,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*2,27,	27,18,	6,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*3,27,	27,18,	7,'-',0,	0,0,0}
+*/
 };
 
 static PanelButton IHNM_ConversePanelButtons[] = {
-	{kPanelButtonConverseText, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
+	{kPanelButtonConverseText,	117,18 + IHNM_CONVERSE_TEXT_HEIGHT * 0, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
+	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 1, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
+	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 2, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	2,'3',0,	0,0,0},
+	{kPanelButtonConverseText,	52,18 + IHNM_CONVERSE_TEXT_HEIGHT * 3, IHNM_CONVERSE_MAX_TEXT_WIDTH,IHNM_CONVERSE_TEXT_HEIGHT,	3,'4',0,	0,0,0},
+	//.....
+	{kPanelButtonArrow,			606,22,		20,25,	-1,'[',0,	0,0,0}, //TODO: arrow Sprite Numbers
+	{kPanelButtonArrow,			606,108,	20,25,	1,']',0,	0,0,0}
 };
 
 static PanelButton IHNM_OptionPanelButtons[] = {
@@ -556,6 +595,9 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 
 	-1, -1,		// converse Up & Down button indexies
 
+	IHNM_CONVERSE_MAX_TEXT_WIDTH,
+	IHNM_CONVERSE_TEXT_HEIGHT,
+	IHNM_CONVERSE_TEXT_LINES,
 	0, 0,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,

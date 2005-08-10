@@ -43,6 +43,9 @@ enum InterfaceUpdateFlags {
 	UPDATE_WHEELDOWN = 16
 };
 
+#define CONVERSE_MAX_TEXTS      64
+#define CONVERSE_MAX_WORK_STRING      128
+
 #define ITE_INVENTORY_SIZE 24
 
 #define VERB_STRLIMIT 32
@@ -51,11 +54,6 @@ enum InterfaceUpdateFlags {
 #define STATUS_TEXT_INPUT_MAX 256
 
 // Converse-specific stuff
-#define CONVERSE_MAX_TEXTS      64
-#define CONVERSE_MAX_TEXT_WIDTH (256 - 60)
-#define CONVERSE_TEXT_HEIGHT	10
-#define CONVERSE_TEXT_LINES     4
-#define CONVERSE_MAX_WORK_STRING      128
 
 enum PanelModes {
 	kPanelNull,

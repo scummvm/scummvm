@@ -72,6 +72,11 @@ enum VerbTypes {
 	kVerbWalkOnly = 13,
 	kVerbLookOnly = 14,
 
+//additional IHNM
+	kVerbTake = 15,
+	kVerbSwallow = 16,
+	kVerbPush = 17,
+/*
 	kVerbIHNMNone = 0,
 	kVerbIHNMWalkTo = 1,
 	kVerbIHNMLookAt = 2,
@@ -81,8 +86,8 @@ enum VerbTypes {
 	kVerbIHNMSwallow = 6,
 	kVerbIHNMGive = 7,
 	kVerbIHNMPush = 8,
-
-	kVerbTypesMax = kVerbLookOnly + 1
+*/
+	kVerbTypesMax = kVerbPush + 1
 };
 
 #define STHREAD_TIMESLICE 8
