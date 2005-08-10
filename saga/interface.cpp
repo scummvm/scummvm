@@ -27,6 +27,7 @@
 #include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/console.h"
+#include "saga/events.h"
 #include "saga/font.h"
 #include "saga/objectmap.h"
 #include "saga/isomap.h"
@@ -264,7 +265,7 @@ void Interface::setMode(int mode) {
 	switch (_panelMode) {
 	case kPanelMain:
 		if (_vm->getGameType() == GType_IHNM)
-			warning("FIXME: Implement IHNM differences from ExecuteInvontoryPanel");
+			warning("FIXME: Implement IHNM differences from ExecuteInventoryPanel");
 
 		_mainPanel.currentButton = NULL;
 		break;
@@ -300,6 +301,8 @@ void Interface::setMode(int mode) {
 	case kPanelSceneSubstitute:
 		_vm->_render->setFlag(RF_DEMO_SUBST);
 		_vm->_gfx->getCurrentPal(_mapSavedPal);
+		break;
+	case kPanelChapterSelection:
 		break;
 	}
 
@@ -1169,6 +1172,56 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 	}
 }
 
+void Interface::handleChapterSelectionUpdate(const Point& mousePoint) {
+	
+}
+
+void Interface::handleChapterSelectionClick(const Point& mousePoint) {
+	int obj = _vm->_script->_pointerObject;
+
+	_vm->_actor->abortSpeech();
+
+	if (obj) {
+		int script = 0;
+		HitZone *hitZone;
+		ActorData *a;
+		ObjectData *o;
+		EVENT event;
+
+		switch (objectTypeId(obj)) {
+		case kGameObjectHitZone:
+			hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(obj));
+			if (hitZone->getFlags() & kHitZoneExit)
+				script = hitZone->getScriptNumber();
+			break;
+
+		case kGameObjectActor:
+			a = _vm->_actor->getActor(obj);
+			script = a->scriptEntrypointNumber;
+			break;
+
+		case kGameObjectObject:
+			o = _vm->_actor->getObj(obj);
+			script = o->scriptEntrypointNumber;
+			break;
+		}
+
+		if (script > 0) {
+			event.type = ONESHOT_EVENT;
+			event.code = SCRIPT_EVENT;
+			event.op = EVENT_EXEC_NONBLOCKING;
+			event.time = 0;
+			event.param = _vm->_scene->getScriptModuleNumber();
+			event.param2 = script;
+			event.param3 = kVerbIHNMUse;		// Action
+			event.param4 = obj;	// Object
+			event.param5 = 0;	// With Object
+			event.param6 = obj;		// Actor
+
+			_vm->_events->queue(&event);
+		}
+	}
+}
 
 void Interface::setOption(PanelButton *panelButton) {
 	char * fileName;
@@ -1210,7 +1263,8 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		return;
 	}
 
-	if (_panelMode == kPanelMain) {
+	switch (_panelMode) {
+	case kPanelMain:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
 			bool lastWasPlayfield = _lastMousePoint.y < _vm->getSceneHeight();
 			if (mousePoint.y < _vm->getSceneHeight()) {
@@ -1235,13 +1289,11 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				}
 			}
 		}
-	}
+		break;
 
-	if (_panelMode == kPanelConverse) {
+	case kPanelConverse:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
-
 			handleConverseUpdate(mousePoint);
-
 		} else {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				handleConverseClick(mousePoint);
@@ -1257,13 +1309,11 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				_vm->_puzzle->handleClick(mousePoint);
 			}
 		}
-	}
+		break;
 
-	if (_panelMode == kPanelOption) {
+	case kPanelOption:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
-
 			handleOptionUpdate(mousePoint);
-
 		} else {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				handleOptionClick(mousePoint);
@@ -1279,21 +1329,19 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				calcOptionSaveSlider();
 			}
 		}
-	}
+		break;
 
-	if (_panelMode == kPanelQuit) {
+	case kPanelQuit:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
-
 			handleQuitUpdate(mousePoint);
-
 		} else {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				handleQuitClick(mousePoint);
 			}
 		}
-	}
+		break;
 
-	if (_panelMode == kPanelLoad) {
+	case kPanelLoad:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
 
 			handleLoadUpdate(mousePoint);
@@ -1303,9 +1351,9 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				handleLoadClick(mousePoint);
 			}
 		}
-	}
+		break;
 
-	if (_panelMode == kPanelSave) {
+	case kPanelSave:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
 
 			handleSaveUpdate(mousePoint);
@@ -1315,20 +1363,31 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				handleSaveClick(mousePoint);
 			}
 		}
-	}
+		break;
 
-	if (_panelMode == kPanelMap) {
+	case kPanelMap:
 		if (updateFlag & UPDATE_MOUSECLICK)
 			mapPanelClean();
-	}
+		break;
 
-	if (_panelMode == kPanelSceneSubstitute) {
+	case kPanelSceneSubstitute:
 		if (updateFlag & UPDATE_MOUSECLICK) {
 			_vm->_render->clearFlag(RF_DEMO_SUBST);
 			_vm->_gfx->setPalette(_mapSavedPal);
 			setMode(kPanelMain);
 			_vm->_script->setNoPendingVerb();
 		}
+		break;
+
+	case kPanelChapterSelection:
+		// TODO: panel has silent button
+		if (updateFlag & UPDATE_MOUSEMOVE) {
+			handleChapterSelectionUpdate(mousePoint);
+		} else {
+			if (updateFlag & UPDATE_MOUSECLICK)
+				handleChapterSelectionClick(mousePoint);
+		}
+		break;
 	}
 
 	_lastMousePoint = mousePoint;

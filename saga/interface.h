@@ -70,7 +70,7 @@ enum PanelModes {
 	kPanelPlacard,
 	kPanelMap,
 	kPanelSceneSubstitute,
-	kPanelUnknown
+	kPanelChapterSelection
 //	kPanelInventory
 };
 
@@ -312,6 +312,9 @@ private:
 	}
 	void handleSaveUpdate(const Point& mousePoint);					// save panel update
 	void handleSaveClick(const Point& mousePoint);					// save panel click
+
+	void handleChapterSelectionUpdate(const Point& mousePoint);
+	void handleChapterSelectionClick(const Point& mousePoint);
 
 	void mapPanelShow();
 	void mapPanelClean();

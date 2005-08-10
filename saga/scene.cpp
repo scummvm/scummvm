@@ -620,7 +620,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_interface->activate();
 
 		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1)
-			_vm->_interface->setMode(kPanelUnknown);
+			_vm->_interface->setMode(kPanelChapterSelection);
 		else
 			_vm->_interface->setMode(kPanelMain);
 
