@@ -43,7 +43,7 @@
 namespace Saga {
 
 static SaveFileData emptySlot = {
-	 "[New Save Game]", 0
+	 "", 0
 };
 
 //TODO:
@@ -62,6 +62,9 @@ SaveFileData *SagaEngine::getSaveFile(uint idx) {
 	if (isSaveListFull()) {
 		return &_saveFiles[_saveFilesCount - idx - 1];
 	} else {
+		if (!emptySlot.name[0])
+			strcpy(emptySlot.name, getTextString(44));
+
 		return (idx == 0) ? &emptySlot : &_saveFiles[_saveFilesCount - idx];
 	}
 }

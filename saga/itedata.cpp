@@ -334,7 +334,7 @@ FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 	{ FX_CROWD_17,      64 }
 };
 
-const char *ITEinterfaceTextStrings[][44] = {
+const char *ITEinterfaceTextStrings[][45] = {
 	{
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
 		"Close", "Use", "Give", "Options", "Test",
@@ -344,7 +344,8 @@ const char *ITEinterfaceTextStrings[][44] = {
 		"Quit", "OK", "Mid", "Click", "10%",
 		"20%", "30%", "40%", "50%", "60%",
 		"70%", "80%", "90%", "Max", "Quit the Game?",
-		"Load Successful!", "Enter Save Game Name", "Give %s to %s", "Use %s with %s"
+		"Load Successful!", "Enter Save Game Name", "Give %s to %s", "Use %s with %s",
+		"[New Save Game]"
 		
 	},
 	// German
@@ -357,7 +358,8 @@ const char *ITEinterfaceTextStrings[][44] = {
 		"Beenden", NULL, "M", "Klick", NULL,
 		NULL, NULL, NULL, NULL, NULL,
 		NULL, NULL, NULL, NULL, "Spiel beenden?",
-		"Spielstand geladen!", "Bitte Namen eingeben", "Gib %s zu %s", "Benutze %s mit %s"
+		"Spielstand geladen!", "Bitte Namen eingeben", "Gib %s zu %s", "Benutze %s mit %s",
+		"[Neuer Spielstand]"
 	}
 };
 
