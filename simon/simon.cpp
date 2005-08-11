@@ -776,7 +776,7 @@ void SimonEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-void palette_fadeout(uint32 *pal_values, uint num) {
+void SimonEngine::palette_fadeout(uint32 *pal_values, uint num) {
 	byte *p = (byte *)pal_values;
 
 	do {

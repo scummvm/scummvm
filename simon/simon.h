@@ -387,6 +387,8 @@ protected:
 	void readItemFromGamePc(Common::File *in, Item *item);
 	void loadGamePcFile(const char *filename);
 
+	void palette_fadeout(uint32 *pal_values, uint num);
+	
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);
 	void alignTableMem();
@@ -739,8 +741,6 @@ protected:
 	int go();
 	void openGameFile();
 
-	static int CDECL game_thread_proc(void *param);
-
 	void timer_callback();
 	void timer_proc1();
 
@@ -817,8 +817,6 @@ protected:
 
 	char *gen_savename(int slot);
 };
-
-void palette_fadeout(uint32 *pal_values, uint num);
 
 } // End of namespace Simon
 
