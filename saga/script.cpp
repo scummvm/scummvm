@@ -431,8 +431,13 @@ void Script::doVerb() {
 
 	} else {
 		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
-		if (excuseText)
+		if (excuseText) {
+			// In Floppy versions we don't have excuse texts
+			if (!(_vm->getFeatures() & GF_CD_FX))
+				excuseSampleResourceId = -1;
+
 			_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
+		}
 	}
 
 	if ((_currentVerb == kVerbWalkTo) || (_currentVerb == kVerbLookAt)) {

@@ -402,26 +402,26 @@ const char *SagaEngine::getTextString(int textStringId) {
 }
 
 void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundResourceId) {
-	textString = NULL; // TODO: i18n it !
+	textString = NULL;
 	switch (verb) {
 	case kVerbPickUp:
-		textString = "I can't pick that up.";
+		textString = getTextString(45);
 		soundResourceId = RID_BOAR_VOICE_007;
 		break;
 	case kVerbLookAt:
-		textString = "I see nothing special about it.";
+		textString = getTextString(46);
 		soundResourceId = RID_BOAR_VOICE_006;
 		break;
 	case kVerbOpen:
-		textString = "There's no place to open it.";
+		textString = getTextString(47);
 		soundResourceId = RID_BOAR_VOICE_000;
 		break;
 	case kVerbClose:
-		textString = "There's no opening to close.";
+		textString = getTextString(48);
 		soundResourceId = RID_BOAR_VOICE_002;
 		break;
 	case kVerbUse:
-		textString = "I don't know how to do that.";
+		textString = getTextString(49);
 		soundResourceId = RID_BOAR_VOICE_005;
 		break;
 	}
