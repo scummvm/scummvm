@@ -1895,6 +1895,8 @@ void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
 	int16 sceneNumber = thread->pop();
 	int16 actorsEntrance = thread->pop();
 
+	debug(2, "sfVsetTrrack(%d, %d, %d)", chapter, sceneNumber, actorsEntrance);
+
 	_vm->_scene->changeScene(sceneNumber, actorsEntrance, kTransitionFade, chapter);
 }
 
