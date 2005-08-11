@@ -174,6 +174,10 @@ void Gfx::setPalette(PalEntry *pal) {
 		ppal[3] = 0;
 	}
 
+	// Make 256th color black. See bug #1256368
+	if (_vm->getFeatures() & GF_MAC_RESOURCES)
+		memset(&_currentPal[255 * 4], 0, 4);
+
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
@@ -232,6 +236,10 @@ void Gfx::palToBlack(PalEntry *src_pal, double percent) {
 		}
 		ppal[3] = 0;
 	}
+
+	// Make 256th color black. See bug #1256368
+	if (_vm->getFeatures() & GF_MAC_RESOURCES)
+		memset(&_currentPal[255 * 4], 0, 4);
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
@@ -302,6 +310,10 @@ void Gfx::blackToPal(PalEntry *src_pal, double percent) {
 			}
 		}
 	}
+
+	// Make 256th color black. See bug #1256368
+	if (_vm->getFeatures() & GF_MAC_RESOURCES)
+		memset(&_currentPal[255 * 4], 0, 4);
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
