@@ -247,7 +247,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 	}
 }
 
-bool QueenEngine::canLoadOrSave() {
+bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
 }
 
@@ -258,13 +258,14 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 	Common::OutSaveFile *file = _saveFileMan->openForSaving(name);
 	if (file) {
 		// save data
-		byte *saveData = new byte[30000];
+		byte *saveData = new byte[SAVESTATE_MAX_SIZE];
 		byte *p = saveData;
 		_bam->saveState(p);
 		_grid->saveState(p);
 		_logic->saveState(p);
 		_sound->saveState(p);
 		uint32 dataSize = p - saveData;
+		assert(dataSize < SAVESTATE_MAX_SIZE);
 
 		// write header
 		GameStateHeader header;
@@ -302,9 +303,10 @@ void QueenEngine::loadGameState(uint16 slot) {
 			_logic->loadState(header.version, p);
 			_sound->loadState(header.version, p);
 			if (header.dataSize != (uint32)(p - saveData)) {
-				error("Corrupted savegame file");
+				warning("Corrupted savegame file");
+			} else {
+				_logic->setupRestoredGame();
 			}
-			_logic->setupRestoredGame();
 		}
 		delete[] saveData;
 		delete file;
@@ -338,9 +340,9 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	char filename[20];
 	makeGameStateName(0, filename);
 	filename[strlen(filename) - 2] = 0;
-	bool marks[SAVESTATE_MAX];
-	_saveFileMan->listSavefiles(filename, marks, SAVESTATE_MAX);
-	for (int i = 0; i < SAVESTATE_MAX; ++i) {
+	bool marks[SAVESTATE_MAX_NUM];
+	_saveFileMan->listSavefiles(filename, marks, SAVESTATE_MAX_NUM);
+	for (int i = 0; i < SAVESTATE_MAX_NUM; ++i) {
 		if (marks[i]) {
 			GameStateHeader header;
 			Common::InSaveFile *f = readGameStateHeader(i, &header);

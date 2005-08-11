@@ -111,7 +111,7 @@ public:
 
 	void update(bool checkPlayerInput = false);
 
-	bool canLoadOrSave();
+	bool canLoadOrSave() const;
 	void saveGameState(uint16 slot, const char *desc);
 	void loadGameState(uint16 slot);
 	void makeGameStateName(uint16 slot, char *buf);
@@ -119,14 +119,16 @@ public:
 	Common::InSaveFile *readGameStateHeader(uint16 slot, GameStateHeader *gsh);
 
 	enum {
-		SAVESTATE_CUR_VER = 1,
-		SAVESTATE_MAX     = 100,
-		AUTOSAVE_INTERVAL = 5 * 60 * 1000,
-		AUTOSAVE_SLOT     = 0xFF,
+		SAVESTATE_CUR_VER  = 1,
+		SAVESTATE_MAX_NUM  = 100,
+		SAVESTATE_MAX_SIZE = 30000,
 
-		MIN_TEXT_SPEED    = 4,
-		MAX_TEXT_SPEED    = 100,
-		MAX_MUSIC_VOLUME  = 255
+		AUTOSAVE_INTERVAL  = 5 * 60 * 1000,
+		AUTOSAVE_SLOT      = 0xFF,
+
+		MIN_TEXT_SPEED     = 4,
+		MAX_TEXT_SPEED     = 100,
+		MAX_MUSIC_VOLUME   = 255
 	};
 
 protected:
