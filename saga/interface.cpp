@@ -1080,9 +1080,11 @@ void Interface::setSave(PanelButton *panelButton) {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
 				_vm->save(fileName, _textInputString);
 			}
+			_textInput = false;
 			setMode(kPanelOption);
 			break;
 		case kTextCancel:
+			_textInput = false;
 			setMode(kPanelOption);
 			break;
 	}
@@ -1257,6 +1259,9 @@ void Interface::setOption(PanelButton *panelButton) {
 }
 
 void Interface::update(const Point& mousePoint, int updateFlag) {
+
+	if (!_active && _panelMode == kPanelNull && (updateFlag & UPDATE_MOUSECLICK))
+		_vm->_actor->abortSpeech();
 
 	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut || !_active) {
 		return;

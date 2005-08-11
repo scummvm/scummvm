@@ -62,7 +62,8 @@ int SagaEngine::processInput() {
 				_interface->draw();
 				break;
 
-/*			case 269:
+#if 0
+			case 269:
 			case 270:
 			case 273:
 			case 274:
@@ -73,7 +74,8 @@ int SagaEngine::processInput() {
 					_vm->_isoMap->_viewScroll.y += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 274) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 273));
 					_vm->_isoMap->_viewScroll.x += (_vm->_isoMap->_viewDiff * (event.kbd.keycode == 275) - _vm->_isoMap->_viewDiff * (event.kbd.keycode == 276));
 				}
-				break;*/
+				break;
+#endif
 			case 282: // F1
 				_render->toggleFlag(RF_SHOW_FPS);
 				_actor->_handleActionDiv = (_actor->_handleActionDiv == 15) ? 50 : 15;
@@ -86,6 +88,10 @@ int SagaEngine::processInput() {
 				break;
 			case 285: // F4
 				_render->toggleFlag(RF_OBJECTMAP_TEST);
+				break;
+			case 286: // F5
+				if (_interface->getSaveReminderState() > 0)
+					_interface->setMode(kPanelOption);
 				break;
 			case 287: // F6
 				_render->toggleFlag(RF_ACTOR_PATH_TEST);

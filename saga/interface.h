@@ -195,6 +195,9 @@ public:
 		_saveReminderState = state;
 		draw();
 	}
+	int getSaveReminderState() {
+		return _saveReminderState;
+	}
 	bool isActive() { return _active; }
 	void setMode(int mode);
 	int getMode(void) const { return _panelMode; }
