@@ -373,8 +373,8 @@ void Insane::initvars(void) {
 	_actor[0].x1 = -1;
 	_actor[0].weaponClass = 2;
 	_actor[0].animWeaponClass = 0;
-	_actor[0].field_34 = 2;
-	_actor[0].field_38 = 0;
+	_actor[0].newFacingFlag = 2;
+	_actor[0].curFacingFlag = 0;
 	_actor[0].lost = false;
 	_actor[0].kicking = false;
 	_actor[0].field_44 = false;
@@ -412,8 +412,8 @@ void Insane::initvars(void) {
 	_actor[1].x1 = -1;
 	_actor[1].weaponClass = 2;
 	_actor[1].animWeaponClass = 0;
-	_actor[1].field_34 = 0;
-	_actor[1].field_38 = 0;
+	_actor[1].newFacingFlag = 0;
+	_actor[1].curFacingFlag = 0;
 	_actor[1].lost = false;
 	_actor[1].kicking = false;
 	_actor[1].field_44 = false;
@@ -914,8 +914,8 @@ void Insane::reinitActors(void) {
 	_actor[0].weapon = INV_HAND;
 	_actor[0].weaponClass = 2;
 	_actor[0].animWeaponClass = 0;
-	_actor[0].field_34 = 2;
-	_actor[0].field_38 = 0;
+	_actor[0].newFacingFlag = 2;
+	_actor[0].curFacingFlag = 0;
 	_actor[0].tilt = 0;
 	_actor[0].field_8 = 1;
 	_actor[0].act[2].state = 1;

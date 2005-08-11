@@ -765,8 +765,8 @@ void Insane::setEnemyCostumes(void) {
 	_actor[0].weapon = INV_HAND;
 	_actor[0].weaponClass = 2;
 	_actor[0].animWeaponClass = 0;
-	_actor[0].field_34 = 2;
-	_actor[0].field_38 = 0;
+	_actor[0].newFacingFlag = 2;
+	_actor[0].curFacingFlag = 0;
 	_actor[0].tilt = 0;
 	_actor[0].field_8 = 1;
 	_actor[0].act[2].state = 1;

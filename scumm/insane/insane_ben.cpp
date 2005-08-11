@@ -607,7 +607,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 6:
 		smlayer_setActorLayer(0, 2, 4);
 		_actor[0].weaponClass = 2;
-		_actor[0].field_34 = 1;
+		_actor[0].newFacingFlag = 1;
 		_actor[0].kicking = false;
 		smlayer_setActorCostume(0, 2, readArray(22));
 		smlayer_setActorFacing(0, 2, 19, 180);
@@ -618,7 +618,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 7:
 		smlayer_setActorLayer(0, 2, 4);
 		_actor[0].weaponClass = 2;
-		_actor[0].field_34 = 1;
+		_actor[0].newFacingFlag = 1;
 		_actor[0].kicking = false;
 		if (_actor[0].act[2].frame >= 1) {
 			smlayer_setActorFacing(0, 2, 20, 180);
@@ -629,7 +629,7 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 8:
 		smlayer_setActorLayer(0, 2, 4);
 		_actor[0].weaponClass = 2;
-		_actor[0].field_34 = 1;
+		_actor[0].newFacingFlag = 1;
 		_actor[0].kicking = false;
 		if ((_actor[0].act[2].frame == 3) && (calcEnemyDamage(0, 0) == 1)) {
 			_actor[1].damage = weaponDamage(0);
@@ -645,11 +645,11 @@ void Insane::actor02Reaction(int32 buttons) {
 	case 9:
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].weaponClass = 2;
-		_actor[0].field_34 = 1;
+		_actor[0].newFacingFlag = 1;
 		_actor[0].kicking = false;
 		if (_actor[0].act[2].frame >= 3) {
 			smlayer_setActorCostume(0, 2, readArray(12));
-			_actor[0].field_34 = 2;
+			_actor[0].newFacingFlag = 2;
 			_actor[0].act[2].state = 1;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -1715,8 +1715,8 @@ void Insane::actor01Reaction(int32 buttons) {
 		break;
 	}
 
-	if (_actor[0].field_38 != _actor[0].field_34) {
-		if (_actor[0].field_34 == 2)
+	if (_actor[0].curFacingFlag != _actor[0].newFacingFlag) {
+		if (_actor[0].newFacingFlag == 2)
 			smlayer_setActorFacing(0, 1, 28, 180);
 		else
 			smlayer_setActorFacing(0, 1, 27, 180);
@@ -1731,7 +1731,7 @@ void Insane::actor01Reaction(int32 buttons) {
 		smlayer_putActor(0, 1, tmpx, tmpy, _smlayer_room);
 
 	_actor[0].animWeaponClass = _actor[0].weaponClass;
-	_actor[0].field_38 = _actor[0].field_34;
+	_actor[0].curFacingFlag = _actor[0].newFacingFlag;
 }
 
 void Insane::actor03Reaction(int32 buttons) {

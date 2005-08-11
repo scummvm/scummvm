@@ -243,13 +243,13 @@ class Insane {
 		int32 x1;
 		int16 weaponClass;
 		int16 animWeaponClass;
-		int16 field_34;
-		int16 field_38;
-		bool  lost;
-		bool  kicking;
-		bool  field_44;
-		bool field_48;
-		bool  defunct;
+		int16 newFacingFlag;
+		int16 curFacingFlag;
+		bool lost;
+		bool kicking;
+		bool field_44;
+		bool field_48; // unused
+		bool defunct;
 		int32 scenePropSubIdx;
 		int32 field_54;
 		int32 runningSound;
