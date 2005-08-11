@@ -289,15 +289,15 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
 	   unsigned int light = tmp | (tmp >> 16); \
        PIXEL pixel = *(PIXEL *)((char *)texture+ \
           (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));\
-       unsigned int c_r = (pixel & 0xF800) >> 9;    \
-       unsigned int c_g = (pixel & 0x07E0) >> 4;    \
-       unsigned int c_b = (pixel & 0x001F) << 2;    \
-       unsigned int l_r = (light & 0xF800) >> 9;    \
-       unsigned int l_g = (light & 0x07E0) >> 4;    \
-       unsigned int l_b = (light & 0x001F) << 2;    \
-       c_r = (c_r + l_r); \
-       c_g = (c_g + l_g); \
-       c_b = (c_b + l_b); \
+       unsigned int c_r = (pixel & 0xF800) >> 8;    \
+       unsigned int c_g = (pixel & 0x07E0) >> 3;    \
+       unsigned int c_b = (pixel & 0x001F) << 3;    \
+       unsigned int l_r = (light & 0xF800) >> 8;    \
+       unsigned int l_g = (light & 0x07E0) >> 3;    \
+       unsigned int l_b = (light & 0x001F) << 3;    \
+       c_r = (c_r * l_r) / 256; \
+       c_g = (c_g * l_g) / 256; \
+       c_b = (c_b * l_b) / 256; \
        pixel = ((c_r & 0xF8) << 8) | ((c_g & 0xFC) << 3) | (c_b >> 3); \
        pp[_a]=pixel;            \
        pz[_a]=zz;				\
