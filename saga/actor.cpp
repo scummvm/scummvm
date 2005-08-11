@@ -345,6 +345,9 @@ bool Actor::loadActorResources(ActorData *actor) {
 		gotSomething = true;
 	} else {
 		warning("Frame List ID = 0 for actor index %d", actor->_index);
+
+		if (_vm->getGameType() == GType_ITE)
+			return true;
 	}
 
 
