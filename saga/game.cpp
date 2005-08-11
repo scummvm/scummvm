@@ -1388,9 +1388,9 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		}
 	}
 
-	if (!filesMD5.isEmpty()) {
-		printf("MD5s of your ITE version are unknown. Please, report following data to\n");
-		printf("ScummVM team along with your ITE version:\n");
+	if (!filesMD5.isEmpty() && start == -1) {
+		printf("MD5s of your game version are unknown. Please, report following data to\n");
+		printf("ScummVM team along with your game name and version:\n");
 
 		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
 			printf("%s: %s\n", file->_key.c_str(), file->_value.c_str());
