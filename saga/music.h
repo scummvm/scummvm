@@ -111,7 +111,8 @@ public:
 	void resume(void);
 	void stop(void);
 
-	void setVolume(int volume, int time);
+	void setVolume(int volume, int time = 1);
+	int getVolume() { return _currentVolume; }
 
 private:
 	SagaEngine *_vm;

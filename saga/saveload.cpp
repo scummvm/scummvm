@@ -30,13 +30,14 @@
 
 #include "saga/saga.h"
 #include "saga/actor.h"
-#include "saga/isomap.h"
-#include "saga/resnames.h"
-#include "saga/script.h"
-#include "saga/interface.h"
-#include "saga/scene.h"
-#include "saga/render.h"
 #include "saga/events.h"
+#include "saga/interface.h"
+#include "saga/isomap.h"
+#include "saga/music.h"
+#include "saga/render.h"
+#include "saga/resnames.h"
+#include "saga/scene.h"
+#include "saga/script.h"
 
 #define CURRENT_SAGA_VER 3
 
@@ -225,10 +226,15 @@ void SagaEngine::load(const char *fileName) {
 
 	delete in;
 
+	// Mute volume to prevent outScene music play
+	int volume = _music->getVolume();
+	_music->setVolume(0);
+
 	_isoMap->setMapPosition(mapx, mapy);
 
 	_scene->clearSceneQueue();
 	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
+
 	_events->handleEvents(0); //dissolve back grounds
 
 	if (insetSceneNumber != sceneNumber) {
@@ -237,6 +243,8 @@ void SagaEngine::load(const char *fileName) {
 		_render->clearFlag(RF_DISABLE_ACTORS);
 		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
 	}
+
+	_music->setVolume(volume);
 
 	_interface->draw();
 }
