@@ -265,6 +265,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		error("SndRes::load Unknown sound type");
 	}
 
+	// In ITE CD De some voices are absent and contain just 5 bytes header
+	// Round it to even number so soundmanager will not crash.
+	// See bug #1256701
+	buffer.size &= ~(0x1);
+
 	return result;
 }
 
