@@ -304,6 +304,9 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 	int srcX, srcY;
 	int l, r;
 
+	if (x > 639 || y > 479)
+		return;
+
 	if (x < 0) {
 		x = 0;
 		srcX = -x;
@@ -336,7 +339,7 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 		}
 	} else {
 		for (l = 0; l < height; l++) {
-			for (r = 0; r < width * 2; r += 2) {
+			for (r = 0; r < copyWidth; r += 2) {
 				uint16 pixel = READ_LE_UINT16(src + r);
 				if (pixel != 0xf81f)
 					WRITE_LE_UINT16(dst + r, pixel);
@@ -392,9 +395,6 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 }
 
 void DriverTinyGL::selectMaterial(const Material *material) {
-#ifdef TURN_ON_LIGTHS_WITHOUT_TEXTURES
-	return;
-#endif
 	TGLuint *textures = (TGLuint *)material->_textures;
 	tglBindTexture(TGL_TEXTURE_2D, textures[material->_currImage]);
 	tglPushMatrix();
@@ -420,8 +420,7 @@ void DriverTinyGL::drawSmushFrame(int offsetX, int offsetY) {
 	if (_smushWidth == 640 && _smushHeight == 480) {
 		memcpy(_zb->pbuf, _smushBitmap, 640 * 480 * 2);
 	} else {
-		TinyGLBlit((byte *)_zb->pbuf, _smushBitmap, offsetX, offsetY,
-			_smushWidth, _smushHeight, false);
+		TinyGLBlit((byte *)_zb->pbuf, _smushBitmap, offsetX, offsetY, _smushWidth, _smushHeight, false);
 	}
 }
 
