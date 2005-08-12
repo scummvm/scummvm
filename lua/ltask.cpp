@@ -11,7 +11,7 @@ void pause_scripts (void) {
 	struct lua_Task *t;
 
 	for (t = L->root_task->next; t != NULL; t = t->next) {
-		if (L->curr_task != t)
+		if ((L->curr_task != t) && (t->Tstate != DONE))
 			t->Tstate = PAUSE;
 	}
 }
@@ -20,7 +20,7 @@ void unpause_scripts (void) {
 	struct lua_Task *t;
 
 	for (t = L->root_task->next; t != NULL; t = t->next) {
-		if (L->curr_task != t)
+		if ((L->curr_task != t) && (t->Tstate != DONE))
 			t->Tstate = YIELD;
 	}
 }
