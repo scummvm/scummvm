@@ -565,7 +565,9 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 
 		if (hitZone->getFlags() & kHitZoneProject) {
 			if (!hitZone->getSpecialPoint(specialPoint)) {
-				error("Script::playfieldClick SpecialPoint not found");
+				// Original behaved this way and this prevents from crash
+				// at ruins. See bug #1257459
+				specialPoint.x = specialPoint.y = 0;
 			}
 
 			// tiled stuff
