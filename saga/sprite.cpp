@@ -69,7 +69,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	uint16 newSpriteCount;
 	uint16 spriteCount;
 	int i;
-	int outputLength;
+	int outputLength, inputLength;
 	uint32 offset;
 	const byte *spritePointer;
 	const byte *spriteDataPointer;
@@ -125,7 +125,8 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		}
 		spriteDataPointer = spritePointer + readS2.pos();
 		outputLength = spriteInfo->width * spriteInfo->height;
-		decodeRLEBuffer(spriteDataPointer, 64000, outputLength); //todo: 64000 - should be replace by real input length
+		inputLength = spriteListLength - (spriteDataPointer -  spriteListData);
+		decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
 		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
 		if (spriteInfo->decodedBuffer == NULL) {
 			memoryError("Sprite::loadList");
