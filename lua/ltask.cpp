@@ -11,7 +11,7 @@ void pause_scripts (void) {
 	struct lua_Task *t;
 
 	for (t = L->root_task->next; t != NULL; t = t->next) {
-		if (t->Tstate != DONE)
+		if (L->curr_task != t)
 			t->Tstate = PAUSE;
 	}
 }
@@ -20,7 +20,7 @@ void unpause_scripts (void) {
 	struct lua_Task *t;
 
 	for (t = L->root_task->next; t != NULL; t = t->next) {
-		if (t->Tstate == PAUSE)
+		if (L->curr_task != t)
 			t->Tstate = YIELD;
 	}
 }
@@ -150,18 +150,18 @@ void identify_script (void) {
 		lua_error("Bad argument to identify_script");
 	}
 
-        int taskId = (int)nvalue(f);
+	int taskId = (int)nvalue(f);
 	for (t = L->root_task->next; t != NULL; t = t->next) {
-                if (t->id == taskId)
-                	break;
-        }
+		if (t->id == taskId)
+			break;
+	}
 
-        if ((t == NULL) || (t->Tstate == DONE)) {
-                ttype(L->stack.top) = LUA_T_NIL;
-        } else {
-                *L->stack.top = *t->stack.stack;
-        }
-        incr_top;
+	if ((t == NULL) || (t->Tstate == DONE)) {
+			ttype(L->stack.top) = LUA_T_NIL;
+	} else {
+		*L->stack.top = *t->stack.stack;
+	}
+	incr_top;
 }
 
 void find_script (void) {
