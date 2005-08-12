@@ -38,10 +38,10 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 	// First four bytes are the FYEK Keyframe identifier code
 	// Next 36 bytes are the filename
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
-		char filebuf[38];
+		char filebuf[37];
 		
 		memcpy(filebuf, data + 4, 36);
-		filebuf[37] = 0;
+		filebuf[36] = 0;
 		printf("Loading Keyframe '%s'.\n", filebuf);
 	}
 	// Next four bytes are the flags
