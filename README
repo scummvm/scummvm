@@ -1,5 +1,5 @@
-Residual: A LucasArts 3D game interpreter           Version:      0.05-CVS
-(C) 2003-2005 The ScummVM-Residual team             Last Updated: 25 Jul 2005
+Residual: A LucasArts 3D game interpreter           Version:      0.06a-CVS
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 12 Aug 2005
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -8,8 +8,7 @@ Residual is a ScummVM (http://www.scummvm.org/) sub-project to play LucasArts'
 LUA-based 3D adventures, such as Grim Fandango. Residual is an OpenGL program,
 and requires a 3D card with working OpenGL support for optimum playability.
 
-A software renderer is also included for machines without hardware OpenGL,
-however it is missing some functionality such as proper lighting.
+A software renderer is also included for machines without hardware OpenGL.
 
 The main ScummVM program can run LucasArts 2D SCUMM adventures (among others).
 Residual is named such as it aims to do the same for the residual (remaining) 
@@ -59,10 +58,11 @@ What is the state of Residual?
 ------------------------------- 
 Basic gameplay works, including cutscenes. Some of the game is playable,
 but many features are either missing or unstable. There is no abilitity
-to save/load, lighting, etc. Crashes are likely.
+to save/load, etc. Crashes are likely.
 
 Game currently playable to:
 	Meche leaves Manny again (Rubacava, Year 2)
+
 Caveats (in order of appearance):
 1) Sound track destruction doesn't do quite a good enough job when
    entering the spider web area (sp.set) in the Petrified Forest
@@ -118,13 +118,13 @@ Credits:
 ScummVM-Residual Team:
  James 'Ender' Brown          	    Core developer. ScummVM co-lead dev
  Pawel 'aquadran' Kolodziejski      Core developer. SMUSH, iMUSE implemention
+ Erich 'Compholio' Hoover           x86-64, various fixes and comments, menu support, improved state support
 
 Contributors:
  Daniel Schepler                    Initial engine codebase, LUA support
  Vincent Hamm                       Various engine code
  Lionel 'bbrox' Ulmer               OpenGL optimisations
  Ori 'salty-horse' Avtalion         Lipsync, LAF support
- Erich 'Compholio' Hoover           x86-64, various fixes and comments, menu support, improved state support
  Andrea 'Yak Bizzarro' Corna        Improved font support
 
 Special Thanks To:
