@@ -90,6 +90,10 @@ Bitmap::Bitmap(const char *data, int width, int height, const char *filename) :
 	_y = 0;
 	_width = width;
 	_height = height;
+	_format = 1;
+	_numTex = 0;
+	_texIds = NULL;
+	_hasTransparency = false;
 	_data = new char *[_numImages];
 	_data[0] = new char[2 * _width * _height];
 	memcpy(_data[0], data, 2 * _width * _height);

@@ -2876,7 +2876,13 @@ static void BlastRect() {
 static void DimScreen() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("DimScreen()");
+		warning("DimRegion()");
+}
+
+static void DimRegion() {
+	DEBUG_FUNCTION();
+	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		warning("DimRegion()");
 }
 
 static void GetDiskFreeSpace() {
@@ -3326,7 +3332,6 @@ STUB_FUNC(SetActorShadowPoint)
 STUB_FUNC(SetActorShadowPlane)
 STUB_FUNC(ActivateActorShadow)
 STUB_FUNC(SetShadowColor)
-STUB_FUNC(DimRegion)
 STUB_FUNC(ForceRefresh)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)

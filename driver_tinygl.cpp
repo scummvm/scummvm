@@ -479,7 +479,7 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	int step = 0;
 	for (float y = 0; y < 479; y += step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			buffer[step++] = *(src + (int)y * 640 + (int)x); 
+			buffer[step++] = *(src + (int)y * 640 + (int)x);
 		}
 	}
 
