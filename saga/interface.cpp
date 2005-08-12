@@ -214,13 +214,13 @@ int Interface::activate() {
 		_active = true;
 		_vm->_script->_skipSpeeches = false;
 		_vm->_actor->_protagonist->_targetObject = ID_NOTHING;
-		_vm->_gfx->showCursor(true);
 		unlockMode();
 		if (_panelMode == kPanelMain){
 			_saveReminderState = 1;
 		}
 		draw();
 	}
+	_vm->_gfx->showCursor(true);
 
 	return SUCCESS;
 }
@@ -228,10 +228,10 @@ int Interface::activate() {
 int Interface::deactivate() {
 	if (_active) {
 		_active = false;
-		_vm->_gfx->showCursor(false);
 		lockMode();
 		setMode(kPanelNull);
 	}
+	_vm->_gfx->showCursor(false);
 
 	return SUCCESS;
 }
