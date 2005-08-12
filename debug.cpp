@@ -108,32 +108,32 @@ void error(const char *fmt, ...) {
 }
 
 const char *debug_levels[] = {
-        "NONE",
-        "NORMAL",
-        "WARN",
-        "ERROR",
-        "FUNC",
-        "BITMAP",
-        "MODEL",
-        "STUB",
-        "SMUSH",
-        "IMUSE",
-        "CHORE",
-        "ALL"
+	"NONE",
+	"NORMAL",
+	"WARN",
+	"ERROR",
+	"FUNC",
+	"BITMAP",
+	"MODEL",
+	"STUB",
+	"SMUSH",
+	"IMUSE",
+	"CHORE",
+	"ALL"
 };
 
 const char *debug_descriptions[] = {
-        "No debug messages will be printed (default)",
-        "\"Normal\" debug messages will be printed",
-        "Warning debug messages will be printed",
-        "Error debug messages will be printed",
-        "Function (normal and stub) debug messages will be printed",
-        "Bitmap debug messages will be printed",
-        "Model debug messages will be printed",
-        "Stub (missing function) debug messages will be printed",
-        "SMUSH (video) debug messages will be printed",
-        "IMUSE (audio) debug messages will be printed",
-        "Chore debug messages will be printed",
-        "All debug messages will be printed",
+	"No debug messages will be printed (default)",
+	"\"Normal\" debug messages will be printed",
+	"Warning debug messages will be printed",
+	"Error debug messages will be printed",
+	"Function (normal and stub) debug messages will be printed",
+	"Bitmap debug messages will be printed",
+	"Model debug messages will be printed",
+	"Stub (missing function) debug messages will be printed",
+	"SMUSH (video) debug messages will be printed",
+	"IMUSE (audio) debug messages will be printed",
+	"Chore debug messages will be printed",
+	"All debug messages will be printed",
 };
 
