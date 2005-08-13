@@ -679,6 +679,12 @@ static GameFileDescription IHNMCDDE_GameFiles[] = {
 	{"voices6.res", GAME_VOICEFILE}
 };
 
+static GameFontDescription IHNMDEMO_GameFonts[] = {
+	{2},
+	{3},
+	{4}
+};
+
 static GameFontDescription IHNMCD_GameFonts[] = {
 	{2},
 	{3},
@@ -821,6 +827,21 @@ static GameMD5 gameMD5[] = {
 	{ GID_IHNM_CD_DE, "c477443c52a0aa56e686ebd8d051e4ab", "voices5.res", false },
 	{ GID_IHNM_CD_DE, "2b9aea838f74b4eecfb29a8f205a2bd4", "voices6.res", false },
 	{ GID_IHNM_CD_DE, "8b09a196a52627cacb4eab13bfe0b2c3", "voicess.res", false },
+
+	// Reported
+	{ GID_IHNM_CD_ES, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
+	{ GID_IHNM_CD_ES, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
+	{ GID_IHNM_CD_ES, "58b79e61594779513c7f2d35509fa89e", "patch.re_", false },
+	{ GID_IHNM_CD_ES, "c92370d400e6f2a3fc411c3729d09224", "scream.res", false },
+	{ GID_IHNM_CD_ES, "be38bbc5a26be809dbf39f13befebd01", "scripts.res", false },
+	{ GID_IHNM_CD_ES, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
+	{ GID_IHNM_CD_ES, "dc6a34e3d1668730ea46815a92c7847f", "voices1.res", false },
+	{ GID_IHNM_CD_ES, "dc6a5fa7a4cdc2ca5a6fd924e969986c", "voices2.res", false },
+	{ GID_IHNM_CD_ES, "dc6a5fa7a4cdc2ca5a6fd924e969986c", "voices3.res", false },
+	{ GID_IHNM_CD_ES, "0f87400b804232a58dd22e404420cc45", "voices4.res", false },
+	{ GID_IHNM_CD_ES, "172668cfc5d8c305cb5b1a9b4d995fc0", "voices5.res", false },
+	{ GID_IHNM_CD_ES, "96c9bda9a5f41d6bc232ed7bf6d371d9", "voices6.res", false },
+	{ GID_IHNM_CD_ES, "d869de9883c8faea7f687217a9ec7057", "voicess.res", false },
 
 	{ GID_IHNM_DEMO, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
 	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res", false },
@@ -1185,8 +1206,8 @@ static GameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFiles),
 		IHNMDEMO_GameFiles,
-		ARRAYSIZE(IHNMCD_GameFonts),
-		IHNMCD_GameFonts,
+		ARRAYSIZE(IHNMDEMO_GameFonts),
+		IHNMDEMO_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
 		NULL,
@@ -1235,7 +1256,28 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		GF_DEFAULT_TO_1X_SCALER
+	},
+	// I Have No Mouth And I Must Scream - Sp CD version
+	{
+		"ihnm",
+		GType_IHNM,
+		GID_IHNM_CD_ES,
+		"I Have No Mouth and I Must Scream (Sp DOS)",
+		&IHNM_DisplayInfo,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFiles),
+		IHNMCD_GameFiles,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		&IHNM_GameSound,
+		&IHNM_GameSound,
+		NULL,
+		0,
+		NULL,
+		GF_DEFAULT_TO_1X_SCALER
 	}
+
 };
 
 bool SagaEngine::initGame(void) {
