@@ -59,6 +59,8 @@ Engine::Engine() :
 	_speechMode = 3; // VOICE + TEXT
 	_textSpeed = 6;
 	_mode = _previousMode = ENGINE_MODE_IDLE;
+	_flipEnable = true;
+	_refreshDrawNeeded = true;
 	g_searchFile = NULL;
 
 	textObjectDefaults.x = 0;
@@ -109,68 +111,6 @@ void Engine::handleButton(int operation, int key) {
 		lua_callfunction(handler);
 	}
 	lua_endblock();
-}
-
-void Engine::updateScreen() {
-	g_driver->clearScreen();
-
-	if (_currScene != NULL) {
-		_currScene->drawBackground();
-	}
-
-	// Draw underlying scene components
-	if (_currScene != NULL) {
-		// Background objects are drawn underneath everything except the background
-		// There are a bunch of these, especially in the tube-switcher room
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
-		// Underlay objects are just above the background
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-		// State objects are drawn on top of other things, such as the flag
-		// on Manny's message tube
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
-	}
-
-	// Play SMUSH Animations
-	// This should occur on top of all underlying scene objects,
-	// a good example is the tube switcher room where some state objects
-	// need to render underneath the animation or you can't see what's going on
-	// This should not occur on top of everything though or Manny gets covered
-	// up when he's next to Glottis's service room
-	if (g_smush->isPlaying()) {
-		_movieTime = g_smush->getMovieTime();
-		if (g_smush->isUpdateNeeded()) {
-			g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
-			g_smush->clearUpdateNeeded();
-		}
-		if (g_smush->getFrame() > 0)
-			g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-	}
-
-	if (_currScene != NULL) {
-		_currScene->setupCamera();
-	}
-
-	g_driver->set3DMode();
-
-	if (_currScene != NULL) {
-		_currScene->setupLights();
-	}
-
-	// Draw actors
-	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-		Actor *a = *i;
-		if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
-			a->draw();
-		if (_currScene != NULL)
-			a->undraw(a->inSet(_currScene->name()) && a->visible());
-	}
-
-	// Draw overlying scene components
-	if (_currScene != NULL) {
-		// The overlay objects should be drawn on top of everything else,
-		// including 3D objects such as Manny and the message tube
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
-	}
 }
 
 void Engine::handleDebugLoadResource() {
@@ -244,6 +184,7 @@ void Engine::updateDisplayScene() {
 
 	if (_mode == ENGINE_MODE_SMUSH) {
 		if (g_smush->isPlaying()) {
+			//_mode = ENGINE_MODE_NORMAL; ???
 			_movieTime = g_smush->getMovieTime();
 			if (g_smush->isUpdateNeeded()) {
 				g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
@@ -261,14 +202,83 @@ void Engine::updateDisplayScene() {
 			}
 		}
 	} else if (_mode == ENGINE_MODE_NORMAL) {
+		if (_currScene == NULL)
+			return;
+
+		// Update actor costumes & sets
+		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+			Actor *a = *i;
+
+			// Update the actor's costumes & chores
+			g_currentUpdatedActor = *i;
+			// Note that the actor need not be visible to update chores, for example:
+			// when Manny has just brought Meche back he is offscreen several times
+			// when he needs to perform certain chores
+			if (a->inSet(_currScene->name()))
+				a->update();
+		}
+		g_currentUpdatedActor = NULL;
+
 		_prevSmushFrame = 0;
-		updateScreen();
+
+		g_driver->clearScreen();
+
+		_currScene->drawBackground();
+
+		// Draw underlying scene components
+		// Background objects are drawn underneath everything except the background
+		// There are a bunch of these, especially in the tube-switcher room
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+		// State objects are drawn on top of other things, such as the flag
+		// on Manny's message tube
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
+
+		// Play SMUSH Animations
+		// This should occur on top of all underlying scene objects,
+		// a good example is the tube switcher room where some state objects
+		// need to render underneath the animation or you can't see what's going on
+		// This should not occur on top of everything though or Manny gets covered
+		// up when he's next to Glottis's service room
+		if (g_smush->isPlaying()) {
+			_movieTime = g_smush->getMovieTime();
+			if (g_smush->isUpdateNeeded()) {
+				g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
+				g_smush->clearUpdateNeeded();
+			}
+			if (g_smush->getFrame() > 0)
+				g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+		}
+
+		// Underlay objects are just above the background
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+
+		_currScene->setupCamera();
+
+		g_driver->set3DMode();
+
+		_currScene->setupLights();
+
+		// Draw actors
+		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+			Actor *a = *i;
+			if (a->inSet(_currScene->name()) && a->visible())
+				a->draw();
+			a->undraw(a->inSet(_currScene->name()) && a->visible());
+		}
+
+		// Draw overlying scene components
+		// The overlay objects should be drawn on top of everything else,
+		// including 3D objects such as Manny and the message tube
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 	} else if (_mode == ENGINE_MODE_DRAW) {
-		lua_beginblock();
-		lua_Object drawHandler = getEventHandler("userPaintHandler");
-		if (drawHandler != LUA_NOOBJECT)
-			lua_callfunction(drawHandler);
-		lua_endblock();
+		if (_refreshDrawNeeded) {
+			lua_beginblock();
+			lua_Object drawHandler = getEventHandler("userPaintHandler");
+			if (drawHandler != LUA_NOOBJECT)
+				lua_callfunction(drawHandler);
+			lua_endblock();
+		}
+		_refreshDrawNeeded = false;
 	}
 
 	// Draw Primitives
@@ -282,10 +292,11 @@ void Engine::updateDisplayScene() {
 		(*i)->draw();
 		doFlip = true;
 	}
+
 	if (SHOWFPS_GLOBAL)
 		g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
 
-	if (doFlip)
+	if (doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
 	// don't kill CPU
@@ -358,22 +369,6 @@ void Engine::mainLoop() {
 		}
 
 		luaUpdate();
-
-		if (_mode == ENGINE_MODE_NORMAL) {
-			// Update actor costumes & sets
-			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-				Actor *a = *i;
-
-				// Update the actor's costumes & chores
-				g_currentUpdatedActor = *i;
-				// Note that the actor need not be visible to update chores, for example:
-				// when Manny has just brought Meche back he is offscreen several times
-				// when he needs to perform certain chores
-				if (_currScene != NULL && a->inSet(_currScene->name()))
-					a->update();
-			}
-			g_currentUpdatedActor = NULL;
-		}
 
 		if (_mode != ENGINE_MODE_PAUSE) {
 			updateDisplayScene();

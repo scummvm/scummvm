@@ -2956,6 +2956,7 @@ static void RenderModeUser() {
 		g_engine->setMode(ENGINE_MODE_DRAW);
 	} else if (lua_isnil(param1)) {
 		g_smush->pause(false);
+		g_engine->refreshDrawMode();
 		g_engine->setMode(g_engine->getPreviousMode());
 	} else {
 		error("RenderModeUser() Unknown type of param");
@@ -2970,31 +2971,23 @@ static void SetGamma() {
 
 static void Display() {
 	DEBUG_FUNCTION();
-
-	g_engine->updateScreen();
+	if (g_engine->getFlipEnable())
+		g_driver->flipBuffer();
 }
 
 static void EngineDisplay() {
-	lua_Object param1;
-	bool mode;
-
 	// it enable/disable updating display
 	DEBUG_FUNCTION();
-	param1 = lua_getparam(1);
-	if (lua_isnumber(param1)) {
-		mode = check_int(1) != 0;
-	} else if (lua_isnil(param1)) {
-		mode = false;
+	bool mode = check_int(1) != 0;
+	if (mode) {
+		g_engine->setFlipEnable(true);
 	} else {
-		error("EngineDisplay() Unknown type of param");
+		g_engine->setFlipEnable(false);
 	}
-	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
-		if (mode) {
-			printf("EngineDisplay() Enable\n");
-		} else {
-			printf("EngineDisplay() Disable\n");
-		}
-	}
+}
+
+static void ForceRefresh() {
+	g_engine->refreshDrawMode();
 }
 
 static void JustLoaded() {
@@ -3109,7 +3102,6 @@ STUB_FUNC(SetActorShadowPoint)
 STUB_FUNC(SetActorShadowPlane)
 STUB_FUNC(ActivateActorShadow)
 STUB_FUNC(SetShadowColor)
-STUB_FUNC(ForceRefresh)
 STUB_FUNC(LightMgrStartup)
 STUB_FUNC(SetLightIntensity)
 STUB_FUNC(SetLightPosition)

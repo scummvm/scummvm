@@ -100,10 +100,12 @@ public:
 	void setSpeechMode(int mode) { _speechMode = mode; }
 	int getSpeechMode() { return _speechMode; }
 
-	void updateScreen();
 	void handleDebugLoadResource();
 	void luaUpdate();
 	void updateDisplayScene();
+	void setFlipEnable(bool state) { _flipEnable = state; }
+	bool getFlipEnable() { return _flipEnable; }
+	void refreshDrawMode() { _refreshDrawNeeded = true; }
 
 	void mainLoop();
 	unsigned frameStart() const { return _frameStart; }
@@ -213,6 +215,8 @@ private:
 	int _mode, _previousMode;
 	int _speechMode;
 	int _textSpeed;
+	bool _flipEnable;
+	bool _refreshDrawNeeded;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	unsigned int _frameTimeCollection;
