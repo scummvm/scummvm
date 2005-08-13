@@ -92,4 +92,8 @@ void Sound::stopVoice() {
 	_mixer->stopHandle(_voiceHandle);
 }
 
+void Sound::stopAll() {
+	_mixer->stopAll();
+}
+
 } // End of namespace Saga

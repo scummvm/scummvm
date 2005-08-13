@@ -61,6 +61,8 @@ public:
 	void resumeVoice();
 	void stopVoice();
 
+	void stopAll();
+
  private:
 
 	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop);

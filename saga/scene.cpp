@@ -812,8 +812,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			_vm->_interface->setMode(kPanelMain);
 		}
 
-		_vm->_sound->stopVoice();
-		_vm->_sound->stopSound();
+		_vm->_sound->stopAll();
 
 		if (_sceneDescription.musicResourceId >= 0) {
 			event.type = kEvTOneshot;
