@@ -67,7 +67,7 @@ public:
 
 	Bitmap *getScreenshot(int w, int h);
 	void storeDisplay() {}
-	void flushStoredDisplay() {}
+	void copyStoredToDisplay() {}
 	void enableDim(int /*x*/, int /*y*/, int /*w*/, int /*h*/) { _dim = true; }
 	void disableDim(int /*x*/, int /*y*/, int /*w*/, int /*h*/) { _dim = false; }
 

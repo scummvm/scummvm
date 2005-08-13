@@ -2261,10 +2261,6 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	}
 }
 
-/* Clean the buffer of text objects and primitives
- * this is known to be used when changing between menus
- * and when loading some cutscenes
- */
 static void CleanBuffer() {
 	DEBUG_FUNCTION();
 	g_engine->killPrimitiveObjects();
@@ -2272,36 +2268,9 @@ static void CleanBuffer() {
 	// Cleanup references to deleted text objects
 	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
 		(*i)->lineCleanup();
+	//g_driver->copyStoredToDisplay();
 }
  
-/* Check to see if the menu item at a specific index has
- * the "disabled" flag set
- */
-bool itemDisabled(lua_Object itemTable, int menuItem) {
-	lua_Object table = getTableValue(itemTable, "items");
-	lua_Object item = getIndexedTableValue(table, menuItem);
-	lua_Object itemdata = getTableValue(item, "props");
-	lua_Object disabled = getTableValue(itemdata, "disabled");
-
-	if (!lua_isnil(disabled) && atoi(lua_getstring(disabled)) == 1)
-		return true;
-	else
-		return false;
-}
-
-/* Find the text representing an item in the menu
- */
-char *itemText(lua_Object itemTable, int menuItem) {
-	lua_Object table = getTableValue(itemTable, "items");
-	lua_Object item = getIndexedTableValue(table, menuItem);
-	lua_Object itemtext = getTableValue(item, "text");
-
-	if (!lua_isnil(itemtext) && lua_isstring(itemtext))
-		return lua_getstring(itemtext);
-	else
-		return NULL;
-}
-
 /* This function sends the SDL signal to
  * go ahead and exit the game
  */
@@ -2958,6 +2927,7 @@ static void RenderModeUser() {
 		g_smush->pause(false);
 		g_engine->refreshDrawMode();
 		g_engine->setMode(g_engine->getPreviousMode());
+		CleanBuffer();
 	} else {
 		error("RenderModeUser() Unknown type of param");
 	}

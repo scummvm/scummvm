@@ -47,7 +47,6 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	loadEmergFont();
 
 	_smushNumTex = 0;
-	_storedDisplay = NULL;
 }
 
 void DriverGL::toggleFullscreenMode() {

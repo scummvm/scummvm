@@ -108,10 +108,12 @@ DriverTinyGL::DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscr
 	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, 0, NULL, NULL, _screen->pixels);
 	tglInit(_zb);
 
-	_storedDisplay = NULL;
+	_storedDisplay = new byte[640 * 480 * 2];
+	memset(_storedDisplay, 0, 640 * 480 * 2);
 }
 
 DriverTinyGL::~DriverTinyGL() {
+	delete []_storedDisplay;
 	tglClose();
 	ZB_close(_zb);
 }
@@ -490,14 +492,11 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 }
 
 void DriverTinyGL::storeDisplay() {
-	_storedDisplay = new byte[640 * 480 * 2];
-	assert(_storedDisplay);
 	memcpy(_storedDisplay, _zb->pbuf, 640 * 480 * 2);
 }
 
-void DriverTinyGL::flushStoredDisplay() {
-	delete []_storedDisplay;
-	_storedDisplay = NULL;
+void DriverTinyGL::copyStoredToDisplay() {
+	memcpy(_zb->pbuf, _storedDisplay, 640 * 480 * 2);
 }
 
 void DriverTinyGL::drawDim() {

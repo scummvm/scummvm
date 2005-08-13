@@ -270,6 +270,8 @@ void Engine::updateDisplayScene() {
 		// The overlay objects should be drawn on top of everything else,
 		// including 3D objects such as Manny and the message tube
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+
+		g_driver->storeDisplay();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		if (_refreshDrawNeeded) {
 			lua_beginblock();

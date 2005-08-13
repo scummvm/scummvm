@@ -84,7 +84,7 @@ public:
 
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;
-	virtual void flushStoredDisplay() = 0;
+	virtual void copyStoredToDisplay() = 0;
 	virtual void enableDim(int x, int y, int w, int h) = 0;
 	virtual void disableDim(int x, int y, int w, int h) = 0;
 
@@ -104,7 +104,6 @@ protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;
 	bool _dim;
-	byte *_storedDisplay;
 
 	virtual void drawDim() = 0;
 };
