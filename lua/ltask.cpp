@@ -248,8 +248,10 @@ void lua_runtasks (void) {
 	while ((t = prev->next) != NULL) {
 		luaI_switchtask(t);
 		// Tstate is not available until after switching tasks
-		if (t->Tstate == PAUSE)
+		if (t->Tstate == PAUSE) {
+			prev = t;
 			continue;
+		}
 		L->errorJmp = &myErrorJmp;
 		L->Tstate = RUN;
 		if (setjmp(myErrorJmp) == 0) {
