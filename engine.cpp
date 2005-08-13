@@ -135,6 +135,7 @@ void Engine::mainLoop() {
 	unsigned int frameCounter = 0;
 	unsigned int timeAccum = 0;
 	unsigned int frameTimeCollection = 0;
+	int prevSmushFrame = 0;
 	char fps[8] = "";
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
@@ -230,6 +231,8 @@ void Engine::mainLoop() {
 			// Run asynchronous tasks
 			lua_runtasks();
 
+		bool doFlip = true;
+
 		if (_mode == ENGINE_MODE_SMUSH) {
 			if (g_smush->isPlaying()) {
 				_movieTime = g_smush->getMovieTime();
@@ -237,13 +240,19 @@ void Engine::mainLoop() {
 					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
 					g_smush->clearUpdateNeeded();
 				}
-				if (g_smush->getFrame() > 0) {
-					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-					if (SHOWFPS_GLOBAL)
-						g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+				int frame = g_smush->getFrame();
+				if (frame > 0) {
+					if (frame != prevSmushFrame) {
+						prevSmushFrame = g_smush->getFrame();
+						g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+						if (SHOWFPS_GLOBAL)
+							g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+					} else
+						doFlip = false;
 				}
 			}
 		} else if (_mode == ENGINE_MODE_NORMAL) {
+			prevSmushFrame = 0;
 			g_driver->clearScreen();
 
 			// Update actor costumes & sets
@@ -326,17 +335,20 @@ void Engine::mainLoop() {
 		// Draw Primitives
 		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
 			(*i)->draw();
+			doFlip = true;
 		}
 
 		// Draw text
 		for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
 			(*i)->draw();
+			doFlip = true;
 		}
 
 		g_imuse->flushTracks();
 		g_imuse->refreshScripts();
 
-		g_driver->flipBuffer();
+		if (doFlip)
+			g_driver->flipBuffer();
 
 		// don't kill CPU
 		SDL_Delay(1);
@@ -360,7 +372,7 @@ void Engine::mainLoop() {
 		setMovieTime(_movieTime);
 		lua_endblock();
 
-		if (SHOWFPS_GLOBAL) {
+		if (SHOWFPS_GLOBAL && doFlip) {
 			frameCounter++;
 			timeAccum += _frameTime;
 			if (timeAccum > 1000) {
