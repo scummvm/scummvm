@@ -92,10 +92,6 @@ void Smush::deinit() {
 		free(_externalBuffer);
 		_externalBuffer = NULL;
 	}
-
-	_videoLooping = false;
-	_videoFinished = true;
-	_videoPause = true;
 	if (_videoLooping && _startPos != NULL) {
 		free(_startPos->tmpBuf);
 		free(_startPos);
@@ -106,14 +102,17 @@ void Smush::deinit() {
 		_stream = NULL;
 		g_mixer->stopHandle(_soundHandle);
 	}
+	_videoLooping = false;
+	_videoFinished = true;
+	_videoPause = true;
  	_file.close();
 }
 
 void Smush::handleWave(const byte *src, uint32 size) {
-	int16 *dst = new int16[size * _channels];
+	int16 *dst = (int16 *)malloc(size * _channels * 2);
 	decompressVima(src, dst, size * _channels * 2, smushDestTable);
 
-	int flags = SoundMixer::FLAG_16BITS | SoundMixer::FLAG_AUTOFREE;
+	int flags = SoundMixer::FLAG_16BITS;
 	if (_channels == 2)
 		flags |= SoundMixer::FLAG_STEREO;
 
@@ -123,6 +122,7 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	}
  	if (_stream)
 		_stream->append((byte *)dst, size * _channels * 2);
+	free(dst);
 }
 
 void Smush::handleFrame() {
@@ -285,7 +285,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
 		printf("SMUSH Flags:");
 		for(int i = 0; i < 16; i++)
-			printf(" %d", (flags & ((int)pow(2.0f, i))) != 0);
+			printf(" %d", (flags & (1 << i)) != 0);
 		printf("\n");
 	}
 	_videoLooping = SMUSH_LOOPMOVIE(flags);
