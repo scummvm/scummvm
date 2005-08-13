@@ -287,6 +287,7 @@ void Engine::mainLoop() {
 				int frame = g_smush->getFrame();
 				if (frame > 0) {
 					if (frame != prevSmushFrame) {
+						prevSmushFrame = g_smush->getFrame();
 						g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 						if (SHOWFPS_GLOBAL)
 							g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
