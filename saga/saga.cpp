@@ -314,7 +314,7 @@ int SagaEngine::go() {
 			// Since Puzzle is actorless, we do it here
 			if (_puzzle->isActive()) {
 				_actor->handleSpeech(msec);
-			} else if (!_scene->isInDemo() && getGameType() == GType_ITE) {
+			} else if (!_scene->isInIntro() && getGameType() == GType_ITE) {
 				if (_interface->getMode() == kPanelMain ||
 						 _interface->getMode() == kPanelConverse ||
 						 _interface->getMode() == kPanelNull)

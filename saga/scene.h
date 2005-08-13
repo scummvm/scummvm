@@ -226,7 +226,7 @@ class Scene {
 	void draw();
 	int getFlags() const { return _sceneDescription.flags; }
 	int getScriptModuleNumber() const { return _sceneDescription.scriptModuleNumber; }
-	bool isInDemo() { return !_inGame; }
+	bool isInIntro() { return !_inGame; }
 	const Rect& getSceneClip() const { return _sceneClip; }
 
 	void getBGMaskInfo(int &width, int &height, byte *&buffer, size_t &bufferLength);

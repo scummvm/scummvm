@@ -329,7 +329,7 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 	switch (_panelMode) {
 	case kPanelNull:
 		if (ascii == 27) { // Esc
-			if (_vm->_scene->isInDemo()) {
+			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
 				_vm->_actor->abortAllSpeeches();
@@ -558,7 +558,7 @@ void Interface::draw() {
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut)
+	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut)
 		return;
 
 	// Disable this for IHNM for now, since that game uses the full screen
@@ -1258,7 +1258,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 	if (!_active && _panelMode == kPanelNull && (updateFlag & UPDATE_MOUSECLICK))
 		_vm->_actor->abortSpeech();
 
-	if (_vm->_scene->isInDemo() || _fadeMode == kFadeOut || !_active) {
+	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut || !_active) {
 		return;
 	}
 
