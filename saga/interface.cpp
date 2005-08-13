@@ -570,7 +570,7 @@ void Interface::draw() {
 
 	drawStatusBar();
 
-	if (_panelMode == kPanelMain) {
+	if (_panelMode == kPanelMain || _panelMode == kPanelMap) {
 		_mainPanel.getRect(rect);
 		backBuffer->blit(rect, _mainPanel.image);
 
@@ -2129,7 +2129,8 @@ void Interface::mapPanelShow() {
 
 	rect.left = rect.top = 0;
 
-	_vm->_resource->loadResource(_interfaceContext, RID_ITE_TYCHO_MAP, resource, resourceLength);
+	_vm->_resource->loadResource(_interfaceContext, 
+			 _vm->_resource->convertResourceId(RID_ITE_TYCHO_MAP), resource, resourceLength);
 	if (resourceLength == 0) {
 		error("Interface::mapPanelShow() unable to load Tycho map resource");
 	}
