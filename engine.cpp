@@ -57,8 +57,8 @@ Engine::Engine() :
 	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
 		_controlsEnabled[i] = false;
 	_speechMode = 3; // VOICE + TEXT
-	_menuMode = 0;
 	_textSpeed = 6;
+	_mode = _previousMode = ENGINE_MODE_IDLE;
 	g_searchFile = NULL;
 
 	textObjectDefaults.x = 0;
@@ -113,20 +113,6 @@ void Engine::handleButton(int operation, int key) {
 
 void Engine::updateScreen() {
 	g_driver->clearScreen();
-
-	// Update actor costumes & sets
-	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-		Actor *a = *i;
-
-		// Update the actor's costumes & chores
-		g_currentUpdatedActor = *i;
-		// Note that the actor need not be visible to update chores, for example:
-		// when Manny has just brought Meche back he is offscreen several times
-		// when he needs to perform certain chores
-		if (_currScene != NULL && a->inSet(_currScene->name()))
-			a->update();
-	}
-	g_currentUpdatedActor = NULL;
 
 	if (_currScene != NULL) {
 		_currScene->drawBackground();
@@ -187,20 +173,161 @@ void Engine::updateScreen() {
 	}
 }
 
+void Engine::handleDebugLoadResource() {
+	void *resource;
+	int c, i = 0;
+	char buf[512];
+
+	// Tool for debugging the loading of a particular resource without
+	// having to actually make it all the way to it in the game
+	fprintf(stderr, "Enter resource to load (extension specifies type): ");
+	while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
+		buf[i++] = c;
+
+	buf[i] = '\0';
+	if (strncmp(buf, "exp:", 4) == 0)
+		// Export a resource in order to view it directly
+		resource = (void *)g_resourceloader->exportResource(&buf[4]);
+	else if (strstr(buf, ".key"))
+		resource = (void *)g_resourceloader->loadKeyframe(buf);
+	else if (strstr(buf, ".zbm") || strstr(buf, ".bm"))
+		resource = (void *)g_resourceloader->loadBitmap(buf);
+	else if (strstr(buf, ".cmp"))
+		resource = (void *)g_resourceloader->loadColormap(buf);
+	else if (strstr(buf, ".cos"))
+		resource = (void *)g_resourceloader->loadCostume(buf, NULL);
+	else if (strstr(buf, ".lip"))
+		resource = (void *)g_resourceloader->loadLipSynch(buf);
+	else if (strstr(buf, ".snm"))
+		resource = (void *)g_smush->play(buf, 0, 0);
+	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
+		g_imuse->startSfx(buf);
+		resource = (void *)1;
+	} else if (strstr(buf, ".mat")) {
+		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
+		warning("Default colormap applied to resources loaded in this fashion!");
+		resource = (void *)g_resourceloader->loadMaterial(buf, *cmap);
+	} else {
+		warning("Resource type not understood!");
+	}
+	if (resource == NULL)
+		warning("Requested resouce (%s) not found!");
+}
+
+void Engine::luaUpdate() {
+	// Update timing information
+	unsigned newStart = SDL_GetTicks();
+	_frameTime = newStart - _frameStart;
+	_frameStart = newStart;
+
+	_frameTimeCollection += _frameTime;
+	if (_frameTimeCollection > 10000) {
+		_frameTimeCollection = 0;
+		lua_collectgarbage(0);
+	}
+
+	lua_beginblock();
+	setFrameTime(_frameTime);
+	lua_endblock();
+
+	lua_beginblock();
+	setMovieTime(_movieTime);
+	lua_endblock();
+
+	// Run asynchronous tasks
+	lua_runtasks();
+}
+
+void Engine::updateDisplayScene() {
+	char fps[8] = "";
+	bool doFlip = true;
+
+	if (_mode == ENGINE_MODE_SMUSH) {
+		if (g_smush->isPlaying()) {
+			_movieTime = g_smush->getMovieTime();
+			if (g_smush->isUpdateNeeded()) {
+				g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
+				g_smush->clearUpdateNeeded();
+			}
+			int frame = g_smush->getFrame();
+			if (frame > 0) {
+				if (frame != _prevSmushFrame) {
+					_prevSmushFrame = g_smush->getFrame();
+					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+					if (SHOWFPS_GLOBAL)
+						g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+				} else
+					doFlip = false;
+			}
+		}
+	} else if (_mode == ENGINE_MODE_NORMAL) {
+		_prevSmushFrame = 0;
+		updateScreen();
+	} else if (_mode == ENGINE_MODE_DRAW) {
+		lua_beginblock();
+		lua_Object drawHandler = getEventHandler("userPaintHandler");
+		if (drawHandler != LUA_NOOBJECT)
+			lua_callfunction(drawHandler);
+		lua_endblock();
+	}
+
+	// Draw Primitives
+	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
+		(*i)->draw();
+		doFlip = true;
+	}
+
+	// Draw text
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+		(*i)->draw();
+		doFlip = true;
+	}
+	if (SHOWFPS_GLOBAL)
+		g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+
+	if (doFlip)
+		g_driver->flipBuffer();
+
+	// don't kill CPU
+	SDL_Delay(1);
+
+	if (SHOWFPS_GLOBAL && doFlip) {
+		_frameCounter++;
+		_timeAccum += _frameTime;
+		if (_timeAccum > 1000) {
+			sprintf(fps, "%7.2f", (double)(_frameCounter * 1000) / (double)_timeAccum );
+			_frameCounter = 0;
+			_timeAccum = 0;
+		}
+	}
+}
+
 void Engine::mainLoop() {
 	_movieTime = 0;
 	_frameTime = 0;
 	_frameStart = SDL_GetTicks();
-	unsigned int frameCounter = 0;
-	unsigned int timeAccum = 0;
-	unsigned int frameTimeCollection = 0;
-	int prevSmushFrame = 0;
-	char fps[8] = "";
+	_frameCounter = 0;
+	_timeAccum = 0;
+	_frameTimeCollection = 0;
+	_prevSmushFrame = 0;
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
 	_savegameFileName = NULL;
 
 	for (;;) {
+		if (_savegameLoadRequest) {
+			savegameRestore();
+		}
+		if (_savegameSaveRequest) {
+			savegameSave();
+		}
+
+		g_imuse->flushTracks();
+		g_imuse->refreshScripts();
+
+		if (_mode == ENGINE_MODE_IDLE)
+			continue;
+
 		// Process events
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
@@ -212,51 +339,13 @@ void Engine::mainLoop() {
 				return;
 			if (event.type == SDL_KEYDOWN) {
 				if (event.key.keysym.sym == SDLK_z
-				 && (event.key.keysym.mod & KMOD_CTRL)) {
-						void *resource;
-						int c, i = 0;
-						char buf[512];
-						
-						// Tool for debugging the loading of a particular resource without
-						// having to actually make it all the way to it in the game
-						fprintf(stderr, "Enter resource to load (extension specifies type): ");
-						while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
-							buf[i++] = c;
-						buf[i] = '\0';
-						if (strncmp(buf, "exp:", 4) == 0)
-							// Export a resource in order to view it directly
-							resource = (void *) g_resourceloader->exportResource(&buf[4]);
-						else if (strstr(buf, ".key"))
-							resource = (void *) g_resourceloader->loadKeyframe(buf);
-						else if (strstr(buf, ".zbm") || strstr(buf, ".bm"))
-							resource = (void *) g_resourceloader->loadBitmap(buf);
-						else if (strstr(buf, ".cmp"))
-							resource = (void *) g_resourceloader->loadColormap(buf);
-						else if (strstr(buf, ".cos"))
-							resource = (void *) g_resourceloader->loadCostume(buf, NULL);
-						else if (strstr(buf, ".lip"))
-							resource = (void *) g_resourceloader->loadLipSynch(buf);
-						else if (strstr(buf, ".snm"))
-							resource = (void *) g_smush->play(buf, 0, 0);
-						else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
-							g_imuse->startSfx(buf);
-							resource = (void *) 1;
-						} else if (strstr(buf, ".mat")) {
-							CMap *cmap = g_resourceloader->loadColormap("item.cmp");
-							
-							warning("Default colormap applied to resources loaded in this fashion!");
-							resource = (void *) g_resourceloader->loadMaterial(buf, *cmap);
-						} else {
-							warning("Resource type not understood!");
-							break;
-						}
-						if (resource == NULL)
-							warning("Requested resouce (%s) not found!");
+						&& (event.key.keysym.mod & KMOD_CTRL)) {
+					handleDebugLoadResource();
 				}
 				if ((event.key.keysym.sym == SDLK_RETURN ||
-				     event.key.keysym.sym == SDLK_KP_ENTER) &&
-				    (event.key.keysym.mod & KMOD_ALT)) {
-						g_driver->toggleFullscreenMode();
+						event.key.keysym.sym == SDLK_KP_ENTER) &&
+						(event.key.keysym.mod & KMOD_ALT)) {
+					g_driver->toggleFullscreenMode();
 				}
 				if (event.key.keysym.sym == SDLK_q) {
 					lua_beginblock();
@@ -268,98 +357,26 @@ void Engine::mainLoop() {
 			}
 		}
 
-		if (_savegameLoadRequest) {
-			savegameRestore();
-		}
-		if (_savegameSaveRequest) {
-			savegameSave();
-		}
+		luaUpdate();
 
-		bool doFlip = true;
+		if (_mode == ENGINE_MODE_NORMAL) {
+			// Update actor costumes & sets
+			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+				Actor *a = *i;
 
-		if (_mode == ENGINE_MODE_SMUSH) {
-			if (g_smush->isPlaying()) {
-				_movieTime = g_smush->getMovieTime();
-				if (g_smush->isUpdateNeeded()) {
-					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
-					g_smush->clearUpdateNeeded();
-				}
-				int frame = g_smush->getFrame();
-				if (frame > 0) {
-					if (frame != prevSmushFrame) {
-						prevSmushFrame = g_smush->getFrame();
-						g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-						if (SHOWFPS_GLOBAL)
-							g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
-					} else
-						doFlip = false;
-				}
+				// Update the actor's costumes & chores
+				g_currentUpdatedActor = *i;
+				// Note that the actor need not be visible to update chores, for example:
+				// when Manny has just brought Meche back he is offscreen several times
+				// when he needs to perform certain chores
+				if (_currScene != NULL && a->inSet(_currScene->name()))
+					a->update();
 			}
-		} else if (_mode == ENGINE_MODE_NORMAL) {
-			prevSmushFrame = 0;
-			updateScreen();
-		} else if (_mode == ENGINE_MODE_DRAW) {
-			lua_beginblock();
-			lua_Object drawHandler = getEventHandler("userPaintHandler");
-			if (drawHandler != LUA_NOOBJECT)
-				lua_callfunction(drawHandler);
-			lua_endblock();
+			g_currentUpdatedActor = NULL;
 		}
 
-		// Draw Primitives
-		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
-			(*i)->draw();
-			doFlip = true;
-		}
-
-		// Draw text
-		for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
-			(*i)->draw();
-			doFlip = true;
-		}
-
-		g_imuse->flushTracks();
-		g_imuse->refreshScripts();
-
-		if (SHOWFPS_GLOBAL)
-			g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
-
-		if (doFlip)
-			g_driver->flipBuffer();
-
-		// don't kill CPU
-		SDL_Delay(1);
-
-		// Update timing information
-		unsigned newStart = SDL_GetTicks();
-		_frameTime = newStart - _frameStart;
-		_frameStart = newStart;
-
-		frameTimeCollection += _frameTime;
-		if (frameTimeCollection > 10000) {
-			frameTimeCollection = 0;
-			lua_collectgarbage(0);
-		}
-
-		lua_beginblock();
-		setFrameTime(_frameTime);
-		lua_endblock();
-
-		lua_beginblock();
-		setMovieTime(_movieTime);
-		lua_endblock();
-
-		// Run asynchronous tasks
-		lua_runtasks();
-
-		if (SHOWFPS_GLOBAL && doFlip) {
-			frameCounter++;
-			timeAccum += _frameTime;
-			if (timeAccum > 1000) {
-				sprintf(fps, "%7.2f", (double)(frameCounter * 1000) / (double)timeAccum );
-				frameCounter = 0;
-				timeAccum = 0;
-			}
+		if (_mode != ENGINE_MODE_PAUSE) {
+			updateDisplayScene();
 		}
 
 		if (g_imuseState != -1) {

@@ -95,10 +95,15 @@ public:
 
 	void setMode(int mode) { _mode = mode; }
 	int getMode() { return _mode; }
+	void setPreviousMode(int mode) { _previousMode = mode; }
+	int getPreviousMode() { return _previousMode; }
 	void setSpeechMode(int mode) { _speechMode = mode; }
 	int getSpeechMode() { return _speechMode; }
 
 	void updateScreen();
+	void handleDebugLoadResource();
+	void luaUpdate();
+	void updateDisplayScene();
 
 	void mainLoop();
 	unsigned frameStart() const { return _frameStart; }
@@ -111,8 +116,6 @@ public:
 
 	int getTextSpeed() { return _textSpeed; }
 	void setTextSpeed(int speed);
-	void setMenuMode(int mode) { _menuMode = mode; }
-	int getMenuMode() { return _menuMode; }
 
 	void enableControl(int num) { _controlsEnabled[num] = true; }
 	void disableControl(int num) { _controlsEnabled[num] = false; }
@@ -207,11 +210,15 @@ private:
 	void handleButton(int operation, int key);
 
 	Scene *_currScene;
-	int _mode, _menuMode;
+	int _mode, _previousMode;
 	int _speechMode;
 	int _textSpeed;
 
 	unsigned _frameStart, _frameTime, _movieTime;
+	unsigned int _frameTimeCollection;
+	int _prevSmushFrame;
+	unsigned int _frameCounter;
+	unsigned int _timeAccum;
 
 	bool _controlsEnabled[SDLK_EXTRA_LAST];
 

@@ -2947,23 +2947,18 @@ static void SetAmbientLight() {
 
 static void RenderModeUser() {
 	lua_Object param1;
-	bool mode;
 
 	DEBUG_FUNCTION();
 	param1 = lua_getparam(1);
 	if (lua_isnumber(param1)) {
-		mode = check_int(1) != 0;
+		g_engine->setPreviousMode(g_engine->getMode());
+		g_smush->pause(true);
+		g_engine->setMode(ENGINE_MODE_DRAW);
 	} else if (lua_isnil(param1)) {
-		mode = false;
+		g_smush->pause(false);
+		g_engine->setMode(g_engine->getPreviousMode());
 	} else {
 		error("RenderModeUser() Unknown type of param");
-	}
-	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
-		if (mode) {
-			g_engine->setMode(ENGINE_MODE_DRAW);
-		} else {
-			g_engine->setMode(ENGINE_MODE_NORMAL);
-		}
 	}
 }
 
