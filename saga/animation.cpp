@@ -170,17 +170,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	} else {
 		// Animation done playing
-		if (anim->linkId != -1) {
-			// If this animation has a link, follow it
-			anim->currentFrame = 0;
-			anim->completed = 0;
-			anim->state = ANIM_PAUSE;
-
-		} else {
-			// No link, stop playing
-			anim->currentFrame = anim->maxFrame;
-			anim->state = ANIM_PAUSE;
-
+		anim->state = ANIM_PAUSE;
+		if (anim->linkId == -1) {
 			if (anim->flags & ANIM_ENDSCENE) {
 				// This animation ends the scene
 				event.type = kEvTOneshot;
@@ -198,6 +189,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		linkAnim = getAnimation(anim->linkId);
 
 		debug(5, "Animation ended going to %d", anim->linkId);
+		linkAnim->cycles = anim->cycles;
 		linkAnim->currentFrame = 0;
 		linkAnim->completed = 0;
 		linkAnim->state = ANIM_PLAYING;
