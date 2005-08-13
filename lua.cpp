@@ -2314,204 +2314,6 @@ static void Exit() {
 		error("Unable to push exit event!");
 }
 
-/* This function acts as a wrapper around the actual
- * cancel operation, which fails if the second parameter
- * passed to it is not 'nil'
- */
-static void cancelHandler() {
-	lua_Object menuTable, cancelFunction;
-	
-	stubWarning("cancelHandler");
-	menuTable = lua_getparam(1);
-	cancelFunction = getTableValue(menuTable, "cancel_orig");
-	lua_pushobject(menuTable);
-	lua_pushnil();
-	lua_callfunction(cancelFunction);
-}
-
-/* This function provides all of the menu
- * handling that has been observed
- */
-static void menuHandler() {
-	lua_Object menuTable, keycode, pushcode, itemTable/*, item*/;
-	int menuItem = 1, menuItems = 1, sliderValue = 0;
-	int key, operation;
-
-	DEBUG_FUNCTION();
-	menuTable = lua_getparam(1);
-	keycode = lua_getparam(2);
-	pushcode = lua_getparam(3);
-	
-	if (!lua_isnumber(keycode) || !lua_istable(menuTable))
-		return;
-	if (lua_isnil(pushcode))
-		operation = 0;
-	else
-		return;
-
-	// get the keycode
-	key = atoi(lua_getstring(keycode));
-
-	// handle hotkeys
-	if (key >= SDLK_a && key <= SDLK_z) {
-		char keychar[2];
-
-		lua_Object handler = getTableFunction(menuTable, "characterHandler");
-		lua_beginblock();
-		lua_pushobject(menuTable);
-		keychar[0] = key;
-		keychar[1] = '\0';
-		lua_pushstring(keychar);
-		lua_pushnil();
-		lua_callfunction(handler);
-		lua_endblock();
-		key = 0;
-		return; // stop processing (we don't need to handle normal keystrokes)
-	}
-	
-	// Handle the correct type of menu
-	if (!lua_isnil(getTableValue(menuTable, "menu"))) {
-		// Get the item list for most menus
-		itemTable = getTableValue(menuTable, "menu");
-	} else if (!lua_isnil(getTableValue(menuTable, "active_menu"))) {
-		// 3D Acceleration Menu
-		itemTable = getTableValue(menuTable, "active_menu");
-	} else if (!lua_isnil(getTableValue(menuTable, "num_choices"))) {
-		// Exit Menu
-		lua_Object currentChoice = getTableValue(menuTable, "current_choice");
-		int num_choices = atoi(lua_getstring(getTableValue(menuTable, "num_choices")));
-		int current_choice;
-		
-		if (lua_isnil(currentChoice))
-			return; // if the current choice is 'nil' then there are no choices
-		current_choice = atoi(lua_getstring(currentChoice));
-		
-		if (key == SDLK_RIGHT)
-			current_choice++;
-		else if (key == SDLK_LEFT)
-			current_choice--;
-		
-		if (current_choice < 0)
-			current_choice = 0;
-		else if (current_choice >= num_choices)
-			current_choice = num_choices-1;
-		
-		setTableValue(menuTable, "current_choice", current_choice);
-		// TODO: Need to figure out how to update the screen under this
-		// type of menu operation!
-		return;
-	} else if (lua_isfunction(getTableValue(menuTable, "next_page"))
-	 || lua_isfunction(getTableValue(menuTable, "prev_page"))) {
-		// Control Help menu
-		lua_Object nextPage = getTableValue(menuTable, "next_page");
-		lua_Object prevPage = getTableValue(menuTable, "prev_page");
-		
-		if (lua_isfunction(nextPage) && key == SDLK_RIGHT) {
-			lua_beginblock();
-			lua_pushobject(menuTable);
-			lua_callfunction(nextPage);
-			lua_endblock();
-		} else if (lua_isfunction(prevPage) && key == SDLK_LEFT) {
-			lua_beginblock();
-			lua_pushobject(menuTable);
-			lua_callfunction(prevPage);
-			lua_endblock();
-		}
-		return;
-	} else {
-		warning("Unhandled type of menu!");
-		return;
-	}
-	
-	if (lua_isnil(getTableValue(menuTable, "cancel_orig"))) {
-		lua_Object cancelFunction = getTableValue(menuTable, "cancel");
-		// Install Alternative Cancel Handler
-		lua_pushobject(menuTable);
-		lua_pushstring(const_cast<char *>("cancel"));
-		lua_pushcfunction(cancelHandler);
-		lua_settable();
-		// Store the old Cancel Handler
-		lua_pushobject(menuTable);
-		lua_pushstring(const_cast<char *>("cancel_orig"));
-		lua_pushobject(cancelFunction);
-		lua_settable();
-	}
-
-	// get the current item
-	menuItem = atoi(lua_getstring(getTableValue(itemTable, "cur_item")));
-	menuItems = atoi(lua_getstring(getTableValue(itemTable, "num_items")));
-
-	// hack the "&Return to Game" command so it actually works
-	if (key == SDLK_RETURN && strmatch(itemText(itemTable, menuItem), "/sytx247/"))
-		key = SDLK_ESCAPE;
-
-	/* if we're running the menu then we need to manually handle
-	 * a lot of the operations necessary to use the menu
-	 */
-	bool menuChanged = false;
-	switch (key) {
-		case SDLK_ESCAPE:
-		{
-			// only use ESC to exit the main menu 
-			if (lua_isnil(getTableFunction(menuTable, "return_to_game")))
-				return;
-
-			lua_Object close = getTableFunction(menuTable, "cancel");
-
-			lua_beginblock();
-			lua_pushobject(menuTable);
-			lua_pushnil();
-			lua_callfunction(close);
-			lua_endblock();
-			break;
-		}
-		case SDLK_DOWN:
-			do {
-				menuItem++;
-				if (menuItem > menuItems) {
-					menuItem = 1;
-					break;
-				}
-			} while (itemDisabled(itemTable, menuItem));
-			menuChanged = true;
-			break;
-		case SDLK_UP:
-			do {
-				menuItem--;
-				if (menuItem < 1) {
-					menuItem = menuItems;
-					break;
-				}
-			} while (itemDisabled(itemTable, menuItem));
-			menuChanged = true;
-			break;
-		case SDLK_LEFT:
-			sliderValue = -1;
-			break;
-		case SDLK_RIGHT:
-			sliderValue = 1;
-			break;
-		case SDLK_RETURN:
-			// Allow the return key to act as a "slide right" operation,
-			// this actually isn't supposed to do anything for normal
-			// sliders but handling more is better than less.
-			sliderValue = 1;
-			break;
-	}
-	if (menuChanged)
-		setTableValue(itemTable, "cur_item", menuItem);
-	if (sliderValue != 0) {
-		lua_Object change = getTableFunction(menuTable, "change_value");
-		lua_beginblock();
-		lua_pushobject(menuTable);
-		lua_pushnil();
-		lua_pushnumber(sliderValue);
-		lua_pushnil();
-		lua_callfunction(change);
-		lua_endblock();
-	}
-}
-
 /* Check for an existing object by a certain name
  * this function is used by several functions that look
  * for text objects to see if they need to be created/modified/destroyed.
@@ -3144,10 +2946,9 @@ static void SetAmbientLight() {
 }
 
 static void RenderModeUser() {
-	// it enable/disable updating display
 	lua_Object param1;
 	bool mode;
-	
+
 	DEBUG_FUNCTION();
 	param1 = lua_getparam(1);
 	if (lua_isnumber(param1)) {
@@ -3157,51 +2958,31 @@ static void RenderModeUser() {
 	} else {
 		error("RenderModeUser() Unknown type of param");
 	}
-	g_engine->setMenuMode(mode);
-	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-	{
-		if (mode)
-			printf("RenderModeUser() Enable\n");
-		else
-			printf("RenderModeUser() Disable\n");
+	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+		if (mode) {
+			g_engine->setMode(ENGINE_MODE_DRAW);
+		} else {
+			g_engine->setMode(ENGINE_MODE_NORMAL);
+		}
 	}
 }
 
-/* For now this should just destroy any text
- * objects that have been created and unlink
- * the menu (this may be more appropriate under
- * RenderModeUser, determine later)
- */
 static void SetGamma() {
-	lua_Object system_table = lua_getglobal("system");
-	
-	// TODO: Make this un-dim the screen
+	DEBUG_FUNCTION();
+
 	stubWarning("SetGamma");
-	
-	CleanBuffer();
-	// Un-Install Menu Key Handler
-	lua_pushobject(system_table);
-	lua_pushstring(const_cast<char *>("menuHandler"));
-	lua_pushnil();
-	lua_settable();
 }
 
 static void Display() {
-	lua_Object system_table;
-	
 	DEBUG_FUNCTION();
-	system_table = lua_getglobal("system");
-	// Install Menu Key Handler
-	lua_pushobject(system_table);
-	lua_pushstring(const_cast<char *>("menuHandler"));
-	lua_pushcfunction(menuHandler);
-	lua_settable();
+
+	g_engine->updateScreen();
 }
 
 static void EngineDisplay() {
 	lua_Object param1;
 	bool mode;
-	
+
 	// it enable/disable updating display
 	DEBUG_FUNCTION();
 	param1 = lua_getparam(1);
@@ -3213,10 +2994,11 @@ static void EngineDisplay() {
 		error("EngineDisplay() Unknown type of param");
 	}
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
-		if (mode)
+		if (mode) {
 			printf("EngineDisplay() Enable\n");
-		else
+		} else {
 			printf("EngineDisplay() Disable\n");
+		}
 	}
 }
 

@@ -98,6 +98,8 @@ public:
 	void setSpeechMode(int mode) { _speechMode = mode; }
 	int getSpeechMode() { return _speechMode; }
 
+	void updateScreen();
+
 	void mainLoop();
 	unsigned frameStart() const { return _frameStart; }
 	unsigned frameTime() const { return _frameTime; }

@@ -96,23 +96,6 @@ void Engine::handleButton(int operation, int key) {
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key])
 		return;
-	
-	lua_beginblock();
-	lua_Object menu = getEventHandler("menuHandler");
-	if (menu != LUA_NOOBJECT && !lua_isnil(menu)) {
-		lua_Object system_table = lua_getglobal("system");
-		lua_pushobject(system_table);
-		lua_pushstring(const_cast<char *>("userPaintHandler"));
-		lua_pushobject(lua_gettable());
-		lua_pushnumber(key);
-		if (operation == SDL_KEYDOWN)
-			lua_pushnil();
-		else
-			lua_pushnumber(1);
-		lua_pushnil();
-		lua_callfunction(menu);
-	}
-	lua_endblock();
 
 	lua_beginblock();
 	lua_Object handler = getEventHandler("buttonHandler");
@@ -126,6 +109,82 @@ void Engine::handleButton(int operation, int key) {
 		lua_callfunction(handler);
 	}
 	lua_endblock();
+}
+
+void Engine::updateScreen() {
+	g_driver->clearScreen();
+
+	// Update actor costumes & sets
+	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+		Actor *a = *i;
+
+		// Update the actor's costumes & chores
+		g_currentUpdatedActor = *i;
+		// Note that the actor need not be visible to update chores, for example:
+		// when Manny has just brought Meche back he is offscreen several times
+		// when he needs to perform certain chores
+		if (_currScene != NULL && a->inSet(_currScene->name()))
+			a->update();
+	}
+	g_currentUpdatedActor = NULL;
+
+	if (_currScene != NULL) {
+		_currScene->drawBackground();
+	}
+
+	// Draw underlying scene components
+	if (_currScene != NULL) {
+		// Background objects are drawn underneath everything except the background
+		// There are a bunch of these, especially in the tube-switcher room
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+		// Underlay objects are just above the background
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+		// State objects are drawn on top of other things, such as the flag
+		// on Manny's message tube
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
+	}
+
+	// Play SMUSH Animations
+	// This should occur on top of all underlying scene objects,
+	// a good example is the tube switcher room where some state objects
+	// need to render underneath the animation or you can't see what's going on
+	// This should not occur on top of everything though or Manny gets covered
+	// up when he's next to Glottis's service room
+	if (g_smush->isPlaying()) {
+		_movieTime = g_smush->getMovieTime();
+		if (g_smush->isUpdateNeeded()) {
+			g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
+			g_smush->clearUpdateNeeded();
+		}
+		if (g_smush->getFrame() > 0)
+			g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
+	}
+
+	if (_currScene != NULL) {
+		_currScene->setupCamera();
+	}
+
+	g_driver->set3DMode();
+
+	if (_currScene != NULL) {
+		_currScene->setupLights();
+	}
+
+	// Draw actors
+	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+		Actor *a = *i;
+		if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
+			a->draw();
+		if (_currScene != NULL)
+			a->undraw(a->inSet(_currScene->name()) && a->visible());
+	}
+
+	// Draw overlying scene components
+	if (_currScene != NULL) {
+		// The overlay objects should be drawn on top of everything else,
+		// including 3D objects such as Manny and the message tube
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+	}
 }
 
 void Engine::mainLoop() {
@@ -200,19 +259,11 @@ void Engine::mainLoop() {
 						g_driver->toggleFullscreenMode();
 				}
 				if (event.key.keysym.sym == SDLK_q) {
-					lua_Object menu = getEventHandler("menuHandler");
-					
-					// Can't handle the exit menu on top of the normal one
-					// at this time, so exit flat-out if we're in a menu
-					if (lua_isnil(menu)) {
-						printf("NOTICE: The left/right arrow keys do not update the quit screen at this time, use Y/N keys instead!\n");
-						lua_beginblock();
-						lua_Object handler = getEventHandler("exitHandler");
-						if (handler != LUA_NOOBJECT)
-							lua_callfunction(handler);
-						lua_endblock();
-					} else
-						return;
+					lua_beginblock();
+					lua_Object handler = getEventHandler("exitHandler");
+					if (handler != LUA_NOOBJECT)
+						lua_callfunction(handler);
+					lua_endblock();
 				}
 			}
 		}
@@ -223,13 +274,6 @@ void Engine::mainLoop() {
 		if (_savegameSaveRequest) {
 			savegameSave();
 		}
-
-		// It appears that the lua tasks should run before rendering,
-		// if you watch the game loading screen you'll see that it
-		// turns out better to run this beforehand
-		if (!_menuMode)
-			// Run asynchronous tasks
-			lua_runtasks();
 
 		bool doFlip = true;
 
@@ -243,7 +287,6 @@ void Engine::mainLoop() {
 				int frame = g_smush->getFrame();
 				if (frame > 0) {
 					if (frame != prevSmushFrame) {
-						prevSmushFrame = g_smush->getFrame();
 						g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 						if (SHOWFPS_GLOBAL)
 							g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
@@ -253,83 +296,13 @@ void Engine::mainLoop() {
 			}
 		} else if (_mode == ENGINE_MODE_NORMAL) {
 			prevSmushFrame = 0;
-			g_driver->clearScreen();
-
-			// Update actor costumes & sets
-			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-				Actor *a = *i;
-				
-				// Update the actor's costumes & chores
-				g_currentUpdatedActor = *i;
-				// Note that the actor need not be visible to update chores, for example:
-				// when Manny has just brought Meche back he is offscreen several times
-				// when he needs to perform certain chores
-				if (_currScene != NULL && a->inSet(_currScene->name()))
-					a->update();
-			}
-			g_currentUpdatedActor = NULL;
-
-			if (_currScene != NULL) {
-				_currScene->drawBackground();
-			}
-
-			// Draw underlying scene components
-			if (_currScene != NULL) {
-				// Background objects are drawn underneath everything except the background
-				// There are a bunch of these, especially in the tube-switcher room
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
-				// Underlay objects are just above the background
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
-				// State objects are drawn on top of other things, such as the flag
-				// on Manny's message tube
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
-			}
-
-			// Play SMUSH Animations
-			// This should occur on top of all underlying scene objects,
-			// a good example is the tube switcher room where some state objects
-			// need to render underneath the animation or you can't see what's going on
-			// This should not occur on top of everything though or Manny gets covered
-			// up when he's next to Glottis's service room
-			if (g_smush->isPlaying()) {
-				_movieTime = g_smush->getMovieTime();
-				if (g_smush->isUpdateNeeded()) {
-					g_driver->prepareSmushFrame(g_smush->getWidth(), g_smush->getHeight(), g_smush->getDstPtr());
-					g_smush->clearUpdateNeeded();
-				}
-				if (g_smush->getFrame() > 0)
-					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-			}
-
-			if (SHOWFPS_GLOBAL)
-				g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
-
-			if (_currScene != NULL) {
-				_currScene->setupCamera();
-			}
-
-			g_driver->set3DMode();
-
-			if (_currScene != NULL) {
-				_currScene->setupLights();
-			}
-
-			// Draw actors
-			for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
-				Actor *a = *i;
-				if (_currScene != NULL && a->inSet(_currScene->name()) && a->visible())
-					a->draw();
-				if (_currScene != NULL)
-					a->undraw(a->inSet(_currScene->name()) && a->visible());
-			}
-
-			// Draw overlying scene components
-			if (_currScene != NULL) {
-				// The overlay objects should be drawn on top of everything else,
-				// including 3D objects such as Manny and the message tube
-				_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
-			}
-
+			updateScreen();
+		} else if (_mode == ENGINE_MODE_DRAW) {
+			lua_beginblock();
+			lua_Object drawHandler = getEventHandler("userPaintHandler");
+			if (drawHandler != LUA_NOOBJECT)
+				lua_callfunction(drawHandler);
+			lua_endblock();
 		}
 
 		// Draw Primitives
@@ -347,8 +320,11 @@ void Engine::mainLoop() {
 		g_imuse->flushTracks();
 		g_imuse->refreshScripts();
 
+		if (SHOWFPS_GLOBAL)
+			g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+
 		if (doFlip)
-			g_driver->flipBuffer();
+				g_driver->flipBuffer();
 
 		// don't kill CPU
 		SDL_Delay(1);
@@ -371,6 +347,9 @@ void Engine::mainLoop() {
 		lua_beginblock();
 		setMovieTime(_movieTime);
 		lua_endblock();
+
+		// Run asynchronous tasks
+		lua_runtasks();
 
 		if (SHOWFPS_GLOBAL && doFlip) {
 			frameCounter++;
