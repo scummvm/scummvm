@@ -325,7 +325,7 @@ void Engine::mainLoop() {
 			g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
 
 		if (doFlip)
-				g_driver->flipBuffer();
+			g_driver->flipBuffer();
 
 		// don't kill CPU
 		SDL_Delay(1);
