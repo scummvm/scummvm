@@ -147,37 +147,13 @@ struct Dir
 
 static Game the_game;
 
-static bool checkName(const char *base, char *text = 0)
+static void detectGames(FSList &files, DetectedGameList &candidates)
 {
-  GameDetector g;
-  GameSettings gs = g.findGame(base);
-
-  if (gs.name) {
-    if(text != NULL)
-      strcpy(text, gs.description);
-    return true;
-  }
-  return false;
-}
-
-static bool isGame(const FilesystemNode &entry, char *base)
-{
-  FSList files;
-  files.push_back(entry);
-  DetectedGameList candidates;
-
   const PluginList &plugins = PluginManager::instance().getPlugins();
   PluginList::const_iterator iter = plugins.begin();
   for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
     candidates.push_back((*iter)->detectGames(files));
   }
-  if (candidates.isEmpty())
-    return false;
-  if (candidates.size() > 1)
-    return false;
-
-  strcpy(base, candidates[0].name);
-  return true;
 }
 
 static bool isIcon(const FilesystemNode &entry)
@@ -231,38 +207,45 @@ static int findGames(Game *games, int max)
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.path().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
-    FSList fslist = dirs[curr_dir++].node.listDir(FilesystemNode::kListAll);
-      for (FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
-	   ++entry) {
-	if (entry->isDirectory()) {
-	  if(num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),
-					      "install")) {
-	    dirs[num_dirs].node = *entry;
-	    num_dirs++;
-	  }
-	} else
-	  if(isIcon(*entry))
-	    strcpy(dirs[curr_dir-1].deficon, entry->displayName().c_str());
-	  else if(curr_game < max &&
-		  isGame(*entry, games[curr_game].filename_base)) {
-	    strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
-	    if(uniqueGame(games[curr_game].filename_base,
-			  games[curr_game].dir, games, curr_game)) {
-
-	      if(!checkName(games[curr_game].filename_base,
-			    games[curr_game].text))
-		strcpy(games[curr_game].text, games[curr_game].filename_base);
+    FSList files, fslist = dirs[curr_dir++].node.listDir(FilesystemNode::kListAll);
+    for (FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
+	 ++entry) {
+      if (entry->isDirectory()) {
+	if(num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),
+					    "install")) {
+	  dirs[num_dirs].node = *entry;
+	  num_dirs++;
+	}
+      } else
+	if(isIcon(*entry))
+	  strcpy(dirs[curr_dir-1].deficon, entry->displayName().c_str());
+	else
+	  files.push_back(*entry);
+    }
+    
+    DetectedGameList candidates;
+    detectGames(files, candidates);
+    
+    for(DetectedGameList::const_iterator ge = candidates.begin();
+	ge != candidates.end(); ++ge)
+      if(curr_game < max) {
+	strcpy(games[curr_game].filename_base, ge->name);
+	strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
+	if(uniqueGame(games[curr_game].filename_base,
+		      games[curr_game].dir, games, curr_game)) {
+	  
+	  strcpy(games[curr_game].text, ge->description);
 #if 0
-	      printf("Registered game <%s> in <%s> <%s> because of <%s> <%s>\n",
-		     games[curr_game].text, games[curr_game].dir,
-		     games[curr_game].filename_base,
-		     dirs[curr_dir-1].name, entry->displayName().c_str());
+	  printf("Registered game <%s> in <%s> <%s> because of <%s> <*>\n",
+		 games[curr_game].text, games[curr_game].dir,
+		 games[curr_game].filename_base,
+		 dirs[curr_dir-1].name);
 #endif
-	      curr_game++;
-	    }
-	  }
+	  curr_game++;
+	}
       }
   }
+
   for(int i=0; i<curr_game; i++)
     if(!loadIcon(games[i], dirs, num_dirs))
       makeDefIcon(games[i].icon);
