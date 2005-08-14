@@ -761,7 +761,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 	}
 
 	if (boxm >= end)
-		warning("The box matrix apparently is truncated (room %d)", _roomResource);
+		debug(0, "The box matrix apparently is truncated (room %d)", _roomResource);
 
 	return dest;
 }

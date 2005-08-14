@@ -41,7 +41,7 @@ void SaudChannel::handleSmrk(Chunk &b) {
 void SaudChannel::handleShdr(Chunk &b) {
 	int32 size = b.getSize();
 	if (size != 4)
-		warning("SMRK has a invalid size : %d", size);
+		error("SMRK has a invalid size : %d", size);
 }
 
 bool SaudChannel::handleSubTags(int32 &offset) {

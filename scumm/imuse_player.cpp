@@ -98,7 +98,7 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	// but we'll go ahead and do a similar check.
 	ptr = _se->findStartOfSound(sound);
 	if (!ptr) {
-		warning("Player::startSound(): Couldn't find start of sound %d!", sound);
+		error("Player::startSound(): Couldn't find start of sound %d!", sound);
 		return false;
 	}
 
@@ -305,7 +305,7 @@ void Player::send(uint32 b) {
 			part->allNotesOff();
 			break;
 		default:
-			warning("Player::send(): Invalid control change %d", param1);
+			error("Player::send(): Invalid control change %d", param1);
 		}
 		break;
 
@@ -335,7 +335,7 @@ void Player::send(uint32 b) {
 
 	default:
 		if (!_scanning) {
-			warning("Player::send(): Invalid command %d", cmd);
+			error("Player::send(): Invalid command %d", cmd);
 			clear();
 		}
 	}
@@ -370,7 +370,7 @@ void Player::sysEx(byte *p, uint16 len) {
 			// FM-TOWNS custom instrument definition
 			_midi->sysEx_customInstrument(p[0], 'EUP ', p + 1);
 		} else {
-			warning("Unknown SysEx manufacturer 0x%02X", (int)a);
+			error("Unknown SysEx manufacturer 0x%02X", (int)a);
 		}
 		return;
 	}
@@ -552,7 +552,7 @@ void Player::sysEx(byte *p, uint16 len) {
 		break;
 
 	default:
-		warning("Unknown SysEx command %d", (int)code);
+		error("Unknown SysEx command %d", (int)code);
 	}
 }
 
@@ -773,7 +773,7 @@ Part *Player::getPart(uint8 chan) {
 
 	part = _se->allocate_part(_priority, _midi);
 	if (!part) {
-		warning("no parts available");
+		error("no parts available");
 		return NULL;
 	}
 
@@ -1016,7 +1016,7 @@ int Player::addParameterFader(int param, int target, int time) {
 	case ParameterFader::pfTranspose:
 		// FIXME: Is this transpose? And what's the scale?
 		// It's set to fade to -2400 in the tunnel of love.
-//		warning("parameterTransition(3) outside Tunnel of Love?");
+//		debug(0, "parameterTransition(3) outside Tunnel of Love?");
 		start = _transpose;
 //		target /= 200;
 		break;
@@ -1039,7 +1039,7 @@ int Player::addParameterFader(int param, int target, int time) {
 		break;
 
 	default:
-		warning("Player::addParameterFader (%d, %d, %d): Unknown parameter", param, target, time);
+		debug(0, "Player::addParameterFader (%d, %d, %d): Unknown parameter", param, target, time);
 		return 0; // Should be -1, but we'll let the script think it worked.
 	}
 
@@ -1066,7 +1066,7 @@ int Player::addParameterFader(int param, int target, int time) {
 			best->total_time = (uint32)time * 10000;
 		best->current_time = 0;
 	} else {
-		warning("IMuse Player %d: Out of parameter faders", _id);
+		debug(0, "IMuse Player %d: Out of parameter faders", _id);
 		return -1;
 	}
 

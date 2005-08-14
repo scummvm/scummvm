@@ -145,7 +145,7 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return false;
 
-	warning("Unknown music type: '%s'", tag2str(tag));
+	error("Unknown music type: '%s'", tag2str(tag));
 
 	return false;
 }
@@ -187,7 +187,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return true;
 
-	warning("Unknown music type: '%s'", tag2str(tag));
+	error("Unknown music type: '%s'", tag2str(tag));
 
 	return false;
 }
@@ -410,7 +410,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 		return;
 
 	if (pos != _queue_end)
-		warning("Skipping entries in iMuse command queue to reach marker");
+		debug(0, "Skipping entries in iMuse command queue to reach marker");
 
 	_trigger_count--;
 	_queue_cleared = false;
@@ -725,11 +725,11 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 			if (a[1] > 127)
 				return -1;
 			else {
-				warning("IMuse doCommand(6) - setImuseMasterVolume (%d)", a[1]);
+				debug(0, "IMuse doCommand(6) - setImuseMasterVolume (%d)", a[1]);
 				return setImuseMasterVolume((a[1] << 1) | (a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
 			}
 		case 7:
-			warning("IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
+			debug(0, "IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
 			return _master_volume / 2; // Convert from 0-255 to 0-127
 		case 8:
 			return startSound(a[1]) ? 0 : -1;
@@ -750,7 +750,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 				// Set player volume.
 				return player->setVolume(a[4]);
 			default:
-				warning("IMuseInternal::doCommand(12) unsupported sub-command %d", a[3]);
+				error("IMuseInternal::doCommand(12) unsupported sub-command %d", a[3]);
 			}
 			return -1;
 		case 13:
@@ -771,11 +771,11 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 			}
 			return -1;
 		case 16:
-			warning("IMuse doCommand(16) - set_volchan (%d, %d)", a[1], a[2]);
+			debug(0, "IMuse doCommand(16) - set_volchan (%d, %d)", a[1], a[2]);
 			return set_volchan(a[1], a[2]);
 		case 17:
 			if (g_scumm->_gameId != GID_SAMNMAX) {
-				warning("IMuse doCommand(17) - set_channel_volume (%d, %d)", a[1], a[2]);
+				debug(0, "IMuse doCommand(17) - set_channel_volume (%d, %d)", a[1], a[2]);
 				return set_channel_volume(a[1], a[2]);
 			} else {
 				if (a[4]) {
@@ -820,7 +820,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 		case 3:
 			return 0;
 		default:
-			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+			error("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 		}
 	} else if (param == 1) {
 		if ((1 << cmd) & 0x783FFF) {
@@ -926,7 +926,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 		case 24:
 			return 0;
 		default:
-			warning("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+			error("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 			return -1;
 		}
 	}
@@ -1756,7 +1756,7 @@ void Part::noteOn(byte note, byte velocity) {
 	if (_unassigned_instrument && !_percussion) {
 		_unassigned_instrument = false;
 		if (!_instrument.isValid()) {
-			warning("[%02d] No instrument specified", (int)_chan);
+			debug(0, "[%02d] No instrument specified", (int)_chan);
 			return;
 		}
 	}
@@ -1885,7 +1885,7 @@ void Part::programChange(byte value) {
 void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
 	if (_bank)
-		warning("Non-zero instrument bank selection. Please report this");
+		error("Non-zero instrument bank selection. Please report this");
 	_instrument.program((byte)b, _player->isMT32());
 	if (clearToTransmit())
 		_instrument.send(_mc);

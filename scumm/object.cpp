@@ -240,7 +240,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			// FIXME: We used to assert here, but it seems that in the nexus
 			// in The Dig, this can happen, at least with old savegames, and
 			// it's safe to continue...
-			warning("getObjectXYPos: Can't find object %d", object);
+			debug(0, "getObjectXYPos: Can't find object %d", object);
 			return;
 		}
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
@@ -1400,7 +1400,7 @@ void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 
 	i = getObjectIndex(obj);
 	if (i == -1) {
-		warning("setObjectState: no such object %d", obj);
+		debug(0, "setObjectState: no such object %d", obj);
 		return;
 	}
 
@@ -1462,7 +1462,7 @@ void ScummEngine::nukeFlObjects(int min, int max) {
 	ObjectData *od;
 	int i;
 
-	warning("nukeFlObjects(%d,%d)", min, max);
+	debug(0, "nukeFlObjects(%d,%d)", min, max);
 
 	for (i = (_numLocalObjects-1), od = _objs; --i >= 0; od++)
 		if (od->fl_object_index && od->obj_nr >= min && od->obj_nr <= max) {
@@ -1477,8 +1477,7 @@ void ScummEngine_v6::enqueueObject(int objectNumber, int objectX, int objectY, i
 	BlastObject *eo;
 
 	if (_blastObjectQueuePos >= (int)ARRAYSIZE(_blastObjectQueue)) {
-		warning("enqueueObject: overflow");
-		return;
+		error("enqueueObject: overflow");
 	}
 
 	int idx = getObjectIndex(objectNumber);

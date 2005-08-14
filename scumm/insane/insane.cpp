@@ -1288,7 +1288,7 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 		sf->drawStringWrap(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, 10, 300, true);
 		break;
 	default:
-		warning("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
+		error("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
 	}
 	free (string);
 }

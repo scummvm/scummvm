@@ -69,7 +69,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
 		if (_channels[i].id == track)
-			warning("SmushMixer::addChannel(%d): channel already exists", track);
+			debugC(DEBUG_SMUSH, "SmushMixer::addChannel(%d): channel already exists", track);
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
@@ -81,7 +81,7 @@ void SmushMixer::addChannel(SmushChannel *c) {
 	}
 
 	for (i = 0; i < NUM_CHANNELS; i++) {
-		warning("channel %d : %p(%d, %d)", i, (void *)_channels[i].chan,
+		debugC(DEBUG_SMUSH, "channel %d : %p(%d, %d)", i, (void *)_channels[i].chan,
 			_channels[i].chan ? _channels[i].chan->getTrackIdentifier() : -1,
 			_channels[i].chan ? _channels[i].chan->isTerminated() : 1);
 	}

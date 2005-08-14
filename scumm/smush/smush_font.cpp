@@ -38,7 +38,7 @@ SmushFont::SmushFont(ScummEngine *vm, bool use_original_colors, bool new_colors)
 int SmushFont::getStringWidth(const char *str) {
 	assert(str);
 	if (!_loaded) {
-		warning("SmushFont::getStringWidth() Font is not loaded");
+		error("SmushFont::getStringWidth() Font is not loaded");
 		return 0;
 	}
 
@@ -56,7 +56,7 @@ int SmushFont::getStringWidth(const char *str) {
 int SmushFont::getStringHeight(const char *str) {
 	assert(str);
 	if (!_loaded) {
-		warning("SmushFont::getStringHeight() Font is not loaded");
+		error("SmushFont::getStringHeight() Font is not loaded");
 		return 0;
 	}
 

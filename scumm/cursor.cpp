@@ -142,7 +142,7 @@ void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
 	VirtScreen *vs = findVirtScreen(y);
 
 	if (vs == NULL) {
-		warning("grabCursor: invalid Y %d", y);
+		debug(0, "grabCursor: invalid Y %d", y);
 		return;
 	}
 
@@ -338,7 +338,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
-		warning("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
+		error("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
 	}
 
 	assert(index >= 0 && index < 4);
@@ -382,7 +382,7 @@ void ScummEngine_v5::redefineBuiltinCursorHotspot(int index, int x, int y) {
 	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
-		warning("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);
+		error("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);
 	}
 
 	assert(index >= 0 && index < 4);

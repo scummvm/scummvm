@@ -70,19 +70,19 @@ static void smush_decode_codec21(byte *dst, const byte *src, int width, int heig
 
 bool NutRenderer::loadFont(const char *filename) {
 	if (_loaded) {
-		warning("NutRenderer::loadFont() Font already loaded, ok, loading...");
+		debug(0, "NutRenderer::loadFont() Font already loaded, ok, loading...");
 	}
 
 	ScummFile file;
 	_vm->openFile(file, filename);
 	if (file.isOpen() == false) {
-		warning("NutRenderer::loadFont() Can't open font file: %s", filename);
+		error("NutRenderer::loadFont() Can't open font file: %s", filename);
 		return false;
 	}
 
 	uint32 tag = file.readUint32BE();
 	if (tag != 'ANIM') {
-		warning("NutRenderer::loadFont() there is no ANIM chunk in font header");
+		error("NutRenderer::loadFont() there is no ANIM chunk in font header");
 		return false;
 	}
 
@@ -92,7 +92,7 @@ bool NutRenderer::loadFont(const char *filename) {
 	file.close();
 
 	if (READ_BE_UINT32(dataSrc) != 'AHDR') {
-		warning("NutRenderer::loadFont() there is no AHDR chunk in font header");
+		error("NutRenderer::loadFont() there is no AHDR chunk in font header");
 		free(dataSrc);
 		return false;
 	}
@@ -103,12 +103,12 @@ bool NutRenderer::loadFont(const char *filename) {
 	for (int l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
 		if (READ_BE_UINT32(dataSrc + offset) != 'FRME') {
-			warning("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
+			error("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
 		offset += 8;
 		if (READ_BE_UINT32(dataSrc + offset) != 'FOBJ') {
-			warning("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
+			error("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
 			break;
 		}
 		int codec = READ_LE_UINT16(dataSrc + offset + 8);
@@ -144,7 +144,7 @@ bool NutRenderer::loadFont(const char *filename) {
 
 int NutRenderer::getCharWidth(byte c) const {
 	if (!_loaded) {
-		warning("NutRenderer::getCharWidth() Font is not loaded");
+		error("NutRenderer::getCharWidth() Font is not loaded");
 		return 0;
 	}
 
@@ -159,7 +159,7 @@ int NutRenderer::getCharWidth(byte c) const {
 
 int NutRenderer::getCharHeight(byte c) const {
 	if (!_loaded) {
-		warning("NutRenderer::getCharHeight() Font is not loaded");
+		error("NutRenderer::getCharHeight() Font is not loaded");
 		return 0;
 	}
 
@@ -174,7 +174,7 @@ int NutRenderer::getCharHeight(byte c) const {
 
 void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y, byte color, bool showShadow) {
 	if (!_loaded) {
-		warning("NutRenderer::drawShadowChar() Font is not loaded");
+		error("NutRenderer::drawShadowChar() Font is not loaded");
 		return;
 	}
 
@@ -271,7 +271,7 @@ void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byt
 
 void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
 	if (!_loaded) {
-		warning("NutRenderer::draw2byte() Font is not loaded");
+		error("NutRenderer::draw2byte() Font is not loaded");
 		return;
 	}
 

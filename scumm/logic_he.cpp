@@ -618,10 +618,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 	default:
 		LogicHE::dispatch(op, numArgs, args);
-		warning("Tell me how to reproduce it");
-		assert(0);
-		break;
-
+		error("Tell me how to reproduce it");
 	}
 
 	return res;

@@ -440,7 +440,7 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 	string2 = getStringAddress(resID + 1);
 	string3 = getStringAddress(resID + 2);
 	if (!string1 || !string2 || !string3) {
-		warning("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d",
+		error("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d",
 				resID, start, end, time, resID, resID + 1, resID + 2);
 		return;
 	}

@@ -576,7 +576,7 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 		memcpy(_curBuf, gfx_data, _frameSize);
 		break;
 	case 1:
-		warning("codec47: not implemented decode1 proc");
+		error("codec47: not implemented decode1 proc");
 		break;
 	case 2:
 		if (seq_nb == _prevSeqNb + 1) {
