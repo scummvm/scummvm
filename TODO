@@ -7,10 +7,18 @@ useful contribution. Note that this list is never complete, and may be
 partially outdated, so just because you don't see something here doesn't
 mean it is not important.
 
-Before you start work on something, you might want to talk to somebody
-from the team. This will help us to prevent double work, i.e. several
-people working on the same stuff at once without knowing about each
-other.
+Before you start work on something, you should first talk to the team!
+Ideally ask on scummvm-devel, our mailing list. This will help us to
+prevent double work, i.e. several people working on the same stuff at
+once without knowing about each other. Furthermore, sometimes entries
+on our list are actually obsolete (because the feature has been
+implemented, or because for some reason we no longer think it to be
+desirable). Special caution should be taken for TODO entries that say
+"we may want to" or similar things; that usually means that we aren't
+sure whether we really want to implement that feature.
+
+So, to repeat it: Always talk to the team before implementing a change
+on this list, or else risk having your patch rejected :-/.
 
 Finally, always make sure to check out our bug tracker and our feature
 request tracker for things that need work.
@@ -83,9 +91,6 @@ General
   we set when the application should be quit (e.g. when an EVENT_QUIT is
   received). This is useful if multiple levels of event loops have to be ended
 * Fix the Map<> template, make it more robust; maybe use a red-black tree?
-* Instead of the above, consider switching everything over to the STL.
-  Maybe a little bit more overhead, but we get instant access to a full-featured
-  and well-tested code base, with everything we need.
 * Make some generic "EventLoop" API/class which all backends and the GUI
   use. Initially this would just call the backend poll_event() etc. methods.
   But eventually the EventLoop object(s) could be made by the backend.
