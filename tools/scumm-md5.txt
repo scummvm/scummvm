@@ -372,6 +372,9 @@ Let's Explore the Airport with Buzzy
 Let's Explore the Jungle with Buzzy
 	-	Windows	en	8801fb4a1200b347f7a38523339526dd	jungle	Kirben
 
+Pajama Sam: Games to Play On Any Day
+	-	Windows	en	8a484262363a8e18be87112454f1456b	pjgames
+
 Pajama Sam 1: No Need to Hide When It's Dark Outside
 	-	All	en	37aed3f91c1ef959e0bd265f9b13781f	pajama	Kirben
 	-	All	en	672dec94b82f7f0877ebb5b5cf7f4bc1	pajama	khalek
@@ -466,6 +469,7 @@ Putt-Putt and Pep's Dog on a Stick
 
 Putt-Putt's Fun Pack
 	-	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
+	-	DOS	hb	90a329d8ad5b7ce0690429e98cfbb32f	funpack
 	-	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev
 
 Putt-Putt & Fatty Bear's Activity Pack
@@ -493,6 +497,7 @@ Spy Fox 2: Some Assembly Required
 	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2-demo	joostp
 
 Spy Fox 3: Operation Ozone
+	-	Windows	en	be39a5d4db60e8aa736b9086778cb45c	spyozon
 	-	All	en	600abd3e9f47e63e670188b7e4e86ac7	spyozon	Kirben
 	-	All	ru	96a3069a3c63caa7329588ce1fef41ee	spyozon	sev
 	Demo	All	en	ebd0b2c8a387f18887282afe6cad894a	sf3-demo	Kirben
