@@ -1,5 +1,9 @@
 OUTPUT_FORMAT("elf32-shl", "elf32-shl", "elf32-shl")
 OUTPUT_ARCH(sh)
+PHDRS
+{
+   plugin PT_LOAD ;
+}
 SECTIONS
 {
   . = 0;
@@ -7,7 +11,7 @@ SECTIONS
   {
     *(.text .stub .text.* .gnu.linkonce.t.*)
     *(.gnu.warning)
-  } =0
+  } :plugin =0
   .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .sdata2         : { *(.sdata2 .sdata2.* .gnu.linkonce.s2.*) }
