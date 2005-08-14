@@ -1405,7 +1405,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	bottom = y + height;
 	if (bottom > vs->h) {
-		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
+		error("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
 	}
 
 	_vertStripNextInc = height * vs->pitch - 1;
@@ -1488,7 +1488,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 			}
 			if (offset < 0 || offset >= smapLen) {
-				warning("drawBitmap: Trying to draw a non-existant strip");
+				error("drawBitmap: Trying to draw a non-existant strip");
 				return;
 			}
 			useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
@@ -1626,7 +1626,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 		break;
 	default:
 		// Alternayive russian freddi3 uses badly formatted bitmaps
-		warning("Gdi::drawBMAPBg: default case %d", code);
+		debug(0, "Gdi::drawBMAPBg: default case %d", code);
 	}
 
 	copyVirtScreenBuffers(Common::Rect(vs->w, vs->h));
@@ -2869,7 +2869,7 @@ void ScummEngine::fadeIn(int effect) {
 		dissolveEffect(1, virtscr[0].h);
 		break;
 	default:
-		warning("Unknown screen effect, %d", effect);
+		error("Unknown screen effect, %d", effect);
 	}
 	_screenEffectFlag = true;
 }
@@ -2921,7 +2921,7 @@ void ScummEngine::fadeOut(int effect) {
 			dissolveEffect(1, virtscr[0].h);
 			break;
 		default:
-			warning("fadeOut: default case %d", effect);
+			error("fadeOut: default case %d", effect);
 		}
 	}
 
@@ -3038,10 +3038,8 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		h++;
 
 	offsets = (int *) malloc(w * h * sizeof(int));
-	if (offsets == NULL) {
-		warning("dissolveEffect: out of memory");
-		return;
-	}
+	if (offsets == NULL)
+		error("dissolveEffect: out of memory");
 
 	// Create a permutation of offsets into the frame buffer
 
@@ -3066,11 +3064,8 @@ void ScummEngine::dissolveEffect(int width, int height) {
 				offsets[i++] = y * vs->pitch + x;
 
 		offsets2 = (int *) malloc(w * h * sizeof(int));
-		if (offsets2 == NULL) {
-			warning("dissolveEffect: out of memory");
-			free(offsets);
-			return;
-		}
+		if (offsets2 == NULL)
+			error("dissolveEffect: out of memory");
 
 		memcpy(offsets2, offsets, w * h * sizeof(int));
 

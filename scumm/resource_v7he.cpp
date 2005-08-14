@@ -177,11 +177,11 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 
 	fi.total_size = fi.file->size();
 	if (fi.total_size == -1) {
-		warning("Cannot get size of file %s", fi.file->name());
+		error("Cannot get size of file %s", fi.file->name());
 		goto cleanup;
 	}
 	if (fi.total_size == 0) {
-		warning("%s: file has a size of 0", fi.file->name());
+		error("%s: file has a size of 0", fi.file->name());
 		goto cleanup;
 	}
 
@@ -266,7 +266,7 @@ int Win32ResExtractor::extract_resources(WinLibrary *fi, WinResource *wr,
 	*data = extract_resource(fi, wr, &size, &free_it, type_wr->id, (lang_wr == NULL ? NULL : lang_wr->id), _arg_raw);
 
 	if (data == NULL) {
-		warning("Win32ResExtractor::extract_resources() problem with resource extraction");
+		error("Win32ResExtractor::extract_resources() problem with resource extraction");
 		return 0;
 	}
 
@@ -362,7 +362,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		snprintf(name, sizeof(name)/sizeof(char), "-%d", icondir->entries[c].res_id);
 		fwr = find_resource(fi, (is_icon ? "-3" : "-1"), name, lang, &level);
 		if (fwr == NULL) {
-			warning("%s: could not find `%s' in `%s' resource.",
+			error("%s: could not find `%s' in `%s' resource.",
 					fi->file->name(), &name[1], (is_icon ? "group_icon" : "group_cursor"));
 			return NULL;
 		}
@@ -410,7 +410,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 		snprintf(name, sizeof(name)/sizeof(char), "-%d", icondir->entries[c].res_id);
 		fwr = find_resource(fi, (is_icon ? "-3" : "-1"), name, lang, &level);
 		if (fwr == NULL) {
-			warning("%s: could not find `%s' in `%s' resource.",
+			error("%s: could not find `%s' in `%s' resource.",
 				fi->file->name(), &name[1], (is_icon ? "group_icon" : "group_cursor"));
 			return NULL;
 		}
@@ -471,7 +471,7 @@ bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *n
 		need_size, total_size, (byte *)offset - memory, size);
 
 	if (need_size < 0 || need_size > total_size) {
-		warning("%s: premature end", name);
+		error("%s: premature end", name);
 		return false;
 	}
 
@@ -769,7 +769,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 
 		RETURN_IF_BAD_POINTER(false, mz_header->lfanew);
 		if (mz_header->lfanew < sizeof(DOSImageHeader)) {
-			warning("%s: not a Windows library", fi->file->name());
+			error("%s: not a Windows library", fi->file->name());
 			return false;
 		}
 	}
@@ -782,7 +782,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 		RETURN_IF_BAD_POINTER(false, header->rsrctab);
 		RETURN_IF_BAD_POINTER(false, header->restab);
 		if (header->rsrctab >= header->restab) {
-			warning("%s: no resource directory found", fi->file->name());
+			error("%s: no resource directory found", fi->file->name());
 			return false;
 		}
 
@@ -837,7 +837,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 		RETURN_IF_BAD_POINTER(false, pe_header->optional_header.data_directory[IMAGE_DIRECTORY_ENTRY_RESOURCE]);
 		dir = pe_header->optional_header.data_directory + IMAGE_DIRECTORY_ENTRY_RESOURCE;
 		if (dir->size == 0) {
-			warning("%s: file contains no resources", fi->file->name());
+			error("%s: file contains no resources", fi->file->name());
 			return false;
 		}
 
@@ -847,7 +847,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 	}
 
 	/* other (unknown) header signature was found */
-	warning("%s: not a Windows library", fi->file->name());
+	error("%s: not a Windows library", fi->file->name());
 	return false;
 }
 
@@ -949,11 +949,11 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 	fix_win32_cursor_icon_file_dir_endian(&dir);
 
 	if (dir.reserved != 0) {
-		warning("not an icon or cursor file (reserved non-zero)");
+		error("not an icon or cursor file (reserved non-zero)");
 		goto cleanup;
 	}
 	if (dir.type != 1 && dir.type != 2) {
-		warning("not an icon or cursor file (wrong type)");
+		error("not an icon or cursor file (wrong type)");
 		goto cleanup;
 	}
 
@@ -963,7 +963,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 			goto cleanup;
 		fix_win32_cursor_icon_file_dir_entry_endian(&entries[c]);
 		if (entries[c].reserved != 0)
-			warning("reserved is not zero");
+			error("reserved is not zero");
 	}
 
 	offset = sizeof(Win32CursorIconFileDir) + (dir.count - 1) * (sizeof(Win32CursorIconFileDirEntry));
@@ -987,24 +987,24 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 				fix_win32_bitmap_info_header_endian(&bitmap);
 				if (bitmap.size < sizeof(Win32BitmapInfoHeader)) {
-					warning("bitmap header is too short");
+					error("bitmap header is too short");
 					goto local_cleanup;
 				}
 				if (bitmap.compression != 0) {
-					warning("compressed image data not supported");
+					error("compressed image data not supported");
 					goto local_cleanup;
 				}
 				if (bitmap.x_pels_per_meter != 0)
-					warning("x_pels_per_meter field in bitmap should be zero");
+					error("x_pels_per_meter field in bitmap should be zero");
 				if (bitmap.y_pels_per_meter != 0)
-					warning("y_pels_per_meter field in bitmap should be zero");
+					error("y_pels_per_meter field in bitmap should be zero");
 				if (bitmap.clr_important != 0)
-					warning("clr_important field in bitmap should be zero");
+					error("clr_important field in bitmap should be zero");
 				if (bitmap.planes != 1)
-					warning("planes field in bitmap should be one");
+					error("planes field in bitmap should be one");
 				if (bitmap.size != sizeof(Win32BitmapInfoHeader)) {
 					uint32 skip = bitmap.size - sizeof(Win32BitmapInfoHeader);
-					warning("skipping %d bytes of extended bitmap header", skip);
+					error("skipping %d bytes of extended bitmap header", skip);
 					in->seek(skip, SEEK_CUR);
 				}
 				offset += bitmap.size;
@@ -1072,7 +1072,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 						if (bitmap.bit_count <= 16) {
 							if (color >= palette_count) {
-								warning("color out of range in image data");
+								error("color out of range in image data");
 								goto local_cleanup;
 							}
 							row[4*x+0] = palette[color].red;
@@ -1122,7 +1122,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 		if (previous == completed) {
 			if (min_offset < offset) {
-				warning("offset of bitmap header incorrect (too low)");
+				error("offset of bitmap header incorrect (too low)");
 				goto cleanup;
 			}
 			debugC(DEBUG_RESOURCE, "skipping %d bytes of garbage at %d", min_offset-offset, offset);

@@ -2043,15 +2043,15 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 
 void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end) {
 	if (dim1end < dim1start) {
-		warning("Across max %d smaller than min %d", dim1end, dim1start);
+		error("Across max %d smaller than min %d", dim1end, dim1start);
  	}
  	if (dim2end < dim2start) {
-	 	warning("Down max %d smaller than min %d", dim2end, dim2start);
+	 	error("Down max %d smaller than min %d", dim2end, dim2start);
  	}
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 	if (ah->dim2start > dim2start || ah->dim2end < dim2end || ah->dim1start > dim1start || ah->dim1end < dim1end) {
-		warning("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", dim2start, dim2end, dim1start, dim1end, ah->dim2start, ah->dim2end, ah->dim1start, ah->dim1end);
+		error("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", dim2start, dim2end, dim1start, dim1end, ah->dim2start, ah->dim2end, ah->dim1start, ah->dim1end);
 	}
 }
 
@@ -2069,7 +2069,7 @@ void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, 
 	int a22_num = a2_dim2end - a2_dim2start + 1;
 	int a21_num = a2_dim1end - a2_dim1start + 1;
 	if (a22_num != a12_num || a21_num != a11_num) {
-		warning("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
+		error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
 	}
 
 	if (array1 != array2) {

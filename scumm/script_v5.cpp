@@ -530,7 +530,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->_shadowMode = getVarOrDirectByte(PARAM_1);
 			break;
 		default:
-			warning("o5_actorOps: default case");
+			error("o5_actorOps: default case %d", _opcode & 0x1F);
 		}
 	}
 }
@@ -869,7 +869,7 @@ void ScummEngine_v5::o5_getStringWidth() {
 	width = _charset->getStringWidth(0, ptr);
 
 	setResult(width);
-	warning("o5_getStringWidth, result %d", width);
+	debug(0, "o5_getStringWidth, result %d", width);
 }
 
 void ScummEngine_v5::o5_saveLoadVars() {
@@ -889,23 +889,23 @@ void ScummEngine_v5::saveVars() {
 			a = _resultVarNumber;
 			getResultPos();
 			b = _resultVarNumber;
-			warning("stub saveVars: vars %d -> %d", a, b);
+			debug(0, "stub saveVars: vars %d -> %d", a, b);
 			break;
 		case 0x02: // write a range of string variables
 			a = getVarOrDirectByte(PARAM_1);
 			b = getVarOrDirectByte(PARAM_2);
-			warning("stub saveVars: strings %d -> %d", a, b);
+			debug(0, "stub saveVars: strings %d -> %d", a, b);
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
-			warning("stub saveVars to %s", _scriptPointer);
+			debug(0, "stub saveVars to %s", _scriptPointer);
 			_scriptPointer += a + 1;
 			break;
 		case 0x04:
 			return;
 			break;
 		case 0x1F: // close file
-			warning("stub saveVars close file");
+			debug(0, "stub saveVars close file");
 			return;
 			break;
 		}
@@ -923,23 +923,23 @@ void ScummEngine_v5::loadVars() {
 			a = _resultVarNumber;
 			getResultPos();
 			b = _resultVarNumber;
-			warning("stub loadVars: vars %d -> %d", a, b);
+			debug(0, "stub loadVars: vars %d -> %d", a, b);
 			break;
 		case 0x02: // read a range of string variables
 			a = getVarOrDirectByte(0x80);
 			b = getVarOrDirectByte(0x40);
-			warning("stub loadVars: strings %d -> %d", a, b);
+			debug(0, "stub loadVars: strings %d -> %d", a, b);
 			break;
 		case 0x03: // open file
 			a = resStrLen(_scriptPointer);
-			warning("stub loadVars from %s", _scriptPointer);
+			debug(0, "stub loadVars from %s", _scriptPointer);
 			_scriptPointer += a + 1;
 			break;
 		case 0x04:
 			return;
 			break;
 		case 0x1F: // close file
-			warning("stub loadVars close file");
+			debug(0, "stub loadVars close file");
 			return;
 			break;
 		}
@@ -1740,7 +1740,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	case 7:			// SO_NUKE_COSTUME
 	case 8:			// SO_NUKE_ROOM
 		if (_gameId == GID_ZAK256)
-			warning("o5_resourceRoutines %d should not occur in Zak256", op);
+			error("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
 			res.setResourceCounter(resType[op-5], resid, 0x7F);
 		break;
@@ -1795,33 +1795,32 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	// TODO: For the following see also Hibarnatus' information on bug #805691.
 	case 32:
 		// TODO (apparently never used in FM-TOWNS)
-		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 33:
 		// TODO (apparently never used in FM-TOWNS)
-		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 35:
 		// TODO: Might be used to set CD volume in FM-TOWNS Loom
 		foo = getVarOrDirectByte(PARAM_2);
-		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 36:
 		// TODO: Sets the loudness of a sound resource. Used in Indy3 and Zak.
 		foo = getVarOrDirectByte(PARAM_2);
 		bar = fetchScriptByte();
-		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 	case 37:
 		// TODO: Sets the pitch of a sound resource (pitch = foo - center semitones.
 		// "center" is at 0x32 in the sfx resource (always 0x3C in zak256, but sometimes different in Indy3).
 		foo = getVarOrDirectByte(PARAM_2);
-		warning("o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
+		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op,  vm.slot[_currentScript].number);
 		break;
 
 	default:
-		warning("Unknown o5_resourceRoutines: %d", op);
-		break;
+		error("o5_resourceRoutines: default case %d", op);
 	}
 }
 
@@ -1944,7 +1943,7 @@ void ScummEngine_v5::o5_roomOps() {
 				case 20: // disable palette operations
 				case 21: // disable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
 				case 22: // enable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
-					warning("o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
+					debug(0, "o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
 					return;
 					break;
 				}
@@ -2178,7 +2177,7 @@ void ScummEngine_v5::o5_startSound() {
 	// far as I can tell, this is a script bug.
 
 	if (_gameId == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
-		warning("Delaying Woodtick music until Largo's theme has finished");
+		printf("Delaying Woodtick music until Largo's theme has finished\n");
 		_scriptPointer = oldaddr;
 		o5_breakHere();
 		return;
@@ -2567,7 +2566,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	int dist = fetchScriptByte();
 
 	if (nr == 106 && _gameId == GID_INDY4) {
-		warning("Bypassing Indy4 bug");
+		printf("Bypassing Indy4 bug\n");
 		return;
 	}
 
@@ -2723,7 +2722,7 @@ void ScummEngine_v5::decodeParseString() {
 						_sound->playCDTrack(1, 0, offset, delay);
 					}
 				} else {
-					warning("ScummEngine_v5::decodeParseString: Unhandled case 8");
+					error("ScummEngine_v5::decodeParseString: Unhandled case 8");
 				}
 			}
 			break;
@@ -2757,8 +2756,7 @@ void ScummEngine_v5::decodeParseString() {
 			}
 			return;
 		default:
-			warning("ScummEngine_v5::decodeParseString: Unhandled case %d", _opcode & 0xF);
-			return;
+			error("ScummEngine_v5::decodeParseString: Unhandled case %d", _opcode & 0xF);
 		}
 	}
 
@@ -2850,7 +2848,7 @@ void ScummEngine_v5::o5_pickupObjectOld() {
 	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
 		return;											/* object twice */
 
-	// warning("adding %d from %d to inventoryOld", obj, _currentRoom);
+	// debug(0, "adding %d from %d to inventoryOld", obj, _currentRoom);
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));

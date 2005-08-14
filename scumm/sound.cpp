@@ -146,7 +146,7 @@ void Sound::processSoundQueues() {
 	while (i < _soundQuePos) {
 		num = _soundQue[i++];
 		if (i + num > _soundQuePos) {
-			warning("processSoundQues: invalid num value");
+			error("processSoundQues: invalid num value");
 			break;
 		}
 		memset(data, 0, sizeof(data));
@@ -335,7 +335,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		size = READ_BE_UINT32(ptr+4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			// Occurs when making fireworks in puttmoon
-			warning("playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
+			debug(0, "playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
 			heOffset = 0;
 		}
 		size -= heOffset;
@@ -662,7 +662,7 @@ void Sound::startHETalkSound(uint32 offset) {
 	int32 size;
 
 	if (!_sfxFile->isOpen()) {
-		warning("startHETalkSound: Speech file is not open");
+		error("startHETalkSound: Speech file is not open");
 		return;
 	}
 
@@ -1452,7 +1452,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			_fileHandle->read(res.createResource(type, idx, total_size), total_size);
 			return 1;
 		}
-		warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
+		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
@@ -1900,7 +1900,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 				continue;
 
 			if (instr[i*16 + 13])
-				warning("Sound %d instrument %d uses percussion", idx, i);
+				debugC(DEBUG_SOUND, "Sound %d instrument %d uses percussion", idx, i);
 
 			debugC(DEBUG_SOUND, "Sound %d: instrument %d on channel %d.", idx, i, ch);
 

@@ -303,7 +303,7 @@ void ScummEngine::CHARSET_1() {
 				_keepText = false;
 				break;
 			default:
-				warning("CHARSET_1: invalid code %d", c);
+				error("CHARSET_1: invalid code %d", c);
 			}
 		} else if (c == 0xFE || c == 0xFF) {
 			// WORKAROUND to avoid korean code 0xfe treated as charset message code.
@@ -369,7 +369,7 @@ void ScummEngine::CHARSET_1() {
 					_charset->setColor(color);
 				break;
 			case 13:
-				warning("CHARSET_1: Unknown opcode 13 %d", READ_LE_UINT16(buffer));
+				debug(0, "CHARSET_1: Unknown opcode 13 %d", READ_LE_UINT16(buffer));
 				buffer += 2;
 				break;
 			case 14: {
@@ -383,7 +383,7 @@ void ScummEngine::CHARSET_1() {
 				break;
 				}
 			default:
-				warning("CHARSET_1: invalid code %d", c);
+				error("CHARSET_1: invalid code %d", c);
 			}
 		} else {
 loc_avoid_ks_fe:
@@ -552,7 +552,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				// A better name for _blitAlso might be _imprintOnBackground
 
 				if (_string[a].no_talk_anim == false) {
-					//warning("Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
+					//debug(0, "Would have set _charset->_blitAlso = true (wanted to print '%c' = %d)", c, c);
 					_charset->_blitAlso = true;
 				}
 			}
@@ -599,7 +599,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	end = dst + dstSize;
 
 	if (msg == NULL) {
-		warning("Bad message in convertMessageToString, ignoring");
+		debug(0, "Bad message in convertMessageToString, ignoring");
 		return 0;
 	}
 
@@ -671,8 +671,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					}
 					break;
 				default:
-					warning("convertMessageToString(): string escape sequence %d unknown", chr);
-					break;
+					error("convertMessageToString(): string escape sequence %d unknown", chr);
 				}
 				num += (_version == 8) ? 4 : 2;
 			}

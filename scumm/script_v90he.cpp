@@ -1753,7 +1753,7 @@ void ScummEngine_v90he::o90_getWizData() {
 		copyScriptString(filename, sizeof(filename));
 		pop();
 		push(0);
-		warning("o90_getWizData() case 111 unhandled");
+		debug(0, "o90_getWizData() case 111 unhandled");
 		break;
 	default:
 		error("o90_getWizData: Unknown case %d", subOp);

@@ -551,7 +551,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 							if (pcolor == 13)
 								pcolor = _shadow_table[*dst];
 						} else if (_shadow_mode == 2) {
-							warning("codec1_spec2"); // TODO
+							error("codec1_spec2"); // TODO
 						} else if (_shadow_mode == 3) {
 							if (pcolor < 8) {
 								pcolor = (pcolor << 8) + *dst;
@@ -934,7 +934,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	int32 maxw, maxh;
 
 	if (_actorHitMode) {
-		warning("codec5: _actorHitMode not yet implemented");
+		error("codec5: _actorHitMode not yet implemented");
 		return 0;
 	}
 
@@ -1101,7 +1101,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	byte transparency = (_vm->_heversion >= 61) ? palette[0] : 255;
 
 	if (_actorHitMode) {
-		warning("codec16: _actorHitMode not yet implemented");
+		error("codec16: _actorHitMode not yet implemented");
 		return 0;
 	}
 

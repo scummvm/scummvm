@@ -508,7 +508,7 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 
 		break;
 	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
-		//warning("decodeParseString: SO_PRINT_WRAP");
+		//debug(0, "decodeParseString: SO_PRINT_WRAP");
 		break;
 	default:
 		error("decodeParseString: default case 0x%x", b);
@@ -1051,10 +1051,10 @@ void ScummEngine_v8::o8_cameraOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
-		//warning("freezeCamera NYI");
+		//debug(0, "freezeCamera NYI");
 		break;
 	case 0x33:		// SO_CAMERA_RESUME
-		//warning("unfreezeCamera NYI");
+		//debug(0, "unfreezeCamera NYI");
 		break;
 	default:
 		error("o8_cameraOps: default case 0x%x", subOp);
@@ -1170,7 +1170,7 @@ void ScummEngine_v8::o8_verbOps() {
 		// scripts that place verbs for that.
 		// Also, var595 contains the vertical position at which to start placing verbs (330)
 		a = pop();
-		warning("SO_VERB_LINE_SPACING %d: not yet implemented", a);
+		debug(0, "SO_VERB_LINE_SPACING %d: not yet implemented", a);
 		break;
 	default:
 		error("o8_verbops: default case 0x%x", subOp);
@@ -1239,7 +1239,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		setScaleSlot(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
 	case 22:	// setBannerColors
-//		warning("o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+//		debug(0, "o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
 		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
@@ -1255,7 +1255,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		char name[30];
 
 		if (!address) {
-			warning("o8_kernelSetFunctions: saveGameReadName failed finding slot string %d", args[2]);
+			error("o8_kernelSetFunctions: saveGameReadName failed finding slot string %d", args[2]);
 			break;
 		}
 		getSavegameName(args[1] - 1, name);
@@ -1266,7 +1266,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 	case 26: {	// saveGame?
 		//char *address = (char*)getStringAddress(args[2]);
 		char address[30];
-		warning("o8_kernelSetFunctions: saveGame?(%d, %s)", args[1], address);
+		debug(0, "o8_kernelSetFunctions: saveGame?(%d, %s)", args[1], address);
 		break;
 	}
 	case 27: {	// FIXME: This doesn't work
@@ -1274,22 +1274,21 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		_saveLoadSlot = args[1];
 		_saveLoadFlag = 2;
 		_saveTemporaryState = false;
-		warning("Sgl: %d", args[1]);
+		debug(0, "Sgl: %d", args[1]);
 		break;
 	}
 	case 28:	// saveGameStampScreenshot
-		warning("o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		debug(0, "o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
 		_keyScriptKey = args[1];
 		_keyScriptNo = args[2];
 		break;
 	case 30:	// killAllScriptsButMe
-		warning("o8_kernelSetFunctions: killAllScriptsButMe()");
 		killAllScriptsExceptCurrent();
 		break;
 	case 31:	// stopAllVideo
-		warning("o8_kernelSetFunctions: stopAllVideo()");
+		debug(0, "o8_kernelSetFunctions: stopAllVideo()");
 		break;
 	case 32:	// writeRegistryValue
 		{
@@ -1301,7 +1300,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		}
 		break;
 	case 33:	// paletteSetIntensity
-		warning("o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
+		debug(0, "o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
 	case 34:	// queryQuit
 		if (_confirmExit)
@@ -1323,7 +1322,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		break;
 
 	default:
-		warning("o8_kernelSetFunctions: default case 0x%x (len = %d)", args[0], len);
+		error("o8_kernelSetFunctions: default case 0x%x (len = %d)", args[0], len);
 	}
 }
 

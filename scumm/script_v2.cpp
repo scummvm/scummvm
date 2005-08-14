@@ -718,7 +718,7 @@ void ScummEngine_v2::o2_actorOps() {
 			a->_talkColor = arg;
 		break;
 	default:
-		warning("o2_actorOps: opcode %d not yet supported", _opcode);
+		error("o2_actorOps: opcode %d not yet supported", _opcode);
 	}
 }
 

@@ -1185,7 +1185,7 @@ void ScummEngine_v6::o6_walkActorToObj() {
 			// FIXME: This is a hack to work around bug #742676 SAM: Fish Farm.
 			// Note quite sure why it happens, though, if it's normal or due to
 			// a bug in the ScummVM code.
-			warning("o6_walkActorToObj: invalid actor %d", obj);
+			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
 			return;
 		}
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
@@ -2555,7 +2555,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			setupShadowPalette(0, args[1], args[2], args[3], args[4], args[5]);
 			break;
 		case 114:
-			warning("o6_kernelSetFunctions: stub114()");
+			error("o6_kernelSetFunctions: stub114()");
 			break;
 		case 117:
 			freezeScripts(2);
@@ -2611,7 +2611,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		case 109:
 			// Case 108 and 109 share the same function
 			if (num != 6)
-				warning("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
+				error("o6_kernelSetFunctions sub op %d: expected 6 params but got %d", args[0], num);
 			setupShadowPalette(args[3], args[4], args[5], args[1], args[2], 0, 256);
 			break;
 		case 110:
@@ -2639,7 +2639,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 				// still be drawn in color.
 				setDirtyColors(0, 255);
 			} else
-				warning("stub o6_kernelSetFunctions_114()");
+				error("stub o6_kernelSetFunctions_114()");
 			break;
 		case 117:
 			// Sam & Max uses this opcode in script-43, right
@@ -2693,7 +2693,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 			VirtScreen *vs = &virtscr[0];
 			if (args[1] < 0 || args[1] >= vs->w || args[2] < 0 || args[2] >= vs->h) {
 				// FIXME: Until we know what to do in this case...
-				warning("o6_kernelGetFunctions:113: asking for pixel (%d, %d) outside of %dx%d screen", args[1], args[2], vs->w, vs->h);
+				debug(0, "o6_kernelGetFunctions:113: asking for pixel (%d, %d) outside of %dx%d screen", args[1], args[2], vs->w, vs->h);
 				push(0);
 			} else
 				push(*((byte *)vs->pixels + args[1] + args[2] * vs->pitch));
@@ -2953,7 +2953,7 @@ void ScummEngine_v6::o6_findAllObjects() {
 	int i = 1;
 
 	if (room != _currentRoom)
-		warning("o6_findAllObjects: current room is not %d", room);
+		error("o6_findAllObjects: current room is not %d", room);
 	writeVar(0, 0);
 	defineArray(0, kIntArray, 0, _numLocalObjects + 1);
 	writeArray(0, 0, 0, _numLocalObjects);

@@ -1083,10 +1083,10 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		// TODO Adding masking for flags 0x80 and 0x100
 		if (flags & 0x80) {
 			// Used in maze
-			warning("drawWizImage: Unhandled flag 0x80");
+			debug(0, "drawWizImage: Unhandled flag 0x80");
 		} else if (flags & 0x100) {
 			// Used in readdemo
-			warning("drawWizImage: Unhandled flag 0x100");
+			debug(0, "drawWizImage: Unhandled flag 0x100");
 		}
 		copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr);
 		break;
@@ -1095,7 +1095,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		break;
 	case 5:
 		// Used in Moonbase Commander
-		warning("drawWizImage: Unhandled wiz compression type %d", comp);
+		debug(0, "drawWizImage: Unhandled wiz compression type %d", comp);
 		break;
 	default:
 		error("drawWizImage: Unhandled wiz compression type %d", comp);
@@ -1407,7 +1407,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int sourceImage = 0;
 	if (params->processFlags & kWPFMaskImg) {
 		sourceImage = params->sourceImage;
-		warning("displayWizComplexImage() unhandled flag 0x80000");
+		debug(0, "displayWizComplexImage() unhandled flag 0x80000");
 	}
 	int palette = 0;
 	if (params->processFlags & kWPFPaletteNum) {
@@ -1442,7 +1442,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int field_390 = 0;
 	if (params->processFlags & 0x200000) {
 		field_390 = params->img.field_390;
-		warning("displayWizComplexImage() unhandled flag 0x200000");
+		debug(0, "displayWizComplexImage() unhandled flag 0x200000");
 	}
 	const Common::Rect *r = NULL;
 	if (params->processFlags & kWPFClipBox) {
@@ -1731,7 +1731,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 					byte *p = _vm->res.createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
 						_vm->res.nukeResource(rtImage, params->img.resNum);
-						warning("i/o error when reading '%s'", buf);
+						error("i/o error when reading '%s'", buf);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
 						_vm->VAR(119) = -2;
 					} else {
@@ -1747,7 +1747,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 			} else {
 				_vm->VAR(_vm->VAR_GAME_LOADED) = -3;
 				_vm->VAR(119) = -3;
-				warning("Unable to open for read '%s'", buf);
+				debug(0, "Unable to open for read '%s'", buf);
 			}
 		}
 		break;
@@ -1771,13 +1771,13 @@ void Wiz::processWizImage(const WizParameters *params) {
 				}
 
 				if (!f.open((const char *)buf, Common::File::kFileWriteMode)) {
-					warning("Unable to open for write '%s'", buf);
+					debug(0, "Unable to open for write '%s'", buf);
 					_vm->VAR(119) = -3;
 				} else {
 					byte *p = _vm->getResourceAddress(rtImage, params->img.resNum);
 					uint32 size = READ_BE_UINT32(p + 4);
 					if (f.write(p, size) != size) {
-						warning("i/o error when writing '%s'", params->filename);
+						error("i/o error when writing '%s'", params->filename);
 						_vm->VAR(119) = -2;
 					} else {
 						_vm->VAR(119) = 0;
@@ -1900,12 +1900,12 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			break;
 		case 2:
 			// Used baseball2003
-			warning("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
 		case 4:
 		case 5:
 			// Used in Moonbase Commander
-			warning("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
+			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
 		default:
 			error("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
@@ -1937,7 +1937,7 @@ uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
 	case 5:
 		// Used in Moonbase Commander
 		color = 1;
-		warning("getWizPixelColor: Unhandled wiz compression type %d", c);
+		debug(0, "getWizPixelColor: Unhandled wiz compression type %d", c);
 		break;
 	default:
 		error("getWizPixelColor: Unhandled wiz compression type %d", c);

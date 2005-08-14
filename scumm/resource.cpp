@@ -430,7 +430,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID('SVER'):
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
-		warning("SVER index block not yet handled, skipping");
+		debug(0, "SVER index block not yet handled, skipping");
 		break;
 
 	case MKID('INIB'):
@@ -568,7 +568,7 @@ void ScummEngine::loadCharset(int no) {
 
 	/* for Humongous catalogs */
 	if (_heversion >= 70 && _numCharsets == 1) {
-		warning("not loading charset as it doesn't seem to exist?");
+		debug(0, "Not loading charset as it doesn't seem to exist?");
 		return;
 	}
 
@@ -819,7 +819,7 @@ ResourceManager::ResourceManager(ScummEngine *vm) {
 
 bool ResourceManager::validateResource(const char *str, int type, int idx) const {
 	if (type < rtFirst || type > rtLast || (uint) idx >= (uint)num[type]) {
-		warning("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
+		error("%s Illegal Glob type %s (%d) num %d", str, resTypeFromId(type), type, idx);
 		return false;
 	}
 	return true;

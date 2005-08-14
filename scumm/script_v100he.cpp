@@ -2138,7 +2138,7 @@ void ScummEngine_v100he::o100_cursorCommand() {
 		_userPut--;
 		break;
 	default:
-		warning("o100_cursorCommand: default case %x", subOp);
+		error("o100_cursorCommand: default case %x", subOp);
 	}
 
 	VAR(VAR_CURSORSTATE) = _cursor.state;
@@ -2441,7 +2441,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		pop();
 		pop();
 		push(0);
-		warning("o100_getWizData() case 34 unhandled");
+		debug(0, "o100_getWizData() case 34 unhandled");
 		break;
 	case 64:
 		state = pop();
@@ -2466,7 +2466,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		copyScriptString(filename, sizeof(filename));
 		pop();
 		push(0);
-		warning("o100_getWizData() case 111 unhandled");
+		debug(0, "o100_getWizData() case 111 unhandled");
 		break;
 	case 112:
 		h = pop();

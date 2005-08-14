@@ -75,7 +75,7 @@ void ScummEngine::loadCJKFont() {
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		} else {
-			warning("Couldn't load any font");
+			error("Couldn't load any font");
 		}
 	}
 }
@@ -156,7 +156,7 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 		else if (kanjiType == EKANJI) chunk = 144;
 		break;
 	default:
-		warning("Invaild Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
+		error("Invaild Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
 		return 0;
 	}
 

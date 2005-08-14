@@ -1163,7 +1163,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_demoMode = ConfMan.getBool("demo_mode");
 	if (ConfMan.hasKey("nosubtitles")) {
-		warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
+		printf("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead\n");
 		if (!ConfMan.hasKey("subtitles"))
 			ConfMan.set("subtitles", !ConfMan.getBool("nosubtitles"));
 	}
@@ -1926,12 +1926,12 @@ void ScummEngine::setupMusic(int midi) {
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
-		warning("Sound mixer initialization failed");
+		printf("Sound mixer initialization failed\n");
 		if (_midiDriver == MD_ADLIB ||
 				_midiDriver == MD_PCSPK ||
 				_midiDriver == MD_PCJR)	{
 			_midiDriver = MD_NULL;
-			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
+			printf("MIDI driver depends on sound mixer, switching to null MIDI driver\n");
 		}
 	}
 
@@ -2439,7 +2439,7 @@ void ScummEngine::restart() {
 }
 
 void ScummEngine::startManiac() {
-	warning("stub startManiac()");
+	debug(0, "stub startManiac()");
 	displayMessage(0, "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory.");
 }
 

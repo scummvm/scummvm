@@ -1868,7 +1868,7 @@ void Actor::walkActorOld() {
 byte *Actor::getActorName() {
 	byte *ptr = _vm->getResourceAddress(rtActorName, _number);
 	if (ptr == NULL) {
-		warning("Failed to find name of actor %d", _number);
+		error("Failed to find name of actor %d", _number);
 	}
 	return ptr;
 }
@@ -1890,13 +1890,13 @@ void Actor::remapActorPaletteColor(int color, int new_color) {
 
 	akos = _vm->getResourceAddress(rtCostume, _costume);
 	if (!akos) {
-		warning("Can't remap actor %d, costume %d not found", _number, _costume);
+		debug(0, "Can't remap actor %d, costume %d not found", _number, _costume);
 		return;
 	}
 
 	akpl = _vm->findResourceData(MKID('AKPL'), akos);
 	if (!akpl) {
-		warning("Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
+		debug(0, "Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
 	}
 
@@ -1928,13 +1928,13 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 
 	akos = _vm->getResourceAddress(rtCostume, _costume);
 	if (!akos) {
-		warning("Can't remap actor %d, costume %d not found", _number, _costume);
+		debug(0, "Can't remap actor %d, costume %d not found", _number, _costume);
 		return;
 	}
 
 	akpl = _vm->findResourceData(MKID('AKPL'), akos);
 	if (!akpl) {
-		warning("Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
+		debug(0, "Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
 	}
 
