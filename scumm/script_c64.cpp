@@ -461,8 +461,6 @@ void ScummEngine_c64::o_isEqual() {
 	a = readVar(var);
 	b = getVarOrDirectByte(PARAM_1);
 
-	printf("o_isEqual: a %d b %d\n", a , b);
-
 	if (b == a)
 		ignoreScriptWord();
 	else
