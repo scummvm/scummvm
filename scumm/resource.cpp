@@ -793,6 +793,16 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 
 	if (!validateResource("allocating", type, idx))
 		return NULL;
+
+	if (_vm->_version <= 2) {
+		// Nuking and reloading a resource can be harmful in some
+		// cases. For instance, Zak tries to reload the intro music
+		// while it's playing. See bug #1253171.
+
+		if (address[type][idx] && (type == rtSound || type == rtScript || type == rtCostume))
+			return address[type][idx] + sizeof(MemBlkHeader);
+	}
+
 	nukeResource(type, idx);
 
 	expireResources(size);
