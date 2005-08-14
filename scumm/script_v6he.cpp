@@ -1165,6 +1165,7 @@ void ScummEngine_v60he::o60_localizeArrayToScript() {
 
 void ScummEngine_v60he::o60_seekFilePos() {
 	int mode, offset, slot;
+
 	mode = pop();
 	offset = pop();
 	slot = pop();
@@ -1173,13 +1174,13 @@ void ScummEngine_v60he::o60_seekFilePos() {
 		return;
 
 	switch (mode) {
-	case 0:
+	case 1:
 		_hFileTable[slot].seek(offset, SEEK_SET);
 		break;
-	case 1:
+	case 2:
 		_hFileTable[slot].seek(offset, SEEK_CUR);
 		break;
-	case 2:
+	case 3:
 		_hFileTable[slot].seek(offset, SEEK_END);
 		break;
 	default:
