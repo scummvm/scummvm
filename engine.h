@@ -106,6 +106,7 @@ public:
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
+	void drawPrimitives();
 
 	void mainLoop();
 	unsigned frameStart() const { return _frameStart; }

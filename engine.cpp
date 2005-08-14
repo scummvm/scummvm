@@ -153,6 +153,26 @@ void Engine::handleDebugLoadResource() {
 	if (resource == NULL)
 		warning("Requested resouce (%s) not found!");
 }
+void Engine::drawPrimitives() {
+	// Draw Primitives
+	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
+		(*i)->draw();
+	}
+
+	// Draw text
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+		(*i)->draw();
+	}
+
+	if (_mode == ENGINE_MODE_DRAW) {
+		g_engine->killPrimitiveObjects();
+		g_engine->killTextObjects();
+
+		// Cleanup references to deleted text objects
+		for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
+			(*i)->lineCleanup();
+	}
+}
 
 void Engine::luaUpdate() {
 	// Update timing information
@@ -279,21 +299,14 @@ void Engine::updateDisplayScene() {
 			if (drawHandler != LUA_NOOBJECT)
 				lua_callfunction(drawHandler);
 			lua_endblock();
+
+			g_driver->flipBuffer();
 		}
 		_refreshDrawNeeded = false;
+		return;
 	}
 
-	// Draw Primitives
-	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
-		(*i)->draw();
-		doFlip = true;
-	}
-
-	// Draw text
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
-		(*i)->draw();
-		doFlip = true;
-	}
+	drawPrimitives();
 
 	if (SHOWFPS_GLOBAL)
 		g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));

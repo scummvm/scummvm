@@ -30,6 +30,7 @@
 #include "objectstate.h"
 #include "colormap.h"
 #include "font.h"
+#include "primitives.h"
 
 #include "imuse/imuse.h"
 
@@ -2263,12 +2264,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 
 static void CleanBuffer() {
 	DEBUG_FUNCTION();
-	g_engine->killPrimitiveObjects();
-	g_engine->killTextObjects();
-	// Cleanup references to deleted text objects
-	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
-		(*i)->lineCleanup();
-	//g_driver->copyStoredToDisplay();
+	g_driver->copyStoredToDisplay();
 }
  
 /* This function sends the SDL signal to
@@ -2927,7 +2923,6 @@ static void RenderModeUser() {
 		g_smush->pause(false);
 		g_engine->refreshDrawMode();
 		g_engine->setMode(g_engine->getPreviousMode());
-		CleanBuffer();
 	} else {
 		error("RenderModeUser() Unknown type of param");
 	}
@@ -2941,8 +2936,10 @@ static void SetGamma() {
 
 static void Display() {
 	DEBUG_FUNCTION();
-	if (g_engine->getFlipEnable())
+	if (g_engine->getFlipEnable()) {
+		g_engine->drawPrimitives();
 		g_driver->flipBuffer();
+	}
 }
 
 static void EngineDisplay() {
