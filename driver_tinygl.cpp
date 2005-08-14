@@ -474,7 +474,7 @@ void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
 
 Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	uint16 *buffer = new uint16[w * h];
-	uint16 *src = (uint16 *)_zb->pbuf;
+	uint16 *src = (uint16 *)_storedDisplay;
 	assert(buffer);
 
 	float step_x = 640.0 / w;
