@@ -488,7 +488,7 @@ void Engine::savegameSave() {
 	//Render_Save(savegameGzwrite);
 	//Primitive_Save(savegameGzwrite);
 	//Smush_Save(savegameGzwrite);
-	g_imuse->saveState(savegameGzread);
+	g_imuse->saveState(savegameGzwrite);
 	lua_Save(savegameGzwrite);
 
 	gzclose(_savegameFileHandle);

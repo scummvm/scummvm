@@ -1958,14 +1958,26 @@ static void ImSetSequence() {
 
 static void SaveIMuse() {
 	DEBUG_FUNCTION();
-	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
-		error("SaveIMuse() is not yet supported");
+	gzFile file = gzopen("grim.tmp", "wb");
+	if (file == NULL) {
+		warning("SaveIMuse() Error creating temp savegame file");
+		return;
+	}
+	g_imuse->saveState(g_engine->savegameGzwrite);
+	gzclose(file);
 }
 
 static void RestoreIMuse() {
 	DEBUG_FUNCTION();
-	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
-		error("RestoreIMuse() is not yet supported");
+	gzFile file = gzopen("grim.tmp", "rb");
+	if (file == NULL) {
+		return;
+	}
+	g_imuse->stopAllSounds();
+	g_imuse->resetState();
+	g_imuse->restoreState(g_engine->savegameGzread);
+	gzclose(file);
+	unlink("grim.tmp");
 }
 
 static void SetSoundPosition() {
