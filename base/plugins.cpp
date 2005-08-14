@@ -43,9 +43,9 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 #else
 #ifdef __DC__
 #include "dcloader.h"
-#define PLUGIN_DIRECTORY	""
+#define PLUGIN_DIRECTORY	"/"
 #define PLUGIN_PREFIX		""
-#define PLUGIN_SUFFIX		".plg"
+#define PLUGIN_SUFFIX		".PLG"
 #else
 #ifdef _WIN32
 #define PLUGIN_DIRECTORY	""
