@@ -199,7 +199,7 @@ void Engine::luaUpdate() {
 }
 
 void Engine::updateDisplayScene() {
-	char fps[8] = "";
+	static char fps[8] = "";
 	bool doFlip = true;
 
 	if (_mode == ENGINE_MODE_SMUSH) {
