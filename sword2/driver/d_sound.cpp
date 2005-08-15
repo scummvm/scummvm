@@ -108,7 +108,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 			fh->idxTab[cnt * 3 + 0] = fh->file->readUint32LE();
 			fh->idxTab[cnt * 3 + 1] = fh->file->readUint32LE();
 			if (fh->fileType == kCLUMode)
-				fh->idxTab[cnt * 3 + 2] = fh->idxTab[cnt * 3 + 1] + 1;
+				fh->idxTab[cnt * 3 + 2] = fh->idxTab[cnt * 3 + 1];
 			else
 				fh->idxTab[cnt * 3 + 2] = fh->file->readUint32LE();
 		}
