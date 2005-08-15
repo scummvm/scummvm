@@ -1868,7 +1868,7 @@ void Actor::walkActorOld() {
 byte *Actor::getActorName() {
 	byte *ptr = _vm->getResourceAddress(rtActorName, _number);
 	if (ptr == NULL) {
-		error("Failed to find name of actor %d", _number);
+		debug(0, "Failed to find name of actor %d", _number);
 	}
 	return ptr;
 }
