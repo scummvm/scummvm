@@ -1523,6 +1523,24 @@ void OSystem_SDL::drawMouse() {
 	src.w = dst.w;
 	src.h = dst.h;
 
+	// Patch #1258912 "GUI: SDL mouse dirty rects too big"
+	//
+	// At this point, dst.w and dst.h appear to be the correct values to
+	// assign to src.w and src.h above, but they are NOT the actual
+	// width and height of the mouse in virtual coordinates required for
+	// the dirty rects.  If left uncorrected, the w and h values are 1.5x
+	// too large for 3x scalers when the overlay is visible, and 2x/3x too
+	// large for 2x/3x scalers when the overlay is not visible, resulting
+	// in dirty rects that are from 2.25x to 9x too large depending on the
+	// combination of scales.
+	if (!_overlayVisible) {
+		dst.w = _mouseCurState.w;
+		dst.h = _mouseCurState.h;
+	} else {
+		dst.w = _mouseCurState.w * _overlayScale;
+		dst.h = _mouseCurState.h * _overlayScale;
+	}
+
 	if (_adjustAspectRatio)
 		dst.y = real2Aspect(dst.y);
 
