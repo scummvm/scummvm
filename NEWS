@@ -42,6 +42,11 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Improved performance when playing the game from CD instead of hard disk.
    - Simplified sound effects handling. Again.
    - Code cleanups and restructuring.
+   - Fixed long-standing bug in decompressing sounds from the speech/music CLU
+     files. It was generating one sample too many, which could be heard as a
+     very slight popping noise at the end of some sounds. Files that have been
+     compressed with older versions of compress_sword2 will, of course, still
+     have the same error. You may want to regenerate them.
 
  <PORT #1 NEWS>
    - ...
