@@ -930,8 +930,8 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACCD_G_GameSound,
 		&ITEMACCD_G_GameSound,
 		NULL,
-		NULL,
 		0,
+		NULL,
 		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_CD_FX
 	},
 
