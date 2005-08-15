@@ -32,10 +32,29 @@ namespace Saga {
 
 Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled) :
 	_vm(vm), _mixer(mixer), _enabled(enabled), _voxStream(0) {
+
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		_handles[i].type = kFreeHandle;
 }
 
 Sound::~Sound() {
 	delete _voxStream;
+}
+
+SndHandle *Sound::getHandle() {
+	for (int i = 0; i < SOUND_HANDLES; i++) {
+		if (_handles[i].type == kFreeHandle)
+			return &_handles[i];
+
+		if (!_mixer->isSoundHandleActive(_handles[i].handle)) {
+			_handles[i].type = kFreeHandle;
+			return &_handles[i];
+		}
+	}
+
+	error("Sound::getHandle(): Too many sound handles");
+
+	return NULL;
 }
 
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop) {
@@ -61,39 +80,62 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {
-	playSoundBuffer(&_effectHandle, buffer, 2 * volume, loop);
+	SndHandle *handle = getHandle();
+
+	handle->type = kEffectHandle;
+	playSoundBuffer(&handle->handle, buffer, 2 * volume, loop);
 }
 
 void Sound::pauseSound() {
-	_mixer->pauseHandle(_effectHandle, true);
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle)
+			_mixer->pauseHandle(_handles[i].handle, true);
 }
 
 void Sound::resumeSound() {
-	_mixer->pauseHandle(_effectHandle, false);
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle)
+			_mixer->pauseHandle(_handles[i].handle, false);
 }
 
 void Sound::stopSound() {
-	_mixer->stopHandle(_effectHandle);
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle) {
+			_mixer->stopHandle(_handles[i].handle);
+			_handles[i].type = kFreeHandle;
+		}
 }
 
 void Sound::playVoice(SoundBuffer &buffer) {
-	playSoundBuffer(&_voiceHandle, buffer, 255, false);
+	SndHandle *handle = getHandle();
+
+	handle->type = kVoiceHandle;
+	playSoundBuffer(&handle->handle, buffer, 255, false);
 }
 
 void Sound::pauseVoice() {
-	_mixer->pauseHandle(_voiceHandle, true);
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kVoiceHandle)
+			_mixer->pauseHandle(_handles[i].handle, true);
 }
 
 void Sound::resumeVoice() {
-	_mixer->pauseHandle(_voiceHandle, false);
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kVoiceHandle)
+			_mixer->pauseHandle(_handles[i].handle, false);
 }
 
 void Sound::stopVoice() {
-	_mixer->stopHandle(_voiceHandle);
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kVoiceHandle) {
+			_mixer->stopHandle(_handles[i].handle);
+			_handles[i].type = kFreeHandle;
+		}
 }
 
 void Sound::stopAll() {
-	_mixer->stopAll();
+	stopVoice();
+	stopSound();
 }
 
 } // End of namespace Saga

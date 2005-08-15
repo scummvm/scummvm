@@ -30,6 +30,8 @@
 
 namespace Saga {
 
+#define SOUND_HANDLES 10
+
 enum SOUND_FLAGS {
 	SOUND_LOOP = 1
 };
@@ -43,6 +45,17 @@ struct SoundBuffer {
 	byte *buffer;
 	size_t size;
 	bool isBigEndian;
+};
+
+enum sndHandleType {
+	kFreeHandle,
+	kEffectHandle,
+	kVoiceHandle
+};
+
+struct SndHandle {
+	Audio::SoundHandle handle;
+	sndHandleType type;
 };
 
 class Sound {
@@ -66,15 +79,15 @@ public:
  private:
 
 	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume, bool loop);
+
+	SndHandle *getHandle();
 	int _enabled;
 
 	SagaEngine *_vm;
 	Audio::Mixer *_mixer;
 	Common::MemoryReadStream *_voxStream;
 
-	Audio::SoundHandle _effectHandle;
-	Audio::SoundHandle _voiceHandle;
-
+	SndHandle _handles[SOUND_HANDLES];
 };
 
 } // End of namespace Saga
