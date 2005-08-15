@@ -145,8 +145,8 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int
 	if (scale < 256) {
 		xAlign = (spriteInfo->xAlign * scale) >> 8;
 		yAlign = (spriteInfo->yAlign * scale) >> 8;
-		height = (spriteInfo->height * scale + 0x80) >> 8;
-		width = (spriteInfo->width * scale + 0x80) >> 8;
+		height = (spriteInfo->height * scale + 0x7f) >> 8;
+		width = (spriteInfo->width * scale + 0x7f) >> 8;
 		scaleBuffer(spriteInfo->decodedBuffer, spriteInfo->width, spriteInfo->height, scale);
 		buffer = _decodeBuf;
 	} else {
