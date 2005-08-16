@@ -608,11 +608,11 @@ void Puzzle::giveHint(void) {
 		}
 
 		if (i >= 0) {
-			char hintBuf[64];
-			const char *hintPtr = hintBuf;
-			sprintf(hintBuf, optionsStr[_lang][kROHint], pieceNames[piece]);
+			static char hintBuf[64];
+			static const char *hintPtr = hintBuf;
+			sprintf(hintBuf, optionsStr[_lang][kROHint], pieceNames[_lang][piece]);
 
-			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece, 0);
+			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece * 3, 0);
 		}
 		else {
 				//	If no pieces are in the wrong place

@@ -2052,7 +2052,10 @@ void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int st
 	_activeSpeech.speechFlags = speechFlags;
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = 0;
-	_activeSpeech.sampleResourceId = sampleResourceId;
+	if (!(_vm->getFeatures() & GF_CD_FX))
+		_activeSpeech.sampleResourceId = -1;
+	else
+		_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 	_activeSpeech.speechBox = box;
