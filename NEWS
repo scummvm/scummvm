@@ -9,6 +9,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  New Ports:
    - Added PlayStation 2 port.
+   - Added PlayStation Portable (PSP) port.
    - Added AmigaOS 4 port.
    - Added EPOC/SymbianOS port.
 

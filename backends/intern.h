@@ -37,6 +37,7 @@ extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 extern OSystem *OSystem_GP32_create();
 extern OSystem *OSystem_PALMOS_create();
 extern OSystem *OSystem_PS2_create();
+extern OSystem *OSystem_PSP_create();
 extern OSystem *OSystem_SymbianOS_create();
 
 

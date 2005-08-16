@@ -35,7 +35,7 @@ namespace Common {
 
 const char *SaveFileManager::getSavePath() const {
 
-#if defined(__PALM_OS__)
+#if defined(__PALM_OS__) || defined(__PSP__)
 	return SCUMMVM_SAVEPATH;
 #else
 

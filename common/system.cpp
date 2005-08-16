@@ -56,6 +56,8 @@ OSystem *OSystem::makeInstance() {
 	return OSystem_PALMOS_create();
 #elif defined(__PLAYSTATION2__)
 	return OSystem_PS2_create();
+#elif defined(__PSP__)
+	return OSystem_PSP_create();
 #elif defined(__SYMBIAN32__) // SumthinWicked / Sprawl
 	return OSystem_SymbianOS_create();
 #else

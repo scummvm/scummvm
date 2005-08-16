@@ -279,6 +279,25 @@
 	#define fsize(a)			ps2_fsize(a)
 
 	extern void ps2_disableHandleCaching(void);
+#elif defined (__PSP__)
+	#define	SCUMM_NEED_ALIGNMENT
+	#define	SCUMM_LITTLE_ENDIAN
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	typedef unsigned char byte;
+	typedef unsigned char uint8;
+	typedef unsigned short uint16;
+	typedef unsigned int uint32;
+	typedef unsigned int uint;
+	typedef unsigned long uint64;
+	typedef signed char int8;
+	typedef signed short int16;
+	typedef signed int int32;
+
+	#define START_PACK_STRUCTS pack (push, 1)
+	#define END_PACK_STRUCTS         pack(pop)
 
 #elif defined (__amigaos4__)
 	#include <exec/types.h>

@@ -86,6 +86,7 @@ void Journal::use() {
 			}
 		}
 		_system->delayMillis(20);
+		_system->updateScreen();
 	}
 
 	_vm->writeOptionSettings();

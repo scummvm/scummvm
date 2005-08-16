@@ -320,7 +320,7 @@ static int runGame(GameDetector &detector, OSystem &system) {
 
 #ifdef _WIN32_WCE
 extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
-#elif defined(__PLAYSTATION2__)
+#elif defined(__PLAYSTATION2__) || defined(__PSP__)
 extern "C" int scummvm_main(int argc, char *argv[]) {
 #else
 extern "C" int main(int argc, char *argv[]) {

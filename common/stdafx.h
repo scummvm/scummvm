@@ -115,7 +115,7 @@
 #endif
 #if !defined(macintosh)
 #include <sys/types.h>
-#if !defined(__PLAYSTATION2__) && !defined(__amigaos4__)
+#if !defined(__PLAYSTATION2__) && !defined(__PSP__) && !defined(__amigaos4__)
 #include <sys/uio.h>
 #endif
 #if !defined(__amigaos4__)
