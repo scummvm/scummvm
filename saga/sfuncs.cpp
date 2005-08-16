@@ -393,7 +393,7 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			moduleNumber = _vm->_scene->getScriptModuleNumber();
 			break;
 		default:
-			error("Script::sfScriptDoAction wrong object type");
+			error("Script::sfScriptDoAction wrong object type 0x%X", objectId);
 	}
 
 	event.type = kEvTOneshot;

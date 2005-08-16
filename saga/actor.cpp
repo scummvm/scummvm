@@ -1901,11 +1901,11 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				}
 			}
 
+			_barrierCount = 0;
 			if (!(actor->_actorFlags & kActorNoCollide)) {
 				collision.x = ACTOR_COLLISION_WIDTH * actor->_screenScale / (256 * 2);
 				collision.y = ACTOR_COLLISION_HEIGHT * actor->_screenScale / (256 * 2);
 
-				_barrierCount = 0;
 
 				for (i = 0; (i < _actorsCount) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
 					anotherActor = _actors[i];
