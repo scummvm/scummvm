@@ -209,7 +209,16 @@ enum TextStringIds {
 	kTextMax,
 	kTextQuitTheGameQuestion,
 	kTextLoadSuccessful,
-	kTextEnterSaveGameName
+	kTextEnterSaveGameName,
+	kTextGiveTo,
+	kTextUseWidth,
+	kTextNewSave,
+	kTextICantPickup,
+	kTextNothingSpecial,
+	kTextNoPlaceToOpen,
+	kTextNoOpening,
+	kTextDontKnow,
+	kTextShowDialog
 };
 
 struct ImageHeader {

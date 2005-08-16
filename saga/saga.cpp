@@ -405,23 +405,23 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 	textString = NULL;
 	switch (verb) {
 	case kVerbPickUp:
-		textString = getTextString(45);
+		textString = getTextString(kTextICantPickup);
 		soundResourceId = RID_BOAR_VOICE_007;
 		break;
 	case kVerbLookAt:
-		textString = getTextString(46);
+		textString = getTextString(kTextNothingSpecial);
 		soundResourceId = RID_BOAR_VOICE_006;
 		break;
 	case kVerbOpen:
-		textString = getTextString(47);
+		textString = getTextString(kTextNoPlaceToOpen);
 		soundResourceId = RID_BOAR_VOICE_000;
 		break;
 	case kVerbClose:
-		textString = getTextString(48);
+		textString = getTextString(kTextNoOpening);
 		soundResourceId = RID_BOAR_VOICE_002;
 		break;
 	case kVerbUse:
-		textString = getTextString(49);
+		textString = getTextString(kTextDontKnow);
 		soundResourceId = RID_BOAR_VOICE_005;
 		break;
 	}

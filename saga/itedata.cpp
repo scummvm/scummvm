@@ -334,7 +334,7 @@ FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 	{ FX_CROWD_17,      64 }
 };
 
-const char *ITEinterfaceTextStrings[][50] = {
+const char *ITEinterfaceTextStrings[][51] = {
 	{
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
 		"Close", "Use", "Give", "Options", "Test",
@@ -350,7 +350,8 @@ const char *ITEinterfaceTextStrings[][50] = {
 		"I see nothing special about it.",
 		"There's no place to open it.",
 		"There's no opening to close.",
-		"I don't know how to do that."
+		"I don't know how to do that.",
+		"Show Dialog"
 	},
 	// German
 	{
@@ -359,16 +360,17 @@ const char *ITEinterfaceTextStrings[][50] = {
 		"Demo", "Hilfe", "Spiel beenden", "S", "L",
 		"An", "Aus", "Weiterspielen", "Laden", "Sichern",
 		"Spieleoptionen", "Lesegeschw.", "Musik", "Sound", "Abbr.",
-		"Beenden", NULL, "M", "Klick", NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, "Spiel beenden?",
+		"Beenden", NULL, "M", "Klick", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		"70%", "80%", "90%", "Max", "Spiel beenden?",
 		"Spielstand geladen!", "Bitte Namen eingeben", "Gib %s zu %s", "Benutze %s mit %s",
 		"[Neuer Spielstand]",
 		"Das kann ich nicht aufnehmen.",
 		"Ich sehe nichts besonderes.",
 		"Das kann man nicht \224ffnen.",
 		"Hier ist keine \231ffnung zum Schlie$en.",
-		"Ich wei$ nicht, wie ich das machen soll."
+		"Ich wei$ nicht, wie ich das machen soll.",
+		"Text zeigen"
 	}
 };
 

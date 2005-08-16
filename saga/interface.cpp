@@ -650,8 +650,15 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	int textWidth;
 	Rect rect;
 	Point textPoint;
+	int textId = panelButton->id;
 
-	text = _vm->getTextString(panelButton->id);
+	switch (panelButton->id) {
+	case kTextReadingSpeed:
+		if (_vm->getFeatures() & GF_CD_FX)
+			textId = kTextShowDialog;
+		break;
+	}
+	text = _vm->getTextString(textId);
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
 		textWidth = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontNormal);
@@ -1770,15 +1777,18 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 
 	textId = panelButton->id;
 	switch(panelButton->id) {
-		case kTextReadingSpeed:
+	case kTextReadingSpeed:
+		if (_vm->getFeatures() & GF_CD_FX)
+			textId = kTextOn;
+		else
 			textId = kTextFast;
-			break;
-		case kTextMusic:
-			textId = kTextOn;
-			break;
-		case kTextSound:
-			textId = kTextOn;
-			break;
+		break;
+	case kTextMusic:
+		textId = kTextOn;
+		break;
+	case kTextSound:
+		textId = kTextOn;
+		break;
 	}
 	text = _vm->getTextString(textId);
 
