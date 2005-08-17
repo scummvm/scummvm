@@ -546,12 +546,15 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	yoffset = vBorder;
 
 #if !( defined(__DC__) || defined(__GP32__) )
+	// These two buttons have to be extra wide, or the text will be
+	// truncated in the small version of the GUI.
+
 	// Save game path
-	addButton(tab, 5, yoffset, "Save Path: ", kChooseSaveDirCmd, 0, ws);
+	new ButtonWidget(tab, 5, yoffset, buttonWidth + 5, buttonHeight, "Save Path: ", kChooseSaveDirCmd, 0, ws);
 	_savePath = new StaticTextWidget(tab, 5 + buttonWidth + 20, yoffset + 3, _w - (5 + buttonWidth + 20) - 10, kLineHeight, "/foo/bar", kTextAlignLeft, ws);
 	yoffset += buttonHeight + 4;
 
-	addButton(tab, 5, yoffset, "Extra Path:", kChooseExtraDirCmd, 0, ws);
+	new ButtonWidget(tab, 5, yoffset, buttonWidth + 5, buttonHeight, "Extra Path:", kChooseExtraDirCmd, 0, ws);
 	_extraPath = new StaticTextWidget(tab, 5 + buttonWidth + 20, yoffset + 3, _w - (5 + buttonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft, ws);
 	yoffset += buttonHeight + 4;
 #endif
