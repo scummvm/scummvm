@@ -94,9 +94,8 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	uLongf kbdSize = KBD_DATA_SIZE;
 	keyboard_letters = (unsigned char *)memalign(16, KBD_DATA_SIZE);
 	assert(Z_OK == uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed));
-	 uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed);
 	
-	 kbdSize = KBD_DATA_SIZE;
+	kbdSize = KBD_DATA_SIZE;
 	keyboard_letters_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
 	assert(Z_OK == uncompress((Bytef *)keyboard_letters_shift, &kbdSize, (const Bytef *)keyboard_letters_shift_compressed, size_keyboard_letters_shift_compressed));
 	
