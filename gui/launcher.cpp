@@ -222,13 +222,16 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	tab->addTab("Paths");
 	yoffset = vBorder;
 
+	// These buttons have to be extra wide, or the text will be truncated
+	// in the small version of the GUI.
+
 	// GUI:  Button + Label for the game path
-	addButton(tab, x, yoffset, "Game Path:", kCmdGameBrowser, 0, ws);
+	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Game Path: ", kCmdGameBrowser, 0, ws);
 	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft, ws);
 	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the additional path
-	addButton(tab, x, yoffset, "Extra Path:", kCmdExtraBrowser, 0, ws);
+	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Extra Path:", kCmdExtraBrowser, 0, ws);
 	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft, ws);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
@@ -236,7 +239,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the save path
-	addButton(tab, x, yoffset, "Save Path:", kCmdSaveBrowser, 0, ws);
+	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Save Path: ", kCmdSaveBrowser, 0, ws);
 	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft, ws);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
