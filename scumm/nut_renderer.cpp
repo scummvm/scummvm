@@ -75,7 +75,7 @@ bool NutRenderer::loadFont(const char *filename) {
 
 	ScummFile file;
 	_vm->openFile(file, filename);
-	if (file.isOpen() == false) {
+	if (!file.isOpen()) {
 		error("NutRenderer::loadFont() Can't open font file: %s", filename);
 		return false;
 	}
@@ -184,9 +184,9 @@ void NutRenderer::drawShadowChar(const Graphics::Surface &s, int c, int x, int y
 	// the question remains whether they did it this way, too, or if there is
 	// some "font shadow" resource we don't know yet.
 
-	int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
-	int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
-	int cTable[7] =  {  0,  0, 0, 0, 0, 0, color };
+	static const int offsetX[7] = { -1,  0, 1, 0, 1, 2, 0 };
+	static const int offsetY[7] = {  0, -1, 0, 1, 2, 1, 0 };
+	const int cTable[7] = { 0, 0, 0, 0, 0, 0, color };
 	int i = 0;
 
 	if (!showShadow)
@@ -278,7 +278,7 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 	byte *dst = (byte *)s.pixels + y * s.pitch + x;
 	const int width = _vm->_2byteWidth;
 	const int height = MIN(_vm->_2byteHeight, s.h - y);
-	byte *src = _vm->get2byteCharPtr(c);
+	const byte *src = _vm->get2byteCharPtr(c);
 	byte bits = 0;
 
 	if (height <= 0 || width <= 0) {
