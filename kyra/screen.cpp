@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2005 The ScummVM project
+ * Copyright (C) 2004-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -164,7 +164,7 @@ void Screen::setAnimBlockPtr(uint8 *p, int size) {
 
 void Screen::setTextColorMap(const uint8 *cmap) {
 	debug(9, "Screen::setTextColorMap(0x%X)", cmap);
-	setTextColor(cmap, 0, 15);
+	setTextColor(cmap, 0, 11);
 }
 
 void Screen::setTextColor(const uint8 *cmap, int a, int b) {
