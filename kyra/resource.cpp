@@ -20,14 +20,13 @@
  */
 
 #include "common/stdafx.h"
+#include "common/file.h"
 #include "kyra/resource.h"
+#include "kyra/script.h"
 #include "kyra/wsamovie.h"
 
-#include "common/file.h"
-#include "kyra/script.h"
-
 namespace Kyra {
-Resourcemanager::Resourcemanager(KyraEngine* engine) {
+Resource::Resource(KyraEngine* engine) {
 	_engine = engine;
 
 	// prefetches all PAK Files
@@ -79,7 +78,7 @@ Resourcemanager::Resourcemanager(KyraEngine* engine) {
 	}
 }
 
-Resourcemanager::~Resourcemanager() {
+Resource::~Resource() {
 	Common::List<PAKFile*>::iterator start = _pakfiles.begin();
 
 	for (;start != _pakfiles.end(); ++start) {
@@ -88,7 +87,7 @@ Resourcemanager::~Resourcemanager() {
 	}
 }
 
-uint8* Resourcemanager::fileData(const char* file, uint32* size) {
+uint8* Resource::fileData(const char* file, uint32* size) {
 	uint8* buffer = 0;
 	Common::File file_;
 
@@ -131,10 +130,9 @@ uint8* Resourcemanager::fileData(const char* file, uint32* size) {
 	return buffer;
 }
 
-Palette* Resourcemanager::loadPalette(const char* file)	{
+Palette* Resource::loadPalette(const char* file)	{
 	uint32 size = 0;
-	uint8* buffer = 0;
-	buffer = fileData(file, &size);
+	uint8 *buffer = fileData(file, &size);
 	if (!buffer) {
 		warning("ResMgr: Failed loading palette %s", file);
 		return 0;
@@ -142,38 +140,23 @@ Palette* Resourcemanager::loadPalette(const char* file)	{
 	return new Palette(buffer, size);
 }
 
-CPSImage* Resourcemanager::loadImage(const char* file) {
+CPSImage* Resource::loadImage(const char* file) {
 	uint32 size = 0;
-	uint8* buffer = 0;
-	buffer = fileData(file, &size);
+	uint8 *buffer = fileData(file, &size);
 	if (!buffer)
 		return 0;
 	return new CPSImage(buffer, size);
 }
 
-Font* Resourcemanager::loadFont(const char* file) {
+Font* Resource::loadFont(const char* file) {
 	uint32 size = 0;
-	uint8* buffer = 0;
-	buffer = fileData(file, &size);
+	uint8 *buffer = fileData(file, &size);
 	if (!buffer)
 		return 0;
 	return new Font(buffer, size);
 }
 
-Movie* Resourcemanager::loadMovie(const char* file) {
-	// TODO: we have to check the Extenion to create the right movie
-	uint32 size = 0;
-	uint8* buffer = 0;
-	buffer = fileData(file, &size);
-	if (!buffer || !size)
-		return 0;
-	if (_engine->game() == KYRA1 || _engine->game() == KYRA1CD)
-		return new WSAMovieV1(buffer, size, _engine->game());
-	else
-		return new WSAMovieV2(buffer, size);
-}
-
-VMContext* Resourcemanager::loadScript(const char* file) {
+VMContext* Resource::loadScript(const char* file) {
 	VMContext* context = new VMContext(_engine);
 	context->loadScript(file);
 	return context;
@@ -182,12 +165,12 @@ VMContext* Resourcemanager::loadScript(const char* file) {
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
-PAKFile::PAKFile(/*const Common::String &path, */const Common::String& file) {
+PAKFile::PAKFile(const Common::String& file) {
 	Common::File pakfile;
 	_buffer = 0;
 	_open = false;
 
-	if (!pakfile.open(file.c_str())){ /*, Common::File::kFileReadMode, path.c_str())) {*/
+	if (!pakfile.open(file.c_str())) {
 		printf("pakfile couldn't open %s\n", file.c_str());
 		return;
 	}

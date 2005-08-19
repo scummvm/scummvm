@@ -20,7 +20,6 @@
  */
 
 #include "common/stdafx.h"
-
 #include "kyra/kyra.h"
 #include "kyra/script.h"
 

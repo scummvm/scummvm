@@ -20,10 +20,9 @@
  */
 
 #include "common/stdafx.h"
-#include "kyra/resource.h"
-#include "kyra/codecs.h"
-
 #include "common/stream.h"
+#include "kyra/resource.h"
+#include "kyra/screen.h"
 
 namespace Kyra {
 
@@ -78,13 +77,18 @@ CPSImage::CPSImage(uint8* buffer, uint32 size) {
 
 	uint8* imagebuffer = &buffer[bufferstream.pos()];
 	assert(imagebuffer);
-
-	if (_cpsHeader._format == 4) {
-		Compression::decode80(imagebuffer, _image);
-	} else if (_cpsHeader._format == 3) {
-		Compression::decode3(imagebuffer, _image, _cpsHeader._imagesize);
-	} else {
-		error("unknown CPS format %d", _cpsHeader._format);
+	switch (_cpsHeader._format) {
+	case 0:
+		memcpy(_image, imagebuffer, _cpsHeader._imagesize);
+		break;
+	case 3:
+		Screen::decodeFrame3(imagebuffer, _image, _cpsHeader._imagesize);
+		break;
+	case 4:
+		Screen::decodeFrame4(imagebuffer, _image, _cpsHeader._imagesize);
+		break;
+	default:
+		break;
 	}
 
 	int16 width = getWidthFromCPSRes(_cpsHeader._imagesize);
@@ -181,5 +185,5 @@ void CPSImage::drawToPlane(uint8* plane, uint16 planepitch, uint16 planeheight, 
 		}
 	}
 }
-} // end of namespace Kyra
 
+} // end of namespace Kyra

@@ -20,12 +20,11 @@
  */
 
 #include "common/stdafx.h"
+#include "common/stream.h"
+#include "common/util.h"
 #include "kyra/kyra.h"
 #include "kyra/script.h"
 #include "kyra/resource.h"
-
-#include "common/stream.h"
-#include "common/util.h"
 
 #define COMMAND(x) { &VMContext::x, #x }
 #define OPCODE(x) { &VMContext::x, #x }
@@ -402,7 +401,7 @@ void VMContext::loadScript(const char* file) {
 	memset(_stack, 0, sizeof(int32) * ARRAYSIZE(_stack));
 
 	// loads the new file
-	_scriptFile = _engine->resManager()->fileData(file, &_scriptFileSize);
+	_scriptFile = _engine->resource()->fileData(file, &_scriptFileSize);
 
 	if (!_scriptFileSize || !_scriptFile) {
 		error("couldn't load script file '%s'", file);

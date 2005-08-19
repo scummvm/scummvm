@@ -48,9 +48,11 @@ public:
 	const uint8* getFile(const char* file);
 	uint32 getFileSize(const char* file);
 
-	bool isValid(void) {return (_buffer != 0);}
-	bool isOpen(void) {return _open;}
+	bool isValid(void) const { return (_buffer != 0); }
+	bool isOpen(void) const { return _open; }
+
 private:
+
 	bool _open;
 	uint8* _buffer; // the whole file
 	Common::List<PakChunk*> _files; // the entries
@@ -63,32 +65,26 @@ class Font;
 class Movie;
 class VMContext;
 
-// out resource manager
-class Resourcemanager {
-	typedef Common::String string;
-
+class Resource {
 public:
 
-	Resourcemanager(KyraEngine* engine);
-	virtual ~Resourcemanager();
+	Resource(KyraEngine* engine);
+	~Resource();
 
 	uint8* fileData(const char* file, uint32* size);
 
 	Palette* loadPalette(const char* file);
 	CPSImage* loadImage(const char* file);
 	Font* loadFont(const char* file);
-	Movie* loadMovie(const char* file);
 	VMContext* loadScript(const char* file);
 
 protected:
+
 	KyraEngine* _engine;
-
 	Common::List<PAKFile*> _pakfiles;
-
 };
 
 class Palette {
-
 public:
 
 	Palette(uint8* data, uint32 size);
@@ -99,11 +95,9 @@ public:
 protected:
 
 	uint8* _palette;
-
 };
 
 class CPSImage {
-
 public:
 
 	CPSImage(uint8* buffer, uint32 size);
@@ -141,7 +135,6 @@ protected:
 };
 
 class Font {
-
 public:
 
 	Font(uint8* buffer, uint32 size);

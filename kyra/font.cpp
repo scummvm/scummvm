@@ -20,9 +20,9 @@
  */
 
 #include "common/stdafx.h"
-#include "kyra/resource.h"
 #include "common/stream.h"
 #include "common/array.h"
+#include "kyra/resource.h"
 
 #ifdef DUMP_FILES
 #include <cstdio>

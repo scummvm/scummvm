@@ -22,65 +22,107 @@
 #ifndef KYRA_H
 #define KYRA_H
 
-//#include "common/scummsys.h"
 #include "base/engine.h"
-#include "base/gameDetector.h"
 #include "common/util.h"
 
-enum {
-	GF_FLOPPY	= 1 << 0,
-	GF_TALKIE	= 1 << 1,
-	GF_KYRA1	= 1 << 2,
-	GF_KYRA2	= 1 << 3,
-	GF_KYRA3	= 1 << 4,
-	GF_AUDIOCD	= 1 << 5	// FM-Towns versions seems to use audio CD
-};
-
-enum {
-	KYRA1 = 0,
-	KYRA1CD = 1,
-	KYRA2 = 2,
-	KYRA2CD = 3,
-	KYRA3 = 4
-};
-
 namespace Kyra {
-class Resourcemanager;
-class CPSImage;
-class Font;
-class Palette;
-class VMContext;
+
+enum {
+	GF_FLOPPY  = 1 << 0,
+	GF_TALKIE  = 1 << 1,
+	GF_KYRA1   = 1 << 2,
+	GF_KYRA2   = 1 << 3,
+	GF_KYRA3   = 1 << 4,
+	GF_AUDIOCD = 1 << 5  // FM-Towns versions seems to use audio CD
+};
+
+enum {
+	KYRA1   = 0,
+	KYRA1CD = 1,
+	KYRA2   = 2,
+	KYRA2CD = 3,
+	KYRA3   = 4
+};
+
+struct TalkCoords {
+	uint16 y, x, w;
+};
+
+struct SeqLoop {
+	const uint8 *ptr;
+	uint16 count;
+};
+
+struct WSAMovieV1;
+
 class MusicPlayer;
+class Resource;
+class Screen;
 
 class KyraEngine : public Engine {
 public:
-	KyraEngine(GameDetector *detector, OSystem *syst);
+
+	KyraEngine(GameDetector *detector, OSystem *system);
 	~KyraEngine();
-	void errorString( const char *buf_input, char *buf_output);
+	
+	void errorString(const char *buf_input, char *buf_output);
 
-	void updateScreen(void);
-	void setCurrentPalette(Palette* pal, bool delNextTime = true);
+	Resource *resource() { return _res; }
+	Screen *screen() { return _screen; }
 
-	Resourcemanager* resManager(void) { return _resMgr; }
-	MusicPlayer* midiDriver(void) { return _midiDriver; }
-
-	uint8 game(void) { return _game; }
+	uint8 game() const { return _game; }
 
 protected:
+
 	int go();
 	int init(GameDetector &detector);
-	void shutdown();
-	Resourcemanager* _resMgr;
-	MusicPlayer* _midiDriver;
-	uint8 *_screen;
+
+	void setTalkCoords(uint16 y);
+	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
+	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
+	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
+	void waitTicks(int ticks);
+	
+	void seq_intro();
+	void seq_introLogos();
+	uint8 *seq_setPanPages(int pageNum, int shape);
+	void seq_makeHandShapes();
+	void seq_freeHandShapes();
+	void seq_copyView();
+	bool seq_skipSequence() const;
+	bool seq_playSpecialSequence(const uint8 *seqData, bool skipSeq);
+
+	WSAMovieV1 *wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf);
+	void wsa_close(WSAMovieV1 *wsa);
+	uint16 wsa_getNumFrames(WSAMovieV1 *wsa) const;
+	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
+	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
+		
 	uint8 _game;
+	bool _fastMode;
+	bool _quitFlag;
+	bool _skipIntroFlag;
+	TalkCoords _talkCoords;
 
-	Font* _font;
-	CPSImage* _mouse;
-	CPSImage* _items;
+	int _seq_copyViewOffs;
+	uint8 *_seq_handShapes[3];
+	uint8 *_seq_specialSequenceTempBuffer;
 
-	VMContext* _currentScript; // our current script
-	VMContext* _npcScript; // script from NPCs
+	MusicPlayer *_midi;
+	Resource *_res;
+	Screen *_screen;
+	
+	static const uint8 _seq_introData_Forest[];
+	static const uint8 _seq_introData_KallakWriting[];
+	static const uint8 _seq_introData_KyrandiaLogo[];
+	static const uint8 _seq_introData_KallakMalcom[];
+	static const uint8 _seq_introData_MalcomTree[];
+	static const uint8 _seq_introData_WestwoodLogo[];
+	static const uint8 _seq_codeSizeTable[];
+	static const char *_seq_WSATable[];
+	static const char *_seq_CPSTable[];
+	static const char *_seq_COLTable[];
+	static const char *_seq_textsTableEN[];	
 };
 
 } // End of namespace Kyra
