@@ -363,6 +363,8 @@ void Engine::mainLoop() {
 			// Check for "Hard" quit"
 			if (event.type == SDL_QUIT)
 				return;
+			if (event.type == SDL_VIDEOEXPOSE)
+				_refreshDrawNeeded = true;
 			if (event.type == SDL_KEYDOWN) {
 				if (event.key.keysym.sym == SDLK_z
 						&& (event.key.keysym.mod & KMOD_CTRL)) {
