@@ -16,6 +16,9 @@
 #include "luadebug.h"
 #include "lualib.h"
 
+#ifdef ADD_CUSTOM_FOPEN
+#include "../resource.h"
+#endif
 
 #ifndef OLD_ANSI
 #include <locale.h>
@@ -47,7 +50,6 @@ int pclose();
 #define popen(x,y) NULL  /* that is, popen always fails */
 #define pclose(x)  (-1)
 #endif
-
 
 static int gettag (int i)
 {
@@ -135,7 +137,15 @@ static void io_readfrom (void)
     current = (FILE *)lua_getuserdata(f);
   else {
     char *s = luaL_check_string(FIRSTARG);
-    current = (*s == '|') ? popen(s+1, "r") : fopen(s, "r");
+	if (*s == '|') 
+      current = popen(s+1, "r");
+	else {
+      current = fopen(s, "r");
+#ifdef ADD_CUSTOM_FOPEN
+      if (current == NULL)
+	    current = g_resourceloader->openNewStream(s);
+#endif
+	}
     if (current == NULL) {
       pushresult(0);
       return;

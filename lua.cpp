@@ -1963,6 +1963,7 @@ static void SaveIMuse() {
 		warning("SaveIMuse() Error creating temp savegame file");
 		return;
 	}
+	g_engine->_savegameFileHandle = file;
 	g_imuse->saveState(g_engine->savegameGzwrite);
 	gzclose(file);
 }
@@ -1973,6 +1974,7 @@ static void RestoreIMuse() {
 	if (file == NULL) {
 		return;
 	}
+	g_engine->_savegameFileHandle = file;
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
 	g_imuse->restoreState(g_engine->savegameGzread);
@@ -2261,6 +2263,8 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 			textObject->setFont(check_font(2));
 		else if (strmatch(key_text, "fgcolor"))
 			textObject->setFGColor(check_color(2));
+		else if (strmatch(key_text, "hicolor"))
+			warning("getTextObjectParams 'hivolor'");
 		else if (strmatch(key_text, "disabled"))
 			textObject->setDisabled(atoi(lua_getstring(lua_getresult(2))) != 0);
 		else if (strmatch(key_text, "center"))

@@ -15,10 +15,12 @@
 #define LUA_COPYRIGHT	"Copyright (C) 1994-1998 TeCGraf, PUC-Rio"
 #define LUA_AUTHORS 	"W. Celes, R. Ierusalimschy & L. H. de Figueiredo"
 
-
 #define LUA_NOOBJECT  0
 
 #define LUA_ANYTAG    (-1)
+
+#define ADD_CUSTOM_FOPEN
+// this allow enable additionaly code in io_readfrom func
 
 typedef void (*lua_CFunction) (void);
 typedef unsigned int lua_Object;
