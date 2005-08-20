@@ -358,7 +358,7 @@ void Engine::mainLoop() {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			// Handle any button operations
-			if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+			if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
 				handleButton(event.type, event.key.keysym.sym);
 			// Check for "Hard" quit"
 			if (event.type == SDL_QUIT)
