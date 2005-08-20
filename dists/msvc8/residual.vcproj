@@ -203,10 +203,6 @@
 				RelativePath="..\..\residual.rc"
 				>
 			</File>
-			<File
-				RelativePath="..\..\TODO"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="3dmath"
