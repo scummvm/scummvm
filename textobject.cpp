@@ -110,7 +110,11 @@ void TextObject::createBitmap() {
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
 	// text justification
-	for(int i = (int) msg.length() - 1; c[i] == TEXT_NULL; i--)
+	for (int i = (int)msg.length() - 1; c[i] == TEXT_NULL; i--)
+		msg.erase(msg.length() - 1, msg.length());
+
+	// remove char of id 13 from the end of the string,
+	for (int i = (int)msg.length() - 1; c[i] == 13; i--)
 		msg.erase(msg.length() - 1, msg.length());
 
 	// format the output message to incorporate line wrapping
@@ -120,7 +124,7 @@ void TextObject::createBitmap() {
 	for (int i = 0; msg[i] != '\0'; ++i) {
 		lineWidth += _font->getCharLogicalWidth(msg[i]);
 		if ((_width != 0 && lineWidth > (_width - _x))
-				|| (_justify == CENTER && (_x - lineWidth/2 < 0 || _x + lineWidth/2 > 640))
+				|| (_justify == CENTER && (_x - lineWidth / 2 < 0 || _x + lineWidth / 2 > 640))
 				|| (_justify == LJUSTIFY && (_x + lineWidth > 640))
 				|| (_justify == RJUSTIFY && (_x - lineWidth < 0))) {
 			lineWidth = 0;
