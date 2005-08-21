@@ -79,7 +79,7 @@ protected:
 	int _justify, _numberLines;
 	bool _disabled;
 	Font *_font;
-	char _textID[32];
+	char _textID[256];
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr, *_bitmapHeightPtr;
 	Driver::TextObjectHandle **_textObjectHandle;
