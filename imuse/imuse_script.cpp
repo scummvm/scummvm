@@ -146,12 +146,7 @@ void Imuse::stopSound(const char *soundName) {
 }
 
 void Imuse::stopAllSounds() {
-	int i;
-	StackLock lock(_mutex);
-	// Make 5 attempts to close out all the sounds before failing
-	// At this time it is inappropriate to say we are stable enough
-	// to just let this run forever
-	for(i = 5; i > 0; i--) {
+	for (;;) {
 		bool foundNotRemoved = false;
 		for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 			Track *track = _track[l];
@@ -164,10 +159,6 @@ void Imuse::stopAllSounds() {
 			break;
 		flushTracks();
 		SDL_Delay(50);
-	}
-	if (i == 0) {
-		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Imuse::stopAllSounds() did not stop everything!");
 	}
 }
 
