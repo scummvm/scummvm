@@ -38,6 +38,8 @@ protected:
 	byte		*_buffer;
 	int			_selection;
 	uint32		_openTime;
+	bool		_twoColumns;
+	int			_entriesPerColumn;
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize ws = kDefaultWidgetSize);
 
@@ -78,6 +80,47 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 
 	const int screenH = g_system->getOverlayHeight();
 
+	// HACK: For now, we do not do scrolling. Instead, we draw the dialog
+	// in two columns if it's too tall.
+
+	if (_h >= screenH) {
+		const int screenW = g_system->getOverlayWidth();
+
+		_twoColumns = true;
+		_entriesPerColumn = _popUpBoss->_entries.size() / 2;
+
+		if (_popUpBoss->_entries.size() & 1)
+			_entriesPerColumn++;
+
+		_h = _entriesPerColumn * kLineHeight + 2;
+		_w = 0;
+
+		for (uint i = 0; i < _popUpBoss->_entries.size(); i++) {
+			int width = g_gui.getStringWidth(_popUpBoss->_entries[i].name);
+
+			if (width > _w)
+				_w = width;
+		}
+
+		_w = 2 * _w + 10;
+
+		if (!(_w & 1))
+			_w++;
+
+		if (_popUpBoss->_selectedItem >= _entriesPerColumn) {
+			_x -= _w / 2;
+			_y = _popUpBoss->getAbsY() - (_popUpBoss->_selectedItem - _entriesPerColumn) * kLineHeight;
+		}
+
+		if (_w >= screenW)
+			_w = screenW - 1;
+		if (_x < 0)
+			_x = 0;
+		if (_x + _w >= screenW)
+			_x = screenW - 1 - _w;
+	} else
+		_twoColumns = false;
+
 	if (_h >= screenH)
 		_h = screenH - 1;
 	if (_y < 0)
@@ -102,10 +145,18 @@ void PopUpDialog::drawDialog() {
 	g_gui.vLine(_x, _y, _y+_h - 1, g_gui._color);
 	g_gui.vLine(_x + _w - 1, _y, _y + _h - 1, g_gui._shadowcolor);
 
+	if (_twoColumns)
+		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);
+
 	// Draw the entries
 	int count = _popUpBoss->_entries.size();
 	for (int i = 0; i < count; i++) {
 		drawMenuEntry(i, i == _selection);
+	}
+
+	// The last entry may be empty. Fill it with black.
+	if (_twoColumns && (count & 1)) {
+		g_gui.fillRect(_x + 1 + _w / 2, _y + 1 + kLineHeight * (_entriesPerColumn - 1), _w / 2 - 1, kLineHeight, g_gui._bgcolor);
 	}
 
 	g_gui.addDirtyRect(_x, _y, _w, _h);
@@ -177,6 +228,16 @@ void PopUpDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
+		if (_twoColumns) {
+			uint entry = (y - 2) / kLineHeight;
+			if (x > _w / 2) {
+				entry += _entriesPerColumn;
+
+				if (entry >= _popUpBoss->_entries.size())
+					return -1;
+			}
+			return entry;
+		}
 		return (y - 2) / kLineHeight;
 	}
 	return -1;
@@ -236,9 +297,29 @@ void PopUpDialog::moveDown() {
 void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	// Draw one entry of the popup menu, including selection
 	assert(entry >= 0);
-	int x = _x + 1;
-	int y = _y + 1 + kLineHeight * entry;
-	int w = _w - 2;
+	int x, y, w;
+
+	if (_twoColumns) {
+		int n = _popUpBoss->_entries.size() / 2;
+
+		if (_popUpBoss->_entries.size() & 1)
+			n++;
+
+		if (entry >= n) {
+			x = _x + 1 + _w / 2;
+			y = _y + 1 + kLineHeight * (entry - n);
+		} else {
+			x = _x + 1;
+			y = _y + 1 + kLineHeight * entry;
+		}
+
+		w = _w / 2 - 1;
+	} else {
+		x = _x + 1;
+		y = _y + 1 + kLineHeight * entry;
+		w = _w - 2;
+	}
+
 	Common::String &name = _popUpBoss->_entries[entry].name;
 
 	g_gui.fillRect(x, y, w, kLineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
