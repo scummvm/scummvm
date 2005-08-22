@@ -39,6 +39,7 @@ WSAMovieV1 *KyraEngine::wsa_open(const char *filename, int offscreenDecode, uint
 	wsa->width = READ_LE_UINT16(wsaData); wsaData += 2;
 	wsa->height = READ_LE_UINT16(wsaData); wsaData += 2;
 	wsa->deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
+	wsa->offscreenBuffer = NULL;
 	wsa->flags = 0;
 	if (_game == KYRA1CD) {
 		flags = READ_LE_UINT16(wsaData); wsaData += 2;

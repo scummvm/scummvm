@@ -199,18 +199,17 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	if (palData && palSize) {
 		memcpy(palData, srcData + 10, palSize);		
 	}
-	srcData += 10 + palSize;
-		
+	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = _screen->getPagePtr(dstPage);
 	switch (compType) {
 	case 0:
-		memcpy(dstData, srcData, imgSize);
+		memcpy(dstData, srcPtr, imgSize);
 		break;
 	case 3:
-		Screen::decodeFrame3(srcData, dstData, imgSize);
+		Screen::decodeFrame3(srcPtr, dstData, imgSize);
 		break;
 	case 4:
-		Screen::decodeFrame4(srcData, dstData, imgSize);
+		Screen::decodeFrame4(srcPtr, dstData, imgSize);
 		break;
 	default:
 		error("Unhandled bitmap compression %d", compType);
