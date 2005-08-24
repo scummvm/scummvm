@@ -46,13 +46,14 @@ class Sound;
 
 class ControlButton {
 public:
-	ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, ResMan *pResMan, uint8 *screenBuf, OSystem *system);
+	ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 flag, ResMan *pResMan, uint8 *screenBuf, OSystem *system);
 	~ControlButton(void);
 	void draw(void);
 	bool wasClicked(uint16 mouseX, uint16 mouseY);
 	void setSelected(uint8 selected);
 	bool isSaveslot(void);
 	uint8 _id;
+	uint8 _flag;
 private:
 	int _frameIdx;
 	uint16 _x, _y;
@@ -63,9 +64,15 @@ private:
 	OSystem *_system;
 };
 
+enum {
+	kButtonOk = 1,
+	kButtonCancel = 2
+};
+
 struct ButtonInfo {
 	uint16 x, y;
 	uint32 resId, id;
+	uint8 flag;
 };
 
 class Control {

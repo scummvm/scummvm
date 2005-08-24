@@ -104,10 +104,11 @@ enum TextModes {
 	TEXT_RED_FONT = 128
 };
 
-ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, ResMan *pResMan, uint8 *screenBuf, OSystem *system) {
+ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 flag, ResMan *pResMan, uint8 *screenBuf, OSystem *system) {
 	_x = x;
 	_y = y;
 	_id = id;
+	_flag = flag;
 	_resId = resId;
 	_resMan = pResMan;
 	_frameIdx = 0;
@@ -322,6 +323,18 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 		checkButtons = 1;
 	}
 
+	uint8 flag = 0;
+	if (_keyPressed == 27)
+		flag = kButtonCancel;
+	else if (_keyPressed == '\r' || _keyPressed == '\n')
+		flag = kButtonOk;
+
+	if (flag) {
+		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
+			if (_buttons[cnt]->_flag == flag)
+				return handleButtonClick(_buttons[cnt]->_id, mode, retVal);
+	}
+
 	if (!_mouseState)
 		return 0;
 	if (_mouseState & BS1L_BUTTON_DOWN)
@@ -429,7 +442,7 @@ void Control::setupMainPanel(void) {
 			panelId = SR_PANEL_ENGLISH;
 	}
 
-	ControlButton *panel = new ControlButton( 0, 0, panelId, 0, _resMan, _screenBuf, _system);
+	ControlButton *panel = new ControlButton(0, 0, panelId, 0, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
 
@@ -466,7 +479,7 @@ void Control::setupSaveRestorePanel(bool saving) {
 	FrameHeader *savePanel = _resMan->fetchFrame(_resMan->openFetchRes(SR_WINDOW), 0);
 	uint16 panelX = (640 - FROM_LE_16(savePanel->width)) / 2;
 	uint16 panelY = (480 - FROM_LE_16(savePanel->height)) / 2;
-	ControlButton *panel = new ControlButton(panelX, panelY, SR_WINDOW, 0, _resMan, _screenBuf, _system);
+	ControlButton *panel = new ControlButton(panelX, panelY, SR_WINDOW, 0, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
 	_resMan->resClose(SR_WINDOW);
@@ -483,7 +496,7 @@ void Control::setupSaveRestorePanel(bool saving) {
 }
 
 void Control::setupVolumePanel(void) {
-	ControlButton *panel = new ControlButton( 0, 0, SR_VOLUME, 0, _resMan, _screenBuf, _system);
+	ControlButton *panel = new ControlButton(0, 0, SR_VOLUME, 0, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
 
@@ -589,14 +602,14 @@ void Control::changeVolume(uint8 id, uint8 action) {
 }
 
 bool Control::getConfirm(const uint8 *title) {
-	ControlButton *panel = new ControlButton( 0, 0, SR_CONFIRM, 0, _resMan, _screenBuf, _system);
+	ControlButton *panel = new ControlButton(0, 0, SR_CONFIRM, 0, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
 	renderText(title, 320, 160, TEXT_CENTER);
 	ControlButton *buttons[2];
-	buttons[0] = new ControlButton( 260, 192 + 40, SR_BUTTON, 0, _resMan, _screenBuf, _system);
+	buttons[0] = new ControlButton(260, 192 + 40, SR_BUTTON, 0, 0, _resMan, _screenBuf, _system);
 	renderText(_lStrings[STR_OK], 640 - 260, 192 + 40, TEXT_RIGHT_ALIGN);
-	buttons[1] = new ControlButton( 260, 256 + 40, SR_BUTTON, 0, _resMan, _screenBuf, _system);
+	buttons[1] = new ControlButton(260, 256 + 40, SR_BUTTON, 0, 0, _resMan, _screenBuf, _system);
 	renderText(_lStrings[STR_CANCEL], 640 - 260, 256 + 40, TEXT_RIGHT_ALIGN);
 	uint8 retVal = 0;
 	uint8 clickVal = 0;
@@ -605,6 +618,10 @@ bool Control::getConfirm(const uint8 *title) {
 		buttons[1]->draw();
 		_system->updateScreen();
 		delay(1000 / 12);
+		if (_keyPressed == 27)
+			retVal = 2;
+		else if (_keyPressed == '\r' || _keyPressed == '\n')
+			retVal = 1;
 		if (_mouseState & BS1L_BUTTON_DOWN) {
 			if (buttons[0]->wasClicked(_mouseX, _mouseY))
 				clickVal = 1;
@@ -816,7 +833,7 @@ void Control::saveNameScroll(uint8 scroll, bool saving) {
 
 void Control::createButtons(const ButtonInfo *buttons, uint8 num) {
 	for (uint8 cnt = 0; cnt < num; cnt++) {
-		_buttons[cnt] = new ControlButton(buttons[cnt].x, buttons[cnt].y, buttons[cnt].resId, buttons[cnt].id, _resMan, _screenBuf, _system);
+		_buttons[cnt] = new ControlButton(buttons[cnt].x, buttons[cnt].y, buttons[cnt].resId, buttons[cnt].id, buttons[cnt].flag, _resMan, _screenBuf, _system);
 		_buttons[cnt]->draw();
 	}
 	_numButtons = num;
@@ -1041,45 +1058,45 @@ void Control::delay(uint32 msecs) {
 }
 
 const ButtonInfo Control::_deathButtons[3] = {
-	{250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
-	{250, 260 + 40, SR_BUTTON, BUTTON_RESTART },
-	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT }
+	{250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0 },
+	{250, 260 + 40, SR_BUTTON, BUTTON_RESTART, kButtonOk },
+	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel }
 };
 
 const ButtonInfo Control::_panelButtons[7] = {
-	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL },
-	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL },
-	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART },
-	{145, 296 + 40, SR_BUTTON, BUTTON_QUIT },
-	{475, 188 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL },
-	{475, 224 + 40, SR_TEXT_BUTTON, BUTTON_TEXT },
-	{475, 332 + 40, SR_BUTTON, BUTTON_DONE }
+	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL, 0 },
+	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0 },
+	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART, 0 },
+	{145, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel },
+	{475, 188 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL, 0 },
+	{475, 224 + 40, SR_TEXT_BUTTON, BUTTON_TEXT, 0 },
+	{475, 332 + 40, SR_BUTTON, BUTTON_DONE, kButtonOk }
 };
 
 const ButtonInfo Control::_saveButtons[16] = {
-	{114,  32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1 },
-	{114,  68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2 },
-	{114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3 },
-	{114, 140 + 40, SR_SLAB4, BUTTON_SAVE_SELECT4 },
-	{114, 176 + 40, SR_SLAB1, BUTTON_SAVE_SELECT5 },
-	{114, 212 + 40, SR_SLAB2, BUTTON_SAVE_SELECT6 },
-	{114, 248 + 40, SR_SLAB3, BUTTON_SAVE_SELECT7 },
-	{114, 284 + 40, SR_SLAB4, BUTTON_SAVE_SELECT8 },
+	{114,  32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1, 0 },
+	{114,  68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2, 0 },
+	{114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3, 0 },
+	{114, 140 + 40, SR_SLAB4, BUTTON_SAVE_SELECT4, 0 },
+	{114, 176 + 40, SR_SLAB1, BUTTON_SAVE_SELECT5, 0 },
+	{114, 212 + 40, SR_SLAB2, BUTTON_SAVE_SELECT6, 0 },
+	{114, 248 + 40, SR_SLAB3, BUTTON_SAVE_SELECT7, 0 },
+	{114, 284 + 40, SR_SLAB4, BUTTON_SAVE_SELECT8, 0 },
 
-	{516,  25 + 40, SR_BUTUF, BUTTON_SCROLL_UP_FAST },
-	{516,  45 + 40, SR_BUTUS, BUTTON_SCROLL_UP_SLOW },
-	{516, 289 + 40, SR_BUTDS, BUTTON_SCROLL_DOWN_SLOW },
-	{516, 310 + 40, SR_BUTDF, BUTTON_SCROLL_DOWN_FAST },
+	{516,  25 + 40, SR_BUTUF, BUTTON_SCROLL_UP_FAST, 0 },
+	{516,  45 + 40, SR_BUTUS, BUTTON_SCROLL_UP_SLOW, 0 },
+	{516, 289 + 40, SR_BUTDS, BUTTON_SCROLL_DOWN_SLOW, 0 },
+	{516, 310 + 40, SR_BUTDF, BUTTON_SCROLL_DOWN_FAST, 0 },
 
-	{125, 338 + 40, SR_BUTTON, BUTTON_SAVE_RESTORE_OKAY},
-	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL}
+	{125, 338 + 40, SR_BUTTON, BUTTON_SAVE_RESTORE_OKAY, kButtonOk},
+	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL, kButtonCancel }
 };
 
 const ButtonInfo Control::_volumeButtons[4] = {
-	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL },
-	{ 138, 135, SR_VKNOB, 0 },
-	{ 273, 135, SR_VKNOB, 0 },
-	{ 404, 135, SR_VKNOB, 0 },
+	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL, kButtonOk },
+	{ 138, 135, SR_VKNOB, 0, 0 },
+	{ 273, 135, SR_VKNOB, 0, 0 },
+	{ 404, 135, SR_VKNOB, 0, 0 },
 };
 
 const uint8 Control::_languageStrings[8 * 20][43] = {
