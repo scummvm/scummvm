@@ -138,6 +138,8 @@ private:
 	uint8 *_font, *_redFont;
 	uint8 *_screenBuf;
 	uint8 _keyPressed;
+	uint8 _keyRepeat;
+	uint32 _keyRepeatTime;
 	void delay(uint32 msecs);
 	uint16 _mouseX, _mouseY, _mouseState;
 	bool _mouseDown;

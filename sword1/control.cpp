@@ -43,6 +43,11 @@ namespace Sword1 {
 #define SAVEFILE_WRITE true
 #define SAVEFILE_READ false
 
+enum {
+	kKeyRepeatInitialDelay = 400,
+	kKeyRepeatSustainDelay = 100
+};
+
 enum LangStrings {
 	STR_PAUSED = 0,
 	STR_INSERT_CD_A,
@@ -167,6 +172,8 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_music = pMusic;
 	_sound = pSound;
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
+	_keyRepeat = 0;
+	_keyRepeatTime = 0;
 }
 
 void Control::askForCd(void) {
@@ -1005,7 +1012,8 @@ void Control::doRestore(void) {
 void Control::delay(uint32 msecs) {
 	OSystem::Event event;
 
-	uint32 endTime = _system->getMillis() + msecs;
+	uint32 now = _system->getMillis();
+	uint32 endTime = now + msecs;
 	_keyPressed = 0;	//reset
 	_mouseState = 0;
 
@@ -1019,6 +1027,12 @@ void Control::delay(uint32 msecs) {
 					_keyPressed = 8;
 				else
 					_keyPressed = (byte)event.kbd.ascii;
+				_keyRepeatTime = now + kKeyRepeatInitialDelay;
+				_keyRepeat = _keyPressed;
+				break;
+			case OSystem::EVENT_KEYUP:
+				_keyRepeatTime = 0;
+				_keyRepeat = 0;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
@@ -1050,6 +1064,10 @@ void Control::delay(uint32 msecs) {
 			default:
 				break;
 			}
+		}
+		if (_keyRepeatTime && now > _keyRepeatTime) {
+			_keyRepeatTime += kKeyRepeatSustainDelay;
+			_keyPressed = _keyRepeat;
 		}
 #ifndef __PALM_OS__
 		_system->delayMillis(10);
