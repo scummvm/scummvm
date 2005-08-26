@@ -615,16 +615,13 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 				int16 first;
 				const char *strings[ACTOR_SPEECH_STRING_MAX];
 
-				if (_vm->getGameType() == GType_IHNM)
-					break;
-
 				if (_vm->_actor->isSpeaking()) {
 					thread->wait(kWaitTypeSpeech);
 					return false;
 				}
 
 				stringsCount = scriptS.readByte();
-				actorId =  scriptS.readUint16LE();
+				actorId = scriptS.readUint16LE();
 				speechFlags = scriptS.readByte();
 				scriptS.readUint16LE(); // x,y skip
 

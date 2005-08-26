@@ -83,7 +83,6 @@ LoadSceneParams IHNM_IntroList[] = {
 	{0, kLoadByDescription, &IHNM_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{0, kLoadByDescription, &IHNM_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc2, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{0, kLoadByDescription, &IHNM_IntroMovie4Desc, Scene::SC_IHNMHateProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}
 };
 
 int Scene::IHNMStartProc() {
@@ -312,90 +311,6 @@ int Scene::IHNMIntroMovieProc3(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
-
-		q_event = _vm->_events->chain(q_event, &event);
-		break;
-	default:
-		break;
-	}
-
-	return 0;
-}
-
-int Scene::SC_IHNMHateProc(int param, void *refCon) {
-	return ((Scene *)refCon)->IHNMHateProc(param);
-}
-
-int Scene::IHNMHateProc(int param) {
-	Event event;
-	Event *q_event;
-
-	switch (param) {
-	case SCENE_BEGIN:
-		_vm->_anim->setCycles(0, -1);
-
-		// Start "hate" animation
-		event.type = kEvTOneshot;
-		event.code = kAnimEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
-
-		q_event = _vm->_events->queue(&event);
-
-		// More music
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = 32;
-		event.param2 = MUSIC_LOOP;
-		event.op = kEventPlay;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Background for intro scene is the first frame of the
-		// intro animation; display it and set the palette
-		event.type = kEvTOneshot;
-		event.code = kBgEvent;
-		event.op = kEventDisplay;
-		event.param = kEvPSetPalette;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Play voice
-		event.type = kEvTOneshot;
-		event.code = kVoiceEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Background sound
-		event.type = kEvTOneshot;
-		event.code = kSoundEvent;
-		event.op = kEventPlay;
-		event.param = 260;
-		event.param2 = 255;	// FIXME: Verify volume
-		event.param3 = SOUND_LOOP;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// End background sound after the voice has finished
-		event.type = kEvTOneshot;
-		event.code = kSoundEvent;
-		event.op = kEventStop;
-		event.time = _vm->_sndRes->getVoiceLength(0);
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// End scene after the voice has finished
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = 0;
 
 		q_event = _vm->_events->chain(q_event, &event);
 		break;
