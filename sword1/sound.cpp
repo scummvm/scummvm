@@ -166,6 +166,8 @@ void Sound::playSample(QueueElement *elem) {
 						flags = Audio::Mixer::FLAG_UNSIGNED;
 					if (READ_LE_UINT16(sampleData + 0x16) == 2)
 						flags |= Audio::Mixer::FLAG_STEREO;
+					if (_fxList[elem->id].type == FX_LOOP)
+						flags |= Audio::Mixer::FLAG_LOOP;
 					_mixer->playRaw(&elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
 			}
 		} else
