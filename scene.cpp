@@ -24,6 +24,7 @@
 #include "colormap.h"
 #include "vector3d.h"
 #include "driver.h"
+#include "engine.h"
 
 #include "imuse/imuse.h"
 
@@ -42,6 +43,15 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	for (int i = 0; i < _numCmaps; i++) {
 		ts.scanString(" colormap %256s", 1, cmap_name);
 		_cmaps[i] = g_resourceloader->loadColormap(cmap_name);
+	}
+
+	if (g_flags & GF_DEMO) {
+		ts.expectString("section: objectstates");
+		ts.scanString(" tot_objects %d", 1, &_numObjectStates);
+		char object_name[256];
+		ts.scanString(" object %256s", 1, object_name);
+	} else {
+		_numObjectStates = 0;
 	}
 
 	ts.expectString("section: setups");
@@ -138,6 +148,8 @@ void Scene::Setup::load(TextSplitter &ts) {
 	ts.scanString(" fov %f", 1, &_fov);
 	ts.scanString(" nclip %f", 1, &_nclip);
 	ts.scanString(" fclip %f", 1, &_fclip);
+	if (ts.checkString("object_art"))
+		ts.scanString(" object_art %256s", 1, &buf);
 }
 
 void Scene::Light::load(TextSplitter &ts) {

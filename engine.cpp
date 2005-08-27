@@ -35,6 +35,7 @@ Engine *g_engine = NULL;
 
 extern Imuse *g_imuse;
 int g_imuseState = -1;
+int g_flags = 0;
 
 #ifdef _WIN32
 

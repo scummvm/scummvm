@@ -19,6 +19,7 @@
 #include "debug.h"
 #include "localize.h"
 #include "registry.h"
+#include "engine.h"
 
 #include <cstdio>
 #include <cstring>
@@ -28,6 +29,9 @@ Localizer *g_localizer = NULL;
 Localizer::Localizer() {
 	std::FILE *f;
 	const char *namesToTry[] = { "/GRIM.TAB", "/Grim.tab", "/grim.tab" };
+
+	if (g_flags & GF_DEMO)
+		return;
 
 	for (unsigned i = 0; i < sizeof(namesToTry) / sizeof(namesToTry[0]); i++) {
 		const char *datadir = g_registry->get("DataDir", NULL);

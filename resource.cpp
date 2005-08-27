@@ -26,6 +26,7 @@
 #include "keyframe.h"
 #include "material.h"
 #include "model.h"
+#include "engine.h"
 #include "lipsynch.h"
 
 #include <cstring>
@@ -62,16 +63,19 @@ ResourceLoader::ResourceLoader() {
 #ifdef _WIN32
 	do {
 		int namelen = strlen(find_file_data.cFileName);
-		if ((namelen > 4) && (stricmp(find_file_data.cFileName + namelen - 4, ".lab") == 0)) {
+		if (namelen > 4 && ((stricmp(find_file_data.cFileName + namelen - 4, ".lab") == 0) || (stricmp(find_file_data.cFileName + namelen - 4, ".mus") == 0))) {
 			std::string fullname = dir_str + find_file_data.cFileName;
 			Lab *l = new Lab(fullname.c_str());
 			lab_counter++;
-			if (l->isOpen())
+			if (l->isOpen()) {
 				if (strstr(find_file_data.cFileName, "005"))
 					_labs.push_front(l);
-				else
+				else {
+					if (strstr(find_file_data.cFileName, "gfdemo01"))
+						g_flags |= GF_DEMO;
 					_labs.push_back(l);
-			else
+				}
+			} else
 				delete l;
 		}
 	} while (FindNextFile(d, &find_file_data));
@@ -80,7 +84,7 @@ ResourceLoader::ResourceLoader() {
 	dirent *de;
 	while ((de = readdir(d)) != NULL) {
 		int namelen = strlen(de->d_name);
-		if (namelen > 4 && strcasecmp(de->d_name + namelen - 4, ".lab") == 0) {
+		if (namelen > 4 && ((strcasecmp(de->d_name + namelen - 4, ".lab") == 0) || (strcasecmp(de->d_name + namelen - 4, ".mus") == 0))) {
 			std::string fullname = dir_str + de->d_name;
 			Lab *l = new Lab(fullname.c_str());
 			lab_counter++;
@@ -88,8 +92,11 @@ ResourceLoader::ResourceLoader() {
 				// Handle the Grim 1.1 patch's datafile
 				if (strstr(de->d_name, "005"))
 					_labs.push_front(l);
-				else
+				else {
+					if (strstr(find_file_data.cFileName, "gfdemo01"))
+						g_flags |= GF_DEMO;
 					_labs.push_back(l);
+				}
 			else
 				delete l;
 		}

@@ -2990,6 +2990,9 @@ static void SetEmergencyFont() {
 	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
+static void LoadBundle() {
+	// loading grimdemo1.lab is allready handled
+}
 
 /* Generate debug information for all functions
  *
@@ -3119,7 +3122,6 @@ STUB_FUNC(SetCameraPosition)
 STUB_FUNC(GetCameraFOV)
 STUB_FUNC(SetCameraFOV)
 STUB_FUNC(GetCameraRoll)
-STUB_FUNC(LoadBundle)
 STUB_FUNC(ActorShadow)
 STUB_FUNC(ActorPuckOrient)
 STUB_FUNC(GetMemoryUsage)

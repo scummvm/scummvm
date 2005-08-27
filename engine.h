@@ -38,6 +38,10 @@ class Actor;
 #define ENGINE_MODE_SMUSH	3
 #define ENGINE_MODE_DRAW	4
 
+extern int g_flags;
+
+#define GF_DEMO		1
+
 // Fake SDLK_* values for joystick and mouse events
 enum {
 	SDLK_JOY1_B1 = SDLK_LAST,

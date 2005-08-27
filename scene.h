@@ -128,7 +128,7 @@ private:
 	std::string _name;
 	int _numCmaps;
 	ResPtr<CMap> *_cmaps;
-	int _numSetups, _numLights, _numSectors;
+	int _numSetups, _numLights, _numSectors, _numObjectStates;
 	bool _enableLights;
 	Sector *_sectors;
 	Light *_lights;

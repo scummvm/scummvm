@@ -171,7 +171,9 @@ needshelp:
 		g_driver = new DriverGL(640, 480, 24, fullscreen);
 	g_imuse = new Imuse(20);
 
-	Bitmap *splash_bm = g_resourceloader->loadBitmap("splash.bm");
+	Bitmap *splash_bm = NULL;
+	if (!(g_flags & GF_DEMO))
+		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 
 	SDL_Event event;
 	
@@ -184,7 +186,8 @@ needshelp:
 #endif	
 			g_driver->clearScreen();
 
-			splash_bm->draw();
+			if (!(g_flags & GF_DEMO))
+				splash_bm->draw();
 
 			g_driver->flipBuffer();
 #ifndef MACOSX

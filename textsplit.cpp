@@ -36,11 +36,22 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 	unsigned int f08 = va_arg(ap, long);
 	unsigned int f09 = va_arg(ap, long);
 	unsigned int f10 = va_arg(ap, long);
+	unsigned int f11 = va_arg(ap, long);
+	unsigned int f12 = va_arg(ap, long);
+	unsigned int f13 = va_arg(ap, long);
+	unsigned int f14 = va_arg(ap, long);
+	unsigned int f15 = va_arg(ap, long);
+	unsigned int f16 = va_arg(ap, long);
+	unsigned int f17 = va_arg(ap, long);
+	unsigned int f18 = va_arg(ap, long);
+	unsigned int f19 = va_arg(ap, long);
+	unsigned int f20 = va_arg(ap, long);
 
-	if (field_count > 10)
+	if (field_count > 20)
 		error("Too many fields requested of residual_vsscanf (%d)", field_count);
 
-	return sscanf(str, format, f01, f02, f03, f04, f05, f06, f07, f08, f09, f10);
+	return sscanf(str, format, f01, f02, f03, f04, f05, f06, f07, f08, f09, f10,
+			f11, f12, f13, f14, f15, f16, f17, f18, f19, f20);
 }
 
 TextSplitter::TextSplitter(const char *data, int len) {
