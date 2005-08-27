@@ -2991,7 +2991,7 @@ static void SetEmergencyFont() {
 		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 static void LoadBundle() {
-	// loading grimdemo1.lab is allready handled
+	// loading grimdemo.mus is allready handled
 }
 
 /* Generate debug information for all functions
