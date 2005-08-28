@@ -66,12 +66,12 @@ public:
 
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);
 	void drawBitmap();
+	void dimScreen();
+	void dimRegion(int x, int y, int w, int h, float level);
 
 	Bitmap *getScreenshot(int w, int h);
 	void storeDisplay();
 	void copyStoredToDisplay();
-	void enableDim(int /*x*/, int /*y*/, int /*w*/, int /*h*/) { _dim = true; }
-	void disableDim(int /*x*/, int /*y*/, int /*w*/, int /*h*/) { _dim = false; }
 
 	void drawEmergString(int x, int y, const char *text, const Color &fgColor);
 	void loadEmergFont();
@@ -86,7 +86,6 @@ public:
 	void drawSmushFrame(int offsetX, int offsetY);
 
 protected:
-	void drawDim();
 
 private:
 	ZBuffer *_zb;

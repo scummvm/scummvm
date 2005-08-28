@@ -107,6 +107,7 @@ public:
 	void handleDebugLoadResource();
 	void luaUpdate();
 	void updateDisplayScene();
+	void doFlip();
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
 	void refreshDrawMode() { _refreshDrawNeeded = true; }
@@ -222,6 +223,8 @@ private:
 	int _textSpeed;
 	bool _flipEnable;
 	bool _refreshDrawNeeded;
+	char _fps[8];
+	bool _doFlip;
 
 	unsigned _frameStart, _frameTime, _movieTime;
 	unsigned int _frameTimeCollection;

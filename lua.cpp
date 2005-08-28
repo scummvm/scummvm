@@ -2207,24 +2207,20 @@ static void FreeImage() {
 }
 
 static void BlastImage() {
-	PrimitiveObject *p = new PrimitiveObject();
 	bool transparent;
 	Bitmap *bitmap;
 	int x, y;
 	
 	DEBUG_FUNCTION();
-	// Allow displaying a null image to fail gracefully.
-	// Once main_menu:cancel is handled better this should
-	// be unnecessary.
-	if (lua_isnil(lua_getparam(1)))
-		return;
 	bitmap = check_bitmapobject(1);
 	x = check_int(2);
 	y = check_int(3);
 	transparent = getbool(4);
-	p->createBitmap(bitmap, x, y, transparent);
-	g_engine->registerPrimitiveObject(p);
-	lua_pushusertag(p, MKID('PRIM'));
+	bitmap->setX(x);
+	bitmap->setY(y);
+	// transparent: what to do ?
+	g_driver->createBitmap(bitmap);
+	g_driver->drawBitmap(bitmap);
 }
 
 void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
@@ -2387,12 +2383,6 @@ static void SetTextSpeed() {
 	g_engine->setTextSpeed(speed);
 }
 
-/* Make a text object, known to be used by the menu
- * please note that if the same text is issued we will
- * add an additional space (TEXT_NULL) until the text
- * becomes unique
- * (otherwise we'll get identically named menu objects)
- */
 static void MakeTextObject() {
 	TextObject *textObject = new TextObject();
 	lua_Object tableObj;
@@ -2454,9 +2444,28 @@ static void GetTextCharPosition() {
 
 static void BlastText() {
 	DEBUG_FUNCTION();
-	// there is some diffrence to MakeTextObject
-	// it draw directly to gfx buffer from here, not from main loop
-	MakeTextObject();
+	TextObject *textObject = new TextObject();
+	lua_Object tableObj;
+	char *line;
+
+	DEBUG_FUNCTION();
+	line = lua_getstring(lua_getparam(1));
+	std::string text = line;
+	tableObj = lua_getparam(2);
+	textObject->setDefaults(&textObjectDefaults);
+         
+	if (lua_istable(tableObj))
+		getTextObjectParams(textObject, tableObj);
+         
+	while (TextObjectExists((char *)text.c_str()) != NULL)
+		text += TEXT_NULL;
+
+	//printf("Make: %s\n", (char *)text.c_str());
+
+	textObject->setText((char *)text.c_str());
+	textObject->createBitmap();
+	textObject->draw();
+	delete textObject;
 }
 
 static void SetOffscreenTextPos() {
@@ -2650,22 +2659,57 @@ static void DrawRectangle() {
 
 static void BlastRect() {
 	DEBUG_FUNCTION();
-	// BlastRect is specifically for the menu thread;
-	// however, we don't need to handle the menu in a 
-	// separate thread so this works fine
-	DrawRectangle();
+	int x1, y1, x2, y2;
+	lua_Object tableObj;
+	Color color;
+	
+	DEBUG_FUNCTION();
+	x1 = check_int(1);
+	y1 = check_int(2);
+	x2 = check_int(3);
+	y2 = check_int(4);
+	tableObj = lua_getparam(5);
+	color._vals[0] = 255;
+	color._vals[1] = 255;
+	color._vals[2] = 255;
+	bool filled = false;
+
+	if (lua_istable(tableObj)){
+		lua_pushobject(tableObj);
+		lua_pushstring("color");
+		lua_Object colorObj = lua_gettable();
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+			color = static_cast<Color *>(lua_getuserdata(colorObj));
+		}
+
+		lua_pushobject(tableObj);
+		lua_pushstring("filled");
+		lua_Object objFilled = lua_gettable();
+		if (!lua_isnil(objFilled))
+			filled = true;
+	}
+
+	PrimitiveObject *p = new PrimitiveObject();
+	p->createRectangle(x1, x2, y1, y2, color, filled);
+	p->draw();
+	delete p;
 }
 
 static void DimScreen() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("DimRegion()");
+	g_driver->dimScreen();
 }
 
 static void DimRegion() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-		warning("DimRegion()");
+
+	int x = check_int(1);
+	int y = check_int(2);
+	int w = check_int(3);
+	int h = check_int(4);
+	float level = luaL_check_number(5);
+
+	g_driver->dimRegion(x, y, w, h, level);
 }
 
 static void GetDiskFreeSpace() {
@@ -2750,7 +2794,12 @@ static void ScreenShot() {
 	DEBUG_FUNCTION();
 	width = check_int(1);
 	height = check_int(2);
+
+	int mode = g_engine->getMode();
+	g_engine->setMode(ENGINE_MODE_NORMAL);
+	g_engine->updateDisplayScene();
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
+	g_engine->setMode(mode);
 	if (screenshot) {
 		lua_pushusertag(screenshot, MKID('VBUF'));
 	} else {
@@ -2953,7 +3002,6 @@ static void SetGamma() {
 static void Display() {
 	DEBUG_FUNCTION();
 	if (g_engine->getFlipEnable()) {
-		g_engine->drawPrimitives();
 		g_driver->flipBuffer();
 	}
 }
@@ -2990,6 +3038,7 @@ static void SetEmergencyFont() {
 	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
+
 static void LoadBundle() {
 	// loading grimdemo.mus is allready handled
 }

@@ -703,7 +703,16 @@ Bitmap *DriverGL::getScreenshot(int /*w*/, int /*h*/) {
 	return NULL;
 }
 
-void DriverGL::drawDim() {
+void DriverGL::storeDisplay() {
+}
+
+void DriverGL::copyStoredToDisplay() {
+}
+
+void DriverGL::dimScreen() {
+}
+
+void DriverGL::dimRegion(int x, int y, int w, int h, float level) {
 }
 
 void DriverGL::drawRectangle(PrimitiveObject *primitive) {

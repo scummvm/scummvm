@@ -482,7 +482,12 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	int step = 0;
 	for (float y = 0; y < 479; y += step_y) {
 		for (float x = 0; x < 639; x += step_x) {
-			buffer[step++] = *(src + (int)y * 640 + (int)x);
+			uint16 pixel = *(src + (int)y * 640 + (int)x);
+			uint8 r = (pixel & 0xF800) >> 8;
+			uint8 g = (pixel & 0x07E0) >> 3;
+			uint8 b = (pixel & 0x001F) << 3;
+			uint32 color = (r + g + b) / 3;
+			buffer[step++] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
 		}
 	}
 
@@ -499,7 +504,30 @@ void DriverTinyGL::copyStoredToDisplay() {
 	memcpy(_zb->pbuf, _storedDisplay, 640 * 480 * 2);
 }
 
-void DriverTinyGL::drawDim() {
+void DriverTinyGL::dimScreen() {
+	uint16 *data = (uint16 *)_storedDisplay;
+	for (int l = 0; l < 640 * 480; l++) {
+		uint16 pixel = data[l];
+		uint8 r = (pixel & 0xF800) >> 8;
+		uint8 g = (pixel & 0x07E0) >> 3;
+		uint8 b = (pixel & 0x001F) << 3;
+		uint32 color = (r + g + b) / 6;
+		data[l] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+	}
+}
+
+void DriverTinyGL::dimRegion(int x, int y, int w, int h, float level) {
+	uint16 *data = (uint16 *)_zb->pbuf;
+	for (int ly = y; ly < y + h; ly++) {
+		for (int lx = x; lx < x + w; lx++) {
+			uint16 pixel = data[ly * 640 + lx];
+			uint8 r = (pixel & 0xF800) >> 8;
+			uint8 g = (pixel & 0x07E0) >> 3;
+			uint8 b = (pixel & 0x001F) << 3;
+			uint16 color = (uint16)(((r + g + b) / 3) * level);
+			data[ly * 640 + lx] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+		}
+	}
 }
 
 void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {

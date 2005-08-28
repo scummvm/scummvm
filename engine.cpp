@@ -154,6 +154,7 @@ void Engine::handleDebugLoadResource() {
 	if (resource == NULL)
 		warning("Requested resouce (%s) not found!");
 }
+
 void Engine::drawPrimitives() {
 	// Draw Primitives
 	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
@@ -163,15 +164,6 @@ void Engine::drawPrimitives() {
 	// Draw text
 	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
 		(*i)->draw();
-	}
-
-	if (_mode == ENGINE_MODE_DRAW) {
-		g_engine->killPrimitiveObjects();
-		g_engine->killTextObjects();
-
-		// Cleanup references to deleted text objects
-		for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
-			(*i)->lineCleanup();
 	}
 }
 
@@ -200,8 +192,7 @@ void Engine::luaUpdate() {
 }
 
 void Engine::updateDisplayScene() {
-	static char fps[8] = "";
-	bool doFlip = true;
+	_doFlip = true;
 
 	if (_mode == ENGINE_MODE_SMUSH) {
 		if (g_smush->isPlaying()) {
@@ -217,11 +208,12 @@ void Engine::updateDisplayScene() {
 					_prevSmushFrame = g_smush->getFrame();
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
 					if (SHOWFPS_GLOBAL)
-						g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+						g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 				} else
-					doFlip = false;
+					_doFlip = false;
 			}
 		}
+		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_NORMAL) {
 		if (_currScene == NULL)
 			return;
@@ -293,6 +285,7 @@ void Engine::updateDisplayScene() {
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		g_driver->storeDisplay();
+		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_DRAW) {
 		if (_refreshDrawNeeded) {
 			lua_beginblock();
@@ -306,23 +299,23 @@ void Engine::updateDisplayScene() {
 		_refreshDrawNeeded = false;
 		return;
 	}
+}
 
-	drawPrimitives();
-
+void Engine::doFlip() {
 	if (SHOWFPS_GLOBAL)
-		g_driver->drawEmergString(550, 25, fps, Color(255, 255, 255));
+		g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 
-	if (doFlip && _flipEnable)
+	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
 	// don't kill CPU
 	SDL_Delay(1);
 
-	if (SHOWFPS_GLOBAL && doFlip) {
+	if (SHOWFPS_GLOBAL && _doFlip) {
 		_frameCounter++;
 		_timeAccum += _frameTime;
 		if (_timeAccum > 1000) {
-			sprintf(fps, "%7.2f", (double)(_frameCounter * 1000) / (double)_timeAccum );
+			sprintf(_fps, "%7.2f", (double)(_frameCounter * 1000) / (double)_timeAccum );
 			_frameCounter = 0;
 			_timeAccum = 0;
 		}
@@ -390,6 +383,7 @@ void Engine::mainLoop() {
 
 		if (_mode != ENGINE_MODE_PAUSE) {
 			updateDisplayScene();
+			doFlip();
 		}
 
 		if (g_imuseState != -1) {
