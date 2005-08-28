@@ -220,7 +220,7 @@ void CDECL warning(const char *s, ...) {
 }
 
 void checkHeap() {
-#if defined(_MSC_VER)
+#if defined(WIN32)
 	if (_heapchk() != _HEAPOK) {
 		error("Heap is invalid!");
 	}
