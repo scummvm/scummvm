@@ -93,7 +93,7 @@ ResourceLoader::ResourceLoader() {
 				if (strstr(de->d_name, "005"))
 					_labs.push_front(l);
 				else {
-					if (strstr(find_file_data.cFileName, "gfdemo01"))
+					if (strstr(de->d_name, "gfdemo01"))
 						g_flags |= GF_DEMO;
 					_labs.push_back(l);
 				}
