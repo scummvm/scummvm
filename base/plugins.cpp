@@ -151,7 +151,7 @@ void *DynamicPlugin::findSymbol(const char *symbol) {
 	return func;
 #else
 #if defined(_WIN32)
-	void *func = GetProcAddress((HMODULE)_dlHandle, symbol);
+	void *func = (void*)GetProcAddress((HMODULE)_dlHandle, symbol);
 	if (!func)
 		warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 	return func;
