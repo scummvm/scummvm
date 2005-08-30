@@ -505,6 +505,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows, 0, 0}, // Pjs2demo
 	{"32709cbeeb3044b34129950860a83f14", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0}, // PajamaTAL
+	{"c6907d44f1166941d982864cd42cdc89", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0}, // PyjamaDBMN
 
 	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Pajama Sam's Lost & Found (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows, 0, 0},
@@ -648,6 +650,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama", "PajamaNHD", kGenPC},
 	{ "pajama2", "Pajama Sam 2", kGenMac},
 	{ "pajama2", "PajamaTAL", kGenPC},
+	{ "pajama2", "PyjamaDBMN", kGenPC},
 	{ "pj2demo", "PJ2Demo", kGenMac },
 	{ "pj2demo", "Pjs2demo", kGenPC },
 	{ "pj3-demo", "Pajama Sam 3-Demo", kGenMac },
