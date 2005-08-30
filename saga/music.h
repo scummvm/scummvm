@@ -114,6 +114,9 @@ public:
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
 
+	int32 *_songTable;
+	int _songTableLen;
+
 private:
 	SagaEngine *_vm;
 	Audio::Mixer *_mixer;

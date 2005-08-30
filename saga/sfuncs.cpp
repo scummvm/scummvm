@@ -1640,11 +1640,20 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 			_vm->_music->stop();
 		}
 	} else {
-		// TODO: Verify this
-		int16 param1 = thread->pop() + 32;
+		int16 param1 = thread->pop();
 		int16 param2 = thread->pop();
 
-		_vm->_music->play(param1, param2 ? MUSIC_LOOP: MUSIC_NORMAL);
+		if (param1 < 1) {
+			_vm->_music->stop();
+			return;
+		}
+
+		if (param1 > _vm->_music->_songTableLen) {
+			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen);
+		} else {
+			_vm->_music->setVolume(-1, 1);
+			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP: MUSIC_NORMAL);
+		}
 	}
 }
 

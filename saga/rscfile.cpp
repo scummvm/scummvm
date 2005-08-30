@@ -26,6 +26,7 @@
 
 #include "saga/actor.h"
 #include "saga/interface.h"
+#include "saga/music.h"
 #include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/stream.h"
@@ -505,6 +506,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		_vm->_sndRes->_fxTable[i].res = fxS.readSint16LE();
 		_vm->_sndRes->_fxTable[i].vol = fxS.readSint16LE();
 	}
+	free(resourcePointer);
 
 	_vm->_interface->_defPortraits.freeMem();
 	_vm->_sprite->loadList(_metaResource.protagFaceSpritesID, _vm->_interface->_defPortraits);
@@ -520,7 +522,24 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	// TODO: cutawayList
 
-	// TODO: songTable
+	// TODO: songTable Long
+	_vm->_resource->loadResource(resourceContext, _metaResource.songTableID,
+								 resourcePointer, resourceLength);
+
+	if (resourceLength == 0) {
+		error("Resource::loadGlobalResources Can't load songs list for current track");
+	}
+
+	free(_vm->_music->_songTable);
+	
+	_vm->_music->_songTableLen = resourceLength / 4;
+	_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
+
+	MemoryReadStream songS(resourcePointer, resourceLength);
+
+	for (int i = 0; i < _vm->_music->_songTableLen; i++)
+		_vm->_music->_songTable[i] = songS.readSint32LE();
+	free(resourcePointer);
 
 	int voiceLUTResourceID = 0;
 

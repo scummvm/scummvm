@@ -274,6 +274,9 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	smfParser = MidiParser::createParser_SMF();	
 
 	_musicContext = _vm->_resource->getContext(GAME_MUSICFILE);
+
+	_songTableLen = 0;
+	_songTable = 0;
 }
 
 Music::~Music() {
@@ -283,6 +286,8 @@ Music::~Music() {
 	smfParser->setMidiDriver(NULL);
 	delete xmidiParser;
 	delete smfParser;
+
+	free(_songTable);
 }
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
