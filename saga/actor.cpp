@@ -1553,7 +1553,7 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	}
 
 	if ((frameNumber < 0) || (spriteList->spriteCount <= frameNumber)) {
-		warning("Actor::getSpriteParams frameNumber invalid for %s id 0x%X (%d)",
+		debug(1, "Actor::getSpriteParams frameNumber invalid for %s id 0x%X (%d)",
 				validObjId(commonObjectData->_id) ? "object" : "actor",
 				commonObjectData->_id, frameNumber);
 		return false;
