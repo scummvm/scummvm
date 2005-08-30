@@ -69,8 +69,8 @@ public:
 	enum {
 		SCREEN_W  = 320,
 		SCREEN_H  = 200,
-		PAGE_SIZE = 320 * 200 + 1024,
-		PAGE_NUM  = 16
+		KYRA_PAGE_SIZE = 320 * 200 + 1024,
+		KYRA_PAGE_NUM  = 16
 	};
 
 private:

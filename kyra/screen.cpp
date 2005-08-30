@@ -29,10 +29,10 @@ namespace Kyra {
 Screen::Screen(KyraEngine *vm, OSystem *system)
 	: _system(system), _vm(vm) {
 	_curPage = 0;
-	for (int pageNum = 0; pageNum < PAGE_NUM; pageNum += 2) {
-		uint8 *pagePtr = (uint8 *)malloc(PAGE_SIZE);
+	for (int pageNum = 0; pageNum < KYRA_PAGE_NUM; pageNum += 2) {
+		uint8 *pagePtr = (uint8 *)malloc(KYRA_PAGE_SIZE);
 		if (pagePtr) {
-			memset(pagePtr, 0, PAGE_SIZE);
+			memset(pagePtr, 0, KYRA_PAGE_SIZE);
 			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 		}
 	}
@@ -43,7 +43,7 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 }
 
 Screen::~Screen() {
-	for (int pageNum = 0; pageNum < PAGE_NUM; pageNum += 2) {
+	for (int pageNum = 0; pageNum < KYRA_PAGE_NUM; pageNum += 2) {
 		free(_pagePtrs[pageNum]);
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
 	}
@@ -58,14 +58,14 @@ void Screen::updateScreen() {
 
 uint8 *Screen::getPagePtr(int pageNum) {
 	debug(9, "Screen::getPagePtr(%d)", pageNum);
-	assert(pageNum < PAGE_NUM);
+	assert(pageNum < KYRA_PAGE_NUM);
 	return _pagePtrs[pageNum];
 }
 
 void Screen::clearPage(int pageNum) {
 	debug(9, "Screen::clearPage(%d)", pageNum);
-	assert(pageNum < PAGE_NUM);
-	memset(getPagePtr(pageNum), 0, PAGE_SIZE);
+	assert(pageNum < KYRA_PAGE_NUM);
+	memset(getPagePtr(pageNum), 0, KYRA_PAGE_SIZE);
 }
 
 int Screen::setCurPage(int pageNum) {
@@ -77,7 +77,7 @@ int Screen::setCurPage(int pageNum) {
 
 void Screen::clearCurPage() {
 	debug(9, "Screen::clearCurPage()");
-	memset(getPagePtr(_curPage), 0, PAGE_SIZE);
+	memset(getPagePtr(_curPage), 0, KYRA_PAGE_SIZE);
 }
 
 void Screen::fadeFromBlack() {
