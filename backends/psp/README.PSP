@@ -65,7 +65,7 @@ Building the source code
 ========================
 To build ScummVM for PSP you need:
 
-- PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/toolchain)
+- PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
 - PSPSDK 	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
 - SDL		(svn co svn://svn.pspdev.org/psp/trunk/SDL)
 - zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
