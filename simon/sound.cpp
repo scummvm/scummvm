@@ -254,7 +254,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 	File *file = new File();
 
 #ifdef USE_FLAC
-	if (!_voice && gss->flac_filename && gss->flac_filename[0]) {
+	if (!_hasVoiceFile && gss->flac_filename && gss->flac_filename[0]) {
 		file->open(gss->flac_filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -263,7 +263,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 	}
 #endif
 #ifdef USE_MAD
-	if (!_voice && gss->mp3_filename && gss->mp3_filename[0]) {
+	if (!_hasVoiceFile && gss->mp3_filename && gss->mp3_filename[0]) {
 		file->open(gss->mp3_filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -272,7 +272,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 	}
 #endif
 #ifdef USE_VORBIS
-	if (!_voice && gss->vorbis_filename && gss->vorbis_filename[0]) {
+	if (!_hasVoiceFile && gss->vorbis_filename && gss->vorbis_filename[0]) {
 		file->open(gss->vorbis_filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -280,7 +280,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 		}
 	}
 #endif
-	if (!_voice && (_game & GF_SIMON2)) {
+	if (!_hasVoiceFile && (_game & GF_SIMON2)) {
 		// for simon2 mac/amiga, only read index file
 		file->open("voices.idx");
 		if (file->isOpen() == true) {
@@ -297,14 +297,14 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 			_hasVoiceFile = true;
 		}
 	}
-	if (!_voice && gss->wav_filename && gss->wav_filename[0]) {
+	if (!_hasVoiceFile && gss->wav_filename && gss->wav_filename[0]) {
 		file->open(gss->wav_filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
 			_voice = new WavSound(_mixer, file);
 		}
 	}
-	if (!_voice && gss->voc_filename && gss->voc_filename[0]) {
+	if (!_hasVoiceFile && gss->voc_filename && gss->voc_filename[0]) {
 		file->open(gss->voc_filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
@@ -315,7 +315,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
 		file = new File();
 #ifdef USE_MAD
-		if (!_effects && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
+		if (!_hasEffectsFile && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
 			file->open(gss->mp3_effects_filename);
 			if (file->isOpen()) {
 				_hasEffectsFile = true;
@@ -324,7 +324,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 		}
 #endif
 #ifdef USE_VORBIS
-		if (!_effects && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
+		if (!_hasEffectsFile && gss->vorbis_effects_filename && gss->vorbis_effects_filename[0]) {
 			file->open(gss->vorbis_effects_filename);
 			if (file->isOpen()) {
 				_hasEffectsFile = true;
@@ -333,7 +333,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 		}
 #endif
 #ifdef USE_FLAC
-		if (!_effects && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
+		if (!_hasEffectsFile && gss->flac_effects_filename && gss->flac_effects_filename[0]) {
 			file->open(gss->flac_effects_filename);
 			if (file->isOpen()) {
 				_hasEffectsFile = true;
@@ -341,7 +341,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 			}
 		}
 #endif
-		if (!_effects && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
+		if (!_hasEffectsFile && gss->voc_effects_filename && gss->voc_effects_filename[0]) {
 			file->open(gss->voc_effects_filename);
 			if (file->isOpen()) {
 				_hasEffectsFile = true;
