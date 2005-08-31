@@ -406,14 +406,12 @@ void ScummEngine_v80he::o80_getFileSize() {
 	copyScriptString(filename, sizeof(filename));
 
 	Common::File f;
-	if (f.open((char *)filename) == false) {
+	if (!f.open((char *)filename)) {
 		push(-1);
-		return;
+	} else {
+		push(f.size());
+		f.close();
 	}
-
-	f.seek(0, SEEK_END);
-	push(f.pos());
-	f.close();
 }
 
 void ScummEngine_v80he::o80_stringToInt() {
@@ -647,17 +645,17 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 		drawPixel(x, y, id);
 	}
 
-	int var_C = 0;
+	int stepCount = 0;
 	int tmpX = 0;
 	int tmpY = 0;
 	for (int i = 0; i <= maxDist; i++) {
 		tmpX += absDX;
 		tmpY += absDY;
 
-		int eax = 0;
+		int drawFlag = 0;
 
 		if (tmpX > maxDist) {
-			eax = 1;
+			drawFlag = 1;
 			tmpX -= maxDist;
 
 			if (dx >= 0) {
@@ -667,7 +665,7 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 			}
 		}
 		if (tmpY > maxDist) {
-			eax = dy;
+			drawFlag = dy;
 			tmpY -= maxDist;
 
 			if (dy >= 0) {
@@ -677,10 +675,10 @@ void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int typ
 			}
 		}
 
-		if (eax == 0)
+		if (drawFlag == 0)
 			continue;
 
-		if ((var_C++ % step) != 0 && maxDist != i)
+		if ((stepCount++ % step) != 0 && maxDist != i)
 			continue;
 
 		if (type == 2) {

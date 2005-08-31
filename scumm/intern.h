@@ -1100,9 +1100,9 @@ protected:
 	struct VideoParameters {
 		byte filename[260];
 		int32 status;
-		int32 unk1;
+		int32 flags;
 		int32 unk2;
-		int32 unk3;
+		int32 wizResNum;
 	};
 
 	VideoParameters _videoParams;

@@ -519,16 +519,16 @@ void ScummEngine_v90he::o90_videoOps() {
 		_videoParams.status = status;
 		break;
 	case 5:
-		_videoParams.unk1 |= pop();
+		_videoParams.flags |= pop();
 		break;
 	case 8:
 		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
 		_videoParams.unk2 = pop();
 		break;
 	case 14:
-		_videoParams.unk3 = pop();
-		if (_videoParams.unk1)
-			_videoParams.unk1 |= 2;
+		_videoParams.wizResNum = pop();
+		if (_videoParams.wizResNum)
+			_videoParams.flags |= 2;
 		break;
 	case 116:
 		_videoParams.status = status;
@@ -536,14 +536,14 @@ void ScummEngine_v90he::o90_videoOps() {
 	case 206:
 		if (_videoParams.status == 49) {
 			// Start video
-			if (_videoParams.unk1 == 0)
-				_videoParams.unk1 = 4;
+			if (_videoParams.flags == 0)
+				_videoParams.flags = 4;
 
-			if (_videoParams.unk1 == 2) {
-				// result = startVideo(_videoParams.filename, _videoParams.unk1, _videoParams.unk3);
+			if (_videoParams.flags == 2) {
+				// result = startVideo(_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
 				// VAR(119) = result;
 			} else {
-				// result = startVideo(_videoParams.filename, _videoParams.unk1);
+				// result = startVideo(_videoParams.filename, _videoParams.flags);
 				// VAR(119) = result;
 			}
 		} else if (_videoParams.status == 165) {
@@ -554,7 +554,7 @@ void ScummEngine_v90he::o90_videoOps() {
 		error("o90_videoOps: unhandled case %d", subOp);
 	}
 
-	debug(0,"o90_videoOps stub (%d)", subOp);
+	debug(0, "o90_videoOps stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getVideoData() {
@@ -578,7 +578,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 	case 31:	// Get image number
 		pop();
 		break;
-	case 107:	// Get genreal property
+	case 107:	// Get statistics
 		pop();
 		pop();
 		break;
@@ -587,7 +587,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 	}
 
 	push(-1);
-	debug(0,"o90_getVideoData stub (%d)", subOp);
+	debug(0, "o90_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_wizImageOps() {
@@ -807,7 +807,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		error("o90_wizImageOps: unhandled case %d", subOp);
 	}
 
-	debug(1,"o90_wizImageOps (%d)", subOp);
+	debug(1, "o90_wizImageOps (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
@@ -861,7 +861,7 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
-	debug(1,"o90_getSpriteInfo (%d)", subOp);
+	debug(1, "o90_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		spriteId = pop();
@@ -1116,7 +1116,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
-	debug(1,"o90_setSpriteInfo (%d)", subOp);
+	debug(1, "o90_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		args[0] = pop();
@@ -1447,7 +1447,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o90_getSpriteGroupInfo (%d)", subOp);
+	debug(1, "o90_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 8: // HE 99+
 		spriteGroupId = pop();
@@ -1529,7 +1529,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
-	debug(1,"o90_setSpriteGroupInfo (%d)", subOp);
+	debug(1, "o90_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		type = pop() - 1;
@@ -1794,7 +1794,7 @@ void ScummEngine_v90he::o90_floodState() {
 	default:
 		error("o90_floodState: Unknown case %d", subOp);
 	}
-	debug(1,"o90_floodState stub (%d)", subOp);
+	debug(1, "o90_floodState stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_shl() {
@@ -2380,7 +2380,7 @@ void ScummEngine_v90he::o90_getObjectData() {
 	default:
 		error("o90_getObjectData: Unknown case %d", subOp);
 	}
-	debug(1,"o90_getObjectData (%d)", subOp);
+	debug(1, "o90_getObjectData (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
@@ -2429,7 +2429,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);
 	}
-	debug(1,"o90_getPaletteData stub (%d)", subOp);
+	debug(1, "o90_getPaletteData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_paletteOps() {
@@ -2501,10 +2501,8 @@ void ScummEngine_v90he::o90_paletteOps() {
 	default:
 		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1,"o90_paletteOps (%d)", subOp);
+	debug(1, "o90_paletteOps (%d)", subOp);
 }
-
-
 
 void ScummEngine_v90he::o90_fontUnk() {
 	// Font related
@@ -2536,7 +2534,7 @@ void ScummEngine_v90he::o90_fontUnk() {
 		error("o90_fontUnk: Unknown case %d", subOp);
 	}
 
-	debug(1,"o90_fontUnk stub (%d)", subOp);
+	debug(1, "o90_fontUnk stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getActorAnimProgress() {

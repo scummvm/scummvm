@@ -2158,28 +2158,28 @@ void ScummEngine_v100he::o100_videoOps() {
 		_videoParams.status = 19;
 		break;
 	case 40:
-		_videoParams.unk3 = pop();
-		if (_videoParams.unk1)
-			_videoParams.unk1 |= 2;
+		_videoParams.wizResNum = pop();
+		if (_videoParams.wizResNum)
+			_videoParams.flags |= 2;
 		break;
 	case 47:
 		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
 		_videoParams.status = 47;
 		break;
 	case 67:
-		_videoParams.unk1 |= pop();
+		_videoParams.flags |= pop();
 		break;
 	case 92:
 		if (_videoParams.status == 47) {
 			// Start video
-			if (_videoParams.unk1 == 0)
-				_videoParams.unk1 = 4;
+			if (_videoParams.flags == 0)
+				_videoParams.flags = 4;
 
-			if (_videoParams.unk1 == 2) {
-				// result = startVideo(_videoParams.filename, _videoParams.unk1, _videoParams.unk3);
+			if (_videoParams.flags == 2) {
+				// result = startVideo(_videoParams.filename, _videoParams.flags, _videoParams.wizResNum);
 				// VAR(119) = result;
 			} else {
-				// result = startVideo(_videoParams.filename, _videoParams.unk1);
+				// result = startVideo(_videoParams.filename, _videoParams.flags);
 				// VAR(119) = result;
 			}
 		} else if (_videoParams.status == 19) {
