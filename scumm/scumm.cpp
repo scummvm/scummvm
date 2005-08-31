@@ -1222,12 +1222,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	// FIXME: a dirty hack. Currently this is checked before engine
-	//  creation.
-	if (_heversion >= 71) {
-		_features |= GF_DEFAULT_TO_1X_SCALER;
-	}
-
 	if (_platform == Common::kPlatformFMTowns && _version == 3) {	// FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
@@ -1464,13 +1458,6 @@ int ScummEngine::init(GameDetector &detector) {
 			if (_features & GF_DEFAULT_TO_1X_SCALER)
 				_system->setGraphicsMode("1x");
 		}
-
-		// FIXME: All this seems a dirty hack to me. We already
-		// have this check in constructor
-		if (_heversion >= 71) {
-			_features |= GF_DEFAULT_TO_1X_SCALER;
-		}
-
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.
@@ -2953,10 +2940,14 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		if (g->name) {
 			game = *g;
 			game.name = name;
-
 			if (game.description)
 				g_system->setWindowCaption(game.description);
 		}
+	}
+	// Starting from version 7.1, HE games use 640x480. We check this here since multiple
+	// versions _could_ use different resolutions (I haven't verified this, though).
+	if (game.heversion >= 71) {
+		game.features |= GF_DEFAULT_TO_1X_SCALER;
 	}
 
 	// TODO: REMOVE DEPRECATED OPTION
@@ -2971,12 +2962,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	if (game.platform == Common::kPlatformFMTowns && game.version == 3) {
 		game.midi = MDT_TOWNS;
-	}
-
-	// Special cases for HE games
-	// Games starting freddi use 640x480
-	if (game.heversion >= 71) {
-		game.features |= GF_DEFAULT_TO_1X_SCALER;
 	}
 
 	switch (game.version) {
