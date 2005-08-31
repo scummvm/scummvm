@@ -1697,6 +1697,42 @@ void Wiz::fillWizLine(const WizParameters *params) {
 	}
 }
 
+void Wiz::fillWizPixel(const WizParameters *params) {
+	if (params->processFlags & kWPFClipBox2) {
+		int px = params->box2.left;
+		int py = params->box2.top;
+		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
+		if (dataPtr) {
+			int state = 0;
+			if (params->processFlags & kWPFNewState) {
+				state = params->img.state;
+			}
+			uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+			assert(wizh);
+			int c = READ_LE_UINT32(wizh + 0x0);
+			int w = READ_LE_UINT32(wizh + 0x4);
+			int h = READ_LE_UINT32(wizh + 0x8);
+			assert(c == 0);
+			Common::Rect imageRect(w, h);
+			if (params->processFlags & kWPFClipBox) {
+				if (!imageRect.intersects(params->box)) {
+					return;
+				}
+				imageRect.clip(params->box);
+			}
+			uint8 color = _vm->VAR(93);
+			if (params->processFlags & kWPFFillColor) {
+				color = params->fillColor;
+			}
+			if (imageRect.contains(px, py)) {
+				uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+				assert(wizd);
+				*(wizd + py * w + px) = color;
+			}
+		}
+	}
+}
+
 void Wiz::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
@@ -1821,8 +1857,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		fillWizLine(params);
 		break;
 	case 11:
-		// TODO: Fill Pixel
-		error("fillWizPixel");
+		fillWizPixel(params);
 		break;
 	case 12:
 		// Used in PuttsFunShop/SamsFunShop
