@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2003-2005 The ScummVM project
+ * Copyright (C) 2004-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,17 @@ namespace Kyra {
 class CPSImage;
 class KyraEngine;
 
+struct ScreenDim {
+	uint16 sx;
+	uint16 sy;
+	uint16 w;
+	uint16 h;
+	uint16 unk8;
+	uint16 unkA;
+	uint16 unkC;
+	uint16 unkE;
+};
+
 class Screen {
 public:
 
@@ -55,6 +66,8 @@ public:
 	int getCharWidth(uint8 c) const;
 	int getTextWidth(const char *str) const;
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
+	void setScreenDim(int dim);
+	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable);
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
@@ -67,11 +80,21 @@ public:
 	uint8 *_palette1;
 
 	enum {
-		SCREEN_W  = 320,
-		SCREEN_H  = 200,
-		KYRA_PAGE_SIZE = 320 * 200 + 1024,
-		KYRA_PAGE_NUM  = 16
+		SCREEN_W = 320,
+		SCREEN_H = 200,
+		SCREEN_PAGE_SIZE = 320 * 200 + 1024,
+		SCREEN_PAGE_NUM  = 16
 	};
+
+	enum DrawShapeFlags {
+		DSF_X_FLIPPED  = 0x01,
+		DSF_Y_FLIPPED  = 0x02,
+		DSF_SCALE      = 0x04,
+		DSF_WND_COORDS = 0x10,
+		DSF_CENTER     = 0x20
+	};
+	
+	typedef void (Screen::*DrawShapePlotPixelCallback)(uint8 *dst, uint8 c);
 
 private:
 
@@ -79,8 +102,18 @@ private:
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
 	uint8 *_pagePtrs[16];
+	uint8 *_palette3;
+	uint8 *_fadePalette;
+	const ScreenDim *_curDim;
+	uint8 *_decodeShapeBuffer;
+	int _decodeShapeBufferSize;
+	
 	OSystem *_system;
 	KyraEngine *_vm;
+	
+	static const ScreenDim _screenDimTable[];
+	static const DrawShapePlotPixelCallback _drawShapePlotPixelTable[];
+	static const int _drawShapePlotPixelCount;
 };
 
 } // End of namespace Kyra

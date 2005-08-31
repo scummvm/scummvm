@@ -29,21 +29,23 @@ namespace Kyra {
 Screen::Screen(KyraEngine *vm, OSystem *system)
 	: _system(system), _vm(vm) {
 	_curPage = 0;
-	for (int pageNum = 0; pageNum < KYRA_PAGE_NUM; pageNum += 2) {
-		uint8 *pagePtr = (uint8 *)malloc(KYRA_PAGE_SIZE);
+	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
+		uint8 *pagePtr = (uint8 *)malloc(SCREEN_PAGE_SIZE);
 		if (pagePtr) {
-			memset(pagePtr, 0, KYRA_PAGE_SIZE);
+			memset(pagePtr, 0, SCREEN_PAGE_SIZE);
 			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 		}
 	}
 	_palette1 = (uint8 *)malloc(768);
-	if (_palette1) {
-		memset(_palette1, 0, 768);
-	}
+	_palette3 = (uint8 *)malloc(768);
+	_fadePalette = (uint8 *)malloc(768);
+	_curDim = &_screenDimTable[0];
+	_decodeShapeBuffer = NULL;
+	_decodeShapeBufferSize = 0;
 }
 
 Screen::~Screen() {
-	for (int pageNum = 0; pageNum < KYRA_PAGE_NUM; pageNum += 2) {
+	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
 		free(_pagePtrs[pageNum]);
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
 	}
@@ -58,14 +60,14 @@ void Screen::updateScreen() {
 
 uint8 *Screen::getPagePtr(int pageNum) {
 	debug(9, "Screen::getPagePtr(%d)", pageNum);
-	assert(pageNum < KYRA_PAGE_NUM);
+	assert(pageNum < SCREEN_PAGE_NUM);
 	return _pagePtrs[pageNum];
 }
 
 void Screen::clearPage(int pageNum) {
 	debug(9, "Screen::clearPage(%d)", pageNum);
-	assert(pageNum < KYRA_PAGE_NUM);
-	memset(getPagePtr(pageNum), 0, KYRA_PAGE_SIZE);
+	assert(pageNum < SCREEN_PAGE_NUM);
+	memset(getPagePtr(pageNum), 0, SCREEN_PAGE_SIZE);
 }
 
 int Screen::setCurPage(int pageNum) {
@@ -77,11 +79,12 @@ int Screen::setCurPage(int pageNum) {
 
 void Screen::clearCurPage() {
 	debug(9, "Screen::clearCurPage()");
-	memset(getPagePtr(_curPage), 0, KYRA_PAGE_SIZE);
+	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
 }
 
 void Screen::fadeFromBlack() {
 	debug(9, "Screen::fadeFromBlack()");
+	memset(_palette3, 0, 768);
 	setScreenPalette(_palette1);
 	warning("Screen::fadeFromBlack() UNIMPLEMENTED");
 }
@@ -191,9 +194,194 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	warning("Screen::printText() UNIMPLEMENTED");
 }
 
+void Screen::setScreenDim(int dim) {
+	debug(9, "setScreenDim(%d)", dim);
+	_curDim = &_screenDimTable[dim];
+	// XXX
+}
+
+void Screen::drawShapePlotPixelCallback1(uint8 *dst, uint8 color) {
+	debug(9, "Screen::drawShapePlotPixelCallback1(0x%X, %d)", dst, color);
+	*dst = color;
+}
+
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable) {
 	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d)", pageNum, x, y, sd, flags);
-	warning("Screen::drawShape() UNIMPLEMENTED");
+	assert(shapeData);
+	if (flags & 0x8000) {
+		warning("unhandled (flags & 0x8000) in Video::drawShape()");
+	}
+	if (flags & 0x100) {
+		warning("unhandled (flags & 0x100) in Video::drawShape()");
+	}
+	if (flags & 0x1000) {
+		warning("unhandled (flags & 0x1000) in Video::drawShape()");
+	}
+	if (flags & 0x200) {
+		warning("unhandled (flags & 0x200) in Video::drawShape()");
+	}
+	if (flags & 0x4000) {
+		warning("unhandled (flags & 0x4000) in Video::drawShape()");
+	}
+	if (flags & 0x800) {
+		warning("unhandled (flags & 0x800) in Video::drawShape()");
+	}
+	int scale_w, scale_h;
+	if (flags & DSF_SCALE) {
+		scale_w = *flagsTable++;
+		scale_h = *flagsTable++;
+	} else {
+		scale_w = 0x100;
+		scale_h = 0x100;
+	}
+	
+	int ppc = (flags >> 8) & 0x3F;
+	assert(ppc < _drawShapePlotPixelCount);
+	DrawShapePlotPixelCallback plotPixel = _drawShapePlotPixelTable[ppc];
+	
+	const uint8 *src = shapeData;
+	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
+	
+	int shapeHeight = *src++;
+	int scaledShapeHeight = (shapeHeight * scale_h) >> 8;
+	if (scaledShapeHeight == 0) {
+		return;
+	}
+
+	int shapeWidth = READ_LE_UINT16(src); src += 2;
+	int scaledShapeWidth = (shapeWidth * scale_w) >> 8;
+	if (scaledShapeWidth == 0) {
+		return;
+	}
+
+	if (flags & DSF_CENTER) {
+		x -= scaledShapeWidth >> 1;
+		y -= scaledShapeHeight >> 1;
+	}
+	
+	src += 3;
+	
+	uint16 frameSize = READ_LE_UINT16(src); src += 2;
+	if ((shapeFlags & 1) || (flags & 0x400)) {
+		src += 0x10;
+	}
+	if (!(shapeFlags & 2)) {
+		decodeFrame4(src, _animBlockPtr, frameSize);
+		src = _animBlockPtr;
+	}
+	
+	int shapeSize = shapeWidth * shapeHeight;
+	if (_decodeShapeBufferSize < shapeSize) {
+		free(_decodeShapeBuffer);
+		_decodeShapeBuffer = (uint8 *)malloc(shapeSize);
+		_decodeShapeBufferSize = shapeSize;
+	}
+	if (!_decodeShapeBuffer) {
+		_decodeShapeBufferSize = 0;
+		return;
+	}
+	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
+	uint8 *decodedShapeFrame = _decodeShapeBuffer;
+	for (int j = 0; j < shapeHeight; ++j) {
+		uint8 *dsbNextLine = decodedShapeFrame + shapeWidth;
+		int count = shapeWidth;
+		while (count > 0) {
+			uint8 code = *src++;
+			if (code != 0) {
+				*decodedShapeFrame++ = code;
+				--count;
+			} else {
+				code = *src++;
+				decodedShapeFrame += code;
+				count -= code;
+			}
+		}
+		decodedShapeFrame = dsbNextLine;
+	}
+	
+	uint16 sx1 = _screenDimTable[sd].sx * 8;
+	uint16 sy1 = _screenDimTable[sd].sy;
+	uint16 sx2 = sx1 + _screenDimTable[sd].w * 8;
+	uint16 sy2 = sy1 + _screenDimTable[sd].h;
+	if (flags & DSF_WND_COORDS) {
+		x += sx1;
+		y += sy1;
+	}
+	
+	int x1, x2;
+	if (x >= 0) {
+		x1 = 0;
+		if (x + scaledShapeWidth < sx2) {
+			x2 = scaledShapeWidth;
+		} else {
+			x2 = sx2 - x;
+		}
+	} else {
+		x2 = scaledShapeWidth;
+		x1 = -x;
+		x = 0;
+		if (x2 > sx2) {
+			x2 = sx2;
+		}
+	}
+	
+	int y1, y2;
+	if (y >= 0) {
+		y1 = 0;
+		if (y + scaledShapeHeight < sy2) {
+			y2 = scaledShapeHeight;
+		} else {
+			y2 = sy2 - y;
+		}
+	} else {
+		y2 = scaledShapeHeight;
+		y1 = -y;
+		y = 0;
+		if (y2 > sy2) {
+			y2 = sy2;
+		}
+	}
+
+	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
+	
+	int scaleYTable[SCREEN_H];
+	assert(y1 >= 0 && y2 < SCREEN_H);
+	for (y = y1; y < y2; ++y) {
+		scaleYTable[y] = (y << 8) / scale_h;
+	}
+	int scaleXTable[SCREEN_W];
+	assert(x1 >= 0 && x2 < SCREEN_W);
+	for (x = x1; x < x2; ++x) {
+		scaleXTable[x] = (x << 8) / scale_w;
+	}
+	
+	const uint8 *shapeBuffer = _decodeShapeBuffer;
+	if (flags & DSF_Y_FLIPPED) {
+		shapeBuffer += shapeWidth * (shapeHeight - 1);
+	}
+	if (flags & DSF_X_FLIPPED) {
+		shapeBuffer += shapeWidth - 1;
+	}
+	
+	for (y = y1; y < y2; ++y) {
+		uint8 *dstNextLine = dst + SCREEN_W;
+		int j = scaleYTable[y];
+		if (flags & DSF_Y_FLIPPED) {
+			j = -j;
+		}
+		for (x = x1; x < x2; ++x) {
+			int i = scaleXTable[x];
+			if (flags & DSF_X_FLIPPED) {
+				i = -i;
+			}
+			uint8 color = shapeBuffer[j * shapeWidth + i];
+			if (color != 0) {
+				(this->*plotPixel)(dst, color);
+			}
+			++dst;
+		}
+		dst = dstNextLine;
+	}
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
@@ -382,7 +570,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 				*dst++ ^= *src++;
 				if (++count == pitch) {
 					count = 0;
-					dstNext += 320;
+					dstNext += SCREEN_W;
 					dst = dstNext;
 				}
 			}

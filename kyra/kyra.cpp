@@ -165,6 +165,9 @@ int KyraEngine::init(GameDetector &detector) {
 	_talkCoords.y = 0x88;
 	_talkCoords.x = 0;
 	_talkCoords.w = 0;
+	_talkMessageY = 0xC;
+	_talkMessageH = 0;
+	_talkMessagePrinted = false;
 
 	return 0;
 }
@@ -183,10 +186,6 @@ int KyraEngine::go() {
 	_quitFlag = false;
 	seq_intro();
 	return 0;
-}
-
-void KyraEngine::setTalkCoords(uint16 y) {
-	_talkCoords.y = y;
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
@@ -218,14 +217,105 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	delete[] srcData;
 }
 
+void KyraEngine::setTalkCoords(uint16 y) {
+	debug(9, "KyraEngine::setTalkCoords(%d)", y);
+	_talkCoords.y = y;
+}
+
+int KyraEngine::getCenterStringX(const char *str, int x1, int x2) {
+	debug(9, "KyraEngine::getCenterStringX('%s', %d, %d)", str, x1, x2);
+	warning("KyraEngine::getCenterStringX() UNIMPLEMENTED");
+	return 0;
+}
+
+int KyraEngine::getCharLength(const char *str, int len) {
+	debug(9, "KyraEngine::preprocessString('%s', %d)", str, len);
+	warning("KyraEngine::preprocessString() UNIMPLEMENTED");
+	return 0;
+}
+
+int KyraEngine::dropCRIntoString(char *str, int offs) {
+	debug(9, "KyraEngine::dropCRIntoString('%s', %d)", str, offs);
+	int pos = 0;
+	while (*str != '\0') {
+		if (*str == 0x20) {
+			*str = 0xD;
+			return pos;
+		}
+		++str;
+		++pos;
+	}
+	return 0;
+}
+
+char *KyraEngine::preprocessString(const char *str) {
+	debug(9, "KyraEngine::preprocessString('%s')", str);
+	warning("KyraEngine::preprocessString() UNIMPLEMENTED");
+	return 0;
+}
+
+int KyraEngine::buildMessageSubstrings(const char *str) {
+	debug(9, "KyraEngine::buildMessageSubstrings('%s')", str);
+	int currentLine = 0;
+	int pos = 0;
+	while (*str) {
+		if (*str == 0xD) {
+			_talkSubstrings[currentLine * 80 + pos] = 0;
+			++currentLine;
+			pos = 0;
+		} else {
+			_talkSubstrings[currentLine * 80 + pos] = *str;
+			++pos;
+			if (pos > 78) {
+				pos = 78;
+			}
+		}
+		++str;
+	}
+	_talkSubstrings[currentLine * 80 + pos] = '\0';
+	return currentLine + 1;
+}
+
+int KyraEngine::getWidestLineWidth(int linesCount) {
+	debug(9, "KyraEngine::getWidestLineWidth(%d)", linesCount);
+	warning("KyraEngine::getWidestLineWidth() UNIMPLEMENTED");
+	return 0;
+}
+
+void KyraEngine::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
+	debug(9, "KyraEngine::calcWidestLineBounds(%d, %d)", w, cx);
+	x1 = cx - w / 2;
+	if (x1 + w >= Screen::SCREEN_W - 12) {
+		x1 = Screen::SCREEN_W - 12 - w - 1;
+	} else if (x1 < 12) {
+		x1 = 12;
+	}
+	x2 = x1 + w + 1;
+}
+
 void KyraEngine::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
-	debug(9, "KyraEngine::printTalkTextMessage(%d, %d)", srcPage, dstPage);
-	warning("KyraEngine::restoreTalkTextMessageBkgd() UNIMPLEMENTED");
+	debug(9, "KyraEngine::restoreTalkTextMessageBkgd(%d, %d)", srcPage, dstPage);
+	if (_talkMessagePrinted) {
+		_talkMessagePrinted = false;
+		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+	}
 }
 
 void KyraEngine::printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage) {
 	debug(9, "KyraEngine::printTalkTextMessage('%s', %d, %d, %d, %d, %d)", text, x, y, color, srcPage, dstPage);
 	warning("KyraEngine::printTalkTextMessage() UNIMPLEMENTED");
+	_talkMessagePrinted = true;
+}
+
+void KyraEngine::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	uint8 colorMap[] = { 0, 15, 12, 12 };
+	colorMap[3] = c1;
+	_screen->setTextColor(colorMap, 0, 3);
+//	const uint8 *currentFont = _screen->setupFont(_res->_8fat_fnt);
+	_screen->_charWidth = -2;
+	_screen->printText(str, x, y, c0, c2);
+	_screen->_charWidth = 0;
+//	_screen->setupFont(currentFont);
 }
 
 void KyraEngine::waitTicks(int ticks) {
@@ -385,6 +475,7 @@ void KyraEngine::seq_copyView() {
 }
 
 bool KyraEngine::seq_skipSequence() const {
+	debug(9, "KyraEngine::seq_skipSequence()");
 	return _quitFlag;
 }
 
@@ -580,7 +671,6 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 					displayedTextX = (Screen::SCREEN_W - _screen->getTextWidth(str)) / 2;
 				}
 			}
-			warning("Sequence opcode 15 skipped");
 			break;
 		case 16: {
 				uint8 txt = *seqData++;

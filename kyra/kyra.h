@@ -77,10 +77,19 @@ protected:
 	int go();
 	int init(GameDetector &detector);
 
-	void setTalkCoords(uint16 y);
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
+
+	void setTalkCoords(uint16 y);
+	int getCenterStringX(const char *str, int x1, int x2);
+	int getCharLength(const char *str, int len);
+	int dropCRIntoString(char *str, int offs);
+	char *preprocessString(const char *str);
+	int buildMessageSubstrings(const char *str);
+	int getWidestLineWidth(int linesCount);
+	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
+	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
 	void waitTicks(int ticks);
 	
 	void seq_intro();
@@ -102,7 +111,11 @@ protected:
 	bool _fastMode;
 	bool _quitFlag;
 	bool _skipIntroFlag;
+	char _talkSubstrings[80 * 3];
 	TalkCoords _talkCoords;
+	uint16 _talkMessageY;
+	uint16 _talkMessageH;
+	bool _talkMessagePrinted;
 
 	int _seq_copyViewOffs;
 	uint8 *_seq_handShapes[3];
