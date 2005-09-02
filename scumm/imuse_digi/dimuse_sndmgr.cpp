@@ -265,7 +265,7 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
-			result = sound->bundle->open("music.bun", sound->compressed, false);
+			result = sound->bundle->open("music.bun", sound->compressed);
 		} else {
 			char musicfile[20];
 			if (disk == -1)
@@ -278,13 +278,13 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 //				sound->bundle->closeFile();
 //			}
 
-			result = sound->bundle->open(musicfile, sound->compressed);
+			result = sound->bundle->open(musicfile, sound->compressed, true);
 
 			// FIXME: Shouldn't we only set _disk if result == true?
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
 	} else if (_vm->_gameId == GID_DIG)
-		result = sound->bundle->open("digmusic.bun", sound->compressed);
+		result = sound->bundle->open("digmusic.bun", sound->compressed, true);
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
 
