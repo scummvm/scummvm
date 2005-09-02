@@ -387,10 +387,11 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		value2 = atoi(argv[4]);
 
 	if (!strcmp(argv[2], "animvar")) {
-
 		a->setAnimVar(value, value2);
 		DebugPrintf("Actor[%d].animVar[%d] = %d\n", actnum, value, a->getAnimVar(value));
-
+	} else if (!strcmp(argv[2], "anim")) {
+		a->animateActor(value);
+		DebugPrintf("Actor[%d].animateActor(%d)\n", actnum, value);
 	} else if (!strcmp(argv[2], "ignoreboxes")) {
 		a->_ignoreBoxes = (value > 0);
 		DebugPrintf("Actor[%d].ignoreBoxes = %d\n", actnum, a->_ignoreBoxes);

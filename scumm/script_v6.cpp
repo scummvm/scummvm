@@ -1271,6 +1271,15 @@ void ScummEngine_v6::o6_animateActor() {
 		// (593 is the time machine in room 57), or if this is simply a script bug.
 		act = 6;
 	}
+	if (_gameId == GID_SAMNMAX && _roomResource == 35 &&
+		vm.slot[_currentScript].number == 202 && act == 4 && anim == 14) {
+		// WORKAROUND bug #1223621 (Animation glitch at World of Fish).
+		// Before starting animation 14 of the fisherman, make sure he isn't
+		// talking anymore. This appears to be a bug in the original game as well.
+		if (getTalkingActor() == 4) {
+			stopTalk();
+		}
+	}
 	Actor *a = derefActor(act, "o6_animateActor");
 	a->animateActor(anim);
 }
