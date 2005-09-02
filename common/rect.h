@@ -36,7 +36,7 @@ struct Point {
 	int16 y;	//!< The vertical part of the point
 
 	Point() : x(0), y(0) {};
-	Point(const Point & p) : x(p.x), y(p.y) {};
+	Point(const Point &p) : x(p.x), y(p.y) {};
 	explicit Point(int16 x1, int16 y1) : x(x1), y(y1) {};
 	Point & operator=(const Point & p) { x = p.x; y = p.y; return *this; };
 	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
@@ -98,7 +98,7 @@ struct Rect {
 
 		@return true if the given point is inside this rectangle, false otherwise
 	*/
-	bool contains(const Point & p) const {
+	bool contains(const Point &p) const {
 		return contains(p.x, p.y);
 	}
 
@@ -108,7 +108,7 @@ struct Rect {
 
 		@return true if the given rectangle is inside the rectangle, false otherwise
 	*/
-	bool intersects(const Rect & r) const {
+	bool intersects(const Rect &r) const {
 		return (left < r.right) && (r.left < right) && (top < r.bottom) && (r.top < bottom);
 	}
 
@@ -116,7 +116,7 @@ struct Rect {
 
 		@param r the rectangle to extend by
 	*/
-	void extend(const Rect & r) {
+	void extend(const Rect &r) {
 		left = MIN(left, r.left);
 		right = MAX(right, r.right);
 		top = MIN(top, r.top);
@@ -134,7 +134,7 @@ struct Rect {
 		right += offset;
 	}
 
-	void clip(const Rect & r) {
+	void clip(const Rect &r) {
 		assert(isValidRect());
 		assert(r.isValidRect());
 
@@ -166,8 +166,12 @@ struct Rect {
 		left = x;
 	}
 
-	void moveTo(const Point & p) {
+	void moveTo(const Point &p) {
 		moveTo(p.x, p.y);
+	}
+
+	void debugPrint(int debuglevel = 0, const char *caption = "Rect:") const {
+		debug(debuglevel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
 	}
 };
 
