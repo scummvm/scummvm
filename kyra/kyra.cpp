@@ -433,7 +433,12 @@ uint8 *KyraEngine::seq_setPanPages(int pageNum, int shape) {
 	const uint8 *data = _screen->getPagePtr(pageNum);
 	uint16 numShapes = READ_LE_UINT16(data);
 	if (shape < numShapes) {
-		uint16 offs = READ_LE_UINT16(data + 2 + shape * 2);
+		uint32 offs = 0;
+		if (_game == KYRA1CD) {
+			offs = READ_LE_UINT32(data + 2 + shape * 4);
+		} else {
+			offs = READ_LE_UINT16(data + 2 + shape * 2);
+		}
 		if (offs != 0) {
 			data += offs;
 			uint16 sz = READ_LE_UINT16(data + 6);
