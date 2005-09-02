@@ -1189,11 +1189,18 @@ void Scene::endScene() {
 	_vm->_script->_skipSpeeches = false;
 
 	// Copy current screen to render buffer so inset rooms will get proper background
-	backBuffer= _vm->_gfx->getBackBuffer();
 	backGroundSurface = _vm->_render->getBackGroundSurface();
-	backBuffer->getRect(rect);
+	if (!(_sceneDescription.flags & kSceneFlagISO)) {
+		BGInfo bgInfo;
 
-	backGroundSurface->blit(rect, (const byte *)backBuffer->pixels);
+		_vm->_scene->getBGInfo(bgInfo);
+		backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
+	} else {
+		backBuffer = _vm->_gfx->getBackBuffer();
+		backBuffer->getRect(rect);
+		backGroundSurface->blit(rect, (const byte *)backBuffer->pixels);
+	}
+
 	// Free scene background
 	if (_bg.loaded) {
 		free(_bg.buf);
