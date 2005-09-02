@@ -71,6 +71,8 @@ public:
 	Screen *screen() { return _screen; }
 
 	uint8 game() const { return _game; }
+	
+	Common::RandomSource _rnd;
 
 protected:
 

@@ -53,12 +53,16 @@ public:
 	void clearPage(int pageNum);
 	int setCurPage(int pageNum);
 	void clearCurPage();
+	uint8 getPagePixel(int pageNum, int x, int y);
+	void setPagePixel(int pageNum, int x, int y, uint8 color);
 	void fadeFromBlack();
 	void fadeToBlack();
 	void setScreenPalette(const uint8 *palData);
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
 	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
+	void copyCurPageBlock(int x, int y, int h, int w, uint8 *dst);
+	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
 	void setAnimBlockPtr(uint8 *p, int size);
 	void setTextColorMap(const uint8 *cmap);

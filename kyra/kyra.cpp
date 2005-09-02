@@ -184,6 +184,7 @@ void KyraEngine::errorString(const char *buf1, char *buf2) {
 
 int KyraEngine::go() {
 	_quitFlag = false;
+	_screen->setScreenDim(0);
 	seq_intro();
 	return 0;
 }
@@ -237,7 +238,7 @@ int KyraEngine::getCharLength(const char *str, int len) {
 int KyraEngine::dropCRIntoString(char *str, int offs) {
 	debug(9, "KyraEngine::dropCRIntoString('%s', %d)", str, offs);
 	int pos = 0;
-	while (*str != '\0') {
+	while (*str) {
 		if (*str == 0x20) {
 			*str = 0xD;
 			return pos;
@@ -609,7 +610,11 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 			}
 			break;
 		case 8:
-			warning("Sequence opcode 8 skipped");
+			_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
+			_screen->_curPage = 2;
+			if (_seq_specialSequenceTempBuffer) {
+				_screen->copyCurPageBlock(0, 16, 40, 128, _seq_specialSequenceTempBuffer);
+			}
 			break;
 		case 9:
 			seq_copyView();

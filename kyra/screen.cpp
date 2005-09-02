@@ -72,6 +72,7 @@ void Screen::clearPage(int pageNum) {
 
 int Screen::setCurPage(int pageNum) {
 	debug(9, "Screen::setCurPage(%d)", pageNum);
+	assert(pageNum < SCREEN_PAGE_NUM);
 	int previousPage = _curPage;
 	_curPage = pageNum;
 	return previousPage;
@@ -80,6 +81,20 @@ int Screen::setCurPage(int pageNum) {
 void Screen::clearCurPage() {
 	debug(9, "Screen::clearCurPage()");
 	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
+}
+
+uint8 Screen::getPagePixel(int pageNum, int x, int y) {
+	debug(9, "Screen::getPagePixel(%d, %d, %d)", pageNum, x, y);
+	assert(pageNum < SCREEN_PAGE_NUM);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	return _pagePtrs[pageNum][y * SCREEN_W + x];
+}
+
+void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
+	debug(9, "Screen::setPagePixel(%d, %d, %d, %d)", pageNum, x, y, color);
+	assert(pageNum < SCREEN_PAGE_NUM);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 }
 
 void Screen::fadeFromBlack() {
@@ -142,6 +157,74 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 		}
 		dst += Screen::SCREEN_W;
 		src += w;
+	}
+}
+
+void Screen::copyCurPageBlock(int x, int y, int h, int w, uint8 *dst) {
+	debug(9, "Screen::copyCurPageBlock(%d, %d, %d, %d, 0x%X)", x, y, w, h, dst);
+	if (x < 0) {
+		x = 0;	
+	} else if (x >= 40) {
+		return;
+	}
+	if (x + w > 40) {
+		w = 40 - x;
+	}
+	if (y < 0) {
+		y = 0;
+	} else if (y >= 200) {
+		return;
+	}
+	if (y + h > 200) {
+		h = 200 - y;
+	}
+	const uint8 *src = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
+	while (h--) {
+		memcpy(dst, src, w * 8);
+		dst += SCREEN_W;
+		src += SCREEN_H;
+	}
+}
+
+void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent) {
+	debug(9, "Screen::shuffleScreen(%d, %d, %d, %d, %d, %d, %d, %d)", sx, sy, w, h, srcPage, dstPage, ticks, transparent);
+	assert(sx >= 0 && w <= SCREEN_W);
+	int x;
+	uint16 x_offs[SCREEN_W];
+	for (x = 0; x < SCREEN_W; ++x) {
+		x_offs[x] = x;
+	}
+	for (x = 0; x < w; ++x) {
+		int i = _vm->_rnd.getRandomNumber(w - 1);
+		SWAP(x_offs[x], x_offs[i]);
+	}
+	
+	assert(sy >= 0 && h <= SCREEN_H);
+	int y;
+	uint8 y_offs[SCREEN_H];
+	for (y = 0; y < SCREEN_H; ++y) {
+		y_offs[y] = y;
+	}
+	for (y = 0; y < h; ++y) {
+		int i = _vm->_rnd.getRandomNumber(h - 1);
+		SWAP(y_offs[y], y_offs[i]);
+	}
+	
+	for (y = 0; y < h; ++y) {
+		int y_cur = y;
+		for (x = 0; x < w; ++x) {
+			int i = sx + x_offs[x];
+			int j = sy + y_offs[y_cur];
+			++y_cur;
+			if (y_cur >= h) {
+				y_cur = 0;
+			}
+			uint8 color = getPagePixel(srcPage, i, j);
+			if (!transparent || color != 0) {
+				setPagePixel(dstPage, i, j, color);
+			}
+		}
+		_system->delayMillis(ticks * 1000 / 60);
 	}
 }
 
@@ -209,22 +292,22 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d)", pageNum, x, y, sd, flags);
 	assert(shapeData);
 	if (flags & 0x8000) {
-		warning("unhandled (flags & 0x8000) in Video::drawShape()");
+		warning("unhandled (flags & 0x8000) in Screen::drawShape()");
 	}
 	if (flags & 0x100) {
-		warning("unhandled (flags & 0x100) in Video::drawShape()");
+		warning("unhandled (flags & 0x100) in Screen::drawShape()");
 	}
 	if (flags & 0x1000) {
-		warning("unhandled (flags & 0x1000) in Video::drawShape()");
+		warning("unhandled (flags & 0x1000) in Screen::drawShape()");
 	}
 	if (flags & 0x200) {
-		warning("unhandled (flags & 0x200) in Video::drawShape()");
+		warning("unhandled (flags & 0x200) in Screen::drawShape()");
 	}
 	if (flags & 0x4000) {
-		warning("unhandled (flags & 0x4000) in Video::drawShape()");
+		warning("unhandled (flags & 0x4000) in Screen::drawShape()");
 	}
 	if (flags & 0x800) {
-		warning("unhandled (flags & 0x800) in Video::drawShape()");
+		warning("unhandled (flags & 0x800) in Screen::drawShape()");
 	}
 	int scale_w, scale_h;
 	if (flags & DSF_SCALE) {
