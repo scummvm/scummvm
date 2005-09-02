@@ -30,11 +30,13 @@
 
 namespace Saga {
 
-Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int enabled) :
-	_vm(vm), _mixer(mixer), _enabled(enabled), _voxStream(0) {
+Sound::Sound(SagaEngine *vm, Audio::Mixer *mixer, int volume) :
+	_vm(vm), _mixer(mixer), _voxStream(0) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
+
+	setVolume(volume == 10 ? 255 : volume * 25);
 }
 
 Sound::~Sound() {
@@ -136,6 +138,11 @@ void Sound::stopVoice() {
 void Sound::stopAll() {
 	stopVoice();
 	stopSound();
+}
+
+void Sound::setVolume(int volume) {
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
 }
 
 } // End of namespace Saga

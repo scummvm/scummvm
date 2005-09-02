@@ -32,16 +32,19 @@
 #include "saga/objectmap.h"
 #include "saga/isomap.h"
 #include "saga/itedata.h"
+#include "saga/music.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
 #include "saga/scene.h"
 #include "saga/script.h"
+#include "saga/sound.h"
 #include "saga/sprite.h"
 #include "saga/rscfile.h"
 #include "saga/resnames.h"
 
 #include "saga/interface.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -650,15 +653,14 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	int textWidth;
 	Rect rect;
 	Point textPoint;
-	int textId = panelButton->id;
 
-	switch (panelButton->id) {
-	case kTextReadingSpeed:
-		if (_vm->getFeatures() & GF_CD_FX)
-			textId = kTextShowDialog;
-		break;
-	}
-	text = _vm->getTextString(textId);
+	// Button differs for CD version
+	if (panelButton->id == kTextReadingSpeed && _vm->getFeatures() & GF_CD_FX)
+		return;
+	if (panelButton->id == kTextShowDialog && !(_vm->getFeatures() & GF_CD_FX))
+		return;
+
+	text = _vm->getTextString(panelButton->id);
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
 		textWidth = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontNormal);
@@ -1234,29 +1236,49 @@ void Interface::setOption(PanelButton *panelButton) {
 	char * fileName;
 	_optionPanel.currentButton = NULL;
 	switch (panelButton->id) {
-		case kTextContinuePlaying:
-			setMode(kPanelMain);
-			break;
-		case kTextQuitGame:
-			setMode(kPanelQuit);
-			break;
-		case kTextLoad:
-			if (_vm->getSaveFilesCount() > 0) {
-				if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
-					fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-					setMode(kPanelMain);
-					_vm->load(fileName);
-				}
+	case kTextContinuePlaying:
+		ConfMan.flushToDisk();
+		setMode(kPanelMain);
+		break;
+	case kTextQuitGame:
+		setMode(kPanelQuit);
+		break;
+	case kTextLoad:
+		if (_vm->getSaveFilesCount() > 0) {
+			if (_vm->isSaveListFull() || (_optionSaveFileTitleNumber > 0)) {
+				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
+				setMode(kPanelMain);
+				_vm->load(fileName);
 			}
-			break;
-		case kTextSave:
-			if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
-				_textInputString[0] = 0;
-			} else {
-				strcpy(_textInputString, _vm->getSaveFile(_optionSaveFileTitleNumber)->name);
-			}
-			setMode(kPanelSave);
-			break;
+		}
+		break;
+	case kTextSave:
+		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
+			_textInputString[0] = 0;
+		} else {
+			strcpy(_textInputString, _vm->getSaveFile(_optionSaveFileTitleNumber)->name);
+		}
+		setMode(kPanelSave);
+		break;
+	case kTextReadingSpeed:
+		if (_vm->getFeatures() & GF_CD_FX) {
+			_vm->_subtitlesEnabled = !_vm->_subtitlesEnabled;
+			ConfMan.set("subtitles", _vm->_subtitlesEnabled);
+		} else {
+			_vm->_readingSpeed = (_vm->_readingSpeed + 1) % 4;
+			ConfMan.set("talkspeed", _vm->_readingSpeed);
+		}
+		break;
+	case kTextMusic:
+		_vm->_musicVolume = (_vm->_musicVolume + 1) % 11;
+		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
+		ConfMan.set("music_volume", _vm->_musicVolume * 25);
+		break;
+	case kTextSound:
+		_vm->_soundVolume = (_vm->_soundVolume + 1) % 11;
+		_vm->_sound->setVolume(_vm->_soundVolume == 10 ? 255 : _vm->_soundVolume * 25);
+		ConfMan.set("sfx_volume", _vm->_soundVolume * 25);
+		break;
 	}
 }
 
@@ -1766,6 +1788,8 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 	ds->fillRect(fill, solidColor);
 }
 
+static const int readingSpeeds[] = { kTextFast, kTextMid, kTextSlow, kTextClick };
+
 void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
 	int textId;
@@ -1778,16 +1802,26 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	textId = panelButton->id;
 	switch(panelButton->id) {
 	case kTextReadingSpeed:
-		if (_vm->getFeatures() & GF_CD_FX)
-			textId = kTextOn;
-		else
-			textId = kTextFast;
+		if (_vm->getFeatures() & GF_CD_FX) {
+			if (_vm->_subtitlesEnabled)
+				textId = kTextOn;
+			else
+				textId = kTextOff;
+		} else {
+			textId = readingSpeeds[_vm->_readingSpeed];
+		}
 		break;
 	case kTextMusic:
-		textId = kTextOn;
+		if (_vm->_musicVolume)
+			textId = kText10Percent + _vm->_musicVolume - 1;
+		else
+			textId = kTextOff;
 		break;
 	case kTextSound:
-		textId = kTextOn;
+		if (_vm->_soundVolume)
+			textId = kText10Percent + _vm->_soundVolume - 1;
+		else
+			textId = kTextOff;
 		break;
 	}
 	text = _vm->getTextString(textId);

@@ -138,8 +138,6 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 		warning("Sound initialization failed.");
 	}
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-
 	_displayClip.left = _displayClip.top = 0;
 }
 
@@ -176,8 +174,13 @@ void SagaEngine::errorString(const char *buf1, char *buf2) {
 }
 
 int SagaEngine::init(GameDetector &detector) {
-	_soundEnabled = 1;
-	_musicEnabled = 1;
+	_soundVolume = ConfMan.getInt("sfx_volume") / 25;
+	_musicVolume = ConfMan.getInt("music_volume") / 25;
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
+	_readingSpeed = ConfMan.getInt("talkspeed");
+
+	if (_readingSpeed > 3)
+		_readingSpeed = 0;
 
 	_resource = new Resource(this);
 
@@ -237,11 +240,11 @@ int SagaEngine::init(GameDetector &detector) {
 	} else if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_music = new Music(this, _mixer, driver, _musicEnabled);
+	_music = new Music(this, _mixer, driver, _musicVolume);
 	_music->setNativeMT32(native_mt32);
 	_music->setAdlib(adlib);
 
-	if (!_musicEnabled) {
+	if (!_musicVolume) {
 		debug(1, "Music disabled.");
 	}
 
@@ -252,8 +255,8 @@ int SagaEngine::init(GameDetector &detector) {
 	}
 
 	// Initialize system specific sound
-	_sound = new Sound(this, _mixer, _soundEnabled);
-	if (!_soundEnabled) {
+	_sound = new Sound(this, _mixer, _soundVolume);
+	if (!_soundVolume) {
 		debug(1, "Sound disabled.");
 	}
 

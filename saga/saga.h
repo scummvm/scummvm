@@ -569,9 +569,10 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
-	int _soundEnabled;
-	int _musicEnabled;
-
+	int _soundVolume;
+	int _musicVolume;
+	bool _subtitlesEnabled;
+	int _readingSpeed;
 
 	SndRes *_sndRes;
 	Sound *_sound;

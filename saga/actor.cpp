@@ -918,7 +918,6 @@ void Actor::handleSpeech(int msec) {
 	int sampleLength;
 	bool removeFirst;
 	int i;
-	int talkspeed;
 	ActorData *actor;
 	int width, height, height2;
 	Point posPoint;
@@ -976,20 +975,29 @@ void Actor::handleSpeech(int msec) {
 
 	stringLength = strlen(_activeSpeech.strings[0]);
 
-	talkspeed = ConfMan.getInt("talkspeed");
 	if (_activeSpeech.speechFlags & kSpeakSlow) {
 		if (_activeSpeech.slowModeCharIndex >= stringLength)
 			error("Wrong string index");
 
 		warning("Slow string encountered!");
-		_activeSpeech.playingTime = 10 * talkspeed;
-		// 10 - fix it
+		_activeSpeech.playingTime = stringLength * 1000 / 4;
 
 	} else {
-		sampleLength = _vm->_sndRes->getVoiceLength(_activeSpeech.sampleResourceId); //fixme - too fast
+		sampleLength = _vm->_sndRes->getVoiceLength(_activeSpeech.sampleResourceId);
 
 		if (sampleLength < 0) {
-			_activeSpeech.playingTime = stringLength * talkspeed;
+			_activeSpeech.playingTime = stringLength * 1000 / 22;
+			switch (_vm->_readingSpeed) {
+			case 1:
+				_activeSpeech.playingTime *= 2;
+				break;
+			case 2:
+				_activeSpeech.playingTime *= 4;
+				break;
+			case 3:
+				_activeSpeech.playingTime = 0x7fffff;
+				break;
+			}
 		} else {
 			_activeSpeech.playingTime = sampleLength;
 		}
@@ -1599,7 +1607,8 @@ void Actor::drawActors() {
 }
 
 void Actor::drawSpeech(void) {
-	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches)
+	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches
+		|| !_vm->_subtitlesEnabled)
 		return;
 
 	int i;

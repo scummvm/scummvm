@@ -322,10 +322,11 @@ void Music::setVolume(int volume, int time) {
 	_currentVolumePercent = 0;
 
 	if (volume == -1) // Set Full volume
-		volume = ConfMan.getInt("music_volume");
+		volume = 255;
 
 	if (time == 1) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+		_player->setVolume(volume);
 		Common::g_timer->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = volume;
 		return;
@@ -447,7 +448,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	parser->setTimerRate(_player->getBaseTempo());
 
 	_player->_parser = parser;
-	_player->setVolume(ConfMan.getInt("music_volume"));
+	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
 
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
