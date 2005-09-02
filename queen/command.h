@@ -23,7 +23,6 @@
 #define QUEENCOMMAND_H
 
 #include "common/util.h"
-#include "queen/defs.h"
 #include "queen/structs.h"
 
 namespace Queen {

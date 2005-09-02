@@ -22,14 +22,11 @@
 #include "common/stdafx.h"
 #include "queen/debug.h"
 
-#include "queen/defs.h"
 #include "queen/graphics.h"
-#include "queen/input.h"
 #include "queen/logic.h"
 #include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
-#include "queen/structs.h"
 
 #include "common/debugger.cpp"
 

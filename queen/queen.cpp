@@ -28,7 +28,6 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
 

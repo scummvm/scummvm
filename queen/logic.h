@@ -24,7 +24,6 @@
 
 #include "common/str.h"
 #include "common/util.h"
-#include "queen/defs.h"
 #include "queen/structs.h"
 
 namespace Queen {
