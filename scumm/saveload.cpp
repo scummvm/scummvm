@@ -1088,7 +1088,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
-	_sprite->saveOrLoadSpriteData(&*s, savegameVersion);
+	_sprite->saveOrLoadSpriteData(s, savegameVersion);
 
 	s->saveLoadArrayOf(&_floodStateParams, 1, sizeof(_floodStateParams), floodStateEntries);
 

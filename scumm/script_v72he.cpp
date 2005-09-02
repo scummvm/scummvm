@@ -538,20 +538,13 @@ int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 	}
 
 	if (setFilePath) {
-		Common::File f;
-		char filePath[256], newFilePath[256];
-
+		char filePath[256];
 		sprintf(filePath, "%s%s", _gameDataPath.c_str(), dst + r);
-		if (f.exists(filePath)) {
-			sprintf(newFilePath, "%s%s", _gameDataPath.c_str(), dst + r);
-		} else {
-			sprintf(newFilePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
+		if (!Common::File::exists(filePath)) {
+			sprintf(filePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
 		}
-
-		len = resStrLen((const byte *)newFilePath);
-		memcpy(dst, newFilePath, len);
-		dst[len] = 0;
-		debug(0, "convertFilePath: newFilePath is %s", newFilePath);
+		strcpy((char *)dst, filePath);
+		debug(0, "convertFilePath: filePath is %s", dst);
 	}
 
 	return r;

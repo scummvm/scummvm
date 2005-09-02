@@ -600,13 +600,18 @@ void ScummEngine_v99he::initScummVars() {
 #endif
 
 void ScummEngine::initScummVars() {
-
 	if (_heversion < 70 && _version <= 6) {
 		switch (_midiDriver) {
-		case MD_NULL:  VAR(VAR_SOUNDCARD) = 0; break;
+		case MD_NULL:
+			VAR(VAR_SOUNDCARD) = 0;
+			break;
 		case MD_PCSPK:
-		case MD_PCJR:  VAR(VAR_SOUNDCARD) = 1; break;
-		case MD_ADLIB: VAR(VAR_SOUNDCARD) = 3; break;
+		case MD_PCJR:
+			VAR(VAR_SOUNDCARD) = 1;
+			break;
+		case MD_ADLIB:
+			VAR(VAR_SOUNDCARD) = 3;
+			break;
 		default:
 			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
 			   &&  (_platform == Common::kPlatformPC)) {
@@ -615,16 +620,12 @@ void ScummEngine::initScummVars() {
 					Common::File f;
 					for (int i = 82; i < 86; i++) {
 						sprintf(buf, "%d.LFL", i);
-						f.open(buf);
-						if (f.isOpen() == false)
+						if (!Common::File::exists(buf))
 							error("Native MIDI support requires Roland patch from LucasArts");
-						f.close();
 					}
 				} else if (_gameId == GID_MONKEY_EGA) {
-						Common::File f;
-						f.open("DISK09.LEC");
-						if (f.isOpen() == false)
-							error("Native MIDI support requires Roland patch from LucasArts");
+					if (!Common::File::exists("DISK09.LEC"))
+						error("Native MIDI support requires Roland patch from LucasArts");
 				}
 				VAR(VAR_SOUNDCARD) = 4;
 			} else {
@@ -670,10 +671,10 @@ void ScummEngine::initScummVars() {
 		}
 		if (_version >= 4) {
 			VAR(VAR_HEAPSPACE) = 1400;
-			VAR(VAR_FIXEDDISK) = true;
+			VAR(VAR_FIXEDDISK) = 1;
 		}
 		if (_version >= 5)
-			VAR(VAR_MOUSEPRESENT) = true;
+			VAR(VAR_MOUSEPRESENT) = 1;
 		if (_version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 	}

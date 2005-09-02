@@ -958,7 +958,7 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst, int dstSize);
-	int convertFilePath(byte *dst, bool setFilePath = 0);
+	int convertFilePath(byte *dst, bool setFilePath = false);
 
 	int findObject(int x, int y, int num, int *args);
 	int getSoundResourceSize(int id);
