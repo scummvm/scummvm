@@ -302,7 +302,7 @@ void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, cons
 	}
 }
 
-void Font::outFont(const FontStyle & drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
+void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
 	const byte *textPointer;
 	byte *c_dataPointer;
 	int c_code;
@@ -326,7 +326,7 @@ void Font::outFont(const FontStyle & drawFont, Surface *ds, const char *text, si
 		return;
 	}
 
-	textPointer = (const byte *) text;
+	textPointer = (const byte *)text;
 	ct = count;
 
 	// Draw string one character at a time, maximum of 'draw_str'_ct
@@ -382,7 +382,7 @@ void Font::outFont(const FontStyle & drawFont, Surface *ds, const char *text, si
 				// Check each bit, draw pixel if bit is set
 				for (c_bit = 7; c_bit >= 0 && (outputPointer < outputPointer_max); c_bit--) {
 					if ((*c_dataPointer >> c_bit) & 0x01) {
-						*outputPointer = (byte) color;
+						*outputPointer = (byte)color;
 					}
 					outputPointer++;
 				} // end per-bit processing
@@ -499,8 +499,8 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 		if ((w_total + w) > fitWidth) {
 			// This word won't fit
 			if (wc == 0) {
-				// The first word in the line didn't fit. abort
-				return textPoint.y;
+				// The first word in the line didn't fit. Still print it
+				searchPointer = measurePointer + 1;
 			}
 			// Wrap what we've got and restart
 			textPoint.y += h + TEXT_LINESPACING;
@@ -582,8 +582,8 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 		if ((w_total + w) > fitWidth) {
 			// This word won't fit
 			if (wc == 0) {
-				// The first word in the line didn't fit. abort
-				return;
+				w_total = fitWidth;
+				len_total = len;
 			}
 
 			// Wrap what we've got and restart
@@ -596,6 +596,9 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 			}
 			w_total = 0;
 			len_total = 0;
+			if (wc == 0) {
+				searchPointer = measurePointer + 1;
+			}
 			wc = 0;
 			measurePointer = searchPointer;
 			startPointer = searchPointer;
