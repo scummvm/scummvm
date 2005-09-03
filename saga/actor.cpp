@@ -2870,6 +2870,14 @@ void Actor::loadState(Common::InSaveFile *in) {
 	for (i = 0; i < _actorsCount; i++) {
 		ActorData *a = _actors[i];
 		a->loadState(_vm->getCurrentLoadVersion(), in);
+
+		// Fix bug #1258633 "ITE: Second Rif appears in wall of dog castle prison"
+		// For some reason in some cases actor position is all wrong, so Rif
+		// crawls to his original poition
+		if (i == 122 && _vm->getGameType() == GType_ITE) {
+			a->_location.x = 130;
+			a->_location.y = 55;
+		}
 	}
 
 	for (i = 0; i < _objsCount; i++) {

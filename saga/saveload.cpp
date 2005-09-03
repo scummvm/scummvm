@@ -167,8 +167,8 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	_saveHeader.type = MKID('SAGA');
 	_saveHeader.size = 0;
-	_saveHeader.version = CURRENT_SAGA_VER;
-	strcpy(_saveHeader.name, saveName);
+	_saveHeader.version = TO_LE_32(CURRENT_SAGA_VER);
+	strncpy(_saveHeader.name, saveName, SAVE_TITLE_SIZE);
 
 	out->write(&_saveHeader, sizeof(_saveHeader));
 
@@ -204,6 +204,9 @@ void SagaEngine::load(const char *fileName) {
 
 	in->read(&_saveHeader, sizeof(_saveHeader));
 
+	_saveHeader.size = FROM_LE_32(_saveHeader.size);
+	_saveHeader.version = FROM_LE_32(_saveHeader.version);
+
 	if (_saveHeader.type != MKID('SAGA')) {
 		error("SagaEngine::load wrong format");
 	}
@@ -235,7 +238,7 @@ void SagaEngine::load(const char *fileName) {
 	_scene->clearSceneQueue();
 	_scene->changeScene(sceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
 
-	_events->handleEvents(0); //dissolve back grounds
+	_events->handleEvents(0); //dissolve backgrounds
 
 	if (insetSceneNumber != sceneNumber) {
 		_render->setFlag(RF_DISABLE_ACTORS);

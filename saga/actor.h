@@ -234,6 +234,10 @@ struct Location {
 		y = stream.readUint16LE();
 		z = stream.readUint16LE();
 	}
+
+	void debugPrint(int debuglevel = 0, const char *loc = "Loc:") const {
+		debug(debuglevel, "%s %d, %d, %d", loc, x, y, z);
+	}
 };
 
 class CommonObjectData {
