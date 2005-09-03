@@ -35,7 +35,7 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	assert(directory);
 	strcpy(buf, directory);
 
-#if !defined(__GP32__) && !defined(__PALM_OS__)
+#if !defined(__GP32__) && !defined(PALMOS_MODE)
 	// Add a trailing slash, if necessary.
 	if (buf[0] != 0) {
 		const int dirLen = strlen(buf);

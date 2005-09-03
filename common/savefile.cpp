@@ -35,7 +35,7 @@ namespace Common {
 
 const char *SaveFileManager::getSavePath() const {
 
-#if defined(__PALM_OS__) || defined(__PSP__)
+#if defined(PALMOS_MODE) || defined(__PSP__)
 	return SCUMMVM_SAVEPATH;
 #else
 
@@ -161,7 +161,7 @@ static void join_paths(const char *filename, const char *directory,
 		if (buf[dirLen-1] != ':' && buf[dirLen-1] != '/')
 #endif
 
-#if !defined(__GP32__) && !defined(__PALM_OS__)
+#if !defined(__GP32__) && !defined(PALMOS_MODE)
 		strncat(buf, "/", bufsize-1);	// prevent double /
 #endif
 	}
