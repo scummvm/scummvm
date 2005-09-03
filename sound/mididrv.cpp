@@ -65,7 +65,7 @@ static const struct MidiDriverDescription midiDrivers[] = {
 	{"mt32", "MT-32", MD_MT32},
 #endif
 
-#if defined(__PALM_OS__)
+#if defined(PALMOS_MODE)
 	{"ypa1", "Yamaha Pa1", MD_YPA1},
 	{"zodiac", "Tapwave Zodiac", MD_ZODIAC},
 #endif
@@ -130,13 +130,13 @@ int MidiDriver::detectMusicDriver(int midiFlags) {
 					musicDriver = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
 				#elif defined(MACOSX)
 					musicDriver = MD_COREAUDIO;
-				#elif defined(__PALM_OS__)	// must be before mac
+				#elif defined(PALMOS_MODE)	// must be before mac
 					musicDriver = MD_YPA1;	// TODO : change this and use Zodiac driver when needed
 				#elif defined(__MORPHOS__)
 					musicDriver = MD_ETUDE;
 				#elif defined(_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND) || defined (__SYMBIAN32__)
 					// Always use MIDI emulation via adlib driver on CE and UNIX device
-
+				
 					// TODO: We should, for the Unix targets, attempt to detect
 					// whether a sequencer is available, and use it instead.
 					musicDriver = MD_ADLIB;
@@ -189,13 +189,14 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	// don't create anything for now.
 	case MD_PCSPK:
 	case MD_PCJR:      return NULL;
-#if defined(__PALM_OS__)
+#if defined(PALMOS_MODE)
+#if defined(COMPILE_CLIE)
 	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
-#ifndef DISABLE_TAPWAVE
+#elif defined(COMPILE_ZODIAC)
 	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #endif
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MORPHOS__)
@@ -204,7 +205,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
 	case MD_SEQ:       return MidiDriver_SEQ_create();
 #endif
-#if (defined(MACOSX) || defined(macintosh)) && !defined(__PALM_OS__)
+#if (defined(MACOSX) || defined(macintosh)) && !defined(PALMOS_MODE)
 	case MD_QTMUSIC:   return MidiDriver_QT_create();
 #endif
 #if defined(MACOSX)
@@ -218,3 +219,4 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	error("Invalid midi driver selected");
 	return NULL;
 }
+

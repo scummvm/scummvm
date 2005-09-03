@@ -38,7 +38,7 @@
 #include "common/config-manager.h"
 #endif
 
-#if defined(__PALM_OS__)
+#if defined(PALMOS_68K)
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
@@ -181,7 +181,7 @@ static int *VIB_TABLE;
 /* envelope output curve table */
 /* attack + decay + OFF */
 //static int ENV_CURVE[2*EG_ENT+1];
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 static int ENV_CURVE[2 * 4096 + 1];   // to keep it static ...
 #else
 static int *ENV_CURVE = NULL;   // to keep it static ...
@@ -451,7 +451,7 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 	env_out=OPL_CALC_SLOT(SLOT);
 	if(env_out < (uint)(EG_ENT - 1)) {
 		/* PG */
-		if(SLOT->vib)
+		if(SLOT->vib) 
 			SLOT->Cnt += (SLOT->Incr * vib / VIB_RATE);
 		else
 			SLOT->Cnt += SLOT->Incr;
@@ -487,7 +487,7 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 inline void OPL_CALC_RH(OPL_CH *CH) {
 	uint env_tam, env_sd, env_top, env_hh;
 	int whitenoise = int(oplRnd.getRandomNumber(1) * (WHITE_NOISE_db / EG_STEP));
-
+	
 	int tone8;
 
 	OPL_SLOT *SLOT;
@@ -584,7 +584,7 @@ static void init_timetables(FM_OPL *OPL, int ARRATE, int DRRATE) {
 		OPL->AR_TABLE[i] = OPL->DR_TABLE[i] = 0;
 	for (i = 4; i <= 60; i++){
 		rate = OPL->freqbase;						/* frequency rate */
-		if(i < 60)
+		if(i < 60) 
 			rate *= 1.0 + (i & 3) * 0.25;		/* b0-1 : x1 , x1.25 , x1.5 , x1.75 */
 		rate *= 1 << ((i >> 2) - 1);						/* b2-5 : shift bit */
 		rate *= (double)(EG_ENT << ENV_BITS);
@@ -604,7 +604,7 @@ static int OPLOpenTable(void) {
 	int i,j;
 	double pom;
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	if (!ENV_CURVE)
 		ENV_CURVE = (int *)calloc(2 * 4096 + 1, sizeof(int));
 #endif
@@ -689,7 +689,7 @@ static void OPLCloseTable(void) {
 	free(SIN_TABLE);
 	free(AMS_TABLE);
 	free(VIB_TABLE);
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	free(ENV_CURVE);
 	ENV_CURVE = NULL;
 #endif
@@ -732,7 +732,7 @@ static void OPL_initalize(FM_OPL *OPL) {
 
 /* ---------- write a OPL registers ---------- */
 void OPLWriteReg(FM_OPL *OPL, int r, int v) {
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ARM_START(OPLDriverType)
 		ARM_INIT(COMMON_OPLWRITEREG)
 		ARM_ADDM(OPL)
@@ -964,7 +964,7 @@ static void OPL_UnLockTable(void) {
 
 /* ---------- update one of chip ----------- */
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ARM_START(OPLDriverType)
 		ARM_INIT(COMMON_YM3812YPDATEONE)
 		ARM_ADDM(OPL)
@@ -973,7 +973,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 		ARM_CALL(ARM_COMMON, PNO_DATA())
 	ARM_END();
 #endif
-
+	
 	int i;
 	int data;
 	int16 *buf = buffer;
@@ -1183,7 +1183,7 @@ FM_OPL *makeAdlibOPL(int rate) {
 	}
 #endif
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	// HQ is really unstable on PalmOS (at least on ARM),
 	// don't know why... seems to read out of buffer ...
 	env_bits = FMOPL_ENV_BITS_MQ;
@@ -1200,3 +1200,4 @@ FM_OPL *makeAdlibOPL(int rate) {
 	OPLBuildTables(env_bits, eg_ent);
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 }
+
