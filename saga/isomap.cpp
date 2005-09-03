@@ -1364,8 +1364,8 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 
 	memset( &_dragonSearchArray, 0, sizeof(_dragonSearchArray));
 
-	for (u = 0; u < SAGA_DRAGON_SEARCH_CENTER; u++) {
-		for (v = 0; v < SAGA_DRAGON_SEARCH_CENTER; v++) {
+	for (u = 0; u < SAGA_DRAGON_SEARCH_DIAMETER; u++) {
+		for (v = 0; v < SAGA_DRAGON_SEARCH_DIAMETER; v++) {
 
 			pcell = _dragonSearchArray.getPathCell(u, v);
 
@@ -1380,8 +1380,8 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 			tile = getTile(u1, v1, _platformHeight );
 			if (tile != NULL) {
 				mask = tile->terrainMask;
-				if ( ((tile->terrainMask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
-					((tile->terrainMask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock)) ) {
+				if ( ((mask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
+					((mask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock)) ) {
 					pcell->visited = 1;
 				}
 			} else {

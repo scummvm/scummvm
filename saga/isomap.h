@@ -232,11 +232,11 @@ private:
 	uint16 _platformHeight;
 
 	struct DragonPathCell {
-		uint16 visited:1,direction:3;
+		uint8 visited:1,direction:3;
 	};
 	struct DragonTilePoint {
 		int8 u, v;
-		uint16 direction:4;
+		uint8 direction:4;
 	};
 	struct PathCell {
 		uint16 visited:1,direction:3,cost:12;
