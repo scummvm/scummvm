@@ -21,144 +21,152 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-FileRef	gStdioOutput = 0;
+#define	CACHE_SIZE	1024
+enum {
+	MODE_BUFREAD = 1,
+	MODE_BUFWRITE,
+	MODE_BUFNONE
+};
 
-static LedProc	gStdioLedProc = NULL;
+FILE gStdioOutput = {0,0,0,0,0,0};
+static void dummy(Boolean) {};
+
+static LedProc	gStdioLedProc = dummy;
 static UInt16	gStdioVolRefNum = sysInvalidRefNum;
+static UInt32	gCacheSize = CACHE_SIZE;
 
-static void dummy(Boolean){};
+// TODO : implement "errno"
 
-void StdioInit(UInt16 volRefNum, const Char *output, LedProc ledProc) {
+void StdioInit(UInt16 volRefNum, const Char *output) {	// DONE
 	gStdioVolRefNum = volRefNum;
+	gStdioOutput.mode = MODE_BUFWRITE;
+			
+	VFSFileDelete(gStdioVolRefNum, output);
+	VFSFileCreate(gStdioVolRefNum, output);
+	VFSFileOpen  (gStdioVolRefNum, output,vfsModeWrite, &gStdioOutput.fileRef);	
+}
 
+void StdioSetLedProc(LedProc ledProc) {	// DONE
 	if (ledProc)
 		gStdioLedProc = ledProc;
 	else
 		gStdioLedProc = dummy;
-
-	VFSFileDelete(gStdioVolRefNum, output);
-	VFSFileCreate(gStdioVolRefNum, output);
-	VFSFileOpen  (gStdioVolRefNum, output,vfsModeWrite, &gStdioOutput);
 }
 
-void StdioRelease() {
-	VFSFileClose(gStdioOutput);
+void StdioSetCacheSize(UInt32 s) {	// DONE
+	gCacheSize = s;
 }
 
-UInt16 fclose(FileRef *stream) {
-	Err error = VFSFileClose(*stream);
-
-	if (error == errNone)
-		MemPtrFree(stream);
-
-#ifdef _DEBUG_STDIO
-	FrmCustomAlert(FrmWarnAlert,"error fclose",0,0);
-#endif
-	return error;
+void StdioRelease() {	// DONE
+	// there is no cache on stdout/stderr
+	VFSFileClose(gStdioOutput.fileRef);
 }
 
-UInt16 feof(FileRef *stream) {
-	Err error = VFSFileEOF(*stream);
+UInt16 fclose(FILE *stream) {	// DONE
+	UInt32 numBytesWritten;
+	Err e;
+	
+	if (stream->cacheSize) {
+		if (stream->bufSize > 0 && stream->mode == MODE_BUFWRITE)
+				VFSFileWrite(stream->fileRef, stream->bufSize, stream->cache, &numBytesWritten);
 
-#ifdef _DEBUG_STDIO
-		switch (error)
-		{
-			case vfsErrFileEOF:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFileEOF",0,0);
-				break;
-			case expErrNotOpen:
-				FrmCustomAlert(FrmWarnAlert,"expErrNotOpen",0,0);
-				break;
-			case vfsErrFileBadRef:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFileBadRef",0,0);
-				break;
-			case vfsErrIsADirectory:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrIsADirectory",0,0);
-				break;
-			case vfsErrNoFileSystem:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrNoFileSystem",0,0);
+		MemPtrFree(stream->cache);
+	}
+
+	e = VFSFileClose(stream->fileRef);
+	e = MemPtrFree(stream);
+
+	return e;
+}
+
+UInt16 feof(FILE *stream) {	// DONE
+	Err e;
+	
+	if (stream->cacheSize) {
+		switch (stream->mode) {
+			case MODE_BUFWRITE:
+				return 0;	// never set in this mode
+			case MODE_BUFREAD:
+				if (stream->bufSize > 0)
+					return 0;
 				break;
 		}
-#endif
-
-	return error;
+	}
+	
+	e = VFSFileEOF(stream->fileRef);
+	return e;
 }
 
-Int16 fgetc(FileRef *stream) {
+UInt16 ferror(FILE *stream) {
+	return (stream->err);
+}
+
+Int16 fgetc(FILE *stream) {
 	UInt32 numBytesRead;
-	Err e;
 	Char c;
-
-	e = VFSFileRead(*stream, 1, &c, &numBytesRead);
-	return (int)(!e ? c : EOF);
+	
+	numBytesRead = fread(&c, 1, 1, stream);
+	return (int)(numBytesRead == 1 ? c : EOF);
 }
 
-Char *fgets(Char *s, UInt32 n, FileRef *stream) {
+Char *fgets(Char *s, UInt32 n, FILE *stream) {
 	UInt32 numBytesRead;
-	gStdioLedProc(true);
-	Err error = VFSFileRead(*stream, n, s, &numBytesRead);
-	gStdioLedProc(false);
-	if (error == errNone || error == vfsErrFileEOF) {
+
+	numBytesRead = fread(s, n, 1, stream);
+	if (numBytesRead) {
 		UInt32 reset = 0;
 		Char *endLine = StrChr(s, '\n');
-
+		
 		if (endLine >= s) {
 			reset = (endLine - s);
 			s[reset] = 0;
 			reset = numBytesRead - (reset + 1);
-			VFSFileSeek(*stream, vfsOriginCurrent, -reset);
+			fseek(stream, -reset, SEEK_CUR);
 		}
-
+	
 		return s;
 	}
-#ifdef _DEBUG_STDIO
-		switch (error)
-		{
-			case expErrNotOpen:
-				FrmCustomAlert(FrmWarnAlert,"expErrNotOpen",0,0);
-				break;
-			case vfsErrFileBadRef:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFileBadRef",0,0);
-				break;
-			case vfsErrFileEOF:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFileEOF",0,0);
-				break;
-			case vfsErrFilePermissionDenied:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFilePermissionDenied",0,0);
-				break;
-			case vfsErrIsADirectory:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrIsADirectory",0,0);
-				break;
-			case vfsErrNoFileSystem:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrNoFileSystem",0,0);
-				break;
-		}
-#endif
 
 	return NULL;
 }
 
-FileRef *fopen(const Char *filename, const Char *type) {
+FILE *fopen(const Char *filename, const Char *type) { // DONE
 	Err err;
 	UInt16 openMode;
-	FileRef *fileRefP = (FileRef *)MemPtrNew(sizeof(FileRef *));
+	Boolean cache = true;
+	FILE *fileP = (FILE *)MemPtrNew(sizeof(FILE));
+	
+	if (!fileP)
+		return NULL;
+	
+	MemSet(fileP, sizeof(FILE), 0);
+		
+	if (StrCompare(type,"r")==0 || StrCompare(type,"rb")==0) {
+		fileP->mode = MODE_BUFREAD;
+		openMode = vfsModeRead;
 
-	if (StrCompare(type,"r")==0)
-		openMode = vfsModeRead;
-	else if (StrCompare(type,"rb")==0)
-		openMode = vfsModeRead;
-	else if (StrCompare(type,"w")==0)
+	} else if (StrCompare(type,"w")==0 || StrCompare(type,"wb")==0) {
+		fileP->mode = MODE_BUFWRITE;
 		openMode = vfsModeCreate|vfsModeWrite;
-	else if (StrCompare(type,"wb")==0)
-		openMode = vfsModeCreate|vfsModeWrite;
-	else
+
+	} else {
+		cache = false;
+		fileP->mode = MODE_BUFNONE;
 		openMode = vfsModeReadWrite;
+	}
+
+	if (cache) {
+							fileP->cacheSize = gCacheSize;
+		if (gCacheSize)		fileP->cache = (UInt8 *)MemGluePtrNew(gCacheSize);
+		if (!fileP->cache)	fileP->cacheSize = 0;
+	}
 
 	if (openMode & vfsModeRead) {
 		// if read file :
 		// first try to load from the specfied card
-		err = VFSFileOpen (gStdioVolRefNum, filename, openMode, fileRefP);
+		err = VFSFileOpen (gStdioVolRefNum, filename, openMode, &fileP->fileRef);
 		//if err (not found ?) parse each avalaible card for the specified file
 		if (err) {
 			UInt16 volRefNum;
@@ -167,13 +175,13 @@ FileRef *fopen(const Char *filename, const Char *type) {
 				err = VFSVolumeEnumerate(&volRefNum, &volIterator);
 
 				if (!err) {
-					err = VFSFileOpen (volRefNum, filename, openMode, fileRefP);
+					err = VFSFileOpen (volRefNum, filename, openMode, &fileP->fileRef);
 					if (!err)
-						return fileRefP;
+						return fileP;
 				}
 			}
 		} else {
-			return fileRefP;
+			return fileP;
 		}
 	} else {
 		// if write file :
@@ -182,110 +190,164 @@ FileRef *fopen(const Char *filename, const Char *type) {
 		err = VFSFileCreate(gStdioVolRefNum, filename);
 		openMode = vfsModeWrite;
 		if (!err) {
-			err = VFSFileOpen (gStdioVolRefNum, filename, openMode, fileRefP);
+			err = VFSFileOpen (gStdioVolRefNum, filename, openMode, &fileP->fileRef);
 			if (!err)
-				return fileRefP;
+				return fileP;
 		}
 	}
 
-#ifdef _DEBUG_STDIO
-	else
-	{
-		switch (err)
-		{
-			case expErrCardReadOnly:
-				FrmCustomAlert(FrmWarnAlert,"expErrCardReadOnly",0,0);
-				break;
-			case expErrNotOpen:
-				FrmCustomAlert(FrmWarnAlert,"expErrNotOpen",0,0);
-				break;
-			case vfsErrBadName:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrBadName",0,0);
-				break;
-			case vfsErrFileNotFound:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFileNotFound",0,0);
-				break;
-			case vfsErrFilePermissionDenied:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrFilePermissionDenied",0,0);
-				break;
-			case vfsErrVolumeBadRef:
-				FrmCustomAlert(FrmWarnAlert,"vfsErrVolumeBadRef",0,0);
-				break;
-			default:
-				FrmCustomAlert(FrmWarnAlert,"unknow",0,0);
-				break;
-		}
-	}
-#endif
+	if (fileP->cacheSize)
+		MemPtrFree(fileP->cache);
 
-	MemPtrFree(fileRefP); // prevent memory leak
+	MemPtrFree(fileP); // prevent memory leak
 	return NULL;
 }
 
-UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
-	UInt32 numBytesRead;
-	gStdioLedProc(true);
-	Err error = VFSFileRead(*stream, size*nitems, ptr, &numBytesRead);
-	gStdioLedProc(false);
-	if (error == errNone || error == vfsErrFileEOF)
-		return (UInt32)(numBytesRead/size);
+UInt32 fread(void *ptr, UInt32 size, UInt32 nitems, FILE *stream) {	// DONE
+	Err e = errNone;
+	UInt32 numBytesRead, rsize = (size * nitems);
 
-#ifdef _DEBUG_STDIO
-		switch (error)
-		{
-			case expErrNotOpen:
-				FrmCustomAlert(FrmWarn,"expErrNotOpen",0,0);
-				break;
-			case vfsErrFileBadRef:
-				FrmCustomAlert(FrmWarn,"vfsErrFileBadRef",0,0);
-				break;
-			case vfsErrFileEOF:
-				FrmCustomAlert(FrmWarn,"vfsErrFileEOF",0,0);
-				break;
-			case vfsErrFilePermissionDenied:
-				FrmCustomAlert(FrmWarn,"vfsErrFilePermissionDenied",0,0);
-				break;
-			case vfsErrIsADirectory:
-				FrmCustomAlert(FrmWarn,"vfsErrIsADirectory",0,0);
-				break;
-			case vfsErrNoFileSystem:
-				FrmCustomAlert(FrmWarn,"vfsErrNoFileSystem",0,0);
-				break;
+	// try to read on a write only stream ?
+	if (stream->mode == MODE_BUFWRITE || !rsize)
+		return 0;
+
+	// cached ?
+	if (stream->cacheSize) {
+		// empty buffer ? fill it if required
+		if (stream->bufSize == 0 && rsize < stream->cacheSize) {
+			gStdioLedProc(true);
+			e = VFSFileRead(stream->fileRef, stream->cacheSize, stream->cache, &numBytesRead);
+			gStdioLedProc(false);
+			stream->bufSize = numBytesRead;
+			stream->bufPos = 0;
+		} 
+
+		// we have the data in the cache
+		if (stream->bufSize >= rsize) {
+			MemMove(ptr, (stream->cache + stream->bufPos), rsize);
+			stream->bufPos += rsize;
+			stream->bufSize -= rsize;
+			numBytesRead = rsize;
+
+		// not enough but something ?
+		} else if (stream->bufSize > 0) {
+			UInt8 *next = (UInt8 *)ptr;
+			MemMove(ptr, (stream->cache + stream->bufPos), stream->bufSize);
+			rsize -= stream->bufSize;
+			gStdioLedProc(true);
+			e = VFSFileRead(stream->fileRef, rsize, (next + stream->bufSize), &numBytesRead);
+			gStdioLedProc(false);
+			numBytesRead += stream->bufSize;
+			stream->bufSize = 0;
+			stream->bufPos = 0;
+
+		// nothing in the cache ?
+		} else {
+			gStdioLedProc(true);
+			e = VFSFileRead(stream->fileRef, rsize, ptr, &numBytesRead);
+			gStdioLedProc(false);
 		}
-#endif
+
+	// no ? direct read
+	} else {
+		gStdioLedProc(true);
+		e = VFSFileRead(stream->fileRef, rsize, ptr, &numBytesRead);
+		gStdioLedProc(false);
+	}
+
+	if (e == errNone || e == vfsErrFileEOF)
+		return (UInt32)(numBytesRead / size);
+
 	return 0;
 }
 
-UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream) {
+UInt32 fwrite(const void *ptr, UInt32 size, UInt32 nitems, FILE *stream) { // DONE
+	Err e = errNone;
+	UInt32 numBytesWritten = (size * nitems);
+	
+	// try to write on a read only stream ?
+	if (stream->mode == MODE_BUFREAD || !numBytesWritten)
+		return 0;
+	
+	// cached ?
+	if (stream->cacheSize) {
+		// can cache it ?
+		if ((stream->bufSize + numBytesWritten) <= stream->cacheSize) {
+			MemMove((stream->cache + stream->bufSize), ptr, numBytesWritten);
+			stream->bufSize += numBytesWritten;
+
+		// not enough room ? write cached data and new data
+		} else {
+			gStdioLedProc(true);
+			e = VFSFileWrite(stream->fileRef, stream->bufSize, stream->cache, &numBytesWritten);
+			e = VFSFileWrite(stream->fileRef, (size * nitems), ptr, &numBytesWritten);
+			gStdioLedProc(false);
+			stream->bufSize = 0;
+		}
+	
+	// no ? direct write
+	} else {
+		gStdioLedProc(true);
+		e = VFSFileWrite(stream->fileRef, (size * nitems), ptr, &numBytesWritten);
+		gStdioLedProc(false);
+	}
+
+	if ((e == errNone || e == vfsErrFileEOF)) {
+		return (UInt32)(numBytesWritten / size);
+	}
+
+	return 0;
+}
+
+Int16 fseek(FILE *stream, Int32 offset, Int32 whence) {	// DONE
 	UInt32 numBytesWritten;
-	gStdioLedProc(true);
-	Err error = VFSFileWrite(*stream, size*nitems, ptr, &numBytesWritten);
-	gStdioLedProc(false);
+	Err e;
 
-	if (error == errNone || error == vfsErrFileEOF)
-		return (UInt32)(numBytesWritten/size);
+	if (stream->cacheSize) {
+		switch (stream->mode) {
+			case MODE_BUFWRITE:
+				e = VFSFileWrite(stream->fileRef, stream->bufSize, stream->cache, &numBytesWritten);
+				stream->bufSize = 0;
+				break;
 
-	return NULL;
+			case MODE_BUFREAD:
+				// reposition file postion if needed
+				if (whence == SEEK_CUR)
+					e = VFSFileSeek(stream->fileRef, vfsOriginCurrent, -stream->bufSize);
+				stream->bufSize = 0;
+				stream->bufPos = 0;
+				break;
+		}
+	}
+		
+	e = VFSFileSeek(stream->fileRef, whence, offset);
+	return (e ? -1 : 0);
 }
 
-Int32 fseek(FileRef *stream, Int32 offset, Int32 whence) {
-	Err error = VFSFileSeek(*stream, whence, offset);
-	return error;
-}
-
-UInt32 ftell(FileRef *stream) {
+Int32 ftell(FILE *stream) { // DONE
 	Err e;
 	UInt32 filePos;
 
-	e = VFSFileTell(*stream,&filePos);
-	if (e != errNone)
-		return e;
+	e = VFSFileTell(stream->fileRef ,&filePos);
 
+	if (stream->cacheSize) {
+		switch (stream->mode) {
+			case MODE_BUFWRITE:
+				filePos += stream->bufSize;
+				break;
+
+			case MODE_BUFREAD:
+				filePos -= stream->bufSize;
+				break;
+		}
+	}
+
+	if (e) return -1; // errno = ?
 	return filePos;
 }
 
-Int32 fprintf(FileRef *stream, const Char *formatStr, ...) {
-	if (!*stream)
+Int32 fprintf(FILE *stream, const Char *formatStr, ...) { // DONE
+	if (!stream->fileRef)
 		return 0;
 
 	UInt32 numBytesWritten;
@@ -296,12 +358,12 @@ Int32 fprintf(FileRef *stream, const Char *formatStr, ...) {
 	vsprintf(buf, formatStr, va);
 	va_end(va);
 
-	VFSFileWrite (*stream, StrLen(buf), buf, &numBytesWritten);
+	numBytesWritten = fwrite(buf, StrLen(buf), 1, stream);
 	return numBytesWritten;
 }
 
-Int32 printf(const Char *format, ...) {
-	if (!*stdout)
+Int32 printf(const Char *format, ...) { // DONE
+	if (!stdout->fileRef)
 		return 0;
 
 	UInt32 numBytesWritten;
@@ -312,7 +374,7 @@ Int32 printf(const Char *format, ...) {
 	vsprintf(buf, format, va);
 	va_end(va);
 
-	VFSFileWrite (*stdout, StrLen(buf), buf, &numBytesWritten);
+	numBytesWritten = fwrite(buf, StrLen(buf), 1, stdout);
 	return numBytesWritten;
 }
 
@@ -323,7 +385,7 @@ Int32 sprintf(Char* s, const Char* formatStr, ...) {
 	va_start(va, formatStr);
 	count = vsprintf(s, formatStr, va);
 	va_end(va);
-
+	
 	return count;
 }
 
@@ -335,7 +397,7 @@ Int32 snprintf(Char* s, UInt32 len, const Char* formatStr, ...) {
 	va_start(va, formatStr);
 	count = vsprintf(s, formatStr, va);
 	va_end(va);
-
+	
 	return count;
 }
 
@@ -345,7 +407,7 @@ Int32 snprintf(Char* s, UInt32 len, const Char* formatStr, ...) {
  * This function can handle only %[+- ][.0][field length][sxXdoiucp] format strings
  * compiler option : 4byte int mode only !
  *
- * TODO : check http://www.ijs.si/software/snprintf/ for a potable implementation of vsnprintf
+ * TODO : check http://www.ijs.si/software/snprintf/ for a portable implementation of vsnprintf
  * This one make use of sprintf so need to check if it works with PalmOS.
  */
 
@@ -354,11 +416,11 @@ static Char *StrIToBase(Char *s, Int32 i, UInt8 b) {
 	Char o;
 	Int16 c, n = 0;
 	Int32 div, mod;
-
+	
 	do {
 		div = i / b;
 		mod = i % b;
-
+		
 		s[n++]	= *(conv + mod);
 		i		= div;
 
@@ -384,7 +446,7 @@ static Char *StrIToBase(Char *s, Int32 i, UInt8 b) {
 static void StrProcC_(Char *ioStr, UInt16 maxLen) {
 	Char *found;
 	Int16 length;
-
+	
 	while (found = StrStr(ioStr, "`c`")) {
 		if (found[3] == 0) { 						// if next char is NULL
 			length = maxLen - (found - ioStr + 2);
@@ -398,10 +460,10 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 	Char *found, *last, mod, fill;
 	Int16 len, count, next;
 	Int32 val;
-
+		
 	while (found = StrChr(ioStr, '`')) {
 		last = StrChr(found + 1, '`');
-
+		
 		if (!last)
 			return;
 
@@ -415,9 +477,9 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 		MemMove(found, (last + 1), len);
 
 		// x and X always 8char on palmos ... o set to 8char (not supported on palmos)
-		while (found[next] == '0' || found[next] == ' ')	// WARNING : reduce size only (TODO ?)
+		while ((found[next] == '0' || found[next] == ' ') && next < 8)	// WARNING : reduce size only (TODO ?)
 			next++;
-
+		
 		// convert to base 8
 		if (mod == 'o') {
 			StrNCopy(tmp, found + next, 8 - next);
@@ -434,7 +496,7 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 
 		if ((8 - next) > count)
 			count = 8 - next;
-
+			
 		if (count == 0)
 			count = 1;
 
@@ -455,12 +517,12 @@ static void StrProcXO(Char *ioStr, UInt16 maxLen, Char *tmp) {
 
 Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 	Char format[256], result[256], tmp[32];
-
+	
 	Char *found, *mod, *num;
 	UInt32 next;
 	Boolean zero;
 	Int16 count, len;
-
+	
 	MemSet(format, sizeof(format), 'x');
 	MemSet(result, sizeof(result), 'y');
 	MemSet(tmp, sizeof(tmp), 'z');
@@ -470,7 +532,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 
 	while (found = StrChr(format + next, '%')) {
 		mod = found + 1;
-
+		
 		if (*mod == '%') {			// just a % ?
 			mod++;
 
@@ -479,7 +541,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 				*mod == '-' ||
 				*mod == ' '	)		// skip
 				mod++;
-
+			
 			if (*mod == '0' ||
 				*mod == '.' ) {
 				*mod++ = '0';
@@ -487,12 +549,12 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 			} else {
 				zero = false;
 			}
-
+			
 			num = mod;
 			while (	*mod >= '0' &&
 					*mod <= '9'	)	// search format char
 				mod++;
-
+			
 			// get the numeric value
 			if (num < mod) {
 				StrNCopy(tmp, num, mod - num);
@@ -506,27 +568,30 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 				mod++;
 
 			// prepare new format
+#if !defined(COMPILE_ZODIAC) || defined(PALMOS_68K)
 			if (*mod == 'c') {
 				StrCopy(tmp, "`c`%c%c");
 
-			} else if (*mod == 'p') {
+			} else
+#endif
+			if (*mod == 'p') {
 				StrCopy(tmp, "%08lX");			// %x = %08X in palmos
 
 			} else {
 				len = 0;
-
+	
 				switch (*mod) {
 					case 'x':
 					case 'X':
 					case 'o':
 						tmp[0] = '`';
 						tmp[1] = (zero) ? '0' : ' ';
-						tmp[2] = *mod;
+						tmp[2] = *mod;	
 						StrIToA(tmp + 3, count);
 						len += StrLen(tmp);
 						tmp[len++] = '`';
 						tmp[len] = 0;
-
+						
 						if (*mod == 'o') {	// set as base 10 num and convert later
 							*mod = 'd';
 							count = 8;		// force 8char
@@ -534,7 +599,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 
 						break;
 				}
-
+					
 				StrNCopy(tmp + len, found, (num - found));
 				len += (num - found);
 
@@ -542,12 +607,12 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 					StrIToA(tmp + len, count);
 					len += StrLen(tmp + len);
 				}
-
+				
 				if (*mod == 'd' ||
 					*mod == 'i' ||
 					*mod == 'x' ||
 					*mod == 'X' ||
-					*mod == 'u'
+					*mod == 'u' 
 					) {
 					tmp[len++] = 'l';
 				}
@@ -561,15 +626,17 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 			StrNCopy(found, tmp, StrLen(tmp));
 			mod = found + StrLen(tmp);
 		}
-
+		
 		next = (mod - format);
 	}
-
+	
 	// Copy result in a temp buffer to process last formats
 	StrVPrintF(result, format, argParam);
+#if !defined(COMPILE_ZODIAC) || defined(PALMOS_68K)
 	StrProcC_(result, 256);
+#endif
 	StrProcXO(result, 256, tmp);
 	StrCopy(s, result);
-
+	
 	return StrLen(s);
 }

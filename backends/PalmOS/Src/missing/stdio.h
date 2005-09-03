@@ -23,16 +23,32 @@
 #ifndef __STDIO_H__
 #define __STDIO_H__
 
-#include <PalmOS.h>
-#include <VFSMgr.h>
+#include "palmversion.h"
 #include <stdarg.h>
 
 typedef void (*LedProc)(Boolean show);
 
-extern FileRef	gStdioOutput;
+typedef struct {
+	FileRef fileRef;
+	UInt32 cacheSize, bufSize, bufPos;
+	UInt8 *cache;
+	UInt16 mode, err;
+} FILE;
 
-typedef FileRef FILE;
+extern FILE	gStdioOutput;
 typedef UInt32 size_t;
+
+#ifdef stdin
+#undef stdin
+#undef stdout
+#undef stderr
+#endif
+
+#ifdef SEEK_SET
+#undef SEEK_SET
+#undef SEEK_CUR
+#undef SEEK_END
+#endif
 
 #define stdin		0
 #define stdout		(&gStdioOutput)
@@ -43,27 +59,31 @@ typedef UInt32 size_t;
 #define vsnprintf(a,b,c,d)	vsprintf(a,c,d)
 #define getc(a)				fgetc(a)
 
-#define	SEEK_SET			vfsOriginBeginning
-#define	SEEK_CUR			vfsOriginCurrent
+#define	SEEK_SET			vfsOriginBeginning 
+#define	SEEK_CUR			vfsOriginCurrent  
 #define	SEEK_END			vfsOriginEnd
 
-UInt16		fclose	(FileRef *stream);
-UInt16		feof	(FileRef *stream);
-Char *		fgets	(Char *s, UInt32 n, FileRef *stream);
-Int16		fgetc	(FileRef *stream);
-FileRef *	fopen	(const Char *filename, const Char *type);
-UInt32		fread	(void *ptr, UInt32 size, UInt32 nitems, FileRef *stream);
-UInt32		fwrite	(const void *ptr, UInt32 size, UInt32 nitems, FileRef *stream);
-Int32		fseek	(FileRef *stream, Int32 offset, Int32 whence);
-UInt32		ftell	(FileRef *stream);
 
-Int32	fprintf	(FileRef *stream, const Char *formatStr, ...);
+UInt16		fclose	(FILE *stream);
+UInt16		feof	(FILE *stream);
+UInt16		ferror	(FILE *stream);
+Char *		fgets	(Char *s, UInt32 n, FILE *stream);
+Int16		fgetc	(FILE *stream);
+FILE *		fopen	(const Char *filename, const Char *type);
+UInt32		fread	(void *ptr, UInt32 size, UInt32 nitems, FILE *stream);
+UInt32		fwrite	(const void *ptr, UInt32 size, UInt32 nitems, FILE *stream);
+Int16		fseek	(FILE *stream, Int32 offset, Int32 whence);
+Int32		ftell	(FILE *stream);
+
+Int32	fprintf	(FILE *stream, const Char *formatStr, ...);
 Int32	printf	(const Char* formatStr, ...);
 Int32	sprintf	(Char* s, const Char* formatStr, ...);
 Int32	snprintf(Char* s, UInt32 len, const Char* formatStr, ...);
 Int32	vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam);
 
-void	StdioInit	(UInt16 volRefNum, const Char *output, LedProc ledProc);
-void	StdioRelease();
+void	StdioInit			(UInt16 volRefNum, const Char *output);
+void	StdioSetLedProc		(LedProc ledProc);
+void	StdioSetCacheSize	(UInt32 s);
+void	StdioRelease		();
 
 #endif
