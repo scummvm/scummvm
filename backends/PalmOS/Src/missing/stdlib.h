@@ -23,8 +23,15 @@
 #ifndef STDLIB_H
 #define STDLIB_H
 
-#include <PalmOS.h>
+#include "palmversion.h"
+
+#ifdef PALMOS_68K
 #include "MemGlue.h"
+#endif
+
+#if defined(COMPILE_ZODIAC) && defined(PALMOS_ARM)
+#define MemGluePtrNew	MemPtrNew
+#endif
 
 extern ErrJumpBuf stdlib_errJumpBuf;
 
@@ -34,11 +41,15 @@ extern ErrJumpBuf stdlib_errJumpBuf;
 #define atoi				StrAToI
 #define atol				StrAToI
 #define abs(a)				((a) < 0 ? -(a) : (a))
-//#define abs					fabs
 #define	malloc(a)			MemGluePtrNew(a)
-//#define free				MemPtrFree
-//#define strtol(a,b,c)		StrAToI(a)
+
+#ifdef PALMOS_68K
 #define qsort(a,b,c,d)		SysQSort((a), (b), (c), (CmpFuncPtr)(&d), 0);
+#else
+typedef  int 	(*_compare_function)(const void*, const void*);
+extern "C" void qsort(void * table_base, size_t num_members, size_t member_size, _compare_function compare_members);
+#endif
+
 #define rand()				SysRandom(0)
 #define abort()
 #define strtoul(a,b,c)		((unsigned long)strtol(a,b,c))

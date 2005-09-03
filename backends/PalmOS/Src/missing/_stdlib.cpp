@@ -23,10 +23,15 @@
 #include <stdlib.h>
 
 void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *)) {
+#ifdef PALMOS_68K
 	Int32 position;
-
 	if (SysBinarySearch(base, nmemb, size, (SearchFuncPtr)compar, key, 0, &position, true))
 		return (void *)((UInt32)base + size * position);
+#else
+	for (int i = 0; i < nmemb; i++) 
+		if (compar(key, (void*)((UInt32)base + size * i)) == 0)
+			return (void*)((UInt32)base + size * i);
+#endif
 
 	return NULL;
 }
@@ -34,11 +39,11 @@ void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int 
 long strtol(const char *s, char **endptr, int base) {
 	// WARNING : only base = 10 supported
 	long val = StrAToI(s);
-
+	
 	if (endptr) {
 		Char str[maxStrIToALen];
 		StrIToA(str, val);
-
+		
 		if (StrNCompare(s, str, StrLen(str)) == 0)
 			*endptr = (char *)s + StrLen(str);
 	}
@@ -65,18 +70,18 @@ Err free(MemPtr memP) {
 }
 
 MemPtr realloc(MemPtr oldP, UInt32 size) {
-
+	
 	if (oldP != NULL)
 		if (MemPtrResize(oldP,size) == 0)
 			return oldP;
 
 	MemPtr	newP = MemPtrNew(size);
-
+	
 	if (oldP!=NULL)
 	{
 		MemMove(newP,oldP,MemPtrSize(oldP));
 		MemPtrFree(oldP);
-	}
+	}	
 	return newP;
 }
 
@@ -84,8 +89,13 @@ ErrJumpBuf stdlib_errJumpBuf;
 #define ERR_MAGIC	0xDADA
 
 void exit(Int16 status) {
+#ifdef PALMOS_68K
 	EventType event;
 	event.eType = keyDownEvent;
+#else
+	SysEventType event;
+	event.eType = sysEventKeyDownEvent;
+#endif
 	event.data.keyDown.chr = vchrLaunch;
 	event.data.keyDown.modifiers = commandKeyMask;
 	EvtAddUniqueEventToQueue(&event, 0, true);

@@ -23,7 +23,11 @@
 #ifndef __MATH_H__
 #define __MATH_H__
 
-#include "mathlib.h"
+#ifndef PALMOS_ARM
+#	include "mathlib.h"
+#else
+#	include "matharm.h"
+#endif
 
 #ifndef M_PI
 #	define M_PI 3.14159265358979323846

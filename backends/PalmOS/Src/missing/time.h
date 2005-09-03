@@ -23,7 +23,7 @@
 #define __TIME_H__
 
 
-#include <PalmOS.h>
+#include "palmversion.h"
 
 typedef UInt32 time_t;
 
