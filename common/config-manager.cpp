@@ -62,12 +62,23 @@ static bool isValidDomainName(const Common::String &domain) {
 
 namespace Common {
 
+#ifndef PALMOS_ARM
+
 const String ConfigManager::kApplicationDomain("scummvm");
 const String ConfigManager::kTransientDomain("__TRANSIENT");
 
 const String trueStr("true");
 const String falseStr("false");
 
+#else
+
+const char *ConfigManager::kApplicationDomain = "scummvm";
+const char *ConfigManager::kTransientDomain = "__TRANSIENT";
+
+const char *trueStr = "true";
+const char *falseStr = "false";
+
+#endif
 
 #pragma mark -
 
@@ -89,7 +100,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 		GetWindowsDirectory(configFile, MAXPATHLEN);
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	#elif defined(__PALM_OS__)
+	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(__PLAYSTATION2__)
 		strcpy(configFile, "mc0:ScummVM/" DEFAULT_CONFIG_FILE);
@@ -101,7 +112,6 @@ void ConfigManager::loadDefaultConfigFile() {
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	#endif
 #endif
-
 	loadConfigFile(configFile);
 }
 
