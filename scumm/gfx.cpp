@@ -29,7 +29,7 @@
 #include "scumm/usage_bits.h"
 #include "scumm/wiz_he.h"
 
-#if defined(__PALM_OS__)
+#if defined(PALMOS_68K)
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
@@ -80,7 +80,7 @@ struct TransitionEffect {
 	byte stripTable[16];	// ditto
 };
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const TransitionEffect *transitionEffects;
 #else
 static const TransitionEffect transitionEffects[6] = {
@@ -100,7 +100,7 @@ static const TransitionEffect transitionEffects[6] = {
 			0,  0,  0, 24
 		}
 	},
-
+	
 	// Box wipe (a box expands from the upper-left corner to the lower-right corner)
 	{
 		25,		// Number of iterations
@@ -117,7 +117,7 @@ static const TransitionEffect transitionEffects[6] = {
 		  255,  0,  0,  0
 		}
 	},
-
+	
 	// Box wipe (a box expands from the lower-right corner to the upper-left corner)
 	{
 		25,		// Number of iterations
@@ -134,7 +134,7 @@ static const TransitionEffect transitionEffects[6] = {
 		  255,  0,  0,  0
 		}
 	},
-
+	
 	// Inverse box wipe
 	{
 		25,		// Number of iterations
@@ -185,7 +185,7 @@ static const TransitionEffect transitionEffects[6] = {
 			255, 0,  0,  0
 		}
 	}
-
+	
 };
 #endif
 
@@ -241,7 +241,7 @@ void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
 	} else if (_vm->_version == 2) {
 		_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
 	}
-
+	
 	_transparentColor = transparentColor;
 }
 
@@ -287,7 +287,7 @@ void ScummEngine::initScreens(int b, int h) {
 	initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
 	_screenB = b;
 	_screenH = h;
-
+	
 	gdi.init();
 }
 
@@ -421,7 +421,7 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 void ScummEngine::drawDirtyScreenParts() {
 	// Update verbs
 	updateDirtyScreen(kVerbVirtScreen);
-
+	
 	// Update the conversation area (at the top of the screen)
 	updateDirtyScreen(kTextVirtScreen);
 
@@ -521,7 +521,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_charset->_textSurface.pixels);
 	assert(_compositeBuf);
-
+	
 	if (width > vs->w - x)
 		width = vs->w - x;
 
@@ -534,13 +534,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	// Convert the vertical coordinates to real screen coords
 	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
-
+	
 	// Compute screen etc. buffer pointers
 	const byte *src = vs->getPixels(x, top);
 	byte *dst = _compositeBuf + x + y * _screenWidth;
 	const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ARM_START(DrawStripType)
 		ARM_INIT(SCUMM_DRAWSTRIP)
 		ARM_ADDM(width)
@@ -550,7 +550,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		ARM_ADDM(text)
 		ARM_ADDV(_vm_screenWidth, _screenWidth)
 		ARM_ADDV(vs_pitch, vs->pitch)
-		ARM_ADDV(_charset->_textSurface_pitch, _charset->_textSurface.pitch)
+		ARM_ADDV(_charset_textSurface_pitch, _charset->_textSurface.pitch)
 		ARM_CALL(ARM_ENGINE, PNO_DATA())
 	ARM_CONTINUE()
 #endif
@@ -573,7 +573,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		ditherHerc(_compositeBuf + x + y * _screenWidth, _herculesBuf, _screenWidth, &x, &y, &width, &height);
 		// center image on the screen
-		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW,
+		_system->copyRectToScreen(_herculesBuf + x + y * Common::kHercW, 
 			Common::kHercW, x + (Common::kHercW - _screenWidth * 2) / 2, y, width, height);
 	} else {
 		// Finally blit the whole thing to the screen
@@ -604,6 +604,20 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 // Odd lines have colors swapped, so there will be checkered patterns.
 // But apparently there is a mistake for 10th color.
 void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
+#ifdef PALMOS_68K
+	ARM_START(RenderCGAType)
+		ARM_INIT(SCUMM_RENDERCGA)
+		ARM_ADDM(dst)
+		ARM_ADDM(dstPitch)
+		ARM_ADDM(x)
+		ARM_ADDM(y)
+		ARM_ADDM(width)
+		ARM_ADDM(height)
+		ARM_ADDV(_version, _version)
+		ARM_CALL(ARM_ENGINE, PNO_DATA())
+	ARM_END()
+#endif
+
 	byte *ptr;
 	int idx1, idx2;
 	static const byte cgaDither[2][2][16] = {
@@ -638,6 +652,20 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 //         cccc1
 //         dddd0
 void ScummEngine::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
+#ifdef PALMOS_68K
+	ARM_START(RenderHercType)
+		ARM_INIT(SCUMM_RENDERHERC)
+		ARM_ADDM(src)
+		ARM_ADDM(hercbuf)
+		ARM_ADDM(srcPitch)
+		ARM_ADDM(x)
+		ARM_ADDM(y)
+		ARM_ADDM(width)
+		ARM_ADDM(height)
+		ARM_CALL(ARM_ENGINE, PNO_DATA())
+	ARM_END()
+#endif
+
 	byte *srcptr, *dstptr;
 	int xo = *x, yo = *y, widtho = *width, heighto = *height;
 	int idx1, idx2, dsty = 0, y1;
@@ -864,7 +892,7 @@ void ScummEngine::restoreBG(Common::Rect rect, byte backColor) {
 
 	const int height = rect.height();
 	const int width = rect.width();
-
+	
 	if (!height)
 		return;
 
@@ -897,7 +925,7 @@ void CharsetRenderer::restoreCharsetBg() {
 			return;
 
 		_vm->markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
-
+	
 		byte *screenBuf = vs->getPixels(0, 0);
 
 		if (vs->hasTwoBuffers && _vm->_currentRoom != 0 && _vm->isLightOn()) {
@@ -945,7 +973,7 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
-
+	
 	if (w == srcPitch && w == dstPitch) {
 		memcpy(dst, src, w*h);
 	} else {
@@ -960,7 +988,7 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
 	assert(h > 0);
 	assert(dst != NULL);
-
+	
 	if (w == dstPitch) {
 		memset(dst, color, w*h);
 	} else {
@@ -1016,7 +1044,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	// Adjust for the topline of the VirtScreen
 	y -= vs->topline;
 	y2 -= vs->topline;
-
+	
 	// Clip the coordinates
 	if (x < 0)
 		x = 0;
@@ -1037,7 +1065,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		return;
 	else if (y2 > vs->h)
 		y2 = vs->h;
-
+	
 	width = x2 - x;
 	height = y2 - y;
 
@@ -1084,7 +1112,7 @@ void ScummEngine::drawFlashlight() {
 	if (_flashlight.isDrawn) {
 		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
-
+		
 		if (_flashlight.buffer) {
 			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h);
 		}
@@ -1152,7 +1180,7 @@ void ScummEngine::drawFlashlight() {
 			_flashlight.buffer[maxrow + maxcol - j] = 0;
 		}
 	}
-
+	
 	_flashlight.isDrawn = true;
 }
 
@@ -1211,7 +1239,7 @@ void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, cons
 		theX = 0;
 		maxX = width;
 	}
-
+	
 	// Decode and draw the image data.
 	assert(height <= 128);
 	for (; theX < maxX; theX++) {
@@ -1265,7 +1293,7 @@ void Gdi::drawBitmapV2Helper(const byte *ptr, VirtScreen *vs, int x, int y, cons
 		do {
 			if (!runFlag)
 				data = *src++;
-
+			
 			if (left <= theX) {
 				*mask_ptr = data;
 				mask_ptr += _numStrips;
@@ -1303,7 +1331,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	else {
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= 9);
-
+		
 		if (_vm->_features & GF_SMALL_HEADER) {
 			if (_vm->_features & GF_16COLOR)
 				zplane_list[1] = ptr + READ_LE_UINT16(ptr);
@@ -1320,7 +1348,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 		} else if (_vm->_version == 8) {
 			// Find the OFFS chunk of the ZPLN chunk
 			const byte *zplnOffsChunkStart = ptr + 24 + READ_BE_UINT32(ptr + 12);
-
+			
 			// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
 			// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
 			// an OFFS chunk. The content of this OFFS chunk contains the offsets to the
@@ -1341,13 +1369,13 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 				MKID('ZP03'),
 				MKID('ZP04')
 			};
-
+			
 			for (i = 1; i < numzbuf; i++) {
 				zplane_list[i] = _vm->findResource(zplane_tags[i], ptr);
 			}
 		}
 	}
-
+	
 	return numzbuf;
 }
 
@@ -1376,7 +1404,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	const bool lightsOn = _vm->isLightOn();
 
 	_objectMode = (flag & dbObjectMode) == dbObjectMode;
-
+	
 	if (_objectMode && _vm->_version == 1) {
 		if (_vm->_platform == Common::kPlatformNES) {
 			decodeNESObject(ptr, x, y, width, height);
@@ -1397,7 +1425,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	assert(smap_ptr);
 
 	numzbuf = getZPlanes(ptr, zplane_list, false);
-
+	
 	const byte *tmsk_ptr = NULL;
 	if (_vm->_heversion >= 72) {
 		tmsk_ptr = _vm->findResource(MKID('TMSK'), ptr);
@@ -1405,7 +1433,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	bottom = y + height;
 	if (bottom > vs->h) {
-		error("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
+		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", bottom, vs->h);
 	}
 
 	_vertStripNextInc = height * vs->pitch - 1;
@@ -1613,9 +1641,9 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	_decomp_shr = code % 10;
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 	code /= 10;
-
+		
 	switch (code) {
-	case 13:
+	case 13:	
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
 	case 14:
@@ -1625,7 +1653,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h);
 		break;
 	default:
-		// Alternayive russian freddi3 uses badly formatted bitmaps
+		// Alternative russian freddi3 uses badly formatted bitmaps
 		debug(0, "Gdi::drawBMAPBg: default case %d", code);
 	}
 
@@ -1674,7 +1702,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		rect1.right -= rect2.left;
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
-
+		
 		copyVirtScreenBuffers(rect1);
 	}
 #endif
@@ -1706,13 +1734,13 @@ void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {
 
 	const int rw = rect.width();
 	const int rh = rect.height();
-
+	
 	if (rw == 0 || rh == 0)
 		return;
 
 	src = _vm->virtscr[0].getBackPixels(rect.left, rect.top);
 	dst = _vm->virtscr[0].getPixels(rect.left, rect.top);
-
+	
 	assert(rw <= _vm->_screenWidth && rw > 0);
 	assert(rh <= _vm->_screenHeight && rh > 0);
 	blit(dst, _vm->virtscr[0].pitch, src, _vm->virtscr[0].pitch, rw, rh);
@@ -1726,7 +1754,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	VirtScreen *vs = &_vm->virtscr[0];
 	byte *backbuff_ptr, *bgbak_ptr;
 	int numLinesToProcess;
-
+	
 	if (top < 0)
 		top = 0;
 
@@ -1759,7 +1787,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 
 bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
-
+	
 	if (_vm->_features & GF_16COLOR) {
 		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 		return false;
@@ -1767,39 +1795,39 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 
 	byte code = *src++;
 	bool useOrDecompress = false;
-
+	
 	if (code <= 10) {
 		switch (code) {
 		case 1:
 			unkDecode7(dst, dstPitch, src, numLinesToProcess);
 			break;
-
+	
 		case 2:
 			unkDecode8(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 			break;
-
+	
 		case 3:
 			unkDecode9(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 			break;
-
+	
 		case 4:
 			unkDecode10(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 			break;
-
+	
 		case 7:
 			unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 			break;
-
+	
 		case 8:
 			// Used in 3DO versions of HE games
 			useOrDecompress = true;
 			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
 			break;
-
+	
 		case 9:
 			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
 			break;
-
+	
 		case 10:
 			// Used in Amiga version of Monkey Island 1
 			drawStripEGA(dst, dstPitch, src, numLinesToProcess);
@@ -1812,51 +1840,51 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
 		code /= 10;
-
+		
 		switch (code) {
 		case 1:
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
 			break;
-
+	
 		case 2:
 			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
 			break;
-
+	
 		case 3:
 			useOrDecompress = true;
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
 			break;
-
+	
 		case 4:
 			useOrDecompress = true;
 			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
 			break;
-
+	
 		case 6:
 		case 10:
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 			break;
-
+	
 		case 8:
 		case 12:
 			useOrDecompress = true;
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
 			break;
-
+	
 		case 13:
 			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 			break;
-
+	
 		case 14:
 			useOrDecompress = true;
 			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
 			break;
-
+	
 		default:
 			error("Gdi::decompressBitmap: default case %d", code);
 		}
 	}
-
+	
 	return useOrDecompress;
 }
 
@@ -1938,7 +1966,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 
 	while (height) {
 		b = *src++;
-
+		
 		if (b & 0x80) {
 			b &= 0x7F;
 			c = *src++;
@@ -2353,7 +2381,7 @@ StripTable *Gdi::generateStripTable(const byte *src, int width, int height, Stri
 	x = 0;
 	y = height;
 	width /= 8;
-
+	
 	for (;;) {
 		length = *src++;
 		const byte runFlag = length & 0x80;
@@ -2387,7 +2415,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 
 	while (x < 8) {
 		color = *src++;
-
+		
 		if (color & 0x80) {
 			run = color & 0x3f;
 
@@ -2426,7 +2454,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 			if (run == 0) {
 				run = *src++;
 			}
-
+			
 			for (z = 0; z < run; z++) {
 				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf];
 
@@ -2454,12 +2482,12 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 	uint32 dataBit, data;
 	byte color;
 	int shift;
-
+	
 	color = *src++;
 	data = READ_LE_UINT24(src);
 	src += 3;
 	shift = 24;
-
+	
 	int x = width;
 	while (1) {
 		if (!transpCheck || color != _transparentColor)
@@ -2892,10 +2920,10 @@ void ScummEngine::fadeOut(int effect) {
 
 
 	if (_screenEffectFlag && effect != 0) {
-
+	
 		// Fill screen 0 with black
 		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
-
+	
 		// Fade to black with the specified effect, if any.
 		switch (effect) {
 		case 1:
@@ -2999,13 +3027,13 @@ void ScummEngine::transitionEffect(int a) {
 /**
  * Update width*height areas of the screen, in random order, until the whole
  * screen has been updated. For instance:
- *
+ * 
  * dissolveEffect(1, 1) produces a pixel-by-pixel dissolve
  * dissolveEffect(8, 8) produces a square-by-square dissolve
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
  */
 void ScummEngine::dissolveEffect(int width, int height) {
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	// Remove this dissolve effect for now on PalmOS since it is a bit
 	// too slow using 68k emulation
 	if (width == 1 && height == 1) {
@@ -3087,7 +3115,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 
 	blits = 0;
 	blits_before_refresh = (3 * w * h) / 25;
-
+	
 	// Speed up the effect for CD Loom since it uses it so often. I don't
 	// think the original had any delay at all, so on modern hardware it
 	// wasn't even noticeable.
@@ -3226,7 +3254,7 @@ void ScummEngine::unkScreenEffect6() {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Gfx)
@@ -3238,3 +3266,4 @@ _GRELEASEPTR(GBVARS_TRANSITIONEFFECTS_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
+
