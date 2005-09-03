@@ -568,7 +568,7 @@ int ConsoleDialog::printf(const char *format, ...) {
 }
 
 int ConsoleDialog::vprintf(const char *format, va_list argptr) {
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	char	buf[256];
 #else
 	char	buf[2048];

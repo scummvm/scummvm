@@ -23,7 +23,7 @@
 
 namespace Graphics {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const byte *guifont;
 #else
 // Built-in font
@@ -95,7 +95,7 @@ void ScummFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) c
 
 } // End of namespace Graphics
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(ScummFont)

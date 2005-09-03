@@ -33,13 +33,13 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#if (!( defined(__PALM_OS__) || defined(__DC__) || defined(__GP32__) || defined(__amigaos4__) ) && !defined(_MSC_VER))
+#if (!( defined(PALMOS_MODE) || defined(__DC__) || defined(__GP32__) || defined(__amigaos4__) ) && !defined(_MSC_VER))
 #include <sys/param.h>
 #include <unistd.h>
 #endif
 
 #if !(defined(MAXPATHLEN))
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 #define MAXPATHLEN 1024
 #else
 #define MAXPATHLEN 256
