@@ -52,8 +52,14 @@ OSystem *OSystem::makeInstance() {
 	return OSystem_WINCE3_create();
 #elif defined(__GP32__)	// ph0x
 	return OSystem_GP32_create();
-#elif defined(__PALM_OS__) //chrilith
-	return OSystem_PALMOS_create();
+#elif defined(PALMOS_MODE) //chrilith
+#	if defined(COMPILE_OS5)
+	return OSystem_PalmOS5_create();
+#	elif defined(COMPILE_ZODIAC)
+	return OSystem_PalmZodiac_create();
+#	else
+	return OSystem_PALMOS_create();	// old backend
+#	endif
 #elif defined(__PLAYSTATION2__)
 	return OSystem_PS2_create();
 #elif defined(__PSP__)

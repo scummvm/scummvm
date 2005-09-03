@@ -68,7 +68,7 @@
 	typedef signed char int8;
 	typedef signed short int16;
 	typedef signed long int32;
-
+	
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
 
@@ -106,14 +106,14 @@
 
 	#ifndef CONFIG_H
 		#ifdef X11_BACKEND
-
+	
 		// You need to set this manually if necessary
 	//	#define SCUMM_LITTLE_ENDIAN
-
+		
 		#else
 		/* need this for the SDL_BYTEORDER define */
 		#include <SDL_byteorder.h>
-
+	
 		#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 		#define SCUMM_LITTLE_ENDIAN
 		#elif SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -149,17 +149,21 @@
 	#define END_PACK_STRUCTS	 pack ()
 	#endif
 
-#elif defined(__PALMOS_TRAPS__)	// PALMOS
-	#include <PalmOS.h>
+#elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__) // PALMOS
+	#include "palmversion.h"
 	#include "globals.h"
 	#include "extend.h"
-
+	
 	#define STRINGBUFLEN 256
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 
+#ifdef PALMOS_68K
 	#define SCUMM_BIG_ENDIAN
+#else
+	#define SCUMM_LITTLE_ENDIAN
+#endif
 	#define SCUMM_NEED_ALIGNMENT
 
 	typedef unsigned char byte;
@@ -170,11 +174,13 @@
 	typedef signed char int8;
 	typedef signed short int16;
 	typedef signed long int32;
-
+	
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
 
+#if !defined(COMPILE_ZODIAC) && !defined(PALMOS_ARM)
 	#define NEWGUI_256
+#endif
 
 #elif defined(__MORPHOS__)
 	#define scumm_stricmp stricmp
@@ -220,7 +226,7 @@
 
 #elif defined __GP32__ //ph0x
 	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN 
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
@@ -240,7 +246,7 @@
 	#define END_PACK_STRUCTS	 pack(pop)
 #elif defined __PLAYSTATION2__
 	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN 
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
@@ -317,9 +323,9 @@
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
 
-	#define CDECL
+	#define CDECL	
 	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN
+	#define SCUMM_LITTLE_ENDIAN	
 	#define CHECK_HEAP
 	#define SMALL_SCREEN_DEVICE
 
@@ -333,7 +339,7 @@
 	typedef signed char int8;
 	typedef signed short int int16;
 	typedef signed long int int32;
-
+	
 	#define START_PACK_STRUCTS pack (push,1)
 	#define END_PACK_STRUCTS   pack(pop)
 #else
@@ -346,7 +352,7 @@
 //
 #if defined(__GNUC__)
 	#define GCC_PACK __attribute__((packed))
-	#define NORETURN __attribute__((__noreturn__))
+	#define NORETURN __attribute__((__noreturn__)) 
 #else
 	#define GCC_PACK
 #endif
