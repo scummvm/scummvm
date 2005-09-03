@@ -50,7 +50,7 @@
 #include "backends/dc/DCLauncherDialog.h"
 #endif
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "args.h"
 #endif
 
@@ -372,7 +372,6 @@ extern "C" int main(int argc, char *argv[]) {
 
 #endif // (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
 
-
 	// Quick preparse of command-line, looking for alt configfile path
 	for (int i = argc - 1; i >= 1; i--) {
 		s = argv[i];
@@ -421,7 +420,7 @@ extern "C" int main(int argc, char *argv[]) {
 
 	detector.parseCommandLine(argc, argv);
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ArgsFree(argv);
 #endif
 

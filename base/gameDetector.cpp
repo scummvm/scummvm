@@ -48,7 +48,7 @@
 #endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__PALM_OS__) || defined(__SYMBIAN32__)
+#if defined(PALMOS_MODE) || defined(__SYMBIAN32__)
 static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char USAGE_STRING[] =
@@ -340,7 +340,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(__PALM_OS__)
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE)
 	const char *dir = getenv("SCUMMVM_SAVEPATH");
 	if (dir && *dir) {
 		// TODO: Verify whether the path is valid

@@ -177,7 +177,7 @@ void NORETURN CDECL error(const char *s, ...) {
 	drawError(buf_output);
 #endif
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_MODE
 	PalmFatalError(buf_output);
 #endif
 
