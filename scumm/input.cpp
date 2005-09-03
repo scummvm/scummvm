@@ -150,7 +150,7 @@ void ScummEngine::parseEvents() {
 
 		case OSystem::EVENT_LBUTTONDOWN:
 			_leftBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
+#if defined(_WIN32_WCE) || defined(PALMOS_MODE)
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
 
@@ -164,7 +164,7 @@ void ScummEngine::parseEvents() {
 
 		case OSystem::EVENT_RBUTTONDOWN:
 			_rightBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
+#if defined(_WIN32_WCE) || defined(PALMOS_MODE)
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
 

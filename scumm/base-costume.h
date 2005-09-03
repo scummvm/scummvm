@@ -44,7 +44,7 @@ struct CostumeInfo {
 
 
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 extern const byte *smallCostumeScaleTable;
 extern const byte *bigCostumeScaleTable;
 #else

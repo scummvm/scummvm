@@ -250,7 +250,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 							}
 							if (!found) {
 								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
-							}
+							}							
 						}
 					}
 
@@ -276,7 +276,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
 							}
 						}
-					}
+					}					
 					break;
 				}
 			} else {
@@ -312,7 +312,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	if (_vm->_heversion == 70) {
 		for (i = 0; i < size; i++)
 			palette[i] = _vm->_HEV7ActorPalette[palette[i]];
-	}
+	} 
 
 	if (size == 256) {
 		byte color = new_palette[0];
@@ -548,7 +548,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					if (color && !masked && !skip_column) {
 						pcolor = palette[color];
 						if (_shadow_mode == 1) {
-							if (pcolor == 13)
+							if (pcolor == 13)	
 								pcolor = _shadow_table[*dst];
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
@@ -591,7 +591,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	} while (1);
 }
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 const byte *bigCostumeScaleTable;
 #else
 const byte bigCostumeScaleTable[768] = {
@@ -919,7 +919,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x;
 
 	codec1_genericDecode(v1);
-
+	
 	return drawFlag;
 }
 
@@ -983,7 +983,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	_vm->drawBomp(bdd, !_mirror);
 
 	_vm->_bompActorPalettePtr = NULL;
-
+	
 	return 0;
 }
 
@@ -1020,7 +1020,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 			*buf = akos16.color;
 			buf += dir;
 		}
-
+		
 		if (akos16.unk5 == 0) {
 			AKOS16_FILL_BITS()
 			bits = akos16.bits & 3;
@@ -1075,7 +1075,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 	}
 
 	maskpitch = _numStrips;
-
+	
 	maskptr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
 
 	assert(t_height > 0);
@@ -1104,7 +1104,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		error("codec16: _actorHitMode not yet implemented");
 		return 0;
 	}
-
+	
 	if (!_mirror) {
 		clip.left = (_actorX - xmoveCur - _width) + 1;
 	} else {
@@ -1249,7 +1249,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	if (diff > 0) {
 		src.bottom -= diff;
 		dst.bottom -= diff;
-	}
+	}	
 
 	if (dst.isValidRect() == false)
 		return 0;
@@ -1352,7 +1352,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
-				if (_heversion >= 61)
+				if (_heversion >= 61) 
 					curpos += 6;
 				else
 					curpos += 8;
@@ -1780,15 +1780,15 @@ void ScummEngine_v7::akos_processQueue() {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Akos)
-_GSETPTR(Scumm::bigCostumeScaleTable, GBVARS_bigCostumeScaleTable_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Scumm::bigCostumeScaleTable, GBVARS_BIGSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Akos)
-_GRELEASEPTR(GBVARS_bigCostumeScaleTable_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_BIGSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif

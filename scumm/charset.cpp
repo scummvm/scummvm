@@ -438,7 +438,7 @@ loc_avoid_ks_fe:
 	setCurID(oldID);
 }
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static byte *englishCharsetDataV2;
 static byte *germanCharsetDataV2;
 static byte *frenchCharsetDataV2;
@@ -1809,7 +1809,7 @@ void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const 
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Charset)

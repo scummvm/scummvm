@@ -41,7 +41,7 @@ namespace Scumm {
 #define FB_WNOISE 0x12000       /* feedback for white noise */
 #define FB_PNOISE 0x08000       /* feedback for periodic noise */
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 const uint8 *note_lengths;
 static const uint16 *hull_offsets;
 static const int16 *hulls;
@@ -976,7 +976,7 @@ void Player_V2::mutex_down() {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(PlayerV2)

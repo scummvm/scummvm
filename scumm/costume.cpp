@@ -27,14 +27,14 @@
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
-#if defined(__PALM_OS__)
+#if defined(PALMOS_68K)
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
 
 namespace Scumm {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 const byte *smallCostumeScaleTable;
 #else
 const byte smallCostumeScaleTable[256] = {
@@ -78,7 +78,7 @@ static const int v1MMNESLookup[25] = {
 	0x02, 0x00, 0x07, 0x0C, 0x04,
 	0x09, 0x0A, 0x12, 0x0B, 0x14,
 	0x0D, 0x11, 0x0F, 0x0E, 0x10,
-	0x17, 0x00, 0x01, 0x05, 0x16
+	0x17, 0x00, 0x01, 0x05, 0x16 
 };
 
 
@@ -92,7 +92,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int step;
 	Codec1 v1;
 
-
+	
 	const int scaletableSize = 128;
 	const bool newAmiCost = (_vm->_version == 5) && (_vm->_platform == Common::kPlatformAmiga);
 
@@ -383,7 +383,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 		while (len--) {
 			if (!rep)
 				color = *src++;
-
+			
 			if (0 <= y && y < _out.h && 0 <= v1.x && v1.x < _out.w) {
 				if (!_mirror) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
@@ -414,7 +414,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 #undef MASK_AT
 
 void ClassicCostumeRenderer::proc3(Codec1 &v1) {
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ARM_START(CostumeProc3Type)
 		ARM_INIT(SCUMM_PROC3)
 		ARM_ADDP(v1)
@@ -467,7 +467,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 		do {
 			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
 				masked = (y < 0 || y >= _out.h) || (v1.mask_ptr && (mask[0] & maskbit));
-
+				
 				if (color && !masked) {
 					if (_shadow_mode & 0x20) {
 						pcolor = _shadow_table[*dst];
@@ -534,7 +534,7 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 		do {
 			if (_scaleY == 255 || v1.scaletable[_scaleIndexY] < _scaleY) {
 				masked = (y < 0 || y >= _out.h) || (v1.mask_ptr && (mask[0] & maskbit));
-
+				
 				if (color && v1.x >= 0 && v1.x < _out.w && !masked) {
 					*dst = _palette[color];
 				}
@@ -608,8 +608,8 @@ void ClassicCostumeLoader::loadCostume(int id) {
 		error("Costume %d with format 0x%X is invalid", id, _format);
 	}
 
-
-	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte.
+	
+	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte. 
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
 	// In addition, all offsets are shifted by 2; we accomodate that via a separate
 	// _baseptr value (instead of adding tons of if's throughout the code).
@@ -729,7 +729,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
-
+	
 	// Get the frame pointer for that limb
 	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
 
@@ -914,12 +914,12 @@ byte ClassicCostumeLoader::increaseAnim(Actor *a, int slot) {
 	i = a->_cost.curpos[slot] & 0x7FFF;
 	end = a->_cost.end[slot];
 	code = _animCmds[i] & 0x7F;
-
+	
 	if (_vm->_version <= 3) {
 		if (_animCmds[i] & 0x80)
 			a->_cost.soundCounter++;
 	}
-
+	
 	do {
 		if (!highflag) {
 			if (i++ >= end)
@@ -1044,15 +1044,15 @@ byte C64CostumeLoader::increaseAnim(Actor *a, int slot) {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Costume)
-_GSETPTR(Scumm::smallCostumeScaleTable, GBVARS_COSTSCALETABLE_INDEX, byte, GBVARS_SCUMM)
+_GSETPTR(Scumm::smallCostumeScaleTable, GBVARS_SMALLSCALETABLE_INDEX, byte, GBVARS_SCUMM)
 _GEND
 
 _GRELEASE(Costume)
-_GRELEASEPTR(GBVARS_COSTSCALETABLE_INDEX, GBVARS_SCUMM)
+_GRELEASEPTR(GBVARS_SMALLSCALETABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
