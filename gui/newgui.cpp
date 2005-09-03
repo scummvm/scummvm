@@ -24,6 +24,10 @@
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 
+#if defined(PALMOS_68K)
+#include "arm/native.h"
+#include "arm/macros.h"
+#endif
 
 DECLARE_SINGLETON(GUI::NewGui);
 
@@ -138,10 +142,10 @@ void NewGui::runLoop() {
 
 		while (_system->pollEvent(event)) {
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
-
+			
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-#if !defined(__PALM_OS__)
+#if !defined(PALMOS_MODE)
 				// init continuous event stream
 				// not done on PalmOS because keyboard is emulated and keyup is not generated
 				_currentKeyDown.ascii = event.kbd.ascii;
@@ -335,7 +339,7 @@ void NewGui::drawSurface(const Graphics::Surface &s, int x, int y) {
 
 	if (!rect.isValidRect())
 		return;
-
+	
 	assert(s.bytesPerPixel == sizeof(OverlayColor));
 
 	OverlayColor *src = (OverlayColor *)s.pixels;
@@ -374,7 +378,7 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 		b = ab * a;
 
 		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
-
+		
 		h = rect.height();
 		w = rect.width();
 		while (h--) {
@@ -399,9 +403,24 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 		b = ab * level;
 
 		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
-
+		
 		h = rect.height();
 		w = rect.width();
+
+#ifdef PALMOS_68K
+	ARM_START(BlendRectType)
+		ARM_INIT(COMMON_BLENDRECT)
+		ARM_ADDM(w)
+		ARM_ADDM(h)
+		ARM_ADDM(ptr)
+		ARM_ADDM(_screenPitch)
+		ARM_ADDM(r)
+		ARM_ADDM(g)
+		ARM_ADDM(b)
+		ARM_ADDM(level)
+		ARM_CALL(ARM_COMMON, PNO_DATA())
+	ARM_END()
+#endif
 		while (h--) {
 			for (int i = 0; i < w; i++) {
 				_system->colorToRGB(ptr[i], ar, ag, ab);
