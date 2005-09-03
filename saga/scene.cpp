@@ -1190,7 +1190,7 @@ void Scene::endScene() {
 
 	// Copy current screen to render buffer so inset rooms will get proper background
 	backGroundSurface = _vm->_render->getBackGroundSurface();
-	if (!(_sceneDescription.flags & kSceneFlagISO)) {
+	if (!(_sceneDescription.flags & kSceneFlagISO) && !_vm->_scene->isInIntro()) {
 		BGInfo bgInfo;
 
 		_vm->_scene->getBGInfo(bgInfo);
