@@ -26,7 +26,7 @@
 #ifdef _DEBUG
 #define assert(a)	ErrFatalDisplayIf(!(a), "Assertion failed: " #a)
 #else
-#define assert(a)
+#define assert(a)	(void)0
 #endif
 
 #endif
