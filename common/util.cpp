@@ -124,7 +124,7 @@ const LanguageDescription g_languages[] = {
 	{"ru", "Russian", RU_RUS},
 	{"cz", "Czech", CZ_CZE},
 	{"nl", "Dutch", NL_NLD},
-	{"nb", "Norwegian Bokmål", NB_NOR},
+	{"nb", "Norwegian Bokm\xE5l", NB_NOR},
 	{0, 0, UNK_LANG}
 };
 

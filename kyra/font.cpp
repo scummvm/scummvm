@@ -293,7 +293,7 @@ void Font::preRenderAllChars(uint16 offsetTableOffset) {
 
 				case 3:
 #ifdef DUMP_FILES
-					fprintf(dump, "§");
+					fprintf(dump, "\xA7");
 #endif
 					dst[yadd * newChar.width + xadd] = 3;
 					break;
