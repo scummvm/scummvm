@@ -89,8 +89,8 @@ struct ScummGameSettings {
 	int midi; // MidiDriverType values
 	uint32 features;
 	Common::Platform platform;
-	const char *baseFilename;
-	const char *detectFilename;
+	int baseFilename;
+	int detectFilename;
 
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { name, description, features };
@@ -467,7 +467,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
 	{"9d7b67be003fea60be4dcbd193611936", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, 0, "Full Throttle Demo Data"},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, 0, 0},
 	{"32a433dea56b86a55b59e4ff7d755711", "Full Throttle (PC Demo)", GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC, 0, 0},
 
@@ -890,11 +890,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			_containerFile = substResFileNameTable[_substResFileNameIndex].macName;
 			_substResFileNameIndex = 0;
 		}
-	} else if (gs.detectFilename) {
-		if (_fileHandle->open(gs.detectFilename)) {
-			_containerFile = gs.detectFilename;
-			_substResFileNameIndex = 0;
-		}
 	}
 
 	// Init all vars
@@ -1240,7 +1235,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Allow the user to override the game name with a custom string.
 	// This allows some game versions to work which use filenames
 	// differing from the regular version(s) of that game.
-	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.baseFilename ? gs.baseFilename : gs.name;
+	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.name;
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_demoMode = ConfMan.getBool("demo_mode");
@@ -2658,67 +2653,75 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		// Determine the 'detectname' for this game, that is, the name of a
 		// file that *must* be presented if the directory contains the data
 		// for this game. For example, FOA requires atlantis.000
-		const char *base = g->baseFilename ? g->baseFilename : g->name;
+		const char *base = g->name;
 		detectName[0] = '\0';
 
-		if (g->detectFilename) {
-			strcpy(detectName, g->detectFilename);
-		} else if (g->version <= 3) {
-			strcpy(detectName, "00.LFL");
-		} else if (g->version == 4) {
-			strcpy(detectName, "000.LFL");
-		} else if (g->version >= 7) {
-			strcpy(detectName, base);
-			strcat(detectName, ".la0");
-		} else if (g->heversion >= 60) {
-			strcpy(detectName, base);
-			strcat(detectName, ".he0");
-		} else if (g->platform == Common::kPlatformNES) {
-			strcpy(detectName, base);
-		} else {
-			strcpy(detectName, base);
-			strcat(detectName, ".000");
-		}
-		strcpy(tempName, detectName);
+		// TODO: we need to add cache here
+		for (int method = 0; method < 6; method++) {
+			switch (method) {
+			case 0:
+				strcpy(detectName, "00.LFL");
+				break;
+			case 1:
+				strcpy(detectName, "000.LFL");
+				break;
+			case 2:
+				strcpy(detectName, base);
+				strcat(detectName, ".la0");
+				break;
+			case 3:
+				strcpy(detectName, base);
+				strcat(detectName, ".he0");
+				break;
+			case 4:
+				strcpy(detectName, base);
+				break;
+			case 5:
+				strcpy(detectName, base);
+				strcat(detectName, ".000");
+				break;
+			}
+			strcpy(tempName, detectName);
 
-		substLastIndex = 0;
+			substLastIndex = 0;
 
-		while (substLastIndex != -1) {
-			// Iterate over all files in the given directory
-			for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-				if (!file->isDirectory()) {
-					const char *name = file->displayName().c_str();
+			while (substLastIndex != -1) {
+				// Iterate over all files in the given directory
+				for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+					if (!file->isDirectory()) {
+						const char *name = file->displayName().c_str();
 
-					if (0 == scumm_stricmp(detectName, name)) {
-						byte buf[6];
+						if (0 == scumm_stricmp(detectName, name)) {
+							byte buf[6];
+							debug(0, detectName);
 
-						if (g->version <= 4) {
-							// We take a look at the file now, to narrow
-							// down the list of possible candidates a bit further.
-							// E.g. it's trivial to distinguish V1 from V3 games.
-							File tmp;
-							if (!tmp.open(file->path().c_str()))
-								break;
-							tmp.read(buf, 6);
-
-							if (buf[0] == 0xCE && buf[1] == 0xF5) {
-								// Looks like V1. However, we currently do not distinguish between V1 and V2
-								// in the scumm_settings list.
-								if (g->version != 1 && g->version != 2)
+							if (g->version < 4) {
+								// We take a look at the file now, to narrow
+								// down the list of possible candidates a bit further.
+								// E.g. it's trivial to distinguish V1 from V3 games.
+								File tmp;
+								if (!tmp.open(file->path().c_str()))
 									break;
+								tmp.read(buf, 6);
 
-								// Candidates: maniac clasic, zak classic
+								if (buf[0] == 0xCE && buf[1] == 0xF5) {
+									// Looks like V1. However, we currently do not distinguish between V1 and V2
+									// in the scumm_settings list.
+									if (g->version != 1 && g->version != 2)
+										break;
 
-								// TODO: Maybe we can use the filesize to distinguish these two?
-								// English V1 Zak: 1896 bytes
-								// English V1 MM:  1972 bytes
-								// It would be interesting if those sizes are the same for other language
-								// variants of these games, or for demos?
-							} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
-								// GF_OLD_BUNDLE: could be V2 or old V3.
-								if (!(g->features & GF_OLD_BUNDLE) || (g->version != 2 && g->version != 3))
-									break;
-								// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+									// Candidates: maniac clasic, zak classic
+
+									// TODO: Maybe we can use the filesize to distinguish these two?
+									// English V1 Zak: 1896 bytes
+									// English V1 MM:  1972 bytes
+									// It would be interesting if those sizes are the same for other language
+									// variants of these games, or for demos?
+								} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
+									// GF_OLD_BUNDLE: could be V2 or old V3.
+									if (!(g->features & GF_OLD_BUNDLE) || (g->version != 2 && g->version != 3))
+										break;
+									// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
 								/*
 								TODO: MIght be possible to distinguish those by the script count.
 								Specifically, my versions of these games have this in their headers:
@@ -2753,11 +2756,11 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 								So, they all have a different number of scripts.
 								*/
-							} else if (buf[4] == '0' && buf[5] == 'R') {
-								// newer V3 game
-								if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
-									break;
-								// Candidates: indy3, indy3Towns, zakTowns, loomTowns
+								} else if (buf[4] == '0' && buf[5] == 'R') {
+									// newer V3 game
+									if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
+										break;
+									// Candidates: indy3, indy3Towns, zakTowns, loomTowns
 								/*
 								Considering that we know about *all* TOWNS versions,
 								and know their MD5s, we could simply rely on this and
@@ -2789,11 +2792,11 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								  else
 									unknown, do not accept it
 								*/
-							} else if (buf[4] == 'R' && buf[5] == 'N') {
-								// V4 game
-								if (g->version != 4)
-									break;
-								// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
+								} else if (buf[4] == 'R' && buf[5] == 'N') {
+									// V4 game
+									if (g->version != 4)
+										break;
+									// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
 								/*
 								For all of them, we have:
 								_numGlobalObjects 1000
@@ -2802,58 +2805,59 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								_numScripts 199
 								_numSounds 199
 								*/
-							} else if (buf[0] == 0xa0 && buf[1] == 0x07 && buf[2] == 0xa5 &&
-									   buf[3] == 0xbc) {
-								// MM NES .prg
-								if (g->id != GID_MANIAC)
+								} else if (buf[0] == 0xa0 && buf[1] == 0x07 && buf[2] == 0xa5 &&
+										   buf[3] == 0xbc) {
+									// MM NES .prg
+									if (g->id != GID_MANIAC)
+										break;
+								} else if (buf[0] == 0xbc && buf[1] == 0xb9) {
+									// MM NES 00.LFL
+									if (g->id != GID_MANIAC)
+										break;
+								} else if (buf[0] == 0x31 && buf[1] == 0x0a) {
+									// C64 MM & Zak disk1
+									if (g->version != 2)
+										break;
+								} else if (buf[0] == 0xcd && buf[1] == 0xfe) {
+									// C64 MM & Zak 00.LFL
+									if (g->version != 2)
+										break;
+								} else {
+									// This is not a V1-V4 game
 									break;
-							} else if (buf[0] == 0xbc && buf[1] == 0xb9) {
-								// MM NES 00.LFL
-								if (g->id != GID_MANIAC)
-									break;
-							} else if (buf[0] == 0x31 && buf[1] == 0x0a) {
-								// C64 MM & Zak disk1
-								if (g->version != 2)
-									break;
-							} else if (buf[0] == 0xcd && buf[1] == 0xfe) {
-								// C64 MM & Zak 00.LFL
-								if (g->version != 2)
-									break;
-							} else {
-								// This is not a V1-V4 game
-								break;
+								}
 							}
-						}
 
-						// Match found, add to list of candidates, then abort inner loop.
-						if (substLastIndex > 0 && // HE Mac versions.
-							(substResFileNameTable[substLastIndex].genMethod == kGenMac ||
-							 substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
-							detectedGames.push_back(DetectedGame(g->toGameSettings(),
-																 Common::UNK_LANG,
-																 Common::kPlatformMacintosh));
-							fileSet[file->path()] = true;
-						} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
-								   (buf[0] == 0xbc || buf[0] == 0xa0)) {
-							detectedGames.push_back(DetectedGame(g->toGameSettings(),
-																 Common::UNK_LANG,
-																 Common::kPlatformNES));
-						} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
-								   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
-									(buf[0] == 0xcd && buf[1] == 0xfe))) {
-							detectedGames.push_back(DetectedGame(g->toGameSettings(),
-																 Common::UNK_LANG,
-																 Common::kPlatformC64));
-						} else {
-							detectedGames.push_back(g->toGameSettings());
-							fileSet[file->path()] = false;
+							// Match found, add to list of candidates, then abort inner loop.
+							if (substLastIndex > 0 && // HE Mac versions.
+								(substResFileNameTable[substLastIndex].genMethod == kGenMac ||
+								 substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
+								detectedGames.push_back(DetectedGame(g->toGameSettings(),
+																	 Common::UNK_LANG,
+																	 Common::kPlatformMacintosh));
+								fileSet[file->path()] = true;
+							} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
+									   (buf[0] == 0xbc || buf[0] == 0xa0)) {
+								detectedGames.push_back(DetectedGame(g->toGameSettings(),
+																	 Common::UNK_LANG,
+																	 Common::kPlatformNES));
+							} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
+									   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
+										(buf[0] == 0xcd && buf[1] == 0xfe))) {
+								detectedGames.push_back(DetectedGame(g->toGameSettings(),
+																	 Common::UNK_LANG,
+																	 Common::kPlatformC64));
+							} else {
+								detectedGames.push_back(g->toGameSettings());
+								fileSet[file->path()] = false;
+							}
+							break;
 						}
-						break;
 					}
 				}
-			}
 
-			substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex+1);
+				substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex+1);
+			}
 		}
 	}
 
@@ -2985,34 +2989,43 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	const char *name = g->name;
 	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
-	int substLastIndex = 0;
-
-	if (g->detectFilename) {
-		strcpy(detectName, game.detectFilename);
-	} else if (g->version <= 3) {
-		strcpy(detectName, "00.LFL");
-	} else if (g->version == 4) {
-		strcpy(detectName, "000.LFL");
-	} else if (g->version >= 7) {
-		strcpy(detectName, name);
-		strcat(detectName, ".la0");
-	} else if (g->heversion >= 60) {
-		strcpy(detectName, name);
-		strcat(detectName, ".he0");
-	} else {
-		strcpy(detectName, name);
-		strcat(detectName, ".000");
-	}
-	strcpy(tempName, detectName);
-
+	int substLastIndex;
 	bool found = false;
-	while (substLastIndex != -1) {
-		if (File::exists(detectName, ConfMan.get("path").c_str())) {
-			found = true;
+
+	for (int method = 0; method < 5 && !found; method++) {
+		switch (method) {
+		case 0:
+			strcpy(detectName, name);
+			strcat(detectName, ".000");
+			break;
+		case 1:
+			strcpy(detectName, "00.LFL");
+			break;
+		case 2:
+			strcpy(detectName, "000.LFL");
+			break;
+		case 3:
+			strcpy(detectName, name);
+			strcat(detectName, ".la0");
+			break;
+		case 4:
+			strcpy(detectName, name);
+			strcat(detectName, ".he0");
 			break;
 		}
+		strcpy(tempName, detectName);
 
-		substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex + 1);
+		substLastIndex = 0;
+		while (substLastIndex != -1) {
+			if (File::exists(detectName, ConfMan.get("path").c_str())) {
+				found = true;
+				break;
+			}
+
+			substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex + 1);
+		}
+		if (found)
+			break;
 	}
 
 	// Unable to locate game data
