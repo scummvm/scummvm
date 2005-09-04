@@ -571,7 +571,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"910e31cffb28226bd68c569668a0d6b4", "Monkey Island 1 (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
 	{"9e5e0fb43bd22f4628719b7501adb717", "Monkey Island 1 (Atari Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtari, 0, 0},
 	{"71523b539491527d9860f4407faf0411", "Monkey Island 1 (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
 	{"771bc18ec6f93837b839c992b211904b", "Monkey Island 1 (Demo De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
@@ -588,7 +588,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"aa8a0cb65f3afbbe2c14c3f9f92775a3", "Monkey Island 1 (CD Fr)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
 	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Monkey Island 1 (Mac CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh, 0, 0},
 
 	{"c13225cb1bbd3bc9fe578301696d8021", "Monkey Island 1 (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
