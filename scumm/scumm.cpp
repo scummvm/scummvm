@@ -596,7 +596,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh, 0, 0},
 
 	{"c13225cb1bbd3bc9fe578301696d8021", "Monkey Island 1 (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSEGA, 0, 0},
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
 
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
