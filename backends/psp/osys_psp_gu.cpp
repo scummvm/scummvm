@@ -227,6 +227,31 @@ void OSystem_PSP_GU::setPalette(const byte *colors, uint start, uint num) {
 
 void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) 
 {
+	//Clip the coordinates
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y;
+		buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _screenWidth - x) {
+		w = _screenWidth - x;
+	}
+
+	if (h > _screenHeight - y) {
+		h = _screenHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return;
+
+	
 	byte *dst = _offscreen + y * _screenWidth + x;
 
 	if (_screenWidth == pitch && pitch == w) 
