@@ -1142,7 +1142,7 @@ ScummFile *Sound::openSfxFile() {
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 
-	const char *basename[3] = { 0, 0, 0 };
+	const char *basename[4] = { 0, 0, 0, 0 };
 	basename[0] = _vm->getGameName();
 	basename[1] = "monster";
 	
