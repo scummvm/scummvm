@@ -105,6 +105,48 @@ enum {
 };
 
 
+struct ObsoleteTargets {
+	const char *from;
+	const char *to;
+	const char *platform;
+
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { from, "Obsolete Target", GF_MULTIPLE_VERSIONS };
+		return dummy;
+	}
+};
+
+static ObsoleteTargets obsoleteTargetsTable[] = {
+	"comidemo", "comi", NULL,
+	"digdemo", "dig", NULL,
+	"digdemoMac", "dig", "macintosh",
+	"dottdemo", "tentacle", NULL,
+	"ftMac", "ft",  "macintosh",
+	"ftpcdemo", "ft", NULL,
+	"ftdemo", "ft",  "macintosh",
+	"game", "monkey", NULL,
+	"indy3ega", "indy3", NULL,
+	"indy3towns", "indy3", "fmtowns",
+	"indy4", "atlantis", "fmtowns",
+	"indydemo", "atlantis", "fmtowns",
+	"loomcd", "loom", NULL,
+	"loomTowns", "loom", "fmtowns",
+	"mi2demo", "monkey2", NULL,
+	"monkey1", "monkey", NULL,
+	"monkeyEGA", "monkey", NULL,
+	"monkeyVGA", "monkey", NULL,
+	"playfate", "atlantis", NULL,
+	"samnmax-alt", "samnmax", NULL,
+	"samnmaxMac", "samnmax", "macintosh",
+	"samdemo", "samnmax", NULL,
+	"samdemoMac", "samnmax", "macintosh",
+	"snmdemo", "samnmax", NULL,
+	"snmidemo", "samnmax", NULL,
+	"tentacleMac", "tentacle", "macintosh",
+	"zakTowns", "zak", "fmtowns",
+	NULL, NULL, NULL
+};
+
 static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
@@ -115,78 +157,32 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 	/* Scumm Version 3 */
-	{"indy3EGA", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC, 0, 0},
-	{"indy3Towns", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
-	{"indy3", "Indiana Jones and the Last Crusade (256)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC, 0, 0},
-
-	{"zakTowns", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"indy3", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC, 0, 0},
-	{"loomTowns", "Loom (FM Towns)", GID_LOOM, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 	/* Scumm Version 4 */
-	{"monkeyEGA", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
 	{"pass", "Passport to Adventure", GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
 
 	/* Scumm version 5, small header -- we treat these as V4 games, since internally
 	   they really are much closer to the V4 games than to all other V5 games. */
-	{"monkeyVGA", "Monkey Island 1 (256 color Floppy version)", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"loomcd", "Loom (256 color CD version)", GID_LOOM256, 4, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"monkey", "Monkey Island 1", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 	/* Scumm version 5 */
-	{"monkey", "Monkey Island 1", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
-	{"monkey1", "Monkey Island 1 (alt)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
-	{"game", "Monkey Island 1 (SegaCD version)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"mi2demo", "Monkey Island 2: LeChuck's revenge (Demo)", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
 
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"playfate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"fate", "Indiana Jones and the Fate of Atlantis (Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"indy4", "Indiana Jones and the Fate of Atlantis (FM-TOWNS)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformFMTowns, 0, 0},
-	{"indydemo", "Indiana Jones and the Fate of Atlantis (FM-TOWNS Demo)", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformFMTowns, 0, 0},
+	 GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"tentacleMac", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformMacintosh, "tentacle", "Day Of The Tentacle Data"},
-	{"dottdemo", "Day Of The Tentacle (Demo)", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
 
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	// This target is obsolete now. Kept here only for compatibility
-	{"samnmax-alt", "Sam & Max (alt)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, "samnmax", "samnmax.000"},
-	{"samnmaxMac", "Sam & Max (Mac)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformMacintosh, "samnmax", "Sam & Max Data"},
-	{"samdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
-	{"samdemoMac", "Sam & Max (Mac Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformMacintosh, "samdemo", "Sam & Max Demo Data"},
-	{"snmdemo", "Sam & Max (Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY, Common::kPlatformPC, 0, "snmdemo.sm0"},
-	{"snmidemo", "Sam & Max (Interactive WIP Demo)", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC, 0, 0},
 
 //	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, Common::kPlatformUnknown, 0, 0},
@@ -194,30 +190,15 @@ static const ScummGameSettings scumm_settings[] = {
 #ifndef DISABLE_SCUMM_7_8
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC, 0, 0},
-	{"ftMac", "Full Throttle (Mac)", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformMacintosh, "ft", "Full Throttle Data"},
-	{"ftdemo", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, 0, "Full Throttle Demo Data"},
-	{"ftpcdemo", "Full Throttle (PC Demo)", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC, "ft", "ft.000"},
-
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 	{"dig", "The Dig", GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC, 0, 0},
-	{"digMac", "The Dig (Mac)", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformMacintosh, "dig", "The Dig Data"},
-	{"digdemo", "The Dig (Demo)", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC, "dig", "dig.la0"},
-	{"digdemoMac", "The Dig (Mac Demo)", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, "dig", "The Dig Demo Data"},
 
 #ifndef __PALM_OS__
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, Common::kPlatformWindows, 0, 0},
-	{"comidemo", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows, "comi", "COMI.LA0"},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows, 0, 0},
 #endif
 
 #endif
@@ -430,6 +411,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"2e85f7aa054930c692a5b1bed1dfc295", "Backyard Football 2002 (Demo Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown, 0, 0}, // Football2002
 
+	{"8fec68383202d38c0d25e9e3b757c5df", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows, 0, 0},
+
 	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, MDT_NONE,
@@ -477,10 +461,34 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
+	{"9d7b67be003fea60be4dcbd193611936", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, 0, "Full Throttle Demo Data"},
+	{"32a433dea56b86a55b59e4ff7d755711", "Full Throttle (PC Demo)", GID_FT, 7, 0, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC, 0, 0},
+
+	{"1875b90fade138c9253a8e967007031a", "Indiana Jones and the Last Crusade (VGA)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC, 0, 0},
+	{"399b217b0c8d65d0398076da486363a9", "Indiana Jones and the Last Crusade (VGA De)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC, 0, 0},
+	{"17b5d5e6af4ae89d62631641d66d5a05", "Indiana Jones and the Last Crusade (VGA It)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC, 0, 0},
+
+	{"04687cdf7f975a89d2474929f7b80946", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"3a0c35f3c147b98a2bdf8d400cfc4ab5", "Indiana Jones and the Last Crusade (FM-TOWNS Jp)", GID_INDY3, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+
 	{"86c9902b7bec1a17926d4dae85beaa45", "Let's Explore the Airport with Buzzy (Demo) (puttputt cd)", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Let's Explore the Farm with Buzzy (Demo) (puttputt cd)", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
+
+	{"5d88b9d6a88e6f8e90cded9d01b7f082", "Loom (256 color CD version)", GID_LOOM256, 4, 0, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"c5d10e190d4b4d59114b824f2fdbd00e", "Loom (FM-TOWNS)", GID_LOOM, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"31b8fda4c8c7413fa6b39997e776eba4", "Loom (FM-TOWNS Jp)", GID_LOOM, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 
 	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES, 0, 0},
@@ -546,6 +554,45 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Putt-Putt and Pep's Dog on a Stick (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 
+	{"1d05cd189e4908f79b57e78a4402f292", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"49210e124e4c2b30f1290a9ef6306301", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"fc6b6148e80d67939d9a18697c0f626a", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"ce6a4cef315b20fef58a95bc40a2d8d3", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"aa7a07d94ae853f6460be4ce0a1bf530", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"1dd3c11ea4439adfe681e4e405b624e1", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"477dbafbd66a53c98416dc01aef019ad", "Monkey Island 1 (EGA It)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"910e31cffb28226bd68c569668a0d6b4", "Monkey Island 1 (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"9e5e0fb43bd22f4628719b7501adb717", "Monkey Island 1 (Atari Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"71523b539491527d9860f4407faf0411", "Monkey Island 1 (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+	{"771bc18ec6f93837b839c992b211904b", "Monkey Island 1 (Demo De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
+
+	{"2d1e891fe52df707c30185e52c50cd92", "Monkey Island 1 (CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"305d3dd57c96c65b017bc70c8c7cfb5e", "Monkey Island 1 (CD De)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"f049e38c1f8302b5db6170f1872af89a", "Monkey Island 1 (CD Sp)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"da6269b18fcb08189c0aa9c95533cce2", "Monkey Island 1 (CD It)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"aa8a0cb65f3afbbe2c14c3f9f92775a3", "Monkey Island 1 (CD Fr)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Monkey Island 1 (Mac CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+
+	{"c13225cb1bbd3bc9fe578301696d8021", "Monkey Island 1 (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"9bda5fee51d2fda5253d02c642016bf4", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
@@ -566,6 +613,20 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC, 0, 0},
 	{"7020931d5a2be0a49d68e7a1882363e4", "Zak McKracken and the Alien Mindbenders (v1)", GID_ZAK, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC, 0, 0},
+
+	{"2d4536a56e01da4b02eb021e7770afa2", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"ce3edc99cd4f478c5b37104d70c68ca5", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"1ca86e2cf9aaa2068738a1e5ba477e60", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+
+	{"2d388339d6050d8ccaa757b64633954e", "Indy/Loom Demo (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"77f5c9cc0986eb729c1a6b4c8823bbae", "Zak/Loom Demo (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
+	{"3938ee1aa4433fca9d9308c9891172b1", "Indy/Zak Demo (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, 0, 0},
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, Common::kPlatformUnknown, 0, 0}
 };
@@ -594,6 +655,10 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
 	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
 	{ "airdemo", "Airport Demo", kGenMac},
+	{ "atlantis", "fate", kGenPC},
+	{ "atlantis", "playfate", kGenPC},
+	{ "atlantis", "indy4", kGenPC},
+	{ "atlantis", "indydemo", kGenPC},
 	{ "balloon", "Balloon-O-Rama", kGenMac},
 	{ "baseball", "BaseBall", kGenMac},
 	{ "baseball2001", "Baseball 2001", kGenMac},
@@ -604,7 +669,8 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "circdemo", "Putt Circus Demo", kGenMac },
 	{ "circdemo", "Putt Circus Demo", kGenMac},
 	{ "dig.la0", "The Dig Data", kGenAsIs},
-	{ "digdemo.la0", "The Dig Demo Data", kGenAsIs},
+	{ "dig.la0", "The Dig Demo Data", kGenAsIs},
+	{ "dig", "digdemo", kGenPC},
 	{ "dog", "Dog on a Stick", kGenMac},
 	{ "f3-mdemo", "F3-mdemo", kGenMac },
 	{ "f3-mdemo", "F3-Mdemo", kGenMac },
@@ -638,12 +704,16 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs},
 	{ "ft.la0", "Vollgas Data", kGenAsIs},
 	{ "ft.la0", "Vollgas Demo Data", kGenAsIs},
+	{ "ft.la0", "ft.000", kGenAsIs},
+	{ "ft.la0", "ftdemo.000", kGenAsIs},
+	{ "ft", "ftdemo", kGenPC },
 	{ "kinddemo", "Kinddemo", kGenMac },
 	{ "kinddemo", "KindDemo", kGenMac },
 	{ "lost", "Lost and Found", kGenMac},
 	{ "maze", "Maze Madness", kGenMac},
 	{ "monkey", "monkey1", kGenPC},
 	{ "monkey", "monkeyk", kGenPC}, // FM-TOWNS Jap
+	{ "monkey2", "mi2demo", kGenPC},
 	{ "moondemo", "Putt-Putt Moon Demo", kGenMacNoParens },
 	{ "mustard", "Mustard", kGenMac},
 	{ "pajama", "Pajama Sam", kGenMac},
@@ -675,6 +745,9 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "samnmax.000", "Sam & Max Demo Data", kGenAsIs},
 	{ "samnmax.000", "samnmax.sm0", kGenAsIs }, // Fixes MD5 detection
 	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
+	{ "samnmax", "samdemo", kGenPC },
+	{ "samnamx", "snmdemo", kGenPC },
+	{ "samnmax", "snmidemo", kGenPC },
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
 	{ "sf2-demo", "sf2demo", kGenPC },
 	{ "sf2-demo", "Spy Fox 2 - Demo", kGenMac },
@@ -691,6 +764,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyozon", "SPYFoxOZU", kGenPC },
 	{ "spyozon", "SpyOzon", kGenMac },
 	{ "tentacle.000", "Day Of The Tentacle Data", kGenAsIs},
+	{ "tentacle", "dottdemo", kGenPC},
 	{ "thinker1", "Thinker1", kGenMac },
 	{ "thinkerk", "ThinkerK", kGenMac },
 	{ "timedemo", "TIJDDEMO", kGenPC },
@@ -2551,10 +2625,16 @@ using namespace Scumm;
 
 GameList Engine_SCUMM_gameList() {
 	const ScummGameSettings *g = scumm_settings;
+	const ObsoleteTargets *o = obsoleteTargetsTable;
 	GameList games;
 	while (g->name) {
 		games.push_back(g->toGameSettings());
 		g++;
+	}
+
+	while (o->from) {
+		games.push_back(o->toGameSettings());
+		o++;
 	}
 	return games;
 }
@@ -2842,7 +2922,10 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 				break;
 
 			case kGenPC:
-				snprintf(buf, bufsize, "%s%s", substResFileNameTable[i].macName, ext);
+				if (ext)
+					snprintf(buf, bufsize, "%s%s", substResFileNameTable[i].macName, ext);
+				else
+					strncpy(buf, substResFileNameTable[i].macName, bufsize);
 				break;
 
 			case kGenAsIs:
@@ -2863,6 +2946,22 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
+	const ObsoleteTargets *o = obsoleteTargetsTable;
+	while (o->from) {
+		if (!scumm_stricmp(detector->_game.name, o->from)) {
+			detector->_game.name = o->to;
+
+			ConfMan.set("gameid", o->to);
+
+			if (o->platform)
+				ConfMan.set("platform", o->platform);
+
+			warning("Target upgraded from %s to %s", o->from, o->to);
+			ConfMan.flushToDisk();
+			break;
+		}
+		o++;
+	}
 
 	const ScummGameSettings *g = scumm_settings;
 	while (g->name) {

@@ -1134,6 +1134,7 @@ ScummFile *Sound::openSfxFile() {
 	};
 
 	char buf[256];
+	char buf1[128];
 	ScummFile *file = new ScummFile();
 	_offsetTable = NULL;
 
@@ -1144,6 +1145,14 @@ ScummFile *Sound::openSfxFile() {
 	const char *basename[3] = { 0, 0, 0 };
 	basename[0] = _vm->getGameName();
 	basename[1] = "monster";
+	
+	if (_vm->_substResFileNameIndex > 0) {
+
+		strcpy(buf, basename[0]);
+		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
+		strcpy(buf, buf1);
+		basename[2] = buf1;
+	}
 
 	for (int j = 0; basename[j] && !file->isOpen(); ++j) {
 		for (int i = 0; extensions[i].ext; ++i) {
@@ -1163,8 +1172,6 @@ ScummFile *Sound::openSfxFile() {
 		}
 
 		if (_vm->_substResFileNameIndex > 0) {
-			char buf1[128];
-
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 			strcpy(buf, buf1);
 		}

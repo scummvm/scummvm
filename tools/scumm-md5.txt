@@ -35,34 +35,34 @@ Zak McKracken and the Alien Mindbenders
 	V2	Amiga	fr	91469353f7be1b122fa88d23480a1320	zak	Tobias Fleischer
 	V2	Amiga	it	27b3a4224ad63d5b04627595c1c1a025	zak	Andrea Petrucci
 	V2	Atari	fr	613f64f78ea26c7353b2a5940eb61d6a	zak	Andreas Bylund
-	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zakTowns
-	FM-TOWNS	FM-TOWNS	jp	ce3edc99cd4f478c5b37104d70c68ca5	zakTowns	khalek
-	FM-TOWNS (alt?)	FM-TOWNS	jp	1ca86e2cf9aaa2068738a1e5ba477e60	zakTowns	Andrea Petrucci
+	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zak
+	FM-TOWNS	FM-TOWNS	jp	ce3edc99cd4f478c5b37104d70c68ca5	zak	khalek
+	FM-TOWNS (alt?)	FM-TOWNS	jp	1ca86e2cf9aaa2068738a1e5ba477e60	zak	Andrea Petrucci
 
 Indiana Jones and the Last Crusade
-	EGA (1.0 7/09/89)	DOS	en	5fbe557049892eb4b709d90916ec97ca	indy3EGA
-	EGA (1.3 8/14/89)	DOS	en	6b3ec67da214f558dc5ceaa2acd47453	indy3EGA	tsuteiuQ, Andrea Petrucci
-	EGA	DOS	de	6f6ef668c608c7f534fea6e6d3878dde	indy3EGA	dhewg
-	EGA	DOS	fr	66236cd1aec24e1d4aff4c4cc93b7e18	indy3EGA	Andrea Petrucci
-	EGA	DOS	it	d62d248c3df6ec177405e2cb23d923b2	indy3EGA	Andrea Petrucci
-	EGA	DOS	es	ce7fd0c382389a6791fc3e199c117ef4	indy3EGA	abnog
-	EGA (alt?)	DOS	es	86be8ada36371d4fdc35659d0e912a26	indy3EGA	Andrea Petrucci
+	EGA (1.0 7/09/89)	DOS	en	5fbe557049892eb4b709d90916ec97ca	indy3
+	EGA (1.3 8/14/89)	DOS	en	6b3ec67da214f558dc5ceaa2acd47453	indy3	tsuteiuQ, Andrea Petrucci
+	EGA	DOS	de	6f6ef668c608c7f534fea6e6d3878dde	indy3	dhewg
+	EGA	DOS	fr	66236cd1aec24e1d4aff4c4cc93b7e18	indy3	Andrea Petrucci
+	EGA	DOS	it	d62d248c3df6ec177405e2cb23d923b2	indy3	Andrea Petrucci
+	EGA	DOS	es	ce7fd0c382389a6791fc3e199c117ef4	indy3	abnog
+	EGA (alt?)	DOS	es	86be8ada36371d4fdc35659d0e912a26	indy3	Andrea Petrucci
 
-	EGA	Mac	en	1dd7aa088e09f96d06818aa9a9deabe0	indy3EGA
-	EGA	Amiga	en	9c0fee288ad564a7d25ec3e841810d79	indy3EGA	dhewg
-	EGA	Amiga	de	330f631502e381a4e199a3f7cb483c20	indy3EGA	dhewg
-	EGA	Amiga	fr	e689bdf67f98b1d760ce4487ec0e8d06	indy3EGA	Gerald Vincent
-	EGA	Amiga	it	df03ee021aa9b81d90cab9c26da07614	indy3EGA	Andrea Petrucci
-	EGA	Atari	en	157367c3c21e0d03a0cba44361b4cf65	indy3EGA	Andreas Bylund
-	EGA	Atari	fr	0f9c7a76657f0840b8f7ccb5bffeb9f4	indy3EGA	Andreas Bylund
-	EGA Demo	DOS	en	b597e0403cc0002f69170e6caba7edd9	indy3EGA
+	EGA	Mac	en	1dd7aa088e09f96d06818aa9a9deabe0	indy3
+	EGA	Amiga	en	9c0fee288ad564a7d25ec3e841810d79	indy3	dhewg
+	EGA	Amiga	de	330f631502e381a4e199a3f7cb483c20	indy3	dhewg
+	EGA	Amiga	fr	e689bdf67f98b1d760ce4487ec0e8d06	indy3	Gerald Vincent
+	EGA	Amiga	it	df03ee021aa9b81d90cab9c26da07614	indy3	Andrea Petrucci
+	EGA	Atari	en	157367c3c21e0d03a0cba44361b4cf65	indy3	Andreas Bylund
+	EGA	Atari	fr	0f9c7a76657f0840b8f7ccb5bffeb9f4	indy3	Andreas Bylund
+	EGA Demo	DOS	en	b597e0403cc0002f69170e6caba7edd9	indy3
 
 	VGA	DOS	All	1875b90fade138c9253a8e967007031a	indy3
 	VGA	DOS	de	399b217b0c8d65d0398076da486363a9	indy3
 	VGA	DOS	it	17b5d5e6af4ae89d62631641d66d5a05	indy3	Andrea Petrucci
 	
-	FM-TOWNS	FM-TOWNS	en	04687cdf7f975a89d2474929f7b80946	indy3towns
-	FM-TOWNS	FM-TOWNS	jp	3a0c35f3c147b98a2bdf8d400cfc4ab5	indy3towns	Paul Priest, Andrea Petrucci
+	FM-TOWNS	FM-TOWNS	en	04687cdf7f975a89d2474929f7b80946	indy3
+	FM-TOWNS	FM-TOWNS	jp	3a0c35f3c147b98a2bdf8d400cfc4ab5	indy3	Paul Priest, Andrea Petrucci
 
 Loom
 	Demo	DOS	en	5a35e36fd777e9c37a49c5b2faca52f9	loom
@@ -81,35 +81,35 @@ Loom
 	Floppy (same as IT?!?)	Amiga	fr	39cb9dec16fa16f38d79acd80effb059	loom	Gerald Vincent
 	Floppy (same as FR?!?)	Amiga	it	39cb9dec16fa16f38d79acd80effb059	loom	Andrea Petrucci
 	Floppy	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
-	Talkie/CD	DOS	en	5d88b9d6a88e6f8e90cded9d01b7f082	loomcd
-	FM-TOWNS	FM-TOWNS	en	c5d10e190d4b4d59114b824f2fdbd00e	loomTowns	dhewg, Andrea Petrucci
-	FM-TOWNS	FM-TOWNS	jp	31b8fda4c8c7413fa6b39997e776eba4	loomTowns	khalek, Andrea Petrucci
+	Talkie/CD	DOS	en	5d88b9d6a88e6f8e90cded9d01b7f082	loom
+	FM-TOWNS	FM-TOWNS	en	c5d10e190d4b4d59114b824f2fdbd00e	loom	dhewg, Andrea Petrucci
+	FM-TOWNS	FM-TOWNS	jp	31b8fda4c8c7413fa6b39997e776eba4	loom	khalek, Andrea Petrucci
 
 The Secret of Monkey Island
-	EGA (4 disk)	DOS	en	1d05cd189e4908f79b57e78a4402f292	monkeyega	Andrea Petrucci
-	EGA (8 disk)	DOS	en	49210e124e4c2b30f1290a9ef6306301	monkeyega
-	EGA (8 disk)	DOS	de	fc6b6148e80d67939d9a18697c0f626a	monkeyega	ghoostkilla
-	EGA (4 disk)	DOS	fr	ce6a4cef315b20fef58a95bc40a2d8d3	monkeyega	Matthieu Milan
-	EGA (4 disk v1.0,9/7/90 II)	DOS	fr	aa7a07d94ae853f6460be4ce0a1bf530	monkeyega	Parazythum
-	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkeyega	Andrea Petrucci
-	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkeyega	Andrea Petrucci
-	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkeyega	Andrea Petrucci
-	EGA	Atari	fr	9e5e0fb43bd22f4628719b7501adb717	monkeyega	Andreas Bylund
-	EGA Demo	DOS	en	71523b539491527d9860f4407faf0411	monkeyega
-	EGA Demo	DOS	de	771bc18ec6f93837b839c992b211904b	monkeyega	khalek
+	EGA (4 disk)	DOS	en	1d05cd189e4908f79b57e78a4402f292	monkey	Andrea Petrucci
+	EGA (8 disk)	DOS	en	49210e124e4c2b30f1290a9ef6306301	monkey
+	EGA (8 disk)	DOS	de	fc6b6148e80d67939d9a18697c0f626a	monkey	ghoostkilla
+	EGA (4 disk)	DOS	fr	ce6a4cef315b20fef58a95bc40a2d8d3	monkey	Matthieu Milan
+	EGA (4 disk v1.0,9/7/90 II)	DOS	fr	aa7a07d94ae853f6460be4ce0a1bf530	monkey	Parazythum
+	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkey	Andrea Petrucci
+	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkey	Andrea Petrucci
+	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkey	Andrea Petrucci
+	EGA	Atari	fr	9e5e0fb43bd22f4628719b7501adb717	monkey	Andreas Bylund
+	EGA Demo	DOS	en	71523b539491527d9860f4407faf0411	monkey
+	EGA Demo	DOS	de	771bc18ec6f93837b839c992b211904b	monkey	khalek
 
-	VGA (4 disk)	DOS	en	15e03ffbfeddb9c2aebc13dcb2a4a8f4	monkeyvga
-	VGA (8 disk)	DOS	en	c7890e038806df2bb5c0c8c6f1986ea2	monkeyvga	Andrea Petrucci
-	VGA (4 disk)	DOS	de	d0b531227a27c6662018d2bd05aac52a	monkeyvga
-	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkeyvga
-	VGA (4 disk)	DOS	it	66fd5ff9a810dfeb6d6bdada18221140	monkeyvga	Andrea Petrucci
-	VGA	Amiga	en	6c2bff0e327f2962e809c2e1a82d7309	monkeyvga	dhweg
-	VGA	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkeyvga	ghoostkilla
-	VGA (alt?)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkeyvga	Andreas Bylund
-	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkeyvga	Andreas Bylund
-	VGA	Amiga	fr	3433be9866ca4261b2d5d25374e3f243	monkeyvga	Gerald Vincent
-	VGA	Amiga	it	fb66aa42de21675116346213f176a366	monkeyvga	Andrea Petrucci
-	VGA Demo	Amiga	en	54a936ad06161ff7bfefcb96200f7bff	monkeyvga	khalek
+	VGA (4 disk)	DOS	en	15e03ffbfeddb9c2aebc13dcb2a4a8f4	monkey
+	VGA (8 disk)	DOS	en	c7890e038806df2bb5c0c8c6f1986ea2	monkey	Andrea Petrucci
+	VGA (4 disk)	DOS	de	d0b531227a27c6662018d2bd05aac52a	monkey
+	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
+	VGA (4 disk)	DOS	it	66fd5ff9a810dfeb6d6bdada18221140	monkey	Andrea Petrucci
+	VGA	Amiga	en	6c2bff0e327f2962e809c2e1a82d7309	monkey	dhweg
+	VGA	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkey	ghoostkilla
+	VGA (alt?)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkey	Andreas Bylund
+	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
+	VGA	Amiga	fr	3433be9866ca4261b2d5d25374e3f243	monkey	Gerald Vincent
+	VGA	Amiga	it	fb66aa42de21675116346213f176a366	monkey	Andrea Petrucci
+	VGA Demo	Amiga	en	54a936ad06161ff7bfefcb96200f7bff	monkey	khalek
 
 	CD	DOS	en	2d1e891fe52df707c30185e52c50cd92	monkey
 	CD	DOS	de	305d3dd57c96c65b017bc70c8c7cfb5e	monkey
@@ -117,7 +117,7 @@ The Secret of Monkey Island
 	CD	DOS	it	da6269b18fcb08189c0aa9c95533cce2	monkey	Andrej Sinicyn, Andrea Petrucci
 	CD	DOS	fr	aa8a0cb65f3afbbe2c14c3f9f92775a3	monkey	Andrej Sinicyn, Andrea Petrucci
 	-	Mac	en	2ccd8891ce4d3f1a334d21bff6a88ca2	monkey	Lars N&aelig;sbye Christensen
-	-	SEGA	en	c13225cb1bbd3bc9fe578301696d8021	game
+	-	SEGA	en	c13225cb1bbd3bc9fe578301696d8021	monkey
 
 	FM-TOWNS	FM-TOWNS	en	8eb84cee9b429314c7f0bdcf560723eb	monkey	Paul Priest, Andrea Petrucci
 	FM-TOWNS	FM-TOWNS	jp	e17db1ddf91b39ca6bbc8ad3ed19e883	monkey	Paul Priest, Andrea Petrucci
@@ -125,9 +125,9 @@ The Secret of Monkey Island
 Misc demos
 	Passport to Adventure	DOS	en	e6cd81b25ab1453a8a6d3482118c391e	pass
 
-	indy/loom non-interactive	FM-TOWNS	en	2d388339d6050d8ccaa757b64633954e	zakTowns	khalek
-	zak/loom non-interactive	FM-TOWNS	en	77f5c9cc0986eb729c1a6b4c8823bbae	zakTowns	khalek
-	indy/zak non-interactive	FM-TOWNS	en	3938ee1aa4433fca9d9308c9891172b1	zakTowns	khalek
+	indy/loom non-interactive	FM-TOWNS	en	2d388339d6050d8ccaa757b64633954e	zak	khalek
+	zak/loom non-interactive	FM-TOWNS	en	77f5c9cc0986eb729c1a6b4c8823bbae	zak	khalek
+	indy/zak non-interactive	FM-TOWNS	en	3938ee1aa4433fca9d9308c9891172b1	zak	khalek
 
 Monkey Island 2: LeChuck's revenge
 	-	Amiga	en	132bff65e6367c09cc69318ce1b59333	monkey2
@@ -145,7 +145,7 @@ Monkey Island 2: LeChuck's revenge
 	-	DOS	es	7974365d3dc0f43a2748c975f91ff042	monkey2	Andrea Petrucci
 	FM-TOWNS	FM-TOWNS	en	da09e666fc8f5b78d7b0ac65d1a3b56e	monkey2	dhewg, Andrea Petrucci
 	FM-TOWNS	FM-TOWNS	jp	430bc518017b6fac046f58bab6baad5d	monkey2	Antti Leimi, Andrea Petrucci
-	Demo (non-interactive)	DOS	en	387a544b8b10b26912d8413bab63a853	mi2demo	khalek
+	Demo (non-interactive)	DOS	en	387a544b8b10b26912d8413bab63a853	monkey2	khalek
 
 Indiana Jones and the Fate of Atlantis
 	Talkie	DOS	en	182344899c2e2998fca0bebcd82aa81a	atlantis
@@ -165,12 +165,12 @@ Indiana Jones and the Fate of Atlantis
 	Non-Talkie	Mac	en	d6dd0646404768a63e963891a96daadd	atlantis	Fingolfin
 	Non-Talkie	Mac	en	06b187468113f9ae5a400b148a847fac	atlantis	Lars N sbye Christensen
 
-	FM-TOWNS	FM-TOWNS	en	c7be10f775404fd9785a8b92a06d240c	indy4	dhewg, Andrea Petrucci
-	FM-TOWNS	FM-TOWNS	jp	4d34042713958b971cb139fba4658586	indy4	Andrea Petrucci
-	FM-TOWNS Demo	FM-TOWNS	jp	28d24a33448fab6795850bc9f159a4a2	indydemo	khalek
-	Demo	DOS	en	035deab53b47bc43abc763560d0f8d4b	playfate
-	Demo	DOS	en	98744fe66ff730e8c2b3b1f58803ab0b	playfate	Simon Krumrein, sev
-	Demo (non-interactive)	DOS	en	99b6f822b0b2612415407865438697d6	fate
+	FM-TOWNS	FM-TOWNS	en	c7be10f775404fd9785a8b92a06d240c	atlantis	dhewg, Andrea Petrucci
+	FM-TOWNS	FM-TOWNS	jp	4d34042713958b971cb139fba4658586	atlantis	Andrea Petrucci
+	FM-TOWNS Demo	FM-TOWNS	jp	28d24a33448fab6795850bc9f159a4a2	atlantis	khalek
+	Demo	DOS	en	035deab53b47bc43abc763560d0f8d4b	atlantis
+	Demo	DOS	en	98744fe66ff730e8c2b3b1f58803ab0b	atlantis	Simon Krumrein, sev
+	Demo (non-interactive)	DOS	en	99b6f822b0b2612415407865438697d6	atlantis
 
 Day Of The Tentacle
 	Floppy Version A ?	All?	en	acad97ab1c6fc2a5b2d98abf6db4a190	tentacle
@@ -184,9 +184,9 @@ Day Of The Tentacle
 	Talkie ?	All?	fr	8aa05d3cdb0e795436043f0546af2da2	tentacle	Andrea Petrucci
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
-	Demo	DOS	en	c83079157ec765a28de445aec9768d60	dottdemo
-	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	dottdemo	Simon Krumrein, sev
-	Demo	DOS	fr	17fa250eb72dae2dad511ba79c0b6b0a	dottdemo	cyx
+	Demo	DOS	en	c83079157ec765a28de445aec9768d60	tentacle
+	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	tentacle	Simon Krumrein, sev
+	Demo	DOS	fr	17fa250eb72dae2dad511ba79c0b6b0a	tentacle	cyx
 
 Sam &amp; Max
 	Non-Talkie	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
@@ -201,12 +201,12 @@ Sam &amp; Max
 	Talkie	All?	it	0f6f2e716ba896a44e5059bba1de7ca9	samnmax	Andrea Petrucci
 	Talkie	All?	es	4ba7fb331296c283e73d8f5b2096e551	samnmax	Andrea Petrucci
 	Talkie	DOS	ru	d43352a805d78b5f4936c6d7779bf575	samnmax
-	Demo	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samdemo
-	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samdemo
+	Demo	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samnmax
+	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samnmax
 
-	interactive Demo	DOS	en	c3196c5349e53e387aaff1533d95e53a	snmdemo
-	interactive Demo	DOS	de	cc8ba2b0df2f9c450bcf055fe2711979	snmdemo	Simon Krumrein, sev
-	Interactive WIP Demo	DOS	en	0e4c5d54a0ad4b26132e78b5ea76642a	snmidemo
+	interactive Demo	DOS	en	c3196c5349e53e387aaff1533d95e53a	samnmax
+	interactive Demo	DOS	de	cc8ba2b0df2f9c450bcf055fe2711979	samnmax	Simon Krumrein, sev
+	Interactive WIP Demo	DOS	en	0e4c5d54a0ad4b26132e78b5ea76642a	samnmax
 
 Full Throttle
 	Version A	All?	en	09820417db26687bb7fe0c83cc4c553b	ft
@@ -221,22 +221,22 @@ Full Throttle
 	-	Mac	en	fe381e45117878b1e942cb876b050fd6	ft	fingolfin
 	-	Mac	de	04401d747f1a2c1c4b388daff71ed378	ft	fingolfin
 
-	Demo	DOS	en	32a433dea56b86a55b59e4ff7d755711	ftpcdemo
-	Demo	Mac	en	9d7b67be003fea60be4dcbd193611936	ftdemo
+	Demo	DOS	en	32a433dea56b86a55b59e4ff7d755711	ft
+	Demo	Mac	en	9d7b67be003fea60be4dcbd193611936	ft
 
 The Dig
 	-	All	All	d8323015ecb8b10bf53474f6e6b0ae33	dig
 	-	All	ru	d62047a6729349ab36f7ee065bf26509	dig	sev
-	Demo	All	en	362c1d281fb9899254cda66ad246c66a	digdemo
+	Demo	All	en	362c1d281fb9899254cda66ad246c66a	dig
 	
 	-	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
 	-	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
-	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	digdemo	fingolfin
+	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
 
 Curse of Monkey Island
 	-	All	All	fe60d6b5ff51b0553ac59963123b5777	comi
 	-	All	ru	861e59ed72a1cd0e6d454f7ee7e2bf3d	comi
-	Demo	All	All	8fec68383202d38c0d25e9e3b757c5df	comidemo
+	Demo	All	All	8fec68383202d38c0d25e9e3b757c5df	comi
 
 Backyard Baseball
 	-	Windows	en	cf8d13446ec6cb6222287a925fd47c1d	baseball	sev
