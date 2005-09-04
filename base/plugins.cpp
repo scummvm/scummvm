@@ -286,11 +286,24 @@ void PluginManager::loadPlugins() {
 	}
 
 #else
+
+#ifdef PALMOS_ARM
+	#define FREE_PLUGIN(ID) \
+		extern PluginRegistrator *g_##ID##_PluginReg; \
+		delete g_##ID##_PluginReg;
+
+	#define LINK_PLUGIN(ID) \
+		extern PluginRegistrator *g_##ID##_PluginReg; \
+		extern void g_##ID##_PluginReg_alloc(); \
+		g_##ID##_PluginReg_alloc(); \
+		plugin = g_##ID##_PluginReg; \
+		tryLoadPlugin(new StaticPlugin(plugin->_name, plugin->_games, plugin->_ef, plugin->_df));
+#else
 	#define LINK_PLUGIN(ID) \
 		extern PluginRegistrator g_##ID##_PluginReg; \
 		plugin = &g_##ID##_PluginReg; \
 		tryLoadPlugin(new StaticPlugin(plugin->_name, plugin->_games, plugin->_ef, plugin->_df));
-
+#endif
 	// "Loader" for the static plugins.
 	// Iterate over all registered (static) plugins and load them.
 	PluginRegistrator *plugin;
@@ -328,6 +341,36 @@ void PluginManager::loadPlugins() {
 
 void PluginManager::unloadPlugins() {
 	unloadPluginsExcept(NULL);
+
+#ifdef PALMOS_ARM
+	#ifndef DISABLE_SCUMM
+	FREE_PLUGIN(SCUMM)
+	#endif
+	#ifndef DISABLE_SKY
+	FREE_PLUGIN(SKY)
+	#endif
+	#ifndef DISABLE_SWORD1
+	FREE_PLUGIN(SWORD1)
+	#endif
+	#ifndef DISABLE_SWORD2
+	FREE_PLUGIN(SWORD2)
+	#endif
+	#ifndef DISABLE_SIMON
+	FREE_PLUGIN(SIMON)
+	#endif
+	#ifndef DISABLE_QUEEN
+	FREE_PLUGIN(QUEEN)
+	#endif
+	#ifndef DISABLE_SAGA
+	FREE_PLUGIN(SAGA)
+	#endif
+	#ifndef DISABLE_KYRA
+	FREE_PLUGIN(KYRA)
+	#endif
+	#ifndef DISABLE_GOB
+	FREE_PLUGIN(GOB)
+	#endif
+#endif
 }
 
 void PluginManager::unloadPluginsExcept(const Plugin *plugin) {
@@ -373,3 +416,4 @@ DetectedGameList PluginManager::detectGames(const FSList &fslist) const {
 
 	return candidates;
 }
+

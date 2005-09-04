@@ -86,6 +86,15 @@ public:
  * @todo	add some means to query the plugin API version etc.
  * @todo	on Windows, we might need __declspec(dllexport) ?
  */
+
+#ifdef PALMOS_ARM
+#define REGISTER_PLUGIN(ID,name) \
+	PluginRegistrator *g_##ID##_PluginReg; \
+	void g_##ID##_PluginReg_alloc() { \
+		g_##ID##_PluginReg = new PluginRegistrator(name, Engine_##ID##_gameList(), Engine_##ID##_create, Engine_##ID##_detectGames);\
+	}
+#else
+
 #ifndef DYNAMIC_MODULES
 #define REGISTER_PLUGIN(ID,name) \
 	PluginRegistrator g_##ID##_PluginReg(name, Engine_##ID##_gameList(), Engine_##ID##_create, Engine_##ID##_detectGames);
@@ -97,6 +106,7 @@ public:
 		PLUGIN_EXPORT Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	}
+#endif
 #endif
 
 #ifndef DYNAMIC_MODULES
@@ -156,3 +166,4 @@ public:
 };
 
 #endif
+
