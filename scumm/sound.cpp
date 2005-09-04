@@ -499,7 +499,6 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			}
 			break;
 		case 1:
-		case 255:	// 255 is the type used by sound resource 40 in Indy3 FM-TOWNS
 			// Music (Euphony format)
 			if (_vm->_musicEngine)
 				_vm->_musicEngine->startSound(soundID);
@@ -524,6 +523,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_currentCDSound = soundID;
 			break;
 		default:
+			// All other sound types are ignored
 			break;
 		}
 	}
