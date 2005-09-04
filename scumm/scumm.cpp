@@ -193,7 +193,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 	{"dig", "The Dig", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC, 0, 0},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC, 0, 0},
 
 #ifndef __PALM_OS__
 	/* Scumm Version 8 */
@@ -414,6 +414,11 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"8fec68383202d38c0d25e9e3b757c5df", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows, 0, 0},
 
+	{"362c1d281fb9899254cda66ad246c66a", "The Dig (Demo)", GID_DIG, 7, 0, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC, 0, 0},
+	{"cd9c05e755d7bf8e9b9590ad1ebe273e", "The Dig (Demo Mac)", GID_DIG, 7, 0, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh, 0, 0},
+
 	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
 	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, MDT_NONE,
@@ -571,7 +576,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"910e31cffb28226bd68c569668a0d6b4", "Monkey Island 1 (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
 	{"9e5e0fb43bd22f4628719b7501adb717", "Monkey Island 1 (Atari Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtari, 0, 0},
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST, 0, 0},
 	{"71523b539491527d9860f4407faf0411", "Monkey Island 1 (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC, 0, 0},
 	{"771bc18ec6f93837b839c992b211904b", "Monkey Island 1 (Demo De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
@@ -591,7 +596,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh, 0, 0},
 
 	{"c13225cb1bbd3bc9fe578301696d8021", "Monkey Island 1 (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC, 0, 0},
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSEGA, 0, 0},
 
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows, 0, 0},
