@@ -469,6 +469,13 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"32a433dea56b86a55b59e4ff7d755711", "Full Throttle (PC Demo)", GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC},
 
+	{"157367c3c21e0d03a0cba44361b4cf65", "Indiana Jones and the Last Crusade (AtariST)", GID_INDY3, 3, 0, MDT_PCSPK,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
+	{"0f9c7a76657f0840b8f7ccb5bffeb9f4", "Indiana Jones and the Last Crusade (AtariST Fr)", GID_INDY3, 3, 0, MDT_PCSPK,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
+	{"1dd7aa088e09f96d06818aa9a9deabe0", "Indiana Jones and the Last Crusade (Macintosh)", GID_INDY3, 3, 0, MDT_PCSPK,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
+
 	{"1875b90fade138c9253a8e967007031a", "Indiana Jones and the Last Crusade (VGA)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
 	{"399b217b0c8d65d0398076da486363a9", "Indiana Jones and the Last Crusade (VGA De)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
@@ -485,6 +492,11 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Let's Explore the Farm with Buzzy (Demo) (puttputt cd)", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"c24c490373aeb48fbd54caa8e7ae376d", "Loom (AtariST De)", GID_LOOM, 3, 0, MDT_PCSPK,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
+	{"6f0be328c64d689bb606d22a389e1b0f", "Loom (Macintosh)", GID_LOOM, 3, 0, MDT_PCSPK,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
 
 	{"5d88b9d6a88e6f8e90cded9d01b7f082", "Loom (256 color CD version)", GID_LOOM256, 4, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
@@ -573,7 +585,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 	{"910e31cffb28226bd68c569668a0d6b4", "Monkey Island 1 (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"9e5e0fb43bd22f4628719b7501adb717", "Monkey Island 1 (Atari Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"9e5e0fb43bd22f4628719b7501adb717", "Monkey Island 1 (Atari Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
 	{"71523b539491527d9860f4407faf0411", "Monkey Island 1 (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
