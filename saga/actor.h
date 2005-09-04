@@ -752,7 +752,7 @@ public:
 
 inline int16 quickDistance(const Point &point1, const Point &point2) {
 	Point delta;
-	delta.x = ABS(point1.x - point2.x);
+	delta.x = ABS(point1.x - point2.x) / 2;
 	delta.y = ABS(point1.y - point2.y);
 	return ((delta.x < delta.y) ? (delta.y + delta.x / 2) : (delta.x + delta.y / 2));
 }

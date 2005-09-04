@@ -1416,40 +1416,40 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 
 		switch (tilePoint->direction) {
 			case kDirUpRight:
-				if (checkDragonPoint( tilePoint->u + 1, tilePoint->v + 0, 1)) {
-					pushDragonPoint( tilePoint->u + 2, tilePoint->v + 0, 1);
-					pushDragonPoint( tilePoint->u + 1, tilePoint->v + 1, 7);
-					pushDragonPoint( tilePoint->u + 1, tilePoint->v - 1, 3);
+				if (checkDragonPoint( tilePoint->u + 1, tilePoint->v + 0, kDirUpRight)) {
+					pushDragonPoint( tilePoint->u + 2, tilePoint->v + 0, kDirUpRight);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v + 1, kDirUpLeft);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v - 1, kDirDownRight);
 				}
 				break;
 			case kDirDownRight:
-				if (checkDragonPoint( tilePoint->u + 0, tilePoint->v - 1, 3)) {
-					pushDragonPoint( tilePoint->u + 0, tilePoint->v - 2, 3);
-					pushDragonPoint( tilePoint->u + 1, tilePoint->v - 1, 1);
-					pushDragonPoint( tilePoint->u - 1, tilePoint->v - 1, 5);
+				if (checkDragonPoint( tilePoint->u + 0, tilePoint->v - 1, kDirDownRight)) {
+					pushDragonPoint( tilePoint->u + 0, tilePoint->v - 2, kDirDownRight);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v - 1, kDirUpRight);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v - 1, kDirDownLeft);
 				}
 				break;
 			case kDirDownLeft:
-				if (checkDragonPoint( tilePoint->u - 1, tilePoint->v + 0, 5)) {
-					pushDragonPoint( tilePoint->u - 2, tilePoint->v + 0, 5);
-					pushDragonPoint( tilePoint->u - 1, tilePoint->v - 1, 3);
-					pushDragonPoint( tilePoint->u - 1, tilePoint->v + 1, 7);
+				if (checkDragonPoint( tilePoint->u - 1, tilePoint->v + 0, kDirDownLeft)) {
+					pushDragonPoint( tilePoint->u - 2, tilePoint->v + 0, kDirDownLeft);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v - 1, kDirDownRight);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v + 1, kDirUpLeft);
 				}
 				break;
 			case kDirUpLeft:
-				if (checkDragonPoint( tilePoint->u + 0, tilePoint->v + 1, 7)) {
-					pushDragonPoint( tilePoint->u + 0, tilePoint->v + 2, 7);
-					pushDragonPoint( tilePoint->u - 1, tilePoint->v + 1, 5);
-					pushDragonPoint( tilePoint->u + 1, tilePoint->v + 1, 1);
+				if (checkDragonPoint( tilePoint->u + 0, tilePoint->v + 1, kDirUpLeft)) {
+					pushDragonPoint( tilePoint->u + 0, tilePoint->v + 2, kDirUpLeft);
+					pushDragonPoint( tilePoint->u - 1, tilePoint->v + 1, kDirDownLeft);
+					pushDragonPoint( tilePoint->u + 1, tilePoint->v + 1, kDirUpRight);
 				}
 				break;
 		}
 
 		if (first && (_queueCount == _readCount)) {
-			pushDragonPoint( tilePoint->u + 1, tilePoint->v + 0, 1);
-			pushDragonPoint( tilePoint->u + 0, tilePoint->v - 1, 3);
-			pushDragonPoint( tilePoint->u - 1, tilePoint->v + 0, 5);
-			pushDragonPoint( tilePoint->u + 0, tilePoint->v + 1, 7);
+			pushDragonPoint( tilePoint->u + 1, tilePoint->v + 0, kDirUpRight);
+			pushDragonPoint( tilePoint->u + 0, tilePoint->v - 1, kDirDownRight);
+			pushDragonPoint( tilePoint->u - 1, tilePoint->v + 0, kDirDownLeft);
+			pushDragonPoint( tilePoint->u + 0, tilePoint->v + 1, kDirUpLeft);
 		}
 		first = false;
 	}

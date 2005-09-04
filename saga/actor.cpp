@@ -1975,13 +1975,14 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 			pointBest = actor->_walkStepsPoints[actor->_walkStepsCount - 1];
 
+			pointBest.x &= ~1;
 			delta.x = ABS(pointFrom.x - pointTo.x);
 			delta.y = ABS(pointFrom.y - pointTo.y);
 
 			bestDelta.x = ABS(pointBest.x - pointTo.x);
 			bestDelta.y = ABS(pointBest.y - pointTo.y);
 
-			if (delta.x + delta.y <= bestDelta.x + bestDelta.y && (actor->_flags & kFollower)) {
+			if ((delta.x + delta.y <= bestDelta.x + bestDelta.y) && (actor->_flags & kFollower)) {
 				actor->_actorFlags |= kActorNoFollow;
 			}
 
@@ -2542,7 +2543,6 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				bestRating = currentRating;
 				bestPath = nextPoint;
 			}
-			pathDirection = &_pathDirectionList[i];
 		}
 		++i;
 	} while (i < _pathDirectionListCount);
