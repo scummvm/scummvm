@@ -441,6 +441,7 @@ protected:
 	void o_setState08();
 	void o_unfreezeScript();
 	void o_decrement();
+	void o_badOpcode();
 };
 
 class ScummEngine_v6 : public ScummEngine {
