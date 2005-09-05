@@ -2221,11 +2221,12 @@ void ScummEngine_v72he::o72_writeINI() {
 		copyScriptString(option, sizeof(option));
 
 		// Filter out useless settings
-		if (!strcmp((char *)option, "HETest"))
+		if (!strcmp((char *)option, "HETest") || !strcmp((char *)option, "Version"))
 			return;
 
 		// Filter out confusing subtitle setting
 		if (!strcmp((char *)option, "TextOn"))
+			return;
 
 		// Filter out confusing path settings
 		if (!strcmp((char *)option, "DownLoadPath") || !strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath"))
