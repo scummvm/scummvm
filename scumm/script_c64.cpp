@@ -41,12 +41,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_askDisk),
 		OPCODE(o_unknown1),
 		/* 04 */
-		OPCODE(o5_isGreaterEqual),
+		OPCODE(o_isGreaterEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_getDist),
 		OPCODE(o5_getActorRoom),
 		/* 08 */
-		OPCODE(o5_isNotEqual),
+		OPCODE(o_isNotEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_setActorBitVar),
@@ -66,7 +66,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_getRandomNr),
 		OPCODE(o_clearState08),
 		/* 18 */
-		OPCODE(o5_jumpRelative),
+		OPCODE(o_jumpRelative),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_move),
 		OPCODE(o_getActorBitVar),
@@ -86,7 +86,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_getClosestObjActor),
 		OPCODE(o2_getActorY),
 		/* 28 */
-		OPCODE(o5_equalZero),
+		OPCODE(o_equalZero),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o2_delay),
 		OPCODE(o_setActorBitVar),
@@ -106,7 +106,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState04),
 		/* 38 */
-		OPCODE(o2_isLessEqual),
+		OPCODE(o_isLessEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o2_subtract),
 		OPCODE(o_stopCurrentScript),
@@ -121,12 +121,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_startScript),
 		OPCODE(o_unknown1),
 		/* 44 */
-		OPCODE(o5_isLess),
+		OPCODE(o_isLess),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_increment),
 		OPCODE(o2_getActorX),
 		/* 48 */
-		OPCODE(o5_isEqual),
+		OPCODE(o_isEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_loadRoom),
 		OPCODE(o_setActorBitVar),
@@ -146,7 +146,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_getActorMoving),
 		OPCODE(o_clearState08),
 		/* 58 */
-		OPCODE(o2_beginOverride),
+		OPCODE(o_beginOverride),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o2_add),
 		OPCODE(o_getActorBitVar),
@@ -186,7 +186,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState04),
 		/* 78 */
-		OPCODE(o5_isGreater),
+		OPCODE(o_isGreater),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
@@ -201,12 +201,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_unknown1),
 		/* 84 */
-		OPCODE(o5_isGreaterEqual),
+		OPCODE(o_isGreaterEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_badOpcode),
 		OPCODE(o5_getActorRoom),
 		/* 88 */
-		OPCODE(o5_isNotEqual),
+		OPCODE(o_isNotEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_setActorBitVar),
@@ -246,7 +246,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o2_getActorY),
 		/* A8 */
-		OPCODE(o5_notEqualZero),
+		OPCODE(o_notEqualZero),
 		OPCODE(o2_setOwnerOf),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_setActorBitVar),
@@ -266,7 +266,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState04),
 		/* B8 */
-		OPCODE(o2_isLessEqual),
+		OPCODE(o_isLessEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o2_subtract),
 		OPCODE(o_stopCurrentScript),
@@ -281,12 +281,12 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_startScript),
 		OPCODE(o_unknown1),
 		/* C4 */
-		OPCODE(o5_isLess),
+		OPCODE(o_isLess),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_decrement),
 		OPCODE(o2_getActorX),
 		/* C8 */
-		OPCODE(o5_isEqual),
+		OPCODE(o_isEqual),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_loadRoom),
 		OPCODE(o_setActorBitVar),
@@ -346,7 +346,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_setState04),
 		/* F8 */
-		OPCODE(o5_isGreater),
+		OPCODE(o_isGreater),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
@@ -381,16 +381,6 @@ uint ScummEngine_c64::fetchScriptWord() {
 
 const char *ScummEngine_c64::getOpcodeDesc(byte i) {
 	return _opcodesC64[i].desc;
-}
-
-void ScummEngine_c64::o_setState08() {
-	int obj = fetchScriptByte();
-	putState(obj, getState(obj) | 0x08);
-}
-
-void ScummEngine_c64::o_clearState08() {
-	int obj = fetchScriptByte();
-	putState(obj, getState(obj) & ~0x08);
 }
 
 void ScummEngine_c64::o_stopCurrentScript() {
@@ -607,6 +597,96 @@ void ScummEngine_c64::o_askDisk() {
 void ScummEngine_c64::o_unknownCD() {
 	debug(0, "o_unknownCD(%d)", fetchScriptByte());
 }
+
+void ScummEngine_c64::o_beginOverride() {
+	fetchScriptByte();
+	fetchScriptByte();
+	fetchScriptByte();
+}
+
+void ScummEngine_c64::o_isEqual() {
+	int16 a, b;
+	int var;
+
+	var = fetchScriptByte();
+	a = readVar(var);
+	b = getVarOrDirectByte(PARAM_1);
+
+	if (b == a)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+
+}
+
+void ScummEngine_c64::o_isGreater() {
+	int16 a = getVar();
+	int16 b = getVarOrDirectByte(PARAM_1);
+	if (b > a)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_isGreaterEqual() {
+	int16 a = getVar();
+	int16 b = getVarOrDirectByte(PARAM_1);
+	if (b >= a)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_isLess() {
+	int16 a = getVar();
+	int16 b = getVarOrDirectByte(PARAM_1);
+	if (b < a)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_isLessEqual() {
+	int16 a = getVar();
+	int16 b = getVarOrDirectByte(PARAM_1);
+
+	if (b <= a)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_isNotEqual() {
+	int16 a = getVar();
+	int16 b = getVarOrDirectByte(PARAM_1);
+	if (b != a)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_notEqualZero() {
+	int a = getVar();
+	if (a != 0)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_equalZero() {
+	int a = getVar();
+	if (a == 0)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
+}
+
+void ScummEngine_c64::o_jumpRelative() {
+	int16 offset = (int16)ScummEngine::fetchScriptWord();
+	_scriptPointer += offset;
+}
+
+
 
 #undef PARAM_1
 #undef PARAM_2
