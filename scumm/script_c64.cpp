@@ -64,7 +64,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getRandomNr),
-		OPCODE(o_clearState08),
+		OPCODE(o2_clearState08),
 		/* 18 */
 		OPCODE(o_jumpRelative),
 		OPCODE(o_stopCurrentScript),
@@ -144,7 +144,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o_clearState08),
+		OPCODE(o2_clearState08),
 		/* 58 */
 		OPCODE(o_beginOverride),
 		OPCODE(o_stopCurrentScript),
@@ -224,7 +224,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o_setState08),
+		OPCODE(o2_setState08),
 		/* 98 */
 		OPCODE(o2_restart),
 		OPCODE(o_stopCurrentScript),
@@ -304,7 +304,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o_setState08),
+		OPCODE(o2_setState08),
 		/* D8 */
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
