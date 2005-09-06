@@ -407,13 +407,11 @@ protected:
 	virtual uint fetchScriptWord();
 
 	/* Version C64 script opcodes */
-	void o_isGreaterEqual();
 	void o_stopCurrentScript();
 	void o_loadSound();
 	void o_animateActor();
 	void o_putActorAtObject();
 	void o_unknown13();
-	void o_clearState08();
 	void o_loadActor();
 	void o_loadRoom();
 	void o_freezeScript();
@@ -423,7 +421,6 @@ protected:
 	void o_lights();
 	void o_pickupObject();
 	void o_unknown93();
-	void o_setState08();
 	void o_unfreezeScript();
 	void o_decrement();
 	void o_badOpcode();
@@ -438,6 +435,16 @@ protected:
 	void o_printEgo_c64();
 	void o_print_c64();
 	void o_unknownCD();
+	void o_beginOverride();
+	void o_isEqual();
+	void o_isGreater();
+	void o_isGreaterEqual();
+	void o_isLess();
+	void o_isLessEqual();
+	void o_isNotEqual();
+	void o_notEqualZero();
+	void o_equalZero();
+	void o_jumpRelative();
 };
 
 class ScummEngine_v6 : public ScummEngine {
