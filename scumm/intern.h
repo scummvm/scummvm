@@ -403,45 +403,41 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void ifStateCommon(byte type);
-	virtual void ifNotStateCommon(byte type);
-	virtual void setStateCommon(byte type);
-	virtual void clearStateCommon(byte type);
+	virtual int getVarOrDirectWord(byte mask);
+	virtual uint fetchScriptWord();
 
-	/* Version 2 script opcodes */
+	/* Version C64 script opcodes */
 	void o_isGreaterEqual();
-	void o_stopScript();
-	void o_getDist();
-	void o_isNotEqual();
+	void o_stopCurrentScript();
 	void o_loadSound();
 	void o_animateActor();
 	void o_putActorAtObject();
 	void o_unknown13();
 	void o_clearState08();
-	void o_move();
 	void o_loadActor();
-	void o_freezeScript();
-	void o_walkActorToObject();
-	void o_isLessEqual();
-	void o_subtract();
-	void o_isLess();
-	void o_increment();
-	void o_isEqual();
 	void o_loadRoom();
+	void o_freezeScript();
 	void o_loadScript();
 	void o_unknown4D();
-	void o_unknown53();
-	void o_add();
 	void o_cursorCommand();
 	void o_lights();
-	void o_getObjectOwner();
-	void o_isGreater();
 	void o_pickupObject();
 	void o_unknown93();
 	void o_setState08();
 	void o_unfreezeScript();
 	void o_decrement();
 	void o_badOpcode();
+	void o_nop();
+	void o_getActorBitVar();
+	void o_setActorBitVar();
+	void o_unknown1();
+	void o_unknown2();
+	void o_unknown3();
+	void o_getClosestObjActor();
+	void o_askDisk();
+	void o_printEgo_c64();
+	void o_print_c64();
+	void o_unknownCD();
 };
 
 class ScummEngine_v6 : public ScummEngine {
