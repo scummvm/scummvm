@@ -1,4 +1,6 @@
 Maniac Mansion
+        VC64	C64	en	d831f7c048574dd9d5d85db2a1468099	maniac
+        VC64	C64	de	c4a7f7398ac9ae588940f9912ea5fd8f	maniac
 	V1	DOS	en	7f45ddd6dbfbf8f80c0c0efea4c295bc	maniac
 	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
 	V1.5	NES	en	d8d07efcb88f396bee0b402b10c3b1c9	maniac
@@ -19,6 +21,8 @@ Maniac Mansion
 	V2	Atari	fr	dd30a53035393baa5a5e222e716559af	maniac	Andreas Bylund
 
 Zak McKracken and the Alien Mindbenders
+	VC64	C64	en	55d3987641bf229c83bc729210173383	zak
+	VC64	C64	de	4973bbc3899e3826dbf316e1d7271ec7	zak
 	V1	DOS	en	7020931d5a2be0a49d68e7a1882363e4	zak
 	V1 (alt?)	DOS	en	b23f7cd7c304d7dff08e92a96120d5b4	zak	Andrea Petrucci
 	V2 Demo	Atari	en	8299d9b8a1b0e7b881bae7a9971dc5e2	zak
