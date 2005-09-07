@@ -2703,7 +2703,6 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 						if (0 == scumm_stricmp(detectName, name)) {
 							byte buf[6];
-							debug(0, detectName);
 
 							if (g->version < 4) {
 								// We take a look at the file now, to narrow
