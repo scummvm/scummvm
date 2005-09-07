@@ -20,7 +20,9 @@ Table of Contents:
  * 3.5 Beneath a Steel Sky notes
  * 3.6 Inherit the Earth
  * 3.7 Gobliiins
- * 3.8 Known Bugs
+ * 3.8 Maniac Mansion NES notes
+ * 3.9 Commodore64 games notes
+ * 3.10 Known Bugs
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -103,20 +105,11 @@ and Amiga versions of games may work with the 'Amiga' flag turned on - but
 this is not always true.
 
 SCUMM Games by LucasArts:
-     Maniac Mansion (Classic Version)                [Game: maniac]
-     Maniac Mansion (Enhanced Version)               [Game: maniac]
-     Zak McKracken (Classic Version)                 [Game: zak]
-     Zak McKracken (Enhanced Version)                [Game: zak]
-     Indiana Jones & the Last Crusade (EGA)          [Game: indy3ega]
-     Indiana Jones & the Last Crusade (256)          [Game: indy3]
-     Indiana Jones & the Last Crusade (FM-TOWNS)     [Game: indy3towns]
-     Loom (16 color floppy version)                  [Game: loom]
-     Loom (FM-TOWNS)                                 [Game: loomtowns]
-     Loom (256 color CD version)                     [Game: loomcd]
-     Zak McKracken (FM-TOWNS)                        [Game: zaktowns]
-     Monkey Island 1 (EGA)                           [Game: monkeyega]
-     Monkey Island 1 (VGA)                           [Game: monkeyvga]
-     Monkey Island 1 (CD)                            [Game: monkey/monkey1]
+     Maniac Mansion                                  [Game: maniac]
+     Zak McKracken                                   [Game: zak]
+     Indiana Jones & the Last Crusade                [Game: indy3]
+     Loom                                            [Game: loom]
+     Monkey Island 1                                 [Game: monkey]
      Monkey Island 2                                 [Game: monkey2]
      Indiana Jones and the Fate of Atlantis          [Game: atlantis]
      Day of the Tentacle                             [Game: tentacle]
@@ -295,7 +288,24 @@ The CD version of Gobliiins contains one big audio track which you need to rip
 (See the section on using compressed audiofiles) and copy into the game
 directory.
 
-3.8) Known Problems in ScummVM 0.8.0CVS
+3.8) Maniac Mansion NES notes
+---- ------------------------
+Supported versions are English USA (E), French (F), Swedish (SW) and European
+(U). Either use extract_mm_nes utility from tools package (but then game
+will not be autodetected) or use PRG section of ROM (with first 16 bytes
+stripped) with 262144 bytes size. It should be named "Maniac Mansion (XX).prg",
+where XX is standard region abbreviation such as E, F, SW or U. If you add
+game manually make sure that platform is set to NES.
+
+3.9) Commodore64 games notes
+---- -----------------------
+Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
+playable. Either use extract_mm_c64 (but then game will not be autodetected)
+or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
+respectively. If you add game manually make sure that platform is set to
+Commodore64.
+
+3.10) Known Problems in ScummVM 0.8.0CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not

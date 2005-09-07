@@ -20,3 +20,17 @@ i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
 CD version of Gobliiins contains one big audio track which needs to be ripped
 and copied into game directory. See section \ref{sect-compressing-audiofiles}.
 
+\subsection{Maniac Mansion NES notes}
+Supported versions are English USA (E), French (F), Swedish (SW) and European
+(U). Either use extract\_mm\_nes utility from tools package (but then game
+will not be autodetected) or use PRG section of ROM (with first 16 bytes
+stripped) with 262144 bytes size. It should be named "Maniac Mansion (XX).prg",
+where XX is standard region abbreviation such as E, F, SW or U. If you add
+game manually make sure that platform is set to NES.
+
+\subsection{Commodore64 games notes}
+Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
+playable. Either use extract\_mm\_c64 (but then game will not be autodetected)
+or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
+respectively. If you add game manually make sure that platform is set to
+Commodore64.
