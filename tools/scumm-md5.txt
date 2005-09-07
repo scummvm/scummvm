@@ -1,6 +1,6 @@
 Maniac Mansion
-        VC64	C64	en	d831f7c048574dd9d5d85db2a1468099	maniac
-        VC64	C64	de	c4a7f7398ac9ae588940f9912ea5fd8f	maniac
+	VC64	C64	en	d831f7c048574dd9d5d85db2a1468099	maniac
+	VC64	C64	de	c4a7f7398ac9ae588940f9912ea5fd8f	maniac
 	V1	DOS	en	7f45ddd6dbfbf8f80c0c0efea4c295bc	maniac
 	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
 	V1.5	NES	en	d8d07efcb88f396bee0b402b10c3b1c9	maniac
