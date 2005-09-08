@@ -68,7 +68,8 @@ void ConResource::drawToScreen(bool doMask) {
 	uint8 *screenPos = _y * GAME_SCREEN_WIDTH + _x + _screen;
 	uint8 *updatePos = screenPos;
 
-	if (!_spriteData) return;
+	if (!_spriteData)
+		return;
 	uint8 *spriteData = ((uint8 *)_spriteData) + sizeof(dataFileHeader);
 	spriteData += _spriteData->s_sp_size * _curSprite;
 	if (doMask) {
@@ -114,7 +115,8 @@ void TextResource::drawToScreen(bool doMask) {
 
 	doMask = true;
 	uint16 cnty, cntx, cpWidth, cpHeight;
-	if ((_oldX == _x) && (_oldY == _y) && (_spriteData)) return;
+	if ((_oldX == _x) && (_oldY == _y) && (_spriteData))
+		return;
 	if (_oldX < GAME_SCREEN_WIDTH) {
 		cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX))?(GAME_SCREEN_WIDTH - _oldX):(PAN_LINE_WIDTH);
 		if (_spriteData && (cpWidth > _spriteData->s_width))
@@ -327,7 +329,7 @@ void Control::buttonControl(ConResource *pButton) {
 		_textSprite = NULL;
 		_curButtonText = 0;
 		_text->setSprite(NULL);
-		return ;
+		return;
 	}
 	if (_curButtonText != pButton->_text) {
 		if (_textSprite) free(_textSprite);
@@ -446,7 +448,7 @@ void Control::doLoadSavePanel(void) {
 void Control::doControlPanel(void) {
 
 	if (SkyEngine::isDemo()) {
-		return ;
+		return;
 	}
 	initPanel();
 
@@ -756,14 +758,16 @@ void Control::toggleMusic(void) {
 uint16 Control::shiftDown(uint8 speed) {
 
 	if (speed == SLOW) {
-		if (_firstText >= MAX_SAVE_GAMES - MAX_ON_SCREEN) return 0;
+		if (_firstText >= MAX_SAVE_GAMES - MAX_ON_SCREEN)
+			return 0;
 		_firstText++;
 	} else {
 		if (_firstText <= MAX_SAVE_GAMES - 2 * MAX_ON_SCREEN)
 			_firstText += MAX_ON_SCREEN;
 		else if (_firstText < MAX_SAVE_GAMES - MAX_ON_SCREEN)
 			_firstText = MAX_SAVE_GAMES - MAX_ON_SCREEN;
-		else return 0;
+		else
+			return 0;
 	}
 	return SHIFTED;
 }
@@ -771,12 +775,17 @@ uint16 Control::shiftDown(uint8 speed) {
 uint16 Control::shiftUp(uint8 speed) {
 
 	if (speed == SLOW) {
-		if (_firstText > 0) _firstText--;
-		else return 0;
+		if (_firstText > 0)
+			_firstText--;
+		else
+			return 0;
 	} else {
-		if (_firstText >= MAX_ON_SCREEN) _firstText -= MAX_ON_SCREEN;
-		else if (_firstText > 0) _firstText = 0;
-		else return 0;
+		if (_firstText >= MAX_ON_SCREEN)
+			_firstText -= MAX_ON_SCREEN;
+		else if (_firstText > 0)
+			_firstText = 0;
+		else
+			return 0;
 	}
 	return SHIFTED;
 }
@@ -931,7 +940,8 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 bool Control::checkKeyList(uint8 key) {
 	static const uint8 charList[14] = " ,().='-&+!?\"";
 	for (uint chCnt = 0; chCnt < ARRAYSIZE(charList); chCnt++)
-		if (charList[chCnt] == key) return true;
+		if (charList[chCnt] == key)
+			return true;
 	return false;
 }
 
@@ -939,7 +949,8 @@ void Control::handleKeyPress(uint8 key, uint8 *textBuf) {
 
 	if (key == 8) { // backspace
 		for (uint8 cnt = 0; cnt < 6; cnt++)
-			if (!textBuf[cnt]) return;
+			if (!textBuf[cnt])
+				return;
 
 		while (textBuf[1])
 			textBuf++;
@@ -1462,7 +1473,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	_skyText->fnSetFont(_savedCharSet);
 
 	removePanel();
-    return result;
+	return result;
 }
 
 void Control::restartGame(void) {

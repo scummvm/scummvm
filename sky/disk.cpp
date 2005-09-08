@@ -232,8 +232,8 @@ void Disk::prefetchFile(uint16 fileNr) {
 		fEntry = &((*fEntry)->next);
 	}
 	if (found) {
-		debug(1,"Disk::prefetchFile: File %d was already prefetched",fileNr);
-		return ;
+		debug(1, "Disk::prefetchFile: File %d was already prefetched", fileNr);
+		return;
 	}
 	uint8 *temp = loadFile(fileNr);
 	*fEntry = new PrefFile;
@@ -382,7 +382,7 @@ void Disk::fnMiniLoad(uint16 fileNum) {
 	uint16 cnt = 0;
 	while (_loadedFilesList[cnt]) {
 		if (_loadedFilesList[cnt] == fileNum)
-			return ;
+			return;
 		cnt++;
 	}
 	_loadedFilesList[cnt] = fileNum & 0x7FFFU;

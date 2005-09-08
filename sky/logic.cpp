@@ -2341,7 +2341,7 @@ bool Logic::fnBlankScreen(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnPrintCredit(uint32 a, uint32 b, uint32 c) {
 
-	lowTextManager_t creditText = _skyText->lowTextManager(a , 240, 0, 248, true);
+	lowTextManager_t creditText = _skyText->lowTextManager(a, 240, 0, 248, true);
 	Compact *credCompact = _skyCompact->fetchCpt(creditText.compactNum);
 	credCompact->xcood = 168;
 	if ((a == 558) && (c == 215))
@@ -2500,7 +2500,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	if (speechUsed && (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
 		target->spTime = 10;
 		target->logic = L_TALK;
-		return ;
+		return;
 	}
 
 	//now form the text sprite

@@ -1090,7 +1090,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 
 	if (sound > _soundsTotal) {
 		debug(5, "Sound::playSound %d ignored, only %d sfx in file", sound, _soundsTotal);
-		return ;
+		return;
 	}
 
 	volume = ((volume & 0x7F) + 1) << 1;

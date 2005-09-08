@@ -177,11 +177,12 @@ void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..6
 void Screen::recreate(void) {
 
 	// check the game grid for changed blocks
-	if (!Logic::_scriptVariables[LAYER_0_ID]) return ;
+	if (!Logic::_scriptVariables[LAYER_0_ID])
+		return;
 	uint8 *gridPos = _gameGrid;
 	uint8 *screenData = (uint8 *)SkyEngine::fetchItem(Logic::_scriptVariables[LAYER_0_ID]);
 	if (!screenData) {
-		error("Screen::recreate():\nSkyEngine::fetchItem(Logic::_scriptVariables[LAYER_0_ID](%X)) returned NULL",Logic::_scriptVariables[LAYER_0_ID]);
+		error("Screen::recreate():\nSkyEngine::fetchItem(Logic::_scriptVariables[LAYER_0_ID](%X)) returned NULL", Logic::_scriptVariables[LAYER_0_ID]);
 	}
 	uint8 *screenPos = _currentScreen;
 
@@ -640,7 +641,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	if (spriteInfo == NULL) {
 		warning("Screen::drawSprite Can't draw sprite. Data %d was not loaded", sprCompact->frame >> 6);
 		sprCompact->status = 0;
-		return ;
+		return;
 	}
 	dataFileHeader *sprDataFile = (dataFileHeader *)spriteInfo;
 	_sprWidth = sprDataFile->s_width;
@@ -653,7 +654,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		spriteY = -spriteY;
 		if (_sprHeight <= (uint32)spriteY) {
 			_sprWidth = 0;
-			return ;
+			return;
 		}
 		_sprHeight -= spriteY;
 		spriteData += sprDataFile->s_width * spriteY;
@@ -664,7 +665,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 			botClip = -botClip;
 			if (_sprHeight <= (uint32)botClip) {
 				_sprWidth = 0;
-				return ;
+				return;
 			}
 			_sprHeight -= botClip;
 		}
@@ -675,7 +676,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		spriteX = -spriteX;
 		if (_sprWidth <= (uint32)spriteX) {
 			_sprWidth = 0;
-			return ;
+			return;
 		}
 		_sprWidth -= spriteX;
 		_maskX1 = spriteX;
@@ -686,7 +687,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 			rightClip = (-rightClip) + 1;
 			if (_sprWidth <= (uint32)rightClip) {
 				_sprWidth = 0;
-				return ;
+				return;
 			}
 			_sprWidth -= rightClip;
 			_maskX2 = rightClip;
@@ -701,7 +702,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 	if ((_sprX + _sprWidth > 320) || (_sprY + _sprHeight > 192)) {
 		warning("Screen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d",_sprX, _sprY, _sprWidth, _sprHeight);
 		_sprWidth = 0;
-		return ;
+		return;
 	}
 
 	for (uint16 cnty = 0; cnty < _sprHeight; cnty++) {
@@ -726,7 +727,8 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 
 void Screen::vectorToGame(uint8 gridVal) {
 
-	if (_sprWidth == 0) return ;
+	if (_sprWidth == 0)
+		return;
 	uint8 *trgGrid = _gameGrid + _sprY * GRID_X +_sprX;
 	for (uint32 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint32 cntx = 0; cntx < _sprWidth; cntx++)
@@ -762,7 +764,7 @@ void Screen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 
 void Screen::verticalMask(void) {
 
 	if (_sprWidth == 0)
-		return ;
+		return;
 	uint32 startGridOfs = (_sprY + _sprHeight - 1) * GRID_X + _sprX;
 	uint8 *startScreenPtr = (_sprY + _sprHeight - 1) * GRID_H * GAME_SCREEN_WIDTH + _sprX * GRID_W + _currentScreen;
 
