@@ -39,6 +39,8 @@ const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x03, 0x28, 0x22, 0x46, 0x0F, 0x0D, 0x00, 0x00 }
 };
 
+const int Screen::_screenDimTableCount = ARRAYSIZE(_screenDimTable);
+
 const Screen::DrawShapePlotPixelCallback Screen::_drawShapePlotPixelTable[] = {
 	&Screen::drawShapePlotPixelCallback1
 	// XXX

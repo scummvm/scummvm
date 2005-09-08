@@ -130,32 +130,6 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 	return buffer;
 }
 
-Palette* Resource::loadPalette(const char* file)	{
-	uint32 size = 0;
-	uint8 *buffer = fileData(file, &size);
-	if (!buffer) {
-		warning("ResMgr: Failed loading palette %s", file);
-		return 0;
-	}
-	return new Palette(buffer, size);
-}
-
-CPSImage* Resource::loadImage(const char* file) {
-	uint32 size = 0;
-	uint8 *buffer = fileData(file, &size);
-	if (!buffer)
-		return 0;
-	return new CPSImage(buffer, size);
-}
-
-Font* Resource::loadFont(const char* file) {
-	uint32 size = 0;
-	uint8 *buffer = fileData(file, &size);
-	if (!buffer)
-		return 0;
-	return new Font(buffer, size);
-}
-
 VMContext* Resource::loadScript(const char* file) {
 	VMContext* context = new VMContext(_engine);
 	context->loadScript(file);

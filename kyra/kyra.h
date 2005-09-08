@@ -62,6 +62,11 @@ class Screen;
 class KyraEngine : public Engine {
 public:
 
+	enum {
+		TALK_SUBSTRING_LEN = 80,
+		TALK_SUBSTRING_NUM = 3
+	};
+
 	KyraEngine(GameDetector *detector, OSystem *system);
 	~KyraEngine();
 	
@@ -73,6 +78,8 @@ public:
 	uint8 game() const { return _game; }
 	
 	Common::RandomSource _rnd;
+
+	typedef void (KyraEngine::*IntroProc)();
 
 protected:
 
@@ -96,6 +103,10 @@ protected:
 	
 	void seq_intro();
 	void seq_introLogos();
+	void seq_introStory();
+	void seq_introMalcomTree();
+	void seq_introKallakWriting();
+	void seq_introKallakMalcom();
 	uint8 *seq_setPanPages(int pageNum, int shape);
 	void seq_makeHandShapes();
 	void seq_freeHandShapes();
@@ -113,7 +124,8 @@ protected:
 	bool _fastMode;
 	bool _quitFlag;
 	bool _skipIntroFlag;
-	char _talkSubstrings[80 * 3];
+	char _talkBuffer[300];
+	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
 	TalkCoords _talkCoords;
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
@@ -123,10 +135,11 @@ protected:
 	uint8 *_seq_handShapes[3];
 	uint8 *_seq_specialSequenceTempBuffer;
 
-	MusicPlayer *_midi;
 	Resource *_res;
 	Screen *_screen;
-	
+	MusicPlayer *_midi;
+
+	// these tables are specific to the floppy version
 	static const uint8 _seq_introData_Forest[];
 	static const uint8 _seq_introData_KallakWriting[];
 	static const uint8 _seq_introData_KyrandiaLogo[];

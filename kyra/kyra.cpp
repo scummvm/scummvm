@@ -184,6 +184,9 @@ void KyraEngine::errorString(const char *buf1, char *buf2) {
 
 int KyraEngine::go() {
 	_quitFlag = false;
+	uint32 sz;
+	_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
+	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
 	_screen->setScreenDim(0);
 	seq_intro();
 	return 0;
@@ -225,21 +228,38 @@ void KyraEngine::setTalkCoords(uint16 y) {
 
 int KyraEngine::getCenterStringX(const char *str, int x1, int x2) {
 	debug(9, "KyraEngine::getCenterStringX('%s', %d, %d)", str, x1, x2);
-	warning("KyraEngine::getCenterStringX() UNIMPLEMENTED");
-	return 0;
+	_screen->_charWidth = -2;
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	int strWidth = _screen->getTextWidth(str);
+	_screen->setFont(curFont);
+	_screen->_charWidth = 0;
+	int w = x2 - x1 + 1;
+	return x1 + (w - strWidth) / 2;
 }
 
 int KyraEngine::getCharLength(const char *str, int len) {
 	debug(9, "KyraEngine::preprocessString('%s', %d)", str, len);
-	warning("KyraEngine::preprocessString() UNIMPLEMENTED");
-	return 0;
+	debug(9, "KyraEngine::getCharLength('%s', %d)", str, len);
+	int charsCount = 0;
+	if (*str) {
+		_screen->_charWidth = -2;
+		Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+		int i = 0;
+		while (i <= len && *str) {
+			i += _screen->getCharWidth(*str++);
+			++charsCount;
+		}
+		_screen->setFont(curFont);
+		_screen->_charWidth = 0;
+	}
+	return charsCount;
 }
 
 int KyraEngine::dropCRIntoString(char *str, int offs) {
 	debug(9, "KyraEngine::dropCRIntoString('%s', %d)", str, offs);
 	int pos = 0;
 	while (*str) {
-		if (*str == 0x20) {
+		if (*str == ' ') {
 			*str = 0xD;
 			return pos;
 		}
@@ -251,8 +271,37 @@ int KyraEngine::dropCRIntoString(char *str, int offs) {
 
 char *KyraEngine::preprocessString(const char *str) {
 	debug(9, "KyraEngine::preprocessString('%s')", str);
-	warning("KyraEngine::preprocessString() UNIMPLEMENTED");
-	return 0;
+	assert(strlen(str) < sizeof(_talkBuffer) - 1);
+	strcpy(_talkBuffer, str);
+	char *p = _talkBuffer;
+	while (*p) {
+		if (*p == 0xD) {
+			return _talkBuffer;
+		}
+		++p;
+	}
+	p = _talkBuffer;
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+	int textWidth = _screen->getTextWidth(p);
+	_screen->_charWidth = 0;
+	if (textWidth > 176) {
+		if (textWidth > 352) {
+			int count = getCharLength(p, textWidth / 3);
+			int offs = dropCRIntoString(p, count);
+			p += count + offs;
+			_screen->_charWidth = -2;
+			textWidth = _screen->getTextWidth(p);
+			_screen->_charWidth = 0;
+			count = getCharLength(p, textWidth / 2);
+			dropCRIntoString(p, count);
+		} else {
+			int count = getCharLength(p, textWidth / 2);
+			dropCRIntoString(p, count);
+		}
+	}
+	_screen->setFont(curFont);
+	return _talkBuffer;
 }
 
 int KyraEngine::buildMessageSubstrings(const char *str) {
@@ -261,26 +310,37 @@ int KyraEngine::buildMessageSubstrings(const char *str) {
 	int pos = 0;
 	while (*str) {
 		if (*str == 0xD) {
-			_talkSubstrings[currentLine * 80 + pos] = 0;
+			assert(currentLine < TALK_SUBSTRING_NUM);
+			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = 0;
 			++currentLine;
 			pos = 0;
 		} else {
-			_talkSubstrings[currentLine * 80 + pos] = *str;
+			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = *str;
 			++pos;
-			if (pos > 78) {
-				pos = 78;
+			if (pos > TALK_SUBSTRING_LEN - 2) {
+				pos = TALK_SUBSTRING_LEN - 2;
 			}
 		}
 		++str;
 	}
-	_talkSubstrings[currentLine * 80 + pos] = '\0';
+	_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
 	return currentLine + 1;
 }
 
 int KyraEngine::getWidestLineWidth(int linesCount) {
 	debug(9, "KyraEngine::getWidestLineWidth(%d)", linesCount);
-	warning("KyraEngine::getWidestLineWidth() UNIMPLEMENTED");
-	return 0;
+	int maxWidth = 0;
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+	for (int l = 0; l < linesCount; ++l) {
+		int w = _screen->getTextWidth(&_talkSubstrings[l * TALK_SUBSTRING_LEN]);
+		if (maxWidth < w) {
+			maxWidth = w;
+		}
+	}
+	_screen->setFont(curFont);
+	_screen->_charWidth = 0;
+	return maxWidth;
 }
 
 void KyraEngine::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
@@ -304,7 +364,29 @@ void KyraEngine::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
 
 void KyraEngine::printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage) {
 	debug(9, "KyraEngine::printTalkTextMessage('%s', %d, %d, %d, %d, %d)", text, x, y, color, srcPage, dstPage);
-	warning("KyraEngine::printTalkTextMessage() UNIMPLEMENTED");
+	char *str = preprocessString(text);
+	int lineCount = buildMessageSubstrings(str);
+	int top = y - lineCount * 10;
+	if (top < 0) {
+		top = 0;
+	}
+	_talkMessageY = top;
+	_talkMessageH = lineCount * 10;
+	int w = getWidestLineWidth(lineCount);
+	int x1, x2;
+	calcWidestLineBounds(x1, x2, w, x);
+	_talkCoords.x = x1;
+	_talkCoords.w = w + 2;
+	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+	int curPage = _screen->_curPage;
+	_screen->_curPage = srcPage;
+	for (int i = 0; i < lineCount; ++i) {
+		top = i * 10 + _talkMessageY;
+		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
+		int left = getCenterStringX(msg, x1, x2);
+		printText(msg, left, top, color, 0xC, 0);
+	}
+	_screen->_curPage = curPage;
 	_talkMessagePrinted = true;
 }
 
@@ -312,11 +394,11 @@ void KyraEngine::printText(const char *str, int x, int y, uint8 c0, uint8 c1, ui
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-//	const uint8 *currentFont = _screen->setupFont(_res->_8fat_fnt);
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
 	_screen->printText(str, x, y, c0, c2);
 	_screen->_charWidth = 0;
-//	_screen->setupFont(currentFont);
+	_screen->setFont(curFont);
 }
 
 void KyraEngine::waitTicks(int ticks) {
@@ -346,45 +428,32 @@ void KyraEngine::waitTicks(int ticks) {
 
 void KyraEngine::seq_intro() {
 	debug(9, "KyraEngine::seq_intro()");
+	static const IntroProc introProcTable[] = {
+		&KyraEngine::seq_introLogos,
+//		&KyraEngine::seq_introStory,
+		&KyraEngine::seq_introMalcomTree,
+		&KyraEngine::seq_introKallakWriting,
+		&KyraEngine::seq_introKallakMalcom
+	};
 	_skipIntroFlag = true; // only true if user already played the game once
 	_seq_copyViewOffs = 1;
-	
+	_screen->setFont(Screen::FID_8_FNT);
 //	snd_kyraPlayTheme(0);
 	setTalkCoords(0x90);
-
-	memset(_screen->_palette1, 0, 768);
-	_screen->setScreenPalette(_screen->_palette1);
-	
-	seq_introLogos();
-	if (!seq_skipSequence()) {
-//		loadBitmap("MAIN_ENG.CPS", 3, 3, 0);
-		_screen->clearPage(0); // XXX
-		if (!seq_skipSequence()) {
-			_screen->_curPage = 0;
-			_screen->clearPage(3);
-			seq_playSpecialSequence(_seq_introData_MalcomTree, true);
-			seq_makeHandShapes();
-			uint8 *p = (uint8 *)malloc(5060);
-			_screen->setAnimBlockPtr(p, 5060);
-			_screen->_charWidth = -2;
-			_screen->clearPage(3);
-			seq_playSpecialSequence(_seq_introData_KallakWriting, true);
-			free(p);
-			seq_freeHandShapes();
-			_screen->clearPage(3);
-			seq_playSpecialSequence(_seq_introData_KallakMalcom, true);
-			setTalkCoords(0x88);
-			waitTicks(0x1E);
-			_seq_copyViewOffs = 0;
-		}
+	_screen->setScreenPalette(_screen->_currentPalette);
+	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
+		(this->*introProcTable[i])();
 	}
+	setTalkCoords(0x88);
+	waitTicks(0x1E);
+	_seq_copyViewOffs = 0;
 }
 
 void KyraEngine::seq_introLogos() {
 	debug(9, "KyraEngine::seq_introLogos()");
 	_screen->clearPage(0);
-	loadBitmap("TOP.CPS", 7, 7, _screen->_palette1);
-	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_palette1);
+	loadBitmap("TOP.CPS", 7, 7, _screen->_currentPalette);
+	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
 	_screen->_curPage = 0;
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
@@ -425,6 +494,37 @@ void KyraEngine::seq_introLogos() {
 	} while (y2 >= 64);
 
 	seq_playSpecialSequence(_seq_introData_Forest, true);
+}
+
+void KyraEngine::seq_introStory() {
+	debug(9, "KyraEngine::seq_introStory()");
+//	loadBitmap("MAIN_ENG.CPS", 3, 3, 0);
+	_screen->clearPage(0); // XXX
+}
+
+void KyraEngine::seq_introMalcomTree() {
+	debug(9, "KyraEngine::seq_introMalcomTree()");
+	_screen->_curPage = 0;
+	_screen->clearPage(3);
+	seq_playSpecialSequence(_seq_introData_MalcomTree, true);
+}
+
+void KyraEngine::seq_introKallakWriting() {
+	debug(9, "KyraEngine::seq_introKallakWriting()");
+	seq_makeHandShapes();
+	uint8 *p = (uint8 *)malloc(5060);
+	_screen->setAnimBlockPtr(p, 5060);
+	_screen->_charWidth = -2;
+	_screen->clearPage(3);
+	seq_playSpecialSequence(_seq_introData_KallakWriting, true);
+	free(p);
+	seq_freeHandShapes();
+}
+
+void KyraEngine::seq_introKallakMalcom() {
+	debug(9, "KyraEngine::seq_introKallakMalcom()");
+	_screen->clearPage(3);
+	seq_playSpecialSequence(_seq_introData_KallakMalcom, true);
 }
 
 uint8 *KyraEngine::seq_setPanPages(int pageNum, int shape) {
@@ -652,7 +752,7 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 				uint8 colNum = *seqData++;
 				uint32 fileSize;
 				uint8 *srcData = _res->fileData(_seq_COLTable[colNum], &fileSize);
-				memcpy(_screen->_palette1, srcData, fileSize);
+				memcpy(_screen->_currentPalette, srcData, fileSize);
 				delete[] srcData;
 			}
 			break;

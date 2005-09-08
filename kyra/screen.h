@@ -28,7 +28,6 @@ class OSystem;
 
 namespace Kyra {
 
-class CPSImage;
 class KyraEngine;
 
 struct ScreenDim {
@@ -42,46 +41,17 @@ struct ScreenDim {
 	uint16 unkE;
 };
 
+struct Font {
+	uint8 *fontData;
+	uint8 *charWidthTable;
+	uint16 charBoxHeight;
+	uint16 charBitmapOffset;
+	uint16 charWidthTableOffset;
+	uint16 charHeightTableOffset;
+};
+
 class Screen {
 public:
-
-	Screen(KyraEngine *vm, OSystem *system);
-	~Screen();
-
-	void updateScreen();
-	uint8 *getPagePtr(int pageNum);
-	void clearPage(int pageNum);
-	int setCurPage(int pageNum);
-	void clearCurPage();
-	uint8 getPagePixel(int pageNum, int x, int y);
-	void setPagePixel(int pageNum, int x, int y, uint8 color);
-	void fadeFromBlack();
-	void fadeToBlack();
-	void setScreenPalette(const uint8 *palData);
-	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
-	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
-	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
-	void copyCurPageBlock(int x, int y, int h, int w, uint8 *dst);
-	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
-	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
-	void setAnimBlockPtr(uint8 *p, int size);
-	void setTextColorMap(const uint8 *cmap);
-	void setTextColor(const uint8 *cmap, int a, int b);
-	int getCharWidth(uint8 c) const;
-	int getTextWidth(const char *str) const;
-	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
-	void setScreenDim(int dim);
-	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable);
-	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
-	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
-	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
-	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
-	
-	int _charOffset;
-	int _charWidth;
-	int _curPage;
-	uint8 *_palette1;
 
 	enum {
 		SCREEN_W = 320,
@@ -98,24 +68,74 @@ public:
 		DSF_CENTER     = 0x20
 	};
 	
+	enum FontId {
+		FID_6_FNT = 0,
+		FID_8_FNT,
+		FID_NUM
+	};
+	
+	Screen(KyraEngine *vm, OSystem *system);
+	~Screen();
+
+	void updateScreen();
+	uint8 *getPagePtr(int pageNum);
+	void clearPage(int pageNum);
+	int setCurPage(int pageNum);
+	void clearCurPage();
+	uint8 getPagePixel(int pageNum, int x, int y);
+	void setPagePixel(int pageNum, int x, int y, uint8 color);
+	void fadeFromBlack();
+	void fadeToBlack();
+	void fadePalette(const uint8 *palData, int delay);
+	void setScreenPalette(const uint8 *palData);
+	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
+	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
+	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
+	void copyCurPageBlock(int x, int y, int h, int w, uint8 *dst);
+	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
+	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
+	void setAnimBlockPtr(uint8 *p, int size);
+	void setTextColorMap(const uint8 *cmap);
+	void setTextColor(const uint8 *cmap, int a, int b);
+	void loadFont(FontId fontId, uint8 *fontData);
+	FontId setFont(FontId fontId);
+	int getCharWidth(uint8 c) const;
+	int getTextWidth(const char *str) const;
+	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
+	void drawChar(char c, int x, int y);
+	void setScreenDim(int dim);
+	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
+	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable);
+	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
+	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
+	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
+	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
+	
+	int _charWidth;
+	int _charOffset;
+	int _curPage;
+	uint8 *_currentPalette;
+	
 	typedef void (Screen::*DrawShapePlotPixelCallback)(uint8 *dst, uint8 c);
 
 private:
 
-	uint8 _textColorsMap[16];
-	uint8 *_animBlockPtr;
-	int _animBlockSize;
 	uint8 *_pagePtrs[16];
-	uint8 *_palette3;
-	uint8 *_fadePalette;
+	uint8 *_screenPalette;
 	const ScreenDim *_curDim;
+	FontId _currentFont;
+	Font _fonts[FID_NUM];
+	uint8 _textColorsMap[16];
 	uint8 *_decodeShapeBuffer;
 	int _decodeShapeBufferSize;
-	
+	uint8 *_animBlockPtr;
+	int _animBlockSize;
+
 	OSystem *_system;
 	KyraEngine *_vm;
 	
 	static const ScreenDim _screenDimTable[];
+	static const int _screenDimTableCount;
 	static const DrawShapePlotPixelCallback _drawShapePlotPixelTable[];
 	static const int _drawShapePlotPixelCount;
 };

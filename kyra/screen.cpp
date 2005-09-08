@@ -36,12 +36,25 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 		}
 	}
-	_palette1 = (uint8 *)malloc(768);
-	_palette3 = (uint8 *)malloc(768);
-	_fadePalette = (uint8 *)malloc(768);
+	_currentPalette = (uint8 *)malloc(768);
+	if (_currentPalette) {
+		memset(_currentPalette, 0, 768);
+	}
+	_screenPalette = (uint8 *)malloc(768);
+	if (_screenPalette) {
+		memset(_screenPalette, 0, 768);
+	}
 	_curDim = &_screenDimTable[0];
+	_charWidth = 0;
+	_charOffset = 0;
+	memset(_fonts, 0, sizeof(_fonts));
+	for (int i = 0; i < ARRAYSIZE(_textColorsMap); ++i) {
+		_textColorsMap[i] = i;
+	}
 	_decodeShapeBuffer = NULL;
 	_decodeShapeBufferSize = 0;
+	_animBlockPtr = NULL;
+	_animBlockSize = 0;
 }
 
 Screen::~Screen() {
@@ -49,7 +62,12 @@ Screen::~Screen() {
 		free(_pagePtrs[pageNum]);
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
 	}
-	free(_palette1);
+	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
+		free(_fonts[f].fontData);
+		_fonts[f].fontData = NULL;
+	}
+	free(_currentPalette);
+	free(_screenPalette);
 }
 
 void Screen::updateScreen() {
@@ -99,18 +117,75 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 
 void Screen::fadeFromBlack() {
 	debug(9, "Screen::fadeFromBlack()");
-	memset(_palette3, 0, 768);
-	setScreenPalette(_palette1);
-	warning("Screen::fadeFromBlack() UNIMPLEMENTED");
+	fadePalette(_currentPalette, 0x54);
 }
 
 void Screen::fadeToBlack() {
 	debug(9, "Screen::fadeToBlack()");
-	warning("Screen::fadeToBlack() UNIMPLEMENTED");
+	uint8 blackPal[768];
+	memset(blackPal, 0, 768);
+	fadePalette(blackPal, 0x54);
+}
+
+void Screen::fadePalette(const uint8 *palData, int delay) {
+	debug(9, "Screen::fadePalette(0x%X, %d)", palData, delay);
+	uint8 fadePal[768];
+	memcpy(fadePal, _screenPalette, 768);
+	uint8 diff, maxDiff = 0;
+	for (int i = 0; i < 768; ++i) {
+		diff = ABS(palData[i] - fadePal[i]);
+		if (diff > maxDiff) {
+			maxDiff = diff;
+		}
+	}
+	delay <<= 8;
+	if (maxDiff != 0) {
+		delay /= maxDiff;
+	}
+	int delayInc = delay;
+	for (diff = 1; diff <= maxDiff; ++diff) {
+		if (delayInc >= 512) {
+			break;
+		}
+		delayInc += delay;
+	}
+	int delayAcc = 0;
+	while (1) {
+		delayAcc += delayInc;
+		bool needRefresh = false;
+		for (int i = 0; i < 768; ++i) {
+			int c1 = palData[i];
+			int c2 = fadePal[i];
+			if (c1 != c2) {
+				needRefresh = true;
+				if (c1 > c2) {
+					c2 += diff;
+					if (c1 < c2) {
+						c2 = c1;
+					}
+				}
+				if (c1 < c2) {
+					c2 -= diff;
+					if (c1 > c2) {
+						c2 = c1;
+					}
+				}
+				fadePal[i] = (uint8)c2;
+			}
+		}
+		if (!needRefresh) {
+			break;
+		}
+		setScreenPalette(fadePal);
+		_system->updateScreen();
+		_system->delayMillis((delayAcc >> 8) * 1000 / 60);
+		delayAcc &= 0xFF;
+	}
 }
 
 void Screen::setScreenPalette(const uint8 *palData) {
 	debug(9, "Screen::setScreenPalette(0x%X)", palData);
+	memcpy(_screenPalette, palData, 768);
 	uint8 screenPal[256 * 4];
 	for (int i = 0; i < 256; ++i) {
 		screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
@@ -234,11 +309,10 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 	if (pageNum == -1) {
 		pageNum = _curPage;
 	}
-	uint8 *dst = getPagePtr(pageNum);
+	uint8 *dst = getPagePtr(pageNum) + y1 * SCREEN_W + x1;
 	for (; y1 <= y2; ++y1) {
-		for (; x1 <= x2; ++x1) {
-			*(dst + y1 * SCREEN_W + x1) = color;
-		}
+		memset(dst, color, x2 - x1 + 1);
+		dst += SCREEN_W;
 	}
 }
 
@@ -260,25 +334,166 @@ void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 	}
 }
 
+void Screen::loadFont(FontId fontId, uint8 *fontData) {
+	debug(9, "Screen::loadFont(%d, 0x%X)", fontId, fontData);
+	Font *fnt = &_fonts[fontId];
+	assert(fontData && !fnt->fontData);
+	fnt->fontData = fontData;
+	uint16 fontSig = READ_LE_UINT16(fontData + 2);
+	if (fontSig != 0x500) {
+		error("Invalid font data");
+	}
+	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
+	fnt->charBoxHeight = READ_LE_UINT16(fontData + 4);
+	fnt->charBitmapOffset = READ_LE_UINT16(fontData + 6);
+	fnt->charWidthTableOffset = READ_LE_UINT16(fontData + 8);
+	fnt->charHeightTableOffset = READ_LE_UINT16(fontData + 0xC);
+}
+
+Screen::FontId Screen::setFont(FontId fontId) {
+	debug(9, "Screen::setFont(0%d)", fontId);
+	FontId prev = _currentFont;
+	_currentFont = fontId;
+	return prev;
+}
+
 int Screen::getCharWidth(uint8 c) const {
-	debug(9, "Screen::getCharWidth(%c)", c);
-	warning("Screen::getCharWidth() UNIMPLEMENTED");
-	return 0;
+	debug(9, "Screen::getCharWidth('%c')", c);
+	return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
 }
 
 int Screen::getTextWidth(const char *str) const {
 	debug(9, "Screen::getTextWidth('%s')", str);
-	warning("Screen::getTextWidth() UNIMPLEMENTED");
-	return 0;
+	int curLineLen = 0;
+	int maxLineLen = 0;
+	while (1) {
+		char c = *str++;
+		if (c == 0) {
+			break;
+		} else if (c == '\r') {
+			if (curLineLen > maxLineLen) {
+				maxLineLen = curLineLen;
+			} else {
+				curLineLen = 0;
+			}
+		} else {
+			curLineLen += getCharWidth(c);
+		}
+	}
+	return MAX(curLineLen, maxLineLen);
 }
 
 void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2) {
 	debug(9, "Screen::printText('%s', %d, %d, 0x%X, 0x%X)", str, x, y, color1, color2);
-	warning("Screen::printText() UNIMPLEMENTED");
+	uint8 cmap[2];
+	cmap[0] = color2;
+	cmap[1] = color1;
+	setTextColor(cmap, 0, 1);
+	
+	Font *fnt = &_fonts[_currentFont];
+	uint8 charHeight = *(fnt->fontData + fnt->charBoxHeight + 4);
+	
+	if (x < 0) {
+		x = 0;
+	} else if (x >= SCREEN_W) {
+		return;
+	}
+	int x_start = x;
+	if (y < 0) {
+		y = 0;
+	} else if (y >= SCREEN_H) {
+		return;
+	}
+
+	while (1) {
+		char c = *str++;
+		if (c == 0) {
+			break;
+		} else if (c == '\r') {
+			x = x_start;
+			y += charHeight + _charOffset;
+		} else {
+			int charWidth = getCharWidth(c);
+			if (x + charWidth > SCREEN_W) {
+				x = x_start;
+				y += charHeight + _charOffset;
+				if (y >= SCREEN_H) {
+					break;
+				}
+			}
+			drawChar(c, x, y);
+			x += charWidth;
+		}
+	}
+}
+
+void Screen::drawChar(char c, int x, int y) {
+	debug(9, "Screen::drawChar('%c', %d, %d)", c, x, y);
+	Font *fnt = &_fonts[_currentFont];
+	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;
+	uint16 bitmapOffset = READ_LE_UINT16(fnt->fontData + fnt->charBitmapOffset + c * 2);
+	if (bitmapOffset == 0) {
+		return;
+	}
+	uint8 charWidth = *(fnt->fontData + fnt->charWidthTableOffset + c);
+	if (charWidth + x > SCREEN_W) {
+		return;
+	}
+	uint8 charH0 = *(fnt->fontData + fnt->charBoxHeight + 4);
+	if (charH0 + y > SCREEN_H) {
+		return;
+	}
+	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
+	uint8 charH2 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2 + 1);
+	charH0 -= charH1 + charH2;
+	
+	const uint8 *src = fnt->fontData + bitmapOffset;
+	const int pitch = SCREEN_W - charWidth;
+	
+	while (charH1--) {
+		uint8 col = _textColorsMap[0];
+		for (int i = 0; i < charWidth; ++i) {
+			if (col != 0) {
+				*dst = col;
+			}
+			++dst;
+		}
+		dst += pitch;
+	}
+	
+	while (charH2--) {
+		uint8 b = 0;
+		for (int i = 0; i < charWidth; ++i) {
+			uint8 col;
+			if (i & 1) {
+				col = _textColorsMap[b >> 4];
+			} else {
+				b = *src++;
+				col = _textColorsMap[b & 0xF];
+			}
+			if (col != 0) {
+				*dst = col;
+			}
+			++dst;
+		}
+		dst += pitch;
+	}
+	
+	while (charH0--) {
+		uint8 col = _textColorsMap[0];
+		for (int i = 0; i < charWidth; ++i) {
+			if (col != 0) {
+				*dst = col;
+			}
+			++dst;
+		}
+		dst += pitch;
+	}
 }
 
 void Screen::setScreenDim(int dim) {
 	debug(9, "setScreenDim(%d)", dim);
+	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
 	// XXX
 }

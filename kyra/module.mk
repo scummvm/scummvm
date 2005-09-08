@@ -1,10 +1,7 @@
 MODULE := kyra
 
 MODULE_OBJS := \
-	kyra/cpsimage.o \
-	kyra/font.o \
 	kyra/kyra.o \
-	kyra/palette.o \
 	kyra/resource.o \
 	kyra/screen.o \
 	kyra/script_v1.o \
