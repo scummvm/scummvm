@@ -2543,6 +2543,7 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 				bestRating = currentRating;
 				bestPath = nextPoint;
 			}
+			pathDirection = &_pathDirectionList[i];
 		}
 		++i;
 	} while (i < _pathDirectionListCount);

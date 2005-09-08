@@ -504,6 +504,10 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 			}
 			// Wrap what we've got and restart
 			textPoint.y += h + TEXT_LINESPACING;
+			if (foundPointer == NULL) {
+				// Since word hit NULL but fit, we are done
+				return textPoint.y + h;
+			}
 			w_total = 0;
 			len_total = 0;
 			wc = 0;
