@@ -761,7 +761,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "samnmax.000", "samnmax.sm0", kGenAsIs }, // Fixes MD5 detection
 	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
 	{ "samnmax", "samdemo", kGenPC },
-	{ "samnamx", "snmdemo", kGenPC },
+	{ "samnmax", "snmdemo", kGenPC },
 	{ "samnmax", "snmidemo", kGenPC },
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
 	{ "sf2-demo", "sf2demo", kGenPC },
