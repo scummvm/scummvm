@@ -1451,6 +1451,8 @@ ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, cons
 }
 
 ScummEngine_v70he::~ScummEngine_v70he() {
+	delete _resExtractor;
+	delete _wiz;
 	free(_heV7DiskOffsets);
 	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
@@ -1490,11 +1492,11 @@ ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, cons
 
 ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v80he(detector, syst, gs, md5sum, substResFileNameIndex) {
-
 	_sprite = new Sprite(this);
 }
 
 ScummEngine_v90he::~ScummEngine_v90he() {
+	delete _sprite;
 	if (_heversion >= 98) {
 		delete _logicHE;
 	}
