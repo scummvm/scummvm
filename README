@@ -302,7 +302,7 @@ game manually make sure that platform is set to NES.
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Either use extract_mm_c64 (but then game will not be autodetected)
 or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
-respectively. If you add game manually make sure that platform is set to
+respectively. If you add the game manually, make sure that platform is set to
 Commodore64.
 
 3.10) Known Problems in ScummVM 0.8.0CVS
