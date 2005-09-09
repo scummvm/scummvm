@@ -44,6 +44,32 @@ enum {
 	KYRA3   = 4
 };
 
+struct Character {
+	uint16 sceneId;
+	uint8 height;
+	uint8 facing;
+	uint16 currentAnimFrame;
+	uint32 unk6;
+	uint8 inventoryItems[10];
+	int16 x1, y1, x2, y2;
+};
+
+struct Shape {
+	uint8 unk0;
+	uint8 unk1;
+	uint8 imageNum;
+	uint8 x, y, w, h;
+};
+
+struct Room {
+	uint8 id;
+	uint16 room_north_exit;
+	uint16 room_east_exit;
+	uint16 room_south_exit;
+	uint16 room_west_exit;
+	uint8 items_table[12];
+};
+
 struct TalkCoords {
 	uint16 y, x, w;
 };
@@ -131,9 +157,8 @@ protected:
 	uint16 _talkMessageH;
 	bool _talkMessagePrinted;
 
-	int _seq_copyViewOffs;
+	bool _seq_copyViewOffs;
 	uint8 *_seq_handShapes[3];
-	uint8 *_seq_specialSequenceTempBuffer;
 
 	Resource *_res;
 	Screen *_screen;

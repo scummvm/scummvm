@@ -299,6 +299,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 				setPagePixel(dstPage, i, j, color);
 			}
 		}
+		updateScreen();
 		_system->delayMillis(ticks * 1000 / 60);
 	}
 }
@@ -351,7 +352,7 @@ void Screen::loadFont(FontId fontId, uint8 *fontData) {
 }
 
 Screen::FontId Screen::setFont(FontId fontId) {
-	debug(9, "Screen::setFont(0%d)", fontId);
+	debug(9, "Screen::setFont(%d)", fontId);
 	FontId prev = _currentFont;
 	_currentFont = fontId;
 	return prev;
