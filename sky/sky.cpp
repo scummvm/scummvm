@@ -94,7 +94,9 @@ DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 
 			if (0 == scumm_stricmp("sky.dsk", fileName)) {
 				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(skySetting);
+				// The game detector uses US English by default. We want British
+				// English to match the recorded voices better.
+				detectedGames.push_back(DetectedGame(skySetting, Common::EN_GRB, Common::kPlatformUnknown));
 				break;
 			}
 		}
@@ -338,6 +340,9 @@ int SkyEngine::init(GameDetector &detector) {
 	_skyLogic->useControlInstance(_skyControl);
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
+	case Common::EN_USA:
+		_systemVars.language = SKY_USA;
+		break;
 	case Common::DE_DEU:
 		_systemVars.language = SKY_GERMAN;
 		break;
@@ -360,7 +365,7 @@ int SkyEngine::init(GameDetector &detector) {
 		_systemVars.language = SKY_ENGLISH;
 		break;
 	default:
-		_systemVars.language = SKY_USA;
+		_systemVars.language = SKY_ENGLISH;
 		break;
 	}
 
