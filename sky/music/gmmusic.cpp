@@ -47,7 +47,8 @@ GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk)
 GmMusic::~GmMusic(void) {
 
 	_midiDrv->setTimerCallback(NULL, NULL);
-	if (_currentMusic) stopMusic();
+	if (_currentMusic)
+		stopMusic();
 	// Send All Sound Off and All Notes Off (for external synths)
 	for (int i = 0; i < 16; ++i) {
 		_midiDrv->send ((120 << 8) | 0xB0 | i);
