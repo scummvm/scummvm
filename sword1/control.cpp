@@ -311,7 +311,7 @@ uint8 Control::runPanel(void) {
 		_system->updateScreen();
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
-	} while ((newMode != 1) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
+	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
 	destroyButtons();
 	_resMan->resClose(fontId);
 	_resMan->resClose(redFontId);
@@ -414,7 +414,7 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 			if (mode == BUTTON_SAVE_PANEL) {
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 				if (saveToFile()) // don't go back to main panel if save fails.
-					return BUTTON_MAIN_PANEL;
+					return BUTTON_DONE;
 			} else {
 				if (restoreFromFile()) { // don't go back to main panel if restore fails.
 					*retVal |= CONTROL_GAME_RESTORED;
