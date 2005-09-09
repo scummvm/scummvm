@@ -1334,11 +1334,9 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 	a->putActor(0, 0, room);
 	_egoPositioned = false;
 
-	if (VAR_WALKTO_OBJ != 0xFF)
-		VAR(VAR_WALKTO_OBJ) = obj;
+	VAR(VAR_WALKTO_OBJ) = obj;
 	startScene(a->_room, a, obj);
-	if (VAR_WALKTO_OBJ != 0xFF)
-		VAR(VAR_WALKTO_OBJ) = 0;
+	VAR(VAR_WALKTO_OBJ) = 0;
 
 	if (_version == 6) {
 		camera._cur.x = camera._dest.x = a->_pos.x;
