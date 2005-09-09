@@ -482,7 +482,7 @@ struct GameDescription {
 	GameSoundInfo *voiceInfo;
 	GameSoundInfo *sfxInfo;
 	GameSoundInfo *musicInfo;
-	int patchsCount;
+	int patchesCount;
 	GamePatchDescription *patchDescriptions;
 	uint32 features;
 

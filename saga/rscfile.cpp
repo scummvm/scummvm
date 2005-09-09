@@ -312,7 +312,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	}
 
 	//process external patch files
-	for (j = 0; j < _vm->getGameDescription()->patchsCount; j++) {
+	for (j = 0; j < _vm->getGameDescription()->patchesCount; j++) {
 		patchDescription = &_vm->getGameDescription()->patchDescriptions[j];
 		if ((patchDescription->fileType & context->fileType) != 0) {
 			if (patchDescription->resourceId < context->count) {
