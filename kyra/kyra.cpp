@@ -189,7 +189,7 @@ int KyraEngine::go() {
 	_quitFlag = false;
 	uint32 sz;
 
-	if (_game != KYRA1DEMO) {
+	if (_game == KYRA1) {
 		_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
 	}
 	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
@@ -210,7 +210,7 @@ void KyraEngine::startup() {
 	debug(9, "KyraEngine::startup()");
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
-	_screen->setFont(Screen::FID_6_FNT);
+//	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 	// XXX
