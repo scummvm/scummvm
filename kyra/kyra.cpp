@@ -56,6 +56,7 @@ struct KyraGameSettings {
 static const KyraGameSettings kyra_settings[] = {
 	{ "kyra1", "Legend of Kyrandia (Floppy)", GF_FLOPPY | GF_KYRA1, "INTRO.SND" },
 	{ "kyra1cd", "Legend of Kyrandia (CD)",  GF_TALKIE | GF_KYRA1,  "CHAPTER1.VRM" },
+	{ "kyra1demo", "Legend of Kyrandia (Demo)", GF_DEMO | GF_FLOPPY | GF_KYRA1, "DEMO1.WSA" },
 //	{ "kyra2", "Hand of Fate (Floppy)", GF_FLOPPY | GF_KYRA2, 0 },
 //	{ "kyra2cd", "Hand of Fate (CD)", GF_TALKIE | GF_KYRA2, "AUDIO.PAK" },
 //	{ "kyra3", "Malcolm's Revenge", GF_TALKIE | GF_KYRA3, "K3INTRO0.VQA" },
@@ -115,7 +116,9 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 
 	// gets the game
 	if (detector->_game.features & GF_KYRA1) {
-		if (detector->_game.features & GF_FLOPPY) {
+		if (detector->_game.features & GF_DEMO) {
+			_game = KYRA1DEMO;
+		} else if (detector->_game.features & GF_FLOPPY) {
 			_game = KYRA1;
 		} else {
 			_game = KYRA1CD;
@@ -188,9 +191,15 @@ int KyraEngine::go() {
 	_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
 	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
 	_screen->setScreenDim(0);
-	seq_intro();
-	startup();
-	mainLoop();
+
+	if (_game == KYRA1DEMO) {
+		seq_demo();
+	} else {
+		seq_intro();
+		startup();
+		mainLoop();
+	}
+
 	return 0;
 }
 
@@ -443,6 +452,42 @@ void KyraEngine::waitTicks(int ticks) {
 	} while (!_fastMode && _system->getMillis() < end);
 }
 
+void KyraEngine::seq_demo() {
+	debug(9, "KyraEngine::seq_demo()");
+
+	// TODO: Display START.CPS
+
+	_screen->clearPage(0);
+	loadBitmap("TOP.CPS", 7, 7, _screen->_currentPalette);
+	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
+	_screen->_curPage = 0;
+	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
+	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
+	_screen->fadeFromBlack();
+	
+	seq_playSpecialSequence(_seq_demoData_WestwoodLogo, true);
+	waitTicks(60);
+
+	seq_playSpecialSequence(_seq_demoData_KyrandiaLogo, true);
+
+	_screen->fadeToBlack();
+	_screen->clearPage(2);
+	_screen->clearPage(0);
+
+	seq_playSpecialSequence(_seq_demoData_Demo1, true);
+
+	_screen->clearPage(0);
+	seq_playSpecialSequence(_seq_demoData_Demo2, true);
+
+	_screen->clearPage(0);
+	seq_playSpecialSequence(_seq_demoData_Demo3, true);
+
+	_screen->clearPage(0);
+	seq_playSpecialSequence(_seq_demoData_Demo4, true);
+
+	// TODO: Display FINAL.CPS
+}
+
 void KyraEngine::seq_intro() {
 	debug(9, "KyraEngine::seq_intro()");
 	static const IntroProc introProcTable[] = {
@@ -660,7 +705,11 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 				assert(wsaObj < 12);
 				uint8 offscreenDecode = *seqData++;
 				wsaCurDecodePage = wsaDecodePage[wsaObj] = (offscreenDecode == 0) ? 0 : 3;				
-				wsaMovieTable[wsaObj] = wsa_open(_seq_WSATable[wsaObj], offscreenDecode, 0);
+				if (_game == KYRA1DEMO) {
+					wsaMovieTable[wsaObj] = wsa_open(_seq_demo_WSATable[wsaObj], offscreenDecode, 0);
+				} else {
+					wsaMovieTable[wsaObj] = wsa_open(_seq_WSATable[wsaObj], offscreenDecode, 0);
+				}
 				wsaCurFramesTable[wsaObj] = 0;
 				wsaNumFramesTable[wsaObj] = wsa_getNumFrames(wsaMovieTable[wsaObj]) - 1;
 			}
@@ -759,7 +808,12 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 		case 12: {
 				uint8 colNum = *seqData++;
 				uint32 fileSize;
-				uint8 *srcData = _res->fileData(_seq_COLTable[colNum], &fileSize);
+				uint8 *srcData;
+				if (_game == KYRA1DEMO) {
+					srcData = _res->fileData(_seq_demo_COLTable[colNum], &fileSize);
+				} else {
+					srcData = _res->fileData(_seq_COLTable[colNum], &fileSize);
+				}
 				memcpy(_screen->_currentPalette, srcData, fileSize);
 				delete[] srcData;
 			}
@@ -899,7 +953,11 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 			}
 			break;
 		case 26:
-			// allocate offscreen buffer, not needed
+			if (_game == KYRA1DEMO) {
+				quitFlag = true;
+			} else {
+				// allocate offscreen buffer, not needed
+			}
 			break;
 		case 27:
 			displayTextFlag = true;

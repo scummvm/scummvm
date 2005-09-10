@@ -33,15 +33,17 @@ enum {
 	GF_KYRA1   = 1 << 2,
 	GF_KYRA2   = 1 << 3,
 	GF_KYRA3   = 1 << 4,
-	GF_AUDIOCD = 1 << 5  // FM-Towns versions seems to use audio CD
+	GF_AUDIOCD = 1 << 5,  // FM-Towns versions seems to use audio CD
+	GF_DEMO    = 1 << 6
 };
 
 enum {
-	KYRA1   = 0,
-	KYRA1CD = 1,
-	KYRA2   = 2,
-	KYRA2CD = 3,
-	KYRA3   = 4
+	KYRA1     = 0,
+	KYRA1CD   = 1,
+	KYRA1DEMO = 2,
+	KYRA2     = 3,
+	KYRA2CD   = 4,
+	KYRA3     = 5
 };
 
 struct Character {
@@ -128,6 +130,7 @@ protected:
 	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
 	void waitTicks(int ticks);
 	
+	void seq_demo();
 	void seq_intro();
 	void seq_introLogos();
 	void seq_introStory();
@@ -165,6 +168,16 @@ protected:
 	Resource *_res;
 	Screen *_screen;
 	MusicPlayer *_midi;
+
+	// these tables are specific to the demo version
+	static const uint8 _seq_demoData_WestwoodLogo[];
+	static const uint8 _seq_demoData_KyrandiaLogo[];
+	static const uint8 _seq_demoData_Demo1[];
+	static const uint8 _seq_demoData_Demo2[];
+	static const uint8 _seq_demoData_Demo3[];
+	static const uint8 _seq_demoData_Demo4[];
+	static const char *_seq_demo_WSATable[];
+	static const char *_seq_demo_COLTable[];
 
 	// these tables are specific to the floppy version
 	static const uint8 _seq_introData_Forest[];

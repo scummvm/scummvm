@@ -29,6 +29,10 @@ namespace Kyra {
 Resource::Resource(KyraEngine* engine) {
 	_engine = engine;
 
+	// No PAK files in the demo version
+	if (_engine->game() == KYRA1DEMO)
+		return;
+
 	// prefetches all PAK Files
 
 	// ugly a hardcoded list
