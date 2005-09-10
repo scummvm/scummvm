@@ -461,11 +461,12 @@ void KyraEngine::seq_demo() {
 	// TODO: Display START.CPS
 
 	_screen->clearPage(0);
-	loadBitmap("TOP.CPS", 7, 7, _screen->_currentPalette);
+	loadBitmap("TOP.CPS", 7, 7, NULL);
 	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
 	_screen->_curPage = 0;
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
+	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
 	seq_playSpecialSequence(_seq_demoData_WestwoodLogo, true);
@@ -505,7 +506,6 @@ void KyraEngine::seq_intro() {
 	_screen->setFont(Screen::FID_8_FNT);
 //	snd_kyraPlayTheme(0);
 	setTalkCoords(144);
-	_screen->setScreenPalette(_screen->_currentPalette);
 	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
 		(this->*introProcTable[i])();
 	}
@@ -517,20 +517,21 @@ void KyraEngine::seq_intro() {
 void KyraEngine::seq_introLogos() {
 	debug(9, "KyraEngine::seq_introLogos()");
 	_screen->clearPage(0);
-	loadBitmap("TOP.CPS", 7, 7, _screen->_currentPalette);
+	loadBitmap("TOP.CPS", 7, 7, NULL);
 	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
 	_screen->_curPage = 0;
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
+	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	if (seq_playSpecialSequence(_seq_introData_WestwoodLogo, _skipIntroFlag)) {
+	if (seq_playSpecialSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
 	waitTicks(60);
-	if (seq_playSpecialSequence(_seq_introData_KyrandiaLogo, _skipIntroFlag)) {
+	if (seq_playSpecialSequence(_seq_floppyData_KyrandiaLogo, _skipIntroFlag)) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -558,7 +559,7 @@ void KyraEngine::seq_introLogos() {
 		waitTicks(1);
 	} while (y2 >= 64);
 
-	seq_playSpecialSequence(_seq_introData_Forest, true);
+	seq_playSpecialSequence(_seq_floppyData_Forest, true);
 }
 
 void KyraEngine::seq_introStory() {
@@ -572,7 +573,7 @@ void KyraEngine::seq_introMalcomTree() {
 	debug(9, "KyraEngine::seq_introMalcomTree()");
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
-	seq_playSpecialSequence(_seq_introData_MalcomTree, true);
+	seq_playSpecialSequence(_seq_floppyData_MalcomTree, true);
 }
 
 void KyraEngine::seq_introKallakWriting() {
@@ -581,14 +582,14 @@ void KyraEngine::seq_introKallakWriting() {
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
-	seq_playSpecialSequence(_seq_introData_KallakWriting, true);
+	seq_playSpecialSequence(_seq_floppyData_KallakWriting, true);
 	seq_freeHandShapes();
 }
 
 void KyraEngine::seq_introKallakMalcom() {
 	debug(9, "KyraEngine::seq_introKallakMalcom()");
 	_screen->clearPage(3);
-	seq_playSpecialSequence(_seq_introData_KallakMalcom, true);
+	seq_playSpecialSequence(_seq_floppyData_KallakMalcom, true);
 }
 
 uint8 *KyraEngine::seq_setPanPages(int pageNum, int shape) {

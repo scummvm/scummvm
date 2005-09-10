@@ -180,12 +180,13 @@ protected:
 	static const char *_seq_demo_COLTable[];
 
 	// these tables are specific to the floppy version
-	static const uint8 _seq_introData_Forest[];
-	static const uint8 _seq_introData_KallakWriting[];
-	static const uint8 _seq_introData_KyrandiaLogo[];
-	static const uint8 _seq_introData_KallakMalcom[];
-	static const uint8 _seq_introData_MalcomTree[];
-	static const uint8 _seq_introData_WestwoodLogo[];
+	static const uint8 _seq_floppyData_Forest[];
+	static const uint8 _seq_floppyData_KallakWriting[];
+	static const uint8 _seq_floppyData_KyrandiaLogo[];
+	static const uint8 _seq_floppyData_KallakMalcom[];
+	static const uint8 _seq_floppyData_MalcomTree[];
+	static const uint8 _seq_floppyData_WestwoodLogo[];
+	
 	static const uint8 _seq_codeSizeTable[];
 	static const char *_seq_WSATable[];
 	static const char *_seq_CPSTable[];
