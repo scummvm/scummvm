@@ -68,6 +68,8 @@ Screen::~Screen() {
 	}
 	free(_currentPalette);
 	free(_screenPalette);
+	free(_decodeShapeBuffer);
+	free(_animBlockPtr);
 }
 
 void Screen::updateScreen() {
@@ -317,9 +319,9 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 	}
 }
 
-void Screen::setAnimBlockPtr(uint8 *p, int size) {
-	debug(9, "Screen::setAnimBlockPtr(0x%X, %d)", p, size);
-	_animBlockPtr = p;
+void Screen::setAnimBlockPtr(int size) {
+	debug(9, "Screen::setAnimBlockPtr(%d)", size);
+	_animBlockPtr = (uint8 *)malloc(size);
 	_animBlockSize = size;
 }
 

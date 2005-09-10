@@ -189,7 +189,24 @@ int KyraEngine::go() {
 	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
 	_screen->setScreenDim(0);
 	seq_intro();
+	startup();
+	mainLoop();
 	return 0;
+}
+
+void KyraEngine::startup() {
+	debug(9, "KyraEngine::startup()");
+	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
+	_screen->setTextColorMap(colorMap);
+	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setAnimBlockPtr(3750);
+	memset(_flagsTable, 0, sizeof(_flagsTable));
+	// XXX
+}
+
+void KyraEngine::mainLoop() {
+	debug(9, "KyraEngine::mainLoop()");
+	// XXX
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
@@ -238,7 +255,6 @@ int KyraEngine::getCenterStringX(const char *str, int x1, int x2) {
 }
 
 int KyraEngine::getCharLength(const char *str, int len) {
-	debug(9, "KyraEngine::preprocessString('%s', %d)", str, len);
 	debug(9, "KyraEngine::getCharLength('%s', %d)", str, len);
 	int charsCount = 0;
 	if (*str) {
@@ -258,9 +274,10 @@ int KyraEngine::getCharLength(const char *str, int len) {
 int KyraEngine::dropCRIntoString(char *str, int offs) {
 	debug(9, "KyraEngine::dropCRIntoString('%s', %d)", str, offs);
 	int pos = 0;
+	str += offs;
 	while (*str) {
 		if (*str == ' ') {
-			*str = 0xD;
+			*str = '\r';
 			return pos;
 		}
 		++str;
@@ -275,7 +292,7 @@ char *KyraEngine::preprocessString(const char *str) {
 	strcpy(_talkBuffer, str);
 	char *p = _talkBuffer;
 	while (*p) {
-		if (*p == 0xD) {
+		if (*p == '\r') {
 			return _talkBuffer;
 		}
 		++p;
@@ -309,9 +326,9 @@ int KyraEngine::buildMessageSubstrings(const char *str) {
 	int currentLine = 0;
 	int pos = 0;
 	while (*str) {
-		if (*str == 0xD) {
+		if (*str == '\r') {
 			assert(currentLine < TALK_SUBSTRING_NUM);
-			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = 0;
+			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
 			++currentLine;
 			pos = 0;
 		} else {
@@ -500,6 +517,7 @@ void KyraEngine::seq_introStory() {
 	debug(9, "KyraEngine::seq_introStory()");
 	loadBitmap("MAIN_ENG.CPS", 3, 3, 0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+	// XXX wait 360 ticks
 }
 
 void KyraEngine::seq_introMalcomTree() {
@@ -512,12 +530,10 @@ void KyraEngine::seq_introMalcomTree() {
 void KyraEngine::seq_introKallakWriting() {
 	debug(9, "KyraEngine::seq_introKallakWriting()");
 	seq_makeHandShapes();
-	uint8 *p = (uint8 *)malloc(5060);
-	_screen->setAnimBlockPtr(p, 5060);
+	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
 	seq_playSpecialSequence(_seq_introData_KallakWriting, true);
-	free(p);
 	seq_freeHandShapes();
 }
 

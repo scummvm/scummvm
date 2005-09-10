@@ -94,7 +94,7 @@ public:
 	void copyCurPageBlock(int x, int y, int h, int w, uint8 *dst);
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
-	void setAnimBlockPtr(uint8 *p, int size);
+	void setAnimBlockPtr(int size);
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);
 	void loadFont(FontId fontId, uint8 *fontData);

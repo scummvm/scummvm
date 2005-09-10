@@ -63,11 +63,11 @@ struct Shape {
 
 struct Room {
 	uint8 id;
-	uint16 room_north_exit;
-	uint16 room_east_exit;
-	uint16 room_south_exit;
-	uint16 room_west_exit;
-	uint8 items_table[12];
+	uint16 northExit;
+	uint16 eastExit;
+	uint16 southExit;
+	uint16 westExit;
+	uint8 itemsTable[12];
 };
 
 struct TalkCoords {
@@ -112,8 +112,9 @@ protected:
 	int go();
 	int init(GameDetector &detector);
 
+	void startup();
+	void mainLoop();
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
-
 	void setTalkCoords(uint16 y);
 	int getCenterStringX(const char *str, int x1, int x2);
 	int getCharLength(const char *str, int len);
@@ -156,6 +157,7 @@ protected:
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
 	bool _talkMessagePrinted;
+	uint8 _flagsTable[51];
 
 	bool _seq_copyViewOffs;
 	uint8 *_seq_handShapes[3];
