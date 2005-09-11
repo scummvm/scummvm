@@ -987,7 +987,7 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 void KyraEngine::snd_playTheme(int file, int track) {
 	debug(9, "KyraEngine::snd_playTheme(%d)", file);
 	assert(file < _xmidiFilesCount);
-	_midi->playMusic("INTRO.XMI");
+	_midi->playMusic(_xmidiFiles[file]);
 	_midi->playTrack(track, false);
 }
 
