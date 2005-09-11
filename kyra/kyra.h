@@ -88,11 +88,16 @@ class Resource;
 class Screen;
 
 class KyraEngine : public Engine {
+	friend class MusicPlayer;
 public:
 
 	enum {
 		TALK_SUBSTRING_LEN = 80,
 		TALK_SUBSTRING_NUM = 3
+	};
+	
+	enum {
+		MUSIC_INTRO = 0
 	};
 
 	KyraEngine(GameDetector *detector, OSystem *system);
@@ -149,6 +154,14 @@ protected:
 	uint16 wsa_getNumFrames(WSAMovieV1 *wsa) const;
 	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
+
+	void snd_playTheme(int file, int track = 0);
+	void snd_playTrack(int track);
+	void snd_startTrack();
+	void snd_haltTrack();
+	void snd_setSoundEffectFile(int file);
+	void snd_playSoundEffect(int track);
+	void snd_seqMessage(int msg);
 		
 	uint8 _game;
 	bool _fastMode;
@@ -191,7 +204,9 @@ protected:
 	static const char *_seq_WSATable[];
 	static const char *_seq_CPSTable[];
 	static const char *_seq_COLTable[];
-	static const char *_seq_textsTableEN[];	
+	static const char *_seq_textsTableEN[];
+	static const char *_xmidiFiles[];
+	static const int _xmidiFilesCount;
 };
 
 } // End of namespace Kyra

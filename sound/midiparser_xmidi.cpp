@@ -51,11 +51,7 @@ public:
 // This is a special XMIDI variable length quantity
 uint32 MidiParser_XMIDI::readVLQ2(byte * &pos) {
 	uint32 value = 0;
-	int i;
-
-	for (i = 0; i < 4; ++i) {
-		if (pos[0] & 0x80)
-			break;
+	while (!(pos[0] & 0x80)) {
 		value += *pos++;
 	}
 	return value;

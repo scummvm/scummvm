@@ -29,53 +29,73 @@
 #include "kyra/kyra.h"
 
 namespace Kyra {
-	class MusicPlayer : public MidiDriver {
 
-	public:
+class MusicPlayer : public MidiDriver {
+public:
 
-		MusicPlayer(MidiDriver* driver, KyraEngine* engine);
-		~MusicPlayer();
+	MusicPlayer(MidiDriver *driver, KyraEngine *engine);
+	~MusicPlayer();
 
-		void setVolume(int volume);
-		int getVolume() { return _volume; }
+	void setVolume(int volume);
+	int getVolume() { return _volume; }
 
-		void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
+	void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
+	bool isMT32() { return _nativeMT32; }
 
-		void playMusic(const char* file);
-		void playMusic(uint8* data, uint32 size);
-		void stopMusic();
+	void playMusic(const char* file);
+	void playMusic(uint8* data, uint32 size);
+	void stopMusic();
 
-		void playTrack(uint8 track);
-		void setPassThrough(bool b)	{ _passThrough = b; }
+	void playTrack(uint8 track, bool looping = true);
+	void haltTrack() { _isPlaying = false; }
+	void startTrack() { _isPlaying = true; }
+	void setPassThrough(bool b)	{ _passThrough = b; }
 
-		//MidiDriver interface implementation
-		int open();
-		void close();
-		void send(uint32 b);
-		void metaEvent(byte type, byte *data, uint16 length);
+	void loadSoundEffectFile(const char* file);
+	void loadSoundEffectFile(uint8* data, uint32 size);
+	void stopSoundEffect();
 
-		void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-		uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
+	void playSoundEffect(uint8 track);
 
-		//Channel allocation functions
-		MidiChannel *allocateChannel()		{ return 0; }
-		MidiChannel *getPercussionChannel()	{ return 0; }
+	void beginFadeOut();
 
-	protected:
+	//MidiDriver interface implementation
+	int open();
+	void close();
+	void send(uint32 b);
+	void metaEvent(byte type, byte *data, uint16 length);
 
-		static void onTimer(void *data);
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
+	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
 
-		MidiChannel* _channel[16];
-		uint8 _channelVolume[16];
-		MidiDriver* _driver;
-		bool _nativeMT32;
-		bool _passThrough;
-		uint8 _volume;
-		bool _isPlaying;
-		MidiParser* _parser;
-		KyraEngine* _engine;
+	//Channel allocation functions
+	MidiChannel *allocateChannel()		{ return 0; }
+	MidiChannel *getPercussionChannel()	{ return 0; }
 
-	};
+protected:
+
+	static void onTimer(void *data);
+
+	MidiChannel* _channel[32];
+	int _virChannel[16];
+	uint8 _channelVolume[16];
+	MidiDriver* _driver;
+	bool _nativeMT32;
+	bool _passThrough;
+	uint8 _volume;
+	bool _isPlaying;
+	bool _sfxIsPlaying;
+	uint32 _fadeStartTime;
+	bool _fadeMusicOut;
+	bool _isLooping;
+	bool _eventFromMusic;
+	MidiParser *_parser;
+	byte *_parserSource;
+	MidiParser *_soundEffect;
+	byte *_soundEffectSource;
+	KyraEngine *_engine;
+};
+
 } // end of namespace Kyra
 
 #endif

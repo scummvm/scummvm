@@ -452,4 +452,19 @@ const char *KyraEngine::_seq_textsTableEN[] = {
 	""
 };
 
+const char *KyraEngine::_xmidiFiles[] = {
+	"INTRO.XMI",
+	"KYRA1A.XMI",
+	"KYRA1B.XMI",
+	"KYRA2A.XMI",
+	"KYRA3A.XMI",
+	"KYRA4A.XMI",
+	"KYRA4B.XMI",
+	"KYRA5A.XMI",
+	"KYRA5B.XMI",
+	"KYRAMISC.XMI"
+};
+
+const int KyraEngine::_xmidiFilesCount = ARRAYSIZE(_xmidiFiles);
+
 } // End of namespace Kyra

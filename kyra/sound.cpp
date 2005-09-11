@@ -20,19 +20,28 @@
  */
 
 #include "common/stdafx.h"
+#include "common/system.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 
 namespace Kyra {
 
-MusicPlayer::MusicPlayer(MidiDriver* driver, KyraEngine* engine) {
+MusicPlayer::MusicPlayer(MidiDriver *driver, KyraEngine *engine) {
 	_engine = engine;
 	_driver = driver;
 	_passThrough = false;
-	_isPlaying = _nativeMT32 = false;
+	_eventFromMusic = false;
+	_fadeMusicOut = _sfxIsPlaying = false;
+	_isPlaying = _isLooping = _nativeMT32 = false;
+	_soundEffect = _parser = 0;
+	_soundEffectSource = _parserSource = 0;
 
-	memset(_channel, 0, sizeof(MidiChannel*) * 16);
-	memset(_channelVolume, 255, sizeof(uint8) * 16);
+	memset(_channel, 0, sizeof(MidiChannel*) * 32);
+	memset(_channelVolume, 50, sizeof(uint8) * 16);
+	_channelVolume[10] = 100;
+	for (int i = 0; i < 16; ++i) {
+		_virChannel[i] = i;
+	}
 	_volume = 0;
 
 	int ret = open();
@@ -56,9 +65,13 @@ void MusicPlayer::setVolume(int volume) {
 		return;
 
 	_volume = volume;
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < 32; ++i) {
 		if (_channel[i]) {
-			_channel[i]->volume(_channelVolume[i] * _volume / 255);
+			if (i >= 16) {
+				_channel[i]->volume(_channelVolume[i - 16] * _volume / 255);
+			} else {
+				_channel[i]->volume(_channelVolume[i] * _volume / 255);
+			}
 		}
 	}
 }
@@ -84,11 +97,23 @@ void MusicPlayer::close() {
 
 void MusicPlayer::send(uint32 b) {
 	if (_passThrough) {
+		if ((b & 0xFFF0) == 0x007BB0)
+			return;
 		_driver->send(b);
 		return;
 	}
 
 	uint8 channel = (byte)(b & 0x0F);
+	if (((b & 0xFFF0) == 0x6FB0 || (b & 0xFFF0) == 0x6EB0) && channel != 9) {
+		if (_virChannel[channel] == channel) {
+			_virChannel[channel] = channel + 16;
+			if (!_channel[_virChannel[channel]])
+				_channel[_virChannel[channel]] = _driver->allocateChannel();
+			_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
+		}
+		return;
+	}
+
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
 		uint8 volume = (uint8)((b >> 16) & 0x7F);
@@ -104,24 +129,36 @@ void MusicPlayer::send(uint32 b) {
 			return;
 	}
 
-	if (!_channel[channel])
-		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-	if (_channel[channel])
-		_channel[channel]->send(b);
+	if (!_channel[_virChannel[channel]]) {
+		_channel[_virChannel[channel]] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
+	}
+	if (_channel[_virChannel[channel]])
+		_channel[_virChannel[channel]]->send(b);
 }
 
 void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:	// End of Track
-		_parser->jumpToTick(0);
+		if (_eventFromMusic) {
+			if (!_isLooping) {
+				_isPlaying = false;
+			}
+			// remap all channels
+			for (int i = 0; i < 16; ++i) {
+				_virChannel[i] = i;
+			}
+		} else {
+			_sfxIsPlaying = false;
+		}
 		break;
 	default:
-		warning("Unhandled meta event: 0x%02x", type);
+		_driver->metaEvent(type, data, length);
 		break;
 	}
 }
 
-void MusicPlayer::playMusic(const char* file) {
+void MusicPlayer::playMusic(const char *file) {
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(file, &size);
 
@@ -133,10 +170,10 @@ void MusicPlayer::playMusic(const char* file) {
 	playMusic(data, size);
 }
 
-void MusicPlayer::playMusic(uint8* data, uint32 size) {
-	if (_isPlaying)
-		stopMusic();
+void MusicPlayer::playMusic(uint8 *data, uint32 size) {
+	stopMusic();
 
+	_parserSource = data;
 	_parser = MidiParser::createParser_XMIDI();
 	assert(_parser);
 
@@ -150,31 +187,117 @@ void MusicPlayer::playMusic(uint8* data, uint32 size) {
 	_parser->setTrack(0);
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(getBaseTempo());
+	_parser->property(MidiParser::mpAutoLoop, false);
+}
 
-	_isPlaying = true;
+void MusicPlayer::loadSoundEffectFile(const char *file) {
+	uint32 size;
+	uint8 *data = (_engine->resource())->fileData(file, &size);
+
+	if (!data) {
+		warning("couldn't load '%s'", file);
+		return;
+	}
+
+	loadSoundEffectFile(data, size);
+}
+
+void MusicPlayer::loadSoundEffectFile(uint8 *data, uint32 size) {
+	stopSoundEffect();
+
+	_soundEffectSource = data;
+	_soundEffect = MidiParser::createParser_XMIDI();
+	assert(_soundEffect);
+
+	if (!_soundEffect->loadMusic(data, size)) {
+		warning("Error reading track!");
+		delete _parser;
+		_parser = 0;
+		return;
+	}
+
+	_soundEffect->setTrack(0);
+	_soundEffect->setMidiDriver(this);
+	_soundEffect->setTimerRate(getBaseTempo());
+	_soundEffect->property(MidiParser::mpAutoLoop, false);
 }
 
 void MusicPlayer::stopMusic() {
+	_isLooping = false;
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
 		delete _parser;
-		_parser = NULL;
+		_parser = 0;
+		delete [] _parserSource;
+		_parserSource = 0;
+	}
+}
+
+void MusicPlayer::stopSoundEffect() {
+	_sfxIsPlaying = false;
+	if (_soundEffect) {
+		_soundEffect->unloadMusic();
+		delete _soundEffect;
+		_soundEffect = 0;
+		delete [] _soundEffectSource;
+		_soundEffectSource = 0;
 	}
 }
 
 void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
-	if (music->_isPlaying)
-		music->_parser->onTimer();
+
+	// this should be set to the fadeToBlack value
+	const static uint32 musicFadeTime = 2 * 1000;
+	if (music->_fadeMusicOut && music->_fadeStartTime + musicFadeTime > music->_engine->_system->getMillis()) {
+		byte volume = (byte)((musicFadeTime - (music->_engine->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
+		music->setVolume(volume);
+	} else if(music->_fadeStartTime) {
+		music->setVolume(255);
+		music->_fadeStartTime = 0;
+		music->_fadeMusicOut = false;
+	}
+
+	if (music->_isPlaying) {
+		if (music->_parser) {
+			music->_eventFromMusic = true;
+			music->_parser->onTimer();
+		}
+	}
+
+	if (music->_sfxIsPlaying) {
+		if (music->_soundEffect) {
+			music->_eventFromMusic = false;
+			music->_soundEffect->onTimer();
+		}
+	}
 }
 
-void MusicPlayer::playTrack(uint8 track) {
+void MusicPlayer::playTrack(uint8 track, bool loop) {
 	if (_parser) {
 		_isPlaying = true;
+		_isLooping = loop;
 		_parser->setTrack(track);
 		_parser->jumpToTick(0);
+		_parser->setTempo(1);
+		_parser->property(MidiParser::mpAutoLoop, loop);
 	}
+}
+
+void MusicPlayer::playSoundEffect(uint8 track) {
+	if (_soundEffect) {
+		_sfxIsPlaying = true;
+		_soundEffect->setTrack(track);
+		_soundEffect->jumpToTick(0);
+		_soundEffect->property(MidiParser::mpAutoLoop, false);
+	}
+}
+
+void MusicPlayer::beginFadeOut() {
+	// this should be something like fade out...
+	_fadeMusicOut = true;
+	_fadeStartTime = _engine->_system->getMillis();
 }
 
 } // end of namespace Kyra

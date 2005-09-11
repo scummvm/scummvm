@@ -142,7 +142,8 @@ int KyraEngine::init(GameDetector &detector) {
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	int midiDrv = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB | MDT_PREFER_NATIVE);
+	// for now we prefer MIDI-to-Adlib conversion over native midi
+	int midiDrv = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB/* | MDT_PREFER_NATIVE*/);
 	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDrv == MD_MT32));
 
 	MidiDriver *driver = MidiDriver::createMidi(midiDrv);
@@ -158,7 +159,7 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_midi);
 	_midi->hasNativeMT32(native_mt32);
 	_midi->setVolume(255);
-
+	
 	_res = new Resource(this);
 	assert(_res);
 	_screen = new Screen(this, _system);
@@ -504,13 +505,14 @@ void KyraEngine::seq_intro() {
 	_skipIntroFlag = true; // only true if user already played the game once
 	_seq_copyViewOffs = true;
 	_screen->setFont(Screen::FID_8_FNT);
-//	snd_kyraPlayTheme(0);
+	snd_playTheme(MUSIC_INTRO, 2);
+ 	snd_setSoundEffectFile(MUSIC_INTRO);
 	setTalkCoords(144);
 	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
 		(this->*introProcTable[i])();
 	}
 	setTalkCoords(136);
-	waitTicks(0x1E);
+	waitTicks(30);
 	_seq_copyViewOffs = false;
 }
 
@@ -947,13 +949,14 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 			}
 			break;
 		case 24: { // sound related
-				seqData++;
-				warning("Sequence opcode 24 skipped");
+				uint8 param = *seqData++;
+				waitTicks(3);
+				snd_playSoundEffect(param);
 			}
 			break;
 		case 25: { // sound related
-				seqData++;
-				warning("Sequence opcode 25 skipped");
+				uint8 param = *seqData++;
+				snd_seqMessage(param);
 			}
 			break;
 		case 26:
@@ -979,6 +982,63 @@ bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
 		_screen->updateScreen();
 	}
 	return seqSkippedFlag;
+}
+
+void KyraEngine::snd_playTheme(int file, int track) {
+	debug(9, "KyraEngine::snd_playTheme(%d)", file);
+	assert(file < _xmidiFilesCount);
+	_midi->playMusic("INTRO.XMI");
+	_midi->playTrack(track, false);
+}
+
+void KyraEngine::snd_playTrack(int track) {
+	debug(9, "KyraEngine::snd_playTrack(%d)", track);
+	_midi->playTrack(track, false);
+}
+
+void KyraEngine::snd_setSoundEffectFile(int file) {
+	debug(9, "KyraEngine::snd_setSoundEffectFile(%d)", file);
+	assert(file < _xmidiFilesCount);
+	_midi->loadSoundEffectFile(_xmidiFiles[file]);
+}
+
+void KyraEngine::snd_playSoundEffect(int track) {
+	debug(9, "KyraEngine::snd_playSoundEffect(%d)", track);
+	_midi->playSoundEffect(track);
+}
+
+void KyraEngine::snd_startTrack() {
+	debug(9, "KyraEngine::snd_startTrack()");
+	_midi->startTrack();
+}
+
+void KyraEngine::snd_haltTrack() {
+	debug(9, "KyraEngine::snd_haltTrack()");
+	_midi->haltTrack();
+}
+
+void KyraEngine::snd_seqMessage(int msg) {
+	debug(9, "KyraEngine::snd_seqMessage(%.02d)", msg);
+	switch (msg) {
+	case 0:
+		// nothing to do here...
+		break;
+	case 1:
+		_midi->beginFadeOut();
+		break;
+	case 56:
+		snd_playTheme(MUSIC_INTRO, 3);
+		break;
+	case 57:
+		snd_playTheme(MUSIC_INTRO, 4);
+		break;
+	case 58:
+		snd_playTheme(MUSIC_INTRO, 5);
+		break;
+	default:
+		warning("Unknown seq. message: %.02d", msg);
+		break;
+	}
 }
 
 } // End of namespace Kyra
