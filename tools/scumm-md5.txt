@@ -64,6 +64,7 @@ Indiana Jones and the Last Crusade
 	VGA	DOS	All	1875b90fade138c9253a8e967007031a	indy3
 	VGA	DOS	de	399b217b0c8d65d0398076da486363a9	indy3
 	VGA	DOS	it	17b5d5e6af4ae89d62631641d66d5a05	indy3	Andrea Petrucci
+	VGA	DOS	ru	3cce1913a3bc586b51a75c3892ff18dd	indy3
 	
 	FM-TOWNS	FM-TOWNS	en	04687cdf7f975a89d2474929f7b80946	indy3
 	FM-TOWNS	FM-TOWNS	jp	3a0c35f3c147b98a2bdf8d400cfc4ab5	indy3	Paul Priest, Andrea Petrucci

@@ -482,6 +482,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
 	{"17b5d5e6af4ae89d62631641d66d5a05", "Indiana Jones and the Last Crusade (VGA It)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
+	{"3cce1913a3bc586b51a75c3892ff18dd", "Indiana Jones and the Last Crusade (VGA Ru)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
 
 	{"04687cdf7f975a89d2474929f7b80946", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
