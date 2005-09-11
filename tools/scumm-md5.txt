@@ -38,6 +38,7 @@ Zak McKracken and the Alien Mindbenders
 	V2	Amiga	de	6027e9ca9c35746d95dee2068cec17e5	zak	Norbert Lange
 	V2	Amiga	fr	91469353f7be1b122fa88d23480a1320	zak	Tobias Fleischer
 	V2	Amiga	it	27b3a4224ad63d5b04627595c1c1a025	zak	Andrea Petrucci
+	V2	Atari	en	d55eff37c2100f5065cde9de428621fa	zak
 	V2	Atari	fr	613f64f78ea26c7353b2a5940eb61d6a	zak	Andreas Bylund
 	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zak
 	FM-TOWNS	FM-TOWNS	jp	ce3edc99cd4f478c5b37104d70c68ca5	zak	khalek
@@ -57,6 +58,7 @@ Indiana Jones and the Last Crusade
 	EGA	Amiga	de	330f631502e381a4e199a3f7cb483c20	indy3	dhewg
 	EGA	Amiga	fr	e689bdf67f98b1d760ce4487ec0e8d06	indy3	Gerald Vincent
 	EGA	Amiga	it	df03ee021aa9b81d90cab9c26da07614	indy3	Andrea Petrucci
+	EGA	Amiga	es	62b8c16b6db226ba95aaa8be73f9885c	indy3
 	EGA	Atari	en	157367c3c21e0d03a0cba44361b4cf65	indy3	Andreas Bylund
 	EGA	Atari	fr	0f9c7a76657f0840b8f7ccb5bffeb9f4	indy3	Andreas Bylund
 	EGA Demo	DOS	en	b597e0403cc0002f69170e6caba7edd9	indy3
@@ -85,7 +87,9 @@ Loom
 	Floppy	Amiga	de	2fe369ad70f52a8cf7ad6077ee64f81a	loom	Norbert Lange
 	Floppy (same as IT?!?)	Amiga	fr	39cb9dec16fa16f38d79acd80effb059	loom	Gerald Vincent
 	Floppy (same as FR?!?)	Amiga	it	39cb9dec16fa16f38d79acd80effb059	loom	Andrea Petrucci
+	Floppy	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
 	Floppy	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
+	Floppy	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
 	Talkie/CD	DOS	en	5d88b9d6a88e6f8e90cded9d01b7f082	loom
 	FM-TOWNS	FM-TOWNS	en	c5d10e190d4b4d59114b824f2fdbd00e	loom	dhewg, Andrea Petrucci
 	FM-TOWNS	FM-TOWNS	jp	31b8fda4c8c7413fa6b39997e776eba4	loom	khalek, Andrea Petrucci
@@ -99,7 +103,9 @@ The Secret of Monkey Island
 	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkey	Andrea Petrucci
 	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkey	Andrea Petrucci
 	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkey	Andrea Petrucci
+	EGA	Atari	en	c666a998af90d81db447eccba9f72c8d	monkey
 	EGA	Atari	fr	9e5e0fb43bd22f4628719b7501adb717	monkey	Andreas Bylund
+	EGA	Atari	es	0a41311d462b6639fc45297b9044bf16	monkey
 	EGA Demo	DOS	en	71523b539491527d9860f4407faf0411	monkey
 	EGA Demo	DOS	de	771bc18ec6f93837b839c992b211904b	monkey	khalek
 
