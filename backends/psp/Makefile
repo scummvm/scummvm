@@ -4,7 +4,6 @@
 #control build
 DISABLE_SCALERS = true
 DISABLE_HQ_SCALERS = true
-DISABLE_HE = true
 DISABLE_KYRA = true
 
 srcdir = ../..
@@ -23,6 +22,8 @@ RANLIB  = psp-ranlib
 STRIP   = psp-strip
 MKDIR 	= mkdir -p
 RM 	= rm -f
+MKSFO	= mksfo
+PACK_PBP = pack-pbp
 
 INCDIR = ../../
 
@@ -58,7 +59,7 @@ LIBS	+= -lz -lm `$(PSPBIN)/sdl-config --libs` -lc -lpspgu -lpspctrl -lpspkernel 
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 
-TARGET = scummvm-psp.elf
+TARGET = scummvm-psp
 OBJS := psp_main.o \
 	psp_fs.o \
 	osys_psp.o \
@@ -73,9 +74,35 @@ MODULE_DIRS += .
 
 include $(srcdir)/Makefile.common
 
-all: $(TARGET)
-	$(STRIP) $(TARGET)
+PSP_EBOOT_SFO = param.sfo
+PSP_EBOOT_TITLE = ScummVM-PSP
+PSP_EBOOT = EBOOT.PBP
+PSP_EBOOT_ICON = icon0.png
+PSP_EBOOT_ICON1 = NULL
+PSP_EBOOT_PIC0 = pic0.png
+PSP_EBOOT_PIC1 = pic1.png
+PSP_EBOOT_SND0 = NULL
+PSP_EBOOT_PSAR = NULL
 
-$(TARGET): $(OBJS)
+all: $(PSP_EBOOT)
+
+$(TARGET).elf: $(OBJS)
 	$(LINK.cpp) $(OBJS) $(LIBS) -o $@
+	$(STRIP) $@
+
+$(PSP_EBOOT_SFO):
+	$(MKSFO) '$(PSP_EBOOT_TITLE)' $@
+
+$(PSP_EBOOT): $(TARGET).elf $(PSP_EBOOT_SFO)
+	$(PACK_PBP) $@ $(PSP_EBOOT_SFO) $(PSP_EBOOT_ICON) $(PSP_EBOOT_ICON1) \
+		$(PSP_EBOOT_PIC0) $(PSP_EBOOT_PIC1) $(PSP_EBOOT_SND0)  \
+		$(TARGET).elf $(PSP_EBOOT_PSAR)
+
+kxploit: $(TARGET).elf $(PSP_EBOOT_SFO)
+	mkdir -p "$(TARGET)"
+	$(STRIP) $(TARGET).elf -o $(TARGET)/$(PSP_EBOOT)
+	mkdir -p "$(TARGET)%"
+	$(PACK_PBP) "$(TARGET)%/$(PSP_EBOOT)" $(PSP_EBOOT_SFO) $(PSP_EBOOT_ICON)  \
+		$(PSP_EBOOT_ICON1) $(PSP_EBOOT_PIC0) $(PSP_EBOOT_PIC1)  \
+		$(PSP_EBOOT_SND0) NULL $(PSP_EBOOT_PSAR)
 	
