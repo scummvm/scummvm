@@ -459,12 +459,18 @@ void KyraEngine::waitTicks(int ticks) {
 void KyraEngine::seq_demo() {
 	debug(9, "KyraEngine::seq_demo()");
 
-	// TODO: Display START.CPS
+	snd_playTheme(MUSIC_INTRO, 2);
+
+	loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
+	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
+	_screen->fadeFromBlack();
+	waitTicks(60);
+	_screen->fadeToBlack();
 
 	_screen->clearPage(0);
 	loadBitmap("TOP.CPS", 7, 7, NULL);
 	loadBitmap("BOTTOM.CPS", 5, 5, _screen->_currentPalette);
-	_screen->_curPage = 0;
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
@@ -490,7 +496,14 @@ void KyraEngine::seq_demo() {
 	_screen->clearPage(0);
 	seq_playSpecialSequence(_seq_demoData_Demo4, true);
 
-	// TODO: Display FINAL.CPS
+	_screen->clearPage(0);
+	loadBitmap("FINAL.CPS", 7, 7, _screen->_currentPalette);
+	_screen->_curPage = 0;
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
+	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
+	_screen->fadeFromBlack();
+	waitTicks(60);
+	_screen->fadeToBlack();
 }
 
 void KyraEngine::seq_intro() {
