@@ -1094,6 +1094,8 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	}
 
 	volume = ((volume & 0x7F) + 1) << 1;
+	if (volume > 255)
+		volume = 255;
 	sound &= 0xFF;
 
 	// note: all those tables are big endian. Don't ask me why. *sigh*
