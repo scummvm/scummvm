@@ -734,6 +734,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "maze", "Maze Madness", kGenMac},
 	{ "monkey", "monkey1", kGenPC},
 	{ "monkey", "monkeyk", kGenPC}, // FM-TOWNS Jap
+	{ "monkey", "game", kGenPC}, // SegaCD
 	{ "monkey2", "mi2demo", kGenPC},
 	{ "moondemo", "Putt-Putt Moon Demo", kGenMacNoParens },
 	{ "mustard", "Mustard", kGenMac},
