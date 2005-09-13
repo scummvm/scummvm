@@ -611,6 +611,12 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Monkey Island 1 (Mac CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh},
 
+	{"8eb84cee9b429314c7f0bdcf560723eb", "Monkey Island 1 (FM-TOWNS)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+
+	{"e17db1ddf91b39ca6bbc8ad3ed19e883", "Monkey Island 1 (FM-TOWNS Jp)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+
 	{"c13225cb1bbd3bc9fe578301696d8021", "Monkey Island 1 (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
 
