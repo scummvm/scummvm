@@ -1074,7 +1074,9 @@ void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
 
 void Sound::setupSound() {
 	delete _sfxFile;
-	_sfxFile = openSfxFile();
+
+	if (_vm->_version >= 5)
+		_sfxFile = openSfxFile();
 
 	if (_vm->_heversion >= 70) {
 		setupHEMusicFile();
