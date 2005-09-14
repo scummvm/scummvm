@@ -1699,9 +1699,7 @@ int ScummEngine::init(GameDetector &detector) {
 		_imuse->setBase(res.address[rtSound]);
 	}
 
-	// Since MM NES and C64 targets substitute whole file class we get monster.sou file
-	// name badly generated, so avoid even attempts to open it
-	if (!((_platform == Common::kPlatformNES) || (_platform == Common::kPlatformC64)))
+	if (_version >= 5)
 		_sound->setupSound();
 
 	// Create debugger
