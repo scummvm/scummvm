@@ -399,6 +399,8 @@ public:
 	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 
 protected:
+	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
+
 	virtual void setupOpcodes();
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);

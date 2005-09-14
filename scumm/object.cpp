@@ -692,6 +692,29 @@ void ScummEngine_v4::loadRoomObjects() {
 	CHECK_HEAP
 }
 
+void ScummEngine_c64::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
+	assert(room);
+	const byte *ptr = room + od->OBCDoffset;
+	ptr -= 2;
+
+	od->obj_nr = *(ptr + 6);
+
+	od->x_pos = *(ptr + 8) * 8;
+	od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
+
+	od->parentstate = (*(ptr + 9) & 0x80) ? 1 : 0;
+	od->parentstate *= 8;
+
+	od->width = *(ptr + 10) * 8;
+
+	od->parent = *(ptr + 11);
+
+	od->walk_x = *(ptr + 12) * 8;
+	od->walk_y = (*(ptr + 13) & 0x1f) * 8;
+	od->actordir = (*(ptr + 14)) & 7;
+	od->height = *(ptr + 14) & 0xf8;
+}
+
 void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr) {
 	assert(room);
 	const byte *ptr = room + od->OBCDoffset;
@@ -699,11 +722,7 @@ void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byt
 	if (_features & GF_OLD_BUNDLE)
 		ptr -= 2;
 
-	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) {
-		od->obj_nr = *(ptr + 7);
-	} else {
-		od->obj_nr = READ_LE_UINT16(ptr + 6);
-	}
+	od->obj_nr = READ_LE_UINT16(ptr + 6);
 
 	od->x_pos = *(ptr + 9) * 8;
 	od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
