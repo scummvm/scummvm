@@ -1149,6 +1149,14 @@ a4816cbb60fa01f16295ab46868e7c41 PuttPuttTTT.he4
 defb8cb9ec4b0f91acfb6b61c6129ad9 puttputtTTT.he0
 947ce44f2336f8467ceadb184dbaa3e9 puttputtTTT.w32
 
+(puttputt cd UK Release)
+eriktorbjorn
+79e5273f8626f6b1448788bc0a279049 *PuttPuttTTT.HE2
+7a0d96204f8874e4eda4918f63ca7b4e *PuttPuttTTT.HE4
+6ea0c0e68384e588ece7e3e110c62b09 *puttputtTTT.(a)
+d4aac997e2f4e15341f0bfbf905419bd *puttputtTTT.HE0
+a75403b5e853d7cc65cde2ec358ca5ba *puttputtTTT.w32
+
 (pj2 cd/puttrace cd/soccer cd)
 sev
 D:\Scummsys.90\sputm.90\*.c

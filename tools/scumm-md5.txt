@@ -465,6 +465,7 @@ Putt-Putt Saves the Zoo
 Putt-Putt Travels Through Time
 	-	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	-	All?	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime
+	-	Windows	en	d4aac997e2f4e15341f0bfbf905419bd	PuttTime	eriktorbjorn
 	-	Windows	nl	fcb78ebecab2757264c590890c319cc5	PuttTime	adutchguy
 	-	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
