@@ -333,8 +333,15 @@ int ScummEngine::findObject(int x, int y) {
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
-		if ((_version <= 2) && _objs[i].state & 0x2)
-			continue;
+
+		if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+			if (_objs[i].flags == 0 && _objs[i].state & 0x2)
+				continue;
+		} else {
+			if (_version <= 2 && _objs[i].state & 0x2)
+				continue;
+		}
+
 		b = i;
 		do {
 			a = _objs[b].parentstate;
@@ -698,6 +705,7 @@ void ScummEngine_c64::setupRoomObject(ObjectData *od, const byte *room, const by
 	ptr -= 2;
 
 	od->obj_nr = *(ptr + 6);
+	od->flags = *(ptr + 7);
 
 	od->x_pos = *(ptr + 8) * 8;
 	od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
