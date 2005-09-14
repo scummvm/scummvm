@@ -623,6 +623,15 @@ ebd324dcf06a4c49e1ba5c231eee1060 f4-demo.HE0
 23632be3c8c4e77c3917148c5f8e56ef f4-demo.he2
 0453fdf42a9aa750ed198bca1d9f8e91 f4-demo.he4
 
+(PuttTime CD UK release)
+eriktorbjorn
+d:\dev\SPUTM\Src\*.cpp
+a2bb4dbf44dbf26587c2c213064853a8 FF4DEMO.(A)
+e03ed1474ec14de78359970e0457a820 FF4DEMO.HE0
+15c9746d2d612d2693ec7e509c4e9fb5 FF4DEMO.HE2
+cb52cbabfa8e91b76a0c6d76ded339c6 ff4demo.exe
+9470cd17e5e301f33876477f14992f29 ff4demo.he4
+
 (ftp)
 2002-06-05 15:23 ffhsdemo.exe
 khalek
@@ -863,6 +872,15 @@ d:\dev\SPUTM\Src\*.cpp
 32709cbeeb3044b34129950860a83f14 PajamaTAL.he0
 f71fe00306d8246bd5f7ee99703aaaff PajamaTAL.he2
 297787a960f2b591bb98add9b0689e9f PajamaTAL.he4
+
+(PuttPutt CD UK release)
+eriktorbjorn
+d:\dev\SPUTM\Src\*.cpp
+5b0f71b2503688d8783f4cc37c302666 PJ3DEMO.(A)
+3e48298920fab9b7aec5a971e1bd1fab PJ3DEMO.HE0
+22df1316d6594bc5c70442874079c46d Pj3Demo.he2
+0794110b085ee91c2aa4a5fc844ff2f4 Pj3Demo.he4
+2702b7fad34607adea8e8a7b6adb1202 pj3demo.exe
 
 (russian socks)
 sev
@@ -1133,6 +1151,15 @@ D:\scummsys.98\sputm.98\*.c
 e80168dc9bfca4577b4e2bbdd70db60b RACEDEMO.HE4
 7ded875e14d324f610a4fde12de2d407 RACEDEMO.A32
 
+(PuttPutt CD UK release)
+eriktorbjorn
+d:\dev\SPUTM\Src\*.cpp
+cb6041f10fbaaa5e491aa8d14fc26dc0 RACEDEMO.(A)
+7c8100e360e8ef05f88069d4cfa0afd1 RACEDEMO.HE0
+095795832ad8a4323bbfa6c137b691bb RACEDEMO.HE4
+177f4e5579e0279700c2b6b7f4f4ba71 RaceDemo.he2
+3616b3bf5877b2fb50ce33c705f15413 racedemo.exe
+
 (putttime cd)
 sev
 C:\Dev\Project\SPUTM\Src\*.cpp
@@ -1154,11 +1181,11 @@ defb8cb9ec4b0f91acfb6b61c6129ad9 puttputtTTT.he0
 (puttputt cd UK Release)
 eriktorbjorn
 d:\dev\SPUTM\Src\*.cpp
-79e5273f8626f6b1448788bc0a279049 *PuttPuttTTT.HE2
-7a0d96204f8874e4eda4918f63ca7b4e *PuttPuttTTT.HE4
-6ea0c0e68384e588ece7e3e110c62b09 *puttputtTTT.(a)
-d4aac997e2f4e15341f0bfbf905419bd *puttputtTTT.HE0
-a75403b5e853d7cc65cde2ec358ca5ba *puttputtTTT.w32
+79e5273f8626f6b1448788bc0a279049 PuttPuttTTT.HE2
+7a0d96204f8874e4eda4918f63ca7b4e PuttPuttTTT.HE4
+6ea0c0e68384e588ece7e3e110c62b09 puttputtTTT.(a)
+d4aac997e2f4e15341f0bfbf905419bd puttputtTTT.HE0
+a75403b5e853d7cc65cde2ec358ca5ba puttputtTTT.w32
 
 (pj2 cd/puttrace cd/soccer cd)
 sev
@@ -1405,6 +1432,15 @@ D:\(vss)scummsys.99\SPUTM\Src\*.cpp
 8634f4ad2f224842364a86ddc57bb072 sf2-demo.he2
 c23f18777b5ad558826493f69749c4c6 sf2-demo.he4
 ccca9a823d117afb1a882fd707586bf0 sf2-demo.d32
+
+(PuttPutt CD UK release)
+eriktorbjorn
+d:\dev\SPUTM\Src\*.cpp
+e79b9525fd1e38c140424f48c609e642 SF2DEMO.(A)
+19bf6938a94698296bcb0c99c31c91a7 SF2DEMO.HE0
+2577b0029ecfcb9e764e20a9b2a4be6a Sf2Demo.he2
+c23f18777b5ad558826493f69749c4c6 Sf2Demo.he4
+6dbe2db93323010de257bcb55d99c3fa sf2demo.exe
 
 (spyozon cd)
 sev

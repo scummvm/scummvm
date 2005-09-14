@@ -408,6 +408,7 @@ Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pj3-demo	sev
 	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pj3-demo	sev
 	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pj3-demo	khalek
+	Demo	Windows	en	3e48298920fab9b7aec5a971e1bd1fab	pj3-demo	eriktorbjorn
 	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pj3-demo	joostp
 
 Pajama Sam's Lost & Found
@@ -425,6 +426,7 @@ Pajama Sam's Sock Works
 Putt-Putt Enters the Race
 	-	All	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace	Kirben
 	Demo	All	en	0ac41e2e3d2174e5a042a6b565328dba	racedemo	sev
+	Demo	Windows	en	7c8100e360e8ef05f88069d4cfa0afd1	racedemo	eriktorbjorn
 	Demo	All	nl	6af2419fe3db5c2fdb091ae4e5833770	racedemo	Kirben
 	Demo	All	nl	aaa587701cde7e74692c68c1024b85eb	racedemo	joostp
 
@@ -509,6 +511,7 @@ Spy Fox 2: Some Assembly Required
 	-	Windows	nl	71fe97c3108678cf604f14abe342341b	spyfox2	adutchguy
 	-	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
 	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
+	Demo	Windows	en	19bf6938a94698296bcb0c99c31c91a7	sf2-demo	eriktorbjorn
 	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2-demo	joostp
 
 Spy Fox 3: Operation Ozone
