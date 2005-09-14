@@ -340,6 +340,7 @@ Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	f4-demo	khalek
 	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	f4-demo	sev
 	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	f4-demo	sev
+	Demo	Windows	en	e03ed1474ec14de78359970e0457a820	f4-demo	eriktorbjorn
 	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	f4-demo	joostp
 	Demo	Windows	nl	499c958affc394f2a3868f1eb568c3ee	f4-demo	adutchguy
 
