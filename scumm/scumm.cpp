@@ -985,6 +985,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numObjectsInRoom = 0;
 	_userPut = 0;
 	_userState = 0;
+	_activeObject = 0;
 	_resourceHeaderSize = 8;
 	_saveLoadFlag = 0;
 	_saveLoadSlot = 0;

@@ -408,7 +408,16 @@ protected:
 	virtual int getVarOrDirectWord(byte mask);
 	virtual uint fetchScriptWord();
 
+	virtual void ifStateCommon(byte type);
+	virtual void ifNotStateCommon(byte type);
+	virtual void setStateCommon(byte type);
+	virtual void clearStateCommon(byte type);
+
+	int getObjectFlag();
+
 	/* Version C64 script opcodes */
+	void o_setState08();
+	void o_clearState08();
 	void o_stopCurrentScript();
 	void o_loadSound();
 	void o_animateActor();

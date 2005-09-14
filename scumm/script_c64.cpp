@@ -61,10 +61,10 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_panCameraTo),
 		OPCODE(o_unknown13),
 		/* 14 */
-		OPCODE(o5_print),
+		OPCODE(o_print_c64),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getRandomNr),
-		OPCODE(o2_clearState08),
+		OPCODE(o_clearState08),
 		/* 18 */
 		OPCODE(o_jumpRelative),
 		OPCODE(o_stopCurrentScript),
@@ -144,7 +144,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o2_clearState08),
+		OPCODE(o_clearState08),
 		/* 58 */
 		OPCODE(o_beginOverride),
 		OPCODE(o_stopCurrentScript),
@@ -182,7 +182,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_getObjectOwner),
 		/* 74 */
 		OPCODE(o5_getDist),
-		OPCODE(o5_printEgo),
+		OPCODE(o_printEgo_c64),
 		OPCODE(o2_walkActorToObject),
 		OPCODE(o2_clearState04),
 		/* 78 */
@@ -224,7 +224,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o2_setState08),
+		OPCODE(o_setState08),
 		/* 98 */
 		OPCODE(o2_restart),
 		OPCODE(o_stopCurrentScript),
@@ -304,7 +304,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o5_getActorMoving),
-		OPCODE(o2_setState08),
+		OPCODE(o_setState08),
 		/* D8 */
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_stopCurrentScript),
@@ -381,6 +381,58 @@ uint ScummEngine_c64::fetchScriptWord() {
 
 const char *ScummEngine_c64::getOpcodeDesc(byte i) {
 	return _opcodesC64[i].desc;
+}
+
+int ScummEngine_c64::getObjectFlag() {
+	if (_opcode & 0x40)
+		return _activeObject;
+	return fetchScriptByte();
+}
+
+void ScummEngine_c64::setStateCommon(byte type) {
+	int obj = getObjectFlag();
+	putState(obj, getState(obj) | type);
+}
+
+void ScummEngine_c64::clearStateCommon(byte type) {
+	int obj = getObjectFlag();
+	putState(obj, getState(obj) & ~type);
+}
+
+void ScummEngine_c64::ifStateCommon(byte type) {
+	int obj = getObjectFlag();
+
+	if ((getState(obj) & type) == 0) {
+		o_jumpRelative();
+	} else {
+		fetchScriptByte();
+		fetchScriptByte();
+	}
+}
+
+void ScummEngine_c64::ifNotStateCommon(byte type) {
+	int obj = getObjectFlag();
+
+	if ((getState(obj) & type) != 0) {
+		o_jumpRelative();
+	} else {
+		fetchScriptByte();
+		fetchScriptByte();
+	}
+}
+
+void ScummEngine_c64::o_setState08() {
+	int obj = getObjectFlag();
+	putState(obj, getState(obj) | 0x08);
+	markObjectRectAsDirty(obj);
+	clearDrawObjectQueue();
+}
+
+void ScummEngine_c64::o_clearState08() {
+	int obj = getObjectFlag();
+	putState(obj, getState(obj) & ~0x08);
+	markObjectRectAsDirty(obj);
+	clearDrawObjectQueue();
 }
 
 void ScummEngine_c64::o_stopCurrentScript() {
@@ -535,7 +587,7 @@ void ScummEngine_c64::o_getActorBitVar() {
 }
 
 void ScummEngine_c64::o_print_c64() {
-	_actorToPrintStrFor = getVarOrDirectByte(PARAM_1);
+	_actorToPrintStrFor = fetchScriptByte();
 	decodeParseString();
 	warning("STUB: o_print_c64()");
 }

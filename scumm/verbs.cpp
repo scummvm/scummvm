@@ -385,6 +385,20 @@ void ScummEngine::checkExecVerbs() {
 	if (VAR_MOUSE_STATE != 0xFF)
 		VAR(VAR_MOUSE_STATE) = _mouseAndKeyboardStat;
 
+	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+		// TODO
+
+		int object = findObject(_mouse.x, _mouse.y);
+		if (object) {
+			_activeObject = object;
+			runObjectScript(object, 15, false, false, NULL);
+		} else {
+
+		}
+
+		return;
+	}
+
 	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
 		/* Check keypresses */
 		vs = &_verbs[1];
