@@ -691,6 +691,10 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	res.nukeResource(rtMatrix, 1);
 	res.nukeResource(rtMatrix, 2);
 
+	// TODO: Different box format used
+	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) 
+		return;
+
 	if (_version <= 2)
 		ptr = roomptr + *(roomptr + 0x15);
 	else
