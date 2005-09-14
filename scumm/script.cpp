@@ -1170,7 +1170,7 @@ void ScummEngine::abortCutscene() {
 		if (ss->cutsceneOverride > 0)
 			ss->cutsceneOverride--;
 
-		VAR(VAR_OVERRIDE) = 1;
+		VAR(6) = 1;
 		vm.cutScenePtr[idx] = 0;
 
 		// HACK to fix issues with SMUSH and the way it does keyboard handling.

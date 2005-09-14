@@ -651,9 +651,20 @@ void ScummEngine_c64::o_unknownCD() {
 }
 
 void ScummEngine_c64::o_beginOverride() {
+	const int idx = vm.cutSceneStackPointer;
+	assert(0 <= idx && idx < 5);
+
+	vm.cutScenePtr[idx] = _scriptPointer - _scriptOrgPointer;
+	vm.cutSceneScript[idx] = _currentScript;
+
+	// Skip the jump instruction following the override instruction
+	// (the jump is responsible for "skipping" cutscenes, and the reason
+	// why we record the current script position in vm.cutScenePtr).
 	fetchScriptByte();
-	fetchScriptByte();
-	fetchScriptByte();
+	ScummEngine::fetchScriptWord();
+
+	// This is based on disassembly
+	VAR(VAR_OVERRIDE) = 0;
 }
 
 void ScummEngine_c64::o_isEqual() {

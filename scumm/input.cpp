@@ -417,8 +417,9 @@ void ScummEngine::processKbd(bool smushMode) {
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
 
-	if (_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY) ||
-		((VAR(VAR_CUTSCENEEXIT_KEY) == 4 || VAR(VAR_CUTSCENEEXIT_KEY) == 64) && _lastKeyHit == 27)) {
+	if ((_platform == Common::kPlatformC64 && _gameId == GID_MANIAC && _lastKeyHit == 27) || 
+		((VAR(VAR_CUTSCENEEXIT_KEY) == 4 || VAR(VAR_CUTSCENEEXIT_KEY) == 64) && _lastKeyHit == 27) ||
+		_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
 #ifndef DISABLE_SCUMM_7_8
 		// Skip cutscene (or active SMUSH video). For the V2 games, which
 		// normally use F4 for this, we add in a hack that makes escape work,
