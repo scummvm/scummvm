@@ -557,7 +557,8 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 				if (v1.x != oldXpos) {
 					dst += _out.pitch - (v1.x - oldXpos);
 					v1.mask_ptr += _numStrips;
-					mask = v1.mask_ptr;
+					mask = v1.mask_ptr + oldXpos / 8;
+					maskbit = revBitMask(oldXpos & 7);
 					y++;
 				}
 				width = _width;
