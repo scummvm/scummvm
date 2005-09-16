@@ -197,6 +197,7 @@ Day Of The Tentacle
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
 	Demo	DOS	en	c83079157ec765a28de445aec9768d60	tentacle
+	Demo	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
 	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	tentacle	Simon Krumrein, sev
 	Demo	DOS	fr	17fa250eb72dae2dad511ba79c0b6b0a	tentacle	cyx
 
