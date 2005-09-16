@@ -56,6 +56,8 @@ static const char *credits_intro[] = {
 "\\C""Broken Sword Games (C) Revolution",
 "\\C""Flight of the Amazon Queen (C) John Passfield",
 "\\C""and Steve Stamatiadis",
+"\\C""Inherit the Earth (C) Wyrmkeep Entertainment",
+"\\C""Goblins Games (C) Coktel Vision",
 "\\C""",
 "\\C""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
 "\\C""",
