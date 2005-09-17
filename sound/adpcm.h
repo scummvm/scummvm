@@ -32,6 +32,9 @@ enum typesADPCM {
 	kADPCMIma
 };
 
+// TODO: Switch from a SeekableReadStream to a plain ReadStream. This requires
+// some internal refactoring but is definitely possible and will increase the
+// flexibility of this code.
 AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type);
 
 #endif

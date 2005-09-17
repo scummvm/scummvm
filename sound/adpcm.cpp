@@ -31,11 +31,12 @@
 // See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
 // In addition, also IMA ADPCM is supported.
+template <typesADPCM TYPE>
 class ADPCMInputStream : public AudioStream {
 private:
 	bool _evenPos;
+	byte _lastByte;
 	Common::SeekableReadStream *_stream;
-	typesADPCM _type;
 	uint32 _endpos;
 
 	struct adpcmStatus {
@@ -44,14 +45,10 @@ private:
 	} _status;
 
 	int16 stepAdjust(byte);
-	int16 okiADPCMDecode(byte);
-	int16 imaADPCMDecode(byte);
-
-	int readOkiBuffer(int16 *buffer, const int numSamples);
-	int readIMABuffer(int16 *buffer, const int numSamples);
+	int16 decode(byte);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type);
+	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size);
 	~ADPCMInputStream() {};
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -62,56 +59,25 @@ public:
 };
 
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type)
-	: _stream(stream), _evenPos(true), _type(type) {
+template <typesADPCM TYPE>
+ADPCMInputStream<TYPE>::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size)
+	: _stream(stream), _evenPos(true) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
 	_endpos = stream->pos() + size;
 }
 
-int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	switch (_type) {
-	case kADPCMOki:
-		return readOkiBuffer(buffer, numSamples);
-		break;
-	case kADPCMIma:
-		return readIMABuffer(buffer, numSamples);
-		break;
-	default:
-		error("Unsupported ADPCM encoding");
-		break;
-	}
-	return 0;
-}
-
-int ADPCMInputStream::readOkiBuffer(int16 *buffer, const int numSamples) {
-	int samples;
-
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
-		// * 16 effectively converts 12-bit input to 16-bit output
-		if (_evenPos) {
-			buffer[samples] = okiADPCMDecode((_stream->readByte() >> 4) & 0x0f) * 16;
-			// Rewind back so we will reget byte later
-			_stream->seek(-1, SEEK_CUR);
-		} else {
-			buffer[samples] = okiADPCMDecode(_stream->readByte() & 0x0f) * 16;
-		}
-		_evenPos = !_evenPos;
-	}
-	return samples;
-}
-
-int ADPCMInputStream::readIMABuffer(int16 *buffer, const int numSamples) {
+template <typesADPCM TYPE>
+int ADPCMInputStream<TYPE>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
 		if (_evenPos) {
-			buffer[samples] = imaADPCMDecode((_stream->readByte() >> 4) & 0x0f);
-			// Rewind back so we will reget byte later
-			_stream->seek(-1, SEEK_CUR);
+			_lastByte = _stream->readByte();
+			buffer[samples] = decode((_lastByte >> 4) & 0x0f);
 		} else {
-			buffer[samples] = imaADPCMDecode(_stream->readByte() & 0x0f);
+			buffer[samples] = decode(_lastByte & 0x0f);
 		}
 		_evenPos = !_evenPos;
 	}
@@ -119,7 +85,8 @@ int ADPCMInputStream::readIMABuffer(int16 *buffer, const int numSamples) {
 }
 
 // adjust the step for use on the next sample.
-int16 ADPCMInputStream::stepAdjust(byte code) {
+template <typesADPCM TYPE>
+int16 ADPCMInputStream<TYPE>::stepAdjust(byte code) {
 	static const int16 adjusts[] = {-1, -1, -1, -1, 2, 4, 6, 8};
 
 	return adjusts[code & 0x07];
@@ -136,7 +103,8 @@ static const int16 okiStepSize[49] = {
 };
 
 // Decode Linear to ADPCM
-int16 ADPCMInputStream::okiADPCMDecode(byte code) {
+template <>
+int16 ADPCMInputStream<kADPCMOki>::decode(byte code) {
 	int16 diff, E, SS, samp;
 
 	SS = okiStepSize[_status.stepIndex];
@@ -163,13 +131,8 @@ int16 ADPCMInputStream::okiADPCMDecode(byte code) {
 	if (_status.stepIndex > 48)
 		_status.stepIndex = 48;
 
-	return samp;
-}
-
-AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type) {
-	AudioStream *audioStream = new ADPCMInputStream(&stream, size, type);
-
-	return audioStream;
+	// * 16 effectively converts 12-bit input to 16-bit output
+	return samp * 16;
 }
 
 
@@ -188,7 +151,8 @@ static const uint16 imaStepTable[89] = {
 	32767
 };
 
-int16 ADPCMInputStream::imaADPCMDecode(byte code) {
+template <>
+int16 ADPCMInputStream<kADPCMIma>::decode(byte code) {
 	int32 diff, E, SS, samp;
 
 	SS = imaStepTable[_status.stepIndex];
@@ -215,4 +179,22 @@ int16 ADPCMInputStream::imaADPCMDecode(byte code) {
 		_status.stepIndex = 88;
 
 	return samp;
+}
+
+AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type) {
+	AudioStream *audioStream;
+
+	switch (type) {
+	case kADPCMOki:
+		audioStream = new ADPCMInputStream<kADPCMOki>(&stream, size);
+		break;
+	case kADPCMIma:
+		audioStream = new ADPCMInputStream<kADPCMIma>(&stream, size);
+		break;
+	default:
+		error("Unsupported ADPCM encoding");
+		break;
+	}
+
+	return audioStream;
 }
