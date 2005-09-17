@@ -110,6 +110,7 @@ The Secret of Monkey Island
 	EGA Demo	DOS	de	771bc18ec6f93837b839c992b211904b	monkey	khalek
 
 	VGA (4 disk)	DOS	en	15e03ffbfeddb9c2aebc13dcb2a4a8f4	monkey
+	VGA (V1.1)	DOS	en	08646dd9698ddf1023ba9bf8a195e37b	monkey	crossbow777
 	VGA (8 disk)	DOS	en	c7890e038806df2bb5c0c8c6f1986ea2	monkey	Andrea Petrucci
 	VGA (4 disk)	DOS	de	d0b531227a27c6662018d2bd05aac52a	monkey
 	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
