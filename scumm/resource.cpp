@@ -224,11 +224,41 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 	bool result = false;
 
 	if (!_containerFile.isEmpty()) {
+		char name[128];
+		char temp[128];
+
 		file.close();
 		file.open(_containerFile.c_str());
 		assert(file.isOpen());
 
-		result = file.openSubFile(filename);
+		strncpy(name, filename, 128);
+
+		// Some Mac demos (i.e. DOTT) have bundled file names different
+		// from target name. dottdemo.000 vs tentacle.000. So we should
+		// substitute those names too
+		if (_substResFileNameIndexBundle == 0) {
+			int substLastIndex = 0;
+
+			while (substLastIndex != -1) {
+				if (file.openSubFile(name))
+					break;
+
+				substLastIndex = generateSubstResFileName(filename, name, sizeof(name), substLastIndex + 1);
+			}
+
+			if (substLastIndex == 0)
+				substLastIndex = -1;
+
+			_substResFileNameIndexBundle = substLastIndex;
+
+			if (substLastIndex != -1)
+				debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, name);
+		}
+
+		if (_substResFileNameIndexBundle != -1)
+			generateSubstResFileName(filename, name, sizeof(temp), _substResFileNameIndexBundle);
+
+		result = file.openSubFile(name);
 	}
 
 	if (!result) {

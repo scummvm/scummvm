@@ -825,6 +825,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _features(gs.features),
 	  _platform(gs.platform),
 	  _substResFileNameIndex(substResFileNameIndex),
+	  _substResFileNameIndexBundle(0),
 	  gdi(this),
 	  res(this),
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
@@ -917,7 +918,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// The first step is to check whether one of them is present (we do that
 	// here); the rest is handled by the  ScummFile class and code in
 	// openResourceFile() (and in the Sound class, for MONSTER.SOU handling).
-	if (_version >= 6 && _heversion == 0 && _substResFileNameIndex) {
+	if (_version >= 6 && _heversion == 0 && _substResFileNameIndex &&
+		_platform == Common::kPlatformMacintosh && 
+		substResFileNameTable[_substResFileNameIndex].genMethod == kGenAsIs) {
 		if (_fileHandle->open(substResFileNameTable[_substResFileNameIndex].macName)) {
 			_containerFile = substResFileNameTable[_substResFileNameIndex].macName;
 			_substResFileNameIndex = 0;
@@ -2647,8 +2650,11 @@ void ScummEngine::errorString(const char *buf1, char *buf2) {
 	}
 }
 
-int ScummEngine::generateSubstResFileName(const char *filename, char *buf, int bufsize) {
-	return generateSubstResFileName_(filename, buf, bufsize, _substResFileNameIndex);
+int ScummEngine::generateSubstResFileName(const char *filename, char *buf, int bufsize, int index) {
+	if (index == -3)
+		index = _substResFileNameIndex;
+
+	return generateSubstResFileName_(filename, buf, bufsize, index);
 }
 
 
@@ -3056,8 +3062,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 			substLastIndex = generateSubstResFileName_(tempName, detectName, sizeof(detectName), substLastIndex + 1);
 		}
-		if (found)
+		if (found) {
+			if (substLastIndex != 0)
+				debug(5, "Generated filename substitute: %s -> %s", tempName, detectName);
 			break;
+		}
 	}
 
 	// Unable to locate game data

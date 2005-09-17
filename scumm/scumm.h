@@ -536,8 +536,9 @@ public:
 	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds uses it
 	bool _egoPositioned;	// Used by Actor::putActor, hence public
 
-	int generateSubstResFileName(const char *filename, char *buf, int bufsize);
+	int generateSubstResFileName(const char *filename, char *buf, int bufsize, int index = -3);
 	int _substResFileNameIndex;
+	int _substResFileNameIndexBundle; // Used with Mac bundles
 
 protected:
 	int _keyPressed;
