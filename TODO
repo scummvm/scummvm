@@ -248,9 +248,10 @@ Graphics
 * Add some more fonts/font variants? Maybe a tool like ttf2bdf could be used
   to convert on (free!) TTF font to both a small and a big font for the GUI,
   maybe including bold/italic variants
-* Use 'complete' fonts. In particular, we should probably pick one encoding
-  (e.g. ISO Latin 1) and standardize on it. Oh yeah, a map from the SCUMM 
-  encoding to that encoding would be useful.
+* Allow loading external fonts (BDF format?). Useful for GUI customization.
+* Use 'complete' fonts, encoding wise. In particular, we should probably pick
+  one encoding (e.g. ISO Latin 1) and standardize on it. Oh yeah, a map from
+  the SCUMM  encoding to that encoding would be useful.
   That way, we can at least all systems/languages which use that encoding.
   Of course, kyrillic and asian users, amongst others, wouldn't be helped
   by this, but there is nothing we can do for them anyway, short of
