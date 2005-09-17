@@ -30,7 +30,11 @@
 #include "sound/audiocd.h"
 
 #ifdef USE_TREMOR
+#ifdef __PSP__
+#include <ivorbisfile.h>
+#else
 #include <tremor/ivorbisfile.h>
+#endif
 #else
 #include <vorbis/vorbisfile.h>
 #endif
