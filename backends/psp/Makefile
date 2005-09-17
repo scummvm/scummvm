@@ -46,7 +46,7 @@ CFLAGS	+= -DUSE_MAD
 LIBS	+= -lmad 
 
 #comment this out if you don't want to use libtremor
-CFLAGS	+= -DUSE_TREMOR
+CFLAGS	+= -DUSE_VORBIS -DUSE_TREMOR
 LIBS	+= -lvorbisidec
 
 #comment this out if you don't want to use libmpeg2
