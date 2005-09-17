@@ -196,8 +196,8 @@ Day Of The Tentacle
 	Talkie ?	All?	fr	8aa05d3cdb0e795436043f0546af2da2	tentacle	Andrea Petrucci
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
-	Demo	DOS	en	c83079157ec765a28de445aec9768d60	tentacle
-	Demo	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
+	Demo	All	en	c83079157ec765a28de445aec9768d60	tentacle
+	Demo (bundle)	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
 	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	tentacle	Simon Krumrein, sev
 	Demo	DOS	fr	17fa250eb72dae2dad511ba79c0b6b0a	tentacle	cyx
 
@@ -216,6 +216,7 @@ Sam &amp; Max
 	Talkie	DOS	ru	d43352a805d78b5f4936c6d7779bf575	samnmax
 	Demo	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samnmax
 	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samnmax
+	Demo (bundle)	Mac	en	6dead580b0ff14d5f7b33b4219f04159	samnmax
 
 	interactive Demo	DOS	en	c3196c5349e53e387aaff1533d95e53a	samnmax
 	interactive Demo	DOS	de	cc8ba2b0df2f9c450bcf055fe2711979	samnmax	Simon Krumrein, sev
