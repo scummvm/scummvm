@@ -225,7 +225,6 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 
 	if (!_containerFile.isEmpty()) {
 		char name[128];
-		char temp[128];
 
 		file.close();
 		file.open(_containerFile.c_str());
@@ -256,7 +255,7 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 		}
 
 		if (_substResFileNameIndexBundle != -1)
-			generateSubstResFileName(filename, name, sizeof(temp), _substResFileNameIndexBundle);
+			generateSubstResFileName(filename, name, sizeof(name), _substResFileNameIndexBundle);
 
 		result = file.openSubFile(name);
 	}
