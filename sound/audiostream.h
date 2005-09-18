@@ -40,8 +40,13 @@ public:
 	 * a critical error occured (note: you *must* check if
 	 * this value is less than what you requested, this can
 	 * happen when the stream is fully used up).
+	 *
+	 * Data has to be in native endianess, 16 bit per sample, signed.
 	 * For stereo stream, buffer will be filled with interleaved
-	 * left and right channel samples.
+	 * left and right channel samples, starting with a left sample.
+	 * Furthermore, the samples in the left and right are summed up.
+	 * So if you request 4 samples from a stereo stream, you will get
+	 * a total of two left channel and two right channel samples.
 	 */
 	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
