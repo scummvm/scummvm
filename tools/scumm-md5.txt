@@ -2,10 +2,14 @@ Maniac Mansion
 	VC64	C64	en	d831f7c048574dd9d5d85db2a1468099	maniac
 	VC64	C64	de	c4a7f7398ac9ae588940f9912ea5fd8f	maniac
 	V1	DOS	en	7f45ddd6dbfbf8f80c0c0efea4c295bc	maniac
-	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
 	V1.5	NES	en	d8d07efcb88f396bee0b402b10c3b1c9	maniac
+	V1.5 (extracted)	NES	en	17f7296f63c78642724f057fd8e736a7	maniac
 	V1.5	NES	en	3905799e081b80a61d4460b7b733c206	maniac
+	V1.5 (extracted)	NES	en	91d5db93187fab54d823f73bd6441cb6	maniac
 	V1.5	NES	fr	81bbfa181184cb494e7a81dcfa94fbd9	maniac
+	V1.5 (extracted)	NES	fr	1c7e7db2cfab1ad62746ab680a634204	maniac
+	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
+	V1.5 (extracted)	NES	se	6b5a3fef241e90d4b2e77f1e222773ee	maniac
 	V2	DOS	en	624cdb93654667c869d204a64af7e57f	maniac	Kirben, Andrea Petrucci
 	V2 (alt?)	DOS	en	b250d0f9cc83f80ced56fe11a4fb057c	maniac	Andrea Petrucci
 	V2	DOS	de	183d7464902d40d00800e8ee1f04117c	maniac
