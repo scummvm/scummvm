@@ -2444,7 +2444,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 				}
 
 				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1) + _paletteMod;
+					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1);
 
 					y++;
 					if (y >= height) {
