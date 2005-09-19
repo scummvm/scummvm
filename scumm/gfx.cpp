@@ -193,10 +193,9 @@ static const TransitionEffect transitionEffects[6] = {
 Gdi::Gdi(ScummEngine *vm) {
 	memset(this, 0, sizeof(*this));
 	_vm = vm;
+	_paletteMod = 0;
 	_roomPalette = vm->_roomPalette;
 	_roomStrips = 0;
-	if ((vm->_platform == Common::kPlatformAmiga) && (vm->_version >= 4))
-		_roomPalette += 16;
 }
 
 Gdi::~Gdi() {
@@ -1796,6 +1795,11 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	byte code = *src++;
 	bool useOrDecompress = false;
 	
+	if ((_vm->_platform == Common::kPlatformAmiga) && (_vm->_version >= 4))
+		_paletteMod = 16;
+	else
+		_paletteMod = 0;
+
 	if (code <= 10) {
 		switch (code) {
 		case 1:
@@ -2426,7 +2430,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 					run = *src++;
 				}
 				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] : _roomPalette[color >> 4];
+					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] + _paletteMod : _roomPalette[color >> 4] + _paletteMod;
 
 					y++;
 					if (y >= height) {
@@ -2440,7 +2444,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 				}
 
 				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1);
+					*(dst + y * dstPitch + x) = *(dst + y * dstPitch + x - 1) + _paletteMod;
 
 					y++;
 					if (y >= height) {
@@ -2456,7 +2460,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 			}
 			
 			for (z = 0; z < run; z++) {
-				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf];
+				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf] + _paletteMod;
 
 				y++;
 				if (y >= height) {
@@ -2580,7 +2584,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color];
+				*dst = _roomPalette[color] + _paletteMod;
 			dst++;
 
 		againPos:
@@ -2607,7 +2611,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 								return;
 						}
 						if (!transpCheck || color != _transparentColor)
-							*dst = _roomPalette[color];
+							*dst = _roomPalette[color] + _paletteMod;
 						dst++;
 					} while (--reps);
 					bits >>= 8;
@@ -2632,7 +2636,7 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color];
+				*dst = _roomPalette[color] + _paletteMod;
 			dst++;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -2665,7 +2669,7 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color];
+				*dst = _roomPalette[color] + _paletteMod;
 			dst += dstPitch;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {

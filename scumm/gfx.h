@@ -204,6 +204,7 @@ public:
 	~Gdi();
 
 protected:
+	byte _paletteMod;
 	byte *_roomPalette;
 	byte _transparentColor;
 	byte _decomp_shr, _decomp_mask;
