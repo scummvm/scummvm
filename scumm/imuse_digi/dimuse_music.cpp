@@ -193,7 +193,14 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 void IMuseDigital::setComiMusicState(int stateId) {
 	int l, num = -1;
 
-	if ((stateId == 0) || (stateId == 4))
+	// This happens at the beginning of Part II, but should apparently not
+	// do anything since the correct music is already playing. A left-over
+	// of some kind?
+
+	if (stateId == 4)
+		return;
+
+	if (stateId == 0)
 		stateId = 1000;
 
 	for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
