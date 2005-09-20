@@ -28,12 +28,33 @@
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 
 namespace Saga {
 
 #define BUFFER_SIZE 4096
+
+struct TrackFormat {
+	DigitalTrackInfo* (*openTrackFunction)(int);
+};
+
+static const TrackFormat TRACK_FORMATS[] = {
+#ifdef USE_FLAC
+	{ getFlacTrack },
+#endif
+#ifdef USE_VORBIS
+	{ getVorbisTrack },
+#endif
+#ifdef USE_MAD
+	{ getMP3Track },
+#endif
+
+	{ NULL } // Terminator
+};
 
 // I haven't decided yet if it's a good idea to make looping part of the audio
 // stream class, or if I should use a "wrapper" class, like I did for Broken
@@ -277,6 +298,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 
 	_songTableLen = 0;
 	_songTable = 0;
+
+	_track = NULL;
 }
 
 Music::~Music() {
@@ -345,6 +368,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	ResourceContext *context;
 	byte *resourceData;
 	size_t resourceSize;
+
 	debug(2, "Music::play %d, %d", resourceId, flags);
 
 	if (!_enabled) {
@@ -358,6 +382,16 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_trackNumber = resourceId;
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
+
+	// Try to open standalone digital track
+	for (int i = 0; i < ARRAYSIZE(TRACK_FORMATS) - 1; ++i)
+		if (_track = TRACK_FORMATS[i].openTrackFunction(resourceId - 8)) {
+			break;
+		}
+	if (_track) {
+		_track->play(_mixer, &_musicHandle, (MUSIC_LOOP ? -1 : 1), 10000);
+		return;
+	}
 
 	if (_vm->getGameType() == GType_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {

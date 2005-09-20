@@ -26,6 +26,7 @@
 #ifndef SAGA_MUSIC_H_
 #define SAGA_MUSIC_H_
 
+#include "sound/audiocd.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
@@ -135,6 +136,8 @@ private:
 	ResourceContext *_musicContext;
 	MidiParser *xmidiParser;
 	MidiParser *smfParser;
+
+	DigitalTrackInfo *_track;
 
 	static void musicVolumeGaugeCallback(void *refCon);
 	void musicVolumeGauge(void);
