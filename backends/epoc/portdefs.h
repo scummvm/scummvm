@@ -36,7 +36,7 @@
 
 // the place in Symbian FS where scummvm.ini & std***.txt are saved
 #define SYMBIAN32_DOC_DIR "C:\\documents\\EScummVM\\" // includes final \\!
-#define DISABLE_HQ_SCALERS // we only need 1x
+#define DISABLE_SCALERS // we only need 1x
 
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!

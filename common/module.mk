@@ -11,17 +11,17 @@ MODULE_OBJS := \
 	common/timer.o \
 	common/util.o \
 	common/savefile.o \
-	common/system.o
+	common/system.o \
+	common/scaler.o \
+	common/scaler/thumbnail.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \
-	common/scaler.o \
 	common/scaler/2xsai.o \
 	common/scaler/aspect.o \
 	common/scaler/scale2x.o \
 	common/scaler/scale3x.o \
-	common/scaler/scalebit.o \
-	common/scaler/thumbnail.o
+	common/scaler/scalebit.o
 
 ifndef DISABLE_HQ_SCALERS
 MODULE_OBJS += \

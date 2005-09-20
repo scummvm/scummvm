@@ -147,6 +147,7 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	}
 }
 
+#ifndef DISABLE_SCALERS
 /**
  * Trivial nearest-neighbour 2x scaler.
  */
@@ -316,3 +317,5 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 		q += nextlineDst << 1;
 	}
 }
+
+#endif

@@ -63,7 +63,7 @@ void OSystem_SDL::initBackend() {
 	SDL_EnableUNICODE(1);
 
 	_cksumValid = false;
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(DISABLE_SCALERS)
 	_mode = GFX_DOUBLESIZE;
 	_scaleFactor = 2;
 	_scalerProc = Normal2x;
@@ -73,7 +73,13 @@ void OSystem_SDL::initBackend() {
 	_mode = GFX_NORMAL;
 	_scaleFactor = 1;
 	_scalerProc = Normal1x;
+
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	_fullscreen = ConfMan.getBool("fullscreen");
+#else
 	_fullscreen = true;
+#endif
+
 	_adjustAspectRatio = false;
 #endif
 	_scalerType = 0;

@@ -48,7 +48,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 // Table of relative scalers magnitudes
 // [definedScale - 1][_scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {
-#ifndef __SYMBIAN32__
+#ifndef DISABLE_SCALERS
 	{ Normal1x, AdvMame2x, AdvMame3x },
 	{ Normal1x, Normal1x, Normal1o5x },
 	{ Normal1x, Normal1x, Normal1x }
@@ -151,7 +151,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		newScaleFactor = 1;
 		newScalerProc = Normal1x;
 		break;
-#ifndef __SYMBIAN32__ // remove dependencies on other scalers
+#ifndef DISABLE_SCALERS
 	case GFX_DOUBLESIZE:
 		newScaleFactor = 2;
 		newScalerProc = Normal2x;
@@ -199,7 +199,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		newScaleFactor = 2;
 		newScalerProc = DotMatrix;
 		break;
-#endif // __SYMBIAN32__
+#endif // DISABLE_SCALERS
 
 	default:
 		warning("unknown gfx mode %d", mode);
@@ -208,7 +208,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 
 	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 
-#ifndef __SYMBIAN32__ // this code introduces a dependency on Normal2x()
+#ifndef DISABLE_SCALERS
 	// Do not let switch to lesser than overlay size resolutions
 	if (_screenWidth * newScaleFactor < _overlayWidth) {
 		if (_scaleFactor == 1) { // Force 2x mode
@@ -284,6 +284,10 @@ int OSystem_SDL::getGraphicsMode() const {
 }
 
 void OSystem_SDL::initSize(uint w, uint h, int overlayScale) {
+#ifdef DISABLE_SCALERS
+	overlayScale = 1;
+#endif
+
 	// Avoid redundant res changes
 	if ((int)w == _screenWidth && (int)h == _screenHeight &&
 		 (int)overlayScale == _overlayScale &&
@@ -669,7 +673,7 @@ void OSystem_SDL::internUpdateScreen() {
 				r->w = r->w * scale1 / scale2;
 				r->h = dst_h * scale1 / scale2;
 
-#ifndef __SYMBIAN32__ // don't want to introduce dep on aspect.cpp
+#ifndef DISABLE_SCALERS
 				if (_adjustAspectRatio && orig_dst_y < height)
 					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1 / scale2);
 #endif
@@ -930,7 +934,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 		h = height - y;
 	}
 
-#ifndef __SYMBIAN32__  // don't want to introduce dep on aspect.cpp
+#ifndef DISABLE_SCALERS
 	if (_adjustAspectRatio) {
 		makeRectStretchable(x, y, w, h);
 		if (_scaleFactor == 3 && _overlayScale == 2 && _overlayVisible) {
@@ -1406,13 +1410,16 @@ void OSystem_SDL::blitCursor() {
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 		_mouseCurState.w, _mouseCurState.h);
 
+#ifndef DISABLE_SCALERS
 	if (_adjustAspectRatio)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, hW, hH1, 0, 0, 0);
+#endif
 
 	SDL_UnlockSurface(_mouseSurface);
 	SDL_UnlockSurface(_mouseOrigSurface);
 }
 
+#ifndef DISABLE_SCALERS
 // Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
 // common/scale/aspect.cpp
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
@@ -1432,6 +1439,7 @@ static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height
 
 	return 1 + maxDstY - srcY;
 }
+#endif
 
 void OSystem_SDL::toggleMouseGrab() {
 	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
