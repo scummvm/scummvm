@@ -3087,11 +3087,13 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		}
 	}
 
-	// Use MD5 to determine specific game version, if required.
-	if (game.features & GF_MULTIPLE_VERSIONS) {
+	// Check if MD5 was overwritten
+	if (ConfMan.hasKey("target_md5")) {
+		const char *md5 = ConfMan.get("target_md5").c_str();
+
 		g = multiple_versions_md5_settings;
 		while (g->name) {
-			if (!scumm_stricmp(gameMD5, g->name))
+			if (!scumm_stricmp(md5, g->name))
 				break;
 			g++;
 		}
@@ -3100,6 +3102,22 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			game.name = name;
 			if (game.description)
 				g_system->setWindowCaption(game.description);
+		}
+	} else {
+		// Use MD5 to determine specific game version, if required.
+		if (game.features & GF_MULTIPLE_VERSIONS) {
+			g = multiple_versions_md5_settings;
+			while (g->name) {
+				if (!scumm_stricmp(gameMD5, g->name))
+					break;
+				g++;
+			}
+			if (g->name) {
+				game = *g;
+				game.name = name;
+				if (game.description)
+					g_system->setWindowCaption(game.description);
+			}
 		}
 	}
 	// Starting from version 7.1, HE games use 640x480. We check this here since multiple
