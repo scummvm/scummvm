@@ -30,26 +30,29 @@ namespace Sword1 {
 #define	O_WALKANIM_SIZE	600			//max number of nodes in router output
 #define	O_GRID_SIZE		200
 #define	EXTRA_GRID_SIZE	20
-//--------------------------------------------------------------------------------------
+
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
 
 struct OEventSlot {			//receiving event list in the compact -
 	int32	o_event;		//array of these with O_TOTAL_EVENTS elements
 	int32	o_event_script;
-};
+} GCC_PACK;	// size = 2*int32 = 8 bytes
 
 #define	TOTAL_script_levels	5
-//-----
-struct ScriptTree {								//this is a logic tree, used by OBJECTs
+
+struct ScriptTree {			//this is a logic tree, used by OBJECTs
 	int32	o_script_level;						//logic level
 	int32	o_script_id[TOTAL_script_levels];	//script id's (are unique to each level)
 	int32	o_script_pc[TOTAL_script_levels];	//pc of script for each (if script_manager)
-};	// size = 11*int32 = 44 bytes
-//--------------------------------------------------------------------------------------
+} GCC_PACK;	// size = 11*int32 = 44 bytes
+
 struct TalkOffset {
 	int32	x;
 	int32	y;
-};	// size = 2*int32 = 8 bytes
-//--------------------------------------------------------------------------------------
+} GCC_PACK;	// size = 2*int32 = 8 bytes
+
 struct WalkData {
 	int32	frame;
 	int32	x;
@@ -114,14 +117,11 @@ struct Object {
 
 	WalkData	o_route[O_WALKANIM_SIZE];	// 340	size = 600*20 bytes = 12000
 				// mega size = 12340 bytes (+ 8 byte offset table + 20 byte header = 12368)
-};
+} GCC_PACK;
 
-struct CollisionData {
-	Object  *compact;
-	int32	w[24];
-	int32	h[24];
-	WalkData route[24];
-};
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 } // End of namespace Sword1
 
