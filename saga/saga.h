@@ -295,7 +295,8 @@ enum GameFileTypes {
 	GAME_MUSICFILE_GM = 1 << 6,
 	GAME_MUSICFILE_FM = 1 << 7,
 	GAME_PATCHFILE    = 1 << 8,
-	GAME_MACBINARY    = 1 << 9
+	GAME_MACBINARY    = 1 << 9,
+	GAME_SWAPENDIAN   = 1 << 10
 };
 
 enum GameSoundTypes {

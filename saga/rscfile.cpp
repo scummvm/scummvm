@@ -268,12 +268,15 @@ bool Resource::loadContext(ResourceContext *context) {
 	byte *tableBuffer;
 	size_t tableSize;
 	bool isMacBinary;
-	
+
 	if (!context->file->open(context->fileName)) {
 		return false;
 	}
 
 	context->isBigEndian = _vm->isBigEndian();
+
+	if (context->fileType & GAME_SWAPENDIAN)
+		context->isBigEndian = !context->isBigEndian;
 	
 	isMacBinary = (context->fileType & GAME_MACBINARY) > 0;
 	context->fileType &= ~GAME_MACBINARY;
@@ -287,7 +290,6 @@ bool Resource::loadContext(ResourceContext *context) {
 			return false;
 		}
 	}
-	
 
 	//process internal patch files
 	if (GAME_PATCHFILE & context->fileType) {
@@ -328,7 +330,6 @@ bool Resource::loadContext(ResourceContext *context) {
 			}
 		}
 	}
-	
 
 	return true;
 }

@@ -334,7 +334,7 @@ static GameFileDescription ITEMULTICD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
-	{"Inherit the Earth Voices", GAME_VOICEFILE},
+	{"Inherit the Earth Voices", GAME_VOICEFILE | GAME_SWAPENDIAN},
 	{"music.rsc", GAME_MUSICFILE}
 };
 
