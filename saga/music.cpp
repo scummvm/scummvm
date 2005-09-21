@@ -383,26 +383,33 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
 
+	int realTrackNumber;
+
+	if (_vm->getGameType() == GType_ITE) {
+		if (flags == MUSIC_DEFAULT) {
+			if (resourceId == 13 || resourceId == 19) {
+				flags = MUSIC_NORMAL;
+			} else {
+				flags = MUSIC_LOOP;
+			}
+		}
+		realTrackNumber = resourceId - 8;
+	} else {
+		realTrackNumber = resourceId + 1;
+	}
+
 	// Try to open standalone digital track
 	for (int i = 0; i < ARRAYSIZE(TRACK_FORMATS) - 1; ++i)
-		if (_track = TRACK_FORMATS[i].openTrackFunction(resourceId - 8)) {
+		if (_track = TRACK_FORMATS[i].openTrackFunction(realTrackNumber)) {
 			break;
 		}
 	if (_track) {
-		_track->play(_mixer, &_musicHandle, (MUSIC_LOOP ? -1 : 1), 10000);
+		_track->play(_mixer, &_musicHandle, (flags == MUSIC_LOOP) ? -1 : 1, 10000);
 		return;
 	}
 
 	if (_vm->getGameType() == GType_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
-			if (flags == MUSIC_DEFAULT) {
-				if ((resourceId == 13) || (resourceId == 19)) {
-					flags = MUSIC_NORMAL;
-				} else {
-					flags = MUSIC_LOOP;
-				}
-			}
-
 			if (_musicContext != NULL) {
 				//TODO: check resource size
 				audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP);
