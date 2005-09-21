@@ -1035,9 +1035,9 @@ static GameDescription gameDescriptions[] = {
 		ITEMULTICD_GameFiles,
 		ARRAYSIZE(ITECD_GameFonts),
 		ITECD_GameFonts,
+		&ITEMACCD_GameSound,
 		&ITECD_GameSound,
-		&ITECD_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,
 		0,
 		NULL,
 		GF_WYRMKEEP | GF_CD_FX
@@ -1060,7 +1060,7 @@ static GameDescription gameDescriptions[] = {
 		ITECD_GameFonts,
 		&ITECD_GameSound,
 		&ITECD_GameSound,
-		NULL,
+		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX
