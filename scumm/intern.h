@@ -422,6 +422,7 @@ protected:
 	void o_clearState08();
 	void o_stopCurrentScript();
 	void o_loadSound();
+	void o_getActorMoving();
 	void o_animateActor();
 	void o_putActorAtObject();
 	void o_unknown13();

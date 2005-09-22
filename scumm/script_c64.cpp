@@ -143,7 +143,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 54 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
-		OPCODE(o5_getActorMoving),
+		OPCODE(o_getActorMoving),
 		OPCODE(o_clearState08),
 		/* 58 */
 		OPCODE(o_beginOverride),
@@ -303,7 +303,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* D4 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
-		OPCODE(o5_getActorMoving),
+		OPCODE(o_getActorMoving),
 		OPCODE(o_setState08),
 		/* D8 */
 		OPCODE(o_stopCurrentScript),
@@ -531,6 +531,16 @@ void ScummEngine_c64::o_animateActor() {
 
 	Actor *a = derefActor(act, "o_animateActor");
 	a->animateActor(anim);
+}
+
+void ScummEngine_c64::o_getActorMoving() {
+	getResultPos();
+	int act = getVarOrDirectByte(PARAM_1);
+	Actor *a = derefActor(act, "o_getActorMoving");
+	if (a->_moving)
+		setResult(1);
+	else
+		setResult(2);
 }
 
 void ScummEngine_c64::o_putActorAtObject() {
