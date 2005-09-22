@@ -276,6 +276,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
 
+	_debugger = 0;
+
 	const SimonGameSettings *g = simon_settings;
 	while (g->name) {
 		if (!scumm_stricmp(detector->_game.name, g->name))

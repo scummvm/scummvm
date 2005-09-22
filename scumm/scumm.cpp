@@ -826,6 +826,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _platform(gs.platform),
 	  _substResFileNameIndex(substResFileNameIndex),
 	  _substResFileNameIndexBundle(0),
+	  _debugger(0),
+	  _currentScript(0xFF), // Let debug() work on init stage
 	  gdi(this),
 	  res(this),
 	  _pauseDialog(0), _mainMenuDialog(0), _versionDialog(0),
@@ -933,7 +935,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_musicEngine = NULL;
 	_verbs = NULL;
 	_objs = NULL;
-	_debugger = NULL;
 	_debugFlags = 0;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
@@ -1009,7 +1010,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_scriptOrgPointer = NULL;
 	_opcode = 0;
 	vm.numNestedScripts = 0;
-	_currentScript = 0;
 	_curExecScript = 0;
 	_lastCodePtr = NULL;
 	_resultVarNumber = 0;

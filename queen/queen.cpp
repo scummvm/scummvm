@@ -135,7 +135,7 @@ REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen")
 namespace Queen {
 
 QueenEngine::QueenEngine(GameDetector *detector, OSystem *syst)
-	: Engine(syst) {
+	: Engine(syst), _debugger(0) {
 }
 
 QueenEngine::~QueenEngine() {
