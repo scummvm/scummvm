@@ -23,6 +23,7 @@ Maniac Mansion
 	V2	Amiga	fr	ce7733f185b838e248927c7ba1a04204	maniac	Tobias Fleischer
 	V2	Atari	en	a570381b028972d891052ee1e51dc011	maniac	Andreas Bylund
 	V2	Atari	fr	dd30a53035393baa5a5e222e716559af	maniac	Andreas Bylund
+	V2	Atari	es	15240c59d3681ed53f714f8d925cb2d6	maniac	VoiD
 
 Zak McKracken and the Alien Mindbenders
 	VC64	C64	en	55d3987641bf229c83bc729210173383	zak
