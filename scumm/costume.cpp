@@ -1002,18 +1002,124 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 	return (a->_cost.curpos[slot] != oldframe);
 }
 
+static const byte actorColorsMMC64[] = {
+	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5,
+	4, 1, 0, 5, 4, 2, 2, 7, 7, 0, 6, 6, 6, 6, 6, 6
+};
+
 byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
+	// TODO:
+	// C64 seems to have at most 8 limbs
+	// if you disable this you will get into the debugger
+	// when the meteor should be displayed
+	// maybe a bug? check this
+	if (limb >= 8)
+		return 0;
+
+	if (limb == 0) {
+		_draw_top = 200;
+		_draw_bottom = 0;
+	}
+
+	// TODO:
+	// get out how animations are handled
+	byte unk1 = (_loaded._animCmds + (/* walking(0) or idle(1) */1*32) + newDirToOldDir(a->getFacing()) * 8)[limb];
+	byte unk2 = _loaded._frameOffsets[_loaded._frameOffsets[limb] + (unk1 & 0x7f)];
+	bool flipped = newDirToOldDir(a->getFacing()) == 0;
+
+	byte p1 = _loaded._frameOffsets[unk2];
+	byte temp1 = _loaded._baseptr[p1];
+	byte temp2 = temp1 + _loaded._dataOffsets[4];
+	int offL = _loaded._baseptr[temp1 + 2];
+	int offH = _loaded._baseptr[temp2];
+	int off = (offH << 8) + offL;
+
+	const byte *data = _loaded._baseptr + off;
+	const byte actorColors[] = { 
+		0, 10, actorColorsMMC64[_actorID], 0
+	};
+
+	int width = *data++;
+	int height = *data++;
+	int offsetX = *data++;
+	int offsetY = *data++;
+//	int byte5 = *data++;
+//	int byte6 = *data++;
+//	debug(3, "byte5: %d", byte5);
+//	debug(3, "byte6: %d", byte6);
+	data += 2;
+
+	if (!width || !height)
+		return 0;
+
+	int xpos = 0;
+	int ypos = _loaded._maxHeight - offsetY;
+	
+	if (flipped) {
+		if (offsetX)
+			xpos -= (offsetX-1) * 8;
+	} else {
+		xpos += offsetX * 8;
+	}
+
+	// + 4 could be commented, because maybe the _actorX position is
+	// wrong, I looked at the scumm-c64 interpreter by lloyd
+	// and there Bernhard is directly on the right in the intro
+	// but here in ScummVM he is 4 pixel left of the other position.
+	xpos += _actorX - (a->_width / 2) + 4;
+	ypos += _actorY - _loaded._maxHeight;
+
+	if (flipped) {
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				byte c = data[y*width+x];
+				byte b, d;
+				byte *dest = &(((byte*)_out.pixels)[((y + ypos) * _out.pitch) + ((width - x) * 8) + xpos - 1]);
+				dest += 8;
+
+				for (int i = 6; i >= 0; i -= 2) {
+					if ((d = (c >> i) & 0x03)) {
+						b = actorColors[d];
+						*dest-- = b;
+						*dest-- = b;
+						continue;
+					}
+					dest -= 2;
+				}
+			}
+		}
+	} else {
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				byte c = data[y*width+x];
+				byte b, d;
+				byte *dest = &(((byte*)_out.pixels)[((y + ypos) * _out.pitch) + ((x * 8) + xpos)]);
+
+				for (int i = 6; i >= 0; i -= 2) {
+					if ((d = (c >> i) & 0x03)) {
+						b = actorColors[d];
+						*dest++ = b;
+						*dest++ = b;
+						continue;
+					}
+					dest += 2;
+				}
+			}
+		}
+	}
+
+	_draw_top = MIN(_draw_top, ypos);
+	_draw_bottom = MAX(_draw_bottom, ypos+height);
+	// if +4 above is NOT commented here +(flipped ? 4 : 0) can be commented out
+	// and other way round
+	_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos+(width*8)/*+(flipped ? 4 : 0)*/, ypos, ypos+height, _actorID);
+
 	return 0;
 }
 
 void C64CostumeRenderer::setCostume(int costume) {
 	_loaded.loadCostume(costume);
 }
-
-static const byte actorColorsMMC64[] = {
-	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5,
-	4, 1, 0, 5, 4, 2, 2, 7, 7, 0, 6, 6, 6, 6, 6, 6
-};
 
 void C64CostumeLoader::loadCostume(int id) {
 	const byte *ptr = _vm->getResourceAddress(rtCostume, id);
@@ -1029,6 +1135,23 @@ void C64CostumeLoader::loadCostume(int id) {
 	_frameOffsets = _baseptr + READ_LE_UINT16(ptr + 5);
 	_dataOffsets = ptr;
 	_animCmds = _baseptr + READ_LE_UINT16(ptr + 7);
+
+	_maxHeight = 0;
+	for (int i = 0; i < 8; ++i) {
+		int pid = _frameOffsets[_frameOffsets[i]];
+		byte p1 = _frameOffsets[pid];
+		byte b = _baseptr[p1];
+		byte c = b + _dataOffsets[4];
+		int offL = _baseptr[b + 2];
+		int offH = _baseptr[c];
+		int off = (offH << 8) + offL;
+		const byte *data = _baseptr + off;
+
+		if (data[3] > _maxHeight) {
+			_maxHeight = data[3];		// data[3] is libs's Y offset
+		}
+	}
+	++_maxHeight;
 }
 
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {

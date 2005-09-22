@@ -74,6 +74,7 @@ public:
 	void costumeDecodeData(Actor *a, int frame, uint usemask);
 	byte increaseAnims(Actor *a);
 
+	int _maxHeight;
 protected:
 	byte increaseAnim(Actor *a, int slot);
 };
