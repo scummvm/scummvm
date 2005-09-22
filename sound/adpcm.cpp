@@ -72,7 +72,9 @@ template <typesADPCM TYPE>
 int ADPCMInputStream<TYPE>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
 
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
+	// Since we process high and low nibbles separately never check buffer end
+	// on low nibble
+	for (samples = 0; !_evenPos || samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
 		if (_evenPos) {
 			_lastByte = _stream->readByte();
 			buffer[samples] = decode((_lastByte >> 4) & 0x0f);
