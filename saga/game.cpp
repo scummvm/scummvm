@@ -766,7 +766,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_MULTICD,  "a6433e34b97b15e64fe8214651012db9", "ite.rsc", false },
 	{ GID_ITE_MULTICD,  "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
 	{ GID_ITE_MULTICD,  "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
-	{ GID_ITE_MULTICD,  "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", false },
+	{ GID_ITE_MULTICD,  "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", true },
 	{ GID_ITE_MULTICD,  "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
 	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
