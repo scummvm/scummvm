@@ -236,7 +236,9 @@ void ScummEngine::CHARSET_1() {
 			if (_charset->_center) {
 				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
 			}
-			if (!(_platform == Common::kPlatformFMTowns) && _string[0].height) {
+			if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+				break;
+			} else if (!(_platform == Common::kPlatformFMTowns) && _string[0].height) {
 				_charset->_nextTop += _string[0].height;
 			} else {
 				_charset->_nextTop += _charset->getFontHeight();

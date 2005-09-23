@@ -406,6 +406,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void decodeParseString();
 
 	virtual int getVarOrDirectWord(byte mask);
 	virtual uint fetchScriptWord();

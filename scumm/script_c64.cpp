@@ -389,6 +389,42 @@ int ScummEngine_c64::getObjectFlag() {
 	return fetchScriptByte();
 }
 
+void ScummEngine_c64::decodeParseString() {
+	byte buffer[512];
+	byte *ptr = buffer;
+	byte c;
+	bool insertSpace = false;
+
+	while ((c = fetchScriptByte())) {
+
+		insertSpace = (c & 0x80) != 0;
+		c &= 0x7f;
+
+		if (c == '/') {
+			*ptr++ = 13;
+		} else {
+			*ptr++ = c;
+		}
+
+		if (insertSpace)
+			*ptr++ = ' ';
+
+	}
+	*ptr = 0;
+
+	int textSlot = 0;
+	_string[textSlot].xpos = 0;
+	_string[textSlot].ypos = 0;
+	_string[textSlot].right = 320;
+	_string[textSlot].center = false;
+	_string[textSlot].overhead = false;
+
+	if (_actorToPrintStrFor == 0xFF)
+		_string[textSlot].color = 14;
+
+	actorTalk(buffer);
+}
+
 void ScummEngine_c64::setStateCommon(byte type) {
 	int obj = getObjectFlag();
 	putState(obj, getState(obj) | type);
