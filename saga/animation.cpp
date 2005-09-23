@@ -36,12 +36,36 @@ namespace Saga {
 Anim::Anim(SagaEngine *vm) : _vm(vm) {
 	uint16 i;
 
+	_cutawayList = NULL;
+	_cutawayListLength = 0;
+
 	for (i = 0; i < MAX_ANIMATIONS; i++)
 		_animations[i] = NULL;
 }
 
 Anim::~Anim(void) {
 	reset();
+}
+
+void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
+	free(_cutawayList);
+	_cutawayListLength = resourceLength / 8;
+	_cutawayList = (Cutaway *)malloc(_cutawayListLength * sizeof(Cutaway));
+
+	MemoryReadStream cutawayS(resourcePointer, resourceLength);
+
+	for (int i = 0; i < _cutawayListLength; i++) {
+		_cutawayList[i].backgroundID = cutawayS.readUint16LE();
+		_cutawayList[i].frameID = cutawayS.readUint16LE();
+		_cutawayList[i].maxFrame = (int16)cutawayS.readUint16LE();
+		_cutawayList[i].frameRate = (int16)cutawayS.readUint16LE();
+	}
+}
+
+void Anim::freeCutawayList(void) {
+	free(_cutawayList);
+	_cutawayList = NULL;
+	_cutawayListLength = 0;
 }
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {

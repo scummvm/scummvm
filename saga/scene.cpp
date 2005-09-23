@@ -478,12 +478,6 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 	loadScene(&sceneParams);
 }
 
-void Scene::freeCutawayList() {
-	// TODO
-	// It has to be in different class
-	warning("STUB: freeCutawayList()");
-}
-
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
 	beginSlope = _vm->getSceneHeight() - _sceneDescription.beginSlope;
 	endSlope = _vm->getSceneHeight() - _sceneDescription.endSlope;
@@ -608,7 +602,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		if (loadSceneParams->chapter == 6)
 			_vm->_interface->setLeftPortrait(0);
 
-		freeCutawayList();
+		_vm->_anim->freeCutawayList();
 		_vm->_script->freeModules();
 		// deleteAllScenes();
 

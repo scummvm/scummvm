@@ -25,6 +25,7 @@
 #include "saga/saga.h"
 
 #include "saga/actor.h"
+#include "saga/animation.h"
 #include "saga/interface.h"
 #include "saga/music.h"
 #include "saga/rscfile.h"
@@ -521,11 +522,15 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_actor->loadObjList(_metaResource.objectCount, _metaResource.objectsResourceID);
 
-	// TODO: cutawayList
+	_vm->_resource->loadResource(resourceContext, _metaResource.cutawayListResourceID, resourcePointer, resourceLength);
 
-	// TODO: songTable Long
-	_vm->_resource->loadResource(resourceContext, _metaResource.songTableID,
-								 resourcePointer, resourceLength);
+	if (resourceLength == 0) {
+		error("Resource::loadGlobalResources Can't load cutaway list");
+	}
+
+	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
+
+	_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
 
 	if (resourceLength == 0) {
 		error("Resource::loadGlobalResources Can't load songs list for current track");

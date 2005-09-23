@@ -251,10 +251,8 @@ class Scene {
 		_sceneQueue.clear();
 	}
 	void changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = NO_CHAPTER_CHANGE);
-	void freeCutawayList();
 
 	bool isSceneLoaded() const { return _sceneLoaded; }
-
 
 	int getSceneResourceId(int sceneNumber) {
 		if ((sceneNumber < 0) || (sceneNumber >= _sceneCount)) {

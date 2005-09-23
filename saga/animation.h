@@ -33,7 +33,6 @@ namespace Saga {
 #define MAX_ANIMATIONS 10
 #define DEFAULT_FRAME_TIME 140
 
-
 #define SAGA_FRAME_START 0xF
 #define SAGA_FRAME_END 0x3F
 #define SAGA_FRAME_NOOP 0x1F
@@ -50,6 +49,15 @@ enum AnimationState {
 	ANIM_PAUSE = 0x02,
 	ANIM_STOPPING = 0x04,
 	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
+};
+
+// Cutaway info array member. Cutaways are basically animations with a really
+// bad attitude.
+struct Cutaway {
+	uint16 backgroundID;
+	uint16 frameID;
+	int16 maxFrame;
+	int16 frameRate;
 };
 
 // Animation info array member
@@ -98,6 +106,9 @@ class Anim {
 public:
 	Anim(SagaEngine *vm);
 	~Anim(void);
+
+	void loadCutawayList(const byte *resourcePointer, size_t resourceLength);
+	void freeCutawayList(void);
 
 	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
@@ -156,7 +167,8 @@ private:
 
 	SagaEngine *_vm;
 	AnimationData *_animations[MAX_ANIMATIONS];
-
+	Cutaway *_cutawayList;
+	int _cutawayListLength;
 };
 
 } // End of namespace Saga
