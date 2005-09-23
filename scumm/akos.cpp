@@ -203,7 +203,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 					a->_cost.end[i] = 0;
 					a->_cost.start[i] = 0;
 					a->_cost.curpos[i] = 0;
-					a->_cost.seq3[i] = 0;
+					a->_cost.heCondMaskTable[i] = 0;
 
 					if (akst) {
 						int size = _vm->getResourceDataSize(akst) / 8;
@@ -211,7 +211,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 							bool found = false;
 							while (size--) {
 								if (READ_LE_UINT32(akst) == 0) {
-									a->_cost.seq3[i] = READ_LE_UINT32(akst + 4);
+									a->_cost.heCondMaskTable[i] = READ_LE_UINT32(akst + 4);
 									found = true;
 									break;
 								}
@@ -233,16 +233,16 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 					start = READ_LE_UINT16(r); r += 2;
 					len = READ_LE_UINT16(r); r += 2;
 
-					a->_cost.seq1[i] = 0;
-					a->_cost.seq2[i] = 0;
+					a->_cost.heJumpOffsetTable[i] = 0;
+					a->_cost.heJumpCountTable[i] = 0;
 					if (aksf) {
 						int size = _vm->getResourceDataSize(aksf) / 6;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
 								if (READ_LE_UINT16(aksf) == start) {
-									a->_cost.seq1[i] = READ_LE_UINT16(aksf + 2);
-									a->_cost.seq2[i] = READ_LE_UINT16(aksf + 4);
+									a->_cost.heJumpOffsetTable[i] = READ_LE_UINT16(aksf + 2);
+									a->_cost.heJumpCountTable[i] = READ_LE_UINT16(aksf + 4);
 									found = true;
 									break;
 								}
@@ -259,14 +259,14 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 					a->_cost.end[i] = start + len;
 					a->_cost.start[i] = start;
 					a->_cost.curpos[i] = start;
-					a->_cost.seq3[i] = 0;
+					a->_cost.heCondMaskTable[i] = 0;
 					if (akst) {
 						int size = _vm->getResourceDataSize(akst) / 8;
 						if (size > 0) {
 							bool found = false;
 							while (size--) {
 								if (READ_LE_UINT32(akst) == start) {
-									a->_cost.seq3[i] = READ_LE_UINT32(akst + 4);
+									a->_cost.heCondMaskTable[i] = READ_LE_UINT32(akst + 4);
 									found = true;
 									break;
 								}
@@ -353,13 +353,13 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	uint i, extra;
 	byte result = 0;
 	int xmoveCur, ymoveCur;
-	uint32 seq3Idx[32];
-	uint8 hasSeq3Idx;
+	uint32 heCondMaskIndex[32];
+	bool useCondMask;
 	int lastDx, lastDy;
 
 	lastDx = lastDy = 0;
 	for (i = 0; i < 32; ++i) {
-		seq3Idx[i] = i;
+		heCondMaskIndex[i] = i;
 	}
 
 	if (_skipLimbs)
@@ -371,7 +371,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (!cost.active[limb] || cost.stopped & (1 << limb))
 		return 0;
 
-	hasSeq3Idx = 0;
+	useCondMask = false;
 	p = aksq + cost.curpos[limb];
 
 	code = p[0];
@@ -383,11 +383,11 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		uint j = 0;
 		extra = p[3];
 		uint8 n = extra;
-		assert(n < ARRAYSIZE(seq3Idx));
+		assert(n < ARRAYSIZE(heCondMaskIndex));
 		while (n--) {
-			seq3Idx[j++] = aksq[s++];
+			heCondMaskIndex[j++] = aksq[s++];
 		}
-		hasSeq3Idx = 1;
+		useCondMask = true;
 		p += extra + 2;
 		code = (code == AKC_C021) ? AKC_ComplexChan : AKC_ComplexChan2;
 	}
@@ -436,7 +436,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 		extra = p[2];
 		p += 3;
-		uint32 decflag = seq3Idx[0];
+		uint32 decflag = heCondMaskIndex[0];
 
 		for (i = 0; i != extra; i++) {
 			code = p[4];
@@ -458,10 +458,10 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				_ymove -= lastDy;
 			}
 
-			if (!hasSeq3Idx || !akct) {
+			if (!useCondMask || !akct) {
 				decflag = 1;
 			} else {
-				uint32 cond = READ_LE_UINT32(akct + cost.seq3[limb] + seq3Idx[i] * 4);
+				uint32 cond = READ_LE_UINT32(akct + cost.heCondMaskTable[limb] + heCondMaskIndex[i] * 4);
 				if (cond == 0) {
 					decflag = 1;
 				} else {
@@ -1513,9 +1513,9 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				error("akos_increaseAnim: no AKFO table");
 			tmp = a->getAnimVar(GB(2)) - 1;
 			if (_heversion >= 80) {
-				if (tmp < 0 || tmp > a->_cost.seq2[chan] - 1)
+				if (tmp < 0 || tmp > a->_cost.heJumpCountTable[chan] - 1)
 					error("akos_increaseAnim: invalid jump value %d", tmp);
-				curpos = READ_LE_UINT16(akfo + a->_cost.seq1[chan] + tmp * 2);
+				curpos = READ_LE_UINT16(akfo + a->_cost.heJumpOffsetTable[chan] + tmp * 2);
 			} else {
 				if (tmp < 0 || tmp > numakfo - 1)
 					error("akos_increaseAnim: invalid jump value %d", tmp);

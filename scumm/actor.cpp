@@ -1144,8 +1144,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_paletteNum = _hePaletteNum;
 
 	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0) {
-		_heCondMask &= 0xFFFFFC00;
-		_heCondMask |= 1;
+		_heCondMask = (_heCondMask & ~0x3FF) | 1;
 		if (_vm->getTalkingActor() == _number) {
 			// Checks if talk sound is active?
 			// Otherwise just do rand animation

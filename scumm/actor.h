@@ -63,9 +63,9 @@ struct CostumeData {
 	uint16 end[16];
 	uint16 frame[16];
 
-	uint16 seq1[16];
-	uint16 seq2[16];
-	uint32 seq3[16];
+	uint16 heJumpOffsetTable[16];
+	uint16 heJumpCountTable[16];
+	uint32 heCondMaskTable[16];
 
 	void reset() {
 		stopped = 0;
