@@ -27,7 +27,10 @@
 
 #include "saga/console.h"
 #include "saga/events.h"
+#include "saga/interface.h"
 #include "saga/render.h"
+#include "saga/rscfile.h"
+#include "saga/scene.h"
 
 #include "saga/animation.h"
 
@@ -55,8 +58,8 @@ void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	MemoryReadStream cutawayS(resourcePointer, resourceLength);
 
 	for (int i = 0; i < _cutawayListLength; i++) {
-		_cutawayList[i].backgroundID = cutawayS.readUint16LE();
-		_cutawayList[i].frameID = cutawayS.readUint16LE();
+		_cutawayList[i].backgroundResourceId = cutawayS.readUint16LE();
+		_cutawayList[i].animResourceId = cutawayS.readUint16LE();
 		_cutawayList[i].maxFrame = (int16)cutawayS.readUint16LE();
 		_cutawayList[i].frameRate = (int16)cutawayS.readUint16LE();
 	}
@@ -66,6 +69,51 @@ void Anim::freeCutawayList(void) {
 	free(_cutawayList);
 	_cutawayList = NULL;
 	_cutawayListLength = 0;
+}
+
+void Anim::playCutaway(int cut, bool fade) {
+	debug(0, "playCutaway(%d, %d)", cut, fade);
+
+	if (fade) {
+		// TODO: Fade down. Is this blocking or non-blocking?
+	}
+
+	// TODO: Stop all other animations
+
+	_vm->_gfx->showCursor(false);
+	_vm->_interface->setStatusText("");
+	_vm->_interface->setSaveReminderState(0);
+
+	// TODO: Hide the inventory. Perhaps by adding a new panel mode?
+
+	// Set the initial background and palette for the cutaway
+
+	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+
+	byte *resourceData;
+	size_t resourceDataLength;
+
+	_vm->_resource->loadResource(context, _cutawayList[cut].backgroundResourceId, resourceData, resourceDataLength);
+
+	byte *buf;
+	size_t buflen;
+	int width;
+	int height;
+
+	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+
+	PalEntry *palette = (PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+
+	Surface *bgSurface = _vm->_render->getBackGroundSurface();
+	const Rect rect(width, height);
+
+	bgSurface->blit(rect, buf);
+	_vm->_gfx->setPalette(palette);
+
+	free(buf);
+	free(resourceData);
+
+	// TODO: Start the animation
 }
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
@@ -230,7 +278,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	event.time = frameTime;
 
 	_vm->_events->queue(&event);
-
 }
 
 void Anim::stop(uint16 animId) {

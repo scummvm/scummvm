@@ -1840,7 +1840,14 @@ void Script::sf75(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfScriptStartCutAway", thread, nArgs);
+	int16 cut;
+	int16 fade;
+
+	cut = thread->pop();
+	thread->pop();		// Not used
+	fade = thread->pop();
+
+	_vm->_anim->playCutaway(cut, fade != 0);
 }
 
 void Script::sfReturnFromCutAway(SCRIPTFUNC_PARAMS) {
