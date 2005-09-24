@@ -408,6 +408,9 @@ protected:
 	virtual void setupScummVars();
 	virtual void decodeParseString();
 
+	virtual void redrawVerbs();
+	virtual void checkExecVerbs();
+
 	virtual int getVarOrDirectWord(byte mask);
 	virtual uint fetchScriptWord();
 

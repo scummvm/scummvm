@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
@@ -350,6 +351,10 @@ void ScummEngine::redrawVerbs() {
 	_verbMouseOver = verb;
 }
 
+void ScummEngine_c64::redrawVerbs() {
+	// TODO
+}
+
 void ScummEngine::handleMouseOver(bool updateInventory) {
 	if (_completeScreenRedraw) {
 		verbMouseOver(0);
@@ -384,20 +389,6 @@ void ScummEngine::checkExecVerbs() {
 
 	if (VAR_MOUSE_STATE != 0xFF)
 		VAR(VAR_MOUSE_STATE) = _mouseAndKeyboardStat;
-
-	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
-		// TODO
-
-		int object = findObject(_mouse.x, _mouse.y);
-		if (object) {
-			_activeObject = object;
-			runObjectScript(object, 15, false, false, NULL);
-		} else {
-
-		}
-
-		return;
-	}
 
 	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
 		/* Check keypresses */
@@ -449,6 +440,26 @@ void ScummEngine::checkExecVerbs() {
 				// Scene was clicked
 				runInputScript((zone->number == kMainVirtScreen) ? 2 : 1, 0, code);
 			}
+		}
+	}
+}
+
+void ScummEngine_c64::checkExecVerbs() {
+	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
+		return;
+
+	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+		// TODO
+
+		int object = findObject(_mouse.x, _mouse.y);
+		if (object) {
+			_activeObject = object;
+			runObjectScript(object, 15, false, false, NULL);
+		} else {
+			Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+			int y = _mouse.y;
+			int x = _mouse.x;
+			a->startWalkActor(x, y, -1);
 		}
 	}
 }

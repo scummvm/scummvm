@@ -814,9 +814,9 @@ protected:
 	int _activeObject;
 
 	virtual void handleMouseOver(bool updateInventory);
+	virtual void redrawVerbs();
+	virtual void checkExecVerbs();
 
-	void redrawVerbs();
-	void checkExecVerbs();
 	void verbMouseOver(int verb);
 	int findVerbAtPos(int x, int y) const;
 	virtual void drawVerb(int verb, int mode);
