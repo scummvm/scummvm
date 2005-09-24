@@ -56,7 +56,7 @@ enum AnimationState {
 struct Cutaway {
 	uint16 backgroundResourceId;
 	uint16 animResourceId;
-	int16 maxFrame;
+	int16 cycles;
 	int16 frameRate;
 };
 
@@ -110,6 +110,8 @@ public:
 	void loadCutawayList(const byte *resourcePointer, size_t resourceLength);
 	void freeCutawayList(void);
 	void playCutaway(int cut, bool fade);
+	void endCutaway(void);
+	void returnFromCutaway(void);
 
 	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
@@ -170,6 +172,7 @@ private:
 	AnimationData *_animations[MAX_ANIMATIONS];
 	Cutaway *_cutawayList;
 	int _cutawayListLength;
+	bool _cutawayActive;
 };
 
 } // End of namespace Saga

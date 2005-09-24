@@ -41,6 +41,7 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 
 	_cutawayList = NULL;
 	_cutawayListLength = 0;
+	_cutawayActive = false;
 
 	for (i = 0; i < MAX_ANIMATIONS; i++)
 		_animations[i] = NULL;
@@ -60,7 +61,7 @@ void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	for (int i = 0; i < _cutawayListLength; i++) {
 		_cutawayList[i].backgroundResourceId = cutawayS.readUint16LE();
 		_cutawayList[i].animResourceId = cutawayS.readUint16LE();
-		_cutawayList[i].maxFrame = (int16)cutawayS.readUint16LE();
+		_cutawayList[i].cycles = (int16)cutawayS.readUint16LE();
 		_cutawayList[i].frameRate = (int16)cutawayS.readUint16LE();
 	}
 }
@@ -78,13 +79,25 @@ void Anim::playCutaway(int cut, bool fade) {
 		// TODO: Fade down. Is this blocking or non-blocking?
 	}
 
-	// TODO: Stop all other animations
+	if (!_cutawayActive) {
+		// Stop all current animations.
 
-	_vm->_gfx->showCursor(false);
-	_vm->_interface->setStatusText("");
-	_vm->_interface->setSaveReminderState(0);
+		// TODO: We need to retain enough of their state so that we can
+		//       resume them afterwards.
 
-	// TODO: Hide the inventory. Perhaps by adding a new panel mode?
+		for (int i = 0; i < MAX_ANIMATIONS; i++) {
+			if (_animations[i])
+				_animations[i]->state = ANIM_PAUSE;
+		}
+
+		_vm->_gfx->showCursor(false);
+		_vm->_interface->setStatusText("");
+		_vm->_interface->setSaveReminderState(0);
+
+		// TODO: Hide the inventory. Perhaps a new panel mode?
+
+		_cutawayActive = true;
+	}
 
 	// Set the initial background and palette for the cutaway
 
@@ -113,7 +126,49 @@ void Anim::playCutaway(int cut, bool fade) {
 	free(buf);
 	free(resourceData);
 
-	// TODO: Start the animation
+	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength); 
+
+	// FIXME: This is a memory leak: slot 0 may be in use already.
+
+	load(0, resourceData, resourceDataLength);
+
+	free(resourceData);
+
+	setCycles(0, _cutawayList[cut].cycles);
+	setFrameTime(0, 1000 / _cutawayList[cut].frameRate);
+
+	// FIXME: When running a series of cutaways, it's quite likely that
+	//        there already is at least one "advance frame" event pending.
+	//        I don't know if implementing the remaining cutaway opcodes
+	//        will fix this...
+
+	play(0, 0);
+}
+
+void Anim::endCutaway(void) {
+	// I believe this is called by scripts after running one cutaway. At
+	// this time, nothing needs to be done here.
+
+	debug(0, "endCutaway()");
+}
+
+void Anim::returnFromCutaway(void) {
+	// I believe this is called by scripts after running a series of
+	// cutaways.
+
+	debug(0, "returnFromCutaway()");
+
+	if (_cutawayActive) {
+		finish(0);
+
+		// TODO: Handle fade up, if we previously faded down
+
+		// TODO: Restore the scene
+
+		// TODO: Restore the animations
+
+		_vm->_gfx->showCursor(true);
+	}
 }
 
 void Anim::load(uint16 animId, const byte *animResourceData, size_t animResourceLength) {
@@ -213,7 +268,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	backGroundSurface = _vm->_render->getBackGroundSurface();
 	displayBuffer = (byte*)backGroundSurface->pixels;
 
-
 	if (playing) {
 		anim->state = ANIM_PLAYING;
 	}
@@ -239,7 +293,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				anim->state = ANIM_PAUSE;
 			}
 		}
-
 	} else {
 		// Animation done playing
 		anim->state = ANIM_PAUSE;

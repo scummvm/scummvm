@@ -1851,11 +1851,11 @@ void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfReturnFromCutAway(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfReturnFromCutAway", thread, nArgs);
+	_vm->_anim->returnFromCutaway();
 }
 
 void Script::sfEndCutAway(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfEndCutAway", thread, nArgs);
+	_vm->_anim->endCutaway();
 }
 
 void Script::sfGetMouseClicks(SCRIPTFUNC_PARAMS) {
