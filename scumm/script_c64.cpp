@@ -38,7 +38,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 00 */
 		OPCODE(o5_stopObjectCode),
 		OPCODE(o2_putActor),
-		OPCODE(o_askDisk),
+		OPCODE(o_askForDisk),
 		OPCODE(o_unknown1),
 		/* 04 */
 		OPCODE(o_isGreaterEqual),
@@ -59,7 +59,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_breakHere),
 		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o_unknown13),
+		OPCODE(o_lockActor),
 		/* 14 */
 		OPCODE(o_print_c64),
 		OPCODE(o2_actorFromPos),
@@ -99,7 +99,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_loadActor),
 		OPCODE(o2_getBitVar),
 		OPCODE(o2_setCameraAt),
-		OPCODE(o_freezeScript),
+		OPCODE(o_lockScript),
 		/* 34 */
 		OPCODE(o5_getDist),
 		OPCODE(o_stopCurrentScript),
@@ -132,7 +132,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_setActorBitVar),
 		/* 4C */
 		OPCODE(o_loadScript),
-		OPCODE(o_unknown4D),
+		OPCODE(o_lockRoom),
 		OPCODE(o_putActorAtObject),
 		OPCODE(o2_clearState02),
 		/* 50 */
@@ -219,7 +219,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_pickupObject),
 		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o_unknown93),
+		OPCODE(o_unlockActor),
 		/* 94 */
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
@@ -259,7 +259,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_loadActor),
 		OPCODE(o2_getBitVar),
 		OPCODE(o2_setCameraAt),
-		OPCODE(o_unfreezeScript),
+		OPCODE(o_unlockScript),
 		/* B4 */
 		OPCODE(o5_getDist),
 		OPCODE(o_stopCurrentScript),
@@ -292,7 +292,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_setActorBitVar),
 		/* CC */
 		OPCODE(o_loadScript),
-		OPCODE(o_unknownCD),
+		OPCODE(o_unlockRoom),
 		OPCODE(o_putActorAtObject),
 		OPCODE(o2_setState02),
 		/* D0 */
@@ -487,12 +487,33 @@ void ScummEngine_c64::o_loadSound() {
 	ensureResourceLoaded(rtSound, resid);
 }
 
-void ScummEngine_c64::o_unknown13() {
-	debug(0, "o_unknown13 (Actor %d)", fetchScriptByte());
-}
-
 void ScummEngine_c64::o_loadActor() {
 	debug(0, "o_loadActor (%d)", getVarOrDirectByte(PARAM_1));
+}
+
+void ScummEngine_c64::o_lockActor() {
+	debug(0, "o_lockActor (%d)", fetchScriptByte());
+}
+
+void ScummEngine_c64::o_unlockActor() {
+	debug(0, "o_unlockActor (%d)", fetchScriptByte());
+}
+
+void ScummEngine_c64::o_loadScript() {
+	int resid = getVarOrDirectByte(PARAM_1);
+	ensureResourceLoaded(rtScript, resid);
+}
+
+void ScummEngine_c64::o_lockScript() {
+	int resid = fetchScriptByte();
+	res.lock(rtScript, resid);
+	debug(0, "o_lockScript (%d)", resid);
+}
+
+void ScummEngine_c64::o_unlockScript() {
+	int resid = fetchScriptByte();
+	res.unlock(rtScript, resid);
+	debug(0, "o_unlockScript (%d)", resid);
 }
 
 void ScummEngine_c64::o_loadRoom() {
@@ -500,13 +521,16 @@ void ScummEngine_c64::o_loadRoom() {
 	ensureResourceLoaded(rtRoom, resid);
 }
 
-void ScummEngine_c64::o_unknown4D() {
-	debug(0, "o_unknown4D (Actor %d)", fetchScriptByte());
+void ScummEngine_c64::o_lockRoom() {
+	int resid = fetchScriptByte();
+	res.lock(rtRoom, resid);
+	debug(0, "o_lockRoom (%d)", resid);
 }
 
-void ScummEngine_c64::o_loadScript() {
-	int resid = getVarOrDirectByte(PARAM_1);
-	ensureResourceLoaded(rtScript, resid);
+void ScummEngine_c64::o_unlockRoom() {
+	int resid = fetchScriptByte();
+	res.unlock(rtRoom, resid);
+	debug(0, "o_unlockRoom (%d)", resid);
 }
 
 void ScummEngine_c64::o_cursorCommand() {
@@ -541,22 +565,6 @@ void ScummEngine_c64::o_lights() {
 		VAR(VAR_CURRENT_LIGHTS) = 0;
 
 	_fullRedraw = true;
-}
-
-void ScummEngine_c64::o_unknown93() {
-	debug(0, "o_unknown93 (Actor %d)", fetchScriptByte());
-}
-
-void ScummEngine_c64::o_freezeScript() {
-	int scr = fetchScriptByte();
-	vm.slot[scr].status &= 0x80;
-	vm.slot[scr].freezeCount = 1;
-}
-
-void ScummEngine_c64::o_unfreezeScript() {
-	int scr = fetchScriptByte();
-	vm.slot[scr].status &= 0x7F;
-	vm.slot[scr].freezeCount = 0;
 }
 
 void ScummEngine_c64::o_animateActor() {
@@ -635,13 +643,11 @@ void ScummEngine_c64::o_getActorBitVar() {
 void ScummEngine_c64::o_print_c64() {
 	_actorToPrintStrFor = fetchScriptByte();
 	decodeParseString();
-	warning("STUB: o_print_c64()");
 }
 
 void ScummEngine_c64::o_printEgo_c64() {
 	_actorToPrintStrFor = (byte)VAR(VAR_EGO);
 	decodeParseString();
-	warning("STUB: o_printEgo_c64()");
 }
 
 void ScummEngine_c64::o_unknown1() {
@@ -688,12 +694,9 @@ void ScummEngine_c64::o_getClosestObjActor() {
 	setResult(closest_obj);
 }
 
-void ScummEngine_c64::o_askDisk() {
-	warning("STUB: o_askDisk");
-}
-
-void ScummEngine_c64::o_unknownCD() {
-	debug(0, "o_unknownCD(%d)", fetchScriptByte());
+void ScummEngine_c64::o_askForDisk() {
+	int disk = getVarOrDirectByte(PARAM_1);
+	debug(0, "o_askForDisk (%d)", disk);
 }
 
 void ScummEngine_c64::o_beginOverride() {
