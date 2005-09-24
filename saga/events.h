@@ -159,12 +159,12 @@ class Events {
 	Event *chain(Event *headEvent, Event *addEvent);
 
  private:
-	int handleContinuous(Event * event);
-	int handleOneShot(Event * event);
-	int handleInterval(Event * event);
+	int handleContinuous(Event *event);
+	int handleOneShot(Event *event);
+	int handleInterval(Event *event);
 	int handleImmediate(Event *event);
 	int processEventTime(long msec);
-	int initializeEvent(Event * event);
+	int initializeEvent(Event *event);
 
  private:
 	SagaEngine *_vm;

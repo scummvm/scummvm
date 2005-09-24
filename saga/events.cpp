@@ -23,10 +23,8 @@
 
 // Event management module
 
-
 #include "saga/saga.h"
 #include "saga/gfx.h"
-
 
 #include "saga/animation.h"
 #include "saga/console.h"
@@ -537,7 +535,7 @@ int Events::clearList() {
 				next_chain = chain_walk->chain;
 				free(chain_walk);
 			}
-			eventi=_eventList.eraseAndPrev(eventi);
+			eventi = _eventList.eraseAndPrev(eventi);
 		}
 	}
 
