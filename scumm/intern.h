@@ -426,6 +426,7 @@ protected:
 	void o_getActorMoving();
 	void o_animateActor();
 	void o_putActorAtObject();
+	void o_lockSound();
 	void o_lockActor();
 	void o_loadActor();
 	void o_loadRoom();
@@ -450,6 +451,7 @@ protected:
 	void o_printEgo_c64();
 	void o_print_c64();
 	void o_unlockRoom();
+	void o_unlockSound();
 	void o_beginOverride();
 	void o_isEqual();
 	void o_isGreater();

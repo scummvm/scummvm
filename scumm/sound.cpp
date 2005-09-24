@@ -90,7 +90,8 @@ Sound::~Sound() {
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
-	_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+	if (_vm->VAR_LAST_SOUND != 0xFF)
+		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	// HE music resources are in separate file
 	if (sound <= _vm->_numSounds)
 		_vm->ensureResourceLoaded(rtSound, sound);

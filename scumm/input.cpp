@@ -437,7 +437,8 @@ void ScummEngine::processKbd(bool smushMode) {
 			// Ensure that the input script also sees the key press.
 			// This is necessary so you can abort the airplane travel
 			// in Zak.
-			VAR(VAR_KEYPRESS) = VAR(VAR_CUTSCENEEXIT_KEY);
+			if (VAR_KEYPRESS != 0xFF)
+				VAR(VAR_KEYPRESS) = VAR(VAR_CUTSCENEEXIT_KEY);
 		}
 	} else if (_lastKeyHit == saveloadkey) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
@@ -490,7 +491,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		// 1) Verb	2) Scene	3) Inv.		4) Key
 		// 5) Sentence Bar
 
-		if (_lastKeyHit) {		// Key Input
+		if (VAR_KEYPRESS != 0xFF && _lastKeyHit) {		// Key Input
 			VAR(VAR_KEYPRESS) = _lastKeyHit;
 		}
 	}

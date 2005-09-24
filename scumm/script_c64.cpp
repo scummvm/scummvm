@@ -139,7 +139,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_nop),
 		OPCODE(o_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o5_startSound),
+		OPCODE(o_lockSound),
 		/* 54 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
@@ -299,7 +299,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_nop),
 		OPCODE(o_animateActor),
 		OPCODE(o5_actorFollowCamera),
-		OPCODE(o5_stopSound),
+		OPCODE(o_unlockSound),
 		/* D4 */
 		OPCODE(o5_setObjectName),
 		OPCODE(o2_actorFromPos),
@@ -485,6 +485,18 @@ void ScummEngine_c64::o_stopCurrentScript() {
 void ScummEngine_c64::o_loadSound() {
 	int resid = fetchScriptByte();
 	ensureResourceLoaded(rtSound, resid);
+}
+
+void ScummEngine_c64::o_lockSound() {
+	int resid = fetchScriptByte();
+	res.lock(rtSound, resid);
+	debug(0, "o_lockSound (%d)", resid);
+}
+
+void ScummEngine_c64::o_unlockSound() {
+	int resid = fetchScriptByte();
+	res.unlock(rtSound, resid);
+	debug(0, "o_unlockSound (%d)", resid);
 }
 
 void ScummEngine_c64::o_loadActor() {

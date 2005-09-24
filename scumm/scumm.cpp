@@ -2233,7 +2233,10 @@ int ScummEngine::scummLoop(int delta) {
 	}
 	if (_version <= 7)
 		VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
-	if (_version <= 2) {
+
+	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+		// TODO
+	} else if (_version <= 2) {
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
 
@@ -2256,19 +2259,21 @@ int ScummEngine::scummLoop(int delta) {
 
 	if (_features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
-	} else if (_musicEngine && VAR_MUSIC_TIMER != 0xFF) {
-		// The music engine generates the timer data for us.
-		VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
-	} else if (_features & GF_SMALL_HEADER) {
-		// Used for Money Island 1 (Amiga)
-		// TODO: The music delay (given in milliseconds) might have to be tuned a little
-		// to get it correct for all games. Without the ability to watch/listen to the
-		// original games, I can't do that myself.
-		const int MUSIC_DELAY = 350;
-		_tempMusic += delta * 15;	// Convert delta to milliseconds
-		if (_tempMusic >= MUSIC_DELAY) {
-			_tempMusic -= MUSIC_DELAY;
-			VAR(VAR_MUSIC_TIMER) += 1;
+	} else if (VAR_MUSIC_TIMER != 0xFF) {
+		if (_musicEngine) {
+			// The music engine generates the timer data for us.
+			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
+		} else {
+			// Used for Money Island 1 (Amiga)
+			// TODO: The music delay (given in milliseconds) might have to be tuned a little
+			// to get it correct for all games. Without the ability to watch/listen to the
+			// original games, I can't do that myself.
+			const int MUSIC_DELAY = 350;
+			_tempMusic += delta * 15;	// Convert delta to milliseconds
+			if (_tempMusic >= MUSIC_DELAY) {
+				_tempMusic -= MUSIC_DELAY;
+				VAR(VAR_MUSIC_TIMER) += 1;
+			}
 		}
 	}
 

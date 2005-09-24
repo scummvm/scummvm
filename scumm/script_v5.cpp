@@ -2183,7 +2183,8 @@ void ScummEngine_v5::o5_startSound() {
 		return;
 	}
 
-	VAR(VAR_MUSIC_TIMER) = 0;
+	if (VAR_MUSIC_TIMER != 0xFF)
+		VAR(VAR_MUSIC_TIMER) = 0;
 	_sound->addSoundToQueue(sound);
 }
 
