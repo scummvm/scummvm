@@ -263,7 +263,7 @@ Backyard Baseball
 
 Backyard Baseball 2001
 	-	All	en	a86f9c49355579c30d4a55b477c0d869	baseball2001	Kirben
-	Demo	Windows	en	a194f15f51ee62badab74b9e7da97693	bb2demo	khalek, sev
+	Demo	Windows	en	a194f15f51ee62badab74b9e7da97693	baseball2001	khalek, sev
 
 Backyard Baseball 2003
 	-	Windows	en	efe0a04a703e765ebebe92b6c8aa6b86	baseball2003	sev
@@ -271,10 +271,8 @@ Backyard Baseball 2003
 
 Backyard Football
 	-	Windows	en	7fc6cdb46b4c9d384c52327f4bca6416	football	sev
-
-Backyard Football 2002
-	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	footdemo	sev
-	Demo	All	en	2e85f7aa054930c692a5b1bed1dfc295	footdemo	khalek
+	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	football	sev
+	Demo	All	en	2e85f7aa054930c692a5b1bed1dfc295	football	khalek
 
 Backyard Soccer
 	-	Windows	en	701246819d1a70573f41bf33fc19214f	soccer	sev
@@ -287,20 +285,20 @@ Backyard Soccer 2004
 
 Big Thinkers: Kindergarten
 	-	All	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
-	Demo	All	en	695fe0b3963333b7e15b37514db3c745	kinddemo	khalek, sev
+	Demo	All	en	695fe0b3963333b7e15b37514db3c745	thinkerk	khalek, sev
 
 Big Thinkers First Grade
 	-	All	en	5c21fc49aee8f46e58fef21579e614a1	thinker1	Kirben
-	Demo	Windows	en	0f5935bd5e88ba6f09e558d64459746d	1grademo	khalek
+	Demo	Windows	en	0f5935bd5e88ba6f09e558d64459746d	thinker1	khalek
 
 Blue's ABC Time
 	Demo	All	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
 	Demo	Windows	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
 
 Fatty Bears Birthday Surprise
-	Demo	DOS	en	47e75b1bdcb44c78cb94883d1731ccf8	fbdemo	khalek
-	Demo	Windows	en	22c9eb04455440131ffc157aeb8d40a8	fbdemo	khalek
-	Demo	Mac	en	6df20c50c1ab19799de9be7ae7716881	fbdemo	khalek
+	Demo	DOS	en	47e75b1bdcb44c78cb94883d1731ccf8	fbear	khalek
+	Demo	Windows	en	22c9eb04455440131ffc157aeb8d40a8	fbear	khalek
+	Demo	Mac	en	6df20c50c1ab19799de9be7ae7716881	fbear	khalek
 	-	DOS	en	3824e60cdf639d22f6df92a03dc4b131	fbear	khalek
 	-	DOS	hb	ef74d9071d4e564b037cb44bd6774de7	fbear	sev
 	-	Windows	en	179879b6e35c1ead0d93aab26db0951b	fbear	khalek
@@ -318,10 +316,10 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
 	-	Windows	ru	746e88c172a5b7a1ae89ac0ee3ee681a	freddi	sev
 	-	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
-	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddemo	khalek
-	Demo	Windows	en	0855496dde35356b1a9691e22ba84cdc	freddemo	khalek
-	Demo	Windows	en	566165a7338fa11029e7c14d94fa70d0	freddemo	khalek
-	Demo	Mac	en	c8aac5e3e701874e2fa4117896f9e1b1	freddemo	khalek, sev
+	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddi	khalek
+	Demo	Windows	en	0855496dde35356b1a9691e22ba84cdc	freddi	khalek
+	Demo	Windows	en	566165a7338fa11029e7c14d94fa70d0	freddi	khalek
+	Demo	Mac	en	c8aac5e3e701874e2fa4117896f9e1b1	freddi	khalek, sev
 
 Freddi Fish 2: The Case of the Haunted Schoolhouse
 	-	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
@@ -329,36 +327,36 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 	-	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
 	-	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
 	-	Windows	ru	e41de1c2a15abbcdbf9977e2d7e8a340	freddi2	sev
-	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	ff2-demo	khalek, sev
-	Demo	All	en	d37c55388294b66e53e7ced3af88fa68	ff2-demo	khalek
+	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	freddi2	khalek, sev
+	Demo	All	en	d37c55388294b66e53e7ced3af88fa68	freddi2	khalek
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
 	-	Windows	nl	0cccfa5223099a60e76cfcca57a1a141	freddi3	adutchguy
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
-	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	f3-mdemo	khalek, sev
-	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	f3-mdemo	adutchguy
+	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	freddi3	khalek, sev
+	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	freddi3	adutchguy
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	-	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
 	-	Windows	nl	14d48c95b43ddeb983254cf6c43851f1	freddi4	adutchguy
 	-	Windows	ru	78bd5f036ea35a878b74e4f47941f784	freddi4	sev
 	-	Windows	ru	07b810e37be7489263f7bc7627d4765d	freddi4	sev
-	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	f4-demo	khalek
-	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	f4-demo	sev
-	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	f4-demo	sev
-	Demo	Windows	en	e03ed1474ec14de78359970e0457a820	f4-demo	eriktorbjorn
-	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	f4-demo	joostp
-	Demo	Windows	nl	499c958affc394f2a3868f1eb568c3ee	f4-demo	adutchguy
+	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	freddi4	khalek
+	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	freddi4	sev
+	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	freddi4	sev
+	Demo	Windows	en	e03ed1474ec14de78359970e0457a820	freddi4	eriktorbjorn
+	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	freddi4	joostp
+	Demo	Windows	nl	499c958affc394f2a3868f1eb568c3ee	freddi4	adutchguy
 
 Freddi Fish 5: The Case of the Creature of Coral Cave
 	-	All	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
 	-	Windows	nl	b8955d7d23b4972229060d1592489fef	freddicove	adutchguy
 	-	Windows	ru	21abe302e1b1e2b66d6f5c12e241ebfd	freddicove	sev
 	-	Windows	ru	4ce2d5b355964bbcb5e5ce73236ef868	freddicove	sev
-	Demo	Windows	en	45082a5c9f42ba14dacfe1fdeeba819d	ff5demo	sev
-	Demo	Windows	nl	6b257bb2827dd894b8109a50a1a18b5a	FF5Demo	Kirben
+	Demo	Windows	en	45082a5c9f42ba14dacfe1fdeeba819d	freddicove	sev
+	Demo	Windows	nl	6b257bb2827dd894b8109a50a1a18b5a	freddicove	Kirben
 
 Freddi Fish and Luther's Water Worries
 	-	All	en	4ba37f835be11a59d969f90f272f575b	water	Kirben
@@ -379,16 +377,16 @@ Humongous Interactive Catalog
 Let's Explore the Farm with Buzzy
 	-	Windows	en	a85856675429fe88051744f755b72f93	farm	Kirben
 	-	Mac	en	fbbbb38a81fc9d6a61d509278390a290	farm	khalek
-	Demo	Windows	en	8d479e36f35e80257dfc102cf4b8a912	farmdemo	khalek, sev
-	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farmdemo	khalek, sev
-	Demo	Windows	nl	0557df19f046a84c2fdc63507c6616cb	farmdemo	adutchguy
+	Demo	Windows	en	8d479e36f35e80257dfc102cf4b8a912	farm	khalek, sev
+	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farm	khalek, sev
+	Demo	Windows	nl	0557df19f046a84c2fdc63507c6616cb	farm	adutchguy
 
 Let's Explore the Airport with Buzzy
 	-	Windows	en	07433205acdca3bc553d0e731588b35f	airport	Kirben
-	Demo	Windows	en	86c9902b7bec1a17926d4dae85beaa45	airdemo	khalek
-	Demo	Windows	en	e144f5f49d9241d2a9dee2576b3d09cb	airdemo	khalek
-	Demo	Windows	en	8ffd618a776a4c0d8922bb28b09f8ce8	airdemo	khalek
-	Demo	Mac	en	7ea2da67ebabea4ac20cee9f4f9d2934	airdemo	khalek
+	Demo	Windows	en	86c9902b7bec1a17926d4dae85beaa45	airport	khalek
+	Demo	Windows	en	e144f5f49d9241d2a9dee2576b3d09cb	airport	khalek
+	Demo	Windows	en	8ffd618a776a4c0d8922bb28b09f8ce8	airport	khalek
+	Demo	Mac	en	7ea2da67ebabea4ac20cee9f4f9d2934	airport	khalek
 
 Let's Explore the Jungle with Buzzy
 	-	Windows	en	8801fb4a1200b347f7a38523339526dd	jungle	Kirben
@@ -400,29 +398,29 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 	-	All	en	37aed3f91c1ef959e0bd265f9b13781f	pajama	Kirben
 	-	All	en	672dec94b82f7f0877ebb5b5cf7f4bc1	pajama	khalek
 	-	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
-	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pjs-demo	khalek, sev
-	Demo	All	en	d7ab7cd6105546016e6a0d46fb36b964	pjs-demo	khalek
-	Demo	Windows	nl	0305e850382b812fec6e5998ef88a966	pjs-demo	adutchguy
+	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pajama	khalek, sev
+	Demo	All	en	d7ab7cd6105546016e6a0d46fb36b964	pajama	khalek
+	Demo	Windows	nl	0305e850382b812fec6e5998ef88a966	pajama	adutchguy
 
 Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	-	All	en	d4e79c3d8645b8266cd78c325bc35154	pajama2	Kirben
 	-	Windows	de	c6907d44f1166941d982864cd42cdc89	pajama2	nachbarnebenan
 	-	Windows	ru	32709cbeeb3044b34129950860a83f14	pajama2	sev
-	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pj2demo	sev
-	Demo	Windows	nl	30ba1e825d4ad2b448143ae8df18482a	pj2demo	Kirben
+	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pajama2	sev
+	Demo	Windows	nl	30ba1e825d4ad2b448143ae8df18482a	pajama2	Kirben
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	-	Windows	en	f7711f9264d4d43c2a1518ec7c10a607	pajama3	Kirben
-	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pj3-demo	sev
-	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pj3-demo	sev
-	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pj3-demo	khalek
-	Demo	Windows	en	3e48298920fab9b7aec5a971e1bd1fab	pj3-demo	eriktorbjorn
-	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pj3-demo	joostp
+	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
+	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pajama3	sev
+	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pajama3	khalek
+	Demo	Windows	en	3e48298920fab9b7aec5a971e1bd1fab	pajama3	eriktorbjorn
+	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pajama3	joostp
 
 Pajama Sam's Lost & Found
 	-	All	en	a561d2e2413cc1c71d5a1bf87bf493ea	lost	Kirben
 	-	All	en	ed361270102e355afe5236954216aba2	lost	Kirben
-	Demo	Windows	en	a2bb6aa0537402c1b3c2ea899ccef64b	smaller	Kirben
+	Demo	Windows	en	a2bb6aa0537402c1b3c2ea899ccef64b	lost	Kirben
 
 Pajama Sam's One-Stop Fun Shop
 	-	All	en	68155a6bf082221525f431c2cbdac8ab	SamsFunShop	Kirben
@@ -433,15 +431,15 @@ Pajama Sam's Sock Works
 
 Putt-Putt Enters the Race
 	-	All	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace	Kirben
-	Demo	All	en	0ac41e2e3d2174e5a042a6b565328dba	racedemo	sev
-	Demo	Windows	en	7c8100e360e8ef05f88069d4cfa0afd1	racedemo	eriktorbjorn
-	Demo	All	nl	6af2419fe3db5c2fdb091ae4e5833770	racedemo	Kirben
-	Demo	All	nl	aaa587701cde7e74692c68c1024b85eb	racedemo	joostp
+	Demo	All	en	0ac41e2e3d2174e5a042a6b565328dba	puttrace	sev
+	Demo	Windows	en	7c8100e360e8ef05f88069d4cfa0afd1	puttrace	eriktorbjorn
+	Demo	All	nl	6af2419fe3db5c2fdb091ae4e5833770	puttrace	Kirben
+	Demo	All	nl	aaa587701cde7e74692c68c1024b85eb	puttrace	joostp
 
 Putt-Putt Goes To The Moon
-	Demo	DOS	en	aa6a91b7f6f119d1b7b1f2a4c9e24d59	moondemo
-	Demo	Windows	en	9c143c5905055d5df7a0f014ab379aee	moondemo	khalek
-	Demo	Mac	en	4af4a6b248103c1fe9edef619677f540	moondemo	khalek
+	Demo	DOS	en	aa6a91b7f6f119d1b7b1f2a4c9e24d59	puttmoon
+	Demo	Windows	en	9c143c5905055d5df7a0f014ab379aee	puttmoon	khalek
+	Demo	Mac	en	4af4a6b248103c1fe9edef619677f540	puttmoon	khalek
 	-	DOS	All	780e4a0ae2ff17dc296f4a79543b44f8	puttmoon	khalek
 	-	DOS	hb	697c9b7c55a05d8199c48b48e379d2c8	puttmoon	sev
 	-	3DO	en	a9543ef0d79bcb47cd76ec197ad0a967	puttmoon	sev
@@ -451,12 +449,12 @@ Putt-Putt Goes To The Moon
 Putt-Putt Joins the Circus
 	-	All	en	ab0693e9324cfcf498fdcbb12acf8bb4	puttcircus	sev
 	-	All	ru	7bad72e332a59f9fcc1d437f4edad32a	puttcircus	sev
-	Demo	All	en	a7cacad9c40c4dc9e1812abf6c8af9d5	circdemo	Kirben, sev
+	Demo	All	en	a7cacad9c40c4dc9e1812abf6c8af9d5	puttcircus	Kirben, sev
 
 Putt-Putt Joins The Parade
-	Demo	DOS	en	31aa57f460a3d12429f0552a46a90b39	puttdemo
-	Demo	Windows	en	37ff1b308999c4cca7319edfcc1280a0	puttdemo	khalek
-	Demo	Mac	en	f40a7f495f59188ca57a9d1d50301bb6	puttdemo	khalek
+	Demo	DOS	en	31aa57f460a3d12429f0552a46a90b39	puttputt
+	Demo	Windows	en	37ff1b308999c4cca7319edfcc1280a0	puttputt	khalek
+	Demo	Mac	en	f40a7f495f59188ca57a9d1d50301bb6	puttputt	khalek
 	-	DOS	en	9708cf716ed8bcc9ff3fcfc69413b746	puttputt	khalek
 	-	DOS	hb	e361a7058ed8e8ebb462663c0a3ae8d6	puttputt	sev
 	-	DOS	ru	0b3222aaa7efcf283eb621e0cefd26cc	puttputt	sev
@@ -469,9 +467,9 @@ Putt-Putt Saves the Zoo
 	-	All	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
 	-	Windows	nl	c3b22fa4654bb580b20325ebf4174841	puttzoo	joostp
 	-	Mac	en	58fdf4c7ad13540a734e18f8584cad89	puttzoo	khalek
-	Demo	Windows	en	f3d55aea441e260e9e9c7d2a187097e0	zoodemo	khalek
-	Demo	Windows	en	de4efb910210736813c9a1185384bace	zoodemo	khalek
-	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	zoodemo	khalek
+	Demo	Windows	en	f3d55aea441e260e9e9c7d2a187097e0	puttzoo	khalek
+	Demo	Windows	en	de4efb910210736813c9a1185384bace	puttzoo	khalek
+	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	puttzoo	khalek
 
 Putt-Putt Travels Through Time
 	-	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
@@ -479,9 +477,9 @@ Putt-Putt Travels Through Time
 	-	Windows	en	d4aac997e2f4e15341f0bfbf905419bd	PuttTime	eriktorbjorn
 	-	Windows	nl	fcb78ebecab2757264c590890c319cc5	PuttTime	adutchguy
 	-	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
-	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	timedemo	khalek, sev
-	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	timedemo	khalek
-	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	timedemo	adutchguy
+	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
+	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	PuttTime	khalek
+	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	PuttTime	adutchguy
 
 Putt-Putt and Pep's Balloon-O-Rama
 	-	All	en	08cc5c3eedaf72ebe12734eee94f7fa2	balloon	Kirben
@@ -509,24 +507,24 @@ Spy Fox 1: Dry Cereal
 	-	Windows	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
 	-	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
 	-	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
-	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spydemo	khalek, sev
-	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spydemo	sev
-	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spydemo	khalek
-	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spydemo	Kirben
+	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
+	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
+	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
+	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
 	-	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
 	-	Windows	nl	71fe97c3108678cf604f14abe342341b	spyfox2	adutchguy
 	-	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
-	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	sf2-demo	Kirben
-	Demo	Windows	en	19bf6938a94698296bcb0c99c31c91a7	sf2-demo	eriktorbjorn
-	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	sf2-demo	joostp
+	Demo	All	en	7222f260253f325c21fcfa68b5bfab67	spyfox2	Kirben
+	Demo	Windows	en	19bf6938a94698296bcb0c99c31c91a7	spyfox2	eriktorbjorn
+	Demo	All	nl	1c792d28376d45e145cb916bca0400a2	spyfox2	joostp
 
 Spy Fox 3: Operation Ozone
 	-	Windows	en	be39a5d4db60e8aa736b9086778cb45c	spyozon
 	-	All	en	600abd3e9f47e63e670188b7e4e86ac7	spyozon	Kirben
 	-	All	ru	96a3069a3c63caa7329588ce1fef41ee	spyozon	sev
-	Demo	All	en	ebd0b2c8a387f18887282afe6cad894a	sf3-demo	Kirben
+	Demo	All	en	ebd0b2c8a387f18887282afe6cad894a	spyozon	Kirben
 
 Spy Fox in Cheese Chase Game
 	-	All	en	589601b676c98b1c0c987bc031ab68b3	chase	Kirben
