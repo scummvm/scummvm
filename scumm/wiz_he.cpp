@@ -1093,10 +1093,6 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	case 2:
 		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
 		break;
-	case 5:
-		// Used in Moonbase Commander
-		debug(0, "drawWizImage: Unhandled wiz compression type %d", comp);
-		break;
 	default:
 		error("drawWizImage: Unhandled wiz compression type %d", comp);
 	}
@@ -1937,11 +1933,6 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 			// Used baseball2003
 			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
-		case 4:
-		case 5:
-			// Used in Moonbase Commander
-			debug(0, "isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
-			break;
 		default:
 			error("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
@@ -1967,12 +1958,6 @@ uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
 		break;
 	case 1:
 		color = getWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
-		break;
-	case 4:
-	case 5:
-		// Used in Moonbase Commander
-		color = 1;
-		debug(0, "getWizPixelColor: Unhandled wiz compression type %d", c);
 		break;
 	default:
 		error("getWizPixelColor: Unhandled wiz compression type %d", c);
