@@ -38,8 +38,8 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 00 */
 		OPCODE(o5_stopObjectCode),
 		OPCODE(o2_putActor),
-		OPCODE(o_askForDisk),
-		OPCODE(o_unknown1),
+		OPCODE(o5_startMusic),
+		OPCODE(o_doSentence),
 		/* 04 */
 		OPCODE(o_isGreaterEqual),
 		OPCODE(o_stopCurrentScript),
@@ -119,7 +119,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_cutscene),
 		OPCODE(o2_putActor),
 		OPCODE(o2_startScript),
-		OPCODE(o_unknown1),
+		OPCODE(o_doSentence),
 		/* 44 */
 		OPCODE(o_isLess),
 		OPCODE(o_stopCurrentScript),
@@ -199,7 +199,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o2_putActor),
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o_unknown1),
+		OPCODE(o_doSentence),
 		/* 84 */
 		OPCODE(o_isGreaterEqual),
 		OPCODE(o_stopCurrentScript),
@@ -279,7 +279,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_endCutscene),
 		OPCODE(o2_putActor),
 		OPCODE(o2_startScript),
-		OPCODE(o_unknown1),
+		OPCODE(o_doSentence),
 		/* C4 */
 		OPCODE(o_isLess),
 		OPCODE(o_stopCurrentScript),
@@ -662,11 +662,11 @@ void ScummEngine_c64::o_printEgo_c64() {
 	decodeParseString();
 }
 
-void ScummEngine_c64::o_unknown1() {
+void ScummEngine_c64::o_doSentence() {
 	byte var1 = fetchScriptByte();
 	byte var2 = fetchScriptByte();
 	byte var3 = fetchScriptByte();
-	warning("STUB: o_unknown1(%d, %d, %d)", var1, var2, var3);
+	warning("STUB: o_doSentence(%d, %d, %d)", var1, var2, var3);
 }
 
 void ScummEngine_c64::o_unknown2() {
@@ -704,11 +704,6 @@ void ScummEngine_c64::o_getClosestObjActor() {
 	} while (--obj);
 
 	setResult(closest_obj);
-}
-
-void ScummEngine_c64::o_askForDisk() {
-	int disk = getVarOrDirectByte(PARAM_1);
-	debug(0, "o_askForDisk (%d)", disk);
 }
 
 void ScummEngine_c64::o_beginOverride() {

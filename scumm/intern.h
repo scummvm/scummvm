@@ -446,11 +446,10 @@ protected:
 	void o_nop();
 	void o_getActorBitVar();
 	void o_setActorBitVar();
-	void o_unknown1();
+	void o_doSentence();
 	void o_unknown2();
 	void o_unknown3();
 	void o_getClosestObjActor();
-	void o_askForDisk();
 	void o_printEgo_c64();
 	void o_print_c64();
 	void o_unlockRoom();
