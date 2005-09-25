@@ -563,17 +563,17 @@ private:
 	void sfSetSpeechBox(SCRIPTFUNC_PARAMS);
 	void sf74(SCRIPTFUNC_PARAMS);
 	void sf75(SCRIPTFUNC_PARAMS);
-	void sf83(SCRIPTFUNC_PARAMS);
-	void sf84(SCRIPTFUNC_PARAMS);
-	void sf85(SCRIPTFUNC_PARAMS);
+	void sfScriptStartVideo(SCRIPTFUNC_PARAMS);
+	void sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS);
+	void sfScriptEndVideo(SCRIPTFUNC_PARAMS);
 	void sf87(SCRIPTFUNC_PARAMS);
 	void sf88(SCRIPTFUNC_PARAMS);
 	void sf89(SCRIPTFUNC_PARAMS);
-	void sf95(SCRIPTFUNC_PARAMS);
-	void sf96(SCRIPTFUNC_PARAMS);
-	void sf97(SCRIPTFUNC_PARAMS);
-	void sf98(SCRIPTFUNC_PARAMS);
-	void sf99(SCRIPTFUNC_PARAMS);
+	void sfGetPoints(SCRIPTFUNC_PARAMS);
+	void sfSetGlobalFlag(SCRIPTFUNC_PARAMS);
+	void sfClearGlobalFlag(SCRIPTFUNC_PARAMS);
+	void sfTestGlobalFlag(SCRIPTFUNC_PARAMS);
+	void sfSetPoints(SCRIPTFUNC_PARAMS);
 	void sf103(SCRIPTFUNC_PARAMS);
 	void sf104(SCRIPTFUNC_PARAMS);
 

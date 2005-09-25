@@ -218,9 +218,9 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfResetMouseClicks),
 		OPCODE(sfWaitFrames),
 		OPCODE(sfScriptFade),
-		OPCODE(sf83),
-		OPCODE(sf84),
-		OPCODE(sf85),
+		OPCODE(sfScriptStartVideo),
+		OPCODE(sfScriptReturnFromVideo),
+		OPCODE(sfScriptEndVideo),
 		OPCODE(sfSetActorZ),
 		OPCODE(sf87),
 		OPCODE(sf88),
@@ -230,11 +230,11 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfNull),
 		OPCODE(sfDemoIsInteractive),
 		OPCODE(sfVsetTrack),
-		OPCODE(sf95),
-		OPCODE(sf96),
-		OPCODE(sf97),
-		OPCODE(sf98),
-		OPCODE(sf99),
+		OPCODE(sfGetPoints),
+		OPCODE(sfSetGlobalFlag),
+		OPCODE(sfClearGlobalFlag),
+		OPCODE(sfTestGlobalFlag),
+		OPCODE(sfSetPoints),
 		OPCODE(sfSetSpeechBox),
 		OPCODE(sfDebugShowData),
 		OPCODE(sfWaitFramesEsc),
@@ -1874,16 +1874,16 @@ void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
 	SF_stub("sfScriptFade", thread, nArgs);
 }
 
-void Script::sf83(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf83", thread, nArgs);
+void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfScriptStartVideo", thread, nArgs);
 }
 
-void Script::sf84(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf84", thread, nArgs);
+void Script::sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfScriptReturnFromVideo", thread, nArgs);
 }
 
-void Script::sf85(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf85", thread, nArgs);
+void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfScriptEndVideo", thread, nArgs);
 }
 
 void Script::sf87(SCRIPTFUNC_PARAMS) {
@@ -1920,24 +1920,24 @@ void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->changeScene(sceneNumber, actorsEntrance, kTransitionFade, chapter);
 }
 
-void Script::sf95(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf95", thread, nArgs);
+void Script::sfGetPoints(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfGetPoints", thread, nArgs);
 }
 
-void Script::sf96(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf96", thread, nArgs);
+void Script::sfSetGlobalFlag(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfSetGlobalFlag", thread, nArgs);
 }
 
-void Script::sf97(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf97", thread, nArgs);
+void Script::sfClearGlobalFlag(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfClearGlobalFlag", thread, nArgs);
 }
 
-void Script::sf98(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf98", thread, nArgs);
+void Script::sfTestGlobalFlag(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfTestGlobalFlag", thread, nArgs);
 }
 
-void Script::sf99(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf99", thread, nArgs);
+void Script::sfSetPoints(SCRIPTFUNC_PARAMS) {
+	SF_stub("sfSetPoints", thread, nArgs);
 }
 
 void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {
