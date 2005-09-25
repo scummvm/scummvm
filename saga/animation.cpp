@@ -61,8 +61,8 @@ void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	for (int i = 0; i < _cutawayListLength; i++) {
 		_cutawayList[i].backgroundResourceId = cutawayS.readUint16LE();
 		_cutawayList[i].animResourceId = cutawayS.readUint16LE();
-		_cutawayList[i].cycles = (int16)cutawayS.readUint16LE();
-		_cutawayList[i].frameRate = (int16)cutawayS.readUint16LE();
+		_cutawayList[i].cycles = cutawayS.readSint16LE();
+		_cutawayList[i].frameRate = cutawayS.readSint16LE();
 	}
 }
 
