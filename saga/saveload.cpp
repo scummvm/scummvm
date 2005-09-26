@@ -178,6 +178,12 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	// Inset scene
 	out->writeSint32LE(_scene->currentSceneNumber());
 
+	if (getGameType() != GType_ITE) {
+		out->writeUint32LE(_globalFlags);
+		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
+			out->writeByte(_ethicsPoints[i]);
+	}
+
 	_interface->saveState(out);
 
 	_actor->saveState(out);
@@ -216,6 +222,12 @@ void SagaEngine::load(const char *fileName) {
 
 	// Inset scene
 	insetSceneNumber = in->readSint32LE();
+
+	if (getGameType() != GType_ITE) {
+		_globalFlags = in->readUint32LE();
+		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
+			_ethicsPoints[i] = in->readByte();
+	}
 
 	_interface->loadState(in);
 

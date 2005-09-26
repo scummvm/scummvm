@@ -1921,23 +1921,43 @@ void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfGetPoints(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfGetPoints", thread, nArgs);
+	int16 index = thread->pop();
+
+	if (index >= 0 && index < ARRAYSIZE(_vm->_ethicsPoints))
+		thread->_returnValue = _vm->_ethicsPoints[index];
+	else
+		thread->_returnValue = 0;
 }
 
 void Script::sfSetGlobalFlag(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfSetGlobalFlag", thread, nArgs);
+	int16 flag = thread->pop();
+
+	if (flag >= 0 && flag < 32)
+		_vm->_globalFlags |= (1 << flag);
 }
 
 void Script::sfClearGlobalFlag(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfClearGlobalFlag", thread, nArgs);
+	int16 flag = thread->pop();
+
+	if (flag >= 0 && flag < 32)
+		_vm->_globalFlags &= ~(1 << flag);
 }
 
 void Script::sfTestGlobalFlag(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfTestGlobalFlag", thread, nArgs);
+	int16 flag = thread->pop();
+
+	if (flag >= 0 && flag < 32 && _vm->_globalFlags & (1 << flag))
+		thread->_returnValue = 1;
+	else
+		thread->_returnValue = 0;
 }
 
 void Script::sfSetPoints(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfSetPoints", thread, nArgs);
+	int16 index = thread->pop();
+	int16 points = thread->pop();
+
+	if (index >= 0 && index < ARRAYSIZE(_vm->_ethicsPoints))
+		_vm->_ethicsPoints[index] = points;
 }
 
 void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {

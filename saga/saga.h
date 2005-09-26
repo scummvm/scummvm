@@ -570,6 +570,9 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
+	uint32 _globalFlags;
+	byte _ethicsPoints[5];	// TODO: Verify that this is large enough
+
 	int _soundVolume;
 	int _musicVolume;
 	bool _subtitlesEnabled;

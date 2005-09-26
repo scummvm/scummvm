@@ -118,6 +118,8 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	_puzzle = NULL;
 
 	_frameCount = 0;
+	_globalFlags = 0;
+	memset(_ethicsPoints, 0, sizeof(_ethicsPoints));
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
