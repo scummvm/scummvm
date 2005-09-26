@@ -569,9 +569,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
 	{"0a41311d462b6639fc45297b9044bf16", "Monkey Island 1 (Atari Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"71523b539491527d9860f4407faf0411", "Monkey Island 1 (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"71523b539491527d9860f4407faf0411", "Monkey Island 1 (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"771bc18ec6f93837b839c992b211904b", "Monkey Island 1 (Demo De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"771bc18ec6f93837b839c992b211904b", "Monkey Island 1 (Demo De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 
 	{"2d1e891fe52df707c30185e52c50cd92", "Monkey Island 1 (CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
