@@ -639,7 +639,7 @@ void ScummEngine::initScummVars() {
 				if (_gameId == GID_LOOM) {
 					char buf[50];
 					Common::File f;
-					for (int i = 82; i < 86; i++) {
+					for (int i = 82; i < 85; i++) {
 						sprintf(buf, "%d.LFL", i);
 						if (!Common::File::exists(buf))
 							error("Native MIDI support requires Roland patch from LucasArts");
