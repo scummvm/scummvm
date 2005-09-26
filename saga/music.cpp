@@ -400,7 +400,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	// Try to open standalone digital track
 	for (int i = 0; i < ARRAYSIZE(TRACK_FORMATS) - 1; ++i)
-		if (_track = TRACK_FORMATS[i].openTrackFunction(realTrackNumber)) {
+		if ((_track = TRACK_FORMATS[i].openTrackFunction(realTrackNumber))) {
 			break;
 		}
 	if (_track) {
