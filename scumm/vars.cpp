@@ -666,9 +666,9 @@ void ScummEngine::initScummVars() {
 
 		if (_platform == Common::kPlatformFMTowns)
 			VAR(VAR_VIDEOMODE) = 42;
-		else if (_gameId == GID_INDY3 && (_platform == Common::kPlatformMacintosh))
+		else if (_platform == Common::kPlatformMacintosh)
 			VAR(VAR_VIDEOMODE) = 50;
-		else if (_gameId == GID_MONKEY2 && (_platform == Common::kPlatformAmiga))
+		else if (_platform == Common::kPlatformAmiga)
 			VAR(VAR_VIDEOMODE) = 82;
 		else if (_renderMode == Common::kRenderCGA)
 			VAR(VAR_VIDEOMODE) = 4;
@@ -680,20 +680,20 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_VIDEOMODE) = 19;
 
 		VAR(VAR_CURRENTDRIVE) = 0;
-		if (_gameId == GID_LOOM && (_features & GF_OLD_BUNDLE)) {
-			if (_platform == Common::kPlatformMacintosh) {
-				// This is the for the Mac version of Indy3/Loom
-				VAR(39) = 320;
-			} else {
-				// Set number of sound resources
-				VAR(39) = 80;
-			}
-			VAR(VAR_HEAPSPACE) = 1400;
+
+		if (_platform == Common::kPlatformMacintosh && (_features & GF_OLD_BUNDLE)) {
+			// This is the for the Mac version of Indy3/Loom
+			VAR(39) = 320;
 		}
-		if (_version >= 4) {
+		if (_platform == Common::kPlatformPC && _gameId == GID_LOOM) {
+			// Set number of sound resources
+			VAR(39) = 80;
+		}
+
+		if (_gameId == GID_LOOM || _version >= 4)
 			VAR(VAR_HEAPSPACE) = 1400;
+		if (_version >= 4)
 			VAR(VAR_FIXEDDISK) = 1;
-		}
 		if (_version >= 5)
 			VAR(VAR_MOUSEPRESENT) = 1;
 		if (_version == 6)
