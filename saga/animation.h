@@ -129,6 +129,8 @@ public:
 	int16 getCurrentFrame(uint16 animId);
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
+			if (animId < MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))
+				return (_cutawayAnimations[animId - MAX_ANIMATIONS] != NULL);
 			return false;
 		}
 		return (_animations[animId] != NULL);
@@ -139,7 +141,11 @@ private:
 
 	void validateAnimationId(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
-			error("validateAnimationId: animId out of range");
+			if (animId >= MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))
+				error("validateAnimationId: animId out of range");
+			if (_cutawayAnimations[animId - MAX_ANIMATIONS] == NULL) {
+				error("validateAnimationId: animId=%i unassigned", animId);
+			}
 		}
 		if (_animations[animId] == NULL) {
 			error("validateAnimationId: animId=%i unassigned", animId);
@@ -155,6 +161,8 @@ private:
 
 	AnimationData* getAnimation(uint16 animId) {
 		validateAnimationId(animId);
+		if (animId > MAX_ANIMATIONS)
+			return _cutawayAnimations[animId - MAX_ANIMATIONS];
 		return _animations[animId];
 	}
 
@@ -170,6 +178,7 @@ private:
 
 	SagaEngine *_vm;
 	AnimationData *_animations[MAX_ANIMATIONS];
+	AnimationData *_cutawayAnimations[2];
 	Cutaway *_cutawayList;
 	int _cutawayListLength;
 	bool _cutawayActive;

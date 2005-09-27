@@ -45,6 +45,9 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 
 	for (i = 0; i < MAX_ANIMATIONS; i++)
 		_animations[i] = NULL;
+
+	for (i = 0; i < ARRAYSIZE(_cutawayAnimations); i++)
+		_cutawayAnimations[i] = NULL;
 }
 
 Anim::~Anim(void) {
@@ -80,16 +83,6 @@ void Anim::playCutaway(int cut, bool fade) {
 	}
 
 	if (!_cutawayActive) {
-		// Stop all current animations.
-
-		// TODO: We need to retain enough of their state so that we can
-		//       resume them afterwards.
-
-		for (int i = 0; i < MAX_ANIMATIONS; i++) {
-			if (_animations[i])
-				_animations[i]->state = ANIM_PAUSE;
-		}
-
 		_vm->_gfx->showCursor(false);
 		_vm->_interface->setStatusText("");
 		_vm->_interface->setSaveReminderState(0);
@@ -126,23 +119,34 @@ void Anim::playCutaway(int cut, bool fade) {
 	free(buf);
 	free(resourceData);
 
-	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength); 
+	int cutawaySlot = -1;
 
-	// FIXME: This is a memory leak: slot 0 may be in use already.
+	for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+		if (!_cutawayAnimations[i]) {
+			cutawaySlot = i;
+		} else if (_cutawayAnimations[i]->state == ANIM_PAUSE) {
+			delete _cutawayAnimations[i];
+			_cutawayAnimations[i] = NULL;
+			cutawaySlot = i;
+		} else if (_cutawayAnimations[i]->state == ANIM_PLAYING) {
+			_cutawayAnimations[i]->state = ANIM_PAUSE;
+		}
+	}
 
-	load(0, resourceData, resourceDataLength);
+	if (cutawaySlot == -1) {
+		warning("Could not allocate cutaway animation slot");
+		return;
+	}
+
+	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
+
+	load(MAX_ANIMATIONS + cutawaySlot, resourceData, resourceDataLength);
 
 	free(resourceData);
 
-	setCycles(0, _cutawayList[cut].cycles);
-	setFrameTime(0, 1000 / _cutawayList[cut].frameRate);
-
-	// FIXME: When running a series of cutaways, it's quite likely that
-	//        there already is at least one "advance frame" event pending.
-	//        I don't know if implementing the remaining cutaway opcodes
-	//        will fix this...
-
-	play(0, 0);
+	setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
+	setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
+	play(MAX_ANIMATIONS + cutawaySlot, 0);
 }
 
 void Anim::endCutaway(void) {
@@ -159,7 +163,20 @@ void Anim::returnFromCutaway(void) {
 	debug(0, "returnFromCutaway()");
 
 	if (_cutawayActive) {
-		finish(0);
+		int i;
+
+		_cutawayActive = false;
+
+		for (i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+			delete _cutawayAnimations[i];
+			_cutawayAnimations[i] = NULL;
+		}
+
+		for (i = 0; i < MAX_ANIMATIONS; i++) {
+			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
+				resume(i, 0);
+			}
+		}
 
 		// TODO: Handle fade up, if we previously faded down
 
@@ -176,10 +193,11 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	uint16 temp;
 
 	if (animId >= MAX_ANIMATIONS) {
-		error("Anim::load could not find unused animation slot");
-	}
-
-	anim = _animations[animId] = new AnimationData(animResourceData, animResourceLength);
+		if (animId >= MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))
+			error("Anim::load could not find unused animation slot");
+		anim = _cutawayAnimations[animId - MAX_ANIMATIONS] = new AnimationData(animResourceData, animResourceLength);
+	} else
+		anim = _animations[animId] = new AnimationData(animResourceData, animResourceLength);
 
 	MemoryReadStreamEndian headerReadS(anim->resourceData, anim->resourceLength, _vm->isBigEndian());
 	anim->magic = headerReadS.readUint16LE(); // cause ALWAYS LE
@@ -262,6 +280,12 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	AnimationData *anim;
 	AnimationData *linkAnim;
+
+	if (animId > MAX_ANIMATIONS && !_cutawayActive)
+		return;
+
+	if (animId < MAX_ANIMATIONS && _cutawayActive)
+		return;
 
 	anim = getAnimation(animId);
 
@@ -365,6 +389,13 @@ void Anim::reset() {
 		if (_animations[i] != NULL) {
 			delete _animations[i];
 			_animations[i] = NULL;
+		}
+	}
+
+	for (i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+		if (_cutawayAnimations[i] != NULL) {
+			delete _cutawayAnimations[i];
+			_cutawayAnimations[i] = NULL;
 		}
 	}
 }
