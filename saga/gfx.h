@@ -134,7 +134,7 @@ public:
 		return &_backBuffer;
 	}
 
-	void setPalette(PalEntry *pal);
+	void setPalette(const PalEntry *pal);
 	void getCurrentPal(PalEntry *src_pal);
 	void palToBlack(PalEntry *src_pal, double percent);
 	void blackToPal(PalEntry *src_pal, double percent);

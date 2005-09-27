@@ -114,7 +114,7 @@ void Anim::playCutaway(int cut, bool fade) {
 	const Rect rect(width, height);
 
 	bgSurface->blit(rect, buf);
-	_vm->_gfx->setPalette(const_cast<PalEntry *>(palette));
+	_vm->_gfx->setPalette(palette);
 
 	free(buf);
 	free(resourceData);
@@ -214,7 +214,6 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 		temp = 0;
 	}
 	anim->start += temp;
-
 
 	// Cache frame offsets
 	anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));

@@ -164,7 +164,7 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 }
 
 
-void Gfx::setPalette(PalEntry *pal) {
+void Gfx::setPalette(const PalEntry *pal) {
 	int i;
 	byte *ppal;
 
