@@ -108,13 +108,13 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
 
-	PalEntry *palette = (PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+	const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
 
 	Surface *bgSurface = _vm->_render->getBackGroundSurface();
 	const Rect rect(width, height);
 
 	bgSurface->blit(rect, buf);
-	_vm->_gfx->setPalette(palette);
+	_vm->_gfx->setPalette(const_cast<PalEntry *>(palette));
 
 	free(buf);
 	free(resourceData);
