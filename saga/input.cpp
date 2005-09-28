@@ -1,4 +1,4 @@
-/* ScummVM - Scumm nterpreter
+/* ScummVM - Scumm Interpreter
  * Copyright (C) 2004-2005 The ScummVM project
  *
  * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
