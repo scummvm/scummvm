@@ -37,10 +37,21 @@
 #include <pspgu.h>
 #include "./trace.h"
 
+
+/**
+ * Define the module info section
+ *
+ * 2nd arg must 0x1000 so __init is executed in
+ * kernelmode for our loaderInit function
+ */
 PSP_MODULE_INFO("SCUMMVM-PSP", 0x1000, 1, 1);
 
-/* Define the main thread's attribute value (optional) */
-PSP_MAIN_THREAD_ATTR(/*THREAD_ATTR_USER | THREAD_ATTR_VFPU*/ 0);
+/**
+ * THREAD_ATTR_USER causes the thread that the startup
+ * code (crt0.c) starts this program in to be in usermode
+ * even though the module was started in kernelmode
+ */
+PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 
 /* global quit flag, this is used to let the VM engine shutdown properly */
 bool g_quit = false;
@@ -58,6 +69,16 @@ void MyExceptionHandler(PspDebugRegBlock *regs) {
 	pspDebugDumpException(regs);
 
 	while (1) ;
+}
+
+/**
+ * Function that is called from _init in kernelmode before the
+ * main thread is started in usermode.
+ */
+__attribute__ ((constructor))
+void loaderInit() {
+	pspKernelSetKernelPC();
+	pspDebugInstallErrorHandler(MyExceptionHandler);
 }
 
 
@@ -103,9 +124,6 @@ int main(void)
 
 	//PSPDebugTrace("Setup callbacks\n");
 	SetupCallbacks();
-
-	//install exception handler
-	pspDebugInstallErrorHandler(MyExceptionHandler);
 
 	//check if the save directory exists
 	SceUID fd = sceIoDopen(SCUMMVM_SAVEPATH);
