@@ -1982,7 +1982,7 @@ void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfWaitFramesEsc(SCRIPTFUNC_PARAMS) {
-	thread->_returnValue = _framesEsc;
+	thread->_returnValue = _vm->_framesEsc;
 }
 
 void Script::sf103(SCRIPTFUNC_PARAMS) {

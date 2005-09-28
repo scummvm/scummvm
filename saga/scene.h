@@ -29,7 +29,6 @@
 #include "saga/font.h"
 #include "saga/list.h"
 #include "saga/actor.h"
-#include "saga/script.h"
 
 namespace Saga {
 
@@ -266,9 +265,9 @@ class Scene {
 	int currentSceneResourceId() const { return _sceneResourceId; }
 	void cutawaySkip() {
 		if (_vm->_scene->isInIntro())
-			_vm->_script->_framesEsc = 2;
+			_vm->_framesEsc = 2;
 		else
-			_vm->_script->_framesEsc = 1;
+			_vm->_framesEsc = 1;
 	}
 
 	void drawTextList(Surface *ds);
