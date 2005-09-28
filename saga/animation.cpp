@@ -119,6 +119,8 @@ void Anim::playCutaway(int cut, bool fade) {
 	free(buf);
 	free(resourceData);
 
+	// Play the animation
+
 	int cutawaySlot = -1;
 
 	for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {

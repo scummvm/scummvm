@@ -1017,34 +1017,41 @@ void Actor::handleSpeech(int msec) {
 	}
 
 	if (_activeSpeech.actorsCount == 1) {
-		width = _activeSpeech.speechBox.width();
-		height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
-
-		if (height > 40 && width < _vm->getDisplayWidth() - 100) {
-			width = _vm->getDisplayWidth() - 100;
+		if (_speechBoxScript.width() > 0) {
+			_activeSpeech.drawRect.left = _speechBoxScript.left;
+			_activeSpeech.drawRect.right = _speechBoxScript.right;
+			_activeSpeech.drawRect.top = _speechBoxScript.top;
+			_activeSpeech.drawRect.bottom = _speechBoxScript.bottom;
+		} else {
+			width = _activeSpeech.speechBox.width();
 			height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
-		}
 
-		_activeSpeech.speechBox.setWidth(width);
-
-		if (_activeSpeech.actorIds[0] != 0) {
-			actor = getActor(_activeSpeech.actorIds[0]);
-			_activeSpeech.speechBox.setHeight(height);
-
-			if (_activeSpeech.speechBox.right > _vm->getDisplayWidth() - 10) {
-				_activeSpeech.drawRect.left = _vm->getDisplayWidth() - 10 - width;
-			} else {
-				_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
+			if (height > 40 && width < _vm->getDisplayWidth() - 100) {
+				width = _vm->getDisplayWidth() - 100;
+				height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 			}
 
-			height2 =  actor->_screenPosition.y - 50;
-			_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
-		} else {
-			_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
-			_activeSpeech.drawRect.top = _activeSpeech.speechBox.top + (_activeSpeech.speechBox.height() - height) / 2;
+			_activeSpeech.speechBox.setWidth(width);
+
+			if (_activeSpeech.actorIds[0] != 0) {
+				actor = getActor(_activeSpeech.actorIds[0]);
+				_activeSpeech.speechBox.setHeight(height);
+
+				if (_activeSpeech.speechBox.right > _vm->getDisplayWidth() - 10) {
+					_activeSpeech.drawRect.left = _vm->getDisplayWidth() - 10 - width;
+				} else {
+					_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
+				}
+
+				height2 =  actor->_screenPosition.y - 50;
+				_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
+			} else {
+				_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
+				_activeSpeech.drawRect.top = _activeSpeech.speechBox.top + (_activeSpeech.speechBox.height() - height) / 2;
+			}
+			_activeSpeech.drawRect.setWidth(width);
+			_activeSpeech.drawRect.setHeight(height);
 		}
-		_activeSpeech.drawRect.setWidth(width);
-		_activeSpeech.drawRect.setHeight(height);
 	}
 
 	_activeSpeech.playing = true;

@@ -76,7 +76,6 @@ public:
 	}
 };
 
-
 struct FontHeader {
 	int charHeight;
 	int charWidth;
@@ -106,6 +105,7 @@ class Font {
  public:
 	Font(SagaEngine *vm);
 	~Font(void);
+	FontData *getFont(FontId fontId);
 	int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
 	int getHeight(FontId fontId);
 	int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
@@ -124,7 +124,6 @@ class Font {
 	}
 
  private:
-
 	void loadFont(uint32 fontResourceId);
 	void createOutline(FontData *font);
 	void draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
@@ -138,7 +137,6 @@ class Font {
 
 		return byteLength;
 	}
-
 
 	static const int _charMap[256];
 	SagaEngine *_vm;

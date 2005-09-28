@@ -62,6 +62,10 @@ Font::~Font(void) {
 	}
 }
 
+FontData *Font::getFont(FontId fontId) {
+	return _fonts[fontId];
+}
+
 void Font::loadFont(uint32 fontResourceId) {
 	FontData *font;
 	byte *fontResourcePointer;
@@ -69,7 +73,6 @@ void Font::loadFont(uint32 fontResourceId) {
 	int numBits;
 	int c;
 	ResourceContext *fontContext;
-
 
 	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
 
@@ -133,7 +136,6 @@ void Font::loadFont(uint32 fontResourceId) {
 	// Set font data
 	_fonts[_loadedFonts++] = font;
 }
-
 
 void Font::createOutline(FontData *font) {
 	int i;
@@ -249,7 +251,7 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 
 	validate(fontId);
 
-	font = _fonts[fontId];
+	font = getFont(fontId);
 
 	txt = (const byte *) text;
 
@@ -273,7 +275,7 @@ int Font::getHeight(FontId fontId) {
 
 	validate(fontId);
 
-	font = _fonts[fontId];
+	font = getFont(fontId);
 
 	return font->normal.header.charHeight;
 }
@@ -285,7 +287,7 @@ void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, cons
 
 	validate(fontId);
 
-	font = _fonts[fontId];
+	font = getFont(fontId);
 
 	if (flags & kFontOutline) {
 		offsetPoint.x--;
@@ -554,7 +556,7 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 	textPoint.y = rect.top;
 
 	if (fitWidth >= textWidth) {
-	// Entire string fits, draw it
+		// Entire string fits, draw it
 		textPoint.x -= (textWidth / 2);
 		draw(fontId, ds, text, textLength, textPoint, color, effectColor, flags);
 		return;
@@ -604,6 +606,19 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 				searchPointer = measurePointer + 1;
 			}
 			wc = 0;
+
+			// Advance the search pointer to the next non-space.
+			// Otherwise, the first "word" to be measured will be
+			// an empty string. Measuring or drawing a string of
+			// length 0 is interpreted as measure/draw the entire
+			// buffer, which certainly is not what we want here.
+			//
+			// This happes because a string may contain several
+			// spaces in a row, e.g. after a period.
+
+			while (*searchPointer == ' ')
+				searchPointer++;
+
 			measurePointer = searchPointer;
 			startPointer = searchPointer;
 		} else {

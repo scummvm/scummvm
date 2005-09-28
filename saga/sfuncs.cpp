@@ -1970,8 +1970,6 @@ void Script::sfSetSpeechBox(SCRIPTFUNC_PARAMS) {
 	_vm->_actor->_speechBoxScript.top = param2;
 	_vm->_actor->_speechBoxScript.setWidth(param3);
 	_vm->_actor->_speechBoxScript.setHeight(param4);
-
-	debug(0, "STUB: sfSetSpeechBox(%d, %d, %d, %d)", param1, param2, param3, param4);
 }
 
 void Script::sfDebugShowData(SCRIPTFUNC_PARAMS) {
