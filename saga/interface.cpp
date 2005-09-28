@@ -329,6 +329,9 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		processStatusTextInput(ascii);
 		return true;
 	}
+
+	_vm->_scene->cutawaySkip();
+
 	switch (_panelMode) {
 	case kPanelNull:
 		if (ascii == 27) { // Esc

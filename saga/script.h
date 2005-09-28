@@ -427,6 +427,7 @@ public:
 
 	bool _skipSpeeches;
 	bool _abortEnabled;
+	bool _framesEsc;
 
 	VoiceLUT _globalVoiceLUT;
 

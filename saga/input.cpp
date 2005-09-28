@@ -1,4 +1,4 @@
-/* ScummVM - Scumm Interpreter
+/* ScummVM - Scumm nterpreter
  * Copyright (C) 2004-2005 The ScummVM project
  *
  * The ReInherit Engine is (C)2000-2003 by Daniel Balsom.
@@ -104,6 +104,7 @@ int SagaEngine::processInput() {
 			// Actual game keys
 			case 32: // space
 				_actor->abortSpeech();
+				_scene->cutawaySkip();
 				break;
 			case 19:  // pause
 			case 'z':

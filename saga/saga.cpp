@@ -294,6 +294,7 @@ int SagaEngine::go() {
 		load(fileName);
 		_interface->setMode(kPanelMain);
 	} else {
+		_script->_framesEsc = 0;
 		_scene->startScene();
 	}
 
