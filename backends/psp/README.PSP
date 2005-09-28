@@ -41,7 +41,9 @@ A:  A 1.00 or 1.50 firmware PSP and the necessary datafiles for the game you
     want to play and obviously this ScummVM port.
 
 Q:  Can I run this on my 1.52/1.52/2.00 firmware PSP?
-A:  No, you can't as of yet.
+A:  No, you can't do this 'directly' as of yet.
+    A method exists for 'downgrading' a 2.00 firmware PSP to 1.50,
+    however, the details of this are beyond the scope of this document.
 
 Q:  My Monkey Island 1 doesn't have any music, what gives?
 A:  If your version of Monkey Island came on a CD then it has the music
@@ -51,14 +53,14 @@ A:  If your version of Monkey Island came on a CD then it has the music
 Q:  Game X crashes, or feature Y doesn't work. Can you fix this?
 A:  Possibly.  
     Because of the large amount of games ScummVM supports we obviously haven't
-    played them all start-to-finish on the PSP, so it's very possible there
+    played them all start-to-finish on the PSP, so it's possible there
     are bugs or issues that we're not aware of.
     When you encounter such a bug, please use the "Bug Tracker" you find linked
     on the ScummVM website, and mention all relevant info (i.e. that you're
-    using the PSP version, which ScummVM version it is, which build date it has,
-    a detailed description of the problem, and if at all possible a nearby
-    savegame), this will make it much easier for us to reproduce
-    (and hopefully fix) the problem.
+    using the PSP version, which ScummVM version it is, if the problem exists
+    in a recent PC CVS version, a detailed description of the problem,
+    and if at all possible a nearby savegame), this will make it much easier
+    for us to reproduce (and hopefully fix) the problem.
 
 
 Building the source code
@@ -66,17 +68,34 @@ Building the source code
 To build ScummVM for PSP you need:
 
 - PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
-- PSPSDK 	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
-- SDL		(svn co svn://svn.pspdev.org/psp/trunk/SDL)
-- zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
-- libmad	(svn co svn://svn.pspdev.org/psp/trunk/libmad)
-- libTremor	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
-- libmpeg2  	(http://libmpeg2.sf.net)
 
-When you've installed these libraries, type "make" to build scummvm-psp.elf
+- PSPSDK 	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
+  		Note: This usually gets installed by the PSP toolchain,
+	 	so you don't have to do it manually.
+
+- SDL		(svn co svn://svn.pspdev.org/psp/trunk/SDL)
+
+- zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
+
+- libmad(*)	(svn co svn://svn.pspdev.org/psp/trunk/libmad)
+
+- libTremor(*)	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
+
+- libmpeg2(*)  	(http://libmpeg2.sf.net)
+		Note: As this is not in pspdev svn, you'll need to build
+		it manually. Adding a psp target/host to config.sub and
+		using a configure line similar to the SDL port worked for
+		me.
+
+(*) = optional
+
+When you've installed these libraries (read their README.PSP for instructions),
+type "make" in the backends/psp directory to build an 1.00 firmware EBOOT.PBP,
+or "make kxploit" to build the 1.50/kxploit EBOOT.PBPs
 
 You can control most of the build process (engines and libraries used) from
 the Makefile.
+
 
 Port Authors
 ============
