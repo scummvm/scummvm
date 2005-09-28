@@ -271,7 +271,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			obj->_location.z = ITE_ObjectTable[i].z;
 		}
 	} else {
-		// TODO. This is causing problems for SYMBIAN os as it does n't like a static class here
+		// TODO. This is causing problems for SYMBIAN os as it doesn't like a static class here
 		ActorData dummyActor;
 
 		dummyActor._frames = NULL;
@@ -306,7 +306,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 	int framesCount;
 	ActorFrameSequence *framesPointer;
 	int lastFrame = 0;
-	int i, orient;
+	int orient;
 	int resourceId;
 	bool gotSomething = false;
 
@@ -324,7 +324,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 
 		MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
 
-		for (i = 0; i < framesCount; i++) {
+		for (int i = 0; i < framesCount; i++) {
 			for (orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 				// Load all four orientations
 				framesPointer[i].directions[orient].frameIndex = readS.readUint16();
@@ -350,7 +350,6 @@ bool Actor::loadActorResources(ActorData *actor) {
 			return true;
 	}
 
-
 	resourceId = actor->_spriteListResourceId;
 
 	if (resourceId) {
@@ -358,7 +357,6 @@ bool Actor::loadActorResources(ActorData *actor) {
 
 		_vm->_sprite->loadList(resourceId, actor->_spriteList);
 
-		i = actor->_spriteList.spriteCount;
 		if (actor->_flags & kExtended) {
 			while ((lastFrame >= actor->_spriteList.spriteCount)) {
 				resourceId++;
