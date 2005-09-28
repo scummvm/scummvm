@@ -290,12 +290,27 @@ directory.
 
 3.8) Maniac Mansion NES notes
 ---- ------------------------
-Supported versions are English USA (E), French (F), Swedish (SW) and European
-(U). Either use extract_mm_nes utility from tools package (but then game
-will not be autodetected) or use PRG section of ROM (with first 16 bytes
-stripped) with 262144 bytes size. It should be named "Maniac Mansion (XX).prg",
-where XX is standard region abbreviation such as E, F, SW or U. If you add
-game manually make sure that platform is set to NES.
+Supported versions are English USA (E), French (F), Swedish (SW) and 
+European (U). ScummVM requires just PRG section to run and not whole ROM.
+
+In order to get the game working, you will have to strip out the first
+16 bytes from the ROM you are trying to work with. Any hex editor will work 
+as long as you are able to copy/paste.  After you open the ROM with the 
+hex editor, copy everything from second row (17th byte) to the end. After
+you do this, paste it to a new hex file. Give the new file name 
+"Maniac Mansion (XX).prg" where XX depends on version you are  working 
+with (E, F, SW, or U).  The final size should be exactly 262144 bytes.
+
+If you add game manually make sure that platform is set to NES.
+
+Most common mistakes which prevent game from running:
+
+  o Bad file
+  o ROM extracted with the 0.7.0 tools
+  o You try to feed ScummVM with the FULL rom and not just the PRG section.
+
+Also it is possible to extract separate LFL files from PRG section. Use
+extract_mm_nes utility from tools package.
 
 3.9) Commodore64 games notes
 ---- -----------------------

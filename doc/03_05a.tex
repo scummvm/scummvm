@@ -20,13 +20,32 @@ i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
 CD version of Gobliiins contains one big audio track which needs to be ripped
 and copied into game directory. See section \ref{sect-compressing-audiofiles}.
 
+
 \subsection{Maniac Mansion NES notes}
-Supported versions are English USA (E), French (F), Swedish (SW) and European
-(U). Either use extract\_mm\_nes utility from tools package (but then game
-will not be autodetected) or use PRG section of ROM (with first 16 bytes
-stripped) with 262144 bytes size. It should be named "Maniac Mansion (XX).prg",
-where XX is standard region abbreviation such as E, F, SW or U. If you add
-game manually make sure that platform is set to NES.
+Supported versions are English USA (E), French (F), Swedish (SW) and 
+European (U). ScummVM requires just PRG section to run and not whole ROM.
+
+In order to get the game working, you will have to strip out the first
+16 bytes from the ROM you are trying to work with. Any hex editor will work 
+as long as you are able to copy/paste.  After you open the ROM with the 
+hex editor, copy everything from second row (17th byte) to the end. After
+you do this, paste it to a new hex file. Give the new file name 
+"Maniac Mansion (XX).prg" where XX depends on version you are  working 
+with (E, F, SW, or U).  The final size should be exactly 262144 bytes.
+
+If you add game manually make sure that platform is set to NES.
+
+Most common mistakes which prevent game from running:
+
+\begin{itemize}
+  \item Bad file
+  \item ROM extracted with the 0.7.0 tools
+  \item You try to feed ScummVM with the FULL rom and not just the PRG section.
+\end{itemize}
+
+Also it is possible to extract separate LFL files from PRG section. Use
+extract\_mm\_nes utility from tools package.
+
 
 \subsection{Commodore64 games notes}
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
