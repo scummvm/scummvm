@@ -1022,11 +1022,11 @@ void Actor::handleSpeech(int msec) {
 			_activeSpeech.drawRect.bottom = _speechBoxScript.bottom;
 		} else {
 			width = _activeSpeech.speechBox.width();
-			height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+			height = _vm->_font->getHeight((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont), _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 
 			if (height > 40 && width < _vm->getDisplayWidth() - 100) {
 				width = _vm->getDisplayWidth() - 100;
-				height = _vm->_font->getHeight(kMediumFont, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+				height = _vm->_font->getHeight((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont), _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 			}
 
 			_activeSpeech.speechBox.setWidth(width);
@@ -1635,8 +1635,8 @@ void Actor::drawSpeech(void) {
 	}
 
 	if (_activeSpeech.actorsCount > 1) {
-		height = _vm->_font->getHeight(kMediumFont);
-		width = _vm->_font->getStringWidth(kMediumFont, _activeSpeech.strings[0], 0, kFontNormal);
+		height = _vm->_font->getHeight((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont));
+		width = _vm->_font->getStringWidth((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont), _activeSpeech.strings[0], 0, kFontNormal);
 
 		for (i = 0; i < _activeSpeech.actorsCount; i++) {
 			actor = getActor(_activeSpeech.actorIds[i]);
@@ -1645,11 +1645,11 @@ void Actor::drawSpeech(void) {
 			textPoint.x = clamp( 10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
 			textPoint.y = clamp( 10, actor->_screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
 
-			_vm->_font->textDraw(kMediumFont, backBuffer, _activeSpeech.strings[0], textPoint,
+			_vm->_font->textDraw((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont), backBuffer, _activeSpeech.strings[0], textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
 	} else {
-		_vm->_font->textDrawRect(kMediumFont, backBuffer, _activeSpeech.strings[0], _activeSpeech.drawRect, _activeSpeech.speechColor[0],
+		_vm->_font->textDrawRect((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont), backBuffer, _activeSpeech.strings[0], _activeSpeech.drawRect, _activeSpeech.speechColor[0],
 			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
 }

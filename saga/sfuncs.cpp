@@ -1583,13 +1583,20 @@ void Script::sfScriptText(SCRIPTFUNC_PARAMS) {
 	point.y = thread->pop();
 
 	text = thread->_strings->getString(stringId);
-	width = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontOutline);
+
+	if (_vm->getGameType() == GType_ITE)
+		width = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontOutline);
+	else
+		width = _vm->_font->getStringWidth(kIHNMMainFont, text, 0, kFontOutline);
 	rect.top = point.y - 6;
 	rect.setHeight(12);
 	rect.left = point.x - width / 2;
 	rect.setWidth(width);
 
-	_vm->_actor->setSpeechColor(color, kITEColorBlack);
+	if (_vm->getGameType() == GType_ITE)
+		_vm->_actor->setSpeechColor(color, kITEColorBlack);
+	else
+		_vm->_actor->setSpeechColor(color, kIHNMColorBlack);
 	_vm->_actor->nonActorSpeech(rect, &text, 1, -1, flags);
 }
 

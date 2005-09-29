@@ -319,7 +319,9 @@ enum GameFeatures {
 enum FontId {
 	kSmallFont,
 	kMediumFont,
-	kBigFont
+	kBigFont,
+
+	kIHNMMainFont = 6
 };
 
 enum FontEffectFlags {

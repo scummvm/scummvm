@@ -159,7 +159,7 @@ struct Converse {
 	int replyBit;
 };
 
-enum ITEColors {
+enum GameColors {
 	kITEColorBrightWhite = 0x01,
 	kITEColorWhite = 0x02,
 	kITEColorLightGrey = 0x04,
@@ -174,7 +174,9 @@ enum ITEColors {
 	kITEColorLightBlue92 = 0x92,
 	kITEColorBlue = 0x93,
 	kITEColorLightBlue94 = 0x94,
-	kITEColorLightBlue96 = 0x96
+	kITEColorLightBlue96 = 0x96,
+
+	kIHNMColorBlack = 0xfa
 };
 
 enum StatusTextInputState {

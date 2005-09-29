@@ -693,7 +693,7 @@ static GameFontDescription IHNMCD_GameFonts[] = {
 	{5},
 	{6},
 	{7},
-	{8}
+	{8}   // kIHNMMainFont
 };
 
 static GameSoundInfo IHNM_GameSound = {
