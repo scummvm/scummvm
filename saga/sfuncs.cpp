@@ -1747,10 +1747,6 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	int16 param = thread->pop();
 	int res;
 
-	// TODO: This doesn't work for IHNM yet. As a point of reference, when
-	//       'param' is 11, during the "hate" speech, it should probably
-	//       play sound resource 260. Probably quite loudly.
-
 	if (param >= 0 && param < _vm->_sndRes->_fxTableLen) {
 		res = _vm->_sndRes->_fxTable[param].res;
 		if (_vm->getFeatures() & GF_CD_FX)
