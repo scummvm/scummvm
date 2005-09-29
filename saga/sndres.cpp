@@ -58,7 +58,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 	} else {
 		ResourceContext *resourceContext;
 
-		resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+		resourceContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 		if (resourceContext == NULL) {
 			error("Resource::loadGlobalResources() resource context not found");
 		}

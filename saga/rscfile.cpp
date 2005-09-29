@@ -440,10 +440,16 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	// TODO: close chapter context, or rather reassign it in our case
 
 	ResourceContext *resourceContext;
+	ResourceContext *soundContext;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
 		error("Resource::loadGlobalResources() resource context not found");
+	}
+
+	soundContext = _vm->_resource->getContext(GAME_SOUNDFILE);
+	if (soundContext == NULL) {
+		error("Resource::loadGlobalResources() sound context not found");
 	}
 
 	byte *resourcePointer;
@@ -490,7 +496,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	}
 
 	debug(0, "Going to read %d of %d", chapter, _vm->_sndRes->_fxTableIDs[chapter]);
-	_vm->_resource->loadResource(resourceContext, _vm->_sndRes->_fxTableIDs[chapter],
+	_vm->_resource->loadResource(soundContext, _vm->_sndRes->_fxTableIDs[chapter],
 								 resourcePointer, resourceLength);
 
 	if (resourceLength == 0) {
