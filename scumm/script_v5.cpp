@@ -1943,6 +1943,7 @@ void ScummEngine_v5::o5_roomOps() {
 				case 20: // disable palette operations
 				case 21: // disable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
 				case 22: // enable clearing of screen 0x1C:0x5000 sizeof(640 * 320) in initScreens()
+				case 30:
 					debug(0, "o5_roomOps: unhandled FM-TOWNS fadeEffect %d", a);
 					return;
 					break;
