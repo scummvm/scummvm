@@ -430,7 +430,7 @@ loc_avoid_ks_fe:
 				_talkDelay += (int)VAR(VAR_CHARINC);
 
 			// Handle line breaks for V1-V3
-			if (_version <= 3 && _charset->_nextLeft > _screenWidth) {
+			if (_version <= 2 && _charset->_nextLeft > _screenWidth) {
 				goto newLine;
 			}
 		}
