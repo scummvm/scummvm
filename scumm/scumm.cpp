@@ -3029,7 +3029,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	const char *name = g->name;
 	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
-	int substLastIndex;
+	int substLastIndex = 0;
 	bool found = false;
 
 	for (int method = 0; method < 5 && !found; method++) {
