@@ -127,6 +127,9 @@ public:
 	void finish(uint16 animId);
 	void resume(uint16 animId, int cycles);
 	int16 getCurrentFrame(uint16 animId);
+	bool hasCutaway(void) {
+		return _cutawayActive;
+	}
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
 			if (animId < MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))

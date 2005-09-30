@@ -24,6 +24,7 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
+#include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
@@ -1575,6 +1576,10 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 }
 
 void Actor::drawActors() {
+	if (_vm->_anim->hasCutaway()) {
+		return;
+	}
+
 	if (_vm->_scene->currentSceneNumber() <= 0) {
 		return;
 	}
