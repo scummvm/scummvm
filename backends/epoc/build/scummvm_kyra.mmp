@@ -22,12 +22,12 @@
  */
 
 //
-// EPOC MMP makefile project for ScummVM
+// EPOC MMP makefile project for ScummVM Kyra
 //
 
 // *** Definitions
 
-TARGET          scummvm_simon.lib
+TARGET          scummvm_kyra.lib
 TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
@@ -45,25 +45,19 @@ MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 
 SOURCEPATH ..\..\..
 
-//START_AUTO_OBJECTS_SIMON_// Updated @ Fri Sep 30 14:01:53 2005
-SOURCE simon\charset.cpp
-SOURCE simon\cursor.cpp
-SOURCE simon\debug.cpp
-SOURCE simon\debugger.cpp
-SOURCE simon\icons.cpp
-SOURCE simon\items.cpp
-SOURCE simon\midi.cpp
-SOURCE simon\midiparser_s1d.cpp
-SOURCE simon\res.cpp
-SOURCE simon\saveload.cpp
-SOURCE simon\sound.cpp
-SOURCE simon\simon.cpp
-SOURCE simon\verb.cpp
-SOURCE simon\vga.cpp
-//STOP_AUTO_OBJECTS_SIMON_//
+//START_AUTO_OBJECTS_KYRA_// Updated @ Fri Sep 30 14:01:53 2005
+SOURCE kyra\kyra.cpp
+SOURCE kyra\resource.cpp
+SOURCE kyra\screen.cpp
+SOURCE kyra\script_v1.cpp
+SOURCE kyra\script.cpp
+SOURCE kyra\sound.cpp
+SOURCE kyra\staticres.cpp
+SOURCE kyra\wsamovie.cpp
+//STOP_AUTO_OBJECTS_KYRA_//
 
 // *** Include paths
 
-USERINCLUDE     ..\..\..\simon
+USERINCLUDE     ..\..\..\kyra
 USERINCLUDE     ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\sound ..\..\..\backends\epoc
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\..\..\backends\epoc

@@ -69,7 +69,7 @@ SYSTEMINCLUDE   ..\..\..\backends\epoc // for portdefs.h
 
 SOURCEPATH ..\..\..
 
-//START_AUTO_OBJECTS_COMMON_// Updated @ Sat Sep 17 16:14:29 2005
+//START_AUTO_OBJECTS_COMMON_// Updated @ Fri Sep 30 14:01:53 2005
 SOURCE common\config-file.cpp
 SOURCE common\config-manager.cpp
 SOURCE common\file.cpp
@@ -81,13 +81,16 @@ SOURCE common\timer.cpp
 SOURCE common\util.cpp
 SOURCE common\savefile.cpp
 SOURCE common\system.cpp
+SOURCE common\scaler.cpp
+SOURCE common\scaler\thumbnail.cpp
 //STOP_AUTO_OBJECTS_COMMON_//
 
-//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Sat Sep 17 16:14:29 2005
+//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Fri Sep 30 14:01:53 2005
 SOURCE graphics\animation.cpp
 SOURCE graphics\consolefont.cpp
 SOURCE graphics\font.cpp
 SOURCE graphics\fontman.cpp
+SOURCE graphics\ilbm.cpp
 SOURCE graphics\newfont.cpp
 SOURCE graphics\newfont_big.cpp
 SOURCE graphics\primitives.cpp
@@ -101,7 +104,7 @@ SOURCE graphics\surface.cpp
 //SOURCE gui\KeysDialog.cpp
 //SOURCE gui\Actions.cpp
 
-//START_AUTO_OBJECTS_GUI_// Updated @ Sat Sep 17 16:14:29 2005
+//START_AUTO_OBJECTS_GUI_// Updated @ Fri Sep 30 14:01:53 2005
 SOURCE gui\about.cpp
 SOURCE gui\browser.cpp
 SOURCE gui\chooser.cpp
@@ -120,7 +123,7 @@ SOURCE gui\TabWidget.cpp
 SOURCE gui\widget.cpp
 //STOP_AUTO_OBJECTS_GUI_//
 
-//START_AUTO_OBJECTS_SOUND_// Updated @ Sat Sep 17 16:14:30 2005
+//START_AUTO_OBJECTS_SOUND_// Updated @ Fri Sep 30 14:01:53 2005
 SOURCE sound\adpcm.cpp
 SOURCE sound\audiocd.cpp
 SOURCE sound\audiostream.cpp
