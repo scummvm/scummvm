@@ -16,7 +16,7 @@ LDFLAGS =
 
 CXX     = psp-g++
 AS      = psp-gcc
-LD      = psp-g++
+LD      = psp-gcc
 AR      = psp-ar cru
 RANLIB  = psp-ranlib
 STRIP   = psp-strip
@@ -24,6 +24,7 @@ MKDIR 	= mkdir -p
 RM 	= rm -f
 MKSFO	= mksfo
 PACK_PBP = pack-pbp
+FIXUP	= psp-fixup-imports
 
 INCDIR = ../../
 
@@ -53,8 +54,7 @@ LIBS	+= -lvorbisidec
 CFLAGS	+= -DUSE_MPEG2
 LIBS	+= -lmpeg2
 
-LIBS	+= -lz -lm `$(PSPBIN)/sdl-config --libs` -lc -lpspgu -lpspctrl -lpspkernel -lpspuser
-
+LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lc -lpspuser -lpspkernel
 
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
@@ -87,13 +87,14 @@ PSP_EBOOT_PSAR = NULL
 all: $(PSP_EBOOT)
 
 $(TARGET).elf: $(OBJS)
-	$(LINK.cpp) $(OBJS) $(LIBS) -o $@
-	$(STRIP) $@
+	$(LD) $^ $(LIBS) -o $@
+	$(FIXUP) $@
 
 $(PSP_EBOOT_SFO):
 	$(MKSFO) '$(PSP_EBOOT_TITLE)' $@
 
 $(PSP_EBOOT): $(TARGET).elf $(PSP_EBOOT_SFO)
+	$(STRIP) $(TARGET).elf
 	$(PACK_PBP) $@ $(PSP_EBOOT_SFO) $(PSP_EBOOT_ICON) $(PSP_EBOOT_ICON1) \
 		$(PSP_EBOOT_PIC0) $(PSP_EBOOT_PIC1) $(PSP_EBOOT_SND0)  \
 		$(TARGET).elf $(PSP_EBOOT_PSAR)
