@@ -36,37 +36,34 @@ OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way
 
 RESOURCE		EScummVM.rss
 EPOCSTACKSIZE	0x80008000 // this enables ECompXL app compression
-AIF			EScummVm.Aif ..\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp // mine still fails: I think it's because I have JRE 1.5 instead of 1.3 :P
+//AIF			EScummVm.Aif ..\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp // mine still fails: I think it's because I have JRE 1.5 instead of 1.3 :P
 UID             0x100039ce 0x101f9b57
 
 MACRO			UIQ
-MACRO			NONSTANDARD_PORT
 MACRO			EPOC_AS_APP
 
-// these need too high a resolution
+//START_AUTO_MACROS_SLAVE// Updated @ Sat Sep 17 16:14:30 2005
+MACRO			NONSTANDARD_PORT
+MACRO			USE_MAD				// LIB:libmad.lib
+MACRO			USE_ZLIB			// LIB:zlib.lib
 MACRO			DISABLE_SWORD1
 MACRO			DISABLE_SWORD2
-// these are not ready to be released
-//MACRO			DISABLE_SAGA
-MACRO			DISABLE_KYRA
-// these work, so don't disable them, left here because during dev you might wanna turn them off once in a while :)
-//MACRO			DISABLE_SIMON
-//MACRO			DISABLE_SKY
-//MACRO			DISABLE_QUEEN
-//MACRO			DISABLE_GOB
+MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+
+// automagically enabled static libs from macros above
+STATICLIBRARY	scummvm_scumm.lib
+STATICLIBRARY	scummvm_simon.lib
+STATICLIBRARY	scummvm_sky.lib
+STATICLIBRARY	scummvm_queen.lib
+STATICLIBRARY	scummvm_gob.lib
+STATICLIBRARY	scummvm_saga.lib
+STATICLIBRARY	scummvm_base.lib // must be above USE_* .libs
+STATICLIBRARY	libmad.lib
+STATICLIBRARY	zlib.lib
+//STOP_AUTO_MACROS_SLAVE//
 
 // *** Static Libraries
 
-STATICLIBRARY scummvm_scumm.lib
-STATICLIBRARY scummvm_simon.lib
-STATICLIBRARY scummvm_sky.lib
-STATICLIBRARY scummvm_queen.lib
-STATICLIBRARY scummvm_gob.lib
-STATICLIBRARY scummvm_saga.lib
-STATICLIBRARY scummvm_base.lib
-
-STATICLIBRARY libmad.lib
-STATICLIBRARY zlib.lib
 STATICLIBRARY esdl.lib
 #if !defined(WINS)
 STATICLIBRARY egcc.lib // for __fixunsdfsi

@@ -12,19 +12,20 @@
 (0x101F617B), 2, 0, 0, {"UIQ20ProductID"}
 
 ; Signature
-*"EScummVM.key","EScummVM.cer"
+*"..\EScummVM.key","..\EScummVM.cer"
 
 ; Application file
-"..\..\..\..\UIQ_21\epoc32\release\armi\urel\EScummVM.app"-"!:\system\apps\EScummVM\EScummVM.app"
+"..\..\..\..\..\UIQ_21\epoc32\release\armi\urel\EScummVM.app"-"!:\system\apps\EScummVM\EScummVM.app"
 
 ; AIF application information file
-"..\..\..\..\UIQ_21\epoc32\data\z\system\apps\EScummVM\EScummVM.aif"-"!:\system\apps\EScummVM\EScummVM.aif"
+;"..\..\..\..\..\UIQ_21\epoc32\data\z\system\apps\EScummVM\EScummVM.aif"-"!:\system\apps\EScummVM\EScummVM.aif"
+"EScummVM.aif"-"!:\system\apps\EScummVM\EScummVM.aif"
 
 ; Resource file
-"..\..\..\..\UIQ_21\epoc32\data\z\system\apps\EScummVM\EScummVM.rsc"-"!:\system\apps\EScummVM\EScummVM.rsc"
+"..\..\..\..\..\UIQ_21\epoc32\data\z\system\apps\EScummVM\EScummVM.rsc"-"!:\system\apps\EScummVM\EScummVM.rsc"
 
 ; Empty .placeholder file, ensures creation of c:\documents\EScummVM\ for future file saves
-".placeholder"-"c:\documents\EScummVM\.placeholder"
+"..\.placeholder"-"c:\documents\EScummVM\.placeholder"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\documents\EScummVM\scummvm.ini",FN

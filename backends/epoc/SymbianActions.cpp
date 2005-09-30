@@ -35,10 +35,10 @@ namespace GUI {
 
 // SumthinWicked says: we either split our Actions like WinCE did with Pocket/Smartphone
 // or we put them in this file separated by #ifdefs, this one is up to you, AnotherGuest :)
-
-const Common::String actionNames[] = {
-	"Up",
-	"Down",
+ 
+const Common::String actionNames[] = { 
+	"Up", 
+	"Down", 
 	"Left",
 	"Right",
 	"Left Click",
@@ -48,8 +48,8 @@ const Common::String actionNames[] = {
 	"Zone",
 	"FT Cheat",
 	"Swap character",
-	"Skip text",
-	"Pause",
+	"Skip text",	
+	"Pause", 
 	"Quit"
 };
 
@@ -58,7 +58,7 @@ static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0x11a, 0x11b, SDLK
 #elif defined (S60)
 const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '0',0,0,0,0,0};
 #else
-const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0x11a, 0x11b, SDLK_MENU, VK_ESCAPE, '9', 0,0,0,0};
+const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0x11a, 0x11b, SDLK_MENU, SDLK_ESCAPE, 0, 0,0,0,0,0};
 #endif
 // creator function according to Factory Pattern
 void SymbianActions::init(GameDetector &detector) {
@@ -96,7 +96,7 @@ SymbianActions::SymbianActions(GameDetector &detector) :
 
 void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 	Actions::initInstanceMain(mainSystem);
-
+	
 	// Mouse Up
 	_action_enabled[ACTION_UP] = true;
 
@@ -125,7 +125,7 @@ void SymbianActions::initInstanceGame() {
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_queen = (_detector->_targetName == "queen");
 	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
-
+	
 	Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
@@ -134,7 +134,7 @@ void SymbianActions::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_gob)
+	if (is_simon || is_gob) 
 		_action_enabled[ACTION_SAVE] = false;
 	else
 	if (is_queen) {
@@ -144,7 +144,7 @@ void SymbianActions::initInstanceGame() {
 	else
 	if (is_sky) {
 		_action_enabled[ACTION_SAVE] = true;
-		_key_action[ACTION_SAVE].setAscii(63);
+		_key_action[ACTION_SAVE].setAscii(63); 
 	}
 	else {
 		_action_enabled[ACTION_SAVE] = true;

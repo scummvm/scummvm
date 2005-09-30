@@ -32,21 +32,26 @@ TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
 
+// Note: the LIB:*.lib statements are used by updateMMPs.pl, so don't remove them!
+//START_AUTO_MACROS_MASTER//
 MACRO			NONSTANDARD_PORT
-MACRO			USE_MAD
-MACRO			USE_ZLIB
-
+MACRO			USE_MAD				// LIB:libmad.lib
+MACRO			USE_ZLIB			// LIB:zlib.lib
+//MACRO			USE_TREMOR			// LIB:libtremor.lib
+//MACRO			USE_VORBIS
 // these need too high a resolution
 MACRO			DISABLE_SWORD1
 MACRO			DISABLE_SWORD2
 // these are not ready to be released
-//MACRO			DISABLE_SAGA
-MACRO			DISABLE_KYRA
-// these work, so don't disable them :)
-//MACRO			DISABLE_SIMON
-//MACRO			DISABLE_SKY
-//MACRO			DISABLE_QUEEN
-//MACRO			DISABLE_GOB
+MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+// these work, so don't disable them, left here because during dev you might wanna turn them off once in a while :)
+//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
+//MACRO			DISABLE_SIMON		// LIB:scummvm_simon.lib
+//MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
+//MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
+//MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
+//MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
+//STOP_AUTO_MACROS_MASTER//
 
 // *** Include paths
 
@@ -56,6 +61,7 @@ USERINCLUDE		..\..\..\backends\fs ..\..\..\backends\epoc ..\..\..\backends\sdl
 SYSTEMINCLUDE 	\epoc32\include\ESDL
 SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc 
+//SYSTEMINCLUDE   \epoc32\include\tremor -- don't need this: refs are direct: "tremor/includexx.h"
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   ..\..\..\backends\epoc // for portdefs.h
 
@@ -63,7 +69,7 @@ SYSTEMINCLUDE   ..\..\..\backends\epoc // for portdefs.h
 
 SOURCEPATH ..\..\..
 
-//START_AUTO_OBJECTS_COMMON_// Updated @ Sun Jul 10 00:52:25 2005
+//START_AUTO_OBJECTS_COMMON_// Updated @ Sat Sep 17 16:14:29 2005
 SOURCE common\config-file.cpp
 SOURCE common\config-manager.cpp
 SOURCE common\file.cpp
@@ -77,7 +83,7 @@ SOURCE common\savefile.cpp
 SOURCE common\system.cpp
 //STOP_AUTO_OBJECTS_COMMON_//
 
-//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Sun Jul 10 00:52:25 2005
+//START_AUTO_OBJECTS_GRAPHICS_// Updated @ Sat Sep 17 16:14:29 2005
 SOURCE graphics\animation.cpp
 SOURCE graphics\consolefont.cpp
 SOURCE graphics\font.cpp
@@ -90,11 +96,12 @@ SOURCE graphics\surface.cpp
 //STOP_AUTO_OBJECTS_GRAPHICS_//
 
 // these next three will go into gui\modules.mk and will end up in START_AUTO_OBJECTS_GUI
+// for now they are in the phone platform specific MMP files because of library dependency probs
 //SOURCE gui\Key.cpp
 //SOURCE gui\KeysDialog.cpp
 //SOURCE gui\Actions.cpp
 
-//START_AUTO_OBJECTS_GUI_// Updated @ Sun Jul 10 00:52:25 2005
+//START_AUTO_OBJECTS_GUI_// Updated @ Sat Sep 17 16:14:29 2005
 SOURCE gui\about.cpp
 SOURCE gui\browser.cpp
 SOURCE gui\chooser.cpp
@@ -113,7 +120,7 @@ SOURCE gui\TabWidget.cpp
 SOURCE gui\widget.cpp
 //STOP_AUTO_OBJECTS_GUI_//
 
-//START_AUTO_OBJECTS_SOUND_// Updated @ Sun Jul 10 00:52:25 2005
+//START_AUTO_OBJECTS_SOUND_// Updated @ Sat Sep 17 16:14:30 2005
 SOURCE sound\adpcm.cpp
 SOURCE sound\audiocd.cpp
 SOURCE sound\audiostream.cpp

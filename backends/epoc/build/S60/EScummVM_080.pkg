@@ -12,11 +12,11 @@
 (0x101F6F88), 0, 0, 0, {"Series60ProductID"}
 
 ; Signature
-*"EScummVM.key","EScummVM.cer"
+*"..\EScummVM.key","..\EScummVM.cer"
 
 ; Application file Launcher and actual exe
-"..\..\\epoc32\release\armi\urel\EScummVMS60.app"-"!:\system\apps\EScummVMS60\EScummVMS60.app"
-"\epoc32\release\armi\urel\EScummVM.exe"-":\system\apps\EScummVMS60\EScummVM.exe"
+"\epoc32\release\armi\urel\EScummVMS60.app"-"!:\system\apps\EScummVMS60\EScummVMS60.app"
+"\epoc32\release\armi\urel\EScummVM.exe"-"!:\system\apps\EScummVMS60\EScummVM.exe"
 
 ; AIF application information file
 "\epoc32\data\z\system\apps\EScummVMS60\EScummVMS60.aif"-"!:\system\apps\EScummVMS60\EScummVMS60.aif"
@@ -25,7 +25,7 @@
 "\epoc32\data\z\system\apps\EScummVMS60\EScummVMS60.rsc"-"!:\system\apps\EScummVMS60\EScummVMS60.rsc"
 
 ; Empty .placeholder file, ensures creation of c:\documents\EScummVM\ for future file saves
-".placeholder"-"c:\documents\EScummVM\.placeholder"
+"..\.placeholder"-"c:\documents\EScummVM\.placeholder"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\documents\EScummVM\scummvm.ini",FN

@@ -21,7 +21,6 @@
  * $Header: 
  */
 
-
 //
 // EPOC MMP makefile project for ScummVM
 //
@@ -33,15 +32,20 @@ TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
 
+//START_AUTO_MACROS_SLAVE// Updated @ Sat Sep 17 16:14:30 2005
 MACRO			NONSTANDARD_PORT
-MACRO			USE_MAD
-MACRO			USE_ZLIB
+MACRO			USE_MAD				// LIB:libmad.lib
+MACRO			USE_ZLIB			// LIB:zlib.lib
+MACRO			DISABLE_SWORD1
+MACRO			DISABLE_SWORD2
+MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+//STOP_AUTO_MACROS_SLAVE//
 
 // *** SOURCE files
 
 SOURCEPATH ..\..\..
 
-//START_AUTO_OBJECTS_SCUMM_// Updated @ Sun Jul 10 00:52:25 2005
+//START_AUTO_OBJECTS_SCUMM_// Updated @ Sat Sep 17 16:14:30 2005
 SOURCE scumm\actor.cpp
 SOURCE scumm\akos.cpp
 SOURCE scumm\base-costume.cpp

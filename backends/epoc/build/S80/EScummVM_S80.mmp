@@ -34,45 +34,42 @@
 #endif
 TARGETPATH      system\apps\EScummVMs80
 TARGETTYPE      EXEDLL
-				// /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
-OPTION			MSVC  /QIfist /Ob1 /Oy /GF 
-//OPTION			GCC -O3 -funroll-loops -finline-functions -ffast-math -frerun-loop-opt -fconserve-space -fexpensive-optimizations -Wno-multichar -Wno-reorder
-sourcepath ..\
-EPOCSTACKSIZE	0x00008000
 
-EPOCHEAPSIZE	1024	5242880
+OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
+OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
+
+EPOCSTACKSIZE	0x00008000
+EPOCHEAPSIZE	1024	8192000
 
 MACRO			S80
-MACRO			NONSTANDARD_PORT
 
-// these need too high a resolution
+//START_AUTO_MACROS_SLAVE// Updated @ Sat Sep 17 16:14:30 2005
+MACRO			NONSTANDARD_PORT
+MACRO			USE_MAD				// LIB:libmad.lib
+MACRO			USE_ZLIB			// LIB:zlib.lib
 MACRO			DISABLE_SWORD1
 MACRO			DISABLE_SWORD2
-// these are not ready to be released
-//MACRO			DISABLE_SAGA
-MACRO			DISABLE_KYRA
-// these work, so don't disable them :)
-//MACRO			DISABLE_SIMON
-//MACRO			DISABLE_SKY
-//MACRO			DISABLE_QUEEN
-//MACRO			DISABLE_GOB
+MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+
+// automagically enabled static libs from macros above
+STATICLIBRARY	scummvm_scumm.lib
+STATICLIBRARY	scummvm_simon.lib
+STATICLIBRARY	scummvm_sky.lib
+STATICLIBRARY	scummvm_queen.lib
+STATICLIBRARY	scummvm_gob.lib
+STATICLIBRARY	scummvm_saga.lib
+STATICLIBRARY	scummvm_base.lib // must be above USE_* .libs
+STATICLIBRARY	libmad.lib
+STATICLIBRARY	zlib.lib
+//STOP_AUTO_MACROS_SLAVE//
 
 // *** Static Libraries
 
-STATICLIBRARY scummvm_scumm.lib
-STATICLIBRARY scummvm_simon.lib
-STATICLIBRARY scummvm_sky.lib
-STATICLIBRARY scummvm_queen.lib
-STATICLIBRARY scummvm_gob.lib
-STATICLIBRARY scummvm_saga.lib
-STATICLIBRARY scummvm_base.lib
-
-STATICLIBRARY libmad.lib
-STATICLIBRARY zlib.lib
 STATICLIBRARY esdl.lib
 #if !defined(WINS)
 STATICLIBRARY egcc.lib // for __fixunsdfsi
 #endif
+
 // *** Include paths
 
 USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui
@@ -107,6 +104,7 @@ SOURCE backends\epoc\ScummApp.cpp
 SOURCE gui\Key.cpp
 SOURCE gui\KeysDialog.cpp
 SOURCE gui\Actions.cpp
+
 // *** Dynamic Libraries
 
 LIBRARY cone.lib  eikcore.lib 
