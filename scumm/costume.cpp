@@ -1008,11 +1008,6 @@ static const byte actorColorsMMC64[] = {
 };
 
 byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
-	// TODO:
-	// C64 seems to have at most 8 limbs
-	// if you disable this you will get into the debugger
-	// when the meteor should be displayed
-	// maybe a bug? check this
 	if (limb >= 8)
 		return 0;
 
@@ -1023,9 +1018,10 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	// TODO:
 	// get out how animations are handled
-	byte unk1 = (_loaded._animCmds + (/* walking(0) or idle(1) */1*32) + newDirToOldDir(a->getFacing()) * 8)[limb];
+	byte state = a->_moving != 0 ? 0 : 1;
+	byte unk1 = (_loaded._animCmds + (state*32) + newDirToOldDir(a->getFacing()) * 8)[limb];
 	byte unk2 = _loaded._frameOffsets[_loaded._frameOffsets[limb] + (unk1 & 0x7f)];
-	bool flipped = newDirToOldDir(a->getFacing()) == 0;
+	bool flipped = (unk1 & 0x80) != 0;
 
 	byte p1 = _loaded._frameOffsets[unk2];
 	byte temp1 = _loaded._baseptr[p1];
@@ -1035,7 +1031,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int off = (offH << 8) + offL;
 
 	const byte *data = _loaded._baseptr + off;
-	const byte actorColors[] = { 
+	const byte actorColors[] = {
 		0, 10, actorColorsMMC64[_actorID], 0
 	};
 
@@ -1043,6 +1039,8 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int height = *data++;
 	int offsetX = *data++;
 	int offsetY = *data++;
+	// these two fields seems to be most times zero
+	// byte6 was one time 255 in one costume I tried
 //	int byte5 = *data++;
 //	int byte6 = *data++;
 //	debug(3, "byte5: %d", byte5);
@@ -1057,7 +1055,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	
 	if (flipped) {
 		if (offsetX)
-			xpos -= (offsetX-1) * 8;
+			xpos += (offsetX-1) * 8;
 	} else {
 		xpos += offsetX * 8;
 	}
@@ -1074,17 +1072,22 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 			for (int x = 0; x < width; ++x) {
 				byte c = data[y*width+x];
 				byte b, d;
-				byte *dest = &(((byte*)_out.pixels)[((y + ypos) * _out.pitch) + ((width - x) * 8) + xpos - 1]);
-				dest += 8;
+				int realX = 0;
+				if (offsetX == 0||offsetX == 1) {
+					realX = width-(x+1);
+				} else if (offsetX == 2) {
+					realX = width-(x+2);
+				}
+				byte *dest = &(((byte*)_out.pixels)[((y + ypos) * _out.pitch) + ((realX * 8) + xpos)]);
 
-				for (int i = 6; i >= 0; i -= 2) {
+				for (int i = 0; i <= 6; i += 2) {
 					if ((d = (c >> i) & 0x03)) {
 						b = actorColors[d];
-						*dest-- = b;
-						*dest-- = b;
+						*dest++ = b;
+						*dest++ = b;
 						continue;
 					}
-					dest -= 2;
+					dest += 2;
 				}
 			}
 		}
@@ -1110,7 +1113,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	_draw_top = MIN(_draw_top, ypos);
 	_draw_bottom = MAX(_draw_bottom, ypos+height);
-	// if +4 above is NOT commented here +(flipped ? 4 : 0) can be commented out
+	// if +4 above is NOT commented, here "+(flipped ? 4 : 0)" can be commented out
 	// and other way round
 	_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos+(width*8)/*+(flipped ? 4 : 0)*/, ypos, ypos+height, _actorID);
 
