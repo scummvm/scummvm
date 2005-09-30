@@ -48,7 +48,7 @@
 #else // WINS
 
 	// let's just blatantly ignore this for now and just get it to work :P but does n't work from the debug function
-	int inline scumm_snprintf (char *str, unsigned long n, char const *fmt, ...)
+	int inline scumm_snprintf (char *str, unsigned long /*n*/, char const *fmt, ...)
 	{
 		va_list args;
 		va_start(args, fmt);

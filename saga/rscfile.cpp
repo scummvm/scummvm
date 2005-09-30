@@ -441,6 +441,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	ResourceContext *resourceContext;
 	ResourceContext *soundContext;
+    int i;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
@@ -510,7 +511,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	MemoryReadStream fxS(resourcePointer, resourceLength);
 
-	for (int i = 0; i < _vm->_sndRes->_fxTableLen; i++) {
+	for (i = 0; i < _vm->_sndRes->_fxTableLen; i++) {
 		_vm->_sndRes->_fxTable[i].res = fxS.readSint16LE();
 		_vm->_sndRes->_fxTable[i].vol = fxS.readSint16LE();
 	}
@@ -549,7 +550,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	MemoryReadStream songS(resourcePointer, resourceLength);
 
-	for (int i = 0; i < _vm->_music->_songTableLen; i++)
+	for (i = 0; i < _vm->_music->_songTableLen; i++)
 		_vm->_music->_songTable[i] = songS.readSint32LE();
 	free(resourcePointer);
 
