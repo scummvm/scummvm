@@ -429,7 +429,11 @@ loc_avoid_ks_fe:
 			} else
 				_talkDelay += (int)VAR(VAR_CHARINC);
 
-			// Handle line breaks for V1-V3
+			// Handle line overflow for V3
+			if (_version == 3 && _charset->_nextLeft > _screenWidth) {
+				_charset->_nextLeft = _screenWidth;
+			}
+			// Handle line breaks for V1-V2
 			if (_version <= 2 && _charset->_nextLeft > _screenWidth) {
 				goto newLine;
 			}
