@@ -21,6 +21,7 @@ Maniac Mansion
 	V2	Amiga	en	e781230da44a44e2f0770edb2b3b3633	maniac	dhewg, Andrea Petrucci
 	V2	Amiga	de	9bc548e179cdb0767009401c094d0895	maniac	Norbert Lange
 	V2	Amiga	fr	ce7733f185b838e248927c7ba1a04204	maniac	Tobias Fleischer
+	V2	Atari	de	be83e882b44f2767bc08d4f766ebc347	maniac	Joachim Eberhard
 	V2	Atari	en	a570381b028972d891052ee1e51dc011	maniac	Andreas Bylund
 	V2	Atari	fr	dd30a53035393baa5a5e222e716559af	maniac	Andreas Bylund
 	V2	Atari	es	15240c59d3681ed53f714f8d925cb2d6	maniac	VooD
@@ -32,7 +33,7 @@ Zak McKracken and the Alien Mindbenders
 	V1 (alt?)	DOS	en	b23f7cd7c304d7dff08e92a96120d5b4	zak	Andrea Petrucci
 	V2 Demo	Atari	en	8299d9b8a1b0e7b881bae7a9971dc5e2	zak
 	V2	DOS	en	675d71151e9b5a968c8ce46d9fbf4cbf	zak	Kirben
-	V2 (alt?)	DOS	en	debe337f73d660e951ece7c1f1c81add	zak	Andrea Petrucci
+	V2	DOS	es	debe337f73d660e951ece7c1f1c81add	zak	Joachim Eberhard
 	V2 (w/o copy protection)	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
 	V2 (from 5\"25 floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
 	V2	DOS	fr	52a4bae0746a11d7b1e8554e91a6645c	zak	Andrea Petrucci
