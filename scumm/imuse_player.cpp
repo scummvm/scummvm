@@ -270,6 +270,8 @@ void Player::send(uint32 b) {
 			break;
 
 		switch (param1) {
+		case 0: // Bank select. Not supported
+			break;
 		case 1: // Modulation Wheel
 			part->modulationWheel(param2);
 			break;
