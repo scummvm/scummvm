@@ -441,7 +441,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	ResourceContext *resourceContext;
 	ResourceContext *soundContext;
-    int i;
+	int i;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (resourceContext == NULL) {
