@@ -2131,6 +2131,24 @@ void ScummEngine_v5::o5_setVarRange() {
 		setResult(b);
 		_resultVarNumber++;
 	} while (--a);
+
+	// Macintosh verison of indy3ega used different interface, so adjust values.
+	if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
+		VAR(68) = 0;
+		VAR(69) = 0;
+		VAR(70) = 168;
+		VAR(71) = 0;
+		VAR(72) = 168;
+		VAR(73) = 0;
+		VAR(74) = 168;
+		VAR(75) = 0;
+		VAR(76) = 176;
+		VAR(77) = 176;
+		VAR(78) = 184;
+		VAR(79) = 184;
+		VAR(80) = 192;
+		VAR(81) = 192;
+	}
 }
 
 void ScummEngine_v5::o5_startMusic() {

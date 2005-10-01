@@ -30,6 +30,7 @@
 #include "scumm/resource.h"
 #include "scumm/util.h"
 #include "scumm/scumm.h"
+#include "scumm/verbs.h"
 
 namespace Scumm {
 
@@ -726,8 +727,100 @@ void ScummEngine::runInventoryScript(int i) {
 	memset(args, 0, sizeof(args));
 	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
-		runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
+		if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
+			inventoryScript(args);
+		} else {
+			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
+		}
 	}
+}
+
+void ScummEngine::inventoryScript(int *args) {
+	VerbSlot *vs;
+	int j, slot;
+
+	if (VAR(67) < 0) {
+		VAR(67) = 0;
+	}
+	args[5] = getInventoryCount(VAR(VAR_EGO));
+	if (args[5] <= 6) {
+		VAR(67) = 0;
+	}
+	if (args[5] >= 6) {
+		args[5] -= 6;
+	}
+	args[6] = 0;
+	if (VAR(67) >= args[5]) {
+		VAR(67) = args[5];
+		args[4] = args[5];
+		args[5] /= 2;
+		args[5] *= 2;
+		args[4] -= args[5];
+		if (args[4]) {
+			VAR(67)++;
+		}
+		args[6]++;
+	}
+	args[2] = 1;
+	for (j = 1; j < 7; j++) {
+		args[1] = (VAR(67) + args[2]);
+		args[3] = findInventory(VAR(VAR_EGO),args[1]);
+		VAR(82 + args[2]) = args[3];
+		args[2]++;
+	}
+
+	byte tmp[6];
+
+	tmp[0] = 0xFF;
+	tmp[1] = 0x06;
+	tmp[3] = 0x00;
+	tmp[4] = 0x00;
+
+	for (j = 0; j < 6; j++) {
+		tmp[2] = 0x53 + j;
+
+		slot = getVerbSlot(101 + j, 0);
+		vs = &_verbs[slot];
+		loadPtrToResource(rtVerb, slot, tmp);
+		vs->type = kTextVerbType;
+		vs->imgindex = 0;
+		vs->curmode = 1;
+		drawVerb(slot, 0);
+	}
+
+	args[5] = getInventoryCount(VAR(VAR_EGO));
+	if (args[5] > 6) {
+		slot = getVerbSlot(107, 0);
+		if (VAR(67)) {
+			vs = &_verbs[slot];
+			vs->curmode = 1;
+		} else {
+			vs = &_verbs[slot];
+			vs->curmode = 0;
+		}
+		drawVerb(slot, 0);
+		slot = getVerbSlot(108, 0);
+		if (!args[6]) {
+			vs = &_verbs[slot];
+			vs->curmode = 1;
+		} else {
+			vs = &_verbs[slot];
+			vs->curmode = 0;
+		}
+		drawVerb(slot, 0);
+	} else {
+		slot = getVerbSlot(107, 0);
+		vs = &_verbs[slot];
+		vs->curmode = 0;
+		drawVerb(slot, 0);
+		verbMouseOver(0);
+		slot = getVerbSlot(108, 0);
+		vs = &_verbs[slot];
+		vs->curmode = 0;
+		drawVerb(slot, 0);
+	}
+
+	verbMouseOver(0);
 }
 
 void ScummEngine::freezeScripts(int flag) {
