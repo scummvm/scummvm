@@ -47,7 +47,7 @@ namespace Saga {
 enum AnimationState {
 	ANIM_PLAYING = 0x01,
 	ANIM_PAUSE = 0x02,
-	ANIM_STOPPING = 0x03,
+	ANIM_STOPPING = 0x03
 };
 
 enum AnimationFlags {
