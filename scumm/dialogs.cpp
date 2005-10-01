@@ -21,6 +21,7 @@
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/scaler.h"
 
@@ -193,6 +194,8 @@ const Common::String ScummDialog::queryResString(int stringno) {
 
 #pragma mark -
 
+Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode);
+
 enum {
 	kSaveCmd = 'SAVE',
 	kLoadCmd = 'LOAD',
@@ -271,6 +274,9 @@ protected:
 	GUI::ListWidget		*_list;
 	GUI::ButtonWidget	*_chooseButton;
 	GUI::GraphicsWidget	*_gfxWidget;
+	GUI::StaticTextWidget	*_date;
+	GUI::StaticTextWidget	*_time;
+	GUI::StaticTextWidget	*_playtime;
 	ScummEngine			*_scumm;
 
 public:
@@ -299,6 +305,39 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 			kThumbnailWidth + 8,
 			((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8);
 	_gfxWidget->setFlags(GUI::WIDGET_BORDER);
+
+	int height = 18 + ((_scumm->_system->getHeight() % 200 && _scumm->_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1) + 8;
+
+	_date = new StaticTextWidget(this,
+					_w - (kThumbnailWidth + 22),
+					height,
+					kThumbnailWidth + 8,
+					kLineHeight,
+					"No date saved",
+					kTextAlignCenter);
+	_date->setFlags(GUI::WIDGET_CLEARBG);
+
+	height += kLineHeight;
+
+	_time = new StaticTextWidget(this,
+					_w - (kThumbnailWidth + 22),
+					height,
+					kThumbnailWidth + 8,
+					kLineHeight,
+					"No time saved",
+					kTextAlignCenter);
+	_time->setFlags(GUI::WIDGET_CLEARBG);
+
+	height += kLineHeight;
+
+	_playtime = new StaticTextWidget(this,
+					_w - (kThumbnailWidth + 22),
+					height,
+					kThumbnailWidth + 8,
+					kLineHeight,
+					"No playtime saved",
+					kTextAlignCenter);
+	_playtime->setFlags(GUI::WIDGET_CLEARBG);
 
 	// Buttons
 	addButton(this, _w - 2 * (kBigButtonWidth + 10), _h - kBigButtonHeight - 8, "Cancel", kCloseCmd, 0, GUI::kBigWidgetSize);
@@ -342,8 +381,47 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		Graphics::Surface *thumb;
 		thumb = _scumm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
 		_gfxWidget->setGfx(thumb);
+		if (thumb)
+			thumb->free();
 		delete thumb;
 		_gfxWidget->draw();
+
+		InfoStuff infos;
+		memset(&infos, 0, sizeof(InfoStuff));
+		char buffer[32];
+		if (_scumm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
+			snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
+				(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
+				infos.date & 0xFFFF);
+			_date->setLabel(buffer);
+			_date->draw();
+			
+			snprintf(buffer, 32, "Time: %.2d:%.2d",
+				(infos.time >> 8) & 0xFF, infos.time & 0xFF);
+			_time->setLabel(buffer);
+			_time->draw();
+
+			int minutes = infos.playtime / 60;
+			int hours = minutes / 60;
+			minutes %= 60;
+
+			snprintf(buffer, 32, "Playtime: %.2d:%.2d",
+				hours & 0xFF, minutes & 0xFF);
+			_playtime->setLabel(buffer);
+			_playtime->draw();
+		} else {
+			snprintf(buffer, 32, "No date saved");
+			_date->setLabel(buffer);
+			_date->draw();
+			
+			snprintf(buffer, 32, "No time saved");
+			_time->setLabel(buffer);
+			_time->draw();
+
+			snprintf(buffer, 32, "No playtime saved");
+			_playtime->setLabel(buffer);
+			_playtime->draw();
+		}
 
 		if (_saveMode) {
 			_list->startEditMode();

@@ -309,6 +309,12 @@ struct AuxEntry {
 	int subIndex;
 };
 
+struct InfoStuff {
+	uint32 date;
+	uint16 time;
+	uint32 playtime;
+};
+
 class ResourceManager {
 	friend class ScummDebugger;
 	friend class ScummEngine;
@@ -583,13 +589,19 @@ public:
 	void requestSave(int slot, const char *name, bool temporary = false);
 	void requestLoad(int slot);
 
-// thumbnail stuff
+// thumbnail + info stuff
 public:
 	Graphics::Surface *loadThumbnailFromSlot(int slot);
+	bool loadInfosFromSlot(int slot, InfoStuff *stuff);
 
 protected:
 	Graphics::Surface *loadThumbnail(Common::InSaveFile *file);
+	bool loadInfos(Common::InSaveFile *file, InfoStuff *stuff);
 	void saveThumbnail(Common::OutSaveFile *file);
+	void saveInfos(Common::OutSaveFile* file);
+
+	int32 _engineStartTime;
+	int32 _dialogStartTime;
 
 protected:
 	/* Script VM - should be in Script class */

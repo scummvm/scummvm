@@ -51,6 +51,24 @@ struct SaveGameHeader {
 	char name[32];
 };
 
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
+
+struct SaveInfoSection {
+	uint32 type;
+	uint32 version;
+	uint32 size;
+	
+	uint32 timeTValue;
+	uint32 playtime;
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
+
+#define INFOSECTION_VERSION 1
 
 void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
 	_saveLoadSlot = slot;
@@ -84,6 +102,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 	out->write(&hdr, sizeof(hdr));
 	saveThumbnail(out);
+	saveInfos(out);
 
 	Serializer ser(0, out, CURRENT_VER);
 	saveOrLoad(&ser, CURRENT_VER);
@@ -143,6 +162,23 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		uint32 size = in->readUint32BE();
 		in->skip(size - 8);
 	}
+
+	// Since version 56 we have informations about the creation of the save game and the save time here
+	if (hdr.ver >= VER(56)) {
+		InfoStuff infos;
+		if (!loadInfos(in, &infos)) {
+			warning("Info section could not be found");
+			delete in;
+			return false;
+		}
+
+		_engineStartTime = _system->getMillis() / 1000 - infos.playtime;
+	} else {
+		// start time counting
+		_engineStartTime = _system->getMillis() / 1000;
+	}
+
+	_dialogStartTime = _system->getMillis() / 1000;
 
 	// Due to a bug in scummvm up to and including 0.3.0, save games could be saved
 	// in the V8/V9 format but were tagged with a V7 mark. Ouch. So we just pretend V7 == V8 here
@@ -359,6 +395,9 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	_sound->pauseSounds(false);
 
+	_engineStartTime += _system->getMillis() / 1000 - _dialogStartTime;
+	_dialogStartTime = 0;
+
 	return true;
 }
 
@@ -438,6 +477,115 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 
 	delete in;
 	return thumb;
+}
+
+bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
+	char filename[256];
+	Common::InSaveFile *in;
+	SaveGameHeader hdr;
+	int len;
+
+	makeSavegameName(filename, slot, false);
+	if (!(in = _saveFileMan->openForLoading(filename))) {
+		return false;
+	}
+	len = in->read(&hdr, sizeof(hdr));
+
+	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
+		delete in;
+		return false;
+	}
+
+	if (hdr.ver > CURRENT_VER)
+		hdr.ver = TO_LE_32(hdr.ver);
+	if (hdr.ver < VER(56)) {
+		delete in;
+		return false;
+	}
+
+	uint32 type;
+	in->read(&type, 4);
+
+	// Check for the THMB header. Also, work around a bug which caused
+	// the chunk type (incorrectly) to be written in LE on LE machines.
+	if (! (type == MKID('THMB') || (hdr.ver < VER(55) && type == MKID('BMHT')))){
+		delete in;
+		return false;
+	}
+	uint32 size = in->readUint32BE();
+	in->skip(size - 8);
+
+	if (!loadInfos(in, stuff)) {
+		delete in;
+		return false;
+	}
+	
+	delete in;	
+	return true;
+}
+
+bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
+	memset(stuff, 0, sizeof(InfoStuff));
+
+	SaveInfoSection section;
+	file->read(&section.type, 4);
+	if (section.type != MKID('INFO')) {
+		return false;
+	}
+
+	section.version = file->readUint32BE();
+	section.size = file->readUint32BE();
+
+	// if we extend this we should add a table for the special sizes at the versions to check it
+	if (section.version == INFOSECTION_VERSION && section.size != sizeof(SaveInfoSection)) {
+		warning("Info section is corrupt");
+		file->skip(section.size);
+		return false;
+	}
+
+	section.timeTValue = file->readUint32BE();
+	section.playtime = file->readUint32BE();
+
+	time_t curTime_ = section.timeTValue;
+	tm *curTime = localtime(&curTime_);	
+	stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
+	stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
+	stuff->playtime = section.playtime;
+
+	// if we extend the header we should check here for the version
+	// e.g.:
+	// if (header.version == 2) {
+	//	// load some things here
+	// }
+	//
+	// if (header.version == 3) {
+	//	// ...
+	// }
+	// and so on...
+
+	// skip all newer features, this could make problems if some older version uses more space for
+	// saving informations, but this should NOT happen
+	if (section.size > sizeof(SaveInfoSection)) {
+		file->skip(section.size - sizeof(SaveInfoSection));
+	}
+
+	return true;
+}
+
+void ScummEngine::saveInfos(Common::OutSaveFile* file) {
+	SaveInfoSection section;
+	section.type = MKID('INFO');
+	section.version = INFOSECTION_VERSION;
+	section.size = sizeof(SaveInfoSection);
+
+	section.timeTValue = time(0);
+	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
+
+	file->write(&section.type, 4);
+	file->writeUint32BE(section.version);
+	file->writeUint32BE(section.size);
+	file->writeUint32BE(section.timeTValue);
+	file->writeUint32BE(section.playtime);
 }
 
 void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {

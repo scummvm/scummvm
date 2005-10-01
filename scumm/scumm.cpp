@@ -2109,6 +2109,8 @@ void ScummEngine::setupVolumes() {
 #pragma mark -
 
 int ScummEngine::go() {
+	_engineStartTime = _system->getMillis() / 1000;
+
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		int args[16];
@@ -2550,6 +2552,8 @@ void ScummEngine::startManiac() {
 #pragma mark -
 
 int ScummEngine::runDialog(Dialog &dialog) {
+	_dialogStartTime = _system->getMillis() / 1000;
+
 	// Pause sound & video
 	bool old_soundsPaused = _sound->_soundsPaused;
 	_sound->pauseSounds(true);
@@ -2565,6 +2569,9 @@ int ScummEngine::runDialog(Dialog &dialog) {
 	// Resume sound & video
 	_sound->pauseSounds(old_soundsPaused);
 	_smushPaused = oldSmushPaused;
+
+	_engineStartTime += (_system->getMillis() / 1000) - _dialogStartTime;
+	_dialogStartTime = 0;
 
 	// Return the result
 	return result;
