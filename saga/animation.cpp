@@ -241,7 +241,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	anim->cycles = anim->maxFrame;
 
 	anim->frameTime = DEFAULT_FRAME_TIME;
-	anim->flags = 0;
+	anim->flags = ANIM_FLAG_NONE;
 	anim->linkId = -1;
 	anim->state = ANIM_PAUSE;
 }
@@ -314,7 +314,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		if (anim->currentFrame > anim->maxFrame) {
 			anim->currentFrame = anim->loopFrame;
 
-			if (anim->flags & ANIM_STOPPING || anim->currentFrame == -1) {
+			if (anim->state == ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
 			}
 		}
@@ -322,7 +322,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
 		if (anim->linkId == -1) {
-			if (anim->flags & ANIM_ENDSCENE) {
+			if (anim->flags & ANIM_FLAG_ENDSCENE) {
 				// This animation ends the scene
 				event.type = kEvTOneshot;
 				event.code = kSceneEvent;
@@ -339,9 +339,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		linkAnim = getAnimation(anim->linkId);
 
 		debug(5, "Animation ended going to %d", anim->linkId);
-		linkAnim->cycles = anim->cycles;
-		linkAnim->currentFrame = 0;
-		linkAnim->completed = 0;
+//		linkAnim->cycles = anim->cycles;
+//		linkAnim->currentFrame = 0;
+//		linkAnim->completed = 0;
 		linkAnim->state = ANIM_PLAYING;
 		animId = anim->linkId;
 		frameTime = 0;

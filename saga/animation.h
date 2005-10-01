@@ -47,8 +47,12 @@ namespace Saga {
 enum AnimationState {
 	ANIM_PLAYING = 0x01,
 	ANIM_PAUSE = 0x02,
-	ANIM_STOPPING = 0x04,
-	ANIM_ENDSCENE = 0x80	// When animation ends, dispatch scene end event
+	ANIM_STOPPING = 0x03,
+};
+
+enum AnimationFlags {
+	ANIM_FLAG_NONE = 0x00,
+	ANIM_FLAG_ENDSCENE = 0x01	// When animation ends, dispatch scene end event
 };
 
 // Cutaway info array member. Cutaways are basically animations with a really

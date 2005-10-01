@@ -132,7 +132,7 @@ int Scene::IHNMIntroMovieProc1(int param) {
 		q_event = _vm->_events->queue(&event);
 
 		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
-		_vm->_anim->setFlag(0, ANIM_ENDSCENE);
+		_vm->_anim->setFlag(0, ANIM_FLAG_ENDSCENE);
 
 		event.type = kEvTOneshot;
 		event.code = kAnimEvent;

@@ -333,7 +333,7 @@ int Scene::ITEIntroAnimProc(int param) {
 		for (int i = 0; i < lastAnim; i++)
 			_vm->_anim->link(i, i+1);
 
-		_vm->_anim->setFlag(lastAnim, ANIM_ENDSCENE);
+		_vm->_anim->setFlag(lastAnim, ANIM_FLAG_ENDSCENE);
 
 		debug(3, "Beginning animation playback.");
 
