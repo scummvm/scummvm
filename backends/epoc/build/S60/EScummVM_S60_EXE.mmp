@@ -43,7 +43,7 @@ EPOCHEAPSIZE	1024	8192000
 
 MACRO			S60
 
-//START_AUTO_MACROS_SLAVE// Updated @ Fri Sep 30 14:01:53 2005
+//START_AUTO_MACROS_SLAVE// Updated @ Fri Sep 30 20:01:17 2005
 MACRO			NONSTANDARD_PORT
 MACRO			USE_MAD				// LIB:libmad.lib
 MACRO			USE_ZLIB			// LIB:zlib.lib
@@ -112,4 +112,4 @@ LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
-
+library avkon.lib
