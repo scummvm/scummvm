@@ -18,15 +18,21 @@ About EScummVM
 
 Nescessary components
 ---------------------
-	Building EScummVM yourself using the UIQ 2.1 framework is not an easy task!
+	Building EScummVM yourself using the UIQ 2.1/Nokia S60 SDK/Nokia S80 SDK/Nokia S90 SDK framework is not an easy task!
 	Lets just say the framework needs quite some time to set up and takes a while 
 	to get used to. If you choose to continue you will need the following items: 
 
-	- Symbian UIQ 2.1 Framework
+	- UIQ 2.1 SDK (To build for UIQ devices);
 	  http://www.symbian.com/developer/sdks_uiq.asp
 
+	- Nokia S60 1st, 2nd edition (3rd edition has not been tested) SDK (To build for S60 devices)
+
+	- Nokia S80 SDK (To build for S80 devices)
+
+	- Nokia 7710 SDK (To build for the 7710/S90 device)
+
 	- ECompXL, an EPOC application compression library
-	  http://www.yipton.demon.co.uk/ecompxl/latest/readme.html
+	  http://www.yipton.demon.co.uk/ecompxl/latest/readme.html (To build for UIQ devices)
 	  
 	- libsdl, Simple Directmedia Layer, a cross-platform multimedia library 
 	  http://www.libsdl.org/ (see note about ESDL below)

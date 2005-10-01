@@ -49,11 +49,11 @@ OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0)
 {
 	ConfMan.set("FM_high_quality", false);
 	ConfMan.set("FM_medium_quality", true);
-//	ConfMan.set("joystick_num",0); // S60 should have joystick_num set to 0 in the ini file
+	ConfMan.set("joystick_num",0); // Symbian OS  should have joystick_num set to 0 in the ini file , but uiq devices might refuse opening the joystick
 	ConfMan.flushToDisk();
 	// Initialize global key mapping for Smartphones
 	GUI::Actions* actions = GUI::Actions::Instance();
-	actions->initInstanceMain(this);
+	actions->initInstanceMain(this);	
 	actions->loadMapping();
 	initZones();
 }
@@ -77,14 +77,14 @@ bool OSystem_SDL_Symbian::setGraphicsMode(const char *name) {
 }
 
 /*
- * SumthinWicked says: the stuff below is copied from common/scaler.cpp,
+ * SumthinWicked says: the stuff below is copied from common/scaler.cpp, 
  * so we can skip compiling the scalers. ESDL still needs 1x and the scaler
  * architecture because we inherit from OSystem_SDL.
  */
 int gBitFormat = 565;
 void InitScalers(uint32 BitFormat) {} // called by OSystem_SDL functions, not relevant for ESDL
-
-/**
+	
+/** 
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
  * source to the destination.
  */
@@ -100,7 +100,7 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
 
 	// First save the proc and param
-	_sound_proc_param = param;
+	_sound_proc_param = param; 
 	_sound_proc = proc;
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
@@ -200,12 +200,12 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
 {
 	if(!GUI::Actions::Instance()->mappingActive() && ev.key.keysym.sym>SDLK_UNKNOWN)
 	for(TInt loop=0;loop<GUI::ACTION_LAST;loop++){
-		if(GUI::Actions::Instance()->getMapping(loop) ==ev.key.keysym.sym &&
+		if(GUI::Actions::Instance()->getMapping(loop) ==ev.key.keysym.sym && 
 			GUI::Actions::Instance()->isEnabled(loop)){
 		// Create proper event instead
 		switch(loop)
 		{
-			case GUI::ACTION_UP:
+			case GUI::ACTION_UP:	
 				if(ev.type == SDL_KEYDOWN)
 				{
 				_km.y_vel =  -1;
@@ -218,7 +218,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
 				}
 				event.type = EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
-				return true;
+				return true;			
 			case GUI::ACTION_DOWN:
 				if(ev.type == SDL_KEYDOWN)
 				{
@@ -232,7 +232,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
 				}
 				event.type = EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
-				return true;
+				return true;	
 			case GUI::ACTION_LEFT:
 				if(ev.type == SDL_KEYDOWN)
 				{
@@ -272,8 +272,8 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
 			case GUI::ACTION_ZONE:
 				if(ev.type == SDL_KEYDOWN)
 				{
-					int i;
-
+					int i;				
+					
 					for (i=0; i<TOTAL_ZONES; i++)
 						if (_km.x >= _zones[i].x && _km.y >= _zones[i].y &&
 							_km.x <= _zones[i].x + _zones[i].width && _km.y <= _zones[i].y + _zones[i].height
@@ -287,7 +287,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
 							_currentZone = 0;
 						event.type = EVENT_MOUSEMOVE;
 						fillMouseEvent(event, _mouseXZone[_currentZone],_mouseYZone[_currentZone]);
-						SDL_WarpMouse(event.mouse.x,event.mouse.y);
+						SDL_WarpMouse(event.mouse.x,event.mouse.y);					
 				}
 				return true;
 			case GUI::ACTION_SAVE:
@@ -301,7 +301,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev,Event &event)
 					ev.key.keysym.scancode= key.keycode();
 					ev.key.keysym.mod =(SDLMod) key.flags();
 					return false;
-				}
+				}			
 			case GUI::ACTION_QUIT:{
 			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
 			if (alert.runModal() == GUI::kMessageOK)
