@@ -44,6 +44,7 @@ Zak McKracken and the Alien Mindbenders
 	V2	Amiga	de	6027e9ca9c35746d95dee2068cec17e5	zak	Norbert Lange
 	V2	Amiga	fr	91469353f7be1b122fa88d23480a1320	zak	Tobias Fleischer
 	V2	Amiga	it	27b3a4224ad63d5b04627595c1c1a025	zak	Andrea Petrucci
+	V2	Atari	de	bf0873ae2345658365932834de3a4fe4	zak	Joachim Eberhard
 	V2	Atari	en	d55eff37c2100f5065cde9de428621fa	zak
 	V2	Atari	fr	613f64f78ea26c7353b2a5940eb61d6a	zak	Andreas Bylund
 	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zak
@@ -109,6 +110,7 @@ The Secret of Monkey Island
 	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkey	Andrea Petrucci
 	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkey	Andrea Petrucci
 	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkey	Andrea Petrucci
+	EGA	Atari	de	927a764615c7fcdd72f591355e089d8c	monkey	Joachim Eberhard
 	EGA	Atari	en	c666a998af90d81db447eccba9f72c8d	monkey
 	EGA	Atari	fr	9e5e0fb43bd22f4628719b7501adb717	monkey	Andreas Bylund
 	EGA	Atari	es	0a41311d462b6639fc45297b9044bf16	monkey
