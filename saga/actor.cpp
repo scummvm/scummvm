@@ -2039,7 +2039,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.actorsCount = 1;
 	_activeSpeech.actorIds[0] = actorId;
 	_activeSpeech.speechColor[0] = actor->_speechColor;
-	_activeSpeech.outlineColor[0] = kITEColorBlack;
+	_activeSpeech.outlineColor[0] = (_vm->getGameType() == GType_ITE ? kITEColorBlack : kIHNMColorBlack);
 	_activeSpeech.sampleResourceId = sampleResourceId;
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
