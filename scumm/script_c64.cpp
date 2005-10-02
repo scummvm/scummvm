@@ -322,7 +322,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		/* E4 */
 		OPCODE(o_unknown3),
-		OPCODE(o2_loadRoomWithEgo),
+		OPCODE(o_loadRoomWithEgo),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_getActorFacing),
 		/* E8 */
@@ -533,6 +533,37 @@ void ScummEngine_c64::o_loadRoom() {
 	ensureResourceLoaded(rtRoom, resid);
 }
 
+void ScummEngine_c64::o_loadRoomWithEgo() {
+	Actor *a;
+	int obj, room, x, y, dir;
+
+	obj = fetchScriptByte();
+	room = fetchScriptByte();
+
+	a = derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
+
+	a->putActor(0, 0, room);
+	_egoPositioned = false;
+
+	startScene(a->_room, a, obj);
+
+	getObjectXYPos(obj, x, y, dir);
+	a->putActor(x, y, _currentRoom);
+	a->setDirection(dir + 180);
+
+	camera._dest.x = camera._cur.x = a->_pos.x;
+	setCameraAt(a->_pos.x, a->_pos.y);
+	setCameraFollows(a);
+
+	_fullRedraw = true;
+
+	resetSentence();
+
+	if (x >= 0 && y >= 0) {
+		a->startWalkActor(x, y, -1);
+	}
+}
+
 void ScummEngine_c64::o_lockRoom() {
 	int resid = fetchScriptByte();
 	res.lock(rtRoom, resid);
@@ -547,17 +578,25 @@ void ScummEngine_c64::o_unlockRoom() {
 
 void ScummEngine_c64::o_cursorCommand() {
 	// TODO
+	int state = 0;
 
-	byte state = fetchScriptByte();
-	debug(0, "o_cursorCommand(%d)", state);
-
-	if (state >= 1) {
-		_userPut = 1;
-		_cursor.state = 1;
-	} else {
-		_userPut = 0;
-		_cursor.state = 0;
+	_currentMode = fetchScriptByte();
+	switch (_currentMode) {
+	case 0:
+		state = 15;
+		break;
+	case 1:
+		state = 31;
+		break;
+	case 2:
+		break;
+	case 3:
+		state = 247;
+		break;
 	}
+
+	setUserState(state);
+	debug(0, "o_cursorCommand(%d)", _currentMode);
 }
 
 void ScummEngine_c64::o_lights() {
@@ -624,32 +663,27 @@ void ScummEngine_c64::o_nop() {
 }
 
 void ScummEngine_c64::o_setActorBitVar() {
-	byte var = fetchScriptByte();
-	byte a = getVarOrDirectByte(PARAM_1);
+	byte flag = getVarOrDirectByte(PARAM_1);
+	byte mask = getVarOrDirectByte(PARAM_2);
+	byte mod = getVarOrDirectByte(PARAM_3);
 
-	int bit_var = var + a;
-	int bit_offset = bit_var & 0x0f;
-	bit_var >>= 4;
-
-	//if (getVarOrDirectByte(PARAM_2))
-	//	_scummVars[bit_var] |= (1 << bit_offset);
+	//if (mod)
+	//	_miscFlags[flag] |= mask;
 	//else
-	//	_scummVars[bit_var] &= ~(1 << bit_offset);
-	warning("STUB: o_setActorBitVar(%d, %d, %d)", a, bit_var, bit_offset);
+	//	_miscFlags[flag] &= ~mash;
+
+	warning("STUB: o_setActorBitVar(%d, %d, %d)", flag, mask, mod);
 }
 
 void ScummEngine_c64::o_getActorBitVar() {
 	getResultPos();
-	byte var = fetchScriptByte();
-	byte a = getVarOrDirectByte(PARAM_1);
+	byte flag = getVarOrDirectByte(PARAM_1);
+	byte mask = getVarOrDirectByte(PARAM_2);
 
-	int bit_var = var + a;
-	int bit_offset = bit_var & 0x0f;
-	bit_var >>= 4;
+	//setResult((_miscFlags[flag] & mask) ? 1 : 0);
 
-	//setResult((_scummVars[bit_var] & (1 << bit_offset)) ? 1 : 0);
 	setResult(0);
-	warning("STUB: o_getActorBitVar(%d, %d, %d)", a, bit_var, bit_offset);
+	warning("STUB: o_getActorBitVar(%d, %d)", flag, mask);
 }
 
 void ScummEngine_c64::o_print_c64() {

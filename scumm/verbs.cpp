@@ -37,6 +37,58 @@ enum {
 	kSentenceLine = 6
 };
 
+struct VerbSettings {
+	int id;
+	int x_pos;
+	int y_pos;
+	const char *name;
+};
+
+static const VerbSettings C64VerbTable[] =
+{
+	{ 1,  8, 0, "Open"},
+	{ 2,  8, 1, "Close"},
+	{ 3,  0, 2, "Give"},
+	{ 4, 32, 0, "Turn On"},
+	{ 5, 32, 1, "Turn Off"},
+	{ 6, 32, 2, "Fix"},
+	{ 7, 24, 0, "New Kid"},
+	{ 8, 24, 1, "Unlock"},
+	{ 9,  0, 0, "Push"},
+	{10,  0, 1, "Pull"},
+	{11, 24, 2, "Use"},
+	{12,  8, 2, "Read"},
+	{13, 15, 0, "Walk To"},
+	{14, 15, 1, "Pick Up"},
+	{15, 15, 2, "What Is"}
+};
+
+void ScummEngine_c64::initC64Verbs() {
+	VirtScreen *virt = &virtscr[kVerbVirtScreen];
+	VerbSlot *vs;
+	int i;
+
+	for (i = 1; i < 16; i++) {
+		vs = &_verbs[i];
+		vs->verbid = C64VerbTable[i - 1].id;
+		vs->color = 5;
+		vs->hicolor = 7;
+		vs->dimcolor = 11;
+		vs->type = kTextVerbType;
+		vs->charset_nr = _string[0]._default.charset;
+		vs->curmode = 1;
+		vs->saveid = 0;
+		vs->key = 0;
+		vs->center = 0;
+		vs->imgindex = 0;
+
+		vs->curRect.left = C64VerbTable[i - 1].x_pos * 8;
+		vs->curRect.top = C64VerbTable[i - 1].y_pos * 8 + virt->topline + 8;
+
+		loadPtrToResource(rtVerb, i, (const byte*)C64VerbTable[i - 1].name);
+	}
+}
+
 void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
@@ -351,10 +403,6 @@ void ScummEngine::redrawVerbs() {
 	_verbMouseOver = verb;
 }
 
-void ScummEngine_c64::redrawVerbs() {
-	// TODO
-}
-
 void ScummEngine::handleMouseOver(bool updateInventory) {
 	if (_completeScreenRedraw) {
 		verbMouseOver(0);
@@ -445,21 +493,45 @@ void ScummEngine::checkExecVerbs() {
 }
 
 void ScummEngine_c64::checkExecVerbs() {
+	Actor *a;
+	VirtScreen *zone = findVirtScreen(_mouse.y);
+
 	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
 		return;
 
-	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+	if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 		// TODO
+	} else if (_version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
+		// Click into V2 inventory
+		checkV2Inventory(_mouse.x, _mouse.y);
+	} else {
+		int over = findVerbAtPos(_mouse.x, _mouse.y);
+		if (over) {
+			_currentAction = _verbs[over].verbid;
+			return;
+		}
+
+		// HACK: Reset value
+		VAR(VAR_EGO) = 3;
 
 		int object = findObject(_mouse.x, _mouse.y);
 		if (object) {
 			_activeObject = object;
-			runObjectScript(object, 15, false, false, NULL);
+			if (_currentMode == 3) {
+				int x, y, dir;
+				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+				getObjectXYPos(object, x, y, dir);
+				a->startWalkActor(x, y, dir);
+			}
+
+			int tmp = (_currentMode == 3) ? _currentAction : 15;
+			runObjectScript(object, tmp, false, false, NULL);
 		} else {
-			Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-			int y = _mouse.y;
-			int x = _mouse.x;
-			a->startWalkActor(x, y, -1);
+			_activeObject = 0;
+			if (zone->number == kMainVirtScreen) {
+				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+				a->startWalkActor(_mouse.x, _mouse.y, -1);
+			}
 		}
 	}
 }

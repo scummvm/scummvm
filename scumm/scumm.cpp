@@ -1426,6 +1426,9 @@ ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const Scum
 
 ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v2(detector, syst, gs, md5sum, substResFileNameIndex) {
+
+	_currentAction = 0;
+	_currentMode = 0;
 }
 
 ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
@@ -1922,6 +1925,11 @@ void ScummEngine::scummInit() {
 		_keyDownMap[i] = false;
 
 	_lastSaveTime = _system->getMillis();
+}
+
+void ScummEngine_c64::scummInit() {
+	ScummEngine::scummInit();
+	initC64Verbs();
 }
 
 void ScummEngine_v2::scummInit() {

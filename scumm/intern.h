@@ -395,8 +395,12 @@ protected:
 
 	const OpcodeEntryC64 *_opcodesC64;
 
+	int _currentAction;
+	int _currentMode;
 public:
 	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+
+	virtual void scummInit();
 
 protected:
 	virtual void setupRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
@@ -408,7 +412,7 @@ protected:
 	virtual void setupScummVars();
 	virtual void decodeParseString();
 
-	virtual void redrawVerbs();
+	void initC64Verbs();
 	virtual void checkExecVerbs();
 
 	virtual int getVarOrDirectWord(byte mask);
@@ -433,6 +437,7 @@ protected:
 	void o_lockActor();
 	void o_loadActor();
 	void o_loadRoom();
+	void o_loadRoomWithEgo();
 	void o_lockScript();
 	void o_loadScript();
 	void o_lockRoom();
