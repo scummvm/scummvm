@@ -728,16 +728,19 @@ void ScummEngine::runInventoryScript(int i) {
 	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
 		if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
-			inventoryScript(args);
+			inventoryScript();
 		} else {
 			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 		}
 	}
 }
 
-void ScummEngine::inventoryScript(int *args) {
+void ScummEngine::inventoryScript() {
 	VerbSlot *vs;
+	int args[24];
 	int j, slot;
+
+	memset(args, 0, sizeof(args));
 
 	if (VAR(67) < 0) {
 		VAR(67) = 0;
@@ -813,7 +816,6 @@ void ScummEngine::inventoryScript(int *args) {
 		vs = &_verbs[slot];
 		vs->curmode = 0;
 		drawVerb(slot, 0);
-		verbMouseOver(0);
 		slot = getVerbSlot(108, 0);
 		vs = &_verbs[slot];
 		vs->curmode = 0;
@@ -1120,6 +1122,25 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 		args[3] = VAR(VAR_VIRT_MOUSE_X);
 		args[4] = VAR(VAR_VIRT_MOUSE_Y);
 	}
+
+	// Macintosh verison of indy3ega used different interface, so adjust values.
+	if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
+		if (a == 1 && (cmd >= 101 && cmd <= 108)) {
+			if (cmd == 107) {
+				VAR(67) -= 2;
+				inventoryScript();
+				return;
+			} else if (cmd == 108) {
+				VAR(67) += 2;
+				inventoryScript();
+				return;
+			} else {
+				args[0] = 3;
+				args[1] = VAR(83 + (cmd - 101));
+			}
+		}
+	}
+
 	if (verbScript)
 		runScript(verbScript, 0, 0, args);
 }
