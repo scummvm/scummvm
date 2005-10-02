@@ -477,7 +477,17 @@ void Puzzle::solicitHint(void) {
 
 	Common::g_timer->removeTimerProc(&hintTimerCallback);
 
-	switch(_hintRqState) {
+	switch (_hintRqState) {
+	case kRQSpeaking:
+		if (_vm->_actor->isSpeaking()) {
+			Common::g_timer->installTimerProc(&hintTimerCallback, 50000, this);
+			break;
+		}
+
+		_hintRqState = _hintNextRqState;
+		Common::g_timer->installTimerProc(&hintTimerCallback, 333333, this);
+		break;
+
 	case kRQNoHint:
 		//	Pick a random hint request.
 		i = _hintOffer++;
@@ -500,8 +510,9 @@ void Puzzle::solicitHint(void) {
 			_hintRqState = kRQSakkaDenies;
 			Common::g_timer->installTimerProc(&hintTimerCallback, 200000, this);
 		} else {
-			_hintRqState = kRQHintRequested;
-			Common::g_timer->installTimerProc(&hintTimerCallback, 400000, this);
+			_hintRqState = kRQSpeaking;
+			_hintNextRqState = kRQHintRequested;
+			Common::g_timer->installTimerProc(&hintTimerCallback, 50000, this);
 		}
 
 		break;
@@ -512,8 +523,9 @@ void Puzzle::solicitHint(void) {
 
 		_vm->_interface->setRightPortrait(RID_ITE_SAKKA_APPRAISING);
 
-		_hintRqState = kRQHintRequestedStage2;
-		Common::g_timer->installTimerProc(&hintTimerCallback, 400000, this);
+		_hintRqState = kRQSpeaking;
+		_hintNextRqState = kRQHintRequestedStage2;
+		Common::g_timer->installTimerProc(&hintTimerCallback, 50000, this);
 
 		_vm->_interface->converseClear();
 		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 1, 0, 0 );

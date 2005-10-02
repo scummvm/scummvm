@@ -40,7 +40,8 @@ private:
 		kRQHintRequested = 1,
 		kRQHintRequestedStage2 = 2,
 		kRQSakkaDenies = 3,
-		kRQSkipEverything = 4
+		kRQSkipEverything = 4,
+		kRQSpeaking = 5
 	};
 
 	SagaEngine *_vm;
@@ -51,6 +52,7 @@ private:
 	bool _sliding;
 
 	kRQStates _hintRqState;
+	kRQStates _hintNextRqState;
 	int _hintGiver;
 	int _hintSpeaker;
 	int _hintOffer;
