@@ -1577,6 +1577,7 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 
 void Actor::drawActors() {
 	if (_vm->_anim->hasCutaway()) {
+		drawSpeech();
 		return;
 	}
 
