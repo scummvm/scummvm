@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef KYRASCRIPT_H
+#define KYRASCRIPT_H
 
 namespace Kyra {
 // TODO:

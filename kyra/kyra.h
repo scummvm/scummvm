@@ -27,6 +27,8 @@
 
 namespace Kyra {
 
+#define MAX_NUM_ROOMS 12
+
 enum {
 	GF_FLOPPY  = 1 << 0,
 	GF_TALKIE  = 1 << 1,
@@ -64,12 +66,18 @@ struct Shape {
 };
 
 struct Room {
-	uint8 id;
+//	uint8 id;
 	uint16 northExit;
 	uint16 eastExit;
 	uint16 southExit;
 	uint16 westExit;
 	uint8 itemsTable[12];
+	const char *filename;
+};
+
+struct Cursor {
+	int x, y;
+	int w, h;
 };
 
 struct TalkCoords {
@@ -86,6 +94,7 @@ struct WSAMovieV1;
 class MusicPlayer;
 class Resource;
 class Screen;
+class Sprites;
 
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
@@ -162,11 +171,19 @@ protected:
 	void snd_setSoundEffectFile(int file);
 	void snd_playSoundEffect(int track);
 	void snd_seqMessage(int msg);
-		
+	
+	void loadRoom(uint16 roomID);
+	void drawRoom();
+	void delay(uint32 millis);
+	void loadPalette(const char *filename, uint8 *palData);
+	void setCursor(uint8 cursorID);
+	void setupRooms();
+
 	uint8 _game;
 	bool _fastMode;
 	bool _quitFlag;
 	bool _skipIntroFlag;
+	bool _abortIntroFlag;
 	char _talkBuffer[300];
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
 	TalkCoords _talkCoords;
@@ -174,14 +191,21 @@ protected:
 	uint16 _talkMessageH;
 	bool _talkMessagePrinted;
 	uint8 _flagsTable[51];
+	uint16 _gameSpeed;
 
+	uint16 _currentRoom;
 	bool _seq_copyViewOffs;
 	uint8 *_seq_handShapes[3];
 
 	Resource *_res;
 	Screen *_screen;
 	MusicPlayer *_midi;
+	Sprites *_sprites;
+	Room _rooms[MAX_NUM_ROOMS];
 
+	static const Cursor _cursors[];
+	static const int _cursorsCount;
+	
 	// these tables are specific to the demo version
 	static const uint8 _seq_demoData_WestwoodLogo[];
 	static const uint8 _seq_demoData_KyrandiaLogo[];

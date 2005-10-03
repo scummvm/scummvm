@@ -38,7 +38,10 @@
 #include "kyra/screen.h"
 #include "kyra/script.h"
 #include "kyra/sound.h"
+#include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
+
+#define TEST_SPRITES 1
 
 using namespace Kyra;
 
@@ -164,6 +167,8 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_res);
 	_screen = new Screen(this, _system);
 	assert(_screen);
+	_sprites = new Sprites(this, _system);
+	assert(_sprites);
 
 	_fastMode = false;
 	_talkCoords.y = 0x88;
@@ -177,6 +182,7 @@ int KyraEngine::init(GameDetector &detector) {
 }
 
 KyraEngine::~KyraEngine() {
+	delete _sprites;
 	delete _screen;
 	delete _res;
 	delete _midi;
@@ -196,6 +202,8 @@ int KyraEngine::go() {
 	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
 	_screen->setScreenDim(0);
 
+	_abortIntroFlag = false;
+
 	if (_game == KYRA1DEMO) {
 		seq_demo();
 	} else {
@@ -203,7 +211,6 @@ int KyraEngine::go() {
 		startup();
 		mainLoop();
 	}
-
 	return 0;
 }
 
@@ -213,13 +220,149 @@ void KyraEngine::startup() {
 	_screen->setTextColorMap(colorMap);
 //	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
+	_gameSpeed = 50;
 	memset(_flagsTable, 0, sizeof(_flagsTable));
+	setupRooms();
 	// XXX
+}
+
+void KyraEngine::delay(uint32 amount) {
+	OSystem::Event event;
+	uint32 start = _system->getMillis();
+	do {
+		while (_system->pollEvent(event)) {
+			switch (event.type) {
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.keycode == 'q' || event.kbd.keycode == 27) {
+					_quitFlag = true;
+				} else if (event.kbd.keycode == ' ') {
+					loadRoom((++_currentRoom) % MAX_NUM_ROOMS);
+				}
+				break;
+			// XXX
+			case OSystem::EVENT_LBUTTONDOWN:
+				loadRoom((++_currentRoom) % MAX_NUM_ROOMS);
+				break;
+			case OSystem::EVENT_RBUTTONDOWN:
+				loadRoom((--_currentRoom) % MAX_NUM_ROOMS);
+				break;
+			case OSystem::EVENT_QUIT:
+				_quitFlag = true;
+				break;
+			default:
+				break;
+			}
+		}
+		if (amount > 0) {
+			_system->delayMillis((amount > 10) ? 10 : amount);
+		}
+	} while (_system->getMillis() < start + amount);
+}
+
+void KyraEngine::drawRoom() {
+	//_screen->clearPage(0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 10, 0);
+	_screen->copyRegion(4, 4, 4, 4, 308, 132, 14, 0);
+	_sprites->doAnims();
+	_sprites->drawSprites(14, 0);
+}
+
+void KyraEngine::setCursor(uint8 cursorID) {
+	debug(9, "KyraEngine::setCursor(%i)", cursorID);
+	assert(cursorID < _cursorsCount);
+
+	loadBitmap("mouse.cps", 2, 2, _screen->_currentPalette); 
+	uint8 *cursor = new uint8[_cursors[cursorID].w * _cursors[cursorID].h];
+
+	_screen->copyRegionToBuffer(2, _cursors[cursorID].x, _cursors[cursorID].y, _cursors[cursorID].w, _cursors[cursorID].h, cursor);
+	_system->setMouseCursor(cursor, _cursors[cursorID].w, _cursors[cursorID].h, 0, 0, 0);
+	_system->showMouse(true);
+
+	delete[] cursor;
+}
+
+void KyraEngine::setupRooms() {
+	// XXX 
+	// Just a few sample rooms, most with sprite anims.
+	memset(_rooms, 0, sizeof(_rooms));
+	_rooms[0].filename = "gemcut";
+	_rooms[1].filename = "arch";
+	_rooms[2].filename = "sorrow";
+	_rooms[3].filename = "emcav";
+	_rooms[4].filename = "extpot";
+	_rooms[5].filename = "spell";
+	_rooms[6].filename = "song";
+	_rooms[7].filename = "belroom";
+	_rooms[8].filename = "kyragem";
+	_rooms[9].filename = "lephole";
+	_rooms[10].filename = "sickwil";
+	_rooms[11].filename = "temple";
+}
+
+void KyraEngine::loadRoom(uint16 roomID) {
+	debug(9, "KyraEngine::loadRoom(%i)", roomID);
+	char buf[12];
+	
+	loadPalette("palette.col", _screen->_currentPalette);
+
+	//loadPalette(_rooms[roomID].palFilename, _screen->_currentPalette);
+	//_screen->setScreenPalette(_screen->_currentPalette);
+
+	_screen->clearPage(14);
+	_screen->clearPage(0);
+	_screen->clearPage(10);
+
+	// Loading GUI bitmap
+	if (_game == KYRA1CD) {
+		loadBitmap("MAIN_ENG.CPS", 10, 10, 0);
+	} else {
+		loadBitmap("MAIN15.CPS", 10, 10, 0);
+	}
+
+	// Loading main room background
+	strncpy(buf, _rooms[roomID].filename, 8);
+	strcat(buf, ".cps");
+	loadBitmap( buf, 14, 14, 0); 
+
+	// Loading the room mask
+	strncpy(buf, _rooms[roomID].filename, 8);
+	strcat(buf, ".msc");
+	loadBitmap( buf, 12, 12, 0); 
+
+	// Loading room data
+	strncpy(buf, _rooms[roomID].filename, 8);
+	strcat(buf, ".dat");
+	_sprites->loadDAT(buf); 
+
+	setCursor(0);
 }
 
 void KyraEngine::mainLoop() {
 	debug(9, "KyraEngine::mainLoop()");
-	// XXX
+#ifdef TEST_SPRITES
+	_currentRoom = 0;
+	loadRoom(_currentRoom);
+
+	while (!_quitFlag) {
+		int32 frameTime = (int32)_system->getMillis();
+
+		drawRoom();
+		_screen->updateScreen();
+
+		delay((frameTime + _gameSpeed) - _system->getMillis());
+	}
+#endif
+}
+
+void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
+	debug(9, "KyraEngine::loadPalette('%s' 0x%X)", filename, palData);
+	uint32 fileSize = 0;
+	uint8 *srcData = _res->fileData(filename, &fileSize);
+
+	if (palData && fileSize) {
+		debug(9, "Loading a palette of size %i from %s", fileSize, filename);
+		memcpy(palData, srcData, fileSize);		
+	}
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
@@ -230,6 +373,7 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	uint32 imgSize = READ_LE_UINT32(srcData + 4);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 	if (palData && palSize) {
+		debug(9, "Loading a palette of size %i from %s", palSize, filename);
 		memcpy(palData, srcData + 10, palSize);		
 	}
 	uint8 *srcPtr = srcData + 10 + palSize;
@@ -446,6 +590,8 @@ void KyraEngine::waitTicks(int ticks) {
 					if (event.kbd.keycode == 'f') {
 						_fastMode = !_fastMode;
 					}
+				} else if (event.kbd.keycode == 13 || event.kbd.keycode == 32 || event.kbd.keycode == 27) {
+					_abortIntroFlag = true;
 				}
 				break;
 			default:
@@ -504,6 +650,7 @@ void KyraEngine::seq_demo() {
 	_screen->fadeFromBlack();
 	waitTicks(60);
 	_screen->fadeToBlack();
+	_midi->stopMusic();
 }
 
 void KyraEngine::seq_intro() {
@@ -527,6 +674,7 @@ void KyraEngine::seq_intro() {
 	setTalkCoords(136);
 	waitTicks(30);
 	_seq_copyViewOffs = false;
+	_midi->stopMusic();
 }
 
 void KyraEngine::seq_introLogos() {
@@ -658,7 +806,7 @@ void KyraEngine::seq_copyView() {
 
 bool KyraEngine::seq_skipSequence() const {
 	debug(9, "KyraEngine::seq_skipSequence()");
-	return _quitFlag;
+	return _quitFlag || _abortIntroFlag;
 }
 
 bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {

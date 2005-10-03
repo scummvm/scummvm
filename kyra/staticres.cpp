@@ -467,4 +467,15 @@ const char *KyraEngine::_xmidiFiles[] = {
 
 const int KyraEngine::_xmidiFilesCount = ARRAYSIZE(_xmidiFiles);
 
+const Cursor KyraEngine::_cursors[] = {
+	{   0,  0,  8, 10 }, // 0: Regular cursor
+	{  80, 18, 15, 10 }, // 1: Up arrow
+	{  95, 18, 15, 10 }, // 2: Right arrow
+	{ 110, 18, 15, 10 }, // 3: Down arrow
+	{ 125, 18, 15, 10 }, // 4: Left arrow
+	{ 140, 18, 15, 10 }  // 5: Stopsign
+};
+
+const int KyraEngine::_cursorsCount = ARRAYSIZE(_cursors);
+
 } // End of namespace Kyra

@@ -110,7 +110,8 @@ public:
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
-	
+	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
+
 	int _charWidth;
 	int _charOffset;
 	int _curPage;

@@ -224,6 +224,14 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	}
 }
 
+void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
+	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H && dest);
+	uint8 *pagePtr = getPagePtr(pageNum);
+	for (int i = y; i < y + h; i++) {
+		memcpy(dest + (i - y) * w, pagePtr + i * SCREEN_W + x, w);
+	}
+}
+
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
 	debug(9, "Screen::copyBlockToPage(%d, %d, %d, %d, %d, 0x%X)", pageNum, x, y, w, h, src);
 	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H);
