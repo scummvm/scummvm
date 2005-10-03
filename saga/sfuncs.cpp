@@ -547,8 +547,14 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		return;
 	}
 
-	if (_vm->getGameType() == GType_IHNM)
+	if (_vm->getGameType() == GType_IHNM) {
 		warning("FIXME: implement sfScriptGotoScene differences for IHNM");
+
+		// Since it doesn't look like the IHNM scripts remove the
+		// cutaway after the intro, this is probably the best place to
+		// to it.
+		_vm->_anim->clearCutaway();
+	}
 
 	// It is possible to leave scene when converse panel is on,
 	// particulalrly it may happen at Moneychanger tent. This

@@ -116,6 +116,7 @@ public:
 	void playCutaway(int cut, bool fade);
 	void endCutaway(void);
 	void returnFromCutaway(void);
+	void clearCutaway(void);
 
 	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);

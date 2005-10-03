@@ -159,32 +159,41 @@ void Anim::endCutaway(void) {
 }
 
 void Anim::returnFromCutaway(void) {
-	// I believe this is called by scripts after running a series of
-	// cutaways.
+	// I believe this is called by scripts after running a cutaway to
+	// ensure that we return to the scene as if nothing had happened. It's
+	// not called by the IHNM intro, presumably because there is no old
+	// scene to return to.
 
 	debug(0, "returnFromCutaway()");
 
 	if (_cutawayActive) {
-		int i;
-
-		_cutawayActive = false;
-
-		for (i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
-			delete _cutawayAnimations[i];
-			_cutawayAnimations[i] = NULL;
-		}
-
-		for (i = 0; i < MAX_ANIMATIONS; i++) {
-			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
-				resume(i, 0);
-			}
-		}
+		// Note that clearCutaway() sets _cutawayActive to false.
+		clearCutaway();
 
 		// TODO: Handle fade up, if we previously faded down
 
 		// TODO: Restore the scene
 
 		// TODO: Restore the animations
+
+		for (int i = 0; i < MAX_ANIMATIONS; i++) {
+			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
+				resume(i, 0);
+			}
+		}
+	}
+}
+
+void Anim::clearCutaway(void) {
+	debug(0, "clearCutaway()\n");
+
+	if (_cutawayActive) {
+		_cutawayActive = false;
+
+		for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+			delete _cutawayAnimations[i];
+			_cutawayAnimations[i] = NULL;
+		}
 
 		_vm->_gfx->showCursor(true);
 	}
