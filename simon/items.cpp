@@ -159,9 +159,9 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 27:{									/* item unk3 is */
+		case 27:{									/* item state is */
 				Item *item = getNextItemPtr();
-				condition = ((uint) item->unk3 == getVarOrWord());
+				condition = ((uint) item->state == getVarOrWord());
 			}
 			break;
 
@@ -311,28 +311,28 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 59:{									/* item inc unk3 */
+		case 59:{									/* item inc state */
 				Item *item = getNextItemPtr();
-				if (item->unk3 <= 30000)
-					setItemUnk3(item, item->unk3 + 1);
+				if (item->state <= 30000)
+					setItemState(item, item->state + 1);
 			}
 			break;
 
-		case 60:{									/* item dec unk3 */
+		case 60:{									/* item dec state */
 				Item *item = getNextItemPtr();
-				if (item->unk3 >= 0)
-					setItemUnk3(item, item->unk3 - 1);
+				if (item->state >= 0)
+					setItemState(item, item->state - 1);
 			}
 			break;
 
-		case 61:{									/* item set unk3 */
+		case 61:{									/* item set state */
 				Item *item = getNextItemPtr();
 				int value = getVarOrWord();
 				if (value < 0)
 					value = 0;
 				if (value > 30000)
 					value = 30000;
-				setItemUnk3(item, value);
+				setItemState(item, value);
 			}
 			break;
 
@@ -653,19 +653,19 @@ int SimonEngine::runScript() {
 
 		case 115:{									/* item has flag */
 				Item *item = getNextItemPtr();
-				condition = (item->unk4 & (1 << getVarOrByte())) != 0;
+				condition = (item->classFlags & (1 << getVarOrByte())) != 0;
 			}
 			break;
 
 		case 116:{									/* item set flag */
 				Item *item = getNextItemPtr();
-				item->unk4 |= (1 << getVarOrByte());
+				item->classFlags |= (1 << getVarOrByte());
 			}
 			break;
 
 		case 117:{									/* item clear flag */
 				Item *item = getNextItemPtr();
-				item->unk4 &= ~(1 << getVarOrByte());
+				item->classFlags &= ~(1 << getVarOrByte());
 			}
 			break;
 
@@ -761,7 +761,7 @@ int SimonEngine::runScript() {
 
 		case 136:{									/* set var to item unk3 */
 				Item *item = getNextItemPtr();
-				writeNextVarContents(item->unk3);
+				writeNextVarContents(item->state);
 			}
 			break;
 
@@ -918,7 +918,7 @@ int SimonEngine::runScript() {
 		case 165:{									/* item unk1 unk2 is */
 				Item *item = getNextItemPtr();
 				int16 a = getNextWord(), b = getNextWord();
-				condition = (item->unk2 == a && item->unk1 == b);
+				condition = (item->adjective == a && item->noun == b);
 			} break;
 
 		case 166:{									/* set bit2 */

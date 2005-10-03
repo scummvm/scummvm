@@ -181,14 +181,14 @@ void SimonEngine::readGamePcText(Common::File *in) {
 void SimonEngine::readItemFromGamePc(Common::File *in, Item *item) {
 	uint32 type;
 
-	item->unk2 = in->readUint16BE();
-	item->unk1 = in->readUint16BE();
-	item->unk3 = in->readUint16BE();
+	item->adjective = in->readUint16BE();
+	item->noun = in->readUint16BE();
+	item->state = in->readUint16BE();
 	item->sibling = (uint16)fileReadItemID(in);
 	item->child = (uint16)fileReadItemID(in);
 	item->parent = (uint16)fileReadItemID(in);
 	in->readUint16BE();
-	item->unk4 = in->readUint16BE();
+	item->classFlags = in->readUint16BE();
 	item->children = NULL;
 
 	type = in->readUint32BE();

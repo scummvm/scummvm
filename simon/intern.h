@@ -54,11 +54,10 @@ struct Item {
 	uint16 parent;
 	uint16 child;
 	uint16 sibling;
-	int16 unk1;
-	int16 unk2;
-	int16 unk3;										/* signed int */
-	uint16 unk4;
-	uint16 xxx_1;									/* unused? */
+	int16 noun;
+	int16 adjective;
+	int16 state;										/* signed int */
+	uint16 classFlags;
 	Child *children;
 
 	Item() { memset(this, 0, sizeof(*this)); }

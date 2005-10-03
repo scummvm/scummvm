@@ -435,8 +435,8 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 
 		f->writeUint16BE(item->parent);
 		f->writeUint16BE(item->sibling);
-		f->writeUint16BE(item->unk3);
-		f->writeUint16BE(item->unk4);
+		f->writeUint16BE(item->state);
+		f->writeUint16BE(item->classFlags);
 
 		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
 		if (child1) {
@@ -547,8 +547,8 @@ bool SimonEngine::load_game(uint slot) {
 			item->sibling = sibling;
 		}
 
-		item->unk3 = f->readUint16BE();
-		item->unk4 = f->readUint16BE();
+		item->state = f->readUint16BE();
+		item->classFlags = f->readUint16BE();
 
 		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
 		if (child1 != NULL) {

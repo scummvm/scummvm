@@ -442,7 +442,7 @@ protected:
 	uint itemPtrToID(Item *id);
 
 	Item *derefItem(uint item);
-	void setItemUnk3(Item *item, int value);
+	void setItemState(Item *item, int value);
 
 	void showMessageFormat(const char *s, ...);
 	const byte *getStringPtrByID(uint string_id);

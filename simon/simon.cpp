@@ -882,8 +882,8 @@ void SimonEngine::loginPlayer() {
 	Child *child;
 
 	_item1 = _itemArrayPtr[1];
-	_item1->unk2 = -1;
-	_item1->unk1 = 10000;
+	_item1->adjective = -1;
+	_item1->noun = 10000;
 
 	child = (Child *)allocateChildBlock(_item1, 3, sizeof(Child));
 	if (child == NULL)
@@ -1050,8 +1050,8 @@ void SimonEngine::allocTablesHeap() {
 	_tablesHeapPtr = (byte *)calloc(TABLES_MEM_SIZE, 1);
 }
 
-void SimonEngine::setItemUnk3(Item *item, int value) {
-	item->unk3 = value;
+void SimonEngine::setItemState(Item *item, int value) {
+	item->state = value;
 }
 
 int SimonEngine::getNextWord() {
@@ -1625,7 +1625,7 @@ void SimonEngine::o_setup_cond_c() {
 		_objectItem = derefItem(getItem1Ptr()->parent);
 
 	if (_objectItem != NULL) {
-		_scriptCondC = _objectItem->unk1;
+		_scriptCondC = _objectItem->noun;
 	} else {
 		_scriptCondC = -1;
 	}
@@ -1829,7 +1829,7 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 	while (item_ptr && unk1-- != 0) {
 		num_sibs_with_flag = 0;
 		while (item_ptr && width_div_3 > num_sibs_with_flag) {
-			if ((unk2 == 0 || item_ptr->unk4 & unk2) && has_item_childflag_0x10(item_ptr))
+			if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr))
 				if (!(_game & GF_SIMON2)) {
 					num_sibs_with_flag++;
 				} else {
@@ -1851,7 +1851,7 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 	j = 0;
 
 	while (item_ptr) {
-		if ((unk2 == 0 || item_ptr->unk4 & unk2) && has_item_childflag_0x10(item_ptr)) {
+		if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr)) {
 			if (item_again == false) {
 				fcs_ptr->fcs_data->e[k].item = item_ptr;
 				if (!(_game & GF_SIMON2)) {
@@ -2240,13 +2240,13 @@ void SimonEngine::handle_verb_clicked(uint verb) {
 	}
 
 	if (_subjectItem) {
-		_scriptCondB = _subjectItem->unk1;
+		_scriptCondB = _subjectItem->noun;
 	} else {
 		_scriptCondB = -1;
 	}
 
 	if (_objectItem) {
-		_scriptCondC = _objectItem->unk1;
+		_scriptCondC = _objectItem->noun;
 	} else {
 		_scriptCondC = -1;
 	}
@@ -2981,7 +2981,7 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	item = _vcItemArray[a];
 	if (item == NULL)
 		return true;
-	return item->unk3 == b;
+	return item->state == b;
 }
 
 // OK
