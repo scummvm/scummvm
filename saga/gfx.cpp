@@ -163,7 +163,6 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 	}
 }
 
-
 void Gfx::setPalette(const PalEntry *pal) {
 	int i;
 	byte *ppal;
@@ -180,6 +179,15 @@ void Gfx::setPalette(const PalEntry *pal) {
 		memset(&_currentPal[255 * 4], 0, 4);
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+}
+
+void Gfx::setPaletteColor(int n, int r, int g, int b) {
+	_currentPal[4 * n + 0] = r;
+	_currentPal[4 * n + 1] = g;
+	_currentPal[4 * n + 2] = b;
+	_currentPal[4 * n + 3] = 0;
+
+	_system->setPalette(_currentPal, n, 1);
 }
 
 void Gfx::getCurrentPal(PalEntry *src_pal) {

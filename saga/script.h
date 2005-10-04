@@ -562,7 +562,7 @@ private:
 	void sfPsychicProfileOff(SCRIPTFUNC_PARAMS);
 	void sfSetSpeechBox(SCRIPTFUNC_PARAMS);
 	void sf74(SCRIPTFUNC_PARAMS);
-	void sf75(SCRIPTFUNC_PARAMS);
+	void sfSetPortraitBgColor(SCRIPTFUNC_PARAMS);
 	void sfScriptStartVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptEndVideo(SCRIPTFUNC_PARAMS);

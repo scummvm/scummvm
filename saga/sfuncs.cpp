@@ -210,7 +210,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfFadeMusic),
 		OPCODE(sfNull),
 		OPCODE(sf74),
-		OPCODE(sf75),
+		OPCODE(sfSetPortraitBgColor),
 		OPCODE(sfScriptStartCutAway),
 		OPCODE(sfReturnFromCutAway),
 		OPCODE(sfEndCutAway),
@@ -1844,8 +1844,12 @@ void Script::sf74(SCRIPTFUNC_PARAMS) {
 	SF_stub("sf74", thread, nArgs);
 }
 
-void Script::sf75(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf75", thread, nArgs);
+void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
+	int16 red = thread->pop();
+	int16 green = thread->pop();
+	int16 blue = thread->pop();
+
+	_vm->_gfx->setPaletteColor(254, red, green, blue);
 }
 
 void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {

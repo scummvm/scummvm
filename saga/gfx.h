@@ -135,6 +135,7 @@ public:
 	}
 
 	void setPalette(const PalEntry *pal);
+	void setPaletteColor(int n, int r, int g, int b);
 	void getCurrentPal(PalEntry *src_pal);
 	void palToBlack(PalEntry *src_pal, double percent);
 	void blackToPal(PalEntry *src_pal, double percent);
