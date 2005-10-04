@@ -332,8 +332,6 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		return true;
 	}
 
-	_vm->_scene->cutawaySkip();
-
 	switch (_panelMode) {
 	case kPanelNull:
 		if (ascii == 27) { // Esc
@@ -343,6 +341,8 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 				if (!_disableAbortSpeeches)
 					_vm->_actor->abortAllSpeeches();
 			}
+			_vm->_scene->cutawaySkip();
+
 			return true;
 		}
 		break;
