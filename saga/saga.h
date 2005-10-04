@@ -575,7 +575,8 @@ public:
 	int16 _framesEsc;
 
 	uint32 _globalFlags;
-	byte _ethicsPoints[5];	// TODO: Verify that this is large enough
+	int16 _ethicsPoints[8];
+	int _spiritualBarometer;
 
 	int _soundVolume;
 	int _musicVolume;

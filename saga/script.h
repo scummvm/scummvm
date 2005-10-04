@@ -561,7 +561,7 @@ private:
 	void sfPsychicProfile(SCRIPTFUNC_PARAMS);
 	void sfPsychicProfileOff(SCRIPTFUNC_PARAMS);
 	void sfSetSpeechBox(SCRIPTFUNC_PARAMS);
-	void sf74(SCRIPTFUNC_PARAMS);
+	void sfSetChapterPoints(SCRIPTFUNC_PARAMS);
 	void sfSetPortraitBgColor(SCRIPTFUNC_PARAMS);
 	void sfScriptStartVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS);
@@ -575,7 +575,7 @@ private:
 	void sfTestGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfSetPoints(SCRIPTFUNC_PARAMS);
 	void sf103(SCRIPTFUNC_PARAMS);
-	void sf104(SCRIPTFUNC_PARAMS);
+	void sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS);
 
 	void SF_stub(const char *name, ScriptThread *thread, int nArgs);
 };

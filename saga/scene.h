@@ -261,6 +261,8 @@ class Scene {
 		return _sceneLUT[sceneNumber];
 	}
 	int currentSceneNumber() const { return _sceneNumber; }
+	int currentChapterNumber() const { return _chapterNumber; }
+	void setChapterNumber(int ch) { _chapterNumber = ch; }
 	int getOutsetSceneNumber() const { return _outsetSceneNumber; }
 	int currentSceneResourceId() const { return _sceneResourceId; }
 	void cutawaySkip() {
@@ -288,6 +290,7 @@ class Scene {
 	SceneQueueList _sceneQueue;
 	bool _sceneLoaded;
 	int _sceneNumber;
+	int _chapterNumber;
 	int _outsetSceneNumber;
 	int _sceneResourceId;
 	bool _inGame;

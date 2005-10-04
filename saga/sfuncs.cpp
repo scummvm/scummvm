@@ -209,7 +209,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfRand),
 		OPCODE(sfFadeMusic),
 		OPCODE(sfNull),
-		OPCODE(sf74),
+		OPCODE(sfSetChapterPoints),
 		OPCODE(sfSetPortraitBgColor),
 		OPCODE(sfScriptStartCutAway),
 		OPCODE(sfReturnFromCutAway),
@@ -239,7 +239,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfDebugShowData),
 		OPCODE(sfWaitFramesEsc),
 		OPCODE(sf103),
-		OPCODE(sf104)
+		OPCODE(sfDisableAbortSpeeches)
 	};
 	if (_vm->getGameType() == GType_IHNM)
 		_scriptFunctionsList = IHNMscriptFunctionsList;
@@ -1840,8 +1840,13 @@ void Script::finishDialog(int replyID, int flags, int bitOffset) {
 	wakeUpThreads(kWaitTypeDialogBegin);
 }
 
-void Script::sf74(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf74", thread, nArgs);
+void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
+	int16 ethics = thread->pop();
+	int16 barometer = thread->pop();
+	int chapter = _vm->_scene->currentChapterNumber();
+
+	_vm->_ethicsPoints[chapter] = ethics;
+	_vm->_spiritualBarometer = barometer;
 }
 
 void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
@@ -2002,8 +2007,10 @@ void Script::sf103(SCRIPTFUNC_PARAMS) {
 	SF_stub("sf103", thread, nArgs);
 }
 
-void Script::sf104(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf104", thread, nArgs);
+void Script::sfDisableAbortSpeeches(SCRIPTFUNC_PARAMS) {
+	int value = thread->pop();
+
+	_vm->_interface->disableAbortSpeeches(value != 0);
 }
 
 void Script::sfNull(SCRIPTFUNC_PARAMS) {

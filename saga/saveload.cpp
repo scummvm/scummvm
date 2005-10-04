@@ -181,7 +181,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	if (getGameType() != GType_ITE) {
 		out->writeUint32LE(_globalFlags);
 		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
-			out->writeByte(_ethicsPoints[i]);
+			out->writeSint16LE(_ethicsPoints[i]);
 	}
 
 	_interface->saveState(out);
@@ -226,7 +226,7 @@ void SagaEngine::load(const char *fileName) {
 	if (getGameType() != GType_ITE) {
 		_globalFlags = in->readUint32LE();
 		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
-			_ethicsPoints[i] = in->readByte();
+			_ethicsPoints[i] = in->readSint16LE();
 	}
 
 	_interface->loadState(in);

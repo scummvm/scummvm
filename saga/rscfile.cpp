@@ -29,6 +29,7 @@
 #include "saga/interface.h"
 #include "saga/music.h"
 #include "saga/rscfile.h"
+#include "saga/scene.h"
 #include "saga/sndres.h"
 #include "saga/stream.h"
 
@@ -596,6 +597,9 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		_vm->_script->loadVoiceLUT(_vm->_script->_globalVoiceLUT, resourcePointer, resourceLength);
 		free(resourcePointer);
 	}
+
+	_vm->_spiritualBarometer = 0;
+	_vm->_scene->setChapterNumber(chapter);
 }
 
 } // End of namespace Saga

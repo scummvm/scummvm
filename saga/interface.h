@@ -176,7 +176,8 @@ enum GameColors {
 	kITEColorLightBlue94 = 0x94,
 	kITEColorLightBlue96 = 0x96,
 
-	kIHNMColorBlack = 0xfa
+	kIHNMColorBlack = 0xfa,
+	kIHNMColorPortrait = 0xfe
 };
 
 enum StatusTextInputState {
@@ -227,6 +228,7 @@ public:
 		_portraitBgColor.green = green;
 		_portraitBgColor.blue = blue;
 	}
+
 	void draw();
 	void drawOption();
 	void drawQuit();
@@ -238,6 +240,8 @@ public:
 
 	bool processAscii(uint16 ascii, bool synthetic = false);
 	void processKeyUp(uint16 ascii);
+
+	void disableAbortSpeeches(bool d) { _disableAbortSpeeches = d; }
 
 	bool _textInput;
 
@@ -408,6 +412,8 @@ private:
 	InterfacePanel _loadPanel;
 	InterfacePanel _savePanel;
 	PanelButton * _saveEdit;
+
+	bool _disableAbortSpeeches;
 
 	int _saveReminderState;
 	bool _active;

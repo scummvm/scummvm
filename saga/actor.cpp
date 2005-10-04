@@ -575,10 +575,7 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 			error("Actor::loadObjList frameListResourceId != 0");
 		}
 		object->_scriptEntrypointNumber = objectS.readUint32LE();
-		objectS.readByte();
-		objectS.readByte();
-		objectS.readByte();
-		objectS.readByte();
+		objectS.readUint32LE(); // xSprite *dSpr;
 		objectS.readUint16LE(); //LEFT
 		objectS.readUint16LE(); //RIGHT
 		objectS.readUint16LE(); //TOP
@@ -1078,11 +1075,6 @@ void Actor::handleActions(int msec, bool setup) {
 		if ((_vm->getGameType() == GType_ITE) && (i == ACTOR_DRAGON_INDEX)) {
 			moveDragon(actor);
 			continue;
-		}
-
-		if (_vm->getGameType() == GType_IHNM) {
-			if (actor->_spriteList.spriteCount == 0)
-				continue;
 		}
 
 		switch (actor->_currentAction) {

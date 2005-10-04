@@ -202,6 +202,8 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_textInput = false;
 	_statusTextInput = false;
 	_statusTextInputState = kStatusTextInputFirstRun;
+
+	_disableAbortSpeeches = false;
 }
 
 Interface::~Interface(void) {
@@ -338,7 +340,8 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
-				_vm->_actor->abortAllSpeeches();
+				if (!_disableAbortSpeeches)
+					_vm->_actor->abortAllSpeeches();
 			}
 			return true;
 		}
@@ -591,10 +594,13 @@ void Interface::draw() {
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
-		_vm->_gfx->setPaletteColor(254,
-			_portraitBgColor.red,
-			_portraitBgColor.green,
-			_portraitBgColor.blue);
+		if (_vm->_spiritualBarometer > 255)
+			_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
+		else
+			_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
+				_portraitBgColor.red,
+				_portraitBgColor.green,
+				_portraitBgColor.blue);
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
