@@ -182,12 +182,30 @@ void Gfx::setPalette(const PalEntry *pal) {
 }
 
 void Gfx::setPaletteColor(int n, int r, int g, int b) {
-	_currentPal[4 * n + 0] = r;
-	_currentPal[4 * n + 1] = g;
-	_currentPal[4 * n + 2] = b;
-	_currentPal[4 * n + 3] = 0;
+	bool update = false;
 
-	_system->setPalette(_currentPal, n, 1);
+	// This function may get called a lot. To avoid forcing full-screen
+	// updates, only update the palette if the color actually changes.
+
+	if (_currentPal[4 * n + 0] != r) {
+		_currentPal[4 * n + 0] = r;
+		update = true;
+	}
+	if (_currentPal[4 * n + 1] != g) {
+		_currentPal[4 * n + 1] = g;
+		update = true;
+	}
+	if (_currentPal[4 * n + 2] != b) {
+		_currentPal[4 * n + 2] = b;
+		update = true;
+	}
+	if (_currentPal[4 * n + 3] != 0) {
+		_currentPal[4 * n + 3] = 0;
+		update = true;
+	}
+
+	if (update)
+		_system->setPalette(_currentPal, n, 1);
 }
 
 void Gfx::getCurrentPal(PalEntry *src_pal) {

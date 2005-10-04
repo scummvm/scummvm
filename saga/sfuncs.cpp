@@ -1849,7 +1849,7 @@ void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
 	int16 green = thread->pop();
 	int16 blue = thread->pop();
 
-	_vm->_gfx->setPaletteColor(254, red, green, blue);
+	_vm->_interface->setPortraitBgColor(red, green, blue);
 }
 
 void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {

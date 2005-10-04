@@ -76,7 +76,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	size_t resourceLength;
 	int i;
 
-
 	// Load interface module resource file context
 	_interfaceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_interfaceContext == NULL) {
@@ -127,12 +126,13 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		// TODO
 	}
 
+	setPortraitBgColor(0, 0, 0);
+
 	_mainPanel.x = _vm->getDisplayInfo().mainPanelXOffset;
 	_mainPanel.y = _vm->getDisplayInfo().mainPanelYOffset;
 	_mainPanel.currentButton = NULL;
 	_inventoryUpButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryUpButtonIndex);
 	_inventoryDownButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryDownButtonIndex);
-
 
 	_conversePanel.x = _vm->getDisplayInfo().conversePanelXOffset;
 	_conversePanel.y = _vm->getDisplayInfo().conversePanelYOffset;
@@ -451,7 +451,6 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		case '4':
 			converseSetPos(ascii);
 			break;
-
 		}
 		break;
 	case kPanelMap:
@@ -589,6 +588,13 @@ void Interface::draw() {
 		_conversePanel.getRect(rect);
 		backBuffer->blit(rect, _conversePanel.image);
 		converseDisplayTextLines(backBuffer);
+	}
+
+	if (_vm->getGameType() == GType_IHNM) {
+		_vm->_gfx->setPaletteColor(254,
+			_portraitBgColor.red,
+			_portraitBgColor.green,
+			_portraitBgColor.blue);
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
@@ -1444,7 +1450,6 @@ void Interface::drawStatusBar() {
 		return;
 	}
 
-
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
 	rect.top = _vm->getDisplayInfo().statusYOffset;
@@ -1566,7 +1571,6 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 	if (changed) {
 		draw();
 	}
-
 }
 
 //inventory stuff

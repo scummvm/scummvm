@@ -187,7 +187,6 @@ enum StatusTextInputState {
 
 class Interface {
 public:
-
 	Interface(SagaEngine *vm);
 	~Interface(void);
 
@@ -223,6 +222,11 @@ public:
 		_rightPortrait = portrait;
 		draw();
 	}
+	void setPortraitBgColor(int red, int green, int blue) {
+		_portraitBgColor.red = red;
+		_portraitBgColor.green = green;
+		_portraitBgColor.blue = blue;
+	}
 	void draw();
 	void drawOption();
 	void drawQuit();
@@ -246,6 +250,7 @@ public:
 		_statusTextInputString[0] = 0;
 		setStatusText(_statusTextInputString);
 	}
+
 private:
 	static void textInputRepeatCallback(void *refCon);
 
@@ -415,6 +420,7 @@ private:
 	int _statusOnceColor;
 	int _leftPortrait;
 	int _rightPortrait;
+	PalEntry _portraitBgColor;
 
 	Point _lastMousePoint;
 
