@@ -203,8 +203,8 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 		from = 0;
 		numcolors = PAL_ENTRIES;
 	} else {
-		from = 0;
-		numcolors = 248;
+		from = 1;
+		numcolors = 247;
 	}
 
 	for (i = 0, ppal = &_currentPal[from * 4]; i < numcolors; i++, ppal += 4) {
@@ -273,8 +273,8 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 		from = 0;
 		numcolors = PAL_ENTRIES;
 	} else {
-		from = 0;
-		numcolors = 248;
+		from = 1;
+		numcolors = 247;
 	}
 
 	if (percent > 1.0) {
@@ -338,8 +338,8 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		from = 0;
 		numcolors = PAL_ENTRIES;
 	} else {
-		from = 0;
-		numcolors = 248;
+		from = 1;
+		numcolors = 247;
 	}
 
 	if (percent > 1.0) {
