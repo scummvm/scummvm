@@ -77,11 +77,11 @@ struct VgaPointersEntry {
 struct VgaSprite {
 	uint16 id;
 	uint16 image;
-	uint16 base_color;
+	uint16 palette;
 	uint16 x, y;									/* actually signed numbers */
 	uint16 flags;
 	uint16 priority;
-	uint16 paletteMode, fileId;
+	uint16 windowNum, fileId;
 	VgaSprite() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -176,7 +176,7 @@ protected:
 
 	uint32 _lastVgaTick;
 
-	uint16 _op189Flags;
+	uint16 _marks;
 
 	bool _scriptVar2;
 	bool _runScriptReturn1;
@@ -211,8 +211,8 @@ protected:
 	bool _vgaVar9;
 	int16 _scriptUnk1;
 	bool _vgaVar6;
-	int _xScroll, _vgaVar1, _vgaVar2, _xScrollStep, _spriteHeight;
-	const byte *_vgaVar7;
+	int _scrollX, _scrollXMax, _scrollCount, _scrollFlag, _scrollHeight;
+	const byte *_scrollImage;
 	byte _vgaVar8;
 
 	int16 _scriptCondA, _scriptCondB, _scriptCondC;
@@ -235,7 +235,7 @@ protected:
 	uint16 _hitAreaUnk4;
 	uint _lockCounter;
 
-	uint16 _videoPaletteMode;
+	uint16 _windowNum;
 
 	uint _printCharUnk1, _printCharUnk2;
 	uint _numLettersToPrint;
@@ -287,7 +287,7 @@ protected:
 
 	uint16 _timer1, _timer5, _timer4;
 
-	uint16 _vgaBaseDelay;
+	uint16 _frameRate;
 
 	uint16 _vgaCurFile2;
 	uint16 _vgaWaitFor, _vgaCurFileId;
@@ -589,7 +589,7 @@ protected:
 	void ensureVgaResLoadedC(uint vga_res);
 	void ensureVgaResLoaded(uint vga_res);
 
-	void loadSprite(uint paletteMode, uint vga_res, uint vga_sprite_id, uint x, uint y, uint base_color);
+	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_sprite_id);
 	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
@@ -641,8 +641,8 @@ public:
 	void vc27_resetSprite();
 	void vc28_dummy_op();
 	void vc29_stopAllSounds();
-	void vc30_setBaseDelay();
-	void vc31_setPaletteMode();
+	void vc30_setFrameRate();
+	void vc31_setWindow();
 	void vc32_copyVar();
 	void vc33_forceUnlock();
 	void vc34_forceLock();
@@ -673,12 +673,12 @@ public:
 	void vc59();
 	void vc60_killSprite();
 	void vc61_changeSprite();
-	void vc62_fadeOut();
-	void vc63_palette_thing_2();
+	void vc62_fastFadeOut();
+	void vc63_fastFadeIn();
 
 	// Simon2 specific Video Script Opcodes
-	void vc64_skipIfNoSpeech();
-	void vc65_palette_thing_3();
+	void vc64_skipIfSpeechEnded();
+	void vc65_slowFadeIn();
 	void vc66_skipIfNotEqual();
 	void vc67_skipIfGE();
 	void vc68_skipIfLE();
@@ -686,8 +686,8 @@ public:
 	void vc70_queueMusic();
 	void vc71_checkMusicQueue();
 	void vc72_play_track_2();
-	void vc73_setOp189Flag();
-	void vc74_clearOp189Flag();
+	void vc73_setMark();
+	void vc74_clearMark();
 
 protected:
 	void delete_vga_timer(VgaTimerEntry * vte);
@@ -787,7 +787,7 @@ protected:
 	void pause();
 
 	void o_83_helper();
-	void o_190_helper(uint i);
+	void o_waitForMark(uint i);
 	void timer_vga_sprites_helper();
 
 	void decodeStripA(byte *dst, const byte *src, int height);

@@ -63,8 +63,8 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonEngine::vc27_resetSprite,
 	&SimonEngine::vc28_dummy_op,
 	&SimonEngine::vc29_stopAllSounds,
-	&SimonEngine::vc30_setBaseDelay,
-	&SimonEngine::vc31_setPaletteMode,
+	&SimonEngine::vc30_setFrameRate,
+	&SimonEngine::vc31_setWindow,
 	&SimonEngine::vc32_copyVar,
 	&SimonEngine::vc33_forceUnlock,
 	&SimonEngine::vc34_forceLock,
@@ -95,10 +95,10 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonEngine::vc59,
 	&SimonEngine::vc60_killSprite,
 	&SimonEngine::vc61_changeSprite,
-	&SimonEngine::vc62_fadeOut,
-	&SimonEngine::vc63_palette_thing_2,
-	&SimonEngine::vc64_skipIfNoSpeech,
-	&SimonEngine::vc65_palette_thing_3,
+	&SimonEngine::vc62_fastFadeOut,
+	&SimonEngine::vc63_fastFadeIn,
+	&SimonEngine::vc64_skipIfSpeechEnded,
+	&SimonEngine::vc65_slowFadeIn,
 	&SimonEngine::vc66_skipIfNotEqual,
 	&SimonEngine::vc67_skipIfGE,
 	&SimonEngine::vc68_skipIfLE,
@@ -106,8 +106,8 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonEngine::vc70_queueMusic,
 	&SimonEngine::vc71_checkMusicQueue,
 	&SimonEngine::vc72_play_track_2,
-	&SimonEngine::vc73_setOp189Flag,
-	&SimonEngine::vc74_clearOp189Flag,
+	&SimonEngine::vc73_setMark,
+	&SimonEngine::vc74_clearMark,
 };
 
 // Script parser
@@ -269,14 +269,14 @@ void SimonEngine::vc2_call() {
 }
 
 void SimonEngine::vc3_loadSprite() {
-	uint16 paletteMode, fileId, base_color, x, y, vgaSpriteId;
+	uint16 windowNum, fileId, palette, x, y, vgaSpriteId;
 	uint16 res;
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
 	byte *old_file_1;
 
-	paletteMode = vc_read_next_word();		/* 0 */
+	windowNum = vc_read_next_word();		/* 0 */
 
 	if (_game & GF_SIMON2) {
 		fileId = vc_read_next_word();		/* 0 */
@@ -288,7 +288,7 @@ void SimonEngine::vc3_loadSprite() {
 
 	x = vc_read_next_word();			/* 4 */
 	y = vc_read_next_word();			/* 6 */
-	base_color = vc_read_next_word();		/* 8 */
+	palette = vc_read_next_word();		/* 8 */
 
 	/* 2nd param ignored with simon1 */
 	if (isSpriteLoaded(vgaSpriteId, fileId))
@@ -298,8 +298,8 @@ void SimonEngine::vc3_loadSprite() {
 	while (vsp->id)
 		vsp++;
 
-	vsp->base_color = base_color;
-	vsp->paletteMode = paletteMode;
+	vsp->palette = palette;
+	vsp->windowNum = windowNum;
 	vsp->priority = 0;
 	vsp->flags = 0;
 	vsp->image = 0;
@@ -603,11 +603,11 @@ void SimonEngine::vc10_draw() {
 	if (state.image == 0)
 		return;
 
-	state.base_color = (_vcPtr[1] << 4);
+	state.palette = (_vcPtr[1] << 4);
 	_vcPtr += 2;
 	state.x = (int16)vc_read_next_word();
 	if (_game & GF_SIMON2) {
-		state.x -= _xScroll;
+		state.x -= _scrollX;
 	}
 	state.y = (int16)vc_read_next_word();
 
@@ -632,7 +632,7 @@ void SimonEngine::vc10_draw() {
 
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
-											 state.base_color);
+											 state.palette);
 
 	if (flags & 0x80 && !(state.flags & 0x10)) {
 		if (state.flags & 1) {
@@ -648,18 +648,18 @@ void SimonEngine::vc10_draw() {
 		byte *dst;
 		uint w;
 
-		_vgaVar1 = width * 2 - 40;
-		_vgaVar7 = state.depack_src;
-		_spriteHeight = height;
+		_scrollXMax = width * 2 - 40;
+		_scrollImage = state.depack_src;
+		_scrollHeight = height;
 		if (_variableArray[34] == -1)
 			state.x = _variableArray[251];
 
-		_xScroll = state.x;
+		_scrollX = state.x;
 
-		vc_write_var(0xfb, _xScroll);
+		vc_write_var(0xfb, _scrollX);
 
 		dst = dx_lock_attached();
-		src = state.depack_src + _xScroll * 4;
+		src = state.depack_src + _scrollX * 4;
 
 		for (w = 0; w < 40; w++) {
 			decodeStripA(dst, src + READ_BE_UINT32(src), height);
@@ -678,7 +678,7 @@ void SimonEngine::vc10_draw() {
 		state.depack_src = vc10_no_depack_swap(state.depack_src, width, height);
 	}
 
-	vlut = &_video_windows[_videoPaletteMode * 4];
+	vlut = &_video_windows[_windowNum * 4];
 
 	state.draw_width = width << 1;	/* cl */
 	state.draw_height = height;		/* ch */
@@ -796,7 +796,7 @@ void SimonEngine::vc10_draw() {
 		} while (++w != state.draw_width);
 
 		/* vc10_helper_5 */
-	} else if (_lockWord & 0x20 && state.base_color == 0 || state.base_color == 0xC0) {
+	} else if (_lockWord & 0x20 && state.palette == 0 || state.palette == 0xC0) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -931,8 +931,8 @@ void SimonEngine::vc10_draw() {
 
 					h = 0;
 					do {
-						dst[0] = (*src >> 4) | state.base_color;
-						dst[1] = (*src & 15) | state.base_color;
+						dst[0] = (*src >> 4) | state.palette;
+						dst[1] = (*src & 15) | state.palette;
 						dst += 320;
 						src++;
 					} while (++h != state.draw_height);
@@ -954,10 +954,10 @@ void SimonEngine::vc10_draw() {
 					do {
 						color = (*src >> 4);
 						if (color)
-							dst[0] = color | state.base_color;
+							dst[0] = color | state.palette;
 						color = (*src & 15);
 						if (color)
-							dst[1] = color | state.base_color;
+							dst[1] = color | state.palette;
 						dst += 320;
 						src++;
 					} while (++h != state.draw_height);
@@ -976,8 +976,8 @@ void SimonEngine::vc10_draw() {
 			if (state.flags & 2) {
 				do {
 					for (count = 0; count != state.draw_width; count++) {
-						dst[count * 2] = (src[count + state.x_skip] >> 4) | state.base_color;
-						dst[count * 2 + 1] = (src[count + state.x_skip] & 15) | state.base_color;
+						dst[count * 2] = (src[count + state.x_skip] >> 4) | state.palette;
+						dst[count * 2 + 1] = (src[count + state.x_skip] & 15) | state.palette;
 					}
 					dst += 320;
 					src += width * 8;
@@ -988,10 +988,10 @@ void SimonEngine::vc10_draw() {
 						byte color;
 						color = (src[count + state.x_skip] >> 4);
 						if (color)
-							dst[count * 2] = color | state.base_color;
+							dst[count * 2] = color | state.palette;
 						color = (src[count + state.x_skip] & 15);
 						if (color)
-							dst[count * 2 + 1] = color | state.base_color;
+							dst[count * 2 + 1] = color | state.palette;
 					}
 					dst += 320;
 					src += width * 8;
@@ -1019,7 +1019,7 @@ void SimonEngine::vc12_delay() {
 	if (_game & GF_SIMON1) {
 		num = vc_read_var_or_word();
 	} else {
-		num = vc_read_next_byte() * _vgaBaseDelay;
+		num = vc_read_next_byte() * _frameRate;
 	}
 
 	// Work around to allow inventory arrows to be
@@ -1160,7 +1160,7 @@ void SimonEngine::vc23_setSpritePriority() {
 
 	memcpy(&bak, vsp, sizeof(bak));
 	bak.priority = pri;
-	bak.paletteMode |= 0x8000;
+	bak.windowNum |= 0x8000;
 
 	vus2 = vsp;
 
@@ -1273,12 +1273,12 @@ void SimonEngine::vc29_stopAllSounds() {
 	_sound->stopAll();
 }
 
-void SimonEngine::vc30_setBaseDelay() {
-	_vgaBaseDelay = vc_read_next_word();
+void SimonEngine::vc30_setFrameRate() {
+	_frameRate = vc_read_next_word();
 }
 
-void SimonEngine::vc31_setPaletteMode() {
-	_videoPaletteMode = vc_read_next_word();
+void SimonEngine::vc31_setWindow() {
+	_windowNum = vc_read_next_word();
 }
 
 uint SimonEngine::vc_read_var(uint var) {
@@ -1355,20 +1355,20 @@ void SimonEngine::vc40() {
 	if ((_game & GF_SIMON2) && var == 0xF && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
-		if (_vgaVar2 != 0) {
-			if (_vgaVar2 >= 0)
+		if (_scrollCount != 0) {
+			if (_scrollCount >= 0)
 				goto no_scroll;
-			_vgaVar2 = 0;
+			_scrollCount = 0;
 		} else {
-			if (_xScrollStep != 0)
+			if (_scrollFlag != 0)
 				goto no_scroll;
 		}
 
-		if (value - _xScroll >= 30) {
-			_vgaVar2 = 20;
-			tmp = _vgaVar1 - _xScroll;
+		if (value - _scrollX >= 30) {
+			_scrollCount = 20;
+			tmp = _scrollXMax - _scrollX;
 			if (tmp < 20)
-				_vgaVar2 = tmp;
+				_scrollCount = tmp;
 			add_vga_timer(6, NULL, 0, 0);	/* special timer */
 		}
 	}
@@ -1384,20 +1384,20 @@ void SimonEngine::vc41() {
 	if ((_game & GF_SIMON2) && var == 0xF && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
-		if (_vgaVar2 != 0) {
-			if (_vgaVar2 < 0)
+		if (_scrollCount != 0) {
+			if (_scrollCount < 0)
 				goto no_scroll;
-			_vgaVar2 = 0;
+			_scrollCount = 0;
 		} else {
-			if (_xScrollStep != 0)
+			if (_scrollFlag != 0)
 				goto no_scroll;
 		}
 
-		if ((uint16)(value - _xScroll) < 11) {
-			_vgaVar2 = -20;
-			tmp = _vgaVar1 - _xScroll;
-			if (_xScroll < 20)
-				_vgaVar2 = -_xScroll;
+		if ((uint16)(value - _scrollX) < 11) {
+			_scrollCount = -20;
+			tmp = _scrollXMax - _scrollX;
+			if (_scrollX < 20)
+				_scrollCount = -_scrollX;
 			add_vga_timer(6, NULL, 0, 0);	/* special timer */
 		}
 	}
@@ -1410,7 +1410,7 @@ void SimonEngine::vc42_delayIfNotEQ() {
 	uint val = vc_read_var(vc_read_next_word());
 	if (val != vc_read_next_word()) {
 
-		add_vga_timer(_vgaBaseDelay + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurFileId);
+		add_vga_timer(_frameRate + 1, _vcPtr - 4, _vgaCurSpriteId, _vgaCurFileId);
 		_vcPtr = (byte *)&_vc_get_out_of_code;
 	}
 }
@@ -1547,7 +1547,7 @@ void SimonEngine::vc55_offset_hit_area() {
 
 void SimonEngine::vc56_delay() {
 	if (_game & GF_SIMON2) {
-		uint num = vc_read_var_or_word() * _vgaBaseDelay;
+		uint num = vc_read_var_or_word() * _frameRate;
 
 		add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
 		_vcPtr = (byte *)&_vc_get_out_of_code;
@@ -1662,7 +1662,7 @@ void SimonEngine::vc61_changeSprite() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc62_fadeOut() {
+void SimonEngine::vc62_fastFadeOut() {
 	uint i;
 
 	vc29_stopAllSounds();
@@ -1671,7 +1671,7 @@ void SimonEngine::vc62_fadeOut() {
 		_videoVar3 = true;
 
 		_videoNumPalColors = 256;
-		if (_videoPaletteMode == 4)
+		if (_windowNum == 4)
 			_videoNumPalColors = 208;
 
 		memcpy(_videoBuf1, _paletteBackup, _videoNumPalColors * sizeof(uint32));
@@ -1694,22 +1694,22 @@ void SimonEngine::vc62_fadeOut() {
 				if (vsp->id == 0x80) {
 					byte *old_file_1 = _curVgaFile1;
 					byte *old_file_2 = _curVgaFile2;
-					uint palmode = _videoPaletteMode;
+					uint palmode = _windowNum;
 
 					vpe = &_vgaBufferPointers[vsp->fileId];
 					_curVgaFile1 = vpe->vgaFile1;
 					_curVgaFile2 = vpe->vgaFile2;
-					_videoPaletteMode = vsp->paletteMode;
+					_windowNum = vsp->windowNum;
 
 					params[0] = READ_BE_UINT16(&vsp->image);
-					params[1] = READ_BE_UINT16(&vsp->base_color);
+					params[1] = READ_BE_UINT16(&vsp->palette);
 					params[2] = READ_BE_UINT16(&vsp->x);
 					params[3] = READ_BE_UINT16(&vsp->y);
 					params[4] = READ_BE_UINT16(&vsp->flags);
 					_vcPtr = (byte *)params;
 					vc10_draw();
 
-					_videoPaletteMode = palmode;
+					_windowNum = palmode;
 					_curVgaFile1 = old_file_1;
 					_curVgaFile2 = old_file_2;
 					break;
@@ -1724,7 +1724,7 @@ void SimonEngine::vc62_fadeOut() {
 		if ((_game & GF_SIMON1) && (_subroutine == 2923 || _subroutine == 2926))
 			dx_clear_surfaces(200);
 		else
-			dx_clear_surfaces(_videoPaletteMode == 4 ? 134 : 200);
+			dx_clear_surfaces(_windowNum == 4 ? 134 : 200);
 	}
 	if (_game & GF_SIMON2) {
 		if (_nextMusicToPlay != -1)
@@ -1733,25 +1733,25 @@ void SimonEngine::vc62_fadeOut() {
 
 }
 
-void SimonEngine::vc63_palette_thing_2() {
+void SimonEngine::vc63_fastFadeIn() {
 	_paletteColorCount = 208;
-	if (_videoPaletteMode != 4) {
+	if (_windowNum != 4) {
 		_paletteColorCount = 256;
 	}
 	_videoVar3 = false;
 }
 
-void SimonEngine::vc64_skipIfNoSpeech() {
+void SimonEngine::vc64_skipIfSpeechEnded() {
 	// Simon2
 	if (!_sound->isVoiceActive() || (_subtitles && _language != 20))
 		vc_skip_next_instruction();
 }
 
-void SimonEngine::vc65_palette_thing_3() {
+void SimonEngine::vc65_slowFadeIn() {
 	// Simon2
 	_paletteColorCount = 624;
 	_videoNumPalColors = 208;
-	if (_videoPaletteMode != 4) {
+	if (_windowNum != 4) {
 		_paletteColorCount = 768;
 		_videoNumPalColors = 256;
 	}
@@ -1862,16 +1862,16 @@ void SimonEngine::vc72_play_track_2() {
 	}
 }
 
-void SimonEngine::vc73_setOp189Flag() {
+void SimonEngine::vc73_setMark() {
 	// Simon2
 	vc_read_next_byte();
-	_op189Flags |= 1 << vc_read_next_byte();
+	_marks |= 1 << vc_read_next_byte();
 }
 
-void SimonEngine::vc74_clearOp189Flag() {
+void SimonEngine::vc74_clearMark() {
 	// Simon2
 	vc_read_next_byte();
-	_op189Flags &= ~(1 << vc_read_next_byte());
+	_marks &= ~(1 << vc_read_next_byte());
 }
 
 } // End of namespace Simon

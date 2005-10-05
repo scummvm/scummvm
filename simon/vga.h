@@ -69,7 +69,7 @@ struct VC10_state {
 	uint16 flags;
 	int x, y;
 
-	byte base_color;
+	byte palette;
 
 	uint draw_width, draw_height;
 	uint x_skip, y_skip;

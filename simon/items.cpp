@@ -526,7 +526,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 98:{									/* start vga */
-				uint vga_res, vgaSpriteId, paletteMode, x, y, base_color;
+				uint vga_res, vgaSpriteId, windowNum, x, y, palette;
 				if (_game & GF_SIMON2) {
 					vga_res = getVarOrWord();
 					vgaSpriteId = getVarOrWord();
@@ -534,11 +534,11 @@ int SimonEngine::runScript() {
 					vgaSpriteId = getVarOrWord();
 					vga_res = vgaSpriteId / 100;
 				}
-				paletteMode = getVarOrByte();
+				windowNum = getVarOrByte();
 				x = getVarOrWord();
 				y = getVarOrWord();
-				base_color = getVarOrWord();
-				loadSprite(paletteMode, vga_res, vgaSpriteId, x, y, base_color);
+				palette = getVarOrWord();
+				loadSprite(windowNum, vga_res, vgaSpriteId, x, y, palette);
 			}
 			break;
 
@@ -1060,7 +1060,7 @@ int SimonEngine::runScript() {
 		case 189:{									/* clear_op189_flag */
 				if (_game & GF_SIMON1)
 					goto invalid_opcode;
-				_op189Flags = 0;
+				_marks = 0;
 			}
 			break;
 
@@ -1069,8 +1069,8 @@ int SimonEngine::runScript() {
 				if (_game & GF_SIMON1)
 					goto invalid_opcode;
 				i = getVarOrByte();
-				if (!(_op189Flags & (1 << i)))
-					o_190_helper(i);
+				if (!(_marks & (1 << i)))
+					o_waitForMark(i);
 			}
 			break;
 
@@ -1163,9 +1163,9 @@ void SimonEngine::o_83_helper() {
 		}
 }
 
-void SimonEngine::o_190_helper(uint i) {
+void SimonEngine::o_waitForMark(uint i) {
 	_exitCutscene = false;
-	while (!(_op189Flags & (1 << i))) {
+	while (!(_marks & (1 << i))) {
 		if (_exitCutscene) {
 			if (vc_get_bit(9)) {
 				startSubroutine170();

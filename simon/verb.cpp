@@ -460,7 +460,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 
 	if (_game & GF_SIMON2) {
 		if (_bitArray[4] & 0x8000 || y < 134) {
-			x_ += _xScroll * 8;
+			x_ += _scrollX * 8;
 		}
 	}
 

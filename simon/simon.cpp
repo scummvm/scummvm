@@ -473,7 +473,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_lastVgaTick = 0;
 
-	_op189Flags = 0;
+	_marks = 0;
 
 	_scriptVar2 = 0;
 	_runScriptReturn1 = 0;
@@ -507,12 +507,12 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vgaVar9 = 0;
 	_scriptUnk1 = 0;
 	_vgaVar6 = 0;
-	_xScroll = 0;
-	_vgaVar1 = 0;
-	_vgaVar2 = 0;
-	_xScrollStep = 0;
-	_spriteHeight = 0;
-	_vgaVar7 = 0;
+	_scrollX = 0;
+	_scrollXMax = 0;
+	_scrollCount = 0;
+	_scrollFlag = 0;
+	_scrollHeight = 0;
+	_scrollImage = 0;
 	_vgaVar8 = 0;
 
 	_scriptCondA = 0;
@@ -539,7 +539,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_hitAreaUnk4 = 0;
 	_lockCounter = 0;
 
-	_videoPaletteMode = 0;
+	_windowNum = 0;
 
 	_printCharUnk1 = 0;
 	_printCharUnk2 = 0;
@@ -600,7 +600,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_timer5 = 0;
 	_timer4 = 0;
 
-	_vgaBaseDelay = 1;
+	_frameRate = 1;
 
 	_vgaCurFile2 = 0;
 	_vgaWaitFor = 0;
@@ -1754,13 +1754,13 @@ void SimonEngine::handle_mouse_moved() {
 					goto get_out2;
 				_vgaVar9 = 1;
 			}
-			if (_vgaVar2 == 0) {
+			if (_scrollCount == 0) {
 				if (_mouseX >= 631 / 2) {
-					if (_xScroll != _vgaVar1)
-						_xScrollStep = 1;
+					if (_scrollX != _scrollXMax)
+						_scrollFlag = 1;
 				} else if (_mouseX < 8) {
-					if (_xScroll != 0)
-						_xScrollStep = -1;
+					if (_scrollX != 0)
+						_scrollFlag = -1;
 				}
 			}
 		} else {
@@ -2014,7 +2014,7 @@ void SimonEngine::f10_key() {
 
 				y_ = (ha->height >> 1) - 4 + ha->y;
 
-				x_ = (ha->width >> 1) - 4 + ha->x - (_xScroll << 3);
+				x_ = (ha->width >> 1) - 4 + ha->x - (_scrollX << 3);
 
 				if (x_ >= 0x137)
 					continue;
@@ -2463,7 +2463,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	uint16 c;
 	const byte *vc_ptr_org;
 
-	_videoPaletteMode = mode;
+	_windowNum = mode;
 	_lockWord |= 0x20;
 
 	if (vga_res_id == 0) {
@@ -2506,11 +2506,11 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			_usePaletteDelay = true;
 		}
 	} else {
-		_xScroll = 0;
-		_vgaVar1 = 0;
-		_vgaVar2 = 0;
-		_xScrollStep = 0;
-		_spriteHeight = 134;
+		_scrollX = 0;
+		_scrollXMax = 0;
+		_scrollCount = 0;
+		_scrollFlag = 0;
+		_scrollHeight = 134;
 		if (_variableArray[34] != -1)
 			_variableArray[251] = 0;
 	}
@@ -2525,7 +2525,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (_game & GF_SIMON2) {
 		if (!_dxUse3Or4ForLock) {
-			num_lines = _videoPaletteMode == 4 ? 134 : 200;
+			num_lines = _windowNum == 4 ? 134 : 200;
 			_vgaVar8 = num_lines;
 			dx_copy_from_attached_to_2(0, 0, 320, num_lines);
 			dx_copy_from_attached_to_3(num_lines);
@@ -2538,7 +2538,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		if (_subroutine == 2923 || _subroutine == 2926)
 			num_lines = 200;
 		else
-			num_lines = _videoPaletteMode == 4 ? 134 : 200;
+			num_lines = _windowNum == 4 ? 134 : 200;
 		dx_copy_from_attached_to_2(0, 0, 320, num_lines);
 		dx_copy_from_attached_to_3(num_lines);
 		_syncFlag2 = 1;
@@ -2622,19 +2622,19 @@ void SimonEngine::expire_vga_timers() {
 
 // Simon2 specific
 void SimonEngine::scroll_timeout() {
-	if (_vgaVar2 == 0)
+	if (_scrollCount == 0)
 		return;
 
-	if (_vgaVar2 < 0) {
-		if (_xScrollStep != -1) {
-			_xScrollStep = -1;
-			if (++_vgaVar2 == 0)
+	if (_scrollCount < 0) {
+		if (_scrollFlag != -1) {
+			_scrollFlag = -1;
+			if (++_scrollCount == 0)
 				return;
 		}
 	} else {
-		if (_xScrollStep != 1) {
-			_xScrollStep = 1;
-			if (--_vgaVar2 == 0)
+		if (_scrollFlag != 1) {
+			_scrollFlag = 1;
+			if (--_scrollCount == 0)
 				return;
 		}
 	}
@@ -2758,23 +2758,23 @@ void SimonEngine::timer_vga_sprites() {
 	if (_videoVar9 == 2)
 		_videoVar9 = 1;
 
-	if (_game & GF_SIMON2 && _xScrollStep) {
+	if (_game & GF_SIMON2 && _scrollFlag) {
 		timer_vga_sprites_helper();
 	}
 
 	vsp = _vgaSprites;
 
 	while (vsp->id != 0) {
-		vsp->paletteMode &= 0x7FFF;
+		vsp->windowNum &= 0x7FFF;
 
 		vpe = &_vgaBufferPointers[vsp->fileId];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
-		_videoPaletteMode = vsp->paletteMode;
+		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
 
 		params[0] = READ_BE_UINT16(&vsp->image);
-		params[1] = READ_BE_UINT16(&vsp->base_color);
+		params[1] = READ_BE_UINT16(&vsp->palette);
 		params[2] = READ_BE_UINT16(&vsp->x);
 		params[3] = READ_BE_UINT16(&vsp->y);
 
@@ -2802,34 +2802,34 @@ void SimonEngine::timer_vga_sprites_helper() {
 	const byte *src;
 	uint x;
 
-	if (_xScrollStep < 0) {
-		memmove(dst + 8, dst, 320 * _spriteHeight - 8);
+	if (_scrollFlag < 0) {
+		memmove(dst + 8, dst, 320 * _scrollHeight - 8);
 	} else {
-		memmove(dst, dst + 8, 320 * _spriteHeight - 8);
+		memmove(dst, dst + 8, 320 * _scrollHeight - 8);
 	}
 
-	x = _xScroll - 1;
+	x = _scrollX - 1;
 
-	if (_xScrollStep > 0) {
+	if (_scrollFlag > 0) {
 		dst += 320 - 8;
 		x += 41;
 	}
 
-	src = _vgaVar7 + x * 4;
-	decodeStripA(dst, src + READ_BE_UINT32(src), _spriteHeight);
+	src = _scrollImage + x * 4;
+	decodeStripA(dst, src + READ_BE_UINT32(src), _scrollHeight);
 
 	dx_unlock_2();
 
 
 	memcpy(_sdl_buf_attached, _sdl_buf, 320 * 200);
-	dx_copy_from_attached_to_3(_spriteHeight);
+	dx_copy_from_attached_to_3(_scrollHeight);
 
 
-	_xScroll += _xScrollStep;
+	_scrollX += _scrollFlag;
 
-	vc_write_var(0xfB, _xScroll);
+	vc_write_var(0xfB, _scrollX);
 
-	_xScrollStep = 0;
+	_scrollFlag = 0;
 }
 
 void SimonEngine::timer_vga_sprites_2() {
@@ -2843,19 +2843,19 @@ void SimonEngine::timer_vga_sprites_2() {
 
 	vsp = _vgaSprites;
 	while (vsp->id != 0) {
-		vsp->paletteMode &= 0x7FFF;
+		vsp->windowNum &= 0x7FFF;
 
 		vpe = &_vgaBufferPointers[vsp->fileId];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
-		_videoPaletteMode = vsp->paletteMode;
+		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
 
 		if (vsp->image)
 			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
-							vsp->id, vsp->image, vsp->base_color, vsp->x, vsp->y, vsp->flags);
+							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 		params[0] = READ_BE_UINT16(&vsp->image);
-		params[1] = READ_BE_UINT16(&vsp->base_color);
+		params[1] = READ_BE_UINT16(&vsp->palette);
 		params[2] = READ_BE_UINT16(&vsp->x);
 		params[3] = READ_BE_UINT16(&vsp->y);
 		params[4] = READ_BE_UINT16(&vsp->flags);
@@ -3058,7 +3058,7 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
 
 	if (_game & GF_SIMON2) {
-		x += _xScroll * 8;
+		x += _scrollX * 8;
 	}
 
 	prev_i = 21 - _variableArray[12];
@@ -3375,7 +3375,7 @@ void SimonEngine::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
 	fcs->mode = 0;
 }
 
-void SimonEngine::loadSprite(uint paletteMode, uint fileId, uint vgaSpriteId, uint x, uint y, uint base_color) {
+void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint x, uint y, uint palette) {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	byte *p, *pp;
@@ -3392,14 +3392,14 @@ void SimonEngine::loadSprite(uint paletteMode, uint fileId, uint vgaSpriteId, ui
 	while (vsp->id != 0)
 		vsp++;
 
-	vsp->paletteMode = paletteMode;
+	vsp->windowNum = windowNum;
 	vsp->priority = 0;
 	vsp->flags = 0;
 
 	vsp->y = y;
 	vsp->x = x;
 	vsp->image = 0;
-	vsp->base_color = base_color;
+	vsp->palette = palette;
 	vsp->id = vgaSpriteId;
 	if (_game & GF_SIMON1)
 		vsp->fileId = fileId = vgaSpriteId / 100;
@@ -4023,7 +4023,7 @@ int SimonEngine::go() {
 	openGameFile();
 
 	_lastMusicPlayed = -1;
-	_vgaBaseDelay = 1;
+	_frameRate = 1;
 
 	_startMainScript = false;
 	_continousMainScript = false;
