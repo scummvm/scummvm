@@ -465,7 +465,6 @@ protected:
 	void o_kill_sprite_simon2(uint a, uint b);
 
 	void o_vga_reset();
-	void o_unk_101();
 	void fcs_unk_2(uint a);
 	void o_unk_103();
 	void fcs_delete(uint a);
