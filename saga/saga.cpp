@@ -253,7 +253,6 @@ int SagaEngine::init(GameDetector &detector) {
 		debug(1, "Music disabled.");
 	}
 
-
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return FAILURE;
@@ -269,6 +268,8 @@ int SagaEngine::init(GameDetector &detector) {
 	_script->setVerb(kVerbWalkTo);
 
 	_music->setVolume(-1, 1);
+
+	_gfx->initPalette();
 
 	return SUCCESS;
 }

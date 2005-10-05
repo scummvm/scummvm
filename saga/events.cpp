@@ -149,11 +149,17 @@ int Events::handleContinuous(Event *event) {
 	case kPalEvent:
 		switch (event->op) {
 		case kEventBlackToPal:
-			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
+			if (_vm->getGameType() == GType_IHNM)
+				_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc, 0, 248);
+			else
+				_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
 
 		case kEventPalToBlack:
-			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
+			if (_vm->getGameType() == GType_IHNM)
+				_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc, 0, 248);
+			else
+				_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -232,11 +238,17 @@ int Events::handleImmediate(Event *event) {
 	case kPalEvent:
 		switch (event->op) {
 		case kEventBlackToPal:
-			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
+			if (_vm->getGameType() == GType_IHNM)
+				_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc, 0, 248);
+			else
+				_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
 
 		case kEventPalToBlack:
-			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
+			if (_vm->getGameType() == GType_IHNM)
+				_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc, 0, 248);
+			else
+				_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
 			break;
 		default:
 			break;
@@ -332,7 +344,10 @@ int Events::handleOneShot(Event *event) {
 				if (event->param == kEvPSetPalette) {
 					PalEntry *palPointer;
 					_vm->_scene->getBGPal(palPointer);
-					_vm->_gfx->setPalette(palPointer);
+					if (_vm->getGameType() == GType_IHNM)
+						_vm->_gfx->setPalette(palPointer, 0, 248);
+					else
+						_vm->_gfx->setPalette(palPointer);
 				}
 			}
 		}

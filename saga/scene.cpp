@@ -447,7 +447,10 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 						cPal[j].blue = *pal++;
 					}
 					free(colors);
-					_vm->_gfx->setPalette(cPal);
+					if (_vm->getGameType() == GType_IHNM)
+						_vm->_gfx->setPalette(cPal, 0, 248);
+					else
+						_vm->_gfx->setPalette(cPal);
 
 				}
 
@@ -1132,7 +1135,10 @@ void Scene::processSceneResources() {
 					pal[c].green = *palPtr++;
 					pal[c].blue = *palPtr++;
 				}
-				_vm->_gfx->setPalette(pal);
+				if (_vm->getGameType() == GType_IHNM)
+					_vm->_gfx->setPalette(pal, 0, 248);
+				else
+					_vm->_gfx->setPalette(pal);
 			}
 			break;
 		default:

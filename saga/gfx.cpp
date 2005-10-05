@@ -26,7 +26,10 @@
 #include "saga/saga.h"
 #include "saga/gfx.h"
 #include "saga/interface.h"
+#include "saga/resnames.h"
+#include "saga/rscfile.h"
 #include "saga/scene.h"
+#include "saga/stream.h"
 
 #include "common/system.h"
 
@@ -163,14 +166,42 @@ void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &s
 	}
 }
 
-void Gfx::setPalette(const PalEntry *pal) {
+void Gfx::initPalette() {
+	if(_vm->getGameType() != GType_IHNM)
+		return;
+
+	ResourceContext *resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	if (resourceContext == NULL) {
+		error("Resource::loadGlobalResources() resource context not found");
+	}
+
+	byte *resourcePointer;
+	size_t resourceLength;
+
+	_vm->_resource->loadResource(resourceContext, RID_IHNM_DEFAULT_PALETTE,
+								 resourcePointer, resourceLength);
+
+	MemoryReadStream metaS(resourcePointer, resourceLength);
+
+	for(int i = 0; i < 256; i++) {
+		_globalPalette[i].red = metaS.readByte();
+		_globalPalette[i].green = metaS.readByte();
+		_globalPalette[i].blue = metaS.readByte();
+	}
+
+	free(resourcePointer);
+
+	setPalette(_globalPalette, 0, 256);
+}
+
+void Gfx::setPalette(const PalEntry *pal, int from, int numcolors) {
 	int i;
 	byte *ppal;
 
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
-		ppal[0] = pal[i].red;
-		ppal[1] = pal[i].green;
-		ppal[2] = pal[i].blue;
+	for (i = 0, ppal = &_currentPal[from * 4]; i < numcolors; i++, ppal += 4) {
+		ppal[0] = _globalPalette[i].red = pal[i].red;
+		ppal[1] = _globalPalette[i].green = pal[i].green;
+		ppal[2] = _globalPalette[i].blue = pal[i].blue;
 		ppal[3] = 0;
 	}
 
@@ -188,15 +219,15 @@ void Gfx::setPaletteColor(int n, int r, int g, int b) {
 	// updates, only update the palette if the color actually changes.
 
 	if (_currentPal[4 * n + 0] != r) {
-		_currentPal[4 * n + 0] = r;
+		_currentPal[4 * n + 0] = _globalPalette[n].red = r;
 		update = true;
 	}
 	if (_currentPal[4 * n + 1] != g) {
-		_currentPal[4 * n + 1] = g;
+		_currentPal[4 * n + 1] = _globalPalette[n].green = g;
 		update = true;
 	}
 	if (_currentPal[4 * n + 2] != b) {
-		_currentPal[4 * n + 2] = b;
+		_currentPal[4 * n + 2] = _globalPalette[n].blue = b;
 		update = true;
 	}
 	if (_currentPal[4 * n + 3] != 0) {
@@ -219,11 +250,12 @@ void Gfx::getCurrentPal(PalEntry *src_pal) {
 	}
 }
 
-void Gfx::palToBlack(PalEntry *src_pal, double percent) {
+void Gfx::palToBlack(PalEntry *srcPal, double percent, int from, int numcolors) {
 	int i;
 	//int fade_max = 255;
 	int new_entry;
 	byte *ppal;
+	PalEntry *palE;
 
 	double fpercent;
 
@@ -238,7 +270,12 @@ void Gfx::palToBlack(PalEntry *src_pal, double percent) {
 
 	// Use the correct percentage change per frame for each palette entry
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
-		new_entry = (int)(src_pal[i].red * fpercent);
+		if (i < from || i >= from + numcolors)
+			palE = &_globalPalette[i];
+		else
+			palE = &srcPal[i];
+
+		new_entry = (int)(palE->red * fpercent);
 
 		if (new_entry < 0) {
 			ppal[0] = 0;
@@ -246,7 +283,7 @@ void Gfx::palToBlack(PalEntry *src_pal, double percent) {
 			ppal[0] = (byte) new_entry;
 		}
 
-		new_entry = (int)(src_pal[i].green * fpercent);
+		new_entry = (int)(palE->green * fpercent);
 
 		if (new_entry < 0) {
 			ppal[1] = 0;
@@ -254,7 +291,7 @@ void Gfx::palToBlack(PalEntry *src_pal, double percent) {
 			ppal[1] = (byte) new_entry;
 		}
 
-		new_entry = (int)(src_pal[i].blue * fpercent);
+		new_entry = (int)(palE->blue * fpercent);
 
 		if (new_entry < 0) {
 			ppal[2] = 0;
@@ -271,16 +308,12 @@ void Gfx::palToBlack(PalEntry *src_pal, double percent) {
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
-void Gfx::blackToPal(PalEntry *src_pal, double percent) {
+void Gfx::blackToPal(PalEntry *srcPal, double percent, int from, int numcolors) {
 	int new_entry;
 	double fpercent;
-	int color_delta;
-	int best_wdelta = 0;
-	int best_windex = 0;
-	int best_bindex = 0;
-	int best_bdelta = 1000;
 	byte *ppal;
 	int i;
+	PalEntry *palE;
 
 	if (percent > 1.0) {
 		percent = 1.0;
@@ -293,15 +326,20 @@ void Gfx::blackToPal(PalEntry *src_pal, double percent) {
 
 	// Use the correct percentage change per frame for each palette entry
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
-		new_entry = (int)(src_pal[i].red - src_pal[i].red * fpercent);
+		if (i < from || i >= from + numcolors)
+			palE = &_globalPalette[i];
+		else
+			palE = &srcPal[i];
+
+		new_entry = (int)(palE->red - palE->red * fpercent);
 
 		if (new_entry < 0) {
 			ppal[0] = 0;
 		} else {
-			ppal[0] = (byte) new_entry;
+			ppal[0] = (byte)new_entry;
 		}
 
-		new_entry = (int)(src_pal[i].green - src_pal[i].green * fpercent);
+		new_entry = (int)(palE->green - palE->green * fpercent);
 
 		if (new_entry < 0) {
 			ppal[1] = 0;
@@ -309,7 +347,7 @@ void Gfx::blackToPal(PalEntry *src_pal, double percent) {
 			ppal[1] = (byte) new_entry;
 		}
 
-		new_entry = (int)(src_pal[i].blue - src_pal[i].blue * fpercent);
+		new_entry = (int)(palE->blue - palE->blue * fpercent);
 
 		if (new_entry < 0) {
 			ppal[2] = 0;
@@ -317,25 +355,6 @@ void Gfx::blackToPal(PalEntry *src_pal, double percent) {
 			ppal[2] = (byte) new_entry;
 		}
 		ppal[3] = 0;
-	}
-
-	// Find the best white and black color indices again
-	if (percent >= 1.0) {
-		for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
-			color_delta = ppal[0];
-			color_delta += ppal[1];
-			color_delta += ppal[2];
-
-			if (color_delta < best_bdelta) {
-				best_bindex = i;
-				best_bdelta = color_delta;
-			}
-
-			if (color_delta > best_wdelta) {
-				best_windex = i;
-				best_wdelta = color_delta;
-			}
-		}
 	}
 
 	// Make 256th color black. See bug #1256368

@@ -47,6 +47,8 @@ namespace Saga {
 
 #define IHNM_OBJ_PROFILE 0x4000
 
+#define RID_IHNM_DEFAULT_PALETTE 1
+
 //actor names
 #define ITE_ACTOR_PUZZLE 176
 

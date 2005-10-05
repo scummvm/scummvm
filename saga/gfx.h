@@ -134,11 +134,12 @@ public:
 		return &_backBuffer;
 	}
 
-	void setPalette(const PalEntry *pal);
+	void initPalette();
+	void setPalette(const PalEntry *pal, int from = 0, int numcolors = PAL_ENTRIES);
 	void setPaletteColor(int n, int r, int g, int b);
 	void getCurrentPal(PalEntry *src_pal);
-	void palToBlack(PalEntry *src_pal, double percent);
-	void blackToPal(PalEntry *src_pal, double percent);
+	void palToBlack(PalEntry *src_pal, double percent, int from = 0, int numcolors = PAL_ENTRIES);
+	void blackToPal(PalEntry *src_pal, double percent, int from = 0, int numcolors = PAL_ENTRIES);
 	void updateCursor() { setCursor(); }
 	void showCursor(bool state);
 
@@ -149,6 +150,8 @@ private:
 	byte _currentPal[PAL_ENTRIES * 4];
 	OSystem *_system;
 	SagaEngine *_vm;
+
+	PalEntry _globalPalette[PAL_ENTRIES];
 };
 
 } // End of namespace Saga
