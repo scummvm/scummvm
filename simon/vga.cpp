@@ -34,10 +34,10 @@ typedef void (SimonEngine::*VgaOpcodeProc) ();
 // Opcode tables
 static const VgaOpcodeProc vga_opcode_table[] = {
 	NULL,
-	&SimonEngine::vc1_dummy_op,
+	&SimonEngine::vc1_fadeOut,
 	&SimonEngine::vc2_call,
 	&SimonEngine::vc3_loadSprite,
-	&SimonEngine::vc4_dummy_op,
+	&SimonEngine::vc4_fadeIn,
 	&SimonEngine::vc5_skip_if_neq,
 	&SimonEngine::vc6_skip_ifn_sib_with_a,
 	&SimonEngine::vc7_skip_if_sib_with_a,
@@ -53,23 +53,23 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonEngine::vc17_setPathfinderItem,
 	&SimonEngine::vc18_jump,
 	&SimonEngine::vc19_chain_to_script,
-	&SimonEngine::vc20_set_code_word,
-	&SimonEngine::vc21_jump_if_code_word,
+	&SimonEngine::vc20_setRepeat,
+	&SimonEngine::vc21_endRepeat,
 	&SimonEngine::vc22_setSpritePalette,
 	&SimonEngine::vc23_setSpritePriority,
 	&SimonEngine::vc24_setSpriteXY,
 	&SimonEngine::vc25_halt_sprite,
-	&SimonEngine::vc26_setWindow,
+	&SimonEngine::vc26_setSubWindow,
 	&SimonEngine::vc27_resetSprite,
 	&SimonEngine::vc28_dummy_op,
 	&SimonEngine::vc29_stopAllSounds,
 	&SimonEngine::vc30_setFrameRate,
 	&SimonEngine::vc31_setWindow,
 	&SimonEngine::vc32_copyVar,
-	&SimonEngine::vc33_forceUnlock,
-	&SimonEngine::vc34_forceLock,
-	&SimonEngine::vc35,
-	&SimonEngine::vc36_saveLoadDialog,
+	&SimonEngine::vc33_setMouseOn,
+	&SimonEngine::vc34_setMouseOff,
+	&SimonEngine::vc35_clearWindow,
+	&SimonEngine::vc36_setWindowImage,
 	&SimonEngine::vc37_addToSpriteY,
 	&SimonEngine::vc38_skipIfVarZero,
 	&SimonEngine::vc39_setVar,
@@ -214,7 +214,7 @@ void SimonEngine::o_read_vgares_328() {
 }
 
 // VGA Script commands
-void SimonEngine::vc1_dummy_op() {
+void SimonEngine::vc1_fadeOut() {
 	/* dummy opcode */
 	_vcPtr += 6;
 }
@@ -356,7 +356,7 @@ void SimonEngine::vc3_loadSprite() {
 	_curVgaFile1 = old_file_1;
 }
 
-void SimonEngine::vc4_dummy_op() {
+void SimonEngine::vc4_fadeIn() {
 	/* dummy opcode */
 	_vcPtr += 6;
 }
@@ -1100,7 +1100,7 @@ void SimonEngine::vc19_chain_to_script() {
 
 /* helper routines */
 
-void SimonEngine::vc20_set_code_word() {
+void SimonEngine::vc20_setRepeat() {
 	/* FIXME: This opcode is somewhat strange: it first reads a BE word from
 	 * the script (advancing the script pointer in doing so); then it writes
 	 * back the same word, this time as LE, into the script.
@@ -1110,7 +1110,7 @@ void SimonEngine::vc20_set_code_word() {
 	_vcPtr += 2;
 }
 
-void SimonEngine::vc21_jump_if_code_word() {
+void SimonEngine::vc21_endRepeat() {
 	int16 a = vc_read_next_word();
 	const byte *tmp = _vcPtr + a;
 	if (_game & GF_SIMON2)
@@ -1211,12 +1211,12 @@ void SimonEngine::vc25_halt_sprite() {
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc26_setWindow() {
-	uint16 *as = &_video_windows[vc_read_next_word() * 4];
-	as[0] = vc_read_next_word();
-	as[1] = vc_read_next_word();
-	as[2] = vc_read_next_word();
-	as[3] = vc_read_next_word();
+void SimonEngine::vc26_setSubWindow() {
+	uint16 *as = &_video_windows[vc_read_next_word() * 4]; // number
+	as[0] = vc_read_next_word(); // x
+	as[1] = vc_read_next_word(); // y
+	as[2] = vc_read_next_word(); // width
+	as[3] = vc_read_next_word(); // height
 }
 
 void SimonEngine::vc27_resetSprite() {
@@ -1295,38 +1295,38 @@ void SimonEngine::vc32_copyVar() {
 	vc_write_var(vc_read_next_word(), a);
 }
 
-void SimonEngine::vc33_forceUnlock() {
+void SimonEngine::vc33_setMouseOn() {
 	if (_lockCounter != 0) {
 		_lockCounter = 1;
 		unlock();
 	}
 }
 
-void SimonEngine::vc34_forceLock() {
+void SimonEngine::vc34_setMouseOff() {
 	lock();
 	_lockCounter = 200;
 	_leftButtonDown = 0;
 }
 
-void SimonEngine::vc35() {
+void SimonEngine::vc35_clearWindow() {
 	/* unused */
 	_vcPtr += 4;
 	_vgaSpriteChanged++;
 }
 
-void SimonEngine::vc36_saveLoadDialog() {
+void SimonEngine::vc36_setWindowImage() {
 	_videoVar8 = false;
 	uint vga_res = vc_read_next_word();
-	uint mode = vc_read_next_word();
+	uint windowNum = vc_read_next_word();
 
 	if (_game & GF_SIMON1) {
-		if (mode == 16) {
+		if (windowNum == 16) {
 			_copyPartialMode = 2;
 		} else {
-			set_video_mode_internal(mode, vga_res);
+			set_video_mode_internal(windowNum, vga_res);
 		}
 	} else {
-		set_video_mode_internal(mode, vga_res);
+		set_video_mode_internal(windowNum, vga_res);
 	}
 }
 

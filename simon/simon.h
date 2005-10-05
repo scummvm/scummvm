@@ -612,10 +612,10 @@ protected:
 
 public:
 	// Simon1/Simon2 video script opcodes
-	void vc1_dummy_op();
+	void vc1_fadeOut();
 	void vc2_call();
 	void vc3_loadSprite();
-	void vc4_dummy_op();
+	void vc4_fadeIn();
 	void vc5_skip_if_neq();
 	void vc6_skip_ifn_sib_with_a();
 	void vc7_skip_if_sib_with_a();
@@ -631,23 +631,23 @@ public:
 	void vc17_setPathfinderItem();
 	void vc18_jump();
 	void vc19_chain_to_script();
-	void vc20_set_code_word();
-	void vc21_jump_if_code_word();
+	void vc20_setRepeat();
+	void vc21_endRepeat();
 	void vc22_setSpritePalette();
 	void vc23_setSpritePriority();
 	void vc24_setSpriteXY();
 	void vc25_halt_sprite();
-	void vc26_setWindow();
+	void vc26_setSubWindow();
 	void vc27_resetSprite();
 	void vc28_dummy_op();
 	void vc29_stopAllSounds();
 	void vc30_setFrameRate();
 	void vc31_setWindow();
 	void vc32_copyVar();
-	void vc33_forceUnlock();
-	void vc34_forceLock();
-	void vc35();
-	void vc36_saveLoadDialog();
+	void vc33_setMouseOn();
+	void vc34_setMouseOff();
+	void vc35_clearWindow();
+	void vc36_setWindowImage();
 	void vc37_addToSpriteY();
 	void vc38_skipIfVarZero();
 	void vc39_setVar();

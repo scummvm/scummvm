@@ -2694,11 +2694,11 @@ void SimonEngine::o_force_unlock() {
 void SimonEngine::o_force_lock() {
 	if (_game & GF_SIMON2) {
 		_lockWord |= 0x8000;
-		vc34_forceLock();
+		vc34_setMouseOff();
 		_lockWord &= ~0x8000;
 	} else {
 		_lockWord |= 0x4000;
-		vc34_forceLock();
+		vc34_setMouseOff();
 		_lockWord &= ~0x4000;
 	}
 }
@@ -3817,7 +3817,7 @@ void SimonEngine::openGameFile() {
 
 	loadIconFile();
 
-	vc34_forceLock();
+	vc34_setMouseOff();
 
 	runSubroutine101();
 	startUp_helper_2();
