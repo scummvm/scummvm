@@ -191,12 +191,21 @@ void Gfx::initPalette() {
 
 	free(resourcePointer);
 
-	setPalette(_globalPalette, 0, 256);
+	setPalette(_globalPalette, true);
 }
 
-void Gfx::setPalette(const PalEntry *pal, int from, int numcolors) {
+void Gfx::setPalette(const PalEntry *pal, bool full) {
 	int i;
 	byte *ppal;
+	int from, numcolors;
+
+	if (_vm->getGameType() != GType_IHNM || full) {
+		from = 0;
+		numcolors = PAL_ENTRIES;
+	} else {
+		from = 0;
+		numcolors = 248;
+	}
 
 	for (i = 0, ppal = &_currentPal[from * 4]; i < numcolors; i++, ppal += 4) {
 		ppal[0] = _globalPalette[i].red = pal[i].red;
@@ -250,14 +259,23 @@ void Gfx::getCurrentPal(PalEntry *src_pal) {
 	}
 }
 
-void Gfx::palToBlack(PalEntry *srcPal, double percent, int from, int numcolors) {
+void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	int i;
 	//int fade_max = 255;
 	int new_entry;
 	byte *ppal;
 	PalEntry *palE;
+	int from, numcolors;
 
 	double fpercent;
+
+	if (_vm->getGameType() != GType_IHNM) {
+		from = 0;
+		numcolors = PAL_ENTRIES;
+	} else {
+		from = 0;
+		numcolors = 248;
+	}
 
 	if (percent > 1.0) {
 		percent = 1.0;
@@ -308,12 +326,21 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent, int from, int numcolors) 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
-void Gfx::blackToPal(PalEntry *srcPal, double percent, int from, int numcolors) {
+void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	int new_entry;
 	double fpercent;
 	byte *ppal;
 	int i;
 	PalEntry *palE;
+	int from, numcolors;
+
+	if (_vm->getGameType() != GType_IHNM) {
+		from = 0;
+		numcolors = PAL_ENTRIES;
+	} else {
+		from = 0;
+		numcolors = 248;
+	}
 
 	if (percent > 1.0) {
 		percent = 1.0;

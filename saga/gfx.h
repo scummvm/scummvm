@@ -135,11 +135,11 @@ public:
 	}
 
 	void initPalette();
-	void setPalette(const PalEntry *pal, int from = 0, int numcolors = PAL_ENTRIES);
+	void setPalette(const PalEntry *pal, bool full = false);
 	void setPaletteColor(int n, int r, int g, int b);
 	void getCurrentPal(PalEntry *src_pal);
-	void palToBlack(PalEntry *src_pal, double percent, int from = 0, int numcolors = PAL_ENTRIES);
-	void blackToPal(PalEntry *src_pal, double percent, int from = 0, int numcolors = PAL_ENTRIES);
+	void palToBlack(PalEntry *src_pal, double percent);
+	void blackToPal(PalEntry *src_pal, double percent);
 	void updateCursor() { setCursor(); }
 	void showCursor(bool state);
 
