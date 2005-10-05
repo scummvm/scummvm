@@ -23,7 +23,7 @@
 #define KYRA_H
 
 #include "base/engine.h"
-#include "common/util.h"
+#include "common/rect.h"
 
 namespace Kyra {
 
@@ -206,6 +206,73 @@ protected:
 	static const Cursor _cursors[];
 	static const int _cursorsCount;
 	
+	typedef void (KyraEngine::*SeqProc)();
+	struct SeqEntry {
+		uint8 len;
+		SeqProc proc;
+		const char* desc;
+	};
+
+	// the sequence procs
+	void s1_wsaOpen();
+	void s1_wsaClose();
+	void s1_wsaPlayFrame();
+	void s1_wsaPlayNextFrame();
+	void s1_wsaPlayPrevFrame();
+	void s1_drawShape();
+	void s1_maybeWaitTicks();
+	void s1_waitTicks();
+	void s1_copyWaitTicks();
+	void s1_shuffleScreen();
+	void s1_copyView();
+	void s1_loopInit();
+	void s1_maybeLoopInc();
+	void s1_loopInc();
+	void s1_skip();
+	void s1_loadPalette();
+	void s1_loadBitmap();
+	void s1_fadeToBlack();
+	void s1_printText();
+	void s1_printTalkText();
+	void s1_restoreTalkText();
+	void s1_clearCurrentScreen();
+	void s1_break();
+	void s1_fadeFromBlack();
+	void s1_copyRegion();
+	void s1_copyRegionSpecial();
+	void s1_fillRect();
+	void s1_soundUnk1();
+	void s1_soundUnk2();
+	void s1_allocTempBuffer();
+	void s1_textDisplayEnable();
+	void s1_textDisplayDisable();
+	void s1_endOfScript();
+	void s1_miscUnk1();
+	void s1_miscUnk2();
+	void s1_miscUnk3();
+	void s1_miscUnk4();
+
+	struct SeqMovie {
+		WSAMovieV1 *wsa;
+		int32 page;
+		int16 frame;
+		int16 numFrames;
+		Common::Point pos;
+	};
+
+	const uint8 *_seqData;
+	SeqMovie _seqMovies[12];
+	SeqLoop _seqLoopTable[20];
+	uint16 _seqWsaCurDecodePage;
+	uint32 _seqDisplayedTextTimer;
+	bool _seqDisplayTextFlag;
+	uint8 _seqDisplayedText;
+	uint8 _seqDisplayedChar;
+	uint16 _seqDisplayedTextX;
+	bool _seqTalkTextPrinted;
+	bool _seqTalkTextRestored;
+	bool _seqQuitFlag;
+
 	// these tables are specific to the demo version
 	static const uint8 _seq_demoData_WestwoodLogo[];
 	static const uint8 _seq_demoData_KyrandiaLogo[];
@@ -223,8 +290,7 @@ protected:
 	static const uint8 _seq_floppyData_KallakMalcom[];
 	static const uint8 _seq_floppyData_MalcomTree[];
 	static const uint8 _seq_floppyData_WestwoodLogo[];
-	
-	static const uint8 _seq_codeSizeTable[];
+
 	static const char *_seq_WSATable[];
 	static const char *_seq_CPSTable[];
 	static const char *_seq_COLTable[];

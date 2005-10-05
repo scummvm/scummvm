@@ -347,11 +347,6 @@ const uint8 KyraEngine::_seq_demoData_Demo4[] = {
 	0x06, 0x06, 0x04, 0x00, 0x0B, 0x00, 0x39, 0x00, 0x06, 0x5A, 0x00, 0x13, 0x0E, 0x01, 0x06, 0x1A
 };
 
-const uint8 KyraEngine::_seq_codeSizeTable[] = {
-	2, 1, 5, 1, 1, 4, 2, 2, 0, 0, 1, 3, 1, 1, 0, 1,
-	5, 0, 0, 0, 0, 2, 1, 8, 1, 1, 0, 0, 0, 0, 0, 0
-};
-
 const char *KyraEngine::_seq_WSATable[] = {
 	"kallak.wsa",
 	"tree1.wsa",
