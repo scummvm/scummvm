@@ -741,7 +741,11 @@ int SimonEngine::runScript() {
 
 		case 133:{									/* load game */
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-				o_load_game();
+				if (_game == GAME_FEEBLEFILES) {
+					load_game(readVariable(55));
+				} else {
+					o_load_game();
+				}
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
