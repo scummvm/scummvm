@@ -68,7 +68,8 @@ enum PanelModes {
 	kPanelPlacard,
 	kPanelMap,
 	kPanelSceneSubstitute,
-	kPanelChapterSelection
+	kPanelChapterSelection,
+	kPanelCutaway
 //	kPanelInventory
 };
 

@@ -341,8 +341,14 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 				if (!_disableAbortSpeeches)
 					_vm->_actor->abortAllSpeeches();
 			}
+			return true;
+		}
+		break;
+	case kPanelCutaway:
+		if (ascii == 27) { // Esc
+			if (!_disableAbortSpeeches)
+				_vm->_actor->abortAllSpeeches();
 			_vm->_scene->cutawaySkip();
-
 			return true;
 		}
 		break;

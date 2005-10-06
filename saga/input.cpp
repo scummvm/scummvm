@@ -104,7 +104,6 @@ int SagaEngine::processInput() {
 			// Actual game keys
 			case 32: // space
 				_actor->abortSpeech();
-				_scene->cutawaySkip();
 				break;
 			case 19:  // pause
 			case 'z':

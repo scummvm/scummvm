@@ -86,9 +86,8 @@ void Anim::playCutaway(int cut, bool fade) {
 		_vm->_gfx->showCursor(false);
 		_vm->_interface->setStatusText("");
 		_vm->_interface->setSaveReminderState(0);
-
-		// TODO: Hide the inventory. Perhaps a new panel mode?
-
+		_vm->_interface->rememberMode();
+		_vm->_interface->setMode(kPanelCutaway);
 		_cutawayActive = true;
 	}
 
@@ -195,6 +194,7 @@ void Anim::clearCutaway(void) {
 			_cutawayAnimations[i] = NULL;
 		}
 
+		_vm->_interface->restoreMode();
 		_vm->_gfx->showCursor(true);
 	}
 }

@@ -327,6 +327,7 @@ int SagaEngine::go() {
 			} else if (!_scene->isInIntro()) {
 				if (_interface->getMode() == kPanelMain ||
 						 _interface->getMode() == kPanelConverse ||
+						 _interface->getMode() == kPanelCutaway ||
 						 _interface->getMode() == kPanelNull)
 					_actor->direct(msec);
 			}
