@@ -799,7 +799,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
-
 	if (loadSceneParams->sceneProc == NULL) {
 		if (!_inGame) {
 			_inGame = true;
@@ -808,22 +807,29 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_vm->_sound->stopAll();
 
-		if (_sceneDescription.musicResourceId >= 0) {
-			event.type = kEvTOneshot;
-			event.code = kMusicEvent;
-			event.param = _sceneDescription.musicResourceId;
-			event.param2 = MUSIC_DEFAULT;
-			event.op = kEventPlay;
-			event.time = 0;
+		// FIXME: Does IHNM use scene background music, or is all the
+		//        music scripted? At the very least, it shouldn't try
+		//        to start song 0 at the beginning of the game, since
+		//        it's the end credits music.
 
-			_vm->_events->queue(&event);
-		} else {
-			event.type = kEvTOneshot;
-			event.code = kMusicEvent;
-			event.op = kEventStop;
-			event.time = 0;
+		if (_vm->getGameType() == GType_ITE) {
+			if (_sceneDescription.musicResourceId >= 0) {
+				event.type = kEvTOneshot;
+				event.code = kMusicEvent;
+				event.param = _sceneDescription.musicResourceId;
+				event.param2 = MUSIC_DEFAULT;
+				event.op = kEventPlay;
+				event.time = 0;
 
-			_vm->_events->queue(&event);
+				_vm->_events->queue(&event);
+			} else {
+				event.type = kEvTOneshot;
+				event.code = kMusicEvent;
+				event.op = kEventStop;
+				event.time = 0;
+
+				_vm->_events->queue(&event);
+			}
 		}
 
 		// Set scene background
