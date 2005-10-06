@@ -496,7 +496,7 @@ char *SimonEngine::gen_savename(int slot) {
 }
 
 bool SimonEngine::load_game(uint slot) {
-	char ident[18];
+	char ident[100];
 	Common::InSaveFile *f;
 	uint num, item_index, i, j;
 
@@ -508,7 +508,11 @@ bool SimonEngine::load_game(uint slot) {
 		return false;
 	}
 
-	f->read(ident, 18);
+	if (_game == GAME_FEEBLEFILES) {
+		f->read(ident, 18);
+	} else {
+		f->read(ident, 100);
+	}
 
 	num = f->readUint32BE();
 

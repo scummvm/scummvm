@@ -75,6 +75,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"},
+	{"ff", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
 
 	{NULL, NULL, 0, NULL}
 };
@@ -261,6 +262,20 @@ static const GameSpecificSettings simon2dos_settings = {
 	"",                                     // flac_effects_filename
 	"GAME32",                               // gamepc_filename
 };
+
+static const GameSpecificSettings feeblefiles_settings = {
+	"",	                                // gme_filename
+	"",                                     // wav_filename
+	"",                                     // voc_filename
+	"",                                     // mp3_filename
+	"",                                     // vorbis_filename
+	"",					// flac_filename
+	"",                                     // voc_effects_filename
+	"",                                     // mp3_effects_filename
+	"",                                     // vorbis_effects_filename
+	"",                                     // flac_effects_filename
+	"GAME22",                               // gamepc_filename
+};
 #endif
 
 static const char* bad_versions[3] = {
@@ -378,7 +393,9 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	}
 
 	_language = Common::parseLanguage(ConfMan.get("language"));
-	if (_game & GF_SIMON2) {
+	if (_game == GAME_FEEBLEFILES) {
+		gss = PTR(feeblefiles_settings);
+	} else if (_game & GF_SIMON2) {
 		if (_game & GF_TALKIE) {
 			gss = PTR(simon2win_settings);
 
@@ -1367,9 +1384,9 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 
-				if (_game & GF_SIMON2) {
+				if (_game == GAME_SIMON2DOS || _game == GAME_SIMON2WIN) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
-				} else if (_game & GF_TALKIE) {
+				} else if (_game == GAME_SIMON1TALKIE) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
 				}
@@ -3815,7 +3832,8 @@ void SimonEngine::openGameFile() {
 #endif
 	}
 
-	loadIconFile();
+	if (_game != GAME_FEEBLEFILES)
+		loadIconFile();
 
 	vc34_setMouseOff();
 
