@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	kyra/screen.o \
 	kyra/script_v1.o \
 	kyra/script.o \
+	kyra/seqplayer.o \
 	kyra/sound.o \
 	kyra/staticres.o \
 	kyra/sprites.o \

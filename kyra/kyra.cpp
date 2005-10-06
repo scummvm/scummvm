@@ -37,13 +37,12 @@
 #include "kyra/resource.h"
 #include "kyra/screen.h"
 #include "kyra/script.h"
+#include "kyra/seqplayer.h"
 #include "kyra/sound.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
 
 #define TEST_SPRITES 1
-
-#define SEQOP(n, x) { n, &KyraEngine::x, #x }
 
 using namespace Kyra;
 
@@ -171,6 +170,8 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_screen);
 	_sprites = new Sprites(this, _system);
 	assert(_sprites);
+	_seq = new SeqPlayer(this, _system);
+	assert(_seq);
 
 	_fastMode = false;
 	_talkCoords.y = 0x88;
@@ -188,6 +189,7 @@ KyraEngine::~KyraEngine() {
 	delete _screen;
 	delete _res;
 	delete _midi;
+	delete _seq;
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
@@ -624,25 +626,25 @@ void KyraEngine::seq_demo() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	seq_playSpecialSequence(_seq_demoData_WestwoodLogo, true);
+	_seq->playSequence(_seq_demoData_WestwoodLogo, true);
 	waitTicks(60);
 
-	seq_playSpecialSequence(_seq_demoData_KyrandiaLogo, true);
+	_seq->playSequence(_seq_demoData_KyrandiaLogo, true);
 
 	_screen->fadeToBlack();
 	_screen->clearPage(2);
 	_screen->clearPage(0);
 
-	seq_playSpecialSequence(_seq_demoData_Demo1, true);
+	_seq->playSequence(_seq_demoData_Demo1, true);
 
 	_screen->clearPage(0);
-	seq_playSpecialSequence(_seq_demoData_Demo2, true);
+	_seq->playSequence(_seq_demoData_Demo2, true);
 
 	_screen->clearPage(0);
-	seq_playSpecialSequence(_seq_demoData_Demo3, true);
+	_seq->playSequence(_seq_demoData_Demo3, true);
 
 	_screen->clearPage(0);
-	seq_playSpecialSequence(_seq_demoData_Demo4, true);
+	_seq->playSequence(_seq_demoData_Demo4, true);
 
 	_screen->clearPage(0);
 	loadBitmap("FINAL.CPS", 7, 7, _screen->_currentPalette);
@@ -665,7 +667,7 @@ void KyraEngine::seq_intro() {
 		&KyraEngine::seq_introKallakMalcom
 	};
 	_skipIntroFlag = true; // only true if user already played the game once
-	_seq_copyViewOffs = true;
+	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
 	snd_playTheme(MUSIC_INTRO, 2);
  	snd_setSoundEffectFile(MUSIC_INTRO);
@@ -675,7 +677,7 @@ void KyraEngine::seq_intro() {
 	}
 	setTalkCoords(136);
 	waitTicks(30);
-	_seq_copyViewOffs = false;
+	_seq->setCopyViewOffs(false);
 	_midi->stopMusic();
 }
 
@@ -690,13 +692,13 @@ void KyraEngine::seq_introLogos() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	if (seq_playSpecialSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
+	if (_seq->playSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
 	waitTicks(60);
-	if (seq_playSpecialSequence(_seq_floppyData_KyrandiaLogo, _skipIntroFlag)) {
+	if (_seq->playSequence(_seq_floppyData_KyrandiaLogo, _skipIntroFlag)) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -724,7 +726,7 @@ void KyraEngine::seq_introLogos() {
 		waitTicks(1);
 	} while (y2 >= 64);
 
-	seq_playSpecialSequence(_seq_floppyData_Forest, true);
+	_seq->playSequence(_seq_floppyData_Forest, true);
 }
 
 void KyraEngine::seq_introStory() {
@@ -738,559 +740,28 @@ void KyraEngine::seq_introMalcomTree() {
 	debug(9, "KyraEngine::seq_introMalcomTree()");
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
-	seq_playSpecialSequence(_seq_floppyData_MalcomTree, true);
+	_seq->playSequence(_seq_floppyData_MalcomTree, true);
 }
 
 void KyraEngine::seq_introKallakWriting() {
 	debug(9, "KyraEngine::seq_introKallakWriting()");
-	seq_makeHandShapes();
+	_seq->makeHandShapes();
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
-	seq_playSpecialSequence(_seq_floppyData_KallakWriting, true);
-	seq_freeHandShapes();
+	_seq->playSequence(_seq_floppyData_KallakWriting, true);
+	_seq->freeHandShapes();
 }
 
 void KyraEngine::seq_introKallakMalcom() {
 	debug(9, "KyraEngine::seq_introKallakMalcom()");
 	_screen->clearPage(3);
-	seq_playSpecialSequence(_seq_floppyData_KallakMalcom, true);
-}
-
-uint8 *KyraEngine::seq_setPanPages(int pageNum, int shape) {
-	debug(9, "KyraEngine::seq_setPanPages(%d, %d)", pageNum, shape);
-	uint8 *panPage = 0;
-	const uint8 *data = _screen->getPagePtr(pageNum);
-	uint16 numShapes = READ_LE_UINT16(data);
-	if (shape < numShapes) {
-		uint32 offs = 0;
-		if (_game == KYRA1CD) {
-			offs = READ_LE_UINT32(data + 2 + shape * 4);
-		} else {
-			offs = READ_LE_UINT16(data + 2 + shape * 2);
-		}
-		if (offs != 0) {
-			data += offs;
-			uint16 sz = READ_LE_UINT16(data + 6);
-			panPage = (uint8 *)malloc(sz);
-			if (panPage) {
-				memcpy(panPage, data, sz);
-			}
-		}
-	}
-	return panPage;
-}
-
-void KyraEngine::seq_makeHandShapes() {
-	debug(9, "KyraEngine::seq_makeHandShapes()");
-	loadBitmap("WRITING.CPS", 3, 3, 0);
-	for (int i = 0; i < 3; ++i) {
-		_seq_handShapes[i] = seq_setPanPages(3, i);
-	}
-}
-
-void KyraEngine::seq_freeHandShapes() {
-	debug(9, "KyraEngine::seq_freeHandShapes()");
-	for (int i = 0; i < 3; ++i) {
-		free(_seq_handShapes[i]);
-		_seq_handShapes[i] = 0;
-	}
-}
-
-void KyraEngine::seq_copyView() {
-	debug(9, "KyraEngine::seq_copyView()");
-	int y = 128;
-	if (!_seq_copyViewOffs) {
-		y -= 8;
-	}
-	_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
+	_seq->playSequence(_seq_floppyData_KallakMalcom, true);
 }
 
 bool KyraEngine::seq_skipSequence() const {
 	debug(9, "KyraEngine::seq_skipSequence()");
 	return _quitFlag || _abortIntroFlag;
-}
-
-void KyraEngine::s1_wsaOpen() {
-	uint8 wsaObj = *_seqData++;
-	assert(wsaObj < 12);
-	uint8 offscreenDecode = *_seqData++;
-	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;				
-	if (_game == KYRA1DEMO) {
-		_seqMovies[wsaObj].wsa = wsa_open(_seq_demo_WSATable[wsaObj], offscreenDecode, 0);
-	} else {
-		_seqMovies[wsaObj].wsa = wsa_open(_seq_WSATable[wsaObj], offscreenDecode, 0);
-	}
-	_seqMovies[wsaObj].frame = 0;
-	_seqMovies[wsaObj].numFrames = wsa_getNumFrames(_seqMovies[wsaObj].wsa) - 1;
-}
-
-void KyraEngine::s1_wsaClose() {
-	uint8 wsaObj = *_seqData++;
-	assert(wsaObj < 12);
-	if (_seqMovies[wsaObj].wsa) {
-		wsa_close(_seqMovies[wsaObj].wsa);
-		_seqMovies[wsaObj].wsa = 0;
-	}
-}
-
-void KyraEngine::s1_wsaPlayFrame() {
-	uint8 wsaObj = *_seqData++;
-	assert(wsaObj < 12);
-	int16 frame = (int8)*_seqData++;
-	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
-	_seqMovies[wsaObj].pos.y = *_seqData++;
-	wsa_play(_seqMovies[wsaObj].wsa, frame, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, _seqMovies[wsaObj].page);
-	_seqMovies[wsaObj].frame = frame;
-}
-
-void KyraEngine::s1_wsaPlayNextFrame() {
-	uint8 wsaObj = *_seqData++;
-	assert(wsaObj < 12);
-	int16 frame = ++_seqMovies[wsaObj].frame;
-	if (frame > _seqMovies[wsaObj].numFrames) {
-		frame = 0;
-		_seqMovies[wsaObj].frame = 0;
-	}
-	wsa_play(_seqMovies[wsaObj].wsa, frame, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, _seqMovies[wsaObj].page);
-}
-
-void KyraEngine::s1_wsaPlayPrevFrame() {
-	uint8 wsaObj = *_seqData++;
-	assert(wsaObj < 12);
-	int16 frame = --_seqMovies[wsaObj].frame;
-	if (frame < 0) {
-		frame = _seqMovies[wsaObj].numFrames;
-		_seqMovies[wsaObj].frame = frame;
-	} else {
-		wsa_play(_seqMovies[wsaObj].wsa, frame, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, _seqMovies[wsaObj].page);
-	}
-}
-
-void KyraEngine::s1_drawShape() {
-	uint8 shapeNum = *_seqData++;
-	int x = READ_LE_UINT16(_seqData); _seqData += 2;
-	int y = *_seqData++;
-	_screen->drawShape(2, _seq_handShapes[shapeNum], x, y, 0, 0, 0);
-}
-
-void KyraEngine::s1_maybeWaitTicks() {
-	uint16 a = READ_LE_UINT16(_seqData); _seqData += 2;
-	warning("STUB: s1_maybeWaitTicks(%d)\n", a);
-}
-
-void KyraEngine::s1_waitTicks() {
-	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
-	waitTicks(ticks);
-}
-
-void KyraEngine::s1_copyWaitTicks() {
-	seq_copyView();
-	s1_waitTicks();
-}
-
-void KyraEngine::s1_shuffleScreen() {
-	_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
-	_screen->_curPage = 2;
-}
-
-void KyraEngine::s1_copyView() {
-	seq_copyView();
-}
-
-void KyraEngine::s1_loopInit() {
-	uint8 seqLoop = *_seqData++;
-	if (seqLoop < 20) {
-		_seqLoopTable[seqLoop].ptr = _seqData;
-	} else {
-		_seqQuitFlag = true;
-	}
-}
-
-void KyraEngine::s1_maybeLoopInc() {
-	uint8 a = *_seqData++;
-	int16 b = (int16)READ_LE_UINT16(_seqData); _seqData += 2;
-	warning("STUB: s1_maybeLoopInc(%d, %d)\n", a, b);
-}
-
-void KyraEngine::s1_loopInc() {
-	uint8 seqLoop = *_seqData++;
-	uint16 seqLoopCount = READ_LE_UINT16(_seqData); _seqData += 2;
-	if (_seqLoopTable[seqLoop].count == 0xFFFF) {
-		_seqLoopTable[seqLoop].count = seqLoopCount - 1;
-		_seqData = _seqLoopTable[seqLoop].ptr;
-	} else if (_seqLoopTable[seqLoop].count == 0) {
-		_seqLoopTable[seqLoop].count = 0xFFFF;
-		_seqLoopTable[seqLoop].ptr = 0;
-	} else {
-		--_seqLoopTable[seqLoop].count;
-		_seqData = _seqLoopTable[seqLoop].ptr;
-	}
-}
-
-void KyraEngine::s1_skip() {
-	uint8 a = *_seqData++;
-	warning("STUB: s1_skip(%d)\n", a);
-}
-
-void KyraEngine::s1_loadPalette() {
-	uint8 colNum = *_seqData++;
-	uint32 fileSize;
-	uint8 *srcData;
-	if (_game == KYRA1DEMO) {
-		srcData = _res->fileData(_seq_demo_COLTable[colNum], &fileSize);
-	} else {
-		srcData = _res->fileData(_seq_COLTable[colNum], &fileSize);
-	}
-	memcpy(_screen->_currentPalette, srcData, fileSize);
-	delete[] srcData;
-}
-
-void KyraEngine::s1_loadBitmap() {
-	uint8 cpsNum = *_seqData++;
-	loadBitmap(_seq_CPSTable[cpsNum], 3, 3, 0);
-}
-
-void KyraEngine::s1_fadeToBlack() {
-	_screen->fadeToBlack();
-}
-
-void KyraEngine::s1_printText() {
-	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
-	uint8 txt = *_seqData++;
-	_screen->fillRect(0, 180, 319, 195, 12);
-	_screen->setTextColorMap(colorMap);
-	if (!_seqDisplayTextFlag) {
-		const char *str = _seq_textsTableEN[txt];
-		int x = (Screen::SCREEN_W - _screen->getTextWidth(str)) / 2;
-		_screen->printText(str, x, 180, 0xF, 0xC);
-	} else {
-		_seqDisplayedTextTimer = _system->getMillis() + 1000 / 60;
-		_seqDisplayedText = txt;
-		_seqDisplayedChar = 0;
-		const char *str = _seq_textsTableEN[_seqDisplayedText];
-		_seqDisplayedTextX = (Screen::SCREEN_W - _screen->getTextWidth(str)) / 2;
-	}
-}
-
-void KyraEngine::s1_printTalkText() {
-	uint8 txt = *_seqData++;
-	int x = READ_LE_UINT16(_seqData); _seqData += 2;
-	int y = *_seqData++;
-	uint8 fillColor = *_seqData++;
-	int b;
-	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
-		if (_seqWsaCurDecodePage != 0) {
-			b = 2;
-		} else {
-			b = 0;
-		}
-		restoreTalkTextMessageBkgd(2, b);
-	}
-	_seqTalkTextPrinted = true;
-	_seqTalkTextRestored = false;
-	if (_seqWsaCurDecodePage != 0) {
-		b = 2;
-	} else {
-		b = 0;
-	}
-	printTalkTextMessage(_seq_textsTableEN[txt], x, y, fillColor, b, 2);
-}
-
-void KyraEngine::s1_restoreTalkText() {
-	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
-		int b;
-		if (_seqWsaCurDecodePage != 0) {
-			b = 2;
-		} else {
-			b = 0;
-		}
-		restoreTalkTextMessageBkgd(2, b);
-		_seqTalkTextRestored = true;
-	}
-}
-
-void KyraEngine::s1_clearCurrentScreen() {
-	_screen->fillRect(10, 180, 319, 196, 0xC);
-}
-
-void KyraEngine::s1_break() {
-	// Do nothing
-}
-
-void KyraEngine::s1_fadeFromBlack() {
-	_screen->fadeFromBlack();
-}
-
-void KyraEngine::s1_copyRegion() {
-	uint8 srcPage = *_seqData++;
-	uint8 dstPage = *_seqData++;
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, srcPage, dstPage);
-}
-
-void KyraEngine::s1_copyRegionSpecial() {
-	static const uint8 colorMap[] = { 0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0 };
-	const char *copyStr = "Copyright (c) 1992 Westwood Studios";
-	const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
-	const int y = 179;
-
-	uint8 so = *_seqData++;
-	switch (so) {
-	case 0:
-		_screen->copyRegion(0, 0, 0, 47, 320, 77, 2, 0);
-		break;
-	case 1:
-		_screen->copyRegion(0, 0, 0, 47, 320, 56, 2, 0);
-		break;			
-	case 2:
-		_screen->copyRegion(107, 72, 107, 72, 43, 87, 2, 0);
-		_screen->copyRegion(130, 159, 130, 159, 35, 17, 2, 0);
-		_screen->copyRegion(165, 105, 165, 105, 32, 9, 2, 0);
-		_screen->copyRegion(206, 83, 206, 83, 94, 93, 2, 0);
-		break;
-	case 3:
-		_screen->copyRegion(152, 56, 152, 56, 48, 48, 2, 0);
-		break;
-	case 4:
-		_screen->_charWidth = -2;
-		_screen->setTextColorMap(colorMap);
-		_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
-		_screen->printText(copyStr, x, y, 0xF, 0xC);
-		break;
-	case 5:
-		_screen->_curPage = 2;
-		break;
-	default:
-		error("Invalid subopcode %d for s1_copyRegionSpecial", so);
-		break;
-	}
-}
-
-void KyraEngine::s1_fillRect() {
-	int x1 = READ_LE_UINT16(_seqData); _seqData += 2;
-	int y1 = *_seqData++;
-	int x2 = READ_LE_UINT16(_seqData); _seqData += 2;
-	int y2 = *_seqData++;
-	uint8 color = *_seqData++;
-	uint8 page = *_seqData++;
-	_screen->fillRect(x1, y1, x2, y2, color, page);
-}
-
-void KyraEngine::s1_soundUnk1() {
-	uint8 param = *_seqData++;
-	waitTicks(3);
-	snd_playSoundEffect(param);
-}
-
-void KyraEngine::s1_soundUnk2() {
-	uint8 param = *_seqData++;
-	snd_seqMessage(param);
-}
-
-void KyraEngine::s1_allocTempBuffer() {
-	if (_game == KYRA1DEMO) {
-		_seqQuitFlag = true;
-	} else {
-		// allocate offscreen buffer, not needed
-	}
-}
-
-void KyraEngine::s1_textDisplayEnable() {
-	_seqDisplayTextFlag = true;
-}
-
-void KyraEngine::s1_textDisplayDisable() {
-	_seqDisplayTextFlag = false;
-}
-
-void KyraEngine::s1_endOfScript() {
-	_seqQuitFlag = true;
-}
-
-void KyraEngine::s1_miscUnk1() {
-	warning("STUB: s1_miscUnk1\n");
-}
-
-void KyraEngine::s1_miscUnk2() {
-	uint8 a = *_seqData++;
-	warning("STUB: s1_miscUnk2(%d)\n", a);
-}
-
-void KyraEngine::s1_miscUnk3() {
-	warning("STUB: s1_miscUnk3\n");
-}
-
-void KyraEngine::s1_miscUnk4() {
-	uint8 a = *_seqData++;
-	warning("STUB: s1_miscUnk4(%d)\n", a);
-}
-
-bool KyraEngine::seq_playSpecialSequence(const uint8 *seqData, bool skipSeq) {
-	static SeqEntry floppySeqProcs[] = {
-		// 0x00
-		SEQOP(3, s1_wsaOpen),
-		SEQOP(2, s1_wsaClose),
-		SEQOP(6, s1_wsaPlayFrame),
-		SEQOP(2, s1_wsaPlayNextFrame),
-		// 0x04
-		SEQOP(2, s1_wsaPlayPrevFrame),
-		SEQOP(5, s1_drawShape),
-		SEQOP(3, s1_waitTicks),
-		SEQOP(3, s1_copyWaitTicks),
-		// 0x08
-		SEQOP(1, s1_shuffleScreen),
-		SEQOP(1, s1_copyView),
-		SEQOP(2, s1_loopInit),
-		SEQOP(4, s1_loopInc),
-		// 0x0C
-		SEQOP(2, s1_loadPalette),
-		SEQOP(2, s1_loadBitmap),
-		SEQOP(1, s1_fadeToBlack),
-		SEQOP(2, s1_printText),
-		// 0x10
-		SEQOP(6, s1_printTalkText),
-		SEQOP(1, s1_restoreTalkText),
-		SEQOP(1, s1_clearCurrentScreen),
-		SEQOP(1, s1_break),
-		// 0x14
-		SEQOP(1, s1_fadeFromBlack),
-		SEQOP(3, s1_copyRegion),
-		SEQOP(2, s1_copyRegionSpecial),
-		SEQOP(9, s1_fillRect),
-		// 0x18
-		SEQOP(2, s1_soundUnk1),
-		SEQOP(2, s1_soundUnk2),
-		SEQOP(1, s1_allocTempBuffer),
-		SEQOP(1, s1_textDisplayEnable),
-		// 0x1C
-		SEQOP(1, s1_textDisplayDisable),
-		SEQOP(1, s1_endOfScript)
-	};
-
-#if 0
-	static SeqEntry cdromSeqProcs[] = {
-		// 0x00
-		SEQOP(3, s1_wsaOpen),
-		SEQOP(2, s1_wsaClose),
-		SEQOP(6, s1_wsaPlayFrame),
-		SEQOP(2, s1_wsaPlayNextFrame),
-		// 0x04
-		SEQOP(2, s1_wsaPlayPrevFrame),
-		SEQOP(5, s1_drawShape),
-		SEQOP(3, s1_maybeWaitTicks),
-		SEQOP(3, s1_waitTicks),
-		// 0x08
-		SEQOP(3, s1_copyWaitTicks),
-		SEQOP(1, s1_shuffleScreen),
-		SEQOP(1, s1_copyView),
-		SEQOP(2, s1_loopInit),
-		// 0x0C
-		SEQOP(4, s1_maybeLoopInc),
-		SEQOP(4, s1_maybeLoopInc), // Again?
-		SEQOP(2, s1_skip),
-		SEQOP(2, s1_loadPalette),
-		// 0x10
-		SEQOP(2, s1_loadBitmap),
-		SEQOP(1, s1_fadeToBlack),
-		SEQOP(2, s1_printText),
-		SEQOP(6, s1_printTalkText),
-		// 0x14
-		SEQOP(1, s1_restoreTalkText),
-		SEQOP(1, s1_clearCurrentScreen),
-		SEQOP(1, s1_break),
-		SEQOP(1, s1_fadeFromBlack),
-		// 0x18
-		SEQOP(3, s1_copyRegion),
-		SEQOP(2, s1_copyRegionSpecial),
-		SEQOP(9, s1_fillRect),
-		SEQOP(2, s1_soundUnk1),
-		// 0x1C
-		SEQOP(2, s1_soundUnk2),
-		SEQOP(1, s1_allocTempBuffer),
-		SEQOP(1, s1_textDisplayEnable),
-		SEQOP(1, s1_textDisplayDisable),
-		// 0x20
-		SEQOP(1, s1_endOfScript),
-		SEQOP(1, s1_miscUnk1),
-		SEQOP(2, s1_miscUnk2),
-		SEQOP(1, s1_miscUnk3),
-		// 0x24
-		SEQOP(2, s1_miscUnk4)
-	};
-#endif
-
-	const SeqEntry* commands;
-	int numCommands;
-
-	debug(9, "KyraEngine::seq_playSpecialSequence(0x%X, %d)", seqData, skipSeq);
-
-	commands = floppySeqProcs;
-	numCommands = ARRAYSIZE(floppySeqProcs);
-
-	bool seqSkippedFlag = false;
-
-	_seqData = seqData;
-
-	_seqDisplayedTextTimer = 0xFFFFFFFF;
-	_seqDisplayTextFlag = false;
-	_seqDisplayedTextX = 0;
-	_seqDisplayedText = 0;
-	_seqDisplayedChar = 0;
-	_seqTalkTextRestored = false;
-	_seqTalkTextPrinted = false;
-
-	_seqQuitFlag = false;
-	_seqWsaCurDecodePage = 0;
-
-	for (int i = 0; i < 20; ++i) {
-		_seqLoopTable[i].ptr = 0;
-		_seqLoopTable[i].count = 0xFFFF;
-	}
-
-	memset(_seqMovies, 0, sizeof(_seqMovies));
-
-	_screen->_curPage = 0;
-	while (!_seqQuitFlag) {
-		if (skipSeq && seq_skipSequence()) {
-			while (1) {
-				uint8 code = *_seqData;
-				if (commands[code].proc == &KyraEngine::s1_endOfScript || commands[code].proc == &KyraEngine::s1_break) {
-					break;
-				}
-				_seqData += commands[code].len;
-			}
-			skipSeq = false;
-			seqSkippedFlag = true;
-		}
-		// used in Kallak writing intro
-		if (_seqDisplayTextFlag && _seqDisplayedTextTimer != 0xFFFFFFFF) {
-			if (_seqDisplayedTextTimer < _system->getMillis()) {
-				char charStr[2];
-				charStr[0] = _seq_textsTableEN[_seqDisplayedText][_seqDisplayedChar];
-				charStr[1] = '\0';
-				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
-				_seqDisplayedTextX += _screen->getCharWidth(charStr[0]);
-				++_seqDisplayedChar;
-				if (_seq_textsTableEN[_seqDisplayedText][_seqDisplayedChar] == '\0') {
-					_seqDisplayedTextTimer = 0xFFFFFFFF;
-				}
-			} else {
-				_seqDisplayedTextTimer = _system->getMillis() + 1000 / 60;
-			}
-		}
-
-		uint8 seqCode = *_seqData++;
-		if (seqCode < numCommands) {
-			SeqProc currentProc = commands[seqCode].proc;
-			debug(5, "seqCode = %d (%s)", seqCode, commands[seqCode].desc);
-			(this->*currentProc)();
-		} else {
-			error("Invalid sequence opcode %d", seqCode);
-		}
-
-		_screen->updateScreen();
-	}
-	return seqSkippedFlag;
 }
 
 void KyraEngine::snd_playTheme(int file, int track) {
@@ -1324,30 +795,6 @@ void KyraEngine::snd_startTrack() {
 void KyraEngine::snd_haltTrack() {
 	debug(9, "KyraEngine::snd_haltTrack()");
 	_midi->haltTrack();
-}
-
-void KyraEngine::snd_seqMessage(int msg) {
-	debug(9, "KyraEngine::snd_seqMessage(%.02d)", msg);
-	switch (msg) {
-	case 0:
-		// nothing to do here...
-		break;
-	case 1:
-		_midi->beginFadeOut();
-		break;
-	case 56:
-		snd_playTheme(MUSIC_INTRO, 3);
-		break;
-	case 57:
-		snd_playTheme(MUSIC_INTRO, 4);
-		break;
-	case 58:
-		snd_playTheme(MUSIC_INTRO, 5);
-		break;
-	default:
-		warning("Unknown seq. message: %.02d", msg);
-		break;
-	}
 }
 
 } // End of namespace Kyra

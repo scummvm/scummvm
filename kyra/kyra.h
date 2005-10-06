@@ -92,6 +92,7 @@ struct SeqLoop {
 struct WSAMovieV1;
 
 class MusicPlayer;
+class SeqPlayer;
 class Resource;
 class Screen;
 class Sprites;
@@ -116,12 +117,39 @@ public:
 
 	Resource *resource() { return _res; }
 	Screen *screen() { return _screen; }
+	MusicPlayer *midi() { return _midi; }
 
 	uint8 game() const { return _game; }
 	
 	Common::RandomSource _rnd;
 
 	typedef void (KyraEngine::*IntroProc)();
+
+	// these tables are specific to the demo version
+	static const char *_seq_demo_WSATable[];
+	static const char *_seq_demo_COLTable[];
+
+	// these tables are specific to the floppy version
+	static const char *_seq_WSATable[];
+	static const char *_seq_CPSTable[];
+	static const char *_seq_COLTable[];
+	static const char *_seq_textsTableEN[];
+
+	bool seq_skipSequence() const;
+
+	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
+
+	void snd_playTheme(int file, int track = 0);
+
+	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
+	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
+
+	WSAMovieV1 *wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf);
+	void wsa_close(WSAMovieV1 *wsa);
+	uint16 wsa_getNumFrames(WSAMovieV1 *wsa) const;
+	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
+
+	void waitTicks(int ticks);
 
 protected:
 
@@ -130,7 +158,6 @@ protected:
 
 	void startup();
 	void mainLoop();
-	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 	void setTalkCoords(uint16 y);
 	int getCenterStringX(const char *str, int x1, int x2);
 	int getCharLength(const char *str, int len);
@@ -139,10 +166,7 @@ protected:
 	int buildMessageSubstrings(const char *str);
 	int getWidestLineWidth(int linesCount);
 	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
-	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
-	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
-	void waitTicks(int ticks);
 	
 	void seq_demo();
 	void seq_intro();
@@ -151,26 +175,14 @@ protected:
 	void seq_introMalcomTree();
 	void seq_introKallakWriting();
 	void seq_introKallakMalcom();
-	uint8 *seq_setPanPages(int pageNum, int shape);
-	void seq_makeHandShapes();
-	void seq_freeHandShapes();
-	void seq_copyView();
-	bool seq_skipSequence() const;
-	bool seq_playSpecialSequence(const uint8 *seqData, bool skipSeq);
 
-	WSAMovieV1 *wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf);
-	void wsa_close(WSAMovieV1 *wsa);
-	uint16 wsa_getNumFrames(WSAMovieV1 *wsa) const;
-	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
-	void snd_playTheme(int file, int track = 0);
 	void snd_playTrack(int track);
 	void snd_startTrack();
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
 	void snd_playSoundEffect(int track);
-	void snd_seqMessage(int msg);
 	
 	void loadRoom(uint16 roomID);
 	void drawRoom();
@@ -194,85 +206,17 @@ protected:
 	uint16 _gameSpeed;
 
 	uint16 _currentRoom;
-	bool _seq_copyViewOffs;
-	uint8 *_seq_handShapes[3];
 
 	Resource *_res;
 	Screen *_screen;
 	MusicPlayer *_midi;
+	SeqPlayer *_seq;
 	Sprites *_sprites;
 	Room _rooms[MAX_NUM_ROOMS];
 
 	static const Cursor _cursors[];
 	static const int _cursorsCount;
 	
-	typedef void (KyraEngine::*SeqProc)();
-	struct SeqEntry {
-		uint8 len;
-		SeqProc proc;
-		const char* desc;
-	};
-
-	// the sequence procs
-	void s1_wsaOpen();
-	void s1_wsaClose();
-	void s1_wsaPlayFrame();
-	void s1_wsaPlayNextFrame();
-	void s1_wsaPlayPrevFrame();
-	void s1_drawShape();
-	void s1_maybeWaitTicks();
-	void s1_waitTicks();
-	void s1_copyWaitTicks();
-	void s1_shuffleScreen();
-	void s1_copyView();
-	void s1_loopInit();
-	void s1_maybeLoopInc();
-	void s1_loopInc();
-	void s1_skip();
-	void s1_loadPalette();
-	void s1_loadBitmap();
-	void s1_fadeToBlack();
-	void s1_printText();
-	void s1_printTalkText();
-	void s1_restoreTalkText();
-	void s1_clearCurrentScreen();
-	void s1_break();
-	void s1_fadeFromBlack();
-	void s1_copyRegion();
-	void s1_copyRegionSpecial();
-	void s1_fillRect();
-	void s1_soundUnk1();
-	void s1_soundUnk2();
-	void s1_allocTempBuffer();
-	void s1_textDisplayEnable();
-	void s1_textDisplayDisable();
-	void s1_endOfScript();
-	void s1_miscUnk1();
-	void s1_miscUnk2();
-	void s1_miscUnk3();
-	void s1_miscUnk4();
-
-	struct SeqMovie {
-		WSAMovieV1 *wsa;
-		int32 page;
-		int16 frame;
-		int16 numFrames;
-		Common::Point pos;
-	};
-
-	const uint8 *_seqData;
-	SeqMovie _seqMovies[12];
-	SeqLoop _seqLoopTable[20];
-	uint16 _seqWsaCurDecodePage;
-	uint32 _seqDisplayedTextTimer;
-	bool _seqDisplayTextFlag;
-	uint8 _seqDisplayedText;
-	uint8 _seqDisplayedChar;
-	uint16 _seqDisplayedTextX;
-	bool _seqTalkTextPrinted;
-	bool _seqTalkTextRestored;
-	bool _seqQuitFlag;
-
 	// these tables are specific to the demo version
 	static const uint8 _seq_demoData_WestwoodLogo[];
 	static const uint8 _seq_demoData_KyrandiaLogo[];
@@ -280,8 +224,6 @@ protected:
 	static const uint8 _seq_demoData_Demo2[];
 	static const uint8 _seq_demoData_Demo3[];
 	static const uint8 _seq_demoData_Demo4[];
-	static const char *_seq_demo_WSATable[];
-	static const char *_seq_demo_COLTable[];
 
 	// these tables are specific to the floppy version
 	static const uint8 _seq_floppyData_Forest[];
@@ -291,10 +233,6 @@ protected:
 	static const uint8 _seq_floppyData_MalcomTree[];
 	static const uint8 _seq_floppyData_WestwoodLogo[];
 
-	static const char *_seq_WSATable[];
-	static const char *_seq_CPSTable[];
-	static const char *_seq_COLTable[];
-	static const char *_seq_textsTableEN[];
 	static const char *_xmidiFiles[];
 	static const int _xmidiFilesCount;
 };
