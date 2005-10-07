@@ -655,7 +655,8 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	if (_game & GF_SIMON2 && width >= 21) {
+	uint maxWidth = (_game == GAME_FEEBLEFILES) ? 641 : 21;
+	if (_game & GF_SIMON2 && width >= maxWidth) {
 		const byte *src;
 		byte *dst;
 		uint w;
