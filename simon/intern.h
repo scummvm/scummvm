@@ -64,8 +64,8 @@ struct Item {
 };
 
 struct Subroutine {
-	uint16 id;										/* subroutine ID */
-	uint16 first;									/* offset from subroutine start to first subroutine line */
+	uint16 id;								/* subroutine ID */
+	uint16 first;								/* offset from subroutine start to first subroutine line */
 	Subroutine *next;							/* next subroutine in linked list */
 };
 

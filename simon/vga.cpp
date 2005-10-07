@@ -694,7 +694,7 @@ void SimonEngine::vc10_draw() {
 	vlut = &_video_windows[_windowNum * 4];
 
 	state.draw_width = width << 1;	/* cl */
-	state.draw_height = height;		/* ch */
+	state.draw_height = height;	/* ch */
 
 	state.x_skip = 0;							/* colums to skip = bh */
 	state.y_skip = 0;							/* rows to skip   = bl */
@@ -825,7 +825,7 @@ void SimonEngine::vc10_draw() {
 				h = state.draw_height;
 				do {
 					memcpy(dst, src, state.draw_width);
-					dst += 320;
+					dst += _screenWidth;
 					src += width * 16;
 				} while (--h);
 			} else {
@@ -835,7 +835,7 @@ void SimonEngine::vc10_draw() {
 					for (i = 0; i != state.draw_width; i++)
 						if (src[i])
 							dst[i] = src[i];
-					dst += 320;
+					dst += _screenWidth;
 					src += width * 16;
 				} while (--h);
 			}
@@ -871,7 +871,7 @@ void SimonEngine::vc10_draw() {
 						dst += 8;
 						src += 5;
 					} while (--count);
-					dst_org += 320;
+					dst_org += _screenWidth;
 				} while (--state.draw_height);
 			} else {
 				/* transparency */
@@ -914,7 +914,7 @@ void SimonEngine::vc10_draw() {
 						dst += 8;
 						src += 5;
 					} while (--count);
-					dst_org += 320;
+					dst_org += _screenWidth;
 				} while (--state.draw_height);
 			}
 		}
@@ -946,7 +946,7 @@ void SimonEngine::vc10_draw() {
 					do {
 						dst[0] = (*src >> 4) | state.palette;
 						dst[1] = (*src & 15) | state.palette;
-						dst += 320;
+						dst += _screenWidth;
 						src++;
 					} while (++h != state.draw_height);
 					dst_org += 2;
@@ -971,7 +971,7 @@ void SimonEngine::vc10_draw() {
 						color = (*src & 15);
 						if (color)
 							dst[1] = color | state.palette;
-						dst += 320;
+						dst += _screenWidth;
 						src++;
 					} while (++h != state.draw_height);
 					dst_org += 2;
@@ -992,7 +992,7 @@ void SimonEngine::vc10_draw() {
 						dst[count * 2] = (src[count + state.x_skip] >> 4) | state.palette;
 						dst[count * 2 + 1] = (src[count + state.x_skip] & 15) | state.palette;
 					}
-					dst += 320;
+					dst += _screenWidth;
 					src += width * 8;
 				} while (--state.draw_height);
 			} else {
@@ -1006,7 +1006,7 @@ void SimonEngine::vc10_draw() {
 						if (color)
 							dst[count * 2 + 1] = color | state.palette;
 					}
-					dst += 320;
+					dst += _screenWidth;
 					src += width * 8;
 				} while (--state.draw_height);
 

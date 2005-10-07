@@ -260,6 +260,8 @@ protected:
 	uint16 _videoVar7;
 	volatile uint16 _paletteColorCount;
 
+	uint _screenWidth, _screenHeight;
+
 	byte _videoVar4;
 	bool _videoVar5;
 	bool _videoVar3;
