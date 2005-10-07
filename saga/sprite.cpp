@@ -108,34 +108,30 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spritePointer = spriteListData;
 		spritePointer += offset;
 
-		MemoryReadStream readS2(spritePointer, (_vm->getFeatures() & GF_MAC_RESOURCES || _vm->getGameType() == GType_IHNM) ? 8 : 4);
+		if ((_vm->getGameType()) != GType_ITE || (_vm->getFeatures() & GF_MAC_RESOURCES)) {
+			MemoryReadStreamEndian readS2(spritePointer, 8,  _spriteContext->isBigEndian);
 
-		if (_vm->getGameType() == GType_ITE) {
-			if (!(_vm->getFeatures() & GF_MAC_RESOURCES)) {
-				spriteInfo->xAlign = readS2.readSByte();
-				spriteInfo->yAlign = readS2.readSByte();
+			spriteInfo->xAlign = readS2.readSint16();
+			spriteInfo->yAlign = readS2.readSint16();
 
-				spriteInfo->width = readS2.readByte();
-				spriteInfo->height = readS2.readByte();
-			} else {
-				spriteInfo->xAlign = readS2.readSint16BE();
-				spriteInfo->yAlign = readS2.readSint16BE();
-
-				spriteInfo->width = readS2.readUint16BE();
-				spriteInfo->height = readS2.readUint16BE();
-			}
-		} else {
-			spriteInfo->xAlign = readS2.readSint16LE();
-			spriteInfo->yAlign = readS2.readSint16LE();
-
-			spriteInfo->width = readS2.readUint16LE();
-			spriteInfo->height = readS2.readUint16LE();
+			spriteInfo->width = readS2.readUint16();
+			spriteInfo->height = readS2.readUint16();
 
 			if (spriteInfo->width > 100) { // FIXME: HACK
 				spriteInfo->width = spriteInfo->height = 0;
 			}
+			spriteDataPointer = spritePointer + readS2.pos();
+		} else {
+			MemoryReadStreamEndian readS2(spritePointer, 4);
+
+			spriteInfo->xAlign = readS2.readSByte();
+			spriteInfo->yAlign = readS2.readSByte();
+
+			spriteInfo->width = readS2.readByte();
+			spriteInfo->height = readS2.readByte();
+			spriteDataPointer = spritePointer + readS2.pos();
 		}
-		spriteDataPointer = spritePointer + readS2.pos();
+
 		outputLength = spriteInfo->width * spriteInfo->height;
 		inputLength = spriteListLength - (spriteDataPointer -  spriteListData);
 		decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
