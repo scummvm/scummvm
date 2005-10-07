@@ -28,6 +28,7 @@
 
 #include "saga/animation.h"
 #include "saga/events.h"
+#include "saga/interface.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
 
@@ -90,6 +91,11 @@ int Scene::IHNMStartProc() {
 	size_t i;
 
 	LoadSceneParams firstScene;
+
+	// The original used the "play video" mechanism for the first part of
+	// the intro. We just use that panel mode.
+
+	_vm->_interface->setMode(kPanelVideo);
 
 	n_introscenes = ARRAYSIZE(IHNM_IntroList);
 

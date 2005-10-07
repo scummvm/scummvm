@@ -352,6 +352,17 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 			return true;
 		}
 		break;
+	case kPanelVideo:
+		if (ascii == 27) { // Esc
+			if (_vm->_scene->isInIntro()) {
+				_vm->_scene->skipScene();
+			} else {
+				if (!_disableAbortSpeeches)
+					_vm->_actor->abortAllSpeeches();
+			}
+			_vm->_scene->cutawaySkip();
+		}
+		break;
 	case kPanelOption:
 		// TODO: check input dialog keys
 		if (ascii == 27 || ascii == 13) { // Esc or Enter

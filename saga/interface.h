@@ -69,7 +69,8 @@ enum PanelModes {
 	kPanelMap,
 	kPanelSceneSubstitute,
 	kPanelChapterSelection,
-	kPanelCutaway
+	kPanelCutaway,
+	kPanelVideo
 //	kPanelInventory
 };
 
