@@ -108,20 +108,32 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spritePointer = spriteListData;
 		spritePointer += offset;
 
-		MemoryReadStream readS2(spritePointer, (_vm->getFeatures() & GF_MAC_RESOURCES) ? 8 : 4);
+		MemoryReadStream readS2(spritePointer, (_vm->getFeatures() & GF_MAC_RESOURCES || _vm->getGameType() == GType_IHNM) ? 8 : 4);
 
-		if (!(_vm->getFeatures() & GF_MAC_RESOURCES)) {
-			spriteInfo->xAlign = readS2.readSByte();
-			spriteInfo->yAlign = readS2.readSByte();
+		if (_vm->getGameType() == GType_ITE) {
+			if (!(_vm->getFeatures() & GF_MAC_RESOURCES)) {
+				spriteInfo->xAlign = readS2.readSByte();
+				spriteInfo->yAlign = readS2.readSByte();
 
-			spriteInfo->width = readS2.readByte();
-			spriteInfo->height = readS2.readByte();
+				spriteInfo->width = readS2.readByte();
+				spriteInfo->height = readS2.readByte();
+			} else {
+				spriteInfo->xAlign = readS2.readSint16BE();
+				spriteInfo->yAlign = readS2.readSint16BE();
+
+				spriteInfo->width = readS2.readUint16BE();
+				spriteInfo->height = readS2.readUint16BE();
+			}
 		} else {
-			spriteInfo->xAlign = readS2.readSint16BE();
-			spriteInfo->yAlign = readS2.readSint16BE();
+			spriteInfo->xAlign = readS2.readSint16LE();
+			spriteInfo->yAlign = readS2.readSint16LE();
 
-			spriteInfo->width = readS2.readUint16BE();
-			spriteInfo->height = readS2.readUint16BE();
+			spriteInfo->width = readS2.readUint16LE();
+			spriteInfo->height = readS2.readUint16LE();
+
+			if (spriteInfo->width > 100) { // FIXME: HACK
+				spriteInfo->width = spriteInfo->height = 0;
+			}
 		}
 		spriteDataPointer = spritePointer + readS2.pos();
 		outputLength = spriteInfo->width * spriteInfo->height;
@@ -156,7 +168,6 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int
 		width = spriteInfo->width;
 		buffer = spriteInfo->decodedBuffer;
 	}
-
 }
 
 void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePointer, int width, int height, const byte *spriteBuffer) {
@@ -219,6 +230,7 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 
 	spritePointer.x = screenCoord.x + xAlign;
 	spritePointer.y = screenCoord.y + yAlign;
+
 	drawClip(ds, clipRect, spritePointer, width, height, spriteBuffer);
 }
 

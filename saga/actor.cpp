@@ -403,7 +403,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		
 	_actorsCount = actorCount;
 
-	if ((int)(actorListLength / ACTOR_INHM_SIZE) < _actorsCount) {
+	if (actorListLength != (uint)_actorsCount * ACTOR_INHM_SIZE) {
 		error("Actor::loadActorList wrong actorlist length");
 	}
 
@@ -412,9 +412,9 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i] = new ActorData();
-		actor->_id = actorIndexToId(i);
+		actor->_id = objectIndexToId(kGameObjectActor, i); //actorIndexToId(i);
 		actor->_index = i;
-		debug(9, "init actor id=%d index=%d", actor->_id, actor->_index);
+		debug(0, "init actor id=0x%x index=%d", actor->_id, actor->_index);
 		actorS.readUint32LE(); //next displayed	
 		actorS.readByte(); //type
 		actor->_flags = actorS.readByte();
@@ -429,10 +429,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor->_frameListResourceId = actorS.readUint32LE();
 		debug(0, "%d: %d, %d", i, actor->_spriteListResourceId, actor->_frameListResourceId);
 		actor->_scriptEntrypointNumber = actorS.readUint32LE();
-		actorS.readByte();
-		actorS.readByte();
-		actorS.readByte();
-		actorS.readByte();
+		actorS.readUint32LE(); // xSprite *dSpr;
 		actorS.readUint16LE(); //LEFT
 		actorS.readUint16LE(); //RIGHT
 		actorS.readUint16LE(); //TOP
@@ -486,14 +483,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->_flags & kExtended) {
-			loadActorResources(actor);
-
-			if (actor->_disabled) {
-				warning("Disabling actor Id=%d index=%d", actor->_id, actor->_index);
-			}
-			break;
-		}
+		loadActorResources(actor);
 	}
 
 	_centerActor = _protagonist = _actors[protagonistIdx];
@@ -1520,6 +1510,7 @@ void Actor::createDrawOrderList() {
 	_drawOrderList.clear();
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
+
 		if (!actor->_inScene)
 			continue;
 

@@ -1100,7 +1100,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	frameType =  thread->pop();
 	frameOffset =  thread->pop();
 
-	debug(1, "sfPlaceActor(id = %d, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actorLocation.x,
+	debug(1, "sfPlaceActor(id = 0x%x, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actorLocation.x,
 		  actorLocation.y, actorDirection, frameType, frameOffset);
 
 	actor = _vm->_actor->getActor(actorId);
@@ -1122,7 +1122,6 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	}
 
 	actor->_targetObject = ID_NOTHING;
-
 }
 
 // Script function #44 (0x2C) nonblocking
