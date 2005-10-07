@@ -487,7 +487,12 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 char *SimonEngine::gen_savename(int slot) {
 	static char buf[15];
 
-	if (_game & GF_SIMON2) {
+	if (_game == GAME_FEEBLEFILES) {
+		if (slot == 999)
+			sprintf(buf, "save.%.3d", slot);
+		else
+			sprintf(buf, "feeble.%.3d", slot);
+	} else if (_game & GF_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
 	} else {
 		sprintf(buf, "simon1.%.3d", slot);

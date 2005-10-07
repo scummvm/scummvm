@@ -75,7 +75,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"},
-	{"ff", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
+	{"feeble", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
 
 	{NULL, NULL, 0, NULL}
 };
@@ -2477,7 +2477,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
-	uint16 c;
+	// uint16 c;
 	const byte *vc_ptr_org;
 
 	_windowNum = mode;
@@ -2510,12 +2510,22 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	// ensure flipping complete
 
 	bb = _curVgaFile1;
-	b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
-	c = READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk1);
-	b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
 
-	while (READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id) != vga_res_id)
-		b += sizeof(VgaFile1Struct0x8);
+	if (_game == GAME_FEEBLEFILES) {
+		b = bb + READ_LE_UINT16(&((FFVgaFile1Header *) bb)->hdr2_start);
+		//c = READ_LE_UINT16(&((FFVgaFile1Header2 *) b)->unk1);
+		b = bb + READ_LE_UINT16(&((FFVgaFile1Header2 *) b)->unk2_offs);
+
+		while (READ_LE_UINT16(&((FFVgaFile1Struct0x8 *) b)->id) != vga_res_id)
+			b += sizeof(FFVgaFile1Struct0x8);
+	} else {
+		b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
+		//c = READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk1);
+		b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
+
+		while (READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id) != vga_res_id)
+			b += sizeof(VgaFile1Struct0x8);
+	}
 
 	if (!(_game & GF_SIMON2)) {
 		if (num == 16300) {
@@ -2534,7 +2544,11 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	vc_ptr_org = _vcPtr;
 
-	_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
+	if (_game == GAME_FEEBLEFILES) {
+		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((FFVgaFile1Struct0x8 *) b)->script_offs);
+	} else {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
+	}
 	//dump_vga_script(_vcPtr, num, vga_res_id);
 	run_vga_script();
 	_vcPtr = vc_ptr_org;

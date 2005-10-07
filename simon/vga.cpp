@@ -147,7 +147,12 @@ int SimonEngine::vc_read_var_or_word() {
 }
 
 uint SimonEngine::vc_read_next_word() {
-	uint a = READ_BE_UINT16(_vcPtr);
+	uint a;
+	if (_game == GAME_FEEBLEFILES) {
+		a = READ_LE_UINT16(_vcPtr);
+	} else {
+ 		a = READ_BE_UINT16(_vcPtr);
+	}
 	_vcPtr += 2;
 	return a;
 }
@@ -623,9 +628,16 @@ void SimonEngine::vc10_draw() {
 	p2 = _curVgaFile2 + state.image * 8;
 	state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 
-	width = READ_BE_UINT16(p2 + 6) >> 4;
+	if (_game == GAME_FEEBLEFILES) {
+		width = READ_LE_UINT16(p2 + 6);
+	} else {
+		width = READ_BE_UINT16(p2 + 6) >> 4;
+	}
+
 	height = p2[5];
 	flags = p2[4];
+
+	debug(1, "Width %d Height %d Flags 0x%x\n", width, height, flags);
 
 	if (height == 0 || width == 0)
 		return;
