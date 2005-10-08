@@ -25,11 +25,17 @@
 
 namespace Common {
 
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 const String String::emptyString;
+#else
+const char *String::emptyString = "";
+#endif
 
 String::String(const char *str, int len)
  : _str(0), _len(0) {
+
 	_refCount = new int(1);
+
 	if (str && len != 0) {
 		if (len > 0)
 			_capacity = _len = len;
@@ -46,6 +52,7 @@ String::String(const char *str, int len)
 
 String::String(const String &str)
  : _str(0), _len(0) {
+
 	++(*str._refCount);
 
 	_refCount = str._refCount;

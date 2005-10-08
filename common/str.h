@@ -37,7 +37,11 @@ protected:
 	int 	_capacity;
 
 public:
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 	static const String emptyString;
+#else
+	static const char *emptyString;
+#endif
 
 	String() : _str(0), _len(0), _capacity(0) { _refCount = new int(1); }
 	String(const char *str, int len = -1);
