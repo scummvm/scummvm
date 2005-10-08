@@ -18,6 +18,8 @@
  * $Header$
  *
  */
+ 
+#ifndef DISABLE_SCUMM_7_8
 
 #include "common/stdafx.h"
 
@@ -1308,3 +1310,5 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 }
 
 } // End of namespace Scumm
+
+#endif

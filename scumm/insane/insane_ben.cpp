@@ -20,6 +20,8 @@
  *
  */
 
+#ifndef DISABLE_SCUMM_7_8
+
 #include "common/stdafx.h"
 
 #include "base/engine.h"
@@ -2006,3 +2008,5 @@ void Insane::ouchSoundBen(void) {
 }
 
 }
+
+#endif

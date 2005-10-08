@@ -18,12 +18,14 @@
  * $Header$
  */
 
+#ifndef DISABLE_SCUMM_7_8
+
 #include "common/stdafx.h"
 #include "scumm/imuse_digi/dimuse.h"
 
 namespace Scumm {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 const imuseRoomMap *_digStateMusicMap;
 const imuseDigTable *_digStateMusicTable;
 const imuseDigTable *_digSeqMusicTable;
@@ -852,7 +854,7 @@ const imuseFtSeqTable _ftSeqMusicTable[] = {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(DimuseTables)
@@ -876,5 +878,7 @@ _GRELEASEPTR(GBVARS_FTSTATEMUSICTABLE_INDEX		, GBVARS_SCUMM)
 _GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
 _GRELEASEPTR(GBVARS_FTSEQNAMES_INDEX			, GBVARS_SCUMM)
 _GEND
+
+#endif
 
 #endif

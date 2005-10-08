@@ -18,6 +18,8 @@
  * $Header$
  */
 
+#ifndef DISABLE_SCUMM_7_8
+
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "scumm/scumm.h"
@@ -441,3 +443,5 @@ void IMuseDigital::playFtMusic(const char *songName, int opcode, int volume) {
 
 
 } // End of namespace Scumm
+
+#endif

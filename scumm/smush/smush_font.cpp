@@ -19,6 +19,8 @@
  *
  */
 
+#ifndef DISABLE_SCUMM_7_8
+
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "scumm/scumm.h"
@@ -265,3 +267,5 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 }
 
 } // End of namespace Scumm
+
+#endif

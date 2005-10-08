@@ -18,6 +18,8 @@
  * $Header$
  */
 
+#ifndef DISABLE_SCUMM_7_8
+
 #include "common/stdafx.h"
 #include "common/timer.h"
 
@@ -360,3 +362,5 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 }
 
 } // End of namespace Scumm
+
+#endif

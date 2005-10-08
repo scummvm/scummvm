@@ -18,6 +18,8 @@
  * $Header$
  */
 
+#ifndef DISABLE_SCUMM_7_8
+
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "common/timer.h"
@@ -409,3 +411,5 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 }
 
 } // End of namespace Scumm
+
+#endif
