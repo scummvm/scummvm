@@ -131,7 +131,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	// and the object names.
 	//
 	// In IHNM, the "main strings" contains the verb strings, but not the
-	// object verbs. At least, I think that's the case.
+	// object names. At least, I think that's the case.
 
 	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsPointer, stringsLength);
 
