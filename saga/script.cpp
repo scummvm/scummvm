@@ -624,7 +624,7 @@ void Script::whichObject(const Point& mousePoint) {
 	newRightButtonVerb = kVerbNone;
 
 	if (_vm->_actor->_protagonist->_currentAction != kActionWalkDir) {
-		if (_vm->getSceneHeight() >= mousePoint.y) {
+		if (_vm->_scene->getHeight() >= mousePoint.y) {
 			newObjectId = _vm->_actor->hitTest(mousePoint, true);
 
 			if (newObjectId != ID_NOTHING) {

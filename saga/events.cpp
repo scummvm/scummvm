@@ -313,7 +313,7 @@ int Events::handleOneShot(Event *event) {
 				backGroundSurface->blit(bgInfo.bounds, bgInfo.buffer);
 
 				// If it is inset scene then draw black border
-				if (bgInfo.bounds.width() < _vm->getDisplayWidth() || bgInfo.bounds.height() < _vm->getSceneHeight()) {
+				if (bgInfo.bounds.width() < _vm->getDisplayWidth() || bgInfo.bounds.height() < _vm->_scene->getHeight()) {
 					Common::Rect rect1(2, bgInfo.bounds.height() + 4);
 					Common::Rect rect2(bgInfo.bounds.width() + 4, 2);
 					Common::Rect rect3(2, bgInfo.bounds.height() + 4);

@@ -118,6 +118,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			spriteInfo->height = readS2.readUint16();
 
 			if (spriteInfo->width > 100) { // FIXME: HACK
+				warning("Width is too big: (%d x %d)", spriteInfo->width, spriteInfo->height);
 				spriteInfo->width = spriteInfo->height = 0;
 			}
 			spriteDataPointer = spritePointer + readS2.pos();

@@ -1330,8 +1330,8 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 	switch (_panelMode) {
 	case kPanelMain:
 		if (updateFlag & UPDATE_MOUSEMOVE) {
-			bool lastWasPlayfield = _lastMousePoint.y < _vm->getSceneHeight();
-			if (mousePoint.y < _vm->getSceneHeight()) {
+			bool lastWasPlayfield = _lastMousePoint.y < _vm->_scene->getHeight();
+			if (mousePoint.y < _vm->_scene->getHeight()) {
 				if (!lastWasPlayfield) {
 					handleMainUpdate(mousePoint);
 				}
@@ -1346,7 +1346,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		} else {
 
 			if (updateFlag & UPDATE_MOUSECLICK) {
-				if (mousePoint.y < _vm->getSceneHeight()) {
+				if (mousePoint.y < _vm->_scene->getHeight()) {
 					_vm->_script->playfieldClick(mousePoint, (updateFlag & UPDATE_LEFTBUTTONCLICK) != 0);
 				} else {
 					handleMainClick(mousePoint);
@@ -2280,7 +2280,7 @@ void Interface::mapPanelDrawCrossHair() {
 	_mapPanelCrossHairState = !_mapPanelCrossHairState;
 
 	Point mapPosition = _vm->_isoMap->getMapPosition();
-	Rect screen(_vm->getDisplayWidth(),  _vm->getSceneHeight());
+	Rect screen(_vm->getDisplayWidth(),  _vm->_scene->getHeight());
 
 	if (screen.contains(mapPosition)) {
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites,

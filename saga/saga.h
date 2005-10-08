@@ -543,6 +543,8 @@ inline uint16 objectIndexToId(int type, int index) {
 DetectedGameList GAME_ProbeGame(const FSList &fslist);
 
 class SagaEngine : public Engine {
+	friend class Scene;
+
 	void errorString(const char *buf_input, char *buf_output);
 
 protected:
@@ -655,8 +657,10 @@ public:
 //current game description
 	int _gameNumber;
 	GameDescription *_gameDescription;
-	GameDisplayInfo _gameDisplayInfo;
 	Common::Rect _displayClip;
+
+protected:
+	GameDisplayInfo _gameDisplayInfo;
 
 public:
 	int32 _frameCount;
@@ -690,7 +694,6 @@ public:
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	int getDisplayWidth() const { return _gameDisplayInfo.logicalWidth; }
 	int getDisplayHeight() const { return _gameDisplayInfo.logicalHeight;}
-	int getSceneHeight() const { return _gameDisplayInfo.sceneHeight; }
 	const GameDisplayInfo & getDisplayInfo() { return _gameDisplayInfo; }
 
 	const char *getTextString(int textStringId);

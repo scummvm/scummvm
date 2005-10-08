@@ -29,6 +29,7 @@
 #include "saga/font.h"
 #include "saga/list.h"
 #include "saga/actor.h"
+#include "saga/interface.h"
 
 namespace Saga {
 
@@ -273,6 +274,14 @@ class Scene {
 	}
 
 	void drawTextList(Surface *ds);
+
+	int getHeight() const {
+		if (_vm->_interface->getMode() == kPanelChapterSelection)
+			return _vm->_gameDisplayInfo.logicalWidth;
+		else
+			return _vm->_gameDisplayInfo.sceneHeight;
+	}
+
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);

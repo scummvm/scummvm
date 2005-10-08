@@ -22,26 +22,25 @@
  */
 
 #include "saga/saga.h"
-#include "saga/gfx.h"
 
+#include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
+#include "saga/events.h"
+#include "saga/gfx.h"
+#include "saga/interface.h"
+#include "saga/isomap.h"
+#include "saga/itedata.h"
+#include "saga/objectmap.h"
+#include "saga/resnames.h"
+#include "saga/rscfile.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
 #include "saga/sprite.h"
+#include "saga/stream.h"
 #include "saga/font.h"
 #include "saga/sound.h"
 #include "saga/scene.h"
-
-#include "saga/isomap.h"
-#include "saga/actor.h"
-#include "saga/itedata.h"
-#include "saga/stream.h"
-#include "saga/interface.h"
-#include "saga/events.h"
-#include "saga/objectmap.h"
-#include "saga/rscfile.h"
-#include "saga/resnames.h"
 
 #include "common/config-manager.h"
 
@@ -200,7 +199,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_protagState = 0;
 	_lastTickMsec = 0;
 
-	_yCellCount = _vm->getSceneHeight();
+	_yCellCount = _vm->_scene->getHeight();
 	_xCellCount = _vm->getDisplayWidth();
 
 	_pathCell = (int8 *)malloc(_yCellCount * _xCellCount * sizeof(*_pathCell));
@@ -208,7 +207,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.left = 0;
 	_pathRect.right = _vm->getDisplayWidth();
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
-	_pathRect.bottom = _vm->getSceneHeight();
+	_pathRect.bottom = _vm->_scene->getHeight();
 
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
@@ -736,7 +735,7 @@ bool Actor::validFollowerLocation(const Location &location) {
 	location.toScreenPointXY(point);
 
 	if ((point.x < 5) || (point.x >= _vm->getDisplayWidth() - 5) ||
-		(point.y < 0) || (point.y > _vm->getSceneHeight())) {
+		(point.y < 0) || (point.y > _vm->_scene->getHeight())) {
 		return false;
 	}
 
@@ -1435,7 +1434,7 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 		_vm->_isoMap->tileCoordsToScreenPoint(commonObjectData->_location, commonObjectData->_screenPosition);
 		commonObjectData->_screenScale = 256;
 	} else {
-		middle = _vm->getSceneHeight() - commonObjectData->_location.y / ACTOR_LMULT;
+		middle = _vm->_scene->getHeight() - commonObjectData->_location.y / ACTOR_LMULT;
 
 		_vm->_scene->getSlopes(beginSlope, endSlope);
 
@@ -1457,7 +1456,7 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 	result = commonObjectData->_screenPosition.x > -64 &&
 			commonObjectData->_screenPosition.x < _vm->getDisplayWidth() + 64 &&
 			commonObjectData->_screenPosition.y > -64 &&
-			commonObjectData->_screenPosition.y < _vm->getSceneHeight() + 64;
+			commonObjectData->_screenPosition.y < _vm->_scene->getHeight() + 64;
 
 	return result;
 }
@@ -1632,7 +1631,7 @@ void Actor::drawSpeech(void) {
 			calcScreenPosition(actor);
 
 			textPoint.x = clamp( 10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
-			textPoint.y = clamp( 10, actor->_screenPosition.y - 58, _vm->getSceneHeight() - 10 - height);
+			textPoint.y = clamp( 10, actor->_screenPosition.y - 58, _vm->_scene->getHeight() - 10 - height);
 
 			_vm->_font->textDraw((_vm->getGameType() == GType_ITE ? kMediumFont : kIHNMMainFont), backBuffer, _activeSpeech.strings[0], textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));

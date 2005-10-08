@@ -296,7 +296,7 @@ void IsoMap::adjustScroll(bool jump) {
 	playerPoint.y -= 28;
 
 	playerPoint.x += _viewScroll.x - _vm->getDisplayWidth()/2;
-	playerPoint.y += _viewScroll.y - _vm->getSceneHeight()/2;
+	playerPoint.y += _viewScroll.y - _vm->_scene->getHeight()/2;
 
 	minScrollPos.x = playerPoint.x - SAGA_SCROLL_LIMIT_X1;
 	minScrollPos.y = playerPoint.y - SAGA_SCROLL_LIMIT_Y1;
@@ -417,8 +417,8 @@ void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, c
 	if (_tileClip.top < 0) {
 		_tileClip.top = 0;
 	}
-	if (_tileClip.bottom > _vm->getSceneHeight()) {
-		_tileClip.bottom = _vm->getSceneHeight();
+	if (_tileClip.bottom > _vm->_scene->getHeight()) {
+		_tileClip.bottom = _vm->_scene->getHeight();
 	}
 
 	_vm->_sprite->drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
@@ -457,7 +457,7 @@ void IsoMap::drawTiles(Surface *ds,  const Location *location) {
 	metaTileY.y = (view1.y * 16 - fineScroll.y) - (u0 + v0) * 64;
 
 	workAreaWidth = _vm->getDisplayWidth() + 128;
-	workAreaHeight = _vm->getSceneHeight() + 128 + 80;
+	workAreaHeight = _vm->_scene->getHeight() + 128 + 80;
 
 	for (u1 = u0, v1 = v0; metaTileY.y < workAreaHeight; u1--, v1-- ) {
 		metaTileX = metaTileY;

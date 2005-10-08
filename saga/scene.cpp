@@ -455,8 +455,8 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].title,
 					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), 1, 15, kFontOutline);
 				_vm->_font->textDrawRect(kMediumFont, backBuffer, sceneSubstitutes[i].message,
-					 Common::Rect(24, _vm->getSceneHeight() - 33, _vm->getDisplayWidth() - 11,
-								  _vm->getSceneHeight()), 1, 15, kFontOutline);
+					 Common::Rect(24, getHeight() - 33, _vm->getDisplayWidth() - 11,
+								  getHeight()), 1, 15, kFontOutline);
 				return;
 			}
 		}
@@ -479,8 +479,8 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 }
 
 void Scene::getSlopes(int &beginSlope, int &endSlope) {
-	beginSlope = _vm->getSceneHeight() - _sceneDescription.beginSlope;
-	endSlope = _vm->getSceneHeight() - _sceneDescription.endSlope;
+	beginSlope = getHeight() - _sceneDescription.beginSlope;
+	endSlope = getHeight() - _sceneDescription.endSlope;
 }
 
 void Scene::getBGInfo(BGInfo &bgInfo) {
@@ -493,8 +493,8 @@ void Scene::getBGInfo(BGInfo &bgInfo) {
 		bgInfo.bounds.left = (_vm->getDisplayWidth() - _bg.w) / 2;
 	}
 
-	if (_bg.h < _vm->getSceneHeight()) {
-		bgInfo.bounds.top = (_vm->getSceneHeight() - _bg.h) / 2;
+	if (_bg.h < getHeight()) {
+		bgInfo.bounds.top = (getHeight() - _bg.h) / 2;
 	}
 
 	bgInfo.bounds.setWidth(_bg.w);
@@ -696,12 +696,12 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_sceneClip.left = 0;
 		_sceneClip.top = 0;
 		_sceneClip.right = _vm->getDisplayWidth();
-		_sceneClip.bottom = _vm->getSceneHeight();
+		_sceneClip.bottom = getHeight();
 	} else {
 		BGInfo backGroundInfo;
 		getBGInfo(backGroundInfo);
 		_sceneClip = backGroundInfo.bounds;
-		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < _vm->getSceneHeight()))
+		if (!(_bg.w < _vm->getDisplayWidth() || _bg.h < getHeight()))
 			_outsetSceneNumber = _sceneNumber;
 	}
 
@@ -1043,7 +1043,7 @@ void Scene::processSceneResources() {
 			// At least in ITE the mask needs to be clipped.
 
 			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayWidth());
-			_bgMask.h = MIN(_bgMask.h, _vm->getSceneHeight());
+			_bgMask.h = MIN(_bgMask.h, getHeight());
 
 			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
 			break;
@@ -1163,7 +1163,7 @@ void Scene::draw() {
 	} else {
 		backGroundSurface->getRect(rect);
 		if (_sceneClip.bottom < rect.bottom) {
-			rect.bottom = _vm->getSceneHeight();
+			rect.bottom = getHeight();
 		}
 		backBuffer->blit(rect, (const byte *)backGroundSurface->pixels);
 	}
