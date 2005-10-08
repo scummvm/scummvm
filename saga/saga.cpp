@@ -216,9 +216,9 @@ int SagaEngine::init(GameDetector &detector) {
 	_anim = new Anim(this);
 	_script = new Script(this);
 	_interface = new Interface(this); // requires script module
+	_scene = new Scene(this);
 	_actor = new Actor(this);
 	_palanim = new PalAnim(this);
-	_scene = new Scene(this);
 	_isoMap = new IsoMap(this);
 	_puzzle = new Puzzle(this);
 
