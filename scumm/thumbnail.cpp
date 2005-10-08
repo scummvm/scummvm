@@ -102,12 +102,20 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	Graphics::Surface thumb;
 
+#ifndef PALMOS_68K
 	if (!createThumbnailFromScreen(&thumb))
+#endif
 		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
 
 	ThumbnailHeader header;
 	header.type = MKID('THMB');
+#ifdef PALMOS_ARM
+	// sizeof(header) is hardcoded here, because the compiler add padding to
+	// have a 4byte aligned struct and there is no easy way to pack it.
+	header.size = 14 + thumb.w*thumb.h*thumb.bytesPerPixel;
+#else
 	header.size = sizeof(header) + thumb.w*thumb.h*thumb.bytesPerPixel;
+#endif
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;
