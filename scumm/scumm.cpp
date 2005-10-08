@@ -54,7 +54,7 @@
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "extras/palm-scumm-md5.h"
 #else
 #include "scumm/scumm-md5.h"
@@ -71,6 +71,12 @@
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone(void);
+#endif
+
+#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+namespace Graphics {
+	extern void initfonts();
+}
 #endif
 
 static int generateSubstResFileName_(const char *filename, char *buf, int bufsize, int index);
@@ -193,11 +199,9 @@ static const ScummGameSettings scumm_settings[] = {
 	{"dig", "The Dig", GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
 
-#ifndef __PALM_OS__
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
-#endif
 
 #endif
 
@@ -353,7 +357,7 @@ static const ScummGameSettings scumm_settings[] = {
 //
 // Please, add new entries sorted alpabetically by string name
 static const ScummGameSettings multiple_versions_md5_settings[] = {
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	{"2e85f7aa054930c692a5b1bed1dfc295", "Backyard Football 2002 (Demo Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown}, // Football2002
 
@@ -845,7 +849,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 	}
 	const MD5Table *elem;
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
 #else
 	uint32 arraySize = ARRAYSIZE(md5table) - 1;
@@ -1683,7 +1687,7 @@ int ScummEngine::init(GameDetector &detector) {
 
 	readIndexFile();
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	if (_features & GF_NEW_COSTUMES)
 		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
 	else
@@ -1719,6 +1723,10 @@ int ScummEngine::init(GameDetector &detector) {
 
 	if (_version >= 5)
 		_sound->setupSound();
+
+#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+	Graphics::initfonts();
+#endif
 
 	// Create debugger
 	if (!_debugger)
@@ -2973,7 +2981,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 		num = filename[strlen(filename) - 2];
 
 	const char *ext = strrchr(filename, '.');
-	size_t len = (ext > 0) ? ext - filename : strlen(filename);
+	size_t len = ((int)ext > 0) ? ext - filename : strlen(filename);
 
 	for (int i = index; i < ARRAYSIZE(substResFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
@@ -3238,7 +3246,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 REGISTER_PLUGIN(SCUMM, "Scumm Engine")
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Scumm_md5table)
