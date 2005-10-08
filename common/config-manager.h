@@ -67,7 +67,7 @@ public:
 
 	typedef Map<String, Domain, IgnoreCaseComparator> DomainMap;
 
-#ifndef PALMOS_ARM
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 	/** The name of the application domain (normally 'scummvm'). */
 	static const String kApplicationDomain;
 
@@ -76,6 +76,8 @@ public:
 #else
 	static const char *kApplicationDomain;
 	static const char *kTransientDomain;
+	
+	const String _emptyString;
 #endif
 
 	void				loadDefaultConfigFile();

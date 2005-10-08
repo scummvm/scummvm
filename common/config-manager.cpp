@@ -62,7 +62,7 @@ static bool isValidDomainName(const Common::String &domain) {
 
 namespace Common {
 
-#ifndef PALMOS_ARM
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 
 const String ConfigManager::kApplicationDomain("scummvm");
 const String ConfigManager::kTransientDomain("__TRANSIENT");
@@ -112,6 +112,7 @@ void ConfigManager::loadDefaultConfigFile() {
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	#endif
 #endif
+
 	loadConfigFile(configFile);
 }
 
@@ -205,7 +206,7 @@ void ConfigManager::loadFile(const String &filename) {
 				String key = rtrim(t);
 				String value = ltrim(p + 1);
 				set(key, value, domain);
-
+//printf("key : %s | %s\n");
 				// Store comment
 				if (_globalDomains.contains(domain)) {
 					_globalDomains[domain].setKVComment(key, comment);
@@ -355,7 +356,6 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 	// 2) Active game domain (if any)
 	// 3) All global domains
 	// 4) The defaults
-
 
 	if ((domain.isEmpty() || domain == kTransientDomain) && _transientDomain.contains(key))
 		return _transientDomain[key];
@@ -513,7 +513,11 @@ bool ConfigManager::hasGameDomain(const String &domain) const {
 
 const String &ConfigManager::Domain::get(const String &key) const {
 	Node *node = findNode(_root, key);
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 	return node ? node->_value : String::emptyString;
+#else
+	return node ? node->_value : ConfMan._emptyString;
+#endif
 }
 
 void ConfigManager::Domain::setDomainComment(const String &comment) {
