@@ -130,12 +130,8 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	// In ITE, the "main strings" resource contains both the verb strings
 	// and the object names.
 	//
-	// In IHNM, the "main strings" does not contain the verb strings.
-	// Instead, it looks as if the object names are divided over several
-	// different string lists. One per character, perhaps?
-	//
-	// Or maybe I'm looking at the wrong resource. I found the IHNM one by
-	// trial and error...
+	// In IHNM, the "main strings" contains the verb strings, but not the
+	// object verbs. At least, I think that's the case.
 
 	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsPointer, stringsLength);
 
