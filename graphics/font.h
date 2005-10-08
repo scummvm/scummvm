@@ -116,6 +116,18 @@ public:
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 };
 
+#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#	define DEFINE_FONT(n) \
+		const NewFont *n;	\
+		void create_##n() {	\
+			n = new NewFont(desc);	\
+		}
+
+#	define INIT_FONT(n) \
+		extern void create_##n(); \
+		create_##n();
+#endif
+
 } // End of namespace Graphics
 
 #endif

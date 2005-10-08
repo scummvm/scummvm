@@ -4777,6 +4777,10 @@ static const FontDesc desc = {
 	sizeof(_font_bits)/sizeof(bitmap_t)
 };
 
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 extern const NewFont g_consolefont(desc);
+#else
+DEFINE_FONT(g_consolefont)
+#endif
 
 } // End of namespace Graphics

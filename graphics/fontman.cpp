@@ -25,20 +25,44 @@ DECLARE_SINGLETON(Graphics::FontManager);
 
 namespace Graphics {
 
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 const ScummFont g_scummfont;
 extern const NewFont g_sysfont;
 extern const NewFont g_sysfont_big;
 extern const NewFont g_consolefont;
 
-
 FontManager::FontManager() {
 }
+
+#else
+const ScummFont *g_scummfont;
+extern const NewFont *g_sysfont;
+extern const NewFont *g_sysfont_big;
+extern const NewFont *g_consolefont;
+
+static bool g_initialized = false;
+void initfonts() {
+	if (!g_initialized) {
+		// FIXME : this need to be freed
+		g_initialized = true;
+		g_scummfont = new ScummFont;
+		INIT_FONT(g_sysfont)
+		INIT_FONT(g_sysfont_big)
+		INIT_FONT(g_consolefont)
+	}
+}
+
+FontManager::FontManager() {
+	initfonts();
+}
+#endif
 
 //const Font *FontManager::getFontByName(const Common::String &name) const {
 //}
 
 const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	switch (usage) {
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
 	case kOSDFont:
 		return &g_scummfont;
 	case kConsoleFont:
@@ -47,7 +71,18 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 		return &g_sysfont;
 	case kBigGUIFont:
 		return &g_sysfont_big;
+#else
+	case kOSDFont:
+		return g_scummfont;
+	case kConsoleFont:
+		return g_consolefont;
+	case kGUIFont:
+		return g_sysfont;
+	case kBigGUIFont:
+		return g_sysfont_big;
+#endif
 	}
+
 	return 0;
 }
 
