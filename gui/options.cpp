@@ -39,7 +39,7 @@
 #endif
 
 #if !(defined(MAXPATHLEN))
-#ifndef PALMOS_68K
+#ifndef PALMOS_MODE
 #define MAXPATHLEN 1024
 #else
 #define MAXPATHLEN 256
