@@ -20,8 +20,6 @@
  *
  */
 
-#ifndef DISABLE_SCUMM_7_8
-
 #include "common/stdafx.h"
 
 #include "base/engine.h"
@@ -1465,5 +1463,3 @@ void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFr
 }
 
 }
-
-#endif

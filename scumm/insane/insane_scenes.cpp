@@ -20,8 +20,6 @@
  *
  */
 
-#ifndef DISABLE_SCUMM_7_8
-
 #include "common/stdafx.h"
 
 #include "base/engine.h"
@@ -1498,4 +1496,3 @@ void Insane::postCaseMore(byte *renderBitmap, int32 codecparam, int32 setupsan12
 
 }
 
-#endif
