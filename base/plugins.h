@@ -87,7 +87,7 @@ public:
  * @todo	on Windows, we might need __declspec(dllexport) ?
  */
 
-#ifdef PALMOS_ARM
+#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
 #define REGISTER_PLUGIN(ID,name) \
 	PluginRegistrator *g_##ID##_PluginReg; \
 	void g_##ID##_PluginReg_alloc() { \
@@ -166,4 +166,3 @@ public:
 };
 
 #endif
-

@@ -287,7 +287,7 @@ void PluginManager::loadPlugins() {
 
 #else
 
-#ifdef PALMOS_ARM
+#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
 	#define FREE_PLUGIN(ID) \
 		extern PluginRegistrator *g_##ID##_PluginReg; \
 		delete g_##ID##_PluginReg;
@@ -342,7 +342,7 @@ void PluginManager::loadPlugins() {
 void PluginManager::unloadPlugins() {
 	unloadPluginsExcept(NULL);
 
-#ifdef PALMOS_ARM
+#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
 	#ifndef DISABLE_SCUMM
 	FREE_PLUGIN(SCUMM)
 	#endif
@@ -416,4 +416,3 @@ DetectedGameList PluginManager::detectGames(const FSList &fslist) const {
 
 	return candidates;
 }
-
