@@ -92,12 +92,12 @@ struct ResourceContext {
 struct MetaResource {
 	int16 sceneIndex;
 	int16 objectCount;
-	int32 field_4;
+	int32 objectsStringsResourceID;
 	int32 field_8;
 	int32 mainSpritesID;
 	int32 objectsResourceID;
 	int16 actorCount;
-	int32 field_16;
+	int32 actorsStringsResourceID;
 	int32 actorsResourceID;
 	int32 protagFaceSpritesID;
 	int32 field_22;

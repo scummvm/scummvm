@@ -641,7 +641,6 @@ protected:
 	SagaEngine *_vm;
 	ResourceContext *_actorContext;
 
-	StringsTable _actorsStrings;
 	int _lastTickMsec;
 	CommonObjectOrderList _drawOrderList;
 
@@ -652,6 +651,9 @@ public:
 	int _handleActionDiv;
 
 	Rect _speechBoxScript;
+
+	StringsTable _objectsStrings;
+	StringsTable _actorsStrings;
 
 protected:
 	SpeechData _activeSpeech;

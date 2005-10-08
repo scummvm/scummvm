@@ -468,12 +468,12 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_metaResource.sceneIndex = metaS.readSint16LE();
 	_metaResource.objectCount = metaS.readSint16LE();
-	_metaResource.field_4 = metaS.readSint32LE();
+	_metaResource.objectsStringsResourceID = metaS.readSint32LE();
 	_metaResource.field_8 = metaS.readSint32LE();
 	_metaResource.mainSpritesID = metaS.readSint32LE();
 	_metaResource.objectsResourceID = metaS.readSint32LE();
 	_metaResource.actorCount = metaS.readSint16LE();
-	_metaResource.field_16 = metaS.readSint32LE();
+	_metaResource.actorsStringsResourceID = metaS.readSint32LE();
 	_metaResource.actorsResourceID = metaS.readSint32LE();
 	_metaResource.protagFaceSpritesID = metaS.readSint32LE();
 	_metaResource.field_22 = metaS.readSint32LE();
@@ -491,7 +491,11 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_actor->_protagonist->_sceneNumber = _metaResource.sceneIndex;
 
-	// TODO: field_16
+	_vm->_actor->_objectsStrings.freeMem();
+
+	_vm->_resource->loadResource(resourceContext, _metaResource.objectsStringsResourceID, resourcePointer, resourceLength);
+	_vm->loadStrings(_vm->_actor->_objectsStrings, resourcePointer, resourceLength);
+	free(resourcePointer);
 
 	if (chapter >= _vm->_sndRes->_fxTableIDsLen) {
 		error("Chapter ID exceeds fxTableIDs length");
@@ -521,7 +525,11 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_interface->_defPortraits.freeMem();
 	_vm->_sprite->loadList(_metaResource.protagFaceSpritesID, _vm->_interface->_defPortraits);
 
-	// TODO: field_4
+	_vm->_actor->_actorsStrings.freeMem();
+
+	_vm->_resource->loadResource(resourceContext, _metaResource.actorsStringsResourceID, resourcePointer, resourceLength);
+	_vm->loadStrings(_vm->_actor->_actorsStrings, resourcePointer, resourceLength);
+	free(resourcePointer);
 
 	// TODO: field_8
 
