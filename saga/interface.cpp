@@ -1215,7 +1215,7 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 }
 
 void Interface::handleChapterSelectionUpdate(const Point& mousePoint) {
-	
+	_vm->_script->whichObject(mousePoint);
 }
 
 void Interface::handleChapterSelectionClick(const Point& mousePoint) {
