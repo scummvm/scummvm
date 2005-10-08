@@ -213,7 +213,7 @@ struct imuseFtSeqTable {
 	byte volume;
 };
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 extern const imuseRoomMap *_digStateMusicMap;
 extern const imuseDigTable *_digStateMusicTable;
 extern const imuseDigTable *_digSeqMusicTable;

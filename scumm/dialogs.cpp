@@ -70,7 +70,7 @@ struct ResString {
 	char string[80];
 };
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static ResString *string_map_table_v7;
 static ResString *string_map_table_v6;
 static ResString *string_map_table_v5;
@@ -973,7 +973,7 @@ void ValueDisplayDialog::open() {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Dialogs)

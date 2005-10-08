@@ -54,7 +54,7 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
  * varies the size of each "packet" between 2 and 7 bits.
  */
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static byte *_destImcTable = NULL;		// save 23k of memory !
 static uint32 *_destImcTable2 = NULL;
 
@@ -113,7 +113,7 @@ static const byte imxOtherTable[6][64] = {
 	}
 };
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 void releaseImcTables() {
 	free(_destImcTable);
 	free(_destImcTable2);
@@ -123,7 +123,7 @@ void releaseImcTables() {
 void initializeImcTables() {
 	int pos;
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
 	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
 #endif
@@ -670,7 +670,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(DimuseCodecs)

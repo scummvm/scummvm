@@ -42,7 +42,7 @@ enum {
 };
 
 class Sound {
-#ifdef __PALM_OS__
+#ifdef PALMOS_MODE
 public:
 #else
 protected:
@@ -54,7 +54,7 @@ protected:
 		kFlacMode
 	};
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_MODE
 protected:
 #endif
 	ScummEngine *_vm;

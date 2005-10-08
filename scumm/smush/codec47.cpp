@@ -83,7 +83,7 @@ static int8 codec47_table_big2[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const int8 *codec47_table;
 #else
 static const int8 codec47_table[] = {
@@ -615,7 +615,7 @@ bool Codec47Decoder::decode(byte *dst, const byte *src) {
 
 } // End of namespace Scumm
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Codec47)
@@ -627,5 +627,3 @@ _GRELEASEPTR(GBVARS_CODEC47TABLE_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-
-
