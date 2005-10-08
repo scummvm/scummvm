@@ -313,6 +313,20 @@ void ScummNESFile::setEnc(byte enc) {
 	_stream->setEnc(enc);
 }
 
+#ifdef PALMOS_68K
+static ScummNESFile::Resource *res_roomgfx;
+static ScummNESFile::Resource *res_costumegfx;
+static ScummNESFile::Resource *res_rooms;
+static ScummNESFile::Resource *res_scripts;
+static ScummNESFile::Resource *res_sounds;
+static ScummNESFile::Resource *res_costumes;
+static ScummNESFile::Resource *res_sprpals;
+static ScummNESFile::Resource *res_sprdesc;
+static ScummNESFile::Resource *res_sprlens;
+static ScummNESFile::Resource *res_sproffs;
+static ScummNESFile::Resource *res_sprdata;
+
+#else
 static ScummNESFile::Resource res_roomgfx[40] = {
 	{ {0x04001,0x04001,0x04001,0x04001}, {0x03C9,0x03B9,0x03F0,0x0426}, NES_ROOMGFX },
 	{ {0x043CA,0x043BA,0x043F1,0x04427}, {0x069E,0x069E,0x069E,0x069E}, NES_ROOMGFX },
@@ -713,10 +727,12 @@ static ScummNESFile::Resource res_costumes[25] = {
 	{ {0x17F05,0x0BEFF,0x0FEF5,0x0BF17}, {0x0055,0x0055,0x0055,0x0055}, NES_COSTUME },
 	{ {0x13FAB,0x0FEA2,0x17E9A,0x13E77}, {0x004B,0x004B,0x004B,0x004B}, NES_COSTUME }
 };
+#endif
 
 static ScummNESFile::Resource res_globdata =
 	{ {0x2CA11,0x2CA11,0x2C001,0x2C628}, {0x0307,0x0307,0x0307,0x0307}, NES_GLOBDATA };
 
+#ifndef PALMOS_68K
 // sprite palette data
 static ScummNESFile::Resource res_sprpals[2] = {
 	{ {0x0BFC1,0x07F61,0x07F55,0x07ED8}, {0x0010,0x0010,0x0010,0x0010}, NES_SPRPALS },
@@ -746,6 +762,7 @@ static ScummNESFile::Resource res_sprdata[2] = {
 	{ {0x2CE11,0x2CE11,0x2C401,0x2CA28}, {0x2BE0,0x2BE0,0x2BE0,0x2BE0}, NES_SPRDATA },
 	{ {0x07F6B,0x0BE28,0x0FE6B,0x07E48}, {0x008A,0x008A,0x008A,0x008A}, NES_SPRDATA }
 };
+#endif
 
 static ScummNESFile::Resource res_charset =
 	{ {0x3F6EE,0x3F724,0x3F739,0x3F739}, {0x0090,0x0090,0x0090,0x0090}, NES_CHARSET };
