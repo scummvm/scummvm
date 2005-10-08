@@ -44,6 +44,8 @@ public:
 
 protected:
 	Graphics::Surface	_canvas;
+	const Graphics::Font *_font;
+
 	char	_buffer[kBufferSize];
 	int		_linesInBuffer;
 

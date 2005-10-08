@@ -29,15 +29,10 @@
 
 #include "graphics/font.h"
 
-namespace Graphics {
-extern const NewFont g_consolefont;
-}
-using Graphics::g_consolefont;
-
 namespace GUI {
 
-#define kConsoleCharWidth	(g_consolefont.getMaxCharWidth())
-#define kConsoleLineHeight	(g_consolefont.getFontHeight() + 2)
+#define kConsoleCharWidth	(_font->getMaxCharWidth())
+#define kConsoleLineHeight	(_font->getFontHeight() + 2)
 
 enum {
 	kConsoleSlideDownDuration = 200	// Time in milliseconds
@@ -59,6 +54,8 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
+	
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 
 	// Calculate the real width/height (rounded to char/line multiples)
 	_w = (uint16)(_widthPercent * screenW);
@@ -177,7 +174,7 @@ void ConsoleDialog::drawDialog() {
 #else
 			byte c = buffer((start + line) * _lineWidth + column);
 #endif
-			g_gui.drawChar(c, x, y, g_gui._textcolor, &g_consolefont);
+			g_gui.drawChar(c, x, y, g_gui._textcolor, _font);
 			x += kConsoleCharWidth;
 		}
 		y += kConsoleLineHeight;
@@ -568,7 +565,7 @@ int ConsoleDialog::printf(const char *format, ...) {
 }
 
 int ConsoleDialog::vprintf(const char *format, va_list argptr) {
-#ifdef PALMOS_68K
+#ifdef PALMOS_MODE
 	char	buf[256];
 #else
 	char	buf[2048];
@@ -632,10 +629,10 @@ void ConsoleDialog::drawCaret(bool erase) {
 	char c = buffer(_currentPos);
 	if (erase) {
 		g_gui.fillRect(x, y, kConsoleCharWidth, kConsoleLineHeight, g_gui._bgcolor);
-		g_gui.drawChar(c, x, y + 2, g_gui._textcolor, &g_consolefont);
+		g_gui.drawChar(c, x, y + 2, g_gui._textcolor, _font);
 	} else {
 		g_gui.fillRect(x, y, kConsoleCharWidth, kConsoleLineHeight, g_gui._textcolor);
-		g_gui.drawChar(c, x, y + 2, g_gui._bgcolor, &g_consolefont);
+		g_gui.drawChar(c, x, y + 2, g_gui._bgcolor, _font);
 	}
 	g_gui.addDirtyRect(x, y, kConsoleCharWidth, kConsoleLineHeight);
 
