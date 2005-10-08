@@ -332,7 +332,14 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	// Finally, draw the occluded sprite
 	sourceRowPointer = spriteBuffer + clipData.drawSource.x + (clipData.drawSource.y * width);
 
-	destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + (clipData.drawDest.y * ds->pitch);
+	int traverseSign;
+	if (_vm->getGameType() == GType_IHNM) {
+		traverseSign = -1;
+		destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + ((clipData.drawDest.y + clipData.drawHeight) * ds->pitch);
+	} else {
+		traverseSign = 1;
+		destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + (clipData.drawDest.y * ds->pitch);
+	}
 	maskRowPointer = maskBuffer + clipData.drawDest.x + (clipData.drawDest.y * maskWidth);
 
 	for (y = 0; y < clipData.drawHeight; y++) {
@@ -350,7 +357,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 			destPointer++;
 			maskPointer++;
 		}
-		destRowPointer += ds->pitch;
+		destRowPointer += ds->pitch * traverseSign;
 		maskRowPointer += maskWidth;
 		sourceRowPointer += width;
 	}
