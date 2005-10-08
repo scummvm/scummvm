@@ -304,7 +304,7 @@ protected:
 	uint16 _stringIdArray3[20];
 	uint16 _speechIdArray4[20];
 
-	uint16 _bitArray[32];
+	uint16 _bitArray[48];
 	int16 _variableArray[256];
 
 	FillOrCopyStruct *_fcsPtrArray3[8];

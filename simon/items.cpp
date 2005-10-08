@@ -1078,6 +1078,74 @@ int SimonEngine::runScript() {
 			}
 			break;
 
+		// Feeble opcodes
+		case 191:
+			warning("STUB: script opcode 191");
+			if (_bitArray[5] & 0x0008) {
+				// Clear some variables
+			} else {
+				// Clear some other variables
+			}
+			break;
+
+		case 192:{
+				uint a = getVarOrByte();
+				uint b = getVarOrByte();
+				uint c = getVarOrByte();
+				uint d = getVarOrByte();
+				if (_bitArray[5] & 0x0008) {
+					// Set some variables
+				} else {
+					// Set some other variables
+				}
+				warning("STUB: script opcode 192 (%d, %d, %d, %d)", a, b, c, d);
+			}
+			break;
+
+		case 193:
+			// pause clock
+			warning("STUB: script opcode 193");
+			break;
+
+		case 194:
+			// resume clock
+			warning("STUB: script opcode 194");
+			break;
+
+		case 195:{
+				// Set palette colour?
+				uint blue = getVarOrByte();
+				uint green = getVarOrByte();
+				uint red = getVarOrByte();
+				uint color = getVarOrByte();
+				warning("STUB: script opcode 195 (%d, %d, %d, %d)", blue, green, red, color);
+			}
+			break;
+
+		case 196:{									/* set bit3 */
+				uint bit = getVarOrByte();
+				_bitArray[(bit >> 4) + 32] |= 1 << (bit & 15);
+			}
+			break;
+
+		case 197:{									/* clear bit3 */
+				uint bit = getVarOrByte();
+				_bitArray[(bit >> 4) + 32] &= ~(1 << (bit & 15));
+			}
+			break;
+
+		case 198:{									/* is bit3 clear */
+				uint bit = getVarOrByte();
+				condition = (_bitArray[(bit >> 4) + 32] & (1 << (bit & 15))) == 0;
+			}
+			break;
+
+		case 199:{									/* is bit3 set */
+				uint bit = getVarOrByte();
+				condition = (_bitArray[(bit >> 4) + 32] & (1 << (bit & 15))) != 0;
+			}
+			break;
+
 		default:
 		invalid_opcode:;
 			error("Invalid opcode '%d'", opcode);
