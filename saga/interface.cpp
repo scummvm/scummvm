@@ -257,7 +257,8 @@ void Interface::restoreMode() {
 }
 
 void Interface::setMode(int mode) {
-	debug(5, "Interface::setMode %i", mode);
+	debug(0, "Interface::setMode %i", mode);
+
 	if (mode == kPanelMain) {
 		_inMainMode = true;
 		_saveReminderState = 1; //TODO: blinking timeout

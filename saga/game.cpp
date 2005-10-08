@@ -567,7 +567,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	640, 480,	// logical width&height
 
 	0,			// scene path y offset
-	618,		// scene height
+	304,		// scene height
 
 	0,			// status x offset
 	304,		// status y offset

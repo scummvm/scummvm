@@ -326,9 +326,10 @@ int SagaEngine::go() {
 				_actor->handleSpeech(msec);
 			} else if (!_scene->isInIntro()) {
 				if (_interface->getMode() == kPanelMain ||
-						 _interface->getMode() == kPanelConverse ||
-						 _interface->getMode() == kPanelCutaway ||
-						 _interface->getMode() == kPanelNull)
+						_interface->getMode() == kPanelConverse ||
+						_interface->getMode() == kPanelCutaway ||
+						_interface->getMode() == kPanelNull ||
+						_interface->getMode() == kPanelChapterSelection)
 					_actor->direct(msec);
 			}
 

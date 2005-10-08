@@ -618,6 +618,8 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		else
 			_vm->_interface->setMode(kPanelMain);
 
+		_inGame = true;
+
 		//_vm->_script->setVerb(kVerbIHNMWalkTo); uncomment then panel will be done
 
 		if (loadSceneParams->sceneDescriptor == -2) {
@@ -800,7 +802,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	if (loadSceneParams->sceneProc == NULL) {
-		if (!_inGame) {
+		if (!_inGame && _vm->getGameType() == GType_ITE) {
 			_inGame = true;
 			_vm->_interface->setMode(kPanelMain);
 		}
