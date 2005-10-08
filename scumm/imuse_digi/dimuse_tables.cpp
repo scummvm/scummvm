@@ -18,8 +18,6 @@
  * $Header$
  */
 
-#ifndef DISABLE_SCUMM_7_8
-
 #include "common/stdafx.h"
 #include "scumm/imuse_digi/dimuse.h"
 
@@ -878,7 +876,5 @@ _GRELEASEPTR(GBVARS_FTSTATEMUSICTABLE_INDEX		, GBVARS_SCUMM)
 _GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
 _GRELEASEPTR(GBVARS_FTSEQNAMES_INDEX			, GBVARS_SCUMM)
 _GEND
-
-#endif
 
 #endif
