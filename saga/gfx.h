@@ -33,6 +33,11 @@ namespace Saga {
 using Common::Point;
 using Common::Rect;
 
+enum CursorType {
+	kCursorNormal,
+	kCursorBusy
+};
+
 struct ClipData {
 	// input members
 	Rect sourceRect;
@@ -144,7 +149,7 @@ public:
 	void showCursor(bool state);
 
 private:
-	void setCursor();
+	void setCursor(CursorType cursorType = kCursorNormal);
 	int _init;
 	Surface _backBuffer;
 	byte _currentPal[PAL_ENTRIES * 4];

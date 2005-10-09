@@ -396,22 +396,57 @@ void Gfx::showCursor(bool state) {
 	g_system->showMouse(state);
 }
 
-void Gfx::setCursor() {
-	// Set up the mouse cursor
-	const byte A = kITEColorLightGrey;
-	const byte B = kITEColorWhite;
+void Gfx::setCursor(CursorType cursorType) {
+	if (_vm->getGameType() == GType_ITE) {
+		// Set up the mouse cursor
+		const byte A = kITEColorLightGrey;
+		const byte B = kITEColorWhite;
 
-	const byte cursor_img[CURSOR_W * CURSOR_H] = {
-		0, 0, 0, A, 0, 0, 0,
-		0, 0, 0, A, 0, 0, 0,
-		0, 0, 0, A, 0, 0, 0,
-		A, A, A, B, A, A, A,
-		0, 0, 0, A, 0, 0, 0,
-		0, 0, 0, A, 0, 0, 0,
-		0, 0, 0, A, 0, 0, 0,
-	};
+		const byte cursor_img[CURSOR_W * CURSOR_H] = {
+			0, 0, 0, A, 0, 0, 0,
+			0, 0, 0, A, 0, 0, 0,
+			0, 0, 0, A, 0, 0, 0,
+			A, A, A, B, A, A, A,
+			0, 0, 0, A, 0, 0, 0,
+			0, 0, 0, A, 0, 0, 0,
+			0, 0, 0, A, 0, 0, 0,
+		};
 
-	_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
+		_system->setMouseCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
+	} else {
+		uint32 resourceId;
+
+		switch (cursorType) {
+		case kCursorBusy:
+			resourceId = RID_IHNM_HOURGLASS_CURSOR;
+			break;
+		default:
+			// Assume normal cursor
+			// TODO: Find the correct resource for it
+			resourceId = RID_IHNM_HOURGLASS_CURSOR;
+			break;
+		}
+
+		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+
+		byte *resource;
+		size_t resourceLength;
+
+		_vm->_resource->loadResource(context, resourceId, resource, resourceLength);
+
+		byte *image;
+		size_t imageLength;
+		int width, height;
+
+		_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &width, &height);
+
+		// TODO: Hotspot?
+
+		_system->setMouseCursor(image, width, height, 0, 0, 0);
+
+		free(image);
+		free(resource);
+	}
 }
 
 bool hitTestPoly(const Point *points, unsigned int npoints, const Point& test_point) {
