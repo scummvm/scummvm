@@ -177,6 +177,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_active = true;
 	_panelMode = _lockedMode = kPanelNull;
 	_savedMode = -1;
+	_bossMode = -1;
 	_fadeMode = kNoFade;
 	_inMainMode = false;
 	*_statusText = 0;
@@ -312,6 +313,9 @@ void Interface::setMode(int mode) {
 		_vm->_gfx->getCurrentPal(_mapSavedPal);
 		break;
 	case kPanelChapterSelection:
+		break;
+	case kPanelBoss:
+		_vm->_render->setFlag(RF_DEMO_SUBST);
 		break;
 	}
 
@@ -486,6 +490,10 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 		} else if (ascii == 'q' || ascii == 'Q') {
 			_vm->shutDown();
 		}
+		break;
+	case kPanelBoss:
+		_vm->_render->clearFlag(RF_DEMO_SUBST);
+		keyBossExit();
 		break;
 	}
 	return false;
@@ -2297,5 +2305,82 @@ void Interface::mapPanelDrawCrossHair() {
 						   mapPosition, 256);
 	}
 }
+
+void Interface::keyBoss() {
+	if (_vm->getGameType() != GType_IHNM)
+		return;
+
+	if (_bossMode != -1 || _fadeMode != kNoFade)
+		return;
+
+	_vm->_sound->pauseVoice();
+	_vm->_sound->pauseSound();
+	_vm->_music->pause();
+
+	int i;
+	byte *resource;
+	size_t resourceLength, imageLength;
+	Surface *backBuffer;
+	Rect rect;
+	byte *image;
+	int imageWidth, imageHeight;
+	const byte *pal;
+	PalEntry cPal[PAL_ENTRIES];
+
+	_vm->_gfx->showCursor(false);
+
+	backBuffer = _vm->_gfx->getBackBuffer();
+
+	rect.left = rect.top = 0;
+
+	_vm->_resource->loadResource(_interfaceContext, RID_IHNM_BOSS_SCREEN, resource, resourceLength);
+	if (resourceLength == 0) {
+		error("Interface::bossKey() unable to load Boss image resource");
+	}
+
+	_bossMode = _panelMode;
+	setMode(kPanelBoss);
+
+	_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &imageWidth, &imageHeight);
+	rect.setWidth(imageWidth);
+	rect.setHeight(imageHeight);
+
+	_vm->_gfx->getCurrentPal(_mapSavedPal);
+	pal = _vm->getImagePal(resource, resourceLength);
+
+	for (i = 0; i < PAL_ENTRIES; i++) {
+		cPal[i].red = *pal++;
+		cPal[i].green = *pal++;
+		cPal[i].blue = *pal++;
+	}
+
+	backBuffer->blit(rect, image);
+
+	_vm->_gfx->setPalette(cPal);
+
+	free(resource);
+	free(image);
+}
+
+
+void Interface::keyBossExit() {
+	PalEntry pal[PAL_ENTRIES];
+
+	_vm->_sound->resumeVoice();
+	_vm->_sound->resumeSound();
+	_vm->_music->resume();
+
+	_vm->_gfx->getCurrentPal(pal);
+
+	_vm->_gfx->palToBlack(pal, 1);
+	setMode(_bossMode);
+
+	_vm->_render->drawScene();
+
+	_vm->_gfx->blackToPal(_mapSavedPal, 1);
+
+	_bossMode = -1;
+}
+
 
 } // End of namespace Saga

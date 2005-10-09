@@ -100,6 +100,9 @@ int SagaEngine::processInput() {
 				break;
 			case 289: // F8
 				break;
+			case 290: // F9
+				_interface->keyBoss();
+				break;
 
 			// Actual game keys
 			case 32: // space

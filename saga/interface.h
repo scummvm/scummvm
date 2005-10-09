@@ -70,7 +70,8 @@ enum PanelModes {
 	kPanelSceneSubstitute,
 	kPanelChapterSelection,
 	kPanelCutaway,
-	kPanelVideo
+	kPanelVideo,
+	kPanelBoss
 //	kPanelInventory
 };
 
@@ -242,6 +243,9 @@ public:
 
 	bool processAscii(uint16 ascii, bool synthetic = false);
 	void processKeyUp(uint16 ascii);
+
+	void keyBoss();
+	void keyBossExit();
 
 	void disableAbortSpeeches(bool d) { _disableAbortSpeeches = d; }
 
@@ -423,6 +427,7 @@ private:
 	int _panelMode;
 	int _savedMode;
 	int _lockedMode;
+	int _bossMode;
 	bool _inMainMode;
 	char _statusText[STATUS_TEXT_LEN];
 	int _statusOnceColor;

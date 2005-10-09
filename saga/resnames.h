@@ -87,6 +87,8 @@ namespace Saga {
 #define RID_IHNM_MAIN_PANEL_SPRITES 13 // TODO: verify this
 #define RID_IHNM_MAIN_STRINGS 21
 
+#define RID_IHNM_BOSS_SCREEN 19
+
 // Puzzle portraits
 #define RID_ITE_SAKKA_APPRAISING	6
 #define RID_ITE_SAKKA_DENIAL		7
