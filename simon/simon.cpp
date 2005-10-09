@@ -264,12 +264,12 @@ static const GameSpecificSettings simon2dos_settings = {
 };
 
 static const GameSpecificSettings feeblefiles_settings = {
-	"",	                                // gme_filename
-	"",                                     // wav_filename
-	"",                                     // voc_filename
-	"",                                     // mp3_filename
-	"",                                     // vorbis_filename
-	"",					// flac_filename
+	"",		                        // gme_filename
+	"VOICES.WAV",                           // wav_filename
+	"VOICES.VOC",                           // voc_filename
+	"VOICES.MP3",                           // mp3_filename
+	"VOICES.OGG",                           // vorbis_filename
+	"VOICES.FLA",                           // flac_filename
 	"",                                     // voc_effects_filename
 	"",                                     // mp3_effects_filename
 	"",                                     // vorbis_effects_filename
@@ -362,7 +362,15 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	}
 
 	VGA_DELAY_BASE = 1;
-	if (_game & GF_SIMON2) {
+	if (_game == GAME_FEEBLEFILES) {
+		NUM_VIDEO_OP_CODES = 85;
+#ifndef __PALM_OS__
+		VGA_MEM_SIZE = 2000000;
+#else
+		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
+#endif
+		TABLES_MEM_SIZE = 100000;
+	} else if (_game & GF_SIMON2) {
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
 		NUM_VIDEO_OP_CODES = 75;
@@ -525,10 +533,13 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_scriptUnk1 = 0;
 	_vgaVar6 = 0;
 	_scrollX = 0;
+	_scrollY = 0;
 	_scrollXMax = 0;
+	_scrollYMax = 0;
 	_scrollCount = 0;
 	_scrollFlag = 0;
 	_scrollHeight = 0;
+	_scrollWidth = 0;
 	_scrollImage = 0;
 	_vgaVar8 = 0;
 

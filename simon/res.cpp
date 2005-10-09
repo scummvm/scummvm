@@ -27,7 +27,6 @@
 
 namespace Simon {
 
-// Script opcodes to load into memory
 static const char *const opcode_arg_table_simon1win[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
@@ -262,7 +261,7 @@ void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 
 		child->string_id = (uint16)in->readUint32BE();
 	} else {
-		error("readItemChildren: invalid mode");
+		error("readItemChildren: invalid type %d", type);
 	}
 }
 

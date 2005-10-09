@@ -985,11 +985,11 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 const char *const simon1_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
-	"ddd|DUMMY_1",
+	"ddd|FADEOUT",
 	"d|CALL",
 	"ddddd|NEW_SPRITE",
 	/* 4 */
-	"ddd|DUMMY_4",
+	"ddd|FADEIN",
 	"vd|SKIP_IF_NEQ",
 	"d|SKIP_IFN_SIB_WITH_A",
 	"d|SKIP_IF_SIB_WITH_A",
@@ -1057,22 +1057,22 @@ const char *const simon1_video_opcode_name_table[] = {
 	"|DUMMY_56",
 	"|DUMMY_57",
 	"|UNK_58",
-	"|SKIP_IF_NO_SPEECH",
+	"|SKIP_IF_SPEECH_ENDED",
 	/* 60 */
 	"d|KILL_SPRITE",
 	"ddd|INIT_SPRITE",
-	"|PALETTE_THING",
-	"|PALETTE_THING_2",
+	"|FASTFADEOUT",
+	"|FASTFADEIN",
 };
 
 const char *const simon2_video_opcode_name_table[] = {
 	/* 0 */
 	"x|RET",
-	"ddd|DUMMY_1",
+	"ddd|FADEOUT",
 	"d|CALL",
 	"ddddd|NEW_SPRITE",
 	/* 4 */
-	"ddd|DUMMY_4",
+	"ddd|FADEIN",
 	"vd|SKIP_IF_NEQ",
 	"d|SKIP_IFN_SIB_WITH_A",
 	"d|SKIP_IF_SIB_WITH_A",
@@ -1144,10 +1144,10 @@ const char *const simon2_video_opcode_name_table[] = {
 	/* 60 */
 	"dd|KILL_SPRITE",
 	"ddd|INIT_SPRITE",
-	"|PALETTE_THING",
-	"|PALETTE_THING_2",
+	"|FASTFADEOUT",
+	"|FASTFADEIN",
 	/* 64 */
-	"|SKIP_IF_NO_SPEECH",
+	"|SKIP_IF_SPEECH_ENDED",
 	"|PALETTE_THING_3",
 	"|SKIP_IF_NZ",
 	"|SKIP_IF_GE",
@@ -1158,8 +1158,115 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|CHECK_MUSIC_QUEUE",
 	/* 72 */
 	"dd|PLAY_TRACK_2",
-	"bb|SET_OP189_FLAG",
-	"bb|CLEAR_OP189_FLAG",
+	"bb|SET_MARK",
+	"bb|CLEAR_MARK",
+};
+
+const char *const feeblefiles_video_opcode_name_table[] = {
+	/* 0 */
+	"x|RET",
+	"ddd|FADEOUT",
+	"d|CALL",
+	"ddddd|NEW_SPRITE",
+	/* 4 */
+	"ddd|FADEIN",
+	"vd|SKIP_IF_NEQ",
+	"d|SKIP_IFN_SIB_WITH_A",
+	"d|SKIP_IF_SIB_WITH_A",
+	/* 8 */
+	"dd|SKIP_IF_PARENT_IS",
+	"dd|SKIP_IF_UNK3_IS",
+	"ddddb|DRAW",
+	"|CLEAR_PATHFIND_ARRAY",
+	/* 12 */
+	"b|DELAY",
+	"d|SET_SPRITE_OFFSET_X",
+	"d|SET_SPRITE_OFFSET_Y",
+	"d|IDENT_WAKEUP",
+	/* 16 */
+	"d|IDENT_SLEEP",
+	"dq|SET_PATHFIND_ITEM",
+	"i|JUMP_REL",
+	"|CHAIN_TO",
+	/* 20 */
+	"dd|SET_CODE_WORD",
+	"i|JUMP_IF_CODE_WORD",
+	"dd|SET_SPRITE_PALETTE",
+	"d|SET_SPRITE_PRIORITY",
+	/* 24 */
+	"diid|SET_SPRITE_XY",
+	"x|HALT_SPRITE",
+	"ddddd|SET_WINDOW",
+	"|RESET",
+	/* 28 */
+	"dddd|DUMMY_28",
+	"|STOP_ALL_SOUNDS",
+	"d|SET_BASE_DELAY",
+	"d|SET_PALETTE_MODE",
+	/* 32 */
+	"vv|COPY_VAR",
+	"|FORCE_UNLOCK",
+	"|FORCE_LOCK",
+	"dd|VC35",
+	/* 36 */
+	"dd|SAVELOAD_THING",
+	"v|SET_SPRITE_OFFSET_Y",
+	"v|SKIP_IF_VAR_ZERO",
+	"vd|SET_VAR",
+	/* 40 */
+	"vd|ADD_VAR",
+	"vd|SUB_VAR",
+	"vd|DELAY_IF_NOT_EQ",
+	"d|SKIP_IF_BIT_CLEAR",
+	/* 44 */
+	"d|SKIP_IF_BIT_SET",
+	"v|SET_SPRITE_X",
+	"v|SET_SPRITE_Y",
+	"vv|ADD_VAR_F",
+	/* 48 */
+	"|VC_48",
+	"d|SET_BIT",
+	"d|CLEAR_BIT",
+	"d|CLEAR_HITAREA_BIT_0x40",
+	/* 52 */
+	"ddd|PLAY_SOUND",
+	"ddd|PLAY_SOUND_WITH_ANIM",
+	"ddd|DUMMY_54",
+	"ddd|OFFSET_HIT_AREA",
+	/* 56 */
+	"i|SLEEP_EX",
+	"|DUMMY_57",
+	"|UNK_58",
+	"ddd|KILL_MULTI_SPRITE",
+	/* 60 */
+	"dd|KILL_SPRITE",
+	"ddd|INIT_SPRITE",
+	"|FASTFADEOUT",
+	"|FASTFADEIN",
+	/* 64 */
+	"|SKIP_IF_SPEECH_ENDED",
+	"|PALETTE_THING_3",
+	"|SKIP_IF_NZ",
+	"|SKIP_IF_GE",
+	/* 68 */
+	"|SKIP_IF_LE",
+	"dd|PLAY_TRACK",
+	"dd|QUEUE_MUSIC",
+	"|CHECK_MUSIC_QUEUE",
+	/* 72 */
+	"dd|PLAY_TRACK_2",
+	"bb|SET_MARK",
+	"bb|CLEAR_MARK",
+	"dd|SETSCALE",
+	"ddd|SETSCALEXOFFS",
+	"ddd|SETSCALEYOFFS",
+	"|PATHUNK1",
+	"|PATHUNK1",
+	"ddd|SETOVERLAPIMAGE",
+	"dd|SETRANDOM",
+	"d|PATHUNK3",
+	"ddd|PLAYSOUNDLOOP",
+	"|STOPSOUNDLOOP",
 };
 
 } // End of namespace Simon

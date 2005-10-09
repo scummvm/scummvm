@@ -108,6 +108,16 @@ static const VgaOpcodeProc vga_opcode_table[] = {
 	&SimonEngine::vc72_play_track_2,
 	&SimonEngine::vc73_setMark,
 	&SimonEngine::vc74_clearMark,
+	&SimonEngine::vc75_setScale,
+	&SimonEngine::vc76_setScaleXOffs,
+	&SimonEngine::vc77_setScaleYOffs,
+	&SimonEngine::vc78_pathUnk1,
+	&SimonEngine::vc79_pathUnk2,
+	&SimonEngine::vc80_setOverlayImage,
+	&SimonEngine::vc81_setRandom,
+	&SimonEngine::vc82_pathUnk3,
+	&SimonEngine::vc83_playSoundLoop,
+	&SimonEngine::vc84_stopSoundLoop,
 };
 
 // Script parser
@@ -186,7 +196,24 @@ void SimonEngine::vc_skip_next_instruction() {
 		4, 2, 2
 	};
 
-	if (_game & GF_SIMON2) {
+	static const byte opcode_param_len_feeblefiles[] = {
+		0, 6, 2, 12, 6, 4, 2, 2,
+		4, 4, 9, 0, 1, 2, 2, 2,
+		2, 0, 2, 0, 4, 2, 4, 2,
+		7, 0, 10, 0, 8, 0, 2, 2,
+		4, 0, 0, 4, 4, 2, 2, 4,
+		4, 4, 4, 2, 2, 2, 2, 4,
+		0, 2, 2, 2, 6, 6, 6, 6,
+		2, 0, 6, 6, 4, 6, 0, 0,
+		0, 0, 4, 4, 4, 4, 4, 0,
+		4, 2, 2, 4, 6, 6, 0, 0,
+		6, 4, 2, 6, 0
+	};
+
+	if (_game == GAME_FEEBLEFILES) {
+		uint opcode = vc_read_next_byte();
+		_vcPtr += opcode_param_len_feeblefiles[opcode];
+	} else if (_game & GF_SIMON2) {
 		uint opcode = vc_read_next_byte();
 		_vcPtr += opcode_param_len_simon2[opcode];
 	} else {
@@ -637,7 +664,7 @@ void SimonEngine::vc10_draw() {
 	height = p2[5];
 	flags = p2[4];
 
-	debug(1, "Width %d Height %d Flags 0x%x\n", width, height, flags);
+	debug(1, "Width %d Height %d Flags 0x%x", width, height, flags);
 
 	if (height == 0 || width == 0)
 		return;
@@ -645,6 +672,10 @@ void SimonEngine::vc10_draw() {
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.palette);
+
+	// TODO::Add support for image scaling
+	if (flags & 0x40)
+		return;
 
 	if (flags & 0x80 && !(state.flags & 0x10)) {
 		if (state.flags & 1) {
@@ -669,7 +700,7 @@ void SimonEngine::vc10_draw() {
 
 		_scrollX = state.x;
 
-		vc_write_var(0xfb, _scrollX);
+		vc_write_var(251, _scrollX);
 
 		dst = dx_lock_attached();
 		src = state.depack_src + _scrollX * 4;
@@ -1513,7 +1544,11 @@ void SimonEngine::vc51_clear_hitarea_bit_0x40() {
 void SimonEngine::vc52_playSound() {
 	uint16 sound_id = vc_read_next_word();
 
-	if (_game & GF_SIMON2) {
+	if (_game == GAME_FEEBLEFILES) {
+		uint16 pan = vc_read_next_word();
+		uint16 vol = vc_read_next_word();
+		debug(0, "STUB: vc52_playSound: snd %d pan %d vol %d", sound_id, pan, vol);
+	} else if (_game & GF_SIMON2) {
 		if (sound_id >= 0x8000) {
 			sound_id = -sound_id;
 			_sound->playAmbient(sound_id);
@@ -1528,8 +1563,11 @@ void SimonEngine::vc52_playSound() {
 }
 
 void SimonEngine::vc53_no_op() {
-	/* unused */
-	_vcPtr += 4;
+	// Start sound effect, panning it with the animation
+	int snd = vc_read_next_word();
+	int xoffs = vc_read_next_word();
+	int vol = vc_read_next_word();
+	debug(0, "STUB: vc53_no_op: snd %d xoffs %d vol %d", snd, xoffs, vol);
 }
 
 void SimonEngine::vc54_no_op() {
@@ -1885,6 +1923,76 @@ void SimonEngine::vc74_clearMark() {
 	// Simon2
 	vc_read_next_byte();
 	_marks &= ~(1 << vc_read_next_byte());
+}
+
+void SimonEngine::vc75_setScale() {
+	// Set scale
+	int baseY = vc_read_next_word();
+	int scale = vc_read_next_word();
+	debug(0, "STUB: vc75_setScale: baseY %d scale %d", baseY, scale);
+}
+
+void SimonEngine::vc76_setScaleXOffs() {
+	// Scale X related
+	int image = vc_read_next_word();
+	int xoffs = vc_read_next_word();
+	int var = vc_read_next_word();
+	debug(0, "STUB: vc76_setScaleXOffs: image %d xoffs %d flag %d", image, xoffs, var);
+}
+
+void SimonEngine::vc77_setScaleYOffs() {
+	// Scale Y related
+	int image = vc_read_next_word();
+	int yoffs = vc_read_next_word();
+	int var = vc_read_next_word();
+	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d flag %d", image, yoffs, var);
+}
+
+void SimonEngine::vc78_pathUnk1() {
+	// Pathfinder related
+	debug(0, "STUB: vc78_pathUnk1");
+}
+
+void SimonEngine::vc79_pathUnk2() {
+	// Pathfinder related
+	debug(0, "STUB: vc79_pathUnk2");
+}
+
+void SimonEngine::vc80_setOverlayImage() {
+	VgaSprite *vsp = find_cur_sprite();
+
+	vsp->image = vc_read_var_or_word();
+
+	vsp->x += vc_read_next_word();
+	vsp->y += vc_read_next_word();
+	vsp->flags = 0x10;
+
+	_vgaSpriteChanged++;
+}
+
+void SimonEngine::vc81_setRandom() {
+	uint var = vc_read_next_word();
+	uint value = vc_read_next_word();
+	writeVariable(var, _rnd.getRandomNumber(value - 1));
+}
+
+void SimonEngine::vc82_pathUnk3() {
+	// Set var to path position
+	int var = vc_read_next_word();
+	debug(0, "STUB: vc82_pathUnk3: var %d", var);
+}
+
+void SimonEngine::vc83_playSoundLoop() {
+	// Start looping sound effect
+	int snd = vc_read_next_word();
+	int vol = vc_read_next_word();
+	int pan = vc_read_next_word();
+	debug(0, "STUB: vc83_playSoundLoop: snd %d vol %d pan %d", snd, vol, pan);
+}
+
+void SimonEngine::vc84_stopSoundLoop() {
+	// Stop looping sound effect
+	debug(0, "STUB: vc84_stopSoundLoop");
 }
 
 } // End of namespace Simon

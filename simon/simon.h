@@ -211,7 +211,9 @@ protected:
 	bool _vgaVar9;
 	int16 _scriptUnk1;
 	bool _vgaVar6;
-	int _scrollX, _scrollXMax, _scrollCount, _scrollFlag, _scrollHeight;
+	int _scrollX, _scrollXMax, _scrollHeight;
+	int _scrollY, _scrollYMax, _scrollWidth;
+	int _scrollCount, _scrollFlag;
 	const byte *_scrollImage;
 	byte _vgaVar8;
 
@@ -690,6 +692,16 @@ public:
 	void vc72_play_track_2();
 	void vc73_setMark();
 	void vc74_clearMark();
+	void vc75_setScale();
+	void vc76_setScaleXOffs();
+	void vc77_setScaleYOffs();
+	void vc78_pathUnk1();
+	void vc79_pathUnk2();
+	void vc80_setOverlayImage();
+	void vc81_setRandom();
+	void vc82_pathUnk3();
+	void vc83_playSoundLoop();
+	void vc84_stopSoundLoop();
 
 protected:
 	void delete_vga_timer(VgaTimerEntry * vte);

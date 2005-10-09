@@ -757,9 +757,14 @@ int SimonEngine::runScript() {
 			break;
 
 		case 135:{									/* quit if user presses y */
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-				o_quit_if_user_presses_y();
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+				if (_game == GAME_FEEBLEFILES) {
+					// Switch CD
+					debug(1, "Switch to CD number %d", readVariable(97));
+				} else {
+					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+					o_quit_if_user_presses_y();
+					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+				}
 			}
 			break;
 
@@ -1006,16 +1011,26 @@ int SimonEngine::runScript() {
 			break;
 
 		case 182:{									/* read vgares 328 */
-				if (_game & GF_SIMON2)
+				if (_game == GAME_FEEBLEFILES) {
+					// Load Smacker filename
+					debug(1,"Load Smacker: %s", getStringPtrByID(getNextStringID()));
+				} else if (_game & GF_SIMON2) {
 					goto invalid_opcode;
-				o_read_vgares_328();
+				} else {
+					o_read_vgares_328();
+				}
 			}
 			break;
 
 		case 183:{									/* read vgares 23 */
-				if (_game & GF_SIMON2)
+				if (_game == GAME_FEEBLEFILES) {
+					// Play Smacker
+					debug(1, "Play Smacker");
+				} else if (_game & GF_SIMON2) {
 					goto invalid_opcode;
-				o_read_vgares_23();
+				} else {
+					o_read_vgares_23();
+				}
 			}
 			break;
 

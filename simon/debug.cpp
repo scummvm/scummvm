@@ -47,7 +47,7 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 		st = s = simon1dos_opcode_name_table[opcode];
 	}
 	if (s == NULL) {
-		error("INVALID OPCODE %d", opcode);
+		//error("INVALID OPCODE %d", opcode);
 		return NULL;
 	}
 	while (*st != '|')
@@ -186,10 +186,12 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			return;
 		}
 
-		if (!(_game & GF_SIMON2)) {
-			strn = str = simon1_video_opcode_name_table[opcode];
-		} else {
+		if (_game == GAME_FEEBLEFILES) {
+			strn = str = feeblefiles_video_opcode_name_table[opcode];
+		} else if (_game & GF_SIMON2) {
 			strn = str = simon2_video_opcode_name_table[opcode];
+		} else {
+			strn = str = simon1_video_opcode_name_table[opcode];
 		}
 
 		while (*strn != '|')
