@@ -1108,6 +1108,9 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	actor->_location.y = actorLocation.y;
 	actor->_facingDirection = actor->_actionDirection = actorDirection;
 
+	if (!actor->_frames)
+		_vm->_actor->loadActorResources(actor);
+
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
 

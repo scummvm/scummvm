@@ -482,7 +482,10 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		loadActorResources(actor);
+		if (actor->_flags & kProtagonist) {
+			loadActorResources(actor);
+			break;
+		}
 	}
 
 	_centerActor = _protagonist = _actors[protagonistIdx];

@@ -590,8 +590,11 @@ public:
 	void freeObjList();
 	void loadObjList(int objectCount, int objectsResourceID);
 
-private:
+protected:
+	friend class Script;
 	bool loadActorResources(ActorData *actor);
+
+private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
 
 	void createDrawOrderList();
