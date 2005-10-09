@@ -53,11 +53,9 @@ Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height, GameDetector &d
 	_system->showMouse(true);
 }
 
-
 Gfx::~Gfx() {
   _backBuffer.free();
 }
-
 
 void Surface::drawPalette() {
 	int x;
@@ -421,28 +419,37 @@ void Gfx::setCursor(CursorType cursorType) {
 			resourceId = RID_IHNM_HOURGLASS_CURSOR;
 			break;
 		default:
-			// Assume normal cursor
-			// TODO: Find the correct resource for it
-			resourceId = RID_IHNM_HOURGLASS_CURSOR;
+			resourceId = (uint32)-1;
 			break;
 		}
 
-		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
-
 		byte *resource;
 		size_t resourceLength;
-
-		_vm->_resource->loadResource(context, resourceId, resource, resourceLength);
-
 		byte *image;
 		size_t imageLength;
 		int width, height;
 
-		_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &width, &height);
+		if (resourceId != (uint32)-1) {
+			ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
-		// TODO: Hotspot?
+			_vm->_resource->loadResource(context, resourceId, resource, resourceLength);
 
-		_system->setMouseCursor(image, width, height, 0, 0, 0);
+			_vm->decodeBGImage(resource, resourceLength, &image, &imageLength, &width, &height);
+		} else {
+			resource = NULL;
+			width = height = 31;
+			image = (byte *)calloc(width, height);
+
+			for (int i = 0; i < 14; i++) {
+				image[15 * 31 + i] = 1;
+				image[15 * 31 + 30 - i] = 1;
+				image[i * 31 + 15] = 1;
+				image[(30 - i) * 31 + 15] = 1;
+			}
+		}
+
+		// Note: Hard-coded hotspot
+		_system->setMouseCursor(image, width, height, 15, 15, 0);
 
 		free(image);
 		free(resource);
