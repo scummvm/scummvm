@@ -215,14 +215,15 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 		error("Actor::Actor() resource context not found");
 	}
 
+	// Load ITE actor strings. (IHNM actor strings are loaded by
+	// loadGlobalResources() instead.)
+
 	if (_vm->getGameType() == GType_ITE) {
 
 		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsPointer, stringsLength);
 
 		_vm->loadStrings(_actorsStrings, stringsPointer, stringsLength);
 		free(stringsPointer);
-	} else {
-		// TODO
 	}
 
 	if (_vm->getGameType() == GType_ITE) {
