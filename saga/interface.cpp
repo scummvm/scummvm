@@ -258,7 +258,7 @@ void Interface::restoreMode() {
 }
 
 void Interface::setMode(int mode) {
-	debug(0, "Interface::setMode %i", mode);
+	debug(1, "Interface::setMode %i", mode);
 
 	if (mode == kPanelMain) {
 		_inMainMode = true;
@@ -2378,6 +2378,8 @@ void Interface::keyBossExit() {
 	_vm->_render->drawScene();
 
 	_vm->_gfx->blackToPal(_mapSavedPal, 1);
+
+	_vm->_gfx->showCursor(true);
 
 	_bossMode = -1;
 }
