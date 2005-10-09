@@ -322,7 +322,7 @@ protected:
 
 	HitArea _hitAreas[90];
 
-	VgaPointersEntry _vgaBufferPointers[180];
+	VgaPointersEntry _vgaBufferPointers[450];
 	VgaSprite _vgaSprites[180];
 	VgaSleepStruct _vgaSleepStructs[30];
 

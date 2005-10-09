@@ -281,15 +281,27 @@ void SimonEngine::vc2_call() {
 
 
 	bb = _curVgaFile1;
-	b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
-	b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
+	if (_game == GAME_FEEBLEFILES) {
+		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
+		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
-	while (READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id) != num)
-		b += sizeof(VgaFile1Struct0x8);
+		while (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) != num)
+			b += sizeof(ImageHeader_Feeble);
+	} else {
+		b = bb + READ_BE_UINT16(&((VgaFileHeader_Simon *) bb)->hdr2_start);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageTable);
+
+		while (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) != num)
+			b += sizeof(ImageHeader_Simon);
+	}
 
 	vc_ptr_org = _vcPtr;
 
-	_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
+	if (_game == GAME_FEEBLEFILES) {
+		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
+	} else {
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
+	}
 
 	//dump_vga_script(_vcPtr, res, num);
 	run_vga_script();
@@ -355,11 +367,19 @@ void SimonEngine::vc3_loadSprite() {
 	}
 
 	pp = _curVgaFile1;
-	p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
-	p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
+	if (_game == GAME_FEEBLEFILES) {
+		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
+		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
 
-	while (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) != vgaSpriteId)
-		p += sizeof(VgaFile1Struct0x6);
+		while (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) != vgaSpriteId)
+			p += sizeof(AnimationHeader_Feeble);
+	} else {
+		p = pp + READ_BE_UINT16(&((VgaFileHeader_Simon *) pp)->hdr2_start);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationTable);
+
+		while (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) != vgaSpriteId)
+			p += sizeof(AnimationHeader_Simon);
+	}
 
 #ifdef DUMP_FILE_NR
 	{
@@ -381,10 +401,21 @@ void SimonEngine::vc3_loadSprite() {
 	}
 #endif
 
-	if (_startVgaScript)
-		dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), res, vgaSpriteId);
+	if (_startVgaScript) {
+		if (_game == GAME_FEEBLEFILES) {
+			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), res, vgaSpriteId);
+		} else {
+			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), res, vgaSpriteId);
 
-	add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vgaSpriteId, res);
+		}
+	}
+
+	if (_game == GAME_FEEBLEFILES) {
+		add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
+	} else {
+		add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
+	}
+
 	_curVgaFile1 = old_file_1;
 }
 
@@ -674,7 +705,7 @@ void SimonEngine::vc10_draw() {
 											 state.palette);
 
 	// TODO::Add support for image scaling
-	if (flags & 0x40)
+	if (_game == GAME_FEEBLEFILES)
 		return;
 
 	if (flags & 0x80 && !(state.flags & 0x10)) {
@@ -1126,8 +1157,14 @@ void SimonEngine::vc16_sleep_on_id() {
 void SimonEngine::vc17_setPathfinderItem() {
 	uint a = vc_read_next_word();
 	_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
-	while (READ_BE_UINT16(_vcPtr) != 999)
-		_vcPtr += 4;
+
+	if (_game == GAME_FEEBLEFILES) {
+		while (READ_LE_UINT16(_vcPtr) != 9999)
+			_vcPtr += 4;
+	} else {
+		while (READ_BE_UINT16(_vcPtr) != 999)
+			_vcPtr += 4;
+	}
 	_vcPtr += 2;
 }
 
@@ -1508,9 +1545,15 @@ void SimonEngine::vc48_setPathFinder() {
 	vp = &_variableArray[20];
 
 	do {
-		y2 = READ_BE_UINT16(p);
-		p += step;
-		y1 = READ_BE_UINT16(p) - y2;
+		if (_game == GAME_FEEBLEFILES) {
+			y2 = READ_LE_UINT16(p);
+			p += step;
+			y1 = READ_LE_UINT16(p) - y2;
+		} else {
+			y2 = READ_BE_UINT16(p);
+			p += step;
+			y1 = READ_BE_UINT16(p) - y2;
+		}
 
 		vp[0] = y1 >> 1;
 		vp[1] = y1 - (y1 >> 1);

@@ -365,11 +365,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	if (_game == GAME_FEEBLEFILES) {
 		NUM_VIDEO_OP_CODES = 85;
 #ifndef __PALM_OS__
-		VGA_MEM_SIZE = 2000000;
+		VGA_MEM_SIZE = 7500000;
 #else
 		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
 #endif
-		TABLES_MEM_SIZE = 100000;
+		TABLES_MEM_SIZE = 200000;
 	} else if (_game & GF_SIMON2) {
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
@@ -2498,7 +2498,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	uint num, num_lines;
 	VgaPointersEntry *vpe;
 	byte *bb, *b;
-	// uint16 c;
+	// uint16 count;
 	const byte *vc_ptr_org;
 
 	_windowNum = mode;
@@ -2533,19 +2533,19 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	bb = _curVgaFile1;
 
 	if (_game == GAME_FEEBLEFILES) {
-		b = bb + READ_LE_UINT16(&((FFVgaFile1Header *) bb)->hdr2_start);
-		//c = READ_LE_UINT16(&((FFVgaFile1Header2 *) b)->unk1);
-		b = bb + READ_LE_UINT16(&((FFVgaFile1Header2 *) b)->unk2_offs);
+		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
+		//count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
+		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
-		while (READ_LE_UINT16(&((FFVgaFile1Struct0x8 *) b)->id) != vga_res_id)
-			b += sizeof(FFVgaFile1Struct0x8);
+		while (READ_LE_UINT16(&((ImageHeader_Feeble *) b)->id) != vga_res_id)
+			b += sizeof(ImageHeader_Feeble);
 	} else {
-		b = bb + READ_BE_UINT16(&((VgaFile1Header *) bb)->hdr2_start);
-		//c = READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk1);
-		b = bb + READ_BE_UINT16(&((VgaFile1Header2 *) b)->unk2_offs);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader_Simon *) bb)->hdr2_start);
+		//count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((VgaFileHeader2_Simon *) b)->imageTable);
 
-		while (READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->id) != vga_res_id)
-			b += sizeof(VgaFile1Struct0x8);
+		while (READ_BE_UINT16(&((ImageHeader_Simon *) b)->id) != vga_res_id)
+			b += sizeof(ImageHeader_Simon);
 	}
 
 	if (!(_game & GF_SIMON2)) {
@@ -2566,9 +2566,9 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	vc_ptr_org = _vcPtr;
 
 	if (_game == GAME_FEEBLEFILES) {
-		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((FFVgaFile1Struct0x8 *) b)->script_offs);
+		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
 	} else {
-		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((VgaFile1Struct0x8 *) b)->script_offs);
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
 	}
 	//dump_vga_script(_vcPtr, num, vga_res_id);
 	run_vga_script();
@@ -2825,10 +2825,17 @@ void SimonEngine::timer_vga_sprites() {
 		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
 
-		params[0] = READ_BE_UINT16(&vsp->image);
-		params[1] = READ_BE_UINT16(&vsp->palette);
-		params[2] = READ_BE_UINT16(&vsp->x);
-		params[3] = READ_BE_UINT16(&vsp->y);
+		if (_game == GAME_FEEBLEFILES) {
+			params[0] = READ_LE_UINT16(&vsp->image);
+			params[1] = READ_LE_UINT16(&vsp->palette);
+			params[2] = READ_LE_UINT16(&vsp->x);
+			params[3] = READ_LE_UINT16(&vsp->y);
+		} else {
+			params[0] = READ_BE_UINT16(&vsp->image);
+			params[1] = READ_BE_UINT16(&vsp->palette);
+			params[2] = READ_BE_UINT16(&vsp->x);
+			params[3] = READ_BE_UINT16(&vsp->y);
+		}
 
 		if (_game & GF_SIMON2) {
 			*(byte *)(&params[4]) = (byte)vsp->flags;
@@ -2906,11 +2913,19 @@ void SimonEngine::timer_vga_sprites_2() {
 		if (vsp->image)
 			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-		params[0] = READ_BE_UINT16(&vsp->image);
-		params[1] = READ_BE_UINT16(&vsp->palette);
-		params[2] = READ_BE_UINT16(&vsp->x);
-		params[3] = READ_BE_UINT16(&vsp->y);
-		params[4] = READ_BE_UINT16(&vsp->flags);
+		if (_game == GAME_FEEBLEFILES) {
+			params[0] = READ_LE_UINT16(&vsp->image);
+			params[1] = READ_LE_UINT16(&vsp->palette);
+			params[2] = READ_LE_UINT16(&vsp->x);
+			params[3] = READ_LE_UINT16(&vsp->y);
+			params[4] = READ_LE_UINT16(&vsp->flags);
+		} else {
+			params[0] = READ_BE_UINT16(&vsp->image);
+			params[1] = READ_BE_UINT16(&vsp->palette);
+			params[2] = READ_BE_UINT16(&vsp->x);
+			params[3] = READ_BE_UINT16(&vsp->y);
+			params[4] = READ_BE_UINT16(&vsp->flags);
+		}
 		_vcPtr = (const byte *)params;
 		vc10_draw();
 
@@ -3469,21 +3484,37 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 	}
 
 	pp = _curVgaFile1;
-	p = pp + READ_BE_UINT16(&((VgaFile1Header *) pp)->hdr2_start);
-
-	count = READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_count);
-	p = pp + READ_BE_UINT16(&((VgaFile1Header2 *) p)->id_table);
+	if (_game == GAME_FEEBLEFILES) {
+		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
+		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
+		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
+	} else {
+		p = pp + READ_BE_UINT16(&((VgaFileHeader_Simon *) pp)->hdr2_start);
+		count = READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((VgaFileHeader2_Simon *) p)->animationTable);
+	}
 
 	for (;;) {
-		if (READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->id) == vgaSpriteId) {
+		if (_game == GAME_FEEBLEFILES) {
+			if (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId) {
+				if (_startVgaScript)
+					dump_vga_script(pp + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), fileId, vgaSpriteId);
 
-			if (_startVgaScript)
-				dump_vga_script(pp + READ_BE_UINT16(&((VgaFile1Struct0x6*)p)->script_offs), fileId, vgaSpriteId);
+				add_vga_timer(VGA_DELAY_BASE, pp + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, fileId);
+				break;
+			}
+			p += sizeof(AnimationHeader_Feeble);
+		} else {
+			if (READ_BE_UINT16(&((AnimationHeader_Simon *) p)->id) == vgaSpriteId) {
+				if (_startVgaScript)
+					dump_vga_script(pp + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), fileId, vgaSpriteId);
 
-			add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((VgaFile1Struct0x6 *) p)->script_offs), vgaSpriteId, fileId);
-			break;
+				add_vga_timer(VGA_DELAY_BASE, pp + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, fileId);
+				break;
+			}
+			p += sizeof(AnimationHeader_Simon);
 		}
-		p += sizeof(VgaFile1Struct0x6);
+
 		if (!--count) {
 			vsp->id = 0;
 			break;

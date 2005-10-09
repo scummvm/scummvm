@@ -1258,10 +1258,12 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"bb|SET_MARK",
 	"bb|CLEAR_MARK",
 	"dd|SETSCALE",
+	/* 76 */
 	"ddd|SETSCALEXOFFS",
 	"ddd|SETSCALEYOFFS",
 	"|PATHUNK1",
 	"|PATHUNK1",
+	/* 80 */
 	"ddd|SETOVERLAPIMAGE",
 	"dd|SETRANDOM",
 	"d|PATHUNK3",

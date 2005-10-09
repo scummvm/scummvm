@@ -29,60 +29,66 @@ namespace Simon {
 #endif
 
 // Feeble Files
-struct FFVgaFile1Header {
+struct VgaFileHeader_Feeble {
 	uint16 x_1;
 	uint16 hdr2_start;
 	uint16 x_2, x_3;
 } GCC_PACK;
 
-struct FFVgaFile1Header2 {
-	uint16 unk1;
+struct VgaFileHeader2_Feeble {
+	uint16 imageCount;
 	uint16 x_2;
-	uint16 id_count;
+	uint16 animationCount;
 	uint16 x_3;
-	uint16 unk2_offs;
+	uint16 imageTable;
 	uint16 x_4;
-	uint16 id_table;
+	uint16 animationTable;
 	uint16 x_5;
 } GCC_PACK;
 
-struct FFVgaFile1Struct0x8 {
+struct ImageHeader_Feeble {
 	uint16 id;
 	uint16 x_1;
-	uint16 script_offs;
+	uint16 scriptOffs;
 	uint16 x_2;
 } GCC_PACK;
 
+struct AnimationHeader_Feeble {
+	uint16 scriptOffs;
+	uint16 x_2;
+	uint16 id;
+} GCC_PACK;
+
 // Simon 1/2
-struct VgaFile1Header {
+struct VgaFileHeader_Simon {
 	uint16 x_1, x_2;
 	uint16 hdr2_start;
 	uint16 x_3, x_4;
 } GCC_PACK;
 
-struct VgaFile1Header2 {
+struct VgaFileHeader2_Simon {
 	uint16 x_1;
-	uint16 unk1;
+	uint16 imageCount;
 	uint16 x_2;
-	uint16 id_count;
+	uint16 animationCount;
 	uint16 x_3;
-	uint16 unk2_offs;
+	uint16 imageTable;
 	uint16 x_4;
-	uint16 id_table;
+	uint16 animationTable;
 	uint16 x_5;
 } GCC_PACK;
 
-struct VgaFile1Struct0x8 {
+struct ImageHeader_Simon {
 	uint16 id;
 	uint16 x_1;
 	uint16 x_2;
-	uint16 script_offs;
+	uint16 scriptOffs;
 } GCC_PACK;
 
-struct VgaFile1Struct0x6 {
+struct AnimationHeader_Simon {
 	uint16 id;
 	uint16 x_2;
-	uint16 script_offs;
+	uint16 scriptOffs;
 } GCC_PACK;
 
 

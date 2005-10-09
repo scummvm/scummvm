@@ -207,22 +207,42 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 				fprintf(_dumpFile, "%d ", *src++);
 				break;
 			case 'd':
-				fprintf(_dumpFile, "%d ", READ_BE_UINT16(src));
+				if (_game == GAME_FEEBLEFILES) {
+					fprintf(_dumpFile, "%d ", READ_LE_UINT16(src));
+				} else {
+					fprintf(_dumpFile, "%d ", READ_BE_UINT16(src));
+				}
 				src += 2;
 				break;
 			case 'v':
-				fprintf(_dumpFile, "[%d] ", READ_BE_UINT16(src));
+				if (_game == GAME_FEEBLEFILES) {
+					fprintf(_dumpFile, "[%d] ", READ_LE_UINT16(src));
+				} else {
+					fprintf(_dumpFile, "[%d] ", READ_BE_UINT16(src));
+				}
 				src += 2;
 				break;
 			case 'i':
-				fprintf(_dumpFile, "%d ", (int16)READ_BE_UINT16(src));
+				if (_game == GAME_FEEBLEFILES) {
+					fprintf(_dumpFile, "%d ", (int16)READ_LE_UINT16(src));
+				} else {
+					fprintf(_dumpFile, "%d ", (int16)READ_BE_UINT16(src));
+				}
 				src += 2;
 				break;
 			case 'q':
-				while (READ_BE_UINT16(src) != 999) {
-					fprintf(_dumpFile, "(%d,%d) ", READ_BE_UINT16(src),
-									READ_BE_UINT16(src + 2));
-					src += 4;
+				if (_game == GAME_FEEBLEFILES) {
+					while (READ_LE_UINT16(src) != 9999) {
+						fprintf(_dumpFile, "(%d,%d) ", READ_LE_UINT16(src),
+										READ_LE_UINT16(src + 2));
+						src += 4;
+					}
+				} else {
+					while (READ_BE_UINT16(src) != 999) {
+						fprintf(_dumpFile, "(%d,%d) ", READ_BE_UINT16(src),
+										READ_BE_UINT16(src + 2));
+						src += 4;
+					}
 				}
 				src++;
 				break;
@@ -242,14 +262,14 @@ void SimonEngine::dump_vga_file(const byte *vga) {
 		int count;
 
 		pp = vga;
-		p = pp + READ_BE_UINT16(&((const VgaFile1Header *) pp)->hdr2_start);
-		count = READ_BE_UINT16(&((const VgaFile1Header2 *) p)->id_count);
-		p = pp + READ_BE_UINT16(&((const VgaFile1Header2 *) p)->id_table);
+		p = pp + READ_BE_UINT16(&((const VgaFileHeader_Simon *) pp)->hdr2_start);
+		count = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationCount);
+		p = pp + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) p)->animationTable);
 		while (--count >= 0) {
-			int id = READ_BE_UINT16(&((const VgaFile1Struct0x6 *) p)->id);
+			int id = READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16(&((const VgaFile1Struct0x6 *) p)->script_offs), id / 100, id);
-			p += sizeof(VgaFile1Struct0x6);
+			dump_vga_script_always(vga + READ_BE_UINT16(&((const AnimationHeader_Simon *) p)->scriptOffs), id / 100, id);
+			p += sizeof(AnimationHeader_Simon);
 		}
 	}
 
@@ -258,15 +278,15 @@ void SimonEngine::dump_vga_file(const byte *vga) {
 		int c;
 
 		bb = vga;
-		b = bb + READ_BE_UINT16(&((const VgaFile1Header *) bb)->hdr2_start);
-		c = READ_BE_UINT16(&((const VgaFile1Header2 *) b)->unk1);
-		b = bb + READ_BE_UINT16(&((const VgaFile1Header2 *) b)->unk2_offs);
+		b = bb + READ_BE_UINT16(&((const VgaFileHeader_Simon *) bb)->hdr2_start);
+		c = READ_BE_UINT16(&((const VgaFileHeader2_Simon *) b)->imageCount);
+		b = bb + READ_BE_UINT16(&((const VgaFileHeader2_Simon *) b)->imageTable);
 
 		while (--c >= 0) {
-			int id = READ_BE_UINT16(&((const VgaFile1Struct0x8 *) b)->id);
+			int id = READ_BE_UINT16(&((const ImageHeader_Simon *) b)->id);
 
-			dump_vga_script_always(vga + READ_BE_UINT16(&((const VgaFile1Struct0x8 *) b)->script_offs), id / 100, id);
-			b += sizeof(VgaFile1Struct0x8);
+			dump_vga_script_always(vga + READ_BE_UINT16(&((const ImageHeader_Simon *) b)->scriptOffs), id / 100, id);
+			b += sizeof(ImageHeader_Simon);
 		}
 	}
 }
