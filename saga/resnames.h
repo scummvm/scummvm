@@ -82,7 +82,9 @@ namespace Saga {
 
 #define RID_IHNM_MAIN_PANEL  9
 #define RID_IHNM_CONVERSE_PANEL 10
-#define RID_IHNM_OPTION_PANEL 11       // TODO: verify this
+#define RID_IHNM_OPTION_PANEL 15
+#define RID_IHNM_HOURGLASS_CURSOR 11
+#define RID_IHNM_WARNING_PANEL 17
 #define RID_IHNM_MAIN_SPRITES 12       // TODO: verify this
 #define RID_IHNM_MAIN_PANEL_SPRITES 13 // TODO: verify this
 #define RID_IHNM_MAIN_STRINGS 21
