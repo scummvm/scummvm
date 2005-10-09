@@ -232,8 +232,9 @@ struct StringsTable {
 	const char **strings;
 
 	const char *getString(int index) const {
-		if ((stringsCount <= index) || (index < 0))
-			error("StringList::getString wrong index 0x%X", index);
+		if ((stringsCount <= index) || (index < 0)) {
+			error("StringList::getString wrong index 0x%X (%d)", index, stringsCount);
+		}
 		return strings[index];
 	}
 

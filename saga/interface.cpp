@@ -1215,7 +1215,27 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 }
 
 void Interface::handleChapterSelectionUpdate(const Point& mousePoint) {
-	_vm->_script->whichObject(mousePoint);
+	uint16 objectId =ID_NOTHING;
+	int16 objectFlags;
+	uint16 newObjectId;
+
+	// FIXME: Original handled more object types here.
+
+	newObjectId = _vm->_actor->hitTest(mousePoint, true);
+
+	if (newObjectId != ID_NOTHING) {
+		if (objectTypeId(newObjectId) == kGameObjectObject) {
+			objectId = newObjectId;
+			objectFlags = 0;
+		} else {
+			objectId = newObjectId;
+			objectFlags = kObjUseWith;
+		}
+	}
+
+	if (objectId != _vm->_script->_pointerObject) {
+		_vm->_script->_pointerObject = objectId;
+	}
 }
 
 void Interface::handleChapterSelectionClick(const Point& mousePoint) {

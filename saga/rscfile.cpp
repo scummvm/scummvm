@@ -531,7 +531,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->loadStrings(_vm->_actor->_actorsStrings, resourcePointer, resourceLength);
 	free(resourcePointer);
 
-	// TODO: field_8
+	// TODO: field_8. Inventory-related
 
 	_vm->_sprite->_mainSprites.freeMem();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);

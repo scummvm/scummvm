@@ -426,7 +426,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor->_screenDepth = actorS.readUint16LE();
 		actor->_spriteListResourceId = actorS.readUint32LE();
 		actor->_frameListResourceId = actorS.readUint32LE();
-		debug(0, "%d: %d, %d", i, actor->_spriteListResourceId, actor->_frameListResourceId);
+		debug(0, "%d: %d, %d [%d]", i, actor->_spriteListResourceId, actor->_frameListResourceId, actor->_nameIndex);
 		actor->_scriptEntrypointNumber = actorS.readUint32LE();
 		actorS.readUint32LE(); // xSprite *dSpr;
 		actorS.readUint16LE(); //LEFT
