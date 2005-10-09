@@ -1264,7 +1264,7 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"|PATHUNK1",
 	"|PATHUNK1",
 	/* 80 */
-	"ddd|SETOVERLAPIMAGE",
+	"ddd|SETOVERLAYIMAGE",
 	"dd|SETRANDOM",
 	"d|PATHUNK3",
 	"ddd|PLAYSOUNDLOOP",
