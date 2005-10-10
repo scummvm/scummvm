@@ -256,9 +256,17 @@ void MidiParser::allNotesOff() {
 	}
 	_hanging_notes_count = 0;
 
-	// To be sure, send an "All Note Off" event (but not all MIDI devices support this...)
-	for (i = 0; i < 16; ++i)
-		_driver->send(0x007BB0 | i);
+	// To be sure, send an "All Note Off" event (but not all MIDI devices
+	// support this...). We also reset all controllers and, but in case
+	// that isn't supported either we manually center the pitch wheel. This
+	// should ensure that the next piece of music isn't played off-key.
+
+	for (i = 0; i < 16; ++i) {
+		_driver->send(0x007BB0 | i); // All notes off
+		_driver->send(0x0079B0 | i); // All controllers off
+		_driver->send(0x4000E0 | i); // Center the pitch wheel
+	}
+
 	memset(_active_notes, 0, sizeof(_active_notes));
 }
 
