@@ -1505,7 +1505,7 @@ void Interface::drawStatusBar() {
 
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(),  _vm->_sprite->_mainSprites,
+		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(),  _vm->_sprite->_saveReminderSprites,
 			_saveReminderState == 1 ? _vm->getDisplayInfo().saveReminderFirstSpriteNumber : _vm->getDisplayInfo().saveReminderSecondSpriteNumber,
 			rect, 256);
 

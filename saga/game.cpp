@@ -578,7 +578,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	250,		// status BG color
 	616, 304,	// save reminder pos
 	24, 24,		// save reminder w&h
-	0,0,		// save reminder sprite numbers
+	0,1,		// save reminder sprite numbers
 
 	253,		// verb text color
 	15,			// verb text shadow color FIXME

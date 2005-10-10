@@ -26,8 +26,8 @@
 
 #include "saga/gfx.h"
 #include "saga/scene.h"
+#include "saga/resnames.h"
 #include "saga/rscfile.h"
-
 #include "saga/font.h"
 
 #include "saga/sprite.h"
@@ -51,8 +51,13 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		memoryError("Sprite::Sprite");
 	}
 
-	if (_vm->getGameType() == GType_ITE)
+	if (_vm->getGameType() == GType_ITE) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
+		_arrowSprites = _saveReminderSprites = _mainSprites;
+	} else {
+		loadList(RID_IHNM_ARROW_SPRITES, _arrowSprites);
+		loadList(RID_IHNM_SAVEREMINDER_SPRITES, _saveReminderSprites);
+	}
 }
 
 Sprite::~Sprite(void) {
@@ -83,6 +88,8 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 	MemoryReadStreamEndian readS(spriteListData, spriteListLength, _spriteContext->isBigEndian);
 
 	spriteCount = readS.readUint16();
+
+	debug(9, "Sprites: %d", spriteCount);
 
 	oldSpriteCount = spriteList.spriteCount;
 	newSpriteCount = spriteList.spriteCount + spriteCount;

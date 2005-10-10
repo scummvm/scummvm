@@ -64,8 +64,8 @@ struct SpriteList {
 class Sprite {
 public:
 	SpriteList _mainSprites;
-
-
+	SpriteList _saveReminderSprites;
+	SpriteList _arrowSprites;
 
 	Sprite(SagaEngine *vm);
 	~Sprite(void);
