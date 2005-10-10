@@ -24,6 +24,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
+#include <common/scaler/intern.h>
 #include "dc.h"
 
 #define SCREEN_W 640
@@ -174,6 +175,8 @@ void OSystem_Dreamcast::setScaling()
 void OSystem_Dreamcast::initSize(uint w, uint h, int overlayScale)
 {
   assert(w <= SCREEN_W && h <= SCREEN_H);
+
+  gBitFormat = 4444;
 
   _overlay_visible = false;
   _overlay_fade = 0.0;
@@ -577,5 +580,3 @@ int OSystem_Dreamcast::getGraphicsMode() const
 {
   return 0;
 }
-
-int gBitFormat = 4444;
