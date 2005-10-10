@@ -783,7 +783,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttzoo", "Zoo Demo", kGenMac },
 	{ "samnmax.000", "Sam & Max Data", kGenAsIs },
 	{ "samnmax.000", "Sam & Max Demo Data", kGenAsIs },
-	{ "samnmax.000", "samnmax.sm0", kGenAsIs }, // Fixes MD5 detection
 	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
 	{ "samnmax", "samdemo", kGenPC },
 	{ "samnmax", "snmdemo", kGenPC },
@@ -2727,7 +2726,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		detectName[0] = '\0';
 
 		// TODO: we need to add cache here
-		for (int method = 0; method < 6; method++) {
+		for (int method = 0; method < 7; method++) {
 			switch (method) {
 			case 0:
 				strcpy(detectName, "00.LFL");
@@ -2749,6 +2748,10 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			case 5:
 				strcpy(detectName, base);
 				strcat(detectName, ".000");
+				break;
+			case 6:
+				strcpy(detectName, base);
+				strcat(detectName, ".sm0");
 				break;
 			}
 			strcpy(tempName, detectName);
@@ -3061,7 +3064,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	int substLastIndex = 0;
 	bool found = false;
 
-	for (int method = 0; method < 5 && !found; method++) {
+	for (int method = 0; method < 6 && !found; method++) {
 		switch (method) {
 		case 0:
 			strcpy(detectName, name);
@@ -3080,6 +3083,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		case 4:
 			strcpy(detectName, name);
 			strcat(detectName, ".he0");
+			break;
+		case 5:
+			strcpy(detectName, name);
+			strcat(detectName, ".sm0");
 			break;
 		}
 		strcpy(tempName, detectName);
