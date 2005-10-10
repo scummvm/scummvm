@@ -596,7 +596,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	15,			// verb text shadow color FIXME
 	252,		// verb text active color
 
-	5, 4,		// left portrait x, y offset
+	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset
 
 	-1, -1,		// inventory Up & Down button indexies

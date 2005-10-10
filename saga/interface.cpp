@@ -123,8 +123,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	if (_vm->getGameType() == GType_ITE) {
 		_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits);
-	} else {
-		// TODO
 	}
 
 	setPortraitBgColor(0, 0, 0);
