@@ -202,6 +202,7 @@ static GameResourceDescription ITE_Resources = {
 static GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_SCENE_LUT,  // Scene lookup table RN
 	RID_ITEDEMO_SCRIPT_LUT, // Script lookup table RN
+	RID_ITEDEMO_MAIN_PANEL,
 	RID_ITEDEMO_CONVERSE_PANEL,
 	RID_ITEDEMO_OPTION_PANEL,
 	RID_ITEDEMO_MAIN_SPRITES,
