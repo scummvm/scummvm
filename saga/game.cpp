@@ -525,14 +525,14 @@ static GamePatchDescription ITELinPatch_Files[] = {
 // IHNM section
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	{kPanelButtonVerb,		106,13,		114,30,	kVerbWalkTo,'w',0,	0,0,0}, //TODO: verb Sprite Numbers
-	{kPanelButtonVerb,		106,45,		114,30,	kVerbLookAt,'l',0,	0,0,0},
-	{kPanelButtonVerb,		106,77,		114,30, kVerbTake,'k',0,	0,0,0},
-	{kPanelButtonVerb,		106,109,	114,30, kVerbUse,'u',0,		0,0,0},
-	{kPanelButtonVerb,		223,13,		114,30, kVerbTalkTo,'t',0,	0,0,0},
-	{kPanelButtonVerb,		223,45,		114,30, kVerbSwallow,'s',0,	0,0,0},
-	{kPanelButtonVerb,		223,77,		114,30, kVerbGive,'g',0,	0,0,0},
-	{kPanelButtonVerb,		223,109,	114,30, kVerbPush,'p',0,	0,0,0},
+	{kPanelButtonVerb,		106,12,		114,30,	kVerbWalkTo,'w',0,	0,2,0},
+	{kPanelButtonVerb,		106,44,		114,30,	kVerbLookAt,'l',0,	4,6,0},
+	{kPanelButtonVerb,		106,76,		114,30, kVerbTake,'k',0,	8,10,0},
+	{kPanelButtonVerb,		106,108,	114,30, kVerbUse,'u',0,		12,14,0},
+	{kPanelButtonVerb,		223,12,		114,30, kVerbTalkTo,'t',0,	0,0,0}, // TODO: Find the sprites for the remaining buttons
+	{kPanelButtonVerb,		223,44,		114,30, kVerbSwallow,'s',0,	0,0,0},
+	{kPanelButtonVerb,		223,76,		114,30, kVerbGive,'g',0,	0,0,0},
+	{kPanelButtonVerb,		223,108,	114,30, kVerbPush,'p',0,	0,0,0},
 	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
 	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0}
 //TODO:inventory

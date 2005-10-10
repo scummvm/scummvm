@@ -118,7 +118,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		&_optionPanel.imageLength, &_optionPanel.imageWidth, &_optionPanel.imageHeight);
 	free(resource);
 
-
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
 
 	if (_vm->getGameType() == GType_ITE) {
@@ -1915,13 +1914,18 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
 		font = kIHNMFont8;
+		textShadowColor = 0;
 	}
-
 
 	textWidth = _vm->_font->getStringWidth(font, text, 0, kFontNormal);
 
-	point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - 1 - textWidth) / 2;
-	point.y = _mainPanel.y + panelButton->yOffset + 1;
+	if (_vm->getGameType() == GType_ITE) {
+		point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - 1 - textWidth) / 2;
+		point.y = _mainPanel.y + panelButton->yOffset + 1;
+	} else {
+		point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - textWidth) / 2;
+		point.y = _mainPanel.y + panelButton->yOffset + 12;
+	}
 
 	_vm->_font->textDraw(font, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
 }
