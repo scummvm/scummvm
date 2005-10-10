@@ -88,6 +88,7 @@ namespace Saga {
 #define RID_IHNM_MAIN_SPRITES 12       // TODO: verify this
 #define RID_IHNM_MAIN_PANEL_SPRITES 13 // TODO: verify this
 #define RID_IHNM_MAIN_STRINGS 21
+#define RID_IHNM_PROFILE_BG 20
 
 #define RID_IHNM_BOSS_SCREEN 19
 

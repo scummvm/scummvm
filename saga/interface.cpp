@@ -50,8 +50,8 @@
 
 namespace Saga {
 
-static int verbTypeToTextStringsIdLUT[kVerbTypesMax] = {
-	-1,
+static int verbTypeToTextStringsIdLUT[2][kVerbTypesMax] = {
+	{-1,
 	kTextPickUp,
 	kTextLookAt,
 	kTextWalkTo,
@@ -68,7 +68,8 @@ static int verbTypeToTextStringsIdLUT[kVerbTypesMax] = {
 	-1,
 	-1,
 	-1,
-	-1
+	 -1},
+	{-1, -1, 2, 1, 5, -1, -1, 7, 4, -1, -1, -1, -1, -1, -1, 3, 6, 8}
 };
 
 Interface::Interface(SagaEngine *vm) : _vm(vm) {
@@ -594,13 +595,6 @@ void Interface::draw() {
 
 	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut)
 		return;
-
-	// Disable this for IHNM for now, since that game uses the full screen
-	// in some cases.
-
-	if (_vm->getGameType() == GType_IHNM) {
-		return;
-	}
 
 	drawStatusBar();
 
@@ -1486,10 +1480,6 @@ void Interface::drawStatusBar() {
 	// Disable this for IHNM for now, since that game uses the full screen
 	// in some cases.
 
-	if (_vm->getGameType() == GType_IHNM) {
-		return;
-	}
-
 	// Erase background of status bar
 	rect.left = _vm->getDisplayInfo().statusXOffset;
 	rect.top = _vm->getDisplayInfo().statusYOffset;
@@ -1917,20 +1907,25 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 	int textWidth;
 	Point point;
 	int textId;
+	FontId font;
 
-	textId = verbTypeToTextStringsIdLUT[panelButton->id];
+	if (_vm->getGameType() == GType_ITE) {
+		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
+		text = _vm->getTextString(textId);
+		font = kSmallFont;
+	} else {
+		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
+		text = _vm->_script->_mainStrings.getString(textId + 1);
+		font = kIHNMFont8;
+	}
 
-	if (textId == -1)
-		error("textId == -1");
 
-	text = _vm->getTextString(textId);
-
-	textWidth = _vm->_font->getStringWidth(kSmallFont, text, 0, kFontNormal);
+	textWidth = _vm->_font->getStringWidth(font, text, 0, kFontNormal);
 
 	point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - 1 - textWidth) / 2;
 	point.y = _mainPanel.y + panelButton->yOffset + 1;
 
-	_vm->_font->textDraw(kSmallFont, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
+	_vm->_font->textDraw(font, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
 }
 
 
@@ -2331,7 +2326,7 @@ void Interface::keyBoss() {
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	rect.left = rect.top = 0;
+	rect.left = rect.top = 20;
 
 	_vm->_resource->loadResource(_interfaceContext, RID_IHNM_BOSS_SCREEN, resource, resourceLength);
 	if (resourceLength == 0) {

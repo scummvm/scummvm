@@ -571,7 +571,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 
 	0,			// status x offset
 	304,		// status y offset
-	640,		// status width
+	616,		// status width
 	24,			// status height
 	8,			// status text y offset
 	186,		// status text color
@@ -590,7 +590,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	-1, -1,		// inventory Up & Down button indexies
 	2, 4,		// inventory rows, columns
 
-	0, 149,		// main panel offsets
+	0, 328,		// main panel offsets
 	ARRAYSIZE(IHNM_MainPanelButtons),
 	IHNM_MainPanelButtons,
 
@@ -599,7 +599,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	IHNM_CONVERSE_MAX_TEXT_WIDTH,
 	IHNM_CONVERSE_TEXT_HEIGHT,
 	IHNM_CONVERSE_TEXT_LINES,
-	0, 0,		// converse panel offsets
+	0, 328,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
 
@@ -691,7 +691,7 @@ static GameFontDescription IHNMCD_GameFonts[] = {
 	{3},
 	{4},
 	{5},
-	{6},
+	{6},  // kIHNMFont8
 	{7},
 	{8}   // kIHNMMainFont
 };

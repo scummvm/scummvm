@@ -198,6 +198,14 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 		bufRowPointer += ds->pitch * io;
 		srcRowPointer += width * io;
 	}
+
+	int traverseSign = 1;
+
+	if (_vm->getGameType() == GType_IHNM) {
+		traverseSign = -1;
+		bufRowPointer += clipHeight * ds->pitch;
+	}
+
 	for (i = io; i < clipHeight; i++) {
 		for (j = jo; j < clipWidth; j++) {
 			assert((byte *)ds->pixels <= (byte *)(bufRowPointer + j + spritePointer.x));
@@ -210,7 +218,7 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
 			}
 		}
-		bufRowPointer += ds->pitch;
+		bufRowPointer += ds->pitch * traverseSign;
 		srcRowPointer += width;
 	}
 }

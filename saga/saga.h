@@ -322,6 +322,7 @@ enum FontId {
 	kMediumFont,
 	kBigFont,
 
+	kIHNMFont8 = 4,
 	kIHNMMainFont = 6
 };
 
