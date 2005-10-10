@@ -199,10 +199,24 @@ static GameResourceDescription ITE_Resources = {
 	RID_ITE_ACTOR_NAMES
 };
 
+static GameResourceDescription ITEDemo_Resources = {
+	318,  // Scene lookup table RN
+	146, // Script lookup table RN
+	2,
+	3,
+	3, // FIXME: should be 4 but it is an empty resource.
+	   // Proper fix would be not load options panel when demo is running
+	5,
+	6,
+	80,
+	8,
+	9
+};
+
 // Inherit the Earth - DOS Demo version
 static GameFileDescription ITEDEMO_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
-	{"ite.dmo", GAME_DEMOFILE},
+	//{"ite.dmo", GAME_DEMOFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"voices.rsc", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
@@ -860,7 +874,7 @@ static GameDescription gameDescriptions[] = {
 		"Inherit the Earth (DOS Demo)", // Game title
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE, // Starting scene number
-		&ITE_Resources,
+		&ITEDemo_Resources,
 		ARRAYSIZE(ITEDEMO_GameFiles), // Game datafiles
 		ITEDEMO_GameFiles,
 		ARRAYSIZE(ITEDEMO_GameFonts),
