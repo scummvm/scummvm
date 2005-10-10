@@ -2326,7 +2326,7 @@ void Interface::keyBoss() {
 
 	backBuffer = _vm->_gfx->getBackBuffer();
 
-	rect.left = rect.top = 20;
+	rect.left = rect.top = 0;
 
 	_vm->_resource->loadResource(_interfaceContext, RID_IHNM_BOSS_SCREEN, resource, resourceLength);
 	if (resourceLength == 0) {
