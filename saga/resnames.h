@@ -34,6 +34,9 @@ namespace Saga {
 #define RID_ITE_SCENE_LUT  1806
 #define RID_ITE_SCRIPT_LUT 216
 
+#define RID_ITEDEMO_SCENE_LUT  318
+#define RID_ITEDEMO_SCRIPT_LUT 146
+
 #define RID_IHNM_SCENE_LUT  1272
 #define RID_IHNM_SCRIPT_LUT 29
 #define RID_IHNM_SFX_LUT 265
@@ -61,6 +64,8 @@ namespace Saga {
 #define ITE_DEFAULT_SCENE 32
 #define IHNM_DEFAULT_SCENE 151
 
+#define ITEDEMO_DEFAULT_SCENE 68
+
 // FONTS
 #define RID_MEDIUM_FONT 0
 #define RID_BIG_FONT 1
@@ -75,6 +80,15 @@ namespace Saga {
 #define RID_ITE_MAIN_STRINGS 35 //main strings
 #define RID_ITE_ACTOR_NAMES 36 //actors names
 #define RID_ITE_DEFAULT_PORTRAITS 125
+
+#define RID_ITEDEMO_MAIN_PANEL 2
+#define RID_ITEDEMO_CONVERSE_PANEL 3
+#define RID_ITEDEMO_OPTION_PANEL 3 // FIXME: should be 4 but it is an empty resource.	
+#define RID_ITEDEMO_MAIN_SPRITES 5 // Proper fix would be not load options panel when demo is running
+#define RID_ITEDEMO_MAIN_PANEL_SPRITES 6
+#define RID_ITEDEMO_MAIN_STRINGS 8 //main strings
+#define RID_ITEDEMO_ACTOR_NAMES 9 //actors names
+#define RID_ITEDEMO_DEFAULT_PORTRAITS 80
 
 #define RID_ITE_TYCHO_MAP 1686
 #define RID_ITE_SPR_XHAIR1 (73 + 9)

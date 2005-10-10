@@ -200,17 +200,15 @@ static GameResourceDescription ITE_Resources = {
 };
 
 static GameResourceDescription ITEDemo_Resources = {
-	318,  // Scene lookup table RN
-	146, // Script lookup table RN
-	2,
-	3,
-	3, // FIXME: should be 4 but it is an empty resource.
-	   // Proper fix would be not load options panel when demo is running
-	5,
-	6,
-	80,
-	8,
-	9
+	RID_ITEDEMO_SCENE_LUT,  // Scene lookup table RN
+	RID_ITEDEMO_SCRIPT_LUT, // Script lookup table RN
+	RID_ITEDEMO_CONVERSE_PANEL,
+	RID_ITEDEMO_OPTION_PANEL,
+	RID_ITEDEMO_MAIN_SPRITES,
+	RID_ITEDEMO_MAIN_PANEL_SPRITES,
+	RID_ITEDEMO_DEFAULT_PORTRAITS,
+	RID_ITEDEMO_MAIN_STRINGS,
+	RID_ITEDEMO_ACTOR_NAMES
 };
 
 // Inherit the Earth - DOS Demo version
