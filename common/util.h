@@ -23,6 +23,11 @@
 
 #include "common/scummsys.h"
 
+#if defined (__INNOTEK_LIBC__)
+#undef MIN
+#undef MAX
+#endif
+
 template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
 #if !defined(MIN)
 template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }

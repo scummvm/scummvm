@@ -107,6 +107,8 @@ static const char *credits[] = {
 "\\L\\c2""    Vorbis support",
 "\\L\\c0""  Johannes Schickel",
 "\\L\\c2""    Thumbnails for ScummEngine",
+"\\L\\c0""  Paul Smedley",
+"\\L\\c2""    OS/2 fixes",
 "\\L\\c0""  Andre Souza",
 "\\L\\c2""    SDL-based OpenGL renderer",
 "\\L\\c0""  Tim ???",

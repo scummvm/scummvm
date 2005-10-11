@@ -13,6 +13,7 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added PlayStation Portable (PSP) port.
    - Added AmigaOS 4 port.
    - Added EPOC/SymbianOS port.
+   - Added fixes for OS/2 port.
 
  General:
    - Reworked cursor handling in SDL backend. Now cursors can have their own

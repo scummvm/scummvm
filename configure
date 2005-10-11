@@ -13,6 +13,27 @@
 # use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 
+# Backslashes into forward slashes:
+# The following OS/2 specific code is performed to deal with handling of backslashes by ksh.
+# Borrowed from the Sane configure script
+
+if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
+  ac_save_IFS="$IFS"
+  IFS="\\"
+  ac_TEMP_PATH=
+  for ac_dir in $PATH; do
+    IFS=$ac_save_IFS
+    if test -z "$ac_TEMP_PATH"; then
+      ac_TEMP_PATH="$ac_dir"
+    else
+      ac_TEMP_PATH="$ac_TEMP_PATH/$ac_dir"
+    fi
+  done
+  export PATH="$ac_TEMP_PATH"
+  unset ac_TEMP_PATH
+fi
+
+
 # default lib behaviour yes/no/auto
 _vorbis=auto
 _tremor=auto
@@ -81,9 +102,9 @@ cc_check() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	echo "$CXX $TMPC -o $TMPO $@" >> "$TMPLOG"
+	echo "$CXX $TMPC -o $TMPO$EXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$EXEEXT"
-	( $CXX "$TMPC" -o "$TMPO" "$@" ) >> "$TMPLOG" 2>&1
+	( $CXX "$TMPC" -o "$TMPO$EXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
 	echo >> "$TMPLOG"
 	return "$TMP"
@@ -112,9 +133,9 @@ EOF
 
 if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
-	eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-	eval "$1 -o tmp_cxx_compiler tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp 2> /dev/null" && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -124,12 +145,12 @@ fi
 # TODO: small bit of code to test sdl useability
 find_sdlconfig()
 {
+
 	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
 	
-	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS=":"
-	
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
 	for path_dir in $_sdlpath; do
 		for sdlconfig in $sdlconfigs; do
 			if test -x "$path_dir/$sdlconfig" ; then
@@ -182,7 +203,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-if eval "$CXX -o tmp_find_type_with_size tmp_find_type_with_size.cpp"; then
+if eval "$CXX -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp"; then
 	datatype=`./tmp_find_type_with_size $1`
 	if test "$datatype" = "unknown"; then
 		echo "couldn't find data type with $1 bytes"
@@ -201,7 +222,7 @@ CheckNASM()
 		return;
 	fi
 
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
 		
 	for path_dir in $_nasmpath; do
 		if test -x "$path_dir/nasm" ; then
@@ -470,7 +491,7 @@ esac
 # Determine extension used for executables
 #
 case $_host_os in
-mingw* | cygwin*)
+mingw* | cygwin* | os2-emx*)
 	EXEEXT=".exe"
 	;;
 arm-riscos)
@@ -479,6 +500,18 @@ arm-riscos)
 *)
 	EXEEXT=""
 	;;
+esac
+
+#
+# Determine separator used for $PATH
+#
+case $_host_os in
+os2-emx* )
+        SEPARATOR=";"
+        ;;
+* )
+        SEPARATOR=":"
+        ;;
 esac
 
 #
@@ -703,6 +736,9 @@ else
 			LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
 			OBJS="$OBJS scummvmico.o"
 			;;
+                os2-emx*)
+                        DEFINES="$DEFINES -DUNIX"
+                        ;;
 		# given this is a shell script assume some type of unix
 		*)
 			echo "WARNING: could not establish system type, assuming unix like"
@@ -730,7 +766,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
-	$CXX -o tmp_endianness_check tmp_endianness_check.cpp
+	$CXX -o tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
 	endianness=`./tmp_endianness_check`
 	echo $endianness;
 	case $endianness in

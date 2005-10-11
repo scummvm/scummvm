@@ -375,6 +375,7 @@ begin_credits("Credits");
 	add_person("Edward Rudd", "", "Fixes for playing MP3 versions of MI1/Loom audio");
 	add_person("Daniel Schepler", "", "Final MI1 CD music support, initial Ogg Vorbis support");
 	add_person("Johannes Schickel", "LordHoto", "Thumbnails for ScummEngine");
+	add_person("Paul Smedley", "Creeping", "OS/2 fixes");
 	add_person("Andr&eacute; Souza", "", "SDL-based OpenGL renderer");
 	add_person("Tim ???", "realmz", "Initial MI1 CD music support");
   end_section();
