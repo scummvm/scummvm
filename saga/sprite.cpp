@@ -103,7 +103,9 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
 		spriteInfo = &spriteList.infoList[i];
-		if (_vm->isMacResources())
+		if (_vm->getGameType() == GType_IHNM)
+			offset = readS.readUint32();
+		else if (_vm->isMacResources())
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
@@ -124,10 +126,6 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			spriteInfo->width = readS2.readUint16();
 			spriteInfo->height = readS2.readUint16();
 
-			if (spriteInfo->width > 200) { // FIXME: HACK
-				warning("Sprite width is too big: (%d x %d)", spriteInfo->width, spriteInfo->height);
-				spriteInfo->width = spriteInfo->height = 0;
-			}
 			spriteDataPointer = spritePointer + readS2.pos();
 		} else {
 			MemoryReadStreamEndian readS2(spritePointer, 4);
