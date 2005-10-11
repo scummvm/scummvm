@@ -53,7 +53,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 
 	if (_vm->getGameType() == GType_ITE) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
-		_arrowSprites = _saveReminderSprites = _mainSprites;
+		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
 	} else {
 		loadList(RID_IHNM_ARROW_SPRITES, _arrowSprites);
 		loadList(RID_IHNM_SAVEREMINDER_SPRITES, _saveReminderSprites);

@@ -534,19 +534,17 @@ static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb,		223,76,		114,30, kVerbGive,'g',0,	12,13,0},
 	{kPanelButtonVerb,		223,108,	114,30, kVerbPush,'p',0,	14,15,0},
 	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
-	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0}
-//TODO:inventory
-/*
-	{kPanelButtonInventory,	181 + 32*0,6,	27,18,	0,'-',0,	0,0,0},
-	{kPanelButtonInventory,	181 + 32*1,6,	27,18,	1,'-',0,	0,0,0},
-	{kPanelButtonInventory,	181 + 32*2,6,	27,18,	2,'-',0,	0,0,0},
-	{kPanelButtonInventory,	181 + 32*3,6,	27,18,	3,'-',0,	0,0,0},
+	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0},
 
-	{kPanelButtonInventory,	181 + 32*0,27,	27,18,	4,'-',0,	0,0,0},
-	{kPanelButtonInventory,	181 + 32*1,27,	27,18,	5,'-',0,	0,0,0},
-	{kPanelButtonInventory,	181 + 32*2,27,	27,18,	6,'-',0,	0,0,0},
-	{kPanelButtonInventory,	181 + 32*3,27,	27,18,	7,'-',0,	0,0,0}
-*/
+	{kPanelButtonInventory,	357 + 64*0,18,	54,54,	0,'-',0,	0,0,0},
+	{kPanelButtonInventory,	357 + 64*1,18,	54,54,	1,'-',0,	0,0,0},
+	{kPanelButtonInventory,	357 + 64*2,18,	54,54,	2,'-',0,	0,0,0},
+	{kPanelButtonInventory,	357 + 64*3,18,	54,54,	3,'-',0,	0,0,0},
+
+	{kPanelButtonInventory,	357 + 64*0,80,	54,54,	4,'-',0,	0,0,0},
+	{kPanelButtonInventory,	357 + 64*1,80,	54,54,	5,'-',0,	0,0,0},
+	{kPanelButtonInventory,	357 + 64*2,80,	54,54,	6,'-',0,	0,0,0},
+	{kPanelButtonInventory,	357 + 64*3,80,	54,54,	7,'-',0,	0,0,0}
 };
 
 static PanelButton IHNM_ConversePanelButtons[] = {
@@ -587,7 +585,7 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	616,		// status width
 	24,			// status height
 	8,			// status text y offset
-	186,		// status text color
+	253,		// status text color
 	250,		// status BG color
 	616, 303,	// save reminder pos
 	24, 24,		// save reminder w&h

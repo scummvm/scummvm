@@ -1689,6 +1689,7 @@ int Interface::inventoryItemPosition(int objectId) {
 void Interface::drawInventory(Surface *backBuffer) {
 	if (!isInMainMode())
 		return;
+
 	int i;
 	Rect rect;
 	int ci;
@@ -1712,7 +1713,7 @@ void Interface::drawInventory(Surface *backBuffer) {
 
 		if (ci < _inventoryCount) {
 			obj = _vm->_actor->getObj(_inventory[ci]);
-			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, obj->_spriteListResourceId, rect, 256);
+			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_inventorySprites, obj->_spriteListResourceId, rect, 256);
 		}
 
 		ci++;

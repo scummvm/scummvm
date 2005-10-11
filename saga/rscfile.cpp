@@ -469,7 +469,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_metaResource.sceneIndex = metaS.readSint16LE();
 	_metaResource.objectCount = metaS.readSint16LE();
 	_metaResource.objectsStringsResourceID = metaS.readSint32LE();
-	_metaResource.field_8 = metaS.readSint32LE();
+	_metaResource.inventorySpritesID = metaS.readSint32LE();
 	_metaResource.mainSpritesID = metaS.readSint32LE();
 	_metaResource.objectsResourceID = metaS.readSint32LE();
 	_metaResource.actorCount = metaS.readSint16LE();
@@ -531,7 +531,8 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->loadStrings(_vm->_actor->_actorsStrings, resourcePointer, resourceLength);
 	free(resourcePointer);
 
-	// TODO: field_8. Inventory-related
+	_vm->_sprite->_inventorySprites.freeMem();
+	_vm->_sprite->loadList(_metaResource.inventorySpritesID, _vm->_sprite->_inventorySprites);
 
 	_vm->_sprite->_mainSprites.freeMem();
 	_vm->_sprite->loadList(_metaResource.mainSpritesID, _vm->_sprite->_mainSprites);

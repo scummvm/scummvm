@@ -414,7 +414,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor = _actors[i] = new ActorData();
 		actor->_id = objectIndexToId(kGameObjectActor, i); //actorIndexToId(i);
 		actor->_index = i;
-		debug(0, "init actor id=0x%x index=%d", actor->_id, actor->_index);
+		debug(4, "init actor id=0x%x index=%d", actor->_id, actor->_index);
 		actorS.readUint32LE(); //next displayed	
 		actorS.readByte(); //type
 		actor->_flags = actorS.readByte();
@@ -427,7 +427,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor->_screenDepth = actorS.readUint16LE();
 		actor->_spriteListResourceId = actorS.readUint32LE();
 		actor->_frameListResourceId = actorS.readUint32LE();
-		debug(0, "%d: %d, %d [%d]", i, actor->_spriteListResourceId, actor->_frameListResourceId, actor->_nameIndex);
+		debug(4, "%d: %d, %d [%d]", i, actor->_spriteListResourceId, actor->_frameListResourceId, actor->_nameIndex);
 		actor->_scriptEntrypointNumber = actorS.readUint32LE();
 		actorS.readUint32LE(); // xSprite *dSpr;
 		actorS.readUint16LE(); //LEFT

@@ -66,6 +66,7 @@ public:
 	SpriteList _mainSprites;
 	SpriteList _saveReminderSprites;
 	SpriteList _arrowSprites;
+	SpriteList _inventorySprites;
 
 	Sprite(SagaEngine *vm);
 	~Sprite(void);

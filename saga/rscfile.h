@@ -93,7 +93,7 @@ struct MetaResource {
 	int16 sceneIndex;
 	int16 objectCount;
 	int32 objectsStringsResourceID;
-	int32 field_8;
+	int32 inventorySpritesID;
 	int32 mainSpritesID;
 	int32 objectsResourceID;
 	int16 actorCount;

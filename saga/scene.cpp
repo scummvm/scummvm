@@ -610,7 +610,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_vm->_interface->clearInventory();
 		_vm->_resource->loadGlobalResources(loadSceneParams->chapter, loadSceneParams->actorsEntrance);
-		_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
+		_vm->_interface->addToInventory(0x4000); //IHNM_OBJ_PROFILE);
 		_vm->_interface->activate();
 
 		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1)
@@ -620,7 +620,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_inGame = true;
 
-		//_vm->_script->setVerb(kVerbIHNMWalkTo); uncomment then panel will be done
+		_vm->_script->setVerb(kVerbWalkTo);
 
 		if (loadSceneParams->sceneDescriptor == -2) {
 			return;
