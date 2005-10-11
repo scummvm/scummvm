@@ -152,6 +152,8 @@ find_sdlconfig()
 	
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
 	for path_dir in $_sdlpath; do
+                #reset separator to parse sdlconfigs
+                IFS=":"
 		for sdlconfig in $sdlconfigs; do
 			if test -x "$path_dir/$sdlconfig" ; then
 				_sdlconfig="$path_dir/$sdlconfig"
