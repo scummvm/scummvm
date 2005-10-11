@@ -603,7 +603,7 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 		if (hitZone->getFlags() & kHitZoneAutoWalk) {
 			actor->_currentAction = kActionWalkDir;
 			actor->_actionDirection = actor->_facingDirection = hitZone->getDirection();
-			actor->_walkFrameSequence = kFrameWalk;
+			actor->_walkFrameSequence = getFrameType(kFrameWalk);
 			return;
 		}
 	} else if (!(hitZone->getFlags() & kHitZoneAutoWalk)) {
@@ -849,17 +849,17 @@ void Actor::updateActorsScene(int actorsEntrance) {
 					tempLocation.x += delta.x;
 					tempLocation.y += delta.y;
 
-					if (validFollowerLocation( tempLocation)) {
+					if (validFollowerLocation(tempLocation)) {
 						possibleLocation = tempLocation;
 					} else {
 						tempLocation = possibleLocation;
 						tempLocation.x += delta.x;
-						if (validFollowerLocation( tempLocation)) {
+						if (validFollowerLocation(tempLocation)) {
 							possibleLocation = tempLocation;
 						} else {
 							tempLocation = possibleLocation;
 							tempLocation.y += delta.y;
-							if (validFollowerLocation( tempLocation)) {
+							if (validFollowerLocation(tempLocation)) {
 								possibleLocation = tempLocation;
 							} else {
 								break;
@@ -878,6 +878,27 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	handleActions(0, true);
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		_vm->_isoMap->adjustScroll(true);
+	}
+}
+
+int Actor::getFrameType(int frameType) {
+	if (_vm->getGameType() == GType_ITE)
+		return frameType;
+
+	switch (frameType) {
+	case kFrameStand:
+		return kFrameIHNMStand;
+	case kFrameWalk:
+		return kFrameIHNMWalk;
+	case kFrameSpeak:
+		return kFrameIHNMSpeak;
+	case kFrameGesture:
+		return kFrameIHNMGesture;
+	case kFrameWait:
+		return kFrameIHNMWait;
+	default:
+		warning("Actor::getFrameType() unknown frame type %d", frameType);
+		return kFrameIHNMStand;
 	}
 }
 
@@ -1084,7 +1105,7 @@ void Actor::handleActions(int msec, bool setup) {
 			}
 
 			if (actor->_flags & kCycle) {
-				frameRange = getActorFrameRange(actor->_id, kFrameStand);
+				frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameStand));
 				if (frameRange->frameCount > 0) {
 					actor->_actionCycle++;
 					actor->_actionCycle = (actor->_actionCycle) % frameRange->frameCount;
@@ -1098,9 +1119,9 @@ void Actor::handleActions(int msec, bool setup) {
 			if ((actor->_actionCycle & 3) == 0) {
 				actor->cycleWrap(100);
 
-				frameRange = getActorFrameRange(actor->_id, kFrameWait);
+				frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameWait));
 				if ((frameRange->frameCount < 1 || actor->_actionCycle > 33))
-					frameRange = getActorFrameRange(actor->_id, kFrameStand);
+					frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameStand));
 
 				if (frameRange->frameCount) {
 					actor->_frameNumber = frameRange->frameIndex + (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount - 1);
@@ -1149,7 +1170,7 @@ void Actor::handleActions(int msec, bool setup) {
 				}
 
 				if (ABS(delta.v()) > ABS(delta.u())) {
-					addDelta.v() = clamp( -speed, delta.v(), speed );
+					addDelta.v() = clamp(-speed, delta.v(), speed);
 					if (addDelta.v() == delta.v()) {
 						addDelta.u() = delta.u();
 					} else {
@@ -1158,7 +1179,7 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.u() /= delta.v();
 					}
 				} else {
-					addDelta.u() = clamp( -speed, delta.u(), speed );
+					addDelta.u() = clamp(-speed, delta.u(), speed);
 					if (addDelta.u() == delta.u()) {
 						addDelta.v() = delta.v();
 					} else {
@@ -1266,16 +1287,16 @@ void Actor::handleActions(int msec, bool setup) {
 			actor->_actionCycle++;
 			actor->cycleWrap(64);
 
-			frameRange = getActorFrameRange(actor->_id, kFrameGesture);
+			frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameGesture));
 			if (actor->_actionCycle >= frameRange->frameCount) {
 				if (actor->_actionCycle & 1)
 					break;
-				frameRange = getActorFrameRange(actor->_id, kFrameSpeak);
+				frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameSpeak));
 
 				state = (uint16)_vm->_rnd.getRandomNumber(frameRange->frameCount);
 
 				if (state == 0) {
-					frameRange = getActorFrameRange(actor->_id, kFrameStand);
+					frameRange = getActorFrameRange(actor->_id, getFrameType(kFrameStand));
 				} else {
 					state--;
 				}
@@ -1399,10 +1420,10 @@ void Actor::handleActions(int msec, bool setup) {
 
 			if (hitZone != actor->_lastZone) {
 				if (actor->_lastZone)
-					stepZoneAction( actor, actor->_lastZone, true, false);
+					stepZoneAction(actor, actor->_lastZone, true, false);
 				actor->_lastZone = hitZone;
 				if (hitZone)
-					stepZoneAction( actor, hitZone, false, false);
+					stepZoneAction(actor, hitZone, false, false);
 			}
 		}
 	}
@@ -1637,8 +1658,8 @@ void Actor::drawSpeech(void) {
 			actor = getActor(_activeSpeech.actorIds[i]);
 			calcScreenPosition(actor);
 
-			textPoint.x = clamp( 10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
-			textPoint.y = clamp( 10, actor->_screenPosition.y - 58, _vm->_scene->getHeight() - 10 - height);
+			textPoint.x = clamp(10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
+			textPoint.y = clamp(10, actor->_screenPosition.y - 58, _vm->_scene->getHeight() - 10 - height);
 
 			_vm->_font->textDraw(font, backBuffer, _activeSpeech.strings[0], textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
@@ -1692,8 +1713,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 			prefU /= 2;
 			prefV /= 2;
 
-			newU = clamp( -prefU, delta.u(), prefU ) + protagonistLocation.u();
-			newV = clamp( -prefV, delta.v(), prefV ) + protagonistLocation.v();
+			newU = clamp(-prefU, delta.u(), prefU) + protagonistLocation.u();
+			newV = clamp(-prefV, delta.v(), prefV) + protagonistLocation.v();
 
 			newLocation.u() = newU + _vm->_rnd.getRandomNumber(prefU - 1) - prefU / 2;
 			newLocation.v() = newV + _vm->_rnd.getRandomNumber(prefV - 1) - prefV / 2;
@@ -1860,9 +1881,9 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 		actor->_walkStepIndex = 0;
 		if (_vm->_isoMap->nextTileTarget(actor)) {
 			actor->_currentAction = kActionWalkToPoint;
-			actor->_walkFrameSequence = kFrameWalk;
+			actor->_walkFrameSequence = getFrameType(kFrameWalk);
 		} else {
-			actorEndWalk( actorId, false);
+			actorEndWalk(actorId, false);
 			return false;
 		}
 	} else {
@@ -1918,9 +1939,10 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 
 				for (i = 0; (i < _actorsCount) && (_barrierCount < ACTOR_BARRIERS_MAX); i++) {
 					anotherActor = _actors[i];
-					if (!anotherActor->_inScene) continue;
-					if (anotherActor == actor ) continue;
-
+					if (!anotherActor->_inScene)
+						continue;
+					if (anotherActor == actor)
+						continue;
 
 					anotherActorScreenPosition = anotherActor->_screenPosition;
 					testBox.left = (anotherActorScreenPosition.x - collision.x) & ~1;
@@ -2006,9 +2028,8 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				_actors[2]->_actorFlags &= ~kActorNoFollow;
 			}
 			actor->_currentAction = (actor->_walkStepsCount >= ACTOR_MAX_STEPS_COUNT) ? kActionWalkToLink : kActionWalkToPoint;
-			actor->_walkFrameSequence = kFrameWalk;
+			actor->_walkFrameSequence = getFrameType(kFrameWalk);
 		}
-
 	}
 	return true;
 }
@@ -2034,8 +2055,8 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 
-	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->_screenPosition.x );
-	dist = clamp( 60, dist, 150 );
+	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->_screenPosition.x);
+	dist = clamp(60, dist, 150);
 
 	_activeSpeech.speechBox.left = actor->_screenPosition.x - dist;
 	_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;
@@ -2561,7 +2582,7 @@ void Actor::setActorPath(ActorData *actor, const Point &fromPoint, const Point &
 	addPathListPoint(toPoint);
 	nextPoint = toPoint;
 
-	while ( !(nextPoint == fromPoint)) {
+	while (!(nextPoint == fromPoint)) {
 		direction = getPathCell(nextPoint);
 		if ((direction < 0) || (direction >= 8)) {
 			error("Actor::setActorPath error direction 0x%X", direction);
@@ -2756,7 +2777,7 @@ void Actor::condenseNodeList() {
 		if (iNode->point.x == PATH_NODE_EMPTY) {
 			j = i + 1;
 			jNode = iNode + 1;
-			while ( jNode->point.x == PATH_NODE_EMPTY ) {
+			while (jNode->point.x == PATH_NODE_EMPTY) {
 				j++;
 				jNode++;
 			}

@@ -981,11 +981,10 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->_actorFlags |= kActorBackwards;
 	}
 
-	actor->_cycleFrameSequence	= cycleFrameSequence;
+	actor->_cycleFrameSequence = cycleFrameSequence;
 	actor->_cycleTimeCount = 0;
 	actor->_cycleDelay = cycleDelay;
 	actor->_actionCycle = 0;
-
 }
 
 // Script function #38 (0x26) nonblocking

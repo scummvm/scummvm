@@ -104,8 +104,16 @@ enum ActorFrameTypes {
 	kFrameGesture = 4,
 	kFrameWait = 5,
 	kFramePickUp = 6,
-	kFrameLook = 7
+	kFrameLook = 7,
 //...some special
+
+	// TODO: Verify that these are correct for IHNM
+	kFrameIHNMStand = 0,
+	kFrameIHNMSpeak = 1,
+	kFrameIHNMWait = 2,
+	kFrameIHNMGesture = 3,
+	kFrameIHNMWalkDiag = 4,
+	kFrameIHNMWalk = 5
 };
 
 enum ActorFlagsEx {
@@ -558,6 +566,7 @@ public:
 	void takeExit(uint16 actorId, const HitZone *hitZone);
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const Location &toLocation);
+	int getFrameType(int frameType);
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
 	void actorFaceTowardsPoint(uint16 actorId, const Location &toLocation);
 	void actorFaceTowardsObject(uint16 actorId, uint16 objectId);
