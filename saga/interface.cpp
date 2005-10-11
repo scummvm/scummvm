@@ -1472,6 +1472,9 @@ void Interface::drawStatusBar() {
 	int stringWidth;
 	int color;
 
+	if (_panelMode == kPanelChapterSelection)
+		return;
+
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	// Disable this for IHNM for now, since that game uses the full screen
