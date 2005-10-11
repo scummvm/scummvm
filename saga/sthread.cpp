@@ -308,7 +308,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			*(uint16*)addr =  thread->pop();
+			*(uint16*)addr = thread->pop();
 			break;
 
 // FUNCTION CALL INSTRUCTIONS
@@ -380,8 +380,9 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			} else {
 				thread->pop(); //cause it 0
 				thread->_instructionOffset = thread->pop();
+
+				// Pop all the call parameters off the stack
 				iparam1 = thread->pop();
-				iparam1 += iparam1;
 				while (iparam1--) {
 					thread->pop();
 				}
