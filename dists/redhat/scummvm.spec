@@ -1,14 +1,13 @@
 #------------------------------------------------------------------------------
 #   scummvm.spec
-#       This SPEC file controls the building of custom ScummVM RPM 
-#       packages.
+#       This SPEC file controls the building of ScummVM RPM packages.
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.7.0
+Version		: 0.8.0
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -25,6 +24,8 @@ BuildRequires: desktop-file-utils
 BuildRequires: libogg-devel
 BuildRequires: libvorbis-devel
 BuildRequires: flac-devel
+BuildRequires: zlib-devel
+BuildRequires: nasm
 BuildRequires: SDL-devel >= 1.2.2
 
 #------------------------------------------------------------------------------
