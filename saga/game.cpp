@@ -529,7 +529,7 @@ static PanelButton IHNM_MainPanelButtons[] = {
 	{kPanelButtonVerb,		106,44,		114,30,	kVerbLookAt,'l',0,	2,3,0},
 	{kPanelButtonVerb,		106,76,		114,30, kVerbTake,'k',0,	4,5,0},
 	{kPanelButtonVerb,		106,108,	114,30, kVerbUse,'u',0,		6,7,0},
-	{kPanelButtonVerb,		223,12,		114,30, kVerbTalkTo,'t',0,	8,9,0}, // TODO: Find the sprites for the remaining buttons
+	{kPanelButtonVerb,		223,12,		114,30, kVerbTalkTo,'t',0,	8,9,0},
 	{kPanelButtonVerb,		223,44,		114,30, kVerbSwallow,'s',0,	10,11,0},
 	{kPanelButtonVerb,		223,76,		114,30, kVerbGive,'g',0,	12,13,0},
 	{kPanelButtonVerb,		223,108,	114,30, kVerbPush,'p',0,	14,15,0},

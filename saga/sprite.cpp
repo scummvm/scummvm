@@ -101,11 +101,11 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	spriteList.spriteCount = newSpriteCount;
 
+	bool bigHeader = _vm->getGameType() != GType_ITE || _vm->isMacResources();
+
 	for (i = oldSpriteCount; i < spriteList.spriteCount; i++) {
 		spriteInfo = &spriteList.infoList[i];
-		if (_vm->getGameType() == GType_IHNM)
-			offset = readS.readUint32();
-		else if (_vm->isMacResources())
+		if (bigHeader)
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
@@ -117,8 +117,8 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spritePointer = spriteListData;
 		spritePointer += offset;
 
-		if ((_vm->getGameType()) != GType_ITE || (_vm->getFeatures() & GF_MAC_RESOURCES)) {
-			MemoryReadStreamEndian readS2(spritePointer, 8,  _spriteContext->isBigEndian);
+		if (bigHeader) {
+			MemoryReadStreamEndian readS2(spritePointer, 8, _spriteContext->isBigEndian);
 
 			spriteInfo->xAlign = readS2.readSint16();
 			spriteInfo->yAlign = readS2.readSint16();
@@ -139,7 +139,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		}
 
 		outputLength = spriteInfo->width * spriteInfo->height;
-		inputLength = spriteListLength - (spriteDataPointer -  spriteListData);
+		inputLength = spriteListLength - (spriteDataPointer - spriteListData);
 		decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
 		spriteInfo->decodedBuffer = (byte *) malloc(outputLength);
 		if (spriteInfo->decodedBuffer == NULL) {
