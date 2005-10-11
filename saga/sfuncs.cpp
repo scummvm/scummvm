@@ -1848,7 +1848,7 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 	int chapter = _vm->_scene->currentChapterNumber();
 
 	_vm->_ethicsPoints[chapter] = ethics;
-	_vm->_spiritualBarometer = barometer;
+	_vm->_spiritualBarometer = ethics * 256 / barometer;
 }
 
 void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {

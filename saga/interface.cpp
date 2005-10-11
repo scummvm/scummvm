@@ -615,9 +615,9 @@ void Interface::draw() {
 			_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
 		else
 			_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
-				_portraitBgColor.red,
-				_portraitBgColor.green,
-				_portraitBgColor.blue);
+				_vm->_spiritualBarometer * _portraitBgColor.red / 256,
+				_vm->_spiritualBarometer * _portraitBgColor.green / 256,
+				_vm->_spiritualBarometer * _portraitBgColor.blue / 256);
 	}
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
