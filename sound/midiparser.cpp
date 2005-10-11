@@ -257,13 +257,10 @@ void MidiParser::allNotesOff() {
 	_hanging_notes_count = 0;
 
 	// To be sure, send an "All Note Off" event (but not all MIDI devices
-	// support this...). We also center the pitch wheel. Perhaps we should
-	// reset all controllers, but at the time of writing that isn't
-	// supported on all our MIDI drivers.
+	// support this...).
 
 	for (i = 0; i < 16; ++i) {
 		_driver->send(0x007BB0 | i); // All notes off
-		_driver->send(0x4000E0 | i); // Center the pitch wheel
 	}
 
 	memset(_active_notes, 0, sizeof(_active_notes));
@@ -398,4 +395,13 @@ void MidiParser::unloadMusic() {
 	_num_tracks = 0;
 	_active_track = 255;
 	_abort_parse = true;
+
+	// Center the pitch wheels in preparation for the next piece of music.
+	// It's not safe to do this from within allNotesOff().
+
+	if (_driver) {
+		for (int i = 0; i < 16; ++i) {
+			_driver->send(0x4000E0 | i); // Center the pitch wheel
+		}
+	}
 }
