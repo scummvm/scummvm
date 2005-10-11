@@ -199,6 +199,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 	uint16 savedInstructionOffset;
 
 	byte *addr;
+	byte mode;
 	uint16 jmpOffset1;
 	int16 iparam1;
 	int16 iparam2;
@@ -270,11 +271,12 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			thread->push((*addr) & iparam1 ? 1 : 0);
 			break;
 		CASEOP(opGetInt)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			thread->push(READ_UINT16(addr));
-			debug(8, "0x%X", READ_UINT16(addr));
+			thread->push(readUint16(addr, mode));
+			debug(8, "0x%X", readUint16(addr, mode));
 			break;
 		CASEOP(opPutFlag)
 			addr = thread->baseAddress(scriptS.readByte());
@@ -288,10 +290,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			}
 			break;
 		CASEOP(opPutInt)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			WRITE_UINT16(addr, thread->stackTop());
+			writeUint16(addr, thread->stackTop(), mode);
 			break;
 		CASEOP(opPutFlagV)
 			addr = thread->baseAddress(scriptS.readByte());
@@ -305,10 +308,11 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			}
 			break;
 		CASEOP(opPutIntV)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			WRITE_UINT16(addr, thread->pop());
+			writeUint16(addr, thread->pop(), mode);
 			break;
 
 // FUNCTION CALL INSTRUCTIONS
@@ -465,34 +469,38 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			break;
 
 		CASEOP(opIncV)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			iparam1 = READ_UINT16(addr);
-			WRITE_UINT16(addr, iparam1 + 1);
+			iparam1 = readUint16(addr, mode);
+			writeUint16(addr, iparam1 + 1, mode);
 			break;
 		CASEOP(opDecV)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			iparam1 = READ_UINT16(addr);
-			WRITE_UINT16(addr, iparam1 - 1);
+			iparam1 = readUint16(addr, mode);
+			writeUint16(addr, iparam1 - 1, mode);
 			break;
 		CASEOP(opPostInc)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			iparam1 = READ_UINT16(addr);
+			iparam1 = readUint16(addr, mode);
 			thread->push(iparam1);
-			WRITE_UINT16(addr, iparam1 + 1);
+			writeUint16(addr, iparam1 + 1, mode);
 			break;
 		CASEOP(opPostDec)
-			addr = thread->baseAddress(scriptS.readByte());
+			mode = scriptS.readByte();
+			addr = thread->baseAddress(mode);
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			iparam1 = READ_UINT16(addr);
+			iparam1 = readUint16(addr, mode);
 			thread->push(iparam1);
-			WRITE_UINT16(addr, iparam1 - 1);
+			writeUint16(addr, iparam1 - 1, mode);
 			break;
 
 // ARITHMETIC INSTRUCTIONS

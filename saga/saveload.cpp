@@ -39,7 +39,7 @@
 #include "saga/scene.h"
 #include "saga/script.h"
 
-#define CURRENT_SAGA_VER 3
+#define CURRENT_SAGA_VER 4
 
 namespace Saga {
 
@@ -212,6 +212,9 @@ void SagaEngine::load(const char *fileName) {
 
 	_saveHeader.size = FROM_LE_32(_saveHeader.size);
 	_saveHeader.version = FROM_LE_32(_saveHeader.version);
+
+	if (_saveHeader.version < 4)
+		warning("This savegame is not endian-safe. There may be problems");
 
 	if (_saveHeader.type != MKID('SAGA')) {
 		error("SagaEngine::load wrong format");

@@ -390,6 +390,38 @@ public:
 	}
 
 private:
+	// When reading or writing data to the common buffer, we have to use a
+	// well-defined byte order since it's stored in savegames. Otherwise,
+	// we use native byte ordering since that data may be accessed in other
+	// ways than through these functions.
+	//
+	// The "module" area is a special case, which possibly never ever
+	// happens. But if it does, we need well-defined byte ordering.
+
+	uint16 readUint16(byte *addr, byte addrMode) {
+		switch (addrMode) {
+		case kAddressCommon:
+		case kAddressStatic:
+		case kAddressModule:
+			return READ_LE_UINT16(addr);
+		default:
+			return READ_UINT16(addr);
+		}
+	}
+
+	void writeUint16(byte *addr, uint16 value, byte addrMode) {
+		switch (addrMode) {
+		case kAddressCommon:
+		case kAddressStatic:
+		case kAddressModule:
+			WRITE_LE_UINT16(addr, value);
+			break;
+		default:
+			WRITE_UINT16(addr, value);
+			break;
+		}
+	}
+
 	SagaEngine *_vm;
 	ResourceContext *_scriptContext;
 
