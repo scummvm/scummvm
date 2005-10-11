@@ -60,6 +60,9 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	#define READ_UINT16(a) READ_LE_UINT16(a)
 	#define READ_UINT32(a) READ_LE_UINT32(a)
 
+	#define WRITE_UINT16(a, v) WRITE_LE_UINT16(a, v)
+	#define WRITE_UINT32(a, v) WRITE_LE_UINT32(a, v)
+
 	#define FROM_LE_32(a) ((uint32)(a))
 	#define FROM_LE_16(a) ((uint16)(a))
 
@@ -77,6 +80,9 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 	#define READ_UINT16(a) READ_BE_UINT16(a)
 	#define READ_UINT32(a) READ_BE_UINT32(a)
+
+	#define WRITE_UINT16(a, v) WRITE_BE_UINT16(a, v)
+	#define WRITE_UINT32(a, v) WRITE_BE_UINT32(a, v)
 
 	#define FROM_LE_32(a) SWAP_BYTES_32(a)
 	#define FROM_LE_16(a) SWAP_BYTES_16(a)
