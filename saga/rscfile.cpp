@@ -45,13 +45,13 @@ struct MacResMap {
 struct MacResource {
 	int16 id;
 	int16 nameOffset;
-	byte  attr;
+	byte attr;
 	int32 dataOffset;
 	byte name[255];
 };
 
 struct MacResType {
-	uint32  id;
+	uint32 id;
 	int16 items;
 	int16 maxItemId;
 	int16 offset;
@@ -178,7 +178,7 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	macMapLength = context->file->readUint32BE();
 
 	if (macDataOffset >= context->file->size() || macMapOffset >= context->file->size() ||
-		macDataLength + macMapLength  > context->file->size()) {
+		macDataLength + macMapLength > context->file->size()) {
 			return false;
 	}
 
@@ -392,7 +392,7 @@ void Resource::clearContexts() {
 
 uint32 Resource::convertResourceId(uint32 resourceId) {
 
-	if ((_vm->getGameType() ==  GType_ITE) && (_vm->getFeatures() & GF_MAC_RESOURCES)) {
+	if (_vm->getGameType() == GType_ITE && _vm->isMacResources()) {
 		if (resourceId > 1537) {
 			return resourceId - 2;
 		} else {

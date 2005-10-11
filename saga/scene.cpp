@@ -304,7 +304,7 @@ void Scene::nextScene() {
 
 	endScene();
 
-	// Delete the current head  in scene queue
+	// Delete the current head in scene queue
 	queueIterator = _sceneQueue.begin();
 	if (queueIterator == _sceneQueue.end()) {
 		return;
@@ -316,7 +316,7 @@ void Scene::nextScene() {
 		return;
 	}
 
-	// Load the head  in scene queue
+	// Load the head in scene queue
 	sceneQueue = queueIterator.operator->();
 
 	loadScene(sceneQueue);
@@ -364,12 +364,12 @@ void Scene::skipScene() {
 }
 
 static struct SceneSubstitutes {
-    int sceneId;
-    const char *message;
-    const char *title;
-    const char *image;
+	int sceneId;
+	const char *message;
+	const char *title;
+	const char *image;
 } sceneSubstitutes[] = {
-    {
+	{
 		7,
 		"Tycho says he knows much about the northern lands. Can Rif convince "
 		"the Dog to share this knowledge?",
@@ -377,7 +377,7 @@ static struct SceneSubstitutes {
 		"tycho.bbm"
 	},
 
-    {
+	{
 		27,
 		"The scene of the crime may hold many clues, but will the servants of "
 		"the Sanctuary trust Rif?",
@@ -385,7 +385,7 @@ static struct SceneSubstitutes {
 		"sanctuar.bbm"
 	},
 
-    {
+	{
 		5,
 		"The Rats hold many secrets that could guide Rif on his quest -- assuming "
 		"he can get past the doorkeeper.",
@@ -393,7 +393,7 @@ static struct SceneSubstitutes {
 		"ratdoor.bbm"
 	},
 
-    {
+	{
 		2,
 		"The Ferrets enjoy making things and have the materials to do so. How can "
 		"that help Rif?",
@@ -401,14 +401,14 @@ static struct SceneSubstitutes {
 		"ferrets.bbm"
 	},
 
-    {
+	{
 		67,
 		"What aid can the noble King of the Elks provide to Rif and his companions?",
 		"The Realm of the Forest King",
 		"elkenter.bbm"
 	},
 
-    {
+	{
 		3,
 		"The King holds Rif's sweetheart hostage. Will the Boar provide any "
 		"assistance to Rif?",

@@ -52,7 +52,7 @@ Events::~Events(void) {
 
 // Function to process event list once per frame.
 // First advances event times, then processes each event with the appropriate
-//  handler depending on the type of event.
+// handler depending on the type of event.
 int Events::handleEvents(long msec) {
 	Event *event_p;
 
@@ -100,7 +100,7 @@ int Events::handleEvents(long msec) {
 			} else {
 				// If there is an event chain present, move the next event
 				// in the chain up, adjust it by the previous delta time,
-				// and reprocess the event  */
+				// and reprocess the event
 				delta_time = event_p->time;
 				Event *from_chain = event_p->chain;
 				memcpy(event_p, from_chain, sizeof(*event_p));

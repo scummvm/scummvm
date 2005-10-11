@@ -222,7 +222,7 @@ void Font::createOutline(FontData *font) {
 		// "Hollow out" character to prevent overdraw
 		for (row = 0; row < font->normal.header.charHeight; row++) {
 			for (currentByte = 0; currentByte < font->outline.fontCharEntry[i].byteWidth; currentByte++) {
-				destPointer2 = font->outline.font +  font->outline.header.rowLength * (row + 1) + font->outline.fontCharEntry[i].index + currentByte;
+				destPointer2 = font->outline.font + font->outline.header.rowLength * (row + 1) + font->outline.fontCharEntry[i].index + currentByte;
 				if (currentByte > 0) {
 					// Get last two columns from previous byte
 					srcPointer = font->normal.font + font->normal.header.rowLength * row + font->normal.fontCharEntry[i].index + (currentByte - 1);

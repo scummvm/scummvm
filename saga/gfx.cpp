@@ -54,7 +54,7 @@ Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height, GameDetector &d
 }
 
 Gfx::~Gfx() {
-  _backBuffer.free();
+	_backBuffer.free();
 }
 
 void Surface::drawPalette() {

@@ -1505,7 +1505,7 @@ void Interface::drawStatusBar() {
 
 		rect.right = rect.left + _vm->getDisplayInfo().saveReminderWidth;
 		rect.bottom = rect.top + _vm->getDisplayInfo().saveReminderHeight;
-		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(),  _vm->_sprite->_saveReminderSprites,
+		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_saveReminderSprites,
 			_saveReminderState == 1 ? _vm->getDisplayInfo().saveReminderFirstSpriteNumber : _vm->getDisplayInfo().saveReminderSecondSpriteNumber,
 			rect, 256);
 
@@ -1606,7 +1606,7 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 //inventory stuff
 void Interface::inventoryChangePos(int chg) {
 	if ((chg < 0 && _inventoryStart + chg >= 0) ||
-		(chg > 0 && _inventoryStart  < _inventoryEnd)) {
+		(chg > 0 && _inventoryStart < _inventoryEnd)) {
 			_inventoryStart += chg;
 			draw();
 		}
@@ -1632,7 +1632,7 @@ void Interface::updateInventory(int pos) {
 		_inventoryStart = 0;
 	}
 
-	_inventoryEnd = (_inventoryCount - 1  - cols) / cols * cols;
+	_inventoryEnd = (_inventoryCount - 1 - cols) / cols * cols;
 	if (_inventoryEnd < 0) {
 		_inventoryEnd = 0;
 	}
@@ -1962,7 +1962,7 @@ void Interface::converseClear(void) {
 }
 
 bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, int replyBit) {
-	int count = 0;         // count how many pieces of text per string
+	int count = 0;	// count how many pieces of text per string
 	int i;
 	int len;
 	byte c;
@@ -1994,10 +1994,10 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 
 		_converseText[_converseTextCount].text[i] = 0;
 		_converseText[_converseTextCount].textNum = count;
-		_converseText[_converseTextCount].stringNum =  _converseStrCount;
-		_converseText[_converseTextCount].replyId =  replyId;
-		_converseText[_converseTextCount].replyFlags =  replyFlags;
-		_converseText[_converseTextCount].replyBit =  replyBit;
+		_converseText[_converseTextCount].stringNum = _converseStrCount;
+		_converseText[_converseTextCount].replyId = replyId;
+		_converseText[_converseTextCount].replyFlags = replyFlags;
+		_converseText[_converseTextCount].replyBit = replyBit;
 
 		_converseTextCount++;
 		count++;
@@ -2104,7 +2104,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 
 void Interface::converseChangePos(int chg) {
 	if ((chg < 0 && _converseStartPos + chg >= 0) ||
-		(chg > 0 && _converseStartPos  < _converseEndPos)) {
+		(chg > 0 && _converseStartPos < _converseEndPos)) {
 		_converseStartPos += chg;
 		draw();
 	}
@@ -2298,7 +2298,7 @@ void Interface::mapPanelDrawCrossHair() {
 	_mapPanelCrossHairState = !_mapPanelCrossHairState;
 
 	Point mapPosition = _vm->_isoMap->getMapPosition();
-	Rect screen(_vm->getDisplayWidth(),  _vm->_scene->getHeight());
+	Rect screen(_vm->getDisplayWidth(), _vm->_scene->getHeight());
 
 	if (screen.contains(mapPosition)) {
 		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _vm->_sprite->_mainSprites,

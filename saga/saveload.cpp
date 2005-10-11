@@ -200,7 +200,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 void SagaEngine::load(const char *fileName) {
 	Common::InSaveFile *in;
-	int  commonBufferSize;
+	int commonBufferSize;
 	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;
 

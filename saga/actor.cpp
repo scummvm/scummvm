@@ -1033,7 +1033,7 @@ void Actor::handleSpeech(int msec) {
 					_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;
 				}
 
-				height2 =  actor->_screenPosition.y - 50;
+				height2 = actor->_screenPosition.y - 50;
 				_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
 			} else {
 				_activeSpeech.drawRect.left = _activeSpeech.speechBox.left;

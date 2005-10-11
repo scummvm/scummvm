@@ -419,7 +419,7 @@ void Script::sfSetActorFacing(SCRIPTFUNC_PARAMS) {
 	ActorData *actor;
 
 	actorId = thread->pop();
-	actorDirection =  thread->pop();
+	actorDirection = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
 	actor->_facingDirection = actor->_actionDirection = actorDirection;
@@ -959,7 +959,7 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	flags = thread->pop();
 	cycleFrameSequence = thread->pop();
-	cycleDelay =  thread->pop();
+	cycleDelay = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
 
@@ -1067,7 +1067,7 @@ void Script::sfScriptSpecialWalk(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	actorLocation.x = thread->pop();
 	actorLocation.y = thread->pop();
-	walkFrameSequence =  thread->pop();
+	walkFrameSequence = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
 	actorLocation.z = actor->_location.z;
@@ -1096,9 +1096,9 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	actorId = thread->pop();
 	actorLocation.x = thread->pop();
 	actorLocation.y = thread->pop();
-	actorDirection =  thread->pop();
-	frameType =  thread->pop();
-	frameOffset =  thread->pop();
+	actorDirection = thread->pop();
+	frameType = thread->pop();
+	frameOffset = thread->pop();
 
 	debug(1, "sfPlaceActor(id = 0x%x, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actorLocation.x,
 		  actorLocation.y, actorDirection, frameType, frameOffset);
@@ -1152,7 +1152,7 @@ void Script::sfScriptWalkRelative(SCRIPTFUNC_PARAMS) {
 	objectId = thread->pop();
 	actorLocation.x = thread->pop();
 	actorLocation.y = thread->pop();
-	walkFlags =  thread->pop();
+	walkFlags = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
 	actorLocation.z = actor->_location.z;
@@ -1189,7 +1189,7 @@ void Script::sfScriptMoveRelative(SCRIPTFUNC_PARAMS) {
 	objectId = thread->pop();
 	actorLocation.x = thread->pop();
 	actorLocation.y = thread->pop();
-	walkFlags =  thread->pop();
+	walkFlags = thread->pop();
 
 	actor = _vm->_actor->getActor(actorId);
 	actorLocation.z = actor->_location.z;
@@ -1834,7 +1834,7 @@ void Script::finishDialog(int replyID, int flags, int bitOffset) {
 
 		if (flags & kReplyOnce) {
 			addr = _conversingThread->_staticBase + (bitOffset >> 3);
-			*addr |=  (1 << (bitOffset & 7));
+			*addr |= (1 << (bitOffset & 7));
 		}
 	}
 

@@ -426,7 +426,7 @@ void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, c
 }
 
 
-void IsoMap::drawTiles(Surface *ds,  const Location *location) {
+void IsoMap::drawTiles(Surface *ds, const Location *location) {
 	Point view1;
 	Point fineScroll;
 	Point tileScroll;
