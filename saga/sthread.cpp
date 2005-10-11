@@ -273,8 +273,8 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			thread->push(*((uint16*)addr));
-			debug(8, "0x%X", *((uint16*)addr));
+			thread->push(READ_UINT16(addr));
+			debug(8, "0x%X", READ_UINT16(addr));
 			break;
 		CASEOP(opPutFlag)
 			addr = thread->baseAddress(scriptS.readByte());
@@ -291,7 +291,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			*(uint16*)addr =  thread->stackTop();
+			WRITE_UINT16(addr, thread->stackTop());
 			break;
 		CASEOP(opPutFlagV)
 			addr = thread->baseAddress(scriptS.readByte());
@@ -308,7 +308,7 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			*(uint16*)addr = thread->pop();
+			WRITE_UINT16(addr, thread->pop());
 			break;
 
 // FUNCTION CALL INSTRUCTIONS
@@ -468,27 +468,31 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			*(uint16*)addr += 1;
+			iparam1 = READ_UINT16(addr);
+			WRITE_UINT16(addr, iparam1 + 1);
 			break;
 		CASEOP(opDecV)
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			*(uint16*)addr -= 1;
+			iparam1 = READ_UINT16(addr);
+			WRITE_UINT16(addr, iparam1 - 1);
 			break;
 		CASEOP(opPostInc)
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			thread->push(*(int16*)addr);
-			*(uint16*)addr += 1;
+			iparam1 = READ_UINT16(addr);
+			thread->push(iparam1);
+			WRITE_UINT16(addr, iparam1 + 1);
 			break;
 		CASEOP(opPostDec)
 			addr = thread->baseAddress(scriptS.readByte());
 			iparam1 = scriptS.readSint16LE();
 			addr += iparam1;
-			thread->push(*(int16*)addr);
-			*(uint16*)addr -= 1;
+			iparam1 = READ_UINT16(addr);
+			thread->push(iparam1);
+			WRITE_UINT16(addr, iparam1 - 1);
 			break;
 
 // ARITHMETIC INSTRUCTIONS
