@@ -180,6 +180,7 @@ Indiana Jones and the Fate of Atlantis
 	Non-Talkie	Amiga	en	3a03dab514e4038df192d8a8de469788	atlantis	dhewg
 	Non-Talkie	Amiga	de	4f267a901719623de7dde83e47d5b474	atlantis	ghoostkilla
 	Non-Talkie	Amiga	de	e534d29afb3c6e0ee9dc3d53c5956714	atlantis	Tobias Fleischer
+	Non-Talkie	Amiga	fr	20da6fce37805423966aaa8f3c2426aa	atlantis	Joachim Eberhard
 	Non-Talkie	Amiga	it	5798972220cd458be2626d54c80f71d7	atlantis	Andrea Petrucci
 	Non-Talkie	Amiga	es	15f588e887e857e8c56fe6ade4956168	atlantis	VooD
 
