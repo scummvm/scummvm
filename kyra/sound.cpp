@@ -32,6 +32,7 @@ MusicPlayer::MusicPlayer(MidiDriver *driver, KyraEngine *engine) {
 	_passThrough = false;
 	_eventFromMusic = false;
 	_fadeMusicOut = _sfxIsPlaying = false;
+	_fadeStartTime = 0;
 	_isPlaying = _isLooping = _nativeMT32 = false;
 	_soundEffect = _parser = 0;
 	_soundEffectSource = _parserSource = 0;

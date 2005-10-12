@@ -24,6 +24,9 @@
 
 #include "base/engine.h"
 #include "common/rect.h"
+#include "sound/mixer.h"
+
+class AudioStream;
 
 namespace Kyra {
 
@@ -140,6 +143,9 @@ public:
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void snd_playTheme(int file, int track = 0);
+	void snd_playTrack(int track);
+	void snd_playVoiceFile(int id);
+	bool snd_voicePlaying();
 
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
@@ -178,12 +184,11 @@ protected:
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
-	void snd_playTrack(int track);
 	void snd_startTrack();
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
 	void snd_playSoundEffect(int track);
-	
+		
 	void loadRoom(uint16 roomID);
 	void drawRoom();
 	void delay(uint32 millis);
@@ -206,6 +211,8 @@ protected:
 	uint16 _gameSpeed;
 
 	uint16 _currentRoom;
+	AudioStream *_currentVocFile;
+	Audio::SoundHandle _vocHandle;
 
 	Resource *_res;
 	Screen *_screen;
@@ -232,6 +239,14 @@ protected:
 	static const uint8 _seq_floppyData_KallakMalcom[];
 	static const uint8 _seq_floppyData_MalcomTree[];
 	static const uint8 _seq_floppyData_WestwoodLogo[];
+	
+	// these tables are specific to the CD version
+	static const uint8 _seq_cdromData_KyrandiaLogo[];
+	static const uint8 _seq_cdromData_WestwoodLogo[];
+	static const uint8 _seq_cdromData_Forest[];
+	static const uint8 _seq_cdromData_MalcomTree[];
+	static const uint8 _seq_cdromData_KallakWriting[];
+	static const uint8 _seq_cdromData_KallakMalcom[];
 
 	static const char *_xmidiFiles[];
 	static const int _xmidiFilesCount;

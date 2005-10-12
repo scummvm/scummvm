@@ -75,20 +75,60 @@ Resource::Resource(KyraEngine* engine) {
 		PAKFile* file = new PAKFile(usedFilelist[tmp]);
 		assert(file);
 
+		PakFileEntry newPak;
+		newPak._file = file;
+		strncpy(newPak._filename, usedFilelist[tmp], 32);
 		if (file->isOpen() && file->isValid())
-			_pakfiles.push_back(file);
-		else
+			_pakfiles.push_back(newPak);
+		else {
+			delete file;
 			debug("couldn't load file '%s' correctly", usedFilelist[tmp]);
+		}
 	}
 }
 
 Resource::~Resource() {
-	Common::List<PAKFile*>::iterator start = _pakfiles.begin();
+	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 
 	for (;start != _pakfiles.end(); ++start) {
-		delete *start;
-		*start = 0;
+		delete start->_file;
+		start->_file = 0;
 	}
+}
+
+bool Resource::loadPakFile(const char *filename) {
+	if (isInPakList(filename))
+		return true;
+	PAKFile* file = new PAKFile(filename);
+	if (!file) {
+		error("Couldn't load file: '%s'", filename);
+	}
+	PakFileEntry newPak;
+	newPak._file = file;
+	strncpy(newPak._filename, filename, 32);
+	_pakfiles.push_back(newPak);
+	return true;
+}
+
+void Resource::unloadPakFile(const char *filename) {
+	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	for (;start != _pakfiles.end(); ++start) {
+		if (scumm_stricmp(start->_filename, filename) == 0) {
+			delete start->_file;
+			_pakfiles.erase(start);
+			break;
+		}
+	}
+	return;
+}
+
+bool Resource::isInPakList(const char *filename) {
+	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+	for (;start != _pakfiles.end(); ++start) {
+		if (scumm_stricmp(start->_filename, filename) == 0)
+			return true;
+	}
+	return false;
 }
 
 uint8* Resource::fileData(const char* file, uint32* size) {
@@ -108,19 +148,24 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 
 	} else {
 		// opens the file in a PAK File
-		Common::List<PAKFile*>::iterator start = _pakfiles.begin();
+		Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
 
 		for (;start != _pakfiles.end(); ++start) {
-			*size = (*start)->getFileSize(file);
-
+			*size = start->_file->getFileSize(file);
+			
 			if (!(*size))
 				continue;
 
 			buffer = new uint8[*size];
 			assert(buffer);
+			
+			// TODO: maybe remove this again, this is only
+			// because I had problems when using gcc 4.0.1
+			const uint8 *from = start->_file->getFile(file);
+			assert(from);
 
 			// creates a copy of the file
-			memcpy(buffer, (*start)->getFile(file), *size);
+			memcpy(buffer, from, *size);
 
 			break;
 		}
@@ -212,7 +257,6 @@ const uint8* PAKFile::getFile(const char* file) {
 		if (!scumm_stricmp((*start)->_name, file))
 			return (*start)->_data;
 	}
-
 	return 0;
 }
 
@@ -221,7 +265,6 @@ uint32 PAKFile::getFileSize(const char* file) {
 		if (!scumm_stricmp((*start)->_name, file))
 			return (*start)->_size;
 	}
-
 	return 0;
 }
 } // end of namespace Kyra

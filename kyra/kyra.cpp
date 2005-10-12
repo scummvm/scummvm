@@ -32,6 +32,8 @@
 
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
+#include "sound/voc.h"
+#include "sound/audiostream.h"
 
 #include "kyra/kyra.h"
 #include "kyra/resource.h"
@@ -117,6 +119,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
 	// gets the game
 	if (detector->_game.features & GF_KYRA1) {
@@ -141,6 +144,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 }
 
 int KyraEngine::init(GameDetector &detector) {
+	_currentVocFile = 0;
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		_system->initSize(320, 200);
@@ -659,6 +663,9 @@ void KyraEngine::seq_demo() {
 
 void KyraEngine::seq_intro() {
 	debug(9, "KyraEngine::seq_intro()");
+	if (_game == KYRA1CD) {
+			_res->loadPakFile("INTRO.VRM");
+	}
 	static const IntroProc introProcTable[] = {
 		&KyraEngine::seq_introLogos,
 //		&KyraEngine::seq_introStory,
@@ -679,6 +686,9 @@ void KyraEngine::seq_intro() {
 	waitTicks(30);
 	_seq->setCopyViewOffs(false);
 	_midi->stopMusic();
+	if (_game == KYRA1CD) {
+			_res->unloadPakFile("INTRO.VRM");
+	}
 }
 
 void KyraEngine::seq_introLogos() {
@@ -692,16 +702,30 @@ void KyraEngine::seq_introLogos() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	if (_seq->playSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
-		_screen->fadeToBlack();
-		_screen->clearPage(0);
-		return;
-	}
-	waitTicks(60);
-	if (_seq->playSequence(_seq_floppyData_KyrandiaLogo, _skipIntroFlag)) {
-		_screen->fadeToBlack();
-		_screen->clearPage(0);
-		return;
+	if (_game == KYRA1) {
+		if (_seq->playSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
+			_screen->fadeToBlack();
+			_screen->clearPage(0);
+			return;
+		}
+		waitTicks(60);
+		if (_seq->playSequence(_seq_floppyData_KyrandiaLogo, _skipIntroFlag)) {
+			_screen->fadeToBlack();
+			_screen->clearPage(0);
+			return;
+		}
+	} else if (_game == KYRA1CD) {
+		if (_seq->playSequence(_seq_cdromData_WestwoodLogo, _skipIntroFlag)) {
+			_screen->fadeToBlack();
+			_screen->clearPage(0);
+			return;
+		}
+		waitTicks(60);
+		if (_seq->playSequence(_seq_cdromData_KyrandiaLogo, _skipIntroFlag)) {
+			_screen->fadeToBlack();
+			_screen->clearPage(0);
+			return;
+		}
 	}
 	_screen->fillRect(0, 179, 319, 199, 0);
 
@@ -726,7 +750,11 @@ void KyraEngine::seq_introLogos() {
 		waitTicks(1);
 	} while (y2 >= 64);
 
-	_seq->playSequence(_seq_floppyData_Forest, true);
+	if (_game == KYRA1) {
+		_seq->playSequence(_seq_floppyData_Forest, true);
+	} else if (_game == KYRA1CD) {
+		_seq->playSequence(_seq_cdromData_Forest, true);
+	}
 }
 
 void KyraEngine::seq_introStory() {
@@ -740,7 +768,11 @@ void KyraEngine::seq_introMalcomTree() {
 	debug(9, "KyraEngine::seq_introMalcomTree()");
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
-	_seq->playSequence(_seq_floppyData_MalcomTree, true);
+	if (_game == KYRA1) {
+		_seq->playSequence(_seq_floppyData_MalcomTree, true);
+	} else if (_game == KYRA1CD) {
+		_seq->playSequence(_seq_cdromData_MalcomTree, true);
+	}
 }
 
 void KyraEngine::seq_introKallakWriting() {
@@ -749,14 +781,22 @@ void KyraEngine::seq_introKallakWriting() {
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
-	_seq->playSequence(_seq_floppyData_KallakWriting, true);
+	if (_game == KYRA1) {
+		_seq->playSequence(_seq_floppyData_KallakWriting, true);
+	} else if (_game == KYRA1CD) {
+		_seq->playSequence(_seq_cdromData_KallakWriting, true);
+	}
 	_seq->freeHandShapes();
 }
 
 void KyraEngine::seq_introKallakMalcom() {
 	debug(9, "KyraEngine::seq_introKallakMalcom()");
 	_screen->clearPage(3);
-	_seq->playSequence(_seq_floppyData_KallakMalcom, true);
+	if (_game == KYRA1) {
+		_seq->playSequence(_seq_floppyData_KallakMalcom, true);
+	} else if (_game == KYRA1CD) {
+		_seq->playSequence(_seq_cdromData_KallakMalcom, true);
+	}
 }
 
 bool KyraEngine::seq_skipSequence() const {
@@ -785,6 +825,34 @@ void KyraEngine::snd_setSoundEffectFile(int file) {
 void KyraEngine::snd_playSoundEffect(int track) {
 	debug(9, "KyraEngine::snd_playSoundEffect(%d)", track);
 	_midi->playSoundEffect(track);
+}
+
+void KyraEngine::snd_playVoiceFile(int id) {
+	debug(9, "KyraEngine::snd_playVoiceFile(%d)", id);
+	char vocFile[7];
+	memset(vocFile, 0, sizeof(char)*7);
+	if (id < 10) {
+		sprintf(vocFile, "00%d.VOC", id);
+	} else if (id < 100) {
+		sprintf(vocFile, "0%d.VOC", id);
+	} else {
+		sprintf(vocFile, "%d.VOC", id);
+	}
+	uint32 fileSize = 0;
+	byte *fileData = 0;
+	fileData = _res->fileData(vocFile, &fileSize);
+	assert(fileData);
+	Common::MemoryReadStream vocStream(fileData, fileSize);
+	_mixer->stopHandle(_vocHandle);
+	_currentVocFile = makeVOCStream(vocStream);
+	if (_currentVocFile)
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
+	delete fileData;
+	fileSize = 0;
+}
+
+bool KyraEngine::snd_voicePlaying() {
+	return _mixer->isSoundHandleActive(_vocHandle);
 }
 
 void KyraEngine::snd_startTrack() {

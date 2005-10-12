@@ -64,13 +64,11 @@ protected:
 	void s1_wsaPlayNextFrame();
 	void s1_wsaPlayPrevFrame();
 	void s1_drawShape();
-	void s1_maybeWaitTicks();
 	void s1_waitTicks();
 	void s1_copyWaitTicks();
 	void s1_shuffleScreen();
 	void s1_copyView();
 	void s1_loopInit();
-	void s1_maybeLoopInc();
 	void s1_loopInc();
 	void s1_skip();
 	void s1_loadPalette();
@@ -92,9 +90,9 @@ protected:
 	void s1_textDisplayDisable();
 	void s1_endOfScript();
 	void s1_miscUnk1();
-	void s1_miscUnk2();
+	void s1_playVocFile();
 	void s1_miscUnk3();
-	void s1_miscUnk4();
+	void s1_prefetchVocFile();
 
 	struct SeqMovie {
 		WSAMovieV1 *wsa;

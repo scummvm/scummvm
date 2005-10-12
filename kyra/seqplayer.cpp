@@ -156,11 +156,6 @@ void SeqPlayer::s1_drawShape() {
 	_screen->drawShape(2, _handShapes[shapeNum], x, y, 0, 0, 0);
 }
 
-void SeqPlayer::s1_maybeWaitTicks() {
-	uint16 a = READ_LE_UINT16(_seqData); _seqData += 2;
-	warning("STUB: s1_maybeWaitTicks(%d)\n", a);
-}
-
 void SeqPlayer::s1_waitTicks() {
 	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
 	_vm->waitTicks(ticks);
@@ -191,12 +186,6 @@ void SeqPlayer::s1_loopInit() {
 	} else {
 		_seqQuitFlag = true;
 	}
-}
-
-void SeqPlayer::s1_maybeLoopInc() {
-	uint8 a = *_seqData++;
-	int16 b = (int16)READ_LE_UINT16(_seqData); _seqData += 2;
-	warning("STUB: s1_maybeLoopInc(%d, %d)\n", a, b);
 }
 
 void SeqPlayer::s1_loopInc() {
@@ -316,10 +305,13 @@ void SeqPlayer::s1_copyRegion() {
 
 void SeqPlayer::s1_copyRegionSpecial() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0 };
-	const char *copyStr = "Copyright (c) 1992 Westwood Studios";
-	const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
-	const int y = 179;
-
+	const char *copyStr = 0;
+	if (_vm->game() == KYRA1 || _vm->game() == KYRA1DEMO) {
+		copyStr = "Copyright (c) 1992 Westwood Studios";
+	} else if (_vm->game() == KYRA1CD) {
+		copyStr = "Copyright (c) 1992,1993 Westwood Studios";
+	}
+	
 	uint8 so = *_seqData++;
 	switch (so) {
 	case 0:
@@ -337,12 +329,14 @@ void SeqPlayer::s1_copyRegionSpecial() {
 	case 3:
 		_screen->copyRegion(152, 56, 152, 56, 48, 48, 2, 0);
 		break;
-	case 4:
+	case 4: {
 		_screen->_charWidth = -2;
+		const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
+		const int y = 179;
 		_screen->setTextColorMap(colorMap);
 		_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
 		_screen->printText(copyStr, x, y, 0xF, 0xC);
-		break;
+	}	break;
 	case 5:
 		_screen->_curPage = 2;
 		break;
@@ -370,25 +364,33 @@ void SeqPlayer::s1_soundUnk1() {
 
 void SeqPlayer::s1_soundUnk2() {
 	uint8 msg = *_seqData++;
-	switch (msg) {
-	case 0:
-		// nothing to do here...
-		break;
-	case 1:
-		_midi->beginFadeOut();
-		break;
-	case 56:
-		_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 3);
-		break;
-	case 57:
-		_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 4);
-		break;
-	case 58:
-		_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 5);
-		break;
-	default:
-		warning("Unknown seq. message: %.02d", msg);
-		break;
+	if (_vm->game() == KYRA1 || _vm->game() == KYRA1DEMO) {
+		switch (msg) {
+		case 0:
+			// nothing to do here...
+			break;
+		case 1:
+			_midi->beginFadeOut();
+			break;
+		case 56:
+			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 3);
+			break;
+		case 57:
+			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 4);
+			break;
+		case 58:
+			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 5);
+			break;
+		default:
+			warning("Unknown seq. message: %.02d", msg);
+			break;
+		}
+	} else if (_vm->game() == KYRA1CD) {
+		if (msg == 1) {
+			_midi->beginFadeOut();
+		} else {
+			_vm->snd_playTrack(msg);
+		}
 	}
 }
 
@@ -413,21 +415,24 @@ void SeqPlayer::s1_endOfScript() {
 }
 
 void SeqPlayer::s1_miscUnk1() {
-	warning("STUB: s1_miscUnk1\n");
+	warning("STUB: s1_miscUnk1");
 }
 
-void SeqPlayer::s1_miscUnk2() {
+void SeqPlayer::s1_playVocFile() {
+	while (_vm->snd_voicePlaying()) {
+		_system->delayMillis(10);
+	}
 	uint8 a = *_seqData++;
-	warning("STUB: s1_miscUnk2(%d)\n", a);
+	_vm->snd_playVoiceFile(a);
 }
 
 void SeqPlayer::s1_miscUnk3() {
-	warning("STUB: s1_miscUnk3\n");
+	warning("STUB: s1_miscUnk3");
 }
 
-void SeqPlayer::s1_miscUnk4() {
-	uint8 a = *_seqData++;
-	warning("STUB: s1_miscUnk4(%d)\n", a);
+void SeqPlayer::s1_prefetchVocFile() {
+	*_seqData++;
+	// we do not have to prefetch the vocfiles on modern systems
 }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
@@ -472,7 +477,6 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(1, s1_endOfScript)
 	};
 
-#if 0
 	static SeqEntry cdromSeqProcs[] = {
 		// 0x00
 		SEQOP(3, s1_wsaOpen),
@@ -482,7 +486,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		// 0x04
 		SEQOP(2, s1_wsaPlayPrevFrame),
 		SEQOP(5, s1_drawShape),
-		SEQOP(3, s1_maybeWaitTicks),
+		SEQOP(3, s1_waitTicks),
 		SEQOP(3, s1_waitTicks),
 		// 0x08
 		SEQOP(3, s1_copyWaitTicks),
@@ -490,8 +494,8 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(1, s1_copyView),
 		SEQOP(2, s1_loopInit),
 		// 0x0C
-		SEQOP(4, s1_maybeLoopInc),
-		SEQOP(4, s1_maybeLoopInc), // Again?
+		SEQOP(4, s1_loopInc),
+		SEQOP(4, s1_loopInc), // Again?
 		SEQOP(2, s1_skip),
 		SEQOP(2, s1_loadPalette),
 		// 0x10
@@ -517,20 +521,26 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		// 0x20
 		SEQOP(1, s1_endOfScript),
 		SEQOP(1, s1_miscUnk1),
-		SEQOP(2, s1_miscUnk2),
+		SEQOP(2, s1_playVocFile),
 		SEQOP(1, s1_miscUnk3),
 		// 0x24
-		SEQOP(2, s1_miscUnk4)
+		SEQOP(2, s1_prefetchVocFile)
 	};
-#endif
 
 	const SeqEntry* commands;
 	int numCommands;
 
 	debug(9, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
 
-	commands = floppySeqProcs;
-	numCommands = ARRAYSIZE(floppySeqProcs);
+	if (_vm->game() == KYRA1 || _vm->game() == KYRA1DEMO) {
+		commands = floppySeqProcs;
+		numCommands = ARRAYSIZE(floppySeqProcs);
+	} else if (_vm->game() == KYRA1CD) {
+		commands = cdromSeqProcs;
+		numCommands = ARRAYSIZE(cdromSeqProcs);
+	} else {
+		error("No commandlist found");
+	}
 
 	bool seqSkippedFlag = false;
 

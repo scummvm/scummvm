@@ -67,15 +67,23 @@ public:
 
 	Resource(KyraEngine* engine);
 	~Resource();
+	
+	bool loadPakFile(const char *filename);
+	void unloadPakFile(const char *filename);
+	bool isInPakList(const char *filename);
 
 	uint8* fileData(const char* file, uint32* size);
 
 	VMContext* loadScript(const char* file);
 
 protected:
+	struct PakFileEntry {
+		PAKFile *_file;
+		char _filename[32];
+	};
 
 	KyraEngine* _engine;
-	Common::List<PAKFile*> _pakfiles;
+	Common::List<PakFileEntry> _pakfiles;
 };
 
 } // end of namespace Kyra
