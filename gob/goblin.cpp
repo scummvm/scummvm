@@ -2387,6 +2387,7 @@ void gob_interFunc(void) {
 	int16 layer;
 	int16 state;
 	int32 *retVarPtr;
+	bool objDescSet = false;
 
 	retVarPtr = (int32 *)VAR_ADDRESS(59);
 
@@ -2395,12 +2396,14 @@ void gob_interFunc(void) {
 	if (cmd > 0 && cmd < 17) {
 		extraData = inter_load16();
 		objDesc = gob_objects[extraData];
+		objDescSet = true;
 		extraData = inter_load16();
 	}
 
 	if (cmd > 90 && cmd < 107) {
 		extraData = inter_load16();
 		objDesc = gob_goblins[extraData];
+		objDescSet = true;
 		extraData = inter_load16();
 		cmd -= 90;
 	}
@@ -2408,13 +2411,25 @@ void gob_interFunc(void) {
 	if (cmd > 110 && cmd < 128) {
 		extraData = inter_load16();
 		objDesc = gob_goblins[extraData];
+		objDescSet = true;
 		cmd -= 90;
 	} else if (cmd > 20 && cmd < 38) {
 		extraData = inter_load16();
 		objDesc = gob_objects[extraData];
+		objDescSet = true;
 	}
 
-	if (cmd < 40 && objDesc == 0)
+/*
+	NB: The original gobliiins engine did not initialize the objDesc
+	variable, so we manually check if objDesc is properly set before
+	checking if it is zero. If it was not set, we do not return. This
+	fixes a crash in the EGA version if the life bar is depleted, because
+	gob_interFunc is called multiple times with cmd == 39.
+	Bug #1324814
+*/
+
+
+	if (cmd < 40 && objDescSet && objDesc == 0)
 		return;
 
 	debug(5, "cmd = %d", cmd);
