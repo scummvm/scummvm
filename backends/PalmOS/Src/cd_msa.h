@@ -20,13 +20,13 @@
  *
  */
 
- #ifndef CD_MSA_H
- #define CD_MSA_H
+#ifndef CD_MSA_H
+#define CD_MSA_H
 
- #include "cdaudio.h"
+#include "cdaudio.h"
 
- class MsaCDPlayer : public CDAudio {
- public:
+class MsaCDPlayer : public CDAudio {
+public:
  	MsaCDPlayer(OSystem *sys);
 
  	bool init();
@@ -37,11 +37,16 @@
  	void play(int track, int num_loops, int start_frame, int duration);
  	void stop();
 
+ 	void setVolume(int volume);
+
  private:
  	void initInternal();
 
  	OSystem *_sys;
  	UInt16 _msaRefNum;
+
+	UInt32 _volumeLLimit;
+	UInt32 _volumeRLimit;
 
  	// cdrom
 	AlbumInfoType _msaAlbum;
@@ -55,7 +60,6 @@
 	UInt16 _msaTrack;
 	UInt32 _msaTrackStartSu, _msaTrackEndSu;
 	UInt32 _msaTrackLength;
-
- };
-
- #endif
+};
+ 
+#endif
