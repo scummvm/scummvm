@@ -1,7 +1,7 @@
 The ScummVM team:
        James Brown           - Lead developer
        Max Horn              - Lead developer
-       Torbjorn Andersson    - Engine: SCUMM, Broken Sword II, SAGA
+       Torbjorn Andersson    - Engine: SCUMM, Broken Sword II, SAGA, Gob
        David Eriksson        - Engine: Flight of the Amazon Queen
        Robert Goeffringmann  - Engine: Beneath a Steel Sky, Broken Sword I
        Jonathan Gray         - Engine: SCUMM, HE, Broken Sword II
@@ -9,10 +9,11 @@ The ScummVM team:
        Oliver Kiehl          - Engine: Beneath a Steel Sky, Simon
        Pawel Kolodziejski    - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
        Andrew Kurushin       - Engine: SAGA
-       Gregory Montoir       - Engine: Flight of the Amazon Queen, HE
+       Gregory Montoir       - Engine: Flight of the Amazon Queen, HE, Kyra
        Joost Peters          - Engine: Beneath a Steel Sky, Flight of the
                                Amazon Queen
-       Eugene Sandulenko     - Engine: SCUMM (FT INSANE), HE, SAGA
+       Eugene Sandulenko     - Engine: SCUMM (FT INSANE), HE, SAGA, Gob
+       Johannes Schickel     - Engine: Kyra, GUI improvements
        Chris Apers           - Port: PalmOS
        Nicolas Bacca         - Port: PocketPC/WinCE
        Jurgen Braam          - Port: EPOC/SymbianOS maintainer
@@ -55,7 +56,6 @@ Contributors:
                                audio
        Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                                support
-       Johannes Schickel     - Thumbnails for ScummEngine
        Paul Smedley          - OS/2 fixes
        Andre Souza           - SDL-based OpenGL renderer
        Tim ???               - Initial MI1 CD music support
