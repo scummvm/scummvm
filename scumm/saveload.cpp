@@ -60,15 +60,18 @@ struct SaveInfoSection {
 	uint32 version;
 	uint32 size;
 	
-	uint32 timeTValue;
+	uint32 timeTValue;  // Obsolete since version 2, but kept for compatibility
 	uint32 playtime;
+	
+	uint32 date;
+	uint16 time;
 } GCC_PACK;
 
 #if !defined(__GNUC__)
 	#pragma END_PACK_STRUCTS
 #endif
 
-#define INFOSECTION_VERSION 1
+#define INFOSECTION_VERSION 2
 
 void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
 	_saveLoadSlot = slot;
@@ -546,22 +549,24 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	section.timeTValue = file->readUint32BE();
 	section.playtime = file->readUint32BE();
 
-	time_t curTime_ = section.timeTValue;
-	tm *curTime = localtime(&curTime_);	
-	stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
-	stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
-	stuff->playtime = section.playtime;
+	// for compatibility for older version we
+	// to load in with our old method
+	if (section.version == 1) {
+		time_t curTime_ = section.timeTValue;
+		tm *curTime = localtime(&curTime_);	
+		stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
+		stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
+	}
+	
+	if (section.version >= 2) {
+		section.date = file->readUint32BE();
+		section.time = file->readUint16BE();
 
-	// if we extend the header we should check here for the version
-	// e.g.:
-	// if (header.version == 2) {
-	//	// load some things here
-	// }
-	//
-	// if (header.version == 3) {
-	//	// ...
-	// }
-	// and so on...
+		stuff->date = section.date;
+		stuff->time = section.time;
+	}
+	
+	stuff->playtime = section.playtime;
 
 	// skip all newer features, this could make problems if some older version uses more space for
 	// saving informations, but this should NOT happen
@@ -578,14 +583,22 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	section.version = INFOSECTION_VERSION;
 	section.size = sizeof(SaveInfoSection);
 
+	// still save old format for older versions
 	section.timeTValue = time(0);
 	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
+	
+	time_t curTime_ = time(0);
+	tm *curTime = localtime(&curTime_);	
+	section.date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
+	section.time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
 
 	file->write(&section.type, 4);
 	file->writeUint32BE(section.version);
 	file->writeUint32BE(section.size);
 	file->writeUint32BE(section.timeTValue);
 	file->writeUint32BE(section.playtime);
+	file->writeUint32BE(section.date);
+	file->writeUint16BE(section.time);
 }
 
 void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
