@@ -34,7 +34,7 @@
 
 #include "common/util.h"
 
-#if defined (_WIN32_WCE)|| defined (__SYMBIAN32__)
+#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_ARM)
 #include "common/config-manager.h"
 #endif
 
@@ -1167,7 +1167,7 @@ FM_OPL *makeAdlibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined (_WIN32_WCE)|| defined(__SYMBIAN32__)
+#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_ARM)
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;
@@ -1200,4 +1200,3 @@ FM_OPL *makeAdlibOPL(int rate) {
 	OPLBuildTables(env_bits, eg_ent);
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 }
-
