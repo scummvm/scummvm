@@ -125,6 +125,7 @@ static ObsoleteTargets obsoleteTargetsTable[] = {
 	{"digdemo", "dig", NULL},
 	{"digdemoMac", "dig", "macintosh"},
 	{"dottdemo", "tentacle", NULL},
+	{"fate", "atlantis", NULL},
 	{"ftMac", "ft",  "macintosh"},
 	{"ftpcdemo", "ft", NULL},
 	{"ftdemo", "ft",  "macintosh"},
@@ -2987,8 +2988,10 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	if (num == ')')
 		num = filename[strlen(filename) - 2];
 
-	const char *ext = strrchr(filename, '.');
-	size_t len = ((int)ext > 0) ? ext - filename : strlen(filename);
+	const char *ext = NULL;
+
+	ext = strrchr(filename, '.');
+	size_t len = (ext != NULL) ? ext - filename : strlen(filename);
 
 	for (int i = index; i < ARRAYSIZE(substResFileNameTable); i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
