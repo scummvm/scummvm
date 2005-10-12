@@ -113,6 +113,17 @@ void OSystem_PalmBase::setPalette(const byte *colors, uint start, uint num) {
 		_paletteDirtyEnd = start + num;
 }
 
+void OSystem_PalmBase::grabPalette(byte *colors, uint start, uint num) {
+	const RGBColorType *base = _currentPalette + start;
+
+	for (uint i = 0; i < num; ++i) {
+		colors[i * 4] = base[i].r;
+		colors[i * 4 + 1] = base[i].g;
+		colors[i * 4 + 2] = base[i].b;
+		colors[i * 4 + 3] = 0xFF;
+	}
+}
+
 /*
  * Screen
  *
