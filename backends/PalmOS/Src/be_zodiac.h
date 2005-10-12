@@ -73,6 +73,7 @@ public:
 	void setFeatureState(Feature f, bool enable);
 
 	void updateScreen();
+	bool grabRawScreen(Graphics::Surface *surf);
 	
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
 

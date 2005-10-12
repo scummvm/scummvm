@@ -145,7 +145,8 @@ protected:
 	WChar _lastKey;
 	UInt8 _lastKeyModifier;
 	UInt32 _lastKeyRepeat;
-	Boolean _useNumPad;
+	Boolean _useNumPad, _showBatLow;
+	UInt32 _batCheckTicks, _batCheckLast;
 	
 	int _samplesPerSec;
 
@@ -161,7 +162,6 @@ public:
 	
 	virtual void beginGFXTransaction();
 	virtual void endGFXTransaction();
-	virtual bool grabRawScreen(Graphics::Surface *surf);
 	
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
@@ -182,6 +182,7 @@ public:
 	int getGraphicsMode() const;
 	int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
+	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
 
 	void initSize(uint w, uint h, int overlayScale);
 	int16 getWidth() { return _screenWidth; }
@@ -203,7 +204,7 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
 
 	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num) { /* TODO */ };
+	void grabPalette(byte *colors, uint start, uint num);
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) = 0;
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) = 0;
 	

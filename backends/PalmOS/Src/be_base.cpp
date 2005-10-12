@@ -51,6 +51,9 @@ void OSystem_PalmBase::initBackend() {
 	_lastKeyModifier = kModifierNone;
 	_lastKeyRepeat = 100;
 	_useNumPad = false;
+	_showBatLow = false;
+	_batCheckTicks = SysTicksPerSecond() * 15;
+	_batCheckLast = TimGetTicks();
 	
 	_mouseDataH = NULL;
 	_mouseDataP = NULL;
