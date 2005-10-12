@@ -340,6 +340,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				_vm->_events->queue(&event);
 			}
 			return;
+		} else {
+			anim->currentFrame = 0;
+			anim->completed = 0;
 		}
 	}
 
@@ -348,9 +351,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		linkAnim = getAnimation(anim->linkId);
 
 		debug(5, "Animation ended going to %d", anim->linkId);
-//		linkAnim->cycles = anim->cycles;
-//		linkAnim->currentFrame = 0;
-//		linkAnim->completed = 0;
 		linkAnim->state = ANIM_PLAYING;
 		animId = anim->linkId;
 		frameTime = 0;
