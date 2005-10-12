@@ -19,7 +19,7 @@
  * $Header$
  *
  */
-
+ 
 #include <PalmOS.h>
 #include <string.h>
 
@@ -32,20 +32,12 @@ const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 void PalmFatalError(const Char *err) {
 	WinSetDrawWindow(WinGetDisplayWindow());
 	WinPalette(winPaletteSetToDefault,0,0,0);
-
-	// unlock to show the alert box
-	if (gVars->screenLocked)
-		WinScreenUnlock();
-
+	
 	if (OPTIONS_TST(kOptModeHiDensity))
 		WinSetCoordinateSystem(kCoordinatesStandard);
 
 	WinEraseWindow();
 	FrmCustomAlert(FrmFatalErrorAlert, err, 0,0);
-
-	// relock to prevent crash unloading gfx mode
-	if (gVars->screenLocked)
-		WinScreenLock(winLockDontCare);
 }
 
 
@@ -56,9 +48,6 @@ void DrawStatus(Boolean show) {
 	UInt8 x,y;
 	UInt8 *screen = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
 	UInt8 color = (show? gVars->indicator.on : gVars->indicator.off);
-
-	if (gVars->screenLocked)
-		screen = (screen == gVars->flipping.pageAddr1) ? gVars->flipping.pageAddr2 : gVars->flipping.pageAddr1;
 
 	screen += gVars->screenPitch + 1;
 	for(y=0; y < 4; y++) {
@@ -78,10 +67,10 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 	UInt16 l2 = 0;
 	UInt16 l3 = StrLen(ioStr);
 	UInt16 next = 0;
-
+		
 	if (inParamStr)
 		l2 = StrLen(inParamStr); // can be null to know how many occur.
-
+	
 	while (((found = StrStr(ioStr+next, fndParamStr)) != NULL) && (!quit)) {
 		occurences++;
 		newLength = (StrLen(ioStr) - l1 + l2);
@@ -98,13 +87,15 @@ UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Ch
 		} else
 			next = found - ioStr + l1;
 	}
-
+	
 	if (inParamStr)
 		ioStr[l3 + l2*occurences - l1*occurences] = 0;
 
 	return occurences;
 }
 
+
+#ifndef PALMOS_ARM
 
 // This is now required since some classes are now very big :)
 #include "MemGlue.h"
@@ -119,3 +110,25 @@ void *operator new [] (UInt32 size) {
 	MemSet(ptr, 0, size);
 	return ptr;
 }
+#else
+/*
+__inline void *operator new(UInt32 size) {
+	void *ptr = MemPtrNew(size);
+	MemSet(ptr, 0, size);
+	return ptr;
+}
+
+__inline void *operator new [] (UInt32 size) {
+	void *ptr = MemPtrNew(size);
+	MemSet(ptr, 0, size);
+	return ptr;
+}
+
+__inline void operator delete(void *ptr) throw() {
+	if (ptr) MemPtrFree(ptr);
+}
+
+__inline void operator delete[](void *ptr) throw() {
+	if (ptr) MemPtrFree(ptr);
+}*/
+#endif
