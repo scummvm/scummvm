@@ -33,29 +33,34 @@ void OSystem_PalmBase::timer_handler() {
 }
 
 void OSystem_PalmBase::battery_handler() {
-//	UInt16 voltage, warnThreshold, criticalThreshold;
-//	voltage = SysBatteryInfo(false, &warnThreshold, &criticalThreshold, NULL, NULL, NULL, NULL);
+	// check battery level every 15secs
+	if ((TimGetTicks() - _batCheckLast) > _batCheckTicks) {
+		UInt16 voltage, warnThreshold, criticalThreshold;
+		voltage = SysBatteryInfoV20(false, &warnThreshold, &criticalThreshold, NULL, NULL, NULL);
 
-/*
-	if (voltage <= warnThreshold) {
-		if (!_showBatLow) {
-			_showBatLow = true;
-			draw1BitGfx(kDrawBatLow, (getWidth() >> 1), -16, true);
+		if (voltage <= warnThreshold) {
+			if (!_showBatLow) {
+				_showBatLow = true;
+				draw_osd(kDrawBatLow, _screenDest.w - 18, -16, true, 2);
+				displayMessageOnOSD("Battery low.");
+			}
+		} else {
+			if (_showBatLow) {
+				_showBatLow = false;
+				draw_osd(kDrawBatLow, _screenDest.w - 18, -16, false);
+			}
 		}
-	} else {
-		if (_showBatLow) {
-			_showBatLow = false;
-			draw1BitGfx(kDrawBatLow, (getWidth() >> 1), -16, false);
+
+		if (voltage <= criticalThreshold) {
+			::EventType event;
+			event.eType = keyDownEvent;
+			event.data.keyDown.chr = vchrPowerOff;
+			event.data.keyDown.modifiers = commandKeyMask;
+			EvtAddEventToQueue(&event);
 		}
+
+		_batCheckLast = TimGetTicks();
 	}
-*//*
-	if (voltage <= criticalThreshold) {
-		::EventType event;
-		event.eType = keyDownEvent;
-		event.data.keyDown.chr = vchrAutoOff;
-		event.data.keyDown.modifiers = commandKeyMask;
-		EvtAddUniqueEventToQueue(&event, 0, true);
-	}*/
 }
 
 bool OSystem_PalmBase::pollEvent(Event &event) {
@@ -256,6 +261,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 			} else if (key == 'n' && mask == KBD_CTRL|KBD_ALT && !_overlayVisible) {
 				_useNumPad = !_useNumPad;
 				draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, _useNumPad, 1);
+				displayMessageOnOSD(_useNumPad ? "Fight mode on." : "Fight mode off.");
 				return false;
 			}
 			
