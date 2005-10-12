@@ -40,6 +40,8 @@ extern OSystem *OSystem_PS2_create();
 extern OSystem *OSystem_PSP_create();
 extern OSystem *OSystem_SymbianOS_create();
 
+extern OSystem *OSystem_PalmOS5_create();
+extern OSystem *OSystem_PalmZodiac_create();
 
 #ifdef _WIN32_WCE
 #define SAMPLES_PER_SEC 22050
