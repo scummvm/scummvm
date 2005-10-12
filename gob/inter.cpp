@@ -613,7 +613,7 @@ void inter_writeData(void) {
 	int16 dataVar;
 	int16 retSize;
 
-	debug(0, "inter_writeData");
+	debug(4, "inter_writeData");
 	inter_evalExpr(0);
 	dataVar = parse_parseVarIndex();
 	size = parse_parseValExpr();
@@ -643,7 +643,7 @@ void inter_checkData(void) {
 	int16 handle;
 	int16 varOff;
 
-	debug(0, "data_cheackData");
+	debug(4, "data_cheackData");
 	inter_evalExpr(0);
 	varOff = parse_parseVarIndex();
 	handle = data_openData(inter_resStr);
@@ -660,7 +660,7 @@ void inter_readData(void) {
 	int16 offset;
 	int16 handle;
 
-	debug(0, "inter_readData");
+	debug(4, "inter_readData");
 	inter_evalExpr(0);
 	dataVar = parse_parseVarIndex();
 	size = parse_parseValExpr();
@@ -692,7 +692,7 @@ void inter_readData(void) {
 void inter_loadFont(void) {
 	int16 index;
 
-	debug(0, "inter_loadFont");
+	debug(4, "inter_loadFont");
 	inter_evalExpr(0);
 	index = inter_load16();
 
@@ -992,7 +992,7 @@ void inter_loadCursor(void) {
 }
 
 void inter_loadSpriteToPos(void) {
-	debug(0, "inter_loadSpriteToPos");
+	debug(4, "inter_loadSpriteToPos");
 	draw_spriteLeft = inter_load16();
 
 	draw_destSpriteX = parse_parseValExpr();
@@ -1013,7 +1013,7 @@ void inter_loadTot(void) {
 	int8 size;
 	int16 i;
 
-	debug(0, "inter_loadTot");
+	debug(4, "inter_loadTot");
 	if ((*inter_execPtr & 0x80) != 0) {
 		inter_execPtr++;
 		inter_evalExpr(0);
@@ -1062,7 +1062,7 @@ void inter_keyFunc(void) {
 	int16 flag;
 	int16 key;
 
-	debug(0, "inter_keyFunc");
+	debug(4, "inter_keyFunc");
 	flag = inter_load16();
 	inter_animPalette();
 	draw_blitInvalidated();
@@ -1200,7 +1200,7 @@ void inter_repeatUntil(void) {
 	int16 size;
 	char flag;
 
-	debug(0, "inter_repeatUntil");
+	debug(4, "inter_repeatUntil");
 	inter_nestLevel[0]++;
 	blockPtr = inter_execPtr;
 
@@ -1227,7 +1227,7 @@ void inter_whileDo(void) {
 	char flag;
 	int16 size;
 
-	debug(0, "inter_whileDo");
+	debug(4, "inter_whileDo");
 	inter_nestLevel[0]++;
 	do {
 		savedIP = inter_execPtr;

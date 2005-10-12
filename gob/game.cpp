@@ -218,7 +218,7 @@ void game_pushCollisions(char all) {
 	Game_Collision *destPtr;
 	int16 size;
 
-	debug(0, "game_pushCollisions");
+	debug(4, "game_pushCollisions");
 	for (size = 0, srcPtr = game_collisionAreas; srcPtr->left != -1;
 	    srcPtr++) {
 		if (all || (srcPtr->id & 0x8000))
@@ -243,7 +243,7 @@ void game_popCollisions(void) {
 	Game_Collision *destPtr;
 	Game_Collision *srcPtr;
 
-	debug(0, "game_popCollision");
+	debug(4, "game_popCollision");
 
 	game_collStackSize--;
 	for (destPtr = game_collisionAreas; destPtr->left != -1; destPtr++);
@@ -1802,8 +1802,8 @@ void game_playTot(int16 skipPlay) {
 			game_curExtFile[strlen(game_curExtFile) - 4] = 0;
 			strcat(game_curExtFile, ".ext");
 
-			debug(0, "IMA: %s", game_curImaFile);
-			debug(0, "EXT: %s", game_curExtFile);
+			debug(4, "IMA: %s", game_curImaFile);
+			debug(4, "EXT: %s", game_curExtFile);
 
 			filePtr = (char *)game_totFileData + 0x30;
 

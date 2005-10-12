@@ -632,7 +632,7 @@ void gob_switchGoblin(int16 index) {
 	int16 next;
 	int16 tmp;
 
-	debug(0, "gob_switchGoblin");
+	debug(4, "gob_switchGoblin");
 	if (VAR(59) != 0)
 		return;
 

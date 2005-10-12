@@ -25,10 +25,10 @@
 namespace Gob {
 
 void timer_enableTimer() {
-	debug(0, "STUB: timer_enableTimer()");
+	debug(4, "STUB: timer_enableTimer()");
 }
 
 void timer_disableTimer() {
-	debug(0, "STUB: timer_disableTimer()");
+	debug(4, "STUB: timer_disableTimer()");
 }
 }

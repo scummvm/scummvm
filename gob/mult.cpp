@@ -466,9 +466,9 @@ void mult_interInitMult(void) {
 	    anim_animAreaLeft + anim_animAreaWidth - 1,
 	    anim_animAreaTop + anim_animAreaHeight - 1, 0, 0, 0);
 
-	debug(0, "mult_interInitMult: x = %d, y = %d, w = %d, h = %d",
+	debug(4, "mult_interInitMult: x = %d, y = %d, w = %d, h = %d",
 		  anim_animAreaLeft, anim_animAreaTop, anim_animAreaWidth, anim_animAreaHeight);
-	debug(0, "    objCount = %d, animation data size = %d", mult_objCount, inter_animDataSize);
+	debug(4, "    objCount = %d, animation data size = %d", mult_objCount, inter_animDataSize);
 }
 
 void mult_freeMult(void) {
@@ -489,7 +489,7 @@ void mult_interLoadMult(void) {
 	int16 i;
 	char *multData;
 
-	debug(0, "mult_interLoadMult: Loading...");
+	debug(4, "mult_interLoadMult: Loading...");
 
 	inter_evalExpr(&objIndex);
 	inter_evalExpr(&val);
