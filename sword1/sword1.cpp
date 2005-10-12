@@ -604,10 +604,10 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 				break;
 			}
 		}
-#ifndef __PALM_OS__
+
 		if (amount > 0)
 			_system->delayMillis(10);
-#endif
+
 	} while (_system->getMillis() < start + amount);
 }
 
