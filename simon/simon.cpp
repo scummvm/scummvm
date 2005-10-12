@@ -75,7 +75,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"},
-	{"feeble", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
+//	{"feeble", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
 
 	{NULL, NULL, 0, NULL}
 };
@@ -2825,17 +2825,10 @@ void SimonEngine::timer_vga_sprites() {
 		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
 
-		if (_game == GAME_FEEBLEFILES) {
-			params[0] = READ_LE_UINT16(&vsp->image);
-			params[1] = READ_LE_UINT16(&vsp->palette);
-			params[2] = READ_LE_UINT16(&vsp->x);
-			params[3] = READ_LE_UINT16(&vsp->y);
-		} else {
-			params[0] = READ_BE_UINT16(&vsp->image);
-			params[1] = READ_BE_UINT16(&vsp->palette);
-			params[2] = READ_BE_UINT16(&vsp->x);
-			params[3] = READ_BE_UINT16(&vsp->y);
-		}
+		params[0] = readUint16Wrapper(&vsp->image);
+		params[1] = readUint16Wrapper(&vsp->palette);
+		params[2] = readUint16Wrapper(&vsp->x);
+		params[3] = readUint16Wrapper(&vsp->y);
 
 		if (_game & GF_SIMON2) {
 			*(byte *)(&params[4]) = (byte)vsp->flags;
@@ -2913,19 +2906,11 @@ void SimonEngine::timer_vga_sprites_2() {
 		if (vsp->image)
 			fprintf(_dumpFile, "id:%5d image:%3d base-color:%3d x:%3d y:%3d flags:%x\n",
 							vsp->id, vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
-		if (_game == GAME_FEEBLEFILES) {
-			params[0] = READ_LE_UINT16(&vsp->image);
-			params[1] = READ_LE_UINT16(&vsp->palette);
-			params[2] = READ_LE_UINT16(&vsp->x);
-			params[3] = READ_LE_UINT16(&vsp->y);
-			params[4] = READ_LE_UINT16(&vsp->flags);
-		} else {
-			params[0] = READ_BE_UINT16(&vsp->image);
-			params[1] = READ_BE_UINT16(&vsp->palette);
-			params[2] = READ_BE_UINT16(&vsp->x);
-			params[3] = READ_BE_UINT16(&vsp->y);
-			params[4] = READ_BE_UINT16(&vsp->flags);
-		}
+		params[0] = readUint16Wrapper(&vsp->image);
+		params[1] = readUint16Wrapper(&vsp->palette);
+		params[2] = readUint16Wrapper(&vsp->x);
+		params[3] = readUint16Wrapper(&vsp->y);
+		params[4] = readUint16Wrapper(&vsp->flags);
 		_vcPtr = (const byte *)params;
 		vc10_draw();
 
@@ -3128,14 +3113,15 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 		x += _scrollX * 8;
 	}
 
+	int end = (_game == GAME_FEEBLEFILES) ? 9999 : 999;
 	prev_i = 21 - _variableArray[12];
 	for (i = 20; i != 0; --i) {
 		p = (const uint16 *)_pathFindArray[20 - i];
 		if (!p)
 			continue;
-		for (j = 0; READ_BE_UINT16(&p[0]) != 999; j++, p += 2) {	// 0xE703 = byteswapped 999
-			x_diff = abs((int)(READ_BE_UINT16(&p[0]) - x));
-			y_diff = abs((int)(READ_BE_UINT16(&p[1]) - 12 - y));
+		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {	// 0xE703 = byteswapped 999
+			x_diff = abs((int)(readUint16Wrapper(&p[0]) - x));
+			y_diff = abs((int)(readUint16Wrapper(&p[1]) - 12 - y));
 
 			if (x_diff < y_diff) {
 				x_diff >>= 2;

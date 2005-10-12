@@ -380,6 +380,8 @@ public:
 	virtual ~SimonEngine();
 
 protected:
+	uint16 readUint16Wrapper(const void *src);
+
 	int allocGamePcVars(Common::File *in);
 	void loginPlayerHelper(Item *item, int a, int b);
 	void loginPlayer();

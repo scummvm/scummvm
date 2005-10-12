@@ -27,6 +27,7 @@
 
 namespace Simon {
 
+// Script opcodes to load into memory
 static const char *const opcode_arg_table_simon1win[256] = {
 	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
 	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
@@ -111,6 +112,13 @@ static const char *const opcode_arg_table_feeblefiles[256] = {
 	"T ", "N ", " ", " ", "I ", " ", " ", "BBI ", "NNBB ", "BBB ", " ", " ", "T ", " ", "N ", "N ",
 	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
 };
+
+uint16 SimonEngine::readUint16Wrapper(const void *src) {
+	if (_game == GAME_FEEBLEFILES)
+		return READ_LE_UINT16(src);
+	else
+		return READ_BE_UINT16(src);
+}
 
 void SimonEngine::loadGamePcFile(const char *filename) {
 	Common::File in;

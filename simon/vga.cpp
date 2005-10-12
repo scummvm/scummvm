@@ -158,11 +158,7 @@ int SimonEngine::vc_read_var_or_word() {
 
 uint SimonEngine::vc_read_next_word() {
 	uint a;
-	if (_game == GAME_FEEBLEFILES) {
-		a = READ_LE_UINT16(_vcPtr);
-	} else {
- 		a = READ_BE_UINT16(_vcPtr);
-	}
+	a = readUint16Wrapper(_vcPtr);
 	_vcPtr += 2;
 	return a;
 }
@@ -300,7 +296,7 @@ void SimonEngine::vc2_call() {
 	if (_game == GAME_FEEBLEFILES) {
 		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
 	} else {
-		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
+		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
 	}
 
 	//dump_vga_script(_vcPtr, res, num);
@@ -703,7 +699,6 @@ void SimonEngine::vc10_draw() {
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.palette);
-
 	// TODO::Add support for image scaling
 	if (_game == GAME_FEEBLEFILES)
 		return;
@@ -1158,13 +1153,9 @@ void SimonEngine::vc17_setPathfinderItem() {
 	uint a = vc_read_next_word();
 	_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
 
-	if (_game == GAME_FEEBLEFILES) {
-		while (READ_LE_UINT16(_vcPtr) != 9999)
-			_vcPtr += 4;
-	} else {
-		while (READ_BE_UINT16(_vcPtr) != 999)
-			_vcPtr += 4;
-	}
+	int end = (_game == GAME_FEEBLEFILES) ? 9999 : 999;
+	while (readUint16Wrapper(_vcPtr) != end)
+		_vcPtr += 4;
 	_vcPtr += 2;
 }
 
@@ -1545,15 +1536,9 @@ void SimonEngine::vc48_setPathFinder() {
 	vp = &_variableArray[20];
 
 	do {
-		if (_game == GAME_FEEBLEFILES) {
-			y2 = READ_LE_UINT16(p);
-			p += step;
-			y1 = READ_LE_UINT16(p) - y2;
-		} else {
-			y2 = READ_BE_UINT16(p);
-			p += step;
-			y1 = READ_BE_UINT16(p) - y2;
-		}
+		y2 = readUint16Wrapper(p);
+		p += step;
+		y1 = readUint16Wrapper(p) - y2;
 
 		vp[0] = y1 >> 1;
 		vp[1] = y1 - (y1 >> 1);

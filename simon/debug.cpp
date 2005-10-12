@@ -198,6 +198,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			strn++;
 		fprintf(_dumpFile, "%.2d: %s ", opcode, strn + 1);
 
+		int end = (_game == GAME_FEEBLEFILES) ? 9999 : 999;
 		for (; *str != '|'; str++) {
 			switch (*str) {
 			case 'x':
@@ -207,42 +208,22 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 				fprintf(_dumpFile, "%d ", *src++);
 				break;
 			case 'd':
-				if (_game == GAME_FEEBLEFILES) {
-					fprintf(_dumpFile, "%d ", READ_LE_UINT16(src));
-				} else {
-					fprintf(_dumpFile, "%d ", READ_BE_UINT16(src));
-				}
+				fprintf(_dumpFile, "%d ", readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'v':
-				if (_game == GAME_FEEBLEFILES) {
-					fprintf(_dumpFile, "[%d] ", READ_LE_UINT16(src));
-				} else {
-					fprintf(_dumpFile, "[%d] ", READ_BE_UINT16(src));
-				}
+				fprintf(_dumpFile, "[%d] ", readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'i':
-				if (_game == GAME_FEEBLEFILES) {
-					fprintf(_dumpFile, "%d ", (int16)READ_LE_UINT16(src));
-				} else {
-					fprintf(_dumpFile, "%d ", (int16)READ_BE_UINT16(src));
-				}
+				fprintf(_dumpFile, "%d ", (int16)readUint16Wrapper(src));
 				src += 2;
 				break;
 			case 'q':
-				if (_game == GAME_FEEBLEFILES) {
-					while (READ_LE_UINT16(src) != 9999) {
-						fprintf(_dumpFile, "(%d,%d) ", READ_LE_UINT16(src),
-										READ_LE_UINT16(src + 2));
-						src += 4;
-					}
-				} else {
-					while (READ_BE_UINT16(src) != 999) {
-						fprintf(_dumpFile, "(%d,%d) ", READ_BE_UINT16(src),
-										READ_BE_UINT16(src + 2));
-						src += 4;
-					}
+				while (readUint16Wrapper(src) != end) {
+					fprintf(_dumpFile, "(%d,%d) ", readUint16Wrapper(src),
+									readUint16Wrapper(src + 2));
+					src += 4;
 				}
 				src++;
 				break;
