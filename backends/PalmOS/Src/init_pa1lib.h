@@ -16,7 +16,7 @@ typedef void (*sndStateOffType)	(UInt8 /* kind */);
 #define aOutSndKindSp       (0) /* Speaker volume */
 #define aOutSndKindHp       (2) /* HeadPhone volume */
 
-void Pa1libInit();
+void Pa1libInit(UInt16 vol);
 void Pa1libRelease();
 
 #endif

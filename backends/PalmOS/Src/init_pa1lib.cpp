@@ -10,18 +10,18 @@ void *sndStateOffFuncP = NULL;
 #define SndStateOn(a,b,c)	if (sndStateOnFuncP)((sndStateOnType)(sndStateOnFuncP))(a, b, c);
 #define SndStateOff(a)		if (sndStateOffFuncP)((sndStateOffType)(sndStateOffFuncP))(a);
 
-void Pa1libInit() {
+void Pa1libInit(UInt16 vol) {
 	Pa1Lib_Open();
 
 	// Doesn't work on T4xx and T6xx series ?
 	FtrGet(sonySysFtrCreatorSystem, sonySysFtrNumSystemAOutSndStateOnHandlerP, (UInt32*) &sndStateOnFuncP);
 	FtrGet(sonySysFtrCreatorSystem, sonySysFtrNumSystemAOutSndStateOffHandlerP, (UInt32*) &sndStateOffFuncP);
 
-	SndStateOn(aOutSndKindSp, 31, 31);
-	SndStateOn(aOutSndKindHp, 31, 31);
+	SndStateOn(aOutSndKindSp, vol, vol);
+	SndStateOn(aOutSndKindHp, vol, vol);
 
-	Pa1Lib_devHpVolume(31, 31);
-	Pa1Lib_devSpVolume(31);
+	Pa1Lib_devHpVolume(vol, vol);
+	Pa1Lib_devSpVolume(vol);
 }
 
 void Pa1libRelease() {
