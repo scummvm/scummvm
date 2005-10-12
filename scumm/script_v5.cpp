@@ -1820,7 +1820,9 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		break;
 
 	default:
-		error("o5_resourceRoutines: default case %d", op);
+		// FIXME: Reverted to a warning from an error, as per
+		// zak256 bug #1290485. This is not a proper fix. :)
+		warning("o5_resourceRoutines: default case %d", op);
 	}
 }
 
