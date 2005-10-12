@@ -276,6 +276,7 @@ protected:
 	uint32 _psec_per_tick;  //!< Microseconds per tick (_tempo / _ppqn).
 	bool   _autoLoop;       //!< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      //!< Support smart expiration of hanging notes when jumping
+	bool   _centerPitchWheelOnUnload;  //!< Center the pitch wheels when unloading a song
 
 	// FIXME: ? Was 32 here, Kyra tracks use 120(!!!) which seems wrong. this is a hacky
 	// workaround until situation is investigated.
@@ -341,7 +342,8 @@ public:
 	enum {
 		mpMalformedPitchBends = 1,
 		mpAutoLoop = 2,
-		mpSmartJump = 3
+		mpSmartJump = 3,
+		mpCenterPitchWheelOnUnload = 4
 	};
 
 public:

@@ -39,6 +39,7 @@ _tempo(500000),
 _psec_per_tick(5208), // 500000 / 96
 _autoLoop(false),
 _smartJump(false),
+_centerPitchWheelOnUnload(false),
 _num_tracks(0),
 _active_track(255),
 _abort_parse(0) {
@@ -49,8 +50,13 @@ void MidiParser::property(int prop, int value) {
 	switch (prop) {
 	case mpAutoLoop:
 		_autoLoop = (value != 0);
+		break;
 	case mpSmartJump:
 		_smartJump = (value != 0);
+		break;
+	case mpCenterPitchWheelOnUnload:
+		_centerPitchWheelOnUnload = (value != 0);
+		break;
 	}
 }
 
@@ -396,12 +402,16 @@ void MidiParser::unloadMusic() {
 	_active_track = 255;
 	_abort_parse = true;
 
-	// Center the pitch wheels in preparation for the next piece of music.
-	// It's not safe to do this from within allNotesOff().
+	if (_centerPitchWheelOnUnload) {
+		// Center the pitch wheels in preparation for the next piece of
+		// music. It's not safe to do this from within allNotesOff(),
+		// and might not even be safe here, so we only do it if the
+		// client has explicitly asked for it.
 
-	if (_driver) {
-		for (int i = 0; i < 16; ++i) {
-			_driver->send(0x4000E0 | i); // Center the pitch wheel
+		if (_driver) {
+			for (int i = 0; i < 16; ++i) {
+				_driver->send(0x4000E0 | i);
+			}
 		}
 	}
 }

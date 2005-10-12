@@ -487,6 +487,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	parser->setTrack(0);
 	parser->setMidiDriver(_player);
 	parser->setTimerRate(_player->getBaseTempo());
+	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	_player->_parser = parser;
 	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
