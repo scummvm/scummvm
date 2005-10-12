@@ -1405,7 +1405,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 
-				if (_game == GAME_SIMON2DOS || _game == GAME_SIMON2WIN) {
+				if (_game == GAME_SIMON2DOS || _game == GAME_SIMON2TALKIE || _game == GAME_SIMON2WIN) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
 				} else if (_game == GAME_SIMON1TALKIE) {
 					memcpy(filename, "SFXXXX", 6);
