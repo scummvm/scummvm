@@ -20,111 +20,56 @@
  *
  */
 
-#include <ctype.h>
-#include "common/stdafx.h"
+#include "stdafx.h"
+#include "common/savefile.h"
 #include "palm.h"
-
-#define	MAX_BLOCK	64000			// store in memory, before dump to file
 
 // SaveFile class
 
-class PalmSaveFile : public Common::SaveFile {
+class OldPalmSaveFile : public Common::SaveFile {
+private:
+	FILE *fh;
 public:
-	PalmSaveFile(const char *filename, bool saveOrLoad);
-	~PalmSaveFile();
+	OldPalmSaveFile(const char *filename, bool saveOrLoad) {
+		fh = ::fopen(filename, (saveOrLoad? "wb" : "rb"));
+	}
+	~OldPalmSaveFile() {
+		if (fh) ::fclose(fh);
+	}
+	
+	bool eos() const { return feof(fh) != 0; }
+	bool ioFailed() const { return ferror(fh) != 0; }
+	void clearIOFailed() { clearerr(fh); }
 
-	bool isOpen() const { return file != NULL; }
+	bool isOpen() const { return fh != NULL; }
 
 	uint32 read(void *buf, uint32 size);
 	uint32 write(const void *buf, uint32 size);
-
-private :
-	FILE *file;
-	UInt8 *_readWriteData;
-	UInt32 _readWritePos;
-	bool _needDump;
-	UInt32 length;
+	
+	void skip(uint32 offset) {
+		::fseek(fh, offset, SEEK_CUR);
+	}
 };
 
-PalmSaveFile::PalmSaveFile(const char *filename, bool saveOrLoad) {
-	_readWriteData = NULL;
-	_readWritePos = 0;
-	_needDump = false;
-
-	file = ::fopen(filename, (saveOrLoad ? "wb" : "rb"));
-
-	if (file) {
-		if (saveOrLoad) {
-			_readWriteData = (byte *)malloc(MAX_BLOCK);
-
-		} else {
-			// read : cache the whole file
-			::fseek(file, 0, SEEK_END);
-			length = ::ftell(file);
-			::fseek(file, 0, SEEK_SET);
-
-			_readWriteData = (byte *)malloc(length);
-			_readWritePos = 0;
-
-			if (_readWriteData)
-				::fread(_readWriteData, 1, length, file);
-		}
-	}
-}
-
-PalmSaveFile::~PalmSaveFile() {
-	if (file) {
-		if (_needDump)
-			::fwrite(_readWriteData, _readWritePos, 1, file);
-
-		if (_readWriteData)
-			free(_readWriteData);
-
-		::fclose(file);
-	}
-}
-
-uint32 PalmSaveFile::read(void *buf, uint32 size) {
-	if (!_readWriteData)
-		// we must return the size, where fread return nitems upon success ( 1 <=> size)
-		return (::fread(buf, 1, size, file));
-
-	if (_readWritePos < length) {
-		MemMove(buf, _readWriteData + _readWritePos, size);
-		_readWritePos += size;
-		return size;
-	}
-
+uint32 OldPalmSaveFile::read(void *buf, uint32 size) {
+	// we must return the size, where fread return nitems upon success ( 1 <=> size)
+	if (fh) return (::fread(buf, 1, size, fh));
 	return 0;
 }
 
-uint32 PalmSaveFile::write(const void *buf, uint32 size) {
-	if (_readWriteData) {
-
-		if ((_readWritePos + size) > MAX_BLOCK) {
-			if (_readWritePos > 0)
-				::fwrite(_readWriteData, _readWritePos, 1, file);
-
-			_readWritePos = 0;
-			_needDump = false;
-
-		} else {
-			// save new block
-			MemMove(_readWriteData + _readWritePos, buf, size);
-			_readWritePos += size;
-			_needDump = true;
-
-			return size;
-		}
-	}
-
+uint32 OldPalmSaveFile::write(const void *buf, uint32 size) {
 	// we must return the size, where fwrite return nitems upon success ( 1 <=> size)
-	return ::fwrite(buf, 1, size, file);
+	if (fh) return ::fwrite(buf, 1, size, fh);
+	return 0;
 }
+
+
+
+
 
 // SaveFileManager class
 
-class PalmSaveFileManager : public SaveFileManager {
+class OldPalmSaveFileManager : public Common::SaveFileManager {
 public:
 	virtual Common::OutSaveFile *openForSaving(const char *filename) {
 		return openSavefile(filename, true);
@@ -140,25 +85,19 @@ protected:
 	Common::SaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
 };
 
-Common::SaveFile *PalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
+Common::SaveFile *OldPalmSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	char buf[256];
 
 	strncpy(buf, getSavePath(), sizeof(buf));
 	strncat(buf, filename, sizeof(buf));
 
-	Common::SaveFile *sf = makeSaveFile(buf, saveOrLoad);
-	if (!sf->isOpen()) {
-		delete sf;
-		sf = NULL;
-	}
-
-	return sf;
+	return makeSaveFile(buf, saveOrLoad);
 }
 
-void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
+void OldPalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	FileRef fileRef;
 	// try to open the dir
-	Err e = VFSFileOpen(gVars->volRefNum, getSavePath(), vfsModeRead, &fileRef);
+	Err e = VFSFileOpen(gVars->VFS.volRefNum, getSavePath(), vfsModeRead, &fileRef);
 	memset(marks, false, num*sizeof(bool));
 
 	if (e != errNone)
@@ -194,11 +133,17 @@ void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num
 	VFSFileClose(fileRef);
 }
 
-Common::SaveFile *PalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
-	return new PalmSaveFile(filename, saveOrLoad);
+Common::SaveFile *OldPalmSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {
+	OldPalmSaveFile *sf = new OldPalmSaveFile(filename, saveOrLoad);
+
+	if (!sf->isOpen()) {
+		delete sf;
+		sf = 0;
+	}
+	return sf;
 }
 
 // OSystem
 Common::SaveFileManager *OSystem_PALMOS::getSavefileManager() {
-	return new PalmSaveFileManager();
+	return new OldPalmSaveFileManager();
 }
