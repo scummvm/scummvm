@@ -667,12 +667,39 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
 	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
-	{ "airport", "airdemo", kGenPC },
-	{ "airport", "Airport Demo", kGenMac },
 	{ "atlantis", "fate", kGenPC },
 	{ "atlantis", "playfate", kGenPC },
 	{ "atlantis", "indy4", kGenPC },
 	{ "atlantis", "indydemo", kGenPC },
+	{ "tentacle.000", "Day Of The Tentacle Data", kGenAsIs },
+	{ "tentacle", "dottdemo", kGenPC },
+	{ "tentacle.000", "Day of the Tentacle Demo Data", kGenAsIs },
+	{ "monkey", "monkey1", kGenPC },
+	{ "monkey", "monkeyk", kGenPC }, // FM-TOWNS Jap
+	{ "monkey", "game", kGenPC }, // SegaCD
+	{ "monkey2", "mi2demo", kGenPC },
+	{ "samnmax.000", "Sam & Max Data", kGenAsIs },
+	{ "samnmax.000", "Sam & Max Demo Data", kGenAsIs },
+	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
+	{ "samnmax", "samdemo", kGenPC },
+	{ "samnmax", "snmdemo", kGenPC },
+	{ "samnmax", "snmidemo", kGenPC },
+	{ "snmdemo", "sdemo", kGenPC },
+#ifndef DISABLE_SCUMM_7_8
+	{ "dig.la0", "The Dig Data", kGenAsIs },
+	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
+	{ "dig", "digdemo", kGenPC },
+	{ "ft.la0", "Full Throttle Data", kGenAsIs },
+	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
+	{ "ft.la0", "Vollgas Data", kGenAsIs },
+	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
+	{ "ft.la0", "ft.000", kGenAsIs },
+	{ "ft.la0", "ftdemo.000", kGenAsIs },
+	{ "ft", "ftdemo", kGenPC },
+#endif
+#ifndef DISABLE_HE
+	{ "airport", "airdemo", kGenPC },
+	{ "airport", "Airport Demo", kGenMac },
 	{ "balloon", "Balloon-O-Rama", kGenMac },
 	{ "baseball", "BaseBall", kGenMac },
 	{ "baseball2001", "bb2demo", kGenPC },
@@ -681,9 +708,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "basketball", "Basketball", kGenMac },
 	{ "BluesABCTimeDemo", "BluesABCTimeDemo", kGenMac },
 	{ "chase", "Cheese Chase", kGenMac },
-	{ "dig.la0", "The Dig Data", kGenAsIs },
-	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
-	{ "dig", "digdemo", kGenPC },
 	{ "dog", "Dog on a Stick", kGenMac },
 	{ "farm", "farmdemo", kGenPC },
 	{ "farm", "Farm Demo", kGenMac },
@@ -722,20 +746,9 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddicove", "ff5demo", kGenPC },
 	{ "freddicove", "FFCoveDemo", kGenPC },
 	{ "FreddisFunShop", "Freddi's FunShop", kGenMac },
-	{ "ft.la0", "Full Throttle Data", kGenAsIs },
-	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
-	{ "ft.la0", "Vollgas Data", kGenAsIs },
-	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
-	{ "ft.la0", "ft.000", kGenAsIs },
-	{ "ft.la0", "ftdemo.000", kGenAsIs },
-	{ "ft", "ftdemo", kGenPC },
 	{ "lost", "Lost and Found", kGenMac },
 	{ "lost", "smaller", kGenPC },
 	{ "maze", "Maze Madness", kGenMac},
-	{ "monkey", "monkey1", kGenPC },
-	{ "monkey", "monkeyk", kGenPC }, // FM-TOWNS Jap
-	{ "monkey", "game", kGenPC }, // SegaCD
-	{ "monkey2", "mi2demo", kGenPC },
 	{ "mustard", "Mustard", kGenMac },
 	{ "pajama", "Pajama Sam", kGenMac },
 	{ "pajama", "PajamaNHD", kGenPC },
@@ -781,14 +794,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "puttzoo", "zoodemo", kGenPC },
 	{ "puttzoo", "Zoo Demo", kGenMac },
-	{ "samnmax.000", "Sam & Max Data", kGenAsIs },
-	{ "samnmax.000", "Sam & Max Demo Data", kGenAsIs },
-	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
-	{ "samnmax", "samdemo", kGenPC },
-	{ "samnmax", "snmdemo", kGenPC },
-	{ "samnmax", "snmidemo", kGenPC },
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
-	{ "snmdemo", "sdemo", kGenPC },
 	{ "soccer", "Soccer", kGenMac },
 	{ "socks", "SockWorks", kGenMac },
 	{ "spyfox", "FoxDemo", kGenMac },
@@ -805,9 +811,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyozon", "Spy Ozone Demo", kGenMac },
 	{ "spyozon", "SPYFoxOZU", kGenPC },
 	{ "spyozon", "SpyOzon", kGenMac },
-	{ "tentacle.000", "Day Of The Tentacle Data", kGenAsIs },
-	{ "tentacle", "dottdemo", kGenPC },
-	{ "tentacle.000", "Day of the Tentacle Demo Data", kGenAsIs },
 	{ "thinker1", "1grademo", kGenPC },
 	{ "thinker1", "Thinker1", kGenMac },
 	{ "thinkerk", "kinddemo", kGenPC },
@@ -815,6 +818,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "thinkerk", "KindDemo", kGenMac },
 	{ "thinkerk", "ThinkerK", kGenMac },
 	{ "water", "Water Worries", kGenMac },
+#endif
 };
 
 static int compareMD5Table(const void *a, const void *b) {
@@ -3226,9 +3230,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			engine = new ScummEngine_v70he(detector, syst, game, md5sum, substLastIndex);
 			break;
 #endif
+#ifndef PALMOS_68K
 		case 61:
 			engine = new ScummEngine_v60he(detector, syst, game, md5sum, substLastIndex);
 			break;
+#endif
 		default:
 			engine = new ScummEngine_v6(detector, syst, game, md5sum, substLastIndex);
 		}
@@ -3237,12 +3243,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	case 7:
 		engine = new ScummEngine_v7(detector, syst, game, md5sum, substLastIndex);
 		break;
-#ifndef __PALM_OS__
 	case 8:
 		engine = new ScummEngine_v8(detector, syst, game, md5sum, substLastIndex);
 		break;
-#endif
-
 #endif
 	default:
 		error("Engine_SCUMM_create(): Unknown version of game engine");
