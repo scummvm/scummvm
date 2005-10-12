@@ -1820,9 +1820,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		break;
 
 	default:
-		// FIXME: Reverted to a warning from an error, as per
-		// zak256 bug #1290485. This is not a proper fix. :)
-		warning("o5_resourceRoutines: default case %d", op);
+		error("o5_resourceRoutines: default case %d", op);
 	}
 }
 
@@ -2264,6 +2262,11 @@ void ScummEngine_v5::o5_startScript() {
 	script = getVarOrDirectByte(PARAM_1);
 
 	getWordVararg(data);
+
+	// FIXME: Script 171 loads a complete room resource, instead of the actual script.
+	// Causing invalid opcode cases, see bug #1290485
+	if (_gameId == GID_ZAK256 && script == 171)
+		return;
 
 	if (!_copyProtection) {
 		// Method used by original games to skip copy protection scheme
