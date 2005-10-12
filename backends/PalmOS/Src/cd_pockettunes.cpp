@@ -34,66 +34,93 @@ bool PckTunesCDPlayer::init() {
 	PocketTunesStart();
 	_isInitialized = PocketTunesIsRunning();
 	_isPlaying = false;
+	_pAction = NULL;
+	
+	if (_isInitialized) {
+		_pAction = (PocketTunesAction*)MemPtrNew(sizeof(PocketTunesAction));
+		_volumeLimit = getVolumeLimit();
+	}
+
+	_isInitialized = (_isInitialized && _pAction);
 	return _isInitialized;
 }
 
 void PckTunesCDPlayer::release() {
-	// self delete
 	PocketTunesStop();
+	if (_pAction)
+		MemPtrFree(_pAction);
+
+	// self delete
 	delete this;
 }
 
+UInt32 PckTunesCDPlayer::getVolumeLimit() {
+	UInt32 value = 0;
+
+	if (!_pAction)
+		return value;
+
+	_pAction->action = kPocketTunesActionGetValue;
+	_pAction->data.getValueAction.which = kPtunesValueMaxVolume;
+	
+	EvtGetEvent(&_eAction, evtNoWait);
+	if (PocketTunesCallSynch(_pAction) == errNone)
+		value = _pAction->data.getValueAction.value;
+
+	return value;	
+}
+
 UInt32 PckTunesCDPlayer::getStatus() {
-	if (!_isPlaying)
-		return kPtunesStopped;
+	UInt32 status = kPtunesStopped;
 
-	EventType e;
-	UInt32 status;
+	if (!_isPlaying || !_pAction)
+		return status;
 
-	PocketTunesAction *pAction = (PocketTunesAction*)MemPtrNew (sizeof(PocketTunesAction));
-	if (!pAction)
-		return kPtunesStopped;
+	_pAction->action = kPocketTunesActionGetStatus;
 
-	pAction->action = kPocketTunesActionGetStatus;
-	EvtGetEvent(&e, evtNoWait);
-	if (PocketTunesCallSynch(pAction) == errNone)
-		status = pAction->data.getStatusAction.status;
-	else
-		status = kPtunesStopped;
-
-	MemPtrFree(pAction);
-	return status;
+	EvtGetEvent(&_eAction, evtNoWait);
+	if (PocketTunesCallSynch(_pAction) == errNone)
+		status = _pAction->data.getStatusAction.status;
+	
+	return status;	
 }
 
 UInt32 PckTunesCDPlayer::getPosition(UInt32 deflt) {
-	if (!_isPlaying)
-		return deflt;
+	UInt32 value = deflt;
 
-	EventType e;
-	UInt32 value;
+	if (!_isPlaying || !_pAction)
+		return value;
 
-	PocketTunesAction *pAction = (PocketTunesAction*)MemPtrNew (sizeof(PocketTunesAction));
-	if (!pAction)
-		return deflt;
+	_pAction->action = kPocketTunesActionGetValue;
+	_pAction->data.getValueAction.which = kPtunesValueSongPosition;
+	
+	EvtGetEvent(&_eAction, evtNoWait);
+	if (PocketTunesCallSynch(_pAction) == errNone)
+		value = _pAction->data.getValueAction.value;
 
-	pAction->action = kPocketTunesActionGetValue;
-	pAction->data.getValueAction.which = kPtunesValueSongPosition;
-
-	EvtGetEvent(&e, evtNoWait);
-	if (PocketTunesCallSynch(pAction) == errNone)
-		value = pAction->data.getValueAction.value;
-	else
-		value = deflt;
-
-	MemPtrFree(pAction);
 	return value;
+}
+
+UInt32 PckTunesCDPlayer::getDuration() {
+	UInt32 value = gVars->CD.defaultTrackLength;
+
+	if (!_isPlaying || !_pAction)
+		return value;
+
+	_pAction->action = kPocketTunesActionGetValue;
+	_pAction->data.getValueAction.which = kPtunesValueSongDuration;
+	
+	EvtGetEvent(&_eAction, evtNoWait);
+	if (PocketTunesCallSynch(_pAction) == errNone)
+		value = _pAction->data.getValueAction.value;
+
+	return value;	
 }
 
 void PckTunesCDPlayer::setPosition(UInt32 value) {
 	if (!_isPlaying)
 		return;
 
-	EventType e;
 	PocketTunesAction *pAction = AllocateAsynchronousActionStruct();
 	if (!pAction)
 		return;
@@ -102,32 +129,23 @@ void PckTunesCDPlayer::setPosition(UInt32 value) {
 	pAction->data.getValueAction.which = kPtunesValueSongPosition;
 	pAction->data.getValueAction.value = value;
 
-	EvtGetEvent(&e, evtNoWait);
+	EvtGetEvent(&_eAction, evtNoWait);
 	PocketTunesCall(pAction);
 }
 
-UInt32 PckTunesCDPlayer::getDuration() {
-	if (!_isPlaying)
-		return gVars->CD.defaultTrackLength;
+void PckTunesCDPlayer::setVolume(int volume) {
+	_volumeLevel = volume;
 
-	EventType e;
-	UInt32 value;
-
-	PocketTunesAction *pAction = (PocketTunesAction*)MemPtrNew (sizeof(PocketTunesAction));
+	PocketTunesAction *pAction = AllocateAsynchronousActionStruct();
 	if (!pAction)
-		return gVars->CD.defaultTrackLength;
+		return;
 
-	pAction->action = kPocketTunesActionGetValue;
-	pAction->data.getValueAction.which = kPtunesValueSongDuration;
+	pAction->action = kPocketTunesActionSetValue;
+	pAction->data.getValueAction.which = kPtunesValueVolume;
+	pAction->data.getValueAction.value = (_volumeLimit * volume) / 100;
 
-	EvtGetEvent(&e, evtNoWait);
-	if (PocketTunesCallSynch(pAction) == errNone)
-		value = pAction->data.getValueAction.value;
-	else
-		value = gVars->CD.defaultTrackLength;
-
-	MemPtrFree(pAction);
-	return value;
+	EvtGetEvent(&_eAction, evtNoWait);
+	PocketTunesCall(pAction);
 }
 
 bool PckTunesCDPlayer::poll() {
@@ -146,9 +164,7 @@ void PckTunesCDPlayer::update() {
 	}
 
 	// not fully played
-//	if (_sys->getMillis() < _pckTrackEndFrame)
-//		return;
-	if (getPosition(_pckTrackEndFrame) < _pckTrackEndFrame)
+	if (getPosition(_pckTrackEndFrame) < _pckTrackEndFrame && getStatus() != kPtunesStopped)
 		return;
 
 	PocketTunesStop();
@@ -162,14 +178,13 @@ void PckTunesCDPlayer::update() {
 
 	// loop if needed
 	if (_pckLoops != 0 && _isPlaying) {
-		PocketTunesPlay();
-
 		if (_pckTrackStartFrame == 0 && _pckTrackDuration == 0) {
 			setPosition(0);
 		} else {
 			setPosition(_pckTrackStartFrame);
 		}
-//		_pckTrackEndFrame = _pckTrackStartFrame + _pckTrackDuration;
+
+		PocketTunesPlay();
 	}
 }
 
@@ -185,21 +200,17 @@ void PckTunesCDPlayer::play(int track, int num_loops, int start_frame, int durat
 
 	EventType e;
 	Char nameP[256], fileP[100];
-	Char *ext[]	= { "mp3", "ogg" };
-
-//	if (duration > 0)
-//		duration += 5;
-
+	static const Char *ext[] = { "mp3", "ogg" };
+	
 	_pckTrack = track;
 	_pckLoops = num_loops;
 	_pckTrackStartFrame = TO_MSECS(start_frame);
 	_pckTrackDuration = TO_MSECS(duration);
 
-	// stop current play if any
-	VFSVolumeGetLabel(gVars->volRefNum, nameP, 256);
-
+	VFSVolumeGetLabel(gVars->VFS.volRefNum, nameP, 256);
+	
 	StrPrintF(fileP, "/Palm/Programs/ScummVM/Audio/%s_%03ld.%s", gameP, (track + gVars->CD.firstTrack - 1), ext[gVars->CD.format]);
-
+	
 	if (PocketTunesOpenFile(nameP, fileP, 0) == errNone) {
 		EvtGetEvent(&e, evtNoWait);
 		PocketTunesPauseIfPlaying();
