@@ -139,7 +139,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			if (!track->used)
 				continue;
 			track->readyToRemove = false;
-			if ((track->toBeRemoved) || (track->souStream)) {
+			if ((track->toBeRemoved) || (track->souStream) || (track->curRegion == -1)) {
 				track->stream2 = NULL;
 				track->stream = NULL;
 				track->used = false;
