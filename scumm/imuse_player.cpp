@@ -775,7 +775,7 @@ Part *Player::getPart(uint8 chan) {
 
 	part = _se->allocate_part(_priority, _midi);
 	if (!part) {
-		error("no parts available");
+		debug(1, "No parts available");
 		return NULL;
 	}
 
@@ -869,10 +869,12 @@ void Player::play_active_notes() {
 
 	for (i = 0; i < 16; ++i) {
 		part = getPart(i);
-		mask = 1 << i;
-		for (j = 0; j < 128; ++j) {
-			if (_active_notes[j] & mask)
-				part->noteOn(j, 80);
+		if (part) {
+			mask = 1 << i;
+			for (j = 0; j < 128; ++j) {
+				if (_active_notes[j] & mask)
+					part->noteOn(j, 80);
+			}
 		}
 	}
 }
