@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/md5.h"
 
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
@@ -48,30 +49,63 @@
 
 using namespace Kyra;
 
+enum {
+	// We only compute MD5 of the first megabyte of our data files.
+	kMD5FileSizeLimit = 1024 * 1024
+};
+
+// Kyra MD5 detection brutally ripped from the Gobliins engine.
 struct KyraGameSettings {
 	const char *name;
 	const char *description;
+	byte id;
 	uint32 features;
-	const char *detectName;
+	const char *md5sum;
+	const char *checkFile;
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { name, description, features };
 		return dummy;
 	}
 };
 
-static const KyraGameSettings kyra_settings[] = {
-	{ "kyra1", "Legend of Kyrandia (Floppy)", GF_FLOPPY | GF_KYRA1, "INTRO.SND" },
-	{ "kyra1cd", "Legend of Kyrandia (CD)",  GF_TALKIE | GF_KYRA1,  "CHAPTER1.VRM" },
-	{ "kyra1demo", "Legend of Kyrandia (Demo)", GF_DEMO | GF_FLOPPY | GF_KYRA1, "DEMO1.WSA" },
-//	{ "kyra2", "Hand of Fate (Floppy)", GF_FLOPPY | GF_KYRA2, 0 },
-//	{ "kyra2cd", "Hand of Fate (CD)", GF_TALKIE | GF_KYRA2, "AUDIO.PAK" },
-//	{ "kyra3", "Malcolm's Revenge", GF_TALKIE | GF_KYRA3, "K3INTRO0.VQA" },
-	{ 0, 0, 0, 0 }
+static const KyraGameSettings kyra_games[] = {
+	{ "kyra1", "Legend of Kyrandia (Floppy, English)",	GI_KYRA1, GF_ENGLISH | GF_FLOPPY  | GF_KYRA1, 
+										"796e44863dd22fa635b042df1bf16673", "GEMCUT.EMC" },
+	{ "kyra1", "Legend of Kyrandia (Floppy, French)",	GI_KYRA1, GF_FRENCH  | GF_FLOPPY  | GF_KYRA1,
+										"abf8eb360e79a6c2a837751fbd4d3d24", "GEMCUT.EMC" },
+	{ "kyra1", "Legend of Kyrandia (Floppy, German)",	GI_KYRA1, GF_GERMAN  | GF_FLOPPY  | GF_KYRA1, 
+										"6018e1dfeaca7fe83f8d0b00eb0dd049", "GEMCUT.EMC"},
+	{ "kyra1", "Legend of Kyrandia (CD, English)",		GI_KYRA1, GF_ENGLISH | GF_TALKIE  | GF_KYRA1, 
+										"fac399fe62f98671e56a005c5e94e39f", "GEMCUT.PAK" },
+	{ "kyra1", "Legend of Kyrandia (CD, German)",		GI_KYRA1, GF_GERMAN | GF_TALKIE  | GF_KYRA1, 
+										"230f54e6afc007ab4117159181a1c722", "GEMCUT.PAK" },
+	{ "kyra1", "Legend of Kyrandia (CD, French)",		GI_KYRA1, GF_FRENCH | GF_TALKIE  | GF_KYRA1, 
+										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
+	{ "kyra1", "Legend of Kyrandia (Demo)",			GI_KYRA1, GF_DEMO | GF_KYRA1,
+										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
+	{ 0, 0, 0, 0, 0, 0 }
+};
+
+// Keep list of different supported games
+struct KyraGameList {
+	const char *name;
+	const char *description;
+	uint32 features;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
+};
+
+static const KyraGameList kyra_list[] = {
+	{ "kyra1", "Legend of Kyrandia", GF_KYRA1 },
+	{ 0, 0, 0 }
 };
 
 GameList Engine_KYRA_gameList() {
 	GameList games;
-	const KyraGameSettings *g = kyra_settings;
+	const KyraGameList *g = kyra_list;
+
 	while (g->name) {
 		games.push_back(g->toGameSettings());
 		g++;
@@ -80,24 +114,49 @@ GameList Engine_KYRA_gameList() {
 }
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
-	const KyraGameSettings *game;
 	DetectedGameList detectedGames;
+	const KyraGameSettings *g;
+	FSList::const_iterator file;
 
-	for (game = kyra_settings; game->name; ++game) {
-		if (game->detectName == NULL)
+	// Iterate over all files in the given directory
+	bool isFound = false;
+	for (file = fslist.begin(); file != fslist.end(); file++) {
+		if (file->isDirectory())
 			continue;
 
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				const char *name = file->displayName().c_str();
-				if ((!scumm_stricmp(game->detectName, name))) {
-					detectedGames.push_back(game->toGameSettings());
-					break;
-				}
+		for (g = kyra_games; g->name; g++) {
+			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
+				isFound = true;
+		}
+		if (isFound)
+			break;
+	}
+
+	if (file == fslist.end())
+		return detectedGames;
+
+	uint8 md5sum[16];
+	char md5str[32 + 1];
+
+	if (Common::md5_file(file->path().c_str(), md5sum, NULL, kMD5FileSizeLimit)) {
+		for (int i = 0; i < 16; i++) {
+			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
+		}
+		for (g = kyra_games; g->name; g++) {
+			if (strcmp(g->md5sum, (char *)md5str) == 0) {
+				detectedGames.push_back(g->toGameSettings());
+			}
+		}
+		if (detectedGames.isEmpty()) {
+			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
+
+			const KyraGameList *g1 = kyra_list;
+			while (g1->name) {
+				detectedGames.push_back(g1->toGameSettings());
+				g1++;
 			}
 		}
 	}
-
 	return detectedGames;
 }
 
@@ -121,25 +180,43 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
-	// gets the game
-	if (detector->_game.features & GF_KYRA1) {
-		if (detector->_game.features & GF_DEMO) {
-			_game = KYRA1DEMO;
-		} else if (detector->_game.features & GF_FLOPPY) {
-			_game = KYRA1;
-		} else {
-			_game = KYRA1CD;
+	// Detect game features based on MD5. Again brutally ripped from Gobliins.
+	uint8 md5sum[16];
+	char md5str[32 + 1];
+
+	const KyraGameSettings *g;
+	bool found = false;
+
+	// TODO
+	// Fallback. Maybe we will be able to determine game type from game
+	// data contents
+	_features = GF_KYRA1;
+
+	for (g = kyra_games; g->name; g++) {
+		if (!Common::File::exists(g->checkFile))
+			continue;
+
+		if (Common::md5_file(g->checkFile, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+			for (int j = 0; j < 16; j++) {
+				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
+			}
+		} else
+			continue;
+
+		if (strcmp(g->md5sum, (char *)md5str) == 0) {
+			_features = g->features;
+			_game = g->id;
+
+			if (g->description)
+				g_system->setWindowCaption(g->description);
+
+			found = true;
+			break;
 		}
-	} else if (detector->_game.features & GF_KYRA2) {
-		if (detector->_game.features & GF_FLOPPY) {
-			_game = KYRA2;
-		} else {
-			_game = KYRA2CD;
-		}
-	} else if (detector->_game.features & GF_KYRA3) {
-		_game = KYRA3;
-	} else {
-		error("unknown game");
+	}
+
+	if (!found) {
+		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
 	}
 }
 
@@ -204,7 +281,7 @@ int KyraEngine::go() {
 	_quitFlag = false;
 	uint32 sz;
 
-	if (_game == KYRA1) {
+	if (_features & GF_FLOPPY) {
 		_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
 	}
 	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
@@ -212,7 +289,7 @@ int KyraEngine::go() {
 
 	_abortIntroFlag = false;
 
-	if (_game == KYRA1DEMO) {
+	if (_features & GF_DEMO) {
 		seq_demo();
 	} else {
 		seq_intro();
@@ -321,11 +398,14 @@ void KyraEngine::loadRoom(uint16 roomID) {
 	_screen->clearPage(10);
 
 	// Loading GUI bitmap
-	if (_game == KYRA1CD) {
+	if (_features & GF_ENGLISH && _features & GF_TALKIE) 
 		loadBitmap("MAIN_ENG.CPS", 10, 10, 0);
-	} else {
+	else if(_features & GF_FRENCH)
+		loadBitmap("MAIN_FRE.CPS", 10, 10, 0);
+	else if(_features & GF_GERMAN)
+		loadBitmap("MAIN_GER.CPS", 10, 10, 0);
+	else
 		loadBitmap("MAIN15.CPS", 10, 10, 0);
-	}
 
 	// Loading main room background
 	strncpy(buf, _rooms[roomID].filename, 8);
@@ -368,7 +448,7 @@ void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 
 	if (palData && fileSize) {
-		debug(9, "Loading a palette of size %i from %s", fileSize, filename);
+		debug(9, "Loading a palette of size %i from '%s'", fileSize, filename);
 		memcpy(palData, srcData, fileSize);		
 	}
 }
@@ -663,12 +743,12 @@ void KyraEngine::seq_demo() {
 
 void KyraEngine::seq_intro() {
 	debug(9, "KyraEngine::seq_intro()");
-	if (_game == KYRA1CD) {
+	if (_features & GF_TALKIE) {
 			_res->loadPakFile("INTRO.VRM");
 	}
 	static const IntroProc introProcTable[] = {
 		&KyraEngine::seq_introLogos,
-//		&KyraEngine::seq_introStory,
+		&KyraEngine::seq_introStory,
 		&KyraEngine::seq_introMalcomTree,
 		&KyraEngine::seq_introKallakWriting,
 		&KyraEngine::seq_introKallakMalcom
@@ -686,7 +766,7 @@ void KyraEngine::seq_intro() {
 	waitTicks(30);
 	_seq->setCopyViewOffs(false);
 	_midi->stopMusic();
-	if (_game == KYRA1CD) {
+	if (_features & GF_TALKIE) {
 			_res->unloadPakFile("INTRO.VRM");
 	}
 }
@@ -702,7 +782,7 @@ void KyraEngine::seq_introLogos() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	if (_game == KYRA1) {
+	if (_features & GF_FLOPPY) {
 		if (_seq->playSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
 			_screen->fadeToBlack();
 			_screen->clearPage(0);
@@ -714,7 +794,7 @@ void KyraEngine::seq_introLogos() {
 			_screen->clearPage(0);
 			return;
 		}
-	} else if (_game == KYRA1CD) {
+	} else if (_features & GF_TALKIE) {
 		if (_seq->playSequence(_seq_cdromData_WestwoodLogo, _skipIntroFlag)) {
 			_screen->fadeToBlack();
 			_screen->clearPage(0);
@@ -750,27 +830,40 @@ void KyraEngine::seq_introLogos() {
 		waitTicks(1);
 	} while (y2 >= 64);
 
-	if (_game == KYRA1) {
+	if (_features & GF_FLOPPY) {
 		_seq->playSequence(_seq_floppyData_Forest, true);
-	} else if (_game == KYRA1CD) {
+	} else if (_features & GF_TALKIE) {
 		_seq->playSequence(_seq_cdromData_Forest, true);
 	}
 }
 
 void KyraEngine::seq_introStory() {
 	debug(9, "KyraEngine::seq_introStory()");
-	loadBitmap("MAIN_ENG.CPS", 3, 3, 0);
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
-	// XXX wait 360 ticks
+	// this is only needed for floppy versions
+	// since CD version has its own opcode for that
+	if (_features & GF_FLOPPY) {
+		_screen->clearPage(3);
+		_screen->clearPage(0);
+		if (_features & GF_ENGLISH) {
+			loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
+		} else if (_features & GF_GERMAN) {
+			loadBitmap("TEXT_GER.CPS", 3, 3, 0);
+		} else if (_features & GF_FRENCH) {
+			loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
+		}
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
+		_screen->updateScreen();
+		waitTicks(360);
+	}
 }
 
 void KyraEngine::seq_introMalcomTree() {
 	debug(9, "KyraEngine::seq_introMalcomTree()");
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
-	if (_game == KYRA1) {
+	if (_features & GF_FLOPPY) {
 		_seq->playSequence(_seq_floppyData_MalcomTree, true);
-	} else if (_game == KYRA1CD) {
+	} else if (_features & GF_TALKIE) {
 		_seq->playSequence(_seq_cdromData_MalcomTree, true);
 	}
 }
@@ -781,9 +874,9 @@ void KyraEngine::seq_introKallakWriting() {
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
-	if (_game == KYRA1) {
+	if (_features & GF_FLOPPY) {
 		_seq->playSequence(_seq_floppyData_KallakWriting, true);
-	} else if (_game == KYRA1CD) {
+	} else if (_features & GF_TALKIE) {
 		_seq->playSequence(_seq_cdromData_KallakWriting, true);
 	}
 	_seq->freeHandShapes();
@@ -792,9 +885,9 @@ void KyraEngine::seq_introKallakWriting() {
 void KyraEngine::seq_introKallakMalcom() {
 	debug(9, "KyraEngine::seq_introKallakMalcom()");
 	_screen->clearPage(3);
-	if (_game == KYRA1) {
+	if (_features & GF_FLOPPY) {
 		_seq->playSequence(_seq_floppyData_KallakMalcom, true);
-	} else if (_game == KYRA1CD) {
+	} else if (_features & GF_TALKIE) {
 		_seq->playSequence(_seq_cdromData_KallakMalcom, true);
 	}
 }

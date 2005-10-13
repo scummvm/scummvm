@@ -549,7 +549,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	DrawShapePlotPixelCallback plotPixel = _drawShapePlotPixelTable[ppc];
 	
 	const uint8 *src = shapeData;
-	if (_vm->game() == KYRA1CD) {
+	if (_vm->features() & GF_TALKIE) {
 		src += 2;
 	}
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;

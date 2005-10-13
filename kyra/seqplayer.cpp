@@ -60,7 +60,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 	uint16 numShapes = READ_LE_UINT16(data);
 	if (shape < numShapes) {
 		uint32 offs = 0;
-		if (_vm->game() == KYRA1CD) {
+		if (_vm->features() & GF_TALKIE) {
 			offs = READ_LE_UINT32(data + 2 + shape * 4);
 		} else {
 			offs = READ_LE_UINT16(data + 2 + shape * 2);
@@ -98,7 +98,7 @@ void SeqPlayer::s1_wsaOpen() {
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
 	uint8 offscreenDecode = *_seqData++;
 	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;				
-	if (_vm->game() == KYRA1DEMO) {
+	if (_vm->features() & GF_DEMO) {
 		_seqMovies[wsaObj].wsa = _vm->wsa_open(KyraEngine::_seq_demo_WSATable[wsaObj], offscreenDecode, 0);
 	} else {
 		_seqMovies[wsaObj].wsa = _vm->wsa_open(KyraEngine::_seq_WSATable[wsaObj], offscreenDecode, 0);
@@ -212,7 +212,7 @@ void SeqPlayer::s1_loadPalette() {
 	uint8 colNum = *_seqData++;
 	uint32 fileSize;
 	uint8 *srcData;
-	if (_vm->game() == KYRA1DEMO) {
+	if (_vm->features() & GF_DEMO) {
 		srcData = _res->fileData(KyraEngine::_seq_demo_COLTable[colNum], &fileSize);
 	} else {
 		srcData = _res->fileData(KyraEngine::_seq_COLTable[colNum], &fileSize);
@@ -306,9 +306,9 @@ void SeqPlayer::s1_copyRegion() {
 void SeqPlayer::s1_copyRegionSpecial() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0 };
 	const char *copyStr = 0;
-	if (_vm->game() == KYRA1 || _vm->game() == KYRA1DEMO) {
+	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
 		copyStr = "Copyright (c) 1992 Westwood Studios";
-	} else if (_vm->game() == KYRA1CD) {
+	} else if (_vm->features() & GF_TALKIE) {
 		copyStr = "Copyright (c) 1992,1993 Westwood Studios";
 	}
 	
@@ -356,15 +356,15 @@ void SeqPlayer::s1_fillRect() {
 	_screen->fillRect(x1, y1, x2, y2, color, page);
 }
 
-void SeqPlayer::s1_soundUnk1() {
+void SeqPlayer::s1_playEffect() {
 	uint8 track = *_seqData++;
 	_vm->waitTicks(3);
 	_midi->playSoundEffect(track);
 }
 
-void SeqPlayer::s1_soundUnk2() {
+void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
-	if (_vm->game() == KYRA1 || _vm->game() == KYRA1DEMO) {
+	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
 		switch (msg) {
 		case 0:
 			// nothing to do here...
@@ -385,8 +385,10 @@ void SeqPlayer::s1_soundUnk2() {
 			warning("Unknown seq. message: %.02d", msg);
 			break;
 		}
-	} else if (_vm->game() == KYRA1CD) {
-		if (msg == 1) {
+	} else if (_vm->features() & GF_TALKIE) {
+		if (msg == 0) {
+			// nothing to do here...
+		} else if (msg == 1) {
 			_midi->beginFadeOut();
 		} else {
 			_vm->snd_playTrack(msg);
@@ -395,7 +397,7 @@ void SeqPlayer::s1_soundUnk2() {
 }
 
 void SeqPlayer::s1_allocTempBuffer() {
-	if (_vm->game() == KYRA1DEMO) {
+	if (_vm->features() & GF_DEMO) {
 		_seqQuitFlag = true;
 	} else {
 		// allocate offscreen buffer, not needed
@@ -426,8 +428,19 @@ void SeqPlayer::s1_playVocFile() {
 	_vm->snd_playVoiceFile(a);
 }
 
-void SeqPlayer::s1_miscUnk3() {
-	warning("STUB: s1_miscUnk3");
+void SeqPlayer::s1_displayStory() {
+	_screen->clearPage(3);
+	_screen->clearPage(0);
+	if (_vm->features() & GF_ENGLISH) {
+		_vm->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
+	} else if (_vm->features() & GF_GERMAN) {
+		_vm->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
+	} else if (_vm->features() & GF_FRENCH) {
+		_vm->loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
+	}
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
+	_screen->updateScreen();
+	_vm->waitTicks(360);
 }
 
 void SeqPlayer::s1_prefetchVocFile() {
@@ -468,8 +481,8 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(2, s1_copyRegionSpecial),
 		SEQOP(9, s1_fillRect),
 		// 0x18
-		SEQOP(2, s1_soundUnk1),
-		SEQOP(2, s1_soundUnk2),
+		SEQOP(2, s1_playEffect),
+		SEQOP(2, s1_playTrack),
 		SEQOP(1, s1_allocTempBuffer),
 		SEQOP(1, s1_textDisplayEnable),
 		// 0x1C
@@ -512,9 +525,9 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(3, s1_copyRegion),
 		SEQOP(2, s1_copyRegionSpecial),
 		SEQOP(9, s1_fillRect),
-		SEQOP(2, s1_soundUnk1),
+		SEQOP(2, s1_playEffect),
 		// 0x1C
-		SEQOP(2, s1_soundUnk2),
+		SEQOP(2, s1_playTrack),
 		SEQOP(1, s1_allocTempBuffer),
 		SEQOP(1, s1_textDisplayEnable),
 		SEQOP(1, s1_textDisplayDisable),
@@ -522,7 +535,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(1, s1_endOfScript),
 		SEQOP(1, s1_miscUnk1),
 		SEQOP(2, s1_playVocFile),
-		SEQOP(1, s1_miscUnk3),
+		SEQOP(1, s1_displayStory),
 		// 0x24
 		SEQOP(2, s1_prefetchVocFile)
 	};
@@ -532,10 +545,10 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 
 	debug(9, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
 
-	if (_vm->game() == KYRA1 || _vm->game() == KYRA1DEMO) {
+	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
 		commands = floppySeqProcs;
 		numCommands = ARRAYSIZE(floppySeqProcs);
-	} else if (_vm->game() == KYRA1CD) {
+	} else if (_vm->features() & GF_TALKIE) {
 		commands = cdromSeqProcs;
 		numCommands = ARRAYSIZE(cdromSeqProcs);
 	} else {

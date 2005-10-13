@@ -41,7 +41,7 @@ WSAMovieV1 *KyraEngine::wsa_open(const char *filename, int offscreenDecode, uint
 	wsa->deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
 	wsa->offscreenBuffer = NULL;
 	wsa->flags = 0;
-	if (_game == KYRA1CD) {
+	if (_features & GF_TALKIE) {
 		flags = READ_LE_UINT16(wsaData); wsaData += 2;
 	}
 	

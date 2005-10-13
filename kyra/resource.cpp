@@ -30,7 +30,7 @@ Resource::Resource(KyraEngine* engine) {
 	_engine = engine;
 
 	// No PAK files in the demo version
-	if (_engine->game() == KYRA1DEMO)
+	if (_engine->features() & GF_DEMO)
 		return;
 
 	// prefetches all PAK Files
@@ -63,9 +63,9 @@ Resource::Resource(KyraEngine* engine) {
 
 	const char** usedFilelist = 0;
 
-	if (_engine->game() == KYRA1)
+	if (_engine->features() & GF_FLOPPY)
 		usedFilelist = kyra1Filelist;
-	else if (_engine->game() == KYRA1CD)
+	else if (_engine->features() & GF_TALKIE)
 		usedFilelist = kyra1CDFilelist;
 	else
 		error("no filelist found for this game");
@@ -155,7 +155,7 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 			
 			if (!(*size))
 				continue;
-
+			
 			buffer = new uint8[*size];
 			assert(buffer);
 			

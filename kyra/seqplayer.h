@@ -83,15 +83,15 @@ protected:
 	void s1_copyRegion();
 	void s1_copyRegionSpecial();
 	void s1_fillRect();
-	void s1_soundUnk1();
-	void s1_soundUnk2();
+	void s1_playEffect();
+	void s1_playTrack();
 	void s1_allocTempBuffer();
 	void s1_textDisplayEnable();
 	void s1_textDisplayDisable();
 	void s1_endOfScript();
 	void s1_miscUnk1();
 	void s1_playVocFile();
-	void s1_miscUnk3();
+	void s1_displayStory();
 	void s1_prefetchVocFile();
 
 	struct SeqMovie {

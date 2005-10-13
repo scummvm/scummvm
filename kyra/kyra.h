@@ -25,6 +25,7 @@
 #include "base/engine.h"
 #include "common/rect.h"
 #include "sound/mixer.h"
+#include "common/file.h"
 
 class AudioStream;
 
@@ -39,16 +40,15 @@ enum {
 	GF_KYRA2   = 1 << 3,
 	GF_KYRA3   = 1 << 4,
 	GF_AUDIOCD = 1 << 5,  // FM-Towns versions seems to use audio CD
-	GF_DEMO    = 1 << 6
+	GF_DEMO    = 1 << 6,
+	GF_ENGLISH = 1 << 7,
+	GF_FRENCH  = 1 << 8,
+	GF_GERMAN  = 1 << 9
+
 };
 
 enum {
-	KYRA1     = 0,
-	KYRA1CD   = 1,
-	KYRA1DEMO = 2,
-	KYRA2     = 3,
-	KYRA2CD   = 4,
-	KYRA3     = 5
+	GI_KYRA1 = 0
 };
 
 struct Character {
@@ -123,6 +123,7 @@ public:
 	MusicPlayer *midi() { return _midi; }
 
 	uint8 game() const { return _game; }
+	uint32 features() const { return _features; }
 	
 	Common::RandomSource _rnd;
 
@@ -209,6 +210,7 @@ protected:
 	bool _talkMessagePrinted;
 	uint8 _flagsTable[51];
 	uint16 _gameSpeed;
+	uint32 _features;
 
 	uint16 _currentRoom;
 	AudioStream *_currentVocFile;
