@@ -85,6 +85,10 @@
 	#define scumm_strnicmp strnicmp
 	#define SCUMM_LITTLE_ENDIAN
 
+	#ifndef _HEAPOK
+	#define _HEAPOK	(-2)
+	#endif
+
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef unsigned short uint16;
