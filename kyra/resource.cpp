@@ -179,12 +179,6 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 	return buffer;
 }
 
-VMContext* Resource::loadScript(const char* file) {
-	VMContext* context = new VMContext(_engine);
-	context->loadScript(file);
-	return context;
-}
-
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start

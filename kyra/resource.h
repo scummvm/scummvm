@@ -74,8 +74,6 @@ public:
 
 	uint8* fileData(const char* file, uint32* size);
 
-	VMContext* loadScript(const char* file);
-
 protected:
 	struct PakFileEntry {
 		PAKFile *_file;
