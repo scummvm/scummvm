@@ -83,17 +83,12 @@ void Input::delay() {
 }
 
 void Input::delay(uint amount) {
-
-	OSystem::Event event;
-
-	uint32 start = _system->getMillis();
-	uint32 cur = start;
-
 	if (_idleTime < DELAY_SCREEN_BLANKER) {
 		_idleTime += amount;
 	}
-
+	uint32 end = _system->getMillis() + amount;
 	do {
+		OSystem::Event event;
 		while (_system->pollEvent(event)) {
 			_idleTime = 0;
 			switch (event.type) {
@@ -124,6 +119,10 @@ void Input::delay(uint amount) {
 
 			case OSystem::EVENT_RBUTTONDOWN:
 				_mouseButton |= MOUSE_RBUTTON;
+#if defined(_WIN32_WCE) || defined(__PALM_OS__)
+				_mouse_x = event.mouse.x;
+				_mouse_y = event.mouse.y;
+#endif
 				break;
 
 			case OSystem::EVENT_QUIT:
@@ -139,13 +138,9 @@ void Input::delay(uint amount) {
 		if (amount == 0)
 			break;
 
-		uint this_delay = 20; // 1?
-		if (this_delay > amount)
-			this_delay = amount;
-		_system->delayMillis(this_delay);
+		_system->delayMillis((amount > 20) ? 20 : amount);
 #endif
-		cur = _system->getMillis();
-	} while (cur < start + amount);
+	} while (_system->getMillis() < end);
 }
 
 int Input::checkKeys() {
