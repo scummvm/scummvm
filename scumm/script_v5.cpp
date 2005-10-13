@@ -2196,7 +2196,7 @@ void ScummEngine_v5::o5_startSound() {
 	// far as I can tell, this is a script bug.
 
 	if (_gameId == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
-		printf("Delaying Woodtick music until Largo's theme has finished\n");
+		debug(1, "Delaying Woodtick music until Largo's theme has finished\n");
 		_scriptPointer = oldaddr;
 		o5_breakHere();
 		return;
