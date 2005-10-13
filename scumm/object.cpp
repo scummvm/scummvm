@@ -394,11 +394,7 @@ void ScummEngine::drawRoomObjects(int arg) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
 				drawRoomObject(i, arg);
 		}
-		// HACK: Reverse order is required to draw inventory background and items
-		// in correct order in putttime/puttzoo. Otherwise the inventory background
-		// is drawn over the items. But this doesn't match original, maybe masking
-		// issue somewhere?
-		for (i = 1; i < _numLocalObjects; i++) {
+		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index != 0)
 				drawRoomObject(i, arg);
 		}

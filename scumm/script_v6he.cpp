@@ -556,7 +556,7 @@ void ScummEngine_v60he::o60_roomOps() {
 void ScummEngine_v60he::swapObjects(int object1, int object2) {
 	int idx1 = -1, idx2 = -1;
 
-	for (int i = 0; i < _numObjectsInRoom; i++) {
+	for (int i = 0; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == object1)
 			idx1 = i;
 
@@ -564,7 +564,7 @@ void ScummEngine_v60he::swapObjects(int object1, int object2) {
 			idx2 = i;
 	}
 
-	if (idx1 == -1 || idx2 == -1 || idx1 >= idx2)
+	if (idx1 == -1 || idx2 == -1 || idx1 <= idx2)
 		return;
 
 	stopObjectScript(object1);
