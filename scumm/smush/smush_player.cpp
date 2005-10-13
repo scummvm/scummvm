@@ -600,6 +600,48 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 		}
 	}
 
+	// HACK. This is to prevent bug #1310846. In updated Win95 dig
+	// there is such line:
+	//
+	// ^f01^c001LEAD TESTER
+	// Chris Purvis
+	// ^f01
+	// ^f01^c001WINDOWS COMPATIBILITY
+	// Chip Hinnenberg
+	// ^f01^c001WINDOWS TESTING
+	// Jim Davison
+	// Lynn Selk
+	//
+	// i.e. formatting exists not in the first line only
+	// We just strip that off and assume that neither font
+	// nor font color was altered. Proper fix would be to feed
+	// drawString() with each line sequentally
+	char *string3 = NULL, *sptr2;
+	const char *sptr;
+
+	if (strchr(str, '^')) {
+		string3 = (char *)malloc(strlen(str) + 1);
+
+		for (sptr = str, sptr2 = string3; *sptr;) {
+			if (*sptr == '^') {
+				switch (sptr[1]) {
+				case 'f':
+					sptr += 4;
+					break;
+				case 'c':
+					sptr += 5;
+					break;
+				default:
+					error("invalid escape code in text string");
+				}
+			} else {
+				*sptr2++ = *sptr++;
+			}
+		}
+		*sptr2++ = *sptr++; // copy zero character
+		str = string3;
+	}
+
 	assert(sf != NULL);
 	sf->setColor(color);
 
@@ -642,6 +684,9 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 
 	if (string != NULL) {
 		free (string);
+	}
+	if (string3 != NULL) {
+		free (string3);
 	}
 }
 
