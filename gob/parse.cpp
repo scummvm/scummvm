@@ -134,8 +134,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					inter_execPtr++;
 					temp += parse_parseValExpr();
 					*operPtr = 20;
-					//XXX: Checkme
-					*valPtr = *(inter_variables + temp);
+					*valPtr = (uint8)*(inter_variables + temp);
 				}
 				break;
 
@@ -162,8 +161,7 @@ int16 parse_parseExpr(char arg_0, byte *arg_2) {
 					inter_execPtr++;
 					temp2 = parse_parseValExpr();
 					*operPtr = 20;
-					//XXX: Checkme
-					*valPtr = *(inter_variables + temp * 4 + offset * 4 * inter_animDataSize + temp2);
+					*valPtr = (uint8)*(inter_variables + temp * 4 + offset * 4 * inter_animDataSize + temp2);
 				}
 				break;
 
@@ -773,8 +771,7 @@ int16 parse_parseValExpr() {
 				temp = inter_load16() * 4;
 				inter_execPtr++;
 				temp += parse_parseValExpr();
-				//XXX: Checkme
-				*valPtr = *(inter_variables + temp);
+				*valPtr = (uint8)*(inter_variables + temp);
 				break;
 
 			case 26:
@@ -793,8 +790,7 @@ int16 parse_parseValExpr() {
 				} else {
 					inter_execPtr++;
 					temp2 = parse_parseValExpr();
-					//XXX: Checkme
-					*valPtr = *(inter_variables + temp * 4 + offset * 4 * inter_animDataSize + temp2);
+					*valPtr = (uint8)*(inter_variables + temp * 4 + offset * 4 * inter_animDataSize + temp2);
 				}
 				break;
 
