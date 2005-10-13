@@ -67,6 +67,12 @@ public:
 	 */
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) = 0;
 
+	/**
+	 * Commit any buffered data to the underlying channel or
+	 * storage medium; unbuffered streams can use the default
+	 * implementation.
+	 */
+	virtual void flush() {}
 
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.

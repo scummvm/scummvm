@@ -258,20 +258,25 @@ public:
 class OutVMSave : public Common::OutSaveFile {
 private:
   char *buffer;
-  int pos, size;
+  int pos, size, committed;
   char filename[16];
-
-  uint32 write(const void *buf, uint32 cnt);
+  bool iofailed;
 
 public:
+  uint32 write(const void *buf, uint32 cnt);
+
   OutVMSave(const char *_filename)
-    : pos(0)
+    : pos(0), committed(-1), iofailed(false)
   {
     strncpy(filename, _filename, 16);
     buffer = new char[size = MAX_SAVE_SIZE];
   }
 
   ~OutVMSave();
+
+  bool ioFailed() const { return iofailed; }
+  void clearIOFailed() { iofailed = false; }
+  void flush();
 };
 
 class VMSaveManager : public Common::SaveFileManager {
@@ -295,23 +300,38 @@ public:
   virtual void listSavefiles(const char *prefix, bool *marks, int num);
 };
 
-OutVMSave::~OutVMSave()
+void OutVMSave::flush()
 {
   extern const char *gGameName;
   extern Icon icon;
 
+  if(committed >= pos)
+    return;
+
+  char *data = buffer, *compbuf = NULL;
+  int len = pos;
+
   if(pos) {
     // Try compression
-    char *compbuf = new char[pos];
+    compbuf = new char[pos];
     unsigned long destlen = pos;
     if(!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
-      delete[] buffer;
-      buffer = compbuf;
-      pos = destlen;
-    } else delete[] compbuf;
+      data = compbuf;
+      len = destlen;
+    }
   }
-  displaySaveResult(writeSaveGame(gGameName, buffer,
-				  pos, filename, icon));
+  vmsaveResult r = writeSaveGame(gGameName, data, len, filename, icon);
+  committed = pos;
+  if(compbuf != NULL)
+    delete[] compbuf;
+  if(r != VMSAVE_OK)
+    iofailed = true;
+  displaySaveResult(r);
+}
+
+OutVMSave::~OutVMSave()
+{
+  flush();
   delete[] buffer;
 }
 
