@@ -108,6 +108,7 @@ OSXOPT=/sw
 scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) \
 		`sdl-config --static-libs` \
+		-framework CoreMIDI \
 		$(OSXOPT)/lib/libmad.a \
 		$(OSXOPT)/lib/libvorbisfile.a \
 		$(OSXOPT)/lib/libvorbis.a \
