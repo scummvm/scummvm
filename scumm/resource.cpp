@@ -1251,8 +1251,10 @@ void ScummEngine::allocateArrays() {
 	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
-	if (_heversion >= 60)
+	if (_heversion >= 60) {
 		_arraySlot = (byte *)calloc(_numArray, 1);
+		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
+	}
 
 	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
 								_numCostumes, "costume", 1);

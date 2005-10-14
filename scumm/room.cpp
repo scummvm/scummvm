@@ -127,6 +127,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	if (_currentRoom == 0) {
 		_ENCD_offs = _EXCD_offs = 0;
 		_numObjectsInRoom = 0;
+		restoreFlObjects();
 		return;
 	}
 
@@ -136,7 +137,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	initBGBuffers(_roomHeight);
 
 	loadRoomObjects();
-
+	restoreFlObjects();
 
 	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {
 		VAR(VAR_ROOM_WIDTH) = _roomWidth;

@@ -376,6 +376,7 @@ public:
 
 	VerbSlot *_verbs;
 	ObjectData *_objs;
+	ObjectData *_storedFlObjects;
 	ScummDebugger *_debugger;
 
 	// Core variables
@@ -512,6 +513,7 @@ protected:
 	int _numNewNames, _numGlobalScripts;
 	int _numRoomVariables;
 	int _numPalettes, _numSprites, _numTalkies, _numUnk;
+	int _numStoredFlObjects;
 	int _HEHeapSize;
 public:
 	int _numLocalScripts, _numImages, _numRooms, _numScripts, _numSounds;	// Used by HE games
@@ -732,6 +734,8 @@ protected:
 	virtual void loadRoomSubBlocks();
 	virtual void initRoomSubBlocks();
 	void clearRoomObjects();
+	void storeFlObject(int slot);
+	void restoreFlObjects();
 	virtual void loadRoomObjects();
 
 	virtual void readArrayFromIndexFile();

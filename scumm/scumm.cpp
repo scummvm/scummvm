@@ -946,6 +946,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_musicEngine = NULL;
 	_verbs = NULL;
 	_objs = NULL;
+	_storedFlObjects = NULL;
 	_debugFlags = 0;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
@@ -970,6 +971,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_numRoomVariables = 0;
 	_numLocalObjects = 0;
 	_numGlobalObjects = 0;
+	_numStoredFlObjects = 0;
 	_numArray = 0;
 	_numVerbs = 0;
 	_numFlObject = 0;

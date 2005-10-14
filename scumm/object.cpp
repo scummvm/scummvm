@@ -507,7 +507,8 @@ void ScummEngine::clearRoomObjects() {
 			_objs[i].obj_nr = 0;
 		}
 	} else {
-		// FIXME: Locking/FlObjects stuff?
+		storeFlObject(-1);
+
 		for (i = 0; i < _numLocalObjects; i++) {
 			if (_objs[i].obj_nr < 1)	// Optimise codepath
 				continue;
@@ -521,10 +522,39 @@ void ScummEngine::clearRoomObjects() {
 					res.nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
+				} else if (_heversion >= 70) {
+					storeFlObject(i);
+					_objs[i].obj_nr = 0;
+					_objs[i].fl_object_index = 0;
 				}
 			}
 		}
 	}
+}
+
+void ScummEngine::storeFlObject(int slot) {
+	if (slot == -1) {
+		_numStoredFlObjects = 0;
+	} else {
+		memcpy(&_storedFlObjects[_numStoredFlObjects], &_objs[slot], sizeof(_objs[slot]));
+		_numStoredFlObjects++;
+		if (_numStoredFlObjects > 100)
+			error("Too many flobjects saved on room transition.");
+	}
+}
+
+void ScummEngine::restoreFlObjects() {
+	if (!_numStoredFlObjects)
+		return;
+
+	int i, slot;
+
+	for (i = 0; i < _numStoredFlObjects; i++) {
+		slot = findLocalObjectSlot();
+		memcpy(&_objs[slot], &_storedFlObjects[i], sizeof(_objs[slot]));
+	}
+
+	_numStoredFlObjects = 0;
 }
 
 void ScummEngine::loadRoomObjects() {
@@ -1674,6 +1704,12 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	// Don't load an already loaded object
 	if (whereIsObject(object) != WIO_NOT_FOUND)
 		return;
+
+	int i;
+	for (i = 0; i < _numStoredFlObjects; i++) {
+		if (_storedFlObjects[i].obj_nr == object)
+			return;
+	}
 
 	// Locate the object in the room resource
 	findObjectInRoom(&foir, foImageHeader | foCodeHeader, object, room);
