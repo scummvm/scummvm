@@ -884,6 +884,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		File::addDefaultDirectory(_gameDataPath + "Rooms 3/");
 	}
 
+#ifndef DISABLE_SCUMM_7_8
 #ifdef MACOSX
 	if (_version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
@@ -913,6 +914,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		File::addDefaultDirectory(_gameDataPath + "DATA/");
 		File::addDefaultDirectory(_gameDataPath + "data/");
 	}
+#endif
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
@@ -2055,16 +2057,15 @@ void ScummEngine::setupMusic(int midi) {
 	else
 		_enable_gs = ConfMan.getBool("enable_gs");
 
-#ifndef __GP32__ //ph0x FIXME, "quick dirty hack"
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
-		printf("Sound mixer initialization failed\n");
+		warning("Sound mixer initialization failed\n");
 		if (_midiDriver == MD_ADLIB ||
 				_midiDriver == MD_PCSPK ||
 				_midiDriver == MD_PCJR)	{
 			_midiDriver = MD_NULL;
-			printf("MIDI driver depends on sound mixer, switching to null MIDI driver\n");
+			warning("MIDI driver depends on sound mixer, switching to null MIDI driver\n");
 		}
 	}
 
@@ -2118,8 +2119,6 @@ void ScummEngine::setupMusic(int midi) {
 	}
 
 	setupVolumes();
-
-#endif // ph0x-hack
 }
 
 void ScummEngine::setupVolumes() {
