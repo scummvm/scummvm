@@ -404,7 +404,7 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 
 const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
-	int lang = getFeatures() & GF_LANG_DE ? 1 : 0;
+	int lang = (getLanguage() == Common::DE_DEU) ? 1 : 0;
 
 	string = ITEinterfaceTextStrings[lang][textStringId];
 	if (!string)

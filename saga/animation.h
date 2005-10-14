@@ -161,7 +161,7 @@ private:
 	}
 
 	bool isLongData() const {
-		if ((_vm->getGameType() == GType_ITE) && ((_vm->getFeatures() & GF_MAC_RESOURCES) == 0)) {
+		if ((_vm->getGameType() == GType_ITE) && (_vm->getPlatform() != Common::kPlatformMacintosh)) {
 			return false;
 		}
 		return true;

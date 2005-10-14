@@ -310,11 +310,9 @@ enum GameSoundTypes {
 
 enum GameFeatures {
 	GF_BIG_ENDIAN_DATA   = 1 << 0,
-	GF_MAC_RESOURCES     = 1 << 1,
-	GF_LANG_DE           = 1 << 2,
-	GF_WYRMKEEP          = 1 << 3,
-	GF_CD_FX             = 1 << 4,
-	GF_SCENE_SUBSTITUTES = 1 << 5
+	GF_WYRMKEEP          = 1 << 1,
+	GF_CD_FX             = 1 << 2,
+	GF_SCENE_SUBSTITUTES = 1 << 3
 };
 
 enum FontId {
@@ -490,6 +488,8 @@ struct GameDescription {
 	int patchesCount;
 	GamePatchDescription *patchDescriptions;
 	uint32 features;
+	Common::Language language;
+	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { name, title, features };
@@ -674,7 +674,7 @@ public:
 public:
 	const GameDescription *getGameDescription() const { return _gameDescription; }
 	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }
-	const bool isMacResources() const { return (_gameDescription->features & GF_MAC_RESOURCES) != 0; }
+	const bool isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 	const GameResourceDescription *getResourceDescription() { return _gameDescription->resourceDescription; }
 	const GameSoundInfo *getVoiceInfo() const { return _gameDescription->voiceInfo; }
 	const GameSoundInfo *getSfxInfo() const { return _gameDescription->sfxInfo; }
@@ -689,6 +689,8 @@ public:
 	int getGameId() const { return _gameDescription->gameId; }
 	int getGameType() const { return _gameDescription->gameType; }
 	uint32 getFeatures() const { return _gameDescription->features; }
+	Common::Language getLanguage() const { return _gameDescription->language; }
+	Common::Platform getPlatform() const { return _gameDescription->platform; }
 	int getGameNumber() const { return _gameNumber; }
 	int getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 

@@ -99,7 +99,7 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 	textEntry.useRect = true;
 	textEntry.rect.left = 0;
 	textEntry.rect.right = _vm->getDisplayWidth();
-	textEntry.rect.top = (_vm->getFeatures() & GF_LANG_DE) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
+	textEntry.rect.top = (_vm->getLanguage() == Common::DE_DEU) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
 	textEntry.rect.bottom = _vm->getDisplayHeight();
 	textEntry.fontId = kMediumFont;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
@@ -168,15 +168,11 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 	// The assumption here is that all WyrmKeep versions have the same
 	// credits, regardless of which operating system they're for.
 
-	if (_vm->getFeatures() & GF_LANG_DE) {
-		lang = DE_DEU;
-	} else {
-		lang = EN_USA;
-	}
+	lang = _vm->getLanguage();
 
 	if (_vm->getFeatures() & GF_WYRMKEEP) {
 		game = kITEWyrmKeep;
-	} else if (_vm->getFeatures() & GF_MAC_RESOURCES) {
+	} else if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		game = kITEMac;
 	} else if (_vm->getGameId() == GID_ITE_CD_G) {
 		game = kITEPCCD;
@@ -317,13 +313,13 @@ int Scene::ITEIntroAnimProc(int param) {
 		int lastAnim;
 
 		if (_vm->getFeatures() & GF_WYRMKEEP) {
-			if (_vm->getFeatures() & GF_MAC_RESOURCES) {
+			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 				lastAnim = 3;
 			} else {
 				lastAnim = 2;
 			}
 		} else {
-			if (_vm->getFeatures() & GF_MAC_RESOURCES) {
+			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 				lastAnim = 4;
 			} else {
 				lastAnim = 5;
@@ -375,7 +371,7 @@ int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
 int Scene::ITEIntroCave1Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
 
 	static const IntroDialogue dialogue[][4] = {
 		{ { // English
@@ -463,7 +459,7 @@ int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
 int Scene::ITEIntroCave2Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
 
 	static const IntroDialogue dialogue[][3] = {
 		{ { // English
@@ -547,7 +543,7 @@ int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
 int Scene::ITEIntroCave3Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
 
 	static const IntroDialogue dialogue[][3] = {
 		{ { // English
@@ -631,7 +627,7 @@ int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
 int Scene::ITEIntroCave4Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
 
 	static const IntroDialogue dialogue[][4] = {
 		{ { // English

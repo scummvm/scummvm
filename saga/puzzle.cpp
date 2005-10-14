@@ -156,7 +156,7 @@ const char *optionsStr[][4] = {
 };
 
 Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
-	_lang = _vm->getFeatures() & GF_LANG_DE ? 1 : 0;
+	_lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
 
 	_hintRqState = kRQNoHint;
 	_hintOffer = 0;

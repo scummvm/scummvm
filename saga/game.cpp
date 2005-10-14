@@ -840,7 +840,6 @@ static GameMD5 gameMD5[] = {
 	{ GID_IHNM_CD_DE, "2b9aea838f74b4eecfb29a8f205a2bd4", "voices6.res", false },
 	{ GID_IHNM_CD_DE, "8b09a196a52627cacb4eab13bfe0b2c3", "voicess.res", false },
 
-	// Reported
 	{ GID_IHNM_CD_ES, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
 	{ GID_IHNM_CD_ES, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
 	{ GID_IHNM_CD_ES, "58b79e61594779513c7f2d35509fa89e", "patch.re_", false },
@@ -882,6 +881,8 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		0, // features
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - MAC Demo version
@@ -902,7 +903,9 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACDEMO_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 	},
 
 	// Inherit the earth - early MAC Demo version
@@ -923,7 +926,9 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 	},
 
 	// Inherit the earth - MAC CD Guild version
@@ -944,7 +949,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_CD_FX
+		GF_BIG_ENDIAN_DATA | GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 	},
 
 	// Inherit the earth - MAC CD Wyrmkeep version
@@ -965,7 +972,9 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
-		GF_BIG_ENDIAN_DATA | GF_MAC_RESOURCES | GF_WYRMKEEP | GF_CD_FX
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
 	},
 
 	// Inherit the earth - Linux Demo version
@@ -987,7 +996,9 @@ static GameDescription gameDescriptions[] = {
 		&ITELINDEMO_GameMusic,
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
-		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES
+		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - Win32 Demo version
@@ -1008,7 +1019,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		ARRAYSIZE(ITEWinPatch2_Files),
 		ITEWinPatch2_Files,
-		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES
+		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		Common::EN_USA,
+		Common::kPlatformWindows,
 	},
 
 	// Inherit the earth - early Win32 Demo version
@@ -1029,7 +1042,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		ARRAYSIZE(ITEWinPatch1_Files),
 		ITEWinPatch1_Files,
-		GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformWindows,
 	},
 
 	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD
@@ -1051,7 +1066,9 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACCD_GameMusic,
 		0,
 		NULL,
-		GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformUnknown,
 	},
 
 	// Inherit the earth - Wyrmkeep Linux CD version
@@ -1074,7 +1091,9 @@ static GameDescription gameDescriptions[] = {
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
-		GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX,
+		Common::DE_DEU,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - Wyrmkeep Windows CD version
@@ -1096,7 +1115,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		ARRAYSIZE(ITEWinPatch1_Files),
 		ITEWinPatch1_Files,
-		GF_WYRMKEEP | GF_CD_FX
+		GF_WYRMKEEP | GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformWindows,
 	},
 
 	// Inherit the earth - DOS CD version
@@ -1118,7 +1139,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_CD_FX
+		GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - DOS CD German version
@@ -1140,7 +1163,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_LANG_DE | GF_CD_FX
+		GF_CD_FX,
+		Common::DE_DEU,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - CD version
@@ -1148,7 +1173,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_CD,
-		"Inherit the Earth (DOS/Win32 CD Version)",
+		"Inherit the Earth (DOS CD Version)",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1161,7 +1186,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_CD_FX
+		GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - German Floppy version
@@ -1183,7 +1210,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_LANG_DE
+		0,
+		Common::DE_DEU,
+		Common::kPlatformPC,
 	},
 
 	// Inherit the earth - Disk version
@@ -1204,7 +1233,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		0
+		0,
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// I Have No Mouth And I Must Scream - Demo version
@@ -1225,7 +1256,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_DEFAULT_TO_1X_SCALER
+		GF_DEFAULT_TO_1X_SCALER,
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// I Have No Mouth And I Must Scream - CD version
@@ -1246,7 +1279,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_DEFAULT_TO_1X_SCALER
+		GF_DEFAULT_TO_1X_SCALER,
+		Common::EN_USA,
+		Common::kPlatformPC,
 	},
 
 	// I Have No Mouth And I Must Scream - De CD version
@@ -1267,7 +1302,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_DEFAULT_TO_1X_SCALER
+		GF_DEFAULT_TO_1X_SCALER,
+		Common::DE_DEU,
+		Common::kPlatformPC,
 	},
 	// I Have No Mouth And I Must Scream - Sp CD version
 	{
@@ -1287,7 +1324,9 @@ static GameDescription gameDescriptions[] = {
 		NULL,
 		0,
 		NULL,
-		GF_DEFAULT_TO_1X_SCALER
+		GF_DEFAULT_TO_1X_SCALER,
+		Common::ES_ESP,
+		Common::kPlatformPC,
 	}
 
 };
@@ -1328,7 +1367,8 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist) {
 		game_n = detectGame(fslist, true, game_n);
 		if (game_n == -1)
 			break;
-		detectedGames.push_back(gameDescriptions[game_n].toGameSettings());
+		detectedGames.push_back(DetectedGame(gameDescriptions[game_n].toGameSettings(),
+					 gameDescriptions[game_n].language, gameDescriptions[game_n].platform));
 	}
 
 	return detectedGames;

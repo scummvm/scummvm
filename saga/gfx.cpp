@@ -213,7 +213,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 	}
 
 	// Make 256th color black. See bug #1256368
-	if (_vm->getFeatures() & GF_MAC_RESOURCES && !_vm->_scene->isInIntro())
+	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
@@ -318,7 +318,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	}
 
 	// Make 256th color black. See bug #1256368
-	if (_vm->getFeatures() & GF_MAC_RESOURCES && !_vm->_scene->isInIntro())
+	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
@@ -383,7 +383,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	}
 
 	// Make 256th color black. See bug #1256368
-	if (_vm->getFeatures() & GF_MAC_RESOURCES && !_vm->_scene->isInIntro())
+	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && !_vm->_scene->isInIntro())
 		memset(&_currentPal[255 * 4], 0, 4);
 
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
