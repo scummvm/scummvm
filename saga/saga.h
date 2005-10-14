@@ -542,7 +542,7 @@ inline uint16 objectIndexToId(int type, int index) {
 }
 
 
-DetectedGameList GAME_ProbeGame(const FSList &fslist);
+DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
 
 class SagaEngine : public Engine {
 	friend class Scene;

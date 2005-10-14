@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/map.h"
+#include "common/config-manager.h"
 #include "base/plugins.h"
 #include "base/gameDetector.h"
 #include "backends/fs/fs.h"
@@ -864,7 +865,7 @@ static GameDescription gameDescriptions[] = {
 	// Inherit the earth - DOS Demo version
 	// sound unchecked
 	{
-		"ite-demo",
+		"ite",
 		GType_ITE,
 		GID_ITE_DEMO_G, // Game id
 		"Inherit the Earth (DOS Demo)", // Game title
@@ -887,7 +888,7 @@ static GameDescription gameDescriptions[] = {
 
 	// Inherit the earth - MAC Demo version
 	{
-		"ite-demo",
+		"ite",
 		GType_ITE,
 		GID_ITE_MACDEMO2,
 		"Inherit the Earth (MAC Demo)",
@@ -910,7 +911,7 @@ static GameDescription gameDescriptions[] = {
 
 	// Inherit the earth - early MAC Demo version
 	{
-		"ite-demo",
+		"ite",
 		GType_ITE,
 		GID_ITE_MACDEMO1,
 		"Inherit the Earth (early MAC Demo)",
@@ -980,7 +981,7 @@ static GameDescription gameDescriptions[] = {
 	// Inherit the earth - Linux Demo version
 	// Note: it should be before GID_ITE_WINDEMO2 version
 	{
-		"ite-demo",
+		"ite",
 		GType_ITE,
 		GID_ITE_LINDEMO,
 		"Inherit the Earth (Linux Demo)",
@@ -998,12 +999,12 @@ static GameDescription gameDescriptions[] = {
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
 		Common::EN_USA,
-		Common::kPlatformPC,
+		Common::kPlatformLinux,
 	},
 
 	// Inherit the earth - Win32 Demo version
 	{
-		"ite-demo",
+		"ite",
 		GType_ITE,
 		GID_ITE_WINDEMO2,
 		"Inherit the Earth (Win32 Demo)",
@@ -1026,7 +1027,7 @@ static GameDescription gameDescriptions[] = {
 
 	// Inherit the earth - early Win32 Demo version
 	{
-		"ite-demo",
+		"ite",
 		GType_ITE,
 		GID_ITE_WINDEMO1,
 		"Inherit the Earth (early Win32 Demo)",
@@ -1092,8 +1093,8 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX,
-		Common::DE_DEU,
-		Common::kPlatformPC,
+		Common::EN_USA,
+		Common::kPlatformLinux,
 	},
 
 	// Inherit the earth - Wyrmkeep Windows CD version
@@ -1240,7 +1241,7 @@ static GameDescription gameDescriptions[] = {
 
 	// I Have No Mouth And I Must Scream - Demo version
 	{
-		"ihnm-demo",
+		"ihnm",
 		GType_IHNM,
 		GID_IHNM_DEMO,
 		"I Have No Mouth and I Must Scream (DOS Demo)",
@@ -1331,14 +1332,57 @@ static GameDescription gameDescriptions[] = {
 
 };
 
-bool SagaEngine::initGame(void) {
+bool SagaEngine::initGame() {
 	uint16 gameCount = ARRAYSIZE(gameDescriptions);
 	int gameNumber;
 	FSList dummy;
+	DetectedGameList detectedGames;
+	int *matches;
+	Common::Language language = Common::UNK_LANG;
+	Common::Platform platform = Common::kPlatformUnknown;
 
-	if ((gameNumber = detectGame(dummy)) == -1) {
+	if (ConfMan.hasKey("language"))
+		language = Common::parseLanguage(ConfMan.get("language"));
+	if (ConfMan.hasKey("platform"))
+		platform = Common::parsePlatform(ConfMan.get("platform"));
+
+
+	detectedGames = GAME_ProbeGame(dummy, &matches);
+
+	if (detectedGames.size() == 0) {
 		warning("No valid games were found in the specified directory.");
 		return false;
+	}
+
+	// If we have more than one match then try to match by platform and
+	// language
+	int count = 0;
+	if (detectedGames.size() > 1) {
+		for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
+			if (matches[i] != -1) {
+				if ((gameDescriptions[matches[i]].language != language &&
+					 language != Common::UNK_LANG) ||
+					(gameDescriptions[matches[i]].platform != platform &&
+					 platform != Common::kPlatformUnknown))
+					matches[i] = -1;
+				else
+					count++;
+			}
+	} else
+		count = 1;
+
+	if (count != 1)
+		warning("Conflicting targets detected (%d)", count);
+
+	for (int i = 0; i < ARRAYSIZE(gameDescriptions); i++)
+		if (matches[i] != -1) {
+			gameNumber = matches[i];
+			break;
+		}
+
+	free(matches);
+
+	if ((gameNumber = detectGame(dummy)) == -1) {
 	}
 
 	if (gameNumber >= gameCount) {
@@ -1357,18 +1401,64 @@ bool SagaEngine::initGame(void) {
 	return true;
 }
 
-DetectedGameList GAME_ProbeGame(const FSList &fslist) {
+DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 	DetectedGameList detectedGames;
 	int game_n;
+	int index = 0, i, j;
+	int matches[ARRAYSIZE(gameDescriptions)];
+	bool mode = retmatches ? false : true;
 
 	game_n = -1;
+	for (i = 0; i < ARRAYSIZE(gameDescriptions); i++)
+		matches[i] = -1;
 
 	while (1) {
-		game_n = detectGame(fslist, true, game_n);
+		game_n = detectGame(fslist, mode, game_n);
 		if (game_n == -1)
 			break;
-		detectedGames.push_back(DetectedGame(gameDescriptions[game_n].toGameSettings(),
-					 gameDescriptions[game_n].language, gameDescriptions[game_n].platform));
+		matches[index++] = game_n;
+	}
+
+	// We have some resource sets which are superpositions of other
+	// Particularly it is ite-demo-linux vs ite-demo-win
+	// Now remove lesser set if bigger matches too
+
+	if (index > 1) {
+		// Search max number
+		int maxcount = 0;
+		for (i = 0; i < index; i++) {
+			int count = 0;
+			for (j = 0; j < ARRAYSIZE(gameMD5); j++)
+				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
+					count++;
+			maxcount = MAX(maxcount, count);
+		}
+
+		// Now purge targets with number of files lesser than max
+		for (i = 0; i < index; i++) {
+			int count = 0;
+			for (j = 0; j < ARRAYSIZE(gameMD5); j++)
+				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
+					count++;
+			if (count < maxcount) {
+				debug(0, "Purged: %s", gameDescriptions[matches[i]].title);
+				matches[i] = -1;
+			}
+		}
+
+	}
+
+	// and now push them into list of detected games
+	for (i = 0; i < index; i++)
+		if (matches[i] != -1)
+			detectedGames.push_back(DetectedGame(gameDescriptions[matches[i]].toGameSettings(),
+							 gameDescriptions[matches[i]].language,
+							 gameDescriptions[matches[i]].platform));
+		
+	if (retmatches) {
+		*retmatches = (int *)calloc(ARRAYSIZE(gameDescriptions), sizeof(int));
+		for (i = 0; i < ARRAYSIZE(gameDescriptions); i++)
+			(*retmatches)[i] = matches[i];
 	}
 
 	return detectedGames;
