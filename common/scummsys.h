@@ -135,8 +135,8 @@
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef unsigned short uint16;
-	typedef unsigned int uint;
 	typedef unsigned int uint32;
+	typedef unsigned int uint;
 	typedef signed char int8;
 	typedef signed short int16;
 	typedef signed int int32;
@@ -260,10 +260,11 @@
 	typedef unsigned short uint16;
 	typedef unsigned int uint32;
 	typedef unsigned int uint;
-	typedef unsigned long uint64;
 	typedef signed char int8;
 	typedef signed short int16;
 	typedef signed int int32;
+
+	typedef unsigned long uint64;
 	typedef signed long int64;
 
 	#define START_PACK_STRUCTS pack (push, 1)
@@ -299,10 +300,11 @@
 	typedef unsigned short uint16;
 	typedef unsigned int uint32;
 	typedef unsigned int uint;
-	typedef unsigned long uint64;
 	typedef signed char int8;
 	typedef signed short int16;
 	typedef signed int int32;
+
+	typedef unsigned long uint64;
 
 	#define START_PACK_STRUCTS pack (push, 1)
 	#define END_PACK_STRUCTS         pack(pop)
