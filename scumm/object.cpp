@@ -1695,17 +1695,17 @@ int ScummEngine::findFlObjectSlot() {
 
 void ScummEngine::loadFlObject(uint object, uint room) {
 	FindObjectInRoom foir;
-	int slot, objslot;
+	int i, slot, objslot;
 	ObjectData *od;
 	byte *flob;
 	uint32 obcd_size, obim_size, flob_size;
 	bool isRoomLocked, isRoomScriptsLocked;
 
 	// Don't load an already loaded object
-	if (whereIsObject(object) != WIO_NOT_FOUND)
+	if (getObjectIndex(object) != -1)
 		return;
 
-	int i;
+	// Don't load an already stored object
 	for (i = 0; i < _numStoredFlObjects; i++) {
 		if (_storedFlObjects[i].obj_nr == object)
 			return;
