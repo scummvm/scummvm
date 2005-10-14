@@ -174,6 +174,7 @@ const PlatformDescription g_platforms[] = {
 	// "FM TOWNS", "FmTowns", etc.
 	{"fmtowns", "towns", "FM-TOWNS", kPlatformFMTowns},
 
+	{"linux", "linux", "Linux", kPlatformLinux},
 	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
 	{"nes", "nes", "NES", kPlatformNES},
 	{"pc", "dos", "DOS", kPlatformPC},
