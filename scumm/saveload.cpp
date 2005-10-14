@@ -1415,7 +1415,7 @@ void Serializer::saveArrayOf(void *b, int len, int datasize, byte filetype) {
 	uint32 data;
 
 	// speed up byte arrays
-	if (datasize == 1 && filetype == sleByte) {
+	if (len > 0 && datasize == 1 && filetype == sleByte) {
 		saveBytes(b, len);
 		return;
 	}
