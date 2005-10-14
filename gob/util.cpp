@@ -179,8 +179,9 @@ void util_longDelay(uint16 msecs)
 {
 	uint32 time = g_system->getMillis() + msecs;
 	do {
+		vid_waitRetrace(videoMode);
 		util_processInput();
-		util_delay(10);
+		util_delay(25);
 	} while (g_system->getMillis() < time);
 }
 
