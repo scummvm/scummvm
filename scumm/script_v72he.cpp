@@ -405,7 +405,13 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 
 	size = arrayDataSizes[type];
 
+	if (_heversion >= 80)
+		id |= 0x33539000;
+
 	writeVar(array, id);
+
+	if (_heversion >= 80)
+		id &= ~0x33539000;
 
 	size *= dim2end - dim2start + 1;
 	size *= dim1end - dim1start + 1;

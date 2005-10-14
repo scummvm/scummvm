@@ -1152,6 +1152,9 @@ void ScummEngine_v60he::o60_soundOps() {
 }
 
 void ScummEngine_v60he::localizeArray(int slot, byte scriptSlot) {
+	if (_heversion >= 80)
+		slot &= ~0x33539000;
+
 	if (slot >= _numArray)
 		error("o60_localizeArrayToScript(%d): array slot out of range", slot);
 

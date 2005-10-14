@@ -460,6 +460,9 @@ void ScummEngine_v6::nukeArray(int a) {
 
 	data = readVar(a);
 
+	if (_heversion >= 80)
+		data &= ~0x33539000;
+
 	if (data)
 		res.nukeResource(rtString, data);
 	if (_heversion >= 60)

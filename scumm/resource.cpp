@@ -753,6 +753,10 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 	byte *ptr;
 
 	CHECK_HEAP
+
+	if (_heversion >= 80 && type == rtString)
+		idx &= ~0x33539000;
+
 	if (!res.validateResource("getResourceAddress", type, idx))
 		return NULL;
 
