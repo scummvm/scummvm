@@ -269,6 +269,13 @@ int SagaEngine::init(GameDetector &detector) {
 
 	_gfx->initPalette();
 
+	// FIXME: This is the ugly way of reducing redraw overhead. It works
+	//        well for 320x200 but it's unclear how well it will work for
+	//        640x480.
+
+	if (getGameType() == GType_ITE)
+		_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
 	return SUCCESS;
 }
 
