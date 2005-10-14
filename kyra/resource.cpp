@@ -188,7 +188,7 @@ PAKFile::PAKFile(const Common::String& file) {
 	_open = false;
 
 	if (!pakfile.open(file.c_str())) {
-		printf("pakfile couldn't open %s\n", file.c_str());
+		debug("couldn't open pakfile '%s'\n", file.c_str());
 		return;
 	}
 

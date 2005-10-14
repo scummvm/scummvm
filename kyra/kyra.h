@@ -36,14 +36,11 @@ namespace Kyra {
 enum {
 	GF_FLOPPY  = 1 << 0,
 	GF_TALKIE  = 1 << 1,
-	GF_KYRA1   = 1 << 2,
-	GF_KYRA2   = 1 << 3,
-	GF_KYRA3   = 1 << 4,
-	GF_AUDIOCD = 1 << 5,  // FM-Towns versions seems to use audio CD
-	GF_DEMO    = 1 << 6,
-	GF_ENGLISH = 1 << 7,
-	GF_FRENCH  = 1 << 8,
-	GF_GERMAN  = 1 << 9
+	GF_AUDIOCD = 1 << 2,  // FM-Towns versions seems to use audio CD
+	GF_DEMO    = 1 << 3,
+	GF_ENGLISH = 1 << 4,
+	GF_FRENCH  = 1 << 5,
+	GF_GERMAN  = 1 << 6
 
 };
 

@@ -601,9 +601,9 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 				++_seqDisplayedChar;
 				if (KyraEngine::_seq_textsTableEN[_seqDisplayedText][_seqDisplayedChar] == '\0') {
 					_seqDisplayedTextTimer = 0xFFFFFFFF;
+				} else {
+					_seqDisplayedTextTimer = _system->getMillis() + 1000 / 60;
 				}
-			} else {
-				_seqDisplayedTextTimer = _system->getMillis() + 1000 / 60;
 			}
 		}
 
