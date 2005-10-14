@@ -112,7 +112,7 @@ enum {
 struct ObsoleteTargets {
 	const char *from;
 	const char *to;
-	const char *platform;
+	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
 		GameSettings dummy = { from, "Obsolete Target", GF_MULTIPLE_VERSIONS };
@@ -120,36 +120,44 @@ struct ObsoleteTargets {
 	}
 };
 
+static const Common::Platform UNK = Common::kPlatformUnknown;
+
+/**
+ * Conversion table mapping old obsolete target names to the
+ * corresponding new target and platform combination.
+ *
+ * We use an ugly macro 'UNK' here to make the following table more readable.
+ */
 static ObsoleteTargets obsoleteTargetsTable[] = {
-	{"comidemo", "comi", NULL},
-	{"digdemo", "dig", NULL},
-	{"digdemoMac", "dig", "macintosh"},
-	{"dottdemo", "tentacle", NULL},
-	{"fate", "atlantis", NULL},
-	{"ftMac", "ft",  "macintosh"},
-	{"ftpcdemo", "ft", NULL},
-	{"ftdemo", "ft",  "macintosh"},
-	{"game", "monkey", NULL},
-	{"indy3ega", "indy3", NULL},
-	{"indy3towns", "indy3", "fmtowns"},
-	{"indy4", "atlantis", "fmtowns"},
-	{"indydemo", "atlantis", "fmtowns"},
-	{"loomcd", "loom", NULL},
-	{"loomTowns", "loom", "fmtowns"},
-	{"mi2demo", "monkey2", NULL},
-	{"monkey1", "monkey", NULL},
-	{"monkeyEGA", "monkey", NULL},
-	{"monkeyVGA", "monkey", NULL},
-	{"playfate", "atlantis", NULL},
-	{"samnmax-alt", "samnmax", NULL},
-	{"samnmaxMac", "samnmax", "macintosh"},
-	{"samdemo", "samnmax", NULL},
-	{"samdemoMac", "samnmax", "macintosh"},
-	{"snmdemo", "samnmax", NULL},
-	{"snmidemo", "samnmax", NULL},
-	{"tentacleMac", "tentacle", "macintosh"},
-	{"zakTowns", "zak", "fmtowns"},
-	{NULL, NULL, NULL}
+	{"comidemo", "comi", UNK},
+	{"digdemo", "dig", UNK},
+	{"digdemoMac", "dig", Common::kPlatformMacintosh},
+	{"dottdemo", "tentacle", UNK},
+	{"fate", "atlantis", UNK},
+	{"ftMac", "ft",  Common::kPlatformMacintosh},
+	{"ftpcdemo", "ft", UNK},
+	{"ftdemo", "ft",  Common::kPlatformMacintosh},
+	{"game", "monkey", UNK},
+	{"indy3ega", "indy3", UNK},
+	{"indy3towns", "indy3", Common::kPlatformFMTowns},
+	{"indy4", "atlantis", Common::kPlatformFMTowns},
+	{"indydemo", "atlantis", Common::kPlatformFMTowns},
+	{"loomcd", "loom", UNK},
+	{"loomTowns", "loom", Common::kPlatformFMTowns},
+	{"mi2demo", "monkey2", UNK},
+	{"monkey1", "monkey", UNK},
+	{"monkeyEGA", "monkey", UNK},
+	{"monkeyVGA", "monkey", UNK},
+	{"playfate", "atlantis", UNK},
+	{"samnmax-alt", "samnmax", UNK},
+	{"samnmaxMac", "samnmax", Common::kPlatformMacintosh},
+	{"samdemo", "samnmax", UNK},
+	{"samdemoMac", "samnmax", Common::kPlatformMacintosh},
+	{"snmdemo", "samnmax", UNK},
+	{"snmidemo", "samnmax", UNK},
+	{"tentacleMac", "tentacle", Common::kPlatformMacintosh},
+	{"zakTowns", "zak", Common::kPlatformFMTowns},
+	{NULL, NULL, UNK}
 };
 
 static const ScummGameSettings scumm_settings[] = {
@@ -3043,8 +3051,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 			ConfMan.set("gameid", o->to);
 
-			if (o->platform)
-				ConfMan.set("platform", o->platform);
+			if (o->platform != Common::kPlatformUnknown)
+				ConfMan.set("platform", Common::getPlatformCode(o->platform));
 
 			warning("Target upgraded from %s to %s", o->from, o->to);
 			ConfMan.flushToDisk();
