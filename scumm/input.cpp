@@ -137,34 +137,16 @@ void ScummEngine::parseEvents() {
 				_keyDownMap[event.kbd.ascii] = false;
 			break;
 
-		case OSystem::EVENT_MOUSEMOVE:
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
 
-			if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-				_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
-				_mouse.x /= 2;
-				_mouse.y = _mouse.y * 4 / 7;
-			}
-			break;
-
+		// We update the mouse position whenever the mouse moves or a click occurs.
+		// The latter is done to accomodate systems with a touchpad / pen controller.
 		case OSystem::EVENT_LBUTTONDOWN:
-			_leftBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(PALMOS_MODE) || defined (__SYMBIAN32__)
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-
-			if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-				_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
-				_mouse.x /= 2;
-				_mouse.y = _mouse.y * 4 / 7;
-			}
-#endif
-			break;
-
 		case OSystem::EVENT_RBUTTONDOWN:
-			_rightBtnPressed |= msClicked|msDown;
-#if defined(_WIN32_WCE) || defined(PALMOS_MODE) || defined (__SYMBIAN32__)
+		case OSystem::EVENT_MOUSEMOVE:
+			if (event.type == OSystem::EVENT_LBUTTONDOWN)
+				_leftBtnPressed |= msClicked|msDown;
+			else if (event.type == OSystem::EVENT_RBUTTONDOWN)
+				_rightBtnPressed |= msClicked|msDown;
 			_mouse.x = event.mouse.x;
 			_mouse.y = event.mouse.y;
 
@@ -173,9 +155,7 @@ void ScummEngine::parseEvents() {
 				_mouse.x /= 2;
 				_mouse.y = _mouse.y * 4 / 7;
 			}
-#endif
 			break;
-
 		case OSystem::EVENT_LBUTTONUP:
 			_leftBtnPressed &= ~msDown;
 			break;
