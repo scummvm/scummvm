@@ -135,7 +135,7 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       }
     }
 
-  if(lmb && inter) {
+  if(lmb && inter && !lastlmb) {
     newkey = 1000;
     lmb = 0;
   }
