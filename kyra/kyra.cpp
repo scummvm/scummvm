@@ -926,15 +926,9 @@ void KyraEngine::snd_playSoundEffect(int track) {
 
 void KyraEngine::snd_playVoiceFile(int id) {
 	debug(9, "KyraEngine::snd_playVoiceFile(%d)", id);
-	char vocFile[7];
-	memset(vocFile, 0, sizeof(char)*7);
-	if (id < 10) {
-		sprintf(vocFile, "00%d.VOC", id);
-	} else if (id < 100) {
-		sprintf(vocFile, "0%d.VOC", id);
-	} else {
-		sprintf(vocFile, "%d.VOC", id);
-	}
+	char vocFile[8];
+	assert(id >= 0 && id < 1000);
+	sprintf(vocFile, "%03d.VOC", id);
 	uint32 fileSize = 0;
 	byte *fileData = 0;
 	fileData = _res->fileData(vocFile, &fileSize);

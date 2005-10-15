@@ -159,8 +159,6 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 			buffer = new uint8[*size];
 			assert(buffer);
 			
-			// TODO: maybe remove this again, this is only
-			// because I had problems when using gcc 4.0.1
 			const uint8 *from = start->_file->getFile(file);
 			assert(from);
 
