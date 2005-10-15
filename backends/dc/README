@@ -12,6 +12,8 @@ you'll need the following:
 
 * libronin-0.4 : <URL:http://peter.bortas.org/scumm/libronin-0.4.tar.gz>
 
+* libmad : <URL:http://mc.pp.se/dc/files/libmad-0.15.1b.tar.gz>
+
 * GNU make
 
 
