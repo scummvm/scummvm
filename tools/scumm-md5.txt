@@ -44,7 +44,7 @@ Zak McKracken and the Alien Mindbenders
 	V2	Amiga	de	6027e9ca9c35746d95dee2068cec17e5	zak	Norbert Lange
 	V2	Amiga	fr	91469353f7be1b122fa88d23480a1320	zak	Tobias Fleischer
 	V2	Amiga	it	27b3a4224ad63d5b04627595c1c1a025	zak	Andrea Petrucci
-	V2	Atari	de	bf0873ae2345658365932834de3a4fe4	zak	Joachim Eberhard
+	V2	Atari	de	ff05c07990061d97647f059c48c1d05a	zak
 	V2	Atari	en	d55eff37c2100f5065cde9de428621fa	zak
 	V2	Atari	fr	613f64f78ea26c7353b2a5940eb61d6a	zak	Andreas Bylund
 	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zak
