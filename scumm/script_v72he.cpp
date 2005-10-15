@@ -1859,7 +1859,7 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
 }
 
 void ScummEngine_v72he::o72_writeFile() {
-	int16 resID = pop();
+	int resID = pop();
 	int slot = pop();
 	byte subOp = fetchScriptByte();
 
@@ -2126,12 +2126,12 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 		*data = ah->data + offset;
 		break;
 	case kIntArray:
-		*num = (len1 - idx1) * 2;
+		*num = (len1 - idx1) * 2 + 2;
 		*size = pitch * 2;
 		*data = ah->data + offset * 2;
 		break;
 	case kDwordArray:
-		*num = (len1 - idx1) * 4;
+		*num = (len1 - idx1) * 4 + 4;
 		*size = pitch * 4;
 		*data = ah->data + offset * 4;
 		break;

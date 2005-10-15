@@ -750,12 +750,16 @@ int ScummEngine::getResourceSize(int type, int idx) {
 }
 
 byte *ScummEngine::getResourceAddress(int type, int idx) {
+	printf("getResourceAddress: type %d idx %d\n", type, idx);
+
 	byte *ptr;
 
 	CHECK_HEAP
 
 	if (_heversion >= 80 && type == rtString)
 		idx &= ~0x33539000;
+
+	printf("getResourceAddress2: type %d idx %d\n", type, idx);
 
 	if (!res.validateResource("getResourceAddress", type, idx))
 		return NULL;
