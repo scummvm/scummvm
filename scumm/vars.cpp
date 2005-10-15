@@ -700,6 +700,11 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_V6_EMSSPACE) = 10000;
 	}
 
+	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {
+		VAR(VAR_ROOM_WIDTH) = _screenWidth;
+		VAR(VAR_ROOM_HEIGHT) = _screenHeight;
+	}
+
 	if (VAR_FADE_DELAY != 0xFF)
 		VAR(VAR_FADE_DELAY) = 3;
 
