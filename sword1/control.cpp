@@ -276,10 +276,10 @@ uint8 Control::runPanel(void) {
 			break;
 		case BUTTON_SAVE_PANEL:
 			if (fullRefresh) {
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				setupSaveRestorePanel(true);
 			}
 			if (_selectedSavegame < 255) {
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				bool visible = _cursorVisible;
 				if (_cursorTick == 0)
 					_cursorVisible = true;
@@ -291,6 +291,8 @@ uint8 Control::runPanel(void) {
 					showSavegameNames();
 				if (++_cursorTick > 5)
 					_cursorTick = 0;
+			} else {
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 		case BUTTON_RESTORE_PANEL:

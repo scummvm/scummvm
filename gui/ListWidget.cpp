@@ -19,6 +19,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/system.h"
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
@@ -85,6 +86,7 @@ void ListWidget::setList(const StringList &list) {
 		_currentPos = 0;
 	_selectedItem = -1;
 	_editMode = false;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	scrollBarRecalc();
 }
 
@@ -278,6 +280,7 @@ bool ListWidget::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 void ListWidget::lostFocusWidget() {
 	// If we loose focus, we simply forget the user changes
 	_editMode = false;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	drawCaret(true);
 	draw();
 }
@@ -381,6 +384,7 @@ void ListWidget::startEditMode() {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
 		draw();
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	}
 }
 
@@ -390,6 +394,7 @@ void ListWidget::endEditMode() {
 	// send a message that editing finished with a return/enter key press
 	_editMode = false;
 	_list[_selectedItem] = _editString;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	sendCommand(kListItemActivatedCmd, _selectedItem);
 }
 
@@ -399,6 +404,7 @@ void ListWidget::abortEditMode() {
 	_editMode = false;
 	//drawCaret(true);
 	//draw();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 } // End of namespace GUI

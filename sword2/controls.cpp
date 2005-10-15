@@ -1062,6 +1062,7 @@ public:
 
 	void setEditable(bool editable) {
 		_editable = editable;
+		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, editable);
 	}
 
 	bool isEditable() {
@@ -1386,13 +1387,8 @@ void SaveRestoreDialog::setResult(int result) {
 }
 
 int SaveRestoreDialog::runModal() {
-	if (_mode == kSaveDialog)
-		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	int result = Dialog::runModal();
-
-	if (_mode == kSaveDialog)
-		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	if (result) {
 		switch (_mode) {
