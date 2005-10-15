@@ -1975,6 +1975,8 @@ void ScummEngine_v2::scummInit() {
 		_switchRoomEffect2 = 1;
 		_switchRoomEffect = 5;
 	}
+
+	_inventoryOffset = 0;
 }
 
 void ScummEngine_v6::scummInit() {
