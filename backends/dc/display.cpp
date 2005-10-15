@@ -25,6 +25,7 @@
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <common/scaler/intern.h>
+#include <graphics/surface.h>
 #include "dc.h"
 
 #define SCREEN_W 640
@@ -580,3 +581,55 @@ int OSystem_Dreamcast::getGraphicsMode() const
 {
   return 0;
 }
+
+bool OSystem_Dreamcast::grabRawScreen(Graphics::Surface *surf)
+{
+  if(!screen || !surf)
+    return false;
+
+  surf->create(_screen_w, _screen_h, 1);
+  unsigned char *src = screen, *dst = (unsigned char *)surf->pixels;
+  for(int h = _screen_h; h>0; --h) {
+    memcpy(dst, src, _screen_w);
+    src += SCREEN_W;
+    dst += _screen_w;
+  }
+  return true;
+}
+
+void OSystem_Dreamcast::clearScreen()
+{
+  memset(screen, 0, SCREEN_W*SCREEN_H);
+  _screen_dirty = true;
+}
+
+int16 OSystem_Dreamcast::getOverlayHeight()
+{
+  return OVL_H;
+}
+
+int16 OSystem_Dreamcast::getOverlayWidth()
+{
+  return OVL_W;
+}
+
+int OSystem_Dreamcast::screenToOverlayX(int x)
+{
+  return x - _overlay_x;
+}
+
+int OSystem_Dreamcast::screenToOverlayY(int y)
+{
+  return y - _overlay_y;
+}
+
+int OSystem_Dreamcast::overlayToScreenX(int x)
+{
+  return x + _overlay_x;
+}
+
+int OSystem_Dreamcast::overlayToScreenY(int y)
+{
+  return y + _overlay_y;
+}
+

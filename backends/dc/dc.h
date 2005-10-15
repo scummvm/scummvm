@@ -76,6 +76,12 @@ class OSystem_Dreamcast : public OSystem {
   // The screen will not be updated to reflect the new bitmap
   void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 
+  // Copies the current screen contents to a new surface.
+  bool grabRawScreen(Graphics::Surface *surf);
+
+  // Clear the screen to black.
+  void clearScreen();
+
   // Update the dirty areas of the screen
   void updateScreen();
 
@@ -129,6 +135,12 @@ class OSystem_Dreamcast : public OSystem {
   void quit();
 
   // Overlay
+  int16 getOverlayHeight();
+  int16 getOverlayWidth();
+  int screenToOverlayX(int x);
+  int screenToOverlayY(int y);
+  int overlayToScreenX(int x);
+  int overlayToScreenY(int y);
   void showOverlay();
   void hideOverlay();
   void clearOverlay();
