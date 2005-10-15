@@ -747,7 +747,7 @@ void Sprite::setSpriteField84(int spriteId, int value) {
 void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 	debug(0, "setSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-	int delay;
+	int32 delay;
 
 	// XXX U32 related check
 
@@ -762,9 +762,9 @@ void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 		break;
 	case 0x7E:
 		delay = MAX(0, value);
-		delay = MIN((int32)value, _spriteTable[spriteId].animSpeed);
+		delay = MIN(delay, _spriteTable[spriteId].animSpeed);
 
-		_spriteTable[spriteId].animProgress = value;
+		_spriteTable[spriteId].animProgress = delay;
 		break;
 	default:
 		error("setSpriteGeneralProperty: Invalid value %d", type);
@@ -1134,17 +1134,11 @@ void Sprite::setRedrawFlags(bool checkZOrder) {
 		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
 			if ((!checkZOrder || spi->priority >= 0) && (spi->flags & kSFMarkDirty)) {
 				int lp = spi->bbox.left / 8;
-				if (lp < 0) {
-					lp = 0;
-				} else if (lp > 79) {
-					lp = 79;
-				}
+				lp = MAX(0, lp);
+				lp = MIN(lp, 79);
 				int rp = (spi->bbox.right + 7) / 8;
-				if (rp < 0) {
-					rp = 0;
-				} else if (rp > 79) {
-					rp = 79;
-				}
+				rp = MAX(0, rp);
+				rp = MIN(rp, 79);
 				for (; lp <= rp; ++lp) {
 					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
 						spi->flags |= kSFNeedRedraw;
