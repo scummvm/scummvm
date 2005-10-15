@@ -214,6 +214,9 @@ void ScummEngine_v6::setupScummVars() {
 void ScummEngine_v70he::setupScummVars() {
 	ScummEngine_v6::setupScummVars();
 
+	VAR_CURRENTDRIVE = 0xFF;
+	VAR_MUSIC_TIMER = 0xFF;
+
 	VAR_NUM_SOUND_CHANNELS = 9;
 	VAR_SOUND_CHANNEL = 10;
 	VAR_MUSIC_CHANNEL = 14;
