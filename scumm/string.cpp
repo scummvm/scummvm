@@ -404,7 +404,9 @@ loc_avoid_ks_fe:
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
-				if ((_imuseDigital && _sound->isSoundRunning(kTalkSoundID)) && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)) {
+				if (_features & GF_HE_NOSUBTITLES) {
+					// HE games which use sprites for subtitles
+				} else if ((_imuseDigital && _sound->isSoundRunning(kTalkSoundID)) && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)) {
 					// Special case for games using imuse digital.for sound
 				} else if (_heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
 					// Special case for HE games
@@ -413,8 +415,9 @@ loc_avoid_ks_fe:
 				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it.
-				} else
+				} else {
 					_charset->printChar(c);
+				}
 			}
 			if (cmi_pos_hack) {
 				cmi_pos_hack = false;

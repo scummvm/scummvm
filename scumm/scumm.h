@@ -124,16 +124,19 @@ enum GameFeatures {
 	 *  HE Games with more global scripts and different sprite handling
 	 *  i.e. read it as HE version 9.85. Used for HE98 only.
 	 */
-	GF_HE_985			   = 1 << 14,
+	GF_HE_985		= 1 << 14,
 
 	/** HE games with 16 bit color */
 	GF_16BIT_COLOR         = 1 << 15,
 
+	/** HE games which use sprites for subtitles */
+	GF_HE_NOSUBTITLES      = 1 << 16,
+
 	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 16,
+	GF_MULTIPLE_VERSIONS   = 1 << 17,
 
 	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 17
+	GF_DEMO                = 1 << 18
 };
 
 /* SCUMM Debug Channels */
