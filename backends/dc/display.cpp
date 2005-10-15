@@ -144,6 +144,24 @@ void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
   _screen_dirty = true;
 }
 
+void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint num)
+{
+  unsigned short *dst = cursor_palette + start;
+  if(num>0)
+    while( num-- ) {
+      *dst++ = ((colors[0]<<7)&0x7c00)|
+	((colors[1]<<2)&0x03e0)|
+	((colors[2]>>3)&0x001f);
+      colors += 4;
+    }
+  _enable_cursor_palette = true;
+}
+
+void OSystem_Dreamcast::disableCursorPalette(bool disable)
+{
+  _enable_cursor_palette = !disable;  
+}
+
 void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)
 {
   const unsigned short *src = palette + start;
@@ -436,6 +454,8 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
 
+  unsigned short *pal = _enable_cursor_palette? cursor_palette : palette;
+
   _mouse_buffer++;
   _mouse_buffer &= NUM_BUFFERS-1;
 
@@ -450,7 +470,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 	  *dst++ = 0;
 	  buf++;
 	} else
-	  *dst++ = palette[*buf++]|0x8000;
+	  *dst++ = pal[*buf++]|0x8000;
       dst += MOUSE_W-x;
     }
   else {

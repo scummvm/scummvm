@@ -94,6 +94,12 @@ class OSystem_Dreamcast : public OSystem {
   // Set the bitmap that's used when drawing the cursor.
   void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale);
 
+  // Replace the specified range of cursor the palette with new colors.
+  void setCursorPalette(const byte *colors, uint start, uint num);
+
+  // Disable or enable cursor palette.
+  void disableCursorPalette(bool disable);
+
   // Shaking is used in SCUMM. Set current shake position.
   void setShakePos(int shake_pos);
 
@@ -198,7 +204,7 @@ class OSystem_Dreamcast : public OSystem {
   void *_sound_proc_param;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
-  bool _aspect_stretch, _softkbd_on;
+  bool _aspect_stretch, _softkbd_on, _enable_cursor_palette;
   float _overlay_fade, _xscale, _yscale, _top_offset;
   int _softkbd_motion;
 
@@ -212,7 +218,7 @@ class OSystem_Dreamcast : public OSystem {
   void *screen_tx[NUM_BUFFERS];
   void *mouse_tx[NUM_BUFFERS];
   void *ovl_tx[NUM_BUFFERS];
-  unsigned short palette[256];
+  unsigned short palette[256], cursor_palette[256];
 
   int temp_sound_buffer[RING_BUFFER_SAMPLES>>SOUND_BUFFER_SHIFT];
 
