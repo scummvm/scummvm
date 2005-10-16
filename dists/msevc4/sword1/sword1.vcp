@@ -109,7 +109,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "DISABLE_KYRA" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_SAGA" /D "DISABLE_KYRA" /D "DISABLE_AWE" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -159,15 +159,15 @@ BSC32=bscmake.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
 # ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
 
@@ -185,15 +185,15 @@ CPP=clarm.exe
 # PROP CPU_ID "{D6518FFC-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /Oxs /M$(CECrtMT) /c
 # ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /D "USE_FLAC" /YX /Oxs /M$(CECrtMT) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
@@ -211,15 +211,15 @@ CPP=clarm.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /YX /M$(CECrtMTDebug) /c
 # ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /YX /M$(CECrtMTDebug) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
 
@@ -237,15 +237,15 @@ CPP=clmips.exe
 # PROP CPU_ID "{D6519010-710F-11D3-99F2-00105A0DF099}"
 # PROP Platform_ID "{8A9A2F80-6887-11D3-842E-005004848CBA}"
 # PROP Target_Dir ""
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
 CPP=clmips.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /YX /Oxs /M$(CECrtMT) /c
 # ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "MIPS" /D "_MIPS_" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "NDEBUG" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_AWE" /D "DISABLE_KYRA" /D "DISABLE_SAGA" /D "USE_ZLIB" /YX /Oxs /M$(CECrtMT) /c
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
@@ -327,6 +327,7 @@ NODEP_CPP_ANIMA=\
 	"..\..\..\sword1\common\file.h"\
 	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\str.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\sound\vorbis.h"\
 	"..\..\..\sword1\sword1\animation.h"\
 	"..\..\..\sword1\sword1\credits.h"\
@@ -340,6 +341,7 @@ NODEP_CPP_ANIMA=\
 	"..\..\..\sword1\common\file.h"\
 	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\str.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\sound\vorbis.h"\
 	"..\..\..\sword1\sword1\animation.h"\
 	"..\..\..\sword1\sword1\credits.h"\
@@ -349,16 +351,18 @@ NODEP_CPP_ANIMA=\
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_ANIMA=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
@@ -366,7 +370,47 @@ DEP_CPP_ANIMA=\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\graphics\animation.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\credits.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	
+NODEP_CPP_ANIMA=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_ANIMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\graphics\animation.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
@@ -382,210 +426,100 @@ DEP_CPP_ANIMA=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ANIMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_ANIMA=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\animation.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\vorbis.h"\
 	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\credits.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\screen.h"\
 	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_ANIMA=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	".\peg2dec\mpeg2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\vorbis.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	".\peg2dec\mpeg2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\vorbis.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\vorbis.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_ANIMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\vorbis.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_ANIMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_ANIMA=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\savefile.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\graphics\animation.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\vorbis.h"\
 	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\credits.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\screen.h"\
 	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_ANIMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -605,83 +539,123 @@ SOURCE=..\..\..\sword1\control.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_CONTR=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\savefile.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\sword1\control.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_CONTR=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\savefile.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\sword1\control.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_CONTR=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
 	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\control.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\mouse.h"\
+	"..\..\..\sword1\music.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_CONTR=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_CONTR=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
@@ -700,31 +674,47 @@ DEP_CPP_CONTR=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_CONTR=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
 	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
 	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
@@ -742,168 +732,43 @@ DEP_CPP_CONTR=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_CONTR=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_CONTR=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_CONTR=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\rate.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_CONTR=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_CONTR=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_CONTR=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_CONTR=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_CONTR=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\savefile.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\control.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\mouse.h"\
@@ -917,17 +782,10 @@ DEP_CPP_CONTR=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_CONTR=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -943,89 +801,86 @@ SOURCE=..\..\..\sword1\credits.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_CREDI=\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	
 NODEP_CPP_CREDI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
 	"..\..\..\sword1\sound\audiostream.h"\
 	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
 	"..\..\..\sword1\sword1\credits.h"\
-	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_CREDI=\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	
 NODEP_CPP_CREDI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
 	"..\..\..\sword1\sound\audiostream.h"\
 	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
 	"..\..\..\sword1\sword1\credits.h"\
-	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_CREDI=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\credits.h"\
 	"..\..\..\sword1\screen.h"\
 	"..\..\..\sword1\sword1.h"\
 	"..\..\..\sword1\sworddefs.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
 
 DEP_CPP_CREDI=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\credits.h"\
@@ -1035,8 +890,10 @@ DEP_CPP_CREDI=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
@@ -1050,21 +907,23 @@ NODEP_CPP_CREDI=\
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_CREDI=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\credits.h"\
@@ -1073,28 +932,32 @@ DEP_CPP_CREDI=\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_CREDI=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\credits.h"\
@@ -1103,8 +966,10 @@ DEP_CPP_CREDI=\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_CREDI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -1120,130 +985,103 @@ SOURCE=..\..\..\sword1\debug.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_DEBUG=\
-	"..\..\..\sword1\debug.h"\
-	
 NODEP_CPP_DEBUG=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\debug.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_DEBUG=\
-	"..\..\..\sword1\debug.h"\
-	
 NODEP_CPP_DEBUG=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\debug.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_DEBUG=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\debug.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
 
 DEP_CPP_DEBUG=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\debug.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
 
-DEP_CPP_DEBUG=\
-	"..\..\..\sword1\debug.h"\
-	
-NODEP_CPP_DEBUG=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_DEBUG=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\debug.h"\
-	
-NODEP_CPP_DEBUG=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_DEBUG=\
-	"..\..\..\sword1\debug.h"\
-	
-NODEP_CPP_DEBUG=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_DEBUG=\
-	"..\..\..\sword1\debug.h"\
-	
-NODEP_CPP_DEBUG=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_DEBUG=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\debug.h"\
 	
 NODEP_CPP_DEBUG=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_DEBUG=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\debug.h"\
 	
 NODEP_CPP_DEBUG=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -1259,150 +1097,113 @@ SOURCE=..\..\..\sword1\eventman.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_EVENT=\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
 NODEP_CPP_EVENT=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\eventman.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_EVENT=\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
 NODEP_CPP_EVENT=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\eventman.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_EVENT=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sword1\eventman.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	
+NODEP_CPP_EVENT=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_EVENT=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\eventman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_EVENT=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_EVENT=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\common\compile.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
 
-DEP_CPP_EVENT=\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_EVENT=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_EVENT=\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_EVENT=\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_EVENT=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_EVENT=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\eventman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_EVENT=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_EVENT=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\eventman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_EVENT=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -1418,96 +1219,128 @@ SOURCE=..\..\..\sword1\logic.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_LOGIC=\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
 NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\sword1\animation.h"\
+	"..\..\..\sword1\sword1\credits.h"\
+	"..\..\..\sword1\sword1\debug.h"\
+	"..\..\..\sword1\sword1\eventman.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\router.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
+	"..\..\..\sword1\sword1\text.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_LOGIC=\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
 NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\sword1\animation.h"\
+	"..\..\..\sword1\sword1\credits.h"\
+	"..\..\..\sword1\sword1\debug.h"\
+	"..\..\..\sword1\sword1\eventman.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\router.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
+	"..\..\..\sword1\sword1\text.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_LOGIC=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\animation.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
 	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\credits.h"\
+	"..\..\..\sword1\debug.h"\
+	"..\..\..\sword1\eventman.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\menu.h"\
+	"..\..\..\sword1\mouse.h"\
+	"..\..\..\sword1\music.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\router.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	"..\..\..\sword1\text.h"\
+	
+NODEP_CPP_LOGIC=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_LOGIC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\animation.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
@@ -1534,33 +1367,50 @@ DEP_CPP_LOGIC=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_LOGIC=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\animation.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
 	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\credits.h"\
 	"..\..\..\sword1\debug.h"\
 	"..\..\..\sword1\eventman.h"\
 	"..\..\..\sword1\logic.h"\
@@ -1580,214 +1430,42 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_LOGIC=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	".\peg2dec\mpeg2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_LOGIC=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_LOGIC=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\rate.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_LOGIC=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	".\peg2dec\mpeg2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_LOGIC=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_LOGIC=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_LOGIC=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\debug.h"\
-	"..\..\..\sword1\eventman.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_LOGIC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\animation.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
 	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\credits.h"\
 	"..\..\..\sword1\debug.h"\
 	"..\..\..\sword1\eventman.h"\
 	"..\..\..\sword1\logic.h"\
@@ -1807,19 +1485,10 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_LOGIC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -1835,130 +1504,103 @@ SOURCE=..\..\..\sword1\memman.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_MEMMA=\
-	"..\..\..\sword1\memman.h"\
-	
 NODEP_CPP_MEMMA=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\memman.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_MEMMA=\
-	"..\..\..\sword1\memman.h"\
-	
 NODEP_CPP_MEMMA=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\memman.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_MEMMA=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\memman.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MEMMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
 
 DEP_CPP_MEMMA=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\memman.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MEMMA=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
 
-DEP_CPP_MEMMA=\
-	"..\..\..\sword1\memman.h"\
-	
-NODEP_CPP_MEMMA=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_MEMMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\memman.h"\
-	
-NODEP_CPP_MEMMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_MEMMA=\
-	"..\..\..\sword1\memman.h"\
-	
-NODEP_CPP_MEMMA=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_MEMMA=\
-	"..\..\..\sword1\memman.h"\
-	
-NODEP_CPP_MEMMA=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_MEMMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	
 NODEP_CPP_MEMMA=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_MEMMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	
 NODEP_CPP_MEMMA=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -1974,62 +1616,86 @@ SOURCE=..\..\..\sword1\menu.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_MENU_=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
 NODEP_CPP_MENU_=\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_MENU_=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
 NODEP_CPP_MENU_=\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_MENU_=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\menu.h"\
+	"..\..\..\sword1\mouse.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	
+NODEP_CPP_MENU_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_MENU_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
@@ -2043,26 +1709,38 @@ DEP_CPP_MENU_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MENU_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_MENU_=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
@@ -2075,134 +1753,31 @@ DEP_CPP_MENU_=\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_MENU_=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_MENU_=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_MENU_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_MENU_=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_MENU_=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_MENU_=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_MENU_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_MENU_=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_MENU_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_MENU_=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_MENU_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_MENU_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\menu.h"\
@@ -2214,12 +1789,10 @@ DEP_CPP_MENU_=\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_MENU_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -2235,64 +1808,89 @@ SOURCE=..\..\..\sword1\mouse.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_MOUSE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_MOUSE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_MOUSE=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\menu.h"\
+	"..\..\..\sword1\mouse.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_MOUSE=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_MOUSE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
@@ -2307,26 +1905,38 @@ DEP_CPP_MOUSE=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_MOUSE=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
@@ -2340,139 +1950,31 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_MOUSE=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_MOUSE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_MOUSE=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_MOUSE=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_MOUSE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_MOUSE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_MOUSE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_MOUSE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\menu.h"\
@@ -2485,12 +1987,10 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_MOUSE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -2506,200 +2006,175 @@ SOURCE=..\..\..\sword1\music.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_MUSIC=\
-	"..\..\..\sword1\music.h"\
-	
 NODEP_CPP_MUSIC=\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
 	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sound\mp3.h"\
+	"..\..\..\sword1\sound\vorbis.h"\
+	"..\..\..\sword1\sound\wave.h"\
+	"..\..\..\sword1\sword1\music.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_MUSIC=\
-	"..\..\..\sword1\music.h"\
-	
 NODEP_CPP_MUSIC=\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
 	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sound\mp3.h"\
+	"..\..\..\sword1\sound\vorbis.h"\
+	"..\..\..\sword1\sound\wave.h"\
+	"..\..\..\sword1\sword1\music.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_MUSIC=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\rate.h"\
 	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\music.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
 
 DEP_CPP_MUSIC=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\rate.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\music.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
 
-DEP_CPP_MUSIC=\
-	"..\..\..\sword1\music.h"\
-	
-NODEP_CPP_MUSIC=\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_MUSIC=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\rate.h"\
-	"..\..\..\sword1\music.h"\
-	
-NODEP_CPP_MUSIC=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_MUSIC=\
-	"..\..\..\sword1\music.h"\
-	
-NODEP_CPP_MUSIC=\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_MUSIC=\
-	"..\..\..\sword1\music.h"\
-	
-NODEP_CPP_MUSIC=\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_MUSIC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\music.h"\
 	
 NODEP_CPP_MUSIC=\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_MUSIC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\music.h"\
 	
 NODEP_CPP_MUSIC=\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -2719,62 +2194,75 @@ SOURCE=..\..\..\sword1\objectman.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_OBJEC=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_OBJEC=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_OBJEC=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_OBJEC=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_OBJEC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -2785,28 +2273,36 @@ DEP_CPP_OBJEC=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_OBJEC=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_OBJEC=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -2816,125 +2312,28 @@ DEP_CPP_OBJEC=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_OBJEC=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_OBJEC=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_OBJEC=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_OBJEC=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_OBJEC=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_OBJEC=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_OBJEC=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_OBJEC=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -2944,12 +2343,10 @@ DEP_CPP_OBJEC=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_OBJEC=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -2965,64 +2362,106 @@ SOURCE=..\..\..\sword1\resman.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_RESMA=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_RESMA=\
 	"..\..\..\sword1\base\engine.h"\
+	"..\..\..\sword1\common\config-manager.h"\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\str.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\gui\newgui.h"\
+	"..\..\..\sword1\sword1\memman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_RESMA=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_RESMA=\
 	"..\..\..\sword1\base\engine.h"\
+	"..\..\..\sword1\common\config-manager.h"\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\str.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\gui\newgui.h"\
+	"..\..\..\sword1\sword1\memman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_RESMA=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\map.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stack.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
 	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_RESMA=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_RESMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\resman.h"\
 	"..\..\..\sword1\sworddefs.h"\
@@ -3030,143 +2469,98 @@ DEP_CPP_RESMA=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RESMA=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_RESMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_RESMA=\
-	"..\..\..\common\compile.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
 
-DEP_CPP_RESMA=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_RESMA=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_RESMA=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_RESMA=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_RESMA=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_RESMA=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_RESMA=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_RESMA=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_RESMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\resman.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_RESMA=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_RESMA=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\resman.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_RESMA=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -3182,53 +2576,73 @@ SOURCE=..\..\..\sword1\router.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_ROUTE=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_ROUTE=\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\router.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_ROUTE=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_ROUTE=\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\router.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_ROUTE=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\router.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_ROUTE=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_ROUTE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -3239,23 +2653,34 @@ DEP_CPP_ROUTE=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ROUTE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_ROUTE=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -3265,112 +2690,26 @@ DEP_CPP_ROUTE=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_ROUTE=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_ROUTE=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_ROUTE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_ROUTE=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_ROUTE=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_ROUTE=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_ROUTE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_ROUTE=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_ROUTE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_ROUTE=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\router.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_ROUTE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_ROUTE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -3380,10 +2719,10 @@ DEP_CPP_ROUTE=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_ROUTE=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -3399,178 +2738,65 @@ SOURCE=..\..\..\sword1\screen.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_SCREE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	
 NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
+	"..\..\..\sword1\arm\macros.h"\
+	"..\..\..\sword1\arm\native.h"\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\sword1\sword1\animation.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\text.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_SCREE=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	
 NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
+	"..\..\..\sword1\arm\macros.h"\
+	"..\..\..\sword1\arm\native.h"\
+	"..\..\..\sword1\common\scummsys.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\sword1\sword1\animation.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\text.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_SCREE=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
-	
-NODEP_CPP_SCREE=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	"..\..\..\sword1\arm\macros.h"\
-	"..\..\..\sword1\arm\native.h"\
-	"..\..\..\sword1\init_arm.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
-
-DEP_CPP_SCREE=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\array.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\animation.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_SCREE=\
-	"..\..\..\common\compile.h"\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	".\peg2dec\mpeg2.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SCREE=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	"..\..\..\sword1\system.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_SCREE=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\animation.h"\
@@ -3587,72 +2813,92 @@ DEP_CPP_SCREE=\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_SCREE=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	".\peg2dec\mpeg2.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\arm\macros.h"\
+	"..\..\..\sword1\arm\native.h"\
 	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_SCREE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\animation.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sword1\animation.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\menu.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\text.h"\
+	{$(INCLUDE)}"mpeg2dec\mpeg2.h"\
+	{$(INCLUDE)}"SDL_byteorder.h"\
+	
+NODEP_CPP_SCREE=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\arm\macros.h"\
+	"..\..\..\sword1\arm\native.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
 
-DEP_CPP_SCREE=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	"..\..\..\sword1\system.h"\
-	
-
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_SCREE=\
-	"..\..\..\sword1\animation.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	"..\..\..\sword1\system.h"\
-	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_SCREE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\animation.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\animation.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
@@ -3661,27 +2907,43 @@ DEP_CPP_SCREE=\
 	"..\..\..\sword1\objectman.h"\
 	"..\..\..\sword1\resman.h"\
 	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
 	"..\..\..\sword1\sword1.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\arm\macros.h"\
+	"..\..\..\sword1\arm\native.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_SCREE=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\animation.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
 	"..\..\..\sword1\animation.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
@@ -3690,22 +2952,18 @@ DEP_CPP_SCREE=\
 	"..\..\..\sword1\objectman.h"\
 	"..\..\..\sword1\resman.h"\
 	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
 	"..\..\..\sword1\sword1.h"\
 	"..\..\..\sword1\sworddefs.h"\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_SCREE=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	"..\..\..\sword1\sword1\screen.h"\
-	"..\..\..\sword1\sword1\sound.h"\
-	"..\..\..\sword1\system.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\arm\macros.h"\
+	"..\..\..\sword1\arm\native.h"\
 	
 
 !ENDIF 
@@ -3721,71 +2979,90 @@ SOURCE=..\..\..\sword1\sound.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_SOUND=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
 NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sound\mp3.h"\
+	"..\..\..\sword1\sound\vorbis.h"\
+	"..\..\..\sword1\sound\wave.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_SOUND=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
 NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sound\mp3.h"\
+	"..\..\..\sword1\sound\vorbis.h"\
+	"..\..\..\sword1\sound\wave.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_SOUND=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\mp3.h"\
 	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	
+NODEP_CPP_SOUND=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_SOUND=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
@@ -3797,29 +3074,41 @@ DEP_CPP_SOUND=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_SOUND=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
@@ -3830,139 +3119,33 @@ DEP_CPP_SOUND=\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_SOUND=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SOUND=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_SOUND=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_SOUND=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_SOUND=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_SOUND=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	
-NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_SOUND=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\mp3.h"\
+	"..\..\..\sound\vorbis.h"\
+	"..\..\..\sound\wave.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
@@ -3973,14 +3156,10 @@ DEP_CPP_SOUND=\
 	"..\..\..\sword1\sworddefs.h"\
 	
 NODEP_CPP_SOUND=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -3996,80 +3175,96 @@ SOURCE=..\..\..\sword1\staticres.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_STATI=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\scumm_globals.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_STATI=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\common\stdafx.h"\
+	"..\..\..\sword1\scumm_globals.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_STATI=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\menu.h"\
+	"..\..\..\sword1\music.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_STATI=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\scumm_globals.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_STATI=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
@@ -4088,32 +3283,42 @@ DEP_CPP_STATI=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_STATI=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	"..\..\..\sword1\scumm_globals.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_STATI=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
 	"..\..\..\base\gameDetector.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
-	"..\..\..\common\system.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\menu.h"\
 	"..\..\..\sword1\music.h"\
@@ -4127,168 +3332,34 @@ DEP_CPP_STATI=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_STATI=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_STATI=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_STATI=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\rate.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_STATI=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_STATI=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_STATI=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_STATI=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\scumm_globals.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_STATI=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\menu.h"\
 	"..\..\..\sword1\music.h"\
@@ -4302,17 +3373,11 @@ DEP_CPP_STATI=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_STATI=\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	"..\..\..\sword1\scumm_globals.h"\
 	
 
 !ENDIF 
@@ -4324,78 +3389,59 @@ SOURCE=..\..\..\sword1\sword1.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_SWORD=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_SWORD=\
 	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
 	"..\..\..\sword1\base\plugins.h"\
 	"..\..\..\sword1\common\config-manager.h"\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\gui\newgui.h"\
+	"..\..\..\sword1\sword1\control.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_SWORD=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
 NODEP_CPP_SWORD=\
 	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
 	"..\..\..\sword1\base\plugins.h"\
 	"..\..\..\sword1\common\config-manager.h"\
 	"..\..\..\sword1\common\file.h"\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\system.h"\
 	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\gui\message.h"\
+	"..\..\..\sword1\gui\newgui.h"\
+	"..\..\..\sword1\sword1\control.h"\
+	"..\..\..\sword1\sword1\logic.h"\
+	"..\..\..\sword1\sword1\menu.h"\
+	"..\..\..\sword1\sword1\mouse.h"\
+	"..\..\..\sword1\sword1\music.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\screen.h"\
+	"..\..\..\sword1\sword1\sound.h"\
+	"..\..\..\sword1\sword1\sword1.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_SWORD=\
 	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
@@ -4403,10 +3449,11 @@ DEP_CPP_SWORD=\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
 	"..\..\..\common\stack.h"\
@@ -4416,13 +3463,74 @@ DEP_CPP_SWORD=\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
 	"..\..\..\graphics\surface.h"\
 	"..\..\..\gui\dialog.h"\
 	"..\..\..\gui\message.h"\
 	"..\..\..\gui\newgui.h"\
 	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\control.h"\
+	"..\..\..\sword1\logic.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\menu.h"\
+	"..\..\..\sword1\mouse.h"\
+	"..\..\..\sword1\music.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\screen.h"\
+	"..\..\..\sword1\sound.h"\
+	"..\..\..\sword1\sword1.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	
+NODEP_CPP_SWORD=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_SWORD=\
+	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
@@ -4443,15 +3551,26 @@ DEP_CPP_SWORD=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SWORD=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_SWORD=\
 	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\base\engine.h"\
@@ -4459,22 +3578,32 @@ DEP_CPP_SWORD=\
 	"..\..\..\base\plugins.h"\
 	"..\..\..\common\array.h"\
 	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
 	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\system.h"\
 	"..\..\..\common\timer.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\mixer.h"\
 	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\control.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\menu.h"\
@@ -4490,202 +3619,51 @@ DEP_CPP_SWORD=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_SWORD=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_SWORD=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_SWORD=\
-	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\base\plugins.h"\
-	"..\..\..\sword1\common\config-manager.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_SWORD=\
-	"..\..\..\backends\fs\fs.h"\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\base\engine.h"\
-	"..\..\..\base\gameDetector.h"\
-	"..\..\..\base\plugins.h"\
-	"..\..\..\common\config-manager.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\map.h"\
-	"..\..\..\common\rect.h"\
-	"..\..\..\common\savefile.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\singleton.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\system.h"\
-	"..\..\..\common\timer.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sound\audiostream.h"\
-	"..\..\..\sound\mixer.h"\
-	"..\..\..\sound\rate.h"\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_SWORD=\
-	"..\..\..\common\extend.h"\
-	"..\..\..\common\morphos_timer.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_SWORD=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_SWORD=\
-	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\base\plugins.h"\
-	"..\..\..\sword1\common\config-manager.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_SWORD=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_SWORD=\
-	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\base\plugins.h"\
-	"..\..\..\sword1\common\config-manager.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_SWORD=\
-	"..\..\..\sword1\logic.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\menu.h"\
-	"..\..\..\sword1\mouse.h"\
-	"..\..\..\sword1\music.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\screen.h"\
-	"..\..\..\sword1\sound.h"\
-	"..\..\..\sword1\sword1.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	
-NODEP_CPP_SWORD=\
-	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\base\plugins.h"\
-	"..\..\..\sword1\common\config-manager.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_SWORD=\
+	"..\..\..\backends\fs\fs.h"\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\base\engine.h"\
+	"..\..\..\base\gameDetector.h"\
+	"..\..\..\base\plugins.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\config-manager.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\map.h"\
+	"..\..\..\common\mutex.h"\
+	"..\..\..\common\rect.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\singleton.h"\
+	"..\..\..\common\stack.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\system.h"\
+	"..\..\..\common\timer.h"\
+	"..\..\..\common\util.h"\
+	"..\..\..\graphics\font.h"\
+	"..\..\..\graphics\fontman.h"\
+	"..\..\..\graphics\surface.h"\
+	"..\..\..\gui\dialog.h"\
+	"..\..\..\gui\message.h"\
+	"..\..\..\gui\newgui.h"\
+	"..\..\..\gui\object.h"\
+	"..\..\..\gui\widget.h"\
+	"..\..\..\sound\audiostream.h"\
+	"..\..\..\sound\mixer.h"\
+	"..\..\..\sound\rate.h"\
+	"..\..\..\sword1\control.h"\
 	"..\..\..\sword1\logic.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\menu.h"\
@@ -4701,21 +3679,11 @@ DEP_CPP_SWORD=\
 	"..\..\..\sword1\swordres.h"\
 	
 NODEP_CPP_SWORD=\
-	"..\..\..\sword1\backends\fs\fs.h"\
-	"..\..\..\sword1\base\engine.h"\
-	"..\..\..\sword1\base\gameDetector.h"\
-	"..\..\..\sword1\base\plugins.h"\
-	"..\..\..\sword1\common\config-manager.h"\
-	"..\..\..\sword1\common\file.h"\
-	"..\..\..\sword1\common\system.h"\
-	"..\..\..\sword1\common\timer.h"\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\sound\audiostream.h"\
-	"..\..\..\sword1\sound\mixer.h"\
-	"..\..\..\sword1\sound\rate.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\morphos_timer.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 
@@ -4739,53 +3707,71 @@ SOURCE=..\..\..\sword1\text.cpp
 
 !IF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Release"
 
-DEP_CPP_TEXT_=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
 NODEP_CPP_TEXT_=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
+	"..\..\..\sword1\sword1\text.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE emulator) Debug"
 
-DEP_CPP_TEXT_=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
 NODEP_CPP_TEXT_=\
+	"..\..\..\sword1\common\stdafx.h"\
 	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\sword1\sword1\objectman.h"\
+	"..\..\..\sword1\sword1\resman.h"\
+	"..\..\..\sword1\sword1\sworddefs.h"\
+	"..\..\..\sword1\sword1\swordres.h"\
+	"..\..\..\sword1\sword1\text.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Release"
 
 DEP_CPP_TEXT_=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
+	"..\..\..\sword1\memman.h"\
+	"..\..\..\sword1\object.h"\
+	"..\..\..\sword1\objectman.h"\
+	"..\..\..\sword1\resman.h"\
+	"..\..\..\sword1\sworddefs.h"\
+	"..\..\..\sword1\swordres.h"\
+	"..\..\..\sword1\text.h"\
+	
+NODEP_CPP_TEXT_=\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
+	
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+
+DEP_CPP_TEXT_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -4796,23 +3782,34 @@ DEP_CPP_TEXT_=\
 	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARMV4) Debug"
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
+
+!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
 
 DEP_CPP_TEXT_=\
+	"..\..\..\backends\ps2\fileio.h"\
 	"..\..\..\backends\wince\missing\unistd.h"\
 	"..\..\..\backends\wince\portdefs.h"\
 	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
 	"..\..\..\common\file.h"\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\common\str.h"\
 	"..\..\..\common\stream.h"\
 	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -4822,112 +3819,26 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_TEXT_=\
-	"..\..\..\common\compile.h"\
+	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Debug"
-
-DEP_CPP_TEXT_=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_TEXT_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE ARM) Release"
-
-DEP_CPP_TEXT_=\
-	"..\..\..\backends\wince\missing\unistd.h"\
-	"..\..\..\backends\wince\portdefs.h"\
-	"..\..\..\common\file.h"\
-	"..\..\..\common\list.h"\
-	"..\..\..\common\scummsys.h"\
-	"..\..\..\common\stdafx.h"\
-	"..\..\..\common\str.h"\
-	"..\..\..\common\util.h"\
-	"..\..\..\config.h"\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_TEXT_=\
-	"..\..\..\common\extend.h"\
-	".\DL_byteorder.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Debug"
-
-DEP_CPP_TEXT_=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_TEXT_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE MIPS) Release"
-
-DEP_CPP_TEXT_=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_TEXT_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
-	
-
-!ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Debug"
-
-DEP_CPP_TEXT_=\
-	"..\..\..\sword1\memman.h"\
-	"..\..\..\sword1\object.h"\
-	"..\..\..\sword1\objectman.h"\
-	"..\..\..\sword1\resman.h"\
-	"..\..\..\sword1\sworddefs.h"\
-	"..\..\..\sword1\swordres.h"\
-	"..\..\..\sword1\text.h"\
-	
-NODEP_CPP_TEXT_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sword1 - Win32 (WCE SH3) Release"
 
 DEP_CPP_TEXT_=\
+	"..\..\..\backends\ps2\fileio.h"\
+	"..\..\..\backends\wince\missing\unistd.h"\
+	"..\..\..\backends\wince\portdefs.h"\
+	"..\..\..\common\array.h"\
+	"..\..\..\common\endian.h"\
+	"..\..\..\common\file.h"\
+	"..\..\..\common\scummsys.h"\
+	"..\..\..\common\stdafx.h"\
+	"..\..\..\common\str.h"\
+	"..\..\..\common\stream.h"\
+	"..\..\..\common\util.h"\
 	"..\..\..\sword1\memman.h"\
 	"..\..\..\sword1\object.h"\
 	"..\..\..\sword1\objectman.h"\
@@ -4937,10 +3848,10 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sword1\text.h"\
 	
 NODEP_CPP_TEXT_=\
-	"..\..\..\sword1\common\util.h"\
-	"..\..\..\sword1\file.h"\
-	"..\..\..\sword1\scummsys.h"\
-	"..\..\..\sword1\stdafx.h"\
+	"..\..\..\common\config.h"\
+	"..\..\..\common\extend.h"\
+	"..\..\..\common\globals.h"\
+	"..\..\..\common\palmversion.h"\
 	
 
 !ENDIF 

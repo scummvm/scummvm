@@ -3,7 +3,31 @@ Microsoft eMbedded Visual Tools Workspace File, Format Version 4.00
 
 ###############################################################################
 
+Project: "gob"=.\gob\gob.vcp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "queen"=.\queen\queen.vcp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "saga"=.\saga\saga.vcp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -52,6 +76,12 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name sword1
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name gob
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name saga
     End Project Dependency
 }}}
 
