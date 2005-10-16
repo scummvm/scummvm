@@ -1378,8 +1378,6 @@ void SaveRestoreDialog::setResult(int result) {
 		if (_mode == kSaveDialog) {
 			if (_editPos <= _firstPos)
 				return;
-
-			_editBuffer[_editPos] = 0;
 		}
 	}
 
@@ -1387,12 +1385,14 @@ void SaveRestoreDialog::setResult(int result) {
 }
 
 int SaveRestoreDialog::runModal() {
-
 	int result = Dialog::runModal();
 
 	if (result) {
 		switch (_mode) {
 		case kSaveDialog:
+			// Remove the cursor character from the savegame name
+			_editBuffer[_editPos] = 0;
+
 			if (_vm->saveGame(_selectedSlot, (byte *)&_editBuffer[_firstPos]) != SR_OK)
 				result = 0;
 			break;
