@@ -21,7 +21,8 @@
 
 #include "common/stdafx.h"
 #include "CEKeysDialog.h"
-#include "CEActions.h"
+#include "CEDevice.h"
+#include "gui/Actions.h"
 
 using GUI::ListWidget;
 using GUI::kListNumberingZero;
@@ -40,9 +41,9 @@ enum {
 
 CEKeysDialog::CEKeysDialog(const Common::String &title)
 	: GUI::Dialog(30, 20, 260, 160) {
-	addButton(160, 20, "Map", kMapCmd, 'M');	// Map
-	addButton(160, 40, "OK", kOKCmd, 'O');						// OK
-	addButton(160, 60, "Cancel", kCloseCmd, 'C');				// Cancel
+	addButton(this, 160, 20, "Map", kMapCmd, 'M', GUI::kDefaultWidgetSize);						// Map
+	addButton(this, 160, 40, "OK", kOKCmd, 'O', GUI::kDefaultWidgetSize);						// OK
+	addButton(this, 160, 60, "Cancel", kCloseCmd, 'C', GUI::kDefaultWidgetSize);				// Cancel
 
 	_actionsList = new ListWidget(this, 10, 20, 140, 90);
 	_actionsList->setNumberingMode(kListNumberingZero);
@@ -56,13 +57,13 @@ CEKeysDialog::CEKeysDialog(const Common::String &title)
 	// Get actions names
 	Common::StringList l;
 
-	for (int i = 0; i < CEActions::Instance()->size(); i++)
-		l.push_back(CEActions::Instance()->actionName((ActionType)i));
+	for (int i = 0; i < GUI_Actions::Instance()->size(); i++)
+		l.push_back(GUI_Actions::Instance()->actionName((GUI::ActionType)i));
 
 	_actionsList->setList(l);
 
 	_actionSelected = -1;
-	CEActions::Instance()->beginMapping(false);
+	GUI_Actions::Instance()->beginMapping(false);
 }
 
 void CEKeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -72,7 +73,7 @@ void CEKeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		if (_actionsList->getSelected() >= 0) {
 				char selection[100];
 
-				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)(_actionsList->getSelected()))).c_str());
+				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(GUI_Actions::Instance()->getMapping((GUI::ActionType)(_actionsList->getSelected()))).c_str());
 				_keyMapping->setLabel(selection);
 				_keyMapping->draw();
 		}
@@ -85,39 +86,39 @@ void CEKeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 				char selection[100];
 
 				_actionSelected = _actionsList->getSelected();
-				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
+				sprintf(selection, "Associated key : %s", CEDevice::getKeyName(GUI_Actions::Instance()->getMapping((GUI::ActionType)_actionSelected)).c_str());
 				_actionTitle->setLabel("Press the key to associate");
 				_keyMapping->setLabel(selection);
 				_keyMapping->draw();
-				CEActions::Instance()->beginMapping(true);
+				GUI_Actions::Instance()->beginMapping(true);
 				_actionsList->setEnabled(false);
 		}
 		_actionTitle->draw();
 		break;
 	case kOKCmd:
-		CEActions::Instance()->saveMapping();
+		GUI_Actions::Instance()->saveMapping();
 		close();
 		break;
 	case kCloseCmd:
-		CEActions::Instance()->loadMapping();
+		GUI_Actions::Instance()->loadMapping();
 		close();
 		break;
 	}
 }
 
 void CEKeysDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
-	if (modifiers == 0xff  && CEActions::Instance()->mappingActive()) {
+	if (modifiers == 0xff  && GUI_Actions::Instance()->mappingActive()) {
 		// GAPI key was selected
 		char selection[100];
 
-		CEActions::Instance()->setMapping((ActionType)_actionSelected, ascii);
+		GUI_Actions::Instance()->setMapping((GUI::ActionType)_actionSelected, ascii);
 
-		sprintf(selection, "Associated key : %s", CEDevice::getKeyName(CEActions::Instance()->getMapping((ActionType)_actionSelected)).c_str());
+		sprintf(selection, "Associated key : %s", CEDevice::getKeyName(GUI_Actions::Instance()->getMapping((GUI::ActionType)_actionSelected)).c_str());
 		_actionTitle->setLabel("Choose an action to map");
 		_keyMapping->setLabel(selection);
 		_keyMapping->draw();
 		_actionSelected = -1;
 		_actionsList->setEnabled(true);
-		CEActions::Instance()->beginMapping(false);
+		GUI_Actions::Instance()->beginMapping(false);
 	}
 }
