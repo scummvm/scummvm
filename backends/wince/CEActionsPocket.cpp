@@ -101,6 +101,8 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_comi = (strncmp(_detector->_targetName.c_str(), "comi", 4) == 0);
 	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
+	bool is_ite = ((strncmp(_detector->_targetName.c_str(), "ite", 3) == 0) ||
+				  (strncmp(_detector->_targetName.c_str(), "ihnm", 4) == 0));
 
 	GUI_Actions::initInstanceGame();
 
@@ -121,9 +123,9 @@ void CEActionsPocket::initInstanceGame() {
 	if (is_simon || is_sword2 || is_gob)
 		_action_enabled[POCKET_ACTION_SAVE] = false;
 	else
-	if (is_queen) {
+	if (is_queen || is_ite) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
-		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F5 key for FOTAQ
+		_key_action[POCKET_ACTION_SAVE].setAscii(286); // F5 key for FOTAQ & ITE
 	}
 	else
 	if (is_sky) {
@@ -138,7 +140,7 @@ void CEActionsPocket::initInstanceGame() {
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
 	_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_ite)
 		_key_action[POCKET_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
