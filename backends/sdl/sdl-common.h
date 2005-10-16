@@ -75,7 +75,7 @@ public:
 
 	// Draw a bitmap to screen.
 	// The screen will not be updated to reflect the new bitmap
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
 
 	// Copies the screen to a buffer
 	bool grabRawScreen(Graphics::Surface *surf);
@@ -92,10 +92,10 @@ public:
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
-	virtual void warpMouse(int x, int y); // overloaded by CE backend
+	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
 
 	// Set colors of cursor palette
 	void setCursorPalette(const byte *colors, uint start, uint num);
@@ -148,11 +148,11 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
-	virtual void showOverlay();
-	virtual void hideOverlay();
+	virtual void showOverlay(); // WinCE FIXME
+	virtual void hideOverlay(); // WinCE FIXME
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h); // WinCE FIXME
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual int16 getOverlayHeight()  { return _overlayHeight; }
@@ -344,9 +344,9 @@ protected:
 	virtual void addDirtyRect(int x, int y, int w, int h, bool mouseRect = false); // overloaded by CE backend
 
 	virtual void drawMouse(); // overloaded by CE backend
-	virtual void undrawMouse(); // overloaded by CE backend
-	void blitCursor();
-
+	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
+	virtual void blitCursor(); // overloaded by CE backend (FIXME)
+ 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
 	virtual void fillMouseEvent(Event &event, int x, int y); // overloaded by CE backend
