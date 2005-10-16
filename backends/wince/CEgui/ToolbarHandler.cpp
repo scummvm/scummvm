@@ -33,7 +33,6 @@ namespace CEGUI {
 		_toolbarMap.addKey(name);
 		_toolbarMap[name] = (Toolbar*)&toolbar;
 
-
 		if (!_active) {
 			_active = &((Toolbar&)toolbar);
 			_current = name;
@@ -58,7 +57,7 @@ namespace CEGUI {
 	}
 
 	bool ToolbarHandler::action(int x, int y, bool pushed) {
-		if (_active) {
+		if (_active && _active->visible()) {
 			// FIXME !
 			if (_offset > 240)
 				return _active->action(x / 2, (y - _offset) / 2, pushed);
