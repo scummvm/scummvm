@@ -1334,7 +1334,7 @@ static GameDescription gameDescriptions[] = {
 
 bool SagaEngine::initGame() {
 	uint16 gameCount = ARRAYSIZE(gameDescriptions);
-	int gameNumber;
+	int gameNumber = -1;
 	FSList dummy;
 	DetectedGameList detectedGames;
 	int *matches;
@@ -1363,8 +1363,10 @@ bool SagaEngine::initGame() {
 				if ((gameDescriptions[matches[i]].language != language &&
 					 language != Common::UNK_LANG) ||
 					(gameDescriptions[matches[i]].platform != platform &&
-					 platform != Common::kPlatformUnknown))
+					 platform != Common::kPlatformUnknown)) {
+					debug(2, "Purged (pass 2) %s", gameDescriptions[matches[i]].title);
 					matches[i] = -1;
+				}
 				else
 					count++;
 			}
@@ -1382,12 +1384,11 @@ bool SagaEngine::initGame() {
 
 	free(matches);
 
-	if ((gameNumber = detectGame(dummy)) == -1) {
-	}
-
-	if (gameNumber >= gameCount) {
+	if (gameNumber >= gameCount || gameNumber == -1) {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
+
+	debug(2, "Running %s", gameDescriptions[gameNumber].title);
 
 	_gameNumber = gameNumber;
 	_gameDescription = &gameDescriptions[gameNumber];
@@ -1441,7 +1442,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
 					count++;
 			if (count < maxcount) {
-				debug(0, "Purged: %s", gameDescriptions[matches[i]].title);
+				debug(2, "Purged: %s", gameDescriptions[matches[i]].title);
 				matches[i] = -1;
 			}
 		}
@@ -1551,7 +1552,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		} else {
 			bool match = true;
 
-			debug(5, "Probing game: %s", gameDescriptions[game_n].title);
+			debug(2, "Probing game: %s", gameDescriptions[game_n].title);
 
 			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
@@ -1566,7 +1567,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			if (!match)
 				continue;
 
-			debug(5, "Found game: %s", gameDescriptions[game_n].title);
+			debug(2, "Found game: %s", gameDescriptions[game_n].title);
 
 			return game_n;
 		}
