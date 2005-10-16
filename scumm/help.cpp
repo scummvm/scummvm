@@ -119,6 +119,25 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 		case GID_ZAK:
 		case GID_ZAK256:
 		case GID_MANIAC:
+			// HACK. I know use of g_scumm here is evil, however, 
+			// introducing new GID and putting it everywhere will
+			// pollute code much more that this single instance
+			if (g_scumm->_platform == Common::kPlatformNES) {
+				ADD_BIND("q", "Push");
+				ADD_BIND("a", "Pull");
+				ADD_BIND("z", "Give");
+				ADD_BIND("w", "Open");
+				ADD_BIND("s", "Close");
+				ADD_BIND("x", "Go to");
+				ADD_BIND("e", "Get");
+				ADD_BIND("d", "Use");
+				ADD_BIND("c", "Read");
+				ADD_BIND("r", "New kid");
+				ADD_BIND("f", "Turn on");
+				ADD_BIND("v", "Turn off");
+				break;
+			}
+
 			ADD_BIND("q", "Push");
 			ADD_BIND("a", "Pull");
 			ADD_BIND("z", "Give");
