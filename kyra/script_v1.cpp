@@ -61,7 +61,7 @@ void ScriptHelper::c1_pushVar() {
 }
 
 void ScriptHelper::c1_pushBPNeg() {
-	_curScript->stack[--_curScript->sp] = _curScript->stack[(-(_parameter + 2)) + _curScript->bp];
+	_curScript->stack[--_curScript->sp] = _curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp];
 }
 
 void ScriptHelper::c1_pushBPAdd() {
@@ -96,7 +96,7 @@ void ScriptHelper::c1_popVar() {
 }
 
 void ScriptHelper::c1_popBPNeg() {
-	_curScript->stack[(-(_parameter + 2)) + _curScript->bp] = _curScript->stack[++_curScript->sp-1];
+	_curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp] = _curScript->stack[++_curScript->sp-1];
 }
 
 void ScriptHelper::c1_popBPAdd() {
