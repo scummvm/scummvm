@@ -833,13 +833,17 @@ void Control::saveNameScroll(uint8 scroll, bool saving) {
 		if (_saveScrollPos >= 1)
 			_saveScrollPos--;
 	} else if (scroll == BUTTON_SCROLL_DOWN_SLOW) {
-		if (_saveScrollPos < maxScroll - 8)
+		if (_saveScrollPos + 8 < maxScroll)
 			_saveScrollPos++;
 	} else if (scroll == BUTTON_SCROLL_DOWN_FAST) {
-		if (_saveScrollPos < maxScroll - 16)
+		if (_saveScrollPos + 16 < maxScroll)
 			_saveScrollPos += 8;
-		else
-			_saveScrollPos = maxScroll - 8;
+		else {
+			if (maxScroll >= 8)
+				_saveScrollPos = maxScroll - 8;
+			else
+				_saveScrollPos = 0;
+		}
 	}
 	_selectedSavegame = 255; // deselect savegame
 	deselectSaveslots();
