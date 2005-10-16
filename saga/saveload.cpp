@@ -39,7 +39,7 @@
 #include "saga/scene.h"
 #include "saga/script.h"
 
-#define CURRENT_SAGA_VER 4
+#define CURRENT_SAGA_VER 5
 
 namespace Saga {
 
@@ -158,8 +158,10 @@ void SagaEngine::fillSaveList() {
 }
 
 
+#define TITLESIZE 80
 void SagaEngine::save(const char *fileName, const char *saveName) {
 	Common::OutSaveFile *out;
+	char title[TITLESIZE];
 
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		return;
@@ -171,6 +173,11 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	strncpy(_saveHeader.name, saveName, SAVE_TITLE_SIZE);
 
 	out->write(&_saveHeader, sizeof(_saveHeader));
+
+	// Original game title
+	memset(title, 0, TITLESIZE);
+	strncpy(title, getGameDescription()->title, TITLESIZE);
+	out->write(title, TITLESIZE);
 
 	// Surrounding scene
 	out->writeSint32LE(_scene->getOutsetSceneNumber());
@@ -203,6 +210,7 @@ void SagaEngine::load(const char *fileName) {
 	int commonBufferSize;
 	int sceneNumber, insetSceneNumber;
 	int mapx, mapy;
+	char title[TITLESIZE];
 
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		return;
@@ -218,6 +226,11 @@ void SagaEngine::load(const char *fileName) {
 
 	if (_saveHeader.type != MKID('SAGA')) {
 		error("SagaEngine::load wrong format");
+	}
+
+	if (_saveHeader.version > 4) {
+		in->read(title, TITLESIZE);
+		debug(2, "Save is for: %s", title);
 	}
 
 	// Surrounding scene
