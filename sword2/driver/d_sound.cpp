@@ -323,9 +323,8 @@ void MusicInputStream::refill() {
 	// during development. :-)
 
 	if (len < desired) {
-		warning("Expected %d samples, but got none", desired);
-		if (!len)
-			return;
+		warning("Expected %d samples, but got %d", desired, len);
+		_samplesLeft = len;
 	}
 
 	buf += len;
