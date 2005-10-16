@@ -809,6 +809,9 @@ EOF
 	#
 	echo_n "Alignment required... "
 	case $_host_cpu in
+		arm*)
+			_need_memalign=yes
+			;;
 		alpha*)
 			# Hardcode alignment requirements for Alpha processsors
 			_need_memalign=yes
