@@ -170,6 +170,7 @@ public:
 	int getWizImageStates(int resnum);
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
+	int getWizImageData(int resNum, int state, int type);
 
 	void flushWizBuffer();
 

@@ -1884,6 +1884,30 @@ void Wiz::processWizImage(const WizParameters *params) {
 	}
 }
 
+int Wiz::getWizImageData(int resNum, int state, int type) {
+	uint8 *dataPtr, *wizh;
+
+	dataPtr = _vm->getResourceAddress(rtImage, resNum);
+	assert(dataPtr);
+
+	switch (type) {
+	case 0:
+		wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+		assert(wizh);
+		return READ_LE_UINT32(wizh + 0x0);
+	case 1:
+		return (_vm->findWrappedBlock(MKID('RGBS'), dataPtr, state, 0) != NULL) ? 1 : 0;
+	case 2:
+		return (_vm->findWrappedBlock(MKID('RMAP'), dataPtr, state, 0) != NULL) ? 1 : 0;
+	case 3:
+		return (_vm->findWrappedBlock(MKID('TRNS'), dataPtr, state, 0) != NULL) ? 1 : 0;
+	case 4:
+		return (_vm->findWrappedBlock(MKID('XMAP'), dataPtr, state, 0) != NULL) ? 1 : 0;
+	default:
+		error("getWizImageData: Unknown type %d", type);
+	}
+}
+
 int Wiz::getWizImageStates(int resNum) {
 	const uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);

@@ -2404,7 +2404,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 
 void ScummEngine_v100he::o100_getWizData() {
 	byte filename[4096];
-	int state, resId;
+	int resId, state, type;
 	int32 w, h;
 	int16 x, y;
 
@@ -2437,11 +2437,10 @@ void ScummEngine_v100he::o100_getWizData() {
 		push(h);
 		break;
 	case 34:
-		pop();
-		pop();
-		pop();
-		push(0);
-		debug(0, "o100_getWizData() case 34 unhandled");
+		type = pop();
+		state = pop();
+		resId = pop();
+		push(_wiz->getWizImageData(resId, state, type));
 		break;
 	case 64:
 		state = pop();
