@@ -76,6 +76,7 @@ bool OSystem_WINCE3::_soundMaster = true;
 OSystem::SoundProc OSystem_WINCE3::_originalSoundProc = NULL;
 
 bool _isSmartphone = false;
+bool _hasSmartphoneResolution = false;
 
 // Graphics mode consts
 
@@ -109,7 +110,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
 // ********************************************************************************************
 
 bool isSmartphone() {
-	return _isSmartphone;
+	//return _isSmartphone;
+	return _hasSmartphoneResolution;
 }
 
 // ********************************************************************************************
@@ -212,9 +214,10 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
 	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0)
+	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0)
 {
-	_isSmartphone = CEDevice::hasSmartphoneResolution();
+	_isSmartphone = CEDevice::isSmartphone();
+	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution();
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
@@ -229,7 +232,8 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 		loadSmartphoneConfiguration();
 	}
 
-
+	// Mouse backup (temporary code)
+	_mouseBackupOld = (byte*)malloc(MAX_MOUSE_W * MAX_MOUSE_H * MAX_SCALING * 2);
 }
 
 void OSystem_WINCE3::swap_panel_visibility() {
@@ -407,8 +411,8 @@ void OSystem_WINCE3::move_cursor_down() {
 	else
 		y += _stepY1;
 
-	if (y > 200)
-		y = 200;
+	if (y > 240)
+		y = 240;
 
 	EventsBuffer::simulateMouseMove(x, y);
 }
@@ -473,9 +477,10 @@ void OSystem_WINCE3::create_toolbar() {
 	PanelKeyboard *keyboard;
 
 	// Add the keyboard
-	if (!_isSmartphone) {
+	if (!_hasSmartphoneResolution) {
 		keyboard = new PanelKeyboard(PANEL_KEYBOARD);
 		_toolbarHandler.add(NAME_PANEL_KEYBOARD, *keyboard);
+		_toolbarHandler.setVisible(false);
 	}
 
 }
@@ -572,7 +577,7 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 		case kFeatureFullscreenMode:
 			return;
 		case kFeatureVirtualKeyboard:
-			if (_isSmartphone)
+			if (_hasSmartphoneResolution)
 				return;
 			_toolbarHighDrawn = false;
 			if (enable) {
@@ -714,6 +719,7 @@ void OSystem_WINCE3::update_game_settings() {
 		}
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
+		_toolbarHandler.setVisible(true);
 
 		// Keyboard is active for Monkey 1 or 2 initial copy-protection
 		if (strncmp(_gameDetector._targetName.c_str(), "monkey", 6) == 0) {
@@ -726,7 +732,7 @@ void OSystem_WINCE3::update_game_settings() {
 			hotswapGFXMode();
 		}
 
-		if (_isSmartphone)
+		if (_hasSmartphoneResolution)
 			panel->setVisible(false);
 
 		// Set Smush Force Redraw rate for Full Throttle
@@ -741,7 +747,7 @@ void OSystem_WINCE3::update_game_settings() {
 
 void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 
-	if (_isSmartphone && h == 240)
+	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
 
 	switch (_transactionMode) {
@@ -759,10 +765,10 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 			break;
 	}
 
-	if (w == 320 && h == 200 && !_isSmartphone)
+	if (w == 320 && h == 200 && !_hasSmartphoneResolution)
 		h = 240; // use the extra 40 pixels height for the toolbar
 
-	if (!_isSmartphone) {
+	if (!_hasSmartphoneResolution) { 
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
 		else
@@ -783,6 +789,7 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 
 	update_game_settings();
 }
+
 
 int OSystem_WINCE3::getDefaultGraphicsMode() const {
     return GFX_NORMAL;
@@ -823,7 +830,7 @@ bool OSystem_WINCE3::update_scalers() {
 	}
 
 //#ifdef WIN32_PLATFORM_WFSP
-	if (_isSmartphone) {
+	if (_hasSmartphoneResolution) {
 		if (_screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
 		_scaleFactorXm = 2;
@@ -1224,6 +1231,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 
 		_toolbarHandler.forceRedraw();
 	}
+	//else
+	//	undrawMouse();
 
 	// Only draw anything if necessary
 	if (_numDirtyRects > 0) {
@@ -1291,6 +1300,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 						dst_y = real2Aspect(dst_y);
 					}
 
+
 					if (!_zoomDown)
 						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + dst_y * dstPitch, dstPitch, r->w, dst_h);
@@ -1298,6 +1308,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 						_scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + (r->x * 2 * _scaleFactorXm / _scaleFactorXd) + (dst_y - 240) * dstPitch, dstPitch, r->w, dst_h);
 					}
+
 				}
 
 				r->x = r->x * _scaleFactorXm / _scaleFactorXd;
@@ -1368,9 +1379,13 @@ void OSystem_WINCE3::internUpdateScreen() {
 		SDL_UpdateRects(_hwscreen, 1, toolbar_rect);
 	}
 
+
+	//drawMouse();
+
 	// Finally, blit all our changes to the screen
 	if (_numDirtyRects > 0)
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+
 
 	_numDirtyRects = 0;
 	_forceFull = false;
@@ -1408,11 +1423,330 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode)
 	return key;
 }
 
+void OSystem_WINCE3::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+	assert (_transactionMode == kTransactionNone);
+
+	if (_overlayscreen == NULL)
+		return;
+
+	// Clip the coordinates
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y; buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _overlayWidth - x) {
+		w = _overlayWidth - x;
+	}
+
+	if (h > _overlayHeight - y) {
+		h = _overlayHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return; 
+
+	// Mark the modified region as dirty
+	_cksumValid = false;
+	addDirtyRect(x, y, w, h);
+
+	undrawMouse();
+
+	if (SDL_LockSurface(_overlayscreen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
+	do {
+		memcpy(dst, buf, w * 2);
+		dst += _overlayscreen->pitch;
+		buf += pitch;
+	} while (--h);
+
+	SDL_UnlockSurface(_overlayscreen);
+}
+
+void OSystem_WINCE3::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+	assert (_transactionMode == kTransactionNone);
+	assert(src);
+
+	if (_screen == NULL)
+		return;
+
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+
+	if (((long)src & 3) == 0 && pitch == _screenWidth && x == 0 && y == 0 &&
+			w == _screenWidth && h == _screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
+		/* Special, optimized case for full screen updates.
+		 * It tries to determine what areas were actually changed,
+		 * and just updates those, on the actual display. */
+		addDirtyRgnAuto(src);
+	} else {
+		/* Clip the coordinates */
+		if (x < 0) {
+			w += x;
+			src -= x;
+			x = 0;
+		}
+
+		if (y < 0) {
+			h += y;
+			src -= y * pitch;
+			y = 0;
+		}
+
+		if (w > _screenWidth - x) {
+			w = _screenWidth - x;
+		}
+
+		if (h > _screenHeight - y) {
+			h = _screenHeight - y;
+		}
+
+		if (w <= 0 || h <= 0)
+			return;
+
+		_cksumValid = false;
+		addDirtyRect(x, y, w, h);
+	}
+
+	undrawMouse();
+
+	// Try to lock the screen surface
+	if (SDL_LockSurface(_screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	byte *dst = (byte *)_screen->pixels + y * _screenWidth + x;
+
+	if (_screenWidth == pitch && pitch == w) {
+		memcpy(dst, src, h*w);
+	} else {
+		do {
+			memcpy(dst, src, w);
+			src += pitch;
+			dst += _screenWidth;
+		} while (--h);
+	}
+
+	// Unlock the screen surface
+	SDL_UnlockSurface(_screen);
+}
+
+void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+
+	undrawMouse();
+
+	assert(w <= MAX_MOUSE_W);
+	assert(h <= MAX_MOUSE_H);
+	_mouseCurState.w = w;
+	_mouseCurState.h = h;
+
+	_mouseHotspotX = hotspot_x;
+	_mouseHotspotY = hotspot_y;
+
+	_mouseKeyColor = keycolor;
+
+	free(_mouseData);
+
+	_mouseData = (byte *)malloc(w * h);
+	memcpy(_mouseData, buf, w * h);
+}
+
+void OSystem_WINCE3::setMousePos(int x, int y) {
+	if (x != _mouseCurState.x || y != _mouseCurState.y) {
+		undrawMouse();
+		_mouseCurState.x = x;
+		_mouseCurState.y = y;
+		updateScreen();
+	}
+}
+
+
+void OSystem_WINCE3::internDrawMouse() {
+	if (_mouseDrawn || !_mouseVisible || !_mouseData)
+		return;
+
+	int x = _mouseCurState.x - _mouseHotspotX;
+	int y = _mouseCurState.y - _mouseHotspotY;
+	int w = _mouseCurState.w;
+	int h = _mouseCurState.h;
+	byte color;
+	const byte *src = _mouseData;		// Image representing the mouse
+	
+	// clip the mouse rect, and addjust the src pointer accordingly
+	if (x < 0) {
+		w += x;
+		src -= x;
+		x = 0;
+	}
+	if (y < 0) {
+		h += y;
+		src -= y * _mouseCurState.w;
+		y = 0;
+	}
+
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
+
+	// Quick check to see if anything has to be drawn at all
+	if (w <= 0 || h <= 0)
+		return;
+
+	// Draw the mouse cursor; backup the covered area in "bak"
+	if (SDL_LockSurface(_overlayVisible ? _overlayscreen : _screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	// Mark as dirty
+	addDirtyRect(x, y, w, h);
+
+	if (!_overlayVisible) {
+		byte *bak = _mouseBackupOld;		// Surface used to backup the area obscured by the mouse
+		byte *dst;					// Surface we are drawing into
+	
+		dst = (byte *)_screen->pixels + y * _screenWidth + x;
+		while (h > 0) {
+			int width = w;
+			while (width > 0) {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != _mouseKeyColor)	// transparent, don't draw
+					*dst = color;
+				dst++;
+				width--;
+			}
+			src += _mouseCurState.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _screenWidth - w;
+			h--;
+		}
+	
+	} else {
+		uint16 *bak = (uint16 *)_mouseBackupOld;	// Surface used to backup the area obscured by the mouse
+		byte *dst;					// Surface we are drawing into
+	
+		dst = (byte *)_overlayscreen->pixels + (y + 1) * _overlayscreen->pitch + (x + 1) * 2;
+		while (h > 0) {
+			int width = w;
+			while (width > 0) {
+				*bak++ = *(uint16 *)dst;
+				color = *src++;
+				if (color != 0xFF)	// 0xFF = transparent, don't draw
+					*(uint16 *)dst = RGBToColor(_currentPalette[color].r, _currentPalette[color].g, _currentPalette[color].b);
+				dst += 2;
+				width--;
+			}
+			src += _mouseCurState.w - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _overlayscreen->pitch - w * 2;
+			h--;
+		}
+	}
+
+	SDL_UnlockSurface(_overlayVisible ? _overlayscreen : _screen);
+
+	// Finally, set the flag to indicate the mouse has been drawn
+	_mouseDrawn = true;
+}
+
+void OSystem_WINCE3::undrawMouse() {
+	assert (_transactionMode == kTransactionNone || _transactionMode == kTransactionCommit);
+
+	if (!_mouseDrawn)
+		return;
+	_mouseDrawn = false;
+
+	int old_mouse_x = _mouseCurState.x - _mouseHotspotX;
+	int old_mouse_y = _mouseCurState.y - _mouseHotspotY;
+	int old_mouse_w = _mouseCurState.w;
+	int old_mouse_h = _mouseCurState.h;
+
+	// clip the mouse rect, and addjust the src pointer accordingly
+	if (old_mouse_x < 0) {
+		old_mouse_w += old_mouse_x;
+		old_mouse_x = 0;
+	}
+	if (old_mouse_y < 0) {
+		old_mouse_h += old_mouse_y;
+		old_mouse_y = 0;
+	}
+
+	if (old_mouse_w > _screenWidth - old_mouse_x)
+		old_mouse_w = _screenWidth - old_mouse_x;
+	if (old_mouse_h > _screenHeight - old_mouse_y)
+		old_mouse_h = _screenHeight - old_mouse_y;
+
+	// Quick check to see if anything has to be drawn at all
+	if (old_mouse_w <= 0 || old_mouse_h <= 0)
+		return;
+
+
+	if (SDL_LockSurface(_overlayVisible ? _overlayscreen : _screen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	int x, y;
+	if (!_overlayVisible) {
+		byte *dst, *bak = _mouseBackupOld;
+
+		// No need to do clipping here, since drawMouse() did that already
+		dst = (byte *)_screen->pixels + old_mouse_y * _screenWidth + old_mouse_x;
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _screenWidth) {
+			for (x = 0; x < old_mouse_w; ++x) {
+				dst[x] = bak[x];
+			}
+		}
+	
+	} else {
+
+		byte *dst;
+		uint16 *bak = (uint16 *)_mouseBackupOld;
+	
+		// No need to do clipping here, since drawMouse() did that already
+		dst = (byte *)_overlayscreen->pixels + (old_mouse_y + 1) * _overlayscreen->pitch + (old_mouse_x + 1) * 2;
+		for (y = 0; y < old_mouse_h; ++y, bak += MAX_MOUSE_W, dst += _overlayscreen->pitch) {
+			for (x = 0; x < old_mouse_w; ++x) {
+				*((uint16 *)dst + x) = bak[x];
+			}
+		}
+	}
+
+	addDirtyRect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
+
+	SDL_UnlockSurface(_overlayVisible ? _overlayscreen : _screen);
+}
+
+void OSystem_WINCE3::blitCursor() {
+}
+
+void OSystem_WINCE3::showOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
+	undrawMouse();
+
+	_overlayVisible = true;
+	clearOverlay();
+}
+
+void OSystem_WINCE3::hideOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
+	undrawMouse();
+
+	_overlayVisible = false;
+	clearOverlay();
+	_forceFull = true;
+}
 
 void OSystem_WINCE3::drawMouse() {
 	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset()) && !_forceHideMouse)
-		OSystem_SDL::drawMouse();
+		internDrawMouse();		
 }
 
 void OSystem_WINCE3::fillMouseEvent(Event &event, int x, int y) {
@@ -1458,6 +1792,7 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 }
 
 void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
+
 	// Align on boundaries
 	if (_scaleFactorXd > 1) {
 		while (x % _scaleFactorXd) {
@@ -1498,7 +1833,7 @@ void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 		}
 	}
 
-	OSystem_SDL::addDirtyRect(x, y, w, h, mouseRect);
+	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
 
 // FIXME
@@ -1589,6 +1924,32 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 				break;
 
 			fillMouseEvent(temp_event, ev.button.x, ev.button.y);
+
+			// Check keyboard tap zone
+			if (temp_event.mouse.y <= 20) {
+				// Already tap initiated ?
+				if (_tapTime) {
+					int deltaX; 
+					int deltaY;
+					if (temp_event.mouse.x > _tapX)
+						deltaX = temp_event.mouse.x - _tapX;
+					else
+						deltaX = _tapX - temp_event.mouse.x;
+					if (temp_event.mouse.y > _tapY)
+						deltaY = temp_event.mouse.y - _tapY;
+					else
+						deltaY = _tapY - temp_event.mouse.y;
+					if (deltaX <= 5 && deltaY <= 5 && (GetTickCount() - _tapTime < 1000))
+						swap_panel_visibility();
+					_tapTime = 0;
+						
+				}
+				else {
+					_tapTime = GetTickCount();
+					_tapX = temp_event.mouse.x;
+					_tapY = temp_event.mouse.y;
+				}
+			}
 
 			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
 				if (!_toolbarHandler.drawn())
