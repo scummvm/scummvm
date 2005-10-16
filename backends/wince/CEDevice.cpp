@@ -19,6 +19,9 @@
  *
  */
 
+//#define SIMU_SMARTPHONE 1
+//#define SIMU_SMARTPHONE_2005 1
+
 #include "common/stdafx.h"
 #include "CEDevice.h"
 
@@ -100,7 +103,11 @@ void CEDevice::wakeUp() {
 
 bool CEDevice::hasPocketPCResolution() {
 #ifdef SIMU_SMARTPHONE
+#ifndef SIMU_SMARTPHONE_2005
 	return false;
+#else
+	return true;
+#endif
 #else
 	if (OSystem_WINCE3::isOzone() && hasWideResolution())
 		return true;
@@ -128,9 +135,25 @@ bool CEDevice::hasWideResolution() {
 
 bool CEDevice::hasSmartphoneResolution() {
 #ifdef SIMU_SMARTPHONE
+#ifndef SIMU_SMARTPHONE_2005
 	return true;
 #else
+	return false;
+#endif
+#else
 	return (OSystem_WINCE3::getScreenWidth() < 240);
+#endif
+}
+
+bool CEDevice::isSmartphone() {
+#ifdef SIMU_SMARTPHONE
+	return true;
+#else
+	TCHAR platformType[100];
+	BOOL result = SystemParametersInfo(SPI_GETPLATFORMTYPE, sizeof(platformType), platformType, 0);
+	if (!result && GetLastError() == ERROR_ACCESS_DENIED)
+		return true;
+	return (wcsnicmp(platformType, TEXT("SmartPhone"), 10) == 0);
 #endif
 }
 

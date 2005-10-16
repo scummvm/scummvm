@@ -38,6 +38,7 @@ class CEDevice {
 		static bool hasDesktopResolution();
 		static bool hasWideResolution();
 		static bool hasSmartphoneResolution();
+		static bool isSmartphone();
 		static Common::String getKeyName(unsigned int keyCode);
 };
 
