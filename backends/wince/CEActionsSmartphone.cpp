@@ -91,6 +91,7 @@ GUI::Actions(detector)
 
 void CEActionsSmartphone::initInstanceMain(OSystem *mainSystem) {
 	_CESystem = static_cast<OSystem_WINCE3*>(mainSystem);
+
 	GUI_Actions::initInstanceMain(mainSystem);
 	// Mouse Up
 	_action_enabled[SMARTPHONE_ACTION_UP] = true;
@@ -111,6 +112,8 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_sky = (_detector->_targetName == "sky");
 	bool is_queen = (_detector->_targetName == "queen");
 	bool is_gob = (strncmp(_detector->_targetName.c_str(), "gob", 3) == 0);
+	bool is_ite = ((strncmp(_detector->_targetName.c_str(), "ite", 3) == 0) ||
+				  (strncmp(_detector->_targetName.c_str(), "ihnm", 4) == 0));
 
 	GUI_Actions::initInstanceGame();
 
@@ -123,9 +126,9 @@ void CEActionsSmartphone::initInstanceGame() {
 	if (is_simon || is_gob)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else
-	if (is_queen) {
+	if (is_queen || is_ite) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
-		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ
+		_key_action[SMARTPHONE_ACTION_SAVE].setAscii(286); // F1 key for FOTAQ and ITE
 	}
 	else
 	if (is_sky) {
@@ -138,7 +141,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_gob)
+	if (is_simon || is_sky || is_gob || is_ite)
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setAscii(KEY_ALL_SKIP);
@@ -194,7 +197,7 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 			return true;
 		case SMARTPHONE_ACTION_RIGHT:
 			_CESystem->move_cursor_right();
-			return true;
+			return true; 
 		case SMARTPHONE_ACTION_ZONE:
 			_CESystem->switch_zone();
 			return true;
