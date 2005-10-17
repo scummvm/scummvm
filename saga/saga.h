@@ -632,7 +632,7 @@ private:
 
 public:
 	int decodeBGImage(const byte *image_data, size_t image_size,
-						byte **output_buf, size_t *output_buf_len, int *w, int *h);
+			  byte **output_buf, size_t *output_buf_len, int *w, int *h, bool flip = false);
 	const byte *getImagePal(const byte *image_data, size_t image_size);
 	void loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength);
 

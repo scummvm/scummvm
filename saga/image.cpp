@@ -47,7 +47,7 @@ static int granulate(int value, int granularity) {
 }
 
 int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
-					byte **output_buf, size_t *output_buf_len, int *w, int *h) {
+				  byte **output_buf, size_t *output_buf_len, int *w, int *h, bool flip) {
 	ImageHeader hdr;
 	int modex_height;
 	const byte *RLE_data_ptr;
@@ -90,7 +90,7 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	unbankBGImage(out_buf, decode_buf, hdr.width, hdr.height);
 
 	// For some reason bg images in IHNM are upside down
-	if (getGameType() == GType_IHNM) {
+	if (getGameType() == GType_IHNM && !flip) {
 		flipImage(out_buf, hdr.width, hdr.height);
 	}
 

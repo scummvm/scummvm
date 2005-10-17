@@ -1040,7 +1040,7 @@ void Scene::processSceneResources() {
 			_bgMask.res_len = resourceDataLength;
 			_bgMask.loaded = 1;
 			_vm->decodeBGImage(_bgMask.res_buf, _bgMask.res_len, &_bgMask.buf,
-							&_bgMask.buf_len, &_bgMask.w, &_bgMask.h);
+							   &_bgMask.buf_len, &_bgMask.w, &_bgMask.h, true);
 
 			// At least in ITE the mask needs to be clipped.
 
