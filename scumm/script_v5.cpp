@@ -1729,7 +1729,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 				resid = _resourceMapper[resid & 0x7F];
 
 			if (_currentRoom != resid) {
-				res.flags[rtRoom][resid] |= 1;
+				res.setResourceCounter(rtRoom, resid, 1);
 			}
 		} else
 			ensureResourceLoaded(rtRoom, resid);
