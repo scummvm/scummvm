@@ -2295,7 +2295,10 @@ int32 Logic::fnResetGlobals(int32 *params) {
 	// switch on scrolling (2 means first time on screen)
 	screenInfo->scroll_flag = 2;
 
-	return IR_CONT;
+	// Used to be IR_CONT, but that's a bad idea. We may just have killed
+	// our own script resource -- continuing will cause a bad memory read
+	// access.
+	return IR_STOP;
 }
 
 int32 Logic::fnSetPalette(int32 *params) {

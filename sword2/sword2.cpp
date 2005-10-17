@@ -332,8 +332,11 @@ int Sword2Engine::go() {
 						pauseGame();
 					break;
 				case 'c':
-					if (!Logic::_scriptVars[DEMO] && !_mouse->isChoosing())
+					if (!Logic::_scriptVars[DEMO] && !_mouse->isChoosing()) {
+						ScreenInfo *screenInfo = _screen->getScreenInfo();
 						_logic->fnPlayCredits(NULL);
+						screenInfo->new_palette = 99;
+					}
 					break;
 #ifdef SWORD2_DEBUG
 				case ' ':

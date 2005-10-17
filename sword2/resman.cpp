@@ -522,6 +522,13 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 void ResourceManager::closeResource(uint32 res) {
 	assert(res < _totalResFiles);
+
+	// Don't try to close the resource if it has already been forcibly
+	// closed, e.g. by fnResetGlobals().
+
+	if (_resList[res].ptr == NULL)
+		return;
+
 	assert(_resList[res].refCount > 0);
 
 	_resList[res].refCount--;

@@ -653,7 +653,6 @@ struct CreditsLine {
 #define CREDITS_LINE_SPACING 20
 
 void Screen::rollCredits() {
-	ScreenInfo *screenInfo = getScreenInfo();
 	uint32 loopingMusicId = _vm->_sound->getLoopingMusicId();
 
 	// Prepare for the credits by fading down, stoping the music, etc.
@@ -975,8 +974,6 @@ void Screen::rollCredits() {
 		_vm->_sound->streamCompMusic(loopingMusicId, true);
 	else
 		_vm->_sound->stopMusic(false);
-
-	screenInfo->new_palette = 99;
 
 	if (!_vm->_mouse->getMouseStatus() || _vm->_mouse->isChoosing())
 		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
