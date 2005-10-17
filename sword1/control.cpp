@@ -281,16 +281,17 @@ uint8 Control::runPanel(void) {
 			if (_selectedSavegame < 255) {
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				bool visible = _cursorVisible;
-				if (_cursorTick == 0)
+				_cursorTick++;
+				if (_cursorTick == 7)
 					_cursorVisible = true;
-				else if (_cursorTick == 3)
+				else if (_cursorTick == 14) {
 					_cursorVisible = false;
+					_cursorTick = 0;
+				}
 				if (_keyPressed)
 					handleSaveKey(_keyPressed);
 				else if (_cursorVisible != visible)
 					showSavegameNames();
-				if (++_cursorTick > 5)
-					_cursorTick = 0;
 			} else {
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
@@ -311,7 +312,12 @@ uint8 Control::runPanel(void) {
 			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
 		}
 		_system->updateScreen();
-		delay(1000 / 12);
+		// Use shorter delay when editing savegames names to minimize
+		// the risk of keypresses being lost.
+		if (mode == BUTTON_SAVE_PANEL && _selectedSavegame < 255)
+			delay(20);
+		else
+			delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
 	destroyButtons();
