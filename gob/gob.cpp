@@ -65,6 +65,7 @@ static const GobGameSettings gob_games[] = {
 	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "d9f8736b7dc0ea891cd06592a72e8a72"},
 	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "69f9ae85252271e7dfa62883e581e5e9"},
 	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "26de406cb09228d902274446a6a2eceb"},
+	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "baf88a95928edb3f51067983f2dffa93"},
 
 	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
 
