@@ -107,9 +107,10 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 		for (uint32 cnt = 0; cnt < fh->idxLen; cnt++) {
 			fh->idxTab[cnt * 3 + 0] = fh->file->readUint32LE();
 			fh->idxTab[cnt * 3 + 1] = fh->file->readUint32LE();
-			if (fh->fileType == kCLUMode)
+			if (fh->fileType == kCLUMode) {
 				fh->idxTab[cnt * 3 + 2] = fh->idxTab[cnt * 3 + 1];
-			else
+				fh->idxTab[cnt * 3 + 1]--;
+			} else
 				fh->idxTab[cnt * 3 + 2] = fh->file->readUint32LE();
 		}
 	}
@@ -296,7 +297,7 @@ void MusicInputStream::refill() {
 		len_left = _samplesLeft;
 
 	if (!_looping) {
-		// None-looping music is faded out at the end. If this fade
+		// Non-looping music is faded out at the end. If this fade
 		// out would have started somewhere within the len_left samples
 		// to read, we only read up to that point. This way, we can
 		// treat this fade as any other.
