@@ -144,25 +144,28 @@ enum HitZoneFlags {
 
 
 enum PanelButtonType {
-	kPanelButtonVerb = 1,
-	kPanelButtonArrow = 2,
-	kPanelButtonConverseText = 4,
-	kPanelButtonInventory = 8,
+	kPanelButtonVerb = 1 << 0,
+	kPanelButtonArrow = 1 << 1,
+	kPanelButtonConverseText = 1 << 2,
+	kPanelButtonInventory = 1 << 3,
 
-	kPanelButtonOption = 0x10,
-	kPanelButtonOptionSlider = 0x20,
-	kPanelButtonOptionSaveFiles = 0x40,
-	kPanelButtonOptionText = 0x80,
+	kPanelButtonOption = 1 << 4,
+	kPanelButtonOptionSlider = 1 << 5,
+	kPanelButtonOptionSaveFiles = 1 << 6,
+	kPanelButtonOptionText = 1 << 7,
 
-	kPanelButtonQuit = 0x100,
-	kPanelButtonQuitText = 0x200,
+	kPanelButtonQuit = 1 << 8,
+	kPanelButtonQuitText = 1 << 9,
 
-	kPanelButtonLoad = 0x400,
-	kPanelButtonLoadText = 0x800,
+	kPanelButtonLoad = 1 << 10,
+	kPanelButtonLoadText = 1 << 11,
 
-	kPanelButtonSave = 0x1000,
-	kPanelButtonSaveText = 0x2000,
-	kPanelButtonSaveEdit = 0x4000,
+	kPanelButtonSave = 1 << 12,
+	kPanelButtonSaveText = 1 << 13,
+	kPanelButtonSaveEdit = 1 << 14,
+
+	kPanelButtonProtectText = 1 << 15,
+	kPanelButtonProtectEdit = 1 << 16,
 
 	kPanelAllButtons = 0xFFFFF
 };
@@ -218,7 +221,8 @@ enum TextStringIds {
 	kTextNoPlaceToOpen,
 	kTextNoOpening,
 	kTextDontKnow,
-	kTextShowDialog
+	kTextShowDialog,
+	kTextEnterProtectAnswer
 };
 
 struct ImageHeader {
@@ -467,6 +471,14 @@ struct GameDisplayInfo {
 	int savePanelHeight;
 	int savePanelButtonsCount;
 	PanelButton *savePanelButtons;
+
+	int protectEditIndex;
+	int protectPanelXOffset;
+	int protectPanelYOffset;
+	int protectPanelWidth;
+	int protectPanelHeight;
+	int protectPanelButtonsCount;
+	PanelButton *protectPanelButtons;
 };
 
 
@@ -586,6 +598,8 @@ public:
 	int _musicVolume;
 	bool _subtitlesEnabled;
 	int _readingSpeed;
+
+	bool _copyProtection;
 
 	SndRes *_sndRes;
 	Sound *_sound;

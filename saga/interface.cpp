@@ -172,6 +172,15 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_saveEdit = _savePanel.getButton(_vm->getDisplayInfo().saveEditIndex);
 	_savePanel.currentButton = NULL;
 
+	_protectPanel.x = _vm->getDisplayInfo().protectPanelXOffset;
+	_protectPanel.y = _vm->getDisplayInfo().protectPanelYOffset;
+	_protectPanel.imageWidth = _vm->getDisplayInfo().protectPanelWidth;
+	_protectPanel.imageHeight = _vm->getDisplayInfo().protectPanelHeight;
+	_protectPanel.buttons = _vm->getDisplayInfo().protectPanelButtons;
+	_protectPanel.buttonsCount = _vm->getDisplayInfo().protectPanelButtonsCount;
+	_protectEdit = _protectPanel.getButton(_vm->getDisplayInfo().protectEditIndex);
+	_protectPanel.currentButton = NULL;
+
 	_active = true;
 	_panelMode = _lockedMode = kPanelNull;
 	_savedMode = -1;
@@ -314,6 +323,15 @@ void Interface::setMode(int mode) {
 		break;
 	case kPanelBoss:
 		_vm->_render->setFlag(RF_DEMO_SUBST);
+		break;
+	case kPanelProtect:
+		_protectPanel.currentButton = NULL;
+		_textInputMaxWidth = _protectEdit->width - 10;
+		_textInput = true;
+		_textInputString[0] = 0;
+		_textInputStringLength = 0;
+		_textInputPos = _textInputStringLength + 1;
+		_textInputRepeatPhase = 0;
 		break;
 	}
 
@@ -492,6 +510,21 @@ bool Interface::processAscii(uint16 ascii, bool synthetic) {
 	case kPanelBoss:
 		_vm->_render->clearFlag(RF_DEMO_SUBST);
 		keyBossExit();
+		break;
+	case kPanelProtect:
+		if (_textInput && processTextInput(ascii)) {
+			return true;
+		}
+
+		if (ascii == 27 || ascii == 13) { // Esc or Enter
+			_vm->_script->wakeUpThreads(kWaitTypeRequest);
+			_vm->_interface->setMode(kPanelMain);
+			
+			_protectHash = 0;
+
+			for (char *p = _textInputString; *p; p++)
+				_protectHash = (_protectHash << 1) + toupper(*p);
+		}
 		break;
 	}
 	return false;
@@ -1055,6 +1088,26 @@ void Interface::drawSave() {
 	drawTextInput(backBuffer, &_savePanel, _saveEdit);
 }
 
+void Interface::drawProtect() {
+	Surface *backBuffer;
+	Rect rect;
+	int i;
+	PanelButton *panelButton;
+
+	backBuffer = _vm->_gfx->getBackBuffer();
+
+	_protectPanel.getRect(rect);
+	drawButtonBox(backBuffer, rect, kButton, false);
+
+	for (i = 0; i < _protectPanel.buttonsCount; i++) {
+		panelButton = &_protectPanel.buttons[i];
+		if (panelButton->type == kPanelButtonProtectText) {
+			drawPanelText(backBuffer, &_protectPanel, panelButton);
+		}
+	}
+	drawTextInput(backBuffer, &_protectPanel, _protectEdit);
+}
+
 void Interface::handleSaveUpdate(const Point& mousePoint) {
 	bool releasedButton;
 
@@ -1460,6 +1513,11 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 				handleChapterSelectionClick(mousePoint);
 		}
 		break;
+
+	case kPanelProtect:
+		// No mouse interaction
+		break;
+
 	}
 
 	_lastMousePoint = mousePoint;

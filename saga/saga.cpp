@@ -181,6 +181,7 @@ int SagaEngine::init(GameDetector &detector) {
 	_musicVolume = ConfMan.getInt("music_volume") / 25;
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = ConfMan.getInt("talkspeed");
+	_copyProtection = ConfMan.getBool("copy_protection");
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;

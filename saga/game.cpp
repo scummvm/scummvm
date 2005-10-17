@@ -120,6 +120,11 @@ static PanelButton ITE_SavePanelButtons[] = {
 	{kPanelButtonSaveText, -1,5, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
 
+static PanelButton ITE_ProtectPanelButtons[] = {
+	{kPanelButtonProtectEdit, 26,17, 119,17, 0,'-',0, 0,0,0},
+	{kPanelButtonProtectText, -1,5, 0,0, kTextEnterProtectAnswer,'-',0, 0,0,0},
+};
+
 /*
 static PanelButton ITE_ProtectionPanelButtons[] = {
 	{kPanelButtonArrow, 0,0, 0,0, 0,'-',0, 0,0,0}, //TODO
@@ -184,7 +189,13 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	74, 44,			// save panel offsets
 	172, 58,		// save panel width & height
 	ARRAYSIZE(ITE_SavePanelButtons),
-	ITE_SavePanelButtons
+	ITE_SavePanelButtons,
+
+	0,				// protect edit index
+	74, 44,			// protect panel offsets
+	172, 58,		// protect panel width & height
+	ARRAYSIZE(ITE_ProtectPanelButtons),
+	ITE_ProtectPanelButtons
 };
 
 static GameResourceDescription ITE_Resources = {
@@ -634,6 +645,13 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	-1,				// save edit index
 	0, 0,			// save panel offsets
 	0, 0,			// save panel width & height
+	ARRAYSIZE(IHNM_SavePanelButtons),
+	IHNM_SavePanelButtons,
+
+	// No protection panel in IHNM
+	-1,				// protect edit index
+	0, 0,			// protect panel offsets
+	0, 0,			// protect panel width & height
 	ARRAYSIZE(IHNM_SavePanelButtons),
 	IHNM_SavePanelButtons
 };

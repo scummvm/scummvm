@@ -87,7 +87,7 @@ struct FxTable {
 extern ObjectTableData ITE_ObjectTable[ITE_OBJECTCOUNT];
 extern FxTable ITE_SfxTable[ITE_SFXCOUNT];
 
-extern const char *ITEinterfaceTextStrings[][51];
+extern const char *ITEinterfaceTextStrings[][52];
 
 } // End of namespace Saga
 

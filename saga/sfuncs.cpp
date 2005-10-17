@@ -1781,19 +1781,25 @@ void Script::sfGetDeltaFrame(SCRIPTFUNC_PARAMS) {
 
 // Script function #73 (0x49)
 void Script::sfShowProtect(SCRIPTFUNC_PARAMS) {
-	thread->wait(kWaitTypeRequest);
+	if (_vm->_copyProtection) {
+		thread->wait(kWaitTypeRequest);
 
-	//TODO:protection dialog
-	thread->_flags &= ~kTFlagWaiting;
+		_vm->_interface->setMode(kPanelProtect);
+	}
 }
 
 // Script function #74 (0x4A)
 void Script::sfProtectResult(SCRIPTFUNC_PARAMS) {
-	int protectHash;
-	//cheating
-	protectHash = thread->pop();
-	thread->push(protectHash);
-	thread->_returnValue = protectHash;
+	if (_vm->_copyProtection) {
+		thread->_returnValue = _vm->_interface->getProtectHash();
+	} else {
+		int protectHash;
+
+		//cheating
+		protectHash = thread->pop();
+		thread->push(protectHash);
+		thread->_returnValue = protectHash;
+	}
 }
 
 // Script function #75 (0x4b)

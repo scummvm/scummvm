@@ -128,6 +128,10 @@ void Render::drawScene() {
 		}
 	}
 
+	if (_vm->_interface->getMode() == kPanelProtect) {
+		_vm->_interface->drawProtect();
+	}
+
 	// Draw queued text strings
 	_vm->_scene->drawTextList(backBufferSurface);
 

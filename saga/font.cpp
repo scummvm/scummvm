@@ -438,7 +438,7 @@ void Font::textDraw(FontId fontId, Surface *ds, const char *text, const Common::
 
 	if (fitWidth < textWidth) {
 		warning("text too long to be displayed in one line");
-		return;
+		textWidth = fitWidth;
 	}
 	// Entire string fits, draw it
 	textPoint.x = textPoint.x - (textWidth / 2);

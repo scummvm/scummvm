@@ -237,6 +237,7 @@ public:
 	void drawQuit();
 	void drawLoad();
 	void drawSave();
+	void drawProtect();
 	void update(const Point& mousePoint, int updateFlag);
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
@@ -296,6 +297,8 @@ public:
 	void loadState(Common::InSaveFile *in);
 
 	void mapPanelDrawCrossHair();
+
+	int32 getProtectHash() { return _protectHash; }
 
 private:
 	void handleMainUpdate(const Point& mousePoint);					// main panel update
@@ -418,6 +421,8 @@ private:
 	InterfacePanel _loadPanel;
 	InterfacePanel _savePanel;
 	PanelButton * _saveEdit;
+	InterfacePanel _protectPanel;
+	PanelButton * _protectEdit;
 
 	bool _disableAbortSpeeches;
 
@@ -472,6 +477,8 @@ private:
 
 	PalEntry _mapSavedPal[PAL_ENTRIES];
 	bool _mapPanelCrossHairState;
+
+	int32 _protectHash;
 };
 
 } // End of namespace Saga
