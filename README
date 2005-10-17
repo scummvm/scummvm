@@ -137,7 +137,9 @@ SCUMM Games by Humongous Entertainment:
      Pajama Sam's Sock Works                                        [Game: socks]
      Putt-Putt's Fun Pack                                           [Game: funpack]
      Putt-Putt & Fatty Bear's Activity Pack                         [Game: activity]
+     Putt-Putt Enters the Race                                      [Game: puttrace]
      Putt-Putt Goes To The Moon                                     [Game: puttmoon]
+     Putt-Putt Joins the Circus                                     [Game: puttcircus]
      Putt-Putt Joins the Parade                                     [Game: puttputt]
      Putt-Putt Saves the Zoo                                        [Game: puttzoo]
      Putt-Putt Travels Through Time                                 [Game: putttime]
@@ -145,6 +147,7 @@ SCUMM Games by Humongous Entertainment:
      Putt-Putt and Pep's Dog on a Stick                             [Game: dog]
      Spyfox 1: Dry Cereal                                           [Game: spyfox]
      Spyfox 2: Some Assembly Required                               [Game: spyfox2]
+     Spy Fox in Cheese Chase Game                                   [Game: chase]
      Spy Fox in Hold the Mustard                                    [Game: mustard]
 
 Other Games:
@@ -170,10 +173,7 @@ compatibility chart.
      Big Thinkers First Grade                                       [Game: thinker1]
      Pajama Sam 3: You Are What You Eat From Your Head to Your Feet [Game: pajama3]
      Pajama Sam's Lost & Found                                      [Game: lost]
-     Putt-Putt Enters the Race                                      [Game: puttrace]
-     Putt-Putt Joins the Circus                                     [Game: puttcircus]
      Spyfox 3: Operation Ozone                                      [Game: spyozon]
-     Spy Fox in Cheese Chase Game                                   [Game: chase]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
