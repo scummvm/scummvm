@@ -37,6 +37,14 @@
 
 namespace Scumm {
 
+enum {
+	RF_LOCK = 0x80,
+	RF_USAGE = 0x7F,
+	RF_USAGE_MAX = RF_USAGE
+};
+
+
+
 extern const char *resTypeFromId(int id);
 
 static uint16 newTag2Old(uint32 newTag);
@@ -877,7 +885,8 @@ void ResourceManager::nukeResource(int type, int idx) {
 
 	assert(idx >= 0 && idx < num[type]);
 
-	if ((ptr = address[type][idx]) != NULL) {
+	ptr = address[type][idx];
+	if (ptr != NULL) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", resTypeFromId(type), idx);
 		address[type][idx] = 0;
 		flags[type][idx] = 0;
@@ -921,6 +930,12 @@ void ResourceManager::unlock(int type, int i) {
 	if (!validateResource("Unlocking", type, i))
 		return;
 	flags[type][i] &= ~RF_LOCK;
+}
+
+bool ResourceManager::isLocked(int type, int i) const {
+	if (!validateResource("Unlocking", type, i))
+		return false;
+	return (flags[type][i] & RF_LOCK) != 0;
 }
 
 bool ScummEngine::isResourceInUse(int type, int i) const {

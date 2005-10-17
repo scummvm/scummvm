@@ -238,7 +238,6 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		if (i != rtTemp && i != rtBuffer && (i != rtSound || _saveSound || !compat))
 			for (j = 0; j < res.num[i]; j++) {
 				res.nukeResource(i, j);
-				res.flags[i][j] = 0;
 			}
 
 	initScummVars();
@@ -1135,7 +1134,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (s->isSaving()) {
 		for (i = rtFirst; i <= rtLast; i++)
 			for (j = 1; j < res.num[i]; j++) {
-				if (res.flags[i][j] & RF_LOCK) {
+				if (res.isLocked(i, j)) {
 					s->saveByte(i);
 					s->saveUint16(j);
 				}
@@ -1144,7 +1143,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	} else {
 		while ((i = s->loadByte()) != 0xFF) {
 			j = s->loadUint16();
-			res.flags[i][j] |= RF_LOCK;
+			res.lock(i, j);
 		}
 	}
 

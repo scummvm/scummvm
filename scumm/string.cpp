@@ -860,8 +860,8 @@ void ScummEngine_v6::removeBlastTexts() {
 
 #ifndef DISABLE_SCUMM_7_8
 int indexCompare(const void *p1, const void *p2) {
-	const LangIndexNode *i1 = (const LangIndexNode *) p1;
-	const LangIndexNode *i2 = (const LangIndexNode *) p2;
+	const ScummEngine_v7::LangIndexNode *i1 = (const ScummEngine_v7::LangIndexNode *) p1;
+	const ScummEngine_v7::LangIndexNode *i2 = (const ScummEngine_v7::LangIndexNode *) p2;
 
 	return strcmp(i1->tag, i2->tag);
 }

@@ -254,6 +254,12 @@ protected:
 
 	const OpcodeEntryV2 *_opcodesV2;
 
+	struct V2MouseoverBox {
+		Common::Rect rect;
+		byte color;
+		byte hicolor;
+	};
+
 	V2MouseoverBox _mouseOverBoxesV2[7];
 	int8 _mouseOverBoxV2;
 
@@ -1319,6 +1325,11 @@ public:
 	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 	~ScummEngine_v7();
 
+	struct LangIndexNode {
+		char tag[12+1];
+		int32 offset;
+	};
+	
 	bool _existLanguageFile;
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;

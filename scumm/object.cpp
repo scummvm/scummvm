@@ -518,7 +518,7 @@ void ScummEngine::clearRoomObjects() {
 				_objs[i].obj_nr = 0;
 			} else {
 				// Nuke all unlocked flObjects
-				if (!(res.flags[rtFlObject][_objs[i].fl_object_index] & RF_LOCK)) {
+				if (!res.isLocked(rtFlObject, _objs[i].fl_object_index)) {
 					res.nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
@@ -1739,8 +1739,8 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 
 	// Lock room/roomScripts for the given room. They contains the OBCD/OBIM
 	// data, and a call to createResource might expire them, hence we lock them.
-	isRoomLocked = ((res.flags[rtRoom][room] & RF_LOCK) != 0);
-	isRoomScriptsLocked = ((res.flags[rtRoomScripts][room] & RF_LOCK) != 0);
+	isRoomLocked = res.isLocked(rtRoom, room);
+	isRoomScriptsLocked = res.isLocked(rtRoomScripts, room);
 	if (!isRoomLocked)
 		res.lock(rtRoom, room);
 	if (_version == 8 && !isRoomScriptsLocked)

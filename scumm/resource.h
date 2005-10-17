@@ -30,13 +30,6 @@ enum {
 	OF_STATE_SHL = 4
 };
 
-enum {
-	RF_LOCK = 0x80,
-	RF_USAGE = 0x7F,
-	RF_USAGE_MAX = RF_USAGE
-};
-
-
 class ResourceIterator {
 	uint32 _size;
 	uint32 _pos;
