@@ -112,7 +112,7 @@ static const struct GobGameList {
 	}
 } gob_list[] = {
 	{"gob1", "Gobliiins", GF_GOB1},
-	{"gob2", "Gobliins 2", GF_GOB2},
+	//{"gob2", "Gobliins 2", GF_GOB2},
 	{0, 0, 0}
 };
 
