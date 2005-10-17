@@ -57,7 +57,7 @@
 
 static const GameSettings saga_games[] = {
 	{"ite", "Inherit the Earth", 0},
-	{"ihnm", "I Have No Mouth and I Must Scream", GF_DEFAULT_TO_1X_SCALER },
+	//{"ihnm", "I Have No Mouth and I Must Scream", GF_DEFAULT_TO_1X_SCALER },
 	{0, 0, 0}
 };
 

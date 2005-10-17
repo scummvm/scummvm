@@ -831,6 +831,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_MACDEMO1, "b3a831fbed337d1f1300fee1dd474f6c", "soundsd.rsc", false },
 	{ GID_ITE_MACDEMO1, "e139d86bab2ee8ba3157337f894a92d4", "voicesd.rsc", false },
 
+	/*
 	{ GID_IHNM_CD, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
 	{ GID_IHNM_CD, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
 	{ GID_IHNM_CD, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
@@ -877,6 +878,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res", false },
 	{ GID_IHNM_DEMO, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
 	{ GID_IHNM_DEMO, "3bbc16a8f741dbb511da506c660a0b54", "voicesd.res", false },
+	*/
 };
 
 static GameDescription gameDescriptions[] = {
