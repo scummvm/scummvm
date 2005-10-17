@@ -694,8 +694,8 @@ static GameFileDescription IHNMCD_GameFiles[] = {
 	{"voices6.res", GAME_VOICEFILE}
 };
 
-// I Have No Mouth and I Must Scream - Retail German CD version
-static GameFileDescription IHNMCDDE_GameFiles[] = {
+// I Have No Mouth and I Must Scream - Censored CD version (without Nimdok)
+static GameFileDescription IHNMCD_Censored_GameFiles[] = {
 	{"musicfm.res", GAME_MUSICFILE_FM},
 	{"musicgm.res", GAME_MUSICFILE_GM},
 	{"scream.res", GAME_RESOURCEFILE},
@@ -872,6 +872,33 @@ static GameMD5 gameMD5[] = {
 	{ GID_IHNM_CD_ES, "172668cfc5d8c305cb5b1a9b4d995fc0", "voices5.res", false },
 	{ GID_IHNM_CD_ES, "96c9bda9a5f41d6bc232ed7bf6d371d9", "voices6.res", false },
 	{ GID_IHNM_CD_ES, "d869de9883c8faea7f687217a9ec7057", "voicess.res", false },
+
+	{ GID_IHNM_CD_RU, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
+	{ GID_IHNM_CD_RU, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
+	{ GID_IHNM_CD_RU, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
+	{ GID_IHNM_CD_RU, "be38bbc5a26be809dbf39f13befebd01", "scripts.res", false },
+	{ GID_IHNM_CD_RU, "58b79e61594779513c7f2d35509fa89e", "patch.re_", false },
+	{ GID_IHNM_CD_RU, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
+	{ GID_IHNM_CD_RU, "d6100d2dc3b2b9f2e1ad247f613dce9b", "voices1.res", false },
+	{ GID_IHNM_CD_RU, "84f6f48ecc2832841ea6417a9a379430", "voices2.res", false },
+	{ GID_IHNM_CD_RU, "ebb9501283047f27a0f54e27b3c8ba1e", "voices3.res", false },
+	{ GID_IHNM_CD_RU, "4c145da5fa6d1306162a7ca8ce5a4f2e", "voices4.res", false },
+	{ GID_IHNM_CD_RU, "871a559644281917677eca4af1b05620", "voices5.res", false },
+	{ GID_IHNM_CD_RU, "211be5c24f066d69a2f6cfa953acfba6", "voices6.res", false },
+	{ GID_IHNM_CD_RU, "9df7cd3b18ddaa16b5291b3432567036", "voicess.res", false },
+
+	{ GID_IHNM_CD_FR, "0439083e3dfdc51b486071d45872ae52", "musicfm.res", false },
+	{ GID_IHNM_CD_FR, "80f875a1fb384160d1f4b27166eef583", "musicgm.res", false },
+	{ GID_IHNM_CD_FR, "58b79e61594779513c7f2d35509fa89e", "patch.re_", false },
+	{ GID_IHNM_CD_FR, "c92370d400e6f2a3fc411c3729d09224", "scream.res", false },
+	{ GID_IHNM_CD_FR, "32aa01a89937520fe0ea513950117292", "scripts.res", false },
+	{ GID_IHNM_CD_FR, "1c610d543f32ec8b525e3f652536f269", "sfx.res", false },
+	{ GID_IHNM_CD_FR, "424971e1e2373187c3f5734fe36071a2", "voices1.res", false },
+	{ GID_IHNM_CD_FR, "c2d93a35d2c2def9c3d6d242576c794b", "voices2.res", false },
+	{ GID_IHNM_CD_FR, "49e42befea883fd101ec3d0f5d0647b9", "voices3.res", false },
+	{ GID_IHNM_CD_FR, "f4c415de7c03de86b73f9a12b8bd632f", "voices5.res", false },
+	{ GID_IHNM_CD_FR, "3fc5358a5d8eee43bdfab2740276572e", "voices6.res", false },
+	{ GID_IHNM_CD_FR, "b8642e943bbebf89cef2f48b31cb4305", "voicess.res", false },
 
 	{ GID_IHNM_DEMO, "46bbdc65d164ba7e89836a0935eec8e6", "scream.res", false },
 	{ GID_IHNM_DEMO, "9626bda8978094ff9b29198bc1ed5f9a", "scripts.res", false },
@@ -1312,8 +1339,8 @@ static GameDescription gameDescriptions[] = {
 		&IHNM_DisplayInfo,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
-		ARRAYSIZE(IHNMCDDE_GameFiles),
-		IHNMCDDE_GameFiles,
+		ARRAYSIZE(IHNMCD_Censored_GameFiles),
+		IHNMCD_Censored_GameFiles,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
@@ -1346,8 +1373,51 @@ static GameDescription gameDescriptions[] = {
 		GF_DEFAULT_TO_1X_SCALER,
 		Common::ES_ESP,
 		Common::kPlatformPC,
-	}
-
+	},
+	// I Have No Mouth And I Must Scream - Ru CD version
+	{
+		"ihnm",
+		GType_IHNM,
+		GID_IHNM_CD_RU,
+		"I Have No Mouth and I Must Scream (Ru DOS)",
+		&IHNM_DisplayInfo,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFiles),
+		IHNMCD_GameFiles,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		&IHNM_GameSound,
+		&IHNM_GameSound,
+		NULL,
+		0,
+		NULL,
+		GF_DEFAULT_TO_1X_SCALER,
+		Common::RU_RUS,
+		Common::kPlatformPC,
+	},
+	// I Have No Mouth And I Must Scream - Fr CD version
+	{
+		"ihnm",
+		GType_IHNM,
+		GID_IHNM_CD_FR,
+		"I Have No Mouth and I Must Scream (Fr DOS)",
+		&IHNM_DisplayInfo,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_Censored_GameFiles),
+		IHNMCD_Censored_GameFiles,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		&IHNM_GameSound,
+		&IHNM_GameSound,
+		NULL,
+		0,
+		NULL,
+		GF_DEFAULT_TO_1X_SCALER,
+		Common::FR_FRA,
+		Common::kPlatformPC,
+	},
 };
 
 bool SagaEngine::initGame() {
