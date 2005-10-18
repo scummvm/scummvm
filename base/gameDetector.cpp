@@ -101,13 +101,13 @@ static const char USAGE_STRING[] =
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
 	"                           Steel Sky and Flight of the Amazon Queen\n"
 #endif
-#ifndef DISABLE_SCUMM
 	"  --copy-protection        Enable copy protection in SCUMM games, when\n"
 	"                           ScummVM disables it by default.\n"
+	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
+#ifndef DISABLE_SCUMM
 	"  --demo-mode              Start demo mode of Maniac Mansion\n"
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
-	"  --talkspeed=NUM          Set talk speed for SCUMM games (default: 60)\n"
 #endif
 	"\n"
 	"The meaning of boolean long options can be inverted by prefixing them with\n"
@@ -152,10 +152,11 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("object_labels", true);
 #endif
 
-#ifndef DISABLE_SCUMM
 	ConfMan.registerDefault("copy_protection", false);
-	ConfMan.registerDefault("demo_mode", false);
 	ConfMan.registerDefault("talkspeed", 60);
+
+#ifndef DISABLE_SCUMM
+	ConfMan.registerDefault("demo_mode", false);
 	ConfMan.registerDefault("tempo", 0);
 #endif
 
@@ -166,6 +167,7 @@ GameDetector::GameDetector() {
 	// Miscellaneous
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
+	ConfMan.registerDefault("disable_sdl_parachute", false);
 #ifdef USE_ALSA
 	ConfMan.registerDefault("alsa_port", "65:0");
 #endif
@@ -501,6 +503,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				settings["soundfont"] = option;
 			END_OPTION
 
+			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
+				settings["disable_sdl_parachute"] = boolValue ? "true" : "false";
+			END_OPTION
+
 			DO_LONG_OPTION_BOOL("multi-midi")
 				settings["multi_midi"] = boolValue ? "true" : "false";
 			END_OPTION
@@ -534,6 +540,14 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				settings["savepath"] = option;
 			END_OPTION
 
+			DO_LONG_OPTION_INT("talkspeed")
+				settings["talkspeed"] = option;
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("copy-protection")
+				settings["copy_protection"] = boolValue ? "true" : "false";
+			END_OPTION
+
 #ifndef DISABLE_SCUMM
 			DO_LONG_OPTION("tempo")
 				// Use the special value '0' for the base in (int)strtol.
@@ -543,14 +557,6 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				char buf[20];
 				snprintf(buf, sizeof(buf), "%d", value);
 				settings["tempo"] = buf;
-			END_OPTION
-
-			DO_LONG_OPTION_INT("talkspeed")
-				settings["talkspeed"] = option;
-			END_OPTION
-
-			DO_LONG_OPTION_BOOL("copy-protection")
-				settings["copy_protection"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")
