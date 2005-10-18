@@ -41,6 +41,9 @@ void OSystem_SDL::initBackend() {
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
+	if (ConfMan.hasKey("disable_sdl_parachute"))
+		sdlFlags |= SDL_INIT_NOPARACHUTE;
+
 #ifdef _WIN32_WCE
 	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
 		SDL_VideoInit("windib", 0);

@@ -166,6 +166,7 @@ GameDetector::GameDetector() {
 	// Miscellaneous
 	ConfMan.registerDefault("joystick_num", -1);
 	ConfMan.registerDefault("confirm_exit", false);
+	ConfMan.registerDefault("disable_sdl_parachute", false);
 #ifdef USE_ALSA
 	ConfMan.registerDefault("alsa_port", "65:0");
 #endif
@@ -499,6 +500,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			DO_LONG_OPTION("soundfont")
 				// TODO: Verify whether the path is valid
 				settings["soundfont"] = option;
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
+				settings["disable_sdl_parachute"] = boolValue ? "true" : "false";
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
