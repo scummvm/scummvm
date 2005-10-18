@@ -1087,18 +1087,33 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (y - _screenTop) + x;
 			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
-	} else {
-		// Flags are used for different methods in HE71+ games
-		if ((color & 0x2000) || (color & 0x4000000)) {
+	} else if (_heversion == 100) {
+		// Flags are used for different methods in HE games
+		int32 flags = color;
+		if (flags & 0x4000000) {
 			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
-		} else if ((color & 0x4000) || (color & 0x2000000)) {
+		} else if (flags & 0x2000000) {
 			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height);
-		} else if ((color & 0x8000) || (color & 0x1000000)) {
-			color &= (_heversion == 100) ? 0xFFFFFF : 0x7FFF;
-			fill(backbuff, vs->pitch, color, width, height);
-			fill(bgbuff, vs->pitch, color, width, height);
+		} else if (flags & 0x1000000) {
+			flags &= 0xFFFFFF;
+			fill(backbuff, vs->pitch, flags, width, height);
+			fill(bgbuff, vs->pitch, flags, width, height);
 		} else {
-			fill(backbuff, vs->pitch, color, width, height);
+			fill(backbuff, vs->pitch, flags, width, height);
+		}
+	} else {
+		// Flags are used for different methods in HE games
+		int16 flags = color;
+		if (flags & 0x2000) {
+			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
+		} else if (flags & 0x4000) {
+			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height);
+		} else if (flags & 0x8000) {
+			flags &= 0x7FFF;
+			fill(backbuff, vs->pitch, flags, width, height);
+			fill(bgbuff, vs->pitch, flags, width, height);
+		} else {
+			fill(backbuff, vs->pitch, flags, width, height);
 		}
 	}
 }
