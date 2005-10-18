@@ -196,6 +196,18 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 			return eatSystemEvents();
 		}
 		break;
+	case MT32Emu::ReportType_availableSSE:
+		debug(1, "MT32emu: SSE is avaliable");
+		break;
+	case MT32Emu::ReportType_usingSSE:
+		debug(1, "MT32emu: using SSE");
+		break;
+	case MT32Emu::ReportType_available3DNow:
+		debug(1, "MT32emu: 3DNow! is avaliable");
+		break;
+	case MT32Emu::ReportType_using3DNow:
+		debug(1, "MT32emu: using 3DNow!");
+		break;
 	default:
 		break;
 	}
