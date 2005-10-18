@@ -50,8 +50,10 @@ Sprite Sprites::getSprite(uint8 spriteID) {
 }
 
 void Sprites::drawSprites(uint8 srcPage, uint8 dstPage) {
+	int flags;
+
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
-		if (_anims[i].script == 0)
+		if (_anims[i].script == 0 || !_anims[i].play)
 			break;
 		if (_anims[i].sprite >= 0) {
 			assert( _anims[i].sprite < MAX_NUM_SPRITES);
@@ -59,8 +61,11 @@ void Sprites::drawSprites(uint8 srcPage, uint8 dstPage) {
 
 			//debug(1, "Drawing from X %i, Y %i, to X %i, Y %i, width %i, height %i, srcPage %i, dstPage %i",
 			//	sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage);
-
-			_screen->copyRegion(sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage);
+			flags = Screen::CR_CLIPPED;
+			if (_anims[i].flipX)
+				flags |= Screen::CR_X_FLIPPED;
+ 
+			_screen->copyRegion(sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage, flags);
 		}
 	}
 }
@@ -68,10 +73,7 @@ void Sprites::drawSprites(uint8 srcPage, uint8 dstPage) {
 void Sprites::doAnims() {
 	uint32 currTime = _system->getMillis();
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
-		if (_anims[i].script == 0)
-			break;
-
-		if (!_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
+		if (_anims[i].script == 0 || !_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
 			continue;
 
 		uint8 *data;
@@ -88,17 +90,22 @@ void Sprites::doAnims() {
 			//debug(1, "Default Y of sprite: %i", READ_LE_UINT16(data + 0x16) );
 			_anims[i].y = READ_LE_UINT16(data + 0x16);
 
-			//debug(1, "Anim %i data: 0h: %i, 2h: %i,4h: %i,6h: %i,8h: %i,ah: %i,ch: %i", i, READ_LE_UINT16(data + 0x0),
-			//READ_LE_UINT16(data + 0x2), READ_LE_UINT16(data + 0x4),READ_LE_UINT16(data + 0x6),READ_LE_UINT16(data + 0x8),
-			//READ_LE_UINT16(data + 0xa),READ_LE_UINT16(data + 0xc));
+			//debug(1, "Anim %i flags: 22h: %i, 1ah: %i", i, READ_LE_UINT16(data + 0x22), READ_LE_UINT16(data + 0x1a));
 
-			//debug(1, "Anim %i data: eh: %i, 10h: %i,12h: %i,14h: %i,16h: %i,18h: %i,1ah: %i", i, READ_LE_UINT16(data + 0xe),
-			//READ_LE_UINT16(data + 0x10), READ_LE_UINT16(data + 0x12),READ_LE_UINT16(data + 0x14),READ_LE_UINT16(data + 0x16),
-			//READ_LE_UINT16(data + 0x18),READ_LE_UINT16(data + 0x1a));
+			/*
+			debug(1, "Anim %i data: 0h: %i, 2h: %i,4h: %i,6h: %i,8h: %i,ah: %i,ch: %i", i, READ_LE_UINT16(data + 0x0),
+			READ_LE_UINT16(data + 0x2), READ_LE_UINT16(data + 0x4),READ_LE_UINT16(data + 0x6),READ_LE_UINT16(data + 0x8),
+			READ_LE_UINT16(data + 0xa),READ_LE_UINT16(data + 0xc));
 
-			//debug(1, "Anim %i data: 1ch: %i, 1fh: %i,22h: %i,24h: %i,26h: %i,28h: %i,2ah: %i", i, READ_LE_UINT16(data + 0x1c),
-			//READ_LE_UINT16(data + 0x1f), READ_LE_UINT16(data + 0x22),READ_LE_UINT16(data + 0x24),READ_LE_UINT16(data + 0x26),
-			//READ_LE_UINT16(data + 0x28),READ_LE_UINT16(data + 0x2a));
+			debug(1, "Anim %i data: eh: %i, 10h: %i,12h: %i,14h: %i,16h: %i,18h: %i,1ah: %i", i, READ_LE_UINT16(data + 0xe),
+			READ_LE_UINT16(data + 0x10), READ_LE_UINT16(data + 0x12),READ_LE_UINT16(data + 0x14),READ_LE_UINT16(data + 0x16),
+			READ_LE_UINT16(data + 0x18),READ_LE_UINT16(data + 0x1a));
+
+			debug(1, "Anim %i data: 1ch: %i, 1fh: %i,22h: %i,24h: %i,26h: %i,28h: %i,2ah: %i", i, READ_LE_UINT16(data + 0x1c),
+			READ_LE_UINT16(data + 0x1f), READ_LE_UINT16(data + 0x22),READ_LE_UINT16(data + 0x24),READ_LE_UINT16(data + 0x26),
+			READ_LE_UINT16(data + 0x28),READ_LE_UINT16(data + 0x2a));
+			*/
+
 
 			// TODO: Find out what the rest of this data (next 38h bytes) does.
 			data += 0x38;
@@ -115,55 +122,56 @@ void Sprites::doAnims() {
 			switch (READ_LE_UINT16(data)) {
 			case 0xFF88:
 				data += 2;
-				debug(9, "func: Set sprite image, and set flag0");
-				debug(9, "Sprite index %i", READ_LE_UINT16(data));
+				debug(5, "func: Set sprite image.");
+				debug(5, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
 				data += 2;
-				debug(9, "Unused %i", READ_LE_UINT16(data));
+				//debug(5, "Unused %i", READ_LE_UINT16(data));
 				data += 2;
-				debug(9, "X %i", READ_LE_UINT16(data));
+				debug(5, "X %i", READ_LE_UINT16(data));
 				_anims[i].x = READ_LE_UINT16(data);
 				data += 2;
-				debug(9, "Y %i", READ_LE_UINT16(data));
+				debug(5, "Y %i", READ_LE_UINT16(data));
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
-				_anims[i].flag0 = true;
+				_anims[i].flipX = false;
 				break;
 			case 0xFF8D:
 				data += 2;
-				debug(9, "func: Set sprite image, and reset flag0");
+				debug(5, "func: Set sprite image, flipped.");
+				debug(5, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
 				data += 2;
 				//debug(9, "Unused %i", READ_LE_UINT16(data));
 				data += 2;
-				debug(9, "X %i", READ_LE_UINT16(data));
+				debug(5, "X %i", READ_LE_UINT16(data));
 				_anims[i].x = READ_LE_UINT16(data);
 				data += 2;
-				debug(9, "Y %i", READ_LE_UINT16(data));
+				debug(5, "Y %i", READ_LE_UINT16(data));
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
-				_anims[i].flag0 = false;
+				_anims[i].flipX = true;
 				break;
 			case 0xFF8A:
 				data += 2;
-				debug(9, "func: Set time to wait");
-				debug(9, "Time %i", READ_LE_UINT16(data));
+				debug(5, "func: Set time to wait");
+				debug(5, "Time %i", READ_LE_UINT16(data));
 				_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _animDelay;
 				data += 2;
 				break;
 			case 0xFFB3:
 				data += 2;
-				debug(9, "func: Set time to wait to random value");
+				debug(5, "func: Set time to wait to random value");
 				rndNr = READ_LE_UINT16(data) + _rnd.getRandomNumber( READ_LE_UINT16(data) + 2);
-				debug(9, "Minimum time %i", READ_LE_UINT16(data));
+				debug(5, "Minimum time %i", READ_LE_UINT16(data));
 				data += 2;
-				debug(9, "Maximum time %i", READ_LE_UINT16(data));
+				debug(5, "Maximum time %i", READ_LE_UINT16(data));
 				data += 2;
 				_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay; 								
 				break;
 			case 0xFF8C:
 				data += 2;
-				debug(9, "func: Wait until wait time has elapsed");
+				debug(5, "func: Wait until wait time has elapsed");
 				_anims[i].reentry = data;
 				endLoop = true;
 				//assert( _anims[i].nextRun > _system->getMillis());
@@ -178,35 +186,35 @@ void Sprites::doAnims() {
 				break;		
 			case 0xFF97:
 				data += 2;
-				debug(9, "func: Set default X coordinate of sprite");
-				debug(9, "X %i", READ_LE_UINT16(data));
+				debug(5, "func: Set default X coordinate of sprite");
+				debug(5, "X %i", READ_LE_UINT16(data));
 				_anims[i].x = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF98:
 				data += 2;
-				debug(9, "func: Set default Y coordinate of sprite");
-				debug(9, "Y %i", READ_LE_UINT16(data));
+				debug(5, "func: Set default Y coordinate of sprite");
+				debug(5, "Y %i", READ_LE_UINT16(data));
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF8B:
-				debug(9, "func: Jump to start of script section");
+				debug(5, "func: Jump to start of script section");
 				//data = scriptStart;
 				_anims[i].nextRun = _system->getMillis();
 				endLoop = true;
 				break;
 			case 0xFF8E:
 				data += 2;
-				debug(9, "func: Begin for () loop");
-				debug(9, "Iterations: %i", READ_LE_UINT16(data));
+				debug(5, "func: Begin for () loop");
+				debug(5, "Iterations: %i", READ_LE_UINT16(data));
 				_anims[i].loopsLeft = READ_LE_UINT16(data);
 				data += 2;
 				_anims[i].loopStart = data;
 				break;
 			case 0xFF8F:
 				data += 2;
-				debug(9, "func: End for () loop");
+				debug(5, "func: End for () loop");
 				if (_anims[i].loopsLeft > 0) {
 					_anims[i].loopsLeft--;
 					data = _anims[i].loopStart;
@@ -214,55 +222,58 @@ void Sprites::doAnims() {
 				break;
 			case 0xFF90:
 				data += 2;
-				debug(9, "func: Set sprite image using default X and Y (and set flag0)");
-				debug(9, "Sprite index %i", READ_LE_UINT16(data));
+				debug(5, "func: Set sprite image using default X and Y");
+				debug(5, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
-				_anims[i].flag0 = true;
+				_anims[i].flipX = false;
 				data += 2;
 				break;
 			case 0xFF91:
 				data += 2;
-				debug(9, "func: Set sprite image using default X and Y (and reset flag0)");
-				debug(9, "Sprite index %i", READ_LE_UINT16(data));
+				debug(5, "func: Set sprite image using default X and Y, flipped.");
+				debug(5, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
-				_anims[i].flag0 = false;
+				_anims[i].flipX = true;
 				data += 2;
 				break;
 			case 0xFF92:
 				data += 2;
-				debug(9, "func: Increase value of default X-coordinate");
-				debug(9, "Increment %i", READ_LE_UINT16(data));
+				debug(5, "func: Increase value of default X-coordinate");
+				debug(5, "Increment %i", READ_LE_UINT16(data));
 				_anims[i].x += READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF93:
 				data += 2;
-				debug(9, "func: Increase value of default Y-coordinate");
-				debug(9, "Increment %i", READ_LE_UINT16(data));
+				debug(5, "func: Increase value of default Y-coordinate");
+				debug(5, "Increment %i", READ_LE_UINT16(data));
 				_anims[i].y += READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF94:
 				data += 2;
-				debug(9, "func: Decrease value of default X-coordinate");
-				debug(9, "Decrement %i", READ_LE_UINT16(data));
+				debug(5, "func: Decrease value of default X-coordinate");
+				debug(5, "Decrement %i", READ_LE_UINT16(data));
 				_anims[i].x -= READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF95:
 				data += 2;
-				debug(9, "func: Decrease value of default Y-coordinate");
-				debug(9, "Decrement %i", READ_LE_UINT16(data));
+				debug(5, "func: Decrease value of default Y-coordinate");
+				debug(5, "Decrement %i", READ_LE_UINT16(data));
 				_anims[i].y -= READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF96:
 				data += 2;
-				debug(1, "TODO func: Set value of animation property 34h to 1(?)");
-				debug(1, "Arg1 %i", READ_LE_UINT16(data));
+				debug(9, "func: Stop animation");
+				debug(9, "Animation index %i", READ_LE_UINT16(data));
+				uint16 anim = READ_LE_UINT16(data);
 				data += 2;
-				debug(1, "Arg2 %i", READ_LE_UINT16(data));
-				data += 2;
+				_anims[anim].play = false;
+				_anims[anim].sprite = -1;
+				//debug(1, "Arg2 %i", READ_LE_UINT16(data));
+				//data += 2;
 				break;
 /*			case 0xFF97:
 				data += 2;
@@ -314,6 +325,12 @@ void Sprites::doAnims() {
 				debug(1, "Sound index %i", READ_LE_UINT16(data));
 				data += 2;
 				debug(1, "Percentage %i", READ_LE_UINT16(data));
+				data += 2;
+				break;
+			case 0xFFA7:
+				data += 2;
+				debug(1, "TODO func: Unknown FFA7");
+				debug(1, " %i", READ_LE_UINT16(data));
 				data += 2;
 				break;
 			default:

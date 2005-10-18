@@ -207,24 +207,65 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 	memcpy(getPagePtr(0) + y * SCREEN_W, src, h * SCREEN_W);
 }
 
-void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
-	debug(9, "Screen::copyRegion(%d, %d, %d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, w, h, srcPage, dstPage);
+void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
+	debug(9, "Screen::copyRegion(%d, %d, %d, %d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, w, h, srcPage, dstPage, flags);
+	
+	if (flags & CR_CLIPPED) {
+		if (x2 < 0) {
+			if (x2  <= -w)
+				return;
+			w += x2;
+			x1 -= x2;
+			x2 = 0;
+		} else if (x2 + w >= SCREEN_W) {
+			if (x2 > SCREEN_W)
+				return;
+			w = SCREEN_W - x2;
+		}
+
+		if (y2 < 0) {
+			if (y2 <= -h )
+				return;
+			h += y2;
+			y1 -= y2;
+			y2 = 0;
+		} else if (y2 + h >= SCREEN_H) {
+			if (y2 > SCREEN_H)
+				return;
+			h = SCREEN_H - y2;
+		}
+	}
+
 	assert(x1 + w <= SCREEN_W && y1 + h <= SCREEN_H);
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W + x1;
 	assert(x2 + w <= SCREEN_W && y2 + h <= SCREEN_H);
 	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W + x2;
-	while (h--) {
-		for (int i = 0; i < w; ++i) {
-			if (src[i]) {
-				dst[i] = src[i];
+
+	if (flags & CR_X_FLIPPED) {
+		while (h--) {
+			for (int i = 0; i < w; ++i) {
+				if (src[i]) {
+					dst[w-i] = src[i];
+				}
 			}
+			src += SCREEN_W;
+			dst += SCREEN_W;
 		}
-		src += SCREEN_W;
-		dst += SCREEN_W;
+	} else {
+		while (h--) {
+			for (int i = 0; i < w; ++i) {
+				if (src[i]) {
+					dst[i] = src[i];
+				}
+			}
+			src += SCREEN_W;
+			dst += SCREEN_W;
+		}
 	}
 }
 
 void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
+	debug(9, "Screen::copyRegionToBuffer(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
 	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H && dest);
 	uint8 *pagePtr = getPagePtr(pageNum);
 	for (int i = y; i < y + h; i++) {

@@ -60,6 +60,11 @@ public:
 		SCREEN_PAGE_NUM  = 16
 	};
 
+	enum CopyRegionFlags {
+		CR_X_FLIPPED  = 0x01,
+		CR_CLIPPED    = 0x02
+	};
+
 	enum DrawShapeFlags {
 		DSF_X_FLIPPED  = 0x01,
 		DSF_Y_FLIPPED  = 0x02,
@@ -89,7 +94,7 @@ public:
 	void fadePalette(const uint8 *palData, int delay);
 	void setScreenPalette(const uint8 *palData);
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
-	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
+	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
 	void copyCurPageBlock(int x, int y, int h, int w, uint8 *dst);
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);

@@ -37,9 +37,9 @@ struct Sprite {
 struct Anim {
 	uint8 *script;
 	uint16 length;
-	uint16 x;
-	uint16 y;
-	bool flag0;
+	int16 x;
+	int16 y;
+	bool flipX;
 	int8 sprite;
 	uint8 *loopStart;
 	uint16 loopsLeft;
@@ -58,6 +58,9 @@ public:
 	void loadDAT(const char* filename);
 	Sprite getSprite(uint8 spriteID);
 	void drawSprites(uint8 srcPage, uint8 dstPage);
+	
+	void enableAnim(uint8 anim) { _anims[anim].play = true; }
+	void disableAnim(uint8 anim) { _anims[anim].play = false; }
 
 protected:
 	KyraEngine *_engine;
