@@ -1765,9 +1765,11 @@ void ScummEngine_v72he::o72_openFile() {
 	// There are Macintosh specific versions of HE7.2 games.
 	if (_heversion >= 80 && _substResFileNameIndex > 0) {
 		char buf1[128];
-
+		buf1[0] = '\0';
 		generateSubstResFileName((char *)filename, buf1, sizeof(buf1));
-		strcpy((char *)filename, buf1);
+		if (buf1[0]) {
+			strcpy((char *)filename, buf1);
+		}
 	}
 
 	int r = convertFilePath(filename);
