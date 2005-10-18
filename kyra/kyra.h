@@ -34,14 +34,16 @@ namespace Kyra {
 #define MAX_NUM_ROOMS 12
 
 enum {
-	GF_FLOPPY  = 1 << 0,
-	GF_TALKIE  = 1 << 1,
-	GF_AUDIOCD = 1 << 2,  // FM-Towns versions seems to use audio CD
-	GF_DEMO    = 1 << 3,
-	GF_ENGLISH = 1 << 4,
-	GF_FRENCH  = 1 << 5,
-	GF_GERMAN  = 1 << 6
-
+	GF_FLOPPY	= 1 <<  0,
+	GF_TALKIE	= 1 <<  1,
+	GF_AUDIOCD	= 1 <<  2,  // FM-Towns versions seems to use audio CD
+	GF_DEMO		= 1 <<  3,
+	GF_ENGLISH	= 1 <<  4,
+	GF_FRENCH	= 1 <<  5,
+	GF_GERMAN	= 1 <<  6,
+	GF_SPANISH	= 1 <<  7,
+	// other languages here
+	GF_LNGUNK	= 1 << 16
 };
 
 enum {
@@ -94,6 +96,7 @@ struct WSAMovieV1;
 class MusicPlayer;
 class SeqPlayer;
 class Resource;
+class PAKFile;
 class Screen;
 class Sprites;
 
@@ -126,18 +129,13 @@ public:
 
 	typedef void (KyraEngine::*IntroProc)();
 
-	// these tables are specific to the demo version
-	static const char *_seq_demo_WSATable[];
-	static const char *_seq_demo_COLTable[];
-
-	// these tables are specific to the floppy version
-	static const char *_seq_WSATable[];
-	static const char *_seq_CPSTable[];
-	static const char *_seq_COLTable[];
-	static const char *_seq_textsTableEN[];
+	const char **seqWSATable() { return (const char **)_seq_WSATable; }
+	const char **seqCPSTable() { return (const char **)_seq_CPSTable; }
+	const char **seqCOLTable() { return (const char **)_seq_COLTable; }
+	const char **seqTextsTable() { return (const char **)_seq_textsTable; }
 
 	bool seq_skipSequence() const;
-
+	
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void snd_playTheme(int file, int track = 0);
@@ -176,9 +174,9 @@ protected:
 	void seq_intro();
 	void seq_introLogos();
 	void seq_introStory();
-	void seq_introMalcomTree();
+	void seq_introMalcolmTree();
 	void seq_introKallakWriting();
-	void seq_introKallakMalcom();
+	void seq_introKallakMalcolm();
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
@@ -186,6 +184,16 @@ protected:
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
 	void snd_playSoundEffect(int track);
+	
+	enum {
+		RES_ALL = 0,
+		RES_INTRO = (1 << 0)
+	};
+	
+	void res_loadResources(int type = RES_ALL);
+	void res_unloadResources(int type = RES_ALL);
+	void res_loadLangTable(const char *filename, PAKFile *res, byte ***loadTo, int *size, bool nativ);
+	void res_loadTable(const byte *src, byte ***loadTo, int *size);
 		
 	void loadRoom(uint16 roomID);
 	void drawRoom();
@@ -223,30 +231,27 @@ protected:
 	static const Cursor _cursors[];
 	static const int _cursorsCount;
 	
-	// these tables are specific to the demo version
-	static const uint8 _seq_demoData_WestwoodLogo[];
-	static const uint8 _seq_demoData_KyrandiaLogo[];
-	static const uint8 _seq_demoData_Demo1[];
-	static const uint8 _seq_demoData_Demo2[];
-	static const uint8 _seq_demoData_Demo3[];
-	static const uint8 _seq_demoData_Demo4[];
-
-	// these tables are specific to the floppy version
-	static const uint8 _seq_floppyData_Forest[];
-	static const uint8 _seq_floppyData_KallakWriting[];
-	static const uint8 _seq_floppyData_KyrandiaLogo[];
-	static const uint8 _seq_floppyData_KallakMalcom[];
-	static const uint8 _seq_floppyData_MalcomTree[];
-	static const uint8 _seq_floppyData_WestwoodLogo[];
+	uint8 *_seq_Forest;
+	uint8 *_seq_KallakWriting;
+	uint8 *_seq_KyrandiaLogo;
+	uint8 *_seq_KallakMalcolm;
+	uint8 *_seq_MalcolmTree;
+	uint8 *_seq_WestwoodLogo;
+	uint8 *_seq_Demo1;
+	uint8 *_seq_Demo2;
+	uint8 *_seq_Demo3;
+	uint8 *_seq_Demo4;
 	
-	// these tables are specific to the CD version
-	static const uint8 _seq_cdromData_KyrandiaLogo[];
-	static const uint8 _seq_cdromData_WestwoodLogo[];
-	static const uint8 _seq_cdromData_Forest[];
-	static const uint8 _seq_cdromData_MalcomTree[];
-	static const uint8 _seq_cdromData_KallakWriting[];
-	static const uint8 _seq_cdromData_KallakMalcom[];
-
+	char **_seq_WSATable;
+	char **_seq_CPSTable;
+	char **_seq_COLTable;
+	char **_seq_textsTable;
+	
+	int _seq_WSATable_Size;
+	int _seq_CPSTable_Size;
+	int _seq_COLTable_Size;
+	int _seq_textsTable_Size;
+	
 	static const char *_xmidiFiles[];
 	static const int _xmidiFilesCount;
 };

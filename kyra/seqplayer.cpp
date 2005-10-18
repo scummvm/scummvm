@@ -98,11 +98,7 @@ void SeqPlayer::s1_wsaOpen() {
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
 	uint8 offscreenDecode = *_seqData++;
 	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;				
-	if (_vm->features() & GF_DEMO) {
-		_seqMovies[wsaObj].wsa = _vm->wsa_open(KyraEngine::_seq_demo_WSATable[wsaObj], offscreenDecode, 0);
-	} else {
-		_seqMovies[wsaObj].wsa = _vm->wsa_open(KyraEngine::_seq_WSATable[wsaObj], offscreenDecode, 0);
-	}
+	_seqMovies[wsaObj].wsa = _vm->wsa_open(_vm->seqWSATable()[wsaObj], offscreenDecode, 0);
 	_seqMovies[wsaObj].frame = 0;
 	_seqMovies[wsaObj].numFrames = _vm->wsa_getNumFrames(_seqMovies[wsaObj].wsa) - 1;
 }
@@ -212,18 +208,14 @@ void SeqPlayer::s1_loadPalette() {
 	uint8 colNum = *_seqData++;
 	uint32 fileSize;
 	uint8 *srcData;
-	if (_vm->features() & GF_DEMO) {
-		srcData = _res->fileData(KyraEngine::_seq_demo_COLTable[colNum], &fileSize);
-	} else {
-		srcData = _res->fileData(KyraEngine::_seq_COLTable[colNum], &fileSize);
-	}
+	srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
 	memcpy(_screen->_currentPalette, srcData, fileSize);
 	delete[] srcData;
 }
 
 void SeqPlayer::s1_loadBitmap() {
 	uint8 cpsNum = *_seqData++;
-	_vm->loadBitmap(KyraEngine::_seq_CPSTable[cpsNum], 3, 3, 0);
+	_vm->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, 0);
 }
 
 void SeqPlayer::s1_fadeToBlack() {
@@ -236,14 +228,14 @@ void SeqPlayer::s1_printText() {
 	_screen->fillRect(0, 180, 319, 195, 12);
 	_screen->setTextColorMap(colorMap);
 	if (!_seqDisplayTextFlag) {
-		const char *str = KyraEngine::_seq_textsTableEN[txt];
+		const char *str = _vm->seqTextsTable()[txt];
 		int x = (Screen::SCREEN_W - _screen->getTextWidth(str)) / 2;
 		_screen->printText(str, x, 180, 0xF, 0xC);
 	} else {
-		_seqDisplayedTextTimer = _system->getMillis() + 1000 / 60;
+		_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->features() & GF_FRENCH) ? 120 : 60);
 		_seqDisplayedText = txt;
 		_seqDisplayedChar = 0;
-		const char *str = KyraEngine::_seq_textsTableEN[_seqDisplayedText];
+		const char *str = _vm->seqTextsTable()[_seqDisplayedText];
 		_seqDisplayedTextX = (Screen::SCREEN_W - _screen->getTextWidth(str)) / 2;
 	}
 }
@@ -269,7 +261,7 @@ void SeqPlayer::s1_printTalkText() {
 	} else {
 		b = 0;
 	}
-	_vm->printTalkTextMessage(KyraEngine::_seq_textsTableEN[txt], x, y, fillColor, b, 2);
+	_vm->printTalkTextMessage(_vm->seqTextsTable()[txt], x, y, fillColor, b, 2);
 }
 
 void SeqPlayer::s1_restoreTalkText() {
@@ -364,7 +356,9 @@ void SeqPlayer::s1_playEffect() {
 
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
-	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
+/*	
+	// we do not have audio cd support for now
+	if (_vm->features() & GF_AUDIOCD) {
 		switch (msg) {
 		case 0:
 			// nothing to do here...
@@ -385,7 +379,7 @@ void SeqPlayer::s1_playTrack() {
 			warning("Unknown seq. message: %.02d", msg);
 			break;
 		}
-	} else if (_vm->features() & GF_TALKIE) {
+	} else {*/
 		if (msg == 0) {
 			// nothing to do here...
 		} else if (msg == 1) {
@@ -393,7 +387,7 @@ void SeqPlayer::s1_playTrack() {
 		} else {
 			_vm->snd_playTrack(msg);
 		}
-	}
+//	}
 }
 
 void SeqPlayer::s1_allocTempBuffer() {
@@ -429,18 +423,8 @@ void SeqPlayer::s1_playVocFile() {
 }
 
 void SeqPlayer::s1_displayStory() {
-	_screen->clearPage(3);
-	_screen->clearPage(0);
-	if (_vm->features() & GF_ENGLISH) {
-		_vm->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
-	} else if (_vm->features() & GF_GERMAN) {
-		_vm->loadBitmap("TEXT_GER.CPS", 3, 3, 0);
-	} else if (_vm->features() & GF_FRENCH) {
-		_vm->loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
-	}
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
-	_screen->updateScreen();
-	_vm->waitTicks(360);
+	// nothing to do here since we handle it in
+	// KyraEngine::seq_introStory
 }
 
 void SeqPlayer::s1_prefetchVocFile() {
@@ -449,6 +433,9 @@ void SeqPlayer::s1_prefetchVocFile() {
 }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
+	debug(9, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
+	assert(seqData);
+	
 	static SeqEntry floppySeqProcs[] = {
 		// 0x00
 		SEQOP(3, s1_wsaOpen),
@@ -543,8 +530,6 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	const SeqEntry* commands;
 	int numCommands;
 
-	debug(9, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
-
 	if (_vm->features() & GF_FLOPPY || _vm->features() & GF_DEMO) {
 		commands = floppySeqProcs;
 		numCommands = ARRAYSIZE(floppySeqProcs);
@@ -594,15 +579,15 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		if (_seqDisplayTextFlag && _seqDisplayedTextTimer != 0xFFFFFFFF) {
 			if (_seqDisplayedTextTimer < _system->getMillis()) {
 				char charStr[2];
-				charStr[0] = KyraEngine::_seq_textsTableEN[_seqDisplayedText][_seqDisplayedChar];
+				charStr[0] = _vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar];
 				charStr[1] = '\0';
 				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
 				_seqDisplayedTextX += _screen->getCharWidth(charStr[0]);
 				++_seqDisplayedChar;
-				if (KyraEngine::_seq_textsTableEN[_seqDisplayedText][_seqDisplayedChar] == '\0') {
+				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0') {
 					_seqDisplayedTextTimer = 0xFFFFFFFF;
 				} else {
-					_seqDisplayedTextTimer = _system->getMillis() + 1000 / 60;
+					_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->features() & GF_FRENCH) ? 120 : 60);
 				}
 			}
 		}

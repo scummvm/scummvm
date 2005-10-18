@@ -438,7 +438,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	}
 }
 
-void Screen::drawChar(char c, int x, int y) {
+void Screen::drawChar(uint8 c, int x, int y) {
 	debug(9, "Screen::drawChar('%c', %d, %d)", c, x, y);
 	Font *fnt = &_fonts[_currentFont];
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;

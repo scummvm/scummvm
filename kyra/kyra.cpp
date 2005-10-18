@@ -75,13 +75,15 @@ static const KyraGameSettings kyra_games[] = {
 										"abf8eb360e79a6c2a837751fbd4d3d24", "GEMCUT.EMC" },
 	{ "kyra1", "Legend of Kyrandia (Floppy, German)",	GI_KYRA1, GF_GERMAN  | GF_FLOPPY, 
 										"6018e1dfeaca7fe83f8d0b00eb0dd049", "GEMCUT.EMC"},
+	{ "kyra1", "Legend of Kyrandia (Floppy, Spanish)",	GI_KYRA1, GF_SPANISH  | GF_FLOPPY, // from VooD
+										"8909b41596913b3f5deaf3c9f1017b01", "GEMCUT.EMC"},
 	{ "kyra1", "Legend of Kyrandia (CD, English)",		GI_KYRA1, GF_ENGLISH | GF_TALKIE, 
 										"fac399fe62f98671e56a005c5e94e39f", "GEMCUT.PAK" },
 	{ "kyra1", "Legend of Kyrandia (CD, German)",		GI_KYRA1, GF_GERMAN | GF_TALKIE, 
 										"230f54e6afc007ab4117159181a1c722", "GEMCUT.PAK" },
 	{ "kyra1", "Legend of Kyrandia (CD, French)",		GI_KYRA1, GF_FRENCH | GF_TALKIE, 
 										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
-	{ "kyra1", "Legend of Kyrandia (Demo)",			GI_KYRA1, GF_DEMO,
+	{ "kyra1", "Legend of Kyrandia (Demo)",			GI_KYRA1, GF_DEMO | GF_ENGLISH,
 										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
@@ -98,7 +100,7 @@ struct KyraGameList {
 };
 
 static const KyraGameList kyra_list[] = {
-	{ "kyra1", "Legend of Kyrandia (Unknown)", 0 },
+	{ "kyra1", "Legend of Kyrandia", 0 },
 	{ 0, 0, 0 }
 };
 
@@ -170,6 +172,12 @@ namespace Kyra {
 
 KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	: Engine(system) {
+	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
+	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 =
+	_seq_Demo4 = 0;
+	
+	_seq_WSATable = _seq_CPSTable = _seq_COLTable = _seq_textsTable = 0;
+	_seq_WSATable_Size = _seq_CPSTable_Size = _seq_COLTable_Size = _seq_textsTable_Size = 0;
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -217,10 +225,14 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 
 	if (!found) {
 		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
-		// a bit hacky but should work fine for now
-		debug("Assuming an english floppy version for now");
-		_features = GF_FLOPPY | GF_ENGLISH;
+		_features = GF_LNGUNK;
 		_game = GI_KYRA1;
+		Common::File test;
+		if (test.open("INTRO.VRM")) {
+			_features |= GF_TALKIE;
+		} else {
+			_features |= GF_FLOPPY;
+		}
 	}
 }
 
@@ -285,6 +297,7 @@ int KyraEngine::go() {
 	_quitFlag = false;
 	uint32 sz;
 
+	res_loadResources();
 	if (_features & GF_FLOPPY) {
 		_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
 	}
@@ -300,6 +313,7 @@ int KyraEngine::go() {
 		startup();
 		mainLoop();
 	}
+	res_unloadResources();
 	return 0;
 }
 
@@ -402,14 +416,18 @@ void KyraEngine::loadRoom(uint16 roomID) {
 	_screen->clearPage(10);
 
 	// Loading GUI bitmap
-	if (_features & GF_ENGLISH && _features & GF_TALKIE) 
+	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
 		loadBitmap("MAIN_ENG.CPS", 10, 10, 0);
 	else if(_features & GF_FRENCH)
 		loadBitmap("MAIN_FRE.CPS", 10, 10, 0);
 	else if(_features & GF_GERMAN)
 		loadBitmap("MAIN_GER.CPS", 10, 10, 0);
-	else
+	else if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
 		loadBitmap("MAIN15.CPS", 10, 10, 0);
+	else if (_features & GF_SPANISH)
+		loadBitmap("MAIN_SPA.CPS", 10, 10, 0);
+	else
+		warning("no main graphics file found");
 
 	// Loading main room background
 	strncpy(buf, _rooms[roomID].filename, 8);
@@ -714,25 +732,25 @@ void KyraEngine::seq_demo() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	_seq->playSequence(_seq_demoData_WestwoodLogo, true);
+	_seq->playSequence(_seq_WestwoodLogo, true);
 	waitTicks(60);
 
-	_seq->playSequence(_seq_demoData_KyrandiaLogo, true);
+	_seq->playSequence(_seq_KyrandiaLogo, true);
 
 	_screen->fadeToBlack();
 	_screen->clearPage(2);
 	_screen->clearPage(0);
 
-	_seq->playSequence(_seq_demoData_Demo1, true);
+	_seq->playSequence(_seq_Demo1, true);
 
 	_screen->clearPage(0);
-	_seq->playSequence(_seq_demoData_Demo2, true);
+	_seq->playSequence(_seq_Demo2, true);
 
 	_screen->clearPage(0);
-	_seq->playSequence(_seq_demoData_Demo3, true);
+	_seq->playSequence(_seq_Demo3, true);
 
 	_screen->clearPage(0);
-	_seq->playSequence(_seq_demoData_Demo4, true);
+	_seq->playSequence(_seq_Demo4, true);
 
 	_screen->clearPage(0);
 	loadBitmap("FINAL.CPS", 7, 7, _screen->_currentPalette);
@@ -748,14 +766,15 @@ void KyraEngine::seq_demo() {
 void KyraEngine::seq_intro() {
 	debug(9, "KyraEngine::seq_intro()");
 	if (_features & GF_TALKIE) {
-			_res->loadPakFile("INTRO.VRM");
+		_res->loadPakFile("INTRO.VRM");
 	}
+	
 	static const IntroProc introProcTable[] = {
 		&KyraEngine::seq_introLogos,
 		&KyraEngine::seq_introStory,
-		&KyraEngine::seq_introMalcomTree,
+		&KyraEngine::seq_introMalcolmTree,
 		&KyraEngine::seq_introKallakWriting,
-		&KyraEngine::seq_introKallakMalcom
+		&KyraEngine::seq_introKallakMalcolm
 	};
 	_skipIntroFlag = true; // only true if user already played the game once
 	_seq->setCopyViewOffs(true);
@@ -773,6 +792,7 @@ void KyraEngine::seq_intro() {
 	if (_features & GF_TALKIE) {
 			_res->unloadPakFile("INTRO.VRM");
 	}
+	res_unloadResources(RES_INTRO);
 }
 
 void KyraEngine::seq_introLogos() {
@@ -786,30 +806,16 @@ void KyraEngine::seq_introLogos() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	if (_features & GF_FLOPPY) {
-		if (_seq->playSequence(_seq_floppyData_WestwoodLogo, _skipIntroFlag)) {
-			_screen->fadeToBlack();
-			_screen->clearPage(0);
-			return;
-		}
-		waitTicks(60);
-		if (_seq->playSequence(_seq_floppyData_KyrandiaLogo, _skipIntroFlag)) {
-			_screen->fadeToBlack();
-			_screen->clearPage(0);
-			return;
-		}
-	} else if (_features & GF_TALKIE) {
-		if (_seq->playSequence(_seq_cdromData_WestwoodLogo, _skipIntroFlag)) {
-			_screen->fadeToBlack();
-			_screen->clearPage(0);
-			return;
-		}
-		waitTicks(60);
-		if (_seq->playSequence(_seq_cdromData_KyrandiaLogo, _skipIntroFlag)) {
-			_screen->fadeToBlack();
-			_screen->clearPage(0);
-			return;
-		}
+	if (_seq->playSequence(_seq_WestwoodLogo, _skipIntroFlag)) {
+		_screen->fadeToBlack();
+		_screen->clearPage(0);
+		return;
+	}
+	waitTicks(60);
+	if (_seq->playSequence(_seq_KyrandiaLogo, _skipIntroFlag)) {
+		_screen->fadeToBlack();
+		_screen->clearPage(0);
+		return;
 	}
 	_screen->fillRect(0, 179, 319, 199, 0);
 
@@ -834,42 +840,34 @@ void KyraEngine::seq_introLogos() {
 		waitTicks(1);
 	} while (y2 >= 64);
 
-	if (_features & GF_FLOPPY) {
-		_seq->playSequence(_seq_floppyData_Forest, true);
-	} else if (_features & GF_TALKIE) {
-		_seq->playSequence(_seq_cdromData_Forest, true);
-	}
+	_seq->playSequence(_seq_Forest, true);
 }
 
 void KyraEngine::seq_introStory() {
 	debug(9, "KyraEngine::seq_introStory()");
-	// this is only needed for floppy versions
-	// since CD version has its own opcode for that
-	if (_features & GF_FLOPPY) {
-		_screen->clearPage(3);
-		_screen->clearPage(0);
-		if (_features & GF_ENGLISH) {
-			loadBitmap("TEXT.CPS", 3, 3, 0);
-		} else if (_features & GF_GERMAN) {
-			loadBitmap("TEXT_GER.CPS", 3, 3, 0);
-		} else if (_features & GF_FRENCH) {
-			loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
-		}
-		_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
-		_screen->updateScreen();
-		waitTicks(360);
+	_screen->clearPage(3);
+	_screen->clearPage(0);
+	if (_features & GF_ENGLISH) {
+		loadBitmap("TEXT.CPS", 3, 3, 0);
+	} else if (_features & GF_GERMAN) {
+		loadBitmap("TEXT_GER.CPS", 3, 3, 0);
+	} else if (_features & GF_FRENCH) {
+		loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
+	} else if (_features & GF_SPANISH) {
+		loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
+	} else {
+		warning("no story graphics file found");
 	}
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
+	_screen->updateScreen();
+	waitTicks(360);
 }
 
-void KyraEngine::seq_introMalcomTree() {
-	debug(9, "KyraEngine::seq_introMalcomTree()");
+void KyraEngine::seq_introMalcolmTree() {
+	debug(9, "KyraEngine::seq_introMalcolmTree()");
 	_screen->_curPage = 0;
 	_screen->clearPage(3);
-	if (_features & GF_FLOPPY) {
-		_seq->playSequence(_seq_floppyData_MalcomTree, true);
-	} else if (_features & GF_TALKIE) {
-		_seq->playSequence(_seq_cdromData_MalcomTree, true);
-	}
+	_seq->playSequence(_seq_MalcolmTree, true);
 }
 
 void KyraEngine::seq_introKallakWriting() {
@@ -878,22 +876,13 @@ void KyraEngine::seq_introKallakWriting() {
 	_screen->setAnimBlockPtr(5060);
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
-	if (_features & GF_FLOPPY) {
-		_seq->playSequence(_seq_floppyData_KallakWriting, true);
-	} else if (_features & GF_TALKIE) {
-		_seq->playSequence(_seq_cdromData_KallakWriting, true);
-	}
-	_seq->freeHandShapes();
+	_seq->playSequence(_seq_KallakWriting, true);
 }
 
-void KyraEngine::seq_introKallakMalcom() {
-	debug(9, "KyraEngine::seq_introKallakMalcom()");
+void KyraEngine::seq_introKallakMalcolm() {
+	debug(9, "KyraEngine::seq_introKallakMalcolm()");
 	_screen->clearPage(3);
-	if (_features & GF_FLOPPY) {
-		_seq->playSequence(_seq_floppyData_KallakMalcom, true);
-	} else if (_features & GF_TALKIE) {
-		_seq->playSequence(_seq_cdromData_KallakMalcom, true);
-	}
+	_seq->playSequence(_seq_KallakMalcolm, true);
 }
 
 bool KyraEngine::seq_skipSequence() const {

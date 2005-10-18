@@ -102,7 +102,7 @@ public:
 	int getCharWidth(uint8 c) const;
 	int getTextWidth(const char *str) const;
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
-	void drawChar(char c, int x, int y);
+	void drawChar(uint8 c, int x, int y);
 	void setScreenDim(int dim);
 	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable);
