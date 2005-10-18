@@ -933,7 +933,7 @@ void ResourceManager::unlock(int type, int i) {
 }
 
 bool ResourceManager::isLocked(int type, int i) const {
-	if (!validateResource("Unlocking", type, i))
+	if (!validateResource("isLocked", type, i))
 		return false;
 	return (flags[type][i] & RF_LOCK) != 0;
 }
