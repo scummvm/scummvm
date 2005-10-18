@@ -1236,9 +1236,6 @@ void ScummEngine_v60he::redimArray(int arrayId, int newX, int newY, int type) {
 	if (!ah)
 		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
 
-	printf("redimArray: type %d newX %d newY %d\n", type, newX, newY);
-	printf("redimArray: arrayId %d type %d dim1 %d dim2 %d\n", arrayId, ah->type, ah->dim1, ah->dim2);
-
 	newSize = (type == kIntArray) ? 2 : 1;
 	oldSize = (ah->type == kIntArray) ? 2 : 1;
 
