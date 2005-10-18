@@ -79,6 +79,7 @@ endif
 
 ifndef DISABLE_HE
 MODULE_OBJS += \
+	scumm/floodfill_he.o \
 	scumm/logic_he.o \
 	scumm/palette_he.o \
 	scumm/resource_v7he.o \

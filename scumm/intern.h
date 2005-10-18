@@ -24,6 +24,7 @@
 #define INTERN_H
 
 #include "scumm/scumm.h"
+#include "scumm/floodfill_he.h"
 #include "scumm/sprite_he.h"
 #include "scumm/wiz_he.h"
 
@@ -1121,15 +1122,7 @@ protected:
 
 	const OpcodeEntryV90he *_opcodesV90he;
 
-	struct FloodStateParameters {
-		Common::Rect box;
-		int32 field_10;
-		int32 field_14;
-		int32 field_18;
-		int32 field_1C;
-	};
-
-	FloodStateParameters _floodStateParams;
+	FloodFillParameters _floodFillParams;
 
 	struct VideoParameters {
 		byte filename[260];
@@ -1218,7 +1211,7 @@ protected:
 	void o90_getSpriteGroupInfo();
 	void o90_setSpriteGroupInfo();
 	void o90_getWizData();
-	void o90_floodState();
+	void o90_floodFill();
 	void o90_mod();
 	void o90_shl();
 	void o90_shr();

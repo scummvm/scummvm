@@ -37,7 +37,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
-#include "scumm/wiz_he.h"
 
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
@@ -1237,15 +1236,15 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine_v70he::saveOrLoad(s, savegameVersion);
 
-	const SaveLoadEntry floodStateEntries[] = {
-		MKLINE(FloodStateParameters, box.left, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, box.top, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, box.right, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, box.bottom, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, field_10, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, field_14, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, field_18, sleInt32, VER(51)),
-		MKLINE(FloodStateParameters, field_1C, sleInt32, VER(51)),
+	const SaveLoadEntry floodFillEntries[] = {
+		MKLINE(FloodFillParameters, box.left, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, box.top, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, box.right, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, box.bottom, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, x, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, y, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, flags, sleInt32, VER(51)),
+		MKLINE(FloodFillParameters, unk1C, sleInt32, VER(51)),
 		MKEND()
 	};
 
@@ -1262,7 +1261,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	_sprite->saveOrLoadSpriteData(s, savegameVersion);
 
-	s->saveLoadArrayOf(&_floodStateParams, 1, sizeof(_floodStateParams), floodStateEntries);
+	s->saveLoadArrayOf(&_floodFillParams, 1, sizeof(_floodFillParams), floodFillEntries);
 
 	_numSpritesToProcess = _sprite->_numSpritesToProcess;
 	s->saveLoadEntries(this, HE90Entries);
