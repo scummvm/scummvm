@@ -34,8 +34,6 @@
 template <typesADPCM TYPE>
 class ADPCMInputStream : public AudioStream {
 private:
-	bool _evenPos;
-	byte _lastByte;
 	Common::SeekableReadStream *_stream;
 	uint32 _endpos;
 
@@ -58,10 +56,14 @@ public:
 	int getRate() const	{ return 22050; }
 };
 
+template <>
+int16 ADPCMInputStream<kADPCMOki>::decode(byte code);
+template <>
+int16 ADPCMInputStream<kADPCMIma>::decode(byte code);
 
 template <typesADPCM TYPE>
 ADPCMInputStream<TYPE>::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size)
-	: _stream(stream), _evenPos(true) {
+	: _stream(stream) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
@@ -71,20 +73,44 @@ ADPCMInputStream<TYPE>::ADPCMInputStream(Common::SeekableReadStream *stream, uin
 template <typesADPCM TYPE>
 int ADPCMInputStream<TYPE>::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
+	byte data;
+
+	assert(numSamples % 2 == 0);
 
 	// Since we process high and low nibbles separately never check buffer end
 	// on low nibble
-	for (samples = 0; !_evenPos || samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
-		if (_evenPos) {
-			_lastByte = _stream->readByte();
-			buffer[samples] = decode((_lastByte >> 4) & 0x0f);
-		} else {
-			buffer[samples] = decode(_lastByte & 0x0f);
-		}
-		_evenPos = !_evenPos;
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+		data = _stream->readByte();
+		buffer[samples] = decode((data >> 4) & 0x0f);
+		buffer[samples + 1] = decode(data & 0x0f);
 	}
 	return samples;
 }
+
+// Microsoft as usual tries to implement it differently. Though we don't
+// use this now
+#if 0
+template <>
+int ADPCMInputStream<kADPCMIma>::readBuffer(int16 *buffer, const int numSamples) {
+	int samples;
+	uint32 data;
+	int nibble;
+
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos;) {
+		for (int channel = 0; channel < 2; channel++) {
+			data = _stream->readUint32LE();
+			
+			for (nibble = 0; nibble < 8; nibble++) {
+				byte k = ((data & 0xf0000000) >> 28);
+				buffer[samples + channel + nibble * 2] = decode(k);
+				data <<= 4;
+			}
+		}
+		samples += 16;
+	}
+	return samples;
+}
+#endif
 
 // adjust the step for use on the next sample.
 template <typesADPCM TYPE>
