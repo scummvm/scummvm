@@ -251,7 +251,7 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 void SimonEngine::showActionString(uint x, const byte *string) {
 	FillOrCopyStruct *fcs;
 
-	fcs = _fcsPtrArray3[1];
+	fcs = _windowArray[1];
 	if (fcs == NULL || fcs->text_color == 0)
 		return;
 
@@ -270,7 +270,7 @@ void SimonEngine::hitareaChangedHelper() {
 			return;
 	}
 
-	fcs = _fcsPtrArray3[1];
+	fcs = _windowArray[1];
 	if (fcs != NULL && fcs->text_color != 0)
 		video_fill_or_copy_from_3_to_2(fcs);
 

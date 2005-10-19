@@ -219,8 +219,8 @@ protected:
 
 	int16 _scriptCondA, _scriptCondB, _scriptCondC;
 
-	uint16 _fcsUnk1;
-	FillOrCopyStruct *_fcsPtr1;
+	uint16 _curWindow;
+	FillOrCopyStruct *_textWindow;
 
 	Item *_subjectItem, *_objectItem;
 	Item *_item1;
@@ -239,7 +239,7 @@ protected:
 
 	uint16 _windowNum;
 
-	uint _printCharUnk1, _printCharUnk2;
+	uint _printCharCurPos, _printCharMaxPos;
 	uint _numLettersToPrint;
 
 	uint _lastTime;
@@ -309,7 +309,7 @@ protected:
 	uint16 _bitArray[48];
 	int16 _variableArray[256];
 
-	FillOrCopyStruct *_fcsPtrArray3[8];
+	FillOrCopyStruct *_windowArray[8];
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -471,9 +471,9 @@ protected:
 	void o_kill_sprite_simon2(uint a, uint b);
 
 	void o_vga_reset();
-	void fcs_unk_2(uint a);
+	void changeWindow(uint a);
 	void o_unk_103();
-	void fcs_delete(uint a);
+	void closeWindow(uint a);
 	void o_unk_108(uint a);
 	void clear_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_bit_0x40(uint hitarea);
@@ -495,7 +495,7 @@ protected:
 	void o_play_music_resource();
 	void o_save_game();
 	void o_load_game();
-	void o_quit_if_user_presses_y();
+	void o_confirmQuit();
 	void o_restoreIconArray(uint a);
 	void o_unk_138();
 	void killAllTimers();
@@ -503,8 +503,8 @@ protected:
 	uint getOffsetOfChild2Param(Child2 *child, uint prop);
 	void o_unk_160(uint a);
 	void o_play_sound(uint a);
-	void o_unk_175();
-	void o_unk_176();
+	void o_lockZone();
+	void o_unlockZone();
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
 	void o_force_unlock();
 	void o_force_lock();
@@ -596,10 +596,10 @@ protected:
 	void ensureVgaResLoaded(uint vga_res);
 
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
-	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
+	void o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_sprite_id);
 	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
-	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
+	FillOrCopyStruct *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);

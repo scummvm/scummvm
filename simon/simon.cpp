@@ -547,8 +547,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_scriptCondB = 0;
 	_scriptCondC = 0;
 
-	_fcsUnk1 = 0;
-	_fcsPtr1 = 0;
+	_curWindow = 0;
+	_textWindow = 0;
 
 	_subjectItem = 0;
 	_objectItem = 0;
@@ -569,8 +569,8 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_windowNum = 0;
 
-	_printCharUnk1 = 0;
-	_printCharUnk2 = 0;
+	_printCharCurPos = 0;
+	_printCharMaxPos = 0;
 	_numLettersToPrint = 0;
 
 	_lastTime = 0;
@@ -647,7 +647,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	memset(_bitArray, 0, sizeof(_bitArray));
 	memset(_variableArray, 0, sizeof(_variableArray));
 
-	memset(_fcsPtrArray3, 0, sizeof(_fcsPtrArray3));
+	memset(_windowArray, 0, sizeof(_windowArray));
 
 	memset(_fcsData1, 0, sizeof(_fcsData1));
 	memset(_fcsData2, 0, sizeof(_fcsData2));
@@ -1226,7 +1226,7 @@ void SimonEngine::itemChildrenChanged(Item *item) {
 	lock();
 
 	for (i = 0; i != 8; i++) {
-		fcs = _fcsPtrArray3[i];
+		fcs = _windowArray[i];
 		if (fcs && fcs->fcs_data && fcs->fcs_data->item_ptr == item) {
 			if (_fcsData1[i]) {
 				_fcsData2[i] = true;
@@ -1735,8 +1735,8 @@ void SimonEngine::startSubroutine170() {
 uint SimonEngine::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
 	uint i;
 
-	for (i = 0; i != ARRAYSIZE(_fcsPtrArray3); i++)
-		if (_fcsPtrArray3[i] == fcs)
+	for (i = 0; i != ARRAYSIZE(_windowArray); i++)
+		if (_windowArray[i] == fcs)
 			return i;
 
 	error("get_fcs_ptr_3_index: not found");
@@ -1837,7 +1837,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 	bool item_again;
 	uint x_pos, y_pos;
 
-	fcs_ptr = _fcsPtrArray3[fcs_index & 7];
+	fcs_ptr = _windowArray[fcs_index & 7];
 
 	if (!(_game & GF_SIMON2)) {
 		width_div_3 = fcs_ptr->width / 3;
@@ -2243,10 +2243,10 @@ void SimonEngine::startUp_helper_2() {
 	if (!_mortalFlag) {
 		_mortalFlag = true;
 		showmessage_print_char(0);
-		_fcsUnk1 = 0;
-		if (_fcsPtrArray3[0] != 0) {
-			_fcsPtr1 = _fcsPtrArray3[0];
-			showmessage_helper_3(_fcsPtr1->textLength, _fcsPtr1->textMaxLength);
+		_curWindow = 0;
+		if (_windowArray[0] != 0) {
+			_textWindow = _windowArray[0];
+			showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 		}
 		_mortalFlag = false;
 	}
@@ -3037,34 +3037,34 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 }
 
 // OK
-void SimonEngine::fcs_delete(uint a) {
-	if (_fcsPtrArray3[a] == NULL)
+void SimonEngine::closeWindow(uint a) {
+	if (_windowArray[a] == NULL)
 		return;
 	removeIconArray(a);
-	video_copy_if_flag_0x8_c(_fcsPtrArray3[a]);
-	_fcsPtrArray3[a] = NULL;
-	if (_fcsUnk1 == a) {
-		_fcsPtr1 = NULL;
-		fcs_unk_2(0);
+	video_copy_if_flag_0x8_c(_windowArray[a]);
+	_windowArray[a] = NULL;
+	if (_curWindow == a) {
+		_textWindow = NULL;
+		changeWindow(0);
 	}
 }
 
 // OK
-void SimonEngine::fcs_unk_2(uint a) {
+void SimonEngine::changeWindow(uint a) {
 	a &= 7;
 
-	if (_fcsPtrArray3[a] == NULL || _fcsUnk1 == a)
+	if (_windowArray[a] == NULL || _curWindow == a)
 		return;
 
-	_fcsUnk1 = a;
+	_curWindow = a;
 	showmessage_print_char(0);
-	_fcsPtr1 = _fcsPtrArray3[a];
+	_textWindow = _windowArray[a];
 
-	showmessage_helper_3(_fcsPtr1->textLength, _fcsPtr1->textMaxLength);
+	showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 }
 
 // OK
-FillOrCopyStruct *SimonEngine::fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
+FillOrCopyStruct *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
 	FillOrCopyStruct *fcs;
 
 	fcs = _fcs_list;
@@ -3146,15 +3146,15 @@ void SimonEngine::removeIconArray(uint fcs_index) {
 	uint16 fcsunk1;
 	uint16 i;
 
-	fcs = _fcsPtrArray3[fcs_index & 7];
-	fcsunk1 = _fcsUnk1;
+	fcs = _windowArray[fcs_index & 7];
+	fcsunk1 = _curWindow;
 
 	if (fcs == NULL || fcs->fcs_data == NULL)
 		return;
 
-	fcs_unk_2(fcs_index);
+	changeWindow(fcs_index);
 	fcs_putchar(12);
-	fcs_unk_2(fcsunk1);
+	changeWindow(fcsunk1);
 
 	for (i = 0; fcs->fcs_data->e[i].item != NULL; i++) {
 		delete_hitarea_by_index(fcs->fcs_data->e[i].hit_area);
@@ -3189,8 +3189,8 @@ void SimonEngine::delete_hitarea_by_index(uint index) {
 
 // ok
 void SimonEngine::fcs_putchar(uint a) {
-	if (_fcsPtr1 != _fcsPtrArray3[0])
-		video_putchar(_fcsPtr1, a);
+	if (_textWindow != _windowArray[0])
+		video_putchar(_textWindow, a);
 }
 
 // ok
@@ -3211,10 +3211,10 @@ void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lockWord |= 0x8000;
 
 	if (!(_game & GF_SIMON2)) {
-		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _fcsPtrArray3[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
-		if (_vgaVar6 && _fcsPtrArray3[2] == fcs) {
-			fcs = _fcsPtrArray3[0x18 / 4];
+		if (_vgaVar6 && _windowArray[2] == fcs) {
+			fcs = _windowArray[0x18 / 4];
 			_vgaVar6 = 0;
 		}
 

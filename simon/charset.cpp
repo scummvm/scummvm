@@ -28,12 +28,12 @@ namespace Simon {
 void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 	uint ind;
 
-	if (_fcsPtr1 == NULL)
+	if (_textWindow == NULL)
 		return;
 
 	while (len-- != 0) {
-		if (*src != 12 && _fcsPtr1->fcs_data != NULL &&
-				_fcsData1[ind = get_fcs_ptr_3_index(_fcsPtr1)] != 2) {
+		if (*src != 12 && _textWindow->fcs_data != NULL &&
+				_fcsData1[ind = get_fcs_ptr_3_index(_textWindow)] != 2) {
 
 			_fcsData1[ind] = 2;
 			_fcsData2[ind] = 1;
@@ -54,7 +54,7 @@ void SimonEngine::print_char_helper_6(uint i) {
 
 	if (_fcsData2[i]) {
 		lock();
-		fcs = _fcsPtrArray3[i];
+		fcs = _windowArray[i];
 		drawIconArray(i, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 		_fcsData2[i] = 0;
 		unlock();
@@ -226,15 +226,15 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	if (!_fcsData1[_fcsUnk1]) {
+	if (!_fcsData1[_curWindow]) {
 		showmessage_helper_2();
 		if (!_showMessageFlag) {
-			_fcsPtrArray3[0] = _fcsPtr1;
-			showmessage_helper_3(_fcsPtr1->textLength,
-                                 _fcsPtr1->textMaxLength);
+			_windowArray[0] = _textWindow;
+			showmessage_helper_3(_textWindow->textLength,
+                                 _textWindow->textMaxLength);
 		}
 		_showMessageFlag = true;
-		_fcsData1[_fcsUnk1] = 1;
+		_fcsData1[_curWindow] = 1;
 	}
 
 	for (str = buf; *str; str++)
@@ -244,35 +244,35 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 void SimonEngine::showmessage_print_char(byte chr) {
 	if (chr == 12) {
 		_numLettersToPrint = 0;
-		_printCharUnk1 = 0;
+		_printCharCurPos = 0;
 		print_char_helper_1(&chr, 1);
-		print_char_helper_5(_fcsPtr1);
+		print_char_helper_5(_textWindow);
 	} else if (chr == 0 || chr == ' ' || chr == 10) {
-		if (_printCharUnk2 - _printCharUnk1 >= _numLettersToPrint) {
-			_printCharUnk1 += _numLettersToPrint;
+		if (_printCharMaxPos - _printCharCurPos >= _numLettersToPrint) {
+			_printCharCurPos += _numLettersToPrint;
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 
-			if (_printCharUnk1 == _printCharUnk2) {
-				_printCharUnk1 = 0;
+			if (_printCharCurPos == _printCharMaxPos) {
+				_printCharCurPos = 0;
 			} else {
 				if (chr)
 					print_char_helper_1(&chr, 1);
 				if (chr == 10)
-					_printCharUnk1 = 0;
+					_printCharCurPos = 0;
 				else if (chr != 0)
-					_printCharUnk1++;
+					_printCharCurPos++;
 			}
 		} else {
 			const byte newline_character = 10;
-			_printCharUnk1 = _numLettersToPrint;
+			_printCharCurPos = _numLettersToPrint;
 			print_char_helper_1(&newline_character, 1);
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
 				print_char_helper_1(&chr, 1);
-				_printCharUnk1++;
+				_printCharCurPos++;
 			} else {
 				print_char_helper_1(&chr, 1);
-				_printCharUnk1 = 0;
+				_printCharCurPos = 0;
 			}
 		}
 		_numLettersToPrint = 0;
@@ -282,15 +282,15 @@ void SimonEngine::showmessage_print_char(byte chr) {
 }
 
 void SimonEngine::showmessage_helper_2() {
-	if (_fcsPtr1)
+	if (_textWindow)
 		return;
 
-	_fcsPtr1 = fcs_alloc(8, 0x90, 0x18, 6, 1, 0, 0xF);
+	_textWindow = openWindow(8, 0x90, 0x18, 6, 1, 0, 0xF);
 }
 
 void SimonEngine::showmessage_helper_3(uint a, uint b) {
-	_printCharUnk1 = a;
-	_printCharUnk2 = b;
+	_printCharCurPos = a;
+	_printCharMaxPos = b;
 	_numLettersToPrint = 0;
 }
 

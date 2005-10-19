@@ -223,7 +223,7 @@ restart:;
 
 		// some code here
 
-		fcs = _fcsPtrArray3[5];
+		fcs = _windowArray[5];
 
 		fcs->textRow = unk132_result;
 
@@ -283,7 +283,7 @@ restart:;
 						goto get_out;
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					if (_saveLoadFlag) {
-						o_clear_character(_fcsPtrArray3[5], 8);
+						o_clear_character(_windowArray[5], 8);
 						// move code
 					}
 					goto if_1;
@@ -297,7 +297,7 @@ restart:;
 			} while (i >= 0x80 || i == 0);
 
 			// after_do_2
-			o_clear_character(_fcsPtrArray3[5], 8);
+			o_clear_character(_windowArray[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
@@ -316,21 +316,21 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_clear_character(_fcsPtrArray3[5], x, m);
+					o_clear_character(_windowArray[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
 
-				video_putchar(_fcsPtrArray3[5], i);
+				video_putchar(_windowArray[5], i);
 			}
 		}
 
 		// do_save
 		if (!save_game(_saveLoadRowCurPos + unk132_result, buf + unk132_result * 18))
-			o_file_error(_fcsPtrArray3[5], true);
+			o_file_error(_windowArray[5], true);
 	} else {
 		if (!load_game(_saveLoadRowCurPos + i))
-			o_file_error(_fcsPtrArray3[5], false);
+			o_file_error(_windowArray[5], false);
 	}
 
 get_out:;

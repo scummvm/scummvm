@@ -566,12 +566,12 @@ int SimonEngine::runScript() {
 				uint e = getVarOrWord();
 				uint f = getVarOrWord();
 				uint g = getVarOrWord();
-				o_unk26_helper(a, b, c, d, e, f, g, 0);
+				o_defineWindow(a, b, c, d, e, f, g, 0);
 			}
 			break;
 
 		case 102:{
-				fcs_unk_2(getVarOrByte() & 7);
+				changeWindow(getVarOrByte() & 7);
 			}
 			break;
 
@@ -581,7 +581,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 104:{
-				fcs_delete(getVarOrByte() & 7);
+				closeWindow(getVarOrByte() & 7);
 			}
 			break;
 
@@ -762,7 +762,7 @@ int SimonEngine::runScript() {
 					debug(1, "Switch to CD number %d", readVariable(97));
 				} else {
 					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-					o_quit_if_user_presses_y();
+					o_confirmQuit();
 					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 				}
 			}
@@ -955,12 +955,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 175:{									/* vga pointer op 1 */
-				o_unk_175();
+				o_lockZone();
 			}
 			break;
 
 		case 176:{									/* vga pointer op 2 */
-				o_unk_176();
+				o_unlockZone();
 			}
 			break;
 
@@ -1004,7 +1004,7 @@ int SimonEngine::runScript() {
 		case 181:{									/* force lock */
 				o_force_lock();
 				if (_game & GF_SIMON2) {
-					fcs_unk_2(1);
+					changeWindow(1);
 					showMessageFormat("\xC");
 				}
 			}
@@ -1381,7 +1381,7 @@ void SimonEngine::o_inventory_descriptions() {
 	}
 }
 
-void SimonEngine::o_quit_if_user_presses_y() {
+void SimonEngine::o_confirmQuit() {
 	// If all else fails, use English as fallback.
 	byte keyYes = 'y';
 	byte keyNo = 'n';
@@ -1430,7 +1430,7 @@ void SimonEngine::o_quit_if_user_presses_y() {
 void SimonEngine::o_restoreIconArray(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 
-	fcs = _fcsPtrArray3[fcs_index & 7];
+	fcs = _windowArray[fcs_index & 7];
 	if (fcs->fcs_data == NULL)
 		return;
 	drawIconArray(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
@@ -1447,11 +1447,11 @@ void SimonEngine::o_unk_186() {
 	_vgaFileBufOrg = _vgaFileBufOrg2;
 }
 
-void SimonEngine::o_unk_175() {
+void SimonEngine::o_lockZone() {
 	_vgaBufStart = _vgaBufFreeStart;
 }
 
-void SimonEngine::o_unk_176() {
+void SimonEngine::o_unlockZone() {
 	_vgaBufFreeStart = _vgaFileBufOrg;
 	_vgaBufStart = _vgaFileBufOrg;
 }
@@ -1643,12 +1643,12 @@ void SimonEngine::o_play_sound(uint sound_id) {
 }
 
 void SimonEngine::o_unk_160(uint a) {
-	fcs_setTextColor(_fcsPtrArray3[_fcsUnk1], a);
+	fcs_setTextColor(_windowArray[_curWindow], a);
 }
 
 void SimonEngine::o_unk_103() {
 	lock();
-	removeIconArray(_fcsUnk1);
+	removeIconArray(_curWindow);
 	showMessageFormat("\x0C");
 	unlock();
 }
@@ -1674,17 +1674,17 @@ void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
 }
 
 /* OK */
-void SimonEngine::o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h) {
+void SimonEngine::o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h) {
 	a &= 7;
 
-	if (_fcsPtrArray3[a])
-		fcs_delete(a);
+	if (_windowArray[a])
+		closeWindow(a);
 
-	_fcsPtrArray3[a] = fcs_alloc(b, c, d, e, f, g, h);
+	_windowArray[a] = openWindow(b, c, d, e, f, g, h);
 
-	if (a == _fcsUnk1) {
-		_fcsPtr1 = _fcsPtrArray3[a];
-		showmessage_helper_3(_fcsPtr1->textLength, _fcsPtr1->textMaxLength);
+	if (a == _curWindow) {
+		_textWindow = _windowArray[a];
+		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 	}
 }
 
