@@ -1951,7 +1951,6 @@ void Gdi::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int heigh
 			}
 		}
 
-
 		if (srcFlag == 0) {
 			srcbits = *src++;
 		}
@@ -1973,9 +1972,10 @@ void Gdi::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int heigh
 
 		maskCount--;
 
-		*dst = (*dst & ~maskbits) | (srcbits & maskbits);
+		*dst |= srcbits;
+		*dst &= ~maskbits;
 
-		dst += 80;
+		dst += _numStrips;
 		height--;
 	}
 }
