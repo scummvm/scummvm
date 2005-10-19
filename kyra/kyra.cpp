@@ -71,11 +71,11 @@ struct KyraGameSettings {
 static const KyraGameSettings kyra_games[] = {
 	{ "kyra1", "Legend of Kyrandia (Floppy, English)",	GI_KYRA1, GF_ENGLISH | GF_FLOPPY, 
 										"796e44863dd22fa635b042df1bf16673", "GEMCUT.EMC" },
-	{ "kyra1", "Legend of Kyrandia (Floppy, French)",	GI_KYRA1, GF_FRENCH  | GF_FLOPPY,
+	{ "kyra1", "Legend of Kyrandia (Floppy, French)",	GI_KYRA1, GF_FRENCH | GF_FLOPPY,
 										"abf8eb360e79a6c2a837751fbd4d3d24", "GEMCUT.EMC" },
-	{ "kyra1", "Legend of Kyrandia (Floppy, German)",	GI_KYRA1, GF_GERMAN  | GF_FLOPPY, 
+	{ "kyra1", "Legend of Kyrandia (Floppy, German)",	GI_KYRA1, GF_GERMAN | GF_FLOPPY, 
 										"6018e1dfeaca7fe83f8d0b00eb0dd049", "GEMCUT.EMC"},
-	{ "kyra1", "Legend of Kyrandia (Floppy, Spanish)",	GI_KYRA1, GF_SPANISH  | GF_FLOPPY, // from VooD
+	{ "kyra1", "Legend of Kyrandia (Floppy, Spanish)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // from VooD
 										"8909b41596913b3f5deaf3c9f1017b01", "GEMCUT.EMC"},
 	{ "kyra1", "Legend of Kyrandia (CD, English)",		GI_KYRA1, GF_ENGLISH | GF_TALKIE, 
 										"fac399fe62f98671e56a005c5e94e39f", "GEMCUT.PAK" },
@@ -790,7 +790,7 @@ void KyraEngine::seq_intro() {
 	_seq->setCopyViewOffs(false);
 	_midi->stopMusic();
 	if (_features & GF_TALKIE) {
-			_res->unloadPakFile("INTRO.VRM");
+		_res->unloadPakFile("INTRO.VRM");
 	}
 	res_unloadResources(RES_INTRO);
 }
