@@ -5,7 +5,6 @@
 	Name="scumm"
 	ProjectGUID="{B6AFD548-63D2-40CD-A652-E87095AFCBAF}"
 	Keyword="Win32Proj"
-	SignManifests="true"
 	>
 	<Platforms>
 		<Platform
@@ -387,6 +386,14 @@
 		</File>
 		<File
 			RelativePath="..\..\scumm\dialogs.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\floodfill_he.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\scumm\floodfill_he.h"
 			>
 		</File>
 		<File
