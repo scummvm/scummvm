@@ -42,6 +42,8 @@ extern const char *resTypeFromId(int id);
 static uint16 newTag2Old(uint32 newTag);
 static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
+static bool checkTryMedia(BaseScummFile *handle);
+
 
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
@@ -353,6 +355,15 @@ void ScummEngine::readIndexFile() {
 		_fileHandle->seek(0, SEEK_SET);
 	}
 
+#ifndef DISABLE_HE
+	if (checkTryMedia(_fileHandle)) {
+		displayMessage(NULL, "You're trying to run game encrypted by ActiveMark. This is not supported.");
+		_quit = true;
+
+		return;
+	}
+#endif
+
 	while (true) {
 		blocktype = fileReadDword();
 		itemsize = _fileHandle->readUint32BE();
@@ -369,6 +380,40 @@ void ScummEngine::readIndexFile() {
 
 	closeRoom();
 }
+
+
+#ifndef DISABLE_HE
+
+#define TRYMEDIA_MARK_LEN 6
+
+bool checkTryMedia(BaseScummFile *handle) {
+	byte buf[TRYMEDIA_MARK_LEN];
+	bool matched;
+	const byte magic[2][TRYMEDIA_MARK_LEN] = 
+		{{ 0x00,  'T', 'M', 'S', 'A', 'M' },
+		 { 'i',   '=', '$', ':', '(', '$' }};  // Same but 0x69 xored
+
+	handle->read(buf, TRYMEDIA_MARK_LEN);
+
+	for (int i = 0; i < 2; i++) {
+		matched = true;
+		for (int j = 0; j < TRYMEDIA_MARK_LEN; j++)
+			if (buf[j] != magic[i][j])
+				matched = false;
+
+		if (matched)
+			break;
+	}
+
+	if (matched)
+		return true;
+
+	handle->seek(0, SEEK_SET);
+
+	return false;
+}
+#endif
+
 
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
