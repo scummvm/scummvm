@@ -866,8 +866,6 @@ void ScummEngine_v100he::o100_drawObject() {
 
 void ScummEngine_v100he::o100_floodFill() {
 	byte subOp = fetchScriptByte();
-	subOp -= 54;
-
 	switch (subOp) {
 	case 0:
 		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
