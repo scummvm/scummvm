@@ -446,7 +446,7 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(50) && _heversion >= 71) {
+	if (hdr.ver < VER(57) && _heversion >= 60) {
 		strcpy(desc, "Unsupported version");
 		return false;
 	}
@@ -1194,8 +1194,28 @@ void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 #endif
 
 #ifndef DISABLE_HE
-void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+void ScummEngine_v60he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine::saveOrLoad(s, savegameVersion);
+
+	s->saveLoadArrayOf(_arraySlot, _numArray, sizeof(_arraySlot[0]), sleByte);
+}
+
+void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine_v60he::saveOrLoad(s, savegameVersion);
+
+	const SaveLoadEntry HE70Entries[] = {
+		MKLINE(ScummEngine_v70he, _heSndSoundId, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v70he, _heSndOffset, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v70he, _heSndChannel, sleInt32, VER(51)),
+		MKLINE(ScummEngine_v70he, _heSndFlags, sleInt32, VER(51)),
+		MKEND()
+	};
+
+	s->saveLoadEntries(this, HE70Entries);
+}
+
+void ScummEngine_v71he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine_v70he::saveOrLoad(s, savegameVersion);
 
 	const SaveLoadEntry polygonEntries[] = {
 		MKLINE(WizPolygon, vert[0].x, sleInt16, VER(40)),
@@ -1218,23 +1238,11 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
-	const SaveLoadEntry HE70Entries[] = {
-		MKLINE(ScummEngine_v70he, _heSndSoundId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v70he, _heSndOffset, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v70he, _heSndChannel, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v70he, _heSndFlags, sleInt32, VER(51)),
-		MKEND()
-	};
-
-	if (_heversion >= 71) {
-		s->saveLoadArrayOf(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), sizeof(_wiz->_polygons[0]), polygonEntries);
-	}
-
-	s->saveLoadEntries(this, HE70Entries);
+	s->saveLoadArrayOf(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), sizeof(_wiz->_polygons[0]), polygonEntries);
 }
 
 void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v70he::saveOrLoad(s, savegameVersion);
+	ScummEngine_v71he::saveOrLoad(s, savegameVersion);
 
 	const SaveLoadEntry floodFillEntries[] = {
 		MKLINE(FloodFillParameters, box.left, sleInt32, VER(51)),
@@ -1266,14 +1274,16 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	_numSpritesToProcess = _sprite->_numSpritesToProcess;
 	s->saveLoadEntries(this, HE90Entries);
 	_sprite->_numSpritesToProcess = _numSpritesToProcess;
+}
 
-	if (_heversion >= 99) {
-		s->saveLoadArrayOf(_hePalettes, _numPalettes, sizeof(_hePalettes[0]), sleUint8);
-	}
+void ScummEngine_v99he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+	ScummEngine_v90he::saveOrLoad(s, savegameVersion);
+
+	s->saveLoadArrayOf(_hePalettes, _numPalettes, sizeof(_hePalettes[0]), sleUint8);
 }
 
 void ScummEngine_v100he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v90he::saveOrLoad(s, savegameVersion);
+	ScummEngine_v99he::saveOrLoad(s, savegameVersion);
 
 	const SaveLoadEntry HE100Entries[] = {
 		MKLINE(ScummEngine_v100he, _heResId, sleInt32, VER(51)),
@@ -1342,7 +1352,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 	assert(res.address[type][idx]);
 
-	if (res.mode[type] == 0) {
+	if ((res.mode[type] == 0) || (_heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
 		byte *ptr = res.address[type][idx];
 		uint32 size = ((MemBlkHeader *)ptr)->size;
 
@@ -1359,7 +1369,7 @@ void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 }
 
 void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
-	if (res.mode[type] == 0) {
+	if ((res.mode[type] == 0) || (_heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
 		uint32 size = ser->loadUint32();
 		assert(size);
 		res.createResource(type, idx, size);
