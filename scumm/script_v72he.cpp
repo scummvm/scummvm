@@ -156,7 +156,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_getSoundElapsedTime),
+		OPCODE(o72_getSoundPosition),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -886,10 +886,10 @@ void ScummEngine_v72he::o72_setTimer() {
 	}
 }
 
-void ScummEngine_v72he::o72_getSoundElapsedTime() {
+void ScummEngine_v72he::o72_getSoundPosition() {
 	int snd = pop();
 	push(_sound->getSoundElapsedTime(snd) * 10);
-	debug(1,"o72_getSoundElapsedTime (%d)", snd);
+	debug(1,"o72_getSoundPosition (%d)", snd);
 }
 
 void ScummEngine_v72he::o72_startScript() {

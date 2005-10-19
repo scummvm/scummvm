@@ -59,7 +59,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_loadRoom),
 		OPCODE(o6_panCameraTo),
 		/* 10 */
-		OPCODE(o6_invalid),
+		OPCODE(o72_captureWizImage),
 		OPCODE(o100_jumpToScript),
 		OPCODE(o6_setClass),
 		OPCODE(o60_closeFile),
@@ -309,7 +309,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_isScriptRunning),
 		OPCODE(o90_sin),
 		/* D8 */
-		OPCODE(o72_getSoundElapsedTime),
+		OPCODE(o72_getSoundPosition),
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o80_getSoundVar),
 		OPCODE(o100_getSpriteInfo),
