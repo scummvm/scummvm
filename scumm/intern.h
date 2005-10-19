@@ -784,6 +784,8 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+
 	void localizeArray(int slot, byte scriptSlot);
 	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
@@ -903,6 +905,8 @@ public:
 	ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 
 protected:
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+
 	virtual void redrawBGAreas();
 
 	virtual void processActors();
@@ -1236,6 +1240,8 @@ protected:
 	virtual void initScummVars();
 
 	virtual void readMAXS(int blockSize);
+
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
 	virtual void copyPalColor(int dst, int src);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);

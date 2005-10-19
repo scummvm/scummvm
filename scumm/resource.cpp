@@ -1257,6 +1257,8 @@ void ScummEngine::allocateArrays() {
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
 	if (_heversion >= 60) {
 		_arraySlot = (byte *)calloc(_numArray, 1);
+	}
+	if (_heversion >= 70) {
 		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 	}
 
