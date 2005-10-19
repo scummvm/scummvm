@@ -1282,6 +1282,7 @@ protected:
 	void o100_dimArray();
 	void o100_drawLine();
 	void o100_drawObject();
+	void o100_floodFill();
 	void o100_setSpriteGroupInfo();
 	void o100_resourceRoutines();
 	void o100_wizImageOps();

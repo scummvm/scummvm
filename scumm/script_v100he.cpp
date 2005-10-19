@@ -96,7 +96,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 2C */
 		OPCODE(o6_stopObjectCode),
 		OPCODE(o6_eq),
-		OPCODE(o6_invalid),
+		OPCODE(o100_floodFill),
 		OPCODE(o6_freezeUnfreeze),
 		/* 30 */
 		OPCODE(o6_ge),
@@ -861,6 +861,42 @@ void ScummEngine_v100he::o100_drawObject() {
 	if (state != -1) {
 		addObjectToDrawQue(objnum);
 		putState(object, state);
+	}
+}
+
+void ScummEngine_v100he::o100_floodFill() {
+	byte subOp = fetchScriptByte();
+	subOp -= 54;
+
+	switch (subOp) {
+	case 0:
+		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
+		_floodFillParams.box.left = 0;
+		_floodFillParams.box.top = 0;
+		_floodFillParams.box.right = 639;
+		_floodFillParams.box.bottom = 479;
+		break;
+	case 6:
+		_floodFillParams.y = pop();
+		_floodFillParams.x = pop();
+		break;
+	case 18:
+		_floodFillParams.box.bottom = pop();
+		_floodFillParams.box.right = pop();
+		_floodFillParams.box.top = pop();
+		_floodFillParams.box.left = pop();
+		break;
+	case 20:
+		_floodFillParams.flags = pop();
+		break;
+	case 67:
+		_floodFillParams.unk1C = pop();
+		break;
+	case 92:
+		floodFill(&_floodFillParams, this);
+		break;
+	default:
+		error("o100_floodFill: Unknown case %d", subOp);
 	}
 }
 
