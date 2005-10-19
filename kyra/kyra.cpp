@@ -847,14 +847,16 @@ void KyraEngine::seq_introStory() {
 	debug(9, "KyraEngine::seq_introStory()");
 	_screen->clearPage(3);
 	_screen->clearPage(0);
-	if (_features & GF_ENGLISH) {
-		loadBitmap("TEXT.CPS", 3, 3, 0);
+	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) {
+		loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
 	} else if (_features & GF_GERMAN) {
 		loadBitmap("TEXT_GER.CPS", 3, 3, 0);
 	} else if (_features & GF_FRENCH) {
 		loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
 	} else if (_features & GF_SPANISH) {
 		loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
+	} else if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY)) {
+		loadBitmap("TEXT.CPS", 3, 3, 0);
 	} else {
 		warning("no story graphics file found");
 	}
