@@ -123,7 +123,7 @@ void SimonEngine::quick_load_or_save() {
 		} else {
 			// Redraw Inventory
 			lock();
-			fcs_unk_proc_1(2, getItem1Ptr(), 0, 0);
+			drawIconArray(2, getItem1Ptr(), 0, 0);
 			unlock();
 			// Reset engine?
 			vc_set_bit_to(97, true);

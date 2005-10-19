@@ -465,7 +465,7 @@ protected:
 	void unlinkItem(Item *item);
 	void linkItem(Item *item, Item *parent);
 
-	bool o_unk_23(uint a);
+	bool o_chance(uint a);
 
 	void o_kill_sprite_simon1(uint a);
 	void o_kill_sprite_simon2(uint a, uint b);
@@ -496,7 +496,7 @@ protected:
 	void o_save_game();
 	void o_load_game();
 	void o_quit_if_user_presses_y();
-	void o_unk_137(uint a);
+	void o_restoreIconArray(uint a);
 	void o_unk_138();
 	void killAllTimers();
 
@@ -524,7 +524,7 @@ protected:
 	void lock();
 	void unlock();
 
-	void fcs_unk_proc_1(uint i, Item *item_ptr, int unk1, int unk2);
+	void drawIconArray(uint i, Item *item_ptr, int unk1, int unk2);
 
 	void loadTextIntoMem(uint string_id);
 	void loadTablesIntoMem(uint subr_id);
@@ -572,7 +572,7 @@ protected:
 	void pollMouseXY();
 	void draw_mouse_pointer();
 
-	void fcs_unk1(uint fcs_index);
+	void removeIconArray(uint fcs_index);
 	void draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y);
 	bool has_item_childflag_0x10(Item *item);
 	uint item_get_icon_number(Item *item);
@@ -599,7 +599,7 @@ protected:
 	void o_unk26_helper(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void talk_with_speech(uint speech_id, uint vga_sprite_id);
 	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
-	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint unk4);
+	FillOrCopyStruct *fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);

@@ -436,7 +436,7 @@ void SimonEngine::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
 		return;
 
 	lock();
-	fcs_unk_proc_1(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
+	drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
 	unlock();
 }
 
@@ -446,7 +446,7 @@ void SimonEngine::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
 	index = get_fcs_ptr_3_index(fcs);
 
 	lock();
-	fcs_unk_proc_1(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
+	drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
 	unlock();
 }
 

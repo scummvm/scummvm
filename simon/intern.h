@@ -79,7 +79,7 @@ struct FillOrCopyData {
 	int16 unk1;
 	Item *item_ptr;
 	FillOrCopyDataEntry e[64];
-	int16 unk3, unk4;
+	int16 upArrow, downArrow;
 	uint16 unk2;
 };
 

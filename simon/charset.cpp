@@ -55,7 +55,7 @@ void SimonEngine::print_char_helper_6(uint i) {
 	if (_fcsData2[i]) {
 		lock();
 		fcs = _fcsPtrArray3[i];
-		fcs_unk_proc_1(i, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
+		drawIconArray(i, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 		_fcsData2[i] = 0;
 		unlock();
 	}

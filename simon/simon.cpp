@@ -75,7 +75,7 @@ static const SimonGameSettings simon_settings[] = {
 	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
 	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
 	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"},
-//	{"feeble", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
+	{"feeble", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
 
 	{NULL, NULL, 0, NULL}
 };
@@ -1232,7 +1232,7 @@ void SimonEngine::itemChildrenChanged(Item *item) {
 				_fcsData2[i] = true;
 			} else {
 				_fcsData2[i] = false;
-				fcs_unk_proc_1(i, item, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
+				drawIconArray(i, item, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 			}
 		}
 	}
@@ -1829,7 +1829,7 @@ get_out:
 	_needHitAreaRecalc = 0;
 }
 
-void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int unk2) {
+void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int unk2) {
 	Item *item_ptr_org = item_ptr;
 	FillOrCopyStruct *fcs_ptr;
 	uint width_div_3, height_div_3;
@@ -1853,12 +1853,12 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 		return;
 
 	if (fcs_ptr->fcs_data)
-		fcs_unk1(fcs_index);
+		removeIconArray(fcs_index);
 
 	fcs_ptr->fcs_data = (FillOrCopyData *) malloc(sizeof(FillOrCopyData));
 	fcs_ptr->fcs_data->item_ptr = item_ptr;
-	fcs_ptr->fcs_data->unk3 = -1;
-	fcs_ptr->fcs_data->unk4 = -1;
+	fcs_ptr->fcs_data->upArrow = -1;
+	fcs_ptr->fcs_data->downArrow = -1;
 	fcs_ptr->fcs_data->unk1 = unk1;
 	fcs_ptr->fcs_data->unk2 = unk2;
 
@@ -1930,8 +1930,8 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 void SimonEngine::fcs_unk_proc_2(FillOrCopyStruct *fcs, uint fcs_index) {
 	setup_hit_areas(fcs, fcs_index);
 
-	fcs->fcs_data->unk3 = _scrollUpHitArea;
-	fcs->fcs_data->unk4 = _scrollDownHitArea;
+	fcs->fcs_data->upArrow = _scrollUpHitArea;
+	fcs->fcs_data->downArrow = _scrollDownHitArea;
 }
 
 void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
@@ -3040,7 +3040,7 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 void SimonEngine::fcs_delete(uint a) {
 	if (_fcsPtrArray3[a] == NULL)
 		return;
-	fcs_unk1(a);
+	removeIconArray(a);
 	video_copy_if_flag_0x8_c(_fcsPtrArray3[a]);
 	_fcsPtrArray3[a] = NULL;
 	if (_fcsUnk1 == a) {
@@ -3064,8 +3064,7 @@ void SimonEngine::fcs_unk_2(uint a) {
 }
 
 // OK
-FillOrCopyStruct *SimonEngine::fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color,
-																				uint unk4) {
+FillOrCopyStruct *SimonEngine::fcs_alloc(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
 	FillOrCopyStruct *fcs;
 
 	fcs = _fcs_list;
@@ -3079,7 +3078,7 @@ FillOrCopyStruct *SimonEngine::fcs_alloc(uint x, uint y, uint w, uint h, uint fl
 	fcs->height = h;
 	fcs->flags = flags;
 	fcs->fill_color = fill_color;
-	fcs->text_color = unk4;
+	fcs->text_color = text_color;
 	fcs->textColumn = 0;
 	fcs->textRow = 0;
 	fcs->textColumnOffset = 0;
@@ -3142,7 +3141,7 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 }
 
 // ok
-void SimonEngine::fcs_unk1(uint fcs_index) {
+void SimonEngine::removeIconArray(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 	uint16 fcsunk1;
 	uint16 i;
@@ -3161,12 +3160,12 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 		delete_hitarea_by_index(fcs->fcs_data->e[i].hit_area);
 	}
 
-	if (fcs->fcs_data->unk3 != -1) {
-		delete_hitarea_by_index(fcs->fcs_data->unk3);
+	if (fcs->fcs_data->upArrow != -1) {
+		delete_hitarea_by_index(fcs->fcs_data->upArrow);
 	}
 
-	if (fcs->fcs_data->unk4 != -1) {
-		delete_hitarea_by_index(fcs->fcs_data->unk4);
+	if (fcs->fcs_data->downArrow != -1) {
+		delete_hitarea_by_index(fcs->fcs_data->downArrow);
 		if (!(_game & GF_SIMON2))
 			fcs_unk_5(fcs, fcs_index);
 	}

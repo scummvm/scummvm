@@ -145,7 +145,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 23:{
-				condition = o_unk_23(getVarOrWord());
+				condition = o_chance(getVarOrWord());
 			}
 			break;
 
@@ -646,7 +646,7 @@ int SimonEngine::runScript() {
 				Item *item = getNextItemPtr();
 				uint fcs_index = getVarOrByte();
 				lock();
-				fcs_unk_proc_1(fcs_index, item, 0, 0);
+				drawIconArray(fcs_index, item, 0, 0);
 				unlock();
 			}
 			break;
@@ -701,7 +701,7 @@ int SimonEngine::runScript() {
 				uint fcs_index = getVarOrByte();
 				uint a = 1 << getVarOrByte();
 				lock();
-				fcs_unk_proc_1(fcs_index, item, 1, a);
+				drawIconArray(fcs_index, item, 1, a);
 				unlock();
 			}
 			break;
@@ -775,7 +775,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 137:{
-				o_unk_137(getVarOrByte());
+				o_restoreIconArray(getVarOrByte());
 			}
 			break;
 
@@ -1267,7 +1267,7 @@ void SimonEngine::o_waitForMark(uint i) {
 }
 
 
-bool SimonEngine::o_unk_23(uint a) {
+bool SimonEngine::o_chance(uint a) {
 	if (a == 0)
 		return 0;
 
@@ -1427,13 +1427,13 @@ void SimonEngine::o_quit_if_user_presses_y() {
 	}
 }
 
-void SimonEngine::o_unk_137(uint fcs_index) {
+void SimonEngine::o_restoreIconArray(uint fcs_index) {
 	FillOrCopyStruct *fcs;
 
 	fcs = _fcsPtrArray3[fcs_index & 7];
 	if (fcs->fcs_data == NULL)
 		return;
-	fcs_unk_proc_1(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
+	drawIconArray(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 }
 
 void SimonEngine::o_unk_138() {
@@ -1648,7 +1648,7 @@ void SimonEngine::o_unk_160(uint a) {
 
 void SimonEngine::o_unk_103() {
 	lock();
-	fcs_unk1(_fcsUnk1);
+	removeIconArray(_fcsUnk1);
 	showMessageFormat("\x0C");
 	unlock();
 }
