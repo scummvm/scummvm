@@ -118,6 +118,7 @@ void Sprites::doAnims() {
 		
 		while (READ_LE_UINT16(data) != 0xFF87 && !endLoop) {
 			uint16 rndNr;
+			uint16 anim;
 			assert((data - _anims[i].script) < _anims[i].length);
 			switch (READ_LE_UINT16(data)) {
 			case 0xFF88:
@@ -268,7 +269,7 @@ void Sprites::doAnims() {
 				data += 2;
 				debug(9, "func: Stop animation");
 				debug(9, "Animation index %i", READ_LE_UINT16(data));
-				uint16 anim = READ_LE_UINT16(data);
+				anim = READ_LE_UINT16(data);
 				data += 2;
 				_anims[anim].play = false;
 				_anims[anim].sprite = -1;
