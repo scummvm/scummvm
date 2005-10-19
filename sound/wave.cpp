@@ -161,7 +161,7 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 		return 0;
 
 	if (type == 17) // IMA ADPCM
-		return makeADPCMStream(stream, size, kADPCMIma);
+		return new ADPCMInputStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);
 
 	byte *data = (byte *)malloc(size);
 	assert(data);

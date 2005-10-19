@@ -316,7 +316,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		if (type == 17) {
-			AudioStream *voxStream = makeADPCMStream(stream, size, kADPCMIma);
+			AudioStream *voxStream = new ADPCMInputStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);
 
 			sound = (char *)malloc(size * 2);
 			size = voxStream->readBuffer((int16*)sound, size * 2);

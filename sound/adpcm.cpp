@@ -20,9 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#include "common/stream.h"
 
-#include "sound/audiostream.h"
 #include "sound/adpcm.h"
 
 
@@ -31,47 +29,34 @@
 // See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
 // In addition, also IMA ADPCM is supported.
-template <typesADPCM TYPE>
-class ADPCMInputStream : public AudioStream {
-private:
-	Common::SeekableReadStream *_stream;
-	uint32 _endpos;
 
-	struct adpcmStatus {
-		int16 last;
-		int16 stepIndex;
-	} _status;
-
-	int16 stepAdjust(byte);
-	int16 decode(byte);
-
-public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size);
-	~ADPCMInputStream() {};
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
-	bool isStereo() const	{ return false; }
-	int getRate() const	{ return 22050; }
-};
-
-template <>
-int16 ADPCMInputStream<kADPCMOki>::decode(byte code);
-template <>
-int16 ADPCMInputStream<kADPCMIma>::decode(byte code);
-
-template <typesADPCM TYPE>
-ADPCMInputStream<TYPE>::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size)
-	: _stream(stream) {
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels)
+	: _stream(stream), _channels(channels), _type(type) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
 	_endpos = stream->pos() + size;
 }
 
-template <typesADPCM TYPE>
-int ADPCMInputStream<TYPE>::readBuffer(int16 *buffer, const int numSamples) {
+int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	switch (_type) {
+	case kADPCMOki:
+		return readBufferOKI(buffer, numSamples);
+		break;
+	case kADPCMIma:
+		if (_channels == 1)
+			return readBufferMSIMA1(buffer, numSamples);
+		else
+			return readBufferMSIMA2(buffer, numSamples);
+		break;
+	default:
+		error("Unsupported ADPCM encoding");
+		break;
+	}
+	return 0;
+}
+
+int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
 
@@ -81,17 +66,33 @@ int ADPCMInputStream<TYPE>::readBuffer(int16 *buffer, const int numSamples) {
 	// on low nibble
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 		data = _stream->readByte();
-		buffer[samples] = decode((data >> 4) & 0x0f);
-		buffer[samples + 1] = decode(data & 0x0f);
+		buffer[samples] = decodeOKI((data >> 4) & 0x0f);
+		buffer[samples + 1] = decodeOKI(data & 0x0f);
 	}
 	return samples;
 }
 
-// Microsoft as usual tries to implement it differently. Though we don't
-// use this now
-#if 0
-template <>
-int ADPCMInputStream<kADPCMIma>::readBuffer(int16 *buffer, const int numSamples) {
+
+int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
+	int samples;
+	byte data;
+
+	assert(numSamples % 2 == 0);
+
+	// Since we process high and low nibbles separately never check buffer end
+	// on low nibble
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+		data = _stream->readByte();
+		buffer[samples] = decodeMSIMA(data & 0x0f);
+		buffer[samples + 1] = decodeMSIMA((data >> 4) & 0x0f);
+	}
+	return samples;
+}
+
+
+// Microsoft as usual tries to implement it differently. This method
+// is used for stereo data.
+int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
 	int samples;
 	uint32 data;
 	int nibble;
@@ -102,7 +103,7 @@ int ADPCMInputStream<kADPCMIma>::readBuffer(int16 *buffer, const int numSamples)
 			
 			for (nibble = 0; nibble < 8; nibble++) {
 				byte k = ((data & 0xf0000000) >> 28);
-				buffer[samples + channel + nibble * 2] = decode(k);
+				buffer[samples + channel + nibble * 2] = decodeMSIMA(k);
 				data <<= 4;
 			}
 		}
@@ -110,11 +111,9 @@ int ADPCMInputStream<kADPCMIma>::readBuffer(int16 *buffer, const int numSamples)
 	}
 	return samples;
 }
-#endif
 
 // adjust the step for use on the next sample.
-template <typesADPCM TYPE>
-int16 ADPCMInputStream<TYPE>::stepAdjust(byte code) {
+int16 ADPCMInputStream::stepAdjust(byte code) {
 	static const int16 adjusts[] = {-1, -1, -1, -1, 2, 4, 6, 8};
 
 	return adjusts[code & 0x07];
@@ -131,8 +130,7 @@ static const int16 okiStepSize[49] = {
 };
 
 // Decode Linear to ADPCM
-template <>
-int16 ADPCMInputStream<kADPCMOki>::decode(byte code) {
+int16 ADPCMInputStream::decodeOKI(byte code) {
 	int16 diff, E, SS, samp;
 
 	SS = okiStepSize[_status.stepIndex];
@@ -179,8 +177,7 @@ static const uint16 imaStepTable[89] = {
 	32767
 };
 
-template <>
-int16 ADPCMInputStream<kADPCMIma>::decode(byte code) {
+int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	int32 diff, E, SS, samp;
 
 	SS = imaStepTable[_status.stepIndex];
@@ -207,22 +204,4 @@ int16 ADPCMInputStream<kADPCMIma>::decode(byte code) {
 		_status.stepIndex = 88;
 
 	return samp;
-}
-
-AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type) {
-	AudioStream *audioStream;
-
-	switch (type) {
-	case kADPCMOki:
-		audioStream = new ADPCMInputStream<kADPCMOki>(&stream, size);
-		break;
-	case kADPCMIma:
-		audioStream = new ADPCMInputStream<kADPCMIma>(&stream, size);
-		break;
-	default:
-		error("Unsupported ADPCM encoding");
-		break;
-	}
-
-	return audioStream;
 }
