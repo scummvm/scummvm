@@ -5,7 +5,6 @@
 	Name="kyra"
 	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
 	Keyword="Win32Proj"
-	SignManifests="true"
 	>
 	<Platforms>
 		<Platform
@@ -161,22 +160,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\kyra\codecs.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\kyra\codecs.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\kyra\cpsimage.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\kyra\font.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\kyra\kyra.cpp"
 			>
 		</File>
@@ -185,15 +168,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\palette.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\kyra\resource.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\kyra\resource.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\screen.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\screen.h"
 			>
 		</File>
 		<File
@@ -209,11 +196,31 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\kyra\seqplayer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\seqplayer.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\kyra\sound.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\kyra\sound.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\sprites.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\sprites.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\staticres.cpp"
 			>
 		</File>
 		<File
