@@ -98,7 +98,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_jumpToScriptUnk),
 		OPCODE(o90_videoOps),
 		OPCODE(o90_getVideoData),
-		OPCODE(o90_floodState),
+		OPCODE(o90_floodFill),
 		/* 30 */
 		OPCODE(o90_mod),
 		OPCODE(o90_shl),
@@ -1760,41 +1760,40 @@ void ScummEngine_v90he::o90_getWizData() {
 	}
 }
 
-void ScummEngine_v90he::o90_floodState() {
+void ScummEngine_v90he::o90_floodFill() {
 	byte subOp = fetchScriptByte();
 	subOp -= 54;
 
 	switch (subOp) {
 	case 0:
-		_floodStateParams.field_1C = pop();
+		_floodFillParams.unk1C = pop();
 		break;
 	case 3:
-		memset(&_floodStateParams, 0, sizeof(_floodStateParams));
-		_floodStateParams.box.left = 0;
-		_floodStateParams.box.top = 0;
-		_floodStateParams.box.right = 640;
-		_floodStateParams.box.bottom = 480;
+		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
+		_floodFillParams.box.left = 0;
+		_floodFillParams.box.top = 0;
+		_floodFillParams.box.right = 639;
+		_floodFillParams.box.bottom = 479;
 		break;
 	case 11:
-		_floodStateParams.field_14 = pop();
-		_floodStateParams.field_10 = pop();
+		_floodFillParams.y = pop();
+		_floodFillParams.x = pop();
 		break;
 	case 12:
-		_floodStateParams.field_18 = pop();
+		_floodFillParams.flags = pop();
 		break;
 	case 13:
-		_floodStateParams.box.bottom = pop();
-		_floodStateParams.box.right = pop();
-		_floodStateParams.box.top = pop();
-		_floodStateParams.box.left = pop();
+		_floodFillParams.box.bottom = pop();
+		_floodFillParams.box.right = pop();
+		_floodFillParams.box.top = pop();
+		_floodFillParams.box.left = pop();
 		break;
 	case 201:
-		//floodState(_floodStateParams);
+		floodFill(&_floodFillParams, this);
 		break;
 	default:
-		error("o90_floodState: Unknown case %d", subOp);
+		error("o90_floodFill: Unknown case %d", subOp);
 	}
-	debug(1, "o90_floodState stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_shl() {

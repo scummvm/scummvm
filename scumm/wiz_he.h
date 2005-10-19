@@ -166,7 +166,7 @@ public:
 	void fillWizLine(const WizParameters *params);
 	void fillWizPixel(const WizParameters *params);
 
-	void getWizImageDim(int resNum, int state,  int32 &w, int32 &h);
+	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
 	int isWizPixelNonTransparent(int resnum, int state, int x, int y, int flags);
 	uint8 getWizPixelColor(int resnum, int state, int x, int y, int flags);
@@ -193,8 +193,8 @@ public:
 	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h);
 	uint8 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
 	uint8 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 color);
-	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect *srcRect);
-	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect *srcRect);
+	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);
+	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect& rCapt);
 
 private:
 	ScummEngine_v70he *_vm;

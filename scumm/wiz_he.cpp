@@ -601,19 +601,19 @@ uint8 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, ui
 	return data[y * w + x];
 }
 
-void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect *srcRect) {
-	int y = srcRect->top;
+void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect &rCapt) {
+	int y = rCapt.top;
 	while (y != 0) {
 		data += READ_LE_UINT16(data) + 2;
 		--y;
 	}
-	int ih = srcRect->height();
+	int ih = rCapt.height();
 	while (ih--) {
 		uint16 off = READ_LE_UINT16(data); data += 2;
 		if (off != 0) {
 			const uint8 *p = data;
-			int x1 = srcRect->left;
-			int x2 = srcRect->right;
+			int x1 = rCapt.left;
+			int x2 = rCapt.right;
 			uint8 code;
 			while (x1 > 0) {
 				code = *p++;
@@ -673,10 +673,10 @@ dec_sub3:			x2 -= code;
 	}
 }
 
-void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect *srcRect) {
-	data += srcRect->top * srcPitch + srcRect->left;
-	int iw = srcRect->width();
-	int ih = srcRect->height();
+void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect &rCapt) {
+	data += rCapt.top * srcPitch + rCapt.left;
+	int iw = rCapt.width();
+	int ih = rCapt.height();
 	while (ih--) {
 		for (int i = 0; i < iw; ++i) {
 			++histogram[data[i]];
@@ -685,161 +685,127 @@ void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPi
 	}
 }
 
-struct wizPackCtx {
-	uint32 len;
-	uint8 saveCode;
-	uint8 saveBuf[256];
-};
-
-static void wizPackType1Helper1(uint8 *&dst, int len, byte newColor, byte prevColor, wizPackCtx *ctx) {
-	assert(len > 0);
-	if (newColor == prevColor) {
-		do {
-			int blockLen = MIN(len, 0x7F);
-			len -= blockLen;
-			if (dst) {
-				*dst++ = (blockLen * 2) | 1;
-			}
-			++ctx->len;
-		} while (len > 0);
-	} else {
-		do {
-			int blockLen = MIN(len, 0x40);
-			len -= blockLen;
-			if (dst) {
-				*dst++ = ((blockLen - 1) * 4) | 2;
-			}
-			++ctx->len;
-			if (dst) {
-				*dst++ = newColor;
-			}
-			++ctx->len;
-		} while (len > 0);
-	}
-}
-
-static void wizPackType1Helper2(uint8 *&dst, int len, wizPackCtx *ctx) {
-	assert(len > 0);
-	const uint8 *src = ctx->saveBuf;
-	do {
-		int blockLen = MIN(len, 0x40);
-		len -= blockLen;
-		if (dst) {
-			*dst++ = (blockLen - 1) * 4;
-		}
-		++ctx->len;
-		while (blockLen--) {
-			if (dst) {
-				*dst++ = *src++;
-			}
-			++ctx->len;
-		}
-	} while (len > 0);
-}
-
 static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 tColor) {
-	debug(1, "wizPackType1(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
-	wizPackCtx ctx;
-	memset(&ctx, 0, sizeof(ctx));
-
+	debug(9, "wizPackType1(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	src += rCapt.top * srcPitch + rCapt.left;
 	int w = rCapt.width();
 	int h = rCapt.height();
-
-	uint8 *nextDstPtr, *curDstPtr;
-	uint8 curColor, prevColor;
-	int saveBufPos;
-
-	nextDstPtr = curDstPtr = 0;
-
 	int dataSize = 0;
 	while (h--) {
+		uint8 *dstLine = dst;
 		if (dst) {
-			curDstPtr = dst;
-			nextDstPtr = dst;
 			dst += 2;
 		}
-		dataSize += 2;
-		int numBytes = 0;
-
-		int i, code;
-		for (i = 0; i < w; ++i) {
-			if (src[i] != tColor)
-				break;
-		}
-		if (i != w) {
-			curDstPtr = dst;
-			ctx.len = 0;
-			prevColor = ctx.saveBuf[0] = *src;
-			const uint8 *curSrcPtr = src + 1;
-			saveBufPos = 1;
-			code = (tColor - ctx.saveBuf[0] == 0) ? 1 : 0;
-			int curw = w;
-			while (curw--) {
-				ctx.saveBuf[saveBufPos] = curColor = *curSrcPtr++;
-				++saveBufPos;
-				if (code == 0) {
-					if (curColor == tColor) {
-						--saveBufPos;
-						wizPackType1Helper2(curDstPtr, saveBufPos, &ctx);
-						code = saveBufPos = 1;
-						ctx.saveBuf[0] = curColor;
-						numBytes = 0;
-						prevColor = curColor;
-						continue;
-					}
-					if (saveBufPos > 0x80) {
-						--saveBufPos;
-						wizPackType1Helper2(curDstPtr, saveBufPos, &ctx);
-						saveBufPos = 1;
-						ctx.saveBuf[0] = curColor;
-						numBytes = 0;
-						prevColor = curColor;
-						continue;
-					}
-					if (prevColor != curColor) {
-						numBytes = saveBufPos - 1;
-						prevColor = curColor;
-						continue;
-					}
-					code = 1;
-					if (numBytes != 0) {
-						if (saveBufPos - numBytes < 3) {
-							code = 0;
-						} else {
-							wizPackType1Helper2(curDstPtr, numBytes, &ctx);
+		uint8 diffBuffer[0x40];
+		int runCountSame = 0;
+		int runCountDiff = 0;
+		uint8 prevColor = src[0];
+		for (int i = 1; i < w; ) {
+			uint8 color = src[i++];
+			if (i == 2) {
+				if (prevColor == color) {
+					runCountSame = 1;
+				} else {
+					diffBuffer[0] = prevColor;
+					runCountDiff = 1;
+				}
+			}
+			if (prevColor == color) {
+				if (runCountDiff != 0) {
+					runCountSame = 1;
+					if (runCountDiff > 1) {
+						--runCountDiff;
+						if (dst) {
+							*dst++ = ((runCountDiff - 1) << 2) | 0;
+							memcpy(dst, diffBuffer, runCountDiff);
+							dst += runCountDiff;
 						}
+						dataSize += runCountDiff + 1;
+					}
+					runCountDiff = 0;
+				}
+				++runCountSame;
+				if (prevColor == tColor) {
+					if (runCountSame == 0x7F) {
+						if (dst) {
+							*dst++ = (runCountSame << 1) | 1;
+						}
+						++dataSize;
+						runCountSame = 0;
+					}
+				} else {
+					if (runCountSame == 0x40) {
+						if (dst) {
+							*dst++ = ((runCountSame - 1) << 2) | 2;
+							*dst++ = prevColor;
+						}
+						dataSize += 2;
+						runCountSame = 0;
 					}
 				}
-				if (prevColor != curColor || saveBufPos - numBytes > 0x80) {
-					saveBufPos -= numBytes;
-					--saveBufPos;
-					wizPackType1Helper1(curDstPtr, saveBufPos, prevColor, tColor, &ctx);
-					saveBufPos = 1;
-					numBytes = 0;
-					ctx.saveBuf[0] = curColor;
-					code = (tColor - ctx.saveBuf[0] == 0) ? 1 : 0;
-				}
-				prevColor = curColor;
-			}
-			if (code == 0) {
-				wizPackType1Helper2(curDstPtr, saveBufPos, &ctx);
 			} else {
-				saveBufPos -= numBytes;
-				wizPackType1Helper1(curDstPtr, saveBufPos, prevColor, tColor, &ctx);
+				if (runCountSame != 0) {
+					if (prevColor == tColor) {
+						if (dst) {
+							*dst++ = (runCountSame << 1) | 1;
+						}
+						++dataSize;
+					} else {
+						if (dst) {
+							*dst++ = ((runCountSame - 1) << 2) | 2;
+							*dst++ = prevColor;
+						}
+						dataSize += 2;
+					}
+					runCountSame = 0;
+				}
+				assert(runCountDiff < ARRAYSIZE(diffBuffer));
+				diffBuffer[runCountDiff++] = color;				
+				if (runCountDiff == 0x40) {
+					if (dst) {
+						*dst++ = ((runCountDiff - 1) << 2) | 0;
+						memcpy(dst, diffBuffer, runCountDiff);
+						dst += runCountDiff + 1;
+					}
+					dataSize += runCountDiff + 1;
+					runCountDiff = 0;
+				}
 			}
-			dataSize += ctx.len;
-			src += srcPitch;
-			if (dst) {
-				dst += ctx.len;
-				*(uint16 *)nextDstPtr = TO_LE_16(ctx.len);
+			prevColor = color;
+		}
+		if (runCountSame != 0) {
+			if (prevColor == tColor) {
+				if (dst) {
+					*dst++ = (runCountSame << 1) | 1;
+				}
+				++dataSize;
+			} else {
+				if (dst) {
+					*dst++ = ((runCountSame - 1) << 2) | 2;
+					*dst++ = prevColor;
+				}
+				dataSize += 2;
 			}
 		}
+		if (runCountDiff != 0) {
+			if (dst) {
+				*dst++ = ((runCountDiff - 1) << 2) | 0;
+				memcpy(dst, diffBuffer, runCountDiff);
+				dst += runCountDiff;
+			}
+			dataSize += runCountDiff + 1;
+		}
+		if (dst) {
+			WRITE_LE_UINT16(dstLine, dst - dstLine - 2);
+		}
+		dataSize += 2;
+		src += srcPitch;
 	}
 	return dataSize;
 }
 
 static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 tColor) {
+	debug(9, "wizPackType0(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	int w = rCapt.width();
 	int h = rCapt.height();
 	int size = w * h;
@@ -855,7 +821,7 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 }
 
 void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
-	debug(1, "ScummEngine_v72he::captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
+	debug(5, "ScummEngine_v72he::captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	uint8 *src = NULL;
 	VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
 	if (backBuffer) {
@@ -987,6 +953,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 	assert(dataPtr);
+	
 	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
 	assert(wizh);
 	uint32 comp   = READ_LE_UINT32(wizh + 0x0);
@@ -1032,7 +999,6 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 			_vm->res.lock(rtImage, dstResNum);
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
-
 			getWizImageDim(dstResNum, 0, cw, ch);
 		} else {
 			VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
@@ -1994,7 +1960,7 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 	writeVar(0, 0);
 	defineArray(0, kDwordArray, 0, 0, 0, 255);
 	if (readVar(0) != 0) {
-		Common::Rect rCap(x, y, w + 1, h + 1);
+		Common::Rect rCapt(x, y, w + 1, h + 1);
 		uint8 *data = getResourceAddress(rtImage, resNum);
 		assert(data);
 		uint8 *wizh = findWrappedBlock(MKID('WIZH'), data, state, 0);
@@ -2005,16 +1971,16 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 		Common::Rect rWiz(w, h);
 		uint8 *wizd = findWrappedBlock(MKID('WIZD'), data, state, 0);
 		assert(wizd);
-		if (rCap.intersects(rWiz)) {
-			rCap.clip(rWiz);
+		if (rCapt.intersects(rWiz)) {
+			rCapt.clip(rWiz);
 			uint32 histogram[256];
 			memset(histogram, 0, sizeof(histogram));
 			switch (c) {
 			case 0:
-				_wiz->computeRawWizHistogram(histogram, wizd, w, &rCap);
+				_wiz->computeRawWizHistogram(histogram, wizd, w, rCapt);
 				break;
 			case 1:
-				_wiz->computeWizHistogram(histogram, wizd, &rCap);
+				_wiz->computeWizHistogram(histogram, wizd, rCapt);
 				break;
 			default:
 				error("computeWizHistogram: Unhandled wiz compression type %d", c);
