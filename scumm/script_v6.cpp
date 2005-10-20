@@ -1087,7 +1087,7 @@ void ScummEngine_v6::o6_startSound() {
 	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
 	// indicate which note to play, but only when using the standard piano
 	// sound. See also o60_soundOps()
-	if (_heversion >= 61)
+	if (_heversion >= 61 && (_gameId != GID_PUTTDEMO))
 		offset = pop();
 
 #ifndef DISABLE_SCUMM_7_8
