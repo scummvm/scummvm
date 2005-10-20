@@ -671,6 +671,9 @@ void Sound::startHETalkSound(uint32 offset) {
 	byte *ptr;
 	int32 size;
 
+	if (ConfMan.getBool("speech_mute"))
+		return;
+
 	if (!_sfxFile->isOpen()) {
 		error("startHETalkSound: Speech file is not open");
 		return;
