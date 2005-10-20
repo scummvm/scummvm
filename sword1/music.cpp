@@ -148,7 +148,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_file.isOpen()) {
 		sprintf(fileName, "%s.wav", fileBase);
 		if (_file.open(fileName))
-            _musicMode = MusicWave;
+			_musicMode = MusicWave;
 		else {
 			warning("Music file %s could not be opened", fileName);
 			return false;
@@ -208,12 +208,12 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 		int samplesReturned = _audioSource->readBuffer(buffer, expectedSamples);
 		buffer += samplesReturned;
 		totalSamples += samplesReturned;
-        expectedSamples -= samplesReturned;
+		expectedSamples -= samplesReturned;
 		if ((expectedSamples > 0) && _audioSource->endOfData()) {
 			debug(2, "Music reached EOF");
 			_audioSource->endOfData();
 			if (_looping) {
-                delete _audioSource; // recreate same source.
+				delete _audioSource; // recreate same source.
 				_audioSource = createAudioSource();
 			}
 			if ((!_looping) || (!_audioSource))
@@ -228,12 +228,12 @@ int MusicHandle::readBuffer(int16 *buffer, const int numSamples) {
 		if (_fading == 0) {
 			stop();
 			// clear the rest of the buffer
-            memset(bufStart + samplePos, 0, (totalSamples - samplePos) * 2);
+			memset(bufStart + samplePos, 0, (totalSamples - samplePos) * 2);
 			return samplePos;
 		}
 	}
 	while ((_fading < 0) && (samplePos < totalSamples)) { // fade up
-        bufStart[samplePos] = -(bufStart[samplePos] * --_fading) / _fadeSamples;
+		bufStart[samplePos] = -(bufStart[samplePos] * --_fading) / _fadeSamples;
 		if (_fading <= -_fadeSamples)
 			_fading = 0;
 	}
