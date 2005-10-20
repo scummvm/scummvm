@@ -300,8 +300,11 @@ void Player::send(uint32 b) {
 		case 93: // Chorus Level
 			part->chorusLevel(param2);
 			break;
-		case 116: // Unknown
-			// FIXME: Often used in puttmoon
+		case 116: // XMIDI For Loop. Not supported
+			// Used in the ending sequence of puttputt
+			break;
+		case 117: // XMIDI Next/Break. Not supported
+			// Used in the ending sequence of puttputt
 			break;
 		case 123: // All Notes Off
 			part->allNotesOff();
