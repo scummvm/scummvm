@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  */
@@ -48,7 +48,11 @@ OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {
 OSystem_SDL_Symbian::OSystem_SDL_Symbian() :_channels(0),_stereo_mix_buffer(0)
 {
 	ConfMan.set("FM_high_quality", false);
+#ifndef S60 // S60 has low quality as default
 	ConfMan.set("FM_medium_quality", true);
+#else
+	ConfMan.set("FM_medium_quality", false);
+#endif
 	ConfMan.set("joystick_num",0); // Symbian OS  should have joystick_num set to 0 in the ini file , but uiq devices might refuse opening the joystick
 	ConfMan.flushToDisk();
 	// Initialize global key mapping for Smartphones
