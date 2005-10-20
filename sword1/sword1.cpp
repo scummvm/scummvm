@@ -261,7 +261,7 @@ static const char *errorMsgs[] = {
 	"%d important files are missing, the game can't start without them.\n"
 	"Please copy these files from their corresponding CDs:\n",
 
-    "The file \"%s\" is missing.\n"
+	"The file \"%s\" is missing.\n"
 	"Even though the game may initially seem to\n"
 	"work fine, it will crash when it needs the\n"
 	"data from this file and you will be thrown back to your last savegame.\n"
