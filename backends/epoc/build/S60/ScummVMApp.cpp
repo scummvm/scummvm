@@ -77,11 +77,15 @@ CScummVMUi::~CScummVMUi() {
 
 void CScummVMUi::ConstructL() {
 	BaseConstructL();
+	TApaTaskList taskList(iEikonEnv->WsSession());
+	TApaTask myTask=taskList.FindApp(TUid::Uid(0x101f9b57));
+	myTask.SendToBackground();
+
 	TBuf<128> startFile;
 	startFile = iEikonEnv->EikAppUi()->Application()->AppFullName();
 	TParse parser;
 	parser.Set(startFile,NULL,NULL);
-
+	
 	startFile = parser.DriveAndPath();
 #ifndef __WINS__
 	startFile.Append( _L("EScummVM.exe"));
@@ -96,10 +100,6 @@ void CScummVMUi::ConstructL() {
 	CleanupStack::PopAndDestroy();//close lsSession
 	CleanupStack::PopAndDestroy(cmdLine);
 	User::After(500000);// Let the application start
-
-	TApaTaskList taskList(iEikonEnv->WsSession());
-	TApaTask myTask=taskList.FindApp(TUid::Uid(0x101f9b57));
-	myTask.SendToBackground();
 	TApaTask exeTask=taskList.FindByPos(0);
 	iExeWgId=exeTask.WgId();
 

@@ -38,8 +38,10 @@ TARGETTYPE      EXEDLL
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
 
+#if !defined(WINS)
 EPOCSTACKSIZE	0x00008000
-EPOCHEAPSIZE	1024	8192000
+EPOCHEAPSIZE	2048000	8192000
+#endif
 
 MACRO			S60
 
@@ -109,7 +111,7 @@ SOURCE gui\Actions.cpp
 
 LIBRARY cone.lib  eikcore.lib 
 LIBRARY euser.lib apparc.lib fbscli.lib  
-LIBRARY estlib.lib apgrfx.lib
+LIBRARY estlib.lib 
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 library avkon.lib
