@@ -25,7 +25,6 @@
 #include "scumm/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/scumm.h"
-#include "scumm/saveload.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
@@ -1296,14 +1295,14 @@ void Sound::updateCD() {
 	AudioCD.updateCD();
 }
 
-const SaveLoadEntry *Sound::getSaveLoadEntries() {
+void Sound::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry soundEntries[] = {
 		MKLINE(Sound, _currentCDSound, sleInt16, VER(35)),
 		MKLINE(Sound, _currentMusic, sleInt16, VER(35)),
 		MKEND()
 	};
 
-	return soundEntries;
+	ser->saveLoadEntries(this, soundEntries);
 }
 
 

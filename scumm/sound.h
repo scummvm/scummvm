@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "scumm/saveload.h"
 
 namespace Common {
 	class File;
@@ -41,7 +42,7 @@ enum {
 	kTalkSoundID = 10000
 };
 
-class Sound {
+class Sound : public Serializable {
 #ifdef PALMOS_MODE
 public:
 #else
@@ -137,7 +138,7 @@ public:
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 
 	// Used by the save/load system:
-	const SaveLoadEntry *getSaveLoadEntries();
+	void saveLoadWithSerializer(Serializer *ser);
 
 protected:
 	ScummFile *openSfxFile();

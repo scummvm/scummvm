@@ -625,8 +625,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
-	const SaveLoadEntry *soundEntries = _sound->getSaveLoadEntries();
-
 	const SaveLoadEntry verbEntries[] = {
 		MKLINE(VerbSlot, curRect.left, sleInt16, VER(8)),
 		MKLINE(VerbSlot, curRect.top, sleInt16, VER(8)),
@@ -957,7 +955,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	//
 	// Save/load sound data
 	//
-	s->saveLoadEntries(_sound, soundEntries);
+	_sound->saveLoadWithSerializer(s);
 
 
 	//
