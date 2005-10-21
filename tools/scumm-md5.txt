@@ -340,6 +340,7 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	freddi3	khalek, sev
+	Demo	Windows	fr	bbadf7309c4a2c2763e4bbba3c3be634	freddi3	Kirben
 	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	freddi3	adutchguy
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
@@ -483,6 +484,7 @@ Putt-Putt Travels Through Time
 	-	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	PuttTime	khalek
+	Demo	Windows	fr	59d5cfcc5e672a6e07baae01328b918b	PuttTime	Kirben
 	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	PuttTime	adutchguy
 
 Putt-Putt and Pep's Balloon-O-Rama
@@ -514,6 +516,7 @@ Spy Fox 1: Dry Cereal
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
 	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
+	Demo	Windows	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
