@@ -490,8 +490,8 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			if (decflag == 0)
 				continue;
 
-			if ((shadowMask & 0x8000) && _shadow_table) {
-				_shadow_mode = (shadowMask) ? 3: 0;
+			if (_vm->_heversion >= 95) {
+				_shadow_mode = ((shadowMask & 0x8000) && _shadow_table) ? 3 : 0;
 			}
 
 			switch (codec) {
@@ -1279,7 +1279,11 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	}
 
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
-	Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr);
+	if (_shadow_mode == 3) {
+		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr, _shadow_table);
+	} else {
+		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr);
+	}
 #endif
 	return 0;
 }
