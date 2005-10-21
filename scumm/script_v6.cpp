@@ -2293,9 +2293,6 @@ void ScummEngine_v6::o6_systemOps() {
 }
 
 void ScummEngine_v6::o6_delay() {
-	// FIXME - what exactly are we measuring here? In order for the other two
-	// delay functions to be right, it should be 1/60th of a second. But for
-	// CMI it would seem this should delay for 1/10th of a second...
 	uint32 delay = (uint16)pop();
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = ssPaused;
@@ -2304,21 +2301,13 @@ void ScummEngine_v6::o6_delay() {
 
 void ScummEngine_v6::o6_delaySeconds() {
 	uint32 delay = (uint32)pop();
-	if (_gameId != GID_CMI)
-		// FIXME - are we really measuring minutes here?
-		delay = delay * 60;
-	else
-		// FIXME - Is this the same in ComI? Seem to need a 1.5 minute
-		// multiplier for correct timing - see patch 664893
-		delay = delay * 90;
-
+	delay = delay * 60;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = ssPaused;
 	o6_breakHere();
 }
 
 void ScummEngine_v6::o6_delayMinutes() {
-	// FIXME - are we really measuring minutes here?
 	uint32 delay = (uint16)pop() * 3600;
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = ssPaused;
