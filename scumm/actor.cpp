@@ -107,6 +107,7 @@ void Actor::initActor(int mode) {
 
 	stopActorMoving();
 
+	_heXmapNum = 0;
 	_shadowMode = 0;
 	_layer = 0;
 
@@ -1104,12 +1105,23 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 
 	bcr->_shadow_mode = _shadowMode;
-	if ((_vm->_features & GF_SMALL_HEADER) || _vm->_heversion >= 71)
+	if (_vm->_features & GF_SMALL_HEADER) {
 		bcr->_shadow_table = NULL;
-	else if (_vm->_heversion == 70)
+	} else if (_vm->_heversion >= 95 && _heXmapNum) {
+		byte shadow_table[65536];
+		const uint8 *dataPtr = _vm->getResourceAddress(rtImage, _heXmapNum);
+		assert(dataPtr);
+		const uint8 *xmapPtr = _vm->findResourceData(MKID('XMAP'), dataPtr);
+		assert(xmapPtr);
+		int32 size = _vm->getResourceDataSize(xmapPtr);
+		assert(size == 65536);
+		memcpy(shadow_table, xmapPtr, size);
+		bcr->_shadow_table = shadow_table;
+	} else if (_vm->_heversion == 70) {
 		bcr->_shadow_table = _vm->_HEV7ActorPalette;
-	else
+	} else {
 		bcr->_shadow_table = _vm->_shadowPalette;
+	}
 
 	bcr->setCostume(_costume);
 	bcr->setPalette(_palette);

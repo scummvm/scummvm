@@ -469,9 +469,8 @@ void ScummEngine_v100he::o100_actorOps() {
 		a->setScale(i, i);
 		break;
 	case 70:		// SO_SHADOW
-		a->_shadowMode = pop();
+		a->_heXmapNum = pop();
 		a->_needRedraw = true;
-		debug(0, "o100_actorOps: Set actor XMAP idx to %d", a->_shadowMode);
 		break;
 	case 74:		// SO_STEP_DIST
 		j = pop();

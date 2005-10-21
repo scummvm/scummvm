@@ -134,6 +134,7 @@ public:
 	CostumeData _cost;
 
 	/* HE specific */
+	int32 _heXmapNum;
 	byte _hePaletteNum;
 	bool _heNoTalkAnimation;
 	bool _heSkipLimbs;

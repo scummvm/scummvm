@@ -458,6 +458,8 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				_ymove -= lastDy;
 			}
 
+			uint16 shadowMask = 0;
+
 			if (!useCondMask || !akct) {
 				decflag = 1;
 			} else {
@@ -468,7 +470,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 					uint32 type = cond & 0xC0000000;
 					cond &= 0x3FFFFFFF;
 					if (_vm->_heversion >= 95) {
-//						uint16 shadowMask = cond & 0xE000;
+						shadowMask = cond & 0xE000;
 						cond &= ~0xE000;
 					}
 					if (_vm->_heversion >= 95 && cond == 0) {
@@ -487,6 +489,10 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 			if (decflag == 0)
 				continue;
+
+			if (_vm->_heversion >= 95) {
+				_shadow_mode = (shadowMask) ? 3: 0;
+			}
 
 			switch (codec) {
 			case 1:
@@ -559,7 +565,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
 						} else if (_shadow_mode == 3) {
-							if (pcolor < 8) {
+							if (_vm->_heversion >= 95 || pcolor < 8) {
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = _shadow_table[pcolor];
 							}
