@@ -20,9 +20,7 @@
  */
 
 #include "common/stdafx.h"
-#include "common/stream.h"
 
-#include "sound/audiostream.h"
 #include "sound/adpcm.h"
 
 
@@ -31,64 +29,102 @@
 // See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
 // In addition, also IMA ADPCM is supported.
-template <typesADPCM TYPE>
-class ADPCMInputStream : public AudioStream {
-private:
-	bool _evenPos;
-	byte _lastByte;
-	Common::SeekableReadStream *_stream;
-	uint32 _endpos;
 
-	struct adpcmStatus {
-		int16 last;
-		int16 stepIndex;
-	} _status;
-
-	int16 stepAdjust(byte);
-	int16 decode(byte);
-
-public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size);
-	~ADPCMInputStream() {};
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
-	bool isStereo() const	{ return false; }
-	int getRate() const	{ return 22050; }
-};
-
-
-template <typesADPCM TYPE>
-ADPCMInputStream<TYPE>::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size)
-	: _stream(stream), _evenPos(true) {
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels, uint32 blockAlign)
+	: _stream(stream), _channels(channels), _type(type), _blockAlign(blockAlign) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
 	_endpos = stream->pos() + size;
+
+	if (type == kADPCMIma && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for MS ADPCM IMA");
 }
 
-template <typesADPCM TYPE>
-int ADPCMInputStream<TYPE>::readBuffer(int16 *buffer, const int numSamples) {
-	int samples;
+int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
+	switch (_type) {
+	case kADPCMOki:
+		return readBufferOKI(buffer, numSamples);
+		break;
+	case kADPCMIma:
+		if (_channels == 1)
+			return readBufferMSIMA1(buffer, numSamples);
+		else
+			return readBufferMSIMA2(buffer, numSamples);
+		break;
+	default:
+		error("Unsupported ADPCM encoding");
+		break;
+	}
+	return 0;
+}
 
-	// Since we process high and low nibbles separately never check buffer end
-	// on low nibble
-	for (samples = 0; !_evenPos || samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples++) {
-		if (_evenPos) {
-			_lastByte = _stream->readByte();
-			buffer[samples] = decode((_lastByte >> 4) & 0x0f);
-		} else {
-			buffer[samples] = decode(_lastByte & 0x0f);
+int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
+	int samples;
+	byte data;
+
+	assert(numSamples % 2 == 0);
+
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+		data = _stream->readByte();
+		buffer[samples] = TO_LE_16(decodeOKI((data >> 4) & 0x0f));
+		buffer[samples + 1] = TO_LE_16(decodeOKI(data & 0x0f));
+	}
+	return samples;
+}
+
+
+int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
+	int samples;
+	byte data;
+	int blockLen;
+	int i;
+
+	assert(numSamples % 2 == 0);
+
+	samples = 0;
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		// read block header
+		_status.last = _stream->readSint16LE();
+		_status.stepIndex = _stream->readSint16LE();
+
+		blockLen = MIN(_endpos - _stream->pos(), _blockAlign - 4);
+
+		for (i = 0; i < blockLen && !_stream->eos() && _stream->pos() < _endpos; i++, samples += 2) {
+			data = _stream->readByte();
+			buffer[samples] = TO_LE_16(decodeMSIMA(data & 0x0f));
+			buffer[samples + 1] = TO_LE_16(decodeMSIMA((data >> 4) & 0x0f));
 		}
-		_evenPos = !_evenPos;
+	}
+	return samples;
+}
+
+
+// Microsoft as usual tries to implement it differently. This method
+// is used for stereo data.
+int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
+	int samples;
+	uint32 data;
+	int nibble;
+
+	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos;) {
+		for (int channel = 0; channel < 2; channel++) {
+			data = _stream->readUint32LE();
+			
+			for (nibble = 0; nibble < 8; nibble++) {
+				byte k = ((data & 0xf0000000) >> 28);
+				buffer[samples + channel + nibble * 2] = TO_LE_16(decodeMSIMA(k));
+				data <<= 4;
+			}
+		}
+		samples += 16;
 	}
 	return samples;
 }
 
 // adjust the step for use on the next sample.
-template <typesADPCM TYPE>
-int16 ADPCMInputStream<TYPE>::stepAdjust(byte code) {
+int16 ADPCMInputStream::stepAdjust(byte code) {
 	static const int16 adjusts[] = {-1, -1, -1, -1, 2, 4, 6, 8};
 
 	return adjusts[code & 0x07];
@@ -105,8 +141,7 @@ static const int16 okiStepSize[49] = {
 };
 
 // Decode Linear to ADPCM
-template <>
-int16 ADPCMInputStream<kADPCMOki>::decode(byte code) {
+int16 ADPCMInputStream::decodeOKI(byte code) {
 	int16 diff, E, SS, samp;
 
 	SS = okiStepSize[_status.stepIndex];
@@ -153,27 +188,27 @@ static const uint16 imaStepTable[89] = {
 	32767
 };
 
-template <>
-int16 ADPCMInputStream<kADPCMIma>::decode(byte code) {
+int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	int32 diff, E, SS, samp;
 
 	SS = imaStepTable[_status.stepIndex];
-	E = SS/8;
-	if (code & 0x01)
-		E += SS/4;
-	if (code & 0x02)
-		E += SS/2;
+	E = SS >> 3;
 	if (code & 0x04)
 		E += SS;
+	if (code & 0x02)
+		E += SS >> 1;
+	if (code & 0x01)
+		E += SS >> 2;
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
-	if (samp < -32768)
-		samp = -32768;
-	else if (samp > 32767)
-		samp = 32767;
+	if (samp < -0x8000)
+		samp = -0x8000;
+	else if (samp > 0x7fff)
+		samp = 0x7fff;
 
 	_status.last = samp;
+
 	_status.stepIndex += stepAdjust(code);
 	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
@@ -181,22 +216,4 @@ int16 ADPCMInputStream<kADPCMIma>::decode(byte code) {
 		_status.stepIndex = 88;
 
 	return samp;
-}
-
-AudioStream *makeADPCMStream(Common::SeekableReadStream &stream, uint32 size, typesADPCM type) {
-	AudioStream *audioStream;
-
-	switch (type) {
-	case kADPCMOki:
-		audioStream = new ADPCMInputStream<kADPCMOki>(&stream, size);
-		break;
-	case kADPCMIma:
-		audioStream = new ADPCMInputStream<kADPCMIma>(&stream, size);
-		break;
-	default:
-		error("Unsupported ADPCM encoding");
-		break;
-	}
-
-	return audioStream;
 }
