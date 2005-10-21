@@ -2201,7 +2201,9 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, _talkPosX, sleInt16, VER(8)),
 		MKLINE(Actor, _ignoreTurns, sleByte, VER(8)),
 
-		MKLINE(Actor, _layer, sleByte, VER(8)),
+		// Actor layer switched to int32 in HE games
+		MKLINE_OLD(Actor, _layer, sleByte, VER(8), VER(57)),
+		MKLINE(Actor, _layer, sleInt32, VER(58)),
 
 		MKLINE(Actor, _talkScript, sleUint16, VER(8)),
 		MKLINE(Actor, _walkScript, sleUint16, VER(8)),

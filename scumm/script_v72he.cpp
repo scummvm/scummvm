@@ -1146,11 +1146,8 @@ void ScummEngine_v72he::o72_actorOps() {
 		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
 	case 43: // HE 90+
-		a->_layer = pop();
-		if (_gameId != GID_FREDDICOVE) {
-			// HE games use reverse order of layering, so we adjust
-			a->_layer = -a->_layer;
-		}
+		// HE games use reverse order of layering, so we adjust
+		a->_layer = -pop();
 		a->_needRedraw = true;
 		break;
 	case 64:
