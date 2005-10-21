@@ -1217,8 +1217,10 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 	}
 
-	_shadowPaletteSize = 256;
-	_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+	if (_heversion <= 70) {
+		_shadowPaletteSize = 256;
+		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+	}
 }
 
 void ScummEngine::readGlobalObjects() {
