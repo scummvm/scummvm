@@ -625,7 +625,6 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
-	const SaveLoadEntry *actorEntries = Actor::getSaveLoadEntries();
 	const SaveLoadEntry *soundEntries = _sound->getSaveLoadEntries();
 
 	const SaveLoadEntry verbEntries[] = {
@@ -951,14 +950,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	//
 	// Save/load actors
 	//
-	if (s->isLoading()) {
-		// Not all actor data is saved; so when loading, we first reset
-		// all actors, to ensure completely reproducible behaviour (else,
-		// some not saved value in the actor class can cause odd things)
-		for (i = 0; i < _numActors; i++)
-			_actors[i].initActor(-1);
-	}
-	s->saveLoadArrayOf(_actors, _numActors, sizeof(_actors[0]), actorEntries);
+	for (i = 0; i < _numActors; i++)
+		_actors[i].saveLoadWithSerializer(s);
 
 
 	//

@@ -2134,7 +2134,7 @@ void ScummEngine_v71he::queueAuxEntry(int actorNum, int subIndex) {
 #endif
 
 
-const SaveLoadEntry *Actor::getSaveLoadEntries() {
+void Actor::saveLoadWithSerializer(Serializer *ser) {
 	static const SaveLoadEntry actorEntries[] = {
 		MKLINE(Actor, _pos.x, sleInt16, VER(8)),
 		MKLINE(Actor, _pos.y, sleInt16, VER(8)),
@@ -2234,7 +2234,14 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKEND()
 	};
 
-	return actorEntries;
+	if (ser->isLoading()) {
+		// Not all actor data is saved; so when loading, we first reset
+		// the actor, to ensure completely reproducible behaviour (else,
+		// some not saved value in the actor class can cause odd things)
+		initActor(-1);
+	}
+
+	ser->saveLoadEntries(this, actorEntries);
 }
 
 } // End of namespace Scumm

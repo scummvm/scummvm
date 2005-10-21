@@ -1603,7 +1603,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	for (i = 0; i < 8; ++i)
 		ser->saveLoadEntries(0, volumeFaderEntries);
 
-	if (!ser->isSaving()) {
+	if (ser->isLoading()) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();

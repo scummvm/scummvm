@@ -25,6 +25,7 @@
 #define ACTOR_H
 
 #include "common/scummsys.h"
+#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
 
@@ -81,9 +82,7 @@ struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 	byte box;
 };
 
-struct SaveLoadEntry;
-
-class Actor {
+class Actor : public Serializable {
 
 public:
 	static byte kInvalidBox;
@@ -277,8 +276,8 @@ public:
 	void setTalkCondition(int slot);
 	bool isTalkConditionSet(int slot) const;
 
-	// Used by the save/load syste:
-	static const SaveLoadEntry *getSaveLoadEntries();
+	// Used by the save/load system:
+	void saveLoadWithSerializer(Serializer *ser);
 
 protected:
 	bool isInClass(int cls);

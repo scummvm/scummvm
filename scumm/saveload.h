@@ -133,6 +133,8 @@ public:
 		  _savegameVersion(savegameVersion)
 	{ }
 
+	// FIXME: Try to get rid of the _save_ref / _load_ref / _ref_me HACK !!!
+	// This is used by imuse...
 	SerializerSaveReference *_save_ref;
 	SerializerLoadReference *_load_ref;
 	void *_ref_me;
@@ -166,6 +168,14 @@ protected:
 
 	void saveEntries(void *d, const SaveLoadEntry *sle);
 	void loadEntries(void *d, const SaveLoadEntry *sle);
+};
+
+
+// Mixin class / interface. Maybe call it ISerializable or SerializableMixin ?
+class Serializable {
+public:
+	virtual ~Serializable() {}
+	virtual void saveLoadWithSerializer(Serializer *ser) = 0;
 };
 
 } // End of namespace Scumm
