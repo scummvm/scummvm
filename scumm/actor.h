@@ -129,7 +129,7 @@ public:
 	uint16 _talkScript, _walkScript;
 	bool _ignoreTurns;
 	bool _drawToBackBuf;
-	int8 _layer;
+	int32 _layer;
 	uint16 _sound[32];
 	CostumeData _cost;
 
