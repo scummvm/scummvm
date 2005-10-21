@@ -396,7 +396,7 @@ void ScummEngine::readIndexFile() {
 
 bool checkTryMedia(BaseScummFile *handle) {
 	byte buf[TRYMEDIA_MARK_LEN];
-	bool matched;
+	bool matched = true;
 	const byte magic[2][TRYMEDIA_MARK_LEN] = 
 		{{ 0x00,  'T', 'M', 'S', 'A', 'M' },
 		 { 'i',   '=', '$', ':', '(', '$' }};  // Same but 0x69 xored
@@ -406,8 +406,10 @@ bool checkTryMedia(BaseScummFile *handle) {
 	for (int i = 0; i < 2; i++) {
 		matched = true;
 		for (int j = 0; j < TRYMEDIA_MARK_LEN; j++)
-			if (buf[j] != magic[i][j])
+			if (buf[j] != magic[i][j]) {
 				matched = false;
+				break;
+			}
 
 		if (matched)
 			break;
