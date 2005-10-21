@@ -809,6 +809,18 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			_protagonist->_location.y = sceneEntry->location.y * ACTOR_LMULT;
 			_protagonist->_location.z = sceneEntry->location.z * ACTOR_LMULT;
 		}
+		// Workaround for bug #1328045:
+		// "When entering any of the houses at the start of the
+		// game if you click on anything inside the building you
+		// start walking through the door, turn around and leave."
+		//
+		// After steping of action zone - Rif trying to exit.
+		// This piece of code shift Rif's entry position to non action zone area.
+		if (_vm->getGameType() == GType_ITE) {
+			if ((_vm->_scene->currentSceneNumber() >= 53) && (_vm->_scene->currentSceneNumber() <= 66))
+				_protagonist->_location.y += 10;
+		}
+
 		_protagonist->_facingDirection = _protagonist->_actionDirection = sceneEntry->facing;
 	}
 
