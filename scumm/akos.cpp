@@ -490,7 +490,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			if (decflag == 0)
 				continue;
 
-			if (_vm->_heversion >= 95) {
+			if ((shadowMask & 0x8000) && _shadow_table) {
 				_shadow_mode = (shadowMask) ? 3: 0;
 			}
 
