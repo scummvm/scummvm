@@ -28,7 +28,7 @@
 #include "sound/wave.h"
 #include "sound/adpcm.h"
 
-bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType) {
+bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_) {
 	const uint32 initialPos = stream.pos();
 	byte buf[4+1];
 
@@ -79,6 +79,9 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 
 	if (wavType != 0)
 		*wavType = type;
+
+	if (blockAlign_ != 0)
+		*blockAlign_ = blockAlign;
 #if 0
 	printf("WAVE information:\n");
 	printf("  total size: %d\n", wavLength);

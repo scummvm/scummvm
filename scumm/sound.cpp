@@ -308,18 +308,20 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	// Support for later Backyard sports games sounds
 	else if (READ_UINT32(ptr) == MKID('RIFF')) {
 		uint16 type;
+		int blockAlign;
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream stream(ptr, size);
 
-		if (!loadWAVFromStream(stream, size, rate, flags, &type)) {
+		if (!loadWAVFromStream(stream, size, rate, flags, &type, &blockAlign)) {
 			error("playSound: Not a valid WAV file");
 		}
 
 		if (type == 17) {
-			AudioStream *voxStream = new ADPCMInputStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);
+			AudioStream *voxStream = new ADPCMInputStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			sound = (char *)malloc(size * 4);
 			size = voxStream->readBuffer((int16*)sound, size * 2);
+			size *= 2; // 16bits.
 		} else {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);

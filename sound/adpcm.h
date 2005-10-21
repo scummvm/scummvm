@@ -43,10 +43,11 @@ private:
 	uint32 _endpos;
 	int _channels;
 	typesADPCM _type;
+	uint32 _blockAlign;
 
 	struct adpcmStatus {
-		int16 last;
-		int16 stepIndex;
+		int32 last;
+		int32 stepIndex;
 	} _status;
 
 	int16 stepAdjust(byte);
@@ -54,7 +55,7 @@ private:
 	int16 decodeMSIMA(byte);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels = 2);
+	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels = 2, uint32 blockAlign = 0);
 	~ADPCMInputStream() {};
 
 	int readBuffer(int16 *buffer, const int numSamples);

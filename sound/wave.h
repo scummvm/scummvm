@@ -34,7 +34,7 @@ namespace Common { class SeekableReadStream; }
  * all information about the data necessary for playback.
  * Currently this only support uncompressed raw PCM data.
  */
-extern bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType = 0);
+extern bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType = 0, int *blockAlign = 0);
 
 AudioStream *makeWAVStream(Common::SeekableReadStream &stream);
 

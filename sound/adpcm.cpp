@@ -30,12 +30,15 @@
 //
 // In addition, also IMA ADPCM is supported.
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels)
-	: _stream(stream), _channels(channels), _type(type) {
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels, uint32 blockAlign)
+	: _stream(stream), _channels(channels), _type(type), _blockAlign(blockAlign) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
 	_endpos = stream->pos() + size;
+
+	if (type == kADPCMIma && blockAlign == 0)
+		error("ADPCMInputStream(): blockAlign isn't specifiled for MS ADPCM IMA");
 }
 
 int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -62,12 +65,10 @@ int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
 
 	assert(numSamples % 2 == 0);
 
-	// Since we process high and low nibbles separately never check buffer end
-	// on low nibble
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 		data = _stream->readByte();
-		buffer[samples] = decodeOKI((data >> 4) & 0x0f);
-		buffer[samples + 1] = decodeOKI(data & 0x0f);
+		buffer[samples] = TO_LE_16(decodeOKI((data >> 4) & 0x0f));
+		buffer[samples + 1] = TO_LE_16(decodeOKI(data & 0x0f));
 	}
 	return samples;
 }
@@ -76,15 +77,25 @@ int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
 int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
+	int blockLen;
+	int i;
 
 	assert(numSamples % 2 == 0);
 
-	// Since we process high and low nibbles separately never check buffer end
-	// on low nibble
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-		data = _stream->readByte();
-		buffer[samples] = decodeMSIMA(data & 0x0f);
-		buffer[samples + 1] = decodeMSIMA((data >> 4) & 0x0f);
+	samples = 0;
+
+	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		// read block header
+		_status.last = _stream->readSint16LE();
+		_status.stepIndex = _stream->readSint16LE();
+
+		blockLen = MIN(_endpos - _stream->pos(), _blockAlign - 4);
+
+		for (i = 0; i < blockLen && !_stream->eos() && _stream->pos() < _endpos; i++, samples += 2) {
+			data = _stream->readByte();
+			buffer[samples] = TO_LE_16(decodeMSIMA(data & 0x0f));
+			buffer[samples + 1] = TO_LE_16(decodeMSIMA((data >> 4) & 0x0f));
+		}
 	}
 	return samples;
 }
@@ -103,7 +114,7 @@ int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
 			
 			for (nibble = 0; nibble < 8; nibble++) {
 				byte k = ((data & 0xf0000000) >> 28);
-				buffer[samples + channel + nibble * 2] = decodeMSIMA(k);
+				buffer[samples + channel + nibble * 2] = TO_LE_16(decodeMSIMA(k));
 				data <<= 4;
 			}
 		}
@@ -181,22 +192,23 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	int32 diff, E, SS, samp;
 
 	SS = imaStepTable[_status.stepIndex];
-	E = SS/8;
-	if (code & 0x01)
-		E += SS/4;
-	if (code & 0x02)
-		E += SS/2;
+	E = SS >> 3;
 	if (code & 0x04)
 		E += SS;
+	if (code & 0x02)
+		E += SS >> 1;
+	if (code & 0x01)
+		E += SS >> 2;
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
-	if (samp < -32768)
-		samp = -32768;
-	else if (samp > 32767)
-		samp = 32767;
+	if (samp < -0x8000)
+		samp = -0x8000;
+	else if (samp > 0x7fff)
+		samp = 0x7fff;
 
 	_status.last = samp;
+
 	_status.stepIndex += stepAdjust(code);
 	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
