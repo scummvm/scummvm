@@ -27,7 +27,13 @@
 
 namespace Scumm {
 
-/* System Wide Constants */
+/**
+ * The number of script slots, which determines the maximal number
+ * of concurrently running scripts.
+ * WARNING: Do NOT changes this value unless you really have to, as
+ * this will break savegame compatibility if done carelessly. If you
+ * have to change it, make sure you update saveload.cpp accordingly!
+ */
 enum {
 	NUM_SCRIPT_SLOT = 80
 };
