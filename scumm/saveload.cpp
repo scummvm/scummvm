@@ -1270,7 +1270,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 void ScummEngine_v99he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine_v90he::saveOrLoad(s, savegameVersion);
 
-	s->saveLoadArrayOf(_hePalettes, _numPalettes, sizeof(_hePalettes[0]), sleUint8);
+	s->saveLoadArrayOf(_hePalettes, (_numPalettes + 1) * 1024, sizeof(_hePalettes[0]), sleUint8);
 }
 
 void ScummEngine_v100he::saveOrLoad(Serializer *s, uint32 savegameVersion) {

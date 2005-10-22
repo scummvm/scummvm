@@ -504,7 +504,7 @@ dec_sub2:			w -= code;
 							*dstPtr++ = palPtr[*dataPtr];
 						}
 					}
-					*dataPtr++;
+					dataPtr++;
 				} else {
 dec_sub3:			w -= code;
 					if (w < 0) {
