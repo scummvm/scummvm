@@ -1549,29 +1549,6 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 		MKEND()
 	};
 
-	const SaveLoadEntry partEntries[] = {
-		MKREF(Part, _next, TYPE_PART, VER(8)),
-		MKREF(Part, _prev, TYPE_PART, VER(8)),
-		MKREF(Part, _player, TYPE_PLAYER, VER(8)),
-		MKLINE(Part, _pitchbend, sleInt16, VER(8)),
-		MKLINE(Part, _pitchbend_factor, sleUint8, VER(8)),
-		MKLINE(Part, _transpose, sleInt8, VER(8)),
-		MKLINE(Part, _vol, sleUint8, VER(8)),
-		MKLINE(Part, _detune, sleInt8, VER(8)),
-		MKLINE(Part, _pan, sleInt8, VER(8)),
-		MKLINE(Part, _on, sleUint8, VER(8)),
-		MKLINE(Part, _modwheel, sleUint8, VER(8)),
-		MKLINE(Part, _pedal, sleUint8, VER(8)),
-		MK_OBSOLETE(Part, _program, sleUint8, VER(8), VER(16)),
-		MKLINE(Part, _pri, sleUint8, VER(8)),
-		MKLINE(Part, _chan, sleUint8, VER(8)),
-		MKLINE(Part, _effect_level, sleUint8, VER(8)),
-		MKLINE(Part, _chorus, sleUint8, VER(8)),
-		MKLINE(Part, _percussion, sleUint8, VER(8)),
-		MKLINE(Part, _bank, sleUint8, VER(8)),
-		MKEND()
-	};
-
 	int i;
 
 	ser->_ref_me = this;
@@ -1584,8 +1561,11 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 
 	// The players
 	for (i = 0; i < ARRAYSIZE(_players); ++i)
-		_players[i].save_or_load(ser);
-	ser->saveLoadArrayOf(_parts, ARRAYSIZE(_parts), sizeof(_parts[0]), partEntries);
+		_players[i].saveLoadWithSerializer(ser);
+	
+	// The parts
+	for (i = 0; i < ARRAYSIZE(_parts); ++i)
+		_parts[i].saveLoadWithSerializer(ser);
 
 	{ // Load/save the instrument definitions, which were revamped with V11.
 		Part *part = &_parts[0];
@@ -1600,6 +1580,8 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	}
 
 	// VolumeFader has been replaced with the more generic ParameterFader.
+	// FIXME: replace this loop by something like
+	// if (loading && version <= 16)  ser->skip(XXX bytes);
 	for (i = 0; i < 8; ++i)
 		ser->saveLoadEntries(0, volumeFaderEntries);
 
@@ -1617,9 +1599,6 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 
 	return 0;
 }
-
-#undef MKLINE
-#undef MKEND
 
 void IMuseInternal::fix_parts_after_load() {
 	Part *part;
@@ -1643,6 +1622,63 @@ void IMuseInternal::fix_players_after_load(ScummEngine *scumm) {
 			player->fixAfterLoad();
 		}
 	}
+}
+
+Part::Part() {
+	_slot = 0;
+	_next = 0;
+	_prev = 0;
+	_mc = 0;
+	_player = 0;
+	_pitchbend = 0;
+	_pitchbend_factor = 0;
+	_transpose = 0;
+	_transpose_eff = 0;
+	_vol = 0;
+	_vol_eff = 0;
+	_detune = 0;
+	_detune_eff = 0;
+	_pan = 0;
+	_pan_eff = 0;
+	_on = false;
+	_modwheel = 0;
+	_pedal = false;
+	_pri = 0;
+	_pri_eff = 0;
+	_chan = 0;
+	_effect_level = 0;
+	_chorus = 0;
+	_percussion = 0;
+	_bank = 0;
+	_unassigned_instrument = false;
+}
+
+void Part::saveLoadWithSerializer(Serializer *ser) {
+	// TODO: Get rid of MKREF usage!
+	const SaveLoadEntry partEntries[] = {
+		MKREF(Part, _next, TYPE_PART, VER(8)),
+		MKREF(Part, _prev, TYPE_PART, VER(8)),
+		MKREF(Part, _player, TYPE_PLAYER, VER(8)),
+		MKLINE(Part, _pitchbend, sleInt16, VER(8)),
+		MKLINE(Part, _pitchbend_factor, sleUint8, VER(8)),
+		MKLINE(Part, _transpose, sleInt8, VER(8)),
+		MKLINE(Part, _vol, sleUint8, VER(8)),
+		MKLINE(Part, _detune, sleInt8, VER(8)),
+		MKLINE(Part, _pan, sleInt8, VER(8)),
+		MKLINE(Part, _on, sleUint8, VER(8)),
+		MKLINE(Part, _modwheel, sleUint8, VER(8)),
+		MKLINE(Part, _pedal, sleUint8, VER(8)),
+		MK_OBSOLETE(Part, _program, sleUint8, VER(8), VER(16)),
+		MKLINE(Part, _pri, sleUint8, VER(8)),
+		MKLINE(Part, _chan, sleUint8, VER(8)),
+		MKLINE(Part, _effect_level, sleUint8, VER(8)),
+		MKLINE(Part, _chorus, sleUint8, VER(8)),
+		MKLINE(Part, _percussion, sleUint8, VER(8)),
+		MKLINE(Part, _bank, sleUint8, VER(8)),
+		MKEND()
+	};
+
+	ser->saveLoadEntries(this, partEntries);
 }
 
 void Part::set_detune(int8 detune) {
@@ -1975,10 +2011,24 @@ void IMuseInternal::copyGlobalAdlibInstrument(byte slot, Instrument *dest) {
 //
 ////////////////////////////////////////////////////////////
 
-IMuse::IMuse(OSystem *system, IMuseInternal *target) : _system(system), _target(target) { _mutex = system->createMutex(); }
-IMuse::~IMuse() { if (_mutex) _system->deleteMutex(_mutex); if (_target) delete _target; }
-inline void IMuse::in() const { _system->lockMutex(_mutex); }
-inline void IMuse::out() const { _system->unlockMutex(_mutex); }
+IMuse::IMuse(OSystem *system, IMuseInternal *target)
+	: _system(system), _target(target) {
+	_mutex = system->createMutex();
+}
+
+IMuse::~IMuse() {
+	if (_mutex)
+		_system->deleteMutex(_mutex);
+	if (_target)
+		delete _target;
+}
+
+inline void IMuse::in() const {
+	_system->lockMutex(_mutex);
+}
+inline void IMuse::out() const {
+	_system->unlockMutex(_mutex);
+}
 
 void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
 void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }

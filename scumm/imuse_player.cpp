@@ -1176,7 +1176,8 @@ enum {
 	TYPE_PLAYER = 2
 };
 
-int Player::save_or_load(Serializer *ser) {
+void Player::saveLoadWithSerializer(Serializer *ser) {
+	// TODO: Get rid of MKREF usage!
 	static const SaveLoadEntry playerEntries[] = {
 		MKREF(Player, _parts, TYPE_PART, VER(8)),
 		MKLINE(Player, _active, sleByte, VER(8)),
@@ -1232,7 +1233,7 @@ int Player::save_or_load(Serializer *ser) {
 	ser->saveLoadEntries(this, playerEntries);
 	ser->saveLoadArrayOf(_parameterFaders, ARRAYSIZE(_parameterFaders),
 						sizeof(ParameterFader), parameterFaderEntries);
-	return 0;
+	return;
 }
 
 } // End of namespace Scumm

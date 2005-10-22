@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "scumm/instrument.h"
+#include "scumm/saveload.h"
 #include "sound/mididrv.h"
 
 class MidiParser;
@@ -245,7 +246,7 @@ public:
 	void onTimer();
 	void removePart(Part *part);
 	int scan(uint totrack, uint tobeat, uint totick);
-	int save_or_load(Serializer *ser);
+	void saveLoadWithSerializer(Serializer *ser);
 	int setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
 	void setDetune(int detune);
 	bool setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
@@ -271,7 +272,7 @@ public:
 	MidiChannel *getPercussionChannel() { return 0; }
 };
 
-struct Part {
+struct Part : public Serializable {
 	int _slot;
 	Part *_next, *_prev;
 	MidiChannel *_mc;
@@ -333,9 +334,9 @@ struct Part {
 	void sendPitchBend();
 	bool clearToTransmit();
 
-	Part() {
-		memset(this,0,sizeof(Part));
-	}
+	Part();
+
+	void saveLoadWithSerializer(Serializer *ser);
 };
 
 // WARNING: This is the internal variant of the IMUSE class.
