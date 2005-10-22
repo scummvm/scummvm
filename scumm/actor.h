@@ -134,12 +134,12 @@ public:
 	CostumeData _cost;
 
 	/* HE specific */
-	int32 _heXmapNum;
-	byte _hePaletteNum;
 	bool _heNoTalkAnimation;
 	bool _heSkipLimbs;
 	bool _heTalking;
 	uint32 _heCondMask;
+	uint32 _hePaletteNum;
+	uint32 _heXmapNum;
 
 	AuxBlock _auxBlock;
 

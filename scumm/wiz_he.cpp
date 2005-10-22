@@ -498,12 +498,13 @@ dec_sub2:			w -= code;
 					}
 					while (code--) {
 						if (xmapPtr) {
-							*dstPtr++ = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
+							*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
+							dstPtr++;
 						} else {
 							*dstPtr++ = palPtr[*dataPtr];
 						}
 					}
-					*dataPtr++;
+					dataPtr++;
 				} else {
 dec_sub3:			w -= code;
 					if (w < 0) {
@@ -511,7 +512,8 @@ dec_sub3:			w -= code;
 					}
 					while (code--) {
 						if (xmapPtr) {
-							*dstPtr++ = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
+							*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
+							dstPtr++;
 						} else {
 							*dstPtr++ = palPtr[*dataPtr++];
 						}

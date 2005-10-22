@@ -2196,6 +2196,8 @@ const SaveLoadEntry *Actor::getSaveLoadEntries() {
 		MKLINE(Actor, _needBgReset, sleByte, VER(8)),
 		MKLINE(Actor, _costumeNeedsInit, sleByte, VER(8)),
 		MKLINE(Actor, _heCondMask, sleUint32, VER(38)),
+		MKLINE(Actor, _hePaletteNum, sleUint32, VER(59)),
+		MKLINE(Actor, _heXmapNum, sleUint32, VER(59)),
 
 		MKLINE(Actor, _talkPosY, sleInt16, VER(8)),
 		MKLINE(Actor, _talkPosX, sleInt16, VER(8)),
