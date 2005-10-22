@@ -489,7 +489,8 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
-		if ((_version == 7 || _gameId == GID_SAMNMAX) && getClass(od.obj_nr, kObjectClassIgnoreBoxes))
+		if ((_gameId == GID_SAMNMAX && getClass(od.obj_nr, kObjectClassIgnoreBoxes)) ||
+		    (_gameId == GID_FT && getClass(od.obj_nr, kObjectClassPlayer)))
 			flags |= Gdi::dbDrawMaskOnAll;
 
 		if (_heversion >= 70 && findResource(MKID('SMAP'), ptr) == NULL)
