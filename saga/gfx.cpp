@@ -48,9 +48,10 @@ Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height, GameDetector &d
 	// Set module data
 	_init = 1;
 
-	// For now, always show the mouse cursor.
-	setCursor();
-	_system->showMouse(true);
+	// Start with the cursor shown. It will be hidden before the intro, if
+	// there is an intro. (With boot params, there may not be.)
+	setCursor(kCursorNormal);
+	showCursor(true);
 }
 
 Gfx::~Gfx() {
@@ -390,7 +391,6 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 }
 
 void Gfx::showCursor(bool state) {
-	updateCursor();
 	g_system->showMouse(state);
 }
 
