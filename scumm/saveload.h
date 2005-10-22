@@ -98,12 +98,6 @@ namespace Scumm {
 // End marker
 #define MKEND() {0xFFFF,0xFF,0xFF,0,0}
 
-// A reference
-#define MKREF(type,item,refid,minVer) {OFFS(type,item),refid,0xFF,minVer,CURRENT_VER}
-
-// An obsolete reference.
-#define MK_OBSOLETE_REF(type,item,refid,minVer,maxVer) {0,sleUint16,0,minVer,maxVer}
-
 
 enum {
 	sleByte = 1,
@@ -123,21 +117,12 @@ struct SaveLoadEntry {
 	uint8 maxVersion;
 };
 
-typedef int SerializerSaveReference(void *me, byte type, void *ref);
-typedef void *SerializerLoadReference(void *me, byte type, int ref);
-
 class Serializer {
 public:
 	Serializer(Common::InSaveFile *in, Common::OutSaveFile *out, uint32 savegameVersion)
-		: _loadStream(in), _saveStream(out), _save_ref(0), _load_ref(0), _ref_me(0),
+		: _loadStream(in), _saveStream(out),
 		  _savegameVersion(savegameVersion)
 	{ }
-
-	// FIXME: Try to get rid of the _save_ref / _load_ref / _ref_me HACK !!!
-	// This is used by imuse...
-	SerializerSaveReference *_save_ref;
-	SerializerLoadReference *_load_ref;
-	void *_ref_me;
 
 	void saveLoadArrayOf(void *b, int len, int datasize, byte filetype);
 	void saveLoadArrayOf(void *b, int num, int datasize, const SaveLoadEntry *sle);

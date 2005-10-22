@@ -1171,15 +1171,8 @@ void Player::metaEvent(byte type, byte *msg, uint16 len) {
 //
 ////////////////////////////////////////
 
-enum {
-	TYPE_PART = 1,
-	TYPE_PLAYER = 2
-};
-
 void Player::saveLoadWithSerializer(Serializer *ser) {
-	// TODO: Get rid of MKREF usage!
 	static const SaveLoadEntry playerEntries[] = {
-		MKREF(Player, _parts, TYPE_PART, VER(8)),
 		MKLINE(Player, _active, sleByte, VER(8)),
 		MKLINE(Player, _id, sleUint16, VER(8)),
 		MKLINE(Player, _priority, sleByte, VER(8)),
@@ -1230,6 +1223,14 @@ void Player::saveLoadWithSerializer(Serializer *ser) {
 	}
 	_music_tick = _parser ? _parser->getTick() : 0;
 
+	int num;
+	if (ser->isSaving()) {
+		num = (_parts ? (_parts - _se->_parts + 1) : 0);
+		ser->saveUint16(num);
+	} else {
+		num = ser->loadUint16();
+		_parts = (num ? &_se->_parts[num - 1] : 0);
+	}
 	ser->saveLoadEntries(this, playerEntries);
 	ser->saveLoadArrayOf(_parameterFaders, ARRAYSIZE(_parameterFaders),
 						sizeof(ParameterFader), parameterFaderEntries);

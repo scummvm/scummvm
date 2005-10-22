@@ -1547,10 +1547,6 @@ void Serializer::saveEntries(void *d, const SaveLoadEntry *sle) {
 			// Skip obsolete entries
 			if (type & 128)
 				sle++;
-		} else if (size == 0xFF) {
-			// save reference
-			void *ptr = *((void **)at);
-			saveUint16(ptr ? ((*_save_ref) (_ref_me, type, ptr) + 1) : 0);
 		} else {
 			// save entry
 			int columns = 1;
@@ -1586,12 +1582,6 @@ void Serializer::loadEntries(void *d, const SaveLoadEntry *sle) {
 			// Skip entries which are not present in this save game version
 			if (type & 128)
 				sle++;
-		} else if (size == 0xFF) {
-			// load reference...
-			int num = loadUint16();
-			// ...but only use it if it's still there in CURRENT_VER
-			if (sle->maxVersion == CURRENT_VER)
-				*((void **)at) = num ? (*_load_ref) (_ref_me, type, num - 1) : NULL;
 		} else {
 			// load entry
 			int columns = 1;

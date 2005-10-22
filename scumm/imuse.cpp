@@ -323,6 +323,7 @@ void IMuseInternal::init_parts() {
 
 	for (i = 0, part = _parts; i != ARRAYSIZE(_parts); i++, part++) {
 		part->init();
+		part->_se = this;
 		part->_slot = i;
 	}
 }
@@ -1477,35 +1478,6 @@ void IMuseInternal::addDeferredCommand(int time, int a, int b, int c, int d, int
 //
 ////////////////////////////////////////////////////////////
 
-enum {
-	TYPE_PART = 1,
-	TYPE_PLAYER = 2
-};
-
-int IMuseInternal::saveReference(void *me_ref, byte type, void *ref) {
-	IMuseInternal *me = (IMuseInternal *)me_ref;
-	switch (type) {
-	case TYPE_PART:
-		return (Part *)ref - me->_parts;
-	case TYPE_PLAYER:
-		return (Player *)ref - me->_players;
-	default:
-		error("saveReference: invalid type");
-	}
-}
-
-void *IMuseInternal::loadReference(void *me_ref, byte type, int ref) {
-	IMuseInternal *me = (IMuseInternal *)me_ref;
-	switch (type) {
-	case TYPE_PART:
-		return &me->_parts[ref];
-	case TYPE_PLAYER:
-		return &me->_players[ref];
-	default:
-		error("loadReference: invalid type");
-	}
-}
-
 int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	const SaveLoadEntry mainEntries[] = {
 		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
@@ -1529,7 +1501,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 
 	// VolumeFader is obsolete.
 	const SaveLoadEntry volumeFaderEntries[] = {
-		MK_OBSOLETE_REF(VolumeFader, player, TYPE_PLAYER, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, player, sleUint16, VER(8), VER(16)),
 		MK_OBSOLETE(VolumeFader, active, sleUint8, VER(8), VER(16)),
 		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER(8), VER(16)),
 		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER(8), VER(16)),
@@ -1550,10 +1522,6 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	};
 
 	int i;
-
-	ser->_ref_me = this;
-	ser->_save_ref = saveReference;
-	ser->_load_ref = loadReference;
 
 	ser->saveLoadEntries(this, mainEntries);
 	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
@@ -1654,11 +1622,7 @@ Part::Part() {
 }
 
 void Part::saveLoadWithSerializer(Serializer *ser) {
-	// TODO: Get rid of MKREF usage!
 	const SaveLoadEntry partEntries[] = {
-		MKREF(Part, _next, TYPE_PART, VER(8)),
-		MKREF(Part, _prev, TYPE_PART, VER(8)),
-		MKREF(Part, _player, TYPE_PLAYER, VER(8)),
 		MKLINE(Part, _pitchbend, sleInt16, VER(8)),
 		MKLINE(Part, _pitchbend_factor, sleUint8, VER(8)),
 		MKLINE(Part, _transpose, sleInt8, VER(8)),
@@ -1678,6 +1642,26 @@ void Part::saveLoadWithSerializer(Serializer *ser) {
 		MKEND()
 	};
 
+	int num;
+	if (ser->isSaving()) {
+		num = (_next ? (_next - _se->_parts + 1) : 0);
+		ser->saveUint16(num);
+
+		num = (_prev ? (_prev - _se->_parts + 1) : 0);
+		ser->saveUint16(num);
+
+		num = (_player ? (_player - _se->_players + 1) : 0);
+		ser->saveUint16(num);
+	} else {
+		num = ser->loadUint16();
+		_next = (num ? &_se->_parts[num - 1] : 0);
+
+		num = ser->loadUint16();
+		_prev = (num ? &_se->_parts[num - 1] : 0);
+
+		num = ser->loadUint16();
+		_player = (num ? &_se->_players[num - 1] : 0);
+	}
 	ser->saveLoadEntries(this, partEntries);
 }
 

@@ -273,6 +273,7 @@ public:
 };
 
 struct Part : public Serializable {
+	IMuseInternal *_se;
 	int _slot;
 	Part *_next, *_prev;
 	MidiChannel *_mc;
@@ -344,6 +345,7 @@ struct Part : public Serializable {
 // the public version, only contains a set of methods.
 class IMuseInternal {
 	friend class Player;
+	friend class Part;
 
 protected:
 	bool _native_mt32;
@@ -429,9 +431,6 @@ protected:
 
 	void fix_parts_after_load();
 	void fix_players_after_load(ScummEngine *scumm);
-
-	static int saveReference(void *me_ref, byte type, void *ref);
-	static void *loadReference(void *me_ref, byte type, int ref);
 
 	static void midiTimerCallback(void *data);
 
