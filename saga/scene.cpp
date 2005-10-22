@@ -843,16 +843,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_vm->_events->queue(&event);
 
-		if (getFlags() & kSceneFlagShowCursor) {
-			// Activate user interface
-			event.type = kEvTOneshot;
-			event.code = kInterfaceEvent;
-			event.op = kEventActivate;
-			event.time = 0;
-
-			_vm->_events->queue(&event);
-		}
-
 		// Begin palette cycle animation if present
 		event.type = kEvTOneshot;
 		event.code = kPalAnimEvent;
@@ -860,12 +850,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.time = 0;
 
 		q_event = _vm->_events->queue(&event);
-
-		// Show cursor
-		event.type = kEvTOneshot;
-		event.code = kCursorEvent;
-		event.op = kEventShow;
-		_vm->_events->chain(q_event, &event);
 
 		// Start the scene main script
 		if (_sceneDescription.sceneScriptEntrypointNumber > 0) {
@@ -899,9 +883,14 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	if (_sceneNumber == ITE_SCENE_PUZZLE)
 		_vm->_puzzle->execute();
 
-	if (_sceneDescription.flags & kSceneFlagShowCursor)
-		_vm->_interface->activate();
-
+	if (getFlags() & kSceneFlagShowCursor) {
+		// Activate user interface
+		event.type = kEvTOneshot;
+		event.code = kInterfaceEvent;
+		event.op = kEventActivate;
+		event.time = 0;
+		_vm->_events->queue(&event);
+	}
 }
 
 void Scene::loadSceneDescriptor(uint32 resourceId) {
