@@ -115,7 +115,7 @@ public:
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
-	uint8 *decodeShape(int x, int y, int w, int h, int flags);
+	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
 	
 	int getRectSize(int x, int y);
@@ -132,9 +132,9 @@ public:
 	typedef void (Screen::*DrawShapePlotPixelCallback)(uint8 *dst, uint8 c);
 
 private:
-	int16 decodeShapeHelper(uint8 *from, uint8 *to, int size);
-	void hideMouseHelper();
-	void showMouseHelper();
+	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
+	void restoreMouseRect();
+	void copyMouseToScreen();
 	void copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr);
 	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 

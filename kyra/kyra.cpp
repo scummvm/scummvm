@@ -957,15 +957,15 @@ void KyraEngine::snd_haltTrack() {
 void KyraEngine::loadMouseShapes() {
 	loadBitmap("MOUSE.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
-	_itemShapes[4] = _screen->decodeShape(0, 0, 8, 10, 0);
-	_itemShapes[5] = _screen->decodeShape(0, 0x17, 0x20, 7, 0);
-	_itemShapes[6] = _screen->decodeShape(0x50, 0x12, 0x10, 9, 0);
-	_itemShapes[7] = _screen->decodeShape(0x60, 0x12, 0x10, 11, 0);
-	_itemShapes[8] = _screen->decodeShape(0x70, 0x12, 0x10, 9, 0);
-	_itemShapes[9] = _screen->decodeShape(0x80, 0x12, 0x10, 11, 0);
-	_itemShapes[10] = _screen->decodeShape(0x90, 0x12, 0x10, 10, 0);
-	_itemShapes[10] = _screen->decodeShape(0x90, 0x12, 0x10, 10, 0);
-	_itemShapes[364] = _screen->decodeShape(0x28, 0, 0x10, 13, 0);
+	_itemShapes[4] = _screen->encodeShape(0, 0, 8, 10, 0);
+	_itemShapes[5] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
+	_itemShapes[6] = _screen->encodeShape(0x50, 0x12, 0x10, 9, 0);
+	_itemShapes[7] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
+	_itemShapes[8] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
+	_itemShapes[9] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
+	_itemShapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
+	_itemShapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
+	_itemShapes[364] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
 	_screen->setMouseCursor(1, 1, 0);
 	_screen->setMouseCursor(1, 1, _itemShapes[4]);
 	_screen->setShapePages(3, 5);
