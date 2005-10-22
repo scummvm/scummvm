@@ -142,7 +142,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// We account for that by retrying once with swapped byte order.
 	if (hdr.ver > CURRENT_VER)
 		hdr.ver = SWAP_BYTES_32(hdr.ver);
-	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER)
+	if (hdr.ver < VER(8) || hdr.ver > CURRENT_VER)
 	{
 		warning("Invalid version of '%s'", filename);
 		delete in;
@@ -156,7 +156,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		return false;
 	}
 
-	// Since version 52 a thumbnail is saved directly after the header
+	// Since version 52 a thumbnail is saved directly after the header.
 	if (hdr.ver >= VER(52)) {
 		uint32 type;
 		in->read(&type, 4);
@@ -172,7 +172,8 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		in->skip(size - 8);
 	}
 
-	// Since version 56 we have informations about the creation of the save game and the save time here
+	// Since version 56 we save additional information about the creation of
+	// the save game and the save time.
 	if (hdr.ver >= VER(56)) {
 		InfoStuff infos;
 		if (!loadInfos(in, &infos)) {
