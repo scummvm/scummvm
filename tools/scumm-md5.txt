@@ -405,6 +405,7 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 	-	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pajama	khalek, sev
 	Demo	All	en	d7ab7cd6105546016e6a0d46fb36b964	pajama	khalek
+	Demo	Windows	fr	7f945525abcd48015adf1632637a44a1	pajama	Kirben
 	Demo	Windows	nl	0305e850382b812fec6e5998ef88a966	pajama	adutchguy
 
 Pajama Sam 2: Thunder and Lightning Aren't so Frightening
