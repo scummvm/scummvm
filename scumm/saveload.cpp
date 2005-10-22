@@ -107,7 +107,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	saveInfos(out);
 
 	Serializer ser(0, out, CURRENT_VER);
-	saveOrLoad(&ser, CURRENT_VER);
+	saveOrLoad(&ser);
 	out->flush();
 	if(out->ioFailed()) {
 		delete out;
@@ -248,7 +248,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Now do the actual loading
 	//
 	Serializer ser(in, 0, hdr.ver);
-	saveOrLoad(&ser, hdr.ver);
+	saveOrLoad(&ser);
 	delete in;
 
 	// Update volume settings
@@ -605,7 +605,7 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	file->writeUint16BE(section.time);
 }
 
-void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
+void ScummEngine::saveOrLoad(Serializer *s) {
 	const SaveLoadEntry objectEntries[] = {
 		MKLINE(ObjectData, OBIMoffset, sleUint32, VER(8)),
 		MKLINE(ObjectData, OBCDoffset, sleUint32, VER(8)),
@@ -936,11 +936,11 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	// that have more than 30 actors (up to 94 are supported now, in theory).
 	// Since the format of the usage bits was changed by this, we have to
 	// convert them when loading an older savegame.
-	if (s->isLoading() && savegameVersion < VER(14))
+	if (s->isLoading() && s->getVersion() < VER(14))
 		upgradeGfxUsageBits();
 
 	// When loading, move the mouse to the saved mouse position.
-	if (s->isLoading() && savegameVersion >= VER(20)) {
+	if (s->isLoading() && s->getVersion() >= VER(20)) {
 		updateCursor();
 		_system->warpMouse(_mouse.x, _mouse.y);
 	}
@@ -961,14 +961,14 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	//
 	// Save/load script data
 	//
-	if (savegameVersion < VER(9))
+	if (s->getVersion() < VER(9))
 		s->saveLoadArrayOf(vm.slot, 25, sizeof(vm.slot[0]), scriptSlotEntries);
-	else if (savegameVersion < VER(20))
+	else if (s->getVersion() < VER(20))
 		s->saveLoadArrayOf(vm.slot, 40, sizeof(vm.slot[0]), scriptSlotEntries);
 	else
 		s->saveLoadArrayOf(vm.slot, NUM_SCRIPT_SLOT, sizeof(vm.slot[0]), scriptSlotEntries);
 
-	if (savegameVersion < VER(46)) {
+	if (s->getVersion() < VER(46)) {
 		// When loading an old savegame, make sure that the 'cycle'
 		// field is set to something sensible, otherwise the scripts
 		// that were running probably won't be.
@@ -983,7 +983,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	// Save/load local objects
 	//
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
-	if (s->isLoading() && savegameVersion < VER(13)) {
+	if (s->isLoading() && s->getVersion() < VER(13)) {
 		// Since roughly v13 of the save games, the objs storage has changed a bit
 		for (i = _numObjectsInRoom; i < _numLocalObjects; i++) {
 			_objs[i].obj_nr = 0;
@@ -1000,7 +1000,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	s->saveLoadArrayOf(_sentence, 6, sizeof(_sentence[0]), sentenceTabEntries);
 	s->saveLoadArrayOf(_string, 6, sizeof(_string[0]), stringTabEntries);
 	s->saveLoadArrayOf(_colorCycle, 16, sizeof(_colorCycle[0]), colorCycleEntries);
-	if (savegameVersion >= VER(13))
+	if (s->getVersion() >= VER(13))
 		s->saveLoadArrayOf(_scaleSlots, 20, sizeof(_scaleSlots[0]), scaleSlotsEntries);
 
 
@@ -1008,7 +1008,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	// Save/load resources
 	//
 	int type, idx;
-	if (savegameVersion >= VER(26)) {
+	if (s->getVersion() >= VER(26)) {
 		// New, more robust resource save/load system. This stores the type
 		// and index of each resource. Thus if we increase e.g. the maximum
 		// number of script resources, savegames won't break.
@@ -1067,12 +1067,12 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
-		if (savegameVersion >= VER(21) && _version < 5)
+		if (s->getVersion() >= VER(21) && _version < 5)
 			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
 	}
 
 	// PalManip data was not saved before V10 save games
-	if (savegameVersion < VER(10))
+	if (s->getVersion() < VER(10))
 		_palManipCounter = 0;
 	if (_palManipCounter) {
 		if (!_palManipPalette)
@@ -1084,7 +1084,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 
 	// darkenPalette was not saved before V53
-	if (s->isLoading() && savegameVersion < VER(53)) {
+	if (s->isLoading() && s->getVersion() < VER(53)) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
@@ -1101,11 +1101,11 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	var120Backup = _scummVars[120];
 	var98Backup = _scummVars[98];
 
-	if (savegameVersion > VER(37))
+	if (s->getVersion() > VER(37))
 		s->saveLoadArrayOf(_roomVars, _numRoomVariables, sizeof(_roomVars[0]), sleInt32);
 
 	// The variables grew from 16 to 32 bit.
-	if (savegameVersion < VER(15))
+	if (s->getVersion() < VER(15))
 		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt16);
 	else
 		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt32);
@@ -1141,7 +1141,7 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	//
 	// Save/load the Audio CD status
 	//
-	if (savegameVersion >= VER(24)) {
+	if (s->getVersion() >= VER(24)) {
 		AudioCDManager::Status info;
 		if (s->isSaving())
 			info = AudioCD.getStatus();
@@ -1162,8 +1162,8 @@ void ScummEngine::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	}
 }
 
-void ScummEngine_v5::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine::saveOrLoad(s, savegameVersion);
+void ScummEngine_v5::saveOrLoad(Serializer *s) {
+	ScummEngine::saveOrLoad(s);
 
 	const SaveLoadEntry cursorEntries[] = {
 		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte*)_cursorImages[1] - (byte*)_cursorImages[0], VER(44)),
@@ -1176,8 +1176,8 @@ void ScummEngine_v5::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 }
 
 #ifndef DISABLE_SCUMM_7_8
-void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine::saveOrLoad(s, savegameVersion);
+void ScummEngine_v7::saveOrLoad(Serializer *s) {
+	ScummEngine::saveOrLoad(s);
 
 	assert(_imuseDigital);
 	_imuseDigital->saveOrLoad(s);
@@ -1185,14 +1185,14 @@ void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 #endif
 
 #ifndef DISABLE_HE
-void ScummEngine_v60he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine::saveOrLoad(s, savegameVersion);
+void ScummEngine_v60he::saveOrLoad(Serializer *s) {
+	ScummEngine::saveOrLoad(s);
 
 	s->saveLoadArrayOf(_arraySlot, _numArray, sizeof(_arraySlot[0]), sleByte);
 }
 
-void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v60he::saveOrLoad(s, savegameVersion);
+void ScummEngine_v70he::saveOrLoad(Serializer *s) {
+	ScummEngine_v60he::saveOrLoad(s);
 
 	const SaveLoadEntry HE70Entries[] = {
 		MKLINE(ScummEngine_v70he, _heSndSoundId, sleInt32, VER(51)),
@@ -1205,8 +1205,8 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	s->saveLoadEntries(this, HE70Entries);
 }
 
-void ScummEngine_v71he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v70he::saveOrLoad(s, savegameVersion);
+void ScummEngine_v71he::saveOrLoad(Serializer *s) {
+	ScummEngine_v70he::saveOrLoad(s);
 
 	const SaveLoadEntry polygonEntries[] = {
 		MKLINE(WizPolygon, vert[0].x, sleInt16, VER(40)),
@@ -1232,8 +1232,8 @@ void ScummEngine_v71he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	s->saveLoadArrayOf(_wiz->_polygons, ARRAYSIZE(_wiz->_polygons), sizeof(_wiz->_polygons[0]), polygonEntries);
 }
 
-void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v71he::saveOrLoad(s, savegameVersion);
+void ScummEngine_v90he::saveOrLoad(Serializer *s) {
+	ScummEngine_v71he::saveOrLoad(s);
 
 	const SaveLoadEntry floodFillEntries[] = {
 		MKLINE(FloodFillParameters, box.left, sleInt32, VER(51)),
@@ -1258,7 +1258,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 		MKEND()
 	};
 
-	_sprite->saveOrLoadSpriteData(s, savegameVersion);
+	_sprite->saveOrLoadSpriteData(s);
 
 	s->saveLoadArrayOf(&_floodFillParams, 1, sizeof(_floodFillParams), floodFillEntries);
 
@@ -1267,14 +1267,14 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	_sprite->_numSpritesToProcess = _numSpritesToProcess;
 }
 
-void ScummEngine_v99he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v90he::saveOrLoad(s, savegameVersion);
+void ScummEngine_v99he::saveOrLoad(Serializer *s) {
+	ScummEngine_v90he::saveOrLoad(s);
 
 	s->saveLoadArrayOf(_hePalettes, (_numPalettes + 1) * 1024, sizeof(_hePalettes[0]), sleUint8);
 }
 
-void ScummEngine_v100he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
-	ScummEngine_v99he::saveOrLoad(s, savegameVersion);
+void ScummEngine_v100he::saveOrLoad(Serializer *s) {
+	ScummEngine_v99he::saveOrLoad(s);
 
 	const SaveLoadEntry HE100Entries[] = {
 		MKLINE(ScummEngine_v100he, _heResId, sleInt32, VER(51)),

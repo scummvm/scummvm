@@ -71,7 +71,7 @@ protected:
 	virtual void initScummVars();
 	virtual void decodeParseString();
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void readMAXS(int blockSize);
 
@@ -790,7 +790,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	void localizeArray(int slot, byte scriptSlot);
 	void redimArray(int arrayId, int newX, int newY, int d);
@@ -861,7 +861,7 @@ protected:
 	virtual void setupScummVars();
 	virtual void initScummVars();
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void readRoomsOffsets();
 	virtual void readGlobalObjects();
@@ -911,7 +911,7 @@ public:
 	ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 
 protected:
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void redrawBGAreas();
 
@@ -1163,7 +1163,7 @@ protected:
 
 	virtual void initScummVars();
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void readMAXS(int blockSize);
 
@@ -1247,7 +1247,7 @@ protected:
 
 	virtual void readMAXS(int blockSize);
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void copyPalColor(int dst, int src);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
@@ -1276,7 +1276,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void decodeParseString(int a, int b);
 
@@ -1342,7 +1342,7 @@ protected:
 
 	virtual void akos_processQueue();
 
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();

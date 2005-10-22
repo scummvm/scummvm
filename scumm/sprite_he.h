@@ -112,7 +112,7 @@ public:
 	int32 _varNumSprites;
 	int32 _varMaxSprites;
 
-	void saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion);
+	void saveOrLoadSpriteData(Serializer *s);
 	void resetBackground();
 	void setRedrawFlags(bool checkZOrder);
 	void sortActiveSprites();

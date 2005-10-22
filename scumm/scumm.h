@@ -581,7 +581,7 @@ protected:
 
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
-	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
+	virtual void saveOrLoad(Serializer *s);
 	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
 	void saveResource(Serializer *ser, int type, int index);
 	void loadResource(Serializer *ser, int type, int index);

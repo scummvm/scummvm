@@ -1391,7 +1391,7 @@ void Sprite::processImages(bool arg) {
 	}
 }
 
-void Sprite::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion) {
+void Sprite::saveOrLoadSpriteData(Serializer *s) {
 	static const SaveLoadEntry spriteEntries[] = {
 		MKLINE(SpriteInfo, id, sleInt32, VER(48)),
 		MKLINE(SpriteInfo, zorder, sleInt32, VER(48)),
