@@ -476,9 +476,9 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		// Names of rooms. Maybe we should put them into a table, for use by the debugger?
 		if (_heversion >= 80) {
 			for (int room; (room = _fileHandle->readUint16LE()); ) {
-				char buf[20];
+				char buf[100];
 				i = 0;
-				for (byte s; (s = _fileHandle->readByte()); ) {
+				for (byte s; (s = _fileHandle->readByte()) && i < ARRAYSIZE(buf) - 1; ) {
 					buf[i++] = s;
 				}
 				buf[i] = 0;
