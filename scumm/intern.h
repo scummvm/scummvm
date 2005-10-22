@@ -25,7 +25,6 @@
 
 #include "scumm/scumm.h"
 #include "scumm/floodfill_he.h"
-#include "scumm/sprite_he.h"
 #include "scumm/wiz_he.h"
 
 namespace Scumm {
@@ -33,6 +32,7 @@ namespace Scumm {
 #ifndef DISABLE_HE
 class ResExtractor;
 class LogicHE;
+class Sprite;
 #endif
 
 class NutRenderer; // V8 Font Renderer

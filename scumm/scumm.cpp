@@ -50,8 +50,9 @@
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
 #include "scumm/resource_v7he.h"
-#include "scumm/sound.h"
 #include "scumm/scumm.h"
+#include "scumm/sound.h"
+#include "scumm/sprite_he.h"
 #include "scumm/util.h"
 
 #ifdef PALMOS_68K

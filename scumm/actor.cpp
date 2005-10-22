@@ -32,6 +32,7 @@
 #include "scumm/resource.h"
 #include "scumm/saveload.h"
 #include "scumm/sound.h"
+#include "scumm/sprite_he.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 

@@ -36,6 +36,7 @@
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/sprite_he.h"
 #include "scumm/verbs.h"
 
 #include "sound/audiocd.h"
