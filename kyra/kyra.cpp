@@ -463,6 +463,7 @@ void KyraEngine::mainLoop() {
 		if (_needMouseUpdate) {
 			_screen->hideMouse();
 			_screen->showMouse();
+			_needMouseUpdate = false;
 		}
 		_screen->updateScreen();
 
@@ -963,7 +964,6 @@ void KyraEngine::loadMouseShapes() {
 	_itemShapes[7] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
 	_itemShapes[8] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
 	_itemShapes[9] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
-	_itemShapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
 	_itemShapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
 	_itemShapes[364] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
 	_screen->setMouseCursor(1, 1, 0);

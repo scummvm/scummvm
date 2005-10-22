@@ -1404,7 +1404,11 @@ void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
 	x <<= 3; w <<= 3;
 	uint8 *src = ptr;
 	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];	
-	memcpy(dst, src, w);
+	for (int i = 0; i < h; ++i) {
+		memcpy(dst, src, w);
+		src += w;
+		dst += SCREEN_W;
+	}
 }
 
 void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
@@ -1412,7 +1416,11 @@ void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 	x <<= 3; w <<= 3;
 	uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
 	uint8 *dst = ptr;	
-	memcpy(dst, src, w);
+	for (int i = 0; i < h; ++i) {
+		memcpy(dst, src, w);
+		dst += w;
+		src += SCREEN_W;
+	}
 }
 
 } // End of namespace Kyra
