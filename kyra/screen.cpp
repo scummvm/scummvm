@@ -36,6 +36,7 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 			_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
 		}
 	}
+	memset(_shapePages, 0, sizeof(_shapePages));
 	_currentPalette = (uint8 *)malloc(768);
 	if (_currentPalette) {
 		memset(_currentPalette, 0, 768);
@@ -55,6 +56,11 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	_decodeShapeBufferSize = 0;
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
+	_mouseShape = NULL;
+	_mouseShapeSize = 0;
+	_mouseRect = NULL;
+	_mouseRectSize = 0;
+	_mouseDrawWidth = 0;
 }
 
 Screen::~Screen() {
@@ -70,6 +76,8 @@ Screen::~Screen() {
 	free(_screenPalette);
 	free(_decodeShapeBuffer);
 	free(_animBlockPtr);
+	free(_mouseShape);
+	free(_mouseRect);
 }
 
 void Screen::updateScreen() {
@@ -370,6 +378,7 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 
 void Screen::setAnimBlockPtr(int size) {
 	debug(9, "Screen::setAnimBlockPtr(%d)", size);
+	free(_animBlockPtr);
 	_animBlockPtr = (uint8 *)malloc(size);
 	_animBlockSize = size;
 }
@@ -555,8 +564,8 @@ void Screen::drawShapePlotPixelCallback1(uint8 *dst, uint8 color) {
 	*dst = color;
 }
 
-void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable) {
-	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d)", pageNum, x, y, sd, flags);
+void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable, bool itemShape) {
+	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d, %d)", pageNum, x, y, sd, flags, itemShape);
 	assert(shapeData);
 	if (flags & 0x8000) {
 		warning("unhandled (flags & 0x8000) in Screen::drawShape()");
@@ -590,7 +599,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	DrawShapePlotPixelCallback plotPixel = _drawShapePlotPixelTable[ppc];
 	
 	const uint8 *src = shapeData;
-	if (_vm->features() & GF_TALKIE) {
+	if (_vm->features() & GF_TALKIE && !itemShape) {
 		src += 2;
 	}
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
@@ -929,6 +938,470 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 			}
 		}
 	}
+}
+
+uint8 *Screen::decodeShape(int x, int y, int w, int h, int flags) {
+	debug(9, "decodeShape(%d, %d, %d, %d, %d)", x, y, w, h, flags);
+	uint8 *srcPtr = &_pagePtrs[_curPage][y * SCREEN_W + x];
+	int16 shapeSize = 0;
+	uint8 *tmp = srcPtr;
+	int xpos = w;
+
+	for (int i = h; i > 0; --i) {
+		uint8 *start = tmp;
+		shapeSize += w;
+		xpos = w;
+		while (xpos) {
+			uint8 value = *tmp++;
+			--xpos;
+			
+			if (!value) {
+				shapeSize += 2;
+				int16 curX = xpos;
+				bool skip = false;
+				
+				while (xpos) {
+					value = *tmp++;
+					--xpos;
+					
+					if (value) {
+						skip = true;
+						break;
+					}
+				}
+				
+				if (!skip)
+					++curX;
+					
+				curX -= xpos;
+				shapeSize -= curX;
+				
+				while (curX > 0xFF) {
+					curX -= 0xFF;
+					shapeSize += 2;
+				}
+			}
+		}
+	
+		tmp = start + SCREEN_W;
+	}
+	
+	int16 shapeSize2 = shapeSize;
+	shapeSize += 10;
+	if (flags & 1)
+		shapeSize += 16;
+	
+	static uint8 table[274];	
+	int tableIndex = 0;
+	
+	uint8 *newShape = (uint8*)malloc(shapeSize+16);
+	assert(newShape);
+	
+	byte *dst = newShape;
+	*(uint16*)dst = flags & 3; dst += 2;
+	*dst = h; dst += 1;
+	*(uint16*)dst = w; dst += 2;
+	*dst = h; dst += 1;
+	*(uint16*)dst = shapeSize; dst += 2;
+	*(uint16*)dst = shapeSize2; dst += 2;
+
+	byte *src = srcPtr;
+	if (flags & 1) {
+		dst += 16;
+		memset(table, 0, sizeof(uint8)*274);
+		tableIndex = 1;
+	}
+	
+	for (int ypos = h; ypos > 0; --ypos) {
+		uint8 *srcBackUp = src;
+		xpos = w;
+		while (xpos) {
+			uint8 value = *src++;
+			if (value) {
+				if (flags & 1) {
+					if (!table[value]) {
+						if (tableIndex == 16) {
+							value = 1;
+						} else {
+							table[0x100+tableIndex] = value;
+							table[value] = tableIndex;
+							++tableIndex;
+						}
+					} else {
+						value = table[value];
+					}
+				}
+				--xpos;
+				*dst++ = value;
+			} else {
+				int16 temp = 1;
+				--xpos;
+				
+				while (xpos) {
+					if (*src)
+						break;
+					++src;
+					++temp;
+					--xpos;
+				}
+				
+				while (temp > 0xFF) {
+					*dst++ = 0;
+					*dst++ = 0xFF;
+					temp -= 0xFF;
+				}
+				
+				if (temp & 0xFF) {
+					*dst++ = 0;
+					*dst++ = temp & 0xFF;
+				}
+			}
+		}
+		src = srcBackUp + SCREEN_W;
+	}
+	
+	if (!(flags & 2)) {
+		if (shapeSize > _animBlockSize) {
+			dst = newShape;
+			*(uint16*)dst |= 2;
+		} else {
+			src = newShape;
+			if (flags & 1) {
+				src += 16;
+			}
+			src += 10;
+			uint8 *shapePtrBackUp = src;
+			dst = _animBlockPtr;
+			memcpy(dst, src, shapeSize2);
+			
+			int16 size = decodeShapeHelper(_animBlockPtr, shapePtrBackUp, shapeSize2);
+			if (size > shapeSize2) {
+				shapeSize -= shapeSize2 - size;
+				newShape = (uint8*)realloc(newShape, shapeSize);
+				assert(newShape);
+			} else {
+				dst = shapePtrBackUp;
+				src = _animBlockPtr;
+				memcpy(dst, src, shapeSize2);
+				dst = newShape;
+				*(uint16*)dst |= 2;
+			}
+		}
+	}
+	
+	*(uint16*)(newShape + 6) = shapeSize;
+	
+	if (flags & 1) {
+		dst = newShape + 10;
+		src = &table[0x100];
+		memcpy(dst, src, sizeof(uint8)*16);
+	}
+	
+	return newShape;
+}
+
+int16 Screen::decodeShapeHelper(uint8 *from, uint8 *to, int size_to) {
+	debug(9, "decodeShapeHelper(0x%X, 0x%X, %d)", from, to, size_to);
+	byte *fromPtrEnd = from + size_to;
+	int var1 = 1;
+	byte *var7 = 0;
+	byte *toPtr = to;
+	byte *fromPtr = from;
+	byte *toPtr2 = to;
+	
+	*to++ = 0x81;
+	*to++ = *from++;
+	
+	while (from < fromPtrEnd) {
+		byte *curToPtr = to;
+		to = fromPtr;
+		int var6 = 1;
+		
+		while (true) {
+			byte curPixel = *from;
+			if (curPixel == *(from+0x40)) {
+				byte *toBackUp = to;
+				to = from;
+				
+				for (int i = 0; i < (fromPtrEnd - from); ++i) {
+					if (*to++ != curPixel)
+						break;
+				}
+				--to;
+				uint16 size = (to - from);
+				if (size >= 0x41) {
+					var1 = 0;
+					from = to;
+					to = curToPtr;
+					*to++ = 0xFE;
+					WRITE_LE_UINT16(to, size); to += 2;
+					*to++ = (size >> 8) & 0xFF;
+					curToPtr = to;
+					to = toBackUp;
+					continue;
+				} else {
+					to = toBackUp;
+				}
+			}
+			
+			bool breakLoop = false;
+			while (true) {
+				if ((from - to) == 0) {
+					breakLoop = true;
+					break;
+				}
+				for (int i = 0; i < (from - to); ++i) {
+					if (*to++ == curPixel)
+						break;
+				}
+				if (*to == curPixel) {
+					if (*(from+var6-1) == *(to+var6-2))
+						break;
+					
+					byte *fromBackUp = from;
+					byte *toBackUp = to;
+					--to;
+					for (int i = 0; i < (fromPtrEnd - from); ++i) {
+						if (*from++ != *to++)
+							break;
+					}
+					if (*(from - 1) == *(to - 1))
+						++to;
+					from = fromBackUp;
+					int temp = to - toBackUp;
+					to = toBackUp;
+					if (temp >= var6) {
+						var6 = temp;
+						var7 = toBackUp - 1;
+					}
+					break;
+				} else {
+					breakLoop = true;
+					break;
+				}
+			}
+			
+			if (breakLoop)
+				break;
+		}
+		
+		to = curToPtr;
+		if (var6 > 2) {
+			uint16 word = 0;
+			if (var6 <= 0x0A) {
+				uint16 size = from - var7;
+				if (size <= 0x0FFF) {
+					byte highByte = ((size & 0xFF00) >> 8) + (((var6 & 0xFF) - 3) << 4);
+					word = ((size & 0xFF) << 8) | highByte;
+					WRITE_LE_UINT16(to, word); to += 2;
+					from += var6;
+					var1 = 0;
+					continue;
+				}
+			}
+			
+			if (var6 > 0x40) {
+				*to++ = 0xFF;
+				WRITE_LE_UINT16(to, var6); to += 2;
+			} else {
+				*to++ = ((var6 & 0xFF) - 3) | 0xC0;
+			}
+			
+			word = var7 - fromPtr;
+			WRITE_LE_UINT16(to, word); to += 2;
+			from += var6;
+			var1 = 0;
+		} else {
+			if (var1 == 0) {
+				toPtr2 = to;
+				*to++ = 0x80;
+			}
+			
+			if (*toPtr2 == 0xBF) {
+				toPtr2 = to;
+				*to++ = 0x80;
+			}
+			
+			++(*toPtr2);
+			*to++ = *from++;
+			var1 = 1;			
+		}
+	}
+	*to++ = 0x80;
+	
+	return (to - toPtr);
+}
+
+int Screen::getRectSize(int x, int y) {
+	if (x < 1) {
+		x = 1;
+	} else if (x > 40) {
+		x = 40;
+	}
+	
+	if (y < 1) {
+		y = 1;
+	} else if (y > 200) {
+		y = 200;
+	}
+	
+	return ((x*y) << 3);
+}
+
+void Screen::hideMouse() {
+	// if mouseDisabled
+	//	return
+	hideMouseHelper();
+}
+
+void Screen::showMouse() {
+	// if mouseDisabled
+	//	return
+	showMouseHelper();
+}
+
+void Screen::setShapePages(int page1, int page2) {
+	_shapePages[0] = _pagePtrs[page1];
+	_shapePages[1] = _pagePtrs[page2];
+}
+
+byte *Screen::setMouseCursor(int x, int y, byte *shape) {
+	debug(9, "setMouseCursor(%d, %d, 0x%X)", x, y, shape);
+	if (!shape)
+		return _mouseShape;
+	// if mouseDisabled
+	//	return _mouseShape
+	
+	hideMouseHelper();
+	
+	int mouseRectSize = getRectSize(((*(uint16*)(shape + 3)) >> 3) + 2, shape[5]);
+	if (_mouseRectSize < mouseRectSize) {
+		free(_mouseRect);
+		_mouseRect = (uint8*)malloc(mouseRectSize << 3);
+		assert(_mouseRect);
+		_mouseRectSize = mouseRectSize;
+	}
+	
+	int shapeSize = *(uint16*)(shape + 8) + 10;
+	if ((*(uint16*)shape) & 1)
+		shapeSize += 16;
+	
+	if (_mouseShapeSize < shapeSize) {
+		free(_mouseShape);
+		_mouseShape = (uint8*)malloc(shapeSize);
+		assert(_mouseShape);
+		_mouseShapeSize = shapeSize;
+	}
+	
+	byte *dst = _mouseShape;
+	byte *src = shape;
+	
+	if (!((*(uint16*)shape) & 2)) {
+		uint16 newFlags = 0;
+		newFlags = *(uint16*)src | 2; src += 2;
+		*(uint16*)dst = newFlags; dst += 2;
+		memcpy(dst, src, 6);
+		dst += 6;
+		src += 6;
+		int size = *(uint16*)src; src += 2;
+		*(uint16*)dst = size; dst += 2;
+		if (newFlags & 1) {
+			memcpy(dst, src, 8);
+			dst += 16;
+			src += 16;
+		}
+		decodeFrame4(src, _animBlockPtr, size);
+		memcpy(dst, _animBlockPtr, size);
+	} else {
+		int size = *(uint16*)(shape + 6);
+		memcpy(dst, src, size);
+	}
+	
+	_mouseXOffset = x; _mouseYOffset = y;
+	_mouseHeight = _mouseShape[5];
+	_mouseWidth = ((*(uint16*)(_mouseShape+3)) >> 3) + 2;
+	
+	showMouseHelper();
+	
+	return _mouseShape;
+}
+
+void Screen::hideMouseHelper() {
+	// if disableMouse
+	//	return
+	
+	// if mouseUnk == 0 {
+		if (_mouseDrawWidth && _mouseRect) {
+			copyScreenFromRect(_mouseDrawX, _mouseDrawY, _mouseDrawWidth, _mouseDrawHeight, _mouseRect);
+		}
+		_mouseDrawWidth = 0;
+	// }
+	// ++mouseUnk
+}
+
+void Screen::showMouseHelper() {
+	// if disableMouse
+	// 	return
+	
+	// if mouseUnk == 0
+	//	return
+	// --mouseUnk
+	// if mouseUnk != 0
+	//	return
+	int width = _mouseWidth;
+	int height = _mouseHeight;
+	int xpos = _vm->mouseX() - _mouseXOffset;
+	int ypos = _vm->mouseY() - _mouseYOffset;
+	
+	int xposTemp = xpos;
+	int yposTemp = ypos;
+	
+	if (xposTemp < 0) {
+		xposTemp = 0;
+	}
+	if (yposTemp < 0) {
+		height += ypos;
+		yposTemp = 0;
+	}
+	
+	xposTemp >>= 3;
+	_mouseDrawX = xposTemp;
+	_mouseDrawY = yposTemp;
+	
+	xposTemp += width;
+	xposTemp -= 40;
+	if (xposTemp >= 0) {
+		width -= xposTemp;
+	}
+	
+	yposTemp += height;
+	yposTemp -= 200;
+	if (yposTemp >= 0) {
+		height -= yposTemp;
+	}
+	
+	_mouseDrawWidth = width;
+	_mouseDrawHeight = height;
+	
+	if (_mouseRect) {
+		copyScreenToRect(_mouseDrawX, _mouseDrawY, width, height, _mouseRect);
+	}
+	
+	drawShape(0, _mouseShape, xpos, ypos, 0, 0, 0, true);
+}
+
+void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
+	x <<= 3; w <<= 3;
+	uint8 *src = ptr;
+	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];	
+	memcpy(dst, src, w);
+}
+
+void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
+	x <<= 3; w <<= 3;
+	uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
+	uint8 *dst = ptr;	
+	memcpy(dst, src, w);
 }
 
 } // End of namespace Kyra

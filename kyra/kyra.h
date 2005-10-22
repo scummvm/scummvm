@@ -152,6 +152,9 @@ public:
 	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
 
 	void waitTicks(int ticks);
+	
+	int mouseX() { return _mouseX; }
+	int mouseY() { return _mouseY; }
 
 protected:
 
@@ -199,7 +202,7 @@ protected:
 	void drawRoom();
 	void delay(uint32 millis);
 	void loadPalette(const char *filename, uint8 *palData);
-	void setCursor(uint8 cursorID);
+	void loadMouseShapes();
 	void setupRooms();
 
 	uint8 _game;
@@ -214,8 +217,11 @@ protected:
 	uint16 _talkMessageH;
 	bool _talkMessagePrinted;
 	uint8 _flagsTable[51];
+	uint8 *_itemShapes[377];
 	uint16 _gameSpeed;
 	uint32 _features;
+	int _mouseX, _mouseY;
+	bool _needMouseUpdate;
 
 	uint16 _currentRoom;
 	AudioStream *_currentVocFile;
@@ -227,9 +233,6 @@ protected:
 	SeqPlayer *_seq;
 	Sprites *_sprites;
 	Room _rooms[MAX_NUM_ROOMS];
-
-	static const Cursor _cursors[];
-	static const int _cursorsCount;
 	
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;

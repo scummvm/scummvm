@@ -277,6 +277,9 @@ int KyraEngine::init(GameDetector &detector) {
 	_talkMessageY = 0xC;
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
+	
+	_mouseX = _mouseY = 0;
+	_needMouseUpdate = true;
 
 	return 0;
 }
@@ -287,6 +290,10 @@ KyraEngine::~KyraEngine() {
 	delete _res;
 	delete _midi;
 	delete _seq;
+	
+	for (int i = 0; i < ARRAYSIZE(_itemShapes); ++i) {
+		free(_itemShapes[i]);
+	}
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
@@ -323,8 +330,12 @@ void KyraEngine::startup() {
 	_screen->setTextColorMap(colorMap);
 //	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
+	memset(_itemShapes, 0, sizeof(_itemShapes));
+	loadMouseShapes();
+	
 	_gameSpeed = 50;
 	memset(_flagsTable, 0, sizeof(_flagsTable));
+	
 	setupRooms();
 	// XXX
 }
@@ -342,7 +353,11 @@ void KyraEngine::delay(uint32 amount) {
 					loadRoom((++_currentRoom) % MAX_NUM_ROOMS);
 				}
 				break;
-			// XXX
+			case OSystem::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				_needMouseUpdate = true;
+				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				loadRoom((++_currentRoom) % MAX_NUM_ROOMS);
 				break;
@@ -368,20 +383,6 @@ void KyraEngine::drawRoom() {
 	_screen->copyRegion(4, 4, 4, 4, 308, 132, 14, 0);
 	_sprites->doAnims();
 	_sprites->drawSprites(14, 0);
-}
-
-void KyraEngine::setCursor(uint8 cursorID) {
-	debug(9, "KyraEngine::setCursor(%i)", cursorID);
-	assert(cursorID < _cursorsCount);
-
-	loadBitmap("mouse.cps", 2, 2, _screen->_currentPalette); 
-	uint8 *cursor = new uint8[_cursors[cursorID].w * _cursors[cursorID].h];
-
-	_screen->copyRegionToBuffer(2, _cursors[cursorID].x, _cursors[cursorID].y, _cursors[cursorID].w, _cursors[cursorID].h, cursor);
-	_system->setMouseCursor(cursor, _cursors[cursorID].w, _cursors[cursorID].h, 0, 0, 0);
-	_system->showMouse(true);
-
-	delete[] cursor;
 }
 
 void KyraEngine::setupRooms() {
@@ -442,9 +443,11 @@ void KyraEngine::loadRoom(uint16 roomID) {
 	// Loading room data
 	strncpy(buf, _rooms[roomID].filename, 8);
 	strcat(buf, ".dat");
-	_sprites->loadDAT(buf); 
-
-	setCursor(0);
+	_sprites->loadDAT(buf);
+	
+	drawRoom();
+	_screen->showMouse();
+	_needMouseUpdate = true;
 }
 
 void KyraEngine::mainLoop() {
@@ -457,6 +460,10 @@ void KyraEngine::mainLoop() {
 		int32 frameTime = (int32)_system->getMillis();
 
 		drawRoom();
+		if (_needMouseUpdate) {
+			_screen->hideMouse();
+			_screen->showMouse();
+		}
 		_screen->updateScreen();
 
 		delay((frameTime + _gameSpeed) - _system->getMillis());
@@ -945,6 +952,23 @@ void KyraEngine::snd_startTrack() {
 void KyraEngine::snd_haltTrack() {
 	debug(9, "KyraEngine::snd_haltTrack()");
 	_midi->haltTrack();
+}
+
+void KyraEngine::loadMouseShapes() {
+	loadBitmap("MOUSE.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+	_itemShapes[4] = _screen->decodeShape(0, 0, 8, 10, 0);
+	_itemShapes[5] = _screen->decodeShape(0, 0x17, 0x20, 7, 0);
+	_itemShapes[6] = _screen->decodeShape(0x50, 0x12, 0x10, 9, 0);
+	_itemShapes[7] = _screen->decodeShape(0x60, 0x12, 0x10, 11, 0);
+	_itemShapes[8] = _screen->decodeShape(0x70, 0x12, 0x10, 9, 0);
+	_itemShapes[9] = _screen->decodeShape(0x80, 0x12, 0x10, 11, 0);
+	_itemShapes[10] = _screen->decodeShape(0x90, 0x12, 0x10, 10, 0);
+	_itemShapes[10] = _screen->decodeShape(0x90, 0x12, 0x10, 10, 0);
+	_itemShapes[364] = _screen->decodeShape(0x28, 0, 0x10, 13, 0);
+	_screen->setMouseCursor(1, 1, 0);
+	_screen->setMouseCursor(1, 1, _itemShapes[4]);
+	_screen->setShapePages(3, 5);
 }
 
 } // End of namespace Kyra

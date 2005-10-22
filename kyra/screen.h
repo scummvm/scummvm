@@ -110,12 +110,19 @@ public:
 	void drawChar(uint8 c, int x, int y);
 	void setScreenDim(int dim);
 	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable);
+	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable, bool itemShape=false);
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
+	uint8 *decodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
+	
+	int getRectSize(int x, int y);
+	void hideMouse();
+	void showMouse();
+	void setShapePages(int page1, int page2);
+	byte *setMouseCursor(int x, int y, byte *shape);
 
 	int _charWidth;
 	int _charOffset;
@@ -125,8 +132,14 @@ public:
 	typedef void (Screen::*DrawShapePlotPixelCallback)(uint8 *dst, uint8 c);
 
 private:
+	int16 decodeShapeHelper(uint8 *from, uint8 *to, int size);
+	void hideMouseHelper();
+	void showMouseHelper();
+	void copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr);
+	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
 	uint8 *_pagePtrs[16];
+	uint8 *_shapePages[2];
 	uint8 *_screenPalette;
 	const ScreenDim *_curDim;
 	FontId _currentFont;
@@ -136,6 +149,15 @@ private:
 	int _decodeShapeBufferSize;
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
+	
+	uint8 *_mouseShape;
+	uint8 *_mouseRect;
+	int _mouseShapeSize;
+	int _mouseRectSize;
+	int _mouseDrawX, _mouseDrawY;
+	int _mouseDrawWidth, _mouseDrawHeight;
+	int _mouseWidth, _mouseHeight;
+	int _mouseXOffset, _mouseYOffset;
 
 	OSystem *_system;
 	KyraEngine *_vm;
