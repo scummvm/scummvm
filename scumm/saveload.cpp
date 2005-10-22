@@ -142,8 +142,12 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// We account for that by retrying once with swapped byte order.
 	if (hdr.ver > CURRENT_VER)
 		hdr.ver = SWAP_BYTES_32(hdr.ver);
-	if (hdr.ver < VER(8) || hdr.ver > CURRENT_VER)
-	{
+		
+	// Reject save games which are too old or too new. Note that
+	// We do not really support V7 games, but still accept them here
+	// to work around a bug from the stone age (see below for more
+	// information).
+	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
 		warning("Invalid version of '%s'", filename);
 		delete in;
 		return false;
