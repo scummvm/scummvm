@@ -844,7 +844,7 @@ void Sound::stopTalkSound() {
 			_vm->_imuseDigital->stopSound(kTalkSoundID);
 #endif
 		} else if (_vm->_heversion >= 60) {
-			_vm->_mixer->stopID(1);
+			stopSound(1);
 		} else {
 			_vm->_mixer->stopHandle(_talkChannelHandle);
 		}
