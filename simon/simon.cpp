@@ -2744,15 +2744,9 @@ void SimonEngine::o_force_unlock() {
 }
 
 void SimonEngine::o_force_lock() {
-	if (_game & GF_SIMON2) {
-		_lockWord |= 0x8000;
-		vc34_setMouseOff();
-		_lockWord &= ~0x8000;
-	} else {
-		_lockWord |= 0x4000;
-		vc34_setMouseOff();
-		_lockWord &= ~0x4000;
-	}
+	_lockWord |= 0x8000;
+	vc34_setMouseOff();
+	_lockWord &= ~0x8000;
 }
 
 void SimonEngine::o_wait_for_vga(uint a) {
@@ -2924,13 +2918,8 @@ void SimonEngine::timer_vga_sprites_2() {
 void SimonEngine::timer_proc1() {
 	_timer4++;
 
-	if (_game & GF_SIMON2) {
-		if (_lockWord & 0x80E9 || _lockWord & 2)
-			return;
-	} else {
-		if (_lockWord & 0xC0E9 || _lockWord & 2)
-			return;
-	}
+	if (_lockWord & 0x80E9 || _lockWord & 2)
+		return;
 
 	_timer1++;
 
@@ -2944,7 +2933,7 @@ void SimonEngine::timer_proc1() {
 		if (!_cepeFlag)
 			expire_vga_timers();
 
-		if (_lockCounter != 0 && !_syncFlag2) {
+		if (_lockCounter != 0 && _syncFlag2) {
 			_lockWord &= ~2;
 			return;
 		}
@@ -2987,15 +2976,9 @@ void SimonEngine::fcs_setTextColor(FillOrCopyStruct *fcs, uint value) {
 }
 
 void SimonEngine::o_vga_reset() {
-	if (_game & GF_SIMON2) {
-		_lockWord |= 0x8000;
-		vc27_resetSprite();
-		_lockWord &= ~0x8000;
-	} else {
-		_lockWord |= 0x4000;
-		vc27_resetSprite();
-		_lockWord &= ~0x4000;
-	}
+	_lockWord |= 0x8000;
+	vc27_resetSprite();
+	_lockWord &= ~0x8000;
 }
 
 bool SimonEngine::itemIsSiblingOf(uint16 a) {

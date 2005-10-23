@@ -1622,17 +1622,10 @@ void SimonEngine::o_play_music_resource() {
 
 void SimonEngine::o_unk_120(uint a) {
 	uint16 id = TO_BE_16(a);
-	if (_game & GF_SIMON2) {
-		_lockWord |= 0x8000;
-		_vcPtr = (byte *)&id;
-		vc15_wakeup_id();
-		_lockWord &= ~0x8000;
-	} else {
-		_lockWord |= 0x4000;
-		_vcPtr = (byte *)&id;
-		vc15_wakeup_id();
-		_lockWord &= ~0x4000;
-	}
+	_lockWord |= 0x8000;
+	_vcPtr = (byte *)&id;
+	vc15_wakeup_id();
+	_lockWord &= ~0x8000;
 }
 
 void SimonEngine::o_play_sound(uint sound_id) {
@@ -1655,10 +1648,10 @@ void SimonEngine::o_unk_103() {
 
 void SimonEngine::o_kill_sprite_simon1(uint a) {
 	uint16 b = TO_BE_16(a);
-	_lockWord |= 0x4000;
+	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
 	vc60_killSprite();
-	_lockWord &= ~0x4000;
+	_lockWord &= ~0x8000;
 }
 
 void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {

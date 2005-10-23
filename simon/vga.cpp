@@ -225,9 +225,9 @@ void SimonEngine::o_read_vgares_23() {
 	// Simon1 Only
 	if (_vgaRes328Loaded == true) {
 		_vgaRes328Loaded = false;
-		_lockWord |= 0x4000;
+		_lockWord |= 0x8000;
 		read_vga_from_datfile_1(23);
-		_lockWord &= ~0x4000;
+		_lockWord &= ~0x8000;
 	}
 }
 
@@ -235,9 +235,9 @@ void SimonEngine::o_read_vgares_328() {
 	// Simon1 Only
 	if (_vgaRes328Loaded == false) {
 		_vgaRes328Loaded = true;
-		_lockWord |= 0x4000;
+		_lockWord |= 0x8000;
 		read_vga_from_datfile_1(328);
-		_lockWord &= ~0x4000;
+		_lockWord &= ~0x8000;
 	}
 }
 
@@ -866,7 +866,7 @@ void SimonEngine::vc10_draw() {
 		} while (++w != state.draw_width);
 
 		/* vc10_helper_5 */
-	} else if (_lockWord & 0x20 && state.palette == 0 || state.palette == 0xC0) {
+	} else if (((_lockWord & 0x20) && state.palette == 0) || state.palette == 0xC0) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
