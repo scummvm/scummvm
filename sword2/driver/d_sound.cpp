@@ -150,7 +150,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 }
 
 // ----------------------------------------------------------------------------
-// Custom AudioStream class to handle Broken Sword II's audio compression.
+// Custom AudioStream class to handle Broken Sword 2's audio compression.
 // ----------------------------------------------------------------------------
 
 #define GetCompressedShift(n)      ((n) >> 4)

@@ -294,8 +294,8 @@ Optional Features:
   --disable-he             exclude HE70+ games in SCUMM engine
   --disable-simon          don't build the simon engine
   --disable-sky            don't build the Beneath a Steel Sky engine
-  --disable-sword1         don't build the Broken Sword I engine
-  --disable-sword2         don't build the Broken Sword II engine
+  --disable-sword1         don't build the Broken Sword 1 engine
+  --disable-sword2         don't build the Broken Sword 2 engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
   --disable-saga           don't build the SAGA engine
   --disable-gob            don't build the Gobli*ns engine
@@ -1184,7 +1184,7 @@ if test "$_build_sky" = yes ; then
 	echo "    Beneath a Steel Sky"
 fi
 if test "$_build_sword1" = yes ; then
-	echo_n "    Broken Sword I"
+	echo_n "    Broken Sword 1"
 	if test "$_mpeg2" = yes ; then
 		echo " (w/ mpeg2 cutscenes)"
 	else
@@ -1192,7 +1192,7 @@ if test "$_build_sword1" = yes ; then
 	fi
 fi
 if test "$_build_sword2" = yes ; then
-	echo_n "    Broken Sword II"
+	echo_n "    Broken Sword 2"
 	if test "$_mpeg2" = yes ; then
 		echo " (w/ mpeg2 cutscenes)"
 	else
