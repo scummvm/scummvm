@@ -1474,7 +1474,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			_fileHandle->read(res.createResource(type, idx, total_size), total_size);
 			return 1;
 		}
-		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
+		error("Unrecognized base tag 0x%08x in sound %d", TO_BE_32(basetag), idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
