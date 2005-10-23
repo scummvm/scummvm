@@ -304,6 +304,30 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		memcpy(sound, ptr, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
+
+	// WORKAROUND bug # 1311447
+	else if (READ_UINT32(ptr) == MKID(0x460e200d)) {
+		// This sound resource occurs in the Macintosh version of Monkey Island.
+		// I do now know whether it is used in any place other than the one
+		// mentioned in the bug report above; in case it is, I put a check here. 
+		assert(soundID == 39);
+
+		// The samplerate is copied from the sound resouce 39 of the PC CD/VGA
+		// version of Monkey Island.
+
+		// Read info from the header
+		size = READ_BE_UINT32(ptr+4);
+		rate = 6849;
+
+		// Skip over the header (fixed size)
+		ptr += 0x26;
+
+		// Allocate a sound buffer, copy the data into it, and play
+		sound = (char *)malloc(size);
+		memcpy(sound, ptr, size);
+		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+	}
+
 	// Support for later Backyard sports games sounds
 	else if (READ_UINT32(ptr) == MKID('RIFF')) {
 		uint16 type;
@@ -1405,6 +1429,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			_fileHandle->seek(best_offs - 8, SEEK_SET);
 			ptr = res.createResource(type, idx, best_size);
 			_fileHandle->read(ptr, best_size);
+			//dumpResource("sound-", idx, ptr);
 			return 1;
 		}
 		break;
@@ -1413,7 +1438,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		total_size = _fileHandle->readUint32BE() - 8;
 		ptr = (byte *)calloc(total_size, 1);
 		_fileHandle->read(ptr, total_size);
-//		dumpResource("sound-", idx, ptr);
+		//dumpResource("sound-", idx, ptr);
 		convertMac0Resource(type, idx, ptr, total_size);
 		free(ptr);
 		return 1;
@@ -1424,9 +1449,12 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	case MKID('TALK'):
 	case MKID('DIGI'):
 	case MKID('Crea'):
+	case MKID(0x460e200d):	// WORKAROUND bug # 1311447
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
-		_fileHandle->read(res.createResource(type, idx, total_size), total_size - 8);
+		ptr = res.createResource(type, idx, total_size);
+		_fileHandle->read(ptr, total_size - 8);
+		//dumpResource("sound-", idx, ptr);
 		return 1;
 
 	case MKID('FMUS'): {
@@ -1471,7 +1499,9 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			_fileHandle->seek(-12, SEEK_CUR);
 			total_size = _fileHandle->readUint32BE();
 			_fileHandle->seek(-8, SEEK_CUR);
-			_fileHandle->read(res.createResource(type, idx, total_size), total_size);
+			ptr = res.createResource(type, idx, total_size);
+			_fileHandle->read(ptr, total_size);
+			//dumpResource("sound-", idx, ptr);
 			return 1;
 		}
 		error("Unrecognized base tag 0x%08x in sound %d", TO_BE_32(basetag), idx);
