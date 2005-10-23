@@ -1194,13 +1194,13 @@ void ScummEngine_v7::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 }
 #endif
 
-#ifndef DISABLE_HE
 void ScummEngine_v60he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine::saveOrLoad(s, savegameVersion);
 
 	s->saveLoadArrayOf(_arraySlot, _numArray, sizeof(_arraySlot[0]), sleByte);
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v70he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 	ScummEngine_v60he::saveOrLoad(s, savegameVersion);
 
