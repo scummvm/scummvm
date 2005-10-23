@@ -152,8 +152,8 @@ SCUMM Games by Humongous Entertainment:
 
 Other Games:
      Beneath a Steel Sky                             [Game: sky]
-     Broken Sword I                                  [Game: sword1]
-     Broken Sword II                                 [Game: sword2]
+     Broken Sword 1                                  [Game: sword1]
+     Broken Sword 2                                 [Game: sword2]
      Flight of the Amazon Queen                      [Game: queen]
      Gobliiins                                       [Game: gob1]
      Inherit the Earth: Quest for the Orb            [Game: ite]
@@ -533,7 +533,7 @@ Curse of Monkey Island
         zh  - Chinese
         kr  - Korean
 
-Beneath a Steel Sky:
+Beneath a Steel Sky
         gb  - English (Great Britain) (default)
         en  - English USA
         de  - German
@@ -552,7 +552,7 @@ Broken Sword 1
         pt  - Portuguese
         cz  - Czech
 
-Simon the Sorcerer: 1 & 2
+Simon the Sorcerer 1 & 2
         en  - English (default)
         de  - German
         fr  - French
@@ -648,10 +648,10 @@ simon games.
         Escape                 - Skips the game intro
         Period (.)             - Skips current line of text
 
-    Broken Sword I:
+    Broken Sword 1:
         F5 or ESC              - Displays save/load box
 
-    Broken Sword II:
+    Broken Sword 2:
         Ctrl-d                 - Starts the debugger
         c                      - Display the credits
         p                      - Pauses
@@ -791,7 +791,7 @@ Windows example:
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
 game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, 
-however, occur with Simon the Sorcerer 1 and 2, nor with Broken Sword I and II.
+however, occur with Simon the Sorcerer 1 and 2, nor with Broken Sword 1 and 2.
 
 
 7.0) Music and Sound: 
@@ -1250,7 +1250,7 @@ The following keywords are recognized:
 
         boot_param      number   Pass this number to the boot script
 
-Broken Sword II adds the following non-standard keywords:
+Broken Sword 2 adds the following non-standard keywords:
 
         gfx_details     number   Graphics details setting (0-3)
         music_mute      bool     If true, music is muted

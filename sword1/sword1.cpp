@@ -48,9 +48,9 @@ using namespace Sword1;
 
 /* Broken Sword 1 */
 static const GameSettings sword1FullSettings =
-	{"sword1", "Broken Sword I", GF_DEFAULT_TO_1X_SCALER};
+	{"sword1", "Broken Sword 1", GF_DEFAULT_TO_1X_SCALER};
 static const GameSettings sword1DemoSettings =
-	{"sword1demo", "Broken Sword I (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword1::GF_DEMO };
+	{"sword1demo", "Broken Sword 1 (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword1::GF_DEMO };
 
 // check these subdirectories (if present)
 static const char *g_dirNames[] = {	"clusters",	"speech" };
