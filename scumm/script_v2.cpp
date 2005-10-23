@@ -1104,7 +1104,15 @@ void ScummEngine_v2::o2_ifClassOfIs() {
 void ScummEngine_v2::o2_walkActorTo() {
 	int x, y;
 	Actor *a;
-	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_walkActorTo");
+
+	int act = getVarOrDirectByte(PARAM_1);
+
+	// FIXME: Work around for bug #1252606
+	if (_gameId == GID_ZAK && _version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
+		act = VAR(VAR_EGO);
+	}
+
+	a = derefActor(act, "o2_walkActorTo");
 
 	x = getVarOrDirectByte(PARAM_2) * 8;
 	y = getVarOrDirectByte(PARAM_3) * 2;
