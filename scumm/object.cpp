@@ -394,9 +394,13 @@ void ScummEngine::drawRoomObjects(int arg) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
 				drawRoomObject(i, arg);
 		}
-		for (i = (_numLocalObjects-1); i > 0; i--) {
-			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index != 0)
-				drawRoomObject(i, arg);
+		// FIXME: Work around for fbear regressions, causes parts of verb area to appear in upper left corner
+		// when changing rooms sometimes.
+		if (_heversion >= 71) {
+			for (i = (_numLocalObjects-1); i > 0; i--) {
+				if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index != 0)
+					drawRoomObject(i, arg);
+			}
 		}
 	} else if (_gameId == GID_SAMNMAX) {
 		// In Sam & Max, objects are drawn in reverse order.
