@@ -50,7 +50,7 @@ Ps2File::~Ps2File(void) {
 
 class Ps2ReadFile : public Ps2File {
 public:
-	Ps2ReadFile(int64 cacheId);
+	Ps2ReadFile(int64 cacheId, bool stream);
 	virtual ~Ps2ReadFile(void);
 	virtual bool open(const char *name);
 	virtual uint32 read(void *dest, uint32 len);
@@ -69,9 +69,10 @@ private:
 	uint32 _fileSize, _bytesInCache, _cacheOfs;
 
 	uint32 _readBytesBlock;
+	bool _stream;
 };
 
-Ps2ReadFile::Ps2ReadFile(int64 cacheId) : Ps2File(cacheId) {
+Ps2ReadFile::Ps2ReadFile(int64 cacheId, bool stream) : Ps2File(cacheId) {
 	_fd = -1;
 	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE);
 
@@ -80,6 +81,7 @@ Ps2ReadFile::Ps2ReadFile(int64 cacheId) : Ps2File(cacheId) {
 	_fileSize = _bytesInCache = _cacheOfs = 0;
 	_cacheOpRunning = false;
 	_readBytesBlock = 0;
+	_stream = stream;
 
 	ee_sema_t newSema;
 	newSema.init_count = 1;
@@ -161,7 +163,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 		if (fio.poll(_fd)) // did it finish?
 			cacheReadSync(); // yes.
 	}
-	if ((!_cacheOpRunning) && (_readBytesBlock >= CACHE_READ_THRESHOLD) && fio.fioAvail()) {
+	if ((!_cacheOpRunning) && ((_readBytesBlock >= CACHE_READ_THRESHOLD) || _stream) && fio.fioAvail()) {
 		// the engine seems to do sequential reads and there are no other I/Os going on. read ahead.
 		uint32 cachePosEnd = _cachePos + _bytesInCache;
 
@@ -424,6 +426,9 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	if (rdOnly && tocManager.haveEntries())
 		cacheId = tocManager.fileExists(fname);
 
+	if (strchr(fname, ' '))
+		return NULL;
+
 	if (cacheId != 0) {
 		Ps2File *file = findInCache(cacheId);
 		if (file) {
@@ -432,11 +437,8 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		}
 
 		if (rdOnly) {
-			// smush files need a quite different caching behaviour than normal data files
-			if (strstr(fname, ".san") || strstr(fname, ".SAN") || strstr(fname, ".San"))
-				file = new Ps2SmushFile(cacheId);
-			else
-				file = new Ps2ReadFile(cacheId);
+			bool isAudioFile = strstr(fname, ".bun") || strstr(fname, ".BUN") || strstr(fname, ".Bun");
+			file = new Ps2ReadFile(cacheId, isAudioFile);
 		} else
 			file = new Ps2WriteFile(cacheId);
 
@@ -453,10 +455,17 @@ void checkCacheListLen(void) {
 	while ((cacheListLen > MAX_CACHED_FILES) || ((openFileCount > 13) && cacheListLen)) {
 		assert(cacheListEnd && cacheListStart);
 		delete cacheListEnd->file;
-		cacheListEnd->prev->next = NULL;
-		FioHandleCache *temp = cacheListEnd;
-		cacheListEnd = cacheListEnd->prev;
-		delete temp;
+		if (cacheListEnd->prev) {
+			cacheListEnd->prev->next = NULL;
+			FioHandleCache *temp = cacheListEnd;
+			cacheListEnd = cacheListEnd->prev;
+			delete temp;
+		} else {
+			assert(cacheListEnd == cacheListStart);
+			assert(cacheListLen == 1);
+			delete cacheListEnd;
+			cacheListEnd = cacheListStart = NULL;
+		}
 		cacheListLen--;
 		openFileCount--;
 	}

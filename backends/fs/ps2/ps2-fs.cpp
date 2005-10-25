@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <cdvd_rpc.h>
 
-#define MAX_LIST_ENTRIES 64
+#define MAX_LIST_ENTRIES 512
 
 class Ps2FilesystemNode : public AbstractFilesystemNode {
 protected:
@@ -86,8 +86,7 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
 	FSList myList;
-
-	struct TocEntry tocEntries[MAX_LIST_ENTRIES];
+	struct TocEntry *tocEntries = (struct TocEntry*)malloc(MAX_LIST_ENTRIES * sizeof(struct TocEntry));
 	int files;
 	char listDir[512];
 	sprintf(listDir, "%s/", _path.c_str() + 5);
@@ -118,6 +117,7 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 			myList.push_back(wrap(new Ps2FilesystemNode(&dirEntry)));
 		}
 	}
+	free(tocEntries);
 	return myList;
 }
 

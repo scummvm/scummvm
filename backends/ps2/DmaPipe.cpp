@@ -169,7 +169,7 @@ void DmaPipe::flatRect(const GsVertex *p1, const GsVertex *p2, const GsVertex *p
 void DmaPipe::flatRect(const GsVertex *p1, const GsVertex *p2, uint32 rgba) {
 	checkSpace(3);
 	_pipes[_curPipe]->setGifRegListTag( 4, 0xffffffffffff5510);
-	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_SPRITE, 0, 0, 0, 0, 0, 0, 0, 0),
+	_pipes[_curPipe]->setListReg( GS_SET_PRIM(PR_SPRITE, 0, 0, 0, 1, 0, 0, 0, 0),
 								  GS_SET_COLQ(rgba));
 	_pipes[_curPipe]->setListReg( GS_SET_XYZ(p1->x, p1->y, p1->z),
 								  GS_SET_XYZ(p2->x, p2->y, p2->z));

@@ -29,6 +29,17 @@ class Gs2dScreen;
 class Ps2Input;
 class Ps2SaveFileManager;
 
+#define _REC_MUTEX_
+
+#ifdef _REC_MUTEX_
+#define MAX_MUTEXES 32
+struct Ps2Mutex {
+	int sema;
+	int owner;
+	int count;
+};
+#endif
+
 class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(void);
@@ -38,11 +49,17 @@ public:
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
 	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-
-	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
+	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual bool grabRawScreen(Graphics::Surface *surf);
+	virtual void updateScreen();
+
+	virtual void showOverlay();
+	virtual void hideOverlay();
+	virtual void clearOverlay();
+	virtual void grabOverlay(OverlayColor *buf, int pitch);
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 
 	virtual bool showMouse(bool visible);
 
@@ -69,12 +86,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
@@ -90,28 +101,32 @@ public:
 
 	void timerThread(void);
 	void soundThread(void);
+	void msgPrintf(int millis, char *format, ...);
+
 private:
 	volatile OSystem::TimerProc _scummTimerProc;
 	volatile OSystem::SoundProc _scummSoundProc;
 	void *_scummSoundParam;
-	int16 *_soundBufL, *_soundBufR;
 	int _soundSema;
 
 	void initTimer(void);
-	void fatalError(char *str);
+	void readRtcTime(void);
 
-	bool loadModules(char *errorStr);
+	void loadModules(void);
 	bool _mouseVisible;
-	bool _useHdd, _useMouse, _useKbd;
+	bool _useMouse, _useKbd;
 
 	Ps2SaveFileManager *_saveManager;
-
-	uint16 _width, _height;
 
 	Gs2dScreen	*_screen;
 	Ps2Input	*_input;
 	uint16		_oldMouseX, _oldMouseY;
-
+	uint32		_msgClearTime;
+	uint16		_printY;
+#ifdef _REC_MUTEX_
+	int			_mutexSema;
+	Ps2Mutex	*_mutex;
+#endif
 	uint8		*_timerStack, *_soundStack;
 	int32		_timerTid, _soundTid;
 	static const GraphicsMode _graphicsMode;

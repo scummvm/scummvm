@@ -43,6 +43,7 @@
 #include "common/file.h"
 #include "backends/ps2/sysdefs.h"
 #include <libmc.h>
+#include <libhdd.h>
 #include "backends/ps2/cd.h"
 #include <sio.h>
 #include <fileXio_rpc.h>
@@ -53,8 +54,8 @@
 #define SOUND_STACK_SIZE (1024 * 32)
 #define SMP_PER_BLOCK 800
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
-#define BUS_CLOCK (150 * 1000 * 1000) // 150 Mhz Bus clock
-#define CLK_DIVIS 5859	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (~100 times)
+#define BUS_CLOCK 147456000 // bus clock, a little less than 150 mhz
+#define CLK_DIVIS 5760	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (100 times)
 
 #ifdef USE_PS2LINK
 #define IRX_PREFIX "host:"
@@ -67,13 +68,13 @@
 static int g_TimerThreadSema = -1, g_SoundThreadSema = -1;
 static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
 static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
-static volatile uint64 msecCount = 0;
+static volatile uint32 msecCount = 0;
 
 OSystem_PS2 *g_systemPs2 = NULL;
 
-void readRtcTime(void);
-
 int gBitFormat = 555;
+
+#define FOREVER 2147483647
 
 namespace Graphics {
 	extern const NewFont g_sysfont;
@@ -84,7 +85,7 @@ void sioprintf(const char *zFormat, ...) {
 	char resStr[2048];
 
 	va_start(ap,zFormat);
-	int res = vsnprintf(resStr, 2048, zFormat, ap);
+	vsnprintf(resStr, 2048, zFormat, ap);
 	va_end(ap);
 
 	sio_puts(resStr);
@@ -113,7 +114,7 @@ extern "C" int main(int argc, char *argv[]) {
 	sio_puts("IOP synced.");
 	SifInitRpc(0);
 	SifLoadFileInit();
-    cdvdInit(CDVD_INIT_NOWAIT);
+	cdvdInit(CDVD_INIT_NOWAIT);
 #endif
 
 	ee_thread_t thisThread;
@@ -143,8 +144,8 @@ extern "C" int main(int argc, char *argv[]) {
 }
 
 s32 timerInterruptHandler(s32 cause) {
-	msecCount += (((uint64)256 * CLK_DIVIS) << 32) / (BUS_CLOCK / 1000);
 	T0_MODE = 0xDC2; // same value as in initialization.
+	msecCount += 10;
 
 	iSignalSema(g_SoundThreadSema);
 	iSignalSema(g_TimerThreadSema);
@@ -175,54 +176,65 @@ void systemSoundThread(OSystem_PS2 *system) {
 }
 
 OSystem_PS2::OSystem_PS2(void) {
-	sioprintf("OSystem_PS2 constructor\n");
-
 	_soundStack = _timerStack = NULL;
 	_scummTimerProc = NULL;
 	_scummSoundProc = NULL;
 	_scummSoundParam = NULL;
+	_printY = 0;
+	_msgClearTime = 0;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
-	_width = 320;
-	_height = 200;
 
-	sioprintf("Initializing timer\n");
+	sioprintf("Initializing system...");
 	initTimer();
 
 	_screen->wantAnim(true);
 
-	char errorStr[256];
-	if (!loadModules(errorStr))
-		fatalError(errorStr);
+	sioprintf("Loading IOP modules...");
+	loadModules();
 
-	sioprintf("Initializing SjPCM");
-	if (SjPCM_Init(0) < 0)
-		fatalError("SjPCM Bind failed");
+	int res;
+	if ((res = SjPCM_Init(0)) < 0) {
+		msgPrintf(FOREVER, "SjPCM Bind failed: %d", res);
+		quit();
+	}
 
-	if (CDVD_Init() != 0)
-		fatalError("CDVD_Init failed");
+	if ((res = CDVD_Init()) != 0) {
+		msgPrintf(FOREVER, "CDVD Init failed: %d", res);
+		quit();
+	}
+	
+	if ((res = fileXioInit()) < 0) {
+		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
+		quit();
+	}
+	fileXioSetBlockMode(FXIO_NOWAIT);
 
 	_mouseVisible = false;
 
 	sioprintf("reading RTC");
 	readRtcTime();
 
-	sioprintf("Initializing FXIO");
-	if (fileXioInit() < 0)
-		fatalError("Can't init fileXio");
-
-	fileXioSetBlockMode(FXIO_NOWAIT);
-
 	sioprintf("Starting SavefileManager");
 	_saveManager = new Ps2SaveFileManager(this, _screen);
-
-	_soundBufL = (int16*)malloc(SMP_PER_BLOCK * sizeof(int16));
-	_soundBufR = (int16*)malloc(SMP_PER_BLOCK * sizeof(int16));
 
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
 
+#ifdef _REC_MUTEX_
+	_mutex = new Ps2Mutex[MAX_MUTEXES];
+
+	ee_sema_t newSema;
+	newSema.init_count = 1;
+	newSema.max_count = 1;
+	_mutexSema = CreateSema(&newSema);
+	for (int i = 0; i < MAX_MUTEXES; i++) {
+		_mutex[i].sema = -1;
+		_mutex[i].count = _mutex[i].owner = 0;
+	}
+#endif
 	_screen->wantAnim(false);
+	_screen->clearScreen();
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
@@ -267,7 +279,7 @@ void OSystem_PS2::initTimer(void) {
 	StartThread(_timerTid, this);
 	StartThread(_soundTid, this);
 
-	// these semaphores are used for OSystem::delay()
+	// these semaphores are used for OSystem::delayMillis()
 	threadSema.init_count = 0;
 	threadSema.max_count = 1;
 	g_MainWaitSema = CreateSema(&threadSema);
@@ -279,7 +291,7 @@ void OSystem_PS2::initTimer(void) {
 	EnableIntc(INT_TIMER0);
 	T0_HOLD = 0;
 	T0_COUNT = 0;
-	T0_COMP = CLK_DIVIS; // (busclock / 256) / 5859 = ~ 100.0064
+	T0_COMP = CLK_DIVIS; // (BUS_CLOCK / 256) / CLK_DIVIS = 100
 	T0_MODE = TIMER_MODE( 2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
 }
 
@@ -298,6 +310,9 @@ void OSystem_PS2::soundThread(void) {
 	_soundSema = CreateSema(&soundSema);
 	assert(_soundSema >= 0);
 
+	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
+	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
+
 	int bufferedSamples = 0;
 	int cycles = 0;
 	while (1) {
@@ -311,7 +326,7 @@ void OSystem_PS2::soundThread(void) {
 
 		WaitSema(_soundSema);
 		if (_scummSoundProc) {
-			if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
+			if (bufferedSamples <= 4 * SMP_PER_BLOCK) {
 				// we have to produce more samples, call sound mixer
 				// the scratchpad at 0x70000000 is used as temporary soundbuffer
 				_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
@@ -343,12 +358,14 @@ void OSystem_PS2::soundThread(void) {
 					"  addiu $t8, 32\n\t"
 					"  bnez  $t9, loop\n\t"		// loop
 						:  // outputs
-				 		: "r"(_soundBufL), "r"(_soundBufR)  // inputs
+				 		: "r"(soundBufL), "r"(soundBufR)  // inputs
 					//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
 						: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
 				);
 				// and feed it into the SPU
-				SjPCM_Enqueue((short int*)_soundBufL, (short int*)_soundBufR, SMP_PER_BLOCK, 0);
+				// non-blocking call, the function will return before the buffer's content
+				// was transferred.
+				SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
 				bufferedSamples += SMP_PER_BLOCK;
 			}
 		}
@@ -356,7 +373,7 @@ void OSystem_PS2::soundThread(void) {
 	}
 }
 
-char *irxModules[] = {
+const char *irxModules[] = {
 	"rom0:SIO2MAN",
 	"rom0:MCMAN",
 	"rom0:MCSERV",
@@ -370,40 +387,36 @@ char *irxModules[] = {
 	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX
 };
 
-bool OSystem_PS2::loadModules(char *errorStr) {
+void OSystem_PS2::loadModules(void) {
 
-	_useHdd = _useMouse = _useKbd = false;
+	_useMouse = _useKbd = false;
 
 	int res;
 	for (int i = 0; i < ARRAYSIZE(irxModules); i++) {
 		if ((res = SifLoadModule(irxModules[i], 0, NULL)) < 0) {
-			sprintf(errorStr, "Can't load module %s (%d)", irxModules[i], res);
-			return false;
+			msgPrintf(FOREVER, "Unable to load module %s, Error %d", irxModules[i], res);
+			_screen->wantAnim(false);
+			SleepThread();
 		}
 	}
-	printf("Modules loaded\n");
+
 	// now try to load optional IRXs
-	if ((res = SifLoadModule(IRX_PREFIX "USBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: USBD.IRX (%d)\n", res);
-	else {
+	if ((res = SifLoadModule(IRX_PREFIX "USBD.IRX" IRX_SUFFIX, 0, NULL)) >= 0) {
 		if ((res = SifLoadModule(IRX_PREFIX "PS2MOUSE.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: PS2MOUSE.IRX (%d)\n", res);
+			sioprintf("Cannot load module: PS2MOUSE.IRX (%d)", res);
 		else
 			_useMouse = true;
 		if ((res = SifLoadModule(IRX_PREFIX "RPCKBD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-			sioprintf("Cannot load module: RPCKBD.IRX (%d)\n", res);
+			sioprintf("Cannot load module: RPCKBD.IRX (%d)", res);
 		else
 			_useKbd = true;
 	}
-	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, Hdd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _useHdd ? "" : "not ");
-	return true;
+	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ");
 }
 
 void OSystem_PS2::initSize(uint width, uint height, int overscale) {
 	printf("initializing new size: (%d/%d)...", width, height);
 	_screen->newScreenSize(width, height);
-	_width = width;
-	_height = height;
 	_screen->setMouseXy(width / 2, height / 2);
 	_input->newRange(0, 0, width - 1, height - 1);
 	_input->warpTo(width / 2, height / 2);
@@ -422,30 +435,24 @@ void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	if (x < 0) {
-		w += x;
-		buf -= x;
-		x = 0;
-	}
-	if (y < 0) {
-		h += y;
-		buf -= y * pitch;
-		y = 0;
-	}
-	if (x + w > _width)
-		w = _width - x;
-	if (y + h > _height)
-		h = _height - y;
-	if ((w > 0) && (h > 0))
-		_screen->copyScreenRect((const uint8*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
+}
+
+bool OSystem_PS2::grabRawScreen(Graphics::Surface *surf) {
+	_screen->grabScreen(surf);
+	return true;
 }
 
 void OSystem_PS2::updateScreen(void) {
+	if (_msgClearTime && (_msgClearTime < getMillis())) {
+		_screen->clearPrintfOverlay();
+		_msgClearTime = 0;
+	}
 	_screen->updateScreen();
 }
 
 uint32 OSystem_PS2::getMillis(void) {
-	return (uint32)(msecCount >> 32);
+	return msecCount;
 }
 
 void OSystem_PS2::delayMillis(uint msecs) {
@@ -500,6 +507,7 @@ Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
 	return _saveManager;
 }
 
+#ifndef _REC_MUTEX_
 OSystem::MutexRef OSystem_PS2::createMutex(void) {
 	ee_sema_t newSema;
 	newSema.init_count = 1;
@@ -521,6 +529,68 @@ void OSystem_PS2::unlockMutex(MutexRef mutex) {
 void OSystem_PS2::deleteMutex(MutexRef mutex) {
 	DeleteSema((int)mutex);
 }
+#else
+OSystem::MutexRef OSystem_PS2::createMutex(void) {
+	WaitSema(_mutexSema);
+	Ps2Mutex *mutex = NULL;
+	for (int i = 0; i < MAX_MUTEXES; i++)
+		if (_mutex[i].sema < 0) {
+			mutex = _mutex + i;
+			break;
+		}
+	if (mutex) {
+		ee_sema_t newSema;
+		newSema.init_count = 1;
+		newSema.max_count = 1;
+		mutex->sema = CreateSema(&newSema);
+		mutex->owner = mutex->count = 0;
+	} else
+		printf("OSystem_PS2::createMutex: ran out of Mutex slots!\n");
+	SignalSema(_mutexSema);
+	return (OSystem::MutexRef)mutex;
+}
+
+void OSystem_PS2::lockMutex(MutexRef mutex) {
+	WaitSema(_mutexSema);
+	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
+	int tid = GetThreadId();
+	assert(tid != 0);
+	if (sysMutex->owner && (sysMutex->owner == tid))
+		sysMutex->count++;
+	else {
+		SignalSema(_mutexSema);
+		WaitSema(sysMutex->sema);
+		WaitSema(_mutexSema);
+		sysMutex->owner = tid;
+		sysMutex->count = 0;
+	}
+	SignalSema(_mutexSema);
+}
+
+void OSystem_PS2::unlockMutex(MutexRef mutex) {
+	WaitSema(_mutexSema);
+	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
+	int tid = GetThreadId();
+	if (sysMutex->owner && sysMutex->count && (sysMutex->owner == tid))
+		sysMutex->count--;
+	else {
+		assert(sysMutex->count == 0);
+		SignalSema(sysMutex->sema);
+		sysMutex->owner = 0;
+	}
+	SignalSema(_mutexSema);
+}
+
+void OSystem_PS2::deleteMutex(MutexRef mutex) {
+	WaitSema(_mutexSema);
+	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
+	if (sysMutex->owner || sysMutex->count)
+		printf("WARNING: Deleting LOCKED mutex!\n");
+	DeleteSema(sysMutex->sema);
+	sysMutex->sema = -1;
+	SignalSema(_mutexSema);
+}
+#endif
 
 void OSystem_PS2::setShakePos(int shakeOffset) {
 	_screen->setShakePos(shakeOffset);
@@ -615,39 +685,67 @@ void OSystem_PS2::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 }
 
 int16 OSystem_PS2::getHeight(void) {
-	return _height;
+	return _screen->getHeight();
 }
 
 int16 OSystem_PS2::getWidth(void) {
-	return _width;
+	return _screen->getWidth();
+}
+
+void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
+	va_list ap;
+	char resStr[1024];
+	memset(resStr, 0, 1024);
+
+	va_start(ap, format);
+	vsnprintf(resStr, 1023, format, ap);
+	va_end(ap);
+
+	uint16 posY = 2;
+	int maxWidth = 0;
+
+	Graphics::Surface surf;
+	surf.create(300, 200, 1);
+
+	char *lnSta = resStr;
+	while (*lnSta && (posY < 180)) {
+		char *lnEnd = lnSta;
+		while ((*lnEnd) && (*lnEnd != '\n'))
+			lnEnd++;
+		*lnEnd = '\0';
+		
+		Common::String str(lnSta);
+		int width = Graphics::g_sysfont.getStringWidth(str);
+		if (width > maxWidth)
+			maxWidth = width;
+		int posX = (300 - width) / 2;
+		Graphics::g_sysfont.drawString(&surf, str, posX, posY, 300 - posX, 1);
+		posY += 14;
+
+        lnSta = lnEnd + 1;
+	}
+
+	uint8 *scrBuf = (uint8*)memalign(64, 320 * 200);
+	memset(scrBuf, 4, 320 * 200);
+
+	uint8 *dstPos = scrBuf + ((200 - posY) >> 1) * 320 + (320 - maxWidth) / 2;
+	for (int y = 0; y < posY; y++) {
+		uint8 *srcPos = (uint8*)surf.getBasePtr((300 - maxWidth) / 2, y);
+		for (int x = 0; x < maxWidth; x++)
+			dstPos[x] = srcPos[x] + 5;
+		dstPos += 320;
+	}
+	surf.free();
+	_screen->copyPrintfOverlay(scrBuf);
+	free(scrBuf);
+	_msgClearTime = millis + getMillis();
 }
 
 void OSystem_PS2::quit(void) {
 	printf("OSystem_PS2::quit\n");
+	_screen->wantAnim(false);
 	clearSoundCallback();
 	setTimerCallback(NULL, 0);
-	SleepThread();
-}
-
-void OSystem_PS2::fatalError(char *errorStr) {
-	sioprintf("ERROR: %s", errorStr);
-	printf("ERROR: %s\n", errorStr);
-	Graphics::Surface surf;
-	surf.create(300, 200, 1);
-	Common::String str(errorStr);
-	Graphics::g_sysfont.drawString(&surf, str, 0, 0, 300, 0xFF);
-
-	uint32 palette[256];
-	palette[0] = 0x00400000;
-	for (int i = 1; i < 256; i++)
-		palette[i] = 0xFFFFFFFF;
-
-	_screen->setPalette(palette, 0, 256);
-	_screen->hideOverlay();
-	_screen->wantAnim(false);
-
-	_screen->copyScreenRect((uint8*)surf.getBasePtr(0, 0), surf.pitch, 10, 10, 300, 100);
-	_screen->updateScreen();
 	SleepThread();
 }
 
@@ -687,13 +785,13 @@ void buildNewDate(int dayDiff) {
 
 #define SECONDS_PER_DAY (24 * 60 * 60)
 
-void readRtcTime(void) {
+void OSystem_PS2::readRtcTime(void) {
 	struct CdClock cdClock;
 	CDVD_ReadClock(&cdClock);
-	g_lastTimeCheck = (uint32)(msecCount >> 32);
+	g_lastTimeCheck = msecCount;
 
 	if (cdClock.stat) {
-		printf("Unable to read RTC time, EC: %d\n", cdClock.stat);
+		msgPrintf(5000, "Unable to read RTC time, EC: %d\n", cdClock.stat);
 		g_day = g_month = 1;
 		g_year = 0;
 		g_timeSecs = 0;
@@ -717,7 +815,6 @@ void readRtcTime(void) {
 			buildNewDate(+1);
 			timeSecs -= SECONDS_PER_DAY;
 		}
-
 		g_timeSecs = (uint32)timeSecs;
 	}
 
@@ -726,17 +823,15 @@ void readRtcTime(void) {
 }
 
 extern time_t time(time_t *p) {
-	time_t blah;
-	memset(&blah, 0, sizeof(time_t));
-	return blah;
+	return (time_t)g_timeSecs;
 }
 
 extern struct tm *localtime(const time_t *p) {
-	uint32 currentSecs = g_timeSecs + ((msecCount >> 32) - g_lastTimeCheck) / 1000;
+	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
 		buildNewDate(+1);
-		g_timeSecs -= SECONDS_PER_DAY;
-		currentSecs = g_timeSecs + ((msecCount >> 32) - g_lastTimeCheck) / 1000;
+		g_lastTimeCheck += SECONDS_PER_DAY * 1000;
+		currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	}
 
 	static struct tm retStruct;
@@ -747,7 +842,7 @@ extern struct tm *localtime(const time_t *p) {
 	retStruct.tm_sec  = currentSecs % 60;
 	retStruct.tm_year = g_year + 100;
 	retStruct.tm_mday = g_day;
-	retStruct.tm_mon  = g_month;
+	retStruct.tm_mon  = g_month - 1;
 	// tm_wday, tm_yday and tm_isdst are zero for now
     return &retStruct;
 }

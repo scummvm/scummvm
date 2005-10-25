@@ -36,17 +36,29 @@ enum GsInterlace {
 	GS_INTERLACED
 };
 
+
+namespace Graphics {
+	struct Surface;
+}
+
 class Gs2dScreen {
 public:
 	Gs2dScreen(uint16 width, uint16 height, TVMode tvMode);
 	~Gs2dScreen(void);
 	void newScreenSize(uint16 width, uint16 height);
 	uint8 tvMode(void);
+	uint16 getWidth(void);
+	uint16 getHeight(void);
 
-	void copyScreenRect(const uint8 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
+	void copyPrintfOverlay(const uint8* buf);
+	void clearPrintfOverlay(void);
+	void clearScreen(void);
+
+	void copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w, int h);
 	void setPalette(const uint32 *pal, uint8 start, uint16 num);
-	void grabPalette(uint32 *pal, uint8 start, uint16 num);
 	void updateScreen(void);
+	void grabPalette(uint32 *pal, uint8 start, uint16 num);
+	void grabScreen(Graphics::Surface *surf);
 	//- overlay routines
 	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
 	void grabOverlay(uint16 *buf, uint16 pitch);
@@ -62,6 +74,7 @@ public:
 	void animThread(void);
 	void wantAnim(bool runIt);
 private:
+	void uploadToVram(void);
 	void createAnimTextures(void);
 
 	DmaPipe *_dmaPipe;
@@ -73,7 +86,7 @@ private:
 	uint8  _curDrawBuf;
 	uint32 _frameBufPtr[2]; //
 	uint32 _clutPtrs[3];    //   vram pointers
-	uint32 _texPtrs[3];     //
+	uint32 _texPtrs[4];     //
 
 	uint16 _width, _height, _pitch;
 	int16  _mouseX, _mouseY, _hotSpotX, _hotSpotY;
