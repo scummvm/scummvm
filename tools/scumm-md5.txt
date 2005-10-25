@@ -267,7 +267,7 @@ Backyard Baseball
 
 Backyard Baseball 2001
 	-	All	en	a86f9c49355579c30d4a55b477c0d869	baseball2001	Kirben
-	Demo	Windows	en	a194f15f51ee62badab74b9e7da97693	baseball2001	khalek, sev
+	Demo	All	en	a194f15f51ee62badab74b9e7da97693	baseball2001	khalek, sev
 
 Backyard Baseball 2003
 	-	Windows	en	efe0a04a703e765ebebe92b6c8aa6b86	baseball2003	sev
@@ -360,7 +360,7 @@ Freddi Fish 5: The Case of the Creature of Coral Cave
 	-	Windows	nl	b8955d7d23b4972229060d1592489fef	freddicove	adutchguy
 	-	Windows	ru	21abe302e1b1e2b66d6f5c12e241ebfd	freddicove	sev
 	-	Windows	ru	4ce2d5b355964bbcb5e5ce73236ef868	freddicove	sev
-	Demo	Windows	en	45082a5c9f42ba14dacfe1fdeeba819d	freddicove	sev
+	Demo	All	en	45082a5c9f42ba14dacfe1fdeeba819d	freddicove	sev
 	Demo	Windows	nl	6b257bb2827dd894b8109a50a1a18b5a	freddicove	Kirben
 
 Freddi Fish and Luther's Water Worries
