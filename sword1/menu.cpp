@@ -96,7 +96,7 @@ Menu::Menu(Screen *pScreen, Mouse *pMouse) {
 	_objectBarStatus = MENU_CLOSED;
 	_fadeSubject = 0;
 	_fadeObject = 0;
-	for (cnt = 0; cnt < TOTAL_subjects; cnt++)
+	for (cnt = 0; cnt < 16; cnt++)
 		_subjects[cnt] = NULL;
 	for (cnt = 0; cnt < TOTAL_pockets; cnt++)
 		_objects[cnt] = NULL;
