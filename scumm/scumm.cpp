@@ -748,6 +748,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi3", "f3-mdemo", kGenPC },
 	{ "freddi3", "FF3-DEMO", kGenPC },
 	{ "freddi3", "MM3-DEMO", kGenPC },
+	{ "freddi3", "MM3-Demo", kGenMac }, // FR Mac demo
 	{ "freddi4", "f4-demo", kGenPC },
 	{ "freddi4", "ff4demo", kGenPC },
 	{ "freddi4", "Freddi 4 Demo", kGenMac },
@@ -760,6 +761,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddicove", "ff5demo", kGenPC },
 	{ "freddicove", "FFCoveDemo", kGenPC },
 	{ "freddicove", "FreddiCoveDemo", kGenMac },
+	{ "freddicove", "FF5Demo", kGenMac }, // NL Mac demo
 	{ "FreddisFunShop", "Freddi's FunShop", kGenMac },
 	{ "lost", "Lost and Found", kGenMac },
 	{ "lost", "smaller", kGenPC },
@@ -768,12 +770,14 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama", "Pajama Sam", kGenMac },
 	{ "pajama", "PajamaNHD", kGenPC },
 	{ "pajama", "SAMDEMO", kGenPC },
+	{ "pajama", "SAMDEMO", kGenMac }, // FR Mac demo
 	{ "pajama2", "Pajama Sam 2", kGenMac },
 	{ "pajama2", "PajamaTAL", kGenPC },
 	{ "pajama2", "PyjamaDBMN", kGenPC },
 	{ "pajama2", "PJ2Demo", kGenMac },
 	{ "pajama2", "pj2demo", kGenPC },
 	{ "pajama2", "Pjs2demo", kGenPC },
+	{ "pajama2", "PJ2 Demo", kGenMac }, // NL Mac demo
 	{ "pajama3", "Pajama Sam 3-Demo", kGenMac },
 	{ "pajama3", "pj3-demo", kGenPC },
 	{ "pajama3", "pj3demo", kGenPC },
@@ -796,6 +800,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttrace", "racedemo", kGenPC },
 	{ "puttrace", "RaceDemo", kGenMac },
 	{ "puttrace", "racedemo", kGenMac },
+	{ "puttrace", "Putt500 demo", kGenMac }, // NL Mac demo
 	{ "puttrace", "Putt Race", kGenMac },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttPuttTTT", kGenPC },
@@ -808,6 +813,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "timedemo", kGenPC },
 	{ "putttime", "TimeDemo", kGenMac },
 	{ "putttime", "TEMPDEMO", kGenPC },
+	{ "putttime", "Tempdemo", kGenMac }, // FR Mac demo
 	{ "puttzoo", "Puttzoo Demo", kGenMac },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "puttzoo", "zoodemo", kGenPC },
@@ -821,6 +827,8 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox", "Spydemo", kGenPC},
 	{ "spyfox", "SPYFox", kGenMac },
 	{ "spyfox", "SPYFoxDC", kGenPC },
+	{ "spyfox", "Spy Fox Demo", kGenMac }, // NL Mac demo
+	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
 	{ "spyfox2", "sf2-demo", kGenPC },
 	{ "spyfox2", "sf2demo", kGenPC },
 	{ "spyfox2", "Spy Fox 2 - Demo", kGenMac },

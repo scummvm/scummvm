@@ -340,7 +340,7 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	freddi3	khalek, sev
-	Demo	Windows	fr	bbadf7309c4a2c2763e4bbba3c3be634	freddi3	Kirben
+	Demo	All	fr	bbadf7309c4a2c2763e4bbba3c3be634	freddi3	Kirben
 	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	freddi3	adutchguy
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
@@ -361,7 +361,7 @@ Freddi Fish 5: The Case of the Creature of Coral Cave
 	-	Windows	ru	21abe302e1b1e2b66d6f5c12e241ebfd	freddicove	sev
 	-	Windows	ru	4ce2d5b355964bbcb5e5ce73236ef868	freddicove	sev
 	Demo	All	en	45082a5c9f42ba14dacfe1fdeeba819d	freddicove	sev
-	Demo	Windows	nl	6b257bb2827dd894b8109a50a1a18b5a	freddicove	Kirben
+	Demo	All	nl	6b257bb2827dd894b8109a50a1a18b5a	freddicove	Kirben, sev
 
 Freddi Fish and Luther's Water Worries
 	-	All	en	4ba37f835be11a59d969f90f272f575b	water	Kirben
@@ -405,7 +405,7 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 	-	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pajama	khalek, sev
 	Demo	All	en	d7ab7cd6105546016e6a0d46fb36b964	pajama	khalek
-	Demo	Windows	fr	7f945525abcd48015adf1632637a44a1	pajama	Kirben
+	Demo	All	fr	7f945525abcd48015adf1632637a44a1	pajama	Kirben
 	Demo	Windows	nl	0305e850382b812fec6e5998ef88a966	pajama	adutchguy
 
 Pajama Sam 2: Thunder and Lightning Aren't so Frightening
@@ -413,7 +413,7 @@ Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	-	Windows	de	c6907d44f1166941d982864cd42cdc89	pajama2	nachbarnebenan
 	-	Windows	ru	32709cbeeb3044b34129950860a83f14	pajama2	sev
 	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pajama2	sev
-	Demo	Windows	nl	30ba1e825d4ad2b448143ae8df18482a	pajama2	Kirben
+	Demo	All	nl	30ba1e825d4ad2b448143ae8df18482a	pajama2	Kirben
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	-	Windows	en	f7711f9264d4d43c2a1518ec7c10a607	pajama3	Kirben
@@ -485,7 +485,7 @@ Putt-Putt Travels Through Time
 	-	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	PuttTime	khalek
-	Demo	Windows	fr	59d5cfcc5e672a6e07baae01328b918b	PuttTime	Kirben
+	Demo	All	fr	59d5cfcc5e672a6e07baae01328b918b	PuttTime	Kirben
 	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	PuttTime	adutchguy
 
 Putt-Putt and Pep's Balloon-O-Rama
@@ -517,7 +517,7 @@ Spy Fox 1: Dry Cereal
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
 	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
-	Demo	Windows	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
+	Demo	All	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
