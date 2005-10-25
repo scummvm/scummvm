@@ -397,7 +397,7 @@ Let's Explore the Jungle with Buzzy
 	-	Windows	en	8801fb4a1200b347f7a38523339526dd	jungle	Kirben
 
 Pajama Sam: Games to Play On Any Day
-	-	Windows	en	8a484262363a8e18be87112454f1456b	pjgames
+	-	All	en	8a484262363a8e18be87112454f1456b	pjgames Kirben
 
 Pajama Sam 1: No Need to Hide When It's Dark Outside
 	-	All	en	37aed3f91c1ef959e0bd265f9b13781f	pajama	Kirben
