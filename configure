@@ -544,7 +544,7 @@ fi
 
 echocheck "compiler version"
 
-cxx_name=`( $cc -v ) 2>&1 | tail -1 | cut -d ' ' -f 1`
+cxx_name=`( $cc -v ) 2>&1 | tail -n 1 | cut -d ' ' -f 1`
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
 	cxx_version="not found"
@@ -686,6 +686,16 @@ if test -n "$_host"; then
 			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
 			_def_align='#define SCUMM_NEED_ALIGNMENT'
 			_def_linupy="#define DLINUPY"
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			;;
+		arm-linux)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			_def_endianness='#define SCUMM_LITTLE_ENDIAN'
+			_def_align='#define SCUMM_NEED_ALIGNMENT'
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
