@@ -36,6 +36,8 @@
 #define MAX_CACHED_FILES 6
 #define CACHE_READ_THRESHOLD (16 * 2048)
 #define CACHE_FILL_MIN (2048 * 24)
+#define READ_ALIGN 64	// align all reads to the size of an EE cache line
+#define READ_ALIGN_MASK (READ_ALIGN - 1)
 
 extern void sioprintf(const char *zFormat, ...);
 
@@ -149,7 +151,7 @@ int Ps2ReadFile::seek(int32 offset, int origin) {
 			seekDest = -1;
 			break;
 	}
-	if ((seekDest >= 0) && (seekDest <= _fileSize)) {
+	if ((seekDest >= 0) && (seekDest <= (int)_fileSize)) {
 		_filePos = seekDest;
 		res = 0;
 	}
@@ -178,11 +180,12 @@ void Ps2ReadFile::cacheReadAhead(void) {
 
 		if (_cachePos + _bytesInCache <= _filePos) {
 			_cacheOfs = _bytesInCache = 0;
-			_cachePos = cachePosEnd = _filePos;
+			_cachePos = cachePosEnd = _filePos & ~READ_ALIGN_MASK;
 			assert(_filePos == _physFilePos);
 		} else {
             uint32 cacheDiff = _filePos - _cachePos;
 			assert(_bytesInCache >= cacheDiff);
+			cacheDiff &= ~READ_ALIGN_MASK;
 			_bytesInCache -= cacheDiff;
 			_cachePos += cacheDiff;
 			_cacheOfs = (_cacheOfs + cacheDiff) % CACHE_SIZE;
@@ -190,6 +193,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 
 		if (_physFilePos != cachePosEnd) {
 			sioprintf("unexpected _physFilePos %d cache %d %d", _physFilePos, _cacheOfs, _bytesInCache);
+			assert(!(cachePosEnd & READ_ALIGN_MASK));
 			_physFilePos = fio.seek(_fd, cachePosEnd, SEEK_SET);
 			if (_physFilePos != cachePosEnd) {
 				sioprintf("cache seek error: seek to %d instead of %d, fs = %d", _physFilePos, cachePosEnd, _fileSize);
@@ -204,7 +208,7 @@ void Ps2ReadFile::cacheReadAhead(void) {
 		if (cacheRead > MAX_READ_STEP)
 			cacheRead = MAX_READ_STEP;
 
-		assert(cacheRead);
+		assert((!(cacheRead & READ_ALIGN_MASK)) && cacheRead);
 
 		_cacheOpRunning = true;
 		fio.read(_fd, _cacheBuf + cacheDest, cacheRead);
@@ -227,7 +231,7 @@ uint32 Ps2ReadFile::read(void *dest, uint32 len) {
 	if ((_filePos < _cachePos) || (_filePos + len > _cachePos + _bytesInCache))
 		cacheReadSync(); // we have to read from CD, sync cache.
 
-	while (len) {
+	while (len && (_filePos != _fileSize)) {
 		if ((_filePos >= _cachePos) && (_filePos < _cachePos + _bytesInCache)) { // read from cache
 			uint32 staPos = (_cacheOfs + (_filePos - _cachePos)) % CACHE_SIZE;
 			uint32 cpyLen = _bytesInCache - (_filePos - _cachePos);
@@ -248,21 +252,24 @@ uint32 Ps2ReadFile::read(void *dest, uint32 len) {
 				if ((_filePos < _physFilePos) || (_filePos > _physFilePos + (CACHE_SIZE / 2)))
 					_readBytesBlock = 0; // reset cache hit count
 
-				if (fio.seek(_fd, _filePos, SEEK_SET) == _filePos)
-					_physFilePos = _filePos;
-				else
+				_physFilePos = _filePos & ~READ_ALIGN_MASK;
+				if (fio.seek(_fd, _physFilePos, SEEK_SET) != (int)_physFilePos)
 					break; // read beyond EOF
 			}
-			assert(_physFilePos == _filePos);
-			int doRead = (len > MAX_READ_STEP) ? MAX_READ_STEP : len;
+
+			int doRead = len + (_filePos - _physFilePos);
+			doRead = (doRead + READ_ALIGN_MASK) & ~READ_ALIGN_MASK;
+
+			if (doRead > MAX_READ_STEP)
+				doRead = MAX_READ_STEP;
 			if (doRead < 2048)
 				doRead = 2048;
 
 			fio.read(_fd, _cacheBuf, doRead);
-			_cachePos = _filePos;
+			_cachePos = _physFilePos;
 			_cacheOfs = 0;
 			_bytesInCache = fio.sync(_fd);
-			_physFilePos = _filePos + _bytesInCache;
+			_physFilePos += _bytesInCache;
 			if (!_bytesInCache)
 				break; // EOF
 		}
@@ -305,7 +312,7 @@ Ps2WriteFile::~Ps2WriteFile(void) {
 	if ((_fd >= 0) && (_bytesInCache)) {
 		fio.write(_fd, _cacheBuf, _bytesInCache);
 		int wrRes = fio.sync(_fd);
-		if (wrRes != _bytesInCache) // too late to return an error
+		if (wrRes != (int)_bytesInCache) // too late to return an error
 			printf("Cache flush on fclose(): Unable to write %d cached bytes to mc, only %d bytes written\n", _bytesInCache, wrRes);
 	}
 	if (_fd >= 0)
@@ -338,8 +345,7 @@ uint32 Ps2WriteFile::write(const void *src, uint32 len) {
 
 		if (_bytesInCache == CACHE_SIZE) {
 			fio.write(_fd, _cacheBuf, _bytesInCache);
-			int wrRes = fio.sync(_fd);
-			if (wrRes != _bytesInCache) {
+			if (fio.sync(_fd) != (int)_bytesInCache) {
 				printf("Unable to flush %d cached bytes to memory card!\n", _bytesInCache);
 				return 0;
 			}
@@ -604,7 +610,7 @@ int ps2_fputc(int c, FILE *stream) {
 
 int ps2_fputs(const char *s, FILE *stream) {
 	int len = strlen(s);
-	if (ps2_fwrite(s, 1, len, stream) == len)
+	if (ps2_fwrite(s, 1, len, stream) == (size_t)len)
 		return len;
 	else
 		return EOF;
@@ -666,8 +672,6 @@ void TocManager::readDir(const char *path, TocNode **node, int level) {
 }
 
 int64 TocManager::fileExists(const char *name) {
-	const char *tmpName = name;
-
 	if (((name[_rootLen] != '/') && (name[_rootLen] != '\0')) || (strnicmp(name, _root, _rootLen) != 0)) {
 		for (int i = 0; i < 8; i++)
 			if (name[i] == ':')	// we don't know the content of other drives,
