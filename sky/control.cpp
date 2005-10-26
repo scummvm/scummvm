@@ -1098,10 +1098,16 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 	Common::OutSaveFile *outf;
 
 	outf = _saveFileMan->openForSaving("SKY-VM.SAV");
-	if (outf != NULL) {
+	bool ioFailed = true;
+	if (outf) {
 		outf->write(tmpBuf, tmpPos - tmpBuf);
+		outf->flush();
+		if (!outf->ioFailed())
+			ioFailed = false;
 		delete outf;
 	}
+	if (ioFailed)
+		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV in directory %s", _saveFileMan->getSavePath());
 	free(tmpBuf);
 }
 
@@ -1121,7 +1127,10 @@ void Control::doAutoSave(void) {
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
-	if (outf->write(saveData, fSize) != fSize)
+	outf->write(saveData, fSize);
+	outf->flush();
+
+	if (outf->ioFailed())
 		displayMessage(0, "Unable to write autosave file '%s' in directory '%s'. Disk full?", fName, _saveFileMan->getSavePath());
 
 	delete outf;
@@ -1134,21 +1143,20 @@ uint16 Control::saveGameToFile(void) {
 
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
-	if (outf == NULL) {
+	if (outf == NULL)
 		return NO_DISK_SPACE;
-	}
 
 	uint8 *saveData = (uint8 *)malloc(0x20000);
 	uint32 fSize = prepareSaveData(saveData);
 
-	if (outf->write(saveData, fSize) != fSize) {
-		free(saveData);
-		delete outf;
-		return NO_DISK_SPACE;
-	}
-	delete outf;
+	uint32 writeRes = outf->write(saveData, fSize);
+	outf->flush();
+	if (outf->ioFailed())
+		writeRes = 0;
 	free(saveData);
-	return GAME_SAVED;
+	delete outf;
+
+	return (writeRes == fSize) ? GAME_SAVED : NO_DISK_SPACE;
 }
 
 #define STOSD(ptr, val) { *(uint32 *)(ptr) = TO_LE_32(val); (ptr) += 4; }
