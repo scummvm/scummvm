@@ -160,19 +160,44 @@ enum {
 	DEBUG_SMUSH	=	1 << 10		// Track SMUSH
 };
 
-/**
- * Internal header for any memory block allocated by the resource manager.
- *
- * @todo Hide MemBlkHeader; no code outside the resource manager should
- * have to use it, ever. Currently script code needs it to detect whether
- * some scripts have moved (in fetchScriptByte()).
- */
 struct MemBlkHeader {
 	uint32 size;
 };
 
 struct VerbSlot;
 struct ObjectData;
+
+struct V2MouseoverBox {
+	Common::Rect rect;
+	byte color;
+	byte hicolor;
+};
+
+enum ResTypes {
+	rtFirst = 1,
+	rtRoom = 1,
+	rtScript = 2,
+	rtCostume = 3,
+	rtSound = 4,
+	rtInventory = 5,
+	rtCharset = 6,
+	rtString = 7,
+	rtVerb = 8,
+	rtActorName = 9,
+	rtBuffer = 10,
+	rtScaleTable = 11,
+	rtTemp = 12,
+	rtFlObject = 13,
+	rtMatrix = 14,
+	rtBox = 15,
+	rtObjectName = 16,
+	rtRoomScripts = 17,
+	rtRoomImage = 18,
+	rtImage = 19,
+	rtTalkie = 20,
+	rtLast = 20,
+	rtNumTypes = 21
+};
 
 enum {
 	LIGHTMODE_dark			= 0,
@@ -266,6 +291,11 @@ enum WhereIsObject {
 	WIO_FLOBJECT = 4
 };
 
+struct LangIndexNode {
+	char tag[12+1];
+	int32 offset;
+};
+
 struct AuxBlock {
 	bool visible;
 	Common::Rect r;
@@ -282,37 +312,10 @@ struct AuxEntry {
 	int subIndex;
 };
 
-// TODO: Rename InfoStuff to something more descriptive
 struct InfoStuff {
 	uint32 date;
 	uint16 time;
 	uint32 playtime;
-};
-
-enum ResTypes {
-	rtFirst = 1,
-	rtRoom = 1,
-	rtScript = 2,
-	rtCostume = 3,
-	rtSound = 4,
-	rtInventory = 5,
-	rtCharset = 6,
-	rtString = 7,
-	rtVerb = 8,
-	rtActorName = 9,
-	rtBuffer = 10,
-	rtScaleTable = 11,
-	rtTemp = 12,
-	rtFlObject = 13,
-	rtMatrix = 14,
-	rtBox = 15,
-	rtObjectName = 16,
-	rtRoomScripts = 17,
-	rtRoomImage = 18,
-	rtImage = 19,
-	rtTalkie = 20,
-	rtLast = 20,
-	rtNumTypes = 21
 };
 
 class ResourceManager {
@@ -327,9 +330,7 @@ public:
 	uint32 tags[rtNumTypes];
 	const char *name[rtNumTypes];
 	byte **address[rtNumTypes];
-protected:
 	byte *flags[rtNumTypes];
-public:
 	byte *roomno[rtNumTypes];
 	uint32 *roomoffs[rtNumTypes];
 	uint32 *globsize[rtNumTypes];
@@ -346,20 +347,17 @@ public:
 
 	void freeResources();
 
+	bool validateResource(const char *str, int type, int index) const;
 	bool isResourceLoaded(int type, int index) const;
 
 	void lock(int type, int i);
 	void unlock(int type, int i);
-	bool isLocked(int type, int i) const;
 
 	void setResourceCounter(int type, int index, byte flag);
 	void increaseResourceCounter();
 
 	void resourceStats();
 	void expireResources(uint32 size);
-
-protected:
-	bool validateResource(const char *str, int type, int index) const;
 };
 
 class ScummEngine : public Engine {
@@ -581,7 +579,7 @@ protected:
 
 	bool saveState(int slot, bool compat);
 	bool loadState(int slot, bool compat);
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 	void saveLoadResource(Serializer *ser, int type, int index);	// "Obsolete"
 	void saveResource(Serializer *ser, int type, int index);
 	void loadResource(Serializer *ser, int type, int index);
