@@ -750,7 +750,7 @@ void Control::writeSavegameDescriptions(void) {
 
 	if (!outf) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Unable to write to path '%s'", _saveFileMan->getSavePath());
+		displayMessage(0, "Can't create SAVEGAME.INF in directory '%s'", _saveFileMan->getSavePath());
 		return;
 	}
 
@@ -765,6 +765,9 @@ void Control::writeSavegameDescriptions(void) {
 		else
 			outf->writeByte(255);
 	}
+	outf->flush();
+	if (outf->ioFailed())
+		displayMessage(0, "Can't write to SAVEGAME.INF in directory '%s'. Device full?", _saveFileMan->getSavePath());
 	delete outf;
 }
 
@@ -934,7 +937,7 @@ void Control::saveGameToFile(uint8 slot) {
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
 	if (!outf) {
-		// Display an error message, and do nothing
+		// Display an error message and do nothing
 		displayMessage(0, "Unable to create file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
 		return;
 	}
@@ -957,6 +960,9 @@ void Control::saveGameToFile(uint8 slot) {
 	uint32 *playerRaw = (uint32*)cpt;
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		outf->writeUint32LE(playerRaw[cnt2]);
+	outf->flush();
+	if (outf->ioFailed())
+		displayMessage(0, "Couldn't write to file '%s' in directory '%s'. Device full?", fName, _saveFileMan->getSavePath());
 	delete outf;
 }
 
@@ -991,6 +997,13 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		playerBuf[cnt2] = inf->readUint32LE();
 
+	if (inf->ioFailed()) {
+		displayMessage(0, "Can't read from file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
+		delete inf;
+		free(_restoreBuf);
+		_restoreBuf = NULL;
+		return false;
+	}
 	delete inf;
 	return true;
 }
