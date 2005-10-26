@@ -312,12 +312,7 @@ uint8 Control::runPanel(void) {
 			_system->copyRectToScreen(_screenBuf, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, 480);
 		}
 		_system->updateScreen();
-		// Use shorter delay when editing savegames names to minimize
-		// the risk of keypresses being lost.
-		if (mode == BUTTON_SAVE_PANEL && _selectedSavegame < 255)
-			delay(20);
-		else
-			delay(1000 / 12);
+		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
 	destroyButtons();
@@ -1047,7 +1042,9 @@ void Control::delay(uint32 msecs) {
 					_keyPressed = (byte)event.kbd.ascii;
 				_keyRepeatTime = now + kKeyRepeatInitialDelay;
 				_keyRepeat = _keyPressed;
-				break;
+				// we skip the rest of the delay and return immediately
+				// to handle keyboard input
+				return;
 			case OSystem::EVENT_KEYUP:
 				_keyRepeatTime = 0;
 				_keyRepeat = 0;
