@@ -34,6 +34,12 @@ public:
 		int32 offset;
 		int32 size;
 	};
+
+	struct IndexNode {
+		char filename[24];
+		int32 index;
+	};
+
 private:
 
 	struct FileDirCache {
@@ -41,6 +47,7 @@ private:
 		AudioTable *bundleTable;
 		int32 numFiles;
 		bool compressedBun;
+		IndexNode *indexTable;
 	} _budleDirCache[4];
 
 public:
@@ -48,12 +55,14 @@ public:
 	~BundleDirCache();
 
 	int matchFile(const char *filename);
-	AudioTable *getTable(const char *filename, int slot);
-	int32 getNumFiles(const char *filename, int slot);
+	AudioTable *getTable(int slot);
+	IndexNode *getIndexTable(int slot);
+	int32 getNumFiles(int slot);
 	bool isCompressed(int slot);
 };
 
 class BundleMgr {
+
 private:
 
 	struct CompTable {
@@ -64,6 +73,7 @@ private:
 
 	BundleDirCache *_cache;
 	BundleDirCache::AudioTable *_bundleTable;
+	BundleDirCache::IndexNode *_indexTable;
 	CompTable *_compTable;
 	int _numFiles;
 	int _numCompItems;

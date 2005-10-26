@@ -42,12 +42,16 @@ BundleDirCache::~BundleDirCache() {
 	}
 }
 
-BundleDirCache::AudioTable *BundleDirCache::getTable(const char *filename, int slot) {
+BundleDirCache::AudioTable *BundleDirCache::getTable(int slot) {
 	return _budleDirCache[slot].bundleTable;
 }
 
-int32 BundleDirCache::getNumFiles(const char *filename, int slot) {
+int32 BundleDirCache::getNumFiles(int slot) {
 	return _budleDirCache[slot].numFiles;
+}
+
+BundleDirCache::IndexNode *BundleDirCache::getIndexTable(int slot) {
+	return _budleDirCache[slot].indexTable;
 }
 
 bool BundleDirCache::isCompressed(int slot) {
@@ -92,6 +96,9 @@ int BundleDirCache::matchFile(const char *filename) {
 
 		file.seek(offset, SEEK_SET);
 
+		_budleDirCache[freeSlot].indexTable =
+				(IndexNode *)calloc(_budleDirCache[freeSlot].numFiles, sizeof(IndexNode));
+
 		for (int32 i = 0; i < _budleDirCache[freeSlot].numFiles; i++) {
 			char name[24], c;
 			int32 z = 0;
@@ -113,7 +120,12 @@ int BundleDirCache::matchFile(const char *filename) {
 			}
 			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
 			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
+			strcpy(_budleDirCache[freeSlot].indexTable[i].filename,
+					_budleDirCache[freeSlot].bundleTable[i].filename);
+			_budleDirCache[freeSlot].indexTable[i].index = i;
 		}
+		qsort(_budleDirCache[freeSlot].indexTable, _budleDirCache[freeSlot].numFiles,
+				sizeof(IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
 		return freeSlot;
 	} else {
 		return fileId;
@@ -136,13 +148,15 @@ BundleMgr::~BundleMgr() {
 }
 
 Common::File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
-	for (int i = 0; i < _numFiles; i++) {
-		if (!scumm_stricmp(filename, _bundleTable[i].filename)) {
-			_file.seek(_bundleTable[i].offset, SEEK_SET);
-			offset = _bundleTable[i].offset;
-			size = _bundleTable[i].size;
-			return &_file;
-		}
+	BundleDirCache::IndexNode target;
+	strcpy(target.filename, filename);
+	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
+			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+	if (found) {
+		_file.seek(_bundleTable[found->index].offset, SEEK_SET);
+		offset = _bundleTable[found->index].offset;
+		size = _bundleTable[found->index].size;
+		return &_file;
 	}
 
 	return NULL;
@@ -164,9 +178,10 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 	int slot = _cache->matchFile(filename);
 	assert(slot != -1);
 	compressed = _cache->isCompressed(slot);
-	_numFiles = _cache->getNumFiles(filename, slot);
+	_numFiles = _cache->getNumFiles(slot);
 	assert(_numFiles);
-	_bundleTable = _cache->getTable(filename, slot);
+	_bundleTable = _cache->getTable(slot);
+	_indexTable = _cache->getIndexTable(slot);
 	assert(_bundleTable);
 	_compTableLoaded = false;
 	_outputSize = 0;
@@ -304,19 +319,22 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 }
 
 int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside) {
-	int32 final_size = 0, i;
+	int32 final_size = 0;
 
 	if (!_file.isOpen()) {
 		error("BundleMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}
 
-	for (i = 0; i < _numFiles; i++) {
-		if (!scumm_stricmp(name, _bundleTable[i].filename)) {
-			final_size = decompressSampleByIndex(i, offset, size, comp_final, 0, header_outside);
-			return final_size;
-		}
+	BundleDirCache::IndexNode target;
+	strcpy(target.filename, name);
+	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
+			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+	if (found) {
+		final_size = decompressSampleByIndex(found->index, offset, size, comp_final, 0, header_outside);
+		return final_size;
 	}
+
 	debug(2, "BundleMgr::decompressSampleByName() Failed finding voice %s", name);
 	return final_size;
 }
