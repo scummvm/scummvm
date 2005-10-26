@@ -270,7 +270,7 @@ Backyard Baseball 2001
 	Demo	All	en	a194f15f51ee62badab74b9e7da97693	baseball2001	khalek, sev
 
 Backyard Baseball 2003
-	-	Windows	en	efe0a04a703e765ebebe92b6c8aa6b86	baseball2003	sev
+	-	All	en	efe0a04a703e765ebebe92b6c8aa6b86	baseball2003	Kirben, sev
 
 
 Backyard Football
