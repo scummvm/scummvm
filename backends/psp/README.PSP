@@ -1,4 +1,4 @@
-ScummVM-PSP 0.8.0CVS README 
+ScummVM-PSP 0.9.0CVS README 
 ===========================
 
 Installation
@@ -40,7 +40,7 @@ Q:  What do I need to run the games?
 A:  A 1.00 or 1.50 firmware PSP and the necessary datafiles for the game you
     want to play and obviously this ScummVM port.
 
-Q:  Can I run this on my 1.52/1.52/2.00 firmware PSP?
+Q:  Can I run this on my 1.51/1.52/2.00 firmware PSP?
 A:  No, you can't do this 'directly' as of yet.
     A method exists for 'downgrading' a 2.00 firmware PSP to 1.50,
     however, the details of this are beyond the scope of this document.
