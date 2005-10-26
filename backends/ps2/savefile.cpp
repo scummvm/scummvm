@@ -29,11 +29,8 @@
 #include <libmc.h>
 #include "backends/ps2/savefile.h"
 #include "backends/ps2/Gs2dScreen.h"
-//#include "backends/ps2/asyncfio.h"
 #include "backends/ps2/systemps2.h"
 #include "common/scummsys.h"
-
-//extern AsyncFio fio;
 
 #define UCL_MAGIC 0x314C4355
 
