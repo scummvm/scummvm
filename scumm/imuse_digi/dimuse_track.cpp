@@ -82,7 +82,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		// processing is done by another thread, we also call parseEvents to
 		// give it some time (and to avoid busy waiting/looping).
 		flushTracks();
+#ifndef __PLAYSTATION2__
 		_vm->parseEvents();
+#endif
 	}
 
 	track->pan = 64;
