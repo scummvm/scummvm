@@ -40,9 +40,6 @@
 
 namespace Sword1 {
 
-#define SAVEFILE_WRITE true
-#define SAVEFILE_READ false
-
 enum {
 	kKeyRepeatInitialDelay = 400,
 	kKeyRepeatSustainDelay = 100
