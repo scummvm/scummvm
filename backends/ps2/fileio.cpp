@@ -432,15 +432,10 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	if (rdOnly && tocManager.haveEntries())
 		cacheId = tocManager.fileExists(fname);
 
-	if (strchr(fname, ' '))
-		return NULL;
-
 	if (cacheId != 0) {
 		Ps2File *file = findInCache(cacheId);
-		if (file) {
-			//sioprintf("open from cache: %s (%d) [%d]\n", fname, cacheId, file->_handle->_handle);
+		if (file)
 			return (FILE*)file;
-		}
 
 		if (rdOnly) {
 			bool isAudioFile = strstr(fname, ".bun") || strstr(fname, ".BUN") || strstr(fname, ".Bun");
