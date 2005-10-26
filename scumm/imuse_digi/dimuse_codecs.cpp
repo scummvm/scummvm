@@ -248,7 +248,6 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
-		memset(t_table, 0, output_size);
 
 		src = comp_output;
 		length = (output_size << 3) / 12;
@@ -290,7 +289,6 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
-		memset(t_table, 0, output_size);
 
 		src = comp_output;
 		length = (output_size << 3) / 12;
@@ -332,7 +330,6 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
-		memset(t_table, 0, output_size);
 
 		src = comp_output;
 		length = (output_size << 3) / 12;
