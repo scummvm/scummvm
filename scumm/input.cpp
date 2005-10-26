@@ -458,8 +458,8 @@ void ScummEngine::processKbd(bool smushMode) {
 			_defaultTalkDelay++;
 
 		// Display the talk speed
-		ValueDisplayDialog dlg("Talk delay: ", 0, 9, _defaultTalkDelay, '-', '+');
-		_defaultTalkDelay = runDialog(dlg);
+		ValueDisplayDialog dlg("Text speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
+		_defaultTalkDelay = 9 - runDialog(dlg);
 
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
