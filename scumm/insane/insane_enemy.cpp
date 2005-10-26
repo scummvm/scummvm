@@ -2129,6 +2129,7 @@ void Insane::actor12Reaction(int32 buttons) {
 				break;
 			}
 		}
+		break;
 	case 37:
 		_actor[1].cursorX = 0;
 		_actor[1].kicking = false;
