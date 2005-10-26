@@ -1759,7 +1759,7 @@ void ScummEngine_v72he::o72_openFile() {
 	debug(0,"Original filename %s", filename);
 
 	// There are Macintosh specific versions of HE7.2 games.
-	if (_heversion >= 80 && _substResFileNameIndex > 0) {
+	if (_heversion >= 80 && _platform == Common::kPlatformMacintosh) {
 		char buf1[128];
 		buf1[0] = '\0';
 		generateSubstResFileName((char *)filename, buf1, sizeof(buf1));
