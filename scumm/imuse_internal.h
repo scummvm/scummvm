@@ -345,7 +345,7 @@ struct Part : public Serializable {
 // the public version, only contains a set of methods.
 class IMuseInternal {
 	friend class Player;
-	friend class Part;
+	friend struct Part;
 
 protected:
 	bool _native_mt32;
