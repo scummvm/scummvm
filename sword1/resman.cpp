@@ -257,8 +257,9 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 		assert(clusFile);
 		clusFile->seek( resOffset(id) );
 		clusFile->read( memHandle->data, size);
-		if (clusFile->ioFailed())
-			error("Can't read %d bytes from cluster %d\n", size, id);
+		if (clusFile->ioFailed()) {
+			error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)\n", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
+		}
 	} else
 		_memMan->setCondition(memHandle, MEM_DONT_FREE);
 
