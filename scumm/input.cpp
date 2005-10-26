@@ -452,13 +452,13 @@ void ScummEngine::processKbd(bool smushMode) {
 		ConfMan.set("music_volume", vol);
 		setupVolumes();
 	} else if (_lastKeyHit == '-' || _lastKeyHit == '+') { // Change text speed
-		if (_lastKeyHit == '+' && _defaultTalkDelay < 9)
-			_defaultTalkDelay++;
-		else if (_lastKeyHit == '-' && _defaultTalkDelay > 0)
+		if (_lastKeyHit == '+' && _defaultTalkDelay > 0)
 			_defaultTalkDelay--;
+		else if (_lastKeyHit == '-' && _defaultTalkDelay < 9)
+			_defaultTalkDelay++;
 
 		// Display the talk speed
-		ValueDisplayDialog dlg("Talk speed: ", 0, 9, _defaultTalkDelay, '+', '-');
+		ValueDisplayDialog dlg("Talk delay: ", 0, 9, _defaultTalkDelay, '+', '-');
 		_defaultTalkDelay = runDialog(dlg);
 
 		if (VAR_CHARINC != 0xFF)
