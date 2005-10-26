@@ -403,6 +403,9 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 	sound->volGroupId = volGroupId;
 	sound->disk = _disk;
 	prepareSound(ptr, sound);
+	if ((soundType == IMUSE_BUNDLE) && !sound->compressed) {
+		free(ptr);
+	}
 	return sound;
 }
 
