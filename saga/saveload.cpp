@@ -221,6 +221,17 @@ void SagaEngine::load(const char *fileName) {
 	_saveHeader.size = FROM_LE_32(_saveHeader.size);
 	_saveHeader.version = FROM_LE_32(_saveHeader.version);
 
+	// This save was written in native endianness (fix that, so warning will show up)
+	if (_saveHeader.version > CURRENT_SAGA_VER) {
+#ifdef SCUMM_LITTLE_ENDIAN
+		_saveHeader.version = TO_BE_32(_saveHeader.version);
+#else
+		_saveHeader.version = TO_LE_32(_saveHeader.version);
+#endif
+	}
+
+	debug(2, "Save version: %x", _saveHeader.version);
+
 	if (_saveHeader.version < 4)
 		warning("This savegame is not endian-safe. There may be problems");
 
@@ -230,7 +241,7 @@ void SagaEngine::load(const char *fileName) {
 
 	if (_saveHeader.version > 4) {
 		in->read(title, TITLESIZE);
-		debug(2, "Save is for: %s", title);
+		debug(0, "Save is for: %s", title);
 	}
 
 	// Surrounding scene
