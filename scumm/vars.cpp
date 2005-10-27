@@ -569,9 +569,21 @@ void ScummEngine_v7::initScummVars() {
 }
 #endif
 
+void ScummEngine_v60he::initScummVars() {
+	ScummEngine::initScummVars();
+
+	VAR(VAR_MACHINE_SPEED) = 2;
+
+	VAR(VAR_SOUNDPARAM) = 1;  // Soundblaster for music
+	VAR(VAR_SOUNDPARAM2) = 1; // Soundblaster for sound effects
+}
+
 #ifndef DISABLE_HE
 void ScummEngine_v70he::initScummVars() {
 	ScummEngine::initScummVars();
+
+	if (VAR_MACHINE_SPEED != 0xFF)
+		VAR(VAR_MACHINE_SPEED) = 13;
 
 	VAR(VAR_NUM_SOUND_CHANNELS) = 8;
 	VAR(VAR_MUSIC_CHANNEL) = 1;
@@ -580,6 +592,8 @@ void ScummEngine_v70he::initScummVars() {
 
 void ScummEngine_v72he::initScummVars() {
 	ScummEngine_v70he::initScummVars();
+
+	VAR(VAR_VIDEO_PERFORMANCE) = 26;
 
 	VAR(VAR_NUM_ROOMS) = _numRooms - 1;
 	VAR(VAR_NUM_SCRIPTS) = _numScripts - 1;
@@ -657,13 +671,8 @@ void ScummEngine::initScummVars() {
 			}
 		}
 		if (_gameId == GID_LOOM256 || _version >= 5) {
-			if (_heversion >= 60) {
-				VAR(VAR_SOUNDPARAM) = 1; // soundblaster for music
-				VAR(VAR_SOUNDPARAM2) = 1; // soundblaster for sfx
-			} else {
-				VAR(VAR_SOUNDPARAM) = 0;
-				VAR(VAR_SOUNDPARAM2) = 0;
-			}
+			VAR(VAR_SOUNDPARAM) = 0;
+			VAR(VAR_SOUNDPARAM2) = 0;
 			VAR(VAR_SOUNDPARAM3) = 0;
 		}
 
