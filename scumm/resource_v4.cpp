@@ -94,7 +94,7 @@ void ScummEngine_v4::readIndexFile() {
 				buf[9] = 0;
 				for (int i = 0; i < 9; i++)
 					buf[i] ^= 0xFF;
-				debug(5, "Room %d: '%s'\n", room, buf);
+				debug(5, "Room %d: '%s'", room, buf);
 			}
 			break;
 
