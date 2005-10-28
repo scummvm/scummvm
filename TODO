@@ -312,7 +312,6 @@ SCUMM
   by ScummEX. [Jamieson has some ideas about this].
 * Figure out how to extract resources from Apple II versions
 * Figure out how to extract resources from Turbografx/PC Engine version of Loom
-* Indiana Jones and the Last Crusade EGA: Add inventory support for Macintosh version
 * Loom EGA: Add support for music and sound effects in Macintosh version
 * Add support for handling Kanji in FM-Towns games (foreground is rendered on a
   second plane at 640x480), text uses Shift_JIS encoding
@@ -360,63 +359,6 @@ SIMON
   Simon the Sorcerer 2
 * Add support for Protracker music format used in Amiga versions
 * Add support for drawing main graphics correctly in Amiga versions
-
-SAGA
-====
-- legacy items -
- * Remove any traces of the additional level of abstraction reinherit used
- * Remove homerolled high level data structures like stacks that should
-   be provided by ScummVM if they aren't already.
- * OO'ify (blah_mod.h contains public stuff, blah.h private stuff) [almost
-   done]
-
-- bugs/misfeatures -
- * Make actor animation Event-driven. See FIXME in actor.cpp. Maybe it
-   should be INTERVAL_EVENT
- * No script func should use ScriptDataWord directly. All of them should
-   be converted to appropriate data types via getTYPE() functions
- * Fix the usage of Rect so that it's more consistent with the rest of ScummVM,
-   e.g. a rectangle covering the entire ITE screen should have right=320 and
-   bottom=200. (eriktorbjorn, partly - mostly? - done)
- * Inspect Font module - free memory, GameFontIds <-> FONT_ID
- * Walk bug. When announcer puts medallion on Rif he should go backwards
-   instead of turning and walking faced to screen
- * In many places RSC_LoadResource() is called but memory is not freed
-   afterwards, i.e. there is a huge leak
- * Optimize screen output. Now we blit whole screen for each frame.
- * When using the original XMIDI music resources, some songs play at the wrong
-   speed. The worst example I've heard of this is the "Elk Fanfare" during the
-   intro. It could be the meta events we don't handle, but at least the tempo
-   event doesn't seem to make any difference. Maybe something in the data
-   header instead...?
- * In the dog's castle at guards' room (scene_change 177 ang go down) subtitles
-   aren't shown. In floppy version there is complete silence both textual and
-   audial. Looks to me as if subtitles are drawn outside the screen. Are the
-   coordinates calculated wrong, or should the text drawing code compensate?
- * Sound in old Win demo is all wrong -- either there is some unique sound
-   format or I didn't guess it correctly
- * Up and down keys ('u' and 'd') in converse panel do not work properly
-
-- plans -
- * Remove use of floating point, especially doubles.
- * Implement Verbs (h00ligan)
- * Implement ShowSaveReminder(), that is that diskette
- * Implement Save/Load
- * Finish inventory code
- * Implement ISO path finder
- * Hook conversations to scripts (partly done)
- * ISO - tile scene implementation
- * Puzzle
-
-- features -
- * Add sound/voices compression. Should _considerably_ save space.
- * Add support for Mac versions. All data is in BE mode and structures are
-   aligned. (h00ligan, partly done)
- * Support for later Win32/Mac/Linux demos where some scenes are substituted
-   with LBM images, tables are in place.
- * Amiga ITE support
- * Support for Dream Guild's Mac ITE
- * Support IHNM
 
 #######################################################################
 # Backends
