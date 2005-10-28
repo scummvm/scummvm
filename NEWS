@@ -3,6 +3,19 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.??
  New Games:
+   - ...
+
+ New Ports:
+   - ...
+
+ General:
+   - ...
+
+ SCUMM:
+   - ...
+
+0.8.0 (2005-10-30)
+ New Games:
    - Added SAGA engine (for the games "I Have No Mouth and I Must Scream"
      and "Inherit the Earth").
    - Added Gob engine (for the Goblins series). Currently, only the first of
@@ -52,9 +65,6 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      very slight popping noise at the end of some sounds. Files that have been
      compressed with older versions of compress_sword2 will, of course, still
      have the same error. You may want to regenerate them.
-
- <PORT #1 NEWS>
-   - ...
 
 0.7.1 (2005-03-27)
  General:
