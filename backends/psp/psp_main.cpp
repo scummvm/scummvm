@@ -38,24 +38,34 @@
 #include "./trace.h"
 
 
+//#define	USERSPACE_ONLY
+
+
 /**
  * Define the module info section
  *
  * 2nd arg must 0x1000 so __init is executed in
  * kernelmode for our loaderInit function
  */
+#ifndef USERSPACE_ONLY
 PSP_MODULE_INFO("SCUMMVM-PSP", 0x1000, 1, 1);
+#else
+PSP_MODULE_INFO("SCUMMVM-PSP", 0, 1, 1);
+#endif
 
 /**
  * THREAD_ATTR_USER causes the thread that the startup
  * code (crt0.c) starts this program in to be in usermode
  * even though the module was started in kernelmode
  */
+#ifndef USERSPACE_ONLY
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
+#endif
 
 /* global quit flag, this is used to let the VM engine shutdown properly */
 bool g_quit = false;
 
+#ifndef USERSPACE_ONLY
 void MyExceptionHandler(PspDebugRegBlock *regs) {
 	/* Do normal initial dump, setup screen etc */
 
@@ -80,7 +90,7 @@ void loaderInit() {
 	pspKernelSetKernelPC();
 	pspDebugInstallErrorHandler(MyExceptionHandler);
 }
-
+#endif
 
 /* Exit callback */
 SceKernelCallbackFunction exit_callback(int /*arg1*/, int /*arg2*/, void * /*common*/) {
