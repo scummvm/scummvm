@@ -115,7 +115,7 @@ struct ObsoleteTargets {
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { from, "Obsolete Target", GF_MULTIPLE_VERSIONS };
+		GameSettings dummy = { from, "Obsolete Target", 0 };
 		return dummy;
 	}
 };
@@ -165,15 +165,15 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 2 */
 
 	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	/* Scumm Version 3 */
 	{"indy3", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	/* Scumm Version 4 */
 	{"pass", "Passport to Adventure", GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB,
@@ -182,14 +182,14 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm version 5, small header -- we treat these as V4 games, since internally
 	   they really are much closer to the V4 games than to all other V5 games. */
 	{"monkey", "Monkey Island 1", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm version 5 */
 	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC},
 
 	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm Version 6 */
 	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
@@ -203,28 +203,28 @@ static const ScummGameSettings scumm_settings[] = {
 #ifndef DISABLE_SCUMM_7_8
 	/* Scumm Version 7 */
 	{"ft", "Full Throttle", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
 
 	{"dig", "The Dig", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
 
 	/* Scumm Version 8 */
 	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, Common::kPlatformWindows},
 
 #endif
 
 	// Humongous Entertainment Scumm Version 6
 	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"puttmoon", "Putt-Putt Goes To The Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_NATIVE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 
 #ifndef DISABLE_HE
 	{"activity", "Putt-Putt & Fatty Bear's Activity Pack", GID_HEGAME, 6, 70, MDT_NONE,
@@ -234,33 +234,33 @@ static const ScummGameSettings scumm_settings[] = {
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
 	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 71, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 7.2
 	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
 	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_FREDDI2, 6, 80, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"balloon", "Putt-Putt and Pep's Balloon-O-Rama", GID_HEGAME, 6, 80, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 80, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"maze", "Freddi Fish and Luther's Maze Madness", GID_HEGAME, 6, 80, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 80, MDT_NONE,
@@ -274,23 +274,23 @@ static const ScummGameSettings scumm_settings[] = {
 	{"thinker1", "Big Thinkers First Grade", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 95, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 95, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
 	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 	{"puttrace", "Putt-Putt Enters the Race", GID_PUTTRACE, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"soccer", "Backyard Soccer", GID_HEGAME, 6, 98, MDT_NONE,
@@ -298,7 +298,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Global scripts increased to 2048
 	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985 | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
 	// Engine moved to c++
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
@@ -313,7 +313,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	// Humongous Entertainment Scumm Version ?
 	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_HE_NOSUBTITLES | GF_16BIT_COLOR | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_HE_NOSUBTITLES | GF_16BIT_COLOR, Common::kPlatformWindows},
 	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
 	{"FreddisFunShop", "Freddi Fish's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, MDT_NONE,
@@ -323,7 +323,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
 	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
@@ -356,9 +356,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, Common::kPlatformUnknown}
 };
 
-// This additional table is used for titles where GF_MULTIPLE_VERSIONS is specified.
-// Now these are HE games. Some of them were released for different versions of SPUTM,
-// and instead of multiplying GIDs this table is used.
+// This additional table is used for MD5-based search
 //
 // Use main table to specify default flags and this table to override defaults.
 //
@@ -391,11 +389,11 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"507bb360688dc4180fdf0d7597352a69", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated Swedish)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"0855496dde35356b1a9691e22ba84cdc", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"c8aac5e3e701874e2fa4117896f9e1b1", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Macintosh Demo)", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_FREDDI2, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
@@ -468,9 +466,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Updated Demo)", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"0557df19f046a84c2fdc63507c6616cb", "Let's Explore the Farm with Buzzy (Updated Dutch Demo)", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"a0a7dea72003933b8b3f8b99b9f7ddeb", "Loom (AtariST)", GID_LOOM, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
@@ -534,9 +532,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (Russian)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformWindows},
 	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	  GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	  GF_USE_KEY, Common::kPlatformPC},
 	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins The Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
-	  GF_USE_KEY | GF_MULTIPLE_VERSIONS, Common::kPlatformPC},
+	  GF_USE_KEY, Common::kPlatformPC},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
@@ -554,11 +552,11 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"4e5867848ee61bc30d157e2c94eee9b4", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"6b19d0e25cbf720d05822379b8b90ed9", "Putt-Putt Travels Through Time (Dutch Demo)", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"59d5cfcc5e672a6e07baae01328b918b", "Putt-Putt Travels Through Time (French Demo)", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_MULTIPLE_VERSIONS, Common::kPlatformWindows}, // TEMPDEMO
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // TEMPDEMO
 
 	{"8e3241ddd6c8dadf64305e8740d45e13", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -3183,20 +3181,18 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 				g_system->setWindowCaption(game.description);
 		}
 	} else {
-		// Use MD5 to determine specific game version, if required.
-		if (game.features & GF_MULTIPLE_VERSIONS) {
-			g = multiple_versions_md5_settings;
-			while (g->name) {
-				if (!scumm_stricmp(gameMD5, g->name))
-					break;
-				g++;
-			}
-			if (g->name) {
-				game = *g;
-				game.name = name;
-				if (game.description)
-					g_system->setWindowCaption(game.description);
-			}
+		// Perform MD5-based search
+		g = multiple_versions_md5_settings;
+		while (g->name) {
+			if (!scumm_stricmp(gameMD5, g->name))
+				break;
+			g++;
+		}
+		if (g->name) {
+			game = *g;
+			game.name = name;
+			if (game.description)
+				g_system->setWindowCaption(game.description);
 		}
 	}
 	// Starting from version 7.1, HE games use 640x480. We check this here since multiple
