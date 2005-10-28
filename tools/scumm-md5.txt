@@ -377,7 +377,7 @@ Freddi Fish's One-Stop Fun Shop
 
 Humongous Interactive Catalog
 	-	Windows	en	11e6e244078ff09b0f3832e35420e0a7	catalog	khalek, sev
-	-	Windows	en	037385a953789190298494d92b89b3d0	catalog2	khalek, sev
+	-	Windows	en	037385a953789190298494d92b89b3d0	catalog	khalek, sev
 
 Let's Explore the Farm with Buzzy
 	-	Windows	en	a85856675429fe88051744f755b72f93	farm	Kirben
