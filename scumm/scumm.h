@@ -132,11 +132,8 @@ enum GameFeatures {
 	/** HE games which use sprites for subtitles */
 	GF_HE_NOSUBTITLES      = 1 << 16,
 
-	/** Games with multiple versions */
-	GF_MULTIPLE_VERSIONS   = 1 << 17,
-
 	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 18
+	GF_DEMO                = 1 << 17
 };
 
 /* SCUMM Debug Channels */
