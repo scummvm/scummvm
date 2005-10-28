@@ -1094,7 +1094,6 @@ static GameDescription gameDescriptions[] = {
 	},
 
 	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD
-	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -1118,8 +1117,6 @@ static GameDescription gameDescriptions[] = {
 	},
 
 	// Inherit the earth - Wyrmkeep Linux CD version
-	// should be before GID_ITE_CD_G
-	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -1143,7 +1140,6 @@ static GameDescription gameDescriptions[] = {
 	},
 
 	// Inherit the earth - Wyrmkeep Windows CD version
-	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -1167,7 +1163,6 @@ static GameDescription gameDescriptions[] = {
 	},
 
 	// Inherit the earth - DOS CD version
-	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -1191,7 +1186,6 @@ static GameDescription gameDescriptions[] = {
 	},
 
 	// Inherit the earth - DOS CD German version
-	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
@@ -1238,7 +1232,6 @@ static GameDescription gameDescriptions[] = {
 	},
 
 	// Inherit the earth - German Floppy version
-	// sound unchecked
 	{
 		"ite",
 		GType_ITE,
