@@ -847,6 +847,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "thinkerk", "ThinkerK", kGenMac },
 	{ "water", "Water Worries", kGenMac },
 #endif
+	{ NULL, NULL, 0 }
 };
 
 static int compareMD5Table(const void *a, const void *b) {
@@ -3023,7 +3024,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	ext = strrchr(filename, '.');
 	size_t len = (ext != NULL) ? ext - filename : strlen(filename);
 
-	for (int i = index; i < ARRAYSIZE(substResFileNameTable); i++) {
+	for (int i = index; substResFileNameTable[i].winName; i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
 			switch (substResFileNameTable[i].genMethod) {
 			case kGenMac:
