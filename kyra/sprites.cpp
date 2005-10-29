@@ -37,16 +37,20 @@ Sprites::Sprites(KyraEngine *engine, OSystem *system) {
 	_system = system;
 	_dat = 0;
 	memset(_anims, 0, sizeof(_anims));
+	memset( _sceneShapes, 0, sizeof(_sceneShapes));
 	_animDelay = 16;
+	_spriteDefStart = 0;
+
 }
 
 Sprites::~Sprites() {
 	delete[] _dat;
+	freeSceneShapes();
 }
 
-Sprite Sprites::getSprite(uint8 spriteID) {
-	assert( spriteID < MAX_NUM_SPRITES);
-	return _sprites[spriteID];
+uint8 *Sprites::getSceneShape(uint8 sceneShapeID) {
+	assert( sceneShapeID < ARRAYSIZE(_sceneShapes));
+	return _sceneShapes[sceneShapeID];
 }
 
 void Sprites::drawSprites(uint8 srcPage, uint8 dstPage) {
@@ -56,21 +60,23 @@ void Sprites::drawSprites(uint8 srcPage, uint8 dstPage) {
 		if (_anims[i].script == 0 || !_anims[i].play)
 			break;
 		if (_anims[i].sprite >= 0) {
-			assert( _anims[i].sprite < MAX_NUM_SPRITES);
-			Sprite sprite = _sprites[_anims[i].sprite];
+			assert( _anims[i].sprite < ARRAYSIZE(_sceneShapes));
+			uint8 *sprite = _sceneShapes[_anims[i].sprite];
 
 			//debug(1, "Drawing from X %i, Y %i, to X %i, Y %i, width %i, height %i, srcPage %i, dstPage %i",
 			//	sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage);
 			flags = Screen::CR_CLIPPED;
 			if (_anims[i].flipX)
 				flags |= Screen::CR_X_FLIPPED;
- 
-			_screen->copyRegion(sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage, flags);
+
+			//_screen->copyRegion(sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage, flags);
+			_screen->drawShape(0, sprite, _anims[i].x, _anims[i].y, 0, 0, 0);
 		}
 	}
 }
 
 void Sprites::doAnims() {
+	debug(9, "Sprites::doAnims()");
 	uint32 currTime = _system->getMillis();
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].script == 0 || !_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
@@ -363,6 +369,10 @@ void Sprites::loadDAT(const char *filename) {
 
 	assert(fileSize > 0x6D);
 
+	_engine->_northExitHeight = READ_BE_UINT16(_dat + 0x15);
+	if (_engine->_northExitHeight & 1)
+		_engine->_northExitHeight += 1;
+	// XXX	
 	memcpy(_screen->_currentPalette + 745 - 0x3D, _dat + 0x17, 0x3D);
 	_screen->setScreenPalette(_screen->_currentPalette);
 	uint8 *data = _dat + 0x6B;
@@ -398,27 +408,10 @@ void Sprites::loadDAT(const char *filename) {
 				break;
 			case 0xFF84:
 				data += 2;
+				_spriteDefStart = data;
 				while (READ_LE_UINT16(data) != 0xFF85) {
-					uint16 spriteNum = READ_LE_UINT16(data);
-					//debug(1, "Spritenum: %i", spriteNum);
-					assert(spriteNum < MAX_NUM_SPRITES);
 					data += 2;
-					_sprites[spriteNum].x = READ_LE_UINT16(data) * 8;
-					data += 2;
-					_sprites[spriteNum].y = READ_LE_UINT16(data);
-					data += 2;
-					_sprites[spriteNum].width = READ_LE_UINT16(data) * 8;
-					data += 2;
-					_sprites[spriteNum].height = READ_LE_UINT16(data);
-					data += 2;
-					spritesLoaded++;
-					//debug(1, "Got sprite index: %i", spriteNum);
-					//debug(1, "X: %i", _sprites[spriteNum].x);
-					//debug(1, "Y: %i", _sprites[spriteNum].y);
-					//debug(1, "Width: %i", _sprites[spriteNum].width);
-					//debug(1, "Height: %i", _sprites[spriteNum].height);
 				}
-				//debug(1, "End of sprite images.");
 				data += 2;
 				break;
 			case 0xFF86:
@@ -453,6 +446,48 @@ void Sprites::loadDAT(const char *filename) {
 	assert(fileSize - (data - _dat) == 0xC);
 
 	//TODO: Read in character entry coords here
+	SceneExits &exits = _engine->sceneExits();
+
+	exits.NorthXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.NorthYPos = *data++ & 0xFFFE;
+	exits.EastXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.EastYPos = *data++ & 0xFFFE;
+	exits.SouthXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.SouthYPos = *data++ & 0xFFFE;
+	exits.WestXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.WestYPos = *data++ & 0xFFFE;
+}
+
+void Sprites::freeSceneShapes() {
+	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++ )
+		free(_sceneShapes[i]);
+	
+}
+
+void Sprites::loadSceneShapes() {
+	debug(9, "Sprites::loadSceneShapes()");
+	uint8 *data = _spriteDefStart;
+	int spriteNum, x, y, width, height;
+
+	assert(_spriteDefStart);
+
+	freeSceneShapes();
+	memset( _sceneShapes, 0, sizeof(_sceneShapes));
+
+	while (READ_LE_UINT16(data) != 0xFF85) {
+		spriteNum = READ_LE_UINT16(data);
+		assert(spriteNum < ARRAYSIZE(_sceneShapes));
+		data += 2;
+		x = READ_LE_UINT16(data) * 8;
+		data += 2;
+		y = READ_LE_UINT16(data);
+		data += 2;
+		width = READ_LE_UINT16(data) * 8;
+		data += 2;
+		height = READ_LE_UINT16(data);
+		data += 2;
+		_sceneShapes[spriteNum] = _screen->encodeShape(x, y, width, height, 0);
+	}
 }
 
 } // end of namespace Kyra

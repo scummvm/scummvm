@@ -23,6 +23,7 @@
 #define KYRASCREEN_H
 
 #include "common/util.h"
+#include <stdarg.h>
 
 class OSystem;
 
@@ -110,26 +111,26 @@ public:
 	void drawChar(uint8 c, int x, int y);
 	void setScreenDim(int dim);
 	void drawShapePlotPixelCallback1(uint8 *dst, uint8 color);
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable, bool itemShape=false);
+	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
-	
+		
 	int getRectSize(int x, int y);
 	void hideMouse();
 	void showMouse();
 	void setShapePages(int page1, int page2);
 	byte *setMouseCursor(int x, int y, byte *shape);
+	uint8 *getPalette(int num);
 
 	int _charWidth;
 	int _charOffset;
 	int _curPage;
 	uint8 *_currentPalette;
-	
-	typedef void (Screen::*DrawShapePlotPixelCallback)(uint8 *dst, uint8 c);
+	uint8 *_shapePages[2];
 
 private:
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
@@ -139,8 +140,8 @@ private:
 	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
 	uint8 *_pagePtrs[16];
-	uint8 *_shapePages[2];
 	uint8 *_screenPalette;
+	uint8 *_palettes[3];
 	const ScreenDim *_curDim;
 	FontId _currentFont;
 	Font _fonts[FID_NUM];
@@ -164,8 +165,6 @@ private:
 	
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
-	static const DrawShapePlotPixelCallback _drawShapePlotPixelTable[];
-	static const int _drawShapePlotPixelCount;
 };
 
 } // End of namespace Kyra

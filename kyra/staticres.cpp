@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 1
+#define RESFILE_VERSION 2
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -129,28 +129,38 @@ void KyraEngine::res_loadResources(int type) {
 		loadNativeLanguage = false;
 	}
 	
-#define loadRawFile(x, y, z) \
+#define getFileEx(x, y) \
 	if (_features & GF_TALKIE) { \
 		temp = getFile(x, y ".CD"); \
 	} else if (_features & GF_DEMO) { \
 		temp = getFile(x, y ".DEM"); \
 	} else { \
 		temp = getFile(x, y); \
-	} \
+	}
+#define loadRawFile(x, y, z) \
+	getFileEx(x, y) \
 	if (temp) { \
 		z = temp; \
 		temp = 0; \
 	}
 #define loadTable(x, y, z, a) \
-	if (_features & GF_TALKIE) { \
-		temp = getFile(x, y ".CD"); \
-	} else if (_features & GF_DEMO) { \
-		temp = getFile(x, y ".DEM"); \
-	} else { \
-		temp = getFile(x, y); \
-	} \
+	getFileEx(x, y) \
 	if (temp) { \
 		res_loadTable(temp, z, a); \
+		delete [] temp; \
+		temp = 0; \
+	}
+#define loadRooms(x, y, z, a) \
+	getFileEx(x, y) \
+	if (temp) { \
+		res_loadRoomTable(temp, z, a); \
+		delete [] temp; \
+		temp = 0; \
+	}
+#define loadShapes(x, y, z, a) \
+	getFileEx(x, y) \
+	if (temp) { \
+		res_loadShapeTable(temp, z, a); \
 		delete [] temp; \
 		temp = 0; \
 	}
@@ -174,8 +184,19 @@ void KyraEngine::res_loadResources(int type) {
 		res_loadLangTable("INTRO-STRINGS.", &resFile, (byte***)&_seq_textsTable, &_seq_textsTable_Size, loadNativeLanguage);
 	}
 	
+	if ((type & RES_INGAME) || type == RES_ALL) {
+		loadTable(resFile, "ROOM-FILENAMES.TXT", (byte***)&_roomFilenameTable, &_roomFilenameTableSize);
+		loadRooms(resFile, "ROOM-TABLE.ROOM", &_roomTable, &_roomTableSize);
+		
+		loadTable(resFile, "CHAR-IMAGE.TXT", (byte***)&_characterImageTable, &_characterImageTableSize);
+		
+		loadShapes(resFile, "SHAPES-DEFAULT.SHP", &_defaultShapeTable, &_defaultShapeTableSize);
+	}
+
+#undef loadRooms
 #undef loadTable
 #undef loadRawFile
+#undef getFileEx
 }
 
 void KyraEngine::res_unloadResources(int type) {
@@ -220,6 +241,27 @@ void KyraEngine::res_unloadResources(int type) {
 		delete [] _seq_Demo3; _seq_Demo3 = 0;
 		delete [] _seq_Demo4; _seq_Demo4 = 0;
 	}
+	
+	if ((type & RES_INGAME) || type == RES_ALL) {
+		for (int i = 0; i < _roomFilenameTableSize; ++i) {
+			delete [] _roomFilenameTable[i];
+		}
+		delete [] _roomFilenameTable;
+		_roomFilenameTableSize = 0;
+		_roomFilenameTable = 0;
+		
+		delete [] _roomTable; _roomTable = 0;
+		_roomTableSize = 0;
+		
+		for (int i = 0; i < _characterImageTableSize; ++i) {
+			delete [] _characterImageTable[i];
+		}
+		delete [] _characterImageTable;
+		_characterImageTableSize = 0;
+		
+		delete [] _defaultShapeTable;
+		_defaultShapeTableSize = 0;
+	}
 }
 
 void KyraEngine::res_loadLangTable(const char *filename, PAKFile *res, byte ***loadTo, int *size, bool nativ) {
@@ -263,6 +305,41 @@ void KyraEngine::res_loadTable(const byte *src, byte ***loadTo, int *size) {
 	}
 }
 
+void KyraEngine::res_loadRoomTable(const byte *src, Room **loadTo, int *size) {
+	uint32 count = READ_BE_UINT32(src); src += 4;
+	*size = count;
+	*loadTo = new Room[count];
+	
+	for (uint32 i = 0; i < count; ++i) {
+		(*loadTo)[i].nameIndex = *src++;
+		(*loadTo)[i].northExit = READ_LE_UINT16(src); src += 2;
+		(*loadTo)[i].eastExit = READ_LE_UINT16(src); src += 2;
+		(*loadTo)[i].southExit = READ_LE_UINT16(src); src += 2;
+		(*loadTo)[i].westExit = READ_LE_UINT16(src); src += 2;
+		memset(&(*loadTo)[i].itemsTable[0], 0xFF, sizeof(byte)*6);
+		memset(&(*loadTo)[i].itemsTable[6], 0, sizeof(byte)*6);
+		memset((*loadTo)[i].itemsXPos, 0, sizeof(uint16)*12);
+		memset((*loadTo)[i].itemsYPos, 0, sizeof(uint8)*12);
+		memset((*loadTo)[i].unkField3, 0, sizeof((*loadTo)[i].unkField3));
+	}
+}
+
+void KyraEngine::res_loadShapeTable(const byte *src, Shape **loadTo, int *size) {
+	uint32 count = READ_BE_UINT32(src); src += 4;
+	*size = count;
+	*loadTo = new Shape[count];
+	
+	for (uint32 i = 0; i < count; ++i) {
+		(*loadTo)[i].imageIndex = *src++;
+		(*loadTo)[i].x = *src++;
+		(*loadTo)[i].y = *src++;
+		(*loadTo)[i].w = *src++;
+		(*loadTo)[i].h = *src++;
+		(*loadTo)[i].xOffset = *src++;
+		(*loadTo)[i].yOffset = *src++;
+	}
+}
+
 const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00 },
@@ -279,12 +356,207 @@ const ScreenDim Screen::_screenDimTable[] = {
 
 const int Screen::_screenDimTableCount = ARRAYSIZE(_screenDimTable);
 
-const Screen::DrawShapePlotPixelCallback Screen::_drawShapePlotPixelTable[] = {
-	&Screen::drawShapePlotPixelCallback1
-	// XXX
+// CD Version *could* use an different opcodeTable
+#define Opcode(x) &KyraEngine::x
+KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
+	// 0x00
+	Opcode(cmd_magicInMouseItem),
+	Opcode(cmd_characterSays),
+	Opcode(cmd_pauseTicks),
+	Opcode(cmd_drawSceneAnimShape),
+	// 0x04
+	Opcode(cmd_queryGameFlag),
+	Opcode(cmd_setGameFlag),
+	Opcode(cmd_resetGameFlag),
+	Opcode(cmd_runNPCScript),
+	// 0x08
+	Opcode(cmd_setSpecialExitList),
+	Opcode(cmd_blockInWalkableRegion),
+	Opcode(cmd_blockOutWalkableRegion),
+	Opcode(cmd_walkPlayerToPoint),
+	// 0x0c
+	Opcode(cmd_dropItemInScene),
+	Opcode(cmd_drawAnimShapeIntoScene),
+	Opcode(cmd_createMouseItem),
+	Opcode(cmd_savePageToDisk),
+	// 0x10
+	Opcode(cmd_sceneAnimOn),
+	Opcode(cmd_sceneAnimOff),
+	Opcode(cmd_getElapsedSeconds),
+	Opcode(cmd_mouseIsPointer),
+	// 0x14
+	Opcode(cmd_destroyMouseItem),
+	Opcode(cmd_runSceneAnimUntilDone),
+	Opcode(cmd_fadeSpecialPalette),
+	Opcode(cmd_playAdlibSound),
+	// 0x18
+	Opcode(cmd_playAdlibScore),
+	Opcode(cmd_phaseInSameScene),
+	Opcode(cmd_setScenePhasingFlag),
+	Opcode(cmd_resetScenePhasingFlag),
+	// 0x1c
+	Opcode(cmd_queryScenePhasingFlag),
+	Opcode(cmd_sceneToDirection),
+	Opcode(cmd_setBirthstoneGem),
+	Opcode(cmd_placeItemInGenericMapScene),
+	// 0x20
+	Opcode(cmd_setBrandonStatusBit),
+	Opcode(cmd_pauseSeconds),
+	Opcode(cmd_getCharactersLocation),
+	Opcode(cmd_runNPCSubscript),
+	// 0x24
+	Opcode(cmd_magicOutMouseItem),
+	Opcode(cmd_internalAnimOn),
+	Opcode(cmd_forceBrandonToNormal),
+	Opcode(cmd_poisonDeathNow),
+	// 0x28
+	Opcode(cmd_setScaleMode),
+	Opcode(cmd_openWSAFile),
+	Opcode(cmd_closeWSAFile),
+	Opcode(cmd_runWSAFromBeginningToEnd),
+	// 0x2c
+	Opcode(cmd_displayWSAFrame),
+	Opcode(cmd_enterNewScene),
+	Opcode(cmd_setSpecialEnterXAndY),
+	Opcode(cmd_runWSAFrames),
+	// 0x30
+	Opcode(cmd_popBrandonIntoScene),
+	Opcode(cmd_restoreAllObjectBackgrounds),
+	Opcode(cmd_setCustomPaletteRange),
+	Opcode(cmd_loadPageFromDisk),
+	// 0x34
+	Opcode(cmd_customPrintTalkString),
+	Opcode(cmd_restoreCustomPrintBackground),
+	Opcode(cmd_hideMouse),
+	Opcode(cmd_showMouse),
+	// 0x38
+	Opcode(cmd_getCharacterX),
+	Opcode(cmd_getCharacterY),
+	Opcode(cmd_changeCharactersFacing),
+	Opcode(cmd_CopyWSARegion),
+	// 0x3c
+	Opcode(cmd_printText),
+	Opcode(cmd_random),
+	Opcode(cmd_loadSoundFile),
+	Opcode(cmd_displayWSAFrameOnHidPage),
+	// 0x40
+	Opcode(cmd_displayWSASequentialFrames),
+	Opcode(cmd_drawCharacterStanding),
+	Opcode(cmd_internalAnimOff),
+	Opcode(cmd_changeCharactersXAndY),
+	// 0x44
+	Opcode(cmd_clearSceneAnimatorBeacon),
+	Opcode(cmd_querySceneAnimatorBeacon),
+	Opcode(cmd_refreshSceneAnimator),
+	Opcode(cmd_placeItemInOffScene),
+	// 0x48
+	Opcode(cmd_wipeDownMouseItem),
+	Opcode(cmd_placeCharacterInOtherScene),
+	Opcode(cmd_getKey),
+	Opcode(cmd_specificItemInInventory),
+	// 0x4c
+	Opcode(cmd_popMobileNPCIntoScene),
+	Opcode(cmd_mobileCharacterInScene),
+	Opcode(cmd_hideMobileCharacter),
+	Opcode(cmd_unhideMobileCharacter),
+	// 0x50
+	Opcode(cmd_setCharactersLocation),
+	Opcode(cmd_walkCharacterToPoint),
+	Opcode(cmd_specialEventDisplayBrynnsNote),
+	Opcode(cmd_specialEventRemoveBrynnsNote),
+	// 0x54
+	Opcode(cmd_setLogicPage),
+	Opcode(cmd_fatPrint),
+	Opcode(cmd_preserveAllObjectBackgrounds),
+	Opcode(cmd_updateSceneAnimations),
+	// 0x58
+	Opcode(cmd_sceneAnimationActive),
+	Opcode(cmd_setCharactersMovementDelay),
+	Opcode(cmd_getCharactersFacing),
+	Opcode(cmd_bkgdScrollSceneAndMasksRight),
+	// 0x5c
+	Opcode(cmd_dispelMagicAnimation),
+	Opcode(cmd_findBrightestFireberry),
+	Opcode(cmd_setFireberryGlowPalette),
+	Opcode(cmd_setDeathHandlerFlag),
+	// 0x60
+	Opcode(cmd_drinkPotionAnimation),
+	Opcode(cmd_makeAmuletAppear),
+	Opcode(cmd_drawItemShapeIntoScene),
+	Opcode(cmd_setCharactersCurrentFrame),
+	// 0x64
+	Opcode(cmd_waitForConfirmationMouseClick),
+	Opcode(cmd_pageFlip),
+	Opcode(cmd_setSceneFile),
+	Opcode(cmd_getItemInMarbleVase),
+	// 0x68
+	Opcode(cmd_setItemInMarbleVase),
+	Opcode(cmd_addItemToInventory),
+	Opcode(cmd_intPrint),
+	Opcode(cmd_shakeScreen),
+	// 0x6c
+	Opcode(cmd_createAmuletJewel),
+	Opcode(cmd_setSceneAnimCurrXY),
+	Opcode(cmd_Poison_Brandon_And_Remaps),
+	Opcode(cmd_fillFlaskWithWater),
+	// 0x70
+	Opcode(cmd_getCharactersMovementDelay),
+	Opcode(cmd_getBirthstoneGem),
+	Opcode(cmd_queryBrandonStatusBit),
+	Opcode(cmd_playFluteAnimation),
+	// 0x74
+	Opcode(cmd_playWinterScrollSequence),
+	Opcode(cmd_getIdolGem),
+	Opcode(cmd_setIdolGem),
+	Opcode(cmd_totalItemsInScene),
+	// 0x78
+	Opcode(cmd_restoreBrandonsMovementDelay),
+	Opcode(cmd_setMousePos),
+	Opcode(cmd_getMouseState),
+	Opcode(cmd_setEntranceMouseCursorTrack),
+	// 0x7c
+	Opcode(cmd_itemAppearsOnGround),
+	Opcode(cmd_setNoDrawShapesFlag),
+	Opcode(cmd_fadeEntirePalette),
+	Opcode(cmd_itemOnGroundHere),
+	// 0x80
+	Opcode(cmd_queryCauldronState),
+	Opcode(cmd_setCauldronState),
+	Opcode(cmd_queryCrystalState),
+	Opcode(cmd_setCrystalState),
+	// 0x84
+	Opcode(cmd_setPaletteRange),
+	Opcode(cmd_shrinkBrandonDown),
+	Opcode(cmd_growBrandonUp),
+	Opcode(cmd_setBrandonScaleXAndY),
+	// 0x88
+	Opcode(cmd_resetScaleMode),
+	Opcode(cmd_getScaleDepthTableValue),
+	Opcode(cmd_setScaleDepthTableValue),
+	Opcode(cmd_message),
+	// 0x8c
+	Opcode(cmd_checkClickOnNPC),
+	Opcode(cmd_getFoyerItem),
+	Opcode(cmd_setFoyerItem),
+	Opcode(cmd_setNoItemDropRegion),
+	// 0x90
+	Opcode(cmd_walkMalcolmOn),
+	Opcode(cmd_passiveProtection),
+	Opcode(cmd_setPlayingLoop),
+	Opcode(cmd_brandonToStoneSequence),
+	// 0x94
+	Opcode(cmd_brandonHealingSequence),
+	Opcode(cmd_protectCommandLine),
+	Opcode(cmd_pauseMusicSeconds),
+	Opcode(cmd_resetMaskRegion),
+	// 0x98
+	Opcode(cmd_setPaletteChangeFlag),
+	Opcode(cmd_fillRect),
+	Opcode(cmd_dummy)
 };
+#undef Opcode
 
-const int Screen::_drawShapePlotPixelCount = ARRAYSIZE(_drawShapePlotPixelTable);
+const int KyraEngine::_opcodeTableSize = ARRAYSIZE(_opcodeTable);
 
 const char *KyraEngine::_xmidiFiles[] = {
 	"INTRO.XMI",
@@ -300,5 +572,13 @@ const char *KyraEngine::_xmidiFiles[] = {
 };
 
 const int KyraEngine::_xmidiFilesCount = ARRAYSIZE(_xmidiFiles);
+
+const int8 KyraEngine::_charXPosTable[] = {
+	0x00, 0x04, 0x04, 0x04, 0x00, 0xFC, 0xFC, 0xFC
+};
+
+const int8 KyraEngine::_charYPosTable[] = {
+	0xFE, 0xFE, 0x00, 0x03, 0x02, 0x02, 0x00, 0xFE
+};
 
 } // End of namespace Kyra

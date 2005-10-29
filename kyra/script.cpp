@@ -69,7 +69,7 @@ ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 ScriptHelper::~ScriptHelper() {
 }
 
-bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, byte *specialPtr) {
+bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, KyraEngine::OpcodeProc *opcodes, int opcodeSize, byte *specialPtr) {
 	uint32 size = 0;
 	uint8 *data = _vm->resource()->fileData(filename, &size);	
 	byte *curData = data;
@@ -147,6 +147,8 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, byte
 		return false;
 	}
 	scriptData->dataSize = chunkSize / 2;
+	scriptData->opcodes = opcodes;
+	scriptData->opcodeSize = opcodeSize;
 	
 	delete [] data;
 	return true;

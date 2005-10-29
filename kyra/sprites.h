@@ -24,7 +24,6 @@
 
 namespace Kyra {
 
-#define MAX_NUM_SPRITES 50
 #define MAX_NUM_ANIMS 11
 
 struct Sprite {
@@ -55,23 +54,27 @@ public:
 	~Sprites();
 
 	void doAnims();
-	void loadDAT(const char* filename);
-	Sprite getSprite(uint8 spriteID);
+	void loadDAT(const char *filename);
+	uint8 *getSceneShape(uint8 sceneShapeID);
 	void drawSprites(uint8 srcPage, uint8 dstPage);
+	void loadSceneShapes();
 	
 	void enableAnim(uint8 anim) { _anims[anim].play = true; }
 	void disableAnim(uint8 anim) { _anims[anim].play = false; }
 
 protected:
+	void freeSceneShapes();
+
 	KyraEngine *_engine;
 	Resource *_res;
 	OSystem *_system;
 	Screen *_screen;
-	Sprite _sprites[MAX_NUM_SPRITES];
+	uint8 *_sceneShapes[50];
 	uint8 *_dat;
 	Anim _anims[MAX_NUM_ANIMS];
 	Common::RandomSource _rnd;
 	uint8 _animDelay;
+	uint8 *_spriteDefStart;
 };
 
 } // End of namespace Kyra

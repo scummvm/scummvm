@@ -45,6 +45,12 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	if (_screenPalette) {
 		memset(_screenPalette, 0, 768);
 	}
+	for (int i = 0; i < 3; ++i) {
+		_palettes[i] = (uint8 *)malloc(768);
+		if (_palettes[i]) {
+			memset(_palettes[i], 0, 768);
+		}
+	}
 	_curDim = &_screenDimTable[0];
 	_charWidth = 0;
 	_charOffset = 0;
@@ -78,6 +84,9 @@ Screen::~Screen() {
 	free(_animBlockPtr);
 	free(_mouseShape);
 	free(_mouseRect);
+	for (int i = 0; i < 3; ++i) {
+		free(_palettes[i]);
+	}
 }
 
 void Screen::updateScreen() {
@@ -314,7 +323,7 @@ void Screen::copyCurPageBlock(int x, int y, int h, int w, uint8 *dst) {
 	}
 	const uint8 *src = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
 	while (h--) {
-		memcpy(dst, src, w * 8);
+		memcpy(dst, src, w);
 		dst += SCREEN_W;
 		src += SCREEN_H;
 	}
@@ -559,47 +568,67 @@ void Screen::setScreenDim(int dim) {
 	// XXX
 }
 
-void Screen::drawShapePlotPixelCallback1(uint8 *dst, uint8 color) {
-	debug(9, "Screen::drawShapePlotPixelCallback1(0x%X, %d)", dst, color);
-	*dst = color;
-}
-
-void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, int *flagsTable, bool itemShape) {
-	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d, %d)", pageNum, x, y, sd, flags, itemShape);
+// TODO: implement the other callbacks and implement all of this function
+void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
+	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d, ...)", pageNum, x, y, sd, flags);
 	assert(shapeData);
+	va_list args;
+	va_start(args, flags);
+	
+	static int drawShapeVar1 = 0;
+	static int drawShapeVar2[] = {
+		1, 3, 2, 5, 4, 3, 2, 1
+	};
+	static int drawShapeVar3 = 1;
+	static int drawShapeVar4 = 0;
+	static int drawShapeVar5 = 0;
+	
+	uint8 *table = 0;
+	int tableLoopCount = 0;
+	int var_30 = 0;
+	uint8 *table2 = 0;
+	uint8 *table3 = 0;
+	uint8 *table4 = 0;
+	
 	if (flags & 0x8000) {
-		warning("unhandled (flags & 0x8000) in Screen::drawShape()");
+		table2 = va_arg(args, uint8*);
 	}
 	if (flags & 0x100) {
-		warning("unhandled (flags & 0x100) in Screen::drawShape()");
+		table = va_arg(args, uint8*);
+		tableLoopCount = va_arg(args, int);
+		if (!tableLoopCount)
+			flags &= 0xFFFFFEFF;
 	}
 	if (flags & 0x1000) {
-		warning("unhandled (flags & 0x1000) in Screen::drawShape()");
+		table3 = va_arg(args, uint8*);
+		table4 = va_arg(args, uint8*);
 	}
 	if (flags & 0x200) {
-		warning("unhandled (flags & 0x200) in Screen::drawShape()");
+		drawShapeVar1 += 1;
+		drawShapeVar1 &= 7;
+		drawShapeVar3 = drawShapeVar2[drawShapeVar1];
+		drawShapeVar4 = 0;
+		drawShapeVar5 = 256;
 	}
 	if (flags & 0x4000) {
-		warning("unhandled (flags & 0x4000) in Screen::drawShape()");
+		drawShapeVar5 = va_arg(args, int);
 	}
 	if (flags & 0x800) {
-		warning("unhandled (flags & 0x800) in Screen::drawShape()");
+		var_30 = va_arg(args, int);
 	}
 	int scale_w, scale_h;
 	if (flags & DSF_SCALE) {
-		scale_w = *flagsTable++;
-		scale_h = *flagsTable++;
+		scale_w = va_arg(args, int);
+		scale_h = va_arg(args, int);
 	} else {
 		scale_w = 0x100;
 		scale_h = 0x100;
 	}
 	
 	int ppc = (flags >> 8) & 0x3F;
-	assert(ppc < _drawShapePlotPixelCount);
-	DrawShapePlotPixelCallback plotPixel = _drawShapePlotPixelTable[ppc];
 	
 	const uint8 *src = shapeData;
-	if (_vm->features() & GF_TALKIE && !itemShape) {
+	if (_vm->features() & GF_TALKIE) {
 		src += 2;
 	}
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
@@ -607,12 +636,14 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int shapeHeight = *src++;
 	int scaledShapeHeight = (shapeHeight * scale_h) >> 8;
 	if (scaledShapeHeight == 0) {
+		va_end(args);
 		return;
 	}
 
 	int shapeWidth = READ_LE_UINT16(src); src += 2;
 	int scaledShapeWidth = (shapeWidth * scale_w) >> 8;
 	if (scaledShapeWidth == 0) {
+		va_end(args);
 		return;
 	}
 
@@ -640,6 +671,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 	if (!_decodeShapeBuffer) {
 		_decodeShapeBufferSize = 0;
+		va_end(args);
 		return;
 	}
 	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
@@ -650,7 +682,15 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		while (count > 0) {
 			uint8 code = *src++;
 			if (code != 0) {
-				*decodedShapeFrame++ = code;
+				// this is guessed
+				if (shapeFlags & 1) {
+					const uint8 *colorTable = shapeData + 10;
+					if (_vm->features() & GF_TALKIE)
+						colorTable += 2;
+					*decodedShapeFrame++ = colorTable[code];
+				} else {
+					*decodedShapeFrame++ = code;
+				}
 				--count;
 			} else {
 				code = *src++;
@@ -732,18 +772,294 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			j = -j;
 		}
 		for (x = x1; x < x2; ++x) {
-			int i = scaleXTable[x];
+			int xpos = scaleXTable[x];
 			if (flags & DSF_X_FLIPPED) {
-				i = -i;
+				xpos = -xpos;
 			}
-			uint8 color = shapeBuffer[j * shapeWidth + i];
+			uint8 color = shapeBuffer[j * shapeWidth + xpos];
 			if (color != 0) {
-				(this->*plotPixel)(dst, color);
+				switch (ppc) {
+					case 0:
+						*dst = color;
+						break;
+
+					case 1:
+						for (int i = 0; i < tableLoopCount; ++i) {
+							color = table[color];
+						}
+						break;
+						
+					case 2: {
+						int temp = drawShapeVar4 + drawShapeVar5;
+						if (temp & 0xFF00) {
+							drawShapeVar4 = temp & 0xFF;
+							dst += drawShapeVar3;
+							color = *dst;
+							dst -= drawShapeVar3;
+						} else {
+							drawShapeVar4 = temp;
+						}
+					}	break;
+					
+					case 7:
+					case 3:
+						color = *dst;
+						for (int i = 0; i < tableLoopCount; ++i) {
+							color = table[color];
+						}
+						break;
+						
+					case 4:
+						color = table2[color];
+						break;
+						
+					case 5:
+						color = table2[color];
+						for (int i = 0; i < tableLoopCount; ++i) {
+							color = table[color];
+						}
+						break;
+						
+					case 6: {
+						int temp = drawShapeVar4 + drawShapeVar5;
+						if (temp & 0xFF00) {
+							drawShapeVar4 = temp & 0xFF;
+							dst += drawShapeVar3;
+							color = *dst;
+							dst -= drawShapeVar3;
+						} else {
+							drawShapeVar4 = temp;
+							color = table2[color];
+						}
+					}	break;
+						
+					case 8: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+						}
+					}	break;
+					
+					case 9: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+						} else {
+							for (int i = 0; i < tableLoopCount; ++i) {
+								color = table[color];
+							}
+						}
+					}	break;
+					
+					case 10: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+							drawShapeVar4 = pixel;
+						} else {
+							int temp = drawShapeVar4 + drawShapeVar5;
+							if (temp & 0xFF00) {
+								dst += drawShapeVar3;
+								color = *dst;
+								dst -= drawShapeVar3;
+							}
+							drawShapeVar4 = temp & 0xFF;
+						}
+					}	break;
+					
+					case 15:
+					case 11: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+						} else {
+							color = *dst;
+							for (int i = 0; i < tableLoopCount; ++i) {
+								color = table[color];
+							}
+						}
+					}	break;
+					
+					case 12: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+						} else {
+							color = table2[color];
+						}
+					}	break;
+					
+					case 13: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+						} else {
+							color = table2[color];
+							for (int i = 0; i < tableLoopCount; ++i) {
+								color = table[color];
+							}
+						}
+					}	break;
+					
+					case 14: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+							drawShapeVar4 = pixel;
+						} else {
+							int temp = drawShapeVar4 + drawShapeVar5;
+							if (temp & 0xFF00) {
+								dst += drawShapeVar3;
+								color = *dst;
+								dst -= drawShapeVar3;
+								drawShapeVar4 = temp % 0xFF;
+							} else {
+								drawShapeVar4 = temp;
+								color = table2[color];
+							}
+						}
+					}	break;
+					
+					case 16: {
+						uint8 newColor = table3[color];
+						if (!(newColor & 0x80)) {
+							color = *dst;
+							color = table4[color + (newColor << 8)];
+						}
+					}	break;
+					
+					case 17: {
+						for (int i = 0; i < tableLoopCount; ++i) {
+							color = table[color];
+						}
+						uint8 newColor = table3[color];
+						if (!(newColor & 0x80)) {
+							color = *dst;
+							color = table4[color + (newColor << 8)];
+						}
+					}	break;
+					
+					case 18: {
+						int temp = drawShapeVar4 + drawShapeVar5;
+						if (temp & 0xFF00) {
+							drawShapeVar4 = temp & 0xFF;
+							dst += drawShapeVar3;
+							color = *dst;
+							dst -= drawShapeVar3;
+							uint8 newColor = table3[color];
+							if (!(newColor & 0x80)) {
+								color = *dst;
+								color = table4[color + (newColor << 8)];
+							}
+						} else {
+							drawShapeVar4 = temp;
+						}
+					}	break;
+					
+					case 23:
+					case 19: {
+						color = *dst;
+						for (int i = 0; i < tableLoopCount; ++i) {
+							color = table[color];
+						}
+						uint8 newColor = table3[color];
+						if (!(newColor & 0x80)) {
+							color = *dst;
+							color = table4[color + (newColor << 8)];
+						}
+					}	break;
+					
+					case 20: {
+						color = table2[color];
+						uint8 newColor = table3[color];
+						if (!(newColor & 0x80)) {
+							color = *dst;
+							color = table4[color + (newColor << 8)];
+						}
+					}	break;
+					
+					case 21: {
+						color = table2[color];
+						for (int i = 0; i < tableLoopCount; ++i) {
+							color = table[color];
+						}
+						uint8 newColor = table3[color];
+						if (!(newColor & 0x80)) {
+							color = *dst;
+							color = table4[color + (newColor << 8)];
+						}
+					}	break;
+					
+					case 22: {
+						int temp = drawShapeVar4 + drawShapeVar5;
+						if (temp & 0xFF00) {
+							drawShapeVar4 = temp & 0xFF;
+							dst += drawShapeVar3;
+							color = *dst;
+							dst -= drawShapeVar3;
+							uint8 newColor = table3[color];
+							if (!(newColor & 0x80)) {
+								color = *dst;
+								color = table4[color + (newColor << 8)];
+							}
+						} else {
+							drawShapeVar4 = temp;
+							color = table2[color];
+							uint8 newColor = table3[color];
+							if (!(newColor & 0x80)) {
+								color = *dst;
+								color = table4[color + (newColor << 8)];
+							}
+						}
+					}	break;
+					
+					case 24: {
+						int offset = dst - shapeBuffer;
+						uint8 pixel = *(_shapePages[0] + offset);
+						pixel &= 0x7F;
+						pixel &= 0x87;
+						if (var_30 < pixel) {
+							color = *(_shapePages[1] + offset);
+						}
+						uint8 newColor = table3[color];
+						if (!(newColor & 0x80)) {
+							color = *dst;
+							color = table4[color + (newColor << 8)];
+						}
+					}	break;
+					
+					default:
+						warning("unhandled ppc: %d", ppc);
+						break;
+				}
+				*dst = color;
 			}
 			++dst;
 		}
 		dst = dstNextLine;
 	}
+	va_end(args);
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
@@ -994,10 +1310,17 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	static uint8 table[274];	
 	int tableIndex = 0;
 	
-	uint8 *newShape = (uint8*)malloc(shapeSize+16);
+	uint8 *newShape = NULL;
+	if (_vm->features() & GF_TALKIE) {
+		newShape = (uint8*)malloc(shapeSize+16);
+	} else {
+		newShape = (uint8*)malloc(shapeSize+18);
+	}
 	assert(newShape);
 	
 	byte *dst = newShape;
+	if (_vm->features() & GF_TALKIE)
+		dst += 2;
 	WRITE_LE_UINT16(dst, (flags & 3)); dst += 2;
 	*dst = h; dst += 1;
 	WRITE_LE_UINT16(dst, w); dst += 2;
@@ -1026,6 +1349,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 							table[0x100+tableIndex] = value;
 							table[value] = tableIndex;
 							++tableIndex;
+							value = tableIndex;
 						}
 					} else {
 						value = table[value];
@@ -1063,11 +1387,15 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	if (!(flags & 2)) {
 		if (shapeSize > _animBlockSize) {
 			dst = newShape;
+			if (_vm->features() & GF_TALKIE)
+				dst += 2;
 			flags = READ_LE_UINT16(dst);
 			flags |= 2;
 			WRITE_LE_UINT16(dst, flags);
 		} else {
 			src = newShape;
+			if (_vm->features() & GF_TALKIE)
+				src += 2;
 			if (flags & 1) {
 				src += 16;
 			}
@@ -1097,6 +1425,8 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	
 	if (flags & 1) {
 		dst = newShape + 10;
+		if (_vm->features() & GF_TALKIE)
+			dst += 2;
 		src = &table[0x100];
 		memcpy(dst, src, sizeof(uint8)*16);
 	}
@@ -1281,6 +1611,9 @@ byte *Screen::setMouseCursor(int x, int y, byte *shape) {
 	
 	restoreMouseRect();
 	
+	if (_vm->features() & GF_TALKIE)
+		shape += 2;
+	
 	int mouseRectSize = getRectSize((READ_LE_UINT16(shape + 3) >> 3) + 2, shape[5]);
 	if (_mouseRectSize < mouseRectSize) {
 		free(_mouseRect);
@@ -1302,6 +1635,8 @@ byte *Screen::setMouseCursor(int x, int y, byte *shape) {
 	
 	byte *dst = _mouseShape;
 	byte *src = shape;
+	if (_vm->features() & GF_TALKIE)
+		dst += 2;
 	
 	if (!(READ_LE_UINT16(shape) & 2)) {
 		uint16 newFlags = 0;
@@ -1338,13 +1673,10 @@ void Screen::restoreMouseRect() {
 	// if disableMouse
 	//	return
 	
-	// if mouseUnk == 0 {
-		if (_mouseDrawWidth && _mouseRect) {
-			copyScreenFromRect(_mouseDrawX, _mouseDrawY, _mouseDrawWidth, _mouseDrawHeight, _mouseRect);
-		}
-		_mouseDrawWidth = 0;
-	// }
-	// ++mouseUnk
+	if (_mouseDrawWidth && _mouseRect) {
+		copyScreenFromRect(_mouseDrawX, _mouseDrawY, _mouseDrawWidth, _mouseDrawHeight, _mouseRect);
+	}
+	_mouseDrawWidth = 0;
 }
 
 void Screen::copyMouseToScreen() {
@@ -1352,11 +1684,6 @@ void Screen::copyMouseToScreen() {
 	// if disableMouse
 	// 	return
 	
-	// if mouseUnk == 0
-	//	return
-	// --mouseUnk
-	// if mouseUnk != 0
-	//	return
 	int width = _mouseWidth;
 	int height = _mouseHeight;
 	int xpos = _vm->mouseX() - _mouseXOffset;
@@ -1396,14 +1723,14 @@ void Screen::copyMouseToScreen() {
 		copyScreenToRect(_mouseDrawX, _mouseDrawY, width, height, _mouseRect);
 	}
 	
-	drawShape(0, _mouseShape, xpos, ypos, 0, 0, 0, true);
+	drawShape(0, _mouseShape, xpos, ypos, 0, 0, 0);
 }
 
 void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
 	debug(9, "copyScreenFromRect(%d, %d, %d, %d, 0x%X)", x, y, w, h, ptr);
 	x <<= 3; w <<= 3;
 	uint8 *src = ptr;
-	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];	
+	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];
 	for (int i = 0; i < h; ++i) {
 		memcpy(dst, src, w);
 		src += w;
@@ -1415,12 +1742,22 @@ void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 	debug(9, "copyScreenToRect(%d, %d, %d, %d, 0x%X)", x, y, w, h, ptr);
 	x <<= 3; w <<= 3;
 	uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
-	uint8 *dst = ptr;	
+	uint8 *dst = ptr;
 	for (int i = 0; i < h; ++i) {
 		memcpy(dst, src, w);
 		dst += w;
 		src += SCREEN_W;
 	}
+}
+
+uint8 *Screen::getPalette(int num) {
+	debug(9, "getPalette(%d)", num);
+	assert(num >= 0 && num < 4);
+	if (num == 0) {
+		return _screenPalette;
+	}
+	
+	return _palettes[num-1];
 }
 
 } // End of namespace Kyra

@@ -31,8 +31,6 @@ class AudioStream;
 
 namespace Kyra {
 
-#define MAX_NUM_ROOMS 12
-
 enum {
 	GF_FLOPPY	= 1 <<  0,
 	GF_TALKIE	= 1 <<  1,
@@ -58,37 +56,78 @@ struct Character {
 	uint32 unk6;
 	uint8 inventoryItems[10];
 	int16 x1, y1, x2, y2;
+	uint16 field_20;
+	uint16 field_23;
 };
 
 struct Shape {
-	uint8 unk0;
-	uint8 unk1;
-	uint8 imageNum;
+	uint8 imageIndex;
+	int8 xOffset, yOffset;
 	uint8 x, y, w, h;
 };
 
 struct Room {
-//	uint8 id;
+	uint8 nameIndex;
 	uint16 northExit;
 	uint16 eastExit;
 	uint16 southExit;
 	uint16 westExit;
 	uint8 itemsTable[12];
-	const char *filename;
+	uint16 itemsXPos[12];
+	uint8 itemsYPos[12];
+	uint32 unkField3[12];	// maybe pointer to shape of the item
 };
 
-struct Cursor {
+struct AnimObject {
+	uint8 index;
+	uint32 active;
+	uint32 refreshFlag;
+	uint32 bkgdChangeFlag;
+	uint32 flags;
+	int16 drawY;
+	uint8 *sceneAnimPtr;
+	uint16 animFrameNumber;
+	uint8 *background;
+	uint16 rectSize;
+	int16 x1, y1;
+	int16 x2, y2;
+	uint16 width;
+	uint16 height;
+	uint16 width2;
+	uint16 height2;
+	AnimObject *nextAnimObject;
+};
+
+struct Rect {
 	int x, y;
-	int w, h;
+	int x2, y2;
 };
 
 struct TalkCoords {
 	uint16 y, x, w;
 };
 
+struct Item {
+	uint8 unk1;
+	uint8 height;
+	uint8 unk2;
+	uint8 unk3;
+};
+
 struct SeqLoop {
 	const uint8 *ptr;
 	uint16 count;
+};
+
+struct SceneExits {
+	int16 NorthXPos;
+	int8  NorthYPos;
+	int16 EastXPos;
+	int8  EastYPos;
+	int16 SouthXPos;
+	int8  SouthYPos;
+	int16 WestXPos;
+	int8  WestYPos;
 };
 
 struct WSAMovieV1;
@@ -99,6 +138,9 @@ class Resource;
 class PAKFile;
 class Screen;
 class Sprites;
+struct ScriptState;
+struct ScriptData;
+class ScriptHelper;
 
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
@@ -124,10 +166,15 @@ public:
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
+	SceneExits sceneExits() const { return _sceneExits; }
+	// ugly hack used by the dat loader
+	SceneExits &sceneExits() { return _sceneExits; }
 	
 	Common::RandomSource _rnd;
+	int16 _northExitHeight;
 
 	typedef void (KyraEngine::*IntroProc)();
+	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
 
 	const char **seqWSATable() { return (const char **)_seq_WSATable; }
 	const char **seqCPSTable() { return (const char **)_seq_CPSTable; }
@@ -155,6 +202,163 @@ public:
 	
 	int mouseX() { return _mouseX; }
 	int mouseY() { return _mouseY; }
+	
+	// all opcode procs (maybe that is somehow useless atm)
+	int cmd_magicInMouseItem(ScriptState *script);
+	int cmd_characterSays(ScriptState *script);
+	int cmd_pauseTicks(ScriptState *script);
+	int cmd_drawSceneAnimShape(ScriptState *script);
+	int cmd_queryGameFlag(ScriptState *script);
+	int cmd_setGameFlag(ScriptState *script);
+	int cmd_resetGameFlag(ScriptState *script);
+	int cmd_runNPCScript(ScriptState *script);
+	int cmd_setSpecialExitList(ScriptState *script);
+	int cmd_blockInWalkableRegion(ScriptState *script);
+	int cmd_blockOutWalkableRegion(ScriptState *script);
+	int cmd_walkPlayerToPoint(ScriptState *script);
+	int cmd_dropItemInScene(ScriptState *script);
+	int cmd_drawAnimShapeIntoScene(ScriptState *script);
+	int cmd_createMouseItem(ScriptState *script);
+	int cmd_savePageToDisk(ScriptState *script);
+	int cmd_sceneAnimOn(ScriptState *script);
+	int cmd_sceneAnimOff(ScriptState *script);
+	int cmd_getElapsedSeconds(ScriptState *script);
+	int cmd_mouseIsPointer(ScriptState *script);
+	int cmd_destroyMouseItem(ScriptState *script);
+	int cmd_runSceneAnimUntilDone(ScriptState *script);
+	int cmd_fadeSpecialPalette(ScriptState *script);
+	int cmd_playAdlibSound(ScriptState *script);
+	int cmd_playAdlibScore(ScriptState *script);
+	int cmd_phaseInSameScene(ScriptState *script);
+	int cmd_setScenePhasingFlag(ScriptState *script);
+	int cmd_resetScenePhasingFlag(ScriptState *script);
+	int cmd_queryScenePhasingFlag(ScriptState *script);
+	int cmd_sceneToDirection(ScriptState *script);
+	int cmd_setBirthstoneGem(ScriptState *script);
+	int cmd_placeItemInGenericMapScene(ScriptState *script);
+	int cmd_setBrandonStatusBit(ScriptState *script);
+	int cmd_pauseSeconds(ScriptState *script);
+	int cmd_getCharactersLocation(ScriptState *script);
+	int cmd_runNPCSubscript(ScriptState *script);
+	int cmd_magicOutMouseItem(ScriptState *script);
+	int cmd_internalAnimOn(ScriptState *script);
+	int cmd_forceBrandonToNormal(ScriptState *script);
+	int cmd_poisonDeathNow(ScriptState *script);
+	int cmd_setScaleMode(ScriptState *script);
+	int cmd_openWSAFile(ScriptState *script);
+	int cmd_closeWSAFile(ScriptState *script);
+	int cmd_runWSAFromBeginningToEnd(ScriptState *script);
+	int cmd_displayWSAFrame(ScriptState *script);
+	int cmd_enterNewScene(ScriptState *script);
+	int cmd_setSpecialEnterXAndY(ScriptState *script);
+	int cmd_runWSAFrames(ScriptState *script);
+	int cmd_popBrandonIntoScene(ScriptState *script);
+	int cmd_restoreAllObjectBackgrounds(ScriptState *script);
+	int cmd_setCustomPaletteRange(ScriptState *script);
+	int cmd_loadPageFromDisk(ScriptState *script);
+	int cmd_customPrintTalkString(ScriptState *script);
+	int cmd_restoreCustomPrintBackground(ScriptState *script);
+	int cmd_hideMouse(ScriptState *script);
+	int cmd_showMouse(ScriptState *script);
+	int cmd_getCharacterX(ScriptState *script);
+	int cmd_getCharacterY(ScriptState *script);
+	int cmd_changeCharactersFacing(ScriptState *script);
+	int cmd_CopyWSARegion(ScriptState *script);
+	int cmd_printText(ScriptState *script);
+	int cmd_random(ScriptState *script);
+	int cmd_loadSoundFile(ScriptState *script);
+	int cmd_displayWSAFrameOnHidPage(ScriptState *script);
+	int cmd_displayWSASequentialFrames(ScriptState *script);
+	int cmd_drawCharacterStanding(ScriptState *script);
+	int cmd_internalAnimOff(ScriptState *script);
+	int cmd_changeCharactersXAndY(ScriptState *script);
+	int cmd_clearSceneAnimatorBeacon(ScriptState *script);
+	int cmd_querySceneAnimatorBeacon(ScriptState *script);
+	int cmd_refreshSceneAnimator(ScriptState *script);
+	int cmd_placeItemInOffScene(ScriptState *script);
+	int cmd_wipeDownMouseItem(ScriptState *script);
+	int cmd_placeCharacterInOtherScene(ScriptState *script);
+	int cmd_getKey(ScriptState *script);
+	int cmd_specificItemInInventory(ScriptState *script);
+	int cmd_popMobileNPCIntoScene(ScriptState *script);
+	int cmd_mobileCharacterInScene(ScriptState *script);
+	int cmd_hideMobileCharacter(ScriptState *script);
+	int cmd_unhideMobileCharacter(ScriptState *script);
+	int cmd_setCharactersLocation(ScriptState *script);
+	int cmd_walkCharacterToPoint(ScriptState *script);
+	int cmd_specialEventDisplayBrynnsNote(ScriptState *script);
+	int cmd_specialEventRemoveBrynnsNote(ScriptState *script);
+	int cmd_setLogicPage(ScriptState *script);
+	int cmd_fatPrint(ScriptState *script);
+	int cmd_preserveAllObjectBackgrounds(ScriptState *script);
+	int cmd_updateSceneAnimations(ScriptState *script);
+	int cmd_sceneAnimationActive(ScriptState *script);
+	int cmd_setCharactersMovementDelay(ScriptState *script);
+	int cmd_getCharactersFacing(ScriptState *script);
+	int cmd_bkgdScrollSceneAndMasksRight(ScriptState *script);
+	int cmd_dispelMagicAnimation(ScriptState *script);
+	int cmd_findBrightestFireberry(ScriptState *script);
+	int cmd_setFireberryGlowPalette(ScriptState *script);
+	int cmd_setDeathHandlerFlag(ScriptState *script);
+	int cmd_drinkPotionAnimation(ScriptState *script);
+	int cmd_makeAmuletAppear(ScriptState *script);
+	int cmd_drawItemShapeIntoScene(ScriptState *script);
+	int cmd_setCharactersCurrentFrame(ScriptState *script);
+	int cmd_waitForConfirmationMouseClick(ScriptState *script);
+	int cmd_pageFlip(ScriptState *script);
+	int cmd_setSceneFile(ScriptState *script);
+	int cmd_getItemInMarbleVase(ScriptState *script);
+	int cmd_setItemInMarbleVase(ScriptState *script);
+	int cmd_addItemToInventory(ScriptState *script);
+	int cmd_intPrint(ScriptState *script);
+	int cmd_shakeScreen(ScriptState *script);
+	int cmd_createAmuletJewel(ScriptState *script);
+	int cmd_setSceneAnimCurrXY(ScriptState *script);
+	int cmd_Poison_Brandon_And_Remaps(ScriptState *script);
+	int cmd_fillFlaskWithWater(ScriptState *script);
+	int cmd_getCharactersMovementDelay(ScriptState *script);
+	int cmd_getBirthstoneGem(ScriptState *script);
+	int cmd_queryBrandonStatusBit(ScriptState *script);
+	int cmd_playFluteAnimation(ScriptState *script);
+	int cmd_playWinterScrollSequence(ScriptState *script);
+	int cmd_getIdolGem(ScriptState *script);
+	int cmd_setIdolGem(ScriptState *script);
+	int cmd_totalItemsInScene(ScriptState *script);
+	int cmd_restoreBrandonsMovementDelay(ScriptState *script);
+	int cmd_setMousePos(ScriptState *script);
+	int cmd_getMouseState(ScriptState *script);
+	int cmd_setEntranceMouseCursorTrack(ScriptState *script);
+	int cmd_itemAppearsOnGround(ScriptState *script);
+	int cmd_setNoDrawShapesFlag(ScriptState *script);
+	int cmd_fadeEntirePalette(ScriptState *script);
+	int cmd_itemOnGroundHere(ScriptState *script);
+	int cmd_queryCauldronState(ScriptState *script);
+	int cmd_setCauldronState(ScriptState *script);
+	int cmd_queryCrystalState(ScriptState *script);
+	int cmd_setCrystalState(ScriptState *script);
+	int cmd_setPaletteRange(ScriptState *script);
+	int cmd_shrinkBrandonDown(ScriptState *script);
+	int cmd_growBrandonUp(ScriptState *script);
+	int cmd_setBrandonScaleXAndY(ScriptState *script);
+	int cmd_resetScaleMode(ScriptState *script);
+	int cmd_getScaleDepthTableValue(ScriptState *script);
+	int cmd_setScaleDepthTableValue(ScriptState *script);
+	int cmd_message(ScriptState *script);
+	int cmd_checkClickOnNPC(ScriptState *script);
+	int cmd_getFoyerItem(ScriptState *script);
+	int cmd_setFoyerItem(ScriptState *script);
+	int cmd_setNoItemDropRegion(ScriptState *script);
+	int cmd_walkMalcolmOn(ScriptState *script);
+	int cmd_passiveProtection(ScriptState *script);
+	int cmd_setPlayingLoop(ScriptState *script);
+	int cmd_brandonToStoneSequence(ScriptState *script);
+	int cmd_brandonHealingSequence(ScriptState *script);
+	int cmd_protectCommandLine(ScriptState *script);
+	int cmd_pauseMusicSeconds(ScriptState *script);
+	int cmd_resetMaskRegion(ScriptState *script);
+	int cmd_setPaletteChangeFlag(ScriptState *script);
+	int cmd_fillRect(ScriptState *script);
+	int cmd_dummy(ScriptState *script);
 
 protected:
 
@@ -172,6 +376,42 @@ protected:
 	int getWidestLineWidth(int linesCount);
 	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
 	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
+	void setCharacterDefaultFrame(int character);
+	void setCharactersPositions(int character);
+	void setCharactersHeight();
+	int setGameFlag(int flag);
+	int queryGameFlag(int flag);
+	int resetGameFlag(int flag);
+	
+	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
+	void moveCharacterToPos(int character, int facing, int xpos, int ypos);
+	void setCharacterPositionWithUpdate(int character);
+	int setCharacterPosition(int character, uint8 *unk1);
+	void setCharacterPositionHelper(int character, uint8 *unk1);
+	int getOppositeFacingDirection(int dir);
+	void loadSceneMSC();
+	void blockInRegion(int x, int y, int width, int height);
+	void blockOutRegion(int x, int y, int width, int height);
+	void startSceneScript(int brandonAlive);
+	void initSceneData(int facing, int unk1, int brandonAlive);
+	void clearNoDropRects();
+	void addToNoDropRects(int x, int y, int w, int h);
+	byte findFreeItemInScene(int scene);
+	byte findItemAtPos(int x, int y);
+	void placeItemInGenericMapScene(int item, int index);
+	void initSceneObjectList(int brandonAlive);
+	void restoreAllObjectBackgrounds();
+	void preserveAnyChangedBackgrounds();
+	void preserveOrRestoreBackground(AnimObject *obj, bool restore);
+	void prepDrawAllObjects();
+	void copyChangedObjectsForward(int refreshFlag);
+	void updateAllObjectShapes();
+	void animRefreshNPC(int character);
+	int findDuplicateItemShape(int shape);
+	
+	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
+	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
+	AnimObject *objectQueue(AnimObject *queue, AnimObject *add);
 	
 	void seq_demo();
 	void seq_intro();
@@ -188,22 +428,32 @@ protected:
 	void snd_setSoundEffectFile(int file);
 	void snd_playSoundEffect(int track);
 	
+	static OpcodeProc _opcodeTable[];
+	static const int _opcodeTableSize;
+	
 	enum {
 		RES_ALL = 0,
-		RES_INTRO = (1 << 0)
+		RES_INTRO = (1 << 0),
+		RES_INGAME = (1 << 1)
 	};
 	
 	void res_loadResources(int type = RES_ALL);
 	void res_unloadResources(int type = RES_ALL);
 	void res_loadLangTable(const char *filename, PAKFile *res, byte ***loadTo, int *size, bool nativ);
 	void res_loadTable(const byte *src, byte ***loadTo, int *size);
-		
-	void loadRoom(uint16 roomID);
-	void drawRoom();
+	void res_loadRoomTable(const byte *src, Room **loadTo, int *size);
+	void res_loadShapeTable(const byte *src, Shape **loadTo, int *size);
+	
 	void delay(uint32 millis);
 	void loadPalette(const char *filename, uint8 *palData);
 	void loadMouseShapes();
-	void setupRooms();
+	void loadCharacterShapes();
+	void loadSpecialEffectShapes();
+	void loadItems();
+	void loadMainScreen();
+	void setCharactersInDefaultScene();
+	void resetBrandonPosionFlags();
+	void initAnimStateList();
 
 	uint8 _game;
 	bool _fastMode;
@@ -216,14 +466,60 @@ protected:
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
 	bool _talkMessagePrinted;
-	uint8 _flagsTable[51];
-	uint8 *_itemShapes[377];
+	uint8 _flagsTable[53];
+	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint32 _features;
 	int _mouseX, _mouseY;
 	bool _needMouseUpdate;
-
+	
+	WSAMovieV1 *_wsaObjects[10];
+	uint16 _entranceMouseCursorTracks[8];
+	uint16 _walkBlockNorth;
+	uint16 _walkBlockEast;
+	uint16 _walkBlockSouth;
+	uint16 _walkBlockWest;
+	
+	int32 _scaleMode;
+	uint16 _scaleTable[145];
+	
+	Rect _noDropRects[11];
+	
+	uint16 _birthstoneGemTable[4];
+	uint8 _idolGemsTable[3];
+	
+	uint16 _marbleVaseItem;
+	
+	uint16 _brandonStatusBit;
+	uint8 _unkBrandonPoisonFlags[256];	// this seem not to be posion flags, it is used for drawing once
+	int _brandonPosX;
+	int _brandonPosY;
+	int16 _brandonScaleX;
+	int16 _brandonScaleY;
+	int _brandonDrawFrame;
+	
+	int8 *_sceneAnimTable[50];
+	
+	Item _itemTable[145];
+	
+	uint16 *_exitListPtr;
+	uint16 _exitList[11];
+	SceneExits _sceneExits;
 	uint16 _currentRoom;
+	uint8 *_maskBuffer;
+	
+	int _movUnkVar1;
+	int _lastFindWayRet;
+	int *_movFacingTable;
+	
+	AnimObject *_objectQueue;
+	AnimObject *_animStates;
+	AnimObject *_charactersAnimState;
+	AnimObject *_animObjects;
+	AnimObject *_unkAnimsBuffer;
+	
+	int _curMusicTheme;
+	int _newMusicTheme;
 	AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
 
@@ -232,7 +528,16 @@ protected:
 	MusicPlayer *_midi;
 	SeqPlayer *_seq;
 	Sprites *_sprites;
-	Room _rooms[MAX_NUM_ROOMS];
+	ScriptHelper *_scriptInterpreter;
+	
+	ScriptState *_scriptMain;
+	ScriptData *_npcScriptData;
+	
+	ScriptState *_scriptClick;	// TODO: rename to a better name
+	ScriptData *_scriptClickData;
+	
+	Character *_characterList;
+	Character *_currentCharacter;
 	
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;
@@ -255,8 +560,22 @@ protected:
 	int _seq_COLTable_Size;
 	int _seq_textsTable_Size;
 	
+	char **_characterImageTable;
+	int _characterImageTableSize;
+	
+	Shape *_defaultShapeTable;
+	int _defaultShapeTableSize;
+	
+	Room *_roomTable;
+	int _roomTableSize;	
+	char **_roomFilenameTable;
+	int _roomFilenameTableSize;
+	
 	static const char *_xmidiFiles[];
 	static const int _xmidiFilesCount;
+	
+	static const int8 _charXPosTable[];
+	static const int8 _charYPosTable[];
 };
 
 } // End of namespace Kyra
