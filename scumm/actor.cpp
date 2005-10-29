@@ -1144,13 +1144,13 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
 	bcr->_paletteNum = _hePaletteNum;
 
-	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0) {
-		_heCondMask = (_heCondMask & ~0x3FF) | 1;
-		if (_vm->getTalkingActor() == _number) {
-			// Checks if talk sound is active?
-			// Otherwise just do rand animation
-			int rnd = _vm->_rnd.getRandomNumberRng(1, 10);
-			setTalkCondition(rnd);
+	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0 && _animProgress == 0) {
+		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
+			// Get sound var 19 of sound 1, if sound code is active.
+			// Otherwise choose random animation
+			setTalkCondition(_vm->_rnd.getRandomNumberRng(1, 10));
+		} else {
+			setTalkCondition(1);
 		}
 	}
 	_heNoTalkAnimation = 0;
