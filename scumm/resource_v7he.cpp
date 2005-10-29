@@ -1689,6 +1689,8 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 	_numGlobalScripts = 2048;
+
+	_shadowPalette = (byte *)calloc(65536, 1);
 }
 
 void ScummEngine_v90he::readMAXS(int blockSize) {
@@ -1724,7 +1726,6 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 	if (_heversion >= 95) {
 		_shadowPalette = (byte *)calloc(65536, 1);
 	}
-
 }
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
