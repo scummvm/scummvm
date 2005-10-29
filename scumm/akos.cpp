@@ -337,6 +337,7 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 	codec = READ_LE_UINT16(&akhd->codec);
 	akct = _vm->findResourceData(MKID('AKCT'), akos);
 
+	xmap = 0;
 	if (shadow) {
 		const uint8 *xmapPtr = _vm->getResourceAddress(rtImage, shadow);
 		assert(xmapPtr);
