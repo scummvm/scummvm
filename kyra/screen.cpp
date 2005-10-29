@@ -568,7 +568,6 @@ void Screen::setScreenDim(int dim) {
 	// XXX
 }
 
-// TODO: implement the other callbacks and implement all of this function
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
 	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d, ...)", pageNum, x, y, sd, flags);
 	assert(shapeData);
@@ -1303,7 +1302,11 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	}
 	
 	int16 shapeSize2 = shapeSize;
-	shapeSize += 10;
+	if (_vm->features() & GF_TALKIE) {
+		shapeSize += 12;
+	} else {
+		shapeSize += 10;
+	}
 	if (flags & 1)
 		shapeSize += 16;
 	
@@ -1311,11 +1314,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	int tableIndex = 0;
 	
 	uint8 *newShape = NULL;
-	if (_vm->features() & GF_TALKIE) {
-		newShape = (uint8*)malloc(shapeSize+16);
-	} else {
-		newShape = (uint8*)malloc(shapeSize+18);
-	}
+	newShape = (uint8*)malloc(shapeSize+16);
 	assert(newShape);
 	
 	byte *dst = newShape;
@@ -1387,15 +1386,17 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	if (!(flags & 2)) {
 		if (shapeSize > _animBlockSize) {
 			dst = newShape;
-			if (_vm->features() & GF_TALKIE)
+			if (_vm->features() & GF_TALKIE) {
 				dst += 2;
+			}
 			flags = READ_LE_UINT16(dst);
 			flags |= 2;
 			WRITE_LE_UINT16(dst, flags);
 		} else {
 			src = newShape;
-			if (_vm->features() & GF_TALKIE)
+			if (_vm->features() & GF_TALKIE) {
 				src += 2;
+			}
 			if (flags & 1) {
 				src += 16;
 			}
@@ -1421,12 +1422,14 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 		}
 	}
 	
-	WRITE_LE_UINT16((newShape + 6), shapeSize);
+	dst = newShape;
+	if (_vm->features() & GF_TALKIE) {
+		dst += 2;
+	}
+	WRITE_LE_UINT16((dst + 6), shapeSize);
 	
 	if (flags & 1) {
 		dst = newShape + 10;
-		if (_vm->features() & GF_TALKIE)
-			dst += 2;
 		src = &table[0x100];
 		memcpy(dst, src, sizeof(uint8)*16);
 	}
@@ -1623,6 +1626,8 @@ byte *Screen::setMouseCursor(int x, int y, byte *shape) {
 	}
 	
 	int shapeSize = READ_LE_UINT16(shape + 8) + 10;
+	if (_vm->features() & GF_TALKIE)
+		shapeSize += 2;
 	if (READ_LE_UINT16(shape) & 1)
 		shapeSize += 16;
 	
@@ -1660,8 +1665,13 @@ byte *Screen::setMouseCursor(int x, int y, byte *shape) {
 	}
 	
 	_mouseXOffset = x; _mouseYOffset = y;
-	_mouseHeight = _mouseShape[5];
-	_mouseWidth = (READ_LE_UINT16(_mouseShape + 3) >> 3) + 2;
+	if (_vm->features() & GF_TALKIE) {
+		_mouseHeight = _mouseShape[7];
+		_mouseWidth = (READ_LE_UINT16(_mouseShape + 5) >> 3) + 2;
+	} else {
+		_mouseHeight = _mouseShape[5];
+		_mouseWidth = (READ_LE_UINT16(_mouseShape + 3) >> 3) + 2;
+	}
 	
 	copyMouseToScreen();
 	
