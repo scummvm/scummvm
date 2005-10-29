@@ -110,7 +110,7 @@ void ScummEngine::putClass(int obj, int cls, bool set) {
 	else
 		_classData[obj] &= ~(1 << (cls - 1));
 
-	if (1 <= obj && obj < _numActors) {
+	if (_version <= 4 && obj >= 1 && obj < _numActors) {
 		_actors[obj].classChanged(cls, set);
 	}
 }
