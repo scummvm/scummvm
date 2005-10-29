@@ -33,17 +33,13 @@
 
 namespace Sword2 {
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
 struct WalkData {
 	uint16 frame;
 	int16 x;
 	int16 y;
 	uint8 step;
 	uint8 dir;
-} GCC_PACK;
+};
 
 struct BarData {
 	int16 x1;
@@ -58,7 +54,7 @@ struct BarData {
 	int16 dy;	// y2 - y1
 	int32 co;	// co = (y1 * dx) - (x1 * dy) from an equation for a
 			// line y * dx = x * dy + co
-} GCC_PACK;
+};
 
 struct NodeData {
 	int16 x;
@@ -66,11 +62,7 @@ struct NodeData {
 	int16 level;
 	int16 prev;
 	int16 dist;
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
+};
 
 // because we only have 2 megas in the game!
 #define TOTAL_ROUTE_SLOTS	2
@@ -137,13 +129,8 @@ private:
 	int32 _framesPerStep;
 	int32 _framesPerChar;
 
-	uint8 _nWalkFrames;			// no. of frames per walk cycle
-	uint8 _usingStandingTurnFrames;		// any standing turn frames?
-	uint8 _usingWalkingTurnFrames;		// any walking turn frames?
-	uint8 _usingSlowInFrames;		// any slow-in frames?
-	uint8 _usingSlowOutFrames;		// any slow-out frames?
-	int32 _dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32 _dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	ObjectWalkdata _walkData;
+
 	int8 _modX[NO_DIRECTIONS];
 	int8 _modY[NO_DIRECTIONS];
 	int32 _diagonalx;
@@ -158,9 +145,6 @@ private:
 	int32 _firstWalkingTurnRightFrame;	// right walking turn
 
 	uint32 _firstSlowInFrame[NO_DIRECTIONS];
-	uint32 _numberOfSlowInFrames[NO_DIRECTIONS];
-
-	uint32 _leadingLeg[NO_DIRECTIONS];
 
 	int32 _firstSlowOutFrame;
 
@@ -183,8 +167,8 @@ private:
 	int32 getRoute();
 	void extractRoute();
 	void loadWalkGrid();
-	void setUpWalkGrid(ObjectMega *ob_mega, int32 x, int32 y, int32 dir);
-	void loadWalkData(ObjectWalkdata *ob_walkdata);
+	void setUpWalkGrid(byte *ob_mega, int32 x, int32 y, int32 dir);
+	void loadWalkData(byte *ob_walkdata);
 	bool scan(int32 level);
 
 	int32 newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2);
@@ -219,44 +203,40 @@ public:
 		memset(_route, 0, sizeof(_route));
 		memset(_smoothPath, 0, sizeof(_smoothPath));
 		memset(_modularPath, 0, sizeof(_modularPath));
-		memset(_dx, 0, sizeof(_dx));
-		memset(_dy, 0, sizeof(_dy));
 		memset(_modX, 0, sizeof(_modX));
 		memset(_modY, 0, sizeof(_modY));
 		memset(_firstSlowInFrame, 0, sizeof(_firstSlowInFrame));
-		memset(_numberOfSlowInFrames, 0, sizeof(_numberOfSlowInFrames));
-		memset(_leadingLeg, 0, sizeof(_leadingLeg));
 	}
 
 	void setStandbyCoords(int16 x, int16 y, uint8 dir);
 	int whatTarget(int startX, int startY, int destX, int destY);
 
 	// Sprites
-	void setSpriteStatus(ObjectGraphic *ob_graph, uint32 type);
-	void setSpriteShading(ObjectGraphic *ob_graph, uint32 type);
+	void setSpriteStatus(byte *ob_graph, uint32 type);
+	void setSpriteShading(byte *ob_graph, uint32 type);
 
 	// Animation
-	int doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, int32 animRes, bool reverse);
-	int megaTableAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 *animTable, bool reverse);
+	int doAnimate(byte *ob_logic, byte *ob_graph, int32 animRes, bool reverse);
+	int megaTableAnimate(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *animTable, bool reverse);
 
 	// Walking
-	int doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y, uint8 target_dir);
-	int walkToAnim(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 animRes);
-	int walkToTalkToMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 megaId, uint32 separation);
+	int doWalk(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, int16 target_x, int16 target_y, uint8 target_dir);
+	int walkToAnim(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint32 animRes);
+	int walkToTalkToMega(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint32 megaId, uint32 separation);
 
 	// Turning
-	int doFace(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint8 target_dir);
-	int faceXY(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y);
-	int faceMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 megaId);
+	int doFace(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint8 target_dir);
+	int faceXY(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, int16 target_x, int16 target_y);
+	int faceMega(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint32 megaId);
 
 	// Standing
-	void standAt(ObjectGraphic *ob_graph, ObjectMega *ob_mega, int32 x, int32 y, int32 dir);
-	void standAfterAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 animRes);
-	void standAtAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 animRes);
+	void standAt(byte *ob_graph, byte *ob_mega, int32 x, int32 y, int32 dir);
+	void standAfterAnim(byte *ob_graph, byte *ob_mega, uint32 animRes);
+	void standAtAnim(byte *ob_graph, byte *ob_mega, uint32 animRes);
 
-	int32 routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int32 x, int32 y, int32 dir);
+	int32 routeFinder(byte *ob_mega, byte *ob_walkdata, int32 x, int32 y, int32 dir);
 
-	void earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata);
+	void earlySlowOut(byte *ob_mega, byte *ob_walkdata);
 
 	void allocateRouteMem();
 	WalkData *getRouteMem();

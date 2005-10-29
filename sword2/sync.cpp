@@ -46,8 +46,10 @@ void Logic::clearSyncs(uint32 id) {
  */
 
 int Logic::getSync() {
+	uint32 id = readVar(ID);
+
 	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == _scriptVars[ID])
+		if (_syncList[i].id == id)
 			return i;
 	}
 

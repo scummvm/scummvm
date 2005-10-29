@@ -25,6 +25,7 @@
 #include "sword2/interpreter.h"
 #include "sword2/logic.h"
 #include "sword2/memory.h"
+#include "sword2/resman.h"
 
 namespace Sword2 {
 
@@ -205,18 +206,58 @@ do { \
 
 #define pop() (assert(stackPtr < ARRAYSIZE(stack)), stack[--stackPtr])
 
-uint32 *Logic::_scriptVars = NULL;
+int Logic::runResScript(uint32 scriptRes, uint32 offset) {
+	byte *scriptAddr;
+	int result;
 
-int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
+	scriptAddr = _vm->_resman->openResource(scriptRes);
+	result = runScript(scriptAddr, scriptAddr, offset);
+	_vm->_resman->closeResource(scriptRes);
+
+	return result;
+}
+
+int Logic::runResObjScript(uint32 scriptRes, uint32 objRes, uint32 offset) {
+	byte *scriptAddr, *objAddr;
+	int result;
+
+	scriptAddr = _vm->_resman->openResource(scriptRes);
+	objAddr = _vm->_resman->openResource(objRes);
+	result = runScript(scriptAddr, objAddr, offset);
+	_vm->_resman->closeResource(objRes);
+	_vm->_resman->closeResource(scriptRes);
+
+	return result;
+}
+
+int Logic::runScript(byte *scriptData, byte *objectData, uint32 offset) {
+	byte pc[4];
+
+	WRITE_LE_UINT32(pc, offset);
+	return runScript2(scriptData, objectData, pc);
+}
+
+// This form of the runScript function is only called directly from
+// the processSession() function, which uses it to update the script PC in the
+// current object hub. For reasons which I do not understand, I couldn't get it
+// to work if I called the function first with a dummy offset variable, and
+// and then updated the object hub myself.
+
+int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	// Interestingly, unlike our BASS engine the stack is a local variable.
-	// This has some interesting implications which may or may not be
-	// necessary to the BS2 engine.
+	// I don't know whether or not this is relevant to the working of the
+	// BS2 engine.
 
 	int32 stack[STACK_SIZE];
 	int32 stackPtr = 0;
 
-	StandardHeader *header = (StandardHeader *)scriptData;
-	scriptData += sizeof(StandardHeader) + sizeof(ObjectHub);
+	uint32 offset = READ_LE_UINT32(offsetPtr);
+
+	ResHeader header;
+
+	header.read(scriptData);
+
+	scriptData += ResHeader::size() + ObjectHub::size();
 
 	// The script data format:
 	//	int32_TYPE	1		Size of variable space in bytes
@@ -231,25 +272,25 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 
 	// Get the start of variables and start of code
 
-	uint32 *localVars = (uint32 *)(scriptData + sizeof(int32));
-	char *code = scriptData + READ_LE_UINT32(scriptData) + sizeof(int32);
+	byte *localVars = scriptData + 4;
+	byte *code = scriptData + READ_LE_UINT32(scriptData) + 4;
 	uint32 noScripts = READ_LE_UINT32(code);
 
-	code += sizeof(int32);
+	code += 4;
 
-	const uint32 *offsetTable = (const uint32 *)code;
+	byte *offsetTable = code;
 
-	if (*offset < noScripts) {
-		ip = FROM_LE_32(offsetTable[*offset]);
-		scriptNumber = *offset;
-		debug(4, "Start script %d with offset %d", *offset, ip);
+	if (offset < noScripts) {
+		ip = READ_LE_UINT32(offsetTable + offset * 4);
+		scriptNumber = offset;
+		debug(4, "Start script %d with offset %d", offset, ip);
 	} else {
 		uint i;
 
-		ip = *offset;
+		ip = offset;
 
 		for (i = 1; i < noScripts; i++) {
-			if (FROM_LE_32(offsetTable[i]) >= ip)
+			if (READ_LE_UINT32(offsetTable + 4 * i) >= ip)
 				break;
 		}
 
@@ -265,23 +306,23 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	bool checkElevatorBug = false;
 
 	if (scriptNumber == 2) {
-		if (strcmp((char *)header->name, "mop_73") == 0)
+		if (strcmp((char *)header.name, "mop_73") == 0)
 			checkMopBug = true;
-		else if (strcmp((char *)header->name, "titipoco_81") == 0)
+		else if (strcmp((char *)header.name, "titipoco_81") == 0)
 			checkPyramidBug = true;
-		else if (strcmp((char *)header->name, "lift_82") == 0)
+		else if (strcmp((char *)header.name, "lift_82") == 0)
 			checkElevatorBug = true;
 	}
 
-	code += noScripts * sizeof(int32);
+	code += noScripts * 4;
 
 	// Code should now be pointing at an identifier and a checksum
-	const char *checksumBlock = code;
+	byte *checksumBlock = code;
 
-	code += sizeof(int32) * 3;
+	code += 4 * 3;
 
 	if (READ_LE_UINT32(checksumBlock) != 12345678) {
-		error("Invalid script in object %s", header->name);
+		error("Invalid script in object %s", header.name);
 		return 0;
 	}
 
@@ -291,8 +332,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 	for (int i = 0; i < codeLen; i++)
 		checksum += (unsigned char) code[i];
 
-	if (checksum != (int32) READ_LE_UINT32(checksumBlock + 8)) {
-		debug(1, "Checksum error in object %s", header->name);
+	if (checksum != (int32)READ_LE_UINT32(checksumBlock + 8)) {
+		debug(1, "Checksum error in object %s", header.name);
 		// This could be bad, but there has been a report about someone
 		// who had problems running the German version because of
 		// checksum errors. Could there be a version where checksums
@@ -341,9 +382,9 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// So if his click hander finishes, and variable 913 is
 			// 1, we set it back to 0 manually.
 
-			if (checkPyramidBug && _scriptVars[913] == 1) {
+			if (checkPyramidBug && readVar(913) == 1) {
 				warning("Working around pyramid bug: Resetting Titipoco's state");
-				_scriptVars[913] = 0;
+				writeVar(913, 0);
 			}
 
 			// WORKAROUND: The not-so-known-but-should-be-dreaded
@@ -354,7 +395,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// examining it, the mouse cursor is removed but never
 			// restored.
 
-			if (checkElevatorBug && Logic::_scriptVars[RIGHT_BUTTON]) {
+			if (checkElevatorBug && readVar(RIGHT_BUTTON)) {
 				warning("Working around elevator bug: Restoring mouse pointer");
 				fnAddHuman(NULL);
 			}
@@ -363,7 +404,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			break;
 		case CP_QUIT:
 			// Quit out for a cycle
-			*offset = ip;
+			WRITE_LE_UINT32(offsetPtr, ip);
 			debug(9, "CP_QUIT");
 			return 0;
 		case CP_TERMINATE:
@@ -388,16 +429,14 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_LOCAL_VAR32:
 			// Push the contents of a local variable
 			Read16ip(parameter);
-			parameter /= 4;
-			push(localVars[parameter]);
-			debug(9, "CP_PUSH_LOCAL_VAR32: localVars[%d] => %d", parameter, localVars[parameter]);
+			push(READ_LE_UINT32(localVars + parameter));
+			debug(9, "CP_PUSH_LOCAL_VAR32: localVars[%d] => %d", parameter / 4, READ_LE_UINT32(localVars + parameter));
 			break;
 		case CP_PUSH_GLOBAL_VAR32:
 			// Push a global variable
-			assert(_scriptVars);
 			Read16ip(parameter);
-			push(_scriptVars[parameter]);
-			debug(9, "CP_PUSH_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, _scriptVars[parameter]);
+			push(readVar(parameter));
+			debug(9, "CP_PUSH_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, readVar(parameter));
 			break;
 		case CP_PUSH_LOCAL_ADDR:
 			// Push the address of a local variable
@@ -410,10 +449,8 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// CP_PUSH_DEREFERENCED_STRUCTURE opcode.
 
 			Read16ip(parameter);
-			parameter /= 4;
-			ptr = (byte *)&localVars[parameter];
-			push_ptr(ptr);
-			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter, ptr);
+			push_ptr(localVars + parameter);
+			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter / 4, localVars + parameter);
 			break;
 		case CP_PUSH_STRING:
 			// Push the address of a string on to the stack
@@ -421,7 +458,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read8ip(parameter);
 
 			// ip now points to the string
-			ptr = (byte *)(code + ip);
+			ptr = code + ip;
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_STRING: \"%s\"", ptr);
 			ip += (parameter + 1);
@@ -429,17 +466,16 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 		case CP_PUSH_DEREFERENCED_STRUCTURE:
 			// Push the address of a dereferenced structure
 			Read32ip(parameter);
-			ptr = (byte *)(objectData + sizeof(int32) + sizeof(StandardHeader) + sizeof(ObjectHub) + parameter);
+			ptr = objectData + 4 + ResHeader::size() + ObjectHub::size() + parameter;
 			push_ptr(ptr);
 			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, ptr);
 			break;
 		case CP_POP_LOCAL_VAR32:
 			// Pop a value into a local word variable
 			Read16ip(parameter);
-			parameter /= 4;
 			value = pop();
-			localVars[parameter] = value;
-			debug(9, "CP_POP_LOCAL_VAR32: localVars[%d] = %d", parameter, value);
+			WRITE_LE_UINT32(localVars + parameter, value);
+			debug(9, "CP_POP_LOCAL_VAR32: localVars[%d] = %d", parameter / 4, value);
 			break;
 		case CP_POP_GLOBAL_VAR32:
 			// Pop a global variable
@@ -472,41 +508,39 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// use that as the signal that Nico's state needs to be
 			// updated as well.
 
-			if (checkMopBug && parameter == 1017 && _scriptVars[1003] != 2) {
+			if (checkMopBug && parameter == 1017 && readVar(1003) != 2) {
 				warning("Working around mop bug: Setting Nico's state");
-				_scriptVars[1003] = 2;
+				writeVar(1003, 2);
 			}
 
-			_scriptVars[parameter] = value;
+			writeVar(parameter, value);
 			debug(9, "CP_POP_GLOBAL_VAR32: scriptsVars[%d] = %d", parameter, value);
 			break;
 		case CP_ADDNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
-			parameter /= 4;
-			value = pop();
-			localVars[parameter] += value;
-			debug(9, "CP_ADDNPOP_LOCAL_VAR32: localVars[%d] += %d => %d", parameter, value, localVars[parameter]);
+			value = READ_LE_UINT32(localVars + parameter) + pop();
+			WRITE_LE_UINT32(localVars + parameter, value);
+			debug(9, "CP_ADDNPOP_LOCAL_VAR32: localVars[%d] => %d", parameter / 4, value);
 			break;
 		case CP_SUBNPOP_LOCAL_VAR32:
 			Read16ip(parameter);
-			parameter /= 4;
-			value = pop();
-			localVars[parameter] -= value;
-			debug(9, "CP_SUBNPOP_LOCAL_VAR32: localVars[%d] -= %d => %d", parameter, value, localVars[parameter]);
+			value = READ_LE_UINT32(localVars + parameter) - pop();
+			WRITE_LE_UINT32(localVars + parameter, value);
+			debug(9, "CP_SUBNPOP_LOCAL_VAR32: localVars[%d] => %d", parameter / 4, value);
 			break;
 		case CP_ADDNPOP_GLOBAL_VAR32:
 			// Add and pop a global variable
 			Read16ip(parameter);
-			value = pop();
-			_scriptVars[parameter] += value;
-			debug(9, "CP_ADDNPOP_GLOBAL_VAR32: scriptVars[%d] += %d => %d", parameter, value, _scriptVars[parameter]);
+			value = readVar(parameter) + pop();
+			writeVar(parameter, value);
+			debug(9, "CP_ADDNPOP_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, value);
 			break;
 		case CP_SUBNPOP_GLOBAL_VAR32:
 			// Sub and pop a global variable
 			Read16ip(parameter);
-			value = pop();
-			_scriptVars[parameter] -= value;
-			debug(9, "CP_SUBNPOP_GLOBAL_VAR32: scriptVars[%d] -= %d => %d", parameter, value, _scriptVars[parameter]);
+			value = readVar(parameter) - pop();
+			writeVar(parameter, value);
+			debug(9, "CP_SUBNPOP_GLOBAL_VAR32: scriptVars[%d] => %d", parameter, value);
 			break;
 
 		// Jump opcodes
@@ -516,7 +550,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read32ipLeaveip(parameter);
 			value = pop();
 			if (!value) {
-				ip += sizeof(int32);
+				ip += 4;
 				debug(9, "CP_SKIPONTRUE: %d (IS FALSE (NOT SKIPPED))", parameter);
 			} else {
 				ip += parameter;
@@ -528,7 +562,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			Read32ipLeaveip(parameter);
 			value = pop();
 			if (value) {
-				ip += sizeof(int32);
+				ip += 4;
 				debug(9, "CP_SKIPONFALSE: %d (IS TRUE (NOT SKIPPED))", parameter);
 			} else {
 				ip += parameter;
@@ -549,13 +583,13 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			// Search the cases
 			foundCase = false;
 			for (i = 0; i < caseCount && !foundCase; i++) {
-				if (value == (int32) READ_LE_UINT32(code + ip)) {
+				if (value == (int32)READ_LE_UINT32(code + ip)) {
 					// We have found the case, so lets
 					// jump to it
 					foundCase = true;
-					ip += READ_LE_UINT32(code + ip + sizeof(int32));
+					ip += READ_LE_UINT32(code + ip + 4);
 				} else
-					ip += sizeof(int32) * 2;
+					ip += 4 * 2;
 			}
 
 			// If we found no matching case then use the default
@@ -585,7 +619,7 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			switch (retVal & 7) {
 			case IR_STOP:
 				// Quit out for a cycle
-				*offset = ip;
+				WRITE_LE_UINT32(offsetPtr, ip);
 				return 0;
 			case IR_CONT:
 				// Continue as normal
@@ -596,11 +630,11 @@ int Logic::runScript(char *scriptData, char *objectData, uint32 *offset) {
 			case IR_REPEAT:
 				// Return setting offset to start of this
 				// function call
-				*offset = savedStartOfMcode;
+				WRITE_LE_UINT32(offsetPtr, savedStartOfMcode);
 				return 0;
 			case IR_GOSUB:
 				// that's really neat
-				*offset = ip;
+				WRITE_LE_UINT32(offsetPtr, ip);
 				return 2;
 			default:
 				error("Bad return code (%d) from '%s'", retVal & 7, opcodes[parameter].desc);

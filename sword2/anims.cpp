@@ -40,12 +40,15 @@
 
 namespace Sword2 {
 
-int Router::doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graphic, int32 animRes, bool reverse) {
+int Router::doAnimate(byte *ob_logic, byte *ob_graph, int32 animRes, bool reverse) {
+	AnimHeader anim_head;
 	byte *anim_file;
-	AnimHeader *anim_head;
 
-	if (ob_logic->looping == 0) {
-		StandardHeader *head;
+	ObjectLogic obLogic(ob_logic);
+	ObjectGraphic obGraph(ob_graph);
+
+	if (obLogic.getLooping() == 0) {
+		byte *ptr;
 
 		// This is the start of the anim - set up the first frame
 
@@ -55,32 +58,32 @@ int Router::doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graphic, int32 an
 		// 'testing_routines' object in George's Player Character
 		// section of linc
 
-		if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
+		if (_vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) {
 			if (!_vm->_resman->checkValid(animRes)) {
 				// Not a valid resource number. Switch off
 				// the sprite. Don't animate - just continue
 				// script next cycle.
-				setSpriteStatus(ob_graphic, NO_SPRITE);
+				setSpriteStatus(ob_graph, NO_SPRITE);
 				return IR_STOP;
 			}
 
-			head = (StandardHeader *)_vm->_resman->openResource(animRes);
+			ptr = _vm->_resman->openResource(animRes);
 
 			// if it's not an animation file
-			if (head->fileType != ANIMATION_FILE) {
+			if (_vm->_resman->fetchType(animRes) != ANIMATION_FILE) {
 				_vm->_resman->closeResource(animRes);
 
 				// switch off the sprite
 				// don't animate - just continue
 				// script next cycle
-				setSpriteStatus(ob_graphic, NO_SPRITE);
+				setSpriteStatus(ob_graph, NO_SPRITE);
 				return IR_STOP;
 			}
 
 			_vm->_resman->closeResource(animRes);
 
 			// switch on the sprite
-			setSpriteStatus(ob_graphic, SORT_SPRITE);
+			setSpriteStatus(ob_graph, SORT_SPRITE);
 		}
 
 		assert(animRes);
@@ -88,88 +91,94 @@ int Router::doAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graphic, int32 an
 		// open anim file
 		anim_file = _vm->_resman->openResource(animRes);
 
-		head = (StandardHeader *)anim_file;
-		assert(head->fileType == ANIMATION_FILE);
+		assert(_vm->_resman->fetchType(animRes) == ANIMATION_FILE);
 
 		// point to anim header
-		anim_head = _vm->fetchAnimHeader(anim_file);
+		anim_head.read(_vm->fetchAnimHeader(anim_file));
 
 		// now running an anim, looping back to this call again
-		ob_logic->looping = 1;
-		ob_graphic->anim_resource = animRes;
+		obLogic.setLooping(1);
+		obGraph.setAnimResource(animRes);
 
 		if (reverse)
-			ob_graphic->anim_pc = anim_head->noAnimFrames - 1;
+			obGraph.setAnimPc(anim_head.noAnimFrames - 1);
 		else
-			ob_graphic->anim_pc = 0;
+			obGraph.setAnimPc(0);
 	} else if (_vm->_logic->getSync() != -1) {
 		// We've received a sync - return to script immediately
-		debug(5, "**sync stopped %d**", Logic::_scriptVars[ID]);
+		debug(5, "**sync stopped %d**", _vm->_logic->readVar(ID));
 
 		// If sync received, anim finishes right now (remaining on
 		// last frame). Quit animation, but continue script.
-		ob_logic->looping = 0;
+		obLogic.setLooping(0);
 		return IR_CONT;
 	} else {
 		// Not first frame, and no sync received - set up the next
 		// frame of the anim.
 
 		// open anim file and point to anim header
-		anim_file = _vm->_resman->openResource(ob_graphic->anim_resource);
-		anim_head = _vm->fetchAnimHeader(anim_file);
+		anim_file = _vm->_resman->openResource(obGraph.getAnimResource());
+		anim_head.read(_vm->fetchAnimHeader(anim_file));
 
 		if (reverse)
-			ob_graphic->anim_pc--;
+			obGraph.setAnimPc(obGraph.getAnimPc() - 1);
 		else
-			ob_graphic->anim_pc++;
+			obGraph.setAnimPc(obGraph.getAnimPc() + 1);
 	}
 
 	// check for end of anim
 
 	if (reverse) {
-		if (ob_graphic->anim_pc == 0)
-			ob_logic->looping = 0;
+		if (obGraph.getAnimPc() == 0)
+			obLogic.setLooping(0);
 	} else {
-		if (ob_graphic->anim_pc == anim_head->noAnimFrames - 1)
-			ob_logic->looping = 0;
+		if (obGraph.getAnimPc() == anim_head.noAnimFrames - 1)
+			obLogic.setLooping(0);
 	}
 
 	// close the anim file
-	_vm->_resman->closeResource(ob_graphic->anim_resource);
+	_vm->_resman->closeResource(obGraph.getAnimResource());
 
 	// check if we want the script to loop back & call this function again
-	return ob_logic->looping ? IR_REPEAT : IR_STOP;
+	return obLogic.getLooping() ? IR_REPEAT : IR_STOP;
 }
 
-int Router::megaTableAnimate(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 *animTable, bool reverse) {
+int Router::megaTableAnimate(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *animTable, bool reverse) {
 	int32 animRes = 0;
 
 	// If this is the start of the anim, read the anim table to get the
 	// appropriate anim resource
 
-	if (ob_logic->looping == 0) {
+	ObjectLogic obLogic(ob_logic);
+
+	if (obLogic.getLooping() == 0) {
+		ObjectMega obMega(ob_mega);
+
 		// Appropriate anim resource is in 'table[direction]'
-		animRes = animTable[ob_mega->current_dir];
+		animRes = READ_LE_UINT32(animTable + 4 * obMega.getCurDir());
 	}
 
 	return doAnimate(ob_logic, ob_graph, animRes, reverse);
 }
 
-void Router::setSpriteStatus(ObjectGraphic *ob_graph, uint32 type) {
+void Router::setSpriteStatus(byte *ob_graph, uint32 type) {
+	ObjectGraphic obGraph(ob_graph);
+
 	// Remove the previous status, but don't affect the shading upper-word
-	ob_graph->type = (ob_graph->type & 0xffff0000) | type;
+	obGraph.setType((obGraph.getType() & 0xffff0000) | type);
 }
 
-void Router::setSpriteShading(ObjectGraphic *ob_graph, uint32 type) {
+void Router::setSpriteShading(byte *ob_graph, uint32 type) {
+	ObjectGraphic obGraph(ob_graph);
+
 	// Remove the previous shading, but don't affect the status lower-word.
 	// Note that mega frames may still be shaded automatically, even when
 	// not sent 'RDSPR_SHADOW'.
-	ob_graph->type = (ob_graph->type & 0x0000ffff) | type;
+	obGraph.setType((obGraph.getType() & 0x0000ffff) | type);
 }
 
 void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 	uint32 line;
- 	FrameHeader *frame;
  	uint32 local_text;
 	uint32 text_res;
 	byte *text;
@@ -192,7 +201,7 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 
 		// open text resource & get the line
 		text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
-		wavId = (int32) READ_LE_UINT16(text);
+		wavId = (int32)READ_LE_UINT16(text);
 
 		// now ok to close the text file
 		_vm->_resman->closeResource(text_res);
@@ -250,18 +259,19 @@ void Logic::createSequenceSpeech(MovieTextObject *sequenceText[]) {
 		if (_sequenceTextList[line].text_mem) {
 			// now fill out the SpriteInfo structure in the
 			// MovieTextObjectStructure
+			FrameHeader frame;
 
-			frame = (FrameHeader *)_sequenceTextList[line].text_mem;
+			frame.read(_sequenceTextList[line].text_mem);
 
 			sequenceText[line]->textSprite = new SpriteInfo;
 
 			// center text at bottom of screen
-			sequenceText[line]->textSprite->x = 320 - frame->width / 2;
-			sequenceText[line]->textSprite->y = 440 - frame->height;
-			sequenceText[line]->textSprite->w = frame->width;
-			sequenceText[line]->textSprite->h = frame->height;
+			sequenceText[line]->textSprite->x = 320 - frame.width / 2;
+			sequenceText[line]->textSprite->y = 440 - frame.height;
+			sequenceText[line]->textSprite->w = frame.width;
+			sequenceText[line]->textSprite->h = frame.height;
 			sequenceText[line]->textSprite->type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION;
-			sequenceText[line]->textSprite->data = _sequenceTextList[line].text_mem + sizeof(FrameHeader);
+			sequenceText[line]->textSprite->data = _sequenceTextList[line].text_mem + FrameHeader::size();
 		}
 
 		// if we've loaded a speech sample for this line...

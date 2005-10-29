@@ -60,7 +60,7 @@ void Screen::setFullPalette(int32 palRes) {
 	// is apparently needed for the palette to be restored properly when
 	// you turn the light off. (I didn't even notice the light switch!)
 
-	if (Logic::_scriptVars[LOCATION] == 13) {
+	if (_vm->_logic->readVar(LOCATION) == 13) {
 		// unpausing
 		if (palRes == -1) {
 			// restore whatever palette was last set (screen
@@ -88,10 +88,9 @@ void Screen::setFullPalette(int32 palRes) {
 	if (palRes) {
 		byte *pal = _vm->_resman->openResource(palRes);
 
-		StandardHeader *head = (StandardHeader *)pal;
-		assert(head->fileType == PALETTE_FILE);
+		assert(_vm->_resman->fetchType(pal) == PALETTE_FILE);
 
-		pal += sizeof(StandardHeader);
+		pal += ResHeader::size();
 
 		// always set colour 0 to black because most background screen
 		// palettes have a bright colour 0 although it should come out
@@ -130,7 +129,7 @@ void Screen::setFullPalette(int32 palRes) {
 // linker complained when I tried to use it in sprite.cpp.
 
 uint8 Screen::quickMatch(uint8 r, uint8 g, uint8 b) {
-	return _paletteMatch[((int32) (r >> 2) << 12) + ((int32) (g >> 2) << 6) + (b >> 2)];
+	return _paletteMatch[((int32)(r >> 2) << 12) + ((int32)(g >> 2) << 6) + (b >> 2)];
 }
 
 /**
@@ -174,7 +173,7 @@ int32 Screen::fadeUp(float time) {
 	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
-	_fadeTotalTime = (int32) (time * 1000);
+	_fadeTotalTime = (int32)(time * 1000);
 	_fadeStatus = RDFADE_UP;
 	_fadeStartTime = _vm->_system->getMillis();
 
@@ -190,7 +189,7 @@ int32 Screen::fadeDown(float time) {
 	if (getFadeStatus() != RDFADE_BLACK && getFadeStatus() != RDFADE_NONE)
 		return RDERR_FADEINCOMPLETE;
 
-	_fadeTotalTime = (int32) (time * 1000);
+	_fadeTotalTime = (int32)(time * 1000);
 	_fadeStatus = RDFADE_DOWN;
 	_fadeStartTime = _vm->_system->getMillis();
 
@@ -239,7 +238,7 @@ void Screen::fadeServer() {
 			_fadeStatus = RDFADE_NONE;
 			newPalette = _palette;
 		} else {
-			fadeMultiplier = (int16) (((int32) (currentTime - _fadeStartTime) * 256) / _fadeTotalTime);
+			fadeMultiplier = (int16)(((int32)(currentTime - _fadeStartTime) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
 				newPalette[i * 4 + 0] = (_palette[i * 4 + 0] * fadeMultiplier) >> 8;
 				newPalette[i * 4 + 1] = (_palette[i * 4 + 1] * fadeMultiplier) >> 8;
@@ -251,7 +250,7 @@ void Screen::fadeServer() {
 			_fadeStatus = RDFADE_BLACK;
 			memset(newPalette, 0, sizeof(fadePalette));
 		} else {
-			fadeMultiplier = (int16) (((int32) (_fadeTotalTime - (currentTime - _fadeStartTime)) * 256) / _fadeTotalTime);
+			fadeMultiplier = (int16)(((int32)(_fadeTotalTime - (currentTime - _fadeStartTime)) * 256) / _fadeTotalTime);
 			for (i = 0; i < 256; i++) {
 				newPalette[i * 4 + 0] = (_palette[i * 4 + 0] * fadeMultiplier) >> 8;
 				newPalette[i * 4 + 1] = (_palette[i * 4 + 1] * fadeMultiplier) >> 8;

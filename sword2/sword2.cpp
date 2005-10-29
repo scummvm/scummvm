@@ -222,7 +222,7 @@ void Sword2Engine::writeSettings() {
  */
 
 void Sword2Engine::setupPersistentResources() {
-	Logic::_scriptVars = (uint32 *)(_resman->openResource(1) + sizeof(StandardHeader));
+	_logic->_scriptVars = _resman->openResource(1) + ResHeader::size();
 	_resman->openResource(CUR_PLAYER_ID);
 }
 
@@ -266,9 +266,9 @@ int Sword2Engine::init(GameDetector &detector) {
 	initialiseFontResourceFlags();
 
 	if (_features & GF_DEMO)
-		Logic::_scriptVars[DEMO] = 1;
+		_logic->writeVar(DEMO, 1);
 	else
-		Logic::_scriptVars[DEMO] = 0;
+		_logic->writeVar(DEMO, 0);
 
 	if (_saveSlot != -1) {
 		if (saveExists(_saveSlot))
@@ -332,7 +332,7 @@ int Sword2Engine::go() {
 						pauseGame();
 					break;
 				case 'c':
-					if (!Logic::_scriptVars[DEMO] && !_mouse->isChoosing()) {
+					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
 						ScreenInfo *screenInfo = _screen->getScreenInfo();
 						_logic->fnPlayCredits(NULL);
 						screenInfo->new_palette = 99;
@@ -401,10 +401,10 @@ void Sword2Engine::restartGame() {
 	_sound->stopMusic(true);
 
 	// In case we were dead - well we're not anymore!
-	Logic::_scriptVars[DEAD] = 0;
+	_logic->writeVar(DEAD, 0);
 
 	// Restart the game. Clear all memory and reset the globals
-	temp_demo_flag = Logic::_scriptVars[DEMO];
+	temp_demo_flag = _logic->readVar(DEMO);
 
 	// Remove all resources from memory, including player object and
 	// global variables
@@ -413,7 +413,7 @@ void Sword2Engine::restartGame() {
 	// Reopen global variables resource and player object
 	setupPersistentResources();
 
-	Logic::_scriptVars[DEMO] = temp_demo_flag;
+	_logic->writeVar(DEMO, temp_demo_flag);
 
 	// Free all the route memory blocks from previous game
 	_logic->_router->freeAllRouteMem();
@@ -605,7 +605,7 @@ void Sword2Engine::startGame() {
 	debug(5, "startGame() STARTING:");
 
 	if (!_bootParam) {
-		if (Logic::_scriptVars[DEMO])
+		if (_logic->readVar(DEMO))
 			screen_manager_id = 19;		// DOCKS SECTION START
 		else
 			screen_manager_id = 949;	// INTRO & PARIS START
@@ -617,15 +617,7 @@ void Sword2Engine::startGame() {
 			screen_manager_id = _bootParam;
 	}
 
-	uint32 null_pc = 1;
-
-	char *raw_data_ad = (char *)_resman->openResource(CUR_PLAYER_ID);
-	char *raw_script = (char *)_resman->openResource(screen_manager_id);
-
-	_logic->runScript(raw_script, raw_data_ad, &null_pc);
-
-	_resman->closeResource(screen_manager_id);
-	_resman->closeResource(CUR_PLAYER_ID);
+	_logic->runResObjScript(screen_manager_id, CUR_PLAYER_ID, 1);
 }
 
 // FIXME: Move this to some better place?

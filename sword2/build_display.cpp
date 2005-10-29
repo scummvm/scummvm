@@ -116,7 +116,10 @@ void Screen::buildDisplay() {
 	startRenderCycle();
 
 	byte *file = _vm->_resman->openResource(_thisScreen.background_layer_id);
-	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *)(file + sizeof(StandardHeader));
+
+	MultiScreenHeader screenLayerTable;
+
+	screenLayerTable.read(file + ResHeader::size());
 
 	// Render at least one frame, but if the screen is scrolling, and if
 	// there is time left, we will render extra frames to smooth out the
@@ -124,13 +127,13 @@ void Screen::buildDisplay() {
 
 	do {
 		// first background parallax + related anims
-		if (screenLayerTable->bg_parallax[0]) {
+		if (screenLayerTable.bg_parallax[0]) {
 			renderParallax(_vm->fetchBackgroundParallaxLayer(file, 0), 0);
 			drawBackPar0Frames();
 		}
 
 		// second background parallax + related anims
-		if (screenLayerTable->bg_parallax[1]) {
+		if (screenLayerTable.bg_parallax[1]) {
 			renderParallax(_vm->fetchBackgroundParallaxLayer(file, 1), 1);
 			drawBackPar1Frames();
 		}
@@ -145,14 +148,14 @@ void Screen::buildDisplay() {
 
 		// first foreground parallax + related anims
 
-		if (screenLayerTable->fg_parallax[0]) {
+		if (screenLayerTable.fg_parallax[0]) {
 			renderParallax(_vm->fetchForegroundParallaxLayer(file, 0), 3);
 			drawForePar0Frames();
 		}
 
 		// second foreground parallax + related anims
 
-		if (screenLayerTable->fg_parallax[1]) {
+		if (screenLayerTable.fg_parallax[1]) {
 			renderParallax(_vm->fetchForegroundParallaxLayer(file, 1), 4);
 			drawForePar1Frames();
 		}
@@ -199,23 +202,26 @@ void Screen::displayMsg(byte *text, int time) {
 	clearScene();
 
 	byte *text_spr = _vm->_fontRenderer->makeTextSprite(text, 640, 187, _vm->_speechFontId);
-	FrameHeader *frame = (FrameHeader *)text_spr;
+
+	FrameHeader frame;
+
+	frame.read(text_spr);
 
 	SpriteInfo spriteInfo;
 
-	spriteInfo.x = _screenWide / 2 - frame->width / 2;
+	spriteInfo.x = _screenWide / 2 - frame.width / 2;
 	if (!time)
-		spriteInfo.y = _screenDeep / 2 - frame->height / 2 - MENUDEEP;
+		spriteInfo.y = _screenDeep / 2 - frame.height / 2 - MENUDEEP;
 	else
-		spriteInfo.y = 400 - frame->height;
-	spriteInfo.w = frame->width;
-	spriteInfo.h = frame->height;
+		spriteInfo.y = 400 - frame.height;
+	spriteInfo.w = frame.width;
+	spriteInfo.h = frame.height;
 	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth = 0;
 	spriteInfo.scaledHeight	= 0;
 	spriteInfo.type = RDSPR_DISPLAYALIGN | RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 	spriteInfo.blend = 0;
-	spriteInfo.data = text_spr + sizeof(FrameHeader);
+	spriteInfo.data = text_spr + FrameHeader::size();
 	spriteInfo.colourTable = 0;
 
 	uint32 rv = drawSprite(&spriteInfo);
@@ -326,25 +332,27 @@ void Screen::drawForePar1Frames() {
 }
 
 void Screen::processLayer(byte *file, uint32 layer_number) {
-	LayerHeader *layer_head = _vm->fetchLayerHeader(file, layer_number);
+	LayerHeader layer_head;
+
+	layer_head.read(_vm->fetchLayerHeader(file, layer_number));
 
  	SpriteInfo spriteInfo;
 
-	spriteInfo.x = layer_head->x;
-	spriteInfo.y = layer_head->y;
-	spriteInfo.w = layer_head->width;
+	spriteInfo.x = layer_head.x;
+	spriteInfo.y = layer_head.y;
+	spriteInfo.w = layer_head.width;
 	spriteInfo.scale = 0;
 	spriteInfo.scaledWidth = 0;
 	spriteInfo.scaledHeight = 0;
-	spriteInfo.h = layer_head->height;
+	spriteInfo.h = layer_head.height;
 	spriteInfo.type = RDSPR_TRANS | RDSPR_RLE256FAST;
 	spriteInfo.blend = 0;
-	spriteInfo.data = file + sizeof(StandardHeader) + layer_head->offset;
+	spriteInfo.data = file + ResHeader::size() + layer_head.offset;
 	spriteInfo.colourTable = 0;
 
 	// check for largest layer for debug info
 
-	uint32 current_layer_area = layer_head->width * layer_head->height;
+	uint32 current_layer_area = layer_head.width * layer_head.height;
 
 	if (current_layer_area > _largestLayerArea) {
 		byte buf[NAME_LEN];
@@ -352,8 +360,8 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 		_largestLayerArea = current_layer_area;
 		sprintf(_largestLayerInfo,
 			"largest layer:  %s layer(%d) is %dx%d",
-			_vm->fetchObjectName(_thisScreen.background_layer_id, buf),
-			layer_number, layer_head->width, layer_head->height);
+			_vm->_resman->fetchName(_thisScreen.background_layer_id, buf),
+			layer_number, layer_head.width, layer_head.height);
 	}
 
 	uint32 rv = drawSprite(&spriteInfo);
@@ -365,22 +373,28 @@ void Screen::processImage(BuildUnit *build_unit) {
 	byte *file = _vm->_resman->openResource(build_unit->anim_resource);
 	byte *colTablePtr = NULL;
 
-	AnimHeader *anim_head = _vm->fetchAnimHeader(file);
-	CdtEntry *cdt_entry = _vm->fetchCdtEntry(file, build_unit->anim_pc);
-	FrameHeader *frame_head = _vm->fetchFrameHeader(file, build_unit->anim_pc);
+	byte *frame = _vm->fetchFrameHeader(file, build_unit->anim_pc);
+
+	AnimHeader anim_head;
+	CdtEntry cdt_entry;
+	FrameHeader frame_head;
+
+	anim_head.read(_vm->fetchAnimHeader(file));
+	cdt_entry.read(_vm->fetchCdtEntry(file, build_unit->anim_pc));
+	frame_head.read(frame);
 
 	// so that 0-colour is transparent
 	uint32 spriteType = RDSPR_TRANS;
 
-	if (anim_head->blend)
+	if (anim_head.blend)
 		spriteType |= RDSPR_BLEND;
 
 	// if the frame is to be flipped (only really applicable to frames
 	// using offsets)
-	if (cdt_entry->frameType & FRAME_FLIPPED)
+	if (cdt_entry.frameType & FRAME_FLIPPED)
 		spriteType |= RDSPR_FLIP;
 
-	if (cdt_entry->frameType & FRAME_256_FAST) {
+	if (cdt_entry.frameType & FRAME_256_FAST) {
 		// scaling, shading & blending don't work with RLE256FAST
 		// but the same compression can be decompressed using the
 		// RLE256 routines!
@@ -388,12 +402,12 @@ void Screen::processImage(BuildUnit *build_unit) {
 		// NOTE: If this restriction refers to drawSprite(), I don't
 		// think we have it any more. But I'm not sure.
 
-		if (build_unit->scale || anim_head->blend || build_unit->shadingFlag)
+		if (build_unit->scale || anim_head.blend || build_unit->shadingFlag)
 			spriteType |= RDSPR_RLE256;
 		else
 			spriteType |= RDSPR_RLE256FAST;
 	} else {
-		switch (anim_head->runTimeComp) {
+		switch (anim_head.runTimeComp) {
 		case NONE:
 			spriteType |= RDSPR_NOCOMPRESSION;
 			break;
@@ -404,7 +418,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 			spriteType |= RDSPR_RLE16;
 			// points to just after last cdt_entry, ie.
 			// start of colour table
-			colTablePtr = (byte *)(anim_head + 1) + anim_head->noAnimFrames * sizeof(CdtEntry);
+			colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size() + anim_head.noAnimFrames * CdtEntry::size();
 			break;
 		}
 	}
@@ -418,19 +432,19 @@ void Screen::processImage(BuildUnit *build_unit) {
 
 	spriteInfo.x = build_unit->x;
 	spriteInfo.y = build_unit->y;
-	spriteInfo.w = frame_head->width;
-	spriteInfo.h = frame_head->height;
+	spriteInfo.w = frame_head.width;
+	spriteInfo.h = frame_head.height;
 	spriteInfo.scale = build_unit->scale;
 	spriteInfo.scaledWidth = build_unit->scaled_width;
 	spriteInfo.scaledHeight	= build_unit->scaled_height;
 	spriteInfo.type = spriteType;
-	spriteInfo.blend = anim_head->blend;
+	spriteInfo.blend = anim_head.blend;
 	// points to just after frame header, ie. start of sprite data
-	spriteInfo.data = (byte *)(frame_head + 1);
-	spriteInfo.colourTable	= colTablePtr;
+	spriteInfo.data = frame + FrameHeader::size();
+	spriteInfo.colourTable = colTablePtr;
 
 	// check for largest layer for debug info
-	uint32 current_sprite_area = frame_head->width * frame_head->height;
+	uint32 current_sprite_area = frame_head.width * frame_head.height;
 
 	if (current_sprite_area > _largestSpriteArea) {
 		byte buf[NAME_LEN];
@@ -438,13 +452,13 @@ void Screen::processImage(BuildUnit *build_unit) {
 		_largestSpriteArea = current_sprite_area;
 		sprintf(_largestSpriteInfo,
 			"largest sprite: %s frame(%d) is %dx%d",
-			_vm->fetchObjectName(build_unit->anim_resource, buf),
+			_vm->_resman->fetchName(build_unit->anim_resource, buf),
 			build_unit->anim_pc,
-			frame_head->width,
-			frame_head->height);
+			frame_head.width,
+			frame_head.height);
 	}
 
-	if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) { // see anims.cpp
+	if (_vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) { // see anims.cpp
 		// bring the anim into the visible screen
 		// but leave extra pixel at edge for box
 		if (spriteInfo.x + spriteInfo.scaledWidth >= 639)
@@ -472,7 +486,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 
 		error("Driver Error %.8x with sprite %s (%d) in processImage",
 			rv,
-			_vm->fetchObjectName(build_unit->anim_resource, buf),
+			_vm->_resman->fetchName(build_unit->anim_resource, buf),
 			build_unit->anim_resource);
 	}
 
@@ -501,32 +515,39 @@ void Screen::resetRenderLists() {
 	}
 }
 
-void Screen::registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, ObjectMega *ob_mega, BuildUnit *build_unit) {
-	assert(ob_graph->anim_resource);
+void Screen::registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega, BuildUnit *build_unit) {
+	ObjectGraphic obGraph(ob_graph);
+	ObjectMega obMega(ob_mega);
 
-	byte *file = _vm->_resman->openResource(ob_graph->anim_resource);
+	assert(obGraph.getAnimResource());
 
-	AnimHeader *anim_head = _vm->fetchAnimHeader(file);
-	CdtEntry *cdt_entry = _vm->fetchCdtEntry(file, ob_graph->anim_pc);
-	FrameHeader *frame_head = _vm->fetchFrameHeader(file, ob_graph->anim_pc);
+	byte *file = _vm->_resman->openResource(obGraph.getAnimResource());
+
+	AnimHeader anim_head;
+	CdtEntry cdt_entry;
+	FrameHeader frame_head;
+
+	anim_head.read(_vm->fetchAnimHeader(file));
+	cdt_entry.read(_vm->fetchCdtEntry(file, obGraph.getAnimPc()));
+	frame_head.read(_vm->fetchFrameHeader(file, obGraph.getAnimPc()));
 
 	// update player graphic details for on-screen debug info
-	if (Logic::_scriptVars[ID] == CUR_PLAYER_ID) {
-		_vm->_debugger->_playerGraphic.type = ob_graph->type;
-		_vm->_debugger->_playerGraphic.anim_resource = ob_graph->anim_resource;
+	if (_vm->_logic->readVar(ID) == CUR_PLAYER_ID) {
+		_vm->_debugger->_graphType = obGraph.getType();
+		_vm->_debugger->_graphAnimRes = obGraph.getAnimResource();
 		// counting 1st frame as 'frame 1'
-		_vm->_debugger->_playerGraphic.anim_pc = ob_graph->anim_pc + 1;
-		_vm->_debugger->_playerGraphicNoFrames = anim_head->noAnimFrames;
+		_vm->_debugger->_graphAnimPc = obGraph.getAnimPc() + 1;
+		_vm->_debugger->_graphNoFrames = anim_head.noAnimFrames;
 	}
 
 	// fill in the BuildUnit structure for this frame
 
- 	build_unit->anim_resource = ob_graph->anim_resource;
-	build_unit->anim_pc = ob_graph->anim_pc;
+ 	build_unit->anim_resource = obGraph.getAnimResource();
+	build_unit->anim_pc = obGraph.getAnimPc();
 	build_unit->layer_number = 0;
 
 	// Affected by shading mask?
-	if (ob_graph->type & SHADED_SPRITE)
+	if (obGraph.getType() & SHADED_SPRITE)
 		build_unit->shadingFlag = true;
 	else
 		build_unit->shadingFlag = false;
@@ -535,34 +556,28 @@ void Screen::registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, Objec
 
 	int scale = 0;
 
-	if (cdt_entry->frameType & FRAME_OFFSET) {
-		// Calc scale at which to print the sprite, based on feet
-		// y-coord & scaling constants (NB. 'scale' is actually
-		// 256 * true_scale, to maintain accuracy)
-
-		// Ay+B gives 256 * scale ie. 256 * 256 * true_scale for even
-		// better accuracy, ie. scale = (Ay + B) / 256
-		scale = (ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256;
+	if (cdt_entry.frameType & FRAME_OFFSET) {
+		scale = obMega.calcScale();
 
 		// calc final render coordinates (top-left of sprite), based
 		// on feet coords & scaled offsets
 
 		// add scaled offsets to feet coords
-		build_unit->x = ob_mega->feet_x + (cdt_entry->x * scale) / 256;
-		build_unit->y = ob_mega->feet_y + (cdt_entry->y * scale) / 256;
+		build_unit->x = obMega.getFeetX() + (cdt_entry.x * scale) / 256;
+		build_unit->y = obMega.getFeetY() + (cdt_entry.y * scale) / 256;
 
 		// Work out new width and height. Always divide by 256 after
 		// everything else, to maintain accurary
-		build_unit->scaled_width = ((scale * frame_head->width) / 256);
-		build_unit->scaled_height = ((scale * frame_head->height) / 256);
+		build_unit->scaled_width = ((scale * frame_head.width) / 256);
+		build_unit->scaled_height = ((scale * frame_head.height) / 256);
 	} else {
 		// It's a non-scaling anim. Get render coords for sprite, from cdt
-		build_unit->x = cdt_entry->x;
-		build_unit->y = cdt_entry->y;
+		build_unit->x = cdt_entry.x;
+		build_unit->y = cdt_entry.y;
 
 		// Get width and height
-		build_unit->scaled_width = frame_head->width;
-		build_unit->scaled_height = frame_head->height;
+		build_unit->scaled_width = frame_head.width;
+		build_unit->scaled_height = frame_head.height;
 	}
 
 	// either 0 or required scale, depending on whether 'scale' computed
@@ -577,12 +592,14 @@ void Screen::registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, Objec
 
 	}
 
-	_vm->_resman->closeResource(ob_graph->anim_resource);
+	_vm->_resman->closeResource(obGraph.getAnimResource());
 }
 
-void Screen::registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, ObjectMega *ob_mega) {
+void Screen::registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega) {
+	ObjectGraphic obGraph(ob_graph);
+
 	// check low word for sprite type
-	switch (ob_graph->type & 0x0000ffff) {
+	switch (obGraph.getType() & 0x0000ffff) {
 	case BGP0_SPRITE:
 		assert(_curBgp0 < MAX_bgp0_sprites);
 		registerFrame(ob_mouse, ob_graph, ob_mega, &_bgp0List[_curBgp0]);
@@ -861,7 +878,7 @@ void Screen::rollCredits() {
 	// credits. Note that musicTimeRemaining() will return 0 if the music
 	// is muted, so we need a sensible fallback for that case.
 
-	uint32 musicLength = MAX((int32) (1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32) scrollSteps);
+	uint32 musicLength = MAX((int32)(1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32)scrollSteps);
 
 	while (scrollPos < scrollSteps && !_vm->_quit) {
 		bool foundStartLine = false;
@@ -892,16 +909,18 @@ void Screen::rollCredits() {
 					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((byte *)creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
 				}
 
-				FrameHeader *frame = (FrameHeader *)creditsLines[i].sprite;
+				FrameHeader frame;
+
+				frame.read(creditsLines[i].sprite);
 
 				spriteInfo.y = creditsLines[i].top - scrollPos;
-				spriteInfo.w = frame->width;
-				spriteInfo.h = frame->height;
-				spriteInfo.data = creditsLines[i].sprite + sizeof(FrameHeader);
+				spriteInfo.w = frame.width;
+				spriteInfo.h = frame.height;
+				spriteInfo.data = creditsLines[i].sprite + FrameHeader::size();
 
 				switch (creditsLines[i].type) {
 				case LINE_LEFT:
-					spriteInfo.x = RENDERWIDE / 2 - 5 - frame->width;
+					spriteInfo.x = RENDERWIDE / 2 - 5 - frame.width;
 					break;
 				case LINE_RIGHT:
 					spriteInfo.x = RENDERWIDE / 2 + 5;
@@ -913,7 +932,7 @@ void Screen::rollCredits() {
 						spriteInfo.w = logoWidth;
 						spriteInfo.h = logoHeight;
 					} else
-						spriteInfo.x = (RENDERWIDE - frame->width) / 2;
+						spriteInfo.x = (RENDERWIDE - frame.width) / 2;
 					break;
 				}
 
@@ -978,7 +997,7 @@ void Screen::rollCredits() {
 	if (!_vm->_mouse->getMouseStatus() || _vm->_mouse->isChoosing())
 		_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
 
-	if (Logic::_scriptVars[DEAD])
+	if (_vm->_logic->readVar(DEAD))
 		_vm->_mouse->buildSystemMenu();
 }
 
@@ -1001,32 +1020,38 @@ void Screen::splashScreen() {
 	closeBackgroundLayer();
 
 	byte *loadingBar = _vm->_resman->openResource(2951);
-	AnimHeader *animHead = _vm->fetchAnimHeader(loadingBar);
-	FrameHeader *frame = _vm->fetchFrameHeader(loadingBar, 0);
-	CdtEntry *cdt = _vm->fetchCdtEntry(loadingBar, 0);
+	byte *frame = _vm->fetchFrameHeader(loadingBar, 0);
+
+	AnimHeader animHead;
+	CdtEntry cdt;
+	FrameHeader frame_head;
+
+	animHead.read(_vm->fetchAnimHeader(loadingBar));
+	cdt.read(_vm->fetchCdtEntry(loadingBar, 0));
+	frame_head.read(_vm->fetchFrameHeader(loadingBar, 0));
 
 	SpriteInfo barSprite;
 
-	barSprite.x = cdt->x;
-	barSprite.y = cdt->y;
-	barSprite.w = frame->width;
-	barSprite.h = frame->height;
+	barSprite.x = cdt.x;
+	barSprite.y = cdt.y;
+	barSprite.w = frame_head.width;
+	barSprite.h = frame_head.height;
 	barSprite.scale = 0;
 	barSprite.scaledWidth = 0;
 	barSprite.scaledHeight = 0;
 	barSprite.type = RDSPR_RLE256FAST | RDSPR_TRANS;
 	barSprite.blend = 0;
 	barSprite.colourTable = 0;
-	barSprite.data = (byte *)(frame + 1);
+	barSprite.data = frame + FrameHeader::size();
 
 	drawSprite(&barSprite);
 
 	fadeUp();
 	waitForFade();
 
-	for (int i = 0; i < animHead->noAnimFrames; i++) {
+	for (int i = 0; i < animHead.noAnimFrames; i++) {
 		frame = _vm->fetchFrameHeader(loadingBar, i);
-		barSprite.data = (byte *)(frame + 1);
+		barSprite.data = frame + FrameHeader::size();
 		drawSprite(&barSprite);
 		updateDisplay();
 		_vm->_system->delayMillis(30);

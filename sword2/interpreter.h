@@ -36,10 +36,10 @@ enum {
 // Get parameter fix so that the playstation version can handle words not on
 // word boundaries
 
-#define Read8ip(var)		{ var = *((const int8 *)(code + ip)); ip++; }
-#define Read16ip(var)		{ var = (int16) READ_LE_UINT16(code + ip); ip += sizeof(int16); }
-#define Read32ip(var)		{ var = (int32) READ_LE_UINT32(code + ip); ip += sizeof(int32); }
-#define Read32ipLeaveip(var)	{ var = (int32) READ_LE_UINT32(code + ip); }
+#define Read8ip(var)		{ var = code[ip]; ip++; }
+#define Read16ip(var)		{ var = (int16)READ_LE_UINT16(code + ip); ip += 2; }
+#define Read32ip(var)		{ var = (int32)READ_LE_UINT32(code + ip); ip += 4; }
+#define Read32ipLeaveip(var)	{ var = (int32)READ_LE_UINT32(code + ip); }
 
 enum {
 	// Compiled tokens

@@ -19,6 +19,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/stream.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/logic.h"
@@ -27,14 +28,20 @@
 
 namespace Sword2 {
 
-void Mouse::addMenuObject(MenuObject *obj) {
+void Mouse::addMenuObject(byte *ptr) {
 	assert(_totalTemp < TOTAL_engine_pockets);
-	memcpy(&_tempList[_totalTemp], obj, sizeof(MenuObject));
+
+	Common::MemoryReadStream readS(ptr, 2 * sizeof(int32));
+
+	_tempList[_totalTemp].icon_resource = readS.readSint32LE();
+	_tempList[_totalTemp].luggage_resource = readS.readSint32LE();
 	_totalTemp++;
 }
 
 void Mouse::addSubject(int32 id, int32 ref) {
-	if (Logic::_scriptVars[IN_SUBJECT] == 0) {
+	uint32 in_subject = _vm->_logic->readVar(IN_SUBJECT);
+
+	if (in_subject == 0) {
 		// This is the start of the new subject list. Set the default
 		// repsonse id to zero in case we're never passed one.
 		_defaultResponseId = 0;
@@ -48,9 +55,9 @@ void Mouse::addSubject(int32 id, int32 ref) {
 		_defaultResponseId = ref;
 	} else {
 		debug(5, "fnAddSubject res %d, uid %d", id, ref);
-		_subjectList[Logic::_scriptVars[IN_SUBJECT]].res = id;
-		_subjectList[Logic::_scriptVars[IN_SUBJECT]].ref = ref;
-		Logic::_scriptVars[IN_SUBJECT]++;
+		_subjectList[in_subject].res = id;
+		_subjectList[in_subject].ref = ref;
+		_vm->_logic->writeVar(IN_SUBJECT, in_subject + 1);
 	}
 }
 
@@ -72,10 +79,7 @@ void Mouse::buildMenu() {
 	// Run the 'build_menu' script in the 'menu_master' object. This will
 	// register all carried menu objects.
 
-	uint32 null_pc = 0;
-	char *menuScript = (char *)_vm->_resman->openResource(MENU_MASTER_OBJECT);
-	_vm->_logic->runScript(menuScript, menuScript, &null_pc);
-	_vm->_resman->closeResource(MENU_MASTER_OBJECT);
+	_vm->_logic->runResScript(MENU_MASTER_OBJECT, 0);
 
 	// Create a new master list based on the old master inventory list and
 	// the new temporary inventory list. The purpose of all this is, as
@@ -139,23 +143,26 @@ void Mouse::buildMenu() {
 		if (res) {
 			bool icon_coloured;
 
+			uint32 object_held = _vm->_logic->readVar(OBJECT_HELD);
+			uint32 combine_base = _vm->_logic->readVar(COMBINE_BASE);
+
 			if (_examiningMenuIcon) {
 				// When examining an object, that object is
 				// coloured. The rest are greyed out.
-				icon_coloured = (res == Logic::_scriptVars[OBJECT_HELD]);
-			} else if (Logic::_scriptVars[COMBINE_BASE]) {
+				icon_coloured = (res == object_held);
+			} else if (combine_base) {
 				// When combining two menu object (i.e. using
 				// one on another), both are coloured. The rest
 				// are greyed out.
-				icon_coloured = (res == Logic::_scriptVars[OBJECT_HELD] || res == Logic::_scriptVars[COMBINE_BASE]);
+				icon_coloured = (res == object_held || combine_base);
 			} else {
 				// If an object is selected but we are not yet
 				// doing anything with it, the selected object
 				// is greyed out. The rest are coloured.
-				icon_coloured = (res != Logic::_scriptVars[OBJECT_HELD]);
+				icon_coloured = (res != object_held);
 			}
 
-			icon = _vm->_resman->openResource(res) + sizeof(StandardHeader);
+			icon = _vm->_resman->openResource(res) + ResHeader::size();
 
 			// The coloured icon is stored directly after the
 			// greyed out one.
@@ -190,12 +197,12 @@ void Mouse::buildSystemMenu() {
 	// rest will grey out.
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		byte *icon = _vm->_resman->openResource(icon_list[i]) + sizeof(StandardHeader);
+		byte *icon = _vm->_resman->openResource(icon_list[i]) + ResHeader::size();
 
 		// The only case when an icon is grayed is when the player
 		// is dead. Then SAVE is not available.
 
-		if (!Logic::_scriptVars[DEAD] || icon_list[i] != SAVE_ICON)
+		if (!_vm->_logic->readVar(DEAD) || icon_list[i] != SAVE_ICON)
 			icon += (RDMENU_ICONWIDE * RDMENU_ICONDEEP);
 
 		setMenuIcon(RDMENU_TOP, i, icon);

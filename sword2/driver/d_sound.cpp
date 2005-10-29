@@ -177,7 +177,7 @@ CLUInputStream::~CLUInputStream() {
 int CLUInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
+		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
@@ -195,7 +195,7 @@ void CLUInputStream::refill() {
 
 	_file->seek(_file_pos, SEEK_SET);
 
-	uint len_left = _file->read(in, MIN((uint32) BUFFER_SIZE, _end_pos - _file->pos()));
+	uint len_left = _file->read(in, MIN((uint32)BUFFER_SIZE, _end_pos - _file->pos()));
 
 	_file_pos = _file->pos();
 
@@ -270,7 +270,7 @@ int MusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
+		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
 		_pos += len;
@@ -290,7 +290,7 @@ void MusicInputStream::refill() {
 
 	len_left = BUFFER_SIZE;
 
-	if (_fading > 0 && (uint32) _fading < len_left)
+	if (_fading > 0 && (uint32)_fading < len_left)
 		len_left = _fading;
 
 	if (_samplesLeft < len_left)

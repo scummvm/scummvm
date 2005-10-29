@@ -69,7 +69,7 @@ private:
 	uint32 _pc;
 
 	// each object has one of these tacked onto the beginning
-	ObjectHub *_curObjectHub;
+	ObjectHub _curObjectHub;
 
 	EventUnit _eventList[MAX_events];
 
@@ -119,18 +119,21 @@ private:
 	bool wantSpeechForLine(uint32 wavId);
 
 	// Set by fnPassMega()
-	ObjectMega _engineMega;
+	byte _engineMega[56];
 
 public:
 	Logic(Sword2Engine *vm);
 	~Logic();
 
 	EventUnit *getEventList() { return _eventList; }
+	byte *getEngineMega() { return _engineMega; }
 
-	ObjectMega *getEngineMega() { return &_engineMega; }
+	byte _saveLogic[8];
+	byte _saveGraphic[12];
+	byte _saveMega[56];
 
 	// Point to the global variable data
-	static uint32 *_scriptVars;
+	byte *_scriptVars;
 
 	// "TEXT" - current official text line number - will match the wav
 	// filenames
@@ -140,7 +143,18 @@ public:
 	// so speech text cleared when running a new start-script
 	uint32 _speechTextBlocNo;
 
-	int runScript(char *scriptData, char *objectData, uint32 *offset);
+	uint32 readVar(int n) {
+		return READ_LE_UINT32(_scriptVars + 4 * n);
+	}
+
+	void writeVar(int n, uint32 value) {
+		WRITE_LE_UINT32(_scriptVars + 4 * n, value);
+	}
+
+	int runResScript(uint32 scriptRes, uint32 offset);
+	int runResObjScript(uint32 scriptRes, uint32 objRes, uint32 offset);
+	int runScript(byte *scriptData, byte *objectData, uint32 offset);
+	int runScript2(byte *scriptData, byte *objectData, byte *offset);
 
 	void sendEvent(uint32 id, uint32 interact_id);
 	void setPlayerActionEvent(uint32 id, uint32 interact_id);

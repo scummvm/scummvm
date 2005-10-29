@@ -199,17 +199,16 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 
 		byte buf[NAME_LEN];
 
-		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->fetchObjectName(res, buf), volume, pan, delay, typeStr);
+		debug(0, "SFX (sample=\"%s\", vol=%d, pan=%d, delay=%d, type=%s)", _vm->_resman->fetchName(res, buf), volume, pan, delay, typeStr);
 	}
 
 	for (int i = 0; i < FXQ_LENGTH; i++) {
 		if (!_fxQueue[i].resource) {
 			byte *data = _vm->_resman->openResource(res);
-			StandardHeader *header = (StandardHeader *)data;
 
-			assert(header->fileType == WAV_FILE);
+			assert(_vm->_resman->fetchType(data) == WAV_FILE);
 
-			uint32 len = _vm->_resman->fetchLen(res) - sizeof(StandardHeader);
+			uint32 len = _vm->_resman->fetchLen(res) - ResHeader::size();
 
 			if (type == FX_RANDOM) {
 				// For spot effects and loops the delay is the
@@ -227,7 +226,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 				pan = -pan;
 
 			_fxQueue[i].resource = res;
-			_fxQueue[i].data = data + sizeof(StandardHeader);
+			_fxQueue[i].data = data + ResHeader::size();
 			_fxQueue[i].len = len;
 			_fxQueue[i].delay = delay;
 			_fxQueue[i].volume = volume;
@@ -238,7 +237,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 			// fnStopFx() can be used later to kill this sound.
 			// Mainly for FX_LOOP and FX_RANDOM.
 
-			Logic::_scriptVars[RESULT] = i;
+			_vm->_logic->writeVar(RESULT, i);
 			return;
 		}
 	}

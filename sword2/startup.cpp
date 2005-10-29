@@ -117,11 +117,7 @@ bool Sword2Engine::initStartMenu() {
 		// start list
 
 		if (_resman->checkValid(_startRes)) {
-			char *raw_script = (char *)_resman->openResource(_startRes);
-			uint32 null_pc = 0;
-
-			_logic->runScript(raw_script, raw_script, &null_pc);
-			_resman->closeResource(_startRes);
+			_logic->runResScript(_startRes, 0);
 		} else
 			warning("Start menu resource %d invalid", _startRes);
 	}
@@ -166,17 +162,7 @@ void Sword2Engine::runStart(int start) {
 		_logic->_speechTextBlocNo = 0;
 	}
 
-	// Open George
-	char *raw_data_ad = (char *)_resman->openResource(CUR_PLAYER_ID);
-	char *raw_script = (char *)_resman->openResource(_startList[start].start_res_id);
-
-	// Denotes script to run
-	uint32 null_pc = _startList[start].key & 0xffff;
-
-	_logic->runScript(raw_script, raw_data_ad, &null_pc);
-
-	_resman->closeResource(_startList[start].start_res_id);
-	_resman->closeResource(CUR_PLAYER_ID);
+	_logic->runResObjScript(_startList[start].start_res_id, CUR_PLAYER_ID, _startList[start].key & 0xffff);
 
 	// Make sure there's a mouse, in case restarting while mouse not
 	// available

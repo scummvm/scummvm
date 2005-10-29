@@ -19,8 +19,8 @@
  */
 
 #include "common/stdafx.h"
-#include "common/file.h"
 #include "common/system.h"
+#include "common/file.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -81,19 +81,19 @@ int32 Logic::fnSetSession(int32 *params) {
 
 int32 Logic::fnBackSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), BACK_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), BACK_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnSortSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), SORT_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), SORT_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForeSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), FORE_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), FORE_SPRITE);
 	return IR_CONT;
 }
 
@@ -106,7 +106,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	_vm->_mouse->registerMouse((ObjectMouse *)decodePtr(params[0]), NULL);
+	_vm->_mouse->registerMouse(decodePtr(params[0]), NULL);
 	return IR_CONT;
 }
 
@@ -117,8 +117,8 @@ int32 Logic::fnAnim(int32 *params) {
 
 	// Normal forward animation
 	return _router->doAnimate(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
 		params[2], false);
 }
 
@@ -126,7 +126,7 @@ int32 Logic::fnRandom(int32 *params) {
 	// params:	0 min
 	//		1 max
 
-	_scriptVars[RESULT] = _vm->_rnd.getRandomNumberRng(params[0], params[1]);
+	writeVar(RESULT, _vm->_rnd.getRandomNumberRng(params[0], params[1]));
 	return IR_CONT;
 }
 
@@ -157,7 +157,7 @@ int32 Logic::fnInteract(int32 *params) {
 	// params:	0 id of target from which we derive action script
 	//		  reference
 
-	_scriptVars[PLAYER_ACTION] = 0;		// must clear this
+	writeVar(PLAYER_ACTION, 0);		// must clear this
 	logicUp((params[0] << 16) | 2);		// 3rd script of clicked on id
 
 	// Out, up and around again - pc is saved for current level to be
@@ -177,7 +177,7 @@ int32 Logic::fnChoose(int32 *params) {
 
 	uint32 response = _vm->_mouse->chooseMouse();
 
-	if (response == (uint32) -1)
+	if (response == (uint32)-1)
 		return IR_REPEAT;
 
 	return IR_CONT | (response << 3);
@@ -198,10 +198,10 @@ int32 Logic::fnWalk(int32 *params) {
 	//		6 target direction (8 means end walk on ANY direction)
 
 	return _router->doWalk(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(ObjectWalkdata *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		params[4], params[5], params[6]);
 }
 
@@ -217,10 +217,10 @@ int32 Logic::fnWalkToAnim(int32 *params) {
 	//		4 anim resource id
 
 	return _router->walkToAnim(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(ObjectWalkdata *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		params[4]);
 }
 
@@ -236,10 +236,10 @@ int32 Logic::fnTurn(int32 *params) {
 	//		4 target direction
 
 	return _router->doFace(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(ObjectWalkdata *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		params[4]);
 }
 
@@ -257,8 +257,8 @@ int32 Logic::fnStandAt(int32 *params) {
 	//		4 target direction
 
 	_router->standAt(
-		(ObjectGraphic *)decodePtr(params[0]),
-		(ObjectMega *)decodePtr(params[1]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
 		params[2], params[3], params[4]);
 	return IR_CONT;
 }
@@ -272,11 +272,13 @@ int32 Logic::fnStand(int32 *params) {
 	// params:	0 pointer to object's graphic structure
 	//		1 pointer to object's mega structure
 	//		2 target direction
-	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[1]);
+	byte *ob_mega = decodePtr(params[1]);
+
+	ObjectMega obMega(ob_mega);
 
 	_router->standAt(
-		(ObjectGraphic *)decodePtr(params[0]),
-		ob_mega, ob_mega->feet_x, ob_mega->feet_y, params[2]);
+		decodePtr(params[0]),
+		ob_mega, obMega.getFeetX(), obMega.getFeetY(), params[2]);
 	return IR_CONT;
 }
 
@@ -290,8 +292,8 @@ int32 Logic::fnStandAfterAnim(int32 *params) {
 	//		2 anim resource id
 
 	_router->standAfterAnim(
-		(ObjectGraphic *)decodePtr(params[0]),
-		(ObjectMega *)decodePtr(params[1]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
 		params[2]);
 	return IR_CONT;
 }
@@ -303,19 +305,19 @@ int32 Logic::fnPause(int32 *params) {
 	// NB. Pause-value of 0 causes script to continue, 1 causes a 1-cycle
 	// quit, 2 gives 2 cycles, etc.
 
-	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
+	ObjectLogic obLogic(decodePtr(params[0]));
 
-	if (ob_logic->looping == 0) {
-		ob_logic->looping = 1;
-		ob_logic->pause = params[1];
+	if (obLogic.getLooping() == 0) {
+		obLogic.setLooping(1);
+		obLogic.setPause(params[1]);
 	}
 
-	if (ob_logic->pause) {
-		ob_logic->pause--;
+	if (obLogic.getPause()) {
+		obLogic.setPause(obLogic.getPause() - 1);
 		return IR_REPEAT;
 	}
 
-	ob_logic->looping = 0;
+	obLogic.setLooping(0);
 	return IR_CONT;
 }
 
@@ -327,17 +329,17 @@ int32 Logic::fnMegaTableAnim(int32 *params) {
 
 	// Normal forward anim
 	return _router->megaTableAnimate(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(uint32 *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		false);
 }
 
 int32 Logic::fnAddMenuObject(int32 *params) {
 	// params:	0 pointer to a MenuObject structure to copy down
 
-	_vm->_mouse->addMenuObject((MenuObject *)decodePtr(params[0]));
+	_vm->_mouse->addMenuObject(decodePtr(params[0]));
 	return IR_CONT;
 }
 
@@ -379,20 +381,21 @@ int32 Logic::fnSetFrame(int32 *params) {
 	// open the resource (& check it's valid)
 	byte *anim_file = _vm->_resman->openResource(res);
 
-	StandardHeader *head = (StandardHeader *)anim_file;
-	assert(head->fileType == ANIMATION_FILE);
+	assert(_vm->_resman->fetchType(res) == ANIMATION_FILE);
 
 	// set up pointer to the animation header
-	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+	AnimHeader anim_head;
+
+	anim_head.read(_vm->fetchAnimHeader(anim_file));
 
 	// set up anim resource in graphic object
-	ObjectGraphic *ob_graphic = (ObjectGraphic *)decodePtr(params[0]);
+	ObjectGraphic obGraph(decodePtr(params[0]));
 
-	ob_graphic->anim_resource = res;
-	ob_graphic->anim_pc = params[2] ? anim_head->noAnimFrames - 1 : 0;
+	obGraph.setAnimResource(res);
+	obGraph.setAnimPc(params[2] ? anim_head.noAnimFrames - 1 : 0);
 
 	// Close the anim file and drop out of script
-	_vm->_resman->closeResource(ob_graphic->anim_resource);
+	_vm->_resman->closeResource(obGraph.getAnimResource());
 	return IR_CONT;
 }
 
@@ -401,14 +404,14 @@ int32 Logic::fnRandomPause(int32 *params) {
 	//		1 minimum number of game-cycles to pause
 	//		2 maximum number of game-cycles to pause
 
-	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
+	ObjectLogic obLogic(decodePtr(params[0]));
 	int32 pars[2];
 
-	if (ob_logic->looping == 0) {
+	if (obLogic.getLooping() == 0) {
 		pars[0] = params[1];
 		pars[1] = params[2];
 		fnRandom(pars);
-		pars[1] = _scriptVars[RESULT];
+		pars[1] = readVar(RESULT);
 	}
 
 	pars[0] = params[0];
@@ -424,17 +427,16 @@ int32 Logic::fnRegisterFrame(int32 *params) {
 	//		1 pointer to graphic structure
 	//		2 pointer to mega structure or NULL if not a mega
 
-	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
-	ObjectGraphic *ob_graph = (ObjectGraphic *)decodePtr(params[1]);
-	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[2]);
-
-	_vm->_screen->registerFrame(ob_mouse, ob_graph, ob_mega);
+	_vm->_screen->registerFrame(
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]));
 	return IR_CONT;
 }
 
 int32 Logic::fnNoSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), NO_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), NO_SPRITE);
 	return IR_CONT;
 }
 
@@ -444,7 +446,7 @@ int32 Logic::fnSendSync(int32 *params) {
 
 	for (int i = 0; i < MAX_syncs; i++) {
 		if (_syncList[i].id == 0) {
-			debug(5, "%d sends sync %d to %d", _scriptVars[ID], params[1], params[0]);
+			debug(5, "%d sends sync %d to %d", readVar(ID), params[1], params[0]);
 			_syncList[i].id = params[0];
 			_syncList[i].sync = params[1];
 			return IR_CONT;
@@ -463,19 +465,21 @@ int32 Logic::fnUpdatePlayerStats(int32 *params) {
 
 	// params:	0 pointer to mega structure
 
-	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[0]);
+	ObjectMega obMega(decodePtr(params[0]));
+
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-	screenInfo->player_feet_x = ob_mega->feet_x;
-	screenInfo->player_feet_y = ob_mega->feet_y;
+	screenInfo->player_feet_x = obMega.getFeetX();
+	screenInfo->player_feet_y = obMega.getFeetY();
 
 	// for the script
-	_scriptVars[PLAYER_FEET_X] = ob_mega->feet_x;
-	_scriptVars[PLAYER_FEET_Y] = ob_mega->feet_y;
-	_scriptVars[PLAYER_CUR_DIR] = ob_mega->current_dir;
-	_scriptVars[SCROLL_OFFSET_X] = screenInfo->scroll_offset_x;
+	writeVar(PLAYER_FEET_X, obMega.getFeetX());
+	writeVar(PLAYER_FEET_Y, obMega.getFeetY());
+	writeVar(PLAYER_CUR_DIR, obMega.getCurDir());
+	writeVar(SCROLL_OFFSET_X, screenInfo->scroll_offset_x);
 
-	debug(5, "fnUpdatePlayerStats: %d %d", ob_mega->feet_x, ob_mega->feet_y);
+	debug(5, "fnUpdatePlayerStats: %d %d",
+		obMega.getFeetX(), obMega.getFeetY());
 
 	return IR_CONT;
 }
@@ -496,31 +500,34 @@ int32 Logic::fnPassGraph(int32 *params) {
 int32 Logic::fnInitFloorMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
+	byte *ob_mouse = decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// floor is always lowest priority
 
-	ob_mouse->x1 = 0;
-	ob_mouse->y1 = 0;
-	ob_mouse->x2 = screenInfo->screen_wide - 1;
-	ob_mouse->y2 = screenInfo->screen_deep - 1;
-	ob_mouse->priority = 9;
-	ob_mouse->pointer = NORMAL_MOUSE_ID;
+	ObjectMouse mouse;
+
+	mouse.x1 = 0;
+	mouse.y1 = 0;
+	mouse.x2 = screenInfo->screen_wide - 1;
+	mouse.y2 = screenInfo->screen_deep - 1;
+	mouse.priority = 9;
+	mouse.pointer = NORMAL_MOUSE_ID;
+
+	mouse.write(ob_mouse);
 	return IR_CONT;
 }
 
 int32 Logic::fnPassMega(int32 *params) {
-	// makes an engine local copy of passed graphic_structure and
-	// mega_structure - run script 4 of an object to request this
-	// used by fnTurnTo(id) etc
+	// makes an engine local copy of passed mega_structure - run script 4
+	// of an object to request this used by fnTurnTo(id) etc
 	//
 	// remember, we cannot simply read a compact any longer but instead
 	// must request it from the object itself
 
 	// params: 	0 pointer to a mega structure
 
-	memcpy(&_engineMega, decodePtr(params[0]), sizeof(ObjectMega));
+	memcpy(_engineMega, decodePtr(params[0]), ObjectMega::size());
 	return IR_CONT;
 }
 
@@ -537,10 +544,10 @@ int32 Logic::fnFaceXY(int32 *params) {
 	//		5 target y-coord
 
 	return _router->faceXY(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(ObjectWalkdata *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		params[4], params[5]);
 }
 
@@ -582,22 +589,14 @@ int32 Logic::fnAddHuman(int32 *params) {
 int32 Logic::fnWeWait(int32 *params) {
 	// params:	0 target
 
-	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[0]);
-	assert(head->fileType == GAME_OBJECT);
+	assert(_vm->_resman->fetchType(params[0]) == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
+	runResScript(params[0], 5);
 
-	int32 target = params[0];
-	char *raw_script_ad = (char *)head;
-	uint32 null_pc = 5;
-
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	if (_scriptVars[RESULT] == 0) {
+	if (readVar(RESULT) == 0) {
 		// The target is busy. Try again.
-		_vm->_debugger->_speechScriptWaiting = target;
+		_vm->_debugger->_speechScriptWaiting = params[0];
 		return IR_REPEAT;
 	}
 
@@ -622,60 +621,52 @@ int32 Logic::fnTheyDoWeWait(int32 *params) {
 	//		6 ins4
 	//		7 ins5
 
-	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[1]);
-	assert(head->fileType == GAME_OBJECT);
+	assert(_vm->_resman->fetchType(params[1]) == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
+	runResScript(params[1], 5);
 
-	int32 target = params[1];
-	char *raw_script_ad = (char *)head;
-	uint32 null_pc = 5;
+	ObjectLogic obLogic(decodePtr(params[0]));
 
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
-
-	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND] && ob_logic->looping == 0) {
+	if (readVar(RESULT) == 1 && readVar(INS_COMMAND) == 0 && obLogic.getLooping() == 0) {
 		// The target is waiting, i.e. not busy, and there is no other
 		// command queued. We haven't sent the command yet, so do it.
 
-		debug(5, "fnTheyDoWeWait: sending command to %d", target);
+		debug(5, "fnTheyDoWeWait: sending command to %d", params[1]);
 
-		_vm->_debugger->_speechScriptWaiting = target;
-		ob_logic->looping = 1;
+		_vm->_debugger->_speechScriptWaiting = params[1];
+		obLogic.setLooping(1);
 
-		_scriptVars[SPEECH_ID] = params[1];
-		_scriptVars[INS_COMMAND] = params[2];
-		_scriptVars[INS1] = params[3];
-		_scriptVars[INS2] = params[4];
-		_scriptVars[INS3] = params[5];
-		_scriptVars[INS4] = params[6];
-		_scriptVars[INS5] = params[7];
+		writeVar(SPEECH_ID, params[1]);
+		writeVar(INS_COMMAND, params[2]);
+		writeVar(INS1, params[3]);
+		writeVar(INS2, params[4]);
+		writeVar(INS3, params[5]);
+		writeVar(INS4, params[6]);
+		writeVar(INS5, params[7]);
 
 		return IR_REPEAT;
 	}
 
-	if (ob_logic->looping == 0) {
+	if (obLogic.getLooping() == 0) {
 		// The command has not been sent yet. Keep waiting.
-		_vm->_debugger->_speechScriptWaiting = target;
+		_vm->_debugger->_speechScriptWaiting = params[1];
 		return IR_REPEAT;
 	}
 
-	if (_scriptVars[RESULT] == 0) {
+	if (readVar(RESULT) == 0) {
 		// The command has been sent, and the target is busy doing it.
 		// Wait for it to finish.
 
-		debug(5, "fnTheyDoWeWait: Waiting for %d to finish", target);
+		debug(5, "fnTheyDoWeWait: Waiting for %d to finish", params[1]);
 
-		_vm->_debugger->_speechScriptWaiting = target;
+		_vm->_debugger->_speechScriptWaiting = params[1];
 		return IR_REPEAT;
 	}
 
-	debug(5, "fnTheyDoWeWait: %d finished", target);
+	debug(5, "fnTheyDoWeWait: %d finished", params[1]);
 
-	ob_logic->looping = 0;
+	obLogic.setLooping(0);
 	_vm->_debugger->_speechScriptWaiting = 0;
 	return IR_CONT;
 }
@@ -694,41 +685,33 @@ int32 Logic::fnTheyDo(int32 *params) {
 	//		5 ins4
 	//		6 ins5
 
-	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[0]);
-	assert(head->fileType == GAME_OBJECT);
+	assert(_vm->_resman->fetchType(params[0]) == GAME_OBJECT);
 
 	// Run the target's get-speech-state script
+	runResScript(params[0], 5);
 
-	int32 target = params[0];
-	char *raw_script_ad = (char *)head;
-	uint32 null_pc = 5;
-
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	if (_scriptVars[RESULT] == 1 && !_scriptVars[INS_COMMAND]) {
+	if (readVar(RESULT) == 1 && !readVar(INS_COMMAND)) {
 		// The target is waiting, i.e. not busy, and there is no other
 		// command queued. Send the command.
 
-		debug(5, "fnTheyDo: sending command to %d", target);
+		debug(5, "fnTheyDo: sending command to %d", params[0]);
 
 		_vm->_debugger->_speechScriptWaiting = 0;
 
-		_scriptVars[SPEECH_ID] = params[0];
-		_scriptVars[INS_COMMAND] = params[1];
-		_scriptVars[INS1] = params[2];
-		_scriptVars[INS2] = params[3];
-		_scriptVars[INS3] = params[4];
-		_scriptVars[INS4] = params[5];
-		_scriptVars[INS5] = params[6];
+		writeVar(SPEECH_ID, params[0]);
+		writeVar(INS_COMMAND, params[1]);
+		writeVar(INS1, params[2]);
+		writeVar(INS2, params[3]);
+		writeVar(INS3, params[4]);
+		writeVar(INS4, params[5]);
+		writeVar(INS5, params[6]);
 
 		return IR_CONT;
 	}
 
 	// The target is busy. Come back again next cycle.
 
-	_vm->_debugger->_speechScriptWaiting = target;
+	_vm->_debugger->_speechScriptWaiting = params[0];
 	return IR_REPEAT;
 }
 
@@ -745,10 +728,10 @@ int32 Logic::fnWalkToTalkToMega(int32 *params) {
 	//		5 separation
 
 	return _router->walkToTalkToMega(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(ObjectWalkdata *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		params[4], params[5]);
 }
 
@@ -801,13 +784,13 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// Set up the pointers which we know we'll always need
 
-	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[S_OB_LOGIC]);
-	ObjectGraphic *ob_graphic = (ObjectGraphic *)decodePtr(params[S_OB_GRAPHIC]);
+	ObjectLogic obLogic(decodePtr(params[S_OB_LOGIC]));
+	ObjectGraphic obGraph(decodePtr(params[S_OB_GRAPHIC]));
 
 	// FIRST TIME ONLY: create the text, load the wav, set up the anim,
 	// etc.
 
-	if (!ob_logic->looping) {
+	if (obLogic.getLooping() == 0) {
 		// New fudge to wait for smacker samples to finish
 		// since they can over-run into the game
 
@@ -850,32 +833,30 @@ int32 Logic::fnISpeak(int32 *params) {
 		// See 'testing_routines' object in George's Player Character
 		// section of linc
 
-		if (_scriptVars[SYSTEM_TESTING_TEXT]) {
+		if (readVar(SYSTEM_TESTING_TEXT)) {
 			if (!_vm->_resman->checkValid(text_res)) {
 				// Not a valid resource number - invalid (null
 				// resource)
-				_scriptVars[RESULT] = 1;
+				writeVar(RESULT, 1);
 				return IR_CONT;
 			}
 
-			StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(text_res);
-
-			if (head->fileType != TEXT_FILE) {
+			if (_vm->_resman->fetchType(text_res) != TEXT_FILE) {
 				// Invalid - not a text resource
 				_vm->_resman->closeResource(text_res);
-				_scriptVars[RESULT] = 1;
+				writeVar(RESULT, 1);
 				return IR_CONT;
 			}
 
-			if (!_vm->checkTextLine((byte *)head, local_text)) {
+			if (!_vm->checkTextLine(_vm->_resman->openResource(text_res), local_text)) {
 				// Line number out of range
 				_vm->_resman->closeResource(text_res);
-				_scriptVars[RESULT] = 2;
+				writeVar(RESULT, 2);
 				return IR_CONT;
 			}
 
 			_vm->_resman->closeResource(text_res);
-			_scriptVars[RESULT] = 0;
+			writeVar(RESULT, 0);
 		}
 
 		byte *text = _vm->fetchTextLine(_vm->_resman->openResource(text_res), local_text);
@@ -885,11 +866,11 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Prevent dud lines from appearing while testing text & speech
 		// since these will not occur in the game anyway
 
-		if (_scriptVars[SYSTEM_TESTING_TEXT]) {
+		if (readVar(SYSTEM_TESTING_TEXT)) {
 			// If actor number is 0 and text line is just a 'dash'
 			// character
 			if (_officialTextNumber == 0 && text[2] == '-' && text[3] == 0) {
-				_scriptVars[RESULT] = 3;
+				writeVar(RESULT, 3);
 				return IR_CONT;
 			}
 		}
@@ -898,16 +879,16 @@ int32 Logic::fnISpeak(int32 *params) {
 		// left-click past the text after half a second, and
 		// right-click past it after a quarter of a second.
 
-		ob_logic->looping = 1;
+		obLogic.setLooping(1);
 		_leftClickDelay = 6;
 		_rightClickDelay = 3;
 
-		if (_scriptVars[PLAYER_ID] != CUR_PLAYER_ID)
+		if (readVar(PLAYER_ID) != CUR_PLAYER_ID)
 			debug(5, "(%d) Nico: %s", _officialTextNumber, text + 2);
 		else {
 			byte buf[NAME_LEN];
 
-			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->fetchObjectName(_scriptVars[ID], buf), text + 2);
+			debug(5, "(%d) %s: %s", _officialTextNumber, _vm->_resman->fetchName(readVar(ID), buf), text + 2);
 		}
 
 		// Set up the speech animation
@@ -919,10 +900,10 @@ int32 Logic::fnISpeak(int32 *params) {
 			// Use this direction table to derive the anim
 			// NB. ASSUMES WE HAVE A MEGA OBJECT!!
 
-			ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[S_OB_MEGA]);
-			int32 *anim_table = (int32 *)decodePtr(params[S_DIR_TABLE]);
+			ObjectMega obMega(decodePtr(params[S_OB_MEGA]));
+			byte *anim_table = decodePtr(params[S_DIR_TABLE]);
 
-			_animId = anim_table[ob_mega->current_dir];
+			_animId = READ_LE_UINT32(anim_table + 4 * obMega.getCurDir());
 		} else {
 			// No animation choosen
 			_animId = 0;
@@ -932,13 +913,13 @@ int32 Logic::fnISpeak(int32 *params) {
 			// Set the talker's graphic to the first frame of this
 			// speech anim for now.
 
-			_speechAnimType = _scriptVars[SPEECHANIMFLAG];
-			ob_graphic->anim_resource = _animId;
-			ob_graphic->anim_pc = 0;
+			_speechAnimType = readVar(SPEECHANIMFLAG);
+			obGraph.setAnimResource(_animId);
+			obGraph.setAnimPc(0);
 		}
 
 		// Default back to looped lip synced anims.
-		_scriptVars[SPEECHANIMFLAG] = 0;
+		writeVar(SPEECHANIMFLAG, 0);
 
 		// Set up _textX and _textY for speech panning and/or text
 		// sprite position.
@@ -959,7 +940,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			// from the 1st 2 chars of the text line.
 
 			if (!params[S_WAV])
-				params[S_WAV] = (int32) _officialTextNumber;
+				params[S_WAV] = (int32)_officialTextNumber;
 
 			// Panning goes from -16 (left) to 16 (right)
 			int8 speech_pan = ((_textX - 320) * 16) / 320;
@@ -996,32 +977,34 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	if (_animId) {
 		// There is an animation - Increment the anim frame number.
-		ob_graphic->anim_pc++;
+		obGraph.setAnimPc(obGraph.getAnimPc() + 1);
 
-		byte *anim_file = _vm->_resman->openResource(ob_graphic->anim_resource);
-		AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+		byte *anim_file = _vm->_resman->openResource(obGraph.getAnimResource());
+		AnimHeader anim_head;
+
+		anim_head.read(_vm->fetchAnimHeader(anim_file));
 
 		if (!_speechAnimType) {
 			// ANIM IS TO BE LIP-SYNC'ED & REPEATING
 
-			if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames)) {
+			if (obGraph.getAnimPc() == (int32)anim_head.noAnimFrames) {
 				// End of animation - restart from frame 0
-				ob_graphic->anim_pc = 0;
+				obGraph.setAnimPc(0);
 			} else if (speechRunning && _vm->_sound->amISpeaking() == RDSE_QUIET) {
 				// The speech is running, but we're at a quiet
 				// bit. Restart from frame 0 (closed mouth).
-				ob_graphic->anim_pc = 0;
+				obGraph.setAnimPc(0);
 			}
 		} else {
 			// ANIM IS TO PLAY ONCE ONLY
-			if (ob_graphic->anim_pc == (int32) (anim_head->noAnimFrames) - 1) {
+			if (obGraph.getAnimPc() == (int32)anim_head.noAnimFrames - 1) {
 				// Reached the last frame of the anim. Hold
 				// anim on this last frame
 				_animId = 0;
 			}
 		}
 
-		_vm->_resman->closeResource(ob_graphic->anim_resource);
+		_vm->_resman->closeResource(obGraph.getAnimResource());
 	} else if (_speechAnimType) {
 		// Placed here so we actually display the last frame of the
 		// anim.
@@ -1061,7 +1044,7 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// So that we can go to the options panel while text & speech is
 	// being tested
-	if (_scriptVars[SYSTEM_TESTING_TEXT] == 0 || mouseY > 0) {
+	if (readVar(SYSTEM_TESTING_TEXT) == 0 || mouseY > 0) {
 		MouseEvent *me = _vm->mouseEvent();
 
 		// Note that we now have TWO click-delays - one for LEFT
@@ -1073,14 +1056,14 @@ int32 Logic::fnISpeak(int32 *params) {
 			// the speech.
 
 			// if testing text & speech
-			if (_scriptVars[SYSTEM_TESTING_TEXT]) {
+			if (readVar(SYSTEM_TESTING_TEXT)) {
 				// and RB used to click past text
 				if (me->buttons & RD_RIGHTBUTTONDOWN) {
 					// then we want the previous line again
-					_scriptVars[SYSTEM_WANT_PREVIOUS_LINE] = 1;
+					writeVar(SYSTEM_WANT_PREVIOUS_LINE, 1);
 				} else {
 					// LB just want next line again
-					_scriptVars[SYSTEM_WANT_PREVIOUS_LINE] = 0;
+					writeVar(SYSTEM_WANT_PREVIOUS_LINE, 0);
 				}
 			}
 
@@ -1107,13 +1090,13 @@ int32 Logic::fnISpeak(int32 *params) {
 		// if there is a speech anim, end it on closed mouth frame
 		if (_animId) {
 			_animId = 0;
-			ob_graphic->anim_pc = 0;
+			obGraph.setAnimPc(0);
 		}
 
 		speechRunning = false;
 
 		// no longer in a script function loop
-		ob_logic->looping = 0;
+		obLogic.setLooping(0);
 
 		_vm->_debugger->_textNumber = 0;
 
@@ -1121,7 +1104,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// this number comes from the text line)
 		_officialTextNumber = 0;
 
-		_scriptVars[RESULT] = 0;
+		writeVar(RESULT, 0);
 		return IR_CONT;
 	}
 
@@ -1141,16 +1124,15 @@ int32 Logic::fnISpeak(int32 *params) {
  * Reset the object and restart script 1 on level 0
  */
 
-#define LEVEL (_curObjectHub->logic_level)
-
 int32 Logic::fnTotalRestart(int32 *params) {
 	// mega runs this to restart its base logic again - like being cached
 	// in again
 
 	// params:	none
 
-	LEVEL = 0;
-	_curObjectHub->script_pc[0] = 1;
+	_curObjectHub.setLogicLevel(0);
+	_curObjectHub.setScriptPc(0, 1);
+
 	return IR_TERMINATE;
 }
 
@@ -1194,7 +1176,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 	//		3 pointer to ob_mega
 	//		4 pointer to ob_walkdata
 
-	ObjectSpeech *ob_speech = (ObjectSpeech *)decodePtr(params[1]);
+	ObjectSpeech obSpeech(decodePtr(params[1]));
 
 	while (1) {
 		int32 pars[9];
@@ -1209,7 +1191,7 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 		// Note: I can't see that we ever check the value of wait_state
 		// but perhaps it accesses that memory location directly?
 
-		switch (ob_speech->command) {
+		switch (obSpeech.getCommand()) {
 		case 0:
 			break;
 		case INS_talk:
@@ -1217,15 +1199,15 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[1] = params[1];		// ob_speech
 			pars[2] = params[2];		// ob_logic
 			pars[3] = params[3];		// ob_mega
-			pars[4] = ob_speech->ins1;	// encoded text number
-			pars[5] = ob_speech->ins2;	// wav res id
-			pars[6] = ob_speech->ins3;	// anim res id
-			pars[7] = ob_speech->ins4;	// anim table res id
-			pars[8] = ob_speech->ins5;	// animation mode - 0 lip synced, 1 just straight animation
+			pars[4] = obSpeech.getIns1();	// encoded text number
+			pars[5] = obSpeech.getIns2();	// wav res id
+			pars[6] = obSpeech.getIns3();	// anim res id
+			pars[7] = obSpeech.getIns4();	// anim table res id
+			pars[8] = obSpeech.getIns5();	// animation mode - 0 lip synced, 1 just straight animation
 
 			if (fnISpeak(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
@@ -1234,11 +1216,11 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = params[3];		// ob_mega
 			pars[3] = params[4];		// ob_walkdata
-			pars[4] = ob_speech->ins1;	// direction to turn to
+			pars[4] = obSpeech.getIns1();	// direction to turn to
 
 			if (fnTurn(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
@@ -1247,33 +1229,33 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = params[3];		// ob_mega
 			pars[3] = params[4];		// ob_walkdata
-			pars[4] = ob_speech->ins1;	// target
+			pars[4] = obSpeech.getIns1();	// target
 
 			if (fnFaceMega(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
 		case INS_anim:
 			pars[0] = params[2];		// ob_logic
 			pars[1] = params[0];		// ob_graphic
-			pars[2] = ob_speech->ins1;	// anim res
+			pars[2] = obSpeech.getIns1();	// anim res
 
 			if (fnAnim(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
 		case INS_reverse_anim:
 			pars[0] = params[2];		// ob_logic
 			pars[1] = params[0];		// ob_graphic
-			pars[2] = ob_speech->ins1;	// anim res
+			pars[2] = obSpeech.getIns1();	// anim res
 
 			if (fnReverseAnim(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
@@ -1281,11 +1263,11 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[0] = params[2];		// ob_logic
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = params[3];		// ob_mega
-			pars[3] = ob_speech->ins1;	// pointer to anim table
+			pars[3] = obSpeech.getIns1();	// pointer to anim table
 
 			if (fnMegaTableAnim(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
@@ -1293,50 +1275,50 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[0] = params[2];		// ob_logic
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = params[3];		// ob_mega
-			pars[3] = ob_speech->ins1;	// pointer to anim table
+			pars[3] = obSpeech.getIns1();	// pointer to anim table
 
 			if (fnReverseMegaTableAnim(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
 		case INS_no_sprite:
 			fnNoSprite(params);		// ob_graphic
 
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			return IR_REPEAT ;
 		case INS_sort:
 			fnSortSprite(params);		// ob_graphic
 
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_foreground:
 			fnForeSprite(params);		// ob_graphic
 
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_background:
 			fnBackSprite(params);		// ob_graphic
 
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_walk:
 			pars[0] = params[2];		// ob_logic
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = params[3];		// ob_mega
 			pars[3] = params[4];		// ob_walkdata
-			pars[4] = ob_speech->ins1;	// target x
-			pars[5] = ob_speech->ins2;	// target y
-			pars[6] = ob_speech->ins3;	// target direction
+			pars[4] = obSpeech.getIns1();	// target x
+			pars[5] = obSpeech.getIns2();	// target y
+			pars[6] = obSpeech.getIns3();	// target direction
 
 			if (fnWalk(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
@@ -1345,69 +1327,69 @@ int32 Logic::fnSpeechProcess(int32 *params) {
 			pars[1] = params[0];		// ob_graphic
 			pars[2] = params[3];		// ob_mega
 			pars[3] = params[4];		// ob_walkdata
-			pars[4] = ob_speech->ins1;	// anim resource
+			pars[4] = obSpeech.getIns1();	// anim resource
 
 			if (fnWalkToAnim(pars) != IR_REPEAT) {
-				ob_speech->command = 0;
-				ob_speech->wait_state = 1;
+				obSpeech.setCommand(0);
+				obSpeech.setWaitState(1);
 			}
 
 			return IR_REPEAT;
 		case INS_stand_after_anim:
 			pars[0] = params[0];		// ob_graphic
 			pars[1] = params[3];		// ob_mega
-			pars[2] = ob_speech->ins1;	// anim resource
+			pars[2] = obSpeech.getIns1();	// anim resource
 
 			fnStandAfterAnim(pars);
 
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_set_frame:
 			pars[0] = params[0];		// ob_graphic
-			pars[1] = ob_speech->ins1;	// anim_resource
-			pars[2] = ob_speech->ins2;	// FIRST_FRAME or LAST_FRAME
+			pars[1] = obSpeech.getIns1();	// anim_resource
+			pars[2] = obSpeech.getIns2();	// FIRST_FRAME or LAST_FRAME
 			fnSetFrame(pars);
 
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		case INS_quit:
 			// That's it - we're finished with this
-			ob_speech->command = 0;
-			// ob_speech->wait_state = 0;
+			obSpeech.setCommand(0);
+			// obSpeech.setWaitState(0);
 			return IR_CONT;
 		default:
 			// Unimplemented command - just cancel
-			ob_speech->command = 0;
-			ob_speech->wait_state = 1;
+			obSpeech.setCommand(0);
+			obSpeech.setWaitState(1);
 			break;
 		}
 
-		if (_scriptVars[SPEECH_ID] == _scriptVars[ID]) {
+		if (readVar(SPEECH_ID) == readVar(ID)) {
 			// There's a new command for us! Grab the command -
 			// potentially we only have this cycle to do this - and
 			// set things up so that the command will be picked up
 			// on the next iteration of the while loop.
 
-			debug(5, "fnSpeechProcess: Received new command %d", _scriptVars[INS_COMMAND]);
+			debug(5, "fnSpeechProcess: Received new command %d", readVar(INS_COMMAND));
 
-			_scriptVars[SPEECH_ID] = 0;
+			writeVar(SPEECH_ID, 0);
 
-			ob_speech->command = _scriptVars[INS_COMMAND];
-			ob_speech->ins1 = _scriptVars[INS1];
-			ob_speech->ins2 = _scriptVars[INS2];
-			ob_speech->ins3 = _scriptVars[INS3];
-			ob_speech->ins4 = _scriptVars[INS4];
-			ob_speech->ins5 = _scriptVars[INS5];
-			ob_speech->wait_state = 0;
+			obSpeech.setCommand(readVar(INS_COMMAND));
+			obSpeech.setIns1(readVar(INS1));
+			obSpeech.setIns2(readVar(INS2));
+			obSpeech.setIns3(readVar(INS3));
+			obSpeech.setIns4(readVar(INS4));
+			obSpeech.setIns5(readVar(INS5));
+			obSpeech.setWaitState(0);
 
-			_scriptVars[INS_COMMAND] = 0;
+			writeVar(INS_COMMAND, 0);
 		} else {
 			// No new command. We could run a blink anim (or
 			// something) here.
 
-			ob_speech->wait_state = 1;
+			obSpeech.setWaitState(1);
 			return IR_REPEAT;
 		}
 	}
@@ -1423,10 +1405,10 @@ int32 Logic::fnSetScaling(int32 *params) {
 	// Where s is system scale, which itself is (256 * actual_scale) ie.
 	// s == 128 is half size
 
- 	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[0]);
+	ObjectMega obMega(decodePtr(params[0]));
 
-	ob_mega->scale_a = params[1];
-	ob_mega->scale_b = params[2];
+	obMega.setScaleA(params[1]);
+	obMega.setScaleB(params[2]);
 
 	return IR_CONT;
 }
@@ -1441,7 +1423,7 @@ int32 Logic::fnStartEvent(int32 *params) {
 int32 Logic::fnCheckEventWaiting(int32 *params) {
 	// params:	none
 
-	_scriptVars[RESULT] = checkEventWaiting();
+	writeVar(RESULT, checkEventWaiting());
 	return IR_CONT;
 }
 
@@ -1480,55 +1462,47 @@ int32 Logic::fnTimedWait(int32 *params) {
 	//		1 target
 	//		2 number of cycles before give up
 
-	StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(params[1]);
-	assert(head->fileType == GAME_OBJECT);
+	assert(_vm->_resman->fetchType(params[1]) == GAME_OBJECT);
 
-	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
+	ObjectLogic obLogic(decodePtr(params[0]));
 
-	if (!ob_logic->looping) {
+	if (obLogic.getLooping() == 0) {
 		// This is the first time, so set up the time-out.
-		ob_logic->looping = params[2];
+		obLogic.setLooping(params[2]);
 	}
 
 	// Run the target's get-speech-state script
+	runResScript(params[1], 5);
 
-	int32 target = params[1];
-	char *raw_script_ad = (char *)head;
-	uint32 null_pc = 5;
-
-	runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	_vm->_resman->closeResource(target);
-
-	if (_scriptVars[RESULT] == 1) {
+	if (readVar(RESULT) == 1) {
 		// The target is waiting, i.e. not busy
 
 		_vm->_debugger->_speechScriptWaiting = 0;
 
-		ob_logic->looping = 0;
-		_scriptVars[RESULT] = 0;
+		obLogic.setLooping(0);
+		writeVar(RESULT, 0);
 		return IR_CONT;
 	}
 
-	ob_logic->looping--;
+	obLogic.setLooping(obLogic.getLooping() - 1);
 
-	if (!ob_logic->looping) {
+	if (obLogic.getLooping() == 0) {
 		// Time's up.
 
-		debug(5, "fnTimedWait: Timed out waiting for %d", target);
+		debug(5, "fnTimedWait: Timed out waiting for %d", params[1]);
 		_vm->_debugger->_speechScriptWaiting = 0;
 
 		// Clear the event that hasn't been picked up - in theory,
 		// none of this should ever happen.
 
-		killAllIdsEvents(target);
-		_scriptVars[RESULT] = 1;
+		killAllIdsEvents(params[1]);
+		writeVar(RESULT, 1);
 		return IR_CONT;
 	}
 
 	// Target is busy. Keep trying.
 
-	_vm->_debugger->_speechScriptWaiting = target;
+	_vm->_debugger->_speechScriptWaiting = params[1];
 	return IR_REPEAT;
 }
 
@@ -1605,9 +1579,9 @@ int32 Logic::fnSetValue(int32 *params) {
 	// params:	0 pointer to object's mega structure
 	//		1 value to set it to
 
-	ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[0]);
+	ObjectMega obMega(decodePtr(params[0]));
 
-	ob_mega->megaset_res = params[1];
+	obMega.setMegasetRes(params[1]);
 	return IR_CONT;
 }
 
@@ -1617,7 +1591,7 @@ int32 Logic::fnNewScript(int32 *params) {
 
 	// params:	0 id of script
 
-	_scriptVars[PLAYER_ACTION] = 0;		// must clear this
+	writeVar(PLAYER_ACTION, 0);		// must clear this
 	logicReplace(params[0]);
 	return IR_TERMINATE;
 }
@@ -1632,7 +1606,7 @@ int32 Logic::fnGetSync(int32 *params) {
 
 	int slot = getSync();
 
-	_scriptVars[RESULT] = (slot != -1) ? _syncList[slot].sync : 0;
+	writeVar(RESULT, (slot != -1) ? _syncList[slot].sync : 0);
 	return IR_CONT;
 }
 
@@ -1644,15 +1618,15 @@ int32 Logic::fnGetSync(int32 *params) {
 int32 Logic::fnWaitSync(int32 *params) {
 	// params:	none
 
-	debug(6, "fnWaitSync: %d waits", _scriptVars[ID]);
+	debug(6, "fnWaitSync: %d waits", readVar(ID));
 
 	int slot = getSync();
 
 	if (slot == -1)
 		return IR_REPEAT;
 
-	debug(5, "fnWaitSync: %d got sync %d", _scriptVars[ID], _syncList[slot].sync);
-	_scriptVars[RESULT] = _syncList[slot].sync;
+	debug(5, "fnWaitSync: %d got sync %d", readVar(ID), _syncList[slot].sync);
+	writeVar(RESULT, _syncList[slot].sync);
 	return IR_CONT;
 }
 
@@ -1671,10 +1645,10 @@ int32 Logic::fnReverseMegaTableAnim(int32 *params) {
 
 	// Reverse anim
 	return _router->megaTableAnimate(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(uint32 *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		true);
 }
 
@@ -1685,8 +1659,8 @@ int32 Logic::fnReverseAnim(int32 *params) {
 
 	// Reverse anim
 	return _router->doAnimate(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
 		params[2], true);
 }
 
@@ -1702,21 +1676,22 @@ int32 Logic::fnReverseAnim(int32 *params) {
 
 int32 Logic::fnAddToKillList(int32 *params) {
 	// params:	none
+	uint32 id = readVar(ID);
 
 	// DON'T EVER KILL GEORGE!
-	if (_scriptVars[ID] == CUR_PLAYER_ID)
+	if (id == CUR_PLAYER_ID)
 		return IR_CONT;
 
 	// Scan the list to see if it's already included
 
 	for (uint32 i = 0; i < _kills; i++) {
-		if (_objectKillList[i] == _scriptVars[ID])
+		if (_objectKillList[i] == id)
 			return IR_CONT;
 	}
 
 	assert(_kills < OBJECT_KILL_LIST_SIZE);	// no room at the inn
 
-	_objectKillList[_kills++] = _scriptVars[ID];
+	_objectKillList[_kills++] = id;
 
 	// "another one bites the dust"
 
@@ -1745,25 +1720,25 @@ int32 Logic::fnSetStandbyCoords(int32 *params) {
 
 int32 Logic::fnBackPar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), BGP0_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), BGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnBackPar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), BGP1_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), BGP1_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar0Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), FGP0_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), FGP0_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnForePar1Sprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteStatus((ObjectGraphic *)decodePtr(params[0]), FGP1_SPRITE);
+	_router->setSpriteStatus(decodePtr(params[0]), FGP1_SPRITE);
 	return IR_CONT;
 }
 
@@ -1816,8 +1791,8 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 	//		2 anim resource id
 
 	_router->standAtAnim(
-		(ObjectGraphic *)decodePtr(params[0]),
-		(ObjectMega *)decodePtr(params[1]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
 		params[2]);
 	return IR_CONT;
 }
@@ -1827,50 +1802,56 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
+ 	byte *ob_mouse = decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
 
-	ob_mouse->x1 = 0;
-	ob_mouse->y1 = 0;
-	ob_mouse->x2 = screenInfo->scroll_offset_x + SCROLL_MOUSE_WIDTH;
-	ob_mouse->y2 = screenInfo->screen_deep - 1;
-	ob_mouse->priority = 0;
+	ObjectMouse mouse;
+
+	mouse.x1 = 0;
+	mouse.y1 = 0;
+	mouse.x2 = screenInfo->scroll_offset_x + SCROLL_MOUSE_WIDTH;
+	mouse.y2 = screenInfo->screen_deep - 1;
+	mouse.priority = 0;
 
 	if (screenInfo->scroll_offset_x > 0) {
 		// not fully scrolled to the left
-		ob_mouse->pointer = SCROLL_LEFT_MOUSE_ID;
+		mouse.pointer = SCROLL_LEFT_MOUSE_ID;
 	} else {
 		// so the mouse area doesn't get registered
-		ob_mouse->pointer = 0;
+		mouse.pointer = 0;
 	}
 
+	mouse.write(ob_mouse);
 	return IR_CONT;
 }
 
 int32 Logic::fnSetScrollRightMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
-	ObjectMouse *ob_mouse = (ObjectMouse *)decodePtr(params[0]);
+	byte *ob_mouse = decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
 
-	ob_mouse->x1 = screenInfo->scroll_offset_x + _vm->_screen->getScreenWide() - SCROLL_MOUSE_WIDTH;
-	ob_mouse->y1 = 0;
-	ob_mouse->x2 = screenInfo->screen_wide - 1;
-	ob_mouse->y2 = screenInfo->screen_deep - 1;
-	ob_mouse->priority = 0;
+	ObjectMouse mouse;
+
+	mouse.x1 = screenInfo->scroll_offset_x + _vm->_screen->getScreenWide() - SCROLL_MOUSE_WIDTH;
+	mouse.y1 = 0;
+	mouse.x2 = screenInfo->screen_wide - 1;
+	mouse.y2 = screenInfo->screen_deep - 1;
+	mouse.priority = 0;
 
 	if (screenInfo->scroll_offset_x < screenInfo->max_scroll_offset_x) {
 		// not fully scrolled to the right
-		ob_mouse->pointer = SCROLL_RIGHT_MOUSE_ID;
+		mouse.pointer = SCROLL_RIGHT_MOUSE_ID;
 	} else {
 		// so the mouse area doesn't get registered
-		ob_mouse->pointer = 0;
+		mouse.pointer = 0;
 	}
 
+	mouse.write(ob_mouse);
 	return IR_CONT;
 }
 
@@ -1971,36 +1952,36 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
 
-	byte *logic_ptr = decodePtr(params[0]);
-	byte *graphic_ptr = decodePtr(params[1]);
-	byte *mega_ptr = decodePtr(params[2]);
+	byte *ob_logic = decodePtr(params[0]);
+	byte *ob_graph = decodePtr(params[1]);
+	byte *ob_mega = decodePtr(params[2]);
 
-	// Copy from savegame header to player object
+	// Copy from savegame buffers to player object
 
-	memcpy(logic_ptr, &_vm->_saveGameHeader.logic, sizeof(ObjectLogic));
-	memcpy(graphic_ptr, &_vm->_saveGameHeader.graphic, sizeof(ObjectGraphic));
-	memcpy(mega_ptr, &_vm->_saveGameHeader.mega, sizeof(ObjectMega));
+	memcpy(ob_logic, _saveLogic, ObjectLogic::size());
+	memcpy(ob_graph, _saveGraphic, ObjectGraphic::size());
+	memcpy(ob_mega, _saveMega, ObjectMega::size());
 
  	// Any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved.
 
-	ObjectMega *ob_mega = (ObjectMega *)mega_ptr;
+	ObjectMega obMega(ob_mega);
 
-	if (ob_mega->currently_walking) {
-		ob_mega->currently_walking = 0;
+	if (obMega.getIsWalking()) {
+		ObjectLogic obLogic(ob_logic);
+
+		obMega.setIsWalking(0);
 
 		int32 pars[3];
 
 		pars[0] = params[1];			// ob_graphic;
 		pars[1] = params[2];			// ob_mega
-		pars[2] = ob_mega->current_dir;
+		pars[2] = obMega.getCurDir();
 
 		fnStand(pars);
 
 		// Reset looping flag (which would have been 1 during fnWalk)
-		ObjectLogic *ob_logic = (ObjectLogic *)logic_ptr;
-
-		ob_logic->looping = 0;
+		obLogic.setLooping(0);
 	}
 
 	return IR_CONT;
@@ -2019,11 +2000,11 @@ int32 Logic::fnPassPlayerSaveData(int32 *params) {
 	//		1 pointer to object's graphic structure
 	//		2 pointer to object's mega structure
 
-	// Copy from player object to savegame header
+	// Copy from player object to savegame buffers
 
-	memcpy(&_vm->_saveGameHeader.logic, decodePtr(params[0]), sizeof(ObjectLogic));
-	memcpy(&_vm->_saveGameHeader.graphic, decodePtr(params[1]), sizeof(ObjectGraphic));
-	memcpy(&_vm->_saveGameHeader.mega, decodePtr(params[2]), sizeof(ObjectMega));
+	memcpy(_saveLogic, decodePtr(params[0]), ObjectLogic::size());
+	memcpy(_saveGraphic, decodePtr(params[1]), ObjectGraphic::size());
+	memcpy(_saveMega, decodePtr(params[2]), ObjectMega::size());
 
 	return IR_CONT;
 }
@@ -2051,7 +2032,7 @@ int32 Logic::fnAddWalkGrid(int32 *params) {
 	// re-enter a location.
 
 	// DON'T EVER KILL GEORGE!
-	if (_scriptVars[ID] != 8) {
+	if (readVar(ID) != CUR_PLAYER_ID) {
 		// Need to call this in case it wasn't called in script!
 		fnAddToKillList(NULL);
 	}
@@ -2095,10 +2076,10 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 	// params:	0 pointer to object's logic structure
 	//		1 number of game-cycles to pause
 
-	ObjectLogic *ob_logic = (ObjectLogic *)decodePtr(params[0]);
+	ObjectLogic obLogic(decodePtr(params[0]));
 
 	if (checkEventWaiting()) {
-		ob_logic->looping = 0;
+		obLogic.setLooping(0);
 		startEvent();
 		return IR_TERMINATE;
 	}
@@ -2109,7 +2090,7 @@ int32 Logic::fnPauseForEvent(int32 *params) {
 int32 Logic::fnClearEvent(int32 *params) {
 	// params:	none
 
-	clearEvent(_scriptVars[ID]);
+	clearEvent(readVar(ID));
 	return IR_CONT;
 }
 
@@ -2121,10 +2102,10 @@ int32 Logic::fnFaceMega(int32 *params) {
 	//		4 id of target mega to face
 
 	return _router->faceMega(
-		(ObjectLogic *)decodePtr(params[0]),
-		(ObjectGraphic *)decodePtr(params[1]),
-		(ObjectMega *)decodePtr(params[2]),
-		(ObjectWalkdata *)decodePtr(params[3]),
+		decodePtr(params[0]),
+		decodePtr(params[1]),
+		decodePtr(params[2]),
+		decodePtr(params[3]),
 		params[4]);
 }
 
@@ -2163,7 +2144,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	MoviePlayer player(_vm);
  	uint32 rv;
 
-	if (_sequenceTextLines && !_scriptVars[DEMO])
+	if (_sequenceTextLines && !readVar(DEMO))
 		rv = player.play(filename, sequenceSpeechArray, _smackerLeadIn, _smackerLeadOut);
 	else
 		rv = player.play(filename, NULL, _smackerLeadIn, _smackerLeadOut);
@@ -2201,13 +2182,13 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 int32 Logic::fnShadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteShading((ObjectGraphic *)decodePtr(params[0]), SHADED_SPRITE);
+	_router->setSpriteShading(decodePtr(params[0]), SHADED_SPRITE);
 	return IR_CONT;
 }
 
 int32 Logic::fnUnshadedSprite(int32 *params) {
 	// params:	0 pointer to object's graphic structure
-	_router->setSpriteShading((ObjectGraphic *)decodePtr(params[0]), UNSHADED_SPRITE);
+	_router->setSpriteShading(decodePtr(params[0]), UNSHADED_SPRITE);
 	return IR_CONT;
 }
 
@@ -2243,7 +2224,7 @@ int32 Logic::fnDisplayMsg(int32 *params) {
 
 int32 Logic::fnSetObjectHeld(int32 *params) {
 	// params:	0 luggage icon to set
-	uint32 res = (uint32) params[0];
+	uint32 res = (uint32)params[0];
 
 	_vm->_mouse->setObjectHeld(res);
 	return IR_CONT;
@@ -2271,15 +2252,10 @@ int32 Logic::fnResetGlobals(int32 *params) {
 
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-	int32 size;
-	uint32 *globals;
-
-	size = _vm->_resman->fetchLen(1);
-	size -= sizeof(StandardHeader);
+	byte *globals = _vm->_resman->openResource(1) + ResHeader::size();
+	int32 size = _vm->_resman->fetchLen(1) - ResHeader::size();
 
 	debug(5, "globals size: %d", size);
-
-	globals = (uint32 *)((byte *)_vm->_resman->openResource(1) + sizeof(StandardHeader));
 
 	// blank each global variable
 	memset(globals, 0, size);
@@ -2384,7 +2360,7 @@ int32 Logic::fnCheckPlayerActivity(int32 *params) {
 	// params:	0 threshold delay in seconds, ie. what we want to
 	//		  check the actual delay against
 
-	uint32 seconds = (uint32) params[0];
+	uint32 seconds = (uint32)params[0];
 
 	_vm->_mouse->checkPlayerActivity(seconds);
 	return IR_CONT;
@@ -2407,8 +2383,7 @@ int32 Logic::fnCheckMusicPlaying(int32 *params) {
 	// or 0 if no music playing
 
 	// in seconds, rounded up to the nearest second
-	_scriptVars[RESULT] = _vm->_sound->musicTimeRemaining();
-
+	writeVar(RESULT, _vm->_sound->musicTimeRemaining());
 	return IR_CONT;
 }
 
@@ -2418,7 +2393,7 @@ int32 Logic::fnPlayCredits(int32 *params) {
 
 	// params:	none
 
-	if (_scriptVars[DEMO]) {
+	if (readVar(DEMO)) {
 		_vm->closeGame();
 		return IR_STOP;
 	}

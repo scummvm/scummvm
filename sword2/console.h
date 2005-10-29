@@ -67,8 +67,10 @@ public:
 
 	int32 _textNumber;
 
-	ObjectGraphic _playerGraphic;
-	uint32 _playerGraphicNoFrames;
+	int32 _graphType;
+	int32 _graphAnimRes;
+	int32 _graphAnimPc;
+	uint32 _graphNoFrames;
 
 	void buildDebugText();
 	void drawDebugGraphics();

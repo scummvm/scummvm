@@ -80,39 +80,35 @@ void Logic::locateTalker(int32 *params) {
 
 	// '0' means 1st frame
 
-	CdtEntry *cdt_entry = _vm->fetchCdtEntry(file, 0);
-	FrameHeader *frame_head = _vm->fetchFrameHeader(file, 0);
+	CdtEntry cdt_entry;
+	FrameHeader frame_head;
+
+	cdt_entry.read(_vm->fetchCdtEntry(file, 0));
+	frame_head.read(_vm->fetchFrameHeader(file, 0));
 
 	// Note: This part of the code is quite similar to registerFrame().
 
-	if (cdt_entry->frameType & FRAME_OFFSET) {
+	if (cdt_entry.frameType & FRAME_OFFSET) {
 		// The frame has offsets, i.e. it's a scalable mega frame
-		ObjectMega *ob_mega = (ObjectMega *)decodePtr(params[S_OB_MEGA]);
+		ObjectMega obMega(decodePtr(params[S_OB_MEGA]));
 
-		// Calculate scale at which to print the sprite, based on feet
-		// y-coord and scaling constants (NB. 'scale' is actually
-		// 256 * true_scale, to maintain accuracy)
-
-		// Ay+B gives 256 * scale ie. 256 * 256 * true_scale for even
-		// better accuracy, ie. scale = (Ay + B) / 256
-
-		uint16 scale = (uint16) ((ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256);
+		uint16 scale = obMega.calcScale();
 
 		// Calc suitable centre point above the head, based on scaled
 		// height
 
 		// just use 'feet_x' as centre
-		_textX = (int16) ob_mega->feet_x;
+		_textX = obMega.getFeetX();
 
 		// Add scaled y-offset to feet_y coord to get top of sprite
-		_textY = (int16) (ob_mega->feet_y + (cdt_entry->y * scale) / 256);
+		_textY = obMega.getFeetY() + (cdt_entry.y * scale) / 256;
 	} else {
 		// It's a non-scaling anim - calc suitable centre point above
 		// the head, based on scaled width
 
 		// x-coord + half of width
-		_textX = cdt_entry->x + (frame_head->width) / 2;
-		_textY = cdt_entry->y;
+		_textX = cdt_entry.x + frame_head.width / 2;
+		_textY = cdt_entry.y;
 	}
 
 	_vm->_resman->closeResource(_animId);
@@ -158,10 +154,13 @@ void Logic::formText(int32 *params) {
 		return;
 	}
 
-	ObjectSpeech *ob_speech = (ObjectSpeech *)decodePtr(params[S_OB_SPEECH]);
+	ObjectSpeech obSpeech(decodePtr(params[S_OB_SPEECH]));
 
 	// Establish the max width allowed for this text sprite.
-	uint32 textWidth = ob_speech->width ? ob_speech->width : 400;
+	uint32 textWidth = obSpeech.getWidth();
+
+	if (!textWidth)
+		textWidth = 400;
 
 	// Pull out the text line, and make the sprite and text block
 
@@ -174,7 +173,7 @@ void Logic::formText(int32 *params) {
 
 	_speechTextBlocNo = _vm->_fontRenderer->buildNewBloc(
 		text + 2, _textX, _textY,
-		textWidth, ob_speech->pen,
+		textWidth, obSpeech.getPen(),
 		RDSPR_TRANS | RDSPR_DISPLAYALIGN,
 		_vm->_speechFontId, POSITION_AT_CENTRE_OF_BASE);
 

@@ -54,10 +54,12 @@ void Screen::setScrolling() {
 
 	// If the scroll offsets are being forced in script, ensure that they
 	// are neither too far to the right nor too far down.
+	uint32 scrollX = _vm->_logic->readVar(SCROLL_X);
+	uint32 scrollY = _vm->_logic->readVar(SCROLL_Y);
 
-	if (Logic::_scriptVars[SCROLL_X] || Logic::_scriptVars[SCROLL_Y]) {
-		_thisScreen.scroll_offset_x = MIN((uint16) Logic::_scriptVars[SCROLL_X], _thisScreen.max_scroll_offset_x);
-		_thisScreen.scroll_offset_y = MIN((uint16) Logic::_scriptVars[SCROLL_Y], _thisScreen.max_scroll_offset_y);
+	if (scrollX || scrollY) {
+		_thisScreen.scroll_offset_x = MIN((uint16)scrollX, _thisScreen.max_scroll_offset_x);
+		_thisScreen.scroll_offset_y = MIN((uint16)scrollY, _thisScreen.max_scroll_offset_y);
 		return;
 	}
 

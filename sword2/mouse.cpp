@@ -74,9 +74,8 @@ Mouse::Mouse(Sword2Engine *vm) {
 	_playerActivityDelay = 0;
 	_realLuggageItem = 0;
 
-	_mouseSprite = NULL;
-	_mouseAnim = NULL;
-	_luggageAnim = NULL;
+	_mouseAnim.data = NULL;
+	_luggageAnim.data = NULL;
 
 	// For the menus
 	_totalTemp = 0;
@@ -103,8 +102,8 @@ Mouse::Mouse(Sword2Engine *vm) {
 }
 
 Mouse::~Mouse() {
-	free(_mouseAnim);
-	free(_luggageAnim);
+	free(_mouseAnim.data);
+	free(_luggageAnim.data);
 	for (int i = 0; i < 2; i++)
 		for (int j = 0; j < RDMENU_MAXPOCKETS; j++)
 			free(_icons[i][j]);
@@ -128,11 +127,15 @@ void Mouse::resetMouseList() {
 	_curMouse = 0;
 }
 
-void Mouse::registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit) {
-	if (!ob_mouse->pointer)
-		return;
-
+void Mouse::registerMouse(byte *ob_mouse, BuildUnit *build_unit) {
 	assert(_curMouse < TOTAL_mouse_list);
+
+	ObjectMouse mouse;
+
+	mouse.read(ob_mouse);
+
+	if (!mouse.pointer)
+		return;
 
 	if (build_unit) {
 		_mouseList[_curMouse].rect.left = build_unit->x;
@@ -140,14 +143,14 @@ void Mouse::registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit) {
 		_mouseList[_curMouse].rect.right = 1 + build_unit->x + build_unit->scaled_width;
 		_mouseList[_curMouse].rect.bottom = 1 + build_unit->y + build_unit->scaled_height;
 	} else {
-		_mouseList[_curMouse].rect.left = ob_mouse->x1;
-		_mouseList[_curMouse].rect.top = ob_mouse->y1;
-		_mouseList[_curMouse].rect.right = 1 + ob_mouse->x2;
-		_mouseList[_curMouse].rect.bottom = 1 + ob_mouse->y2;
+		_mouseList[_curMouse].rect.left = mouse.x1;
+		_mouseList[_curMouse].rect.top = mouse.y1;
+		_mouseList[_curMouse].rect.right = 1 + mouse.x2;
+		_mouseList[_curMouse].rect.bottom = 1 + mouse.y2;
 	}
 
-	_mouseList[_curMouse].priority = ob_mouse->priority;
-	_mouseList[_curMouse].pointer = ob_mouse->pointer;
+	_mouseList[_curMouse].priority = mouse.priority;
+	_mouseList[_curMouse].pointer = mouse.pointer;
 
 	// Change all COGS pointers to CROSHAIR. I'm guessing that this was a
 	// design decision made in mid-development and they didn't want to go
@@ -162,11 +165,11 @@ void Mouse::registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit) {
 	// If 'pointer_text' field is set, but the 'id' field isn't same is
 	// current id then we don't want this "left over" pointer text
 
-	if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32) Logic::_scriptVars[ID])
+	if (_mouseList[_curMouse].pointer_text && _mouseList[_curMouse].id != (int32)_vm->_logic->readVar(ID))
 		_mouseList[_curMouse].pointer_text = 0;
 
 	// Get id from system variable 'id' which is correct for current object
-	_mouseList[_curMouse].id = Logic::_scriptVars[ID];
+	_mouseList[_curMouse].id = _vm->_logic->readVar(ID);
 
 	_curMouse++;
 }
@@ -177,7 +180,7 @@ void Mouse::registerPointerText(int32 text_id) {
 	// current object id - used for checking pointer_text when mouse area
 	// registered (in fnRegisterMouse and fnRegisterFrame)
 
-	_mouseList[_curMouse].id = Logic::_scriptVars[ID];
+	_mouseList[_curMouse].id = _vm->_logic->readVar(ID);
 	_mouseList[_curMouse].pointer_text = text_id;
 }
 
@@ -192,7 +195,7 @@ void Mouse::mouseEngine() {
 	// If George is dead, the system menu is visible all the time, and is
 	// the only thing that can be used.
 
-	if (Logic::_scriptVars[DEAD]) {
+	if (_vm->_logic->readVar(DEAD)) {
 		if (_mouseMode != MOUSE_system_menu) {
 			_mouseMode = MOUSE_system_menu;
 
@@ -239,8 +242,10 @@ void Mouse::mouseEngine() {
 
 #if RIGHT_CLICK_CLEARS_LUGGAGE
 bool Mouse::heldIsInInventory() {
+	int32 object_held = (int32)_vm->_logic->readVar(OBJECT_HELD);
+
 	for (uint i = 0; i < _totalMasters; i++) {
-		if ((uint32) _masterMenuList[i].icon_resource == Logic::_scriptVars[OBJECT_HELD])
+		if (_masterMenuList[i].icon_resource == object_held)
 			return true;
 	}
 	return false;
@@ -274,7 +279,7 @@ void Mouse::systemMenuMouse() {
 	// If the mouse is moved off the menu, close it. Unless the player is
 	// dead, in which case the menu should always be visible.
 
-	if (_pos.y > 0 && !Logic::_scriptVars[DEAD]) {
+	if (_pos.y > 0 && !_vm->_logic->readVar(DEAD)) {
 		_mouseMode = MOUSE_normal;
 		hideMenu(RDMENU_TOP);
 		return;
@@ -297,14 +302,14 @@ void Mouse::systemMenuMouse() {
 
 	// No save when dead
 
-	if (icon_list[hit] == SAVE_ICON && Logic::_scriptVars[DEAD])
+	if (icon_list[hit] == SAVE_ICON && _vm->_logic->readVar(DEAD))
 		return;
 
 	// Gray out all he icons, except the one that was clicked
 
 	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
 		if (i != hit) {
-			icon = _vm->_resman->openResource(icon_list[i]) + sizeof(StandardHeader);
+			icon = _vm->_resman->openResource(icon_list[i]) + ResHeader::size();
 			setMenuIcon(RDMENU_TOP, i, icon);
 			_vm->_resman->closeResource(icon_list[i]);
 		}
@@ -364,7 +369,7 @@ void Mouse::systemMenuMouse() {
 
 	// Menu stays open on death screen. Otherwise it's closed.
 
-	if (!Logic::_scriptVars[DEAD]) {
+	if (!_vm->_logic->readVar(DEAD)) {
 		_mouseMode = MOUSE_normal;
 		hideMenu(RDMENU_TOP);
 	} else {
@@ -432,7 +437,7 @@ void Mouse::dragMouse() {
 
 #if RIGHT_CLICK_CLEARS_LUGGAGE
 	if ((me->buttons & RD_RIGHTBUTTONDOWN) && heldIsInInventory()) {
-		Logic::_scriptVars[OBJECT_HELD] = 0;
+		_vm->_logic->writeVar(OBJECT_HELD, 0);
 		_menuSelectedPos = 0;
 		_mouseMode = MOUSE_menu;
 		setLuggage(0);
@@ -458,25 +463,25 @@ void Mouse::dragMouse() {
 		// Set global script variable 'button'. We know that it was the
 		// left button, not the right one.
 
-		Logic::_scriptVars[LEFT_BUTTON]  = 1;
-		Logic::_scriptVars[RIGHT_BUTTON] = 0;
+		_vm->_logic->writeVar(LEFT_BUTTON, 1);
+		_vm->_logic->writeVar(RIGHT_BUTTON, 0);
 
 		// These might be required by the action script about to be run
 		ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-		Logic::_scriptVars[MOUSE_X] = _pos.x + screenInfo->scroll_offset_x;
-		Logic::_scriptVars[MOUSE_Y] = _pos.y + screenInfo->scroll_offset_y;
+		_vm->_logic->writeVar(MOUSE_X, _pos.x + screenInfo->scroll_offset_x);
+		_vm->_logic->writeVar(MOUSE_Y, _pos.y + screenInfo->scroll_offset_y);
 
 		// For scripts to know what's been clicked. First used for
 		// 'room_13_turning_script' in object 'biscuits_13'
 
-		Logic::_scriptVars[CLICKED_ID] = _mouseTouching;
+		_vm->_logic->writeVar(CLICKED_ID, _mouseTouching);
 
 		_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		debug(2, "Used \"%s\" on \"%s\"",
-			_vm->fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf1),
-			_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf2));
+			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
+			_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
 
 		// Hide menu - back to normal menu mode
 
@@ -499,15 +504,15 @@ void Mouse::dragMouse() {
 	_mouseMode = MOUSE_menu;
 	setLuggage(0);
 
-	if ((uint) hit == _menuSelectedPos) {
+	if ((uint)hit == _menuSelectedPos) {
 		// If we clicked on the same icon again, reset the first icon
 
-		Logic::_scriptVars[OBJECT_HELD] = 0;
+		_vm->_logic->writeVar(OBJECT_HELD, 0);
 		_menuSelectedPos = 0;
 	} else {
 		// Otherwise, combine the two icons
 
-		Logic::_scriptVars[COMBINE_BASE] = _masterMenuList[hit].icon_resource;
+		_vm->_logic->writeVar(COMBINE_BASE, _masterMenuList[hit].icon_resource);
 		_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
 		// Turn off mouse now, to prevent player trying to click
@@ -516,8 +521,8 @@ void Mouse::dragMouse() {
 		hideMouse();
 
 		debug(2, "Used \"%s\" on \"%s\"",
-			_vm->fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf1),
-			_vm->fetchObjectName(Logic::_scriptVars[COMBINE_BASE], buf2));
+			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
+			_vm->_resman->fetchName(_vm->_logic->readVar(COMBINE_BASE), buf2));
 	}
 
 	// Refresh the menu
@@ -555,12 +560,12 @@ void Mouse::menuMouse() {
 		// resource id.
 
 		_examiningMenuIcon = true;
-		Logic::_scriptVars[OBJECT_HELD] = _masterMenuList[hit].icon_resource;
+		_vm->_logic->writeVar(OBJECT_HELD, _masterMenuList[hit].icon_resource);
 
 		// Must clear this so next click on exit becomes 1st click
 		// again
 
-		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
+		_vm->_logic->writeVar(EXIT_CLICK_ID, 0);
 
 		_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, MENU_MASTER_OBJECT);
 
@@ -574,7 +579,7 @@ void Mouse::menuMouse() {
 		hideMouse();
 
 		debug(2, "Right-click on \"%s\" icon",
-			_vm->fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf));
+			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf));
 
 		return;
 	}
@@ -587,13 +592,13 @@ void Mouse::menuMouse() {
 		_mouseMode = MOUSE_drag;
 
 		_menuSelectedPos = hit;
-		Logic::_scriptVars[OBJECT_HELD] = _masterMenuList[hit].icon_resource;
+		_vm->_logic->writeVar(OBJECT_HELD, _masterMenuList[hit].icon_resource);
 		_currentLuggageResource = _masterMenuList[hit].luggage_resource;
 
 		// Must clear this so next click on exit becomes 1st click
 		// again
 
-		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
+		_vm->_logic->writeVar(EXIT_CLICK_ID, 0);
 
 		// Refresh the menu
 
@@ -602,7 +607,7 @@ void Mouse::menuMouse() {
 		setLuggage(_masterMenuList[hit].luggage_resource);
 
 		debug(2, "Left-clicked on \"%s\" icon - switch to drag mode",
-			_vm->fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf));
+			_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf));
 	}
 }
 
@@ -616,7 +621,7 @@ void Mouse::normalMouse() {
 	// big-object menu lock situation, of if the player is dragging an
 	// object.
 
-	if (_pos.y < 0 && !_mouseModeLocked && !Logic::_scriptVars[OBJECT_HELD]) {
+	if (_pos.y < 0 && !_mouseModeLocked && !_vm->_logic->readVar(OBJECT_HELD)) {
 		_mouseMode = MOUSE_system_menu;
 
 		if (_mouseTouching) {
@@ -644,7 +649,7 @@ void Mouse::normalMouse() {
 		// object, even if the inventory menu was closed after the
 		// first object was selected.
 
-		if (!Logic::_scriptVars[OBJECT_HELD])
+		if (!_vm->_logic->readVar(OBJECT_HELD))
 			_mouseMode = MOUSE_menu;
 		else
 			_mouseMode = MOUSE_drag;
@@ -686,8 +691,8 @@ void Mouse::normalMouse() {
 
 			if (button_down) {
 				// set both (x1,y1) and (x2,y2) to this point
-				_vm->_debugger->_rectX1 = _vm->_debugger->_rectX2 = (uint32) _pos.x + screenInfo->scroll_offset_x;
-				_vm->_debugger->_rectY1 = _vm->_debugger->_rectY2 = (uint32) _pos.y + screenInfo->scroll_offset_y;
+				_vm->_debugger->_rectX1 = _vm->_debugger->_rectX2 = (uint32)_pos.x + screenInfo->scroll_offset_x;
+				_vm->_debugger->_rectY1 = _vm->_debugger->_rectY2 = (uint32)_pos.y + screenInfo->scroll_offset_y;
 				_vm->_debugger->_draggingRectangle = 1;
 			}
 		} else if (_vm->_debugger->_draggingRectangle == 1) {
@@ -699,8 +704,8 @@ void Mouse::normalMouse() {
 				_vm->_debugger->_draggingRectangle = 2;
 			} else {
 				// drag rectangle
-				_vm->_debugger->_rectX2 = (uint32) _pos.x + screenInfo->scroll_offset_x;
-				_vm->_debugger->_rectY2 = (uint32) _pos.y + screenInfo->scroll_offset_y;
+				_vm->_debugger->_rectX2 = (uint32)_pos.x + screenInfo->scroll_offset_x;
+				_vm->_debugger->_rectY2 = (uint32)_pos.y + screenInfo->scroll_offset_y;
 			}
 		} else {
 			// currently locked to avoid knocking out of place
@@ -716,8 +721,8 @@ void Mouse::normalMouse() {
 	}
 
 #if RIGHT_CLICK_CLEARS_LUGGAGE
-	if (Logic::_scriptVars[OBJECT_HELD] && (me->buttons & RD_RIGHTBUTTONDOWN) && heldIsInInventory()) {
-		Logic::_scriptVars[OBJECT_HELD] = 0;
+	if (_vm->_logic->readVar(OBJECT_HELD) && (me->buttons & RD_RIGHTBUTTONDOWN) && heldIsInInventory()) {
+		_vm->_logic->writeVar(OBJECT_HELD, 0);
 		_menuSelectedPos = 0;
 		setLuggage(0);
 		return;
@@ -743,29 +748,29 @@ void Mouse::normalMouse() {
 
 	// PLAYER_ACTION script variable - whatever catches this must reset to
 	// 0 again
-	// Logic::_scriptVars[PLAYER_ACTION] = _mouseTouching;
+	// _vm->_logic->writeVar(PLAYER_ACTION, _mouseTouching);
 
 	// Idle or router-anim will catch it
 
 	// Set global script variable 'button'
 
 	if (me->buttons & RD_LEFTBUTTONDOWN) {
-		Logic::_scriptVars[LEFT_BUTTON]  = 1;
-		Logic::_scriptVars[RIGHT_BUTTON] = 0;
+		_vm->_logic->writeVar(LEFT_BUTTON, 1);
+		_vm->_logic->writeVar(RIGHT_BUTTON, 0);
 		_buttonClick = 0;	// for re-click
 	} else {
-		Logic::_scriptVars[LEFT_BUTTON]  = 0;
-		Logic::_scriptVars[RIGHT_BUTTON] = 1;
+		_vm->_logic->writeVar(LEFT_BUTTON, 0);
+		_vm->_logic->writeVar(RIGHT_BUTTON, 1);
 		_buttonClick = 1;	// for re-click
 	}
 
 	// These might be required by the action script about to be run
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
-	Logic::_scriptVars[MOUSE_X] = _pos.x + screenInfo->scroll_offset_x;
-	Logic::_scriptVars[MOUSE_Y] = _pos.y + screenInfo->scroll_offset_y;
+	_vm->_logic->writeVar(MOUSE_X, _pos.x + screenInfo->scroll_offset_x);
+	_vm->_logic->writeVar(MOUSE_Y, _pos.y + screenInfo->scroll_offset_y);
 
-	if (_mouseTouching == Logic::_scriptVars[EXIT_CLICK_ID] && (me->buttons & RD_LEFTBUTTONDOWN)) {
+	if (_mouseTouching == _vm->_logic->readVar(EXIT_CLICK_ID) && (me->buttons & RD_LEFTBUTTONDOWN)) {
 		// It's the exit double click situation. Let the existing
 		// interaction continue and start fading down. Switch the human
 		// off too
@@ -775,8 +780,8 @@ void Mouse::normalMouse() {
 
 		// Tell the walker
 
-		Logic::_scriptVars[EXIT_FADING] = 1;
-	} else if (_oldButton == _buttonClick && _mouseTouching == Logic::_scriptVars[CLICKED_ID] && _mousePointerRes != NORMAL_MOUSE_ID) {
+		_vm->_logic->writeVar(EXIT_FADING, 1);
+	} else if (_oldButton == _buttonClick && _mouseTouching == _vm->_logic->readVar(CLICKED_ID) && _mousePointerRes != NORMAL_MOUSE_ID) {
 		// Re-click. Do nothing, except on floors
 	} else {
 		// For re-click
@@ -786,28 +791,28 @@ void Mouse::normalMouse() {
 		// For scripts to know what's been clicked. First used for
 		// 'room_13_turning_script' in object 'biscuits_13'
 
-		Logic::_scriptVars[CLICKED_ID] = _mouseTouching;
+		_vm->_logic->writeVar(CLICKED_ID, _mouseTouching);
 
 		// Must clear these two double-click control flags - do it here
 		// so reclicks after exit clicks are cleared up
 
-		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
-		Logic::_scriptVars[EXIT_FADING] = 0;
+		_vm->_logic->writeVar(EXIT_CLICK_ID, 0);
+		_vm->_logic->writeVar(EXIT_FADING, 0);
 
 		_vm->_logic->setPlayerActionEvent(CUR_PLAYER_ID, _mouseTouching);
 
 		byte buf1[NAME_LEN], buf2[NAME_LEN];
 
-		if (Logic::_scriptVars[OBJECT_HELD])
+		if (_vm->_logic->readVar(OBJECT_HELD))
 			debug(2, "Used \"%s\" on \"%s\"",
-				_vm->fetchObjectName(Logic::_scriptVars[OBJECT_HELD], buf1),
-				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf2));
-		else if (Logic::_scriptVars[LEFT_BUTTON])
+				_vm->_resman->fetchName(_vm->_logic->readVar(OBJECT_HELD), buf1),
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf2));
+		else if (_vm->_logic->readVar(LEFT_BUTTON))
 			debug(2, "Left-clicked on \"%s\"",
-				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf1));
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf1));
 		else	// RIGHT BUTTON
 			debug(2, "Right-clicked on \"%s\"",
-				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], buf1));
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), buf1));
 	}
 }
 
@@ -817,9 +822,12 @@ uint32 Mouse::chooseMouse() {
 
 	uint i;
 
-	Logic::_scriptVars[AUTO_SELECTED] = 0;
+	_vm->_logic->writeVar(AUTO_SELECTED, 0);
 
-	if (Logic::_scriptVars[OBJECT_HELD]) {
+	uint32 in_subject = _vm->_logic->readVar(IN_SUBJECT);
+	uint32 object_held = _vm->_logic->readVar(OBJECT_HELD);
+
+	if (object_held) {
 		// The player used an object on a person. In this case it
 		// triggered a conversation menu. Act as if the user tried to
 		// talk to the person about that object. If the person doesn't
@@ -827,8 +835,8 @@ uint32 Mouse::chooseMouse() {
 
 		uint32 response = _defaultResponseId;
 
-		for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
-			if (_subjectList[i].res == Logic::_scriptVars[OBJECT_HELD]) {
+		for (i = 0; i < in_subject; i++) {
+			if (_subjectList[i].res == object_held) {
 				response = _subjectList[i].ref;
 				break;
 			}
@@ -837,12 +845,12 @@ uint32 Mouse::chooseMouse() {
 		// The user won't be holding the object any more, and the
 		// conversation menu will be closed.
 
-		Logic::_scriptVars[OBJECT_HELD] = 0;
-		Logic::_scriptVars[IN_SUBJECT] = 0;
+		_vm->_logic->writeVar(OBJECT_HELD, 0);
+		_vm->_logic->writeVar(IN_SUBJECT, 0);
 		return response;
 	}
 
-	if (Logic::_scriptVars[CHOOSER_COUNT_FLAG] == 0 && Logic::_scriptVars[IN_SUBJECT] == 1 && _subjectList[0].res == EXIT_ICON) {
+	if (_vm->_logic->readVar(CHOOSER_COUNT_FLAG) == 0 && in_subject == 1 && _subjectList[0].res == EXIT_ICON) {
 		// This is the first time the chooser is coming up in this
 		// conversation, there is only one subject and that's the
 		// EXIT icon.
@@ -853,8 +861,8 @@ uint32 Mouse::chooseMouse() {
 		// The conversation menu will be closed. We set AUTO_SELECTED
 		// because the speech script depends on it.
 
-		Logic::_scriptVars[AUTO_SELECTED] = 1;
-		Logic::_scriptVars[IN_SUBJECT] = 0;
+		_vm->_logic->writeVar(AUTO_SELECTED, 1);
+		_vm->_logic->writeVar(IN_SUBJECT, 0);
 		return _subjectList[0].ref;
 	}
 
@@ -863,11 +871,11 @@ uint32 Mouse::chooseMouse() {
 	if (!_choosing) {
 		// This is a new conversation menu.
 
-		if (!Logic::_scriptVars[IN_SUBJECT])
+		if (!in_subject)
 			error("fnChoose with no subjects");
 
-		for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader) + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
+		for (i = 0; i < in_subject; i++) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + ResHeader::size() + RDMENU_ICONWIDE * RDMENU_ICONDEEP;
 			setMenuIcon(RDMENU_BOTTOM, i, icon);
 			_vm->_resman->closeResource(_subjectList[i].res);
 		}
@@ -878,7 +886,7 @@ uint32 Mouse::chooseMouse() {
 		showMenu(RDMENU_BOTTOM);
 		setMouse(NORMAL_MOUSE_ID);
 		_choosing = true;
-		return (uint32) -1;
+		return (uint32)-1;
 	}
 
 	// The menu is there - we're just waiting for a click. We only care
@@ -890,33 +898,33 @@ uint32 Mouse::chooseMouse() {
 	getPos(mouseX, mouseY);
 
 	if (!me || !(me->buttons & RD_LEFTBUTTONDOWN) || mouseY < 400)
-		return (uint32) -1;
+		return (uint32)-1;
 
 	// Check for click on a menu.
 
-	int hit = _vm->_mouse->menuClick(Logic::_scriptVars[IN_SUBJECT]);
+	int hit = _vm->_mouse->menuClick(in_subject);
 	if (hit < 0)
-		return (uint32) -1;
+		return (uint32)-1;
 
 	// Hilight the clicked icon by greying the others. This can look a bit
 	// odd when you click on the exit icon, but there are also cases when
 	// it looks strange if you don't do it.
 
-	for (i = 0; i < Logic::_scriptVars[IN_SUBJECT]; i++) {
-		if ((int) i != hit) {
-			icon = _vm->_resman->openResource(_subjectList[i].res) + sizeof(StandardHeader);
+	for (i = 0; i < in_subject; i++) {
+		if ((int)i != hit) {
+			icon = _vm->_resman->openResource(_subjectList[i].res) + ResHeader::size();
 			_vm->_mouse->setMenuIcon(RDMENU_BOTTOM, i, icon);
 			_vm->_resman->closeResource(_subjectList[i].res);
 		}
 	}
 
 	// For non-speech scripts that manually call the chooser
-	Logic::_scriptVars[RESULT] = _subjectList[hit].res;
+	_vm->_logic->writeVar(RESULT, _subjectList[hit].res);
 
 	// The conversation menu will be closed
 
 	_choosing = false;
-	Logic::_scriptVars[IN_SUBJECT] = 0;
+	_vm->_logic->writeVar(IN_SUBJECT, 0);
 	setMouse(0);
 
 	return _subjectList[hit].ref;
@@ -973,13 +981,13 @@ void Mouse::mouseOnOff() {
 			setMouse(pointer_type);
 
 			// setup luggage icon
-			if (Logic::_scriptVars[OBJECT_HELD]) {
+			if (_vm->_logic->readVar(OBJECT_HELD)) {
 				setLuggage(_currentLuggageResource);
 			}
 		} else {
 			byte buf[NAME_LEN];
 
-			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, _vm->fetchObjectName(_mouseTouching, buf));
+			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, _vm->_resman->fetchName(_mouseTouching, buf));
 		}
 	} else if (_oldMouseTouching && !_mouseTouching) {
 		// the cursor has moved off something - reset cursor to
@@ -1024,8 +1032,8 @@ void Mouse::setMouse(uint32 res) {
 	_mousePointerRes = res;
 
 	if (res) {
-		byte *icon = _vm->_resman->openResource(res) + sizeof(StandardHeader);
-		uint32 len = _vm->_resman->fetchLen(res) - sizeof(StandardHeader);
+		byte *icon = _vm->_resman->openResource(res) + ResHeader::size();
+		uint32 len = _vm->_resman->fetchLen(res) - ResHeader::size();
 
 		// don't pulse the normal pointer - just do the regular anim
 		// loop
@@ -1046,8 +1054,8 @@ void Mouse::setLuggage(uint32 res) {
 	_realLuggageItem = res;
 
 	if (res) {
-		byte *icon = _vm->_resman->openResource(res) + sizeof(StandardHeader);
-		uint32 len = _vm->_resman->fetchLen(res) - sizeof(StandardHeader);
+		byte *icon = _vm->_resman->openResource(res) + ResHeader::size();
+		uint32 len = _vm->_resman->fetchLen(res) - ResHeader::size();
 
 		setLuggageAnim(icon, len);
 		_vm->_resman->closeResource(res);
@@ -1058,7 +1066,7 @@ void Mouse::setLuggage(uint32 res) {
 void Mouse::setObjectHeld(uint32 res) {
 	setLuggage(res);
 
-	Logic::_scriptVars[OBJECT_HELD] = res;
+	_vm->_logic->writeVar(OBJECT_HELD, res);
 	_currentLuggageResource = res;
 
 	// mode locked - no menu available
@@ -1263,7 +1271,7 @@ void Mouse::hideMouse() {
 	// it and when combining objects
 
 	// for logic scripts
-	Logic::_scriptVars[MOUSE_AVAILABLE] = 0;
+	_vm->_logic->writeVar(MOUSE_AVAILABLE, 0);
 
 	// human/mouse off
 	_mouseStatus = true;
@@ -1280,7 +1288,7 @@ void Mouse::noHuman() {
 	// special menus use hideMouse()
 
 	// Don't hide menu in conversations
-	if (Logic::_scriptVars[TALK_FLAG] == 0)
+	if (_vm->_logic->readVar(TALK_FLAG) == 0)
 		hideMenu(RDMENU_BOTTOM);
 
 	if (_mouseMode == MOUSE_system_menu) {
@@ -1292,7 +1300,7 @@ void Mouse::noHuman() {
 
 void Mouse::addHuman() {
 	// For logic scripts
-	Logic::_scriptVars[MOUSE_AVAILABLE] = 1;
+	_vm->_logic->writeVar(MOUSE_AVAILABLE, 1);
 
 	if (_mouseStatus) {
 		// Force engine to choose a cursor
@@ -1301,7 +1309,7 @@ void Mouse::addHuman() {
 	}
 
 	// Clear this to reset no-second-click system
-	Logic::_scriptVars[CLICKED_ID] = 0;
+	_vm->_logic->writeVar(CLICKED_ID, 0);
 
 	// This is now done outside the OBJECT_HELD check in case it's set to
 	// zero before now!
@@ -1311,13 +1319,13 @@ void Mouse::addHuman() {
 
 	_mouseModeLocked = false;
 
-	if (Logic::_scriptVars[OBJECT_HELD]) {
+	if (_vm->_logic->readVar(OBJECT_HELD)) {
 		// Was dragging something around - need to clear this again
-		Logic::_scriptVars[OBJECT_HELD] = 0;
+		_vm->_logic->writeVar(OBJECT_HELD, 0);
 
 		// And these may also need clearing, just in case
 		_examiningMenuIcon = false;
-		Logic::_scriptVars[COMBINE_BASE] = 0;
+		_vm->_logic->writeVar(COMBINE_BASE, 0);
 
 		setLuggage(0);
 	}
@@ -1356,7 +1364,7 @@ void Mouse::addHuman() {
 
 void Mouse::refreshInventory() {
 	// Can reset this now
-	Logic::_scriptVars[COMBINE_BASE] = 0;
+	_vm->_logic->writeVar(COMBINE_BASE, 0);
 
 	// Cause 'object_held' icon to be greyed. The rest are coloured.
 	_examiningMenuIcon = true;
@@ -1365,9 +1373,9 @@ void Mouse::refreshInventory() {
 }
 
 void Mouse::startConversation() {
-	if (Logic::_scriptVars[TALK_FLAG] == 0) {
+	if (_vm->_logic->readVar(TALK_FLAG) == 0) {
 		// See fnChooser & speech scripts
-		Logic::_scriptVars[CHOOSER_COUNT_FLAG] = 0;
+		_vm->_logic->writeVar(CHOOSER_COUNT_FLAG, 0);
 	}
 
 	noHuman();
@@ -1382,7 +1390,7 @@ void Mouse::endConversation() {
 	}
 
 	// In case DC forgets
-	Logic::_scriptVars[TALK_FLAG] = 0;
+	_vm->_logic->writeVar(TALK_FLAG, 0);
 }
 
 void Mouse::monitorPlayerActivity() {
@@ -1405,9 +1413,9 @@ void Mouse::checkPlayerActivity(uint32 seconds) {
 
 	if (_playerActivityDelay >= threshold) {
 		_playerActivityDelay = 0;
-		Logic::_scriptVars[RESULT] = 1;
+		_vm->_logic->writeVar(RESULT, 1);
 	} else
-		Logic::_scriptVars[RESULT] = 0;
+		_vm->_logic->writeVar(RESULT, 0);
 }
 
 void Mouse::pauseGame() {
@@ -1421,7 +1429,7 @@ void Mouse::pauseGame() {
 }
 
 void Mouse::unpauseGame() {
-	if (Logic::_scriptVars[OBJECT_HELD] && _realLuggageItem)
+	if (_vm->_logic->readVar(OBJECT_HELD) && _realLuggageItem)
 		setLuggage(_realLuggageItem);
 }
 

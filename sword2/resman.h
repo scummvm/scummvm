@@ -91,6 +91,29 @@ public:
 
 	bool checkValid(uint32 res);
 	uint32 fetchLen(uint32 res);
+	uint8 fetchType(uint32 res) {
+		byte *ptr = openResource(res);
+		uint8 type = ptr[0];
+		closeResource(res);
+
+		return type;
+	}
+
+	uint8 fetchType(byte *ptr) {
+		return ptr[0];
+	}
+
+	byte *fetchName(uint32 res, byte *buf) {
+		byte *ptr = openResource(res);
+		memcpy(buf, ptr + 10, NAME_LEN);
+		closeResource(res);
+
+		return buf;
+	}
+
+	byte *fetchName(byte *ptr) {
+		return ptr + 10;
+	}
 
 	// Prompts the user for the specified CD.
 	void getCd(int cd);

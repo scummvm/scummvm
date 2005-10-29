@@ -79,10 +79,14 @@ int Router::whatTarget(int startX, int startY, int destX, int destY) {
  * RESULT to 1. Return true if the mega has finished walking.
  */
 
-int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y, uint8 target_dir) {
+int Router::doWalk(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, int16 target_x, int16 target_y, uint8 target_dir) {
+	ObjectLogic obLogic(ob_logic);
+	ObjectGraphic obGraph(ob_graph);
+	ObjectMega obMega(ob_mega);
+
 	// If this is the start of the walk, calculate the route.
 
-	if (!ob_logic->looping) {
+	if (obLogic.getLooping() == 0) {
 		// If we're already there, don't even bother allocating
 		// memory and calling the router, just quit back & continue
 		// the script! This avoids an embarassing mega stand frame
@@ -91,14 +95,14 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 		// an anim - no mega frame will appear in between runs of the
 		// anim.
 
-		if (ob_mega->feet_x == target_x && ob_mega->feet_y == target_y && ob_mega->current_dir == target_dir) {
-			Logic::_scriptVars[RESULT] = 0;
+		if (obMega.getFeetX() == target_x && obMega.getFeetY() == target_y && obMega.getCurDir() == target_dir) {
+			_vm->_logic->writeVar(RESULT, 0);
 			return IR_CONT;
 		}
 
 		assert(target_dir <= 8);
 
-		ob_mega->walk_pc = 0;
+		obMega.setWalkPc(0);
 
 		// Set up mem for _walkData in route_slots[] & set mega's
 		// 'route_slot_id' accordingly
@@ -112,16 +116,16 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 
 		if (route != 1 && route != 2) {
 			freeRouteMem();
-			Logic::_scriptVars[RESULT] = 1;
+			_vm->_logic->writeVar(RESULT, 1);
 			return IR_CONT;
 		}
 
 		// Walk is about to start
 
-		ob_mega->currently_walking = 1;
-		ob_logic->looping = 1;
-		ob_graph->anim_resource = ob_mega->megaset_res;
-	} else if (Logic::_scriptVars[EXIT_FADING] && _vm->_screen->getFadeStatus() == RDFADE_BLACK) {
+		obMega.setIsWalking(1);
+		obLogic.setLooping(1);
+		obGraph.setAnimResource(obMega.getMegasetRes());
+	} else if (_vm->_logic->readVar(EXIT_FADING) && _vm->_screen->getFadeStatus() == RDFADE_BLACK) {
 		// Double clicked an exit, and the screen has faded down to
 		// black. Ok, that's it. Back to script and change screen.
 
@@ -130,10 +134,10 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 
 		freeRouteMem();
 
-		ob_logic->looping = 0;
-		ob_mega->currently_walking = 0;
-		Logic::_scriptVars[EXIT_CLICK_ID] = 0;
-		Logic::_scriptVars[RESULT] = 0;
+		obLogic.setLooping(0);
+		obMega.setIsWalking(0);
+		_vm->_logic->writeVar(EXIT_CLICK_ID, 0);
+		_vm->_logic->writeVar(RESULT, 0);
 
 		return IR_CONT;
 	}
@@ -141,7 +145,7 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 	// Get pointer to walkanim & current frame position
 
 	WalkData *walkAnim = getRouteMem();
-	int32 walk_pc = ob_mega->walk_pc;
+	int32 walk_pc = obMega.getWalkPc();
 
 	// If stopping the walk early, overwrite the next step with a
 	// slow-out, then finish
@@ -153,17 +157,17 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 
 	// Get new frame of walk
 
-	ob_graph->anim_pc = walkAnim[walk_pc].frame;
-	ob_mega->current_dir = walkAnim[walk_pc].dir;
-	ob_mega->feet_x = walkAnim[walk_pc].x;
-	ob_mega->feet_y = walkAnim[walk_pc].y;
+	obGraph.setAnimPc(walkAnim[walk_pc].frame);
+	obMega.setCurDir(walkAnim[walk_pc].dir);
+	obMega.setFeetX(walkAnim[walk_pc].x);
+	obMega.setFeetY(walkAnim[walk_pc].y);
 
 	// Is the NEXT frame is the end-marker (512) of the walk sequence?
 
 	if (walkAnim[walk_pc + 1].frame != 512) {
 		// No, it wasn't. Increment the walk-anim frame number and
 		// come back next cycle.
-		ob_mega->walk_pc++;
+		obMega.setWalkPc(obMega.getWalkPc() + 1);
 		return IR_REPEAT;
 	}
 
@@ -171,8 +175,8 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 	// script just as the final (stand) frame of the walk is set.
 
 	freeRouteMem();
-	ob_logic->looping = 0;
-	ob_mega->currently_walking = 0;
+	obLogic.setLooping(0);
+	obMega.setIsWalking(0);
 
 	// If George's walk has been interrupted to run a new action script for
 	// instance or Nico's walk has been interrupted by player clicking on
@@ -184,11 +188,11 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
 
 	if (_vm->_logic->checkEventWaiting()) {
 		_vm->_logic->startEvent();
-		Logic::_scriptVars[RESULT] = 1;
+		_vm->_logic->writeVar(RESULT, 1);
 		return IR_TERMINATE;
 	}
 
-	Logic::_scriptVars[RESULT] = 0;
+	_vm->_logic->writeVar(RESULT, 0);
 
 	// CONTINUE the script so that RESULT can be checked! Also, if an anim
 	// command follows the fnWalk command, the 1st frame of the anim (which
@@ -203,7 +207,7 @@ int Router::doWalk(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
  * Walk mega to start position of anim
  */
 
-int Router::walkToAnim(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 animRes) {
+int Router::walkToAnim(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint32 animRes) {
 	int16 target_x = 0;
 	int16 target_y = 0;
 	uint8 target_dir = 0;
@@ -213,13 +217,17 @@ int Router::walkToAnim(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMeg
 
 	// If this is the start of the walk, read anim file to get start coords
 
-	if (!ob_logic->looping) {
-		byte *anim_file = _vm->_resman->openResource(animRes);
-		AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+	ObjectLogic obLogic(ob_logic);
 
-		target_x = anim_head->feetStartX;
-		target_y = anim_head->feetStartY;
-		target_dir = anim_head->feetStartDir;
+	if (obLogic.getLooping() == 0) {
+		byte *anim_file = _vm->_resman->openResource(animRes);
+		AnimHeader anim_head;
+
+		anim_head.read(_vm->fetchAnimHeader(anim_file));
+
+		target_x = anim_head.feetStartX;
+		target_y = anim_head.feetStartY;
+		target_dir = anim_head.feetStartDir;
 
 		_vm->_resman->closeResource(animRes);
 
@@ -242,53 +250,47 @@ int Router::walkToAnim(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMeg
  * Route to the left or right hand side of target id, if possible.
  */
 
-int Router::walkToTalkToMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 megaId, uint32 separation) {
+int Router::walkToTalkToMega(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint32 megaId, uint32 separation) {
+	ObjectMega obMega(ob_mega);
+
 	int16 target_x = 0;
 	int16 target_y = 0;
 	uint8 target_dir = 0;
 
 	// If this is the start of the walk, calculate the route.
 
-	if (!ob_logic->looping)	{
-		StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(megaId);
+	ObjectLogic obLogic(ob_logic);
 
-		assert(head->fileType == GAME_OBJECT);
+	if (obLogic.getLooping() == 0) {
+		assert(_vm->_resman->fetchType(megaId) == GAME_OBJECT);
 
 		// Call the base script. This is the graphic/mouse service
 		// call, and will set _engineMega to the ObjectMega of mega we
 		// want to route to.
 
-		char *raw_script_ad = (char *)head;
-		uint32 null_pc = 3;
+		_vm->_logic->runResScript(megaId, 3);
 
-		_vm->_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
-		_vm->_resman->closeResource(megaId);
-
-		ObjectMega *targetMega = _vm->_logic->getEngineMega();
+		ObjectMega targetMega(_vm->_logic->getEngineMega());
 
 		// Stand exactly beside the mega, ie. at same y-coord
-		target_y = targetMega->feet_y;
+		target_y = targetMega.getFeetY();
 
-		// Apply scale factor to walk distance. Ay+B gives 256 * scale
-		// ie. 256 * 256 * true_scale for even better accuracy, ie.
-		// scale = (Ay + B) / 256
-
-		int scale = (ob_mega->scale_a * ob_mega->feet_y + ob_mega->scale_b) / 256;
+		int scale = obMega.calcScale();
 		int mega_separation = (separation * scale) / 256;
 
-		debug(4, "Target is at (%d, %d), separation %d", targetMega->feet_x, targetMega->feet_y, mega_separation);
+		debug(4, "Target is at (%d, %d), separation %d", targetMega.getFeetX(), targetMega.getFeetY(), mega_separation);
 
-		if (targetMega->feet_x < ob_mega->feet_x) {
+		if (targetMega.getFeetX() < obMega.getFeetX()) {
 			// Target is left of us, so aim to stand to their
 			// right. Face down_left
 
-			target_x = targetMega->feet_x + mega_separation;
+			target_x = targetMega.getFeetX() + mega_separation;
 			target_dir = 5;
 		} else {
 			// Ok, must be right of us so aim to stand to their
 			// left. Face down_right.
 
-			target_x = targetMega->feet_x - mega_separation;
+			target_x = targetMega.getFeetX() - mega_separation;
 			target_dir = 3;
 		}
 	}
@@ -300,18 +302,22 @@ int Router::walkToTalkToMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, Obj
  * current feet coords, so router can produce anim of turn frames.
  */
 
-int Router::doFace(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint8 target_dir) {
+int Router::doFace(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint8 target_dir) {
 	int16 target_x = 0;
 	int16 target_y = 0;
 
 	// If this is the start of the turn, get the mega's current feet
 	// coords + the required direction
 
-	if (!ob_logic->looping) {
+	ObjectLogic obLogic(ob_logic);
+
+	if (obLogic.getLooping() == 0) {
 		assert(target_dir <= 7);
 
-		target_x = ob_mega->feet_x;
-		target_y = ob_mega->feet_y;
+		ObjectMega obMega(ob_mega);
+
+		target_x = obMega.getFeetX();
+		target_y = obMega.getFeetY();
 	}
 
 	return doWalk(ob_logic, ob_graph, ob_mega, ob_walkdata, target_x, target_y, target_dir);
@@ -321,14 +327,18 @@ int Router::doFace(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
  * Turn mega to face point (x,y) on the floor
  */
 
-int Router::faceXY(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int16 target_x, int16 target_y) {
+int Router::faceXY(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, int16 target_x, int16 target_y) {
 	uint8 target_dir = 0;
 
 	// If this is the start of the turn, get the mega's current feet
 	// coords + the required direction
 
-	if (!ob_logic->looping) {
-		target_dir = whatTarget(ob_mega->feet_x, ob_mega->feet_y, target_x, target_y);
+	ObjectLogic obLogic(ob_logic);
+
+	if (obLogic.getLooping() == 0) {
+		ObjectMega obMega(ob_mega);
+
+		target_dir = whatTarget(obMega.getFeetX(), obMega.getFeetY(), target_x, target_y);
 	}
 
 	return doFace(ob_logic, ob_graph, ob_mega, ob_walkdata, target_dir);
@@ -338,29 +348,26 @@ int Router::faceXY(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *o
  * Turn mega to face another mega.
  */
 
-int Router::faceMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, uint32 megaId) {
+int Router::faceMega(byte *ob_logic, byte *ob_graph, byte *ob_mega, byte *ob_walkdata, uint32 megaId) {
 	uint8 target_dir = 0;
 
 	// If this is the start of the walk, decide where to walk to.
 
-	if (!ob_logic->looping) {
-		StandardHeader *head = (StandardHeader *)_vm->_resman->openResource(megaId);
+	ObjectLogic obLogic(ob_logic);
 
-		assert(head->fileType == GAME_OBJECT);
+	if (obLogic.getLooping() == 0) {
+		assert(_vm->_resman->fetchType(megaId) == GAME_OBJECT);
 
 		// Call the base script. This is the graphic/mouse service
 		// call, and will set _engineMega to the ObjectMega of mega we
 		// want to turn to face.
 
-		char *raw_script_ad = (char *)head;
-		uint32 null_pc = 3;
+		_vm->_logic->runResScript(megaId, 3);
 
-		_vm->_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
-		_vm->_resman->closeResource(megaId);
+		ObjectMega obMega(ob_mega);
+		ObjectMega targetMega(_vm->_logic->getEngineMega());
 
-		ObjectMega *targetMega = _vm->_logic->getEngineMega();
-
-		target_dir = whatTarget(ob_mega->feet_x, ob_mega->feet_y, targetMega->feet_x, targetMega->feet_y);
+		target_dir = whatTarget(obMega.getFeetX(), obMega.getFeetY(), targetMega.getFeetX(), targetMega.getFeetY());
 	}
 
 	return doFace(ob_logic, ob_graph, ob_mega, ob_walkdata, target_dir);
@@ -372,33 +379,38 @@ int Router::faceMega(ObjectLogic *ob_logic, ObjectGraphic *ob_graph, ObjectMega 
  * the mega object, so the router knows in future
  */
 
-void Router::standAt(ObjectGraphic *ob_graph, ObjectMega *ob_mega, int32 x, int32 y, int32 dir) {
+void Router::standAt(byte *ob_graph, byte *ob_mega, int32 x, int32 y, int32 dir) {
 	assert(dir >= 0 && dir <= 7);
+
+	ObjectGraphic obGraph(ob_graph);
+	ObjectMega obMega(ob_mega);
 
 	// Set up the stand frame & set the mega's new direction
 
-	ob_mega->feet_x = x;
-	ob_mega->feet_y = y;
-	ob_mega->current_dir = dir;
+	obMega.setFeetX(x);
+	obMega.setFeetY(y);
+	obMega.setCurDir(dir);
 
 	// Mega-set animation file
-	ob_graph->anim_resource	= ob_mega->megaset_res;
+	obGraph.setAnimResource(obMega.getMegasetRes());
 
 	// Dir + first stand frame (always frame 96)
-	ob_graph->anim_pc = dir + 96;
+	obGraph.setAnimPc(dir + 96);
 }
 
 /**
- * stand mega at end position of anim
+ * Stand mega at end position of anim
  */
 
-void Router::standAfterAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 animRes) {
+void Router::standAfterAnim(byte *ob_graph, byte *ob_mega, uint32 animRes) {
 	byte *anim_file = _vm->_resman->openResource(animRes);
-	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+	AnimHeader anim_head;
 
-	int32 x = anim_head->feetEndX;
-	int32 y = anim_head->feetEndY;
-	int32 dir = anim_head->feetEndDir;
+	anim_head.read(_vm->fetchAnimHeader(anim_file));
+
+	int32 x = anim_head.feetEndX;
+	int32 y = anim_head.feetEndY;
+	int32 dir = anim_head.feetEndDir;
 
 	_vm->_resman->closeResource(animRes);
 
@@ -414,13 +426,15 @@ void Router::standAfterAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32
 	standAt(ob_graph, ob_mega, x, y, dir);
 }
 
-void Router::standAtAnim(ObjectGraphic *ob_graph, ObjectMega *ob_mega, uint32 animRes) {
+void Router::standAtAnim(byte *ob_graph, byte *ob_mega, uint32 animRes) {
 	byte *anim_file = _vm->_resman->openResource(animRes);
-	AnimHeader *anim_head = _vm->fetchAnimHeader(anim_file);
+	AnimHeader anim_head;
 
-	int32 x = anim_head->feetStartX;
-	int32 y = anim_head->feetStartY;
-	int32 dir = anim_head->feetStartDir;
+	anim_head.read(_vm->fetchAnimHeader(anim_file));
+
+	int32 x = anim_head.feetStartX;
+	int32 y = anim_head.feetStartY;
+	int32 dir = anim_head.feetStartDir;
 
 	_vm->_resman->closeResource(animRes);
 

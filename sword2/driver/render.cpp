@@ -248,19 +248,22 @@ void Screen::setLocationMetrics(uint16 w, uint16 h) {
  * parallax can be either foreground, background or the main screen.
  */
 
-void Screen::renderParallax(Parallax *p, int16 l) {
+void Screen::renderParallax(byte *ptr, int16 l) {
+	Parallax p;
 	int16 x, y;
 	Common::Rect r;
+
+	p.read(ptr);
 
 	if (_locationWide == _screenWide)
 		x = 0;
 	else
-		x = ((int32) ((p->w - _screenWide) * _scrollX) / (int32) (_locationWide - _screenWide));
+		x = ((int32)((p.w - _screenWide) * _scrollX) / (int32)(_locationWide - _screenWide));
 
 	if (_locationDeep == _screenDeep - MENUDEEP * 2)
 		y = 0;
 	else
-		y = ((int32) ((p->h - (_screenDeep - MENUDEEP * 2)) * _scrollY) / (int32) (_locationDeep - (_screenDeep - MENUDEEP * 2)));
+		y = ((int32)((p.h - (_screenDeep - MENUDEEP * 2)) * _scrollY) / (int32)(_locationDeep - (_screenDeep - MENUDEEP * 2)));
 
 	Common::Rect clipRect;
 
@@ -315,8 +318,8 @@ void Screen::startRenderCycle() {
 		_scrollY = _scrollYTarget;
 		_renderTooSlow = true;
 	} else {
-		_scrollX = (int16) (_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
-		_scrollY = (int16) (_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_scrollX = (int16)(_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_scrollY = (int16)(_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
 		_renderTooSlow = false;
 	}
 
@@ -377,8 +380,8 @@ bool Screen::endRenderCycle() {
 		_scrollX = _scrollXTarget;
 		_scrollY = _scrollYTarget;
 	} else {
-		_scrollX = (int16) (_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
-		_scrollY = (int16) (_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_scrollX = (int16)(_scrollXOld + ((_scrollXTarget - _scrollXOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
+		_scrollY = (int16)(_scrollYOld + ((_scrollYTarget - _scrollYOld) * (_startTime - _initialTime + _renderAverageTime)) / (_totalTime - _initialTime));
 	}
 
 	if (_scrollX != _scrollXOld || _scrollY != _scrollYOld)
@@ -410,7 +413,8 @@ void Screen::resetRenderEngine() {
  * or a NULL pointer in order of background parallax to foreground parallax.
  */
 
-int32 Screen::initialiseBackgroundLayer(Parallax *p) {
+int32 Screen::initialiseBackgroundLayer(byte *parallax) {
+	Parallax p;
 	uint16 i, j, k;
 	byte *data;
 	byte *dst;
@@ -419,13 +423,15 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 
 	assert(_layer < MAXLAYERS);
 
-	if (!p) {
+	if (!parallax) {
 		_layer++;
 		return RD_OK;
 	}
 
-	_xBlocks[_layer] = (p->w + BLOCKWIDTH - 1) / BLOCKWIDTH;
-	_yBlocks[_layer] = (p->h + BLOCKHEIGHT - 1) / BLOCKHEIGHT;
+	p.read(parallax);
+
+	_xBlocks[_layer] = (p.w + BLOCKWIDTH - 1) / BLOCKWIDTH;
+	_yBlocks[_layer] = (p.h + BLOCKHEIGHT - 1) / BLOCKHEIGHT;
 
 	_blockSurfaces[_layer] = (BlockSurface **)calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
 	if (!_blockSurfaces[_layer])
@@ -437,19 +443,21 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 	if (!memchunk)
 		return RDERR_OUTOFMEMORY;
 
-	for (i = 0; i < p->h; i++) {
-		if (!p->offset[i])
+	for (i = 0; i < p.h; i++) {
+		uint32 p_offset = READ_LE_UINT32(parallax + Parallax::size() + 4 * i);
+
+		if (!p_offset)
 			continue;
 
-		byte *pLine = (byte *)p + FROM_LE_32(p->offset[i]);
+		byte *pLine = parallax + p_offset;
 		uint16 packets = READ_LE_UINT16(pLine);
 		uint16 offset = READ_LE_UINT16(pLine + 2);
 
 		data = pLine + 4;
-		dst = memchunk + i * p->w + offset;
+		dst = memchunk + i * p.w + offset;
 
 		if (!packets) {
-			memcpy(dst, data, p->w);
+			memcpy(dst, data, p.w);
 			continue;
 		}
 
@@ -487,12 +495,12 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 		int x = BLOCKWIDTH * (i % _xBlocks[_layer]);
 		int y = BLOCKHEIGHT * (i / _xBlocks[_layer]);
 
-		data = memchunk + p->w * y + x;
+		data = memchunk + p.w * y + x;
 
 		for (j = 0; j < BLOCKHEIGHT; j++) {
 			for (k = 0; k < BLOCKWIDTH; k++) {
-				if (x + k < p->w && y + j < p->h) {
-					if (data[j * p->w + k])
+				if (x + k < p.w && y + j < p.h) {
+					if (data[j * p.w + k])
 						block_has_data = true;
 					else
 						block_is_transparent = true;
@@ -509,7 +517,7 @@ int32 Screen::initialiseBackgroundLayer(Parallax *p) {
 			dst = _blockSurfaces[_layer][i]->data;
 			for (j = 0; j < BLOCKHEIGHT; j++) {
 				memcpy(dst, data, BLOCKWIDTH);
-				data += p->w;
+				data += p.w;
 				dst += BLOCKWIDTH;
 			}
 

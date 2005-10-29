@@ -22,6 +22,7 @@
 #define	_BUILD_DISPLAY
 
 #include "common/rect.h"
+#include "common/stream.h"
 
 #define MAX_bgp0_sprites 6
 #define MAX_bgp1_sprites 6
@@ -52,10 +53,6 @@
 namespace Sword2 {
 
 class Sword2Engine;
-
-struct ObjectMouse;
-struct ObjectGraphic;
-struct ObjectMega;
 
 // Sprite defines
 
@@ -176,19 +173,31 @@ struct BlockSurface {
 	bool transparent;
 };
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
 struct Parallax {
 	uint16 w;
 	uint16 h;
-	uint32 offset[2];	// 2 is arbitrary
-} GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
+	// The dimensions are followed by an offset table, but we don't know in
+	// advance how big it is. See initializeBackgroundLayer().
+
+	static const int size() {
+		return 4;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		w = readS.readUint16LE();
+		h = readS.readUint16LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint16LE(w);
+		writeS.writeUint16LE(h);
+	}
+};
 
 class Screen {
 private:
@@ -310,13 +319,13 @@ private:
 	char _largestLayerInfo[128];
 	char _largestSpriteInfo[128];
 
-	void registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, ObjectMega *ob_mega, BuildUnit *build_unit);
+	void registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega, BuildUnit *build_unit);
 
 	void mirrorSprite(byte *dst, byte *src, int16 w, int16 h);
 	int32 decompressRLE256(byte *dst, byte *src, int32 decompSize);
 	void unwindRaw16(byte *dst, byte *src, uint8 blockSize, byte *colTable);
 	int32 decompressRLE16(byte *dst, byte *src, int32 decompSize, byte *colTable);
-	void renderParallax(Parallax *p, int16 layer);
+	void renderParallax(byte *ptr, int16 layer);
 
 	void markAsDirty(int16 x0, int16 y0, int16 x1, int16 y1);
 
@@ -370,13 +379,13 @@ public:
 	void resetRenderLists();
 
 	void setLocationMetrics(uint16 w, uint16 h);
-	int32 initialiseBackgroundLayer(Parallax *p);
+	int32 initialiseBackgroundLayer(byte *parallax);
 	void closeBackgroundLayer();
 
 	void initialiseRenderCycle();
 
 	void initBackground(int32 res, int32 new_palette);
-	void registerFrame(ObjectMouse *ob_mouse, ObjectGraphic *ob_graph, ObjectMega *ob_mega);
+	void registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega);
 
 	void setScrollFraction(uint8 f) { _scrollFraction = f; }
 	void setScrollTarget(int16 x, int16 y);

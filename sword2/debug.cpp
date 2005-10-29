@@ -85,7 +85,7 @@ void Debugger::buildDebugText() {
 	// mouse area coords
 
 	// defining a mouse area the easy way, by creating a box on-screen
-	if (_draggingRectangle || Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
+	if (_draggingRectangle || _vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) {
 		// so we can see what's behind the lines
 		_rectFlicker = !_rectFlicker;
 
@@ -137,8 +137,8 @@ void Debugger::buildDebugText() {
 
 	if (_displayTextNumbers) {
 		if (_textNumber) {
-			if (Logic::_scriptVars[SYSTEM_TESTING_TEXT]) {
-				if (Logic::_scriptVars[SYSTEM_WANT_PREVIOUS_LINE])
+			if (_vm->_logic->readVar(SYSTEM_TESTING_TEXT)) {
+				if (_vm->_logic->readVar(SYSTEM_WANT_PREVIOUS_LINE))
 					sprintf(buf, "backwards");
 				else
  					sprintf(buf, "forwards");
@@ -159,8 +159,8 @@ void Debugger::buildDebugText() {
 
 	// resource number currently being checking for animation
 
-	if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
-		sprintf(buf, "trying resource %d", Logic::_scriptVars[SYSTEM_TESTING_ANIMS]);
+	if (_vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) {
+		sprintf(buf, "trying resource %d", _vm->_logic->readVar(SYSTEM_TESTING_ANIMS));
 		makeDebugTextBlock(buf, 0, 90);
 	}
 
@@ -177,16 +177,16 @@ void Debugger::buildDebugText() {
 
 		// mouse coords & object pointed to
 
-		if (Logic::_scriptVars[CLICKED_ID])
+		if (_vm->_logic->readVar(CLICKED_ID))
 			sprintf(buf, "last click at %d,%d (id %d: %s)",
-				Logic::_scriptVars[MOUSE_X],
-				Logic::_scriptVars[MOUSE_Y],
-				Logic::_scriptVars[CLICKED_ID],
-				_vm->fetchObjectName(Logic::_scriptVars[CLICKED_ID], name));
+				_vm->_logic->readVar(MOUSE_X),
+				_vm->_logic->readVar(MOUSE_Y),
+				_vm->_logic->readVar(CLICKED_ID),
+				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID), name));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
-				Logic::_scriptVars[MOUSE_X],
-				Logic::_scriptVars[MOUSE_Y]);
+				_vm->_logic->readVar(MOUSE_X),
+				_vm->_logic->readVar(MOUSE_Y));
 
  		makeDebugTextBlock(buf, 0, 15);
 
@@ -201,7 +201,7 @@ void Debugger::buildDebugText() {
 				mouseX + screenInfo->scroll_offset_x,
 				mouseY + screenInfo->scroll_offset_y,
 				mouseTouching,
-				_vm->fetchObjectName(mouseTouching, name));
+				_vm->_resman->fetchName(mouseTouching, name));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
 				mouseX + screenInfo->scroll_offset_x,
@@ -212,19 +212,19 @@ void Debugger::buildDebugText() {
  		// player coords & graphic info
 		// if player objct has a graphic
 
-		if (_playerGraphic.anim_resource)
+		if (_graphAnimRes)
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
 				screenInfo->player_feet_x,
 				screenInfo->player_feet_y,
-				_vm->fetchObjectName(_playerGraphic.anim_resource, name),
-				_playerGraphic.anim_resource,
-				_playerGraphic.anim_pc,
-				_playerGraphicNoFrames);
+				_vm->_resman->fetchName(_graphAnimRes, name),
+				_graphAnimRes,
+				_graphAnimPc,
+				_graphNoFrames);
 		else
 			sprintf(buf, "player %d,%d --- %d",
 				screenInfo->player_feet_x,
 				screenInfo->player_feet_y,
-				_playerGraphic.anim_pc);
+				_graphAnimPc);
 
 		makeDebugTextBlock(buf, 0, 45);
 
@@ -235,12 +235,12 @@ void Debugger::buildDebugText() {
 
  		// location number
 
-		sprintf(buf, "location=%d", Logic::_scriptVars[LOCATION]);
+		sprintf(buf, "location=%d", _vm->_logic->readVar(LOCATION));
 		makeDebugTextBlock(buf, 440, 15);
 
  		// "result" variable
 
-		sprintf(buf, "result=%d", Logic::_scriptVars[RESULT]);
+		sprintf(buf, "result=%d", _vm->_logic->readVar(RESULT));
 		makeDebugTextBlock(buf, 440, 30);
 
  		// no. of events in event list
@@ -282,7 +282,7 @@ void Debugger::buildDebugText() {
 
 		if (_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				_vm->fetchObjectName(_speechScriptWaiting, name),
+				_vm->_resman->fetchName(_speechScriptWaiting, name),
 				_speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
@@ -298,7 +298,7 @@ void Debugger::buildDebugText() {
 			// anyway because it changes throughout the logic loop
 
 			if (varNo) {
-				sprintf(buf, "var(%d) = %d", varNo, Logic::_scriptVars[varNo]);
+				sprintf(buf, "var(%d) = %d", varNo, _vm->_logic->readVar(varNo));
 				makeDebugTextBlock(buf, 530, showVarPos);
 				showVarPos += 15;	// next line down
 			}
@@ -345,7 +345,7 @@ void Debugger::drawDebugGraphics() {
 
    	// mouse area rectangle / sprite box rectangle when testing anims
 
-	if (Logic::_scriptVars[SYSTEM_TESTING_ANIMS]) {
+	if (_vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) {
 		// draw box around current frame
 		drawRect(_rectX1, _rectY1, _rectX2, _rectY2, 184);
 	} else if (_draggingRectangle) {

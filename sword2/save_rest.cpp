@@ -43,63 +43,58 @@ namespace Sword2 {
 // Max length of a savegame filename
 #define	MAX_FILENAME_LEN 128
 
-#ifdef SCUMM_BIG_ENDIAN
-// Quick macro to make swapping in-place easier to write
-#define SWAP32(x)	x = SWAP_BYTES_32(x)
+/**
+ * Calculate size of required savegame buffer
+ */
 
-static void convertHeaderEndian(Sword2Engine::SaveGameHeader &header) {
-	// SaveGameHeader
-	SWAP32(header.checksum);
-	SWAP32(header.varLength);
-	SWAP32(header.screenId);
-	SWAP32(header.runListId);
-	SWAP32(header.feet_x);
-	SWAP32(header.feet_y);
-	SWAP32(header.music_id);
-
-	// ObjectHub
-	SWAP32(header.player_hub.type);
-	SWAP32(header.player_hub.logic_level);
-	for (int i = 0; i < TREE_SIZE; i++) {
-		SWAP32(header.player_hub.logic[i]);
-		SWAP32(header.player_hub.script_id[i]);
-		SWAP32(header.player_hub.script_pc[i]);
-	}
-
-	// ObjectLogic
-	SWAP32(header.logic.looping);
-	SWAP32(header.logic.pause);
-
-	// ObjectGraphic
-	SWAP32(header.graphic.type);
-	SWAP32(header.graphic.anim_resource);
-	SWAP32(header.graphic.anim_pc);
-
-	// ObjectMega
-	SWAP32(header.mega.currently_walking);
-	SWAP32(header.mega.walk_pc);
-	SWAP32(header.mega.scale_a);
-	SWAP32(header.mega.scale_b);
-	SWAP32(header.mega.feet_x);
-	SWAP32(header.mega.feet_y);
-	SWAP32(header.mega.current_dir);
-	SWAP32(header.mega.megaset_res);
+uint32 Sword2Engine::findBufferSize() {
+	// Size of savegame header + size of global variables
+	return 212 + _resman->fetchLen(1);
 }
-#endif
 
 /**
  * Save the game.
  */
 
 uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
+	char description[SAVE_DESCRIPTION_LEN];
 	uint32 bufferSize = findBufferSize();
-	byte *saveBufferMem = (byte *)malloc(bufferSize);
+	byte *saveBuffer = (byte *)malloc(bufferSize);
+	ScreenInfo *screenInfo = _screen->getScreenInfo();
 
-	fillSaveBuffer(saveBufferMem, bufferSize, desc);
+	memset(description, 0, sizeof(description));
+	strncpy(description, (char *)desc, SAVE_DESCRIPTION_LEN - 1);
 
-	uint32 errorCode = saveData(slotNo, saveBufferMem, bufferSize);
+	Common::MemoryWriteStream writeS(saveBuffer, bufferSize);
 
-	free(saveBufferMem);
+	byte *globalVars = _resman->openResource(1);
+	byte *objectHub = _resman->openResource(CUR_PLAYER_ID) + ResHeader::size();
+
+	// Script no. 7 - 'george_savedata_request' calls fnPassPlayerSaveData
+	_logic->runResScript(CUR_PLAYER_ID, 7);
+
+	writeS.writeUint32LE(0);	// Checksum
+	writeS.write(description, SAVE_DESCRIPTION_LEN);
+	writeS.writeUint32LE(_resman->fetchLen(1));
+	writeS.writeUint32LE(screenInfo->background_layer_id);
+	writeS.writeUint32LE(_logic->getRunList());
+	writeS.writeUint32LE(screenInfo->feet_x);
+	writeS.writeUint32LE(screenInfo->feet_y);
+	writeS.writeUint32LE(_sound->getLoopingMusicId());
+	writeS.write(objectHub, ObjectHub::size());
+	writeS.write(_logic->_saveLogic, ObjectLogic::size());
+	writeS.write(_logic->_saveGraphic, ObjectGraphic::size());
+	writeS.write(_logic->_saveMega, ObjectMega::size());
+	writeS.write(globalVars, _resman->fetchLen(1));
+
+	WRITE_LE_UINT32(saveBuffer, calcChecksum(saveBuffer + 4, bufferSize - 4));
+
+	_resman->closeResource(CUR_PLAYER_ID);
+	_resman->closeResource(1);
+
+	uint32 errorCode = saveData(slotNo, saveBuffer, bufferSize);
+
+	free(saveBuffer);
 
 	if (errorCode != SR_OK) {
 		uint32 textId;
@@ -117,65 +112,6 @@ uint32 Sword2Engine::saveGame(uint16 slotNo, byte *desc) {
 	}
 
 	return errorCode;
-}
-
-/**
- * Calculate size of required savegame buffer
- */
-
-uint32 Sword2Engine::findBufferSize() {
-	// Size of savegame header + size of global variables
-	return sizeof(_saveGameHeader) + _resman->fetchLen(1);
-}
-
-void Sword2Engine::fillSaveBuffer(byte *buffer, uint32 size, byte *desc) {
-	// Set up the _saveGameHeader. Checksum gets filled in last of all.
-	ScreenInfo *screenInfo = _screen->getScreenInfo();
-
-	strcpy(_saveGameHeader.description, (char *)desc);
-	_saveGameHeader.varLength = _resman->fetchLen(1);
-	_saveGameHeader.screenId = screenInfo->background_layer_id;
-	_saveGameHeader.runListId = _logic->getRunList();
-	_saveGameHeader.feet_x = screenInfo->feet_x;
-	_saveGameHeader.feet_y	= screenInfo->feet_y;
-	_saveGameHeader.music_id = _sound->getLoopingMusicId();
-
-	memcpy(&_saveGameHeader.player_hub, _resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), sizeof(ObjectHub));
-
-	_resman->closeResource(CUR_PLAYER_ID);
-
-	// Get the logic, graphic and mega structures
-	getPlayerStructures();
-
-#ifdef SCUMM_BIG_ENDIAN
-	convertHeaderEndian(_saveGameHeader);
-#endif
-
-	// Copy the header to the buffer, even though it isn't quite complete
-	memcpy(buffer, &_saveGameHeader, sizeof(_saveGameHeader));
-
-	// Get the global variables
-
-	byte *varsRes = _resman->openResource(1);
-	memcpy(buffer + sizeof(_saveGameHeader), varsRes, FROM_LE_32(_saveGameHeader.varLength));
-
-#ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *)(buffer + sizeof(_saveGameHeader) + sizeof(StandardHeader));
-	const uint numVars = (FROM_LE_32(_saveGameHeader.varLength) - sizeof(StandardHeader)) / 4;
-
-	for (uint i = 0; i < numVars; i++)
-		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
-#endif
-
- 	_resman->closeResource(1);
-
-	// Finally, get the checksum
-
-	_saveGameHeader.checksum = TO_LE_32(calcChecksum(buffer + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum)));
-
-	// All done
-
-	memcpy(buffer, &_saveGameHeader.checksum, sizeof(_saveGameHeader.checksum));
 }
 
 uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
@@ -284,19 +220,16 @@ uint32 Sword2Engine::restoreData(uint16 slotNo, byte *buffer, uint32 bufferSize)
 }
 
 uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
-	// Get a copy of the header from the savegame buffer
-	memcpy(&_saveGameHeader, buffer, sizeof(_saveGameHeader));
-
-#ifdef SCUMM_BIG_ENDIAN
-	convertHeaderEndian(_saveGameHeader);
-#endif
+	Common::MemoryReadStream readS(buffer, size);
 
 	// Calc checksum & check that aginst the value stored in the header
 
-	if (_saveGameHeader.checksum != calcChecksum(buffer + sizeof(_saveGameHeader.checksum), size - sizeof(_saveGameHeader.checksum))) {
+	if (readS.readUint32LE() != calcChecksum(buffer + 4, size - 4)) {
 		free(buffer);
 		return SR_ERR_INCOMPATIBLE;
 	}
+
+	readS.seek(SAVE_DESCRIPTION_LEN, SEEK_CUR);
 
 	// Check savegame against length of current global variables resource
 	// This would most probably be trapped by the checksum test anyway,
@@ -305,49 +238,75 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	// Historical note: During development, earlier savegames would often
 	// be shorter than the current expected length.
 
-	if (_saveGameHeader.varLength != _resman->fetchLen(1)) {
+	if (readS.readUint32LE() != _resman->fetchLen(1)) {
 		free(buffer);
 		return SR_ERR_INCOMPATIBLE;
 	}
 
-	// Clean out system
+	byte *globalVars = _resman->openResource(1);
+	byte *objectHub = _resman->openResource(CUR_PLAYER_ID) + ResHeader::size();
+
+	uint32 screenId = readS.readUint32LE();
+	uint32 runListId = readS.readUint32LE();
+	uint32 feetX = readS.readUint32LE();
+	uint32 feetY = readS.readUint32LE();
+	uint32 musicId = readS.readUint32LE();
 
 	// Trash all resources from memory except player object & global vars
 	_resman->killAll(false);
-
-	// Clean out the system kill list (no more objects to kill)
 	_logic->resetKillList();
 
-	// Object hub is just after the standard header
-	memcpy(_resman->openResource(CUR_PLAYER_ID) + sizeof(StandardHeader), &_saveGameHeader.player_hub, sizeof(ObjectHub));
+	readS.read(objectHub, ObjectHub::size());
+	readS.read(_logic->_saveLogic, ObjectLogic::size());
+	readS.read(_logic->_saveGraphic, ObjectGraphic::size());
+	readS.read(_logic->_saveMega, ObjectMega::size());
 
-	_resman->closeResource(CUR_PLAYER_ID);
+	// Fill out the player object structures from the savegame structures.
+	// Also run the appropriate scripts to set up George's anim tables and
+	// walkdata, and Nico's anim tables.
 
-	// Fill in the player object structures from the header
-	putPlayerStructures();
+	// Script no. 8 - 'george_savedata_return' calls fnGetPlayerSaveData
+	_logic->runResScript(CUR_PLAYER_ID, 8);
+
+	// Script no. 14 - 'set_up_nico_anim_tables'
+	_logic->runResScript(CUR_PLAYER_ID, 14);
+
+	// Which megaset was the player at the time of saving?
+	ObjectMega obMega(_logic->_saveMega);
+
+	uint32 scriptNo = 0;
+
+	switch (obMega.getMegasetRes()) {
+	case 36:		// GeoMega:
+		scriptNo = 9;	// script no.9	- 'player_is_george'
+		break;
+	case 2003:		// GeoMegaB:
+		scriptNo = 13;	// script no.13 - 'player_is_georgeB'
+		break;
+	case 1366:		// NicMegaA:
+		scriptNo = 11;	// script no.11 - 'player_is_nicoA'
+		break;
+	case 1437:		// NicMegaB:
+		scriptNo = 12;	// script no.12 - 'player_is_nicoB'
+		break;
+	case 1575:		// NicMegaC:
+		scriptNo = 10;	// script no.10 - 'player_is_nicoC'
+		break;
+	}
+
+	_logic->runResScript(CUR_PLAYER_ID, scriptNo);
 
 	// Copy variables from savegame buffer to memory
-	byte *varsRes = _resman->openResource(1);
+	readS.read(globalVars, _resman->fetchLen(1));
 
-	memcpy(varsRes, buffer + sizeof(_saveGameHeader), _saveGameHeader.varLength);
-
-#ifdef SCUMM_BIG_ENDIAN
-	uint32 *globalVars = (uint32 *)(varsRes + sizeof(StandardHeader));
-	const uint numVars = (_saveGameHeader.varLength - sizeof(StandardHeader)) / 4;
-
-	for (uint i = 0; i < numVars; i++)
-		globalVars[i] = SWAP_BYTES_32(globalVars[i]);
-#endif
-
+	_resman->closeResource(CUR_PLAYER_ID);
  	_resman->closeResource(1);
 
-	// Free it now, rather than in RestoreGame, to unblock memory before
-	// new screen & runlist loaded
 	free(buffer);
 
 	int32 pars[2];
 
-	pars[0] = _saveGameHeader.screenId;
+	pars[0] = screenId;
 	pars[1] = 1;
 	_logic->fnInitBackground(pars);
 
@@ -361,19 +320,19 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	// Remember that these can change through the game, so need saving &
 	// restoring too.
 
-	screenInfo->feet_x = _saveGameHeader.feet_x;
-	screenInfo->feet_y = _saveGameHeader.feet_y;
+	screenInfo->feet_x = feetX;
+	screenInfo->feet_y = feetY;
 
 	// Start the new run list
-	_logic->expressChangeSession(_saveGameHeader.runListId);
+	_logic->expressChangeSession(runListId);
 
 	// Force in the new scroll position, so unsightly scroll-catch-up does
 	// not occur when screen first draws after returning from restore panel
 
 	// Set the screen record of player position - ready for setScrolling()
 
-	screenInfo->player_feet_x = _saveGameHeader.mega.feet_x;
-	screenInfo->player_feet_y = _saveGameHeader.mega.feet_y;
+	screenInfo->player_feet_x = obMega.getFeetX();
+	screenInfo->player_feet_y = obMega.getFeetY();
 
 	// if this screen is wide, recompute the scroll offsets now
 	if (screenInfo->scroll_flag)
@@ -386,8 +345,8 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	// in systemMenuMouse(), but with ScummVM we have other ways of
 	// restoring savegames so it's easier to put it here as well.
 
-	if (_saveGameHeader.music_id) {
-		pars[0] = _saveGameHeader.music_id;
+	if (musicId) {
+		pars[0] = musicId;
 		pars[1] = FX_LOOP;
 		_logic->fnPlayMusic(pars);
 	} else
@@ -411,12 +370,10 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 		return SR_ERR_FILEOPEN;
 	}
 
-	SaveGameHeader dummy;
+	in->readUint32LE();
+	in->read(description, SAVE_DESCRIPTION_LEN);
 
-	in->read(&dummy, sizeof(dummy));
 	delete in;
-
-	strcpy((char *)description, dummy.description);
 	return SR_OK;
 }
 
@@ -440,71 +397,6 @@ bool Sword2Engine::saveExists(uint16 slotNo) {
 
 	delete in;
 	return true;
-}
-
-/**
- * Request the player object structures which need saving.
- */
-
-void Sword2Engine::getPlayerStructures() {
-	StandardHeader *head = (StandardHeader *)_resman->openResource(CUR_PLAYER_ID);
-
-	assert(head->fileType == GAME_OBJECT);
-
-	char *raw_script_ad = (char *)head;
-
-	// Script no. 7 - 'george_savedata_request' calls fnPassPlayerSaveData
-	uint32 null_pc = 7;
-
-	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
-	_resman->closeResource(CUR_PLAYER_ID);
-}
-
-/**
- * Fill out the player object structures from the savegame structures also run
- * the appropriate scripts to set up george's anim tables and walkdata, and
- * Nico's anim tables.
- */
-
-void Sword2Engine::putPlayerStructures() {
-	StandardHeader *head = (StandardHeader *)_resman->openResource(CUR_PLAYER_ID);
-
-	assert(head->fileType == GAME_OBJECT);
-
-	char *raw_script_ad = (char *)head;
-
-	// Script no. 8 - 'george_savedata_return' calls fnGetPlayerSaveData
-
-	uint32 null_pc = 8;
-	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	// Script no. 14 - 'set_up_nico_anim_tables'
-
-	null_pc = 14;
-	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
-
-	// Which megaset was the player at the time of saving?
-
-	switch (_saveGameHeader.mega.megaset_res) {
-	case 36:		// GeoMega:
-		null_pc = 9;	// script no.9	- 'player_is_george'
-		break;
-	case 2003:		// GeoMegaB:
-		null_pc = 13;	// script no.13 - 'player_is_georgeB'
-		break;
-	case 1366:		// NicMegaA:
-		null_pc = 11;	// script no.11 - 'player_is_nicoA'
-		break;
-	case 1437:		// NicMegaB:
-		null_pc = 12;	// script no.12 - 'player_is_nicoB'
-		break;
-	case 1575:		// NicMegaC:
-		null_pc = 10;	// script no.10 - 'player_is_nicoC'
-		break;
-	}
-
-	_logic->runScript(raw_script_ad, raw_script_ad, &null_pc);
-	_resman->closeResource(CUR_PLAYER_ID);
 }
 
 uint32 Sword2Engine::calcChecksum(byte *buffer, uint32 size) {

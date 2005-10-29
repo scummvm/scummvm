@@ -213,22 +213,24 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 	// Allocate memory for the text sprite
 
 	uint32 sizeOfSprite = spriteWidth * spriteHeight;
-	byte *textSprite = (byte *)malloc(sizeof(FrameHeader) + sizeOfSprite);
+	byte *textSprite = (byte *)malloc(FrameHeader::size() + sizeOfSprite);
 
 	// At this stage, textSprite points to an unmovable memory block. Set
 	// up the frame header.
 
-	FrameHeader *frameHeadPtr = (FrameHeader *)textSprite;
+	FrameHeader frame_head;
 
-	frameHeadPtr->compSize = 0;
-	frameHeadPtr->width = spriteWidth;
-	frameHeadPtr->height = spriteHeight;
+	frame_head.compSize = 0;
+	frame_head.width = spriteWidth;
+	frame_head.height = spriteHeight;
+
+	frame_head.write(textSprite);
 
 	debug(4, "Text sprite size: %ux%u", spriteWidth, spriteHeight);
 
 	// Clear the entire sprite to make it transparent.
 
-	byte *linePtr = textSprite + sizeof(FrameHeader);
+	byte *linePtr = textSprite + FrameHeader::size();
 	memset(linePtr, 0, sizeOfSprite);
 
 	byte *charSet = _vm->_resman->openResource(fontRes);
@@ -246,11 +248,13 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 		// width minus the 'overlap'
 
 		for (uint j = 0; j < line[i].length; j++) {
-			FrameHeader *charPtr = findChar(sentence[pos++], charSet);
+			byte *charPtr = findChar(sentence[pos++], charSet);
 
-			assert(charPtr->height == char_height);
+			frame_head.read(charPtr);
+
+			assert(frame_head.height == char_height);
 			copyChar(charPtr, spritePtr, spriteWidth, pen);
-			spritePtr += charPtr->width + _charSpacing;
+			spritePtr += frame_head.width + _charSpacing;
 		}
 
 		// Skip space at end of last word in this line
@@ -273,11 +277,12 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 uint16 FontRenderer::charWidth(byte ch, uint32 fontRes) {
 	byte *charSet = _vm->_resman->openResource(fontRes);
 
-	FrameHeader *charFrame = findChar(ch, charSet);
-	uint16 width = charFrame->width;
+	FrameHeader frame_head;
 
+	frame_head.read(findChar(ch, charSet));
 	_vm->_resman->closeResource(fontRes);
-	return width;
+
+	return frame_head.width;
 }
 
 /**
@@ -293,11 +298,12 @@ uint16 FontRenderer::charWidth(byte ch, uint32 fontRes) {
 uint16 FontRenderer::charHeight(uint32 fontRes) {
 	byte *charSet = _vm->_resman->openResource(fontRes);
 
-	FrameHeader *charFrame = findChar(FIRST_CHAR, charSet);
-	uint16 height = charFrame->height;
+	FrameHeader frame_head;
 
+	frame_head.read(findChar(FIRST_CHAR, charSet));
 	_vm->_resman->closeResource(fontRes);
-	return height;
+
+	return frame_head.height;
 }
 
 /**
@@ -307,7 +313,7 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
  *         'dud' character (chequered flag)
  */
 
-FrameHeader* FontRenderer::findChar(byte ch, byte *charSet) {
+byte *FontRenderer::findChar(byte ch, byte *charSet) {
 	if (ch < FIRST_CHAR)
 		ch = DUD;
 	return _vm->fetchFrameHeader(charSet, ch - FIRST_CHAR);
@@ -323,16 +329,20 @@ FrameHeader* FontRenderer::findChar(byte ch, byte *charSet) {
  *                    LETTER_COL to pen.
  */
 
-void FontRenderer::copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
-	byte *source = (byte *)charPtr + sizeof(FrameHeader);
+void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
+	FrameHeader frame;
+
+	frame.read(charPtr);
+
+	byte *source = charPtr + FrameHeader::size();
 	byte *rowPtr = spritePtr;
 
-	for (uint i = 0; i < charPtr->height; i++) {
+	for (uint i = 0; i < frame.height; i++) {
 		byte *dest = rowPtr;
 
 		if (pen) {
 			// Use the specified colours
-			for (uint j = 0; j < charPtr->width; j++) {
+			for (uint j = 0; j < frame.width; j++) {
 				switch (*source++) {
 				case LETTER_COL:
 					*dest = pen;
@@ -355,8 +365,8 @@ void FontRenderer::copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 sprite
 			// Pen is zero, so just copy character sprites
 			// directly into text sprite without remapping colours.
 			// Apparently overlapping is never considered here?
-			memcpy(dest, source, charPtr->width);
-			source += charPtr->width;
+			memcpy(dest, source, frame.width);
+			source += frame.width;
 		}
 		rowPtr += spriteWidth;
 	}
@@ -387,37 +397,39 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 	// without margin checking - used for debug text
 
 	if (justification != NO_JUSTIFICATION) {
-		FrameHeader *frame_head = (FrameHeader *)_blocList[i].text_mem;
+		FrameHeader frame_head;
+
+		frame_head.read(_blocList[i].text_mem);
 
 		switch (justification) {
 		case POSITION_AT_CENTRE_OF_BASE:
 			// This one is always used for SPEECH TEXT; possibly
 			// also for pointer text
-			x -= (frame_head->width / 2);
-			y -= frame_head->height;
+			x -= (frame_head.width / 2);
+			y -= frame_head.height;
 			break;
 		case POSITION_AT_CENTRE_OF_TOP:
-			x -= (frame_head->width / 2);
+			x -= (frame_head.width / 2);
 			break;
 		case POSITION_AT_LEFT_OF_TOP:
 			// The given coords are already correct for this!
 			break;
 		case POSITION_AT_RIGHT_OF_TOP:
-			x -= frame_head->width;
+			x -= frame_head.width;
 			break;
 		case POSITION_AT_LEFT_OF_BASE:
-			y -= frame_head->height;
+			y -= frame_head.height;
 			break;
 		case POSITION_AT_RIGHT_OF_BASE:
-			x -= frame_head->width;
-			y -= frame_head->height;
+			x -= frame_head.width;
+			y -= frame_head.height;
 			break;
 		case POSITION_AT_LEFT_OF_CENTRE:
-			y -= (frame_head->height / 2);
+			y -= (frame_head.height / 2);
 			break;
 		case POSITION_AT_RIGHT_OF_CENTRE:
-			x -= frame_head->width;
-			y -= (frame_head->height) / 2;
+			x -= frame_head.width;
+			y -= (frame_head.height) / 2;
 			break;
 		}
 
@@ -425,9 +437,9 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 		// remember - it's RDSPR_DISPLAYALIGN
 
 		uint16 text_left_margin = TEXT_MARGIN;
-		uint16 text_right_margin = 640 - TEXT_MARGIN - frame_head->width;
+		uint16 text_right_margin = 640 - TEXT_MARGIN - frame_head.width;
 		uint16 text_top_margin = TEXT_MARGIN;
-		uint16 text_bottom_margin = 400 - TEXT_MARGIN - frame_head->height;
+		uint16 text_bottom_margin = 400 - TEXT_MARGIN - frame_head.height;
 
 		// Move if too far left or too far right
 
@@ -460,19 +472,21 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 void FontRenderer::printTextBlocs() {
 	for (uint i = 0; i < MAX_text_blocs; i++) {
 		if (_blocList[i].text_mem) {
-			FrameHeader *frame = (FrameHeader *)_blocList[i].text_mem;
+			FrameHeader frame_head;
 			SpriteInfo spriteInfo;
+
+			frame_head.read(_blocList[i].text_mem);
 
 			spriteInfo.x = _blocList[i].x;
 			spriteInfo.y = _blocList[i].y;
-			spriteInfo.w = frame->width;
-			spriteInfo.h = frame->height;
+			spriteInfo.w = frame_head.width;
+			spriteInfo.h = frame_head.height;
 			spriteInfo.scale = 0;
 			spriteInfo.scaledWidth = 0;
 			spriteInfo.scaledHeight = 0;
 			spriteInfo.type = _blocList[i].type;
 			spriteInfo.blend = 0;
-			spriteInfo.data = _blocList[i].text_mem + sizeof(FrameHeader);
+			spriteInfo.data = _blocList[i].text_mem + FrameHeader::size();
 			spriteInfo.colourTable = 0;
 
 			uint32 rv = _vm->_screen->drawSprite(&spriteInfo);
@@ -528,7 +542,7 @@ void Sword2Engine::initialiseFontResourceFlags() {
 	//
 	// But we get it from the text resource instead.
 
-	if (Logic::_scriptVars[DEMO])
+	if (_logic->readVar(DEMO))
 		textLine = (char *)fetchTextLine(textFile, 451) + 2;
 	else
 		textLine = (char *)fetchTextLine(textFile, 54) + 2;

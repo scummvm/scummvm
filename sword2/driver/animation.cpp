@@ -176,12 +176,11 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 	if (leadInRes) {
 		byte *leadIn = _vm->_resman->openResource(leadInRes);
-		uint32 leadInLen = _vm->_resman->fetchLen(leadInRes) - sizeof(StandardHeader);
-		StandardHeader *header = (StandardHeader *)leadIn;
+		uint32 leadInLen = _vm->_resman->fetchLen(leadInRes) - ResHeader::size();
 
-		assert(header->fileType == WAV_FILE);
+		assert(_vm->_resman->fetchType(leadIn) == WAV_FILE);
 
-		leadIn += sizeof(StandardHeader);
+		leadIn += ResHeader::size();
 
 		_vm->_sound->playFx(&leadInHandle, leadIn, leadInLen, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
 	}
@@ -191,15 +190,14 @@ int32 MoviePlayer::play(const char *filename, MovieTextObject *text[], int32 lea
 
 	if (leadOutRes) {
 		leadOut = _vm->_resman->openResource(leadOutRes);
-		leadOutLen = _vm->_resman->fetchLen(leadOutRes) - sizeof(StandardHeader);
-		StandardHeader *header = (StandardHeader *)leadOut;
+		leadOutLen = _vm->_resman->fetchLen(leadOutRes) - ResHeader::size();
 
-		assert(header->fileType == WAV_FILE);
+		assert(_vm->_resman->fetchType(leadOut) == WAV_FILE);
 
-		leadOut += sizeof(StandardHeader);
+		leadOut += ResHeader::size();
 	}
 
-	_leadOutFrame = (uint) -1;
+	_leadOutFrame = (uint)-1;
 
 	int i;
 
@@ -420,16 +418,18 @@ void MoviePlayer::playDummy(const char *filename, MovieTextObject *text[], byte 
 		data = _vm->_fontRenderer->makeTextSprite(msg, RENDERWIDE, 255, _vm->_speechFontId);
 	}
 
-	FrameHeader *frame = (FrameHeader *)data;
+	FrameHeader frame_head;
 	SpriteInfo msgSprite;
 	byte *msgSurface;
 
-	msgSprite.x = _vm->_screen->getScreenWide() / 2 - frame->width / 2;
-	msgSprite.y = MENUDEEP / 2 - frame->height / 2;
-	msgSprite.w = frame->width;
-	msgSprite.h = frame->height;
+	frame_head.read(data);
+
+	msgSprite.x = _vm->_screen->getScreenWide() / 2 - frame_head.width / 2;
+	msgSprite.y = MENUDEEP / 2 - frame_head.height / 2;
+	msgSprite.w = frame_head.width;
+	msgSprite.h = frame_head.height;
 	msgSprite.type = RDSPR_NOCOMPRESSION;
-	msgSprite.data = data + sizeof(FrameHeader);
+	msgSprite.data = data + FrameHeader::size();
 
 	_vm->_screen->createSurface(&msgSprite, &msgSurface);
 	_vm->_screen->drawSurface(&msgSprite, msgSurface);

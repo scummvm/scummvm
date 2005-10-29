@@ -44,7 +44,7 @@ void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
 
 int Logic::checkEventWaiting() {
 	for (int i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id == _scriptVars[ID])
+		if (_eventList[i].id == readVar(ID))
 			return 1;
 	}
 
@@ -56,14 +56,14 @@ void Logic::startEvent() {
 	// you must follow with a return IR_TERMINATE
 
 	for (int i = 0; i < MAX_events; i++) {
-		if (_eventList[i].id == _scriptVars[ID]) {
+		if (_eventList[i].id == readVar(ID)) {
 			logicOne(_eventList[i].interact_id);
 			_eventList[i].id = 0;
 			return;
 		}
 	}
 
-	error("startEvent() can't find event for id %d", _scriptVars[ID]);
+	error("startEvent() can't find event for id %d", readVar(ID));
 }
 
 void Logic::clearEvent(uint32 id) {

@@ -74,6 +74,7 @@
  ****************************************************************************/
 
 #include "common/stdafx.h"
+#include "common/stream.h"
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/logic.h"
@@ -82,8 +83,24 @@
 
 namespace Sword2 {
 
+//----------------------------------------------------------
+// (4) WALK-GRID FILES
+//----------------------------------------------------------
+// a walk-grid file consists of:
+//
+// standard file header
+// walk-grid file header
+// walk-grid data
+
+// Walk-Grid Header - taken directly from old "header.h" in STD_INC
+
+struct WalkGridHeader {
+	int32 numBars;		// number of bars on the floor
+	int32 numNodes;		// number of nodes
+};
+
 uint8 Router::returnSlotNo(uint32 megaId) {
-	if (Logic::_scriptVars[ID] == CUR_PLAYER_ID) {
+	if (_vm->_logic->readVar(ID) == CUR_PLAYER_ID) {
 		// George (8)
 		return 0;
 	} else {
@@ -101,7 +118,7 @@ void Router::allocateRouteMem() {
 	// in middle of route, the old route will be safely cleared from
 	// memory just before they create a new one
 
-	slotNo = returnSlotNo(Logic::_scriptVars[ID]);
+	slotNo = returnSlotNo(_vm->_logic->readVar(ID));
 
 	// if this slot is already used, then it can't be needed any more
 	// because this id is creating a new route!
@@ -125,13 +142,13 @@ void Router::allocateRouteMem() {
 }
 
 WalkData *Router::getRouteMem() {
-	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
+	uint8 slotNo = returnSlotNo(_vm->_logic->readVar(ID));
 
 	return (WalkData *)_routeSlots[slotNo];
 }
 
 void Router::freeRouteMem() {
-	uint8 slotNo = returnSlotNo(Logic::_scriptVars[ID]);
+	uint8 slotNo = returnSlotNo(_vm->_logic->readVar(ID));
 
 	free(_routeSlots[slotNo]);
 	_routeSlots[slotNo] = NULL;
@@ -144,7 +161,7 @@ void Router::freeAllRouteMem() {
 	}
 }
 
-int32 Router::routeFinder(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata, int32 x, int32 y, int32 dir) {
+int32 Router::routeFinder(byte *ob_mega, byte *ob_walkdata, int32 x, int32 y, int32 dir) {
 	/*********************************************************************
 	 * RouteFinder.C		polygon router with modular walks
 	 * 						21 august 94
@@ -677,8 +694,8 @@ void Router::slidyPath() {
 // SLOW IN
 
 bool Router::addSlowInFrames(WalkData *walkAnim) {
-	if (_usingSlowInFrames && _modularPath[1].num > 0) {
-		for (uint slowInFrameNo = 0; slowInFrameNo < _numberOfSlowInFrames[_currentDir]; slowInFrameNo++) {
+	if (_walkData.usingSlowInFrames && _modularPath[1].num > 0) {
+		for (int slowInFrameNo = 0; slowInFrameNo < _walkData.nSlowInFrames[_currentDir]; slowInFrameNo++) {
 			walkAnim[_stepCount].frame = _firstSlowInFrame[_currentDir] + slowInFrameNo;
 			walkAnim[_stepCount].step = 0;
 			walkAnim[_stepCount].dir = _currentDir;
@@ -692,10 +709,12 @@ bool Router::addSlowInFrames(WalkData *walkAnim) {
 	return false;
 }
 
-void Router::earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata) {
+void Router::earlySlowOut(byte *ob_mega, byte *ob_walkdata) {
 	int32 slowOutFrameNo;
 	int32 walk_pc;
 	WalkData *walkAnim;
+
+	ObjectMega obMega(ob_mega);
 
 	debug(5, "EARLY SLOW-OUT");
 
@@ -709,12 +728,12 @@ void Router::earlySlowOut(ObjectMega *ob_mega, ObjectWalkdata *ob_walkdata) {
 	debug(5, "_firstSlowOutFrame = %d", _firstSlowOutFrame);
 	debug(5, "********************************");
 
- 	walk_pc = ob_mega->walk_pc;
+ 	walk_pc = obMega.getWalkPc();
 
 	walkAnim = getRouteMem();
 
 	// if this mega does actually have slow-out frames
-	if (_usingSlowOutFrames) {
+	if (_walkData.usingSlowOutFrames) {
 		// overwrite the next step (half a cycle) of the walk
 		// (ie .step - 0..5)
 
@@ -787,7 +806,7 @@ void Router::addSlowOutFrames(WalkData *walkAnim) {
 	// if the mega did actually walk, we overwrite the last step (half a
 	// cycle) with slow-out frames + add any necessary stationary frames
 
- 	if (_usingSlowOutFrames && _lastCount >= _framesPerStep) {
+ 	if (_walkData.usingSlowOutFrames && _lastCount >= _framesPerStep) {
 		// place stop frames here
 		// slowdown at the end of the last walk
 
@@ -904,7 +923,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
 
-		if (_usingStandingTurnFrames) {
+		if (_walkData.usingStandingTurnFrames) {
 			// new frames for turn frames	29oct95jps
 			if (turnDir < 0)
 				module = _firstStandingTurnLeftFrame + lastDir;
@@ -964,7 +983,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 	// (0 = left; 1 = right)
 
-	if (_leadingLeg[_currentDir] == 0) {
+	if (_walkData.leadingLeg[_currentDir] == 0) {
 		// start the walk on the left leg (ie. at beginning of the
 		// first step of the walk cycle)
 		left = 0;
@@ -1010,8 +1029,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 			scale = (_scaleA * _moduleY + _scaleB);
 
 			do {
-				module16X += _dx[module] * scale;
-				module16Y += _dy[module] * scale;
+				module16X += _walkData.dx[module] * scale;
+				module16Y += _walkData.dy[module] * scale;
 				_moduleX = module16X >> 16;
 				_moduleY = module16Y >> 16;
 				walkAnim[_stepCount].frame = module;
@@ -1109,7 +1128,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				// check each turn condition in turn
 
 				 // only for george
-				if (lastDir != 99 && _currentDir != 99 && _usingWalkingTurnFrames) {
+				if (lastDir != 99 && _currentDir != 99 && _walkData.usingWalkingTurnFrames) {
 					// 1 and -7 going right -1 and 7 going
 					// left
 					lastDir = _currentDir - lastDir;
@@ -1199,7 +1218,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate to target direction
 		// for george and nico put in a head turn at the start
 
-		if (_usingStandingTurnFrames) {
+		if (_walkData.usingStandingTurnFrames) {
 			// new frames for turn frames	29oct95jps
 			if (turnDir < 0)
 				module = _firstStandingTurnLeftFrame + lastDir;
@@ -1410,7 +1429,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
 
-		if (_usingStandingTurnFrames) {
+		if (_walkData.usingStandingTurnFrames) {
 			// new frames for turn frames	29oct95jps
 			if (turnDir < 0)
 				module = _firstStandingTurnLeftFrame + lastDir;
@@ -1468,7 +1487,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	// slow-in frames were drawn
 
 	// (0 = left; 1 = right)
-	if (_leadingLeg[_currentDir] == 0) {
+	if (_walkData.leadingLeg[_currentDir] == 0) {
 		// start the walk on the left leg (ie. at beginning of the
 		// first step of the walk cycle)
 		left = 0;
@@ -1504,8 +1523,8 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 				scale = (_scaleA * _moduleY + _scaleB);
 
 				do {
-					module16X += _dx[module] * scale;
-					module16Y += _dy[module] * scale;
+					module16X += _walkData.dx[module] * scale;
+					module16Y += _walkData.dy[module] * scale;
 					_moduleX = module16X >> 16;
 					_moduleY = module16Y >> 16;
 					walkAnim[_stepCount].frame = module;
@@ -1551,8 +1570,8 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 						// walk
 
 						if (slowStart) {
-							_stepCount -= _numberOfSlowInFrames[_currentDir];
-							_lastCount -= _numberOfSlowInFrames[_currentDir];
+							_stepCount -= _walkData.nSlowInFrames[_currentDir];
+							_lastCount -= _walkData.nSlowInFrames[_currentDir];
 							slowStart = false;
 						}
 
@@ -1564,7 +1583,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 					}
 
 					// check each turn condition in turn
-					if (lastDir != 99 && _currentDir != 99 && _usingWalkingTurnFrames) {
+					if (lastDir != 99 && _currentDir != 99 && _walkData.usingWalkingTurnFrames) {
 						// only for george
 						// 1 and -7 going right -1 and
 						// 7 going left
@@ -2091,38 +2110,30 @@ int32 Router::checkTarget(int32 x, int32 y) {
 
 // THE SETUP ROUTINES
 
-void Router::loadWalkData(ObjectWalkdata *ob_walkdata) {
+void Router::loadWalkData(byte *ob_walkdata) {
 	uint16 firstFrameOfDirection;
 	uint16 walkFrameNo;
 	uint32 frameCounter = 0; // starts at frame 0 of mega set
+	int i;
 
-	_nWalkFrames = ob_walkdata->nWalkFrames;
-	_usingStandingTurnFrames = ob_walkdata->usingStandingTurnFrames;
-	_usingWalkingTurnFrames = ob_walkdata->usingWalkingTurnFrames;
-	_usingSlowInFrames = ob_walkdata->usingSlowInFrames;
-	_usingSlowOutFrames = ob_walkdata->usingSlowOutFrames;
+	_walkData.read(ob_walkdata);
 
 	// 0 = not using slow out frames; non-zero = using that many frames
 	// for each leading leg for each direction
 
-	_numberOfSlowOutFrames = _usingSlowOutFrames;
+	_numberOfSlowOutFrames = _walkData.usingSlowOutFrames;
 
- 	memcpy(&_numberOfSlowInFrames[0], ob_walkdata->nSlowInFrames, NO_DIRECTIONS * sizeof(_numberOfSlowInFrames[0]));
- 	memcpy(&_leadingLeg[0], ob_walkdata->leadingLeg, NO_DIRECTIONS * sizeof(_leadingLeg[0]));
- 	memcpy(&_dx[0], ob_walkdata->dx, NO_DIRECTIONS * (_nWalkFrames + 1) * sizeof(_dx[0]));
- 	memcpy(&_dy[0], ob_walkdata->dy, NO_DIRECTIONS * (_nWalkFrames + 1) * sizeof(_dy[0]));
-
-	for (int i = 0; i < NO_DIRECTIONS; i++) {
-		firstFrameOfDirection = i * _nWalkFrames;
+	for (i = 0; i < NO_DIRECTIONS; i++) {
+		firstFrameOfDirection = i * _walkData.nWalkFrames;
 
 		_modX[i] = 0;
 		_modY[i] = 0;
 
-		for (walkFrameNo = firstFrameOfDirection; walkFrameNo < firstFrameOfDirection + _nWalkFrames / 2; walkFrameNo++) {
+		for (walkFrameNo = firstFrameOfDirection; walkFrameNo < firstFrameOfDirection + _walkData.nWalkFrames / 2; walkFrameNo++) {
 			// eg. _modX[0] is the sum of the x-step sizes for the
 			// first half of the walk cycle for direction 0
-			_modX[i] += _dx[walkFrameNo];
-			_modY[i] += _dy[walkFrameNo];
+			_modX[i] += _walkData.dx[walkFrameNo];
+			_modY[i] += _walkData.dy[walkFrameNo];
 		}
 	}
 
@@ -2131,8 +2142,8 @@ void Router::loadWalkData(ObjectWalkdata *ob_walkdata) {
 
 	// interpret the walk data
 
-	_framesPerStep = _nWalkFrames / 2;
-	_framesPerChar = _nWalkFrames * NO_DIRECTIONS;
+	_framesPerStep = _walkData.nWalkFrames / 2;
+	_framesPerChar = _walkData.nWalkFrames * NO_DIRECTIONS;
 
 	// offset pointers added Oct 30 95 JPS
 	// mega id references removed 16sep96 by JEL
@@ -2155,7 +2166,7 @@ void Router::loadWalkData(ObjectWalkdata *ob_walkdata) {
 	// standing turn-left frames come after the standing turn-right frames
 	// one for each direction
 
-	if (_usingStandingTurnFrames) {
+	if (_walkData.usingStandingTurnFrames) {
 		_firstStandingTurnLeftFrame = frameCounter;
 		frameCounter += NO_DIRECTIONS;
 
@@ -2171,7 +2182,7 @@ void Router::loadWalkData(ObjectWalkdata *ob_walkdata) {
 	// walking left-turn frames come after the stand frames
 	// walking right-turn frames come after the walking left-turn frames
 
-	if (_usingWalkingTurnFrames) {
+	if (_walkData.usingWalkingTurnFrames) {
 		_firstWalkingTurnLeftFrame = frameCounter;
 		frameCounter += _framesPerChar;
 
@@ -2185,21 +2196,21 @@ void Router::loadWalkData(ObjectWalkdata *ob_walkdata) {
 	// SLOW-IN FRAMES - OPTIONAL!
 	// slow-in frames come after the walking right-turn frames
 
-	if (_usingSlowInFrames) {
+	if (_walkData.usingSlowInFrames) {
 		// Make note of frame number of first slow-in frame for each
 		// direction. There may be a different number of slow-in
 		// frames in each direction
 
-		for (int i = 0; i < NO_DIRECTIONS; i++) {
+		for (i = 0; i < NO_DIRECTIONS; i++) {
 			_firstSlowInFrame[i] = frameCounter;
-			frameCounter += _numberOfSlowInFrames[i];
+			frameCounter += _walkData.nSlowInFrames[i];
 		}
 	}
 
 	// SLOW-OUT FRAMES - OPTIONAL!
 	// slow-out frames come after the slow-in frames
 
-	if (_usingSlowOutFrames)
+	if (_walkData.usingSlowOutFrames)
 		_firstSlowOutFrame = frameCounter;
 }
 
@@ -2316,22 +2327,24 @@ void Router::extractRoute() {
 	return;
 }
 
-void Router::setUpWalkGrid(ObjectMega *ob_mega, int32 x, int32 y, int32 dir) {
+void Router::setUpWalkGrid(byte *ob_mega, int32 x, int32 y, int32 dir) {
+	ObjectMega obMega(ob_mega);
+
 	// get walk grid file + extra grid into 'bars' & 'node' arrays
 	loadWalkGrid();
 
 	// copy the mega structure into the local variables for use in all
 	// subroutines
 
-	_startX = ob_mega->feet_x;
-	_startY = ob_mega->feet_y;
-	_startDir = ob_mega->current_dir;
+	_startX = obMega.getFeetX();
+	_startY = obMega.getFeetY();
+	_startDir = obMega.getCurDir();
 	_targetX = x;
 	_targetY = y;
 	_targetDir = dir;
 
-	_scaleA = ob_mega->scale_a;
-	_scaleB = ob_mega->scale_b;
+	_scaleA = obMega.getScaleA();
+	_scaleB = obMega.getScaleB();
 
 	// mega's current position goes into first node
 
@@ -2383,8 +2396,7 @@ void Router::plotCross(int16 x, int16 y, uint8 colour) {
 void Router::loadWalkGrid() {
 	WalkGridHeader floorHeader;
 	byte *fPolygrid;
-	uint32 theseBars;
-	uint32 theseNodes;
+	uint16 fPolygridLen;
 
 	_nBars	= 0;	// reset counts
 	_nNodes	= 1;	// leave node 0 for start-node
@@ -2394,37 +2406,47 @@ void Router::loadWalkGrid() {
 	// go through walkgrid list
 	for (int i = 0; i < MAX_WALKGRIDS; i++) {
 		if (_walkGridList[i]) {
+			int j;
+
 			// open walk grid file
 			fPolygrid = _vm->_resman->openResource(_walkGridList[i]);
- 			fPolygrid += sizeof(StandardHeader);
- 			memcpy((byte *)&floorHeader, fPolygrid, sizeof(WalkGridHeader));
- 			fPolygrid += sizeof(WalkGridHeader);
+			fPolygridLen = _vm->_resman->fetchLen(_walkGridList[i]);
 
-			// how many bars & nodes are we getting from this
-			// walkgrid file
+			Common::MemoryReadStream readS(fPolygrid, fPolygridLen);
 
-			theseBars = floorHeader.numBars;
-			theseNodes = floorHeader.numNodes;
+			readS.seek(ResHeader::size());
+
+			floorHeader.numBars = readS.readSint32LE();
+			floorHeader.numNodes = readS.readSint32LE();
 
 			// check that we're not going to exceed the max
 			// allowed in the complete walkgrid arrays
 
-			assert(_nBars + theseBars < O_GRID_SIZE);
-			assert(_nNodes + theseNodes < O_GRID_SIZE);
+			assert(_nBars + floorHeader.numBars < O_GRID_SIZE);
+			assert(_nNodes + floorHeader.numNodes < O_GRID_SIZE);
 
 			// lines
 
- 			memcpy((byte *)&_bars[_nBars], fPolygrid, theseBars * sizeof(BarData));
-
-			// move pointer to start of node data
-			fPolygrid += theseBars * sizeof(BarData);
+			for (j = 0; j < floorHeader.numBars; j++) {
+				_bars[_nBars + j].x1 = readS.readSint16LE();
+				_bars[_nBars + j].y1 = readS.readSint16LE();
+				_bars[_nBars + j].x2 = readS.readSint16LE();
+				_bars[_nBars + j].y2 = readS.readSint16LE();
+				_bars[_nBars + j].xmin = readS.readSint16LE();
+				_bars[_nBars + j].ymin = readS.readSint16LE();
+				_bars[_nBars + j].xmax = readS.readSint16LE();
+				_bars[_nBars + j].ymax = readS.readSint16LE();
+				_bars[_nBars + j].dx = readS.readSint16LE();
+				_bars[_nBars + j].dy = readS.readSint16LE();
+				_bars[_nBars + j].co = readS.readSint32LE();
+			}
 
 			// nodes
 
 			// leave node 0 for start node
-			for (uint j = 0; j < theseNodes; j++) {
-				memcpy((byte *)&_node[_nNodes + j].x, fPolygrid, 2 * sizeof(int16));
-				fPolygrid += 2 * sizeof(int16);
+			for (j = 0; j < floorHeader.numNodes; j++) {
+				_node[_nNodes + j].x = readS.readSint16LE();
+				_node[_nNodes + j].y = readS.readSint16LE();
 			}
 
 			// close walk grid file
@@ -2433,8 +2455,8 @@ void Router::loadWalkGrid() {
 			// increment counts of total bars & nodes in whole
 			// walkgrid
 
-			_nBars += theseBars;
-			_nNodes	+= theseNodes;
+			_nBars += floorHeader.numBars;
+			_nNodes	+= floorHeader.numNodes;
 		}
 	}
 }

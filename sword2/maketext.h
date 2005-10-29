@@ -91,8 +91,8 @@ private:
 	byte *buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
 	uint16 charWidth(byte ch, uint32 fontRes);
 	uint16 charHeight(uint32 fontRes);
-	FrameHeader* findChar(byte ch, byte *charSet);
-	void copyChar(FrameHeader *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
+	byte *findChar(byte ch, byte *charSet);
+	void copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
 
 public:
 	FontRenderer(Sword2Engine *vm) : _vm(vm) {

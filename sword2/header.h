@@ -21,15 +21,13 @@
 #ifndef	_HEADER
 #define	_HEADER
 
+#include "common/stream.h"
+
 namespace Sword2 {
 
 //----------------------------------------------------------
 // SYSTEM FILE & FRAME HEADERS
 //----------------------------------------------------------
-
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
 
 //----------------------------------------------------------
 // ALL FILES
@@ -39,7 +37,7 @@ namespace Sword2 {
 
 #define	NAME_LEN 34
 
-struct StandardHeader {
+struct ResHeader {
 	uint8 fileType;			// Byte to define file type (see below)
 	uint8 compType;			// Type of file compression used ie.
 					// on whole file (see below)
@@ -49,7 +47,31 @@ struct StandardHeader {
 					// memory (NB. frames still held
 					// compressed)
 	byte name[NAME_LEN];		// Name of object
-} GCC_PACK;
+
+	static const int size() {
+		return 44;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		fileType = readS.readByte();
+		compType = readS.readByte();
+		compSize = readS.readUint32LE();
+		decompSize = readS.readUint32LE();
+		readS.read(name, NAME_LEN);
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeByte(fileType);
+		writeS.writeByte(compType);
+		writeS.writeUint32LE(compSize);
+		writeS.writeUint32LE(decompSize);
+		writeS.write(name, NAME_LEN);
+	}
+};
 
 // fileType
 
@@ -121,7 +143,40 @@ struct AnimHeader {
 				// place from the start)
 	uint8 feetEndDir;	// Direction to start in after running anim
 	uint16 blend;
-} GCC_PACK;
+
+	static const int size() {
+		return 15;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		runTimeComp = readS.readByte();
+		noAnimFrames = readS.readUint16LE();
+		feetStartX = readS.readUint16LE();
+		feetStartY = readS.readUint16LE();
+		feetStartDir = readS.readByte();
+		feetEndX = readS.readUint16LE();
+		feetEndY = readS.readUint16LE();
+		feetEndDir = readS.readByte();
+		blend = readS.readUint16LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeByte(runTimeComp);
+		writeS.writeUint16LE(noAnimFrames);
+		writeS.writeUint16LE(feetStartX);
+		writeS.writeUint16LE(feetStartY);
+		writeS.writeByte(feetStartDir);
+		writeS.writeUint16LE(feetEndX);
+		writeS.writeUint16LE(feetEndY);
+		writeS.writeByte(feetEndDir);
+		writeS.writeUint16LE(blend);
+	}
+		
+};
 
 // runtimeComp - compression used on each frame of the anim
 
@@ -145,7 +200,29 @@ struct CdtEntry {
 				// of file header)
 	uint8 frameType;	// 0 = print sprite normally with top-left
 				// corner at (x,y), otherwise see below...
-} GCC_PACK;
+
+	static const int size() {
+		return 9;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		x = readS.readUint16LE();
+		y = readS.readUint16LE();
+		frameOffset = readS.readUint32LE();
+		frameType = readS.readByte();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint16LE(x);
+		writeS.writeUint16LE(y);
+		writeS.writeUint32LE(frameOffset);
+		writeS.writeByte(frameType);
+	}
+};
 
 // 'frameType' bit values
 
@@ -164,7 +241,27 @@ struct FrameHeader {
 				// type is now in Anim Header
 	uint16 width;		// Dimensions of frame
 	uint16 height;
-} GCC_PACK;
+
+	static const int size() {
+		return 8;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		compSize = readS.readUint32LE();
+		width = readS.readUint16LE();
+		height = readS.readUint16LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint32LE(compSize);
+		writeS.writeUint16LE(width);
+		writeS.writeUint16LE(height);
+	}
+};
 
 //----------------------------------------------------------
 // (2) SCREEN FILES
@@ -193,7 +290,39 @@ struct MultiScreenHeader {
 	uint32 layers;
 	uint32 paletteTable;
 	uint32 maskOffset;
-} GCC_PACK;
+
+	static const int size() {
+		return 36;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		palette = readS.readUint32LE();
+		bg_parallax[0] = readS.readUint32LE();
+		bg_parallax[1] = readS.readUint32LE();
+		screen = readS.readUint32LE();
+		fg_parallax[0] = readS.readUint32LE();
+		fg_parallax[1] = readS.readUint32LE();
+		layers = readS.readUint32LE();
+		paletteTable = readS.readUint32LE();
+		maskOffset = readS.readUint32LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint32LE(palette);
+		writeS.writeUint32LE(bg_parallax[0]);
+		writeS.writeUint32LE(bg_parallax[1]);
+		writeS.writeUint32LE(screen);
+		writeS.writeUint32LE(fg_parallax[0]);
+		writeS.writeUint32LE(fg_parallax[1]);
+		writeS.writeUint32LE(layers);
+		writeS.writeUint32LE(paletteTable);
+		writeS.writeUint32LE(maskOffset);
+	}
+};
 
 // Screen Header
 
@@ -201,7 +330,27 @@ struct ScreenHeader {
 	uint16 width;		// dimensions of the background screen
 	uint16 height;
 	uint16 noLayers;	// number of layer areas
-} GCC_PACK;
+
+	static const int size() {
+		return 6;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		width = readS.readUint16LE();
+		height = readS.readUint16LE();
+		noLayers = readS.readUint16LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint16LE(width);
+		writeS.writeUint16LE(height);
+		writeS.writeUint16LE(noLayers);
+	}
+};
 
 // Layer Header
 
@@ -216,7 +365,33 @@ struct LayerHeader {
 	uint32 maskSize;
 	uint32 offset;		// where to find mask data (from start of
 				// standard file header)
-} GCC_PACK;
+
+	static const int size() {
+		return 16;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		x = readS.readUint16LE();
+		y = readS.readUint16LE();
+		width = readS.readUint16LE();
+		height = readS.readUint16LE();
+		maskSize = readS.readUint32LE();
+		offset = readS.readUint32LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint16LE(x);
+		writeS.writeUint16LE(y);
+		writeS.writeUint16LE(width);
+		writeS.writeUint16LE(height);
+		writeS.writeUint32LE(maskSize);
+		writeS.writeUint32LE(offset);
+	}
+};
 
 //----------------------------------------------------------
 // (3) SCRIPT OBJECT FILES
@@ -226,22 +401,6 @@ struct LayerHeader {
 // standard file header
 // script object header
 // script object data
-
-//----------------------------------------------------------
-// (4) WALK-GRID FILES
-//----------------------------------------------------------
-// a walk-grid file consists of:
-//
-// standard file header
-// walk-grid file header
-// walk-grid data
-
-// Walk-Grid Header - taken directly from old "header.h" in STD_INC
-
-struct WalkGridHeader {
-	int32 numBars;		// number of bars on the floor
-	int32 numNodes;		// number of nodes
-} GCC_PACK;
 
 //----------------------------------------------------------
 // (5) PALETTE FILES
@@ -254,34 +413,88 @@ struct WalkGridHeader {
 
 // an object hub - which represents all that remains of the compact concept
 
-#define	TREE_SIZE	3
+class ObjectHub {
+	// int32 type;		// type of object
+	// uint32 logic_level;	// what level?
+	// uint32 logic[3]	// NOT USED
+	// uint32 script_id[3]	// need this if script
+	// uint32 script_pc[3]	// need this also
 
-struct ObjectHub {
-	int32 type;			// type of object
-	uint32 logic_level;		// what level?
-	uint32 logic[TREE_SIZE];	// NOT USED
-	uint32 script_id[TREE_SIZE];	// need this if script
-	uint32 script_pc[TREE_SIZE];	// need this also
-} GCC_PACK;
+private:
+	byte *_addr;
+
+public:
+	ObjectHub() {
+		_addr = NULL;
+	}
+
+	static const int size() {
+		return 44;
+	}
+
+	byte *data() {
+		return _addr;
+	}
+
+	void setAddress(byte *addr) {
+		_addr = addr;
+	}
+
+	byte *getScriptPcPtr(int level) {
+		return _addr + 32 + 4 * level;
+	}
+
+	uint32 getLogicLevel() {
+		return READ_LE_UINT32(_addr + 4);
+	}
+	uint32 getScriptId(int level) {
+		return READ_LE_UINT32(_addr + 20 + 4 * level);
+	}
+	uint32 getScriptPc(int level) {
+		return READ_LE_UINT32(_addr + 32 + 4 * level);
+	}
+
+	void setLogicLevel(uint32 x) {
+		WRITE_LE_UINT32(_addr + 4, x);
+	}
+	void setScriptId(int level, uint32 x) {
+		WRITE_LE_UINT32(_addr + 20 + 4 * level, x);
+	}
+	void setScriptPc(int level, uint32 x) {
+		WRITE_LE_UINT32(_addr + 32 + 4 * level, x);
+	}
+};
 
 // (6) text module header
 
 struct TextHeader {
 	uint32 noOfLines;	// how many lines of text are there in this
 				// module
-} GCC_PACK;
+
+	static const int size() {
+		return 4;
+	}
+
+	void read(byte *addr) {
+		Common::MemoryReadStream readS(addr, size());
+
+		noOfLines = readS.readUint32LE();
+	}
+
+	void write(byte *addr) {
+		Common::MemoryWriteStream writeS(addr, size());
+
+		writeS.writeUint32LE(noOfLines);
+	}
+};
 
 // a text file has:
 //
-//	StandardHeader
+//	ResHeader
 //	TextHeader
 //	look up table, to
 //	line of text,0
 //	line of text,0
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
 
 } // End of namespace Sword2
 

@@ -139,19 +139,23 @@ public:
 FontRendererGui::FontRendererGui(Sword2Engine *vm, int fontId)
 	: _vm(vm), _fontId(fontId) {
 	byte *font = _vm->_resman->openResource(fontId);
-	FrameHeader *head;
 	SpriteInfo sprite;
 
 	sprite.type = RDSPR_NOCOMPRESSION | RDSPR_TRANS;
 
 	for (int i = 0; i < SIZE_OF_CHAR_SET; i++) {
-		head = (FrameHeader *)_vm->fetchFrameHeader(font, i);
-		sprite.data = (byte *)(head + 1);
-		sprite.w = head->width;
-		sprite.h = head->height;
+		byte *frame = _vm->fetchFrameHeader(font, i);
+
+		FrameHeader frame_head;
+
+		frame_head.read(frame);
+
+		sprite.data = frame + FrameHeader::size();
+		sprite.w = frame_head.width;
+		sprite.h = frame_head.height;
 		_vm->_screen->createSurface(&sprite, &_glyph[i]._data);
-		_glyph[i]._width = head->width;
-		_glyph[i]._height = head->height;
+		_glyph[i]._width = frame_head.width;
+		_glyph[i]._height = frame_head.height;
 	}
 
 	_vm->_resman->closeResource(fontId);
@@ -413,27 +417,29 @@ Widget::~Widget() {
 
 void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) {
 	byte *file, *colTablePtr = NULL;
-	AnimHeader *anim_head;
-	FrameHeader *frame_head;
-	CdtEntry *cdt_entry;
+	AnimHeader anim_head;
+	FrameHeader frame_head;
+	CdtEntry cdt_entry;
 	uint32 spriteType = RDSPR_TRANS;
 
 	// open anim resource file, point to base
 	file = _vm->_resman->openResource(res);
 
-	anim_head = _vm->fetchAnimHeader(file);
-	cdt_entry = _vm->fetchCdtEntry(file, pc);
-	frame_head = _vm->fetchFrameHeader(file, pc);
+	byte *frame = _vm->fetchFrameHeader(file, pc);
+
+	anim_head.read(_vm->fetchAnimHeader(file));
+	cdt_entry.read(_vm->fetchCdtEntry(file, pc));
+	frame_head.read(frame);
 
 	// If the frame is flipped. (Only really applicable to frames using
 	// offsets.)
 
-	if (cdt_entry->frameType & FRAME_FLIPPED)
+	if (cdt_entry.frameType & FRAME_FLIPPED)
 		spriteType |= RDSPR_FLIP;
 
 	// Which compression was used?
 
-	switch (anim_head->runTimeComp) {
+	switch (anim_head.runTimeComp) {
 	case NONE:
 		spriteType |= RDSPR_NOCOMPRESSION;
 		break;
@@ -444,21 +450,21 @@ void Widget::createSurfaceImage(int state, uint32 res, int x, int y, uint32 pc) 
 		spriteType |= RDSPR_RLE256;
 		// Points to just after last cdt_entry, i.e. start of colour
 		// table
-		colTablePtr = (byte *)(anim_head + 1) +
-			anim_head->noAnimFrames * sizeof(CdtEntry);
+		colTablePtr = _vm->fetchAnimHeader(file) + AnimHeader::size()
+			+ anim_head.noAnimFrames * CdtEntry::size();
 		break;
 	}
 
 	_sprites[state].x = x;
 	_sprites[state].y = y;
-	_sprites[state].w = frame_head->width;
-	_sprites[state].h = frame_head->height;
+	_sprites[state].w = frame_head.width;
+	_sprites[state].h = frame_head.height;
 	_sprites[state].scale = 0;
 	_sprites[state].type = spriteType;
-	_sprites[state].blend = anim_head->blend;
+	_sprites[state].blend = anim_head.blend;
 
 	// Points to just after frame header, ie. start of sprite data
-	_sprites[state].data = (byte *)(frame_head + 1);
+	_sprites[state].data = frame + FrameHeader::size();
 
 	_vm->_screen->createSurface(&_sprites[state], &_surfaces[state]._surface);
 	_surfaces[state]._original = true;
@@ -661,7 +667,7 @@ private:
 	}
 
 	int valueFromPos(int x) {
-		return (int) ((double) (_maxValue * (x - _hitRect.left)) / (double) (_hitRect.width() - 38) + 0.5);
+		return (int)((double)(_maxValue * (x - _hitRect.left)) / (double)(_hitRect.width() - 38) + 0.5);
 	}
 
 public:

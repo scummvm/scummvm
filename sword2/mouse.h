@@ -27,7 +27,6 @@
 
 namespace Sword2 {
 
-struct ObjectMouse;
 struct BuildUnit;
 
 // Menubar defines.
@@ -62,10 +61,8 @@ enum {
 #define RDMENU_ICONSPACING	5
 #define RDMENU_MAXPOCKETS	15
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
+#define MOUSE_ANIM_HEADER_SIZE	6
+ 
 struct MouseAnim {
 	uint8 runTimeComp;	// type of runtime compression used for the
 				// frame data
@@ -74,11 +71,9 @@ struct MouseAnim {
 	int8 yHotSpot;
 	uint8 mousew;
 	uint8 mouseh;
-} GCC_PACK;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
+	byte *data;
+};
 
 // The MOUSE_holding mode is entered when the conversation menu is closed, and
 // exited when the mouse cursor moves off that menu area. I don't know why yet.
@@ -145,13 +140,10 @@ private:
 
 	uint32 _mousePointerRes;
 
-	struct MouseAnim *_mouseAnim;
-	struct MouseAnim *_luggageAnim;
+	MouseAnim _mouseAnim;
+	MouseAnim _luggageAnim;
 
 	uint8 _mouseFrame;
-	byte *_mouseSprite;
-	int32 *_mouseOffsets;
-	int32 *_luggageOffset;
 
 	uint32 _mouseMode;
 
@@ -177,7 +169,7 @@ private:
 
 	uint32 _menuSelectedPos;
 
-	void decompressMouse(byte *decomp, byte *comp, int width, int height, int pitch, int xOff = 0, int yOff = 0);
+	void decompressMouse(byte *decomp, byte *comp, uint8 frame, int width, int height, int pitch, int xOff = 0, int yOff = 0);
 
 	int32 setMouseAnim(byte *ma, int32 size, int32 mouseFlash);
 	int32 setLuggageAnim(byte *la, int32 size);
@@ -208,7 +200,7 @@ public:
 
 	void resetMouseList();
 
-	void registerMouse(ObjectMouse *ob_mouse, BuildUnit *build_unit);
+	void registerMouse(byte *ob_mouse, BuildUnit *build_unit);
 	void registerPointerText(int32 text_id);
 
 	void createPointerText(uint32 text_id, uint32 pointer_res);
@@ -219,7 +211,7 @@ public:
 
 	void processMenu();
 
-	void addMenuObject(MenuObject *obj);
+	void addMenuObject(byte *ptr);
 	void addSubject(int32 id, int32 ref);
 
 	void buildMenu();

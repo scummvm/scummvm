@@ -29,19 +29,11 @@ namespace Sword2 {
 
 // define these in a script and then register them with the system
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
 struct MenuObject {
 	int32 icon_resource;	// icon graphic graphic
 	int32 luggage_resource;	// luggage icon resource (for attaching to
 				// mouse pointer)
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
+};
 
 } // End of namespace Sword2
 

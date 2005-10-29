@@ -184,58 +184,25 @@ public:
 #endif
 
 	byte *fetchPalette(byte *screenFile);
-	ScreenHeader *fetchScreenHeader(byte *screenFile);
-	LayerHeader *fetchLayerHeader(byte *screenFile, uint16 layerNo);
+	byte *fetchScreenHeader(byte *screenFile);
+	byte *fetchLayerHeader(byte *screenFile, uint16 layerNo);
 	byte *fetchShadingMask(byte *screenFile);
 
-	AnimHeader *fetchAnimHeader(byte *animFile);
-	CdtEntry *fetchCdtEntry(byte *animFile, uint16 frameNo);
-	FrameHeader *fetchFrameHeader(byte *animFile, uint16 frameNo);
-	Parallax *fetchBackgroundParallaxLayer(byte *screenFile, int layer);
-	Parallax *fetchBackgroundLayer(byte *screenFile);
-	Parallax *fetchForegroundParallaxLayer(byte *screenFile, int layer);
+	byte *fetchAnimHeader(byte *animFile);
+	byte *fetchCdtEntry(byte *animFile, uint16 frameNo);
+	byte *fetchFrameHeader(byte *animFile, uint16 frameNo);
+	byte *fetchBackgroundParallaxLayer(byte *screenFile, int layer);
+	byte *fetchBackgroundLayer(byte *screenFile);
+	byte *fetchForegroundParallaxLayer(byte *screenFile, int layer);
 	byte *fetchTextLine(byte *file, uint32 text_line);
 	bool checkTextLine(byte *file, uint32 text_line);
 	byte *fetchPaletteMatchTable(byte *screenFile);
-	byte *fetchObjectName(int32 resourceId, byte *buf);
-
-	// savegame file header
-
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
-	struct SaveGameHeader {
-		// sum of all bytes in file, excluding this uint32
-		uint32 checksum;
-
-		// player's description of savegame
-		char description[SAVE_DESCRIPTION_LEN];
-
-		uint32 varLength;	// length of global variables resource
-		uint32 screenId;	// resource id of screen file
-		uint32 runListId;	// resource id of run list
-		uint32 feet_x;		// copy of _thisScreen.feet_x
-		uint32 feet_y;		// copy of _thisScreen.feet_y
-		uint32 music_id;	// copy of 'looping_music_id'
-		ObjectHub player_hub;	// copy of player object's object_hub structure
-		ObjectLogic logic;	// copy of player character logic structure
-		ObjectGraphic graphic;	// copy of player character graphic structure
-		ObjectMega mega;	// copy of player character mega structure
-	} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
-
-	SaveGameHeader _saveGameHeader;
 
 	uint32 saveGame(uint16 slotNo, byte *description);
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, byte *description);
 	bool saveExists();
 	bool saveExists(uint16 slotNo);
-	void fillSaveBuffer(byte *buffer, uint32 size, byte *desc);
 	uint32 restoreFromBuffer(byte *buffer, uint32 size);
 	uint32 findBufferSize();
 

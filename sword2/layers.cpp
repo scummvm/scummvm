@@ -52,7 +52,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	_vm->_sound->clearFxQueue();
 	waitForFade();
 
-	debug(1, "CHANGED TO LOCATION \"%s\"", _vm->fetchObjectName(res, buf));
+	debug(1, "CHANGED TO LOCATION \"%s\"", _vm->_resman->fetchName(res, buf));
 
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {
@@ -72,36 +72,40 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	// each cycle
 
 	byte *file = _vm->_resman->openResource(_thisScreen.background_layer_id);
-	ScreenHeader *screen_head = _vm->fetchScreenHeader(file);
+	ScreenHeader screen_head;
+
+	screen_head.read(_vm->fetchScreenHeader(file));
 
 	// set number of special sort layers
-	_thisScreen.number_of_layers = screen_head->noLayers;
-	_thisScreen.screen_wide = screen_head->width;
-	_thisScreen.screen_deep = screen_head->height;
+	_thisScreen.number_of_layers = screen_head.noLayers;
+	_thisScreen.screen_wide = screen_head.width;
+	_thisScreen.screen_deep = screen_head.height;
 
-	debug(2, "layers=%d width=%d depth=%d", screen_head->noLayers, screen_head->width, screen_head->height);
+	debug(2, "layers=%d width=%d depth=%d", screen_head.noLayers, screen_head.width, screen_head.height);
 
 	// initialise the driver back buffer
-	setLocationMetrics(screen_head->width, screen_head->height);
+	setLocationMetrics(screen_head.width, screen_head.height);
 
-	for (i = 0; i < screen_head->noLayers; i++) {
+	for (i = 0; i < screen_head.noLayers; i++) {
 		debug(3, "init layer %d", i);
 
-		LayerHeader *layer = _vm->fetchLayerHeader(file, i);
+		LayerHeader layer;
+
+		layer.read(_vm->fetchLayerHeader(file, i));
 
 		// Add the layer to the sort list. We only provide just enough
 		// information so that it's clear that it's a layer, and where
 		// to sort it in relation to other things in the list.
 
 		_sortList[i].layer_number = i + 1;
-		_sortList[i].sort_y = layer->y + layer->height;
+		_sortList[i].sort_y = layer.y + layer.height;
 	}
 
 	// reset scroll offsets
 	_thisScreen.scroll_offset_x = 0;
 	_thisScreen.scroll_offset_y = 0;
 
-	if (screen_head->width > _screenWide || screen_head->height > _screenDeep) {
+	if (screen_head.width > _screenWide || screen_head.height > _screenDeep) {
 		// The layer is larger than the physical screen. Switch on
 		// scrolling. (2 means first time on screen)
 		_thisScreen.scroll_flag = 2;
@@ -112,8 +116,8 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 		// Calculate the maximum scroll offsets to prevent scrolling
 		// off the edge. The minimum offsets are both 0.
 
-		_thisScreen.max_scroll_offset_x = screen_head->width - _screenWide;
-		_thisScreen.max_scroll_offset_y = screen_head->height - (_screenDeep - (MENUDEEP * 2));
+		_thisScreen.max_scroll_offset_x = screen_head.width - _screenWide;
+		_thisScreen.max_scroll_offset_y = screen_head.height - (_screenDeep - (MENUDEEP * 2));
 	} else {
 		// The later fits on the phyiscal screen. Switch off scrolling.
 		_thisScreen.scroll_flag = 0;
@@ -129,15 +133,17 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	// shading mask
 
-	MultiScreenHeader *screenLayerTable = (MultiScreenHeader *)(file + sizeof(StandardHeader));
+	MultiScreenHeader screenLayerTable;
 
-	if (screenLayerTable->maskOffset) {
+	screenLayerTable.read(file + ResHeader::size());
+
+	if (screenLayerTable.maskOffset) {
 	 	SpriteInfo spriteInfo;
 
 		spriteInfo.x = 0;
 		spriteInfo.y = 0;
-		spriteInfo.w = screen_head->width;
-		spriteInfo.h = screen_head->height;
+		spriteInfo.w = screen_head.width;
+		spriteInfo.h = screen_head.height;
 		spriteInfo.scale = 0;
 		spriteInfo.scaledWidth = 0;
 		spriteInfo.scaledHeight = 0;
@@ -159,7 +165,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	// Background parallax layers
 
 	for (i = 0; i < 2; i++) {
-		if (screenLayerTable->bg_parallax[i])
+		if (screenLayerTable.bg_parallax[i])
 			initialiseBackgroundLayer(_vm->fetchBackgroundParallaxLayer(file, i));
 		else
 			initialiseBackgroundLayer(NULL);
@@ -172,7 +178,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	// Foreground parallax layers
 
 	for (i = 0; i < 2; i++) {
-		if (screenLayerTable->fg_parallax[i])
+		if (screenLayerTable.fg_parallax[i])
 			initialiseBackgroundLayer(_vm->fetchForegroundParallaxLayer(file, i));
 		else
 			initialiseBackgroundLayer(NULL);

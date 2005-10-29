@@ -43,18 +43,10 @@ namespace Sword2 {
 //	resource.tab which is a table which tells us which cluster a resource
 //	is located in and the number within the cluster
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
-
 struct CdInf {
 	uint8 clusterName[20];	// Null terminated cluster name.
 	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
-} GCC_PACK;
-
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
+};
 
 ResourceManager::ResourceManager(Sword2Engine *vm) {
 	_vm = vm;
@@ -201,192 +193,6 @@ ResourceManager::~ResourceManager() {
 	free(_resConvTable);
 }
 
-// Quick macro to make swapping in-place easier to write
-
-#define SWAP16(x)	x = SWAP_BYTES_16(x)
-#define SWAP32(x)	x = SWAP_BYTES_32(x)
-
-void convertEndian(byte *file, uint32 len) {
-	int i;
-	StandardHeader *hdr = (StandardHeader *)file;
-
-	file += sizeof(StandardHeader);
-
-	SWAP32(hdr->compSize);
-	SWAP32(hdr->decompSize);
-
-	switch (hdr->fileType) {
-	case ANIMATION_FILE: {
-		AnimHeader *animHead = (AnimHeader *)file;
-
-		SWAP16(animHead->noAnimFrames);
-		SWAP16(animHead->feetStartX);
-		SWAP16(animHead->feetStartY);
-		SWAP16(animHead->feetEndX);
-		SWAP16(animHead->feetEndY);
-		SWAP16(animHead->blend);
-
-		CdtEntry *cdtEntry = (CdtEntry *)(file + sizeof(AnimHeader));
-		for (i = 0; i < animHead->noAnimFrames; i++, cdtEntry++) {
-			SWAP16(cdtEntry->x);
-			SWAP16(cdtEntry->y);
-			SWAP32(cdtEntry->frameOffset);
-
-			FrameHeader *frameHeader = (FrameHeader *)(file + cdtEntry->frameOffset);
-			// Quick trick to prevent us from incorrectly applying the endian
-			// fixes multiple times. This assumes that frames are less than 1 MB
-			// and have height/width less than 4096.
-			if ((frameHeader->compSize & 0xFFF00000) ||
-				(frameHeader->width & 0xF000) ||
-				(frameHeader->height & 0xF000)) {
-				SWAP32(frameHeader->compSize);
-				SWAP16(frameHeader->width);
-				SWAP16(frameHeader->height);
-			}
-		}
-		break;
-	}
-	case SCREEN_FILE: {
-		MultiScreenHeader *mscreenHeader = (MultiScreenHeader *)file;
-
-		SWAP32(mscreenHeader->palette);
-		SWAP32(mscreenHeader->bg_parallax[0]);
-		SWAP32(mscreenHeader->bg_parallax[1]);
-		SWAP32(mscreenHeader->screen);
-		SWAP32(mscreenHeader->fg_parallax[0]);
-		SWAP32(mscreenHeader->fg_parallax[1]);
-		SWAP32(mscreenHeader->layers);
-		SWAP32(mscreenHeader->paletteTable);
-		SWAP32(mscreenHeader->maskOffset);
-
-		// screenHeader
-		ScreenHeader *screenHeader = (ScreenHeader *)(file + mscreenHeader->screen);
-
-		SWAP16(screenHeader->width);
-		SWAP16(screenHeader->height);
-		SWAP16(screenHeader->noLayers);
-
-		// layerHeader
-		LayerHeader *layerHeader = (LayerHeader *)(file + mscreenHeader->layers);
-		for (i = 0; i < screenHeader->noLayers; i++, layerHeader++) {
-			SWAP16(layerHeader->x);
-			SWAP16(layerHeader->y);
-			SWAP16(layerHeader->width);
-			SWAP16(layerHeader->height);
-			SWAP32(layerHeader->maskSize);
-			SWAP32(layerHeader->offset);
-		}
-
-		// backgroundParallaxLayer
-		Parallax *parallax;
-		int offset;
-		offset = mscreenHeader->bg_parallax[0];
-		if (offset > 0) {
-			parallax = (Parallax *)(file + offset);
-			SWAP16(parallax->w);
-			SWAP16(parallax->h);
-		}
-
-		offset = mscreenHeader->bg_parallax[1];
-		if (offset > 0) {
-			parallax = (Parallax *)(file + offset);
-			SWAP16(parallax->w);
-			SWAP16(parallax->h);
-		}
-
-		// backgroundLayer
-		offset = mscreenHeader->screen + sizeof(ScreenHeader);
-		if (offset > 0) {
-			parallax = (Parallax *)(file + offset);
-			SWAP16(parallax->w);
-			SWAP16(parallax->h);
-		}
-
-		// foregroundParallaxLayer
-		offset = mscreenHeader->fg_parallax[0];
-		if (offset > 0) {
-			parallax = (Parallax *)(file + offset);
-			SWAP16(parallax->w);
-			SWAP16(parallax->h);
-		}
-
-		offset = mscreenHeader->fg_parallax[1];
-		if (offset > 0) {
-			parallax = (Parallax *)(file + offset);
-			SWAP16(parallax->w);
-			SWAP16(parallax->h);
-		}
-		break;
-	}
-	case GAME_OBJECT: {
-		ObjectHub *objectHub = (ObjectHub *)file;
-
-		objectHub->type = (int) SWAP_BYTES_32(objectHub->type);
-		SWAP32(objectHub->logic_level);
-
-		for (i = 0; i < TREE_SIZE; i++) {
-			SWAP32(objectHub->logic[i]);
-			SWAP32(objectHub->script_id[i]);
-			SWAP32(objectHub->script_pc[i]);
-		}
-		break;
-	}
-	case WALK_GRID_FILE: {
-		WalkGridHeader *walkGridHeader = (WalkGridHeader *)file;
-
-		SWAP32(walkGridHeader->numBars);
-		SWAP32(walkGridHeader->numNodes);
-
-		BarData *barData = (BarData *)(file + sizeof(WalkGridHeader));
-		for (i = 0; i < walkGridHeader->numBars; i++) {
-			SWAP16(barData->x1);
-			SWAP16(barData->y1);
-			SWAP16(barData->x2);
-			SWAP16(barData->y2);
-			SWAP16(barData->xmin);
-			SWAP16(barData->ymin);
-			SWAP16(barData->xmax);
-			SWAP16(barData->ymax);
-			SWAP16(barData->dx);
-			SWAP16(barData->dy);
-			SWAP32(barData->co);
-			barData++;
-		}
-
-		uint16 *node = (uint16 *)(file + sizeof(WalkGridHeader) + walkGridHeader->numBars * sizeof(BarData));
-		for (i = 0; i < walkGridHeader->numNodes * 2; i++) {
-			SWAP16(*node);
-			node++;
-		}
-
-		break;
-	}
-	case GLOBAL_VAR_FILE:
-		break;
-	case PARALLAX_FILE_null:
-		break;
-	case RUN_LIST: {
-		uint32 *list = (uint32 *)file;
-		while (*list) {
-			SWAP32(*list);
-			list++;
-		}
-		break;
-	}
-	case TEXT_FILE: {
-		TextHeader *textHeader = (TextHeader *)file;
-		SWAP32(textHeader->noOfLines);
-		break;
-	}
-	case SCREEN_MANAGER:
-		break;
-	case MOUSE_FILE:
-		break;
-	case ICON_FILE:
-		break;
-	}
-}
-
 /**
  * Returns the address of a resource. Loads if not in memory. Retains a count.
  */
@@ -440,12 +246,11 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		file->read(_resList[res].ptr, len);
 
 		if (dump) {
-			StandardHeader *header = (StandardHeader *)_resList[res].ptr;
 			char buf[256];
 			const char *tag;
 			Common::File out;
 
-			switch (header->fileType) {
+			switch (fetchType(_resList[res].ptr)) {
 			case ANIMATION_FILE:
 				tag = "anim";
 				break;
@@ -508,10 +313,6 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 		_usedMem += len;
 		checkMemUsage();
-
-#ifdef SCUMM_BIG_ENDIAN
-		convertEndian(_resList[res].ptr, len);
-#endif
 	} else if (_resList[res].refCount == 0)
 		removeFromCacheList(_resList + res);
 
@@ -732,10 +533,8 @@ void ResourceManager::killAll(bool wantInfo) {
 			continue;
 
 		if (_resList[i].ptr) {
-			StandardHeader *header = (StandardHeader *)_resList[i].ptr;
-
 			if (wantInfo)
-				Debug_Printf("Nuked %5d: %s\n", i, header->name);
+				Debug_Printf("Nuked %5d: %s\n", i, fetchName(_resList[i].ptr));
 
 			remove(i);
 			nuked++;
@@ -764,11 +563,9 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 			continue;
 
 		if (_resList[i].ptr) {
-			StandardHeader *header = (StandardHeader *)_resList[i].ptr;
-
-			if (header->fileType == GAME_OBJECT) {
+			if (fetchType(_resList[i].ptr) == GAME_OBJECT) {
 				if (wantInfo)
-					Debug_Printf("Nuked %5d: %s\n", i, header->name);
+					Debug_Printf("Nuked %5d: %s\n", i, fetchName(_resList[i].ptr));
 
 				remove(i);
 				nuked++;
