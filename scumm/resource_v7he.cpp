@@ -1720,6 +1720,11 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 		_numGlobalScripts = 2048;
 	else
 		_numGlobalScripts = 200;
+
+	if (_heversion >= 95) {
+		_shadowPalette = (byte *)calloc(65536, 1);
+	}
+
 }
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
