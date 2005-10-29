@@ -344,12 +344,6 @@ Broken Sword 2
 * Maybe work around script bug which causes the mop to disappear briefly when
   trying to pick it up from the top of the boat at the London docks. (The event
   to hide the mop is sent too early.) See bug #1214168.
-* I'm told BS2 has alignment problems on some architectures. It probably does
-  make the assumption that any address may be dereferenced as a pointer to a
-  packed struct. I have a vague feeling that scripts may be accessing the same
-  memory, too, so it's probably not enough to just replace the functions in
-  protocol.cpp with ones that copy the data to an aligned struct. This could be
-  a lot of work...
 
 SIMON
 =====
