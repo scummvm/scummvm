@@ -781,7 +781,7 @@ void NESCostumeRenderer::setFacing(const Actor *a) {
 	//_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 
-void NESCostumeRenderer::setCostume(int costume) {
+void NESCostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
 }
 
@@ -888,7 +888,7 @@ void ClassicCostumeRenderer::setFacing(const Actor *a) {
 	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 
-void ClassicCostumeRenderer::setCostume(int costume) {
+void ClassicCostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
 }
 
@@ -1120,7 +1120,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	return 0;
 }
 
-void C64CostumeRenderer::setCostume(int costume) {
+void C64CostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
 }
 

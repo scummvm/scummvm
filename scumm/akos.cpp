@@ -324,7 +324,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	}
 }
 
-void AkosRenderer::setCostume(int costume) {
+void AkosRenderer::setCostume(int costume, int shadow) {
 	akos = _vm->getResourceAddress(rtCostume, costume);
 	assert(akos);
 
@@ -336,6 +336,13 @@ void AkosRenderer::setCostume(int costume) {
 	akpl = _vm->findResourceData(MKID('AKPL'), akos);
 	codec = READ_LE_UINT16(&akhd->codec);
 	akct = _vm->findResourceData(MKID('AKCT'), akos);
+
+	if (shadow) {
+		const uint8 *xmapPtr = _vm->getResourceAddress(rtImage, shadow);
+		assert(xmapPtr);
+		xmap = _vm->findResourceData(MKID('XMAP'), xmapPtr);
+		assert(xmap);
+	}
 }
 
 void AkosRenderer::setFacing(const Actor *a) {
@@ -491,7 +498,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				continue;
 
 			if (_vm->_heversion >= 95) {
-				_shadow_mode = ((shadowMask & 0x8000) && _shadow_table) ? 3 : 0;
+				_shadow_mode = ((shadowMask & 0x8000) && xmap) ? 3 : 0;
 			}
 
 			switch (codec) {
@@ -565,7 +572,10 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
 						} else if (_shadow_mode == 3) {
-							if (_vm->_heversion >= 95 || pcolor < 8) {
+							if (_vm->_heversion >= 95) {
+								pcolor = (pcolor << 8) + *dst;
+								pcolor = xmap[pcolor];
+							} else if (pcolor < 8) {
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = _shadow_table[pcolor];
 							}
@@ -1323,7 +1333,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
 	if (_shadow_mode == 3) {
-		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr, _shadow_table);
+		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr, xmap);
 	} else {
 		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr);
 	}

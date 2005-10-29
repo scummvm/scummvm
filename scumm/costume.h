@@ -92,7 +92,7 @@ public:
 
 	void setPalette(byte *palette);
 	void setFacing(const Actor *a);
-	void setCostume(int costume);
+	void setCostume(int costume, int shadow);
 
 protected:
 	byte drawLimb(const Actor *a, int limb);
@@ -114,7 +114,7 @@ public:
 
 	void setPalette(byte *palette);
 	void setFacing(const Actor *a);
-	void setCostume(int costume);
+	void setCostume(int costume, int shadow);
 
 protected:
 	byte drawLimb(const Actor *a, int limb);
@@ -129,7 +129,7 @@ public:
 
 	void setPalette(byte *palette) {}
 	void setFacing(const Actor *a) {}
-	void setCostume(int costume);
+	void setCostume(int costume, int shadow);
 
 protected:
 	byte drawLimb(const Actor *a, int limb);

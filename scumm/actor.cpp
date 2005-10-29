@@ -1106,27 +1106,13 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 
 	bcr->_shadow_mode = _shadowMode;
-	if (_vm->_features & GF_SMALL_HEADER) {
-		bcr->_shadow_table = NULL;
-#ifndef DISABLE_HE
-	} else if (_vm->_heversion >= 95 && _heXmapNum) {
-		byte shadow_table[65536];
-		const uint8 *dataPtr = _vm->getResourceAddress(rtImage, _heXmapNum);
-		assert(dataPtr);
-		const uint8 *xmapPtr = _vm->findResourceData(MKID('XMAP'), dataPtr);
-		assert(xmapPtr);
-		int32 size = _vm->getResourceDataSize(xmapPtr);
-		assert(size == 65536);
-		memcpy(shadow_table, xmapPtr, size);
-		bcr->_shadow_table = shadow_table;
+	if (_vm->_version >= 5 && _vm->_heversion == 0) {
+		bcr->_shadow_table = _vm->_shadowPalette;
 	} else if (_vm->_heversion == 70) {
 		bcr->_shadow_table = _vm->_HEV7ActorPalette;
-#endif
-	} else {
-		bcr->_shadow_table = _vm->_shadowPalette;
 	}
 
-	bcr->setCostume(_costume);
+	bcr->setCostume(_costume, _heXmapNum);
 	bcr->setPalette(_palette);
 	bcr->setFacing(this);
 

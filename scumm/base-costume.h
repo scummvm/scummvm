@@ -151,7 +151,7 @@ public:
 
 	virtual void setPalette(byte *palette) = 0;
 	virtual void setFacing(const Actor *a) = 0;
-	virtual void setCostume(int costume) = 0;
+	virtual void setCostume(int costume, int shadow) = 0;
 
 
 	byte drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf);
