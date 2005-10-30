@@ -83,6 +83,7 @@ struct AnimObject {
 	uint32 active;
 	uint32 refreshFlag;
 	uint32 bkgdChangeFlag;
+	uint32 unk1;
 	uint32 flags;
 	int16 drawY;
 	uint8 *sceneAnimPtr;
@@ -408,6 +409,8 @@ protected:
 	void updateAllObjectShapes();
 	void animRefreshNPC(int character);
 	int findDuplicateItemShape(int shape);
+	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
+	int8 fetchAnimHeight(const uint8 *shape, int8 mult);
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
@@ -516,7 +519,7 @@ protected:
 	AnimObject *_animStates;
 	AnimObject *_charactersAnimState;
 	AnimObject *_animObjects;
-	AnimObject *_unkAnimsBuffer;
+	AnimObject *_animItems;
 	
 	int _curMusicTheme;
 	int _newMusicTheme;

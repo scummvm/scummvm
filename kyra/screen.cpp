@@ -1694,10 +1694,15 @@ void Screen::copyMouseToScreen() {
 	// if disableMouse
 	// 	return
 	
+	restoreMouseRect();
+	
 	int width = _mouseWidth;
 	int height = _mouseHeight;
 	int xpos = _vm->mouseX() - _mouseXOffset;
 	int ypos = _vm->mouseY() - _mouseYOffset;
+	if (xpos < -1 || ypos < -1) {
+		return;
+	}
 	
 	int xposTemp = xpos;
 	int yposTemp = ypos;

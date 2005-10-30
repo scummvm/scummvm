@@ -284,7 +284,7 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_animStates);
 	_charactersAnimState = &_animStates[0];
 	_animObjects =  &_animStates[5];
-	_unkAnimsBuffer = &_animStates[16];
+	_animItems = &_animStates[16];
 	
 	_scriptInterpreter = new ScriptHelper(this);
 	assert(_scriptInterpreter);
@@ -314,7 +314,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
 	
-	_mouseX = _mouseY = 0;
+	_mouseX = _mouseY = -1;
 	_needMouseUpdate = true;
 	
 	_brandonPosX = _brandonPosY = -1;
@@ -432,14 +432,11 @@ void KyraEngine::startup() {
 	}
 	loadCharacterShapes();
 	loadSpecialEffectShapes();
-	loadSpecialEffectShapes();
 	loadItems();
 	loadMainScreen();
 	loadPalette("PALETTE.COL", _screen->_currentPalette);
 	_screen->setScreenPalette(_screen->_currentPalette);
 	// XXX
-	_screen->showMouse();
-	_screen->hideMouse();
 	initAnimStateList();
 	setCharactersInDefaultScene();
 	
@@ -501,7 +498,6 @@ void KyraEngine::delay(uint32 amount) {
 
 void KyraEngine::mainLoop() {
 	debug(9, "KyraEngine::mainLoop()");
-	_currentRoom = 11;
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
@@ -1025,7 +1021,7 @@ void KyraEngine::loadCharacterShapes() {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
-			_shapes[i+4] = 0;
+			_shapes[i+7+4] = 0;
 			continue;
 		}
 		if (shape->imageIndex != curImage) {
@@ -1033,7 +1029,7 @@ void KyraEngine::loadCharacterShapes() {
 			loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
 			curImage = shape->imageIndex;
 		}
-		_shapes[i+4] = _screen->encodeShape(shape->x, shape->y, shape->w, shape->h, 1);
+		_shapes[i+7+4] = _screen->encodeShape(shape->x, shape->y, shape->w, shape->h, 1);
 	}
 	_screen->_curPage = videoPage;
 }
@@ -1848,7 +1844,146 @@ void KyraEngine::initAnimStateList() {
 }
 
 void KyraEngine::initSceneObjectList(int brandonAlive) {
-	warning("STUB: initSceneObjectList");
+	debug(9, "initSceneObjectList(%d)", brandonAlive);
+	for (int i = 0; i < 31; ++i) {
+		_charactersAnimState[i].active = 0;
+	}
+	
+	int startAnimFrame = 0;
+	
+	AnimObject *curAnimState = _charactersAnimState;
+	curAnimState->active = 1;
+	curAnimState->drawY = _currentCharacter->y1;
+	curAnimState->sceneAnimPtr = _shapes[4+_currentCharacter->currentAnimFrame];
+	curAnimState->animFrameNumber = _currentCharacter->currentAnimFrame;
+	startAnimFrame = _currentCharacter->currentAnimFrame-7;
+	int xOffset = _defaultShapeTable[startAnimFrame].xOffset;
+	int yOffset = _defaultShapeTable[startAnimFrame].yOffset;
+	if (_scaleMode) {
+		curAnimState->x1 = _currentCharacter->x1;
+		curAnimState->y1 = _currentCharacter->y1;
+		
+		_brandonScaleX = _scaleTable[_currentCharacter->y1];
+		_brandonScaleY = _scaleTable[_currentCharacter->y1];
+		
+		curAnimState->x1 += (_brandonScaleX * xOffset) >> 8;
+		curAnimState->y1 += (_brandonScaleY * yOffset) >> 8;
+	} else {
+		curAnimState->x1 += _currentCharacter->x1 + xOffset;
+		curAnimState->y1 += _currentCharacter->y1 + yOffset;
+	}
+	curAnimState->x2 = curAnimState->x1;
+	curAnimState->y2 = curAnimState->y1;
+	curAnimState->refreshFlag = 1;
+	curAnimState->bkgdChangeFlag = 1;
+	_objectQueue = 0;
+	_objectQueue = objectAddHead(0, curAnimState);
+	
+	int listAdded = 0;
+	int addedObjects = 1;
+	
+	for (int i = 1; i < 5; ++i) {
+		Character *ch = &_characterList[i];
+		if (ch->sceneId != _currentCharacter->sceneId) {
+			++addedObjects;
+			continue;
+		}
+		
+		curAnimState = &_charactersAnimState[addedObjects];
+		curAnimState->drawY = ch->y1;
+		curAnimState->sceneAnimPtr = _shapes[4+ch->currentAnimFrame];
+		curAnimState->animFrameNumber = ch->currentAnimFrame;
+		startAnimFrame = ch->currentAnimFrame-7;
+		xOffset = _defaultShapeTable[startAnimFrame].xOffset;
+		yOffset = _defaultShapeTable[startAnimFrame].yOffset;
+		if (_scaleMode) {
+			curAnimState->x1 = ch->x1;
+			curAnimState->y1 = ch->y1;
+		
+			_brandonScaleX = _scaleTable[ch->y1];
+			_brandonScaleY = _scaleTable[ch->y1];
+		
+			curAnimState->x1 += (_brandonScaleX * xOffset) >> 8;
+			curAnimState->y1 += (_brandonScaleY * yOffset) >> 8;
+		} else {
+			curAnimState->x1 += ch->x1 + xOffset;
+			curAnimState->y1 += ch->y1 + yOffset;
+		}
+		curAnimState->x2 = curAnimState->x1;
+		curAnimState->y2 = curAnimState->y1;
+		curAnimState->active = 1;
+		curAnimState->refreshFlag = 1;
+		curAnimState->bkgdChangeFlag = 1;
+		
+		if (ch->facing >= 1 && ch->facing <= 3) {
+			curAnimState->flags |= 1;
+		} else if (ch->facing >= 5 && ch->facing <= 7) {
+			curAnimState->flags &= 0xFFFFFFFE;
+		}
+		
+		_objectQueue = objectQueue(_objectQueue, curAnimState);
+		
+		++addedObjects;
+		++listAdded;
+		if (listAdded < 2)
+			i = 5;
+	}
+	
+	for (int i = 0; i < 11; ++i) {
+		curAnimState = &_animObjects[i];
+		curAnimState->active = 0;
+		curAnimState->refreshFlag = 0;
+		curAnimState->bkgdChangeFlag = 0;
+		// XXX this needs the dat loader
+	}
+	
+	for (int i = 0; i < 12; ++i) {
+		curAnimState = &_animItems[i];
+		Room *curRoom = &_roomTable[_currentCharacter->sceneId];
+		byte curItem = curRoom->itemsTable[i];
+		if (curItem != 0xFF) {
+			curAnimState->drawY = curRoom->itemsYPos[i];
+			curAnimState->sceneAnimPtr = _shapes[220+i];
+			curAnimState->animFrameNumber = 0xFFFF;
+			curAnimState->y1 = curRoom->itemsYPos[i];
+			curAnimState->x1 = curRoom->itemsXPos[i];
+			
+			curAnimState->x1 -= (_scaleTable[curAnimState->drawY] >> 1);
+			curAnimState->y1 -= _scaleTable[curAnimState->drawY];
+			
+			curAnimState->x2 = curAnimState->x1;
+			curAnimState->y2 = curAnimState->y1;
+			
+			curAnimState->active = 1;
+			curAnimState->refreshFlag = 1;
+			curAnimState->bkgdChangeFlag = 1;
+			
+			_objectQueue = objectQueue(_objectQueue, curAnimState);
+		} else {
+			curAnimState->active = 0;
+			curAnimState->refreshFlag = 0;
+			curAnimState->bkgdChangeFlag = 0;
+		}
+	}
+	
+	preserveAnyChangedBackgrounds();
+	curAnimState = _charactersAnimState;
+	curAnimState->bkgdChangeFlag = 1;
+	curAnimState->refreshFlag = 1;
+	for (int i = 0; i < 28; ++i) {
+		curAnimState = &_charactersAnimState[i];
+		if (curAnimState->active) {
+			curAnimState->bkgdChangeFlag = 1;
+			curAnimState->refreshFlag = 1;
+		}
+	}
+	restoreAllObjectBackgrounds();
+	preserveAnyChangedBackgrounds();
+	prepDrawAllObjects();
+	_screen->hideMouse();
+	// XXX game_unkScreen
+	_screen->showMouse();
+	copyChangedObjectsForward(0);
 }
 
 #pragma mark -
@@ -2063,15 +2198,17 @@ void KyraEngine::prepDrawAllObjects() {
 			int xpos = curObject->x1;
 			int ypos = curObject->y1;
 			
-			int temp = 0; /*si*/
+			int temp = 0;
 			if (curObject->flags & 0x800) {
 				temp = 7;
+			} else if (!curObject->unk1) {
+				temp = 0;
 			} else {
-				// XXX
+				// XXX temp = sub_13368(curObject->drawY)
 				temp = 0;
 			}
 			
-			// XXX
+			// talking head functionallity
 			if (!true) {
 				// XXX
 			}
@@ -2111,8 +2248,7 @@ void KyraEngine::prepDrawAllObjects() {
 				}
 			} else {
 				if (curObject->index >= 16 && curObject->index <= 27) {
-					// XXX
-					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | 4, temp, (int)_scaleTable[curObject->drawY]);
+					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | 4, temp, (int)_scaleTable[curObject->drawY], (int)_scaleTable[curObject->drawY]);
 				} else {
 					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags, temp);
 				}
@@ -2271,5 +2407,21 @@ AnimObject *KyraEngine::objectQueue(AnimObject *queue, AnimObject *add) {
 		add->nextAnimObject = 0;
 	}
 	return 0;
+}
+
+#pragma mark -
+#pragma mark - Misc stuff
+#pragma mark -
+
+int16 KyraEngine::fetchAnimWidth(const uint8 *shape, int16 mult) {
+	if (_features & GF_TALKIE)
+		shape += 2;
+	return ((int16)READ_LE_UINT16((shape+3))) * mult;
+}
+
+int8 KyraEngine::fetchAnimHeight(const uint8 *shape, int8 mult) {
+	if (_features & GF_TALKIE)
+		shape += 2;
+	return ((int8)*(shape+2)) * mult;
 }
 } // End of namespace Kyra
