@@ -15,15 +15,15 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - ...
 
  Broken Sword 2:
-   - Major rewrite of how game resources are accessed in memory. This should
-     fix alignment issues reported on some platforms.
+   - Major rewrite of how game resources are accessed in memory. This
+     should fix alignment issues reported on some platforms.
 
 0.8.0 (2005-10-30)
  New Games:
    - Added SAGA engine (for the games "I Have No Mouth and I Must Scream"
      and "Inherit the Earth").
-   - Added Gob engine (for the Goblins series). Currently, only the first of
-     the Goblins games is supported.
+   - Added Gob engine (for the Goblins series). Currently, only the
+     first of the Goblins games is supported.
 
  New Ports:
    - Added PlayStation 2 port.
@@ -33,8 +33,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added fixes for OS/2 port.
 
  General:
-   - Reworked cursor handling in SDL backend. Now cursors can have their own
-     palette and scaling. This is used by Humongous Entertainment games now.
+   - Reworked cursor handling in SDL backend. Now cursors can have
+     their own palette and scaling. This is used by Humongous
+     Entertainment games now.
    - Added FluidSynth MIDI driver.
    - Added GUI for the "soundfont" setting. (Currently only used by the
      CoreAudio and FluidSynth MIDI drivers.)
@@ -46,34 +47,36 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added support for Mac Humongous Entertainment titles.
    - Added support for multiple filenames/versions using a single target.
    - Implemented CGA and Hercules render modes in early LEC titles.
-   - Added dialogs which are shown when you modify the talkspeed or music
-     volume using hotkeys.
+   - Added dialogs which are shown when you modify the talkspeed or
+     music volume using hotkeys.
    - Added support for NES version of Maniac Mansion.
    - Added thumbnail support for savegames.
    - Broke compatibility with HE savegame (HE v71 and upwards only).
    - Added possibility to disable building of HE and SCUMM v7 & v8 games
      support.
-   - Fixed the last few known music glitches in Sam & Max. (There are still
-     some - probably - minor missing features though.)
+   - Fixed the last few known music glitches in Sam & Max. (There are
+     still some - probably - minor missing features though.)
    - Added support for Commodore64 version of Zak McKracken
-   - Eliminated all demos targets and platform-specific targets. Config file
-     is autoupdated.
+   - Eliminated all demos targets and platform-specific targets. Config
+     file is autoupdated.
 
  Sword2:
    - Made the resource manager expire resources more intelligently.
-   - Improved performance when playing the game from CD instead of hard disk.
+   - Improved performance when playing the game from CD instead of hard
+     disk.
    - Simplified sound effects handling. Again.
    - Code cleanups and restructuring.
-   - Fixed long-standing bug in decompressing sounds from the speech/music CLU
-     files. It was generating one sample too many, which could be heard as a
-     very slight popping noise at the end of some sounds. Files that have been
-     compressed with older versions of compress_sword2 will, of course, still
-     have the same error. You may want to regenerate them.
+   - Fixed long-standing bug in decompressing sounds from the
+     speech/music CLU files. It was generating one sample too many,
+     which could be heard as a very slight popping noise at the end of
+     some sounds. Files that have been compressed with older versions
+     of compress_sword2 will, of course, still have the same error. You
+     may want to regenerate them.
 
 0.7.1 (2005-03-27)
  General:
-   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we forgot to
-     put it into the NEWS file :-).
+   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we
+     forgot to put it into the NEWS file :-).
    - Less memory-hungry MPEG movie playback for the Broken Sword games.
 
  SCUMM:
