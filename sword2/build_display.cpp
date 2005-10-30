@@ -974,6 +974,8 @@ void Screen::rollCredits() {
 		free(logoData);
 
 	if (!abortCredits) {
+		fadeDown();
+
 		// The music should either have stopped or be about to stop, so
 		// wait for it to really happen.
 
@@ -985,6 +987,8 @@ void Screen::rollCredits() {
 
 	if (_vm->_quit)
 		return;
+
+	waitForFade();
 
 	_vm->_sound->muteFx(false);
 	_vm->_sound->muteSpeech(false);
