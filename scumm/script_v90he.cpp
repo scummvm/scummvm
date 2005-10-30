@@ -2624,7 +2624,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		debug(0, "o90_kernelSetFunctions: case 714: type %d resId %d unk1 %d", args[1], args[2], args[3]);
 		break;
 	case 1492:
-		_sprite->setSpriteFlagDoubleBuffered(args[1], args[2]);
+		// Remote start script function
 		break;
 	case 1969:
 		a = derefActor(args[1], "o90_kernelSetFunctions: 1969");
