@@ -176,8 +176,9 @@ GameDetector::GameDetector() {
 	char savePath[MAXPATHLEN];
 #ifdef UNIX
 	struct stat sb;
-	if (getenv("HOME") != NULL) {
-		snprintf(savePath, MAXPATHLEN, "%s/%s", getenv("HOME"), DEFAULT_SAVE_PATH);
+	const char *home = getenv("HOME");
+	if (home != NULL && strlen(home) < MAXPATHLEN) {
+		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
 		if (stat(savePath, &sb) == -1) {
 			/* create the dir if it does not exist */
 			if (errno == ENOENT) {
@@ -344,7 +345,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 	// handled here, just before the command line gets parsed.
 #if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE)
 	const char *dir = getenv("SCUMMVM_SAVEPATH");
-	if (dir && *dir) {
+	if (dir && *dir && strlen(dir) < 1024) {
 		// TODO: Verify whether the path is valid
 		settings["savepath"] = dir;
 	}
