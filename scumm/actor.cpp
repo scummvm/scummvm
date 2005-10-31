@@ -1338,15 +1338,13 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
+	if ((_version == 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
+		stopTalk();
+	}
 	if (_actorToPrintStrFor == 0xFF) {
-		if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
-			stopTalk();
-		}
 		setTalkingActor(0xFF);
 	} else {
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
-		if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
-			stopTalk();
 		setTalkingActor(a->_number);
 		if (!_string[0].no_talk_anim) {
 			a->runActorTalkScript(a->_talkStartFrame);
@@ -1363,10 +1361,8 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
-	if (_version <= 7)
+	if (_version == 7)
 		VAR(VAR_HAVE_MSG) = 0xFF;
-	if (VAR_CHARCOUNT != 0xFF)
-		VAR(VAR_CHARCOUNT) = 0;
 	CHARSET_1();
 }
 #endif
@@ -1383,7 +1379,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	}
 
 	if (_actorToPrintStrFor == 0xFF) {
-		if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
+		if (!_keepText) {
 			stopTalk();
 		}
 		setTalkingActor(0xFF);
@@ -1397,11 +1393,12 @@ void ScummEngine::actorTalk(const byte *msg) {
 		}
 
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
-		if (!a->isInCurrentRoom() && (_version <= 6)) {
+		if (!a->isInCurrentRoom()) {
 			oldact = 0xFF;
 		} else {
-			if ((_version <= 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG)))
+			if (!_keepText) {
 				stopTalk();
+			}
 			setTalkingActor(a->_number);
 			a->_heTalking = true;
 			if (!_string[0].no_talk_anim) {
@@ -1428,8 +1425,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 0xFF;
-	if (_version <= 7)
-		VAR(VAR_HAVE_MSG) = 0xFF;
+	VAR(VAR_HAVE_MSG) = 0xFF;
 	if (VAR_CHARCOUNT != 0xFF)
 		VAR(VAR_CHARCOUNT) = 0;
 	CHARSET_1();
