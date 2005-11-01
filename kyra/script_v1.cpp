@@ -841,25 +841,80 @@ int KyraEngine::cmd_setCharactersLocation(ScriptState *script) {
 }
 
 int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
-	warning("STUB: cmd_walkCharacterToPoint");
-//	debug(9, "cmd_walkCharacterToPoint(0x%X)", script);
-//	int character = stackPos(0);
-//	int toX = stackPos(1);
-//	int toY = stackPos(2);
-//	_movUnkVar1 = 1;
-//	int findWayReturn = findWay(_characterList[character].x1, _characterList[character].y1, toX, toY, _movFacingTable, 150);
-//	_movUnkVar1 = 0;
-//	if (_lastFindWayRet < findWayReturn) {
-//		_lastFindWayRet = findWayReturn;
-//	}
-//	if (findWayReturn == 0x7D00 || findWayReturn == 0) {
-//		return 0;
-//	}
-//	int *curPos = _movFacingTable;
-//	bool running = true;
-//	while (running) {
-//		// XXX
-//	}
+	debug(9, "cmd_walkCharacterToPoint(0x%X)", script);
+	int character = stackPos(0) - 1;
+	int toX = stackPos(1);
+	int toY = stackPos(2);
+	_pathfinderFlag2 = 1;
+	int findWayReturn = findWay(_characterList[character].x1, _characterList[character].y1, toX, toY, _movFacingTable, 150);
+	_pathfinderFlag2 = 0;
+	if (_lastFindWayRet < findWayReturn) {
+		_lastFindWayRet = findWayReturn;
+	}
+	if (findWayReturn == 0x7D00 || findWayReturn == 0) {
+		return 0;
+	}
+	int *curPos = _movFacingTable;
+	bool running = true;
+	while (running) {
+		bool forceContinue = false;
+		switch (*curPos) {
+			case 0:
+				_characterList[character].facing = 2;
+				break;
+				
+			case 1:
+				_characterList[character].facing = 1;
+				break;
+				
+			case 2:
+				_characterList[character].facing = 0;
+				break;
+				
+			case 3:
+				_characterList[character].facing = 7;
+				break;
+				
+			case 4:
+				_characterList[character].facing = 6;
+				break;
+				
+			case 5:
+				_characterList[character].facing = 5;
+				break;
+				
+			case 6:
+				_characterList[character].facing = 4;
+				break;
+				
+			case 7:
+				_characterList[character].facing = 3;
+				break;
+				
+			case 8:
+				running = 0;
+				break;
+				
+			default:
+				++curPos;
+				forceContinue = true;
+				break;
+		}
+		
+		if (forceContinue || !running) {
+			continue;
+		}
+		
+		setCharacterPosition(character, 0);
+		++curPos;
+		// XXX
+		waitTicks(10);
+		// XXX updateAnimFlags();
+		// XXX updateMouseCursor();
+		// XXX updateGameTimers();
+		updateAllObjectShapes();
+		// XXX processPalette();
+	}
 	return 0;
 }
 

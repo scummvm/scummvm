@@ -411,6 +411,12 @@ protected:
 	int findDuplicateItemShape(int shape);
 	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
 	int8 fetchAnimHeight(const uint8 *shape, int8 mult);
+	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
+	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
+	int getFacingFromPointToPoint(int x, int y, int toX, int toY);
+	void changePosTowardsFacing(int &x, int &y, int facing);
+	bool lineIsPassable(int x, int y);
+	int getMoveTableSize(int *moveTable);
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
@@ -484,7 +490,7 @@ protected:
 	uint16 _walkBlockWest;
 	
 	int32 _scaleMode;
-	uint16 _scaleTable[145];
+	int16 _scaleTable[145];
 	
 	Rect _noDropRects[11];
 	
@@ -511,7 +517,8 @@ protected:
 	uint16 _currentRoom;
 	uint8 *_maskBuffer;
 	
-	int _movUnkVar1;
+	int _pathfinderFlag;
+	int _pathfinderFlag2;
 	int _lastFindWayRet;
 	int *_movFacingTable;
 	
@@ -578,7 +585,9 @@ protected:
 	static const int _xmidiFilesCount;
 	
 	static const int8 _charXPosTable[];
+	static const int8 _addXPosTable[];
 	static const int8 _charYPosTable[];
+	static const int8 _addYPosTable[];
 };
 
 } // End of namespace Kyra

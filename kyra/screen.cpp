@@ -1775,4 +1775,16 @@ uint8 *Screen::getPalette(int num) {
 	return _palettes[num-1];
 }
 
+byte Screen::getShapeFlag1(int x, int y) {
+	debug(9, "getShapeFlag1(%d, %d)", x, y);
+	uint8 color = _shapePages[0][y * SCREEN_W + x];
+	color &= 0x80;
+	color ^= 0x80;
+	
+	if (color & 0x80) {
+		return (color << 1) + 1;
+	}	
+	return (color << 1);
+}
+
 } // End of namespace Kyra

@@ -574,11 +574,19 @@ const char *KyraEngine::_xmidiFiles[] = {
 const int KyraEngine::_xmidiFilesCount = ARRAYSIZE(_xmidiFiles);
 
 const int8 KyraEngine::_charXPosTable[] = {
-	0x00, 0x04, 0x04, 0x04, 0x00, 0xFC, 0xFC, 0xFC
+	0, 4, 4, 4, 0, -4, -4, -4
+};
+
+const int8 KyraEngine::_addXPosTable[] = {
+	4, 4, 0, -4, -4, -4, 0, 4
 };
 
 const int8 KyraEngine::_charYPosTable[] = {
-	0xFE, 0xFE, 0x00, 0x03, 0x02, 0x02, 0x00, 0xFE
+	-2, -2, 0, 3, 2, 2, 0, -2
+};
+
+const int8 KyraEngine::_addYPosTable[] = {
+	0, -2, -2, -2, 0, 2, 2, 2
 };
 
 } // End of namespace Kyra

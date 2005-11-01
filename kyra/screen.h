@@ -125,6 +125,8 @@ public:
 	void setShapePages(int page1, int page2);
 	byte *setMouseCursor(int x, int y, byte *shape);
 	uint8 *getPalette(int num);
+	
+	byte getShapeFlag1(int x, int y);
 
 	int _charWidth;
 	int _charOffset;

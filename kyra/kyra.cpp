@@ -323,9 +323,11 @@ int KyraEngine::init(GameDetector &detector) {
 	memset(_itemTable, 0, sizeof(_itemTable));
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
 	_exitListPtr = 0;
+	_pathfinderFlag = 0;
 	
 	_movFacingTable = new int[150];
 	assert(_movFacingTable);
+	_movFacingTable[0] = 8;
 
 	return 0;
 }
@@ -1010,7 +1012,7 @@ void KyraEngine::loadMouseShapes() {
 	_shapes[364] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
 	_screen->setMouseCursor(1, 1, 0);
 	_screen->setMouseCursor(1, 1, _shapes[4]);
-	_screen->setShapePages(3, 5);
+	_screen->setShapePages(5, 3);
 }
 
 void KyraEngine::loadCharacterShapes() {
@@ -1165,7 +1167,7 @@ void KyraEngine::setCharactersInDefaultScene() {
 
 void KyraEngine::setCharacterDefaultFrame(int character) {
 	static uint16 initFrameTable[] = {
-		0x07, 0x29, 0x4D, 0x00, 0x00
+		7, 41, 77, 0, 0
 	};
 	assert(character < ARRAYSIZE(initFrameTable));
 	Character *edit = &_characterList[character];
@@ -1176,12 +1178,11 @@ void KyraEngine::setCharacterDefaultFrame(int character) {
 }
 
 void KyraEngine::setCharactersPositions(int character) {
-	static int16 initXPosTable[] = {
+	static uint16 initXPosTable[] = {
 		0x3200, 0x0024, 0x2230, 0x2F00, 0x0020, 0x002B,
-		0x00CA, 0x00F0, 0x0082, 0x00A2, 0x0042, 0x6767,
-		0x5A60
+		0x00CA, 0x00F0, 0x0082, 0x00A2, 0x0042
 	};
-	static int8 initYPosTable[] = {
+	static uint8 initYPosTable[] = {
 		0x00, 0xA2, 0x00, 0x42, 0x00,
 		0x67, 0x67, 0x60, 0x5A, 0x71,
 		0x76
@@ -1194,9 +1195,9 @@ void KyraEngine::setCharactersPositions(int character) {
 
 void KyraEngine::setCharactersHeight() {
 	static int8 initHeightTable[] = {
-		0x30, 0x28, 0x30, 0x2F, 0x38,
-		0x2C, 0x2A, 0x2F, 0x26, 0x23,
-		0x28
+		48, 40, 48, 47, 56,
+		44, 42, 47, 38, 35,
+		40
 	};
 	for (int i = 0; i < 11; ++i) {
 		_characterList[i].height = initHeightTable[i];
@@ -1218,6 +1219,7 @@ int KyraEngine::resetGameFlag(int flag) {
 }
 
 void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive) {
+	debug(9, "enterNewScene(%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, brandonAlive);
 	int unkVar1 = 1;
 	_screen->hideMouse();
 	if (_currentCharacter->sceneId == 7 && sceneId == 24) {
@@ -1413,18 +1415,14 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 
 int KyraEngine::setCharacterPosition(int character, uint8 *unk1) {
 	debug(9, "setCharacterPosition(%d)", character);
-	static bool firstRun = true;
 	if (character == 0) {
-		if (firstRun) {
-			firstRun = false;
-			_currentCharacter->x1 += _charXPosTable[character];
-			_currentCharacter->y1 += _charYPosTable[character];
-			setCharacterPositionHelper(0, unk1);
-			return 1;
-		}
+		_currentCharacter->x1 += _charXPosTable[_currentCharacter->facing];
+		_currentCharacter->y1 += _charYPosTable[_currentCharacter->facing];
+		setCharacterPositionHelper(0, unk1);
+		return 1;
 	} else {
-		_characterList[character].x1 += _charXPosTable[character];
-		_characterList[character].y1 += _charYPosTable[character];
+		_characterList[character].x1 += _charXPosTable[_currentCharacter->facing];
+		_characterList[character].y1 += _charYPosTable[_currentCharacter->facing];
 		if (_characterList[character].sceneId == _currentCharacter->sceneId) {
 			setCharacterPositionHelper(character, 0);
 		}
@@ -1433,14 +1431,17 @@ int KyraEngine::setCharacterPosition(int character, uint8 *unk1) {
 }
 
 void KyraEngine::setCharacterPositionHelper(int character, uint8 *unk1) {
+	debug(9, "setCharacterPositionHelper(%d, 0x%X)", character, unk1);
 	Character *ch = &_characterList[character];
+	++ch->currentAnimFrame;
 	int facing = ch->facing;
 	if (unk1) {
+		warning("unk1 handling is NOT implemented");
 		// XXX
 	}
 	
-	static uint8 facingIsZero[8];
-	static uint8 facingIsFour[8];
+	static uint8 facingIsZero[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	static uint8 facingIsFour[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	
 	if (facing == 0) {
 		++facingIsZero[character];
@@ -2117,6 +2118,7 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 #pragma mark -
 
 void KyraEngine::restoreAllObjectBackgrounds() {
+	debug(9, "restoreAllObjectBackground()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
 	
@@ -2134,6 +2136,7 @@ void KyraEngine::restoreAllObjectBackgrounds() {
 }
 
 void KyraEngine::preserveAnyChangedBackgrounds() {
+	debug(9, "preserveAnyChangedBackgrounds()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
 	
@@ -2150,6 +2153,7 @@ void KyraEngine::preserveAnyChangedBackgrounds() {
 }
 
 void KyraEngine::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
+	debug(9, "preserveOrRestoreBackground(0x%X, restore)", obj, restore);
 	int x, y, width = obj->width, height = obj->height;
 	
 	if (restore) {
@@ -2184,6 +2188,7 @@ void KyraEngine::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
 }
 
 void KyraEngine::prepDrawAllObjects() {
+	debug(9, "prepDrawAllObjects()");
 	AnimObject *curObject = _objectQueue;
 	int drawPage = 2;
 	int flagUnk1 = 0, flagUnk2 = 0, flagUnk3 = 0;
@@ -2259,6 +2264,7 @@ void KyraEngine::prepDrawAllObjects() {
 }
 
 void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
+	debug(9, "copyChangedObjectsForward(%d)", refreshFlag);
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
 		if (curObject->active) {
@@ -2269,7 +2275,7 @@ void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 				width = curObject->width;
 				height = curObject->height;
 				
-				_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, 2, 0);
+				_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, 2, 0, Screen::CR_CLIPPED);
 				curObject->refreshFlag = 0;
 			}
 		}
@@ -2278,6 +2284,7 @@ void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 }
 
 void KyraEngine::updateAllObjectShapes() {
+	debug(9, "updateAllObjectShapes()");
 	restoreAllObjectBackgrounds();
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
@@ -2287,6 +2294,7 @@ void KyraEngine::updateAllObjectShapes() {
 }
 
 void KyraEngine::animRefreshNPC(int character) {
+	debug(9, "animRefreshNPC(%d)", character);
 	AnimObject *animObj = &_charactersAnimState[character];
 	Character *ch = &_characterList[character];
 	
@@ -2423,5 +2431,366 @@ int8 KyraEngine::fetchAnimHeight(const uint8 *shape, int8 mult) {
 	if (_features & GF_TALKIE)
 		shape += 2;
 	return ((int8)*(shape+2)) * mult;
+}
+
+#pragma mark -
+#pragma mark - Pathfinder
+#pragma mark -
+
+int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
+	debug(9, "findWay(%d, %d, %d, %d, 0x%X, %d)", x, y, toX, toY, moveTable, moveTableSize);
+	x &= 0xFFFC; toX &= 0xFFFC;
+	y &= 0xFFFE; toY &= 0xFFFE;
+	
+	if (x == toY && y == toY) {
+		moveTable[0] = 8;
+		return 0;
+	}
+	
+	int curX = x;
+	int curY = y;
+	int lastUsedEntry = 0;
+	int tempValue = 0;
+	int *pathTable1 = new int[0x7D0];
+	int *pathTable2 = new int[0x7D0];
+	
+	while (true) {
+		int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
+		changePosTowardsFacing(curX, curY, newFacing);
+		
+		if (curX == toX && curY == toY) {
+			if (!lineIsPassable(curX, curY))
+				break;
+			moveTable[lastUsedEntry++] = newFacing;
+			x = curX;
+			y = curY;
+			break;
+		}		
+		
+		if (lineIsPassable(curX, curY)) {
+			if (lastUsedEntry == moveTableSize) {
+				delete [] pathTable1;
+				delete [] pathTable2;
+				return 0x7D00;
+			}
+			moveTable[lastUsedEntry++] = newFacing;
+			x = curX;
+			y = curY;
+			continue;
+		}
+		
+		int temp = 0;
+		while (true) {
+			newFacing = getFacingFromPointToPoint(curX, curY, toX, toY);
+			changePosTowardsFacing(curX, curY, newFacing);
+			
+			if (!lineIsPassable(curX, curY)) {
+				if (curX != toX || curY != toY)
+					continue;
+			}
+			
+			if (curX == toX && curY == toY) {
+				if (!lineIsPassable(curX, curY)) {
+					tempValue = 0;
+					temp = 0;
+					break;
+				}
+			}
+			
+			assert(pathTable1 && pathTable1);
+			temp = findSubPath(x, y, curX, curY, pathTable1, 1, 0x7D0);
+			tempValue = findSubPath(x, y, curX, curY, pathTable2, 0, 0x7D0);
+			if (curX == toX && curY == toY) {
+				if (temp == 0x7D00 && tempValue == 0x7D00) {
+					delete [] pathTable1;
+					delete [] pathTable2;
+					return 0x7D00;
+				}
+			}
+			
+			if (temp != 0x7D00 || tempValue != 0x7D00)
+				break;
+		}
+		
+		if (temp < tempValue) {
+			if (lastUsedEntry + temp > moveTableSize) {
+				delete [] pathTable1;
+				delete [] pathTable2;
+				return 0x7D00;
+			}
+			memcpy(&moveTable[lastUsedEntry], pathTable1, temp);
+			lastUsedEntry += temp;
+		} else {
+			if (lastUsedEntry + tempValue > moveTableSize) {
+				delete [] pathTable1;
+				delete [] pathTable2;
+				debug("[2] oh no");
+				return 0x7D00;
+			}
+			memcpy(&moveTable[lastUsedEntry], pathTable2, temp);
+			debug("[2] temp: %d", temp);
+			lastUsedEntry += temp;
+		}
+		x = curX;
+		y = curY;
+		if (curX == toX && curY == toY) {
+			break;
+		}
+	}
+	delete [] pathTable1;
+	delete [] pathTable2;
+	moveTable[lastUsedEntry] = 8;	
+	return getMoveTableSize(moveTable);
+}
+
+int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
+	debug(9, "findSubPath(%d, %d, %d, %d, 0x%X, %d, %d)", x, y, toX, toY, moveTable, start, end);
+	static uint16 unkTable[] = { 8, 5 };
+	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
+	static const int8 facingTable2[] = { -1,  0, -1,  2, -1,  4, -1,  6, -1,  2, -1,  4, -1,  6, -1,  0 };
+	static const int8 facingTable3[] = {  2,  4,  4,  6,  6,  0,  0,  2,  6,  6,  0,  0,  2,  2,  4,  4 };
+	static const int8 addPosTable1[] = { -1,  0, -1,  4, -1,  0, -1, -4, -1, -4, -1,  0, -1,  4, -1,  0 };
+	static const int8 addPosTable2[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
+	++unkTable[start];
+	
+	while (_screen->getPalette(0)[unkTable[start]] != 0x0F) {
+		++unkTable[start];
+	}
+	
+	int xpos1 = x, xpos2 = x;
+	int ypos1 = y, ypos2 = y;
+	int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
+	int position = 0;
+	
+	while (position != end) {
+		changePosTowardsFacing(xpos1, ypos1, facingTable1[start<<3 + newFacing]);
+		while (true) {
+			if (!lineIsPassable(xpos1, ypos1)) {
+				if (facingTable1[start<<3 + newFacing] == newFacing) {
+					return 0x7D00;
+				}
+				newFacing = facingTable1[start<<3 + newFacing];
+				xpos1 = x;
+				ypos1 = x;
+				continue;
+			}
+			break;
+		}
+		if (newFacing & 1) {
+			int temp = xpos1 + addPosTable1[newFacing + start * 8];
+			if (toX == temp) {
+				temp = ypos1 + addPosTable2[newFacing + start * 8];
+				if (toY == temp) {
+					moveTable[position++] = facingTable2[newFacing + start * 8];
+					return position;
+				}
+			}
+		}
+		moveTable[position++] = newFacing;
+		x = xpos1;
+		y = ypos1;
+		if (x == toX && y == toY) {
+			return position;
+		}
+		
+		if (xpos1 == xpos2 && ypos1 == ypos2) {
+			break;
+		}
+		
+		newFacing = facingTable3[start<<3 + newFacing];
+	}
+	return 0x7D00;
+}
+
+int KyraEngine::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
+	debug(9, "getFacingFromPointToPoint(%d, %d, %d, %d)", x, y, toX, toY);
+	static const int facingTable[] = {
+		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
+	};
+	
+	int facingEntry = 0;
+	int ydiff = y - toY;
+	if (ydiff < 0) {
+		++facingEntry;
+		ydiff = -ydiff;
+	}	
+	facingEntry <<= 1;
+	
+	int xdiff = toX - x;
+	if (xdiff < 0) {
+		++facingEntry;
+		xdiff = -xdiff;
+	}
+	
+	if (xdiff >= ydiff) {
+		int temp = xdiff;
+		ydiff = xdiff;
+		xdiff = temp;
+		
+		facingEntry <<= 1;
+	} else {
+		facingEntry <<= 1;
+		facingEntry += 1;
+	}
+	int temp = (ydiff + 1) >> 1;
+	
+	if (xdiff < temp) {
+		facingEntry <<= 1;
+		facingEntry += 1;
+	} else {
+		facingEntry <<= 1;
+	}
+	assert(facingEntry < ARRAYSIZE(facingTable));
+	return facingTable[facingEntry];
+}
+
+void KyraEngine::changePosTowardsFacing(int &x, int &y, int facing) {
+	debug(9, "changePosTowardsFacing(%d, %d, %d)", x, y, facing);
+	x += _addXPosTable[facing];
+	y += _addYPosTable[facing];
+}
+
+bool KyraEngine::lineIsPassable(int x, int y) {
+	debug(9, "lineIsPassable(%d, %d)", x, y);
+	if (queryGameFlag(0xEF)) {
+		if (_currentCharacter->sceneId == 5)
+			return true;
+	}
+	
+	if (_pathfinderFlag & 2) {
+		if (x >= 312)
+			return false;
+	}
+	
+	if (_pathfinderFlag & 4) {
+		if (y >= 136)
+			return false;
+	}
+	
+	if (_pathfinderFlag & 8) {
+		if (x < 8)
+			return false;
+	}
+	
+	if (_pathfinderFlag2) {
+		if (x <= 8 || x >= 312)
+			return true;
+		if (y < _northExitHeight || y >= 135)
+			return true;
+	}
+	
+	if (y > 137) {
+		return false;
+	}
+	
+	int ypos = 8;
+	if (_scaleMode) {
+		int scaling = (_scaleTable[y] >> 5) + 1;
+		if (8 < scaling)
+			ypos = scaling;
+	}
+	
+	x -= (ypos >> 1);
+	if (y < 0)
+		y = 0;
+	
+	int xpos = x;
+	int xtemp = xpos + ypos - 1;
+	if (xpos < 0)
+		xpos = 0;
+		
+	if (xtemp > 319)
+		xtemp = 319;
+		
+	for (; xpos < xtemp; ++xpos) {
+		if (!(_screen->getShapeFlag1(xpos, y) & 0xFF))
+			return false;
+	}
+	
+	return true;
+}
+
+int KyraEngine::getMoveTableSize(int *moveTable) {
+	int retValue = 0;
+	if (moveTable[0] == 8)
+		return 0;
+	
+	static const int facingTable[] = {
+		4, 5, 6, 7, 0, 1, 2, 3
+	};
+	static const int unkTable[] = {
+		-1, -1,  1,  2, -1,  6,  7, -1,
+		-1, -1, -1, -1,  2, -1,  0, -1,
+		 1, -1, -1, -1,  3,  4, -1,  0,
+		 2, -1, -1, -1, -1, -1,  4, -1,
+		-1,  2,  3, -1, -1, -1,  5,  6,
+		 6, -1,  4, -1, -1, -1, -1, -1,
+		 7,  0, -1,  4,  5, -1, -1, -1,
+		-1, -1,  0, -1,  6, -1, -1, -1
+	};
+	
+	int *oldPosition = moveTable;
+	int *tempPosition = moveTable;
+	int *curPosition = &moveTable[1];
+
+	while (*curPosition != 8) {
+		if (*curPosition == facingTable[*oldPosition]) {
+			retValue -= 2;
+			*oldPosition = 9;
+			*curPosition = 9;
+			
+			while (tempPosition != moveTable) {
+				--tempPosition;
+				if (*tempPosition != 9)
+					break;
+			}
+			
+			if (tempPosition == moveTable && *tempPosition == 9) {
+				while (*tempPosition == 8 || *tempPosition != 9) {
+					++tempPosition;
+				}
+				if (*tempPosition == 8) {
+					return 0;
+				}
+			}
+			
+			while (*curPosition == 8 || *curPosition != 9) {
+				++curPosition;
+			}
+		}
+		
+		if (unkTable[*curPosition+(*oldPosition*8)] != -1) {
+			--retValue;
+			*oldPosition = unkTable[*curPosition+(*oldPosition*8)];
+			*curPosition = 9;
+			
+			if (tempPosition != oldPosition) {
+				curPosition = oldPosition;
+				oldPosition = tempPosition;
+				if (tempPosition != moveTable) {
+					--tempPosition;
+					while (*tempPosition == 9) {
+						++tempPosition;
+					}
+				}
+			} else {
+				++curPosition;
+				while (*curPosition == 9) {
+					++curPosition;
+				}
+			}
+			continue;
+		}
+		
+		tempPosition = oldPosition;
+		oldPosition = curPosition;
+		++retValue;
+		++curPosition;
+		while (*curPosition == 9) {
+			++curPosition;
+		}
+	}
+	
+	return retValue;
 }
 } // End of namespace Kyra
