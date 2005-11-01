@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	gob/driver_vga.o \
 	gob/game.o \
 	gob/global.o \
+	gob/gob.o \
 	gob/goblin.o \
 	gob/init.o \
 	gob/inter.o \
@@ -17,11 +18,10 @@ MODULE_OBJS := \
 	gob/palanim.o \
 	gob/parse.o \
 	gob/scenery.o \
-	gob/util.o \
-	gob/video.o \
 	gob/sound.o \
 	gob/timer.o \
-	gob/gob.o
+	gob/util.o \
+	gob/video.o
 
 MODULE_DIRS += \
 	gob

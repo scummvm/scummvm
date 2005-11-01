@@ -58,9 +58,9 @@ static const GobGameSettings gob_games[] = {
 	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, "a5e232fcd02733c7dffff107d22d36eb"},
 
 	// CD 1.000 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1, "037db48ebce94bdfe42e2c9510da9211"},
+	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, "037db48ebce94bdfe42e2c9510da9211"},
 	// CD 1.02 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1, "45f9c1162dd7040fd05fd013ccc176e2"},
+	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, "45f9c1162dd7040fd05fd013ccc176e2"},
 
 	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "d9f8736b7dc0ea891cd06592a72e8a72"},
 	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "69f9ae85252271e7dfa62883e581e5e9"},
@@ -243,6 +243,10 @@ int GobEngine::init(GameDetector &detector) {
 		initCommonGFX(detector);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
+
+	// On some systems it's not safe to run CD audio games from the CD.
+	if (_features & GF_CD) 
+		checkCD();
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
