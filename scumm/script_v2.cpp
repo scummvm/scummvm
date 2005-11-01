@@ -1053,21 +1053,29 @@ void ScummEngine_v2::o2_drawSentence() {
 	else
 		_string[2].color = 13;
 
+	byte string[80];
 	char *ptr = sentence;
-	int n = 0;
+	int i = 0, len = 0;
 
-	// Maximum length: 40 printable characters
+	// Maximum length of printable characters
+	int maxChars = (_platform == Common::kPlatformNES) ? 60: 40;
 	while (*ptr) {
 		if (*ptr != '@')
-			n++;
-		if (n > 40) {
-			*ptr = 0;
+			len++;
+		if (len > maxChars) {
 			break;
 		}
-		ptr++;
-	}
 
-	if (_platform == Common::kPlatformNES) {	// TODO - get multiline sentences working
+		string[i++] = *ptr++;
+
+		if (_platform == Common::kPlatformNES && len == 30) {
+			string[i++] = 0xFF;
+			string[i++] = 8;
+		}
+	}
+	string[i] = 0;
+
+	if (_platform == Common::kPlatformNES) {
 		sentenceline.top = virtscr[kVerbVirtScreen].topline;
 		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 16;
 		sentenceline.left = 16;
@@ -1080,7 +1088,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	}
 	restoreBG(sentenceline);
 
-	drawString(2, (byte*)sentence);
+	drawString(2, (byte*)string);
 }
 
 void ScummEngine_v2::o2_ifClassOfIs() {
