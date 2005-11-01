@@ -1081,6 +1081,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	memset(virtscr, 0, sizeof(virtscr));
 	memset(&camera, 0, sizeof(CameraData));
 	memset(_colorCycle, 0, sizeof(_colorCycle));
+	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
 	_ENCD_offs = 0;
 	_EXCD_offs = 0;
 	_CLUT_offs = 0;
