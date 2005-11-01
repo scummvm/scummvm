@@ -306,6 +306,7 @@ void ScummEngine::initCycl(const byte *ptr) {
 			cycl->end = end;
 		}
 	} else {
+		memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
 		while ((j = *ptr++) != 0) {
 			if (j < 1 || j > 16) {
 				error("Invalid color cycle index %d", j);
@@ -320,6 +321,10 @@ void ScummEngine::initCycl(const byte *ptr) {
 			ptr += 2;
 			cycl->start = *ptr++;
 			cycl->end = *ptr++;
+
+			for (int i = cycl->start; i <= cycl->end; ++i) {
+				_colorUsedByCycle[i] = 1;
+			}
 		}
 	}
 }
@@ -787,7 +792,10 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	g &= ~3;
 	b &= ~3;
 
-	for (i = startColor; i < 256; i++, pal += 3) {
+	for (i = startColor; i < 255; i++, pal += 3) {
+		if (_version == 7 && _colorUsedByCycle[i])
+			continue;
+
 		ar = pal[0] & ~3;
 		ag = pal[1] & ~3;
 		ab = pal[2] & ~3;

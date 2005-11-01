@@ -759,6 +759,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(ScummEngine, _mouse.x, sleInt16, VER(20)),
 		MKLINE(ScummEngine, _mouse.y, sleInt16, VER(20)),
 
+		MKARRAY(ScummEngine, _colorUsedByCycle[0], sleByte, 256, VER(60)),
 		MKLINE(ScummEngine, _doEffect, sleByte, VER(8)),
 		MKLINE(ScummEngine, _switchRoomEffect, sleByte, VER(8)),
 		MKLINE(ScummEngine, _newEffect, sleByte, VER(8)),
@@ -1094,6 +1095,10 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
+	// _colorUsedByCycle was not saved before V60
+	if (s->isLoading() && s->getVersion() < VER(60)) {
+		memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
+	}
 
 	//
 	// Save/load more global object state

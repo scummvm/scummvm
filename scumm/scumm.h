@@ -916,6 +916,7 @@ public:
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
+	uint8 _colorUsedByCycle[256];
 
 	uint32 _ENCD_offs, _EXCD_offs;
 	uint32 _CLUT_offs, _EPAL_offs;
