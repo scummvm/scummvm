@@ -1834,8 +1834,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		fillWizPixel(params);
 		break;
 	case 12:
-		// Used in PuttsFunShop/SamsFunShop
-		// TODO: Flood Fill
+		fillWizFlood(params);
 		break;
 	case 13:
 		// Used in PuttsFunShop/SamsFunShop
