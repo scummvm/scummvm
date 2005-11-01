@@ -111,18 +111,14 @@ void Input::delay(uint amount) {
 
 			case OSystem::EVENT_LBUTTONDOWN:
 				_mouseButton |= MOUSE_LBUTTON;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;
-#endif
 				break;
 
 			case OSystem::EVENT_RBUTTONDOWN:
 				_mouseButton |= MOUSE_RBUTTON;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
 				_mouse_x = event.mouse.x;
 				_mouse_y = event.mouse.y;
-#endif
 				break;
 
 			case OSystem::EVENT_QUIT:
