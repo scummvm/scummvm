@@ -25,6 +25,13 @@
 
 #include "mt32emu.h"
 
+#ifdef MACOSX
+// Older versions of Mac OS X didn't supply a powf function. To ensure
+// binary compatibiity, we force using pow instead of powf (the only
+// potential drawback is that it might be a little bit slower).
+#define powf pow
+#endif
+
 #define FIXEDPOINT_MAKE(x, point) ((Bit32u)((1 << point) * x))
 
 namespace MT32Emu {
@@ -164,7 +171,7 @@ void Tables::initEnvelopes(float samplerate) {
 		if (elf == 0) {
 			envDeltaMaxTime[lf] = 63;
 		} else {
-			float cap = 11.0f * logf(elf) + 64;
+			float cap = 11.0f * log(elf) + 64;
 			if (cap > 100.0f) {
 				cap = 100.0f;
 			}
@@ -328,7 +335,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 				tlf = (float)lf - padjtable[depti];
 				if (tlf < 0)
 					tlf = 0;
-				lfp = expf(0.713619942f * tlf) / 407.4945111f;
+				lfp = exp(0.713619942f * tlf) / 407.4945111f;
 
 				if (depat < 50)
 					finalval = 4096.0f * powf(2, -lfp);
@@ -372,7 +379,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 				/*
 				amplog = powf(1.431817011f, (float)lf) / FLOAT_PI;
 				dval = ((128.0f - (float)distval) / 128.0f);
-				amplog = expf(amplog);
+				amplog = exp(amplog);
 				dval = powf(amplog, dval) / amplog;
 				tvaBiasMult[lf][distval] = (int)(dval * 256.0);
 				*/
@@ -403,7 +410,7 @@ void Tables::initMT32ConstantTables(Synth *synth) {
 				//amplog = pow(1.431817011, filval) / FLOAT_PI;
 				amplog = powf(1.531817011f, filval) / FLOAT_PI;
 				dval = (128.0f - (float)distval) / 128.0f;
-				amplog = expf(amplog);
+				amplog = exp(amplog);
 				dval = powf(amplog,dval)/amplog;
 				if (lf < 8) {
 					tvfBiasMult[lf][distval] = (int)(dval * 256.0f);
@@ -549,8 +556,8 @@ static void initNFiltTable(NoteLookup *noteLookup, float freq, float rate) {
 		for (int tf = 0;tf <= 100; tf++) {
 			float tfadd = (float)tf;
 
-			//float freqsum = expf((cfmult + tfadd) / 30.0f) / 4.0f;
-			//float freqsum = 0.15f * expf(0.45f * ((cfmult + tfadd) / 10.0f));
+			//float freqsum = exp((cfmult + tfadd) / 30.0f) / 4.0f;
+			//float freqsum = 0.15f * exp(0.45f * ((cfmult + tfadd) / 10.0f));
 
 			float freqsum = powf(2.0f, ((cfmult + tfadd) - 40.0f) / 16.0f);
 
