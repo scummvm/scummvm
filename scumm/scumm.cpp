@@ -388,6 +388,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"746e88c172a5b7a1ae89ac0ee3ee681a", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated Russian)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"507bb360688dc4180fdf0d7597352a69", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated Swedish)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"cf8ef3a1fb483c5c4b1c584d1167b2c4", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated German)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"0855496dde35356b1a9691e22ba84cdc", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -814,6 +815,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "TimeDemo", kGenMac },
 	{ "putttime", "TEMPDEMO", kGenPC },
 	{ "putttime", "Tempdemo", kGenMac }, // FR Mac demo
+	{ "putttime", "toffzeit", kGenPC }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
 	{ "puttzoo", "Puttzoo Demo", kGenMac },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "puttzoo", "zoodemo", kGenPC },
