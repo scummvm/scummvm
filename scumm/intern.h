@@ -516,6 +516,13 @@ protected:
 
 	int _smushFrameRate;
 
+	struct TextObject {
+		int16 xpos, ypos;
+		byte color;
+		byte charset;
+		byte text[256];		
+	};
+
 	/** BlastObjects to draw */
 	struct BlastObject {
 		uint16 number;
@@ -528,13 +535,9 @@ protected:
 	int _blastObjectQueuePos;
 	BlastObject _blastObjectQueue[128];
 
-	struct BlastText {
-		int16 xpos, ypos;
+	struct BlastText : TextObject {
 		Common::Rect rect;
-		byte color;
-		byte charset;
 		bool center;
-		byte text[256];
 	};
 
 	int _blastTextQueuePos;
@@ -1004,6 +1007,8 @@ protected:
 	int findObject(int x, int y, int num, int *args);
 	int getSoundResourceSize(int id);
 
+	virtual bool handleNextCharsetCode(Actor *a, int *c);
+
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
 	void o72_getScriptString();
@@ -1337,6 +1342,17 @@ public:
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
+
+	struct SubtitleText : TextObject {
+		bool actorSpeechMsg;
+	};
+
+	int _subtitleQueuePos;
+	SubtitleText _subtitleQueue[20];
+
+	void processSubtitleQueue();
+	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
+	void clearSubtitleQueue();
 
 protected:
 	virtual void setupScummVars();

@@ -730,6 +730,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKLINE(ScummEngine, _charsetBufPos, sleInt16, VER(10)),
 
 		MKLINE(ScummEngine, _haveMsg, sleByte, VER(8)),
+		MKLINE(ScummEngine, _haveActorSpeechMsg, sleByte, VER(61)),
 		MKLINE(ScummEngine, _useTalkAnims, sleByte, VER(8)),
 
 		MKLINE(ScummEngine, _talkDelay, sleInt16, VER(8)),
@@ -950,6 +951,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (s->isLoading() && s->getVersion() >= VER(20)) {
 		updateCursor();
 		_system->warpMouse(_mouse.x, _mouse.y);
+	}
+
+	// Before V61, we re-used the _haveMsg flag to handle "alternative" speech
+	// sound files (see charset code 10).
+	if (s->isLoading() && s->getVersion() < VER(61)) {
+		_haveActorSpeechMsg = (_haveMsg != 0xFE);
+		_haveMsg = 0xFF;
 	}
 
 	//
@@ -1190,8 +1198,25 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 void ScummEngine_v7::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
-	assert(_imuseDigital);
+	const SaveLoadEntry subtitleQueueEntries[] = {
+		MKARRAY(SubtitleText, text[0], sleByte, 256, VER(61)),
+		MKLINE(SubtitleText, charset, sleByte, VER(61)),
+		MKLINE(SubtitleText, color, sleByte, VER(61)),
+		MKLINE(SubtitleText, xpos, sleInt16, VER(61)),
+		MKLINE(SubtitleText, ypos, sleInt16, VER(61)),
+		MKLINE(SubtitleText, actorSpeechMsg, sleByte, VER(61)),
+		MKEND()
+	};
+
+	const SaveLoadEntry V7Entries[] = {
+		MKLINE(ScummEngine_v7, _subtitleQueuePos, sleInt32, VER(61)),
+		MKEND()
+	};
+
 	_imuseDigital->saveOrLoad(s);
+
+	s->saveLoadArrayOf(_subtitleQueue, ARRAYSIZE(_subtitleQueue), sizeof(_subtitleQueue[0]), subtitleQueueEntries);
+	s->saveLoadEntries(this, V7Entries);
 }
 #endif
 

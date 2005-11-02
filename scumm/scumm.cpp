@@ -1128,6 +1128,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_palDirtyMin = 0;
 	_palDirtyMax = 0;
 	_haveMsg = 0;
+	_haveActorSpeechMsg = false;
 	_useTalkAnims = false;
 	_defaultTalkDelay = 0;
 	_midiDriver = MD_NULL;
@@ -1585,6 +1586,7 @@ ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const Scum
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
+	clearSubtitleQueue();
 }
 
 ScummEngine_v7::~ScummEngine_v7() {
@@ -1939,6 +1941,7 @@ void ScummEngine::scummInit() {
 
 	_charsetBufPos = 0;
 	_haveMsg = 0;
+	_haveActorSpeechMsg = false;
 
 	_varwatch = -1;
 	_screenStartStrip = 0;
@@ -2296,7 +2299,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 	}
 	if (_version <= 7)
-		VAR(VAR_HAVE_MSG) = (_haveMsg == 0xFE) ? 0xFF : _haveMsg;
+		VAR(VAR_HAVE_MSG) = _haveMsg;
 
 	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
 		// TODO

@@ -1360,10 +1360,13 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	}
 	_charsetBufPos = 0;
 	_talkDelay = 0;
-	_haveMsg = 0xFF;
+	_haveMsg = 1;
 	if (_version == 7)
 		VAR(VAR_HAVE_MSG) = 0xFF;
+	_haveActorSpeechMsg = true;
 	CHARSET_1();
+	if (_version == 8)
+		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
 }
 #endif
 
@@ -1428,6 +1431,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	VAR(VAR_HAVE_MSG) = 0xFF;
 	if (VAR_CHARCOUNT != 0xFF)
 		VAR(VAR_CHARCOUNT) = 0;
+	_haveActorSpeechMsg = true;
 	CHARSET_1();
 }
 
@@ -1474,7 +1478,13 @@ void ScummEngine::stopTalk() {
 	if (_version == 8)
 		VAR(VAR_HAVE_MSG) = 0;
 	_keepText = false;
-	_charset->restoreCharsetBg();
+	if (_version >= 7) {
+#ifndef DISABLE_SCUMM_7_8
+		((ScummEngine_v7 *)this)->clearSubtitleQueue();
+#endif
+	} else {
+		_charset->restoreCharsetBg();
+	}
 }
 
 void Actor::setActorCostume(int c) {

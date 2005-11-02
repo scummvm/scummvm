@@ -1093,6 +1093,7 @@ protected:
 	byte *_palManipIntermediatePal;
 
 	byte _haveMsg;
+	bool _haveActorSpeechMsg;
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
 	int _tempMusic;
@@ -1161,6 +1162,7 @@ protected:
 
 	void printString(int m, const byte *msg);
 
+	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
 	void debugMessage(const byte *msg);
