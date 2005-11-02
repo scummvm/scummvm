@@ -942,6 +942,10 @@ int Logic::fnSetPaletteToCut(Object *cpt, int32 id, int32 c, int32 d, int32 e, i
 
 int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int32 e, int32 f, int32 z, int32 x) {
 
+	// A cutscene usually (always?) means the room will change. In the
+	// meantime, we don't want any looping sound effects still playing.
+	_sound->quitScreen();
+
 	if ((SwordEngine::_systemVars.cutscenePackVersion == 1) && (sequenceId == SEQ_CREDITS)) {
 		CreditsPlayer player(_system, _mixer);
 		player.play();
