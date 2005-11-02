@@ -316,6 +316,7 @@ Fatty Bears Fun Pack
 
 Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	All	en	df047cc4792150f601290357566d36a6	freddi	khalek
+	-	Windows	de	cf8ef3a1fb483c5c4b1c584d1167b2c4	freddi	Oncer
 	-	Windows	nb	e63a0b9249b5ca4cc4d3ac34305ae360	freddi	Karl Ove Hufthammer
 	-	Windows	nl	c0039ad982999c92d0de81910d640fa0	freddi	adutchguy
 	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
