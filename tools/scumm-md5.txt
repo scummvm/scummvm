@@ -54,7 +54,7 @@ Zak McKracken and the Alien Mindbenders
 Indiana Jones and the Last Crusade
 	EGA (1.0 7/09/89)	DOS	en	5fbe557049892eb4b709d90916ec97ca	indy3
 	EGA (1.3 8/14/89)	DOS	en	6b3ec67da214f558dc5ceaa2acd47453	indy3	tsuteiuQ, Andrea Petrucci
-	EGA (1.3 8/14/89 5.25")	DOS	en	6508fd55530e6915507e1cc37f7f045d	indy3	Zer02
+	EGA (1.3 8/14/89 5.25\")	DOS	en	6508fd55530e6915507e1cc37f7f045d	indy3	Zer02
 	EGA	DOS	de	6f6ef668c608c7f534fea6e6d3878dde	indy3	dhewg
 	EGA	DOS	fr	66236cd1aec24e1d4aff4c4cc93b7e18	indy3	Andrea Petrucci
 	EGA	DOS	it	d62d248c3df6ec177405e2cb23d923b2	indy3	Andrea Petrucci
