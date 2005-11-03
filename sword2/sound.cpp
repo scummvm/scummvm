@@ -78,6 +78,8 @@ Sound::Sound(Sword2Engine *vm) {
 
 	_reverseStereo = false;
 
+	_loopingMusicId = 0;
+
 	_mixBuffer = NULL;
 	_mixBufferLen = 0;
 
