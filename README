@@ -105,75 +105,78 @@ and Amiga versions of games may work with the 'Amiga' flag turned on - but
 this is not always true.
 
 SCUMM Games by LucasArts:
-     Maniac Mansion                                  [Game: maniac]
-     Zak McKracken                                   [Game: zak]
-     Indiana Jones & the Last Crusade                [Game: indy3]
-     Loom                                            [Game: loom]
-     Monkey Island 1                                 [Game: monkey]
-     Monkey Island 2                                 [Game: monkey2]
-     Indiana Jones and the Fate of Atlantis          [Game: atlantis]
-     Day of the Tentacle                             [Game: tentacle]
-     Sam & Max                                       [Game: samnmax]
-     The Dig                                         [Game: dig]
-     Full Throttle                                   [Game: ft]
-     Curse of Monkey Island                          [Game: comi]
+     Title                                           Target
+     ----------------------------------------------  --------
+     Maniac Mansion                                  [maniac]
+     Zak McKracken                                   [zak]
+     Indiana Jones & the Last Crusade                [indy3]
+     Loom                                            [loom]
+     Monkey Island 1                                 [monkey]
+     Monkey Island 2                                 [monkey2]
+     Indiana Jones and the Fate of Atlantis          [atlantis]
+     Day of the Tentacle                             [tentacle]
+     Sam & Max                                       [samnmax]
+     The Dig                                         [dig]
+     Full Throttle                                   [ft]
+     Curse of Monkey Island                          [comi]
 
 SCUMM Games by Humongous Entertainment:
-     Backyard Football                                              [Game: football]
-     Big Thinkers Kindergarten                                      [Game: thinkerk]
-     Fatty Bear's Birthday Surprise                                 [Game: fbear]
-     Fatty Bear's Fun Pack                                          [Game: fbpack]
-     Freddi Fish 1: The Case of the Missing Kelp Seeds              [Game: freddi]
-     Freddi Fish 2: The Case of the Haunted Schoolhouse             [Game: fredd2]
-     Freddi Fish 3: The Case of the Stolen Conch Shell              [Game: freddi3]
-     Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch [Game: freddi4]
-     Freddi Fish and Luther's Maze Madness                          [Game: maze]
-     Freddi Fish and Luther's Water Worries                         [Game: water]
-     Let's Explore the Airport with Buzzy                           [Game: airport]
-     Let's Explore the Farm with Buzzy                              [Game: farm]
-     Let's Explore the Jungle with Buzzy                            [Game: jungle]
-     Pajama Sam 1: No Need to Hide When It's Dark Outside           [Game: pajama]
-     Pajama Sam 2: Thunder and Lightning Aren't so Frightening      [Game: pajama2]
-     Pajama Sam's Sock Works                                        [Game: socks]
-     Putt-Putt's Fun Pack                                           [Game: funpack]
-     Putt-Putt & Fatty Bear's Activity Pack                         [Game: activity]
-     Putt-Putt Enters the Race                                      [Game: puttrace]
-     Putt-Putt Goes To The Moon                                     [Game: puttmoon]
-     Putt-Putt Joins the Circus                                     [Game: puttcircus]
-     Putt-Putt Joins the Parade                                     [Game: puttputt]
-     Putt-Putt Saves the Zoo                                        [Game: puttzoo]
-     Putt-Putt Travels Through Time                                 [Game: putttime]
-     Putt-Putt and Pep's Balloon-O-Rama                             [Game: balloon]
-     Putt-Putt and Pep's Dog on a Stick                             [Game: dog]
-     Spyfox 1: Dry Cereal                                           [Game: spyfox]
-     Spyfox 2: Some Assembly Required                               [Game: spyfox2]
-     Spy Fox in Cheese Chase Game                                   [Game: chase]
-     Spy Fox in Hold the Mustard                                    [Game: mustard]
+     Backyard Football                                          [football]
+     Big Thinkers Kindergarten                                  [thinkerk]
+     Fatty Bear's Birthday Surprise                             [fbear]
+     Fatty Bear's Fun Pack                                      [fbpack]
+     Freddi Fish 1: The Case of the Missing Kelp Seeds          [freddi]
+     Freddi Fish 2: The Case of the Haunted Schoolhouse         [fredd2]
+     Freddi Fish 3: The Case of the Stolen Conch Shell          [freddi3]
+     Freddi Fish 4: The Case of the Hogfish Rustlers
+         of Briny Gulch                                         [freddi4]
+     Freddi Fish and Luther's Maze Madness                      [maze]
+     Freddi Fish and Luther's Water Worries                     [water]
+     Let's Explore the Airport with Buzzy                       [airport]
+     Let's Explore the Farm with Buzzy                          [farm]
+     Let's Explore the Jungle with Buzzy                        [jungle]
+     Pajama Sam 1: No Need to Hide When It's Dark Outside       [pajama]
+     Pajama Sam 2: Thunder and Lightning Aren't so Frightening  [pajama2]
+     Pajama Sam's Sock Works                                    [socks]
+     Putt-Putt's Fun Pack                                       [funpack]
+     Putt-Putt & Fatty Bear's Activity Pack                     [activity]
+     Putt-Putt Enters the Race                                  [puttrace]
+     Putt-Putt Goes To The Moon                                 [puttmoon]
+     Putt-Putt Joins the Circus                                 [puttcircus]
+     Putt-Putt Joins the Parade                                 [puttputt]
+     Putt-Putt Saves the Zoo                                    [puttzoo]
+     Putt-Putt Travels Through Time                             [putttime]
+     Putt-Putt and Pep's Balloon-O-Rama                         [balloon]
+     Putt-Putt and Pep's Dog on a Stick                         [dog]
+     Spyfox 1: Dry Cereal                                       [spyfox]
+     Spyfox 2: Some Assembly Required                           [spyfox2]
+     Spy Fox in Cheese Chase Game                               [chase]
+     Spy Fox in Hold the Mustard                                [mustard]
 
 Other Games:
-     Beneath a Steel Sky                             [Game: sky]
-     Broken Sword 1                                  [Game: sword1]
-     Broken Sword 2                                  [Game: sword2]
-     Flight of the Amazon Queen                      [Game: queen]
-     Gobliiins                                       [Game: gob1]
-     Inherit the Earth: Quest for the Orb            [Game: ite]
-     Simon the Sorcerer 1                            [Game: simon1acorn/
-                                                            simon1dos/
-                                                            simon1talkie]
-     Simon the Sorcerer 2                            [Game: simon2dos/
-                                                            simon2talkie]
+     Beneath a Steel Sky                             [sky]
+     Broken Sword 1                                  [sword1]
+     Broken Sword 2                                  [sword2]
+     Flight of the Amazon Queen                      [queen]
+     Gobliiins                                       [gob1]
+     Inherit the Earth: Quest for the Orb            [ite]
+     Simon the Sorcerer 1                            [simon1acorn/
+                                                         simon1dos/
+                                                         simon1talkie]
+     Simon the Sorcerer 2                            [simon2dos/
+                                                         simon2talkie]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-     Backyard Baseball                                              [Game: baseball]
-     Backyard Soccer                                                [Game: soccer]
-     Big Thinkers First Grade                                       [Game: thinker1]
-     Pajama Sam 3: You Are What You Eat From Your Head to Your Feet [Game: pajama3]
-     Pajama Sam's Lost & Found                                      [Game: lost]
-     Spyfox 3: Operation Ozone                                      [Game: spyozon]
+     Backyard Baseball                                              [baseball]
+     Backyard Soccer                                                [soccer]
+     Big Thinkers First Grade                                       [thinker1]
+     Pajama Sam 3: You Are What You Eat From Your Head to Your Feet [pajama3]
+     Pajama Sam's Lost & Found                                      [lost]
+     Spyfox 3: Operation Ozone                                      [spyozon]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -363,8 +366,9 @@ the section on Reporting Bugs.
 
      Simon the Sorcerer 1:
           - Amiga versions aren't supported
-          - Subtitles aren't available in the English and German CD versions, they
-            are missing the majority of subtitles.
+          - Subtitles aren't available in the English and German CD versions,
+            they are missing the majority of subtitles.
+            
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
@@ -629,8 +633,8 @@ simon games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-d                 - Starts the debugger
-        Ctrl-t                 - Switch been 'Speech only', 'Speech and Subtitles'
-                                 and 'Subtitles only'
+        Ctrl-t                 - Switch been 'Speech only',
+                                 'Speech and Subtitles' and 'Subtitles only'
         Tilde (~)              - Show/hide the debugging console
         Ctrl-s                 - Shows memory consumption
         [ and ]                - Music volume, down/up
@@ -668,7 +672,7 @@ simon games.
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
         F1 - F3                - Text speed, faster - slower
-        F10                    - Shows all characters and objects you can 
+        F10                    - Shows all characters and objects you can
                                  interact with
         - and +                - Music volume, down/up
         m                      - Music on/off
@@ -770,7 +774,8 @@ copy them.
 ---- ----------
 Savegames are by default put in the current directory on some platforms and
 preset directories on others.  You can specify the save in the config file by
-setting the savepath parameter. See the example config file later in this readme.
+setting the savepath parameter. See the example config file later in this
+readme.
 
 The platforms that currently have a different default directory are:
         Mac OS X:     $HOME/Documents/ScummVM Savegames/
@@ -961,13 +966,13 @@ setup real time priority, which may reduce music lag.
 
 Asking TiMidity to become an ALSA sequencer:
   timidity -iAqqq -B2,8 -Os1S -s 44100 &
-(If you get distorted output with this setting, you can try dropping the 
+(If you get distorted output with this setting, you can try dropping the
 -B2,8 or changing the value.)
 
 Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
   fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
 
-Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l' 
+Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l'
 command as described earlier in this section.
 
 
@@ -976,7 +981,7 @@ command as described earlier in this section.
 Use LAME or some other MP3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
 to use this option. You'll need to rip the file from the CD as a WAV file,
-then encode the MP3 files in constant bit rate. This can be done with the 
+then encode the MP3 files in constant bit rate. This can be done with the
 following LAME command line:
 
   lame -t -q 0 -b 96 track1.wav track1.mp3
@@ -996,10 +1001,10 @@ command line with the value after q specifying the desired quality from 0 to 10:
 7.7.2) Using Flac files for CD audio:
 ------ ------------------------------------
 Use flac or some other flac encoder to encode the audio tracks to files.
-Name the files track1.flac track2.flac etc. In your filesystem only allows 
+Name the files track1.flac track2.flac etc. In your filesystem only allows
 three letter extensions, name the files track1.fla track2.fla etc. 
-ScummVM must be compiled with flac support to use this option. You'll need to 
-rip the files from the CD as a WAV file, then encode the flac files. This can 
+ScummVM must be compiled with flac support to use this option. You'll need to
+rip the files from the CD as a WAV file, then encode the flac files. This can
 be done with the following flac command line:
 
   flac --best track1.wav
