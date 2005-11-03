@@ -647,6 +647,18 @@ struct CreditsLine {
 	int top;
 	int height;
 	byte *sprite;
+
+	CreditsLine() {
+		str = NULL;
+		sprite = NULL;
+	}
+
+	~CreditsLine() {
+		free(str);
+		free(sprite);
+		str = NULL;
+		sprite = NULL;
+	}
 };
 
 #define CREDITS_FONT_HEIGHT 25
@@ -735,37 +747,26 @@ void Screen::rollCredits() {
 
 	// Read the credits text
 
-	// This should be plenty
-	CreditsLine creditsLines[350];
-
-	for (i = 0; i < ARRAYSIZE(creditsLines); i++) {
-		creditsLines[i].str = NULL;
-		creditsLines[i].sprite = NULL;
-	}
-
-	if (!f.open("credits.clu")) {
-		warning("Can't find credits.clu");
-		return;
-	}
+	Common::Array<CreditsLine *> creditsLines;
 
 	int lineTop = 400;
 	int lineCount = 0;
 	int paragraphStart = 0;
 	bool hasCenterMark = false;
 
-	while (1) {
-		if (lineCount >= ARRAYSIZE(creditsLines)) {
-			warning("Too many credits lines");
-			break;
-		}
+	if (!f.open("credits.clu")) {
+		warning("Can't find credits.clu");
+		return;
+	}
 
+	while (1) {
 		char buffer[80];
 		char *line = f.readLine(buffer, sizeof(buffer));
 
 		if (!line || *line == 0) {
 			if (!hasCenterMark) {
 				for (i = paragraphStart; i < lineCount; i++)
-					creditsLines[i].type = LINE_CENTER;
+					creditsLines[i]->type = LINE_CENTER;
 			}
 			paragraphStart = lineCount;
 			hasCenterMark = false;
@@ -785,45 +786,43 @@ void Screen::rollCredits() {
 			hasCenterMark = true;
 
 			if (center_mark != line) {
+				creditsLines.push_back(new CreditsLine);
+
 				// The center mark is somewhere inside the
 				// line. Split it into left and right side.
 				*center_mark = 0;
 
-				creditsLines[lineCount].top = lineTop;
-				creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
-				creditsLines[lineCount].type = LINE_LEFT;
-				creditsLines[lineCount].str = strdup(line);
+				creditsLines[lineCount]->top = lineTop;
+				creditsLines[lineCount]->height = CREDITS_FONT_HEIGHT;
+				creditsLines[lineCount]->type = LINE_LEFT;
+				creditsLines[lineCount]->str = strdup(line);
 
 				lineCount++;
-
-				if (lineCount >= ARRAYSIZE(creditsLines)) {
-					warning("Too many credits lines");
-					break;
-				}
-
 				*center_mark = '^';
 			}
 
 			line = center_mark;
 		}
 
-		creditsLines[lineCount].top = lineTop;
+		creditsLines.push_back(new CreditsLine);
+
+		creditsLines[lineCount]->top = lineTop;
 
 		if (*line == '^') {
-			creditsLines[lineCount].type = LINE_RIGHT;
+			creditsLines[lineCount]->type = LINE_RIGHT;
 			line++;
 		} else
-			creditsLines[lineCount].type = LINE_LEFT;
+			creditsLines[lineCount]->type = LINE_LEFT;
 
 		if (strcmp(line, "@") == 0) {
-			creditsLines[lineCount].height = logoHeight;
+			creditsLines[lineCount]->height = logoHeight;
 			lineTop += logoHeight;
 		} else {
-			creditsLines[lineCount].height = CREDITS_FONT_HEIGHT;
+			creditsLines[lineCount]->height = CREDITS_FONT_HEIGHT;
 			lineTop += CREDITS_LINE_SPACING;
 		}
 
-		creditsLines[lineCount].str = strdup(line);
+		creditsLines[lineCount]->str = strdup(line);
 		lineCount++;
 	}
 
@@ -864,42 +863,35 @@ void Screen::rollCredits() {
 	uint32 musicLength = MAX((int32) (1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32) scrollSteps);
 
 	while (scrollPos < scrollSteps && !_vm->_quit) {
-		bool foundStartLine = false;
-
 		clearScene();
 
 		for (i = startLine; i < lineCount; i++) {
+			if (!creditsLines[i])
+				continue;
+
 			// Free any sprites that have scrolled off the screen
 
-			if (creditsLines[i].top + creditsLines[i].height < scrollPos) {
-				if (creditsLines[i].sprite) {
-					free(creditsLines[i].sprite);
-					creditsLines[i].sprite = NULL;
-					debug(2, "Freeing sprite '%s'", creditsLines[i].str);
-				}
-				if (creditsLines[i].str) {
-					free(creditsLines[i].str);
-					creditsLines[i].str = NULL;
-				}
-			} else if (creditsLines[i].top < scrollPos + 400) {
-				if (!foundStartLine) {
-					startLine = i;
-					foundStartLine = true;
+			if (creditsLines[i]->top + creditsLines[i]->height < scrollPos) {
+				debug(2, "Freeing line %d: '%s'", i, creditsLines[i]->str);
+
+				delete creditsLines[i];
+				creditsLines[i] = NULL;
+
+				startLine = i + 1;
+			} else if (creditsLines[i]->top < scrollPos + 400) {
+				if (!creditsLines[i]->sprite) {
+					debug(2, "Creating line %d: '%s'", i, creditsLines[i]->str);
+					creditsLines[i]->sprite = _vm->_fontRenderer->makeTextSprite((byte *)creditsLines[i]->str, 600, 14, _vm->_speechFontId, 0);
 				}
 
-				if (!creditsLines[i].sprite) {
-					debug(2, "Creating sprite '%s'", creditsLines[i].str);
-					creditsLines[i].sprite = _vm->_fontRenderer->makeTextSprite((byte *)creditsLines[i].str, 600, 14, _vm->_speechFontId, 0);
-				}
+				FrameHeader *frame = (FrameHeader *)creditsLines[i]->sprite;
 
-				FrameHeader *frame = (FrameHeader *)creditsLines[i].sprite;
-
-				spriteInfo.y = creditsLines[i].top - scrollPos;
+				spriteInfo.y = creditsLines[i]->top - scrollPos;
 				spriteInfo.w = frame->width;
 				spriteInfo.h = frame->height;
-				spriteInfo.data = creditsLines[i].sprite + sizeof(FrameHeader);
+				spriteInfo.data = creditsLines[i]->sprite + sizeof(FrameHeader);
 
-				switch (creditsLines[i].type) {
+				switch (creditsLines[i]->type) {
 				case LINE_LEFT:
 					spriteInfo.x = RENDERWIDE / 2 - 5 - frame->width;
 					break;
@@ -907,7 +899,7 @@ void Screen::rollCredits() {
 					spriteInfo.x = RENDERWIDE / 2 + 5;
 					break;
 				case LINE_CENTER:
-					if (strcmp(creditsLines[i].str, "@") == 0) {
+					if (strcmp(creditsLines[i]->str, "@") == 0) {
 						spriteInfo.data = logoData;
 						spriteInfo.x = (RENDERWIDE - logoWidth) / 2;
 						spriteInfo.w = logoWidth;
@@ -945,14 +937,10 @@ void Screen::rollCredits() {
 	// before the credits.
 
 	for (i = 0; i < lineCount; i++) {
-		if (creditsLines[i].str)
-			free(creditsLines[i].str);
-		if (creditsLines[i].sprite)
-			free(creditsLines[i].sprite);
+		delete creditsLines[i];
 	}
 
-	if (logoData)
-		free(logoData);
+	free(logoData);
 
 	if (!abortCredits) {
 		fadeDown();
