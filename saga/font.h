@@ -79,7 +79,7 @@ enum KnownFont {
 
 	kKnownFontPause,
 	kKnownFontScript,
-	kKnownFontVerb,
+	kKnownFontVerb
 };
 
 struct TextListEntry {
@@ -169,7 +169,7 @@ class Font {
 	 }
 
 public:
-	int Font::getHeight(FontId fontId) {
+	int getHeight(FontId fontId) {
 		 return getFont(fontId)->normal.header.charHeight;
 	 }
 
