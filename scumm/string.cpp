@@ -222,7 +222,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_b = 0;
 	int i, c;
 	char value[32];
-	bool endLoop = false;
+	bool endLoop = false, ;
+	bool endText = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
 	while (!endLoop) {
 		c = *buffer++;
@@ -257,7 +258,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 		case 104:
 			_haveMsg = 0;
 			_keepText = true;
-			endLoop = true;
+			endLoop = endText = true;
 			break;
 		case 110:
 			c = 13; // new line
@@ -280,7 +281,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 		case 119:
 			_haveMsg = 0xFF;
 			_keepText = false;
-			endLoop = true;
+			endLoop = endText = true;
 			break;
 		default:
 			error("handleNextCharsetCode: invalid code %d", c);
@@ -288,7 +289,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	}
 	_charsetBufPos = buffer - _charsetBuffer;
 	*code = c;
-	return (c != 104 && c != 119);
+	return (endText == 0);
 }
 #endif
 
@@ -465,7 +466,7 @@ void ScummEngine::CHARSET_1() {
 			*subtitleLine++ = c;
 			*subtitleLine = '\0';
 #endif
-	} else {
+		} else {
 			if (_version <= 3) {
 				_charset->printChar(c);
 			} else {
