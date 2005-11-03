@@ -331,6 +331,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 	-	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
 	-	All	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
 	-	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
+	-	Windows	en	151071053a1d0021198216713939521d	freddi2	vampir_raziel
 	-	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
 	-	Windows	ru	e41de1c2a15abbcdbf9977e2d7e8a340	freddi2	sev
 	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	freddi2	khalek, sev
