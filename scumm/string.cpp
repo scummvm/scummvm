@@ -222,7 +222,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_b = 0;
 	int i, c;
 	char value[32];
-	bool endLoop = false, ;
+	bool endLoop = false;
 	bool endText = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
 	while (!endLoop) {
