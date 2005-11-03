@@ -838,8 +838,6 @@ void Screen::rollCredits() {
 
 	f.close();
 
-printf("lineCount = %d\n", lineCount); fflush(stdout);
-
 	// We could easily add some ScummVM stuff to the credits, if we wanted
 	// to. On the other hand, anyone with the attention span to actually
 	// read all the credits probably already knows. :-)
