@@ -120,7 +120,6 @@ struct SoundFileHandle {
 class MusicInputStream : public AudioStream {
 private:
 	int _cd;
-	//Common::File *_file;
 	SoundFileHandle *_fh;
 	uint32 _musicId;
 	AudioStream *_decoder;
@@ -201,7 +200,6 @@ private:
 	Audio::SoundHandle _soundHandleSpeech;
 
 	MusicInputStream *_music[MAXMUS];
-	//Common::File _musicFile[MAXMUS];
 	SoundFileHandle _musicFile[MAXMUS];
 	SoundFileHandle _speechFile[MAXMUS];
 
