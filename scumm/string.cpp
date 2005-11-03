@@ -138,7 +138,7 @@ void ScummEngine_v7::clearSubtitleQueue() {
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
-	int i, color, frme, c, oldy;
+	int color, frme, c, oldy;
 	bool endLoop = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
 	while (!endLoop) {
@@ -203,8 +203,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			oldy = _charset->getFontHeight();
 			_charset->setCurID(*buffer++);
 			buffer += 2;
-			for (i = 0; i < 4; i++)
-				_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
+			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 			_charset->_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 		default:
@@ -223,8 +222,9 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_b = 0;
 	int i, c;
 	char value[32];
+	bool endLoop = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
-	do {
+	while (!endLoop) {
 		c = *buffer++;
 		if (c != charsetCode) {
 			break;
@@ -233,7 +233,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 		switch (c) {
 		case 84:
 			i = 0;
-			memset(value, 0, 32);
+			memset(value, 0, sizeof(value));
 			c = *buffer++;
 			while (c != 44) {
 				value[i] = c;
@@ -243,7 +243,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			value[i] = 0;
 			talk_sound_a = atoi(value);
 			i = 0;
-			memset(value, 0, 32);
+			memset(value, 0, sizeof(value));
 			c = *buffer++;
 			while (c != charsetCode) {
 				value[i] = c;
@@ -257,13 +257,15 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 		case 104:
 			_haveMsg = 0;
 			_keepText = true;
+			endLoop = true;
 			break;
 		case 110:
 			c = 13; // new line
+			endLoop = true;
 			break;
 		case 116:
 			i = 0;
-			memset(value, 0, 32);
+			memset(value, 0, sizeof(value));
 			c = *buffer++;
 			while (c != charsetCode) {
 				value[i] = c;
@@ -278,14 +280,15 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 		case 119:
 			_haveMsg = 0xFF;
 			_keepText = false;
+			endLoop = true;
 			break;
 		default:
 			error("handleNextCharsetCode: invalid code %d", c);
 		}
-	} while (c != 13);
+	}
 	_charsetBufPos = buffer - _charsetBuffer;
 	*code = c;
-	return true;
+	return (c != 104 && c != 119);
 }
 #endif
 
@@ -526,10 +529,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	if (_version >= 5) {
-		for (i = 0; i < 4; i++)
-			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
-	}
+	if (_version >= 5)
+		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	fontHeight = _charset->getFontHeight();
 
@@ -573,7 +574,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				_charset->_top += fontHeight;
 				break;
 			}
-		} else if (c == 0xFE || c == 0xFF) {
+		} else if (c == 0xFF || (_version <= 6 && c == 0xFE)) {
 			c = buf[i++];
 			switch (c) {
 			case 9:
