@@ -669,6 +669,13 @@ struct CreditsLine {
 		str = NULL;
 		sprite = NULL;
 	};
+
+	~CreditsLine() {
+		free(str);
+		free(sprite);
+		str = NULL;
+		sprite = NULL;
+	}
 };
 
 #define CREDITS_FONT_HEIGHT 25
@@ -873,29 +880,24 @@ void Screen::rollCredits() {
 	uint32 musicLength = MAX((int32)(1000 * (_vm->_sound->musicTimeRemaining() - 3)), 25 * (int32)scrollSteps);
 
 	while (scrollPos < scrollSteps && !_vm->_quit) {
-		bool foundStartLine = false;
-
 		clearScene();
 
 		for (i = startLine; i < lineCount; i++) {
+			if (!creditsLines[i])
+				continue;
+
 			// Free any sprites that have scrolled off the screen
 
 			if (creditsLines[i]->top + creditsLines[i]->height < scrollPos) {
-				debug(2, "Freeing line %d", i);
+				debug(2, "Freeing line %d: '%s'", i, creditsLines[i]->str);
 
-				free(creditsLines[i]->sprite);
-				creditsLines[i]->sprite = NULL;
+				delete creditsLines[i];
+				creditsLines[i] = NULL;
 
-				free(creditsLines[i]->str);
-				creditsLines[i]->str = NULL;
+				startLine = i + 1;
 			} else if (creditsLines[i]->top < scrollPos + 400) {
-				if (!foundStartLine) {
-					startLine = i;
-					foundStartLine = true;
-				}
-
 				if (!creditsLines[i]->sprite) {
-					debug(2, "Creating line %d sprite '%s'", i, creditsLines[i]->str);
+					debug(2, "Creating line %d: '%s'", i, creditsLines[i]->str);
 					creditsLines[i]->sprite = _vm->_fontRenderer->makeTextSprite((byte *)creditsLines[i]->str, 600, 14, _vm->_speechFontId, 0);
 				}
 
@@ -954,13 +956,10 @@ void Screen::rollCredits() {
 	// before the credits.
 
 	for (i = 0; i < lineCount; i++) {
-		free(creditsLines[i]->str);
-		free(creditsLines[i]->sprite);
 		delete creditsLines[i];
 	}
 
-	if (logoData)
-		free(logoData);
+	free(logoData);
 
 	if (!abortCredits) {
 		fadeDown();
