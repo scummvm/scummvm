@@ -41,118 +41,12 @@ namespace Saga {
 #define PUZZLE_MOVED		0x04   // 1 when somewhere in the box
 #define PUZZLE_ALL_SET		PUZZLE_FIT | PUZZLE_MOVED
 
-static Point pieceOrigins[PUZZLE_PIECES] = {
-	Point(268,  18),
-	Point(270,  51),
-	Point( 19,  51),
-	Point( 73,   0),
-	Point(  0,  34),
-	Point(215,   0),
-	Point(159,   0),
-	Point(  9,  69),
-	Point(288,  18),
-	Point(112,   0),
-	Point( 27,  88),
-	Point( 43,   0),
-	Point(  0,   0),
-	Point(262,   0),
-	Point(271, 103)
-};
-
-const char *pieceNames[][PUZZLE_PIECES] = {
-	{ "screwdriver", "pliers", "c-clamp", "wood clamp", "level",
-	  "twine", "wood plane", "claw hammer", "tape measure", "hatchet",
-	  "shears", "ruler", "saw", "mallet", "paint brush"
-	},
-	{ "Schraubendreher", "Zange", "Schraubzwinge", "Holzzwinge", "Wasserwaage",
-	  "Bindfaden", "Hobel", "Schusterhammer", "Bandma$", "Beil",
-	  "Schere", "Winkel", "S\204ge", "Hammer", "Pinsel"
-	}
-};
-
-const char *hintStr[][4] = {
-	{ "Check which pieces could fit in each corner first.",
-	  "Check which corner has the least number of pieces that can fit and start from there.",
-	  "Check each new corner and any new side for pieces that fit.",
-	  "I don't see anything out of place."
-	},
-	{ "\232berpr\201fe zun\204chst, welche die Eckteile sein k\224nnten.",
-	  "Schau, in welche Ecke die wenigsten Teile passen, und fang dort an.",
-	  "Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\224nnen.",
-	  "Ich sehe nichts an der falschen Stelle."
-	}
-};
-
-#define NUM_SOLICIT_REPLIES 5
-const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
-	{ "Hey, Fox! Would you like a hint?",
-	  "Would you like some help?",
-	  "Umm...Umm...",
-	  "Psst! want a hint?",
-	  "I would have done this differently, you know."
-	},
-	{ "Hey, Fuchs! Brauchst Du \047nen Tip?",
-	  "M\224chtest Du etwas Hilfe?"
-	  "\231hm...\216hm..."
-	  "Psst! \047n Tip vielleicht?"
-	  "Ja, wei$t Du... ich h\204tte das anders gemacht."
-	}
-};
-
-const char portraitList[] = {
-	RID_ITE_JFERRET_SERIOUS,
-	RID_ITE_JFERRET_GOOFY,
-	RID_ITE_JFERRET_SERIOUS,
-	RID_ITE_JFERRET_GOOFY,
-	RID_ITE_JFERRET_ALOOF
-};
-
-#define NUM_SAKKA 3
-const char *sakkaStr[][NUM_SAKKA] = {
-	{ "Hey, you're not supposed to help the applicants!",
-	  "Guys! This is supposed to be a test!",
-	  "C'mon fellows, that's not in the rules!"
-	},
-	{ "Hey, Du darfst dem Pr\201fling nicht helfen!",
-	  "Hallo?! Dies soll eine Pr\201fung sein!",
-	  "Also, Jungs. Schummeln steht nicht in den Regeln!"
-	}
-};
-
-#define NUM_WHINES 5
-const char *whineStr[][NUM_WHINES] = {
-	{ "Aww, c'mon Sakka!",
-	  "One hint won't hurt, will it?",
-	  "Sigh...",
-	  "I think that clipboard has gone to your head, Sakka!",
-	  "Well, I don't recall any specific rule against hinting."
-	},
-	{ "Och, sei nicht so, Sakka!"
-	  "EIN Tip wird schon nicht schaden, oder?",
-	  "Seufz..."
-	  "Ich glaube, Du hast ein Brett vor dem Kopf, Sakka!",
-	  "Hm, ich kann mich an keine Regel erinnern, die Tips verbietet."
-	}
-};
 
 enum rifOptions {
 	kROLater = 0,
 	kROAccept = 1,
 	kRODecline = 2,
 	kROHint = 3
-};
-
-const char *optionsStr[][4] = {
-	{ "\"I'll do this puzzle later.\"",
-	  "\"Yes, I'd like a hint please.\"",
-	  "\"No, thank you, I'd like to try and solve it myself.\"",
-	  "I think the %s is in the wrong place."
-	},
-	{ "\"Ich l\224se das Puzzle sp\204ter.\"",
-	  "\"Ja, ich m\224chte einen Tip, bitte.\"",
-	  "\"Nein danke, ich m\224chte das alleine l\224sen.\"",
-	  "Pssst... %s... falsche Stelle..."
-	}
 };
 
 Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {

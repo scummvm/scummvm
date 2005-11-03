@@ -101,7 +101,7 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 	textEntry.rect.right = _vm->getDisplayWidth();
 	textEntry.rect.top = (_vm->getLanguage() == Common::DE_DEU) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
 	textEntry.rect.bottom = _vm->getDisplayHeight();
-	textEntry.fontId = kMediumFont;
+	textEntry.font = kKnownFontMedium;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 
 	for (i = 0; i < n_dialogues; i++) {
@@ -182,7 +182,7 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 	int line_spacing = 0;
 	int paragraph_spacing;
-	FontId font = kSmallFont;
+	KnownFont font = kKnownFontSmall;
 	int i;
 
 	int n_paragraphs = 0;
@@ -199,12 +199,12 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 		switch (credits[i].type) {
 		case kCHeader:
-			font = kSmallFont;
+			font = kKnownFontSmall;
 			line_spacing = 4;
 			n_paragraphs++;
 			break;
 		case kCText:
-			font = kMediumFont;
+			font = kKnownFontMedium;
 			line_spacing = 2;
 			break;
 		default:
@@ -240,12 +240,12 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 
 		switch (credits[i].type) {
 		case kCHeader:
-			font = kSmallFont;
+			font = kKnownFontSmall;
 			line_spacing = 4;
 			y += paragraph_spacing;
 			break;
 		case kCText:
-			font = kMediumFont;
+			font = kKnownFontMedium;
 			line_spacing = 2;
 			break;
 		default:
@@ -253,7 +253,7 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 		}
 
 		textEntry.text = credits[i].string;
-		textEntry.fontId = font;
+		textEntry.font = font;
 		textEntry.point.y = y;
 
 		entry = _vm->_scene->_textList.addEntry(textEntry);

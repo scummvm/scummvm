@@ -321,24 +321,6 @@ enum GameFeatures {
 	GF_SCENE_SUBSTITUTES = 1 << 3
 };
 
-enum FontId {
-	kSmallFont,
-	kMediumFont,
-	kBigFont,
-
-	kIHNMFont8 = 4,
-	kIHNMMainFont = 6
-};
-
-enum FontEffectFlags {
-	kFontNormal   = 0,
-	kFontOutline  = 1 << 0,
-	kFontShadow   = 1 << 1,
-	kFontBold     = 1 << 2,
-	kFontCentered = 1 << 3,
-	kFontDontmap  = 1 << 4
-};
-
 struct GameSoundInfo {
 	GameSoundTypes resourceType;
 	long frequency;
@@ -685,8 +667,6 @@ public:
 
 public:
 	bool initGame(void);
-//	RSCFILE_CONTEXT *getFileContext(uint16 type, int param);
-//	bool isBigEndianFile(const char *filename);
 public:
 	const GameDescription *getGameDescription() const { return _gameDescription; }
 	const bool isBigEndian() const { return (_gameDescription->features & GF_BIG_ENDIAN_DATA) != 0; }

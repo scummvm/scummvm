@@ -242,7 +242,7 @@ void ObjectMap::draw(Surface *ds, const Point& testPoint, int color, int color2)
 		snprintf(txtBuf, sizeof(txtBuf), "hitZone %d", hitZoneIndex);
 		textPoint.x = 2;
 		textPoint.y = 2;
-		_vm->_font->textDraw(kSmallFont, ds, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(kKnownFontSmall, ds, txtBuf, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 }
 

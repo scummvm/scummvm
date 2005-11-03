@@ -33,6 +33,7 @@
 #include "saga/itedata.h"
 #include "saga/list.h"
 #include "saga/saga.h"
+#include "saga/font.h"
 
 namespace Saga {
 

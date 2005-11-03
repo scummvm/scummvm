@@ -89,6 +89,24 @@ extern FxTable ITE_SfxTable[ITE_SFXCOUNT];
 
 extern const char *ITEinterfaceTextStrings[][52];
 
+#define PUZZLE_PIECES 15
+
+extern Point pieceOrigins[PUZZLE_PIECES];
+extern const char *pieceNames[][PUZZLE_PIECES];
+
+#define NUM_SOLICIT_REPLIES 5
+extern const char *solicitStr[][NUM_SOLICIT_REPLIES];
+
+#define NUM_SAKKA 3
+extern const char *sakkaStr[][NUM_SAKKA];
+
+#define NUM_WHINES 5
+extern const char *whineStr[][NUM_WHINES];
+
+extern const char *hintStr[][4];
+extern const char portraitList[];
+extern const char *optionsStr[][4];
+
 } // End of namespace Saga
 
 #endif

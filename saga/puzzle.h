@@ -24,7 +24,6 @@
 
 namespace Saga {
 
-#define PUZZLE_PIECES 15
 
 #define PUZZLE_SOUNDS         3622
 #define PUZZLE_TOOL_SOUNDS    (PUZZLE_SOUNDS + 0)

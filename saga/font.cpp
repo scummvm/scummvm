@@ -62,9 +62,6 @@ Font::~Font(void) {
 	}
 }
 
-FontData *Font::getFont(FontId fontId) {
-	return _fonts[fontId];
-}
 
 void Font::loadFont(uint32 fontResourceId) {
 	FontData *font;
@@ -239,9 +236,9 @@ void Font::createOutline(FontData *font) {
 }
 
 // Returns the horizontal length in pixels of the graphical representation
-// of at most 'test_str_ct' characters of the string 'test_str', taking
+// of at most 'count' characters of the string 'text', taking
 // into account any formatting options specified by 'flags'.
-// If 'test_str_ct' is 0, all characters of 'test_str' are counted.
+// If 'count' is 0, all characters of 'test' are counted.
 int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags) {
 	FontData *font;
 	size_t ct;
@@ -249,8 +246,7 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	int ch;
 	const byte *txt;
 
-	validate(fontId);
-
+	
 	font = getFont(fontId);
 
 	txt = (const byte *) text;
@@ -270,22 +266,11 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	return width;
 }
 
-int Font::getHeight(FontId fontId) {
-	FontData *font;
-
-	validate(fontId);
-
-	font = getFont(fontId);
-
-	return font->normal.header.charHeight;
-}
 
 void Font::draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point,
 			   int color, int effectColor, FontEffectFlags flags) {
 	FontData *font;
 	Point offsetPoint(point);
-
-	validate(fontId);
 
 	font = getFont(fontId);
 
@@ -637,6 +622,59 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 			searchPointer = measurePointer + 1;
 		}
 	}
+}
+
+FontId Font::knownFont2FontIdx(KnownFont font) {
+	FontId fontId = kSmallFont;
+
+	if (_vm->getGameType() == GType_ITE) {
+		switch (font)
+		{
+		case (kKnownFontSmall):
+			fontId = kSmallFont;
+			break;
+		case (kKnownFontMedium):
+			fontId = kMediumFont;
+			break;
+		case (kKnownFontBig):
+			fontId = kBigFont;
+			break;
+
+		case (kKnownFontVerb):
+			fontId = kSmallFont;
+			break;
+		case (kKnownFontScript):
+			fontId = kMediumFont;
+			break;
+		case (kKnownFontPause):
+			fontId = _vm->_font->valid(kBigFont) ? kBigFont : kMediumFont;
+			break;
+		}
+	} else if (_vm->getGameType() == GType_IHNM) {
+		switch (font)
+		{
+		case (kKnownFontSmall):
+			fontId = kSmallFont;
+			break;
+		case (kKnownFontMedium):
+			fontId = kMediumFont;
+			break;
+		case (kKnownFontBig):
+			fontId = kBigFont;
+			break;
+
+		case (kKnownFontVerb):
+			fontId = kIHNMFont8;
+			break;
+		case (kKnownFontScript):
+			fontId = kIHNMMainFont;
+			break;
+		case (kKnownFontPause):
+			fontId = kMediumFont; // unchecked
+			break;
+		}
+	}
+	return fontId;
 }
 
 } // End of namespace Saga

@@ -141,20 +141,18 @@ void Render::drawScene() {
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {
 		sprintf(txtBuffer, "%d", _fps);
-		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kSmallFont, txtBuffer, 0, kFontOutline);
+		textPoint.x = backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontSmall, txtBuffer, 0, kFontOutline);
 		textPoint.y = 2;
 
-		_vm->_font->textDraw(kSmallFont, backBufferSurface, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(kKnownFontSmall, backBufferSurface, txtBuffer, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 
 	// Display "paused game" message, if applicable
 	if (_flags & RF_RENDERPAUSE) {
-		FontId fontId = _vm->_font->loaded(kBigFont) ? kBigFont : kMediumFont;
-
-		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(fontId, pauseString, 0, kFontOutline)) / 2;
+		textPoint.x = (backBufferSurface->w - _vm->_font->getStringWidth(kKnownFontPause, pauseString, 0, kFontOutline)) / 2;
 		textPoint.y = 90;
 
-		_vm->_font->textDraw(fontId, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
+		_vm->_font->textDraw(kKnownFontPause, backBufferSurface, pauseString, textPoint, kITEColorBrightWhite, kITEColorBlack, kFontOutline);
 	}
 
 	// Update user interface
@@ -163,7 +161,7 @@ void Render::drawScene() {
 	// Display text formatting test, if applicable
 	if (_flags & RF_TEXT_TEST) {
 		Rect rect(mousePoint.x, mousePoint.y, mousePoint.x + 100, mousePoint.y + 50);
-		_vm->_font->textDrawRect(kMediumFont, backBufferSurface, test_txt, rect,
+		_vm->_font->textDrawRect(kKnownFontMedium, backBufferSurface, test_txt, rect,
 				kITEColorBrightWhite, kITEColorBlack, (FontEffectFlags)(kFontOutline | kFontCentered));
 	}
 

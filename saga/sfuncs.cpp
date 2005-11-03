@@ -1309,7 +1309,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	textEntry.effectColor = kITEColorBlack;
 	textEntry.point.x = _vm->getDisplayWidth() / 2;
 	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kMediumFont)) / 2;
-	textEntry.fontId = kMediumFont;
+	textEntry.font = kKnownFontMedium;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 	textEntry.text = thread->_strings->getString(stringId);
 
@@ -1591,10 +1591,7 @@ void Script::sfScriptText(SCRIPTFUNC_PARAMS) {
 
 	text = thread->_strings->getString(stringId);
 
-	if (_vm->getGameType() == GType_ITE)
-		width = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontOutline);
-	else
-		width = _vm->_font->getStringWidth(kIHNMMainFont, text, 0, kFontOutline);
+	width = _vm->_font->getStringWidth(kKnownFontScript, text, 0, kFontOutline);
 	rect.top = point.y - 6;
 	rect.setHeight(12);
 	rect.left = point.x - width / 2;

@@ -728,14 +728,14 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	text = _vm->getTextString(panelButton->id);
 	panel->calcPanelButtonRect(panelButton, rect);
 	if (panelButton->xOffset < 0) {
-		textWidth = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontNormal);
+		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
 		rect.left += 2 + (panel->imageWidth - 1 - textWidth) / 2;
 	}
 
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	_vm->_font->textDraw(kMediumFont, ds, text, textPoint,
+	_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint,
 		_vm->getDisplayInfo().verbTextColor, _vm->getDisplayInfo().verbTextShadowColor, kFontShadow);
 }
 
@@ -796,7 +796,7 @@ void Interface::drawOption() {
 			text = _vm->getSaveFile(idx)->name;
 			textPoint.x = rect.left + 1;
 			textPoint.y = rect2.top;
-			_vm->_font->textDraw(kSmallFont, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
+			_vm->_font->textDraw(kKnownFontSmall, backBuffer, text, textPoint, fgColor, 0, kFontNormal);
 		}
 	}
 
@@ -1003,8 +1003,8 @@ bool Interface::processTextInput(uint16 ascii) {
 			(ascii == ' ')) {
 			if (_textInputStringLength < SAVE_TITLE_SIZE - 1) {
 				ch[0] = ascii;
-				tempWidth = _vm->_font->getStringWidth(kSmallFont, ch, 0, kFontNormal);
-				tempWidth += _vm->_font->getStringWidth(kSmallFont, _textInputString, 0, kFontNormal);
+				tempWidth = _vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal);
+				tempWidth += _vm->_font->getStringWidth(kKnownFontSmall, _textInputString, 0, kFontNormal);
 				if (tempWidth > _textInputMaxWidth) {
 									break;
 				}
@@ -1045,7 +1045,7 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 
 	i = 0;
 	while ((ch[0] = _textInputString[i++]) != 0) {
-		rect.setWidth(_vm->_font->getStringWidth(kSmallFont, ch, 0, kFontNormal));
+		rect.setWidth(_vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal));
 		if ((i == _textInputPos) && _textInput) {
 			fgColor = kITEColorBlack;
 			ds->fillRect(rect, kITEColorWhite);
@@ -1055,12 +1055,12 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 		textPoint.x = rect.left;
 		textPoint.y = rect.top + 1;
 
-		_vm->_font->textDraw(kSmallFont, ds, ch, textPoint, fgColor, 0, kFontNormal);
+		_vm->_font->textDraw(kKnownFontSmall, ds, ch, textPoint, fgColor, 0, kFontNormal);
 		rect.left += rect.width();
 	}
 	if (_textInput && (_textInputPos >= i)) {
 		ch[0] = ' ';
-		rect.setWidth(_vm->_font->getStringWidth(kSmallFont, ch, 0, kFontNormal));
+		rect.setWidth(_vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal));
 		ds->fillRect(rect, kITEColorWhite);
 	}
 }
@@ -1546,7 +1546,7 @@ void Interface::drawStatusBar() {
 
 	backBuffer->drawRect(rect, _vm->getDisplayInfo().statusBGColor);
 
-	stringWidth = _vm->_font->getStringWidth(kSmallFont, _statusText, 0, kFontNormal);
+	stringWidth = _vm->_font->getStringWidth(kKnownFontSmall, _statusText, 0, kFontNormal);
 
 	if (_statusOnceColor == -1)
 		color = _vm->getDisplayInfo().statusTextColor;
@@ -1555,7 +1555,7 @@ void Interface::drawStatusBar() {
 
 	textPoint.x = _vm->getDisplayInfo().statusXOffset + (_vm->getDisplayInfo().statusWidth - stringWidth) / 2;
 	textPoint.y = _vm->getDisplayInfo().statusYOffset + _vm->getDisplayInfo().statusTextY;
-	_vm->_font->textDraw(kSmallFont, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
+	_vm->_font->textDraw(kKnownFontSmall, backBuffer, _statusText, textPoint, color, 0, kFontNormal);
 
 	if (_saveReminderState > 0) {
 		rect.left = _vm->getDisplayInfo().saveReminderXOffset;
@@ -1922,8 +1922,8 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	}
 	text = _vm->getTextString(textId);
 
-	textWidth = _vm->_font->getStringWidth(kMediumFont, text, 0, kFontNormal);
-	textHeight = _vm->_font->getHeight(kMediumFont);
+	textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+	textHeight = _vm->_font->getHeight(kKnownFontMedium);
 
 	point.x = panel->x + panelButton->xOffset + (panelButton->width / 2) - (textWidth / 2);
 	point.y = panel->y + panelButton->yOffset + (panelButton->height / 2) - (textHeight / 2);
@@ -1937,7 +1937,7 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	panel->calcPanelButtonRect(panelButton, rect);
 	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
 
-	_vm->_font->textDraw(kMediumFont, ds, text, point,
+	_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
 		textColor, _vm->getDisplayInfo().verbTextShadowColor, kFontShadow);
 }
 
@@ -1966,20 +1966,17 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 	int textWidth;
 	Point point;
 	int textId;
-	FontId font;
 
 	if (_vm->getGameType() == GType_ITE) {
 		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
 		text = _vm->getTextString(textId);
-		font = kSmallFont;
 	} else {
 		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
-		font = kIHNMFont8;
 		textShadowColor = 0;
 	}
 
-	textWidth = _vm->_font->getStringWidth(font, text, 0, kFontNormal);
+	textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
 
 	if (_vm->getGameType() == GType_ITE) {
 		point.x = _mainPanel.x + panelButton->xOffset + 1 + (panelButton->width - 1 - textWidth) / 2;
@@ -1989,7 +1986,7 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 		point.y = _mainPanel.y + panelButton->yOffset + 12;
 	}
 
-	_vm->_font->textDraw(font, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
+	_vm->_font->textDraw(kKnownFontVerb, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
 }
 
 
@@ -2035,7 +2032,7 @@ bool Interface::converseAddText(const char *text, int replyId, byte replyFlags, 
 		for (i = len; i >= 0; i--) {
 			c = _converseWorkString[i];
 
-			if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kSmallFont, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth)) {
+			if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kKnownFontSmall, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth)) {
 				break;
 			}
 		}
@@ -2144,11 +2141,11 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 			textPoint.x = rect.left - 6;
 			textPoint.y = rect.top;
 
-			_vm->_font->textDraw(kSmallFont, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+			_vm->_font->textDraw(kKnownFontSmall, ds, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
 		textPoint.x = rect.left + 1;
 		textPoint.y = rect.top;
-		_vm->_font->textDraw(kSmallFont, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
+		_vm->_font->textDraw(kKnownFontSmall, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
 	}
 
 	if (_converseStartPos != 0) {

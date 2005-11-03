@@ -53,6 +53,35 @@ namespace Saga {
 #define TEXT_MARGIN 10
 #define TEXT_LINESPACING 2
 
+enum FontId {
+	kSmallFont,
+	kMediumFont,
+	kBigFont,
+	kIHNMUnknown,
+	kIHNMFont8,
+	kIHNMUnknown2,
+	kIHNMMainFont
+};
+
+enum FontEffectFlags {
+	kFontNormal   = 0,
+	kFontOutline  = 1 << 0,
+	kFontShadow   = 1 << 1,
+	kFontBold     = 1 << 2,
+	kFontCentered = 1 << 3,
+	kFontDontmap  = 1 << 4
+};
+
+enum KnownFont {
+	kKnownFontSmall,
+	kKnownFontMedium,
+	kKnownFontBig,
+
+	kKnownFontPause,
+	kKnownFontScript,
+	kKnownFontVerb,
+};
+
 struct TextListEntry {
 	bool display;
 	bool useRect;
@@ -61,7 +90,7 @@ struct TextListEntry {
 	int color;
 	int effectColor;
 	FontEffectFlags flags;
-	FontId fontId;
+	KnownFont font;
 	const char *text;
 	TextListEntry() {
 		memset(this, 0, sizeof(*this));
@@ -105,38 +134,62 @@ class Font {
  public:
 	Font(SagaEngine *vm);
 	~Font(void);
-	FontData *getFont(FontId fontId);
-	int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
-	int getHeight(FontId fontId);
-	int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
-
-	void textDraw(FontId fontId, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
-	void textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
-
-	void validate(FontId fontId) {
-		if ((fontId < 0) || (fontId >= _loadedFonts)) {
-			error("Font::validate: Invalid font id.");
-		}
+	int getStringWidth(KnownFont font, const char *text, size_t count, FontEffectFlags flags) {
+		return getStringWidth(knownFont2FontIdx(font), text, count, flags);
 	}
-
-	bool loaded(FontId fontId) {
-		return !((fontId < 0) || (fontId >= _loadedFonts));
+	int getHeight(KnownFont font) {
+		return getHeight(knownFont2FontIdx(font));
 	}
-
+	int getHeight(KnownFont font, const char *text, int width, FontEffectFlags flags) {
+		return getHeight(knownFont2FontIdx(font), text, width, flags);
+	}
+	void textDraw(KnownFont font, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) {
+		textDraw(knownFont2FontIdx(font), ds, string, point, color, effectColor, flags);
+	}
+	void textDrawRect(KnownFont font, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
+		textDrawRect(knownFont2FontIdx(font), ds, text, rect, color, effectColor, flags);
+	}
+	
  private:
-	void loadFont(uint32 fontResourceId);
-	void createOutline(FontData *font);
-	void draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
-	void outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
-	int getByteLen(int numBits) const {
-		int byteLength = numBits / 8;
+	 FontId knownFont2FontIdx(KnownFont font);
 
-		if (numBits % 8) {
-			byteLength++;
-		}
+	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
+	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
+	 void textDrawRect(FontId fontId, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags);
+	 void textDraw(FontId fontId, Surface *ds, const char *string, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 
-		return byteLength;
-	}
+	 void loadFont(uint32 fontResourceId);
+	 void createOutline(FontData *font);
+	 void draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
+	 void outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
+	 
+	 FontData *getFont(FontId fontId) {
+		 validate(fontId);
+		 return _fonts[fontId];
+	 }
+
+public:
+	int Font::getHeight(FontId fontId) {
+		 return getFont(fontId)->normal.header.charHeight;
+	 }
+
+	 void validate(FontId fontId) {
+		 if (!valid(fontId)) {
+			 error("Font::validate: Invalid font id.");
+		 }
+	 }
+	 bool valid(FontId fontId) {
+		 return ((fontId >= 0) && (fontId < _loadedFonts));
+	 }
+	 int getByteLen(int numBits) const {
+		 int byteLength = numBits / 8;
+
+		 if (numBits % 8) {
+			 byteLength++;
+		 }
+
+		 return byteLength;
+	 }
 
 	static const int _charMap[256];
 	SagaEngine *_vm;
