@@ -956,8 +956,12 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Before V61, we re-used the _haveMsg flag to handle "alternative" speech
 	// sound files (see charset code 10).
 	if (s->isLoading() && s->getVersion() < VER(61)) {
-		_haveActorSpeechMsg = (_haveMsg != 0xFE);
-		_haveMsg = 0xFF;
+		if (_haveMsg == 0xFE) {
+			_haveActorSpeechMsg = false;
+			_haveMsg = 0xFF;
+		} else {
+			_haveActorSpeechMsg = true;
+		}
 	}
 
 	//
