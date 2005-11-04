@@ -298,10 +298,12 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
+		if (chr == '\n' || chr == '\r')
+			break;
 		if (_vm->_heversion >= 72) {
 			if (chr == code) {
 				chr = text[pos++];
-				if (chr == 84) {  // Strings of speech offset/size
+				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
 					while (chr != code)
 						chr = text[pos++];
 					continue;
@@ -314,8 +316,6 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		} else {
 			if (chr == '@')
 				continue;
-			if (chr == '\n' || chr == '\r')
-				break;
 			if (chr == 255 || (_vm->_version <= 6 && chr == 254)) {
 				chr = text[pos++];
 				if (chr == 3)	// 'WAIT'
@@ -365,7 +365,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (_vm->_heversion >= 72) {
 			if (chr == code) {
 				chr = str[pos++];
-				if (chr == 84) {  // Strings of speech offset/size
+				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
 					while (chr != code)
 						chr = str[pos++];
 					continue;
