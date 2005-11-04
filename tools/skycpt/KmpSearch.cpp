@@ -1,5 +1,10 @@
 #include "stdafx.h"
 #include "KmpSearch.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _MSC_VER
 
 __declspec(naked) void __fastcall KmpSearch::init(const char *subStr) {
 	__asm {
@@ -126,4 +131,16 @@ __declspec(naked) char * __fastcall KmpSearch::search(const char *str) {
 		ret
 	}
 }
+
+#else
+
+void __fastcall KmpSearch::init(const char *subStr) {
+	strcpy(_subStr, subStr);
+}
+
+char * __fastcall KmpSearch::search(const char *str) {
+	return strstr(str, _subStr);
+}
+
+#endif
 

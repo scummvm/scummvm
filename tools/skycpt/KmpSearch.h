@@ -1,6 +1,10 @@
 #ifndef __KmpSearch__
 #define __KmpSearch__
 
+#ifndef _MSC_VER
+#define __fastcall
+#endif
+
 class KmpSearch {
 public:
 	void __fastcall init(const char *subStr);

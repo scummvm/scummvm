@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "cpthelp.h"
 #include "textfile.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 uint32 crop(char *line);
 uint16 findCptId(char *name, TextFile *cptFile);
@@ -243,19 +246,29 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	uint16 maxStrl = 0;
 	uint16 maxCptl = 0;
 
+	printf("Processing...\n");
 	CptObj *resCpts;
 	uint16 baseLists[NUM_DATA_LISTS];
 	memset(baseLists, 0, NUM_DATA_LISTS * 2);
 	resCpts = (CptObj*)malloc(MAX_CPTS * sizeof(CptObj));
 	memset(resCpts, 0, MAX_CPTS * sizeof(CptObj));
+	printf(" MainLists...\n");
 	processMainLists(inf, resCpts, baseLists);
+	printf(" Compacts...\n");
 	processCpts(inf, resCpts);
+	printf(" Turntables...\n");
 	processTurntabs(inf, resCpts);
+	printf(" Animation tables...\n");
 	processBins(inf, resCpts, "ANIMSEQS", "ANIMSEQ", ANIMSEQ);
+	printf(" Unknown binaries...\n");
 	processBins(inf, resCpts, "MISCBINS", "MISCBIN", MISCBIN);
+	printf(" Get To tables...\n");
 	processBins(inf, resCpts, "GETTOTAB", "GET_TOS", GETTOTAB);
+	printf(" Scratch buffers...\n");
 	processBins(inf, resCpts, "SCRATCHR", "SCRATCH", ROUTEBUF);
+	printf(" Symbolic links...\n");
 	processSymlinks(inf, resCpts, baseLists);
+	printf("Converting to binary data...\n");
 	uint32 numCpts = 1;
 	for (uint32 cnt = 1; cnt < MAX_CPTS; cnt++)
 		if (resCpts[cnt].data || resCpts[cnt].dbgName || resCpts[cnt].len)
@@ -351,6 +364,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		fwrite(dlinks + cnt * 2 + 1, 2, 1, debOutf);
 		fwrite(dlinks + cnt * 2 + 1, 2, 1, resOutf);
 	}
+	printf("Processing diff data...\n");
 	// 288 diffdata
 	FILE *dif = fopen("288diff.txt", "r");
 	assert(dif);
@@ -408,6 +422,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	fwrite(&diffDest, 1, 2, resOutf);
 	fwrite(diff, 2, diffDest, resOutf);
 
+	printf("Converting Save data...\n");
 	// the IDs of the compacts to be saved
 	char cptName[1024];
 	uint16 saveIds[2048];
@@ -428,50 +443,76 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	fwrite(&numIds, 2, 1, resOutf);
 	fwrite(saveIds, 2, numIds, resOutf);
 
+	printf("Converting Reset data...\n");
 	// now append the reset data
-	uint16 gameVers[6] = { 303, 331, 348, 365, 368, 372 };
-	FILE *res288 = fopen("RESET.288", "rb");
-	fseek(res288, 0, SEEK_END);
-	assert((ftell(res288) / 2) < 65536);
-	uint16 resSize = (uint16)(ftell(res288) / 2);
-	fseek(res288, 0, SEEK_SET);
-	uint16 *buf288 = (uint16*)malloc(resSize * 2);
-	fread(buf288, 2, resSize, res288);
-	fclose(res288);
-	fwrite(&resSize, 1, 2, debOutf);
-	fwrite(buf288, 2, resSize, debOutf);
+	uint16 gameVers[7] = { 303, 331, 348, 365, 368, 372, 288 };
+	// make sure all files exist
+	bool filesExist = true;
+	char inName[32];
+	for (int i = 0; i < 7; i++) {
+		sprintf(inName, "reset.%03d", gameVers[i]);
+		FILE *test = fopen(inName, "rb");
+		if (test)
+			fclose(test);
+		else {
+			filesExist = false;
+			printf("File %s not found\n", inName);
+		}
+	}
+	
+	if (filesExist) {
+		FILE *res288 = fopen("RESET.288", "rb");
+		fseek(res288, 0, SEEK_END);
+		assert((ftell(res288) / 2) < 65536);
+		uint16 resSize = (uint16)(ftell(res288) / 2);
+		fseek(res288, 0, SEEK_SET);
+		uint16 *buf288 = (uint16*)malloc(resSize * 2);
+		fread(buf288, 2, resSize, res288);
+		fclose(res288);
+		fwrite(&resSize, 1, 2, debOutf);
+		fwrite(buf288, 2, resSize, debOutf);
 
-	uint16 tmp = 7;
-	fwrite(&tmp, 2, 1, debOutf);
-	tmp = 288;
-	fwrite(&tmp, 2, 1, debOutf);
-	tmp = 0;
-	fwrite(&tmp, 2, 1, debOutf);
-	printf("reset destination: %d\n", ftell(debOutf));
-	for (int cnt = 0; cnt < 6; cnt++) {
-		char inName[32];
-		uint16 diff[8192];
-		uint16 diffPos = 0;
-		sprintf(inName, "reset.%03d", gameVers[cnt]);
-		FILE *resDiff = fopen(inName, "rb");
-		fseek(resDiff, 0, SEEK_END);
-		assert(ftell(resDiff) == (resSize * 2));
-		fseek(resDiff, 0, SEEK_SET);
-		uint16 *bufDif = (uint16*)malloc(resSize *2);
-		fread(bufDif, 2, resSize, resDiff);
-		fclose(resDiff);
-		for (uint16 eCnt = 0; eCnt < resSize; eCnt++)
-			if (buf288[eCnt] != bufDif[eCnt]) {
-				diff[diffPos++] = eCnt;
-				diff[diffPos++] = bufDif[eCnt];
-			}
-		free(bufDif);
-		fwrite(gameVers + cnt, 1, 2, debOutf);
-		assert(!(diffPos & 1));
-		diffPos /= 2;
-		fwrite(&diffPos, 1, 2, debOutf);
-		fwrite(diff, 2, 2 * diffPos, debOutf);
-		printf("diff v0.0%03d: 2 * 2 * %d\n", gameVers[cnt], diffPos);
+		uint16 tmp = 7;
+		fwrite(&tmp, 2, 1, debOutf);
+		tmp = 288;
+		fwrite(&tmp, 2, 1, debOutf);
+		tmp = 0;
+		fwrite(&tmp, 2, 1, debOutf);
+		printf("reset destination: %d\n", ftell(debOutf));
+		for (int cnt = 0; cnt < 6; cnt++) {
+			uint16 diff[8192];
+			uint16 diffPos = 0;
+			sprintf(inName, "reset.%03d", gameVers[cnt]);
+			FILE *resDiff = fopen(inName, "rb");
+			fseek(resDiff, 0, SEEK_END);
+			assert(ftell(resDiff) == (resSize * 2));
+			fseek(resDiff, 0, SEEK_SET);
+			uint16 *bufDif = (uint16*)malloc(resSize *2);
+			fread(bufDif, 2, resSize, resDiff);
+			fclose(resDiff);
+			for (uint16 eCnt = 0; eCnt < resSize; eCnt++)
+				if (buf288[eCnt] != bufDif[eCnt]) {
+					diff[diffPos++] = eCnt;
+					diff[diffPos++] = bufDif[eCnt];
+				}
+			free(bufDif);
+			fwrite(gameVers + cnt, 1, 2, debOutf);
+			assert(!(diffPos & 1));
+			diffPos /= 2;
+			fwrite(&diffPos, 1, 2, debOutf);
+			fwrite(diff, 2, 2 * diffPos, debOutf);
+			printf("diff v0.0%03d: 2 * 2 * %d\n", gameVers[cnt], diffPos);
+		}
+	} else {
+		printf("Creating CPT file with Dummy reset data @ %d\n", ftell(debOutf));
+		uint16 resetFields16 = 4;
+		fwrite(&resetFields16, 2, 1, debOutf);
+		uint32 blah = 8;
+		fwrite(&blah, 4, 1, debOutf); // size field: 8 bytes
+		blah = (uint32)-1;
+		fwrite(&blah, 4, 1, debOutf); // save file revision. -1 is unknown to scummvm, so it'll refuse to load it.
+		resetFields16 = 0;
+		fwrite(&resetFields16, 2, 1, debOutf); // numDiffs: 0, no further reset blocks.
 	}
 
 	// now fill the raw-compact-data-size header field
