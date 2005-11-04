@@ -244,6 +244,8 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 72, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -383,6 +385,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
+	{"cf8ef3a1fb483c5c4b1c584d1167b2c4", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated German)", GID_HEGAME, 6, 73, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"746e88c172a5b7a1ae89ac0ee3ee681a", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated Russian)", GID_HEGAME, 6, 90, MDT_NONE,
@@ -544,15 +548,15 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
+	{"2108d83dcf09f8adb4bc524669c8cf51", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"d4aac997e2f4e15341f0bfbf905419bd", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"defb8cb9ec4b0f91acfb6b61c6129ad9", "Putt-Putt Travels Through Time (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"a525c1753c1db5011c00417da37887ef", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"fcb78ebecab2757264c590890c319cc5", "Putt-Putt Travels Through Time (Updated Dutch)", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"84e3c23a49ded8a6f9197735c8eb3de7", "Putt-Putt Travels Through Time (Updated German)", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"defb8cb9ec4b0f91acfb6b61c6129ad9", "Putt-Putt Travels Through Time (Russian)", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"4e5867848ee61bc30d157e2c94eee9b4", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -560,6 +564,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"59d5cfcc5e672a6e07baae01328b918b", "Putt-Putt Travels Through Time (French Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // TEMPDEMO
+	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"8e3241ddd6c8dadf64305e8740d45e13", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
