@@ -42,7 +42,7 @@ If you still want to waste your time by creating this file:
 8) Copy the files into the skycpt tool directory, execute the tool again.
 	It'll create a new COMPACT.DBG.
 9) Rename this file to SKY.CPT.
-10) DELETE THE FUCKING FILE BECAUSE IT'S PROBABLY BROKEN, NOT WORTH BOTHERING WITH ANYWAYS
+10) DELETE IT BECAUSE IT'S PROBABLY BROKEN, NOT WORTH BOTHERING WITH ANYWAYS
 	AND DOWNLOAD THE SKY.CPT FILE FROM THE URL ABOVE!!
 	
 Oh, I almost forgot.
