@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "TextFile.h"
 #include "KmpSearch.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 uint16 findCptId(char *name, TextFile *cptFile) {
 	KmpSearch *kmp = new KmpSearch();

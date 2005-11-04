@@ -2,13 +2,15 @@
 // oder projektspezifische Includedateien, die h‰ufig benutzt, aber
 // in unregelm‰ﬂigen Abst‰nden ge‰ndert werden.
 //
+#ifndef __STDAFX_H__
+#define __STDAFX_H__
 
+#ifdef _MSC_VER
 #pragma once
-
 
 #include <iostream>
 #include <tchar.h>
-
+#endif
 
 typedef unsigned char byte;
 typedef unsigned char uint8;
@@ -30,4 +32,5 @@ struct CptObj {
 	uint16 type;
 	//uint16 id;
 };
-// TODO: Verweisen Sie hier auf zus‰tzliche Header, die Ihr Programm erfordert
+
+#endif // __STDAFX_H__
