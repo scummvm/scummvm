@@ -1602,12 +1602,12 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			int w = READ_LE_UINT32(wizh + 0x4);
 			int h = READ_LE_UINT32(wizh + 0x8);
 			assert(c == 0);
-			Common::Rect r1(w, h);
+			Common::Rect imageRect(w, h);
 			if (params->processFlags & kWPFClipBox) {
-				if (!r1.intersects(params->box)) {
+				if (!imageRect.intersects(params->box)) {
 					return;
 				}
-				r1.clip(params->box);
+				imageRect.clip(params->box);
 			}
 			uint8 color = _vm->VAR(93);
 			if (params->processFlags & kWPFFillColor) {
@@ -1635,7 +1635,10 @@ void Wiz::fillWizLine(const WizParameters *params) {
 				incy = -1;
 			}
 
-			if (r1.contains(x1, y1)) {
+			dx = ABS(x2 - x1);
+			dy = ABS(y2 - y1);
+
+			if (imageRect.contains(x1, y1)) {
 				*(wizd + y1 * w + x1) = color;
 			}
 
@@ -1651,7 +1654,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 						y1 += incy;
 					}
 					x1 += incx;
-					if (r1.contains(x1, y1)) {
+					if (imageRect.contains(x1, y1)) {
 						*(wizd + y1 * w + x1) = color;
 					}
 				}
@@ -1667,7 +1670,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 						x1 += incx;
 					}
 					y1 += incy;
-					if (r1.contains(x1, y1)) {
+					if (imageRect.contains(x1, y1)) {
 						*(wizd + y1 * w + x1) = color;
 					}
 				}
@@ -1716,7 +1719,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
 
-	debug(1, "processWizImage: processMode %d", params->processMode);
+	debug(0, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
@@ -1842,15 +1845,15 @@ void Wiz::processWizImage(const WizParameters *params) {
 		fillWizFlood(params);
 		break;
 	case 13:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Start Font
 		break;
 	case 14:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: End Font
 		break;
 	case 15:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Create Font
 		break;
 	case 16:
@@ -1858,7 +1861,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		error("Render Font String");
 		break;
 	case 17:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used in to draw circles in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Ellipse
 		break;
 	default:
