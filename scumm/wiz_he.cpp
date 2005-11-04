@@ -1003,7 +1003,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	int32 cw, ch;
 	if (flags & kWIFBlitToMemBuffer) {
 		dst = (uint8 *)malloc(width * height);
-		int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
+		int color = 255;
 		memset(dst, color, width * height);
 		cw = width;
 		ch = height;
@@ -1925,7 +1925,11 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 		}
 		switch (c) {
 		case 0:
-			ret = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
+			if (_vm->_heversion >= 99) {
+				ret = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
+			} else {
+				ret = 0;
+			}
 			break;
 		case 1:
 			ret = isWizPixelNonTransparent(wizd, x, y, w, h);
@@ -1955,7 +1959,11 @@ uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
 	assert(wizd);
 	switch (c) {
 	case 0:
-		color = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+		if (_vm->_heversion >= 99) {
+			color = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
+		} else {
+			color = _vm->VAR(_vm->VAR_WIZ_TCOLOR);
+		}
 		break;
 	case 1:
 		color = getWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
