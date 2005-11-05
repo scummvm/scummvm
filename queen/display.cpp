@@ -28,14 +28,14 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
-#if defined(__PALM_OS__)
+#if defined(PALMOS_68K)
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
 
 namespace Queen {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const uint8 *_fontRegular;
 static const uint8 *_fontHebrew;
 static const uint8 *_palJoeClothes;
@@ -569,7 +569,7 @@ void Display::prepareUpdate() {
 	uint8 *dst = _screenBuf;
 	const uint8 *src = _backdropBuf + _horizontalScroll;
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ARM_START(CopyRectangleType)
 		ARM_INIT(COMMON_COPYRECT)
 		ARM_ADDM(dst)
@@ -696,7 +696,7 @@ void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uin
 	assert(w <= dstPitch);
 	dstBuf += dstPitch * y + x;
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 	ARM_CHECK_EXEC(w > 8 && h > 8)
 		ARM_START(BlitType)
 			ARM_INIT(QUEEN_BLIT)
@@ -1044,7 +1044,7 @@ void Display::blankScreenEffect3() {
 	}
 }
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 const uint8 Display::_fontRegular[] = {
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 
@@ -1323,7 +1323,7 @@ const uint8 Display::_palJoeDress[] = {
 
 } // End of namespace Queen
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Queen_Display)

@@ -24,7 +24,7 @@
 
 namespace Queen {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static ResourceEntry *_resourceTablePEM10;
 #endif
 
@@ -81,7 +81,7 @@ ResourceEntry *Resource::resourceEntry(const char *filename) const {
 	while (*ptr++);
 
 	ResourceEntry *re = NULL;
-#ifndef __PALM_OS__
+#ifndef PALMOS_MODE
 	re = (ResourceEntry *)bsearch(entryName, _resourceTable, _resourceEntries, sizeof(ResourceEntry), compareResourceEntry);
 #else
 	// PALMOS FIXME (?) : still doesn't work for me (????) use this instead
@@ -269,7 +269,7 @@ char *LineReader::nextLine() {
 
 } // End of namespace Queen
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Queen_Restables)

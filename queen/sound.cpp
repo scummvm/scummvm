@@ -96,7 +96,7 @@ void Sound::playSfx(uint16 sfx, bool isSpeech) {
 
 	if (sfx != 0) {
 		char name[13];
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 		strcpy(name, _sfxName[sfx - 1]);
 #else
 		strncpy(name, _sfxName + 10 * (sfx - 1), 10);	// saved as 8char + /0/0

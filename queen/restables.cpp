@@ -23,7 +23,7 @@
 
 namespace Queen {
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 //English Floppy Version
 ResourceEntry Resource::_resourceTablePEM10[] = {
 	{ "1000SSSS.SB", 1, 0x00000000, 0x000027fe },

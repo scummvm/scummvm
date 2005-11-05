@@ -77,7 +77,7 @@ private:
 		int16 gameStateValue;
 	};
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	struct SpeechParameters {
 		const char *name;
 		signed char state,faceDirection;
@@ -150,7 +150,7 @@ private:
 	char _talkString[5][MAX_STRING_SIZE];
 	char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	static const SpeechParameters _speechParameters[];
 #endif
 

@@ -257,7 +257,7 @@ private:
 		int16 frame;
 	};
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 public:
 #endif
 	struct BamDataBlock {
@@ -266,7 +266,7 @@ public:
 		BamDataObj fx;
 		int16 sfx;
 	};
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 private:
 #endif
 
@@ -279,7 +279,7 @@ private:
 
 	QueenEngine *_vm;
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	static const BamDataBlock _carData[];
 	static const BamDataBlock _fight1Data[];
 	static const BamDataBlock _fight2Data[];

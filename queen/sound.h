@@ -84,7 +84,7 @@ public:
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	static const songData _songDemo[];
 	static const songData _song[];
 	static const tuneData _tuneDemo[];

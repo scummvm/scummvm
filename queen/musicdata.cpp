@@ -24,7 +24,7 @@
 
 namespace Queen {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 
 const songData *Sound::_songDemo;
 const songData *Sound::_song;
@@ -1919,7 +1919,7 @@ const int16 Sound::_jungleList[] = { 15, 16, 17, 18, 7, 8, 9, 10, 11, 12, 13, 14
 
 } // End of namespace Queen
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Queen_Musicdata)
