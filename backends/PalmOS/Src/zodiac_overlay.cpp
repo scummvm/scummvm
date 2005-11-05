@@ -24,16 +24,18 @@
 #include "be_zodiac.h"
 
 void OSystem_PalmZodiac::showOverlay() {
+	// hide fight indicator
 	draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, false);
+
 	undraw_mouse();
 	_overlayVisible = true;
 	clearOverlay();	
 }
 
 void OSystem_PalmZodiac::hideOverlay() {
-	draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, _useNumPad, 1);
 	undraw_mouse();
 	_overlayVisible = false;
+	_redawOSD = true;
 }
 
 void OSystem_PalmZodiac::clearOverlay() {
@@ -41,7 +43,7 @@ void OSystem_PalmZodiac::clearOverlay() {
 		return;
 
 	Err e;
-	TwGfxPointType pos = {0, 0};	
+	TwGfxPointType pos = {0, 0};
 	TwGfxBitmapType bmp = {
 		sizeof(TwGfxBitmapType),
 		_screenWidth, _screenHeight, _screenWidth, twGfxPixelFormat8bpp,
@@ -88,4 +90,3 @@ void OSystem_PalmZodiac::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint
 	g = ((color >> 3) & 0xFC);
 	b = ((color << 3) & 0xF8);
 }
-
