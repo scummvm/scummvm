@@ -103,7 +103,7 @@ protected:
 	bool	_dtCentre;	//set for centre text
 	uint32	_lowTextWidth, _mouseOfsX, _mouseOfsY;
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	static const HuffTree _huffTree_00109[]; // trees moved to hufftext.cpp
 	static const HuffTree _huffTree_00267[];
 	static const HuffTree _huffTree_00288[];

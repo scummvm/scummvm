@@ -1523,7 +1523,7 @@ void Control::delay(unsigned int amount) {
 				_mouseY = event.mouse.y;
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
-#ifdef __PALM_OS__
+#ifdef PALMOS_MODE
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif

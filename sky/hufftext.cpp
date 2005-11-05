@@ -23,7 +23,7 @@
 
 namespace Sky {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 const HuffTree *Text::_huffTree_00109;
 const HuffTree *Text::_huffTree_00267;
 const HuffTree *Text::_huffTree_00288;
@@ -2015,7 +2015,7 @@ const HuffTree Text::_huffTree_00372[] = {
 
 } // End of namespace Sky
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Sky_Hufftext)

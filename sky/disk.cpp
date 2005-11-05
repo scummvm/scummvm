@@ -28,7 +28,7 @@
 #include "sky/sky.h"
 #include "sky/struc.h"
 
-#if defined(__PALM_OS__)
+#if defined(PALMOS_68K)
 #include "arm/native.h"
 #include "arm/macros.h"
 #endif
@@ -164,7 +164,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 		if ((fileFlags >> 22) & 0x1) { //do we include the header?
 			// don't return the file's header
 			output = uncompDest;
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 		ARM_START(RncDecoderType)
 			ARM_INIT(SKY_UNPACKM1)
 			ARM_ADDM(input)
@@ -184,7 +184,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 			memcpy(uncompDest, fileDest, sizeof(dataFileHeader));
 			output = uncompDest + sizeof(dataFileHeader);
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 		ARM_START(RncDecoderType)
 			ARM_INIT(SKY_UNPACKM1)
 			ARM_ADDM(input)
