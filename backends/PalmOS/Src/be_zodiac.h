@@ -27,6 +27,8 @@
 #include "be_os5.h"
 #include <tapwave.h>
 
+#define MIN_OFFSET	20
+
 class OSystem_PalmZodiac : public OSystem_PalmOS5 {
 private:
 	enum {
@@ -68,9 +70,12 @@ private:
 	void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
 
 public:
+	OSystem_PalmZodiac();
+
 	static OSystem *create();
 	
 	void setFeatureState(Feature f, bool enable);
+	int getDefaultGraphicsMode() const;
 
 	void updateScreen();
 	bool grabRawScreen(Graphics::Surface *surf);

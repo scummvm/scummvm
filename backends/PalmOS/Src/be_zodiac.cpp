@@ -23,17 +23,15 @@
 
 #include "be_zodiac.h"
 
-void OSystem_PalmZodiac::int_initBackend() {
-	_sound.active = false;
-
-
+OSystem_PalmZodiac::OSystem_PalmZodiac() : OSystem_PalmOS5() {
 	_gfxH = NULL;
 	_overlayP = NULL;
 	_palmScreenP = NULL;
 	_tmpScreenP = NULL;
 	_stretched = false;
-	_tmpScreenP = NULL;
+}
 
+void OSystem_PalmZodiac::int_initBackend() {
 	_keyMouse.bitUp		= keyBitRockerUp;
 	_keyMouse.bitDown	= keyBitRockerDown;
 	_keyMouse.bitLeft	= keyBitRockerLeft;
@@ -65,10 +63,10 @@ void OSystem_PalmZodiac::calc_rect(Boolean fullscreen) {
 
 	} else {
 		w = gVars->screenWidth;
-		h = gVars->screenHeight;
+		h = gVars->screenHeight - MIN_OFFSET * 2;
 
 		_screenOffset.x = 0;
-		_screenOffset.y = 0;		
+		_screenOffset.y = MIN_OFFSET;		
 	}
 
 	_dstRect.x = _screenOffset.x;
