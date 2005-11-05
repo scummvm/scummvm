@@ -2033,8 +2033,7 @@ void ScummEngine_v71he::preProcessAuxQueue() {
 	if (!_skipProcessActors) {
 		for (int i = 0; i < _auxBlocksNum; ++i) {
 			AuxBlock *ab = &_auxBlocks[i];
-			if (ab->visible) {
-				assert(ab->r.top <= ab->r.bottom);
+			if (ab->r.top <= ab->r.bottom) {
 				gdi.copyVirtScreenBuffers(ab->r);
 			}
 		}
