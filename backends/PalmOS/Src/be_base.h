@@ -94,7 +94,7 @@ protected:
 		kKeyAny				= 1 << 31
 	};
 	enum {
-		MAX_MOUSE_W = 40,	// should be 80x80 with 640x480 games ?
+		MAX_MOUSE_W = 40,
 		MAX_MOUSE_H = 40
 	};
 	struct MousePos {
@@ -151,6 +151,7 @@ protected:
 	int _samplesPerSec;
 
 public:
+	OSystem_PalmBase();
 	void initBackend();
 
 /*
@@ -180,7 +181,7 @@ public:
 */
 	const GraphicsMode *getSupportedGraphicsModes() const;
 	int getGraphicsMode() const;
-	int getDefaultGraphicsMode() const;
+	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 	virtual bool grabRawScreen(Graphics::Surface *surf) { return false; }
 

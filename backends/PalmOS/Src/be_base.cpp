@@ -25,7 +25,7 @@
 #include "common/config-file.h"
 #include "common/config-manager.h"
 
-void OSystem_PalmBase::initBackend() {
+OSystem_PalmBase::OSystem_PalmBase() {
 	_overlayVisible = false;
 
 	_current_shake_pos = 0;
@@ -62,7 +62,9 @@ void OSystem_PalmBase::initBackend() {
 	MemSet(&_keyMouse, sizeof(_keyMouse), 0);
 	MemSet(&_mouseCurState, sizeof(_mouseCurState), 0);
 	MemSet(&_mouseOldState, sizeof(_mouseOldState), 0);
-	
+}
+
+void OSystem_PalmBase::initBackend() {	
 	int_initBackend();
 	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
 }

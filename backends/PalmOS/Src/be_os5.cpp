@@ -23,6 +23,10 @@
 
 #include "be_os5.h"
 
+OSystem_PalmOS5::OSystem_PalmOS5() : OSystem_PalmBase() {
+	_sound.active = false;
+}
+
 void OSystem_PalmOS5::int_initBackend() {
 }
 

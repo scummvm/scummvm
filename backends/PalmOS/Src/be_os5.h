@@ -56,6 +56,7 @@ protected:
 	SoundDataType _sound;
 
 public:
+	OSystem_PalmOS5();
 	static OSystem *create();
 
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
