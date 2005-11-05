@@ -125,13 +125,15 @@ uint32 Sword2Engine::saveData(uint16 slotNo, byte *buffer, uint32 bufferSize) {
 		return SR_ERR_FILEOPEN;
 	}
 
-	uint32 itemsWritten = out->write(buffer, bufferSize);
+	out->write(buffer, bufferSize);
+	out->flush();
+
+	if (!out->ioFailed()) {
+		delete out;
+		return SR_OK;
+	}
 
 	delete out;
-
-	if (itemsWritten == bufferSize)
-		return SR_OK;
-
 	return SR_ERR_WRITEFAIL;
 }
 
