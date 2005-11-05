@@ -24,42 +24,20 @@
 #define GLOBALS_H
 
 #include <VFSMgr.h>
+#include "stuffs.h"
+
+#ifdef PALMOS_68K
+
 #include "scumm_globals.h"
 #include "arm/pnodefs.h"
 
 enum {
-	kOptNone				=	0,
-	kOptDeviceARM			=	1 <<	0x00,
-	kOptDeviceOS5			=	1 <<	0x01,
-	kOptDeviceClie			=	1 <<	0x02,
-	kOptDeviceZodiac		=	1 <<	0x03,
-	kOptModeWide			=	1 <<	0x04,
-	kOptModeLandscape		=	1 <<	0x05,
-	kOptMode16Bit			=	1 <<	0x06,
-	kOptModeHiDensity		=	1 <<	0x07,
-	kOptCollapsible			=	1 <<	0x08,
-	kOptDisableOnScrDisp	=	1 <<	0x09,
-	kOpt5WayNavigator		=	1 <<	0x0A,
-	kOptPalmSoundAPI		=	1 <<	0x0B,
-	kOptSonyPa1LibAPI		=	1 <<	0x0C,
-
-	kOptDeviceProcX86		=	1 <<	0x1F	// DEBUG only
-};
-
-enum {
 	kMemScummOldCostGames = 0,
 	kMemScummNewCostGames,
-	kMemSimon1Games,
+	kMemSimon1Games,	
 	kMemSimon2Games,
 
 	kMemGamesCount
-};
-
-enum {
-	INIT_VIBRATOR	= 1 <<	0x00,
-	INIT_PA1LIB		= 1 <<	0x01,
-	INIT_ARM		= 1 <<	0x02,
-	INIT_AUTOOFF	= 1 <<	0x03
 };
 
 typedef struct {
@@ -68,55 +46,94 @@ typedef struct {
 	PnoDescriptor pnoDesc;
 } PNOInitType;
 
+#endif
+
+enum {
+	INIT_VIBRATOR	= 1 <<	0x00,
+	INIT_PA1LIB		= 1 <<	0x01,
+	INIT_ARM		= 1 <<	0x02,
+	INIT_AUTOOFF	= 1 <<	0x03,
+	INIT_GOLCD		= 1 <<	0x04
+};
+
+enum {
+	FM_QUALITY_LOW = 0,
+	FM_QUALITY_MED,
+	FM_QUALITY_HI,
+	FM_QUALITY_INI
+};
+
 typedef struct {
-	DmOpenRef globals[GBVARS_COUNT];
-	UInt32 memory[kMemGamesCount];
+	// common parts
+	UInt32 _4B, _2B;
 
-	UInt8 init;
-	UInt32 options;
-
-	UInt16 HRrefNum;
-	UInt16 volRefNum;
-	UInt16 slkRefNum;
+	// 4 bytes part
+	UInt32 startupMemory;
 	UInt32 slkVersion;
+	UInt32 options;
+	UInt32 screenPitch;
 
-	FileRef	logFile;
+	struct {
+		FileRef	logFile;
+		UInt32 cacheSize;
+		UInt16 volRefNum;
+		UInt16 dummy;
+	} VFS;
 
+	// 2 bytes part
+	UInt16 HRrefNum;
+	UInt16 slkRefNum;
+	Coord screenWidth, screenHeight;			// silkarea shown
+	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
+
+	// 1 byte part
 	Boolean vibrator;
 	Boolean screenLocked;
 	Boolean stdPalette;
 	Boolean filter;
-	Coord screenWidth, screenHeight;			// silkarea shown
-	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
-	UInt32 screenPitch;
-
-	PNOInitType arm[ARM_COUNT];
-
+	Boolean stylusClick;
+	UInt8 init;
+	UInt8 palmVolume;
+	UInt8 fmQuality;
 	struct {
+		UInt8 showLED;
 		UInt8 on;
 		UInt8 off;
 	} indicator;
 
-	struct {
-		UInt8 *pageAddr1;
-		UInt8 *pageAddr2;
-	} flipping;
-
+#ifdef PALMOS_68K
+	// 68k only part
 	struct {
 		Boolean enable;
 		UInt8 driver, format;
 		UInt16 defaultTrackLength;
 		UInt16 firstTrack;
-		UInt16 volume;
+		UInt8 volume;		
 	} CD;
+
+	DmOpenRef globals[GBVARS_COUNT];
+	UInt32 memory[kMemGamesCount];
+	PNOInitType arm[ARM_COUNT];
+#endif
 
 } GlobalsDataType, *GlobalsDataPtr;
 
 extern GlobalsDataPtr gVars;
 
-#define OPTIONS_TST(x)	(gVars->options & (x))
-#define OPTIONS_SET(x)	gVars->options |= (x)
-#define OPTIONS_RST(x)	gVars->options &= ~(x)
+#define VARS_EXPORT()		gVars->_4B = 6; \
+							gVars->_2B = 8;
+
+#define DO_VARS(z, t, o) \
+	{	Int8 *tmp = (Int8 *)gVars + o + 8; \
+		for (Int8 cnt = 0; cnt < gVars->z; cnt++) \
+			{ 	UInt##t val = *((UInt##t *)tmp);	\
+				val = ByteSwap##t(val);	\
+				*((UInt##t *)tmp) = val;	\
+				tmp += (t / 8);	\
+			}	\
+	}
+
+#define OPTIONS_DEF()		gVars->options
 
 #define HWR_INIT(x)			(gVars->init & (x))
 #define HWR_SET(x)			gVars->init |= (x)
