@@ -27,7 +27,7 @@
 
 namespace Simon {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const byte *_simon1_cursor;
 #else
 static const byte _simon1_cursor[256] = {
@@ -231,7 +231,7 @@ void SimonEngine::draw_mouse_pointer() {
 
 } // End of namespace Simon
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Simon_Cursor)

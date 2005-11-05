@@ -118,7 +118,7 @@ struct TimeEvent {
 };
 
 struct GameSpecificSettings {
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 	const char *gme_filename;
 	const char *wav_filename;
 	const char *voc_filename;

@@ -369,7 +369,7 @@ void SimonEngine::video_putchar_newline(FillOrCopyStruct *fcs) {
 		fcs->textRow++;
 }
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const byte *russian_video_font;
 static const byte *french_video_font;
 static const byte *german_video_font;
@@ -1132,7 +1132,7 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 
 } // End of namespace Simon
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Simon_Charset)
