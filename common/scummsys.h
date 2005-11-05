@@ -184,6 +184,8 @@
 
 #if !defined(COMPILE_ZODIAC) && !defined(PALMOS_ARM)
 	#define NEWGUI_256
+#else
+	#undef UNUSED
 #endif
 
 #elif defined(__MORPHOS__)
