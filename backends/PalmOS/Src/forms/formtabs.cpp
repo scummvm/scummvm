@@ -3,6 +3,7 @@
 #include <FrmGlue.h>
 #include <LstGlue.h>
 
+#include "globals.h"
 #include "formTabs.h"
 
 TabType *TabNewTabs(UInt16 cnt) {
@@ -15,11 +16,17 @@ TabType *TabNewTabs(UInt16 cnt) {
 	return newP;
 }
 
+void TabMoveUpObject(FormType *frmP, UInt16 objID, Coord amount) {
+	Coord x, y;
+	FrmGetObjectPosition(frmP, FrmGetObjectIndex(frmP, objID), &x, &y);
+	FrmSetObjectPosition(frmP, FrmGetObjectIndex(frmP, objID), x, y - amount);
+}
+
 void TabDeleteTabs(TabType *tabP) {
 	UInt16 cnt, num;
 	num = MemPtrSize(tabP->tabs) / sizeof(TabDataType);
 
-	for (cnt = 0; cnt < num; cnt++)
+	for (cnt = 0; cnt < num; cnt++)	
 		FrmDeleteForm(tabP->tabs[cnt].srcP);
 
 	delete tabP->tabs;
@@ -60,7 +67,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 	h = 12;
 	ControlType *addP = CtlNewControl(dstP, (FrmGetFormId(*frmP) + tabP->count), buttonCtl, nameP, x, y, w, h, stdFont, 0, true);
 	CtlGlueSetFrameStyle(addP, noButtonFrame);
-	tabP->width += w + 1;
+	tabP->width += w + 3;
 
 	// create tab content
 	for (cnt = 0; cnt < objNum; cnt++) {
@@ -86,7 +93,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 				UInt16 items = LstGetNumberOfItems((ListType *)objP);
 				UInt16 trigger = id - 1;
 				trigger = (FrmGetObjectIndex((FormType *)*dstP, trigger) != frmInvalidObjectId) ? trigger : 0;
-
+				
 				LstNewList(dstP, id, x, y, w, h, font, visible, trigger);
 				newP = (ListType *)FrmGetObjectPtr((FormType *)*dstP, FrmGetObjectIndex((FormType *)*dstP, id));
 				LstSetListChoices(newP, itemsP, items);
@@ -184,25 +191,52 @@ void TabSetActive(FormType *frmP, TabType *tabP, UInt16 num) {
 			if (num == cnt) {
 				RGBColorType yellow = {0,255,192,0};
 
+				UInt8 line = /*(UIColorGetTableEntryIndex(UIFormFill) == UIColorGetTableEntryIndex(UIFieldTextHighlightBackground)) ?
+							WinRGBToIndex(&yellow) :*/
+							UIColorGetTableEntryIndex(UIFieldTextHighlightBackground);
+
 				r.topLeft.y	-= 1;
 				WinSetForeColor(UIColorGetTableEntryIndex(UIObjectFrame));
-				WinDrawRectangleFrame(simpleFrame, &r);
-				WinSetForeColor(WinRGBToIndex(&yellow));
+				WinDrawRectangleFrame(simpleFrame, &r); 
+				WinSetForeColor(line);
 				WinDrawLine(r.topLeft.x, r.topLeft.y, r.topLeft.x + r.extent.x - 1, r.topLeft.y);
-				FrmShowObject(frmP, idx);
+				FrmShowObject(frmP, idx);				
+
 			} else {
-				WinSetForeColor(UIColorGetTableEntryIndex(UIObjectFrame));
-				WinDrawRectangleFrame(simpleFrame, &r);
+				UInt8 frame = UIColorGetTableEntryIndex(UIObjectFrame);
+				RGBColorType light;
+				WinIndexToRGB(frame, &light);
+				light.r = (255 - light.r) > 72 ? light.r + 72 : 255;
+				light.g = (255 - light.g) > 72 ? light.g + 72 : 255;
+				light.b = (255 - light.b) > 72 ? light.b + 72 : 255;
+
+				WinSetForeColor(WinRGBToIndex(&light));
+				WinDrawRectangleFrame(simpleFrame, &r); 
+				WinSetForeColor(frame);
+				WinDrawLine(r.topLeft.x - 1, r.topLeft.y + r.extent.y, r.topLeft.x + r.extent.x, r.topLeft.y + r.extent.y);
+			}
+
+			// round corner
+			WinSetForeColor(UIColorGetTableEntryIndex(UIFormFill));
+			if (OPTIONS_TST(kOptModeHiDensity)) {
+				WinSetCoordinateSystem(kCoordinatesNative);
+				WinDrawPixel((r.topLeft.x - 1) * 2, (r.topLeft.y - 1) * 2);
+				WinDrawPixel((r.topLeft.x + r.extent.x) * 2 + 1, (r.topLeft.y - 1) * 2);
+				WinSetCoordinateSystem(kCoordinatesStandard);
+
+			} else {
+				// TODO
 			}
 		}
 	}
 
 	// show objects
-	if (dataP->drawFunc)
-		(dataP->drawFunc)();
-
 	for (cnt = dataP->first; cnt <= dataP->last; cnt++) {
 		if ((idx = FrmGetObjectIndex(frmP, cnt)) != frmInvalidObjectId)
 			FrmShowObject(frmP, idx);
 	}
+
+	// post draw function
+	if (dataP->drawFunc)
+		(dataP->drawFunc)();
 }
