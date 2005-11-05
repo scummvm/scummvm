@@ -152,6 +152,12 @@ public:
 	void initScreen0(void);
 	void parseSaveData(uint32 *data);
 
+private:
+	void setupLogicTable();
+	void setupMcodeTable();
+	const LogicTable *_logicTable;
+	const McodeTable *_mcodeTable;
+	
 protected:
 	void push(uint32);
 	uint32 pop();
@@ -163,7 +169,6 @@ protected:
 	void stopAndWait();
 	bool checkProtection(void);
 
-	static const LogicTable _logicTable[];
 	void nop();
 	void logicScript();
 	void autoRoute();
@@ -182,7 +187,6 @@ protected:
 	void waitSync();
 	void simpleAnim();
 
-	static const McodeTable _mcodeTable[];
 	bool fnCacheChip(uint32 a, uint32 b, uint32 c);
 	bool fnCacheFast(uint32 a, uint32 b, uint32 c);
 	bool fnDrawScreen(uint32 a, uint32 b, uint32 c);
