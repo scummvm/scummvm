@@ -459,7 +459,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 			}
 		}
 
-		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
+		Child9 *child9 = (Child9 *)findChildOfType(item, 9);
 		if (child9) {
 			for (i = 0; i != 4; i++) {
 				f->writeUint16BE(child9->array[i]);
@@ -487,11 +487,13 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 			f->writeUint16BE(_bitArray[i]);
 	}
 
-	delete f;
+	f->flush();
+	bool result = !f->ioFailed();
 
+	delete f;
 	_lockWord &= ~0x100;
 
-	return true;
+	return result;
 }
 
 char *SimonEngine::gen_savename(int slot) {
