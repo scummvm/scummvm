@@ -63,17 +63,21 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 	Boolean success = false;
 
 	if (!_sound.active) {
+		if (gVars->fmQuality != FM_QUALITY_INI) {
+			ConfMan.set("FM_medium_quality", (gVars->fmQuality == FM_QUALITY_MED));
+			ConfMan.set("FM_high_quality", (gVars->fmQuality == FM_QUALITY_HI));
+		}
+
 		_sound.proc = proc;
 		_sound.param = param;
 		_sound.active = true;		// always true when we call this function, false when sound is off
 		_sound.handle = NULL;
 
-
 		if (ConfMan.hasKey("output_rate"))
 			_samplesPerSec = ConfMan.getInt("output_rate");
 		else
 #ifdef PALMOS_ARM
-			_samplesPerSec = 22050;	// default value
+			_samplesPerSec = 44100;	// default value
 #else
 			_samplesPerSec = 8000;	// default value
 #endif
