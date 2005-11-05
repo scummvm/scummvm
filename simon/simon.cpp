@@ -45,7 +45,7 @@
 extern bool isSmartphone(void);
 #endif
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "globals.h"
 #endif
 
@@ -169,7 +169,7 @@ REGISTER_PLUGIN(SIMON, "Simon the Sorcerer")
 
 namespace Simon {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #define PTR(a) a
 static const GameSpecificSettings *simon1_settings;
 static const GameSpecificSettings *simon1acorn_settings;
@@ -177,6 +177,7 @@ static const GameSpecificSettings *simon1amiga_settings;
 static const GameSpecificSettings *simon1demo_settings;
 static const GameSpecificSettings *simon2win_settings;
 static const GameSpecificSettings *simon2dos_settings;
+static const GameSpecificSettings *feeblefiles_settings;
 #else
 #define PTR(a) &a
 static const GameSpecificSettings simon1_settings = {
@@ -292,6 +293,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_gameOffsetsPtr = 0;
 
 	_debugger = 0;
+	setupVgaOpcodes();
 
 	const SimonGameSettings *g = simon_settings;
 	while (g->name) {
@@ -364,7 +366,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	VGA_DELAY_BASE = 1;
 	if (_game == GAME_FEEBLEFILES) {
 		NUM_VIDEO_OP_CODES = 85;
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 		VGA_MEM_SIZE = 7500000;
 #else
 		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
@@ -374,7 +376,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		TABLE_INDEX_BASE = 1580 / 4;
 		TEXT_INDEX_BASE = 1500 / 4;
 		NUM_VIDEO_OP_CODES = 75;
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 		VGA_MEM_SIZE = 2000000;
 #else
 		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
@@ -390,7 +392,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 		TABLE_INDEX_BASE = 1576 / 4;
 		TEXT_INDEX_BASE = 1460 / 4;
 		NUM_VIDEO_OP_CODES = 64;
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 		VGA_MEM_SIZE = 1000000;
 #else
 		VGA_MEM_SIZE = gVars->memory[kMemSimon1Games];
@@ -1404,7 +1406,6 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				in = openTablesFile(filename);
 				readSubroutineBlock(in);
 				closeTablesFile(in);
-
 				if (_game == GAME_FEEBLEFILES) {
 					// TODO
 				} else if (_game & GF_SIMON2) {
@@ -2572,6 +2573,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	} else {
 		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
 	}
+
 	//dump_vga_script(_vcPtr, num, vga_res_id);
 	run_vga_script();
 	_vcPtr = vc_ptr_org;
@@ -2593,8 +2595,10 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			num_lines = 200;
 		else
 			num_lines = _windowNum == 4 ? 134 : 200;
+
 		dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
 		dx_copy_from_attached_to_3(num_lines);
+
 		_syncFlag2 = 1;
 		_timer5 = 0;
 	}
@@ -4200,7 +4204,7 @@ void SimonEngine::delay(uint amount) {
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				_leftButtonDown++;
-#if defined (_WIN32_WCE) || defined(__PALM_OS__)
+#if defined (_WIN32_WCE) || defined(PALMOS_MODE)
 				_sdlMouseX = event.mouse.x;
 				_sdlMouseY = event.mouse.y;
 #endif
@@ -4325,7 +4329,7 @@ byte SimonEngine::getByte() {
 
 } // End of namespace Simon
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Simon_Simon)
@@ -4335,6 +4339,7 @@ _GSETPTR(Simon::simon1amiga_settings, GBVARS_SIMON1AMIGASETTINGS_INDEX, Simon::G
 _GSETPTR(Simon::simon1demo_settings, GBVARS_SIMON1DEMOSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon2win_settings, GBVARS_SIMON2WINSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GSETPTR(Simon::simon2dos_settings, GBVARS_SIMON2DOSSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
+_GSETPTR(Simon::feeblefiles_settings, GBVARS_FEEBLEFILESSETTINGS_INDEX, Simon::GameSpecificSettings, GBVARS_SIMON)
 _GEND
 
 _GRELEASE(Simon_Simon)
@@ -4344,6 +4349,7 @@ _GRELEASEPTR(GBVARS_SIMON1AMIGASETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON1DEMOSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2WINSETTINGS_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_SIMON2DOSSETTINGS_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_FEEBLEFILESSETTINGS_INDEX, GBVARS_SIMON)
 _GEND
 
 #endif
