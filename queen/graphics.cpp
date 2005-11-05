@@ -32,7 +32,7 @@
 
 namespace Queen {
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 static const BamScene::BamDataBlock *_carData;
 static const BamScene::BamDataBlock *_fight1Data;
 static const BamScene::BamDataBlock *_fight2Data;
@@ -187,6 +187,14 @@ void BobSlot::clear() {
 	anim.string.buffer = NULL;
 	moving = false;
 	scale = 100;
+
+#ifdef PALMOS_ARM
+	Box *tmp = (Box *)&_defaultBox;
+	tmp->x1 = -1;
+	tmp->y1 = -1;
+	tmp->x2 = -1;
+	tmp->y2 = -1;
+#endif
 	box = _defaultBox;
 }
 
@@ -212,6 +220,24 @@ Graphics::Graphics(QueenEngine *vm)
 	memset(_sortedBobs, 0, sizeof(_sortedBobs));
 	_sortedBobsCount = 0;
 	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
+
+#ifdef PALMOS_ARM
+	Box *tmp1 = (Box *)&BobSlot::_defaultBox;
+	tmp1->x1 = -1;
+	tmp1->y1 = -1;
+	tmp1->x2 = -1;
+	tmp1->y2 = -1;
+	Box *tmp2 = (Box *)&_gameScreenBox;
+	tmp2->x1 = 0;
+	tmp2->y1 = 0;
+	tmp2->x2 = GAME_SCREEN_WIDTH - 1;
+	tmp2->y2 = ROOM_ZONE_HEIGHT - 1;
+	Box *tmp3 = (Box *)&_fullScreenBox;
+	tmp3->x1 = 0;
+	tmp3->y1 = 0;
+	tmp3->x2 = GAME_SCREEN_WIDTH - 1;
+	tmp3->y2 = GAME_SCREEN_HEIGHT - 1;
+#endif
 }
 
 Graphics::~Graphics() {
@@ -1219,7 +1245,7 @@ void BamScene::loadState(uint32 ver, byte *&ptr) {
 	_flag = READ_BE_UINT16(ptr); ptr += 2;
 }
 
-#ifndef __PALM_OS__
+#ifndef PALMOS_68K
 const BamScene::BamDataBlock BamScene::_carData[] = {
 	{ { 310, 105, 1 }, { 314, 106, 17 }, { 366, 101,  1 },  0 },
 	{ { 303, 105, 1 }, { 307, 106, 17 }, { 214,   0, 10 },  0 },
@@ -1490,7 +1516,7 @@ const BamScene::BamDataBlock BamScene::_fight3Data[] = {
 
 } // End of namespace Queen
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Queen_Graphics)
