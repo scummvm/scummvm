@@ -36,11 +36,6 @@
 #include "sword1/animation.h"
 #endif
 
-#if defined(__PALM_OS__)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 namespace Sword1 {
 
 #define SCROLL_FRACTION 16
@@ -350,16 +345,6 @@ void Screen::draw(void) {
 		uint8 *src = _layerBlocks[0];
 		uint8 *dest = _screenBuf;
 
-#ifdef __PALM_OS__
-	ARM_START(DrawType)
-		ARM_INIT(SWORD1_SCREENDRAW)
-		ARM_ADDM(_scrnSizeY)
-		ARM_ADDM(_scrnSizeX)
-		ARM_ADDM(src)
-		ARM_ADDM(dest)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_CONTINUE()
-#endif
 		for (uint16 cnty = 0; cnty < _scrnSizeY; cnty++)
 			for (uint16 cntx = 0; cntx < _scrnSizeX; cntx++) {
 				if (*src)
@@ -550,22 +535,6 @@ void Screen::renderParallax(uint8 *data) {
 	} else
 		paraScrlY = 0;
 
-#ifdef __PALM_OS__
-	ARM_START(ParallaxType)
-		ARM_INIT(SWORD1_RENDERPARALLAX)
-		ARM_ADDM(data)
-		ARM_ADDM(lineIndexes)
-		ARM_ADDM(_screenBuf)
-		ARM_ADDM(_scrnSizeX)
-		ARM_ADDM(scrnScrlX)
-		ARM_ADDM(scrnScrlY)
-		ARM_ADDM(paraScrlX)
-		ARM_ADDM(paraScrlY)
-		ARM_ADDM(scrnWidth)
-		ARM_ADDM(scrnHeight)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_END()
-#endif
 	for (uint16 cnty = 0; cnty < scrnHeight; cnty++) {
 		uint8 *src = data + READ_LE_UINT32(lineIndexes + cnty + paraScrlY);
 		uint8 *dest = _screenBuf + scrnScrlX + (cnty + scrnScrlY) * _scrnSizeX;
@@ -622,19 +591,6 @@ void Screen::renderParallax(uint8 *data) {
 void Screen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch) {
 	uint8 *dest = _screenBuf + (sprY * _scrnSizeX) + sprX;
 
-#ifdef __PALM_OS__
-	ARM_START(DrawSpriteType)
-		ARM_INIT(SWORD1_DRAWSPRITE)
-		ARM_ADDM(sprData)
-		ARM_ADDM(sprHeight)
-		ARM_ADDM(sprWidth)
-		ARM_ADDM(sprPitch)
-		ARM_ADDM(dest)
-		ARM_ADDM(_scrnSizeX)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_END()
-#endif
-
 	for (uint16 cnty = 0; cnty < sprHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 			if (sprData[cntx])
@@ -646,18 +602,6 @@ void Screen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidt
 
 // nearest neighbor filter:
 void Screen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, uint8 *dest) {
-#ifdef __PALM_OS__
-	ARM_START(FastShrinkType)
-		ARM_INIT(SWORD1_FASTSHRINK)
-		ARM_ADDM(src)
-		ARM_ADDM(width)
-		ARM_ADDM(height)
-		ARM_ADDM(scale)
-		ARM_ADDM(dest)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_END()
-#endif
-
 	uint32 resHeight = (height * scale) >> 8;
 	uint32 resWidth = (width * scale) >> 8;
 	uint32 step = 0x10000 / scale;
@@ -724,16 +668,6 @@ void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 }
 
 void Screen::decompressTony(uint8 *src, uint32 compSize, uint8 *dest) {
-#ifdef __PALM_OS__
-	ARM_START(CompressType)
-		ARM_INIT(SWORD1_DECOMPTONY)
-		ARM_ADDM(src)
-		ARM_ADDM(compSize)
-		ARM_ADDM(dest)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_END()
-#endif
-
 	uint8 *endOfData = src + compSize;
 	while (src < endOfData) {
 		uint8 numFlat = *src++;
@@ -752,16 +686,6 @@ void Screen::decompressTony(uint8 *src, uint32 compSize, uint8 *dest) {
 }
 
 void Screen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
-#ifdef __PALM_OS__
-	ARM_START(CompressType)
-		ARM_INIT(SWORD1_DECOMPRLE7)
-		ARM_ADDM(src)
-		ARM_ADDM(compSize)
-		ARM_ADDM(dest)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_END()
-#endif
-
 	uint8 *compBufEnd = src + compSize;
 	while (src < compBufEnd) {
 		uint8 code = *src++;
@@ -776,16 +700,6 @@ void Screen::decompressRLE7(uint8 *src, uint32 compSize, uint8 *dest) {
 }
 
 void Screen::decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest) {
-#ifdef __PALM_OS__
-	ARM_START(CompressType)
-		ARM_INIT(SWORD1_DECOMPRLE0)
-		ARM_ADDM(src)
-		ARM_ADDM(compSize)
-		ARM_ADDM(dest)
-		ARM_CALL(ARM_ENGINE, PNO_DATA());
-	ARM_END()
-#endif
-
 	uint8 *srcBufEnd = src + compSize;
 	while (src < srcBufEnd) {
 		uint8 color = *src++;
