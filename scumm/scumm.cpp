@@ -244,8 +244,6 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -256,6 +254,8 @@ static const ScummGameSettings scumm_settings[] = {
 	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_FREDDI2, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"balloon", "Putt-Putt and Pep's Balloon-O-Rama", GID_HEGAME, 6, 80, MDT_NONE,
