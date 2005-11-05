@@ -113,7 +113,7 @@ private:
 	char _filePath[100];
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 public:
 	static const FxDef *_fxList;
 #else

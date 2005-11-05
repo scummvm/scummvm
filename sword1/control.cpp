@@ -1066,7 +1066,7 @@ void Control::delay(uint32 msecs) {
 			case OSystem::EVENT_LBUTTONDOWN:
 				_mouseDown = true;
 				_mouseState |= BS1L_BUTTON_DOWN;
-#if defined(_WIN32_WCE) || defined(__PALM_OS__)
+#if defined(_WIN32_WCE) || defined(PALMOS_MODE)
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 #endif
@@ -1094,9 +1094,8 @@ void Control::delay(uint32 msecs) {
 			_keyRepeatTime += kKeyRepeatSustainDelay;
 			_keyPressed = _keyRepeat;
 		}
-#ifndef __PALM_OS__
+
 		_system->delayMillis(10);
-#endif
 	} while (_system->getMillis() < endTime);
 }
 
@@ -1293,4 +1292,3 @@ const uint8 Control::_languageStrings[8 * 20][43] = {
 };
 
 } // End of namespace Sword1
-

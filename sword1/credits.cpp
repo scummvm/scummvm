@@ -286,10 +286,9 @@ void CreditsPlayer::delay(int msecs) {
 			}
 		}
 
-#ifndef __PALM_OS__
 		if (msecs > 0)
 			_system->delayMillis(10);
-#endif
+
 	} while ((_system->getMillis() < start + msecs) && !SwordEngine::_systemVars.engineQuit);
 }
 

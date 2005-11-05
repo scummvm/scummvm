@@ -2890,7 +2890,7 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"rm3d",		// DONE 269 ONe the scene change after the Grand Master says, "George, we have watched you..." This one might need a bit of fiddling to get it to match to the fisticuffs.
 };
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 const FxDef *Sound::_fxList;
 #else
 const FxDef Sound::_fxList[312] = {
@@ -7153,7 +7153,7 @@ const uint8 *Logic::_helperData[] = {
 
 } // End of namespace Sword1
 
-#ifdef __PALM_OS__
+#ifdef PALMOS_68K
 #include "scumm_globals.h"
 
 _GINIT(Sword1_fxList)
