@@ -34,12 +34,12 @@ UInt16 lastIndex = dmMaxRecordIndex;	// last select index in the list to prevent
 static WinHandle winLockH = NULL;
 
 MemPtr SknScreenLock(WinLockInitType initMode) {
-	if (!OPTIONS_TST(kOptDeviceZodiac)) {
+/*	if (!OPTIONS_TST(kOptDeviceZodiac)) {
 		WinSetDrawWindow(WinGetDisplayWindow());
 		// WARNING : this doesn't work on < OS5 with 16bit mode
-		return WinScreenLock(initMode);
+		return WinScreenLock(initMode);	
 	}
-
+*/
 	Err e;
 	RectangleType r;
 
@@ -54,12 +54,12 @@ MemPtr SknScreenLock(WinLockInitType initMode) {
 }
 
 void SknScreenUnlock() {
-	if (!OPTIONS_TST(kOptDeviceZodiac)) {
+/*	if (!OPTIONS_TST(kOptDeviceZodiac)) {
 		WinSetDrawWindow(WinGetDisplayWindow());
 		WinScreenUnlock();
 		return;
 	}
-
+*/
 	RectangleType r;
 
 	WinGetBounds(winLockH, &r);
@@ -81,13 +81,13 @@ static void SknGetListColors(DmOpenRef skinDBP, UInt8 *text, UInt8 *selected, UI
 
 	if (skinDBP) {
 		colIndex = DmFindResource (skinDBP, sknColorsRsc, skinColors, NULL);
-
+		
 		if (colIndex != (UInt16)-1) {
 			colH = DmGetResourceIndex(skinDBP, colIndex);
-
+			
 			if (colH) {
 				colTemp = (UInt8 *)MemHandleLock(colH);
-
+				
 				*text = colTemp[0];
 				*selected = colTemp[1];
 				*background = colTemp[2];
@@ -113,7 +113,7 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 
 		if (index != (UInt16)-1) {
 			hTemp = DmGetResourceIndex(skinDBP,index);
-
+			
 			if (hTemp) {
 				bmpTemp = (BitmapType *)MemHandleLock(hTemp);
 				BmpGlueGetDimensions(bmpTemp, &bw, &bh, 0);
@@ -129,28 +129,20 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 					cw = srcRect->extent.x;
 					ch = srcRect->extent.y;
 				}
-
+				
 				if (ch) {
 					WinGetClip(&old);
-					if (gVars->HRrefNum != sysInvalidRefNum) {
-						copy.topLeft.x = destX;
-						copy.topLeft.y = destY;
-						copy.extent.x = cw;
-						copy.extent.y = ch;
-
-						HRWinSetClip(gVars->HRrefNum, &copy);
-						HRWinDrawBitmap(gVars->HRrefNum, bmpTemp, destX - cx, destY - cy);
-					} else {
+					if (OPTIONS_TST(kOptModeHiDensity)) {
 						Err e;
 						BitmapTypeV3 *bmp2P;
-
+						
 						// create an uncompressed version of the bitmap
 						WinHandle win = WinCreateOffscreenWindow(bw, bh, screenFormat, &e);
 						WinHandle old = WinGetDrawWindow();
 						WinSetDrawWindow(win);
 						WinDrawBitmap(bmpTemp, 0, 0);
 						WinSetDrawWindow(old);
-
+						
  						bmp2P = BmpCreateBitmapV3(WinGetBitmap(win), kDensityDouble, BmpGetBits(WinGetBitmap(win)), NULL);
 
 						copy.topLeft.x = destX / 2;
@@ -162,6 +154,15 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 						WinDrawBitmap((BitmapPtr)bmp2P, (destX - cx) / 2, (destY - cy) / 2);
 						BmpDelete((BitmapPtr)bmp2P);
 						WinDeleteWindow(win, false);
+
+					} else {
+						copy.topLeft.x = destX;
+						copy.topLeft.y = destY;
+						copy.extent.x = cw;
+						copy.extent.y = ch;
+
+						HRWinSetClip(gVars->HRrefNum, &copy);
+						HRWinDrawBitmap(gVars->HRrefNum, bmpTemp, destX - cx, destY - cy);
 					}
 					WinSetClip(&old);
 				}
@@ -183,7 +184,7 @@ void SknApplySkin() {
 	SknScreenLock(winLockCopy);
 
 	skinDBP = SknOpenSkin();
-
+	
 	if (gPrefs->card.volRefNum != sysInvalidRefNum)
 		FrmShowObject(frmP, FrmGetObjectIndex (frmP, MainMSBitMap));
 	else
@@ -198,7 +199,7 @@ void SknApplySkin() {
 	SknCopyBits(skinDBP, skinBackgroundImageTop, 0, r.topLeft.x, r.topLeft.y);
 	SknGetObjectBounds(skinDBP, skinBackgroundImageBottom, &r);
 	SknCopyBits(skinDBP, skinBackgroundImageBottom, 0, r.topLeft.x, r.topLeft.y);
-
+	
 	for (UInt16 resID = 1100; resID <= 7000; resID += 100) {
 		SknSetState(skinDBP, resID, sknStateNormal);
 		SknShowObject(skinDBP, resID);
@@ -217,30 +218,30 @@ void SknGetObjectBounds(DmOpenRef skinDBP, DmResID resID, RectangleType *rP) {
 	UInt8 *strTemp;
 
 	RctSetRectangle(rP, 0, 0, 0, 0);
-
+	
 	if (skinDBP) {
 		bmpIndex = DmFindResource (skinDBP, bitmapRsc, resID, NULL);
-
+		
 		if (bmpIndex != (UInt16)-1) {						// if bmp exists
 			strIndex = DmFindResource (skinDBP, sknPosRsc, resID, NULL);
-
+			
 			if (strIndex != (UInt16)-1) {					// if params exist
 				hBmp = DmGetResourceIndex(skinDBP,bmpIndex);
 
 				if (hBmp) {
 					hStr = DmGetResourceIndex(skinDBP,strIndex);
-
+					
 					if (hStr) {
 					//	buttons : state|x|y|w/h slider|draw mode|x1/y1 keep|x2/y2 keep slider
 					//	list (160mode) : state|x|y|w|h|
 						bmpTemp = (BitmapType *)MemHandleLock(hBmp);
 						strTemp = (UInt8 *)MemHandleLock(hStr);
-
+						
 						BmpGlueGetDimensions(bmpTemp, &(rP->extent.x), &(rP->extent.y), 0);
 						rP->topLeft.x = strTemp[sknInfoPosX] * 2;
 						rP->topLeft.y = strTemp[sknInfoPosY] * 2;
-
-						MemPtrUnlock(strTemp);
+						
+						MemPtrUnlock(strTemp);					
 						DmReleaseResource(hStr);
 					}
 
@@ -270,20 +271,20 @@ UInt8 SknSetState(DmOpenRef skinDBP, DmResID resID, UInt8 newState) {
 
 	if (skinDBP) {
 		index = DmFindResource (skinDBP, sknPosRsc, resID, NULL);
-
+		
 		if (index != (UInt16)-1) {
 			hStr = DmGetResourceIndex(skinDBP, index);
-
+			
 			if (hStr) {
 				strTemp = (UInt8 *)MemHandleLock(hStr);
 				oldState = strTemp[sknInfoState];
-
+				
 				if (oldState != newState) {
 					DmWrite(strTemp, 0, &newState, 1);
 				}
-
-				MemPtrUnlock(strTemp);
-				DmReleaseResource(hStr);
+				
+				MemPtrUnlock(strTemp);					
+				DmReleaseResource(hStr);				
 			}
 		}
 	}
@@ -299,19 +300,19 @@ UInt8 SknGetDepth(DmOpenRef skinDBP) {
 
 	if (skinDBP) {
 		index = DmFindResource (skinDBP, sknDepthRsc, skinDepth, NULL);
-
+		
 		if (index != (UInt16)-1) {
 			hStr = DmGetResourceIndex(skinDBP, index);
-
+			
 			if (hStr) {
 				strTemp = (UInt8 *)MemHandleLock(hStr);
 				depth = *strTemp;
-				MemPtrUnlock(strTemp);
-				DmReleaseResource(hStr);
+				MemPtrUnlock(strTemp);					
+				DmReleaseResource(hStr);				
 			}
 		}
 	}
-
+	
 	return depth;
 }
 
@@ -324,15 +325,15 @@ UInt8 SknGetState(DmOpenRef skinDBP, DmResID resID) {
 
 	if (skinDBP) {
 		index = DmFindResource (skinDBP, sknPosRsc, resID, NULL);
-
+		
 		if (index != (UInt16)-1) {
 			hStr = DmGetResourceIndex(skinDBP, index);
-
+			
 			if (hStr) {
 				strTemp = (UInt8 *)MemHandleLock(hStr);
-				oldState = strTemp[sknInfoState];
-				MemPtrUnlock(strTemp);
-				DmReleaseResource(hStr);
+				oldState = strTemp[sknInfoState];				
+				MemPtrUnlock(strTemp);					
+				DmReleaseResource(hStr);				
 			}
 		}
 	}
@@ -358,7 +359,7 @@ void SknGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP) {
 	skinDBP = DmOpenDatabase(gPrefs->skin.cardNo, gPrefs->skin.dbID, dmModeReadOnly);
 	if (skinDBP) {
 		strIndex = DmFindResource (skinDBP, sknPosRsc, skinList, NULL);
-
+		
 		if (strIndex != 0xFFFF) {					// if params exist
 			hStr = DmGetResourceIndex(skinDBP,strIndex);
 			if (hStr) {
@@ -368,7 +369,7 @@ void SknGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP) {
 				y = strTemp[sknInfoPosY];
 				w = strTemp[sknInfoListWidth];
 				h = strTemp[sknInfoListSize] * sknInfoListItemSize;
-
+				
 				if (rAreaP)
 					RctSetRectangle(rAreaP ,x, y, w, h);
 				if (rArea2xP)
@@ -376,7 +377,7 @@ void SknGetListBounds(RectangleType *rAreaP, RectangleType *rArea2xP) {
 
 				MemHandleUnlock(hStr);
 				DmReleaseResource(hStr);
-
+				
 			}
 		}
 
@@ -447,7 +448,7 @@ void SknUpdateList() {
 
 	UInt8 txtColor, norColor, selColor, bkgColor;
 	UInt16 x,y;
-
+	
 	SknScreenLock(winLockCopy);
 
 	SknGetListBounds(&rArea, &rArea2x);
@@ -461,7 +462,7 @@ void SknUpdateList() {
 	x = rCopy.topLeft.x;
 	y = rCopy.topLeft.y;
 	rCopy.topLeft.x	-= rField.topLeft.x;
-	rCopy.topLeft.y	-= rField.topLeft.y;
+	rCopy.topLeft.y	-= rField.topLeft.y;	
 	SknCopyBits(skinDBP, skinBackgroundImageTop, &rCopy, x, y);
 	// copy bottom bg
 	SknGetObjectBounds(skinDBP, skinBackgroundImageBottom, &rField);
@@ -469,7 +470,7 @@ void SknUpdateList() {
 	x = rCopy.topLeft.x;
 	y = rCopy.topLeft.y;
 	rCopy.topLeft.x	-= rField.topLeft.x;
-	rCopy.topLeft.y	-= rField.topLeft.y;
+	rCopy.topLeft.y	-= rField.topLeft.y;	
 	SknCopyBits(skinDBP, skinBackgroundImageBottom, &rCopy, x, y);
 
 	FntSetFont(stdFont);
@@ -549,9 +550,9 @@ UInt16 SknCheckClick(DmOpenRef skinDBP, Coord mx, Coord my) {
 				}
 			}
 		}
-
+		
 	}
-
+	
 	return 0;
 }
 
@@ -572,7 +573,7 @@ void SknSelect(Coord x, Coord y) {
 
 		if (index < DmNumRecords(gameDB)) {
 			Boolean newValue;
-
+			
 			oldIndex = GamGetSelected();
 
 			if (oldIndex != index && oldIndex != dmMaxRecordIndex)
@@ -586,7 +587,7 @@ void SknSelect(Coord x, Coord y) {
 
 			MemHandleUnlock(record);
 			DmReleaseRecord (gameDB, index, 0);
-
+			
 			lastIndex = index;
 			SknUpdateList();
 		}
