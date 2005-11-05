@@ -234,7 +234,6 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 		switch (c) {
 		case 84:
 			i = 0;
-			memset(value, 0, sizeof(value));
 			c = *buffer++;
 			while (c != 44) {
 				value[i] = c;
@@ -244,7 +243,6 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			value[i] = 0;
 			talk_sound_a = atoi(value);
 			i = 0;
-			memset(value, 0, sizeof(value));
 			c = *buffer++;
 			while (c != charsetCode) {
 				value[i] = c;
