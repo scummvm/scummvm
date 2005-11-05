@@ -719,6 +719,8 @@ void Screen::rollCredits() {
 	//     '@' is used as a placeholder for the "Smacker" logo. At least
 	//     when it appears alone.
 	//     Remaining lines are centered.
+	//     The German version also contains character code 9 for no
+	//     apparent reason. We ignore them.
 	//
 	// fonts.clu    - The credits font?
 	//
@@ -794,6 +796,15 @@ void Screen::rollCredits() {
 				break;
 
 			continue;
+		}
+
+		// The German credits contains character code 9. We don't want
+		// the credits to show the 'dud' symbol, so we replace them
+		// with spaces.
+
+		for (char *ptr = line; *ptr; ptr++) {
+			if (*ptr < 32)
+				*ptr = 32;
 		}
 
 		char *center_mark = strchr(line, '^');
