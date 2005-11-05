@@ -31,12 +31,6 @@
 #include "skin.h"
 
 #include "forms.h"
-/***********************************************************************
- *
- *	Internal Structures
- *
- ***********************************************************************/
-
 
 /***********************************************************************
  *
@@ -60,7 +54,6 @@ Boolean bLaunched	= false;
 #define kOurMinVersion	sysMakeROMVersion(3,5,0,sysROMStageRelease,0)
 #define kPalmOS10Version	sysMakeROMVersion(1,0,0,sysROMStageRelease,0)
 
-
 /***********************************************************************
  *
  *	Internal Functions
@@ -68,15 +61,13 @@ Boolean bLaunched	= false;
  ***********************************************************************/
 
 // Callback for ExgDBWrite to send data with Exchange Manager
-static Err WriteDBData(const void* dataP, UInt32* sizeP, void* userDataP)
-{
+static Err WriteDBData(const void* dataP, UInt32* sizeP, void* userDataP) {
 	Err err;
 	*sizeP = ExgSend((ExgSocketPtr)userDataP, (void*)dataP, *sizeP, &err);
 	return err;
 }
 
-Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP)
-{
+Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP) {
 	ExgSocketType exgSocket;
 	Err err;
 
@@ -104,9 +95,9 @@ Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP)
  *              minimum requirement.
  *
  * PARAMETERS:  requiredVersion - minimum rom version required
- *                                (see sysFtrNumROMVersion in SystemMgr.h
+ *                                (see sysFtrNumROMVersion in SystemMgr.h 
  *                                for format)
- *              launchFlags     - flags that indicate if the application
+ *              launchFlags     - flags that indicate if the application 
  *                                UI is initialized.
  *
  * RETURNED:    error code or zero if rom is compatible
@@ -115,28 +106,25 @@ Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP)
  *
  *
  ***********************************************************************/
-static Err RomVersionCompatible(UInt32 requiredVersion, UInt16 launchFlags)
-{
+static Err RomVersionCompatible(UInt32 requiredVersion, UInt16 launchFlags) {
 	UInt32 romVersion;
 
 	// See if we're on in minimum required version of the ROM or later.
 	FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
-	if (romVersion < requiredVersion)
-		{
+	if (romVersion < requiredVersion) {
 		if ((launchFlags & (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) ==
-			(sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp))
-			{
+			(sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp)) {
+
 			FrmAlert (RomIncompatibleAlert);
 
-			// Palm OS 1.0 will continuously relaunch this app unless we switch to
+			// Palm OS 1.0 will continuously relaunch this app unless we switch to 
 			// another safe one.
 			if (romVersion <= kPalmOS10Version)
-				{
 				AppLaunchWithCommand(sysFileCDefaultApp, sysAppLaunchCmdNormalLaunch, NULL);
-				}
-			}
-		return sysErrRomIncompatible;
+
 		}
+		return sysErrRomIncompatible;
+	}
 
 	return errNone;
 }
@@ -168,13 +156,11 @@ void SavePrefs() {
  *
  *
  ***********************************************************************/
-static Boolean AppHandleEvent(EventPtr eventP)
-{
+static Boolean AppHandleEvent(EventPtr eventP) {
 	UInt16 formId;
 	FormPtr frmP;
 
-	if (eventP->eType == frmLoadEvent)
-		{
+	if (eventP->eType == frmLoadEvent) {
 		// Load the form resource.
 		formId = eventP->data.frmLoad.formID;
 		frmP = FrmInitForm(formId);
@@ -183,8 +169,7 @@ static Boolean AppHandleEvent(EventPtr eventP)
 		// Set the event handler for the form.  The handler of the currently
 		// active form is called by FrmHandleEvent each time is receives an
 		// event.
-		switch (formId)
-			{
+		switch (formId) {
 			case MainForm:
 				FrmSetEventHandler(frmP, MainFormHandleEvent);
 				break;
@@ -216,11 +201,10 @@ static Boolean AppHandleEvent(EventPtr eventP)
 			default:
 //				ErrFatalDisplay("Invalid Form Load Event");
 				break;
-
-			}
+		}
 		return true;
 		}
-
+	
 	return false;
 }
 
@@ -228,7 +212,7 @@ static Boolean AppHandleEvent(EventPtr eventP)
  *
  * FUNCTION:    AppEventLoop
  *
- * DESCRIPTION: This routine is the event loop for the application.
+ * DESCRIPTION: This routine is the event loop for the application.  
  *
  * PARAMETERS:  nothing
  *
@@ -238,8 +222,7 @@ static Boolean AppHandleEvent(EventPtr eventP)
  *
  *
  ***********************************************************************/
-static void AppEventLoop(void)
-{
+static void AppEventLoop(void) {
 	UInt16 error;
 	EventType event;
 
@@ -263,8 +246,8 @@ static void AppEventLoop(void)
  *
  * DESCRIPTION: This is the main entry point for the application.
  *
- * PARAMETERS:  cmd - word value specifying the launch code.
- *              cmdPB - pointer to a structure that is associated with the launch code.
+ * PARAMETERS:  cmd - word value specifying the launch code. 
+ *              cmdPB - pointer to a structure that is associated with the launch code. 
  *              launchFlags -  word value providing extra information about the launch.
  *
  * RETURNED:    Result of launch
@@ -273,10 +256,8 @@ static void AppEventLoop(void)
  *
  *
  ***********************************************************************/
-static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
-{
-	switch (pData->notifyType)
-	{
+static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData) {
+	switch (pData->notifyType) {
 		case sysNotifyVolumeMountedEvent:
 			pData->handled = true;	// don't switch
 
@@ -310,18 +291,9 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 			break;
 
 		case sysNotifyDisplayResizedEvent:
-			// This code allow redifinition of the screen pitch rotating the screen in the frontend
-			if (gVars) {
-				static Boolean resizing = false;
-
-				if (!resizing) {
-					resizing = true;
-					PINGetScreenDimensions();
-					WinScreenGetPitch();
+			if (gVars)
+				if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
 					SknApplySkin();
-					resizing = false;
-				}
-			}
 			break;
 
 		case sonySysNotifyMsaEnforceOpenEvent:
@@ -330,29 +302,26 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData)
 	}
 }
 
-static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
-{
+static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 	Err error;
 
 	error = RomVersionCompatible (kOurMinVersion, launchFlags);
 	if (error) return (error);
 
-	switch (cmd)
-		{
+	switch (cmd) {
 		case sysAppLaunchCmdNotify:
 			AppLaunchCmdNotify(launchFlags, (SysNotifyParamType *) cmdPBP);
 			break;
 
-
-		case sysAppLaunchCustomDeleteEngine:
+		case sysAppLaunchCustomEngineDelete:
 #ifndef _DEBUG_ENGINE
 			ModDelete();
 #endif
 			break;
 
-		case sysAppLaunchCmdNormalLaunch:
+		case sysAppLaunchCmdNormalLaunch:	
 			error = AppStart();
-			if (error)
+			if (error) 
 				goto end;
 
 			if (!bDirectMode) {
@@ -370,18 +339,18 @@ end:
 		default:
 			break;
 
-		}
-
+	}
 	return error;
 }
+
 /***********************************************************************
  *
  * FUNCTION:    PilotMain
  *
  * DESCRIPTION: This is the main entry point for the application.
  *
- * PARAMETERS:  cmd - word value specifying the launch code.
- *              cmdPB - pointer to a structure that is associated with the launch code.
+ * PARAMETERS:  cmd - word value specifying the launch code. 
+ *              cmdPB - pointer to a structure that is associated with the launch code. 
  *              launchFlags -  word value providing extra information about the launch.
  * RETURNED:    Result of launch
  *
@@ -390,7 +359,6 @@ end:
  *
  ***********************************************************************/
 
-UInt32 PilotMain( UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
-{
+UInt32 PilotMain( UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 	return ScummVMPalmMain(cmd, cmdPBP, launchFlags);
 }
