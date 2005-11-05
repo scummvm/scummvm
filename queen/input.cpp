@@ -130,12 +130,10 @@ void Input::delay(uint amount) {
 			}
 		}
 
-#ifndef __PALM_OS__
 		if (amount == 0)
 			break;
 
 		_system->delayMillis((amount > 20) ? 20 : amount);
-#endif
 	} while (_system->getMillis() < end);
 }
 
