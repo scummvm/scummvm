@@ -38,7 +38,7 @@ DmOpenRef gameDB = NULL;
 static Err GamUpdateList() {
 	if (gameDB) {
 		UInt16 numRecs = DmNumRecords(gameDB);
-
+		
 		if (numRecs > 0) {
 			MemHandle tmpH;
 			UInt32 version, size;
@@ -57,7 +57,7 @@ static Err GamUpdateList() {
 				GameInfoType gitCur;
 				void *tmpP;
 				FormPtr ofmP, frmP;
-
+				
 				// show dialog
 				ofmP = FrmGetActiveForm();
 				frmP = FrmInitForm(ConvertForm);
@@ -67,21 +67,23 @@ static Err GamUpdateList() {
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_30 ||
+				if (version == itemVersion_33 ||
+					version == itemVersion_32 ||
+					version == itemVersion_31 ||
+					version == itemVersion_30 ||
 					version == itemVersion_27 ||
 					version == itemVersion_26 ||
 					version == itemVersion_25) {
 
 					for (index = 0; index < numRecs; index++) {
-
 						// get old data
 						tmpH = DmQueryRecord(gameDB, index);
 						tmpP = MemHandleLock(tmpH);
 						MemMove(&gitCur, tmpP, MemHandleSize(tmpH));
 						MemHandleUnlock(tmpH);
-
-						if (version != itemVersion_30) {
-							gitCur.musicInfo.volume.master = 192;
+						
+						if (version < itemVersion_30) {
+							gitCur.musicInfo.volume.palm = 50;
 							gitCur.musicInfo.volume.music = 192;
 							gitCur.musicInfo.volume.sfx = 192;
 							gitCur.musicInfo.volume.speech = 192;
@@ -92,7 +94,59 @@ static Err GamUpdateList() {
 							gitCur.musicInfo.sound.firstTrack = 1;
 						}
 
-						gitCur.engine = 0;
+						if (version < itemVersion_31)
+							gitCur.engine = 0;
+						
+						if (version < itemVersion_32)
+							gitCur.renderMode = 0;
+
+						gitCur.renderMode = 0;
+						gitCur.fmQuality = 0;
+						gitCur.gfxMode = (gitCur.gfxMode == 3 ? 1 : 0); // v3.4 only 2 modes
+
+						if (version <= itemVersion_33) {
+									if (gitCur.engine == 0) gitCur.engine = 8;
+							else	if (gitCur.engine == 1) gitCur.engine = 7;
+							else	if (gitCur.engine == 2) gitCur.engine = 3;
+							else	if (gitCur.engine == 3) gitCur.engine = 1;
+							else	if (gitCur.engine == 4) gitCur.engine = 0;
+							else	if (gitCur.engine == 5) gitCur.engine = 6;
+							else	if (gitCur.engine == 6) gitCur.engine = 4;
+							else	if (gitCur.engine == 7) gitCur.engine = 5;
+							else	if (gitCur.engine == 8) gitCur.engine = 2;
+							
+									if (gitCur.renderMode == 1) gitCur.renderMode = 4;
+							else	if (gitCur.renderMode == 2) gitCur.renderMode = 5;
+							else	if (gitCur.renderMode == 3) gitCur.renderMode = 2;
+							else	if (gitCur.renderMode == 4) gitCur.renderMode = 3;
+							else	if (gitCur.renderMode == 5) gitCur.renderMode = 1;
+
+									if (gitCur.platform == 2) gitCur.platform = 6;
+							else	if (gitCur.platform == 5) gitCur.platform = 8;
+							else	if (gitCur.platform == 6) gitCur.platform = 2;
+
+									if (gitCur.language ==  1) gitCur.language = 4;
+							else	if (gitCur.language ==  2) gitCur.language = 6;
+							else	if (gitCur.language ==  3) gitCur.language = 5;
+							else	if (gitCur.language ==  4) gitCur.language = 8;
+							else	if (gitCur.language ==  5) gitCur.language = 11;
+							else	if (gitCur.language ==  6) gitCur.language = 13;
+							else	if (gitCur.language ==  7) gitCur.language = 9;
+							else	if (gitCur.language ==  8) gitCur.language = 1;
+							else	if (gitCur.language ==  9) gitCur.language = 10;
+							else	if (gitCur.language == 10) gitCur.language = 7;
+							else	if (gitCur.language == 11) gitCur.language = 12;
+							else	if (gitCur.language == 12) gitCur.language = 2;
+							else	if (gitCur.language == 13) gitCur.language = 3;
+
+									if (gitCur.musicInfo.sound.drvMusic == 1) gitCur.musicInfo.sound.drvMusic = 4;
+							else	if (gitCur.musicInfo.sound.drvMusic == 2) gitCur.musicInfo.sound.drvMusic = 5;
+							else	if (gitCur.musicInfo.sound.drvMusic == 4) gitCur.musicInfo.sound.drvMusic = 2;
+							else	if (gitCur.musicInfo.sound.drvMusic == 5) gitCur.musicInfo.sound.drvMusic = 1;
+						}
+						
+						if (gitCur.musicInfo.volume.palm > 100)
+							gitCur.musicInfo.volume.palm = 50;
 
 						// simply resize the old record
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
@@ -100,13 +154,13 @@ static Err GamUpdateList() {
 						DmWrite(tmpP, 0, &gitCur, sizeof(GameInfoType));
 						MemPtrUnlock(tmpP);
 					}
-
+					
 				} else if (version == itemVersion_20) {
-					// need conversion from V2 -> V2.7
+					// need conversion from V2 -> V3.4
 					GameInfoTypeV2 git0;
 
 					for (index = 0; index < numRecs; index++) {
-
+						
 						// get old data
 						tmpH = DmQueryRecord(gameDB, index);
 						tmpP = MemHandleLock(tmpH);
@@ -120,8 +174,8 @@ static Err GamUpdateList() {
 						StrCopy(gitCur.nameP, git0.nameP);
 						StrCopy(gitCur.pathP, git0.pathP);
 						StrCopy(gitCur.gameP, git0.gameP);
-						gitCur.gfxMode = git0.gfxMode;
-
+						gitCur.gfxMode = (git0.gfxMode == 3 ? 1 : 0); // v3.4 only 2 modes
+						
 						gitCur.autoLoad = git0.autoLoad;
 						gitCur.bootParam = git0.bootParam;
 						gitCur.setPlatform = git0.setPlatform;
@@ -134,17 +188,41 @@ static Err GamUpdateList() {
 						gitCur.platform = git0.platform;
 						gitCur.language = git0.language;
 
-						gitCur.musicInfo.volume.master = 192;
+						gitCur.musicInfo.volume.palm = 50;
 						gitCur.musicInfo.volume.music = 192;
 						gitCur.musicInfo.volume.sfx = 192;
 						gitCur.musicInfo.volume.speech = 192;
 						gitCur.musicInfo.volume.audiocd = 50;
-
+						
 						gitCur.musicInfo.sound.tempo = 100;
 						gitCur.musicInfo.sound.defaultTrackLength = 10;
 						gitCur.musicInfo.sound.firstTrack = 1;
+						
+						// to V3.4
+								if (gitCur.platform == 2) gitCur.platform = 6;
+						else	if (gitCur.platform == 5) gitCur.platform = 8;
+						else	if (gitCur.platform == 6) gitCur.platform = 2;
 
-						gitCur.engine = 0;
+								if (gitCur.language ==  1) gitCur.language = 4;
+						else	if (gitCur.language ==  2) gitCur.language = 6;
+						else	if (gitCur.language ==  3) gitCur.language = 5;
+						else	if (gitCur.language ==  4) gitCur.language = 8;
+						else	if (gitCur.language ==  5) gitCur.language = 11;
+						else	if (gitCur.language ==  6) gitCur.language = 13;
+						else	if (gitCur.language ==  7) gitCur.language = 9;
+						else	if (gitCur.language ==  8) gitCur.language = 1;
+						else	if (gitCur.language ==  9) gitCur.language = 10;
+						else	if (gitCur.language == 10) gitCur.language = 7;
+						else	if (gitCur.language == 11) gitCur.language = 12;
+						else	if (gitCur.language == 12) gitCur.language = 2;
+						else	if (gitCur.language == 13) gitCur.language = 3;
+						
+								if (gitCur.musicInfo.sound.drvMusic == 1) gitCur.musicInfo.sound.drvMusic = 4;
+						else	if (gitCur.musicInfo.sound.drvMusic == 2) gitCur.musicInfo.sound.drvMusic = 5;
+						else	if (gitCur.musicInfo.sound.drvMusic == 4) gitCur.musicInfo.sound.drvMusic = 2;
+						else	if (gitCur.musicInfo.sound.drvMusic == 5) gitCur.musicInfo.sound.drvMusic = 1;
+		
+						gitCur.engine = ENGINE_SCUMM;
 
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
 						tmpP = MemHandleLock(tmpH);
@@ -152,11 +230,11 @@ static Err GamUpdateList() {
 						MemPtrUnlock(tmpP);
 					}
 				} else {
-					// need conversion from V0 -> V2.7
+					// need conversion from V0 -> V3.4
 					GameInfoTypeV0 git0;
 
 					for (index = 0; index < numRecs; index++) {
-
+						
 						// get old data
 						tmpH = DmQueryRecord(gameDB, index);
 						tmpP = MemHandleLock(tmpH);
@@ -170,8 +248,8 @@ static Err GamUpdateList() {
 						StrCopy(gitCur.nameP, git0.nameP);
 						StrCopy(gitCur.pathP, git0.pathP);
 						StrCopy(gitCur.gameP, git0.gameP);
-						gitCur.gfxMode = git0.gfxMode;
-
+						gitCur.gfxMode = (git0.gfxMode == 3 ? 1 : 0); // v3.4 only 2 modes
+						
 						gitCur.autoLoad = git0.autoLoad;
 						gitCur.bootParam = git0.bootParam;
 						gitCur.setPlatform = git0.amiga;	// amiga become platform amiga/atari-st/machintosh
@@ -184,17 +262,17 @@ static Err GamUpdateList() {
 						gitCur.platform = 0;	// default to amiga
 						gitCur.language = git0.language;
 
-						gitCur.musicInfo.volume.master = 192;
+						gitCur.musicInfo.volume.palm = 50;
 						gitCur.musicInfo.volume.music = 192;
 						gitCur.musicInfo.volume.sfx = 192;
 						gitCur.musicInfo.volume.speech = 192;
 						gitCur.musicInfo.volume.audiocd = 50;
-
+						
 						gitCur.musicInfo.sound.tempo = 100;
 						gitCur.musicInfo.sound.defaultTrackLength = 10;
 						gitCur.musicInfo.sound.firstTrack = 1;
-
-						gitCur.engine = 0;
+						
+						gitCur.engine = ENGINE_SCUMM;
 
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
 						tmpP = MemHandleLock(tmpH);
@@ -206,11 +284,11 @@ static Err GamUpdateList() {
 				FrmEraseForm(frmP);
 				FrmDeleteForm(frmP);
 				if (ofmP)
-					FrmReturnToForm(MainForm);
-			}
+					FrmSetActiveForm(ofmP);
+			}	
 		}
 	}
-
+	
 	return errNone;
 }
 
@@ -223,7 +301,7 @@ Err GamOpenDatabase() {
 		err = DmCreateDatabase(0, "ScummVM-Data", appFileCreator, 'DATA', false);
 		if (!err) {
 			gameDB = DmOpenDatabaseByTypeCreator( 'DATA', appFileCreator, dmModeReadWrite);
-
+			
 			if (!gameDB)
 				err = DmGetLastErr();
 		}
@@ -241,7 +319,7 @@ void GamImportDatabase() {
 	if (gPrefs->card.volRefNum != sysInvalidRefNum && gPrefs->card.moveDB) {
 		FileRef file;
 		Err e;
-
+		
 		e = VFSFileOpen(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", vfsModeRead, &file);
 		if (!e) {
 			UInt16 oCardNo, nCardNo;
@@ -254,7 +332,7 @@ void GamImportDatabase() {
 					gPrefs->card.moveDB = false;
 					return;
 				}
-
+ 			
  			// get current db info and rename it
  			DmOpenDatabaseInfo(gameDB, &oDbID, 0, 0, &oCardNo, 0);
 			GamCloseDatabase(true);
@@ -273,7 +351,7 @@ void GamCloseDatabase(Boolean ignoreCardParams) {
 	if (gameDB) {
 		LocalID dbID;
 		UInt16 cardNo;
-
+		
 		DmOpenDatabaseInfo(gameDB, &dbID, 0, 0, &cardNo, 0);
 		DmCloseDatabase(gameDB);
 
@@ -309,13 +387,13 @@ void GamUnselect() {
 	UInt16 index;
 
 	index = GamGetSelected();
-
+	
 	if (index != dmMaxRecordIndex) {
 		Boolean newValue;
-
+		
 		recordH = DmGetRecord(gameDB, index);
 		game = (GameInfoType *)MemHandleLock(recordH);
-
+		
 		newValue = false;
 		DmWrite(game, OffsetOf(GameInfoType,selected), &newValue, sizeof(Boolean));
 
@@ -329,7 +407,7 @@ UInt16 GamGetSelected() {
 	GameInfoType *game;
 	Boolean selected;
 	UInt16 index = DmNumRecords(gameDB)-1;
-
+	
 	while (index != (UInt16)-1) {
 		record = DmQueryRecord(gameDB, index);
 		game = (GameInfoType *)MemHandleLock(record);
@@ -356,7 +434,7 @@ Boolean GamJumpTo(Char letter) {
 	while (index < maxIndex) {
 		record = DmGetRecord(gameDB, index);
 		game = (GameInfoType *)MemHandleLock(record);
-
+		
 		if (tolower(game->nameP[0]) == tolower(letter)) {
 			found = true;
 
@@ -370,7 +448,7 @@ Boolean GamJumpTo(Char letter) {
 
 				GamUnselect();
 				DmWrite(game, OffsetOf(GameInfoType,selected), &newValue, sizeof(Boolean));
-
+				
 				if (index < gPrefs->listPosition || index >= (gPrefs->listPosition + maxView))
 					gPrefs->listPosition = index;
 			}
@@ -380,11 +458,10 @@ Boolean GamJumpTo(Char letter) {
 		DmReleaseRecord (gameDB, index, 0);
 
 		index++;
-
+		
 		if (found)
 			return found;
 	}
 
 	return found;
 }
-
