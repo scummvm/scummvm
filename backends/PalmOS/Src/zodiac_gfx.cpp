@@ -15,7 +15,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -23,25 +23,11 @@
 
 #include "be_zodiac.h"
 #include "common/config-manager.h"
+#include "graphics/surface.h"
 #include "rumble.h"
 
 #ifdef PALMOS_68K
-#include "globals.h"
-#include "arm/native.h"
-#include "arm/macros.h"
-
-static Err _TwGfxOpen(void** aResult, void* aInfoResult) {
-#if !defined(SIMULATOR_MODE)
-		ARM_START(TwHackGfxType)
-			ARM_INIT(COMMON_ZODIACGFX)
-			ARM_ADDM(aResult)
-			ARM_ADDM(aInfoResult)
-			ARM_CALL_RET(ARM_COMMON, PNO_DATA())
-		ARM_END_RET(Err)
-#endif
-		return TwGfxOpen((TwGfxType**)aResult, (TwGfxInfoType *)aInfoResult);
-}
-
+#define _TwGfxOpen(x, y)	TwGfxOpen((TwGfxHandle*)x, y);
 #else
 static asm Err _TwGfxOpen(void **aResult, void *aInfoResult) {
 	stmfd sp!, {r4-r11,lr}
@@ -54,9 +40,13 @@ static asm Err _TwGfxOpen(void **aResult, void *aInfoResult) {
 }
 #endif
 
+int OSystem_PalmZodiac::getDefaultGraphicsMode() const {
+	return GFX_WIDE;
+}
+
 void OSystem_PalmZodiac::load_gfx_mode() {
 	Err e;
-	
+
 	if (_gfxLoaded)
 		return;
 	_gfxLoaded = true;
@@ -75,21 +65,9 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	_sysOldOrientation = SysGetOrientation();
 	SysSetOrientation(sysOrientationLandscape);
 
-#ifdef PALMOS_68K
-	// init mouse (must be here, after WinSetCoordinateSystem)
-	_mouseBackupH = WinCreateOffscreenWindow(MAX_MOUSE_W, MAX_MOUSE_H, nativeFormat, &e);
-	_mouseBackupP = (byte *)(BmpGetBits(WinGetBitmap(_mouseBackupH)));
-
-	_mouseDataH = WinCreateOffscreenWindow(MAX_MOUSE_W, MAX_MOUSE_H, nativeFormat, &e);
-	_mouseDataP = (byte *)BmpGetBits(WinGetBitmap(_mouseDataH));
-
-	_offScreenH	= WinCreateOffscreenWindow(_screenWidth, _screenHeight, nativeFormat, &e);
-	_offScreenP	= (byte *)(BmpGetBits(WinGetBitmap(_offScreenH)));
-#else
-	_mouseBackupP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H);
+	_mouseBackupP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H * 2); // *2 if 16bit
 	_mouseDataP = (byte *)MemPtrNew(MAX_MOUSE_W * MAX_MOUSE_H);
 	_offScreenP = (byte *)MemPtrNew(_screenWidth * _screenHeight);
-#endif
 
 	MemSet(_offScreenP, _screenWidth * _screenHeight, 0);
 	MemSet(_nativePal, sizeof(_nativePal), 0);
@@ -98,7 +76,7 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	UInt32 depth = 16;		
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	_screenH = WinGetDisplayWindow();
-	_screenP = (byte *)WinScreenLock(winLockDontCare);
+	_screenP = (byte *)WinScreenLock(winLockDontCare);	// TODO : change this !
 	WinScreenUnlock();
 
 	e = _TwGfxOpen((void **)&_gfxH, 0);
@@ -121,7 +99,7 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	_srcBmp.pixelFormat = twGfxPixelFormat8bpp;
 	_srcBmp.data = _offScreenP;
 	_srcBmp.palette = _nativePal;
-	
+
 	_srcRect.x = 0;
 	_srcRect.y = 0;
 	_srcRect.w = _screenWidth;
@@ -192,6 +170,7 @@ void OSystem_PalmZodiac::hotswap_gfx_mode(int mode) {
 	_srcPos.x = _screenOffset.x;
 	_srcPos.y = _screenOffset.y;
 	clearScreen();
+//	updateScreen();
 }
 
 void OSystem_PalmZodiac::unload_gfx_mode() {
@@ -213,15 +192,9 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	clearScreen();
 
-#ifdef PALMOS_68K
-	WinDeleteWindow(_mouseBackupH, 0);
-	WinDeleteWindow(_mouseDataH, 0);
-	WinDeleteWindow(_offScreenH, 0);
-#else
 	MemPtrFree(_mouseBackupP);
 	MemPtrFree(_mouseDataP);
 	MemPtrFree(_offScreenP);
-#endif
 
 	SysSetOrientation(_sysOldOrientation);
 	WinSetCoordinateSystem(_sysOldCoord);
@@ -246,39 +219,22 @@ void OSystem_PalmZodiac::updateScreen() {
 
 	if (_redawOSD) {
 		_redawOSD = false;
-		if (!_overlayVisible)
-			draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, _useNumPad, 1);
-		// + battery
+		draw_osd(kDrawBatLow, _screenDest.w - 18, -16, _showBatLow, 2);
+		draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, (_useNumPad && !_overlayVisible), 1);
 	}
 
+	// draw the mouse pointer
+	draw_mouse();		
+	// update the screen
 	if (_overlayVisible) {
-		// update the palette only with overlay, since it is in 16bit mode, this
-		// is needed so that the cursor has the correct colors. Hopefully Zodiac
-		// set the palette even in 16bit mode, where other OS5 devices don't :(
-		// FIXME : seems to corrupt the Stat grafiti panel
-		if (_paletteDirtyEnd != 0) {
-			WinSetDrawWindow(_screenH);
-// no cursor for now
-//			WinPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart, _currentPalette + _paletteDirtyStart);
-			_paletteDirtyEnd = 0;
-		}
-
 		if (_stretched) {
 			TwGfxRectType dst = {_dstRect.x, _dstRect.y, _dstRect.w, _dstRect.h};
-			// TODO : where is the mouse :)
-			e = TwGfxStretchBlt2(_palmScreenP, &dst, _overlayP, &_srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0)); 
-
+			e = TwGfxStretchBlt2(_palmScreenP, &dst, _overlayP, &_srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0));
 		} else {
-			// not really time sensitive, can use WinScreenLock/Unlock, this prevent use
-			// of a additional backpup buffer to draw the mouse
-			WinScreenLock(winLockCopy);
 			e = TwGfxBitBlt(_palmScreenP, &_srcPos, _overlayP, &_srcRect);
-			draw_mouse();
-			WinScreenUnlock();
 		}
 
 	} else {
-		draw_mouse();		
 		if (_stretched) {
 			TwGfxPointType pos = {0, 0};
 			TwGfxRectType dst = {_dstRect.x, _dstRect.y, _dstRect.w, _dstRect.h};
@@ -314,8 +270,17 @@ void OSystem_PalmZodiac::updateScreen() {
 			}
 			e = TwGfxDrawBitmap(_palmScreenP, &pos, &_srcBmp);
 		}
-		undraw_mouse();
 	}
+	undraw_mouse();
+}
+
+bool OSystem_PalmZodiac::grabRawScreen(Graphics::Surface *surf) {
+	assert(surf);
+	
+	surf->create(_screenWidth, _screenHeight, 1);
+	MemMove(surf->pixels, _offScreenP, _screenWidth * _screenHeight);
+	
+	return true;
 }
 
 void OSystem_PalmZodiac::extras_palette(uint8 index, uint8 r, uint8 g, uint8 b) {
@@ -329,11 +294,12 @@ void OSystem_PalmZodiac::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UIn
 	MemHandle hTemp = DmGetResource(bitmapRsc, id + 100);
 
 	if (hTemp) {
-		static const UInt32 pal[2] = {
+		static const UInt32 pal[3] = {
 			(TwGfxComponentsToPackedRGB(0,255,0)),
+			(TwGfxComponentsToPackedRGB(255,255,0)),
 			(TwGfxComponentsToPackedRGB(255,0,0))
 		};
-	
+
 		BitmapType *bmTemp;
 		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
 
