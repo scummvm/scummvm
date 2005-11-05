@@ -19,7 +19,7 @@
  * $Header$
  *
  */
-
+ 
 #ifndef __START_H__
 #define __START_H__
 
@@ -33,17 +33,22 @@ typedef	struct {
 
 	//skin params
 	SkinInfoType skin;	//	card where is located the skin
-	Boolean soundClick;
-	//
+	Boolean soundClick;	
+
 	Boolean vibrator;
 	Boolean autoOff;
 	Boolean setStack;
 	Boolean exitLauncher;
+	Boolean goLCD;
+	Boolean stylusClick;
 
 	UInt16 listPosition;
 
 	struct {
 		UInt16 volRefNum;
+		UInt32 cacheSize;
+		Boolean useCache;
+		Boolean showLED;
 		Boolean moveDB;
 		Boolean deleteDB;
 		Boolean confirmMoveDB;
@@ -81,9 +86,6 @@ extern Boolean bLaunched;
 Err AppStart(void);
 void AppStop(void);
 Boolean StartScummVM();
-void PINGetScreenDimensions();
-void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP);
-void WinScreenGetPitch();
 void SavePrefs();
 Err SendDatabase (UInt16 cardNo, LocalID dbID, Char *nameP, Char *descriptionP);
 #endif
