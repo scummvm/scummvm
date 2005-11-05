@@ -4,7 +4,9 @@
 #include "formTabs.h"
 #include "forms.h"
 
-#include "version.h"
+#include "base/version.h"
+#include "globals.h"
+#include "init_palmos.h"
 
 /***********************************************************************
  *
@@ -28,55 +30,6 @@ static UInt32 GetStackSize() {
 	return ((Char *)endPP - (Char *)startPP) / 1024L;
 }
 
-void GetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *storageFreeP, UInt32 *dynamicFreeP) {
-	UInt32		free, max;
-
-	Int16		i;
-	Int16		nCards;
-	UInt16		cardNo;
-	UInt16		heapID;
-
-	UInt32		storageMemory = 0;
-	UInt32		dynamicMemory = 0;
-	UInt32		storageFree = 0;
-	UInt32		dynamicFree = 0;
-
-	// Iterate through each card to support devices with multiple cards.
-	nCards = MemNumCards();
-
-	for (cardNo = 0; cardNo < nCards; cardNo++) {
-		// Iterate through the RAM heaps on a card (excludes ROM).
-		for (i=0; i< MemNumRAMHeaps(cardNo); i++) {
-			// Obtain the ID of the heap.
-			heapID = MemHeapID(cardNo, i);
-			// Calculate the total memory and free memory of the heap.
-			MemHeapFreeBytes(heapID, &free, &max);
-
-			// If the heap is dynamic, increment the dynamic memory total.
-			if (MemHeapDynamic(heapID)) {
-				dynamicMemory += MemHeapSize(heapID);
-				dynamicFree += free;
-
-			// The heap is nondynamic (storage ?).
-			} else {
-				storageMemory += MemHeapSize(heapID);
-				storageFree += free;
-			}
-		}
-	}
-	// Reduce the stats to KB.  Round the results.
-	dynamicMemory = dynamicMemory / 1024L;
-	storageMemory = storageMemory / 1024L;
-
-	dynamicFree = dynamicFree / 1024L;
-	storageFree = storageFree / 1024L;
-
-	if (dynamicMemoryP) *dynamicMemoryP = dynamicMemory;
-	if (storageMemoryP) *storageMemoryP = storageMemory;
-	if (dynamicFreeP) *dynamicFreeP = dynamicFree;
-	if (storageFreeP) *storageFreeP = storageFree;
-}
-
 static void VersionTabDraw() {
 	WinDrawChars(gScummVMVersion, StrLen(gScummVMVersion), 47, 12 + 30);
 	WinDrawChars(gScummVMBuildDate, StrLen(gScummVMBuildDate), 47, 24 + 30);
@@ -87,12 +40,13 @@ static void SystemTabDraw() {
 	UInt32 dm, sm, df, sf, stack;
 	Char num[10];
 
-	GetMemory(&sm, &dm, &sf, &df);
+	PalmGetMemory(&sm, &dm, &sf, 0);
 	stack = GetStackSize();
-
+	df = gVars->startupMemory;
+	
 	WinSetTextColor(UIColorGetTableEntryIndex(UIObjectForeground));
 	FntSetFont(stdFont);
-
+	
 	StrIToA(num, dm);
 	x = 147 - FntCharsWidth(num, StrLen(num)) + 5;
 	WinDrawChars(num, StrLen(num), x, 12 + 30);
@@ -161,6 +115,11 @@ Boolean InfoFormHandleEvent(EventPtr eventP) {
 			InfoFormInit();
 			handled = true;
 			break;
+			
+		case frmCloseEvent:
+			InfoFormSave();
+			handled = true;
+			break;
 
 		case ctlSelectEvent:
 			switch (eventP->data.ctlSelect.controlID)
@@ -182,6 +141,6 @@ Boolean InfoFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-
+	
 	return handled;
 }
