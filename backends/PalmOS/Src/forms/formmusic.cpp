@@ -10,12 +10,12 @@
 static TabType *myTabP;
 static UInt16 lastTab = 0;
 
-static MusicInfoType *musicInfoP = NULL;
+static GameInfoType *gameInfoP = NULL;
 
 // Music
 static Boolean MusicTabSave() {
 	ControlType *cck1P, *cck2P;
-	ListType *list1P;
+	ListType *list1P, *list2P, *list3P;
 	FieldType *fld1P;
 	UInt16 tempo;
 	FormPtr frmP;
@@ -24,7 +24,11 @@ static Boolean MusicTabSave() {
 
 	cck1P = (ControlType *)GetObjectPtr(TabMusicMusicCheckbox);
 	cck2P = (ControlType *)GetObjectPtr(TabMusicMultiMidiCheckbox);
+
 	list1P = (ListType *)GetObjectPtr(TabMusicDriverList);
+	list2P = (ListType *)GetObjectPtr(TabMusicRateList);
+	list3P = (ListType *)GetObjectPtr(TabMusicQualityList);
+
 	fld1P = (FieldType *)GetObjectPtr(TabMusicTempoField);
 
 	tempo = StrAToI(FldGetTextPtr(fld1P));
@@ -35,65 +39,57 @@ static Boolean MusicTabSave() {
 		return false;
 	}
 
-	musicInfoP->sound.music = CtlGetValue(cck1P);
-	musicInfoP->sound.multiMidi = CtlGetValue(cck2P);
+	gameInfoP->musicInfo.sound.music = CtlGetValue(cck1P);
+	gameInfoP->musicInfo.sound.multiMidi = CtlGetValue(cck2P);
+	gameInfoP->musicInfo.sound.sfx = 1;
 
-	musicInfoP->sound.drvMusic = LstGetSelection(list1P);
-	musicInfoP->sound.tempo = tempo;
+	gameInfoP->musicInfo.sound.drvMusic = LstGetSelection(list1P);
+	gameInfoP->musicInfo.sound.rate = LstGetSelection(list2P);
+	gameInfoP->fmQuality = LstGetSelection(list3P);
+	gameInfoP->musicInfo.sound.tempo = tempo;
 
 	return true;
 }
 
 static void MusicTabInit() {
 	ControlType *cck1P, *cck2P;
-	ListType *list1P;
+	ListType *list1P, *list2P, *list3P;
 	FieldType *fld1P;
 	MemHandle tempoH;
 	Char *tempoP;
 
 	cck1P = (ControlType *)GetObjectPtr(TabMusicMusicCheckbox);
 	cck2P = (ControlType *)GetObjectPtr(TabMusicMultiMidiCheckbox);
+
 	list1P = (ListType *)GetObjectPtr(TabMusicDriverList);
+	list2P = (ListType *)GetObjectPtr(TabMusicRateList);
+	list3P = (ListType *)GetObjectPtr(TabMusicQualityList);
+
 	fld1P = (FieldType *)GetObjectPtr(TabMusicTempoField);
 
-	CtlSetValue(cck1P, musicInfoP->sound.music);
-	CtlSetValue(cck2P, musicInfoP->sound.multiMidi);
+	CtlSetValue(cck1P, gameInfoP->musicInfo.sound.music);
+	CtlSetValue(cck2P, gameInfoP->musicInfo.sound.multiMidi);
 
-	if (musicInfoP->sound.drvMusic > 5)
-		musicInfoP->sound.drvMusic = 0;
+	if (gameInfoP->musicInfo.sound.drvMusic > 5)
+		gameInfoP->musicInfo.sound.drvMusic = 0;
 
-	LstSetSelection(list1P, musicInfoP->sound.drvMusic);
+
+	LstSetSelection(list1P, gameInfoP->musicInfo.sound.drvMusic);
+	LstSetTopItem(list1P, gameInfoP->musicInfo.sound.drvMusic);
 	CtlSetLabel((ControlType *)GetObjectPtr(TabMusicDriverPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
+
+	LstSetSelection(list2P, gameInfoP->musicInfo.sound.rate);
+	LstSetTopItem(list2P, gameInfoP->musicInfo.sound.rate);
+	CtlSetLabel((ControlType *)GetObjectPtr(TabMusicRatePopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
+
+	LstSetSelection(list3P, gameInfoP->fmQuality);
+	CtlSetLabel((ControlType *)GetObjectPtr(TabMusicQualityPopTrigger), LstGetSelectionText(list3P, LstGetSelection(list3P)));
 
 	tempoH = MemHandleNew(FldGetMaxChars(fld1P)+1);
 	tempoP = (Char *)MemHandleLock(tempoH);
-	StrIToA(tempoP, musicInfoP->sound.tempo);
+	StrIToA(tempoP, gameInfoP->musicInfo.sound.tempo);
 	MemHandleUnlock(tempoH);
 	FldSetTextHandle(fld1P, tempoH);
-}
-
-// Sound
-static void SoundTabSave() {
-	ControlType *cck1P;
-	ListType *list1P;
-
-	cck1P = (ControlType *)GetObjectPtr(TabSoundSoundCheckbox);
-	list1P = (ListType *)GetObjectPtr(TabSoundRateList);
-
-	musicInfoP->sound.sfx = CtlGetValue(cck1P);
-	musicInfoP->sound.rate = LstGetSelection(list1P);
-}
-
-static void SoundTabInit() {
-	ControlType *cck1P;
-	ListType *list1P;
-
-	cck1P = (ControlType *)GetObjectPtr(TabSoundSoundCheckbox);
-	list1P = (ListType *)GetObjectPtr(TabSoundRateList);
-
-	CtlSetValue(cck1P, musicInfoP->sound.sfx);
-	LstSetSelection(list1P, musicInfoP->sound.rate);
-	CtlSetLabel((ControlType *)GetObjectPtr(TabSoundRatePopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
 }
 
 // Audio CD
@@ -120,13 +116,13 @@ static Boolean AudioCDTabSave() {
 		return false;
 	}
 
-	musicInfoP->sound.CD = CtlGetValue(cck3P);
+	gameInfoP->musicInfo.sound.CD = CtlGetValue(cck3P);
 
-	musicInfoP->sound.drvCD = LstGetSelection(list1P);
-	musicInfoP->sound.frtCD = LstGetSelection(list2P);
+	gameInfoP->musicInfo.sound.drvCD = LstGetSelection(list1P);
+	gameInfoP->musicInfo.sound.frtCD = LstGetSelection(list2P);
 
-	musicInfoP->sound.defaultTrackLength = StrAToI(FldGetTextPtr(fld2P));
-	musicInfoP->sound.firstTrack = firstTrack;
+	gameInfoP->musicInfo.sound.defaultTrackLength = StrAToI(FldGetTextPtr(fld2P));
+	gameInfoP->musicInfo.sound.firstTrack = firstTrack;
 
 	return true;
 }
@@ -144,23 +140,23 @@ static void AudioCDTabInit() {
 	list1P = (ListType *)GetObjectPtr(TabAudioCDDriverList);
 	list2P = (ListType *)GetObjectPtr(TabAudioCDFormatList);
 
-	LstSetSelection(list1P, musicInfoP->sound.drvCD);
+	LstSetSelection(list1P, gameInfoP->musicInfo.sound.drvCD);
 	CtlSetLabel((ControlType *)GetObjectPtr(TabAudioCDDriverPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
 
-	LstSetSelection(list2P, musicInfoP->sound.frtCD);
+	LstSetSelection(list2P, gameInfoP->musicInfo.sound.frtCD);
 	CtlSetLabel((ControlType *)GetObjectPtr(TabAudioCDFormatPopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
 
-	CtlSetValue(cck3P, musicInfoP->sound.CD);
+	CtlSetValue(cck3P, gameInfoP->musicInfo.sound.CD);
 
 	lengthH = MemHandleNew(FldGetMaxChars(fld2P)+1);
 	lengthP = (Char *)MemHandleLock(lengthH);
-	StrIToA(lengthP, musicInfoP->sound.defaultTrackLength);
+	StrIToA(lengthP, gameInfoP->musicInfo.sound.defaultTrackLength);
 	MemHandleUnlock(lengthH);
 	FldSetTextHandle(fld2P, lengthH);
 
 	firstTrackH = MemHandleNew(FldGetMaxChars(fld3P)+1);
 	firstTrackP = (Char *)MemHandleLock(firstTrackH);
-	StrIToA(firstTrackP, musicInfoP->sound.firstTrack);
+	StrIToA(firstTrackP, gameInfoP->musicInfo.sound.firstTrack);
 	MemHandleUnlock(firstTrackH);
 	FldSetTextHandle(fld3P, firstTrackH);
 }
@@ -169,61 +165,59 @@ static void AudioCDTabInit() {
 static void VolumeTabSave() {
 	SliderControlType *slid1P, *slid2P, *slid3P, *slid4P, *slid5P;
 
-	slid1P = (SliderControlType *)GetObjectPtr(TabVolumeMasterSliderControl);
+	slid1P = (SliderControlType *)GetObjectPtr(TabVolumePalmSliderControl);
 	slid2P = (SliderControlType *)GetObjectPtr(TabVolumeMusicSliderControl);
 	slid3P = (SliderControlType *)GetObjectPtr(TabVolumeSfxSliderControl);
 	slid4P = (SliderControlType *)GetObjectPtr(TabVolumeSpeechSliderControl);
 	slid5P = (SliderControlType *)GetObjectPtr(TabVolumeAudioCDSliderControl);
 
-	CtlGetSliderValues ((ControlType *)slid1P, 0, 0, 0, &musicInfoP->volume.master);
-	CtlGetSliderValues ((ControlType *)slid2P, 0, 0, 0, &musicInfoP->volume.music);
-	CtlGetSliderValues ((ControlType *)slid3P, 0, 0, 0, &musicInfoP->volume.sfx);
-	CtlGetSliderValues ((ControlType *)slid4P, 0, 0, 0, &musicInfoP->volume.speech);
-	CtlGetSliderValues ((ControlType *)slid5P, 0, 0, 0, &musicInfoP->volume.audiocd);
+	CtlGetSliderValues ((ControlType *)slid1P, 0, 0, 0, &gameInfoP->musicInfo.volume.palm);
+	CtlGetSliderValues ((ControlType *)slid2P, 0, 0, 0, &gameInfoP->musicInfo.volume.music);
+	CtlGetSliderValues ((ControlType *)slid3P, 0, 0, 0, &gameInfoP->musicInfo.volume.sfx);
+	CtlGetSliderValues ((ControlType *)slid4P, 0, 0, 0, &gameInfoP->musicInfo.volume.speech);
+	CtlGetSliderValues ((ControlType *)slid5P, 0, 0, 0, &gameInfoP->musicInfo.volume.audiocd);
 }
 
 static void VolumeTabInit() {
 	SliderControlType *slid1P, *slid2P, *slid3P, *slid4P, *slid5P;
 	UInt16 value;
 
-	slid1P = (SliderControlType *)GetObjectPtr(TabVolumeMasterSliderControl);
+	slid1P = (SliderControlType *)GetObjectPtr(TabVolumePalmSliderControl);
 	slid2P = (SliderControlType *)GetObjectPtr(TabVolumeMusicSliderControl);
 	slid3P = (SliderControlType *)GetObjectPtr(TabVolumeSfxSliderControl);
 	slid4P = (SliderControlType *)GetObjectPtr(TabVolumeSpeechSliderControl);
 	slid5P = (SliderControlType *)GetObjectPtr(TabVolumeAudioCDSliderControl);
 
-	value = musicInfoP->volume.master;
+	value = gameInfoP->musicInfo.volume.palm;
 	CtlSetSliderValues ((ControlType *)slid1P, 0, 0, 0, &value);
-	value = musicInfoP->volume.music;
+	value = gameInfoP->musicInfo.volume.music;
 	CtlSetSliderValues ((ControlType *)slid2P, 0, 0, 0, &value);
-	value = musicInfoP->volume.sfx;
+	value = gameInfoP->musicInfo.volume.sfx;
 	CtlSetSliderValues ((ControlType *)slid3P, 0, 0, 0, &value);
-	value = musicInfoP->volume.speech;
+	value = gameInfoP->musicInfo.volume.speech;
 	CtlSetSliderValues ((ControlType *)slid4P, 0, 0, 0, &value);
-	value = musicInfoP->volume.audiocd;
+	value = gameInfoP->musicInfo.volume.audiocd;
 	CtlSetSliderValues ((ControlType *)slid5P, 0, 0, 0, &value);
 }
-
 
 static void MusicFormSave(UInt16 index) {
 	if (index != dmMaxRecordIndex) {
 		MemHandle recordH;
-		GameInfoType *gameInfoP;
+		GameInfoType *ogameInfoP;
 
 		if (!MusicTabSave()) return;
-		SoundTabSave();
 		if (!AudioCDTabSave()) return;
 		VolumeTabSave();
 
 		recordH = DmGetRecord(gameDB, index);
-		gameInfoP = (GameInfoType *)MemHandleLock(recordH);
-		DmWrite(gameInfoP, OffsetOf(GameInfoType, musicInfo), musicInfoP, sizeof(MusicInfoType));
+		ogameInfoP = (GameInfoType *)MemHandleLock(recordH);
+		DmWrite(ogameInfoP, 0, gameInfoP, sizeof(GameInfoType));
 		MemHandleUnlock(recordH);
 		DmReleaseRecord (gameDB, index, 0);
 	}
 
-	MemPtrFree(musicInfoP);
-	musicInfoP = NULL;
+	MemPtrFree(gameInfoP);
+	gameInfoP = NULL;
 
 	TabDeleteTabs(myTabP);
 	FrmReturnToMain();
@@ -234,18 +228,18 @@ static void MusicFormInit(UInt16 index) {
 
 	if (index != dmMaxRecordIndex) {
 		MemHandle recordH = NULL;
-		GameInfoType *gameInfoP;
+		GameInfoType *ogameInfoP;
 
 		recordH = DmQueryRecord(gameDB, index);
-		gameInfoP = (GameInfoType *)MemHandleLock(recordH);
-
-		if (!gameInfoP) {
+		ogameInfoP = (GameInfoType *)MemHandleLock(recordH);
+		
+		if (!ogameInfoP) {
 			FrmCustomAlert(FrmErrorAlert, "An error occured.",0,0);
 			return;
 		}
 
-		musicInfoP = (MusicInfoType *)MemPtrNew(sizeof(MusicInfoType));
-		MemMove(musicInfoP, &gameInfoP->musicInfo, sizeof(MusicInfoType));
+		gameInfoP = (GameInfoType *)MemPtrNew(sizeof(GameInfoType));
+		MemMove(gameInfoP, ogameInfoP, sizeof(GameInfoType));
 		MemHandleUnlock(recordH);
 
 	} else {
@@ -254,14 +248,12 @@ static void MusicFormInit(UInt16 index) {
 		return;
 	}
 
-	tabP = TabNewTabs(4);
-	TabAddContent(&frmP, tabP, "Music", TabMusicForm);
-	TabAddContent(&frmP, tabP, "Sound", TabSoundForm);
-	TabAddContent(&frmP, tabP, "Audio CD", TabAudioCDForm);
+	tabP = TabNewTabs(3);
+	TabAddContent(&frmP, tabP, "Sound", TabMusicForm);
 	TabAddContent(&frmP, tabP, "Volume", TabVolumeForm);
+	TabAddContent(&frmP, tabP, "Audio CD", TabAudioCDForm);
 
 	MusicTabInit();
-	SoundTabInit();
 	AudioCDTabInit();
 	VolumeTabInit();
 
@@ -281,13 +273,17 @@ Boolean MusicFormHandleEvent(EventPtr eventP) {
 			handled = true;
 			break;
 
+		case frmCloseEvent:
+			MusicFormSave(dmMaxRecordIndex);
+			handled = true;
+			break;
+
 		case ctlSelectEvent:
 			switch (eventP->data.ctlSelect.controlID)
 			{
 				case (MusicForm + 1) :
 				case (MusicForm + 2) :
 				case (MusicForm + 3) :
-				case (MusicForm + 4) :
 					lastTab = (eventP->data.ctlSelect.controlID - MusicForm - 1);
 					TabSetActive(frmP, myTabP, lastTab);
 					break;
@@ -307,17 +303,22 @@ Boolean MusicFormHandleEvent(EventPtr eventP) {
 					}
 					break;
 
-				case TabSoundRatePopTrigger:
-					FrmList(eventP, TabSoundRateList);
-					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabSoundRateList));
+				case TabMusicQualityPopTrigger:
+					FrmList(eventP, TabMusicQualityList);
+					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabMusicQualityList));
+					break;
+
+				case TabMusicRatePopTrigger:
+					FrmList(eventP, TabMusicRateList);
+					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabMusicRateList));
 
 					if (!OPTIONS_TST(kOptPalmSoundAPI)) {
-						ListType *list1P = (ListType *)GetObjectPtr(TabSoundRateList);
+						ListType *list1P = (ListType *)GetObjectPtr(TabMusicRateList);
 
 						if (LstGetSelection(list1P) != 0) {
 							FrmCustomAlert(FrmInfoAlert, "You cannot use this rate on your device.", 0, 0);
 							LstSetSelection(list1P, 0);
-							CtlSetLabel((ControlType *)GetObjectPtr(TabSoundRatePopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
+							CtlSetLabel((ControlType *)GetObjectPtr(TabMusicRatePopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
 						}
 					}
 					break;
