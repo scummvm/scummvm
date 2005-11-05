@@ -22,6 +22,11 @@ static void GameTabInit(GameInfoType *gameInfoP) {
 
 	list1P = (ListType *)GetObjectPtr(TabGameInfoEngineList);
 
+	itemsText = (Char **)MemPtrNew(ENGINE_COUNT * sizeof(Char *));
+	for (int i = 0; i < ENGINE_COUNT; i++)
+		itemsText[i] = (Char *)engines[i].nameP;
+	LstSetListChoices(list1P, itemsText, ENGINE_COUNT);
+
 	fld1P = (FieldType *)GetObjectPtr(TabGameInfoEntryNameField);
 	fld2P = (FieldType *)GetObjectPtr(TabGameInfoPathField);
 	fld3P = (FieldType *)GetObjectPtr(TabGameInfoGameField);
@@ -33,9 +38,10 @@ static void GameTabInit(GameInfoType *gameInfoP) {
 	nameP = (Char *)MemHandleLock(nameH);
 	pathP = (Char *)MemHandleLock(pathH);
 	gameP = (Char *)MemHandleLock(gameH);
-
+	
 	if (gameInfoP) {
 		LstSetSelection(list1P, gameInfoP->engine);
+		LstSetTopItem(list1P, gameInfoP->engine);
 		StrCopy(nameP, gameInfoP->nameP);
 		StrCopy(pathP, gameInfoP->pathP);
 		StrCopy(gameP, gameInfoP->gameP);
@@ -72,6 +78,7 @@ static Err GameTabSave(GameInfoType *gameInfoP) {
 	FldTrimText(fld2P);
 	FldTrimText(fld3P);
 
+	// test case
 	if (!gameInfoP) {
 		if (FldGetTextLength(fld1P) == 0) {
 			FrmCustomAlert(FrmWarnAlert,"You must specified an entry name.",0,0);
@@ -101,51 +108,58 @@ static Err GameTabSave(GameInfoType *gameInfoP) {
 		if (gameInfoP->pathP[StrLen(gameInfoP->pathP)-1] != '/')
 			StrCat(gameInfoP->pathP, "/");
 
+		MemPtrFree(itemsText);
+		itemsText = NULL;
 	}
-
+	
 	return errNone;
 }
 
 static void DisplayInit(GameInfoType *gameInfoP) {
-	ListType *list1P;
+	ListType *list1P, *list2P;
 
 	list1P = (ListType *)GetObjectPtr(TabGameDisplayGfxListList);
-
+	list2P = (ListType *)GetObjectPtr(TabGameDisplayRenderList);
+	
 	if (gameInfoP) {
 		LstSetSelection(list1P, gameInfoP->gfxMode);
+		LstSetSelection(list2P, gameInfoP->renderMode);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameDisplayFilterCheckbox), gameInfoP->filter);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameDisplayFullscreenCheckbox), gameInfoP->fullscreen);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameDisplayAspectRatioCheckbox), gameInfoP->aspectRatio);
 
 	} else {
-		LstSetSelection(list1P, 2);
+		LstSetSelection(list1P, 0);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameDisplayFilterCheckbox), 0);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameDisplayFullscreenCheckbox), 0);
 		CtlSetValue((ControlType *)GetObjectPtr(TabGameDisplayAspectRatioCheckbox), 0);
 	}
 
 	CtlSetLabel((ControlType *)GetObjectPtr(TabGameDisplayGfxPopupPopTrigger), LstGetSelectionText(list1P, LstGetSelection(list1P)));
+	CtlSetLabel((ControlType *)GetObjectPtr(TabGameDisplayRenderPopTrigger), LstGetSelectionText(list2P, LstGetSelection(list2P)));
 }
 
 static Err DisplaySave(GameInfoType *gameInfoP) {
-	ListType *list1P;
-	ControlType *cck6P, *cck7P, *cck8P;
+	ListType *list1P, *list2P;
+	ControlType *cck6P, *cck7P, *cck8P;	
 
 	FormType *frmP = FrmGetActiveForm();
 
 	list1P = (ListType *)GetObjectPtr(TabGameDisplayGfxListList);
+	list2P = (ListType *)GetObjectPtr(TabGameDisplayRenderList);
 	cck6P = (ControlType *)GetObjectPtr(TabGameDisplayFilterCheckbox);
 	cck7P = (ControlType *)GetObjectPtr(TabGameDisplayFullscreenCheckbox);
 	cck8P = (ControlType *)GetObjectPtr(TabGameDisplayAspectRatioCheckbox);
-
+	
 	if (!gameInfoP) {
 	} else {
 		gameInfoP->gfxMode = LstGetSelection(list1P);
+		gameInfoP->renderMode = LstGetSelection(list2P);
 		gameInfoP->filter = CtlGetValue(cck6P);
 		gameInfoP->fullscreen = CtlGetValue(cck7P);
 		gameInfoP->aspectRatio = CtlGetValue(cck8P);
 	}
-
+	
 	return errNone;
 }
 
@@ -172,7 +186,9 @@ static void OptionsInit(GameInfoType *gameInfoP) {
 
 	if (gameInfoP) {
 		LstSetSelection(list2P, gameInfoP->language);
+		LstSetTopItem(list2P, gameInfoP->language);
 		LstSetSelection(list3P, gameInfoP->platform);
+		LstSetTopItem(list3P, gameInfoP->platform);
 
 		StrIToA(loadP, gameInfoP->loadSlot);
 		StrIToA(roomP, gameInfoP->bootValue);
@@ -213,7 +229,7 @@ static void OptionsInit(GameInfoType *gameInfoP) {
 
 static Err OptionsSave(GameInfoType *gameInfoP) {
 	FieldType *fld4P, *fld5P, *fld6P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;	
 	ListType *list2P, *list3P;
 
 	FormType *frmP = FrmGetActiveForm();
@@ -247,7 +263,7 @@ static Err OptionsSave(GameInfoType *gameInfoP) {
 	} else {
 		gameInfoP->language = LstGetSelection(list2P);
 		gameInfoP->platform = LstGetSelection(list3P);
-
+		
 		gameInfoP->autoLoad = CtlGetValue(cck1P);
 		gameInfoP->bootParam = CtlGetValue(cck2P);
 		gameInfoP->setPlatform = CtlGetValue(cck3P);
@@ -258,7 +274,7 @@ static Err OptionsSave(GameInfoType *gameInfoP) {
 		gameInfoP->bootValue = StrAToI(FldGetTextPtr(fld5P));
 		gameInfoP->talkValue = StrAToI(FldGetTextPtr(fld6P));
 	}
-
+	
 	return errNone;
 }
 
@@ -323,9 +339,9 @@ static void GameManSave(UInt16 index) {
 		newGameInfo.version	= curItemVersion;
 		newGameInfo.icnID = 0xFFFF;
 		newGameInfo.selected = true;
-
+		
 		// default sound data
-		newGameInfo.musicInfo.volume.master = 192;
+		newGameInfo.musicInfo.volume.palm = 50;
 		newGameInfo.musicInfo.volume.music = 192;
 		newGameInfo.musicInfo.volume.sfx = 192;
 		newGameInfo.musicInfo.volume.speech = 192;
@@ -335,7 +351,7 @@ static void GameManSave(UInt16 index) {
 		newGameInfo.musicInfo.sound.defaultTrackLength = 10;
 		newGameInfo.musicInfo.sound.firstTrack = 1;
 	}
-
+	
 	GameTabSave(&newGameInfo);
 	DisplaySave(&newGameInfo);
 	OptionsSave(&newGameInfo);
@@ -349,14 +365,14 @@ static void GameManSave(UInt16 index) {
 	{
 		RectangleType rArea;
 		UInt16 posIndex, maxView;
-
+		
 		// get the sorted index
 		index = GamGetSelected();
 		// if new item is out of the list bounds, change current list pos
 		SknGetListBounds(&rArea, NULL);
 		maxView = rArea.extent.y / sknInfoListItemSize;
 		posIndex = gPrefs->listPosition;
-
+		
 		// if out of the current list position
 		if (!(index >= posIndex && index < (posIndex + maxView)))
 			gPrefs->listPosition = index;	// this value is corrected in SknUpdateList if needed
@@ -373,7 +389,7 @@ static void GameManSave(UInt16 index) {
  * FUNCTION:    EditGameFormInit
  * FUNCTION:    EditGameFormHandleEvent
  *
- * DESCRIPTION:
+ * DESCRIPTION: 
  *
  * REVISION HISTORY:
  *
@@ -397,11 +413,25 @@ void EditGameFormDelete(Boolean direct) {
 	}
 }
 
+void EditGameCancel() {
+	if (itemsText) {
+		MemPtrFree(itemsText);
+		itemsText = NULL;
+	}
+	TabDeleteTabs(myTabP);
+	FrmReturnToMain();
+}
+
 Boolean EditGameFormHandleEvent(EventPtr eventP) {
 	FormPtr frmP = FrmGetActiveForm();
 	Boolean handled = false;
 
 	switch (eventP->eType) {
+		case frmCloseEvent:
+			EditGameCancel();
+			handled = true;
+			break;
+		
 		case frmOpenEvent:
 			switch (gFormEditMode) {
 				case edtModeAdd:
@@ -448,10 +478,9 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 					break;
 
 				case GameEditCancelButton:
-					TabDeleteTabs(myTabP);
-					FrmReturnToMain();
+					EditGameCancel();
 					break;
-
+				
 				case GameEditDeleteButton:
 					EditGameFormDelete(false);
 					break;
@@ -464,6 +493,11 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 				case TabGameDisplayGfxPopupPopTrigger:
 					FrmList(eventP, TabGameDisplayGfxListList);
 					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabGameDisplayGfxListList));
+					break;
+
+				case TabGameDisplayRenderPopTrigger:
+					FrmList(eventP, TabGameDisplayRenderList);
+					FrmHideObject(frmP, FrmGetObjectIndex(frmP, TabGameDisplayRenderList));
 					break;
 
 				case TabGameOptionsLanguagePopTrigger:
@@ -482,6 +516,6 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-
+	
 	return handled;
 }
