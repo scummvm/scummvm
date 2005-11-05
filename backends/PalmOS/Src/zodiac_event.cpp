@@ -33,10 +33,20 @@ void OSystem_PalmZodiac::get_coordinates(EventPtr ev, Coord &x, Coord &y) {
 	if (_stretched) {
 		Int32 w, h;
 
-		h = (_ratio.adjustAspect == kRatioHeight ? _ratio.height : gVars->screenFullHeight);
-		w = (_ratio.adjustAspect == kRatioWidth ? _ratio.width : gVars->screenFullWidth);
-		x = (_screenWidth * x) / w;
-		y = (_screenHeight * y) / h;
+		if (_mode == GFX_NORMAL) {
+
+			h = gVars->screenHeight - MIN_OFFSET * 2;
+			w = gVars->screenWidth;
+			x = (_screenWidth * x) / w;
+			y = (_screenHeight * y) / h;
+
+		} else {
+
+			h = (_ratio.adjustAspect == kRatioHeight ? _ratio.height : gVars->screenFullHeight);
+			w = (_ratio.adjustAspect == kRatioWidth ? _ratio.width : gVars->screenFullWidth);
+			x = (_screenWidth * x) / w;
+			y = (_screenHeight * y) / h;
+		}
 	}
 }
 
