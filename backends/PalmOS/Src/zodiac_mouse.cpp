@@ -34,36 +34,6 @@ void OSystem_PalmZodiac::setMouseCursor(const byte *buf, uint w, uint h, int hot
 	_mouseHotspotY = hotspotY;
 
 	_mouseKeyColor = keycolor;
-	
-#ifdef PALMOS_68K
-	// set bitmap transparency
-	WinSetDrawWindow(_mouseDataH);
-	WinSetBackColor(_mouseKeyColor);
-	WinEraseWindow();
-	BmpSetTransparentValue(WinGetBitmap(_mouseDataH), _mouseKeyColor);
-
-	if (w & 1) {
-		// copy new cursor
-		byte *dst = _mouseDataP;
-		while (h--) {
-			memcpy(dst, buf, w);
-			dst += MAX_MOUSE_W;
-			buf += w;
-		}
-
-	} else {
-		// copy new cursor
-		BitmapTypeV1 nfo = {
-			w, h, w,
-			{0,0,0,0,0,0,0,0,0},
-			8, BitmapVersionOne, 0
-		};
-
-		BitmapTypeV3 *v3 = BmpCreateBitmapV3((BitmapType*)&nfo, kDensityDouble, (void *)buf, 0);
-		WinDrawBitmap((BitmapPtr)v3, 0, 0);
-		BmpDelete((BitmapPtr)v3);
-	}
-#else
 
 	// copy new cursor
 	byte *dst = _mouseDataP;
@@ -72,20 +42,15 @@ void OSystem_PalmZodiac::setMouseCursor(const byte *buf, uint w, uint h, int hot
 		dst += MAX_MOUSE_W;
 		buf += w;
 	}
-#endif
 }
 
 void OSystem_PalmZodiac::draw_mouse() {
 	if (_mouseDrawn || !_mouseVisible)
 		return;
 
-#ifdef PALMOS_ARM
 	byte *src = _mouseDataP;		// Image representing the mouse
-	byte *bak = _mouseBackupP;		// Surface used to backup the area obscured by the mouse
-	byte *dst;						// Surface we are drawing into
 	byte color;
 	int width;
-#endif
 
 	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
 
@@ -100,16 +65,12 @@ void OSystem_PalmZodiac::draw_mouse() {
 	// clip the mouse rect
 	if (x < 0) {
 		w += x;
-#ifdef PALMOS_ARM
 		src -= x;
-#endif
 		x = 0;
 	}
 	if (y < 0) {
 		h += y;
-#ifdef PALMOS_ARM
 		src -= y * MAX_MOUSE_W;
-#endif
 		y = 0;
 	}
 	if (w > _screenWidth - x)
@@ -129,27 +90,33 @@ void OSystem_PalmZodiac::draw_mouse() {
 	_mouseOldState.h = h;
 
 	// Backup the covered area draw the mouse cursor
-#ifdef PALMOS_68K
 	if (_overlayVisible) {
-		WinSetDrawWindow(_screenH);
-		WinDrawBitmap(WinGetBitmap(_mouseDataH), draw_x + _screenOffset.x, draw_y + _screenOffset.y);
-		// force mouse redraw at each frame so that an extra buffer is not needed
-		_mouseDrawn = false;
+		uint16 *bak = (uint16 *)_mouseBackupP;			// Surface used to backup the area obscured by the mouse
+		uint16 *dst;
+
+		TwGfxLockSurface(_overlayP, (void **)&dst);
+		dst += y * _screenWidth + x;
+		
+		do {
+			width = w;
+			do {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != _mouseKeyColor)	// transparent, don't draw
+					*dst = _nativePal[color];
+				dst++;
+			} while (--width);
+
+			src += MAX_MOUSE_W - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _screenWidth - w;
+		} while (--h);
+
+		TwGfxUnlockSurface(_overlayP, true);
 
 	} else {
-		// backup...
-		RectangleType r = {x, y, w, h};
-		WinCopyRectangle(_offScreenH, _mouseBackupH, &r, 0, 0, winPaint);
-		// ...and draw
-		WinSetDrawWindow(_offScreenH);
-		WinDrawBitmap(WinGetBitmap(_mouseDataH), draw_x, draw_y);
-		_mouseDrawn = true;
-	}
-#else	
-	if (_overlayVisible) {
-		// where is the mouse ...
-	} else {
-		dst = _offScreenP + y * _screenWidth + x;
+		byte *bak = _mouseBackupP;						// Surface used to backup the area obscured by the mouse
+		byte *dst =_offScreenP + y * _screenWidth + x;	// Surface we are drawing into
 
 		do {
 			width = w;
@@ -165,27 +132,33 @@ void OSystem_PalmZodiac::draw_mouse() {
 			bak += MAX_MOUSE_W - w;
 			dst += _screenWidth - w;
 		} while (--h);
-		_mouseDrawn = true;
 	}
-#endif
+
+	_mouseDrawn = true;
 }
 
 void OSystem_PalmZodiac::undraw_mouse() {
 	if (!_mouseDrawn)
 		return;
-	_mouseDrawn = false;
 
+	int h = _mouseOldState.h;
 	// No need to do clipping here, since draw_mouse() did that already
-#ifdef PALMOS_68K
 	if (_overlayVisible) {
+		uint16 *bak = (uint16 *)_mouseBackupP;
+		uint16 *dst;
+		
+		TwGfxLockSurface(_overlayP, (void **)&dst);
+		dst += _mouseOldState.y * _screenWidth + _mouseOldState.x;
+
+		do {
+			memcpy(dst, bak, _mouseOldState.w * 2);
+			bak += MAX_MOUSE_W;
+			dst += _screenWidth;
+		} while (--h);
+
+		TwGfxUnlockSurface(_overlayP, true);
+
 	} else {
-		RectangleType r = {0, 0, _mouseOldState.w, _mouseOldState.h};
-		WinCopyRectangle(_mouseBackupH, _offScreenH, &r, _mouseOldState.x, _mouseOldState.y, winPaint);
-	}
-#else
-	if (_overlayVisible) {
-	} else {
-		int h = _mouseOldState.h;
 		byte *dst, *bak = _mouseBackupP;
 		dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
 		
@@ -195,5 +168,6 @@ void OSystem_PalmZodiac::undraw_mouse() {
 			dst += _screenWidth;
 		} while (--h);
 	}
-#endif
+
+	_mouseDrawn = false;
 }
