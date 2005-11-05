@@ -8,7 +8,7 @@
 #include "globals.h"
 
 #include "common/stdafx.h"
-#include "version.h"
+#include "base/version.h"
 
 #include "formEditGame.h"
 #include "formUtil.h"
@@ -25,7 +25,7 @@ static Err BeamMe() {
 		err = SendDatabase(0, dbID, "ScummVM.prc", "\nPlay your favorite LucasArts games");
 	else
 		err = DmGetLastErr();
-
+	
 	return err;
 }
 
@@ -73,9 +73,20 @@ static Boolean MainFormDoCommand(UInt16 command)
 			handled = true;
 			break;
 
-		case MainGamesNewEdit:
-			gFormEditMode = edtModeParams;
+		case MainGamesNew:
+			gFormEditMode = edtModeAdd;
 			FrmPopupForm(GameEditForm);
+			handled = true;
+			break;
+
+		case MainGamesEdit:
+			gFormEditMode = edtModeEdit;
+			FrmPopupForm(GameEditForm);
+			handled = true;
+			break;
+			
+		case MainGamesDelete:
+			EditGameFormDelete(true);
 			handled = true;
 			break;
 
@@ -326,4 +337,3 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 
 	return handled;
 }
-
