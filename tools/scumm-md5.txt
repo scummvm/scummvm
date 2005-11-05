@@ -520,7 +520,7 @@ Spy Fox 1: Dry Cereal
 	-	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
-	Demo	Windows	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
+	Demo	All	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
 	Demo	All	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
