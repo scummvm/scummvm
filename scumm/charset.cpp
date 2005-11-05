@@ -1427,7 +1427,7 @@ void CharsetRendererClassic::printChar(int chr) {
 			byte imagePalette[256];
 			memset(imagePalette, 0, sizeof(imagePalette));
 			memcpy(imagePalette, _vm->_charsetColorMap, 16);
-			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, imagePalette);
+			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, imagePalette);
 		} else {
 			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen);
 		}

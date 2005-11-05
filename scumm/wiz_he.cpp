@@ -311,11 +311,11 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 	return srcRect.isValidRect() && dstRect.isValidRect();
 }
 
-void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, const uint8 *palPtr, const uint8 *xmapPtr) {
+void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		dst += r2.left + r2.top * dstw;
-		decompressWizImage(dst, dstw, r2, src, r1, palPtr, xmapPtr);
+		decompressWizImage(dst, dstw, r2, src, r1, flags, palPtr, xmapPtr);
 	}
 }
 
@@ -406,7 +406,14 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 	}
 }
 
-void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, const uint8 *palPtr, const uint8 *xmapPtr) {
+void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
+	if (flags & kWIFFlipX) {
+		debug(0, "decompressWizImage: Unhandled flag kWIFFlipX");
+	}
+	if (flags & kWIFFlipY) {
+		debug(0, "decompressWizImage: Unhandled flag kWIFFlipY");
+	}
+
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
 	uint32 code;
@@ -1059,14 +1066,14 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		break;
 	case 1:
 		// TODO Adding masking for flags 0x80 and 0x100
-		if (flags & 0x80) {
+		if (flags & 0x80)
 			// Used in maze
 			debug(0, "drawWizImage: Unhandled flag 0x80");
-		} else if (flags & 0x100) {
+		if (flags & 0x100) {
 			// Used in readdemo
 			debug(0, "drawWizImage: Unhandled flag 0x100");
 		}
-		copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, palPtr, xmapPtr);
+		copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr);
 		break;
 	case 2:
 		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
@@ -1181,10 +1188,16 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 		pts[i].y += po_y;
 	}
 
+	Common::Rect bounds;
+	polygonCalcBoundBox(pts, 4, bounds);
+	int x1 = bounds.left;
+	int y1 = bounds.top;
+
 	if (scale != 256) {
 		debug(1, "drawWizComplexPolygon() scale not implemented");
-
 		//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstPtr, palette, xmapPtr);
+
+		drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 	} else {
 		debug(1, "drawWizComplexPolygon() angle partially implemented");
 
@@ -1193,15 +1206,12 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 			angle += 360;
 		}
 
-		Common::Rect bounds;
-		polygonCalcBoundBox(pts, 4, bounds);
-		int x1 = bounds.left;
-		int y1 = bounds.top;
-
 		switch(angle) {
 		case 270:
 			flags |= kWIFFlipX | kWIFFlipY;
 			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, palette);
+
+			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 			break;
 		case 180:
 			flags |= kWIFFlipX | kWIFFlipY;
@@ -1209,12 +1219,16 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 			break;
 		case 90:
 			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, palette);
+
+			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 			break;
 		case 0:
 			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 			break;
 		default:
 			//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstResNum, palette, xmapPtr);
+
+			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
 			break;
 		}
 	}

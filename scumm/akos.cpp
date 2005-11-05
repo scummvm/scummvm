@@ -1334,9 +1334,9 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 
 	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
 	if (_shadow_mode == 3) {
-		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr, xmap);
+		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, 0, palPtr, xmap);
 	} else {
-		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, palPtr);
+		Wiz::decompressWizImage(dstPtr, _out.pitch, dst, _srcptr, src, 0, palPtr);
 	}
 #endif
 	return 0;
