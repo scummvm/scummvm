@@ -1,7 +1,5 @@
 #include <PalmOS.h>
 #include <SonyClie.h>
-#include <PalmNavigator.h>
-#include "Pa1Lib.h"
 
 #include "StarterRsc.h"
 #include "palmdefs.h"
@@ -18,13 +16,8 @@
 #include "init_mathlib.h"
 #include "init_sony.h"
 #include "init_palmos.h"
+#include "init_stuffs.h"
 
-#ifndef DISABLE_TAPWAVE
-#define __TWKEYS_H__
-#include "tapwave.h"
-#endif
-
-#define kOS5Version		sysMakeROMVersion(5,0,0,sysROMStageRelease,0)
 /***********************************************************************
  *
  * FUNCTION:     AppStart
@@ -47,9 +40,12 @@ static Err AppStartCheckHRmode()
 	// try to init Sony HR mode then Palm HR mode
 	gVars->HRrefNum = SonyHRInit(depth);
 
-	if (gVars->HRrefNum == sysInvalidRefNum)
+	if (gVars->HRrefNum == sysInvalidRefNum) {
 		if (e = PalmHRInit(depth))
 			FrmCustomAlert(FrmErrorAlert,"Your device doesn't seem to support Hi-Res or 256color mode.",0,0);
+	} else {
+		OPTIONS_SET(kOptDeviceClie);
+	}
 
 	return e;
 }
@@ -65,7 +61,7 @@ static Err AppStartCheckNotify() {
 	UInt32 romVersion;
 	Err err;
 
-	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion);
+	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion); 
 	if (!err) {
 		UInt16 cardNo;
 		LocalID dbID;
@@ -89,13 +85,26 @@ static Err AppStartLoadSkin() {
 	if (gPrefs->skin.dbID) {
 		UInt32 type, creator;
 
-		// remember to check version for next revision of the skin
-		err = DmDatabaseInfo (gPrefs->skin.cardNo, gPrefs->skin.dbID, gPrefs->skin.nameP, 0, 0, 0, 0, 0, 0, 0,0, &type, &creator);
-		if (!err)
-			if (type != 'skin' || creator != appFileCreator)
-				err = dmErrInvalidParam;
+		// check if the DB still exists
+		DmSearchStateType state;
+		UInt16 cardNo;
+		LocalID dbID;
+		Boolean found = false;
+		err = DmGetNextDatabaseByTypeCreator(true, &state, 'skin', appFileCreator, false, &cardNo, &dbID);
+		while (!err && dbID && !found) {
+			found = (cardNo == gPrefs->skin.cardNo && dbID == gPrefs->skin.dbID);
+			err = DmGetNextDatabaseByTypeCreator(false, &state, 'skin', appFileCreator, false, &cardNo, &dbID);
+		}
 
-		if (err)
+		if (found) {
+			// remember to check version for next revision of the skin
+			err = DmDatabaseInfo (gPrefs->skin.cardNo, gPrefs->skin.dbID, gPrefs->skin.nameP, 0, 0, 0, 0, 0, 0, 0,0, &type, &creator);
+			if (!err)
+				if (type != 'skin' || creator != appFileCreator)
+					err = dmErrInvalidParam;
+		}
+		
+		if (!found || err)
 			MemSet(&(gPrefs->skin),sizeof(SkinInfoType),0);
 	}
 
@@ -107,17 +116,13 @@ static Err AppStartLoadSkin() {
 		if (!err)
 			err = DmDatabaseInfo (gPrefs->skin.cardNo, gPrefs->skin.dbID, gPrefs->skin.nameP, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
-
-	if (err)
-		FrmCustomAlert(FrmWarnAlert,"No skin found.\nScummVM will start in direct mode.",0,0);
-		//FrmCustomAlert(FrmErrorAlert,"No skin found.\nPlease install a skin and restart ScummVM.",0,0);
-
+	
 	return err;
 }
 
 static Err AppStartCheckMathLib() {
 	Err e = MathlibInit();
-
+	
 	switch (e) {
 		case errNone:
 			break;
@@ -128,7 +133,7 @@ static Err AppStartCheckMathLib() {
 			FrmCustomAlert(FrmErrorAlert,"Can't open MathLib !",0,0);
 			break;
 	}
-
+	
 	return e;
 }
 
@@ -136,103 +141,35 @@ static void AppStopMathLib() {
 	MathlibRelease();
 }
 
-// Set the screen pitch for direct screen access
-// available only before a game start
-void WinScreenGetPitch() {
-	if (OPTIONS_TST(kOptModeHiDensity)) {
-		WinScreenGetAttribute(winScreenRowBytes, &(gVars->screenPitch));
-		if (OPTIONS_TST(kOptMode16Bit))
-			gVars->screenPitch /= 2;	// this value is used only in-game and in 8bit mode, so if we are in 16Bit 8bit = 16bit/2
-
-		// FIXME : hack for TT3 simulator (and real ?) return 28 on landscape mode
-		if (gVars->screenPitch < gVars->screenFullWidth)
-			gVars->screenPitch = gVars->screenFullWidth;
-	} else {
-		gVars->screenPitch = gVars->screenFullWidth;
-	}
-}
-
-void PINGetScreenDimensions() {
-	UInt32 ftr;
-	// if feature set, not set on Garmin iQue3600 ???
-	if (!(FtrGet(sysFtrCreator, sysFtrNumInputAreaFlags, &ftr))) {
-		if (ftr & grfFtrInputAreaFlagCollapsible) {
-
-			Coord x, y;
-			UInt16 curOrientation = SysGetOrientation();
-
-			OPTIONS_SET(kOptCollapsible);
-			// reset previous options if any
-			OPTIONS_RST(kOptModeWide);
-			OPTIONS_RST(kOptModeLandscape);
-
-			PINSetInputTriggerState(pinInputTriggerEnabled);
-			PINSetInputAreaState(pinInputAreaClosed);
-			StatHide();
-
-			WinGetDisplayExtent(&x, &y);
-			gVars->screenFullWidth = x << 1;
-			gVars->screenFullHeight = y << 1;
-
-			OPTIONS_SET(kOptModeWide);
-
-			if (curOrientation == sysOrientationLandscape ||
-				curOrientation == sysOrientationReverseLandscape
-					)
-				OPTIONS_SET(kOptModeLandscape);
-
-			StatShow();
-			PINSetInputAreaState(pinInputAreaOpen);
-			PINSetInputTriggerState(pinInputTriggerDisabled);
-		}
-	}
-}
-
 static void AppStartCheckScreenSize() {
-	UInt32 version;
-	UInt16 slkRefNum;
+	Coord sw, sh, fw, fh;
+	UInt8 mode;
 
-	gVars->screenWidth = 320;
-	gVars->screenHeight = 320;
+	OPTIONS_RST(kOptCollapsible);
+	OPTIONS_RST(kOptModeWide);
+	OPTIONS_RST(kOptModeLandscape);
 
-	gVars->screenFullWidth = gVars->screenWidth;
-	gVars->screenFullHeight = gVars->screenHeight;
-
-	// Sony HiRes+
-	slkRefNum = SilkInit(&version);
-	gVars->slkRefNum = slkRefNum;
-	gVars->slkVersion = version;
-	if (slkRefNum != sysInvalidRefNum) {
-		if (version == vskVersionNum1) {
-			SilkLibEnableResize(slkRefNum);
-			SilkLibResizeDispWin(slkRefNum, silkResizeMax);
-			HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
-			SilkLibResizeDispWin(slkRefNum, silkResizeNormal);
-			SilkLibDisableResize(slkRefNum);
-
-		} else {
-			VskSetState(slkRefNum, vskStateEnable, (gVars->slkVersion == vskVersionNum2 ? vskResizeVertically : vskResizeHorizontally));
-			VskSetState(slkRefNum, vskStateResize, vskResizeNone);
-			HRWinGetWindowExtent(gVars->HRrefNum, &gVars->screenFullWidth, &gVars->screenFullHeight);
-			VskSetState(slkRefNum, vskStateResize, vskResizeMax);
-			VskSetState(slkRefNum, vskStateEnable, vskResizeDisable);
-			OPTIONS_SET((version == vskVersionNum3 ? kOptModeLandscape : kOptNone));
+	// we are on a sony device
+	if (OPTIONS_TST(kOptDeviceClie)) {
+		mode = SonyScreenSize(gVars->HRrefNum, &sw, &sh, &fw, &fh);
+		if (mode) {
+			OPTIONS_SET(kOptModeWide);
+			OPTIONS_SET((mode == SONY_LANDSCAPE) ? kOptModeLandscape : kOptNone);
 		}
-
-		OPTIONS_SET(kOptModeWide);
-
-	// Tapwave Zodiac and other DIA API compatible devices
-	// get max screen size
 	} else {
-		PINGetScreenDimensions();
+		mode = PalmScreenSize(&sw, &sh, &fw, &fh);
+		if (mode) {
+			OPTIONS_SET(kOptCollapsible);
+			OPTIONS_SET(kOptModeWide);
+			OPTIONS_SET((mode == PALM_LANDSCAPE) ? kOptModeLandscape : kOptNone);
+		}
 	}
 
-	WinScreenGetPitch();
-}
+	gVars->screenWidth = sw;
+	gVars->screenHeight = sh;
 
-static void AppStopSilk() {
-	if (gVars->slkRefNum != sysInvalidRefNum)
-		SilkLibClose(gVars->slkRefNum);
+	gVars->screenFullWidth = fw;
+	gVars->screenFullHeight = fh;
 }
 
 #define max(id,value)	gVars->memory[id] = (gVars->memory[id] < value ? value : gVars->memory[id])
@@ -241,8 +178,9 @@ static void AppStopSilk() {
 
 static void AppStartSetMemory() {
 	UInt32 mem, def;
-	GetMemory(0,0,0,&mem);
+	PalmGetMemory(0,0,0,&mem);
 	def = (mem > threshold) ? (mem - threshold) * 1024 : 0;
+	gVars->startupMemory = mem;
 
 	// default values
 	gVars->memory[kMemScummOldCostGames] = (mem >= 550 + threshold) ? 550000 : def;
@@ -261,7 +199,7 @@ static void AppStartSetMemory() {
 	min(kMemScummNewCostGames, 2500000);
 	min(kMemSimon1Games, 1000000);
 	min(kMemSimon2Games, 2000000);
-
+	
 }
 
 #undef threshold
@@ -270,8 +208,6 @@ static void AppStartSetMemory() {
 
 Err AppStart(void) {
 	UInt16 dataSize, checkSize = 0;
-	UInt32 ulProcessorType, manufacturer, version, depth;
-	Boolean color;
 	Err error;
 
 #ifndef _DEBUG_ENGINE
@@ -287,53 +223,13 @@ Err AppStart(void) {
 	gVars->indicator.on	= 255;
 	gVars->indicator.off = 0;
 	gVars->HRrefNum = sysInvalidRefNum;
-	gVars->volRefNum = sysInvalidRefNum;
+	gVars->VFS.volRefNum = sysInvalidRefNum;
 	gVars->slkRefNum = sysInvalidRefNum;
 	gVars->options = kOptNone;
 
-#ifndef DISABLE_TAPWAVE
-	// Tapwave Zodiac libs ?
-	if (!FtrGet(sysFileCSystem, sysFtrNumOEMCompanyID, &manufacturer))
-		if (manufacturer == twCreatorID)
-			OPTIONS_SET(kOptDeviceZodiac);
-#endif
-
-	// Hi-Density present ?
-	if (!FtrGet(sysFtrCreator, sysFtrNumWinVersion, &version))
-		if (version >= 4)
-			OPTIONS_SET(kOptModeHiDensity);
-
-	// OS5 ?
-	if (!FtrGet(sysFtrCreator, sysFtrNumROMVersion, &version))
-		if (version >= kOS5Version)
-			OPTIONS_SET(kOptDeviceOS5);
-
-	// ARM ?
- 	if (!FtrGet(sysFileCSystem, sysFtrNumProcessorID, &ulProcessorType))
- 		if (sysFtrNumProcessorIsARM(ulProcessorType))
- 			OPTIONS_SET(kOptDeviceARM);
- 		else if (ulProcessorType == sysFtrNumProcessorx86)
- 			OPTIONS_SET(kOptDeviceProcX86);
-
-	// 5Way Navigator
-	if (!FtrGet(navFtrCreator, navFtrVersion, &version))
-		if (version >= 1)
-	 		OPTIONS_SET(kOpt5WayNavigator);
-
-	// Palm Sound API ?
-	if (!FtrGet(sysFileCSoundMgr, sndFtrIDVersion, &version))
-		if (version >= 1)
-			OPTIONS_SET(kOptPalmSoundAPI);
-
-	// Sony Pa1 Sound API
-	if (Pa1Lib_Open()) {
-		OPTIONS_SET(kOptSonyPa1LibAPI);
-		Pa1Lib_Close();
-	}
-
-	// check for 16bit mode
-	if (!WinScreenMode(winScreenModeGetSupportedDepths, NULL, NULL, &depth, &color))
-		OPTIONS_SET(((depth & 0x8000) ? kOptMode16Bit : kOptNone));
+	// set memory required by the differents engines
+	AppStartSetMemory();
+	StuffsGetFeatures();
 
 	// allocate prefs space
 	dataSize = sizeof(GlobalsPreferenceType);
@@ -346,13 +242,18 @@ Err AppStart(void) {
 		MemSet(gPrefs, dataSize, 0);
 
 		gPrefs->card.volRefNum = sysInvalidRefNum;
+		gPrefs->card.cacheSize = 4096;
+		gPrefs->card.useCache = true;
+		gPrefs->card.showLED = true;
 
 		gPrefs->autoOff = true;
 		gPrefs->vibrator = RumbleExists();
 		gPrefs->debug = false;
 		gPrefs->exitLauncher = true;
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
-
+		gPrefs->arm = OPTIONS_TST(kOptDeviceARM);
+		gPrefs->stylusClick = true;
+		
 	} else {
 		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
 	}
@@ -362,32 +263,33 @@ Err AppStart(void) {
 
 	error = AppStartCheckHRmode();
 	if (error) return (error);
-
-//	error = AppStartLoadSkin();
-//	if (error) return (error);
+	
 	bDirectMode = (AppStartLoadSkin() != errNone);
 
-	if (gPrefs->card.volRefNum != sysInvalidRefNum) {	// if volref previously defined, check if it's a valid one
+	// if volref previously defined, check if it's a valid one
+	if (gPrefs->card.volRefNum != sysInvalidRefNum) {
 		VolumeInfoType volInfo;
 		Err err = VFSVolumeInfo(gPrefs->card.volRefNum, &volInfo);
 		if (err)
-			gPrefs->card.volRefNum = sysInvalidRefNum;
+			gPrefs->card.volRefNum = parseCards();
 	}
 	else
-		gPrefs->card.volRefNum = parseCards(); //parseCards(0);	// get first volref
+		gPrefs->card.volRefNum = parseCards();
+	if (gPrefs->card.volRefNum != sysInvalidRefNum)
+		CardSlotCreateDirs();
 
+	// open games database
 	error = GamOpenDatabase();
 	if (error) return (error);
 	GamImportDatabase();
 
 	AppStartCheckScreenSize();
-	AppStartCheckNotify(); 		// not fatal error if not available
-	AppStartSetMemory();		// set memory required by the different engines
+	AppStartCheckNotify(); 		// not fatal error if not avalaible
 
-	// force ARM option if bDirectMode
 	if (!error)
-		if (bDirectMode && OPTIONS_TST(kOptDeviceARM))
-			gPrefs->arm = true;
+		if (bDirectMode)
+			// force ARM option if bDirectMode
+			gPrefs->arm = OPTIONS_TST(kOptDeviceARM);
 
 	return error;
 }
@@ -410,8 +312,8 @@ static Err AppStopCheckNotify()
 {
 	UInt32 romVersion;
 	Err err;
-
-	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion);
+	
+	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion); 
 	if (!err) {
 		UInt16 cardNo;
 		LocalID dbID;
@@ -424,7 +326,7 @@ static Err AppStopCheckNotify()
 			SysNotifyUnregister(cardNo, dbID, sysNotifyDisplayResizedEvent, sysNotifyNormalPriority);
 		}
 	}
-
+	
 	return err;
 }
 
@@ -437,12 +339,11 @@ void AppStop(void) {
 	// Close and move Game list database
 	GamCloseDatabase(false);
 
-	// Write the saved preferences / saved-state information.  This data
+	// Write the saved preferences / saved-state information.  This data 
 	// will saved during a HotSync backup.
 	SavePrefs();
 
 	// stop all
-	AppStopSilk();
 	AppStopCheckNotify();
 	AppStopMathLib();
 	AppStopHRMode();
