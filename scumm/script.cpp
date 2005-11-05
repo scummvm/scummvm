@@ -184,7 +184,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 			ptr += 2;
 		} while (1);
 		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
-	} if (_version <= 2) {
+	} else if (_version <= 2) {
 		do {
 			if (!*verbptr)
 				return 0;
