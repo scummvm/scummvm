@@ -936,8 +936,8 @@ void Sprite::setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2) {
 	_spriteGroups[spriteGroupId].flags |= kSGFClipBox;
 	_spriteGroups[spriteGroupId].bbox.left = x1;
 	_spriteGroups[spriteGroupId].bbox.top = y1;
-	_spriteGroups[spriteGroupId].bbox.right = x2 + 1;
-	_spriteGroups[spriteGroupId].bbox.bottom = y2 + 1;
+	_spriteGroups[spriteGroupId].bbox.right = x2;
+	_spriteGroups[spriteGroupId].bbox.bottom = y2;
 
 	redrawSpriteGroup(spriteGroupId);
 }
