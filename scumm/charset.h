@@ -100,8 +100,9 @@ public:
 class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	byte *_fontPtr;
-	int _numChars;
+	int _bitDepth;
 	int _fontHeight;
+	int _numChars;
 
 	enum ShadowMode {
 		kNoShadowMode,

@@ -220,7 +220,7 @@ CharsetRenderer::~CharsetRenderer() {
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
-	: CharsetRenderer(vm), _numChars(0), _fontHeight(0) {
+	: CharsetRenderer(vm), _bitDepth(0), _fontHeight(0), _numChars(0) {
 	_shadowMode = kNoShadowMode;
 	_shadowColor = 0;
 }
@@ -239,7 +239,7 @@ void CharsetRendererCommon::setCurID(byte id) {
 	else
 		_fontPtr += 29;
 
-	//_bitDepth = _fontPtr[0];
+	_bitDepth = _fontPtr[0];
 	_fontHeight = _fontPtr[1];
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
 }
@@ -253,7 +253,7 @@ void CharsetRendererV3::setCurID(byte id) {
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
 
-	//_bitDepth = 1;
+	_bitDepth = 1;
 	_numChars = _fontPtr[4];
 	_fontHeight = _fontPtr[5];
 
@@ -1332,7 +1332,6 @@ void CharsetRendererClassic::printChar(int chr) {
 
 	_vm->_charsetColorMap[1] = _color;
 
-	int type = *_fontPtr;
 	if (is2byte) {
 		enableShadow(true);
 		charPtr = _vm->get2byteCharPtr(chr);
@@ -1410,7 +1409,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		_textScreenID = vs->number;
 	}
 
-	if ((_vm->_heversion >= 71 && type >= 8) || (_vm->_heversion >= 90 && type == 0)) {
+	if ((_vm->_heversion >= 71 && _bitDepth >= 8) || (_vm->_heversion >= 90 && _bitDepth == 0)) {
 #ifndef DISABLE_HE
 		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
@@ -1423,7 +1422,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		}
 
 		Common::Rect rScreen(vs->w, vs->h);
-		if (type >= 8) {
+		if (_bitDepth >= 8) {
 			byte imagePalette[256];
 			memset(imagePalette, 0, sizeof(imagePalette));
 			memcpy(imagePalette, _vm->_charsetColorMap, 16);
