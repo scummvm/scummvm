@@ -88,8 +88,8 @@ private:
 	int fullAnimDriver(Object *compact);
 	int animDriver(Object *compact);
 
-        static BSMcodeTable _mcodeTable[100];
-  
+	static BSMcodeTable _mcodeTable[100];
+
 	uint16 inRange(uint16 a, uint16 b, uint16 c);
 
 //- mcodeTable:

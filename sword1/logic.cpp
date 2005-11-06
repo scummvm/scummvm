@@ -681,7 +681,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 	}
 }
 
-const BSMcodeTable Logic::_mcodeTable[100] = {
+BSMcodeTable Logic::_mcodeTable[100] = {
 	&Logic::fnBackground,
 	&Logic::fnForeground,
 	&Logic::fnSort,
