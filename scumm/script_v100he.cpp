@@ -2268,7 +2268,7 @@ void ScummEngine_v100he::o100_wait() {
 }
 
 void ScummEngine_v100he::o100_writeFile() {
-	int16 resID = pop();
+	int resID = pop();
 	int slot = pop();
 	byte subOp = fetchScriptByte();
 
