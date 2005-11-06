@@ -1972,7 +1972,7 @@ void ScummEngine_v72he::o72_pickVarRandom() {
 	dim1end = FROM_LE_32(ah->dim1end);
 
 	if (dim1end < num) {
-		int16 var_2 = readArray(value, 0, num - 1);
+		int32 var_2 = readArray(value, 0, num - 1);
 		shuffleArray(value, 1, dim1end);
 		if (readArray(value, 0, 1) == var_2) {
 			num = 2;
