@@ -59,17 +59,23 @@ MidiDriver_SEQ::MidiDriver_SEQ() {
 }
 
 int MidiDriver_SEQ::open() {
+	char *device_name;
+	char dev_seq[] = "/dev/sequencer";
+
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 	_isOpen = true;
 	device = 0;
 
-	char *device_name = getenv("SCUMMVM_MIDI");
-	if (device_name != NULL) {
-		device = (::open((device_name), O_RDWR, 0));
-	} else {
-		warning("You need to set-up the SCUMMVM_MIDI environment variable properly (see README) ");
+	device_name = getenv("SCUMMVM_MIDI");
+
+	if (device_name == NULL) {
+		warning("SCUMMVM_MIDI environment variable not set, using /dev/sequencer");
+		device_name = dev_seq;
 	}
+
+	device = (::open((device_name), O_RDWR, 0));
+
 	if ((device_name == NULL) || (device < 0)) {
 		if (device_name == NULL)
 			warning("Opening /dev/null (no music will be heard) ");
