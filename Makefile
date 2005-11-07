@@ -104,9 +104,12 @@ bundle: scummvm-static
 # location of additional libs for OS X usually /sw/ for fink or
 # /opt/local/ for darwinports
 OSXOPT=/sw
-# Special target to create a static linked binary for Mac OS X
+# Special target to create a static linked binary for Mac OS X.
+# We use -force_cpusubtype_ALL to ensure the binary runs on every
+# PowerPC machine, even though we use Altivec code (we dynamically
+# check whether Altivec is available before trying to run it).
 scummvm-static: $(OBJS)
-	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) \
+	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(OBJS) \
 		`sdl-config --static-libs` \
 		-framework CoreMIDI \
 		$(OSXOPT)/lib/libmad.a \
