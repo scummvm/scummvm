@@ -97,7 +97,7 @@ void SeqPlayer::s1_wsaOpen() {
 	uint8 wsaObj = *_seqData++;
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
 	uint8 offscreenDecode = *_seqData++;
-	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;				
+	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;
 	_seqMovies[wsaObj].wsa = _vm->wsa_open(_vm->seqWSATable()[wsaObj], offscreenDecode, 0);
 	_seqMovies[wsaObj].frame = 0;
 	_seqMovies[wsaObj].numFrames = _vm->wsa_getNumFrames(_seqMovies[wsaObj].wsa) - 1;
@@ -311,7 +311,7 @@ void SeqPlayer::s1_copyRegionSpecial() {
 		break;
 	case 1:
 		_screen->copyRegion(0, 0, 0, 47, 320, 56, 2, 0);
-		break;			
+		break;
 	case 2:
 		_screen->copyRegion(107, 72, 107, 72, 43, 87, 2, 0);
 		_screen->copyRegion(130, 159, 130, 159, 35, 17, 2, 0);
