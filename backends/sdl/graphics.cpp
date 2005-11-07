@@ -297,9 +297,6 @@ void OSystem_SDL::initSize(uint w, uint h, int overlayScale) {
 	_screenWidth = w;
 	_screenHeight = h;
 
-	if (h != 200)
-		_adjustAspectRatio = false;
-
 	if (overlayScale != -1) {
 		_overlayScale = overlayScale;
 		if (w != 320 && w != 256) // 256 is for MM NES
@@ -338,6 +335,9 @@ void OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
 	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
+
+	if (_screenHeight != 200)
+		_adjustAspectRatio = false;
 
 	//
 	// Create the surface that contains the 8 bit game data
