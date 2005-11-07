@@ -53,7 +53,7 @@ class Sound {
 public:
 	Sound(Audio::Mixer *mixer, QueenEngine *vm);
 	virtual ~Sound();
-	virtual void sfxPlay(const char *name, bool isSpeech) = 0;
+	virtual bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle) = 0;
 	static Sound *giveSound(Audio::Mixer *mixer, QueenEngine *vm, uint8 compression);
 	void playSfx(uint16 sfx, bool isSpeech);
 	void playSfx(const char *base, bool isSpeech);
@@ -119,22 +119,20 @@ protected:
 class SilentSound : public Sound {
 public:
 	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name, bool isSpeech) { }
+	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
 };
 
 class SBSound : public Sound {
 public:
 	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name, bool isSpeech);
-protected:
-	void playSound(byte *sound, uint32 size, bool isSpeech);
+	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
 };
 
 #ifdef USE_MAD
 class MP3Sound : public Sound {
 public:
 	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name, bool isSpeech);
+	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
 };
 #endif
 
@@ -142,7 +140,7 @@ public:
 class OGGSound : public Sound {
 public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name, bool isSpeech);
+	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
 };
 #endif
 
@@ -150,7 +148,7 @@ public:
 class FLACSound : public Sound {
 public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : Sound(mixer, vm) {};
-	void sfxPlay(const char *name, bool isSpeech);
+	bool sfxPlay(const char *name, Audio::SoundHandle *soundHandle);
 };
 #endif // #ifdef USE_FLAC
 

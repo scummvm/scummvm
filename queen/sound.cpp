@@ -103,8 +103,7 @@ void Sound::playSfx(uint16 sfx, bool isSpeech) {
 #endif
 		strcat(name, ".SB");
 		waitFinished(isSpeech);
-		if (_vm->resource()->fileExists(name)) {
-			sfxPlay(name, isSpeech);
+		if (sfxPlay(name, isSpeech ? &_speechHandle : &_sfxHandle)) {
 			_speechSfxExists = isSpeech;
 		} else {
 			_speechSfxExists = false;
@@ -125,8 +124,7 @@ void Sound::playSfx(const char *base, bool isSpeech) {
 	}
 	strcat(name, ".SB");
 	waitFinished(isSpeech);
-	if (_vm->resource()->fileExists(name)) {
-		sfxPlay(name, isSpeech);
+	if (sfxPlay(name, isSpeech ? &_speechHandle : &_sfxHandle)) {
 		_speechSfxExists = isSpeech;
 	} else {
 		_speechSfxExists = false;
@@ -186,38 +184,54 @@ void Sound::loadState(uint32 ver, byte *&ptr) {
 	_lastOverride = (int16)READ_BE_INT16(ptr); ptr += 2;
 }
 
-void SBSound::playSound(byte *sound, uint32 size, bool isSpeech) {
-	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
-	_mixer->playRaw(isSpeech ? &_speechHandle : &_sfxHandle, sound, size, 11025, flags);
+bool SilentSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
+	return false;
 }
 
-void SBSound::sfxPlay(const char *name, bool isSpeech) {
-	uint32 size;
-	uint8 *buf = _vm->resource()->loadFile(name, SB_HEADER_SIZE, &size, true);
-	playSound(buf, size, isSpeech);
+bool SBSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
+	if (_vm->resource()->fileExists(name)) {
+		uint32 size;
+		uint8 *sound = _vm->resource()->loadFile(name, SB_HEADER_SIZE, &size, true);
+		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+		_mixer->playRaw(soundHandle, sound, size, 11025, flags);
+		return true;
+	}
+	return false;
 }
 
 #ifdef USE_MAD
-void MP3Sound::sfxPlay(const char *name, bool isSpeech) {
+bool MP3Sound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeMP3Stream(f, size));
+	if (f) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, makeMP3Stream(f, size));
+		return true;
+	}
+	return false;
 }
 #endif
 
 #ifdef USE_VORBIS
-void OGGSound::sfxPlay(const char *name, bool isSpeech) {
+bool OGGSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeVorbisStream(f, size));
+	if (f) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, makeVorbisStream(f, size));
+		return true;
+	}
+	return false;
 }
 #endif
 
 #ifdef USE_FLAC
-void FLACSound::sfxPlay(const char *name, bool isSpeech) {
+bool FLACSound::sfxPlay(const char *name, Audio::SoundHandle *soundHandle) {
 	uint32 size;
 	Common::File *f = _vm->resource()->giveCompressedSound(name, &size);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, isSpeech ? &_speechHandle : &_sfxHandle, makeFlacStream(f, size));
+	if (f) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, makeFlacStream(f, size));
+		return true;
+	}
+	return false;
 }
 #endif
 

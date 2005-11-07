@@ -239,13 +239,16 @@ const GameVersion *Resource::detectGameVersion(uint32 size) const {
 
 Common::File *Resource::giveCompressedSound(const char *filename, uint32 *size) {
 	assert(strstr(filename, ".SB"));
+	Common::File *f = NULL;
 	ResourceEntry *re = resourceEntry(filename);
-	assert(re != NULL);
-	if (size != NULL) {
-		*size = re->size;
+	if (re) {
+		if (size != NULL) {
+			*size = re->size;
+		}
+		_resourceFile->seek(re->offset);
+		f = _resourceFile;
 	}
-	_resourceFile->seek(re->offset);
-	return _resourceFile;
+	return f;
 }
 
 LineReader::LineReader(char *buffer, uint32 bufsize) : _buffer(buffer), _bufSize(bufsize), _current(0) {
