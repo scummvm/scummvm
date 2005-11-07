@@ -341,6 +341,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
+	-	Windows	de	83cedbe26aa8b58988e984e3d34cac8e	freddi3	joachimeberhard
 	-	Windows	nl	0cccfa5223099a60e76cfcca57a1a141	freddi3	adutchguy
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev

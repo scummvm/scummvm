@@ -412,6 +412,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 	{"07b810e37be7489263f7bc7627d4765d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Unencrypted Russian)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"b5298a5c15ffbe8b381d51ea4e26d35c", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"78bd5f036ea35a878b74e4f47941f784", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"16effd200aa6b8abe9c569c3e578814d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Dutch Demo)", GID_HEGAME, 6, 99, MDT_NONE,
@@ -755,6 +757,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi3", "F3-Mdemo", kGenMac },
 	{ "freddi3", "f3-mdemo", kGenPC },
 	{ "freddi3", "FF3-DEMO", kGenPC },
+	{ "freddi3", "FreddiFGT", kGenPC },
 	{ "freddi3", "MM3-DEMO", kGenPC },
 	{ "freddi3", "MM3-Demo", kGenMac }, // FR Mac demo
 	{ "freddi4", "f4-demo", kGenPC },
