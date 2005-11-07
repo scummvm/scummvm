@@ -77,7 +77,8 @@ void ScummEngine::requestSave(int slot, const char *name, bool temporary) {
 	_saveTemporaryState = temporary;
 	_saveLoadFlag = 1;		// 1 for save
 	assert(name);
-	strcpy(_saveLoadName, name);
+	strncpy(_saveLoadName, name, sizeof(_saveLoadName));
+	_saveLoadName[sizeof(_saveLoadName) -  1] = 0;
 }
 
 void ScummEngine::requestLoad(int slot) {
