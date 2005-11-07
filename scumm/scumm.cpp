@@ -575,6 +575,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 	{"49210e124e4c2b30f1290a9ef6306301", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
+	{"e98b982ceaf9d253d730bde8903233d6", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 	{"fc6b6148e80d67939d9a18697c0f626a", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 	{"ce6a4cef315b20fef58a95bc40a2d8d3", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
