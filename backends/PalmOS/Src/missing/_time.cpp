@@ -22,13 +22,24 @@
 
 #include <time.h>
 
-// ignore GMT, only device time
-
 time_t time(time_t *tloc) {
-	UInt32 secs = TimGetSeconds();					// since 1/1/1904 12AM.
-	DateTimeType Epoch = {1, 0, 0, 1, 1, 1970, 0};	// form 1/1/1904 12AM to 1/1/1970 12AM
+	// get ROM version
+	UInt32 romVersion;
+	Err e = FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
 
-	secs -= TimDateTimeToSeconds (&Epoch);
+	// since 1/1/1904 12AM.
+	UInt32 secs = TimGetSeconds();
+	
+	// form 1/1/1904 12AM to 1/1/1970 12AM
+	DateTimeType Epoch = {0, 0, 0, 1, 1, 1970, 0};
+
+	secs -= TimDateTimeToSeconds(&Epoch);
+
+	// DST really supported from OS v4.0
+	if (romVersion >= sysMakeROMVersion(4,0,0,sysROMStageRelease,0))
+		secs -= (PrefGetPreference(prefTimeZone) + PrefGetPreference(prefDaylightSavingAdjustment)) * 60;
+	else
+		secs -= (PrefGetPreference(prefMinutesWestOfGMT) - 720) * 60;
 
 	if (tloc)
 		*tloc = secs;
@@ -39,12 +50,24 @@ time_t time(time_t *tloc) {
 
 struct tm *localtime(const time_t *timer) {
 	static struct tm tmDate;
-
 	DateTimeType dt;
 	UInt32 secs = *timer;
-	DateTimeType Epoch = {0, 0, 0, 1, 1, 1970, 0};	// form 1/1/1904 12AM to 1/1/1970 12AM
+	
+	// get ROM version
+	UInt32 romVersion;
+	Err e = FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romVersion);
+	
+	// form 1/1/1904 12AM to 1/1/1970 12AM
+	DateTimeType Epoch = {0, 0, 0, 1, 1, 1970, 0};
+
 	// timer supposed to be based on Epoch
 	secs += TimDateTimeToSeconds(&Epoch);
+
+	// DST really supported from OS v4.0
+	if (romVersion >= sysMakeROMVersion(4,0,0,sysROMStageRelease,0))
+		secs += (PrefGetPreference(prefTimeZone) + PrefGetPreference(prefDaylightSavingAdjustment)) * 60;
+	else
+		secs += (PrefGetPreference(prefMinutesWestOfGMT) - 720) * 60;	// no sure about this one
 
 	TimSecondsToDateTime (secs, &dt);
 
