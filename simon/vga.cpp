@@ -503,96 +503,97 @@ void vc10_skip_cols(VC10_state *vs) {
 	}
 }
 
-byte *SimonEngine::vc10_depack_swap(const byte *src, uint w, uint h) {
-	w <<= 3;
+byte *SimonEngine::vc10_uncompressFlip(const byte *src, uint w, uint h) {
+	w *= 8;
 
-	{
-		byte *dst_org = _videoBuf1 + w;
-		byte color;
-		int8 cur = -0x80;
-		uint w_cur = w;
+	byte *src_org, *dst_org;
+	byte color;
+	int8 cur = -0x80;
+	uint i, w_cur = w;
 
-		do {
-			byte *dst = dst_org;
-			uint h_cur = h;
+	dst_org = _videoBuf1 + w;
 
-			if (cur == -0x80)
-				cur = *src++;
+	do {
+		byte *dst = dst_org;
+		uint h_cur = h;
 
-			for (;;) {
-				if (cur >= 0) {
-					/* rle_same */
-					color = *src++;
-					do {
-						*dst = color;
-						dst += w;
-						if (!--h_cur) {
-							if (--cur < 0)
-								cur = -0x80;
-							else
-								src--;
-							goto next_line;
-						}
-					} while (--cur >= 0);
-				} else {
-					/* rle_diff */
-					do {
-						*dst = *src++;
-						dst += w;
-						if (!--h_cur) {
-							if (++cur == 0)
-								cur = -0x80;
-							goto next_line;
-						}
-					} while (++cur != 0);
-				}
-				cur = *src++;
+		if (cur == -0x80)
+			cur = *src++;
+
+		for (;;) {
+			if (cur >= 0) {
+				/* rle_same */
+				color = *src++;
+				do {
+					*dst = color;
+					dst += w;
+					if (!--h_cur) {
+						if (--cur < 0)
+							cur = -0x80;
+						else
+							src--;
+						goto next_line;
+					}
+				} while (--cur >= 0);
+			} else {
+				/* rle_diff */
+				do {
+					*dst = *src++;
+					dst += w;
+					if (!--h_cur) {
+						if (++cur == 0)
+							cur = -0x80;
+						goto next_line;
+					}
+				} while (++cur != 0);
 			}
-		next_line:
-			dst_org++;
-		} while (--w_cur);
-	}
+			cur = *src++;
+		}
+	next_line:
+		dst_org++;
+	} while (--w_cur);
 
-	{
-		byte *dst_org, *src_org;
-		uint i;
 
-		src_org = dst_org = _videoBuf1 + w;
+	src_org = dst_org = _videoBuf1 + w;
 
-		do {
-			byte *dst = dst_org;
-			for (i = 0; i != w; ++i) {
-				byte b = src_org[i];
-				b = (b >> 4) | (b << 4);
-				*--dst = b;
-			}
+	do {
+		byte *dst = dst_org;
+		for (i = 0; i != w; ++i) {
+			byte b = src_org[i];
+			b = (b >> 4) | (b << 4);
+			*--dst = b;
+		}
 
-			src_org += w;
-			dst_org += w;
-		} while (--h);
-
-	}
+		src_org += w;
+		dst_org += w;
+	} while (--h);
 
 	return _videoBuf1;
 }
 
-byte *SimonEngine::vc10_no_depack_swap(const byte *src, uint w, uint h) {
+byte *SimonEngine::vc10_flip(const byte *src, uint w, uint h) {
 	if (src == _vc10BasePtrOld)
 		return _videoBuf1;
 
 	_vc10BasePtrOld = src;
-	h *= 8;
-	byte *dst = _videoBuf1 + h - 1;
 
-	uint h_cur = h;
+	byte *dst_org, *src_org;
+	uint i;
+
+	w *= 8;
+	src_org = dst_org = _videoBuf1 + w;
+
 	do {
-		do {
-			*dst = *src << 4;
-			(*dst--) |= (*src++) >> 4;
-		} while (--h_cur != 0);
-		h_cur = h;
-		dst += h * 2;
-	} while (--w != 0);
+		byte *dst = dst_org;
+		for (i = 0; i != w; ++i) {
+			byte b = src_org[i];
+			b = (b >> 4) | (b << 4);
+			*--dst = b;
+		}
+
+		src_org += w;
+		dst_org += w;
+	} while (--h);
 
 	return _videoBuf1;
 }
@@ -686,13 +687,16 @@ void SimonEngine::vc10_draw() {
 	state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 
 	if (_game == GAME_FEEBLEFILES) {
+		state.depack_src = _curVgaFile2 + READ_LE_UINT32(p2);
 		width = READ_LE_UINT16(p2 + 6);
+		height = p2[4];
+		flags = p2[5];
 	} else {
+		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 		width = READ_BE_UINT16(p2 + 6) >> 4;
+		height = p2[5];
+		flags = p2[4];
 	}
-
-	height = p2[5];
-	flags = p2[4];
 
 	debug(1, "Width %d Height %d Flags 0x%x", width, height, flags);
 
@@ -746,9 +750,9 @@ void SimonEngine::vc10_draw() {
 	}
 
 	if (state.flags & 0x10) {
-		state.depack_src = vc10_depack_swap(state.depack_src, width, height);
+		state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
 	} else if (state.flags & 1) {
-		state.depack_src = vc10_no_depack_swap(state.depack_src, width, height);
+		state.depack_src = vc10_flip(state.depack_src, width, height);
 	}
 
 	vlut = &_video_windows[_windowNum * 4];

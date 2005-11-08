@@ -788,8 +788,8 @@ protected:
 	void quick_load_or_save();
 	void shutdown();
 
-	byte *vc10_depack_swap(const byte *src, uint w, uint h);
-	byte *vc10_no_depack_swap(const byte *src, uint w, uint h);
+	byte *vc10_uncompressFlip(const byte *src, uint w, uint h);
+	byte *vc10_flip(const byte *src, uint w, uint h);
 
 	Item *getNextItemPtrStrange();
 
