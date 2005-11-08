@@ -802,6 +802,11 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
+	assert(x >= 0 && x < _screenWidth);
+	assert(y >= 0 && y < _screenHeight);
+	assert(h > 0 && y + h <= _screenHeight);
+	assert(w > 0 && x + w <= _screenWidth);
+
 	if (((long)src & 3) == 0 && pitch == _screenWidth && x == 0 && y == 0 &&
 			w == _screenWidth && h == _screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
 		/* Special, optimized case for full screen updates.
