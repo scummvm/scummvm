@@ -298,50 +298,49 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
-		if (_vm->_heversion >= 72 && chr == code) {
-			chr = text[pos++];
-			if (chr == 84) {  // Strings of speech offset/size
-				while (chr != code)
-					chr = text[pos++];
-				continue;
-			}
-			if (chr == 119) // 'Wait'
-				break;
-			if (chr == 104|| chr == 110) // 'Newline'
-				break;
-		} else if (chr == '@')
-			continue;
 		if (chr == '\n' || chr == '\r')
 			break;
-		if (chr == 254 || chr == 255) {
-			//process in LE
-			if (chr == 254 && checkKSCode(text[pos], chr) && _vm->_useCJKMode) {
-				goto loc_avoid_ks_fe;
-			}
-			chr = text[pos++];
-			if (chr == 3)	// 'WAIT'
-				break;
-			if (chr == 8) { // 'Verb on next line'
-				if (arg == 1)
+		if (_vm->_heversion >= 72) {
+			if (chr == code) {
+				chr = text[pos++];
+				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
+					while (chr != code)
+						chr = text[pos++];
+					continue;
+				}
+				if (chr == 119) // 'Wait'
 					break;
-				while (text[pos++] == ' ')
+				if (chr == 104|| chr == 110) // 'Newline'
+					break;
+			}
+		} else {
+			if (chr == '@')
+				continue;
+			if (chr == 255 || (_vm->_version <= 6 && chr == 254)) {
+				chr = text[pos++];
+				if (chr == 3)	// 'WAIT'
+					break;
+				if (chr == 8) { // 'Verb on next line'
+					if (arg == 1)
+						break;
+					while (text[pos++] == ' ')
 					;
-				continue;
-			}
-			if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
-				pos += 2;
-				continue;
-			}
-			if (chr == 9 || chr == 1 || chr == 2) // 'Newline'
-				break;
-			if (chr == 14) {
-				int set = text[pos] | (text[pos + 1] << 8);
-				pos += 2;
-				setCurID(set);
-				continue;
+					continue;
+				}
+				if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
+					pos += 2;
+					continue;
+				}
+				if (chr == 9 || chr == 1 || chr == 2) // 'Newline'
+					break;
+				if (chr == 14) {
+					int set = text[pos] | (text[pos + 1] << 8);
+					pos += 2;
+					setCurID(set);
+					continue;
+				}
 			}
 		}
-loc_avoid_ks_fe:
 		if ((chr & 0x80) && _vm->_useCJKMode) {
 			pos++;
 			width += _vm->_2byteWidth;
@@ -363,62 +362,60 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int code = (_vm->_heversion >= 80) ? 127 : 64;
 
 	while ((chr = str[pos++]) != 0) {
-		if (_vm->_heversion >= 72 && chr == code) {
-			chr = str[pos++];
-			if (chr == 84) {  // Strings of speech offset/size
-				while (chr != code)
-					chr = str[pos++];
-				continue;
-			}
-			if (chr == 119) // 'Wait'
-				break;
-			if (chr == 110) { // 'Newline'
-				curw = 1;
-				continue;
-			}
-			if (chr == 104) // 'Don't terminate with \n'
-				break;
-		} else if (chr == '@')
-			continue;
-		if (chr == 254 || chr == 255) {
-			//process in LE
-			if (chr == 254 && checkKSCode(str[pos], chr) && _vm->_useCJKMode) {
-				goto loc_avoid_ks_fe;
-			}
-			chr = str[pos++];
-			if (chr == 3) // 'Wait'
-				break;
-			if (chr == 8) { // 'Verb on next line'
-				if (a == 1) {
-					curw = 1;
-				} else {
-					while (str[pos] == ' ')
-						str[pos++] = '@';
+		if (_vm->_heversion >= 72) {
+			if (chr == code) {
+				chr = str[pos++];
+				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
+					while (chr != code)
+						chr = str[pos++];
+					continue;
 				}
-				continue;
+				if (chr == 119) // 'Wait'
+					break;
+				if (chr == 110) { // 'Newline'
+					curw = 1;
+					continue;
+				}
+				if (chr == 104) // 'Don't terminate with \n'
+					break;
 			}
-			if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
-				pos += 2;
+		} else {
+			if (chr == '@')
 				continue;
-			}
-			if (chr == 1) { // 'Newline'
-				curw = 1;
-				continue;
-			}
-			if (chr == 2) // 'Don't terminate with \n'
-				break;
-			if (chr == 14) {
-				int set = str[pos] | (str[pos + 1] << 8);
-				pos += 2;
-				setCurID(set);
-				continue;
+			if (chr == 255 || (_vm->_version <= 6 && chr == 254)) {
+				chr = str[pos++];
+				if (chr == 3) // 'Wait'
+					break;
+				if (chr == 8) { // 'Verb on next line'
+					if (a == 1) {
+						curw = 1;
+					} else {
+						while (str[pos] == ' ')
+							str[pos++] = '@';
+					}
+					continue;
+				}
+				if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
+					pos += 2;
+					continue;
+				}
+				if (chr == 1) { // 'Newline'
+					curw = 1;
+					continue;
+				}
+				if (chr == 2) // 'Don't terminate with \n'
+					break;
+				if (chr == 14) {
+					int set = str[pos] | (str[pos + 1] << 8);
+					pos += 2;
+					setCurID(set);
+					continue;
+				}
 			}
 		}
-
 		if (chr == ' ')
 			lastspace = pos - 1;
 
-loc_avoid_ks_fe:
 		if ((chr & 0x80) && _vm->_useCJKMode) {
 			pos++;
 			curw += _vm->_2byteWidth;
@@ -1429,7 +1426,7 @@ void CharsetRendererClassic::printChar(int chr) {
 		if (type >= 8) {
 			byte imagePalette[256];
 			memset(imagePalette, 0, sizeof(imagePalette));
-			memcpy(imagePalette, _vm->_charsetColorMap, 16);
+			memcpy(imagePalette, _vm->_charsetColorMap, 4);
 			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, imagePalette);
 		} else {
 			Wiz::copyWizImage(dstPtr, charPtr, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen);
