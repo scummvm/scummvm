@@ -756,7 +756,9 @@ void Control::writeSavegameDescriptions(void) {
 	while (strlen((char*)_saveNames[_saveFiles - 1]) == 0)
 		_saveFiles--;
 	for (uint8 cnt = 0; cnt < _saveFiles; cnt++) {
-		outf->write(_saveNames[cnt], strlen((char*)_saveNames[cnt]));
+		int len = strlen((char*)_saveNames[cnt]);
+		if (len > 0)
+			outf->write(_saveNames[cnt], len);
 		if (cnt < _saveFiles - 1)
 			outf->writeByte(10);
 		else
