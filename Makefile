@@ -120,16 +120,28 @@ scummvm-static: $(OBJS)
 		$(OSXOPT)/lib/libFLAC.a \
 		-lz
 
+# Target for building the PDF version of the README
+doc/readme.pdf: doc/readme.tex doc/*.tex
+	cd doc && pdflatex readme.tex 
+	cd doc && pdflatex readme.tex 
+
 # Special target to create a snapshot disk image for Mac OS X
-osxsnap: bundle
+osxsnap: bundle doc/readme.pdf
 	mkdir ScummVM-snapshot
-	cp AUTHORS ./ScummVM-snapshot/ScummVM\ Authors
 	cp COPYING ./ScummVM-snapshot/License
 	cp NEWS ./ScummVM-snapshot/News
-	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
-	/Developer/Tools/SetFile -t TEXT -c ttxt ./ScummVM-snapshot/*
+	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
+	cp doc/readme.pdf ./ScummVM-snapshot/ScummVM\ ReadMe
+	/Developer/Tools/SetFile -t 'PDF ' -c prvw ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
-	hdiutil create -ov -format UDZO -srcfolder ScummVM-snapshot ScummVM-snapshot.dmg
+	cp dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
+	cp dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
+	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/.DS_Store
+	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
+	hdiutil create -ov -format UDZO -imagekey zlib-level=9  \
+					-srcfolder ScummVM-snapshot \
+					-volname "ScummVM snapshot" \
+					ScummVM-snapshot.dmg
 	rm -rf ScummVM-snapshot
 
 # Special target to create a win32 snapshot binary
