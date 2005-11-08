@@ -1158,6 +1158,7 @@ protected:
 
 	void printString(int m, const byte *msg);
 
+	virtual bool handleNextCharsetCode(Actor *a, int *c);
 	void CHARSET_1();
 	void drawString(int a, const byte *msg);
 	void debugMessage(const byte *msg);

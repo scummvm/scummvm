@@ -95,16 +95,178 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 }
 
-void ScummEngine::CHARSET_1() {
+
+bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
-	int i, t, c;
-	int frme;
-	Actor *a;
-	byte *buffer;
-	int code = (_heversion >= 80) ? 127 : 64;
-	char value[32];
+	int color, frme, c, oldy;
+	bool endLoop = false;
+	byte *buffer = _charsetBuffer + _charsetBufPos;
+	while (!endLoop) {
+		c = *buffer++;
+		if (!(c == 0xFF || (_version <= 6 && c == 0xFE))) {
+			break;
+		}
+		c = *buffer++;
+		switch (c) {
+		case 1:
+			c = 13; // new line
+			endLoop = true;
+			break;
+		case 2:
+			_haveMsg = 0;
+			_keepText = true;
+			endLoop = true;
+			break;
+		case 3:
+			if (_haveMsg != 0xFE)
+				_haveMsg = 0xFF;
+			_keepText = false;
+			endLoop = true;
+			break;
+		case 8:
+			// Ignore this code here. Occurs e.g. in MI2 when you
+			// talk to the carpenter on scabb island. It works like
+			// code 1 (=newline) in verb texts, but is ignored in
+			// spoken text (i.e. here). Used for very long verb
+			// sentences.
+			break;
+		case 9:
+			frme = buffer[0] | (buffer[1] << 8);
+			buffer += 2;
+			if (a)
+				a->startAnimActor(frme);
+			break;
+		case 10:
+			// Note the similarity to the code in debugMessage()
+			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
+			buffer += 14;
+			if (_heversion >= 60) {
+				_sound->startHETalkSound(talk_sound_a);
+			} else {
+				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+			}
 
+			// Set flag that speech variant exist of this msg.
+			// This is actually a hack added by ScummVM; the original did
+			// subtitle hiding in some other way. I am not sure exactly
+			// how, though.
+			// FIXME: This is actually a rather ugly hack, and we should consider
+			// replacing it with something better; problem is that _haveMsg is saved,
+			// so we need to cope with old save games if we ever change this.
+			// And BTW Fingolfin was responsible for this silly bad hack. Stupid me! :-).
+			if (_haveMsg == 0xFF)
+				_haveMsg = 0xFE;
+			break;
+		case 12:
+			color = buffer[0] | (buffer[1] << 8);
+			buffer += 2;
+			if (color == 0xFF)
+				_charset->setColor(_charsetColor);
+			else
+				_charset->setColor(color);
+			break;
+		case 13:
+			debug(0, "handleNextCharsetCode: Unknown opcode 13 %d", READ_LE_UINT16(buffer));
+			buffer += 2;
+			break;
+		case 14:
+			oldy = _charset->getFontHeight();
+			_charset->setCurID(*buffer++);
+			buffer += 2;
+			memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
+			_charset->_nextTop -= _charset->getFontHeight() - oldy;
+			break;
+		default:
+			error("handleNextCharsetCode: invalid code %d", c);
+		}
+	}
+	_charsetBufPos = buffer - _charsetBuffer;
+	*code = c;
+	return (c != 2 && c != 3);
+}
+
+#ifndef DISABLE_HE
+bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
+	const int charsetCode = (_heversion >= 80) ? 127 : 64;
+	uint32 talk_sound_a = 0;
+	uint32 talk_sound_b = 0;
+	int i, c;
+	char value[32];
+	bool endLoop = false;
+	bool endText = false;
+	byte *buffer = _charsetBuffer + _charsetBufPos;
+	while (!endLoop) {
+		c = *buffer++;
+		if (c != charsetCode) {
+			break;
+		}
+		c = *buffer++;
+		switch (c) {
+		case 84:
+			i = 0;
+			c = *buffer++;
+			while (c != 44) {
+				value[i] = c;
+				c = *buffer++;
+				i++;
+			}
+			value[i] = 0;
+			talk_sound_a = atoi(value);
+			i = 0;
+			c = *buffer++;
+			while (c != charsetCode) {
+				value[i] = c;
+				c = *buffer++;
+				i++;
+			}
+			value[i] = 0;
+			talk_sound_b = atoi(value);
+			_sound->startHETalkSound(talk_sound_a);
+			break;
+		case 104:
+			_haveMsg = 0;
+			_keepText = true;
+			endLoop = endText = true;
+			break;
+		case 110:
+			c = 13; // new line
+			endLoop = true;
+			break;
+		case 116:
+			i = 0;
+			memset(value, 0, sizeof(value));
+			c = *buffer++;
+			while (c != charsetCode) {
+				value[i] = c;
+				c = *buffer++;
+				i++;
+			}
+			value[i] = 0;
+			talk_sound_a = atoi(value);
+			talk_sound_b = 0;
+			_sound->startHETalkSound(talk_sound_a);
+			break;
+		case 119:
+			if (_haveMsg != 0xFE)
+				_haveMsg = 0xFF;
+			_keepText = false;
+			endLoop = endText = true;
+			break;
+		default:
+			error("handleNextCharsetCode: invalid code %d", c);
+		}
+	}
+	_charsetBufPos = buffer - _charsetBuffer;
+	*code = c;
+	return (endText == 0);
+}
+#endif
+
+void ScummEngine::CHARSET_1() {
+	Actor *a;
+	int t, c = 0;
 	bool cmi_pos_hack = false;
 
 	if (!_haveMsg)
@@ -166,8 +328,7 @@ void ScummEngine::CHARSET_1() {
 		_charset->setCurID(_string[0].charset);
 
 	if (_version >= 5)
-		for (i = 0; i < 4; i++)
-			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
+		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	if (_talkDelay)
 		return;
@@ -183,11 +344,7 @@ void ScummEngine::CHARSET_1() {
 		_useTalkAnims = true;
 	}
 
-	// Always set to 60
-	if (_version <= 6)
-		_talkDelay = 60;
-	else
-		_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
+	_talkDelay = (VAR_DEFAULT_TALK_DELAY != 0xFF) ? VAR(VAR_DEFAULT_TALK_DELAY) : 60;
 
 	if (!_keepText) {
 		_charset->restoreCharsetBg();
@@ -200,21 +357,18 @@ void ScummEngine::CHARSET_1() {
 		t *= 2;
 	}
 
-	buffer = _charsetBuffer + _charsetBufPos;
-
 	if (_version > 3)
-		_charset->addLinebreaks(0, buffer, 0, t);
+		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, t);
 
 	if (_charset->_center) {
-		_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
+		_charset->_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_charset->_nextLeft < 0)
 			_charset->_nextLeft = 0;
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
 
-	do {
-		c = *buffer++;
+	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg to 1 so that the text will be
 			// removed next time CHARSET_1 is called.
@@ -234,7 +388,7 @@ void ScummEngine::CHARSET_1() {
 		newLine:;
 			_charset->_nextLeft = _string[0].xpos;
 			if (_charset->_center) {
-				_charset->_nextLeft -= _charset->getStringWidth(0, buffer) / 2;
+				_charset->_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 			}
 			if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
 				break;
@@ -250,200 +404,62 @@ void ScummEngine::CHARSET_1() {
 			continue;
 		}
 
-		if (_heversion >= 72 && c == code) {
-			c = *buffer++;
-			switch (c) {
-			case 84:
-				i = 0;
-				memset(value, 0, 32);
-				c = *buffer++;
-				while (c != 44) {
-					value[i] = c;
-					c = *buffer++;
-					i++;
-				}
-				value[i] = 0;
-				talk_sound_a = atoi(value);
-
-				i = 0;
-				memset(value, 0, 32);
-				c = *buffer++;
-				while (c != code) {
-					value[i] = c;
-					c = *buffer++;
-					i++;
-				}
-				value[i] = 0;
-				talk_sound_b = atoi(value);
-
-				_sound->startHETalkSound(talk_sound_a);
-				break;
-			case 104:
-				_haveMsg = 0;
-				_keepText = true;
-				break;
-			case 110:
-				goto newLine;
-			case 116:
-				i = 0;
-				memset(value, 0, 32);
-				c = *buffer++;
-				while (c != code) {
-					value[i] = c;
-					c = *buffer++;
-					i++;
-				}
-				value[i] = 0;
-				talk_sound_a = atoi(value);
-				talk_sound_b = 0;
-
-				_sound->startHETalkSound(talk_sound_a);
-				break;
-			case 119:
-				if (_haveMsg != 0xFE)
-					_haveMsg = 0xFF;
-				_keepText = false;
-				break;
-			default:
-				error("CHARSET_1: invalid code %d", c);
-			}
-		} else if (c == 0xFE || c == 0xFF) {
-			// WORKAROUND to avoid korean code 0xfe treated as charset message code.
-			if (c == 0xFE && checkKSCode(*(buffer + 1), c) && _useCJKMode) {
-				goto loc_avoid_ks_fe;
-			}
-			c = *buffer++;
-			switch (c) {
-			case 1:
-				goto newLine;
-			case 2:
-				_haveMsg = 0;
-				_keepText = true;
-				break;
-			case 3:
-				if (_haveMsg != 0xFE)
-					_haveMsg = 0xFF;
-				_keepText = false;
-				break;
-			case 8:
-				// Ignore this code here. Occurs e.g. in MI2 when you
-				// talk to the carpenter on scabb island. It works like
-				// code 1 (=newline) in verb texts, but is ignored in
-				// spoken text (i.e. here). Used for very long verb
-				// sentences.
-				break;
-			case 9:
-				frme = *buffer++;
-				frme |= *buffer++ << 8;
-				if (a)
-					a->startAnimActor(frme);
-				break;
-			case 10:
-				// Note the similarity to the code in debugMessage()
-				talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-				talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
-				buffer += 14;
-
-				if (_heversion >= 60) {
-					_sound->startHETalkSound(talk_sound_a);
-				} else {
-					_sound->talkSound(talk_sound_a, talk_sound_b, 2);
-				}
-
-				// Set flag that speech variant exist of this msg.
-				// This is actually a hack added by ScummVM; the original did
-				// subtitle hiding in some other way. I am not sure exactly
-				// how, though.
-				// FIXME: This is actually a rather ugly hack, and we should consider
-				// replacing it with something better; problem is that _haveMsg is saved,
-				// so we need to cope with old save games if we ever change this.
-				// And BTW Fingolfin was responsible for this silly bad hack. Stupid me! :-).
-				if (_haveMsg == 0xFF)
-					_haveMsg = 0xFE;
-				break;
-			case 12:
-				int color;
-				color = *buffer++;
-				color |= *buffer++ << 8;
-				if (color == 0xFF)
-					_charset->setColor(_charsetColor);
-				else
-					_charset->setColor(color);
-				break;
-			case 13:
-				debug(0, "CHARSET_1: Unknown opcode 13 %d", READ_LE_UINT16(buffer));
-				buffer += 2;
-				break;
-			case 14: {
-				int oldy = _charset->getFontHeight();
-
-				_charset->setCurID(*buffer++);
-				buffer += 2;
-				for (i = 0; i < 4; i++)
-					_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
-				_charset->_nextTop -= _charset->getFontHeight() - oldy;
-				break;
-				}
-			default:
-				error("CHARSET_1: invalid code %d", c);
-			}
-		} else {
-loc_avoid_ks_fe:
-			_charset->_left = _charset->_nextLeft;
-			_charset->_top = _charset->_nextTop;
-			if (c & 0x80 && _useCJKMode)
-				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-					c = 0x20; //not in S-JIS
-				} else {
-					c += *buffer++ * 256; //LE
-					if (_gameId == GID_CMI) { //HACK: This fixes korean text position in COMI (off by 6 pixel)
-						cmi_pos_hack = true;
-						_charset->_top += 6;
-					}
-				}
-			if (_version <= 3) {
-				_charset->printChar(c);
+		_charset->_left = _charset->_nextLeft;
+		_charset->_top = _charset->_nextTop;
+		if (c & 0x80 && _useCJKMode) {
+			if (_language == Common::JA_JPN && !checkSJISCode(c)) {
+				c = 0x20; //not in S-JIS
 			} else {
-				if (_features & GF_HE_NOSUBTITLES) {
-					// HE games which use sprites for subtitles
-				} else if ((_imuseDigital && _sound->isSoundRunning(kTalkSoundID)) && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)) {
-					// Special case for games using imuse digital.for sound
-				} else if (_heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
-					// Special case for HE games
-				} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
-					// Special case for loomcd, since it only uses CD audio.for sound
-				} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
-					// Subtitles are turned off, and there is a voice version
-					// of this message -> don't print it.
-				} else {
-					_charset->printChar(c);
+				byte *buffer = _charsetBuffer + _charsetBufPos;
+				c += *buffer++ * 256; //LE
+				_charsetBufPos = buffer - _charsetBuffer;
+				if (_gameId == GID_CMI) { //HACK: This fixes korean text position in COMI (off by 6 pixel)
+					cmi_pos_hack = true;
+					_charset->_top += 6;
 				}
-			}
-			if (cmi_pos_hack) {
-				cmi_pos_hack = false;
-				_charset->_top -= 6;
-			}
-
-			_charset->_nextLeft = _charset->_left;
-			_charset->_nextTop = _charset->_top;
-			if (_version <= 2) {
-				_talkDelay += _defaultTalkDelay;
-				VAR(VAR_CHARCOUNT)++;
-			} else
-				_talkDelay += (int)VAR(VAR_CHARINC);
-
-			// Handle line overflow for V3
-			if (_version == 3 && _charset->_nextLeft > _screenWidth) {
-				_charset->_nextLeft = _screenWidth;
-			}
-			// Handle line breaks for V1-V2
-			if (_version <= 2 && _charset->_nextLeft > _screenWidth) {
-				goto newLine;
 			}
 		}
-	} while (c != 2 && c != 3);
+		if (_version <= 3) {
+			_charset->printChar(c);
+		} else {
+			if (_features & GF_HE_NOSUBTITLES) {
+				// HE games which use sprites for subtitles
+			} else if ((_imuseDigital && _sound->isSoundRunning(kTalkSoundID)) && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0)) {
+				// Special case for games using imuse digital.for sound
+			} else if (_heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
+				// Special case for HE games
+			} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
+				// Special case for loomcd, since it only uses CD audio.for sound
+			} else if (!ConfMan.getBool("subtitles") && (_haveMsg == 0xFE || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
+				// Subtitles are turned off, and there is a voice version
+				// of this message -> don't print it.
+			} else {
+				_charset->printChar(c);
+			}
+		}
+		if (cmi_pos_hack) {
+			cmi_pos_hack = false;
+			_charset->_top -= 6;
+		}
 
-	_charsetBufPos = buffer - _charsetBuffer;
+		_charset->_nextLeft = _charset->_left;
+		_charset->_nextTop = _charset->_top;
+		if (_version <= 2) {
+			_talkDelay += _defaultTalkDelay;
+			VAR(VAR_CHARCOUNT)++;
+		} else {
+			_talkDelay += (int)VAR(VAR_CHARINC);
+		}
+
+		// Handle line overflow for V3
+		if (_version == 3 && _charset->_nextLeft > _screenWidth) {
+			_charset->_nextLeft = _screenWidth;
+		}
+		// Handle line breaks for V1-V2
+		if (_version <= 2 && _charset->_nextLeft > _screenWidth) {
+			goto newLine;
+		}
+	}
 
 	// TODO Verify this is correct spot
 	if (_version == 8)
@@ -470,10 +486,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	if (_version >= 5) {
-		for (i = 0; i < 4; i++)
-			_charsetColorMap[i] = _charsetData[_charset->getCurID()][i];
-	}
+	if (_version >= 5)
+		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	fontHeight = _charset->getFontHeight();
 
@@ -517,7 +531,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				_charset->_top += fontHeight;
 				break;
 			}
-		} else if (c == 0xFE || c == 0xFF) {
+		} else if (c == 0xFF || (_version <= 6 && c == 0xFE)) {
 			c = buf[i++];
 			switch (c) {
 			case 9:

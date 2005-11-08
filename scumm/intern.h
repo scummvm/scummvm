@@ -998,6 +998,8 @@ protected:
 	int findObject(int x, int y, int num, int *args);
 	int getSoundResourceSize(int id);
 
+	virtual bool handleNextCharsetCode(Actor *a, int *c);
+
 	/* HE version 72 script opcodes */
 	void o72_pushDWord();
 	void o72_getScriptString();
