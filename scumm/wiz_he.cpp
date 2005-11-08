@@ -1557,28 +1557,33 @@ void Wiz::fillWizRect(const WizParameters *params) {
 		int w = READ_LE_UINT32(wizh + 0x4);
 		int h = READ_LE_UINT32(wizh + 0x8);
 		assert(c == 0);
-		Common::Rect r1(w, h);
+		Common::Rect areaRect, imageRect(w, h);
 		if (params->processFlags & kWPFClipBox) {
-			if (!r1.intersects(params->box)) {
+			if (!imageRect.intersects(params->box)) {
 				return;
 			}
-			r1.clip(params->box);
+			imageRect.clip(params->box);
 		}
 		if (params->processFlags & kWPFClipBox2) {
-			r1.clip(params->box2);
+			areaRect = params->box2;
+		} else {
+			areaRect = imageRect;
 		}
 		uint8 color = _vm->VAR(93);
 		if (params->processFlags & kWPFFillColor) {
 			color = params->fillColor;
 		}
-		uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
-		assert(wizd);
-		int dx = r1.width();
-		int dy = r1.height();
-		wizd += r1.top * w + r1.left;
-		while (dy--) {
-			memset(wizd, color, dx);
-			wizd += w;
+		if (areaRect.intersects(imageRect)) {
+			areaRect.clip(imageRect);
+			uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+			assert(wizd);
+			int dx = areaRect.width();
+			int dy = areaRect.height();
+			wizd += areaRect.top * w + areaRect.left;
+			while (dy--) {
+				memset(wizd, color, dx);
+				wizd += w;
+			}
 		}
 	}
 }
@@ -1597,12 +1602,12 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			int w = READ_LE_UINT32(wizh + 0x4);
 			int h = READ_LE_UINT32(wizh + 0x8);
 			assert(c == 0);
-			Common::Rect r1(w, h);
+			Common::Rect imageRect(w, h);
 			if (params->processFlags & kWPFClipBox) {
-				if (!r1.intersects(params->box)) {
+				if (!imageRect.intersects(params->box)) {
 					return;
 				}
-				r1.clip(params->box);
+				imageRect.clip(params->box);
 			}
 			uint8 color = _vm->VAR(93);
 			if (params->processFlags & kWPFFillColor) {
@@ -1630,7 +1635,10 @@ void Wiz::fillWizLine(const WizParameters *params) {
 				incy = -1;
 			}
 
-			if (r1.contains(x1, y1)) {
+			dx = ABS(x2 - x1);
+			dy = ABS(y2 - y1);
+
+			if (imageRect.contains(x1, y1)) {
 				*(wizd + y1 * w + x1) = color;
 			}
 
@@ -1646,7 +1654,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 						y1 += incy;
 					}
 					x1 += incx;
-					if (r1.contains(x1, y1)) {
+					if (imageRect.contains(x1, y1)) {
 						*(wizd + y1 * w + x1) = color;
 					}
 				}
@@ -1662,7 +1670,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 						x1 += incx;
 					}
 					y1 += incy;
-					if (r1.contains(x1, y1)) {
+					if (imageRect.contains(x1, y1)) {
 						*(wizd + y1 * w + x1) = color;
 					}
 				}
