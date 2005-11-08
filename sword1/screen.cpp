@@ -402,8 +402,6 @@ void Screen::processImage(uint32 id) {
 		spriteX += (int16)READ_LE_UINT16(&frameHead->offsetX);
 		spriteY += (int16)READ_LE_UINT16(&frameHead->offsetY);
 	}
-	if (scale > 512)
-		debug(1, "compact %d is oversized: scale = %d", id, scale);
 
 	uint8 *tonyBuf = NULL;
 	if (frameHead->runTimeComp[3] == '7') { // RLE7 encoded?
@@ -512,7 +510,6 @@ void Screen::renderParallax(uint8 *data) {
 	uint32 *lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
 	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
 
-	//double scrlfx, scrlfy;
 	uint16 paraScrlX, paraScrlY;
 	uint16 scrnScrlX, scrnScrlY;
 	uint16 scrnWidth, scrnHeight;
@@ -540,7 +537,6 @@ void Screen::renderParallax(uint8 *data) {
 		uint8 *dest = _screenBuf + scrnScrlX + (cnty + scrnScrlY) * _scrnSizeX;
 		uint16 remain = paraScrlX;
 		uint16 xPos = 0;
-		bool copyFirst = false;
 		while (remain) { // skip past the first part of the parallax to get to the right scrolling position
 			uint8 doSkip = *src++;
 			if (doSkip <= remain)
@@ -550,30 +546,24 @@ void Screen::renderParallax(uint8 *data) {
 				dest += xPos;
 				remain = 0;
 			}
-			if (remain) {
-				uint8 doCopy = *src++;
-				if (doCopy <= remain) {
-					remain -= doCopy;
-					src += doCopy;
-				} else {
-					uint16 remCopy = doCopy - remain;
-					memcpy(dest, src + remain, remCopy);
-					dest += remCopy;
-					src += doCopy;
-					xPos = remCopy;
-					remain = 0;
-				}
-			} else
-				copyFirst = true;
+			uint8 doCopy = *src++;
+			if (doCopy <= remain) {
+				remain -= doCopy;
+				src += doCopy;
+			} else {
+				uint16 remCopy = doCopy - remain;
+				memcpy(dest, src + remain, remCopy);
+				dest += remCopy;
+				src += doCopy;
+				xPos = remCopy;
+				remain = 0;
+			}
 		}
 		while (xPos < scrnWidth) {
-			if (!copyFirst) {
-				if (uint8 skip = *src++) {
-					dest += skip;
-					xPos += skip;
-				}
-			} else
-				copyFirst = false;
+			if (uint8 skip = *src++) {
+				dest += skip;
+				xPos += skip;
+			}
 			if (xPos < scrnWidth) {
 				if (uint8 doCopy = *src++) {
 					if (xPos + doCopy > scrnWidth)
@@ -642,11 +632,11 @@ void Screen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, u
 
 void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 	if (listId == 0) {
+		assert(_foreLength < MAX_FORE);
 		_foreList[_foreLength++] = objId;
-		if (_foreLength > MAX_FORE)
-			error("foreList exceeded!");
 	}
 	if (listId == 1) {
+		assert(_sortLength < MAX_SORT);
 		Object *cpt = _objMan->fetchObject(objId);
 		_sortList[_sortLength].id = objId;
 		_sortList[_sortLength].y = cpt->o_anim_y; // gives feet coords if boxed mega, otherwise top of sprite box
@@ -657,13 +647,10 @@ void Screen::addToGraphicList(uint8 listId, uint32 objId) {
 			_resMan->resClose(cpt->o_resource);
 		}
 		_sortLength++;
-		if (_sortLength > MAX_SORT)
-			error("sortList exceeded!");
 	}
 	if (listId == 2) {
+		assert(_backLength < MAX_BACK);
 		_backList[_backLength++] = objId;
-		if (_backLength > MAX_BACK)
-			error("backList exceeded!");
 	}
 }
 
@@ -731,8 +718,6 @@ void Screen::fadePalette(void) {
 }
 
 void Screen::fnSetParallax(uint32 screen, uint32 resId) {
-	if ((screen == _currentScreen) && (resId != _roomDefTable[screen].parallax[0]))
-		warning("fnSetParallax: setting parallax for current room!!");
 	_roomDefTable[screen].parallax[0] = resId;
 }
 
@@ -771,8 +756,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 	*pSprY = (uint16)sprY;
 
 	if (*pSprWidth && *pSprHeight) {
-		// sprite will be drawn, so mark it in the grid buffer (we don't need to keep
-		// track of changed blocks if we're going to do a full refresh, anyways.
+		// sprite will be drawn, so mark it in the grid buffer
 		uint16 gridH = (*pSprHeight + (sprY & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
 		uint16 gridW = (*pSprWidth +  (sprX & (SCRNGRID_X - 1)) + (SCRNGRID_X - 1)) / SCRNGRID_X;
 		uint16 gridX = sprX / SCRNGRID_X;
