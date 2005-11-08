@@ -89,8 +89,8 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 		_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y];
 		int dx = offsetX - Logic::_scriptVars[SCROLL_OFFSET_X];
 		int dy = offsetY - Logic::_scriptVars[SCROLL_OFFSET_Y];
-		int scrlDistX = inRange(-MAX_SCROLL_DISTANCE, ((1 + ABS(dx)) / SCROLL_FRACTION) * ((dx > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
-		int scrlDistY = inRange(-MAX_SCROLL_DISTANCE, ((1 + ABS(dy)) / SCROLL_FRACTION) * ((dy > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
+		int scrlDistX = inRange(-MAX_SCROLL_DISTANCE, (((SCROLL_FRACTION - 1) + ABS(dx)) / SCROLL_FRACTION) * ((dx > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
+		int scrlDistY = inRange(-MAX_SCROLL_DISTANCE, (((SCROLL_FRACTION - 1) + ABS(dy)) / SCROLL_FRACTION) * ((dy > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
 		if ((scrlDistX != 0) || (scrlDistY != 0))
 			_fullRefresh = true;
 		Logic::_scriptVars[SCROLL_OFFSET_X] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_X] + scrlDistX, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
