@@ -314,11 +314,11 @@ Optional Libraries:
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
 
   --with-tremor-prefix=DIR Prefix where tremor is installed (optional)
-  --disable-tremor          disable tremor support [autodetect]
+  --disable-tremor         disable tremor support [autodetect]
 
   --with-mad-prefix=DIR    Prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
-  
+
   --with-flac-prefix=DIR   Prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
 
@@ -337,12 +337,12 @@ Optional Libraries:
   --disable-nasm           disable assembly language optimizations [autodetect]
 
 Some influential environment variables:
-  LDFLAGS	linker flags, e.g. -L<lib dir> if you have libraries in a
-  		nonstandard directory <lib dir>
-  CXX		C++ compiler command
-  CXXFLAGS	C++ compiler flags
-  CPPFLAGS	C++ preprocessor flags, e.g. -I<include dir> if you have
-  		headers in a nonstandard directory <include dir>
+  LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
+            nonstandard directory <lib dir>
+  CXX       C++ compiler command
+  CXXFLAGS  C++ compiler flags
+  CPPFLAGS  C++ preprocessor flags, e.g. -I<include dir> if you have
+            headers in a nonstandard directory <include dir>
 
 EOF
     exit 0
@@ -431,6 +431,9 @@ for ac_option in $@; do
         ;;
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
+        ;;
+      --enable-debug)
+        # debug is enabled by default
         ;;
       --disable-debug)
         DEBFLAGS=""
