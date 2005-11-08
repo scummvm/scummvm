@@ -384,6 +384,21 @@ public:
 	 * Client code has to to call updateScreen to ensure any changes are
 	 * visible to the user. This can be used to optimize drawing and reduce
 	 * flicker.
+	 * The graphics data uses 8 bits per pixel, using the palette specified
+	 * via setPalette.
+	 *
+	 * @param buf		the buffer containing the graphics data source
+	 * @param pitch		the pitch of the buffer (number of bytes in a scanline)
+	 * @param x			the x coordinate of the destination rectangle
+	 * @param y			the y coordinate of the destination rectangle
+	 * @param w			the width of the destination rectangle
+	 * @param h			the height of the destination rectangle
+	 *
+	 * @note The specified destination rectangle must be completly contained
+	 *       in the visible screen space, and must be non-empty. If not, a
+	 *       backend may or may not perform clipping, trigger an assert or
+	 *       silently corrupt memory.
+	 *
 	 * @see updateScreen
 	 */
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
