@@ -2795,8 +2795,8 @@ void SimonEngine::skip_speech() {
 	if (!(_bitArray[1] & 0x1000)) {
 		_bitArray[0] |= 0x4000;
 		_variableArray[100] = 5;
-		loadSprite(4, 1, 0x1e, 0, 0, 0);
-		o_wait_for_vga(0x82);
+		loadSprite(4, 1, 30, 0, 0, 0);
+		o_wait_for_vga(130);
 		o_kill_sprite_simon2(2, 1);
 	}
 }
@@ -3499,15 +3499,15 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 }
 
 void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
-	if (!(_game & GF_SIMON2)) {
+	if (_game & GF_SIMON1) {
 		if (speech_id == 9999) {
 			if (_subtitles)
 				return;
 			if (!(_bitArray[0] & 0x4000) && !(_bitArray[1] & 0x1000)) {
 				_bitArray[0] |= 0x4000;
-				_variableArray[100] = 0xF;
-				loadSprite(4, 1, 0x82, 0, 0, 0);
-				o_wait_for_vga(0x82);
+				_variableArray[100] = 15;
+				loadSprite(4, 1, 130, 0, 0, 0);
+				o_wait_for_vga(130);
 			}
 			_skipVgaWait = true;
 		} else {
@@ -3527,8 +3527,8 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 			if (!(_bitArray[0] & 0x4000) && !(_bitArray[1] & 0x1000)) {
 				_bitArray[0] |= 0x4000;
 				_variableArray[100] = 5;
-				loadSprite(4, 1, 0x1e, 0, 0, 0);
-				o_wait_for_vga(0x82);
+				loadSprite(4, 1, 30, 0, 0, 0);
+				o_wait_for_vga(130);
 			}
 			_skipVgaWait = true;
 		} else {
@@ -3551,7 +3551,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
 	char convertedString[320];
 	char *convertedString2 = convertedString;
-	int16 height, len_div_3;
+	int16 height, delay;
 	int stringLength = strlen(string);
 	int padding, lettersPerRow, lettersPerRowJustified;
 	const int textHeight = 10;
@@ -3560,17 +3560,17 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	lettersPerRow = width / 6;
 	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
-	len_div_3 = (stringLength + 3) / 3;
-	if (!(_game & GF_SIMON2) && (_game & GF_TALKIE)) {
+	delay = (stringLength + 3) / 3;
+	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
-		_variableArray[85] = _variableArray[141] * len_div_3;
+		_variableArray[85] = _variableArray[141] * delay;
 	} else {
 		if (_variableArray[86] == 0)
-			len_div_3 >>= 1;
+			delay /= 2;
 		if (_variableArray[86] == 2)
-			len_div_3 <<= 1;
-		_variableArray[85] = len_div_3 * 5;
+			delay *= 2;
+		_variableArray[85] = delay * 5;
 	}
 
 	assert(stringLength > 0);
@@ -3622,8 +3622,7 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	if (!(_bitArray[8] & 0x20))
 		b = 3;
 
-	x >>= 3;
-
+	x *= 8;
 	if (y < 2)
 		y = 2;
 
@@ -3915,7 +3914,7 @@ void SimonEngine::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 void SimonEngine::dx_clear_surfaces(uint num_lines) {
 	memset(_sdl_buf_attached, 0, num_lines * _screenWidth);
 
-	_system->copyRectToScreen(_sdl_buf_attached, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	_system->copyRectToScreen(_sdl_buf_attached, _screenWidth, 0, 0, _screenWidth, num_lines);
 
 	if (_dxUse3Or4ForLock) {
 		memset(_sdl_buf, 0, num_lines * _screenWidth);
