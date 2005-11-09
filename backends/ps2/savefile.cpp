@@ -26,33 +26,148 @@
 #include <fileio.h>
 #include <malloc.h>
 #include <ucl/ucl.h>
+#include <libmc.h>
 #include "backends/ps2/savefile.h"
 #include "backends/ps2/Gs2dScreen.h"
-#include "backends/ps2/asyncfio.h"
 #include "backends/ps2/systemps2.h"
 #include "common/scummsys.h"
 
-extern AsyncFio fio;
+#define UCL_MAGIC 0x314C4355
+
+#define PORT 0
+#define SLOT 0
+// port 0, slot 0: memory card in first slot.
+
+void sioprintf(const char *zFormat, ...);
+
+class McAccess {
+public:
+	McAccess(int port, int slot);
+	~McAccess(void);
+	int open(const char *name, int mode);
+	int close(int fd);
+	int size(int fd);
+	int read(int fd, void *buf, int size);
+	int write(int fd, const void *buf, int size);
+	int mkDir(const char *name);
+	int getDir(const char *name, unsigned int mode, int max, void *dest);    
+	int getInfo(int *type, int *free, int *format);
+private:
+	int _sema;
+	int _port, _slot;
+};
+
+McAccess::McAccess(int port, int slot) {
+	_port = port;
+	_slot = slot;
+	ee_sema_t newSema;
+	newSema.init_count = 1;
+	newSema.max_count = 1;
+	_sema = CreateSema(&newSema);
+
+	assert(mcInit(MC_TYPE_MC) >= 0);
+}
+
+McAccess::~McAccess(void) {
+	DeleteSema(_sema);
+}
+
+int McAccess::open(const char *name, int mode) {
+	int res;
+	WaitSema(_sema);
+	mcOpen(_port, _slot, name, mode);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
+int McAccess::close(int fd) {
+	int res;
+	WaitSema(_sema);
+	mcClose(fd);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
+int McAccess::size(int fd) {
+	int res, size;
+	WaitSema(_sema);
+	mcSeek(fd, 0, SEEK_END);
+	mcSync(0, NULL, &size);
+	mcSeek(fd, 0, SEEK_SET);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	assert(res == 0);
+	return size;
+}
+
+int McAccess::read(int fd, void *buf, int size) {
+	int res;
+	WaitSema(_sema);
+	mcRead(fd, buf, size);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
+int McAccess::write(int fd, const void *buf, int size) {
+	int res;
+	WaitSema(_sema);
+	mcWrite(fd, buf, size);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
+int McAccess::mkDir(const char *name) {
+	int res;
+	WaitSema(_sema);
+	mcMkDir(_port, _slot, name);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
+int McAccess::getDir(const char *name, unsigned int mode, int max, void *dest) {
+	int res;
+	WaitSema(_sema);
+	mcGetDir(_port, _slot, name, mode, max, (mcTable*)dest);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
+
+int McAccess::getInfo(int *type, int *free, int *format) {
+	int res;
+	WaitSema(_sema);
+	mcGetInfo(_port, _slot, type, free, format);
+	mcSync(0, NULL, &res);
+	SignalSema(_sema);
+	return res;
+}
 
 class UclOutSaveFile : public Common::OutSaveFile {
 public:
-	UclOutSaveFile(const char *filename, Gs2dScreen *screen);
+	UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc);
 	virtual ~UclOutSaveFile(void);
 	virtual uint32 write(const void *ptr, uint32 size);
-	virtual int flush(void);
+	virtual void flush(void);
 	virtual bool ioFailed(void);
 	virtual void clearIOFailed(void);
 private:
+	OSystem_PS2 *_system;
 	Gs2dScreen *_screen;
+	McAccess *_mc;
 	int _fd;
 	uint8 *_buf;
 	uint32 _bufSize, _bufPos;
-	bool _ioFailed;
+	bool _ioFailed, _wasFlushed;
 };
 
 class UclInSaveFile : public Common::InSaveFile {
 public:
-	UclInSaveFile(const char *filename, Gs2dScreen *screen);
+	UclInSaveFile(const char *filename, Gs2dScreen *screen, McAccess *mc);
 	virtual ~UclInSaveFile(void);
 	virtual bool eos(void) const;
 	virtual uint32 read(void *ptr, uint32 size);
@@ -61,32 +176,74 @@ public:
 	virtual void skip(uint32 offset);
 private:
 	Gs2dScreen *_screen;
+	McAccess *_mc;
 	uint8 *_buf;
 	uint32 _bufSize, _bufPos;
 	bool _ioFailed;
 };
 
+class AutoSaveFile : public Common::OutSaveFile {
+public:
+	AutoSaveFile(Ps2SaveFileManager *saveMan, const char *filename);
+	~AutoSaveFile(void);
+	virtual uint32 write(const void *ptr, uint32 size);
+	virtual void flush(void) { };
+	virtual bool ioFailed(void) { return false; };
+	virtual void clearIOFailed(void) {};
+private:
+	Ps2SaveFileManager *_saveMan;
+	char _fileName[256];
+	uint8 *_buf;
+	uint32 _bufSize, _bufPos;
+};
+
+AutoSaveFile::AutoSaveFile(Ps2SaveFileManager *saveMan, const char *filename) {
+	strcpy(_fileName, filename);
+	_saveMan = saveMan;
+	_bufSize = 65536;
+	_buf = (uint8*)memalign(64, _bufSize);
+	_bufPos = 0;
+}
+
+AutoSaveFile::~AutoSaveFile(void) {
+	_saveMan->writeSaveNonblocking(_fileName, _buf, _bufPos);
+	free(_buf);
+}
+
+uint32 AutoSaveFile::write(const void *ptr, uint32 size) {
+	uint32 bytesFree = _bufSize - _bufPos;
+	if (bytesFree < size) {
+		uint32 allocBytes = (size > 32 * 1024) ? size : 32 * 1024;
+		_bufSize += allocBytes;
+		_buf = (uint8*)realloc(_buf, _bufSize);
+		bytesFree = _bufSize - _bufPos;
+	}
+	memcpy(_buf + _bufPos, ptr, size);
+	_bufPos += size;
+	return size;
+}
+
 #define MAX_MC_ENTRIES	16
+
+void runSaveThread(Ps2SaveFileManager *param);
 
 Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) {
 	_system = system;
 	_screen = screen;
-	assert(mcInit(MC_TYPE_MC) >= 0);
+	_mc = new McAccess(0, 0);
 
 	_mcDirList = (mcTable*)memalign(64, MAX_MC_ENTRIES * sizeof(mcTable));
 	_mcDirName[0] = '\0';
 	_mcCheckTime = 0;
 	_mcNeedsUpdate = true;
 
-	int mcCheckCount;
-	int res = -10;
 	for (int mcCheckCount = 0; mcCheckCount < 3; mcCheckCount++) {
 		/* retry mcGetInfo 3 times. It slows down startup without mc considerably,
 		   but cheap 3rd party memory cards apparently fail to get detected once in a while */
 
-		int mcType, mcFree, mcFormat, res;
-		mcGetInfo(0, 0, &mcType, &mcFree, &mcFormat);
-		mcSync(0, NULL, &res);
+		int mcType, mcFree, mcFormat;
+		int res = _mc->getInfo(&mcType, &mcFree, &mcFormat);
+
 		if ((res == 0) || (res == -1)) { // mc okay
 			_mcPresent = true;
 			printf("MC okay, result = %d. Type %d, Free %d, Format %d\n", res, mcType, mcFree, mcFormat);
@@ -97,6 +254,29 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 			printf("MC failed, not present or not formatted, code %d\n", res);
 		}
 	}
+
+	// create save thread
+	ee_sema_t newSema;
+	newSema.init_count = 0;
+	newSema.max_count = 1;
+	_autoSaveSignal = CreateSema(&newSema);
+	_autoSaveBuf = NULL;
+	_autoSaveSize = 0;
+	_systemQuit = false;
+
+	ee_thread_t saveThread, thisThread;
+	ReferThreadStatus(GetThreadId(), &thisThread);
+
+	saveThread.initial_priority = thisThread.current_priority + 1;
+	saveThread.stack_size = 8 * 1024;
+	_autoSaveStack = malloc(saveThread.stack_size);	
+	saveThread.stack = _autoSaveStack;
+	saveThread.func = (void *)runSaveThread;
+	asm("move %0, $gp\n": "=r"(saveThread.gp_reg));
+
+	_autoSaveTid = CreateThread(&saveThread);
+	assert(_autoSaveTid >= 0);
+	StartThread(_autoSaveTid, this);
 }
 
 Ps2SaveFileManager::~Ps2SaveFileManager(void) {
@@ -104,25 +284,28 @@ Ps2SaveFileManager::~Ps2SaveFileManager(void) {
 
 void Ps2SaveFileManager::checkMainDirectory(void) {
 	// verify that the main directory (scummvm config + icon) exists
-	int ret;
-	mcGetDir(0, 0, "/ScummVM/*", 0, MAX_MC_ENTRIES, _mcDirList);
-	mcSync(0, NULL, &ret);
+	int ret, fd;
+	_mcNeedsUpdate = true;
+	ret = _mc->getDir("/ScummVM/*", 0, MAX_MC_ENTRIES, _mcDirList);
 	printf("/ScummVM/* res = %d\n", ret);
 	if (ret <= 0) { // assume directory doesn't exist
 		printf("Dir doesn't exist\n");
-		fio.mkdir("mc0:ScummVM");
-		int fd = fio.open("mc0:ScummVM/scummvm.icn", O_WRONLY | O_CREAT | O_TRUNC);
-		if (fd >= 0) {
-			uint16 icoSize;
-			uint16 *icoBuf = decompressIconData(&icoSize);
-			fio.write(fd, icoBuf, icoSize * 2);
-			fio.sync(fd);
-			free(icoBuf);
-			fio.close(fd);
-			printf(".icn written\n");
-			setupIcon("mc0:ScummVM/icon.sys", "scummvm.icn", "ScummVM", "Configuration");
+		ret = _mc->mkDir("/ScummVM");
+		if (ret >= 0) {
+			fd = _mc->open("/ScummVM/scummvm.icn", O_WRONLY | O_CREAT);
+			if (fd >= 0) {
+				uint16 icoSize;
+				uint16 *icoBuf = decompressIconData(&icoSize);
+				ret = _mc->write(fd, icoBuf, icoSize * 2);
+				_mc->close(fd);
+				free(icoBuf);
+
+				printf(".icn written\n");
+				setupIcon("/ScummVM/icon.sys", "scummvm.icn", "ScummVM", "Configuration");
+			} else
+				printf("Can't create icon file: %d\n", fd);
 		} else
-			printf("unable to write icon data\n");
+			printf("can't create scummvm directory: %d\n", ret);
 	}
 }
 
@@ -140,30 +323,31 @@ void Ps2SaveFileManager::splitPath(const char *fileName, char *dir, char *name) 
 }
 
 bool Ps2SaveFileManager::mcReadyForDir(const char *dir) {
-	if (_mcNeedsUpdate || ((_system->getMillis() - _mcCheckTime) > 1000) || !_mcPresent) {
+	if (_mcNeedsUpdate || ((_system->getMillis() - _mcCheckTime) > 2000) || !_mcPresent) {
 		// check if memory card was exchanged/removed in the meantime
 		int mcType, mcFree, mcFormat, mcResult;
-		mcGetInfo(0, 0, &mcType, &mcFree, &mcFormat);
-		mcSync(0, NULL, &mcResult);
+		mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
 		if (mcResult != 0) { // memory card was exchanged
 			_mcNeedsUpdate = true;
-			if (mcResult != -1) {
+			if (mcResult == -1) { // yes, it was exchanged
+				checkMainDirectory(); // make sure ScummVM dir and icon are there
+			} else { // no memorycard in slot or not formatted or something like that
 				_mcPresent = false;
 				printf("MC not found, error code %d\n", mcResult);
 				return false;
 			}
 		}
 		_mcPresent = true;
+		_mcCheckTime = _system->getMillis();
 	}
 	if (_mcNeedsUpdate || strcmp(_mcDirName, dir)) {
 		strcpy(_mcDirName, dir);
 		char dirStr[256];
 		sprintf(dirStr, "/ScummVM-%s/*", dir);
-		mcGetDir(0, 0, dirStr, 0, MAX_MC_ENTRIES, _mcDirList);
-		mcSync(0, NULL, &_mcEntries);
-		return (_mcEntries >= 0);
-	} else
-		return true;
+		_mcEntries = _mc->getDir(dirStr, 0, MAX_MC_ENTRIES, _mcDirList);
+		_mcNeedsUpdate = false;
+	}
+	return (_mcEntries >= 0);
 }
 
 Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
@@ -178,12 +362,12 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 				fileExists = true;
 		if (fileExists) {
 			char fullName[256];
-			sprintf(fullName, "mc0:ScummVM-%s/%s", dir, name);
-			UclInSaveFile *file = new UclInSaveFile(fullName, _screen);
+			sprintf(fullName, "/ScummVM-%s/%s", dir, name);
+			UclInSaveFile *file = new UclInSaveFile(fullName, _screen, _mc);
 			if (file) {
-				if (!file->ioFailed()) {
+				if (!file->ioFailed())
 					return file;
-				} else
+				else
 					delete file;
 			}
 		} else
@@ -194,15 +378,17 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 }
 
 Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
-	_screen->wantAnim(true);
+	int res;
 	char dir[256], name[256];
+
+	_screen->wantAnim(true);
 	splitPath(filename, dir, name);
 
 	if (!mcReadyForDir(dir)) {
 		if (_mcPresent) { // directory doesn't seem to exist yet
 			char fullPath[256];
-			sprintf(fullPath, "mc0:ScummVM-%s", dir);
-			fio.mkdir(fullPath);
+			sprintf(fullPath, "/ScummVM-%s", dir);
+			res = _mc->mkDir(fullPath);
 
 			char icoSysDest[256], saveDesc[256];
 			sprintf(icoSysDest, "%s/icon.sys", fullPath);
@@ -215,14 +401,20 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 
 	if (_mcPresent) {
 		char fullPath[256];
-		sprintf(fullPath, "mc0:ScummVM-%s/%s", dir, name);
-		UclOutSaveFile *file = new UclOutSaveFile(fullPath, _screen);
-		if (!file->ioFailed()) {
-			// we're creating a file, mc will have to be updated next time
-			_mcNeedsUpdate = true;
+		sprintf(fullPath, "/ScummVM-%s/%s", dir, name);
+		if (strstr(filename, ".s00") || strstr(filename, ".ASD") || strstr(filename, ".asd")) {
+			// this is an autosave
+			AutoSaveFile *file = new AutoSaveFile(this, fullPath);
 			return file;
-		} else
-			delete file;
+		} else {
+			UclOutSaveFile *file = new UclOutSaveFile(fullPath, _system, _screen, _mc);
+			if (!file->ioFailed()) {
+				// we're creating a file, mc will have to be updated next time
+				_mcNeedsUpdate = true;
+				return file;
+			} else
+				delete file;
+		}
 	}
 
 	_screen->wantAnim(false);
@@ -233,8 +425,7 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 	_screen->wantAnim(true);
 
 	int mcType, mcFree, mcFormat, mcResult;
-	mcGetInfo(0, 0, &mcType, &mcFree, &mcFormat);
-	mcSync(0, NULL, &mcResult);
+	mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
 
 	memset(marks, false, num * sizeof(bool));
 
@@ -255,9 +446,7 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 			ext[0] = '\0';
 		sprintf(mcSearchStr, "/ScummVM-%s/%s*", dirStr, ext);
 
-		int numEntries;
-		mcGetDir(0, 0, mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
-		mcSync(0, NULL, &numEntries);
+		int numEntries = _mc->getDir(mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
 
 		int searchLen = strlen(ext);
 		for (int i = 0; i < numEntries; i++)
@@ -300,12 +489,12 @@ bool Ps2SaveFileManager::setupIcon(const char *dest, const char *ico, const char
 	strcpy((char*)icon_sys.copy, ico);
 	strcpy((char*)icon_sys.del, ico);
 
-	int fd = fio.open(dest, O_WRONLY | O_CREAT | O_TRUNC);
+	int fd, res;
+	fd = _mc->open(dest, O_WRONLY | O_CREAT);
 	if (fd >= 0) {
-		fio.write(fd, &icon_sys, sizeof(icon_sys));
-		int res = fio.sync(fd);
-		fio.close(fd);
-		return (res == sizeof(icon_sys));
+		res = _mc->write(fd, &icon_sys, sizeof(icon_sys));
+		_mc->close(fd);
+        return (res == sizeof(icon_sys));
 	} else
 		return false;
 }
@@ -329,25 +518,77 @@ uint16 *Ps2SaveFileManager::decompressIconData(uint16 *size) {
 	return resData;
 }
 
-UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen) {
+void runSaveThread(Ps2SaveFileManager *param) {
+	param->saveThread();
+}
+
+void Ps2SaveFileManager::writeSaveNonblocking(char *name, void *buf, uint32 size) {
+	if (buf && size && !_systemQuit) {
+		strcpy(_autoSaveName, name);
+		assert(!_autoSaveBuf);
+		_autoSaveBuf = (uint8*)malloc(size);
+		memcpy(_autoSaveBuf, buf, size);
+		_autoSaveSize = size;
+		SignalSema(_autoSaveSignal);
+	}
+}
+
+void Ps2SaveFileManager::saveThread(void) {
+	while (!_systemQuit) {
+		WaitSema(_autoSaveSignal);
+		if (_autoSaveBuf && _autoSaveSize) {
+			UclOutSaveFile *outSave = new UclOutSaveFile(_autoSaveName, _system, _screen, _mc);
+			if (!outSave->ioFailed()) {
+				outSave->write(_autoSaveBuf, _autoSaveSize);
+				outSave->flush();
+			}
+			if (outSave->ioFailed())
+				_system->msgPrintf(5000, "Writing autosave to %s failed", _autoSaveName);
+			delete outSave;
+			free(_autoSaveBuf);
+			_autoSaveBuf = NULL;
+			_autoSaveSize = 0;
+			_mcNeedsUpdate = true; // we've created a file, mc will have to be updated
+			_screen->wantAnim(false);
+		}
+	}
+	ExitThread();
+}
+
+void Ps2SaveFileManager::quit(void) {
+	_systemQuit = true;
+	ee_thread_t statSave, statThis;
+	ReferThreadStatus(GetThreadId(), &statThis);
+	int res = ChangeThreadPriority(_autoSaveTid, statThis.current_priority - 1);
+	sioprintf("SaveThread prio res: %d", res);
+
+	do {	// wait until thread called ExitThread()
+		SignalSema(_autoSaveSignal);
+		ReferThreadStatus(_autoSaveTid, &statSave);
+	} while (statSave.status != 0x10);
+	sioprintf("wait done");
+	DeleteThread(_autoSaveTid);
+    free(_autoSaveStack);
+}
+
+UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen, McAccess *mc) {
 	_screen = screen;
-	int fd = fio.open(filename, O_RDONLY);
+	_mc = mc;
+	int fd = _mc->open(filename, O_RDONLY);
 	_buf = NULL;
 	_bufSize = _bufPos = 0;
 	_ioFailed = false;
 
 	if (fd >= 0) {
-		int srcSize = fio.seek(fd, 0, SEEK_END);
-		fio.seek(fd, 0, SEEK_SET);
-		if (srcSize > 4) {
+		int srcSize = _mc->size(fd);
+		if (srcSize > 8) {
 			int res;
-			uint8 *tmpBuf = (uint8*)malloc(srcSize);
-			fio.read(fd, tmpBuf, srcSize);
-			res = fio.sync(fd);
-			if (res == srcSize) {
-				uint32 resLen = _bufSize = *(uint32*)tmpBuf;
+			uint8 *tmpBuf = (uint8*)memalign(64, srcSize);
+			res = _mc->read(fd, tmpBuf, srcSize);
+			if ((res == srcSize) && (*(uint32*)tmpBuf == UCL_MAGIC)) {
+				uint32 resLen = _bufSize = *(uint32*)(tmpBuf + 4);
 				_buf = (uint8*)malloc(_bufSize + 2048);
-				res = ucl_nrv2e_decompress_8(tmpBuf + 4, srcSize - 4, _buf, &resLen, NULL);
+				res = ucl_nrv2e_decompress_8(tmpBuf + 8, srcSize - 8, _buf, &resLen, NULL);
 				if ((res < 0) || (resLen != _bufSize)) {
 					printf("Unable to decompress file %s (%d -> %d) error code %d\n", filename, srcSize, _bufSize, res);
 					free(_buf);
@@ -357,11 +598,11 @@ UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen) {
 			}
 			free(tmpBuf);
 		}
-		if (!_buf) {
-			printf("Invalid savegame %s\n", filename);
-			_ioFailed = true;
-		}
-		fio.close(fd);
+		_mc->close(fd);
+	}
+	if (!_buf) {
+		printf("Invalid savegame %s\n", filename);
+		_ioFailed = true;
 	}
 }
 
@@ -384,27 +625,36 @@ bool UclInSaveFile::eos(void) const {
 }
 
 uint32 UclInSaveFile::read(void *ptr, uint32 size) {
-	uint32 bytesRemain = _bufSize - _bufPos;
-	if (size > bytesRemain) {
-		size = bytesRemain;
+	if (_buf) {
+		uint32 bytesRemain = _bufSize - _bufPos;
+		if (size > bytesRemain) {
+			size = bytesRemain;
+			_ioFailed = true;
+		}
+		memcpy(ptr, _buf + _bufPos, size);
+		_bufPos += size;
+		return size;
+	} else {
 		_ioFailed = true;
+		return 0;
 	}
-	memcpy(ptr, _buf + _bufPos, size);
-	_bufPos += size;
-	return size;
 }
 
 void UclInSaveFile::skip(uint32 offset) {
-	if (_bufPos + offset <= _bufSize)
-		_bufPos += offset;
-	else
-		_bufPos = _bufSize;
+	if (_buf) {
+		if (_bufPos + offset <= _bufSize)
+			_bufPos += offset;
+		else
+			_bufPos = _bufSize;
+	}
 }
 
-UclOutSaveFile::UclOutSaveFile(const char *filename, Gs2dScreen *screen) {
+UclOutSaveFile::UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc) {
 	_screen = screen;
+	_system = system;
+	_mc = mc;
 	_bufPos = 0;
-	_fd = fio.open(filename, O_WRONLY | O_CREAT | O_TRUNC);
+	_fd = _mc->open(filename, O_WRONLY | O_CREAT);
 	if (_fd >= 0) {
 		_bufSize = 65536;
 		_buf = (uint8*)malloc(_bufSize);
@@ -414,16 +664,24 @@ UclOutSaveFile::UclOutSaveFile(const char *filename, Gs2dScreen *screen) {
 		_bufSize = 0;
 		_buf = NULL;
 	}
+	_wasFlushed = false;
 }
 
 UclOutSaveFile::~UclOutSaveFile(void) {
 	if (_buf) {
-		if (flush() < 0)
-			printf("~UclOutSaveFile: Flush failed!\n");
+		if (_bufPos) {
+			printf("Engine didn't call SaveFile::flush()\n");
+			flush();
+			if (ioFailed()) {
+				// unable to save to memory card and it's too late to return an error code to the engine
+				_system->msgPrintf(5000, "!WARNING!\nCan't write to memory card.\nGame was NOT saved.");
+				printf("~UclOutSaveFile: Flush failed!\n");
+			}
+		}
 		free(_buf);
 	}
 	if (_fd >= 0)
-		fio.close(_fd);
+		_mc->close(_fd);
 	_screen->wantAnim(false);
 }
 
@@ -435,33 +693,36 @@ void UclOutSaveFile::clearIOFailed(void) {
 	_ioFailed = false;
 }
 
-int UclOutSaveFile::flush(void) {
-	if (_bufPos == 0)
-		return 0; // no data to flush
-	if (_buf) {
-		uint8 *compBuf = (uint8*)malloc(_bufPos * 2);
-		uint32 compSize = _bufPos * 2;
-		int res = ucl_nrv2e_99_compress(_buf, _bufPos, compBuf, &compSize, NULL, 10, NULL, NULL);
-		if (res >= 0) {
-			fio.write(_fd, &_bufPos, 4);
-			if (fio.sync(_fd) == 4) {
-				fio.write(_fd, compBuf, compSize);
-				if (fio.sync(_fd) != compSize)
+void UclOutSaveFile::flush(void) {
+	int res = 0;
+
+	if (_bufPos) {
+		if (_wasFlushed) {
+			// the engine flushed this file and afterwards wrote more data.
+			// this is unsupported because it results in savefiles that consist
+			// of two or more compressed segments.
+			printf("Error: 2nd call to UclOutSaveFile::flush!\n");
+			res = -1;
+		} else {
+			uint32 compSize = _bufPos * 2;
+			uint8 *compBuf = (uint8*)memalign(64, compSize + 8);
+			*(uint32*)(compBuf + 0) = UCL_MAGIC;
+			*(uint32*)(compBuf + 4) = _bufPos; // uncompressed size
+			res = ucl_nrv2e_99_compress(_buf, _bufPos, compBuf + 8, &compSize, NULL, 10, NULL, NULL);
+			if (res >= 0) {
+				res = _mc->write(_fd, compBuf, compSize + 8);
+				if (res != (int)compSize + 8)
 					res = -1;
 			} else
-				res = -1;
-		} else
-			printf("Unable to compress %d bytes of savedata, errorcode %d\n", _bufPos, res);
-		free(compBuf);
-
-		if (res >= 0) {
+				printf("Unable to compress %d bytes of savedata, errorcode %d\n", _bufPos, res);
+			free(compBuf);
 			_bufPos = 0;
-			return 0;
 		}
 	}
-	_ioFailed = true;
-	printf("UclOutSaveFile::flush failed!\n");
-	return -1;
+	if (res < 0) {
+		_ioFailed = true;
+		printf("UclOutSaveFile::flush failed!\n");
+	}
 }
 
 uint32 UclOutSaveFile::write(const void *ptr, uint32 size) {

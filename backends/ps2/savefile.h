@@ -22,17 +22,12 @@
 #ifndef __PS2_SAVEFILE__
 #define __PS2_SAVEFILE__
 
-#include "common/savefile.h"
 #include <libmc.h>
-
-enum SaveMode {
-	TO_HOST = 0,
-	TO_MC,
-	TO_HDD
-};
+#include "common/savefile.h"
 
 class Gs2dScreen;
 class OSystem_PS2;
+class McAccess;
 
 class Ps2SaveFileManager : public Common::SaveFileManager {
 public:
@@ -45,8 +40,12 @@ public:
 
 	/** Get the path to the save game directory. */
 	virtual const char *getSavePath() const;
+
+	void writeSaveNonblocking(char *name, void *buf, uint32 size);
+	void saveThread(void);
+	void quit(void);
 private:
-	static bool setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2);
+	bool setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2);
 
 	bool mcReadyForDir(const char *dir);
 
@@ -56,6 +55,15 @@ private:
 
 	Gs2dScreen *_screen;
 	OSystem_PS2 *_system;
+	McAccess	*_mc;
+
+	int _autoSaveTid;
+	int _autoSaveSignal;
+	void *_autoSaveStack;
+	volatile bool _systemQuit;
+	uint8 *_autoSaveBuf;
+	uint32 _autoSaveSize;
+	char _autoSaveName[256];
 
 	mcTable *_mcDirList;
 	int		_mcEntries;

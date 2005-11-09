@@ -1,0 +1,68 @@
+ScummVM-PS2 Readme
+==================
+
+You need a Playstation2 with a modchip of your choice in order to run ScummVM.
+
+ScummVM expects the game data on the CD-R, other devices like USB sticks
+ and HDD are currently unsupported.
+
+In order to use a USB Mouse and USB Keyboard, you need Sony's USB driver,
+ the USBD.IRX.  Copy it from a PS2 game that supports USB devices, like
+ Eye Toy or Singstar. 
+The demo disc that came with my PS2 also had it.
+ Put it into the directory in which you extracted the .zip file.
+You can also use ScummVM without the USB driver but you can only use the
+ Gamepad in that case.
+
+
+Creating a CD-R using CD-Tool
+=============================
+Copy any games you want on the CD over into the directory where you extracted
+ the ZIP file. Don't copy any files directly into the directory of the
+ ScummVM.ELF, those files are ignored. Instead, have each game in its own
+ directory.
+File- and directorynames should be DOS 8+3, if they aren't, they'll get
+ renamed.
+
+If you run windows, just double click the make_iso.bat.
+Wait while it creates the ISO image and burn it with Nero
+or any other CD writing software.
+
+For Linux or Mac OS X binaries check http://www.nobis-crew.org/cd-tool/
+
+Unfortunately, writing DVD images with cd-tool is currently broken and will
+ crash when it reaches the 2GB limit. This problem will probably be fixed in
+ the nearer future.
+
+
+Notes
+=====
+- CD swapping doesn't work, unfortunately. So you should have all games
+   on the CD you booted from.
+- Curse of Monkey Island is unsupported. iMuse digital crashes often, 
+   especially during Sea battles.
+- Zlib is unsupported, so compressed SAN files won't work.
+- The cd/dvd drive is a bottleneck, that's why you should compress the games
+   with MP3 or Ogg/Vorbis using compress_scumm_sou / compress_scumm_bun /
+   compress_sword1 / compress_sword2 etc, but *not* compress_san as it
+   requires zlib. Besides, uncompressed SAN files play fine.
+- I haven't had time to implement a virtual keyboard. If you don't have a USB
+   keyboard, you can only enter '1's using the Select button.
+- When you see '1's and '0's flying across your screen, it means ScummVM is
+   accessing the Memory Card. Don't switch off or reset the console in that
+   case, and don't remove the Memory Card either :P
+
+
+GamePad
+=======
+Start Button         -   F5
+Select Button        -   Figure 1
+L1                   -   'n'
+R1                   -   'y'
+L2                   -   Numpad 0
+Triangle             -   Escape
+Square               -   Enter
+Cross                -   Left mouse button
+Circle               -   Right mouse button
+Left analog stick    -   Mouse. Disabled when USB mouse is detected.
+

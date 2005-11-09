@@ -51,6 +51,8 @@ int AsyncFio::open(const char *name, int ioMode) {
 	fileXioOpen(name, ioMode, DEFAULT_MODE);
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
+	if (res < -2)
+		printf("File %s error: %d (mode %d)\n", name, res, ioMode);
 	return res;
 }
 
@@ -60,10 +62,8 @@ void AsyncFio::close(int handle) {
 	fileXioClose(handle);
 	int res;
 	fileXioWaitAsync(FXIO_WAIT, &res);
-	if (res != 0) {
+	if (res != 0)
 		sioprintf("ERROR: fileXioClose failed, EC %d", res);
-		SleepThread();
-	}
 	_ioSlots[handle] = 0;
 	SignalSema(_ioSema);
 }

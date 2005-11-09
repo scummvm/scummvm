@@ -235,11 +235,11 @@ bool Ps2Input::getKeyEvent(OSystem::Event *event, uint16 buttonCode, bool down) 
 			entry++;
 			buttonCode >>= 1;
 		}
-		if (_asciiCodes[entry] || _keyCodes[entry]) {
+		if (_padCodes[entry]) {
 			event->type = (down) ? OSystem::EVENT_KEYDOWN : OSystem::EVENT_KEYUP;
-			event->kbd.ascii = _asciiCodes[entry];
-			event->kbd.keycode = _keyCodes[entry];
-			event->kbd.flags = 0;
+			event->kbd.keycode = _padCodes[entry];
+			event->kbd.flags = _padFlags[entry];
+			event->kbd.ascii = mapKey(_padCodes[entry], _padFlags[entry]);
 			return true;
 		}
 	}
@@ -505,41 +505,42 @@ const int Ps2Input::_usbToSdlk[0x100] = {
 	/* FF */	0
 };
 
-const int Ps2Input::_keyCodes[16] = {
-	49,	 // '1' - Select
-	0,	 //     - L3
-	0,	 //     - R3
-	286, // F5  - Start
-	0,	 //		- Up
-	0,	 //		- Right
-	0,	 //		- Down
-	0,	 //		- Left
-	0,	 //		- L2
-	0,	 //		- R2
-	0,	 //		- L1
-	0,	 //		- R1
-	27,	 // Esc - Triangle
-	0,	 //		- Circle
-	0,	 //		- Cross
-	0,	 //		- Square
+const int Ps2Input::_padCodes[16] = {
+	SDLK_1,		 // Select
+	0,			 // L3
+	0,			 // R3
+	SDLK_F5,	 // Start
+	0,			 //	Up
+	0,			 //	Right
+	0,			 //	Down
+	0,			 //	Left
+	SDLK_KP0,	 //	L2
+	0,			 //	R2
+	SDLK_n,		 //	L1
+	SDLK_y,		 //	R1
+	SDLK_ESCAPE, // Triangle
+	0,			 //	Circle  => Right mouse button
+	0,			 //	Cross	=> Left mouse button
+	SDLK_RETURN	 //	Square
 };
 
-const uint16 Ps2Input::_asciiCodes[16] = {
-	49,	 // '1' - Select
-	0,	 //     - L3
-	0,	 //     - R3
-	319, // F5  - Start
-	0,	 //		- Up
-	0,	 //		- Right
-	0,	 //		- Down
-	0,	 //		- Left
-	0,	 //		- L2
-	0,	 //		- R2
-	0,	 //		- L1
-	0,	 //		- R1
-	27,	 // Esc - Triangle
-	0,	 //		- Circle
-	0,	 //		- Cross
-	0,	 //		- Square
+const int Ps2Input::_padFlags[16] = {
+	0,			 // Select
+	0,			 // L3
+	0,			 // R3
+	0,			 // Start
+	0,			 //	Up
+	0,			 //	Right
+	0,			 //	Down
+	0,			 //	Left
+	0,			 //	L2
+	0,			 //	R2
+	0,			 //	L1
+	0,			 //	R1
+	0,			 // Triangle
+	0,			 //	Circle
+	0,			 //	Cross
+	0			 //	Square
 };
+
 

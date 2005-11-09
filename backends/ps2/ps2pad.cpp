@@ -97,6 +97,9 @@ void Ps2Pad::initPad(void) {
 				case STAT_WAIT_READY:
 					_padStatus = STAT_OKAY;
 					break;
+				case STAT_OKAY:
+					// pad is already initialized
+					break;
 			}
 		} else {
 			// check for timeout...
