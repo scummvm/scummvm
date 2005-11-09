@@ -38,6 +38,8 @@
 #define SLOT 0
 // port 0, slot 0: memory card in first slot.
 
+void sioprintf(const char *zFormat, ...);
+
 class McAccess {
 public:
 	McAccess(int port, int slot);
@@ -260,21 +262,21 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 	_autoSaveSignal = CreateSema(&newSema);
 	_autoSaveBuf = NULL;
 	_autoSaveSize = 0;
+	_systemQuit = false;
 
 	ee_thread_t saveThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
 
 	saveThread.initial_priority = thisThread.current_priority + 1;
 	saveThread.stack_size = 8 * 1024;
-	saveThread.stack = malloc(saveThread.stack_size);	
+	_autoSaveStack = malloc(saveThread.stack_size);	
+	saveThread.stack = _autoSaveStack;
 	saveThread.func = (void *)runSaveThread;
 	asm("move %0, $gp\n": "=r"(saveThread.gp_reg));
 
-	int tid = CreateThread(&saveThread);
-	if (tid >= 0) {
-		StartThread(tid, this);
-	} else
-		free(saveThread.stack);
+	_autoSaveTid = CreateThread(&saveThread);
+	assert(_autoSaveTid >= 0);
+	StartThread(_autoSaveTid, this);
 }
 
 Ps2SaveFileManager::~Ps2SaveFileManager(void) {
@@ -283,6 +285,7 @@ Ps2SaveFileManager::~Ps2SaveFileManager(void) {
 void Ps2SaveFileManager::checkMainDirectory(void) {
 	// verify that the main directory (scummvm config + icon) exists
 	int ret, fd;
+	_mcNeedsUpdate = true;
 	ret = _mc->getDir("/ScummVM/*", 0, MAX_MC_ENTRIES, _mcDirList);
 	printf("/ScummVM/* res = %d\n", ret);
 	if (ret <= 0) { // assume directory doesn't exist
@@ -320,28 +323,31 @@ void Ps2SaveFileManager::splitPath(const char *fileName, char *dir, char *name) 
 }
 
 bool Ps2SaveFileManager::mcReadyForDir(const char *dir) {
-	if (_mcNeedsUpdate || ((_system->getMillis() - _mcCheckTime) > 1000) || !_mcPresent) {
+	if (_mcNeedsUpdate || ((_system->getMillis() - _mcCheckTime) > 2000) || !_mcPresent) {
 		// check if memory card was exchanged/removed in the meantime
 		int mcType, mcFree, mcFormat, mcResult;
 		mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
 		if (mcResult != 0) { // memory card was exchanged
 			_mcNeedsUpdate = true;
-			if (mcResult != -1) {
+			if (mcResult == -1) { // yes, it was exchanged
+				checkMainDirectory(); // make sure ScummVM dir and icon are there
+			} else { // no memorycard in slot or not formatted or something like that
 				_mcPresent = false;
 				printf("MC not found, error code %d\n", mcResult);
 				return false;
 			}
 		}
 		_mcPresent = true;
+		_mcCheckTime = _system->getMillis();
 	}
 	if (_mcNeedsUpdate || strcmp(_mcDirName, dir)) {
 		strcpy(_mcDirName, dir);
 		char dirStr[256];
 		sprintf(dirStr, "/ScummVM-%s/*", dir);
 		_mcEntries = _mc->getDir(dirStr, 0, MAX_MC_ENTRIES, _mcDirList);
-		return (_mcEntries >= 0);
-	} else
-		return true;
+		_mcNeedsUpdate = false;
+	}
+	return (_mcEntries >= 0);
 }
 
 Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
@@ -359,9 +365,9 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 			sprintf(fullName, "/ScummVM-%s/%s", dir, name);
 			UclInSaveFile *file = new UclInSaveFile(fullName, _screen, _mc);
 			if (file) {
-				if (!file->ioFailed()) {
+				if (!file->ioFailed())
 					return file;
-				} else
+				else
 					delete file;
 			}
 		} else
@@ -396,7 +402,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 	if (_mcPresent) {
 		char fullPath[256];
 		sprintf(fullPath, "/ScummVM-%s/%s", dir, name);
-		if (strstr(filename, ".s00")) {
+		if (strstr(filename, ".s00") || strstr(filename, ".ASD") || strstr(filename, ".asd")) {
 			// this is an autosave
 			AutoSaveFile *file = new AutoSaveFile(this, fullPath);
 			return file;
@@ -517,7 +523,7 @@ void runSaveThread(Ps2SaveFileManager *param) {
 }
 
 void Ps2SaveFileManager::writeSaveNonblocking(char *name, void *buf, uint32 size) {
-	if (buf && size) {
+	if (buf && size && !_systemQuit) {
 		strcpy(_autoSaveName, name);
 		assert(!_autoSaveBuf);
 		_autoSaveBuf = (uint8*)malloc(size);
@@ -528,22 +534,41 @@ void Ps2SaveFileManager::writeSaveNonblocking(char *name, void *buf, uint32 size
 }
 
 void Ps2SaveFileManager::saveThread(void) {
-	while (1) {
+	while (!_systemQuit) {
 		WaitSema(_autoSaveSignal);
-		assert((_autoSaveBuf != NULL) && _autoSaveSize);
-		UclOutSaveFile *outSave = new UclOutSaveFile(_autoSaveName, _system, _screen, _mc);
-		if (!outSave->ioFailed()) {
-			outSave->write(_autoSaveBuf, _autoSaveSize);
-			outSave->flush();
-		} else
-			_system->msgPrintf(5000, "Writing autosave to %s failed", _autoSaveName);
-		delete outSave;
-		free(_autoSaveBuf);
-		_autoSaveBuf = NULL;
-		_autoSaveSize = 0;
-		_mcNeedsUpdate = true; // we've created a file, mc will have to be updated
-		_screen->wantAnim(false);
+		if (_autoSaveBuf && _autoSaveSize) {
+			UclOutSaveFile *outSave = new UclOutSaveFile(_autoSaveName, _system, _screen, _mc);
+			if (!outSave->ioFailed()) {
+				outSave->write(_autoSaveBuf, _autoSaveSize);
+				outSave->flush();
+			}
+			if (outSave->ioFailed())
+				_system->msgPrintf(5000, "Writing autosave to %s failed", _autoSaveName);
+			delete outSave;
+			free(_autoSaveBuf);
+			_autoSaveBuf = NULL;
+			_autoSaveSize = 0;
+			_mcNeedsUpdate = true; // we've created a file, mc will have to be updated
+			_screen->wantAnim(false);
+		}
 	}
+	ExitThread();
+}
+
+void Ps2SaveFileManager::quit(void) {
+	_systemQuit = true;
+	ee_thread_t statSave, statThis;
+	ReferThreadStatus(GetThreadId(), &statThis);
+	int res = ChangeThreadPriority(_autoSaveTid, statThis.current_priority - 1);
+	sioprintf("SaveThread prio res: %d", res);
+
+	do {	// wait until thread called ExitThread()
+		SignalSema(_autoSaveSignal);
+		ReferThreadStatus(_autoSaveTid, &statSave);
+	} while (statSave.status != 0x10);
+	sioprintf("wait done");
+	DeleteThread(_autoSaveTid);
+    free(_autoSaveStack);
 }
 
 UclInSaveFile::UclInSaveFile(const char *filename, Gs2dScreen *screen, McAccess *mc) {

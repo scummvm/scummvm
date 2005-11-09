@@ -43,7 +43,7 @@
 #include "common/file.h"
 #include "backends/ps2/sysdefs.h"
 #include <libmc.h>
-#include <libhdd.h>
+#include <libpad.h>
 #include "backends/ps2/cd.h"
 #include <sio.h>
 #include <fileXio_rpc.h>
@@ -182,6 +182,7 @@ OSystem_PS2::OSystem_PS2(void) {
 	_scummSoundParam = NULL;
 	_printY = 0;
 	_msgClearTime = 0;
+	_systemQuit = false;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
@@ -287,7 +288,8 @@ void OSystem_PS2::initTimer(void) {
 	assert((g_MainWaitSema >= 0) && (g_TimerWaitSema >= 0));
 
 	// threads done, start the interrupt handler
-	AddIntcHandler( INT_TIMER0, timerInterruptHandler, 0); // 0=first handler
+	_intrId = AddIntcHandler( INT_TIMER0, timerInterruptHandler, 0); // 0=first handler
+	assert(_intrId >= 0);
 	EnableIntc(INT_TIMER0);
 	T0_HOLD = 0;
 	T0_COUNT = 0;
@@ -296,11 +298,12 @@ void OSystem_PS2::initTimer(void) {
 }
 
 void OSystem_PS2::timerThread(void) {
-	while (1) {
+	while (!_systemQuit) {
 		WaitSema(g_TimerThreadSema);
 		if (_scummTimerProc)
 			_scummTimerProc(0);
 	}
+	ExitThread();
 }
 
 void OSystem_PS2::soundThread(void) {
@@ -315,7 +318,7 @@ void OSystem_PS2::soundThread(void) {
 
 	int bufferedSamples = 0;
 	int cycles = 0;
-	while (1) {
+	while (!_systemQuit) {
 		WaitSema(g_SoundThreadSema);
 
 		if (!(cycles & 31))
@@ -371,6 +374,9 @@ void OSystem_PS2::soundThread(void) {
 		}
 		SignalSema(_soundSema);
 	}
+	free(soundBufL);
+	DeleteSema(_soundSema);
+	ExitThread();
 }
 
 const char *irxModules[] = {
@@ -396,6 +402,7 @@ void OSystem_PS2::loadModules(void) {
 		if ((res = SifLoadModule(irxModules[i], 0, NULL)) < 0) {
 			msgPrintf(FOREVER, "Unable to load module %s, Error %d", irxModules[i], res);
 			_screen->wantAnim(false);
+			updateScreen();
 			SleepThread();
 		}
 	}
@@ -742,11 +749,33 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 }
 
 void OSystem_PS2::quit(void) {
-	printf("OSystem_PS2::quit\n");
-	_screen->wantAnim(false);
+	sioprintf("OSystem_PS2::quit");
 	clearSoundCallback();
 	setTimerCallback(NULL, 0);
-	SleepThread();
+	_screen->wantAnim(false);
+	_systemQuit = true;
+	ee_thread_t statSound, statTimer;
+	do {	// wait until both threads called ExitThread()
+		ReferThreadStatus(_timerTid, &statTimer);
+		ReferThreadStatus(_soundTid, &statSound);
+	} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
+	DeleteThread(_timerTid);
+	DeleteThread(_soundTid);
+	free(_timerStack);
+	free(_soundStack);
+	DisableIntc(INT_TIMER0);
+	RemoveIntcHandler(INT_TIMER0, _intrId);
+
+	_saveManager->quit();
+	_screen->quit();
+
+	padEnd(); // stop pad library
+	cdvdInit(CDVD_EXIT);
+	cdvdExit();
+	SifExitIopHeap();
+	SifLoadFileExit();
+	SifExitRpc();
+	LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
 }
 
 static uint32 g_timeSecs;

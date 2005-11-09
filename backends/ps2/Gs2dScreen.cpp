@@ -37,6 +37,8 @@ enum Buffers {
 	PRINTF
 };
 
+#define ANIM_STACK_SIZE (1024 * 32)
+
 #define DEFAULT_PAL_X		175
 #define DEFAULT_PAL_Y		60
 #define DEFAULT_NTSC_X		165
@@ -66,6 +68,7 @@ static TexVertex kPrintTex[2] = {
 };
 
 void sioprintf(const char *zFormat, ...);
+void runAnimThread(Gs2dScreen *param);
 
 int vblankStartHandler(int cause) {
 	// start of VBlank period
@@ -96,6 +99,7 @@ void createAnimThread(Gs2dScreen *screen);
 
 Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
+	_systemQuit = false;
 	ee_sema_t newSema;
 	newSema.init_count = 1;
 	newSema.max_count = 1;
@@ -107,9 +111,9 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	g_AnimSema = CreateSema(&newSema);
 	assert((g_VblankSema >= 0) && (g_DmacSema >= 0) && (_screenSema >= 0) && (g_AnimSema >= 0));
 
-	AddIntcHandler(INT_VBLANK_START, vblankStartHandler, 0);
-	AddIntcHandler(INT_VBLANK_END, vblankEndHandler, 0);
-	AddDmacHandler(2, dmacHandler, 0);
+	_vblankStartId = AddIntcHandler(INT_VBLANK_START, vblankStartHandler, 0);
+	_vblankEndId   = AddIntcHandler(INT_VBLANK_END, vblankEndHandler, 0);
+	_dmacId		   = AddDmacHandler(2, dmacHandler, 0);
 
 	_dmaPipe = new DmaPipe(0x2000);
 
@@ -127,7 +131,6 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	memset(_screenBuf, 0, _width * _height);
 	memset(_clut, 0, 256 * sizeof(uint32));
-	//_clut[1] = GS_RGBA(0x16, 0x16, 0xF0, 0);
 	_clut[1] = GS_RGBA(0xC0, 0xC0, 0xC0, 0);
 	clearOverlay();
 
@@ -215,7 +218,46 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	updateScreen();
 
 	createAnimTextures();
-	createAnimThread(this);
+	
+	// create anim thread
+	ee_thread_t animThread, thisThread;
+	ReferThreadStatus(GetThreadId(), &thisThread);
+
+	_animStack = malloc(ANIM_STACK_SIZE);
+	animThread.initial_priority = thisThread.current_priority - 3;
+	animThread.stack = _animStack;
+	animThread.stack_size = ANIM_STACK_SIZE;
+	animThread.func = (void *)runAnimThread;
+	asm("move %0, $gp\n": "=r"(animThread.gp_reg));
+
+	_animTid = CreateThread(&animThread);
+	assert(_animTid >= 0);
+	StartThread(_animTid, this);
+}
+
+void Gs2dScreen::quit(void) {
+	_systemQuit = true;
+	ee_thread_t statAnim;
+	do {	// wait until thread called ExitThread()
+		SignalSema(g_AnimSema);
+		ReferThreadStatus(_animTid, &statAnim);
+	} while (statAnim.status != 0x10);
+	DeleteThread(_animTid);
+	free(_animStack);
+	_dmaPipe->waitForDma();	// wait for dmac and vblank for the last time
+	while (g_DmacCmd || g_VblankCmd);
+
+	sioprintf("kill handlers");
+	DisableIntc(INT_VBLANK_START);
+	DisableIntc(INT_VBLANK_END);
+	DisableDmac(2);
+	RemoveIntcHandler(INT_VBLANK_START, _vblankStartId);
+	RemoveIntcHandler(INT_VBLANK_END, _vblankEndId);
+	RemoveDmacHandler(2, _dmacId);
+
+	DeleteSema(g_VblankSema);
+	DeleteSema(g_DmacSema);
+	DeleteSema(g_AnimSema);
 }
 
 void Gs2dScreen::createAnimTextures(void) {
@@ -567,10 +609,13 @@ void Gs2dScreen::animThread(void) {
 	};
 	float angleStep = ((2 * PI) / _tvHeight);
 
-	while (1) {
+	while (!_systemQuit) {
 		do {
 			WaitSema(g_AnimSema);
-		} while (!g_RunAnim);
+		} while ((!_systemQuit) && (!g_RunAnim));
+		
+		if (_systemQuit)
+			break;
 
 		if (PollSema(_screenSema) > 0) { // make sure no thread is currently drawing
 			WaitSema(g_DmacSema);   // dma transfers have to be finished
@@ -655,29 +700,11 @@ void Gs2dScreen::animThread(void) {
 			SignalSema(_screenSema);
 		}
 	}
+	ExitThread();
 }
 
 void runAnimThread(Gs2dScreen *param) {
 	param->animThread();
-}
-
-#define ANIM_STACK_SIZE (1024 * 32)
-
-void createAnimThread(Gs2dScreen *screen) {
-	ee_thread_t animThread, thisThread;
-	ReferThreadStatus(GetThreadId(), &thisThread);
-
-	animThread.initial_priority = thisThread.current_priority - 3;
-	animThread.stack = malloc(ANIM_STACK_SIZE);
-	animThread.stack_size = ANIM_STACK_SIZE;
-	animThread.func = (void *)runAnimThread;
-	asm("move %0, $gp\n": "=r"(animThread.gp_reg));
-
-	int tid = CreateThread(&animThread);
-	if (tid >= 0) {
-		StartThread(tid, screen);
-	} else
-		free(animThread.stack);
 }
 
 // data for the animated zeros and ones...

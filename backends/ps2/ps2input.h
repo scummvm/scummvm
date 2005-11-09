@@ -50,8 +50,7 @@ private:
 
 	bool _mouseLoaded, _kbdLoaded;
 	int _keyFlags;
-	static const int _keyCodes[16];
-	static const uint16 _asciiCodes[16];
+	static const int _padCodes[16], _padFlags[16];
 	static const int _usbToSdlk[0x100];
 };
 

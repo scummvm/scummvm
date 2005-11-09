@@ -128,7 +128,9 @@ private:
 	Ps2Mutex	*_mutex;
 #endif
 	uint8		*_timerStack, *_soundStack;
-	int32		_timerTid, _soundTid;
+	int			_timerTid, _soundTid;
+	int			_intrId;
+	volatile bool _systemQuit;
 	static const GraphicsMode _graphicsMode;
 };
 

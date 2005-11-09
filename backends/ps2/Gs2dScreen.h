@@ -73,6 +73,8 @@ public:
 
 	void animThread(void);
 	void wantAnim(bool runIt);
+
+	void quit(void);
 private:
 	void uploadToVram(void);
 	void createAnimTextures(void);
@@ -101,6 +103,10 @@ private:
 	uint32 *_clut;
 
 	int _screenSema;
+	int _vblankStartId, _vblankEndId, _dmacId, _animTid;
+	void *_animStack;
+	volatile bool _systemQuit;
+
 	static const uint32 _binaryClut[16];
 	static const uint8  _binaryData[4 * 14 * 2];
 	static const uint16 _binaryPattern[16];
