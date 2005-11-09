@@ -121,14 +121,14 @@ struct SeqLoop {
 };
 
 struct SceneExits {
-	int16 NorthXPos;
-	int8  NorthYPos;
-	int16 EastXPos;
-	int8  EastYPos;
-	int16 SouthXPos;
-	int8  SouthYPos;
-	int16 WestXPos;
-	int8  WestYPos;
+	uint16 northXPos;
+	uint8  northYPos;
+	uint16 eastXPos;
+	uint8  eastYPos;
+	uint16 southXPos;
+	uint8  southYPos;
+	uint16 westXPos;
+	uint8  westYPos;
 };
 
 struct WSAMovieV1;
@@ -387,8 +387,8 @@ protected:
 	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
 	void moveCharacterToPos(int character, int facing, int xpos, int ypos);
 	void setCharacterPositionWithUpdate(int character);
-	int setCharacterPosition(int character, uint8 *unk1);
-	void setCharacterPositionHelper(int character, uint8 *unk1);
+	int setCharacterPosition(int character, int *facingTable);
+	void setCharacterPositionHelper(int character, int *facingTable);
 	int getOppositeFacingDirection(int dir);
 	void loadSceneMSC();
 	void blockInRegion(int x, int y, int width, int height);
@@ -417,6 +417,9 @@ protected:
 	void changePosTowardsFacing(int &x, int &y, int facing);
 	bool lineIsPassable(int x, int y);
 	int getMoveTableSize(int *moveTable);
+	int handleSceneChange(int xpos, int ypos, int unk1, int frameReset);
+	int processSceneChange(int *table, int unk1, int frameReset);
+	int changeScene(int facing);
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
@@ -516,6 +519,9 @@ protected:
 	SceneExits _sceneExits;
 	uint16 _currentRoom;
 	uint8 *_maskBuffer;
+	
+	int _sceneChangeState;
+	int _loopFlag2;
 	
 	int _pathfinderFlag;
 	int _pathfinderFlag2;

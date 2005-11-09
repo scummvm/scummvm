@@ -582,7 +582,7 @@ const int8 KyraEngine::_addXPosTable[] = {
 };
 
 const int8 KyraEngine::_charYPosTable[] = {
-	-2, -2, 0, 3, 2, 2, 0, -2
+	-2, -2, 0, 2, 2, 2, 0, -2
 };
 
 const int8 KyraEngine::_addYPosTable[] = {

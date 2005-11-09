@@ -448,14 +448,14 @@ void Sprites::loadDAT(const char *filename) {
 	//TODO: Read in character entry coords here
 	SceneExits &exits = _engine->sceneExits();
 
-	exits.NorthXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
-	exits.NorthYPos = *data++ & 0xFFFE;
-	exits.EastXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
-	exits.EastYPos = *data++ & 0xFFFE;
-	exits.SouthXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
-	exits.SouthYPos = *data++ & 0xFFFE;
-	exits.WestXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
-	exits.WestYPos = *data++ & 0xFFFE;
+	exits.northXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.northYPos = *data++ & 0xFFFE;
+	exits.eastXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.eastYPos = *data++ & 0xFFFE;
+	exits.southXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.southYPos = *data++ & 0xFFFE;
+	exits.westXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
+	exits.westYPos = *data++ & 0xFFFE;
 }
 
 void Sprites::freeSceneShapes() {

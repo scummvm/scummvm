@@ -314,7 +314,7 @@ int KyraEngine::cmd_pauseTicks(ScriptState *script) {
 
 int KyraEngine::cmd_drawSceneAnimShape(ScriptState *script) {
 	debug(9, "cmd_drawSceneAnimShape(0x%X)", script);
-	_screen->drawShape( stackPos(4), _sprites->getSceneShape(stackPos(0)), stackPos(1), stackPos(2), 0, stackPos(3) );
+	_screen->drawShape(stackPos(4), _sprites->getSceneShape(stackPos(0)), stackPos(1), stackPos(2), 0, stackPos(3));
 	return 0;
 }
 
@@ -362,7 +362,14 @@ int KyraEngine::cmd_blockOutWalkableRegion(ScriptState *script) {
 }
 
 int KyraEngine::cmd_walkPlayerToPoint(ScriptState *script) {
-	warning("STUB: cmd_walkPlayerToPoint");
+	debug(9, "cmd_walkPlayerToPoint(0x%X)", script);
+	// if !stackPos(2)
+	// XXX
+	int reinitScript = handleSceneChange(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	// XXX
+	if (reinitScript) {
+		_scriptInterpreter->initScript(script, script->dataPtr);
+	}
 	return 0;
 }
 
@@ -842,7 +849,7 @@ int KyraEngine::cmd_setCharactersLocation(ScriptState *script) {
 
 int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 	debug(9, "cmd_walkCharacterToPoint(0x%X)", script);
-	int character = stackPos(0) - 1;
+	int character = stackPos(0);
 	int toX = stackPos(1);
 	int toY = stackPos(2);
 	_pathfinderFlag2 = 1;

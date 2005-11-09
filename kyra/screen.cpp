@@ -323,8 +323,8 @@ void Screen::copyCurPageBlock(int x, int y, int h, int w, uint8 *dst) {
 	}
 	const uint8 *src = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
 	while (h--) {
-		memcpy(dst, src, w);
-		dst += SCREEN_W;
+		memcpy(dst, src, w*8);
+		dst += w*8;
 		src += SCREEN_H;
 	}
 }
@@ -569,7 +569,7 @@ void Screen::setScreenDim(int dim) {
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
-	debug(9, "Screen::drawShape(%d, %d, %d, %d, %d, ...)", pageNum, x, y, sd, flags);
+	debug(9, "Screen::drawShape(%d, 0x%X, %d, %d, %d, 0x%.04X, ...)", pageNum, shapeData, x, y, sd, flags);
 	assert(shapeData);
 	va_list args;
 	va_start(args, flags);
@@ -744,6 +744,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
+	uint8 *dstStart = getPagePtr(pageNum) + y * SCREEN_W + x;
 	
 	int scaleYTable[SCREEN_H];
 	assert(y1 >= 0 && y2 < SCREEN_H);
@@ -833,7 +834,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 						
 					case 8: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -843,7 +844,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 					
 					case 9: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -857,7 +858,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 					
 					case 10: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -877,7 +878,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					
 					case 15:
 					case 11: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -892,7 +893,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 					
 					case 12: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -904,7 +905,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 					
 					case 13: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -919,7 +920,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 					
 					case 14: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -1034,7 +1035,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 					}	break;
 					
 					case 24: {
-						int offset = dst - shapeBuffer;
+						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
@@ -1780,11 +1781,11 @@ byte Screen::getShapeFlag1(int x, int y) {
 	uint8 color = _shapePages[0][y * SCREEN_W + x];
 	color &= 0x80;
 	color ^= 0x80;
-	
+
 	if (color & 0x80) {
-		return (color << 1) + 1;
-	}	
-	return (color << 1);
+		return 1;
+	}
+	return 0;
 }
 
 } // End of namespace Kyra
