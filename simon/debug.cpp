@@ -356,7 +356,7 @@ static void dump_bitmap(const char *filename, const byte *offs, int w, int h, in
 
 void SimonEngine::dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base) {
 	char buf[40];
-#if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__)
+#if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__) && !defined(__PLAYSTATION2__)
 	struct stat statbuf;
 #endif
 
@@ -366,7 +366,7 @@ void SimonEngine::dump_single_bitmap(int file, int image, const byte *offs, int 
 	sprintf(buf, "dumps/File%d_Image%d.bmp", file, image);
 #endif
 
-#if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__)
+#if !defined(PALMOS_MODE) && !defined(__DC__) && !defined(__PSP__) && !defined(__PLAYSTATION2__)
 	if (stat(buf, &statbuf) == 0)
 		return;
 #endif
