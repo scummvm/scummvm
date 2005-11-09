@@ -22,6 +22,11 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
   General:
     - Fixed crash when trying to apply aspect-ratio correction to games that
       cannot use it.
+    - Fixed potential security vulnerability with oversized PATH environment
+      variables.
+
+  SCUMM:
+    - Improved support of some German HE games
 
   Sword1:
     - Looping sounds are now stopped before cutscenes are played.
