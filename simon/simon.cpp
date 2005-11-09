@@ -509,7 +509,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_vgaRes328Loaded = 0;
 	_hitarea_unk_3 = 0;
 	_mortalFlag = 0;
-	_videoVar8 = 0;
+	_updateScreen = 0;
 	_usePaletteDelay = 0;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
@@ -2551,11 +2551,9 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			b += sizeof(ImageHeader_Simon);
 	}
 
-	if (!(_game & GF_SIMON2)) {
-		if (num == 16300) {
-			dx_clear_attached_from_top(134);
-			_usePaletteDelay = true;
-		}
+	if ((_game & GF_SIMON1) && vga_res_id == 16300) {
+		dx_clear_attached_from_top(134);
+		_usePaletteDelay = true;
 	} else {
 		_scrollX = 0;
 		_scrollXMax = 0;
@@ -2845,7 +2843,7 @@ void SimonEngine::timer_vga_sprites() {
 	if (_drawImagesDebug)
 		memset(_sdl_buf_attached, 0, _screenWidth * _screenHeight);
 
-	_videoVar8++;
+	_updateScreen++;
 	_vcPtr = vc_ptr_org;
 }
 
@@ -2917,7 +2915,7 @@ void SimonEngine::timer_vga_sprites_2() {
 		vsp++;
 	}
 
-	_videoVar8++;
+	_updateScreen++;
 	_vcPtr = vc_ptr_org;
 }
 
@@ -2959,10 +2957,10 @@ void SimonEngine::timer_proc1() {
 		_copyPartialMode = 0;
 	}
 
-	if (_videoVar8) {
+	if (_updateScreen) {
 		handle_mouse_moved();
 		dx_update_screen_and_palette();
-		_videoVar8 = false;
+		_updateScreen = false;
 	}
 
 	_lockWord &= ~2;
@@ -3551,7 +3549,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
 	char convertedString[320];
 	char *convertedString2 = convertedString;
-	int16 height, delay;
+	int16 height, talkDelay;
 	int stringLength = strlen(string);
 	int padding, lettersPerRow, lettersPerRowJustified;
 	const int textHeight = 10;
@@ -3560,17 +3558,17 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	lettersPerRow = width / 6;
 	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
-	delay = (stringLength + 3) / 3;
+	talkDelay = (stringLength + 3) / 3;
 	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
-		_variableArray[85] = _variableArray[141] * delay;
+		_variableArray[85] = _variableArray[141] * talkDelay;
 	} else {
 		if (_variableArray[86] == 0)
-			delay /= 2;
+			talkDelay /= 2;
 		if (_variableArray[86] == 2)
-			delay *= 2;
-		_variableArray[85] = delay * 5;
+			talkDelay *= 2;
+		_variableArray[85] = talkDelay * 5;
 	}
 
 	assert(stringLength > 0);

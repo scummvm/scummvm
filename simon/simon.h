@@ -190,7 +190,7 @@ protected:
 	bool _vgaRes328Loaded;
 	bool _hitarea_unk_3;
 	bool _mortalFlag;
-	byte _videoVar8;
+	byte _updateScreen;
 	bool _usePaletteDelay;
 	bool _syncFlag2;
 	bool _inCallBack;

@@ -1394,7 +1394,7 @@ void SimonEngine::vc35_clearWindow() {
 }
 
 void SimonEngine::vc36_setWindowImage() {
-	_videoVar8 = false;
+	_updateScreen = false;
 	uint vga_res = vc_read_next_word();
 	uint windowNum = vc_read_next_word();
 
