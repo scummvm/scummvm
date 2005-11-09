@@ -48,6 +48,7 @@ Notes
    requires zlib. Besides, uncompressed SAN files play fine.
 - I haven't had time to implement a virtual keyboard. If you don't have a USB
    keyboard, you can only enter '1's using the Select button.
+   (for copy protection screens as well as savegame names)
 - When you see '1's and '0's flying across your screen, it means ScummVM is
    accessing the Memory Card. Don't switch off or reset the console in that
    case, and don't remove the Memory Card either :P
