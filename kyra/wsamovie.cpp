@@ -134,6 +134,8 @@ void KyraEngine::wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageN
 	}
 		
 	if (wsa->currentFrame == wsa->numFrames) {
+		if (!(wsa->flags & WF_OFFSCREEN_DECODE) && (_features & GF_TALKIE))
+			_screen->clearPage(pageNum);
 		if (!(wsa->flags & WF_NO_FIRST_FRAME)) {
 			if (wsa->flags & WF_OFFSCREEN_DECODE) {
 				Screen::decodeFrameDelta(dst, wsa->deltaBuffer);
