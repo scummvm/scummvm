@@ -283,7 +283,7 @@ same directory as the game data which is stored in:
 
   Inherit the Earth.app/Contents/Resources
 
-For old Mac OS9 release you will need to compile files in MacBinary format,
+For old Mac OS9 release you will need to copy files in MacBinary format,
 i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
 
 3.7) Gobliiins notes
