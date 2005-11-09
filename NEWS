@@ -1,6 +1,19 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.8.1 (????-??-??)
+  General:
+    - Fixed crash when trying to apply aspect-ratio correction to games that
+      cannot use it.
+
+  Sword1:
+    - Looping sounds are now stopped before cutscenes are played.
+    - The save game dialog would erronously claim an I/O error occurred if the
+      savegame list had unused slots, and savegames were compressed.
+
+  Sword2:
+    - Fixes and cleanups to the end credits. The German credits work now.
+
 0.8.0 (2005-10-30)
  New Games:
    - Added SAGA engine (for the games "I Have No Mouth and I Must Scream"
