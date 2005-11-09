@@ -56,7 +56,7 @@ Contributors:
                                audio
        Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                                support
-       Paul Smedley          - OS/2 fixes
+       Paul Smedley          - OS/2 fixes and packaging
        Andre Souza           - SDL-based OpenGL renderer
        Tim ???               - Initial MI1 CD music support
 
@@ -67,10 +67,11 @@ Special thanks to:
        Sander Buskens  - For his work on the initial reversing of Monkey2
        Canadacow       - For the original MT-32 emulator
        Kevin Carnes    - For Scumm16, the basis of ScummVM's older gfx codecs
-       Jezar           - For his freeverb filter implementation
        Ivan Dubrov     - For contributing the initial version of the
                          Gobliiins engine
+       Jezar           - For his freeverb filter implementation
        Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
+       lloyd           - For deep tech details about C64 Zak & MM
        Jimmi Thogersen - For ScummRev, and much obscure code/documentation
        Tristan         - For additional work on the original MT-32 emulator
 
