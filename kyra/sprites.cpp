@@ -142,6 +142,7 @@ void Sprites::updateSceneAnims() {
 		while (READ_LE_UINT16(data) != 0xFF87 && !endLoop) {
 			uint16 rndNr;
 			uint16 anim;
+			uint16 sound;
 			assert((data - _anims[i].script) < _anims[i].length);
 			switch (READ_LE_UINT16(data)) {
 			case 0xFF88:
@@ -358,7 +359,7 @@ void Sprites::updateSceneAnims() {
 				data += 2;
 				debug(5, "func: Play (at random) a certain sound at a certain percentage of time");
 				debug(5, "Sound index %i", READ_LE_UINT16(data));
-				int sound = READ_LE_UINT16(data);
+				sound = READ_LE_UINT16(data);
 				data += 2;
 				debug(5, "Percentage %i", READ_LE_UINT16(data));
 				rndNr = _rnd.getRandomNumber(100);
