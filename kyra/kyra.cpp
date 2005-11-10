@@ -1409,7 +1409,7 @@ void KyraEngine::loadSceneMSC() {
 
 // maybe move this two functions to Screen
 void KyraEngine::blockInRegion(int x, int y, int width, int height) {
-	debug(9, "blockInRegion(%d, %d, %d, %d, %d)", x, y, width, height);
+	debug(9, "blockInRegion(%d, %d, %d, %d)", x, y, width, height);
 	assert(_screen->_shapePages[0]);
 	byte *toPtr = _screen->_shapePages[0] + (y * 320 + x);
 	for (int i = 0; i < height; ++i) {
@@ -1422,7 +1422,7 @@ void KyraEngine::blockInRegion(int x, int y, int width, int height) {
 }
 
 void KyraEngine::blockOutRegion(int x, int y, int width, int height) {
-	debug(9, "blockOutRegion(%d, %d, %d, %d, %d)", x, y, width, height);
+	debug(9, "blockOutRegion(%d, %d, %d, %d)", x, y, width, height);
 	assert(_screen->_shapePages[0]);
 	byte *toPtr = _screen->_shapePages[0] + (y * 320 + x);
 	for (int i = 0; i < height; ++i) {
@@ -1878,7 +1878,7 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 }
 
 #pragma mark -
-#pragma mark - Item handling
+#pragma mark - Text handling
 #pragma mark -
 
 void KyraEngine::setTalkCoords(uint16 y) {
@@ -2952,6 +2952,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 	int tempValue = 0;
 	int *pathTable1 = new int[0x7D0];
 	int *pathTable2 = new int[0x7D0];
+	assert(pathTable1 && pathTable2);
 	
 	while (true) {
 		int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
@@ -2961,10 +2962,8 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 			if (!lineIsPassable(curX, curY))
 				break;
 			moveTable[lastUsedEntry++] = newFacing;
-			x = curX;
-			y = curY;
 			break;
-		}		
+		}
 		
 		if (lineIsPassable(curX, curY)) {
 			if (lastUsedEntry == moveTableSize) {
@@ -3008,7 +3007,6 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 				}
 			}
 			
-			assert(pathTable1 && pathTable2);
 			temp = findSubPath(x, y, curX, curY, pathTable1, 1, 0x7D0);
 			tempValue = findSubPath(x, y, curX, curY, pathTable2, 0, 0x7D0);
 			if (curX == toX && curY == toY) {
@@ -3049,7 +3047,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 	}
 	delete [] pathTable1;
 	delete [] pathTable2;
-	moveTable[lastUsedEntry] = 8;	
+	moveTable[lastUsedEntry] = 8;
 	return getMoveTableSize(moveTable);
 }
 
@@ -3064,7 +3062,7 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 	static const int8 addPosTable2[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
 	
 	// debug specific
-	//++unkTable[start];	
+	//++unkTable[start];
 	//while (_screen->getPalette(0)[unkTable[start]] != 0x0F) {
 	//	++unkTable[start];
 	//}
@@ -3075,19 +3073,21 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 	int position = 0;
 	
 	while (position != end) {
-		changePosTowardsFacing(xpos1, ypos1, facingTable1[start<<3 + newFacing]);
+		int newFacing2 = newFacing;
 		while (true) {
+			changePosTowardsFacing(xpos1, ypos1, facingTable1[start*8 + newFacing2]);
 			if (!lineIsPassable(xpos1, ypos1)) {
-				if (facingTable1[start<<3 + newFacing] == newFacing) {
+				if (facingTable1[start*8 + newFacing2] == newFacing) {
 					return 0x7D00;
 				}
-				newFacing = facingTable1[start<<3 + newFacing];
+				newFacing2 = facingTable1[start*8 + newFacing2];
 				xpos1 = x;
-				ypos1 = x;
+				ypos1 = y;
 				continue;
 			}
 			break;
 		}
+		newFacing = newFacing2;
 		// debug drawing
 		//if (xpos1 >= 0 && ypos1 >= 0 && xpos1 < 320 && ypos1 < 200) {
 		//	_screen->setPagePixel(0, xpos1,ypos1, unkTable[start]);
@@ -3115,7 +3115,7 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 			break;
 		}
 		
-		newFacing = facingTable3[start<<3 + newFacing];
+		newFacing = facingTable3[start*8 + newFacing];
 	}
 	return 0x7D00;
 }
@@ -3193,7 +3193,7 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 	if (_pathfinderFlag2) {
 		if (x <= 8 || x >= 312)
 			return true;
-		if (y < _northExitHeight || y > 135)
+		if (y < (_northExitHeight & 0xFF) || y > 135)
 			return true;
 	}
 	
@@ -3204,7 +3204,7 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 	int ypos = 8;
 	if (_scaleMode) {
 		int scaling = (_scaleTable[y] >> 5) + 1;
-		if (8 < scaling)
+		if (8 >= scaling)
 			ypos = scaling;
 	}
 	
@@ -3219,12 +3219,11 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 		
 	if (xtemp > 319)
 		xtemp = 319;
-		
+
 	for (; xpos < xtemp; ++xpos) {
-		if (!(_screen->getShapeFlag1(xpos, y) & 0xFF))
+		if (!_screen->getShapeFlag1(xpos, y))
 			return false;
 	}
-	
 	return true;
 }
 
@@ -3469,7 +3468,7 @@ int KyraEngine::changeScene(int facing) {
 			
 			if (*ptr > _currentCharacter->x1 || _currentCharacter->y1 < *(ptr + 1) || _currentCharacter->x1 > *(ptr + 2) || _currentCharacter->y1 > *(ptr + 3)) {
 				ptr += 10;
-				continue;
+				break;
 			}
 			_brandonPosX = *(ptr + 6);
 			_brandonPosY = *(ptr + 7);
@@ -3504,7 +3503,7 @@ int KyraEngine::changeScene(int facing) {
 			animRefreshNPC(0);
 			updateAllObjectShapes();
 			enterNewScene(sceneId, facing, unk1, unk2, 0);
-			resetGameFlag(0xEF);
+			resetGameFlag(0xEE);
 			return 1;
 		}
 	}

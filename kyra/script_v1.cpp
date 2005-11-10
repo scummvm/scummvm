@@ -361,7 +361,7 @@ int KyraEngine::cmd_setSpecialExitList(ScriptState *script) {
 
 int KyraEngine::cmd_blockInWalkableRegion(ScriptState *script) {
 	debug(9, "cmd_blockInWalkableRegion(0x%X)", script);
-	blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
