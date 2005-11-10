@@ -649,7 +649,52 @@ int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
 }
 
 int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
-	warning("STUB: cmd_popBrandonIntoScene");
+	debug(9, "cmd_popBrandonIntoScene(0x%X)", script);
+	int changeScaleMode = stackPos(3);
+	int xpos = stackPos(0) & 0xFFFC;
+	int ypos = stackPos(1) & 0xFFFE;
+	int facing = stackPos(2);
+	_currentCharacter->x1 = _currentCharacter->x2 = xpos;
+	_currentCharacter->y1 = _currentCharacter->y2 = ypos;
+	_currentCharacter->facing = facing;
+	_currentCharacter->currentAnimFrame = 7;
+	int xOffset = _defaultShapeTable[0].xOffset;
+	int yOffset = _defaultShapeTable[0].yOffset;
+	int width = _defaultShapeTable[0].w << 3;
+	int height = _defaultShapeTable[0].h;
+	AnimObject *curAnim = _charactersAnimState;
+	
+	if (changeScaleMode) {
+		curAnim->x1 = _currentCharacter->x1;
+		curAnim->y1 = _currentCharacter->y1;
+		_brandonScaleY = _scaleTable[_currentCharacter->y1];
+		_brandonScaleX = _brandonScaleY;
+		
+		int animWidth = fetchAnimWidth(curAnim->sceneAnimPtr, _brandonScaleX) >> 1;
+		int animHeight = fetchAnimHeight(curAnim->sceneAnimPtr, _brandonScaleY);
+		
+		animWidth = (xOffset * animWidth) /  width;
+		animHeight = (yOffset * animHeight) / height;
+		
+		curAnim->x2 = curAnim->x1 += animWidth;
+		curAnim->y2 = curAnim->y1 += animHeight;
+	} else {
+		curAnim->x2 = curAnim->x1 = _currentCharacter->x1 + xOffset;
+		curAnim->y2 = curAnim->y1 = _currentCharacter->y1 + yOffset;
+	}
+	
+	int scaleModeBackup = _scaleMode;
+	if (changeScaleMode) {
+		_scaleMode = 1;
+	}
+	
+	animRefreshNPC(0);
+	preserveAllBackgrounds();
+	prepDrawAllObjects();
+	copyChangedObjectsForward(0);
+	
+	_scaleMode = scaleModeBackup;
+
 	return 0;
 }
 
@@ -702,7 +747,21 @@ int KyraEngine::cmd_getCharacterY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_changeCharactersFacing(ScriptState *script) {
-	warning("STUB: cmd_changeCharactersFacing");
+	debug(9, "cmd_changeCharactersFacing(0x%X)", script);
+	int character = stackPos(0);
+	int facing = stackPos(1);
+	int newAnimFrame = stackPos(2);
+	
+	restoreAllObjectBackgrounds();
+	if (newAnimFrame != -1) {
+		_characterList[character].currentAnimFrame = newAnimFrame;
+	}
+	_characterList[character].facing = facing;
+	animRefreshNPC(character);
+	preserveAllBackgrounds();
+	prepDrawAllObjects();
+	copyChangedObjectsForward(0);
+	
 	return 0;
 }
 
@@ -739,7 +798,6 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 
 int KyraEngine::cmd_drawCharacterStanding(ScriptState *script) {
 	debug(9, "cmd_drawCharacterStanding(0x%X)", script);
-	// XXX
 	int character = stackPos(0);
 	int animFrame = stackPos(1);
 	int newFacing = stackPos(2);

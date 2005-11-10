@@ -513,8 +513,6 @@ void KyraEngine::delay(uint32 amount) {
 void KyraEngine::mainLoop() {
 	debug(9, "KyraEngine::mainLoop()");
 
-	//enterNewScene(0x0, _currentCharacter->facing, 0, 0, 1);
-
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
 
@@ -2495,7 +2493,7 @@ void KyraEngine::preserveAllBackgrounds() {
 
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
-		if (!curObject->active && curObject->flags) {
+		if (curObject->active && !curObject->unk1) {
 			preserveOrRestoreBackground(curObject, false);
 			curObject->bkgdChangeFlag = 0;
 		}
@@ -2617,9 +2615,102 @@ void KyraEngine::prepDrawAllObjects() {
 			}
 			
 			// talking head functionallity
-			if (!true) {
-				// XXX
+			if (_charSayUnk1 != -1) {
+				const int16 baseAnimFrameTable1[] = { 0x11, 0x35, 0x59, 0x00, 0x00, 0x00 };
+				const int16 baseAnimFrameTable2[] = { 0x15, 0x39, 0x5D, 0x00, 0x00, 0x00 };
+				const int8 xOffsetTable1[] = { 2, 4, 0, 5, 2, 0, 0, 0 };
+				const int8 xOffsetTable2[] = { 6, 4, 8, 3, 6, 0, 0, 0 };
+				const int8 yOffsetTable1[] = { 0, 8, 1, 1, 0, 0, 0, 0 };
+				const int8 yOffsetTable2[] = { 0, 8, 1, 1, 0, 0, 0, 0 };
+				if (curObject->index == 0 || curObject->index <= 4) {
+					int shapesIndex = 0;
+					if (curObject->index == _charSayUnk3) {
+						shapesIndex = _charSayUnk4 + baseAnimFrameTable1[curObject->index];
+					} else {
+						shapesIndex = baseAnimFrameTable2[curObject->index];
+						int temp2 = 0;
+						if (curObject->index == 2) {
+							if (_characterList[2].sceneId == 0x4D || _characterList[2].sceneId == 0x56) {
+								temp2 = 1;
+							} else {
+								temp2 = 0;
+							}
+						} else {
+							temp2 = 1;
+						}
+						
+						if (!temp2) {
+							shapesIndex = -1;
+						}
+					}
+						
+					xpos = curObject->x1;
+					ypos = curObject->y1;
+						
+					int tempX = 0, tempY = 0;
+					if (curObject->flags & 0x1) {
+						tempX = (xOffsetTable1[curObject->index] * _brandonScaleX) >> 8;
+						tempY = yOffsetTable1[curObject->index];
+					} else {
+						tempX = (xOffsetTable2[curObject->index] * _brandonScaleX) >> 8;
+						tempY = yOffsetTable2[curObject->index];
+					}
+					tempY = (tempY * _brandonScaleY) >> 8;
+					xpos += tempX;
+					ypos += tempY;
+					
+					if (_scaleMode && _brandonScaleX != 256) {
+						++xpos;
+					}
+					
+					if (curObject->index == 0) {
+						if (!(_brandonStatusBit & 2)) {
+							flagUnk3 = 0x100;
+							if ((flagUnk1 & 0x200) || (flagUnk2 & 0x4000)) {
+								flagUnk3 = 0;
+							}
+							
+							int tempFlags = 0;
+							if (flagUnk3 & 0x100) {
+								if (curObject->flags & 1) {
+									tempFlags = 1;
+								}
+								tempFlags |= 0x800 | flagUnk1 | 0x100;
+							}
+							
+							if (!(flagUnk3 & 0x100) && (flagUnk2 & 0x4000)) {
+								tempFlags = 0;
+								if (curObject->flags & 1) {
+									tempFlags = 1;
+								}
+								tempFlags |= 0x900 | flagUnk1 | 0x4000;
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, 0/*XXX*/, temp, _brandonScaleX, _brandonScaleY);
+							} else {
+								if (!(flagUnk2 & 0x4000)) {
+									tempFlags = 0;
+									if (curObject->flags & 1) {
+										tempFlags = 1;
+									}
+									tempFlags |= 0x900 | flagUnk1;
+								}
+								
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, temp, _brandonScaleX, _brandonScaleY);
+							}
+						}
+					} else {
+						if (shapesIndex != -1) {
+							int tempFlags = 0;
+							if (curObject->flags & 1) {
+								tempFlags = 1;
+							}
+							_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 0x800, temp); 							
+						}
+					}
+				}
 			}
+			
+			xpos = curObject->x1;
+			ypos = curObject->y1;
 			
 			curObject->flags |= 0x800;
 			if (curObject->index == 0) {

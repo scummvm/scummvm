@@ -545,10 +545,10 @@ protected:
 	int _lastFindWayRet;
 	int *_movFacingTable;
 	
-	int8 _charSayUnk1; // this is byte_2EE24
+	int8 _charSayUnk1;
 	int8 _charSayUnk2;
-	int8 _charSayUnk3; // this is byte_2EE25
-	int8 _charSayUnk4; // this is byte_2EE26
+	int8 _charSayUnk3;
+	int8 _charSayUnk4;
 
 	uint8 _configTalkspeed;
 	AnimObject *_objectQueue;
