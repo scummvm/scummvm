@@ -534,7 +534,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
 	
-	if (height <= 0)
+	if (height <= 0 || width <= 0)
 		return;
 	
 	// Compute screen etc. buffer pointers
