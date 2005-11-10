@@ -1664,7 +1664,7 @@ void SimonEngine::vc58() {
 	_vgaCurFileId = vc_read_next_word();
 	_vgaCurSpriteId = vc_read_next_word();
 
-	tmp = TO_BE_16(vc_read_next_word());
+	tmp = to16Wrapper(vc_read_next_word());
 
 	vc_ptr_org = _vcPtr;
 	_vcPtr = (byte *)&tmp;

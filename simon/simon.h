@@ -385,6 +385,7 @@ public:
 	virtual ~SimonEngine();
 
 protected:
+	uint16 to16Wrapper(uint value);
 	uint16 readUint16Wrapper(const void *src);
 
 	int allocGamePcVars(Common::File *in);

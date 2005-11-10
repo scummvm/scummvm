@@ -1012,8 +1012,8 @@ int SimonEngine::runScript() {
 
 		case 182:{									/* load beard */
 				if (_game == GAME_FEEBLEFILES) {
-					// Load Smacker filename
-					debug(1,"Load Smacker: %s", getStringPtrByID(getNextStringID()));
+					// Load video file
+					debug(1,"Load video file: %s", getStringPtrByID(getNextStringID()));
 				} else if (_game & GF_SIMON2) {
 					goto invalid_opcode;
 				} else {
@@ -1024,8 +1024,8 @@ int SimonEngine::runScript() {
 
 		case 183:{									/* unload beard */
 				if (_game == GAME_FEEBLEFILES) {
-					// Play Smacker
-					debug(1, "Play Smacker");
+					// Play video
+					debug(1, "Play video");
 				} else if (_game & GF_SIMON2) {
 					goto invalid_opcode;
 				} else {
@@ -1039,10 +1039,11 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 185:{									/* midi sfx file number */
+		case 185:{									/* load sound files */
 				if (_game & GF_SIMON2)
 					goto invalid_opcode;
-					_soundFileId = getVarOrWord();
+
+				_soundFileId = getVarOrWord();
 				if (_game == GAME_SIMON1CD32) {
 					char buf[10];
 					sprintf(buf, "%d%s", _soundFileId, "Effects");
@@ -1621,7 +1622,7 @@ void SimonEngine::o_play_music_resource() {
 }
 
 void SimonEngine::o_unk_120(uint a) {
-	uint16 id = TO_BE_16(a);
+	uint16 id = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&id;
 	vc15_wakeup_id();
@@ -1647,7 +1648,7 @@ void SimonEngine::o_unk_103() {
 }
 
 void SimonEngine::o_kill_sprite_simon1(uint a) {
-	uint16 b = TO_BE_16(a);
+	uint16 b = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&b;
 	vc60_killSprite();
@@ -1657,8 +1658,8 @@ void SimonEngine::o_kill_sprite_simon1(uint a) {
 void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
 	uint16 items[2];
 
-	items[0] = TO_BE_16(a);
-	items[1] = TO_BE_16(b);
+	items[0] = to16Wrapper(a);
+	items[1] = to16Wrapper(b);
 
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&items;

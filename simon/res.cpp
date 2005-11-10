@@ -113,6 +113,13 @@ static const char *const opcode_arg_table_feeblefiles[256] = {
 	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
 };
 
+uint16 SimonEngine::to16Wrapper(uint value) {
+	if (_game == GAME_FEEBLEFILES)
+		return TO_LE_16(value);
+	else
+		return TO_BE_16(value);
+}
+
 uint16 SimonEngine::readUint16Wrapper(const void *src) {
 	if (_game == GAME_FEEBLEFILES)
 		return READ_LE_UINT16(src);
