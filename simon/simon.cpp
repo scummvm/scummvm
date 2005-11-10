@@ -506,7 +506,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_runScriptReturn1 = 0;
 	_skipVgaWait = 0;
 	_noParentNotify = 0;
-	_vgaRes328Loaded = 0;
+	_beardLoaded = 0;
 	_hitarea_unk_3 = 0;
 	_mortalFlag = 0;
 	_updateScreen = 0;
@@ -1051,11 +1051,11 @@ Child *SimonEngine::findChildOfType(Item *i, uint type) {
 	return NULL;
 }
 
-bool SimonEngine::hasChildOfType1(Item *item) {
+bool SimonEngine::isRoom(Item *item) {
 	return findChildOfType(item, 1) != NULL;
 }
 
-bool SimonEngine::hasChildOfType2(Item *item) {
+bool SimonEngine::isObject(Item *item) {
 	return findChildOfType(item, 2) != NULL;
 }
 

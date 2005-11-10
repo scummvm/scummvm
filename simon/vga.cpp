@@ -223,20 +223,20 @@ void SimonEngine::vc_skip_next_instruction() {
 		fprintf(_dumpFile, "; skipped\n");
 }
 
-void SimonEngine::o_read_vgares_23() {
+void SimonEngine::o_unloadBeard() {
 	// Simon1 Only
-	if (_vgaRes328Loaded == true) {
-		_vgaRes328Loaded = false;
+	if (_beardLoaded == true) {
+		_beardLoaded = false;
 		_lockWord |= 0x8000;
 		read_vga_from_datfile_1(23);
 		_lockWord &= ~0x8000;
 	}
 }
 
-void SimonEngine::o_read_vgares_328() {
+void SimonEngine::o_loadBeard() {
 	// Simon1 Only
-	if (_vgaRes328Loaded == false) {
-		_vgaRes328Loaded = true;
+	if (_beardLoaded == false) {
+		_beardLoaded = true;
 		_lockWord |= 0x8000;
 		read_vga_from_datfile_1(328);
 		_lockWord &= ~0x8000;

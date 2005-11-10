@@ -37,7 +37,9 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 	opcode = *p++;
 	if (opcode == 255)
 		return NULL;
-	if (_game & GF_SIMON2 && _game & GF_TALKIE) {
+	if (_game == GAME_FEEBLEFILES) {
+		st = s = feeblefiles_opcode_name_table[opcode];
+	} else if (_game & GF_SIMON2 && _game & GF_TALKIE) {
 		st = s = simon2talkie_opcode_name_table[opcode];
 	} else if (_game & GF_TALKIE) {
 		st = s = simon1talkie_opcode_name_table[opcode];

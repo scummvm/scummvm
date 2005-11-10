@@ -187,7 +187,7 @@ protected:
 	bool _runScriptReturn1;
 	bool _skipVgaWait;
 	bool _noParentNotify;
-	bool _vgaRes328Loaded;
+	bool _beardLoaded;
 	bool _hitarea_unk_3;
 	bool _mortalFlag;
 	byte _updateScreen;
@@ -463,8 +463,8 @@ protected:
 	void addTimeEvent(uint timeout, uint subroutine_id);
 	void delTimeEvent(TimeEvent *te);
 
-	bool hasChildOfType1(Item *item);
-	bool hasChildOfType2(Item *item);
+	bool isRoom(Item *item);
+	bool isObject(Item *item);
 
 	void itemChildrenChanged(Item *item);
 	void unlinkItem(Item *item);
@@ -513,8 +513,8 @@ protected:
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
 	void o_force_unlock();
 	void o_force_lock();
-	void o_read_vgares_328();
-	void o_read_vgares_23();
+	void o_loadBeard();
+	void o_unloadBeard();
 	void o_clear_vgapointer_entry(uint a);
 	void o_unk_186();
 	void o_fade_to_black();

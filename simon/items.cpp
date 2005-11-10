@@ -149,13 +149,13 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 25:{									/* has child of type 1 */
-				condition = hasChildOfType1(getNextItemPtr());
+		case 25:{									/* is room */
+				condition = isRoom(getNextItemPtr());
 			}
 			break;
 
-		case 26:{									/* has child of type 2 */
-				condition = hasChildOfType2(getNextItemPtr());
+		case 26:{									/* is object */
+				condition = isObject(getNextItemPtr());
 			}
 			break;
 
@@ -443,7 +443,7 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 82:{									/* dummy opcode */
+		case 82:{									/* debug opcode */
 				getVarOrByte();
 			}
 			break;
@@ -459,12 +459,12 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 88:{									/* or_lockWord */
+		case 88:{									/* stop animation */
 				_lockWord |= 0x10;
 			}
 			break;
 
-		case 89:{									/* and lock word */
+		case 89:{									/* restart animation */
 				_lockWord &= ~0x10;
 			}
 			break;
@@ -1010,26 +1010,26 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 182:{									/* read vgares 328 */
+		case 182:{									/* load beard */
 				if (_game == GAME_FEEBLEFILES) {
 					// Load Smacker filename
 					debug(1,"Load Smacker: %s", getStringPtrByID(getNextStringID()));
 				} else if (_game & GF_SIMON2) {
 					goto invalid_opcode;
 				} else {
-					o_read_vgares_328();
+					o_loadBeard();
 				}
 			}
 			break;
 
-		case 183:{									/* read vgares 23 */
+		case 183:{									/* unload beard */
 				if (_game == GAME_FEEBLEFILES) {
 					// Play Smacker
 					debug(1, "Play Smacker");
 				} else if (_game & GF_SIMON2) {
 					goto invalid_opcode;
 				} else {
-					o_read_vgares_23();
+					o_unloadBeard();
 				}
 			}
 			break;
