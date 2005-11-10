@@ -411,7 +411,7 @@ int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) 
 	}
 
 	// SoundFont
-	_soundFontButton = addButton(boss, x, yoffset, "SoundFont: ", kChooseSoundFontCmd, 0, ws);
+	_soundFontButton = addButton(boss, x, yoffset, "SoundFont:", kChooseSoundFontCmd, 0, ws);
 	_soundFont = new StaticTextWidget(boss, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft, ws);
 	yoffset += buttonHeight + 2 * spacing;
 
