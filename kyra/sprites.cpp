@@ -46,82 +46,99 @@ Sprites::Sprites(KyraEngine *engine, OSystem *system) {
 Sprites::~Sprites() {
 	delete[] _dat;
 	freeSceneShapes();
+	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
+		if (_anims[i].background)
+			free(_anims[i].background);
+	}
 }
 
-uint8 *Sprites::getSceneShape(uint8 sceneShapeID) {
-	assert( sceneShapeID < ARRAYSIZE(_sceneShapes));
-	return _sceneShapes[sceneShapeID];
-}
-
-void Sprites::drawSprites(uint8 srcPage, uint8 dstPage) {
-	int flags;
+void Sprites::setupSceneAnims() {
+	debug(9, "Sprites::setupSceneAnims()");
+	uint8 *data;
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
-		if (_anims[i].script == 0 || !_anims[i].play)
-			break;
-		if (_anims[i].sprite >= 0) {
-			assert( _anims[i].sprite < ARRAYSIZE(_sceneShapes));
-			uint8 *sprite = _sceneShapes[_anims[i].sprite];
+		if (_anims[i].background) {
+			free(_anims[i].background);
+			_anims[i].background = 0;
+		}
 
-			//debug(1, "Drawing from X %i, Y %i, to X %i, Y %i, width %i, height %i, srcPage %i, dstPage %i",
-			//	sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage);
-			flags = Screen::CR_CLIPPED;
-			if (_anims[i].flipX)
-				flags |= Screen::CR_X_FLIPPED;
+		if (_anims[i].script != 0) {
+			data = _anims[i].script;
 
-			//_screen->copyRegion(sprite.x, sprite.y, _anims[i].x, _anims[i].y, sprite.width, sprite.height, srcPage, dstPage, flags);
-			_screen->drawShape(0, sprite, _anims[i].x, _anims[i].y, 0, 0, 0);
+			assert( READ_LE_UINT16(data) == 0xFF86 );
+			data += 4;
+
+			//sceneUnk16[i] = READ_LE_UINT16(data);
+			data += 4;
+			_anims[i].unk2 = READ_LE_UINT16(data);
+			data += 4;
+
+			if (_engine->_northExitHeight > READ_LE_UINT16(data))
+				_anims[i].drawY = _engine->_northExitHeight;
+			else
+				_anims[i].drawY = READ_LE_UINT16(data);
+			data += 4;
+
+			//sceneUnk2[i] = READ_LE_UINT16(data);
+			data += 4;
+			
+			_anims[i].x = READ_LE_UINT16(data);
+			data += 4;
+			_anims[i].y = READ_LE_UINT16(data);
+			data += 4;
+			_anims[i].width = *(data);
+			data += 4;
+			_anims[i].height = *(data);
+			data += 4;
+			_anims[i].sprite = READ_LE_UINT16(data);
+			data += 4;
+			_anims[i].flipX = READ_LE_UINT16(data);
+			data += 4;
+			_anims[i].width2 = *(data);
+			data += 4;
+			_anims[i].height2 = *(data);
+			data += 4;
+			_anims[i].unk1 = READ_LE_UINT16(data);
+			data += 4;
+			_anims[i].play = READ_LE_UINT16(data);
+			data += 2;
+
+			_anims[i].script = data;
+
+			int bkgdWidth = _anims[i].width;
+			int bkgdHeight = _anims[i].height;
+
+			if (_anims[i].width2)
+				bkgdWidth += (_anims[i].width2 >> 3) + 1;
+
+			if (_anims[i].height2)
+				bkgdHeight += _anims[i].height2;
+
+			_anims[i].background = (uint8 *)malloc(_screen->getRectSize(bkgdWidth + 1, bkgdHeight));
+			//_anims[i].background = (uint8 *)malloc(100*100);
+			assert(_anims[i].background);
 		}
 	}
 }
 
-void Sprites::doAnims() {
-	debug(9, "Sprites::doAnims()");
+void Sprites::updateSceneAnims() {
+	debug(9, "Sprites::updateSceneAnims()");
 	uint32 currTime = _system->getMillis();
+	uint8 *data;
+	bool endLoop;
+
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].script == 0 || !_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
 			continue;
 
-		uint8 *data;
-
 		if (_anims[i].reentry == 0) {
 			data = _anims[i].script;
-
-			//debug(1, "---Start of anim script---");
-			assert( READ_LE_UINT16(data) == 0xFF86 );
-			data += 2;
-
-			//debug(1, "Default X of sprite: %i", READ_LE_UINT16(data + 0x12) );
-			_anims[i].x = READ_LE_UINT16(data + 0x12);
-			//debug(1, "Default Y of sprite: %i", READ_LE_UINT16(data + 0x16) );
-			_anims[i].y = READ_LE_UINT16(data + 0x16);
-
-			//debug(1, "Anim %i flags: 22h: %i, 1ah: %i", i, READ_LE_UINT16(data + 0x22), READ_LE_UINT16(data + 0x1a));
-
-			/*
-			debug(1, "Anim %i data: 0h: %i, 2h: %i,4h: %i,6h: %i,8h: %i,ah: %i,ch: %i", i, READ_LE_UINT16(data + 0x0),
-			READ_LE_UINT16(data + 0x2), READ_LE_UINT16(data + 0x4),READ_LE_UINT16(data + 0x6),READ_LE_UINT16(data + 0x8),
-			READ_LE_UINT16(data + 0xa),READ_LE_UINT16(data + 0xc));
-
-			debug(1, "Anim %i data: eh: %i, 10h: %i,12h: %i,14h: %i,16h: %i,18h: %i,1ah: %i", i, READ_LE_UINT16(data + 0xe),
-			READ_LE_UINT16(data + 0x10), READ_LE_UINT16(data + 0x12),READ_LE_UINT16(data + 0x14),READ_LE_UINT16(data + 0x16),
-			READ_LE_UINT16(data + 0x18),READ_LE_UINT16(data + 0x1a));
-
-			debug(1, "Anim %i data: 1ch: %i, 1fh: %i,22h: %i,24h: %i,26h: %i,28h: %i,2ah: %i", i, READ_LE_UINT16(data + 0x1c),
-			READ_LE_UINT16(data + 0x1f), READ_LE_UINT16(data + 0x22),READ_LE_UINT16(data + 0x24),READ_LE_UINT16(data + 0x26),
-			READ_LE_UINT16(data + 0x28),READ_LE_UINT16(data + 0x2a));
-			*/
-
-
-			// TODO: Find out what the rest of this data (next 38h bytes) does.
-			data += 0x38;
 		} else {
 			data = _anims[i].reentry;
 			_anims[i].reentry = 0;
 		}
 
-		bool endLoop = false;
-		
+		endLoop = false;
 		while (READ_LE_UINT16(data) != 0xFF87 && !endLoop) {
 			uint16 rndNr;
 			uint16 anim;
@@ -142,6 +159,7 @@ void Sprites::doAnims() {
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
 				_anims[i].flipX = false;
+				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1);
 				break;
 			case 0xFF8D:
 				data += 2;
@@ -158,6 +176,7 @@ void Sprites::doAnims() {
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
 				_anims[i].flipX = true;
+				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1);
 				break;
 			case 0xFF8A:
 				data += 2;
@@ -174,7 +193,7 @@ void Sprites::doAnims() {
 				data += 2;
 				debug(5, "Maximum time %i", READ_LE_UINT16(data));
 				data += 2;
-				_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay; 								
+				_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay;
 				break;
 			case 0xFF8C:
 				data += 2;
@@ -185,11 +204,13 @@ void Sprites::doAnims() {
 				break;
 			case 0xFF99:
 				data += 2;
-				debug(1, "TODO func: Set value of animation property 32h to 1");
+				debug(1, "func: Set value of unknown animation property to 1");
+				_anims[i].unk1 = 1;
 				break;
 			case 0xFF9A:
 				data += 2;
-				debug(1, "TODO func: Set value of animation property 32h to 0");
+				debug(1, "func: Set value of unknown animation property to 0");
+				_anims[i].unk1 = 0;
 				break;		
 			case 0xFF97:
 				data += 2;
@@ -234,6 +255,7 @@ void Sprites::doAnims() {
 				_anims[i].sprite = READ_LE_UINT16(data);
 				_anims[i].flipX = false;
 				data += 2;
+				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1);
 				break;
 			case 0xFF91:
 				data += 2;
@@ -242,6 +264,7 @@ void Sprites::doAnims() {
 				_anims[i].sprite = READ_LE_UINT16(data);
 				_anims[i].flipX = true;
 				data += 2;
+				refreshSceneAnimObject(i, _anims[i].sprite, _anims[i].x, _anims[i].y, _anims[i].flipX, _anims[i].unk1);
 				break;
 			case 0xFF92:
 				data += 2;
@@ -279,8 +302,6 @@ void Sprites::doAnims() {
 				data += 2;
 				_anims[anim].play = false;
 				_anims[anim].sprite = -1;
-				//debug(1, "Arg2 %i", READ_LE_UINT16(data));
-				//data += 2;
 				break;
 /*			case 0xFF97:
 				data += 2;
@@ -288,20 +309,23 @@ void Sprites::doAnims() {
 				break;*/
 			case 0xFFAD:
 				data += 2;
-				debug(1, "TODO func: Set Brandon's X coordinate");
-				debug(1, "X %i", READ_LE_UINT16(data));
+				debug(5, "func: Set Brandon's X coordinate");
+				debug(5, "X %i", READ_LE_UINT16(data));
+				_engine->_currentCharacter->x1 = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAE:
 				data += 2;
-				debug(1, "TODO func: Set Brandon's Y coordinate");
-				debug(1, "Y %i", READ_LE_UINT16(data));
+				debug(5, "func: Set Brandon's Y coordinate");
+				debug(5, "Y %i", READ_LE_UINT16(data));
+				_engine->_currentCharacter->y1 = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAF:
 				data += 2;
-				debug(1, "TODO func: Set Brandon's X sprite");
-				debug(1, "Sprite %i", READ_LE_UINT16(data));
+				debug(5, "func: Set Brandon's sprite");
+				debug(5, "Sprite %i", READ_LE_UINT16(data));
+				_engine->_currentCharacter->currentAnimFrame = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAA:
@@ -310,28 +334,36 @@ void Sprites::doAnims() {
 				break;
 			case 0xFFAB:
 				data += 2;
-				debug(1, "TODO func: Update Brandon's sprite");
+				debug(5, "func: Update Brandon's sprite");
+				_engine->animRefreshNPC(0);
+				_engine->flagAllObjectsForRefresh();
+				_engine->updateAllObjectShapes();
 				break;
 			case 0xFFB0:
 				data += 2;
-				debug(1, "TODO func: Play sound");
-				debug(1, "Sound index %i", READ_LE_UINT16(data));
+				debug(5, "func: Play sound");
+				debug(5, "Sound index %i", READ_LE_UINT16(data));
+				_engine->snd_playSoundEffect(READ_LE_UINT16(data));
 				data += 2;
 				break;
 			case 0xFFB1:
 				data += 2;
-				debug(1, "TODO func: Set unknown global bit");
+				debug(1, "TODO func: Set animator beacon flag");
 				break;
 			case 0xFFB2:
 				data += 2;
-				debug(1, "TODO func: Reset unknown global bit");
+				debug(1, "TODO func: Reset animator beacon flag");
 				break;
 			case 0xFFB4:
 				data += 2;
-				debug(1, "TODO func: Play (at random) a certain sound at a certain percentage of time");
-				debug(1, "Sound index %i", READ_LE_UINT16(data));
+				debug(5, "func: Play (at random) a certain sound at a certain percentage of time");
+				debug(5, "Sound index %i", READ_LE_UINT16(data));
+				int sound = READ_LE_UINT16(data);
 				data += 2;
-				debug(1, "Percentage %i", READ_LE_UINT16(data));
+				debug(5, "Percentage %i", READ_LE_UINT16(data));
+				rndNr = _rnd.getRandomNumber(100);
+				if (rndNr <= READ_LE_UINT16(data))
+					_engine->snd_playSoundEffect(sound);
 				data += 2;
 				break;
 			case 0xFFA7:
@@ -341,7 +373,7 @@ void Sprites::doAnims() {
 				data += 2;
 				break;
 			default:
-				debug(1, "Unsupported anim command %X", READ_LE_UINT16(data));
+				debug(1, "Unsupported anim command %X in script %i", READ_LE_UINT16(data), i);
 				//endLoop = true;
 				data += 1;
 				break;
@@ -350,21 +382,19 @@ void Sprites::doAnims() {
 
 		if (READ_LE_UINT16(data) == 0xFF87)
 			_anims[i].play = false;
-
-		//debug(1, "---End of anim script---");
 	}
 }
 
-void Sprites::loadDAT(const char *filename) {
+void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 	debug(9, "Sprites::loadDat('%s')", filename);
 	uint32 fileSize;
-	uint8 spritesLoaded = 0;
 
 	delete[] _dat;
+	_spriteDefStart = 0;
 
 	_dat = _res->fileData(filename, &fileSize);
 
-	memset(_anims, 0, sizeof(Anim) * MAX_NUM_ANIMS);
+	memset(_anims, 0, sizeof(_anims));
 	uint8 nextAnim = 0;
 
 	assert(fileSize > 0x6D);
@@ -379,8 +409,6 @@ void Sprites::loadDAT(const char *filename) {
 
 	uint16 length = READ_LE_UINT16(data);
 	data += 2;
-
-	//debug(1, "DAT body length: %i, filesize %i, current spot %i", length, fileSize, data - _dat);
 
 	if (length > 2) {
 		assert( length < fileSize);
@@ -440,13 +468,7 @@ void Sprites::loadDAT(const char *filename) {
 		data += 2;
 	}
 
-	debug(1, "Room DAT file loaded. Found %i sprite and %i animation scripts.", spritesLoaded, nextAnim);
-	
-	//debug(1, "Remainder after script: %i", fileSize - (data - _dat));
 	assert(fileSize - (data - _dat) == 0xC);
-
-	//TODO: Read in character entry coords here
-	SceneExits &exits = _engine->sceneExits();
 
 	exits.northXPos = READ_LE_UINT16(data) & 0xFFFC; data += 2;
 	exits.northYPos = *data++ & 0xFFFE;
@@ -459,9 +481,11 @@ void Sprites::loadDAT(const char *filename) {
 }
 
 void Sprites::freeSceneShapes() {
-	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++ )
+	debug(9, "Sprites::freeSceneShapes()");
+	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++ ) {
 		free(_sceneShapes[i]);
-	
+		_sceneShapes[i] = 0;
+	}
 }
 
 void Sprites::loadSceneShapes() {
@@ -469,10 +493,14 @@ void Sprites::loadSceneShapes() {
 	uint8 *data = _spriteDefStart;
 	int spriteNum, x, y, width, height;
 
-	assert(_spriteDefStart);
-
 	freeSceneShapes();
 	memset( _sceneShapes, 0, sizeof(_sceneShapes));
+
+	if (_spriteDefStart == 0)
+		return;
+
+	int bakPage = _screen->_curPage;
+	_screen->_curPage = 3;
 
 	while (READ_LE_UINT16(data) != 0xFF85) {
 		spriteNum = READ_LE_UINT16(data);
@@ -486,8 +514,31 @@ void Sprites::loadSceneShapes() {
 		data += 2;
 		height = READ_LE_UINT16(data);
 		data += 2;
-		_sceneShapes[spriteNum] = _screen->encodeShape(x, y, width, height, 0);
+		_sceneShapes[spriteNum] = _screen->encodeShape(x, y, width, height, 2);
+		debug(9, "Sprite %i is at (%i, %i), width %i, height %i", spriteNum, x, y, width, height);
 	}
+	_screen->_curPage = bakPage;
+}
+
+void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag) {
+	debug(9, "Sprites::refreshSceneAnimObject(%i, %i, %i, %i, %i, %i", animNum, shapeNum, x, y, flipX, unkFlag);
+	_animObjects[animNum].refreshFlag = 1;
+	_animObjects[animNum].bkgdChangeFlag = 1;
+
+	if (unkFlag)
+		_animObjects[animNum].flags |= 0x0200;
+	else
+		_animObjects[animNum].flags &= 0xFD00;
+
+	if (flipX)
+		_animObjects[animNum].flags |= 1;
+	else
+		_animObjects[animNum].flags &= 0xFE;
+
+	_animObjects[animNum].sceneAnimPtr = _sceneShapes[shapeNum];
+	_animObjects[animNum].animFrameNumber = -1;
+	_animObjects[animNum].x1 = x;
+	_animObjects[animNum].y1 = y;
 }
 
 } // end of namespace Kyra

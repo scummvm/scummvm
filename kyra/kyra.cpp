@@ -285,7 +285,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_animStates = new AnimObject[31];
 	assert(_animStates);
 	_charactersAnimState = &_animStates[0];
-	_animObjects =  &_animStates[5];
+	_sprites->_animObjects =  &_animStates[5];
 	_animItems = &_animStates[16];
 	
 	_scriptInterpreter = new ScriptHelper(this);
@@ -308,6 +308,8 @@ int KyraEngine::init(GameDetector &detector) {
 	memset(_shapes, 0, sizeof(_shapes));
 	memset(_wsaObjects, 0, sizeof(_wsaObjects));
 
+	memset(_flagsTable, 0, sizeof(_flagsTable));
+
 	_fastMode = false;
 	_talkCoords.y = 0x88;
 	_talkCoords.x = 0;
@@ -315,9 +317,9 @@ int KyraEngine::init(GameDetector &detector) {
 	_talkMessageY = 0xC;
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
-	
+	_charSayUnk1 = -1;
+	_charSayUnk3 = -1;
 	_mouseX = _mouseY = -1;
-	_needMouseUpdate = true;
 	
 	_brandonPosX = _brandonPosY = -1;
 	_brandonDrawFrame = 113;
@@ -326,12 +328,14 @@ int KyraEngine::init(GameDetector &detector) {
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
 	_exitListPtr = 0;
 	_pathfinderFlag = 0;
-	
+	_lastFindWayRet = 0;
 	_sceneChangeState = _loopFlag2 = 0;
 	
 	_movFacingTable = new int[150];
 	assert(_movFacingTable);
 	_movFacingTable[0] = 8;
+
+	_configTalkspeed = 1;
 
 	return 0;
 }
@@ -368,6 +372,7 @@ KyraEngine::~KyraEngine() {
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i) {
 		free(_sceneAnimTable[i]);
 	}
+
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
@@ -390,11 +395,15 @@ int KyraEngine::go() {
 	if (_features & GF_DEMO) {
 		seq_demo();
 	} else {
+		setGameFlag(0xF3);
+		setGameFlag(0xFD);
+		setGameFlag(0xEF);
 		seq_intro();
 		startup();
+		resetGameFlag(0xEF);
 		mainLoop();
 	}
-	res_unloadResources();
+	quitGame();
 	return 0;
 }
 
@@ -445,9 +454,8 @@ void KyraEngine::startup() {
 	// XXX
 	initAnimStateList();
 	setCharactersInDefaultScene();
-	
+
 	_gameSpeed = 50;
-	memset(_flagsTable, 0, sizeof(_flagsTable));
 	
 	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, _opcodeTable, _opcodeTableSize, 0)) {
 		error("Could not load \"_STARTUP.EMC\" script");
@@ -488,7 +496,6 @@ void KyraEngine::delay(uint32 amount) {
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
-				_needMouseUpdate = true;
 				break;
 			case OSystem::EVENT_QUIT:
 				_quitFlag = true;
@@ -506,18 +513,25 @@ void KyraEngine::delay(uint32 amount) {
 void KyraEngine::mainLoop() {
 	debug(9, "KyraEngine::mainLoop()");
 
+	//enterNewScene(0x0, _currentCharacter->facing, 0, 0, 1);
+
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
 
-		if (_needMouseUpdate) {
-			_screen->hideMouse();
-			_screen->showMouse();
-			_needMouseUpdate = false;
-		}
-		_screen->updateScreen();
+		_sprites->updateSceneAnims();
+		updateAllObjectShapes();
 
 		delay((frameTime + _gameSpeed) - _system->getMillis());
 	}
+}
+
+void KyraEngine::quitGame() {
+	res_unloadResources();
+
+	for (int i = 0; i < 10; i++)
+		wsa_close(_wsaObjects[i]);
+
+	_system->quit();
 }
 
 void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
@@ -529,6 +543,7 @@ void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
 		debug(9, "Loading a palette of size %i from '%s'", fileSize, filename);
 		memcpy(palData, srcData, fileSize);		
 	}
+	delete[] srcData;
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
@@ -561,186 +576,6 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	delete[] srcData;
 }
 
-void KyraEngine::setTalkCoords(uint16 y) {
-	debug(9, "KyraEngine::setTalkCoords(%d)", y);
-	_talkCoords.y = y;
-}
-
-int KyraEngine::getCenterStringX(const char *str, int x1, int x2) {
-	debug(9, "KyraEngine::getCenterStringX('%s', %d, %d)", str, x1, x2);
-	_screen->_charWidth = -2;
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	int strWidth = _screen->getTextWidth(str);
-	_screen->setFont(curFont);
-	_screen->_charWidth = 0;
-	int w = x2 - x1 + 1;
-	return x1 + (w - strWidth) / 2;
-}
-
-int KyraEngine::getCharLength(const char *str, int len) {
-	debug(9, "KyraEngine::getCharLength('%s', %d)", str, len);
-	int charsCount = 0;
-	if (*str) {
-		_screen->_charWidth = -2;
-		Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-		int i = 0;
-		while (i <= len && *str) {
-			i += _screen->getCharWidth(*str++);
-			++charsCount;
-		}
-		_screen->setFont(curFont);
-		_screen->_charWidth = 0;
-	}
-	return charsCount;
-}
-
-int KyraEngine::dropCRIntoString(char *str, int offs) {
-	debug(9, "KyraEngine::dropCRIntoString('%s', %d)", str, offs);
-	int pos = 0;
-	str += offs;
-	while (*str) {
-		if (*str == ' ') {
-			*str = '\r';
-			return pos;
-		}
-		++str;
-		++pos;
-	}
-	return 0;
-}
-
-char *KyraEngine::preprocessString(const char *str) {
-	debug(9, "KyraEngine::preprocessString('%s')", str);
-	assert(strlen(str) < sizeof(_talkBuffer) - 1);
-	strcpy(_talkBuffer, str);
-	char *p = _talkBuffer;
-	while (*p) {
-		if (*p == '\r') {
-			return _talkBuffer;
-		}
-		++p;
-	}
-	p = _talkBuffer;
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
-	int textWidth = _screen->getTextWidth(p);
-	_screen->_charWidth = 0;
-	if (textWidth > 176) {
-		if (textWidth > 352) {
-			int count = getCharLength(p, textWidth / 3);
-			int offs = dropCRIntoString(p, count);
-			p += count + offs;
-			_screen->_charWidth = -2;
-			textWidth = _screen->getTextWidth(p);
-			_screen->_charWidth = 0;
-			count = getCharLength(p, textWidth / 2);
-			dropCRIntoString(p, count);
-		} else {
-			int count = getCharLength(p, textWidth / 2);
-			dropCRIntoString(p, count);
-		}
-	}
-	_screen->setFont(curFont);
-	return _talkBuffer;
-}
-
-int KyraEngine::buildMessageSubstrings(const char *str) {
-	debug(9, "KyraEngine::buildMessageSubstrings('%s')", str);
-	int currentLine = 0;
-	int pos = 0;
-	while (*str) {
-		if (*str == '\r') {
-			assert(currentLine < TALK_SUBSTRING_NUM);
-			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
-			++currentLine;
-			pos = 0;
-		} else {
-			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = *str;
-			++pos;
-			if (pos > TALK_SUBSTRING_LEN - 2) {
-				pos = TALK_SUBSTRING_LEN - 2;
-			}
-		}
-		++str;
-	}
-	_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
-	return currentLine + 1;
-}
-
-int KyraEngine::getWidestLineWidth(int linesCount) {
-	debug(9, "KyraEngine::getWidestLineWidth(%d)", linesCount);
-	int maxWidth = 0;
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
-	for (int l = 0; l < linesCount; ++l) {
-		int w = _screen->getTextWidth(&_talkSubstrings[l * TALK_SUBSTRING_LEN]);
-		if (maxWidth < w) {
-			maxWidth = w;
-		}
-	}
-	_screen->setFont(curFont);
-	_screen->_charWidth = 0;
-	return maxWidth;
-}
-
-void KyraEngine::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
-	debug(9, "KyraEngine::calcWidestLineBounds(%d, %d)", w, cx);
-	x1 = cx - w / 2;
-	if (x1 + w >= Screen::SCREEN_W - 12) {
-		x1 = Screen::SCREEN_W - 12 - w - 1;
-	} else if (x1 < 12) {
-		x1 = 12;
-	}
-	x2 = x1 + w + 1;
-}
-
-void KyraEngine::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
-	debug(9, "KyraEngine::restoreTalkTextMessageBkgd(%d, %d)", srcPage, dstPage);
-	if (_talkMessagePrinted) {
-		_talkMessagePrinted = false;
-		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
-	}
-}
-
-void KyraEngine::printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage) {
-	debug(9, "KyraEngine::printTalkTextMessage('%s', %d, %d, %d, %d, %d)", text, x, y, color, srcPage, dstPage);
-	char *str = preprocessString(text);
-	int lineCount = buildMessageSubstrings(str);
-	int top = y - lineCount * 10;
-	if (top < 0) {
-		top = 0;
-	}
-	_talkMessageY = top;
-	_talkMessageH = lineCount * 10;
-	int w = getWidestLineWidth(lineCount);
-	int x1, x2;
-	calcWidestLineBounds(x1, x2, w, x);
-	_talkCoords.x = x1;
-	_talkCoords.w = w + 2;
-	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage);
-	int curPage = _screen->_curPage;
-	_screen->_curPage = srcPage;
-	for (int i = 0; i < lineCount; ++i) {
-		top = i * 10 + _talkMessageY;
-		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
-		int left = getCenterStringX(msg, x1, x2);
-		printText(msg, left, top, color, 0xC, 0);
-	}
-	_screen->_curPage = curPage;
-	_talkMessagePrinted = true;
-}
-
-void KyraEngine::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
-	uint8 colorMap[] = { 0, 15, 12, 12 };
-	colorMap[3] = c1;
-	_screen->setTextColor(colorMap, 0, 3);
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charWidth = -2;
-	_screen->printText(str, x, y, c0, c2);
-	_screen->_charWidth = 0;
-	_screen->setFont(curFont);
-}
-
 void KyraEngine::waitTicks(int ticks) {
 	debug(9, "KyraEngine::waitTicks(%d)", ticks);
 	const uint32 end = _system->getMillis() + ticks * 1000 / 60;
@@ -750,6 +585,7 @@ void KyraEngine::waitTicks(int ticks) {
 			switch (event.type) {
 			case OSystem::EVENT_QUIT:
 				_quitFlag = true;
+				quitGame();
 				break;
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.flags == OSystem::KBD_CTRL) {
@@ -1331,7 +1167,8 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	char datFileNameBuffer[32];
 	strcpy(datFileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(datFileNameBuffer, ".DAT");
-	_sprites->loadDAT(datFileNameBuffer);
+	_sprites->loadDAT(datFileNameBuffer, _sceneExits);
+	_sprites->setupSceneAnims();
 	_scriptInterpreter->unloadScript(_scriptClickData);
 	loadSceneMSC();
 	
@@ -1940,11 +1777,38 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	}
 	
 	for (int i = 0; i < 11; ++i) {
-		curAnimState = &_animObjects[i];
-		curAnimState->active = 0;
-		curAnimState->refreshFlag = 0;
-		curAnimState->bkgdChangeFlag = 0;
-		// XXX this needs the dat loader
+		curAnimState = &_sprites->_animObjects[i];
+
+		if (_sprites->_anims[i].play) {
+			curAnimState->active = 1;
+			curAnimState->refreshFlag = 1;
+			curAnimState->bkgdChangeFlag = 1;
+		}
+		else {
+			curAnimState->active = 0;
+			curAnimState->refreshFlag = 0;
+			curAnimState->bkgdChangeFlag = 0;
+		}
+		curAnimState->height = _sprites->_anims[i].height;
+		curAnimState->height2 = _sprites->_anims[i].height2;
+		curAnimState->width = _sprites->_anims[i].width + 1;
+		curAnimState->width2 = _sprites->_anims[i].width2;
+		curAnimState->drawY = _sprites->_anims[i].drawY;
+		curAnimState->x1 = curAnimState->x2 = _sprites->_anims[i].x;
+		curAnimState->y1 = curAnimState->y2 = _sprites->_anims[i].y;
+		curAnimState->background = _sprites->_anims[i].background;
+		curAnimState->sceneAnimPtr = _sprites->_sceneShapes[_sprites->_anims[i].sprite];
+		
+		if(_sprites->_anims[i].unk2)
+			curAnimState->flags = 0x800;
+		else
+			curAnimState->flags = 0;
+
+		if (_sprites->_anims[i].flipX)
+			curAnimState->flags |= 0x1;
+		
+		_objectQueue = objectQueue(_objectQueue, curAnimState);
+
 	}
 	
 	for (int i = 0; i < 12; ++i) {
@@ -1991,9 +1855,507 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
 	_screen->hideMouse();
-	// XXX game_unkScreen
+	initSceneScreen(brandonAlive);
 	_screen->showMouse();
 	copyChangedObjectsForward(0);
+}
+
+void KyraEngine::initSceneScreen(int brandonAlive) {
+	// XXX (Pointless?) Palette stuff
+	//_screen->shuffleScreen(8, 8, 0x130, 0x80, 2, 0, byte_2EE1C);
+	_screen->copyRegion(1, 8, 1, 8, 304, 0x80, 2, 0);
+	// XXX More (pointless?) palette stuff
+
+	if (!_scriptInterpreter->startScript(_scriptClick, 2))
+		error("Could not start script function 2 of scene script");
+
+	_scriptClick->variables[7] = brandonAlive;
+
+	while (_scriptInterpreter->validScript(_scriptClick))
+		_scriptInterpreter->runScript(_scriptClick);
+
+	if (_currentCharacter->sceneId == 0xD2) {
+		// XXX
+	}
+}
+
+#pragma mark -
+#pragma mark - Item handling
+#pragma mark -
+
+void KyraEngine::setTalkCoords(uint16 y) {
+	debug(9, "KyraEngine::setTalkCoords(%d)", y);
+	_talkCoords.y = y;
+}
+
+int KyraEngine::getCenterStringX(const char *str, int x1, int x2) {
+	debug(9, "KyraEngine::getCenterStringX('%s', %d, %d)", str, x1, x2);
+	_screen->_charWidth = -2;
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	int strWidth = _screen->getTextWidth(str);
+	_screen->setFont(curFont);
+	_screen->_charWidth = 0;
+	int w = x2 - x1 + 1;
+	return x1 + (w - strWidth) / 2;
+}
+
+int KyraEngine::getCharLength(const char *str, int len) {
+	debug(9, "KyraEngine::getCharLength('%s', %d)", str, len);
+	int charsCount = 0;
+	if (*str) {
+		_screen->_charWidth = -2;
+		Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+		int i = 0;
+		while (i <= len && *str) {
+			i += _screen->getCharWidth(*str++);
+			++charsCount;
+		}
+		_screen->setFont(curFont);
+		_screen->_charWidth = 0;
+	}
+	return charsCount;
+}
+
+int KyraEngine::dropCRIntoString(char *str, int offs) {
+	debug(9, "KyraEngine::dropCRIntoString('%s', %d)", str, offs);
+	int pos = 0;
+	str += offs;
+	while (*str) {
+		if (*str == ' ') {
+			*str = '\r';
+			return pos;
+		}
+		++str;
+		++pos;
+	}
+	return 0;
+}
+
+char *KyraEngine::preprocessString(const char *str) {
+	debug(9, "KyraEngine::preprocessString('%s')", str);
+	assert(strlen(str) < sizeof(_talkBuffer) - 1);
+	strcpy(_talkBuffer, str);
+	char *p = _talkBuffer;
+	while (*p) {
+		if (*p == '\r') {
+			return _talkBuffer;
+		}
+		++p;
+	}
+	p = _talkBuffer;
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+	int textWidth = _screen->getTextWidth(p);
+	_screen->_charWidth = 0;
+	if (textWidth > 176) {
+		if (textWidth > 352) {
+			int count = getCharLength(p, textWidth / 3);
+			int offs = dropCRIntoString(p, count);
+			p += count + offs;
+			_screen->_charWidth = -2;
+			textWidth = _screen->getTextWidth(p);
+			_screen->_charWidth = 0;
+			count = getCharLength(p, textWidth / 2);
+			dropCRIntoString(p, count);
+		} else {
+			int count = getCharLength(p, textWidth / 2);
+			dropCRIntoString(p, count);
+		}
+	}
+	_screen->setFont(curFont);
+	return _talkBuffer;
+}
+
+int KyraEngine::buildMessageSubstrings(const char *str) {
+	debug(9, "KyraEngine::buildMessageSubstrings('%s')", str);
+	int currentLine = 0;
+	int pos = 0;
+	while (*str) {
+		if (*str == '\r') {
+			assert(currentLine < TALK_SUBSTRING_NUM);
+			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
+			++currentLine;
+			pos = 0;
+		} else {
+			_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = *str;
+			++pos;
+			if (pos > TALK_SUBSTRING_LEN - 2) {
+				pos = TALK_SUBSTRING_LEN - 2;
+			}
+		}
+		++str;
+	}
+	_talkSubstrings[currentLine * TALK_SUBSTRING_LEN + pos] = '\0';
+	return currentLine + 1;
+}
+
+int KyraEngine::getWidestLineWidth(int linesCount) {
+	debug(9, "KyraEngine::getWidestLineWidth(%d)", linesCount);
+	int maxWidth = 0;
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+	for (int l = 0; l < linesCount; ++l) {
+		int w = _screen->getTextWidth(&_talkSubstrings[l * TALK_SUBSTRING_LEN]);
+		if (maxWidth < w) {
+			maxWidth = w;
+		}
+	}
+	_screen->setFont(curFont);
+	_screen->_charWidth = 0;
+	return maxWidth;
+}
+
+void KyraEngine::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
+	debug(9, "KyraEngine::calcWidestLineBounds(%d, %d)", w, cx);
+	x1 = cx - w / 2;
+	if (x1 + w >= Screen::SCREEN_W - 12) {
+		x1 = Screen::SCREEN_W - 12 - w - 1;
+	} else if (x1 < 12) {
+		x1 = 12;
+	}
+	x2 = x1 + w + 1;
+}
+
+void KyraEngine::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
+	debug(9, "KyraEngine::restoreTalkTextMessageBkgd(%d, %d)", srcPage, dstPage);
+	if (_talkMessagePrinted) {
+		_talkMessagePrinted = false;
+		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+	}
+}
+
+void KyraEngine::printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage) {
+	debug(9, "KyraEngine::printTalkTextMessage('%s', %d, %d, %d, %d, %d)", text, x, y, color, srcPage, dstPage);
+	char *str = preprocessString(text);
+	int lineCount = buildMessageSubstrings(str);
+	int top = y - lineCount * 10;
+	if (top < 0) {
+		top = 0;
+	}
+	_talkMessageY = top;
+	_talkMessageH = lineCount * 10;
+	int w = getWidestLineWidth(lineCount);
+	int x1, x2;
+	calcWidestLineBounds(x1, x2, w, x);
+	_talkCoords.x = x1;
+	_talkCoords.w = w + 2;
+	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+	int curPage = _screen->_curPage;
+	_screen->_curPage = srcPage;
+	for (int i = 0; i < lineCount; ++i) {
+		top = i * 10 + _talkMessageY;
+		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
+		int left = getCenterStringX(msg, x1, x2);
+		printText(msg, left, top, color, 0xC, 0);
+	}
+	_screen->_curPage = curPage;
+	_talkMessagePrinted = true;
+}
+
+void KyraEngine::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	uint8 colorMap[] = { 0, 15, 12, 12 };
+	colorMap[3] = c1;
+	_screen->setTextColor(colorMap, 0, 3);
+	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+	_screen->printText(str, x, y, c0, c2);
+	_screen->_charWidth = 0;
+	_screen->setFont(curFont);
+}
+
+void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 charNum) {
+	debug(9, "KyraEngine::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum); 
+	bool hasUpdatedNPCs = false;
+	bool runLoop = true;
+	uint8 currPage;
+	OSystem::Event event;
+	uint8 tickLength = (uint8)(1000.0 / _gameSpeed);
+
+	//while( towns_isEscKeyPressed() )
+		//towns_getKey();
+
+	uint32 timeToEnd = strlen(chatStr) * 8 * tickLength + _system->getMillis();
+
+	if (chatDuration != -1 ) {
+		switch ( _configTalkspeed) {
+			case 0: chatDuration *= 2;
+					break;
+			case 2: chatDuration /= 4;
+					break;
+			case 3: chatDuration = -1;
+		}
+	}
+
+	if (chatDuration != -1)
+		chatDuration *= tickLength;
+
+	//disableTimer(0x13);
+	//disableTimer(0x0E);
+	//disableTimer(0x12);
+	//towns_flushKeyb();
+
+	uint32 timeAtStart = _system->getMillis();
+	uint32 loopStart;
+	while (runLoop) {
+		loopStart = _system->getMillis();
+		/*
+		if (_currentCharacter.sceneId == 0xD2)
+			if (seq_playEnd())
+				break;
+		*/
+
+		if( _system->getMillis() < timeToEnd && !hasUpdatedNPCs) {
+			hasUpdatedNPCs = true;
+			//disableTimer(0x0F);
+			_charSayUnk4 = 4;
+			animRefreshNPC(0);
+			animRefreshNPC(_charSayUnk1);
+
+			if (_charSayUnk2 != -1) {
+				_sprites->_animObjects[_charSayUnk2].active = 0;
+				_sprites->_anims[_charSayUnk2].play = false;
+				_charSayUnk2 = -1;
+			}
+		}
+
+		//updateGameTimers();
+		_sprites->updateSceneAnims();
+		restoreAllObjectBackgrounds();
+		preserveAnyChangedBackgrounds();
+		prepDrawAllObjects();
+
+		currPage = _screen->_curPage;
+		_screen->_curPage = 2;
+		printCharacterText(chatStr, charNum);
+		_screen->_curPage = currPage;
+
+		copyChangedObjectsForward(0);
+		//processPalette();
+
+		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1)
+			break;
+
+		while (_system->pollEvent(event)) {
+			switch (event.type) {
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.keycode == 0x20 || event.kbd.keycode == 0xC6)
+					runLoop = false;
+				break;
+			case OSystem::EVENT_QUIT:
+				quitGame();
+			case OSystem::EVENT_LBUTTONDOWN:
+				runLoop = false;
+				break;
+			default:
+				break;
+			}
+		}
+		delay((loopStart + _gameSpeed) - _system->getMillis());
+	}
+
+	/*enableTimer(0x13);
+	enableTimer(0x0E);
+	enableTimer(0x12);
+	enableTimer(0x0F);
+	clearKyrandiaButtonIO();*/
+}
+
+void KyraEngine::endCharacterChat(int8 charNum, int16 convoInitialized) {
+	_charSayUnk3 = -1;
+
+	if (charNum > 4 && charNum < 11) {
+		//TODO: weird _game_inventory stuff here
+	}
+
+	if (convoInitialized != 0) {
+		_charSayUnk1 = -1;
+		_currentCharacter->currentAnimFrame = 7;
+		animRefreshNPC(0);
+		updateAllObjectShapes();
+	}
+}
+
+void KyraEngine::restoreChatPartnerAnimFrame(int8 charNum) {
+	_charSayUnk1 = -1;
+
+	if (charNum > 0 && charNum < 5) {
+		_characterList[charNum].currentAnimFrame = _currentChatPartnerBackupFrame;
+		animRefreshNPC(charNum);
+	}
+
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	updateAllObjectShapes();
+}
+
+void KyraEngine::backupChatPartnerAnimFrame(int8 charNum) {
+	_charSayUnk1 = 0;
+
+	if (charNum < 5 && charNum > 0) 
+		_currentChatPartnerBackupFrame = _characterList[charNum].currentAnimFrame;
+
+	if (_scaleMode != 0)
+		_currentCharacter->currentAnimFrame = 7;
+	else
+		_currentCharacter->currentAnimFrame = _currentCharAnimFrame;
+
+	animRefreshNPC(0);
+	updateAllObjectShapes();
+}
+
+int8 KyraEngine::getChatPartnerNum() {
+	uint8 sceneTable[] = {0x2, 0x5, 0x2D, 0x7, 0x1B, 0x8, 0x22, 0x9, 0x30, 0x0A};
+	int pos = 0;
+	int partner = -1;
+
+	for (int i = 1; i < 6; i++) {
+		if (_currentCharacter->sceneId == sceneTable[pos]) {
+			partner = sceneTable[pos+1];
+			break;
+		}
+		pos += 2;
+	}
+
+	for (int i = 1; i < 5; i++) {
+		if (_characterList[i].sceneId == _currentCharacter->sceneId) {
+			partner = i;
+			break;
+		}
+	}
+	return partner;
+}
+
+int KyraEngine::initCharacterChat(int8 charNum) {
+	if (_charSayUnk1 == -1) {
+		_charSayUnk1 = 0;
+
+		if (_scaleMode != 0)
+			_currentCharacter->currentAnimFrame = 7;
+		else
+			_currentCharacter->currentAnimFrame = 16;
+
+		animRefreshNPC(0);
+		updateAllObjectShapes();
+	}
+
+	_charSayUnk2 = -1;
+	flagAllObjectsForBkgdChange();
+	restoreAllObjectBackgrounds();
+
+	if( charNum > 4 && charNum < 11 ) {
+		// TODO: Fill in weird _game_inventory stuff here
+	}
+
+	flagAllObjectsForRefresh();
+	flagAllObjectsForBkgdChange();
+	preserveAnyChangedBackgrounds();
+	_charSayUnk3 = charNum;
+
+	return 1;
+}
+
+void KyraEngine::printCharacterText(char *text, int8 charNum) {
+	uint8 colorTable[] = {0x0F, 0x9, 0x0C9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
+	int top, left, x1, x2, w, x;
+	char *msg;
+
+	uint8 color = colorTable[charNum];
+	text = preprocessString(text);
+	int lineCount = buildMessageSubstrings(text);
+	w = getWidestLineWidth(lineCount);
+	x = _characterList[charNum].x1;
+	calcWidestLineBounds(x1, x2, w, x);
+
+	for (int i = 0; i < lineCount; ++i) {
+		top = i * 10 + _talkMessageY;
+		msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
+		left = getCenterStringX(msg, x1, x2);
+		printText(msg, left, top, color, 0xC, 0);
+	}
+}
+
+void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
+	debug(9, "KyraEngine:::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
+	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
+
+	uint16 chatTicks;
+	int16 convoInitialized;
+	int8 chatPartnerNum;
+
+	if (_currentCharacter->sceneId == 0xD2)
+		return;
+
+	convoInitialized = initCharacterChat(charNum);	
+	chatPartnerNum = getChatPartnerNum();
+
+	if(chatPartnerNum != -1 && chatPartnerNum < 5)
+		backupChatPartnerAnimFrame(chatPartnerNum);
+
+	if (charNum < 5) {
+		_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
+		_charSayUnk3 = charNum;
+		_charSayUnk1 = charNum;
+		animRefreshNPC(charNum);
+	}
+
+	char *processedString = preprocessString(chatStr);
+	int lineNum = buildMessageSubstrings(processedString);
+
+	int16 YPos = _characterList[charNum].y1;
+	YPos -= _scaleTable[charNum] * _characterList[charNum].height;
+	YPos -= 8;
+	YPos -= lineNum * 10;
+
+	if (YPos < 11)
+		YPos = 11;
+
+	if (YPos > 100 )
+		YPos = 100;
+
+	_talkMessageY = YPos;
+	_talkMessageH = lineNum * 10;
+	restoreAllObjectBackgrounds();
+
+	_screen->copyRegion(1, _talkMessageY, 1, 136, 319, _talkMessageH, 2, 2);
+	_screen->hideMouse();
+
+	printCharacterText(processedString, charNum);
+	_screen->showMouse();
+
+	if (chatDuration == -2)
+		chatTicks = strlen(processedString) * 9;
+	else
+		chatTicks = chatDuration;
+
+	waitForChatToFinish(chatTicks, chatStr, charNum);
+
+	restoreAllObjectBackgrounds();
+
+	_screen->copyRegion(1, 136, 1, _talkMessageY, 319, _talkMessageH, 2, 2);
+	preserveAllBackgrounds();
+	prepDrawAllObjects();
+	_screen->hideMouse();
+
+	_screen->copyRegion(1, _talkMessageY, 1, _talkMessageY, 319, _talkMessageH, 2, 0);
+	_screen->showMouse();
+	flagAllObjectsForRefresh();
+	copyChangedObjectsForward(0);
+
+	if (chatPartnerNum != -1 && chatPartnerNum < 5)
+		restoreChatPartnerAnimFrame(chatPartnerNum);
+
+	endCharacterChat(charNum, convoInitialized);
+}
+
+void KyraEngine::drawSentenceCommand(char *sentence, int unk1) {
+	_screen->hideMouse();
+	_screen->fillRect(8, 143, 311, 152, 12);
+	// XXX: palette stuff
+
+	printText(sentence, 8, 143, 0xFF, 12, 0);
+	_screen->showMouse();
+	//setTextFadeTimerCountdown(_textFadeTimerCountdown);
+	//_palScrollEnabled = 0;
 }
 
 #pragma mark -
@@ -2127,6 +2489,37 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 #pragma mark - Animation specific code
 #pragma mark -
 
+void KyraEngine::preserveAllBackgrounds() {
+	uint8 currPage = _screen->_curPage;
+	_screen->_curPage = 2;
+
+	AnimObject *curObject = _objectQueue;
+	while (curObject) {
+		if (!curObject->active && curObject->flags) {
+			preserveOrRestoreBackground(curObject, false);
+			curObject->bkgdChangeFlag = 0;
+		}
+		curObject = curObject->nextAnimObject;
+	}
+	_screen->_curPage = currPage;
+}
+
+void KyraEngine::flagAllObjectsForBkgdChange() {
+	AnimObject *curObject = _objectQueue;
+	while (curObject) {
+		curObject->bkgdChangeFlag = 1;
+		curObject = curObject->nextAnimObject;
+	}
+}
+
+void KyraEngine::flagAllObjectsForRefresh() {
+	AnimObject *curObject = _objectQueue;
+	while (curObject) {
+		curObject->refreshFlag = 1;
+		curObject = curObject->nextAnimObject;
+	}
+}
+
 void KyraEngine::restoreAllObjectBackgrounds() {
 	debug(9, "restoreAllObjectBackground()");
 	AnimObject *curObject = _objectQueue;
@@ -2207,7 +2600,7 @@ void KyraEngine::prepDrawAllObjects() {
 		flagUnk1 = 0x200;
 	if (_brandonStatusBit & 0x40)
 		flagUnk2 = 0x4000;
-	
+
 	while (curObject) {
 		if (curObject->active) {
 			int xpos = curObject->x1;
@@ -2276,6 +2669,7 @@ void KyraEngine::prepDrawAllObjects() {
 void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 	debug(9, "copyChangedObjectsForward(%d)", refreshFlag);
 	AnimObject *curObject = _objectQueue;
+
 	while (curObject) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {
@@ -2291,6 +2685,7 @@ void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 		}
 		curObject = curObject->nextAnimObject;
 	}
+	_screen->updateScreen();
 }
 
 void KyraEngine::updateAllObjectShapes() {
@@ -2299,15 +2694,13 @@ void KyraEngine::updateAllObjectShapes() {
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
 	copyChangedObjectsForward(0);
-
-	_screen->updateScreen();
 }
 
 void KyraEngine::animRefreshNPC(int character) {
 	debug(9, "animRefreshNPC(%d)", character);
 	AnimObject *animObj = &_charactersAnimState[character];
 	Character *ch = &_characterList[character];
-	
+
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
 	int facing = ch->facing;
@@ -2352,12 +2745,12 @@ void KyraEngine::animRefreshNPC(int character) {
 	}
 	animObj->width2 = 4;
 	animObj->height2 = 3;
-	
+
 	_objectQueue = objectRemoveQueue(_objectQueue, animObj);
 	if (_objectQueue) {
-		
+		_objectQueue = objectQueue(_objectQueue, animObj);
 	} else {
-		_objectQueue = objectAddHead(_objectQueue, animObj);
+		_objectQueue = objectAddHead(0, animObj);
 	}
 }
 
@@ -2368,6 +2761,7 @@ void KyraEngine::animRefreshNPC(int character) {
 AnimObject *KyraEngine::objectRemoveQueue(AnimObject *queue, AnimObject *rem) {
 	AnimObject *cur = queue;
 	AnimObject *prev = queue;
+
 	while (cur != rem && cur) {
 		AnimObject *temp = cur->nextAnimObject;
 		if (!temp)
@@ -2383,10 +2777,12 @@ AnimObject *KyraEngine::objectRemoveQueue(AnimObject *queue, AnimObject *rem) {
 	}
 	
 	if (!cur->nextAnimObject) {
-		if (!prev) {
-			return 0;
-		} else {
-			prev->nextAnimObject = 0;
+		if (cur == rem) {
+			if (!prev) {
+				return 0;
+			} else {
+				prev->nextAnimObject = 0;
+			}
 		}
 	} else {
 		if (cur == rem) {
@@ -2424,7 +2820,7 @@ AnimObject *KyraEngine::objectQueue(AnimObject *queue, AnimObject *add) {
 		cur->nextAnimObject = add;
 		add->nextAnimObject = 0;
 	}
-	return 0;
+	return queue;
 }
 
 #pragma mark -
@@ -2937,7 +3333,8 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		if (!temp)
 			continue;
 		++table;
-		// XXX updateAnimFlags
+		_sprites->updateSceneAnims();
+		waitTicks(10);
 		// XXX updateMousePointer
 		// XXX updateGameTimers
 		updateAllObjectShapes();

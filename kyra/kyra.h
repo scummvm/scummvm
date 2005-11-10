@@ -87,7 +87,7 @@ struct AnimObject {
 	uint32 flags;
 	int16 drawY;
 	uint8 *sceneAnimPtr;
-	uint16 animFrameNumber;
+	int16 animFrameNumber;
 	uint8 *background;
 	uint16 rectSize;
 	int16 x1, y1;
@@ -167,12 +167,11 @@ public:
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
-	SceneExits sceneExits() const { return _sceneExits; }
-	// ugly hack used by the dat loader
-	SceneExits &sceneExits() { return _sceneExits; }
 	
 	Common::RandomSource _rnd;
 	int16 _northExitHeight;
+
+	Character *_currentCharacter;
 
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
@@ -183,16 +182,18 @@ public:
 	const char **seqTextsTable() { return (const char **)_seq_textsTable; }
 
 	bool seq_skipSequence() const;
-	
+	void quitGame();
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void snd_playTheme(int file, int track = 0);
 	void snd_playTrack(int track);
 	void snd_playVoiceFile(int id);
 	bool snd_voicePlaying();
+	void snd_playSoundEffect(int track);
 
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
+	void drawSentenceCommand(char *sentence, int unk1);
 
 	WSAMovieV1 *wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf);
 	void wsa_close(WSAMovieV1 *wsa);
@@ -200,6 +201,11 @@ public:
 	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
 
 	void waitTicks(int ticks);
+	void updateAllObjectShapes();
+	void flagAllObjectsForRefresh();
+	void animRefreshNPC(int character);
+	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
+	int8 fetchAnimHeight(const uint8 *shape, int8 mult);
 	
 	int mouseX() { return _mouseX; }
 	int mouseY() { return _mouseY; }
@@ -377,6 +383,15 @@ protected:
 	int getWidestLineWidth(int linesCount);
 	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
 	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
+	void characterSays(char *msg, int8 charNum, int8 chatDuration);
+	int initCharacterChat(int8 charNum);
+	int8 getChatPartnerNum();
+	void backupChatPartnerAnimFrame(int8 charNum);
+	void restoreChatPartnerAnimFrame(int8 charNum);
+	void endCharacterChat(int8 charNum, int16 arg_4);
+	void waitForChatToFinish(int16 chatDuration, char *str, uint8 charNum);
+	void printCharacterText(char *text, int8 charNum);
+
 	void setCharacterDefaultFrame(int character);
 	void setCharactersPositions(int character);
 	void setCharactersHeight();
@@ -401,16 +416,15 @@ protected:
 	byte findItemAtPos(int x, int y);
 	void placeItemInGenericMapScene(int item, int index);
 	void initSceneObjectList(int brandonAlive);
+	void initSceneScreen(int brandonAlive);
+	void preserveAllBackgrounds();
+	void flagAllObjectsForBkgdChange();
 	void restoreAllObjectBackgrounds();
 	void preserveAnyChangedBackgrounds();
 	void preserveOrRestoreBackground(AnimObject *obj, bool restore);
 	void prepDrawAllObjects();
 	void copyChangedObjectsForward(int refreshFlag);
-	void updateAllObjectShapes();
-	void animRefreshNPC(int character);
 	int findDuplicateItemShape(int shape);
-	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
-	int8 fetchAnimHeight(const uint8 *shape, int8 mult);
 	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
 	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
 	int getFacingFromPointToPoint(int x, int y, int toX, int toY);
@@ -424,7 +438,7 @@ protected:
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
 	AnimObject *objectQueue(AnimObject *queue, AnimObject *add);
-	
+	AnimObject *_animStates;
 	void seq_demo();
 	void seq_intro();
 	void seq_introLogos();
@@ -438,7 +452,7 @@ protected:
 	void snd_startTrack();
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
-	void snd_playSoundEffect(int track);
+
 	
 	static OpcodeProc _opcodeTable[];
 	static const int _opcodeTableSize;
@@ -509,6 +523,9 @@ protected:
 	int16 _brandonScaleX;
 	int16 _brandonScaleY;
 	int _brandonDrawFrame;
+
+	uint16 _currentChatPartnerBackupFrame;
+	uint16 _currentCharAnimFrame;
 	
 	int8 *_sceneAnimTable[50];
 	
@@ -528,10 +545,14 @@ protected:
 	int _lastFindWayRet;
 	int *_movFacingTable;
 	
+	int8 _charSayUnk1; // this is byte_2EE24
+	int8 _charSayUnk2;
+	int8 _charSayUnk3; // this is byte_2EE25
+	int8 _charSayUnk4; // this is byte_2EE26
+
+	uint8 _configTalkspeed;
 	AnimObject *_objectQueue;
-	AnimObject *_animStates;
 	AnimObject *_charactersAnimState;
-	AnimObject *_animObjects;
 	AnimObject *_animItems;
 	
 	int _curMusicTheme;
@@ -553,7 +574,6 @@ protected:
 	ScriptData *_scriptClickData;
 	
 	Character *_characterList;
-	Character *_currentCharacter;
 	
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;

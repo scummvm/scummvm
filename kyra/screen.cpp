@@ -62,11 +62,6 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	_decodeShapeBufferSize = 0;
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
-	_mouseShape = NULL;
-	_mouseShapeSize = 0;
-	_mouseRect = NULL;
-	_mouseRectSize = 0;
-	_mouseDrawWidth = 0;
 }
 
 Screen::~Screen() {
@@ -75,15 +70,13 @@ Screen::~Screen() {
 		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
 	}
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
-		free(_fonts[f].fontData);
+		delete[] _fonts[f].fontData;
 		_fonts[f].fontData = NULL;
 	}
 	free(_currentPalette);
 	free(_screenPalette);
 	free(_decodeShapeBuffer);
 	free(_animBlockPtr);
-	free(_mouseShape);
-	free(_mouseRect);
 	for (int i = 0; i < 3; ++i) {
 		free(_palettes[i]);
 	}
@@ -305,6 +298,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 
 void Screen::copyCurPageBlock(int x, int y, int h, int w, uint8 *dst) {
 	debug(9, "Screen::copyCurPageBlock(%d, %d, %d, %d, 0x%X)", x, y, w, h, dst);
+	assert(dst);
 	if (x < 0) {
 		x = 0;	
 	} else if (x >= 40) {
@@ -389,6 +383,8 @@ void Screen::setAnimBlockPtr(int size) {
 	debug(9, "Screen::setAnimBlockPtr(%d)", size);
 	free(_animBlockPtr);
 	_animBlockPtr = (uint8 *)malloc(size);
+	assert(_animBlockPtr);
+	memset(_animBlockPtr, 0, size);
 	_animBlockSize = size;
 }
 
@@ -1590,14 +1586,14 @@ void Screen::hideMouse() {
 	debug(9, "hideMouse()");
 	// if mouseDisabled
 	//	return
-	restoreMouseRect();
+	_system->showMouse(false);
 }
 
 void Screen::showMouse() {
 	debug(9, "showMouse()");
 	// if mouseDisabled
 	//	return
-	copyMouseToScreen();
+	_system->showMouse(true);
 }
 
 void Screen::setShapePages(int page1, int page2) {
@@ -1606,140 +1602,30 @@ void Screen::setShapePages(int page1, int page2) {
 	_shapePages[1] = _pagePtrs[page2];
 }
 
-byte *Screen::setMouseCursor(int x, int y, byte *shape) {
+void Screen::setMouseCursor(int x, int y, byte *shape) {
 	debug(9, "setMouseCursor(%d, %d, 0x%X)", x, y, shape);
 	if (!shape)
-		return _mouseShape;
+		return;
 	// if mouseDisabled
 	//	return _mouseShape
-	
-	restoreMouseRect();
-	
+
 	if (_vm->features() & GF_TALKIE)
 		shape += 2;
-	
-	int mouseRectSize = getRectSize((READ_LE_UINT16(shape + 3) >> 3) + 2, shape[5]);
-	if (_mouseRectSize < mouseRectSize) {
-		free(_mouseRect);
-		_mouseRect = (uint8*)malloc(mouseRectSize << 3);
-		assert(_mouseRect);
-		_mouseRectSize = mouseRectSize;
-	}
-	
-	int shapeSize = READ_LE_UINT16(shape + 8) + 10;
-	if (_vm->features() & GF_TALKIE)
-		shapeSize += 2;
-	if (READ_LE_UINT16(shape) & 1)
-		shapeSize += 16;
-	
-	if (_mouseShapeSize < shapeSize) {
-		free(_mouseShape);
-		_mouseShape = (uint8*)malloc(shapeSize);
-		assert(_mouseShape);
-		_mouseShapeSize = shapeSize;
-	}
-	
-	byte *dst = _mouseShape;
-	byte *src = shape;
-	if (_vm->features() & GF_TALKIE)
-		dst += 2;
-	
-	if (!(READ_LE_UINT16(shape) & 2)) {
-		uint16 newFlags = 0;
-		newFlags = READ_LE_UINT16(src) | 2; src += 2;
-		WRITE_LE_UINT16(dst, newFlags); dst += 2;
-		memcpy(dst, src, 6);
-		dst += 6;
-		src += 6;
-		int size = READ_LE_UINT16(src); src += 2;
-		WRITE_LE_UINT16(dst, size); dst += 2;
-		if (newFlags & 1) {
-			memcpy(dst, src, 8);
-			dst += 16;
-			src += 16;
-		}
-		decodeFrame4(src, _animBlockPtr, size);
-		memcpy(dst, _animBlockPtr, size);
-	} else {
-		int size = READ_LE_UINT16(shape + 6);
-		memcpy(dst, src, size);
-	}
-	
-	_mouseXOffset = x; _mouseYOffset = y;
-	if (_vm->features() & GF_TALKIE) {
-		_mouseHeight = _mouseShape[7];
-		_mouseWidth = (READ_LE_UINT16(_mouseShape + 5) >> 3) + 2;
-	} else {
-		_mouseHeight = _mouseShape[5];
-		_mouseWidth = (READ_LE_UINT16(_mouseShape + 3) >> 3) + 2;
-	}
-	
-	copyMouseToScreen();
-	
-	return _mouseShape;
-}
 
-void Screen::restoreMouseRect() {
-	debug(9, "restoreMouseRect()");
-	// if disableMouse
-	//	return
+	int mouseHeight = *(shape+2);
+	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
 	
-	if (_mouseDrawWidth && _mouseRect) {
-		copyScreenFromRect(_mouseDrawX, _mouseDrawY, _mouseDrawWidth, _mouseDrawHeight, _mouseRect);
-	}
-	_mouseDrawWidth = 0;
-}
+	uint8 *cursor = (uint8 *)malloc(mouseHeight * mouseWidth);
+	fillRect(0, 0, mouseWidth, mouseHeight, 0, 3);
+	drawShape(3, shape, 0, 0, 0, 0);
 
-void Screen::copyMouseToScreen() {
-	debug(9, "copyMouseToScreen()");
-	// if disableMouse
-	// 	return
-	
-	restoreMouseRect();
-	
-	int width = _mouseWidth;
-	int height = _mouseHeight;
-	int xpos = _vm->mouseX() - _mouseXOffset;
-	int ypos = _vm->mouseY() - _mouseYOffset;
-	if (xpos < -1 || ypos < -1) {
-		return;
-	}
-	
-	int xposTemp = xpos;
-	int yposTemp = ypos;
-	
-	if (xposTemp < 0) {
-		xposTemp = 0;
-	}
-	if (yposTemp < 0) {
-		height += ypos;
-		yposTemp = 0;
-	}
-	
-	xposTemp >>= 3;
-	_mouseDrawX = xposTemp;
-	_mouseDrawY = yposTemp;
-	
-	xposTemp += width;
-	xposTemp -= 40;
-	if (xposTemp >= 0) {
-		width -= xposTemp;
-	}
-	
-	yposTemp += height;
-	yposTemp -= 200;
-	if (yposTemp >= 0) {
-		height -= yposTemp;
-	}
-	
-	_mouseDrawWidth = width;
-	_mouseDrawHeight = height;
-	
-	if (_mouseRect) {
-		copyScreenToRect(_mouseDrawX, _mouseDrawY, width, height, _mouseRect);
-	}
-	
-	drawShape(0, _mouseShape, xpos, ypos, 0, 0, 0);
+	copyRegionToBuffer(3, 0, 0, mouseWidth, mouseHeight, cursor);
+	_system->setMouseCursor(cursor, mouseWidth, mouseHeight, 0, 0, 0);
+	_system->showMouse(true);
+	free(cursor);
+
+	return;
+
 }
 
 void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {

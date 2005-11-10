@@ -123,7 +123,7 @@ public:
 	void hideMouse();
 	void showMouse();
 	void setShapePages(int page1, int page2);
-	byte *setMouseCursor(int x, int y, byte *shape);
+	void setMouseCursor(int x, int y, byte *shape);
 	uint8 *getPalette(int num);
 	
 	byte getShapeFlag1(int x, int y);
@@ -152,15 +152,6 @@ private:
 	int _decodeShapeBufferSize;
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
-	
-	uint8 *_mouseShape;
-	uint8 *_mouseRect;
-	int _mouseShapeSize;
-	int _mouseRectSize;
-	int _mouseDrawX, _mouseDrawY;
-	int _mouseDrawWidth, _mouseDrawHeight;
-	int _mouseWidth, _mouseHeight;
-	int _mouseXOffset, _mouseYOffset;
 
 	OSystem *_system;
 	KyraEngine *_vm;

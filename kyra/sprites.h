@@ -45,6 +45,14 @@ struct Anim {
 	uint8 *reentry;
 	uint32 nextRun;
 	bool play;
+	uint16 width;
+	uint16 height;
+	uint16 width2;
+	uint16 height2;
+	uint16 unk1;
+	uint16 drawY;
+	uint16 unk2;
+	uint8 *background;
 };
 
 class Sprites {
@@ -53,14 +61,16 @@ public:
 	Sprites(KyraEngine *engine, OSystem *system);
 	~Sprites();
 
-	void doAnims();
-	void loadDAT(const char *filename);
-	uint8 *getSceneShape(uint8 sceneShapeID);
-	void drawSprites(uint8 srcPage, uint8 dstPage);
+	void updateSceneAnims();
+	void setupSceneAnims();
+	void loadDAT(const char *filename, SceneExits &exits);
 	void loadSceneShapes();
 	
-	void enableAnim(uint8 anim) { _anims[anim].play = true; }
-	void disableAnim(uint8 anim) { _anims[anim].play = false; }
+	Anim _anims[MAX_NUM_ANIMS];
+	AnimObject *_animObjects;
+	uint8 *_sceneShapes[50];
+
+	void refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag);
 
 protected:
 	void freeSceneShapes();
@@ -69,9 +79,7 @@ protected:
 	Resource *_res;
 	OSystem *_system;
 	Screen *_screen;
-	uint8 *_sceneShapes[50];
 	uint8 *_dat;
-	Anim _anims[MAX_NUM_ANIMS];
 	Common::RandomSource _rnd;
 	uint8 _animDelay;
 	uint8 *_spriteDefStart;

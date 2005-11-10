@@ -122,7 +122,7 @@ void ScriptHelper::c1_execOpcode() {
 }
 
 void ScriptHelper::c1_ifNotJmp() {
-	if (_curScript->stack[++_curScript->sp-1] != 0) {
+	if (!_curScript->stack[_curScript->sp++]) {
 		_parameter &= 0x7FFF;
 		_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
 	}
@@ -296,6 +296,7 @@ void ScriptHelper::c1_setRetAndJmp() {
 #pragma mark -
 
 #define stackPos(x) script->stack[script->sp+x]
+#define stackPosString(x) (char *)&script->dataPtr->text[READ_BE_UINT16( &((uint16 *)script->dataPtr->text)[stackPos(x)])]
 
 int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
 	warning("STUB: cmd_magicInMouseItem");
@@ -303,7 +304,16 @@ int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_characterSays(ScriptState *script) {
-	warning("STUB: cmd_characterSays");
+	debug(9, "cmd_characterSays(0x%X)", script);
+	// Japanese version?
+	/*const char *str1 = "âuâëâôââôüAé?é¢ùêé¢é+é®üH";
+	const char *str2 = "âuâëâôâ\\âôüAé?é¢ùêé¢é+é®üH";
+
+	if (strcmp(stackPosString(0), str1) == 0)
+		characterSays((char *)str2, stackPos(1), stackPos(2));
+	else*/
+	characterSays(stackPosString(0), stackPos(1), stackPos(2));
+
 	return 0;
 }
 
@@ -314,7 +324,7 @@ int KyraEngine::cmd_pauseTicks(ScriptState *script) {
 
 int KyraEngine::cmd_drawSceneAnimShape(ScriptState *script) {
 	debug(9, "cmd_drawSceneAnimShape(0x%X)", script);
-	_screen->drawShape(stackPos(4), _sprites->getSceneShape(stackPos(0)), stackPos(1), stackPos(2), 0, stackPos(3));
+	_screen->drawShape(stackPos(4), _sprites->_sceneShapes[stackPos(0)], stackPos(1), stackPos(2), 0, stackPos(3));
 	return 0;
 }
 
@@ -417,13 +427,13 @@ int KyraEngine::cmd_savePageToDisk(ScriptState *script) {
 
 int KyraEngine::cmd_sceneAnimOn(ScriptState *script) {
 	debug(9, "cmd_sceneAnimOn(0x%X)", script);
-	_sprites->enableAnim(stackPos(0));
+	_sprites->_anims[stackPos(0)].play = true;
 	return 0;
 }
 
 int KyraEngine::cmd_sceneAnimOff(ScriptState *script) {
 	debug(9, "cmd_sceneAnimOff(0x%X)", script);
-	_sprites->disableAnim(stackPos(0));
+	_sprites->_anims[stackPos(0)].play = false;
 	return 0;
 }
 
@@ -530,7 +540,8 @@ int KyraEngine::cmd_magicOutMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_internalAnimOn(ScriptState *script) {
-	warning("STUB: cmd_internalAnimOn");
+	debug(9, "cmd_internalAnimOn(0x%X)", script);
+	_sprites->_animObjects[stackPos(0)].active = 1;
 	return 0;
 }
 
@@ -552,11 +563,8 @@ int KyraEngine::cmd_setScaleMode(ScriptState *script) {
 int KyraEngine::cmd_openWSAFile(ScriptState *script) {
 	debug(9, "cmd_openWSAFile(0x%X)", script);
 	
-	int wsaIndex = stackPos(0);
-	uint16 offset = READ_BE_UINT16(&script->dataPtr->text[wsaIndex]);
-	char *filename = (char*)&script->dataPtr->text[offset];
-	
-	wsaIndex = stackPos(1);
+	char *filename = stackPosString(0);
+	int wsaIndex = stackPos(1);
 	// stackPos(2) is NOT used whyever
 	int offscreenDecode = 0;
 	if (!stackPos(3)) {
@@ -646,7 +654,8 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_restoreAllObjectBackgrounds(ScriptState *script) {
-	warning("STUB: cmd_restoreAllObjectBackgrounds");
+	debug(9, "cmd_restoreAllObjectBackgrounds(0x%X)", script);
+	restoreAllObjectBackgrounds();
 	return 0;
 }
 
@@ -747,7 +756,8 @@ int KyraEngine::cmd_drawCharacterStanding(ScriptState *script) {
 }
 
 int KyraEngine::cmd_internalAnimOff(ScriptState *script) {
-	warning("STUB: cmd_internalAnimOff");
+	debug(9, "cmd_internalAnimOff(0x%X)", script);
+	_sprites->_animObjects[stackPos(0)].active = 0;
 	return 0;
 }
 
@@ -916,7 +926,7 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 		++curPos;
 		// XXX
 		waitTicks(10);
-		// XXX updateAnimFlags();
+		_sprites->updateSceneAnims();
 		// XXX updateMouseCursor();
 		// XXX updateGameTimers();
 		updateAllObjectShapes();
@@ -951,13 +961,17 @@ int KyraEngine::cmd_preserveAllObjectBackgrounds(ScriptState *script) {
 }
 
 int KyraEngine::cmd_updateSceneAnimations(ScriptState *script) {
-	warning("STUB: cmd_updateSceneAnimations");
+	debug(9, "cmd_updateSceneAnimations(0x%X)", script);
+	if (stackPos(0)) {
+		_sprites->updateSceneAnims();
+		updateAllObjectShapes();
+	}
 	return 0;
 }
 
 int KyraEngine::cmd_sceneAnimationActive(ScriptState *script) {
-	warning("STUB: cmd_sceneAnimationActive");
-	return 0;
+	debug(9, "cmd_sceneAnimationActive(0x%X)", script);
+	return _sprites->_anims[stackPos(0)].play;
 }
 
 int KyraEngine::cmd_setCharactersMovementDelay(ScriptState *script) {
@@ -1062,7 +1076,9 @@ int KyraEngine::cmd_createAmuletJewel(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setSceneAnimCurrXY(ScriptState *script) {
-	warning("STUB: cmd_setSceneAnimCurrXY");
+	debug(9, "cmd_setSceneAnimCurrXY(0x%X)", script);
+	_sprites->_anims[stackPos(0)].x = stackPos(1);
+	_sprites->_anims[stackPos(0)].y = stackPos(2);
 	return 0;
 }
 
@@ -1218,7 +1234,8 @@ int KyraEngine::cmd_setScaleDepthTableValue(ScriptState *script) {
 }
 
 int KyraEngine::cmd_message(ScriptState *script) {
-	warning("STUB: cmd_message");
+	debug(9, "cmd_message(0x%X)", script);
+	drawSentenceCommand(stackPosString(0), stackPos(1));
 	return 0;
 }
 
