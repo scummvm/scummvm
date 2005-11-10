@@ -275,7 +275,7 @@ protected:
 	bool _unkPalFlag;
 	bool _exitCutscene;
 	bool _skipSpeech;
-	byte _videoVar9;
+	byte _paletteFlag;
 
 	uint _soundFileId;
 	int16 _lastMusicPlayed;

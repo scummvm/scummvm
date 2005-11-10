@@ -706,9 +706,7 @@ void SimonEngine::vc10_draw() {
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.palette);
-	// TODO::Add support for image scaling
-	if (_game == GAME_FEEBLEFILES)
-		return;
+	// TODO::Add support for image scaling in Feeble Files
 
 	if (flags & 0x80 && !(state.flags & 0x10)) {
 		if (state.flags & 1) {
@@ -1209,11 +1207,16 @@ void SimonEngine::vc22_setSpritePalette() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 	uint num = a == 0 ? 0x20 : 0x10;
+	uint palSize = 96;
 	byte *palptr, *src;
 
-	palptr = &_palette[(a << 6)];
+	if (_game == GAME_FEEBLEFILES) {
+		num = 256;
+		palSize = 768;
+	}
 
-	src = _curVgaFile1 + 6 + b * 96;
+	palptr = &_palette[(a << 6)];
+	src = _curVgaFile1 + 6 + b * palSize;
 
 	do {
 		palptr[0] = src[0] << 2;
@@ -1225,7 +1228,7 @@ void SimonEngine::vc22_setSpritePalette() {
 		src += 3;
 	} while (--num);
 
-	_videoVar9 = 2;
+	_paletteFlag = 2;
 	_vgaSpriteChanged++;
 }
 

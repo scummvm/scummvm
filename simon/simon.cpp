@@ -604,7 +604,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
 	_skipSpeech = 0;
-	_videoVar9 = 0;
+	_paletteFlag = 0;
 
 	_soundFileId = 0;
 	_lastMusicPlayed = -1;
@@ -2805,8 +2805,8 @@ void SimonEngine::timer_vga_sprites() {
 	const byte *vc_ptr_org = _vcPtr;
 	uint16 params[5];							// parameters to vc10
 
-	if (_videoVar9 == 2)
-		_videoVar9 = 1;
+	if (_paletteFlag == 2)
+		_paletteFlag = 1;
 
 	if (_game & GF_SIMON2 && _scrollFlag) {
 		timer_vga_sprites_helper();
@@ -2888,8 +2888,8 @@ void SimonEngine::timer_vga_sprites_2() {
 	const byte *vc_ptr_org = _vcPtr;
 	uint16 params[5];							// parameters to vc10_draw
 
-	if (_videoVar9 == 2)
-		_videoVar9 = 1;
+	if (_paletteFlag == 2)
+		_paletteFlag = 1;
 
 	vsp = _vgaSprites;
 	while (vsp->id != 0) {
@@ -3955,8 +3955,8 @@ void SimonEngine::dx_copy_from_attached_to_3(uint lines) {
 void SimonEngine::dx_update_screen_and_palette() {
 	_numScreenUpdates++;
 
-	if (_paletteColorCount == 0 && _videoVar9 == 1) {
-		_videoVar9 = 0;
+	if (_paletteColorCount == 0 && _paletteFlag == 1) {
+		_paletteFlag = 0;
 		if (memcmp(_palette, _paletteBackup, 256 * 4) != 0) {
 			memcpy(_paletteBackup, _palette, 256 * 4);
 			_system->setPalette(_palette, 0, 256);
@@ -3978,7 +3978,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 }
 
 void SimonEngine::realizePalette() {
-	_videoVar9 = false;
+	_paletteFlag = false;
 	memcpy(_paletteBackup, _palette, 256 * 4);
 
 	if (_paletteColorCount & 0x8000) {
