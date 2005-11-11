@@ -3620,7 +3620,7 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	if (!(_bitArray[8] & 0x20))
 		b = 3;
 
-	x *= 8;
+	x /= 8;
 	if (y < 2)
 		y = 2;
 
