@@ -1065,7 +1065,7 @@ uint SimonEngine::getOffsetOfChild2Param(Child2 *child, uint prop) {
 	while (m != prop) {
 		if (child->avail_props & m)
 			offset++;
-		m <<= 1;
+		m *= 2;
 	}
 	return offset;
 }
@@ -1337,7 +1337,7 @@ void SimonEngine::loadTextIntoMem(uint string_id) {
 		filename[i] = 0;
 		p++;
 
-		base_max = (p[0] << 8) | p[1];
+		base_max = (p[0] * 256) | p[1];
 		p += 2;
 
 		if (string_id < base_max) {
@@ -1387,13 +1387,13 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 		p++;
 
 		for (;;) {
-			min_num = (p[0] << 8) | p[1];
+			min_num = (p[0] * 256) | p[1];
 			p += 2;
 
 			if (min_num == 0)
 				break;
 
-			max_num = (p[0] << 8) | p[1];
+			max_num = (p[0] * 256) | p[1];
 			p += 2;
 
 			if (subr_id >= min_num && subr_id <= max_num) {
@@ -1712,7 +1712,7 @@ void SimonEngine::setup_cond_c_helper() {
 			handle_downarrow_hitarea(_lastHitArea->fcs);
 		} else if (_lastHitArea->item_ptr != NULL) {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
-			_variableArray[60] = (_lastHitArea->flags & 1) ? (_lastHitArea->flags >> 8) : 0xFFFF;
+			_variableArray[60] = (_lastHitArea->flags & 1) ? (_lastHitArea->flags / 256) : 0xFFFF;
 			break;
 		}
 	}
@@ -2053,16 +2053,16 @@ void SimonEngine::f10_key() {
 				if (ha->y >= limit || ((_game & GF_SIMON2) && ha->y >= _vgaVar8))
 					continue;
 
-				y_ = (ha->height >> 1) - 4 + ha->y;
+				y_ = (ha->height / 2) - 4 + ha->y;
 
-				x_ = (ha->width >> 1) - 4 + ha->x - (_scrollX << 3);
+				x_ = (ha->width / 2) - 4 + ha->x - (_scrollX * 8);
 
 				if (x_ >= 0x137)
 					continue;
 
 				dst = dx_lock_attached();
 
-				dst += (((_dxSurfacePitch >> 2) * y_) << 2) + x_;
+				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
 
 				b = _dxSurfacePitch;
 				dst[4] = color;
@@ -2158,7 +2158,7 @@ startOver:
 				_hitAreaSubjectItem = ha->item_ptr;
 				id = 0xFFFF;
 				if (ha->flags & 1)
-					id = ha->flags >> 8;
+					id = ha->flags / 256;
 				_variableArray[60] = id;
 				new_current_hitarea(ha);
 				if (_verbHitArea != 0)
@@ -3110,10 +3110,10 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 			y_diff = abs((int)(readUint16Wrapper(&p[1]) - 12 - y));
 
 			if (x_diff < y_diff) {
-				x_diff >>= 2;
-				y_diff <<= 2;
+				x_diff /= 4;
+				y_diff *= 4;
 			}
-			x_diff += y_diff >> 2;
+			x_diff += y_diff /= 4;
 
 			if (x_diff < best_dist || x_diff == best_dist && prev_i == i) {
 				best_dist = x_diff;
@@ -3803,11 +3803,11 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		byte *dst;
 
 		if (_game == GAME_SIMON1CD32) {
-			sprintf(buf, "%.3d%d.out", id >> 1, (id & 1) + 1);
+			sprintf(buf, "%.3d%d.out", id / 2, (id & 1) + 1);
 		} else if (_game == GAME_SIMON1AMIGA) {
-			sprintf(buf, "%.3d%d.pkd", id >> 1, (id & 1) + 1);
+			sprintf(buf, "%.3d%d.pkd", id / 2, (id & 1) + 1);
 		} else {
-			sprintf(buf, "%.3d%d.VGA", id >> 1, (id & 1) + 1);
+			sprintf(buf, "%.3d%d.VGA", id / 2, (id & 1) + 1);
 		}
 
 		in.open(buf);

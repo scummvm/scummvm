@@ -844,25 +844,25 @@ int SimonEngine::runScript() {
 
 		case 153:{									/* set bit */
 				uint bit = getVarOrByte();
-				_bitArray[bit >> 4] |= 1 << (bit & 15);
+				_bitArray[bit / 16] |= 1 << (bit & 15);
 				break;
 			}
 
 		case 154:{									/* clear bit */
 				uint bit = getVarOrByte();
-				_bitArray[bit >> 4] &= ~(1 << (bit & 15));
+				_bitArray[bit / 16] &= ~(1 << (bit & 15));
 				break;
 			}
 
-		case 155:{									/* is bit clear? */
+		case 155:{									/* is bit clear */
 				uint bit = getVarOrByte();
-				condition = (_bitArray[bit >> 4] & (1 << (bit & 15))) == 0;
+				condition = (_bitArray[bit / 16] & (1 << (bit & 15))) == 0;
 			}
 			break;
 
-		case 156:{									/* is bit set? */
+		case 156:{									/* is bit set */
 				uint bit = getVarOrByte();
-				condition = (_bitArray[bit >> 4] & (1 << (bit & 15))) != 0;
+				condition = (_bitArray[bit / 16] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
@@ -932,25 +932,25 @@ int SimonEngine::runScript() {
 
 		case 166:{									/* set bit2 */
 				uint bit = getVarOrByte();
-				_bitArray[(bit >> 4) + 16] |= 1 << (bit & 15);
+				_bitArray[(bit / 16) + 16] |= 1 << (bit & 15);
 			}
 			break;
 
 		case 167:{									/* clear bit2 */
 				uint bit = getVarOrByte();
-				_bitArray[(bit >> 4) + 16] &= ~(1 << (bit & 15));
+				_bitArray[(bit / 16) + 16] &= ~(1 << (bit & 15));
 			}
 			break;
 
 		case 168:{									/* is bit2 clear */
 				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit >> 4) + 16] & (1 << (bit & 15))) == 0;
+				condition = (_bitArray[(bit / 16) + 16] & (1 << (bit & 15))) == 0;
 			}
 			break;
 
 		case 169:{									/* is bit2 set */
 				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit >> 4) + 16] & (1 << (bit & 15))) != 0;
+				condition = (_bitArray[(bit / 16) + 16] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
@@ -1140,25 +1140,25 @@ int SimonEngine::runScript() {
 
 		case 196:{									/* set bit3 */
 				uint bit = getVarOrByte();
-				_bitArray[(bit >> 4) + 32] |= 1 << (bit & 15);
+				_bitArray[(bit / 16) + 32] |= 1 << (bit & 15);
 			}
 			break;
 
 		case 197:{									/* clear bit3 */
 				uint bit = getVarOrByte();
-				_bitArray[(bit >> 4) + 32] &= ~(1 << (bit & 15));
+				_bitArray[(bit / 16) + 32] &= ~(1 << (bit & 15));
 			}
 			break;
 
 		case 198:{									/* is bit3 clear */
 				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit >> 4) + 32] & (1 << (bit & 15))) == 0;
+				condition = (_bitArray[(bit / 16) + 32] & (1 << (bit & 15))) == 0;
 			}
 			break;
 
 		case 199:{									/* is bit3 set */
 				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit >> 4) + 32] & (1 << (bit & 15))) != 0;
+				condition = (_bitArray[(bit / 16) + 32] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
