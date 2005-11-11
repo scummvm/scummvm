@@ -110,7 +110,6 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// Prepare the return values.
 	rate = samplesPerSec;
 
-	flags = 0;
 	if (bitsPerSample == 8)		// 8 bit data is unsigned
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
