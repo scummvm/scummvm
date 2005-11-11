@@ -142,6 +142,14 @@ class Sprites;
 struct ScriptState;
 struct ScriptData;
 class ScriptHelper;
+class KyraEngine;
+
+struct Timer {
+	bool active;
+	int16 countdown;
+	uint32 nextRun;
+	void (KyraEngine::*func)(int timerNum);
+};
 
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
@@ -194,6 +202,13 @@ public:
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void drawSentenceCommand(char *sentence, int unk1);
+
+	void updateGameTimers();
+	void clearNextEventTickCount();
+	void setTimerCountdown(uint8 timer, int16 countdown);
+	int16 getTimerDelay(uint8 timer);
+	void enableTimer(uint8 timer);
+	void disableTimer(uint8 timer);
 
 	WSAMovieV1 *wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf);
 	void wsa_close(WSAMovieV1 *wsa);
@@ -480,6 +495,16 @@ protected:
 	void setCharactersInDefaultScene();
 	void resetBrandonPosionFlags();
 	void initAnimStateList();
+	
+	void setupTimers();
+	void timerUpdateHeadAnims(int timerNum);
+	void timerSetFlags1(int timerNum);
+	void timerSetFlags2(int timerNum);
+	void timerCheckAnimFlag1(int timerNum);
+	void timerCheckAnimFlag2(int timerNum);
+	void checkSpecialAnimFlags();
+	void timerRedrawAmulet(int timerNum);
+	void drawAmulet();
 
 	uint8 _game;
 	bool _fastMode;
@@ -495,6 +520,7 @@ protected:
 	uint8 _flagsTable[53];
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
+	uint16 _tickLength;
 	uint32 _features;
 	int _mouseX, _mouseY;
 	bool _needMouseUpdate;
@@ -606,7 +632,9 @@ protected:
 	int _roomTableSize;	
 	char **_roomFilenameTable;
 	int _roomFilenameTableSize;
-	
+
+	Timer _timers[34];
+	uint32 _timerNextRun;	
 	static const char *_xmidiFiles[];
 	static const int _xmidiFilesCount;
 	
@@ -614,6 +642,10 @@ protected:
 	static const int8 _addXPosTable[];
 	static const int8 _charYPosTable[];
 	static const int8 _addYPosTable[];
+
+	static const uint16 _amuletX[];
+	static const uint16 _amuletY[];
+
 };
 
 } // End of namespace Kyra

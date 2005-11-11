@@ -373,10 +373,21 @@ int KyraEngine::cmd_blockOutWalkableRegion(ScriptState *script) {
 
 int KyraEngine::cmd_walkPlayerToPoint(ScriptState *script) {
 	debug(9, "cmd_walkPlayerToPoint(0x%X)", script);
-	// if !stackPos(2)
-	// XXX
+
+	if (!stackPos(2)) {
+		disableTimer(19);
+		disableTimer(14);
+		disableTimer(18);
+	}
+
 	int reinitScript = handleSceneChange(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	// XXX
+
+	if (!stackPos(2)) {
+		enableTimer(19);
+		enableTimer(14);
+		enableTimer(18);
+	}
+
 	if (reinitScript) {
 		_scriptInterpreter->initScript(script, script->dataPtr);
 	}
@@ -520,7 +531,7 @@ int KyraEngine::cmd_setBrandonStatusBit(ScriptState *script) {
 
 int KyraEngine::cmd_pauseSeconds(ScriptState *script) {
 	debug(9, "cmd_pauseSeconds(0x%X)", script);
-	_system->delayMillis(stackPos(0)*1000);
+	delay(stackPos(0)*1000);
 	return 0;
 }
 
@@ -921,6 +932,7 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 	int toX = stackPos(1);
 	int toY = stackPos(2);
 	_pathfinderFlag2 = 1;
+	uint32 nextFrame;
 	int findWayReturn = findWay(_characterList[character].x1, _characterList[character].y1, toX, toY, _movFacingTable, 150);
 	_pathfinderFlag2 = 0;
 	if (_lastFindWayRet < findWayReturn) {
@@ -980,15 +992,19 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 			continue;
 		}
 		
+		nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 		setCharacterPosition(character, 0);
 		++curPos;
-		// XXX
-		waitTicks(10);
-		_sprites->updateSceneAnims();
-		// XXX updateMouseCursor();
-		// XXX updateGameTimers();
-		updateAllObjectShapes();
-		// XXX processPalette();
+
+		while (_system->getMillis() < nextFrame) {
+			_sprites->updateSceneAnims();
+			// XXX updateMouseCursor();
+			updateGameTimers();
+			updateAllObjectShapes();
+			// XXX processPalette();
+			if ((nextFrame - _system->getMillis()) >= 10)
+				_system->delayMillis(10);
+		}
 	}
 	return 0;
 }

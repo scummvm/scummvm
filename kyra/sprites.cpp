@@ -405,7 +405,6 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 		_engine->_northExitHeight += 1;
 	// XXX	
 	memcpy(_screen->_currentPalette + 745 - 0x3D, _dat + 0x17, 0x3D);
-	_screen->setScreenPalette(_screen->_currentPalette);
 	uint8 *data = _dat + 0x6B;
 
 	uint16 length = READ_LE_UINT16(data);

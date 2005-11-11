@@ -589,4 +589,7 @@ const int8 KyraEngine::_addYPosTable[] = {
 	0, -2, -2, -2, 0, 2, 2, 2
 };
 
+const uint16 KyraEngine::_amuletX[] = {231, 275, 253, 253};
+const uint16 KyraEngine::_amuletY[] = {170, 170, 159, 181};
+
 } // End of namespace Kyra
