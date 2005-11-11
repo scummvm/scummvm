@@ -1350,7 +1350,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"dd|SET_SPRITE_PALETTE",
 	"d|SET_SPRITE_PRIORITY",
 	/* 24 */
-	"diid|SET_SPRITE_XY",
+	"diib|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
@@ -1447,7 +1447,7 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"dd|SET_SPRITE_PALETTE",
 	"d|SET_SPRITE_PRIORITY",
 	/* 24 */
-	"diid|SET_SPRITE_XY",
+	"diib|SET_SPRITE_XY",
 	"x|HALT_SPRITE",
 	"ddddd|SET_WINDOW",
 	"|RESET",
