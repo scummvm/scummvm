@@ -689,7 +689,7 @@ void SimonEngine::vc10_draw() {
 	if (_game == GAME_FEEBLEFILES) {
 		state.depack_src = _curVgaFile2 + READ_LE_UINT32(p2);
 		width = READ_LE_UINT16(p2 + 6);
-		height = p2[4];
+		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
 		flags = p2[5];
 	} else {
 		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);

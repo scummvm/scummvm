@@ -117,7 +117,7 @@ struct VC10_state {
 	const byte *depack_src;
 	int8 depack_cont;
 
-	byte depack_dest[200];
+	byte depack_dest[480];
 };
 
 byte *vc10_depack_column(VC10_state *vs);
