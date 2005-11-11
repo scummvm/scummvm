@@ -1979,8 +1979,8 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->unk3 = 1;
 
 		// Simon1 specific
-		o_kill_sprite_simon1(0x80);
-		loadSprite(0, 1, 0x80, 0, 0, 0xE);
+		o_kill_sprite_simon1(128);
+		loadSprite(0, 1, 128, 0, 0, 14);
 	} else {
 		ha->x = 227;
 		ha->y = 162;
@@ -2021,9 +2021,9 @@ void SimonEngine::f10_key() {
 	_lockWord |= 0x8000;
 
 	if (_game & GF_SIMON2)
-		color = 0xec;
+		color = 236;
 	else
-		color = 0xe1;
+		color = 225;
 
 	uint limit = (_game & GF_SIMON2) ? 200 : 134;
 
@@ -2057,7 +2057,7 @@ void SimonEngine::f10_key() {
 
 				x_ = (ha->width / 2) - 4 + ha->x - (_scrollX * 8);
 
-				if (x_ >= 0x137)
+				if (x_ >= 311)
 					continue;
 
 				dst = dx_lock_attached();
@@ -2877,7 +2877,7 @@ void SimonEngine::timer_vga_sprites_helper() {
 
 	_scrollX += _scrollFlag;
 
-	vc_write_var(0xfB, _scrollX);
+	vc_write_var(251, _scrollX);
 
 	_scrollFlag = 0;
 }
@@ -3105,7 +3105,7 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 		p = (const uint16 *)_pathFindArray[20 - i];
 		if (!p)
 			continue;
-		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {	// 0xE703 = byteswapped 999
+		for (j = 0; readUint16Wrapper(&p[0]) != end; j++, p += 2) {
 			x_diff = abs((int)(readUint16Wrapper(&p[0]) - x));
 			y_diff = abs((int)(readUint16Wrapper(&p[1]) - 12 - y));
 
@@ -3166,7 +3166,7 @@ void SimonEngine::removeIconArray(uint fcs_index) {
 
 // ok
 void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
-	o_kill_sprite_simon1(0x80);
+	o_kill_sprite_simon1(128);
 }
 
 void SimonEngine::delete_hitarea_by_index(uint index) {
@@ -3201,7 +3201,7 @@ void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
 		if (_vgaVar6 && _windowArray[2] == fcs) {
-			fcs = _windowArray[0x18 / 4];
+			fcs = _windowArray[6];
 			_vgaVar6 = 0;
 		}
 

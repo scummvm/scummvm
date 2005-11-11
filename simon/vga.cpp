@@ -655,6 +655,7 @@ void SimonEngine::decodeStripA(byte *dst, const byte *src, int height) {
 void SimonEngine::vc10_draw() {
 	byte *p2;
 	uint width, height;
+	uint maxWidth, maxHeight;
 	byte flags;
 	const uint16 *vlut;
 	VC10_state state;
@@ -665,7 +666,11 @@ void SimonEngine::vc10_draw() {
 	if (state.image == 0)
 		return;
 
-	state.palette = (_vcPtr[1] << 4);
+	if (_game == GAME_FEEBLEFILES) {
+		state.palette = (_vcPtr[0] * 16);
+	} else {
+		state.palette = (_vcPtr[1] * 16);
+	}
 	_vcPtr += 2;
 	state.x = (int16)vc_read_next_word();
 
@@ -674,7 +679,7 @@ void SimonEngine::vc10_draw() {
 	}
 	state.y = (int16)vc_read_next_word();
 
-	if (!(_game & GF_SIMON2)) {
+	if (_game & GF_SIMON1) {
 		state.flags = vc_read_next_word();
 	} else {
 		state.flags = vc_read_next_byte();
@@ -693,7 +698,7 @@ void SimonEngine::vc10_draw() {
 		flags = p2[5];
 	} else {
 		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
-		width = READ_BE_UINT16(p2 + 6) >> 4;
+		width = READ_BE_UINT16(p2 + 6) / 16;
 		height = p2[5];
 		flags = p2[4];
 	}
@@ -717,8 +722,8 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	uint maxWidth = (_game == GAME_FEEBLEFILES) ? 641 : 21;
-	if (_game & GF_SIMON2 && width >= maxWidth) {
+	maxWidth = (_game == GAME_FEEBLEFILES) ? 640 : 20;
+	if (_game & GF_SIMON2 && width > maxWidth) {
 		const byte *src;
 		byte *dst;
 		uint w;
@@ -747,15 +752,17 @@ void SimonEngine::vc10_draw() {
 		return;
 	}
 
-	if (state.flags & 0x10) {
-		state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
-	} else if (state.flags & 1) {
-		state.depack_src = vc10_flip(state.depack_src, width, height);
+	if (_game != GAME_FEEBLEFILES) {
+		if (state.flags & 0x10) {
+			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
+		} else if (state.flags & 1) {
+			state.depack_src = vc10_flip(state.depack_src, width, height);
+		}
 	}
 
 	vlut = &_video_windows[_windowNum * 4];
 
-	state.draw_width = width << 1;	/* cl */
+	state.draw_width = width * 2;	/* cl */
 	state.draw_height = height;	/* ch */
 
 	state.x_skip = 0;							/* colums to skip = bh */
@@ -771,7 +778,8 @@ void SimonEngine::vc10_draw() {
 	}
 	state.x = cur;
 
-	cur += state.draw_width - (vlut[2] << 1);
+	maxWidth = (_game == GAME_FEEBLEFILES) ? 640 : (vlut[2] * 2);
+	cur += state.draw_width - maxWidth;
 	if (cur > 0) {
 		do {
 			if (!--state.draw_width)
@@ -789,7 +797,8 @@ void SimonEngine::vc10_draw() {
 	}
 	state.y = cur;
 
-	cur += state.draw_height - vlut[3];
+	maxHeight = (_game == GAME_FEEBLEFILES) ? 480 : vlut[3];
+	cur += state.draw_height - maxHeight;
 	if (cur > 0) {
 		do {
 			if (!--state.draw_height)
@@ -799,7 +808,7 @@ void SimonEngine::vc10_draw() {
 
 	assert(state.draw_width != 0 && state.draw_height != 0);
 
-	state.draw_width <<= 2;
+	state.draw_width *= 4;
 
 	state.surf2_addr = dx_lock_2();
 	state.surf2_pitch = _dxSurfacePitch;
@@ -828,7 +837,7 @@ void SimonEngine::vc10_draw() {
 		byte h;
 		uint w;
 
-		state.x_skip <<= 2;
+		state.x_skip *= 4;
 		state.dl = width;
 		state.dh = height;
 
@@ -877,7 +886,7 @@ void SimonEngine::vc10_draw() {
 		uint h, i;
 
 		if (!(state.flags & 8)) {
-			src = state.depack_src + (width * state.y_skip << 4) + (state.x_skip << 3);
+			src = state.depack_src + (width * state.y_skip * 16) + (state.x_skip * 8);
 			dst = state.surf_addr;
 
 			state.draw_width *= 2;
@@ -912,7 +921,7 @@ void SimonEngine::vc10_draw() {
 			if (state.flags & 2) {
 				/* no transparency */
 				do {
-					uint count = state.draw_width >> 2;
+					uint count = state.draw_width / 4;
 
 					dst = dst_org;
 					do {
@@ -938,7 +947,7 @@ void SimonEngine::vc10_draw() {
 			} else {
 				/* transparency */
 				do {
-					uint count = state.draw_width >> 2;
+					uint count = state.draw_width / 4;
 
 					dst = dst_org;
 					do {
@@ -991,7 +1000,7 @@ void SimonEngine::vc10_draw() {
 			uint w, h;
 			byte *src, *dst, *dst_org;
 
-			state.x_skip <<= 2;				/* reached */
+			state.x_skip *= 4;				/* reached */
 			state.dl = width;
 			state.dh = height;
 
@@ -1006,7 +1015,7 @@ void SimonEngine::vc10_draw() {
 
 					h = 0;
 					do {
-						dst[0] = (*src >> 4) | state.palette;
+						dst[0] = (*src / 16) | state.palette;
 						dst[1] = (*src & 15) | state.palette;
 						dst += _screenWidth;
 						src++;
@@ -1027,7 +1036,7 @@ void SimonEngine::vc10_draw() {
 
 					h = 0;
 					do {
-						color = (*src >> 4);
+						color = (*src / 16);
 						if (color)
 							dst[0] = color | state.palette;
 						color = (*src & 15);
@@ -1047,11 +1056,11 @@ void SimonEngine::vc10_draw() {
 
 			src = state.depack_src + (width * state.y_skip) * 8;
 			dst = state.surf_addr;
-			state.x_skip <<= 2;
+			state.x_skip *= 4;
 			if (state.flags & 2) {
 				do {
 					for (count = 0; count != state.draw_width; count++) {
-						dst[count * 2] = (src[count + state.x_skip] >> 4) | state.palette;
+						dst[count * 2] = (src[count + state.x_skip] / 16) | state.palette;
 						dst[count * 2 + 1] = (src[count + state.x_skip] & 15) | state.palette;
 					}
 					dst += _screenWidth;
@@ -1061,7 +1070,7 @@ void SimonEngine::vc10_draw() {
 				do {
 					for (count = 0; count != state.draw_width; count++) {
 						byte color;
-						color = (src[count + state.x_skip] >> 4);
+						color = (src[count + state.x_skip] / 16);
 						if (color)
 							dst[count * 2] = color | state.palette;
 						color = (src[count + state.x_skip] & 15);
@@ -1206,7 +1215,7 @@ void SimonEngine::vc21_endRepeat() {
 void SimonEngine::vc22_setSpritePalette() {
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
-	uint num = a == 0 ? 0x20 : 0x10;
+	uint num = a == 0 ? 32 : 16;
 	uint palSize = 96;
 	byte *palptr, *src;
 
@@ -1215,13 +1224,13 @@ void SimonEngine::vc22_setSpritePalette() {
 		palSize = 768;
 	}
 
-	palptr = &_palette[(a << 6)];
+	palptr = &_palette[(a * 64)];
 	src = _curVgaFile1 + 6 + b * palSize;
 
 	do {
-		palptr[0] = src[0] << 2;
-		palptr[1] = src[1] << 2;
-		palptr[2] = src[2] << 2;
+		palptr[0] = src[0] * 4;
+		palptr[1] = src[1] * 4;
+		palptr[2] = src[2] * 4;
 		palptr[3] = 0;
 
 		palptr += 4;
@@ -1312,7 +1321,7 @@ void SimonEngine::vc27_resetSprite() {
 
 	vsp = _vgaSprites;
 	while (vsp->id) {
-		if ((_game & GF_SIMON1) && vsp->id == 0x80) {
+		if ((_game & GF_SIMON1) && vsp->id == 128) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
 		}
 		vsp->id = 0;
@@ -1330,7 +1339,7 @@ void SimonEngine::vc27_resetSprite() {
 
 	vte = _vgaTimerList;
 	while (vte->delay) {
-		if ((_game & GF_SIMON1) && vsp->id == 0x80) {
+		if ((_game & GF_SIMON1) && vsp->id == 128) {
 			vte++;
 		} else {
 			vte2 = vte;
@@ -1341,7 +1350,7 @@ void SimonEngine::vc27_resetSprite() {
 		}
 	}
 
-	vc_write_var(0xFE, 0);
+	vc_write_var(254, 0);
 
 	_lockWord &= ~8;
 }
@@ -1434,7 +1443,7 @@ void SimonEngine::vc40() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) + vc_read_next_word();
 
-	if ((_game & GF_SIMON2) && var == 0xF && !(_bitArray[5] & 1)) {
+	if ((_game & GF_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {
@@ -1463,7 +1472,7 @@ void SimonEngine::vc41() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) - vc_read_next_word();
 
-	if ((_game & GF_SIMON2) && var == 0xF && !(_bitArray[5] & 1)) {
+	if ((_game & GF_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {
@@ -1550,8 +1559,8 @@ void SimonEngine::vc48_setPathFinder() {
 		p += step;
 		y1 = readUint16Wrapper(p) - y2;
 
-		vp[0] = y1 >> 1;
-		vp[1] = y1 - (y1 >> 1);
+		vp[0] = y1 / 2;
+		vp[1] = y1 - (y1 / 2);
 
 		vp += 2;
 	} while (--c);
