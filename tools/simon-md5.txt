@@ -22,6 +22,7 @@ Simon the Sorcerer 2
 	-	DOS	en	078b04da0974a40645b92baffdf2781e	simon2talkie	Kirben
 	-	DOS	fr	c8ddd48919aa75423dd2d3e5864909df	simon2talkie	SimSaw
 	-	DOS	hb	a3cbdd3450f9fccb0a9d8d6dc28f66fe	simon2talkie
+	-	DOS	it	c5091c98e3b13760764876177fdf4fb4	simon2talkie	guybrushvm
 	-	DOS	es	79a9d9357c15153c8c502dba73c3eac6	simon2talkie	Samuel Suárez
 	Demo	DOS	en	1e11ddbad80c408031ae44a0cbce46bb	simon2talkie	Kirben
 	Demo	DOS	de	028c6240c9c8e190d86188238505c5e5	simon2talkie	Kirben
