@@ -234,6 +234,7 @@ uint8 Control::runPanel(void) {
 	_screenBuf = (uint8*)malloc(640 * 480);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
+	_sound->quitScreen();
 
 	uint32 fontId = SR_FONT, redFontId = SR_REDFONT;
 	if (SwordEngine::_systemVars.language == BS1_CZECH) {
