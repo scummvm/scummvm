@@ -24,6 +24,8 @@
 
 #include <stdio.h>
 #include "base/engine.h"
+#include "base/gameDetector.h"
+#include "base/plugins.h"
 #include "common/util.h"
 #include "simon/midi.h"
 #include "simon/sound.h"
@@ -101,6 +103,36 @@ struct VgaTimerEntry {
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
+enum SimonTypes {
+	GType_SIMON1,
+	GType_SIMON2,
+	GType_FF
+};
+
+struct GameFileDescription {
+	const char *fileName;
+	uint16 fileType;
+};
+
+struct GameDescription {
+	const char *name;
+	SimonTypes gameType;
+	GameIds gameId;
+	const char *title;
+	int filesCount;
+	GameFileDescription *filesDescriptions;
+	uint32 features;
+	Common::Language language;
+	Common::Platform platform;
+
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, title, features };
+		return dummy;
+	}
+};
+
+DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
+
 struct GameSpecificSettings;
 
 class Debugger;
@@ -113,7 +145,18 @@ class SimonEngine : public Engine {
 	typedef void (SimonEngine::*VgaOpcodeProc) ();
 	void setupVgaOpcodes();
 	const VgaOpcodeProc *_vga_opcode_table;
-	
+
+public:
+	GameDescription *_gameDescription;
+
+	bool initGame(void);
+
+	int getGameId() const { return _gameDescription->gameId; }
+	int getGameType() const { return _gameDescription->gameType; }
+	uint32 getFeatures() const { return _gameDescription->features; }
+	Common::Language getLanguage() const { return _gameDescription->language; }
+	Common::Platform getPlatform() const { return _gameDescription->platform; }
+
 protected:
 	void playSting(uint a);
 

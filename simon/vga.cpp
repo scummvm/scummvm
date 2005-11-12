@@ -134,7 +134,7 @@ void SimonEngine::run_vga_script() {
 			}
 		}
 
-		if (_game & GF_SIMON1) {
+		if (getGameType() == GType_SIMON1) {
 			opcode = READ_BE_UINT16(_vcPtr);
 			_vcPtr += 2;
 		} else {
@@ -208,10 +208,10 @@ void SimonEngine::vc_skip_next_instruction() {
 		6, 4, 2, 6, 0
 	};
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		uint opcode = vc_read_next_byte();
 		_vcPtr += opcode_param_len_feeblefiles[opcode];
-	} else if (_game & GF_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		uint opcode = vc_read_next_byte();
 		_vcPtr += opcode_param_len_simon2[opcode];
 	} else {
@@ -279,7 +279,7 @@ void SimonEngine::vc2_call() {
 
 
 	bb = _curVgaFile1;
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
 
@@ -295,7 +295,7 @@ void SimonEngine::vc2_call() {
 
 	vc_ptr_org = _vcPtr;
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
 	} else {
 		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
@@ -320,7 +320,7 @@ void SimonEngine::vc3_loadSprite() {
 
 	windowNum = vc_read_next_word();		/* 0 */
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		fileId = vc_read_next_word();		/* 0 */
 		vgaSpriteId = vc_read_next_word();	/* 2 */
 	} else {
@@ -365,7 +365,7 @@ void SimonEngine::vc3_loadSprite() {
 	}
 
 	pp = _curVgaFile1;
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
 		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
 
@@ -400,7 +400,7 @@ void SimonEngine::vc3_loadSprite() {
 #endif
 
 	if (_startVgaScript) {
-		if (_game == GAME_FEEBLEFILES) {
+		if (getGameType() == GType_FF) {
 			dump_vga_script(_curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), res, vgaSpriteId);
 		} else {
 			dump_vga_script(_curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon*)p)->scriptOffs), res, vgaSpriteId);
@@ -408,7 +408,7 @@ void SimonEngine::vc3_loadSprite() {
 		}
 	}
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->scriptOffs), vgaSpriteId, res);
 	} else {
 		add_vga_timer(VGA_DELAY_BASE, _curVgaFile1 + READ_BE_UINT16(&((AnimationHeader_Simon *) p)->scriptOffs), vgaSpriteId, res);
@@ -666,7 +666,7 @@ void SimonEngine::vc10_draw() {
 	if (state.image == 0)
 		return;
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		state.palette = (_vcPtr[0] * 16);
 	} else {
 		state.palette = (_vcPtr[1] * 16);
@@ -674,12 +674,12 @@ void SimonEngine::vc10_draw() {
 	_vcPtr += 2;
 	state.x = (int16)vc_read_next_word();
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		state.x -= _scrollX;
 	}
 	state.y = (int16)vc_read_next_word();
 
-	if (_game & GF_SIMON1) {
+	if (getGameType() == GType_SIMON1) {
 		state.flags = vc_read_next_word();
 	} else {
 		state.flags = vc_read_next_byte();
@@ -691,7 +691,7 @@ void SimonEngine::vc10_draw() {
 	p2 = _curVgaFile2 + state.image * 8;
 	state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		state.depack_src = _curVgaFile2 + READ_LE_UINT32(p2);
 		width = READ_LE_UINT16(p2 + 6);
 		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
@@ -722,8 +722,8 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	maxWidth = (_game == GAME_FEEBLEFILES) ? 640 : 20;
-	if (_game & GF_SIMON2 && width > maxWidth) {
+	maxWidth = (getGameType() == GType_FF) ? 640 : 20;
+	if (getGameType() == GType_SIMON2 && width > maxWidth) {
 		const byte *src;
 		byte *dst;
 		uint w;
@@ -752,7 +752,7 @@ void SimonEngine::vc10_draw() {
 		return;
 	}
 
-	if (_game != GAME_FEEBLEFILES) {
+	if (getGameType() != GType_FF) {
 		if (state.flags & 0x10) {
 			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
 		} else if (state.flags & 1) {
@@ -778,7 +778,7 @@ void SimonEngine::vc10_draw() {
 	}
 	state.x = cur;
 
-	maxWidth = (_game == GAME_FEEBLEFILES) ? 640 : (vlut[2] * 2);
+	maxWidth = (getGameType() == GType_FF) ? 640 : (vlut[2] * 2);
 	cur += state.draw_width - maxWidth;
 	if (cur > 0) {
 		do {
@@ -797,7 +797,7 @@ void SimonEngine::vc10_draw() {
 	}
 	state.y = cur;
 
-	maxHeight = (_game == GAME_FEEBLEFILES) ? 480 : vlut[3];
+	maxHeight = (getGameType() == GType_FF) ? 480 : vlut[3];
 	cur += state.draw_height - maxHeight;
 	if (cur > 0) {
 		do {
@@ -820,7 +820,7 @@ void SimonEngine::vc10_draw() {
 		uint offs, offs2;
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
-		if ((_game & GF_SIMON1) && _subroutine == 2926) {
+		if ((getGameType() == GType_SIMON1) && _subroutine == 2926) {
 			offs = ((vlut[0]) * 2 + state.x) * 8;
 			offs2 = (vlut[1] + state.y);
 		} else {
@@ -850,7 +850,7 @@ void SimonEngine::vc10_draw() {
 			dst = state.surf_addr + w * 2;	/* edi */
 
 			h = state.draw_height;
-			if ((_game & GF_SIMON1) && vc_get_bit(88)) {
+			if ((getGameType() == GType_SIMON1) && vc_get_bit(88)) {
 				/* transparency */
 				do {
 					if (mask[0] & 0xF0) {
@@ -991,7 +991,7 @@ void SimonEngine::vc10_draw() {
 		}
 		/* vc10_helper_4 */
 	} else {
-		if (_game & GF_SIMON2 && state.flags & 0x4 && _bitArray[10] & 0x800) {
+		if (getGameType() == GType_SIMON2 && state.flags & 0x4 && _bitArray[10] & 0x800) {
 			state.surf_addr = state.surf2_addr;
 			state.surf_pitch = state.surf2_pitch;
 		}
@@ -1100,7 +1100,7 @@ void SimonEngine::vc12_delay() {
 	VgaSprite *vsp = find_cur_sprite();
 	uint num;
 
-	if (_game & GF_SIMON1) {
+	if (getGameType() == GType_SIMON1) {
 		num = vc_read_var_or_word();
 	} else {
 		num = vc_read_next_byte() * _frameRate;
@@ -1108,7 +1108,7 @@ void SimonEngine::vc12_delay() {
 
 	// Work around to allow inventory arrows to be
 	// shown in some versions of Simon the Sorcerer 1
-	if ((_game & GF_SIMON1) && vsp->id == 0x80)
+	if ((getGameType() == GType_SIMON1) && vsp->id == 0x80)
 		num = 0;
 	else
 		num += VGA_DELAY_BASE;
@@ -1167,7 +1167,7 @@ void SimonEngine::vc17_setPathfinderItem() {
 	uint a = vc_read_next_word();
 	_pathFindArray[a - 1] = (const uint16 *)_vcPtr;
 
-	int end = (_game == GAME_FEEBLEFILES) ? 9999 : 999;
+	int end = (getGameType() == GType_FF) ? 9999 : 999;
 	while (readUint16Wrapper(_vcPtr) != end)
 		_vcPtr += 4;
 	_vcPtr += 2;
@@ -1199,7 +1199,7 @@ void SimonEngine::vc20_setRepeat() {
 void SimonEngine::vc21_endRepeat() {
 	int16 a = vc_read_next_word();
 	const byte *tmp = _vcPtr + a;
-	if (_game & GF_SIMON2)
+	if (getGameType() == GType_SIMON2)
 		tmp += 3;
 	else
 		tmp += 4;
@@ -1219,7 +1219,7 @@ void SimonEngine::vc22_setSpritePalette() {
 	uint palSize = 96;
 	byte *palptr, *src;
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		num = 256;
 		palSize = 768;
 	}
@@ -1283,7 +1283,7 @@ void SimonEngine::vc24_setSpriteXY() {
 
 	vsp->x += (int16)vc_read_next_word();
 	vsp->y += (int16)vc_read_next_word();
-	if (_game & GF_SIMON1) {
+	if (getGameType() == GType_SIMON1) {
 		vsp->flags = vc_read_next_word();
 	} else {
 		vsp->flags = vc_read_next_byte();
@@ -1321,7 +1321,7 @@ void SimonEngine::vc27_resetSprite() {
 
 	vsp = _vgaSprites;
 	while (vsp->id) {
-		if ((_game & GF_SIMON1) && vsp->id == 128) {
+		if ((getGameType() == GType_SIMON1) && vsp->id == 128) {
 			memcpy(&bak, vsp, sizeof(VgaSprite));
 		}
 		vsp->id = 0;
@@ -1339,7 +1339,7 @@ void SimonEngine::vc27_resetSprite() {
 
 	vte = _vgaTimerList;
 	while (vte->delay) {
-		if ((_game & GF_SIMON1) && vsp->id == 128) {
+		if ((getGameType() == GType_SIMON1) && vsp->id == 128) {
 			vte++;
 		} else {
 			vte2 = vte;
@@ -1410,7 +1410,7 @@ void SimonEngine::vc36_setWindowImage() {
 	uint vga_res = vc_read_next_word();
 	uint windowNum = vc_read_next_word();
 
-	if (_game & GF_SIMON1) {
+	if (getGameType() == GType_SIMON1) {
 		if (windowNum == 16) {
 			_copyPartialMode = 2;
 		} else {
@@ -1443,7 +1443,7 @@ void SimonEngine::vc40() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) + vc_read_next_word();
 
-	if ((_game & GF_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
+	if ((getGameType() == GType_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {
@@ -1472,7 +1472,7 @@ void SimonEngine::vc41() {
 	uint var = vc_read_next_word();
 	int16 value = vc_read_var(var) - vc_read_next_word();
 
-	if ((_game & GF_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
+	if ((getGameType() == GType_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {
@@ -1591,18 +1591,18 @@ void SimonEngine::vc51_clear_hitarea_bit_0x40() {
 void SimonEngine::vc52_playSound() {
 	uint16 sound_id = vc_read_next_word();
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		uint16 pan = vc_read_next_word();
 		uint16 vol = vc_read_next_word();
 		debug(0, "STUB: vc52_playSound: snd %d pan %d vol %d", sound_id, pan, vol);
-	} else if (_game & GF_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		if (sound_id >= 0x8000) {
 			sound_id = -sound_id;
 			_sound->playAmbient(sound_id);
 		} else {
 			_sound->playEffects(sound_id);
 		}
-	} else if (_game & GF_TALKIE) {
+	} else if (getFeatures() & GF_TALKIE) {
 		_sound->playEffects(sound_id);
 	} else {
 		playSting(sound_id);
@@ -1644,7 +1644,7 @@ void SimonEngine::vc55_offset_hit_area() {
 }
 
 void SimonEngine::vc56_delay() {
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		uint num = vc_read_var_or_word() * _frameRate;
 
 		add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
@@ -1653,7 +1653,7 @@ void SimonEngine::vc56_delay() {
 }
 
 void SimonEngine::vc59() {
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		uint file = vc_read_next_word();
 		uint start = vc_read_next_word();
 		uint end = vc_read_next_word() + 1;
@@ -1707,7 +1707,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 	vfs = _vgaSleepStructs;
 	while (vfs->ident != 0) {
-		if (vfs->sprite_id == _vgaCurSpriteId && ((_game & GF_SIMON1) || vfs->cur_vga_file == _vgaCurFileId)) {
+		if (vfs->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vfs->cur_vga_file == _vgaCurFileId)) {
 			while (vfs->ident != 0) {
 				memcpy(vfs, vfs + 1, sizeof(VgaSleepStruct));
 				vfs++;
@@ -1723,7 +1723,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 
 		vte = _vgaTimerList;
 		while (vte->delay != 0) {
-			if (vte->sprite_id == _vgaCurSpriteId && ((_game & GF_SIMON1) || vte->cur_vga_file == _vgaCurFileId)) {
+			if (vte->sprite_id == _vgaCurSpriteId && ((getGameType() == GType_SIMON1) || vte->cur_vga_file == _vgaCurFileId)) {
 				delete_vga_timer(vte);
 				break;
 			}
@@ -1739,7 +1739,7 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 void SimonEngine::vc60_killSprite() {
 	uint file;
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		file = vc_read_next_word();
 	} else {
 		file = _vgaCurFileId;
@@ -1781,7 +1781,7 @@ void SimonEngine::vc62_fastFadeOut() {
 			delay(5);
 		}
 
-		if (_game & GF_SIMON1) {
+		if (getGameType() == GType_SIMON1) {
 			uint16 params[5];						/* parameters to vc10_draw */
 			VgaSprite *vsp;
 			VgaPointersEntry *vpe;
@@ -1819,12 +1819,12 @@ void SimonEngine::vc62_fastFadeOut() {
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
-		if ((_game & GF_SIMON1) && (_subroutine == 2923 || _subroutine == 2926))
+		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926))
 			dx_clear_surfaces(200);
 		else
 			dx_clear_surfaces(_windowNum == 4 ? 134 : 200);
 	}
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		if (_nextMusicToPlay != -1)
 			loadMusic(_nextMusicToPlay);
 	}

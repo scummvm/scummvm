@@ -38,7 +38,6 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 #include "simon/debugger.h"
-#include "simon/simon-md5.h"
 
 #include "sound/mididrv.h"
 #ifdef _WIN32_WCE
@@ -51,117 +50,90 @@ extern bool isSmartphone(void);
 
 using Common::File;
 
-struct SimonGameSettings {
-	const char *name;
-	const char *description;
-	uint32 features;
-	const char *detectname;
+struct ObsoleteTargets {
+	const char *from;
+	const char *to;
+	Common::Platform platform;
+
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { from, "Obsolete Target", 0 };
 		return dummy;
 	}
 };
 
-static const SimonGameSettings simon_settings[] = {
-	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", GAME_SIMON1ACORN, "DATA"},
-	{"simon1dos", "Simon the Sorcerer 1 (DOS)", GAME_SIMON1DOS, "GAMEPC"},
-	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", GAME_SIMON1AMIGA, "gameamiga"},
-	{"simon2dos", "Simon the Sorcerer 2 (DOS)", GAME_SIMON2DOS, "GAME32"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie", GAME_SIMON1TALKIE, "GAMEPC"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", GAME_SIMON1TALKIE, 0},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie", GAME_SIMON2TALKIE, "GSPTR30"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", GAME_SIMON2WIN, 0},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", GAME_SIMON2WIN, 0},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", GAME_SIMON1CD32, "gameamiga"},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", GAME_SIMON1DEMO, "GDEMO"},
-	{"feeble", "The Feeble Files", GAME_FEEBLEFILES, "GAME22"},
-
-	{NULL, NULL, 0, NULL}
+/**
+ * Conversion table mapping old obsolete target names to the
+ * corresponding new target and platform combination.
+ *
+ */
+static ObsoleteTargets obsoleteTargetsTable[] = {
+	{"simon1acorn", "simon1", Common::kPlatformAcorn},
+	{"simon1amiga", "simon1", Common::kPlatformAmiga},
+	{"simon1cd32", "simon1", Common::kPlatformAmiga},
+	{"simon1dos", "simon1", Common::kPlatformPC},
+	{"simon1talkie", "simon1", Common::kPlatformPC},
+	{"simon1win", "simon1", Common::kPlatformWindows},
+	{"simon2dos", "simon2",  Common::kPlatformPC},
+	{"simon2talkie", "simon2", Common::kPlatformPC},
+	{"simon2mac", "simon2", Common::kPlatformMacintosh},
+	{"simon2win", "simon2",  Common::kPlatformWindows},
+	{NULL, NULL, Common::kPlatformUnknown}
 };
 
-static int compareMD5Table(const void *a, const void *b) {
-	const char *key = (const char *)a;
-	const MD5Table *elem = (const MD5Table *)b;
-	return strcmp(key, elem->md5);
-}
+static const GameSettings simonGames[] = {
+	// Simon the Sorcerer 1 & 2 (not SCUMM games)
+	{"feeble", "The Feeble Files", 0},
+	{"simon1", "Simon the Sorcerer 1", 0},
+	{"simon2", "Simon the Sorcerer 2", 0},
+
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", 0},
+	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", 0},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", 0},
+	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", 0},
+	{"simon1dos", "Simon the Sorcerer 1 (DOS)", 0},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie", 0},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", 0},
+	{"simon2dos", "Simon the Sorcerer 2 (DOS)", 0},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie", 0},
+	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", 0},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", 0},
+
+	{NULL, NULL, 0}
+};
 
 GameList Engine_SIMON_gameList() {
-	const SimonGameSettings *g = simon_settings;
 	GameList games;
+	const GameSettings *g = simonGames;
 	while (g->name) {
-		games.push_back(g->toGameSettings());
+		games.push_back(*g);
 		g++;
 	}
+
 	return games;
 }
 
 DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
-	DetectedGameList detectedGames;
-	const SimonGameSettings *g;
-	char detectName[128];
-	char detectName2[128];
-
-	typedef Common::Map<Common::String, bool> StringSet;
-	StringSet fileSet;
-
-	for (g = simon_settings; g->name; ++g) {
-		if (g->detectname == NULL)
-			continue;
-
-		strcpy(detectName, g->detectname);
-		strcpy(detectName2, g->detectname);
-		strcat(detectName2, ".");
-
-		// Iterate over all files in the given directory
-		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				const char *name = file->displayName().c_str();
-
-				if ((!scumm_stricmp(detectName, name))  || (!scumm_stricmp(detectName2, name))) {
-					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(g->toGameSettings());
-					fileSet.addKey(file->path());
-					break;
-				}
-			}
-		}
-	}
-
-	// Now, we check the MD5 sums of the 'candidate' files. If we have an exact match,
-	// only return that.
-	bool exactMatch = false;
-	for (StringSet::const_iterator iter = fileSet.begin(); iter != fileSet.end(); ++iter) {
-		uint8 md5sum[16];
-		const char *name = iter->_key.c_str();
-		if (Common::md5_file(name, md5sum)) {
-			char md5str[32+1];
-			for (int j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-
-			const MD5Table *elem;
-			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
-			if (elem) {
-				if (!exactMatch)
-					detectedGames.clear();	// Clear all the non-exact candidates
-				// Find the GameSettings for that target
-				for (g = simon_settings; g->name; ++g) {
-					if (0 == scumm_stricmp(g->name, elem->target))
-						break;
-				}
-				assert(g->name);
-				// Insert the 'enhanced' game data into the candidate list
-				detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, elem->platform));
-				exactMatch = true;
-			}
-		}
-	}
-
-	return detectedGames;
+	return Simon::GAME_ProbeGame(fslist);
 }
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
+	const ObsoleteTargets *o = obsoleteTargetsTable;
+	while (o->from) {
+		if (!scumm_stricmp(detector->_game.name, o->from)) {
+			detector->_game.name = o->to;
+
+			ConfMan.set("gameid", o->to);
+
+			if (o->platform != Common::kPlatformUnknown)
+				ConfMan.set("platform", Common::getPlatformCode(o->platform));
+
+			warning("Target upgraded from %s to %s", o->from, o->to);
+			ConfMan.flushToDisk();
+			break;
+		}
+		o++;
+	}
+
 	return new Simon::SimonEngine(detector, syst);
 }
 
@@ -279,179 +251,14 @@ static const GameSpecificSettings feeblefiles_settings = {
 };
 #endif
 
-static const char* bad_versions[3] = {
-	"465eed710cc242b2de7dc77edd467c4c", // simon1dos (English)
-	"bed9134804d96f72afa152b8ec5628c3", // simon1dos (French)
-	"27c8e7feada80c75b70b9c2f6088d519", // simon2dos (English)
-};
-
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), midi(syst) {
-	int j =0;
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;
 	_gameOffsetsPtr = 0;
 
 	_debugger = 0;
 	setupVgaOpcodes();
-
-	const SimonGameSettings *g = simon_settings;
-	while (g->name) {
-		if (!scumm_stricmp(detector->_game.name, g->name))
-			break;
-		g++;
-	}
-	if (!g->name)
-		error("Invalid game '%s'\n", detector->_game.name);
-
-	SimonGameSettings game = *g;
-
-	switch (Common::parsePlatform(ConfMan.get("platform"))) {
-	case Common::kPlatformAmiga:
-	case Common::kPlatformMacintosh:
-		if (game.features & GF_SIMON2)
-			game.features |= GF_WIN;
-		break;
-	case Common::kPlatformWindows:
-		game.features |= GF_WIN;
-		break;
-	default:
-		break;
-	}
-
-	_game = game.features;
-
-	// Convert older targets
-	if (g->detectname == NULL) {
-		if (!strcmp("simon1win", g->name)) {
-			ConfMan.set("gameid", "simon1talkie");
-			ConfMan.set("platform", "Windows");
-		} else if (!strcmp("simon2win", g->name) || !strcmp("simon2mac", g->name)) {
-			ConfMan.set("gameid", "simon2talkie");
-			ConfMan.set("platform", "Windows");
-		}
-		ConfMan.flushToDisk();
-	} else {
-		char buf[100];
-		uint8 md5sum[16];
-		File f;
-
-		sprintf(buf, g->detectname);
-		f.open(buf);
-		if (f.isOpen() == false)
-			strcat(buf, ".");
-
-		if (Common::md5_file(buf, md5sum)) {
-			char md5str[32+1];
-			for (j = 0; j < 16; j++) {
-				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-
-			for (j = 0; j < 3; j++) {
-				if (!strcmp(md5str, bad_versions[j]))
-					error("Cracked versions aren't supported");
-			}
-
-			printf("%s  %s\n", md5str, buf);
-			const MD5Table *elem;
-			elem = (const MD5Table *)bsearch(md5str, md5table, ARRAYSIZE(md5table)-1, sizeof(MD5Table), compareMD5Table);
-			if (elem)
-				printf("Match found in database: target %s, language %s, platform %s\n",
-					elem->target, Common::getLanguageDescription(elem->language), Common::getPlatformDescription(elem->platform));
-			else
-				printf("Unknown MD5! Please report the details (language, platform, etc.) of this game to the ScummVM team\n");
-		}
-	}
-
-	VGA_DELAY_BASE = 1;
-	if (_game == GAME_FEEBLEFILES) {
-		NUM_VIDEO_OP_CODES = 85;
-#ifndef PALMOS_68K
-		VGA_MEM_SIZE = 7500000;
-#else
-		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
-#endif
-		TABLES_MEM_SIZE = 200000;
-	} else if (_game & GF_SIMON2) {
-		TABLE_INDEX_BASE = 1580 / 4;
-		TEXT_INDEX_BASE = 1500 / 4;
-		NUM_VIDEO_OP_CODES = 75;
-#ifndef PALMOS_68K
-		VGA_MEM_SIZE = 2000000;
-#else
-		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
-#endif
-		TABLES_MEM_SIZE = 100000;
-		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-		if ((_game & GF_SIMON2) && (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)))
-			MUSIC_INDEX_BASE = (1128 + 612) / 4;
-		else
-			MUSIC_INDEX_BASE = 1128 / 4;
-		SOUND_INDEX_BASE = 1660 / 4;
-	} else {
-		TABLE_INDEX_BASE = 1576 / 4;
-		TEXT_INDEX_BASE = 1460 / 4;
-		NUM_VIDEO_OP_CODES = 64;
-#ifndef PALMOS_68K
-		VGA_MEM_SIZE = 1000000;
-#else
-		VGA_MEM_SIZE = gVars->memory[kMemSimon1Games];
-#endif
-		TABLES_MEM_SIZE = 50000;
-		MUSIC_INDEX_BASE = 1316 / 4;
-		SOUND_INDEX_BASE = 0;
-	}
-
-	_language = Common::parseLanguage(ConfMan.get("language"));
-	if (_game == GAME_FEEBLEFILES) {
-		gss = PTR(feeblefiles_settings);
-	} else if (_game & GF_SIMON2) {
-		if (_game & GF_TALKIE) {
-			gss = PTR(simon2win_settings);
-
-			// Add default file directories
-			File::addDefaultDirectory(_gameDataPath + "voices/");
-			File::addDefaultDirectory(_gameDataPath + "VOICES/");
-		} else {
-			gss = PTR(simon2dos_settings);
-		}
-	} else if (_game & GF_SIMON1) {
-		if (_game & GF_ACORN) {
-			gss = PTR(simon1acorn_settings);
-
-			// Add default file directories
-			File::addDefaultDirectory(_gameDataPath + "execute/");
-			File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
-		} else if (_game & GF_AMIGA) {
-			gss = PTR(simon1amiga_settings);
-		} else if (_game & GF_DEMO) {
-			gss = PTR(simon1demo_settings);
-		} else {
-			gss = PTR(simon1_settings);
-		}
-	}
-
-	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
-		// Add default file directories
-		switch (_language) {
-		case 20:
-			File::addDefaultDirectory(_gameDataPath + "hebrew/");
-			File::addDefaultDirectory(_gameDataPath + "HEBREW/");
-			break;
-		case  5:
-			File::addDefaultDirectory(_gameDataPath + "spanish/");
-			File::addDefaultDirectory(_gameDataPath + "SPANISH/");
-			break;
-		case  3:
-			File::addDefaultDirectory(_gameDataPath + "italian/");
-			File::addDefaultDirectory(_gameDataPath + "ITALIAN/");
-			break;
-		case  2:
-			File::addDefaultDirectory(_gameDataPath + "french/");
-			File::addDefaultDirectory(_gameDataPath + "FRENCH/");
-			break;
-		}
-	}
 
 	_keyPressed = 0;
 
@@ -701,16 +508,31 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	memcpy (_hebrew_char_widths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
-	if (_game == GAME_FEEBLEFILES) {
+}
+
+int SimonEngine::init(GameDetector &detector) {
+	// Detect game and open resource files
+	if (!initGame()) {
+		return -1;
+	}
+
+	// Checking flags
+	if (getGameType() == GType_SIMON1)
+		printf("Simon1 game\n");
+	else if (getGameType() == GType_SIMON2)
+		printf("Simon2 game\n");
+
+	if (getFeatures() & GF_TALKIE)
+		printf("Talkie\n");
+
+	if (getGameType() == GType_FF) {
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
 	}
-}
 
-int SimonEngine::init(GameDetector &detector) {
 	// Setup mixer
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. "
@@ -721,14 +543,14 @@ int SimonEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		_system->initSize(_screenWidth, _screenHeight);
-		if (_game == GAME_FEEBLEFILES)
+		if (getGameType() == GType_FF)
 			_system->setGraphicsMode("1x");
 	_system->endGFXTransaction();
 
 	// Setup midi driver
 	MidiDriver *driver = 0;
 	_midiDriver = MD_NULL;
-	if (_game == GAME_SIMON1AMIGA || _game == GAME_SIMON1CD32)
+	if (getPlatform() == Common::kPlatformAmiga)
 		driver = MidiDriver::createMidi(MD_NULL);	// Create fake MIDI driver for Simon1Amiga and Simon2CD32 for now
 	else {
 		_midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
@@ -739,7 +561,7 @@ int SimonEngine::init(GameDetector &detector) {
 	else if (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	midi.mapMT32toGM (!(_game & GF_SIMON2) && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
+	midi.mapMT32toGM (!(getGameType() == GType_SIMON2) && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
 
 	midi.set_driver(driver);
 	int ret = midi.open();
@@ -752,17 +574,17 @@ int SimonEngine::init(GameDetector &detector) {
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_musicPaused ^= 1);
 
-	if ((_game & GF_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
+	if ((getGameType() == GType_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
 		_speech = 0;
 
-	if ((!(_game & GF_SIMON2) && _language > 1) || ((_game & GF_SIMON2) && _language == 20)) {
+	if ((!(getGameType() == GType_SIMON2) && _language > 1) || ((getGameType() == GType_SIMON2) && _language == 20)) {
 		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
 	} else
 		_subtitles = ConfMan.getBool("subtitles");
 
 	// Make sure either speech or subtitles is enabled
-	if ((_game & GF_TALKIE) && !_speech && !_subtitles)
+	if ((getFeatures() & GF_TALKIE) && !_speech && !_subtitles)
 		_subtitles = 1;
 
 	if (ConfMan.hasKey("fade") && ConfMan.getBool("fade") == 0)
@@ -773,6 +595,96 @@ int SimonEngine::init(GameDetector &detector) {
 
 	// FIXME Use auto dirty rects cleanup code to reduce CPU usage
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
+
+	VGA_DELAY_BASE = 1;
+	if (getGameType() == GType_FF) {
+		NUM_VIDEO_OP_CODES = 85;
+#ifndef PALMOS_68K
+		VGA_MEM_SIZE = 7500000;
+#else
+		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
+#endif
+		TABLES_MEM_SIZE = 200000;
+	} else if (getGameType() == GType_SIMON2) {
+		TABLE_INDEX_BASE = 1580 / 4;
+		TEXT_INDEX_BASE = 1500 / 4;
+		NUM_VIDEO_OP_CODES = 75;
+#ifndef PALMOS_68K
+		VGA_MEM_SIZE = 2000000;
+#else
+		VGA_MEM_SIZE = gVars->memory[kMemSimon2Games];
+#endif
+		TABLES_MEM_SIZE = 100000;
+		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
+		if ((getGameType() == GType_SIMON2) && (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)))
+			MUSIC_INDEX_BASE = (1128 + 612) / 4;
+		else
+			MUSIC_INDEX_BASE = 1128 / 4;
+		SOUND_INDEX_BASE = 1660 / 4;
+	} else {
+		TABLE_INDEX_BASE = 1576 / 4;
+		TEXT_INDEX_BASE = 1460 / 4;
+		NUM_VIDEO_OP_CODES = 64;
+#ifndef PALMOS_68K
+		VGA_MEM_SIZE = 1000000;
+#else
+		VGA_MEM_SIZE = gVars->memory[kMemSimon1Games];
+#endif
+		TABLES_MEM_SIZE = 50000;
+		MUSIC_INDEX_BASE = 1316 / 4;
+		SOUND_INDEX_BASE = 0;
+	}
+
+	_language = Common::parseLanguage(ConfMan.get("language"));
+	if (getGameType() == GType_FF) {
+		gss = PTR(feeblefiles_settings);
+	} else if (getGameType() == GType_SIMON2) {
+		if (getFeatures() & GF_TALKIE) {
+			gss = PTR(simon2win_settings);
+
+			// Add default file directories
+			File::addDefaultDirectory(_gameDataPath + "voices/");
+			File::addDefaultDirectory(_gameDataPath + "VOICES/");
+		} else {
+			gss = PTR(simon2dos_settings);
+		}
+	} else if (getGameType() == GType_SIMON1) {
+		if (getPlatform() == Common::kPlatformAcorn) {
+			gss = PTR(simon1acorn_settings);
+
+			// Add default file directories
+			File::addDefaultDirectory(_gameDataPath + "execute/");
+			File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
+		} else if (getPlatform() == Common::kPlatformAmiga) {
+			gss = PTR(simon1amiga_settings);
+		} else if (getGameId() == GID_SIMON1DEMO) {
+			gss = PTR(simon1demo_settings);
+		} else {
+			gss = PTR(simon1_settings);
+		}
+	}
+
+	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
+		// Add default file directories
+		switch (_language) {
+		case 20:
+			File::addDefaultDirectory(_gameDataPath + "hebrew/");
+			File::addDefaultDirectory(_gameDataPath + "HEBREW/");
+			break;
+		case  5:
+			File::addDefaultDirectory(_gameDataPath + "spanish/");
+			File::addDefaultDirectory(_gameDataPath + "SPANISH/");
+			break;
+		case  3:
+			File::addDefaultDirectory(_gameDataPath + "italian/");
+			File::addDefaultDirectory(_gameDataPath + "ITALIAN/");
+			break;
+		case  2:
+			File::addDefaultDirectory(_gameDataPath + "french/");
+			File::addDefaultDirectory(_gameDataPath + "FRENCH/");
+			break;
+		}
+	}
 
 	return 0;
 }
@@ -1406,11 +1318,11 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 				in = openTablesFile(filename);
 				readSubroutineBlock(in);
 				closeTablesFile(in);
-				if (_game == GAME_FEEBLEFILES) {
+				if (getGameType() == GType_FF) {
 					// TODO
-				} else if (_game & GF_SIMON2) {
+				} else if (getGameType() == GType_SIMON2) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
-				} else if (_game & GF_TALKIE) {
+				} else if (getFeatures() & GF_TALKIE) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
 				}
@@ -1528,21 +1440,21 @@ File *SimonEngine::openTablesFile_simon1(const char *filename) {
 }
 
 uint SimonEngine::loadTextFile(const char *filename, byte *dst) {
-	if (_game & GF_OLD_BUNDLE)
+	if (getFeatures() & GF_OLD_BUNDLE)
 		return loadTextFile_simon1(filename, dst);
 	else
 		return loadTextFile_gme(filename, dst);
 }
 
 File *SimonEngine::openTablesFile(const char *filename) {
-	if (_game & GF_OLD_BUNDLE)
+	if (getFeatures() & GF_OLD_BUNDLE)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
 }
 
 void SimonEngine::closeTablesFile(File *in) {
-	if (_game & GF_OLD_BUNDLE) {
+	if (getFeatures() & GF_OLD_BUNDLE) {
 		in->close();
 		delete in;
 	}
@@ -1675,7 +1587,7 @@ void SimonEngine::o_setup_cond_c() {
 void SimonEngine::setup_cond_c_helper() {
 	HitArea *last;
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		_mouseCursor = 0;
 		if (_hitAreaUnk4 != 999) {
 			_mouseCursor = 9;
@@ -1788,7 +1700,7 @@ void SimonEngine::handle_mouse_moved() {
 			hitarea_proc_1();
 	}
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		if (_bitArray[4] & 0x8000) {
 			if (!_vgaVar9) {
 				if (_mouseX >= 630 / 2 || _mouseX < 9)
@@ -1842,7 +1754,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 
 	fcs_ptr = _windowArray[fcs_index & 7];
 
-	if (!(_game & GF_SIMON2)) {
+	if (!(getGameType() == GType_SIMON2)) {
 		width_div_3 = fcs_ptr->width / 3;
 		height_div_3 = fcs_ptr->height / 3;
 	} else {
@@ -1871,7 +1783,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 		num_sibs_with_flag = 0;
 		while (item_ptr && width_div_3 > num_sibs_with_flag) {
 			if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr))
-				if (!(_game & GF_SIMON2)) {
+				if (!(getGameType() == GType_SIMON2)) {
 					num_sibs_with_flag++;
 				} else {
 					num_sibs_with_flag += 20;
@@ -1895,7 +1807,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 		if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr)) {
 			if (item_again == false) {
 				fcs_ptr->fcs_data->e[k].item = item_ptr;
-				if (!(_game & GF_SIMON2)) {
+				if (!(getGameType() == GType_SIMON2)) {
 					draw_icon_c(fcs_ptr, item_get_icon_number(item_ptr), x_pos * 3, y_pos);
 					fcs_ptr->fcs_data->e[k].hit_area =
 						setup_icon_hit_area(fcs_ptr, x_pos * 3, y_pos,
@@ -1910,12 +1822,12 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 				fcs_ptr->fcs_data->e[k].item = NULL;
 				j = 1;
 			}
-			x_pos += (_game & GF_SIMON2) ? 20 : 1;
+			x_pos += (getGameType() == GType_SIMON2) ? 20 : 1;
 
 			if (x_pos >= width_div_3) {
 				x_pos = 0;
 
-				y_pos += (_game & GF_SIMON2) ? 20 : 1;
+				y_pos += (getGameType() == GType_SIMON2) ? 20 : 1;
 				if (y_pos >= height_div_3)
 					item_again = true;
 			}
@@ -1942,7 +1854,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 
 	ha = findEmptyHitArea();
 	_scrollUpHitArea = ha - _hitAreas;
-	if (!(_game & GF_SIMON2)) {
+	if (!(getGameType() == GType_SIMON2)) {
 		ha->x = 308;
 		ha->y = 149;
 		ha->width = 12;
@@ -1967,7 +1879,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 	ha = findEmptyHitArea();
 	_scrollDownHitArea = ha - _hitAreas;
 
-	if (!(_game & GF_SIMON2)) {
+	if (!(getGameType() == GType_SIMON2)) {
 		ha->x = 308;
 		ha->y = 176;
 		ha->width = 12;
@@ -2020,12 +1932,12 @@ void SimonEngine::f10_key() {
 
 	_lockWord |= 0x8000;
 
-	if (_game & GF_SIMON2)
+	if (getGameType() == GType_SIMON2)
 		color = 236;
 	else
 		color = 225;
 
-	uint limit = (_game & GF_SIMON2) ? 200 : 134;
+	uint limit = (getGameType() == GType_SIMON2) ? 200 : 134;
 
 	for (int i = 0; i < 5; i++) {
 		ha = _hitAreas;
@@ -2050,7 +1962,7 @@ void SimonEngine::f10_key() {
 						continue;
 				}
 
-				if (ha->y >= limit || ((_game & GF_SIMON2) && ha->y >= _vgaVar8))
+				if (ha->y >= limit || ((getGameType() == GType_SIMON2) && ha->y >= _vgaVar8))
 					continue;
 
 				y_ = (ha->height / 2) - 4 + ha->y;
@@ -2187,7 +2099,7 @@ startOver:
 void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
-	if (!(_game & GF_SIMON2)) {
+	if (!(getGameType() == GType_SIMON2)) {
 		uint subr_id = _variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
@@ -2308,7 +2220,7 @@ void SimonEngine::handle_verb_clicked(uint verb) {
 	if (sub)
 		startSubroutine(sub);
 
-	if (_game & GF_SIMON2)
+	if (getGameType() == GType_SIMON2)
 		_runScriptReturn1 = false;
 
 	startUp_helper_2();
@@ -2341,14 +2253,14 @@ void SimonEngine::o_print_str() {
 	if (string_id != 0xFFFF)
 		string_ptr = getStringPtrByID(string_id);
 
-	if (_game & GF_TALKIE)
+	if (getFeatures() & GF_TALKIE)
 		speech_id = (uint16)getNextWord();
 
 	tl = getTextLocation(vgaSpriteId);
 
 	if (_speech && speech_id != 0)
 		talk_with_speech(speech_id, vgaSpriteId);
-	if ((_game & GF_SIMON2) && (_game & GF_TALKIE) && speech_id == 0)
+	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speech_id == 0)
 		o_kill_sprite_simon2(2, vgaSpriteId + 2);
 
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
@@ -2509,7 +2421,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (vga_res_id == 0) {
 
-		if (!(_game & GF_SIMON2)) {
+		if (!(getGameType() == GType_SIMON2)) {
 			_unkPalFlag = true;
 		} else {
 			_dxUse3Or4ForLock = true;
@@ -2535,7 +2447,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	bb = _curVgaFile1;
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		b = bb + READ_LE_UINT16(&((VgaFileHeader_Feeble *) bb)->hdr2_start);
 		//count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageCount);
 		b = bb + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) b)->imageTable);
@@ -2551,7 +2463,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			b += sizeof(ImageHeader_Simon);
 	}
 
-	if ((_game & GF_SIMON1) && vga_res_id == 16300) {
+	if ((getGameType() == GType_SIMON1) && vga_res_id == 16300) {
 		dx_clear_attached_from_top(134);
 		_usePaletteDelay = true;
 	} else {
@@ -2566,7 +2478,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	vc_ptr_org = _vcPtr;
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		_vcPtr = _curVgaFile1 + READ_LE_UINT16(&((ImageHeader_Feeble *) b)->scriptOffs);
 	} else {
 		_vcPtr = _curVgaFile1 + READ_BE_UINT16(&((ImageHeader_Simon *) b)->scriptOffs);
@@ -2577,7 +2489,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	_vcPtr = vc_ptr_org;
 
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		if (!_dxUse3Or4ForLock) {
 			num_lines = _windowNum == 4 ? 134 : 200;
 			_vgaVar8 = num_lines;
@@ -2603,7 +2515,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	_lockWord &= ~0x20;
 
-	if (!(_game & GF_SIMON2)) {
+	if (!(getGameType() == GType_SIMON2)) {
 		if (_unkPalFlag) {
 			_unkPalFlag = false;
 			while (_paletteColorCount != 0) {
@@ -2663,7 +2575,7 @@ void SimonEngine::expire_vga_timers() {
 			_nextVgaTimerToProcess = vte + 1;
 			delete_vga_timer(vte);
 
-			if ((_game & GF_SIMON2) && script_ptr == NULL) {
+			if ((getGameType() == GType_SIMON2) && script_ptr == NULL) {
 				// special scroll timer
 				scroll_timeout();
 			} else {
@@ -2724,7 +2636,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 	// caused several glitches in this scene.
 	// We work around the problem by correcting the code_ptr for sprite
 	// 200 in this scene, if it is wrong.
-	if (!(_game & GF_SIMON2) && (_language == 2) &&
+	if (!(getGameType() == GType_SIMON2) && (_language == 2) &&
 		(code_ptr - _vgaBufferPointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
 		code_ptr += 0x66;
 
@@ -2742,7 +2654,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 }
 
 void SimonEngine::o_force_unlock() {
-	if (_game & GF_SIMON2 && _bitArray[4] & 0x8000)
+	if (getGameType() == GType_SIMON2 && _bitArray[4] & 0x8000)
 		_mouseCursor = 0;
 	_lockCounter = 0;
 }
@@ -2759,7 +2671,7 @@ void SimonEngine::o_wait_for_vga(uint a) {
 	_exitCutscene = false;
 	_skipSpeech = false;
 	while (_vgaWaitFor != 0) {
-		if (_skipSpeech && _game & GF_SIMON2) {
+		if (_skipSpeech && getGameType() == GType_SIMON2) {
 			if (_vgaWaitFor == 200 && !vc_get_bit(14)) {
 				skip_speech();
 				break;
@@ -2775,7 +2687,7 @@ void SimonEngine::o_wait_for_vga(uint a) {
 
 		delay(10);
 
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			if (_timer1 >= 1000) {
 				warning("wait timed out");
 				break;
@@ -2808,7 +2720,7 @@ void SimonEngine::timer_vga_sprites() {
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
 
-	if (_game & GF_SIMON2 && _scrollFlag) {
+	if (getGameType() == GType_SIMON2 && _scrollFlag) {
 		timer_vga_sprites_helper();
 	}
 
@@ -2828,7 +2740,7 @@ void SimonEngine::timer_vga_sprites() {
 		params[2] = readUint16Wrapper(&vsp->x);
 		params[3] = readUint16Wrapper(&vsp->y);
 
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			*(byte *)(&params[4]) = (byte)vsp->flags;
 		} else {
 			params[4] = READ_BE_UINT16(&vsp->flags);
@@ -3095,11 +3007,11 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
 
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		x += _scrollX * 8;
 	}
 
-	int end = (_game == GAME_FEEBLEFILES) ? 9999 : 999;
+	int end = (getGameType() == GType_FF) ? 9999 : 999;
 	prev_i = 21 - _variableArray[12];
 	for (i = 20; i != 0; --i) {
 		p = (const uint16 *)_pathFindArray[20 - i];
@@ -3153,7 +3065,7 @@ void SimonEngine::removeIconArray(uint fcs_index) {
 
 	if (fcs->fcs_data->downArrow != -1) {
 		delete_hitarea_by_index(fcs->fcs_data->downArrow);
-		if (!(_game & GF_SIMON2))
+		if (!(getGameType() == GType_SIMON2))
 			fcs_unk_5(fcs, fcs_index);
 	}
 
@@ -3197,7 +3109,7 @@ void SimonEngine::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lockWord |= 0x8000;
 
-	if (!(_game & GF_SIMON2)) {
+	if (!(getGameType() == GType_SIMON2)) {
 		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
 		if (_vgaVar6 && _windowArray[2] == fcs) {
@@ -3233,7 +3145,7 @@ void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
 VgaSprite *SimonEngine::find_cur_sprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			if (vsp->id == _vgaCurSpriteId && vsp->fileId == _vgaCurFileId)
 				break;
 		} else {
@@ -3248,7 +3160,7 @@ VgaSprite *SimonEngine::find_cur_sprite() {
 bool SimonEngine::isSpriteLoaded(uint16 id, uint16 fileId) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			if (vsp->id == id && vsp->fileId == fileId)
 				return true;
 		} else {
@@ -3266,7 +3178,7 @@ void SimonEngine::processSpecialKeys() {
 		_exitCutscene = true;
 		break;
 	case 59: // F1
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			vc_write_var(5, 50);
 		} else {
 			vc_write_var(5, 40);
@@ -3274,7 +3186,7 @@ void SimonEngine::processSpecialKeys() {
 			vc_write_var(86, 0);
 		break;
 	case 60: // F2
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			vc_write_var(5, 75);
 		} else {
 			vc_write_var(5, 60);
@@ -3282,7 +3194,7 @@ void SimonEngine::processSpecialKeys() {
 			vc_write_var(86, 1);
 		break;
 	case 61: // F3
-		if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			vc_write_var(5, 125);
 		} else {
 			vc_write_var(5, 100);
@@ -3290,19 +3202,19 @@ void SimonEngine::processSpecialKeys() {
 			vc_write_var(86, 2);
 		break;
 	case 63: // F5
-		if (_game & GF_SIMON2)
+		if (getGameType() == GType_SIMON2)
 			_exitCutscene = true;
 		break;
 	case 'p':
 		pause();
 		break;
 	case 't':
-		if ((_game & GF_SIMON2 && _game & GF_TALKIE) || ( _game & GF_TALKIE && _language > 1))
+		if ((getGameType() == GType_SIMON2 && getFeatures() & GF_TALKIE) || ( getFeatures() & GF_TALKIE && _language > 1))
 			if (_speech)
 				_subtitles ^= 1;
 		break;
 	case 'v':
-		if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
+		if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE))
 			if (_subtitles)
 				_speech ^= 1;
 	case '+':
@@ -3315,7 +3227,7 @@ void SimonEngine::processSpecialKeys() {
 		midi.pause(_musicPaused ^= 1);
 		break;
 	case 's':
-		if (_game == GAME_SIMON1DOS)
+		if (getGameId() == GID_SIMON1DOS)
 			midi._enable_sfx ^= 1;
 		else
 			_sound->effectsPause(_effectsPaused ^= 1);
@@ -3440,7 +3352,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 	vsp->image = 0;
 	vsp->palette = palette;
 	vsp->id = vgaSpriteId;
-	if (_game & GF_SIMON1)
+	if (getGameType() == GType_SIMON1)
 		vsp->fileId = fileId = vgaSpriteId / 100;
 	else
 		vsp->fileId = fileId;
@@ -3456,7 +3368,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 	}
 
 	pp = _curVgaFile1;
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		p = pp + READ_LE_UINT16(&((VgaFileHeader_Feeble *) pp)->hdr2_start);
 		count = READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationCount);
 		p = pp + READ_LE_UINT16(&((VgaFileHeader2_Feeble *) p)->animationTable);
@@ -3467,7 +3379,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 	}
 
 	for (;;) {
-		if (_game == GAME_FEEBLEFILES) {
+		if (getGameType() == GType_FF) {
 			if (READ_LE_UINT16(&((AnimationHeader_Feeble *) p)->id) == vgaSpriteId) {
 				if (_startVgaScript)
 					dump_vga_script(pp + READ_LE_UINT16(&((AnimationHeader_Feeble*)p)->scriptOffs), fileId, vgaSpriteId);
@@ -3497,7 +3409,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 }
 
 void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
-	if (_game & GF_SIMON1) {
+	if (getGameType() == GType_SIMON1) {
 		if (speech_id == 9999) {
 			if (_subtitles)
 				return;
@@ -3559,7 +3471,7 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
 
 	talkDelay = (stringLength + 3) / 3;
-	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
+	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * talkDelay;
@@ -3605,13 +3517,13 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	}
 	*(convertedString2 - 1) = '\0';
 
-	if (_game & GF_SIMON2)
+	if (getGameType() == GType_SIMON2)
 		o_kill_sprite_simon2(2, vgaSpriteId);
 	else
 		o_kill_sprite_simon1(vgaSpriteId + 199);
 
 	color = color * 3 + 192;
-	if (_game & GF_AMIGA)
+	if (getPlatform() == Common::kPlatformAmiga)
 		render_string_amiga(vgaSpriteId, color, width, height, convertedString);
 	else
 		render_string(vgaSpriteId, color, width, height, convertedString);
@@ -3624,7 +3536,7 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	if (y < 2)
 		y = 2;
 
-	if (_game & GF_SIMON2)
+	if (getGameType() == GType_SIMON2)
 		loadSprite(b, 2, vgaSpriteId, x, y, 12);
 	else
 		loadSprite(b, 2, vgaSpriteId + 199, x, y, 12);
@@ -3748,7 +3660,7 @@ static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
 #undef SD_TYPE_MATCH
 
 void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
-	if (_game & GF_OLD_BUNDLE) {
+	if (getFeatures() & GF_OLD_BUNDLE) {
 		File in;
 		char buf[15];
 		uint32 size;
@@ -3757,10 +3669,11 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 		if (vga_id == 328)
 			vga_id = 119;
 
-		if (_game == GAME_SIMON1CD32) {
-			sprintf(buf, "0%d.out", vga_id);
-		} else if (_game == GAME_SIMON1AMIGA) {
-			sprintf(buf, "0%d.pkd", vga_id);
+		if (getPlatform() == Common::kPlatformAmiga) {
+			if (getFeatures() & GF_TALKIE)
+				sprintf(buf, "0%d.out", vga_id);
+			else 
+				sprintf(buf, "0%d.pkd", vga_id);
 		} else {
 			sprintf(buf, "0%d.VGA", vga_id);
 		}
@@ -3770,7 +3683,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 			error("read_vga_from_datfile_1: can't open %s", buf);
 		size = in.size();
 
-		if (_game == GAME_SIMON1AMIGA) {
+		if (getPlatform() == Common::kPlatformAmiga) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_1: read failed");
@@ -3796,16 +3709,17 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 	// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
 	int extraBuffer = (id == 5 ? 6400 : 0);
 
-	if (_game & GF_OLD_BUNDLE) {
+	if (getFeatures() & GF_OLD_BUNDLE) {
 		File in;
 		char buf[15];
 		uint32 size;
 		byte *dst;
 
-		if (_game == GAME_SIMON1CD32) {
-			sprintf(buf, "%.3d%d.out", id / 2, (id & 1) + 1);
-		} else if (_game == GAME_SIMON1AMIGA) {
-			sprintf(buf, "%.3d%d.pkd", id / 2, (id & 1) + 1);
+		if (getPlatform() == Common::kPlatformAmiga) {
+			if (getFeatures() & GF_TALKIE)
+				sprintf(buf, "%.3d%d.out", id / 2, (id & 1) + 1);
+			else 
+				sprintf(buf, "%.3d%d.pkd", id / 2, (id & 1) + 1);
 		} else {
 			sprintf(buf, "%.3d%d.VGA", id / 2, (id & 1) + 1);
 		}
@@ -3815,7 +3729,7 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 			error("read_vga_from_datfile_2: can't open %s", buf);
 		size = in.size();
 
-		if (_game == GAME_SIMON1AMIGA) {
+		if (getPlatform() == Common::kPlatformAmiga) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_2: read failed");
@@ -3849,7 +3763,7 @@ void SimonEngine::resfile_read(void *dst, uint32 offs, uint32 size) {
 }
 
 void SimonEngine::openGameFile() {
-	if (!(_game & GF_OLD_BUNDLE)) {
+	if (!(getFeatures() & GF_OLD_BUNDLE)) {
 		_gameFile = new File();
 		_gameFile->open(gss->gme_filename);
 
@@ -3869,7 +3783,7 @@ void SimonEngine::openGameFile() {
 #endif
 	}
 
-	if (_game != GAME_FEEBLEFILES)
+	if (getGameType() != GType_FF)
 		loadIconFile();
 
 	vc34_setMouseOff();
@@ -3969,7 +3883,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
 
 	if (_paletteColorCount != 0) {
-		if (!(_game & GF_SIMON2) && _usePaletteDelay) {
+		if (!(getGameType() == GType_SIMON2) && _usePaletteDelay) {
 			delay(100);
 			_usePaletteDelay = false;
 		}
@@ -4062,11 +3976,11 @@ int SimonEngine::go() {
 
 	setup_vga_file_buf_pointers();
 
-	_sound = new Sound(_game, gss, _mixer);
+	_sound = new Sound(this, gss, _mixer);
 	_debugger = new Debugger(this);
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
-		if (_game == GAME_SIMON1DOS)
+		if (getGameId() == GID_SIMON1DOS)
 			midi._enable_sfx ^= 1;
 		else
 			_sound->effectsPause(_effectsPaused ^= 1);
@@ -4095,9 +4009,9 @@ int SimonEngine::go() {
 	if (gDebugLevel == 5)
 		_startVgaScript = true;
 
-	if (_game & GF_TALKIE) {
+	if (getFeatures() & GF_TALKIE) {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		if (!(_game & GF_SIMON2) && _language < 2)
+		if (!(getGameType() == GType_SIMON2) && _language < 2)
 			_subtitles = false;
 	} else {
 		_subtitles = true;
@@ -4140,7 +4054,7 @@ void SimonEngine::delay(uint amount) {
 
 	if (_fastMode)
 	 	vga_period = 10;
-	else if (_game & GF_SIMON2)
+	else if (getGameType() == GType_SIMON2)
 		vga_period = 45 * _speed;
 	else
 		vga_period = 50 * _speed;
@@ -4207,7 +4121,7 @@ void SimonEngine::delay(uint amount) {
 #endif
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					_skipSpeech = true;
 				else
 					_exitCutscene = true;
@@ -4237,14 +4151,14 @@ void SimonEngine::delay(uint amount) {
 void SimonEngine::loadMusic (uint music) {
 	char buf[4];
 
-	if (_game & GF_AMIGA) {
-		if (_game != GAME_SIMON1CD32) {
+	if (getPlatform() == Common::kPlatformAmiga) {
+		if (!(getFeatures() & GF_TALKIE)) {
 			// TODO Add support for decruncher
 			debug(5,"loadMusic - Decrunch %dtune attempt", music);
 		}
 		// TODO Add Protracker support for simon1amiga/cd32
 		debug(5,"playMusic - Load %dtune attempt", music);
-	} else if (_game & GF_SIMON2) {        // Simon 2 music
+	} else if (getGameType() == GType_SIMON2) {        // Simon 2 music
 		midi.stop();
 		_gameFile->seek(_gameOffsetsPtr[MUSIC_INDEX_BASE + music - 1], SEEK_SET);
 		_gameFile->read(buf, 4);
@@ -4258,11 +4172,11 @@ void SimonEngine::loadMusic (uint music) {
 
 		_lastMusicPlayed = music;
 		_nextMusicToPlay = -1;
-	} else if (_game & GF_SIMON1) {        // Simon 1 music
+	} else if (getGameType() == GType_SIMON1) {        // Simon 1 music
 		midi.stop();
 		midi.setLoop (true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
-		if (_game & GF_TALKIE) {
+		if (getFeatures() & GF_TALKIE) {
 			// FIXME: The very last music resource, a cymbal crash for when the
 			// two demons crash into each other, should NOT be looped like the
 			// other music tracks. In simon1dos/talkie the GMF resource includes
@@ -4290,7 +4204,7 @@ void SimonEngine::loadMusic (uint music) {
 				warning("Can't load music from '%s'", filename);
 				return;
 			}
-			if (_game & GF_DEMO)
+			if (getGameId() == GID_SIMON1DEMO)
 				midi.loadS1D (&f);
 			else
 				midi.loadSMF (&f, music);

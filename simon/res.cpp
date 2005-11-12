@@ -114,14 +114,14 @@ static const char *const opcode_arg_table_feeblefiles[256] = {
 };
 
 uint16 SimonEngine::to16Wrapper(uint value) {
-	if (_game == GAME_FEEBLEFILES)
+	if (getGameType() == GType_FF)
 		return TO_LE_16(value);
 	else
 		return TO_BE_16(value);
 }
 
 uint16 SimonEngine::readUint16Wrapper(const void *src) {
-	if (_game == GAME_FEEBLEFILES)
+	if (getGameType() == GType_FF)
 		return READ_LE_UINT16(src);
 	else
 		return READ_BE_UINT16(src);
@@ -179,11 +179,11 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	_tablesHeapPtrOrg = _tablesHeapPtr;
 	_tablesHeapCurPosOrg = _tablesHeapCurPos;
 
-	if (_game == GAME_FEEBLEFILES)
+	if (getGameType() == GType_FF)
 		return;
 
 	/* Read list of TEXT resources */
-	if (_game == GAME_SIMON1ACORN)
+	if (getPlatform() == Common::kPlatformAcorn)
 		in.open("STRIPPED");
 	else
 		in.open("STRIPPED.TXT");
@@ -294,13 +294,13 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 
 	const char *const *table;
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		table = opcode_arg_table_feeblefiles;
-	} else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
+	} else if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE))
 		table = opcode_arg_table_simon2win;
-	else if (_game & GF_SIMON2)
+	else if (getGameType() == GType_SIMON2)
 		table = opcode_arg_table_simon2dos;
-	else if (_game & GF_TALKIE)
+	else if (getFeatures() & GF_TALKIE)
 		table = opcode_arg_table_simon1win;
 	else
 		table = opcode_arg_table_simon1dos;

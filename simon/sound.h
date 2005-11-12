@@ -28,9 +28,11 @@ namespace Simon {
 
 class BaseSound;
 
+class SimonEngine;
+
 class Sound {
 private:
-	byte _game;
+	SimonEngine *_vm;
 
 	Audio::Mixer *_mixer;
 
@@ -53,7 +55,7 @@ private:
 	uint _ambientPlaying;
 
 public:
-	Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mixer);
+	Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer);
 	~Sound();
 
 	void readSfxFile(const char *filename);

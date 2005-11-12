@@ -277,7 +277,7 @@ int SimonEngine::runScript() {
 
 				// Disable random in simon1amiga for now
 				// Since copy protection screen is currently unreadable
-				if (_game == GAME_SIMON1AMIGA)
+				if (getPlatform() == Common::kPlatformAmiga)
 					writeVariable(var, 4);
 				else
 					writeVariable(var, _rnd.getRandomNumber(value - 1));
@@ -374,7 +374,7 @@ int SimonEngine::runScript() {
 		case 67:{									/* set item description */
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
-				if (_game & GF_TALKIE) {
+				if (getFeatures() & GF_TALKIE) {
 					uint speech_id = getNextWord();
 					if (var < 20) {
 						_stringIdArray3[var] = string_id;
@@ -400,7 +400,7 @@ int SimonEngine::runScript() {
 		case 70:{									/* show string from array */
 				const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
 
-				if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					writeVariable(51, strlen(str) / 53 * 8 + 8);
 				}
 
@@ -449,7 +449,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 83:{									/* restart subroutine */
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					o_83_helper();
 				return -10;
 			}
@@ -527,7 +527,7 @@ int SimonEngine::runScript() {
 
 		case 98:{									/* start vga */
 				uint vga_res, vgaSpriteId, windowNum, x, y, palette;
-				if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					vga_res = getVarOrWord();
 					vgaSpriteId = getVarOrWord();
 				} else {
@@ -543,7 +543,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 99:{									/* kill sprite */
-				if (_game & GF_SIMON1) {
+				if (getGameType() == GType_SIMON1) {
 					o_kill_sprite_simon1(getVarOrWord());
 				} else {
 					uint a = getVarOrWord();
@@ -741,7 +741,7 @@ int SimonEngine::runScript() {
 
 		case 133:{									/* load game */
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-				if (_game == GAME_FEEBLEFILES) {
+				if (getGameType() == GType_FF) {
 					load_game(readVariable(55));
 				} else {
 					o_load_game();
@@ -757,7 +757,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 135:{									/* quit if user presses y */
-				if (_game == GAME_FEEBLEFILES) {
+				if (getGameType() == GType_FF) {
 					// Switch CD
 					debug(1, "Switch to CD number %d", readVariable(97));
 				} else {
@@ -986,7 +986,7 @@ int SimonEngine::runScript() {
 
 				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
 				TextLocation *tl = getTextLocation(vgaSpriteId);
-				if (_game & GF_TALKIE)
+				if (getFeatures() & GF_TALKIE)
 					speech_id = _speechIdArray4[string_id];
 
 				if (_speech && speech_id != 0)
@@ -1003,7 +1003,7 @@ int SimonEngine::runScript() {
 
 		case 181:{									/* force lock */
 				o_force_lock();
-				if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					changeWindow(1);
 					showMessageFormat("\xC");
 				}
@@ -1011,10 +1011,10 @@ int SimonEngine::runScript() {
 			break;
 
 		case 182:{									/* load beard */
-				if (_game == GAME_FEEBLEFILES) {
+				if (getGameType() == GType_FF) {
 					// Load video file
 					debug(1,"Load video file: %s", getStringPtrByID(getNextStringID()));
-				} else if (_game & GF_SIMON2) {
+				} else if (getGameType() == GType_SIMON2) {
 					goto invalid_opcode;
 				} else {
 					o_loadBeard();
@@ -1023,10 +1023,10 @@ int SimonEngine::runScript() {
 			break;
 
 		case 183:{									/* unload beard */
-				if (_game == GAME_FEEBLEFILES) {
+				if (getGameType() == GType_FF) {
 					// Play video
 					debug(1, "Play video");
-				} else if (_game & GF_SIMON2) {
+				} else if (getGameType() == GType_SIMON2) {
 					goto invalid_opcode;
 				} else {
 					o_unloadBeard();
@@ -1040,11 +1040,11 @@ int SimonEngine::runScript() {
 			break;
 
 		case 185:{									/* load sound files */
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
 
 				_soundFileId = getVarOrWord();
-				if (_game == GAME_SIMON1CD32) {
+				if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE) {
 					char buf[10];
 					sprintf(buf, "%d%s", _soundFileId, "Effects");
 					_sound->readSfxFile(buf);
@@ -1061,14 +1061,14 @@ int SimonEngine::runScript() {
 			break;
 
 		case 187:{									/* fade to black */
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
 				o_fade_to_black();
 			}
 			break;
 
 		case 188:									/* string2 is */
-			if (_game & GF_SIMON1)
+			if (getGameType() == GType_SIMON1)
 				goto invalid_opcode;
 			{
 				uint i = getVarOrByte();
@@ -1078,7 +1078,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 189:{									/* clear_op189_flag */
-				if (_game & GF_SIMON1)
+				if (getGameType() == GType_SIMON1)
 					goto invalid_opcode;
 				_marks = 0;
 			}
@@ -1086,7 +1086,7 @@ int SimonEngine::runScript() {
 
 		case 190:{
 				uint i;
-				if (_game & GF_SIMON1)
+				if (getGameType() == GType_SIMON1)
 					goto invalid_opcode;
 				i = getVarOrByte();
 				if (!(_marks & (1 << i)))
@@ -1310,7 +1310,7 @@ void SimonEngine::o_inventory_descriptions() {
 		tl = getTextLocation(vgaSpriteId);
 	}
 
-	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
+	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint speech_id = child->array[getOffsetOfChild2Param(child, 0x200)];
 
@@ -1362,7 +1362,7 @@ void SimonEngine::o_inventory_descriptions() {
 				talk_with_speech(speech_id, vgaSpriteId);
 		}
 
-	} else if (_game & GF_TALKIE) {
+	} else if (getFeatures() & GF_TALKIE) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
 			talk_with_speech(child->array[offs], vgaSpriteId);
@@ -1470,7 +1470,7 @@ int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
 start_over:;
 	_keyPressed = 0;
 
-	if (_game == GAME_SIMON1CD32)
+	if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE)
 		goto start_over_3;
 
 start_over_2:;
@@ -1604,7 +1604,7 @@ void SimonEngine::o_play_music_resource() {
 	// actually start a track (so the resource is
 	// effectively preloaded so there's no latency when
 	// starting playback).
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		int loop = getVarOrByte();
 
 		midi.setLoop (loop != 0);
@@ -1630,7 +1630,7 @@ void SimonEngine::o_unk_120(uint a) {
 }
 
 void SimonEngine::o_play_sound(uint sound_id) {
-	if (_game == GAME_SIMON1DOS)
+	if (getGameId() == GID_SIMON1DOS)
 		playSting(sound_id);
 	else
 		_sound->playEffects(sound_id);

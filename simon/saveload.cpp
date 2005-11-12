@@ -108,7 +108,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 void SimonEngine::quick_load_or_save() {
 	// simon1demo subroutines are missing too many segments
 	// original demo didn't allow load or save either.
-	if (_game == GAME_SIMON1DEMO)
+	if (getGameId() == GID_SIMON1DEMO)
 		return;
 
 	bool success;
@@ -412,7 +412,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 		return false;
 	}
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		f->write(caption, 100);
 	} else {
 		f->write(caption, 18);
@@ -482,7 +482,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 		f->writeUint16BE(_bitArray[i]);
 
 	// Write the bits in array 3
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		for (i = 33; i != 48; i++)
 			f->writeUint16BE(_bitArray[i]);
 	}
@@ -499,12 +499,12 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 char *SimonEngine::gen_savename(int slot) {
 	static char buf[15];
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		if (slot == 999)
 			sprintf(buf, "save.%.3d", slot);
 		else
 			sprintf(buf, "feeble.%.3d", slot);
-	} else if (_game & GF_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
 	} else {
 		sprintf(buf, "simon1.%.3d", slot);
@@ -525,7 +525,7 @@ bool SimonEngine::load_game(uint slot) {
 		return false;
 	}
 
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		f->read(ident, 100);
 	} else {
 		f->read(ident, 18);
@@ -612,7 +612,7 @@ bool SimonEngine::load_game(uint slot) {
 		_bitArray[i] = f->readUint16BE();
 
 	// Read the bits in array 3
-	if (_game == GAME_FEEBLEFILES) {
+	if (getGameType() == GType_FF) {
 		for (i = 33; i != 48; i++)
 			_bitArray[i] = f->readUint16BE();
 	}
