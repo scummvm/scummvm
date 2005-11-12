@@ -200,6 +200,9 @@ static GameMD5 gameMD5[] = {
 
 	{ GID_FEEBLEFILES_4CD, "a8746407a5b20a7da0da0a14c380af1c", "game22", false },
 	{ GID_FEEBLEFILES_4CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_DE, "bcd76ac080003eee3649df18db25b60e", "game22", false },
+	{ GID_FEEBLEFILES_DE, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
 };
 
 // Simon the Sorcerer 1
@@ -599,6 +602,19 @@ static GameDescription gameDescriptions[] = {
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
 		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
+	// The Feeble Files - German 4CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_DE,
+		"The Feeble Files (De)",
+		ARRAYSIZE(FEEBLEFILES_GameFiles),
+		FEEBLEFILES_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::DE_DEU,
 		Common::kPlatformPC,
 	},
 };
