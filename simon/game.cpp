@@ -49,32 +49,38 @@ struct GameMD5 {
 #define FILE_MD5_BYTES 5000
 
 static GameMD5 gameMD5[] = {
-	{ GID_SIMON1ACORN,  "64958b3a38afdcb85da1eeed85169806", "data", false },
-	{ GID_SIMON1ACORN,  "28261b99cd9da1242189b4f6f2841bd6", "gamebase", false },
-	{ GID_SIMON1ACORN,  "22107c24dfb31b66ac503c28a6e20b19", "icondata", false},
-	{ GID_SIMON1ACORN,  "f3b27a3fbb45dcd323a48159496e45e8", "stripped", false},
-	{ GID_SIMON1ACORN,  "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+	{ GID_SIMON1ACORNDEMO, "b4a7526ced425ba8ad0d548d0ec69900", "data", false },
+	{ GID_SIMON1ACORNDEMO, "425c7d1957699d35abca7e12a08c7422", "gamebase", false },
+	{ GID_SIMON1ACORNDEMO, "22107c24dfb31b66ac503c28a6e20b19", "icondata", false},
+	{ GID_SIMON1ACORNDEMO, "d9de7542612d9f4e0819ad0df5eac56b", "stripped", false},
+	{ GID_SIMON1ACORNDEMO, "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
-	{ GID_SIMON1CD32,   "bab7f19237cf7d7619b6c73631da1854", "gameamiga", true },
-	{ GID_SIMON1CD32,   "565ef7a98dcc21ef526a2bb10b6f42ed", "icon.pkd", true },
-	{ GID_SIMON1CD32,   "59be788020441e21861e284236fd08c1", "stripped.txt", true},
-	{ GID_SIMON1CD32,   "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
+	{ GID_SIMON1ACORN,     "64958b3a38afdcb85da1eeed85169806", "data", false },
+	{ GID_SIMON1ACORN,     "28261b99cd9da1242189b4f6f2841bd6", "gamebase", false },
+	{ GID_SIMON1ACORN,     "22107c24dfb31b66ac503c28a6e20b19", "icondata", false},
+	{ GID_SIMON1ACORN,     "f3b27a3fbb45dcd323a48159496e45e8", "stripped", false},
+	{ GID_SIMON1ACORN,     "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
-	{ GID_SIMON1DOS,    "9f93d27432ce44a787eef10adb640870", "gamepc", false },
-	{ GID_SIMON1DOS,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
-	{ GID_SIMON1DOS,    "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
-	{ GID_SIMON1DOS,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+	{ GID_SIMON1CD32,      "bab7f19237cf7d7619b6c73631da1854", "gameamiga", true },
+	{ GID_SIMON1CD32,      "565ef7a98dcc21ef526a2bb10b6f42ed", "icon.pkd", true },
+	{ GID_SIMON1CD32,      "59be788020441e21861e284236fd08c1", "stripped.txt", true},
+	{ GID_SIMON1CD32,      "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
 
-	{ GID_SIMON1DEMO,   "2be4a21bc76e2fdc071867c130651439", "gdemo", false },
-	{ GID_SIMON1DEMO,   "55af3b4d93972bc58bfee38a86b76c3f", "icon.dat", false},
-	{ GID_SIMON1DEMO,   "33a2e329b97b2a349858d6a093159eb7", "stripped.txt", false},
-	{ GID_SIMON1DEMO,   "1247e024e1f13ca54c1e354120c7519c", "tbllist", false},
+	{ GID_SIMON1DOS,       "9f93d27432ce44a787eef10adb640870", "gamepc", false },
+	{ GID_SIMON1DOS,       "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1DOS,       "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
+	{ GID_SIMON1DOS,       "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
-	{ GID_SIMON1TALKIE, "28261b99cd9da1242189b4f6f2841bd6", "gamepc", false },
-	{ GID_SIMON1TALKIE, "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
-	{ GID_SIMON1TALKIE, "64958b3a38afdcb85da1eeed85169806", "simon.gme", false },
-	{ GID_SIMON1TALKIE, "f3b27a3fbb45dcd323a48159496e45e8", "stripped.txt", false},
-	{ GID_SIMON1TALKIE, "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+	{ GID_SIMON1DEMO,      "2be4a21bc76e2fdc071867c130651439", "gdemo", false },
+	{ GID_SIMON1DEMO,      "55af3b4d93972bc58bfee38a86b76c3f", "icon.dat", false},
+	{ GID_SIMON1DEMO,      "33a2e329b97b2a349858d6a093159eb7", "stripped.txt", false},
+	{ GID_SIMON1DEMO,      "1247e024e1f13ca54c1e354120c7519c", "tbllist", false},
+
+	{ GID_SIMON1TALKIE,    "28261b99cd9da1242189b4f6f2841bd6", "gamepc", false },
+	{ GID_SIMON1TALKIE,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1TALKIE,    "64958b3a38afdcb85da1eeed85169806", "simon.gme", false },
+	{ GID_SIMON1TALKIE,    "f3b27a3fbb45dcd323a48159496e45e8", "stripped.txt", false},
+	{ GID_SIMON1TALKIE,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON1TALKIE_FR, "00000000000000000000000000000000", "gamepc", false },
 	{ GID_SIMON1TALKIE_FR, "00000000000000000000000000000000", "icon.dat", false},
@@ -118,11 +124,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "stripped.txt", false},
 	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "tbllist", false},
 
-	{ GID_SIMON2DOS,      "00000000000000000000000000000000", "game32", false },
-	{ GID_SIMON2DOS,      "00000000000000000000000000000000", "icon.dat", false},
-	{ GID_SIMON2DOS,      "00000000000000000000000000000000", "simon2.gme", false},
-	{ GID_SIMON2DOS,      "00000000000000000000000000000000", "stripped.txt", false},
-	{ GID_SIMON2DOS,      "00000000000000000000000000000000", "tbllist", false},
+	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "game32", false },
+	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "icon.dat", false},
+	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "simon2.gme", false},
+	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "stripped.txt", false},
+	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "tbllist", false},
 
 	{ GID_SIMON2DEMO,      "3794c15887539b8578bacab694ccf08a", "gsptr30", false },
 	{ GID_SIMON2DEMO,      "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
@@ -227,17 +233,17 @@ static GameFileDescription SIMON2_GameFiles[] = {
 };
 
 static GameDescription gameDescriptions[] = {
-	// Simon the Sorcerer 1 - English Amiga CD32
+	// Simon the Sorcerer 1 - English Acorn CD Demo
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1CD32,
-		"Simon the Sorcerer 1 (Amiga CD32)",
-		ARRAYSIZE(SIMON1_GameFiles),
-		SIMON1CD32_GameFiles,
-		GF_TALKIE | GF_OLD_BUNDLE,
+		GID_SIMON1ACORNDEMO,
+		"Simon the Sorcerer 1 (Acorn CD Demo)",
+		ARRAYSIZE(SIMON1ACORN_GameFiles),
+		SIMON1ACORN_GameFiles,
+		GF_TALKIE,
 		Common::EN_USA,
-		Common::kPlatformAmiga,
+		Common::kPlatformAcorn,
 	},
 
 	// Simon the Sorcerer 1 - English Acorn CD
@@ -251,6 +257,19 @@ static GameDescription gameDescriptions[] = {
 		GF_TALKIE,
 		Common::EN_USA,
 		Common::kPlatformAcorn,
+	},
+
+	// Simon the Sorcerer 1 - English Amiga CD32
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1CD32,
+		"Simon the Sorcerer 1 (Amiga CD32)",
+		ARRAYSIZE(SIMON1_GameFiles),
+		SIMON1CD32_GameFiles,
+		GF_TALKIE | GF_OLD_BUNDLE,
+		Common::EN_USA,
+		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - English DOS Floppy Demo

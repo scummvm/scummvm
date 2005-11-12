@@ -511,19 +511,15 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 }
 
 int SimonEngine::init(GameDetector &detector) {
-	// Detect game and open resource files
+
+	// Add default file directories for Acorn version
+	File::addDefaultDirectory(_gameDataPath + "execute/");
+	File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
+
+	// Detect game
 	if (!initGame()) {
 		return -1;
 	}
-
-	// Checking flags
-	if (getGameType() == GType_SIMON1)
-		printf("Simon1 game\n");
-	else if (getGameType() == GType_SIMON2)
-		printf("Simon2 game\n");
-
-	if (getFeatures() & GF_TALKIE)
-		printf("Talkie\n");
 
 	if (getGameType() == GType_FF) {
 		_screenWidth = 640;
@@ -651,10 +647,6 @@ int SimonEngine::init(GameDetector &detector) {
 	} else if (getGameType() == GType_SIMON1) {
 		if (getPlatform() == Common::kPlatformAcorn) {
 			gss = PTR(simon1acorn_settings);
-
-			// Add default file directories
-			File::addDefaultDirectory(_gameDataPath + "execute/");
-			File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
 		} else if (getPlatform() == Common::kPlatformAmiga) {
 			gss = PTR(simon1amiga_settings);
 		} else if (getGameId() == GID_SIMON1DEMO) {
