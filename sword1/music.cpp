@@ -149,10 +149,8 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 		sprintf(fileName, "%s.wav", fileBase);
 		if (_file.open(fileName))
 			_musicMode = MusicWave;
-		else {
-			warning("Music file %s could not be opened", fileName);
+		else
 			return false;
-		}
 	}
 	_audioSource = createAudioSource();
 	_looping = loop;
@@ -329,6 +327,9 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 			_mutex.lock();
 			_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 			_mutex.unlock();
+		} else {
+			if (tuneId != 81) // file 81 was apparently removed from BS.
+				warning("Can't find music file %s", _tuneList[tuneId]);
 		}
 	} else {
 		_mutex.lock();
