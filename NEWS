@@ -29,7 +29,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
     - Improved support of some German HE games
 
   Sword1:
-    - Looping sounds are now stopped before cutscenes are played.
+    - Fixed a bug where looping sounds would keep playing during cutscenes or
+      when displaying any form of control panel dialog.
     - The save game dialog would erronously claim an I/O error occurred if the
       savegame list had unused slots, and savegames were compressed.
 
