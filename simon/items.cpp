@@ -527,12 +527,12 @@ int SimonEngine::runScript() {
 
 		case 98:{									/* start vga */
 				uint vga_res, vgaSpriteId, windowNum, x, y, palette;
-				if (getGameType() == GType_SIMON2) {
-					vga_res = getVarOrWord();
-					vgaSpriteId = getVarOrWord();
-				} else {
+				if (getGameType() == GType_SIMON1) {
 					vgaSpriteId = getVarOrWord();
 					vga_res = vgaSpriteId / 100;
+				} else {
+					vga_res = getVarOrWord();
+					vgaSpriteId = getVarOrWord();
 				}
 				windowNum = getVarOrByte();
 				x = getVarOrWord();

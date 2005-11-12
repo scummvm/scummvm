@@ -557,7 +557,7 @@ int SimonEngine::init(GameDetector &detector) {
 	else if (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	midi.mapMT32toGM (!(getGameType() == GType_SIMON2) && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
+	midi.mapMT32toGM (getGameType() == GType_SIMON1 && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
 
 	midi.set_driver(driver);
 	int ret = midi.open();
@@ -573,7 +573,7 @@ int SimonEngine::init(GameDetector &detector) {
 	if ((getGameType() == GType_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
 		_speech = 0;
 
-	if ((!(getGameType() == GType_SIMON2) && _language > 1) || ((getGameType() == GType_SIMON2) && _language == 20)) {
+	if ((getGameType() == GType_SIMON1 && _language > 1) || ((getGameType() == GType_SIMON2) && _language == 20)) {
 		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
 	} else
@@ -1746,7 +1746,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 
 	fcs_ptr = _windowArray[fcs_index & 7];
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		width_div_3 = fcs_ptr->width / 3;
 		height_div_3 = fcs_ptr->height / 3;
 	} else {
@@ -1775,7 +1775,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 		num_sibs_with_flag = 0;
 		while (item_ptr && width_div_3 > num_sibs_with_flag) {
 			if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr))
-				if (!(getGameType() == GType_SIMON2)) {
+				if (getGameType() == GType_SIMON1) {
 					num_sibs_with_flag++;
 				} else {
 					num_sibs_with_flag += 20;
@@ -1799,7 +1799,7 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 		if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr)) {
 			if (item_again == false) {
 				fcs_ptr->fcs_data->e[k].item = item_ptr;
-				if (!(getGameType() == GType_SIMON2)) {
+				if (getGameType() == GType_SIMON1) {
 					draw_icon_c(fcs_ptr, item_get_icon_number(item_ptr), x_pos * 3, y_pos);
 					fcs_ptr->fcs_data->e[k].hit_area =
 						setup_icon_hit_area(fcs_ptr, x_pos * 3, y_pos,
@@ -1814,12 +1814,12 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 				fcs_ptr->fcs_data->e[k].item = NULL;
 				j = 1;
 			}
-			x_pos += (getGameType() == GType_SIMON2) ? 20 : 1;
+			x_pos += (getGameType() == GType_SIMON1) ? 1 : 20;
 
 			if (x_pos >= width_div_3) {
 				x_pos = 0;
 
-				y_pos += (getGameType() == GType_SIMON2) ? 20 : 1;
+				y_pos += (getGameType() == GType_SIMON1) ? 1 : 20;
 				if (y_pos >= height_div_3)
 					item_again = true;
 			}
@@ -1846,7 +1846,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 
 	ha = findEmptyHitArea();
 	_scrollUpHitArea = ha - _hitAreas;
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		ha->x = 308;
 		ha->y = 149;
 		ha->width = 12;
@@ -1871,7 +1871,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 	ha = findEmptyHitArea();
 	_scrollDownHitArea = ha - _hitAreas;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		ha->x = 308;
 		ha->y = 176;
 		ha->width = 12;
@@ -2091,7 +2091,7 @@ startOver:
 void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		uint subr_id = _variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
@@ -2413,7 +2413,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (vga_res_id == 0) {
 
-		if (!(getGameType() == GType_SIMON2)) {
+		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
 		} else {
 			_dxUse3Or4ForLock = true;
@@ -2481,16 +2481,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	_vcPtr = vc_ptr_org;
 
 
-	if (getGameType() == GType_SIMON2) {
-		if (!_dxUse3Or4ForLock) {
-			num_lines = _windowNum == 4 ? 134 : 200;
-			_vgaVar8 = num_lines;
-			dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
-			dx_copy_from_attached_to_3(num_lines);
-			_syncFlag2 = 1;
-		}
-		_dxUse3Or4ForLock = false;
-	} else {
+	if (getGameType() == GType_SIMON1) {
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
 		if (_subroutine == 2923 || _subroutine == 2926)
@@ -2503,11 +2494,20 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 		_syncFlag2 = 1;
 		_timer5 = 0;
+	} else {
+		if (!_dxUse3Or4ForLock) {
+			num_lines = _windowNum == 4 ? 134 : 200;
+			_vgaVar8 = num_lines;
+			dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
+			dx_copy_from_attached_to_3(num_lines);
+			_syncFlag2 = 1;
+		}
+		_dxUse3Or4ForLock = false;
 	}
 
 	_lockWord &= ~0x20;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		if (_unkPalFlag) {
 			_unkPalFlag = false;
 			while (_paletteColorCount != 0) {
@@ -2628,7 +2628,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 	// caused several glitches in this scene.
 	// We work around the problem by correcting the code_ptr for sprite
 	// 200 in this scene, if it is wrong.
-	if (!(getGameType() == GType_SIMON2) && (_language == 2) &&
+	if (getGameType() == GType_SIMON1 && _language == 2 &&
 		(code_ptr - _vgaBufferPointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
 		code_ptr += 0x66;
 
@@ -3057,7 +3057,7 @@ void SimonEngine::removeIconArray(uint fcs_index) {
 
 	if (fcs->fcs_data->downArrow != -1) {
 		delete_hitarea_by_index(fcs->fcs_data->downArrow);
-		if (!(getGameType() == GType_SIMON2))
+		if (getGameType() == GType_SIMON1)
 			fcs_unk_5(fcs, fcs_index);
 	}
 
@@ -3101,7 +3101,7 @@ void SimonEngine::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lockWord |= 0x8000;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
 		if (_vgaVar6 && _windowArray[2] == fcs) {
@@ -3137,11 +3137,11 @@ void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
 VgaSprite *SimonEngine::find_cur_sprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON2) {
-			if (vsp->id == _vgaCurSpriteId && vsp->fileId == _vgaCurFileId)
+		if (getGameType() == GType_SIMON1) {
+			if (vsp->id == _vgaCurSpriteId)
 				break;
 		} else {
-			if (vsp->id == _vgaCurSpriteId)
+			if (vsp->id == _vgaCurSpriteId && vsp->fileId == _vgaCurFileId)
 				break;
 		}
 		vsp++;
@@ -3152,11 +3152,11 @@ VgaSprite *SimonEngine::find_cur_sprite() {
 bool SimonEngine::isSpriteLoaded(uint16 id, uint16 fileId) {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
-		if (getGameType() == GType_SIMON2) {
-			if (vsp->id == id && vsp->fileId == fileId)
+		if (getGameType() == GType_SIMON1) {
+			if (vsp->id == id)
 				return true;
 		} else {
-			if (vsp->id == id)
+			if (vsp->id == id && vsp->fileId == fileId)
 				return true;
 		}
 		vsp++;
@@ -3170,28 +3170,28 @@ void SimonEngine::processSpecialKeys() {
 		_exitCutscene = true;
 		break;
 	case 59: // F1
-		if (getGameType() == GType_SIMON2) {
-			vc_write_var(5, 50);
-		} else {
+		if (getGameType() == GType_SIMON1) {
 			vc_write_var(5, 40);
+		} else {
+			vc_write_var(5, 50);
 		}
-			vc_write_var(86, 0);
+		vc_write_var(86, 0);
 		break;
 	case 60: // F2
-		if (getGameType() == GType_SIMON2) {
-			vc_write_var(5, 75);
-		} else {
+		if (getGameType() == GType_SIMON1) {
 			vc_write_var(5, 60);
+		} else {
+			vc_write_var(5, 75);
 		}
-			vc_write_var(86, 1);
+		vc_write_var(86, 1);
 		break;
 	case 61: // F3
-		if (getGameType() == GType_SIMON2) {
-			vc_write_var(5, 125);
-		} else {
+		if (getGameType() == GType_SIMON1) {
 			vc_write_var(5, 100);
+		} else {
+			vc_write_var(5, 125);
 		}
-			vc_write_var(86, 2);
+		vc_write_var(86, 2);
 		break;
 	case 63: // F5
 		if (getGameType() == GType_SIMON2)
@@ -3509,10 +3509,10 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	}
 	*(convertedString2 - 1) = '\0';
 
-	if (getGameType() == GType_SIMON2)
-		o_kill_sprite_simon2(2, vgaSpriteId);
-	else
+	if (getGameType() == GType_SIMON1)
 		o_kill_sprite_simon1(vgaSpriteId + 199);
+	else
+		o_kill_sprite_simon2(2, vgaSpriteId);
 
 	color = color * 3 + 192;
 	if (getPlatform() == Common::kPlatformAmiga)
@@ -3528,10 +3528,10 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 	if (y < 2)
 		y = 2;
 
-	if (getGameType() == GType_SIMON2)
-		loadSprite(b, 2, vgaSpriteId, x, y, 12);
-	else
+	if (getGameType() == GType_SIMON1)
 		loadSprite(b, 2, vgaSpriteId + 199, x, y, 12);
+	else
+		loadSprite(b, 2, vgaSpriteId, x, y, 12);
 }
 
 // Thanks to Stuart Caie for providing the original
@@ -3875,7 +3875,7 @@ void SimonEngine::dx_update_screen_and_palette() {
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
 
 	if (_paletteColorCount != 0) {
-		if (!(getGameType() == GType_SIMON2) && _usePaletteDelay) {
+		if (getGameType() == GType_SIMON1 && _usePaletteDelay) {
 			delay(100);
 			_usePaletteDelay = false;
 		}
@@ -4003,7 +4003,7 @@ int SimonEngine::go() {
 
 	if (getFeatures() & GF_TALKIE) {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		if (!(getGameType() == GType_SIMON2) && _language < 2)
+		if (getGameType() == GType_SIMON1 && _language < 2)
 			_subtitles = false;
 	} else {
 		_subtitles = true;

@@ -320,17 +320,17 @@ void SimonEngine::vc3_loadSprite() {
 
 	windowNum = vc_read_next_word();		/* 0 */
 
-	if (getGameType() == GType_SIMON2) {
-		fileId = vc_read_next_word();		/* 0 */
-		vgaSpriteId = vc_read_next_word();	/* 2 */
-	} else {
+	if (getGameType() == GType_SIMON1) {
 		vgaSpriteId = vc_read_next_word();	/* 2 */
 		fileId = vgaSpriteId / 100;
+	} else {
+		fileId = vc_read_next_word();		/* 0 */
+		vgaSpriteId = vc_read_next_word();	/* 2 */
 	}
 
 	x = vc_read_next_word();			/* 4 */
 	y = vc_read_next_word();			/* 6 */
-	palette = vc_read_next_word();		/* 8 */
+	palette = vc_read_next_word();			/* 8 */
 
 	/* 2nd param ignored with simon1 */
 	if (isSpriteLoaded(vgaSpriteId, fileId))
@@ -1199,10 +1199,10 @@ void SimonEngine::vc20_setRepeat() {
 void SimonEngine::vc21_endRepeat() {
 	int16 a = vc_read_next_word();
 	const byte *tmp = _vcPtr + a;
-	if (getGameType() == GType_SIMON2)
-		tmp += 3;
-	else
+	if (getGameType() == GType_SIMON1)
 		tmp += 4;
+	else
+		tmp += 3;
 
 	uint16 val = READ_LE_UINT16(tmp);
 	if (val != 0) {
@@ -1644,16 +1644,17 @@ void SimonEngine::vc55_offset_hit_area() {
 }
 
 void SimonEngine::vc56_delay() {
-	if (getGameType() == GType_SIMON2) {
-		uint num = vc_read_var_or_word() * _frameRate;
+	uint num = vc_read_var_or_word() * _frameRate;
 
-		add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
-		_vcPtr = (byte *)&_vc_get_out_of_code;
-	}
+	add_vga_timer(num + VGA_DELAY_BASE, _vcPtr, _vgaCurSpriteId, _vgaCurFileId);
+	_vcPtr = (byte *)&_vc_get_out_of_code;
 }
 
 void SimonEngine::vc59() {
-	if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON1) {
+		if (!_sound->isVoiceActive())
+			vc_skip_next_instruction();
+	} else {
 		uint file = vc_read_next_word();
 		uint start = vc_read_next_word();
 		uint end = vc_read_next_word() + 1;
@@ -1661,9 +1662,6 @@ void SimonEngine::vc59() {
 		do {
 			vc_kill_sprite(file, start);
 		} while (++start != end);
-	} else {
-		if (!_sound->isVoiceActive())
-			vc_skip_next_instruction();
 	}
 }
 
@@ -1739,10 +1737,10 @@ void SimonEngine::vc_kill_sprite(uint file, uint sprite) {
 void SimonEngine::vc60_killSprite() {
 	uint file;
 
-	if (getGameType() == GType_SIMON2) {
-		file = vc_read_next_word();
-	} else {
+	if (getGameType() == GType_SIMON1) {
 		file = _vgaCurFileId;
+	} else {
+		file = vc_read_next_word();
 	}
 	uint sprite = vc_read_next_word();
 	vc_kill_sprite(file, sprite);
