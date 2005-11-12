@@ -102,6 +102,7 @@ public:
 	void timerThread(void);
 	void soundThread(void);
 	void msgPrintf(int millis, char *format, ...);
+	void makeConfigPath(char *dest);
 
 private:
 	volatile OSystem::TimerProc _scummTimerProc;

@@ -114,7 +114,7 @@ extern "C" int main(int argc, char *argv[]) {
 	sio_puts("IOP synced.");
 	SifInitRpc(0);
 	SifLoadFileInit();
-	cdvdInit(CDVD_INIT_NOWAIT);
+	cdvdInit(CDVD_INIT_WAIT);
 #endif
 
 	ee_thread_t thisThread;
@@ -778,6 +778,15 @@ void OSystem_PS2::quit(void) {
 	LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
 }
 
+void OSystem_PS2::makeConfigPath(char *dest) {
+	FILE *handle = ps2_fopen("cdfs:/ScummVM.ini", "r");
+	if (handle) {
+		ps2_fclose(handle);
+		strcpy(dest, "cdfs:/scummvm.ini");
+	} else
+		strcpy(dest, "mc0:ScummVM/scummvm.ini");
+}
+
 static uint32 g_timeSecs;
 static int	  g_day, g_month, g_year;
 static uint32 g_lastTimeCheck;
@@ -851,11 +860,11 @@ void OSystem_PS2::readRtcTime(void) {
 		g_day, g_month, g_year + 2000);
 }
 
-extern time_t time(time_t *p) {
+extern "C" time_t time(time_t *p) {
 	return (time_t)g_timeSecs;
 }
 
-extern struct tm *localtime(const time_t *p) {
+extern "C" struct tm *localtime(const time_t *p) {
 	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
 		buildNewDate(+1);

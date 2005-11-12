@@ -1,4 +1,4 @@
-ScummVM-PS2 0.8.0 Release Candidate 1 Readme
+ScummVM-PS2 0.8.0 Release Candidate 2 Readme
 ============================================
 
 You need a Playstation2 with a modchip of your choice in order to run ScummVM.
@@ -30,22 +30,20 @@ or any other CD writing software.
 
 For Linux or Mac OS X binaries check http://www.nobis-crew.org/cd-tool/
 
-Unfortunately, writing DVD images with cd-tool is currently broken and will
- crash when it reaches the 2GB limit. This problem will probably be fixed in
- the nearer future.
+Unfortunately, writing DVD images with cd-tool is currently broken.
+ This problem will probably be fixed in the nearer future.
 
 
 Notes
 =====
-- CD swapping doesn't work, unfortunately. So you should have all games
-   on the CD you booted from.
 - Curse of Monkey Island is unsupported. iMuse digital crashes often, 
    especially during Sea battles.
-- Zlib is unsupported, so compressed SAN files won't work.
+- Compressed SAN files need a lot of CPU power, probably because of zlib,
+   and are constantly out of sync. Uncompressed SANs play fine though, so
+   compress_san is NOT recommended.
 - The cd/dvd drive is a bottleneck, that's why you should compress the games
    with MP3 or Ogg/Vorbis using compress_scumm_sou / compress_scumm_bun /
-   compress_sword1 / compress_sword2 etc, but *not* compress_san as it
-   requires zlib. Besides, uncompressed SAN files play fine.
+   compress_sword1 / compress_sword2 etc, but NOT compress_san.
 - I haven't had time to implement a virtual keyboard. If you don't have a USB
    keyboard, you can only enter '1's using the Select button.
    (for copy protection screens as well as savegame names)
@@ -67,3 +65,13 @@ Cross                -   Left mouse button
 Circle               -   Right mouse button
 Left analog stick    -   Mouse. Disabled when USB mouse is detected.
 
+
+
+Changes since 0.8.0 RC1
+=======================
+- Zlib was added
+- ScummVM looks for a ScummVM.ini in the CD/DVD's root directory before falling
+   back to the one on the Memory Card
+- Disc swapping was fixed
+- PAL/NTSC detection was fixed
+- Autosaves are now written every 15 minutes instead of every 5 minutes
