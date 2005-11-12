@@ -626,7 +626,7 @@ protected:
 	bool has_item_childflag_0x10(Item *item);
 	uint item_get_icon_number(Item *item);
 	uint setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number, Item *item_ptr);
-	void fcs_unk_proc_2(FillOrCopyStruct *fcs, uint fcs_index);
+	void addArrows(FillOrCopyStruct *fcs, uint fcs_index);
 
 	void loadIconFile();
 	void processSpecialKeys();
@@ -653,7 +653,7 @@ protected:
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
-	void setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index);
+	void setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index);
 
 	byte *setup_vga_destination(uint32 size);
 	void vga_buf_unk_proc3(byte *end);
@@ -783,7 +783,7 @@ protected:
 	void video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs);
 	void delete_hitarea_by_index(uint index);
 
-	void fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index);
+	void removeArrows(FillOrCopyStruct *fcs, uint fcs_index);
 	void fcs_putchar(uint a);
 
 	void copy_img_from_3_to_2(FillOrCopyStruct *fcs);

@@ -1830,18 +1830,18 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 	fcs_ptr->fcs_data->e[k].item = NULL;
 
 	if (j != 0 || fcs_ptr->fcs_data->unk1 != 0) {
-		fcs_unk_proc_2(fcs_ptr, fcs_index);
+		addArrows(fcs_ptr, fcs_index);
 	}
 }
 
-void SimonEngine::fcs_unk_proc_2(FillOrCopyStruct *fcs, uint fcs_index) {
-	setup_hit_areas(fcs, fcs_index);
+void SimonEngine::addArrows(FillOrCopyStruct *fcs, uint fcs_index) {
+	setArrowHitAreas(fcs, fcs_index);
 
 	fcs->fcs_data->upArrow = _scrollUpHitArea;
 	fcs->fcs_data->downArrow = _scrollDownHitArea;
 }
 
-void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -3058,7 +3058,7 @@ void SimonEngine::removeIconArray(uint fcs_index) {
 	if (fcs->fcs_data->downArrow != -1) {
 		delete_hitarea_by_index(fcs->fcs_data->downArrow);
 		if (getGameType() == GType_SIMON1)
-			fcs_unk_5(fcs, fcs_index);
+			removeArrows(fcs, fcs_index);
 	}
 
 	free(fcs->fcs_data);
@@ -3069,7 +3069,7 @@ void SimonEngine::removeIconArray(uint fcs_index) {
 }
 
 // ok
-void SimonEngine::fcs_unk_5(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::removeArrows(FillOrCopyStruct *fcs, uint fcs_index) {
 	o_kill_sprite_simon1(128);
 }
 
