@@ -224,6 +224,14 @@ static GameFileDescription SIMON1_GameFiles[] = {
 };
 
 // Simon the Sorcerer 2
+static GameFileDescription SIMON2DOS_GameFiles[] = {
+	{"game32", GAME_BASEFILE},
+	{"icon.dat", GAME_ICONFILE},
+	{"simon2.gme", GAME_GMEFILE},
+	{"stripped.txt", GAME_STRFILE},
+	{"tbllist", GAME_TBLFILE},
+};
+
 static GameFileDescription SIMON2_GameFiles[] = {
 	{"gsptr30", GAME_BASEFILE},
 	{"icon.dat", GAME_ICONFILE},
@@ -265,7 +273,7 @@ static GameDescription gameDescriptions[] = {
 		GType_SIMON1,
 		GID_SIMON1CD32,
 		"Simon the Sorcerer 1 (Amiga CD32)",
-		ARRAYSIZE(SIMON1_GameFiles),
+		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
 		Common::EN_USA,
@@ -408,8 +416,8 @@ static GameDescription gameDescriptions[] = {
 		GType_SIMON2,
 		GID_SIMON2DOS,
 		"Simon the Sorcerer 2 (DOS Floppy)",
-		ARRAYSIZE(SIMON2_GameFiles),
-		SIMON2_GameFiles,
+		ARRAYSIZE(SIMON2DOS_GameFiles),
+		SIMON2DOS_GameFiles,
 		0,
 		Common::EN_USA,
 		Common::kPlatformPC,

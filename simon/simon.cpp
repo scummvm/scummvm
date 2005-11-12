@@ -1314,7 +1314,7 @@ void SimonEngine::loadTablesIntoMem(uint subr_id) {
 					// TODO
 				} else if (getGameType() == GType_SIMON2) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + SOUND_INDEX_BASE]);
-				} else if (getFeatures() & GF_TALKIE) {
+				} else if (getPlatform() == Common::kPlatformWindows) {
 					memcpy(filename, "SFXXXX", 6);
 					_sound->readSfxFile(filename);
 				}
@@ -3562,7 +3562,7 @@ void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *strin
 #define SD_TYPE_LITERAL (0)
 #define SD_TYPE_MATCH   (1)
 
-static bool decrunch_file_amiga (byte *src, byte *dst, uint32 size) {
+static bool decrunchFile(byte *src, byte *dst, uint32 size) {
 	byte *s = src + size - 4;
 	uint32 destlen = READ_BE_UINT32 (s);
 	uint32 bb, x, y;
@@ -3675,11 +3675,11 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 			error("read_vga_from_datfile_1: can't open %s", buf);
 		size = in.size();
 
-		if (getPlatform() == Common::kPlatformAmiga) {
+		if (getFeatures() & GF_CRUNCHED) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_1: read failed");
-			decrunch_file_amiga (buffer, _vgaBufferPointers[11].vgaFile2, size);
+			decrunchFile(buffer, _vgaBufferPointers[11].vgaFile2, size);
 			delete [] buffer;
 		} else {
 			if (in.read(_vgaBufferPointers[11].vgaFile2, size) != size)
@@ -3721,12 +3721,12 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 			error("read_vga_from_datfile_2: can't open %s", buf);
 		size = in.size();
 
-		if (getPlatform() == Common::kPlatformAmiga) {
+		if (getFeatures() & GF_CRUNCHED) {
 			byte *buffer = new byte[size];
 			if (in.read(buffer, size) != size)
 				error("read_vga_from_datfile_2: read failed");
 			dst = setup_vga_destination (READ_BE_UINT32(buffer + size - 4) + extraBuffer);
-			decrunch_file_amiga (buffer, dst, size);
+			decrunchFile(buffer, dst, size);
 			delete[] buffer;
 		} else {
 			dst = setup_vga_destination(size + extraBuffer);
