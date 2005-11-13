@@ -283,7 +283,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	if (offset < noScripts) {
 		ip = READ_LE_UINT32(offsetTable + offset * 4);
 		scriptNumber = offset;
-		debug(4, "Start script %d with offset %d", offset, ip);
+		debug(8, "Starting script %d from %d", scriptNumber, ip);
 	} else {
 		uint i;
 
@@ -295,7 +295,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		}
 
 		scriptNumber = i - 1;
-		debug(4, "Resume script %d with offset %d", scriptNumber, ip);
+		debug(8, "Resuming script %d from %d", scriptNumber, ip);
 	}
 
 	// There are a couple of known script bugs related to interacting with
