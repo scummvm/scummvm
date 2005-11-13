@@ -1108,7 +1108,7 @@ void SimonEngine::vc12_delay() {
 
 	// Work around to allow inventory arrows to be
 	// shown in some versions of Simon the Sorcerer 1
-	if ((getGameType() == GType_SIMON1) && vsp->id == 0x80)
+	if ((getGameType() == GType_SIMON1) && vsp->id == 128)
 		num = 0;
 	else
 		num += VGA_DELAY_BASE;
@@ -1770,7 +1770,7 @@ void SimonEngine::vc62_fastFadeOut() {
 		if (_windowNum == 4)
 			_videoNumPalColors = 208;
 
-		memcpy(_videoBuf1, _paletteBackup, _videoNumPalColors * sizeof(uint32));
+		memcpy(_videoBuf1, _paletteBackup, _videoNumPalColors * 4);
 		for (i = NUM_PALETTE_FADEOUT; i != 0; --i) {
 			palette_fadeout((uint32 *)_videoBuf1, _videoNumPalColors);
 			_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
@@ -1787,7 +1787,7 @@ void SimonEngine::vc62_fastFadeOut() {
 
 			vsp = _vgaSprites;
 			while (vsp->id != 0) {
-				if (vsp->id == 0x80) {
+				if (vsp->id == 128) {
 					byte *old_file_1 = _curVgaFile1;
 					byte *old_file_2 = _curVgaFile2;
 					uint palmode = _windowNum;

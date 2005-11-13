@@ -858,8 +858,8 @@ protected:
 	void decodeStripA(byte *dst, const byte *src, int height);
 	void scroll_timeout();
 	void hitarea_stuff_helper_2();
-	void realizePalette();
-	void fadeUpPalette();
+	void fastFadeIn();
+	void slowFadeIn();
 
 	void vc_kill_sprite(uint file, uint sprite);
 

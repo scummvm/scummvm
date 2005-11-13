@@ -738,7 +738,7 @@ void SimonEngine::palette_fadeout(uint32 *pal_values, uint num) {
 			p[2] -= 8;
 		else
 			p[2] = 0;
-		p += sizeof(uint32);
+		p += 4;
 	} while (--num);
 }
 
@@ -2520,7 +2520,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 void SimonEngine::o_fade_to_black() {
 	uint i;
 
-	memcpy(_videoBuf1, _paletteBackup, 256 * sizeof(uint32));
+	memcpy(_videoBuf1, _paletteBackup, 1024);
 
 	i = NUM_PALETTE_FADEOUT;
 	do {
@@ -2534,8 +2534,8 @@ void SimonEngine::o_fade_to_black() {
 		delay(5);
 	} while (--i);
 
-	memcpy(_paletteBackup, _videoBuf1, 256 * sizeof(uint32));
-	memcpy(_palette, _videoBuf1, 256 * sizeof(uint32));
+	memcpy(_paletteBackup, _videoBuf1, 1024);
+	memcpy(_palette, _videoBuf1, 1024);
 }
 
 void SimonEngine::delete_vga_timer(VgaTimerEntry * vte) {
@@ -3770,7 +3770,7 @@ void SimonEngine::openGameFile() {
 
 		resfile_read(_gameOffsetsPtr, 0, size);
 #if defined(SCUMM_BIG_ENDIAN)
-		for (uint r = 0; r < size / sizeof(uint32); r++)
+		for (uint r = 0; r < size / 4; r++)
 			_gameOffsetsPtr[r] = FROM_LE_32(_gameOffsetsPtr[r]);
 #endif
 	}
@@ -3863,8 +3863,8 @@ void SimonEngine::dx_update_screen_and_palette() {
 
 	if (_paletteColorCount == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
-		if (memcmp(_palette, _paletteBackup, 256 * 4) != 0) {
-			memcpy(_paletteBackup, _palette, 256 * 4);
+		if (memcmp(_palette, _paletteBackup, 1024) != 0) {
+			memcpy(_paletteBackup, _palette, 1024);
 			_system->setPalette(_palette, 0, 256);
 		}
 	}
@@ -3879,79 +3879,52 @@ void SimonEngine::dx_update_screen_and_palette() {
 			delay(100);
 			_usePaletteDelay = false;
 		}
-		realizePalette();
+		fastFadeIn();
 	}
 }
 
-void SimonEngine::realizePalette() {
-	_paletteFlag = false;
-	memcpy(_paletteBackup, _palette, 256 * 4);
-
+void SimonEngine::fastFadeIn() {
 	if (_paletteColorCount & 0x8000) {
-		fadeUpPalette();
+		slowFadeIn();
 	} else {
+		_paletteFlag = false;
+		memcpy(_paletteBackup, _palette, 1024);
 		_system->setPalette(_palette, 0, _paletteColorCount);
+		_paletteColorCount = 0;
 	}
-
-	_paletteColorCount = 0;
 }
 
-void SimonEngine::fadeUpPalette() {
-	bool done;
+void SimonEngine::slowFadeIn() {
+	uint8 paletteTmp[768];
+	uint8 *src, *dst;
+	int c, p;
 
-	_paletteColorCount = (_paletteColorCount & 0x7fff) / 4;
+	_paletteColorCount &= 0x7fff;
+	_paletteFlag = false;
 
-	memset(_videoBuf1, 0, _paletteColorCount * sizeof(uint32));
+	memcpy(_videoBuf1, _palette, 1024); // Difference
+	memset(_videoBuf1, 0, 768);
 
-	// This function is used by Simon 2 when riding the lion to the goblin
-	// camp. Note that _paletteColorCount is not 1024 in this scene, so
-	// only part of the palette is faded up. But apparently that's enough,
-	// as long as we make sure that the remaining palette colours aren't
-	// completely ignored.
+	memcpy(_paletteBackup, _palette, 768);
+	memcpy(paletteTmp, _palette, 768);
 
-	if (_paletteColorCount < _videoNumPalColors)
-		memcpy(_videoBuf1 + _paletteColorCount * sizeof(uint32),
-			_palette + _paletteColorCount * sizeof(uint32),
-			(_videoNumPalColors - _paletteColorCount) * sizeof(uint32));
+	for (c = 255; c > 0; c -= 4) {
+	  	src = paletteTmp;
+ 		dst = _videoBuf1;
 
-	do {
-		uint8 *src;
-		byte *dst;
-		int i;
-
-		done = true;
-		src = _palette;
-		dst = _videoBuf1;
-
-		for (i = 0; i < _paletteColorCount; i++) {
-			if (src[0] > dst[0]) {
-				if (dst[0] > src[0] - 4)
-					dst[0] = src[0];
-				else
-					dst[0] += 4;
-				done = false;
-			}
-			if (src[1] > dst[1]) {
-				if (dst[1] > src[1] - 4)
-					dst[1] = src[1];
-				else
-					dst[1] += 4;
-				done = false;
-			}
-			if (src[2] > dst[2]) {
-				if (dst[2] > src[2] - 4)
-					dst[2] = src[2];
-				else
-					dst[2] += 4;
-				done = false;
-			}
-			dst += 4;
-			src += 4;
-		}
-
-		_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
-		delay(5);
- 	} while (!done);
+		for (p = _paletteColorCount; p !=0 ; p--) {
+			if (*src >= c)
+				*dst = *dst + 4;
+			
+			src++;
+			dst++;
+ 		}
+ 		_system->setPalette(_videoBuf1, 0, _videoNumPalColors);
+		if (_fade)
+			_system->updateScreen();
+ 		delay(5);
+ 	}
+	_paletteColorCount = 0;
 }
 
 int SimonEngine::go() {

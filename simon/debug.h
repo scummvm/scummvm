@@ -1401,7 +1401,7 @@ const char *const simon2_video_opcode_name_table[] = {
 	"|FASTFADEIN",
 	/* 64 */
 	"|SKIP_IF_SPEECH_ENDED",
-	"|PALETTE_THING_3",
+	"|SLOW_FADE_IN",
 	"|SKIP_IF_NZ",
 	"|SKIP_IF_GE",
 	/* 68 */
@@ -1498,7 +1498,7 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"|FASTFADEIN",
 	/* 64 */
 	"|SKIP_IF_SPEECH_ENDED",
-	"|PALETTE_THING_3",
+	"|SLOW_FADE_IN",
 	"|SKIP_IF_NZ",
 	"|SKIP_IF_GE",
 	/* 68 */
