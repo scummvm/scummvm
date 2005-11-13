@@ -31,9 +31,6 @@ struct MovieTextObject;
 
 #define MAX_events 10
 
-// There won't be many, will there? Probably 2 at most i reckon
-#define MAX_syncs 10
-
 #define TREE_SIZE 3
 
 // This must allow for the largest number of objects in a screen
@@ -170,9 +167,11 @@ public:
 		uint32 sync;
 	};
 
-	SyncUnit _syncList[MAX_syncs];
+	// There won't be many, will there? Probably 2 at most i reckon
+	SyncUnit _syncList[10];
 
 	void clearSyncs(uint32 id);
+	void sendSync(uint32 id, uint32 sync);
 	int getSync();
 
 	Router *_router;

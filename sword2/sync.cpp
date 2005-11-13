@@ -32,12 +32,28 @@ namespace Sword2 {
  */
 
 void Logic::clearSyncs(uint32 id) {
-	for (int i = 0; i < MAX_syncs; i++) {
+	for (int i = 0; i < ARRAYSIZE(_syncList); i++) {
 		if (_syncList[i].id == id) {
 			debug(5, "removing sync %d for %d", i, id);
 			_syncList[i].id = 0;
 		}
 	}
+}
+
+void Logic::sendSync(uint32 id, uint32 sync) {
+	for (int i = 0; i < ARRAYSIZE(_syncList); i++) {
+		if (_syncList[i].id == 0) {
+			debug(5, "%d sends sync %d to %d", readVar(ID), sync, id);
+			_syncList[i].id = id;
+			_syncList[i].sync = sync;
+			return;
+		}
+	}
+
+	// The original code didn't even check for this condition, so maybe
+	// it should be a fatal error?
+
+	warning("No free sync slot");
 }
 
 /**
@@ -48,7 +64,7 @@ void Logic::clearSyncs(uint32 id) {
 int Logic::getSync() {
 	uint32 id = readVar(ID);
 
-	for (int i = 0; i < MAX_syncs; i++) {
+	for (int i = 0; i < ARRAYSIZE(_syncList); i++) {
 		if (_syncList[i].id == id)
 			return i;
 	}

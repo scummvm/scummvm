@@ -444,19 +444,7 @@ int32 Logic::fnSendSync(int32 *params) {
 	// params:	0 sync's recipient
 	//		1 sync value
 
-	for (int i = 0; i < MAX_syncs; i++) {
-		if (_syncList[i].id == 0) {
-			debug(5, "%d sends sync %d to %d", readVar(ID), params[1], params[0]);
-			_syncList[i].id = params[0];
-			_syncList[i].sync = params[1];
-			return IR_CONT;
-		}
-	}
-
-	// The original code didn't even check for this condition, so maybe
-	// it should be a fatal error?
-
-	warning("No free sync slot");
+	sendSync(params[0], params[1]);
 	return IR_CONT;
 }
 
