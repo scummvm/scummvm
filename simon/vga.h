@@ -112,7 +112,7 @@ struct VC10_state {
 	byte *surf_addr;
 	uint surf_pitch;
 
-	byte dl, dh;
+	uint16 dl, dh;
 
 	const byte *depack_src;
 	int8 depack_cont;

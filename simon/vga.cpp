@@ -457,7 +457,7 @@ byte *vc10_depack_column(VC10_state * vs) {
 	int8 a = vs->depack_cont;
 	const byte *src = vs->depack_src;
 	byte *dst = vs->depack_dest;
-	byte dh = vs->dh;
+	uint16 dh = vs->dh;
 	byte color;
 
 	if (a == -0x80)
@@ -696,14 +696,14 @@ void SimonEngine::vc10_draw() {
 		width = READ_LE_UINT16(p2 + 6);
 		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
 		flags = p2[5];
+
+		debug(1, "Width %d Height %d Flags 0x%x", width, height, flags);
 	} else {
 		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 		width = READ_BE_UINT16(p2 + 6) / 16;
 		height = p2[5];
 		flags = p2[4];
 	}
-
-	debug(1, "Width %d Height %d Flags 0x%x", width, height, flags);
 
 	if (height == 0 || width == 0)
 		return;
@@ -752,7 +752,7 @@ void SimonEngine::vc10_draw() {
 		return;
 	}
 
-	if (getGameType() != GType_FF) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		if (state.flags & 0x10) {
 			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
 		} else if (state.flags & 1) {
@@ -762,8 +762,12 @@ void SimonEngine::vc10_draw() {
 
 	vlut = &_video_windows[_windowNum * 4];
 
-	state.draw_width = width * 2;	/* cl */
+	state.draw_width = width;	/* cl */
 	state.draw_height = height;	/* ch */
+	
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		state.draw_width = width * 2;	/* cl */
+	} 
 
 	state.x_skip = 0;							/* colums to skip = bh */
 	state.y_skip = 0;							/* rows to skip   = bl */
@@ -808,7 +812,9 @@ void SimonEngine::vc10_draw() {
 
 	assert(state.draw_width != 0 && state.draw_height != 0);
 
-	state.draw_width *= 4;
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		state.draw_width *= 4;
+	}
 
 	state.surf2_addr = dx_lock_2();
 	state.surf2_pitch = _dxSurfacePitch;
@@ -880,7 +886,7 @@ void SimonEngine::vc10_draw() {
 		} while (++w != state.draw_width);
 
 		/* vc10_helper_5 */
-	} else if (((_lockWord & 0x20) && state.palette == 0) || state.palette == 0xC0) {
+	} else if (getGameType() != GType_FF && (((_lockWord & 0x20) && state.palette == 0) || state.palette == 0xC0)) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
@@ -1001,6 +1007,7 @@ void SimonEngine::vc10_draw() {
 			byte *src, *dst, *dst_org;
 
 			state.x_skip *= 4;				/* reached */
+
 			state.dl = width;
 			state.dh = height;
 
@@ -1817,10 +1824,13 @@ void SimonEngine::vc62_fastFadeOut() {
 
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
 		// in lower half of screen
-		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926))
+		if ((getGameType() == GType_SIMON1) && (_subroutine == 2923 || _subroutine == 2926)) {
 			dx_clear_surfaces(200);
-		else
+		} else if (getGameType() == GType_FF) {
+			dx_clear_surfaces(480);
+		} else {
 			dx_clear_surfaces(_windowNum == 4 ? 134 : 200);
+		}
 	}
 	if (getGameType() == GType_SIMON2) {
 		if (_nextMusicToPlay != -1)

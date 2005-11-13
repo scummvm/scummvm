@@ -2496,7 +2496,11 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_timer5 = 0;
 	} else {
 		if (!_dxUse3Or4ForLock) {
-			num_lines = _windowNum == 4 ? 134 : 200;
+			if (getGameType() == GType_FF)
+				num_lines = 480;
+			else
+				num_lines = _windowNum == 4 ? 134 : 200;
+
 			_vgaVar8 = num_lines;
 			dx_copy_from_attached_to_2(0, 0, _screenWidth, num_lines);
 			dx_copy_from_attached_to_3(num_lines);
