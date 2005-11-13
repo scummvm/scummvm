@@ -398,7 +398,7 @@ begin_credits("Credits");
 	add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
 	add_person("", "Jezar", "For his freeverb filter implementation");
 	add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
-	add_person("", "lloyd", "For deep tech details about C64 Zak & MM");
+	add_person("", "lloyd", "For deep tech details about C64 Zak &amp; MM");
 	add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
 	add_person("", "Tristan", "For additional work on the original MT-32 emulator");
   end_section();
