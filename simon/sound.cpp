@@ -125,13 +125,15 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	// Try to load the WAVE data into an audio stream
-	AudioStream *stream = makeWAVStream(*_file);
-	if (!stream) {
-		error("playWav(%d): can't read WAVE header", sound);
+	byte wavFlags;
+	int size, rate;
+	if (!loadWAVFromStream(*_file, size, rate, wavFlags)) {
+		error("playSound: Not a valid WAV file");
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream);
+	byte *buffer = (byte *)malloc(size);
+	_file->read(buffer, size);
+	_mixer->playRaw(handle, buffer, size, rate, flags | wavFlags);
 }
 
 void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
@@ -140,10 +142,10 @@ void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
-	int size, samples_per_sec;
-	byte *buffer = loadVOCFromStream(*_file, size, samples_per_sec);
+	int size, rate;
+	byte *buffer = loadVOCFromStream(*_file, size, rate);
 
-	_mixer->playRaw(handle, buffer, size, samples_per_sec, flags | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 }
 
 void RawSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
