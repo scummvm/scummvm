@@ -369,6 +369,7 @@ begin_credits("Credits");
 	add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");
 	add_person("Andreas Karlsson", "Sprawl", "Initial port for EPOC/SymbianOS");
 	add_person("Robert Kelsen", "", "Packaging for SlackWare");
+	add_person("Jean Marc", "", 'ScummVM logo');
 	add_person("Claudio Matsuoka", "", 'Daily Linux builds');
 	add_person("Mikesch Nepomuk", "", "MI1 VGA floppy patches");
 	add_person("Juha Niemim&auml;ki", "", "AmigaOS 4 port maintaining");

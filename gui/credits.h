@@ -89,6 +89,8 @@ static const char *credits[] = {
 "\\L\\c2""    Initial port for EPOC/SymbianOS",
 "\\L\\c0""  Robert Kelsen",
 "\\L\\c2""    Packaging for SlackWare",
+"\\L\\c0""  Jean Marc",
+"\\L\\c2""    ScummVM logo",
 "\\L\\c0""  Claudio Matsuoka",
 "\\L\\c2""    Daily Linux builds",
 "\\L\\c0""  Mikesch Nepomuk",
