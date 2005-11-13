@@ -59,6 +59,7 @@ sub html_entities_to_ascii {
 	# For now we hardcode these mappings
 	# &aacute;  -> a
 	# &eacute;  -> e
+	# &oacute;  -> o
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
 	# &auml;    -> a
@@ -66,6 +67,7 @@ sub html_entities_to_ascii {
 	# &#322;    -> l
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
+	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
 
@@ -359,7 +361,9 @@ begin_credits("Credits");
 
   begin_section("Contributors");
 	add_person("Tore Anderson", "tore", "Packaging for Debian GNU/Linux");
+	add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 	add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
+	add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
 	add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 	add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 	add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");
