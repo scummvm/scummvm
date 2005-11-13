@@ -557,8 +557,8 @@ protected:
 	
 	Item _itemTable[145];
 	
-	uint16 *_exitListPtr;
-	uint16 _exitList[11];
+	int16 *_exitListPtr;
+	int16 _exitList[11];
 	SceneExits _sceneExits;
 	uint16 _currentRoom;
 	uint8 *_maskBuffer;

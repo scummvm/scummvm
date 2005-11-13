@@ -400,7 +400,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 
 	assert(fileSize > 0x6D);
 
-	_engine->_northExitHeight = READ_BE_UINT16(_dat + 0x15);
+	_engine->_northExitHeight = READ_LE_UINT16(_dat + 0x15);
 	if (_engine->_northExitHeight & 1)
 		_engine->_northExitHeight += 1;
 	// XXX	

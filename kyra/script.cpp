@@ -207,7 +207,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 		opcode = 0;
 		_parameter = code & 0x7FFF;
 	} else if (code & 0x4000) {
-		_parameter = code & 0xFF;
+		_parameter = (int8)(code);
 	} else if (code & 0x2000) {
 		_parameter = READ_BE_UINT16(_curScript->ip); _curScript->ip += 2;
 	} else {

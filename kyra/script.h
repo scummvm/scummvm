@@ -70,7 +70,7 @@ protected:
 	
 	KyraEngine *_vm;
 	ScriptState *_curScript;
-	uint32 _parameter;
+	int16 _parameter;
 	bool _continue;
 
 	typedef void (ScriptHelper::*CommandProc)();

@@ -312,10 +312,10 @@ void KyraEngine::res_loadRoomTable(const byte *src, Room **loadTo, int *size) {
 	
 	for (uint32 i = 0; i < count; ++i) {
 		(*loadTo)[i].nameIndex = *src++;
-		(*loadTo)[i].northExit = READ_LE_UINT16(src); src += 2;
-		(*loadTo)[i].eastExit = READ_LE_UINT16(src); src += 2;
-		(*loadTo)[i].southExit = READ_LE_UINT16(src); src += 2;
-		(*loadTo)[i].westExit = READ_LE_UINT16(src); src += 2;
+		(*loadTo)[i].northExit = READ_BE_UINT16(src); src += 2;
+		(*loadTo)[i].eastExit = READ_BE_UINT16(src); src += 2;
+		(*loadTo)[i].southExit = READ_BE_UINT16(src); src += 2;
+		(*loadTo)[i].westExit = READ_BE_UINT16(src); src += 2;
 		memset(&(*loadTo)[i].itemsTable[0], 0xFF, sizeof(byte)*6);
 		memset(&(*loadTo)[i].itemsTable[6], 0, sizeof(byte)*6);
 		memset((*loadTo)[i].itemsXPos, 0, sizeof(uint16)*12);

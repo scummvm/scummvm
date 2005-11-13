@@ -1116,7 +1116,7 @@ void Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 				while (len--) {
 					*dst++ = *dstOffs++;
 				}
-			}				
+			}
 		} else if (code != 0x80) {
 			int len = MIN(count, code & 0x3F);
 			while (len--) {

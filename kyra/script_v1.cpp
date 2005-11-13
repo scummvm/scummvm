@@ -115,10 +115,10 @@ void ScriptHelper::c1_subSP() {
 }
 
 void ScriptHelper::c1_execOpcode() {
-	assert((int)_parameter < _curScript->dataPtr->opcodeSize);
-	if (_curScript->dataPtr->opcodes[_parameter] == &KyraEngine::cmd_dummy)
-		debug("calling unimplemented opcode(0x%.02X)", _parameter);
-	_curScript->retValue = (_vm->*_curScript->dataPtr->opcodes[_parameter])(_curScript);
+	assert((uint8)_parameter < _curScript->dataPtr->opcodeSize);
+	if (_curScript->dataPtr->opcodes[(uint8)_parameter] == &KyraEngine::cmd_dummy)
+		debug("calling unimplemented opcode(0x%.02X)", (uint8)_parameter);
+	_curScript->retValue = (_vm->*_curScript->dataPtr->opcodes[(uint8)_parameter])(_curScript);
 }
 
 void ScriptHelper::c1_ifNotJmp() {
@@ -296,7 +296,7 @@ void ScriptHelper::c1_setRetAndJmp() {
 #pragma mark -
 
 #define stackPos(x) script->stack[script->sp+x]
-#define stackPosString(x) (char *)&script->dataPtr->text[READ_BE_UINT16( &((uint16 *)script->dataPtr->text)[stackPos(x)])]
+#define stackPosString(x) (char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
 
 int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
 	warning("STUB: cmd_magicInMouseItem");
