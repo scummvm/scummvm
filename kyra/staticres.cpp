@@ -88,7 +88,7 @@ void KyraEngine::res_loadResources(int type) {
 	temp = 0;
 	
 	if (version < RESFILE_VERSION) {
-		error("invalid resource file version (%d)", version);
+		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
 	}
 	if (gameID != _game) {
 		error("invalid game id (%d)", gameID);
