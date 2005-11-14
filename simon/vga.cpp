@@ -1994,23 +1994,35 @@ void SimonEngine::vc75_setScale() {
 	// Set scale
 	int baseY = vc_read_next_word();
 	int scale = vc_read_next_word();
+	//setScale(scale, baseY);
+
 	debug(0, "STUB: vc75_setScale: baseY %d scale %d", baseY, scale);
 }
 
 void SimonEngine::vc76_setScaleXOffs() {
+	VgaSprite *vsp = find_cur_sprite();
+
 	// Scale X related
-	int image = vc_read_next_word();
+	vsp->image = vc_read_next_word();
 	int xoffs = vc_read_next_word();
 	int var = vc_read_next_word();
-	debug(0, "STUB: vc76_setScaleXOffs: image %d xoffs %d flag %d", image, xoffs, var);
+
+	vsp->flags = 0x40;
+
+	debug(0, "STUB: vc76_setScaleXOffs: image %d xoffs %d flag %d", vsp->image, xoffs, var);
 }
 
 void SimonEngine::vc77_setScaleYOffs() {
+	VgaSprite *vsp = find_cur_sprite();
+
 	// Scale Y related
-	int image = vc_read_next_word();
+	vsp->image = vc_read_next_word();
 	int yoffs = vc_read_next_word();
 	int var = vc_read_next_word();
-	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d flag %d", image, yoffs, var);
+
+	vsp->flags = 0x40;
+
+	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d flag %d", vsp->image, yoffs, var);
 }
 
 void SimonEngine::vc78_computeXY() {
