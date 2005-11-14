@@ -374,7 +374,7 @@ protected:
 	VgaSprite _vgaSprites[180];
 	VgaSleepStruct _vgaSleepStructs[30];
 
-	const uint16 *_pathFindArray[20];
+	const uint16 *_pathFindArray[100];
 
 	uint8 _paletteBackup[1024];
 	uint8 _palette[1024];
@@ -746,7 +746,7 @@ public:
 	void vc75_setScale();
 	void vc76_setScaleXOffs();
 	void vc77_setScaleYOffs();
-	void vc78_pathUnk1();
+	void vc78_computeXY();
 	void vc79_pathUnk2();
 	void vc80_setOverlayImage();
 	void vc81_setRandom();

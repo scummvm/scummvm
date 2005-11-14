@@ -110,7 +110,7 @@ void SimonEngine::setupVgaOpcodes() {
 		&SimonEngine::vc75_setScale,
 		&SimonEngine::vc76_setScaleXOffs,
 		&SimonEngine::vc77_setScaleYOffs,
-		&SimonEngine::vc78_pathUnk1,
+		&SimonEngine::vc78_computeXY,
 		&SimonEngine::vc79_pathUnk2,
 		&SimonEngine::vc80_setOverlayImage,
 		&SimonEngine::vc81_setRandom,
@@ -1022,12 +1022,16 @@ void SimonEngine::vc10_draw() {
 
 					h = 0;
 					do {
-						dst[0] = (*src / 16) | state.palette;
-						dst[1] = (*src & 15) | state.palette;
+						if (getGameType() == GType_FF) {
+							*dst = *src;
+						} else {
+							dst[0] = (*src / 16) | state.palette;
+							dst[1] = (*src & 15) | state.palette;
+						}
 						dst += _screenWidth;
 						src++;
 					} while (++h != state.draw_height);
-					dst_org += 2;
+					dst_org += (getGameType() == GType_FF) ? 1 : 2;
 				} while (++w != state.draw_width);
 			} else {
 				dst_org = state.surf_addr;
@@ -1043,16 +1047,22 @@ void SimonEngine::vc10_draw() {
 
 					h = 0;
 					do {
-						color = (*src / 16);
-						if (color)
-							dst[0] = color | state.palette;
-						color = (*src & 15);
-						if (color)
-							dst[1] = color | state.palette;
+						if (getGameType() == GType_FF) {
+							color = *src;
+							if (color)
+								*dst = color;
+						} else {
+							color = (*src / 16);
+							if (color)
+								dst[0] = color | state.palette;
+							color = (*src & 15);
+							if (color)
+								dst[1] = color | state.palette;
+						}
 						dst += _screenWidth;
 						src++;
 					} while (++h != state.draw_height);
-					dst_org += 2;
+					dst_org += (getGameType() == GType_FF) ? 1 : 2;
 				} while (++w != state.draw_width);
 			}
 			/* vc10_helper_6 */
@@ -2003,9 +2013,27 @@ void SimonEngine::vc77_setScaleYOffs() {
 	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d flag %d", image, yoffs, var);
 }
 
-void SimonEngine::vc78_pathUnk1() {
-	// Pathfinder related
-	debug(0, "STUB: vc78_pathUnk1");
+void SimonEngine::vc78_computeXY() {
+	VgaSprite *vsp = find_cur_sprite();
+
+	uint a = (uint16)_variableArray[12];
+	uint b = (uint16)_variableArray[13];
+	const uint16 *p = _pathFindArray[a - 1];
+	p += b * 2;
+
+	uint16 posx = READ_LE_UINT16(p);
+	_variableArray[15] = posx;
+	vsp->x = posx;
+
+	uint16 posy = READ_LE_UINT16(p + 2);
+	_variableArray[16] = posy;
+	vsp->y = posy;
+
+	
+	vc_set_bit_to(85, false);
+	if (vc_get_bit(74) == true) {
+		//centreScroll();
+	}
 }
 
 void SimonEngine::vc79_pathUnk2() {
