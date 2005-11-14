@@ -105,11 +105,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1TALKIE_HB, "9d31bef42db1a8abe4e9f368014df1d5", "stripped.txt", false},
 	{ GID_SIMON1TALKIE_HB, "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
-	{ GID_SIMON1TALKIE_IT, "00000000000000000000000000000000", "gamepc", false },
-	{ GID_SIMON1TALKIE_IT, "00000000000000000000000000000000", "icon.dat", false},
-	{ GID_SIMON1TALKIE_IT, "00000000000000000000000000000000", "simon.gme", false },
-	{ GID_SIMON1TALKIE_IT, "00000000000000000000000000000000", "stripped.txt", false},
-	{ GID_SIMON1TALKIE_IT, "00000000000000000000000000000000", "tbllist", false},
+	{ GID_SIMON1TALKIE_IT, "8d3ca654e158c91b860c7eae31d65312", "gamepc", false },
+	{ GID_SIMON1TALKIE_IT, "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1TALKIE_IT, "104efd83c8f3edf545982e07d87f66ac", "simon.gme", false },
+	{ GID_SIMON1TALKIE_IT, "9d31bef42db1a8abe4e9f368014df1d5", "stripped.txt", false},
+	{ GID_SIMON1TALKIE_IT, "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON1TALKIE_ES, "439f801ba52c02c9d1844600d1ce0f5e", "gamepc", false },
 	{ GID_SIMON1TALKIE_ES, "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
@@ -171,12 +171,6 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2TALKIE_HB, "de9dbc24158660e153483fa0cf6c3172", "stripped.txt", false},
 	{ GID_SIMON2TALKIE_HB, "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_SIMON2TALKIE_IT, "3e11d400bea0638f360a724687005cd1", "gsptr30", false },
-	{ GID_SIMON2TALKIE_IT, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
-	{ GID_SIMON2TALKIE_IT, "344aca58e5ad5e25c517d5eb1d85c435", "simon2.gme", false },
-	{ GID_SIMON2TALKIE_IT, "bea6843fb9f3b2144fcb146d62db0b9a", "stripped.txt", false},
-	{ GID_SIMON2TALKIE_IT, "2082f8d02075e590300478853a91ffd9", "tbllist", false},
-
 	{ GID_SIMON2TALKIE_ES, "00000000000000000000000000000000", "gsptr30", false },
 	{ GID_SIMON2TALKIE_ES, "00000000000000000000000000000000", "icon.dat", false},
 	{ GID_SIMON2TALKIE_ES, "00000000000000000000000000000000", "simon2.gme", false },
@@ -194,6 +188,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "simon2.gme", false },
 	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "stripped.txt", false},
 	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "tbllist", false},
+
+	{ GID_SIMON2WIN_IT, "3e11d400bea0638f360a724687005cd1", "gsptr30", false },
+	{ GID_SIMON2WIN_IT, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2WIN_IT, "344aca58e5ad5e25c517d5eb1d85c435", "simon2.gme", false },
+	{ GID_SIMON2WIN_IT, "bea6843fb9f3b2144fcb146d62db0b9a", "stripped.txt", false},
+	{ GID_SIMON2WIN_IT, "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
 	{ GID_FEEBLEFILES_2CD, "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
 	{ GID_FEEBLEFILES_2CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
@@ -527,19 +527,6 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
-	// Simon the Sorcerer 2 - Italian DOS CD
-	{
-		"simon2",
-		GType_SIMON2,
-		GID_SIMON2TALKIE_IT,
-		"Simon the Sorcerer 2 (It DOS CD)",
-		ARRAYSIZE(SIMON2_GameFiles),
-		SIMON2_GameFiles,
-		GF_TALKIE,
-		Common::IT_ITA,
-		Common::kPlatformPC,
-	},
-
 	// Simon the Sorcerer 2 - Spanish DOS CD
 	{
 		"simon2",
@@ -576,6 +563,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON2_GameFiles,
 		GF_TALKIE,
 		Common::DE_DEU,
+		Common::kPlatformWindows,
+	},
+
+	// Simon the Sorcerer 2 - Italian Windows CD
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2WIN_IT,
+		"Simon the Sorcerer 2 (It Windows CD)",
+		ARRAYSIZE(SIMON2_GameFiles),
+		SIMON2_GameFiles,
+		GF_TALKIE,
+		Common::IT_ITA,
 		Common::kPlatformWindows,
 	},
 
