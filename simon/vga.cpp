@@ -1606,23 +1606,31 @@ void SimonEngine::vc51_clear_hitarea_bit_0x40() {
 }
 
 void SimonEngine::vc52_playSound() {
-	uint16 sound_id = vc_read_next_word();
+	bool ambient = false;
+
+	uint16 sound = vc_read_next_word();
+	if (sound >= 0x8000) {
+		ambient = true;
+		sound = -sound;
+	}
 
 	if (getGameType() == GType_FF) {
 		uint16 pan = vc_read_next_word();
 		uint16 vol = vc_read_next_word();
-		debug(0, "STUB: vc52_playSound: snd %d pan %d vol %d", sound_id, pan, vol);
+		debug(0, "STUB: vc52_playSound: snd %d pan %d vol %d", sound, pan, vol);
+
+		_sound->playSoundData(_curSfxFile, sound, pan, vol, ambient);
+
 	} else if (getGameType() == GType_SIMON2) {
-		if (sound_id >= 0x8000) {
-			sound_id = -sound_id;
-			_sound->playAmbient(sound_id);
+		if (ambient) {
+			_sound->playAmbient(sound);
 		} else {
-			_sound->playEffects(sound_id);
+			_sound->playEffects(sound);
 		}
 	} else if (getFeatures() & GF_TALKIE) {
-		_sound->playEffects(sound_id);
+		_sound->playEffects(sound);
 	} else {
-		playSting(sound_id);
+		playSting(sound);
 	}
 }
 

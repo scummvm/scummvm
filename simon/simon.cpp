@@ -432,6 +432,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_curVgaFile1 = 0;
 	_curVgaFile2 = 0;
+	_curSfxFile = 0;
 
 	_timer1 = 0;
 	_timer5 = 0;
@@ -2275,8 +2276,9 @@ void SimonEngine::ensureVgaResLoaded(uint vga_res) {
 	if (vpe->vgaFile1 != NULL)
 		return;
 
-	vpe->vgaFile2 = read_vga_from_datfile_2(vga_res * 2 + 1);
-	vpe->vgaFile1 = read_vga_from_datfile_2(vga_res * 2);
+	vpe->vgaFile1 = read_vga_from_datfile_2(vga_res * 2, 1);
+	vpe->vgaFile2 = read_vga_from_datfile_2(vga_res * 2 + 1, 2);
+	vpe->sfxFile = read_vga_from_datfile_2(vga_res * 2, 3);
 
 }
 
@@ -2358,7 +2360,7 @@ void SimonEngine::delete_memptr_range(byte *end) {
 	do {
 		if (_vgaBufFreeStart <= vpe->vgaFile1 && end >= vpe->vgaFile1 ||
 				_vgaBufFreeStart <= vpe->vgaFile2 && end >= vpe->vgaFile2) {
-			vpe->dd = 0;
+			vpe->sfxFile = NULL;
 			vpe->vgaFile1 = NULL;
 			vpe->vgaFile2 = NULL;
 		}
@@ -2386,7 +2388,7 @@ void SimonEngine::o_clear_vgapointer_entry(uint a) {
 
 	vpe = &_vgaBufferPointers[a];
 
-	vpe->dd = 0;
+	vpe->sfxFile = NULL;
 	vpe->vgaFile1 = NULL;
 	vpe->vgaFile2 = NULL;
 }
@@ -2428,6 +2430,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
 
 		if (vpe->vgaFile1 != NULL)
 			break;
@@ -2617,6 +2620,7 @@ void SimonEngine::vc_resume_sprite(const byte *code_ptr, uint16 cur_file, uint16
 
 	_curVgaFile1 = vpe->vgaFile1;
 	_curVgaFile2 = vpe->vgaFile2;
+	_curSfxFile = vpe->sfxFile;
 
 	_vcPtr = code_ptr;
 
@@ -2728,6 +2732,7 @@ void SimonEngine::timer_vga_sprites() {
 		vpe = &_vgaBufferPointers[vsp->fileId];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
 		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
 
@@ -2806,6 +2811,7 @@ void SimonEngine::timer_vga_sprites_2() {
 		vpe = &_vgaBufferPointers[vsp->fileId];
 		_curVgaFile1 = vpe->vgaFile1;
 		_curVgaFile2 = vpe->vgaFile2;
+		_curSfxFile = vpe->sfxFile;
 		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
 
@@ -3698,7 +3704,7 @@ void SimonEngine::read_vga_from_datfile_1(uint vga_id) {
 	}
 }
 
-byte *SimonEngine::read_vga_from_datfile_2(uint id) {
+byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 	// !!! HACK !!!
 	// allocate more space for text to cope with foreign languages that use
 	// up more space than english. I hope 6400 bytes are enough. This number
@@ -3709,20 +3715,24 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id) {
 		File in;
 		char buf[15];
 		uint32 size;
-		byte *dst;
+		byte *dst = NULL;
 
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
-				sprintf(buf, "%.3d%d.out", id / 2, (id & 1) + 1);
+				sprintf(buf, "%.3d%d.out", id / 2, type);
 			else 
-				sprintf(buf, "%.3d%d.pkd", id / 2, (id & 1) + 1);
+				sprintf(buf, "%.3d%d.pkd", id / 2, type);
 		} else {
-			sprintf(buf, "%.3d%d.VGA", id / 2, (id & 1) + 1);
+			sprintf(buf, "%.3d%d.VGA", id / 2, type);
 		}
 
 		in.open(buf);
-		if (in.isOpen() == false)
-			error("read_vga_from_datfile_2: can't open %s", buf);
+		if (in.isOpen() == false) {
+			if (type == 3) 
+				return NULL;
+			else
+				error("read_vga_from_datfile_2: can't open %s", buf);
+		}
 		size = in.size();
 
 		if (getFeatures() & GF_CRUNCHED) {

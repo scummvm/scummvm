@@ -450,6 +450,36 @@ void Sound::playVoice(uint sound) {
 	_voice->playSound(sound, &_voiceHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 
+void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient) {
+	byte flags;
+	int rate;
+
+	if (ambient) {
+		if (_ambientPaused || sound == _ambientPlaying)
+			return;
+	} else {
+		if (_effectsPaused)
+			return;
+	}
+
+	// TODO: Use sound offsets
+	soundData += 8;
+	int32 size = READ_LE_UINT32(soundData + 4);
+	Common::MemoryReadStream stream(soundData, size);
+	if (!loadWAVFromStream(stream, size, rate, flags)) {
+		error("playSoundData: Not a valid WAV data");
+	}
+
+	byte *buffer = (byte *)malloc(size);
+	memcpy(buffer, soundData + stream.pos(), size);
+
+	if (ambient && sound == _ambientPlaying) {
+		_mixer->playRaw(&_effectsHandle, buffer, size, rate, flags);
+	} else {
+		_mixer->playRaw(&_ambientHandle, buffer, size, rate, Audio::Mixer::FLAG_LOOP|flags);
+	}
+}
+
 void Sound::playEffects(uint sound) {
 	if (!_effects)
 		return;

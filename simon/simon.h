@@ -72,7 +72,7 @@ struct HitArea {
 struct VgaPointersEntry {
 	byte *vgaFile1;
 	byte *vgaFile2;
-	uint32 dd;
+	byte *sfxFile;
 	VgaPointersEntry() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -336,6 +336,7 @@ protected:
 
 	byte *_curVgaFile1;
 	byte *_curVgaFile2;
+	byte *_curSfxFile;
 
 	uint16 _timer1, _timer5, _timer4;
 
@@ -797,7 +798,7 @@ protected:
 	byte *dx_lock_attached();
 	void dx_unlock_attached();
 
-	byte *read_vga_from_datfile_2(uint id);
+	byte *read_vga_from_datfile_2(uint id, uint type);
 
 	void resfile_read(void *dst, uint32 offs, uint32 size);
 

@@ -65,6 +65,7 @@ public:
 	void playVoice(uint sound);
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
+	void playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient);
 
 	bool hasVoice() const;
 	bool isVoiceActive() const;
