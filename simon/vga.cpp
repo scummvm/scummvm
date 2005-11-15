@@ -824,8 +824,6 @@ void SimonEngine::vc10_draw() {
 	state.surf_addr = dx_lock_attached();
 	state.surf_pitch = _dxSurfacePitch;
 
-	memset(&_video_windows, 0, sizeof(_video_windows));
-
 	{
 		uint offs, offs2;
 		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
