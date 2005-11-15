@@ -1563,20 +1563,21 @@ void SimonEngine::vc48_setPathFinder() {
 
 	if (getGameType() == GType_FF) {
 		VgaSprite *vsp = find_cur_sprite();
-		int x, y, y1, y2, ydiff, count = 0;
+		int x, x2, y, y1, y2, ydiff, count = 0;
 
-		while(vsp->x > readUint16Wrapper(p + 2)) {
+		while(vsp->x < readUint16Wrapper(p + 2)) {
 			p += 2;
 			count++;
 		}
 
 		y1 = readUint16Wrapper(p + 1);
+		x2 = readUint16Wrapper(p + 2);
 		y2 = readUint16Wrapper(p + 3);
 
-		if (y2 != 9999) {
+		if (x2 != 9999) {
 			ydiff = y2 - y1;
 			if (ydiff < 0) {
-				ydiff = - ydiff;
+				ydiff = -ydiff;
 				x = vsp->x & 7;
 				ydiff *= x;
 				ydiff /= 8;

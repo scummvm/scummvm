@@ -462,8 +462,7 @@ void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool 
 			return;
 	}
 
-	// TODO: Use sound offsets
-	soundData += 8;
+	soundData += READ_LE_UINT32(soundData + sound * 4);
 	int32 size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
 	if (!loadWAVFromStream(stream, size, rate, flags)) {
