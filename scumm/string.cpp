@@ -455,6 +455,15 @@ void ScummEngine::CHARSET_1() {
 
 		_charset->_left = _charset->_nextLeft;
 		_charset->_top = _charset->_nextTop;
+		if (c & 0x80 && _useCJKMode) {
+			if (_language == Common::JA_JPN && !checkSJISCode(c)) {
+				c = 0x20; //not in S-JIS
+			} else {
+				byte *buffer = _charsetBuffer + _charsetBufPos;
+				c += *buffer++ * 256; //LE
+				_charsetBufPos = buffer - _charsetBuffer;
+			}
+		}
 		if (_version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
 			if (subtitleLine == subtitleBuffer) {
