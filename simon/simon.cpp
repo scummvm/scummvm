@@ -2741,10 +2741,10 @@ void SimonEngine::timer_vga_sprites() {
 		params[2] = readUint16Wrapper(&vsp->x);
 		params[3] = readUint16Wrapper(&vsp->y);
 
-		if (getGameType() == GType_SIMON2) {
-			*(byte *)(&params[4]) = (byte)vsp->flags;
-		} else {
+		if (getGameType() == GType_SIMON1) {
 			params[4] = READ_BE_UINT16(&vsp->flags);
+		} else {
+			*(byte *)(&params[4]) = (byte)vsp->flags;
 		}
 
 		_vcPtr = (const byte *)params;
