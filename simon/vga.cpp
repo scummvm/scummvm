@@ -2049,11 +2049,8 @@ void SimonEngine::vc74_clearMark() {
 
 void SimonEngine::vc75_setScale() {
 	// Set scale
-	int baseY = vc_read_next_word();
-	int scale = vc_read_next_word();
-	//setScale(scale, baseY);
-
-	debug(0, "STUB: vc75_setScale: baseY %d scale %d", baseY, scale);
+	_baseY = vc_read_next_word();
+	_scale = (float)vc_read_next_word() / 1000000.;
 }
 
 void SimonEngine::vc76_setScaleXOffs() {

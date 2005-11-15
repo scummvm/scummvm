@@ -207,7 +207,6 @@ protected:
 
 	const byte *_codePtr;
 
-
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
@@ -345,6 +344,9 @@ protected:
 	uint16 _vgaCurFile2;
 	uint16 _vgaWaitFor, _vgaCurFileId;
 	uint16 _vgaCurSpriteId;
+
+	int16 _baseY;
+	float _scale;
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
 
