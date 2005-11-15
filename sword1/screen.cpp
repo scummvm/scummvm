@@ -76,12 +76,6 @@ int32 Screen::inRange(int32 a, int32 b, int32 c) { // return b(!) so that: a <= 
 }
 
 void Screen::setScrolling(int16 offsetX, int16 offsetY) {
-	if (!Logic::_scriptVars[SCROLL_FLAG]) {
-		Logic::_scriptVars[SCROLL_OFFSET_X] = _oldScrollX = 0;
-		Logic::_scriptVars[SCROLL_OFFSET_Y] = _oldScrollY = 0;
-		return ; // screen is smaller than 640x400 => no need for scrolling
-	}
-
 	offsetX = inRange(0, offsetX, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 	offsetY = inRange(0, offsetY, Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
 
@@ -100,12 +94,23 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 		_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y];
 		int dx = offsetX - Logic::_scriptVars[SCROLL_OFFSET_X];
 		int dy = offsetY - Logic::_scriptVars[SCROLL_OFFSET_Y];
-		int scrlDistX = inRange(-MAX_SCROLL_DISTANCE, ((1 + ABS(dx)) / SCROLL_FRACTION) * ((dx > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
-		int scrlDistY = inRange(-MAX_SCROLL_DISTANCE, ((1 + ABS(dy)) / SCROLL_FRACTION) * ((dy > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
+		int scrlDistX = inRange(-MAX_SCROLL_DISTANCE, (((SCROLL_FRACTION - 1) + ABS(dx)) / SCROLL_FRACTION) * ((dx > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
+		int scrlDistY = inRange(-MAX_SCROLL_DISTANCE, (((SCROLL_FRACTION - 1) + ABS(dy)) / SCROLL_FRACTION) * ((dy > 0) ? 1 : -1), MAX_SCROLL_DISTANCE);
 		if ((scrlDistX != 0) || (scrlDistY != 0))
 			_fullRefresh = true;
 		Logic::_scriptVars[SCROLL_OFFSET_X] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_X] + scrlDistX, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 		Logic::_scriptVars[SCROLL_OFFSET_Y] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_Y] + scrlDistY, Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
+	} else {
+		// SCROLL_FLAG == 0, this usually means that the screen is smaller than 640x400 and doesn't need scrolling at all
+		// however, it can also mean that the gamescript overwrote the scrolling flag to take care of scrolling directly,
+		// (see bug report #1345130) so we ignore the offset arguments in this case
+		Logic::_scriptVars[SCROLL_OFFSET_X] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_X], Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
+		Logic::_scriptVars[SCROLL_OFFSET_Y] = inRange(0, Logic::_scriptVars[SCROLL_OFFSET_Y], Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
+		if ((Logic::_scriptVars[SCROLL_OFFSET_X] != _oldScrollX) || (Logic::_scriptVars[SCROLL_OFFSET_Y] != _oldScrollY)) {
+			_fullRefresh = true;
+			_oldScrollX = Logic::_scriptVars[SCROLL_OFFSET_X];
+			_oldScrollY = Logic::_scriptVars[SCROLL_OFFSET_Y];
+		}
 	}
 }
 
@@ -151,7 +156,7 @@ bool Screen::stillFading(void) {
 }
 
 bool Screen::showScrollFrame(void) {
-	if ((!_fullRefresh) || Logic::_scriptVars[NEW_PALETTE] || (!Logic::_scriptVars[SCROLL_FLAG]))
+	if ((!_fullRefresh) || Logic::_scriptVars[NEW_PALETTE])
 		return false; // don't draw an additional frame if we aren't scrolling or have to change the palette
 	if ((_oldScrollX == Logic::_scriptVars[SCROLL_OFFSET_X]) &&
 		(_oldScrollY == Logic::_scriptVars[SCROLL_OFFSET_Y]))
@@ -290,9 +295,9 @@ void Screen::newScreen(uint32 screen) {
 		Logic::_scriptVars[SCROLL_FLAG] = 0;
 		Logic::_scriptVars[MAX_SCROLL_OFFSET_X] = 0;
 		Logic::_scriptVars[MAX_SCROLL_OFFSET_Y] = 0;
-		Logic::_scriptVars[SCROLL_OFFSET_X] = 0;
-		Logic::_scriptVars[SCROLL_OFFSET_Y] = 0;
 	}
+	Logic::_scriptVars[SCROLL_OFFSET_X] = 0;
+	Logic::_scriptVars[SCROLL_OFFSET_Y] = 0;
 	if (_screenBuf)
 		free(_screenBuf);
 	if (_screenGrid)
@@ -411,8 +416,6 @@ void Screen::processImage(uint32 id) {
 		spriteX += (int16)READ_LE_UINT16(&frameHead->offsetX);
 		spriteY += (int16)READ_LE_UINT16(&frameHead->offsetY);
 	}
-	if (scale > 512)
-		debug(1, "compact %d is oversized: scale = %d", id, scale);
 
 	uint8 *tonyBuf = NULL;
 	if (frameHead->runTimeComp[3] == '7') { // RLE7 encoded?
@@ -521,7 +524,6 @@ void Screen::renderParallax(uint8 *data) {
 	uint32 *lineIndexes = (uint32*)(data + sizeof(ParallaxHeader));
 	assert((FROM_LE_16(header->sizeX) >= SCREEN_WIDTH) && (FROM_LE_16(header->sizeY) >= SCREEN_DEPTH));
 
-	//double scrlfx, scrlfy;
 	uint16 paraScrlX, paraScrlY;
 	uint16 scrnScrlX, scrnScrlY;
 	uint16 scrnWidth, scrnHeight;
