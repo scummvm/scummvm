@@ -407,7 +407,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	_videoVar4 = 0;
 	_videoVar5 = 0;
-	_videoVar3 = 0;
+	_fastFadeOutFlag = 0;
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
 	_skipSpeech = 0;

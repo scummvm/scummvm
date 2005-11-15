@@ -314,7 +314,7 @@ protected:
 
 	byte _videoVar4;
 	bool _videoVar5;
-	bool _videoVar3;
+	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
 	bool _exitCutscene;
 	bool _skipSpeech;
@@ -728,7 +728,7 @@ public:
 	void vc58();
 	void vc59();
 	void vc60_killSprite();
-	void vc61_changeSprite();
+	void vc61_setMaskImage();
 	void vc62_fastFadeOut();
 	void vc63_fastFadeIn();
 

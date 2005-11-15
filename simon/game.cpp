@@ -589,7 +589,7 @@ static GameDescription gameDescriptions[] = {
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
 		Common::EN_USA,
-		Common::kPlatformPC,
+		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - English 4CD
@@ -602,7 +602,7 @@ static GameDescription gameDescriptions[] = {
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
 		Common::EN_USA,
-		Common::kPlatformPC,
+		Common::kPlatformWindows,
 	},
 
 	// The Feeble Files - German 4CD
@@ -615,7 +615,7 @@ static GameDescription gameDescriptions[] = {
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
 		Common::DE_DEU,
-		Common::kPlatformPC,
+		Common::kPlatformWindows,
 	},
 };
 
