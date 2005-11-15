@@ -123,11 +123,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1WIN,       "a27e87a9ba21212d769804b3df47bfb2", "stripped.txt", false},
 	{ GID_SIMON1WIN,       "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
-	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "gamepc", false },
-	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "icon.dat", false},
-	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "simon.gme", false },
-	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "stripped.txt", false},
-	{ GID_SIMON1WIN_DE,    "00000000000000000000000000000000", "tbllist", false},
+	{ GID_SIMON1WIN_DE,    "48b1f3499e2e0d731047f4d481ff7817", "gamepc", false },
+	{ GID_SIMON1WIN_DE,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1WIN_DE,    "acd9cc438525b142d93b15c77a6f551b", "simon.gme", false },
+	{ GID_SIMON1WIN_DE,    "40d68bec54042ef930f084ad9a4342a1", "stripped.txt", false},
+	{ GID_SIMON1WIN_DE,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "game32", false },
 	{ GID_SIMON2DOS,       "00000000000000000000000000000000", "icon.dat", false},
@@ -183,11 +183,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2WIN,       "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2WIN,       "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "gsptr30", false },
-	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "icon.dat", false},
-	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "simon2.gme", false },
-	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "stripped.txt", false},
-	{ GID_SIMON2WIN_DE,    "00000000000000000000000000000000", "tbllist", false},
+	{ GID_SIMON2WIN_DE,    "a76ea940076b5d9316796dea225a9b69", "gsptr30", false },
+	{ GID_SIMON2WIN_DE,    "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2WIN_DE,    "9609a933c541fed2e00c6c3479d7c181", "simon2.gme", false },
+	{ GID_SIMON2WIN_DE,    "6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
+	{ GID_SIMON2WIN_DE,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
 	{ GID_SIMON2WIN_IT, "3e11d400bea0638f360a724687005cd1", "gsptr30", false },
 	{ GID_SIMON2WIN_IT, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
