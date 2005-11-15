@@ -82,6 +82,10 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigendia
 	else
 		size = _file->readUint32LE();
 
+	// The Feeble Files uses set amount of voice offsets
+	if (size == 0)
+		size = 40000;
+
 	res = size / sizeof(uint32);
 
 	_offsets = (uint32 *)malloc(size + sizeof(uint32));
@@ -447,7 +451,11 @@ void Sound::playVoice(uint sound) {
 		return;
 
 	_mixer->stopHandle(_voiceHandle);
-	_voice->playSound(sound, &_voiceHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
+	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
+		_voice->playSound(sound, &_voiceHandle, 0);
+	} else {
+		_voice->playSound(sound, &_voiceHandle, Audio::Mixer::FLAG_UNSIGNED);
+	}
 }
 
 void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool ambient) {
