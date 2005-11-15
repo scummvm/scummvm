@@ -2218,6 +2218,7 @@ void ScummEngine_v72he::o72_writeINI() {
 		value = pop();
 		copyScriptString(option, sizeof(option));
 		ConfMan.set((char *)option, value);
+		debug(0, "o72_writeINI: Option %s Value %d", option, value);
 		break;
 	case 77: // HE 100
 	case 7: // string
@@ -2237,6 +2238,7 @@ void ScummEngine_v72he::o72_writeINI() {
 			return;
 
 		ConfMan.set((char *)option, (char *)string);
+		debug(0, "o72_writeINI: Option %s String %s", option);
 		break;
 	default:
 		error("o72_writeINI: default type %d", type);

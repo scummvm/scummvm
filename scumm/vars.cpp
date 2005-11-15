@@ -176,26 +176,21 @@ void ScummEngine_v6::setupScummVars() {
 	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
 	ScummEngine::setupScummVars();
 
-	if (_heversion == 0) {
-		VAR_V6_SOUNDMODE = 9;
-	}
-
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
-	if (_heversion >= 60 && _heversion <= 61) {
+	if (_heversion >= 70) {
+		VAR_SUBTITLES = 60;
+	} else if (_heversion >= 60) {
 		VAR_NOSUBTITLES = 60;
 	} else {
-		VAR_SUBTITLES = 60;
+		VAR_VOICE_MODE = 60; // 0 is voice, 1 is voice+text, 2 is text only
+		VAR_SAVELOAD_SCRIPT = 61;
+		VAR_SAVELOAD_SCRIPT2 = 62;
 	}
 
 	VAR_LEFTBTN_HOLD = 74;
 	VAR_RIGHTBTN_HOLD = 75;
-
-	if (_heversion == 0) {
-		VAR_SAVELOAD_SCRIPT = 61;
-		VAR_SAVELOAD_SCRIPT2 = 62;
-	}
 
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
@@ -207,7 +202,10 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 
 	// Sam & Max specific
-	VAR_CHARSET_MASK = 123;
+	if (_gameId == GID_SAMNMAX) {
+		VAR_V6_SOUNDMODE = 9;
+		VAR_CHARSET_MASK = 123;
+	}
 }
 
 #ifndef DISABLE_HE
@@ -299,8 +297,8 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
 	if (_heversion >= 80)
-		VAR_PLATFORM = 78;  // 1 is PC, 2 is Macintosh
- 		VAR_WINDOWS_VERSION = 79; // 31 is Windows 3.1, 40 is Windows 95+
+		VAR_PLATFORM = 78;  		// 1 is PC, 2 is Macintosh
+ 		VAR_WINDOWS_VERSION = 79; 	// 31 is Windows 3.1, 40 is Windows 95+
 		VAR_CURRENT_CHARSET = 80;
 		VAR_KEY_STATE = 86;
 		VAR_NUM_SOUND_CHANNELS = 88;
@@ -417,7 +415,9 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_FADE_DELAY = 117;
 
 	// Full Throttle specific
-	VAR_CHARSET_MASK = 119;
+	if (_gameId == GID_FT) {
+		VAR_CHARSET_MASK = 119;
+	}
 
 	VAR_VIDEONAME = 123;
 
