@@ -2208,7 +2208,7 @@ void ScummEngine_v72he::o72_writeINI() {
 			return;
 
 		ConfMan.set((char *)option, (char *)string);
-		debug(0, "o72_writeINI: Option %s String %s", option);
+		debug(0, "o72_writeINI: Option %s String %s", option, string);
 		break;
 	default:
 		error("o72_writeINI: default type %d", type);

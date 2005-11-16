@@ -952,10 +952,13 @@ void ScummEngine_v70he::o70_readINI() {
 	type = pop();
 	switch (type) {
 	case 1: // number
-		if (!strcmp((char *)option, "NoPrinting"))
+		if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
-		else
+		} else if (!strcmp((char *)option, "TextOn")) {
+			push(ConfMan.getBool("subtitles"));
+		} else {
 			push(ConfMan.getInt((char *)option));
+		}
 		break;
 	case 2: // string
 		entry = (ConfMan.get((char *)option).c_str());
@@ -970,6 +973,7 @@ void ScummEngine_v70he::o70_readINI() {
 	default:
 		error("o70_readINI: default type %d", type);
 	}
+	debug(0, "o70_readINI: Option %s", option);
 }
 
 void ScummEngine_v70he::o70_writeINI() {
@@ -987,12 +991,14 @@ void ScummEngine_v70he::o70_writeINI() {
 	switch (type) {
 	case 1: // number
 		ConfMan.set((char *)option, value);
+		debug(0, "o70_writeINI: Option %s Value %d", option, value);
 		break;
 	case 2: // string
 		convertMessageToString(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 		ConfMan.set((char *)option, (char *)string);
+		debug(0, "o70_writeINI: Option %s String %s", option, string);
 		break;
 	default:
 		error("o70_writeINI: default type %d", type);
