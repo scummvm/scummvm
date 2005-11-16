@@ -179,9 +179,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
-	if (_heversion >= 70) {
-		VAR_SUBTITLES = 60;
-	} else if (_heversion >= 60) {
+	if (_heversion >= 60) {
 		VAR_NOSUBTITLES = 60;
 	} else {
 		VAR_VOICE_MODE = 60; // 0 is voice, 1 is voice+text, 2 is text only
