@@ -320,7 +320,7 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	Windows	de	cf8ef3a1fb483c5c4b1c584d1167b2c4	freddi	Oncer
 	-	Windows	nb	e63a0b9249b5ca4cc4d3ac34305ae360	freddi	Karl Ove Hufthammer
 	-	Windows	nl	c0039ad982999c92d0de81910d640fa0	freddi	adutchguy
-	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
+	-	Windows	All	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
 	-	Windows	ru	746e88c172a5b7a1ae89ac0ee3ee681a	freddi	sev
 	-	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
 	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddi	khalek

@@ -346,7 +346,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* F0 */
 		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
-		OPCODE(o72_isResourceLoaded),
+		OPCODE(o70_isResourceLoaded),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
@@ -2136,36 +2136,6 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 	default:
 		error("Invalid array type", FROM_LE_32(ah->type));
 	}
-}
-
-void ScummEngine_v72he::o72_isResourceLoaded() {
-	// Reports percentage of resource loaded by queue
-	int type;
-
-	byte subOp = fetchScriptByte();
-	/* int idx = */ pop();
-
-	switch (subOp) {
-	case 18:
-		type = rtImage;
-		break;
-	case 226:
-		type = rtRoom;
-		break;
-	case 227:
-		type = rtCostume;
-		break;
-	case 228:
-		type = rtSound;
-		break;
-	case 229:
-		type = rtScript;
-		break;
-	default:
-		error("o72_isResourceLoaded: default case %d", subOp);
-	}
-
-	push(100);
 }
 
 void ScummEngine_v72he::o72_readINI() {

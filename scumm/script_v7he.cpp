@@ -909,6 +909,36 @@ void ScummEngine_v70he::o70_compareString() {
 	push(result);
 }
 
+void ScummEngine_v70he::o70_isResourceLoaded() {
+	// Reports percentage of resource loaded by queue
+	int type;
+
+	byte subOp = fetchScriptByte();
+	/* int idx = */ pop();
+
+	switch (subOp) {
+	case 18:
+		type = rtImage;
+		break;
+	case 226:
+		type = rtRoom;
+		break;
+	case 227:
+		type = rtCostume;
+		break;
+	case 228:
+		type = rtSound;
+		break;
+	case 229:
+		type = rtScript;
+		break;
+	default:
+		error("o70_isResourceLoaded: default case %d", subOp);
+	}
+
+	push(100);
+}
+
 void ScummEngine_v70he::o70_readINI() {
 	byte option[256];
 	ArrayHeader *ah;

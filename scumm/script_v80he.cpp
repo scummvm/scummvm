@@ -345,7 +345,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* F0 */
 		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
-		OPCODE(o72_isResourceLoaded),
+		OPCODE(o70_isResourceLoaded),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
