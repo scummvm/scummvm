@@ -922,10 +922,13 @@ void ScummEngine_v70he::o70_readINI() {
 	type = pop();
 	switch (type) {
 	case 1: // number
-		if (!strcmp((char *)option, "NoPrinting"))
+		if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
-		else
+		} else if (!strcmp((char *)option, "TextOn")) {
+			push(ConfMan.getBool("subtitles"));
+		} else {
 			push(ConfMan.getInt((char *)option));
+		}
 		break;
 	case 2: // string
 		entry = (ConfMan.get((char *)option).c_str());

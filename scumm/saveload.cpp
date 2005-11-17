@@ -396,7 +396,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		VAR(VAR_ROOM_FLAG) = 1;
 
 	// Sync with current config setting
-	if (_version >= 7)
+	if (VAR_VOICE_MODE != 0xFF)
 		VAR(VAR_VOICE_MODE) = ConfMan.getBool("subtitles");
 
 	CHECK_HEAP

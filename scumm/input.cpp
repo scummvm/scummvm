@@ -363,7 +363,7 @@ void ScummEngine::processKbd(bool smushMode) {
 			break;
 		}
 
-		if (_version >= 7)
+		if (VAR_VOICE_MODE != 0xFF)
 			VAR(VAR_VOICE_MODE) = _voiceMode;
 
 		GUI::TimedMessageDialog dialog(buf, 1500);

@@ -583,12 +583,15 @@ void ScummEngine::writeVar(uint var, int value) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
+			// Ignore default setting in HE72-73 games
+			if (_heversion <= 73 && vm.slot[_currentScript].number == 1)
+				return;
 			assert(value == 0 || value == 1);
 			ConfMan.set("subtitles", value);
 		}
 		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
-			// Ignore default setting in HE60/61 games
-			if ((_heversion >= 60 && _heversion <= 61) && vm.slot[_currentScript].number == 1)
+			// Ignore default setting in HE60-71 games
+			if (_heversion >= 60 && vm.slot[_currentScript].number == 1)
 				return;
 			assert(value == 0 || value == 1);
 			ConfMan.set("subtitles", !value);

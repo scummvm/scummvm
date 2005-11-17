@@ -711,7 +711,7 @@ void ConfigDialog::close() {
 		else
 			_vm->_voiceMode = ConfMan.getBool("subtitles");
 
-		if (_vm->_version >= 7)
+		if (_vm->VAR_VOICE_MODE != 0xFF)
 			_vm->VAR(_vm->VAR_VOICE_MODE) = _vm->_voiceMode;
 	}
 

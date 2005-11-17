@@ -568,6 +568,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
+	{"d7b247c26bf1f01f8f7daf142be84de3", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"8e3241ddd6c8dadf64305e8740d45e13", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
@@ -1262,7 +1264,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_V6_EMSSPACE = 0xFF;
 
 	VAR_CAMERA_POS_Y = 0xFF;
-
 	VAR_CAMERA_MIN_Y = 0xFF;
 	VAR_CAMERA_MAX_Y = 0xFF;
 	VAR_CAMERA_THRESHOLD_X = 0xFF;
@@ -1271,11 +1272,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_CAMERA_SPEED_Y = 0xFF;
 	VAR_CAMERA_ACCEL_X = 0xFF;
 	VAR_CAMERA_ACCEL_Y = 0xFF;
-
 	VAR_CAMERA_DEST_X = 0xFF;
-
 	VAR_CAMERA_DEST_Y = 0xFF;
-
 	VAR_CAMERA_FOLLOWED_ACTOR = 0xFF;
 
 	VAR_LEFTBTN_DOWN = 0xFF;

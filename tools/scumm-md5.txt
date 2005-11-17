@@ -320,7 +320,7 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	Windows	de	cf8ef3a1fb483c5c4b1c584d1167b2c4	freddi	Oncer
 	-	Windows	nb	e63a0b9249b5ca4cc4d3ac34305ae360	freddi	Karl Ove Hufthammer
 	-	Windows	nl	c0039ad982999c92d0de81910d640fa0	freddi	adutchguy
-	-	Windows	ru	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
+	-	Windows	All	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
 	-	Windows	ru	746e88c172a5b7a1ae89ac0ee3ee681a	freddi	sev
 	-	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
 	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddi	khalek
@@ -488,6 +488,7 @@ Putt-Putt Travels Through Time
 	-	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	-	All	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime	Kirben
 	-	Windows	de	84e3c23a49ded8a6f9197735c8eb3de7	PuttTime	oncer
+	-	Windows	en	63fdcdc95cdeea00060883aed38e5504	PuttTime	iziku
 	-	Windows	en	d4aac997e2f4e15341f0bfbf905419bd	PuttTime	eriktorbjorn
 	-	Windows	nl	fcb78ebecab2757264c590890c319cc5	PuttTime	adutchguy
 	-	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
@@ -499,6 +500,7 @@ Putt-Putt Travels Through Time
 Putt-Putt and Pep's Balloon-O-Rama
 	-	All	en	08cc5c3eedaf72ebe12734eee94f7fa2	balloon	Kirben
 	-	All	en	8e3241ddd6c8dadf64305e8740d45e13	balloon	Kirben
+	-	Windows	en	d7b247c26bf1f01f8f7daf142be84de3	balloon	iziku
 	-	Windows	ru	145bd3373574feb668cc2eea2ec6cf86	balloon	sev
 
 Putt-Putt and Pep's Dog on a Stick
@@ -506,6 +508,7 @@ Putt-Putt and Pep's Dog on a Stick
 	-	All	en	eae95b2b3546d8ba86ae1d397c383253	dog	Kirben
 
 Putt-Putt's Fun Pack
+	-	DOS	en	3d219e7546039543307b55a91282bf18	funpack	iziku
 	-	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
 	-	DOS	hb	90a329d8ad5b7ce0690429e98cfbb32f	funpack
 	-	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev

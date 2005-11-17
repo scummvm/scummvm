@@ -183,19 +183,16 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
-	if (_heversion >= 60 && _heversion <= 61) {
+	if (_heversion >= 60) {
 		VAR_NOSUBTITLES = 60;
 	} else {
-		VAR_SUBTITLES = 60;
+		VAR_VOICE_MODE = 60; // 0 is voice, 1 is voice+text, 2 is text only
+		VAR_SAVELOAD_SCRIPT = 61;
+		VAR_SAVELOAD_SCRIPT2 = 62;
 	}
 
 	VAR_LEFTBTN_HOLD = 74;
 	VAR_RIGHTBTN_HOLD = 75;
-
-	if (_heversion == 0) {
-		VAR_SAVELOAD_SCRIPT = 61;
-		VAR_SAVELOAD_SCRIPT2 = 62;
-	}
 
 	VAR_V6_EMSSPACE = 76;
 	VAR_RANDOM_NR = 118;
