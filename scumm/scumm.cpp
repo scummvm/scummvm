@@ -691,6 +691,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
 	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
+	{ "atlantis.000", "Fate of Atlantis Data", kGenAsIs },
 	{ "atlantis", "fate", kGenPC },
 	{ "atlantis", "playfate", kGenPC },
 	{ "atlantis", "indy4", kGenPC },
