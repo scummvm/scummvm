@@ -525,6 +525,8 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 }
 
 int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
+	debug(0, "convertFilePath: original filePath is %s", dst);
+
 	// Switch all \ to / for portablity
 	int len = resStrLen(dst) + 1;
 	for (int i = 0; i < len; i++) {
