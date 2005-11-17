@@ -30,14 +30,13 @@
 #include <assert.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
-#include <osd_config.h>
 #include "common/scummsys.h"
 #include "../intern.h"
 #include "base/engine.h"
 #include "backends/ps2/systemps2.h"
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/ps2input.h"
-#include <sjpcm.h>
+#include <audsrv.h>
 #include <libhdd.h>
 #include "backends/ps2/savefile.h"
 #include "common/file.h"
@@ -47,14 +46,13 @@
 #include "backends/ps2/cd.h"
 #include <sio.h>
 #include <fileXio_rpc.h>
+#include "eecodyvdfs.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"
-#include "eecodyvdfs.h"
 
 #define TIMER_STACK_SIZE (1024 * 32)
 #define SOUND_STACK_SIZE (1024 * 32)
-#define SMP_PER_BLOCK 800
-#define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
+#define SMP_PER_CB 1024
 #define BUS_CLOCK 147456000 // bus clock, a little less than 150 mhz
 #define CLK_DIVIS 5760	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (100 times)
 
@@ -66,10 +64,11 @@
 #define IRX_SUFFIX ";1"
 #endif
 
-static int g_TimerThreadSema = -1, g_SoundThreadSema = -1;
+static int g_TimerThreadSema = -1;
+static int g_SoundRequestSema = -1;
 static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
 static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
-static volatile uint32 msecCount = 0;
+volatile uint32 msecCount = 0;
 
 OSystem_PS2 *g_systemPs2 = NULL;
 
@@ -150,7 +149,6 @@ s32 timerInterruptHandler(s32 cause) {
 	T0_MODE = 0xDC2; // same value as in initialization.
 	msecCount += 10;
 
-	iSignalSema(g_SoundThreadSema);
 	iSignalSema(g_TimerThreadSema);
 
 	if (g_MainWakeUp) {
@@ -167,6 +165,11 @@ s32 timerInterruptHandler(s32 cause) {
 			g_TimerWakeUp = 0;
 		}
 	}
+	return 0;
+}
+
+static int iSoundCallback(void *arg) {
+	iSignalSema((int)arg);
 	return 0;
 }
 
@@ -197,19 +200,26 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("Loading IOP modules...");
 	loadModules();
 
-	printf("Modules done\n");
-
 	int res;
 	if ((res = initCdvdFs()) < 0) {
 		msgPrintf(FOREVER, "CoDyVDfs bind failed: %d", res);
 		quit();
 	}
 
-	if ((res = SjPCM_Init(0)) < 0) {
-		msgPrintf(FOREVER, "SjPCM Bind failed: %d", res);
+	if ((res = audsrv_init()) != 0) {
+		msgPrintf(FOREVER, "AudSrv_init failed: %d\n", res);
 		quit();
 	}
 
+	struct audsrv_fmt_t format;
+	format.bits = 16;
+	format.freq = 48000;
+	format.channels = 2;
+
+	audsrv_set_format(&format);
+	audsrv_set_volume(MAX_VOLUME);
+	audsrv_on_fillbuf(SMP_PER_CB * 2 * sizeof(int16), iSoundCallback, (void*)g_SoundRequestSema);
+	
 	fileXioSetBlockMode(FXIO_NOWAIT);
 
 	_mouseVisible = false;
@@ -230,9 +240,6 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
 
-#ifdef _REC_MUTEX_
-	_mutex = new Ps2Mutex[MAX_MUTEXES];
-
 	ee_sema_t newSema;
 	newSema.init_count = 1;
 	newSema.max_count = 1;
@@ -241,7 +248,7 @@ OSystem_PS2::OSystem_PS2(void) {
 		_mutex[i].sema = -1;
 		_mutex[i].count = _mutex[i].owner = 0;
 	}
-#endif
+
 	_screen->wantAnim(false);
 	_screen->clearScreen();
 }
@@ -256,8 +263,8 @@ void OSystem_PS2::initTimer(void) {
 	threadSema.init_count = 0;
 	threadSema.max_count = 255;
 	g_TimerThreadSema = CreateSema(&threadSema);
-	g_SoundThreadSema = CreateSema(&threadSema);
-	assert((g_TimerThreadSema >= 0) && (g_SoundThreadSema >= 0));
+	g_SoundRequestSema = CreateSema(&threadSema);
+	assert((g_TimerThreadSema >= 0) && (g_SoundRequestSema >= 0));
 
 	ee_thread_t timerThread, soundThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
@@ -320,69 +327,21 @@ void OSystem_PS2::soundThread(void) {
 	soundSema.max_count = 1;
 	_soundSema = CreateSema(&soundSema);
 	assert(_soundSema >= 0);
+	int16 *soundBuf = (int16*)memalign(64, SMP_PER_CB * sizeof(int16) * 2);
 
-	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
-	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
-
-	int bufferedSamples = 0;
-	int cycles = 0;
 	while (!_systemQuit) {
-		WaitSema(g_SoundThreadSema);
-
-		if (!(cycles & 31))
-			bufferedSamples = SjPCM_Buffered();
-		else
-			bufferedSamples -= 480;
-		cycles++;
+		WaitSema(g_SoundRequestSema);
 
 		WaitSema(_soundSema);
-		if (_scummSoundProc) {
-			if (bufferedSamples <= 4 * SMP_PER_BLOCK) {
-				// we have to produce more samples, call sound mixer
-				// the scratchpad at 0x70000000 is used as temporary soundbuffer
-				_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+		if (_scummSoundProc)
+			_scummSoundProc(_scummSoundParam, (uint8 *)soundBuf, SMP_PER_CB * sizeof(int16) * 2);			
+		else 
+			memset(soundBuf, 0, SMP_PER_CB * sizeof(int16) * 2);
 
-				// demux data into 2 buffers, L and R
-				 __asm__ (
-					"move  $t2, %1\n\t"			// dest buffer right
-					"move  $t3, %0\n\t"			// dest buffer left
-					"lui   $t8, 0x7000\n\t"		// muxed buffer, fixed at 0x70000000
-					"addiu $t9, $0, 100\n\t"	// number of loops
-					"mtsab $0, 2\n\t"			// set qword shift = 2 byte
-
-					"loop:\n\t"
-					"  lq $t4,  0($t8)\n\t"		// load 8 muxed samples
-					"  lq $t5, 16($t8)\n\t"		// load 8 more muxed samples
-
-					"  qfsrv $t6, $0, $t4\n\t"	// shift right for second
-					"  qfsrv $t7, $0, $t5\n\t"	// packing step (right channel)
-
-					"  ppach $t4, $t5, $t4\n\t"	// combine left channel data
-					"  ppach $t6, $t7, $t6\n\t"	// right channel data
-
-					"  sq $t4, 0($t3)\n\t"		// write back
-					"  sq $t6, 0($t2)\n\t"		//
-
-					"  addiu $t9, -1\n\t"		// decrement loop counter
-					"  addiu $t2, 16\n\t"		// increment pointers
-					"  addiu $t3, 16\n\t"
-					"  addiu $t8, 32\n\t"
-					"  bnez  $t9, loop\n\t"		// loop
-						:  // outputs
-				 		: "r"(soundBufL), "r"(soundBufR)  // inputs
-					//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
-						: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
-				);
-				// and feed it into the SPU
-				// non-blocking call, the function will return before the buffer's content
-				// was transferred.
-				SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
-				bufferedSamples += SMP_PER_BLOCK;
-			}
-		}
+		audsrv_play_audio((char *)soundBuf, SMP_PER_CB * sizeof(int16) * 2);
 		SignalSema(_soundSema);
 	}
-	free(soundBufL);
+	free(soundBuf);
 	DeleteSema(_soundSema);
 	ExitThread();
 }
@@ -398,7 +357,7 @@ const char *irxModules[] = {
 #endif
 	IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX,
 	IRX_PREFIX "CODYVDFS.IRX" IRX_SUFFIX,
-	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX,
+	IRX_PREFIX "AUDSRV.IRX" IRX_SUFFIX,
 #ifndef USE_PS2LINK
 	IRX_PREFIX "PS2DEV9.IRX" IRX_SUFFIX
 #endif
@@ -438,11 +397,11 @@ void OSystem_PS2::loadModules(void) {
 	}
 
 	if ((res = SifLoadModule(IRX_PREFIX "PS2ATAD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		printf("Cannot load module: PS2ATAD.IRX (%d)\n", res);
+		sioprintf("Cannot load module: PS2ATAD.IRX (%d)\n", res);
 	else if ((res = SifLoadModule(IRX_PREFIX "PS2HDD.IRX" IRX_SUFFIX, sizeof(hddarg), hddarg)) < 0)
-		printf("Cannot load module: PS2HDD.IRX (%d)\n", res);
+		sioprintf("Cannot load module: PS2HDD.IRX (%d)\n", res);
 	else if ((res = SifLoadModule(IRX_PREFIX "PS2FS.IRX" IRX_SUFFIX, sizeof(pfsarg), pfsarg)) < 0)
-		printf("Cannot load module: PS2FS.IRX (%d)\n", res);
+		sioprintf("Cannot load module: PS2FS.IRX (%d)\n", res);
 	else {
 		if ((hddCheckPresent() >= 0) && (hddCheckFormatted() >= 0))
 			_useHdd = true;
@@ -531,7 +490,6 @@ bool OSystem_PS2::setSoundCallback(SoundProc proc, void *param) {
 	WaitSema(_soundSema);
     _scummSoundProc = proc;
 	_scummSoundParam = param;
-	SjPCM_Play();
 	SignalSema(_soundSema);
 	return true;
 }
@@ -540,98 +498,12 @@ void OSystem_PS2::clearSoundCallback(void) {
 	WaitSema(_soundSema);
 	_scummSoundProc = NULL;
 	_scummSoundParam = NULL;
-	SjPCM_Pause();
 	SignalSema(_soundSema);
 }
 
 Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
 	return _saveManager;
 }
-
-#ifndef _REC_MUTEX_
-OSystem::MutexRef OSystem_PS2::createMutex(void) {
-	ee_sema_t newSema;
-	newSema.init_count = 1;
-	newSema.max_count = 1;
-	int resSema = CreateSema(&newSema);
-	if (resSema < 0)
-		printf("createMutex: unable to create Semaphore.\n");
-	return (MutexRef)resSema;
-}
-
-void OSystem_PS2::lockMutex(MutexRef mutex) {
-	WaitSema((int)mutex);
-}
-
-void OSystem_PS2::unlockMutex(MutexRef mutex) {
-	SignalSema((int)mutex);
-}
-
-void OSystem_PS2::deleteMutex(MutexRef mutex) {
-	DeleteSema((int)mutex);
-}
-#else
-OSystem::MutexRef OSystem_PS2::createMutex(void) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *mutex = NULL;
-	for (int i = 0; i < MAX_MUTEXES; i++)
-		if (_mutex[i].sema < 0) {
-			mutex = _mutex + i;
-			break;
-		}
-	if (mutex) {
-		ee_sema_t newSema;
-		newSema.init_count = 1;
-		newSema.max_count = 1;
-		mutex->sema = CreateSema(&newSema);
-		mutex->owner = mutex->count = 0;
-	} else
-		printf("OSystem_PS2::createMutex: ran out of Mutex slots!\n");
-	SignalSema(_mutexSema);
-	return (OSystem::MutexRef)mutex;
-}
-
-void OSystem_PS2::lockMutex(MutexRef mutex) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
-	int tid = GetThreadId();
-	assert(tid != 0);
-	if (sysMutex->owner && (sysMutex->owner == tid))
-		sysMutex->count++;
-	else {
-		SignalSema(_mutexSema);
-		WaitSema(sysMutex->sema);
-		WaitSema(_mutexSema);
-		sysMutex->owner = tid;
-		sysMutex->count = 0;
-	}
-	SignalSema(_mutexSema);
-}
-
-void OSystem_PS2::unlockMutex(MutexRef mutex) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
-	int tid = GetThreadId();
-	if (sysMutex->owner && sysMutex->count && (sysMutex->owner == tid))
-		sysMutex->count--;
-	else {
-		assert(sysMutex->count == 0);
-		SignalSema(sysMutex->sema);
-		sysMutex->owner = 0;
-	}
-	SignalSema(_mutexSema);
-}
-
-void OSystem_PS2::deleteMutex(MutexRef mutex) {
-	WaitSema(_mutexSema);
-	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
-	if (sysMutex->owner || sysMutex->count)
-		printf("WARNING: Deleting LOCKED mutex!\n");
-	DeleteSema(sysMutex->sema);
-	sysMutex->sema = -1;
-	SignalSema(_mutexSema);
-}
-#endif
 
 void OSystem_PS2::setShakePos(int shakeOffset) {
 	_screen->setShakePos(shakeOffset);
@@ -784,6 +656,10 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 
 void OSystem_PS2::quit(void) {
 	sioprintf("OSystem_PS2::quit");
+	if (_useHdd) {
+		driveStandby();
+		fio.umount("pfs0:");
+	}
 	clearSoundCallback();
 	setTimerCallback(NULL, 0);
 	_screen->wantAnim(false);
@@ -821,102 +697,4 @@ void OSystem_PS2::makeConfigPath(char *dest) {
 		strcpy(dest, "mc0:ScummVM/scummvm.ini");
 }
 
-static uint32 g_timeSecs;
-static int	  g_day, g_month, g_year;
-static uint32 g_lastTimeCheck;
-
-void buildNewDate(int dayDiff) {
-	static int daysPerMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-	if (((g_year % 4) == 0) && (((g_year % 100) != 0) || ((g_year % 1000) == 0)))
-		daysPerMonth[1] = 29;
-	else
-		daysPerMonth[1] = 28;
-
-	if (dayDiff == -1) {
-		g_day--;
-		if (g_day == 0) {
-			g_month--;
-			if (g_month == 0) {
-				g_year--;
-				g_month = 12;
-			}
-			g_day = daysPerMonth[g_month - 1];
-		}
-	} else if (dayDiff == 1) {
-		g_day++;
-		if (g_day > daysPerMonth[g_month - 1]) {
-			g_day = 1;
-			g_month++;
-			if (g_month > 12) {
-				g_month = 1;
-				g_year++;
-			}
-		}
-	}
-}
-
-#define SECONDS_PER_DAY (24 * 60 * 60)
-
-void OSystem_PS2::readRtcTime(void) {
-	struct CdClock cdClock;
-	readRTC(&cdClock);
-
-	g_lastTimeCheck = msecCount;
-
-	if (cdClock.stat) {
-		msgPrintf(5000, "Unable to read RTC time, EC: %d\n", cdClock.stat);
-		g_day = g_month = 1;
-		g_year = 0;
-		g_timeSecs = 0;
-	} else {
-		int gmtOfs = configGetTimezone();
-		if (configIsDaylightSavingEnabled())
-			gmtOfs += 60;
-
-		int timeSecs = (FROM_BCD(cdClock.hour) * 60 + FROM_BCD(cdClock.minute)) * 60 + FROM_BCD(cdClock.second);
-		timeSecs -= 9 * 60 * 60; // minus 9 hours, JST -> GMT conversion
-		timeSecs += gmtOfs * 60; // GMT -> timezone the user selected
-
-		g_day = FROM_BCD(cdClock.day);
-		g_month = FROM_BCD(cdClock.month);
-		g_year = FROM_BCD(cdClock.year);
-
-		if (timeSecs < 0) {
-			buildNewDate(-1);
-			timeSecs += SECONDS_PER_DAY;
-		} else if (timeSecs >= SECONDS_PER_DAY) {
-			buildNewDate(+1);
-			timeSecs -= SECONDS_PER_DAY;
-		}
-		g_timeSecs = (uint32)timeSecs;
-	}
-
-	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60,
-		g_day, g_month, g_year + 2000);
-}
-
-extern "C" time_t time(time_t *p) {
-	return (time_t)g_timeSecs;
-}
-
-extern "C" struct tm *localtime(const time_t *p) {
-	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
-	if (currentSecs >= SECONDS_PER_DAY) {
-		buildNewDate(+1);
-		g_lastTimeCheck += SECONDS_PER_DAY * 1000;
-		currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
-	}
-
-	static struct tm retStruct;
-	memset(&retStruct, 0, sizeof(retStruct));
-
-	retStruct.tm_hour = currentSecs / (60 * 60);
-	retStruct.tm_min  = (currentSecs / 60) % 60;
-	retStruct.tm_sec  = currentSecs % 60;
-	retStruct.tm_year = g_year + 100;
-	retStruct.tm_mday = g_day;
-	retStruct.tm_mon  = g_month - 1;
-	// tm_wday, tm_yday and tm_isdst are zero for now
-    return &retStruct;
-}
 

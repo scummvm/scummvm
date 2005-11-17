@@ -29,16 +29,15 @@ class Gs2dScreen;
 class Ps2Input;
 class Ps2SaveFileManager;
 
-#define _REC_MUTEX_
+extern void sioprintf(const char *zFormat, ...);
 
-#ifdef _REC_MUTEX_
-#define MAX_MUTEXES 32
+#define MAX_MUTEXES 16
+
 struct Ps2Mutex {
 	int sema;
 	int owner;
 	int count;
 };
-#endif
 
 class OSystem_PS2 : public OSystem {
 public:
@@ -126,10 +125,10 @@ private:
 	uint16		_oldMouseX, _oldMouseY;
 	uint32		_msgClearTime;
 	uint16		_printY;
-#ifdef _REC_MUTEX_
+
 	int			_mutexSema;
-	Ps2Mutex	*_mutex;
-#endif
+	Ps2Mutex	_mutex[MAX_MUTEXES];
+
 	uint8		*_timerStack, *_soundStack;
 	int			_timerTid, _soundTid;
 	int			_intrId;
