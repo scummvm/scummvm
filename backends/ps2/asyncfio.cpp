@@ -143,6 +143,26 @@ void AsyncFio::dclose(int fd) {
 	SignalSema(_ioSema);
 }
 
+int AsyncFio::mount(const char *mountpoint, const char *mountstring, int flag) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioMount(mountpoint, mountstring, flag);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
+}
+
+int AsyncFio::umount(const char *mountpoint) {
+	int res;
+	WaitSema(_ioSema);
+	checkSync();
+	fileXioUmount(mountpoint);
+	fileXioWaitAsync(FXIO_WAIT, &res);
+	SignalSema(_ioSema);
+	return res;
+}
+
 int AsyncFio::sync(int fd) {
 	WaitSema(_ioSema);
 	if (_runningOp == _ioSlots + fd)

@@ -104,6 +104,8 @@ public:
 	void msgPrintf(int millis, char *format, ...);
 	void makeConfigPath(char *dest);
 
+	bool hddPresent(void);
+
 private:
 	volatile OSystem::TimerProc _scummTimerProc;
 	volatile OSystem::SoundProc _scummSoundProc;
@@ -115,7 +117,7 @@ private:
 
 	void loadModules(void);
 	bool _mouseVisible;
-	bool _useMouse, _useKbd;
+	bool _useMouse, _useKbd, _useHdd;
 
 	Ps2SaveFileManager *_saveManager;
 

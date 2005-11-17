@@ -26,10 +26,10 @@
 #include <fileio.h>
 #include <assert.h>
 #include <string.h>
-#include <cdvd_rpc.h>
 #include "backends/ps2/asyncfio.h"
 #include "base/engine.h"
 #include "common/file.h"
+#include "eecodyvdfs.h"
 
 #define CACHE_SIZE (2048 * 32)
 #define MAX_READ_STEP (2048 * 16)
@@ -395,7 +395,7 @@ private:
 	uint8 _rootLen;
 };
 
-TocManager tocManager;
+static TocManager tocManager;
 
 struct FioHandleCache {
 	Ps2File *file;
@@ -408,6 +408,8 @@ static int cacheListLen = 0;
 static int openFileCount = 0;
 static int cacheListSema = -1;
 
+static bool checkedPath = false;
+
 Ps2File *findInCache(int64 id);
 
 FILE *ps2_fopen(const char *fname, const char *mode) {
@@ -418,8 +420,15 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		cacheListSema = CreateSema(&newSema);
 		assert(cacheListSema >= 0);
 	}
-	if (!tocManager.haveEntries() && g_engine) // read the TOC the first time the engine opens a file
+
+	if (!checkedPath && g_engine) {
+		// are we playing from HDD?
+		if (strncmp(g_engine->getGameDataPath(), "pfs0:", 5) == 0)
+			driveStop(); // yes we are. stop dvd drive. it's noisy.
+		// now cache the dir tree
 		tocManager.readEntries(g_engine->getGameDataPath());
+		checkedPath = true;
+	}
 
 	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
 		printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
@@ -621,7 +630,6 @@ TocManager::TocManager(void) {
 }
 
 TocManager::~TocManager(void) {
-	// todo: write this...
 }
 
 bool TocManager::haveEntries(void) {
@@ -635,34 +643,36 @@ void TocManager::readEntries(const char *root) {
 		_rootLen--;
 		_root[_rootLen] = '\0';
 	}
-	readDir(_root, &_rootNode, 0);
+	char readPath[256];
+	sprintf(readPath, "%s/", _root);
+	readDir(readPath, &_rootNode, 0);
 }
-
-#define MAX_DIR_ENTRIES 512
 
 void TocManager::readDir(const char *path, TocNode **node, int level) {
 	if (level <= 2) { // we don't scan deeper than that
-		struct TocEntry tocEntries[MAX_DIR_ENTRIES];
-		int files = CDVD_GetDir(path + 5, NULL, CDVD_GET_FILES_AND_DIRS, tocEntries, MAX_DIR_ENTRIES, NULL);
+		iox_dirent_t dirent;
+		int fd = fio.dopen(path);
+		if (fd >= 0) {
+			while (fio.dread(fd, &dirent) != 0)
+				if (dirent.name[0] != '.') { // skip '.' and '..'
+					*node = new TocNode;
+					(*node)->sub = (*node)->next = NULL;
 
-		for (int cnt = 0; cnt < files; cnt++) {
-			if (tocEntries[cnt].filename[0] != '.') { // skip '.' and '..'
-				*node = new TocNode;
-				(*node)->sub = (*node)->next = NULL;
+					(*node)->nameLen = strlen(dirent.name);
+					memcpy((*node)->name, dirent.name, (*node)->nameLen + 1);
 
-				(*node)->nameLen = strlen(tocEntries[cnt].filename);
-				memcpy((*node)->name, tocEntries[cnt].filename, (*node)->nameLen + 1);
-
-				if (tocEntries[cnt].fileProperties & 2) { // directory
-					(*node)->isDir = true;
-					char nextPath[256];
-					sprintf(nextPath, "%s/%s", path, tocEntries[cnt].filename);
-					readDir(nextPath, &((*node)->sub), level + 1);
-				} else
-					(*node)->isDir = false;
-				node = &((*node)->next);
-			}
-		}
+					if (dirent.stat.mode & FIO_S_IFDIR) { // directory
+						(*node)->isDir = true;
+						char nextPath[256];
+						sprintf(nextPath, "%s%s/", path, dirent.name);
+						readDir(nextPath, &((*node)->sub), level + 1);
+					} else
+						(*node)->isDir = false;
+					node = &((*node)->next);
+				}
+			fio.dclose(fd);
+		} else
+			printf("Can't open path: %s\n", path);
 	}
 }
 

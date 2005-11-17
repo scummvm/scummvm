@@ -35,6 +35,8 @@ public:
 	int dopen(const char *name);
 	int dread(int fd, iox_dirent_t *dest);
 	void dclose(int fd);
+	int mount(const char *mountpoint, const char *mountstring, int flag);
+	int umount(const char *mountpoint);
 	int sync(int fd);
 	bool poll(int fd);
 	bool fioAvail(void);

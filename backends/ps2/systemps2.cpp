@@ -38,7 +38,7 @@
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/ps2input.h"
 #include <sjpcm.h>
-#include <cdvd_rpc.h>
+#include <libhdd.h>
 #include "backends/ps2/savefile.h"
 #include "common/file.h"
 #include "backends/ps2/sysdefs.h"
@@ -49,6 +49,7 @@
 #include <fileXio_rpc.h>
 #include "graphics/surface.h"
 #include "graphics/font.h"
+#include "eecodyvdfs.h"
 
 #define TIMER_STACK_SIZE (1024 * 32)
 #define SOUND_STACK_SIZE (1024 * 32)
@@ -79,6 +80,8 @@ int gBitFormat = 555;
 namespace Graphics {
 	extern const NewFont g_sysfont;
 };
+#include "asyncfio.h"
+extern AsyncFio fio;
 
 void sioprintf(const char *zFormat, ...) {
 	va_list ap;
@@ -194,27 +197,32 @@ OSystem_PS2::OSystem_PS2(void) {
 	sioprintf("Loading IOP modules...");
 	loadModules();
 
+	printf("Modules done\n");
+
 	int res;
+	if ((res = initCdvdFs()) < 0) {
+		msgPrintf(FOREVER, "CoDyVDfs bind failed: %d", res);
+		quit();
+	}
+
 	if ((res = SjPCM_Init(0)) < 0) {
 		msgPrintf(FOREVER, "SjPCM Bind failed: %d", res);
 		quit();
 	}
 
-	if ((res = CDVD_Init()) != 0) {
-		msgPrintf(FOREVER, "CDVD Init failed: %d", res);
-		quit();
-	}
-	
-	if ((res = fileXioInit()) < 0) {
-		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
-		quit();
-	}
 	fileXioSetBlockMode(FXIO_NOWAIT);
 
 	_mouseVisible = false;
 
 	sioprintf("reading RTC");
 	readRtcTime();
+
+	if (_useHdd) {
+		if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
+			printf("Successfully mounted!\n");
+		else
+			_useHdd = false;
+	}
 
 	sioprintf("Starting SavefileManager");
 	_saveManager = new Ps2SaveFileManager(this, _screen);
@@ -389,13 +397,18 @@ const char *irxModules[] = {
 	IRX_PREFIX "IOMANX.IRX" IRX_SUFFIX,
 #endif
 	IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX,
-	IRX_PREFIX "CDVD.IRX" IRX_SUFFIX,
-	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX
+	IRX_PREFIX "CODYVDFS.IRX" IRX_SUFFIX,
+	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX,
+#ifndef USE_PS2LINK
+	IRX_PREFIX "PS2DEV9.IRX" IRX_SUFFIX
+#endif
 };
 
 void OSystem_PS2::loadModules(void) {
 
-	_useMouse = _useKbd = false;
+	_useMouse = _useKbd = _useHdd = false;
+	static char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
+	static char pfsarg[] = "-m" "\0" "2" "\0" "-o" "\0" "16" "\0" "-n" "\0" "40" /*"\0" "-debug"*/;
 
 	int res;
 	for (int i = 0; i < ARRAYSIZE(irxModules); i++) {
@@ -418,7 +431,28 @@ void OSystem_PS2::loadModules(void) {
 		else
 			_useKbd = true;
 	}
-	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ");
+
+	if ((res = fileXioInit()) < 0) {
+		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
+		quit();
+	}
+
+	if ((res = SifLoadModule(IRX_PREFIX "PS2ATAD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		printf("Cannot load module: PS2ATAD.IRX (%d)\n", res);
+	else if ((res = SifLoadModule(IRX_PREFIX "PS2HDD.IRX" IRX_SUFFIX, sizeof(hddarg), hddarg)) < 0)
+		printf("Cannot load module: PS2HDD.IRX (%d)\n", res);
+	else if ((res = SifLoadModule(IRX_PREFIX "PS2FS.IRX" IRX_SUFFIX, sizeof(pfsarg), pfsarg)) < 0)
+		printf("Cannot load module: PS2FS.IRX (%d)\n", res);
+	else {
+		if ((hddCheckPresent() >= 0) && (hddCheckFormatted() >= 0))
+			_useHdd = true;
+	}
+
+	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, HDD %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _useHdd ? "" : "not ");
+}
+
+bool OSystem_PS2::hddPresent(void) {
+	return _useHdd;
 }
 
 void OSystem_PS2::initSize(uint width, uint height, int overscale) {
@@ -825,7 +859,8 @@ void buildNewDate(int dayDiff) {
 
 void OSystem_PS2::readRtcTime(void) {
 	struct CdClock cdClock;
-	CDVD_ReadClock(&cdClock);
+	readRTC(&cdClock);
+
 	g_lastTimeCheck = msecCount;
 
 	if (cdClock.stat) {
