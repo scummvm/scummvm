@@ -42,7 +42,8 @@ enum {
 	GF_GOB1 = 1 << 0,
 	GF_GOB2 = 1 << 1,
 	GF_GOB3 = 1 << 2,
-	GF_WOODRUFF = 1 << 3
+	GF_WOODRUFF = 1 << 3,
+	GF_CD = 1 << 4
 };
 
 namespace Gob {
