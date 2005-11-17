@@ -172,6 +172,7 @@ Monkey Island 2: LeChuck's revenge
 Indiana Jones and the Fate of Atlantis
 	Talkie	DOS	en	182344899c2e2998fca0bebcd82aa81a	atlantis
 	Talkie	Mac	en	1a6e5ae2777a6a33f06ffc0226210934	atlantis	Scott Summers
+	Talkie (bundle)	Mac	en	24a9f99277ec46ec9592d7b0457896b4	atlantis	joachimeberhard
 
 	Non-Talkie	DOS	en	c63ee46143ba65f9ce14cf539ca51bd7	atlantis	Andrea Petrucci
 	Non-Talkie	DOS	de	1fbebd7b2b692df5297870447a80cfed	atlantis
@@ -208,8 +209,9 @@ Day Of The Tentacle
 	Talkie ?	All?	fr	8aa05d3cdb0e795436043f0546af2da2	tentacle	Andrea Petrucci
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
+	Talkie (bundle)	Mac	en	4c8fdb49faf15391a3b179364c8af76a	tentacle	joachimeberhard
 	Demo	All	en	c83079157ec765a28de445aec9768d60	tentacle
-	Demo (bundle)	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
+	Demo	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
 	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	tentacle	Simon Krumrein, sev
 	Demo	DOS	fr	17fa250eb72dae2dad511ba79c0b6b0a	tentacle	cyx
 
@@ -226,6 +228,7 @@ Sam &amp; Max
 	Talkie	All?	it	0f6f2e716ba896a44e5059bba1de7ca9	samnmax	Andrea Petrucci
 	Talkie	All?	es	4ba7fb331296c283e73d8f5b2096e551	samnmax	Andrea Petrucci
 	Talkie	DOS	ru	d43352a805d78b5f4936c6d7779bf575	samnmax
+	Talkie (bundle)	Mac	en	e84d3a41b3015de79344f2c507639eed	samnmax	joachimeberhard
 	Demo	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samnmax
 	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samnmax
 	Demo (bundle)	Mac	en	6dead580b0ff14d5f7b33b4219f04159	samnmax
@@ -249,6 +252,7 @@ Full Throttle
 
 	Demo	DOS	en	32a433dea56b86a55b59e4ff7d755711	ft
 	Demo	Mac	en	9d7b67be003fea60be4dcbd193611936	ft
+	Demo (bundle)	Mac	en	be7ee4d2de086668e0a16b0cd5514faa	ft	joachimeberhard
 
 The Dig
 	-	All	All	d8323015ecb8b10bf53474f6e6b0ae33	dig
@@ -258,6 +262,7 @@ The Dig
 	-	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
 	-	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
 	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
+	Demo (bundle)	Mac	en	7bc30eab02da1a6a1e4e9ede528e6be4	dig	joachimeberhard
 
 Curse of Monkey Island
 	-	All	All	fe60d6b5ff51b0553ac59963123b5777	comi
