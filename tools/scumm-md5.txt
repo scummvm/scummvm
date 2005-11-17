@@ -261,8 +261,7 @@ The Dig
 	
 	-	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
 	-	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
-	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
-	Demo (bundle)	Mac	en	7bc30eab02da1a6a1e4e9ede528e6be4	dig	Joachim Eberhard
+	Demo (bundle)	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
 
 Curse of Monkey Island
 	-	All	All	fe60d6b5ff51b0553ac59963123b5777	comi
