@@ -156,7 +156,7 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 		else if (kanjiType == EKANJI) chunk = 144;
 		break;
 	default:
-		error("Invaild Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
+		error("Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
 		return 0;
 	}
 
