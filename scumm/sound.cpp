@@ -256,7 +256,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 			strcpy(buf, buf1);
 		}
 		if (musicFile.open(buf) == false) {
-			error("playSound: Can't open music file %s", buf);
+			warning("playSound: Can't open music file %s", buf);
 			return;
 		}
 		if (!getHEMusicDetails(soundID, music_offs, size)) {
@@ -515,7 +515,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 				ptr += 0x20;
 				size -= 0x20;
 				if (size < waveSize) {
-					error("Wrong wave size in sound #%i: %i", soundID, waveSize);
+					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
 					waveSize = size;
 				}
 				sound = (char *)malloc(waveSize);
@@ -750,7 +750,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		else if (offset == 79)
 			strcpy(roomname, "newton");
 		else {
-			error("startTalkSound: dig demo: unknown room number: %d", offset);
+			warning("startTalkSound: dig demo: unknown room number: %d", offset);
 			return;
 		}
 
@@ -762,13 +762,13 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_vm->openFile(*_sfxFile, filename);
 		}
 		if (!_sfxFile->isOpen()) {
-			error("startTalkSound: dig demo: voc file not found");
+			warning("startTalkSound: dig demo: voc file not found");
 			return;
 		}
 	} else {
 
 		if (!_sfxFile->isOpen()) {
-			error("startTalkSound: SFX file is not open");
+			warning("startTalkSound: SFX file is not open");
 			return;
 		}
 
@@ -793,11 +793,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 													sizeof(MP3OffsetTable), compareMP3OffsetTable);
 
 			if (result == NULL) {
-				error("startTalkSound: did not find sound at offset %d !", offset);
+				warning("startTalkSound: did not find sound at offset %d !", offset);
 				return;
 			}
 			if (2 * num != result->num_tags) {
-				error("startTalkSound: number of tags do not match (%d - %d) !", b,
+				warning("startTalkSound: number of tags do not match (%d - %d) !", b,
 								result->num_tags);
 				num = result->num_tags;
 			}
@@ -847,7 +847,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 
 		if (!input) {
-			error("startSfxSound failed to load sound");
+			warning("startSfxSound failed to load sound");
 			return;
 		}
 
