@@ -195,6 +195,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2WIN_DE,    "6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
 	{ GID_SIMON2WIN_DE,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2WIN_PL,    "657fd873f5d0637097ee02315b447e6f", "gsptr30", false },
+	{ GID_SIMON2WIN_PL,    "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2WIN_PL,    "7b9afcf82a94722707e0d025c0192be8", "simon2.gme", false },
+	{ GID_SIMON2WIN_PL,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
+	{ GID_SIMON2WIN_PL,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
 	{ GID_FEEBLEFILES_2CD, "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
 	{ GID_FEEBLEFILES_2CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
 
@@ -577,6 +583,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON2_GameFiles,
 		GF_TALKIE,
 		Common::DE_DEU,
+		Common::kPlatformWindows,
+	},
+
+	// Simon the Sorcerer 2 - Polish Windows CD
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2WIN_PL,
+		"Simon the Sorcerer 2 (Pl Windows CD)",
+		ARRAYSIZE(SIMON2_GameFiles),
+		SIMON2_GameFiles,
+		GF_TALKIE,
+		Common::PL_POL,
 		Common::kPlatformWindows,
 	},
 
