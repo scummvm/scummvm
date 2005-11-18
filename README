@@ -160,11 +160,8 @@ Other Games:
      Flight of the Amazon Queen                      [queen]
      Gobliiins                                       [gob1]
      Inherit the Earth: Quest for the Orb            [ite]
-     Simon the Sorcerer 1                            [simon1acorn/
-                                                         simon1dos/
-                                                         simon1talkie]
-     Simon the Sorcerer 2                            [simon2dos/
-                                                         simon2talkie]
+     Simon the Sorcerer 1                            [simon1]
+     Simon the Sorcerer 2                            [simon2]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
@@ -1047,14 +1044,14 @@ task. You can choose between multiple target formats, but note that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.
 
-  compress_simon effects     (For simon1acorn)
-  compress_simon simon       (For simon1acorn)
-  compress_simon effects.voc (For simon1talkie)
-  compress_simon simon.voc   (For simon1talkie)
-  compress_simon simon.wav   (For simon1win)
-  compress_simon simon2.voc  (For simon2talkie)
-  compress_simon simon2.wav  (For simon2win) 
-  compress_simon mac         (For simon2mac) 
+  compress_simon effects     (For Acorn CD version of Simon 1)
+  compress_simon simon       (For Acorn CD version of Simon 1)
+  compress_simon effects.voc (For DOS CD version of Simon 1)
+  compress_simon simon.voc   (For DOS CD version of Simon 1)
+  compress_simon simon.wav   (For Windows CD version of Simon 1)
+  compress_simon simon2.voc  (For DOS CD version of Simon 2)
+  compress_simon simon2.wav  (For Windows CD version of Simon 2) 
+  compress_simon mac         (For Macintosh version of Simon 2) 
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
