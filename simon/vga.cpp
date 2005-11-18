@@ -2051,8 +2051,30 @@ void SimonEngine::vc74_clearMark() {
 	_marks &= ~(1 << vc_read_next_byte());
 }
 
+int SimonEngine::getScale(int y, int x) {
+	int z;
+
+	if (y > _baseY) {
+		return((int)(x * (1 + ((y - _baseY) * _scale))));
+	} else {	
+		if (x == 0)
+			return(0);
+		if (x < 0) {
+			z = ((int)((x * (1 - ((_baseY - y)* _scale))) - 0.5));
+			if (z >- 2)
+				return(-2);
+			return(z);
+		}
+
+		z=((int)((x * (1 - ((_baseY-y) * _scale))) + 0.5));
+		if (z < 2)
+			return(2);
+
+		return(z);
+	}
+}
+
 void SimonEngine::vc75_setScale() {
-	// Set scale
 	_baseY = vc_read_next_word();
 	_scale = (float)vc_read_next_word() / 1000000.;
 }
@@ -2060,33 +2082,30 @@ void SimonEngine::vc75_setScale() {
 void SimonEngine::vc76_setScaleXOffs() {
 	VgaSprite *vsp = find_cur_sprite();
 
-	// Scale X related
 	vsp->image = vc_read_next_word();
 	int16 xoffs = vc_read_next_word();
 	int var = vc_read_next_word();
 
-	vsp->x += xoffs;
-	vsp->flags = 0x40;
-
+	vsp->x += getScale(vsp->x, xoffs);
 	_variableArray[var] = vsp->x;
 
-	debug(0, "STUB: vc76_setScaleXOffs: image %d xoffs %d var %d", vsp->image, xoffs, var);
+	if (_scrollXMax) {
+		// TODO: Scroll check
+	}
+
+	vsp->flags = 0x40;
 }
 
 void SimonEngine::vc77_setScaleYOffs() {
 	VgaSprite *vsp = find_cur_sprite();
 
-	// Scale Y related
 	vsp->image = vc_read_next_word();
 	int16 yoffs = vc_read_next_word();
 	int var = vc_read_next_word();
 
-	vsp->y += yoffs;
-	vsp->flags = 0x40;
-
+	vsp->y += getScale(vsp->y, yoffs);
 	_variableArray[var] = vsp->y;
-
-	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d var %d", vsp->image, yoffs, var);
+	vsp->flags = 0x40;
 }
 
 void SimonEngine::vc78_computeXY() {

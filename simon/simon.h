@@ -767,6 +767,8 @@ protected:
 	void vc_write_var(uint var, int16 value);
 	void vc_skip_next_instruction();
 
+	int getScale(int y, int x);
+
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);
 	bool vc_maybe_skip_proc_1(uint16 a, int16 b);
