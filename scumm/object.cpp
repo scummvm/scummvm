@@ -472,11 +472,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 	for (a = numstrip = 0; a < width; a++) {
 		tmp = xpos + a;
-		if (arg == 1 && _screenStartStrip != tmp)
+		if (tmp < _screenStartStrip || _screenEndStrip < tmp)
 			continue;
-		if (arg == 2 && _screenEndStrip != tmp)
+		if (arg > 0 && _screenStartStrip + arg <= tmp)
 			continue;
-		if (tmp < _screenStartStrip || tmp > _screenEndStrip)
+		if (arg < 0 && tmp <= _screenEndStrip + arg)
 			continue;
 		setGfxUsageBit(tmp, USAGE_BIT_DIRTY);
 		if (tmp < x)
