@@ -107,7 +107,7 @@ The Secret of Monkey Island
 	EGA (8 disk)	DOS	de	fc6b6148e80d67939d9a18697c0f626a	monkey	ghoostkilla
 	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkey	Andrea Petrucci
 	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkey	Andrea Petrucci
-	EGA (4 disk)	DOS	de	e98b982ceaf9d253d730bde8903233d6	monkey	joachimeberhard
+	EGA (4 disk)	DOS	de	e98b982ceaf9d253d730bde8903233d6	monkey	Joachim Eberhard
 	EGA (4 disk)	DOS	en	1d05cd189e4908f79b57e78a4402f292	monkey	Andrea Petrucci
 	EGA (4 disk)	DOS	fr	ce6a4cef315b20fef58a95bc40a2d8d3	monkey	Matthieu Milan
 	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkey	Andrea Petrucci
@@ -172,6 +172,7 @@ Monkey Island 2: LeChuck's revenge
 Indiana Jones and the Fate of Atlantis
 	Talkie	DOS	en	182344899c2e2998fca0bebcd82aa81a	atlantis
 	Talkie	Mac	en	1a6e5ae2777a6a33f06ffc0226210934	atlantis	Scott Summers
+	Talkie (bundle)	Mac	en	2d9d46f23cb07bbc90b8ad464d3e4ff8	atlantis	Joachim Eberhard
 
 	Non-Talkie	DOS	en	c63ee46143ba65f9ce14cf539ca51bd7	atlantis	Andrea Petrucci
 	Non-Talkie	DOS	de	1fbebd7b2b692df5297870447a80cfed	atlantis
@@ -208,6 +209,7 @@ Day Of The Tentacle
 	Talkie ?	All?	fr	8aa05d3cdb0e795436043f0546af2da2	tentacle	Andrea Petrucci
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
+	Talkie (bundle)	Mac	en	cc04a076779379524ed4d9c5ee3c6fb1	tentacle	Joachim Eberhard
 	Demo	All	en	c83079157ec765a28de445aec9768d60	tentacle
 	Demo (bundle)	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
 	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	tentacle	Simon Krumrein, sev
@@ -226,6 +228,7 @@ Sam &amp; Max
 	Talkie	All?	it	0f6f2e716ba896a44e5059bba1de7ca9	samnmax	Andrea Petrucci
 	Talkie	All?	es	4ba7fb331296c283e73d8f5b2096e551	samnmax	Andrea Petrucci
 	Talkie	DOS	ru	d43352a805d78b5f4936c6d7779bf575	samnmax
+	Talkie (bundle)	Mac	en	166553538ff320c69edafeee29525419	samnmax	Joachim Eberhard
 	Demo	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samnmax
 	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samnmax
 	Demo (bundle)	Mac	en	6dead580b0ff14d5f7b33b4219f04159	samnmax
@@ -249,6 +252,7 @@ Full Throttle
 
 	Demo	DOS	en	32a433dea56b86a55b59e4ff7d755711	ft
 	Demo	Mac	en	9d7b67be003fea60be4dcbd193611936	ft
+	Demo (bundle)	Mac	en	9b7452b5cd6d3ffb2b2f5118010af84f	ft	Joachim Eberhard
 
 The Dig
 	-	All	All	d8323015ecb8b10bf53474f6e6b0ae33	dig
@@ -257,7 +261,7 @@ The Dig
 	
 	-	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
 	-	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
-	Demo	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
+	Demo (bundle)	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
 
 Curse of Monkey Island
 	-	All	All	fe60d6b5ff51b0553ac59963123b5777	comi
@@ -332,7 +336,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 	-	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
 	-	All	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
 	-	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
-	-	Windows	de	fce4b8010704b103acfeea9413788f32	freddi2	joachimeberhard
+	-	Windows	de	fce4b8010704b103acfeea9413788f32	freddi2	Joachim Eberhard
 	-	Windows	en	151071053a1d0021198216713939521d	freddi2	vampir_raziel
 	-	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
 	-	Windows	ru	e41de1c2a15abbcdbf9977e2d7e8a340	freddi2	sev
@@ -341,7 +345,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
-	-	Windows	de	83cedbe26aa8b58988e984e3d34cac8e	freddi3	joachimeberhard
+	-	Windows	de	83cedbe26aa8b58988e984e3d34cac8e	freddi3	Joachim Eberhard
 	-	Windows	nl	0cccfa5223099a60e76cfcca57a1a141	freddi3	adutchguy
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
@@ -351,7 +355,7 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 
 Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	-	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
-	-	Windows	de	b5298a5c15ffbe8b381d51ea4e26d35c	freddi4	joachimeberhard
+	-	Windows	de	b5298a5c15ffbe8b381d51ea4e26d35c	freddi4	Joachim Eberhard
 	-	Windows	nl	14d48c95b43ddeb983254cf6c43851f1	freddi4	adutchguy
 	-	Windows	ru	78bd5f036ea35a878b74e4f47941f784	freddi4	sev
 	-	Windows	ru	07b810e37be7489263f7bc7627d4765d	freddi4	sev

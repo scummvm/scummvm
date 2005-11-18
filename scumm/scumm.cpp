@@ -690,6 +690,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
 	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
+	{ "atlantis.000", "Fate of Atlantis Data", kGenAsIs },
 	{ "atlantis", "fate", kGenPC },
 	{ "atlantis", "playfate", kGenPC },
 	{ "atlantis", "indy4", kGenPC },
@@ -711,7 +712,6 @@ static SubstResFileNames substResFileNameTable[] = {
 #ifndef DISABLE_SCUMM_7_8
 	{ "dig.la0", "The Dig Data", kGenAsIs },
 	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
-	{ "dig", "digdemo", kGenPC },
 	{ "ft.la0", "Full Throttle Data", kGenAsIs },
 	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Data", kGenAsIs },
@@ -971,14 +971,15 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else
 		_fileHandle = new ScummFile();
 
-	// The mac versions of Sam&Max, DOTT, FT and The Dig used a special meta
-	// (container) file format to store the actual SCUMM data files. The
-	// rescumm utility used to be used to extract those files. While that is
-	// still possible, we now support reading those files directly.
-	// The first step is to check whether one of them is present (we do that
-	// here); the rest is handled by the  ScummFile class and code in
-	// openResourceFile() (and in the Sound class, for MONSTER.SOU handling).
-	if (_version >= 6 && _heversion == 0 && _substResFileNameIndex &&
+	// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
+	// special meta (container) file format to store the actual SCUMM data
+	// files. The rescumm utility used to be used to extract those files. 
+	// While that is still possible, we now support reading those files 
+	// directly. The first step is to check whether one of them is present
+	// (we do that here); the rest is handled by the  ScummFile class and 
+	// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
+	// handling).
+	if (_version >= 5 && _heversion == 0 && _substResFileNameIndex &&
 		_platform == Common::kPlatformMacintosh && 
 		substResFileNameTable[_substResFileNameIndex].genMethod == kGenAsIs) {
 		if (_fileHandle->open(substResFileNameTable[_substResFileNameIndex].macName)) {
