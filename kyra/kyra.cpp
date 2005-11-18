@@ -337,6 +337,10 @@ int KyraEngine::init(GameDetector &detector) {
 	_movFacingTable[0] = 8;
 
 	_configTalkspeed = 1;
+	
+	_marbleVaseItem = -1;
+	_mouseState = _itemInHand = -1;
+	_handleInput = false;
 
 	return 0;
 }
@@ -490,10 +494,6 @@ void KyraEngine::delay(uint32 amount) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 'q' || event.kbd.keycode == 27) {
 					_quitFlag = true;
-				} else {
-					++_currentRoom;
-					if (_currentRoom > ARRAYSIZE(_shapes))
-						_currentRoom = 3;
 				}
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
@@ -502,6 +502,15 @@ void KyraEngine::delay(uint32 amount) {
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
+				break;
+			case OSystem::EVENT_LBUTTONDOWN:
+				if (_handleInput) {
+					_mouseX = event.mouse.x;
+					_mouseY = event.mouse.y;
+					_handleInput = false;
+					processInput(_mouseX, _mouseY);
+					_handleInput = true;
+				}
 				break;
 			default:
 				break;
@@ -526,9 +535,15 @@ void KyraEngine::mainLoop() {
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
 
+		updateMousePointer();
 		updateGameTimers();
+		_sprites->updateSceneAnims();
+		updateAllObjectShapes();
+		// XXX call processPalette
 
+		_handleInput = true;
 		delay((frameTime + _gameSpeed) - _system->getMillis());
+		_handleInput = false;
 	}
 }
 
@@ -1223,28 +1238,37 @@ void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypo
 	disableTimer(19);
 	disableTimer(14);
 	disableTimer(18);
+	uint32 nextFrame = 0;
 	switch (facing) {
 		case 0:
 			while (ypos < ch->y1) {
+				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 				setCharacterPositionWithUpdate(character);
+				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
 			}
 			break;
 		
 		case 2:	
 			while (ch->x1 < xpos) {
+				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 				setCharacterPositionWithUpdate(character);
+				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
 			}
 			break;
 		
 		case 4:
 			while (ypos > ch->y1) {
+				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 				setCharacterPositionWithUpdate(character);
+				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
 			}
 			break;
 		
 		case 6:
 			while (ch->x1 > xpos) {
+				nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 				setCharacterPositionWithUpdate(character);
+				while (_system->getMillis() < nextFrame) { updateGameTimers(); }
 			}
 			break;
 		
@@ -1659,8 +1683,7 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 		moveCharacterToPos(0, facing, xpos2, ypos2);
 	}
 	
-	// XXX _mousePointerFlag
-	_scriptClick->variables[4] = -1;
+	_scriptClick->variables[4] = _itemInHand;
 	_scriptClick->variables[7] = brandonAlive;
 	_scriptInterpreter->startScript(_scriptClick, 3);
 	while (_scriptInterpreter->validScript(_scriptClick)) {
@@ -2513,6 +2536,58 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 	}
 }
 
+void KyraEngine::createMouseItem(int item) {
+	debug(9, "createMouseItem(%d)", item);
+	_screen->hideMouse();
+	setMouseItem(item);
+	_itemInHand = item;
+	_screen->showMouse();
+}
+
+void KyraEngine::destroyMouseItem() {
+	debug(9, "destroyMouseItem()");
+	_screen->hideMouse();
+	_screen->setMouseCursor(1, 1, _shapes[4]);
+	_itemInHand = -1;
+	_screen->showMouse();
+}
+
+void KyraEngine::setMouseItem(int item) {
+	debug(9, "setMouseItem(%d)", item);
+	if (item == -1) {
+		_screen->setMouseCursor(1, 1, _shapes[10]);
+	} else {
+		_screen->setMouseCursor(8, 15, _shapes[220+item]);
+	}
+}
+
+void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
+	debug(9, "wipeDownMouseItem(%d, %d)", xpos, ypos);
+	if (_itemInHand == -1)
+		return;
+	xpos -= 8;
+	ypos -= 15;
+	_screen->hideMouse();
+	backUpRect1(xpos, ypos);
+	int y = ypos;
+	int height = 16;
+	
+	while (height >= 0) {
+		restoreRect1(xpos, ypos);
+		_screen->setNewShapeHeight(_shapes[220+_itemInHand], height);
+		_screen->drawShape(0, _shapes[220+_itemInHand], xpos, y, 0, 0);
+		_screen->updateScreen();
+		y += 2;
+		height -= 2;
+		// XXX
+		waitTicks(1);
+	}	
+	restoreRect1(xpos, ypos);
+	_screen->resetShapeHeight(_shapes[220+_itemInHand]);
+	destroyMouseItem();
+	_screen->showMouse();
+}
+
 #pragma mark -
 #pragma mark - Animation specific code
 #pragma mark -
@@ -2634,14 +2709,13 @@ void KyraEngine::prepDrawAllObjects() {
 			int xpos = curObject->x1;
 			int ypos = curObject->y1;
 			
-			int temp = 0;
-			if (curObject->flags & 0x800) {
-				temp = 7;
-			} else if (!curObject->unk1) {
-				temp = 0;
+			int drawLayer = 0;
+			if (!(curObject->flags & 0x800)) {
+				drawLayer = 7;
+			} else if (curObject->unk1) {
+				drawLayer = 0;
 			} else {
-				// XXX temp = sub_13368(curObject->drawY)
-				temp = 0;
+				drawLayer = _sprites->getDrawLayer(curObject->drawY);
 			}
 			
 			// talking head functionallity
@@ -2714,7 +2788,7 @@ void KyraEngine::prepDrawAllObjects() {
 									tempFlags = 1;
 								}
 								tempFlags |= 0x900 | flagUnk1 | 0x4000;
-								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, 0/*XXX*/, temp, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, 0/*XXX*/, drawLayer, _brandonScaleX, _brandonScaleY);
 							} else {
 								if (!(flagUnk2 & 0x4000)) {
 									tempFlags = 0;
@@ -2724,7 +2798,7 @@ void KyraEngine::prepDrawAllObjects() {
 									tempFlags |= 0x900 | flagUnk1;
 								}
 								
-								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, temp, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, drawLayer, _brandonScaleX, _brandonScaleY);
 							}
 						}
 					} else {
@@ -2733,7 +2807,7 @@ void KyraEngine::prepDrawAllObjects() {
 							if (curObject->flags & 1) {
 								tempFlags = 1;
 							}
-							_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 0x800, temp); 							
+							_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 0x800, drawLayer); 							
 						}
 					}
 				}
@@ -2756,30 +2830,30 @@ void KyraEngine::prepDrawAllObjects() {
 				
 				if (!_scaleMode) {
 					if (flagUnk3 & 0x100) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_unkBrandonPoisonFlags, 1, temp);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_unkBrandonPoisonFlags, 1, drawLayer);
 					} else if (flagUnk3 & 0x4000) {
 						// XXX
 						int hackVar = 0;
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, hackVar, 0);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, hackVar, drawLayer);
 					} else {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1, temp);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1, drawLayer);
 					}
 				} else {
 					if (flagUnk3 & 0x100) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_unkBrandonPoisonFlags, 1, temp, _brandonScaleX, _brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_unkBrandonPoisonFlags, 1, drawLayer, _brandonScaleX, _brandonScaleY);
 					} else if (flagUnk3 & 0x4000) {
 						// XXX
 						int hackVar = 0;
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, 0, temp, hackVar, _brandonScaleX, _brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, 0, drawLayer, hackVar, _brandonScaleX, _brandonScaleY);
 					} else {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4, temp, _brandonScaleX, _brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4, drawLayer, _brandonScaleX, _brandonScaleY);
 					}
 				}
 			} else {
 				if (curObject->index >= 16 && curObject->index <= 27) {
-					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | 4, temp, (int)_scaleTable[curObject->drawY], (int)_scaleTable[curObject->drawY]);
+					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | 4, drawLayer, (int)_scaleTable[curObject->drawY], (int)_scaleTable[curObject->drawY]);
 				} else {
-					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags, temp);
+					_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags, drawLayer);
 				}
 			}
 		}
@@ -2974,6 +3048,16 @@ int8 KyraEngine::fetchAnimHeight(const uint8 *shape, int8 mult) {
 	if (_features & GF_TALKIE)
 		shape += 2;
 	return ((int8)*(shape+2)) * mult;
+}
+
+void KyraEngine::backUpRect1(int xpos, int ypos) {
+	debug(9, "backUpRect1(%d, %d)", xpos, ypos);
+	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 4<<3, 32, _shapes[1]);
+}
+
+void KyraEngine::restoreRect1(int xpos, int ypos) {
+	debug(9, "restoreRect1(%d, %d)", xpos, ypos);
+	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 32, _shapes[1]);
 }
 
 #pragma mark -
@@ -3272,6 +3356,7 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 }
 
 int KyraEngine::getMoveTableSize(int *moveTable) {
+	debug(9, "getMoveTableSize(0x%X)", moveTable);
 	int retValue = 0;
 	if (moveTable[0] == 8)
 		return 0;
@@ -3295,7 +3380,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 	int *curPosition = &moveTable[1];
 
 	while (*curPosition != 8) {
-		if (*curPosition == facingTable[*oldPosition]) {
+		if (*oldPosition == facingTable[*curPosition]) {
 			retValue -= 2;
 			*oldPosition = 9;
 			*curPosition = 9;
@@ -3307,7 +3392,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 			}
 			
 			if (tempPosition == moveTable && *tempPosition == 9) {
-				while (*tempPosition == 8 || *tempPosition != 9) {
+				while (*tempPosition != 8 && *tempPosition == 9) {
 					++tempPosition;
 				}
 				if (*tempPosition == 8) {
@@ -3315,14 +3400,17 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 				}
 			}
 			
-			while (*curPosition == 8 || *curPosition != 9) {
+			oldPosition = tempPosition;
+			curPosition = oldPosition+1;
+			while (*curPosition != 8 && *curPosition == 9) {
 				++curPosition;
 			}
+			continue;
 		}
 		
-		if (unkTable[*curPosition+(*oldPosition*8)] != -1) {
+		if (unkTable[*curPosition+((*oldPosition)*8)] != -1) {
 			--retValue;
-			*oldPosition = unkTable[*curPosition+(*oldPosition*8)];
+			*oldPosition = unkTable[*curPosition+((*oldPosition)*8)];
 			*curPosition = 9;
 			
 			if (tempPosition != oldPosition) {
@@ -3427,6 +3515,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	_loopFlag2 = 0;
 	bool running = true;
 	int returnValue = 0;
+	uint32 nextFrame;
 	while (running) {
 		// XXX
 		bool forceContinue = false;
@@ -3455,6 +3544,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		
 		if (unk1) {
 			// XXX
+			_sceneChangeState = 1;
 		}
 		
 		if (forceContinue || !running) {
@@ -3467,19 +3557,25 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		} else {
 			temp = setCharacterPosition(0, table);
 		}
-		if (!temp)
+		if (!temp) {
 			continue;
+		}
+		
 		++table;
-		_sprites->updateSceneAnims();
-		waitTicks(10);
-		// XXX updateMousePointer
-		updateGameTimers();
-		updateAllObjectShapes();
-		// XXX processPalette
-		if (_currentCharacter->sceneId == 210) {
-			// XXX updateKyragemFading
-			// XXX playEnd
-			// XXX
+		nextFrame = getTimerDelay(5) * _tickLength + _system->getMillis();
+		while (_system->getMillis() < nextFrame) {
+			_sprites->updateSceneAnims();
+			updateMousePointer();
+			updateGameTimers();
+			updateAllObjectShapes();
+			// XXX processPalette
+			if (_currentCharacter->sceneId == 210) {
+				// XXX updateKyragemFading
+				// XXX playEnd
+				// XXX
+			}
+			if ((nextFrame - _system->getMillis()) >= 10)
+				delay(10);
 		}
 	}
 	
@@ -3664,7 +3760,17 @@ void KyraEngine::setupTimers() {
 	_timers[31].countdown = -1;
 	_timers[32].countdown = 9;
 	_timers[33].countdown = 3;
+}
 
+void KyraEngine::setTimer19() {
+	debug(9, "KyraEngine::setTimer19()");
+	if (_brandonStatusBit & 2) {
+		// XXX call sub_3F9C
+		setTimerCountdown(19, 300);
+	} else if (_brandonStatusBit & 0x20) {
+		// XXX call sub_4110
+		setTimerCountdown(19, 300);
+	}
 }
 
 void KyraEngine::updateGameTimers() {
@@ -3831,6 +3937,175 @@ void KyraEngine::drawAmulet() {
 		i++;
 	}
 	_screen->showMouse();
+}
+
+#pragma mark -
+#pragma mark - Input
+#pragma mark -
+
+void KyraEngine::processInput(int xpos, int ypos) {
+	debug(9, "processInput(%d, %d)", xpos, ypos);
+	if (processInputHelper(xpos, ypos)) {
+		return;
+	}
+	uint8 item = findItemAtPos(xpos, ypos);
+	if (item == 0xFF) {
+		if (clickEventHandler(xpos, ypos))
+			return;
+	} 
+	
+	// XXX _deathHandler specific
+	if (ypos <= 158) {
+		uint16 exit = 0xFFFF;
+		if (xpos < 12) {
+			exit = _walkBlockWest;
+		} else if (xpos >= 308) {
+			exit = _walkBlockEast;
+		} else if (ypos >= 136) {
+			exit = _walkBlockSouth;
+		} else if (ypos < 12) {
+			exit = _walkBlockNorth;
+		}
+		
+		if (exit != 0xFFFF) {
+			handleSceneChange(xpos, ypos, 1, 1);
+			return;
+		}
+	}
+	
+	
+}
+
+int KyraEngine::processInputHelper(int xpos, int ypos) {
+	debug(9, "processInputHelper(%d, %d)", xpos, ypos);
+	return 0;
+}
+
+int KyraEngine::clickEventHandler(int xpos, int ypos) {
+	debug(9, "clickEventHandler(%d, %d)", xpos, ypos);
+	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
+	_scriptClick->variables[1] = xpos;
+	_scriptClick->variables[2] = ypos;
+	_scriptClick->variables[3] = 0;
+	_scriptClick->variables[4] = _itemInHand;
+	_scriptInterpreter->startScript(_scriptClick, 1);
+	
+	while (_scriptInterpreter->validScript(_scriptClick)) {
+		_scriptInterpreter->runScript(_scriptClick);
+	}
+	return _scriptClick->variables[3];
+}
+
+void KyraEngine::updateMousePointer() {
+	int shape = 0;
+	
+	int newMouseState = 0;
+	int newX = 0; // si
+	int newY = 0; // bx
+	if (_mouseY <= 158) {
+		if (_mouseX >= 12) {
+			if (_mouseX >= 308) {
+				if (_walkBlockEast == 0xFFFF) {
+					newMouseState = -2;
+				} else {
+					newMouseState = -5;
+					shape = 3;
+					newX = 7;
+					newY = 5;
+				}
+			} else if (_mouseY >= 136) {
+				if (_walkBlockSouth == 0xFFFF) {
+					newMouseState = -2;
+				} else {
+					newMouseState = -4;
+					shape = 4;
+					newX = 5;
+					newY = 7;
+				}
+			} else if (_mouseY < 12) {
+				if (_walkBlockNorth == 0xFFFF) {
+					newMouseState = -2;
+				} else {
+					newMouseState = -6;
+					shape = 2;
+					newX = 5;
+					newY = 1;
+				}
+			}
+		} else {
+			if (_walkBlockWest == 0xFFFF) {
+				newMouseState = -2;
+			} else {
+				newMouseState = -3;
+				newX = 1;
+				newY = shape = 5;
+			}
+		}
+	}
+	
+	if (_mouseX >= _entranceMouseCursorTracks[0] && _mouseY >= _entranceMouseCursorTracks[1]
+		&& _mouseX <= _entranceMouseCursorTracks[2] && _mouseY <= _entranceMouseCursorTracks[3]) {
+		switch (_entranceMouseCursorTracks[4]) {
+			case 0:
+				newMouseState = -6;
+				shape = 2;
+				newX = 5;
+				newY = 1;
+				break;
+			
+			case 2:
+				newMouseState = -5;
+				shape = 3;
+				newX = 7;
+				newY = 5;
+				break;
+			
+			case 4:
+				newMouseState = -4;
+				shape = 4;
+				newX = 5;
+				newY = 7;
+				break;
+			
+			case 6:
+				newMouseState = -3;
+				shape = 5;
+				newX = 1;
+				newY = 5;
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	if (newMouseState == -2) {
+		shape = 6;
+		newX = 4;
+		newY = 4;
+	}
+	
+	if (newMouseState && _mouseState != newMouseState) {
+		_mouseState = newMouseState;
+		_screen->hideMouse();
+		_screen->setMouseCursor(newX, newY, _shapes[4+shape]);
+		_screen->showMouse();
+	}
+	
+	if (!newMouseState) {
+		if (_mouseState != _itemInHand) {
+			if (_mouseY > 158 || (_mouseX >= 12 && _mouseX < 308 && _mouseY < 136 && _mouseY >= 12)) {
+				_mouseState = _itemInHand;
+				_screen->hideMouse();
+				if (_itemInHand == -1) {
+					_screen->setMouseCursor(1, 1, _shapes[4]);
+				} else {
+					_screen->setMouseCursor(8, 15, _shapes[220+_itemInHand]);
+				}
+				_screen->showMouse();
+			}
+		}
+	}
 }
 
 } // End of namespace Kyra

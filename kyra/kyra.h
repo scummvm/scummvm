@@ -285,7 +285,7 @@ public:
 	int cmd_getCharacterX(ScriptState *script);
 	int cmd_getCharacterY(ScriptState *script);
 	int cmd_changeCharactersFacing(ScriptState *script);
-	int cmd_CopyWSARegion(ScriptState *script);
+	int cmd_copyWSARegion(ScriptState *script);
 	int cmd_printText(ScriptState *script);
 	int cmd_random(ScriptState *script);
 	int cmd_loadSoundFile(ScriptState *script);
@@ -449,6 +449,17 @@ protected:
 	int handleSceneChange(int xpos, int ypos, int unk1, int frameReset);
 	int processSceneChange(int *table, int unk1, int frameReset);
 	int changeScene(int facing);
+	void createMouseItem(int item);
+	void destroyMouseItem();
+	void setMouseItem(int item);
+	void wipeDownMouseItem(int xpos, int ypos);
+	void backUpRect1(int xpos, int ypos);
+	void restoreRect1(int xpos, int ypos);
+	
+	void processInput(int xpos, int ypos);
+	int processInputHelper(int xpos, int ypos);
+	int clickEventHandler(int xpos, int ypos);
+	void updateMousePointer();
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
@@ -496,6 +507,7 @@ protected:
 	void resetBrandonPosionFlags();
 	void initAnimStateList();
 	
+	void setTimer19();
 	void setupTimers();
 	void timerUpdateHeadAnims(int timerNum);
 	void timerSetFlags1(int timerNum);
@@ -523,7 +535,9 @@ protected:
 	uint16 _tickLength;
 	uint32 _features;
 	int _mouseX, _mouseY;
-	bool _needMouseUpdate;
+	int _itemInHand;
+	int _mouseState;
+	bool _handleInput;
 	
 	WSAMovieV1 *_wsaObjects[10];
 	uint16 _entranceMouseCursorTracks[8];
@@ -540,7 +554,7 @@ protected:
 	uint16 _birthstoneGemTable[4];
 	uint8 _idolGemsTable[3];
 	
-	uint16 _marbleVaseItem;
+	int16 _marbleVaseItem;
 	
 	uint16 _brandonStatusBit;
 	uint8 _unkBrandonPoisonFlags[256];	// this seem not to be posion flags, it is used for drawing once

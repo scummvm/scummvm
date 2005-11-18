@@ -71,6 +71,8 @@ public:
 	uint8 *_sceneShapes[50];
 
 	void refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag);
+	
+	int getDrawLayer(int y);
 
 protected:
 	void freeSceneShapes();
@@ -83,6 +85,7 @@ protected:
 	Common::RandomSource _rnd;
 	uint8 _animDelay;
 	uint8 *_spriteDefStart;
+	uint8 _drawLayerTable[8];
 };
 
 } // End of namespace Kyra

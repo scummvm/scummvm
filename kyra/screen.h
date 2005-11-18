@@ -127,6 +127,8 @@ public:
 	uint8 *getPalette(int num);
 	
 	byte getShapeFlag1(int x, int y);
+	int setNewShapeHeight(uint8 *shape, int height);
+	int resetShapeHeight(uint8 *shape);
 
 	int _charWidth;
 	int _charOffset;
@@ -152,6 +154,7 @@ private:
 	int _decodeShapeBufferSize;
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
+	int _mouseLockCount;
 
 	OSystem *_system;
 	KyraEngine *_vm;

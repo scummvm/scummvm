@@ -124,7 +124,8 @@ uint16 KyraEngine::wsa_getNumFrames(WSAMovieV1 *wsa) const {
 
 void KyraEngine::wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum) {
 	debug(9, "KyraEngine::wsa_play(0x%X, %d, %d, %d, %d)", wsa, frameNum, x, y, pageNum);
-	assert(frameNum <= wsa->numFrames);
+	if (frameNum > wsa->numFrames)
+		return;
 
 	uint8 *dst;
 	if (wsa->flags & WF_OFFSCREEN_DECODE) {

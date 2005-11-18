@@ -37,10 +37,10 @@ Sprites::Sprites(KyraEngine *engine, OSystem *system) {
 	_system = system;
 	_dat = 0;
 	memset(_anims, 0, sizeof(_anims));
-	memset( _sceneShapes, 0, sizeof(_sceneShapes));
+	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	_animDelay = 16;
 	_spriteDefStart = 0;
-
+	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 }
 
 Sprites::~Sprites() {
@@ -400,6 +400,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 
 	assert(fileSize > 0x6D);
 
+	memcpy(_drawLayerTable, (_dat + 0x0D), 8);
 	_engine->_northExitHeight = READ_LE_UINT16(_dat + 0x15);
 	if (_engine->_northExitHeight & 1)
 		_engine->_northExitHeight += 1;
@@ -541,4 +542,22 @@ void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, ui
 	_animObjects[animNum].y1 = y;
 }
 
+int Sprites::getDrawLayer(int y) {
+	debug(9, "getDrawLayer(%d)", y);
+	uint8 returnValue = 0;
+	for (int i = 0; i < ARRAYSIZE(_drawLayerTable); ++i) {
+		uint8 temp = _drawLayerTable[i];
+		if (temp) {
+			if (temp <= y) {
+				returnValue = i;
+			}
+		}
+	}
+	if (returnValue <= 0) {
+		returnValue = 1;
+	} else if (returnValue >= 7) {
+		returnValue = 6;
+	}
+	return returnValue;
+}
 } // end of namespace Kyra

@@ -62,6 +62,7 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	_decodeShapeBufferSize = 0;
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
+	_mouseLockCount = 0;
 }
 
 Screen::~Screen() {
@@ -580,7 +581,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	
 	uint8 *table = 0;
 	int tableLoopCount = 0;
-	int var_30 = 0;
+	int drawLayer = 0;
 	uint8 *table2 = 0;
 	uint8 *table3 = 0;
 	uint8 *table4 = 0;
@@ -609,7 +610,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		drawShapeVar5 = va_arg(args, int);
 	}
 	if (flags & 0x800) {
-		var_30 = va_arg(args, int);
+		drawLayer = va_arg(args, int);
 	}
 	int scale_w, scale_h;
 	if (flags & DSF_SCALE) {
@@ -740,7 +741,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
-	uint8 *dstStart = getPagePtr(pageNum) + y * SCREEN_W + x;
+	uint8 *dstStart = getPagePtr(pageNum);
 	
 	int scaleYTable[SCREEN_H];
 	assert(y1 >= 0 && y2 < SCREEN_H);
@@ -834,7 +835,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						}
 					}	break;
@@ -844,7 +845,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						} else {
 							for (int i = 0; i < tableLoopCount; ++i) {
@@ -858,7 +859,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 							drawShapeVar4 = pixel;
 						} else {
@@ -878,7 +879,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						} else {
 							color = *dst;
@@ -893,7 +894,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						} else {
 							color = table2[color];
@@ -905,7 +906,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						} else {
 							color = table2[color];
@@ -920,7 +921,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 							drawShapeVar4 = pixel;
 						} else {
@@ -1035,7 +1036,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						uint8 pixel = *(_shapePages[0] + offset);
 						pixel &= 0x7F;
 						pixel &= 0x87;
-						if (var_30 < pixel) {
+						if (drawLayer < pixel) {
 							color = *(_shapePages[1] + offset);
 						}
 						uint8 newColor = table3[color];
@@ -1584,16 +1585,15 @@ int Screen::getRectSize(int x, int y) {
 
 void Screen::hideMouse() {
 	debug(9, "hideMouse()");
-	// if mouseDisabled
-	//	return
+	++_mouseLockCount;
 	_system->showMouse(false);
 }
 
 void Screen::showMouse() {
 	debug(9, "showMouse()");
-	// if mouseDisabled
-	//	return
-	_system->showMouse(true);
+	if (--_mouseLockCount == 0) { 
+		_system->showMouse(true);
+	}
 }
 
 void Screen::setShapePages(int page1, int page2) {
@@ -1616,10 +1616,11 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
 	
 	uint8 *cursor = (uint8 *)malloc(mouseHeight * mouseWidth);
-	fillRect(0, 0, mouseWidth, mouseHeight, 0, 3);
-	drawShape(3, shape, 0, 0, 0, 0);
+	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
+	drawShape(8, shape, 0, 0, 0, 0);
 
-	copyRegionToBuffer(3, 0, 0, mouseWidth, mouseHeight, cursor);
+	_system->showMouse(false);
+	copyRegionToBuffer(8, 0, 0, mouseWidth, mouseHeight, cursor);
 	_system->setMouseCursor(cursor, mouseWidth, mouseHeight, 0, 0, 0);
 	_system->showMouse(true);
 	free(cursor);
@@ -1672,6 +1673,24 @@ byte Screen::getShapeFlag1(int x, int y) {
 		return 1;
 	}
 	return 0;
+}
+
+int Screen::setNewShapeHeight(uint8 *shape, int height) {
+	debug(9, "setNewShapeHeight(0x%X, %d)", shape, height);
+	if (_vm->features() & GF_TALKIE)
+		shape += 2;
+	int oldHeight = shape[2];
+	shape[2] = height;
+	return oldHeight;
+}
+
+int Screen::resetShapeHeight(uint8 *shape) {
+	debug(9, "setNewShapeHeight(0x%X)", shape);
+	if (_vm->features() & GF_TALKIE)
+		shape += 2;
+	int oldHeight = shape[2];
+	shape[2] = shape[5];
+	return oldHeight;
 }
 
 } // End of namespace Kyra

@@ -433,7 +433,7 @@ KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
 	Opcode(cmd_getCharacterX),
 	Opcode(cmd_getCharacterY),
 	Opcode(cmd_changeCharactersFacing),
-	Opcode(cmd_CopyWSARegion),
+	Opcode(cmd_copyWSARegion),
 	// 0x3c
 	Opcode(cmd_printText),
 	Opcode(cmd_random),

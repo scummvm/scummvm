@@ -133,9 +133,9 @@ void ScriptHelper::c1_negate() {
 	switch (_parameter) {
 		case 0:
 			if (!value) {
-				_curScript->stack[_curScript->sp] = 0;
-			} else {
 				_curScript->stack[_curScript->sp] = 1;
+			} else {
+				_curScript->stack[_curScript->sp] = 0;
 			}
 		break;
 		
@@ -304,7 +304,7 @@ int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_characterSays(ScriptState *script) {
-	debug(9, "cmd_characterSays(0x%X)", script);
+	debug(3, "cmd_characterSays(0x%X) ('%s', %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2));
 	// Japanese version?
 	/*const char *str1 = "âuâëâôââôüAé?é¢ùêé¢é+é®üH";
 	const char *str2 = "âuâëâôâ\\âôüAé?é¢ùêé¢é+é®üH";
@@ -323,23 +323,23 @@ int KyraEngine::cmd_pauseTicks(ScriptState *script) {
 }
 
 int KyraEngine::cmd_drawSceneAnimShape(ScriptState *script) {
-	debug(9, "cmd_drawSceneAnimShape(0x%X)", script);
+	debug(3, "cmd_drawSceneAnimShape(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_screen->drawShape(stackPos(4), _sprites->_sceneShapes[stackPos(0)], stackPos(1), stackPos(2), 0, stackPos(3));
 	return 0;
 }
 
 int KyraEngine::cmd_queryGameFlag(ScriptState *script) {
-	debug(9, "cmd_queryGameFlag(0x%X)", script);
+	debug(3, "cmd_queryGameFlag(0x%X) (0x%X)", script, stackPos(0));
 	return queryGameFlag(stackPos(0));
 }
 
 int KyraEngine::cmd_setGameFlag(ScriptState *script) {
-	debug(9, "cmd_setGameFlag(0x%X)", script);
+	debug(3, "cmd_setGameFlag(0x%X) (0x%X)", script, stackPos(0));
 	return setGameFlag(stackPos(0));
 }
 
 int KyraEngine::cmd_resetGameFlag(ScriptState *script) {
-	debug(9, "cmd_resetGameFlag(0x%X)", script);
+	debug(3, "cmd_resetGameFlag(0x%X) (0x%X)", script, stackPos(0));
 	return resetGameFlag(stackPos(0));
 }
 
@@ -349,7 +349,7 @@ int KyraEngine::cmd_runNPCScript(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setSpecialExitList(ScriptState *script) {
-	debug(9, "cmd_setSpecialExitList(0x%X)", script);
+	debug(3, "cmd_setSpecialExitList(0x%X) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	
 	for (int i = 0; i < 10; ++i) {
 		_exitList[i] = stackPos(i);
@@ -360,19 +360,19 @@ int KyraEngine::cmd_setSpecialExitList(ScriptState *script) {
 }
 
 int KyraEngine::cmd_blockInWalkableRegion(ScriptState *script) {
-	debug(9, "cmd_blockInWalkableRegion(0x%X)", script);
+	debug(3, "cmd_blockInWalkableRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
 int KyraEngine::cmd_blockOutWalkableRegion(ScriptState *script) {
-	debug(9, "cmd_blockOutWalkableRegion(0x%X)", script);
+	debug(9, "cmd_blockOutWalkableRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
 int KyraEngine::cmd_walkPlayerToPoint(ScriptState *script) {
-	debug(9, "cmd_walkPlayerToPoint(0x%X)", script);
+	debug(3, "cmd_walkPlayerToPoint(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
 	if (!stackPos(2)) {
 		disableTimer(19);
@@ -395,7 +395,7 @@ int KyraEngine::cmd_walkPlayerToPoint(ScriptState *script) {
 }
 
 int KyraEngine::cmd_dropItemInScene(ScriptState *script) {
-	debug(9, "cmd_dropItemInScene(0x%X)", script);
+	debug(3, "cmd_dropItemInScene(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
 	int item = stackPos(0);
 	int xpos = stackPos(1);
 	int ypos = stackPos(2);
@@ -422,12 +422,26 @@ int KyraEngine::cmd_dropItemInScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_drawAnimShapeIntoScene(ScriptState *script) {
-	warning("STUB: cmd_drawAnimShapeIntoScene");
+	debug(3, "cmd_drawAnimShapeIntoScene(0x%X) (%d, %d, %d, %d)", stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_screen->hideMouse();
+	restoreAllObjectBackgrounds();
+	int shape = stackPos(0);
+	int xpos = stackPos(1);
+	int ypos = stackPos(2);
+	int flags = (stackPos(3) != 0) ? 1 : 0;
+	_screen->drawShape(2, _sprites->_sceneShapes[shape], xpos, ypos, 0, flags);
+	_screen->drawShape(0, _sprites->_sceneShapes[shape], xpos, ypos, 0, flags);
+	flagAllObjectsForBkgdChange();
+	preserveAnyChangedBackgrounds();
+	flagAllObjectsForRefresh();
+	updateAllObjectShapes();
+	_screen->showMouse();
 	return 0;
 }
 
 int KyraEngine::cmd_createMouseItem(ScriptState *script) {
-	warning("STUB: cmd_createMouseItem");
+	debug(3, "cmd_createMouseItem(0x%X) (%d)", stackPos(0));
+	createMouseItem(stackPos(0));
 	return 0;
 }
 
@@ -437,13 +451,13 @@ int KyraEngine::cmd_savePageToDisk(ScriptState *script) {
 }
 
 int KyraEngine::cmd_sceneAnimOn(ScriptState *script) {
-	debug(9, "cmd_sceneAnimOn(0x%X)", script);
+	debug(3, "cmd_sceneAnimOn(0x%X) (%d)", script, stackPos(0));
 	_sprites->_anims[stackPos(0)].play = true;
 	return 0;
 }
 
 int KyraEngine::cmd_sceneAnimOff(ScriptState *script) {
-	debug(9, "cmd_sceneAnimOff(0x%X)", script);
+	debug(3, "cmd_sceneAnimOff(0x%X) (%d)", script, stackPos(0));
 	_sprites->_anims[stackPos(0)].play = false;
 	return 0;
 }
@@ -454,12 +468,16 @@ int KyraEngine::cmd_getElapsedSeconds(ScriptState *script) {
 }
 
 int KyraEngine::cmd_mouseIsPointer(ScriptState *script) {
-	warning("STUB: cmd_mouseIsPointer");
+	debug(3, "cmd_mouseIsPointer(0x%X) ()", script);
+	if (_itemInHand == -1) {
+		return 1;
+	}
 	return 0;
 }
 
 int KyraEngine::cmd_destroyMouseItem(ScriptState *script) {
-	warning("STUB: cmd_destroyMouseItem");
+	debug(3, "cmd_destroyMouseItem(0x%X) ()", script);
+	destroyMouseItem();
 	return 0;
 }
 
@@ -509,7 +527,7 @@ int KyraEngine::cmd_sceneToDirection(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setBirthstoneGem(ScriptState *script) {
-	debug(9, "cmd_setBirthstoneGem(0x%X)", script);
+	debug(3, "cmd_setBirthstoneGem(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	int index = stackPos(0);
 	if (index < 4 && index >= 0) {
 		_birthstoneGemTable[index] = stackPos(1);
@@ -519,7 +537,7 @@ int KyraEngine::cmd_setBirthstoneGem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_placeItemInGenericMapScene(ScriptState *script) {
-	debug(9, "cmd_placeItemInGenericMapScene(0x%X)", script);
+	debug(3, "cmd_placeItemInGenericMapScene(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	placeItemInGenericMapScene(stackPos(0), stackPos(1));
 	return 0;
 }
@@ -530,7 +548,7 @@ int KyraEngine::cmd_setBrandonStatusBit(ScriptState *script) {
 }
 
 int KyraEngine::cmd_pauseSeconds(ScriptState *script) {
-	debug(9, "cmd_pauseSeconds(0x%X)", script);
+	debug(3, "cmd_pauseSeconds(0x%X) (%d)", script, stackPos(0));
 	delay(stackPos(0)*1000);
 	return 0;
 }
@@ -551,13 +569,14 @@ int KyraEngine::cmd_magicOutMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_internalAnimOn(ScriptState *script) {
-	debug(9, "cmd_internalAnimOn(0x%X)", script);
+	debug(3, "cmd_internalAnimOn(0x%X) (%d)", script, stackPos(0));
 	_sprites->_animObjects[stackPos(0)].active = 1;
 	return 0;
 }
 
 int KyraEngine::cmd_forceBrandonToNormal(ScriptState *script) {
-	warning("STUB: cmd_forceBrandonToNormal");
+	debug(3, "cmd_forceBrandonToNormal(0x%X) ()", script);
+	setTimer19();
 	return 0;
 }
 
@@ -572,26 +591,19 @@ int KyraEngine::cmd_setScaleMode(ScriptState *script) {
 }
 
 int KyraEngine::cmd_openWSAFile(ScriptState *script) {
-	debug(9, "cmd_openWSAFile(0x%X)", script);
+	debug(3, "cmd_openWSAFile(0x%X) ('%s', %d)", script, stackPosString(0), stackPos(1));
 	
 	char *filename = stackPosString(0);
 	int wsaIndex = stackPos(1);
-	// stackPos(2) is NOT used whyever
-	int offscreenDecode = 0;
-	if (!stackPos(3)) {
-		offscreenDecode = 1;
-	} else {
-		offscreenDecode = 0;
-	}
 	
-	_wsaObjects[wsaIndex] = wsa_open(filename, offscreenDecode, 0);
+	_wsaObjects[wsaIndex] = wsa_open(filename, 1, 0);
 	assert(_wsaObjects[wsaIndex]);
 	
 	return 0;
 }
 
 int KyraEngine::cmd_closeWSAFile(ScriptState *script) {
-	debug(9, "cmd_closeWSAFile(0x%X)", script);
+	debug(3, "cmd_closeWSAFile(0x%X) (%d)", script, stackPos(0));
 	
 	int wsaIndex = stackPos(0);
 	if (_wsaObjects[wsaIndex]) {
@@ -603,7 +615,7 @@ int KyraEngine::cmd_closeWSAFile(ScriptState *script) {
 }
 
 int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
-	debug(9, "cmd_runWSAFromBeginningToEnd(0x%X)", script);
+	debug(3, "cmd_runWSAFromBeginningToEnd(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	
 	_screen->hideMouse();
 	
@@ -620,13 +632,13 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 		wsa_play(_wsaObjects[wsaIndex], wsaFrame++, xpos, ypos, 0);
 		if (wsaFrame >= wsa_getNumFrames(_wsaObjects[wsaIndex]))
 			running = false;
-			
+		
 		waitTicks(waitTime);
-		_screen->updateScreen();
 		if (worldUpdate) {
+			_sprites->updateSceneAnims();
 			updateAllObjectShapes();
-			// XXX
 		}
+		_screen->updateScreen();
 	}
 	
 	_screen->showMouse();
@@ -635,18 +647,30 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 }
 
 int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
-	warning("STUB: cmd_displayWSAFrame");
+	debug(3, "cmd_displayWSAFrame(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	int frame = stackPos(0);
+	int xpos = stackPos(1);
+	int ypos = stackPos(2);
+	int waitTime = stackPos(3);
+	int wsaIndex = stackPos(4);
+	_screen->hideMouse();
+	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+	waitTicks(waitTime);
+	_sprites->updateSceneAnims();
+	updateAllObjectShapes();
+	_screen->updateScreen();
+	_screen->showMouse();
 	return 0;
 }
 
 int KyraEngine::cmd_enterNewScene(ScriptState *script) {
-	debug(9, "cmd_enterNewScene(0x%X)", script);
+	debug(3, "cmd_enterNewScene(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	enterNewScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	return 0;
 }
 
 int KyraEngine::cmd_setSpecialEnterXAndY(ScriptState *script) {
-	debug(9, "cmd_setSpecialEnterXAndY(0x%X)", script);
+	debug(3, "cmd_setSpecialEnterXAndY(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	_brandonPosX = stackPos(0);
 	_brandonPosY = stackPos(1);
 	if (_brandonPosX + 1 == 0 && _brandonPosY + 1 == 0)
@@ -660,7 +684,7 @@ int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
 }
 
 int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
-	debug(9, "cmd_popBrandonIntoScene(0x%X)", script);
+	debug(3, "cmd_popBrandonIntoScene(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int changeScaleMode = stackPos(3);
 	int xpos = stackPos(0) & 0xFFFC;
 	int ypos = stackPos(1) & 0xFFFE;
@@ -710,7 +734,7 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_restoreAllObjectBackgrounds(ScriptState *script) {
-	debug(9, "cmd_restoreAllObjectBackgrounds(0x%X)", script);
+	debug(3, "cmd_restoreAllObjectBackgrounds(0x%X) ()", script);
 	restoreAllObjectBackgrounds();
 	return 0;
 }
@@ -726,39 +750,41 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 }
 
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
-	warning("STUB: cmd_customPrintTalkString");
+	debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
+	printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
 	return 0;
 }
 
 int KyraEngine::cmd_restoreCustomPrintBackground(ScriptState *script) {
-	warning("STUB: cmd_restoreCustomPrintBackground");
+	debug(3, "cmd_restoreCustomPrintBackground(0x%X) ()", script);
+	restoreTalkTextMessageBkgd(2, 0);
 	return 0;
 }
 
 int KyraEngine::cmd_hideMouse(ScriptState *script) {
-	debug(9, "cmd_hideMouse(0x%X)", script);
+	debug(3, "cmd_hideMouse(0x%X) ()", script);
 	_screen->hideMouse();
 	return 0;
 }
 
 int KyraEngine::cmd_showMouse(ScriptState *script) {
-	debug(9, "cmd_showMouse(0x%X)", script);
+	debug(3, "cmd_showMouse(0x%X) ()", script);
 	_screen->showMouse();
 	return 0;
 }
 
 int KyraEngine::cmd_getCharacterX(ScriptState *script) {
-	debug(9, "cmd_getCharacterX(0x%X)", script);
+	debug(3, "cmd_getCharacterX(0x%X) (%d)", script, stackPos(0));
 	return _characterList[stackPos(0)].x1;
 }
 
 int KyraEngine::cmd_getCharacterY(ScriptState *script) {
-	debug(9, "cmd_getCharacterY(0x%X)", script);
+	debug(3, "cmd_getCharacterY(0x%X) (%d)", script, stackPos(0));
 	return _characterList[stackPos(0)].y1;
 }
 
 int KyraEngine::cmd_changeCharactersFacing(ScriptState *script) {
-	debug(9, "cmd_changeCharactersFacing(0x%X)", script);
+	debug(3, "cmd_changeCharactersFacing(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
 	int character = stackPos(0);
 	int facing = stackPos(1);
 	int newAnimFrame = stackPos(2);
@@ -776,8 +802,15 @@ int KyraEngine::cmd_changeCharactersFacing(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::cmd_CopyWSARegion(ScriptState *script) {
-	warning("STUB: cmd_CopyWSARegion");
+int KyraEngine::cmd_copyWSARegion(ScriptState *script) {
+	debug(3, "cmd_copyWSARegion(0x%X) (%d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	int xpos = stackPos(0);
+	int ypos = stackPos(1);
+	int width = stackPos(2);
+	int height = stackPos(3);
+	int srcPage = stackPos(4);
+	int dstPage = stackPos(5);
+	_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, srcPage, dstPage, 0);
 	return 0;
 }
 
@@ -787,7 +820,7 @@ int KyraEngine::cmd_printText(ScriptState *script) {
 }
 
 int KyraEngine::cmd_random(ScriptState *script) {
-	debug(9, "cmd_random(0x%X)", script);
+	debug(3, "cmd_random(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
@@ -803,12 +836,50 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 }
 
 int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
-	warning("STUB: cmd_displayWSASequentialFrames");
+	debug(3, "cmd_displayWSASequentialFrames(0x%X) (%d, %d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
+	int startFrame = stackPos(0);
+	int endFrame = stackPos(1);
+	int xpos = stackPos(2);
+	int ypos = stackPos(3);
+	int waitTime = stackPos(4);
+	int wsaIndex = stackPos(5);
+	int maxTime = stackPos(6);
+	if (maxTime - 1 <= 0)
+		maxTime = 1;
+	
+	int curTime = 0;
+	_screen->hideMouse();
+	while (curTime < maxTime) {
+		if (endFrame >= startFrame) {
+			int frame = startFrame;
+			while (endFrame >= frame) {
+				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+				// XXX
+				waitTicks(waitTime);
+				_sprites->updateSceneAnims();
+				updateAllObjectShapes();
+				++frame;
+			}
+		} else {
+			int frame = endFrame;
+			while (startFrame <= frame) {
+				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+				// XXX
+				waitTicks(waitTime);
+				_sprites->updateSceneAnims();
+				updateAllObjectShapes();
+				--frame;
+			}
+		}
+		++curTime;
+	}
+	_screen->showMouse();
+	
 	return 0;
 }
 
 int KyraEngine::cmd_drawCharacterStanding(ScriptState *script) {
-	debug(9, "cmd_drawCharacterStanding(0x%X)", script);
+	debug(3, "cmd_drawCharacterStanding(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int character = stackPos(0);
 	int animFrame = stackPos(1);
 	int newFacing = stackPos(2);
@@ -825,7 +896,7 @@ int KyraEngine::cmd_drawCharacterStanding(ScriptState *script) {
 }
 
 int KyraEngine::cmd_internalAnimOff(ScriptState *script) {
-	debug(9, "cmd_internalAnimOff(0x%X)", script);
+	debug(3, "cmd_internalAnimOff(0x%X) (%d)", script, stackPos(0));
 	_sprites->_animObjects[stackPos(0)].active = 0;
 	return 0;
 }
@@ -851,7 +922,7 @@ int KyraEngine::cmd_refreshSceneAnimator(ScriptState *script) {
 }
 
 int KyraEngine::cmd_placeItemInOffScene(ScriptState *script) {
-	debug(9, "cmd_placeItemInOffScene(0x%X)", script);
+	debug(3, "cmd_placeItemInOffScene(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int item = stackPos(0);
 	int xpos = stackPos(1);
 	int ypos = stackPos(2);
@@ -870,12 +941,16 @@ int KyraEngine::cmd_placeItemInOffScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_wipeDownMouseItem(ScriptState *script) {
-	warning("STUB: cmd_wipeDownMouseItem");
+	debug(3, "cmd_wipeDownMouseItem(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
+	_screen->hideMouse();
+	wipeDownMouseItem(stackPos(1), stackPos(2));
+	destroyMouseItem();
+	_screen->showMouse();
 	return 0;
 }
 
 int KyraEngine::cmd_placeCharacterInOtherScene(ScriptState *script) {
-	debug(9, "cmd_placeCharacterInOtherScene(0x%X)", script);
+	debug(3, "cmd_placeCharacterInOtherScene(0x%X) (%d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int id = stackPos(0);
 	int sceneId = stackPos(1);
 	int xpos = stackPos(2) & 0xFFFC;
@@ -927,7 +1002,7 @@ int KyraEngine::cmd_setCharactersLocation(ScriptState *script) {
 }
 
 int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
-	debug(9, "cmd_walkCharacterToPoint(0x%X)", script);
+	debug(3, "cmd_walkCharacterToPoint(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
 	int character = stackPos(0);
 	int toX = stackPos(1);
 	int toY = stackPos(2);
@@ -992,18 +1067,18 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 			continue;
 		}
 		
-		nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 		setCharacterPosition(character, 0);
 		++curPos;
 
+		nextFrame = getTimerDelay(5 + character) * _tickLength + _system->getMillis();
 		while (_system->getMillis() < nextFrame) {
 			_sprites->updateSceneAnims();
-			// XXX updateMouseCursor();
+			updateMousePointer();
 			updateGameTimers();
 			updateAllObjectShapes();
 			// XXX processPalette();
 			if ((nextFrame - _system->getMillis()) >= 10)
-				_system->delayMillis(10);
+				delay(10);
 		}
 	}
 	return 0;
@@ -1035,7 +1110,7 @@ int KyraEngine::cmd_preserveAllObjectBackgrounds(ScriptState *script) {
 }
 
 int KyraEngine::cmd_updateSceneAnimations(ScriptState *script) {
-	debug(9, "cmd_updateSceneAnimations(0x%X)", script);
+	debug(3, "cmd_updateSceneAnimations(0x%X) (%d)", script, stackPos(0));
 	if (stackPos(0)) {
 		_sprites->updateSceneAnims();
 		updateAllObjectShapes();
@@ -1044,7 +1119,7 @@ int KyraEngine::cmd_updateSceneAnimations(ScriptState *script) {
 }
 
 int KyraEngine::cmd_sceneAnimationActive(ScriptState *script) {
-	debug(9, "cmd_sceneAnimationActive(0x%X)", script);
+	debug(3, "cmd_sceneAnimationActive(0x%X) (%d)", script, stackPos(0));
 	return _sprites->_anims[stackPos(0)].play;
 }
 
@@ -1054,8 +1129,8 @@ int KyraEngine::cmd_setCharactersMovementDelay(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getCharactersFacing(ScriptState *script) {
-	warning("STUB: cmd_getCharactersFacing");
-	return 0;
+	debug(9, "cmd_getCharactersFacing(0x%X) (%d)", script, stackPos(0));
+	return _characterList[stackPos(0)].facing;
 }
 
 int KyraEngine::cmd_bkgdScrollSceneAndMasksRight(ScriptState *script) {
@@ -1119,12 +1194,12 @@ int KyraEngine::cmd_setSceneFile(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getItemInMarbleVase(ScriptState *script) {
-	warning("STUB: cmd_getItemInMarbleVase");
-	return 0;
+	debug(3, "cmd_getItemInMarbleVase(0x%X) ()", script);
+	return _marbleVaseItem;
 }
 
 int KyraEngine::cmd_setItemInMarbleVase(ScriptState *script) {
-	debug(9, "cmd_setItemInMarbleVase(0x%X)", script);
+	debug(3, "cmd_setItemInMarbleVase(0x%X) (%d)", script, stackPos(0));
 	_marbleVaseItem = stackPos(0);
 	return 0;
 }
@@ -1150,7 +1225,7 @@ int KyraEngine::cmd_createAmuletJewel(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setSceneAnimCurrXY(ScriptState *script) {
-	debug(9, "cmd_setSceneAnimCurrXY(0x%X)", script);
+	debug(3, "cmd_setSceneAnimCurrXY(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
 	_sprites->_anims[stackPos(0)].x = stackPos(1);
 	_sprites->_anims[stackPos(0)].y = stackPos(2);
 	return 0;
@@ -1197,7 +1272,7 @@ int KyraEngine::cmd_getIdolGem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setIdolGem(ScriptState *script) {
-	debug(9, "cmd_setIdolGem(0x%X)", script);
+	debug(3, "cmd_setIdolGem(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	_idolGemsTable[stackPos(0)] = stackPos(1);
 	return 0;
 }
@@ -1213,22 +1288,25 @@ int KyraEngine::cmd_restoreBrandonsMovementDelay(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setMousePos(ScriptState *script) {
-	warning("STUB: cmd_setMousePos");
+	debug(3, "cmd_setMousePos(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	_system->warpMouse(stackPos(0), stackPos(1));
+	_mouseX = stackPos(0);
+	_mouseY = stackPos(1);
 	return 0;
 }
 
 int KyraEngine::cmd_getMouseState(ScriptState *script) {
-	warning("STUB: cmd_getMouseState");
-	return 0;
+	debug(3, "cmd_getMouseState(0x%X) ()", script);
+	return _mouseState;
 }
 
 int KyraEngine::cmd_setEntranceMouseCursorTrack(ScriptState *script) {
-	debug(9, "cmd_setEntranceMouseCursorTrack(0x%X)", script);
+	debug(3, "cmd_setEntranceMouseCursorTrack(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	_entranceMouseCursorTracks[0] = stackPos(0);
 	_entranceMouseCursorTracks[1] = stackPos(1);
 	_entranceMouseCursorTracks[2] = stackPos(0) + stackPos(2) - 1;
 	_entranceMouseCursorTracks[3] = stackPos(1) + stackPos(3) - 1;
-	_entranceMouseCursorTracks[4] = stackPos(3);
+	_entranceMouseCursorTracks[4] = stackPos(4);
 	return 0;
 }
 
@@ -1329,7 +1407,7 @@ int KyraEngine::cmd_setFoyerItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setNoItemDropRegion(ScriptState *script) {
-	debug(9, "cmd_setNoItemDropRegion(0x%X)", script);
+	debug(3, "cmd_setNoItemDropRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	addToNoDropRects(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 0;
 }
@@ -1385,7 +1463,7 @@ int KyraEngine::cmd_fillRect(ScriptState *script) {
 }
 
 int KyraEngine::cmd_dummy(ScriptState *script) {
-	debug(9, "cmd_dummy(0x%X)", script);
+	debug(3, "cmd_dummy(0x%X) ()", script);
 	return 0;
 }
 
