@@ -221,25 +221,53 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 
 	if (_showPreposition) {
 		switch (_language) {
-		case 21: verb_prep_names = russian_verb_prep_names; break;
-		case 20: verb_prep_names = hebrew_verb_prep_names; break;
-		case  5: verb_prep_names = spanish_verb_prep_names; break;
-		case  3: verb_prep_names = italian_verb_prep_names; break;
-		case  2: verb_prep_names = french_verb_prep_names; break;
-		case  1: verb_prep_names = german_verb_prep_names; break;
-		default: verb_prep_names = english_verb_prep_names; break;
+		case Common::RU_RUS:
+			verb_prep_names = russian_verb_prep_names;
+			break;
+		case Common::HB_ISR:
+			verb_prep_names = hebrew_verb_prep_names;
+			break;
+		case Common::ES_ESP:
+			verb_prep_names = spanish_verb_prep_names;
+			break;
+		case Common::IT_ITA:
+			verb_prep_names = italian_verb_prep_names; 
+			break;
+		case Common::FR_FRA:
+			verb_prep_names = french_verb_prep_names;
+			break;
+		case Common::DE_DEU:
+			verb_prep_names = german_verb_prep_names;
+			break;
+		default: 
+			verb_prep_names = english_verb_prep_names;
+			break;
 		}
 		CHECK_BOUNDS(hitarea_id, english_verb_prep_names);
 		txt = verb_prep_names[hitarea_id];
 	} else {
 		switch (_language) {
-		case 21: verb_names = russian_verb_names; break;
-		case 20: verb_names = hebrew_verb_names; break;
-		case  5: verb_names = spanish_verb_names; break;
-		case  3: verb_names = italian_verb_names; break;
-		case  2: verb_names = french_verb_names; break;
-		case  1: verb_names = german_verb_names; break;
-		default: verb_names = english_verb_names; break;
+		case Common::RU_RUS:
+			verb_names = russian_verb_names;
+			break;
+		case Common::HB_ISR:
+			verb_names = hebrew_verb_names;
+			break;
+		case Common::ES_ESP:
+			verb_names = spanish_verb_names;
+			break;
+		case Common::IT_ITA:
+			verb_names = italian_verb_names;
+			break;
+		case Common::FR_FRA:
+			verb_names = french_verb_names;
+			break;
+		case Common::DE_DEU:
+			verb_names = german_verb_names;
+			break;
+		default: 
+			verb_names = english_verb_names;
+			break;
 		}
 		CHECK_BOUNDS(hitarea_id, english_verb_names);
 		txt = verb_names[hitarea_id];

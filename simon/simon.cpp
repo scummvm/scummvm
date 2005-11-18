@@ -574,7 +574,7 @@ int SimonEngine::init(GameDetector &detector) {
 	if ((getGameType() == GType_SIMON2) && ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute") == 1)
 		_speech = 0;
 
-	if ((getGameType() == GType_SIMON1 && _language > 1) || ((getGameType() == GType_SIMON2) && _language == 20)) {
+	if ((getGameType() == GType_SIMON1 && _language > 1) || ((getGameType() == GType_SIMON2) && _language == Common::HB_ISR)) {
 		if (ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles") == 0)
 			_subtitles = 0;
 	} else
@@ -2636,7 +2636,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 	// caused several glitches in this scene.
 	// We work around the problem by correcting the code_ptr for sprite
 	// 200 in this scene, if it is wrong.
-	if (getGameType() == GType_SIMON1 && _language == 2 &&
+	if (getGameType() == GType_SIMON1 && _language == Common::FR_FRA &&
 		(code_ptr - _vgaBufferPointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
 		code_ptr += 0x66;
 
@@ -3444,7 +3444,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 			}
 			_skipVgaWait = true;
 		} else {
-			if (_subtitles && _language != 20) {
+			if (_subtitles && _language != Common::HB_ISR) {
 				_sound->playVoice(speech_id);
 				return;
 			} else if (_subtitles && _scriptVar2) {
@@ -3990,7 +3990,7 @@ int SimonEngine::go() {
 
 	if (getFeatures() & GF_TALKIE) {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		if (getGameType() == GType_SIMON1 && _language < 2)
+		if (getGameType() == GType_SIMON1 && (_language == Common::EN_USA || _language == Common::DE_DEU))
 			_subtitles = false;
 	} else {
 		_subtitles = true;

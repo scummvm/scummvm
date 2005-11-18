@@ -1914,7 +1914,7 @@ void SimonEngine::vc63_fastFadeIn() {
 
 void SimonEngine::vc64_skipIfSpeechEnded() {
 	// Simon2
-	if (!_sound->isVoiceActive() || (_subtitles && _language != 20))
+	if (!_sound->isVoiceActive() || (_subtitles && _language != Common::HB_ISR))
 		vc_skip_next_instruction();
 }
 

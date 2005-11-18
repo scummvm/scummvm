@@ -227,7 +227,7 @@ restart:;
 
 		fcs->textRow = unk132_result;
 
-		if (_language == 20) { //Hebrew
+		if (_language == Common::HB_ISR) { //Hebrew
 			// init x offset with a 2 character savegame number + a period (18 pix)
 			fcs->textColumn = 3;
 			fcs->textColumnOffset = 6;
@@ -244,7 +244,7 @@ restart:;
 		// now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			if (_language == 20) { //Hebrew
+			if (_language == Common::HB_ISR) { //Hebrew
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
 					width = _hebrew_char_widths [name[name_len] - 64];
@@ -309,7 +309,7 @@ restart:;
 					name_len--;
 					m = name[name_len];
 
-					if (_language == 20) //Hebrew
+					if (_language == Common::HB_ISR) //Hebrew
 						x = 8;
 					else
 						x = (name[name_len] == 'i' || name[name_len] == 'l') ? 1 : 8;
