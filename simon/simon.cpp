@@ -2671,7 +2671,7 @@ void SimonEngine::o_wait_for_vga(uint a) {
 	_exitCutscene = false;
 	_skipSpeech = false;
 	while (_vgaWaitFor != 0) {
-		if (_skipSpeech && getGameType() == GType_SIMON2) {
+		if (_skipSpeech && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
 			if (_vgaWaitFor == 200 && !vc_get_bit(14)) {
 				skip_speech();
 				break;
@@ -3204,7 +3204,7 @@ void SimonEngine::processSpecialKeys() {
 		vc_write_var(86, 2);
 		break;
 	case 63: // F5
-		if (getGameType() == GType_SIMON2)
+		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 			_exitCutscene = true;
 		break;
 	case 'p':
@@ -4100,7 +4100,7 @@ void SimonEngine::delay(uint amount) {
 #endif
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
-				if (getGameType() == GType_SIMON2)
+				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 					_skipSpeech = true;
 				else
 					_exitCutscene = true;

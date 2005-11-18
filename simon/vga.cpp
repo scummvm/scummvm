@@ -111,7 +111,7 @@ void SimonEngine::setupVgaOpcodes() {
 		&SimonEngine::vc76_setScaleXOffs,
 		&SimonEngine::vc77_setScaleYOffs,
 		&SimonEngine::vc78_computeXY,
-		&SimonEngine::vc79_pathUnk2,
+		&SimonEngine::vc79_computePosNum,
 		&SimonEngine::vc80_setOverlayImage,
 		&SimonEngine::vc81_setRandom,
 		&SimonEngine::vc82_pathUnk3,
@@ -751,6 +751,11 @@ void SimonEngine::vc10_draw() {
 
 		dx_unlock_attached();
 
+		return;
+	}
+
+	if (getGameType() == GType_FF && height > 480) {
+		debug(0, "Vertical scrolling not supported\n");
 		return;
 	}
 
@@ -1561,11 +1566,12 @@ void SimonEngine::vc48_setPathFinder() {
 
 	if (getGameType() == GType_FF) {
 		VgaSprite *vsp = find_cur_sprite();
-		int x, x2, y, y1, y2, ydiff, count = 0;
+		int16 x, x2, y, y1, y2, ydiff;
+		uint pos = 0;
 
-		while(vsp->x < readUint16Wrapper(p + 2)) {
+		while(vsp->x > readUint16Wrapper(p + 2)) {
 			p += 2;
-			count++;
+			pos++;
 		}
 
 		y1 = readUint16Wrapper(p + 1);
@@ -1593,7 +1599,7 @@ void SimonEngine::vc48_setPathFinder() {
 		//checkScrollY(y, diff);
 
 		_variableArray[11] = readUint16Wrapper(p);
-		_variableArray[13] = count;
+		_variableArray[13] = pos;
 	} else {
 		uint b = (uint16)_variableArray[13];
 		p += b * 2 + 1;
@@ -2056,12 +2062,15 @@ void SimonEngine::vc76_setScaleXOffs() {
 
 	// Scale X related
 	vsp->image = vc_read_next_word();
-	int xoffs = vc_read_next_word();
+	int16 xoffs = vc_read_next_word();
 	int var = vc_read_next_word();
 
+	vsp->x += xoffs;
 	vsp->flags = 0x40;
 
-	debug(0, "STUB: vc76_setScaleXOffs: image %d xoffs %d flag %d", vsp->image, xoffs, var);
+	_variableArray[var] = vsp->x;
+
+	debug(0, "STUB: vc76_setScaleXOffs: image %d xoffs %d var %d", vsp->image, xoffs, var);
 }
 
 void SimonEngine::vc77_setScaleYOffs() {
@@ -2069,12 +2078,15 @@ void SimonEngine::vc77_setScaleYOffs() {
 
 	// Scale Y related
 	vsp->image = vc_read_next_word();
-	int yoffs = vc_read_next_word();
+	int16 yoffs = vc_read_next_word();
 	int var = vc_read_next_word();
 
+	vsp->y += yoffs;
 	vsp->flags = 0x40;
 
-	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d flag %d", vsp->image, yoffs, var);
+	_variableArray[var] = vsp->y;
+
+	debug(0, "STUB: vc77_setScaleYOffs: image %d yoffs %d var %d", vsp->image, yoffs, var);
 }
 
 void SimonEngine::vc78_computeXY() {
@@ -2082,14 +2094,15 @@ void SimonEngine::vc78_computeXY() {
 
 	uint a = (uint16)_variableArray[12];
 	uint b = (uint16)_variableArray[13];
+
 	const uint16 *p = _pathFindArray[a - 1];
 	p += b * 2;
 
-	uint posx = readUint16Wrapper(p);
+	uint16 posx = readUint16Wrapper(p);
 	_variableArray[15] = posx;
 	vsp->x = posx;
 
-	uint posy = readUint16Wrapper(p + 1);
+	uint16 posy = readUint16Wrapper(p + 1);
 	_variableArray[16] = posy;
 	vsp->y = posy;
 
@@ -2099,9 +2112,18 @@ void SimonEngine::vc78_computeXY() {
 	}
 }
 
-void SimonEngine::vc79_pathUnk2() {
-	// Pathfinder related
-	debug(0, "STUB: vc79_pathUnk2");
+void SimonEngine::vc79_computePosNum() {
+	uint a = (uint16)_variableArray[12];
+	uint pos = 0;
+	const uint16 *p = _pathFindArray[a - 1];
+
+	int16 y = vc_read_next_word();
+	while(y > readUint16Wrapper(p + 1)) {
+		p += 2;
+		pos++;
+	}
+
+	_variableArray[13] = pos;
 }
 
 void SimonEngine::vc80_setOverlayImage() {
@@ -2125,6 +2147,7 @@ void SimonEngine::vc81_setRandom() {
 void SimonEngine::vc82_pathUnk3() {
 	// Set var to path position
 	int var = vc_read_next_word();
+
 	debug(0, "STUB: vc82_pathUnk3: var %d", var);
 }
 

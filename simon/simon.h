@@ -750,7 +750,7 @@ public:
 	void vc76_setScaleXOffs();
 	void vc77_setScaleYOffs();
 	void vc78_computeXY();
-	void vc79_pathUnk2();
+	void vc79_computePosNum();
 	void vc80_setOverlayImage();
 	void vc81_setRandom();
 	void vc82_pathUnk3();
