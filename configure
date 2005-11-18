@@ -884,10 +884,13 @@ fi
 #
 # Check whether plugin support is requested and possible
 #
-echocheck "Plugin support"
+echo_n "Checking whether building plugins was requested... "
+echo "$_build_plugins"
 _mak_plugins=
 _def_plugin=
+
 if test "$_build_plugins" = yes ; then
+    echo_n "Checking whether building plugins is supported... "
     case $_host_os in
 	linux*)
 _def_plugin='
@@ -947,8 +950,8 @@ LIBS            += -ldl
 		_def_plugin=
 	    ;;
     esac
+    echo "$_build_plugins"
 fi
-echo "$_build_plugins"
 
 
 #
