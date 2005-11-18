@@ -713,9 +713,8 @@ static SubstResFileNames substResFileNameTable[] = {
 #ifndef DISABLE_SCUMM_7_8
 	{ "dig.la0", "The Dig Data", kGenAsIs },
 	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
-	{ "dig", "digdemo", kGenPC },
 	{ "ft.la0", "Full Throttle Data", kGenAsIs },
-	{ "ftdemo.la0", "Full Throttle Demo Data", kGenAsIs },
+	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
 	{ "ft.la0", "ft.000", kGenAsIs },
