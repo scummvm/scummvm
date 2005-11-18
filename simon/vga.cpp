@@ -2168,7 +2168,7 @@ void SimonEngine::vc82_getPathValue() {
 
 	uint16 var = vc_read_next_word();
 
-	if (vc_get_bit(88) == true) {
+	if (vc_get_bit(82) == true) {
 		val = _pathValues1[_GPVCount1++];
 	} else {
 		val = _pathValues[_GPVCount++];
