@@ -715,7 +715,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
 	{ "dig", "digdemo", kGenPC },
 	{ "ft.la0", "Full Throttle Data", kGenAsIs },
-	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
+	{ "ftdemo.la0", "Full Throttle Demo Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
 	{ "ft.la0", "ft.000", kGenAsIs },
@@ -973,14 +973,15 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else
 		_fileHandle = new ScummFile();
 
-	// The mac versions of Sam&Max, DOTT, FT and The Dig used a special meta
-	// (container) file format to store the actual SCUMM data files. The
-	// rescumm utility used to be used to extract those files. While that is
-	// still possible, we now support reading those files directly.
-	// The first step is to check whether one of them is present (we do that
-	// here); the rest is handled by the  ScummFile class and code in
-	// openResourceFile() (and in the Sound class, for MONSTER.SOU handling).
-	if (_version >= 6 && _heversion == 0 && _substResFileNameIndex &&
+	// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
+	// special meta (container) file format to store the actual SCUMM data
+	// files. The rescumm utility used to be used to extract those files. 
+	// While that is still possible, we now support reading those files 
+	// directly. The first step is to check whether one of them is present
+	// (we do that here); the rest is handled by the  ScummFile class and 
+	// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
+	// handling).
+	if (_version >= 5 && _heversion == 0 && _substResFileNameIndex &&
 		_platform == Common::kPlatformMacintosh && 
 		substResFileNameTable[_substResFileNameIndex].genMethod == kGenAsIs) {
 		if (_fileHandle->open(substResFileNameTable[_substResFileNameIndex].macName)) {
