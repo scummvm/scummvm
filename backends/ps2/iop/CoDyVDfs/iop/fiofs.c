@@ -226,13 +226,14 @@ int cd_dread(iop_file_t *handle, iox_dirent_t *buf) {
 	int i;
 	for (i = hd->lbaOfs; i < NUM_SECTORS(hd->size); i++) {
 		if (i != hd->lbaOfs) {
-			hd->lbaOfs = i;
 			cdReadSectors(hd->lba + i, 1, hd->buf, &rmode);
+			hd->lbaOfs = i;
+			hd->curOfs = 0;
 		}
 		while ((hd->curOfs < SECTOR_SIZE) && ((ISODirectoryRecord *)(hd->buf + hd->curOfs))->len_dr) {
 			rec = (ISODirectoryRecord *)(hd->buf + hd->curOfs);
 			hd->curOfs += rec->len_dr;
-			if ((rec->len_fi != 1) || ((rec->name[0] == 0) && (rec->name[0] == 1))) { // skip '.' / '..'
+			if ((rec->len_fi != 1) || ((rec->name[0] != 0) && (rec->name[0] != 1))) { // skip '.' / '..'
 				memcpy(buf->name, rec->name, rec->len_fi);
 				if ((buf->name[rec->len_fi - 2] == ';') && (buf->name[rec->len_fi - 1] == '1'))
 					buf->name[rec->len_fi - 2] = '\0';

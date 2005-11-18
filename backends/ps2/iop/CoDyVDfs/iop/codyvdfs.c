@@ -99,7 +99,7 @@ ISODirectoryRecord *findEntryInCache(const char *name, int nameLen) {
 	for (i = 0; i < NUM_SECTORS(cachedDirSize); i++) {
 		entry = (ISODirectoryRecord *)cacheBuf;
 		if (i != cachedDirOfs) {
-			if (cdReadSectors(cachedDirLba + cachedDirOfs, 1, cacheBuf, &rmode) < 0)
+			if (cdReadSectors(cachedDirLba + i, 1, cacheBuf, &rmode) < 0)
 				return NULL;
             cachedDirOfs = i;
 		}
@@ -143,7 +143,7 @@ ISODirectoryRecord *findPath(const char *path) {
 		else
 			pathPos = findEntryInCache(path, strlen(path));
 
-		if (pathPos && tok && IS_DIR(pathPos))
+		if (pathPos && tok && tok[1] && IS_DIR(pathPos))
 			if (cacheEnterDir(pathPos) < 0)
 				return NULL;
 
