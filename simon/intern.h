@@ -106,9 +106,9 @@ enum {
 
 struct SubroutineLine {
 	uint16 next;
-	int16 cond_a;
-	int16 cond_b;
-	int16 cond_c;
+	int16 verb;
+	int16 noun1;
+	int16 noun2;
 };
 
 struct TimeEvent {

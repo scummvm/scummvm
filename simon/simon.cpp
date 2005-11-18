@@ -352,9 +352,11 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_scrollImage = 0;
 	_vgaVar8 = 0;
 
-	_scriptCondA = 0;
-	_scriptCondB = 0;
-	_scriptCondC = 0;
+	_scriptVerb = 0;
+	_scriptNoun1 = 0;
+	_scriptNoun2 = 0;
+	_scriptAdj1 = 0;
+	_scriptAdj2 = 0;
 
 	_curWindow = 0;
 	_textWindow = 0;
@@ -880,9 +882,9 @@ void SimonEngine::readSubroutineLine(File *in, SubroutineLine *sl, Subroutine *s
 	int size;
 
 	if (sub->id == 0) {
-		sl->cond_a = in->readUint16BE();
-		sl->cond_b = in->readUint16BE();
-		sl->cond_c = in->readUint16BE();
+		sl->verb = in->readUint16BE();
+		sl->noun1 = in->readUint16BE();
+		sl->noun2 = in->readUint16BE();
 	}
 
 	while ((*q = in->readByte()) != 0xFF) {
@@ -1557,7 +1559,7 @@ bool SimonEngine::kickoffTimeEvents() {
 void SimonEngine::invokeTimeEvent(TimeEvent *te) {
 	Subroutine *sub;
 
-	_scriptCondA = 0;
+	_scriptVerb = 0;
 	if (_runScriptReturn1)
 		return;
 	sub = getSubroutineByID(te->subroutine_id);
@@ -1579,9 +1581,11 @@ void SimonEngine::o_setup_cond_c() {
 		_objectItem = derefItem(getItem1Ptr()->parent);
 
 	if (_objectItem != NULL) {
-		_scriptCondC = _objectItem->noun;
+		_scriptNoun2 = _objectItem->noun;
+		_scriptAdj2 = _objectItem->adjective;
 	} else {
-		_scriptCondC = -1;
+		_scriptNoun2 = -1;
+		_scriptAdj2 = -1;
 	}
 }
 
@@ -2194,18 +2198,22 @@ void SimonEngine::handle_verb_clicked(uint verb) {
 	}
 
 	if (_subjectItem) {
-		_scriptCondB = _subjectItem->noun;
+		_scriptNoun1 = _subjectItem->noun;
+		_scriptAdj1 = _subjectItem->adjective;
 	} else {
-		_scriptCondB = -1;
+		_scriptNoun1 = -1;
+		_scriptAdj1 = -1;
 	}
 
 	if (_objectItem) {
-		_scriptCondC = _objectItem->noun;
+		_scriptNoun2 = _objectItem->noun;
+		_scriptAdj2 = _objectItem->adjective;
 	} else {
-		_scriptCondC = -1;
+		_scriptNoun2 = -1;
+		_scriptAdj2 = -1;
 	}
 
-	_scriptCondA = _verbHitArea;
+	_scriptVerb = _verbHitArea;
 
 	sub = getSubroutineByID(0);
 	if (sub == NULL)
@@ -2221,7 +2229,7 @@ void SimonEngine::handle_verb_clicked(uint verb) {
 	if (sub)
 		startSubroutine(sub);
 
-	if (getGameType() == GType_SIMON2)
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 		_runScriptReturn1 = false;
 
 	startUp_helper_2();
@@ -2661,13 +2669,13 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 	_lockWord &= ~1;
 }
 
-void SimonEngine::o_force_unlock() {
+void SimonEngine::o_mouseOn() {
 	if (getGameType() == GType_SIMON2 && _bitArray[4] & 0x8000)
 		_mouseCursor = 0;
 	_lockCounter = 0;
 }
 
-void SimonEngine::o_force_lock() {
+void SimonEngine::o_mouseOff() {
 	_lockWord |= 0x8000;
 	vc34_setMouseOff();
 	_lockWord &= ~0x8000;

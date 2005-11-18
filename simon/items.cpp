@@ -722,13 +722,15 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 130:{									/* set script cond */
+		case 130:{									/* set adj noun */
 				uint var = getVarOrByte();
-				getNextWord();
-				if (var == 1)
-					_scriptCondB = getNextWord();
-				else
-					_scriptCondC = getNextWord();
+				if (var == 1) {
+					_scriptAdj1 = getNextWord();
+					_scriptNoun1 = getNextWord();
+				} else {
+					_scriptAdj2 = getNextWord();
+					_scriptNoun2 = getNextWord();
+				}
 			}
 			break;
 
@@ -997,12 +999,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 180:{									/* force unlock */
-				o_force_unlock();
+				o_mouseOn();
 			}
 			break;
 
 		case 181:{									/* force lock */
-				o_force_lock();
+				o_mouseOff();
 				if (getGameType() == GType_SIMON2) {
 					changeWindow(1);
 					showMessageFormat("\xC");
@@ -1232,16 +1234,16 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 	if (sub->id)
 		return true;
 
-	if (sl->cond_a != -1 && sl->cond_a != _scriptCondA &&
-			(sl->cond_a != -2 || _scriptCondA != -1))
+	if (sl->verb != -1 && sl->verb != _scriptVerb &&
+			(sl->verb != -2 || _scriptVerb != -1))
 		return false;
 
-	if (sl->cond_b != -1 && sl->cond_b != _scriptCondB &&
-			(sl->cond_b != -2 || _scriptCondB != -1))
+	if (sl->noun1 != -1 && sl->noun1 != _scriptNoun1 &&
+			(sl->noun1 != -2 || _scriptNoun1 != -1))
 		return false;
 
-	if (sl->cond_c != -1 && sl->cond_c != _scriptCondC &&
-			(sl->cond_c != -2 || _scriptCondC != -1))
+	if (sl->noun2 != -1 && sl->noun2 != _scriptNoun2 &&
+			(sl->noun2 != -2 || _scriptNoun2 != -1))
 		return false;
 
 	return true;

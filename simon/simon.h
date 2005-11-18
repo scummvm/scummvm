@@ -264,7 +264,8 @@ protected:
 	const byte *_scrollImage;
 	byte _vgaVar8;
 
-	int16 _scriptCondA, _scriptCondB, _scriptCondC;
+	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
+	int16 _scriptAdj1, _scriptAdj2;
 
 	uint16 _curWindow;
 	FillOrCopyStruct *_textWindow;
@@ -566,8 +567,8 @@ protected:
 	void o_lockZone();
 	void o_unlockZone();
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
-	void o_force_unlock();
-	void o_force_lock();
+	void o_mouseOn();
+	void o_mouseOff();
 	void o_loadBeard();
 	void o_unloadBeard();
 	void o_clear_vgapointer_entry(uint a);

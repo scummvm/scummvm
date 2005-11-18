@@ -141,7 +141,7 @@ void SimonEngine::dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub) {
 
 	p = (byte *)sl + SUBROUTINE_LINE_SMALL_SIZE;
 	if (sub->id == 0) {
-		fprintf(_dumpFile, "; cond_a=%d, cond_b=%d, cond_c=%d\n", sl->cond_a, sl->cond_b, sl->cond_c);
+		fprintf(_dumpFile, "; verb=%d, noun1=%d, noun2=%d\n", sl->verb, sl->noun1, sl->noun2);
 		p = (byte *)sl + SUBROUTINE_LINE_BIG_SIZE;
 	}
 

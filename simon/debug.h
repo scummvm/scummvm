@@ -186,7 +186,7 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK_130",
+	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
 	"|SAVE_GAME",
@@ -249,8 +249,8 @@ static const char *const simon1dos_opcode_name_table[256] = {
 	"WWBB|PATHFIND",
 	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	"|LOAD_BEARD",
 	"|UNLOAD_BEARD",
 	/* 184 */
@@ -424,7 +424,7 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK_130",
+	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
 	"|SAVE_GAME",
@@ -487,8 +487,8 @@ static const char *const simon1talkie_opcode_name_table[256] = {
 	"WWBB|PATHFIND",
 	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	"|LOAD_BEARD",
 	"|UNLOAD_BEARD",
 	/* 184 */
@@ -662,7 +662,7 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK_130",
+	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
 	"|SAVE_GAME",
@@ -725,8 +725,8 @@ static const char *const simon2dos_opcode_name_table[256] = {
 	"WWBB|PATHFIND",
 	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	NULL,
 	NULL,
 	/* 184 */
@@ -904,7 +904,7 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK_130",
+	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
 	"|SAVE_GAME",
@@ -967,8 +967,8 @@ static const char *const simon2talkie_opcode_name_table[256] = {
 	"WWBB|PATHFIND",
 	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	NULL,
 	NULL,
 	/* 184 */
@@ -1146,7 +1146,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	/* 128 */
 	"W|GET_DUMMY_WORD",
 	"W|GET_WORD_COND_TRUE",
-	"Bww|UNK_130",
+	"Bww|SET_ADJ_NOUN",
 	NULL,
 	/* 132 */
 	"|SAVE_GAME",
@@ -1209,8 +1209,8 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"WWBB|PATHFIND",
 	"BBB|ROOM_DESCRIPTION",
 	/* 180 */
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	"T|LOAD_VIDEO",
 	"|PLAY_VIDEO",
 	/* 184 */
@@ -1278,8 +1278,8 @@ const char *const simon1_video_opcode_name_table[] = {
 	"d|SET_PALETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
@@ -1361,8 +1361,8 @@ const char *const simon2_video_opcode_name_table[] = {
 	"d|SET_PALETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
@@ -1458,8 +1458,8 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	"d|SET_PALETTE_MODE",
 	/* 32 */
 	"vv|COPY_VAR",
-	"|FORCE_UNLOCK",
-	"|FORCE_LOCK",
+	"|MOUSE_ON",
+	"|MOUSE_OFF",
 	"dd|VC35",
 	/* 36 */
 	"dd|SAVELOAD_THING",
@@ -1514,12 +1514,12 @@ const char *const feeblefiles_video_opcode_name_table[] = {
 	/* 76 */
 	"ddd|SETSCALEXOFFS",
 	"ddd|SETSCALEYOFFS",
-	"|PATHUNK1",
-	"|PATHUNK1",
+	"|COMPUTEXY",
+	"|COMPUTEPOSNUM",
 	/* 80 */
 	"ddd|SETOVERLAYIMAGE",
 	"dd|SETRANDOM",
-	"d|PATHUNK3",
+	"d|GETPATHVALUE",
 	"ddd|PLAYSOUNDLOOP",
 	"|STOPSOUNDLOOP",
 };
