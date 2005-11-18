@@ -176,7 +176,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 	dst += READ_BE_UINT32(p);
 
 	memset(dst, 0, count);
-	if (_language == 20)
+	if (_language == Common::HB_ISR)
 		dst += width - 1; // For Hebrew, start at the right edge, not the left.
 
 	dst_org = dst;
@@ -185,13 +185,13 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 			dst_org += width * 10;
 			dst = dst_org;
 		} else if ((chr -= ' ') == 0) {
-			dst += (_language == 20 ? -6 : 6); // Hebrew moves to the left, all others to the right
+			dst += (_language == Common::HB_ISR ? -6 : 6); // Hebrew moves to the left, all others to the right
 		} else {
 			byte *img_hdr = src + 48 + chr * 4;
 			uint img_height = img_hdr[2];
 			uint img_width = img_hdr[3], i;
 			byte *img = src + READ_LE_UINT16(img_hdr);
-			if (_language == 20)
+			if (_language == Common::HB_ISR)
 				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;
 
@@ -211,7 +211,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 				cur_dst += width;
 			} while (--img_height);
 
-			if (_language != 20) // Hebrew character movement is done higher up
+			if (_language != Common::HB_ISR) // Hebrew character movement is done higher up
 				dst += img_width - 1;
 		}
 	}
@@ -301,8 +301,8 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 		video_fill_or_copy_from_3_to_2(fcs);
 	} else if (c == 0xD || c == 0xA) {
 		video_putchar_newline(fcs);
-	} else if ((c == 1 && _language != 20) || (c == 8)) {
-		if (_language == 20) { //Hebrew
+	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
+		if (_language == Common::HB_ISR) { //Hebrew
 			if (b >= 64 && b < 91)
 				width = _hebrew_char_widths [b - 64];
 
@@ -334,7 +334,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 			fcs->textRow--;
 		}
 
-		if (_language == 20) { //Hebrew
+		if (_language == Common::HB_ISR) { //Hebrew
 			if (c >= 64 && c < 91)
 				width = _hebrew_char_widths [c - 64];
 			fcs->textColumnOffset  -= width;
@@ -371,6 +371,7 @@ void SimonEngine::video_putchar_newline(FillOrCopyStruct *fcs) {
 
 #ifdef PALMOS_68K
 static const byte *russian_video_font;
+static const byte *polish_video_font;
 static const byte *french_video_font;
 static const byte *german_video_font;
 static const byte *hebrew_video_font;
@@ -470,6 +471,107 @@ static const byte russian_video_font[] = {
 	0, 0, 72, 72, 72, 72, 60, 4,
 	0, 0, 76, 72, 72, 56, 8, 28,
 	0, 0, 84, 84, 84, 84, 60, 0,
+	32, 80, 0, 96, 144, 144, 96, 0,
+	0, 14, 8, 48, 8, 8, 14, 0,
+	0, 8, 8, 8, 8, 8, 8, 0,
+	0, 112, 16, 12, 16, 16, 112, 0,
+	0, 0, 0, 0, 0, 0, 248, 0,
+	252, 252, 252, 252, 252, 252, 252, 252,
+	240, 240, 240, 240, 240, 240, 240, 240,
+};
+
+static const byte polish_video_font[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	32, 112, 112, 32, 32, 0, 32, 0,
+	48, 48, 96, 0, 0, 0, 0, 0,
+	0, 0, 112, 136, 248, 128, 112, 8,
+	0, 16, 120, 128, 112, 8, 240, 0,
+	192, 64, 64, 96, 192, 64, 224, 0,
+	0, 16, 40, 16, 42, 68, 58, 0,
+	48, 48, 96, 0, 0, 0, 0, 0,
+	0, 4, 8, 8, 8, 8, 4, 0,
+	0, 32, 16, 16, 16, 16, 32, 0,
+	0, 0, 20, 8, 62, 8, 20, 0,
+	0, 32, 112, 136, 136, 136, 112, 0,
+	0, 0, 0, 0, 0, 48, 48, 96,
+	0, 0, 0, 240, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 48, 48, 0,
+	0, 32, 112, 136, 128, 136, 112, 0,
+	112, 136, 152, 168, 200, 136, 112, 0,
+	32, 96, 32, 32, 32, 32, 112, 0,
+	112, 136, 8, 48, 64, 136, 248, 0,
+	112, 136, 8, 48, 8, 136, 112, 0,
+	16, 48, 80, 144, 248, 16, 56, 0,
+	248, 128, 240, 8, 8, 136, 112, 0,
+	48, 64, 128, 240, 136, 136, 112, 0,
+	248, 136, 8, 16, 32, 32, 32, 0,
+	112, 136, 136, 112, 136, 136, 112, 0,
+	112, 136, 136, 120, 8, 16, 96, 0,
+	0, 0, 48, 48, 0, 48, 48, 0,
+	0, 32, 240, 136, 136, 136, 136, 0,
+	80, 0, 136, 136, 136, 136, 112, 0,
+	0, 32, 248, 144, 32, 72, 248, 0,
+	8, 32, 248, 144, 32, 72, 248, 0,
+	112, 136, 8, 16, 32, 0, 32, 0,
+	0, 0, 112, 8, 120, 136, 120, 4,
+	112, 136, 136, 248, 136, 136, 136, 0,
+	240, 72, 72, 112, 72, 72, 240, 0,
+	48, 72, 128, 128, 128, 72, 48, 0,
+	224, 80, 72, 72, 72, 80, 224, 0,
+	248, 72, 64, 112, 64, 72, 248, 0,
+	248, 72, 64, 112, 64, 64, 224, 0,
+	48, 72, 128, 152, 136, 72, 56, 0,
+	136, 136, 136, 248, 136, 136, 136, 0,
+	248, 32, 32, 32, 32, 32, 248, 0,
+	24, 8, 8, 8, 136, 136, 112, 0,
+	200, 72, 80, 96, 80, 72, 200, 0,
+	224, 64, 64, 64, 64, 72, 248, 0,
+	136, 216, 168, 168, 136, 136, 136, 0,
+	136, 200, 168, 152, 136, 136, 136, 0,
+	112, 136, 136, 136, 136, 136, 112, 0,
+	240, 72, 72, 112, 64, 64, 224, 0,
+	112, 136, 136, 136, 136, 168, 112, 8,
+	240, 72, 72, 112, 72, 72, 200, 0,
+	112, 136, 128, 112, 8, 136, 112, 0,
+	248, 168, 32, 32, 32, 32, 112, 0,
+	136, 136, 136, 136, 136, 136, 120, 0,
+	136, 136, 136, 80, 80, 32, 32, 0,
+	136, 136, 136, 136, 168, 216, 136, 0,
+	136, 136, 80, 32, 80, 136, 136, 0,
+	136, 136, 136, 112, 32, 32, 112, 0,
+	248, 136, 16, 32, 64, 136, 248, 0,
+	0, 14, 8, 8, 8, 8, 14, 0,
+	0, 128, 64, 32, 16, 8, 4, 0,
+	224, 64, 64, 96, 192, 72, 248, 0,
+	16, 120, 128, 112, 8, 136, 112, 0,
+	248, 72, 64, 112, 64, 72, 248, 16,
+	32, 248, 16, 32, 64, 136, 248, 0,
+	0, 0, 112, 8, 120, 136, 120, 0,
+	192, 64, 80, 104, 72, 72, 112, 0,
+	0, 0, 112, 136, 128, 136, 112, 0,
+	24, 16, 80, 176, 144, 144, 112, 0,
+	0, 0, 112, 136, 248, 128, 112, 0,
+	48, 72, 64, 224, 64, 64, 224, 0,
+	0, 0, 104, 144, 144, 112, 136, 112,
+	192, 64, 80, 104, 72, 72, 200, 0,
+	64, 0, 192, 64, 64, 64, 224, 0,
+	8, 0, 8, 8, 8, 8, 136, 112,
+	192, 64, 72, 80, 96, 80, 200, 0,
+	192, 64, 64, 64, 64, 64, 224, 0,
+	0, 0, 144, 216, 168, 136, 136, 0,
+	0, 0, 240, 136, 136, 136, 136, 0,
+	0, 0, 112, 136, 136, 136, 112, 0,
+	0, 0, 176, 72, 72, 112, 64, 224,
+	0, 0, 104, 144, 144, 112, 16, 56,
+	0, 0, 176, 72, 72, 64, 224, 0,
+	0, 0, 120, 128, 112, 8, 240, 0,
+	64, 64, 240, 64, 64, 72, 48, 0,
+	0, 0, 144, 144, 144, 144, 104, 0,
+	0, 0, 136, 136, 136, 80, 32, 0,
+	0, 0, 136, 136, 168, 216, 144, 0,
+	0, 0, 136, 80, 32, 80, 136, 0,
+	0, 0, 136, 136, 136, 112, 32, 192,
+	0, 0, 248, 144, 32, 72, 248, 0,
 	32, 80, 0, 96, 144, 144, 96, 0,
 	0, 14, 8, 48, 8, 8, 14, 0,
 	0, 8, 8, 8, 8, 8, 8, 0,
@@ -1096,20 +1198,34 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 	dst = dx_lock_2();
 	dst += y * _dxSurfacePitch + x * 8 + fcs->textColumnOffset;
 
-	if (_language == 21) {
+	switch(_language == 21) {
+	case Common::RU_RUS:
 		src = russian_video_font + (chr - 0x20) * 8;
-	} else if (_language == 20) {
+		break;
+	case Common::PL_POL:
+		src = polish_video_font + (chr - 0x20) * 8;
+		break;
+	case Common::HB_ISR:
 		src = hebrew_video_font + (chr - 0x20) * 8;
-	} else if (_language == 5) {
+		break;
+	case Common::ES_ESP:
 		src = spanish_video_font + (chr - 0x20) * 8;
-	} else if (_language == 3) {
+		break;
+	case Common::IT_ITA:
 		src = italian_video_font + (chr - 0x20) * 8;
-	} else if (_language == 2) {
+		break;
+	case Common::FR_FRA:
 		src = french_video_font + (chr - 0x20) * 8;
-	} else if (_language == 1) {
+		break;
+	case Common::DE_DEU:
 		src = german_video_font + (chr - 0x20) * 8;
-	} else
+		break;
+	case Common::EN_USA:
 		src = video_font + (chr - 0x20) * 8;
+		break;
+	default:
+		error("video_putchar_drawchar: Unknown language %d\n", _language);
+	}
 
 	color = fcs->text_color;
 
@@ -1137,6 +1253,7 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 
 _GINIT(Simon_Charset)
 _GSETPTR(Simon::russian_video_font, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_SIMON)
+_GSETPTR(Simon::polish_video_font, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_SIMON)
 _GSETPTR(Simon::french_video_font, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_SIMON)
 _GSETPTR(Simon::german_video_font, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_SIMON)
 _GSETPTR(Simon::hebrew_video_font, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_SIMON)
@@ -1147,6 +1264,7 @@ _GEND
 
 _GRELEASE(Simon_Charset)
 _GRELEASEPTR(GBVARS_RUSSIANVIDEOFONT_INDEX, GBVARS_SIMON)
+_GRELEASEPTR(GBVARS_POLISHVIDEOFONT_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_FRENCHVIDEOFONT_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_GERMANVIDEOFONT_INDEX, GBVARS_SIMON)
 _GRELEASEPTR(GBVARS_HEBREWVIDEOFONT_INDEX, GBVARS_SIMON)

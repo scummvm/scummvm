@@ -660,19 +660,19 @@ int SimonEngine::init(GameDetector &detector) {
 	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
 		// Add default file directories
 		switch (_language) {
-		case 20:
+		case Common::HB_ISR:
 			File::addDefaultDirectory(_gameDataPath + "hebrew/");
 			File::addDefaultDirectory(_gameDataPath + "HEBREW/");
 			break;
-		case  5:
+		case  Common::ES_ESP:
 			File::addDefaultDirectory(_gameDataPath + "spanish/");
 			File::addDefaultDirectory(_gameDataPath + "SPANISH/");
 			break;
-		case  3:
+		case  Common::IT_ITA:
 			File::addDefaultDirectory(_gameDataPath + "italian/");
 			File::addDefaultDirectory(_gameDataPath + "ITALIAN/");
 			break;
-		case  2:
+		case  Common::FR_FRA:
 			File::addDefaultDirectory(_gameDataPath + "french/");
 			File::addDefaultDirectory(_gameDataPath + "FRENCH/");
 			break;
