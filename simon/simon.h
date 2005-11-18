@@ -379,11 +379,11 @@ protected:
 
 	const uint16 *_pathFindArray[100];
 
-	uint8 _pathValues[100];
+	uint8 _pathValues[400];
 	uint8 _PVCount;
 	uint8 _GPVCount;
 
-	uint8 _pathValues1[100];
+	uint8 _pathValues1[400];
 	uint8 _PVCount1;
 	uint8 _GPVCount1;
 
