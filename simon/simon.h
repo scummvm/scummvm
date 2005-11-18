@@ -379,6 +379,14 @@ protected:
 
 	const uint16 *_pathFindArray[100];
 
+	uint8 _pathValues[100];
+	uint8 _PVCount;
+	uint8 _GPVCount;
+
+	uint8 _pathValues1[100];
+	uint8 _PVCount1;
+	uint8 _GPVCount1;
+
 	uint8 _paletteBackup[1024];
 	uint8 _palette[1024];
 
@@ -753,7 +761,7 @@ public:
 	void vc79_computePosNum();
 	void vc80_setOverlayImage();
 	void vc81_setRandom();
-	void vc82_pathUnk3();
+	void vc82_getPathValue();
 	void vc83_playSoundLoop();
 	void vc84_stopSoundLoop();
 

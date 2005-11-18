@@ -1096,25 +1096,31 @@ int SimonEngine::runScript() {
 
 		// Feeble opcodes
 		case 191:
-			warning("STUB: script opcode 191");
 			if (_bitArray[5] & 0x0008) {
-				// Clear some variables
+				_PVCount1 = 0;
+				_GPVCount1 = 0;
 			} else {
-				// Clear some other variables
+				_PVCount = 0;
+				_GPVCount = 0;
 			}
 			break;
 
 		case 192:{
-				uint a = getVarOrByte();
-				uint b = getVarOrByte();
-				uint c = getVarOrByte();
-				uint d = getVarOrByte();
+				uint8 a = getVarOrByte();
+				uint8 b = getVarOrByte();
+				uint8 c = getVarOrByte();
+				uint8 d = getVarOrByte();
 				if (_bitArray[5] & 0x0008) {
-					// Set some variables
+					_pathValues1[_PVCount1++] = a;
+					_pathValues1[_PVCount1++] = b;
+					_pathValues1[_PVCount1++] = c;
+					_pathValues1[_PVCount1++] = d;
 				} else {
-					// Set some other variables
+					_pathValues[_PVCount++] = a;
+					_pathValues[_PVCount++] = b;
+					_pathValues[_PVCount++] = c;
+					_pathValues[_PVCount++] = d;
 				}
-				warning("STUB: script opcode 192 (%d, %d, %d, %d)", a, b, c, d);
 			}
 			break;
 

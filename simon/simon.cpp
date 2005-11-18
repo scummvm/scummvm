@@ -468,6 +468,14 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 
 	memset(_pathFindArray, 0, sizeof(_pathFindArray));
 
+	memset(_pathValues, 0, sizeof(_pathValues));
+	_PVCount = 0;
+	_GPVCount = 0;
+
+	memset(_pathValues1, 0, sizeof(_pathValues1));
+	_PVCount1 = 0;
+	_GPVCount1 = 0;
+
 	memset(_paletteBackup, 0, sizeof(_paletteBackup));
 	memset(_palette, 0, sizeof(_palette));
 

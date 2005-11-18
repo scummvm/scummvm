@@ -114,7 +114,7 @@ void SimonEngine::setupVgaOpcodes() {
 		&SimonEngine::vc79_computePosNum,
 		&SimonEngine::vc80_setOverlayImage,
 		&SimonEngine::vc81_setRandom,
-		&SimonEngine::vc82_pathUnk3,
+		&SimonEngine::vc82_getPathValue,
 		&SimonEngine::vc83_playSoundLoop,
 		&SimonEngine::vc84_stopSoundLoop,
 	};
@@ -2163,11 +2163,18 @@ void SimonEngine::vc81_setRandom() {
 	writeVariable(var, _rnd.getRandomNumber(value - 1));
 }
 
-void SimonEngine::vc82_pathUnk3() {
-	// Set var to path position
-	int var = vc_read_next_word();
+void SimonEngine::vc82_getPathValue() {
+	uint8 val;
 
-	debug(0, "STUB: vc82_pathUnk3: var %d", var);
+	uint16 var = vc_read_next_word();
+
+	if (vc_get_bit(88) == true) {
+		val = _pathValues1[_GPVCount1++];
+	} else {
+		val = _pathValues[_GPVCount++];
+	}
+
+	writeVariable(var, val);
 }
 
 void SimonEngine::vc83_playSoundLoop() {
