@@ -48,7 +48,11 @@ extern OSystem *OSystem_PalmZodiac_create();
 #define SAMPLES_PER_SEC_OLD 11025
 #define SAMPLES_PER_SEC_NEW 22050
 #elif defined(__SYMBIAN32__)
-#define SAMPLES_PER_SEC 16000
+ #ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
+  #define SAMPLES_PER_SEC 8000
+#else
+  #define SAMPLES_PER_SEC 16000
+ #endif
 #elif defined(__PLAYSTATION2__)
 #define SAMPLES_PER_SEC 48000 // the SPU can't handle anything else
 #else
