@@ -138,7 +138,7 @@ void ScummEngine_v7::clearSubtitleQueue() {
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
-	int color, frme, c, oldy;
+	int color, frme, c = 0, oldy;
 	bool endLoop = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
 	while (!endLoop) {
@@ -220,7 +220,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	const int charsetCode = (_heversion >= 80) ? 127 : 64;
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
-	int i, c;
+	int i, c = 0;
 	char value[32];
 	bool endLoop = false;
 	bool endText = false;
