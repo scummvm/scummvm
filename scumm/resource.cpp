@@ -230,7 +230,7 @@ void ScummEngine::readRoomsOffsets() {
 	}
 }
 
-bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
+bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resourceFile) {
 	bool result = false;
 
 	if (!_containerFile.isEmpty()) {
@@ -245,27 +245,29 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 		// Some Mac demos (i.e. DOTT) have bundled file names different
 		// from target name. dottdemo.000 vs tentacle.000. So we should
 		// substitute those names too
-		if (_substResFileNameIndexBundle == 0) {
-			int substLastIndex = 0;
+		if (resourceFile == true) {
+			if (_substResFileNameIndexBundle == 0) {
+				int substLastIndex = 0;
 
-			while (substLastIndex != -1) {
-				if (file.openSubFile(name))
-					break;
+				while (substLastIndex != -1) {
+					if (file.openSubFile(name))
+						break;
 
-				substLastIndex = generateSubstResFileName(filename, name, sizeof(name), substLastIndex + 1);
+					substLastIndex = generateSubstResFileName(filename, name, sizeof(name), substLastIndex + 1);
+				}
+
+				if (substLastIndex == 0)
+					substLastIndex = -1;
+
+				_substResFileNameIndexBundle = substLastIndex;
+
+				if (substLastIndex != -1)
+					debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, name);
 			}
 
-			if (substLastIndex == 0)
-				substLastIndex = -1;
-
-			_substResFileNameIndexBundle = substLastIndex;
-
-			if (substLastIndex != -1)
-				debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, name);
+			if (_substResFileNameIndexBundle != -1)
+				generateSubstResFileName(filename, name, sizeof(name), _substResFileNameIndexBundle);
 		}
-
-		if (_substResFileNameIndexBundle != -1)
-			generateSubstResFileName(filename, name, sizeof(name), _substResFileNameIndexBundle);
 
 		result = file.openSubFile(name);
 	}
@@ -281,7 +283,7 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename) {
 bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
 	debugC(DEBUG_GENERAL, "openResourceFile(%s)", filename);
 
-	if (openFile(*_fileHandle, filename)) {
+	if (openFile(*_fileHandle, filename, true)) {
 		_fileHandle->setEnc(encByte);
 		return true;
 	}

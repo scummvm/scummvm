@@ -691,7 +691,7 @@ public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
 
-	bool openFile(BaseScummFile &file, const char *filename);
+	bool openFile(BaseScummFile &file, const char *filename, bool resourceFile = false);
 
 protected:
 	int _resourceHeaderSize;

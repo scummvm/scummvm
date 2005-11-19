@@ -717,8 +717,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
-	{ "ft.la0", "ft.000", kGenAsIs }, // Is this target used?
-	{ "ft.la0", "ftdemo.la0", kGenAsIs },
 	{ "ft", "ftdemo", kGenPC },
 #endif
 #ifndef DISABLE_HE
