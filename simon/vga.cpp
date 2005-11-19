@@ -901,9 +901,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				} while (++w != state->draw_width);
 			} else {
 				dst_org = state->surf_addr;
-				if (state->flags & 0x40) {		/* reached */
-					dst_org += vc_read_var(252);
-				}
 				w = 0;
 				do {
 					byte color;
@@ -955,7 +952,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 					dst += _screenWidth;
 					src += state->width;
 				} while (--state->draw_height);
-
 			}
 		}
 	}
