@@ -86,24 +86,25 @@ GameSettings Plugin::findGame(const char *gameName) const {
 #pragma mark -
 
 class StaticPlugin : public Plugin {
-	const char *_name;
-	EngineFactory _ef;
-	DetectFunc _df;
-	GameList _games;
+	PluginRegistrator *_plugin;
 public:
-	StaticPlugin(const char *name, GameList games, EngineFactory ef, DetectFunc df)
-		: _name(name), _ef(ef), _df(df), _games(games) {
+	StaticPlugin(PluginRegistrator *plugin)
+		: _plugin(plugin) {
+	}
+	
+	~StaticPlugin() {
+		delete _plugin;
 	}
 
-	const char *getName() const					{ return _name; }
+	const char *getName() const { return _plugin->_name; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
-		return (*_ef)(detector, syst);
+		return (*_plugin->_ef)(detector, syst);
 	}
 
-	GameList getSupportedGames() const { return _games; }
+	GameList getSupportedGames() const { return _plugin->_games; }
 	DetectedGameList detectGames(const FSList &fslist) const {
-		return (*_df)(fslist);
+		return (*_plugin->_df)(fslist);
 	}
 };
 
@@ -287,23 +288,13 @@ void PluginManager::loadPlugins() {
 
 #else
 
-#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
-	#define FREE_PLUGIN(ID) \
-		extern PluginRegistrator *g_##ID##_PluginReg; \
-		delete g_##ID##_PluginReg;
-
 	#define LINK_PLUGIN(ID) \
 		extern PluginRegistrator *g_##ID##_PluginReg; \
 		extern void g_##ID##_PluginReg_alloc(); \
 		g_##ID##_PluginReg_alloc(); \
 		plugin = g_##ID##_PluginReg; \
-		tryLoadPlugin(new StaticPlugin(plugin->_name, plugin->_games, plugin->_ef, plugin->_df));
-#else
-	#define LINK_PLUGIN(ID) \
-		extern PluginRegistrator g_##ID##_PluginReg; \
-		plugin = &g_##ID##_PluginReg; \
-		tryLoadPlugin(new StaticPlugin(plugin->_name, plugin->_games, plugin->_ef, plugin->_df));
-#endif
+		tryLoadPlugin(new StaticPlugin(plugin));
+
 	// "Loader" for the static plugins.
 	// Iterate over all registered (static) plugins and load them.
 	PluginRegistrator *plugin;
@@ -341,36 +332,6 @@ void PluginManager::loadPlugins() {
 
 void PluginManager::unloadPlugins() {
 	unloadPluginsExcept(NULL);
-
-#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
-	#ifndef DISABLE_SCUMM
-	FREE_PLUGIN(SCUMM)
-	#endif
-	#ifndef DISABLE_SKY
-	FREE_PLUGIN(SKY)
-	#endif
-	#ifndef DISABLE_SWORD1
-	FREE_PLUGIN(SWORD1)
-	#endif
-	#ifndef DISABLE_SWORD2
-	FREE_PLUGIN(SWORD2)
-	#endif
-	#ifndef DISABLE_SIMON
-	FREE_PLUGIN(SIMON)
-	#endif
-	#ifndef DISABLE_QUEEN
-	FREE_PLUGIN(QUEEN)
-	#endif
-	#ifndef DISABLE_SAGA
-	FREE_PLUGIN(SAGA)
-	#endif
-	#ifndef DISABLE_KYRA
-	FREE_PLUGIN(KYRA)
-	#endif
-	#ifndef DISABLE_GOB
-	FREE_PLUGIN(GOB)
-	#endif
-#endif
 }
 
 void PluginManager::unloadPluginsExcept(const Plugin *plugin) {

@@ -26,12 +26,12 @@
 #include "common/array.h"
 #include "common/singleton.h"
 #include "common/util.h"
+#include "base/gameDetector.h"	// For GameSettings
 
 class Engine;
 class FSList;
 class GameDetector;
 class OSystem;
-struct GameSettings;
 
 /** List of games. */
 typedef Common::Array<GameSettings> GameList;
@@ -84,20 +84,14 @@ public:
  * both as a static and a dynamic plugin.
  *
  * @todo	add some means to query the plugin API version etc.
- * @todo	on Windows, we might need __declspec(dllexport) ?
  */
 
-#if defined(PALMOS_ARM) || defined(PALMOS_DEBUG)
+#ifndef DYNAMIC_MODULES
 #define REGISTER_PLUGIN(ID,name) \
 	PluginRegistrator *g_##ID##_PluginReg; \
 	void g_##ID##_PluginReg_alloc() { \
 		g_##ID##_PluginReg = new PluginRegistrator(name, Engine_##ID##_gameList(), Engine_##ID##_create, Engine_##ID##_detectGames);\
 	}
-#else
-
-#ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(ID,name) \
-	PluginRegistrator g_##ID##_PluginReg(name, Engine_##ID##_gameList(), Engine_##ID##_create, Engine_##ID##_detectGames);
 #else
 #define REGISTER_PLUGIN(ID,name) \
 	extern "C" { \
@@ -107,7 +101,6 @@ public:
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	}
 #endif
-#endif
 
 #ifndef DYNAMIC_MODULES
 /**
@@ -115,7 +108,7 @@ public:
  * to allow static 'plugins' to register with the PluginManager.
  */
 class PluginRegistrator {
-	friend class PluginManager;
+	friend class StaticPlugin;
 public:
 	typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
