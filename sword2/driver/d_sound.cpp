@@ -60,7 +60,7 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 			{ "clu", kCLUMode }
 		};
 
-		int soundMode = -1;
+		int soundMode = 0;
 		char filename[20];
 
 		for (int i = 0; i < ARRAYSIZE(file_types); i++) {
