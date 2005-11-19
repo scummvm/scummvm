@@ -802,11 +802,10 @@ void ScummEngine::redrawBGAreas() {
 
 	if (_features & GF_NEW_CAMERA) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
-		if (_fullRedraw) {
+		if (_fullRedraw || ABS(diff) >= gdi._numStrips) {
 			_bgNeedsRedraw = false;
 			redrawBGStrip(0, gdi._numStrips);
 		} else if (diff > 0) {
-			assert(gdi._numStrips > diff);
 			val = -diff;
 			redrawBGStrip(gdi._numStrips - diff, diff);
 		} else if (diff < 0) {
