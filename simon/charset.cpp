@@ -1198,7 +1198,7 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 	dst = dx_lock_2();
 	dst += y * _dxSurfacePitch + x * 8 + fcs->textColumnOffset;
 
-	switch(_language == 21) {
+	switch(_language) {
 	case Common::RU_RUS:
 		src = russian_video_font + (chr - 0x20) * 8;
 		break;
