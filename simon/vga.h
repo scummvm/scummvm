@@ -103,6 +103,7 @@ struct VC10_state {
 
 	byte palette;
 
+	uint width, height;
 	uint draw_width, draw_height;
 	uint x_skip, y_skip;
 

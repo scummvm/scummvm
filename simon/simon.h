@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "simon/midi.h"
 #include "simon/sound.h"
+#include "simon/vga.h"
 
 class GameDetector;
 
@@ -755,6 +756,8 @@ public:
 	void vc72_play_track_2();
 	void vc73_setMark();
 	void vc74_clearMark();
+
+	// Feeble specific Video Script Opcodes
 	void vc75_setScale();
 	void vc76_setScaleXOffs();
 	void vc77_setScaleYOffs();
@@ -767,6 +770,9 @@ public:
 	void vc84_stopSoundLoop();
 
 protected:
+	void drawImages(VC10_state *state);
+	void drawImages_Feeble(VC10_state *state);
+
 	void delete_vga_timer(VgaTimerEntry * vte);
 	void vc_resume_sprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vc_read_var_or_word();

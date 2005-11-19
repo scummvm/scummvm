@@ -713,7 +713,7 @@ void SimonEngine::vc10_draw() {
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.palette);
-	// TODO::Add support for image scaling in Feeble Files
+	// TODO::Add support for image overlay and scaling in Feeble Files
 
 	if (flags & 0x80 && !(state.flags & 0x10)) {
 		if (state.flags & 1) {
@@ -769,11 +769,11 @@ void SimonEngine::vc10_draw() {
 
 	vlut = &_video_windows[_windowNum * 4];
 
-	state.draw_width = width;	/* cl */
-	state.draw_height = height;	/* ch */
+	state.width = state.draw_width = width;	/* cl */
+	state.height = state.draw_height = height;	/* ch */
 	
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		state.draw_width = width * 2;	/* cl */
+		state.draw_width = width * 2;
 	} 
 
 	state.x_skip = 0;							/* colums to skip = bh */
@@ -829,42 +829,173 @@ void SimonEngine::vc10_draw() {
 	state.surf_addr = dx_lock_attached();
 	state.surf_pitch = _dxSurfacePitch;
 
-	{
-		uint offs, offs2;
-		// Allow one section of Simon the Sorcerer 1 introduction to be displayed
-		// in lower half of screen
-		if ((getGameType() == GType_SIMON1) && _subroutine == 2926) {
-			offs = ((vlut[0]) * 2 + state.x) * 8;
-			offs2 = (vlut[1] + state.y);
-		} else {
-			offs = ((vlut[0] - _video_windows[16]) * 2 + state.x);
-			offs2 = (vlut[1] - _video_windows[17] + state.y);
-			if (getGameType() != GType_FF)
-				offs *= 8;
-		}
-
-		state.surf2_addr += offs + offs2 * state.surf2_pitch;
-		state.surf_addr += offs + offs2 * state.surf_pitch;
+	if (getGameType() == GType_FF) {
+		drawImages_Feeble(&state);
+	} else {
+		drawImages(&state);
 	}
 
-	if (state.flags & 0x20) {
+	dx_unlock_2();
+	dx_unlock_attached();
+}
+
+void SimonEngine::drawImages_Feeble(VC10_state *state) {
+	state->surf2_addr += state->x + state->y * state->surf2_pitch;
+	state->surf_addr += state->x + state->y * state->surf_pitch;
+
+	if (state->flags & 0x20) {
+		if (vc_get_bit(81) == false) {
+			// TODO: Compare Feeble rect
+		}
+
+		uint w, h;
+		byte *src, *dst, *dst_org;
+
+		state->dl = state->width;
+		state->dh = state->height;
+
+		vc10_skip_cols(state);
+
+			dst_org = state->surf_addr;
+		w = 0;
+		do {
+			byte color;
+
+			src = vc10_depack_column(state);
+			dst = dst_org;
+
+			h = 0;
+			do {
+				color = *src;
+				if (color)
+					*dst = color;
+				dst += _screenWidth;
+				src++;
+			} while (++h != state->draw_height);
+			dst_org++;
+		} while (++w != state->draw_width);
+	} else {
+		if (state->flags & 0x8) {
+			uint w, h;
+			byte *src, *dst, *dst_org;
+
+			state->dl = state->width;
+			state->dh = state->height;
+
+			vc10_skip_cols(state);
+
+			if (state->flags & 2) {
+				dst_org = state->surf_addr;
+				w = 0;
+				do {
+					src = vc10_depack_column(state);
+					dst = dst_org;
+
+					h = 0;
+					do {
+						*dst = *src;
+						dst += _screenWidth;
+						src++;
+					} while (++h != state->draw_height);
+					dst_org++;
+				} while (++w != state->draw_width);
+			} else {
+				dst_org = state->surf_addr;
+				if (state->flags & 0x40) {		/* reached */
+					dst_org += vc_read_var(252);
+				}
+				w = 0;
+				do {
+					byte color;
+
+					src = vc10_depack_column(state);
+					dst = dst_org;
+
+					h = 0;
+					do {
+						color = *src;
+						if (color)
+							*dst = color;
+						dst += _screenWidth;
+						src++;
+					} while (++h != state->draw_height);
+					dst_org++;
+				} while (++w != state->draw_width);
+			}
+		} else {
+			const byte *src;
+			byte *dst;
+			uint count;
+
+			src = state->depack_src + state->width * state->y_skip;
+			dst = state->surf_addr;
+			if (state->flags & 0x80) {
+				do {
+					for (count = 0; count != state->draw_width; count++) {
+						byte color;
+						color = src[count + state->x_skip];
+						if (color) {
+							if (color = 220)
+								color = 244;
+
+							dst[count] = color;
+						}
+					}
+					dst += _screenWidth;
+					src += state->width;
+				} while (--state->draw_height);
+			} else {
+				do {
+					for (count = 0; count != state->draw_width; count++) {
+						byte color;
+						color = src[count + state->x_skip];
+						if (color)
+							dst[count] = color;
+					}
+					dst += _screenWidth;
+					src += state->width;
+				} while (--state->draw_height);
+
+			}
+		}
+	}
+}
+
+void SimonEngine::drawImages(VC10_state *state) {
+	const uint16 *vlut = &_video_windows[_windowNum * 4];
+
+	uint offs, offs2;
+	// Allow one section of Simon the Sorcerer 1 introduction to be displayed
+	// in lower half of screen
+	if ((getGameType() == GType_SIMON1) && _subroutine == 2926) {
+		offs = ((vlut[0]) * 2 + state->x) * 8;
+		offs2 = (vlut[1] + state->y);
+	} else {
+		offs = ((vlut[0] - _video_windows[16]) * 2 + state->x) * 8;
+		offs2 = (vlut[1] - _video_windows[17] + state->y);
+	}
+
+	state->surf2_addr += offs + offs2 * state->surf2_pitch;
+	state->surf_addr += offs + offs2 * state->surf_pitch;
+
+	if (state->flags & 0x20) {
 		byte *mask, *src, *dst;
 		byte h;
 		uint w;
 
-		state.x_skip *= 4;
-		state.dl = width;
-		state.dh = height;
+		state->x_skip *= 4;
+		state->dl = state->width;
+		state->dh = state->height;
 
-		vc10_skip_cols(&state);
+		vc10_skip_cols(state);
 
 		w = 0;
 		do {
-			mask = vc10_depack_column(&state);	/* esi */
-			src = state.surf2_addr + w * 2;	/* ebx */
-			dst = state.surf_addr + w * 2;	/* edi */
+			mask = vc10_depack_column(state);	/* esi */
+			src = state->surf2_addr + w * 2;	/* ebx */
+			dst = state->surf_addr + w * 2;	/* edi */
 
-			h = state.draw_height;
+			h = state->draw_height;
 			if ((getGameType() == GType_SIMON1) && vc_get_bit(88)) {
 				/* transparency */
 				do {
@@ -877,8 +1008,8 @@ void SimonEngine::vc10_draw() {
 							dst[1] = src[1];
 					}
 					mask++;
-					dst += state.surf_pitch;
-					src += state.surf2_pitch;
+					dst += state->surf_pitch;
+					src += state->surf2_pitch;
 				} while (--h);
 			} else {
 				/* no transparency */
@@ -888,55 +1019,55 @@ void SimonEngine::vc10_draw() {
 					if (mask[0] & 0x0F)
 						dst[1] = src[1];
 					mask++;
-					dst += state.surf_pitch;
-					src += state.surf2_pitch;
+					dst += state->surf_pitch;
+					src += state->surf2_pitch;
 				} while (--h);
 			}
-		} while (++w != state.draw_width);
+		} while (++w != state->draw_width);
 
 		/* vc10_helper_5 */
-	} else if (getGameType() != GType_FF && (((_lockWord & 0x20) && state.palette == 0) || state.palette == 0xC0)) {
+	} else if (((_lockWord & 0x20) && state->palette == 0) || state->palette == 0xC0) {
 		const byte *src;
 		byte *dst;
 		uint h, i;
 
-		if (!(state.flags & 8)) {
-			src = state.depack_src + (width * state.y_skip * 16) + (state.x_skip * 8);
-			dst = state.surf_addr;
+		if (!(state->flags & 8)) {
+			src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
+			dst = state->surf_addr;
 
-			state.draw_width *= 2;
+			state->draw_width *= 2;
 
-			if (state.flags & 2) {
+			if (state->flags & 2) {
 				/* no transparency */
-				h = state.draw_height;
+				h = state->draw_height;
 				do {
-					memcpy(dst, src, state.draw_width);
+					memcpy(dst, src, state->draw_width);
 					dst += _screenWidth;
-					src += width * 16;
+					src += state->width * 16;
 				} while (--h);
 			} else {
 				/* transparency */
-				h = state.draw_height;
+				h = state->draw_height;
 				do {
-					for (i = 0; i != state.draw_width; i++)
+					for (i = 0; i != state->draw_width; i++)
 						if (src[i])
 							dst[i] = src[i];
 					dst += _screenWidth;
-					src += width * 16;
+					src += state->width * 16;
 				} while (--h);
 			}
 
 		} else {
-			byte *dst_org = state.surf_addr;
-			src = state.depack_src;
+			byte *dst_org = state->surf_addr;
+			src = state->depack_src;
 			/* AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD EEEEEEEE
 			 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
 			 */
 
-			if (state.flags & 2) {
+			if (state->flags & 2) {
 				/* no transparency */
 				do {
-					uint count = state.draw_width / 4;
+					uint count = state->draw_width / 4;
 
 					dst = dst_org;
 					do {
@@ -958,11 +1089,11 @@ void SimonEngine::vc10_draw() {
 						src += 5;
 					} while (--count);
 					dst_org += _screenWidth;
-				} while (--state.draw_height);
+				} while (--state->draw_height);
 			} else {
 				/* transparency */
 				do {
-					uint count = state.draw_width / 4;
+					uint count = state->draw_width / 4;
 
 					dst = dst_org;
 					do {
@@ -1001,78 +1132,68 @@ void SimonEngine::vc10_draw() {
 						src += 5;
 					} while (--count);
 					dst_org += _screenWidth;
-				} while (--state.draw_height);
+				} while (--state->draw_height);
 			}
 		}
 		/* vc10_helper_4 */
 	} else {
-		if (getGameType() == GType_SIMON2 && state.flags & 0x4 && _bitArray[10] & 0x800) {
-			state.surf_addr = state.surf2_addr;
-			state.surf_pitch = state.surf2_pitch;
+		if (getGameType() == GType_SIMON2 && state->flags & 0x4 && _bitArray[10] & 0x800) {
+			state->surf_addr = state->surf2_addr;
+			state->surf_pitch = state->surf2_pitch;
 		}
 
-		if (state.flags & 0x8) {
+		if (state->flags & 0x8) {
 			uint w, h;
 			byte *src, *dst, *dst_org;
 
-			state.x_skip *= 4;				/* reached */
+			state->x_skip *= 4;				/* reached */
 
-			state.dl = width;
-			state.dh = height;
+			state->dl = state->width;
+			state->dh = state->height;
 
-			vc10_skip_cols(&state);
+			vc10_skip_cols(state);
 
-			if (state.flags & 2) {
-				dst_org = state.surf_addr;
+			if (state->flags & 2) {
+				dst_org = state->surf_addr;
 				w = 0;
 				do {
-					src = vc10_depack_column(&state);
+					src = vc10_depack_column(state);
 					dst = dst_org;
 
 					h = 0;
 					do {
-						if (getGameType() == GType_FF) {
-							*dst = *src;
-						} else {
-							dst[0] = (*src / 16) | state.palette;
-							dst[1] = (*src & 15) | state.palette;
-						}
+						dst[0] = (*src / 16) | state->palette;
+						dst[1] = (*src & 15) | state->palette;
 						dst += _screenWidth;
 						src++;
-					} while (++h != state.draw_height);
-					dst_org += (getGameType() == GType_FF) ? 1 : 2;
-				} while (++w != state.draw_width);
+					} while (++h != state->draw_height);
+					dst_org += 2;
+				} while (++w != state->draw_width);
 			} else {
-				dst_org = state.surf_addr;
-				if (state.flags & 0x40) {		/* reached */
+				dst_org = state->surf_addr;
+				if (state->flags & 0x40) {		/* reached */
 					dst_org += vc_read_var(252);
 				}
 				w = 0;
 				do {
 					byte color;
 
-					src = vc10_depack_column(&state);
+					src = vc10_depack_column(state);
 					dst = dst_org;
 
 					h = 0;
 					do {
-						if (getGameType() == GType_FF) {
-							color = *src;
-							if (color)
-								*dst = color;
-						} else {
-							color = (*src / 16);
-							if (color)
-								dst[0] = color | state.palette;
-							color = (*src & 15);
-							if (color)
-								dst[1] = color | state.palette;
-						}
+						color = (*src / 16);
+						if (color)
+							dst[0] = color | state->palette;
+						color = (*src & 15);
+						if (color)
+							dst[1] = color | state->palette;
 						dst += _screenWidth;
 						src++;
-					} while (++h != state.draw_height);
-					dst_org += (getGameType() == GType_FF) ? 1 : 2;
-				} while (++w != state.draw_width);
+					} while (++h != state->draw_height);
+					dst_org += 2;
+				} while (++w != state->draw_width);
 			}
 			/* vc10_helper_6 */
 		} else {
@@ -1080,41 +1201,38 @@ void SimonEngine::vc10_draw() {
 			byte *dst;
 			uint count;
 
-			src = state.depack_src + (width * state.y_skip) * 8;
-			dst = state.surf_addr;
-			state.x_skip *= 4;
-			if (state.flags & 2) {
+			src = state->depack_src + (state->width * state->y_skip) * 8;
+			dst = state->surf_addr;
+			state->x_skip *= 4;
+			if (state->flags & 2) {
 				do {
-					for (count = 0; count != state.draw_width; count++) {
-						dst[count * 2] = (src[count + state.x_skip] / 16) | state.palette;
-						dst[count * 2 + 1] = (src[count + state.x_skip] & 15) | state.palette;
+					for (count = 0; count != state->draw_width; count++) {
+						dst[count * 2] = (src[count + state->x_skip] / 16) | state->palette;
+						dst[count * 2 + 1] = (src[count + state->x_skip] & 15) | state->palette;
 					}
 					dst += _screenWidth;
-					src += width * 8;
-				} while (--state.draw_height);
+					src += state->width * 8;
+				} while (--state->draw_height);
 			} else {
 				do {
-					for (count = 0; count != state.draw_width; count++) {
+					for (count = 0; count != state->draw_width; count++) {
 						byte color;
-						color = (src[count + state.x_skip] / 16);
+						color = (src[count + state->x_skip] / 16);
 						if (color)
-							dst[count * 2] = color | state.palette;
-						color = (src[count + state.x_skip] & 15);
+							dst[count * 2] = color | state->palette;
+						color = (src[count + state->x_skip] & 15);
 						if (color)
-							dst[count * 2 + 1] = color | state.palette;
+							dst[count * 2 + 1] = color | state->palette;
 					}
 					dst += _screenWidth;
-					src += width * 8;
-				} while (--state.draw_height);
+					src += state->width * 8;
+				} while (--state->draw_height);
 
 			}
 
 			/* vc10_helper_7 */
 		}
 	}
-
-	dx_unlock_2();
-	dx_unlock_attached();
 
 }
 
@@ -1921,13 +2039,11 @@ void SimonEngine::vc63_fastFadeIn() {
 }
 
 void SimonEngine::vc64_skipIfSpeechEnded() {
-	// Simon2
 	if (!_sound->isVoiceActive() || (_subtitles && _language != Common::HB_ISR))
 		vc_skip_next_instruction();
 }
 
 void SimonEngine::vc65_slowFadeIn() {
-	// Simon2
 	_paletteColorCount = 624;
 	_videoNumPalColors = 208;
 	if (_windowNum != 4) {
@@ -1939,7 +2055,6 @@ void SimonEngine::vc65_slowFadeIn() {
 }
 
 void SimonEngine::vc66_skipIfNotEqual() {
-	// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 
@@ -1948,7 +2063,6 @@ void SimonEngine::vc66_skipIfNotEqual() {
 }
 
 void SimonEngine::vc67_skipIfGE() {
-	// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 
@@ -1957,7 +2071,6 @@ void SimonEngine::vc67_skipIfGE() {
 }
 
 void SimonEngine::vc68_skipIfLE() {
-	// Simon2
 	uint a = vc_read_next_word();
 	uint b = vc_read_next_word();
 
@@ -1966,7 +2079,6 @@ void SimonEngine::vc68_skipIfLE() {
 }
 
 void SimonEngine::vc69_playTrack() {
-	// Simon2
 	int16 track = vc_read_next_word();
 	int16 loop = vc_read_next_word();
 
@@ -2006,7 +2118,6 @@ void SimonEngine::vc70_queueMusic() {
 }
 
 void SimonEngine::vc71_checkMusicQueue() {
-	// Simon2
 	// Jamieson630:
 	// This command skips the next instruction
 	// unless (1) there is a track playing, AND
@@ -2016,7 +2127,6 @@ void SimonEngine::vc71_checkMusicQueue() {
 }
 
 void SimonEngine::vc72_play_track_2() {
-	// Simon2
 	// Jamieson630:
 	// This is a "play or stop track". Note that
 	// this opcode looks very similar in function
@@ -2042,13 +2152,11 @@ void SimonEngine::vc72_play_track_2() {
 }
 
 void SimonEngine::vc73_setMark() {
-	// Simon2
 	vc_read_next_byte();
 	_marks |= 1 << vc_read_next_byte();
 }
 
 void SimonEngine::vc74_clearMark() {
-	// Simon2
 	vc_read_next_byte();
 	_marks &= ~(1 << vc_read_next_byte());
 }
