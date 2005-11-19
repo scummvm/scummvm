@@ -426,6 +426,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"e03ed1474ec14de78359970e0457a820", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"688328c5bdc4c8ec4145688dfa077bf2", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (German Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Ff4demo
 
 	{"b8955d7d23b4972229060d1592489fef", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Dutch)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FreddiDZZ
@@ -528,6 +530,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
 	{"aaa587701cde7e74692c68c1024b85eb", "Putt-Putt Enters the Race (Updated Dutch Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"663743c03ae0c007f3d665cf631c0e6b", "Putt-Putt Enters the Race (German Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Rennen
 	{"7c8100e360e8ef05f88069d4cfa0afd1", "Putt-Putt Enters the Race (UK Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
@@ -793,6 +797,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama2", "pj2demo", kGenPC },
 	{ "pajama2", "Pjs2demo", kGenPC },
 	{ "pajama2", "PJ2 Demo", kGenMac }, // NL Mac demo
+	{ "pajama3", "GPJ3Demo", kGenPC },
 	{ "pajama3", "Pajama Sam 3-Demo", kGenMac },
 	{ "pajama3", "pj3-demo", kGenPC },
 	{ "pajama3", "pj3demo", kGenPC },
@@ -814,6 +819,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttrace", "racedemo", kGenPC },
 	{ "puttrace", "RaceDemo", kGenMac },
 	{ "puttrace", "racedemo", kGenMac },
+	{ "puttrace", "Rennen", kGenPC },
 	{ "puttrace", "Putt500 demo", kGenMac }, // NL Mac demo
 	{ "puttrace", "Putt Race", kGenMac },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
