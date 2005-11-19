@@ -624,7 +624,7 @@ void Font::textDrawRect(FontId fontId, Surface *ds, const char *text, const Comm
 	}
 }
 
-FontId Font::knownFont2FontIdx(KnownFont font) {
+Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	FontId fontId = kSmallFont;
 
 	if (_vm->getGameType() == GType_ITE) {

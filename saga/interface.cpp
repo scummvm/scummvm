@@ -780,7 +780,7 @@ void Interface::drawOption() {
 	_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
 	rect.top++;
 	rect2 = rect;
-	fontHeight = _vm->_font->getHeight(kSmallFont);
+	fontHeight = _vm->_font->getHeight(kKnownFontSmall);
 	for (j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
 		bgColor = kITEColorDarkGrey0C;
 		fgColor = kITEColorBrightWhite;
@@ -1041,7 +1041,7 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 	drawButtonBox(ds, rect, kEdit, _textInput);
 	rect.left += 4;
 	rect.top += 4;
-	rect.setHeight(_vm->_font->getHeight(kSmallFont));
+	rect.setHeight(_vm->_font->getHeight(kKnownFontSmall));
 
 	i = 0;
 	while ((ch[0] = _textInputString[i++]) != 0) {
@@ -1251,7 +1251,7 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 	} else {
 		if (_optionPanel.currentButton == _optionSaveFilePanel) {
 			_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
-			_optionSaveFileTitleNumber = (mousePoint.y - rect.top) / (_vm->_font->getHeight(kSmallFont) + 1);
+			_optionSaveFileTitleNumber = (mousePoint.y - rect.top) / (_vm->_font->getHeight(kKnownFontSmall) + 1);
 
 			if (_optionSaveFileTitleNumber >= _vm->getDisplayInfo().optionSaveFileVisible) {
 				_optionSaveFileTitleNumber = _vm->getDisplayInfo().optionSaveFileVisible - 1;

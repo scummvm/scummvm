@@ -53,16 +53,6 @@ namespace Saga {
 #define TEXT_MARGIN 10
 #define TEXT_LINESPACING 2
 
-enum FontId {
-	kSmallFont,
-	kMediumFont,
-	kBigFont,
-	kIHNMUnknown,
-	kIHNMFont8,
-	kIHNMUnknown2,
-	kIHNMMainFont
-};
-
 enum FontEffectFlags {
 	kFontNormal   = 0,
 	kFontOutline  = 1 << 0,
@@ -151,7 +141,17 @@ class Font {
 	}
 	
  private:
-	 FontId knownFont2FontIdx(KnownFont font);
+	 enum FontId {
+		 kSmallFont,
+		 kMediumFont,
+		 kBigFont,
+		 kIHNMUnknown,
+		 kIHNMFont8,
+		 kIHNMUnknown2,
+		 kIHNMMainFont
+	 };
+
+	 Font::FontId knownFont2FontIdx(KnownFont font);
 
 	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
 	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
@@ -168,7 +168,6 @@ class Font {
 		 return _fonts[fontId];
 	 }
 
-public:
 	int getHeight(FontId fontId) {
 		 return getFont(fontId)->normal.header.charHeight;
 	 }

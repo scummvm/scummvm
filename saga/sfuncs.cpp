@@ -1308,7 +1308,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	textEntry.color = kITEColorBrightWhite;
 	textEntry.effectColor = kITEColorBlack;
 	textEntry.point.x = _vm->getDisplayWidth() / 2;
-	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kMediumFont)) / 2;
+	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kKnownFontMedium)) / 2;
 	textEntry.font = kKnownFontMedium;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 	textEntry.text = thread->_strings->getString(stringId);
