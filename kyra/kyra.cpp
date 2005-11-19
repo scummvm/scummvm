@@ -77,6 +77,8 @@ static const KyraGameSettings kyra_games[] = {
 										"6018e1dfeaca7fe83f8d0b00eb0dd049", "GEMCUT.EMC"},
 	{ "kyra1", "Legend of Kyrandia (Floppy, Spanish)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // from VooD
 										"8909b41596913b3f5deaf3c9f1017b01", "GEMCUT.EMC"},
+	{ "kyra1", "Legend of Kyrandia (Floppy, Spanish)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // floppy 1.8 from clemmy
+										"747861d2a9c643c59fdab570df5b9093", "GEMCUT.EMC"},
 	{ "kyra1", "Legend of Kyrandia (CD, English)",		GI_KYRA1, GF_ENGLISH | GF_TALKIE, 
 										"fac399fe62f98671e56a005c5e94e39f", "GEMCUT.PAK" },
 	{ "kyra1", "Legend of Kyrandia (CD, German)",		GI_KYRA1, GF_GERMAN | GF_TALKIE, 
