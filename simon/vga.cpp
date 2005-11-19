@@ -932,7 +932,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 						byte color;
 						color = src[count + state->x_skip];
 						if (color) {
-							if (color = 220)
+							if (color == 220)
 								color = 244;
 
 							dst[count] = color;
