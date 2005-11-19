@@ -837,8 +837,10 @@ void SimonEngine::vc10_draw() {
 			offs = ((vlut[0]) * 2 + state.x) * 8;
 			offs2 = (vlut[1] + state.y);
 		} else {
-			offs = ((vlut[0] - _video_windows[16]) * 2 + state.x) * 8;
+			offs = ((vlut[0] - _video_windows[16]) * 2 + state.x);
 			offs2 = (vlut[1] - _video_windows[17] + state.y);
+			if (getGameType() != GType_FF)
+				offs *= 8;
 		}
 
 		state.surf2_addr += offs + offs2 * state.surf2_pitch;
