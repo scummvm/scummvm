@@ -61,6 +61,21 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1ACORN,     "f3b27a3fbb45dcd323a48159496e45e8", "stripped", false},
 	{ GID_SIMON1ACORN,     "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
+	{ GID_SIMON1AMIGA,     "00000000000000000000000000000000", "gameamiga", true },
+	{ GID_SIMON1AMIGA,     "00000000000000000000000000000000", "icon.pkd", true },
+	{ GID_SIMON1AMIGA,     "00000000000000000000000000000000", "stripped.txt", true},
+	{ GID_SIMON1AMIGA,     "00000000000000000000000000000000", "tbllist", true},
+
+	{ GID_SIMON1AMIGA_FR,  "00000000000000000000000000000000", "gameamiga", true },
+	{ GID_SIMON1AMIGA_FR,  "00000000000000000000000000000000", "icon.pkd", true },
+	{ GID_SIMON1AMIGA_FR,  "00000000000000000000000000000000", "stripped.txt", true},
+	{ GID_SIMON1AMIGA_FR,  "00000000000000000000000000000000", "tbllist", true},
+
+	{ GID_SIMON1AMIGA_DE,  "a2de9553f3b73064369948b5af38bb30", "gameamiga", true },
+	{ GID_SIMON1AMIGA_DE,  "565ef7a98dcc21ef526a2bb10b6f42ed", "icon.pkd", true },
+	{ GID_SIMON1AMIGA_DE,  "c649fcc0439766810e5097ee7e81d4c8", "stripped.txt", true},
+	{ GID_SIMON1AMIGA_DE,  "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
+
 	{ GID_SIMON1CD32,      "bab7f19237cf7d7619b6c73631da1854", "gameamiga", true },
 	{ GID_SIMON1CD32,      "565ef7a98dcc21ef526a2bb10b6f42ed", "icon.pkd", true },
 	{ GID_SIMON1CD32,      "59be788020441e21861e284236fd08c1", "stripped.txt", true},
@@ -303,6 +318,45 @@ static GameDescription gameDescriptions[] = {
 		GF_TALKIE,
 		Common::EN_USA,
 		Common::kPlatformAcorn,
+	},
+
+	// Simon the Sorcerer 1 - English AGA Floppy
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1AMIGA,
+		"Simon the Sorcerer 1 (Amiga AGA Floppy)",
+		ARRAYSIZE(SIMON1CD32_GameFiles),
+		SIMON1CD32_GameFiles,
+		GF_CRUNCHED | GF_OLD_BUNDLE,
+		Common::EN_USA,
+		Common::kPlatformAmiga,
+	},
+
+	// Simon the Sorcerer 1 - French AGA Floppy
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1AMIGA_FR,
+		"Simon the Sorcerer 1 (Fr Amiga AGA Floppy)",
+		ARRAYSIZE(SIMON1CD32_GameFiles),
+		SIMON1CD32_GameFiles,
+		GF_CRUNCHED | GF_OLD_BUNDLE,
+		Common::FR_FRA,
+		Common::kPlatformAmiga,
+	},
+
+	// Simon the Sorcerer 1 - German AGA Floppy
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1AMIGA_DE,
+		"Simon the Sorcerer 1 (De Amiga AGA Floppy)",
+		ARRAYSIZE(SIMON1CD32_GameFiles),
+		SIMON1CD32_GameFiles,
+		GF_CRUNCHED | GF_OLD_BUNDLE,
+		Common::DE_DEU,
+		Common::kPlatformAmiga,
 	},
 
 	// Simon the Sorcerer 1 - English Amiga CD32
