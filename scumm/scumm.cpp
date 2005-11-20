@@ -1755,10 +1755,7 @@ int ScummEngine::init(GameDetector &detector) {
 	} else if (_features & GF_NEW_COSTUMES) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
-		res._maxHeapThreshold = 2500000;
-#ifdef __PLAYSTATION2__
 		res._maxHeapThreshold = 6 * 1024 * 1024;
-#endif
 	} else {
 		res._maxHeapThreshold = 550000;
 	}
