@@ -195,6 +195,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2WIN_DE,    "6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
 	{ GID_SIMON2WIN_DE,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2WIN_DE2,   "9e858b3bb189c134c3a5f34c3385a8d3", "gsptr30", false },
+	{ GID_SIMON2WIN_DE2,   "ee92d1f84893195a60449f2430d07285", "icon.dat", false},
+	{ GID_SIMON2WIN_DE2,   "16d574da07e93bcae43cee353dab8c7e", "simon2.gme", false },
+	{ GID_SIMON2WIN_DE2,   "6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
+	{ GID_SIMON2WIN_DE2,   "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
 	{ GID_SIMON2WIN_PL,    "657fd873f5d0637097ee02315b447e6f", "gsptr30", false },
 	{ GID_SIMON2WIN_PL,    "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2WIN_PL,    "7b9afcf82a94722707e0d025c0192be8", "simon2.gme", false },
@@ -338,7 +344,7 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
-	// Simon the Sorcerer 1 - Russian DOS Floppy (Infocom)
+	// Simon the Sorcerer 1 - English DOS Floppy (Infocom) with Russian patch
 	{
 		"simon1",
 		GType_SIMON1,
@@ -578,6 +584,19 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2WIN_DE,
+		"Simon the Sorcerer 2 (De Windows CD)",
+		ARRAYSIZE(SIMON2_GameFiles),
+		SIMON2_GameFiles,
+		GF_TALKIE,
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+	},
+
+	// Simon the Sorcerer 2 - German Windows CD 1.1
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2WIN_DE2,
 		"Simon the Sorcerer 2 (De Windows CD)",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
