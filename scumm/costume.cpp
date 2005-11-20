@@ -365,7 +365,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 		palette[1] = v1MMActorPalatte1[actor];
 		palette[2] = v1MMActorPalatte2[actor];
 	} else {
-		palette[1] = 8;
+		palette[1] = (_vm->_platform == Common::kPlatformC64) ? 10 : 8;
 		palette[2] = _palette[actor];
 	}
 	mask = v1.mask_ptr;
