@@ -37,7 +37,7 @@ endif
 INCDIR   := $(INCDIR) . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
-CFLAGS = -O2 -G0 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags` 
+CFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags` 
 CFLAGS	:= $(addprefix -I,$(INCDIR)) $(CFLAGS)
 LDFLAGS := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 LIBS     = 
