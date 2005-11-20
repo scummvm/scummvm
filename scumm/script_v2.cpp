@@ -445,6 +445,12 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 	checkRange(_numVariables - 1, 0, var, "Variable %d out of range(r)");
 	debugC(DEBUG_VARS, "writeVar(%d) = %d", var, value);
 
+	if (VAR_CUTSCENEEXIT_KEY != 0xFF && var == VAR_CUTSCENEEXIT_KEY) {
+		// Remap the cutscene exit key in earlier games
+		if (value == 4 || value == 13 || value == 64)
+			value = 27;
+	}
+
 	_scummVars[var] = value;
 
 	// HACK: Ender's hack around a bug in Maniac. If you take the last dime from

@@ -258,20 +258,20 @@ void ScummEngine::processKbd(bool smushMode) {
 		}
 	}
 
-	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked && _version > 3) {
+	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked && _version >= 4) {
 		// Pressing both mouse buttons is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
 		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_rightBtnPressed & msClicked && (_version < 4 && _gameId != GID_LOOM)) {
+	} else if (_rightBtnPressed & msClicked && (_version <- 3 && _gameId != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing right
 		// mouse button also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
-		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
+		_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 	} else if (_leftBtnPressed & msClicked) {
 		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
 	} else if (_rightBtnPressed & msClicked) {
@@ -305,11 +305,11 @@ void ScummEngine::processKbd(bool smushMode) {
 	if (_lastKeyHit == KEY_ALL_SKIP) {
 		// Skip cutscene
 		if (smushMode) {
-			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
+			_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 		}
 		else
 		if (vm.cutScenePtr[vm.cutSceneStackPointer])
-			_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
+			_lastKeyHit = (VAR_CUTSCENEEXIT_KEY != 0xFF) ? (uint)VAR(VAR_CUTSCENEEXIT_KEY) : 27;
 		else
 		// Skip talk
 		if (VAR_TALKSTOP_KEY != 0xFF && _talkDelay > 0)
@@ -380,8 +380,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
 
 	if ((_platform == Common::kPlatformC64 && _gameId == GID_MANIAC && _lastKeyHit == 27) || 
-		((VAR(VAR_CUTSCENEEXIT_KEY) == 4 || VAR(VAR_CUTSCENEEXIT_KEY) == 64) && _lastKeyHit == 27) ||
-		_lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY)) {
+		(VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY))) {
 #ifndef DISABLE_SCUMM_7_8
 		// Skip cutscene (or active SMUSH video). For the V2 games, which
 		// normally use F4 for this, we add in a hack that makes escape work,
