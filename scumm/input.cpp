@@ -265,7 +265,7 @@ void ScummEngine::processKbd(bool smushMode) {
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
 		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_rightBtnPressed & msClicked && (_version <- 3 && _gameId != GID_LOOM)) {
+	} else if (_rightBtnPressed & msClicked && (_version <= 3 && _gameId != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing right
