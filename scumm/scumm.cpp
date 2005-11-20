@@ -1822,16 +1822,12 @@ void ScummEngine::scummInit() {
 		// line
 		// Original games used some kind of dynamic
 		// color table remapping between rooms
-		if (_platform == Common::kPlatformC64)
+		if (_platform == Common::kPlatformC64) {
 			setupC64Palette();
-		else {
-			if (_gameId == GID_MANIAC) {
-				if (_platform == Common::kPlatformNES)
-					setupNESPalette();
-				else
-					setupV1ManiacPalette();
-			} else
-				setupV1ZakPalette();
+		} else if (_platform == Common::kPlatformNES) {
+			setupNESPalette();
+		} else {
+			setupV1Palette();
 		}
 	} else if (_features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)

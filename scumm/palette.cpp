@@ -32,21 +32,21 @@ namespace Scumm {
 
 void ScummEngine::setupC64Palette() {
 	setPalColor( 0, 0x00, 0x00, 0x00);
-	setPalColor( 1, 0xFF, 0xFF, 0xFF);
-	setPalColor( 2, 0x99, 0x00, 0x00);
-	setPalColor( 3, 0x00, 0xff, 0xcc);
-	setPalColor( 4, 0xcc, 0x00, 0xcc);
-	setPalColor( 5, 0x44, 0xcc, 0x44);
-	setPalColor( 6, 0x11, 0x00, 0x99);
-	setPalColor( 7, 0xff, 0xff, 0x00);
-	setPalColor( 8, 0xaa, 0x55, 0x00);
-	setPalColor( 9, 0x66, 0x33, 0x00);
-	setPalColor(10, 0xff, 0x66, 0x66);
-	setPalColor(11, 0x40, 0x40, 0x40);
-	setPalColor(12, 0x80, 0x80, 0x80);
-	setPalColor(13, 0x66, 0xff, 0x66);
-	setPalColor(14, 0x77, 0x77, 0xff);
-	setPalColor(15, 0xc0, 0xc0, 0xc0);
+	setPalColor( 1, 0xFD, 0xFE, 0xFC);
+	setPalColor( 2, 0xBE, 0x1A, 0x24);
+	setPalColor( 3, 0x30, 0xE6, 0xC6);
+	setPalColor( 4, 0xB4, 0x1A, 0xE2);
+	setPalColor( 5, 0x1F, 0xD2, 0x1E);
+	setPalColor( 6, 0x21, 0x1B, 0xAE);
+	setPalColor( 7, 0xDF, 0xF6, 0x0A);
+	setPalColor( 8, 0xB8, 0x41, 0x04);
+	setPalColor( 9, 0x6A, 0x33, 0x04);
+	setPalColor(10, 0xFE, 0x4A, 0x57);
+	setPalColor(11, 0x42, 0x45, 0x40);
+	setPalColor(12, 0x70, 0x74, 0x6F);
+	setPalColor(13, 0x59, 0xFE, 0x59);
+	setPalColor(14, 0x5F, 0x53, 0xFE);
+	setPalColor(15, 0xA4, 0xA7, 0xA2);
 
 	setPalColor(16, 255,  85, 255);
 }
@@ -185,7 +185,7 @@ void ScummEngine::setupEGAPalette() {
 	setPalColor(15, 255, 255, 255);
 }
 
-void ScummEngine::setupV1ManiacPalette() {
+void ScummEngine::setupV1Palette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1, 255, 255, 255);
 	setPalColor( 2, 170,   0,   0);
@@ -201,28 +201,11 @@ void ScummEngine::setupV1ManiacPalette() {
 	setPalColor(12, 170, 170, 170);
 	setPalColor(13,  85, 255,  85);
 	setPalColor(14,  85,  85, 255);
-	setPalColor(15,  85,  85,  85);
 
-	setPalColor(16, 255,  85, 255);
-}
-
-void ScummEngine::setupV1ZakPalette() {
-	setPalColor( 0,   0,   0,   0);
-	setPalColor( 1, 255, 255, 255);
-	setPalColor( 2, 170,   0,   0);
-	setPalColor( 3,   0, 170, 170);
-	setPalColor( 4, 170,   0, 170);
-	setPalColor( 5,   0, 170,   0);
-	setPalColor( 6,   0,   0, 170);
-	setPalColor( 7, 255, 255,  85);
-	setPalColor( 8, 255,  85,  85);
-	setPalColor( 9, 170,  85,   0);
-	setPalColor(10, 255,  85,  85);
-	setPalColor(11,  85,  85,  85);
-	setPalColor(12, 170, 170, 170);
-	setPalColor(13,  85, 255,  85);
-	setPalColor(14,  85,  85, 255);
-	setPalColor(15, 170, 170, 170);
+	if (_gameId == GID_ZAK)
+		setPalColor(15, 170, 170, 170);
+	else
+		setPalColor(15,  85,  85,  85);
 
 	setPalColor(16, 255,  85, 255);
 }

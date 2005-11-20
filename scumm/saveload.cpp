@@ -320,16 +320,12 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// for backwards compatibility, and it may still prove useful if we
 	// ever add options for using different 16-colour palettes.
 	if (_version == 1) {
-		if (_platform == Common::kPlatformC64)
+		if (_platform == Common::kPlatformC64) {
 			setupC64Palette();
-		else {
-			if (_gameId == GID_MANIAC)
-				if (_platform == Common::kPlatformNES)
-					setupNESPalette();
-				else
-					setupV1ManiacPalette();
-			else
-				setupV1ZakPalette();
+		} else if (_platform == Common::kPlatformNES) {
+			setupNESPalette();
+		} else {
+			setupV1Palette();
 		}
 	} else if (_features & GF_16COLOR) {
 		switch (_renderMode) {
