@@ -1780,10 +1780,7 @@ void SimonEngine::vc52_playSound() {
 	if (getGameType() == GType_FF) {
 		uint16 pan = vc_read_next_word();
 		uint16 vol = vc_read_next_word();
-		debug(0, "STUB: vc52_playSound: snd %d pan %d vol %d", sound, pan, vol);
-
 		_sound->playSoundData(_curSfxFile, sound, pan, vol, ambient);
-
 	} else if (getGameType() == GType_SIMON2) {
 		if (ambient) {
 			_sound->playAmbient(sound);
@@ -1792,7 +1789,7 @@ void SimonEngine::vc52_playSound() {
 		}
 	} else if (getFeatures() & GF_TALKIE) {
 		_sound->playEffects(sound);
-	} else {
+	} else if (getGameId() == GID_SIMON1DOS) {
 		playSting(sound);
 	}
 }
