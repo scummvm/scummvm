@@ -85,6 +85,7 @@ GameSettings Plugin::findGame(const char *gameName) const {
 
 #pragma mark -
 
+#ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
 	PluginRegistrator *_plugin;
 public:
@@ -107,6 +108,7 @@ public:
 		return (*_plugin->_df)(fslist);
 	}
 };
+#endif
 
 #pragma mark -
 
