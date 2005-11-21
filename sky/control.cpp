@@ -332,7 +332,8 @@ void Control::buttonControl(ConResource *pButton) {
 		return;
 	}
 	if (_curButtonText != pButton->_text) {
-		if (_textSprite) free(_textSprite);
+		if (_textSprite)
+			free(_textSprite);
 		_textSprite = NULL;
 		_curButtonText = pButton->_text;
 		if (pButton->_text) {
@@ -345,9 +346,11 @@ void Control::buttonControl(ConResource *pButton) {
 			}
 			_textSprite = (dataFileHeader *)textRes.textData;
 			_text->setSprite(_textSprite);
-		} else _text->setSprite(NULL);
+		} else
+			_text->setSprite(NULL);
 	}
-	_text->setXY(_mouseX + 12, _mouseY - 16);
+	int destY = (_mouseY - 16 >= 0) ? _mouseY - 16 : 0;
+	_text->setXY(_mouseX + 12, destY);
 }
 
 void Control::drawTextCross(uint32 flags) {
