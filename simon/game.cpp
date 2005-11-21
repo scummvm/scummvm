@@ -179,11 +179,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2TALKIE_FR, "5ea27977b4d7dcfd50eb5074e162ebbf", "stripped.txt", false},
 	{ GID_SIMON2TALKIE_FR, "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_SIMON2TALKIE_DE, "0d05c3f4c06c9a4ceb3d2f5bc0b18e11 ", "gsptr30", false },
-	{ GID_SIMON2TALKIE_DE, "72096a62d36e6034ea9fecc13b2dbdab ", "icon.dat", false},
-	{ GID_SIMON2TALKIE_DE, "6c5fdfdd0eab9038767c2d22858406b2 ", "simon2.gme", false },
-	{ GID_SIMON2TALKIE_DE, "6de6292c9ac11bfb2e70fdb0f773ba85 ", "stripped.txt", false},
-	{ GID_SIMON2TALKIE_DE, "2082f8d02075e590300478853a91ffd9 ", "tbllist", false},
+	{ GID_SIMON2TALKIE_DE, "0d05c3f4c06c9a4ceb3d2f5bc0b18e11", "gsptr30", false },
+	{ GID_SIMON2TALKIE_DE, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2TALKIE_DE, "6c5fdfdd0eab9038767c2d22858406b2", "simon2.gme", false },
+	{ GID_SIMON2TALKIE_DE, "6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
+	{ GID_SIMON2TALKIE_DE, "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
 	{ GID_SIMON2TALKIE_HB, "952a2b1be23c3c609ba8d988a9a1627d", "gsptr30", false },
 	{ GID_SIMON2TALKIE_HB, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
