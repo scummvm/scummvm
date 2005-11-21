@@ -86,6 +86,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1DOS,       "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
 	{ GID_SIMON1DOS,       "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
+	{ GID_SIMON1DOS_DE,    "063015e6ce7d90b570dbc21fe0c667b1 ", "gamepc", false },
+	{ GID_SIMON1DOS_DE,    "22107c24dfb31b66ac503c28a6e20b19 ", "icon.dat", false},
+	{ GID_SIMON1DOS_DE,    "c95a0a1ee973e19c2a1c5d12026c139f ", "stripped.txt", false},
+	{ GID_SIMON1DOS_DE,    "d198a80de2c59e4a0cd24b98814849e8 ", "tbllist", false},
+
 	{ GID_SIMON1DOS_RU,    "605fb866e03ec1c41b10c6a518ddfa49", "gamepc", false },
 	{ GID_SIMON1DOS_RU,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
 	{ GID_SIMON1DOS_RU,    "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
@@ -408,6 +413,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
 		Common::RU_RUS,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 1 - German DOS Floppy
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1DOS_DE,
+		"Simon the Sorcerer 1 (De DOS Floppy)",
+		ARRAYSIZE(SIMON1DOS_GameFiles),
+		SIMON1DOS_GameFiles,
+		GF_OLD_BUNDLE,
+		Common::DE_DEU,
 		Common::kPlatformPC,
 	},
 
