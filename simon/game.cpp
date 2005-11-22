@@ -81,6 +81,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1CD32,      "59be788020441e21861e284236fd08c1", "stripped.txt", true},
 	{ GID_SIMON1CD32,      "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
 
+	{ GID_SIMON1CD32_2,    "ec5358680c117f29b128cbbb322111a4", "gameamiga", true },
+	{ GID_SIMON1CD32_2,    "8ce5a46466a4f8f6d0f780b0ef00d5f5", "icon.pkd", true },
+	{ GID_SIMON1CD32_2,    "59be788020441e21861e284236fd08c1", "stripped.txt", true},
+	{ GID_SIMON1CD32_2,    "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
+
 	{ GID_SIMON1DOS,       "9f93d27432ce44a787eef10adb640870", "gamepc", false },
 	{ GID_SIMON1DOS,       "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
 	{ GID_SIMON1DOS,       "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
@@ -369,6 +374,19 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1CD32,
+		"Simon the Sorcerer 1 (Amiga CD32)",
+		ARRAYSIZE(SIMON1CD32_GameFiles),
+		SIMON1CD32_GameFiles,
+		GF_TALKIE | GF_OLD_BUNDLE,
+		Common::EN_USA,
+		Common::kPlatformAmiga,
+	},
+
+	// Simon the Sorcerer 1 - English Amiga CD32 alternative
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1CD32_2,
 		"Simon the Sorcerer 1 (Amiga CD32)",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
