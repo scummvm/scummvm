@@ -278,12 +278,6 @@ static const GameSpecificSettings feeblefiles_settings = {
 };
 #endif
 
-static const char* bad_versions[3] = {
-	"465eed710cc242b2de7dc77edd467c4c", // simon1dos (English)
-	"bed9134804d96f72afa152b8ec5628c3", // simon1dos (French)
-	"27c8e7feada80c75b70b9c2f6088d519", // simon2dos (English)
-};
-
 SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst), midi(syst) {
 	int j =0;
@@ -343,11 +337,6 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 			char md5str[32+1];
 			for (j = 0; j < 16; j++) {
 				sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-			}
-
-			for (j = 0; j < 3; j++) {
-				if (!strcmp(md5str, bad_versions[j]))
-					error("Cracked versions aren't supported");
 			}
 
 			printf("%s  %s\n", md5str, buf);
