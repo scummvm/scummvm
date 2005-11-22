@@ -29,15 +29,13 @@ typedef signed int int32;
 typedef signed short int16;
 typedef signed char int8;
 
-struct __ISOPathTableRecord {
+typedef struct {
 	uint8	len_di;
 	uint8	attributeLength;
 	uint8	lba[4];
 	uint16	parent;
 	char	name[256]; // arbitrary number
-} __attribute__ ((packed));
-
-typedef struct __ISOPathTableRecord ISOPathTableRecord;
+} ISOPathTableRecord __attribute__ ((packed));
 
 typedef struct {
     uint8 year; // Number of years since 1900

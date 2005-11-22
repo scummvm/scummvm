@@ -37,6 +37,7 @@ typedef cd_read_mode_t CdRMode;
 
 #define IS_DIR(a)  ((a)->flags & 2)
 
+#define DISC_UNKNOWN 0xFE
 #define DISC_NONE  0xFF
 #define DISC_DVD   0
 #define DISC_MODE1 1

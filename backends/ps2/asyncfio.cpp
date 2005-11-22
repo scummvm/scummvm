@@ -51,8 +51,6 @@ int AsyncFio::open(const char *name, int ioMode) {
 	fileXioOpen(name, ioMode, DEFAULT_MODE);
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
-	if (res < -2)
-		printf("File %s error: %d (mode %d)\n", name, res, ioMode);
 	return res;
 }
 

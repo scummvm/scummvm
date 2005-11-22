@@ -49,12 +49,14 @@ int verifyDriveReady(void) {
 	int res;
 	u32 trayStat;
 	res = CdTrayReq(CdTrayCheck, &trayStat);
-	if ((res == 0) || (trayStat == 1)) {
+	if ((mediaType == DISC_UNKNOWN) || (res == 0) || (trayStat == 1)) {
 		// media was exchanged
-		if (checkDiscReady(300) == 0) // wait up to 3 seconds
+		if (checkDiscReady(100) == 0) // wait up to 1 second
 			return initDisc();
-		else
-			return -1; // drive still not ready			
+		else {
+			mediaType = DISC_UNKNOWN;
+			return -1; // drive still not ready
+		}
 	}
     if (mediaType == DISC_NONE)
 		return -1;
@@ -133,8 +135,11 @@ ISODirectoryRecord *findPath(const char *path) {
 	if (path[0] == '/')
 		path++;
 
-	if (!path[0]) // open root dir
+	if (!path[0]) { // open root dir
+		if (cachedDirOfs)
+			initRootCache();
 		return (ISODirectoryRecord *)cacheBuf;
+	}
 	
 	do {
 		tok = strchr(path, '/');
@@ -172,10 +177,12 @@ int initDisc(void) {
 	ISOPvd *pvd;
 	CdRMode rmode = { 16, 0, CdSect2048, 0 };
 	ISOPathTableRecord *rootRec;
-	mediaType = DISC_NONE;
 
-	if (checkDiscReady(0) < 0)
+	if (checkDiscReady(0) < 0) {
+		printf("disc not ready\n");
+		mediaType = DISC_UNKNOWN; // retry later
 		return -1;
+	}
 
 	do {	// wait until drive detected disc type
 		type = CdGetDiskType();
@@ -208,6 +215,7 @@ int initDisc(void) {
 	}
 
 	for (sector = 16; sector < 32; sector++) {
+		printf("sec %d\n", sector);
 		if (cdReadSectors(sector, 1, cacheBuf, &rmode) == 0) {
 			if (discType == DISC_DVD)
 				pvd = (ISOPvd *)cacheBuf;
@@ -252,6 +260,7 @@ int initDisc(void) {
 			}
 		}
 	}
+	mediaType = DISC_NONE;
 	// PVD not found
 	return -1;
 }
@@ -272,12 +281,10 @@ int cd_dummy(void) {
 }
 
 int cd_init(iop_device_t *dev) {
+	printf("FS init\n");
 	memset(cachedDir, 0, 256);
 	cachedDirLba = cachedDirOfs = 0;
-
-	mediaType = DISC_NONE;
-
-	initDisc();
+	mediaType = DISC_UNKNOWN;
 	return 0;
 }
 
@@ -312,12 +319,10 @@ iop_device_t fsdriver = {
     &FS_ops
 };
 
-void checkCC(void);
-
 int _start(void) {
     printf("CoDyVDfs v0.01\n");
 
-    CdInit(0);
+	CdInit(1);
     DelDrv(FS_NAME);
     AddDrv(&fsdriver);
 

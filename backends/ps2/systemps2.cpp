@@ -36,7 +36,7 @@
 #include "backends/ps2/systemps2.h"
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/ps2input.h"
-#include <audsrv.h>
+#include <sjpcm.h>
 #include <libhdd.h>
 #include "backends/ps2/savefile.h"
 #include "common/file.h"
@@ -50,9 +50,11 @@
 #include "graphics/surface.h"
 #include "graphics/font.h"
 
+extern void *_gp;
+
 #define TIMER_STACK_SIZE (1024 * 32)
 #define SOUND_STACK_SIZE (1024 * 32)
-#define SMP_PER_CB 1024
+#define SMP_PER_BLOCK 800
 #define BUS_CLOCK 147456000 // bus clock, a little less than 150 mhz
 #define CLK_DIVIS 5760	// the timer IRQ handler gets called (BUS_CLOCK / 256) / CLK_DIVIS times per second (100 times)
 
@@ -64,8 +66,7 @@
 #define IRX_SUFFIX ";1"
 #endif
 
-static int g_TimerThreadSema = -1;
-static int g_SoundRequestSema = -1;
+static int g_TimerThreadSema = -1, g_SoundThreadSema = -1;
 static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
 static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
 volatile uint32 msecCount = 0;
@@ -110,7 +111,7 @@ extern "C" int main(int argc, char *argv[]) {
 	SifLoadFileExit();
 	SifExitRpc();
 	sio_puts("Resetting IOP.");
-	SifIopReset("rom0:UDNL rom0:EELOADCNF",0);
+	SifIopReset("rom0:UDNL rom0:EELOADCNF", 0);
 	while (!SifIopSync())
 		;
 	sio_puts("IOP synced.");
@@ -149,6 +150,7 @@ s32 timerInterruptHandler(s32 cause) {
 	T0_MODE = 0xDC2; // same value as in initialization.
 	msecCount += 10;
 
+	iSignalSema(g_SoundThreadSema);
 	iSignalSema(g_TimerThreadSema);
 
 	if (g_MainWakeUp) {
@@ -181,6 +183,10 @@ void systemSoundThread(OSystem_PS2 *system) {
 	system->soundThread();
 }
 
+void gluePowerOffCallback(void *system) {
+	((OSystem_PS2*)system)->powerOffCallback();
+}
+
 OSystem_PS2::OSystem_PS2(void) {
 	_soundStack = _timerStack = NULL;
 	_scummTimerProc = NULL;
@@ -206,20 +212,14 @@ OSystem_PS2::OSystem_PS2(void) {
 		quit();
 	}
 
-	if ((res = audsrv_init()) != 0) {
-		msgPrintf(FOREVER, "AudSrv_init failed: %d\n", res);
+	if ((res = SjPCM_Init(0)) < 0) {
+		msgPrintf(FOREVER, "SjPCM Bind failed: %d\n", res);
 		quit();
 	}
 
-	struct audsrv_fmt_t format;
-	format.bits = 16;
-	format.freq = 48000;
-	format.channels = 2;
+	hddPreparePoweroff();
+	hddSetUserPoweroffCallback(gluePowerOffCallback, this);
 
-	audsrv_set_format(&format);
-	audsrv_set_volume(MAX_VOLUME);
-	audsrv_on_fillbuf(SMP_PER_CB * 2 * sizeof(int16), iSoundCallback, (void*)g_SoundRequestSema);
-	
 	fileXioSetBlockMode(FXIO_NOWAIT);
 
 	_mouseVisible = false;
@@ -263,8 +263,8 @@ void OSystem_PS2::initTimer(void) {
 	threadSema.init_count = 0;
 	threadSema.max_count = 255;
 	g_TimerThreadSema = CreateSema(&threadSema);
-	g_SoundRequestSema = CreateSema(&threadSema);
-	assert((g_TimerThreadSema >= 0) && (g_SoundRequestSema >= 0));
+	g_SoundThreadSema = CreateSema(&threadSema);
+	assert((g_TimerThreadSema >= 0) && (g_SoundThreadSema >= 0));
 
 	ee_thread_t timerThread, soundThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
@@ -277,15 +277,14 @@ void OSystem_PS2::initTimer(void) {
 	timerThread.stack            = _timerStack;
 	timerThread.stack_size       = TIMER_STACK_SIZE;
 	timerThread.func             = (void *)systemTimerThread;
-	//timerThread.gp_reg         = _gp; // _gp is always NULL.. broken linkfile?
-	asm("move %0, $gp\n": "=r"(timerThread.gp_reg));
+	timerThread.gp_reg			 = &_gp;
 
 	// soundthread's priority is higher than main- and timerthread
 	soundThread.initial_priority = thisThread.current_priority - 2;
 	soundThread.stack            = _soundStack;
 	soundThread.stack_size       = SOUND_STACK_SIZE;
 	soundThread.func             = (void *)systemSoundThread;
-	asm("move %0, $gp\n": "=r"(soundThread.gp_reg));
+	soundThread.gp_reg			 = &_gp;
 
 	_timerTid = CreateThread(&timerThread);
 	_soundTid = CreateThread(&soundThread);
@@ -327,21 +326,69 @@ void OSystem_PS2::soundThread(void) {
 	soundSema.max_count = 1;
 	_soundSema = CreateSema(&soundSema);
 	assert(_soundSema >= 0);
-	int16 *soundBuf = (int16*)memalign(64, SMP_PER_CB * sizeof(int16) * 2);
+	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
+	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
+
+	int bufferedSamples = 0;
+	int cycles = 0;
 
 	while (!_systemQuit) {
-		WaitSema(g_SoundRequestSema);
+		WaitSema(g_SoundThreadSema);
+
+		if (!(cycles & 31))
+			bufferedSamples = SjPCM_Buffered();
+		else
+			bufferedSamples -= 480;
+		cycles++;
 
 		WaitSema(_soundSema);
-		if (_scummSoundProc)
-			_scummSoundProc(_scummSoundParam, (uint8 *)soundBuf, SMP_PER_CB * sizeof(int16) * 2);			
-		else 
-			memset(soundBuf, 0, SMP_PER_CB * sizeof(int16) * 2);
+		if (_scummSoundProc) {
+			if (bufferedSamples <= 4 * SMP_PER_BLOCK) {
+				// we have to produce more samples, call sound mixer
+				// the scratchpad at 0x70000000 is used as temporary soundbuffer
+				_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
 
-		audsrv_play_audio((char *)soundBuf, SMP_PER_CB * sizeof(int16) * 2);
+				// demux data into 2 buffers, L and R
+				 __asm__ (
+					"move  $t2, %1\n\t"			// dest buffer right
+					"move  $t3, %0\n\t"			// dest buffer left
+					"lui   $t8, 0x7000\n\t"		// muxed buffer, fixed at 0x70000000
+					"addiu $t9, $0, 100\n\t"	// number of loops
+					"mtsab $0, 2\n\t"			// set qword shift = 2 byte
+
+					"loop:\n\t"
+					"  lq $t4,  0($t8)\n\t"		// load 8 muxed samples
+					"  lq $t5, 16($t8)\n\t"		// load 8 more muxed samples
+
+					"  qfsrv $t6, $0, $t4\n\t"	// shift right for second
+					"  qfsrv $t7, $0, $t5\n\t"	// packing step (right channel)
+
+					"  ppach $t4, $t5, $t4\n\t"	// combine left channel data
+					"  ppach $t6, $t7, $t6\n\t"	// right channel data
+
+					"  sq $t4, 0($t3)\n\t"		// write back
+					"  sq $t6, 0($t2)\n\t"		//
+
+					"  addiu $t9, -1\n\t"		// decrement loop counter
+					"  addiu $t2, 16\n\t"		// increment pointers
+					"  addiu $t3, 16\n\t"
+					"  addiu $t8, 32\n\t"
+					"  bnez  $t9, loop\n\t"		// loop
+						:  // outputs
+				 		: "r"(soundBufL), "r"(soundBufR)  // inputs
+					//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
+						: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
+				);
+				// and feed it into the SPU
+				// non-blocking call, the function will return before the buffer's content
+				// was transferred.
+				SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
+				bufferedSamples += SMP_PER_BLOCK;
+			}
+		} 
 		SignalSema(_soundSema);
 	}
-	free(soundBuf);
+	free(soundBufL);
 	DeleteSema(_soundSema);
 	ExitThread();
 }
@@ -357,10 +404,7 @@ const char *irxModules[] = {
 #endif
 	IRX_PREFIX "FILEXIO.IRX" IRX_SUFFIX,
 	IRX_PREFIX "CODYVDFS.IRX" IRX_SUFFIX,
-	IRX_PREFIX "AUDSRV.IRX" IRX_SUFFIX,
-#ifndef USE_PS2LINK
-	IRX_PREFIX "PS2DEV9.IRX" IRX_SUFFIX
-#endif
+	IRX_PREFIX "SJPCM.IRX" IRX_SUFFIX,
 };
 
 void OSystem_PS2::loadModules(void) {
@@ -395,14 +439,18 @@ void OSystem_PS2::loadModules(void) {
 		msgPrintf(FOREVER, "FXIO Init failed: %d", res);
 		quit();
 	}
-
-	if ((res = SifLoadModule(IRX_PREFIX "PS2ATAD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
-		sioprintf("Cannot load module: PS2ATAD.IRX (%d)\n", res);
+	
+	if ((res = SifLoadModule(IRX_PREFIX "PS2DEV9.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: PS2DEV9.IRX (%d)", res);
+	else if ((res = SifLoadModule(IRX_PREFIX "PS2ATAD.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+		sioprintf("Cannot load module: PS2ATAD.IRX (%d)", res);
 	else if ((res = SifLoadModule(IRX_PREFIX "PS2HDD.IRX" IRX_SUFFIX, sizeof(hddarg), hddarg)) < 0)
-		sioprintf("Cannot load module: PS2HDD.IRX (%d)\n", res);
+		sioprintf("Cannot load module: PS2HDD.IRX (%d)", res);
 	else if ((res = SifLoadModule(IRX_PREFIX "PS2FS.IRX" IRX_SUFFIX, sizeof(pfsarg), pfsarg)) < 0)
-		sioprintf("Cannot load module: PS2FS.IRX (%d)\n", res);
+		sioprintf("Cannot load module: PS2FS.IRX (%d)", res);
 	else {
+		if ((res = SifLoadModule(IRX_PREFIX "POWEROFF.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+			sioprintf("Cannot load module: POWEROFF.IRX (%d)", res);
 		if ((hddCheckPresent() >= 0) && (hddCheckFormatted() >= 0))
 			_useHdd = true;
 	}
@@ -654,7 +702,24 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 	_msgClearTime = millis + getMillis();
 }
 
+void OSystem_PS2::powerOffCallback(void) {
+	sioprintf("powerOffCallback");
+	_saveManager->quit();
+	if (_useHdd) {
+		sioprintf("umount");
+		fio.umount("pfs0:");
+	}
+	sioprintf("fxio");
+	// enable blocking FXIO so libhdd will correctly close drive, etc.
+	fileXioSetBlockMode(FXIO_WAIT);
+	sioprintf("done");
+}
+
 void OSystem_PS2::quit(void) {
+#ifdef USE_PS2LINK
+	printf("OSystem_PS2::quit\n");
+	SleepThread();
+#endif
 	sioprintf("OSystem_PS2::quit");
 	if (_useHdd) {
 		driveStandby();
@@ -681,10 +746,16 @@ void OSystem_PS2::quit(void) {
 
 	padEnd(); // stop pad library
 	cdvdInit(CDVD_EXIT);
-	cdvdExit();
-	SifExitIopHeap();
-	SifLoadFileExit();
+	sioprintf("resetting iop");
+	SifIopReset(NULL, 0);
 	SifExitRpc();
+	while (!SifIopSync());
+    SifInitRpc(0);
+	cdvdExit();
+	SifExitRpc();
+	FlushCache(0);
+	SifLoadFileExit();
+	sioprintf("Restarting ScummVM");
 	LoadExecPS2("cdrom0:\\SCUMMVM.ELF", 0, NULL); // resets the console and executes the ELF
 }
 

@@ -32,6 +32,8 @@
 #include "backends/ps2/systemps2.h"
 #include "common/scummsys.h"
 
+extern void *_gp;
+
 #define UCL_MAGIC 0x314C4355
 
 #define PORT 0
@@ -270,9 +272,9 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 	saveThread.initial_priority = thisThread.current_priority + 1;
 	saveThread.stack_size = 8 * 1024;
 	_autoSaveStack = malloc(saveThread.stack_size);	
-	saveThread.stack = _autoSaveStack;
-	saveThread.func = (void *)runSaveThread;
-	asm("move %0, $gp\n": "=r"(saveThread.gp_reg));
+	saveThread.stack  = _autoSaveStack;
+	saveThread.func   = (void *)runSaveThread;
+	saveThread.gp_reg = &_gp;
 
 	_autoSaveTid = CreateThread(&saveThread);
 	assert(_autoSaveTid >= 0);
@@ -560,13 +562,12 @@ void Ps2SaveFileManager::quit(void) {
 	ee_thread_t statSave, statThis;
 	ReferThreadStatus(GetThreadId(), &statThis);
 	int res = ChangeThreadPriority(_autoSaveTid, statThis.current_priority - 1);
-	sioprintf("SaveThread prio res: %d", res);
 
 	do {	// wait until thread called ExitThread()
 		SignalSema(_autoSaveSignal);
 		ReferThreadStatus(_autoSaveTid, &statSave);
 	} while (statSave.status != 0x10);
-	sioprintf("wait done");
+
 	DeleteThread(_autoSaveTid);
     free(_autoSaveStack);
 }

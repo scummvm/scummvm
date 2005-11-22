@@ -30,6 +30,8 @@
 #include "GsDefs.h"
 #include "graphics/surface.h"
 
+extern void *_gp;
+
 enum Buffers {
 	SCREEN = 0,
 	MOUSE,
@@ -225,10 +227,10 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	_animStack = malloc(ANIM_STACK_SIZE);
 	animThread.initial_priority = thisThread.current_priority - 3;
-	animThread.stack = _animStack;
+	animThread.stack	  = _animStack;
 	animThread.stack_size = ANIM_STACK_SIZE;
-	animThread.func = (void *)runAnimThread;
-	asm("move %0, $gp\n": "=r"(animThread.gp_reg));
+	animThread.func		  = (void *)runAnimThread;
+	animThread.gp_reg	  = &_gp;
 
 	_animTid = CreateThread(&animThread);
 	assert(_animTid >= 0);

@@ -24,9 +24,9 @@
 #include <osd_config.h>
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
 
-static uint32 g_timeSecs;
+static int	  g_timeSecs;
 static int	  g_day, g_month, g_year;
-static uint32 g_lastTimeCheck;
+static int	  g_lastTimeCheck;
 extern volatile uint32 msecCount;
 
 void buildNewDate(int dayDiff) {

@@ -77,6 +77,7 @@ void *driveStop(void *data) {
 }
 
 void *driveStandby(void *data) {
+	int type;
 	if (CdStandby() == 1) {
 		if (CdSync(0) == 0) {
 			*(int*)data = CdGetError();
@@ -84,6 +85,14 @@ void *driveStandby(void *data) {
 			*(int*)data = -0x100;
 	} else
 		*(int*)data = -0x101;
+
+	do {	// wait until drive detected disc type
+		type = CdGetDiskType();
+		if (DISC_NOT_READY(type))
+			DelayThread(10 * 1000);
+	} while (DISC_NOT_READY(type));
+	printf("Standby: Disc type: %02X\n", type);
+
 	return data;
 }
 

@@ -103,6 +103,7 @@ public:
 	void msgPrintf(int millis, char *format, ...);
 	void makeConfigPath(char *dest);
 
+	void powerOffCallback(void);
 	bool hddPresent(void);
 
 private:
