@@ -453,7 +453,7 @@ void map_loadMapObjects(char *avjFile) {
 	if (handle >= 0) {
 		map_loadFromAvo = 1;
 		data_closeData(handle);
-		map_avoDataPtr = data_getSmallData(avoName);
+		map_avoDataPtr = data_getData(avoName);
 		dataBuf = map_avoDataPtr;
 		map_loadDataFromAvo((char *)map_passMap, 28 * 26);
 
@@ -471,7 +471,7 @@ void map_loadMapObjects(char *avjFile) {
 		map_loadDataFromAvo((char *)map_itemPoses, szMap_ItemPos * 20);
 	} else {
 		map_loadFromAvo = 0;
-		map_avoDataPtr = data_getSmallData(avjFile);
+		map_avoDataPtr = data_getData(avjFile);
 		dataBuf = map_avoDataPtr;
 	}
 

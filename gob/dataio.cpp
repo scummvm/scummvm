@@ -26,30 +26,26 @@
 
 namespace Gob {
 
-int16 file_write(int16 handle, char *buf, int16 size) {
-	return filesHandles[handle].write(buf, size);
+Common::File *file_getHandle(int16 handle) {
+	return &filesHandles[handle];
 }
 
 int16 file_open(const char *path, Common::File::AccessMode mode) {
 	int16 i;
 
 	for (i = 0; i < MAX_FILES; i++) {
-		if (!filesHandles[i].isOpen())
+		if (!file_getHandle(i)->isOpen())
 			break;
 	}
 	if (i == MAX_FILES)
 		return -1;
 
-	filesHandles[i].open(path, mode);
+	file_getHandle(i)->open(path, mode);
 
-	if (filesHandles[i].isOpen())
+	if (file_getHandle(i)->isOpen())
 		return i;
 
 	return -1;
-}
-
-Common::File *file_getHandle(int16 handle) {
-	return &filesHandles[handle];
 }
 
 int16 data_getChunk(const char *chunkName) {
@@ -362,10 +358,6 @@ char *data_getData(const char *path) {
 	data_readData(handle, ptr, size);
 	data_closeData(handle);
 	return data;
-}
-
-char *data_getSmallData(const char *path) {
-	return data_getData(path);
 }
 
 }				// End of namespace Gob
