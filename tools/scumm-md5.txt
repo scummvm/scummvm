@@ -126,8 +126,8 @@ The Secret of Monkey Island
 	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
 	VGA (4 disk)	DOS	it	66fd5ff9a810dfeb6d6bdada18221140	monkey	Andrea Petrucci
 	VGA	Amiga	en	6c2bff0e327f2962e809c2e1a82d7309	monkey	dhweg
-	VGA	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkey	ghoostkilla
-	VGA (alt?)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkey	Andreas Bylund
+	VGA (V1.1)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkey	Andreas Bylund
+	VGA (V1.2r)	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkey	ghoostkilla
 	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
 	VGA	Amiga	fr	3433be9866ca4261b2d5d25374e3f243	monkey	Gerald Vincent
 	VGA	Amiga	it	fb66aa42de21675116346213f176a366	monkey	Andrea Petrucci
