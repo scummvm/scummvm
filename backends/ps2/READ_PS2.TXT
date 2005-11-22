@@ -1,16 +1,18 @@
-ScummVM-PS2 0.8.0 Release Candidate 2 Readme
+ScummVM-PS2 0.8.0 Release Candidate 3 Readme
 ============================================
 
-You need a Playstation2 with a modchip of your choice in order to run ScummVM.
+You need a PlayStation 2 with a modchip of your choice in order to run ScummVM.
 
-ScummVM expects the game data on the CD-R, other devices like USB sticks
- and HDD are currently unsupported.
+ScummVM expects the game data either on CD-R/DVD-R or on the Harddisk.
+ It tries to mount the partition hdd0:+ScummVM on startup and basically treats
+ it in the same way as the DVD drive.
+ Creating the partition and putting the datafiles there is up to you.
 
 In order to use a USB Mouse and USB Keyboard, you need Sony's USB driver,
- the USBD.IRX.  Copy it from a PS2 game that supports USB devices, like
- Eye Toy or Singstar. 
-The demo disc that came with my PS2 also had it.
- Put it into the directory in which you extracted the .zip file.
+ the USBD.IRX.  As it is Sony property, we can not offer it for download.
+ Later versions of the USBD apparently are incompatible. It should work if
+ the file is smaller than ~30 KB.
+I am using the USBD from the Demo Disc that was shipped with my PS2.
 You can also use ScummVM without the USB driver but you can only use the
  Gamepad in that case.
 
@@ -36,8 +38,9 @@ Unfortunately, writing DVD images with cd-tool is currently broken.
 
 Notes
 =====
-- Curse of Monkey Island is unsupported. iMuse digital crashes often, 
-   especially during Sea battles.
+- The Curse of Monkey Island only works correctly from HDD.
+   Playing it from CD/DVD will initially seem to work, but you will
+   experience random crashes.
 - Compressed SAN files need a lot of CPU power, probably because of zlib,
    and are constantly out of sync. Uncompressed SANs play fine though, so
    compress_san is NOT recommended.
@@ -67,11 +70,6 @@ Left analog stick    -   Mouse. Disabled when USB mouse is detected.
 
 
 
-Changes since 0.8.0 RC1
+Changes since 0.8.0 RC2
 =======================
-- Zlib was added
-- ScummVM looks for a ScummVM.ini in the CD/DVD's root directory before falling
-   back to the one on the Memory Card
-- Disc swapping was fixed
-- PAL/NTSC detection was fixed
-- Autosaves are now written every 15 minutes instead of every 5 minutes
+- HDD support was added
