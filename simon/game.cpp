@@ -76,6 +76,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1AMIGA_DE,  "c649fcc0439766810e5097ee7e81d4c8", "stripped.txt", true},
 	{ GID_SIMON1AMIGA_DE,  "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
 
+	{ GID_SIMON1AMIGADEMO, "a12b696170f14eca5ff75f1549829251", "gameamiga", true },  // Unpacked version
+	{ GID_SIMON1AMIGADEMO, "ebc96af15bfaf75ba8210326b9260d2f", "icon.pkd", true },
+	{ GID_SIMON1AMIGADEMO, "8edde5b9498dc9f31da1093028da467c", "stripped.txt", true},
+	{ GID_SIMON1AMIGADEMO, "1247e024e1f13ca54c1e354120c7519c", "tbllist", true},
+
 	{ GID_SIMON1CD32,      "bab7f19237cf7d7619b6c73631da1854", "gameamiga", true },
 	{ GID_SIMON1CD32,      "565ef7a98dcc21ef526a2bb10b6f42ed", "icon.pkd", true },
 	{ GID_SIMON1CD32,      "59be788020441e21861e284236fd08c1", "stripped.txt", true},
@@ -372,6 +377,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON1CD32_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
 		Common::DE_DEU,
+		Common::kPlatformAmiga,
+	},
+
+	// Simon the Sorcerer 1 - English Amiga ECS Demo
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1AMIGADEMO,
+		"Simon the Sorcerer 1 (Amiga ECS Demo)",
+		ARRAYSIZE(SIMON1CD32_GameFiles),
+		SIMON1CD32_GameFiles,
+		GF_CRUNCHED | GF_OLD_BUNDLE,
+		Common::EN_USA,
 		Common::kPlatformAmiga,
 	},
 
