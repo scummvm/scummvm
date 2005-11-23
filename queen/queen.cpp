@@ -231,7 +231,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 			_input->quickLoadReset();
 			loadGameState(0);
 		}
-		if (_system->getMillis() - _lastSaveTime >= AUTOSAVE_INTERVAL) {
+		if (shouldPerformAutoSave(_lastSaveTime)) {
 			saveGameState(AUTOSAVE_SLOT, "Autosave");
 			_lastSaveTime = _system->getMillis();
 		}

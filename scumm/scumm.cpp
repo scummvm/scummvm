@@ -2359,8 +2359,8 @@ int ScummEngine::scummLoop(int delta) {
 		}
 	}
 
-	// Trigger autosave all 5 minutes.
-	if (!_saveLoadFlag && _system->getMillis() > _lastSaveTime + 5 * 60 * 1000) {
+	// Trigger autosave if necessary.
+	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime)) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;

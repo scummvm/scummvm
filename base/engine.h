@@ -44,6 +44,9 @@ protected:
 	const Common::String _gameDataPath;
 	Common::SaveFileManager *_saveFileMan;
 
+private:
+	int _autosavePeriod;
+
 public:
 	Engine(OSystem *syst);
 	virtual ~Engine();
@@ -72,6 +75,9 @@ public:
 
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
+
+	/* Indicate if an autosave should be performed */
+	bool shouldPerformAutoSave(int lastSaveTime);
 };
 
 extern Engine *g_engine;

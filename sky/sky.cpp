@@ -240,7 +240,7 @@ int SkyEngine::go() {
 
 		int32 frameTime = (int32)_system->getMillis();
 
-		if (_system->getMillis() - _lastSaveTime > 5 * 60 * 1000) {
+		if (shouldPerformAutoSave(_lastSaveTime)) {
 			if (_skyControl->loadSaveAllowed()) {
 				_lastSaveTime = _system->getMillis();
 				_skyControl->doAutoSave();

@@ -402,6 +402,11 @@ extern "C" int main(int argc, char *argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
+	if (!ConfMan.hasKey("autosave_period")) {
+		// By default, trigger autosave every 5 minutes
+		ConfMan.set("autosave_period", 5 * 60, Common::ConfigManager::kApplicationDomain);
+	}
+
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
 
