@@ -4147,7 +4147,7 @@ void SimonEngine::loadMusic (uint music) {
 	char buf[4];
 
 	if (getPlatform() == Common::kPlatformAmiga) {
-		if (!(getFeatures() & GF_TALKIE)) {
+		if (getFeatures() & GF_CRUNCHED) {
 			// TODO Add support for decruncher
 			debug(5,"loadMusic - Decrunch %dtune attempt", music);
 		}
