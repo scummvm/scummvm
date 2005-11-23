@@ -1387,21 +1387,24 @@ void SimonEngine::o_quit_if_user_presses_y() {
 	byte keyNo = 'n';
 
 	switch (_language) {
-	case 21:  // Russian
+	case Common::RU_RUS:
 		break;
-	case 20:  // Hebrew
+	case Common::PL_POL:
+		keyYes = 't';
+		break;
+	case Common::HB_ISR:
 		keyYes = 'f';
 		break;
-	case 5:   // Spanish
+	case Common::ES_ESP:
 		keyYes = 's';
 		break;
-	case 3:   // Italian
+	case Common::IT_ITA:
 		keyYes = 's';
 		break;
-	case 2:   // French
+	case Common::FR_FRA:
 		keyYes = 'o';
 		break;
-	case 1:   // German
+	case Common::DE_DEU:
 		keyYes = 'j';
 		break;
 	default:
