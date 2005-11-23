@@ -838,6 +838,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "TEMPDEMO", kGenPC },
 	{ "putttime", "Tempdemo", kGenMac }, // FR Mac demo
 	{ "putttime", "toffzeit", kGenPC }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
+	{ "putttime", "toffzeit", kGenMac }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
 	{ "puttzoo", "Puttzoo Demo", kGenMac },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "puttzoo", "zoodemo", kGenPC },
