@@ -178,6 +178,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2TALKIE,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2TALKIE,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2TALKIE2,   "608e277904d87dd28725fa08eacc2c0d", "gsptr30", false },
+	{ GID_SIMON2TALKIE2,   "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2TALKIE2,   "8d6dcc65577e285dbca03ff6d7d9323c", "simon2.gme", false },
+	{ GID_SIMON2TALKIE2,   "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
+	{ GID_SIMON2TALKIE2,   "a0d5a494b5d3d209d1a1d76cc8d76601", "tbllist", false},
+
 	{ GID_SIMON2TALKIE_FR, "43b3a04d2f0a0cbd1b024c814856561a", "gsptr30", false },
 	{ GID_SIMON2TALKIE_FR, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2TALKIE_FR, "8af0e02c0c3344db64dffc12196eb59d", "simon2.gme", false },
@@ -382,7 +388,7 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformAmiga,
 	},
 
-	// Simon the Sorcerer 1 - English Amiga CD32 alternative
+	// Simon the Sorcerer 1 - English Amiga CD32 alternative?
 	{
 		"simon1",
 		GType_SIMON1,
@@ -582,6 +588,20 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
+		"Simon the Sorcerer 2 (DOS CD)",
+		ARRAYSIZE(SIMON2_GameFiles),
+		SIMON2_GameFiles,
+		GF_TALKIE,
+		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
+
+	// Simon the Sorcerer 2 - English DOS CD alternate?
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2TALKIE2,
 		"Simon the Sorcerer 2 (DOS CD)",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
