@@ -533,7 +533,7 @@ protected:
 	};
 
 	int _blastObjectQueuePos;
-	BlastObject _blastObjectQueue[128];
+	BlastObject _blastObjectQueue[200];
 
 	struct BlastText : TextObject {
 		Common::Rect rect;
