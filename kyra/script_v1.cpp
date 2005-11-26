@@ -374,7 +374,8 @@ int KyraEngine::cmd_blockOutWalkableRegion(ScriptState *script) {
 int KyraEngine::cmd_walkPlayerToPoint(ScriptState *script) {
 	debug(3, "cmd_walkPlayerToPoint(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
-	if (!stackPos(2)) {
+	int normalTimers = stackPos(2);
+	if (!normalTimers) {
 		disableTimer(19);
 		disableTimer(14);
 		disableTimer(18);
@@ -382,7 +383,7 @@ int KyraEngine::cmd_walkPlayerToPoint(ScriptState *script) {
 
 	int reinitScript = handleSceneChange(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 
-	if (!stackPos(2)) {
+	if (!normalTimers) {
 		enableTimer(19);
 		enableTimer(14);
 		enableTimer(18);

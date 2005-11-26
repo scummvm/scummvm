@@ -286,6 +286,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_objectQueue = 0;
 	_animStates = new AnimObject[31];
 	assert(_animStates);
+	memset(_animStates, 0, sizeof(AnimObject)*31);
 	_charactersAnimState = &_animStates[0];
 	_sprites->_animObjects =  &_animStates[5];
 	_animItems = &_animStates[16];
@@ -329,7 +330,7 @@ int KyraEngine::init(GameDetector &detector) {
 	memset(_itemTable, 0, sizeof(_itemTable));
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
 	_exitListPtr = 0;
-	_pathfinderFlag = 0;
+	_pathfinderFlag = _pathfinderFlag2 = 0;
 	_lastFindWayRet = 0;
 	_sceneChangeState = _loopFlag2 = 0;
 	_timerNextRun = 0;
@@ -1337,7 +1338,7 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 			if (facing - 1 != 0) {
 				if (facing != 4) {
 					if (facing == 3 || facing == 5) {
-						if (facingIsFour[character] < 2) {
+						if (facingIsFour[character] > 2) {
 							facing = 4;
 						}
 						resetTables = true;
@@ -1351,6 +1352,11 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 				}
 				resetTables = true;
 			}
+		} else {
+			if (facingIsZero[character] > 2) {
+				facing = 0;
+			}
+			resetTables = true;
 		}
 		
 		if (resetTables) {
@@ -3158,7 +3164,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 				delete [] pathTable2;
 				return 0x7D00;
 			}
-			memcpy(&moveTable[lastUsedEntry], pathTable1, temp);
+			memcpy(&moveTable[lastUsedEntry], pathTable1, temp*sizeof(int));
 			lastUsedEntry += temp;
 		} else {
 			if (lastUsedEntry + tempValue > moveTableSize) {
@@ -3166,7 +3172,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 				delete [] pathTable2;
 				return 0x7D00;
 			}
-			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue);
+			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue*sizeof(int));
 			lastUsedEntry += tempValue;
 		}
 		x = curX;
@@ -3188,8 +3194,8 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
 	static const int8 facingTable2[] = { -1,  0, -1,  2, -1,  4, -1,  6, -1,  2, -1,  4, -1,  6, -1,  0 };
 	static const int8 facingTable3[] = {  2,  4,  4,  6,  6,  0,  0,  2,  6,  6,  0,  0,  2,  2,  4,  4 };
-	static const int8 addPosTable1[] = { -1,  0, -1,  4, -1,  0, -1, -4, -1, -4, -1,  0, -1,  4, -1,  0 };
-	static const int8 addPosTable2[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
+	static const int8 addPosTableX[] = { -1,  0, -1,  4, -1,  0, -1, -4, -1, -4, -1,  0, -1,  4, -1,  0 };
+	static const int8 addPosTableY[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
 	
 	// debug specific
 	//++unkTable[start];
@@ -3215,19 +3221,19 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 				ypos1 = y;
 				continue;
 			}
+			newFacing = facingTable1[start*8 + newFacing2];
 			break;
 		}
-		newFacing = newFacing2;
 		// debug drawing
 		//if (xpos1 >= 0 && ypos1 >= 0 && xpos1 < 320 && ypos1 < 200) {
-		//	_screen->setPagePixel(0, xpos1,ypos1, unkTable[start]);
+		//	_screen->setPagePixel(0, xpos1, ypos1, unkTable[start]);
 		//	_screen->updateScreen();
 		//	waitTicks(5);
 		//}
 		if (newFacing & 1) {
-			int temp = xpos1 + addPosTable1[newFacing + start * 8];
+			int temp = xpos1 + addPosTableX[newFacing + start * 8];
 			if (toX == temp) {
-				temp = ypos1 + addPosTable2[newFacing + start * 8];
+				temp = ypos1 + addPosTableY[newFacing + start * 8];
 				if (toY == temp) {
 					moveTable[position++] = facingTable2[newFacing + start * 8];
 					return position;
@@ -3379,7 +3385,8 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 	
 	int *oldPosition = moveTable;
 	int *tempPosition = moveTable;
-	int *curPosition = &moveTable[1];
+	int *curPosition = moveTable + 1;
+	retValue = 1;
 
 	while (*curPosition != 8) {
 		if (*oldPosition == facingTable[*curPosition]) {
@@ -3418,16 +3425,21 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 			if (tempPosition != oldPosition) {
 				curPosition = oldPosition;
 				oldPosition = tempPosition;
-				if (tempPosition != moveTable) {
+				while (true) {
+					if (tempPosition == moveTable) {
+						break;
+					}
 					--tempPosition;
-					while (*tempPosition == 9) {
-						++tempPosition;
+					if (*tempPosition != 9) {
+						break;
 					}
 				}
 			} else {
-				++curPosition;
-				while (*curPosition == 9) {
+				while (true) {
 					++curPosition;
+					if (*curPosition != 9) {
+						break;
+					}
 				}
 			}
 			continue;
@@ -3436,12 +3448,14 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 		tempPosition = oldPosition;
 		oldPosition = curPosition;
 		++retValue;
-		++curPosition;
-		while (*curPosition == 9) {
+		while (true) {
 			++curPosition;
+			if (*curPosition != 9) {
+				break;
+			}
 		}
 	}
-	
+
 	return retValue;
 }
 
@@ -3508,7 +3522,7 @@ int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) 
 }
 
 int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
-	debug(9, "handleSceneChange(0x%X, %d, %d)", table, unk1, frameReset);
+	debug(9, "processSceneChange(0x%X, %d, %d)", table, unk1, frameReset);
 	if (queryGameFlag(0xEF)) {
 		unk1 = 0;
 	}
@@ -3517,7 +3531,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	_loopFlag2 = 0;
 	bool running = true;
 	int returnValue = 0;
-	uint32 nextFrame;
+	uint32 nextFrame = 0;
 	while (running) {
 		// XXX
 		bool forceContinue = false;
@@ -3545,7 +3559,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		}
 		
 		if (unk1) {
-			// XXX
+			// XXX running = false;
 			_sceneChangeState = 1;
 		}
 		
@@ -3554,16 +3568,15 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		}
 		
 		int temp = 0;
-		if (table == tableStart) {
+		if (table == tableStart || table[1] == 8) {
 			temp = setCharacterPosition(0, 0);
 		} else {
 			temp = setCharacterPosition(0, table);
 		}
-		if (!temp) {
-			continue;
+		if (temp) {
+			++table;
 		}
 		
-		++table;
 		nextFrame = getTimerDelay(5) * _tickLength + _system->getMillis();
 		while (_system->getMillis() < nextFrame) {
 			_sprites->updateSceneAnims();
