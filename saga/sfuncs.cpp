@@ -1305,8 +1305,8 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 	TextListEntry textEntry;
 
-	textEntry.color = kITEColorBrightWhite;
-	textEntry.effectColor = kITEColorBlack;
+	textEntry.knownColor = kKnownColorBrightWhite;
+	textEntry.effectKnownColor = kKnownColorBlack;
 	textEntry.point.x = _vm->getDisplayWidth() / 2;
 	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kKnownFontMedium)) / 2;
 	textEntry.font = kKnownFontMedium;
@@ -1597,10 +1597,7 @@ void Script::sfScriptText(SCRIPTFUNC_PARAMS) {
 	rect.left = point.x - width / 2;
 	rect.setWidth(width);
 
-	if (_vm->getGameType() == GType_ITE)
-		_vm->_actor->setSpeechColor(color, kITEColorBlack);
-	else
-		_vm->_actor->setSpeechColor(color, kIHNMColorBlack);
+	_vm->_actor->setSpeechColor(color, _vm->KnownColor2ColorId(kKnownColorBlack));
 	_vm->_actor->nonActorSpeech(rect, &text, 1, -1, flags);
 }
 

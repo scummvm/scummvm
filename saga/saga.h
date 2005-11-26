@@ -321,6 +321,39 @@ enum GameFeatures {
 	GF_SCENE_SUBSTITUTES = 1 << 3
 };
 
+enum ColorId {
+	kITEColorTransBlack = 0x00,
+	kITEColorBrightWhite = 0x01,
+	kITEColorWhite = 0x02,
+	kITEColorLightGrey = 0x04,
+	kITEColorGrey = 0x0a,
+	kITEColorDarkGrey = 0x0b,
+	kITEColorDarkGrey0C = 0x0C,
+	kITEColorBlack = 0x0f,
+	kITEColorRed = 0x65,
+	kITEColorDarkBlue8a = 0x8a,
+	kITEColorBlue89 = 0x89,
+	kITEColorLightBlue92 = 0x92,
+	kITEColorBlue = 0x93,
+	kITEColorLightBlue94 = 0x94,
+	kITEColorLightBlue96 = 0x96,
+	kITEColorGreen = 0xba,
+
+	kIHNMColorBlack = 0xfa,
+	kIHNMColorPortrait = 0xfe
+};
+
+enum KnownColor {
+	kKnownColorTransparent,
+	kKnownColorBrightWhite,	
+	kKnownColorBlack,
+
+	kKnownColorSubtitleTextColor,
+	kKnownColorVerbText,
+	kKnownColorVerbTextShadow,
+	kKnownColorVerbTextActive
+};
+
 struct GameSoundInfo {
 	GameSoundTypes resourceType;
 	long frequency;
@@ -394,10 +427,6 @@ struct GameDisplayInfo {
 	int saveReminderHeight;
 	int saveReminderFirstSpriteNumber;
 	int saveReminderSecondSpriteNumber;
-
-	int verbTextColor;
-	int verbTextShadowColor;
-	int verbTextActiveColor;
 
 	int leftPortraitXOffset;
 	int leftPortraitYOffset;
@@ -698,6 +727,11 @@ public:
 
 	const char *getTextString(int textStringId);
 	void getExcuseInfo(int verb, const char *&textString, int &soundResourceId);
+
+private:
+
+public:
+	ColorId KnownColor2ColorId(KnownColor knownColor);
 };
 
 

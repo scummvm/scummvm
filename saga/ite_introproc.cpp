@@ -94,8 +94,8 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 	int i;
 
 	// Queue narrator dialogue list
-	textEntry.color = 255;
-	textEntry.effectColor = 0;
+	textEntry.knownColor = kKnownColorSubtitleTextColor;
+	textEntry.effectKnownColor = kKnownColorTransparent;
 	textEntry.useRect = true;
 	textEntry.rect.left = 0;
 	textEntry.rect.right = _vm->getDisplayWidth();
@@ -224,8 +224,8 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 	Event event;
 	Event *q_event = NULL;
 
-	textEntry.color = 255;
-	textEntry.effectColor = 0;
+	textEntry.knownColor = kKnownColorSubtitleTextColor;
+	textEntry.effectKnownColor = kKnownColorTransparent;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
 	textEntry.point.x = 160;
 

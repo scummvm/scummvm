@@ -445,4 +445,74 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 	}
 }
 
+ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
+	ColorId colorId = kITEColorTransBlack;
+
+	if (getGameType() == GType_ITE) {
+		switch (knownColor)
+		{
+		case(kKnownColorTransparent):
+			colorId = kITEColorTransBlack;
+			break;
+
+		case (kKnownColorBrightWhite):
+			colorId = kITEColorBrightWhite;
+			break;
+		case (kKnownColorBlack):
+			colorId = kITEColorBlack;
+			break;
+
+
+		case (kKnownColorSubtitleTextColor):
+			colorId = (ColorId)255;
+			break;
+		case (kKnownColorVerbText):
+			colorId = kITEColorBlue;
+			break;
+		case (kKnownColorVerbTextShadow):
+			colorId = kITEColorBlack;
+			break;
+		case (kKnownColorVerbTextActive):
+			colorId = (ColorId)96;
+			break;
+
+		default:
+			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
+		}
+	} else if (getGameType() == GType_IHNM) {
+		switch (knownColor)
+		{
+		case(kKnownColorTransparent):
+			colorId = kITEColorTransBlack;
+			break;
+
+		case (kKnownColorBlack):
+			colorId = kIHNMColorBlack;
+			break;
+
+		case (kKnownColorVerbText):
+			colorId = (ColorId)253;
+			break;
+		case (kKnownColorVerbTextShadow):
+			colorId = (ColorId)15;
+			break;
+		case (kKnownColorVerbTextActive):
+			colorId = (ColorId)252;
+			break;
+
+		default:
+			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
+		}
+
+/*		switch (font)
+		{
+		case (kKnownFontSmall):
+			fontId = kSmallFont;
+			break;
+		}*/
+	}
+	return colorId;
+}
+
+
 } // End of namespace Saga

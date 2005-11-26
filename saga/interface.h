@@ -162,26 +162,6 @@ struct Converse {
 	int replyBit;
 };
 
-enum GameColors {
-	kITEColorBrightWhite = 0x01,
-	kITEColorWhite = 0x02,
-	kITEColorLightGrey = 0x04,
-	kITEColorGrey = 0x0a,
-	kITEColorDarkGrey = 0x0b,
-	kITEColorDarkGrey0C = 0x0C,
-	kITEColorGreen = 0xba,
-	kITEColorBlack = 0x0f,
-	kITEColorRed = 0x65,
-	kITEColorDarkBlue8a = 0x8a,
-	kITEColorBlue89 = 0x89,
-	kITEColorLightBlue92 = 0x92,
-	kITEColorBlue = 0x93,
-	kITEColorLightBlue94 = 0x94,
-	kITEColorLightBlue96 = 0x96,
-
-	kIHNMColorBlack = 0xfa,
-	kIHNMColorPortrait = 0xfe
-};
 
 enum StatusTextInputState {
 	kStatusTextInputFirstRun,
@@ -358,7 +338,7 @@ private:
 	};
 	void drawButtonBox(Surface *ds, const Rect &rect, ButtonKind kind, bool down);
 	void drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton);
-	void drawVerbPanelText(Surface *ds, PanelButton *panelButton, int textColor, int textShadowColor);
+	void drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor);
 	void drawVerbPanel(Surface *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
 	bool processTextInput(uint16 ascii);

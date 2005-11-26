@@ -585,7 +585,7 @@ void Interface::loadScenePortraits(int resourceId) {
 void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 	PanelButton * rightButtonVerbPanelButton;
 	PanelButton * currentVerbPanelButton;
-	int textColor;
+	KnownColor textColor;
 	int spriteNumber;
 	Point point;
 
@@ -593,11 +593,11 @@ void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 	currentVerbPanelButton = getPanelButtonByVerbType(_vm->_script->getCurrentVerb());
 
 	if (panelButton->state) {
-		textColor = _vm->getDisplayInfo().verbTextActiveColor;
+		textColor = kKnownColorVerbTextActive;
 	} else if (panelButton == rightButtonVerbPanelButton) {
-		textColor = _vm->getDisplayInfo().verbTextActiveColor;
+		textColor = kKnownColorVerbTextActive;
 	} else {
-		textColor = _vm->getDisplayInfo().verbTextColor;
+		textColor = kKnownColorVerbText;
 	}
 
 	if (panelButton == currentVerbPanelButton) {
@@ -610,7 +610,7 @@ void Interface::drawVerbPanel(Surface *backBuffer, PanelButton* panelButton) {
 
 	_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _mainPanel.sprites, spriteNumber, point, 256);
 
-	drawVerbPanelText(backBuffer, panelButton, textColor, _vm->getDisplayInfo().verbTextShadowColor);
+	drawVerbPanelText(backBuffer, panelButton, textColor, kKnownColorVerbTextShadow);
 }
 
 void Interface::draw() {
@@ -735,8 +735,7 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + 1;
 
-	_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint,
-		_vm->getDisplayInfo().verbTextColor, _vm->getDisplayInfo().verbTextShadowColor, kFontShadow);
+	_vm->_font->textDraw(kKnownFontMedium, ds, text, textPoint, _vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -1892,7 +1891,7 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	int textWidth;
 	int textHeight;
 	Point point;
-	int textColor;
+	KnownColor textColor;
 	Rect rect;
 
 	textId = panelButton->id;
@@ -1929,16 +1928,16 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 	point.y = panel->y + panelButton->yOffset + (panelButton->height / 2) - (textHeight / 2);
 
 	if (panelButton == panel->currentButton) {
-		textColor = _vm->getDisplayInfo().verbTextActiveColor;
+		textColor = kKnownColorVerbTextActive;
 	} else {
-		textColor = _vm->getDisplayInfo().verbTextColor;
+		textColor = kKnownColorVerbText;
 	}
 
 	panel->calcPanelButtonRect(panelButton, rect);
 	drawButtonBox(ds, rect, kButton, panelButton->state > 0);
 
 	_vm->_font->textDraw(kKnownFontMedium, ds, text, point,
-		textColor, _vm->getDisplayInfo().verbTextShadowColor, kFontShadow);
+		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(kKnownColorVerbTextShadow), kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelButton *panelButton) {
@@ -1961,7 +1960,7 @@ void Interface::drawPanelButtonArrow(Surface *ds, InterfacePanel *panel, PanelBu
 	_vm->_sprite->draw(ds, _vm->getDisplayClip(), _vm->_sprite->_mainSprites, spriteNumber, point, 256);
 }
 
-void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int textColor, int textShadowColor) {
+void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor) {
 	const char *text;
 	int textWidth;
 	Point point;
@@ -1973,7 +1972,7 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 	} else {
 		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
-		textShadowColor = 0;
+		textShadowKnownColor = kKnownColorTransparent;
 	}
 
 	textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
@@ -1986,7 +1985,7 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, int tex
 		point.y = _mainPanel.y + panelButton->yOffset + 12;
 	}
 
-	_vm->_font->textDraw(kKnownFontVerb, ds, text, point, textColor, textShadowColor, (textShadowColor != 0) ? kFontShadow : kFontNormal);
+	_vm->_font->textDraw(kKnownFontVerb, ds, text, point, _vm->KnownColor2ColorId(textKnownColor),_vm->KnownColor2ColorId(textShadowKnownColor), (textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
 }
 
 

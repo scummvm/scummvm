@@ -77,8 +77,8 @@ struct TextListEntry {
 	bool useRect;
 	Common::Point point;
 	Common::Rect rect;
-	int color;
-	int effectColor;
+	KnownColor knownColor;
+	KnownColor effectKnownColor;
 	FontEffectFlags flags;
 	KnownFont font;
 	const char *text;

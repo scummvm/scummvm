@@ -147,10 +147,6 @@ static GameDisplayInfo ITE_DisplayInfo = {
 	12,12,			// save reminder w & h
 	6,7,			// save reminder sprite numbers
 
-	147,			// verb text color
-	15,				// verb text shadow color
-	96,				// verb text active color
-
 	5, 4,			// left portrait x, y offset
 	274, 4,			// right portrait x, y offset
 
@@ -602,10 +598,6 @@ static GameDisplayInfo IHNM_DisplayInfo = { //TODO: fill it all
 	616, 303,	// save reminder pos
 	24, 24,		// save reminder w&h
 	0,1,		// save reminder sprite numbers
-
-	253,		// verb text color
-	15,			// verb text shadow color FIXME
-	252,		// verb text active color
 
 	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset

@@ -240,9 +240,9 @@ void Scene::drawTextList(Surface *ds) {
 		if (entry->display) {
 
 			if (entry->useRect) {
-				_vm->_font->textDrawRect(entry->font, ds, entry->text, entry->rect, entry->color, entry->effectColor, entry->flags);
+				_vm->_font->textDrawRect(entry->font, ds, entry->text, entry->rect, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
 			} else {
-				_vm->_font->textDraw(entry->font, ds, entry->text, entry->point, entry->color, entry->effectColor, entry->flags);
+				_vm->_font->textDraw(entry->font, ds, entry->text, entry->point, _vm->KnownColor2ColorId(entry->knownColor), _vm->KnownColor2ColorId(entry->effectKnownColor), entry->flags);
 			}
 		}
 	}
@@ -453,10 +453,10 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 
 				_vm->_interface->setStatusText("Click or Press Return to continue. Press Q to quit.", 96);
 				_vm->_font->textDrawRect(kKnownFontMedium, backBuffer, sceneSubstitutes[i].title,
-					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), 1, 15, kFontOutline);
+					 Common::Rect(0, 7, _vm->getDisplayWidth(), 27), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				_vm->_font->textDrawRect(kKnownFontMedium, backBuffer, sceneSubstitutes[i].message,
 					 Common::Rect(24, getHeight() - 33, _vm->getDisplayWidth() - 11,
-								  getHeight()), 1, 15, kFontOutline);
+								  getHeight()), _vm->KnownColor2ColorId(kKnownColorBrightWhite), _vm->KnownColor2ColorId(kKnownColorBlack), kFontOutline);
 				return;
 			}
 		}
