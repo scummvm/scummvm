@@ -32,6 +32,7 @@ WSAMovieV1 *KyraEngine::wsa_open(const char *filename, int offscreenDecode, uint
 	uint32 flags = 0;
 	uint32 fileSize;
 	uint8 *p = _res->fileData(filename, &fileSize);
+	assert(p);
 	
 	WSAMovieV1 *wsa = new WSAMovieV1;
 	const uint8 *wsaData = p;
