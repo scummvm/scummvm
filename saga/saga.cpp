@@ -449,8 +449,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 	ColorId colorId = kITEColorTransBlack;
 
 	if (getGameType() == GType_ITE) {
-		switch (knownColor)
-		{
+		switch (knownColor) {
 		case(kKnownColorTransparent):
 			colorId = kITEColorTransBlack;
 			break;
@@ -461,7 +460,6 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		case (kKnownColorBlack):
 			colorId = kITEColorBlack;
 			break;
-
 
 		case (kKnownColorSubtitleTextColor):
 			colorId = (ColorId)255;
@@ -503,13 +501,6 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		default:
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
-
-/*		switch (font)
-		{
-		case (kKnownFontSmall):
-			fontId = kSmallFont;
-			break;
-		}*/
 	}
 	return colorId;
 }
