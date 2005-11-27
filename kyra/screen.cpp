@@ -1614,7 +1614,10 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 
 	int mouseHeight = *(shape+2);
 	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
-	
+
+	if (_vm->features() & GF_TALKIE)
+		shape -= 2;
+
 	uint8 *cursor = (uint8 *)malloc(mouseHeight * mouseWidth);
 	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
