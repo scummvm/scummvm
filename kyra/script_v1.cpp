@@ -314,6 +314,12 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_characterSays(0x%X) (%d, '%s', %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
+		while (snd_voicePlaying()) {
+			_sprites->updateSceneAnims();
+			updateAllObjectShapes();
+			_system->delayMillis(10);
+		}
+		snd_playVoiceFile(stackPos(0));
 		characterSays(stackPosString(1), stackPos(2), stackPos(3));
 	} else {
 		debug(3, "cmd_characterSays(0x%X) ('%s', %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2));
@@ -773,6 +779,12 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
+		while (snd_voicePlaying()) {
+			_sprites->updateSceneAnims();
+			updateAllObjectShapes();
+			_system->delayMillis(10);
+		}
+		snd_playVoiceFile(stackPos(0));
 		printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {
 		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
@@ -1428,10 +1440,10 @@ int KyraEngine::cmd_setScaleDepthTableValue(ScriptState *script) {
 
 int KyraEngine::cmd_message(ScriptState *script) {
 	if (_features & GF_TALKIE) {
-		debug(9, "cmd_message(0x%X)", script);
+		debug(3, "cmd_message(0x%X) (%d, '%s', %d)", script, stackPos(0), stackPosString(1), stackPos(2));
 		drawSentenceCommand(stackPosString(1), stackPos(2));
 	} else {
-		debug(9, "cmd_message(0x%X)", script);
+		debug(3, "cmd_message(0x%X) ('%s', %d)", script, stackPosString(0), stackPos(1));
 		drawSentenceCommand(stackPosString(0), stackPos(1));
 	}
 

@@ -344,6 +344,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_marbleVaseItem = -1;
 	_mouseState = _itemInHand = -1;
 	_handleInput = false;
+	
+	_currentRoom = 0xFFFF;
 
 	return 0;
 }
@@ -1186,17 +1188,35 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	
 	assert(sceneId < _roomTableSize);
 	Room *currentRoom = &_roomTable[sceneId];
-
+	
+	if (_currentRoom != 0xFFFF && (_features & GF_TALKIE)) {
+		char file[32];
+		assert(_currentRoom < _roomTableSize);
+		int tableId = _roomTable[_currentRoom].nameIndex;
+		assert(tableId < _roomFilenameTableSize);
+		strcpy(file, _roomFilenameTable[tableId]);
+		strcat(file, ".VRM");
+		_res->unloadPakFile(file);
+	}
+	
+	_currentRoom = sceneId;
+	
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
 	assert(tableId < _roomFilenameTableSize);
-	char datFileNameBuffer[32];
-	strcpy(datFileNameBuffer, _roomFilenameTable[tableId]);
-	strcat(datFileNameBuffer, ".DAT");
-	_sprites->loadDAT(datFileNameBuffer, _sceneExits);
+	char fileNameBuffer[32];
+	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
+	strcat(fileNameBuffer, ".DAT");
+	_sprites->loadDAT(fileNameBuffer, _sceneExits);
 	_sprites->setupSceneAnims();
 	_scriptInterpreter->unloadScript(_scriptClickData);
 	loadSceneMSC();
+	
+	if ((_features & GF_TALKIE)) {
+		strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
+		strcat(fileNameBuffer, ".VRM");
+		_res->loadPakFile(fileNameBuffer);
+	}
 	
 	_walkBlockNorth = currentRoom->northExit;
 	_walkBlockEast = currentRoom->eastExit;
