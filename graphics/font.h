@@ -116,7 +116,7 @@ public:
 	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
 };
 
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 #	define DEFINE_FONT(n) \
 		const NewFont *n;	\
 		void create_##n() {	\

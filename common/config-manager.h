@@ -67,7 +67,7 @@ public:
 
 	typedef Map<String, Domain, IgnoreCaseComparator> DomainMap;
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	/** The name of the application domain (normally 'scummvm'). */
 	static const String kApplicationDomain;
 

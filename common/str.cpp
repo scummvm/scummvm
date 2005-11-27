@@ -25,7 +25,7 @@
 
 namespace Common {
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 const String String::emptyString;
 #else
 const char *String::emptyString = "";

@@ -1,8 +1,8 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001/2004 The ScummVM project
+ * Copyright (C) 2001-2005 The ScummVM project
  * Copyright (C) 2002 Ph0x - GP32 Backend
  * Copyright (C) 2003/2004 DJWillis - GP32 Backend
+ * Copyright (C) 2005 Won Star - GP32 Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
  *
  * $Header$
  *
@@ -34,21 +34,12 @@
 	#include <gpmem.h>
 #endif
 
-//#ifdef GP32_GDB
-//	#include <gdb-stub.h>
-//#endif /*GP32_GDB*/
-
 unsigned int HEAPSTART;
 unsigned int HEAPEND;
 
 void InitializeFont (void);
 extern void GpKeyPollingTimeSet (int loop_cnt);
 extern void GpMain(void *arg);
-
-//extern int OpenUSB ();
-//extern void InstallISR ();
-
-
 
 int main (int arg_len, char * arg_v)
    {

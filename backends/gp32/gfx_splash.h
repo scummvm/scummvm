@@ -1,3 +1,26 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001-2005 The ScummVM project
+ * Copyright (C) 2003/2004 DJWillis - GP32 Backend
+ * Copyright (C) 2005 Won Star - GP32 Backend
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $Header$
+ *
+ */
+
 /////////////////////////////////////////
 //
 // Header file for GP32
@@ -18,7 +41,7 @@
 
 #define gfx_splash_palnb      256
 
-#include "gpgraphic.h"
+#include <gpgraphic.h>
 
 GP_PALETTEENTRY gfx_splash_Pal[256] = {
       0x843, 0x88B, 0x1941, 0x110D, 0x2883, 0x30C9, 0x2945, 0x2109, 0x214D, 0x2989, 0x218F, 0x3149, 0x394D, 0x3989, 0x318D, 0x8D1,

@@ -1,8 +1,6 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001/2004 The ScummVM project
- * Copyright (C) 2002 Ph0x - GP32 Backend
- * Copyright (C) 2003/2004 DJWillis - GP32 Backend
+ * Copyright (C) 2001-2005 The ScummVM project
+ * Copyright (C) 2005 Won Star - GP32 Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,28 +20,15 @@
  *
  */
 
-#ifndef STARTUP_H
-#define STARTUP_H
+#ifndef __GP32_LAUNCHER_H
+#define __GP32_LAUNCHER_H
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// ScummVM/GP32 - GP32 start-up header.
-//                Not part of ScummVM backend as such.
-//
-/////////////////////////////////////////////////////////////////////////////
+#include "stdafx.h"
+#include "common/scummsys.h"
 
-//	GP32 SDK Includes.
-#include <gpdef.h>
-#include <gpstdlib.h>
-#include <gpfont.h>
-#include <gpfont_port.h>
-#include <gpfontres.dat>
-#include <initval_port.h>
+extern void splashScreen();
 
-//	GP32 System startup.
+extern int g_cpuSpeed;
+extern int g_gammaRamp;
 
-unsigned int HEAPSTART;
-unsigned int HEAPEND;
-void InitializeFont (void);
-
-#endif /* STARTUP_H */
+#endif

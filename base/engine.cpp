@@ -156,13 +156,16 @@ void NORETURN CDECL error(const char *s, ...) {
 	vsnprintf(buf_input, STRINGBUFLEN, s, va);
 	va_end(va);
 
+#ifndef __GP32__
 	if (g_engine) {
 		g_engine->errorString(buf_input, buf_output);
 	} else {
 		strcpy(buf_output, buf_input);
 	}
-
-#ifdef __GP32__ //ph0x FIXME?
+#else
+	strcpy(buf_output, buf_input);
+#endif
+#ifdef __GP32__
 	printf("ERROR: %s\n", buf_output);
 #else
 #ifndef _WIN32_WCE

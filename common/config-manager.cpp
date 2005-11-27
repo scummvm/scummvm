@@ -62,7 +62,7 @@ static bool isValidDomainName(const Common::String &domain) {
 
 namespace Common {
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 
 const String ConfigManager::kApplicationDomain("scummvm");
 const String ConfigManager::kTransientDomain("__TRANSIENT");
@@ -514,7 +514,7 @@ bool ConfigManager::hasGameDomain(const String &domain) const {
 
 const String &ConfigManager::Domain::get(const String &key) const {
 	Node *node = findNode(_root, key);
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	return node ? node->_value : String::emptyString;
 #else
 	return node ? node->_value : ConfMan._emptyString;

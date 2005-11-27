@@ -4777,7 +4777,7 @@ static const FontDesc desc = {
 	sizeof(_font_bits)/sizeof(bitmap_t)
 };
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 extern const NewFont g_consolefont(desc);
 #else
 DEFINE_FONT(g_consolefont)

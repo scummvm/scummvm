@@ -109,7 +109,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 
 	ThumbnailHeader header;
 	header.type = MKID('THMB');
-#ifdef PALMOS_ARM
+#if defined(PALMOS_ARM) || defined(__GP32__)
 	// sizeof(header) is hardcoded here, because the compiler add padding to
 	// have a 4byte aligned struct and there is no easy way to pack it.
 	header.size = 14 + thumb.w*thumb.h*thumb.bytesPerPixel;

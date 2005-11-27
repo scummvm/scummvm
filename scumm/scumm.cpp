@@ -74,7 +74,7 @@
 extern bool isSmartphone(void);
 #endif
 
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 namespace Graphics {
 	extern void initfonts();
 }
@@ -1787,7 +1787,7 @@ int ScummEngine::init(GameDetector &detector) {
 	if (_version >= 5)
 		_sound->setupSound();
 
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG))
+#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	Graphics::initfonts();
 #endif
 
@@ -3117,14 +3117,14 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		return 0;
 	}
 
-	ScummGameSettings game = *g;
-
 	// Calculate MD5 of the games detection file, for savegames etc.
 	const char *name = g->name;
 	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
 	int substLastIndex = 0;
 	bool found = false;
+
+	ScummGameSettings game = *g;
 
 	for (int method = 0; method < 6 && !found; method++) {
 		switch (method) {

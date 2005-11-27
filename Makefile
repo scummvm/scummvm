@@ -1,4 +1,7 @@
-# $Header$
+CC		:= arm-elf-gcc
+CXX		:= arm-elf-g++
+LD		:= arm-elf-g++
+AS		:= arm-elf-as
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #

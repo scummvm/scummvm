@@ -1,4 +1,7 @@
-CXX     := c++
+CC		:= arm-elf-gcc
+CXX		:= arm-elf-g++
+LD		:= arm-elf-g++
+AS		:= arm-elf-as
 AR      := arm-elf-ar cru
 RANLIB  := arm-elf-ranlib
 RM      := rm -f
@@ -10,6 +13,9 @@ RM      := rm -f
 RM_REC  := $(RM) -r
 ZIP     := zip -q
 CP      := cp
+OBJCOPY	:= arm-elf-objcopy
+FXETOOL	:= b2fxec
+
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
@@ -28,19 +34,114 @@ CXXFLAGS+= -Wshadow -Wuninitialized -Wimplicit -Wundef
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 CXXFLAGS+= -Wwrite-strings -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor
 
-# Seems GCC 2.95 doesn't support the following, so we do not yet turn them
-# on by default (but I'd strongly recommend to all GCC 2.95 users to update
-# to a better compiler like GCC 3.x).
-#CXXFLAGS+= -ansi -W -Wno-unused-parameter -Woverloaded-virtual -Wdisabled-optimization -Wfloat-equal
+# GPSDK (SDK, Includes and Startup Files) base dir
+GPSDK			=	/usr/compat/gp32/share/sdk
 
-# The following causes problems on some systems where the system header
-# contain duplicate declarations already. That's really a bug in the 
-# system headers, but since it causes lots of warnings on those systems,
-# we don't enable it by default
-#CXXFLAGS+= -Wredundant-decls
+# Outputs
+EXEEXT			=	.elf
+MAPFILE			=	scummvm.map
+BIN			=	scummvm.gxb
+FXE			=	scummvm.fxe
 
-# Load the build rules & settings for the chosen backend
--include build.rules
+# Stripped Build? (Smaller ELF, Minimal debug symbol information).
+# You MUST comment this out with a # if you wish to debug your code.
+# STRIP_DEBUG		=	-Wl,--strip-debug
+
+# Plugins hack
+srcdir			=	./
+
+# GP32 Direct Execute Tool (i.e. pclink -e on Windows, gplink run on Linux)
+EXECUTE_TOOL	=	pclink -e
+#
+#	       		-ffast-math \
+#	       		-fshort-double \
+#
+#
+#
+
+				#-Wno-multichar \
+				# Remove the below from the above flags for Debug.
+CFLAGS		=	-marm -march=armv4t -mtune=arm920 -mapcs \
+	       		-finline-functions \
+	       		-fshort-enums \
+	       		-mstructure-size-boundary=32 \
+	       		-mno-thumb-interwork \
+				-I$(GPSDK)/include \
+				-g \
+	       		-O3 \
+	       		-fomit-frame-pointer
+
+CPPFLAGS	=	$(CFLAGS)
+
+DEFINES 	= 	-D__GP32__
+DEFINES		+=	-DNONSTANDARD_PORT
+
+# Support Vorbis Tremor Patches.
+#DEFINES	+=	-DVORBIS_TREMOR
+
+# Support LIBMAD Patches.
+#DEFINES	+=	-DGP32_MADMP3
+
+# Support for 8:3 save files names (The GP32 uses FAT12/16 (no vFAT) for the file system).
+DEFINES		+=	-DSHORT_SAVENAMES
+
+# Support for the unsigned sound mixer.
+DEFINES		+=	-DOUTPUT_UNSIGNED_AUDIO
+
+# Support for the GP32 (fmOPL derived) MIDI engine.
+#	-	NOT fully implemented yet.
+DEFINES		+=	-DUSE_GP32_FMOPL
+
+LDSPECS		=	-specs=gp32_gpsdk.specs
+
+LDFLAGS 	= 	$(STRIP_DEBUG) \
+				-Wl,-Map,$(MAPFILE) \
+				$(LDSPECS) -Wl,--no-warn-mismatch
+
+LIBS		+=	-L$(GPSDK)/lib \
+				-lgpmem -lgpos -lgpstdio -lgpstdlib -lgpsound -lgpgraphic -lgpfont \
+				-lm -lc -lgcc
+
+INCLUDES	+=	-Ibackends/gp32 -I$(GPSDK)/include
+
+MODULES		+=	backends/gp32
+
+#GP32 Debug - Remove from Release builds
+#	This builds in the GP32 GDB USB Stub. Don't use it unless you know what your doing.
+#	You also need to remove ANY optemisation from the compiler flags.
+#DEFINES	+=	-DGP32_GDB
+#OBJS	+=	backends/gp32/debug-gdbstub-usb.o
+
+# Standard librarys and optimization modules
+OBJS	+=	backends/gp32/startup.o \
+			backends/gp32/memcpy.o \
+			backends/gp32/gp_asmlib.o \
+			backends/gp32/gp_clipped.o \
+			backends/gp32/fontdata.o
+
+# Custom GP32 std library
+OBJS	+=	backends/gp32/gp32std.o \
+			backends/gp32/gp32std_grap.o \
+			backends/gp32/gp32std_input.o \
+			backends/gp32/gp32std_sound.o \
+			#backends/gp32/dmaaudio_asm.o \
+			#backends/gp32/dmaaudio.o \
+
+#Main ScummVM for the GP32 Backend
+OBJS	+= 	backends/gp32/gp32_main.o \
+			backends/gp32/gp32_launcher.o \
+			backends/gp32/gp32_osys.o \
+			backends/gp32/gp-fs.o
+
+#install: all
+					#$(EXECUTE_TOOL) $(BIN)
+
+$(FXE): $(BIN)
+					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" $< $@
+#					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" -b scummvm.bmp $< $@
+
+$(BIN): scummvm$(EXEEXT)
+					$(OBJCOPY) -O binary $< $@
 
 #######################################################################
 # Compile options - you can modify these to tweak ScummVM compilation #
@@ -69,10 +170,16 @@ HAVE_GCC3 = 1
 # Control which modules are built - uncomment any to disable module   #
 #######################################################################
 
+DISABLE_SCALERS = 1
+DISABLE_HQ_SCALERS = 1
+
 #DISABLE_SCUMM = 1
+#DISABLE_SCUMM_7_8 = 1
+DISABLE_HE = 1
 DISABLE_SIMON = 1
 DISABLE_SKY = 1
 DISABLE_QUEEN = 1
+
 
 # The engines below are not supported on the GP32 port so there is
 # no point compiling support into the binary.
@@ -83,6 +190,7 @@ DISABLE_SWORD2 = 1
 # Disable for ALL release builds.
 DISABLE_SAGA = 1
 DISABLE_KYRA = 1
+DISABLE_GOB = 1
 
 #######################################################################
 # Misc stuff - you should normally never have to edit this            #
@@ -96,32 +204,5 @@ dist:
 	$(RM) $(ZIPFILE)
 	$(ZIP) $(ZIPFILE) $(DISTFILES)
 
-# Pull in the GP32 backend build.rules here.
-build.rules: backends/gp32/build.rules
-	$(CP) backends/gp32/build.rules build.rules
-
-# Special target to create a application wrapper for Mac OS X
-bundle_name = ScummVM.app
-bundle: scummvm-static
-	mkdir -p $(bundle_name)/Contents/MacOS
-	mkdir -p $(bundle_name)/Contents/Resources
-	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
-	cp Info.plist $(bundle_name)/Contents/
-	cp scummvm.icns $(bundle_name)/Contents/Resources/
-	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
-	strip $(bundle_name)/Contents/MacOS/scummvm
-
 install: $(FXE)
 		$(EXECUTE_TOOL) $(BIN)	
-
-# Special target to create a static linked binary for Mac OS X
-scummvm-static: $(OBJS)
-	$(CXX) $(LDFLAGS) -o scummvm-static $(OBJS) \
-		/sw/lib/libSDLmain.a /sw/lib/libSDL.a \
-		/sw/lib/libmad.a \
-		/sw/lib/libvorbisfile.a /sw/lib/libvorbis.a /sw/lib/libogg.a \
-		-framework Cocoa -framework Carbon -framework IOKit \
-		-framework OpenGL -framework AGL -framework QuickTime \
-		-framework AudioUnit -framework AudioToolbox
-
-.PHONY: deb bundle
