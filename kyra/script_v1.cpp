@@ -483,7 +483,19 @@ int KyraEngine::cmd_destroyMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_runSceneAnimUntilDone(ScriptState *script) {
-	warning("STUB: cmd_runSceneAnimUntilDone");
+	debug(3, "cmd_runSceneAnimUntilDone(0x%X) (%d)", script, stackPos(0));
+	_sprites->_anims[stackPos(0)].play = true;
+	_sprites->_animObjects[stackPos(0)].active = 1;
+	_screen->hideMouse();
+	restoreAllObjectBackgrounds();
+	flagAllObjectsForBkgdChange();
+	preserveAnyChangedBackgrounds();
+	while (_sprites->_anims[stackPos(0)].play) {
+		_sprites->updateSceneAnims();
+		updateAllObjectShapes();
+	}
+	restoreAllObjectBackgrounds();
+	_screen->showMouse();
 	return 0;
 }
 
@@ -634,6 +646,7 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 		if (wsaFrame >= wsa_getNumFrames(_wsaObjects[wsaIndex]))
 			running = false;
 		
+		// XXX
 		waitTicks(waitTime);
 		if (worldUpdate) {
 			_sprites->updateSceneAnims();
@@ -656,6 +669,7 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
 	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+	// XXX
 	waitTicks(waitTime);
 	_sprites->updateSceneAnims();
 	updateAllObjectShapes();
@@ -832,7 +846,21 @@ int KyraEngine::cmd_loadSoundFile(ScriptState *script) {
 }
 
 int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
-	warning("STUB: cmd_displayWSAFrameOnHidPage");
+	debug(3, "cmd_displayWSAFrameOnHidPage(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(3), stackPos(4));
+	int frame = stackPos(0);
+	int xpos = stackPos(1);
+	int ypos = stackPos(2);
+	int waitTime = stackPos(3);
+	int wsaIndex = stackPos(4);
+	
+	_screen->hideMouse();
+	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 2);
+	// XXX
+	waitTicks(waitTime);
+	_sprites->updateSceneAnims();
+	updateAllObjectShapes();
+	_screen->showMouse();
+	
 	return 0;
 }
 

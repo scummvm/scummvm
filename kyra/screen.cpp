@@ -1621,7 +1621,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 
 	_system->showMouse(false);
 	copyRegionToBuffer(8, 0, 0, mouseWidth, mouseHeight, cursor);
-	_system->setMouseCursor(cursor, mouseWidth, mouseHeight, 0, 0, 0);
+	_system->setMouseCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
 	_system->showMouse(true);
 	free(cursor);
 
