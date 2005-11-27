@@ -681,8 +681,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 				// this is guessed
 				if (shapeFlags & 1) {
 					const uint8 *colorTable = shapeData + 10;
-					if (_vm->features() & GF_TALKIE)
-						colorTable += 2;
 					*decodedShapeFrame++ = colorTable[code];
 				} else {
 					*decodedShapeFrame++ = code;
