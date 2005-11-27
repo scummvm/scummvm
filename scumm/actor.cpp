@@ -2150,9 +2150,10 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE(Actor, _scaley, sleByte, VER(8)),
 		MKLINE(Actor, _charset, sleByte, VER(8)),
 
-		// Actor sound grew from 8 to 32 bytes
+		// Actor sound grew from 8 to 32 bytes and switched to uint16 in HE games
 		MKARRAY_OLD(Actor, _sound[0], sleByte, 8, VER(8), VER(36)),
-		MKARRAY(Actor, _sound[0], sleByte, 32, VER(37)),
+		MKARRAY_OLD(Actor, _sound[0], sleByte, 32, VER(37), VER(61)),
+		MKARRAY(Actor, _sound[0], sleUint16, 32, VER(62)),
 
 		// Actor animVariable grew from 8 to 27
 		MKARRAY_OLD(Actor, _animVariable[0], sleUint16, 8, VER(8), VER(40)),
