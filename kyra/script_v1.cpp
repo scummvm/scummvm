@@ -304,7 +304,6 @@ int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_characterSays(ScriptState *script) {
-	debug(3, "cmd_characterSays(0x%X) ('%s', %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2));
 	// Japanese version?
 	/*const char *str1 = "âuâëâôââôüAé?é¢ùêé¢é+é®üH";
 	const char *str2 = "âuâëâôâ\\âôüAé?é¢ùêé¢é+é®üH";
@@ -312,7 +311,14 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 	if (strcmp(stackPosString(0), str1) == 0)
 		characterSays((char *)str2, stackPos(1), stackPos(2));
 	else*/
-	characterSays(stackPosString(0), stackPos(1), stackPos(2));
+
+	if (_features & GF_TALKIE) {
+		debug(3, "cmd_characterSays(0x%X) (%d, '%s', %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
+		characterSays(stackPosString(1), stackPos(2), stackPos(3));
+	} else {
+		debug(3, "cmd_characterSays(0x%X) ('%s', %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2));
+		characterSays(stackPosString(0), stackPos(1), stackPos(2));
+	}
 
 	return 0;
 }
