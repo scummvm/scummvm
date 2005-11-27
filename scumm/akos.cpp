@@ -1638,24 +1638,6 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			if (akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_SkipStart) == 0)
 				flag_value = true;
 			continue;
-		case AKC_C0A0:
-			akos_queCommand(8, a, GB(2), 0);
-			continue;
-		case AKC_C0A1:
-			if (a->_heTalking) {
-				curpos = GUW(2);
-				break;
-			}
-			continue;
-		case AKC_C0A2:
-			if (!a->_heTalking) {
-				curpos = GUW(2);
-				break;
-			}
-			continue;
-		case AKC_C0A3:
-			akos_queCommand(8, a, a->getAnimVar(GB(2)), 0);
-			continue;
 		case AKC_C016:
 			if (_sound->isSoundRunning( a->_sound[a->getAnimVar(GB(4))]))  {
 				curpos = GUW(2);
@@ -1683,23 +1665,48 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 		case AKC_C044:
 			akos_queCommand(3, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
-
 		case AKC_C045:
 			a->setUserCondition(GB(3), a->getAnimVar(GB(4)));
 			continue;
-
 		case AKC_C046:
 			a->setAnimVar(GB(4), a->isUserConditionSet(GB(3)));
 			continue;
-
 		case AKC_C047:
 			a->setTalkCondition(GB(3));
 			continue;
-
 		case AKC_C048:
 			a->setAnimVar(GB(4), a->isTalkConditionSet(GB(3)));
 			continue;
-
+		case AKC_C0A0:
+			akos_queCommand(8, a, GB(2), 0);
+			continue;
+		case AKC_C0A1:
+			if (a->_heTalking != 0) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C0A2:
+			if (a->_heTalking == 0) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C0A3:
+			akos_queCommand(8, a, a->getAnimVar(GB(2)), 0);
+			continue;
+		case AKC_C0A4:
+			if (VAR(VAR_TALK_ACTOR) != 0) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
+		case AKC_C0A5:
+			if (VAR(VAR_TALK_ACTOR) == 0) {
+				curpos = GUW(2);
+				break;
+			}
+			continue;
 		default:
 			if ((code & 0xC000) == 0xC000)
 				error("Undefined uSweat token %X", code);
