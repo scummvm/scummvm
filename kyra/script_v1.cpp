@@ -771,8 +771,14 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 }
 
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
-	debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
-	printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
+	if (_features & GF_TALKIE) {
+		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
+		printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
+	} else {
+		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
+		printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
+	}
+
 	return 0;
 }
 
@@ -1421,8 +1427,14 @@ int KyraEngine::cmd_setScaleDepthTableValue(ScriptState *script) {
 }
 
 int KyraEngine::cmd_message(ScriptState *script) {
-	debug(9, "cmd_message(0x%X)", script);
-	drawSentenceCommand(stackPosString(0), stackPos(1));
+	if (_features & GF_TALKIE) {
+		debug(9, "cmd_message(0x%X)", script);
+		drawSentenceCommand(stackPosString(1), stackPos(2));
+	} else {
+		debug(9, "cmd_message(0x%X)", script);
+		drawSentenceCommand(stackPosString(0), stackPos(1));
+	}
+
 	return 0;
 }
 
