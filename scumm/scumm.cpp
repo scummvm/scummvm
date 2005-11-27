@@ -509,7 +509,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"ef71a322b6530ac45b1a070f7c0795f7", "Moonbase Commander (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
-	{"898eaa21f79cf8d4f08db856244689ff", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"898eaa21f79cf8d4f08db856244689ff", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaNHD
