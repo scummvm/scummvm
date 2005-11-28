@@ -937,6 +937,8 @@ void ScummEngine_v7::loadLanguageBundle() {
 		for (i = 0; i < lineCount; i++) {
 			if (*ptr == '!') {
 				// Don't know what a line with '!' means, just ignore it
+			} else if (*ptr == 'h') {
+				// File contains Korean text (Hangul). just ignore it
 			} else if (*ptr == 'e') {
 				// File is encoded!
 				enc = 0x13;
