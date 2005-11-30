@@ -717,7 +717,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "samnmax", "samdemo", kGenPC },
 	{ "samnmax", "snmdemo", kGenPC },
 	{ "samnmax", "snmidemo", kGenPC },
-	{ "snmdemo", "sdemo", kGenPC },
+	{ "samnmax", "sdemo", kGenPC },
 #ifndef DISABLE_SCUMM_7_8
 	{ "dig.la0", "The Dig Data", kGenAsIs },
 	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
