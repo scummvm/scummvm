@@ -377,6 +377,7 @@ Freddi Fish 5: The Case of the Creature of Coral Cave
 
 Freddi Fish and Luther's Water Worries
 	-	All	en	4ba37f835be11a59d969f90f272f575b	water	Kirben
+	-	All	en	f1b0e0d587b85052de5534a3847e68fe	water	Joachim Eberhard
 	-	Windows	ru	2012f854d83d9cc6f73b2b544cd8bbf8	water	sev
 	-	Windows	ru	6271130f440066830eca9056c1d7926f	water	sev
 
@@ -530,6 +531,7 @@ Putt-Putt's One-Stop Fun Shop
 
 Spy Fox 1: Dry Cereal
 	-	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
+	-	All	en	58436e634f4fae1d9973591c2ffa1fcb	spyfox	Joachim Eberhard
 	-	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	-	Windows	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
 	-	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
