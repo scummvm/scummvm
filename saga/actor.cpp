@@ -306,9 +306,6 @@ bool Actor::loadActorResources(ActorData *actor) {
 	size_t resourceLength;
 	int framesCount;
 	ActorFrameSequence *framesPointer;
-	int lastFrame = 0;
-	int orient;
-	int resourceId;
 	bool gotSomething = false;
 
 	if (actor->_frameListResourceId) {
@@ -326,15 +323,12 @@ bool Actor::loadActorResources(ActorData *actor) {
 		MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
 
 		for (int i = 0; i < framesCount; i++) {
-			for (orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
+			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 				// Load all four orientations
 				framesPointer[i].directions[orient].frameIndex = readS.readUint16();
 				framesPointer[i].directions[orient].frameCount = readS.readSint16();
 				if (framesPointer[i].directions[orient].frameCount < 0)
 					warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
-				if (framesPointer[i].directions[orient].frameIndex > lastFrame) {
-					lastFrame = framesPointer[i].directions[orient].frameIndex;
-				}
 			}
 		}
 
@@ -351,21 +345,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 			return true;
 	}
 
-	resourceId = actor->_spriteListResourceId;
-
-	if (resourceId) {
-		debug(9, "Loading sprite resource id %d", resourceId);
-
-		_vm->_sprite->loadList(resourceId, actor->_spriteList);
-
-		if (actor->_flags & kExtended) {
-			while ((lastFrame >= actor->_spriteList.spriteCount)) {
-				resourceId++;
-				debug(9, "Appending to sprite list %d", resourceId);
-				_vm->_sprite->loadList(resourceId, actor->_spriteList);
-			}
-		}
-
+	if (actor->_spriteListResourceId) {
 		gotSomething = true;
 	} else {
 		warning("Sprite List ID = 0 for actor index %d", actor->_index);
@@ -384,6 +364,31 @@ void Actor::freeActorList() {
 	free(_actors);
 	_actors = NULL;
 	_actorsCount = 0;
+}
+
+void Actor::loadActorSpriteList(ActorData *actor) {
+	int lastFrame = 0;
+	int resourceId = actor->_spriteListResourceId;
+
+	for (int i = 0; i < actor->_framesCount; i++) {
+		for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
+			if (actor->_frames[i].directions[orient].frameIndex > lastFrame) {
+				lastFrame = actor->_frames[i].directions[orient].frameIndex;
+			}
+		}
+	}
+
+	debug(9, "Loading actor sprite resource id %d", resourceId);
+
+	_vm->_sprite->loadList(resourceId, actor->_spriteList);
+
+	if (actor->_flags & kExtended) {
+		while ((lastFrame >= actor->_spriteList.spriteCount)) {
+			resourceId++;
+			debug(9, "Appending to actor sprite list %d", resourceId);
+			_vm->_sprite->loadList(resourceId, actor->_spriteList);
+		}
+	}
 }
 
 void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResourceID, int protagStatesCount, int protagStatesResourceID) {
@@ -774,6 +779,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
 		actor->_inScene = false;
+		actor->_spriteList.freeMem();
 		if (actor->_disabled) {
 			continue;
 		}
@@ -1578,8 +1584,12 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 		frameNumber = 8;
 		spriteList = &_vm->_sprite->_mainSprites;
 	} else if (validActorId(commonObjectData->_id)) {
-		spriteList = &((ActorData *)commonObjectData)->_spriteList;
-		frameNumber = ((ActorData *)commonObjectData)->_frameNumber;
+		ActorData *actor = (ActorData *)commonObjectData;
+		spriteList = &(actor->_spriteList);
+		frameNumber = actor->_frameNumber;
+		if (spriteList->infoList == NULL)
+			loadActorSpriteList(actor);
+
 	} else if (validObjId(commonObjectData->_id)) {
 		spriteList = &_vm->_sprite->_mainSprites;
 		frameNumber = commonObjectData->_spriteListResourceId;

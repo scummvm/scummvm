@@ -40,7 +40,7 @@ namespace Saga {
 class HitZone;
 
 
-#define ACTOR_DEBUG
+//#define ACTOR_DEBUG only for actor pathfinding debug!
 
 #define ACTOR_BARRIERS_MAX 16
 
@@ -473,6 +473,10 @@ public:
 		_walkStepsPoints[_walkStepsCount++] = point;
 	}
 
+	void freeSpriteList() {
+		_spriteList.freeMem();
+	}
+
 	ActorData() {
 		memset(this, 0, sizeof(*this));
 	}
@@ -480,7 +484,7 @@ public:
 		free(_frames);
 		free(_tileDirections);
 		free(_walkStepsPoints);
-		_spriteList.freeMem();
+		freeSpriteList();
 	}
 };
 
@@ -519,6 +523,7 @@ struct SpeechData {
 class Actor {
 	friend class IsoMap;
 	friend class SagaEngine;
+	friend class Puzzle;
 public:
 
 	Actor(SagaEngine *vm);
@@ -606,6 +611,7 @@ protected:
 
 private:
 	void stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, bool stopped);
+	void loadActorSpriteList(ActorData *actor);
 
 	void createDrawOrderList();
 	bool calcScreenPosition(CommonObjectData *commonObjectData);

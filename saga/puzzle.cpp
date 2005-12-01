@@ -140,11 +140,14 @@ void Puzzle::exitPuzzle(void) {
 }
 
 void Puzzle::initPieces(void) {
-	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	SpriteInfo *spI;
-
+	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
+	int frameNumber;
+	SpriteList *spriteList;
+	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
+	
 	for (int i = 0; i < PUZZLE_PIECES; i++) {
-		spI = &puzzle->_spriteList.infoList[i];
+		spI = &(spriteList->infoList[i]);
 		_pieceInfo[i].offX = (byte)(spI->width >> 1);
 		_pieceInfo[i].offY = (byte)(spI->height >> 1);
 
@@ -159,13 +162,16 @@ void Puzzle::initPieces(void) {
 
 void Puzzle::showPieces(void) {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
+	int frameNumber;
+	SpriteList *spriteList;
 	Surface *backBuffer = _vm->_gfx->getBackBuffer();
+	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
 	for (int j = PUZZLE_PIECES - 1 ; j >= 0; j--) {
 		int num = _piecePriority[j];
 
 		if (_puzzlePiece != num) {
-			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), puzzle->_spriteList, num, Point(_pieceInfo[num].curX, _pieceInfo[num].curY), 256);
+			_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), *spriteList, num, Point(_pieceInfo[num].curX, _pieceInfo[num].curY), 256);
 		}
 	}
 }
@@ -173,8 +179,11 @@ void Puzzle::showPieces(void) {
 void Puzzle::drawCurrentPiece() {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	Surface *backBuffer = _vm->_gfx->getBackBuffer();
+	int frameNumber;
+	SpriteList *spriteList;
+	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
 
-	_vm->_sprite->draw(backBuffer, _vm->_scene->getSceneClip(), puzzle->_spriteList, _puzzlePiece,
+	_vm->_sprite->draw(backBuffer, _vm->_scene->getSceneClip(), *spriteList, _puzzlePiece,
 			   Point(_pieceInfo[_puzzlePiece].curX, _pieceInfo[_puzzlePiece].curY), 256);
 }
 
@@ -302,6 +311,10 @@ void Puzzle::dropPiece(Point mousePt) {
 	if (mousePt.x >= boxx && mousePt.x < boxw && mousePt.y >= boxy && mousePt.y <= boxh) {
 		ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 		SpriteInfo *spI;
+		int frameNumber;
+		SpriteList *spriteList;
+		_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
+
 		int newx = mousePt.x - _pieceInfo[_puzzlePiece].offX;
 		int newy = mousePt.y - _pieceInfo[_puzzlePiece].offY;
 
@@ -310,7 +323,7 @@ void Puzzle::dropPiece(Point mousePt) {
 		if (newy < boxy)
 			newy = PUZZLE_Y_OFFSET;
 
-		spI = &puzzle->_spriteList.infoList[_puzzlePiece];
+		spI = &(spriteList->infoList[_puzzlePiece]);
 
 		if (newx + spI->width > boxw)
 			newx = boxw - spI->width ;
