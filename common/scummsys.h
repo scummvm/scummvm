@@ -43,7 +43,7 @@
 #undef _MSC_VER
 #endif
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__SYMBIAN32__)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp _strnicmp
