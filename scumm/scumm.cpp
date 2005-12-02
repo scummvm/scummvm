@@ -861,6 +861,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox", "Spydemo", kGenPC},
 	{ "spyfox", "SPYFox", kGenMac },
 	{ "spyfox", "SPYFoxDC", kGenPC },
+	{ "spyfox", "SPYFoxDC", kGenMac },
 	{ "spyfox", "Spy Fox Demo", kGenMac }, // NL Mac demo
 	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
 	{ "spyfox2", "sf2-demo", kGenPC },
