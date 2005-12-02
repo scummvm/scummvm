@@ -13,7 +13,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  *
@@ -92,7 +92,7 @@ MP3InputStream::MP3InputStream(File *file, mad_timer_t duration) {
 #if defined(__SYMBIAN32__)
 	// Symbian can't share filehandles between different threads.
 	// So create a new file  and seek that to the other filehandles position
-	_file= new (ELeave)File;
+	_file= new File;
 	_file->open(file->name());
 	_file->seek(file->pos());
 #else
@@ -123,7 +123,7 @@ MP3InputStream::MP3InputStream(File *file, uint32 size) {
 #if defined(__SYMBIAN32__)
 	// Symbian can't share filehandles between different threads.
 	// So create a new file  and seek that to the other filehandles position
-	_file= new (ELeave)File;
+	_file= new File;
 	_file->open(file->name());
 	_file->seek(file->pos());
 #else
@@ -138,9 +138,9 @@ MP3InputStream::MP3InputStream(File *file, uint32 size) {
 	// If a size is specified, we do not perform any further read operations
 	if (size) {
 #ifdef __SYMBIAN32__
-		 delete _file;
+		delete _file;
 #endif
-		_file = 0;
+		_file = NULL;
 	} else {
 		_file->incRef();
 	}
@@ -205,7 +205,7 @@ void MP3InputStream::refill(bool first) {
 #ifdef __SYMBIAN32__
 	// For symbian we must check that an alternative file pointer is created, see if its open
 	// If not re-open file and seek to the last read position
-	if(_file && !_file->isOpen()){
+	if(_file && !_file->isOpen()) {
 		_file->open(_file->name());
 		_file->seek(_lastReadPosition);
 	}
@@ -267,10 +267,10 @@ void MP3InputStream::refill(bool first) {
 
 #ifdef __SYMBIAN32__
 	// For symbian we now store the last read position and then close the file
-	if(_file){
-		_lastReadPosition=_file->pos();
+	if(_file) {
+		_lastReadPosition = _file->pos();
 		_file->close();
-		}
+	}
 #endif
 }
 

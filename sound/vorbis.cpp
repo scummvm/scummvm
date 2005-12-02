@@ -74,14 +74,13 @@ static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) 
 	int result;
 
 #ifdef __SYMBIAN32__
-    // For symbian we must check that an alternative file pointer is created, see if its open
-    // If not re-open file and seek to the last read position
-    if(f->file && !f->file->isOpen()){
-        f->file->open(f->file->name());
-        f->file->seek(f->curr_pos);
-        }
+	// For symbian we must check that an alternative file pointer is created, see if its open
+	// If not re-open file and seek to the last read position
+	if (f->file && !f->file->isOpen()) {
+		f->file->open(f->file->name());
+		f->file->seek(f->curr_pos);
+	}
 #endif
-
 
 	nmemb *= size;
 	if (f->curr_pos > (int) f->len)
@@ -93,10 +92,10 @@ static size_t read_wrap(void *ptr, size_t size, size_t nmemb, void *datasource) 
 	f->file->seek(f->start + f->curr_pos);
 	result = f->file->read(ptr, nmemb);
 #ifdef __SYMBIAN32__
-    // For symbian we now store the last read position and then close the file
-    if(f->file){
-        f->file->close();
-        }
+	// For symbian we now store the last read position and then close the file
+	if (f->file) {
+		f->file->close();
+	}
 #endif
 	if (result == -1) {
 		f->curr_pos = f->file->pos() - f->start;
@@ -118,12 +117,12 @@ static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
 	}
 
 #ifdef __SYMBIAN32__
-    // For symbian we must check that an alternative file pointer is created, see if its open
-    // If not re-open file and seek to the last read position
-    if(f->file && !f->file->isOpen()){
-        f->file->open(f->file->name());
-        f->file->seek(f->curr_pos);
-        }
+	// For symbian we must check that an alternative file pointer is created, see if its open
+	// If not re-open file and seek to the last read position
+	if (f->file && !f->file->isOpen()) {
+		f->file->open(f->file->name());
+		f->file->seek(f->curr_pos);
+	}
 #endif
 
 	f->file->seek(offset, whence);
@@ -131,9 +130,9 @@ static int seek_wrap(void *datasource, ogg_int64_t offset, int whence) {
 
 #ifdef __SYMBIAN32__
     // For symbian we now store the last read position and then close the file
-    if(f->file){
-        f->file->close();
-        }
+	if (f->file) {
+		f->file->close();
+	}
 #endif
 
 	return f->curr_pos;
@@ -180,13 +179,13 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 	file_info *f = new file_info;
 
 #if defined(__SYMBIAN32__)
-    // Symbian can't share filehandles between different threads.
-    // So create a new file  and seek that to the other filehandles position
-    f->file= new (ELeave)File;
-    f->file->open(_file->name());
-    f->file->seek(_file->pos());
+	// Symbian can't share filehandles between different threads.
+	// So create a new file  and seek that to the other filehandles position
+	f->file = new File;
+	f->file->open(_file->name());
+	f->file->seek(_file->pos());
 #else
-    f->file = _file;
+	f->file = _file;
 #endif
 
 	f->start = 0;
@@ -197,14 +196,14 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 	bool err = (ov_open_callbacks((void *) f, &_ov_file, NULL, 0, g_File_wrap) < 0);
 	if (err) {
 #ifdef __SYMBIAN32__
-        delete f->file;
+		delete f->file;
 #endif
 		delete f;
 	} else {
 #ifndef __SYMBIAN32__
-        _file->incRef();
+		_file->incRef();
 #endif	
-            }
+    }
 
 	return err;
 }
@@ -224,9 +223,9 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 
 #ifdef USE_TREMOR // In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking positions in milliseconds as 64 bit integers, rather than in seconds as doubles as in Vorbisfile.
 #if defined(__SYMBIAN32__) && defined(__GCC32__) // SumthinWicked says: fixing "relocation truncated to fit: ARM_26 __fixdfdi" during linking on GCC, see portdefs.h
-    ov_time_seek(&_ov_file, (ogg_int64_t)scumm_fixdfdi(startFrame / 75.0 * 1000));
+	ov_time_seek(&_ov_file, (ogg_int64_t)scumm_fixdfdi(startFrame / 75.0 * 1000));
 #else
-    ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
+	ov_time_seek(&_ov_file, (ogg_int64_t)(startFrame / 75.0 * 1000));
 #endif
 #else
     ov_time_seek(&_ov_file, startFrame / 75.0);
@@ -380,13 +379,13 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 	file_info *f = new file_info;
 
 #if defined(__SYMBIAN32__)
-    // Symbian can't share filehandles between different threads.
-    // So create a new file  and seek that to the other filehandles position
-    f->file= new (ELeave)File;
-    f->file->open(file->name());
-    f->file->seek(file->pos());
+	// Symbian can't share filehandles between different threads.
+	// So create a new file  and seek that to the other filehandles position
+	f->file = new File;
+	f->file->open(file->name());
+	f->file->seek(file->pos());
 #else
-    f->file = file;
+	f->file = file;
 #endif
     f->start = file->pos();
 	f->len = size;
@@ -399,10 +398,9 @@ debug(5, "" __FILE__ ":%i", __LINE__);
         return 0;
         } else {
 #ifndef __SYMBIAN32__
-        file->incRef();
+		file->incRef();
 #endif
-        return new VorbisInputStream(ov_file, 0, true);
-            }
-    }
-
+		return new VorbisInputStream(ov_file, 0, true);
+		}
+	}
 #endif
