@@ -68,8 +68,7 @@
 
 	/* convert double float to double int (dfdi) */
 	long long inline
-	scumm_fixdfdi (double a1) // __fixdfdi (double a1)
-	{
+	scumm_fixdfdi (double a1) { // __fixdfdi (double a1)
 	    register union double_long dl1;
 	    register int exp;
 	    register long long l;
@@ -77,7 +76,7 @@
 	    dl1.d = a1;
 	
 	    if (!dl1.l.upper && !dl1.l.lower)
-		return (0);
+			return (0);
 	
 	    exp = EXPD (dl1) - EXCESSD - 64;
 	    l = MANTD_LL(dl1);
@@ -91,9 +90,9 @@
 	
 	    /* shift down until exp = 0 or l = 0 */
 	    if (exp < 0 && exp > -64 && l)
-		l >>= -exp;
+			l >>= -exp;
 	    else
-		return (0);
+			return (0);
 	
 	    return (SIGND (dl1) ? -l : l);
 	}
@@ -109,8 +108,7 @@
 #else // WINS
 
 	// let's just blatantly ignore this for now and just get it to work :P but does n't work from the debug function
-	int inline scumm_snprintf (char *str, unsigned long /*n*/, char const *fmt, ...)
-	{
+	int inline scumm_snprintf (char *str, unsigned long /*n*/, char const *fmt, ...) {
 		va_list args;
 		va_start(args, fmt);
 		vsprintf(str, fmt, args);
@@ -130,9 +128,9 @@
 void inline *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
 	size_t i;
 
-	for (i=0; i<nmemb; i++)
-		if (compar(key, (void*)((size_t)base + size * i)) == 0)
-			return (void*)((size_t)base + size * i);
+	for (i=0; i < nmemb; i++)
+		if (compar(key, (void *)((size_t)base + size * i)) == 0)
+			return (void *)((size_t)base + size * i);
 	return NULL;
 }
 #define bsearch						scumm_bsearch
