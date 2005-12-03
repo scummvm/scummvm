@@ -1,0 +1,34 @@
+;;;
+;;; ScummVM .PKG file for .SIS gegeration
+;;;
+
+; Languages
+;&EN
+
+; UID is the app's UID
+#{"ScummVM S60"},(0x101f9b57),0,80,3
+
+; Platform type
+(0x101F6F88), 0, 0, 0, {"Series60ProductID"}
+
+; Application file Launcher and actual exe
+"\epoc32\release\armi\urel\ScummVMS60.app"-"!:\system\apps\ScummVMS60\ScummVMS60.app"
+"\epoc32\release\armi\urel\ScummVM.exe"-"!:\system\apps\ScummVMS60\ScummVM.exe"
+
+; AIF application information file
+"\epoc32\data\z\system\apps\ScummVMS60\ScummVMS60.aif"-"!:\system\apps\ScummVMS60\ScummVMS60.aif"
+
+; Resource file
+"\epoc32\data\z\system\apps\ScummVMS60\ScummVMS60.rsc"-"!:\system\apps\ScummVMS60\ScummVMS60.rsc"
+
+; Empty .placeholder file, ensures creation of c:\documents\ScummVM\ for future file saves
+"..\.placeholder"-"c:\documents\ScummVM\.placeholder"
+
+; Config/log files: 'empty' will automagically be removed on uninstall
+""-"c:\documents\ScummVM\scummvm.ini",FILENULL
+""-"c:\documents\ScummVM\scummvm.stdout.txt",FILENULL
+""-"c:\documents\ScummVM\scummvm.stderr.txt",FILENULL
+""-"!:\system\apps\ScummVM\sdl.ini",FILENULL
+
+; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
+; It will remove the config file, std***.txt files & dirs on uninstall.

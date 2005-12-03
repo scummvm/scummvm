@@ -158,7 +158,7 @@ static ov_callbacks g_File_wrap = {
 
 
 VorbisTrackInfo::VorbisTrackInfo(File *file) {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 
 	_file = file;
 	if (openTrack()) {
@@ -173,7 +173,7 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 bool VorbisTrackInfo::openTrack() {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	assert(_file);
 
 	file_info *f = new file_info;
@@ -209,7 +209,7 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 VorbisTrackInfo::~VorbisTrackInfo() {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	if (! _error_flag) {
 		ov_clear(&_ov_file);
 		_file->decRef();
@@ -217,8 +217,8 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 void VorbisTrackInfo::play(Audio::Mixer *mixer, Audio::SoundHandle *handle, int startFrame, int duration) {
-debug(5, "" __FILE__ ":%i", __LINE__);
-	bool err = openTrack();
+//debug(5, "" __FILE__ ":%i", __LINE__);
+	bool err = openTrack(); err=err;//satisfy unused variable
 	assert(!err);
 
 #ifdef USE_TREMOR // In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking positions in milliseconds as 64 bit integers, rather than in seconds as doubles as in Vorbisfile.
@@ -236,7 +236,7 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 DigitalTrackInfo *getVorbisTrack(int track) {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	char track_name[32];
 	File *file = new File();
 
@@ -287,7 +287,7 @@ VorbisInputStream::VorbisInputStream(OggVorbis_File *file, int duration, bool de
 	: _ov_file(file),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)),
 	_deleteFileAfterUse(deleteFileAfterUse) {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 
 	// Check the header, determine if this is a stereo stream
 	_numChannels = ov_info(_ov_file, -1)->channels;
@@ -303,19 +303,19 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 VorbisInputStream::~VorbisInputStream() {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	ov_clear(_ov_file);
 	if (_deleteFileAfterUse)
 		delete _ov_file;
 }
 
 inline bool VorbisInputStream::eosIntern() const {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	return _pos >= _bufferEnd;
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	int samples = 0;
 	while (samples < numSamples && !eosIntern()) {
 		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
@@ -331,7 +331,7 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 void VorbisInputStream::refill() {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	// Read the samples
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
@@ -369,12 +369,12 @@ debug(5, "" __FILE__ ":%i", __LINE__);
 }
 
 static AudioStream *makeVorbisStream(OggVorbis_File *file, int duration) {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	return new VorbisInputStream(file, duration, false);
 }
 
 AudioStream *makeVorbisStream(File *file, uint32 size) {
-debug(5, "" __FILE__ ":%i", __LINE__);
+//debug(5, "" __FILE__ ":%i", __LINE__);
 	OggVorbis_File *ov_file = new OggVorbis_File;
 	file_info *f = new file_info;
 

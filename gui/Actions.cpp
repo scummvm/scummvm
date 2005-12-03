@@ -29,7 +29,7 @@
 	#include "backends/wince/CEActionsPocket.h"
 	#include "backends/wince/CEActionsSmartphone.h"
 #elif defined(__SYMBIAN32__)
-	#include "backends/epoc/SymbianActions.h"
+	#include "backends/epoc/src/SymbianActions.h"
 #endif
 
 namespace GUI {

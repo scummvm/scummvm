@@ -191,6 +191,9 @@ void NORETURN CDECL error(const char *s, ...) {
 	PalmFatalError(buf_output);
 #endif
 
+#ifdef __SYMBIAN32__
+	SymbianFatalError(buf_output);
+#endif
 	// Finally exit. quit() will terminate the program if g_system iss present
 	if (g_system)
 		g_system->quit();
@@ -203,11 +206,7 @@ void CDECL warning(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
-#ifdef __SYMBIAN32__
-	vsprintf(buf, s, va);
-#else
 	vsnprintf(buf, STRINGBUFLEN, s, va);
-#endif
 	va_end(va);
 
 #ifdef __GP32__ //ph0x FIXME: implement fprint?

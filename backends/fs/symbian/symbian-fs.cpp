@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * $Header$
  */
@@ -83,9 +83,6 @@ SymbianFilesystemNode::SymbianFilesystemNode(bool aIsRoot) {
 
 }
 
-// SumthinWicked says: added next function myself, since it was not in 0.7.1.
-// might still be a little buggy, or simply the reason ScummVM can't run any 
-// games on the phone yet :P
 SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	if (path.size() == 0)
 		_isPseudoRoot = true;
@@ -113,23 +110,35 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		TDriveList drivelist;
-		CEikonEnv::Static()->FsSession().DriveList(drivelist);
-		for (int loop=0;loop<KMaxDrives;loop++) {
-			if(drivelist[loop]>0) {
-				SymbianFilesystemNode entry(false);		
-				char drive_name[2];
-				drive_name[0] = loop+'A';
-				drive_name[1] = '\0';
-				entry._displayName = drive_name;
-				entry._isDirectory = true;
-				entry._isValid = true;
-				entry._isPseudoRoot = false;
-				char path[10];
-				sprintf(path,"%c:\\",loop+'A');
-				entry._path=path;
-				myList.push_back(wrap(new SymbianFilesystemNode(&entry)));
+		RFs fs = CEikonEnv::Static()->FsSession();
+		TInt driveNumber;
+		TChar driveLetter;
+		TVolumeInfo volumeInfo;
+		TBuf8<30> driveLabel8;
+		TBuf8<30> driveString8;
+		
+		for (driveNumber=EDriveA; driveNumber<=EDriveZ; driveNumber++) {
+			TInt err = fs.Volume(volumeInfo, driveNumber);
+			if (err != KErrNone)
+				continue; 
+			User::LeaveIfError(fs.DriveToChar(driveNumber,driveLetter));
+			if(volumeInfo.iName.Length() > 0) {				
+				driveLabel8.Copy(volumeInfo.iName); // 16 to 8bit des // enabling this line alone gives KERN-EXEC 3 with non-optimized GCC? WHY? grrr
+				driveString8.Format(_L8("Drive %c: (%S)"), driveLetter, &driveLabel8);
+			} else {
+				driveString8.Format(_L8("Drive %c:"), driveLetter);
 			}
+				
+			char path[10];
+			sprintf(path,"%c:\\", driveNumber+'A');
+			
+			SymbianFilesystemNode entry(false);		
+			entry._displayName = (char*)driveString8.PtrZ(); // drive_name
+			entry._isDirectory = true;
+			entry._isValid = true;
+			entry._isPseudoRoot = false;
+			entry._path = path;
+			myList.push_back(wrap(new SymbianFilesystemNode(&entry)));
 		}
 	} else {
 		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());

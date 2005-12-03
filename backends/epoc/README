@@ -1,5 +1,5 @@
 
- EScummVM - ScummVM ported to EPOC/SymbianOS
+ ScummVM - ScummVM ported to EPOC/SymbianOS
  
  Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
  Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson
@@ -9,7 +9,7 @@
  $Id$ 
  
  
-About EScummVM
+About ScummVM
 --------------
 	The original ports (uptil 0.7.1) were made by Andreas Karlsson and Lars Persson.
 	The main transition to 0.8.0CVS and all relevant changes were done by Jurgen Braam.
@@ -18,7 +18,7 @@ About EScummVM
 
 Nescessary components
 ---------------------
-	Building EScummVM yourself using the UIQ 2.1/Nokia S60 SDK/Nokia S80 SDK/Nokia S90 SDK framework is not an easy task!
+	Building ScummVM yourself using the UIQ 2.1/Nokia S60 SDK/Nokia S80 SDK/Nokia S90 SDK framework is not an easy task!
 	Lets just say the framework needs quite some time to set up and takes a while 
 	to get used to. If you choose to continue you will need the following items: 
 
@@ -58,7 +58,7 @@ Nescessary components
 	  http://libmpeg2.sourceforge.net/
 
 
-Building EScummVM
+Building ScummVM
 -----------------
 	ECompXL: this is a tool that will compress your executable with GZIP and glue
 	it to a predefined loader app. The app will uncompress your application at
@@ -92,18 +92,23 @@ Building EScummVM
 	> bldmake bldfiles
 	> abld build
 
-	EScummVM: make sure the SYSTEMINCLUDE dirs in EScumVM.mmp are correct. For the 
+	ScummVM: make sure the SYSTEMINCLUDE dirs in ScumVM.mmp are correct. For the 
 	'wins' platform also check the LIBRARY entries for the correct path to your MSVC 
 	installation. Please note that you can only specify relative paths here, so every-
 	thing needs to be on the same physical drive! Another weird demand of the UIQ
-	platform...	In <DevRoot>/scummvm/backends/epoc/build/ go:
-	> bldmake bldfiles
-	> abld build
-	> makesis EScummVM_xxx.pkg
+	platform...	In <DevRoot>/scummvm/backends/epoc/ go:
+
+	> run 'unzip mmp\initial_mmps.zip'
+	> edit the scummvm_base.mmp to fit your needs (for supported target games and features, check the MACRO statements)
+	> run 'perl AdaptAllMMPs.pl' from the commandline, this will update all mmp and bld.inf files
+	> change to the directory for your designated target (uiq2 for UIQ 2.X, S60 for S60 v1 & V2 etc)
+	> 'bldmake bldfiles' to update and create the symbian build structure
+	> 'abld build armi urel' to build the target binaries
+	> makesis -d\sdkpath ScummVM_xxx.pkg to build the sis file for your target.
 	
-	Now you should have yourself a nice EScummVM_xxx.sis installer package for use 
+	Now you should have yourself a nice ScummVM_xxx.sis installer package for use 
 	on your phone. Please note that for development it will be a lot faster if you
-	transfer the ESCUMMVM.APP file directly to your !:\system\apps\EScummVM\ dir!
+	transfer the SCUMMVM.APP/Scummvm.EXE file directly to your !:\system\apps\ScummVM\ dir!
 
 	Platforms can be one of: ARMi, ARM4, THUMB, WINS. The SE P900 uses the ARMi platform,
 	which is a combined ARM4/THUMB programming mode. Configurations can be one of: 
@@ -116,7 +121,7 @@ Greetz & such
 	- Sprawl for having the nerve to start & carry this puppy for so long
 	- AnotherGuest for having the nerve to start & carry this puppy for so long
 	- Fingolfin for taking the time to go through 1000 patch versions with me
-	- Myself (SumthinWicked), for writing this entire README :)
+	- Myself (SumthinWicked), for writing this entire README and adopting all sources together with Fingolfin :)
 	- the entire ScummVM Dev team for making a kicka$$ program
 	- the folks in #scummvm @ irc.freenode.net for their help, confort and support
 	- everybody else who wants to give me 'the look' for not including them here :P

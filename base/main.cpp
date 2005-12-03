@@ -515,11 +515,7 @@ void CDECL debug(int level, const char *s, ...) {
 		return;
 
 	va_start(va, s);
-#ifdef __SYMBIAN32__
-	vsprintf(buf, s, va);
-#else
 	vsnprintf(buf, STRINGBUFLEN, s, va);
-#endif
 	va_end(va);
 
 	debugHelper(buf);
@@ -530,11 +526,7 @@ void CDECL debug(const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
-#ifdef __SYMBIAN32__
-	vsprintf(buf, s, va);
-#else
 	vsnprintf(buf, STRINGBUFLEN, s, va);
-#endif
 	va_end(va);
 
 	debugHelper(buf);

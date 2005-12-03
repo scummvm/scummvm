@@ -1343,9 +1343,19 @@ public:
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
 
+#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
+	struct SubtitleText {
+		int16 xpos, ypos;
+		byte color;
+		byte charset;
+		byte text[256];		
+		bool actorSpeechMsg;
+	};
+#else
 	struct SubtitleText : TextObject {
 		bool actorSpeechMsg;
 	};
+#endif
 
 	int _subtitleQueuePos;
 	SubtitleText _subtitleQueue[20];
