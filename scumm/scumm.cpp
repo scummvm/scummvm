@@ -809,6 +809,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama2", "Pjs2demo", kGenPC },
 	{ "pajama2", "PJ2 Demo", kGenMac }, // NL Mac demo
 	{ "pajama3", "GPJ3Demo", kGenPC },
+	{ "pajama3", "Pajama Sam 3", kGenMac },
 	{ "pajama3", "Pajama Sam 3-Demo", kGenMac },
 	{ "pajama3", "pj3-demo", kGenPC },
 	{ "pajama3", "pj3demo", kGenPC },
@@ -879,7 +880,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "thinker1", "1grademo", kGenPC },
 	{ "thinker1", "Thinker1", kGenMac },
 	{ "thinkerk", "kinddemo", kGenPC },
-	{ "thinkerk", "Kinddemo", kGenMac },
 	{ "thinkerk", "KindDemo", kGenMac },
 	{ "thinkerk", "ThinkerK", kGenMac },
 	{ "water", "Water Worries", kGenMac },
