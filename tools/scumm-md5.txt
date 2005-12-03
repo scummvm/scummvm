@@ -345,7 +345,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
 	-	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
-	-	Windows	de	83cedbe26aa8b58988e984e3d34cac8e	freddi3	Joachim Eberhard
+	-	All	de	83cedbe26aa8b58988e984e3d34cac8e	freddi3	Joachim Eberhard
 	-	Windows	nl	0cccfa5223099a60e76cfcca57a1a141	freddi3	adutchguy
 	-	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	-	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
@@ -431,6 +431,7 @@ Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	-	Windows	en	f7711f9264d4d43c2a1518ec7c10a607	pajama3	Kirben
+	-	All	de	2e8a1f76ea33bc5e04347646feee173d	pajama3	Joachim Eberhard
 	Demo	Windows	de	0c45eb4baff0c12c3d9dfa889c8070ab	pajama3	Joachim Eberhard
 	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
 	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pajama3	sev

@@ -773,6 +773,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi3", "f3-mdemo", kGenPC },
 	{ "freddi3", "FF3-DEMO", kGenPC },
 	{ "freddi3", "FreddiFGT", kGenPC },
+	{ "freddi3", "FreddiFGT", kGenMac },
 	{ "freddi3", "MM3-DEMO", kGenPC },
 	{ "freddi3", "MM3-Demo", kGenMac }, // FR Mac demo
 	{ "freddi4", "f4-demo", kGenPC },
@@ -815,6 +816,8 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama3", "Pajama Sam Demo", kGenMac },
 	{ "pajama3", "PjSamDemo", kGenMac },
 	{ "pajama3", "PjSamDemo", kGenPC },
+	{ "pajama3", "PyjamaSKS", kGenPC },
+	{ "pajama3", "PyjamaSKS", kGenMac },
 	{ "pjgames", "PJGames", kGenMac },
 	{ "puttcircus", "circdemo", kGenPC },
 	{ "puttcircus", "Putt Circus Demo", kGenMac },
