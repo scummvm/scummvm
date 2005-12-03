@@ -266,7 +266,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 80, MDT_NONE,
+	{"water", "Freddi Fish and Luther's Water Worries", GID_WATER, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
@@ -443,7 +443,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"f1b0e0d587b85052de5534a3847e68fe", "Freddi Fish and Luther's Water Worries (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"f1b0e0d587b85052de5534a3847e68fe", "Freddi Fish and Luther's Water Worries (Updated)", GID_WATER, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"9d7b67be003fea60be4dcbd193611936", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
@@ -779,7 +779,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi4", "f4-demo", kGenPC },
 	{ "freddi4", "ff4demo", kGenPC },
 	{ "freddi4", "Freddi 4 Demo", kGenMac },
-	{ "freddi4", "ff4demo", kGenMac },
+	{ "freddi4", "Ff4demo", kGenMac },
 	{ "freddi4", "Freddi 4", kGenMac },
 	{ "freddi4", "FreddiGS", kGenPC },
 	{ "freddi4", "FreddiHRBG", kGenPC },
@@ -812,7 +812,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama3", "Pajama Sam 3-Demo", kGenMac },
 	{ "pajama3", "pj3-demo", kGenPC },
 	{ "pajama3", "pj3demo", kGenPC },
-	{ "pajama3", "pj3demo", kGenMac },
+	{ "pajama3", "PJ3Demo", kGenMac },
 	{ "pajama3", "Pajama Sam Demo", kGenMac },
 	{ "pajama3", "PjSamDemo", kGenMac },
 	{ "pajama3", "PjSamDemo", kGenPC },
@@ -831,7 +831,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttrace", "500demo", kGenPC },
 	{ "puttrace", "racedemo", kGenPC },
 	{ "puttrace", "RaceDemo", kGenMac },
-	{ "puttrace", "racedemo", kGenMac },
 	{ "puttrace", "Rennen", kGenPC },
 	{ "puttrace", "Putt500 demo", kGenMac }, // NL Mac demo
 	{ "puttrace", "Putt Race", kGenMac },
@@ -869,6 +868,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
 	{ "spyfox2", "sf2-demo", kGenPC },
 	{ "spyfox2", "sf2demo", kGenPC },
+	{ "spyfox2", "Sf2demo", kGenMac },
 	{ "spyfox2", "Spy Fox 2 - Demo", kGenMac },
 	{ "spyfox2", "Spy Fox 2", kGenMac },
 	{ "spyfox2", "spyfoxsr", kGenPC },
