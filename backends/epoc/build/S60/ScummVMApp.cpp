@@ -21,13 +21,13 @@
  * $Header$
  */
 
-#include "ScummVMapp.h"
+#include "backends/epoc/build/S60/ScummVMapp.h"
 #include <escummvms60.rsg>
 #include <apgcli.h>
 #include <eikdll.h>
 
-EXPORT_C CApaApplication* NewApplication() {
-        return (new CScummVM);
+EXPORT_C CApaApplication *NewApplication() {
+	return (new CScummVM);
 }
 
 CScummVM::CScummVM() {
@@ -36,28 +36,26 @@ CScummVM::CScummVM() {
 CScummVM::~CScummVM() {
 }
 
-CApaDocument* CScummVM::CreateDocumentL()
-{
-	return new (ELeave) CScummVMDoc(*this);
+CApaDocument *CScummVM::CreateDocumentL() {
+	return new (ELeave)CScummVMDoc(*this);
 }
 
-TUid CScummVM::AppDllUid() const
-{
+TUid CScummVM::AppDllUid() const {
 	return TUid::Uid(0x101f9b57);
 }
 
-CScummVMDoc::CScummVMDoc(CEikApplication& aApp):CAknDocument(aApp) {
+CScummVMDoc::CScummVMDoc(CEikApplication &aApp) : CAknDocument(aApp) {
 }
 
 CScummVMDoc::~CScummVMDoc() {
 }
 
-CEikAppUi* CScummVMDoc::CreateAppUiL() {
-	return new (ELeave) CScummVMUi;
+CEikAppUi *CScummVMDoc::CreateAppUiL() {
+	return new (ELeave)CScummVMUi;
 }
 
 void CScummVMUi::HandleForegroundEventL(TBool aForeground) {
-	if(aForeground) {
+	if (aForeground) {
 		BringUpEmulatorL();
 	}
 }
@@ -80,33 +78,38 @@ void CScummVMUi::ConstructL() {
 	TBuf<128> startFile;
 	startFile = iEikonEnv->EikAppUi()->Application()->AppFullName();
 	TParse parser;
-	parser.Set(startFile,NULL,NULL);
+	parser.Set(startFile, NULL, NULL);
 
 	startFile = parser.DriveAndPath();
 #ifndef __WINS__
-	startFile.Append( _L("EScummVM.exe"));
+	startFile.Append( _L("ScummVM.exe"));
 #else
-	startFile.Append( _L("EScummVM.dll"));
+	startFile.Append( _L("ScummVM.dll"));
 #endif
-	CApaCommandLine* cmdLine=CApaCommandLine::NewLC(startFile);
+	CApaCommandLine *cmdLine = CApaCommandLine::NewLC(startFile);
 	RApaLsSession lsSession;
+
 	lsSession.Connect();
 	CleanupClosePushL(lsSession);
-	lsSession.StartApp(*cmdLine,iThreadId);
-	CleanupStack::PopAndDestroy();//close lsSession
+	lsSession.StartApp(*cmdLine, iThreadId);
+	CleanupStack::PopAndDestroy(); //close lsSession
 	CleanupStack::PopAndDestroy(cmdLine);
-	User::After(500000);// Let the application start
+
+	User::After(500000); // Let the application start
 
 	TApaTaskList taskList(iEikonEnv->WsSession());
+
 	TApaTask myTask=taskList.FindApp(TUid::Uid(0x101f9b57));
 	myTask.SendToBackground();
+
 	TApaTask exeTask=taskList.FindByPos(0);
 	iExeWgId=exeTask.WgId();
 
 	if(iExeWgId == myTask.WgId()) { // Should n't be the same
 		Exit();
 	}
-	if(iThreadWatch.Open(iThreadId)==KErrNone) {
+
+	if(iThreadWatch.Open(iThreadId) == KErrNone) {
 		iWatcher = new (ELeave)CScummWatcher;
 		iWatcher->iAppUi=this;
 		iThreadWatch.Logon(iWatcher->iStatus);
@@ -131,34 +134,33 @@ void CScummWatcher::RunL() {
 
 void CScummVMUi::BringUpEmulatorL() {
 	RThread thread;
-	if(thread.Open(iThreadId)==KErrNone) {
+
+	if (thread.Open(iThreadId) == KErrNone) {
 		thread.Close();
 		TApaTask apaTask(iEikonEnv->WsSession());
 		apaTask.SetWgId(iExeWgId);
 		apaTask.BringToForeground();
-	}
-	else
-	{
-		iExeWgId=-1;
+	} else {
+		iExeWgId = -1;
 	}
 }
 
 void CScummVMUi::HandleCommandL(TInt aCommand) {
 	switch(aCommand) {
 	case EEikCmdExit:
-	{
-		RThread thread;
-		if(thread.Open(iThreadId)==KErrNone)
 		{
-			thread.Terminate(0);
-			thread.Close();
+			RThread thread;
+
+			if(thread.Open(iThreadId) == KErrNone) {
+				thread.Terminate(0);
+				thread.Close();
+			}
+			Exit();
 		}
-		Exit();
-	}
-	break;
+		break;
 	}
 }
 
-GLDEF_C  TInt E32Dll(TDllReason) {
+GLDEF_C TInt E32Dll(TDllReason) {
 	return KErrNone;
 }

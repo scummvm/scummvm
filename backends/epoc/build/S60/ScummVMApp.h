@@ -36,7 +36,8 @@ class CScummVM:public CEikApplication {
 public:
 	CScummVM();
 	~CScummVM();
-	CApaDocument* CreateDocumentL();
+
+	CApaDocument *CreateDocumentL();
 	TUid AppDllUid() const;
 };
 
@@ -45,35 +46,39 @@ public:
 
 class CScummVMDoc:public  CAknDocument {
 public:
+	CScummVMDoc(CEikApplication &aApplicaiton);
 	~CScummVMDoc();
-	CEikAppUi* CreateAppUiL();
+
+	CEikAppUi *CreateAppUiL();
 	void ConstructL();
-	CScummVMDoc(CEikApplication& aApplicaiton);
 };
 
 #include <aknappui.h>
 class CScummVMUi;
-class CScummWatcher:public CActive {
+class CScummWatcher : public CActive {
 public:
 	CScummWatcher();
 	~CScummWatcher();
+
 	void DoCancel();
 	void RunL();
-	CScummVMUi* iAppUi;
+	CScummVMUi *iAppUi;
 };
 
-class CScummVMUi:public CAknAppUi {
+class CScummVMUi : public CAknAppUi {
 public:
 	CScummVMUi();
 	~CScummVMUi();
+
 	void ConstructL();
 	void HandleCommandL(TInt aCommand);
 	void HandleForegroundEventL(TBool aForeground);
 	void BringUpEmulatorL();
+
 private:
 	TThreadId iThreadId;
 	TInt iExeWgId;
 	RThread iThreadWatch;
-	CScummWatcher* iWatcher;
+	CScummWatcher *iWatcher;
 };
 #endif

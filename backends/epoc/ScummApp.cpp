@@ -21,9 +21,10 @@
  * $Header$
  */
 
-#include "ScummApp.h"
+#include "backends/epoc/ScummApp.h"
 
-#include "ScummVM.hrh"
+#include "backends/epoc/ScummVM.hrh"
+
 #ifdef __WINS__
 extern "C" int _chkstk(int /*a*/) {
 	return 1;
@@ -32,7 +33,7 @@ extern "C" int _chkstk(int /*a*/) {
 
 #ifdef EPOC_AS_APP
 // this function is called by Symbian to deliver the new CApaApplication object
-EXPORT_C CApaApplication* NewApplication() {
+EXPORT_C CApaApplication *NewApplication() {
 	// Return pointer to newly created CQMApp
 	return (new CScummApp);
 }

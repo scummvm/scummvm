@@ -24,7 +24,7 @@
 #ifndef SDLSYMBIANH
 #define SDLSYMBIANH
 
-#include "sdl-common.h"
+#include "backends/sdl/sdl-common.h"
 
 #define TOTAL_ZONES 3
 
@@ -32,42 +32,44 @@ class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
 	OSystem_SDL_Symbian();
 	~OSystem_SDL_Symbian();
+
 	int getDefaultGraphicsMode() const;
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	bool setGraphicsMode(const char *name);
 
 	// Set function that generates samples
-	/**
-	 * This function is overridden by the symbian port in order to provide MONO audio
-	 * downmix is done by supplying our own audiocallback
-	 */
+	//
+	// This function is overridden by the symbian port in order to provide MONO audio
+	// downmix is done by supplying our own audiocallback
+	//
 	virtual bool setSoundCallback(SoundProc proc, void *param); // overloaded by CE backend
+
 protected:
-	/**
-	 * The mixer callback function, passed on to OSystem::setSoundCallback().
-	 * This simply calls the mix() method.
-	 * and then does downmixing for symbian if needed
-	 */
+	//
+	// The mixer callback function, passed on to OSystem::setSoundCallback().
+	// This simply calls the mix() method.
+	// and then does downmixing for symbian if needed
+	//
 	static void symbianMixCallback(void *s, byte *samples, int len);
 
-	/**
-	 * Actual mixing implementation
-	 */
+	//
+	// Actual mixing implementation
+	//
 	void symbianMix(byte *samples, int len);
 
-	/**
-	 * This is an implementation by the remapKey function
-	 * @param SDL_Event to remap
-	 * @param ScumVM event to modify if special result is requested
-	 * @return true if Event has a valid return status
-	 */
-	bool remapKey(SDL_Event &ev,Event &event);
+	//
+	// This is an implementation by the remapKey function
+	// @param SDL_Event to remap
+	// @param ScumVM event to modify if special result is requested
+	// @return true if Event has a valid return status
+	//
+	bool remapKey(SDL_Event &ev, Event &event);
 
 	void setWindowCaption(const char *caption);
 
-	/**
-	 * Used to intialized special game mappings
-	 */
+	//
+	// Used to intialized special game mappings
+	//
 	void check_mappings();
 
 	void initZones();
@@ -77,7 +79,7 @@ protected:
 
 	SoundProc _sound_proc;
 	void *_sound_proc_param;
-	byte* _stereo_mix_buffer;
+	byte *_stereo_mix_buffer;
 
 	// Used to handle joystick navi zones
 	int _mouseXZone[TOTAL_ZONES];

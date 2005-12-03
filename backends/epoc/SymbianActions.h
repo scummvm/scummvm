@@ -67,6 +67,7 @@ public:
 	int version();
 
 	~SymbianActions();
+
 private:
 	SymbianActions(GameDetector &detector);
 	bool _right_click_needed;

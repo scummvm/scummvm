@@ -31,7 +31,7 @@
 #include "ECompXL.h"
 #endif
 
-class CScummApp:public CSDLApp {
+class CScummApp : public CSDLApp {
 public:
 	CScummApp();
 	~CScummApp();

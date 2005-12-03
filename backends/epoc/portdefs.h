@@ -35,43 +35,44 @@
 
 
 // the place in Symbian FS where scummvm.ini & std***.txt are saved
-#define SYMBIAN32_DOC_DIR "C:\\documents\\EScummVM\\" // includes final \\!
+#define SYMBIAN32_DOC_DIR "C:\\documents\\ScummVM\\" // includes final \\!
 #define DISABLE_SCALERS // we only need 1x
 
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!
 #ifdef __GCC32__
 
-	#define snprintf(buf,len,args...)	sprintf(buf,args)
-	#define vsnprintf					snprintf
+#define snprintf(buf,len,args...)	sprintf(buf, args)
+#define vsnprintf					snprintf
 
 #else // WINS
 
-	// let's just blatantly ignore this for now and just get it to work :P but does n't work from the debug function
-	int inline scumm_snprintf (char *str, unsigned long /*n*/, char const *fmt, ...)
-	{
-		va_list args;
-		va_start(args, fmt);
-		vsprintf(str, fmt, args);
-		va_end(args);
-		return strlen(str);
-	}
+// let's just blatantly ignore this for now and just get it to work :P but does n't work from the debug function
+int inline scumm_snprintf (char *str, unsigned long /*n*/, char const *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	vsprintf(str, fmt, args);
+	va_end(args);
 
-	#define snprintf					scumm_snprintf
-	#define vsnprintf					scumm_snprintf
+	return strlen(str);
+}
+
+#define snprintf					scumm_snprintf
+#define vsnprintf					scumm_snprintf
 
 #endif
 
 // somehow nobody has this function...
-#define hypot(a, b)					sqrt((a)*(a) + (b)*(b))
+#define hypot(a, b)					sqrt((a) * (a) + (b) * (b))
 
 // Symbian bsearch implementation is flawed
 void inline *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
 	size_t i;
 
-	for (i=0; i<nmemb; i++)
+	for (i = 0; i < nmemb; i++)
 		if (compar(key, (void*)((size_t)base + size * i)) == 0)
 			return (void*)((size_t)base + size * i);
+
 	return NULL;
 }
 #define bsearch						scumm_bsearch

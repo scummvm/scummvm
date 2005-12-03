@@ -19,8 +19,8 @@
  *
  */
 
-#include "stdafx.h"
-#include "SymbianActions.h"
+#include "common/stdafx.h"
+#include "backends/epoc/SymbianActions.h"
 
 #include "gui/message.h"
 #include "scumm/scumm.h"
@@ -83,11 +83,10 @@ int SymbianActions::version() {
 }
 
 SymbianActions::SymbianActions(GameDetector &detector) :
-	Actions(detector)
-{
+	Actions(detector) {
 	int i;
 
-	for (i=0; i<ACTION_LAST; i++) {
+	for (i = 0; i < ACTION_LAST; i++) {
 		_action_mapping[i] = ACTIONS_DEFAULT[i];
 		_action_enabled[i] = false;
 	}
@@ -136,17 +135,13 @@ void SymbianActions::initInstanceGame() {
 	// Save
 	if (is_simon || is_gob) 
 		_action_enabled[ACTION_SAVE] = false;
-	else
-	if (is_queen) {
+	else if (is_queen) {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(SDLK_F1); // F1 key for FOTAQ or F5??!?
-	}
-	else
-	if (is_sky) {
+	} else if (is_sky) {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(63); 
-	}
-	else {
+	} else {
 		_action_enabled[ACTION_SAVE] = true;
 		_key_action[ACTION_SAVE].setAscii(SDLK_F5); // F5 key
 	}
@@ -161,13 +156,13 @@ void SymbianActions::initInstanceGame() {
 	// FT Cheat
 	_action_enabled[ACTION_FT_CHEAT] = true;
 	_key_action[ACTION_FT_CHEAT].setAscii(86); // shift-V
+
 	// Skip text
-	_action_enabled[ACTION_SKIP_TEXT]=true;
+	_action_enabled[ACTION_SKIP_TEXT] = true;
 	if (is_queen) {
-	_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_SPACE);
-	}
-	else {
-	_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_PERIOD);
+		_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_SPACE);
+	} else {
+		_key_action[ACTION_SKIP_TEXT].setAscii(SDLK_PERIOD);
 	}
 
 	// Pause

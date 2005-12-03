@@ -31,48 +31,53 @@
 #include <coeview.h>
 #include <eikappui.h>
 
-class CScummVM:public CEikApplication {
+class CScummVM : public CEikApplication {
 public:
 	CScummVM();
 	~CScummVM();
-	CApaDocument* CreateDocumentL();
+
+	CApaDocument *CreateDocumentL();
 	TUid AppDllUid() const;
 };
 
 
 #include <eikdoc.h>
 
-class CScummVMDoc:public  CEikDocument {
+class CScummVMDoc : public CEikDocument {
 public:
+	CScummVMDoc(CEikApplication &aApplicaiton);
 	~CScummVMDoc();
-	CEikAppUi* CreateAppUiL();
+
+	CEikAppUi *CreateAppUiL();
 	void ConstructL();
-	CScummVMDoc(CEikApplication& aApplicaiton);
 };
 
 #include <eikappui.h>
 class CScummVMUi;
-class CScummWatcher:public CActive {
+class CScummWatcher : public CActive {
 public:
 	CScummWatcher();
 	~CScummWatcher();
+
 	void DoCancel();
 	void RunL();
-	CScummVMUi* iAppUi;
+	CScummVMUi *iAppUi;
 };
 
-class CScummVMUi:public CEikAppUi {
+class CScummVMUi : public CEikAppUi {
 public:
 	CScummVMUi();
 	~CScummVMUi();
+
 	void ConstructL();
 	void HandleCommandL(TInt aCommand);
 	void HandleForegroundEventL(TBool aForeground);
 	void BringUpEmulatorL();
+
 private:
 	TThreadId iThreadId;
 	TInt iExeWgId;
 	RThread iThreadWatch;
-	CScummWatcher* iWatcher;
+	CScummWatcher *iWatcher;
 };
 #endif
