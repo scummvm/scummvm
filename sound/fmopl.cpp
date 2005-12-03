@@ -38,11 +38,6 @@
 #include "common/config-manager.h"
 #endif
 
-#if defined(PALMOS_68K)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 static Common::RandomSource oplRnd;			/* OPL random number generator */
 
 /* -------------------- preliminary define section --------------------- */
@@ -732,16 +727,6 @@ static void OPL_initalize(FM_OPL *OPL) {
 
 /* ---------- write a OPL registers ---------- */
 void OPLWriteReg(FM_OPL *OPL, int r, int v) {
-#ifdef PALMOS_68K
-	ARM_START(OPLDriverType)
-		ARM_INIT(COMMON_OPLWRITEREG)
-		ARM_ADDM(OPL)
-		ARM_ADDM(r)
-		ARM_ADDM(v)
-		ARM_CALL(ARM_COMMON, PNO_DATA())
-	ARM_END();
-#endif
-
 	OPL_CH *CH;
 	int slot;
 	uint block_fnum;
@@ -964,16 +949,6 @@ static void OPL_UnLockTable(void) {
 
 /* ---------- update one of chip ----------- */
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
-#ifdef PALMOS_68K
-	ARM_START(OPLDriverType)
-		ARM_INIT(COMMON_YM3812YPDATEONE)
-		ARM_ADDM(OPL)
-		ARM_ADDM(buffer)
-		ARM_ADDM(length)
-		ARM_CALL(ARM_COMMON, PNO_DATA())
-	ARM_END();
-#endif
-	
 	int i;
 	int data;
 	int16 *buf = buffer;
@@ -1167,7 +1142,7 @@ FM_OPL *makeAdlibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_ARM) || defined(__GP32__)
+#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__)
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;
@@ -1183,20 +1158,6 @@ FM_OPL *makeAdlibOPL(int rate) {
 	}
 #endif
 
-#ifdef PALMOS_68K
-	// HQ is really unstable on PalmOS (at least on ARM),
-	// don't know why... seems to read out of buffer ...
-	env_bits = FMOPL_ENV_BITS_MQ;
-	eg_ent = FMOPL_EG_ENT_MQ;
-
-	ARM_START(OPLDriverType)
-		ARM_INIT(COMMON_OPLCREATE)
-		ARM_ADDM(env_bits)
-		ARM_ADDM(eg_ent)
-		ARM_ADDM(rate)
-		ARM_CALL_RET(ARM_COMMON, PNO_DATA())
-	ARM_END_RET(FM_OPL *);
-#endif
 	OPLBuildTables(env_bits, eg_ent);
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 }

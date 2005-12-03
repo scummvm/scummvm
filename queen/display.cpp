@@ -28,11 +28,6 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
-#if defined(PALMOS_68K)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 namespace Queen {
 
 #ifdef PALMOS_68K
@@ -569,19 +564,6 @@ void Display::prepareUpdate() {
 	uint8 *dst = _screenBuf;
 	const uint8 *src = _backdropBuf + _horizontalScroll;
 
-#ifdef PALMOS_68K
-	ARM_START(CopyRectangleType)
-		ARM_INIT(COMMON_COPYRECT)
-		ARM_ADDM(dst)
-		ARM_ADDV(buf, src)
-		ARM_ADDV(pitch, BACKDROP_W)
-		ARM_ADDV(_offScreenPitch, SCREEN_W)
-		ARM_ADDV(w, SCREEN_W)
-		ARM_ADDM(h)
-		ARM_CALL(ARM_COMMON, PNO_DATA())
-	ARM_END()
-#endif
-
 	while (h--) {
 		memcpy(dst, src, SCREEN_W);
 		dst += SCREEN_W;
@@ -695,23 +677,6 @@ void Display::drawInventoryItem(const uint8 *data, uint16 x, uint16 y, uint16 w,
 void Display::blit(uint8 *dstBuf, uint16 dstPitch, uint16 x, uint16 y, const uint8 *srcBuf, uint16 srcPitch, uint16 w, uint16 h, bool xflip, bool masked) {
 	assert(w <= dstPitch);
 	dstBuf += dstPitch * y + x;
-
-#ifdef PALMOS_68K
-	ARM_CHECK_EXEC(w > 8 && h > 8)
-		ARM_START(BlitType)
-			ARM_INIT(QUEEN_BLIT)
-			ARM_ADDM(dstBuf)
-			ARM_ADDM(dstPitch)
-			ARM_ADDM(srcBuf)
-			ARM_ADDM(srcPitch)
-			ARM_ADDM(w)
-			ARM_ADDM(h)
-			ARM_ADDM(xflip)
-			ARM_ADDM(masked)
-			ARM_CALL(ARM_ENGINE, PNO_DATA())
-		ARM_END()
-	ARM_CHECK_END()
-#endif
 
 	if (!masked) { // Unmasked always unflipped
 		while (h--) {

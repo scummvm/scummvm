@@ -24,11 +24,6 @@
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 
-#if defined(PALMOS_68K)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 DECLARE_SINGLETON(GUI::NewGui);
 
 namespace GUI {
@@ -125,6 +120,7 @@ void NewGui::runLoop() {
 			// This is necessary to get the blending right.
 			_system->clearOverlay();
 			_system->grabOverlay((OverlayColor *)_screen.pixels, _screenPitch);
+
 			for (int i = 0; i < _dialogStack.size(); i++) {
 				// For each dialog we draw we have to ensure the correct
 				// scaling mode is active.
@@ -222,7 +218,6 @@ void NewGui::runLoop() {
 #pragma mark -
 
 void NewGui::saveState() {
-
 	// Backup old cursor
 	_oldCursorMode = _system->showMouse(true);
 
@@ -407,20 +402,6 @@ void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level
 		h = rect.height();
 		w = rect.width();
 
-#ifdef PALMOS_68K
-	ARM_START(BlendRectType)
-		ARM_INIT(COMMON_BLENDRECT)
-		ARM_ADDM(w)
-		ARM_ADDM(h)
-		ARM_ADDM(ptr)
-		ARM_ADDM(_screenPitch)
-		ARM_ADDM(r)
-		ARM_ADDM(g)
-		ARM_ADDM(b)
-		ARM_ADDM(level)
-		ARM_CALL(ARM_COMMON, PNO_DATA())
-	ARM_END()
-#endif
 		while (h--) {
 			for (int i = 0; i < w; i++) {
 				_system->colorToRGB(ptr[i], ar, ag, ab);

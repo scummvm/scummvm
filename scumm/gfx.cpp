@@ -29,11 +29,6 @@
 #include "scumm/usage_bits.h"
 #include "scumm/wiz_he.h"
 
-#if defined(PALMOS_68K)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 namespace Scumm {
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
@@ -542,20 +537,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	byte *dst = _compositeBuf + x + y * _screenWidth;
 	const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
 
-#ifdef PALMOS_68K
-	ARM_START(DrawStripType)
-		ARM_INIT(SCUMM_DRAWSTRIP)
-		ARM_ADDM(width)
-		ARM_ADDM(height)
-		ARM_ADDM(src)
-		ARM_ADDM(dst)
-		ARM_ADDM(text)
-		ARM_ADDV(_vm_screenWidth, _screenWidth)
-		ARM_ADDV(vs_pitch, vs->pitch)
-		ARM_ADDV(_charset_textSurface_pitch, _charset->_textSurface.pitch)
-		ARM_CALL(ARM_ENGINE, PNO_DATA())
-	ARM_CONTINUE()
-#endif
 	// Compose the text over the game graphics
 	for (int h = 0; h < height; ++h) {
 		for (int w = 0; w < width; ++w) {
@@ -606,20 +587,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 // Odd lines have colors swapped, so there will be checkered patterns.
 // But apparently there is a mistake for 10th color.
 void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
-#ifdef PALMOS_68K
-	ARM_START(RenderCGAType)
-		ARM_INIT(SCUMM_RENDERCGA)
-		ARM_ADDM(dst)
-		ARM_ADDM(dstPitch)
-		ARM_ADDM(x)
-		ARM_ADDM(y)
-		ARM_ADDM(width)
-		ARM_ADDM(height)
-		ARM_ADDV(_version, _version)
-		ARM_CALL(ARM_ENGINE, PNO_DATA())
-	ARM_END()
-#endif
-
 	byte *ptr;
 	int idx1, idx2;
 	static const byte cgaDither[2][2][16] = {
@@ -654,20 +621,6 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 //         cccc1
 //         dddd0
 void ScummEngine::ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) const {
-#ifdef PALMOS_68K
-	ARM_START(RenderHercType)
-		ARM_INIT(SCUMM_RENDERHERC)
-		ARM_ADDM(src)
-		ARM_ADDM(hercbuf)
-		ARM_ADDM(srcPitch)
-		ARM_ADDM(x)
-		ARM_ADDM(y)
-		ARM_ADDM(width)
-		ARM_ADDM(height)
-		ARM_CALL(ARM_ENGINE, PNO_DATA())
-	ARM_END()
-#endif
-
 	byte *srcptr, *dstptr;
 	int xo = *x, yo = *y, widtho = *width, heighto = *height;
 	int idx1, idx2, dsty = 0, y1;
@@ -3289,4 +3242,3 @@ _GRELEASEPTR(GBVARS_TRANSITIONEFFECTS_INDEX, GBVARS_SCUMM)
 _GEND
 
 #endif
-

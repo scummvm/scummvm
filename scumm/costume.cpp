@@ -27,11 +27,6 @@
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
-#if defined(PALMOS_68K)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 namespace Scumm {
 
 #ifdef PALMOS_68K
@@ -414,27 +409,6 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 #undef MASK_AT
 
 void ClassicCostumeRenderer::proc3(Codec1 &v1) {
-#ifdef PALMOS_68K
-	ARM_START(CostumeProc3Type)
-		ARM_INIT(SCUMM_PROC3)
-		ARM_ADDP(v1)
-		ARM_ADDM(_srcptr)
-		ARM_ADDM(_height)
-		ARM_ADDM(_scaleIndexX)
-		ARM_ADDM(_scaleIndexY)
-		ARM_ADDM(_scaleX)
-		ARM_ADDM(_scaleY)
-		ARM_ADDM(_numStrips)
-		ARM_ADDM(_shadow_mode)
-		ARM_ADDM(_shadow_table)
-		ARM_ADDM(_palette)
-		ARM_ADDV(_out_pitch,	_out.pitch)
-		ARM_ADDV(_out_w,		_out.w)
-		ARM_ADDV(_out_h,		_out.h)
-		ARM_CALL_VALUE(ARM_ENGINE, PNO_DATA(), _scaleIndexX)
-	ARM_END()
-#endif
-
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;

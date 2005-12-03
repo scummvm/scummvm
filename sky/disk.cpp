@@ -28,11 +28,6 @@
 #include "sky/sky.h"
 #include "sky/struc.h"
 
-#if defined(PALMOS_68K)
-#include "arm/native.h"
-#include "arm/macros.h"
-#endif
-
 namespace Sky {
 
 static const char *dataFilename = "sky.dsk";
@@ -164,14 +159,6 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 		if ((fileFlags >> 22) & 0x1) { //do we include the header?
 			// don't return the file's header
 			output = uncompDest;
-#ifdef PALMOS_68K
-		ARM_START(RncDecoderType)
-			ARM_INIT(SKY_UNPACKM1)
-			ARM_ADDM(input)
-			ARM_ADDM(output)
-			ARM_CALL_VALUE(ARM_ENGINE, PNO_DATA(), unpackLen)
-		ARM_CONTINUE()
-#endif
 			unpackLen = _rncDecoder.unpackM1(input, output, 0);
 		} else {
 #ifdef SCUMM_BIG_ENDIAN
@@ -183,15 +170,6 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 
 			memcpy(uncompDest, fileDest, sizeof(dataFileHeader));
 			output = uncompDest + sizeof(dataFileHeader);
-
-#ifdef PALMOS_68K
-		ARM_START(RncDecoderType)
-			ARM_INIT(SKY_UNPACKM1)
-			ARM_ADDM(input)
-			ARM_ADDM(output)
-			ARM_CALL_VALUE(ARM_ENGINE, PNO_DATA(), unpackLen)
-		ARM_CONTINUE()
-#endif
 			unpackLen = _rncDecoder.unpackM1(input, output, 0);
 			if (unpackLen)
 				unpackLen += sizeof(dataFileHeader);
