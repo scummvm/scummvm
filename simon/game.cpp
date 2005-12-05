@@ -170,6 +170,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2DOS,       "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS,       "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2DOS2,      "604d04315935e77624bd356ac926e068", "game32", false },
+	{ GID_SIMON2DOS2,      "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2DOS2,      "aa6840420899a31874204f90bb214108", "simon2.gme", false},
+	{ GID_SIMON2DOS2,      "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
+	{ GID_SIMON2DOS2,      "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
 	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "game32", false },
 	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "icon.dat", false},
 	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "simon2.gme", false},
@@ -598,6 +604,19 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS,
+		"Simon the Sorcerer 2 (DOS Floppy)",
+		ARRAYSIZE(SIMON2DOS_GameFiles),
+		SIMON2DOS_GameFiles,
+		0,
+		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 2 - English DOS Floppy
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2DOS2,
 		"Simon the Sorcerer 2 (DOS Floppy)",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
