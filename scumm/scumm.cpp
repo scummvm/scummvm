@@ -835,6 +835,8 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttrace", "Rennen", kGenPC },
 	{ "puttrace", "Putt500 demo", kGenMac }, // NL Mac demo
 	{ "puttrace", "Putt Race", kGenMac },
+	{ "puttrace", "ToffRennen", kGenPC },
+	{ "puttrace", "ToffRennen", kGenMac },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttPuttTTT", kGenPC },
 	{ "putttime", "PuttPuttTTT", kGenMac },
@@ -865,6 +867,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox", "SPYFox", kGenMac },
 	{ "spyfox", "SPYFoxDC", kGenPC },
 	{ "spyfox", "SPYFoxDC", kGenMac },
+	{ "spyfox", "SpyFoxDMK", kGenMac },
 	{ "spyfox", "Spy Fox Demo", kGenMac }, // NL Mac demo
 	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
 	{ "spyfox2", "sf2-demo", kGenPC },
@@ -872,6 +875,8 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox2", "Sf2demo", kGenMac },
 	{ "spyfox2", "Spy Fox 2 - Demo", kGenMac },
 	{ "spyfox2", "Spy Fox 2", kGenMac },
+	{ "spyfox2", "SpyFoxOR", kGenPC },
+	{ "spyfox2", "SpyFoxOR", kGenMac },
 	{ "spyfox2", "spyfoxsr", kGenPC },
 	{ "spyozon", "sf3-demo", kGenPC },
 	{ "spyozon", "Spy Ozone Demo", kGenMac },

@@ -452,6 +452,7 @@ Pajama Sam's Sock Works
 	-	Windows	ru	19263586f749a560c1adf8b3393a9593	socks	sev
 
 Putt-Putt Enters the Race
+	-	All	de	055ffe4f47753e47594ac67823220c54	puttrace	Joachim Eberhard
 	-	All	en	981e1e1891f2be7e25a01f50ae55a5af	puttrace	Kirben
 	Demo	All	de	663743c03ae0c007f3d665cf631c0e6b	puttrace	Joachim Eberhard
 	Demo	All	en	0ac41e2e3d2174e5a042a6b565328dba	puttrace	sev
@@ -531,10 +532,10 @@ Putt-Putt's One-Stop Fun Shop
 	-	All	en	5262a27afcaee04e5c4900220bd463e7	PuttsFunShop	Kirben
 
 Spy Fox 1: Dry Cereal
+	-	All	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
 	-	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
 	-	All	en	58436e634f4fae1d9973591c2ffa1fcb	spyfox	Joachim Eberhard
 	-	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
-	-	Windows	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
 	-	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
 	-	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
@@ -544,6 +545,7 @@ Spy Fox 1: Dry Cereal
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
+	-	All	de	bc4700bc0e12879f6d25d14d6be6cfdd	spyfox2	Joachim Eberhard
 	-	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
 	-	Windows	nl	71fe97c3108678cf604f14abe342341b	spyfox2	adutchguy
 	-	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
