@@ -79,6 +79,8 @@ static const char *credits[] = {
 "\\L\\c2""    Decoders for Simon 1 Amiga data files",
 "\\L\\c0""  Yaroslav Fedevych",
 "\\L\\c2""    HTML/CSS for the website",
+"\\L\\c0""  Chris Gray",
+"\\L\\c2""    Windows64 builds",
 "\\L\\c0""  Janne Huttunen",
 "\\L\\c2""    V3 actor mask support, Dig/FT SMUSH audio",
 "\\L\\c0""  Kovacs Endre Janos",

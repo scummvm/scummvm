@@ -364,6 +364,7 @@ begin_credits("Credits");
 	add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 	add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
 	add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
+	add_person("Chris Gray", "Psychoid", "Windows64 builds");
 	add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 	add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 	add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");
