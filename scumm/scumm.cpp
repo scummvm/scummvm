@@ -531,6 +531,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Pajama Sam's Lost & Found (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 
+	{"055ffe4f47753e47594ac67823220c54", "Putt-Putt Enters the Race (German)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // ToffRennen
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Dutch Demo)", GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
 	{"aaa587701cde7e74692c68c1024b85eb", "Putt-Putt Enters the Race (Updated Dutch Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
@@ -867,6 +869,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox", "SPYFox", kGenMac },
 	{ "spyfox", "SPYFoxDC", kGenPC },
 	{ "spyfox", "SPYFoxDC", kGenMac },
+	{ "spyfox", "SpyFoxDMK", kGenPC },
 	{ "spyfox", "SpyFoxDMK", kGenMac },
 	{ "spyfox", "Spy Fox Demo", kGenMac }, // NL Mac demo
 	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
