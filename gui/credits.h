@@ -93,6 +93,8 @@ static const char *credits[] = {
 "\\L\\c2""    ScummVM logo",
 "\\L\\c0""  Claudio Matsuoka",
 "\\L\\c2""    Daily Linux builds",
+"\\L\\c0""  Kostas Nakos",
+"\\L\\c2""    PocketPC 2002 builds",
 "\\L\\c0""  Mikesch Nepomuk",
 "\\L\\c2""    MI1 VGA floppy patches",
 "\\L\\c0""  Juha Niemimaki",

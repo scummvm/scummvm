@@ -371,6 +371,7 @@ begin_credits("Credits");
 	add_person("Robert Kelsen", "", "Packaging for SlackWare");
 	add_person("Jean Marc", "", 'ScummVM logo');
 	add_person("Claudio Matsuoka", "", 'Daily Linux builds');
+	add_person("Kostas Nakos", "knakos", 'PocketPC 2002 builds');
 	add_person("Mikesch Nepomuk", "", "MI1 VGA floppy patches");
 	add_person("Juha Niemim&auml;ki", "", "AmigaOS 4 port maintaining");
 	add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
