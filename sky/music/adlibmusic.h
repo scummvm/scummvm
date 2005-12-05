@@ -36,7 +36,6 @@ class AdlibMusic : public AudioStream, public MusicBase {
 public:
 	AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk);
 	~AdlibMusic(void);
-	virtual void setVolume(uint8 volume);
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {

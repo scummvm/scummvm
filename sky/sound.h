@@ -82,7 +82,7 @@ private:
 	Disk *_skyDisk;
 	uint16 _sfxBaseOfs;
 	uint8 *_soundData;
-	uint8 *_sampleRates, *_sfxInfo;
+	uint8 *_sfxInfo;
 	uint8 _mainSfxVolume;
 
 	static uint16 _speechConvertTable[8];

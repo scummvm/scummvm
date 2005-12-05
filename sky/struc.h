@@ -26,6 +26,7 @@ namespace Sky {
 
 struct lowTextManager_t {
 	byte *textData;
+	uint32 textWidth;
 	uint16 compactNum;
 };
 

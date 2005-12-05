@@ -77,6 +77,8 @@ Disk::~Disk(void) {
 		_dnrHandle->close();
 	if (_dataDiskHandle->isOpen())
 		_dataDiskHandle->close();
+	fnFlushBuffers();
+	free(_dinnerTableArea);
 	delete _dnrHandle;
 	delete _dataDiskHandle;
 }
@@ -374,7 +376,7 @@ void Disk::fnFlushBuffers(void) {
 	uint8 lCnt = 0;
 	while (_loadedFilesList[lCnt]) {
 		free(SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047]);
-		SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047] = 0;
+		SkyEngine::_itemList[_loadedFilesList[lCnt] & 2047] = NULL;
 		lCnt++;
 	}
 	_loadedFilesList[0] = 0;

@@ -123,6 +123,8 @@ SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
 
 SkyEngine::~SkyEngine() {
 
+	_timer->removeTimerProc(&timerHandler);
+
 	delete _skyLogic;
 	delete _skySound;
 	delete _skyMusic;
@@ -130,6 +132,11 @@ SkyEngine::~SkyEngine() {
 	delete _skyMouse;
 	delete _skyScreen;
 	delete _debugger;
+	delete _skyDisk;
+
+	for (int i = 0; i < 300; i++)
+		if (_itemList[i])
+			free(_itemList[i]);
 }
 
 void SkyEngine::errorString(const char *buf1, char *buf2) {
@@ -206,6 +213,8 @@ void SkyEngine::handleKey(void) {
 
 int SkyEngine::go() {
 
+	_systemVars.quitGame = false;
+
 	_mouseX = GAME_SCREEN_WIDTH / 2;
 	_mouseY = GAME_SCREEN_HEIGHT / 2;
 	_keyFlags = _keyPressed = 0;
@@ -216,25 +225,24 @@ int SkyEngine::go() {
 
 	if (result != GAME_RESTORED) {
 		bool introSkipped = false;
-		if (_systemVars.gameVersion > 267) {// don't do intro for floppydemos
+		if (_systemVars.gameVersion > 267) { // don't do intro for floppydemos
 			_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			introSkipped = !_skyIntro->doIntro(_floppyIntro);
-			if (_skyIntro->_quitProg) {
-				delete _skyIntro;
-				_skyControl->showGameQuitMsg();
-			}
+			_systemVars.quitGame = _skyIntro->_quitProg;
+
 			delete _skyIntro;
 		}
 
-		_skyLogic->initScreen0();
-
-		if (introSkipped)
-			_skyControl->restartGame();
+		if (!_systemVars.quitGame) {
+			_skyLogic->initScreen0();
+			if (introSkipped)
+				_skyControl->restartGame();
+		}
 	}
 
 	_lastSaveTime = _system->getMillis();
 
-	while (1) {
+	while (!_systemVars.quitGame) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
@@ -273,6 +281,10 @@ int SkyEngine::go() {
 			delay((frameTime + _systemVars.gameSpeed) - _system->getMillis());
 	}
 
+	_skyControl->showGameQuitMsg();
+	_skyMusic->stopMusic();
+	ConfMan.flushToDisk();
+	delay(1500);
 	return 0;
 }
 
@@ -372,12 +384,12 @@ int SkyEngine::init(GameDetector &detector) {
 	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars.language * 8)) {
 		warning("The language you selected does not exist in your BASS version.");
 		if (_skyDisk->fileExists(60600))
-			SkyEngine::_systemVars.language = SKY_ENGLISH;
+			SkyEngine::_systemVars.language = SKY_ENGLISH; // default to GB english if it exists..
 		else if (_skyDisk->fileExists(60600 + SKY_USA * 8))
-			SkyEngine::_systemVars.language = SKY_USA;
+			SkyEngine::_systemVars.language = SKY_USA;		// try US english...
 		else
 			for (uint8 cnt = SKY_ENGLISH; cnt <= SKY_SPANISH; cnt++)
-				if (_skyDisk->fileExists(60600 + cnt * 8)) {
+				if (_skyDisk->fileExists(60600 + cnt * 8)) {	// pick the first language we can find
 					SkyEngine::_systemVars.language = cnt;
 					break;
 				}
@@ -395,22 +407,6 @@ void SkyEngine::initItemList() {
 
 	for (int i = 0; i < 300; i++)
 		_itemList[i] = NULL;
-
-	//init the non-null items
-	// I don't see where the script could possible access this.. so it should be safe to
-	// leave these as NULL.
-	/*_itemList[119] = (void **)SkyCompact::data_0; // Compacts - Section 0
-	_itemList[120] = (void **)SkyCompact::data_1; // Compacts - Section 1
-
-	if (isDemo()) {
-		_itemList[121] = _itemList[122] = _itemList[123] = _itemList[124] = _itemList[125] = (void **)SkyCompact::data_0;
-	} else {
-		_itemList[121] = (void **)SkyCompact::data_2; // Compacts - Section 2
-		_itemList[122] = (void **)SkyCompact::data_3; // Compacts - Section 3
-		_itemList[123] = (void **)SkyCompact::data_4; // Compacts - Section 4
-		_itemList[124] = (void **)SkyCompact::data_5; // Compacts - Section 5
-		_itemList[125] = (void **)SkyCompact::data_6; // Compacts - Section 6
-	}*/
 }
 
 void SkyEngine::loadFixedItems(void) {
@@ -486,8 +482,7 @@ void SkyEngine::delay(int32 amount) {
 				_skyMouse->buttonPressed(1);
 				break;
 			case OSystem::EVENT_QUIT:
-				if (!SkyEngine::_systemVars.quitting)
-					_skyControl->showGameQuitMsg(); // will call _system->quit()
+				_systemVars.quitGame = true;
 				break;
 			default:
 				break;

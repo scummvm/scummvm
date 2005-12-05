@@ -181,7 +181,7 @@ public:
 	void doControlPanel(void);
 	void doLoadSavePanel(void);
 	void restartGame(void);
-	void showGameQuitMsg(bool useScreen = true);
+	void showGameQuitMsg(void);
 	void doAutoSave(void);
 	uint16 quickXRestore(uint16 slot);
 	bool loadSaveAllowed(void);

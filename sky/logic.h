@@ -140,6 +140,7 @@ public:
 		MusicBase *skyMusic,
 		Mouse *skyMouse,
 		Sound *skySound);
+	~Logic(void);
 	void engine();
 	void useControlInstance(Control *control) { _skyControl = control; };
 

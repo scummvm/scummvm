@@ -31,6 +31,7 @@ namespace Sky {
 
 #define FIRST_TEXT_SEC	77
 #define	FIRST_TEXT_BUFFER	274
+#define LAST_TEXT_BUFFER	284
 #define NO_OF_TEXT_SECTIONS	8	// 8 sections per language
 #define	CHAR_SET_FILE	60150
 #define MAX_SPEECH_SECTION	7
@@ -63,18 +64,21 @@ Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
 		_controlCharacterSet.addr = NULL;
 		_linkCharacterSet.addr = NULL;
 	}
-
-	if (SkyEngine::isCDVersion()) {
-		_preAfterTableArea = _skyDisk->loadFile(60522);
-	} else
-		_preAfterTableArea = NULL;
 }
 
 Text::~Text(void) {
+	for (int i = FIRST_TEXT_BUFFER; i <= LAST_TEXT_BUFFER; i++)
+		if (SkyEngine::_itemList[i]) {
+			free(SkyEngine::_itemList[i]);
+			SkyEngine::_itemList[i] = NULL;
+		}
 
-	if (_controlCharacterSet.addr) free(_controlCharacterSet.addr);
-	if (_linkCharacterSet.addr) free(_linkCharacterSet.addr);
-	if (_preAfterTableArea) free(_preAfterTableArea);
+	if (_mainCharacterSet.addr)
+		free(_mainCharacterSet.addr);
+	if (_controlCharacterSet.addr)
+		free(_controlCharacterSet.addr);
+	if (_linkCharacterSet.addr)
+		free(_linkCharacterSet.addr);
 }
 
 void Text::patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data) {
@@ -97,9 +101,9 @@ void Text::patchLINCCharset() {
 	byte *charSetPtr = _controlCharacterSet.addr;
 	int charHeight = _controlCharacterSet.charHeight;
 
-	// In v0.0288, decrease the character spacing is too wide. Decrease
-	// the width for every character by one, except for space which needs
-	// to be one pixel wider than before.
+	// In v0.0288, the character spacing is too wide. Decrease the width
+	// for every character by one, except for space which needs to be one
+	// pixel wider than before.
 
 	if (SkyEngine::_systemVars.gameVersion == 288) {
 		for (int i = 1; i < CHAR_SET_HEADER; i++)
@@ -247,8 +251,6 @@ void Text::patchLINCCharset() {
 	patchChar(charSetPtr, 5, charHeight, 74, normal_j);
 	patchChar(charSetPtr, 6, charHeight, 17, normal_1);
 
-	// TODO: Verify that these work in all versions
-
 	patchChar(charSetPtr, 5, charHeight, 11, e_acute);
 	patchChar(charSetPtr, 5, charHeight, 61, e_grave);
 	patchChar(charSetPtr, 5, charHeight, 29, e_circumflex);
@@ -311,68 +313,57 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
 
-	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == (void **)NULL) { //check if already loaded
+	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo >> 2));
 
 		uint32 fileNo = sectionNo + ((SkyEngine::_systemVars.language * NO_OF_TEXT_SECTIONS) + 60600);
 		SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] = (void **)_skyDisk->loadFile((uint16)fileNo);
 	}
-	_textItemPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
+	uint8 *textDataPtr = (uint8 *)SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo];
 
 	uint32 offset = 0;
-	uint32 nr32MsgBlocks = (textNr & 0x0fe0);
-	uint32 skipBytes;
-	byte *blockPtr;
-	bool bitSeven;
 
-	if (nr32MsgBlocks) {
-		blockPtr = (byte *)(_textItemPtr + 4);
-		nr32MsgBlocks >>= 5;
+	uint32 blockNr = textNr & 0xFE0;
+	textNr &= 0x1F;
+
+	if (blockNr) {
+		uint16 *blockPtr = (uint16*)(textDataPtr + 4);
+		uint32 nr32MsgBlocks = blockNr >> 5;
+
 		do {
 			offset += READ_LE_UINT16(blockPtr);
-			blockPtr += 2;
+			blockPtr++;
 		} while (--nr32MsgBlocks);
 	}
 
-	uint32 remItems = textNr;
-	textNr &= 0x1f;
 	if (textNr) {
-
-		remItems &= 0x0fe0;
-		remItems += READ_LE_UINT16(_textItemPtr);
-		blockPtr = _textItemPtr + remItems;
-
+		uint8 *blockPtr = textDataPtr + blockNr + READ_LE_UINT16(textDataPtr);
 		do {
-			skipBytes = *blockPtr++;
-			bitSeven = (bool)((skipBytes >> (7)) & 0x1);
-			skipBytes &= ~(1UL << 7);
-
-			if (bitSeven)
+			uint8 skipBytes = *blockPtr++;
+			if (skipBytes & 0x80) {
+				skipBytes &= 0x7F;
 				skipBytes <<= 3;
-
+			}
 			offset += skipBytes;
-
 		} while (--textNr);
 	}
 
-	uint32 numBits = offset;
+	uint32 bitPos = offset & 3;
 	offset >>= 2;
-	offset += READ_LE_UINT16(_textItemPtr + 2);
-	_textItemPtr += offset;
+	offset += READ_LE_UINT16(textDataPtr + 2);
+
+	textDataPtr += offset;
 
 	//bit pointer: 0->8, 1->6, 2->4 ...
-	numBits &= 3;
-	numBits ^= 3;
-	numBits++;
-	numBits <<= 1;
+	bitPos ^= 3;
+	bitPos++;
+	bitPos <<= 1;
 
-	_inputValue = *_textItemPtr++;
 	char *dest = (char *)_textBuffer;
 	char textChar;
-	_shiftBits = (uint8) numBits;
 
 	do {
-		textChar = getTextChar();
+		textChar = getTextChar(&textDataPtr, &bitPos);
 		*dest++ = textChar;
 	} while (textChar);
 }
@@ -384,12 +375,16 @@ void Text::fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY) {
 	Logic::_scriptVariables[CURSOR_ID] = text.compactNum;
 	if (Logic::_scriptVariables[MENU]) {
 		_mouseOfsY = TOP_LEFT_Y - 2;
-		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 24;
-		else _mouseOfsX = TOP_LEFT_X  - 8 - _lowTextWidth;
+		if (mouseX < 150)
+			_mouseOfsX = TOP_LEFT_X + 24;
+		else
+			_mouseOfsX = TOP_LEFT_X  - 8 - text.textWidth;
 	} else {
 		_mouseOfsY = TOP_LEFT_Y - 10;
-		if (mouseX < 150) _mouseOfsX = TOP_LEFT_X + 13;
-		else _mouseOfsX = TOP_LEFT_X - 8 - _lowTextWidth;
+		if (mouseX < 150)
+			_mouseOfsX = TOP_LEFT_X + 13;
+		else
+			_mouseOfsX = TOP_LEFT_X - 8 - text.textWidth;
 	}
 	Compact *textCompact = _skyCompact->fetchCpt(text.compactNum);
 	logicCursor(textCompact, mouseX, mouseY);
@@ -399,46 +394,50 @@ void Text::logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY) {
 
 	textCompact->xcood = (uint16)(mouseX + _mouseOfsX);
 	textCompact->ycood = (uint16)(mouseY + _mouseOfsY);
-	if (textCompact->ycood < TOP_LEFT_Y) textCompact->ycood = TOP_LEFT_Y;
+	if (textCompact->ycood < TOP_LEFT_Y)
+		textCompact->ycood = TOP_LEFT_Y;
 }
 
-bool Text::getTBit() {
+bool Text::getTextBit(uint8 **data, uint32 *bitPos) {
 
-	if (_shiftBits) {
-		(_shiftBits)--;
+	if (*bitPos) {
+		(*bitPos)--;
 	} else {
-		_inputValue = *_textItemPtr++;
-		_shiftBits = 7;
+		(*data)++;
+		*bitPos = 7;
 	}
 
-	return (bool)(((_inputValue) >> (_shiftBits)) & 1);
+	return (bool)(((**data) >> (*bitPos)) & 1);
 }
 
-displayText_t Text::displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
-	//Render text in _textBuffer in buffer *dest
-	return displayText(this->_textBuffer, dest, centre, pixelWidth, color);
+char Text::getTextChar(uint8 **data, uint32 *bitPos) {
+	int pos = 0;
+	while (1) {
+		if (getTextBit(data, bitPos))
+			pos = _huffTree[pos].rChild;
+		else
+			pos = _huffTree[pos].lChild;
+
+		if (_huffTree[pos].lChild == 0 && _huffTree[pos].rChild == 0) {
+			return _huffTree[pos].value;
+		}
+	}
+}
+
+displayText_t Text::displayText(uint32 textNum, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
+	//Render text into buffer *dest
+	getText(textNum);
+	return displayText(_textBuffer, dest, centre, pixelWidth, color);
 }
 
 displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color) {
 
 	//Render text pointed to by *textPtr in buffer *dest
-
-	uint8 textChar;
-	char *curPos = textPtr;
-	char *lastSpace = curPos;
-	byte *centerTblPtr = _centreTable;
+	uint32 centerTable[10];
 	uint16 lineWidth = 0;
 
-	_dtCol = color;
-	_dtLineWidth = pixelWidth;
-	_dtLines = 0;
-	_dtLetters = 1;
-	_dtData = dest;
-	_dtText = textPtr;
-	_dtCentre = centre;
-
-	textChar = (uint8)*curPos++;
-	_dtLetters++;
+	uint32 numLines = 0;
+	_numLetters = 2;
 
 	// work around bug #778105 (line width exceeded)
 	char *tmpPtr = strstr(textPtr, "MUND-BEATMUNG!");
@@ -452,6 +451,10 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	if (tmpPtr)
 		strcpy(tmpPtr, "MANIFESTACION ARTISTICA.");
 
+	char *curPos = textPtr;
+	char *lastSpace = textPtr;
+	uint8 textChar = (uint8)*curPos++;
+
 	while (textChar >= 0x20) {
 		if ((_curCharSet == 1) && (textChar >= 0x80))
 			textChar = 0x20;
@@ -459,10 +462,10 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 		textChar -= 0x20;
 		if (textChar == 0) {
 			lastSpace = curPos; //keep track of last space
-			*(uint32 *)centerTblPtr = TO_LE_32(lineWidth);
+			centerTable[numLines] = lineWidth;
 		}
 
-		lineWidth += *(_characterSet+textChar);	//add character width
+		lineWidth += _characterSet[textChar];	//add character width
 		lineWidth += (uint16)_dtCharSpacing;	//include character spacing
 
 		if (pixelWidth <= lineWidth) {
@@ -472,74 +475,68 @@ displayText_t Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 
 			*(lastSpace-1) = 10;
 			lineWidth = 0;
-			_dtLines++;
-			centerTblPtr += 4;	//get next space in centering table
+			numLines++;
 			curPos = lastSpace;	//go back for new count
 		}
 
 		textChar = (uint8)*curPos++;
-		_dtLetters++;
+		_numLetters++;
 	}
 
-	_dtLastWidth = lineWidth;	//save width of last line
-	*(uint32 *)centerTblPtr = TO_LE_32(lineWidth);	//and update centering table
-	_dtLines++;
+	uint32 dtLastWidth = lineWidth;	//save width of last line
+	centerTable[numLines] = lineWidth; //and update centering table
+	numLines++;
 
-	if (_dtLines > MAX_NO_LINES)
+	if (numLines > MAX_NO_LINES)
 		error("Maximum no. of lines exceeded!");
 
-	_dtLineSize = pixelWidth * _charHeight;
-	uint32 numBytes = (_dtLineSize * _dtLines) + sizeof(struct dataFileHeader) + 4;
+	uint32 dtLineSize = pixelWidth * _charHeight;
+	uint32 numBytes = (dtLineSize * numLines) + sizeof(struct dataFileHeader) + 4;
 
-	if (_dtData == NULL)
-		_dtData = (byte *)malloc(numBytes);
+	if (!dest)
+		dest = (uint8*)malloc(numBytes);
 
-	uint8 *curDest = _dtData;
-
-	uint32 bytesToClear = numBytes; //no of bytes to clear
-	bytesToClear -= sizeof(struct dataFileHeader);	//don't touch the header.
-	memset(curDest + sizeof(struct dataFileHeader), 0, bytesToClear);
-	curPos += bytesToClear;
+	// clear text sprite buffer
+	memset(dest + sizeof(struct dataFileHeader), 0, numBytes - sizeof(struct dataFileHeader));
 
 	//make the header
-	((struct dataFileHeader *)curDest)->s_width = _dtLineWidth;
-	((struct dataFileHeader *)curDest)->s_height = (uint16)(_charHeight * _dtLines);
-	((struct dataFileHeader *)curDest)->s_sp_size = (uint16)(_dtLineWidth * _charHeight * _dtLines);
-	((struct dataFileHeader *)curDest)->s_offset_x = 0;
-	((struct dataFileHeader *)curDest)->s_offset_y = 0;
+	((struct dataFileHeader *)dest)->s_width = pixelWidth;
+	((struct dataFileHeader *)dest)->s_height = (uint16)(_charHeight * numLines);
+	((struct dataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * _charHeight * numLines);
+	((struct dataFileHeader *)dest)->s_offset_x = 0;
+	((struct dataFileHeader *)dest)->s_offset_y = 0;
 
 	//reset position
 	curPos = textPtr;
 
-	curDest += sizeof(struct dataFileHeader);	//point to where pixels start
+	uint8 *curDest = dest +  sizeof(struct dataFileHeader); //point to where pixels start
 	byte *prevDest = curDest;
-	centerTblPtr = _centreTable;
+	uint32 *centerTblPtr = centerTable;
 
 	do {
-		if (_dtCentre) {
-
-			uint32 width = (_dtLineWidth - READ_LE_UINT32(centerTblPtr)) >> 1;
-			centerTblPtr += 4;
+		if (centre) {
+			uint32 width = (pixelWidth - *centerTblPtr) >> 1;
+			centerTblPtr++;
 			curDest += width;
 		}
 
 		textChar = (uint8)*curPos++;
 		while (textChar >= 0x20) {
-			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color);
+			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
 			textChar = *curPos++;
 		}
 
-		prevDest = curDest = prevDest + _dtLineSize;	//start of last line + start of next
+		prevDest = curDest = prevDest + dtLineSize;	//start of last line + start of next
 
 	} while (textChar >= 10);
 
 	struct displayText_t ret;
-	ret.textData = _dtData;
-	ret.textWidth = _dtLastWidth;
+	ret.textData = dest;
+	ret.textWidth = dtLastWidth;
 	return ret;
 }
 
-void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color) {
+void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
 
 	bool maskBit, dataBit;
 	uint8 charWidth = (uint8)((*(charSetPtr + textChar)) + 1 - _dtCharSpacing);
@@ -571,29 +568,20 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 
 			curPos++;
 		}
-
 		//advance a line
-		curPos = prevPos + _dtLineWidth;
+		curPos = prevPos + bufPitch;
 	}
-
 	//update position
 	dest = startPos + charWidth + _dtCharSpacing * 2 - 1;
-
 }
 
 lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre) {
 
 	getText(textNum);
-
-	struct displayText_t textInfo = displayText(NULL, centre, width, color);
-
-	_lowTextWidth = textInfo.textWidth;
-	byte *textData = textInfo.textData;
+	struct displayText_t textInfo = displayText(_textBuffer, NULL, centre, width, color);
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
-
 	Compact *cpt = _skyCompact->fetchCpt(compactNum);
-
 	while (cpt->status != 0) {
 		compactNum++;
 		cpt = _skyCompact->fetchCpt(compactNum);
@@ -601,18 +589,18 @@ lowTextManager_t Text::lowTextManager(uint32 textNum, uint16 width, uint16 logic
 
 	cpt->flag = (uint16)(compactNum - FIRST_TEXT_COMPACT) + FIRST_TEXT_BUFFER;
 
-	byte *oldText = (byte *)SkyEngine::_itemList[cpt->flag];
-	SkyEngine::_itemList[cpt->flag] = (void **)textData;
+	if (SkyEngine::_itemList[cpt->flag])
+		free(SkyEngine::_itemList[cpt->flag]);
 
-	if (oldText != NULL)
-		free (oldText);
+	SkyEngine::_itemList[cpt->flag] = textInfo.textData;
 
 	cpt->logic = logicNum;
 	cpt->status = ST_LOGIC | ST_FOREGROUND | ST_RECREATE;
 	cpt->screen = (uint16) Logic::_scriptVariables[SCREEN];
 
 	struct lowTextManager_t ret;
-	ret.textData = _dtData;
+	ret.textData = textInfo.textData;
+	ret.textWidth = textInfo.textWidth;
 	ret.compactNum = (uint16)compactNum;
 
 	return ret;
@@ -623,7 +611,12 @@ void Text::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 	dataFileHeader *header = (dataFileHeader *)sprData;
 	sprData += sizeof(dataFileHeader);
 	for (uint16 cnt = 0; cnt < header->s_sp_size; cnt++)
-		if (sprData[cnt] >= 241) sprData[cnt] = newCol;
+		if (sprData[cnt] >= 241)
+			sprData[cnt] = newCol;
+}
+
+uint32 Text::giveCurrentCharSet(void) {
+	return _curCharSet;
 }
 
 void Text::initHuffTree() {
@@ -657,19 +650,6 @@ void Text::initHuffTree() {
 		break;
 	default:
 		error("Unknown game version %d", SkyEngine::_systemVars.gameVersion);
-	}
-}
-
-char Text::getTextChar() {
-	int pos = 0;
-	for (;;) {
-		if (getTBit() == 0)
-			pos = _huffTree[pos].lChild;
-		else
-			pos = _huffTree[pos].rChild;
-		if (_huffTree[pos].lChild == 0 && _huffTree[pos].rChild == 0) {
-			return _huffTree[pos].value;
-		}
 	}
 }
 

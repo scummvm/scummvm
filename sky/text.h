@@ -48,31 +48,31 @@ class Text {
 public:
 	Text(Disk *skyDisk, SkyCompact *skyCompact);
 	~Text(void);
-	void getText(uint32 textNr);
-	struct displayText_t displayText(uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
+	struct displayText_t displayText(uint32 textNum, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	struct displayText_t displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
-	void makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&data, uint8 color);
 	struct lowTextManager_t lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
 	void fnSetFont(uint32 fontNr);
 	void fnTextModule(uint32 textInfoId, uint32 textNo);
 	void fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY);
 	void logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY);
 	void changeTextSpriteColour(uint8 *sprData, uint8 newCol);
-	uint32 giveCurrentCharSet(void) { return _curCharSet; };
+	uint32 giveCurrentCharSet(void);
+	
+	uint32 _numLetters;	//no of chars in message
 
-protected:
-	bool getTBit();
+private:
 	void initHuffTree();
-	char getTextChar();
+	void getText(uint32 textNr);
+	char getTextChar(uint8 **data, uint32 *bitPos);
+	bool getTextBit(uint8 **data, uint32 *bitPos);
+	void makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&data, uint8 color, uint16 bufPitch);
+
 	void patchChar(byte *charSetPtr, int width, int height, int c, const uint16 *data);
 	void patchLINCCharset();
 	bool patchMessage(uint32 textNum);
 
 	Disk *_skyDisk;
 	SkyCompact *_skyCompact;
-	uint8	_inputValue;
-	uint8	_shiftBits;
-	uint8	*_textItemPtr;
 
 	const HuffTree *_huffTree;
 
@@ -85,23 +85,14 @@ protected:
 	uint32	_curCharSet;
 	uint8	*_characterSet;
 	uint8	_charHeight;
-	uint8	*_preAfterTableArea;
 
 	char _textBuffer[1024];
-	uint8 _centreTable[40];
 
-	uint8	*_mouseTextData;	//space for the mouse text
-	uint8	_dtCol;
-	uint16	_dtLineWidth;	//width of line in pixels
-	uint32	_dtLines;	//no of lines to do
-	uint32	_dtLineSize;	//size of one line in bytes
-	uint8	*_dtData;	//address of textdata
-	char	*_dtText;	//pointer to text
 	uint32	_dtCharSpacing;	//character separation adjustment
-	uint32	_dtWidth;	//width of chars in last line (for editing (?))
-	uint32	_dtLastWidth;
-	bool	_dtCentre;	//set for centre text
-	uint32	_lowTextWidth, _mouseOfsX, _mouseOfsY;
+	uint32	_mouseOfsX, _mouseOfsY;
+	static const PatchMessage _patchedMessages[NUM_PATCH_MSG];
+	static const uint16 _patchLangIdx[8];
+	static const uint16 _patchLangNum[8];
 
 #ifndef PALMOS_68K
 	static const HuffTree _huffTree_00109[]; // trees moved to hufftext.cpp
@@ -124,15 +115,7 @@ public:
 	static const HuffTree *_huffTree_00365;
 	static const HuffTree *_huffTree_00368;
 	static const HuffTree *_huffTree_00372;
-protected:
 #endif
-
-	static const PatchMessage _patchedMessages[NUM_PATCH_MSG];
-	static const uint16 _patchLangIdx[8];
-	static const uint16 _patchLangNum[8];
-
-public:
-	uint32 _dtLetters;	//no of chars in message
 };
 
 } // End of namespace Sky

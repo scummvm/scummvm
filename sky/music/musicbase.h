@@ -52,13 +52,12 @@ public:
 	MusicBase(Disk *pDisk);
 	virtual ~MusicBase(void);
 	void loadSection(uint8 pSection);
-	void musicCommand(uint16 command);
 	void startMusic(uint16 param) { _onNextPoll.musicToProcess = param & 0xF; }; // 4
 	void stopMusic();                                                            // 7
 	bool musicIsPlaying(void);
-	virtual void setVolume(uint8 volume) = 0;
 	uint8 giveVolume(void) { return (uint8)_musicVolume; };
 	uint8 giveCurrentMusic(void) { return _currentMusic; };
+	void setVolume(uint16 param);
 
 protected:
 
@@ -80,16 +79,11 @@ protected:
 
 	virtual void setupPointers(void) = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;
+	virtual void startDriver(void) = 0;
 
 	void updateTempo(void);
 	void loadNewMusic(void);
-	//-                           functions from CommandTable @0x90 (the main interface)
-	virtual void startDriver(void) = 0;                                          // 0
-	void StopDriver(void);                                                       // 1
-	void setTempo(uint16 newTempo);                                              // 2
-	void pollMusic();                                                            // 3
-	void reinitFM(void) { _onNextPoll.doReInit = true; };                        // 6
-	void setFMVolume(uint16 param);                                              // 13
+	void pollMusic(void);
 };
 
 } // End of namespace Sky

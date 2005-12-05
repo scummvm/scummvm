@@ -182,10 +182,9 @@ void ControlStatus::setToText(const char *newText) {
 }
 
 void ControlStatus::setToText(uint16 textNum) {
-	_skyText->getText(textNum);
 	if (_textData)
 		free(_textData);
-	displayText_t disText = _skyText->displayText(NULL, true, STATUS_WIDTH, 255);
+	displayText_t disText = _skyText->displayText(textNum, NULL, true, STATUS_WIDTH, 255);
 	_textData = (dataFileHeader *)disText.textData;
 	_statusText->setSprite(_textData);
 	_statusText->drawToScreen(WITH_MASK);
@@ -338,12 +337,10 @@ void Control::buttonControl(ConResource *pButton) {
 		_curButtonText = pButton->_text;
 		if (pButton->_text) {
 			displayText_t textRes;
-			if (pButton->_text == 0xFFFF) { // text for autosave button
+			if (pButton->_text == 0xFFFF) // text for autosave button
 				textRes = _skyText->displayText(autoSave, NULL, false, PAN_LINE_WIDTH, 255);
-			} else {
-				_skyText->getText(pButton->_text);
-				textRes = _skyText->displayText(NULL, false, PAN_LINE_WIDTH, 255);
-			}
+			else
+				textRes = _skyText->displayText(pButton->_text, NULL, false, PAN_LINE_WIDTH, 255);
 			_textSprite = (dataFileHeader *)textRes.textData;
 			_text->setSprite(_textSprite);
 		} else
@@ -475,7 +472,7 @@ void Control::doControlPanel(void) {
 	_textSprite = NULL;
 	uint16 clickRes = 0;
 
-	while (!quitPanel) {
+	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
@@ -501,12 +498,13 @@ void Control::doControlPanel(void) {
 				_mouseClicked = false;
 			}
 		}
-		if (!haveButton) buttonControl(NULL);
-
+		if (!haveButton)
+			buttonControl(NULL);
 	}
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
-	_system->updateScreen();
+	if (!SkyEngine::_systemVars.quitGame)
+		_system->updateScreen();
 	_skyScreen->forceRefresh();
 	_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
 	removePanel();
@@ -583,11 +581,8 @@ uint16 Control::handleClick(ConResource *pButton) {
 			return 0;
 	case QUIT_TO_DOS:
 		animClick(pButton);
-		if (getYesNo(quitDos)) {
-			showGameQuitMsg(false);
-			delay(1500);
-			_system->quit();
-		}
+		if (getYesNo(quitDos))
+			SkyEngine::_systemVars.quitGame = true;
 		return 0;
 	default:
 		error("Control::handleClick: unknown routine: %X",pButton->_onClick);
@@ -1538,8 +1533,7 @@ void Control::delay(unsigned int amount) {
 			case OSystem::EVENT_RBUTTONDOWN:
 				break;
 			case OSystem::EVENT_QUIT:
-				if (!SkyEngine::_systemVars.quitting)
-					showGameQuitMsg(false);
+				SkyEngine::_systemVars.quitGame = true;
 				break;
 			default:
 				break;
@@ -1559,20 +1553,17 @@ void Control::delay(unsigned int amount) {
 	} while (cur < start + amount);
 }
 
-void Control::showGameQuitMsg(bool useScreen) {
+void Control::showGameQuitMsg(void) {
 
-	SkyEngine::_systemVars.quitting = true;
 	_skyText->fnSetFont(0);
 	uint8 *textBuf1 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *textBuf2 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(dataFileHeader));
 	uint8 *screenData;
-	if (useScreen) {
-		if (_skyScreen->sequenceRunning())
-			_skyScreen->stopSequence();
+	if (_skyScreen->sequenceRunning())
+		_skyScreen->stopSequence();
 
-		screenData = _skyScreen->giveCurrent();
-	} else
-		screenData = _screenBuf;
+	screenData = _skyScreen->giveCurrent();
+
 	_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 0], textBuf1, true, 320, 255);
 	_skyText->displayText(_quitTexts[SkyEngine::_systemVars.language * 2 + 1], textBuf2, true, 320, 255);
 	uint8 *curLine1 = textBuf1 + sizeof(dataFileHeader);
@@ -1591,19 +1582,8 @@ void Control::showGameQuitMsg(bool useScreen) {
 	}
 	_skyScreen->halvePalette();
 	_skyScreen->showScreen(screenData);
-	free(textBuf1); free(textBuf2);
-
-	// __tom (FIXME): This is a poor method of turning
-	// off music. ~GmMusic, ~AdlibMusic, and ~MT32Music
-	// should do it themselves so the appropriate MIDI
-	// controller events (e.g. 123/'All Notes Off') can
-	// be sent. However, that requires a re-write of
-	// other code and for now this fixes hanging notes
-	// on MT-32 + other external GMIDI synths.
-	_skyMusic->stopMusic();
-	delay(1500);
-	ConfMan.flushToDisk();
-	_system->quit();
+	free(textBuf1);
+	free(textBuf2);
 }
 
 char Control::_quitTexts[16][35] = {

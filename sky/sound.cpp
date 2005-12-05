@@ -1028,7 +1028,8 @@ Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
 Sound::~Sound(void) {
 
 	_mixer->stopAll();
-	if (_soundData) free(_soundData);
+	if (_soundData)
+		free(_soundData);
 }
 
 void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle) {
@@ -1048,7 +1049,8 @@ void Sound::loadSection(uint8 pSection) {
 	fnStopFx();
 	_mixer->stopAll();
 
-	if (_soundData) free(_soundData);
+	if (_soundData)
+		free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE);
 	uint16 asmOfs;
 	if (SkyEngine::_systemVars.gameVersion == 109) {
@@ -1065,10 +1067,8 @@ void Sound::loadSection(uint8 pSection) {
 			error("Unknown sounddriver version!");
 
 	_soundsTotal = _soundData[asmOfs + 1];
-	uint16 sRateTabOfs = (_soundData[asmOfs + 0x2A] << 8) | _soundData[asmOfs + 0x29];
-	_sfxBaseOfs = (_soundData[asmOfs + 0x32] << 8) | _soundData[asmOfs + 0x31];
+	_sfxBaseOfs = READ_LE_UINT16(_soundData + asmOfs + 0x31);
 
-	_sampleRates = _soundData + sRateTabOfs;
 	_sfxInfo = _soundData + _sfxBaseOfs;
 	// if we just restored a savegame, the sfxqueue holds the sound we need to restart
 	if (!(SkyEngine::_systemVars.systemFlags & SF_GAME_RESTORED))
@@ -1093,20 +1093,15 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 		return;
 	}
 
-	volume = ((volume & 0x7F) + 1) << 1;
-	if (volume > 255)
-		volume = 255;
+	volume = (volume & 0x7F) << 1;
 	sound &= 0xFF;
 
 	// note: all those tables are big endian. Don't ask me why. *sigh*
-	uint16 sampleRate = (_sampleRates[sound << 2] << 8) | _sampleRates[(sound << 2) | 1];
-	if (sampleRate > 11025)
-		sampleRate = 11025;
-	uint32 dataOfs = ((_sfxInfo[sound << 3] << 8) | _sfxInfo[(sound << 3) | 1]) << 4;
+	uint32 dataOfs  = READ_BE_UINT16(_sfxInfo + (sound << 3) + 0) << 4;
+	uint32 dataSize = READ_BE_UINT16(_sfxInfo + (sound << 3) + 2);
+	uint32 dataLoop = READ_BE_UINT16(_sfxInfo + (sound << 3) + 6);
 	dataOfs += _sfxBaseOfs;
-	uint16 dataSize = (_sfxInfo[(sound << 3) | 2] << 8) | _sfxInfo[(sound << 3) | 3];
-	uint16 dataLoop = (_sfxInfo[(sound << 3) | 6] << 8) | _sfxInfo[(sound << 3) | 7];
-
+	
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	uint32 loopSta = 0, loopEnd = 0;
@@ -1117,9 +1112,9 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	}
 
 	if (channel == 0)
-		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound0, _soundData + dataOfs, dataSize, 11025, flags, SOUND_CH0, volume, 0, loopSta, loopEnd);
 	else
-		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, sampleRate, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
+		_mixer->playRaw(&_ingameSound1, _soundData + dataOfs, dataSize, 11025, flags, SOUND_CH1, volume, 0, loopSta, loopEnd);
 }
 
 void Sound::fnStartFx(uint32 sound, uint8 channel) {

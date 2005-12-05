@@ -41,14 +41,6 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk)
 AdlibMusic::~AdlibMusic(void) {
 
 	_mixer->setupPremix(0);
-//	YM3812Shutdown();
-}
-
-void AdlibMusic::setVolume(uint8 volume) {
-
-	_musicVolume = volume;
-	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
-		_channels[cnt]->updateVolume(volume | 128);
 }
 
 void AdlibMusic::premixerCall(int16 *data, uint len) {
@@ -111,7 +103,7 @@ void AdlibMusic::setupChannels(uint8 *channelData) {
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++) {
 		uint16 chDataStart = ((channelData[(cnt << 1) | 1] << 8) | channelData[cnt << 1]) + _musicDataLoc;
 		_channels[cnt] = new AdlibChannel(_opl, _musicData, chDataStart);
-		_channels[cnt]->updateVolume(_musicVolume | 128);
+		_channels[cnt]->updateVolume(_musicVolume);
 	}
 }
 

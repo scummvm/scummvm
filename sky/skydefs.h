@@ -57,6 +57,7 @@ namespace Sky {
 #define SEQUENCE_COUNT	3
 
 #define	FIRST_TEXT_COMPACT	23
+#define LAST_TEXT_COMPACT	33
 #define FIXED_TEXT_WIDTH	128
 
 //screen/grid defines

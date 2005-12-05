@@ -32,7 +32,6 @@ class GmMusic : public MusicBase {
 public:
 	GmMusic(MidiDriver *pMidiDrv, Disk *pDisk);
 	~GmMusic(void);
-	virtual void setVolume(uint8 volume);
 private:
 	static void passTimerFunc(void *param);
 	void timerCall(void);

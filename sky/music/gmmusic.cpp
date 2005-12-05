@@ -58,11 +58,6 @@ GmMusic::~GmMusic(void) {
 	delete _midiDrv;
 }
 
-void GmMusic::setVolume(uint8 volume) {
-
-	setFMVolume(volume);
-}
-
 void GmMusic::timerCall(void) {
 	_timerCount += _midiDrv->getBaseTempo();
 	if (_timerCount > (1000000 / 50)) {

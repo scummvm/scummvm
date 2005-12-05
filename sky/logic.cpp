@@ -87,6 +87,11 @@ Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *sky
 	initScriptVariables();
 }
 
+Logic::~Logic(void) {
+	delete _skyGrid;
+	delete _skyAutoRoute;
+}
+
 void Logic::initScreen0(void) {
 	fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
@@ -2464,8 +2469,8 @@ bool Logic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnQuitToDos(uint32 a, uint32 b, uint32 c) {
-	_skyControl->showGameQuitMsg();  // calls _system->quit()
-	return true;
+	SkyEngine::_systemVars.quitGame = true;
+	return false;
 }
 
 bool Logic::fnPauseFx(uint32 a, uint32 b, uint32 c) {
@@ -2561,7 +2566,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	if (speechUsed)
 		target->spTime = 10;
 	else
-		target->spTime = (uint16)_skyText->_dtLetters + 5;
+		target->spTime = (uint16)_skyText->_numLetters + 5;
 	target->logic = L_TALK;
 }
 

@@ -37,6 +37,7 @@ MusicBase::MusicBase(Disk *pDisk) {
 
 MusicBase::~MusicBase(void) {
 
+	stopMusic();
 	if (_musicData)
 		free(_musicData);
 }
@@ -71,47 +72,7 @@ bool MusicBase::musicIsPlaying(void) {
 	return false;
 }
 
-void MusicBase::musicCommand(uint16 command) {
-
-	if (_musicData == NULL) {
-		debug(1,"Got music command but driver is not yet loaded");
-		return ;
-	}
-	if ((command >> 8) > _allowedCommands) {
-		debug(1,"got musicCommand %d while expecting <= %d", command >> 8, _allowedCommands);
-		return ;
-	}
-	switch(command >> 8) {
-	case 0:
-		debug(1,"Music: got call to startAdlibDriver(). Not necessary in this implementation.");
-		break;
-	case 1:
-		debug(1,"Music: got call to stopDriver(). Not necessary in this implementation.");
-		break;
-	case 2:
-		debug(1,"Music: got call to SetTempo(). Tempo is fixed in this implementation.");
-		break;
-	case 3:
-		debug(1,"Music: ignored direct call to driverPoll().");
-		break;
-	case 4:
-		startMusic(command & 0xFF);
-		break;
-	case 6:
-		reinitFM();
-		break;
-	case 7:
-		stopMusic();
-		break;
-	case 13:
-		setFMVolume(command & 0xFF);
-		break;
-	default:
-		debug(1,"musicCommand %d ignored.",command >> 8);
-	}
-}
-
-void MusicBase::setFMVolume(uint16 param) {
+void MusicBase::setVolume(uint16 param) {
 
 	_musicVolume = param;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
