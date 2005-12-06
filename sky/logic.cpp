@@ -532,8 +532,7 @@ void Logic::talk() {
 			if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
 				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
 					_skySound->stopSpeech();
-				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) &&
-					(_compact->spTextId > 0) &&
+				if ((_compact->spTextId > 0) &&
 					(_compact->spTextId < 0xFFFF)) {
 
 					_skyCompact->fetchCpt(_compact->spTextId)->status = 0;
@@ -2502,71 +2501,67 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 		target->offset = *animPtr++;
 		target->getToFlag = *animPtr++;
 		target->grafixProgPos += 2;
-	} else {
+	} else
 		target->grafixProgId = 0;
-	}
 
-	bool speechUsed = false;
-	// startSpeech returns false if no speech file exists for that text
+	bool speechFileFound = false;
 	if (SkyEngine::isCDVersion())
-		speechUsed = _skySound->startSpeech((uint16)textNum);
+		speechFileFound = _skySound->startSpeech((uint16)textNum);
 
-	// if sky is configured to speech-only return now - except if we're running another
-	// language than english
-	if (speechUsed && (!(SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT))) {
-		target->spTime = 10;
-		target->logic = L_TALK;
-		return;
-	}
+	if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
+		// form the text sprite, if player wants subtitles or
+		// if we couldn't find the speech file
+		struct lowTextManager_t textInfo;
+		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColour, true);
+		Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
+		target->spTextId = textInfo.compactNum;	//So we know what text to kill
+		byte *textGfx = textInfo.textData;
 
-	//now form the text sprite
-	struct lowTextManager_t textInfo;
-	textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColour, true);
-	Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
-	target->spTextId = textInfo.compactNum;	//So we know what text to kill
-	byte *textGfx = textInfo.textData;
+		textCompact->screen = target->screen;	//put it on our screen
 
-	//create the x coordinate for the speech text
-	//we need the talkers sprite information
-	textCompact->screen = target->screen;	//put our screen in
+		if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen
+			//talking on-screen
+			//create the x coordinate for the speech text
+			//we need the talkers sprite information
+			byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
+			uint16 xPos = target->xcood + ((struct dataFileHeader *)targetGfx)->s_offset_x;
+			uint16 width = (((struct dataFileHeader *)targetGfx)->s_width >> 1);
 
-	if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen
-		//talking on-screen
-		byte *targetGfx = (byte *)SkyEngine::fetchItem(target->frame >> 6);
-		uint16 xPos = target->xcood + ((struct dataFileHeader *)targetGfx)->s_offset_x;
-		uint16 width = (((struct dataFileHeader *)targetGfx)->s_width >> 1);
+			xPos += width - (FIXED_TEXT_WIDTH / 2);	//middle of talker
 
-		xPos += width - (FIXED_TEXT_WIDTH / 2);	//middle of talker
+			if (xPos < TOP_LEFT_X)
+				xPos = TOP_LEFT_X;
 
-		if (xPos < TOP_LEFT_X)
-			xPos = TOP_LEFT_X;
+			width = xPos + FIXED_TEXT_WIDTH;
+			if ((TOP_LEFT_X + FULL_SCREEN_WIDTH) <= width) {
+				xPos = TOP_LEFT_X + FULL_SCREEN_WIDTH;
+				xPos -= FIXED_TEXT_WIDTH;
+			}
 
-		width = xPos + FIXED_TEXT_WIDTH;
-		if ((TOP_LEFT_X + FULL_SCREEN_WIDTH) <= width) {
-			xPos = TOP_LEFT_X + FULL_SCREEN_WIDTH;
-			xPos -= FIXED_TEXT_WIDTH;
+			textCompact->xcood = xPos;
+			uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
+
+			if (yPos < TOP_LEFT_Y)
+				yPos = TOP_LEFT_Y;
+
+			textCompact->ycood = yPos;
+
+		} else {
+			//talking off-screen
+			target->spTextId = 0; 	//don't kill any text 'cos none was made
+			textCompact->status = 0;	//don't display text
 		}
-
-		textCompact->xcood = xPos;
-		uint16 yPos = target->ycood + ((struct dataFileHeader *)targetGfx)->s_offset_y - 6 - ((struct dataFileHeader *)textGfx)->s_height;
-
-		if (yPos < TOP_LEFT_Y)
-			yPos = TOP_LEFT_Y;
-
-		textCompact->ycood = yPos;
-
+		// In CD version, we're doing the timing by checking when the VOC has stopped playing.
+		// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between
+		// each sentence.
+		if (speechFileFound)
+			target->spTime = 10;
+		else
+			target->spTime = (uint16)_skyText->_numLetters + 5;
 	} else {
-		//talking off-screen
-		target->spTextId = 0; 	//don't kill any text 'cos none was made
-		textCompact->status = 0;	//don't display text
-	}
-	// In CD version, we're doing the timing by checking when the VOC has stopped playing.
-	// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between
-	// each sentence.
-	if (speechUsed)
 		target->spTime = 10;
-	else
-		target->spTime = (uint16)_skyText->_numLetters + 5;
+		target->spTextId = 0;
+	}
 	target->logic = L_TALK;
 }
 
