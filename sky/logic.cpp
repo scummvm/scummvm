@@ -1217,13 +1217,13 @@ script:
 	/// process a script
 	/// low level interface to interpreter
 
-	uint16 moduleNo = (uint16)((scriptNo & 0xff00) >> 12);
+	uint16 moduleNo = scriptNo >> 12;
 	debug(3, "Doing Script %x", (offset << 16) | scriptNo);
 	uint16 *scriptData = _moduleList[moduleNo]; // get module address
 
-	if (!scriptData) { // The module has not been loaded
-		scriptData = (uint16 *)_skyDisk->loadFile(moduleNo + F_MODULE_0);
-		_moduleList[moduleNo] = scriptData; // module has been loaded
+	if (!scriptData) { // We need to load the script module
+		_moduleList[moduleNo] = _skyDisk->loadScriptFile(moduleNo + F_MODULE_0);
+		 scriptData = _moduleList[moduleNo]; // module has been loaded
 	}
 
 	uint16 *moduleStart = scriptData;
@@ -1232,18 +1232,18 @@ script:
 	if (offset)
 		scriptData = moduleStart + offset;
 	else
-		scriptData += READ_LE_UINT16(scriptData + (scriptNo & 0x0fff));
+		scriptData += scriptData[scriptNo & 0x0fff];
 
 	uint32 a = 0, b = 0, c = 0;
 	uint16 command, s;
 
 	for (;;) {
-		command = READ_LE_UINT16(scriptData++); // get a command
+		command = *scriptData++; // get a command
 		Debug::script(command, scriptData);
 
 		switch (command) {
 		case 0: // push_variable
-			push( _scriptVariables[READ_LE_UINT16(scriptData++) / 4] );
+			push( _scriptVariables[*scriptData++ / 4] );
 			break;
 		case 1: // less_than
 			a = pop();
@@ -1254,7 +1254,7 @@ script:
 				push(0);
 			break;
 		case 2: // push_number
-			push(READ_LE_UINT16(scriptData++));
+			push(*scriptData++);
 			break;
 		case 3: // not_equal
 			a = pop();
@@ -1273,14 +1273,14 @@ script:
 				push(0);
 			break;
 		case 5: // skip_zero
-			s = READ_LE_UINT16(scriptData++);
+			s = *scriptData++;
 
 			a = pop();
 			if (!a)
 				scriptData += s / 2;
 			break;
 		case 6: // pop_var
-			b = _scriptVariables[READ_LE_UINT16(scriptData++) / 4] = pop();
+			b = _scriptVariables[*scriptData++ / 4] = pop();
 			break;
 		case 7: // minus
 			a = pop();
@@ -1293,7 +1293,7 @@ script:
 			push(b+a);
 			break;
 		case 9: // skip_always
-			s = READ_LE_UINT16(scriptData++);
+			s = *scriptData++;
 			scriptData += s / 2;
 			break;
 		case 10: // if_or
@@ -1306,7 +1306,7 @@ script:
 			break;
 		case 11: // call_mcode
 			{
-				a = READ_LE_UINT16(scriptData++);
+				a = *scriptData++;
 				assert(a <= 3);
 				// No, I did not forget the "break"s
 				switch (a) {
@@ -1318,7 +1318,7 @@ script:
 					a = pop();
 				}
 
-				uint16 mcode = READ_LE_UINT16(scriptData++)/4; // get mcode number
+				uint16 mcode = *scriptData++ / 4; // get mcode number
 				Debug::mcode(mcode, a, b, c);
 
 				Compact *saveCpt = _compact;
@@ -1338,13 +1338,13 @@ script:
 				push(0);
 			break;
 		case 14: // switch
-			c = s = READ_LE_UINT16(scriptData++); // get number of cases
+			c = s = *scriptData++; // get number of cases
 
 			a = pop(); // and value to switch on
 
 			do {
-				if (a == READ_LE_UINT16(scriptData)) {
-					scriptData += READ_LE_UINT16(scriptData + 1) / 2;
+				if (a == *scriptData) {
+					scriptData += scriptData[1] / 2;
 					scriptData++;
 					break;
 				}
@@ -1352,14 +1352,14 @@ script:
 			} while (--s);
 
 			if (s == 0)
-				scriptData += READ_LE_UINT16(scriptData)/2; // use the default
+				scriptData += *scriptData / 2; // use the default
 			break;
 		case 15: // push_offset
-			push( *(uint16 *)_skyCompact->getCompactElem(_compact, READ_LE_UINT16(scriptData++)) );
+			push( *(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) );
 			break;
 		case 16: // pop_offset
 			// pop a value into a compact
-			*(uint16 *)_skyCompact->getCompactElem(_compact, READ_LE_UINT16(scriptData++)) = (uint16)pop();
+			*(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) = (uint16)pop();
 			break;
 		case 17: // is_equal
 			a = pop();
@@ -1370,7 +1370,7 @@ script:
 				push(0);
 			break;
 		case 18: { // skip_nz
-				int16 t = READ_LE_UINT16(scriptData++);
+				int16 t = *scriptData++;
 				a = pop();
 				if (a)
 					scriptData += t / 2;
@@ -1668,7 +1668,6 @@ bool Logic::fnClearStop(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnPointerText(uint32 a, uint32 b, uint32 c) {
-
 	_skyText->fnPointerText(a, _skyMouse->giveMouseX(), _skyMouse->giveMouseY());
 	return true;
 }
@@ -2028,11 +2027,11 @@ bool Logic::fnResetId(uint32 id, uint32 resetBlock, uint32 c) {
 	uint16 *rst = (uint16 *)_skyCompact->fetchCpt(resetBlock);
 
 	if (!cpt) {
-		warning("fnResetId(): Compact %d (id) == NULL",id);
+		warning("fnResetId(): Compact %d (id) == NULL", id);
 		return true;
 	}
 	if (!rst) {
-		warning("fnResetId(): Compact %d (resetBlock) == NULL",resetBlock);
+		warning("fnResetId(): Compact %d (resetBlock) == NULL", resetBlock);
 		return true;
 	}
 
@@ -2318,13 +2317,11 @@ bool Logic::fnEnterSection(uint32 sectionNo, uint32 b, uint32 c) {
 }
 
 bool Logic::fnRestoreGame(uint32 a, uint32 b, uint32 c) {
-
 	_skyControl->doLoadSavePanel();
 	return false;
 }
 
 bool Logic::fnRestartGame(uint32 a, uint32 b, uint32 c) {
-
 	_skyControl->restartGame();
 	return false;
 }

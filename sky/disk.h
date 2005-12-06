@@ -27,20 +27,13 @@
 #include "common/str.h"
 #include "sky/rnc_deco.h"
 
+#define MAX_FILES_IN_LIST 60
+
 namespace Common {
 	class File;
 }
 
 namespace Sky {
-
-#define MAX_FILES_IN_LIST 60
-
-struct PrefFile {
-	uint8 *data;
-	uint16 fileNr;
-	uint32 fileSize;
-	PrefFile *next;
-};
 
 class Disk {
 public:
@@ -48,10 +41,8 @@ public:
 	~Disk(void);
 
 	uint8 *loadFile(uint16 fileNr);
+	uint16 *loadScriptFile(uint16 fileNr);
 	bool fileExists(uint16 fileNr);
-
-	void prefetchFile(uint16 fileNr);
-	void flushPrefetched(void);
 
 	uint32 determineGameVersion();
 
@@ -66,10 +57,6 @@ public:
 	void refreshFilesList(uint32 *list);
 
 protected:
-
-	PrefFile *_prefRoot;
-	uint8 *givePrefetched(uint16 fileNr, uint32 *fSize);
-
 	uint8 *getFileInfo(uint16 fileNr);
 	void dumpFile(uint16 fileNr);
 

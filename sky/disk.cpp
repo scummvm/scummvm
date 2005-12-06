@@ -34,12 +34,8 @@ static const char *dataFilename = "sky.dsk";
 static const char *dinnerFilename = "sky.dnr";
 
 Disk::Disk(const Common::String &gameDataPath) {
-	_prefRoot = NULL;
-
 	_dataDiskHandle = new Common::File();
 	_dnrHandle = new Common::File();
-
-	uint32 entriesRead;
 
 	_dnrHandle->open(dinnerFilename);
 	if (!_dnrHandle->isOpen())
@@ -49,10 +45,10 @@ Disk::Disk(const Common::String &gameDataPath) {
 		error("Error reading from sky.dnr"); //even though it was opened correctly?!
 
 	_dinnerTableArea = (uint8 *)malloc(_dinnerTableEntries * 8);
-	entriesRead = _dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
+	uint32 entriesRead = _dnrHandle->read(_dinnerTableArea, 8 * _dinnerTableEntries) / 8;
 
 	if (entriesRead != _dinnerTableEntries)
-		warning("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
+		error("entriesRead != dinnerTableEntries. [%d/%d]", entriesRead, _dinnerTableEntries);
 
 	_dataDiskHandle->open(dataFilename);
 	if (!_dataDiskHandle->isOpen())
@@ -65,14 +61,6 @@ Disk::Disk(const Common::String &gameDataPath) {
 }
 
 Disk::~Disk(void) {
-
-	PrefFile *fEntry = _prefRoot;
-	while (fEntry) {
-		free(fEntry->data);
-		PrefFile *fTemp = fEntry;
-		fEntry = fEntry->next;
-		delete fTemp;
-	}
 	if (_dnrHandle->isOpen())
 		_dnrHandle->close();
 	if (_dataDiskHandle->isOpen())
@@ -83,20 +71,7 @@ Disk::~Disk(void) {
 	delete _dataDiskHandle;
 }
 
-void Disk::flushPrefetched(void) {
-
-	PrefFile *fEntry = _prefRoot;
-	while (fEntry) {
-		free(fEntry->data);
-		PrefFile *fTemp = fEntry;
-		fEntry = fEntry->next;
-		delete fTemp;
-	}
-	_prefRoot = NULL;
-}
-
 bool Disk::fileExists(uint16 fileNr) {
-
 	return (getFileInfo(fileNr) != NULL);
 }
 
@@ -104,10 +79,6 @@ bool Disk::fileExists(uint16 fileNr) {
 uint8 *Disk::loadFile(uint16 fileNr) {
 
 	uint8 cflag;
-
-	uint8 *prefData = givePrefetched(fileNr, &_lastLoadedFileSize);
-	if (prefData)
-		return prefData;
 
 	debug(2, "load file %d,%d (%d)", (fileNr >> 11), (fileNr & 2047), fileNr);
 
@@ -202,47 +173,13 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 	}
 }
 
-void Disk::prefetchFile(uint16 fileNr) {
-
-	PrefFile **fEntry = &_prefRoot;
-	bool found = false;
-	while (*fEntry) {
-		if ((*fEntry)->fileNr == fileNr)
-			found = true;
-		fEntry = &((*fEntry)->next);
-	}
-	if (found) {
-		debug(1, "Disk::prefetchFile: File %d was already prefetched", fileNr);
-		return;
-	}
-	uint8 *temp = loadFile(fileNr);
-	*fEntry = new PrefFile;
-	(*fEntry)->data = temp;
-	(*fEntry)->fileSize = _lastLoadedFileSize;
-	(*fEntry)->fileNr = fileNr;
-	(*fEntry)->next = NULL;
-}
-
-uint8 *Disk::givePrefetched(uint16 fileNr, uint32 *fSize) {
-
-	PrefFile **fEntry = &_prefRoot;
-	bool found = false;
-	while ((*fEntry) && (!found)) {
-		if ((*fEntry)->fileNr == fileNr)
-			found = true;
-		else
-			fEntry = &((*fEntry)->next);
-	}
-	if (!found) {
-		*fSize = 0;
-		return NULL;
-	}
-	uint8 *retPtr = (*fEntry)->data;
-	PrefFile *retStr = *fEntry;
-	*fEntry = (*fEntry)->next;
-	*fSize = retStr->fileSize;
-	delete retStr;
-	return retPtr;
+uint16 *Disk::loadScriptFile(uint16 fileNr) {
+	uint16 *buf = (uint16*)loadFile(fileNr);
+#ifdef SCUMM_BIG_ENDIAN
+	for (int i = 0; i < _lastLoadedFileSize / 2; i++)
+		buf[i] = FROM_LE_16(buf[i]);
+#endif
+	return buf;
 }
 
 uint8 *Disk::getFileInfo(uint16 fileNr) {

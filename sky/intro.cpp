@@ -639,7 +639,6 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 Intro::~Intro(void) {
 
 	_mixer->stopAll();
-	_skyDisk->flushPrefetched();
 	_skyScreen->stopSequence();
 	if (_textBuf)
 		free(_textBuf);
@@ -654,8 +653,6 @@ bool Intro::doIntro(bool floppyIntro) {
 	if (!SkyEngine::isCDVersion())
 		floppyIntro = true;
 
-	_skyDisk->prefetchFile(60112);
-	_skyDisk->prefetchFile(60113);
 	_skyMusic->loadSection(0);
 	_skySound->loadSection(0);
 
