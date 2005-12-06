@@ -33,6 +33,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
       when displaying any form of control panel dialog.
     - The save game dialog would erronously claim an I/O error occurred if the
       savegame list had unused slots, and savegames were compressed.
+    - Fixed a scrolling bug which caused the finale sequence to be displayed
+      incorrectly.
 
   Sword2:
     - Fixes and cleanups to the end credits. The German credits work now.
