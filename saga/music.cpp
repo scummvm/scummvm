@@ -148,10 +148,14 @@ void RAWInputStream::refill() {
 		if (len & 1)
 			len--;
 
+#ifdef SCUMM_BIG_ENDIAN
+		if (!_context->isBigEndian) {
+#else
 		if (_context->isBigEndian) {
+#endif
 			uint16 *ptr16 = (uint16 *)ptr;
 			for (uint32 i = 0; i < (len / 2); i++)
-				ptr16[i] = TO_BE_16(ptr16[i]);
+				ptr16[i] = SWAP_BYTES_16(ptr16[i]);
 		}
 
 		lengthLeft -= len;
