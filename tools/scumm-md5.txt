@@ -269,7 +269,7 @@ Curse of Monkey Island
 	Demo	All	All	8fec68383202d38c0d25e9e3b757c5df	comi
 
 Backyard Baseball
-	-	Windows	en	cf8d13446ec6cb6222287a925fd47c1d	baseball	sev
+	-	All	en	cf8d13446ec6cb6222287a925fd47c1d	baseball	sev
 
 Backyard Baseball 2001
 	-	All	en	a86f9c49355579c30d4a55b477c0d869	baseball2001	Kirben
@@ -280,12 +280,12 @@ Backyard Baseball 2003
 
 
 Backyard Football
-	-	Windows	en	7fc6cdb46b4c9d384c52327f4bca6416	football	sev
+	-	All	en	7fc6cdb46b4c9d384c52327f4bca6416	football	sev
 	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	football	sev
 	Demo	All	en	2e85f7aa054930c692a5b1bed1dfc295	football	khalek
 
 Backyard Soccer
-	-	Windows	en	701246819d1a70573f41bf33fc19214f	soccer	sev
+	-	All	en	701246819d1a70573f41bf33fc19214f	soccer	sev
 
 Backyard Soccer MLS Edition
 	-	Windows	en	bfdf584b01503f0762baded581f6a0a2	SoccerMLS	sev
