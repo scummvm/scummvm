@@ -127,6 +127,7 @@ public:
 	uint8 *getPalette(int num);
 	
 	byte getShapeFlag1(int x, int y);
+	byte getShapeFlag2(int x, int y);
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 

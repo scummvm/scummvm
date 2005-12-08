@@ -1676,6 +1676,14 @@ byte Screen::getShapeFlag1(int x, int y) {
 	return 0;
 }
 
+byte Screen::getShapeFlag2(int x, int y) {
+	debug(9, "getShapeFlag2(%d, %d)", x, y);
+	uint8 color = _shapePages[0][y * SCREEN_W + x];
+	color &= 0x7F;
+	color &= 0x87;
+	return color;
+}
+
 int Screen::setNewShapeHeight(uint8 *shape, int height) {
 	debug(9, "setNewShapeHeight(0x%X, %d)", shape, height);
 	if (_vm->features() & GF_TALKIE)

@@ -75,7 +75,7 @@ struct Room {
 	uint8 itemsTable[12];
 	uint16 itemsXPos[12];
 	uint8 itemsYPos[12];
-	uint32 unkField3[12];	// maybe pointer to shape of the item
+	uint32 unkField3[12];
 };
 
 struct AnimObject {
@@ -220,7 +220,7 @@ public:
 	void flagAllObjectsForRefresh();
 	void animRefreshNPC(int character);
 	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
-	int8 fetchAnimHeight(const uint8 *shape, int8 mult);
+	int16 fetchAnimHeight(const uint8 *shape, int16 mult);
 	
 	int mouseX() { return _mouseX; }
 	int mouseY() { return _mouseY; }
@@ -424,6 +424,7 @@ protected:
 	void blockInRegion(int x, int y, int width, int height);
 	void blockOutRegion(int x, int y, int width, int height);
 	void startSceneScript(int brandonAlive);
+	void setupSceneItems();
 	void initSceneData(int facing, int unk1, int brandonAlive);
 	void clearNoDropRects();
 	void addToNoDropRects(int x, int y, int w, int h);
@@ -453,18 +454,35 @@ protected:
 	void destroyMouseItem();
 	void setMouseItem(int item);
 	void wipeDownMouseItem(int xpos, int ypos);
+	void backUpRect0(int xpos, int ypos);
+	void restoreRect0(int xpos, int ypos);
 	void backUpRect1(int xpos, int ypos);
 	void restoreRect1(int xpos, int ypos);
 	
 	void processInput(int xpos, int ypos);
 	int processInputHelper(int xpos, int ypos);
 	int clickEventHandler(int xpos, int ypos);
+	void clickEventHandler2();
 	void updateMousePointer();
+	
+	int countItemsInScene(uint16 sceneId);
+	int unkItemFunction(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
+	void exchangeItemWithMouseItem(uint16 sceneId, int itemIndex);
+	void addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y);
+	int getDrawLayer(int x, int y);
+	int getDrawLayer2(int x, int y, int height);
+	int checkNoDropRects(int x, int y);
+	int isDropable(int x, int y);
+	void itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item);
+	
+	void animRemoveGameItem(int index);
+	void animAddGameItem(int index, uint16 sceneId);
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
 	AnimObject *objectQueue(AnimObject *queue, AnimObject *add);
 	AnimObject *_animStates;
+	
 	void seq_demo();
 	void seq_intro();
 	void seq_introLogos();
@@ -570,6 +588,8 @@ protected:
 	int8 *_sceneAnimTable[50];
 	
 	Item _itemTable[145];
+	int _lastProcessedItem;
+	int _lastProcessedItemHeight;
 	
 	int16 *_exitListPtr;
 	int16 _exitList[11];

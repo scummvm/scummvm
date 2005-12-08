@@ -421,9 +421,8 @@ int KyraEngine::cmd_dropItemInScene(ScriptState *script) {
 		room->itemsYPos[freeItem] = ypos;
 		room->itemsTable[freeItem] = item;
 		
-		warning("PARTIALLY IMPLEMENTED: cmd_dropItemInScene");
-		// XXX animAddGameItem
-		// XXX updateAllObjectShapes
+		animAddGameItem(sceneId, freeItem);
+		updateAllObjectShapes();
 	} else {
 		if (item == 43) {
 			placeItemInGenericMapScene(item, 0);
@@ -1331,8 +1330,8 @@ int KyraEngine::cmd_setIdolGem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_totalItemsInScene(ScriptState *script) {
-	warning("STUB: cmd_totalItemsInScene");
-	return 0;
+	debug(3, "cmd_totalItemsInScene(0x%X) (%d)", script, stackPos(0));
+	return countItemsInScene(stackPos(0));
 }
 
 int KyraEngine::cmd_restoreBrandonsMovementDelay(ScriptState *script) {
@@ -1364,7 +1363,8 @@ int KyraEngine::cmd_setEntranceMouseCursorTrack(ScriptState *script) {
 }
 
 int KyraEngine::cmd_itemAppearsOnGround(ScriptState *script) {
-	warning("STUB: cmd_itemAppearsOnGround");
+	debug(3, "cmd_itemAppearsOnGround(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
+	unkItemFunction(_currentCharacter->sceneId, stackPos(0), stackPos(1), stackPos(2), 2, 0);
 	return 0;
 }
 

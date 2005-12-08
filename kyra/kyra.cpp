@@ -346,6 +346,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_handleInput = false;
 	
 	_currentRoom = 0xFFFF;
+	_lastProcessedItem = 0;
+	_lastProcessedItemHeight = 16;
 
 	return 0;
 }
@@ -450,8 +452,8 @@ void KyraEngine::startup() {
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {
 			_roomTable[i].itemsTable[item] = 0xFF;
-			_roomTable[i].itemsXPos[item] = 0;
-			_roomTable[i].itemsYPos[item] = 0;
+			_roomTable[i].itemsXPos[item] = 0xFFFF;
+			_roomTable[i].itemsYPos[item] = 0xFF;
 			_roomTable[i].unkField3[item] = 0;
 		}
 	}
@@ -1241,7 +1243,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	}
 	
 	startSceneScript(brandonAlive);
-	// XXX setupSceneItems
+	setupSceneItems();
 	initSceneData(facing, unk2, brandonAlive);
 	
 	_loopFlag2 = 0;
@@ -1899,8 +1901,8 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 			curAnimState->y1 = curRoom->itemsYPos[i];
 			curAnimState->x1 = curRoom->itemsXPos[i];
 			
-			curAnimState->x1 -= (_scaleTable[curAnimState->drawY] >> 1);
-			curAnimState->y1 -= _scaleTable[curAnimState->drawY];
+			curAnimState->x1 -= (fetchAnimWidth(curAnimState->sceneAnimPtr, _scaleTable[curAnimState->drawY])) >> 1;
+			curAnimState->y1 -= fetchAnimHeight(curAnimState->sceneAnimPtr, _scaleTable[curAnimState->drawY]);
 			
 			curAnimState->x2 = curAnimState->x1;
 			curAnimState->y2 = curAnimState->y1;
@@ -2464,7 +2466,7 @@ byte KyraEngine::findFreeItemInScene(int scene) {
 	assert(scene < _roomTableSize);
 	Room *room = &_roomTable[scene];
 	for (int i = 0; i < 12; ++i) {
-		if (room->itemsTable[i] != 0xFF)
+		if (room->itemsTable[i] == 0xFF)
 			return i;
 	}
 	return 0xFF;
@@ -2556,9 +2558,8 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 		}
 		
 		if (placeItem) {
-			warning("placeItemInGenericMapScene: placing an item is NOT implemented");
-			//if (!sub_B010(room, item, -1, -1, 2, 0))
-			//	continue;
+			if (!unkItemFunction(room, item, -1, -1, 2, 0))
+				continue;
 			break;
 		}
 	}
@@ -2613,6 +2614,389 @@ void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
 	restoreRect1(xpos, ypos);
 	_screen->resetShapeHeight(_shapes[220+_itemInHand]);
 	destroyMouseItem();
+	_screen->showMouse();
+}
+
+void KyraEngine::setupSceneItems() {
+	debug(9, "setupSceneItems()");
+	uint16 sceneId = _currentCharacter->sceneId;
+	assert(sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[sceneId];
+	for (int i = 0; i < 12; ++i) {
+		uint8 item = currentRoom->itemsTable[i];
+		if (item == 0xFF || !currentRoom->unkField3[i]) {
+			continue;
+		}
+		
+		int xpos = 0;
+		int ypos = 0;
+		
+		if (currentRoom->itemsXPos[i] == 0xFFFF) {
+			xpos = currentRoom->itemsXPos[i] = _rnd.getRandomNumberRng(24, 296);
+			ypos = currentRoom->itemsYPos[i] = _rnd.getRandomNumberRng(_northExitHeight & 0xFF, 130);
+		} else {
+			xpos = currentRoom->itemsXPos[i];
+			ypos = currentRoom->itemsYPos[i];
+		}
+		
+		_lastProcessedItem = i;
+		
+		int stop = 0;
+		while (!stop) {
+			stop = unkItemFunction(sceneId, item, xpos, ypos, 3, 0);
+			if (!stop) {
+				xpos = currentRoom->itemsXPos[i] = _rnd.getRandomNumberRng(24, 296);
+				ypos = currentRoom->itemsYPos[i] = _rnd.getRandomNumberRng(_northExitHeight & 0xFF, 130);
+				if (countItemsInScene(sceneId) >= 12) {
+					break;
+				}
+			} else {
+				currentRoom->unkField3[i] = 0;
+			}
+		}
+	}
+}
+
+int KyraEngine::countItemsInScene(uint16 sceneId) {
+	debug(9, "countItemsInScene(%d)", sceneId);
+	assert(sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[sceneId];
+	
+	int items = 0;
+	
+	for (int i = 0; i < 12; ++i) {
+		if (currentRoom->itemsTable[i] != 0xFF) {
+			++items;
+		}
+	}
+	
+	return items;
+}
+
+int KyraEngine::unkItemFunction(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2) {
+	debug(9, "unkItemFunction(%d, %d, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
+	int freeItem = -1;
+	uint8 itemIndex = findItemAtPos(x, y);
+	if (unk1) {
+		itemIndex = 0xFF;
+	}
+	
+	if (itemIndex != 0xFF) {
+		exchangeItemWithMouseItem(sceneId, itemIndex);
+		return 0;
+	}
+	
+	assert(sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[sceneId];
+	
+	if (unk1 != 3) {
+		for (int i = 0; i < 12; ++i) {
+			if (currentRoom->itemsTable[i] == 0xFF) {
+				freeItem = i;
+				break;
+			}
+		}
+	} else {
+		freeItem = _lastProcessedItem;
+	}
+
+	if (freeItem == -1) {
+		return 0;
+	}
+	
+	if (sceneId != _currentCharacter->sceneId) {
+		addItemToRoom(sceneId, item, freeItem, x, y);
+		return 1;
+	}
+	
+	int itemHeight = _itemTable[item].height;
+	_lastProcessedItemHeight = itemHeight;
+	
+	if (x == -1 && x == -1) {
+		x = _rnd.getRandomNumberRng(16, 304);
+		y = _rnd.getRandomNumberRng(_northExitHeight & 0xFF, 135);
+	}
+	
+	int xpos = x;
+	int ypos = y;
+	int destY = -1;
+	int destX = -1;
+	int running = 1;
+	
+	while (running) {
+		if ((_northExitHeight & 0xFF) <= ypos) {
+			bool running2 = true;
+			
+			if (getDrawLayer(xpos, ypos) - 1 < 0) {
+				if (((_northExitHeight >> 8) & 0xFF) != ypos) {
+					running2 = false;
+				}
+			}
+			
+			if (getDrawLayer2(xpos, ypos, itemHeight) - 1 < 0) {
+				if (((_northExitHeight >> 8) & 0xFF) != ypos) {
+					running2 = false;
+				}
+			}
+			
+			if (!isDropable(xpos, ypos)) {
+				if (((_northExitHeight >> 8) & 0xFF) != ypos) {
+					running2 = false;
+				}
+			}
+			
+			int xpos2 = xpos;
+			int xpos3 = xpos;
+			
+			while (running2) {
+				if (isDropable(xpos2, ypos)) {
+					if (getDrawLayer2(xpos2, ypos, itemHeight) < 7) {
+						if (findItemAtPos(xpos2, ypos) == 0xFF) {
+							destX = xpos2;
+							destY = ypos;
+							running = 0;
+							running2 = false;
+						}
+					}
+				}
+				
+				if (isDropable(xpos3, ypos)) {
+					if (getDrawLayer2(xpos3, ypos, itemHeight) < 7) {
+						if (findItemAtPos(xpos3, ypos) == 0xFF) {
+							destX = xpos3;
+							destY = ypos;
+							running = 0;
+							running2 = false;
+						}
+					}
+				}
+				
+				if (!running2)
+					continue;
+				
+				xpos2 -= 2;
+				if (xpos2 < 16) {
+					xpos2 = 16;
+				}
+				
+				xpos3 += 2;
+				if (xpos3 > 304) {
+					xpos3 = 304;
+				}
+				
+				if (xpos2 > 16)
+					continue;
+				if (xpos3 < 304)
+					continue;
+				running2 = false;
+			}
+		}
+		
+		if (((_northExitHeight >> 8) & 0xFF) == ypos) {
+			running = 0;
+			destY -= _rnd.getRandomNumberRng(0, 3);
+			
+			if ((_northExitHeight & 0xFF) < destY) {
+				continue;
+			}
+			
+			destY = (_northExitHeight & 0xFF) + 1;
+			continue;
+		}		
+		ypos += 2;
+		if (((_northExitHeight >> 8) & 0xFF) >= ypos) {
+			continue;
+		}
+		ypos = (_northExitHeight >> 8) & 0xFF;
+	}
+	
+	if (destX == -1 || destY == -1) {
+		return 0;
+	}
+	
+	if (unk1 == 3) {
+		currentRoom->itemsXPos[freeItem] = destX;
+		currentRoom->itemsYPos[freeItem] = destY;
+		return 1;
+	}
+	
+	if (unk1 == 2) {
+		warning("unkItemFunction unk1 == 2 is NOT implemented");
+		// XXX
+	}
+	
+	if (unk1 == 0) {
+		destroyMouseItem();
+	}
+	
+	itemDropDown(x, y, destX, destY, freeItem, item);
+	
+	if (unk1 == 0 && unk2 != 0) {
+		// XXX updateSentenceCommand
+	}
+	
+	return 1;
+}
+
+void KyraEngine::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
+	debug(9, "exchangeItemWithMouseItem(%d, %d)", sceneId, itemIndex);
+	_screen->hideMouse();
+	animRemoveGameItem(itemIndex);
+	assert(sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[sceneId];
+	
+	uint8 item = currentRoom->itemsTable[itemIndex];
+	currentRoom->itemsTable[itemIndex] = _itemInHand;
+	_itemInHand = item;
+	animAddGameItem(itemIndex, sceneId);
+	// XXX snd_kyraPlaySound 53
+	
+	setMouseItem(_itemInHand);
+	// XXX	
+	_screen->showMouse();
+	clickEventHandler2();
+}
+
+void KyraEngine::addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y) {
+	debug(9, "addItemToRoom(%d, %d, %d, %d, %d)", sceneId, item, itemIndex, x, y);
+	assert(sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[sceneId];
+	currentRoom->itemsTable[itemIndex] = item;
+	currentRoom->itemsXPos[itemIndex] = x;
+	currentRoom->itemsYPos[itemIndex] = y;
+	currentRoom->unkField3[itemIndex] = 1;
+}
+
+int KyraEngine::checkNoDropRects(int x, int y) {
+	debug(9, "checkNoDropRects(%d, %d)", x, y);
+	if (_lastProcessedItemHeight < 1 || _lastProcessedItemHeight > 16) {
+		_lastProcessedItemHeight = 16;
+	}
+	if (_noDropRects[0].x == -1) {
+		return 0;
+	}
+	
+	for (int i = 0; i < 11; ++i) {
+		if (_noDropRects[i].x == -1) {
+			break;
+		}
+		
+		int xpos = _noDropRects[i].x;
+		int ypos = _noDropRects[i].y;
+		int xpos2 = _noDropRects[i].x2;
+		int ypos2 = _noDropRects[i].y2;
+		
+		if (xpos > x + 16)
+			continue;
+		if (xpos2 < x)
+			continue;
+		if (y < ypos)
+			continue;
+		if (ypos2 < y - _lastProcessedItemHeight)
+			continue;
+		return 1;
+	}
+	
+	return 0;
+}
+
+int KyraEngine::isDropable(int x, int y) {
+	debug(9, "isDropable(%d, %d)", x, y);
+	x -= 8;
+	y -= 1;
+	
+	if (checkNoDropRects(x, y)) {
+		return 0;
+	}
+	
+	for (int xpos = x; xpos < x + 16; ++xpos) {
+		if (_screen->getShapeFlag1(xpos, y) == 0) {
+			return 0;
+		}
+	}	
+	return 1;
+}
+
+void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item) {
+	debug(9, "itemDropDown(%d, %d, %d, %d, %d, %d)", x, y, destX, destY, freeItem, item);
+	assert(_currentCharacter->sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[_currentCharacter->sceneId];
+	if (x == destX && y == destY) {
+		currentRoom->itemsXPos[freeItem] = destX;
+		currentRoom->itemsYPos[freeItem] = destY;
+		currentRoom->itemsTable[freeItem] = item;
+		// call kyraPlaySound(0x32)
+		animAddGameItem(freeItem, _currentCharacter->sceneId);
+		return;
+	}
+	_screen->hideMouse();
+	if (y <= destY) {
+		int tempY = y;
+		int addY = 2;
+		int drawX = x - 8;
+		int drawY = 0;
+		
+		backUpRect0(drawX, y - 16);
+		
+		while (tempY < destY) {
+			restoreRect0(drawX, tempY - 16);
+			tempY += addY;
+			if (tempY > destY) {
+				tempY = destY;
+			}
+			++addY;
+			drawY = tempY - 16;
+			backUpRect0(drawX, drawY);
+			_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
+			_screen->updateScreen();
+		}
+		
+		bool skip = false;
+		if (x == destX) {
+			if (destY - y <= 16) {
+				skip = true;
+			}
+		}
+		
+		if (!skip) {
+			// call kyraPlaySound(0x47)
+			if (addY < 6)
+				addY = 6;
+			
+			int xDiff = destX - x;
+			xDiff /= addY;
+			int startAddY = addY;
+			if (destY - y <= 8) {
+				addY >>= 1;
+			}
+			addY = -addY;
+			int unkX = x << 4;
+			while (--startAddY) {
+				drawX = (unkX >> 4) - 8;
+				drawY = tempY - 16;
+				restoreRect0(drawX, drawY);
+				tempY += addY;
+				unkX += xDiff;
+				if (tempY > destY) {
+					tempY = destY;
+				}
+				++addY;
+				drawX = (unkX >> 4) - 8;
+				drawY = tempY - 16;
+				backUpRect0(drawX, drawY);
+				_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
+				_screen->updateScreen();
+			}
+			restoreRect0(drawX, tempY);
+		} else {
+			restoreRect0(drawX, tempY - 16);
+		}
+	}
+	currentRoom->itemsXPos[freeItem] = destX;
+	currentRoom->itemsYPos[freeItem] = destY;
+	currentRoom->itemsTable[freeItem] = item;
+	// call kyraPlaySound(0x32)
+	animAddGameItem(freeItem, _currentCharacter->sceneId);
 	_screen->showMouse();
 }
 
@@ -2911,8 +3295,8 @@ void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 				
 				if (ypos < 8) {
 					ypos = 8;
-				} else if (ypos + height > 134) {
-					height = 134 - ypos;
+				} else if (ypos + height > 136) {
+					height = 136 - ypos;
 				}
 				
 				_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, 2, 0, Screen::CR_CLIPPED);
@@ -2989,6 +3373,47 @@ void KyraEngine::animRefreshNPC(int character) {
 	} else {
 		_objectQueue = objectAddHead(0, animObj);
 	}
+}
+
+void KyraEngine::animRemoveGameItem(int index) {
+	debug(9, "animRemoveGameItem(%d)", index);
+	restoreAllObjectBackgrounds();
+	
+	AnimObject *animObj = &_animItems[index];
+	animObj->sceneAnimPtr = 0;
+	animObj->animFrameNumber = -1;
+	animObj->refreshFlag = 1;
+	animObj->bkgdChangeFlag = 1;	
+	updateAllObjectShapes();
+	animObj->active = 0;
+	
+	objectRemoveQueue(_objectQueue, animObj);
+}
+
+void KyraEngine::animAddGameItem(int index, uint16 sceneId) {
+	debug(9, "animRemoveGameItem(%d, %d)", index, sceneId);
+	restoreAllObjectBackgrounds();
+	assert(sceneId < _roomTableSize);
+	Room *currentRoom = &_roomTable[sceneId];
+	AnimObject *animObj = &_animItems[index];
+	animObj->active = 1;
+	animObj->refreshFlag = 1;
+	animObj->bkgdChangeFlag = 1;
+	animObj->drawY = currentRoom->itemsYPos[index];
+	animObj->sceneAnimPtr = _shapes[220+currentRoom->itemsTable[index]];
+	animObj->animFrameNumber = -1;
+	animObj->x1 = currentRoom->itemsXPos[index];
+	animObj->y1 = currentRoom->itemsYPos[index];
+	animObj->x1 -= fetchAnimWidth(animObj->sceneAnimPtr, _scaleTable[animObj->drawY]) >> 1;
+	animObj->y1 -= fetchAnimHeight(animObj->sceneAnimPtr, _scaleTable[animObj->drawY]);
+	animObj->x2 = animObj->x1;
+	animObj->y2 = animObj->y1;
+	animObj->width2 = 0;
+	animObj->height2 = 0;
+	_objectQueue = objectQueue(_objectQueue, animObj);
+	preserveAnyChangedBackgrounds();
+	animObj->refreshFlag = 1;
+	animObj->bkgdChangeFlag = 1;
 }
 
 #pragma mark -
@@ -3068,14 +3493,24 @@ int16 KyraEngine::fetchAnimWidth(const uint8 *shape, int16 mult) {
 	debug(9, "fetchAnimWidth(0x%X, %d)", shape, mult);
 	if (_features & GF_TALKIE)
 		shape += 2;
-	return ((int16)READ_LE_UINT16((shape+3))) * mult;
+	return (((int16)READ_LE_UINT16((shape+3))) * mult) >> 8;
 }
 
-int8 KyraEngine::fetchAnimHeight(const uint8 *shape, int8 mult) {
+int16 KyraEngine::fetchAnimHeight(const uint8 *shape, int16 mult) {
 	debug(9, "fetchAnimHeight(0x%X, %d)", shape, mult);
 	if (_features & GF_TALKIE)
 		shape += 2;
-	return ((int8)*(shape+2)) * mult;
+	return (int16)(((int8)*(shape+2)) * mult) >> 8;
+}
+
+void KyraEngine::backUpRect0(int xpos, int ypos) {
+	debug(9, "backUpRect0(%d, %d)", xpos, ypos);
+	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 4<<3, 24, _shapes[0]);
+}
+
+void KyraEngine::restoreRect0(int xpos, int ypos) {
+	debug(9, "restoreRect0(%d, %d)", xpos, ypos);
+	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 24, _shapes[0]);
 }
 
 void KyraEngine::backUpRect1(int xpos, int ypos) {
@@ -3086,6 +3521,44 @@ void KyraEngine::backUpRect1(int xpos, int ypos) {
 void KyraEngine::restoreRect1(int xpos, int ypos) {
 	debug(9, "restoreRect1(%d, %d)", xpos, ypos);
 	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 32, _shapes[1]);
+}
+
+int KyraEngine::getDrawLayer(int x, int y) {
+	debug(9, "getDrawLayer(%d, %d)", x, y);
+	int xpos = x - 8;
+	int ypos = y - 1;
+	int layer = 1;
+	for (int curX = xpos; curX < xpos + 16; ++curX) {
+		int tempLayer = _screen->getShapeFlag2(curX, ypos);
+		if (layer < tempLayer) {
+			layer = tempLayer;
+		}
+		if (layer >= 7) {
+			return 7;
+		}
+	}
+	return layer;
+}
+
+int KyraEngine::getDrawLayer2(int x, int y, int height) {
+	debug(9, "getDrawLayer2(%d, %d, %d)", x, y, height);
+	int xpos = x - 8;
+	int ypos = y - 1;
+	int layer = 1;
+	
+	for (int useX = xpos; useX < xpos + 16; ++useX) {
+		for (int useY = ypos - height; useY < xpos; ++useY) {
+			int tempLayer = _screen->getShapeFlag2(useX, useY);
+			if (tempLayer > layer) {
+				layer = tempLayer;
+			}
+			
+			if (tempLayer >= 7) {
+				return 7;
+			}
+		}
+	}	
+	return layer;
 }
 
 #pragma mark -
@@ -4035,8 +4508,8 @@ void KyraEngine::updateMousePointer() {
 	int shape = 0;
 	
 	int newMouseState = 0;
-	int newX = 0; // si
-	int newY = 0; // bx
+	int newX = 0;
+	int newY = 0;
 	if (_mouseY <= 158) {
 		if (_mouseX >= 12) {
 			if (_mouseX >= 308) {
@@ -4140,6 +4613,20 @@ void KyraEngine::updateMousePointer() {
 				_screen->showMouse();
 			}
 		}
+	}
+}
+
+void KyraEngine::clickEventHandler2() {
+	debug(9, "clickEventHandler2()");
+	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
+	_scriptClick->variables[0] = _currentCharacter->sceneId;
+	_scriptClick->variables[1] = _mouseX;
+	_scriptClick->variables[2] = _mouseY;
+	_scriptClick->variables[4] = _itemInHand;
+	_scriptInterpreter->startScript(_scriptClick, 6);
+	
+	while (_scriptInterpreter->validScript(_scriptClick)) {
+		_scriptInterpreter->runScript(_scriptClick);
 	}
 }
 
