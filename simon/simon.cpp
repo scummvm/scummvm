@@ -1689,13 +1689,13 @@ void SimonEngine::handle_mouse_moved() {
 
 	if (_mouseX >= 32768)
 		_mouseX = 0;
-	if (_mouseX >= 638 / 2)
-		_mouseX = 638 / 2;
+	if (_mouseX >= _screenWidth - 1)
+		_mouseX = _screenWidth - 1;
 
 	if (_mouseY >= 32768)
 		_mouseY = 0;
-	if (_mouseY >= 199)
-		_mouseY = 199;
+	if (_mouseY >= _screenHeight - 1)
+		_mouseY = _screenHeight - 1;
 
 	if (_hitAreaUnk4) {
 		uint id = 101;
