@@ -1528,15 +1528,15 @@ void SimonEngine::vc32_copyVar() {
 }
 
 void SimonEngine::vc33_setMouseOn() {
-	if (_lockCounter != 0) {
-		_lockCounter = 1;
-		unlock();
+	if (_mouseHideCount != 0) {
+		_mouseHideCount = 1;
+		mouseOn();
 	}
 }
 
 void SimonEngine::vc34_setMouseOff() {
-	lock();
-	_lockCounter = 200;
+	mouseOff();
+	_mouseHideCount = 200;
 	_leftButtonDown = 0;
 }
 

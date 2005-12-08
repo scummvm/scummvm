@@ -284,7 +284,7 @@ protected:
 	uint _needHitAreaRecalc;
 	uint _verbHitArea;
 	uint16 _hitAreaUnk4;
-	uint _lockCounter;
+	uint _mouseHideCount;
 
 	uint16 _windowNum;
 
@@ -583,8 +583,8 @@ protected:
 
 	void o_inventory_descriptions();
 
-	void lock();
-	void unlock();
+	void mouseOff();
+	void mouseOn();
 
 	void drawIconArray(uint i, Item *item_ptr, int unk1, int unk2);
 

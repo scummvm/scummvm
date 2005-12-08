@@ -53,11 +53,11 @@ void SimonEngine::print_char_helper_6(uint i) {
 	FillOrCopyStruct *fcs;
 
 	if (_fcsData2[i]) {
-		lock();
+		mouseOff();
 		fcs = _windowArray[i];
 		drawIconArray(i, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 		_fcsData2[i] = 0;
-		unlock();
+		mouseOn();
 	}
 }
 

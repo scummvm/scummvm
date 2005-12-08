@@ -122,9 +122,9 @@ void SimonEngine::quick_load_or_save() {
 			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
 		} else {
 			// Redraw Inventory
-			lock();
+			mouseOff();
 			drawIconArray(2, getItem1Ptr(), 0, 0);
-			unlock();
+			mouseOn();
 			// Reset engine?
 			vc_set_bit_to(97, true);
 			sub = getSubroutineByID(100);

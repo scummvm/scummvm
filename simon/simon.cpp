@@ -376,7 +376,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_needHitAreaRecalc = 0;
 	_verbHitArea = 0;
 	_hitAreaUnk4 = 0;
-	_lockCounter = 0;
+	_mouseHideCount = 0;
 
 	_windowNum = 0;
 
@@ -1140,7 +1140,7 @@ void SimonEngine::itemChildrenChanged(Item *item) {
 	if (_noParentNotify)
 		return;
 
-	lock();
+	mouseOff();
 
 	for (i = 0; i != 8; i++) {
 		fcs = _windowArray[i];
@@ -1154,7 +1154,7 @@ void SimonEngine::itemChildrenChanged(Item *item) {
 		}
 	}
 
-	unlock();
+	mouseOn();
 }
 
 void SimonEngine::unlinkItem(Item *item) {
@@ -1663,15 +1663,15 @@ uint SimonEngine::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
 	return 0;
 }
 
-void SimonEngine::lock() {
-	_lockCounter++;
+void SimonEngine::mouseOff() {
+	_mouseHideCount++;
 }
 
-void SimonEngine::unlock() {
+void SimonEngine::mouseOn() {
 	_lockWord |= 1;
 
-	if (_lockCounter != 0)
-		_lockCounter--;
+	if (_mouseHideCount != 0)
+		_mouseHideCount--;
 
 	_lockWord &= ~1;
 }
@@ -1679,7 +1679,7 @@ void SimonEngine::unlock() {
 void SimonEngine::handle_mouse_moved() {
 	uint x;
 
-	if (_lockCounter) {
+	if (_mouseHideCount) {
 		_system->showMouse(false);
 		return;
 	}
@@ -1703,6 +1703,26 @@ void SimonEngine::handle_mouse_moved() {
 			id = 102;
 		if (_hitAreaUnk4 != id)
 			hitarea_proc_1();
+	}
+
+	if (getGameType() == GType_FF) {
+		if (_bitArray[6] & 0x8) { // Oracle
+			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseX <= 475) {
+				_bitArray[6] |= 0x4;
+			} else {
+				if (_bitArray[6] & 0x4) {
+					_variableArray[254] = 63;
+				}
+			}
+		} else if (_bitArray[5] & 0x0100) { // Close Up
+			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseX <= 475) {
+				_bitArray[5] |= 0x80;
+			} else {
+				if (_bitArray[5] & 0x80) {
+					_variableArray[254] = 75;
+				}
+			}
+		}
 	}
 
 	if (getGameType() == GType_SIMON2) {
@@ -2672,7 +2692,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 void SimonEngine::o_mouseOn() {
 	if (getGameType() == GType_SIMON2 && _bitArray[4] & 0x8000)
 		_mouseCursor = 0;
-	_lockCounter = 0;
+	_mouseHideCount = 0;
 }
 
 void SimonEngine::o_mouseOff() {
@@ -2867,7 +2887,7 @@ void SimonEngine::timer_proc1() {
 		if (!_cepeFlag)
 			expire_vga_timers();
 
-		if (_lockCounter != 0 && _syncFlag2) {
+		if (_mouseHideCount != 0 && _syncFlag2) {
 			_lockWord &= ~2;
 			return;
 		}
@@ -4086,7 +4106,7 @@ void SimonEngine::delay(uint amount) {
 
 					// We should only allow a load or save when it was possible in original
 					// This stops load/save during copy protection, conversations and cut scenes
-					if (!_lockCounter && !_showPreposition)
+					if (!_mouseHideCount && !_showPreposition)
 						quick_load_or_save();
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'a') {

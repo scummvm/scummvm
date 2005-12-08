@@ -645,9 +645,9 @@ int SimonEngine::runScript() {
 		case 114:{
 				Item *item = getNextItemPtr();
 				uint fcs_index = getVarOrByte();
-				lock();
+				mouseOff();
 				drawIconArray(fcs_index, item, 0, 0);
-				unlock();
+				mouseOn();
 			}
 			break;
 
@@ -690,6 +690,32 @@ int SimonEngine::runScript() {
 			}
 			break;
 
+		case 122:{									/* oracle text down */
+				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+					goto invalid_opcode;
+
+				warning("STUB: script opcode 122");
+			}
+			break;
+
+		case 123:{									/* oracle text down */
+				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+					goto invalid_opcode;
+
+				warning("STUB: script opcode 123");
+			}
+			break;
+
+		case 124:{									/* if time */
+				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+					goto invalid_opcode;
+
+				uint time = getVarOrWord();
+				condition = 1;
+				warning("STUB: script opcode 124 (%d)", time);
+			}
+			break;
+
 		case 125:{									/* item is sibling with item 1 */
 				Item *item = getNextItemPtr();
 				condition = (getItem1Ptr()->parent == item->parent);
@@ -700,9 +726,9 @@ int SimonEngine::runScript() {
 				Item *item = getNextItemPtr();
 				uint fcs_index = getVarOrByte();
 				uint a = 1 << getVarOrByte();
-				lock();
+				mouseOff();
 				drawIconArray(fcs_index, item, 1, a);
-				unlock();
+				mouseOn();
 			}
 			break;
 
@@ -753,8 +779,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 134:{									/* dummy opcode? */
-				midi.stop();
-				_lastMusicPlayed = -1;
+				if (getGameType() == GType_FF) {
+					warning("STUB: script opcode 134");
+				} else {
+					midi.stop();
+					_lastMusicPlayed = -1;
+				}
 			}
 			break;
 
@@ -998,12 +1028,12 @@ int SimonEngine::runScript() {
 			}
 			break;
 
-		case 180:{									/* force unlock */
+		case 180:{									/* force mouseOn */
 				o_mouseOn();
 			}
 			break;
 
-		case 181:{									/* force lock */
+		case 181:{									/* force mouseOff */
 				o_mouseOff();
 				if (getGameType() == GType_SIMON2) {
 					changeWindow(1);
@@ -1652,10 +1682,10 @@ void SimonEngine::o_unk_160(uint a) {
 }
 
 void SimonEngine::o_unk_103() {
-	lock();
+	mouseOff();
 	removeIconArray(_curWindow);
 	showMessageFormat("\x0C");
-	unlock();
+	mouseOn();
 }
 
 void SimonEngine::o_kill_sprite_simon1(uint a) {

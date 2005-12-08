@@ -463,9 +463,9 @@ void SimonEngine::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
 	if (fcs->fcs_data->unk1 == 0)
 		return;
 
-	lock();
+	mouseOff();
 	drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
-	unlock();
+	mouseOn();
 }
 
 void SimonEngine::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
@@ -473,9 +473,9 @@ void SimonEngine::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
 
 	index = get_fcs_ptr_3_index(fcs);
 
-	lock();
+	mouseOff();
 	drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
-	unlock();
+	mouseOn();
 }
 
 void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {

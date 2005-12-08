@@ -1136,10 +1136,10 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	/* 120 */
 	"W|UNK_120",
 	"BI|SET_VGA_ITEM",
-	NULL,
-	NULL,
+	"ORACLE_TEXT_DOWN",
+	"ORACLE_TEXT_UP",
 	/* 124 */
-	NULL,
+	"WJ|IF_TIME",
 	"IJ|IS_SIBLING_WITH_A",
 	"IBB|UNK_126",
 	"WW|PLAY_MUSIC_RESOURCE",
@@ -1151,7 +1151,7 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	/* 132 */
 	"|SAVE_GAME",
 	"|LOAD_GAME",
-	"|DUMMYPROC_134",
+	"|LIST_SAVED_GAMES",
 	"|SWITCH_CD",
 	/* 136 */
 	"IV|GET_ITEM_UNK3",
