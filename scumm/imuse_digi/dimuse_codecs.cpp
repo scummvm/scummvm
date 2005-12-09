@@ -54,15 +54,11 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
  * varies the size of each "packet" between 2 and 7 bits.
  */
 
-#ifdef PALMOS_68K
-static byte *_destImcTable = NULL;		// save 23k of memory !
-static uint32 *_destImcTable2 = NULL;
+static byte _imcTableEntryBitCount[89];
 
+#ifdef PALMOS_68K
 static const int16 *imcTable;
 #else
-static byte _destImcTable[89];
-static uint32 _destImcTable2[89 * 64];
-
 static const int16 imcTable[89] = {
 		7,	  8,	9,	 10,   11,	 12,   13,	 14,
 	   16,	 17,   19,	 21,   23,	 25,   28,	 31,
@@ -119,53 +115,26 @@ static const byte imxOtherTable[6][64] = {
 	}
 };
 
-#ifdef PALMOS_68K
-void releaseImcTables() {
-	free(_destImcTable);
-	free(_destImcTable2);
-}
-#endif
-
 void initializeImcTables() {
 	int pos;
 
-#ifdef PALMOS_68K
-	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
-	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
-#endif
-
-	for (pos = 0; pos <= 88; ++pos) {
-		byte put = 1;
+	for (pos = 0; pos < ARRAYSIZE(imcTable); ++pos) {
+		byte put = 0;
 		int32 tableValue = ((imcTable[pos] * 4) / 7) / 2;
 		while (tableValue != 0) {
 			tableValue /= 2;
 			put++;
 		}
-		if (put < 3) {
-			put = 3;
+		if (put < 2) {
+			put = 2;
 		}
-		if (put > 8) {
-			put = 8;
+		if (put > 7) {
+			put = 7;
 		}
-		_destImcTable[pos] = put - 1;
-	}
-
-	for (int n = 0; n < 64; n++) {
-		for (pos = 0; pos <= 88; ++pos) {
-			int32 count = 32;
-			int32 put = 0;
-			int32 tableValue = imcTable[pos];
-	 		do {
-				if ((count & n) != 0) {
-					put += tableValue;
-				}
-				count /= 2;
-				tableValue /= 2;
-			} while (count != 0);
-			_destImcTable2[n + pos * 64] = put;
-		}
+		_imcTableEntryBitCount[pos] = put;
 	}
 }
+
 #define NextBit                            \
 	do {                                   \
 		bit = mask & 1;                    \
@@ -613,7 +582,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 										: outputSamplesLeft / 2);
 				for (i = 0; i < bound; ++i) {
 					// Determine the size (in bits) of the next data packet
-					const int32 curTableEntryBitCount = _destImcTable[curTablePos];
+					const int32 curTableEntryBitCount = _imcTableEntryBitCount[curTablePos];
 					assert(2 <= curTableEntryBitCount && curTableEntryBitCount <= 7);
 
 					// Read the next data packet
@@ -629,9 +598,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 					const byte dataBitMask = (signBitMask - 1);
 					const byte data = (packet & dataBitMask);
 
-					const int32 tmpA = (data << (7 - curTableEntryBitCount));
-					const int32 imcTableEntry = imcTable[curTablePos] >> (curTableEntryBitCount - 1);
-					int32 delta = imcTableEntry + _destImcTable2[tmpA + (curTablePos * 64)];
+					int32 delta = imcTable[curTablePos] * (2 * data + 1) >> (curTableEntryBitCount - 1);
 
 					// The topmost bit in the data packet tells is a sign bit
 					if ((packet & signBitMask) != 0) {

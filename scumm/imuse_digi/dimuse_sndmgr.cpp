@@ -48,9 +48,6 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		closeSound(&_sounds[l]);
 	}
-#ifdef PALMOS_68K
-	BundleCodecs::releaseImcTables();
-#endif
 }
 
 void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs) {
