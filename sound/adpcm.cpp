@@ -166,8 +166,8 @@ int16 ADPCMInputStream::decodeOKI(byte code) {
 	_status.stepIndex += stepAdjust(code);
 	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
-	if (_status.stepIndex > 48)
-		_status.stepIndex = 48;
+	if (_status.stepIndex > ARRAYSIZE(okiStepSize) - 1)
+		_status.stepIndex = ARRAYSIZE(okiStepSize) - 1;
 
 	// * 16 effectively converts 12-bit input to 16-bit output
 	return samp * 16;
@@ -213,8 +213,8 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	_status.stepIndex += stepAdjust(code);
 	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
-	if (_status.stepIndex > 88)
-		_status.stepIndex = 88;
+	if (_status.stepIndex > ARRAYSIZE(imaStepTable) - 1)
+		_status.stepIndex = ARRAYSIZE(imaStepTable) - 1;
 
 	return samp;
 }
