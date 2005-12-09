@@ -28,7 +28,8 @@
 // Dialogic or Oki ADPCM coding format aka VOX.
 // See also <http://www.comptek.ru/telephony/tnotes/tt1-13.html>
 //
-// In addition, also IMA ADPCM is supported.
+// In addition, also IMA ADPCM is supported. See
+//   <http://www.multimedia.cx/simpleaudio.html>.
 
 ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels, uint32 blockAlign)
 	: _stream(stream), _channels(channels), _type(type), _blockAlign(blockAlign) {

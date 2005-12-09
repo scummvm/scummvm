@@ -47,7 +47,7 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 /*
  * The "IMC" codec below (see cases 13 & 15 in decompressCodec) is actually a
  * variant of the IMA codec, see also
- *   <http://home.pcisys.net/~melanson/codecs/simpleaudio.html>
+ *   <http://www.multimedia.cx/simpleaudio.html>
  *
  * It is somewhat different, though: the standard ADPCM codecs use a fixed
  * size for their data packets (4 bits), while the codec implemented here
