@@ -43,6 +43,7 @@ Debugger::Debugger(KyraEngine *vm)
 	DCmd_Register("queryflag",			&Debugger::cmd_queryFlag);
 	DCmd_Register("timers",				&Debugger::cmd_listTimers);
 	DCmd_Register("settimercountdown",	&Debugger::cmd_setTimerCountdown);
+	DCmd_Register("give",			&Debugger::cmd_giveItem);
 }
 
 void Debugger::preEnter() {
@@ -176,4 +177,14 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmd_giveItem(int argc, const char **argv) {
+	if (argc) {
+		int item = atoi(argv[1]);
+		_vm->setMouseItem(item);
+		_vm->_itemInHand = item;
+	} else
+		DebugPrintf("Syntax: give <itemid>\n");
+		
+	return true;
+}
 } // End of namespace Kyra

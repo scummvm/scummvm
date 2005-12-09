@@ -419,6 +419,7 @@ protected:
 	int resetGameFlag(int flag);
 	
 	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
+	void transcendScenes(int roomIndex, int roomName);
 	void moveCharacterToPos(int character, int facing, int xpos, int ypos);
 	void setCharacterPositionWithUpdate(int character);
 	int setCharacterPosition(int character, int *facingTable);
@@ -470,6 +471,8 @@ protected:
 	void clickEventHandler2();
 	void updateMousePointer();
 	bool hasClickedOnExit(int xpos, int ypos);
+	int checkForNPCScriptRun(int xpos, int ypos);
+	void runNpcScript(int func);
 	
 	int countItemsInScene(uint16 sceneId);
 	int processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
@@ -484,6 +487,7 @@ protected:
 	
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);
+	void animAddNPC(int character);
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
@@ -603,6 +607,7 @@ protected:
 	int16 _exitList[11];
 	SceneExits _sceneExits;
 	uint16 _currentRoom;
+	int _scenePhasingFlag;
 	uint8 *_maskBuffer;
 	
 	int _sceneChangeState;
@@ -640,9 +645,11 @@ protected:
 	Debugger *_debugger;
 	
 	ScriptState *_scriptMain;
+	
+	ScriptState *_npcScript;
 	ScriptData *_npcScriptData;
 	
-	ScriptState *_scriptClick;	// TODO: rename to a better name
+	ScriptState *_scriptClick;
 	ScriptData *_scriptClickData;
 	
 	Character *_characterList;

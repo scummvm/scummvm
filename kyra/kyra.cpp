@@ -298,6 +298,10 @@ int KyraEngine::init(GameDetector &detector) {
 	_npcScriptData = new ScriptData;
 	memset(_npcScriptData, 0, sizeof(ScriptData));
 	assert(_npcScriptData);
+	_npcScript = new ScriptState;
+	assert(_npcScript);
+	memset(_npcScript, 0, sizeof(ScriptState));
+	
 	_scriptMain = new ScriptState;
 	assert(_scriptMain);
 	memset(_scriptMain, 0, sizeof(ScriptState));
@@ -352,6 +356,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_handleInput = false;
 	
 	_currentRoom = 0xFFFF;
+	_scenePhasingFlag = 0;
 	_lastProcessedItem = 0;
 	_lastProcessedItemHeight = 16;
 
@@ -1265,13 +1270,28 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	}
 }
 
+void KyraEngine::transcendScenes(int roomIndex, int roomName) {
+	debug(9, "transcendScenes(%d, %d, %d, %d)", roomIndex, roomName);
+	assert(roomIndex < _roomTableSize);
+	_roomTable[roomIndex].nameIndex = roomName;
+	// _game_unkScreenVar2 = 1;
+	// _game_unkScreenVar3 = 1;
+	// _game_unkScreenVar1 = 0;
+	_brandonPosX = _currentCharacter->x1;
+	_brandonPosY = _currentCharacter->y1;
+	enterNewScene(roomIndex, _currentCharacter->facing, 0, 0, 0);
+	// _game_unkScreenVar1 = 1;
+	// _game_unkScreenVar2 = 0;
+	// _game_unkScreenVar3 = 0;
+}
+
 void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypos) {
 	debug(9, "moveCharacterToPos(%d, %d, %d, %d)", character, facing, xpos, ypos);
 	Character *ch = &_characterList[character];
 	ch->facing = facing;
 	_screen->hideMouse();
-	xpos &= 0xFFFC;
-	ypos &= 0xFFFE;
+	xpos = (int16)(xpos & 0xFFFC);
+	ypos = (int16)(ypos & 0xFFFE);
 	disableTimer(19);
 	disableTimer(14);
 	disableTimer(18);
@@ -1710,10 +1730,10 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 		}
 	}
 	
-	xpos2 &= 0xFFFC;
-	ypos2 &= 0xFFFE;
-	xpos &= 0xFFFC;
-	ypos &= 0xFFFE;
+	xpos2 = (int16)(xpos2 & 0xFFFC);
+	ypos2 = (int16)(ypos2 & 0xFFFE);
+	xpos = (int16)(xpos & 0xFFFC);
+	ypos = (int16)(ypos & 0xFFFE);
 	_currentCharacter->facing = facing;
 	_currentCharacter->x1 = xpos;
 	_currentCharacter->x2 = xpos;
@@ -1909,7 +1929,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		byte curItem = curRoom->itemsTable[i];
 		if (curItem != 0xFF) {
 			curAnimState->drawY = curRoom->itemsYPos[i];
-			curAnimState->sceneAnimPtr = _shapes[220+i];
+			curAnimState->sceneAnimPtr = _shapes[220+curItem];
 			curAnimState->animFrameNumber = 0xFFFF;
 			curAnimState->y1 = curRoom->itemsYPos[i];
 			curAnimState->x1 = curRoom->itemsXPos[i];
@@ -3492,6 +3512,30 @@ void KyraEngine::animAddGameItem(int index, uint16 sceneId) {
 	animObj->bkgdChangeFlag = 1;
 }
 
+void KyraEngine::animAddNPC(int character) {
+	debug(9, "animAddNPC(%d)", character);
+	restoreAllObjectBackgrounds();
+	AnimObject *animObj = &_charactersAnimState[character];
+	const Character *ch = &_characterList[character];
+	
+	animObj->active = 1;
+	animObj->refreshFlag = 1;
+	animObj->bkgdChangeFlag = 1;
+	animObj->drawY = ch->y1;
+	animObj->sceneAnimPtr = _shapes[4+ch->currentAnimFrame];
+	animObj->x1 = animObj->x2 = ch->x1 + _defaultShapeTable[ch->currentAnimFrame-7].xOffset;
+	animObj->y1 = animObj->y2 = ch->y1 + _defaultShapeTable[ch->currentAnimFrame-7].yOffset;
+	if (ch->facing >= 1 && ch->facing <= 3) {
+		animObj->flags |= 1;
+	} else if (ch->facing >= 5 && ch->facing <= 7) {
+		animObj->flags &= 0xFFFFFFFE;
+	}	
+	_objectQueue = objectQueue(_objectQueue, animObj);
+	preserveAnyChangedBackgrounds();
+	animObj->refreshFlag = 1;
+	animObj->bkgdChangeFlag = 1;
+}
+
 #pragma mark -
 #pragma mark - Queue handling
 #pragma mark -
@@ -3662,6 +3706,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 	debug(9, "findWay(%d, %d, %d, %d, 0x%X, %d)", x, y, toX, toY, moveTable, moveTableSize);
 	x &= 0xFFFC; toX &= 0xFFFC;
 	y &= 0xFFFE; toY &= 0xFFFE;
+	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
 	
 	if (x == toY && y == toY) {
 		moveTable[0] = 8;
@@ -4092,10 +4137,10 @@ int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) 
 		}
 	}
 	
-	int x = _currentCharacter->x1 & 0xFFFC;
-	int y = _currentCharacter->y1 & 0xFFFE;
-	xpos &= 0xFFFC;
-	ypos &= 0xFFFE;
+	int x = (int16)(_currentCharacter->x1 & 0xFFFC);
+	int y = (int16)(_currentCharacter->y1 & 0xFFFE);
+	xpos = (int16)(xpos & 0xFFFC);
+	ypos = (int16)(ypos & 0xFFFE);
 	int ret = findWay(x, y, xpos, ypos, _movFacingTable, 150);
 	_pathfinderFlag = 0;
 	if (ret >= _lastFindWayRet) {
@@ -4572,6 +4617,11 @@ void KyraEngine::processInput(int xpos, int ypos) {
 			handleSceneChange(xpos, ypos, 1, 1);
 			return;
 		} else {
+			int script = checkForNPCScriptRun(xpos, ypos);
+			if (script >= 0) {
+				runNpcScript(script);
+				return;
+			}
 			if (_itemInHand != -1) {
 				if (ypos < 155) {
 					if (hasClickedOnExit(xpos, ypos)) {
@@ -4766,6 +4816,73 @@ void KyraEngine::clickEventHandler2() {
 	
 	while (_scriptInterpreter->validScript(_scriptClick)) {
 		_scriptInterpreter->runScript(_scriptClick);
+	}
+}
+
+int KyraEngine::checkForNPCScriptRun(int xpos, int ypos) {
+	debug(9, "checkForNPCScriptRun(%d, %d)", xpos, ypos);
+	int returnValue = -1;
+	const Character *currentChar = _currentCharacter;
+	int charLeft = 0, charRight = 0, charTop = 0, charBottom = 0;
+	
+	int scaleFactor = _scaleTable[currentChar->y1];
+	int addX = (((scaleFactor*8)*3)>>8)>>1;
+	int addY = ((scaleFactor*3)<<4)>>8;
+	
+	charLeft = currentChar->x1 - addX;
+	charRight = currentChar->x1 + addX;
+	charTop = currentChar->y1 - addY;
+	charBottom = currentChar->y1;
+	
+	if (xpos >= charLeft && charRight >= xpos && charTop <= ypos && charBottom >= ypos) {
+		return 0;
+	}
+	
+	if (xpos > 304 || xpos < 16) {
+		return -1;
+	}
+	
+	for (int i = 1; i < 5; ++i) {
+		currentChar = &_characterList[i];
+		
+		if (currentChar->sceneId != _currentCharacter->sceneId)
+			continue;
+			
+		charLeft = currentChar->x1 - 12;
+		charRight = currentChar->x1 + 11;
+		charTop = currentChar->y1 - 48;
+		// if (!i) {
+		// 	charBottom = currentChar->y2 - 16;
+		// } else {
+		charBottom = currentChar->y1;
+		// }
+		
+		if (xpos < charLeft || xpos > charRight || ypos < charTop || charBottom < ypos) {
+			continue;
+		}
+		
+		if (returnValue != -1) {
+			if (currentChar->y1 >= _characterList[returnValue].y1) {
+				returnValue = i;
+			}
+		} else {
+			returnValue = i;
+		}
+	}
+	
+	return returnValue;
+}
+
+void KyraEngine::runNpcScript(int func) {
+	debug(9, "runNpcScript(%d)", func);
+	_scriptInterpreter->initScript(_npcScript, _npcScriptData);
+	_scriptInterpreter->startScript(_npcScript, func);
+	_npcScript->variables[0] = _currentCharacter->sceneId;
+	_npcScript->variables[4] = _itemInHand;
+	_npcScript->variables[5] = func;
+	
+	while (_scriptInterpreter->validScript(_npcScript)) {
+		_scriptInterpreter->runScript(_npcScript);
 	}
 }
 

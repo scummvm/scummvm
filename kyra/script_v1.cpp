@@ -421,7 +421,7 @@ int KyraEngine::cmd_dropItemInScene(ScriptState *script) {
 		room->itemsYPos[freeItem] = ypos;
 		room->itemsTable[freeItem] = item;
 		
-		animAddGameItem(sceneId, freeItem);
+		animAddGameItem(freeItem, sceneId);
 		updateAllObjectShapes();
 	} else {
 		if (item == 43) {
@@ -526,23 +526,26 @@ int KyraEngine::cmd_playAdlibScore(ScriptState *script) {
 }
 
 int KyraEngine::cmd_phaseInSameScene(ScriptState *script) {
-	warning("STUB: cmd_phaseInSameScene");
+	debug(3, "cmd_phaseInSameScene(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	transcendScenes(stackPos(0), stackPos(1));
 	return 0;
 }
 
 int KyraEngine::cmd_setScenePhasingFlag(ScriptState *script) {
-	warning("STUB: cmd_setScenePhasingFlag");
-	return 0;
+	debug(3, "cmd_setScenePhasingFlag(0x%X) ()");
+	_scenePhasingFlag = 1;
+	return 1;
 }
 
 int KyraEngine::cmd_resetScenePhasingFlag(ScriptState *script) {
-	warning("STUB: cmd_resetScenePhasingFlag");
+	debug(3, "cmd_resetScenePhasingFlag(0x%X) ()");
+	_scenePhasingFlag = 0;
 	return 0;
 }
 
 int KyraEngine::cmd_queryScenePhasingFlag(ScriptState *script) {
-	warning("STUB: cmd_queryScenePhasingFlag");
-	return 0;
+	debug(3, "cmd_queryScenePhasingFlag(0x%X) ()");
+	return _scenePhasingFlag;
 }
 
 int KyraEngine::cmd_sceneToDirection(ScriptState *script) {
@@ -567,7 +570,8 @@ int KyraEngine::cmd_placeItemInGenericMapScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setBrandonStatusBit(ScriptState *script) {
-	warning("STUB: cmd_setBrandonStatusBit");
+	debug(3, "cmd_setBrandonStatusBit(0x%X) (%d)", script, stackPos(0));
+	_brandonStatusBit |= stackPos(0);
 	return 0;
 }
 
@@ -579,8 +583,8 @@ int KyraEngine::cmd_pauseSeconds(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getCharactersLocation(ScriptState *script) {
-	warning("STUB: cmd_getCharactersLocation");
-	return 0;
+	debug(3, "cmd_getCharactersLocation(0x%X) (%d)", script, stackPos(0));
+	return _characterList[stackPos(0)].sceneId;
 }
 
 int KyraEngine::cmd_runNPCSubscript(ScriptState *script) {
@@ -709,8 +713,8 @@ int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
 int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 	debug(3, "cmd_popBrandonIntoScene(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int changeScaleMode = stackPos(3);
-	int xpos = stackPos(0) & 0xFFFC;
-	int ypos = stackPos(1) & 0xFFFE;
+	int xpos = (int16)(stackPos(0) & 0xFFFC);
+	int ypos = (int16)(stackPos(1) & 0xFFFE);
 	int facing = stackPos(2);
 	_currentCharacter->x1 = _currentCharacter->x2 = xpos;
 	_currentCharacter->y1 = _currentCharacter->y2 = ypos;
@@ -997,8 +1001,8 @@ int KyraEngine::cmd_placeCharacterInOtherScene(ScriptState *script) {
 	debug(3, "cmd_placeCharacterInOtherScene(0x%X) (%d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int id = stackPos(0);
 	int sceneId = stackPos(1);
-	int xpos = stackPos(2) & 0xFFFC;
-	int ypos = stackPos(3) & 0xFE;
+	int xpos = (int16)(stackPos(2) & 0xFFFC);
+	int ypos = (int16)(stackPos(3) & 0xFFFE);
 	int facing = stackPos(4);
 	int animFrame = stackPos(5);
 	
@@ -1021,7 +1025,23 @@ int KyraEngine::cmd_specificItemInInventory(ScriptState *script) {
 }
 
 int KyraEngine::cmd_popMobileNPCIntoScene(ScriptState *script) {
-	warning("STUB: cmd_popMobileNPCIntoScene");
+	debug(3, "cmd_popMobileNPCIntoScene(0x%X) (%d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), (int16)(stackPos(4) & 0xFFFC), (int8)(stackPos(5) & 0xFE));
+	int character = stackPos(0);
+	int sceneId = stackPos(1);
+	int animFrame = stackPos(2);
+	int facing = stackPos(3);
+	int16 xpos = (int16)(stackPos(4) & 0xFFFC);
+	int8 ypos = (int16)(stackPos(5) & 0xFFFE);
+	Character *curChar = &_characterList[character];
+	
+	curChar->sceneId = sceneId;
+	curChar->currentAnimFrame = animFrame;
+	curChar->facing = facing;
+	curChar->x1 = curChar->x2 = xpos;
+	curChar->y1 = curChar->y2 = ypos;
+	
+	animAddNPC(character);
+	updateAllObjectShapes();
 	return 0;
 }
 
@@ -1169,7 +1189,8 @@ int KyraEngine::cmd_sceneAnimationActive(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setCharactersMovementDelay(ScriptState *script) {
-	warning("STUB: cmd_setCharactersMovementDelay");
+	debug(3, "cmd_setCharactersMovementDelay(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	setTimerCountdown(stackPos(0)+5, stackPos(1));
 	return 0;
 }
 
@@ -1297,7 +1318,10 @@ int KyraEngine::cmd_getBirthstoneGem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_queryBrandonStatusBit(ScriptState *script) {
-	warning("STUB: cmd_queryBrandonStatusBit");
+	debug(3, "cmd_queryBrandonStatusBit(0x%X) (%d)", script, stackPos(0));
+	if (_brandonStatusBit & stackPos(0)) {
+		return 1;
+	}
 	return 0;
 }
 
