@@ -210,6 +210,7 @@ public:
 	void updateGameTimers();
 	void clearNextEventTickCount();
 	void setTimerCountdown(uint8 timer, int32 countdown);
+	void setTimerDelay(uint8 timer, int32 countdown);
 	int16 getTimerDelay(uint8 timer);
 	void enableTimer(uint8 timer);
 	void disableTimer(uint8 timer);

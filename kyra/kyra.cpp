@@ -4436,6 +4436,11 @@ void KyraEngine::clearNextEventTickCount() {
 	_timerNextRun = 0;
 }
 
+void KyraEngine::setTimerDelay(uint8 timer, int32 countdown) {
+	debug(9, "setTimerDelay(%i, %d)", timer, countdown);
+	_timers[timer].countdown = countdown;
+}
+
 int16 KyraEngine::getTimerDelay(uint8 timer) {
 	debug(9, "getTimerDelay(%i)", timer);
 	return _timers[timer].countdown;

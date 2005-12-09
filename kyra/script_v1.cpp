@@ -1190,7 +1190,7 @@ int KyraEngine::cmd_sceneAnimationActive(ScriptState *script) {
 
 int KyraEngine::cmd_setCharactersMovementDelay(ScriptState *script) {
 	debug(3, "cmd_setCharactersMovementDelay(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
-	setTimerCountdown(stackPos(0)+5, stackPos(1));
+	setTimerDelay(stackPos(0)+5, stackPos(1));
 	return 0;
 }
 
