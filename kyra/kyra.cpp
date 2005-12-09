@@ -2619,7 +2619,7 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 		}
 		
 		if (placeItem) {
-			if (!unkItemFunction(room, item, -1, -1, 2, 0))
+			if (!processItemDrop(room, item, -1, -1, 2, 0))
 				continue;
 			break;
 		}
@@ -2704,7 +2704,7 @@ void KyraEngine::setupSceneItems() {
 		
 		int stop = 0;
 		while (!stop) {
-			stop = unkItemFunction(sceneId, item, xpos, ypos, 3, 0);
+			stop = processItemDrop(sceneId, item, xpos, ypos, 3, 0);
 			if (!stop) {
 				xpos = currentRoom->itemsXPos[i] = _rnd.getRandomNumberRng(24, 296);
 				ypos = currentRoom->itemsYPos[i] = _rnd.getRandomNumberRng(_northExitHeight & 0xFF, 130);
@@ -2734,8 +2734,8 @@ int KyraEngine::countItemsInScene(uint16 sceneId) {
 	return items;
 }
 
-int KyraEngine::unkItemFunction(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2) {
-	debug(9, "unkItemFunction(%d, %d, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
+int KyraEngine::processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2) {
+	debug(9, "processItemDrop(%d, %d, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
 	int freeItem = -1;
 	uint8 itemIndex = findItemAtPos(x, y);
 	if (unk1) {
@@ -2783,18 +2783,18 @@ int KyraEngine::unkItemFunction(uint16 sceneId, uint8 item, int x, int y, int un
 	int destY = -1;
 	int destX = -1;
 	int running = 1;
-	
+
 	while (running) {
 		if ((_northExitHeight & 0xFF) <= ypos) {
 			bool running2 = true;
 			
-			if (getDrawLayer(xpos, ypos) - 1 < 0) {
+			if (getDrawLayer(xpos, ypos) > 1) {
 				if (((_northExitHeight >> 8) & 0xFF) != ypos) {
 					running2 = false;
 				}
 			}
 			
-			if (getDrawLayer2(xpos, ypos, itemHeight) - 1 < 0) {
+			if (getDrawLayer2(xpos, ypos, itemHeight) > 1) {
 				if (((_northExitHeight >> 8) & 0xFF) != ypos) {
 					running2 = false;
 				}
@@ -2882,7 +2882,7 @@ int KyraEngine::unkItemFunction(uint16 sceneId, uint8 item, int x, int y, int un
 	}
 	
 	if (unk1 == 2) {
-		warning("unkItemFunction unk1 == 2 is NOT implemented");
+		warning("processItemDrop unk1 == 2 is NOT implemented");
 		// XXX
 	}
 	
@@ -3009,6 +3009,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 			drawY = tempY - 16;
 			backUpRect0(drawX, drawY);
 			_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
+			delay(1);
 			_screen->updateScreen();
 		}
 		
@@ -3024,9 +3025,10 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 			if (addY < 6)
 				addY = 6;
 			
-			int xDiff = destX - x;
+			int xDiff = (destX - x) << 4;
 			xDiff /= addY;
 			int startAddY = addY;
+			addY >>= 1;
 			if (destY - y <= 8) {
 				addY >>= 1;
 			}
@@ -3046,9 +3048,10 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 				drawY = tempY - 16;
 				backUpRect0(drawX, drawY);
 				_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
+				delay(1);
 				_screen->updateScreen();
 			}
-			restoreRect0(drawX, tempY);
+			restoreRect0(drawX, drawY);
 		} else {
 			restoreRect0(drawX, tempY - 16);
 		}
@@ -3059,6 +3062,18 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 	// call kyraPlaySound(0x32)
 	animAddGameItem(freeItem, _currentCharacter->sceneId);
 	_screen->showMouse();
+}
+
+void KyraEngine::dropItem(int unk1, int item, int x, int y, int unk2) {
+	debug(9, "dropItem(%d, %d, %d, %d, %d)", unk1, item, x, y, unk2);
+	if (processItemDrop(_currentCharacter->sceneId, item, x, y, unk1, unk2))
+		return;
+	// call kyraPlaySound(54)
+	if (12 == countItemsInScene(_currentCharacter->sceneId)) {
+		// XXX drawSentenceCommand
+	} else {
+		// XXX drawSentenceCommand
+	}
 }
 
 #pragma mark -
@@ -3564,23 +3579,40 @@ int16 KyraEngine::fetchAnimHeight(const uint8 *shape, int16 mult) {
 	return (int16)(((int8)*(shape+2)) * mult) >> 8;
 }
 
+void KyraEngine::rectClip(int &x, int &y, int w, int h) {
+	if (x < 0) {
+		x = 0;
+	} else if (x + w >= 320) {
+		x = 320 - w;
+	}
+	if (y < 0) {
+		y = 0;
+	} else if (y + h >= 200) {
+		y = 200 - h;
+	}
+}
+
 void KyraEngine::backUpRect0(int xpos, int ypos) {
 	debug(9, "backUpRect0(%d, %d)", xpos, ypos);
-	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 4<<3, 24, _shapes[0]);
+	rectClip(xpos, ypos, 3<<3, 24);
+	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 3<<3, 24, _shapes[0]);
 }
 
 void KyraEngine::restoreRect0(int xpos, int ypos) {
 	debug(9, "restoreRect0(%d, %d)", xpos, ypos);
-	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 24, _shapes[0]);
+	rectClip(xpos, ypos, 3<<3, 24);
+	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 3<<3, 24, _shapes[0]);
 }
 
 void KyraEngine::backUpRect1(int xpos, int ypos) {
 	debug(9, "backUpRect1(%d, %d)", xpos, ypos);
+	rectClip(xpos, ypos, 4<<3, 32);
 	_screen->copyRegionToBuffer(_screen->_curPage, xpos, ypos, 4<<3, 32, _shapes[1]);
 }
 
 void KyraEngine::restoreRect1(int xpos, int ypos) {
 	debug(9, "restoreRect1(%d, %d)", xpos, ypos);
+	rectClip(xpos, ypos, 4<<3, 32);
 	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 32, _shapes[1]);
 }
 
@@ -3608,7 +3640,7 @@ int KyraEngine::getDrawLayer2(int x, int y, int height) {
 	int layer = 1;
 	
 	for (int useX = xpos; useX < xpos + 16; ++useX) {
-		for (int useY = ypos - height; useY < xpos; ++useY) {
+		for (int useY = ypos - height; useY < ypos; ++useY) {
 			int tempLayer = _screen->getShapeFlag2(useX, useY);
 			if (tempLayer > layer) {
 				layer = tempLayer;
@@ -4539,6 +4571,20 @@ void KyraEngine::processInput(int xpos, int ypos) {
 		if (exit != 0xFFFF) {
 			handleSceneChange(xpos, ypos, 1, 1);
 			return;
+		} else {
+			if (_itemInHand != -1) {
+				if (ypos < 155) {
+					if (hasClickedOnExit(xpos, ypos)) {
+						handleSceneChange(xpos, ypos, 1, 1);
+						return;
+					}
+					dropItem(0, _itemInHand, xpos, ypos, 1);
+				}
+			} else {
+				if (ypos <= 155) {
+					handleSceneChange(xpos, ypos, 1, 1);
+				}
+			}
 		}
 	}	
 }
@@ -4694,6 +4740,19 @@ void KyraEngine::updateMousePointer() {
 			}
 		}
 	}
+}
+
+bool KyraEngine::hasClickedOnExit(int xpos, int ypos) {
+	debug(9, "hasClickedOnExit(%d, %d)", xpos, ypos);
+	if (xpos < 16 || xpos >= 304) {
+		return true;
+	}
+	if (ypos < 8)
+		return true;
+	if (ypos < 136 || ypos > 155) {
+		return false;
+	}
+	return true;
 }
 
 void KyraEngine::clickEventHandler2() {

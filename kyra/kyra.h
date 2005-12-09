@@ -458,6 +458,7 @@ protected:
 	void destroyMouseItem();
 	void setMouseItem(int item);
 	void wipeDownMouseItem(int xpos, int ypos);
+	void rectClip(int &x, int &y, int w, int h);
 	void backUpRect0(int xpos, int ypos);
 	void restoreRect0(int xpos, int ypos);
 	void backUpRect1(int xpos, int ypos);
@@ -468,9 +469,10 @@ protected:
 	int clickEventHandler(int xpos, int ypos);
 	void clickEventHandler2();
 	void updateMousePointer();
+	bool hasClickedOnExit(int xpos, int ypos);
 	
 	int countItemsInScene(uint16 sceneId);
-	int unkItemFunction(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
+	int processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
 	void exchangeItemWithMouseItem(uint16 sceneId, int itemIndex);
 	void addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y);
 	int getDrawLayer(int x, int y);
@@ -478,6 +480,7 @@ protected:
 	int checkNoDropRects(int x, int y);
 	int isDropable(int x, int y);
 	void itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item);
+	void dropItem(int unk1, int item, int x, int y, int unk2);
 	
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);

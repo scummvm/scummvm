@@ -1357,7 +1357,7 @@ int KyraEngine::cmd_setEntranceMouseCursorTrack(ScriptState *script) {
 
 int KyraEngine::cmd_itemAppearsOnGround(ScriptState *script) {
 	debug(3, "cmd_itemAppearsOnGround(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
-	unkItemFunction(_currentCharacter->sceneId, stackPos(0), stackPos(1), stackPos(2), 2, 0);
+	processItemDrop(_currentCharacter->sceneId, stackPos(0), stackPos(1), stackPos(2), 2, 0);
 	return 0;
 }
 
