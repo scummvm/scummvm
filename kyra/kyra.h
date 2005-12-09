@@ -142,17 +142,19 @@ class Sprites;
 struct ScriptState;
 struct ScriptData;
 class ScriptHelper;
+class Debugger;
 class KyraEngine;
 
 struct Timer {
 	bool active;
-	int16 countdown;
+	int32 countdown;
 	uint32 nextRun;
 	void (KyraEngine::*func)(int timerNum);
 };
 
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
+	friend class Debugger;
 public:
 
 	enum {
@@ -202,10 +204,12 @@ public:
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void drawSentenceCommand(char *sentence, int unk1);
+	void updateSentenceCommand(char *str1, char *str2, int unk1);
+	void updateTextFade();
 
 	void updateGameTimers();
 	void clearNextEventTickCount();
-	void setTimerCountdown(uint8 timer, int16 countdown);
+	void setTimerCountdown(uint8 timer, int32 countdown);
 	int16 getTimerDelay(uint8 timer);
 	void enableTimer(uint8 timer);
 	void disableTimer(uint8 timer);
@@ -336,7 +340,7 @@ public:
 	int cmd_shakeScreen(ScriptState *script);
 	int cmd_createAmuletJewel(ScriptState *script);
 	int cmd_setSceneAnimCurrXY(ScriptState *script);
-	int cmd_Poison_Brandon_And_Remaps(ScriptState *script);
+	int cmd_poisonBrandonAndRemaps(ScriptState *script);
 	int cmd_fillFlaskWithWater(ScriptState *script);
 	int cmd_getCharactersMovementDelay(ScriptState *script);
 	int cmd_getBirthstoneGem(ScriptState *script);
@@ -532,10 +536,11 @@ protected:
 	void timerSetFlags2(int timerNum);
 	void timerCheckAnimFlag1(int timerNum);
 	void timerCheckAnimFlag2(int timerNum);
-	void checkSpecialAnimFlags();
+	void checkAmuletAnimFlags();
 	void timerRedrawAmulet(int timerNum);
+	void timerFadeText(int timerNum);
 	void drawAmulet();
-
+	void setTextFadeTimerCountdown(int16 countdown);
 	uint8 _game;
 	bool _fastMode;
 	bool _quitFlag;
@@ -605,10 +610,13 @@ protected:
 	int _lastFindWayRet;
 	int *_movFacingTable;
 	
-	int8 _charSayUnk1;
+	int8 _talkingCharNum;
 	int8 _charSayUnk2;
 	int8 _charSayUnk3;
-	int8 _charSayUnk4;
+	int8 _currHeadShape;
+	uint8 _currSentenceColor[3];
+	int8 _startSentencePalIndex;
+	bool _fadeText;
 
 	uint8 _configTalkspeed;
 	AnimObject *_objectQueue;
@@ -626,6 +634,7 @@ protected:
 	SeqPlayer *_seq;
 	Sprites *_sprites;
 	ScriptHelper *_scriptInterpreter;
+	Debugger *_debugger;
 	
 	ScriptState *_scriptMain;
 	ScriptData *_npcScriptData;

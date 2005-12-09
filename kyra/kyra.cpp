@@ -44,6 +44,7 @@
 #include "kyra/sound.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
+#include "kyra/debugger.h"
 
 using namespace Kyra;
 
@@ -308,6 +309,8 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_scriptClick);
 	memset(_scriptClick, 0, sizeof(ScriptState));
 	
+	_debugger = new Debugger(this);
+	assert(_debugger);	
 	memset(_shapes, 0, sizeof(_shapes));
 	memset(_wsaObjects, 0, sizeof(_wsaObjects));
 
@@ -320,10 +323,13 @@ int KyraEngine::init(GameDetector &detector) {
 	_talkMessageY = 0xC;
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
-	_charSayUnk1 = -1;
+	_talkingCharNum = -1;
 	_charSayUnk3 = -1;
 	_mouseX = _mouseY = -1;
-	
+	memset(_currSentenceColor, 0, 3);
+	_startSentencePalIndex = -1;
+	_fadeText = false;
+
 	_brandonPosX = _brandonPosY = -1;
 	_brandonDrawFrame = 113;
 	
@@ -353,6 +359,7 @@ int KyraEngine::init(GameDetector &detector) {
 }
 
 KyraEngine::~KyraEngine() {
+	delete _debugger;
 	delete _sprites;
 	delete _screen;
 	delete _res;
@@ -501,6 +508,8 @@ void KyraEngine::delay(uint32 amount) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 'q' || event.kbd.keycode == 27) {
 					_quitFlag = true;
+				} else if (event.kbd.keycode == 'd' && !_debugger->isAttached()) {
+					_debugger->attach();
 				}
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
@@ -523,6 +532,10 @@ void KyraEngine::delay(uint32 amount) {
 				break;
 			}
 		}
+
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
 		_sprites->updateSceneAnims();
 		updateAllObjectShapes();
 
@@ -541,12 +554,11 @@ void KyraEngine::mainLoop() {
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
-
 		updateMousePointer();
 		updateGameTimers();
 		_sprites->updateSceneAnims();
 		updateAllObjectShapes();
-		// XXX call processPalette
+		updateTextFade();
 
 		_handleInput = true;
 		delay((frameTime + _gameSpeed) - _system->getMillis());
@@ -1186,9 +1198,10 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	
 	memset(_entranceMouseCursorTracks, 0xFFFF, sizeof(uint16)*4);
 	_currentCharacter->sceneId = sceneId;
-	assert(sceneId < _roomFilenameTableSize);
 	
 	assert(sceneId < _roomTableSize);
+	assert(_roomTable[sceneId].nameIndex < _roomFilenameTableSize);
+
 	Room *currentRoom = &_roomTable[sceneId];
 	
 	if (_currentRoom != 0xFFFF && (_features & GF_TALKIE)) {
@@ -1203,9 +1216,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	
 	_currentRoom = sceneId;
 	
-	assert(_currentCharacter->sceneId < _roomTableSize);
 	int tableId = _roomTable[_currentCharacter->sceneId].nameIndex;
-	assert(tableId < _roomFilenameTableSize);
 	char fileNameBuffer[32];
 	strcpy(fileNameBuffer, _roomFilenameTable[tableId]);
 	strcat(fileNameBuffer, ".DAT");
@@ -1241,9 +1252,10 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	if (!brandonAlive) {
 		// XXX
 	}
-	
+
 	startSceneScript(brandonAlive);
 	setupSceneItems();
+	
 	initSceneData(facing, unk2, brandonAlive);
 	
 	_loopFlag2 = 0;
@@ -1312,7 +1324,8 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 	_sprites->updateSceneAnims();
 	updateGameTimers();
 	updateAllObjectShapes();
-	// XXX processPalette
+	updateTextFade();
+
 	if (_currentCharacter->sceneId == 210) {
 		// XXX game_updateKyragemFading
 	}
@@ -1953,6 +1966,7 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
 
+	setTextFadeTimerCountdown(-1);
 	if (_currentCharacter->sceneId == 0xD2) {
 		// XXX
 	}
@@ -2185,9 +2199,9 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 		if (_system->getMillis() > timeToEnd && !hasUpdatedNPCs) {
 			hasUpdatedNPCs = true;
 			disableTimer(15);
-			_charSayUnk4 = 4;
+			_currHeadShape = 4;
 			animRefreshNPC(0);
-			animRefreshNPC(_charSayUnk1);
+			animRefreshNPC(_talkingCharNum);
 
 			if (_charSayUnk2 != -1) {
 				_sprites->_animObjects[_charSayUnk2].active = 0;
@@ -2208,7 +2222,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 		_screen->_curPage = currPage;
 
 		copyChangedObjectsForward(0);
-		//processPalette();
+		updateTextFade();
 
 		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1)
 			break;
@@ -2249,7 +2263,7 @@ void KyraEngine::endCharacterChat(int8 charNum, int16 convoInitialized) {
 	}
 
 	if (convoInitialized != 0) {
-		_charSayUnk1 = -1;
+		_talkingCharNum = -1;
 		_currentCharacter->currentAnimFrame = 7;
 		animRefreshNPC(0);
 		updateAllObjectShapes();
@@ -2257,7 +2271,7 @@ void KyraEngine::endCharacterChat(int8 charNum, int16 convoInitialized) {
 }
 
 void KyraEngine::restoreChatPartnerAnimFrame(int8 charNum) {
-	_charSayUnk1 = -1;
+	_talkingCharNum = -1;
 
 	if (charNum > 0 && charNum < 5) {
 		_characterList[charNum].currentAnimFrame = _currentChatPartnerBackupFrame;
@@ -2270,7 +2284,7 @@ void KyraEngine::restoreChatPartnerAnimFrame(int8 charNum) {
 }
 
 void KyraEngine::backupChatPartnerAnimFrame(int8 charNum) {
-	_charSayUnk1 = 0;
+	_talkingCharNum = 0;
 
 	if (charNum < 5 && charNum > 0) 
 		_currentChatPartnerBackupFrame = _characterList[charNum].currentAnimFrame;
@@ -2307,8 +2321,8 @@ int8 KyraEngine::getChatPartnerNum() {
 }
 
 int KyraEngine::initCharacterChat(int8 charNum) {
-	if (_charSayUnk1 == -1) {
-		_charSayUnk1 = 0;
+	if (_talkingCharNum == -1) {
+		_talkingCharNum = 0;
 
 		if (_scaleMode != 0)
 			_currentCharacter->currentAnimFrame = 7;
@@ -2375,7 +2389,7 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 	if (charNum < 5) {
 		_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
 		_charSayUnk3 = charNum;
-		_charSayUnk1 = charNum;
+		_talkingCharNum = charNum;
 		animRefreshNPC(charNum);
 	}
 
@@ -2428,16 +2442,63 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 	endCharacterChat(charNum, convoInitialized);
 }
 
-void KyraEngine::drawSentenceCommand(char *sentence, int unk1) {
+void KyraEngine::drawSentenceCommand(char *sentence, int color) {
+	debug(9, "drawSentenceCommand('%s', %i)", sentence, color);
 	_screen->hideMouse();
 	_screen->fillRect(8, 143, 311, 152, 12);
-	// XXX: palette stuff
+
+	if (_startSentencePalIndex != color || _fadeText != false) {
+		_currSentenceColor[0] = _screen->_currentPalette[765] = _screen->_currentPalette[color*3];
+		_currSentenceColor[1] = _screen->_currentPalette[766] = _screen->_currentPalette[color*3+1];
+		_currSentenceColor[2] = _screen->_currentPalette[767] = _screen->_currentPalette[color*3+2];
+	
+		_screen->setScreenPalette(_screen->_currentPalette);
+		_startSentencePalIndex = 0;
+	}
 
 	printText(sentence, 8, 143, 0xFF, 12, 0);
 	_screen->showMouse();
-	//setTextFadeTimerCountdown(_textFadeTimerCountdown);
-	//_palScrollEnabled = 0;
+	setTextFadeTimerCountdown(15);
+	_fadeText = false;
 }
+
+void KyraEngine::updateSentenceCommand(char *str1, char *str2, int color) {
+	debug(9, "updateSentenceCommand('%s', '%s', %i)", str1, str2, color);
+	char sentenceCommand[500];
+	strncpy(sentenceCommand, str1, 500);
+	if (str2)
+		strncat(sentenceCommand, str2, 500 - strlen(sentenceCommand));
+
+	drawSentenceCommand(sentenceCommand, color);
+}
+
+void KyraEngine::updateTextFade() {
+	debug(9, "updateTextFade()");
+	if (!_fadeText)
+		return;
+	
+	bool finished = false;
+	for (int i = 0; i < 3; i++)
+		if (_currSentenceColor[i] > 4)
+			_currSentenceColor[i] -= 4;
+		else
+			if (_currSentenceColor[i]) {
+				_currSentenceColor[i] = 0;
+				finished = true;
+			}
+		
+	_screen->_currentPalette[765] = _currSentenceColor[0];
+	_screen->_currentPalette[766] = _currSentenceColor[1];
+	_screen->_currentPalette[767] = _currSentenceColor[2];
+	_screen->setScreenPalette(_screen->_currentPalette);
+
+	if (finished) {
+		_fadeText = false;
+		_startSentencePalIndex = -1;
+	}
+
+}
+
 
 #pragma mark -
 #pragma mark - Item handling
@@ -3131,7 +3192,7 @@ void KyraEngine::prepDrawAllObjects() {
 			}
 			
 			// talking head functionallity
-			if (_charSayUnk1 != -1) {
+			if (_talkingCharNum != -1) {
 				const int16 baseAnimFrameTable1[] = { 0x11, 0x35, 0x59, 0x00, 0x00, 0x00 };
 				const int16 baseAnimFrameTable2[] = { 0x15, 0x39, 0x5D, 0x00, 0x00, 0x00 };
 				const int8 xOffsetTable1[] = { 2, 4, 0, 5, 2, 0, 0, 0 };
@@ -3141,7 +3202,7 @@ void KyraEngine::prepDrawAllObjects() {
 				if (curObject->index == 0 || curObject->index <= 4) {
 					int shapesIndex = 0;
 					if (curObject->index == _charSayUnk3) {
-						shapesIndex = _charSayUnk4 + baseAnimFrameTable1[curObject->index];
+						shapesIndex = _currHeadShape + baseAnimFrameTable1[curObject->index];
 					} else {
 						shapesIndex = baseAnimFrameTable2[curObject->index];
 						int temp2 = 0;
@@ -4076,7 +4137,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 			updateMousePointer();
 			updateGameTimers();
 			updateAllObjectShapes();
-			// XXX processPalette
+			updateTextFade();
 			if (_currentCharacter->sceneId == 210) {
 				// XXX updateKyragemFading
 				// XXX playEnd
@@ -4217,7 +4278,7 @@ int KyraEngine::changeScene(int facing) {
 #pragma mark -
 
 void KyraEngine::setupTimers() {
-	debug(9, "KyraEngine::setupTimers()");
+	debug(9, "setupTimers()");
 	memset(_timers, 0, sizeof(_timers));
 
 	for (int i = 0; i < 34; i++)
@@ -4226,7 +4287,7 @@ void KyraEngine::setupTimers() {
 	_timers[0].func = _timers[1].func = _timers[2].func = _timers[3].func = _timers[4].func = 0; //Unused.
 	_timers[5].func = _timers[6].func = _timers[7].func = _timers[8].func = _timers[9].func = 0; //_nullsub51;
 	_timers[10].func = _timers[11].func = _timers[12].func = _timers[13].func = 0; //_nullsub50;
-	_timers[14].func = &KyraEngine::timerCheckAnimFlag2;; //_nullsub52;
+	_timers[14].func = &KyraEngine::timerCheckAnimFlag2; //_nullsub52;
 	_timers[15].func = &KyraEngine::timerUpdateHeadAnims; //_nullsub48;
 	_timers[16].func = &KyraEngine::timerSetFlags1; //_nullsub47;
 	_timers[17].func = 0; //sub_15120;
@@ -4243,7 +4304,7 @@ void KyraEngine::setupTimers() {
 	_timers[28].func = 0; //offset _timerDummy6
 	_timers[29].func = 0; //offset _timerDummy7, 
 	_timers[30].func = 0; //offset _timerDummy8, 
-	_timers[31].func = 0; //sub_151F8;
+	_timers[31].func = &KyraEngine::timerFadeText; //sub_151F8;
 	_timers[32].func = 0; //_nullsub61;
 	_timers[33].func = 0; //_nullsub62;
 
@@ -4270,20 +4331,8 @@ void KyraEngine::setupTimers() {
 	_timers[33].countdown = 3;
 }
 
-void KyraEngine::setTimer19() {
-	debug(9, "KyraEngine::setTimer19()");
-	if (_brandonStatusBit & 2) {
-		// XXX call sub_3F9C
-		setTimerCountdown(19, 300);
-	} else if (_brandonStatusBit & 0x20) {
-		// XXX call sub_4110
-		setTimerCountdown(19, 300);
-	}
-}
-
 void KyraEngine::updateGameTimers() {
-	debug(9, "KyraEngine::updateGameTimers()");
-	void (Kyra::KyraEngine::*callback)(int timerNum);
+	debug(9, "updateGameTimers()");
 	
 	if (_system->getMillis() < _timerNextRun)
 		return;
@@ -4293,13 +4342,8 @@ void KyraEngine::updateGameTimers() {
 	for (int i = 0; i < 34; i++) {
 		if (_timers[i].active && _timers[i].countdown > -1) {
 			if (_timers[i].nextRun <=_system->getMillis()) {
-				if (i < 5)
-					callback = 0;
-				else
-					callback = _timers[i].func;
-
-				if (callback)
-					(*this.*callback)(i);
+				if (i > 4 && _timers[i].func)
+					(*this.*_timers[i].func)(i);
 
 				_timers[i].nextRun = _system->getMillis() + _timers[i].countdown * _tickLength;
 
@@ -4311,16 +4355,17 @@ void KyraEngine::updateGameTimers() {
 }
 
 void KyraEngine::clearNextEventTickCount() {
-	debug(9, "KyraEngine::clearNextEventTickCount()");
+	debug(9, "clearNextEventTickCount()");
 	_timerNextRun = 0;
 }
 
 int16 KyraEngine::getTimerDelay(uint8 timer) {
+	debug(9, "getTimerDelay(%i)", timer);
 	return _timers[timer].countdown;
 }
 
-void KyraEngine::setTimerCountdown(uint8 timer, int16 countdown) {
-	debug(9, "KyraEngine::setTimerCountdown(%i, %i)", timer, countdown);
+void KyraEngine::setTimerCountdown(uint8 timer, int32 countdown) {
+	debug(9, "setTimerCountdown(%i, %i)", timer, countdown);
 	_timers[timer].countdown = countdown;
 
 	uint32 nextRun = _system->getMillis() + countdown;
@@ -4329,36 +4374,36 @@ void KyraEngine::setTimerCountdown(uint8 timer, int16 countdown) {
 }
 
 void KyraEngine::enableTimer(uint8 timer) {
-	debug(9, "KyraEngine::enableTimer(%i)", timer);
+	debug(9, "enableTimer(%i)", timer);
 	_timers[timer].active = 1;
 }
 
 void KyraEngine::disableTimer(uint8 timer) {
-	debug(9, "KyraEngine::disableTimer(%i)", timer);
+	debug(9, "disableTimer(%i)", timer);
 	_timers[timer].active = 0;
 }
 
 void KyraEngine::timerUpdateHeadAnims(int timerNum) {
-	debug(9, "KyraEngine::timerUpdateHeadAnims(%i)", timerNum);
+	debug(9, "timerUpdateHeadAnims(%i)", timerNum);
 	static int8 currentFrame = 0;
 	static const int8 frameTable[] = {4, 5, 4, 5, 4, 5, 0, 1, 4, 5,
 								4, 4, 6, 4, 8, 1, 9, 4, -1};
 
-	if (_charSayUnk1 < 0)
+	if (_talkingCharNum < 0)
 		return;
 
-	_charSayUnk4 = frameTable[currentFrame];
+	_currHeadShape = frameTable[currentFrame];
 	currentFrame++;
 
 	if (frameTable[currentFrame] == -1)
 		currentFrame = 0;
 
 	animRefreshNPC(0);
-	animRefreshNPC(_charSayUnk1);
+	animRefreshNPC(_talkingCharNum);
 }
 
 void KyraEngine::timerSetFlags1(int timerNum) {
-	debug(9, "KyraEngine::timerSetFlags(%i)", timerNum);
+	debug(9, "timerSetFlags(%i)", timerNum);
 	if (_currentCharacter->sceneId == 0x1C)
 		return;
 
@@ -4376,29 +4421,43 @@ void KyraEngine::timerSetFlags1(int timerNum) {
 	}
 }
 
+void KyraEngine::timerFadeText(int timerNum) {
+	debug(9, "timerFadeText(%i)", timerNum);
+	_fadeText = true;
+}
+
+void KyraEngine::setTextFadeTimerCountdown(int16 countdown) {
+	debug(9, "setTextFadeTimerCountdown(%i)", countdown);
+	//if (countdown == -1)
+		//countdown = 32000;
+
+	setTimerCountdown(31, countdown*60);
+}
+
 void KyraEngine::timerSetFlags2(int timerNum) {
+	debug(9, "timerSetFlags2(%i)", timerNum);
 	if (!((uint32*)(_flagsTable+0x2D))[timerNum])
 		((uint32*)(_flagsTable+0x2D))[timerNum] = 1;	
 }
 
 void KyraEngine::timerCheckAnimFlag1(int timerNum) {
-	debug(9, "KyraEngine::timerCheckAnimFlag1(%i)", timerNum);
+	debug(9, "timerCheckAnimFlag1(%i)", timerNum);
 	if (_brandonStatusBit & 0x20) {
-		checkSpecialAnimFlags();
+		checkAmuletAnimFlags();
 		setTimerCountdown(18, -1);
 	}
 }
 
 void KyraEngine::timerCheckAnimFlag2(int timerNum) {
-	debug(9, "KyraEngine::timerCheckAnimFlag1(%i)", timerNum);
+	debug(9, "timerCheckAnimFlag1(%i)", timerNum);
 	if (_brandonStatusBit & 0x2) {
-		checkSpecialAnimFlags();
+		checkAmuletAnimFlags();
 		setTimerCountdown(14, -1);
 	}
 }
 
-void KyraEngine::checkSpecialAnimFlags() {
-	debug(9, "KyraEngine::checkSpecialAnimFlags()");
+void KyraEngine::checkAmuletAnimFlags() {
+	debug(9, "checkSpecialAnimFlags()");
 	if (_brandonStatusBit & 2) {
 		warning("STUB: playSpecialAnim1");
 		// XXX
@@ -4413,13 +4472,15 @@ void KyraEngine::checkSpecialAnimFlags() {
 }
 
 void KyraEngine::timerRedrawAmulet(int timerNum) {
+	debug(9, "timerRedrawAmulet(%i)", timerNum);
 	if (queryGameFlag(241)) {
 		drawAmulet();
-		setTimerCountdown(0x13, -1);
+		setTimerCountdown(19, -1);
 	}
 }
 
 void KyraEngine::drawAmulet() {
+	debug(9, "drawAmulet()");
 	static const int16 amuletTable1[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x150, 0x155, 0x15A, 0x15F, 0x164, 0x145, -1};
 	static const int16 amuletTable3[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x14F, 0x154, 0x159, 0x15E, 0x163, 0x144, -1};
 	static const int16 amuletTable2[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1};

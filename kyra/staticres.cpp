@@ -497,7 +497,7 @@ KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
 	// 0x6c
 	Opcode(cmd_createAmuletJewel),
 	Opcode(cmd_setSceneAnimCurrXY),
-	Opcode(cmd_Poison_Brandon_And_Remaps),
+	Opcode(cmd_poisonBrandonAndRemaps),
 	Opcode(cmd_fillFlaskWithWater),
 	// 0x70
 	Opcode(cmd_getCharactersMovementDelay),

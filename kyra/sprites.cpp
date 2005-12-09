@@ -344,7 +344,7 @@ void Sprites::updateSceneAnims() {
 				data += 2;
 				debug(5, "func: Play sound");
 				debug(5, "Sound index %i", READ_LE_UINT16(data));
-				_engine->snd_playSoundEffect(READ_LE_UINT16(data));
+				//_engine->snd_playSoundEffect(READ_LE_UINT16(data));
 				data += 2;
 				break;
 			case 0xFFB1:
@@ -363,8 +363,8 @@ void Sprites::updateSceneAnims() {
 				data += 2;
 				debug(5, "Percentage %i", READ_LE_UINT16(data));
 				rndNr = _rnd.getRandomNumber(100);
-				if (rndNr <= READ_LE_UINT16(data))
-					_engine->snd_playSoundEffect(sound);
+				//if (rndNr <= READ_LE_UINT16(data))
+					//_engine->snd_playSoundEffect(sound);
 				data += 2;
 				break;
 			case 0xFFA7:

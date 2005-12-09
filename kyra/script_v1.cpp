@@ -573,7 +573,8 @@ int KyraEngine::cmd_setBrandonStatusBit(ScriptState *script) {
 
 int KyraEngine::cmd_pauseSeconds(ScriptState *script) {
 	debug(3, "cmd_pauseSeconds(0x%X) (%d)", script, stackPos(0));
-	delay(stackPos(0)*1000);
+	if (stackPos(0) > 0)
+		delay(stackPos(0)*1000);
 	return 0;
 }
 
@@ -600,7 +601,7 @@ int KyraEngine::cmd_internalAnimOn(ScriptState *script) {
 
 int KyraEngine::cmd_forceBrandonToNormal(ScriptState *script) {
 	debug(3, "cmd_forceBrandonToNormal(0x%X) ()", script);
-	setTimer19();
+	checkAmuletAnimFlags();
 	return 0;
 }
 
@@ -657,8 +658,7 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 		if (wsaFrame >= wsa_getNumFrames(_wsaObjects[wsaIndex]))
 			running = false;
 		
-		// XXX
-		waitTicks(waitTime);
+		delay(waitTime * _tickLength);
 		if (worldUpdate) {
 			_sprites->updateSceneAnims();
 			updateAllObjectShapes();
@@ -680,10 +680,7 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
 	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
-	// XXX
-	waitTicks(waitTime);
-	_sprites->updateSceneAnims();
-	updateAllObjectShapes();
+	delay(waitTime * _tickLength);
 	_screen->updateScreen();
 	_screen->showMouse();
 	return 0;
@@ -878,8 +875,7 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	
 	_screen->hideMouse();
 	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 2);
-	// XXX
-	waitTicks(waitTime);
+	delay(waitTime*_tickLength);
 	_sprites->updateSceneAnims();
 	updateAllObjectShapes();
 	_screen->showMouse();
@@ -906,20 +902,16 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
 				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
-				// XXX
-				waitTicks(waitTime);
-				_sprites->updateSceneAnims();
-				updateAllObjectShapes();
+				delay(waitTime * _tickLength);
+				_screen->updateScreen();
 				++frame;
 			}
 		} else {
 			int frame = endFrame;
 			while (startFrame <= frame) {
 				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
-				// XXX
-				waitTicks(waitTime);
-				_sprites->updateSceneAnims();
-				updateAllObjectShapes();
+				delay(waitTime * _tickLength);
+				_screen->updateScreen();
 				--frame;
 			}
 		}
@@ -1128,7 +1120,7 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 			updateMousePointer();
 			updateGameTimers();
 			updateAllObjectShapes();
-			// XXX processPalette();
+			updateTextFade();
 			if ((nextFrame - _system->getMillis()) >= 10)
 				delay(10);
 		}
@@ -1157,7 +1149,8 @@ int KyraEngine::cmd_fatPrint(ScriptState *script) {
 }
 
 int KyraEngine::cmd_preserveAllObjectBackgrounds(ScriptState *script) {
-	warning("STUB: cmd_preserveAllObjectBackgrounds");
+	debug(3, "cmd_preserveAllObjectBackgrounds(0x%X) ()", script);
+	preserveAllBackgrounds();
 	return 0;
 }
 
@@ -1283,8 +1276,8 @@ int KyraEngine::cmd_setSceneAnimCurrXY(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine::cmd_Poison_Brandon_And_Remaps(ScriptState *script) {
-	warning("STUB: cmd_Poison_Brandon_And_Remaps");
+int KyraEngine::cmd_poisonBrandonAndRemaps(ScriptState *script) {
+	warning("STUB: cmdPoisonBrandonAndRemaps");
 	return 0;
 }
 
@@ -1497,8 +1490,8 @@ int KyraEngine::cmd_brandonHealingSequence(ScriptState *script) {
 }
 
 int KyraEngine::cmd_protectCommandLine(ScriptState *script) {
-	warning("STUB: cmd_protectCommandLine");
-	return 0;
+	debug(3, "cmd_protectCommandLine(0x%X) (%d)", script, stackPos(0));
+	return stackPos(0);
 }
 
 int KyraEngine::cmd_pauseMusicSeconds(ScriptState *script) {
