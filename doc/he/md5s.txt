@@ -177,7 +177,7 @@ cd70bf11bb65058338f64f6013fb5165 Football Demo (i).bin
 d7a768b15dd0fa128dd84c87a7a70bb3 Football Demo (u).bin
 51edb2aab563f73b0a4c397f190d8e09 Football Demo.bin
 
-(football2002 cd) // uses Bink as external files. 138 files
+(football2002 cd) // uses Bink as external files. 137 files
 c:\SRC_RELEASE\SPUTM\Src\SrcPWin\*.cpp
 7894dd82c874b535dc8acadef0950be4 Football2002.exe
 b81d20adb6371ed620fedcc0156c6fb7 Football2002.(a)
