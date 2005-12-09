@@ -567,7 +567,8 @@ void Screen::setScreenDim(int dim) {
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
 	debug(9, "Screen::drawShape(%d, 0x%X, %d, %d, %d, 0x%.04X, ...)", pageNum, shapeData, x, y, sd, flags);
-	assert(shapeData);
+	if (!shapeData)
+		return;
 	va_list args;
 	va_start(args, flags);
 	

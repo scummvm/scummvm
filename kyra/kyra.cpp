@@ -2536,24 +2536,24 @@ byte KyraEngine::findFreeItemInScene(int scene) {
 byte KyraEngine::findItemAtPos(int x, int y) {
 	debug(9, "findItemAtPos(%d, %d)", x, y);
 	assert(_currentCharacter->sceneId < _roomTableSize);
-	uint8 *itemsTable = _roomTable[_currentCharacter->sceneId].itemsTable;
-	uint16 *xposOffset = _roomTable[_currentCharacter->sceneId].itemsXPos;
-	uint8 *yposOffset = _roomTable[_currentCharacter->sceneId].itemsYPos;
+	const uint8 *itemsTable = _roomTable[_currentCharacter->sceneId].itemsTable;
+	const uint16 *xposOffset = _roomTable[_currentCharacter->sceneId].itemsXPos;
+	const uint8 *yposOffset = _roomTable[_currentCharacter->sceneId].itemsYPos;
 	
 	int highestYPos = -1;
 	byte returnValue = 0xFF;
 	
 	for (int i = 0; i < 12; ++i) {
 		if (*itemsTable != 0xFF) {
-			int xpos = *xposOffset - 8;
+			int xpos = *xposOffset - 11;
 			int xpos2 = *xposOffset + 10;
 			if (x > xpos && x < xpos2) {
 				assert(*itemsTable < ARRAYSIZE(_itemTable));
 				int itemHeight = _itemTable[*itemsTable].height;
-				int ypos = *yposOffset;
+				int ypos = *yposOffset + 3;
 				int ypos2 = ypos - itemHeight - 3;
 				
-				if (y < ypos2 && (ypos+3) > y) {
+				if (y > ypos2 && ypos > y) {
 					if (highestYPos <= ypos) {
 						returnValue = i;
 						highestYPos = ypos;
@@ -2561,9 +2561,9 @@ byte KyraEngine::findItemAtPos(int x, int y) {
 				}
 			}
 		}
-		xposOffset += 2;
-		yposOffset += 1;
-		itemsTable += 1;
+		++xposOffset;
+		++yposOffset;
+		++itemsTable;
 	}
 	
 	return returnValue;
@@ -2906,7 +2906,7 @@ void KyraEngine::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
 	assert(sceneId < _roomTableSize);
 	Room *currentRoom = &_roomTable[sceneId];
 	
-	uint8 item = currentRoom->itemsTable[itemIndex];
+	int item = currentRoom->itemsTable[itemIndex];
 	currentRoom->itemsTable[itemIndex] = _itemInHand;
 	_itemInHand = item;
 	animAddGameItem(itemIndex, sceneId);
@@ -4540,13 +4540,32 @@ void KyraEngine::processInput(int xpos, int ypos) {
 			handleSceneChange(xpos, ypos, 1, 1);
 			return;
 		}
-	}
-	
-	
+	}	
 }
 
 int KyraEngine::processInputHelper(int xpos, int ypos) {
 	debug(9, "processInputHelper(%d, %d)", xpos, ypos);
+	uint8 item = findItemAtPos(xpos, ypos);
+	if (item != 0xFF) {
+		if (_itemInHand == -1) {
+			_screen->hideMouse();
+			animRemoveGameItem(item);
+			// XXX call kyraPlaySound(53)
+			assert(_currentCharacter->sceneId < _roomTableSize);
+			Room *currentRoom = &_roomTable[_currentCharacter->sceneId];
+			int item2 = currentRoom->itemsTable[item];
+			currentRoom->itemsTable[item] = 0xFF;
+			setMouseItem(item2);
+			// XXX updateSentenceCommand
+			_itemInHand = item2;
+			_screen->showMouse();
+			clickEventHandler2();
+			return 1;
+		} else {
+			exchangeItemWithMouseItem(_currentCharacter->sceneId, item);
+			return 1;
+		}
+	}
 	return 0;
 }
 

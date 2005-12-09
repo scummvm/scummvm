@@ -74,7 +74,7 @@ void ScriptHelper::c1_pushBPAdd() {
 void ScriptHelper::c1_popRetOrPos() {
 	switch (_parameter) {
 		case 0:
-			_curScript->retValue = _curScript->stack[++_curScript->sp-1];
+			_curScript->retValue = _curScript->stack[_curScript->sp++];
 		break;
 		
 		case 1:
@@ -82,8 +82,8 @@ void ScriptHelper::c1_popRetOrPos() {
 				_continue = false;
 				_curScript->ip = 0;
 			} else {
-				_curScript->bp = _curScript->stack[++_curScript->sp-1];
-				_curScript->ip = _curScript->dataPtr->data + (_curScript->stack[++_curScript->sp-1] << 1);
+				_curScript->bp = _curScript->stack[_curScript->sp++];
+				_curScript->ip = _curScript->dataPtr->data + (_curScript->stack[_curScript->sp++] << 1);
 			}
 		break;
 		
@@ -95,15 +95,15 @@ void ScriptHelper::c1_popRetOrPos() {
 }
 
 void ScriptHelper::c1_popVar() {
-	_curScript->variables[_parameter] = _curScript->stack[++_curScript->sp-1];
+	_curScript->variables[_parameter] = _curScript->stack[_curScript->sp++];
 }
 
 void ScriptHelper::c1_popBPNeg() {
-	_curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp] = _curScript->stack[++_curScript->sp-1];
+	_curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp] = _curScript->stack[_curScript->sp++];
 }
 
 void ScriptHelper::c1_popBPAdd() {
-	_curScript->stack[(_parameter - 1) + _curScript->bp] = _curScript->stack[++_curScript->sp-1];
+	_curScript->stack[(_parameter - 1) + _curScript->bp] = _curScript->stack[_curScript->sp++];
 }
 
 void ScriptHelper::c1_addSP() {
@@ -157,8 +157,8 @@ void ScriptHelper::c1_eval() {
 	int16 ret = 0;
 	bool error = false;
 	
-	int16 val1 = _curScript->stack[++_curScript->sp-1];
-	int16 val2 = _curScript->stack[++_curScript->sp-1];
+	int16 val1 = _curScript->stack[_curScript->sp++];
+	int16 val2 = _curScript->stack[_curScript->sp++];
 	
 	switch (_parameter) {
 		case 0:
@@ -284,8 +284,8 @@ void ScriptHelper::c1_setRetAndJmp() {
 		_continue = false;
 		_curScript->ip = 0;
 	} else {
-		_curScript->retValue = _curScript->stack[++_curScript->sp-1];
-		uint16 temp = _curScript->stack[++_curScript->sp-1];
+		_curScript->retValue = _curScript->stack[_curScript->sp++];
+		uint16 temp = _curScript->stack[_curScript->sp++];
 		_curScript->stack[60] = 0;
 		_curScript->ip = &_curScript->dataPtr->data[temp*2];
 	}
@@ -1277,7 +1277,7 @@ int KyraEngine::cmd_setSceneAnimCurrXY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_poisonBrandonAndRemaps(ScriptState *script) {
-	warning("STUB: cmdPoisonBrandonAndRemaps");
+	warning("STUB: cmd_poisonBrandonAndRemaps");
 	return 0;
 }
 
