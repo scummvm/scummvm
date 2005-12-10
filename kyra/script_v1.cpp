@@ -1200,7 +1200,12 @@ int KyraEngine::cmd_getCharactersFacing(ScriptState *script) {
 }
 
 int KyraEngine::cmd_bkgdScrollSceneAndMasksRight(ScriptState *script) {
-	warning("STUB: cmd_bkgdScrollSceneAndMasksRight");
+	debug(3, "cmd_bkgdScrollSceneAndMasksRight(0x%X) (%d)", script, stackPos(0));
+	copyBackgroundBlock(stackPos(0), 2, 0);
+	copyBackgroundBlock2(stackPos(0));
+	// update the whole screen
+	_screen->copyRegion(7, 7, 7, 7, 305, 129, 3, 0);
+	_screen->updateScreen();
 	return 0;
 }
 
@@ -1529,8 +1534,9 @@ int KyraEngine::cmd_resetMaskRegion(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setPaletteChangeFlag(ScriptState *script) {
-	warning("STUB: cmd_setPaletteChangeFlag");
-	return 0;
+	debug(3, "cmd_setPaletteChangeFlag(0x%X) (%d)", script, stackPos(0));
+	_paletteChanged = stackPos(0);
+	return _paletteChanged;
 }
 
 int KyraEngine::cmd_fillRect(ScriptState *script) {

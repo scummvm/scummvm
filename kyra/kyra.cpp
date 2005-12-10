@@ -273,6 +273,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_seq = new SeqPlayer(this, _system);
 	assert(_seq);
 	
+	_paletteChanged = 1;
 	_currentCharacter = 0;
 	_characterList = new Character[11];
 	assert(_characterList);
@@ -453,13 +454,17 @@ void KyraEngine::startup() {
 		int size = _screen->getRectSize(3, 24);
 		_shapes[365+i] = (byte*)malloc(size);
 	}
-	_shapes[0] = (byte*)malloc(_screen->getRectSize(3, 24));
+	_unkPtr1 = (uint8*)malloc(_screen->getRectSize(1, 144));
+	memset(_unkPtr1, 0, _screen->getRectSize(1, 144));
+	_unkPtr2 = (uint8*)malloc(_screen->getRectSize(1, 144));
+	memset(_unkPtr2, 0, _screen->getRectSize(1, 144));
+	_shapes[0] = (uint8*)malloc(_screen->getRectSize(3, 24));
 	memset(_shapes[0], 0, _screen->getRectSize(3, 24));
-	_shapes[1] = (byte*)malloc(_screen->getRectSize(4, 32));
+	_shapes[1] = (uint8*)malloc(_screen->getRectSize(4, 32));
 	memset(_shapes[1], 0, _screen->getRectSize(4, 32));
-	_shapes[2] = (byte*)malloc(_screen->getRectSize(8, 69));
+	_shapes[2] = (uint8*)malloc(_screen->getRectSize(8, 69));
 	memset(_shapes[2], 0, _screen->getRectSize(8, 69));
-	_shapes[3] = (byte*)malloc(_screen->getRectSize(8, 69));
+	_shapes[3] = (uint8*)malloc(_screen->getRectSize(8, 69));
 	memset(_shapes[3], 0, _screen->getRectSize(8, 69));
 	for (int i = 0; i < _roomTableSize; ++i) {
 		for (int item = 0; item < 12; ++item) {
@@ -3696,6 +3701,51 @@ int KyraEngine::getDrawLayer2(int x, int y, int height) {
 		}
 	}	
 	return layer;
+}
+
+void KyraEngine::copyBackgroundBlock(int x, int page, int flag) {
+	debug(9, "copyBackgroundBlock(%d, %d, %d)", x, page, flag);
+	
+	if (x < 1)
+		return;
+	
+	int height = 128;
+	if (flag)
+		height += 8;	
+	if (!(x & 1))
+		++x;
+	if (x == 19)
+		x = 17;
+	uint8 *ptr1 = _unkPtr1;
+	uint8 *ptr2 = _unkPtr2;
+	int oldVideoPage = _screen->_curPage;
+	_screen->_curPage = page;
+	
+	int curX = x;
+	_screen->hideMouse();
+	_screen->copyRegionToBuffer(_screen->_curPage, 8, 8, 8, height, ptr2);
+	for (int i = 0; i < 19; ++i) {
+		int tempX = curX + 1;
+		_screen->copyRegionToBuffer(_screen->_curPage, tempX<<3, 8, 8, height, ptr1);
+		_screen->copyBlockToPage(_screen->_curPage, tempX<<3, 8, 8, height, ptr2);
+		int newXPos = curX + x;
+		if (newXPos > 37) {
+			newXPos = newXPos % 38;
+		}
+		tempX = newXPos + 1;
+		_screen->copyRegionToBuffer(_screen->_curPage, tempX<<3, 8, 8, height, ptr2);
+		_screen->copyBlockToPage(_screen->_curPage, tempX<<3, 8, 8, height, ptr1);
+		curX += x*2;
+		if (curX > 37) {
+			curX = curX % 38;
+		}
+	}
+	_screen->showMouse();
+	_screen->_curPage = oldVideoPage;
+}
+
+void KyraEngine::copyBackgroundBlock2(int x) {
+	copyBackgroundBlock(x, 4, 1);
 }
 
 #pragma mark -

@@ -182,6 +182,7 @@ public:
 	int16 _northExitHeight;
 
 	Character *_currentCharacter;
+	int _paletteChanged;
 
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
@@ -465,6 +466,8 @@ protected:
 	void restoreRect0(int xpos, int ypos);
 	void backUpRect1(int xpos, int ypos);
 	void restoreRect1(int xpos, int ypos);
+	void copyBackgroundBlock(int x, int page, int flag);
+	void copyBackgroundBlock2(int x);
 	
 	void processInput(int xpos, int ypos);
 	int processInputHelper(int xpos, int ypos);
@@ -561,6 +564,7 @@ protected:
 	uint16 _talkMessageH;
 	bool _talkMessagePrinted;
 	uint8 _flagsTable[53];
+	uint8 *_unkPtr1, *_unkPtr2;
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint16 _tickLength;
