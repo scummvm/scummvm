@@ -314,10 +314,8 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_characterSays(0x%X) (%d, '%s', %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
-		while (snd_voicePlaying()) {
-			_sprites->updateSceneAnims();
-			updateAllObjectShapes();
-			_system->delayMillis(10);
+		while (snd_voicePlaying() && !_fastMode) {
+			delay(10);
 		}
 		snd_playVoiceFile(stackPos(0));
 		characterSays(stackPosString(1), stackPos(2), stackPos(3));
@@ -667,7 +665,7 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 			_sprites->updateSceneAnims();
 			updateAllObjectShapes();
 		}
-		_screen->updateScreen();
+		_updateScreen = true;
 	}
 	
 	_screen->showMouse();
@@ -685,7 +683,7 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	_screen->hideMouse();
 	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
 	delay(waitTime * _tickLength);
-	_screen->updateScreen();
+	_updateScreen = true;
 	_screen->showMouse();
 	return 0;
 }
@@ -779,10 +777,8 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
-		while (snd_voicePlaying()) {
-			_sprites->updateSceneAnims();
-			updateAllObjectShapes();
-			_system->delayMillis(10);
+		while (snd_voicePlaying() && !_fastMode) {
+			delay(10);
 		}
 		snd_playVoiceFile(stackPos(0));
 		printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
@@ -790,7 +786,7 @@ int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
 		printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
 	}
-
+	_updateScreen = true;
 	return 0;
 }
 
@@ -907,7 +903,7 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 			while (endFrame >= frame) {
 				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
 				delay(waitTime * _tickLength);
-				_screen->updateScreen();
+				_updateScreen = true;
 				++frame;
 			}
 		} else {
@@ -915,7 +911,7 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 			while (startFrame <= frame) {
 				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
 				delay(waitTime * _tickLength);
-				_screen->updateScreen();
+				_updateScreen = true;
 				--frame;
 			}
 		}

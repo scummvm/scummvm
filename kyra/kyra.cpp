@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/md5.h"
+#include "common/savefile.h"
 
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
@@ -264,6 +265,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_midi->hasNativeMT32(native_mt32);
 	_midi->setVolume(255);
 	
+	_saveFileMan = _system->getSavefileManager();
+	assert(_saveFileMan);	
 	_res = new Resource(this);
 	assert(_res);
 	_screen = new Screen(this, _system);
@@ -370,6 +373,7 @@ KyraEngine::~KyraEngine() {
 	delete _screen;
 	delete _res;
 	delete _midi;
+	delete _saveFileMan;
 	delete _seq;
 	delete _scriptInterpreter;
 	
@@ -511,6 +515,8 @@ void KyraEngine::startup() {
 
 void KyraEngine::delay(uint32 amount) {
 	OSystem::Event event;
+	char saveLoadSlot[20];
+
 	uint32 start = _system->getMillis();
 	do {
 		while (_system->pollEvent(event)) {
@@ -520,6 +526,15 @@ void KyraEngine::delay(uint32 amount) {
 					_quitFlag = true;
 				} else if (event.kbd.keycode == 'd' && !_debugger->isAttached()) {
 					_debugger->attach();
+				} else if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
+						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT)) {
+					sprintf(saveLoadSlot, "KYRA1.00%i", event.kbd.keycode - '0');
+					if (event.kbd.flags == OSystem::KBD_CTRL)
+						saveGame(saveLoadSlot, saveLoadSlot);
+					else
+						loadGame(saveLoadSlot);
+				}	else if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'f') {
+						_fastMode = !_fastMode;
 				}
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
@@ -556,7 +571,7 @@ void KyraEngine::delay(uint32 amount) {
 		if (amount > 0) {
 			_system->delayMillis((amount > 10) ? 10 : amount);
 		}
-	} while (_system->getMillis() < start + amount);
+	} while (!_fastMode && _system->getMillis() < start + amount);
 }
 
 void KyraEngine::mainLoop() {
@@ -1971,9 +1986,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	restoreAllObjectBackgrounds();
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
-	_screen->hideMouse();
 	initSceneScreen(brandonAlive);
-	_screen->showMouse();
 	copyChangedObjectsForward(0);
 }
 
@@ -2255,7 +2268,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 0x20 || event.kbd.keycode == 0xC6)
+				if (event.kbd.keycode == '.')
 					runLoop = false;
 				break;
 			case OSystem::EVENT_QUIT:
@@ -2267,6 +2280,9 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 				break;
 			}
 		}
+		
+		if (_fastMode)
+			runLoop = false;
 
 		delayTime = (loopStart + _gameSpeed) - _system->getMillis();
 		if (delayTime > 0)
@@ -2285,6 +2301,7 @@ void KyraEngine::endCharacterChat(int8 charNum, int16 convoInitialized) {
 
 	if (charNum > 4 && charNum < 11) {
 		//TODO: weird _game_inventory stuff here
+		warning("STUB: endCharacterChat() for high charnums");
 	}
 
 	if (convoInitialized != 0) {
@@ -2364,6 +2381,7 @@ int KyraEngine::initCharacterChat(int8 charNum) {
 
 	if (charNum > 4 && charNum < 11) {
 		// TODO: Fill in weird _game_inventory stuff here
+		warning("STUB: initCharacterChat() for high charnums");
 	}
 
 	flagAllObjectsForRefresh();
@@ -3377,7 +3395,6 @@ void KyraEngine::prepDrawAllObjects() {
 void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 	debug(9, "copyChangedObjectsForward(%d)", refreshFlag);
 	AnimObject *curObject = _objectQueue;
-	bool changed = false;
 
 	while (curObject) {
 		if (curObject->active) {
@@ -3402,13 +3419,15 @@ void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 				
 				_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, 2, 0, Screen::CR_CLIPPED);
 				curObject->refreshFlag = 0;
-				changed = true;
+				_updateScreen = true;
 			}
 		}
 		curObject = curObject->nextAnimObject;
 	}
-	if (changed)
+	if (_updateScreen) {
 		_screen->updateScreen();
+		_updateScreen = false;
+	}
 }
 
 void KyraEngine::updateAllObjectShapes() {
@@ -4939,6 +4958,158 @@ void KyraEngine::runNpcScript(int func) {
 	while (_scriptInterpreter->validScript(_npcScript)) {
 		_scriptInterpreter->runScript(_npcScript);
 	}
+}
+
+#pragma mark -
+#pragma mark - Saving/loading
+#pragma mark -
+
+void KyraEngine::loadGame(const char *fileName) {
+	debug(9, "loadGame('%s')", fileName);
+	Common::InSaveFile *in;
+
+	if (!(in = _saveFileMan->openForLoading(fileName))) {
+		warning("Can't open file '%s', game not loaded", fileName);
+		return;
+	}
+
+	if (in->readByte() != 1) {
+		warning("Savegame is not the right version");
+		delete in;
+		return;
+	}
+
+	char saveName[31];
+	in->read(saveName, 31);
+
+	for (int i = 0; i < 11; i++) {
+		_characterList[i].sceneId = in->readUint16BE();
+		_characterList[i].height = in->readByte();
+		_characterList[i].facing = in->readByte();
+		_characterList[i].currentAnimFrame = in->readUint16BE();
+		_characterList[i].unk6 = in->readUint32BE();
+		in->read(_characterList[i].inventoryItems, 10);
+		_characterList[i].x1 = in->readSint16BE();
+		_characterList[i].y1 = in->readSint16BE();
+		_characterList[i].x2 = in->readSint16BE();
+		_characterList[i].y1 = in->readSint16BE();
+		_characterList[i].field_20 = in->readUint16BE();
+		_characterList[i].field_23 = in->readUint16BE();
+	}
+
+	_marbleVaseItem = in->readSint16BE();
+	_itemInHand = in->readByte();
+
+	for (int i = 0; i < 32; i++) {
+		_timers[i].countdown = in->readSint32BE();
+		_timers[i].nextRun = in->readUint32BE();
+	}
+	_timerNextRun = 0;
+
+	in->read(_flagsTable, sizeof(_flagsTable));
+
+	for (int i = 0; i < _roomTableSize; ++i) {
+		for (int item = 0; item < 12; ++item) {
+			_roomTable[i].itemsTable[item] = 0xFF;
+			_roomTable[i].itemsXPos[item] = 0xFFFF;
+			_roomTable[i].itemsYPos[item] = 0xFF;
+			_roomTable[i].unkField3[item] = 0;
+		}
+	}
+
+	uint16 sceneId;
+	uint8 itemCount;
+
+	while (!in->eos()) {
+		sceneId = in->readUint16BE();
+		if (sceneId == 0xffff)
+			break;
+
+		itemCount = in->readByte();
+		for (int i = 0; i < itemCount; i++) {
+			_roomTable[sceneId].itemsTable[i] = in->readByte();
+			_roomTable[sceneId].itemsXPos[i] = in->readUint16BE();
+			_roomTable[sceneId].itemsYPos[i] = in->readUint16BE();
+			_roomTable[sceneId].unkField3[i] = in->readUint32BE();
+			
+		}
+	}
+
+	createMouseItem(_itemInHand);
+	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
+
+	if (in->ioFailed())
+		error("Load failed.");
+	else
+		debug(1, "Loaded savegame '%s.'", saveName);
+
+	delete in;
+}
+
+void KyraEngine::saveGame(const char *fileName, const char *saveName) {
+	debug(9, "saveGame('%s', '%s')", fileName, saveName);
+	Common::OutSaveFile *out;
+
+	if (!(out = _saveFileMan->openForSaving(fileName))) {
+		warning("Can't create file '%s', game not saved", fileName);
+		return;
+	}
+
+	// Savegame version
+	out->writeByte(1);
+	out->write(saveName, 31);
+
+	for (int i = 0; i < 11; i++) {
+		out->writeUint16BE(_characterList[i].sceneId);
+		out->writeByte(_characterList[i].height);
+		out->writeByte(_characterList[i].facing);
+		out->writeUint16BE(_characterList[i].currentAnimFrame);
+		out->writeUint32BE(_characterList[i].unk6);
+		out->write(_characterList[i].inventoryItems, 10);
+		out->writeSint16BE(_characterList[i].x1);
+		out->writeSint16BE(_characterList[i].y1);
+		out->writeSint16BE(_characterList[i].x2);
+		out->writeSint16BE(_characterList[i].y1);
+		out->writeUint16BE(_characterList[i].field_20);
+		out->writeUint16BE(_characterList[i].field_23);
+	}
+	
+	out->writeSint16BE(_marbleVaseItem);
+	out->writeByte(_itemInHand);
+
+	for (int i = 0; i < 32; i++) {
+		out->writeSint32BE(_timers[i].countdown);
+		out->writeUint32BE(_timers[i].nextRun);
+	}
+
+	out->write(_flagsTable, sizeof(_flagsTable));
+
+	uint8 itemCount;
+	for (int i = 0; i < _roomTableSize; i++) {
+		itemCount = countItemsInScene(i);
+		if (itemCount > 0) {
+			out->writeUint16BE(i);
+			out->writeByte(itemCount);
+			for (int a = 0; a < 12; a++) {
+				if (_roomTable[i].itemsTable[a] != 0xff) {
+					out->writeByte(_roomTable[i].itemsTable[a]);
+					out->writeUint16BE(_roomTable[i].itemsXPos[a]);
+					out->writeUint16BE(_roomTable[i].itemsYPos[a]);
+					out->writeUint32BE(_roomTable[i].unkField3[a]);
+				}
+			}
+		}	
+	}
+
+	out->flush();
+
+	// check for errors
+	if (out->ioFailed())
+		warning("Can't write file '%s'. (Disk full?)", fileName);
+	else
+		debug(1, "Saved game '%s.'", saveName);
+
+	delete out;
 }
 
 } // End of namespace Kyra

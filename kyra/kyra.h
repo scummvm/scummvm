@@ -228,6 +228,9 @@ public:
 	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
 	int16 fetchAnimHeight(const uint8 *shape, int16 mult);
 	
+	void saveGame(const char *fileName, const char *saveName);
+	void loadGame(const char *fileName);
+
 	int mouseX() { return _mouseX; }
 	int mouseY() { return _mouseY; }
 	
@@ -570,10 +573,11 @@ protected:
 	uint16 _tickLength;
 	uint32 _features;
 	int _mouseX, _mouseY;
-	int _itemInHand;
+	int8 _itemInHand;
 	int _mouseState;
 	bool _handleInput;
-	
+	bool _updateScreen;
+
 	WSAMovieV1 *_wsaObjects[10];
 	uint16 _entranceMouseCursorTracks[8];
 	uint16 _walkBlockNorth;
@@ -648,7 +652,8 @@ protected:
 	Sprites *_sprites;
 	ScriptHelper *_scriptInterpreter;
 	Debugger *_debugger;
-	
+	Common::SaveFileManager *_saveFileMan;
+
 	ScriptState *_scriptMain;
 	
 	ScriptState *_npcScript;
