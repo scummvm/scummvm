@@ -363,6 +363,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_scenePhasingFlag = 0;
 	_lastProcessedItem = 0;
 	_lastProcessedItemHeight = 16;
+	
+	_hidPage = _screenPage = 0;
 
 	return 0;
 }
@@ -401,7 +403,8 @@ KyraEngine::~KyraEngine() {
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i) {
 		free(_sceneAnimTable[i]);
 	}
-
+	free(_unkPtr1);
+	free(_unkPtr2);
 }
 
 void KyraEngine::errorString(const char *buf1, char *buf2) {
@@ -572,6 +575,37 @@ void KyraEngine::delay(uint32 amount) {
 			_system->delayMillis((amount > 10) ? 10 : amount);
 		}
 	} while (!_fastMode && _system->getMillis() < start + amount);
+}
+
+void KyraEngine::waitForEvent() {
+	bool finished = false;
+	OSystem::Event event;
+	while (!finished) {
+		while (_system->pollEvent(event)) {
+			switch (event.type) {
+			case OSystem::EVENT_KEYDOWN:
+				finished = true;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				break;
+			case OSystem::EVENT_QUIT:
+				quitGame();
+				break;
+			case OSystem::EVENT_LBUTTONDOWN:
+				finished = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
+		_system->delayMillis(10);
+	}
 }
 
 void KyraEngine::mainLoop() {

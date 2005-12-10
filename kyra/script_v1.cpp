@@ -473,8 +473,8 @@ int KyraEngine::cmd_sceneAnimOff(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getElapsedSeconds(ScriptState *script) {
-	warning("STUB: cmd_getElapsedSeconds");
-	return 0;
+	debug(3, "cmd_getElapsedSeconds(0x%X) ()");
+	return _system->getMillis() / 1000;
 }
 
 int KyraEngine::cmd_mouseIsPointer(ScriptState *script) {
@@ -850,7 +850,9 @@ int KyraEngine::cmd_copyWSARegion(ScriptState *script) {
 }
 
 int KyraEngine::cmd_printText(ScriptState *script) {
-	warning("STUB: cmd_printText");
+	debug(3, "cmd_printText(0x%X) ('%s', %d, %d, 0x%X, 0x%X)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	_screen->printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	_screen->updateScreen();
 	return 0;
 }
 
@@ -1011,7 +1013,8 @@ int KyraEngine::cmd_placeCharacterInOtherScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getKey(ScriptState *script) {
-	warning("STUB: cmd_getKey");
+	debug(3, "cmd_getKey(0x%X) ()");
+	waitForEvent();
 	return 0;
 }
 
@@ -1145,12 +1148,32 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 }
 
 int KyraEngine::cmd_specialEventDisplayBrynnsNote(ScriptState *script) {
-	warning("STUB: cmd_specialEventDisplayBrynnsNote");
+	debug(3, "cmd_specialEventDisplayBrynnsNote(0x%X) ()", script);
+	_hidPage = (uint8*)malloc(320*200);
+	_screenPage = (uint8*)malloc(320*200);
+	assert(_hidPage && _screenPage);
+	_screen->hideMouse();
+	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenPage);
+	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _hidPage);
+	loadBitmap("NOTE.CPS", 3, 3, 0);
+	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
+	_screen->updateScreen();
+	_screen->showMouse();
+	_screen->setFont(Screen::FID_6_FNT);
 	return 0;
 }
 
 int KyraEngine::cmd_specialEventRemoveBrynnsNote(ScriptState *script) {
-	warning("STUB: cmd_specialEventRemoveBrynnsNote");
+	debug(3, "cmd_specialEventRemoveBrynnsNote(0x%X) ()", script);
+	_screen->hideMouse();
+	assert(_hidPage && _screenPage);
+	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenPage);
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _hidPage);
+	free(_screenPage);
+	free(_hidPage);
+	_screen->updateScreen();
+	_screen->showMouse();
+	_screen->setFont(Screen::FID_8_FNT);
 	return 0;
 }
 

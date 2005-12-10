@@ -514,7 +514,6 @@ protected:
 	void snd_startTrack();
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
-
 	
 	static OpcodeProc _opcodeTable[];
 	static const int _opcodeTableSize;
@@ -532,6 +531,7 @@ protected:
 	void res_loadRoomTable(const byte *src, Room **loadTo, int *size);
 	void res_loadShapeTable(const byte *src, Shape **loadTo, int *size);
 	
+	void waitForEvent();
 	void delay(uint32 millis);
 	void loadPalette(const char *filename, uint8 *palData);
 	void loadMouseShapes();
@@ -568,6 +568,7 @@ protected:
 	bool _talkMessagePrinted;
 	uint8 _flagsTable[53];
 	uint8 *_unkPtr1, *_unkPtr2;
+	uint8 *_hidPage, *_screenPage;
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint16 _tickLength;
