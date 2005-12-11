@@ -21,8 +21,8 @@
  *
  */
 
-#include "be_os5.h"
 #include "be_zodiac.h"
+#include "be_os5.h"
 
 OSystem *OSystem_PalmOS5_create() {
 	return OSystem_PalmOS5::create();
