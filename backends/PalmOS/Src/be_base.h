@@ -50,14 +50,16 @@ enum {
 #define kDrawBatLow		3020
 #define kDrawFight		3030
 
+typedef struct {
+	uint32 duration, nextExpiry;
+	bool active;
+	OSystem::TimerProc callback;
+} TimerType, *TimerPtr;
+
+extern "C" void SysEventGet(EventType *, Int32);
+
 class OSystem_PalmBase : public OSystem {
 private:
-	struct {
-		uint32 duration, nextExpiry;
-		bool active;
-		TimerProc callback;
-	} _timer;
-
 	virtual void int_initBackend() { }
 	
 	virtual const GraphicsMode *int_getSupportedGraphicsModes() const;
@@ -77,14 +79,15 @@ private:
 //	virtual bool check_hard_keys() = 0;
 	virtual bool check_event(Event &event, EventPtr ev) = 0;
 	
-	void timer_handler();
+	virtual void timer_handler();
 	void battery_handler();
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y) = 0;
 	void simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr);
 	virtual void sound_handler() {};
-	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
 
 protected:
+	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
+
 	enum {
 		kKeyNone			= 0,
 		kKeyMouseMove		= 1	<< 0,
@@ -100,6 +103,8 @@ protected:
 	struct MousePos {
 		int16 x,y,w,h;
 	};
+
+	TimerType _timer;
 
 	RGBColorType _currentPalette[256];
 	uint _paletteDirtyStart, _paletteDirtyEnd;
@@ -129,6 +134,7 @@ protected:
 		UInt32 bitLeft;
 		UInt32 bitRight;
 		UInt32 bitButLeft;
+		Boolean hasMore;
 	} _keyMouse;
 
 	bool _mouseVisible;
@@ -214,7 +220,7 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	
-	void setTimerCallback(TimerProc callback, int interval);
+	virtual void setTimerCallback(TimerProc callback, int interval);
 
 	MutexRef createMutex() { return NULL; }
 	void lockMutex(MutexRef mutex) {}
