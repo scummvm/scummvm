@@ -53,14 +53,12 @@ Sound::Sound(Sword2Engine *vm) {
 	for (i = 0; i < MAXMUS; i++) {
 		_music[i] = NULL;
 
-		_musicFile[i].file = new Common::File;
 		_musicFile[i].idxTab = NULL;
 		_musicFile[i].idxLen = 0;
 		_musicFile[i].fileSize = 0;
 		_musicFile[i].fileType = 0;
 		_musicFile[i].inUse = false;
 
-		_speechFile[i].file = new Common::File;
 		_speechFile[i].idxTab = NULL;
 		_speechFile[i].idxLen = 0;
 		_speechFile[i].fileSize = 0;
@@ -96,10 +94,13 @@ Sound::~Sound() {
 	free(_mixBuffer);
 
 	for (int i = 0; i < MAXMUS; i++) {
-		if (_musicFile[i].file->isOpen())
-			_musicFile[i].file->close();
-		if (_speechFile[i].file->isOpen())
-			_speechFile[i].file->close();
+		if (_musicFile[i].file.isOpen())
+			_musicFile[i].file.close();
+		if (_speechFile[i].file.isOpen())
+			_speechFile[i].file.close();
+
+		free(_musicFile[i].idxTab);
+		free(_speechFile[i].idxTab);
 	}
 }
 

@@ -109,7 +109,7 @@ public:
 };
 
 struct SoundFileHandle {
-	Common::File *file;
+	Common::File file;
 	uint32 *idxTab;
 	uint32 idxLen;
 	uint32 fileSize;

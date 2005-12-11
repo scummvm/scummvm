@@ -43,7 +43,7 @@ namespace Sword2 {
 static AudioStream *makeCLUStream(Common::File *fp, int size);
 
 static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
-	if (!fh->file->isOpen()) {
+	if (!fh->file.isOpen()) {
 		struct {
 			const char *ext;
 			int mode;
@@ -82,13 +82,13 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 		if (soundMode == 0)
 			return NULL;
 
-		fh->file->open(filename);
+		fh->file.open(filename);
 		fh->fileType = soundMode;
-		if (!fh->file->isOpen()) {
+		if (!fh->file.isOpen()) {
 			warning("Very strange fopen error");
 			return NULL;
 		}
-		if (fh->fileSize != fh->file->size()) {
+		if (fh->fileSize != fh->file.size()) {
 			if (fh->idxTab) {
 				free(fh->idxTab);
 				fh->idxTab = NULL;
@@ -99,19 +99,19 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 	uint32 entrySize = (fh->fileType == kCLUMode) ? 2 : 3;
 
 	if (!fh->idxTab) {
-		fh->file->seek(0);
-		fh->idxLen = fh->file->readUint32LE();
-		fh->file->seek(entrySize * 4);
+		fh->file.seek(0);
+		fh->idxLen = fh->file.readUint32LE();
+		fh->file.seek(entrySize * 4);
 
 		fh->idxTab = (uint32*)malloc(fh->idxLen * 3 * sizeof(uint32));
 		for (uint32 cnt = 0; cnt < fh->idxLen; cnt++) {
-			fh->idxTab[cnt * 3 + 0] = fh->file->readUint32LE();
-			fh->idxTab[cnt * 3 + 1] = fh->file->readUint32LE();
+			fh->idxTab[cnt * 3 + 0] = fh->file.readUint32LE();
+			fh->idxTab[cnt * 3 + 1] = fh->file.readUint32LE();
 			if (fh->fileType == kCLUMode) {
 				fh->idxTab[cnt * 3 + 2] = fh->idxTab[cnt * 3 + 1];
 				fh->idxTab[cnt * 3 + 1]--;
 			} else
-				fh->idxTab[cnt * 3 + 2] = fh->file->readUint32LE();
+				fh->idxTab[cnt * 3 + 2] = fh->file.readUint32LE();
 		}
 	}
 
@@ -123,26 +123,26 @@ static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd
 		*numSamples = len;
 
 	if (!pos || !len) {
-		fh->file->close();
+		fh->file.close();
 		return NULL;
 	}
 
-	fh->file->seek(pos, SEEK_SET);
+	fh->file.seek(pos, SEEK_SET);
 
 	switch (fh->fileType) {
 	case kCLUMode:
-		return makeCLUStream(fh->file, enc_len);
+		return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
-		return makeMP3Stream(fh->file, enc_len);
+		return makeMP3Stream(&fh->file, enc_len);
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		return makeVorbisStream(fh->file, enc_len);
+		return makeVorbisStream(&fh->file, enc_len);
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		return makeFlacStream(fh->file, enc_len);
+		return makeFlacStream(&fh->file, enc_len);
 #endif
 	default:
 		return NULL;
@@ -461,8 +461,8 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	}
 
 	for (i = 0; i < MAXMUS; i++) {
-		if (!inUse[i] && !_musicFile[i].inUse && _musicFile[i].file->isOpen())
-			_musicFile[i].file->close();
+		if (!inUse[i] && !_musicFile[i].inUse && _musicFile[i].file.isOpen())
+			_musicFile[i].file.close();
 	}
 
 	return numSamples;
@@ -470,7 +470,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 
 bool Sound::endOfData() const {
 	for (int i = 0; i < MAXMUS; i++) {
-		if (_musicFile[i].file->isOpen())
+		if (_musicFile[i].file.isOpen())
 			return false;
 	}
 
@@ -727,13 +727,13 @@ uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
 	*buf = (uint16 *)malloc(bufferSize);
 	if (!*buf) {
 		delete input;
-		fh->file->close();
+		fh->file.close();
 		return 0;
 	}
 
 	uint32 readSamples = input->readBuffer((int16 *)*buf, numSamples);
 
-	fh->file->close();
+	fh->file.close();
 	delete input;
 
 	return 2 * readSamples;

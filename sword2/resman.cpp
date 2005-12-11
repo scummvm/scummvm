@@ -189,6 +189,8 @@ ResourceManager::~ResourceManager() {
 		_vm->_memory->memFree(res->ptr);
 		res = res->next;
 	}
+	for (int i = 0; i < _totalClusters; i++)
+		free(_resFiles[i].entryTab);
 	free(_resList);
 	free(_resConvTable);
 }
