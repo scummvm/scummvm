@@ -36,27 +36,30 @@ void OSystem_PalmBase::battery_handler() {
 	// check battery level every 15secs
 	if ((TimGetTicks() - _batCheckLast) > _batCheckTicks) {
 		UInt16 voltage, warnThreshold, criticalThreshold;
-		voltage = SysBatteryInfoV20(false, &warnThreshold, &criticalThreshold, NULL, NULL, NULL);
+		Boolean pluggedIn;
+		voltage = SysBatteryInfoV20(false, &warnThreshold, &criticalThreshold, NULL, NULL, &pluggedIn);
 
-		if (voltage <= warnThreshold) {
-			if (!_showBatLow) {
-				_showBatLow = true;
-				draw_osd(kDrawBatLow, _screenDest.w - 18, -16, true, 2);
-				displayMessageOnOSD("Battery low.");
+		if (!pluggedIn) {
+			if (voltage <= warnThreshold) {
+				if (!_showBatLow) {
+					_showBatLow = true;
+					draw_osd(kDrawBatLow, _screenDest.w - 18, -16, true, 2);
+					displayMessageOnOSD("Battery low.");
+				}
+			} else {
+				if (_showBatLow) {
+					_showBatLow = false;
+					draw_osd(kDrawBatLow, _screenDest.w - 18, -16, false);
+				}
 			}
-		} else {
-			if (_showBatLow) {
-				_showBatLow = false;
-				draw_osd(kDrawBatLow, _screenDest.w - 18, -16, false);
-			}
-		}
 
-		if (voltage <= criticalThreshold) {
-			::EventType event;
-			event.eType = keyDownEvent;
-			event.data.keyDown.chr = vchrPowerOff;
-			event.data.keyDown.modifiers = commandKeyMask;
-			EvtAddEventToQueue(&event);
+			if (voltage <= criticalThreshold) {
+				::EventType event;
+				event.eType = keyDownEvent;
+				event.data.keyDown.chr = vchrPowerOff;
+				event.data.keyDown.modifiers = commandKeyMask;
+				EvtAddEventToQueue(&event);
+			}
 		}
 
 		_batCheckLast = TimGetTicks();
@@ -74,7 +77,11 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 	sound_handler();
 		
 	for(;;) {
+#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
+		SysEventGet(&ev, evtNoWait);
+#else
 		EvtGetEvent(&ev, evtNoWait);
+#endif
 
 		// check for hardkey repeat for mouse emulation
 		keyCurrentState = KeyCurrentState();
