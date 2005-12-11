@@ -143,16 +143,9 @@ static const int16 okiStepSize[49] = {
 
 // Decode Linear to ADPCM
 int16 ADPCMInputStream::decodeOKI(byte code) {
-	int16 diff, E, SS, samp;
+	int16 diff, E, samp;
 
-	SS = okiStepSize[_status.stepIndex];
-	E = SS/8;
-	if (code & 0x01)
-		E += SS/4;
-	if (code & 0x02)
-		E += SS/2;
-	if (code & 0x04)
-		E += SS;
+	E = (2 * (code & 0x7) + 1) * okiStepSize[_status.stepIndex] / 8;
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
@@ -190,16 +183,9 @@ static const uint16 imaStepTable[89] = {
 };
 
 int16 ADPCMInputStream::decodeMSIMA(byte code) {
-	int32 diff, E, SS, samp;
+	int32 diff, E, samp;
 
-	SS = imaStepTable[_status.stepIndex];
-	E = SS >> 3;
-	if (code & 0x04)
-		E += SS;
-	if (code & 0x02)
-		E += SS >> 1;
-	if (code & 0x01)
-		E += SS >> 2;
+	E = (2 * (code & 0x7) + 1) * imaStepTable[_status.stepIndex] / 8;
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
