@@ -24,8 +24,8 @@
 #ifndef BE_ZODIAC_H
 #define BE_ZODIAC_H
 
-#include "be_os5.h"
 #include <tapwave.h>
+#include "be_os5.h"
 
 #define MIN_OFFSET	20
 
@@ -89,9 +89,6 @@ public:
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 	void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-//	uint32 getMillis();
-//	void delayMillis(uint msecs);
-
 };
 
 #endif

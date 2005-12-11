@@ -37,19 +37,8 @@ void OSystem_PalmZodiac::int_initBackend() {
 	_keyMouse.bitLeft	= keyBitRockerLeft;
 	_keyMouse.bitRight	= keyBitRockerRight;
 	_keyMouse.bitButLeft= keyBitRockerCenter;
+	_keyMouse.hasMore	= true;
 }
-/*
-uint32 OSystem_PalmZodiac::getMillis() {
-	return TwGetMicroSeconds();
-}
-
-void OSystem_PalmZodiac::delayMillis(uint msecs) {
-	Int32 delay = (SysTicksPerSecond() * msecs) / 1000;
-
-	if (delay > 0)
-		SysTaskDelay(delay);
-}
-*/
 
 void OSystem_PalmZodiac::calc_rect(Boolean fullscreen) {
 	Int32 w, h;
