@@ -62,9 +62,20 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	MemSet(&_keyMouse, sizeof(_keyMouse), 0);
 	MemSet(&_mouseCurState, sizeof(_mouseCurState), 0);
 	MemSet(&_mouseOldState, sizeof(_mouseOldState), 0);
+	MemSet(&_timer, sizeof(TimerType), 0);
 }
 
-void OSystem_PalmBase::initBackend() {	
+void OSystem_PalmBase::initBackend() {
+	if (gVars->autoSave != -1)
+		ConfMan.set("autosave_period", gVars->autoSave);
+
+	_keyMouse.bitUp		= keyBitPageUp;
+	_keyMouse.bitDown	= keyBitPageDown;
+	_keyMouse.bitLeft	= keyBitHard1;
+	_keyMouse.bitRight	= keyBitHard2;
+	_keyMouse.bitButLeft= keyBitHard3;
+	_keyMouse.hasMore	= false;
+
 	int_initBackend();
 	_keyMouseMask = (_keyMouse.bitUp | _keyMouse.bitDown | _keyMouse.bitLeft | _keyMouse.bitRight | _keyMouse.bitButLeft);
 }
@@ -85,7 +96,7 @@ void OSystem_PalmBase::setTimerCallback(TimerProc callback, int timer) {
 		_timer.duration = timer;
 		_timer.nextExpiry = getMillis() + timer;
 		_timer.callback = callback;
-		_timer.active = true;
+		_timer.active = true;		
 	} else {
 		_timer.active = false;
 	}
