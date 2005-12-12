@@ -36,10 +36,7 @@ byte *getFile(PAKFile &res, const char *filename) {
 	size = res.getFileSize(filename);
 	if (!size)
 		return 0;
-	const byte *src = res.getFile(filename);
-	byte *dst = new byte[size];
-	memcpy(dst, src, size);
-	return dst;
+	return res.getFile(filename);
 }
 
 struct LanguageTypes {

@@ -35,8 +35,8 @@ namespace Kyra {
 // standard Package format for Kyrandia games
 class PAKFile {
 	struct PakChunk {
-		const char* _name;
-		const uint8* _data;
+		char* _name;
+		uint32 _start;
 		uint32 _size;
 	};
 
@@ -45,16 +45,16 @@ public:
 	PAKFile(const Common::String& file);
 	~PAKFile();
 
-	const uint8* getFile(const char* file);
+	uint8* getFile(const char* file);
 	uint32 getFileSize(const char* file);
 
-	bool isValid(void) const { return (_buffer != 0); }
+	bool isValid(void) const { return (_filename != 0); }
 	bool isOpen(void) const { return _open; }
 
 private:
 
 	bool _open;
-	uint8* _buffer; // the whole file
+	char *_filename;
 	Common::List<PakChunk*> _files; // the entries
 };
 

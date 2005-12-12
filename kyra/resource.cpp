@@ -65,7 +65,9 @@ Resource::Resource(KyraEngine* engine) {
 		"FSOUTHB.PAK", "GRAVE.PAK", "LAGOON.PAK", "NCLIFFB.PAK", "SND.PAK", "TRUNK.PAK", "ZROCK.PAK",
 		"BONKBG.PAK", "CGATE.PAK", "EDGEB.PAK", "FINALE.PAK", "FWSTSTH.PAK", "GRTHALL.PAK", "LANDING.PAK",
 		"NWCLIFB.PAK", "SONG.PAK", "UPSTAIR.PAK", "BRIDGE.PAK", "CHASM.PAK", "EMCAV.PAK", "FNORTH.PAK",
-		"GATECV.PAK", "HEALER.PAK", "LAVA.PAK", "NWCLIFF.PAK", "SORROW.PAK", "WELL.PAK", 0
+		"GATECV.PAK", "HEALER.PAK", "LAVA.PAK", "NWCLIFF.PAK", "SORROW.PAK", "WELL.PAK",
+		
+		"CHAPTER1.VRM", 0
 	};
 
 	const char** usedFilelist = 0;
@@ -89,7 +91,7 @@ Resource::Resource(KyraEngine* engine) {
 			_pakfiles.push_back(newPak);
 		else {
 			delete file;
-			debug("couldn't load file '%s' correctly", usedFilelist[tmp]);
+			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
 		}
 	}
 }
@@ -108,7 +110,7 @@ bool Resource::loadPakFile(const char *filename) {
 		return true;
 	PAKFile* file = new PAKFile(filename);
 	if (!file) {
-		error("Couldn't load file: '%s'", filename);
+		error("couldn't load file: '%s'", filename);
 	}
 	PakFileEntry newPak;
 	newPak._file = file;
@@ -152,7 +154,6 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 		file_.read(buffer, *size);
 
 		file_.close();
-
 	} else {
 		// opens the file in a PAK File
 		Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
@@ -163,18 +164,9 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 			if (!(*size))
 				continue;
 			
-			buffer = new uint8[*size];
-			assert(buffer);
-			
-			const uint8 *from = start->_file->getFile(file);
-			assert(from);
-
-			// creates a copy of the file
-			memcpy(buffer, from, *size);
-
+			buffer = start->_file->getFile(file);
 			break;
 		}
-
 	}
 
 	if (!buffer || !(*size)) {
@@ -189,25 +181,25 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
 PAKFile::PAKFile(const Common::String& file) {
 	Common::File pakfile;
-	_buffer = 0;
+	uint8 *buffer = 0;
 	_open = false;
 
 	if (!pakfile.open(file.c_str())) {
-		debug("couldn't open pakfile '%s'\n", file.c_str());
+		debug(3, "couldn't open pakfile '%s'\n", file.c_str());
 		return;
 	}
 
 	uint32 filesize = pakfile.size();
-	_buffer = new uint8[filesize];
-	assert(_buffer);
+	buffer = new uint8[filesize];
+	assert(buffer);
 
-	pakfile.read(_buffer, filesize);
+	pakfile.read(buffer, filesize);
 	pakfile.close();
 
 	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
 
-	startoffset = READ_LE_UINT32(_buffer + pos);
+	startoffset = READ_LE_UINT32(buffer + pos);
 	pos += 4;
 
 	while (pos < filesize) {
@@ -215,19 +207,21 @@ PAKFile::PAKFile(const Common::String& file) {
 		assert(chunk);
 
 		// saves the name
-		chunk->_name = reinterpret_cast<const char*>(_buffer + pos);
+		chunk->_name = new char[strlen((const char*)buffer + pos) + 1];
+		assert(chunk->_name);
+		strcpy(chunk->_name, (const char*)buffer + pos);
 		pos += strlen(chunk->_name) + 1;
 		if (!(*chunk->_name))
 			break;
 
-		endoffset = READ_LE_UINT32(_buffer + pos);
+		endoffset = READ_LE_UINT32(buffer + pos);
 		pos += 4;
 
 		if (endoffset == 0) {
 			endoffset = filesize;
 		}
 
-		chunk->_data = _buffer + startoffset;
+		chunk->_start = startoffset;
 		chunk->_size = endoffset - startoffset;
 
 		_files.push_back(chunk);
@@ -238,23 +232,40 @@ PAKFile::PAKFile(const Common::String& file) {
 		startoffset = endoffset;
 	}
 	_open = true;
+	delete [] buffer;
+	
+	_filename = new char[file.size()+1];
+	assert(_filename);
+	strcpy(_filename, file.c_str());
 }
 
 PAKFile::~PAKFile() {
-	delete [] _buffer;
-	_buffer = 0;
+	delete [] _filename;
+	_filename = 0;
 	_open = false;
 
 	for (PAKFile_Iterate) {
+		delete [] (*start)->_name;
+		(*start)->_name = 0;
 		delete *start;
 		*start = 0;
 	}
 }
 
-const uint8* PAKFile::getFile(const char* file) {
+uint8* PAKFile::getFile(const char* file) {
 	for (PAKFile_Iterate) {
-		if (!scumm_stricmp((*start)->_name, file))
-			return (*start)->_data;
+		if (!scumm_stricmp((*start)->_name, file)) {
+			Common::File pakfile;
+			if (!pakfile.open(_filename)) {
+				debug(3, "couldn't open pakfile '%s'\n", _filename);
+				return 0;
+			}
+			pakfile.seek((*start)->_start);
+			uint8 *buffer = new uint8[(*start)->_size];
+			assert(buffer);
+			pakfile.read(buffer, (*start)->_size);
+			return buffer;
+		}
 	}
 	return 0;
 }
