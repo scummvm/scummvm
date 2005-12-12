@@ -910,7 +910,7 @@ void KyraEngine::snd_playSoundEffect(int track) {
 
 void KyraEngine::snd_playVoiceFile(int id) {
 	debug(9, "KyraEngine::snd_playVoiceFile(%d)", id);
-	char vocFile[8];
+	char vocFile[9];
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d.VOC", id);
 	uint32 fileSize = 0;
