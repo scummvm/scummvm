@@ -1155,7 +1155,17 @@ int KyraEngine::cmd_specialEventDisplayBrynnsNote(ScriptState *script) {
 	_screen->hideMouse();
 	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenPage);
 	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _hidPage);
-	loadBitmap("NOTE.CPS", 3, 3, 0);
+	if (_features & GF_TALKIE) {
+		if (_features & GF_ENGLISH) {
+			loadBitmap("NOTEENG.CPS", 3, 3, 0);
+		} else if (_features & GF_FRENCH) {
+			loadBitmap("NOTEFRE.CPS", 3, 3, 0);
+		} else if (_features & GF_GERMAN) {
+			loadBitmap("NOTEGER.CPS", 3, 3, 0);
+		}
+	} else {
+		loadBitmap("NOTE.CPS", 3, 3, 0);
+	}
 	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
