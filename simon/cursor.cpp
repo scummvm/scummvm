@@ -222,7 +222,7 @@ static const byte _simon2_cursors[10][256] = {
 	  0xff,0xff,0xff,0xff,0xff,0xff,0xe5,0xe5,0xe5,0xff,0xff,0xff,0xff,0xff,0xff,0xff },
 };
 
-void SimonEngine::draw_mouse_pointer() {
+void SimonEngine::drawMousePointer() {
 	if (getGameType() == GType_SIMON2)
 		_system->setMouseCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
 	else

@@ -536,7 +536,6 @@ protected:
 	void changeWindow(uint a);
 	void o_unk_103();
 	void closeWindow(uint a);
-	void o_unk_108(uint a);
 	void clear_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_x_y(uint hitarea, int x, int y);
@@ -549,22 +548,20 @@ protected:
 	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 
-	void o_unk_114();
-	void o_wait_for_vga(uint a);
-	void skip_speech();
-	void o_unk_120(uint a);
-	void o_unk_126();
-	void o_play_music_resource();
-	void o_save_game();
-	void o_load_game();
+	void o_waitForSync(uint a);
+	void skipSpeech();
+	void o_sync(uint a);
+	void o_playMusic();
+	void o_saveGame();
+	void o_loadGame();
 	void o_confirmQuit();
 	void o_restoreIconArray(uint a);
-	void o_unk_138();
+	void o_freezeBottom();
 	void killAllTimers();
 
 	uint getOffsetOfChild2Param(Child2 *child, uint prop);
 	void o_unk_160(uint a);
-	void o_play_sound(uint a);
+	void o_playSFX(uint a);
 	void o_lockZone();
 	void o_unlockZone();
 	void o_pathfind(int x, int y, uint var_1, uint var_2);
@@ -572,12 +569,12 @@ protected:
 	void o_mouseOff();
 	void o_loadBeard();
 	void o_unloadBeard();
-	void o_clear_vgapointer_entry(uint a);
-	void o_unk_186();
-	void o_fade_to_black();
+	void o_unloadZone(uint a);
+	void o_unfreezeBottom();
+	void o_fadeToBlack();
 
 	TextLocation *getTextLocation(uint a);
-	void o_print_str();
+	void o_printStr();
 	void o_setup_cond_c();
 	void setup_cond_c_helper();
 
@@ -590,7 +587,6 @@ protected:
 
 	void loadTextIntoMem(uint string_id);
 	void loadTablesIntoMem(uint subr_id);
-
 
 	uint loadTextFile(const char *filename, byte *dst);
 	Common::File *openTablesFile(const char *filename);
@@ -606,7 +602,7 @@ protected:
 	bool kickoffTimeEvents();
 
 	void defocusHitarea();
-	void startSubroutine170();
+	void endCutscene();
 	void runSubroutine101();
 	void handle_uparrow_hitarea(FillOrCopyStruct *fcs);
 	void handle_downarrow_hitarea(FillOrCopyStruct *fcs);
@@ -632,7 +628,7 @@ protected:
 
 	void handle_mouse_moved();
 	void pollMouseXY();
-	void draw_mouse_pointer();
+	void drawMousePointer();
 
 	void removeIconArray(uint fcs_index);
 	void draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y);
@@ -654,13 +650,13 @@ protected:
 	void o_set_video_mode(uint mode, uint vga_res);
 	void set_video_mode_internal(uint mode, uint vga_res_id);
 
-	void ensureVgaResLoadedC(uint vga_res);
-	void ensureVgaResLoaded(uint vga_res);
+	void o_loadZone(uint vga_res);
+	void loadZone(uint vga_res);
 
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
 	void o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
-	void talk_with_speech(uint speech_id, uint vga_sprite_id);
-	void talk_with_text(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
+	void playSpeech(uint speech_id, uint vga_sprite_id);
+	void printText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
 	FillOrCopyStruct *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
@@ -774,13 +770,13 @@ protected:
 	void drawImages_Feeble(VC10_state *state);
 
 	void delete_vga_timer(VgaTimerEntry * vte);
-	void vc_resume_sprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
-	int vc_read_var_or_word();
-	uint vc_read_next_word();
-	uint vc_read_next_byte();
-	uint vc_read_var(uint var);
-	void vc_write_var(uint var, int16 value);
-	void vc_skip_next_instruction();
+	void vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
+	int vcReadVarOrWord();
+	uint vcReadNextWord();
+	uint vcReadNextByte();
+	uint vcReadVar(uint var);
+	void vcWriteVar(uint var, int16 value);
+	void vcSkipNextInstruction();
 
 	int getScale(int y, int x);
 
@@ -789,14 +785,14 @@ protected:
 	bool vc_maybe_skip_proc_1(uint16 a, int16 b);
 
 	void add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file);
-	VgaSprite *find_cur_sprite();
-	void vc_set_bit_to(uint bit, bool value);
+	VgaSprite *findCurSprite();
+
+	bool vcGetBit(uint bit);
+	void vcSetBitTo(uint bit, bool value);
 
 	void expire_vga_timers();
 
 	bool isSpriteLoaded(uint16 id, uint16 fileId);
-
-	bool vc_get_bit(uint bit);
 
 	void fcs_setTextColor(FillOrCopyStruct *fcs, uint value);
 
@@ -849,7 +845,7 @@ protected:
 	void print_char_helper_1(const byte *src, uint len);
 	void print_char_helper_5(FillOrCopyStruct *fcs);
 
-	void quick_load_or_save();
+	void quickLoadOrSave();
 	void shutdown();
 
 	byte *vc10_uncompressFlip(const byte *src, uint w, uint h);
@@ -857,8 +853,8 @@ protected:
 
 	Item *getNextItemPtrStrange();
 
-	bool save_game(uint slot, char *caption);
-	bool load_game(uint slot);
+	bool saveGame(uint slot, char *caption);
+	bool loadGame(uint slot);
 
 	void showmessage_helper_2();
 	void print_char_helper_6(uint i);
@@ -887,15 +883,15 @@ protected:
 
 	void set_volume(int volume);
 
-	void save_or_load_dialog(bool load);
+	void saveOrLoadDialog(bool load);
 	void o_unk_132_helper_3();
 	int o_unk_132_helper(bool *b, char *buf);
-	void o_clear_character(FillOrCopyStruct *fcs, int x, byte b = 0);
-	void savegame_dialog(char *buf);
-	void o_file_error(FillOrCopyStruct *fcs, bool save_error);
+	void o_clearCharacter(FillOrCopyStruct *fcs, int x, byte b = 0);
+	void saveGameDialog(char *buf);
+	void o_fileError(FillOrCopyStruct *fcs, bool save_error);
 
-	int count_savegames();
-	int display_savegame_list(int curpos, bool load, char *dst);
+	int countSaveGames();
+	int displaySaveGameList(int curpos, bool load, char *dst);
 
 	void show_it(void *buf);
 

@@ -211,7 +211,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 				break;
 			case 'd': {
 					int16 tmp = (int16)readUint16Wrapper(src);
-					if (tmp < 0) tmp = vc_read_var(-tmp);
+					if (tmp < 0) tmp = vcReadVar(-tmp);
 					fprintf(_dumpFile, "%d ", tmp);
 					src += 2;
 					break;

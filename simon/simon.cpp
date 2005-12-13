@@ -1615,7 +1615,7 @@ void SimonEngine::setup_cond_c_helper() {
 
 		do {
 			if (_exitCutscene && (_bitArray[0] & 0x200)) {
-				startSubroutine170();
+				endCutscene();
 				goto out_of_here;
 			}
 
@@ -1640,7 +1640,7 @@ out_of_here:
 	_lastHitArea2Ptr = NULL;
 }
 
-void SimonEngine::startSubroutine170() {
+void SimonEngine::endCutscene() {
 	Subroutine *sub;
 
 	_sound->stopVoice();
@@ -1765,7 +1765,7 @@ void SimonEngine::handle_mouse_moved() {
 		_lastHitArea3 = (HitArea *) - 1;
 
 get_out:
-	draw_mouse_pointer();
+	drawMousePointer();
 	_needHitAreaRecalc = 0;
 }
 
@@ -2271,7 +2271,7 @@ TextLocation *SimonEngine::getTextLocation(uint a) {
 	return NULL;
 }
 
-void SimonEngine::o_print_str() {
+void SimonEngine::o_printStr() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
 	uint string_id = getNextStringID();
@@ -2288,22 +2288,22 @@ void SimonEngine::o_print_str() {
 	tl = getTextLocation(vgaSpriteId);
 
 	if (_speech && speech_id != 0)
-		talk_with_speech(speech_id, vgaSpriteId);
+		playSpeech(speech_id, vgaSpriteId);
 	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE) && speech_id == 0)
 		o_kill_sprite_simon2(2, vgaSpriteId + 2);
 
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-		talk_with_text(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
+		printText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
 
 }
 
-void SimonEngine::ensureVgaResLoadedC(uint vga_res) {
+void SimonEngine::o_loadZone(uint vga_res) {
 	_lockWord |= 0x80;
-	ensureVgaResLoaded(vga_res);
+	loadZone(vga_res);
 	_lockWord &= ~0x80;
 }
 
-void SimonEngine::ensureVgaResLoaded(uint vga_res) {
+void SimonEngine::loadZone(uint vga_res) {
 	VgaPointersEntry *vpe;
 
 	CHECK_BOUNDS(vga_res, _vgaBufferPointers);
@@ -2419,7 +2419,7 @@ void SimonEngine::vga_buf_unk_proc2(uint a, byte *end) {
 	}
 }
 
-void SimonEngine::o_clear_vgapointer_entry(uint a) {
+void SimonEngine::o_unloadZone(uint a) {
 	VgaPointersEntry *vpe;
 
 	vpe = &_vgaBufferPointers[a];
@@ -2471,7 +2471,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		if (vpe->vgaFile1 != NULL)
 			break;
 
-		ensureVgaResLoaded(num);
+		loadZone(num);
 	}
 
 	// ensure flipping complete
@@ -2560,7 +2560,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	}
 }
 
-void SimonEngine::o_fade_to_black() {
+void SimonEngine::o_fadeToBlack() {
 	uint i;
 
 	memcpy(_videoBuf1, _paletteBackup, 1024);
@@ -2614,7 +2614,7 @@ void SimonEngine::expire_vga_timers() {
 				// special scroll timer
 				scroll_timeout();
 			} else {
-				vc_resume_sprite(script_ptr, cur_file, cur_unk);
+				vcResumeSprite(script_ptr, cur_file, cur_unk);
 			}
 			vte = _nextVgaTimerToProcess;
 		} else {
@@ -2645,7 +2645,7 @@ void SimonEngine::scroll_timeout() {
 	add_vga_timer(6, NULL, 0, 0);
 }
 
-void SimonEngine::vc_resume_sprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
+void SimonEngine::vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
 	VgaPointersEntry *vpe;
 
 	_vgaCurSpriteId = cur_sprite;
@@ -2701,20 +2701,20 @@ void SimonEngine::o_mouseOff() {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::o_wait_for_vga(uint a) {
+void SimonEngine::o_waitForSync(uint a) {
 	_vgaWaitFor = a;
 	_timer1 = 0;
 	_exitCutscene = false;
 	_skipSpeech = false;
 	while (_vgaWaitFor != 0) {
 		if (_skipSpeech && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
-			if (_vgaWaitFor == 200 && !vc_get_bit(14)) {
-				skip_speech();
+			if (_vgaWaitFor == 200 && !vcGetBit(14)) {
+				skipSpeech();
 				break;
 			}
 		} else if (_exitCutscene) {
-			if (vc_get_bit(9)) {
-				startSubroutine170();
+			if (vcGetBit(9)) {
+				endCutscene();
 				break;
 			}
 		} else {
@@ -2736,13 +2736,13 @@ void SimonEngine::o_wait_for_vga(uint a) {
 	}
 }
 
-void SimonEngine::skip_speech() {
+void SimonEngine::skipSpeech() {
 	_sound->stopVoice();
 	if (!(_bitArray[1] & 0x1000)) {
 		_bitArray[0] |= 0x4000;
 		_variableArray[100] = 5;
 		loadSprite(4, 1, 30, 0, 0, 0);
-		o_wait_for_vga(130);
+		o_waitForSync(130);
 		o_kill_sprite_simon2(2, 1);
 	}
 }
@@ -2826,7 +2826,7 @@ void SimonEngine::timer_vga_sprites_helper() {
 
 	_scrollX += _scrollFlag;
 
-	vc_write_var(251, _scrollX);
+	vcWriteVar(251, _scrollX);
 
 	_scrollFlag = 0;
 }
@@ -3180,7 +3180,7 @@ void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
 	_lockWord &= ~0x8000;
 }
 
-VgaSprite *SimonEngine::find_cur_sprite() {
+VgaSprite *SimonEngine::findCurSprite() {
 	VgaSprite *vsp = _vgaSprites;
 	while (vsp->id) {
 		if (getGameType() == GType_SIMON1) {
@@ -3217,27 +3217,27 @@ void SimonEngine::processSpecialKeys() {
 		break;
 	case 59: // F1
 		if (getGameType() == GType_SIMON1) {
-			vc_write_var(5, 40);
+			vcWriteVar(5, 40);
 		} else {
-			vc_write_var(5, 50);
+			vcWriteVar(5, 50);
 		}
-		vc_write_var(86, 0);
+		vcWriteVar(86, 0);
 		break;
 	case 60: // F2
 		if (getGameType() == GType_SIMON1) {
-			vc_write_var(5, 60);
+			vcWriteVar(5, 60);
 		} else {
-			vc_write_var(5, 75);
+			vcWriteVar(5, 75);
 		}
-		vc_write_var(86, 1);
+		vcWriteVar(86, 1);
 		break;
 	case 61: // F3
 		if (getGameType() == GType_SIMON1) {
-			vc_write_var(5, 100);
+			vcWriteVar(5, 100);
 		} else {
-			vc_write_var(5, 125);
+			vcWriteVar(5, 125);
 		}
-		vc_write_var(86, 2);
+		vcWriteVar(86, 2);
 		break;
 	case 63: // F5
 		if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
@@ -3402,7 +3402,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 		_curVgaFile1 = vpe->vgaFile1;
 		if (vpe->vgaFile1 != NULL)
 			break;
-		ensureVgaResLoaded(fileId);
+		loadZone(fileId);
 	}
 
 	pp = _curVgaFile1;
@@ -3446,7 +3446,7 @@ void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint
 	_lockWord &= ~0x40;
 }
 
-void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
+void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 	if (getGameType() == GType_SIMON1) {
 		if (speech_id == 9999) {
 			if (_subtitles)
@@ -3455,13 +3455,13 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 				_bitArray[0] |= 0x4000;
 				_variableArray[100] = 15;
 				loadSprite(4, 1, 130, 0, 0, 0);
-				o_wait_for_vga(130);
+				o_waitForSync(130);
 			}
 			_skipVgaWait = true;
 		} else {
 			if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 204, 0, 0, 0);
-				o_wait_for_vga(204);
+				o_waitForSync(204);
 				o_kill_sprite_simon1(204);
 			}
 			o_kill_sprite_simon1(vgaSpriteId + 201);
@@ -3476,7 +3476,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 				_bitArray[0] |= 0x4000;
 				_variableArray[100] = 5;
 				loadSprite(4, 1, 30, 0, 0, 0);
-				o_wait_for_vga(130);
+				o_waitForSync(130);
 			}
 			_skipVgaWait = true;
 		} else {
@@ -3485,7 +3485,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 				return;
 			} else if (_subtitles && _scriptVar2) {
 				loadSprite(4, 2, 5, 0, 0, 0);
-				o_wait_for_vga(205);
+				o_waitForSync(205);
 				o_kill_sprite_simon2(2,5);
 			}
 
@@ -3496,7 +3496,7 @@ void SimonEngine::talk_with_speech(uint speech_id, uint vgaSpriteId) {
 	}
 }
 
-void SimonEngine::talk_with_text(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
+void SimonEngine::printText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
 	char convertedString[320];
 	char *convertedString2 = convertedString;
 	int16 height, talkDelay;
@@ -4107,7 +4107,7 @@ void SimonEngine::delay(uint amount) {
 					// We should only allow a load or save when it was possible in original
 					// This stops load/save during copy protection, conversations and cut scenes
 					if (!_mouseHideCount && !_showPreposition)
-						quick_load_or_save();
+						quickLoadOrSave();
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'a') {
 						GUI::Dialog *_aboutDialog;
@@ -4163,7 +4163,7 @@ void SimonEngine::delay(uint amount) {
 	} while (cur < start + amount);
 }
 
-void SimonEngine::loadMusic (uint music) {
+void SimonEngine::loadMusic(uint music) {
 	char buf[4];
 
 	if (getPlatform() == Common::kPlatformAmiga) {

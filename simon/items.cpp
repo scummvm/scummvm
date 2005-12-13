@@ -375,10 +375,10 @@ int SimonEngine::runScript() {
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
 				if (getFeatures() & GF_TALKIE) {
-					uint speech_id = getNextWord();
+					uint speechId = getNextWord();
 					if (var < 20) {
 						_stringIdArray3[var] = string_id;
-						_speechIdArray4[var] = speech_id;
+						_speechIdArray4[var] = speechId;
 					}
 				} else {
 					if (var < 20) {
@@ -449,12 +449,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 83:{									/* restart subroutine */
-				if (getGameType() == GType_SIMON2)
+				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 					o_83_helper();
 				return -10;
 			}
 
-		case 87:{									/* dummy opcode */
+		case 87:{									/* comment */
 				getNextStringID();
 			}
 			break;
@@ -521,7 +521,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 97:{									/* load vga */
-				ensureVgaResLoadedC(getVarOrWord());
+				o_loadZone(getVarOrWord());
 			}
 			break;
 
@@ -674,13 +674,13 @@ int SimonEngine::runScript() {
 				_scriptVar2 = (var == 200);
 
 				if (var != 200 || !_skipVgaWait)
-					o_wait_for_vga(var);
+					o_waitForSync(var);
 				_skipVgaWait = false;
 			}
 			break;
 
 		case 120:{
-				o_unk_120(getVarOrWord());
+				o_sync(getVarOrWord());
 			}
 			break;
 
@@ -733,7 +733,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 127:{									/* deals with music */
-				o_play_music_resource();
+				o_playMusic();
 			}
 			break;
 
@@ -762,19 +762,19 @@ int SimonEngine::runScript() {
 
 		case 132:{									/* save game */
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-				o_save_game();
+				o_saveGame();
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 
 		case 133:{									/* load game */
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				if (getGameType() == GType_FF) {
-					load_game(readVariable(55));
+					loadGame(readVariable(55));
 				} else {
-					o_load_game();
+					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+					o_loadGame();
+					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 				}
-				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 
@@ -812,7 +812,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 138:{									/* vga pointer op 4 */
-				o_unk_138();
+				o_freezeBottom();
 			}
 			break;
 
@@ -940,12 +940,12 @@ int SimonEngine::runScript() {
 			break;
 
 		case 162:{									/* print string */
-				o_print_str();
+				o_printStr();
 			}
 			break;
 
 		case 163:{									/* play sound */
-				o_play_sound(getVarOrWord());
+				o_playSFX(getVarOrWord());
 			}
 			break;
 
@@ -1014,17 +1014,17 @@ int SimonEngine::runScript() {
 				uint vgaSpriteId = getVarOrByte();				/* and room descriptions */
 				uint color = getVarOrByte();
 				uint string_id = getVarOrByte();
-				uint speech_id = 0;
+				uint speechId = 0;
 
 				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
 				TextLocation *tl = getTextLocation(vgaSpriteId);
 				if (getFeatures() & GF_TALKIE)
-					speech_id = _speechIdArray4[string_id];
+					speechId = _speechIdArray4[string_id];
 
-				if (_speech && speech_id != 0)
-					talk_with_speech(speech_id, vgaSpriteId);
+				if (_speech && speechId != 0)
+					playSpeech(speechId, vgaSpriteId);
 				if (string_ptr != NULL && _subtitles)
-					talk_with_text(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+					printText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 			}
 			break;
 
@@ -1067,7 +1067,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 184:{									/* clear vgapointer entry */
-				o_clear_vgapointer_entry(getVarOrWord());
+				o_unloadZone(getVarOrWord());
 			}
 			break;
 
@@ -1088,14 +1088,14 @@ int SimonEngine::runScript() {
 			break;
 
 		case 186:{									/* vga pointer op 3 */
-				o_unk_186();
+				o_unfreezeBottom();
 			}
 			break;
 
 		case 187:{									/* fade to black */
 				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
-				o_fade_to_black();
+				o_fadeToBlack();
 			}
 			break;
 
@@ -1281,8 +1281,8 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 
 void SimonEngine::o_83_helper() {
 		if (_exitCutscene) {
-			if (vc_get_bit(9)) {
-				startSubroutine170();
+			if (vcGetBit(9)) {
+				endCutscene();
 			}
 		} else {
 			processSpecialKeys();
@@ -1293,8 +1293,8 @@ void SimonEngine::o_waitForMark(uint i) {
 	_exitCutscene = false;
 	while (!(_marks & (1 << i))) {
 		if (_exitCutscene) {
-			if (vc_get_bit(9)) {
-				startSubroutine170();
+			if (vcGetBit(9)) {
+				endCutscene();
 				break;
 			}
 		} else {
@@ -1350,63 +1350,63 @@ void SimonEngine::o_inventory_descriptions() {
 
 	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
 		if (child != NULL && child->avail_props & 0x200) {
-			uint speech_id = child->array[getOffsetOfChild2Param(child, 0x200)];
+			uint speechId = child->array[getOffsetOfChild2Param(child, 0x200)];
 
 			if (child->avail_props & 0x100) {
-				uint speech_id_offs = child->array[getOffsetOfChild2Param(child, 0x100)];
+				uint speechIdOffs = child->array[getOffsetOfChild2Param(child, 0x100)];
 
-				if (speech_id == 116)
-					speech_id = speech_id_offs + 115;
-				if (speech_id == 92)
-					speech_id = speech_id_offs + 98;
-				if (speech_id == 99)
-					speech_id = 9;
-				if (speech_id == 97) {
-					switch (speech_id_offs) {
+				if (speechId == 116)
+					speechId = speechIdOffs + 115;
+				if (speechId == 92)
+					speechId = speechIdOffs + 98;
+				if (speechId == 99)
+					speechId = 9;
+				if (speechId == 97) {
+					switch (speechIdOffs) {
 					case 12:
-						speech_id = 109;
+						speechId = 109;
 						break;
 					case 14:
-						speech_id = 108;
+						speechId = 108;
 						break;
 					case 18:
-						speech_id = 107;
+						speechId = 107;
 						break;
 					case 20:
-						speech_id = 106;
+						speechId = 106;
 						break;
 					case 22:
-						speech_id = 105;
+						speechId = 105;
 						break;
 					case 28:
-						speech_id = 104;
+						speechId = 104;
 						break;
 					case 90:
-						speech_id = 103;
+						speechId = 103;
 						break;
 					case 92:
-						speech_id = 102;
+						speechId = 102;
 						break;
 					case 100:
-						speech_id = 51;
+						speechId = 51;
 						break;
 					default:
-						error("o_177: invalid case %d", speech_id_offs);
+						error("o_177: invalid case %d", speechIdOffs);
 					}
 				}
 			}
 
 			if (_speech)
-				talk_with_speech(speech_id, vgaSpriteId);
+				playSpeech(speechId, vgaSpriteId);
 		}
 
 	} else if (getFeatures() & GF_TALKIE) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
-			talk_with_speech(child->array[offs], vgaSpriteId);
+			playSpeech(child->array[offs], vgaSpriteId);
 		} else if (child != NULL && child->avail_props & 0x100) {
 			uint offs = getOffsetOfChild2Param(child, 0x100);
-			talk_with_speech(child->array[offs] + 3550, vgaSpriteId);
+			playSpeech(child->array[offs] + 3550, vgaSpriteId);
 		}
 	}
 
@@ -1416,7 +1416,7 @@ void SimonEngine::o_inventory_descriptions() {
 			string_ptr = buf;
 		}
 		if (string_ptr != NULL)
-			talk_with_text(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+			printText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 	}
 }
 
@@ -1478,12 +1478,12 @@ void SimonEngine::o_restoreIconArray(uint fcs_index) {
 	drawIconArray(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
 }
 
-void SimonEngine::o_unk_138() {
+void SimonEngine::o_freezeBottom() {
 	_vgaBufStart = _vgaBufFreeStart;
 	_vgaFileBufOrg = _vgaBufFreeStart;
 }
 
-void SimonEngine::o_unk_186() {
+void SimonEngine::o_unfreezeBottom() {
 	_vgaBufFreeStart = _vgaFileBufOrg2;
 	_vgaBufStart = _vgaFileBufOrg2;
 	_vgaFileBufOrg = _vgaFileBufOrg2;
@@ -1505,14 +1505,11 @@ int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
 	if (!_saveLoadFlag) {
 	strange_jump:;
 		_saveLoadFlag = false;
-		savegame_dialog(buf);
+		saveGameDialog(buf);
 	}
 
 start_over:;
 	_keyPressed = 0;
-
-	if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE)
-		goto start_over_3;
 
 start_over_2:;
 	_lastHitArea = _lastHitArea3 = 0;
@@ -1559,51 +1556,6 @@ start_over_2:;
 	if (ha->id >= 214)
 		goto start_over_2;
 	return ha->id - 208;
-
-//FIXME Hack to allow load and save file selection in simon1cd32
-//      Uses the follow keys for moving around
-//      1 - 6 to select slot to load/save
-//      Up Arrow to move up slots
-//      Down Arrow to move down slots
-//      X to exit
-start_over_3:;
-	if (_saveLoadFlag) {
-		*b = false;
-		delay(1);
-		return _keyPressed;
-	}
-
-	if (_keyPressed == 17) {
-		if (_saveLoadRowCurPos == 1)
-			goto start_over_3;
-		if (_saveLoadRowCurPos < 7)
-			_saveLoadRowCurPos = 1;
-		else
-			_saveLoadRowCurPos -= 6;
-
-		goto strange_jump;
-	}
-
-	if (_keyPressed == 18) {
-		if (!_saveDialogFlag)
-			goto start_over_3;
-		_saveLoadRowCurPos += 6;
-		if (_saveLoadRowCurPos >= _numSaveGameRows)
-			_saveLoadRowCurPos = _numSaveGameRows;
-		goto strange_jump;
-	}
-
-	if (_keyPressed == 120)
-		return 205;
-
-	if (_keyPressed > 48 && _keyPressed < 55) {
-		return _keyPressed - 49;
-	}
-
-
-	delay(1);
-	goto start_over_3;
-
 }
 
 void SimonEngine::o_unk_132_helper_3() {
@@ -1611,7 +1563,7 @@ void SimonEngine::o_unk_132_helper_3() {
 		set_hitarea_bit_0x40(i);
 }
 
-void SimonEngine::o_clear_character(FillOrCopyStruct *fcs, int x, byte b) {
+void SimonEngine::o_clearCharacter(FillOrCopyStruct *fcs, int x, byte b) {
 	byte old_text;
 
 	video_putchar(fcs, x, b);
@@ -1633,7 +1585,7 @@ void SimonEngine::o_clear_character(FillOrCopyStruct *fcs, int x, byte b) {
 	video_putchar(fcs, 8);
 }
 
-void SimonEngine::o_play_music_resource() {
+void SimonEngine::o_playMusic() {
 	int music = getVarOrWord();
 	int track = getVarOrWord();
 
@@ -1662,7 +1614,7 @@ void SimonEngine::o_play_music_resource() {
 	}
 }
 
-void SimonEngine::o_unk_120(uint a) {
+void SimonEngine::o_sync(uint a) {
 	uint16 id = to16Wrapper(a);
 	_lockWord |= 0x8000;
 	_vcPtr = (byte *)&id;
@@ -1670,7 +1622,7 @@ void SimonEngine::o_unk_120(uint a) {
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::o_play_sound(uint sound_id) {
+void SimonEngine::o_playSFX(uint sound_id) {
 	if (getGameId() == GID_SIMON1DOS)
 		playSting(sound_id);
 	else

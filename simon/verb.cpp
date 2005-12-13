@@ -193,7 +193,7 @@ void SimonEngine::defocusHitarea() {
 
 	if (getGameType() == GType_SIMON2) {
 		if (_bitArray[4] & 0x8000) {
-			o_unk_120(202);
+			o_sync(202);
 			_lastHitArea2Ptr = NULL;
 			return;
 		}

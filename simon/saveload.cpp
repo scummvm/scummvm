@@ -32,15 +32,15 @@
 
 namespace Simon {
 
-void SimonEngine::o_save_game() {
-	save_or_load_dialog(false);
+void SimonEngine::o_saveGame() {
+	saveOrLoadDialog(false);
 }
 
-void SimonEngine::o_load_game() {
-	save_or_load_dialog(true);
+void SimonEngine::o_loadGame() {
+	saveOrLoadDialog(true);
 }
 
-int SimonEngine::count_savegames() {
+int SimonEngine::countSaveGames() {
 	Common::InSaveFile *f;
 	uint i = 1;
 	bool marks[256];
@@ -60,7 +60,7 @@ int SimonEngine::count_savegames() {
 	return i;
 }
 
-int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
+int SimonEngine::displaySaveGameList(int curpos, bool load, char *dst) {
 	int slot, last_slot;
 	Common::InSaveFile *in;
 
@@ -105,7 +105,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 	return slot - curpos;
 }
 
-void SimonEngine::quick_load_or_save() {
+void SimonEngine::quickLoadOrSave() {
 	// simon1demo subroutines are missing too many segments
 	// original demo didn't allow load or save either.
 	if (getGameId() == GID_SIMON1DEMO)
@@ -117,7 +117,7 @@ void SimonEngine::quick_load_or_save() {
 	char *filename = gen_savename(_saveLoadSlot);
 	if (_saveLoadType == 2) {
 		Subroutine *sub;
-		success = load_game(_saveLoadSlot);
+		success = loadGame(_saveLoadSlot);
 		if (!success) {
 			sprintf(buf, "Failed to load game state to file:\n\n%s", filename);
 		} else {
@@ -126,12 +126,12 @@ void SimonEngine::quick_load_or_save() {
 			drawIconArray(2, getItem1Ptr(), 0, 0);
 			mouseOn();
 			// Reset engine?
-			vc_set_bit_to(97, true);
+			vcSetBitTo(97, true);
 			sub = getSubroutineByID(100);
 			startSubroutine(sub);
 		}
 	} else {
-		success = save_game(_saveLoadSlot, _saveLoadName);
+		success = saveGame(_saveLoadSlot, _saveLoadName);
 		if (!success)
 			sprintf(buf, "Failed to save game state to file:\n\n%s", filename);
 	}
@@ -150,12 +150,12 @@ void SimonEngine::quick_load_or_save() {
 	_saveLoadType = 0;
 }
 
-void SimonEngine::savegame_dialog(char *buf) {
+void SimonEngine::saveGameDialog(char *buf) {
 	int i;
 
 	o_unk_132_helper_3();
 
-	i = display_savegame_list(_saveLoadRowCurPos, _saveOrLoad, buf);
+	i = displaySaveGameList(_saveLoadRowCurPos, _saveOrLoad, buf);
 
 	_saveDialogFlag = true;
 
@@ -174,7 +174,7 @@ void SimonEngine::savegame_dialog(char *buf) {
 	} while (--i);
 }
 
-void SimonEngine::save_or_load_dialog(bool load) {
+void SimonEngine::saveOrLoadDialog(bool load) {
 	time_t save_time;
 	int number_of_savegames;
 	int i;
@@ -191,7 +191,7 @@ void SimonEngine::save_or_load_dialog(bool load) {
 
 	_copyPartialMode = 1;
 
-	number_of_savegames = count_savegames();
+	number_of_savegames = countSaveGames();
 	if (!load)
 		number_of_savegames++;
 	number_of_savegames -= 6;
@@ -283,7 +283,7 @@ restart:;
 						goto get_out;
 					clear_hitarea_bit_0x40(0xd0 + unk132_result);
 					if (_saveLoadFlag) {
-						o_clear_character(_windowArray[5], 8);
+						o_clearCharacter(_windowArray[5], 8);
 						// move code
 					}
 					goto if_1;
@@ -297,7 +297,7 @@ restart:;
 			} while (i >= 0x80 || i == 0);
 
 			// after_do_2
-			o_clear_character(_windowArray[5], 8);
+			o_clearCharacter(_windowArray[5], 8);
 			if (i == 10 || i == 13)
 				break;
 			if (i == 8) {
@@ -316,7 +316,7 @@ restart:;
 
 					name[name_len] = 0;
 
-					o_clear_character(_windowArray[5], x, m);
+					o_clearCharacter(_windowArray[5], x, m);
 				}
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
@@ -326,11 +326,11 @@ restart:;
 		}
 
 		// do_save
-		if (!save_game(_saveLoadRowCurPos + unk132_result, buf + unk132_result * 18))
-			o_file_error(_windowArray[5], true);
+		if (!saveGame(_saveLoadRowCurPos + unk132_result, buf + unk132_result * 18))
+			o_fileError(_windowArray[5], true);
 	} else {
-		if (!load_game(_saveLoadRowCurPos + i))
-			o_file_error(_windowArray[5], false);
+		if (!loadGame(_saveLoadRowCurPos + i))
+			o_fileError(_windowArray[5], false);
 	}
 
 get_out:;
@@ -349,7 +349,7 @@ get_out:;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void SimonEngine::o_file_error(FillOrCopyStruct *fcs, bool save_error) {
+void SimonEngine::o_fileError(FillOrCopyStruct *fcs, bool save_error) {
 	HitArea *ha;
 	const char *string, *string2;
 
@@ -399,7 +399,7 @@ loop:;
 	delete_hitarea(0x7FFF);
 }
 
-bool SimonEngine::save_game(uint slot, char *caption) {
+bool SimonEngine::saveGame(uint slot, char *caption) {
 	Common::OutSaveFile *f;
 	uint item_index, num_item, i, j;
 	TimeEvent *te;
@@ -512,7 +512,7 @@ char *SimonEngine::gen_savename(int slot) {
 	return buf;
 }
 
-bool SimonEngine::load_game(uint slot) {
+bool SimonEngine::loadGame(uint slot) {
 	char ident[100];
 	Common::InSaveFile *f;
 	uint num, item_index, i, j;
