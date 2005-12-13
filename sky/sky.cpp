@@ -244,6 +244,7 @@ int SkyEngine::go() {
 
 	_lastSaveTime = _system->getMillis();
 
+	uint32 delayCount = _system->getMillis();
 	while (!_systemVars.quitGame) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
@@ -260,10 +261,13 @@ int SkyEngine::go() {
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine((uint16)_mouseX, (uint16)_mouseY);
 		handleKey();
-		while (_systemVars.paused) {
-			_system->updateScreen();
-			delay(300);
-			handleKey();
+		if (_systemVars.paused) {
+			do {
+				_system->updateScreen();
+				delay(50);
+				handleKey();
+			} while (_systemVars.paused);
+			delayCount = _system->getMillis();
 		}
 
 		_skyLogic->engine();
@@ -279,8 +283,15 @@ int SkyEngine::go() {
 			delay(0);
 		else if (_fastMode & 1)
 			delay(10);
-		else
-			delay((frameTime + _systemVars.gameSpeed) - _system->getMillis());
+		else {
+			delayCount += _systemVars.gameSpeed;
+			int needDelay = delayCount - (int)_system->getMillis();
+			if ((needDelay < 0) || (needDelay > 4 * _systemVars.gameSpeed)) {
+				needDelay = 0;
+				delayCount = _system->getMillis();
+			}
+			delay(needDelay);
+		}
 	}
 
 	_skyControl->showGameQuitMsg();
