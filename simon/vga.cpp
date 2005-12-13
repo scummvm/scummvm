@@ -691,8 +691,6 @@ void SimonEngine::vc10_draw() {
 	debug(1, "vc10_draw: image %d palette %d x %d y %d flags 0x0%x\n", state.image, state.palette, state.x, state.y, state.flags);
 
 	p2 = _curVgaFile2 + state.image * 8;
-	state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
-
 	if (getGameType() == GType_FF) {
 		state.depack_src = _curVgaFile2 + READ_LE_UINT32(p2);
 		width = READ_LE_UINT16(p2 + 6);
