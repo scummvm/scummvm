@@ -249,8 +249,6 @@ int SkyEngine::go() {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
-		int32 frameTime = (int32)_system->getMillis();
-
 		if (shouldPerformAutoSave(_lastSaveTime)) {
 			if (_skyControl->loadSaveAllowed()) {
 				_lastSaveTime = _system->getMillis();
