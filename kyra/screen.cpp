@@ -1584,15 +1584,15 @@ int Screen::getRectSize(int x, int y) {
 
 void Screen::hideMouse() {
 	debug(9, "hideMouse()");
-	++_mouseLockCount;
+	//++_mouseLockCount;
 	_system->showMouse(false);
 }
 
 void Screen::showMouse() {
 	debug(9, "showMouse()");
-	if (--_mouseLockCount == 0) { 
+	//if (--_mouseLockCount == 0) { 
 		_system->showMouse(true);
-	}
+	//}
 }
 
 void Screen::setShapePages(int page1, int page2) {

@@ -476,7 +476,7 @@ protected:
 	int processInputHelper(int xpos, int ypos);
 	int clickEventHandler(int xpos, int ypos);
 	void clickEventHandler2();
-	void updateMousePointer();
+	void updateMousePointer(bool forceUpdate = false);
 	bool hasClickedOnExit(int xpos, int ypos);
 	int checkForNPCScriptRun(int xpos, int ypos);
 	void runNpcScript(int func);
@@ -560,6 +560,8 @@ protected:
 	bool _quitFlag;
 	bool _skipIntroFlag;
 	bool _abortIntroFlag;
+	bool _abortWalkFlag;
+	bool _abortWalkFlag2;
 	char _talkBuffer[300];
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
 	TalkCoords _talkCoords;
