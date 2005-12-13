@@ -367,6 +367,10 @@ int KyraEngine::init(GameDetector &detector) {
 	_lastProcessedItemHeight = 16;
 	
 	_hidPage = _screenPage = 0;
+	
+	_unkScreenVar1 = 1;
+	_unkScreenVar2 = 0;
+	_unkScreenVar3 = 0;
 
 	return 0;
 }
@@ -1346,15 +1350,15 @@ void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 		_res->unloadPakFile(file);
 	}
 	_roomTable[roomIndex].nameIndex = roomName;
-	// _game_unkScreenVar2 = 1;
-	// _game_unkScreenVar3 = 1;
-	// _game_unkScreenVar1 = 0;
+	_unkScreenVar2 = 1;
+	_unkScreenVar3 = 1;
+	_unkScreenVar1 = 0;
 	_brandonPosX = _currentCharacter->x1;
 	_brandonPosY = _currentCharacter->y1;
 	enterNewScene(roomIndex, _currentCharacter->facing, 0, 0, 0);
-	// _game_unkScreenVar1 = 1;
-	// _game_unkScreenVar2 = 0;
-	// _game_unkScreenVar3 = 0;
+	_unkScreenVar1 = 1;
+	_unkScreenVar2 = 0;
+	_unkScreenVar3 = 0;
 }
 
 void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypos) {
@@ -1623,11 +1627,8 @@ void KyraEngine::startSceneScript(int brandonAlive) {
 	_sprites->loadSceneShapes();
 	_exitListPtr = 0;
 
-	_screen->fillRect(7, 7, 312, 136, 0, 0);
 	_screen->setScreenPalette(_screen->_currentPalette);
-	_screen->copyRegion(7, 7, 7, 7, 305, 129, 3, 0);
-	_screen->updateScreen();
-
+	
 	_scaleMode = 1;	
 	for (int i = 0; i < 145; ++i) {
 		_scaleTable[i] = 256;
@@ -2044,8 +2045,12 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 
 void KyraEngine::initSceneScreen(int brandonAlive) {
 	// XXX (Pointless?) Palette stuff
-	//_screen->shuffleScreen(8, 8, 0x130, 0x80, 2, 0, byte_2EE1C);
-	_screen->copyRegion(1, 8, 1, 8, 304, 0x80, 2, 0);
+	if (_unkScreenVar2 == 1) {
+		_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
+	} else {
+		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+	}
+	_screen->updateScreen();
 	// XXX More (pointless?) palette stuff
 
 	if (!_scriptInterpreter->startScript(_scriptClick, 2))

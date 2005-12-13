@@ -580,6 +580,7 @@ protected:
 	int _mouseState;
 	bool _handleInput;
 	bool _updateScreen;
+	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
 
 	WSAMovieV1 *_wsaObjects[10];
 	uint16 _entranceMouseCursorTracks[8];
