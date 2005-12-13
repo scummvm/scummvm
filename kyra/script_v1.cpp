@@ -948,7 +948,18 @@ int KyraEngine::cmd_internalAnimOff(ScriptState *script) {
 }
 
 int KyraEngine::cmd_changeCharactersXAndY(ScriptState *script) {
-	warning("STUB: cmd_changeCharactersXAndY");
+	debug(3, "cmd_changeCharactersXAndY(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
+	Character *ch = &_characterList[stackPos(0)];
+	int16 x = stackPos(1);
+	int16 y = stackPos(2);
+	if (x != -1 && y != -1) {
+		x &= 0xFFFC;
+		y &= 0xFFFE;
+	}
+	restoreAllObjectBackgrounds();
+	ch->x1 = ch->x2 = x;
+	ch->y1 = ch->y2 = y;
+	preserveAllBackgrounds();
 	return 0;
 }
 
@@ -1060,7 +1071,19 @@ int KyraEngine::cmd_unhideMobileCharacter(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setCharactersLocation(ScriptState *script) {
-	warning("STUB: cmd_setCharactersLocation");
+	debug(3, "cmd_setCharactersLocation(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	Character *ch = &_characterList[stackPos(0)];
+	AnimObject *animObj = &_charactersAnimState[stackPos(0)];
+	int newScene = stackPos(1);
+	if (_currentCharacter->sceneId == ch->sceneId) {
+		if (_currentCharacter->sceneId != newScene)
+			animObj->active = 0;
+	} else if (_currentCharacter->sceneId == newScene) {
+		if (_currentCharacter->sceneId != ch->sceneId)
+			animObj->active = 1;
+	}
+	
+	ch->sceneId = stackPos(1);
 	return 0;
 }
 
@@ -1274,7 +1297,8 @@ int KyraEngine::cmd_drawItemShapeIntoScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setCharactersCurrentFrame(ScriptState *script) {
-	warning("STUB: cmd_setCharactersCurrentFrame");
+	debug(3, "cmd_setCharactersCurrentFrame(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	_characterList[stackPos(0)].currentAnimFrame = stackPos(1);
 	return 0;
 }
 

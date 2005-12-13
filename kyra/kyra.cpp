@@ -1327,6 +1327,15 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 	debug(9, "transcendScenes(%d, %d, %d, %d)", roomIndex, roomName);
 	assert(roomIndex < _roomTableSize);
+	if (_features & GF_TALKIE) {
+		char file[32];
+		assert(roomIndex < _roomTableSize);
+		int tableId = _roomTable[roomIndex].nameIndex;
+		assert(tableId < _roomFilenameTableSize);
+		strcpy(file, _roomFilenameTable[tableId]);
+		strcat(file, ".VRM");
+		_res->unloadPakFile(file);
+	}
 	_roomTable[roomIndex].nameIndex = roomName;
 	// _game_unkScreenVar2 = 1;
 	// _game_unkScreenVar3 = 1;
