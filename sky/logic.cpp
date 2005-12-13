@@ -90,6 +90,10 @@ Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *sky
 Logic::~Logic(void) {
 	delete _skyGrid;
 	delete _skyAutoRoute;
+
+	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
+		if (_moduleList[i])
+			free(_moduleList[i]);
 }
 
 void Logic::initScreen0(void) {

@@ -133,6 +133,8 @@ SkyEngine::~SkyEngine() {
 	delete _skyScreen;
 	delete _debugger;
 	delete _skyDisk;
+	delete _skyControl;
+	delete _skyCompact;
 
 	for (int i = 0; i < 300; i++)
 		if (_itemList[i])

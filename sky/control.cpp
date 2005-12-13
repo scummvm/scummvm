@@ -237,7 +237,12 @@ void Control::removePanel(void) {
 	delete _restartPanButton;		delete _fxPanButton;
 	delete _musicPanButton;			delete _bodge;
 	delete _yesNo;					delete _text;
-	delete _statusBar;
+	delete _statusBar;				delete _restoreButton;
+	
+	if (_textSprite) {
+		free(_textSprite);
+		_textSprite = NULL;
+	}
 }
 
 void Control::initPanel(void) {
@@ -318,13 +323,16 @@ void Control::initPanel(void) {
 	_restorePanLookList[6] = _autoSaveButton;
 
 	_statusBar = new ControlStatus(_skyText, _system, _screenBuf);
+
+	_textSprite = NULL;
 }
 
 void Control::buttonControl(ConResource *pButton) {
 
 	char autoSave[] = "Restore Autosave";
 	if (pButton == NULL) {
-		if (_textSprite) free(_textSprite);
+		if (_textSprite)
+			free(_textSprite);
 		_textSprite = NULL;
 		_curButtonText = 0;
 		_text->setSprite(NULL);
@@ -431,7 +439,6 @@ void Control::doLoadSavePanel(void) {
 	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 	_lastButton = -1;
 	_curButtonText = 0;
-	_textSprite = NULL;
 
 	saveRestorePanel(false);
 
@@ -469,7 +476,6 @@ void Control::doControlPanel(void) {
 	bool quitPanel = false;
 	_lastButton = -1;
 	_curButtonText = 0;
-	_textSprite = NULL;
 	uint16 clickRes = 0;
 
 	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
@@ -841,7 +847,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	bool refreshNames = true;
 	bool refreshAll = true;
 	uint16 clickRes = 0;
-	while (!quitPanel) {
+	while (!quitPanel && !SkyEngine::_systemVars.quitGame) {
 		clickRes = 0;
 		if (refreshNames || refreshAll) {
 			if (refreshAll) {
@@ -920,7 +926,8 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 					refreshNames = true;
 			}
 		}
-		if (!haveButton) buttonControl(NULL);
+		if (!haveButton)
+			buttonControl(NULL);
 	}
 
 	for (cnt = 0; cnt < MAX_ON_SCREEN + 1; cnt++)

@@ -91,6 +91,8 @@ Screen::~Screen(void) {
 	free(_gameGrid);
 	if (_currentScreen)
 		free(_currentScreen);
+	if (_scrollScreen)
+		free(_scrollScreen);
 }
 
 void Screen::clearScreen(void) {
@@ -246,14 +248,7 @@ void Screen::fnDrawScreen(uint32 palette, uint32 scroll) {
 
 void Screen::fnFadeDown(uint32 scroll) {
 
-	if (scroll && (!(SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL))) {
-		// scrolling is performed by fnFadeUp. It's just prepared here
-		_scrollScreen = _currentScreen;
-		_currentScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-		// the game will draw the new room into _currentScreen which
-		// will be scrolled into the visible screen by fnFadeUp
-		// fnFadeUp also frees the _scrollScreen
-	} else {
+	if (((scroll != 123) && (scroll != 321)) || (SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL)) {
 		uint32 delayTime = _system->getMillis();
 		for (uint8 cnt = 0; cnt < 32; cnt++) {
 			delayTime += 20;
@@ -265,6 +260,13 @@ void Screen::fnFadeDown(uint32 scroll) {
 				waitTime = 0;
 			_system->delayMillis((uint)waitTime);
 		}
+	} else {
+		// scrolling is performed by fnFadeUp. It's just prepared here
+		_scrollScreen = _currentScreen;
+		_currentScreen = (uint8 *)malloc(FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
+		// the game will draw the new room into _currentScreen which
+		// will be scrolled into the visible screen by fnFadeUp
+		// fnFadeUp also frees the _scrollScreen
 	}
 }
 
@@ -325,9 +327,8 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 
 	//_currentScreen points to new screen,
 	//_scrollScreen points to graphic showing old room
-	if ((scroll != 123) && (scroll != 321)) {
+	if ((scroll != 123) && (scroll != 321))
 		scroll = 0;
-	}
 
 	if ((scroll == 0) || (SkyEngine::_systemVars.systemFlags & SF_NO_SCROLL)) {
 		uint8 *palette = (uint8 *)_skyCompact->fetchCpt(palNum);
@@ -342,10 +343,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 		paletteFadeUp(palette);
 #endif
 	} else if (scroll == 123) {	// scroll left (going right)
-		if (!_currentScreen)
-			error("Screen::fnFadeUp[Scroll L]: _currentScreen is NULL");
-		if (!_scrollScreen)
-			error("Screen::fnFadeUp[Scroll L]: _scrollScreen is NULL");
+		assert(_currentScreen && _scrollScreen);
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
 			scrNewPtr = _currentScreen + scrollCnt * SCROLL_JUMP;
@@ -360,12 +358,8 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 			waitForTimer();
 		}
 		showScreen(_currentScreen);
-		free(_scrollScreen);
 	} else if (scroll == 321) {	// scroll right (going left)
-		if (!_currentScreen)
-			error("Screen::fnFadeUp[Scroll R]: _currentScreen is NULL");
-		if (!_scrollScreen)
-			error("Screen::fnFadeUp[Scroll R]: _scrollScreen is NULL");
+		assert(_currentScreen && _scrollScreen);
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
 			scrNewPtr = _currentScreen + GAME_SCREEN_WIDTH - (scrollCnt + 1) * SCROLL_JUMP;
@@ -380,7 +374,10 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 			waitForTimer();
 		}
 		showScreen(_currentScreen);
+	}
+	if (_scrollScreen) {
 		free(_scrollScreen);
+		_scrollScreen = NULL;
 	}
 }
 
