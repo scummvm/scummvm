@@ -250,7 +250,8 @@ void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
 
 	// this should be set to the fadeToBlack value
-	const static uint32 musicFadeTime = 2 * 1000;
+	static const uint32 musicFadeTime = 2 * 1000;
+
 	if (music->_fadeMusicOut && music->_fadeStartTime + musicFadeTime > music->_engine->_system->getMillis()) {
 		byte volume = (byte)((musicFadeTime - (music->_engine->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
 		music->setVolume(volume);
