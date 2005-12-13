@@ -33,6 +33,8 @@ namespace Common {
 enum CptIds {
 	CPT_JOEY = 1,
 	CPT_FOSTER = 3,
+	CPT_TEXT_1 = 0x17,
+	CPT_TEXT_11 = 0x21,
 	CPT_MENU_BAR = 0x2E,
 	CPT_REICH_DOOR_20 = 0x30AB,
 	CPT_MOVE_LIST = 0xBD,

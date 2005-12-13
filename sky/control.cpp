@@ -1396,6 +1396,10 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 			LODSW(srcPos, rawCpt[cnt]);
 	}
 
+	// make sure all text compacts are off
+	for (cnt = CPT_TEXT_1; cnt <= CPT_TEXT_11; cnt++)
+		_skyCompact->fetchCpt(cnt)->status = 0;
+
 	if (srcPos - srcBuf != (int32)size)
 		error("Restore failed! Savegame data = %d bytes. Expected size: %d", srcPos-srcBuf, size);
 
