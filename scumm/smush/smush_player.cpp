@@ -996,14 +996,16 @@ void SmushPlayer::handleFrame(Chunk &b) {
 
 	end_time = _vm->_system->getMillis();
 
+	if (_width != 0 && _height != 0) {
 #ifdef _WIN32_WCE
-	if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
-		updateScreen();
-		_inTimerCount = 0;
-	}
+		if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
+			updateScreen();
+			_inTimerCount = 0;
+		}
 #else
-	updateScreen();
+		updateScreen();
 #endif
+	}
 	_smixer->handleFrame();
 
 	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed);
