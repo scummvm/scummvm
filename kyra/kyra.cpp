@@ -2993,7 +2993,8 @@ int KyraEngine::processItemDrop(uint16 sceneId, uint8 item, int x, int y, int un
 	itemDropDown(x, y, destX, destY, freeItem, item);
 	
 	if (unk1 == 0 && unk2 != 0) {
-		// XXX updateSentenceCommand
+		assert(_itemList && _droppedList);
+		updateSentenceCommand(_itemList[item], _droppedList[0], 179);
 	}
 	
 	return 1;
@@ -3013,7 +3014,8 @@ void KyraEngine::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
 	// XXX snd_kyraPlaySound 53
 	
 	setMouseItem(_itemInHand);
-	// XXX	
+	assert(_itemList && _takenList);
+	updateSentenceCommand(_itemList[_itemInHand], _takenList[1], 179);
 	_screen->showMouse();
 	clickEventHandler2();
 }
@@ -3170,9 +3172,11 @@ void KyraEngine::dropItem(int unk1, int item, int x, int y, int unk2) {
 		return;
 	// call kyraPlaySound(54)
 	if (12 == countItemsInScene(_currentCharacter->sceneId)) {
-		// XXX drawSentenceCommand
+		assert(_noDropList);
+		drawSentenceCommand(_noDropList[0], 6);
 	} else {
-		// XXX drawSentenceCommand
+		assert(_noDropList);
+		drawSentenceCommand(_noDropList[1], 6);
 	}
 }
 
@@ -4799,7 +4803,8 @@ int KyraEngine::processInputHelper(int xpos, int ypos) {
 			int item2 = currentRoom->itemsTable[item];
 			currentRoom->itemsTable[item] = 0xFF;
 			setMouseItem(item2);
-			// XXX updateSentenceCommand
+			assert(_itemList && _takenList);
+			updateSentenceCommand(_itemList[item2], _takenList[0], 179);
 			_itemInHand = item2;
 			_screen->showMouse();
 			clickEventHandler2();

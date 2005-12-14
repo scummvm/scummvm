@@ -689,6 +689,18 @@ protected:
 	int _seq_COLTable_Size;
 	int _seq_textsTable_Size;
 	
+	char **_itemList;
+	char **_takenList;
+	char **_placedList;
+	char **_droppedList;
+	char **_noDropList;
+	
+	int _itemList_Size;
+	int _takenList_Size;
+	int _placedList_Size;
+	int _droppedList_Size;
+	int _noDropList_Size;
+	
 	char **_characterImageTable;
 	int _characterImageTableSize;
 	

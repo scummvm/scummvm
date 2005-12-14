@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 3
+#define RESFILE_VERSION 4
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -188,6 +188,12 @@ void KyraEngine::res_loadResources(int type) {
 		loadTable(resFile, "CHAR-IMAGE.TXT", (byte***)&_characterImageTable, &_characterImageTableSize);
 		
 		loadShapes(resFile, "SHAPES-DEFAULT.SHP", &_defaultShapeTable, &_defaultShapeTableSize);
+		
+		res_loadLangTable("ITEMLIST.", &resFile, (byte***)&_itemList, &_itemList_Size, loadNativeLanguage);
+		res_loadLangTable("TAKEN.", &resFile, (byte***)&_takenList, &_takenList_Size, loadNativeLanguage);
+		res_loadLangTable("PLACED.", &resFile, (byte***)&_placedList, &_placedList_Size, loadNativeLanguage);
+		res_loadLangTable("DROPPED.", &resFile, (byte***)&_droppedList, &_droppedList_Size, loadNativeLanguage);
+		res_loadLangTable("NODROP.", &resFile, (byte***)&_noDropList, &_noDropList_Size, loadNativeLanguage);
 	}
 
 #undef loadRooms
@@ -258,6 +264,41 @@ void KyraEngine::res_unloadResources(int type) {
 		
 		delete [] _defaultShapeTable;
 		_defaultShapeTableSize = 0;
+		
+		for (int i = 0; i < _itemList_Size; ++i) {
+			delete [] _itemList[i];
+		}
+		delete [] _itemList;
+		_itemList_Size = 0;
+		_itemList = 0;
+		
+		for (int i = 0; i < _takenList_Size; ++i) {
+			delete [] _takenList[i];
+		}
+		delete [] _takenList;
+		_takenList_Size = 0;
+		_takenList = 0;
+		
+		for (int i = 0; i < _placedList_Size; ++i) {
+			delete [] _placedList[i];
+		}
+		delete [] _placedList;
+		_placedList_Size = 0;
+		_placedList = 0;
+		
+		for (int i = 0; i < _droppedList_Size; ++i) {
+			delete [] _droppedList[i];
+		}
+		delete [] _droppedList;
+		_droppedList_Size = 0;
+		_droppedList = 0;
+		
+		for (int i = 0; i < _noDropList_Size; ++i) {
+			delete [] _noDropList[i];
+		}
+		delete [] _noDropList;
+		_noDropList_Size = 0;
+		_noDropList = 0;
 	}
 }
 
