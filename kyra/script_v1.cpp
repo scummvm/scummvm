@@ -376,7 +376,7 @@ int KyraEngine::cmd_blockInWalkableRegion(ScriptState *script) {
 }
 
 int KyraEngine::cmd_blockOutWalkableRegion(ScriptState *script) {
-	debug(9, "cmd_blockOutWalkableRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	debug(3, "cmd_blockOutWalkableRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
@@ -613,8 +613,24 @@ int KyraEngine::cmd_poisonDeathNow(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setScaleMode(ScriptState *script) {
-	warning("STUB: cmd_setScaleMode");
-	return 0;
+	debug(3, "cmd_setScaleMode(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	int len = stackPos(0);
+	int setValue1 = stackPos(1);
+	int start2 = stackPos(2);
+	int setValue2 = stackPos(3);
+	for (int i = 0; i < len; ++i) {
+		_scaleTable[i] = setValue1;
+	}
+	int temp = setValue2 - setValue1;
+	int temp2 = start2 - len;
+	for (int i = len, offset = 0; i < start2; ++i, ++offset) {
+		_scaleTable[i] = (offset * temp) / temp2 + setValue1;
+	}
+	for (int i = start2; i < 145; ++i) {
+		_scaleTable[i] = setValue2;
+	}
+	_scaleMode = 1;
+	return _scaleMode;
 }
 
 int KyraEngine::cmd_openWSAFile(ScriptState *script) {
@@ -1247,7 +1263,7 @@ int KyraEngine::cmd_setCharactersMovementDelay(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getCharactersFacing(ScriptState *script) {
-	debug(9, "cmd_getCharactersFacing(0x%X) (%d)", script, stackPos(0));
+	debug(3, "cmd_getCharactersFacing(0x%X) (%d)", script, stackPos(0));
 	return _characterList[stackPos(0)].facing;
 }
 
