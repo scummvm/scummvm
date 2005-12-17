@@ -46,7 +46,7 @@ void gp_putBitmap8x16(uint16 *frameBuffer, int x, int y, byte *lpBitmap, uint16 
 		byte data = *pBitmap++;
 		for (int nCol = 0; nCol < 7; nCol ++) {
 			if (data & 0x80)
-				if(x + nCol >= 0 && y + nRow >= 0 && x + nCol < 320 && y + nRow < 240)
+				if (x + nCol >= 0 && y + nRow >= 0 && x + nCol < 320 && y + nRow < 240)
 					gpd_drawPixel16(frameBuffer, x + nCol, y + nRow, wColor);
 
 			data <<= 1;

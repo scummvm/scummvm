@@ -86,7 +86,7 @@ static void soundTimer() {
 				*d++ ^= 0x8000; // 30
 				*d++ ^= 0x8000; // 31
 				*d++ ^= 0x8000; // 32
-			} while((uint32)d < max);
+			} while ((uint32)d < max);
 		}
 	}
 }
@@ -106,7 +106,7 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 	// and a corresponding shift value
 	shiftVal = 0;
 
-	switch(soundBuf.format) {
+	switch (soundBuf.format) {
 	case 8:
 		gpFormat = PCM_8BIT;
 		break;
@@ -116,7 +116,7 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 		break;
 	}
 
-	switch(soundBuf.freq) {
+	switch (soundBuf.freq) {
 	case 11025:
 		if (soundBuf.channels == 2) {
 			gpFreq = PCM_S11;
@@ -148,7 +148,7 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 
 	// Clear the buffer
 	uint16 *tmpBuf = (uint16 *)buffer;
-	for(int i = 0; i < bufferSize / 2; i++)
+	for (int i = 0; i < bufferSize / 2; i++)
 		tmpBuf[i] = 0x8000;
 
 	// Frequency of the timer interrupt which polls the playing position
