@@ -42,16 +42,61 @@ static GPSOUNDBUF soundBuf;
 // polls the current playing position within the buffer.
 
 static void soundTimer() {
+	unsigned int sampleshiftVal = soundBuf.samples << shiftVal;
 	unsigned int t = (((unsigned int)(*soundPos) - (unsigned int)buffer) >> shiftVal) >= soundBuf.samples ? 1 : 0;
 	if (t != frame) {
-		unsigned int offs = ((frame == 1) ? (soundBuf.samples << shiftVal) : 0);
-		soundBuf.callback(soundBuf.userdata, (uint8 *)((unsigned int)buffer + offs), soundBuf.samples << shiftVal);
+		unsigned int offs = ((frame == 1) ? (sampleshiftVal) : 0);
+		//memset((uint8 *)buffer + offs, 0, sampleshiftVal);
+		soundBuf.callback(soundBuf.userdata, (uint8 *)((unsigned int)buffer + offs), sampleshiftVal);
 		frame = t;
+		{
+			// Play silence
+			register uint16 *d = (uint16 *)((uint8 *)buffer + offs); // alignment-safe
+			register uint32 max = (uint32)((uint8 *)buffer + offs + sampleshiftVal);
+			do {
+				*d++ ^= 0x8000; // 1
+				*d++ ^= 0x8000; // 2
+				*d++ ^= 0x8000; // 3
+				*d++ ^= 0x8000; // 4
+				*d++ ^= 0x8000; // 5
+				*d++ ^= 0x8000; // 6
+				*d++ ^= 0x8000; // 7
+				*d++ ^= 0x8000; // 8
+				*d++ ^= 0x8000; // 9
+				*d++ ^= 0x8000; // 10
+				*d++ ^= 0x8000; // 11
+				*d++ ^= 0x8000; // 12
+				*d++ ^= 0x8000; // 13
+				*d++ ^= 0x8000; // 14
+				*d++ ^= 0x8000; // 15
+				*d++ ^= 0x8000; // 16
+				*d++ ^= 0x8000; // 17
+				*d++ ^= 0x8000; // 18
+				*d++ ^= 0x8000; // 19
+				*d++ ^= 0x8000; // 20
+				*d++ ^= 0x8000; // 21
+				*d++ ^= 0x8000; // 22
+				*d++ ^= 0x8000; // 23
+				*d++ ^= 0x8000; // 24
+				*d++ ^= 0x8000; // 25
+				*d++ ^= 0x8000; // 26
+				*d++ ^= 0x8000; // 27
+				*d++ ^= 0x8000; // 28
+				*d++ ^= 0x8000; // 29
+				*d++ ^= 0x8000; // 30
+				*d++ ^= 0x8000; // 31
+				*d++ ^= 0x8000; // 32
+			} while((uint32)d < max);
+		}
 	}
 }
 
 int gp_soundBufStart(GPSOUNDBUF *sb) {
 	int bufferSize = 0;
+
+	PCM_SR gpFreq = PCM_S11;
+	PCM_BIT gpFormat = PCM_16BIT;
+
 	frame = 0;
 
 	// Copy the structure
@@ -60,39 +105,63 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 	// Calculate size of a single sample in bytes
 	// and a corresponding shift value
 	shiftVal = 0;
-	switch (soundBuf.freq) {
-	case PCM_S11:
+
+	switch(soundBuf.format) {
+	case 8:
+		gpFormat = PCM_8BIT;
 		break;
-	case PCM_S22:
-		break;
-	case PCM_S44:
-		shiftVal++;
-		break;
-	case PCM_M11:
-		break;
-	case PCM_M22:
-		break;
-	case PCM_M44:
+	case 16:
+		gpFormat = PCM_16BIT;
 		shiftVal++;
 		break;
 	}
-	if (soundBuf.format == PCM_16BIT)
-		shiftVal++;
-	soundBuf.samplesize = 1 << shiftVal;
 
+	switch(soundBuf.freq) {
+	case 11025:
+		if (soundBuf.channels == 2) {
+			gpFreq = PCM_S11;
+			shiftVal++;
+		} else
+			gpFreq = PCM_M11;
+		break;
+	case 22050:
+		if (soundBuf.channels == 2) {
+			gpFreq = PCM_S22;
+			shiftVal++;
+		} else
+			gpFreq = PCM_M22;
+		break;
+	case 44100:
+		if (soundBuf.channels == 2) {
+			gpFreq = PCM_S44;
+			shiftVal++;
+		} else
+			gpFreq = PCM_M44;
+		break;
+	}
+
+	soundBuf.samplesize = 1 << shiftVal;
+	
 	// Allocate memory for the playing buffer
 	bufferSize = soundBuf.samplesize * soundBuf.samples * 2;
 	buffer = malloc(bufferSize);
-	memset(buffer, 0, bufferSize);
+
+	// Clear the buffer
+	uint16 *tmpBuf = (uint16 *)buffer;
+	for(int i = 0; i < bufferSize / 2; i++)
+		tmpBuf[i] = 0x8000;
+
+	// Frequency of the timer interrupt which polls the playing position
+	soundBuf.pollfreq = 4 * (2 * soundBuf.freq) / soundBuf.samples;
 
 	// Set timer interrupt
 	if (GpTimerOptSet(GP32_TIMER_AUDIO_IDX, soundBuf.pollfreq, 0, soundTimer) == GPOS_ERR_ALREADY_USED) {
-		NP(" Timer is already used... kill timer");
+		GPDEBUG(" Timer is already used... kill timer");
 		GpTimerKill(GP32_TIMER_AUDIO_IDX);
 	}
 	GpTimerSet(GP32_TIMER_AUDIO_IDX);
-	// Start playing
-    GpPcmInit(soundBuf.freq, soundBuf.format);
+
+	GpPcmInit(gpFreq, gpFormat);
 	GpPcmPlay((unsigned short *)buffer, bufferSize, 1);
 	GpPcmLock((unsigned short *)buffer, (int *)&idx_buf, (unsigned int *)&soundPos);
 
@@ -100,8 +169,8 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 }
 
 void gp_soundBufStop() {
+	GpTimerKill(GP32_TIMER_AUDIO_IDX);
 	GpPcmStop();
 	GpPcmRemove((unsigned short *)buffer);
-	GpTimerKill(GP32_TIMER_AUDIO_IDX);
 	free(buffer);
 }

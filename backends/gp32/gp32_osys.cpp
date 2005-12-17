@@ -636,7 +636,6 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 	NP("OSys::setSoundCallback()");
 
 	GPSOUNDBUF gpSoundBuf;
-	PCM_SR sampleFreq;
 
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
@@ -658,31 +657,19 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 
 	switch(_samplesPerSec) {
 		case 44100:
-			sampleFreq = PCM_S44;
-			break;
 		case 22050:
-			sampleFreq = PCM_S22;
-			break;
 		case 11025:
-			sampleFreq = PCM_S11;
 			break;
 		default:
-			_samplesPerSec = 22050;
-			sampleFreq = PCM_S22;
+			_samplesPerSec = 11025;
 	}
 
-	gpSoundBuf.freq = sampleFreq;
-	gpSoundBuf.format = PCM_16BIT;
+	gpSoundBuf.freq = _samplesPerSec;
+	gpSoundBuf.format = 16;
+	gpSoundBuf.channels = 2;
 	gpSoundBuf.samples = samples;
 	gpSoundBuf.userdata = param;
 	gpSoundBuf.callback = proc;
-//	gpSoundBuf.pollfreq = 2 * (SAMPLES_PER_SEC / gpSoundBuf.samples);
-	gpSoundBuf.pollfreq = 2 * 4 * (SAMPLES_PER_SEC / gpSoundBuf.samples); // FIXME?
-	// Frequency of the timer interrupt which polls the playing position
-	// recommended value: 2*(playingfreq in Hz/GPSOUNDBUF.samples)
-	//s.samplesize;  // Size of one sample (8bit mono->1, 16bit stereo->4) - don't touch this
-
-	GpPcmInit(gpSoundBuf.freq, gpSoundBuf.format);
 	gp_soundBufStart(&gpSoundBuf);
 
 	// For Safety...

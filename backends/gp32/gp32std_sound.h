@@ -29,14 +29,16 @@
 typedef void SoundProc(void *param, byte *buf, int len);
 
 typedef struct TGPSOUNDBUF {
-    PCM_SR freq;              // Taken from gpmm.h
-    PCM_BIT format;           // Taken from gpmm.h
-    unsigned int samples;     // Buffer length (in samples)
-    void *userdata;           // Userdata which gets passed to the callback function
-    SoundProc *callback;      // Callback function (just like in SDL)
-    unsigned int pollfreq;    // Frequency of the timer interrupt which polls the playing position
-                              // recommended value: 2*(playingfreq in Hz/GPSOUNDBUF.samples)
-    unsigned int samplesize;  // Size of one sample (8bit mono->1, 16bit stereo->4) - don't touch this
+	int32 freq;
+	uint16 format;
+	uint16 samples;				// Buffer length (in samples)
+	uint16 channels;
+	uint16 padding;				// Fix alignment problem
+	void *userdata;				// Userdata which gets passed to the callback function
+	SoundProc *callback;		// Callback function (just like in SDL)
+	unsigned int pollfreq;		// Frequency of the timer interrupt which polls the playing position
+								// recommended value: 2*(playingfreq in Hz/GPSOUNDBUF.samples)
+	unsigned int samplesize;	// Size of one sample (8bit mono->1, 16bit stereo->4) - don't touch this
 } GPSOUNDBUF;
 
 int gp_soundBufStart(GPSOUNDBUF *sb);
