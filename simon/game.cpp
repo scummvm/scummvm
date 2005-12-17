@@ -91,15 +91,25 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1CD32_2,    "59be788020441e21861e284236fd08c1", "stripped.txt", true},
 	{ GID_SIMON1CD32_2,    "f9d5bf2ce09f82289c791c3ca26e1e4b", "tbllist", true},
 
-	{ GID_SIMON1DOS_INFO,  "9f93d27432ce44a787eef10adb640870", "gamepc", false },
-	{ GID_SIMON1DOS_INFO,  "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
-	{ GID_SIMON1DOS_INFO,  "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
-	{ GID_SIMON1DOS_INFO,  "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+	{ GID_SIMON1DOS_INF,  "9f93d27432ce44a787eef10adb640870", "gamepc", false },
+	{ GID_SIMON1DOS_INF,  "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1DOS_INF,  "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
+	{ GID_SIMON1DOS_INF,  "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+
+	{ GID_SIMON1DOS_INF_RU,"605fb866e03ec1c41b10c6a518ddfa49", "gamepc", false },
+	{ GID_SIMON1DOS_INF_RU,"22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1DOS_INF_RU,"2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
+	{ GID_SIMON1DOS_INF_RU,"d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON1DOS,       "c392e494dcabed797b98cbcfc687b33a", "gamepc", false },
 	{ GID_SIMON1DOS,       "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
 	{ GID_SIMON1DOS,       "c95a0a1ee973e19c2a1c5d12026c139f", "stripped.txt", false},
 	{ GID_SIMON1DOS,       "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+
+	{ GID_SIMON1DOS_RU,    "605fb866e03ec1c41b10c6a518ddfa49", "gamepc", false },
+	{ GID_SIMON1DOS_RU,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1DOS_RU,    "c95a0a1ee973e19c2a1c5d12026c139f", "stripped.txt", false},
+	{ GID_SIMON1DOS_RU,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON1DOS_FR,    "00000000000000000000000000000000", "gamepc", false },
 	{ GID_SIMON1DOS_FR,    "00000000000000000000000000000000", "icon.dat", false},
@@ -115,11 +125,6 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1DOS_IT,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
 	{ GID_SIMON1DOS_IT,    "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
 	{ GID_SIMON1DOS_IT,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
-
-	{ GID_SIMON1DOS_RU,    "605fb866e03ec1c41b10c6a518ddfa49", "gamepc", false },
-	{ GID_SIMON1DOS_RU,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
-	{ GID_SIMON1DOS_RU,    "2af9affc5981eec44b90d4c556145cb8", "stripped.txt", false},
-	{ GID_SIMON1DOS_RU,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON1DEMO,      "2be4a21bc76e2fdc071867c130651439", "gdemo", false },
 	{ GID_SIMON1DEMO,      "55af3b4d93972bc58bfee38a86b76c3f", "icon.dat", false},
@@ -180,23 +185,29 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2DOS,       "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS,       "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2DOS_RU,    "b10ba182b738c22503489b79eb994d3a", "game32", false },
+	{ GID_SIMON2DOS_RU,    "ee92d1f84893195a60449f2430d07285", "icon.dat", false},
+	{ GID_SIMON2DOS_RU,    "eefcc32b1f2c0482c1a59a963a146345", "simon2.gme", false},
+	{ GID_SIMON2DOS_RU,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
+	{ GID_SIMON2DOS_RU,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
 	{ GID_SIMON2DOS2,      "604d04315935e77624bd356ac926e068", "game32", false },
 	{ GID_SIMON2DOS2,      "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2DOS2,      "aa6840420899a31874204f90bb214108", "simon2.gme", false},
 	{ GID_SIMON2DOS2,      "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS2,      "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2DOS2_RU,   "b10ba182b738c22503489b79eb994d3a", "game32", false },
+	{ GID_SIMON2DOS2_RU,   "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2DOS2_RU,   "aa6840420899a31874204f90bb214108", "simon2.gme", false},
+	{ GID_SIMON2DOS2_RU,   "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
+	{ GID_SIMON2DOS2_RU,   "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
 	{ GID_SIMON2DOS_IT,    "3e11d400bea0638f360a724687005cd1", "game32", false },
 	{ GID_SIMON2DOS_IT,    "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2DOS_IT,    "f306a397565d7f13bec7ecf14c723de7", "simon2.gme", false},
 	{ GID_SIMON2DOS_IT,    "bea6843fb9f3b2144fcb146d62db0b9a", "stripped.txt", false},
 	{ GID_SIMON2DOS_IT,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
-
-	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "game32", false },
-	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "icon.dat", false},
-	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "simon2.gme", false},
-	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "stripped.txt", false},
-	{ GID_SIMON2DOS_RU,    "00000000000000000000000000000000", "tbllist", false},
 
 	{ GID_SIMON2DEMO,      "3794c15887539b8578bacab694ccf08a", "gsptr30", false },
 	{ GID_SIMON2DEMO,      "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
@@ -472,11 +483,24 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
+	// Simon the Sorcerer 1 - English DOS Floppy with Russian patch
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1DOS_RU,
+		"Simon the Sorcerer 1 (Ru DOS Floppy)",
+		ARRAYSIZE(SIMON1DOS_GameFiles),
+		SIMON1DOS_GameFiles,
+		GF_OLD_BUNDLE,
+		Common::RU_RUS,
+		Common::kPlatformPC,
+	},
+
 	// Simon the Sorcerer 1 - English DOS Floppy (Infocom)
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_INFO,
+		GID_SIMON1DOS_INF,
 		"Simon the Sorcerer 1 (DOS Floppy)",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
@@ -489,7 +513,7 @@ static GameDescription gameDescriptions[] = {
 	{
 		"simon1",
 		GType_SIMON1,
-		GID_SIMON1DOS_RU,
+		GID_SIMON1DOS_INF_RU,
 		"Simon the Sorcerer 1 (Ru DOS Floppy)",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
@@ -654,7 +678,20 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
-	// Simon the Sorcerer 2 - English DOS Floppy
+	// Simon the Sorcerer 2 - English DOS Floppy with Russian patch
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2DOS_RU,
+		"Simon the Sorcerer 2 (Ru DOS Floppy)",
+		ARRAYSIZE(SIMON2DOS_GameFiles),
+		SIMON2DOS_GameFiles,
+		0,
+		Common::RU_RUS,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 2 - English DOS Floppy alternate?
 	{
 		"simon2",
 		GType_SIMON2,
@@ -664,6 +701,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON2DOS_GameFiles,
 		0,
 		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 2 - English DOS Floppy alternate? with Russian patch
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2DOS2_RU,
+		"Simon the Sorcerer 2 (Ru DOS Floppy)",
+		ARRAYSIZE(SIMON2DOS_GameFiles),
+		SIMON2DOS_GameFiles,
+		0,
+		Common::RU_RUS,
 		Common::kPlatformPC,
 	},
 
