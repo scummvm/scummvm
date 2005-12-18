@@ -478,6 +478,11 @@ bool OSystem_GP32::pollEvent(Event &event) {
 			event.kbd.keycode = event.kbd.ascii = 32;
 			return true;
 		}
+		if (ev.button == GPC_VK_FL) {
+			event.type = EVENT_KEYDOWN;
+			event.kbd.keycode = event.kbd.ascii = '0';
+			return true;
+		}
 		if (ev.button == GPC_VK_FR) { // R = ESC
 			event.type = EVENT_KEYDOWN;
 			event.kbd.keycode = event.kbd.ascii = 27;
@@ -543,6 +548,11 @@ bool OSystem_GP32::pollEvent(Event &event) {
 		if (ev.button == GPC_VK_SELECT) {
 			event.type = EVENT_KEYUP;
 			event.kbd.keycode = event.kbd.ascii = 32;
+			return true;
+		}
+		if (ev.button == GPC_VK_FL) {
+			event.type = EVENT_KEYUP;
+			event.kbd.keycode = event.kbd.ascii = '0';
 			return true;
 		}
 		if (ev.button == GPC_VK_FR) {
