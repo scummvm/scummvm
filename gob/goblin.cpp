@@ -969,9 +969,7 @@ void gob_targetItem(void) {
 void gob_initiateMove(void) {
 	map_findNearestToDest();
 	map_findNearestToGob();
-
-	map_nearestWayPoint =
-	    map_optimizePoints(map_curGoblinX, map_curGoblinY);
+	map_optimizePoints();
 
 	gob_pathExistence = map_checkDirectPath(map_curGoblinX, map_curGoblinY,
 	    gob_pressedMapX, gob_pressedMapY);
@@ -1237,8 +1235,7 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		map_curGoblinX = gob_gobPositions[gob_currentGoblin].x;
 		map_curGoblinY = gob_gobPositions[gob_currentGoblin].y;
 
-		if (map_curGoblinX == gob_gobDestX &&
-		    map_curGoblinY == gob_gobDestY) {
+		if (map_curGoblinX == gob_gobDestX && map_curGoblinY == gob_gobDestY) {
 			gob_pathExistence = 1;
 			map_destX = gob_pressedMapX;
 			map_destY = gob_pressedMapY;
@@ -1248,13 +1245,10 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 				gob_gobDestX, gob_gobDestY) == 1) {
 				map_destX = gob_gobDestX;
 				map_destY = gob_gobDestY;
-			} else if (map_curGoblinX == map_destX
-			    && map_curGoblinY == map_destY) {
+			} else if (map_curGoblinX == map_destX && map_curGoblinY == map_destY) {
 
 				if (map_nearestWayPoint > map_nearestDest) {
-					map_nearestWayPoint =
-					    map_optimizePoints(map_curGoblinX,
-					    map_curGoblinY);
+					map_optimizePoints();
 
 					map_destX =
 					    map_wayPoints[map_nearestWayPoint].
@@ -1263,14 +1257,10 @@ void gob_movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 					    map_wayPoints[map_nearestWayPoint].
 					    y;
 
-					if (map_nearestWayPoint >
-					    map_nearestDest)
+					if (map_nearestWayPoint > map_nearestDest)
 						map_nearestWayPoint--;
-				} else if (map_nearestWayPoint <
-				    map_nearestDest) {
-					map_nearestWayPoint =
-					    map_optimizePoints(map_curGoblinX,
-					    map_curGoblinY);
+				} else if (map_nearestWayPoint < map_nearestDest) {
+					map_optimizePoints();
 
 					map_destX =
 					    map_wayPoints[map_nearestWayPoint].

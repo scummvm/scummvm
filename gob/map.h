@@ -38,18 +38,20 @@ enum {
 };
 
 #pragma START_PACK_STRUCTS
-#define szMap_Point 4
+
 typedef struct Map_Point {
 	int16 x;
 	int16 y;
 } GCC_PACK Map_Point;
 
 #define szMap_ItemPos 3
-typedef struct Map_ItemPos {
+
+ typedef struct Map_ItemPos {
 	int8 x;
 	int8 y;
 	int8 orient;		// ??
 } GCC_PACK Map_ItemPos;
+
 #pragma END_PACK_STRUCTS
 
 extern int8 map_passMap[28][26];	// [y][x]
@@ -74,7 +76,7 @@ void map_findNearestToGob(void);
 void map_findNearestToDest(void);
 int16 map_checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1);
 int16 map_checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
-int16 map_optimizePoints(int16 xPos, int16 yPos);
+void map_optimizePoints(void);
 void map_loadItemToObject(void);
 void map_loadMapObjects(char *avjFile);
 void map_loadDataFromAvo(int8 *dest, int16 size);

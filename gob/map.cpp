@@ -376,23 +376,22 @@ int16 map_checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 
 	}
 }
 
-int16 map_optimizePoints(int16 xPos, int16 yPos) {
+void map_optimizePoints(void) {
 	int16 i;
 
 	if (map_nearestWayPoint < map_nearestDest) {
 		for (i = map_nearestWayPoint; i <= map_nearestDest; i++) {
-			if (map_checkDirectPath(xPos, yPos,
+			if (map_checkDirectPath(map_curGoblinX, map_curGoblinY,
 				map_wayPoints[i].x, map_wayPoints[i].y) == 1)
 				map_nearestWayPoint = i;
 		}
 	} else if (map_nearestWayPoint > map_nearestDest) {
 		for (i = map_nearestWayPoint; i >= map_nearestDest; i--) {
-			if (map_checkDirectPath(xPos, yPos,
+			if (map_checkDirectPath(map_curGoblinX, map_curGoblinY,
 				map_wayPoints[i].x, map_wayPoints[i].y) == 1)
 				map_nearestWayPoint = i;
 		}
 	}
-	return map_nearestWayPoint;
 }
 
 void map_loadDataFromAvo(char *dest, int16 size) {
