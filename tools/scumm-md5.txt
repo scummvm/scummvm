@@ -327,6 +327,7 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	-	Windows	All	d4cccb5af88f3e77f370896e9ba8c5f9	freddi	sev
 	-	Windows	ru	746e88c172a5b7a1ae89ac0ee3ee681a	freddi	sev
 	-	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
+	Demo	All	de	cf4ef315214c7d8cdab6302cdb7e50db	freddi	Joachim Eberhard
 	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddi	khalek
 	Demo	Windows	en	0855496dde35356b1a9691e22ba84cdc	freddi	khalek
 	Demo	Windows	en	566165a7338fa11029e7c14d94fa70d0	freddi	khalek
@@ -336,7 +337,7 @@ Freddi Fish 2: The Case of the Haunted Schoolhouse
 	-	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
 	-	All	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
 	-	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
-	-	Windows	de	fce4b8010704b103acfeea9413788f32	freddi2	Joachim Eberhard
+	-	All	de	fce4b8010704b103acfeea9413788f32	freddi2	Joachim Eberhard
 	-	Windows	en	151071053a1d0021198216713939521d	freddi2	vampir_raziel
 	-	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
 	-	Windows	ru	e41de1c2a15abbcdbf9977e2d7e8a340	freddi2	sev
@@ -353,7 +354,7 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 	Demo	All	fr	bbadf7309c4a2c2763e4bbba3c3be634	freddi3	Kirben
 	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	freddi3	adutchguy
 
-Freddie Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
+Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	-	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
 	-	Windows	de	b5298a5c15ffbe8b381d51ea4e26d35c	freddi4	Joachim Eberhard
 	-	Windows	nl	14d48c95b43ddeb983254cf6c43851f1	freddi4	adutchguy
@@ -491,6 +492,8 @@ Putt-Putt Saves the Zoo
 	-	All	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
 	-	Windows	nl	c3b22fa4654bb580b20325ebf4174841	puttzoo	joostp
 	-	Mac	en	58fdf4c7ad13540a734e18f8584cad89	puttzoo	khalek
+	Demo	Mac	de	d220d154aafbfa12bd6f3ab1b2dae420	puttzoo	Joachim Eberhard
+	Demo	Windows	de	2a446817ffcabfef8716e0c456ecaf81	puttzoo	Joachim Eberhard
 	Demo	Windows	en	f3d55aea441e260e9e9c7d2a187097e0	puttzoo	khalek
 	Demo	Windows	en	de4efb910210736813c9a1185384bace	puttzoo	khalek
 	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	puttzoo	khalek

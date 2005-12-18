@@ -768,6 +768,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi2", "Freddi Fish 2 Demo", kGenMac },
 	{ "freddi2", "Freddi Fish 2", kGenMac },
 	{ "freddi2", "FreddiCHSH", kGenPC },
+	{ "freddi2", "Fritzi Fisch 2", kGenMac },
 	{ "freddi3", "Freddi Fish 3", kGenMac },
 	{ "freddi3", "FreddiSCS", kGenPC },
 	{ "freddi3", "F3-mdemo", kGenMac },
