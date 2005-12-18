@@ -2570,6 +2570,7 @@ void KyraEngine::updateSentenceCommand(char *str1, char *str2, int color) {
 		strncat(sentenceCommand, str2, 500 - strlen(sentenceCommand));
 
 	drawSentenceCommand(sentenceCommand, color);
+	_screen->updateScreen();
 }
 
 void KyraEngine::updateTextFade() {
