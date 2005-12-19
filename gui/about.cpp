@@ -31,7 +31,7 @@ namespace GUI {
 
 enum {
 	kScrollStartDelay = 1500,
-	kScrollMillisPerPixel = 80
+	kScrollMillisPerPixel = 60
 };
 
 // The following commands can be put at the start of a line (all subject to change):
@@ -45,6 +45,9 @@ enum {
 // TODO: Maybe add a tab/indent feature; that is, make it possible to specify
 // an amount by which that line shall be indented (the indent of course would have
 // to be considered while performing any word wrapping, too).
+//
+// TODO: Add different font sizes (for bigger headlines)
+// TODO: Allow color change in the middle of a line...
 static const char *credits_intro[] = {
 "\\C""Copyright (C) 2002-2005 The ScummVM project",
 "\\C""http://www.scummvm.org",

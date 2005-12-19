@@ -1,100 +1,200 @@
-The ScummVM team:
-       James Brown           - Lead developer
-       Max Horn              - Lead developer
-       Torbjorn Andersson    - Engine: SCUMM, Broken Sword 2, SAGA, Gob
-       David Eriksson        - Engine: Flight of the Amazon Queen
-       Robert Goeffringmann  - Engine: Beneath a Steel Sky, Broken Sword 1
-       Jonathan Gray         - Engine: SCUMM, HE, Broken Sword 2
-       Travis Howell         - Engine: SCUMM, HE, Simon the Sorcerer
-       Oliver Kiehl          - Engine: Beneath a Steel Sky, Simon
-       Pawel Kolodziejski    - Engine: SCUMM (Codecs, iMUSE, Smush, etc.)
-       Andrew Kurushin       - Engine: SAGA
-       Gregory Montoir       - Engine: Flight of the Amazon Queen, HE, Kyra
-       Joost Peters          - Engine: Beneath a Steel Sky, Flight of the
-                               Amazon Queen
-       Eugene Sandulenko     - Engine: SCUMM (FT INSANE), HE, SAGA, Gob
-       Johannes Schickel     - Engine: Kyra, GUI improvements
-       Chris Apers           - Port: PalmOS
-       Nicolas Bacca         - Port: PocketPC/WinCE
-       Jurgen Braam          - Port: EPOC/SymbianOS maintainer
-       Marcus Comstedt       - Port: Dreamcast
-       Hans-Jorg Frieden     - Port: AmigaOS 4
-       Lars Persson          - Port: EPOC/SymbianOS, ESDL
-       Jerome Fisher         - MT-32 emulator
-       Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+ScummVM Team
+************
+  Project Leaders
+  ---------------
+     James Brown          
+     Max Horn              - This is a long desc. A really, really long long
+                             description. No I really mean *long* like in
+                             'very long'!
 
-Retired Team Members:
-       Ralph Brorsen         - Help with GUI implementation
-       Jamieson Christian    - iMUSE, MIDI, all things musical
-       Vincent Hamm          - Co-Founder
-       Ruediger Hanke        - Port: MorphOS
-       Felix Jakschitsch     - Zak256 reverse engineering
-       Mutwin Kraus          - Original MacOS porter
-       Peter Moraliyski      - Port: GP32
-       Jeremy Newman         - Former webmaster
-       Ludvig Strigeus       - Original ScummVM and SimonVM author
-       Lionel Ulmer          - Port: X11
+  Engine Teams
+  ------------
+    SCUMM:
+       Torbjorn Andersson   
+       James Brown          
+       Jonathan Gray        
+       Max Horn             
+       Travis Howell        
+       Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
+       Eugene Sandulenko     - FT INSANE
 
-Contributors:
-       Tore Anderson         - Packaging for Debian GNU/Linux
-       Dobo Balazs           - Website design
-       Stuart Caie           - Decoders for Simon 1 Amiga data files
-       Yaroslav Fedevych     - HTML/CSS for the website
-       Chris Gray            - Windows64 builds
-       Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
-       Kovacs Endre Janos    - Several fixes for Simon1
-       Jeroen Janssen        - Numerous readability and bugfix patches
-       Andreas Karlsson      - Initial port for EPOC/SymbianOS
-       Robert Kelsen         - Packaging for SlackWare
-       Jean Marc             - ScummVM logo
-       Claudio Matsuoka      - Daily Linux builds
-       Kostas Nakos          - PocketPC 2002 builds
-       Mikesch Nepomuk       - MI1 VGA floppy patches
-       Juha Niemimaki        - AmigaOS 4 port maintaining
-       Nicolas Noble         - Config file and ALSA support
-       Willem Jan Palenstijn - Packaging for Fedora/RedHat
-       Stefan Parviainen     - Packaging for BeOS
-       Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
-                               NES support
-       Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
-       Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom
-                               audio
-       Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
-                               support
-       Paul Smedley          - OS/2 fixes and packaging
-       Andre Souza           - SDL-based OpenGL renderer
-       Tim ???               - Initial MI1 CD music support
+    HE:
+       Jonathan Gray        
+       Travis Howell        
+       Gregory Montoir      
+       Eugene Sandulenko    
 
-       And to all the contributors, users, and beta testers we've missed.
-       Thanks!
+    BASS:
+       Robert Goeffringmann 
+       Oliver Kiehl         
+       Joost Peters         
 
-Special thanks to:
-       Sander Buskens  - For his work on the initial reversing of Monkey2
-       Canadacow       - For the original MT-32 emulator
-       Kevin Carnes    - For Scumm16, the basis of ScummVM's older gfx codecs
-       Ivan Dubrov     - For contributing the initial version of the
-                         Gobliiins engine
-       Jezar           - For his freeverb filter implementation
-       Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
-       lloyd           - For deep tech details about C64 Zak & MM
-       Jimmi Thogersen - For ScummRev, and much obscure code/documentation
-       Tristan         - For additional work on the original MT-32 emulator
+    Broken Sword 1:
+       Robert Goeffringmann 
 
-       Tony Warriner and everyone at Revolution Software Ltd. for sharing
-       with us the source of some of their brilliant games, allowing us to
-       release Beneath a Steel Sky as freeware... and generally being
-       supportive above and beyond the call of duty.
+    Broken Sword 2:
+       Torbjorn Andersson   
+       Jonathan Gray        
 
-       John Passfield and Steve Stamatiadis for sharing the source of their
-       classic title, Flight of the Amazon Queen and also being incredibly
-       supportive.
+    FOTAQ:
+       David Eriksson       
+       Gregory Montoir      
+       Joost Peters         
 
-       Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source
-       of their famous title Inherit the Earth and always prompt replies to
-       our questions.
+    Gob:
+       Torbjorn Andersson   
+       Eugene Sandulenko    
 
-       Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
-       LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that
-       it is today. Feel free to drop us a line and tell us what you think,
-       guys!
+    Kyra:
+       Gregory Montoir      
+       Johannes Schickel    
+
+    SAGA:
+       Torbjorn Andersson   
+       Andrew Kurushin      
+       Eugene Sandulenko    
+
+    Simon:
+       Travis Howell        
+       Oliver Kiehl         
+
+  Backend Teams
+  -------------
+    Dreamcast:
+       Marcus Comstedt      
+
+    SymbianOS:
+       Jurgen Braam         
+       Lars Persson         
+
+    PalmOS:
+       Chris Apers          
+
+    PocketPC / WinCE:
+       Nicolas Bacca        
+
+    Playstation 2:
+       Robert Goeffringmann 
+
+    PSP (PlayStation Portable):
+       Joost Peters         
+
+    SDL (Win/Linux/OS X/etc.):
+       Max Horn             
+       Random Name           - TODO: Add yourself if you feel it's
+                               appropriate
+
+  Other subsystems
+  ----------------
+     Jerome Fisher         - MT-32 emulator
+     Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
+
+  Website (content)
+  -----------------
+     All active team members
+
+  Retired Team Members
+  --------------------
+     Ralph Brorsen         - Help with GUI implementation
+     Jamieson Christian    - iMUSE, MIDI, all things musical
+     Vincent Hamm          - Co-Founder
+     Ruediger Hanke        - Port: MorphOS
+     Felix Jakschitsch     - Zak256 reverse engineering
+     Mutwin Kraus          - Original MacOS porter
+     Peter Moraliyski      - Port: GP32
+     Jeremy Newman         - Former webmaster
+     Ludvig Strigeus       - Original ScummVM and SimonVM author
+     Lionel Ulmer          - Port: X11
+
+Other contributions
+*******************
+  Packages
+  --------
+    AmigaOS 4:
+       Hans-Jorg Frieden    
+       Juha Niemimaki       
+
+    BeOS:
+       Stefan Parviainen    
+
+    Debian GNU/Linux:
+       Tore Anderson        
+
+    Fedora / RedHat:
+       Willem Jan Palenstijn
+
+    Mac OS X:
+       Max Horn             
+
+    OS/2:
+       Paul Smedley         
+
+    PocketPC 2002:
+       Kostas Nakos         
+
+    SlackWare:
+       Robert Kelsen        
+
+    Win32:
+       Travis Howell        
+
+    Win64:
+       Chris Gray           
+
+  Website (design)
+  ----------------
+     Dobo Balazs           - Website design
+     Yaroslav Fedevych     - HTML/CSS for the website
+     Jean Marc             - ScummVM logo
+
+  Code contributions
+  ------------------
+     Stuart Caie           - Decoders for Simon 1 Amiga data files
+     Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
+     Kovacs Endre Janos    - Several fixes for Simon1
+     Jeroen Janssen        - Numerous readability and bugfix patches
+     Andreas Karlsson      - Initial port for EPOC/SymbianOS
+     Claudio Matsuoka      - Daily Linux builds
+     Mikesch Nepomuk       - MI1 VGA floppy patches
+     Nicolas Noble         - Config file and ALSA support
+     Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
+                             NES support
+     Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
+     Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom audio
+     Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
+                             support
+     Andre Souza           - SDL-based OpenGL renderer
+     Tim ???               - Initial MI1 CD music support
+
+   And to all the contributors, users, and beta testers we've missed. Thanks!
+
+Special thanks to
+*****************
+   Sander Buskens  - For his work on the initial reversing of Monkey2
+   Canadacow       - For the original MT-32 emulator
+   Kevin Carnes    - For Scumm16, the basis of ScummVM's older gfx codecs
+   Ivan Dubrov     - For contributing the initial version of the Gobliiins
+                     engine
+   Jezar           - For his freeverb filter implementation
+   Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
+   lloyd           - For deep tech details about C64 Zak & MM
+   Jimmi Thogersen - For ScummRev, and much obscure code/documentation
+   Tristan         - For additional work on the original MT-32 emulator
+
+   Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
+   the source of some of their brilliant games, allowing us to release
+   Beneath a Steel Sky as freeware... and generally being supportive above
+   and beyond the call of duty.
+
+   John Passfield and Steve Stamatiadis for sharing the source of their
+   classic title, Flight of the Amazon Queen and also being incredibly
+   supportive.
+
+   Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source of
+   their famous title Inherit the Earth and always prompt replies to our
+   questions.
+
+   Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
+   LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it
+   is today. Feel free to drop us a line and tell us what you think, guys!
 
