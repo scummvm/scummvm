@@ -568,6 +568,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		// other games we shift it right on rendering stage
 		if ((_platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
 			x += 16;
+			if (x + width >= _screenWidth)
+				width -= 16;
 		}
 
 		_system->copyRectToScreen(_compositeBuf + x1 + y * _screenWidth, _screenWidth, x, y, width, height);
