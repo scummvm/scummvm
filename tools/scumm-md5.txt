@@ -112,32 +112,32 @@ Loom
 	Floppy Demo (non-interactive)	DOS	en	5a35e36fd777e9c37a49c5b2faca52f9	loom
 
 The Secret of Monkey Island
-	EGA	Atari	de	927a764615c7fcdd72f591355e089d8c	monkey	Joachim Eberhard
 	EGA	Atari	en	c666a998af90d81db447eccba9f72c8d	monkey
 	EGA	Atari	fr	9e5e0fb43bd22f4628719b7501adb717	monkey	Andreas Bylund
+	EGA	Atari	de	927a764615c7fcdd72f591355e089d8c	monkey	Joachim Eberhard
 	EGA	Atari	es	0a41311d462b6639fc45297b9044bf16	monkey
 	EGA (8 disk)	DOS	en	49210e124e4c2b30f1290a9ef6306301	monkey
-	EGA (8 disk)	DOS	de	fc6b6148e80d67939d9a18697c0f626a	monkey	ghoostkilla
 	EGA (8 disk)	DOS	fr	1dd3c11ea4439adfe681e4e405b624e1	monkey	Andrea Petrucci
+	EGA (8 disk)	DOS	de	fc6b6148e80d67939d9a18697c0f626a	monkey	ghoostkilla
 	EGA (8 disk)	DOS	es	910e31cffb28226bd68c569668a0d6b4	monkey	Andrea Petrucci
-	EGA (4 disk)	DOS	de	e98b982ceaf9d253d730bde8903233d6	monkey	Joachim Eberhard
 	EGA (4 disk)	DOS	en	1d05cd189e4908f79b57e78a4402f292	monkey	Andrea Petrucci
 	EGA (4 disk)	DOS	fr	ce6a4cef315b20fef58a95bc40a2d8d3	monkey	Matthieu Milan
-	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkey	Andrea Petrucci
 	EGA (4 disk v1.0,9/7/90 II)	DOS	fr	aa7a07d94ae853f6460be4ce0a1bf530	monkey	Parazythum
+	EGA (4 disk)	DOS	de	e98b982ceaf9d253d730bde8903233d6	monkey	Joachim Eberhard
+	EGA (4 disk)	DOS	it	477dbafbd66a53c98416dc01aef019ad	monkey	Andrea Petrucci
 
 	VGA	Amiga	en	6c2bff0e327f2962e809c2e1a82d7309	monkey	dhweg
-	VGA (V1.1)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkey	Andreas Bylund
-	VGA (V1.2r)	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkey	ghoostkilla
-	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
 	VGA	Amiga	fr	3433be9866ca4261b2d5d25374e3f243	monkey	Gerald Vincent
 	VGA	Amiga	it	fb66aa42de21675116346213f176a366	monkey	Andrea Petrucci
+	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
+	VGA (V1.1)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkey	Andreas Bylund
+	VGA (V1.2r)	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkey	ghoostkilla
 	VGA (8 disk)	DOS	en	c7890e038806df2bb5c0c8c6f1986ea2	monkey	Andrea Petrucci
 	VGA (4 disk)	DOS	en	15e03ffbfeddb9c2aebc13dcb2a4a8f4	monkey
 	VGA (V1.1)	DOS	en	08646dd9698ddf1023ba9bf8a195e37b	monkey	crossbow777
 	VGA (4 disk)	DOS	de	d0b531227a27c6662018d2bd05aac52a	monkey
-	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
 	VGA (4 disk)	DOS	it	66fd5ff9a810dfeb6d6bdada18221140	monkey	Andrea Petrucci
+	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
 
 	CD	DOS	en	2d1e891fe52df707c30185e52c50cd92	monkey
 	CD	DOS	fr	aa8a0cb65f3afbbe2c14c3f9f92775a3	monkey	Andrej Sinicyn, Andrea Petrucci
@@ -217,8 +217,8 @@ Day Of The Tentacle
 	Floppy	DOS	es	ae94f110a14ce71fc515d5b648827a8f	tentacle	abnog, Andrea Petrucci
 
 	Talkie	All?	en	4167a92a1d46baa4f4127d918d561f88	tentacle
-	Talkie	All?	de	6e959d65358eedf9b68b81e304b97fa4	tentacle
 	Talkie?	All?	fr	8aa05d3cdb0e795436043f0546af2da2	tentacle	Andrea Petrucci
+	Talkie	All?	de	6e959d65358eedf9b68b81e304b97fa4	tentacle
 	Talkie	All?	it	4fbbe9f64b8bc547503a379a301183ce	tentacle	Andrea Petrucci
 	Talkie	All?	es	883af4b0af4f77a92f1dcf1d0a283140	tentacle	Andrea Petrucci
 	Talkie (bundle)	Mac	en	cc04a076779379524ed4d9c5ee3c6fb1	tentacle	Joachim Eberhard
@@ -232,14 +232,14 @@ Day Of The Tentacle
 Sam &amp; Max
 	Non-Talkie	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
 	Non-Talkie (alt?)	DOS	en	3b301b7892f883ce42ab4be6a274fea6	samnmax	Andrea Petrucci
-	Non-Talkie	DOS	de	f27b1ba0eadaf2a6617b2b58192d1dbf	samnmax	dhewg, Andrea Petrucci
 	Non-Talkie	DOS	fr	ef347474f3c7be3b29584eaa133cca05	samnmax	Nicolas Sauz&egrave;de, Andrea Petrucci
+	Non-Talkie	DOS	de	f27b1ba0eadaf2a6617b2b58192d1dbf	samnmax	dhewg, Andrea Petrucci
 	Non-Talkie	DOS	it	b289a2a8cbedbf45786e0b4ad2f510f1	samnmax	Andrea Petrucci
 	Non-Talkie	DOS	es	fc53ce0e5f6562b1c1e1b4b8203acafb	samnmax	Andrea Petrucci
 
 	Talkie	All?	en	d917f311a448e3cc7239c31bddb00dd2	samnmax
-	Talkie	All?	de	0fb73eddfcf584c02ba097984df131ba	samnmax
 	Talkie	All?	fr	7edd665bbede7ea8b7233f8e650be6f8	samnmax	Andrea Petrucci
+	Talkie	All?	de	0fb73eddfcf584c02ba097984df131ba	samnmax
 	Talkie	All?	it	0f6f2e716ba896a44e5059bba1de7ca9	samnmax	Andrea Petrucci
 	Talkie	All?	es	4ba7fb331296c283e73d8f5b2096e551	samnmax	Andrea Petrucci
 	Talkie	DOS	ru	d43352a805d78b5f4936c6d7779bf575	samnmax
