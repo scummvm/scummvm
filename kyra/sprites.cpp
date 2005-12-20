@@ -115,6 +115,7 @@ void Sprites::setupSceneAnims() {
 				bkgdHeight += _anims[i].height2;
 
 			_anims[i].background = (uint8 *)malloc(_screen->getRectSize(bkgdWidth + 1, bkgdHeight));
+			memset(_anims[i].background, 0, _screen->getRectSize(bkgdWidth + 1, bkgdHeight));
 			//_anims[i].background = (uint8 *)malloc(100*100);
 			assert(_anims[i].background);
 		}

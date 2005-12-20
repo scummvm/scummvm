@@ -894,7 +894,7 @@ int KyraEngine::cmd_loadSoundFile(ScriptState *script) {
 }
 
 int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
-	debug(3, "cmd_displayWSAFrameOnHidPage(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(3), stackPos(4));
+	debug(3, "cmd_displayWSAFrameOnHidPage(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	int frame = stackPos(0);
 	int xpos = stackPos(1);
 	int ypos = stackPos(2);
