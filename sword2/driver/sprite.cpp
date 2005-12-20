@@ -286,28 +286,32 @@ void Screen::drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect) {
 	rd.top = s->y;
 	rd.bottom = rd.top + rs.bottom;
 
-	if (clipRect) {
-		if (clipRect->left > rd.left) {
-			rs.left += (clipRect->left - rd.left);
-			rd.left = clipRect->left;
-		}
+	Common::Rect defClipRect(0, 0, _screenWide, _screenDeep);
 
-		if (clipRect->top > rd.top) {
-			rs.top += (clipRect->top - rd.top);
-			rd.top = clipRect->top;
-		}
-
-		if (clipRect->right < rd.right) {
-			rd.right = clipRect->right;
-		}
-
-		if (clipRect->bottom < rd.bottom) {
-			rd.bottom = clipRect->bottom;
-		}
-
-		if (rd.width() <= 0 || rd.height() <= 0)
-			return;
+	if (!clipRect) {
+		clipRect = &defClipRect;
 	}
+
+	if (clipRect->left > rd.left) {
+		rs.left += (clipRect->left - rd.left);
+		rd.left = clipRect->left;
+	}
+
+	if (clipRect->top > rd.top) {
+		rs.top += (clipRect->top - rd.top);
+		rd.top = clipRect->top;
+	}
+
+	if (clipRect->right < rd.right) {
+		rd.right = clipRect->right;
+	}
+
+	if (clipRect->bottom < rd.bottom) {
+		rd.bottom = clipRect->bottom;
+	}
+
+	if (rd.width() <= 0 || rd.height() <= 0)
+		return;
 
 	src = surface + rs.top * s->w + rs.left;
 	dst = _buffer + _screenWide * rd.top + rd.left;
