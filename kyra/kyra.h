@@ -711,6 +711,8 @@ protected:
 	int _roomTableSize;	
 	char **_roomFilenameTable;
 	int _roomFilenameTableSize;
+	
+	uint8 *_amuleteAnim;
 
 	Timer _timers[34];
 	uint32 _timerNextRun;	
@@ -724,7 +726,6 @@ protected:
 
 	static const uint16 _amuletX[];
 	static const uint16 _amuletY[];
-
 };
 
 } // End of namespace Kyra

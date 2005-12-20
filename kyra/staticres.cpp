@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 4
+#define RESFILE_VERSION 5
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -194,6 +194,8 @@ void KyraEngine::res_loadResources(int type) {
 		res_loadLangTable("PLACED.", &resFile, (byte***)&_placedList, &_placedList_Size, loadNativeLanguage);
 		res_loadLangTable("DROPPED.", &resFile, (byte***)&_droppedList, &_droppedList_Size, loadNativeLanguage);
 		res_loadLangTable("NODROP.", &resFile, (byte***)&_noDropList, &_noDropList_Size, loadNativeLanguage);
+		
+		loadRawFile(resFile, "AMULETEANIM.SEQ", _amuleteAnim);
 	}
 
 #undef loadRooms
@@ -299,6 +301,9 @@ void KyraEngine::res_unloadResources(int type) {
 		delete [] _noDropList;
 		_noDropList_Size = 0;
 		_noDropList = 0;
+		
+		delete [] _amuleteAnim;
+		_amuleteAnim = 0;
 	}
 }
 
@@ -627,7 +632,6 @@ const int8 KyraEngine::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 
-const uint16 KyraEngine::_amuletX[] = {231, 275, 253, 253};
-const uint16 KyraEngine::_amuletY[] = {170, 170, 159, 181};
-
+const uint16 KyraEngine::_amuletX[] = { 231, 275, 253, 253 };
+const uint16 KyraEngine::_amuletY[] = { 170, 170, 159, 181 };
 } // End of namespace Kyra

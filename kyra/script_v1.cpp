@@ -1326,7 +1326,41 @@ int KyraEngine::cmd_drinkPotionAnimation(ScriptState *script) {
 }
 
 int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
-	warning("STUB: cmd_makeAmuletAppear");
+	debug(3, "cmd_makeAmuletAppear(0x%X) ()", script);
+	WSAMovieV1 *amulet = wsa_open("AMULET.WSA", 1, 0);
+	if (amulet) {
+		assert(_amuleteAnim);
+		_screen->hideMouse();
+		// snd_kyraPlaySound(0x70);
+		uint32 nextTime = 0;
+		for (int i = 0; _amuleteAnim[i] != 0xFF; ++i) {
+			nextTime = _system->getMillis() + 5 * _tickLength;
+			
+			uint8 code = _amuleteAnim[i];
+			if (code == 3 || code == 7) {
+				// snd_kyraPlaySound(0x71);
+			}
+			
+			if (code == 5) {
+				// snd_kyraPlaySound(0x72);
+			}
+			
+			if (code == 14) {
+				// snd_kyraPlaySound(0x73);
+			}
+			
+			wsa_play(amulet, code, 224, 152, 0);
+			_updateScreen = true;
+			
+			while (_system->getMillis() < nextTime) {
+				_sprites->updateSceneAnims();
+				updateAllObjectShapes();
+			}
+		}
+		_screen->showMouse();
+	}
+	wsa_close(amulet);
+	setGameFlag(0x2D);
 	return 0;
 }
 
