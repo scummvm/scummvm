@@ -532,7 +532,7 @@ protected:
 	void res_loadShapeTable(const byte *src, Shape **loadTo, int *size);
 	
 	void waitForEvent();
-	void delay(uint32 millis);
+	void delay(uint32 millis, bool update = false);
 	void loadPalette(const char *filename, uint8 *palData);
 	void loadMouseShapes();
 	void loadCharacterShapes();

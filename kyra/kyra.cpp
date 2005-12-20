@@ -522,7 +522,7 @@ void KyraEngine::startup() {
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 }
 
-void KyraEngine::delay(uint32 amount) {
+void KyraEngine::delay(uint32 amount, bool update) {
 	OSystem::Event event;
 	char saveLoadSlot[20];
 
@@ -576,7 +576,8 @@ void KyraEngine::delay(uint32 amount) {
 			_debugger->onFrame();
 
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		if (update)
+			updateAllObjectShapes();
 
 		if (_currentCharacter->sceneId == 210) {
 			//XXX
@@ -631,7 +632,7 @@ void KyraEngine::mainLoop() {
 		updateTextFade();
 
 		_handleInput = true;
-		delay((frameTime + _gameSpeed) - _system->getMillis());
+		delay((frameTime + _gameSpeed) - _system->getMillis(), true);
 		_handleInput = false;
 	}
 }
@@ -1916,12 +1917,15 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	
 	for (int i = 1; i < 5; ++i) {
 		Character *ch = &_characterList[i];
+		curAnimState = &_charactersAnimState[addedObjects];
 		if (ch->sceneId != _currentCharacter->sceneId) {
+			curAnimState->active = 0;
+			curAnimState->refreshFlag = 0;
+			curAnimState->bkgdChangeFlag = 0;
 			++addedObjects;
 			continue;
 		}
 		
-		curAnimState = &_charactersAnimState[addedObjects];
 		curAnimState->drawY = ch->y1;
 		curAnimState->sceneAnimPtr = _shapes[4+ch->currentAnimFrame];
 		curAnimState->animFrameNumber = ch->currentAnimFrame;
@@ -2029,8 +2033,8 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 	curAnimState = _charactersAnimState;
 	curAnimState->bkgdChangeFlag = 1;
 	curAnimState->refreshFlag = 1;
-	for (int i = 0; i < 28; ++i) {
-		curAnimState = &_charactersAnimState[i];
+	for (int i = 1; i < 28; ++i) {
+		curAnimState = &_animStates[i];
 		if (curAnimState->active) {
 			curAnimState->bkgdChangeFlag = 1;
 			curAnimState->refreshFlag = 1;
@@ -3222,8 +3226,7 @@ void KyraEngine::restoreAllObjectBackgrounds() {
 	_screen->_curPage = 2;
 	
 	while (curObject) {
-		// XXX
-		if (curObject->active) {
+		if (curObject->active && !curObject->unk1) {
 			preserveOrRestoreBackground(curObject, true);
 			curObject->x2 = curObject->x1;
 			curObject->y2 = curObject->y1;
@@ -3240,8 +3243,7 @@ void KyraEngine::preserveAnyChangedBackgrounds() {
 	_screen->_curPage = 2;
 	
 	while (curObject) {
-		// XXX
-		if (curObject->active && curObject->bkgdChangeFlag) {
+		if (curObject->active && !curObject->unk1 && curObject->bkgdChangeFlag) {
 			preserveOrRestoreBackground(curObject, false);
 			curObject->bkgdChangeFlag = 0;
 		}
@@ -3464,7 +3466,7 @@ void KyraEngine::copyChangedObjectsForward(int refreshFlag) {
 				int xpos = 0, ypos = 0, width = 0, height = 0;
 				xpos = curObject->x1 - (curObject->width2+1);
 				ypos = curObject->y1 - curObject->height2;				
-				width = (curObject->width + curObject->width2*2)<<3;
+				width = (curObject->width + ((curObject->width2)>>3)+2)<<3;
 				height = curObject->height + curObject->height2*2;
 				
 				if (xpos < 8) {

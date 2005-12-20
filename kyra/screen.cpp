@@ -673,6 +673,13 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
 	uint8 *decodedShapeFrame = _decodeShapeBuffer;
+	
+	// only used if shapeFlag & 1 is NOT zero
+	const uint8 *colorTable = shapeData + 10;
+	if (_vm->features() & GF_TALKIE) {
+		colorTable += 2;
+	}
+	
 	for (int j = 0; j < shapeHeight; ++j) {
 		uint8 *dsbNextLine = decodedShapeFrame + shapeWidth;
 		int count = shapeWidth;
@@ -681,8 +688,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (code != 0) {
 				// this is guessed
 				if (shapeFlags & 1) {
-					const uint8 *colorTable = shapeData + 10;
-					*decodedShapeFrame++ = colorTable[code];
+					if (code < 16) {
+						*decodedShapeFrame++ = colorTable[code];
+					}
 				} else {
 					*decodedShapeFrame++ = code;
 				}
@@ -1427,6 +1435,9 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	
 	if (flags & 1) {
 		dst = newShape + 10;
+		if (_vm->features() & GF_TALKIE) {
+			dst += 2;
+		}
 		src = &table[0x100];
 		memcpy(dst, src, sizeof(uint8)*16);
 	}
