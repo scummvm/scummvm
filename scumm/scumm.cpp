@@ -265,7 +265,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"water", "Freddi Fish and Luther's Water Worries", GID_HEGAME, 6, 80, MDT_NONE,
+	{"water", "Freddi Fish and Luther's Water Worries", GID_WATER, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
@@ -394,6 +394,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"cf4ef315214c7d8cdab6302cdb7e50db", "Freddi Fish 1: The Case of the Missing Kelp Seeds (German Demo)", GID_HEGAME, 6, 73, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"c8aac5e3e701874e2fa4117896f9e1b1", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Macintosh Demo)", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
@@ -425,6 +427,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"e03ed1474ec14de78359970e0457a820", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Demo)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"688328c5bdc4c8ec4145688dfa077bf2", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (German Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Ff4demo
 
 	{"b8955d7d23b4972229060d1592489fef", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Dutch)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FreddiDZZ
@@ -438,6 +442,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FF5Demo
 
 	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"f1b0e0d587b85052de5534a3847e68fe", "Freddi Fish and Luther's Water Worries (Updated)", GID_WATER, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"9d7b67be003fea60be4dcbd193611936", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
@@ -506,6 +513,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"ef71a322b6530ac45b1a070f7c0795f7", "Moonbase Commander (Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
+	{"898eaa21f79cf8d4f08db856244689ff", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaNHD
 	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
@@ -523,10 +532,14 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Pajama Sam's Lost & Found (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 
+	{"055ffe4f47753e47594ac67823220c54", "Putt-Putt Enters the Race (German)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // ToffRennen
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Dutch Demo)", GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
 	{"aaa587701cde7e74692c68c1024b85eb", "Putt-Putt Enters the Race (Updated Dutch Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"663743c03ae0c007f3d665cf631c0e6b", "Putt-Putt Enters the Race (German Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Rennen
 	{"7c8100e360e8ef05f88069d4cfa0afd1", "Putt-Putt Enters the Race (UK Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
@@ -552,6 +565,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"2108d83dcf09f8adb4bc524669c8cf51", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"d4aac997e2f4e15341f0bfbf905419bd", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"7c980a1b1596a93f26917318884f48f7", "Putt-Putt Travels Through Time (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"defb8cb9ec4b0f91acfb6b61c6129ad9", "Putt-Putt Travels Through Time (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -631,6 +646,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"58436e634f4fae1d9973591c2ffa1fcb", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"9bda5fee51d2fda5253d02c642016bf4", "Spyfox 1: Dry Cereal (Updated Dutch)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 	{"a28135a7ade38cc0208b04507c46efd1", "Spyfox 1: Dry Cereal (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
@@ -708,7 +725,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "samnmax", "samdemo", kGenPC },
 	{ "samnmax", "snmdemo", kGenPC },
 	{ "samnmax", "snmidemo", kGenPC },
-	{ "snmdemo", "sdemo", kGenPC },
+	{ "samnmax", "sdemo", kGenPC },
 #ifndef DISABLE_SCUMM_7_8
 	{ "dig.la0", "The Dig Data", kGenAsIs },
 	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
@@ -716,8 +733,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Data", kGenAsIs },
 	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
-	{ "ft.la0", "ft.000", kGenAsIs },
-	{ "ft.la0", "ftdemo.000", kGenAsIs },
 	{ "ft", "ftdemo", kGenPC },
 #endif
 #ifndef DISABLE_HE
@@ -754,6 +769,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi2", "Freddi Fish 2 Demo", kGenMac },
 	{ "freddi2", "Freddi Fish 2", kGenMac },
 	{ "freddi2", "FreddiCHSH", kGenPC },
+	{ "freddi2", "Fritzi Fisch 2", kGenMac },
 	{ "freddi3", "Freddi Fish 3", kGenMac },
 	{ "freddi3", "FreddiSCS", kGenPC },
 	{ "freddi3", "F3-mdemo", kGenMac },
@@ -761,12 +777,13 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi3", "f3-mdemo", kGenPC },
 	{ "freddi3", "FF3-DEMO", kGenPC },
 	{ "freddi3", "FreddiFGT", kGenPC },
+	{ "freddi3", "FreddiFGT", kGenMac },
 	{ "freddi3", "MM3-DEMO", kGenPC },
 	{ "freddi3", "MM3-Demo", kGenMac }, // FR Mac demo
 	{ "freddi4", "f4-demo", kGenPC },
 	{ "freddi4", "ff4demo", kGenPC },
 	{ "freddi4", "Freddi 4 Demo", kGenMac },
-	{ "freddi4", "ff4demo", kGenMac },
+	{ "freddi4", "Ff4demo", kGenMac },
 	{ "freddi4", "Freddi 4", kGenMac },
 	{ "freddi4", "FreddiGS", kGenPC },
 	{ "freddi4", "FreddiHRBG", kGenPC },
@@ -790,17 +807,22 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama2", "Pajama Sam 2", kGenMac },
 	{ "pajama2", "PajamaTAL", kGenPC },
 	{ "pajama2", "PyjamaDBMN", kGenPC },
+	{ "pajama2", "PyjamaDBMN", kGenMac },
 	{ "pajama2", "PJ2Demo", kGenMac },
 	{ "pajama2", "pj2demo", kGenPC },
 	{ "pajama2", "Pjs2demo", kGenPC },
 	{ "pajama2", "PJ2 Demo", kGenMac }, // NL Mac demo
+	{ "pajama3", "GPJ3Demo", kGenPC },
+	{ "pajama3", "Pajama Sam 3", kGenMac },
 	{ "pajama3", "Pajama Sam 3-Demo", kGenMac },
 	{ "pajama3", "pj3-demo", kGenPC },
 	{ "pajama3", "pj3demo", kGenPC },
-	{ "pajama3", "pj3demo", kGenMac },
+	{ "pajama3", "PJ3Demo", kGenMac },
 	{ "pajama3", "Pajama Sam Demo", kGenMac },
 	{ "pajama3", "PjSamDemo", kGenMac },
 	{ "pajama3", "PjSamDemo", kGenPC },
+	{ "pajama3", "PyjamaSKS", kGenPC },
+	{ "pajama3", "PyjamaSKS", kGenMac },
 	{ "pjgames", "PJGames", kGenMac },
 	{ "puttcircus", "circdemo", kGenPC },
 	{ "puttcircus", "Putt Circus Demo", kGenMac },
@@ -814,9 +836,11 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "puttrace", "500demo", kGenPC },
 	{ "puttrace", "racedemo", kGenPC },
 	{ "puttrace", "RaceDemo", kGenMac },
-	{ "puttrace", "racedemo", kGenMac },
+	{ "puttrace", "Rennen", kGenPC },
 	{ "puttrace", "Putt500 demo", kGenMac }, // NL Mac demo
 	{ "puttrace", "Putt Race", kGenMac },
+	{ "puttrace", "ToffRennen", kGenPC },
+	{ "puttrace", "ToffRennen", kGenMac },
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttPuttTTT", kGenPC },
 	{ "putttime", "PuttPuttTTT", kGenMac },
@@ -830,6 +854,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "TEMPDEMO", kGenPC },
 	{ "putttime", "Tempdemo", kGenMac }, // FR Mac demo
 	{ "putttime", "toffzeit", kGenPC }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
+	{ "putttime", "toffzeit", kGenMac }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
 	{ "puttzoo", "Puttzoo Demo", kGenMac },
 	{ "puttzoo", "PuttZoo", kGenMac },
 	{ "puttzoo", "zoodemo", kGenPC },
@@ -845,12 +870,18 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "spyfox", "Spydemo", kGenPC},
 	{ "spyfox", "SPYFox", kGenMac },
 	{ "spyfox", "SPYFoxDC", kGenPC },
+	{ "spyfox", "SPYFoxDC", kGenMac },
+	{ "spyfox", "SpyFoxDMK", kGenPC },
+	{ "spyfox", "SpyFoxDMK", kGenMac },
 	{ "spyfox", "Spy Fox Demo", kGenMac }, // NL Mac demo
 	{ "spyfox", "JR-Demo", kGenMac }, // FR Mac demo
 	{ "spyfox2", "sf2-demo", kGenPC },
 	{ "spyfox2", "sf2demo", kGenPC },
+	{ "spyfox2", "Sf2demo", kGenMac },
 	{ "spyfox2", "Spy Fox 2 - Demo", kGenMac },
 	{ "spyfox2", "Spy Fox 2", kGenMac },
+	{ "spyfox2", "SpyFoxOR", kGenPC },
+	{ "spyfox2", "SpyFoxOR", kGenMac },
 	{ "spyfox2", "spyfoxsr", kGenPC },
 	{ "spyozon", "sf3-demo", kGenPC },
 	{ "spyozon", "Spy Ozone Demo", kGenMac },
@@ -859,7 +890,6 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "thinker1", "1grademo", kGenPC },
 	{ "thinker1", "Thinker1", kGenMac },
 	{ "thinkerk", "kinddemo", kGenPC },
-	{ "thinkerk", "Kinddemo", kGenMac },
 	{ "thinkerk", "KindDemo", kGenMac },
 	{ "thinkerk", "ThinkerK", kGenMac },
 	{ "water", "Water Worries", kGenMac },

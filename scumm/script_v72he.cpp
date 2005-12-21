@@ -1760,10 +1760,18 @@ void ScummEngine_v72he::o72_openFile() {
 
 	// There are Macintosh specific versions of HE7.2 games.
 	if (_heversion >= 80 && _platform == Common::kPlatformMacintosh) {
-		char buf1[128];
-
-		generateSubstResFileName((char *)filename, buf1, sizeof(buf1));
-		strcpy((char *)filename, buf1);
+		// Work around for filename difference in HE7 file, needs to
+		// open 'Water (7)' instead of 'Water Worries (7)'.
+		if (_gameId == GID_WATER && _heversion == 99 && !strcmp((char *)filename, "Water.he7")) {
+			strcpy((char *)filename, "Water (7)");
+		} else {
+			char buf1[128];
+			buf1[0] = '\0';
+			generateSubstResFileName((char *)filename, buf1, sizeof(buf1));
+			if (buf1[0]) {
+				strcpy((char *)filename, buf1);
+			}
+		}
 	}
 
 	int r = convertFilePath(filename);
