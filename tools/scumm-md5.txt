@@ -52,8 +52,7 @@ Zak McKracken and the Alien Mindbenders
 	V2 (alt?)	DOS	it	1900e501a52fbf55bde6e4196f6d2aa6	zak	Andrea Petrucci
 
 	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zak
-	FM-TOWNS	FM-TOWNS	jp	ce3edc99cd4f478c5b37104d70c68ca5	zak	khalek
-	FM-TOWNS (alt?)	FM-TOWNS	jp	1ca86e2cf9aaa2068738a1e5ba477e60	zak	Andrea Petrucci
+	FM-TOWNS	FM-TOWNS	jp	1ca86e2cf9aaa2068738a1e5ba477e60	zak	Andrea Petrucci
 
 	V2 Demo (non-interactive)	Atari	en	8299d9b8a1b0e7b881bae7a9971dc5e2	zak
 
@@ -86,30 +85,30 @@ Indiana Jones and the Last Crusade
 	EGA Demo (non-interactive)	DOS	en	b597e0403cc0002f69170e6caba7edd9	indy3
 
 Loom
-	Floppy	Amiga	en	4dc780f1bc587a193ce8a97652791438	loom	Antti Leimi, Andrea Petrucci
-	Floppy (same as IT?!?)	Amiga	fr	39cb9dec16fa16f38d79acd80effb059	loom	Gerald Vincent
-	Floppy	Amiga	de	2fe369ad70f52a8cf7ad6077ee64f81a	loom	Norbert Lange
-	Floppy (same as FR?!?)	Amiga	it	39cb9dec16fa16f38d79acd80effb059	loom	Andrea Petrucci
-	Floppy	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
-	Floppy	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
-	Floppy	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
-	Floppy v1.0	DOS	en	28ef68ee3ed76d7e2ee8ee13c15fbd5b	loom
-	Floppy v1.0 alternative	DOS	en	73e5ab7dbb9a8061cc6d25df02dbd1e7	loom	Andrea Petrucci
-	Floppy (v1.1 16 Mar 90)	DOS	en	37f56ceb13e401a7ac7d9e6b37fecaf7	loom	Kirben, Andrea Petrucci
-	Floppy (v1.1 29 Mar 90)	DOS	en	22f4ea88a09da12df9308ba30bcb7d0f	loom	James Grosbeck
-	Floppy	DOS	fr	b886b0a5d909c7158a914e1d7c1c6c65	loom	Andrea Petrucci
-	Floppy	DOS	de	fa127d7c4bb47d05bb1c33ddcaa9f767	loom
-	Floppy	DOS	hb	187d315f6b5168f68680dfe8c3d76a3e	loom
-	Floppy	DOS	it	c3df37df9d3b481b45f75283a9907c47	loom	Andrea Petrucci
-	Floppy	DOS	es	2a208ffbcd0e83e86f4356e6f64aa6e1	loom	abnog, Andrea Petrucci
-	Floppy	Mac	en	6f0be328c64d689bb606d22a389e1b0f	loom
+	EGA	Amiga	en	4dc780f1bc587a193ce8a97652791438	loom	Antti Leimi, Andrea Petrucci
+	EGA (same as IT?!?)	Amiga	fr	39cb9dec16fa16f38d79acd80effb059	loom	Gerald Vincent
+	EGA	Amiga	de	2fe369ad70f52a8cf7ad6077ee64f81a	loom	Norbert Lange
+	EGA (same as FR?!?)	Amiga	it	39cb9dec16fa16f38d79acd80effb059	loom	Andrea Petrucci
+	EGA	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
+	EGA	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
+	EGA	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
+	EGA v1.0	DOS	en	28ef68ee3ed76d7e2ee8ee13c15fbd5b	loom
+	EGA v1.0 alternative	DOS	en	73e5ab7dbb9a8061cc6d25df02dbd1e7	loom	Andrea Petrucci
+	EGA (v1.1 16 Mar 90)	DOS	en	37f56ceb13e401a7ac7d9e6b37fecaf7	loom	Kirben, Andrea Petrucci
+	EGA (v1.1 29 Mar 90)	DOS	en	22f4ea88a09da12df9308ba30bcb7d0f	loom	James Grosbeck
+	EGA	DOS	fr	b886b0a5d909c7158a914e1d7c1c6c65	loom	Andrea Petrucci
+	EGA	DOS	de	fa127d7c4bb47d05bb1c33ddcaa9f767	loom
+	EGA	DOS	hb	187d315f6b5168f68680dfe8c3d76a3e	loom
+	EGA	DOS	it	c3df37df9d3b481b45f75283a9907c47	loom	Andrea Petrucci
+	EGA	DOS	es	2a208ffbcd0e83e86f4356e6f64aa6e1	loom	abnog, Andrea Petrucci
+	EGA	Mac	en	6f0be328c64d689bb606d22a389e1b0f	loom
 
-	Talkie/CD	DOS	en	5d88b9d6a88e6f8e90cded9d01b7f082	loom
+	VGA CD	DOS	en	5d88b9d6a88e6f8e90cded9d01b7f082	loom
 
 	FM-TOWNS	FM-TOWNS	en	c5d10e190d4b4d59114b824f2fdbd00e	loom	dhewg, Andrea Petrucci
 	FM-TOWNS	FM-TOWNS	jp	31b8fda4c8c7413fa6b39997e776eba4	loom	khalek, Andrea Petrucci
 
-	Floppy Demo (non-interactive)	DOS	en	5a35e36fd777e9c37a49c5b2faca52f9	loom
+	EGA Demo (non-interactive)	DOS	en	5a35e36fd777e9c37a49c5b2faca52f9	loom
 
 The Secret of Monkey Island
 	EGA	Atari	en	c666a998af90d81db447eccba9f72c8d	monkey
@@ -128,23 +127,23 @@ The Secret of Monkey Island
 
 	VGA	Amiga	en	6c2bff0e327f2962e809c2e1a82d7309	monkey	dhweg
 	VGA	Amiga	fr	3433be9866ca4261b2d5d25374e3f243	monkey	Gerald Vincent
-	VGA	Amiga	it	fb66aa42de21675116346213f176a366	monkey	Andrea Petrucci
-	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
 	VGA (V1.1)	Amiga	de	0a212fa35fa8421f31c1f3961272caf0	monkey	Andreas Bylund
 	VGA (V1.2r)	Amiga	de	319a4dde52c7960b5aae8a1ec348d918	monkey	ghoostkilla
+	VGA	Amiga	it	fb66aa42de21675116346213f176a366	monkey	Andrea Petrucci
+	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
 	VGA (8 disk)	DOS	en	c7890e038806df2bb5c0c8c6f1986ea2	monkey	Andrea Petrucci
 	VGA (4 disk)	DOS	en	15e03ffbfeddb9c2aebc13dcb2a4a8f4	monkey
 	VGA (V1.1)	DOS	en	08646dd9698ddf1023ba9bf8a195e37b	monkey	crossbow777
 	VGA (4 disk)	DOS	de	d0b531227a27c6662018d2bd05aac52a	monkey
 	VGA (4 disk)	DOS	it	66fd5ff9a810dfeb6d6bdada18221140	monkey	Andrea Petrucci
 	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
+	VGA	Mac	en	2ccd8891ce4d3f1a334d21bff6a88ca2	monkey	Lars N&aelig;sbye Christensen
 
 	CD	DOS	en	2d1e891fe52df707c30185e52c50cd92	monkey
 	CD	DOS	fr	aa8a0cb65f3afbbe2c14c3f9f92775a3	monkey	Andrej Sinicyn, Andrea Petrucci
 	CD	DOS	de	305d3dd57c96c65b017bc70c8c7cfb5e	monkey
 	CD	DOS	it	da6269b18fcb08189c0aa9c95533cce2	monkey	Andrej Sinicyn, Andrea Petrucci
 	CD	DOS	es	f049e38c1f8302b5db6170f1872af89a	monkey	Andrej Sinicyn, Andrea Petrucci
-	-	Mac	en	2ccd8891ce4d3f1a334d21bff6a88ca2	monkey	Lars N&aelig;sbye Christensen
 	CD	SEGA	en	c13225cb1bbd3bc9fe578301696d8021	monkey
 
 	FM-TOWNS	FM-TOWNS	en	8eb84cee9b429314c7f0bdcf560723eb	monkey	Paul Priest, Andrea Petrucci
