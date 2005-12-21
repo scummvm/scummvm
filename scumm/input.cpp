@@ -278,29 +278,11 @@ void ScummEngine::processKbd(bool smushMode) {
 		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 	}
 
-	if (_version == 8) {
-		VAR(VAR_MOUSE_BUTTONS) = 0;
-		VAR(VAR_MOUSE_HOLD) = 0;
-		VAR(VAR_RIGHTBTN_HOLD) = 0;
-
-		if (_leftBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 1;
-
-		if (_rightBtnPressed & msClicked)
-			VAR(VAR_MOUSE_BUTTONS) += 2;
-
-		if (_leftBtnPressed & msDown)
-			VAR(VAR_MOUSE_HOLD) += 1;
-
-		if (_rightBtnPressed & msDown) {
-			VAR(VAR_RIGHTBTN_HOLD) = 1;
-			VAR(VAR_MOUSE_HOLD) += 2;
-		}
-	} else if (_version >= 6) {
+	if (_version >= 6) {
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 
-		if (_version == 7) {
+		if (_version >= 7) {
 			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
 			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
 		}

@@ -1311,8 +1311,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_RIGHTBTN_DOWN = 0xFF;
 	VAR_LEFTBTN_HOLD = 0xFF;
 	VAR_RIGHTBTN_HOLD = 0xFF;
-	VAR_MOUSE_BUTTONS = 0xFF;
-	VAR_MOUSE_HOLD = 0xFF;
+
 	VAR_SAVELOAD_SCRIPT = 0xFF;
 	VAR_SAVELOAD_SCRIPT2 = 0xFF;
 
