@@ -170,7 +170,7 @@ Monkey Island 2: LeChuck's revenge
 	Floppy	DOS	fr	8e4ee4db46954bfe2912e259a16fad82	monkey2	Nicolas Sauz&egrave;de, Andrea Petrucci
 	Floppy	DOS	de	6886e5d08cee329b1f2e743ae2e3ceed	monkey2
 	Floppy	DOS	it	69ea626f1f87eecb78ea0d6c6b983a1d	monkey2	Andrea Petrucci
-	Floppy	DOS	it	bd126753de619a495f9f22adc951c8d5	monkey2	Andrea Petrucci
+	Floppy (alt?)	DOS	it	bd126753de619a495f9f22adc951c8d5	monkey2	Andrea Petrucci
 	Floppy	DOS	es	7974365d3dc0f43a2748c975f91ff042	monkey2	Andrea Petrucci
 	Floppy	Mac	en	4cb9c3618f71668f8e4346c8f323fa82	monkey2
 	Floppy (alt?)	Mac	en	e246e02db9630533a40d99c9f54a8e01	monkey2	Lars N&aelig;sbye Christensen
@@ -184,7 +184,7 @@ Indiana Jones and the Fate of Atlantis
 	Floppy	Amiga	en	3a03dab514e4038df192d8a8de469788	atlantis	dhewg
 	Floppy	Amiga	fr	20da6fce37805423966aaa8f3c2426aa	atlantis	Joachim Eberhard
 	Floppy	Amiga	de	4f267a901719623de7dde83e47d5b474	atlantis	ghoostkilla
-	Floppy	Amiga	de	e534d29afb3c6e0ee9dc3d53c5956714	atlantis	Tobias Fleischer
+	Floppy (alt?)	Amiga	de	e534d29afb3c6e0ee9dc3d53c5956714	atlantis	Tobias Fleischer
 	Floppy	Amiga	it	5798972220cd458be2626d54c80f71d7	atlantis	Andrea Petrucci
 	Floppy	Amiga	es	15f588e887e857e8c56fe6ade4956168	atlantis	VooD
 	Floppy	DOS	en	c63ee46143ba65f9ce14cf539ca51bd7	atlantis	Andrea Petrucci
@@ -193,7 +193,7 @@ Indiana Jones and the Fate of Atlantis
 	Floppy	DOS	it	8f3758ff98c9c5d78e5d635222cad026	atlantis	Andrea Petrucci
 	Floppy	DOS	es	9bd2a8f72613e715c199246dd511e10f	atlantis	abnog, Andrea Petrucci
 	Floppy	Mac	en	d6dd0646404768a63e963891a96daadd	atlantis	Fingolfin
-	Floppy	Mac	en	06b187468113f9ae5a400b148a847fac	atlantis	Lars N sbye Christensen
+	Floppy (alt?)	Mac	en	06b187468113f9ae5a400b148a847fac	atlantis	Lars N sbye Christensen
 
 	CD	DOS	en	182344899c2e2998fca0bebcd82aa81a	atlantis
 	CD	Mac	en	1a6e5ae2777a6a33f06ffc0226210934	atlantis	Scott Summers
@@ -244,9 +244,9 @@ Sam &amp; Max
 	CD	DOS	ru	d43352a805d78b5f4936c6d7779bf575	samnmax
 	CD (bundle)	Mac	en	166553538ff320c69edafeee29525419	samnmax	Joachim Eberhard
 
-	Demo (non-interactive)	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samnmax
-	Demo (WIP)	DOS	en	0e4c5d54a0ad4b26132e78b5ea76642a	samnmax
 	Demo	DOS	en	c3196c5349e53e387aaff1533d95e53a	samnmax
+	Demo (WIP)	DOS	en	0e4c5d54a0ad4b26132e78b5ea76642a	samnmax
+	Demo (non-interactive)	DOS	en	d9d0dd93d16ab4dec55cabc2b86bbd17	samnmax
 	Demo	DOS	de	cc8ba2b0df2f9c450bcf055fe2711979	samnmax	Simon Krumrein, sev
 	Demo	Mac	en	0425954a9db5c340861672892c3e678d	samnmax
 	Demo (bundle)	Mac	en	6dead580b0ff14d5f7b33b4219f04159	samnmax
