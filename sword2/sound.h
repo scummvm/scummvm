@@ -152,7 +152,7 @@ public:
 	bool isStereo() const	{ return _decoder->isStereo(); }
 	int getRate() const	{ return _decoder->getRate(); }
 
-	int whichCd()		{ return _cd; }
+	int getCD()		{ return _cd; }
 
 	void fadeUp();
 	void fadeDown();

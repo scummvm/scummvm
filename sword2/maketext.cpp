@@ -73,7 +73,7 @@ namespace Sword2 {
  */
 
 byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
-	debug(3, "makeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
+	debug(5, "makeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
 
 	_borderPen = border;
 

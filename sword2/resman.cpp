@@ -53,7 +53,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	// Until proven differently, assume we're on CD 1. This is so the start
 	// dialog will be able to play any music at all.
-	_curCd = 1;
+	setCD(CD1);
 
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
@@ -217,10 +217,9 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 		// If we're loading a cluster that's only available from one
 		// of the CDs, remember which one so that we can play the
-		// correct music.
+		// correct speech and music.
 
-		if ((_resFiles[cluFileNum].cd == CD1) || (_resFiles[cluFileNum].cd == CD2))
-			_curCd = _resFiles[cluFileNum].cd;
+		setCD(_resFiles[cluFileNum].cd);
 
 		// Actually, as long as the file can be found we don't really
 		// care which CD it's on. But if we can't find it, keep asking
@@ -246,6 +245,8 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		_resList[res].refCount = 0;
 
 		file->read(_resList[res].ptr, len);
+
+		debug(3, "Loaded resource '%s' from CD %d", fetchName(_resList[res].ptr), getCD());
 
 		if (dump) {
 			char buf[256];
@@ -390,7 +391,7 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 		if ((_vm->_features & GF_DEMO) || (_resFiles[fileNum].cd & LOCAL_PERM))
 			error("Could not find '%s'", _resFiles[fileNum].fileName);
 
-		getCd(_resFiles[fileNum].cd & 3);
+		askForCD(_resFiles[fileNum].cd & 3);
 	}
 	return file;
 }
@@ -579,11 +580,7 @@ void ResourceManager::killAllObjects(bool wantInfo) {
 		Debug_Printf("Expelled %d resources\n", nuked);
 }
 
-int ResourceManager::whichCd() {
-	return _curCd;
-}
-
-void ResourceManager::getCd(int cd) {
+void ResourceManager::askForCD(int cd) {
 	byte *textRes;
 
 	// Stop any music from playing - so the system no longer needs the

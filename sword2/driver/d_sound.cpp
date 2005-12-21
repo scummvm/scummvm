@@ -43,6 +43,8 @@ namespace Sword2 {
 static AudioStream *makeCLUStream(Common::File *fp, int size);
 
 static AudioStream *getAudioStream(SoundFileHandle *fh, const char *base, int cd, uint32 id, uint32 *numSamples) {
+	debug(3, "Playing %s from CD %d", base, cd);
+
 	if (!fh->file.isOpen()) {
 		struct {
 			const char *ext;
@@ -453,7 +455,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 
 	for (i = 0; i < MAXMUS; i++) {
 		if (_music[i]) {
-			if (_music[i]->whichCd() == 1)
+			if (_music[i]->getCD() == 1)
 				inUse[0] = true;
 			else
 				inUse[1] = true;
@@ -532,7 +534,7 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 	//Common::StackLock lock(_mutex);
 
 	_mutex.lock();
-	int cd = _vm->_resman->whichCd();
+	int cd = _vm->_resman->getCD();
 
 	if (loop)
 		_loopingMusicId = musicId;
@@ -708,7 +710,7 @@ int32 Sound::amISpeaking() {
  */
 
 uint32 Sound::preFetchCompSpeech(uint32 speechId, uint16 **buf) {
-	int cd = _vm->_resman->whichCd();
+	int cd = _vm->_resman->getCD();
 	uint32 numSamples;
 
 	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
@@ -754,7 +756,7 @@ int32 Sound::playCompSpeech(uint32 speechId, uint8 vol, int8 pan) {
 	if (getSpeechStatus() == RDERR_SPEECHPLAYING)
 		return RDERR_SPEECHPLAYING;
 
-	int cd = _vm->_resman->whichCd();
+	int cd = _vm->_resman->getCD();
 	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
 
 	AudioStream *input = getAudioStream(fh, "speech", cd, speechId, NULL);

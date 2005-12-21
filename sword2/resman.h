@@ -64,7 +64,7 @@ private:
 
 	Sword2Engine *_vm;
 
-	int _curCd;
+	int _curCD;
 	uint32 _totalResFiles;
 	uint32 _totalClusters;
 
@@ -116,9 +116,18 @@ public:
 	}
 
 	// Prompts the user for the specified CD.
-	void getCd(int cd);
+	void askForCD(int cd);
 
-	int whichCd();
+	void setCD(int cd) {
+		if (cd == CD1)
+			_curCD = 1;
+		else if (cd == CD2)
+			_curCD = 2;
+	}
+
+	int getCD() {
+		return _curCD;
+	}
 
 	void remove(int res);
 	void removeAll();
