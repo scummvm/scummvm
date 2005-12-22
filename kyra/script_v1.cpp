@@ -1003,17 +1003,20 @@ int KyraEngine::cmd_changeCharactersXAndY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_clearSceneAnimatorBeacon(ScriptState *script) {
-	warning("STUB: cmd_clearSceneAnimatorBeacon");
+	debug(3, "cmd_clearSceneAnimatorBeacon(0x%X) ()");
+	_sprites->_sceneAnimatorBeaconFlag = 0;
 	return 0;
 }
 
 int KyraEngine::cmd_querySceneAnimatorBeacon(ScriptState *script) {
-	warning("STUB: cmd_querySceneAnimatorBeacon");
-	return 0;
+	debug(3, "cmd_querySceneAnimatorBeacon(0x%X) ()");
+	return _sprites->_sceneAnimatorBeaconFlag;
 }
 
 int KyraEngine::cmd_refreshSceneAnimator(ScriptState *script) {
-	warning("STUB: cmd_refreshSceneAnimator");
+	debug(3, "cmd_refreshSceneAnimator(0x%X) ()");
+	_sprites->updateSceneAnims();
+	updateAllObjectShapes();
 	return 0;
 }
 

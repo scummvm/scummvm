@@ -41,6 +41,7 @@ Sprites::Sprites(KyraEngine *engine, OSystem *system) {
 	_animDelay = 16;
 	_spriteDefStart = 0;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
+	_sceneAnimatorBeaconFlag = 0;
 }
 
 Sprites::~Sprites() {
@@ -350,11 +351,11 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFFB1:
 				data += 2;
-				debug(1, "TODO func: Set animator beacon flag");
+				_sceneAnimatorBeaconFlag = 1;
 				break;
 			case 0xFFB2:
 				data += 2;
-				debug(1, "TODO func: Reset animator beacon flag");
+				_sceneAnimatorBeaconFlag = 0;
 				break;
 			case 0xFFB4:
 				data += 2;
@@ -370,8 +371,7 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFFA7:
 				data += 2;
-				debug(1, "TODO func: Unknown FFA7");
-				debug(1, " %i", READ_LE_UINT16(data));
+				_anims[READ_LE_UINT16(data)].play = 1;
 				data += 2;
 				break;
 			default:

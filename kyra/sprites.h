@@ -74,6 +74,7 @@ public:
 	
 	int getDrawLayer(int y);
 
+	int _sceneAnimatorBeaconFlag;
 protected:
 	void freeSceneShapes();
 
