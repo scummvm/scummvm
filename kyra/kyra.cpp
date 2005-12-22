@@ -1341,7 +1341,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 }
 
 void KyraEngine::transcendScenes(int roomIndex, int roomName) {
-	debug(9, "transcendScenes(%d, %d, %d, %d)", roomIndex, roomName);
+	debug(9, "transcendScenes(%d, %d)", roomIndex, roomName);
 	assert(roomIndex < _roomTableSize);
 	if (_features & GF_TALKIE) {
 		char file[32];
@@ -1362,6 +1362,12 @@ void KyraEngine::transcendScenes(int roomIndex, int roomName) {
 	_unkScreenVar1 = 1;
 	_unkScreenVar2 = 0;
 	_unkScreenVar3 = 0;
+}
+
+void KyraEngine::setSceneFile(int roomIndex, int roomName) {
+	debug(9, "setSceneFile(%d, %d)", roomIndex, roomName);
+	assert(roomIndex < _roomTableSize);
+	_roomTable[roomIndex].nameIndex = roomName;
 }
 
 void KyraEngine::moveCharacterToPos(int character, int facing, int xpos, int ypos) {
@@ -1690,8 +1696,8 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 			break;
 		}
 		
-		if ((uint8)(_northExitHeight & 0xFF) >= ypos) {
-			ypos = (_northExitHeight & 0xFF);
+		if ((uint8)(_northExitHeight & 0xFF) + 2 >= ypos) {
+			ypos = (_northExitHeight & 0xFF) + 4;
 		}
 		if (xpos >= 308) {
 			xpos = 304;
@@ -1743,7 +1749,7 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 				_currentCharacter->x2 = xpos;
 				_currentCharacter->y1 = ypos;
 				_currentCharacter->y2 = ypos;
-				facing = 4;
+				facing = 2;
 				xpos2 = 192;
 				ypos2 = 128;
 				setFacing = 0;

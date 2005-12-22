@@ -577,7 +577,7 @@ int KyraEngine::cmd_setBrandonStatusBit(ScriptState *script) {
 int KyraEngine::cmd_pauseSeconds(ScriptState *script) {
 	debug(3, "cmd_pauseSeconds(0x%X) (%d)", script, stackPos(0));
 	if (stackPos(0) > 0)
-		delay(stackPos(0)*1000, false);
+		delay(stackPos(0)*1000, true);
 	return 0;
 }
 
@@ -1393,7 +1393,8 @@ int KyraEngine::cmd_pageFlip(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setSceneFile(ScriptState *script) {
-	warning("STUB: cmd_setSceneFile");
+	debug(3, "cmd_setSceneFile(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	setSceneFile(stackPos(0), stackPos(1));
 	return 0;
 }
 

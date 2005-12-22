@@ -428,6 +428,7 @@ protected:
 	
 	void enterNewScene(int sceneId, int facing, int unk1, int unk2, int brandonAlive);
 	void transcendScenes(int roomIndex, int roomName);
+	void setSceneFile(int roomIndex, int roomName);
 	void moveCharacterToPos(int character, int facing, int xpos, int ypos);
 	void setCharacterPositionWithUpdate(int character);
 	int setCharacterPosition(int character, int *facingTable);
