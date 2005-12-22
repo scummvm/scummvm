@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 5
+#define RESFILE_VERSION 6
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -162,6 +162,7 @@ void KyraEngine::res_loadResources(int type) {
 		temp = 0; \
 	}
 	
+	
 	if ((type & RES_INTRO) || type == RES_ALL) {
 		loadRawFile(resFile, "FOREST.SEQ", _seq_Forest);
 		loadRawFile(resFile, "KALLAK-WRITING.SEQ", _seq_KallakWriting);
@@ -196,6 +197,21 @@ void KyraEngine::res_loadResources(int type) {
 		res_loadLangTable("NODROP.", &resFile, (byte***)&_noDropList, &_noDropList_Size, loadNativeLanguage);
 		
 		loadRawFile(resFile, "AMULETEANIM.SEQ", _amuleteAnim);
+		
+		for (int i = 1; i <= 33; ++i) {
+			char buffer[32];
+			sprintf(buffer, "PALTABLE%d.PAL", i);
+			if (_features & GF_TALKIE) {
+				strcat(buffer, ".CD");
+			} else if (_features & GF_DEMO) {
+				strcat(buffer, ".DEM");
+			}
+			temp = getFile(resFile, buffer);
+			if (temp) {
+				_specialPalettes[i-1] = temp;
+				temp = 0;
+			}
+		}
 	}
 
 #undef loadRooms
@@ -304,6 +320,11 @@ void KyraEngine::res_unloadResources(int type) {
 		
 		delete [] _amuleteAnim;
 		_amuleteAnim = 0;
+		
+		for (int i = 0; i < 33; ++i) {
+			delete [] _specialPalettes[i];
+			_specialPalettes[i] = 0;
+		}
 	}
 }
 

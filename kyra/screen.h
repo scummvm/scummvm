@@ -92,6 +92,7 @@ public:
 	void setPagePixel(int pageNum, int x, int y, uint8 color);
 	void fadeFromBlack();
 	void fadeToBlack();
+	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
 	void fadePalette(const uint8 *palData, int delay);
 	void setScreenPalette(const uint8 *palData);
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);

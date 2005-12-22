@@ -371,6 +371,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_unkScreenVar1 = 1;
 	_unkScreenVar2 = 0;
 	_unkScreenVar3 = 0;
+	
+	memset(_specialPalettes, 0, sizeof(_specialPalettes));
 
 	return 0;
 }
@@ -2987,8 +2989,7 @@ int KyraEngine::processItemDrop(uint16 sceneId, uint8 item, int x, int y, int un
 	}
 	
 	if (unk1 == 2) {
-		warning("processItemDrop unk1 == 2 is NOT implemented");
-		// XXX
+		itemSpecialFX(x, y, item);
 	}
 	
 	if (unk1 == 0) {
@@ -3115,9 +3116,13 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 			++addY;
 			drawY = tempY - 16;
 			backUpRect0(drawX, drawY);
+			uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 			_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
-			delay(1);
 			_screen->updateScreen();
+			while (_system->getMillis() < nextTime) {
+				if ((nextTime - _system->getMillis()) >= 10)
+					delay(10);
+			}
 		}
 		
 		bool skip = false;
@@ -3154,9 +3159,13 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 				drawX = (unkX >> 4) - 8;
 				drawY = tempY - 16;
 				backUpRect0(drawX, drawY);
+				uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 				_screen->drawShape(0, _shapes[220+item], drawX, drawY, 0, 0);
-				delay(1);
 				_screen->updateScreen();
+				while (_system->getMillis() < nextTime) {
+					if ((nextTime - _system->getMillis()) >= 10)
+						delay(10);
+				}
 			}
 			restoreRect0(drawX, drawY);
 		} else {
@@ -3183,6 +3192,74 @@ void KyraEngine::dropItem(int unk1, int item, int x, int y, int unk2) {
 		assert(_noDropList);
 		drawSentenceCommand(_noDropList[1], 6);
 	}
+}
+
+void KyraEngine::itemSpecialFX(int x, int y, int item) {
+	debug(9, "itemSpecialFX(%d, %d, %d)", x, y, item);
+	if (item == 41) {
+		itemSpecialFX1(x, y, item);
+	} else {
+		itemSpecialFX2(x, y, item);
+	}
+}
+
+void KyraEngine::itemSpecialFX1(int x, int y, int item) {
+	debug(9, "itemSpecialFX1(%d, %d, %d)", x, y, item);
+	uint8 *shape = _shapes[220+item];
+	x -= 8;
+	int startY = y;
+	y -= 15;
+	_screen->hideMouse();
+	backUpRect0(x, y);
+	for (int i = 1; i <= 16; ++i) {
+		_screen->setNewShapeHeight(shape, i);
+		--startY;
+		restoreRect0(x, y);
+		uint32 nextTime = _system->getMillis() + 1 * _tickLength;
+		_screen->drawShape(0, shape, x, startY, 0, 0);
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if ((nextTime - _system->getMillis()) >= 10)
+				delay(10);
+		}
+	}
+	restoreRect0(x, y);
+	_screen->showMouse();
+}
+
+void KyraEngine::itemSpecialFX2(int x, int y, int item) {
+	debug(9, "itemSpecialFX2(%d, %d, %d)", x, y, item);
+	x -= 8;
+	y -= 15;
+	int yAdd = (int8)(((16 - _itemTable[item].height) >> 1) & 0xFF);
+	backUpRect0(x, y);
+	if (item >= 80 && item <= 89) {
+		// snd_kyraPlaySound(55);
+	}
+	
+	for (int i = 201; i <= 205; ++i) {
+		restoreRect0(x, y);
+		uint32 nextTime = _system->getMillis() + 3 * _tickLength;
+		_screen->drawShape(0, _shapes[4+i], x, y + yAdd, 0, 0);
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if ((nextTime - _system->getMillis()) >= 10)
+				delay(10);
+		}
+	}
+	
+	for (int i = 204; i >= 201; --i) {
+		restoreRect0(x, y);
+		uint32 nextTime = _system->getMillis() + 3 * _tickLength;
+		_screen->drawShape(0, _shapes[220+item], x, y, 0, 0);
+		_screen->drawShape(0, _shapes[4+i], x, y + yAdd, 0, 0);
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if ((nextTime - _system->getMillis()) >= 10)
+				delay(10);
+		}
+	}
+	restoreRect0(x, y);
 }
 
 #pragma mark -

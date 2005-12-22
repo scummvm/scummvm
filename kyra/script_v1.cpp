@@ -509,7 +509,8 @@ int KyraEngine::cmd_runSceneAnimUntilDone(ScriptState *script) {
 }
 
 int KyraEngine::cmd_fadeSpecialPalette(ScriptState *script) {
-	warning("STUB: cmd_fadeSpecialPalette");
+	debug(3, "cmd_fadeSpecialPalette(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_screen->fadeSpecialPalette(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 0;
 }
 
@@ -791,7 +792,10 @@ int KyraEngine::cmd_restoreAllObjectBackgrounds(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setCustomPaletteRange(ScriptState *script) {
-	warning("STUB: cmd_setCustomPaletteRange");
+	debug(3, "cmd_setCustomPaletteRange(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
+	uint8 *screenPal = _screen->_currentPalette;
+	memcpy(&screenPal[stackPos(1)*3], _specialPalettes[stackPos(0)], stackPos(2)*3);
+	_screen->setScreenPalette(screenPal);
 	return 0;
 }
 
@@ -802,7 +806,7 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 	if (_features & GF_TALKIE) {
-		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
+		debug(3, "cmd_customPrintTalkString(0x%X) (%d, '%s', %d, %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
 		while (snd_voicePlaying() && !_fastMode) {
 			delay(10);
 		}

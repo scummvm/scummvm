@@ -191,6 +191,9 @@ public:
 	const char **seqCPSTable() { return (const char **)_seq_CPSTable; }
 	const char **seqCOLTable() { return (const char **)_seq_COLTable; }
 	const char **seqTextsTable() { return (const char **)_seq_textsTable; }
+	
+	const uint8 **palTable1() { return (const uint8 **)&_specialPalettes[0]; }
+	const uint8 **palTable2() { return (const uint8 **)&_specialPalettes[29]; }
 
 	bool seq_skipSequence() const;
 	void quitGame();
@@ -491,6 +494,9 @@ protected:
 	int isDropable(int x, int y);
 	void itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item);
 	void dropItem(int unk1, int item, int x, int y, int unk2);
+	void itemSpecialFX(int x, int y, int item);
+	void itemSpecialFX1(int x, int y, int item);
+	void itemSpecialFX2(int x, int y, int item);
 	
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);
@@ -713,6 +719,8 @@ protected:
 	int _roomFilenameTableSize;
 	
 	uint8 *_amuleteAnim;
+	
+	uint8 *_specialPalettes[33];
 
 	Timer _timers[34];
 	uint32 _timerNextRun;	

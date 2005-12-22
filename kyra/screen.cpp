@@ -140,6 +140,19 @@ void Screen::fadeToBlack() {
 	fadePalette(blackPal, 0x54);
 }
 
+void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
+	debug(9, "fadeSpecialPalette(%d, %d, %d, %d)", palIndex, startIndex, size, fadeTime);
+	assert(_vm->palTable1()[palIndex]);
+	assert(_currentPalette);
+	uint8 tempPal[768];
+	memcpy(tempPal, _currentPalette, 768);
+	memcpy(&tempPal[startIndex*3], _vm->palTable1()[palIndex], size*3);
+	fadePalette(tempPal, fadeTime*9);
+	memcpy(&_currentPalette[startIndex*3], &tempPal[startIndex*3], size*3);
+	setScreenPalette(_currentPalette);
+	_system->updateScreen();
+}
+
 void Screen::fadePalette(const uint8 *palData, int delay) {
 	debug(9, "Screen::fadePalette(0x%X, %d)", palData, delay);
 	uint8 fadePal[768];
