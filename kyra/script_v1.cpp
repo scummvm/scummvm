@@ -592,7 +592,8 @@ int KyraEngine::cmd_runNPCSubscript(ScriptState *script) {
 }
 
 int KyraEngine::cmd_magicOutMouseItem(ScriptState *script) {
-	warning("STUB: cmd_magicOutMouseItem");
+	debug(3, "cmd_magicOutMouseItem(0x%X) (%d)", script, stackPos(0));
+	magicOutMouseItem(stackPos(0), -1);
 	return 0;
 }
 

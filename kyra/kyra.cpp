@@ -1324,7 +1324,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	}
 	
 	if (!brandonAlive) {
-		// XXX
+		updatePlayerItemsForScene();
 	}
 
 	startSceneScript(brandonAlive);
@@ -2074,8 +2074,16 @@ void KyraEngine::initSceneScreen(int brandonAlive) {
 		_scriptInterpreter->runScript(_scriptClick);
 
 	setTextFadeTimerCountdown(-1);
-	if (_currentCharacter->sceneId == 0xD2) {
-		// XXX
+	if (_currentCharacter->sceneId == 210) {
+		if (_itemInHand != -1)
+			magicOutMouseItem(2, -1);
+		
+		_screen->hideMouse();
+		for (int i = 0; i < 10; ++i) {
+			if (_currentCharacter->inventoryItems[i] != 0xFF)
+				magicOutMouseItem(2, i);
+		}
+		_screen->showMouse();
 	}
 }
 
@@ -3266,6 +3274,201 @@ void KyraEngine::itemSpecialFX2(int x, int y, int item) {
 		}
 	}
 	restoreRect0(x, y);
+}
+
+void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
+	debug(9, "magicOutMouseItem(%d, %d)", animIndex, itemPos);
+	int videoPageBackUp = _screen->_curPage;
+	_screen->_curPage = 0;
+	int x = 0, y = 0;
+	if (itemPos == -1) {
+		x = _mouseX - 12;
+		y = _mouseY - 18;
+	} else {
+		x = _itemPosX[itemPos] - 4;
+		y = _itemPosY[itemPos] - 3;
+	}
+	
+	if (_itemInHand == -1 && itemPos == -1) {
+		return;
+	}
+	
+	int tableIndex = 0, loopStart = 0, maxLoops = 0;
+	if (animIndex == 0) {
+		tableIndex = _rnd.getRandomNumberRng(0, 5);
+		loopStart = 35;
+		maxLoops = 9;
+	} else if (animIndex == 1) {
+		tableIndex = _rnd.getRandomNumberRng(0, 11);
+		loopStart = 115;
+		maxLoops = 8;
+	} else if (animIndex == 2) {
+		tableIndex = 0;
+		loopStart = 124;
+		maxLoops = 4;
+	} else {
+		tableIndex = -1;
+	}
+	
+	if (animIndex == 2) {
+		// snd_kyraPlaySound(0x5E);
+	} else {
+		// snd_kyraPlaySound(0x37);
+	}
+	_screen->hideMouse();
+	backUpRect1(x, y);
+
+	for (int shape = _magicMouseItemStartFrame[animIndex]; shape <= _magicMouseItemEndFrame[animIndex]; ++shape) {
+		restoreRect1(x, y);
+		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
+		_screen->drawShape(0, _shapes[220+_itemInHand], x + 4, y + 3, 0, 0);
+		if (tableIndex == -1) {
+			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+		} else {
+			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
+		}
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if (nextTime - _system->getMillis() >= 10)
+				delay(10);
+		}
+	}
+	
+	if (itemPos != -1) {
+		restoreRect1(x, y);
+		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, 12, 0);
+		backUpRect1(x, y);
+	}
+	
+	for (int shape = _magicMouseItemStartFrame2[animIndex]; shape <= _magicMouseItemEndFrame2[animIndex]; ++shape) {
+		restoreRect1(x, y);
+		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
+		_screen->drawShape(0, _shapes[220+_itemInHand], x + 4, y + 3, 0, 0);
+		if (tableIndex == -1) {
+			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+		} else {
+			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
+		}
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if (nextTime - _system->getMillis() >= 10)
+				delay(10);
+		}
+	}
+	restoreRect1(x, y);
+	if (itemPos == -1) {
+		_screen->setMouseCursor(1, 1, _shapes[4]);
+		_itemInHand = -1;
+	} else {
+		_characterList[0].inventoryItems[itemPos] = 0xFF;
+		_screen->hideMouse();
+		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, 12, 0);
+		_screen->showMouse();
+	}
+	_screen->showMouse();
+	_screen->_curPage = videoPageBackUp;
+}
+
+void KyraEngine::specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops) {
+	debug(9, "specialMouseItemFX(%d, %d, %d, %d, %d, %d, %d)", shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
+	static const uint8 table1[] = {
+		0x23, 0x45, 0x55, 0x72, 0x84, 0xCF, 0x00, 0x00
+	};
+	static const uint8 table2[] = {
+		0x73, 0xB5, 0x80, 0x21, 0x13, 0x39, 0x45, 0x55, 0x62, 0xB4, 0xCF, 0xD8
+	};
+	static const uint8 table3[] = {
+		0x7C, 0xD0, 0x74, 0x84, 0x87, 0x00, 0x00, 0x00
+	};
+	int tableValue = 0;
+	if (animIndex == 0) {
+		tableValue = table1[tableIndex];
+	} else if (animIndex == 1) {
+		tableValue = table2[tableIndex];
+	} else if (animIndex == 2) {
+		tableValue = table3[tableIndex];
+	} else {
+		return;
+	}
+	processSpecialMouseItemFX(shape, x, y, tableValue, loopStart, maxLoops);
+}
+
+void KyraEngine::processSpecialMouseItemFX(int shape, int x, int y, int tableValue, int loopStart, int maxLoops) {
+	debug(9, "processSpecialMouseItemFX(%d, %d, %d, %d, %d, %d)", shape, x, y, tableValue, loopStart, maxLoops);
+	uint8 shapeColorTable[16];
+	uint8 *shapePtr = _shapes[4+shape] + 10;
+	if (_features & GF_TALKIE)
+		shapePtr += 2;
+	for (int i = 0; i < 16; ++i) {
+		shapeColorTable[i] = shapePtr[i];
+	}
+	for (int i = loopStart; i < loopStart + maxLoops; ++i) {
+		for (int i2 = 0; i2 < 16; ++i2) {
+			if (shapePtr[i2] == i) {
+				shapeColorTable[i2] = (i + tableValue) - loopStart;
+			}
+		}
+	}
+	_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0x8000, shapeColorTable);
+}
+
+void KyraEngine::updatePlayerItemsForScene() {
+	debug(9, "updatePlayerItemsForScene()");
+	if (_itemInHand >= 29 && _itemInHand < 33) {
+		++_itemInHand;
+		if (_itemInHand > 33)
+			_itemInHand = 33;
+		_screen->hideMouse();
+		_screen->setMouseCursor(8, 15, _shapes[220+_itemInHand]);
+		_screen->showMouse();
+	}
+	
+	bool redraw = false;
+	for (int i = 0; i < 10; ++i) {
+		uint8 item = _currentCharacter->inventoryItems[i];
+		if (item >= 29 && item < 33) {
+			++item;
+			if (item > 33)
+				item = 33;
+			_currentCharacter->inventoryItems[i] = item;
+			redraw = true;
+		}
+	}
+	
+	if (redraw) {
+		_screen->hideMouse();
+		redrawInventory(0);
+		_screen->showMouse();
+	}
+	
+	if (_itemInHand == 33) {
+		magicOutMouseItem(2, -1);
+	}
+	
+	_screen->hideMouse();
+	for (int i = 0; i < 10; ++i) {
+		uint8 item = _currentCharacter->inventoryItems[i];
+		if (item == 33) {
+			magicOutMouseItem(2, i);
+		}
+	}
+	_screen->showMouse();
+}
+
+void KyraEngine::redrawInventory(int page) {
+	int videoPageBackUp = _screen->_curPage;
+	_screen->_curPage = page;
+	_screen->hideMouse();
+	for (int i = 0; i < 10; ++i) {
+		_screen->fillRect(_itemPosX[i], _itemPosY[i], _itemPosX[i] + 15, _itemPosY[i] + 15, 12, page);
+		if (_currentCharacter->inventoryItems[i] != 0xFF) {
+			uint8 item = _currentCharacter->inventoryItems[i];
+			_screen->drawShape(page, _shapes[220+item], _itemPosX[i], _itemPosY[i], 0, 0);
+		}
+	}
+	_screen->showMouse();
+	_screen->_curPage = videoPageBackUp;
+	_screen->updateScreen();
 }
 
 #pragma mark -

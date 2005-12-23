@@ -653,6 +653,30 @@ const int8 KyraEngine::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 
+const int16 KyraEngine::_itemPosX[] = {
+	95, 115, 135, 155, 175, 95, 115, 135, 155, 175
+};
+
+const int8 KyraEngine::_itemPosY[] = {
+	160, 160, 160, 160, 160, 181, 181, 181, 181, 181
+};
+
+const uint8 KyraEngine::_magicMouseItemStartFrame[] = {
+	0xAD, 0xB7, 0xBE, 0x00
+};
+
+const uint8 KyraEngine::_magicMouseItemEndFrame[] = {
+	0xB1, 0xB9, 0xC2, 0x00
+};
+
+const uint8 KyraEngine::_magicMouseItemStartFrame2[] = {
+	0xB2, 0xBA, 0xC3, 0x00
+};
+
+const uint8 KyraEngine::_magicMouseItemEndFrame2[] = {
+	0xB6, 0xBD, 0xC8, 0x00
+};
+
 const uint16 KyraEngine::_amuletX[] = { 231, 275, 253, 253 };
 const uint16 KyraEngine::_amuletY[] = { 170, 170, 159, 181 };
 } // End of namespace Kyra

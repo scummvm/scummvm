@@ -475,7 +475,7 @@ protected:
 	void restoreRect1(int xpos, int ypos);
 	void copyBackgroundBlock(int x, int page, int flag);
 	void copyBackgroundBlock2(int x);
-	
+
 	void processInput(int xpos, int ypos);
 	int processInputHelper(int xpos, int ypos);
 	int clickEventHandler(int xpos, int ypos);
@@ -498,6 +498,11 @@ protected:
 	void itemSpecialFX(int x, int y, int item);
 	void itemSpecialFX1(int x, int y, int item);
 	void itemSpecialFX2(int x, int y, int item);
+	void magicOutMouseItem(int animIndex, int itemPos);
+	void specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops);
+	void processSpecialMouseItemFX(int shape, int x, int y, int tableValue, int loopStart, int maxLoops);
+	void updatePlayerItemsForScene();
+	void redrawInventory(int page);
 	
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);
@@ -732,6 +737,15 @@ protected:
 	static const int8 _addXPosTable[];
 	static const int8 _charYPosTable[];
 	static const int8 _addYPosTable[];
+
+	// positions of the inventory
+	static const int16 _itemPosX[];
+	static const int8 _itemPosY[];
+
+	static const uint8 _magicMouseItemStartFrame[];
+	static const uint8 _magicMouseItemEndFrame[];
+	static const uint8 _magicMouseItemStartFrame2[];
+	static const uint8 _magicMouseItemEndFrame2[];
 
 	static const uint16 _amuletX[];
 	static const uint16 _amuletY[];
