@@ -35,7 +35,7 @@ public:
 	int32 getCharStartingLine(unsigned char c) { return _charHeaders[getCharIndex(c)].startingLine; }
 	const byte *getCharData(unsigned char c) { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
-	static const uint8 Font::emerFont[][13];
+	static const uint8 emerFont[][13];
 private:
 
 	uint16 getCharIndex(unsigned char c);

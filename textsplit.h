@@ -39,7 +39,7 @@ public:
 	bool eof() const { return _currLine == NULL; }
 
 	// Check if the current line contains 'needle'
-	bool TextSplitter::checkString(const char *needle);
+	bool checkString(const char *needle);
 
 	// Expect a certain fixed string; bail out with an error if not
 	// found.  Advance to the next line.
