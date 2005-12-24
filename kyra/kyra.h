@@ -152,6 +152,34 @@ struct Timer {
 	void (KyraEngine::*func)(int timerNum);
 };
 
+struct Button {
+	Button *nextButton;
+	uint16 specialValue;
+	// uint8 unk[4];
+	uint8 process0;
+	uint8 process1;
+	uint8 process2;
+	// uint8 unk
+	uint16 flags;
+	typedef int (KyraEngine::*ButtonCallback)(Button*);
+	// using 6 pointers instead of 3 as in the orignal here (safer for use with classes)
+	uint8 *process0PtrShape;
+	uint8 *process1PtrShape;
+	uint8 *process2PtrShape;
+	ButtonCallback process0PtrCallback;
+	ButtonCallback process1PtrCallback;
+	ButtonCallback process2PtrCallback;
+	uint16 dimTableIndex;
+	uint16 x;
+	uint16 y;
+	uint16 width;
+	uint16 height;
+	// uint8 unk[8];
+	uint32 flags2;
+	ButtonCallback buttonCallback;
+	// uint8 unk[8];
+};
+
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
 	friend class Debugger;
@@ -225,6 +253,7 @@ public:
 	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
 
 	void waitTicks(int ticks);
+	void delayWithTicks(int ticks);
 	void updateAllObjectShapes();
 	void flagAllObjectsForRefresh();
 	void animRefreshNPC(int character);
@@ -520,6 +549,7 @@ protected:
 	void seq_introMalcolmTree();
 	void seq_introKallakWriting();
 	void seq_introKallakMalcolm();
+	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
@@ -550,6 +580,8 @@ protected:
 	void loadCharacterShapes();
 	void loadSpecialEffectShapes();
 	void loadItems();
+	void loadButtonShapes();
+	void initMainButtonList();
 	void loadMainScreen();
 	void setCharactersInDefaultScene();
 	void resetBrandonPosionFlags();
@@ -567,6 +599,12 @@ protected:
 	void timerFadeText(int timerNum);
 	void drawAmulet();
 	void setTextFadeTimerCountdown(int16 countdown);
+	
+	int buttonInventoryCallback(Button *caller);
+	Button *initButton(Button *list, Button *newButton);
+	void processButtonList(Button *list);
+	void processButton(Button *button);
+	
 	uint8 _game;
 	bool _fastMode;
 	bool _quitFlag;
@@ -574,6 +612,7 @@ protected:
 	bool _abortIntroFlag;
 	bool _abortWalkFlag;
 	bool _abortWalkFlag2;
+	bool _mousePressFlag;
 	char _talkBuffer[300];
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
 	TalkCoords _talkCoords;
@@ -592,7 +631,9 @@ protected:
 	int _mouseState;
 	bool _handleInput;
 	bool _updateScreen;
+	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
+	int _noDrawShapesFlag;
 
 	WSAMovieV1 *_wsaObjects[10];
 	uint16 _entranceMouseCursorTracks[8];
@@ -610,6 +651,7 @@ protected:
 	uint8 _idolGemsTable[3];
 	
 	int16 _marbleVaseItem;
+	int16 _foyerItemTable[3];
 	
 	uint16 _brandonStatusBit;
 	uint8 _unkBrandonPoisonFlags[256];	// this seem not to be posion flags, it is used for drawing once
@@ -680,6 +722,15 @@ protected:
 	
 	Character *_characterList;
 	
+	Button *_buttonList;
+	
+	uint8 *_buttonShape0;
+	uint8 *_buttonShape1;
+	uint8 *_buttonShape2;
+	uint8 *_buttonShape3;
+	uint8 *_buttonShape4;
+	uint8 *_buttonShape5;
+	
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;
 	uint8 *_seq_KyrandiaLogo;
@@ -739,8 +790,11 @@ protected:
 	static const int8 _addYPosTable[];
 
 	// positions of the inventory
-	static const int16 _itemPosX[];
-	static const int8 _itemPosY[];
+	static const uint16 _itemPosX[];
+	static const uint8 _itemPosY[];
+	
+	static Button _buttonData[];
+	static Button *_buttonDataListPtr[];
 
 	static const uint8 _magicMouseItemStartFrame[];
 	static const uint8 _magicMouseItemEndFrame[];
@@ -749,6 +803,8 @@ protected:
 
 	static const uint16 _amuletX[];
 	static const uint16 _amuletY[];
+	static const uint16 _amuletX2[];
+	static const uint16 _amuletY2[];
 };
 
 } // End of namespace Kyra

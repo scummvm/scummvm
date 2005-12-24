@@ -138,6 +138,8 @@ public:
 	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
 
+	static const ScreenDim _screenDimTable[];
+	static const int _screenDimTableCount;
 private:
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 	void restoreMouseRect();
@@ -160,9 +162,6 @@ private:
 
 	OSystem *_system;
 	KyraEngine *_vm;
-	
-	static const ScreenDim _screenDimTable[];
-	static const int _screenDimTableCount;
 };
 
 } // End of namespace Kyra

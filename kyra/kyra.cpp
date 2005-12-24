@@ -282,6 +282,7 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_characterList);
 	for (int i = 0; i < 11; ++i) {
 		memset(&_characterList[i], 0, sizeof(Character));
+		memset(_characterList[i].inventoryItems, 0xFF, sizeof(_characterList[i].inventoryItems));
 	}
 	_characterList[0].sceneId = 5;
 	_characterList[0].height = 48;
@@ -339,6 +340,7 @@ int KyraEngine::init(GameDetector &detector) {
 	memset(_currSentenceColor, 0, 3);
 	_startSentencePalIndex = -1;
 	_fadeText = false;
+	_noDrawShapesFlag = 0;
 
 	_brandonPosX = _brandonPosY = -1;
 	_brandonDrawFrame = 113;
@@ -358,6 +360,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_configTalkspeed = 1;
 	
 	_marbleVaseItem = -1;
+	memset(_foyerItemTable, -1, sizeof(_foyerItemTable));
 	_mouseState = _itemInHand = -1;
 	_handleInput = false;
 	
@@ -373,6 +376,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_unkScreenVar3 = 0;
 	
 	memset(_specialPalettes, 0, sizeof(_specialPalettes));
+	_mousePressFlag = false;
 
 	return 0;
 }
@@ -397,6 +401,13 @@ KyraEngine::~KyraEngine() {
 	delete [] _characterList;
 	
 	delete [] _movFacingTable;
+	
+	free(_buttonShape0);
+	free(_buttonShape1);
+	free(_buttonShape2);
+	free(_buttonShape3);
+	free(_buttonShape4);
+	free(_buttonShape5);
 	
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
@@ -492,6 +503,8 @@ void KyraEngine::startup() {
 	loadCharacterShapes();
 	loadSpecialEffectShapes();
 	loadItems();
+	loadButtonShapes();
+	initMainButtonList();
 	loadMainScreen();
 	setupTimers();
 	loadPalette("PALETTE.COL", _screen->_currentPalette);
@@ -528,6 +541,7 @@ void KyraEngine::delay(uint32 amount, bool update) {
 	OSystem::Event event;
 	char saveLoadSlot[20];
 
+	_mousePressFlag = false;
 	uint32 start = _system->getMillis();
 	do {
 		while (_system->pollEvent(event)) {
@@ -556,6 +570,7 @@ void KyraEngine::delay(uint32 amount, bool update) {
 				quitGame();
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
+				_mousePressFlag = true;
 				if (_abortWalkFlag2) {
 					_abortWalkFlag = true;
 					_mouseX = event.mouse.x;
@@ -627,6 +642,7 @@ void KyraEngine::mainLoop() {
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
+		processButtonList(_buttonList);
 		updateMousePointer();
 		updateGameTimers();
 		_sprites->updateSceneAnims();
@@ -716,6 +732,18 @@ void KyraEngine::waitTicks(int ticks) {
 		}
 		_system->delayMillis(10);
 	} while (!_fastMode && _system->getMillis() < end);
+}
+
+void KyraEngine::delayWithTicks(int ticks) {
+	uint32 nextTime = _system->getMillis() + ticks * _tickLength;
+	while (_system->getMillis() < nextTime) {
+		_sprites->updateSceneAnims();
+		updateAllObjectShapes();
+		//if (_currentCharacter->sceneId == 210) {
+		//	updateKyragemFading();
+		//	seq_playEnd();
+		//}
+	}
 }
 
 void KyraEngine::seq_demo() {
@@ -891,6 +919,66 @@ void KyraEngine::seq_introKallakMalcolm() {
 	debug(9, "KyraEngine::seq_introKallakMalcolm()");
 	_screen->clearPage(3);
 	_seq->playSequence(_seq_KallakMalcolm, true);
+}
+
+void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly) {
+	debug(9, "seq_createAmuletJewel(%d, %d, %d, %d)", jewel, page, noSound, drawOnly);
+	const static uint16 specialJewelTable[] = {
+		0x167, 0x162, 0x15D, 0x158, 0x153, 0xFFFF
+	};
+	const static uint16 specialJewelTable1[] = {
+		0x14F, 0x154, 0x159, 0x15E, 0x163, 0xFFFF
+	};
+	const static uint16 specialJewelTable2[] = {
+		0x150, 0x155, 0x15A, 0x15F, 0x164, 0xFFFF
+	};
+	const static uint16 specialJewelTable3[] = {
+		0x151, 0x156, 0x15B, 0x160, 0x165, 0xFFFF
+	};
+	const static uint16 specialJewelTable4[] = {
+		0x152, 0x157, 0x15C, 0x161, 0x166, 0xFFFF
+	};
+	if (!noSound)
+		// snd_playSoundEffect(0x5F)
+	_screen->hideMouse();
+	if (!drawOnly) {
+		for (int i = 0; specialJewelTable[i] != 0xFFFF; ++i) {
+			_screen->drawShape(page, _shapes[4+specialJewelTable[i]], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+			_screen->updateScreen();
+			delayWithTicks(3);
+		}
+		
+		const uint16 *opcodes = 0;
+		switch (jewel - 1) {
+			case 0:
+				opcodes = specialJewelTable1;
+				break;
+				
+			case 1:
+				opcodes = specialJewelTable2;
+				break;
+				
+			case 2:
+				opcodes = specialJewelTable3;
+				break;
+				
+			case 3:
+				opcodes = specialJewelTable4;
+				break;
+		}
+		
+		if (opcodes) {
+			for (int i = 0; opcodes[i] != 0xFFFF; ++i) {
+				_screen->drawShape(page, _shapes[4+opcodes[i]], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+				_screen->updateScreen();
+				delayWithTicks(3);
+			}
+		}
+	}
+	_screen->drawShape(page, _shapes[327+jewel], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+	_screen->updateScreen();
+	_screen->showMouse();
+	setGameFlag(0x55+jewel);
 }
 
 bool KyraEngine::seq_skipSequence() const {
@@ -1080,6 +1168,25 @@ void KyraEngine::loadItems() {
 	delete[] fileData;
 }
 
+void KyraEngine::loadButtonShapes() {
+	loadBitmap("BUTTONS2.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+	_buttonShape0 = _screen->encodeShape(0, 0, 24, 14, 1);
+	_buttonShape1 = _screen->encodeShape(24, 0, 24, 14, 1);
+	_buttonShape2 = _screen->encodeShape(48, 0, 24, 14, 1);
+	_buttonShape3 = _screen->encodeShape(0, 15, 24, 14, 1);
+	_buttonShape4 = _screen->encodeShape(24, 15, 24, 14, 1);
+	_buttonShape5 = _screen->encodeShape(48, 15, 24, 14, 1);
+	_screen->_curPage = 0;
+}
+
+void KyraEngine::initMainButtonList() {
+	_buttonList = &_buttonData[0];
+	for (int i = 0; _buttonDataListPtr[i]; ++i) {
+		_buttonList = initButton(_buttonList, _buttonDataListPtr[i]);
+	}
+}
+
 void KyraEngine::loadMainScreen() {
 	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
 		loadBitmap("MAIN_ENG.CPS", 3, 3, 0);
@@ -1177,6 +1284,8 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	debug(9, "enterNewScene(%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, brandonAlive);
 	int unkVar1 = 1;
 	_screen->hideMouse();
+	_handleInput = false;
+	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
 	if (_currentCharacter->sceneId == 7 && sceneId == 24) {
 		_newMusicTheme = 2;
@@ -1336,8 +1445,9 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_screen->showMouse();
 	if (!brandonAlive) {
 		// XXX seq_poisionDeathNow
-	}	
+	}
 	updateMousePointer(true);
+	_changedScene = true;
 }
 
 void KyraEngine::transcendScenes(int roomIndex, int roomName) {
@@ -2786,12 +2896,12 @@ void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
 	while (height >= 0) {
 		restoreRect1(xpos, ypos);
 		_screen->setNewShapeHeight(_shapes[220+_itemInHand], height);
+		uint32 nextTime = _system->getMillis() + 1 * _tickLength;
 		_screen->drawShape(0, _shapes[220+_itemInHand], xpos, y, 0, 0);
 		_screen->updateScreen();
 		y += 2;
 		height -= 2;
-		// XXX
-		waitTicks(1);
+		while (_system->getMillis() < nextTime) {}
 	}	
 	restoreRect1(xpos, ypos);
 	_screen->resetShapeHeight(_shapes[220+_itemInHand]);
@@ -3579,7 +3689,8 @@ void KyraEngine::prepDrawAllObjects() {
 	AnimObject *curObject = _objectQueue;
 	int drawPage = 2;
 	int flagUnk1 = 0, flagUnk2 = 0, flagUnk3 = 0;
-	// XXX
+	if (_noDrawShapesFlag)
+		return;
 	if (_brandonStatusBit & 0x20)
 		flagUnk1 = 0x200;
 	if (_brandonStatusBit & 0x40)
@@ -4583,6 +4694,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	int returnValue = 0;
 	uint32 nextFrame = 0;
 	_abortWalkFlag = false;
+	_mousePressFlag = false;
 	while (running) {
 		if (_abortWalkFlag) {
 			*table = 8;
@@ -4611,14 +4723,17 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 				break;
 		}
 		
-		returnValue = (changeScene(_currentCharacter->facing) != 0);
+		returnValue = changeScene(_currentCharacter->facing);
 		if (returnValue) {
 			running = false;
+			_abortWalkFlag = false;
 		}
 		
 		if (unk1) {
-			// XXX running = false;
-			_sceneChangeState = 1;
+			if (_mousePressFlag) {
+				running = false;
+				_sceneChangeState = 1;
+			}
 		}
 		
 		if (forceContinue || !running) {
@@ -5030,7 +5145,9 @@ void KyraEngine::processInput(int xpos, int ypos) {
 	}
 	uint8 item = findItemAtPos(xpos, ypos);
 	if (item == 0xFF) {
-		if (clickEventHandler(xpos, ypos))
+		_changedScene = false;
+		clickEventHandler(xpos, ypos);
+		if (_changedScene)
 			return;
 	} 
 	
@@ -5114,10 +5231,11 @@ int KyraEngine::clickEventHandler(int xpos, int ypos) {
 	_scriptClick->variables[3] = 0;
 	_scriptClick->variables[4] = _itemInHand;
 	_scriptInterpreter->startScript(_scriptClick, 1);
-	
+
 	while (_scriptInterpreter->validScript(_scriptClick)) {
 		_scriptInterpreter->runScript(_scriptClick);
 	}
+
 	return _scriptClick->variables[3];
 }
 
@@ -5477,6 +5595,179 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 		debug(1, "Saved game '%s.'", saveName);
 
 	delete out;
+}
+
+#pragma mark -
+#pragma mark - Button handling
+#pragma mark -
+
+Button *KyraEngine::initButton(Button *list, Button *newButton) {
+	if (!newButton)
+		return list;
+	if (!list)
+		return newButton;
+	Button *cur = list;
+	while (true) {
+		if (!cur->nextButton) {
+			break;
+		}
+		cur = cur->nextButton;
+	}
+	cur->nextButton = newButton;
+	return list;
+}
+
+int KyraEngine::buttonInventoryCallback(Button *caller) {
+	int itemOffset = caller->specialValue - 2;
+	uint8 inventoryItem = _currentCharacter->inventoryItems[itemOffset];
+	if (_itemInHand == -1) {
+		if (inventoryItem == 0xFF) {
+			// snd_playSoundEffect(0x36);
+			return 0;
+		} else {
+			_screen->hideMouse();
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			// snd_playSoundEffect(0x35);
+			setMouseItem(inventoryItem);
+			updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
+			_itemInHand = inventoryItem;
+			_screen->showMouse();
+			_currentCharacter->inventoryItems[itemOffset] = 0xFF;
+		}
+	} else {
+		if (inventoryItem != 0xFF) {
+			// snd_playSoundEffect(0x35);
+			_screen->hideMouse();
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			setMouseItem(inventoryItem);
+			updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
+			_screen->showMouse();
+			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
+			_itemInHand = inventoryItem;
+		} else {
+			// snd_playSoundEffect(0x32);
+			_screen->hideMouse();
+			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
+			_screen->setMouseCursor(1, 1, _shapes[4]);
+			updateSentenceCommand(_itemList[_itemInHand], _placedList[0], 179);
+			_screen->showMouse();
+			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
+			_itemInHand = -1;
+		}
+	}
+	_screen->updateScreen();
+	// XXX clearKyrandiaButtonIO
+	return 0;
+}
+
+void KyraEngine::processButtonList(Button *list) {
+	while (list) {
+		if (list->flags & 8) {
+			list = list->nextButton;
+			continue;
+		}
+		
+		int x = list->x;
+		int y = list->y;
+		assert(list->dimTableIndex < _screen->_screenDimTableCount);
+		if (x < 0) {
+			x += _screen->_screenDimTable[list->dimTableIndex].w << 3;
+		}
+		x += _screen->_screenDimTable[list->dimTableIndex].sx << 3;
+		
+		if (y < 0) {
+			y += _screen->_screenDimTable[list->dimTableIndex].h;
+		}
+		y += _screen->_screenDimTable[list->dimTableIndex].sy;
+		
+		if (_mouseX >= x && _mouseY >= y && x + list->width >= _mouseX && y + list->height >= _mouseY) {
+			int processMouseClick = 0;
+			if (list->flags & 0x400) {
+				if (_mousePressFlag) {
+					if (!(list->flags2 & 1)) {
+						list->flags2 |= 1;
+						processButton(list);
+					}
+				} else {
+					if (list->flags2 & 1) {
+						list->flags2 &= 0xFFFE;
+						processButton(list);
+						processMouseClick = 1;
+					}
+				}
+			} else if (_mousePressFlag) {
+				processMouseClick = 1;
+			}
+				
+			if (processMouseClick) {
+				if (list->buttonCallback) {
+					if ((this->*(list->buttonCallback))(list)) {
+						break;
+					}
+				}
+			}
+		} else {
+			if (list->flags2 & 1) {
+				list->flags2 &= 0xFFFE;
+				processButton(list);
+			}
+			list = list->nextButton;
+			continue;
+		}
+		
+		list = list->nextButton;
+	}
+}
+
+void KyraEngine::processButton(Button *button) {
+	if (!button)
+		return;
+		
+	int processType = 0;
+	uint8 *shape = 0;
+	Button::ButtonCallback callback = 0;
+	
+	int flags = (button->flags2 & 5);
+	if (flags == 1) {
+		processType = button->process2;
+		if (processType == 1) {
+			shape = button->process2PtrShape;
+		} else if (processType == 4) {
+			callback = button->process2PtrCallback;
+		}
+	} else if (flags == 4 || flags == 5) {
+		processType = button->process1;
+		if (processType == 1) {
+			shape = button->process1PtrShape;
+		} else if (processType == 4) {
+			callback = button->process1PtrCallback;
+		}
+	} else {
+		processType = button->process0;
+		if (processType == 1) {
+			shape = button->process0PtrShape;
+		} else if (processType == 4) {
+			callback = button->process0PtrCallback;
+		}
+	}
+	
+	int x = button->x;
+	int y = button->y;
+	assert(button->dimTableIndex < _screen->_screenDimTableCount);
+	if (x < 0) {
+		x += _screen->_screenDimTable[button->dimTableIndex].w << 3;
+	}
+	
+	if (y < 0) {
+		y += _screen->_screenDimTable[button->dimTableIndex].h;
+	}
+	
+	if (processType == 1 && shape) {
+		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);
+	} else if (processType == 4 && callback) {
+		(this->*callback)(button);
+	}
 }
 
 } // End of namespace Kyra

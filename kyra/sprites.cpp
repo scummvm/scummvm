@@ -149,16 +149,16 @@ void Sprites::updateSceneAnims() {
 			switch (READ_LE_UINT16(data)) {
 			case 0xFF88:
 				data += 2;
-				debug(5, "func: Set sprite image.");
-				debug(5, "Sprite index %i", READ_LE_UINT16(data));
+				debug(6, "func: Set sprite image.");
+				debug(6, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
 				data += 2;
-				//debug(5, "Unused %i", READ_LE_UINT16(data));
+				//debug(6, "Unused %i", READ_LE_UINT16(data));
 				data += 2;
-				debug(5, "X %i", READ_LE_UINT16(data));
+				debug(6, "X %i", READ_LE_UINT16(data));
 				_anims[i].x = READ_LE_UINT16(data);
 				data += 2;
-				debug(5, "Y %i", READ_LE_UINT16(data));
+				debug(6, "Y %i", READ_LE_UINT16(data));
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
 				_anims[i].flipX = false;
@@ -166,16 +166,16 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFF8D:
 				data += 2;
-				debug(5, "func: Set sprite image, flipped.");
-				debug(5, "Sprite index %i", READ_LE_UINT16(data));
+				debug(6, "func: Set sprite image, flipped.");
+				debug(6, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
 				data += 2;
 				//debug(9, "Unused %i", READ_LE_UINT16(data));
 				data += 2;
-				debug(5, "X %i", READ_LE_UINT16(data));
+				debug(6, "X %i", READ_LE_UINT16(data));
 				_anims[i].x = READ_LE_UINT16(data);
 				data += 2;
-				debug(5, "Y %i", READ_LE_UINT16(data));
+				debug(6, "Y %i", READ_LE_UINT16(data));
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
 				_anims[i].flipX = true;
@@ -183,24 +183,24 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFF8A:
 				data += 2;
-				debug(5, "func: Set time to wait");
-				debug(5, "Time %i", READ_LE_UINT16(data));
+				debug(6, "func: Set time to wait");
+				debug(6, "Time %i", READ_LE_UINT16(data));
 				_anims[i].nextRun = _system->getMillis() + READ_LE_UINT16(data) * _animDelay;
 				data += 2;
 				break;
 			case 0xFFB3:
 				data += 2;
-				debug(5, "func: Set time to wait to random value");
+				debug(6, "func: Set time to wait to random value");
 				rndNr = READ_LE_UINT16(data) + _rnd.getRandomNumber( READ_LE_UINT16(data) + 2);
-				debug(5, "Minimum time %i", READ_LE_UINT16(data));
+				debug(6, "Minimum time %i", READ_LE_UINT16(data));
 				data += 2;
-				debug(5, "Maximum time %i", READ_LE_UINT16(data));
+				debug(6, "Maximum time %i", READ_LE_UINT16(data));
 				data += 2;
 				_anims[i].nextRun = _system->getMillis() + rndNr * _animDelay;
 				break;
 			case 0xFF8C:
 				data += 2;
-				debug(5, "func: Wait until wait time has elapsed");
+				debug(6, "func: Wait until wait time has elapsed");
 				_anims[i].reentry = data;
 				endLoop = true;
 				//assert( _anims[i].nextRun > _system->getMillis());
@@ -217,35 +217,35 @@ void Sprites::updateSceneAnims() {
 				break;		
 			case 0xFF97:
 				data += 2;
-				debug(5, "func: Set default X coordinate of sprite");
-				debug(5, "X %i", READ_LE_UINT16(data));
+				debug(6, "func: Set default X coordinate of sprite");
+				debug(6, "X %i", READ_LE_UINT16(data));
 				_anims[i].x = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF98:
 				data += 2;
-				debug(5, "func: Set default Y coordinate of sprite");
-				debug(5, "Y %i", READ_LE_UINT16(data));
+				debug(6, "func: Set default Y coordinate of sprite");
+				debug(6, "Y %i", READ_LE_UINT16(data));
 				_anims[i].y = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF8B:
-				debug(5, "func: Jump to start of script section");
+				debug(6, "func: Jump to start of script section");
 				//data = scriptStart;
 				_anims[i].nextRun = _system->getMillis();
 				endLoop = true;
 				break;
 			case 0xFF8E:
 				data += 2;
-				debug(5, "func: Begin for () loop");
-				debug(5, "Iterations: %i", READ_LE_UINT16(data));
+				debug(6, "func: Begin for () loop");
+				debug(6, "Iterations: %i", READ_LE_UINT16(data));
 				_anims[i].loopsLeft = READ_LE_UINT16(data);
 				data += 2;
 				_anims[i].loopStart = data;
 				break;
 			case 0xFF8F:
 				data += 2;
-				debug(5, "func: End for () loop");
+				debug(6, "func: End for () loop");
 				if (_anims[i].loopsLeft > 0) {
 					_anims[i].loopsLeft--;
 					data = _anims[i].loopStart;
@@ -253,8 +253,8 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFF90:
 				data += 2;
-				debug(5, "func: Set sprite image using default X and Y");
-				debug(5, "Sprite index %i", READ_LE_UINT16(data));
+				debug(6, "func: Set sprite image using default X and Y");
+				debug(6, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
 				_anims[i].flipX = false;
 				data += 2;
@@ -262,8 +262,8 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFF91:
 				data += 2;
-				debug(5, "func: Set sprite image using default X and Y, flipped.");
-				debug(5, "Sprite index %i", READ_LE_UINT16(data));
+				debug(6, "func: Set sprite image using default X and Y, flipped.");
+				debug(6, "Sprite index %i", READ_LE_UINT16(data));
 				_anims[i].sprite = READ_LE_UINT16(data);
 				_anims[i].flipX = true;
 				data += 2;
@@ -271,29 +271,29 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFF92:
 				data += 2;
-				debug(5, "func: Increase value of default X-coordinate");
-				debug(5, "Increment %i", READ_LE_UINT16(data));
+				debug(6, "func: Increase value of default X-coordinate");
+				debug(6, "Increment %i", READ_LE_UINT16(data));
 				_anims[i].x += READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF93:
 				data += 2;
-				debug(5, "func: Increase value of default Y-coordinate");
-				debug(5, "Increment %i", READ_LE_UINT16(data));
+				debug(6, "func: Increase value of default Y-coordinate");
+				debug(6, "Increment %i", READ_LE_UINT16(data));
 				_anims[i].y += READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF94:
 				data += 2;
-				debug(5, "func: Decrease value of default X-coordinate");
-				debug(5, "Decrement %i", READ_LE_UINT16(data));
+				debug(6, "func: Decrease value of default X-coordinate");
+				debug(6, "Decrement %i", READ_LE_UINT16(data));
 				_anims[i].x -= READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFF95:
 				data += 2;
-				debug(5, "func: Decrease value of default Y-coordinate");
-				debug(5, "Decrement %i", READ_LE_UINT16(data));
+				debug(6, "func: Decrease value of default Y-coordinate");
+				debug(6, "Decrement %i", READ_LE_UINT16(data));
 				_anims[i].y -= READ_LE_UINT16(data);
 				data += 2;
 				break;
@@ -312,22 +312,22 @@ void Sprites::updateSceneAnims() {
 				break;*/
 			case 0xFFAD:
 				data += 2;
-				debug(5, "func: Set Brandon's X coordinate");
-				debug(5, "X %i", READ_LE_UINT16(data));
+				debug(6, "func: Set Brandon's X coordinate");
+				debug(6, "X %i", READ_LE_UINT16(data));
 				_engine->_currentCharacter->x1 = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAE:
 				data += 2;
-				debug(5, "func: Set Brandon's Y coordinate");
-				debug(5, "Y %i", READ_LE_UINT16(data));
+				debug(6, "func: Set Brandon's Y coordinate");
+				debug(6, "Y %i", READ_LE_UINT16(data));
 				_engine->_currentCharacter->y1 = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAF:
 				data += 2;
-				debug(5, "func: Set Brandon's sprite");
-				debug(5, "Sprite %i", READ_LE_UINT16(data));
+				debug(6, "func: Set Brandon's sprite");
+				debug(6, "Sprite %i", READ_LE_UINT16(data));
 				_engine->_currentCharacter->currentAnimFrame = READ_LE_UINT16(data);
 				data += 2;
 				break;
@@ -337,15 +337,15 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFFAB:
 				data += 2;
-				debug(5, "func: Update Brandon's sprite");
+				debug(6, "func: Update Brandon's sprite");
 				_engine->animRefreshNPC(0);
 				_engine->flagAllObjectsForRefresh();
 				_engine->updateAllObjectShapes();
 				break;
 			case 0xFFB0:
 				data += 2;
-				debug(5, "func: Play sound");
-				debug(5, "Sound index %i", READ_LE_UINT16(data));
+				debug(6, "func: Play sound");
+				debug(6, "Sound index %i", READ_LE_UINT16(data));
 				//_engine->snd_playSoundEffect(READ_LE_UINT16(data));
 				data += 2;
 				break;
@@ -359,11 +359,11 @@ void Sprites::updateSceneAnims() {
 				break;
 			case 0xFFB4:
 				data += 2;
-				debug(5, "func: Play (at random) a certain sound at a certain percentage of time");
-				debug(5, "Sound index %i", READ_LE_UINT16(data));
+				debug(6, "func: Play (at random) a certain sound at a certain percentage of time");
+				debug(6, "Sound index %i", READ_LE_UINT16(data));
 				sound = READ_LE_UINT16(data);
 				data += 2;
-				debug(5, "Percentage %i", READ_LE_UINT16(data));
+				debug(6, "Percentage %i", READ_LE_UINT16(data));
 				rndNr = _rnd.getRandomNumber(100);
 				//if (rndNr <= READ_LE_UINT16(data))
 					//_engine->snd_playSoundEffect(sound);
