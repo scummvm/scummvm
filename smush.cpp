@@ -29,7 +29,9 @@
 #include <cstring>
 #include <zlib.h>
 
-#define SMUSH_LOOPMOVIE(x) (x & 1)
+#define SMUSH_LOOPMOVIE(x)		(x & 0x000001)
+#define SMUSH_ALTSPEED(x)			(x & 0x000004)
+
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
 
@@ -275,11 +277,6 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	_height = height;
 
 	_speed = READ_LE_UINT32(s_header + 14);
-	// Videos "copaldie.snm" and "getshcks.snm" seem to have
-	// the wrong speed value, the value 66667 (used by the
-	// other videos) seems to work whereas "2x" does not.
-	// TODO: Find out what needs to go on here.
-	//_speed = 66667;
 	flags = READ_LE_UINT16(s_header + 18);
 	// Output information for checking out the flags
 	if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
@@ -287,6 +284,15 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 		for(int i = 0; i < 16; i++)
 			printf(" %d", (flags & (1 << i)) != 0);
 		printf("\n");
+	}
+	// Videos "copaldie.snm" and "getshcks.snm" seem to have
+	// the wrong speed value, the value 66667 (used by the
+	// other videos) seems to work whereas "2x" (68928)
+	// does not quite do it.
+	// TODO: Find out what needs to go on here.
+	if (SMUSH_ALTSPEED(flags)) {
+		printf("Bad time: %d, suggested: %d\n", _speed, 2*_speed);
+		_speed = 66667;
 	}
 	_videoLooping = SMUSH_LOOPMOVIE(flags);
 	_startPos = NULL; // Set later

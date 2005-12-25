@@ -63,7 +63,11 @@ TextSplitter::TextSplitter(const char *data, int len) {
 }
 
 bool TextSplitter::checkString(const char *needle) {
-	if (std::strstr(currentLine(), needle))
+	// checkString also needs to check for extremely optional
+	// components like "object_art" which can be missing entirely
+	if (currentLine() == NULL)
+		return false;
+	else if (std::strstr(currentLine(), needle))
 		return true;
 	else
 		return false;

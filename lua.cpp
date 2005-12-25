@@ -2422,12 +2422,9 @@ static void GetTextObjectDimensions() {
 
 static void ExpireText() {
 	DEBUG_FUNCTION();
-	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
-		TextObject *textO = *i;
-		g_engine->killTextObject(textO);
-		delete textO;
-	}
-	// Cleanup references to deleted text objects
+	// Expire all the text objects
+	g_engine->killTextObjects();
+	// Cleanup actor references to deleted text objects
 	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
 		(*i)->lineCleanup();
 }
@@ -2496,7 +2493,7 @@ static void StartFullscreenMovie() {
 	// Clean out any text objects on the display before running the
 	// movie, otherwise things like Bruno's "Nice bathrobe." will stay
 	// on-screen the whole movie
-	CleanBuffer();
+	ExpireText();
 	g_engine->setMode(ENGINE_MODE_SMUSH);
 	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
@@ -2601,8 +2598,13 @@ static void ChangePrimitive() {
 			break;
 		}
 	}
-	if(!pmodify)
-		error("Primitive object not found.");
+	if (!pmodify) {
+		// When Manny exists Don's computer (using ESC) the primitive objects
+		// are destroyed just before the last call to change them
+		if (debugLevel == DEBUG_WARN)
+			warning("Primitive object not found.");
+		return;
+	}
 
 	lua_pushobject(tableObj);
 	lua_pushstring("color");
