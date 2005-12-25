@@ -46,7 +46,13 @@ DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {
 	// Load emergency built-in font
 	loadEmergFont();
 
+	_storedDisplay = new byte[_screenWidth * _screenHeight * 4];
+	memset(_storedDisplay, 0, _screenWidth * _screenHeight * 4);
 	_smushNumTex = 0;
+}
+
+DriverGL::~DriverGL() {
+	delete []_storedDisplay;
 }
 
 void DriverGL::toggleFullscreenMode() {
@@ -653,7 +659,7 @@ Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int
 void DriverGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glMatrixMode(GL_TEXTURE);
@@ -699,20 +705,105 @@ void DriverGL::destroyTextBitmap(TextObjectHandle *handle) {
 	delete[] (GLuint *)handle->texIds;
 }
 
-Bitmap *DriverGL::getScreenshot(int /*w*/, int /*h*/) {
-	return NULL;
+Bitmap *DriverGL::getScreenshot(int w, int h) {
+	uint16 *buffer = new uint16[w * h];
+	uint32 *src = (uint32 *)_storedDisplay;
+	float step_x = _screenWidth * 1.0f / w;
+	float step_y = _screenHeight * 1.0f / h;
+
+	int step = 0;
+	for (float y = 0; y < 479; y += step_y) {
+		for (float x = 0; x < 639; x += step_x) {
+			uint32 pixel = *(src + (int)y * _screenWidth + (int)x);
+
+			uint8 r = (pixel & 0xFF0000) >> 16;
+			uint8 g = (pixel & 0x00FF00) >> 8;
+			uint8 b = (pixel & 0x0000FF);
+			uint32 color = (r + g + b) / 3;
+			int pos = step/w;
+			int wpos = step-pos*w;
+			// source is upside down, flip appropriately while storing
+			buffer[h*w - (pos*w+w-wpos)] = ((color & 0xF8) << 8) | ((color & 0xFC) << 3) | (color >> 3);
+			step++;
+		}
+	}
+	
+	Bitmap *screenshot = new Bitmap((char *) buffer, w, h, "screenshot");
+	delete []buffer;
+	return screenshot;
 }
 
 void DriverGL::storeDisplay() {
+	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, _storedDisplay);
 }
 
 void DriverGL::copyStoredToDisplay() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glRasterPos2i(0, _screenHeight);
+	glDrawPixels(_screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, _storedDisplay);
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
 }
 
 void DriverGL::dimScreen() {
+	uint32 *data = (uint32 *)_storedDisplay;
+	for (int l = 0; l < _screenWidth * _screenHeight; l++) {
+		uint32 pixel = data[l];
+		uint8 r = (pixel & 0xFF0000) >> 16;
+		uint8 g = (pixel & 0x00FF00) >> 8;
+		uint8 b = (pixel & 0x0000FF);
+		uint32 color = (r + g + b) / 6;
+		data[l] = ((color & 0xFF) << 16) | ((color & 0xFF) << 8) | (color & 0xFF);
+	}
 }
 
-void DriverGL::dimRegion(int x, int y, int w, int h, float level) {
+void DriverGL::dimRegion(int x, int yReal, int w, int h, float level) {
+	uint32 *data = new uint32[w*h];
+	int y = _screenHeight - yReal;
+	
+	// collect the requested area and generate the dimmed version
+	glReadPixels(x, y-h, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	for (int ly = 0; ly < h; ly++) {
+		for (int lx = 0; lx < w; lx++) {
+			uint32 pixel = data[ly * w + lx];
+			uint8 r = (pixel & 0xFF0000) >> 16;
+			uint8 g = (pixel & 0x00FF00) >> 8;
+			uint8 b = (pixel & 0x0000FF);
+			uint32 color = (uint32)(((r + g + b) / 3) * level);
+			data[ly * w + lx] = ((color & 0xFF) << 16) | ((color & 0xFF) << 8) | (color & 0xFF);
+		}
+	}
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	// Set the raster position and draw the bitmap
+	glRasterPos2i(x, yReal+h);
+	glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+
+	delete[] data;
 }
 
 void DriverGL::drawRectangle(PrimitiveObject *primitive) {
@@ -725,7 +816,7 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -764,7 +855,7 @@ void DriverGL::drawLine(PrimitiveObject *primitive) {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 640, 480, 0, 0, 1);
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 

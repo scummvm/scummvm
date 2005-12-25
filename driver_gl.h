@@ -32,6 +32,7 @@
 class DriverGL : public Driver {
 public:
 	DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen = false);
+	virtual ~DriverGL();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
@@ -91,6 +92,7 @@ private:
 	GLuint *_smushTexIds;
 	int _smushWidth;
 	int _smushHeight;
+	byte *_storedDisplay;
 };
 
 #endif
