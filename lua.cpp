@@ -2804,8 +2804,6 @@ static void ScreenShot() {
 /*
  * Store a screenshot into a savegame file
  *
- * TODO: Width and height are currently hardcoded,
- * find a fix
  */
 static void StoreSaveGameImage(SaveGame *savedState) {
 	int width = 250, height = 188;
@@ -2837,8 +2835,6 @@ static void StoreSaveGameImage(SaveGame *savedState) {
 /*
  * Restore a screenshot from a savegame file
  *
- * TODO: Width and height are currently hardcoded,
- * find a fix
  */
 static void GetSaveGameImage() {
 	int width = 250, height = 188;
