@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	backends/fs/amigaos4/amigaos4-fs.o \
 	backends/midi/alsa.o \
 	backends/midi/coreaudio.o \
+	backends/midi/coremidi.o \
 	backends/midi/morphos.o \
 	backends/midi/null.o \
 	backends/midi/quicktime.o \

@@ -33,28 +33,45 @@ namespace Audio {
 namespace Common { class String; }
 
 /** MIDI Driver Types */
-enum {
-	MD_AUTO = 0,
-	MD_NULL = 1,
-	MD_WINDOWS = 2,
-	MD_TIMIDITY = 3,
-	MD_SEQ = 4,
-	MD_QTMUSIC = 5,
-	MD_ETUDE = 6,
-	MD_COREAUDIO = 7,
-	MD_MIDIEMU = 8,
-	MD_ALSA = 9,
-	MD_ADLIB = 10,
-	MD_PCSPK = 11,
-	MD_PCJR = 12,
-	MD_TOWNS = 13,
-	MD_YPA1 = 14, // PalmOS
-	MD_ZODIAC = 15, // PalmOS
-	MD_MT32 = 16,
-	MD_FLUIDSYNTH = 17
+enum MidiDriverType {
+	MD_AUTO,
+	MD_NULL,
+
+	// Windows
+	MD_WINDOWS,
+
+	// Linux
+	MD_ALSA,
+	MD_SEQ,
+
+	// Mac OS X
+	MD_QTMUSIC,
+	MD_COREAUDIO,
+	MD_COREMIDI,
+
+	// PalmOS
+	MD_YPA1,
+	MD_ZODIAC,
+
+	// MorphOS
+	MD_ETUDE,
+
+	// "Fake" MIDI devices
+	MD_ADLIB,
+	MD_PCSPK,
+	MD_PCJR,
+	MD_TOWNS,
+
+	// MIDI softsynths
+	MD_MT32,
+	MD_FLUIDSYNTH
 };
 
-enum MidiDriverType {
+/**
+ * A set of bitmasks which can be used to specify what kind of midi
+ * driver is prefered.
+ */
+enum MidiDriverFlags {
 	MDT_NONE   = 0,
 	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR
 	MDT_ADLIB  = 2, // MD_ADLIB
@@ -71,7 +88,8 @@ enum MidiDriverType {
 struct MidiDriverDescription {
 	const char *name;
 	const char *description;
-	int id;
+	MidiDriverType id;
+	MidiDriverFlags flags;
 };
 
 /** Abstract MIDI Driver Class */
@@ -199,6 +217,7 @@ extern MidiDriver *MidiDriver_WIN_create();
 extern MidiDriver *MidiDriver_SEQ_create();
 extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
+extern MidiDriver *MidiDriver_CoreMIDI_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
 extern MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer);

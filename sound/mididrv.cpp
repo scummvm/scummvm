@@ -30,46 +30,48 @@
 
 /** Internal list of all available 'midi' drivers. */
 static const struct MidiDriverDescription midiDrivers[] = {
-	{"auto", "Default", MD_AUTO},
-	{"null", "No music", MD_NULL},
+	{"auto", "Default", MD_AUTO, MDT_NONE},
+	{"null", "No music", MD_NULL, MDT_NONE},
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	{"windows", "Windows MIDI", MD_WINDOWS},
+	{"windows", "Windows MIDI", MD_WINDOWS, MDT_NATIVE},
 #endif
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
-	{"seq", "SEQ", MD_SEQ},
+	{"seq", "SEQ", MD_SEQ, MDT_NONE},
 #endif
 
 #if defined(MACOSX)
-	{"qt", "QuickTime", MD_QTMUSIC},
-	{"core", "CoreAudio", MD_COREAUDIO},
+	{"qt", "QuickTime", MD_QTMUSIC, MDT_NATIVE},
+	{"core", "CoreAudio", MD_COREAUDIO, MDT_NATIVE},
+	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_NATIVE},
+	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_NATIVE},
 #endif
 
 #if defined(__MORPHOS__)
-	{"etude", "Etude", MD_ETUDE},
+	{"etude", "Etude", MD_ETUDE, MDT_NONE},
 #endif
 
 #if defined(UNIX) && defined(USE_ALSA)
-	{"alsa", "ALSA", MD_ALSA},
+	{"alsa", "ALSA", MD_ALSA, MDT_NONE},
 #endif
 
-	{"adlib", "Adlib", MD_ADLIB},
-	{"towns", "FM Towns", MD_TOWNS},
-	{"pcspk", "PC Speaker", MD_PCSPK},
-	{"pcjr", "IBM PCjr", MD_PCJR},
+	{"adlib", "Adlib", MD_ADLIB, MDT_ADLIB},
+	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
+	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
+	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
 #ifdef USE_FLUIDSYNTH
-	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH},
+	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH, MDT_NONE},
 #endif
 #ifdef USE_MT32EMU
-	{"mt32", "MT-32", MD_MT32},
+	{"mt32", "MT-32", MD_MT32, MDT_NONE},
 #endif
 
 #if defined(PALMOS_MODE)
-	{"ypa1", "Yamaha Pa1", MD_YPA1},
-	{"zodiac", "Tapwave Zodiac", MD_ZODIAC},
+	{"ypa1", "Yamaha Pa1", MD_YPA1, MDT_NATIVE},
+	{"zodiac", "Tapwave Zodiac", MD_ZODIAC, MDT_NATIVE},
 #endif
-	{0, 0, 0}
+	{0, 0, MD_NULL, MDT_NONE}
 };
 
 const byte MidiDriver::_mt32ToGm[128] = {
@@ -210,6 +212,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #endif
 #if defined(MACOSX)
 	case MD_COREAUDIO: return MidiDriver_CORE_create();
+	case MD_COREMIDI: return MidiDriver_CoreMIDI_create();
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
 	case MD_ALSA:      return MidiDriver_ALSA_create();
