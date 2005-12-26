@@ -32,6 +32,12 @@
 #include <SDL_timer.h>
 #include <assert.h>
 
+// CHAR_KEY tests to see whether a keycode is for
+// a "character" handler or a "button" handler
+#define CHAR_KEY(k) (k >= SDLK_a && k <= SDLK_z) || (k >= SDLK_0 && k <= SDLK_9) || k == SDLK_SPACE
+// numupper provides conversion between number keys and their "upper case"
+const char numupper[] = {')', '!', '@', '#', '$', '%', '^', '&', '*', '('};
+
 Engine *g_engine = NULL;
 
 extern Imuse *g_imuse;
@@ -97,21 +103,60 @@ Engine::Engine() :
 	printLineDefaults.justify = 2;
 }
 
-void Engine::handleButton(int operation, int key) {
+void Engine::handleButton(int operation, int key, int keyModifier) {
+	lua_Object handler, system_table, userPaintHandler;
+	
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key])
 		return;
 
 	lua_beginblock();
-	lua_Object handler = getEventHandler("buttonHandler");
-	if (handler != LUA_NOOBJECT) {
-		lua_pushnumber(key);
-		if (operation == SDL_KEYDOWN)
-			lua_pushnumber(1);
-		else
+	system_table = lua_getglobal("system");
+	userPaintHandler = getTableValue(system_table, "userPaintHandler");
+	if (userPaintHandler != LUA_NOOBJECT && CHAR_KEY(key)) {
+		handler = getTableFunction(userPaintHandler, "characterHandler");
+		// Ignore SDL_KEYUP so there are not duplicate keystrokes, but
+		// don't pass on to the normal buttonHandler since it doesn't
+		// recognize character codes
+		if (handler != LUA_NOOBJECT && operation == SDL_KEYDOWN) {
+			char keychar[2];
+			
+			lua_beginblock();
+			lua_pushobject(userPaintHandler);
+			if (keyModifier & KMOD_SHIFT)
+				if (isalpha(key))
+					keychar[0] = toupper(key);
+				else
+					keychar[0] = numupper[key - SDLK_0];
+			else
+				keychar[0] = key;
+			keychar[1] = '\0';
+			lua_pushstring(keychar);
 			lua_pushnil();
-		lua_pushnil();
-		lua_callfunction(handler);
+			lua_callfunction(handler);
+			lua_endblock();
+		}
+	} else {
+		// Only allow the "Q" safe-exit when in-game, otherwise
+		// it interferes with menu operation
+		if (key == SDLK_q) {
+			lua_beginblock();
+			lua_Object handler = getEventHandler("exitHandler");
+			if (handler != LUA_NOOBJECT)
+				lua_callfunction(handler);
+			lua_endblock();
+		} else {
+			handler = getEventHandler("buttonHandler");
+			if (handler != LUA_NOOBJECT) {
+				lua_pushnumber(key);
+				if (operation == SDL_KEYDOWN)
+					lua_pushnumber(1);
+				else
+					lua_pushnil();
+				lua_pushnil();
+				lua_callfunction(handler);
+			}
+		}
 	}
 	lua_endblock();
 }
@@ -355,7 +400,7 @@ void Engine::mainLoop() {
 		while (SDL_PollEvent(&event)) {
 			// Handle any button operations
 			if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-				handleButton(event.type, event.key.keysym.sym);
+				handleButton(event.type, event.key.keysym.sym, event.key.keysym.mod);
 			// Check for "Hard" quit"
 			if (event.type == SDL_QUIT)
 				return;
@@ -370,13 +415,6 @@ void Engine::mainLoop() {
 						event.key.keysym.sym == SDLK_KP_ENTER) &&
 						(event.key.keysym.mod & KMOD_ALT)) {
 					g_driver->toggleFullscreenMode();
-				}
-				if (event.key.keysym.sym == SDLK_q) {
-					lua_beginblock();
-					lua_Object handler = getEventHandler("exitHandler");
-					if (handler != LUA_NOOBJECT)
-						lua_callfunction(handler);
-					lua_endblock();
 				}
 			}
 		}

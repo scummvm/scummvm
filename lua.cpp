@@ -2883,9 +2883,6 @@ static void SubmitSaveGameData() {
 		if (lua_isnil(table2))
 			break;
 		str = lua_getstring(table2);
-		// Leave out an apparently bogus option
-		if (!strcmp(str, "000000000000000000000000000000000000000000000000000000000000"))
-			continue;
 		int len = strlen(str) + 1;
 		savedState->writeBlock(&len, sizeof(int));
 		savedState->writeBlock(str, len);
@@ -2912,12 +2909,6 @@ static void GetSaveGameData() {
 	int strSize;
 	int count = 0;
 
-	// Get the name of the saved game
-	lua_pushobject(result);
-	lua_pushnumber(count++);
-	lua_pushstring(filename); // TODO: Use an actual stored name
-	lua_settable();
-	
 	for (;;) {
 		if (dataSize <= 0)
 			break;
@@ -3053,6 +3044,9 @@ static void Display() {
 	if (g_engine->getFlipEnable()) {
 		g_driver->flipBuffer();
 	}
+	// refreshDrawMode ensures that the blinking cursor
+	// for the "text entry" renders correctly
+	g_engine->refreshDrawMode();
 }
 
 static void EngineDisplay() {

@@ -213,7 +213,7 @@ public:
 
 private:
 
-	void handleButton(int operation, int key);
+	void handleButton(int operation, int key, int keyModifier);
 
 	Scene *_currScene;
 	int _mode, _previousMode;
