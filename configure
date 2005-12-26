@@ -736,7 +736,7 @@ else
 			;;
 		darwin*)
 			DEFINES="$DEFINES -DUNIX -DMACOSX"
-			LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework Carbon -framework CoreMIDI"
+			LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 			# TODO: Add proper check for Altivec support in the compiler...
 			DEFINES="$DEFINES -DHAS_ALTIVEC"
 			CXXFLAGS="$CXXFLAGS -faltivec"

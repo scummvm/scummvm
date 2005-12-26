@@ -25,7 +25,7 @@
 #include "common/util.h"
 #include "sound/mpu401.h"
 
-#include <AudioUnit/AudioUnit.h>
+#include <AudioToolbox/AUGraph.h>
 
 
 
@@ -35,16 +35,19 @@
 // TODO: Maybe make this a config option?
 //#define COREAUDIO_DISABLE_REVERB
 
-/*
-See here to see how to react to a change of the default output unit:
-http://cvs.opendarwin.org/cgi-bin/cvsweb.cgi/proj/KDE-Darwin/arts/flow/audioiocoreaudio.cc?rev=HEAD&content-type=text/x-cvsweb-markup
 
-*/
+// A macro to simplify error handling a bit.
+#define RequireNoErr(error)                                         \
+do {                                                                \
+	OSStatus localError = error;                                    \
+	if (localError != noErr)                                        \
+		throw localError;                                           \
+} while (false)
 
 
 /* CoreAudio MIDI driver
+ * By Max Horn / Fingolfin
  * Based on code by Benjamin W. Zale
- * Extended by Max Horn
  */
 class MidiDriver_CORE : public MidiDriver_MPU401 {
 public:
@@ -55,123 +58,126 @@ public:
 	void sysEx(byte *msg, uint16 length);
 
 private:
-	AudioUnit au_MusicDevice;
-	AudioUnit au_output;
+	AUGraph _auGraph;
+	AudioUnit _synth;
 };
 
 MidiDriver_CORE::MidiDriver_CORE()
-	: au_MusicDevice(0), au_output(0) {
+	: _auGraph(0) {
 }
 
 int MidiDriver_CORE::open() {
-	if (au_output)
+	if (_auGraph)
 		return MERR_ALREADY_OPEN;
-
-	AudioUnitConnection auconnect;
-	ComponentDescription compdesc;
-	Component compid;
-	OSErr err;
 
 	// Open the Music Device.
 	// We use the AudioUnit v1 API, even though it is deprecated, because
 	// this way we stay compatible with older OS X versions.
 	// For v2, we'd use kAudioUnitType_MusicDevice and kAudioUnitSubType_DLSSynth
-	compdesc.componentType = kAudioUnitComponentType;
-	compdesc.componentSubType = kAudioUnitSubType_MusicDevice;
-	compdesc.componentManufacturer = kAudioUnitID_DLSSynth;
-	compdesc.componentFlags = 0;
-	compdesc.componentFlagsMask = 0;
-	compid = FindNextComponent(NULL, &compdesc);
-	au_MusicDevice = static_cast<AudioUnit>(OpenComponent(compid));
+	try {
+		RequireNoErr(NewAUGraph(&_auGraph));
 
-	if (au_MusicDevice == 0)
-		error("Failed opening CoreAudio music device");
+		AUNode outputNode, synthNode;
+		ComponentDescription desc;
 
-	// Load custom soundfont, if specified
-	// FIXME: This is kind of a temporary hack. Better (IMO) would be to
-	// query QuickTime for whatever custom soundfont was set in the
-	// QuickTime Preferences, and use that automatically.
-	if (ConfMan.hasKey("soundfont")) {
-		FSRef	fsref;
-		FSSpec	fsSpec;
-		const char *soundfont = ConfMan.get("soundfont").c_str();
+		// The default output device
+		desc.componentType = kAudioUnitComponentType;
+		desc.componentSubType = kAudioUnitSubType_Output;
+		desc.componentManufacturer = kAudioUnitID_DefaultOutput;
+		desc.componentFlags = 0;
+		desc.componentFlagsMask = 0;
+		RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
 
-		err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
+		// The built-in default (softsynth) music device
+		desc.componentSubType = kAudioUnitSubType_MusicDevice;
+		desc.componentManufacturer = kAudioUnitID_DLSSynth;
+		RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
 
-		if (err == noErr) {
-			err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
+		// Connect the softsynth to the default output
+		RequireNoErr(AUGraphConnectNodeInput(_auGraph, synthNode, 0, outputNode, 0));
+
+		// Open and initialize the whole graph
+		RequireNoErr(AUGraphOpen(_auGraph));
+		RequireNoErr(AUGraphInitialize(_auGraph));
+
+		// Get the music device from the graph.
+		RequireNoErr(AUGraphGetNodeInfo(_auGraph, synthNode, NULL, NULL, NULL, &_synth));
+
+
+		// Load custom soundfont, if specified
+		if (ConfMan.hasKey("soundfont")) {
+			OSErr	err;
+			FSRef	fsref;
+			FSSpec	fsSpec;
+			const char *soundfont = ConfMan.get("soundfont").c_str();
+
+			err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
+
+			if (err == noErr) {
+				err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
+			}
+
+			if (err == noErr) {
+				// TODO: We should really check here whether the file contains an
+				// actual soundfont...
+				err = AudioUnitSetProperty (
+					_synth,
+					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+					0,
+					&fsSpec, sizeof(fsSpec)
+				);
+			}
+
+			if (err != noErr)
+				warning("Failed loading custom sound font '%s' (error %d)\n", soundfont, err);
 		}
-
-		if (err == noErr) {
-			err = AudioUnitSetProperty (
-				au_MusicDevice,
-				kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-				0,
-				&fsSpec, sizeof(fsSpec)
-			);
-		}
-
-		if (err != noErr)
-			warning("Failed loading custom sound font '%s' (error %d)\n", soundfont, err);
-	}
-
-	// open the output unit
-	au_output = (AudioUnit) OpenDefaultComponent(kAudioUnitComponentType, kAudioUnitSubType_Output);
-	if (au_output == 0)
-		error("Failed opening output audio unit");
-
-	// connect the units
-	auconnect.sourceAudioUnit = au_MusicDevice;
-	auconnect.sourceOutputNumber = 0;
-	auconnect.destInputNumber = 0;
-	err =
-		AudioUnitSetProperty(au_output, kAudioUnitProperty_MakeConnection, kAudioUnitScope_Input, 0,
-												 (void *)&auconnect, sizeof(AudioUnitConnection));
 
 #ifdef COREAUDIO_DISABLE_REVERB
-	UInt32 usesReverb = 0;
-	AudioUnitSetProperty (au_MusicDevice, kMusicDeviceProperty_UsesInternalReverb,
-		kAudioUnitScope_Global,    0, &usesReverb, sizeof (usesReverb));
+		// Disable reverb mode, as that sucks up a lot of CPU power, which can
+		// be painful on low end machines.
+		// TODO: Make this customizable via a config key?
+		UInt32 usesReverb = 0;
+		AudioUnitSetProperty (_synth, kMusicDeviceProperty_UsesInternalReverb,
+			kAudioUnitScope_Global, 0, &usesReverb, sizeof (usesReverb));
 #endif
 
-	// initialize the units
-	AudioUnitInitialize(au_MusicDevice);
-	AudioUnitInitialize(au_output);
 
-	// start the output
-	AudioOutputUnitStart(au_output);
+		// Finally: Start the graph!
+		RequireNoErr(AUGraphStart(_auGraph));
 
-
+	} catch (OSStatus err) {
+		if (_auGraph) {
+			AUGraphStop(_auGraph);
+			DisposeAUGraph(_auGraph);
+			_auGraph = 0;
+		}
+		return MERR_CANNOT_CONNECT;
+	}
 	return 0;
 }
 
 void MidiDriver_CORE::close() {
 	MidiDriver_MPU401::close();
 
-	// Stop the output
-	AudioOutputUnitStop(au_output);
-
-	// Cleanup
-	CloseComponent(au_output);
-	au_output = 0;
-	CloseComponent(au_MusicDevice);
-	au_MusicDevice = 0;
+	if (_auGraph) {
+		AUGraphStop(_auGraph);
+		DisposeAUGraph(_auGraph);
+		_auGraph = 0;
+	}
 }
 
 void MidiDriver_CORE::send(uint32 b) {
-	assert(au_output != NULL);
-	assert(au_MusicDevice != NULL);
+	assert(_auGraph != NULL);
 
 	byte status_byte = (b & 0x000000FF);
 	byte first_byte = (b & 0x0000FF00) >> 8;
 	byte second_byte = (b & 0x00FF0000) >> 16;
 
-	MusicDeviceMIDIEvent(au_MusicDevice, status_byte, first_byte, second_byte, 0);
+	MusicDeviceMIDIEvent(_synth, status_byte, first_byte, second_byte, 0);
 }
 
 void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
-	assert(au_output != NULL);
-	assert(au_MusicDevice != NULL);
+	assert(_auGraph != NULL);
 
 	// Add SysEx frame if missing
 	byte *buf = 0;
@@ -184,7 +190,7 @@ void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
 		length += 2;
 	}
 
-	MusicDeviceSysEx(au_MusicDevice, msg, length);
+	MusicDeviceSysEx(_synth, msg, length);
 
 	free(buf);
 }
