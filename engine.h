@@ -28,7 +28,6 @@
 #include <cstdlib>
 #include <list>
 #include <SDL_keysym.h>
-#include <zlib.h>
 
 class Actor;
 
@@ -103,6 +102,7 @@ public:
 	int getPreviousMode() { return _previousMode; }
 	void setSpeechMode(int mode) { _speechMode = mode; }
 	int getSpeechMode() { return _speechMode; }
+	SaveGame *savedState() { return _savedState; }
 
 	void handleDebugLoadResource();
 	void luaUpdate();
@@ -201,14 +201,12 @@ public:
 
 	void savegameSave();
 	void savegameRestore();
-	static void savegameGzread(void *data, int size);
-	static void savegameGzwrite(void *data, int size);
 	void savegameCallback();
 
 	bool _savegameLoadRequest;
 	bool _savegameSaveRequest;
 	char *_savegameFileName;
-	gzFile _savegameFileHandle;
+	SaveGame *_savedState;
 
 	Engine();
 	~Engine() {}

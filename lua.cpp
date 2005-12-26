@@ -31,6 +31,7 @@
 #include "colormap.h"
 #include "font.h"
 #include "primitives.h"
+#include "savegame.h"
 
 #include "imuse/imuse.h"
 
@@ -1958,27 +1959,18 @@ static void ImSetSequence() {
 
 static void SaveIMuse() {
 	DEBUG_FUNCTION();
-	gzFile file = gzopen("grim.tmp", "wb");
-	if (file == NULL) {
-		warning("SaveIMuse() Error creating temp savegame file");
-		return;
-	}
-	g_engine->_savegameFileHandle = file;
-	g_imuse->saveState(g_engine->savegameGzwrite);
-	gzclose(file);
+	SaveGame *savedIMuse = new SaveGame("grim.tmp", true);
+	g_imuse->saveState(savedIMuse);
+	delete savedIMuse;
 }
 
 static void RestoreIMuse() {
 	DEBUG_FUNCTION();
-	gzFile file = gzopen("grim.tmp", "rb");
-	if (file == NULL) {
-		return;
-	}
-	g_engine->_savegameFileHandle = file;
+	SaveGame *savedIMuse = new SaveGame("grim.tmp", false);
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
-	g_imuse->restoreState(g_engine->savegameGzread);
-	gzclose(file);
+	g_imuse->restoreState(savedIMuse);
+	delete savedIMuse;
 	unlink("grim.tmp");
 }
 
@@ -2809,29 +2801,83 @@ static void ScreenShot() {
 	}
 }
 
+/*
+ * Store a screenshot into a savegame file
+ *
+ * TODO: Width and height are currently hardcoded,
+ * find a fix
+ */
+static void StoreSaveGameImage(SaveGame *savedState) {
+	int width = 250, height = 188;
+	Bitmap *screenshot;
+	
+	printf("StoreSaveGameImage() started.\n");
+	
+	DEBUG_FUNCTION();
+
+	int mode = g_engine->getMode();
+	g_engine->setMode(ENGINE_MODE_NORMAL);
+	g_engine->updateDisplayScene();
+	screenshot = g_driver->getScreenshot(width, height);
+	g_engine->setMode(mode);
+	savedState->beginSection('SIMG');
+	if (screenshot) {
+		int size = screenshot->width() * screenshot->height() * sizeof(uint16);
+		screenshot->setNumber(0);
+		char *data = screenshot->getData();
+		
+		savedState->writeBlock(data, size);
+	} else {
+		error("Unable to store screenshot!");
+	}
+	savedState->endSection();
+	printf("StoreSaveGameImage() finished.\n");
+}
+
+/*
+ * Restore a screenshot from a savegame file
+ *
+ * TODO: Width and height are currently hardcoded,
+ * find a fix
+ */
+static void GetSaveGameImage() {
+	int width = 250, height = 188;
+	char *filename, *data;
+	Bitmap *screenshot;
+	int dataSize;
+	
+	printf("GetSaveGameImage() started.\n");
+	DEBUG_FUNCTION();
+	filename = luaL_check_string(1);
+	SaveGame *savedState = new SaveGame(filename, false);
+	dataSize = savedState->beginSection('SIMG');
+	data = (char *) malloc(dataSize);
+	savedState->readBlock(data, dataSize);
+	screenshot = new Bitmap(data, width, height, "screenshot");
+	if (screenshot) {
+		lua_pushusertag(screenshot, MKID('VBUF'));
+	} else {
+		lua_pushnil();
+		error("Could not restore screenshot from file!");
+	}
+	savedState->endSection();
+	printf("GetSaveGameImage() finished.\n");
+}
+
 static void SubmitSaveGameData() {
 	lua_Object table, table2;
-	int dataSize = 0;
+	SaveGame *savedState;
 	int count = 0;
 	char *str;
 	
+	printf("SubmitSaveGameData() started.\n");
 	DEBUG_FUNCTION();
 	table = lua_getparam(1);
-	for (;;) {
-		lua_pushobject(table);
-		lua_pushnumber(count);
-		count++;
-		table2 = lua_gettable();
-		if (lua_isnil(table2))
-			break;
-		str = lua_getstring(table2);
-		dataSize += strlen(str) + 1;
-		dataSize += 4;
-	}
-	if (dataSize == 0)
-		return;
 
-	g_engine->savegameGzwrite(&dataSize, sizeof(int));
+	savedState = g_engine->savedState();
+	if (savedState == NULL)
+		error("Cannot obtain saved game!");
+	savedState->beginSection('SUBS');
 	count = 0;
 	for (;;) {
 		lua_pushobject(table);
@@ -2841,26 +2887,30 @@ static void SubmitSaveGameData() {
 		if (lua_isnil(table2))
 			break;
 		str = lua_getstring(table2);
+		// Leave out an apparently bogus option
+		if (!strcmp(str, "000000000000000000000000000000000000000000000000000000000000"))
+			continue;
 		int len = strlen(str) + 1;
-		g_engine->savegameGzwrite(&len, sizeof(int));
-		g_engine->savegameGzwrite(str, len);
+		savedState->writeBlock(&len, sizeof(int));
+		savedState->writeBlock(str, len);
 	}
+	savedState->endSection();
+	printf("SubmitSaveGameData() finished.\n");
+	StoreSaveGameImage(savedState);
 }
 
 static void GetSaveGameData() {
 	lua_Object result;
 	char *filename;
 	int dataSize;
-	gzFile file;
 	
+	printf("GetSaveGameData() started.\n");
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	file = gzopen(filename, "rb");
-	if (!file)
-		return;
+	SaveGame *savedState = new SaveGame(filename, false);
+	dataSize = savedState->beginSection('SUBS');
 
 	result = lua_createtable();
-	gzread(file, &dataSize, sizeof(int));
 
 	char str[128];
 	int strSize;
@@ -2875,8 +2925,8 @@ static void GetSaveGameData() {
 	for (;;) {
 		if (dataSize <= 0)
 			break;
-		gzread(file, &strSize, sizeof(int));
-		gzread(file, str, strSize);
+		savedState->readBlock(&strSize, sizeof(int));
+		savedState->readBlock(str, strSize);
 		lua_pushobject(result);
 		lua_pushnumber(count);
 		lua_pushstring(str);
@@ -2885,10 +2935,11 @@ static void GetSaveGameData() {
 		dataSize -= 4;
 		count++;
 	}
-
+	savedState->endSection();
 	lua_pushobject(result);
 
-	gzclose(file);
+	delete savedState;
+	printf("GetSaveGameData() finished.\n");
 }
 
 static void Load() {
@@ -2925,12 +2976,12 @@ static void Save() {
 	g_engine->_savegameSaveRequest = true;
 }
 
-static int SaveCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
+static int SaveCallback(int /*tag*/, int value, SaveGame * /*savedState*/) {
 	DEBUG_FUNCTION();
 	return value;
 }
 
-static int RestoreCallback(int /*tag*/, int value, SaveRestoreFunc /*saveFunc*/) {
+static int RestoreCallback(int /*tag*/, int value, SaveGame * /*savedState*/) {
 	DEBUG_FUNCTION();
 	return value;
 }
@@ -3120,7 +3171,6 @@ STUB_FUNC(ShrinkBoxes)
 STUB_FUNC(ResetTextures)
 STUB_FUNC(AttachToResources)
 STUB_FUNC(DetachFromResources)
-STUB_FUNC(GetSaveGameImage)
 STUB_FUNC(IrisUp)
 STUB_FUNC(IrisDown)
 STUB_FUNC(FadeInChore)

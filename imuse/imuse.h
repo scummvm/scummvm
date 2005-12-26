@@ -43,6 +43,8 @@ struct ImuseTable {
 	char filename[32];
 };
 
+class SaveGame;
+
 class Imuse {
 private:
 
@@ -123,8 +125,8 @@ public:
 	void startMusic(const char *soundName, int hookId, int volume, int pan);
 	void startSfx(const char *soundName, int priority = 127);
 
-	void restoreState(SaveRestoreFunc);
-	void saveState(SaveRestoreFunc);
+	void restoreState(SaveGame *savedState);
+	void saveState(SaveGame *savedState);
 	void resetState();
 
 	void setGroupVoiceVolume(int volume) { _volVoice = volume; }

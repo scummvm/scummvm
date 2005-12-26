@@ -64,6 +64,7 @@ OBJS =\
 	driver_gl.o \
 	driver_tinygl.o \
 	engine.o \
+	savegame.o \
 	font.o \
 	keyframe.o \
 	lab.o \

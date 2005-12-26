@@ -20,6 +20,7 @@
 #include "debug.h"
 #include "timer.h"
 #include "engine.h"
+#include "savegame.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
@@ -81,42 +82,43 @@ void Imuse::resetState() {
 	memset(_attributes, 0, sizeof(_attributes));
 }
 
-void Imuse::restoreState(SaveRestoreFunc) {
+void Imuse::restoreState(SaveGame *savedState) {
 	StackLock lock(_mutex);
 	printf("Imuse::restoreState() started.\n");
 
-	g_engine->savegameGzread(&_volVoice, sizeof(int32));
-	g_engine->savegameGzread(&_volSfx, sizeof(int32));
-	g_engine->savegameGzread(&_volMusic, sizeof(int32));
-	g_engine->savegameGzread(&_curMusicState, sizeof(int32));
-	g_engine->savegameGzread(&_curMusicSeq, sizeof(int32));
-	g_engine->savegameGzread(_attributes, sizeof(int32) * 185);
+	savedState->beginSection('IMUS');
+	savedState->readBlock(&_volVoice, sizeof(int32));
+	savedState->readBlock(&_volSfx, sizeof(int32));
+	savedState->readBlock(&_volMusic, sizeof(int32));
+	savedState->readBlock(&_curMusicState, sizeof(int32));
+	savedState->readBlock(&_curMusicSeq, sizeof(int32));
+	savedState->readBlock(_attributes, sizeof(int32) * 185);
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
-		g_engine->savegameGzread(&track->pan, sizeof(int32));
-		g_engine->savegameGzread(&track->panFadeDest, sizeof(int32));
-		g_engine->savegameGzread(&track->panFadeDelay, sizeof(int32));
-		g_engine->savegameGzread(&track->panFadeUsed, sizeof(bool));
-		g_engine->savegameGzread(&track->vol, sizeof(int32));
-		g_engine->savegameGzread(&track->volFadeDest, sizeof(int32));
-		g_engine->savegameGzread(&track->volFadeDelay, sizeof(int32));
-		g_engine->savegameGzread(&track->volFadeUsed, sizeof(bool));
-		g_engine->savegameGzread(track->soundName, 32);
-		g_engine->savegameGzread(&track->used, sizeof(bool));
-		g_engine->savegameGzread(&track->toBeRemoved, sizeof(bool));
-		g_engine->savegameGzread(&track->readyToRemove, sizeof(bool));
-		g_engine->savegameGzread(&track->started, sizeof(bool));
-		g_engine->savegameGzread(&track->priority, sizeof(int32));
-		g_engine->savegameGzread(&track->regionOffset, sizeof(int32));
-		g_engine->savegameGzread(&track->dataOffset, sizeof(int32));
-		g_engine->savegameGzread(&track->curRegion, sizeof(int32));
-		g_engine->savegameGzread(&track->curHookId, sizeof(int32));
-		g_engine->savegameGzread(&track->volGroupId, sizeof(int32));
-		g_engine->savegameGzread(&track->iteration, sizeof(int32));
-		g_engine->savegameGzread(&track->mixerFlags, sizeof(int32));
-		g_engine->savegameGzread(&track->mixerVol, sizeof(int32));
-		g_engine->savegameGzread(&track->mixerPan, sizeof(int32));
+		savedState->readBlock(&track->pan, sizeof(int32));
+		savedState->readBlock(&track->panFadeDest, sizeof(int32));
+		savedState->readBlock(&track->panFadeDelay, sizeof(int32));
+		savedState->readBlock(&track->panFadeUsed, sizeof(bool));
+		savedState->readBlock(&track->vol, sizeof(int32));
+		savedState->readBlock(&track->volFadeDest, sizeof(int32));
+		savedState->readBlock(&track->volFadeDelay, sizeof(int32));
+		savedState->readBlock(&track->volFadeUsed, sizeof(bool));
+		savedState->readBlock(track->soundName, 32);
+		savedState->readBlock(&track->used, sizeof(bool));
+		savedState->readBlock(&track->toBeRemoved, sizeof(bool));
+		savedState->readBlock(&track->readyToRemove, sizeof(bool));
+		savedState->readBlock(&track->started, sizeof(bool));
+		savedState->readBlock(&track->priority, sizeof(int32));
+		savedState->readBlock(&track->regionOffset, sizeof(int32));
+		savedState->readBlock(&track->dataOffset, sizeof(int32));
+		savedState->readBlock(&track->curRegion, sizeof(int32));
+		savedState->readBlock(&track->curHookId, sizeof(int32));
+		savedState->readBlock(&track->volGroupId, sizeof(int32));
+		savedState->readBlock(&track->iteration, sizeof(int32));
+		savedState->readBlock(&track->mixerFlags, sizeof(int32));
+		savedState->readBlock(&track->mixerVol, sizeof(int32));
+		savedState->readBlock(&track->mixerPan, sizeof(int32));
 
 		if (!track->used)
 			continue;
@@ -137,46 +139,49 @@ void Imuse::restoreState(SaveRestoreFunc) {
 		track->stream = makeAppendableAudioStream(freq, track->mixerFlags, streamBufferSize);
 		g_mixer->playInputStream(&track->handle, track->stream, false, -1, track->mixerVol, track->mixerPan, false);
 	}
+	savedState->endSection();
 	printf("Imuse::restoreState() finished.\n");
 }
 
-void Imuse::saveState(SaveRestoreFunc) {
+void Imuse::saveState(SaveGame *savedState) {
 	StackLock lock(_mutex);
 	printf("Imuse::saveState() started.\n");
 
-	g_engine->savegameGzwrite(&_volVoice, sizeof(int32));
-	g_engine->savegameGzwrite(&_volSfx, sizeof(int32));
-	g_engine->savegameGzwrite(&_volMusic, sizeof(int32));
-	g_engine->savegameGzwrite(&_curMusicState, sizeof(int32));
-	g_engine->savegameGzwrite(&_curMusicSeq, sizeof(int32));
-	g_engine->savegameGzwrite(_attributes, sizeof(int32) * 185);
+	savedState->beginSection('IMUS');
+	savedState->writeBlock(&_volVoice, sizeof(int32));
+	savedState->writeBlock(&_volSfx, sizeof(int32));
+	savedState->writeBlock(&_volMusic, sizeof(int32));
+	savedState->writeBlock(&_curMusicState, sizeof(int32));
+	savedState->writeBlock(&_curMusicSeq, sizeof(int32));
+	savedState->writeBlock(_attributes, sizeof(int32) * 185);
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
-		g_engine->savegameGzwrite(&track->pan, sizeof(int32));
-		g_engine->savegameGzwrite(&track->panFadeDest, sizeof(int32));
-		g_engine->savegameGzwrite(&track->panFadeDelay, sizeof(int32));
-		g_engine->savegameGzwrite(&track->panFadeUsed, sizeof(bool));
-		g_engine->savegameGzwrite(&track->vol, sizeof(int32));
-		g_engine->savegameGzwrite(&track->volFadeDest, sizeof(int32));
-		g_engine->savegameGzwrite(&track->volFadeDelay, sizeof(int32));
-		g_engine->savegameGzwrite(&track->volFadeUsed, sizeof(bool));
-		g_engine->savegameGzwrite(track->soundName, 32);
-		g_engine->savegameGzwrite(&track->used, sizeof(bool));
-		g_engine->savegameGzwrite(&track->toBeRemoved, sizeof(bool));
-		g_engine->savegameGzwrite(&track->readyToRemove, sizeof(bool));
-		g_engine->savegameGzwrite(&track->started, sizeof(bool));
-		g_engine->savegameGzwrite(&track->priority, sizeof(int32));
-		g_engine->savegameGzwrite(&track->regionOffset, sizeof(int32));
-		g_engine->savegameGzwrite(&track->dataOffset, sizeof(int32));
-		g_engine->savegameGzwrite(&track->curRegion, sizeof(int32));
-		g_engine->savegameGzwrite(&track->curHookId, sizeof(int32));
-		g_engine->savegameGzwrite(&track->volGroupId, sizeof(int32));
-		g_engine->savegameGzwrite(&track->iteration, sizeof(int32));
-		g_engine->savegameGzwrite(&track->mixerFlags, sizeof(int32));
-		g_engine->savegameGzwrite(&track->mixerVol, sizeof(int32));
-		g_engine->savegameGzwrite(&track->mixerPan, sizeof(int32));
+		savedState->writeBlock(&track->pan, sizeof(int32));
+		savedState->writeBlock(&track->panFadeDest, sizeof(int32));
+		savedState->writeBlock(&track->panFadeDelay, sizeof(int32));
+		savedState->writeBlock(&track->panFadeUsed, sizeof(bool));
+		savedState->writeBlock(&track->vol, sizeof(int32));
+		savedState->writeBlock(&track->volFadeDest, sizeof(int32));
+		savedState->writeBlock(&track->volFadeDelay, sizeof(int32));
+		savedState->writeBlock(&track->volFadeUsed, sizeof(bool));
+		savedState->writeBlock(track->soundName, 32);
+		savedState->writeBlock(&track->used, sizeof(bool));
+		savedState->writeBlock(&track->toBeRemoved, sizeof(bool));
+		savedState->writeBlock(&track->readyToRemove, sizeof(bool));
+		savedState->writeBlock(&track->started, sizeof(bool));
+		savedState->writeBlock(&track->priority, sizeof(int32));
+		savedState->writeBlock(&track->regionOffset, sizeof(int32));
+		savedState->writeBlock(&track->dataOffset, sizeof(int32));
+		savedState->writeBlock(&track->curRegion, sizeof(int32));
+		savedState->writeBlock(&track->curHookId, sizeof(int32));
+		savedState->writeBlock(&track->volGroupId, sizeof(int32));
+		savedState->writeBlock(&track->iteration, sizeof(int32));
+		savedState->writeBlock(&track->mixerFlags, sizeof(int32));
+		savedState->writeBlock(&track->mixerVol, sizeof(int32));
+		savedState->writeBlock(&track->mixerPan, sizeof(int32));
 	}
+	savedState->endSection();
 	printf("Imuse::saveState() finished.\n");
 }
 

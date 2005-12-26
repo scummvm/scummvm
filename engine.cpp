@@ -24,6 +24,7 @@
 #include "textobject.h"
 #include "smush.h"
 #include "driver.h"
+#include "savegame.h"
 
 #include "imuse/imuse.h"
 
@@ -63,6 +64,7 @@ Engine::Engine() :
 	_flipEnable = true;
 	_refreshDrawNeeded = true;
 	g_searchFile = NULL;
+	_savedState = NULL;
 
 	textObjectDefaults.x = 0;
 	textObjectDefaults.y = 200;
@@ -393,14 +395,6 @@ void Engine::mainLoop() {
 	}
 }
 
-void Engine::savegameGzread(void *data, int size) {
-	gzread(g_engine->_savegameFileHandle, data, size);
-}
-
-void Engine::savegameGzwrite(void *data, int size) {
-	gzwrite(g_engine->_savegameFileHandle, data, size);
-}
-
 void Engine::savegameRestore() {
 	printf("Engine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
@@ -410,11 +404,7 @@ void Engine::savegameRestore() {
 	} else {
 		strcpy(filename, _savegameFileName);
 	}
-	_savegameFileHandle = gzopen(filename, "rb");
-	if (_savegameFileHandle == NULL) {
-		warning("savegameRestore() Error opening savegame file");
-		return;
-	}
+	_savedState = new SaveGame(filename, false);
 
 	g_imuse->stopAllSounds();
 	g_imuse->resetState();
@@ -425,25 +415,18 @@ void Engine::savegameRestore() {
 	//  free all resource
 	//  lock resources
 
-	uint32 tag;
-	uint32 version;
-	savegameGzread(&tag, 4);
-	assert(tag == 'RSAV');
-	savegameGzread(&version, 4);
-	assert(version == 1);
-
-	//Chore_Restore(savegameGzread);
-	//Resource_Restore(savegameGzread);
-	//Text_Restore(savegameGzread);
-	//Room_Restore(savegameGzread);
-	//Actor_Restore(savegameGzread);
-	//Render_Restore(savegameGzread);
-	//Primitive_Restore(savegameGzread);
-	//Smush_Restore(savegameGzread);
-	g_imuse->restoreState(savegameGzread);
-	lua_Restore(savegameGzread);
+	//Chore_Restore(_savedState);
+	//Resource_Restore(_savedState);
+	//Text_Restore(_savedState);
+	//Room_Restore(_savedState);
+	//Actor_Restore(_savedState);
+	//Render_Restore(_savedState);
+	//Primitive_Restore(_savedState);
+	//Smush_Restore(_savedState);
+	g_imuse->restoreState(_savedState);
+	lua_Restore(_savedState);
 	//  unlock resources
-	gzclose(_savegameFileHandle);
+	delete _savedState;
 
 	//bundle_dofile("patch05.bin");
 
@@ -461,34 +444,25 @@ void Engine::savegameSave() {
 	} else {
 		strcpy(filename, _savegameFileName);
 	}
-	_savegameFileHandle = gzopen(filename, "wb");
-	if (_savegameFileHandle == NULL) {
-		warning("savegameSave() Error creating savegame file");
-		return;
-	}
+	_savedState = new SaveGame(filename, true);
 
 	g_imuse->pause(true);
 	g_smush->pause(true);
 
-	uint32 tag = 'RSAV';
-	uint32 version = 1;
-	savegameGzwrite(&tag, 4);
-	savegameGzwrite(&version, 4);
-
 	savegameCallback();
 
-	//Chore_Save(savegameGzwrite);
-	//Resource_Save(savegameGzwrite);
-	//Text_Save(savegameGzwrite);
-	//Room_Save(savegameGzwrite);
-	//Actor_Save(savegameGzwrite);
-	//Render_Save(savegameGzwrite);
-	//Primitive_Save(savegameGzwrite);
-	//Smush_Save(savegameGzwrite);
-	g_imuse->saveState(savegameGzwrite);
-	lua_Save(savegameGzwrite);
+	//Chore_Save(_savedState);
+	//Resource_Save(_savedState);
+	//Text_Save(_savedState);
+	//Room_Save(_savedState);
+	//Actor_Save(_savedState);
+	//Render_Save(_savedState);
+	//Primitive_Save(_savedState);
+	//Smush_Save(_savedState);
+	g_imuse->saveState(_savedState);
+	lua_Save(_savedState);
 
-	gzclose(_savegameFileHandle);
+	delete _savedState;
 
 	g_imuse->pause(false);
 	g_smush->pause(false);
