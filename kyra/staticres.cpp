@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 6
+#define RESFILE_VERSION 7
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -212,6 +212,15 @@ void KyraEngine::res_loadResources(int type) {
 				temp = 0;
 			}
 		}
+		
+		res_loadLangTable("PUTDOWN.", &resFile, (byte***)&_putDownFirst, &_putDownFirst_Size, loadNativeLanguage);
+		res_loadLangTable("WAITAMUL.", &resFile, (byte***)&_waitForAmulet, &_waitForAmulet_Size, loadNativeLanguage);
+		res_loadLangTable("BLACKJEWEL.", &resFile, (byte***)&_blackJewel, &_blackJewel_Size, loadNativeLanguage);
+		res_loadLangTable("POISONGONE.", &resFile, (byte***)&_poisonGone, &_poisonGone_Size, loadNativeLanguage);
+		res_loadLangTable("HEALINGTIP.", &resFile, (byte***)&_healingTip, &_healingTip_Size, loadNativeLanguage);
+		
+		loadShapes(resFile, "HEALING.SHP", &_healingShapeTable, &_healingShapeTableSize);
+		loadShapes(resFile, "HEALING2.SHP", &_healingShape2Table, &_healingShape2TableSize);
 	}
 
 #undef loadRooms
@@ -223,33 +232,10 @@ void KyraEngine::res_loadResources(int type) {
 void KyraEngine::res_unloadResources(int type) {
 	debug(9, "res_unloadResources(%d)", type);
 	if ((type & RES_INTRO) || type == RES_ALL) {
-		for (int i = 0; i < _seq_WSATable_Size; ++i) {
-			delete [] _seq_WSATable[i];
-		}
-		delete [] _seq_WSATable;
-		_seq_WSATable_Size = 0;
-		_seq_WSATable = 0;
-		
-		for (int i = 0; i < _seq_CPSTable_Size; ++i) {
-			delete [] _seq_CPSTable[i];
-		}
-		delete [] _seq_CPSTable;
-		_seq_CPSTable_Size = 0;
-		_seq_CPSTable = 0;
-		
-		for (int i = 0; i < _seq_COLTable_Size; ++i) {
-			delete [] _seq_COLTable[i];
-		}
-		delete [] _seq_COLTable;
-		_seq_COLTable_Size = 0;
-		_seq_COLTable = 0;
-		
-		for (int i = 0; i < _seq_textsTable_Size; ++i) {
-			delete [] _seq_textsTable[i];
-		}
-		delete [] _seq_textsTable;
-		_seq_textsTable_Size = 0;
-		_seq_textsTable = 0;
+		res_freeLangTable(&_seq_WSATable, &_seq_WSATable_Size);
+		res_freeLangTable(&_seq_CPSTable, &_seq_CPSTable_Size);
+		res_freeLangTable(&_seq_COLTable, &_seq_COLTable_Size);
+		res_freeLangTable(&_seq_textsTable, &_seq_textsTable_Size);
 		
 		delete [] _seq_Forest; _seq_Forest = 0;
 		delete [] _seq_KallakWriting; _seq_KallakWriting = 0;
@@ -264,60 +250,22 @@ void KyraEngine::res_unloadResources(int type) {
 	}
 	
 	if ((type & RES_INGAME) || type == RES_ALL) {
-		for (int i = 0; i < _roomFilenameTableSize; ++i) {
-			delete [] _roomFilenameTable[i];
-		}
-		delete [] _roomFilenameTable;
-		_roomFilenameTableSize = 0;
-		_roomFilenameTable = 0;
-		
+		res_freeLangTable(&_roomFilenameTable, &_roomFilenameTableSize);
+				
 		delete [] _roomTable; _roomTable = 0;
 		_roomTableSize = 0;
 		
-		for (int i = 0; i < _characterImageTableSize; ++i) {
-			delete [] _characterImageTable[i];
-		}
-		delete [] _characterImageTable;
-		_characterImageTableSize = 0;
-		
+		res_freeLangTable(&_characterImageTable, &_characterImageTableSize);
+				
 		delete [] _defaultShapeTable;
 		_defaultShapeTableSize = 0;
 		
-		for (int i = 0; i < _itemList_Size; ++i) {
-			delete [] _itemList[i];
-		}
-		delete [] _itemList;
-		_itemList_Size = 0;
-		_itemList = 0;
-		
-		for (int i = 0; i < _takenList_Size; ++i) {
-			delete [] _takenList[i];
-		}
-		delete [] _takenList;
-		_takenList_Size = 0;
-		_takenList = 0;
-		
-		for (int i = 0; i < _placedList_Size; ++i) {
-			delete [] _placedList[i];
-		}
-		delete [] _placedList;
-		_placedList_Size = 0;
-		_placedList = 0;
-		
-		for (int i = 0; i < _droppedList_Size; ++i) {
-			delete [] _droppedList[i];
-		}
-		delete [] _droppedList;
-		_droppedList_Size = 0;
-		_droppedList = 0;
-		
-		for (int i = 0; i < _noDropList_Size; ++i) {
-			delete [] _noDropList[i];
-		}
-		delete [] _noDropList;
-		_noDropList_Size = 0;
-		_noDropList = 0;
-		
+		res_freeLangTable(&_itemList, &_itemList_Size);
+		res_freeLangTable(&_takenList, &_takenList_Size);
+		res_freeLangTable(&_placedList, &_placedList_Size);
+		res_freeLangTable(&_droppedList, &_droppedList_Size);
+		res_freeLangTable(&_noDropList, &_noDropList_Size);
+				
 		delete [] _amuleteAnim;
 		_amuleteAnim = 0;
 		
@@ -325,6 +273,18 @@ void KyraEngine::res_unloadResources(int type) {
 			delete [] _specialPalettes[i];
 			_specialPalettes[i] = 0;
 		}
+		
+		res_freeLangTable(&_putDownFirst, &_putDownFirst_Size);
+		res_freeLangTable(&_waitForAmulet, &_waitForAmulet_Size);
+		res_freeLangTable(&_blackJewel, &_blackJewel_Size);
+		res_freeLangTable(&_poisonGone, &_poisonGone_Size);
+		res_freeLangTable(&_healingTip, &_healingTip_Size);
+		
+		delete [] _healingShapeTable;
+		_healingShapeTableSize = 0;
+		
+		delete [] _healingShape2Table;
+		_healingShape2TableSize = 0;
 	}
 }
 
@@ -402,6 +362,19 @@ void KyraEngine::res_loadShapeTable(const byte *src, Shape **loadTo, int *size) 
 		(*loadTo)[i].xOffset = *src++;
 		(*loadTo)[i].yOffset = *src++;
 	}
+}
+
+void KyraEngine::res_freeLangTable(char ***string, int *size) {
+	if (!string || !size)
+		return;
+	if (!*size || !*string)
+		return;
+	for (int i = 0; i < *size; ++i) {
+		delete [] (*string)[i];
+	}
+	delete [] *string;
+	size = 0;
+	*string = 0;
 }
 
 const ScreenDim Screen::_screenDimTable[] = {
@@ -673,10 +646,10 @@ Button KyraEngine::_buttonData[] = {
 	{ 0, 0x09, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
 	{ 0, 0x0A, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
 	{ 0, 0x0B, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-	{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, 0/*buttonAmuletCallback, XXX*/ },
-	{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, 0/*buttonAmuletCallback, XXX*/ },
-	{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, 0/*buttonAmuletCallback, XXX*/ },
-	{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, 0/*buttonAmuletCallback, XXX*/ }
+	{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
+	{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
+	{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
+	{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ }
 };
 
 Button *KyraEngine::_buttonDataListPtr[] = {

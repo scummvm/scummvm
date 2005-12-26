@@ -504,6 +504,7 @@ protected:
 	void restoreRect1(int xpos, int ypos);
 	void copyBackgroundBlock(int x, int page, int flag);
 	void copyBackgroundBlock2(int x);
+	void makeBrandonFaceMouse();
 
 	void processInput(int xpos, int ypos);
 	int processInputHelper(int xpos, int ypos);
@@ -536,6 +537,13 @@ protected:
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);
 	void animAddNPC(int character);
+	void drawJewelPress(int jewel, int drawSpecial);
+	void drawJewelsFadeOutStart();
+	void drawJewelsFadeOutEnd(int jewel);
+	void setupShapes123(const Shape *shapeTable, int endShape, int flags);
+	void freeShapes123();
+	void setBrandonAnimSeqSize(int width, int height);
+	void resetBrandonAnimSeqSize();
 	
 	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
 	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
@@ -550,6 +558,7 @@ protected:
 	void seq_introKallakWriting();
 	void seq_introKallakMalcolm();
 	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
+	void seq_brandonHealing();
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
@@ -572,6 +581,7 @@ protected:
 	void res_loadTable(const byte *src, byte ***loadTo, int *size);
 	void res_loadRoomTable(const byte *src, Room **loadTo, int *size);
 	void res_loadShapeTable(const byte *src, Shape **loadTo, int *size);
+	void res_freeLangTable(char ***sting, int *size);
 	
 	void waitForEvent();
 	void delay(uint32 millis, bool update = false);
@@ -601,6 +611,7 @@ protected:
 	void setTextFadeTimerCountdown(int16 countdown);
 	
 	int buttonInventoryCallback(Button *caller);
+	int buttonAmuletCallback(Button *caller);
 	Button *initButton(Button *list, Button *newButton);
 	void processButtonList(Button *list);
 	void processButton(Button *button);
@@ -634,6 +645,10 @@ protected:
 	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
 	int _noDrawShapesFlag;
+	int _unkAmuletVar;
+	
+	int _brandonAnimSeqSizeWidth;
+	int _brandonAnimSeqSizeHeight;
 
 	WSAMovieV1 *_wsaObjects[10];
 	uint16 _entranceMouseCursorTracks[8];
@@ -655,10 +670,11 @@ protected:
 	
 	uint16 _brandonStatusBit;
 	uint8 _unkBrandonPoisonFlags[256];	// this seem not to be posion flags, it is used for drawing once
+	uint8 _deathHandler;
 	int _brandonPosX;
 	int _brandonPosY;
-	int16 _brandonScaleX;
-	int16 _brandonScaleY;
+	int _brandonScaleX;
+	int _brandonScaleY;
 	int _brandonDrawFrame;
 
 	uint16 _currentChatPartnerBackupFrame;
@@ -757,18 +773,33 @@ protected:
 	char **_placedList;
 	char **_droppedList;
 	char **_noDropList;
+	char **_putDownFirst;
+	char **_waitForAmulet;
+	char **_blackJewel;
+	char **_poisonGone;
+	char **_healingTip;
 	
 	int _itemList_Size;
 	int _takenList_Size;
 	int _placedList_Size;
 	int _droppedList_Size;
 	int _noDropList_Size;
+	int _putDownFirst_Size;
+	int _waitForAmulet_Size;
+	int _blackJewel_Size;
+	int _poisonGone_Size;
+	int _healingTip_Size;
 	
 	char **_characterImageTable;
 	int _characterImageTableSize;
 	
 	Shape *_defaultShapeTable;
 	int _defaultShapeTableSize;
+	
+	Shape *_healingShapeTable;
+	int  _healingShapeTableSize;
+	Shape *_healingShape2Table;
+	int  _healingShape2TableSize;
 	
 	Room *_roomTable;
 	int _roomTableSize;	

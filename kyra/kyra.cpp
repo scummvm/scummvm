@@ -182,6 +182,16 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	
 	_seq_WSATable = _seq_CPSTable = _seq_COLTable = _seq_textsTable = 0;
 	_seq_WSATable_Size = _seq_CPSTable_Size = _seq_COLTable_Size = _seq_textsTable_Size = 0;
+	
+	_roomFilenameTable = _characterImageTable = 0;
+	_roomFilenameTableSize = _characterImageTableSize = 0;
+	_itemList = _takenList = _placedList = _droppedList = _noDropList = 0;
+	_itemList_Size = _takenList_Size = _placedList_Size = _droppedList_Size = _noDropList_Size = 0;
+	_putDownFirst = _waitForAmulet = _blackJewel = _poisonGone = _healingTip = 0;
+	_putDownFirst_Size = _waitForAmulet_Size = _blackJewel_Size = _poisonGone_Size = _healingTip_Size = 0;
+	
+	_defaultShapeTable = _healingShapeTable = _healingShape2Table = 0;
+	_defaultShapeTableSize = _healingShapeTableSize = _healingShape2TableSize = 0;
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -344,6 +354,7 @@ int KyraEngine::init(GameDetector &detector) {
 
 	_brandonPosX = _brandonPosY = -1;
 	_brandonDrawFrame = 113;
+	_deathHandler = 0xFF;
 	
 	memset(_itemTable, 0, sizeof(_itemTable));
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
@@ -979,6 +990,37 @@ void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int dra
 	_screen->updateScreen();
 	_screen->showMouse();
 	setGameFlag(0x55+jewel);
+}
+
+void KyraEngine::seq_brandonHealing() {
+	debug(9, "seq_brandonHealing()");
+	if (!(_deathHandler & 8))
+		return;
+	if (_currentCharacter->sceneId == 210) {
+		//if (_unkSceneVar == 4 || _unkSceneVar == 6)
+		//	return;
+	}
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	assert(_healingShapeTable);
+	setupShapes123(_healingShapeTable, 22, 0);
+	setBrandonAnimSeqSize(3, 48);
+	// snd_playSoundEffect(0x53);
+	for (int i = 123; i <= 144; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	for (int i = 125; i >= 123; --i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
 }
 
 bool KyraEngine::seq_skipSequence() const {
@@ -2600,14 +2642,14 @@ void KyraEngine::printCharacterText(char *text, int8 charNum) {
 }
 
 void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
-	debug(9, "KyraEngine:::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
+	debug(9, "KyraEngine::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
 	uint16 chatTicks;
 	int16 convoInitialized;
 	int8 chatPartnerNum;
 
-	if (_currentCharacter->sceneId == 0xD2)
+	if (_currentCharacter->sceneId == 210)
 		return;
 
 	convoInitialized = initCharacterChat(charNum);	
@@ -2634,7 +2676,7 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 	if (yPos < 11)
 		yPos = 11;
 
-	if (yPos > 100 )
+	if (yPos > 100)
 		yPos = 100;
 
 	_talkMessageY = yPos;
@@ -3582,7 +3624,7 @@ void KyraEngine::redrawInventory(int page) {
 }
 
 #pragma mark -
-#pragma mark - Animation specific code
+#pragma mark - Animation/shape specific code
 #pragma mark -
 
 void KyraEngine::preserveAllBackgrounds() {
@@ -3780,7 +3822,7 @@ void KyraEngine::prepDrawAllObjects() {
 									tempFlags = 1;
 								}
 								tempFlags |= 0x900 | flagUnk1 | 0x4000;
-								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, 0/*XXX*/, drawLayer, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, int(1), int(0)/*XXX*/, drawLayer, _brandonScaleX, _brandonScaleY);
 							} else {
 								if (!(flagUnk2 & 0x4000)) {
 									tempFlags = 0;
@@ -3790,7 +3832,7 @@ void KyraEngine::prepDrawAllObjects() {
 									tempFlags |= 0x900 | flagUnk1;
 								}
 								
-								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, 1, drawLayer, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
 							}
 						}
 					} else {
@@ -4021,6 +4063,146 @@ void KyraEngine::animAddNPC(int character) {
 	animObj->bkgdChangeFlag = 1;
 }
 
+void KyraEngine::drawJewelPress(int jewel, int drawSpecial) {
+	debug(9, "drawJewelPress(%d, %d)", jewel, drawSpecial);
+	_screen->hideMouse();
+	int shape = 0;
+	if (drawSpecial) {
+		shape = 0x14E;
+	} else {
+		shape = jewel + 0x149;
+	}
+	// snd_playSoundEffect(0x45);
+	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+	_screen->updateScreen();
+	delayWithTicks(2);
+	if (drawSpecial) {
+		shape = 0x148;
+	} else {
+		shape = jewel + 0x143;
+	}
+	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
+	_screen->updateScreen();
+	_screen->showMouse();
+}
+
+void KyraEngine::drawJewelsFadeOutStart() {
+	debug(9, "drawJewelsFadeOutStart()");
+	static const uint16 jewelTable1[] = { 0x164, 0x15F, 0x15A, 0x155, 0x150, 0xFFFF };
+	static const uint16 jewelTable2[] = { 0x163, 0x15E, 0x159, 0x154, 0x14F, 0xFFFF };
+	static const uint16 jewelTable3[] = { 0x166, 0x160, 0x15C, 0x157, 0x152, 0xFFFF };
+	static const uint16 jewelTable4[] = { 0x165, 0x161, 0x15B, 0x156, 0x151, 0xFFFF };
+	for (int i = 0; jewelTable1[i] != 0xFFFF; ++i) {
+		if (queryGameFlag(0x57)) {
+			_screen->drawShape(0, _shapes[4+jewelTable1[i]], _amuletX2[2], _amuletY2[2], 0, 0);
+		}
+		if (queryGameFlag(0x59)) {
+			_screen->drawShape(0, _shapes[4+jewelTable3[i]], _amuletX2[4], _amuletY2[4], 0, 0);
+		}
+		if (queryGameFlag(0x56)) {
+			_screen->drawShape(0, _shapes[4+jewelTable2[i]], _amuletX2[1], _amuletY2[1], 0, 0);
+		}
+		if (queryGameFlag(0x58)) {
+			_screen->drawShape(0, _shapes[4+jewelTable4[i]], _amuletX2[3], _amuletY2[3], 0, 0);
+		}
+		_screen->updateScreen();
+		delayWithTicks(3);
+	}
+}
+
+void KyraEngine::drawJewelsFadeOutEnd(int jewel) {
+	debug(9, "drawJewelsFadeOutEnd(%d)", jewel);
+	static const uint16 jewelTable[] = { 0x153, 0x158, 0x15D, 0x162, 0x148, 0xFFFF };
+	int newDelay = 0;
+	switch (jewel-1) {
+		case 2:
+			if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+				newDelay = 18900;
+			} else {
+				newDelay = 8100;
+			}
+			break;
+			
+		default:
+			newDelay = 3600;
+			break;
+	}
+	setGameFlag(0xF1);
+	setTimerCountdown(19, newDelay);
+	_screen->hideMouse();
+	for (int i = 0; jewelTable[i] != 0xFFFF; ++i) {
+		uint16 shape = jewelTable[i];
+		if (queryGameFlag(0x57)) {
+			_screen->drawShape(0, _shapes[4+shape], _amuletX2[2], _amuletY2[2], 0, 0);
+		}
+		if (queryGameFlag(0x59)) {
+			_screen->drawShape(0, _shapes[4+shape], _amuletX2[4], _amuletY2[4], 0, 0);
+		}
+		if (queryGameFlag(0x56)) {
+			_screen->drawShape(0, _shapes[4+shape], _amuletX2[1], _amuletY2[1], 0, 0);
+		}
+		if (queryGameFlag(0x58)) {
+			_screen->drawShape(0, _shapes[4+shape], _amuletX2[3], _amuletY2[3], 0, 0);
+		}
+		_screen->updateScreen();
+		delayWithTicks(3);
+	}
+	_screen->showMouse();
+}
+
+void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
+	debug(9, "setupShapes123(0x%X, startShape, flags)", shapeTable, endShape, flags);
+	for (int i = 123; i <= 172; ++i) {
+		_shapes[4+i] = NULL;
+	}
+	uint8 curImage = 0xFF;
+	int curPageBackUp = _screen->_curPage;
+	_screen->_curPage = 8;	// we are using page 8 here in the original page 2 was backuped and then used for this stuff
+	int shapeFlags = 2;
+	if (flags)
+		shapeFlags = 3;
+	for (int i = 123; i < 123+endShape; ++i) {
+		uint8 newImage = shapeTable[i-123].imageIndex;
+		if (newImage != curImage) {
+			assert(_characterImageTable);
+			loadBitmap(_characterImageTable[newImage], 8, 8, 0);
+			curImage = newImage;
+		}
+		_shapes[4+i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, flags);
+		assert(i-7 < _defaultShapeTableSize);
+		_defaultShapeTable[i-7].xOffset = shapeTable[i-123].xOffset;
+		_defaultShapeTable[i-7].yOffset = shapeTable[i-123].yOffset;
+		_defaultShapeTable[i-7].w = shapeTable[i-123].w;
+		_defaultShapeTable[i-7].h = shapeTable[i-123].h;
+	}
+	_screen->_curPage = curPageBackUp;
+}
+
+void KyraEngine::freeShapes123() {
+	debug(9, "freeShapes123()");
+	for (int i = 123; i <= 172; ++i) {
+		free(_shapes[4+i]);
+		_shapes[4+i] = NULL;
+	}
+}
+
+void KyraEngine::setBrandonAnimSeqSize(int width, int height) {
+	debug(9, "setBrandonAnimSeqSize(%d, %d)", width, height);
+	restoreAllObjectBackgrounds();
+	_brandonAnimSeqSizeWidth = _charactersAnimState[0].width;
+	_brandonAnimSeqSizeHeight = _charactersAnimState[0].height;
+	_charactersAnimState[0].width = width + 1;
+	_charactersAnimState[0].height = height;
+	preserveAllBackgrounds();
+}
+
+void KyraEngine::resetBrandonAnimSeqSize() {
+	restoreAllObjectBackgrounds();
+	_charactersAnimState[0].width = _brandonAnimSeqSizeWidth;
+	_charactersAnimState[0].height = _brandonAnimSeqSizeHeight;
+	preserveAllBackgrounds();
+}
+
 #pragma mark -
 #pragma mark - Queue handling
 #pragma mark -
@@ -4226,6 +4408,17 @@ void KyraEngine::copyBackgroundBlock(int x, int page, int flag) {
 
 void KyraEngine::copyBackgroundBlock2(int x) {
 	copyBackgroundBlock(x, 4, 1);
+}
+
+void KyraEngine::makeBrandonFaceMouse() {
+	debug(9, "makeBrandonFaceMouse()");
+	if (_mouseX >= _currentCharacter->x1) {
+		_currentCharacter->facing = 3;
+	} else {
+		_currentCharacter->facing = 5;
+	}
+	animRefreshNPC(0);
+	updateAllObjectShapes();
 }
 
 #pragma mark -
@@ -5097,7 +5290,7 @@ void KyraEngine::checkAmuletAnimFlags() {
 
 void KyraEngine::timerRedrawAmulet(int timerNum) {
 	debug(9, "timerRedrawAmulet(%i)", timerNum);
-	if (queryGameFlag(241)) {
+	if (queryGameFlag(0xF1)) {
 		drawAmulet();
 		setTimerCountdown(19, -1);
 	}
@@ -5110,6 +5303,7 @@ void KyraEngine::drawAmulet() {
 	static const int16 amuletTable2[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x152, 0x157, 0x15C, 0x161, 0x166, 0x147, -1};
 	static const int16 amuletTable4[] = {0x167, 0x162, 0x15D, 0x158, 0x153, 0x151, 0x156, 0x15B, 0x160, 0x165, 0x146, -1};
 
+	resetGameFlag(0xF1);
 	_screen->hideMouse();
 
 	int i = 0;
@@ -5126,7 +5320,8 @@ void KyraEngine::drawAmulet() {
 		if (queryGameFlag(88))
 			_screen->drawShape(0, _shapes[4+amuletTable4[i]], _amuletX[3], _amuletY[3], 0, 0);
 
-		delay(3 * _tickLength);
+		_screen->updateScreen();
+		delayWithTicks(3);
 		i++;
 	}
 	_screen->showMouse();
@@ -5659,6 +5854,81 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 	_screen->updateScreen();
 	// XXX clearKyrandiaButtonIO
 	return 0;
+}
+
+int KyraEngine::buttonAmuletCallback(Button *caller) {
+	if (!(_deathHandler & 8))
+		return 1;
+	int jewel = caller->specialValue - 0x14;
+	if (_currentCharacter->sceneId == 210) {
+		//if (_unkSceneVar == 4 || _unkSceneVar == 6)
+		//	return 1;
+	}
+	if (!queryGameFlag(0x2D))
+		return 1;
+	if (_itemInHand != -1) {
+		assert(_putDownFirst);
+		characterSays(_putDownFirst[0], 0, -2);
+		return 1;
+	}
+	if (queryGameFlag(0xF1)) {
+		assert(_waitForAmulet);
+		characterSays(_waitForAmulet[0], 0, -2);
+		return 1;
+	}
+	if (!queryGameFlag(0x55+jewel)) {
+		assert(_blackJewel);
+		makeBrandonFaceMouse();
+		drawJewelPress(jewel, 1);
+		characterSays(_blackJewel[0], 0, -2);
+		return 1;
+	}
+	drawJewelPress(jewel, 0);
+	drawJewelsFadeOutStart();
+	drawJewelsFadeOutEnd(jewel);
+	
+	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
+	_scriptClick->variables[3] = 0;
+	_scriptClick->variables[6] = jewel;
+	_scriptInterpreter->startScript(_scriptClick, 4);
+	
+	while (_scriptInterpreter->validScript(_scriptClick)) {
+		_scriptInterpreter->runScript(_scriptClick);
+	}
+	
+	if (_scriptClick->variables[3])
+		return 1;
+	
+	_unkAmuletVar = 1;
+	switch (jewel-1) {
+		case 0:
+			if (_brandonStatusBit & 1) {
+				// seq_brandonHealing2
+			} else if (_brandonStatusBit == 0) {
+				seq_brandonHealing();
+				assert(_healingTip);
+				characterSays(_healingTip[0], 0, -2);
+			}
+			break;
+		
+		case 1:
+			warning("jewel 1 STUB");
+			break;
+		
+		case 2:
+			warning("jewel 2 STUB");
+			break;
+		
+		case 3:
+			warning("jewel 3 STUB");
+			break;
+		
+		default:
+			break;
+	}
+	_unkAmuletVar = 0;
+	// XXX clearKyrandiaButtonIO (!used before every return in this function!)
+	return 1;
 }
 
 void KyraEngine::processButtonList(Button *list) {
