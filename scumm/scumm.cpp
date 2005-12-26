@@ -739,6 +739,7 @@ static SubstResFileNames substResFileNameTable[] = {
 #ifndef DISABLE_HE
 	{ "airport", "airdemo", kGenPC },
 	{ "airport", "Airport Demo", kGenMac },
+	{ "airport", "The AirPort", kGenMac },
 	{ "balloon", "Balloon-O-Rama", kGenMac },
 	{ "baseball", "BaseBall", kGenMac },
 	{ "baseball2001", "bb2demo", kGenPC },
@@ -796,6 +797,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddicove", "FreddiCoveDemo", kGenMac },
 	{ "freddicove", "FF5Demo", kGenMac }, // NL Mac demo
 	{ "FreddisFunShop", "Freddi's FunShop", kGenMac },
+	{ "jungle", "The Jungle", kGenMac },
 	{ "lost", "Lost and Found", kGenMac },
 	{ "lost", "smaller", kGenPC },
 	{ "maze", "Maze Madness", kGenMac},

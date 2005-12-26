@@ -423,6 +423,7 @@ Let's Explore the Farm with Buzzy
 	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farm	khalek, sev
 
 Let's Explore the Airport with Buzzy
+	CD	Mac	en	d6334a5a9b61afe18c368540fdf522ca	airport	Joachim Eberhard
 	CD	Windows	en	07433205acdca3bc553d0e731588b35f	airport	Kirben
 
 	Demo	Mac	en	7ea2da67ebabea4ac20cee9f4f9d2934	airport	khalek
@@ -431,6 +432,7 @@ Let's Explore the Airport with Buzzy
 	Demo	Windows	en	8ffd618a776a4c0d8922bb28b09f8ce8	airport	khalek
 
 Let's Explore the Jungle with Buzzy
+	CD	Mac	en	659942b9a6b519f123a13cca3c333a13	jungle	Joachim Eberhard
 	CD	Windows	en	8801fb4a1200b347f7a38523339526dd	jungle	Kirben
 
 Pajama Sam: Games to Play On Any Day
