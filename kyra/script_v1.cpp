@@ -1594,7 +1594,10 @@ int KyraEngine::cmd_getCharactersMovementDelay(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getBirthstoneGem(ScriptState *script) {
-	warning("STUB: cmd_getBirthstoneGem");
+	debug(3, "cmd_getBirthstoneGem(0x%X) (%d)", script, stackPos(0));
+	if (stackPos(0) < 4) {
+		return _birthstoneGemTable[stackPos(0)];
+	}
 	return 0;
 }
 

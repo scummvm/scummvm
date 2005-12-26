@@ -5341,8 +5341,8 @@ void KyraEngine::processInput(int xpos, int ypos) {
 	uint8 item = findItemAtPos(xpos, ypos);
 	if (item == 0xFF) {
 		_changedScene = false;
-		clickEventHandler(xpos, ypos);
-		if (_changedScene)
+		int handled = clickEventHandler(xpos, ypos);
+		if (_changedScene || handled)
 			return;
 	} 
 	
