@@ -67,7 +67,12 @@ private:
 	ExtStatus _cd;
 
 	enum {
+#if defined(__PSP__)
+		CACHE_TRACKS = 4        //the PSP can't have more than 8 files open simultaneously
+					//so don't use more than 4 filehandles for CD tracks
+#else
 		CACHE_TRACKS = 10
+#endif
 	};
 	int _cachedTracks[CACHE_TRACKS];
 	DigitalTrackInfo *_trackInfo[CACHE_TRACKS];
