@@ -84,21 +84,20 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	if (ts.eof()) 	// Sectors are optional, but section: doesn't seem to be
 		return;
 
-	// Sector NAMES can be null, but ts doesn't seem flexible enough to allow this
-	if (strlen(ts.currentLine()) > strlen(" sector"))
-		ts.scanString(" sector %256s", 1, tempBuf);
-	else {
-		ts.nextLine();
-		strcpy(tempBuf, "");
+	int sectorStart = ts.getLineNumber();
+	_numSectors = 0;
+	// Find the number of sectors (while the sectors usually
+	// count down from the highest number there are a few
+	// cases where they count up, see hh.set for example)
+	while (!ts.eof()) {
+		ts.scanString(" %s", 1, tempBuf);
+		if(!std::strcmp(tempBuf, "sector"))
+			_numSectors++;
 	}
-
-	ts.scanString(" id %d", 1, &_numSectors);
-	_numSectors++;
+	// Allocate and fill an array of sector info
 	_sectors = new Sector[_numSectors];
-	// FIXME: This would be nicer if we could rewind the textsplitter
-	// stream
-	_sectors[0].load0(ts, tempBuf, _numSectors);
-	for (int i = 1; i < _numSectors; i++)
+	ts.setLineNumber(sectorStart);
+	for (int i = 0; i < _numSectors; i++)
 		_sectors[i].load(ts);
 }
 

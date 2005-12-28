@@ -20,8 +20,10 @@
 #include "textsplit.h"
 
 void Sector::load(TextSplitter &ts) {
+//	float height = 12345.f; // Yaz: this is in the original code...
 	char buf[256];
-	int id = 0;
+	int id = 0, i = 0;
+	Vector3d tempVert;
 
 	// Sector NAMES can be null, but ts isn't flexible enough
 	if (strlen(ts.currentLine()) > strlen(" sector"))
@@ -32,16 +34,8 @@ void Sector::load(TextSplitter &ts) {
 	}
 
 	ts.scanString(" id %d", 1, &id);
-	load0(ts, buf, id);
-}
 
-void Sector::load0(TextSplitter &ts, char *name, int id) {
-	char buf[256];
-	int i = 0;
-//	float height = 12345.f; // Yaz: this is in the original code...
-	Vector3d tempVert;
-
-	_name = name;
+	_name = buf;
 	_id = id;
 	ts.scanString(" type %256s", 1, buf);
 

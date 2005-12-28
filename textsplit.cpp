@@ -55,10 +55,34 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 }
 
 TextSplitter::TextSplitter(const char *data, int len) {
-	_data = new char[len + 1];
-	std::memcpy(_data, data, len);
-	_data[len] = '\0';
-	_currLine = _data;
+	char *line, *tmpData;
+	int i;
+	
+	tmpData = new char[len+1];
+	std::memcpy(tmpData, data, len);
+	tmpData[len] = '\0';
+	// Find out how many lines of text there are
+	_numLines = _lineIndex = 0;
+	line = (char *) tmpData;
+	while (line != NULL) {
+		line = std::strchr(line, '\n');
+		if (line != NULL) {
+			_numLines++;
+			line++;
+		}
+	}
+	// Allocate an array of the lines
+	_lines = new TextLines[_numLines];
+	line = (char *) tmpData;
+	for (i=0;i<_numLines;i++) {
+		char *lastLine = line;
+		
+		line = std::strchr(lastLine, '\n');
+		_lines[i].setData(lastLine, line-lastLine);
+		line++;
+	}
+	delete[] tmpData;
+	_currLine = NULL;
 	processLine();
 }
 
@@ -74,7 +98,7 @@ bool TextSplitter::checkString(const char *needle) {
 }
 
 void TextSplitter::expectString(const char *expected) {
-	if (eof())
+	if (_currLine == NULL)
 		error("Expected `%s', got EOF\n", expected);
 	if (std::strcmp(currentLine(), expected) != 0)
 		error("Expected `%s', got `%s'\n", expected, currentLine());
@@ -82,7 +106,7 @@ void TextSplitter::expectString(const char *expected) {
 }
 
 void TextSplitter::scanString(const char *fmt, int field_count, ...) {
-	if (eof())
+	if (_currLine == NULL)
 		error("Expected line of format `%s', got EOF\n", fmt);
 
 	std::va_list va;
@@ -104,11 +128,7 @@ void TextSplitter::processLine() {
 	if (eof())
 		return;
 
-	_nextLine = std::strchr(_currLine, '\n');
-	if (_nextLine != NULL) {
-		*_nextLine = '\0';
-		_nextLine++;
-	}
+	_currLine = _lines[_lineIndex++].getData();
 
 	// Cut off comments
 	char *comment_start = std::strchr(_currLine, '#');
@@ -129,4 +149,12 @@ void TextSplitter::processLine() {
 	if (!eof())
 		for (char *s = _currLine; *s != '\0'; s++)
 			*s = std::tolower(*s);
+}
+
+void TextSplitter::TextLines::setData(char *data, int length) {
+	int _lineLength = length;
+	
+	_lineData = new char[_lineLength];
+	std::memcpy(_lineData, data, _lineLength);
+	_lineData[_lineLength-1] = 0;
 }

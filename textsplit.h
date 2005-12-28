@@ -29,14 +29,15 @@ public:
 	TextSplitter(const char *data, int len);
 
 	char *nextLine() {
-		_currLine = _nextLine;
 		processLine();
 		return _currLine;
 	}
 
 	char *currentLine() { return _currLine; }
 	const char *currentLine() const { return _currLine; }
-	bool eof() const { return _currLine == NULL; }
+	bool eof() const { return _lineIndex == _numLines; }
+	int getLineNumber() { return _lineIndex; }
+	void setLineNumber(int line) { _lineIndex = line-1; processLine(); }
 
 	// Check if the current line contains 'needle'
 	bool checkString(const char *needle);
@@ -53,11 +54,26 @@ public:
 	__attribute__((format (scanf, 2, 4)))
 #endif
 	;
+	class TextLines {
+	public:
+		TextLines() {};
+		~TextLines() { delete[] _lineData; }
+		void setData(char *data, int length);
+		char *getData() { return _lineData; }
 
-	~TextSplitter() { delete[] _data; }
+	protected:
+		char *_lineData;
+		int _lineLength;
+
+		friend class TextSplitter;
+	};
+
+	~TextSplitter() { delete[] _lines; }
 
 private:
-	char *_data, *_currLine, *_nextLine;
+	char *_currLine;
+	int _numLines, _lineIndex;
+	TextLines *_lines;
 
 	void processLine();
 };

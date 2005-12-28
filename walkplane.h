@@ -31,7 +31,6 @@ class TextSplitter;
 class Sector { 
 public:
 	void load(TextSplitter &ts);
-	void load0(TextSplitter &ts, char *name, int id);
 
 	void setVisible(bool visible);
 
