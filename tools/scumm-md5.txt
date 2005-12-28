@@ -294,6 +294,7 @@ Backyard Baseball 2003
 Backyard Football
 	CD	All	en	7fc6cdb46b4c9d384c52327f4bca6416	football	sev
 
+	Demo	All	en	425205754fa749f4f0b0dd9d09fa45fd	football	Joachim Eberhard
 	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	football	sev
 	Demo	All	en	2e85f7aa054930c692a5b1bed1dfc295	football	khalek
 
@@ -318,7 +319,7 @@ Big Thinkers First Grade
 
 Blue's ABC Time
 	Demo	All	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
-	Demo	Windows	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
+	Demo	All	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
 
 Fatty Bears Birthday Surprise
 	CD	3DO	en	5b08000a9c47b2887df6506ac767ca68	fbear	sev
@@ -344,11 +345,11 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	CD	Windows	ru	746e88c172a5b7a1ae89ac0ee3ee681a	freddi	sev
 	CD	Windows	se	507bb360688dc4180fdf0d7597352a69	freddi	Sven Arvidsson
 
+	Demo	Mac	en	c8aac5e3e701874e2fa4117896f9e1b1	freddi	khalek, sev
 	Demo	Windows	en	084ed0fa98a6d1e9368d67fe9cfbd417	freddi	khalek
 	Demo	Windows	en	0855496dde35356b1a9691e22ba84cdc	freddi	khalek
 	Demo	Windows	en	566165a7338fa11029e7c14d94fa70d0	freddi	khalek
 	Demo	Windows	de	cf4ef315214c7d8cdab6302cdb7e50db	freddi	Joachim Eberhard
-	Demo	Mac	en	c8aac5e3e701874e2fa4117896f9e1b1	freddi	khalek, sev
 
 Freddi Fish 2: The Case of the Haunted Schoolhouse
 	CD	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
@@ -382,10 +383,10 @@ Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 
 	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	freddi4	khalek
 	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	freddi4	sev
+	Demo	All	en	c25755b08a8d0d47695e05f1e2111bfc	freddi4	sev
 	Demo	All	de	688328c5bdc4c8ec4145688dfa077bf2	freddi4	Joachim Eberhard
 	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	freddi4	joostp
 	Demo	Windows	nl	499c958affc394f2a3868f1eb568c3ee	freddi4	adutchguy
-	Demo	Windows	en	c25755b08a8d0d47695e05f1e2111bfc	freddi4	sev
 	Demo	Windows	en	e03ed1474ec14de78359970e0457a820	freddi4	eriktorbjorn
 
 Freddi Fish 5: The Case of the Creature of Coral Cave
@@ -418,6 +419,7 @@ Let's Explore the Farm with Buzzy
 	CD	Mac	en	fbbbb38a81fc9d6a61d509278390a290	farm	khalek
 	CD	Windows	en	a85856675429fe88051744f755b72f93	farm	Kirben
 
+	Demo	Mac	en	39fd6db10d0222d817025c4d3346e3b4	farm	Joachim Eberhard
 	Demo	Windows	nl	0557df19f046a84c2fdc63507c6616cb	farm	adutchguy
 	Demo	Windows	en	8d479e36f35e80257dfc102cf4b8a912	farm	khalek, sev
 	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farm	khalek, sev
