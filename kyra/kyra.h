@@ -505,6 +505,8 @@ protected:
 	void copyBackgroundBlock(int x, int page, int flag);
 	void copyBackgroundBlock2(int x);
 	void makeBrandonFaceMouse();
+	void setBrandonPoisonFlags(int reset);
+	void resetBrandonPoisonFlags();
 
 	void processInput(int xpos, int ypos);
 	int processInputHelper(int xpos, int ypos);
@@ -529,6 +531,7 @@ protected:
 	void itemSpecialFX1(int x, int y, int item);
 	void itemSpecialFX2(int x, int y, int item);
 	void magicOutMouseItem(int animIndex, int itemPos);
+	void magicInMouseItem(int animIndex, int item, int itemPos);
 	void specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops);
 	void processSpecialMouseItemFX(int shape, int x, int y, int tableValue, int loopStart, int maxLoops);
 	void updatePlayerItemsForScene();
@@ -559,6 +562,10 @@ protected:
 	void seq_introKallakMalcolm();
 	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
 	void seq_brandonHealing();
+	void seq_brandonHealing2();
+	void seq_poisonDeathNow(int now);
+	void seq_poisonDeathNowAnim();
+	void seq_playFluteAnimation();
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
@@ -669,8 +676,9 @@ protected:
 	int16 _foyerItemTable[3];
 	
 	uint16 _brandonStatusBit;
-	uint8 _unkBrandonPoisonFlags[256];	// this seem not to be posion flags, it is used for drawing once
+	uint8 _brandonPoisonFlagsGFX[256];	// this seem not to be posion flags, it is used for drawing once
 	uint8 _deathHandler;
+	int8 _poisonDeathCounter;
 	int _brandonPosX;
 	int _brandonPosY;
 	int _brandonScaleX;
@@ -778,6 +786,8 @@ protected:
 	char **_blackJewel;
 	char **_poisonGone;
 	char **_healingTip;
+	char **_thePoison;
+	char **_fluteString;
 	
 	int _itemList_Size;
 	int _takenList_Size;
@@ -789,6 +799,8 @@ protected:
 	int _blackJewel_Size;
 	int _poisonGone_Size;
 	int _healingTip_Size;
+	int _thePoison_Size;
+	int _fluteString_Size;
 	
 	char **_characterImageTable;
 	int _characterImageTableSize;
@@ -800,6 +812,12 @@ protected:
 	int  _healingShapeTableSize;
 	Shape *_healingShape2Table;
 	int  _healingShape2TableSize;
+	
+	Shape *_posionDeathShapeTable;
+	int _posionDeathShapeTableSize;
+	
+	Shape *_fluteAnimShapeTable;
+	int _fluteAnimShapeTableSize;
 	
 	Room *_roomTable;
 	int _roomTableSize;	

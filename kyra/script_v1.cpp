@@ -299,7 +299,8 @@ void ScriptHelper::c1_setRetAndJmp() {
 #define stackPosString(x) (char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
 
 int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
-	warning("STUB: cmd_magicInMouseItem");
+	debug(3, "cmd_magicInMouseItem(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	magicInMouseItem(stackPos(0), stackPos(1), -1);
 	return 0;
 }
 
@@ -640,7 +641,8 @@ int KyraEngine::cmd_forceBrandonToNormal(ScriptState *script) {
 }
 
 int KyraEngine::cmd_poisonDeathNow(ScriptState *script) {
-	warning("STUB: cmd_poisonDeathNow");
+	debug(3, "cmd_poisonDeathNow(0x%X) ()", script);
+	seq_poisonDeathNow(1);
 	return 0;
 }
 
@@ -1579,7 +1581,8 @@ int KyraEngine::cmd_setSceneAnimCurrXY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_poisonBrandonAndRemaps(ScriptState *script) {
-	warning("STUB: cmd_poisonBrandonAndRemaps");
+	debug(3, "cmd_setSceneAnimCurrXY(0x%X) ()", script);
+	setBrandonPoisonFlags(1);
 	return 0;
 }
 
@@ -1610,7 +1613,8 @@ int KyraEngine::cmd_queryBrandonStatusBit(ScriptState *script) {
 }
 
 int KyraEngine::cmd_playFluteAnimation(ScriptState *script) {
-	warning("STUB: cmd_playFluteAnimation");
+	debug(3, "cmd_playFluteAnimation(0x%X) ()", script);
+	seq_playFluteAnimation();
 	return 0;
 }
 

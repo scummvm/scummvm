@@ -355,6 +355,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_brandonPosX = _brandonPosY = -1;
 	_brandonDrawFrame = 113;
 	_deathHandler = 0xFF;
+	_poisonDeathCounter = 0;
 	
 	memset(_itemTable, 0, sizeof(_itemTable));
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
@@ -1023,6 +1024,145 @@ void KyraEngine::seq_brandonHealing() {
 	_screen->showMouse();
 }
 
+void KyraEngine::seq_brandonHealing2() {
+	debug(9, "seq_brandonHealing2()");
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	assert(_healingShape2Table);
+	setupShapes123(_healingShape2Table, 30, 0);
+	resetBrandonPoisonFlags();
+	setBrandonAnimSeqSize(3, 48);
+	// snd_playSoundEffect(0x50);
+	for (int i = 123; i <= 152; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
+	assert(_poisonGone);
+	characterSays(_poisonGone[0], 0, -2);
+	characterSays(_poisonGone[1], 0, -2);
+}
+
+void KyraEngine::seq_poisonDeathNow(int now) {
+	debug(9, "seq_poisonDeathNow(%d)", now);
+	if (!(_brandonStatusBit & 1))
+		return;
+	++_poisonDeathCounter;
+	if (now)
+		_poisonDeathCounter = 2;
+	if (_poisonDeathCounter >= 2) {
+		// XXX
+		assert(_thePoison);
+		characterSays(_thePoison[0], 0, -2);
+		characterSays(_thePoison[1], 0, -2);
+		seq_poisonDeathNowAnim();
+		_deathHandler = 3;
+	} else {
+		assert(_thePoison);
+		characterSays(_thePoison[2], 0, -2);
+		characterSays(_thePoison[3], 0, -2);
+	}
+}
+
+void KyraEngine::seq_poisonDeathNowAnim() {
+	debug(9, "seq_poisonDeathNowAnim()");
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	assert(_posionDeathShapeTable);
+	setupShapes123(_posionDeathShapeTable, 20, 0);
+	setBrandonAnimSeqSize(8, 48);
+	
+	_currentCharacter->currentAnimFrame = 124;
+	animRefreshNPC(0);
+	delayWithTicks(30);
+	
+	_currentCharacter->currentAnimFrame = 123;
+	animRefreshNPC(0);
+	delayWithTicks(30);
+	
+	for (int i = 125; i <= 139; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	delayWithTicks(60);
+	
+	for (int i = 140; i <= 142; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	delayWithTicks(60);
+	
+	resetBrandonAnimSeqSize();
+	freeShapes123();
+	restoreAllObjectBackgrounds();
+	_currentCharacter->x1 = _currentCharacter->x2 = -1;
+	_currentCharacter->y1 = _currentCharacter->y2 = -1;
+	preserveAllBackgrounds();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_playFluteAnimation() {
+	debug(9, "seq_playFluteAnimation()");
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	setupShapes123(_fluteAnimShapeTable, 36, 0);
+	setBrandonAnimSeqSize(3, 75);
+	for (int i = 123; i <= 130; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(2);
+	}
+	
+	int delayTime = 0, soundType = 0;
+	if (queryGameFlag(0x85)) {
+		// snd_playSoundEffect(0x63);
+		delayTime = 9;
+		soundType = 3;
+	} else if (queryGameFlag(0x86)) {
+		// snd_playSoundEffect(0x61);
+		delayTime = 2;
+		soundType = 1;
+	} else {
+		// snd_playSoundEffect(0x62);
+		delayTime = 2;
+		soundType = 2;
+	}
+	
+	for (int i = 131; i <= 158; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(delayTime);
+	}
+	
+	for (int i = 126; i >= 123; --i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(delayTime);
+	}
+	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
+	
+	if (soundType == 1) {
+		assert(_fluteString);
+		characterSays(_fluteString[0], 0, -2);
+	} else if (soundType == 2) {
+		assert(_fluteString);
+		characterSays(_fluteString[1], 0, -2);
+	}
+}
+
 bool KyraEngine::seq_skipSequence() const {
 	debug(9, "KyraEngine::seq_skipSequence()");
 	return _quitFlag || _abortIntroFlag;
@@ -1486,7 +1626,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_loopFlag2 = 0;
 	_screen->showMouse();
 	if (!brandonAlive) {
-		// XXX seq_poisionDeathNow
+		seq_poisonDeathNow(0);
 	}
 	updateMousePointer(true);
 	_changedScene = true;
@@ -1991,7 +2131,7 @@ void KyraEngine::initSceneData(int facing, int unk1, int brandonAlive) {
 void KyraEngine::resetBrandonPosionFlags() {
 	_brandonStatusBit = 0;
 	for (int i = 0; i < 256; ++i) {
-		_unkBrandonPoisonFlags[i] = i;
+		_brandonPoisonFlagsGFX[i] = i;
 	}
 }
 
@@ -3521,6 +3661,87 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 	_screen->_curPage = videoPageBackUp;
 }
 
+void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
+	debug(9, "magicInMouseItem(%d, %d, %d)", animIndex, item, itemPos);
+	int videoPageBackUp = _screen->_curPage;
+	_screen->_curPage = 0;
+	int x = 0, y = 0;
+	if (itemPos == -1) {
+		x = _mouseX - 12;
+		y = _mouseY - 18;
+	} else {
+		x = _itemPosX[itemPos] - 4;
+		y = _itemPosX[itemPos] - 3;
+	}
+	if (item < 0)
+		return;
+
+	int tableIndex = -1, loopStart = 0, maxLoops = 0;
+	if (animIndex == 0) {
+		tableIndex = _rnd.getRandomNumberRng(0, 5);
+		loopStart = 35;
+		maxLoops = 9;
+	} else if (animIndex == 1) {
+		tableIndex = _rnd.getRandomNumberRng(0, 11);
+		loopStart = 115;
+		maxLoops = 8;
+	} else if (animIndex == 2) {
+		tableIndex = 0;
+		loopStart = 124;
+		maxLoops = 4;
+	}
+	
+	_screen->hideMouse();
+	backUpRect1(x, y);
+	if (animIndex == 2) {
+		// snd_playSoundEffect(0x5E);
+	} else {
+		// snd_playSoundEffect(0x37);
+	}
+	
+	for (int shape = _magicMouseItemStartFrame[animIndex]; shape <= _magicMouseItemEndFrame[animIndex]; ++shape) {
+		restoreRect1(x, y);
+		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
+		if (tableIndex == -1) {
+			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+		} else {
+			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
+		}
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if (nextTime - _system->getMillis() >= 10)
+				delay(10);
+		}
+	}
+	
+	for (int shape = _magicMouseItemStartFrame2[animIndex]; shape <= _magicMouseItemEndFrame2[animIndex]; ++shape) {
+		restoreRect1(x, y);
+		uint32 nextTime = _system->getMillis() + 4 * _tickLength;
+		if (tableIndex == -1) {
+			_screen->drawShape(0, _shapes[4+shape], x, y, 0, 0);
+		} else {
+			specialMouseItemFX(shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
+		}
+		_screen->updateScreen();
+		while (_system->getMillis() < nextTime) {
+			if (nextTime - _system->getMillis() >= 10)
+				delay(10);
+		}
+	}
+	restoreRect1(x, y);
+	if (itemPos == -1) {
+		_screen->setMouseCursor(8, 15, _shapes[220+item]);
+		_itemInHand = item;
+	} else {
+		_characterList[0].inventoryItems[itemPos] = item;
+		_screen->hideMouse();
+		_screen->drawShape(0, _shapes[220+item], _itemPosX[itemPos], _itemPosY[itemPos], 0, 0);
+		_screen->showMouse();
+	}
+	_screen->showMouse();
+	_screen->_curPage = videoPageBackUp;
+}
+
 void KyraEngine::specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops) {
 	debug(9, "specialMouseItemFX(%d, %d, %d, %d, %d, %d, %d)", shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 	static const uint8 table1[] = {
@@ -3822,7 +4043,7 @@ void KyraEngine::prepDrawAllObjects() {
 									tempFlags = 1;
 								}
 								tempFlags |= 0x900 | flagUnk1 | 0x4000;
-								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, int(1), int(0)/*XXX*/, drawLayer, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _brandonPoisonFlagsGFX, int(1), int(0)/*XXX*/, drawLayer, _brandonScaleX, _brandonScaleY);
 							} else {
 								if (!(flagUnk2 & 0x4000)) {
 									tempFlags = 0;
@@ -3832,7 +4053,7 @@ void KyraEngine::prepDrawAllObjects() {
 									tempFlags |= 0x900 | flagUnk1;
 								}
 								
-								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _unkBrandonPoisonFlags, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
+								_screen->drawShape(drawPage, _shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _brandonPoisonFlagsGFX, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
 							}
 						}
 					} else {
@@ -3864,7 +4085,7 @@ void KyraEngine::prepDrawAllObjects() {
 				
 				if (!_scaleMode) {
 					if (flagUnk3 & 0x100) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_unkBrandonPoisonFlags, 1, drawLayer);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_brandonPoisonFlagsGFX, 1, drawLayer);
 					} else if (flagUnk3 & 0x4000) {
 						// XXX
 						int hackVar = 0;
@@ -3874,7 +4095,7 @@ void KyraEngine::prepDrawAllObjects() {
 					}
 				} else {
 					if (flagUnk3 & 0x100) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_unkBrandonPoisonFlags, 1, drawLayer, _brandonScaleX, _brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_brandonPoisonFlagsGFX, 1, drawLayer, _brandonScaleX, _brandonScaleY);
 					} else if (flagUnk3 & 0x4000) {
 						// XXX
 						int hackVar = 0;
@@ -4419,6 +4640,29 @@ void KyraEngine::makeBrandonFaceMouse() {
 	}
 	animRefreshNPC(0);
 	updateAllObjectShapes();
+}
+
+void KyraEngine::setBrandonPoisonFlags(int reset) {
+	debug(9, "setBrandonPoisonFlags(%d)", reset);
+	_brandonStatusBit |= 1;
+	if (reset)
+		_poisonDeathCounter = 0;
+	for (int i = 0; i < 0x100; ++i) {
+		_brandonPoisonFlagsGFX[i] = i;
+	}
+	_brandonPoisonFlagsGFX[0x99] = 0x34;
+	_brandonPoisonFlagsGFX[0x9A] = 0x35;
+	_brandonPoisonFlagsGFX[0x9B] = 0x37;
+	_brandonPoisonFlagsGFX[0x9C] = 0x38;
+	_brandonPoisonFlagsGFX[0x9D] = 0x2B;
+}
+
+void KyraEngine::resetBrandonPoisonFlags() {
+	debug(9, "resetBrandonPoisonFlags()");
+	_brandonStatusBit = 0;
+	for (int i = 0; i < 0x100; ++i) {
+		_brandonPoisonFlagsGFX[i] = i;
+	}
 }
 
 #pragma mark -
@@ -5903,7 +6147,7 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	switch (jewel-1) {
 		case 0:
 			if (_brandonStatusBit & 1) {
-				// seq_brandonHealing2
+				seq_brandonHealing2();
 			} else if (_brandonStatusBit == 0) {
 				seq_brandonHealing();
 				assert(_healingTip);

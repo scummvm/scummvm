@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 7
+#define RESFILE_VERSION 8
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -221,6 +221,12 @@ void KyraEngine::res_loadResources(int type) {
 		
 		loadShapes(resFile, "HEALING.SHP", &_healingShapeTable, &_healingShapeTableSize);
 		loadShapes(resFile, "HEALING2.SHP", &_healingShape2Table, &_healingShape2TableSize);
+		
+		res_loadLangTable("THEPOISON.", &resFile, (byte***)&_thePoison, &_thePoison_Size, loadNativeLanguage);
+		res_loadLangTable("FLUTE.", &resFile, (byte***)&_fluteString, &_fluteString_Size, loadNativeLanguage);
+		
+		loadShapes(resFile, "POISONDEATH.SHP", &_posionDeathShapeTable, &_posionDeathShapeTableSize);
+		loadShapes(resFile, "FLUTE.SHP", &_fluteAnimShapeTable, &_fluteAnimShapeTableSize);
 	}
 
 #undef loadRooms
@@ -285,6 +291,15 @@ void KyraEngine::res_unloadResources(int type) {
 		
 		delete [] _healingShape2Table;
 		_healingShape2TableSize = 0;
+		
+		res_freeLangTable(&_thePoison, &_thePoison_Size);
+		res_freeLangTable(&_fluteString, &_fluteString_Size);
+		
+		delete [] _posionDeathShapeTable;
+		_posionDeathShapeTableSize = 0;
+		
+		delete [] _fluteAnimShapeTable;
+		_fluteAnimShapeTableSize = 0;
 	}
 }
 
