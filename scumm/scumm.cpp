@@ -479,8 +479,6 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"39fd6db10d0222d817025c4d3346e3b4", "Let's Explore the Farm with Buzzy (Macintosh Demo)", GID_HEGAME, 6, 71, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformMacintosh},
 	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Updated Demo)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"0557df19f046a84c2fdc63507c6616cb", "Let's Explore the Farm with Buzzy (Updated Dutch Demo)", GID_HEGAME, 6, 72, MDT_NONE,
