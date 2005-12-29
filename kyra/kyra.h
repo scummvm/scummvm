@@ -566,6 +566,13 @@ protected:
 	void seq_poisonDeathNow(int now);
 	void seq_poisonDeathNowAnim();
 	void seq_playFluteAnimation();
+	void seq_winterScroll1();
+	void seq_winterScroll2();
+	void seq_makeBrandonInv();
+	void seq_makeBrandonNormal();
+	void seq_makeBrandonNormal2();
+	void seq_makeBrandonWisp();
+	void seq_dispelMagicAnimation();
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
@@ -609,11 +616,14 @@ protected:
 	void timerUpdateHeadAnims(int timerNum);
 	void timerSetFlags1(int timerNum);
 	void timerSetFlags2(int timerNum);
+	void timerSetFlags3(int timerNum);
 	void timerCheckAnimFlag1(int timerNum);
 	void timerCheckAnimFlag2(int timerNum);
 	void checkAmuletAnimFlags();
 	void timerRedrawAmulet(int timerNum);
 	void timerFadeText(int timerNum);
+	void updateAnimFlag1(int timerNum);
+	void updateAnimFlag2(int timerNum);
 	void drawAmulet();
 	void setTextFadeTimerCountdown(int16 countdown);
 	
@@ -676,8 +686,11 @@ protected:
 	int16 _foyerItemTable[3];
 	
 	uint16 _brandonStatusBit;
+	int _brandonStatusBit0x02Flag;
+	int _brandonStatusBit0x20Flag;
 	uint8 _brandonPoisonFlagsGFX[256];	// this seem not to be posion flags, it is used for drawing once
 	uint8 _deathHandler;
+	int _brandonInvFlag;
 	int8 _poisonDeathCounter;
 	int _brandonPosX;
 	int _brandonPosY;
@@ -788,6 +801,8 @@ protected:
 	char **_healingTip;
 	char **_thePoison;
 	char **_fluteString;
+	char **_wispJewelStrings;
+	char **_magicJewelString;
 	
 	int _itemList_Size;
 	int _takenList_Size;
@@ -801,6 +816,8 @@ protected:
 	int _healingTip_Size;
 	int _thePoison_Size;
 	int _fluteString_Size;
+	int _wispJewelStrings_Size;
+	int _magicJewelString_Size;
 	
 	char **_characterImageTable;
 	int _characterImageTableSize;
@@ -818,6 +835,25 @@ protected:
 	
 	Shape *_fluteAnimShapeTable;
 	int _fluteAnimShapeTableSize;
+	
+	Shape *_winterScrollTable;
+	int _winterScrollTableSize;
+	Shape *_winterScroll1Table;
+	int _winterScroll1TableSize;
+	Shape *_winterScroll2Table;
+	int _winterScroll2TableSize;
+	
+	Shape *_drinkAnimationTable;
+	int _drinkAnimationTableSize;
+	
+	Shape *_brandonToWispTable;
+	int _brandonToWispTableSize;
+	
+	Shape *_magicAnimationTable;
+	int _magicAnimationTableSize;
+	
+	Shape *_brandonStoneTable;
+	int _brandonStoneTableSize;
 	
 	Room *_roomTable;
 	int _roomTableSize;	

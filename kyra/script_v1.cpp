@@ -329,7 +329,12 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 }
 
 int KyraEngine::cmd_pauseTicks(ScriptState *script) {
-	warning("STUB: cmd_pauseTicks");
+	debug(3, "cmd_pauseTicks(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	if (stackPos(1)) {
+		warning("STUB: special cmd_pauseTicks");
+	} else {
+		delayWithTicks(stackPos(0));
+	}
 	return 0;
 }
 
@@ -1292,12 +1297,14 @@ int KyraEngine::cmd_specialEventRemoveBrynnsNote(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setLogicPage(ScriptState *script) {
-	warning("STUB: cmd_setLogicPage");
-	return 0;
+	debug(3, "cmd_setLogicPage(0x%X) (%d)", script, stackPos(0));
+	_screen->_curPage = stackPos(0);
+	return stackPos(0);
 }
 
 int KyraEngine::cmd_fatPrint(ScriptState *script) {
-	warning("STUB: cmd_fatPrint");
+	debug(3, "cmd_fatPrint(0x%X) ('%s', %d, %d, %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	return 0;
 }
 
@@ -1619,7 +1626,12 @@ int KyraEngine::cmd_playFluteAnimation(ScriptState *script) {
 }
 
 int KyraEngine::cmd_playWinterScrollSequence(ScriptState *script) {
-	warning("STUB: cmd_playWinterScrollSequence");
+	debug(3, "cmd_playWinterScrollSequence(0x%X) (%d)", script, stackPos(0));
+	if (!stackPos(0)) {
+		seq_winterScroll2();
+	} else {
+		seq_winterScroll1();
+	}
 	return 0;
 }
 

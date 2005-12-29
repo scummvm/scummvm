@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 8
+#define RESFILE_VERSION 9
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -227,6 +227,17 @@ void KyraEngine::res_loadResources(int type) {
 		
 		loadShapes(resFile, "POISONDEATH.SHP", &_posionDeathShapeTable, &_posionDeathShapeTableSize);
 		loadShapes(resFile, "FLUTE.SHP", &_fluteAnimShapeTable, &_fluteAnimShapeTableSize);
+		
+		loadShapes(resFile, "WINTER1.SHP", &_winterScrollTable, &_winterScrollTableSize);
+		loadShapes(resFile, "WINTER2.SHP", &_winterScroll1Table, &_winterScroll1TableSize);
+		loadShapes(resFile, "WINTER3.SHP", &_winterScroll2Table, &_winterScroll2TableSize);
+		loadShapes(resFile, "DRINK.SHP", &_drinkAnimationTable, &_drinkAnimationTableSize);
+		loadShapes(resFile, "WISP.SHP", &_brandonToWispTable, &_brandonToWispTableSize);
+		loadShapes(resFile, "MAGICANIM.SHP", &_magicAnimationTable, &_magicAnimationTableSize);
+		loadShapes(resFile, "BRANSTONE.SHP", &_brandonStoneTable, &_brandonStoneTableSize);
+		
+		res_loadLangTable("WISPJEWEL.", &resFile, (byte***)&_wispJewelStrings, &_wispJewelStrings_Size, loadNativeLanguage);
+		res_loadLangTable("MAGICJEWEL.", &resFile, (byte***)&_magicJewelString, &_magicJewelString_Size, loadNativeLanguage);
 	}
 
 #undef loadRooms
@@ -264,6 +275,7 @@ void KyraEngine::res_unloadResources(int type) {
 		res_freeLangTable(&_characterImageTable, &_characterImageTableSize);
 				
 		delete [] _defaultShapeTable;
+		_defaultShapeTable = 0;
 		_defaultShapeTableSize = 0;
 		
 		res_freeLangTable(&_itemList, &_itemList_Size);
@@ -287,19 +299,51 @@ void KyraEngine::res_unloadResources(int type) {
 		res_freeLangTable(&_healingTip, &_healingTip_Size);
 		
 		delete [] _healingShapeTable;
+		_healingShapeTable = 0;
 		_healingShapeTableSize = 0;
 		
 		delete [] _healingShape2Table;
+		_healingShape2Table = 0;
 		_healingShape2TableSize = 0;
 		
 		res_freeLangTable(&_thePoison, &_thePoison_Size);
 		res_freeLangTable(&_fluteString, &_fluteString_Size);
 		
 		delete [] _posionDeathShapeTable;
+		_posionDeathShapeTable = 0;
 		_posionDeathShapeTableSize = 0;
 		
 		delete [] _fluteAnimShapeTable;
+		_fluteAnimShapeTable = 0;
 		_fluteAnimShapeTableSize = 0;
+		
+		delete [] _winterScrollTable;
+		_winterScrollTable = 0;
+		_winterScrollTableSize = 0;
+		
+		delete [] _winterScroll1Table;
+		_winterScroll1Table = 0;
+		_winterScroll1TableSize = 0;
+		
+		delete [] _winterScroll2Table;
+		_winterScroll2Table = 0;
+		_winterScroll2TableSize = 0;
+		
+		delete [] _drinkAnimationTable;
+		_drinkAnimationTable = 0;
+		_drinkAnimationTableSize = 0;
+		
+		delete [] _brandonToWispTable;
+		_brandonToWispTable = 0;
+		_brandonToWispTableSize = 0;
+		
+		delete [] _magicAnimationTable;
+		_magicAnimationTable = 0;
+		_magicAnimationTableSize = 0;
+		
+		delete [] _brandonStoneTable;
+		_brandonStoneTable = 0;
+		_brandonStoneTableSize = 0;
 	}
 }
 

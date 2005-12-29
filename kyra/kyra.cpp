@@ -352,6 +352,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_fadeText = false;
 	_noDrawShapesFlag = 0;
 
+	_brandonStatusBit = 0;
+	_brandonStatusBit0x02Flag = _brandonStatusBit0x20Flag = 10;
 	_brandonPosX = _brandonPosY = -1;
 	_brandonDrawFrame = 113;
 	_deathHandler = 0xFF;
@@ -654,6 +656,18 @@ void KyraEngine::mainLoop() {
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
+		
+		if (_brandonStatusBit & 2) {
+			if (_brandonStatusBit0x02Flag)
+				animRefreshNPC(0);
+		}
+		if (_brandonStatusBit & 0x20) {
+			if (_brandonStatusBit0x20Flag) {
+				animRefreshNPC(0);
+				_brandonStatusBit0x20Flag = 0;
+			}
+		}
+		
 		processButtonList(_buttonList);
 		updateMousePointer();
 		updateGameTimers();
@@ -1161,6 +1175,248 @@ void KyraEngine::seq_playFluteAnimation() {
 		assert(_fluteString);
 		characterSays(_fluteString[1], 0, -2);
 	}
+}
+
+void KyraEngine::seq_winterScroll1() {
+	debug(9, "seq_winterScroll1()");
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	assert(_winterScrollTable);
+	assert(_winterScroll1Table);
+	assert(_winterScroll2Table);
+	setupShapes123(_winterScrollTable, 7, 0);
+	setBrandonAnimSeqSize(5, 66);
+	
+	for (int i = 123; i <= 129; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	freeShapes123();
+	// snd_playSoundEffect(0x20);
+	setupShapes123(_winterScroll1Table, 35, 0);
+	
+	for (int i = 123; i <= 146; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	if (_currentCharacter->sceneId == 41 && !queryGameFlag(0xA2)) {
+		// snd_playSoundEffect(0x20);
+		_sprites->_anims[0].play = false;
+		_sprites->_animObjects[0].active = 0;
+		_sprites->_anims[1].play = true;
+		_sprites->_animObjects[1].active = 1;
+	}
+	
+	for (int i = 147; i <= 157; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	if (_currentCharacter->sceneId == 117 && !queryGameFlag(0xB3)) {
+		for (int i = 0; i <= 7; ++i) {
+			_sprites->_anims[i].play = false;
+			_sprites->_animObjects[i].active = 0;
+		}
+		uint8 tmpPal[768];
+		memcpy(tmpPal, _screen->_currentPalette, 768);
+		memcpy(&tmpPal[684], palTable2()[0], 60);
+		_screen->fadePalette(tmpPal, 72);
+	} else {
+		delayWithTicks(120);
+	}
+	
+	freeShapes123();
+	setupShapes123(_winterScroll2Table, 4, 0);
+	
+	for (int i = 123; i <= 126; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_winterScroll2() {
+	debug(9, "seq_winterScroll2()");	
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	assert(_winterScrollTable);
+	setupShapes123(_winterScrollTable, 7, 0);
+	setBrandonAnimSeqSize(5, 66);
+	
+	for (int i = 123; i <= 128; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	delayWithTicks(120);
+	
+	for (int i = 127; i >= 123; --i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_makeBrandonInv() {
+	debug(9, "seq_makeBrandonInv()");
+	if (_deathHandler == 8)
+		return;
+
+	if (_currentCharacter->sceneId == 210) {
+		//if (_unkSceneVar == 4 || _unkSceneVar == 6)
+		//	return;
+	}
+	
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	_brandonStatusBit |= 0x20;
+	setTimerCountdown(18, 2700);
+	_brandonStatusBit |= 0x40;
+	// snd_playSoundEffect(0x77);
+	_brandonInvFlag = 0;
+	while (_brandonInvFlag <= 0x100) {
+		animRefreshNPC(0);
+		delayWithTicks(10);
+		_brandonInvFlag += 0x10;
+	}
+	_brandonStatusBit &= 0xFFBF;
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_makeBrandonNormal() {
+	debug(9, "seq_makeBrandonNormal()");
+	_screen->hideMouse();
+	_brandonStatusBit |= 0x40;
+	// snd_playSoundEffect(0x77);
+	_brandonInvFlag = 0x100;
+	while (_brandonInvFlag >= 0) {
+		animRefreshNPC(0);
+		delayWithTicks(10);
+		_brandonInvFlag -= 0x10;
+	}
+	_brandonStatusBit &= 0xFF9F;
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_makeBrandonNormal2() {
+	debug(9, "seq_makeBrandonNormal2()");
+	_screen->hideMouse();
+	assert(_brandonToWispTable);
+	setupShapes123(_brandonToWispTable, 26, 0);
+	setBrandonAnimSeqSize(5, 48);
+	_brandonStatusBit &= 0xFFFD;
+	// snd_playSoundEffect(0x6C);
+	for (int i = 138; i >= 123; --i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	setBrandonAnimSeqSize(4, 48);
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) {
+		_screen->fadeSpecialPalette(31, 234, 13, 4);
+	} else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186) {
+		_screen->fadeSpecialPalette(14, 228, 15, 4);
+	}
+	freeShapes123();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_makeBrandonWisp() {
+	debug(9, "seq_makeBrandonWisp()");
+	if (_deathHandler == 8)
+		return;
+	
+	if (_currentCharacter->sceneId == 210) {
+		//if (_unkSceneVar == 4 || _unkSceneVar == 6)
+		//	return;
+	}	
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	assert(_brandonToWispTable);
+	setupShapes123(_brandonToWispTable, 26, 0);
+	setBrandonAnimSeqSize(5, 48);
+	// snd_playSoundEffect(0x6C);
+	for (int i = 123; i <= 138; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	_brandonStatusBit |= 2;
+	if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+		setTimerCountdown(14, 18000);
+	} else {
+		setTimerCountdown(14, 7200);
+	}
+	_brandonDrawFrame = 113;
+	_brandonStatusBit0x02Flag = 1;
+	_currentCharacter->currentAnimFrame = 113;
+	animRefreshNPC(0);
+	updateAllObjectShapes();
+	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) {
+		_screen->fadeSpecialPalette(30, 234, 13, 4);
+	} else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186) {
+		_screen->fadeSpecialPalette(14, 228, 15, 4);
+	}
+	freeShapes123();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_dispelMagicAnimation() {
+	debug(9, "seq_dispelMagicAnimation()");
+	if (_deathHandler == 8)
+		return;
+	if (_currentCharacter->sceneId == 210) {
+		//if (_unkSceneVar == 4 || _unkSceneVar == 6)
+		//	return;
+	}
+	_screen->hideMouse();
+	if (_currentCharacter->sceneId == 210 && _currentCharacter->sceneId < 160)
+		_currentCharacter->facing = 3;
+	// XXX
+	checkAmuletAnimFlags();
+	setGameFlag(0xEE);
+	assert(_magicAnimationTable);
+	setupShapes123(_magicAnimationTable, 5, 0);
+	setBrandonAnimSeqSize(8, 49);
+	// snd_playSoundEffect(0x15);
+	for (int i = 123; i <= 127; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(8);
+	}
+	
+	delayWithTicks(120);
+	
+	for (int i = 127; i >= 123; --i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(10);
+	}
+	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
 }
 
 bool KyraEngine::seq_skipSequence() const {
@@ -4085,21 +4341,17 @@ void KyraEngine::prepDrawAllObjects() {
 				
 				if (!_scaleMode) {
 					if (flagUnk3 & 0x100) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_brandonPoisonFlagsGFX, 1, drawLayer);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_brandonPoisonFlagsGFX, int(1), drawLayer);
 					} else if (flagUnk3 & 0x4000) {
-						// XXX
-						int hackVar = 0;
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, hackVar, drawLayer);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, _brandonInvFlag, drawLayer);
 					} else {
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1, drawLayer);
 					}
 				} else {
 					if (flagUnk3 & 0x100) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_brandonPoisonFlagsGFX, 1, drawLayer, _brandonScaleX, _brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_brandonPoisonFlagsGFX, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
 					} else if (flagUnk3 & 0x4000) {
-						// XXX
-						int hackVar = 0;
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, 0, drawLayer, hackVar, _brandonScaleX, _brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, int(0), drawLayer, _brandonInvFlag, _brandonScaleX, _brandonScaleY);
 					} else {
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4, drawLayer, _brandonScaleX, _brandonScaleY);
 					}
@@ -4188,7 +4440,12 @@ void KyraEngine::animRefreshNPC(int character) {
 			animObj->animFrameNumber = _brandonDrawFrame;
 			ch->currentAnimFrame = _brandonDrawFrame;
 			animObj->sceneAnimPtr = _shapes[4+_brandonDrawFrame];
-			// XXX
+			if (_brandonStatusBit0x02Flag) {
+				++_brandonDrawFrame;
+				if (_brandonDrawFrame >= 122)
+					_brandonDrawFrame = 113;
+					_brandonStatusBit0x02Flag = 0;
+			}
 		}
 	}
 	
@@ -4384,12 +4641,12 @@ void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags
 		shapeFlags = 3;
 	for (int i = 123; i < 123+endShape; ++i) {
 		uint8 newImage = shapeTable[i-123].imageIndex;
-		if (newImage != curImage) {
+		if (newImage != curImage && newImage != 0xFF) {
 			assert(_characterImageTable);
 			loadBitmap(_characterImageTable[newImage], 8, 8, 0);
 			curImage = newImage;
 		}
-		_shapes[4+i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, flags);
+		_shapes[4+i] = _screen->encodeShape(shapeTable[i-123].x<<3, shapeTable[i-123].y, shapeTable[i-123].w<<3, shapeTable[i-123].h, shapeFlags);
 		assert(i-7 < _defaultShapeTableSize);
 		_defaultShapeTable[i-7].xOffset = shapeTable[i-123].xOffset;
 		_defaultShapeTable[i-7].yOffset = shapeTable[i-123].yOffset;
@@ -5361,8 +5618,8 @@ void KyraEngine::setupTimers() {
 	_timers[29].func = 0; //offset _timerDummy7, 
 	_timers[30].func = 0; //offset _timerDummy8, 
 	_timers[31].func = &KyraEngine::timerFadeText; //sub_151F8;
-	_timers[32].func = 0; //_nullsub61;
-	_timers[33].func = 0; //_nullsub62;
+	_timers[32].func = &KyraEngine::updateAnimFlag1; //_nullsub61;
+	_timers[33].func = &KyraEngine::updateAnimFlag2; //_nullsub62;
 
 	_timers[0].countdown = _timers[1].countdown = _timers[2].countdown = _timers[3].countdown = _timers[4].countdown = -1;
 	_timers[5].countdown = 5;
@@ -5487,6 +5744,20 @@ void KyraEngine::timerFadeText(int timerNum) {
 	_fadeText = true;
 }
 
+void KyraEngine::updateAnimFlag1(int timerNum) {
+	debug(9, "updateAnimFlag1(%d)", timerNum);
+	if (_brandonStatusBit & 2) {
+		_brandonStatusBit0x02Flag = 1;
+	}
+}
+
+void KyraEngine::updateAnimFlag2(int timerNum) {
+	debug(9, "updateAnimFlag2(%d)", timerNum);
+	if (_brandonStatusBit & 0x20) {
+		_brandonStatusBit0x20Flag = 1;
+	}
+}
+
 void KyraEngine::setTextFadeTimerCountdown(int16 countdown) {
 	debug(9, "setTextFadeTimerCountdown(%i)", countdown);
 	//if (countdown == -1)
@@ -5520,14 +5791,12 @@ void KyraEngine::timerCheckAnimFlag2(int timerNum) {
 void KyraEngine::checkAmuletAnimFlags() {
 	debug(9, "checkSpecialAnimFlags()");
 	if (_brandonStatusBit & 2) {
-		warning("STUB: playSpecialAnim1");
-		// XXX
+		seq_makeBrandonNormal2();
 		setTimerCountdown(19, 300);
 	}
 
 	if (_brandonStatusBit & 0x20) {
-		warning("STUB: playSpecialAnim2");
-		// XXX
+		seq_makeBrandonNormal();
 		setTimerCountdown(19, 300);
 	}
 }
@@ -6156,15 +6425,37 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 			break;
 		
 		case 1:
-			warning("jewel 1 STUB");
+			seq_makeBrandonInv();
 			break;
 		
 		case 2:
-			warning("jewel 2 STUB");
+			if (_brandonStatusBit & 1) {
+				assert(_wispJewelStrings);
+				characterSays(_wispJewelStrings[0], 0, -2);
+			} else {
+				if (_brandonStatusBit & 2) {
+					// XXX
+					seq_makeBrandonNormal2();
+					// XXX
+				} else {
+					// do not check for item in hand again as in the original since some strings are missing
+					// in the cd version
+					if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
+						// XXX
+						seq_makeBrandonWisp();
+						// XXX
+					} else {
+						seq_makeBrandonWisp();
+					}
+					setGameFlag(0x9E);
+				}
+			}
 			break;
 		
 		case 3:
-			warning("jewel 3 STUB");
+			seq_dispelMagicAnimation();
+			assert(_magicJewelString);
+			characterSays(_magicJewelString[0], 0, -2);
 			break;
 		
 		default:
