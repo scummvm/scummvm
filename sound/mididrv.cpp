@@ -53,7 +53,7 @@ static const struct MidiDriverDescription midiDrivers[] = {
 #if defined(MACOSX)
 	{"qt", "QuickTime", MD_QTMUSIC, MDT_MIDI},
 	{"core", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
-	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
+//	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
 	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_MIDI},
 #endif
 
