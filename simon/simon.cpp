@@ -556,19 +556,21 @@ int SimonEngine::init(GameDetector &detector) {
 
 	// Setup midi driver
 	MidiDriver *driver = 0;
-	_midiDriver = MD_NULL;
-	if (getPlatform() == Common::kPlatformAmiga)
+	if (getPlatform() == Common::kPlatformAmiga) {
 		driver = MidiDriver::createMidi(MD_NULL);	// Create fake MIDI driver for Simon1Amiga and Simon2CD32 for now
-	else {
-		_midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
-		driver = MidiDriver::createMidi(_midiDriver);
+		_native_mt32 = false;
+	} else {
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
+		driver = MidiDriver::createMidi(midiDriver);
+		_native_mt32 = (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
 	}
 	if (!driver)
 		driver = MidiDriver_ADLIB_create(_mixer);
-	else if (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))
+	else if (_native_mt32) {
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+	}
 
-	midi.mapMT32toGM (getGameType() == GType_SIMON1 && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
+	midi.mapMT32toGM (getGameType() == GType_SIMON1 && !_native_mt32);
 
 	midi.set_driver(driver);
 	int ret = midi.open();
@@ -623,7 +625,7 @@ int SimonEngine::init(GameDetector &detector) {
 #endif
 		TABLES_MEM_SIZE = 100000;
 		// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-		if ((getGameType() == GType_SIMON2) && (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)))
+		if ((getGameType() == GType_SIMON2) && _native_mt32)
 			MUSIC_INDEX_BASE = (1128 + 612) / 4;
 		else
 			MUSIC_INDEX_BASE = 1128 / 4;

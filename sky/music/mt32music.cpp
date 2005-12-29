@@ -89,8 +89,6 @@ void MT32Music::setupChannels(uint8 *channelData) {
 	}
 }
 
-#define MIDI_PACK(a,b,c,d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
-
 bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 
 	uint8 sysExBuf[15];

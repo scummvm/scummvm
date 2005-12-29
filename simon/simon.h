@@ -401,7 +401,7 @@ protected:
 	byte _lettersToPrintBuf[80];
 
 	MidiPlayer midi;
-	int _midiDriver;
+	bool _native_mt32;
 
 	int _numScreenUpdates;
 	int _vgaTickCounter;
