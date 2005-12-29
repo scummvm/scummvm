@@ -32,8 +32,16 @@ namespace Audio {
 }
 namespace Common { class String; }
 
-/** MIDI Driver Types */
+/**
+ * Music Driver Types, used to uniquely identify each music driver.
+ *
+ * The pseudo drivers are listed first, then all native drivers,
+ * then all other MIDI drivers, and finally the non-MIDI drivers.
+ *
+ * @todo Rename MidiDriverType to MusicDriverType
+ */
 enum MidiDriverType {
+	// Pseudo drivers
 	MD_AUTO,
 	MD_NULL,
 
@@ -56,43 +64,58 @@ enum MidiDriverType {
 	// MorphOS
 	MD_ETUDE,
 
+	// MIDI softsynths
+	MD_FLUIDSYNTH,
+	MD_MT32,
+
 	// "Fake" MIDI devices
 	MD_ADLIB,
 	MD_PCSPK,
 	MD_PCJR,
-	MD_TOWNS,
-
-	// MIDI softsynths
-	MD_MT32,
-	MD_FLUIDSYNTH
+	MD_TOWNS
 };
 
 /**
- * A set of bitmasks which can be used to specify what kind of midi
- * driver is prefered.
+ * A set of flags to be passed to detectMusicDriver() which can be used to
+ * specify what kind of music driver is preferred / accepted.
+ *
+ * The flags (except for MDT_PREFER_NATIVE) indicate whether a given driver
+ * type is acceptable. E.g. the TOWNS music driver could be returned by
+ * detectMusicDriver if and only if MDT_TOWNS is specified. 
+ *
+ * @todo Rename MidiDriverFlags to MusicDriverFlags
  */
 enum MidiDriverFlags {
 	MDT_NONE   = 0,
-	MDT_PCSPK  = 1, // MD_PCSPK and MD_PCJR
-	MDT_ADLIB  = 2, // MD_ADLIB
-	MDT_TOWNS  = 4, // MD_TOWNS
-	MDT_NATIVE = 8, // Everything else
-	MDT_PREFER_NATIVE = 16
+	MDT_PCSPK  = 1 << 0,      // PC Speaker: Maps to MD_PCSPK and MD_PCJR
+	MDT_ADLIB  = 1 << 1,      // Adlib: Maps to MD_ADLIB
+	MDT_TOWNS  = 1 << 2,      // FM-TOWNS: Maps to MD_TOWNS
+	MDT_MIDI   = 1 << 3,      // Real MIDI
+	MDT_PREFER_MIDI = 1 << 4, // Real MIDI output is preferred
+
+	MDT_NATIVE = MDT_MIDI,    // Alias for MDT_MIDI
+	MDT_PREFER_NATIVE = MDT_PREFER_MIDI // Alias for MDT_PREFER_MIDI
 };
 
 /**
  * Abstract description of a MIDI driver. Used by the config file and command
  * line parsing code, and also to be able to give the user a list of available
  * drivers.
+ *
+ * @todo Rename MidiDriverType to MusicDriverType
  */
 struct MidiDriverDescription {
 	const char *name;
 	const char *description;
-	MidiDriverType id;
-	MidiDriverFlags flags;
+	MidiDriverType id;		// A unique ID for each driver
+	int flags;				// Capabilities of this driver
 };
 
-/** Abstract MIDI Driver Class */
+/**
+ * Abstract MIDI Driver Class
+ *
+ * @todo Rename MidiDriver to MusicDriver
+ */
 class MidiDriver {
 public:
 	/** Convert a string containing a music driver name into MIDI Driver type. */

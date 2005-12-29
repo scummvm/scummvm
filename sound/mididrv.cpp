@@ -30,47 +30,54 @@
 
 /** Internal list of all available 'midi' drivers. */
 static const struct MidiDriverDescription midiDrivers[] = {
-	{"auto", "Default", MD_AUTO, MDT_NONE},
+
+	// The flags for the "auto" driver indicate that it is anything you want
+	// it to be.
+	{"auto", "Default", MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
+
+	// The flags for the "null" driver indicate that it does nothing, really.
 	{"null", "No music", MD_NULL, MDT_NONE},
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	{"windows", "Windows MIDI", MD_WINDOWS, MDT_NATIVE},
-#endif
-
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
-	{"seq", "SEQ", MD_SEQ, MDT_NONE},
-#endif
-
-#if defined(MACOSX)
-	{"qt", "QuickTime", MD_QTMUSIC, MDT_NATIVE},
-	{"core", "CoreAudio", MD_COREAUDIO, MDT_NATIVE},
-	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_NATIVE},
-	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_NATIVE},
-#endif
-
-#if defined(__MORPHOS__)
-	{"etude", "Etude", MD_ETUDE, MDT_NONE},
+	{"windows", "Windows MIDI", MD_WINDOWS, MDT_MIDI},
 #endif
 
 #if defined(UNIX) && defined(USE_ALSA)
-	{"alsa", "ALSA", MD_ALSA, MDT_NONE},
+	{"alsa", "ALSA", MD_ALSA, MDT_MIDI},
 #endif
 
-	{"adlib", "Adlib", MD_ADLIB, MDT_ADLIB},
-	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
-	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
-	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
-#ifdef USE_FLUIDSYNTH
-	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH, MDT_NONE},
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
+	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
 #endif
-#ifdef USE_MT32EMU
-	{"mt32", "MT-32", MD_MT32, MDT_NONE},
+
+#if defined(MACOSX)
+	{"qt", "QuickTime", MD_QTMUSIC, MDT_MIDI},
+	{"core", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
+	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
+	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_MIDI},
 #endif
 
 #if defined(PALMOS_MODE)
-	{"ypa1", "Yamaha Pa1", MD_YPA1, MDT_NATIVE},
-	{"zodiac", "Tapwave Zodiac", MD_ZODIAC, MDT_NATIVE},
+	{"ypa1", "Yamaha Pa1", MD_YPA1, MDT_MIDI},
+	{"zodiac", "Tapwave Zodiac", MD_ZODIAC, MDT_MIDI},
 #endif
+
+#if defined(__MORPHOS__)
+	{"etude", "Etude", MD_ETUDE, MDT_MIDI},
+#endif
+#ifdef USE_FLUIDSYNTH
+	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH, MDT_MIDI},
+#endif
+#ifdef USE_MT32EMU
+	{"mt32", "MT-32", MD_MT32, MDT_MIDI},
+#endif
+
+	// The flags for the "adlibe" driver indicate that it can do adlib and MIDI.
+	{"adlib", "Adlib", MD_ADLIB, MDT_ADLIB | MDT_MIDI},
+	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
+	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
+	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
+
 	{0, 0, MD_NULL, MDT_NONE}
 };
 
@@ -120,13 +127,36 @@ int MidiDriver::parseMusicDriver(const Common::String &str) {
 }
 
 int MidiDriver::detectMusicDriver(int midiFlags) {
+	/*
+	TODO: The code in this method is very complicated and convuluted. Maybe we
+	can improve it. 
+	
+	First off, one needs to understand why it is so complex. It tries to honor
+	the user's music_driver config, but with the restrictions imposed by midiFlags.
+	Hence it must either select a suitable default driver (for example if
+	musicDriver is set to MD_AUTO), or it must try to fall back to a suitable
+	driver resp. the NULL driver.
+	
+	Different games support different output drivers, as indicated by midiFlags.
+	Some of the occuring combinations are:
+	 - TOWNS games always want towns or null
+	 - some scumm games allow only pcspk, pcjr
+	 - some scumm games allow pcspk, pcjr, adlib, MIDI
+	 - some games allow adlib, MIDI
+	 - some games only allow MIDI
+	 - did I miss something?
+	
+	My hope is that we can simplify the whole selection process by iterating over
+	the list of available drivers and looking at their "flags" member.
+	*/
+
 	int musicDriver = parseMusicDriver(ConfMan.get("music_driver"));
 	/* Use the adlib sound driver if auto mode is selected,
 	 * and the game is one of those that want adlib as
 	 * default, OR if the game is an older game that doesn't
 	 * support anything else anyway. */
 	if (musicDriver == MD_AUTO || musicDriver < 0) {
-		if (midiFlags & MDT_PREFER_NATIVE) {
+		if (midiFlags & MDT_PREFER_MIDI) {
 			if (musicDriver == MD_AUTO) {
 				#if defined(WIN32) && !defined(_WIN32_WCE) &&  !defined(__SYMBIAN32__)
 					musicDriver = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
