@@ -46,8 +46,8 @@ Zak McKracken and the Alien Mindbenders
 	V2 (alt?)	DOS	en	debe337f73d660e951ece7c1f1c81add	zak	Andrea Petrucci
 	V2	DOS	fr	52a4bae0746a11d7b1e8554e91a6645c	zak	Andrea Petrucci
 	V2	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f	zak	Qvist
-	V2 (w/o copy protection)	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
-	V2 (from 5\"25 floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
+	V2	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
+	V2 (from 5.25\" floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
 	V2	DOS	it	75ba23fff4fd63fa446c02864f2a5a4b	zak	Antti Leimi, Andrea Petrucci
 	V2 (alt?)	DOS	it	1900e501a52fbf55bde6e4196f6d2aa6	zak	Andrea Petrucci
 
@@ -207,7 +207,7 @@ Indiana Jones and the Fate of Atlantis
 	Demo (non-interactive)	DOS	en	99b6f822b0b2612415407865438697d6	atlantis
 	Demo (non-interactive)	FM-TOWNS	jp	28d24a33448fab6795850bc9f159a4a2	atlantis	khalek
 
-Day Of The Tentacle
+Day of the Tentacle
 	Floppy Version A ?	All?	en	acad97ab1c6fc2a5b2d98abf6db4a190	tentacle
 	Floppy Version B ?	DOS	en	2723fea3dae0cb47768c424b145ae0e7	tentacle	Andrej Sinicyn, Andrea Petrucci
 	Floppy	DOS	fr	92b078d9d6d9d751da9c26b8b3075779	tentacle	Nicolas Sauz&egrave;de, Andrea Petrucci
@@ -307,7 +307,7 @@ Backyard Soccer MLS Edition
 Backyard Soccer 2004
 	CD	All	en	c4ffae9fac495475d6bc3343ccc8faf9	Soccer2004	Kirben, sev
 
-Big Thinkers: Kindergarten
+Big Thinkers Kindergarten
 	CD	All	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
 
 	Demo	All	en	695fe0b3963333b7e15b37514db3c745	thinkerk	khalek, sev
@@ -390,7 +390,7 @@ Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	Demo	Windows	en	e03ed1474ec14de78359970e0457a820	freddi4	eriktorbjorn
 
 Freddi Fish 5: The Case of the Creature of Coral Cave
-	CD	All	en	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
+	CD	All	All	590e6546aacd0d374b7f3a4f53013ab1	freddicove	cyx
 	CD	Windows	nl	b8955d7d23b4972229060d1592489fef	freddicove	adutchguy
 	CD	Windows	ru	21abe302e1b1e2b66d6f5c12e241ebfd	freddicove	sev
 	CD	Windows	ru	4ce2d5b355964bbcb5e5ce73236ef868	freddicove	sev
@@ -415,15 +415,6 @@ Humongous Interactive Catalog
 	Demo	Windows	en	11e6e244078ff09b0f3832e35420e0a7	catalog	khalek, sev
 	Demo	Windows	en	037385a953789190298494d92b89b3d0	catalog	khalek, sev
 
-Let's Explore the Farm with Buzzy
-	CD	Mac	en	fbbbb38a81fc9d6a61d509278390a290	farm	khalek
-	CD	Windows	en	a85856675429fe88051744f755b72f93	farm	Kirben
-
-	Demo	Mac	en	39fd6db10d0222d817025c4d3346e3b4	farm	Joachim Eberhard
-	Demo	Windows	nl	0557df19f046a84c2fdc63507c6616cb	farm	adutchguy
-	Demo	Windows	en	8d479e36f35e80257dfc102cf4b8a912	farm	khalek, sev
-	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farm	khalek, sev
-
 Let's Explore the Airport with Buzzy
 	CD	Mac	en	d6334a5a9b61afe18c368540fdf522ca	airport	Joachim Eberhard
 	CD	Windows	en	07433205acdca3bc553d0e731588b35f	airport	Kirben
@@ -432,6 +423,15 @@ Let's Explore the Airport with Buzzy
 	Demo	Windows	en	86c9902b7bec1a17926d4dae85beaa45	airport	khalek
 	Demo	Windows	en	e144f5f49d9241d2a9dee2576b3d09cb	airport	khalek
 	Demo	Windows	en	8ffd618a776a4c0d8922bb28b09f8ce8	airport	khalek
+
+Let's Explore the Farm with Buzzy
+	CD	Mac	en	fbbbb38a81fc9d6a61d509278390a290	farm	khalek
+	CD	Windows	en	a85856675429fe88051744f755b72f93	farm	Kirben
+
+	Demo	Mac	en	39fd6db10d0222d817025c4d3346e3b4	farm	Joachim Eberhard
+	Demo	Windows	nl	0557df19f046a84c2fdc63507c6616cb	farm	adutchguy
+	Demo	Windows	en	8d479e36f35e80257dfc102cf4b8a912	farm	khalek, sev
+	Demo	Windows	en	bf8b52fdd9a69c67f34e8e9fec72661c	farm	khalek, sev
 
 Let's Explore the Jungle with Buzzy
 	CD	Mac	en	659942b9a6b519f123a13cca3c333a13	jungle	Joachim Eberhard
@@ -493,7 +493,7 @@ Putt-Putt Enters the Race
 	Demo	All	de	663743c03ae0c007f3d665cf631c0e6b	puttrace	Joachim Eberhard
 	Demo	Windows	en	7c8100e360e8ef05f88069d4cfa0afd1	puttrace	eriktorbjorn
 
-Putt-Putt Goes To The Moon
+Putt-Putt Goes to the Moon
 	CD	3DO	en	a9543ef0d79bcb47cd76ec197ad0a967	puttmoon	sev
 	CD	DOS	All	780e4a0ae2ff17dc296f4a79543b44f8	puttmoon	khalek
 	CD	DOS	hb	697c9b7c55a05d8199c48b48e379d2c8	puttmoon	sev
@@ -510,7 +510,7 @@ Putt-Putt Joins the Circus
 
 	Demo	All	en	a7cacad9c40c4dc9e1812abf6c8af9d5	puttcircus	Kirben, sev
 
-Putt-Putt Joins The Parade
+Putt-Putt Joins the Parade
 	CD	3DO	en	7e151c17adf624f1966c8fc5827c95e9	puttputt	khalek
 	CD	DOS	en	9708cf716ed8bcc9ff3fcfc69413b746	puttputt	khalek
 	CD	DOS	hb	e361a7058ed8e8ebb462663c0a3ae8d6	puttputt	sev
