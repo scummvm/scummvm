@@ -32,6 +32,8 @@
 #include "scumm/gfx.h"
 #include "scumm/script.h"
 
+#include "sound/mididrv.h"
+
 namespace GUI {
 	class Dialog;
 }
@@ -1101,7 +1103,7 @@ protected:
 	bool _native_mt32;
 	bool _enable_gs;
 	int _midi;
-	int _midiDriver; // Use the MD_ values from mididrv.h
+	MidiDriverFlags _musicType;
 	bool _copyProtection;
 	bool _demoMode;
 	bool _confirmExit;

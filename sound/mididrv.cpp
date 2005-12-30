@@ -29,14 +29,12 @@
 #include "sound/mididrv.h"
 
 /** Internal list of all available 'midi' drivers. */
-static const struct MidiDriverDescription midiDrivers[] = {
+static const MidiDriverDescription s_musicDrivers[] = {
 
-	// The flags for the "auto" driver indicate that it is anything you want
-	// it to be.
+	// The flags for the "auto" & "null" drivers indicate that they are anything
+	// you want it to be.
 	{"auto", "Default", MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
-
-	// The flags for the "null" driver indicate that it does nothing, really.
-	{"null", "No music", MD_NULL, MDT_NONE},
+	{"null", "No music", MD_NULL, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	{"windows", "Windows MIDI", MD_WINDOWS, MDT_MIDI},
@@ -51,10 +49,10 @@ static const struct MidiDriverDescription midiDrivers[] = {
 #endif
 
 #if defined(MACOSX)
-	{"qt", "QuickTime", MD_QTMUSIC, MDT_MIDI},
 	{"core", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
 //	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
 	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_MIDI},
+	{"qt", "QuickTime", MD_QTMUSIC, MDT_MIDI},
 #endif
 
 #if defined(PALMOS_MODE)
@@ -73,7 +71,7 @@ static const struct MidiDriverDescription midiDrivers[] = {
 #endif
 
 	// The flags for the "adlibe" driver indicate that it can do adlib and MIDI.
-	{"adlib", "Adlib", MD_ADLIB, MDT_ADLIB | MDT_MIDI},
+	{"adlib", "Adlib", MD_ADLIB, MDT_ADLIB},
 	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
 	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
@@ -106,93 +104,101 @@ const byte MidiDriver::_gmToMt32[128] = {
 };
 
 const MidiDriverDescription *MidiDriver::getAvailableMidiDrivers() {
-	return midiDrivers;
+	return s_musicDrivers;
 }
 
-int MidiDriver::parseMusicDriver(const Common::String &str) {
+const MidiDriverDescription &MidiDriver::findMusicDriver(const Common::String &str) {
 	if (str.isEmpty())
-		return -1;
+		return s_musicDrivers[0];
 
 	const char *s = str.c_str();
-	const MidiDriverDescription *md = getAvailableMidiDrivers();
+	int len = 0;
+	const MidiDriverDescription *md = s_musicDrivers;
+	
+	// Scan for string end or a colon
+	while (s[len] != 0 && s[len] != ':')
+		len++;
 
 	while (md->name) {
-		if (!scumm_stricmp(md->name, s)) {
-			return md->id;
+		// Compare the string passed to us with the current table entry.
+		// We ignore any characters following an (optional) colon ':'
+		// contained in str.
+		if (!scumm_strnicmp(md->name, s, len)) {
+			return *md;
 		}
 		md++;
 	}
 
-	return -1;
+	return s_musicDrivers[0];
 }
 
-int MidiDriver::detectMusicDriver(int midiFlags) {
-	/*
-	TODO: The code in this method is very complicated and convuluted. Maybe we
-	can improve it. 
-	
-	First off, one needs to understand why it is so complex. It tries to honor
-	the user's music_driver config, but with the restrictions imposed by midiFlags.
-	Hence it must either select a suitable default driver (for example if
-	musicDriver is set to MD_AUTO), or it must try to fall back to a suitable
-	driver resp. the NULL driver.
-	
-	Different games support different output drivers, as indicated by midiFlags.
-	Some of the occuring combinations are:
-	 - TOWNS games always want towns or null
-	 - some scumm games allow only pcspk, pcjr
-	 - some scumm games allow pcspk, pcjr, adlib, MIDI
-	 - some games allow adlib, MIDI
-	 - some games only allow MIDI
-	 - did I miss something?
-	
-	My hope is that we can simplify the whole selection process by iterating over
-	the list of available drivers and looking at their "flags" member.
-	*/
+int MidiDriver::parseMusicDriver(const Common::String &str) {
+	return findMusicDriver(str).id;
+}
 
-	int musicDriver = parseMusicDriver(ConfMan.get("music_driver"));
-	/* Use the adlib sound driver if auto mode is selected,
-	 * and the game is one of those that want adlib as
-	 * default, OR if the game is an older game that doesn't
-	 * support anything else anyway. */
-	if (musicDriver == MD_AUTO || musicDriver < 0) {
-		if (midiFlags & MDT_PREFER_MIDI) {
-			if (musicDriver == MD_AUTO) {
-				#if defined(WIN32) && !defined(_WIN32_WCE) &&  !defined(__SYMBIAN32__)
-					musicDriver = MD_WINDOWS; // MD_WINDOWS is default MidiDriver on windows targets
-				#elif defined(MACOSX)
-					musicDriver = MD_COREAUDIO;
-				#elif defined(PALMOS_MODE)	// must be before mac
-					musicDriver = MD_YPA1;	// TODO : change this and use Zodiac driver when needed
-				#elif defined(__MORPHOS__)
-					musicDriver = MD_ETUDE;
-				#elif defined(_WIN32_WCE) || defined(UNIX) || defined(X11_BACKEND) || defined (__SYMBIAN32__)
-					// Always use MIDI emulation via adlib driver on CE and UNIX device
-				
-					// TODO: We should, for the Unix targets, attempt to detect
-					// whether a sequencer is available, and use it instead.
-					musicDriver = MD_ADLIB;
-				#else
-					musicDriver = MD_NULL;
-				#endif
-			} else
+static int getDefaultMIDIDriver() {
+#if defined(WIN32) && !defined(_WIN32_WCE) &&  !defined(__SYMBIAN32__)
+	return MD_WINDOWS;
+#elif defined(MACOSX)
+	return MD_COREAUDIO;
+#elif defined(PALMOS_MODE)
+  #if defined(COMPILE_CLIE)
+	return MD_YPA1;
+  #elif defined(COMPILE_ZODIAC)
+	return MD_ZODIAC;
+  #else
+	return MD_NULL;
+  #endif
+#elif defined(__MORPHOS__)
+	return MD_ETUDE;
+#else
+	return MD_NULL;
+#endif
+}
+
+int MidiDriver::detectMusicDriver(int flags) {
+	// Query the selected music driver (defaults to MD_AUTO).
+	const MidiDriverDescription &md = findMusicDriver(ConfMan.get("music_driver"));
+	int musicDriver = md.id;
+
+	// Check whether the selected music driver is compatible with the
+	// given flags.
+	if (! (md.flags & flags))
+		musicDriver = MD_AUTO;
+
+	// If the selected driver is MD_AUTO, we try to determine
+	// a suitable and "optimal" music driver.
+	if (musicDriver == MD_AUTO) {
+
+		if (flags & MDT_PREFER_MIDI) {
+			// A MIDI music driver is preferred. Of course this implies
+			// that MIDI is actually listed in flags, so we verify that.
+			assert(flags & MDT_MIDI);
+
+			// Query the default MIDI driver. It's possible that there
+			// is none, in which case we revert to AUTO mode.
+			musicDriver = getDefaultMIDIDriver();
+			if (musicDriver == MD_NULL)
+				musicDriver = MD_AUTO;
+		}
+
+		if (musicDriver == MD_AUTO) {
+			// MIDI is not preferred, or no default MIDI device is available.
+			// In this case we first try the alternate drivers before checking
+			// for a 'real' MIDI driver.
+
+			if (flags & MDT_TOWNS)
+				musicDriver = MD_TOWNS;
+			else if (flags & MDT_ADLIB)
 				musicDriver = MD_ADLIB;
-		} else
-			musicDriver = MD_TOWNS;
+			else if (flags & MDT_PCSPK)
+				musicDriver = MD_PCJR;
+			else if (flags & MDT_MIDI)
+				musicDriver = getDefaultMIDIDriver();
+			else
+				musicDriver = MD_NULL;
+		}
 	}
-	bool nativeMidiDriver =
-		(musicDriver != MD_NULL && musicDriver != MD_ADLIB &&
-		 musicDriver != MD_PCSPK && musicDriver != MD_PCJR &&
-		 musicDriver != MD_TOWNS);
-
-	if (nativeMidiDriver && !(midiFlags & MDT_NATIVE))
-		musicDriver = MD_TOWNS;
-	if (musicDriver == MD_TOWNS && !(midiFlags & MDT_TOWNS))
-		musicDriver = MD_ADLIB;
-	if (musicDriver == MD_ADLIB && !(midiFlags & MDT_ADLIB))
-		musicDriver = MD_PCJR;
-	if ((musicDriver == MD_PCSPK || musicDriver == MD_PCJR) && !(midiFlags & MDT_PCSPK))
-		musicDriver = MD_NULL;
 
 	return musicDriver;
 }
@@ -201,18 +207,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	switch(midiDriver) {
 	case MD_NULL:      return MidiDriver_NULL_create();
 
-	// In the case of Adlib, we won't specify anything.
-	// IMuse is designed to set up its own Adlib driver
-	// if need be, and we only have to specify a native
-	// driver.
-	case MD_ADLIB:     return NULL;
-
-#ifdef USE_FLUIDSYNTH
-	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create(g_engine->_mixer);
-#endif
-#ifdef USE_MT32EMU
-	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
-#endif
+	case MD_ADLIB:     return MidiDriver_ADLIB_create(g_engine->_mixer);
 
 	case MD_TOWNS:     return MidiDriver_YM2612_create(g_engine->_mixer);
 
@@ -221,6 +216,15 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	// don't create anything for now.
 	case MD_PCSPK:
 	case MD_PCJR:      return NULL;
+
+#ifdef USE_FLUIDSYNTH
+	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create(g_engine->_mixer);
+#endif
+
+#ifdef USE_MT32EMU
+	case MD_MT32:      return MidiDriver_MT32_create(g_engine->_mixer);
+#endif
+
 #if defined(PALMOS_MODE)
 #if defined(COMPILE_CLIE)
 	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
@@ -228,6 +232,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #endif
+
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
@@ -237,12 +242,10 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
 	case MD_SEQ:       return MidiDriver_SEQ_create();
 #endif
-#if (defined(MACOSX) || defined(macintosh)) && !defined(PALMOS_MODE)
-	case MD_QTMUSIC:   return MidiDriver_QT_create();
-#endif
 #if defined(MACOSX)
+	case MD_QTMUSIC:   return MidiDriver_QT_create();
 	case MD_COREAUDIO: return MidiDriver_CORE_create();
-	case MD_COREMIDI: return MidiDriver_CoreMIDI_create();
+	case MD_COREMIDI:  return MidiDriver_CoreMIDI_create();
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
 	case MD_ALSA:      return MidiDriver_ALSA_create();

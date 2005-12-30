@@ -560,14 +560,12 @@ int SimonEngine::init(GameDetector &detector) {
 		driver = MidiDriver::createMidi(MD_NULL);	// Create fake MIDI driver for Simon1Amiga and Simon2CD32 for now
 		_native_mt32 = false;
 	} else {
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_NATIVE);
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
+		_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 		driver = MidiDriver::createMidi(midiDriver);
-		_native_mt32 = (ConfMan.getBool("native_mt32") || (midiDriver == MD_MT32));
-	}
-	if (!driver)
-		driver = MidiDriver_ADLIB_create(_mixer);
-	else if (_native_mt32) {
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		if (_native_mt32) {
+			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		}
 	}
 
 	midi.mapMT32toGM (getGameType() == GType_SIMON1 && !_native_mt32);

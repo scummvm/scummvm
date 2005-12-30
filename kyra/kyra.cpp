@@ -258,14 +258,13 @@ int KyraEngine::init(GameDetector &detector) {
 	_system->endGFXTransaction();
 
 	// for now we prefer MIDI-to-Adlib conversion over native midi
-	int midiDrv = MidiDriver::detectMusicDriver(MDT_NATIVE | MDT_ADLIB/* | MDT_PREFER_NATIVE*/);
-	bool native_mt32 = (ConfMan.getBool("native_mt32") || (midiDrv == MD_MT32));
+	int midiDrv = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
+	bool native_mt32 = ((midiDrv == MD_MT32) || ConfMan.getBool("native_mt32"));
 
 	MidiDriver *driver = MidiDriver::createMidi(midiDrv);
-	if (!driver) {
+	if (midiDriver == MD_ADLIB) {
 		// In this case we should play the Adlib tracks, but for now
 		// the automagic MIDI-to-Adlib conversion will do.
-		driver = MidiDriver_ADLIB_create(_mixer);
 	} else if (native_mt32) {
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 	}

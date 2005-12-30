@@ -639,15 +639,14 @@ void ScummEngine_v99he::initScummVars() {
 
 void ScummEngine::initScummVars() {
 	if (_heversion < 70 && _version <= 6) {
-		switch (_midiDriver) {
-		case MD_NULL:
+		switch (_musicType) {
+		case MDT_NONE:
 			VAR(VAR_SOUNDCARD) = 0;
 			break;
-		case MD_PCSPK:
-		case MD_PCJR:
+		case MDT_PCSPK:
 			VAR(VAR_SOUNDCARD) = 1;
 			break;
-		case MD_ADLIB:
+		case MDT_ADLIB:
 			VAR(VAR_SOUNDCARD) = 3;
 			break;
 		default:

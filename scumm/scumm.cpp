@@ -62,7 +62,6 @@
 #endif
 #include "scumm/verbs.h"
 
-#include "sound/mididrv.h"
 #include "sound/mixer.h"
 
 #ifdef MACOSX
@@ -93,7 +92,7 @@ struct ScummGameSettings {
 	const char *name;
 	const char *description;
 	byte id, version, heversion;
-	int midi; // MidiDriverType values
+	int midi; // MidiDriverFlags values
 	uint32 features;
 	Common::Platform platform;
 
@@ -173,7 +172,7 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 3 */
 	{"indy3", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	/* Scumm Version 4 */
@@ -182,24 +181,24 @@ static const ScummGameSettings scumm_settings[] = {
 
 	/* Scumm version 5, small header -- we treat these as V4 games, since internally
 	   they really are much closer to the V4 games than to all other V5 games. */
-	{"monkey", "Monkey Island 1", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"monkey", "Monkey Island 1", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm version 5 */
-	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"monkey2", "Monkey Island 2: LeChuck's revenge", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, MDT_ADLIB | MDT_NATIVE,
+	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm Version 6 */
-	{"tentacle", "Day of the Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"tentacle", "Day of the Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
-	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
-//	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE, GF_NEW_OPCODES, Common::kPlatformUnknown},
+//	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_NEW_OPCODES, Common::kPlatformUnknown},
 
 #ifndef DISABLE_SCUMM_7_8
 	/* Scumm Version 7 */
@@ -216,15 +215,15 @@ static const ScummGameSettings scumm_settings[] = {
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"puttputt", "Putt-Putt Joins the Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"puttputt", "Putt-Putt Joins the Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"puttmoon", "Putt-Putt Goes to the Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"puttmoon", "Putt-Putt Goes to the Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 
 #ifndef DISABLE_HE
@@ -549,11 +548,11 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins the Parade (Russian)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins the Parade (Russian)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformWindows},
-	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins the Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins the Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
 	  GF_USE_KEY, Common::kPlatformPC},
-	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins the Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins the Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
 	  GF_USE_KEY, Common::kPlatformPC},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins the Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -592,23 +591,23 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Putt-Putt and Pep's Dog on a Stick (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"1d05cd189e4908f79b57e78a4402f292", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"1d05cd189e4908f79b57e78a4402f292", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"49210e124e4c2b30f1290a9ef6306301", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"49210e124e4c2b30f1290a9ef6306301", "Monkey Island 1 (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"e98b982ceaf9d253d730bde8903233d6", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"e98b982ceaf9d253d730bde8903233d6", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"fc6b6148e80d67939d9a18697c0f626a", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"fc6b6148e80d67939d9a18697c0f626a", "Monkey Island 1 (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"ce6a4cef315b20fef58a95bc40a2d8d3", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"ce6a4cef315b20fef58a95bc40a2d8d3", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"aa7a07d94ae853f6460be4ce0a1bf530", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"aa7a07d94ae853f6460be4ce0a1bf530", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"1dd3c11ea4439adfe681e4e405b624e1", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"1dd3c11ea4439adfe681e4e405b624e1", "Monkey Island 1 (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"477dbafbd66a53c98416dc01aef019ad", "Monkey Island 1 (EGA It)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"477dbafbd66a53c98416dc01aef019ad", "Monkey Island 1 (EGA It)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"910e31cffb28226bd68c569668a0d6b4", "Monkey Island 1 (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_NATIVE,
+	{"910e31cffb28226bd68c569668a0d6b4", "Monkey Island 1 (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 	{"c666a998af90d81db447eccba9f72c8d", "Monkey Island 1 (Atari)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
@@ -913,6 +912,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	  _heversion(gs.heversion),
 	  _features(gs.features),
 	  _platform(gs.platform),
+	  _midi(gs.midi),
 	  _substResFileNameIndex(substResFileNameIndex),
 	  _substResFileNameIndexBundle(0),
 	  _debugger(0),
@@ -1179,7 +1179,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_haveActorSpeechMsg = false;
 	_useTalkAnims = false;
 	_defaultTalkDelay = 0;
-	_midiDriver = MD_NULL;
+	_musicType = MDT_NONE;
 	_tempMusic = 0;
 	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
@@ -1447,8 +1447,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
 	}
-
-	_midi = gs.midi;
 }
 
 ScummEngine::~ScummEngine() {
@@ -2117,10 +2115,30 @@ void ScummEngine_v99he::scummInit() {
 #endif
 
 void ScummEngine::setupMusic(int midi) {
-	_midiDriver = MidiDriver::detectMusicDriver(midi);
-	_native_mt32 = (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32));
+	int midiDriver = MidiDriver::detectMusicDriver(midi);
+	_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	
+	switch (midiDriver) {
+	case MD_NULL:
+		_musicType = MDT_NONE;
+		break;
+	case MD_PCSPK:
+	case MD_PCJR:
+		_musicType = MDT_PCSPK;
+		break;
+	case MD_TOWNS:
+		_musicType = MDT_TOWNS;
+		break;
+	case MD_ADLIB:
+		_musicType = MDT_ADLIB;
+		break;
+	default:
+		_musicType = MDT_MIDI;
+		break;
+	}
+	
 	// FIXME: MD_TOWNS should not be _midi_native in the first place!! iMuse code needs to be restructured.
-	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX) || (_midiDriver == MD_TOWNS))
+	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX) || (midiDriver == MD_TOWNS))
 		_enable_gs = false;
 	else
 		_enable_gs = ConfMan.getBool("enable_gs");
@@ -2129,10 +2147,9 @@ void ScummEngine::setupMusic(int midi) {
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed\n");
-		if (_midiDriver == MD_ADLIB ||
-				_midiDriver == MD_PCSPK ||
-				_midiDriver == MD_PCJR)	{
-			_midiDriver = MD_NULL;
+		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK)	{
+			midiDriver = MD_NULL;
+			_musicType = MDT_NONE;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver\n");
 		}
 	}
@@ -2154,22 +2171,24 @@ void ScummEngine::setupMusic(int midi) {
 	} else if ((_platform == Common::kPlatformAmiga) && (_version < 5)) {
 		_musicEngine = NULL;
 	} else if (_gameId == GID_MANIAC && (_version == 1)) {
-		_musicEngine = new Player_V1(this, _midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V1(this, midiDriver != MD_PCSPK);
 	} else if (_version <= 2) {
-		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);;
-	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && ((_version > 2) && (_version < 5))) {
-		_musicEngine = new Player_V2(this, _midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
+	} else if ((_musicType == MDT_PCSPK) && ((_version > 2) && (_version < 5))) {
+		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
 	} else if (_version > 2 && _heversion <= 61) {
-		MidiDriver *nativeMidiDriver = MidiDriver::createMidi(_midiDriver);
+		MidiDriver *nativeMidiDriver = 0;
+		MidiDriver *adlibMidiDriver = 0;
+
+		if (_musicType != MDT_ADLIB)
+			nativeMidiDriver = MidiDriver::createMidi(midiDriver);
 		if (nativeMidiDriver != NULL && _native_mt32)
-			nativeMidiDriver->property (MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		bool multi_midi = ConfMan.getBool("multi_midi") && _midiDriver != MD_NULL && (midi & MDT_ADLIB);
-		MidiDriver *adlibMidiDriver;
-		if (nativeMidiDriver == NULL || multi_midi) {
+			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
+		if (_musicType == MDT_ADLIB || multi_midi) {
 			adlibMidiDriver = MidiDriver_ADLIB_create(_mixer);
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_features & GF_SMALL_HEADER) ? 1 : 0);
-		} else
-			adlibMidiDriver = NULL;
+		}
 
 		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		if (_imuse) {

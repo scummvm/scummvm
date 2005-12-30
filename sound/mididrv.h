@@ -79,7 +79,7 @@ enum MidiDriverType {
  * A set of flags to be passed to detectMusicDriver() which can be used to
  * specify what kind of music driver is preferred / accepted.
  *
- * The flags (except for MDT_PREFER_NATIVE) indicate whether a given driver
+ * The flags (except for MDT_PREFER_MIDI) indicate whether a given driver
  * type is acceptable. E.g. the TOWNS music driver could be returned by
  * detectMusicDriver if and only if MDT_TOWNS is specified. 
  *
@@ -91,10 +91,7 @@ enum MidiDriverFlags {
 	MDT_ADLIB  = 1 << 1,      // Adlib: Maps to MD_ADLIB
 	MDT_TOWNS  = 1 << 2,      // FM-TOWNS: Maps to MD_TOWNS
 	MDT_MIDI   = 1 << 3,      // Real MIDI
-	MDT_PREFER_MIDI = 1 << 4, // Real MIDI output is preferred
-
-	MDT_NATIVE = MDT_MIDI,    // Alias for MDT_MIDI
-	MDT_PREFER_NATIVE = MDT_PREFER_MIDI // Alias for MDT_PREFER_MIDI
+	MDT_PREFER_MIDI = 1 << 4  // Real MIDI output is preferred
 };
 
 /**
@@ -118,6 +115,9 @@ struct MidiDriverDescription {
  */
 class MidiDriver {
 public:
+	/** Find the music driver matching the given driver name/description. */
+	static const MidiDriverDescription &findMusicDriver(const Common::String &str);
+
 	/** Convert a string containing a music driver name into MIDI Driver type. */
 	static int parseMusicDriver(const Common::String &str);
 
@@ -129,7 +129,7 @@ public:
 
 	static MidiDriver *createMidi(int midiDriver);
 
-	static int detectMusicDriver(int midiFlags);
+	static int detectMusicDriver(int flags);
 
 
 public:

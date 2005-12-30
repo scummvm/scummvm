@@ -1362,7 +1362,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 	switch (basetag) {
 	case MKID('MIDI'):
 	case MKID('iMUS'):
-		if (_midiDriver != MD_PCSPK && _midiDriver != MD_PCJR) {
+		if (_musicType != MDT_PCSPK) {
 			_fileHandle->seek(-8, SEEK_CUR);
 			_fileHandle->read(res.createResource(type, idx, total_size + 8), total_size + 8);
 			return 1;
@@ -1386,7 +1386,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 				break;
 			case MKID('ADL '):
 				pri = 1;
-				if (_midiDriver == MD_ADLIB)
+				if (_musicType == MDT_ADLIB)
 					pri = 10;
 				break;
 			case MKID('AMI '):
@@ -1405,12 +1405,12 @@ int ScummEngine::readSoundResource(int type, int idx) {
 				break;
 			case MKID('SPK '):
 				pri = -1;
-//				if (_midiDriver == MD_PCSPK)
+//				if (_musicType == MDT_PCSPK)
 //					pri = 11;
 				break;
 			}
 
-			if ((_midiDriver == MD_PCSPK || _midiDriver == MD_PCJR) && pri != 11)
+			if ((_musicType == MDT_PCSPK) && pri != 11)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(TO_BE_32(tag)), size, pri);
@@ -2333,7 +2333,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		}
 	}
 
-	if ((_midiDriver == MD_ADLIB) && ad_offs != 0) {
+	if ((_musicType == MDT_ADLIB) && ad_offs != 0) {
 		// AD resources have a header, instrument definitions and one MIDI track.
 		// We build an 'ADL ' resource from that:
 		//   8 bytes resource header
@@ -2358,7 +2358,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 			free(ptr);
 			return 1;
 		}
-	} else if (((_midiDriver == MD_PCJR) || (_midiDriver == MD_PCSPK)) && wa_offs != 0) {
+	} else if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
 			_fileHandle->read(res.createResource(type, idx, wa_size), wa_size);
