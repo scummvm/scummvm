@@ -603,7 +603,7 @@ Spy Fox 3: Operation Ozone
 
 	Demo	All	en	ebd0b2c8a387f18887282afe6cad894a	spyozon	Kirben
 
-Spy Fox in Cheese Chase Game
+Spy Fox in Cheese Chase
 	CD	All	en	589601b676c98b1c0c987bc031ab68b3	chase	Kirben
 	CD	All	en	90c755e1c9b9b8a4129d37b2259d0655	chase	Kirben
 	CD	Windows	ru	9cdd327c1034c046cb595d251c44da2f	chase	sev

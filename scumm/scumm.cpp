@@ -193,7 +193,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm Version 6 */
-	{"tentacle", "Day Of The Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
+	{"tentacle", "Day of the Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformPC},
 
 	{"samnmax", "Sam & Max", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_NATIVE,
@@ -216,9 +216,9 @@ static const ScummGameSettings scumm_settings[] = {
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"puttputt", "Putt-Putt Joins The Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"puttputt", "Putt-Putt Joins the Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"puttmoon", "Putt-Putt Goes To The Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
+	{"puttmoon", "Putt-Putt Goes to the Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
@@ -278,13 +278,13 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"spyfox", "Spyfox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
+	{"spyfox", "Spy Fox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 95, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"chase", "Spy Fox in Cheese Chase Game", GID_HEGAME, 6, 95, MDT_NONE,
+	{"chase", "Spy Fox in Cheese Chase", GID_HEGAME, 6, 95, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
@@ -309,7 +309,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"puttcircus", "Putt-Putt Joins the Circus", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"spyfox2", "Spyfox 2: Some Assembly Required", GID_HEGAME, 6, 99, MDT_NONE,
+	{"spyfox2", "Spy Fox 2: Some Assembly Required", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
 	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
@@ -325,7 +325,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
 	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"spyozon", "Spyfox 3: Operation Ozone", GID_HEGAME, 6, 99, MDT_NONE,
+	{"spyozon", "Spy Fox 3: Operation Ozone", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
 	{"baseball2001", "Backyard Baseball 2001", GID_HEGAME, 6, 99, MDT_NONE,
@@ -549,15 +549,15 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins The Parade (Russian)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins the Parade (Russian)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	 GF_USE_KEY, Common::kPlatformWindows},
-	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins The Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins the Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	  GF_USE_KEY, Common::kPlatformPC},
-	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins The Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
+	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins the Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_NATIVE,
 	  GF_USE_KEY, Common::kPlatformPC},
-	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins The Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins the Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins The Parade (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins the Parade (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
@@ -645,22 +645,22 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"c13225cb1bbd3bc9fe578301696d8021", "Monkey Island 1 (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
 
-	{"3de99ef0523f8ca7958faa3afccd035a", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"3de99ef0523f8ca7958faa3afccd035a", "Spy Fox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"58436e634f4fae1d9973591c2ffa1fcb", "Spyfox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"58436e634f4fae1d9973591c2ffa1fcb", "Spy Fox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"9bda5fee51d2fda5253d02c642016bf4", "Spyfox 1: Dry Cereal (Updated Dutch)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"9bda5fee51d2fda5253d02c642016bf4", "Spy Fox 1: Dry Cereal (Updated Dutch)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"a28135a7ade38cc0208b04507c46efd1", "Spyfox 1: Dry Cereal (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"a28135a7ade38cc0208b04507c46efd1", "Spy Fox 1: Dry Cereal (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"72ac6bc980d5101c2142189d746bd62f", "Spyfox 1: Dry Cereal (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"72ac6bc980d5101c2142189d746bd62f", "Spy Fox 1: Dry Cereal (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // SPYFoxDC
-	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spyfox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spy Fox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"4edbf9d03550f7ba01e7f34d69b678dd", "Spyfox 1: Dry Cereal (Updated Dutch Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"4edbf9d03550f7ba01e7f34d69b678dd", "Spy Fox 1: Dry Cereal (Updated Dutch Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
-	{"90c755e1c9b9b8a4129d37b2259d0655", "Spy Fox in Cheese Chase Game (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"90c755e1c9b9b8a4129d37b2259d0655", "Spy Fox in Cheese Chase (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"b23f7cd7c304d7dff08e92a96120d5b4", "Zak McKracken and the Alien Mindbenders (v1)", GID_ZAK, 1, 0, MDT_PCSPK,
