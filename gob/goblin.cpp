@@ -720,11 +720,11 @@ void gob_adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1;
-		    (i + gob_pressedMapX) < 26
+		    (i + gob_pressedMapX) < kMapWidth
 		    && map_passMap[gob_pressedMapY][gob_pressedMapX + i] == 0;
 		    i++);
 
-		if (gob_pressedMapX + i < 26) {
+		if (gob_pressedMapX + i < kMapWidth) {
 			deltaPix = (i * 12) - (posX % 12);
 			if (resDelta == -1 || deltaPix < resDeltaPix) {
 				resDeltaPix = deltaPix;
@@ -734,11 +734,11 @@ void gob_adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1;
-		    (i + gob_pressedMapY) < 28
+		    (i + gob_pressedMapY) < kMapHeight
 		    && map_passMap[gob_pressedMapY + i][gob_pressedMapX] == 0;
 		    i++);
 
-		if (gob_pressedMapY + i < 28) {
+		if (gob_pressedMapY + i < kMapHeight) {
 			deltaPix = (i * 6) - (posY % 6);
 			if (resDelta == -1 || deltaPix < resDeltaPix) {
 				resDeltaPix = deltaPix;
@@ -790,11 +790,11 @@ void gob_adjustTarget(void) {
 		    && map_itemsMap[gob_pressedMapY - 1][gob_pressedMapX] !=
 		    0) {
 			gob_pressedMapY--;
-		} else if (gob_pressedMapX < 25
+		} else if (gob_pressedMapX < kMapWidth - 1
 		    && map_itemsMap[gob_pressedMapY][gob_pressedMapX + 1] !=
 		    0) {
 			gob_pressedMapX++;
-		} else if (gob_pressedMapX < 25 && gob_pressedMapY > 0
+		} else if (gob_pressedMapX < kMapWidth - 1 && gob_pressedMapY > 0
 		    && map_itemsMap[gob_pressedMapY - 1][gob_pressedMapX +
 			1] != 0) {
 			gob_pressedMapY--;
@@ -2089,8 +2089,8 @@ void gob_pickItem(int16 indexToPocket, int16 idToPocket) {
 	gob_itemIndInPocket = indexToPocket;
 	gob_itemIdInPocket = idToPocket;
 
-	for (y = 0; y < 28; y++) {
-		for (x = 0; x < 26; x++) {
+	for (y = 0; y < kMapHeight; y++) {
+		for (x = 0; x < kMapWidth; x++) {
 			if (gob_itemByteFlag == 1) {
 				if (((map_itemsMap[y][x] & 0xff00) >> 8) ==
 				    idToPocket)
@@ -2156,7 +2156,7 @@ void gob_placeItem(int16 indexInPocket, int16 idInPocket) {
 	}
 
 	if (lookDir == 4) {
-		if (xPos < 25) {
+		if (xPos < kMapWidth - 1) {
 			map_placeItem(xPos + 1, yPos, idInPocket);
 
 			if (yPos > 0) {
@@ -2205,8 +2205,8 @@ void gob_swapItems(int16 indexToPick, int16 idToPick) {
 	gob_itemIdInPocket = idToPick;
 
 	if (gob_itemByteFlag == 0) {
-		for (y = 0; y < 28; y++) {
-			for (x = 0; x < 26; x++) {
+		for (y = 0; y < kMapHeight; y++) {
+			for (x = 0; x < kMapWidth; x++) {
 				if ((map_itemsMap[y][x] & 0xff) == idToPick)
 					map_itemsMap[y][x] =
 					    (map_itemsMap[y][x] & 0xff00) +
@@ -2215,8 +2215,8 @@ void gob_swapItems(int16 indexToPick, int16 idToPick) {
 		}
 	} else {
 
-		for (y = 0; y < 28; y++) {
-			for (x = 0; x < 26; x++) {
+		for (y = 0; y < kMapHeight; y++) {
+			for (x = 0; x < kMapWidth; x++) {
 				if (((map_itemsMap[y][x] & 0xff00) >> 8) ==
 				    idToPick)
 					map_itemsMap[y][x] =
@@ -2594,8 +2594,8 @@ void gob_interFunc(void) {
 			item = VAR(item);
 		}
 
-		for (y = 0; y < 28; y++) {
-			for (x = 0; x < 26; x++) {
+		for (y = 0; y < kMapHeight; y++) {
+			for (x = 0; x < kMapWidth; x++) {
 				if ((map_itemsMap[y][x] & 0xff) == item) {
 					map_itemsMap[y][x] &= 0xff00;
 				} else if (((map_itemsMap[y][x] & 0xff00) >> 8)
@@ -2605,7 +2605,7 @@ void gob_interFunc(void) {
 			}
 		}
 
-		if (xPos < 25) {
+		if (xPos < kMapWidth - 1) {
 			if (yPos > 0) {
 				if ((map_itemsMap[yPos][xPos] & 0xff00) != 0 ||
 				    (map_itemsMap[yPos - 1][xPos] & 0xff00) !=
@@ -2712,14 +2712,14 @@ void gob_interFunc(void) {
 			break;
 		}
 
-		if (xPos < 24 && map_passMap[yPos][xPos + 2] == 1) {
+		if (xPos < kMapWidth - 2 && map_passMap[yPos][xPos + 2] == 1) {
 			map_itemPoses[item].x = xPos + 2;
 			map_itemPoses[item].y = yPos;
 			map_itemPoses[item].orient = 0;
 			break;
 		}
 
-		if (xPos < 25 && map_passMap[yPos][xPos + 1] == 1) {
+		if (xPos < kMapWidth - 1 && map_passMap[yPos][xPos + 1] == 1) {
 			map_itemPoses[item].x = xPos + 1;
 			map_itemPoses[item].y = yPos;
 			map_itemPoses[item].orient = 0;

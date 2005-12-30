@@ -31,8 +31,8 @@
 
 namespace Gob {
 
-int8 map_passMap[28][26];	// [y][x]
-int16 map_itemsMap[28][26];	// [y][x]
+int8 map_passMap[kMapHeight][kMapWidth];	// [y][x]
+int16 map_itemsMap[kMapHeight][kMapWidth];	// [y][x]
 
 Map_Point map_wayPoints[40];
 int16 map_nearestWayPoint = 0;
@@ -68,7 +68,7 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	if (x0 == x1 && y0 == y1)
 		return 0;
 
-	if (x1 < 0 || x1 > 25 || y1 < 0 || y1 > 27)
+	if (!(x1 >= 0 && x1 < kMapWidth && y1 >= 0 && y1 < kMapHeight))
 		return 0;
 
 	if (y1 > y0)
@@ -108,7 +108,7 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	if (dir == kRight) {
-		if (x0 + 1 < 26 && map_passMap[y0][x0 + 1] != 0)
+		if (x0 + 1 < kMapWidth && map_passMap[y0][x0 + 1] != 0)
 			return kDirE;
 		return 0;
 	}
@@ -121,7 +121,7 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 		    && map_passMap[y0 - 1][x0 - 1] != 0)
 			return kDirNW;
 
-		if (y0 - 1 >= 0 && x0 + 1 < 26
+		if (y0 - 1 >= 0 && x0 + 1 < kMapWidth
 		    && map_passMap[y0 - 1][x0 + 1] != 0)
 			return kDirNE;
 
@@ -129,14 +129,14 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	if (dir == kDown) {
-		if (y0 + 1 < 28 && map_passMap[y0 + 1][x0] != 0)
+		if (y0 + 1 < kMapHeight && map_passMap[y0 + 1][x0] != 0)
 			return kDirS;
 
-		if (y0 + 1 < 28 && x0 - 1 >= 0
+		if (y0 + 1 < kMapHeight && x0 - 1 >= 0
 		    && map_passMap[y0 + 1][x0 - 1] != 0)
 			return kDirSW;
 
-		if (y0 + 1 < 28 && x0 + 1 < 26
+		if (y0 + 1 < kMapHeight && x0 + 1 < kMapWidth
 		    && map_passMap[y0 + 1][x0 + 1] != 0)
 			return kDirSE;
 
@@ -144,28 +144,28 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	if (dir == (kRight | kUp)) {
-		if (y0 - 1 >= 0 && x0 + 1 < 26
+		if (y0 - 1 >= 0 && x0 + 1 < kMapWidth
 		    && map_passMap[y0 - 1][x0 + 1] != 0)
 			return kDirNE;
 
 		if (y0 - 1 >= 0 && map_passMap[y0 - 1][x0] != 0)
 			return kDirN;
 
-		if (x0 + 1 < 26 && map_passMap[y0][x0 + 1] != 0)
+		if (x0 + 1 < kMapWidth && map_passMap[y0][x0 + 1] != 0)
 			return kDirE;
 
 		return 0;
 	}
 
 	if (dir == (kRight | kDown)) {
-		if (x0 + 1 < 26 && y0 + 1 < 28
+		if (x0 + 1 < kMapWidth && y0 + 1 < kMapHeight
 		    && map_passMap[y0 + 1][x0 + 1] != 0)
 			return kDirSE;
 
-		if (y0 + 1 < 28 && map_passMap[y0 + 1][x0] != 0)
+		if (y0 + 1 < kMapHeight && map_passMap[y0 + 1][x0] != 0)
 			return kDirS;
 
-		if (x0 + 1 < 26 && map_passMap[y0][x0 + 1] != 0)
+		if (x0 + 1 < kMapWidth && map_passMap[y0][x0 + 1] != 0)
 			return kDirE;
 
 		return 0;
@@ -186,11 +186,11 @@ int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	}
 
 	if (dir == (kLeft | kDown)) {
-		if (x0 - 1 >= 0 && y0 + 1 < 28
+		if (x0 - 1 >= 0 && y0 + 1 < kMapHeight
 		    && map_passMap[y0 + 1][x0 - 1] != 0)
 			return kDirSW;
 
-		if (y0 + 1 < 28 && map_passMap[y0 + 1][x0] != 0)
+		if (y0 + 1 < kMapHeight && map_passMap[y0 + 1][x0] != 0)
 			return kDirS;
 
 		if (x0 - 1 >= 0 && map_passMap[y0][x0 - 1] != 0)
@@ -211,8 +211,8 @@ int16 map_findNearestWayPoint(int16 x, int16 y) {
 
 	for (i = 0; i < 40; i++) {
 		if (map_wayPoints[i].x < 0 ||
-		    map_wayPoints[i].x > 25 ||
-		    map_wayPoints[i].y < 0 || map_wayPoints[i].y > 27)
+		    map_wayPoints[i].x >= kMapWidth ||
+		    map_wayPoints[i].y < 0 || map_wayPoints[i].y >= kMapHeight)
 			return -1;
 
 		tmp = ABS(x - map_wayPoints[i].x) + ABS(y - map_wayPoints[i].y);
@@ -454,10 +454,10 @@ void map_loadMapObjects(char *avjFile) {
 		data_closeData(handle);
 		map_avoDataPtr = data_getData(avoName);
 		dataBuf = map_avoDataPtr;
-		map_loadDataFromAvo((char *)map_passMap, 28 * 26);
+		map_loadDataFromAvo((char *)map_passMap, kMapHeight * kMapWidth);
 
-		for (y = 0; y < 28; y++) {
-			for (x = 0; x < 26; x++) {
+		for (y = 0; y < kMapHeight; y++) {
+			for (x = 0; x < kMapWidth; x++) {
 				map_loadDataFromAvo(&item, 1);
 				map_itemsMap[y][x] = item;
 			}

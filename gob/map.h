@@ -54,6 +54,11 @@ typedef struct Map_Point {
 
 #pragma END_PACK_STRUCTS
 
+enum {
+	kMapWidth  = 26,
+	kMapHeight = 28
+};
+
 extern int8 map_passMap[28][26];	// [y][x]
 extern int16 map_itemsMap[28][26];	// [y][x]
 extern Map_Point map_wayPoints[40];
