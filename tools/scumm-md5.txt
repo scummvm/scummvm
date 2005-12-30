@@ -307,15 +307,15 @@ Backyard Soccer MLS Edition
 Backyard Soccer 2004
 	CD	All	en	c4ffae9fac495475d6bc3343ccc8faf9	Soccer2004	Kirben, sev
 
-Big Thinkers Kindergarten
-	CD	All	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
-
-	Demo	All	en	695fe0b3963333b7e15b37514db3c745	thinkerk	khalek, sev
-
 Big Thinkers First Grade
 	CD	All	en	5c21fc49aee8f46e58fef21579e614a1	thinker1	Kirben
 
 	Demo	Windows	en	0f5935bd5e88ba6f09e558d64459746d	thinker1	khalek
+
+Big Thinkers Kindergarten
+	CD	All	en	92fc0073a4cf259ff36070ecb8628ba8	thinkerk	Kirben
+
+	Demo	All	en	695fe0b3963333b7e15b37514db3c745	thinkerk	khalek, sev
 
 Blue's ABC Time
 	Demo	All	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
@@ -398,15 +398,15 @@ Freddi Fish 5: The Case of the Creature of Coral Cave
 	Demo	All	nl	6b257bb2827dd894b8109a50a1a18b5a	freddicove	Kirben, sev
 	Demo	All	en	45082a5c9f42ba14dacfe1fdeeba819d	freddicove	sev
 
+Freddi Fish and Luther's Maze Madness
+	CD	All	en	4dbff3787aedcd96b0b325f2d92d7ad9	maze	Kirben
+	CD	All	en	4f04b321a95d4315ce6d65f8e1dd0368	maze	Kirben
+
 Freddi Fish and Luther's Water Worries
 	CD	All	en	4ba37f835be11a59d969f90f272f575b	water	Kirben
 	CD	All	en	f1b0e0d587b85052de5534a3847e68fe	water	Joachim Eberhard
 	CD	Windows	ru	2012f854d83d9cc6f73b2b544cd8bbf8	water	sev
 	CD	Windows	ru	6271130f440066830eca9056c1d7926f	water	sev
-
-Freddi Fish and Luther's Maze Madness
-	CD	All	en	4dbff3787aedcd96b0b325f2d92d7ad9	maze	Kirben
-	CD	All	en	4f04b321a95d4315ce6d65f8e1dd0368	maze	Kirben
 
 Freddi Fish's One-Stop Fun Shop
 	CD	All	en	16542a7342a918bfe4ba512007d36c47	FreddisFunShop	Kirben
