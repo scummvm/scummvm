@@ -59,8 +59,8 @@ enum {
 	kMapHeight = 28
 };
 
-extern int8 map_passMap[28][26];	// [y][x]
-extern int16 map_itemsMap[28][26];	// [y][x]
+extern int8 map_passMap[kMapHeight][kMapWidth];	// [y][x]
+extern int16 map_itemsMap[kMapHeight][kMapWidth];	// [y][x]
 extern Map_Point map_wayPoints[40];
 extern int16 map_nearestWayPoint;
 extern int16 map_nearestDest;
