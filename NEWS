@@ -19,39 +19,39 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      should fix alignment issues reported on some platforms.
 
 0.8.1 (????-??-??)
-  General:
-    - Fixed crash when trying to apply aspect-ratio correction to games that
-      cannot use it.
-    - Fixed potential security vulnerability with oversized PATH environment
-      variables.
+ General:
+   - Fixed crash when trying to apply aspect-ratio correction to games that
+     cannot use it.
+   - Fixed potential security vulnerability with oversized PATH environment
+     variables.
 
-  SCUMM:
-     -Fixed mouse button states in COMI.
-     -Fixed subtitles glitches in HE Games.
-    - Improved support for international versions of HE games.
-    - Improved support for Macintosh versions of games.
+ SCUMM:
+   - Fixed mouse button states in COMI.
+   - Fixed subtitles glitches in HE Games.
+   - Improved support for international versions of HE games.
+   - Improved support for Macintosh versions of games.
 
-  Simon:
-     -Added Polish support for Simon the Sorcerer 2.
-     -Fixed fades during ride to goblins camp in Simon the Sorcerer 2.
-     -Fixed palette delay at the end of Simon the Sorcerer 1.
-     -Fixed sound looping in Windows version of Simon the Sorcerer 2.
+ Simon:
+   - Added Polish support for Simon the Sorcerer 2.
+   - Fixed fades during ride to goblins camp in Simon the Sorcerer 2.
+   - Fixed palette delay at the end of Simon the Sorcerer 1.
+   - Fixed sound looping in Windows version of Simon the Sorcerer 2.
 
-  Sword1:
-    - Fixed a bug where looping sounds would keep playing during cutscenes or
-      when displaying any form of control panel dialog.
-    - The save game dialog would erroneously claim an I/O error occurred if the
-      savegame list had unused slots, and savegames were compressed.
-    - Fixed a scrolling bug which caused the finale sequence to be displayed
-      incorrectly.
+ Sword1:
+   - Fixed a bug where looping sounds would keep playing during cutscenes or
+     when displaying any form of control panel dialog.
+   - The save game dialog would erroneously claim an I/O error occurred if the
+     savegame list had unused slots, and savegames were compressed.
+   - Fixed a scrolling bug which caused the finale sequence to be displayed
+     incorrectly.
 
-  Sword2:
-    - Fixes and cleanups to the end credits. The German credits work now.
+ Sword2:
+   - Fixes and cleanups to the end credits. The German credits work now.
 
-  PSP Port:
-    - Fixed a bug that caused Broken Sword 1, and games that use ripped CDDA
-      tracks (most notably the CD version of Monkey Island 1), to stop
-      functioning properly after a while.
+ PSP Port:
+   - Fixed a bug that caused Broken Sword 1, and games that use ripped CDDA
+     tracks (most notably the CD version of Monkey Island 1), to stop
+     functioning properly after a while.
 
 0.8.0 (2005-10-30)
  New Games:
