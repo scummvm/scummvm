@@ -108,23 +108,44 @@ void MidiDriver_CoreMIDI::send(uint32 b) {
 	assert(mOutPort != NULL);
 	assert(mDest != NULL);
 
+	// Extract the MIDI data
 	byte status_byte = (b & 0x000000FF);
 	byte first_byte = (b & 0x0000FF00) >> 8;
 	byte second_byte = (b & 0x00FF0000) >> 16;
 
+	// Generate a single MIDI packet with that data
 	MIDIPacketList packetList;
 	MIDIPacket *packet = &packetList.packet[0];
 
 	packetList.numPackets = 1;
 
 	packet->timeStamp = 0;
-	packet->length = 3;
 	packet->data[0] = status_byte;
 	packet->data[1] = first_byte;
 	packet->data[2] = second_byte;
 
-	MIDISend(mOutPort, mDest, &packetList);
+	// Compute the correct length of the MIDI command. This is important,
+	// else things may screw up badly...
+	switch (status_byte & 0xF0) {
+	case 0x80:	// Note Off
+	case 0x90:	// Note On
+	case 0xA0:	// Polyphonic Aftertouch
+	case 0xB0:	// Controller Change
+	case 0xE0:	// Pitch Bending
+		packet->length = 3;
+		break;
+	case 0xC0:	// Programm Change
+	case 0xD0:	// Monophonic Aftertouch
+		packet->length = 2;
+		break;
+	default:
+		warning("CoreMIDI driver encountered unsupported status byte: 0x%02x", status_byte);
+		packet->length = 3;
+		break;
+	}
 
+	// Finally send it out to the synthesizer.
+	MIDISend(mOutPort, mDest, &packetList);
 }
 
 void MidiDriver_CoreMIDI::sysEx(byte *msg, uint16 length) {
