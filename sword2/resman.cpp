@@ -169,7 +169,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	debug(1, "%d resources in %d cluster files", _totalResFiles, _totalClusters);
 	for (i = 0; i < _totalClusters; i++)
-		debug(2, "filename of cluster %d: -%s", i, _resFiles[i].fileName);
+		debug(2, "filename of cluster %d: -%s (%d)", i, _resFiles[i].fileName, _resFiles[i].cd);
 
 	_resList = (Resource *)malloc(_totalResFiles * sizeof(Resource));
 
@@ -246,7 +246,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 		file->read(_resList[res].ptr, len);
 
-		debug(3, "Loaded resource '%s' from CD %d", fetchName(_resList[res].ptr), getCD());
+		debug(3, "Loaded resource '%s' from '%s' on CD %d (%d)", fetchName(_resList[res].ptr), _resFiles[cluFileNum].fileName, getCD(), _resFiles[cluFileNum].cd);
 
 		if (dump) {
 			char buf[256];
