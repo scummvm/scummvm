@@ -9,14 +9,24 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
       variables.
 
   SCUMM:
-    - Improved support of some German HE games
+     -Fixed mouse button states in COMI.
+     -Fixed subtitles glitches in HE Games.
+    - Improved support for international versions of HE games.
+    - Improved support for Macintosh versions of games.
 
+  Simon:
+     -Added Polish support for Simon the Sorcerer 2.
+     -Fixed fades during ride to goblins camp in Simon the Sorcerer 2.
+     -Fixed palette delay at the end of Simon the Sorcerer 1.
+     -Fixed sound looping in Windows version of Simon the Sorcerer 2.
 
   Sword1:
     - Fixed a bug where looping sounds would keep playing during cutscenes or
       when displaying any form of control panel dialog.
     - The save game dialog would erroneously claim an I/O error occurred if the
       savegame list had unused slots, and savegames were compressed.
+    - Fixed a scrolling bug which caused the finale sequence to be displayed
+      incorrectly.
 
   Sword2:
     - Fixes and cleanups to the end credits. The German credits work now.
@@ -30,8 +40,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
  New Games:
    - Added SAGA engine (for the games "I Have No Mouth and I Must Scream"
      and "Inherit the Earth").
-   - Added Gob engine (for the Goblins series). Currently, only the first of
-     the Goblins games is supported.
+   - Added Gob engine (for the Goblins series). Currently, only the
+     first of the Goblins games is supported.
 
  New Ports:
    - Added PlayStation 2 port.
@@ -41,8 +51,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added fixes for OS/2 port.
 
  General:
-   - Reworked cursor handling in SDL backend. Now cursors can have their own
-     palette and scaling. This is used by Humongous Entertainment games now.
+   - Reworked cursor handling in SDL backend. Now cursors can have
+     their own palette and scaling. This is used by Humongous
+     Entertainment games now.
    - Added FluidSynth MIDI driver.
    - Added GUI for the "soundfont" setting. (Currently only used by the
      CoreAudio and FluidSynth MIDI drivers.)
@@ -54,34 +65,36 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Added support for Mac Humongous Entertainment titles.
    - Added support for multiple filenames/versions using a single target.
    - Implemented CGA and Hercules render modes in early LEC titles.
-   - Added dialogs which are shown when you modify the talkspeed or music
-     volume using hotkeys.
+   - Added dialogs which are shown when you modify the talkspeed or
+     music volume using hotkeys.
    - Added support for NES version of Maniac Mansion.
    - Added thumbnail support for savegames.
    - Broke compatibility with HE savegame (HE v71 and upwards only).
    - Added possibility to disable building of HE and SCUMM v7 & v8 games
      support.
-   - Fixed the last few known music glitches in Sam & Max. (There are still
-     some - probably - minor missing features though.)
+   - Fixed the last few known music glitches in Sam & Max. (There are
+     still some - probably - minor missing features though.)
    - Added support for Commodore64 version of Zak McKracken
-   - Eliminated all demos targets and platform-specific targets. Config file
-     is autoupdated.
+   - Eliminated all demos targets and platform-specific targets. Config
+     file is autoupdated.
 
  Sword2:
    - Made the resource manager expire resources more intelligently.
-   - Improved performance when playing the game from CD instead of hard disk.
+   - Improved performance when playing the game from CD instead of hard
+     disk.
    - Simplified sound effects handling. Again.
    - Code cleanups and restructuring.
-   - Fixed long-standing bug in decompressing sounds from the speech/music CLU
-     files. It was generating one sample too many, which could be heard as a
-     very slight popping noise at the end of some sounds. Files that have been
-     compressed with older versions of compress_sword2 will, of course, still
-     have the same error. You may want to regenerate them.
+   - Fixed long-standing bug in decompressing sounds from the
+     speech/music CLU files. It was generating one sample too many,
+     which could be heard as a very slight popping noise at the end of
+     some sounds. Files that have been compressed with older versions
+     of compress_sword2 will, of course, still have the same error. You
+     may want to regenerate them.
 
 0.7.1 (2005-03-27)
  General:
-   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we forgot to
-     put it into the NEWS file :-).
+   - Added a MT-32 emulator. (It was actually added in 0.7.0 but we
+     forgot to put it into the NEWS file :-).
    - Less memory-hungry MPEG movie playback for the Broken Sword games.
 
  SCUMM:
