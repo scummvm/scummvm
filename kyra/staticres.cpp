@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 9
+#define RESFILE_VERSION 10
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -238,6 +238,9 @@ void KyraEngine::res_loadResources(int type) {
 		
 		res_loadLangTable("WISPJEWEL.", &resFile, (byte***)&_wispJewelStrings, &_wispJewelStrings_Size, loadNativeLanguage);
 		res_loadLangTable("MAGICJEWEL.", &resFile, (byte***)&_magicJewelString, &_magicJewelString_Size, loadNativeLanguage);
+		
+		res_loadLangTable("FLASKFULL.", &resFile, (byte***)&_flaskFull, &_fullFlask_Size, loadNativeLanguage);
+		res_loadLangTable("FULLFLASK.", &resFile, (byte***)&_fullFlask, &_fullFlask_Size, loadNativeLanguage);
 	}
 
 #undef loadRooms
@@ -344,6 +347,9 @@ void KyraEngine::res_unloadResources(int type) {
 		delete [] _brandonStoneTable;
 		_brandonStoneTable = 0;
 		_brandonStoneTableSize = 0;
+		
+		res_freeLangTable(&_flaskFull, &_flaskFull_Size);
+		res_freeLangTable(&_fullFlask, &_fullFlask_Size);
 	}
 }
 

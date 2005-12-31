@@ -189,9 +189,18 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	_itemList_Size = _takenList_Size = _placedList_Size = _droppedList_Size = _noDropList_Size = 0;
 	_putDownFirst = _waitForAmulet = _blackJewel = _poisonGone = _healingTip = 0;
 	_putDownFirst_Size = _waitForAmulet_Size = _blackJewel_Size = _poisonGone_Size = _healingTip_Size = 0;
+	_thePoison = _fluteString = _wispJewelStrings = _magicJewelString = _flaskFull = _fullFlask = 0;
+	_thePoison_Size = _fluteString_Size = _wispJewelStrings_Size = 0;
+	_magicJewelString_Size = _flaskFull_Size = _fullFlask_Size = 0;
 	
 	_defaultShapeTable = _healingShapeTable = _healingShape2Table = 0;
 	_defaultShapeTableSize = _healingShapeTableSize = _healingShape2TableSize = 0;
+	_posionDeathShapeTable = _fluteAnimShapeTable = 0;
+	_posionDeathShapeTableSize = _fluteAnimShapeTableSize = 0;
+	_winterScrollTable = _winterScroll1Table = _winterScroll2Table = 0;
+	_winterScrollTableSize = _winterScroll1TableSize = _winterScroll2TableSize = 0;
+	_drinkAnimationTable = _brandonToWispTable = _magicAnimationTable = _brandonStoneTable = 0;
+	_drinkAnimationTableSize = _brandonToWispTableSize = _magicAnimationTableSize = _brandonStoneTableSize = 0;
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -352,6 +361,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_noDrawShapesFlag = 0;
 
 	_cauldronState = 0;
+	_crystalState[0] = _crystalState[1] = -1;
 
 	_brandonStatusBit = 0;
 	_brandonStatusBit0x02Flag = _brandonStatusBit0x20Flag = 10;
@@ -1414,6 +1424,78 @@ void KyraEngine::seq_dispelMagicAnimation() {
 		delayWithTicks(10);
 	}
 	resetBrandonAnimSeqSize();
+	_currentCharacter->currentAnimFrame = 7;
+	animRefreshNPC(0);
+	freeShapes123();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
+	debug(9, "seq_fillFlaskWithWater(%d, %d)", item, type);
+	int newItem = -1;
+	static const uint8 flaskTable1[] = { 0x46, 0x48, 0x4A, 0x4C };
+	static const uint8 flaskTable2[] = { 0x47, 0x49, 0x4B, 0x4D };
+	
+	if (item >= 60 && item <= 77) {
+		assert(_flaskFull);
+		characterSays(_flaskFull[0], 0, -2);
+	} else if (item == 78) {
+		assert(type >= 0 && type < ARRAYSIZE(flaskTable1));
+		newItem = flaskTable1[type];
+	} else if (item == 79) {
+		assert(type >= 0 && type < ARRAYSIZE(flaskTable2));
+		newItem = flaskTable2[type];
+	}
+	
+	if (newItem == -1)
+		return;
+	
+	_screen->hideMouse();
+	setMouseItem(newItem);
+	_screen->showMouse();
+	_itemInHand = newItem;
+	assert(_fullFlask);
+	assert(type < _fullFlask_Size && type >= 0);
+	characterSays(_fullFlask[type], 0, -2);
+}
+
+void KyraEngine::seq_playDrinkPotionAnim(int unk1, int unk2, int flags) {
+	debug(9, "seq_playDrinkPotionAnim(%d, %d, %d)", unk1, unk2, flags);
+	// XXX
+	_screen->hideMouse();
+	checkAmuletAnimFlags();
+	_currentCharacter->facing = 5;
+	animRefreshNPC(0);
+	assert(_drinkAnimationTable);
+	setupShapes123(_drinkAnimationTable, 9, flags);
+	setBrandonAnimSeqSize(5, 54);
+	
+	for (int i = 123; i <= 131; ++i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(5);
+	}	
+	// snd_playSoundEffect(0x34);
+	for (int i = 0; i < 2; ++i) {
+		_currentCharacter->currentAnimFrame = 130;
+		animRefreshNPC(0);
+		delayWithTicks(7);
+		_currentCharacter->currentAnimFrame = 131;
+		animRefreshNPC(0);
+		delayWithTicks(7);
+	}
+	
+	if (unk2) {
+		// XXX
+	}
+	
+	for (int i = 131; i >= 123; --i) {
+		_currentCharacter->currentAnimFrame = i;
+		animRefreshNPC(0);
+		delayWithTicks(5);
+	}
+	
+	resetBrandonAnimSeqSize();	
 	_currentCharacter->currentAnimFrame = 7;
 	animRefreshNPC(0);
 	freeShapes123();

@@ -573,6 +573,8 @@ protected:
 	void seq_makeBrandonNormal2();
 	void seq_makeBrandonWisp();
 	void seq_dispelMagicAnimation();
+	void seq_fillFlaskWithWater(int item, int type);
+	void seq_playDrinkPotionAnim(int unk1, int unk2, int flags);
 
 	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
 
@@ -686,6 +688,7 @@ protected:
 	int8 _foyerItemTable[3];
 	
 	int8 _cauldronState;
+	int8 _crystalState[2];
 
 	uint16 _brandonStatusBit;
 	int _brandonStatusBit0x02Flag;
@@ -805,6 +808,8 @@ protected:
 	char **_fluteString;
 	char **_wispJewelStrings;
 	char **_magicJewelString;
+	char **_flaskFull;
+	char **_fullFlask;
 	
 	int _itemList_Size;
 	int _takenList_Size;
@@ -820,6 +825,8 @@ protected:
 	int _fluteString_Size;
 	int _wispJewelStrings_Size;
 	int _magicJewelString_Size;
+	int _flaskFull_Size;
+	int _fullFlask_Size;
 	
 	char **_characterImageTable;
 	int _characterImageTableSize;

@@ -1441,7 +1441,8 @@ int KyraEngine::cmd_setDeathHandlerFlag(ScriptState *script) {
 }
 
 int KyraEngine::cmd_drinkPotionAnimation(ScriptState *script) {
-	warning("STUB: cmd_drinkPotionAnimation");
+	debug(3, "cmd_drinkPotionAnimation(0x%X) (%d, %d, %d)", script);
+	seq_playDrinkPotionAnim(stackPos(0), stackPos(1), stackPos(2));
 	return 0;
 }
 
@@ -1594,7 +1595,8 @@ int KyraEngine::cmd_poisonBrandonAndRemaps(ScriptState *script) {
 }
 
 int KyraEngine::cmd_fillFlaskWithWater(ScriptState *script) {
-	warning("STUB: cmd_fillFlaskWithWater");
+	debug(3, "cmd_fillFlaskWithWater(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	seq_fillFlaskWithWater(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -1636,8 +1638,8 @@ int KyraEngine::cmd_playWinterScrollSequence(ScriptState *script) {
 }
 
 int KyraEngine::cmd_getIdolGem(ScriptState *script) {
-	warning("STUB: cmd_getIdolGem");
-	return 0;
+	debug(3, "cmd_getIdolGem(0x%X) (%d)", script, stackPos(0));
+	return _idolGemsTable[stackPos(0)];;
 }
 
 int KyraEngine::cmd_setIdolGem(ScriptState *script) {
@@ -1697,7 +1699,13 @@ int KyraEngine::cmd_fadeEntirePalette(ScriptState *script) {
 }
 
 int KyraEngine::cmd_itemOnGroundHere(ScriptState *script) {
-	warning("STUB: cmd_itemOnGroundHere");
+	debug(3, "cmd_itemOnGroundHere(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	assert(stackPos(0) < _roomTableSize);
+	Room *curRoom = &_roomTable[stackPos(0)];
+	for (int i = 0; i < 12; ++i) {
+		if (curRoom->itemsTable[i] == stackPos(1))
+			return 1;
+	}
 	return 0;
 }
 
@@ -1713,13 +1721,23 @@ int KyraEngine::cmd_setCauldronState(ScriptState *script) {
 }
 
 int KyraEngine::cmd_queryCrystalState(ScriptState *script) {
-	warning("STUB: cmd_queryCrystalState");
-	return 0;
+	debug(3, "cmd_queryCrystalState(0x%X) (%d)", script, stackPos(0));
+	if (!stackPos(0)) {
+		return _crystalState[0];
+	} else if (stackPos(0) == 1) {
+		return _crystalState[1];
+	}
+	return -1;
 }
 
 int KyraEngine::cmd_setCrystalState(ScriptState *script) {
-	warning("STUB: cmd_setCrystalState");
-	return 0;
+	debug(3, "cmd_setCrystalState(0x%X) (%d)", script, stackPos(0), stackPos(1));
+	if (!stackPos(0)) {
+		_crystalState[0] = stackPos(1);
+	} else if (stackPos(0) == 1) {
+		_crystalState[1] = stackPos(1);
+	}
+	return stackPos(1);
 }
 
 int KyraEngine::cmd_setPaletteRange(ScriptState *script) {
@@ -1738,23 +1756,29 @@ int KyraEngine::cmd_growBrandonUp(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setBrandonScaleXAndY(ScriptState *script) {
-	warning("STUB: cmd_setBrandonScaleXAndY");
+	debug(3, "cmd_setBrandonScaleXAndY(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	_brandonScaleX = stackPos(0);
+	_brandonScaleY = stackPos(1);
 	return 0;
 }
 
 int KyraEngine::cmd_resetScaleMode(ScriptState *script) {
-	warning("STUB: cmd_resetScaleMode");
+	debug(3, "cmd_setBrandonScaleXAndY(0x%X) ()", script);
+	_scaleMode = 0;
 	return 0;
 }
 
 int KyraEngine::cmd_getScaleDepthTableValue(ScriptState *script) {
-	warning("STUB: cmd_getScaleDepthTableValue");
-	return 0;
+	debug(3, "cmd_getScaleDepthTableValue(0x%X) (%d)", script, stackPos(0));
+	assert(stackPos(0) < ARRAYSIZE(_scaleTable));
+	return _scaleTable[stackPos(0)];
 }
 
 int KyraEngine::cmd_setScaleDepthTableValue(ScriptState *script) {
-	warning("STUB: cmd_setScaleDepthTableValue");
-	return 0;
+	debug(3, "cmd_setScaleDepthTableValue(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	assert(stackPos(0) < ARRAYSIZE(_scaleTable));
+	_scaleTable[stackPos(0)] = stackPos(1);
+	return stackPos(1);
 }
 
 int KyraEngine::cmd_message(ScriptState *script) {
@@ -1814,7 +1838,8 @@ int KyraEngine::cmd_brandonToStoneSequence(ScriptState *script) {
 }
 
 int KyraEngine::cmd_brandonHealingSequence(ScriptState *script) {
-	warning("STUB: cmd_brandonHealingSequence");
+	debug(3, "cmd_brandonHealingSequence(0x%X) ()", script);
+	seq_brandonHealing();
 	return 0;
 }
 
