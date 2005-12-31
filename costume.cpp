@@ -267,7 +267,28 @@ void ModelComponent::init() {
 }
 
 void ModelComponent::setKey(int val) {
+	MainModelComponent *mmc;
+	ModelComponent *moc;
+	MeshComponent *mc;
+	
 	_hier->_hierVisible = (val != 0);
+	// If we're making a model component visible then assume
+	// that the parent mesh object should also become visible
+	if (_parent == NULL || val == 0)
+		return;
+	mc = dynamic_cast<MeshComponent *>(_parent);
+	if (mc == NULL)
+		return;
+	mc->node()->_meshVisible = true;
+	// Do the same thing with the parent of the mesh object
+	// but DO NOT handle the parent if it's a MMDL
+	if (mc->parent() == NULL)
+		return;
+	moc = dynamic_cast<ModelComponent *>(mc->parent());
+	mmc = dynamic_cast<MainModelComponent *>(mc->parent());
+	if (moc == NULL || mmc != NULL)
+		return;
+	moc->_hier->_hierVisible = true;
 }
 
 // Reset the hierarchy nodes for any keyframe animations (which

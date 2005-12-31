@@ -68,6 +68,7 @@ public:
 		Component(Component *parent, int parentID, char *tag);
 
 		char *tag() { return _tag; }
+		Component *parent() { return _parent; }
 		virtual void setMatrix(Matrix4) { };
 		virtual void init() { }
 		virtual void setKey(int) { }
