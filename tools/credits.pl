@@ -448,7 +448,7 @@ begin_credits("Credits");
 		  add_person('Max Horn', 'Fingolfin', "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
-		  add_person("Eugene Sandulenko", "sev", "FT INSANE");
+		  add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
 	  end_section();
 
 	  begin_section("HE");
@@ -530,7 +530,7 @@ begin_credits("Credits");
 
 	  begin_section("SDL (Win/Linux/OS X/etc.)");
 		  add_person('Max Horn', 'Fingolfin', "");
-		  add_person('Random Name', '', "TODO: Add yourself if you feel it's appropriate");
+		  add_person('Eugene Sandulenko', 'sev', "Asm routines, GFX layers");
 	  end_section();
     end_section();
 

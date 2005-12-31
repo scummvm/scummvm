@@ -16,7 +16,8 @@ ScummVM Team
        Max Horn             
        Travis Howell        
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
-       Eugene Sandulenko     - FT INSANE
+       Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
+                               Herc/CGA
 
     HE:
        Jonathan Gray        
@@ -81,8 +82,7 @@ ScummVM Team
 
     SDL (Win/Linux/OS X/etc.):
        Max Horn             
-       Random Name           - TODO: Add yourself if you feel it's
-                               appropriate
+       Eugene Sandulenko     - Asm routines, GFX layers
 
   Other subsystems
   ----------------
