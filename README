@@ -138,16 +138,16 @@ SCUMM Games by Humongous Entertainment:
      Pajama Sam 1: No Need to Hide When It's Dark Outside       [pajama]
      Pajama Sam 2: Thunder and Lightning Aren't so Frightening  [pajama2]
      Pajama Sam's Sock Works                                    [socks]
-     Putt-Putt's Fun Pack                                       [funpack]
-     Putt-Putt & Fatty Bear's Activity Pack                     [activity]
      Putt-Putt Enters the Race                                  [puttrace]
-     Putt-Putt Goes To The Moon                                 [puttmoon]
+     Putt-Putt Goes to the Moon                                 [puttmoon]
      Putt-Putt Joins the Circus                                 [puttcircus]
      Putt-Putt Joins the Parade                                 [puttputt]
      Putt-Putt Saves the Zoo                                    [puttzoo]
      Putt-Putt Travels Through Time                             [putttime]
      Putt-Putt and Pep's Balloon-O-Rama                         [balloon]
      Putt-Putt and Pep's Dog on a Stick                         [dog]
+     Putt-Putt & Fatty Bear's Activity Pack                     [activity]
+     Putt-Putt's Fun Pack                                       [funpack]
      Spy Fox 1: Dry Cereal                                      [spyfox]
      Spy Fox 2: Some Assembly Required                          [spyfox2]
      Spy Fox in Cheese Chase                                    [chase]
@@ -221,18 +221,18 @@ any answer. Chances are that it will work.
 3.2) Simon the Sorcerer 1 and 2 notes:
 ---- ---------------------------------
 The current game targets are:
- simon1acorn  - Use for Simon the Sorcerer 1 for Acorn (CD)
- simon1dos    - Use for Simon the Sorcerer 1 for DOS (Disk)
- simon2dos    - Use for Simon the Sorcerer 2 for DOS (Disk)
- simon1talkie - Use for Simon the Sorcerer 1 Talkie (DOS/Windows)
- simon2talkie - Use for Simon the Sorcerer 2 Talkie (Amiga/DOS/Mac/Windows)
+ simon1acorn  - Use for Simon the Sorcerer 1 (Acorn CD)
+ simon1dos    - Use for Simon the Sorcerer 1 (DOS Floppy)
+ simon2dos    - Use for Simon the Sorcerer 2 (DOS Floppy)
+ simon1talkie - Use for Simon the Sorcerer 1 (DOS/Windows CD)
+ simon2talkie - Use for Simon the Sorcerer 2 (Amiga/DOS/Mac/Windows CD)
 
 Also make sure that the platform setting is correct, since it is used
 to tell the difference between the various ports of the games.
 
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
-and the DOS Talkie version in the DOS directory of the CD.
+and the DOS version in the DOS directory of the CD.
 
 3.3) Broken Sword notes
 ---- ------------------
@@ -1056,14 +1056,14 @@ task. You can choose between multiple target formats, but note that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.
 
-  compress_simon effects     (For simon1acorn)
-  compress_simon simon       (For simon1acorn)
-  compress_simon effects.voc (For simon1talkie)
-  compress_simon simon.voc   (For simon1talkie)
-  compress_simon simon.wav   (For simon1win)
-  compress_simon simon2.voc  (For simon2talkie)
-  compress_simon simon2.wav  (For simon2win) 
-  compress_simon mac         (For simon2mac) 
+  compress_simon effects     (For Acorn CD version of Simon 1)
+  compress_simon simon       (For Acorn CD version of Simon 1)
+  compress_simon effects.voc (For DOS CD version of Simon 1)
+  compress_simon simon.voc   (For DOS CD version of Simon 1)
+  compress_simon simon.wav   (For Windows CD version of Simon 1)
+  compress_simon simon2.voc  (For DOS CD version of Simon 2)
+  compress_simon simon2.wav  (For Windows CD version of Simon 2) 
+  compress_simon mac         (For Macintosh version of Simon 2) 
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 

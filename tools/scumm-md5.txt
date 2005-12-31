@@ -437,9 +437,6 @@ Let's Explore the Jungle with Buzzy
 	CD	Mac	en	659942b9a6b519f123a13cca3c333a13	jungle	Joachim Eberhard
 	CD	Windows	en	8801fb4a1200b347f7a38523339526dd	jungle	Kirben
 
-Pajama Sam: Games to Play On Any Day
-	CD	All	en	8a484262363a8e18be87112454f1456b	pjgames	Kirben
-
 Pajama Sam 1: No Need to Hide When It's Dark Outside
 	CD	All	en	37aed3f91c1ef959e0bd265f9b13781f	pajama	Kirben
 	CD	All	en	672dec94b82f7f0877ebb5b5cf7f4bc1	pajama	khalek
@@ -469,6 +466,9 @@ Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
 	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pajama3	khalek
 	Demo	Windows	en	3e48298920fab9b7aec5a971e1bd1fab	pajama3	eriktorbjorn
+
+Pajama Sam: Games to Play On Any Day
+	CD	All	en	8a484262363a8e18be87112454f1456b	pjgames	Kirben
 
 Pajama Sam's Lost & Found
 	CD	All	en	a561d2e2413cc1c71d5a1bf87bf493ea	lost	Kirben
@@ -559,14 +559,14 @@ Putt-Putt and Pep's Dog on a Stick
 	CD	All	en	eae95b2b3546d8ba86ae1d397c383253	dog	Kirben
 	CD	Windows	en	d4b8ee426b1afd3e53bc0cf020418cf6	dog	sev
 
+Putt-Putt & Fatty Bear's Activity Pack
+	CD	Windows	en	b628506f7def772e40de0aa5440fb8e1	activity
+
 Putt-Putt's Fun Pack
 	CD	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev
 	CD	DOS	en	3d219e7546039543307b55a91282bf18	funpack	iziku
 	CD	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
 	CD	DOS	hb	90a329d8ad5b7ce0690429e98cfbb32f	funpack
-
-Putt-Putt & Fatty Bear's Activity Pack
-	CD	Windows	en	b628506f7def772e40de0aa5440fb8e1	activity
 
 Putt-Putt's One-Stop Fun Shop
 	CD	All	en	5262a27afcaee04e5c4900220bd463e7	PuttsFunShop	Kirben
