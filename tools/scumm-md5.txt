@@ -559,14 +559,14 @@ Putt-Putt and Pep's Dog on a Stick
 	CD	All	en	eae95b2b3546d8ba86ae1d397c383253	dog	Kirben
 	CD	Windows	en	d4b8ee426b1afd3e53bc0cf020418cf6	dog	sev
 
+Putt-Putt & Fatty Bear's Activity Pack
+	CD	Windows	en	b628506f7def772e40de0aa5440fb8e1	activity
+
 Putt-Putt's Fun Pack
 	CD	3DO	en	8afb3cf9f95abf208358e984f0c9e738	funpack	sev
 	CD	DOS	en	3d219e7546039543307b55a91282bf18	funpack	iziku
 	CD	DOS	en	46b53fd430adcfbed791b48a0d4b079f	funpack	khalek
 	CD	DOS	hb	90a329d8ad5b7ce0690429e98cfbb32f	funpack
-
-Putt-Putt & Fatty Bear's Activity Pack
-	CD	Windows	en	b628506f7def772e40de0aa5440fb8e1	activity
 
 Putt-Putt's One-Stop Fun Shop
 	CD	All	en	5262a27afcaee04e5c4900220bd463e7	PuttsFunShop	Kirben
