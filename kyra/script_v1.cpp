@@ -1702,13 +1702,14 @@ int KyraEngine::cmd_itemOnGroundHere(ScriptState *script) {
 }
 
 int KyraEngine::cmd_queryCauldronState(ScriptState *script) {
-	warning("STUB: cmd_queryCauldronState");
-	return 0;
+	debug(3, "cmd_queryCauldronState(0x%X) ()", script);
+	return _cauldronState;
 }
 
 int KyraEngine::cmd_setCauldronState(ScriptState *script) {
-	warning("STUB: cmd_setCauldronState");
-	return 0;
+	debug(3, "cmd_setCauldronState(0x%X) (%d)", script, stackPos(0));
+	_cauldronState = stackPos(0);
+	return _cauldronState;
 }
 
 int KyraEngine::cmd_queryCrystalState(ScriptState *script) {

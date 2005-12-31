@@ -351,6 +351,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_fadeText = false;
 	_noDrawShapesFlag = 0;
 
+	_cauldronState = 0;
+
 	_brandonStatusBit = 0;
 	_brandonStatusBit0x02Flag = _brandonStatusBit0x20Flag = 10;
 	_brandonPosX = _brandonPosY = -1;

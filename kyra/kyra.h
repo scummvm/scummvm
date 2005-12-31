@@ -679,12 +679,14 @@ protected:
 	
 	Rect _noDropRects[11];
 	
-	uint16 _birthstoneGemTable[4];
-	uint8 _idolGemsTable[3];
+	int8 _birthstoneGemTable[4];
+	int8 _idolGemsTable[3];
 	
-	int16 _marbleVaseItem;
-	int16 _foyerItemTable[3];
+	int8 _marbleVaseItem;
+	int8 _foyerItemTable[3];
 	
+	int8 _cauldronState;
+
 	uint16 _brandonStatusBit;
 	int _brandonStatusBit0x02Flag;
 	int _brandonStatusBit0x20Flag;

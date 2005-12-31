@@ -59,9 +59,15 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 	if (argc > 1) {
 		uint room = atoi(argv[1]);
 
-		if (argc > 2)
+		// game will crash if entering a non-existent room
+		if (room >= _vm->_roomTableSize) {
+			DebugPrintf("room number must be any value between (including) 0 and %d\n", _vm->_roomTableSize-1);
+			return true;
+		}
+
+		if (argc > 2) {
 			direction = atoi(argv[2]);
-		else {
+		} else {
 			if (_vm->_roomTable[room].northExit != 0xff)
 				direction = 3;
 			else if (_vm->_roomTable[room].eastExit != 0xff)
@@ -178,8 +184,15 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_giveItem(int argc, const char **argv) {
-	if (argc) {
+	if (argc == 2) {
 		int item = atoi(argv[1]);
+
+		// Kyrandia 1 has only 108 items (-1 to 106), otherwise it will crash
+		if (item < -1 || item > 106) {
+			DebugPrintf("itemid must be any value between (including) -1 and 106\n");
+			return true;
+		}
+
 		_vm->setMouseItem(item);
 		_vm->_itemInHand = item;
 	} else
