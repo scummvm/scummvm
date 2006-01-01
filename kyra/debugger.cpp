@@ -57,7 +57,7 @@ void Debugger::postEnter() {
 bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 	uint direction = 0;
 	if (argc > 1) {
-		uint room = atoi(argv[1]);
+		int room = atoi(argv[1]);
 
 		// game will crash if entering a non-existent room
 		if (room >= _vm->_roomTableSize) {

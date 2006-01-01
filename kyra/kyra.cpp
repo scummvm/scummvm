@@ -2646,7 +2646,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		if (curItem != 0xFF) {
 			curAnimState->drawY = curRoom->itemsYPos[i];
 			curAnimState->sceneAnimPtr = _shapes[220+curItem];
-			curAnimState->animFrameNumber = 0xFFFF;
+			curAnimState->animFrameNumber = (int16)0xFFFF;
 			curAnimState->y1 = curRoom->itemsYPos[i];
 			curAnimState->x1 = curRoom->itemsXPos[i];
 			
