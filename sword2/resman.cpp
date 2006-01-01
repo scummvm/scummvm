@@ -167,10 +167,12 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 		if (cdInf[i].cd & LOCAL_PERM)
 			cdInf[i].cd = LOCAL_PERM;
+		else if (cdInf[i].cd & CD1)
+			cdInf[i].cd = CD1;
 		else if (cdInf[i].cd & CD2)
 			cdInf[i].cd = CD2;
 		else
-			cdInf[i].cd = CD1;
+			cdInf[i].cd = LOCAL_PERM;
 	}
 
 	file.close();
@@ -598,10 +600,10 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 		// playing a demo, then we're in trouble if the file
 		// can't be found!
 
-		if ((_vm->_features & GF_DEMO) || (_resFiles[fileNum].cd & LOCAL_PERM))
+		if ((_vm->_features & GF_DEMO) || (_resFiles[fileNum].cd == LOCAL_PERM))
 			error("Could not find '%s'", _resFiles[fileNum].fileName);
 
-		getCd(_resFiles[fileNum].cd & 3);
+		getCd(_resFiles[fileNum].cd);
 	}
 	return file;
 }
