@@ -245,7 +245,7 @@ protected:
 	void drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 
-	void unkDecode7(byte *dst, int dstPitch, const byte *src, int height) const;
+	void drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 	void unkDecode8(byte *dst, int dstPitch, const byte *src, int height) const;
 	void unkDecode9(byte *dst, int dstPitch, const byte *src, int height) const;
 	void unkDecode10(byte *dst, int dstPitch, const byte *src, int height) const;

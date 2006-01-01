@@ -1777,7 +1777,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	if (code <= 10) {
 		switch (code) {
 		case 1:
-			unkDecode7(dst, dstPitch, src, numLinesToProcess);
+			drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
 		case 2:
@@ -1817,47 +1817,90 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	} else {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
-		code /= 10;
 		
 		switch (code) {
-		case 1:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		case 2:
+		case 24:
+		case 25:
+		case 26:
+		case 27:
+		case 28:
 			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		case 3:
+		case 34:
+		case 35:
+		case 36:
+		case 37:
+		case 38:
 			useOrDecompress = true;
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
-		case 4:
+		case 44:
+		case 45:
+		case 46:
+		case 47:
+		case 48:
 			useOrDecompress = true;
 			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
-		case 6:
-		case 10:
+		case 64:
+		case 65:
+		case 66:
+		case 67:
+		case 68:
+		case 104:
+		case 105:
+		case 106:
+		case 107:
+		case 108:
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		case 8:
-		case 12:
+		case 84:
+		case 85:
+		case 86:
+		case 87:
+		case 88:
+		case 124:
+		case 125:
+		case 126:
+		case 127:
+		case 128:
 			useOrDecompress = true;
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
-		case 13:
+		case 134:
+		case 135:
+		case 136:
+		case 137:
+		case 138:
 			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 			break;
 	
-		case 14:
+		case 144:
+		case 145:
+		case 146:
+		case 147:
+		case 148:
 			useOrDecompress = true;
 			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
 			break;
-	
+
+		case 149:
+			drawStripRaw(dst, dstPitch, src, numLinesToProcess, true);
+			break;
+
 		default:
 			error("Gdi::decompressBitmap: default case %d", code);
 		}
@@ -2696,20 +2739,24 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 			}                              \
 		} while (0)
 
-void Gdi::unkDecode7(byte *dst, int dstPitch, const byte *src, int height) const {
+void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
+	int x;
 
 	if (_vm->_features & GF_OLD256) {
 		uint h = height;
-		int x = 8;
+		x = 8;
 		for (;;) {
 			*dst = *src++;
 			NEXT_ROW;
 		}
 	} else {
 		do {
-			memcpy(dst, src, 8);
+			for (x = 0; x < 8; x ++) {
+				byte color = *src++;
+				if (!transpCheck || color != _transparentColor)
+					dst[x] = _roomPalette[color] + _paletteMod;
+			}
 			dst += dstPitch;
-			src += 8;
 		} while (--height);
 	}
 }
