@@ -77,6 +77,10 @@ void deleteMutex(MutexRef mutex);
 
 
 #include <windows.h>
+#if defined(ARRAYSIZE)
+// VS2005beta2 introduces new stuff in winnt.h
+#undef ARRAYSIZE
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,7 +94,7 @@ void deleteMutex(MutexRef mutex);
 #include <winuser.h>
 #include <direct.h>
 #define strcasecmp stricmp
-#define M_PI 3.14159265
+#define M_PI 3.14159265358979323846
 
 #ifndef _MSC_VER
 #include <stdint.h>
