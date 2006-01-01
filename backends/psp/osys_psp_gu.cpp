@@ -65,7 +65,6 @@ unsigned int  kbd_code_cl[]  = {SDLK_EXCLAIM, SDLK_AT, SDLK_HASH, SDLK_DOLLAR, 3
 #define CAPS_LOCK	(1 << 0)
 #define SYMBOLS 	(1 << 1)
 
-extern bool g_quit;
 
 OSystem_PSP_GU::OSystem_PSP_GU() {
 	//sceKernelDcacheWritebackAll();
@@ -484,15 +483,6 @@ bool OSystem_PSP_GU::pollEvent(Event &event) {
 
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
-	/* check if user exited using the Home button */
-	if (g_quit) {
-		g_quit = false; //set g_quit back to false or else pollEvent keeps looping..
-
-		warning("g_quit signal caught, sending EVENT_QUIT to VM engine");
-		event.type = OSystem::EVENT_QUIT;
-		return true;
-	}
-	
 	if  ((buttonsChanged & PSP_CTRL_SELECT) || (pad.Buttons & PSP_CTRL_SELECT)) 
 	{
 		if( !(pad.Buttons & PSP_CTRL_SELECT) )

@@ -37,7 +37,6 @@
 #define	SCREEN_WIDTH	480
 #define	SCREEN_HEIGHT	272
 
-extern bool g_quit;
 
 unsigned short *DrawBuffer = (unsigned short *)0x44044000;
 unsigned short *DisplayBuffer = (unsigned short *)0x44000000;
@@ -407,15 +406,6 @@ bool OSystem_PSP::pollEvent(Event &event) {
 */
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
-	/* check if user exited using the Home button */
-	if (g_quit) {
-		g_quit = false; //set g_quit back to false or else pollEvent keeps looping..
-
-		warning("g_quit signal caught, sending EVENT_QUIT to VM engine");
-		event.type = OSystem::EVENT_QUIT;
-		return true;
-	}
-	
 	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? OSystem::EVENT_LBUTTONDOWN : OSystem::EVENT_LBUTTONUP;

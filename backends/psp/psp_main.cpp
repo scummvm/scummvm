@@ -62,8 +62,6 @@ PSP_MODULE_INFO("SCUMMVM-PSP", 0, 1, 1);
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 #endif
 
-/* global quit flag, this is used to let the VM engine shutdown properly */
-bool g_quit = false;
 
 #ifndef USERSPACE_ONLY
 void MyExceptionHandler(PspDebugRegBlock *regs) {
@@ -94,8 +92,7 @@ void loaderInit() {
 
 /* Exit callback */
 SceKernelCallbackFunction exit_callback(int /*arg1*/, int /*arg2*/, void * /*common*/) {
-	g_quit = true; //Set g_quit so our backend can shutdown the VM
-	sceKernelDelayThread(1000);
+	sceKernelExitGame();
 	return 0;
 }
 
