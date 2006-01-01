@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sdl.lib zlibwapi.lib OpenGL32.Lib GLU32.Lib"
+				AdditionalDependencies="sdl.lib zdll.lib OpenGL32.Lib GLU32.Lib"
 				LinkIncremental="2"
 				GenerateManifest="false"
 				ManifestFile=""
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sdl.lib zlibwapi.lib OpenGL32.Lib GLU32.Lib"
+				AdditionalDependencies="sdl.lib zdll.lib OpenGL32.Lib GLU32.Lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
@@ -802,6 +802,14 @@
 		</File>
 		<File
 			RelativePath="..\..\resource.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\savegame.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\savegame.h"
 			>
 		</File>
 		<File
