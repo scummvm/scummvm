@@ -153,10 +153,24 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	for (i = 0; i < _totalClusters; i++) {
 		file.read(cdInf[i].clusterName, sizeof(cdInf[i].clusterName));
+
 		cdInf[i].cd = file.readByte();
 
 		if (file.ioFailed())
 			error("Cannot read cd.inf");
+
+		// It has been reported that there are two different versions
+		// of the cd.inf file: One where all clusters on CD also have
+		// the LOCAL_CACHE bit set. This bit is no longer used. To
+		// avoid future problems, let's normalize the flag once and for
+		// all here.
+
+		if (cdInf[i].cd & LOCAL_PERM)
+			cdInf[i].cd = LOCAL_PERM;
+		else if (cdInf[i].cd & CD2)
+			cdInf[i].cd = CD2;
+		else
+			cdInf[i].cd = CD1;
 	}
 
 	file.close();
