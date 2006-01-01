@@ -580,9 +580,9 @@ void KyraEngine::delay(uint32 amount, bool update) {
 						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT)) {
 					sprintf(saveLoadSlot, "KYRA1.00%i", event.kbd.keycode - '0');
 					if (event.kbd.flags == OSystem::KBD_CTRL)
-						saveGame(saveLoadSlot, saveLoadSlot);
-					else
 						loadGame(saveLoadSlot);
+					else
+						saveGame(saveLoadSlot, saveLoadSlot);
 				}	else if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'f') {
 						_fastMode = !_fastMode;
 				}
