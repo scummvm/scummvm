@@ -58,6 +58,9 @@ extern OSystem *OSystem_PalmZodiac_create();
 #elif defined(__PLAYSTATION2__)
 #define SAMPLES_PER_SEC 48000 // the SPU can't handle anything else
 
+#elif defined(__PSP__)
+#define	SAMPLES_PER_SEC	44100
+
 #elif defined(PALMOS_MODE)
 #	ifdef PALMOS_ARM
 #		ifdef COMPILE_ZODIAC
