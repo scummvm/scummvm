@@ -43,6 +43,14 @@ namespace Sword2 {
 //	resource.tab which is a table which tells us which cluster a resource
 //	is located in and the number within the cluster
 
+enum {
+	BOTH		= 0x0,		// Cluster is on both CDs
+	CD1		= 0x1,		// Cluster is on CD1 only
+	CD2		= 0x2,		// Cluster is on CD2 only
+	LOCAL_CACHE	= 0x4,		// Cluster is cached on HDD
+	LOCAL_PERM	= 0x8		// Cluster is on HDD.
+};
+
 struct CdInf {
 	uint8 clusterName[20];	// Null terminated cluster name.
 	uint8 cd;		// Cd cluster is on and whether it is on the local drive or not.
@@ -53,7 +61,7 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 
 	// Until proven differently, assume we're on CD 1. This is so the start
 	// dialog will be able to play any music at all.
-	setCD(CD1);
+	setCD(1);
 
 	// We read in the resource info which tells us the names of the
 	// resource cluster files ultimately, although there might be groups
@@ -158,11 +166,13 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 		// all here.
 
 		if (cdInf[i].cd & LOCAL_PERM)
-			cdInf[i].cd = LOCAL_PERM;
+			cdInf[i].cd = 0;
+		else if (cdInf[i].cd & CD1)
+			cdInf[i].cd = 1;
 		else if (cdInf[i].cd & CD2)
-			cdInf[i].cd = CD2;
+			cdInf[i].cd = 2;
 		else
-			cdInf[i].cd = CD1;
+			cdInf[i].cd = 0;
 	}
 
 	file.close();
@@ -402,10 +412,10 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 		// playing a demo, then we're in trouble if the file
 		// can't be found!
 
-		if ((_vm->_features & GF_DEMO) || (_resFiles[fileNum].cd & LOCAL_PERM))
+		if ((_vm->_features & GF_DEMO) || _resFiles[fileNum].cd == 0)
 			error("Could not find '%s'", _resFiles[fileNum].fileName);
 
-		askForCD(_resFiles[fileNum].cd & 3);
+		askForCD(_resFiles[fileNum].cd);
 	}
 	return file;
 }

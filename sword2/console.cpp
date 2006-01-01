@@ -284,24 +284,9 @@ bool Debugger::Cmd_Res(int argc, const char **argv) {
 	ResourceFile *resFiles = _vm->_resman->getResFiles();
 
 	for (uint i = 0; i < numClusters; i++) {
-		DebugPrintf("%-20s ", resFiles[i].fileName);
-		if (!(resFiles[i].cd & LOCAL_PERM)) {
-			switch (resFiles[i].cd & 3) {
-			case BOTH:
-				DebugPrintf("CD 1 & 2\n");
-				break;
-			case CD1:
-				DebugPrintf("CD 1\n");
-				break;
-			case CD2:
-				DebugPrintf("CD 2\n");
-				break;
-			default:
-				DebugPrintf("CD 3? Huh?!\n");
-				break;
-			}
-		} else
-			DebugPrintf("HD\n");
+		const char *locStr[3] = { "HDD", "CD1", "CD2" };
+
+		DebugPrintf("%-20s %d\n", resFiles[i].fileName, locStr[resFiles[i].cd]);
 	}
 
 	DebugPrintf("%d resources\n", _vm->_resman->getNumResFiles());

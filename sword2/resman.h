@@ -32,14 +32,6 @@ namespace Sword2 {
 
 class Sword2Engine;
 
-enum {
-	BOTH		= 0x0,		// Cluster is on both CDs
-	CD1		= 0x1,		// Cluster is on CD1 only
-	CD2		= 0x2,		// Cluster is on CD2 only
-	LOCAL_CACHE	= 0x4,		// Cluster is cached on HDD
-	LOCAL_PERM	= 0x8		// Cluster is on HDD.
-};
-
 struct Resource {
 	byte *ptr;
 	uint32 size;
@@ -119,10 +111,8 @@ public:
 	void askForCD(int cd);
 
 	void setCD(int cd) {
-		if (cd == CD1)
-			_curCD = 1;
-		else if (cd == CD2)
-			_curCD = 2;
+		if (cd)
+			_curCD = cd;
 	}
 
 	int getCD() {
