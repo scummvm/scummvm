@@ -427,7 +427,8 @@ static const uint32 IMxx_tags[] = {
 	MKID('IM0C'),
 	MKID('IM0D'),
 	MKID('IM0E'),
-	MKID('IM0F')
+	MKID('IM0F'),
+	MKID('IM10')
 };
 
 void ScummEngine::drawObject(int obj, int arg) {
