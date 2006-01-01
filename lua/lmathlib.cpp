@@ -12,9 +12,7 @@
 #include "lua.h"
 #include "lualib.h"
 
-#ifdef M_PI
-#define PI                      M_PI
-#else
+#ifndef PI
 #define PI          ((double)3.14159265358979323846)
 #endif
 
