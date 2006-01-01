@@ -1415,7 +1415,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	int bottom;
 	int numzbuf;
 	int sx;
-	bool useOrDecompress = false;
+	bool transpStrip = false;
 
 	// Check whether lights are turned on or not
 	const bool lightsOn = _vm->isLightOn();
@@ -1536,7 +1536,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				error("drawBitmap: Trying to draw a non-existant strip");
 				return;
 			}
-			useOrDecompress = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+			transpStrip = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 		}
 
 		CHECK_HEAP;
@@ -1551,7 +1551,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 		// COMI and HE games only uses flag value
 		if (_vm->_version == 8 || _vm->_heversion >= 60)
-			useOrDecompress = true;
+			transpStrip = true;
 
 		if (_vm->_version == 1) {
 			mask_ptr = getMaskBuffer(x + k, y, 1);
@@ -1585,7 +1585,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
 			for (i = 0; i < numzbuf; i++) {
 				mask_ptr = getMaskBuffer(x + k, y, i);
-				if (useOrDecompress && (flag & dbAllowMaskOr))
+				if (transpStrip && (flag & dbAllowMaskOr))
 					decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 				else
 					decompressMaskImg(mask_ptr, z_plane_ptr, height);
@@ -1616,14 +1616,14 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 					if (tmsk_ptr) {
 						const byte *tmsk = tmsk_ptr + READ_LE_UINT16(tmsk_ptr + 8);
 						decompressTMSK(mask_ptr, tmsk, z_plane_ptr, height);
-					} else if (useOrDecompress && (flag & dbAllowMaskOr)) {
+					} else if (transpStrip && (flag & dbAllowMaskOr)) {
 						decompressMaskImgOr(mask_ptr, z_plane_ptr, height);
 					} else {
 						decompressMaskImg(mask_ptr, z_plane_ptr, height);
 					}
 
 				} else {
-					if (!(useOrDecompress && (flag & dbAllowMaskOr)))
+					if (!(transpStrip && (flag & dbAllowMaskOr)))
 						for (int h = 0; h < height; h++)
 							mask_ptr[h * _numStrips] = 0;
 					// FIXME: needs better abstraction
@@ -1811,7 +1811,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	}
 
 	byte code = *src++;
-	bool useOrDecompress = false;
+	bool transpStrip = false;
 	
 	if ((_vm->_platform == Common::kPlatformAmiga) && (_vm->_version >= 4))
 		_paletteMod = 16;
@@ -1821,7 +1821,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	if (code <= 10) {
 		switch (code) {
 		case 1:
-			unkDecode7(dst, dstPitch, src, numLinesToProcess);
+			drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
 		case 2:
@@ -1842,7 +1842,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	
 		case 8:
 			// Used in 3DO versions of HE games
-			useOrDecompress = true;
+			transpStrip = true;
 			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
@@ -1861,45 +1861,88 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	} else {
 		_decomp_shr = code % 10;
 		_decomp_mask = 0xFF >> (8 - _decomp_shr);
-		code /= 10;
 		
 		switch (code) {
-		case 1:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		case 2:
+		case 24:
+		case 25:
+		case 26:
+		case 27:
+		case 28:
 			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		case 3:
-			useOrDecompress = true;
+		case 34:
+		case 35:
+		case 36:
+		case 37:
+		case 38:
+			transpStrip = true;
 			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
-		case 4:
-			useOrDecompress = true;
+		case 44:
+		case 45:
+		case 46:
+		case 47:
+		case 48:
+			transpStrip = true;
 			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
-		case 6:
-		case 10:
+		case 64:
+		case 65:
+		case 66:
+		case 67:
+		case 68:
+		case 104:
+		case 105:
+		case 106:
+		case 107:
+		case 108:
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 			break;
 	
-		case 8:
-		case 12:
-			useOrDecompress = true;
+		case 84:
+		case 85:
+		case 86:
+		case 87:
+		case 88:
+		case 124:
+		case 125:
+		case 126:
+		case 127:
+		case 128:
+			transpStrip = true;
 			drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
-		case 13:
+		case 134:
+		case 135:
+		case 136:
+		case 137:
+		case 138:
 			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 			break;
 	
-		case 14:
-			useOrDecompress = true;
+		case 144:
+		case 145:
+		case 146:
+		case 147:
+		case 148:
+			transpStrip = true;
 			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
+			break;
+
+		case 149:
+			drawStripRaw(dst, dstPitch, src, numLinesToProcess, true);
 			break;
 	
 		default:
@@ -1907,7 +1950,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 		}
 	}
 	
-	return useOrDecompress;
+	return transpStrip;
 }
 
 void Gdi::decompressMaskImg(byte *dst, const byte *src, int height) const {
@@ -2740,20 +2783,24 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 			}                              \
 		} while (0)
 
-void Gdi::unkDecode7(byte *dst, int dstPitch, const byte *src, int height) const {
+void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
+	int x;
 
 	if (_vm->_features & GF_OLD256) {
 		uint h = height;
-		int x = 8;
+		x = 8;
 		for (;;) {
 			*dst = *src++;
 			NEXT_ROW;
 		}
 	} else {
 		do {
-			memcpy(dst, src, 8);
+			for (x = 0; x < 8; x ++) {
+				byte color = *src++;
+				if (!transpCheck || color != _transparentColor)
+					dst[x] = _roomPalette[color] + _paletteMod;
+			}
 			dst += dstPitch;
-			src += 8;
 		} while (--height);
 	}
 }
