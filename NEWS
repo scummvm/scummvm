@@ -47,6 +47,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  Sword2:
    - Fixes and cleanups to the end credits. The German credits work now.
+   - Fixed missing speech/music in the second half of the game, reported to
+     happen in some versions of the game.
 
  PSP Port:
    - Fixed a bug that caused Broken Sword 1, and games that use ripped CDDA
