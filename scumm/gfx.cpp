@@ -535,19 +535,26 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	// Compute screen etc. buffer pointers
 	const byte *src = vs->getPixels(x, top);
 	byte *dst = _compositeBuf + x + y * _screenWidth;
-	const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
 
-	// Compose the text over the game graphics
-	for (int h = 0; h < height; ++h) {
-		for (int w = 0; w < width; ++w) {
-			if (text[w] == CHARSET_MASK_TRANSPARENCY)
-				dst[w] = src[w];
-			else
-				dst[w] = text[w];
+	if (_version < 7) {
+		// Handle the text mask in older games; newer (V7/V8) games do not use it anymore.
+		const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
+	
+		// Compose the text over the game graphics
+		for (int h = 0; h < height; ++h) {
+			for (int w = 0; w < width; ++w) {
+				if (text[w] == CHARSET_MASK_TRANSPARENCY)
+					dst[w] = src[w];
+				else
+					dst[w] = text[w];
+			}
+			src += vs->pitch;
+			dst += _screenWidth;
+			text += _charset->_textSurface.pitch;
 		}
-		src += vs->pitch;
-		dst += _screenWidth;
-		text += _charset->_textSurface.pitch;
+	} else {
+		// Just do a simple blit in V7/V8 games.
+		blit(dst, _screenWidth, src, vs->pitch, width, height);
 	}
 
 	if (_renderMode == Common::kRenderCGA)
