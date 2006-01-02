@@ -160,7 +160,7 @@ Misc demos
 	zak/loom (non-interactive)	FM-TOWNS	en	77f5c9cc0986eb729c1a6b4c8823bbae	zak	khalek
 	indy/zak (non-interactive)	FM-TOWNS	en	3938ee1aa4433fca9d9308c9891172b1	zak	khalek
 
-Monkey Island 2: LeChuck's revenge
+Monkey Island 2: LeChuck's Revenge
 	Floppy	Amiga	en	132bff65e6367c09cc69318ce1b59333	monkey2
 	Floppy	Amiga	fr	c30ef068add4277104243c31ce46c12b	monkey2	Andreas Bylund
 	Floppy	Amiga	de	da669b20271b85182e9c17a2a37ea02e	monkey2	Andreas Bylund, Norbert Lange
@@ -228,7 +228,7 @@ Day of the Tentacle
 	Demo	DOS	de	ac1642b6edfb8521ca03760126f1c250	tentacle	Simon Krumrein, sev
 	Demo (bundle)	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
 
-Sam &amp; Max
+Sam &amp; Max Hit the Road
 	Floppy	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
 	Floppy (alt?)	DOS	en	3b301b7892f883ce42ab4be6a274fea6	samnmax	Andrea Petrucci
 	Floppy	DOS	fr	ef347474f3c7be3b29584eaa133cca05	samnmax	Nicolas Sauz&egrave;de, Andrea Petrucci
@@ -275,7 +275,7 @@ The Dig
 	Demo	All	en	362c1d281fb9899254cda66ad246c66a	dig
 	Demo (bundle)	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
 
-Curse of Monkey Island
+The Curse of Monkey Island
 	CD	All	All	fe60d6b5ff51b0553ac59963123b5777	comi
 	CD	All	ru	861e59ed72a1cd0e6d454f7ee7e2bf3d	comi
 
