@@ -188,7 +188,7 @@ GameDetector::GameDetector() {
 				}
 			}
 		}
-		/* check that we can the dir is there */
+		/* check that the dir is there */
 		if (stat(savePath, &sb) == 0) {
 			ConfMan.registerDefault("savepath", savePath);
 		}
