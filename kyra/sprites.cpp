@@ -27,6 +27,7 @@
 #include "kyra/kyra.h"
 #include "kyra/sprites.h"
 #include "kyra/resource.h"
+#include "kyra/animator.h"
 
 namespace Kyra {
 
@@ -339,8 +340,8 @@ void Sprites::updateSceneAnims() {
 				data += 2;
 				debug(6, "func: Update Brandon's sprite");
 				_engine->animRefreshNPC(0);
-				_engine->flagAllObjectsForRefresh();
-				_engine->updateAllObjectShapes();
+				_engine->animator()->flagAllObjectsForRefresh();
+				_engine->animator()->updateAllObjectShapes();
 				break;
 			case 0xFFB0:
 				data += 2;
@@ -524,23 +525,24 @@ void Sprites::loadSceneShapes() {
 
 void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag) {
 	debug(9, "Sprites::refreshSceneAnimObject(%i, %i, %i, %i, %i, %i", animNum, shapeNum, x, y, flipX, unkFlag);
-	_animObjects[animNum].refreshFlag = 1;
-	_animObjects[animNum].bkgdChangeFlag = 1;
+	AnimObject &anim = _engine->animator()->sprites()[animNum];
+	anim.refreshFlag = 1;
+	anim.bkgdChangeFlag = 1;
 
 	if (unkFlag)
-		_animObjects[animNum].flags |= 0x0200;
+		anim.flags |= 0x0200;
 	else
-		_animObjects[animNum].flags &= 0xFD00;
+		anim.flags &= 0xFD00;
 
 	if (flipX)
-		_animObjects[animNum].flags |= 1;
+		anim.flags |= 1;
 	else
-		_animObjects[animNum].flags &= 0xFE;
+		anim.flags &= 0xFE;
 
-	_animObjects[animNum].sceneAnimPtr = _sceneShapes[shapeNum];
-	_animObjects[animNum].animFrameNumber = -1;
-	_animObjects[animNum].x1 = x;
-	_animObjects[animNum].y1 = y;
+	anim.sceneAnimPtr = _sceneShapes[shapeNum];
+	anim.animFrameNumber = -1;
+	anim.x1 = x;
+	anim.y1 = y;
 }
 
 int Sprites::getDrawLayer(int y) {

@@ -25,277 +25,11 @@
 #include "kyra/screen.h"
 #include "kyra/sprites.h"
 #include "kyra/wsamovie.h"
+#include "kyra/animator.h"
+#include "kyra/text.h"
 #include "common/system.h"
 
 namespace Kyra {
-
-void ScriptHelper::c1_jmpTo() {
-	_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
-}
-
-void ScriptHelper::c1_setRetValue() {
-	_curScript->retValue = _parameter;
-}
-
-void ScriptHelper::c1_pushRetOrPos() {
-	switch (_parameter) {
-		case 0:
-			_curScript->stack[--_curScript->sp] = _curScript->retValue;
-		break;
-		
-		case 1:
-			_curScript->stack[--_curScript->sp] = (_curScript->ip - _curScript->dataPtr->data) / 2 + 1;
-			_curScript->stack[--_curScript->sp] = _curScript->bp;
-			_curScript->bp = _curScript->sp + 2;
-		break;
-		
-		default:
-			_continue = false;
-			_curScript->ip = 0;
-		break;
-	}
-}
-
-void ScriptHelper::c1_push() {
-	_curScript->stack[--_curScript->sp] = _parameter;
-}
-
-void ScriptHelper::c1_pushVar() {
-	_curScript->stack[--_curScript->sp] = _curScript->variables[_parameter];
-}
-
-void ScriptHelper::c1_pushBPNeg() {
-	_curScript->stack[--_curScript->sp] = _curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp];
-}
-
-void ScriptHelper::c1_pushBPAdd() {
-	_curScript->stack[--_curScript->sp] = _curScript->stack[(_parameter - 1) + _curScript->bp];
-}
-
-void ScriptHelper::c1_popRetOrPos() {
-	switch (_parameter) {
-		case 0:
-			_curScript->retValue = _curScript->stack[_curScript->sp++];
-		break;
-		
-		case 1:
-			if (_curScript->sp >= 60) {
-				_continue = false;
-				_curScript->ip = 0;
-			} else {
-				_curScript->bp = _curScript->stack[_curScript->sp++];
-				_curScript->ip = _curScript->dataPtr->data + (_curScript->stack[_curScript->sp++] << 1);
-			}
-		break;
-		
-		default:
-			_continue = false;
-			_curScript->ip = 0;
-		break;
-	}
-}
-
-void ScriptHelper::c1_popVar() {
-	_curScript->variables[_parameter] = _curScript->stack[_curScript->sp++];
-}
-
-void ScriptHelper::c1_popBPNeg() {
-	_curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp] = _curScript->stack[_curScript->sp++];
-}
-
-void ScriptHelper::c1_popBPAdd() {
-	_curScript->stack[(_parameter - 1) + _curScript->bp] = _curScript->stack[_curScript->sp++];
-}
-
-void ScriptHelper::c1_addSP() {
-	_curScript->sp += _parameter;
-}
-
-void ScriptHelper::c1_subSP() {
-	_curScript->sp -= _parameter;
-}
-
-void ScriptHelper::c1_execOpcode() {
-	assert((uint8)_parameter < _curScript->dataPtr->opcodeSize);
-	if (_curScript->dataPtr->opcodes[(uint8)_parameter] == &KyraEngine::cmd_dummy)
-		debug("calling unimplemented opcode(0x%.02X)", (uint8)_parameter);
-	_curScript->retValue = (_vm->*_curScript->dataPtr->opcodes[(uint8)_parameter])(_curScript);
-}
-
-void ScriptHelper::c1_ifNotJmp() {
-	if (!_curScript->stack[_curScript->sp++]) {
-		_parameter &= 0x7FFF;
-		_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
-	}
-}
-
-void ScriptHelper::c1_negate() {
-	int16 value = _curScript->stack[_curScript->sp];
-	switch (_parameter) {
-		case 0:
-			if (!value) {
-				_curScript->stack[_curScript->sp] = 1;
-			} else {
-				_curScript->stack[_curScript->sp] = 0;
-			}
-		break;
-		
-		case 1:
-			_curScript->stack[_curScript->sp] = -value;
-		break;
-		
-		case 2:
-			_curScript->stack[_curScript->sp] = ~value;
-		break;
-		
-		default:
-			_continue = false;
-		break;
-	}
-}
-
-void ScriptHelper::c1_eval() {
-	int16 ret = 0;
-	bool error = false;
-	
-	int16 val1 = _curScript->stack[_curScript->sp++];
-	int16 val2 = _curScript->stack[_curScript->sp++];
-	
-	switch (_parameter) {
-		case 0:
-			if (!val2 || !val1) {
-				ret = 0;
-			} else {
-				ret = 1;
-			}
-		break;
-		
-		case 1:
-			if (val2 || val1) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 2:
-			if (val1 == val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 3:
-			if (val1 != val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 4:
-			if (val1 > val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 5:
-			if (val1 >= val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 6:
-			if (val1 < val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 7:
-			if (val1 <= val2) {
-				ret = 1;
-			} else {
-				ret = 0;
-			}
-		break;
-		
-		case 8:
-			ret = val1 + val2;
-		break;
-		
-		case 9:
-			ret = val2 - val1;
-		break;
-		
-		case 10:
-			ret = val1 * val2;
-		break;
-		
-		case 11:
-			ret = val2 / val1;
-		break;
-		
-		case 12:
-			ret = val2 >> val1;
-		break;
-		
-		case 13:
-			ret = val2 << val1;
-		break;
-		
-		case 14:
-			ret = val1 & val2;
-		break;
-		
-		case 15:
-			ret = val1 | val2;
-		break;
-		
-		case 16:
-			ret = val2 % val1;
-		break;
-		
-		case 17:
-			ret = val1 ^ val2;
-		break;
-		
-		default:
-			warning("Unknown evaluate func: %d", _parameter);
-			error = true;
-		break;
-	}
-	
-	if (error) {
-		_curScript->ip = 0;
-		_continue = false;
-	} else {
-		_curScript->stack[--_curScript->sp] = ret;
-	}
-}
-
-void ScriptHelper::c1_setRetAndJmp() {
-	if (_curScript->sp >= 60) {
-		_continue = false;
-		_curScript->ip = 0;
-	} else {
-		_curScript->retValue = _curScript->stack[_curScript->sp++];
-		uint16 temp = _curScript->stack[_curScript->sp++];
-		_curScript->stack[60] = 0;
-		_curScript->ip = &_curScript->dataPtr->data[temp*2];
-	}
-}
-
-#pragma mark -
-#pragma mark - Opcode implementations
-#pragma mark -
-
 #define stackPos(x) script->stack[script->sp+x]
 #define stackPosString(x) (char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
 
@@ -431,8 +165,8 @@ int KyraEngine::cmd_dropItemInScene(ScriptState *script) {
 		room->itemsYPos[freeItem] = ypos;
 		room->itemsTable[freeItem] = item;
 		
-		animAddGameItem(freeItem, sceneId);
-		updateAllObjectShapes();
+		_animator->animAddGameItem(freeItem, sceneId);
+		_animator->updateAllObjectShapes();
 	} else {
 		if (item == 43) {
 			placeItemInGenericMapScene(item, 0);
@@ -446,17 +180,17 @@ int KyraEngine::cmd_dropItemInScene(ScriptState *script) {
 int KyraEngine::cmd_drawAnimShapeIntoScene(ScriptState *script) {
 	debug(3, "cmd_drawAnimShapeIntoScene(0x%X) (%d, %d, %d, %d)", stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	_screen->hideMouse();
-	restoreAllObjectBackgrounds();
+	_animator->restoreAllObjectBackgrounds();
 	int shape = stackPos(0);
 	int xpos = stackPos(1);
 	int ypos = stackPos(2);
 	int flags = (stackPos(3) != 0) ? 1 : 0;
 	_screen->drawShape(2, _sprites->_sceneShapes[shape], xpos, ypos, 0, flags);
 	_screen->drawShape(0, _sprites->_sceneShapes[shape], xpos, ypos, 0, flags);
-	flagAllObjectsForBkgdChange();
-	preserveAnyChangedBackgrounds();
-	flagAllObjectsForRefresh();
-	updateAllObjectShapes();
+	_animator->flagAllObjectsForBkgdChange();
+	_animator->preserveAnyChangedBackgrounds();
+	_animator->flagAllObjectsForRefresh();
+	_animator->updateAllObjectShapes();
 	_screen->showMouse();
 	return 0;
 }
@@ -506,16 +240,16 @@ int KyraEngine::cmd_destroyMouseItem(ScriptState *script) {
 int KyraEngine::cmd_runSceneAnimUntilDone(ScriptState *script) {
 	debug(3, "cmd_runSceneAnimUntilDone(0x%X) (%d)", script, stackPos(0));
 	_sprites->_anims[stackPos(0)].play = true;
-	_sprites->_animObjects[stackPos(0)].active = 1;
+	_animator->sprites()[stackPos(0)].active = 1;
 	_screen->hideMouse();
-	restoreAllObjectBackgrounds();
-	flagAllObjectsForBkgdChange();
-	preserveAnyChangedBackgrounds();
+	_animator->restoreAllObjectBackgrounds();
+	_animator->flagAllObjectsForBkgdChange();
+	_animator->preserveAnyChangedBackgrounds();
 	while (_sprites->_anims[stackPos(0)].play) {
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 	}
-	restoreAllObjectBackgrounds();
+	_animator->restoreAllObjectBackgrounds();
 	_screen->showMouse();
 	return 0;
 }
@@ -636,7 +370,7 @@ int KyraEngine::cmd_magicOutMouseItem(ScriptState *script) {
 
 int KyraEngine::cmd_internalAnimOn(ScriptState *script) {
 	debug(3, "cmd_internalAnimOn(0x%X) (%d)", script, stackPos(0));
-	_sprites->_animObjects[stackPos(0)].active = 1;
+	_animator->sprites()[stackPos(0)].active = 1;
 	return 0;
 }
 
@@ -715,7 +449,7 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 	_movieObjects[wsaIndex]->_drawPage = 0;
 	while (running) {
 		_movieObjects[wsaIndex]->displayFrame(wsaFrame++);
-		_updateScreen = true;
+		_animator->_updateScreen = true;
 		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
 		
@@ -723,7 +457,7 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 		while (_system->getMillis() < continueTime) {
 			if (worldUpdate) {
 				_sprites->updateSceneAnims();
-				updateAllObjectShapes();
+				_animator->updateAllObjectShapes();
 			} else {
 				_screen->updateScreen();
 			}
@@ -751,10 +485,10 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 		delay(10);
 	}
-	_updateScreen = true;
+	_animator->_updateScreen = true;
 	_screen->showMouse();
 	return 0;
 }
@@ -793,7 +527,7 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 	int yOffset = _defaultShapeTable[0].yOffset;
 	int width = _defaultShapeTable[0].w << 3;
 	int height = _defaultShapeTable[0].h;
-	AnimObject *curAnim = _charactersAnimState;
+	AnimObject *curAnim = _animator->actors();
 	
 	if (changeScaleMode) {
 		curAnim->x1 = _currentCharacter->x1;
@@ -820,9 +554,9 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 	}
 	
 	animRefreshNPC(0);
-	preserveAllBackgrounds();
-	prepDrawAllObjects();
-	copyChangedObjectsForward(0);
+	_animator->preserveAllBackgrounds();
+	_animator->prepDrawAllObjects();
+	_animator->copyChangedObjectsForward(0);
 	
 	_scaleMode = scaleModeBackup;
 
@@ -831,7 +565,7 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 
 int KyraEngine::cmd_restoreAllObjectBackgrounds(ScriptState *script) {
 	debug(3, "cmd_restoreAllObjectBackgrounds(0x%X) ()", script);
-	restoreAllObjectBackgrounds();
+	_animator->restoreAllObjectBackgrounds();
 	return 0;
 }
 
@@ -855,18 +589,18 @@ int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 			delay(10);
 		}
 		snd_playVoiceFile(stackPos(0));
-		printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
+		_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {
 		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
-		printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
+		_text->printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
 	}
-	_updateScreen = true;
+	_animator->_updateScreen = true;
 	return 0;
 }
 
 int KyraEngine::cmd_restoreCustomPrintBackground(ScriptState *script) {
 	debug(3, "cmd_restoreCustomPrintBackground(0x%X) ()", script);
-	restoreTalkTextMessageBkgd(2, 0);
+	_text->restoreTalkTextMessageBkgd(2, 0);
 	return 0;
 }
 
@@ -898,15 +632,15 @@ int KyraEngine::cmd_changeCharactersFacing(ScriptState *script) {
 	int facing = stackPos(1);
 	int newAnimFrame = stackPos(2);
 	
-	restoreAllObjectBackgrounds();
+	_animator->restoreAllObjectBackgrounds();
 	if (newAnimFrame != -1) {
 		_characterList[character].currentAnimFrame = newAnimFrame;
 	}
 	_characterList[character].facing = facing;
 	animRefreshNPC(character);
-	preserveAllBackgrounds();
-	prepDrawAllObjects();
-	copyChangedObjectsForward(0);
+	_animator->preserveAllBackgrounds();
+	_animator->prepDrawAllObjects();
+	_animator->copyChangedObjectsForward(0);
 	
 	return 0;
 }
@@ -957,7 +691,7 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 		delay(10);
 	}
 	_screen->showMouse();
@@ -988,11 +722,11 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
 				_movieObjects[wsaIndex]->displayFrame(frame);
-				_updateScreen = true;
+				_animator->_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
-					updateAllObjectShapes();
+					_animator->updateAllObjectShapes();
 					if (continueTime - _system->getMillis() >= 10)
 						delay(10);
 				}
@@ -1002,11 +736,11 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 			int frame = startFrame;
 			while (endFrame <= frame) {
 				_movieObjects[wsaIndex]->displayFrame(frame);
-				_updateScreen = true;
+				_animator->_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
-					updateAllObjectShapes();
+					_animator->updateAllObjectShapes();
 					if (continueTime - _system->getMillis() >= 10)
 						delay(10);
 				}
@@ -1032,14 +766,14 @@ int KyraEngine::cmd_drawCharacterStanding(ScriptState *script) {
 	}
 	animRefreshNPC(character);
 	if (updateShapes) {
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 	}
 	return 0;
 }
 
 int KyraEngine::cmd_internalAnimOff(ScriptState *script) {
 	debug(3, "cmd_internalAnimOff(0x%X) (%d)", script, stackPos(0));
-	_sprites->_animObjects[stackPos(0)].active = 0;
+	_animator->sprites()[stackPos(0)].active = 0;
 	return 0;
 }
 
@@ -1052,10 +786,10 @@ int KyraEngine::cmd_changeCharactersXAndY(ScriptState *script) {
 		x &= 0xFFFC;
 		y &= 0xFFFE;
 	}
-	restoreAllObjectBackgrounds();
+	_animator->restoreAllObjectBackgrounds();
 	ch->x1 = ch->x2 = x;
 	ch->y1 = ch->y2 = y;
-	preserveAllBackgrounds();
+	_animator->preserveAllBackgrounds();
 	return 0;
 }
 
@@ -1073,7 +807,7 @@ int KyraEngine::cmd_querySceneAnimatorBeacon(ScriptState *script) {
 int KyraEngine::cmd_refreshSceneAnimator(ScriptState *script) {
 	debug(3, "cmd_refreshSceneAnimator(0x%X) ()", script);
 	_sprites->updateSceneAnims();
-	updateAllObjectShapes();
+	_animator->updateAllObjectShapes();
 	return 0;
 }
 
@@ -1149,8 +883,8 @@ int KyraEngine::cmd_popMobileNPCIntoScene(ScriptState *script) {
 	curChar->x1 = curChar->x2 = xpos;
 	curChar->y1 = curChar->y2 = ypos;
 	
-	animAddNPC(character);
-	updateAllObjectShapes();
+	_animator->animAddNPC(character);
+	_animator->updateAllObjectShapes();
 	return 0;
 }
 
@@ -1172,7 +906,7 @@ int KyraEngine::cmd_unhideMobileCharacter(ScriptState *script) {
 int KyraEngine::cmd_setCharactersLocation(ScriptState *script) {
 	debug(3, "cmd_setCharactersLocation(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	Character *ch = &_characterList[stackPos(0)];
-	AnimObject *animObj = &_charactersAnimState[stackPos(0)];
+	AnimObject *animObj = &_animator->actors()[stackPos(0)];
 	int newScene = stackPos(1);
 	if (_currentCharacter->sceneId == ch->sceneId) {
 		if (_currentCharacter->sceneId != newScene)
@@ -1260,7 +994,7 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 			_sprites->updateSceneAnims();
 			updateMousePointer();
 			updateGameTimers();
-			updateAllObjectShapes();
+			_animator->updateAllObjectShapes();
 			updateTextFade();
 			if ((nextFrame - _system->getMillis()) >= 10)
 				delay(10);
@@ -1317,13 +1051,13 @@ int KyraEngine::cmd_setLogicPage(ScriptState *script) {
 
 int KyraEngine::cmd_fatPrint(ScriptState *script) {
 	debug(3, "cmd_fatPrint(0x%X) ('%s', %d, %d, %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	_text->printText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	return 0;
 }
 
 int KyraEngine::cmd_preserveAllObjectBackgrounds(ScriptState *script) {
 	debug(3, "cmd_preserveAllObjectBackgrounds(0x%X) ()", script);
-	preserveAllBackgrounds();
+	_animator->preserveAllBackgrounds();
 	return 0;
 }
 
@@ -1331,7 +1065,7 @@ int KyraEngine::cmd_updateSceneAnimations(ScriptState *script) {
 	debug(3, "cmd_updateSceneAnimations(0x%X) (%d)", script, stackPos(0));
 	if (stackPos(0)) {
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 	}
 	return 0;
 }
@@ -1489,11 +1223,11 @@ int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 			
 			
 			amulet.displayFrame(code);
-			_updateScreen = true;
+			_animator->_updateScreen = true;
 			
 			while (_system->getMillis() < nextTime) {
 				_sprites->updateSceneAnims();
-				updateAllObjectShapes();
+				_animator->updateAllObjectShapes();
 			}
 		}
 		_screen->showMouse();
@@ -1515,12 +1249,12 @@ int KyraEngine::cmd_drawItemShapeIntoScene(ScriptState *script) {
 		_screen->drawShape(2, _shapes[220+item], x, y, 0, flags);
 	} else {
 		_screen->hideMouse();
-		restoreAllObjectBackgrounds();
+		_animator->restoreAllObjectBackgrounds();
 		_screen->drawShape(2, _shapes[220+item], x, y, 0, flags);
 		_screen->drawShape(0, _shapes[220+item], x, y, 0, flags);
-		flagAllObjectsForBkgdChange();
-		flagAllObjectsForRefresh();
-		updateAllObjectShapes();
+		_animator->flagAllObjectsForBkgdChange();
+		_animator->flagAllObjectsForRefresh();
+		_animator->updateAllObjectShapes();
 		_screen->showMouse();
 	}
 	return 0;
@@ -1538,14 +1272,14 @@ int KyraEngine::cmd_waitForConfirmationMouseClick(ScriptState *script) {
 	while (!_mousePressFlag) {
 		updateMousePointer();
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 		delay(10);
 	}
 	
 	while (_mousePressFlag) {
 		updateMousePointer();
 		_sprites->updateSceneAnims();
-		updateAllObjectShapes();
+		_animator->updateAllObjectShapes();
 		delay(10);
 	}
 	// }
@@ -1706,7 +1440,7 @@ int KyraEngine::cmd_itemAppearsOnGround(ScriptState *script) {
 
 int KyraEngine::cmd_setNoDrawShapesFlag(ScriptState *script) {
 	debug(3, "cmd_setNoDrawShapesFlag(0x%X) (%d)", script, stackPos(0));
-	_noDrawShapesFlag = stackPos(0);
+	_animator->_noDrawShapesFlag = stackPos(0);
 	return 0;
 }
 

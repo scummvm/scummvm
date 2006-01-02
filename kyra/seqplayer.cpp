@@ -29,6 +29,7 @@
 #include "kyra/screen.h"
 #include "kyra/sound.h"
 #include "kyra/wsamovie.h"
+#include "kyra/text.h"
 
 #include "kyra/seqplayer.h"
 
@@ -266,7 +267,7 @@ void SeqPlayer::s1_printTalkText() {
 		} else {
 			b = 0;
 		}
-		_vm->restoreTalkTextMessageBkgd(2, b);
+		_vm->text()->restoreTalkTextMessageBkgd(2, b);
 	}
 	_seqTalkTextPrinted = true;
 	_seqTalkTextRestored = false;
@@ -275,7 +276,7 @@ void SeqPlayer::s1_printTalkText() {
 	} else {
 		b = 0;
 	}
-	_vm->printTalkTextMessage(_vm->seqTextsTable()[txt], x, y, fillColor, b, 2);
+	_vm->text()->printTalkTextMessage(_vm->seqTextsTable()[txt], x, y, fillColor, b, 2);
 }
 
 void SeqPlayer::s1_restoreTalkText() {
@@ -286,7 +287,7 @@ void SeqPlayer::s1_restoreTalkText() {
 		} else {
 			b = 0;
 		}
-		_vm->restoreTalkTextMessageBkgd(2, b);
+		_vm->text()->restoreTalkTextMessageBkgd(2, b);
 		_seqTalkTextRestored = true;
 	}
 }

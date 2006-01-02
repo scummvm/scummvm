@@ -11,7 +11,11 @@ MODULE_OBJS := \
 	kyra/staticres.o \
 	kyra/sprites.o \
 	kyra/wsamovie.o \
-	kyra/debugger.o
+	kyra/debugger.o \
+	kyra/animator.o \
+	kyra/gui.o \
+	kyra/text.o \
+	kyra/timer.o
 
 MODULE_DIRS += \
 	kyra

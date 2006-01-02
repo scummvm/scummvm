@@ -67,7 +67,6 @@ public:
 	void loadSceneShapes();
 	
 	Anim _anims[MAX_NUM_ANIMS];
-	AnimObject *_animObjects;
 	uint8 *_sceneShapes[50];
 
 	void refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag);

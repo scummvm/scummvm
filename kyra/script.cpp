@@ -294,4 +294,271 @@ bool ScriptHelper::loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const 
 	}
 	return false;
 }
+
+#pragma mark -
+#pragma mark - Command implementations
+#pragma mark -
+
+void ScriptHelper::c1_jmpTo() {
+	_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
+}
+
+void ScriptHelper::c1_setRetValue() {
+	_curScript->retValue = _parameter;
+}
+
+void ScriptHelper::c1_pushRetOrPos() {
+	switch (_parameter) {
+		case 0:
+			_curScript->stack[--_curScript->sp] = _curScript->retValue;
+		break;
+		
+		case 1:
+			_curScript->stack[--_curScript->sp] = (_curScript->ip - _curScript->dataPtr->data) / 2 + 1;
+			_curScript->stack[--_curScript->sp] = _curScript->bp;
+			_curScript->bp = _curScript->sp + 2;
+		break;
+		
+		default:
+			_continue = false;
+			_curScript->ip = 0;
+		break;
+	}
+}
+
+void ScriptHelper::c1_push() {
+	_curScript->stack[--_curScript->sp] = _parameter;
+}
+
+void ScriptHelper::c1_pushVar() {
+	_curScript->stack[--_curScript->sp] = _curScript->variables[_parameter];
+}
+
+void ScriptHelper::c1_pushBPNeg() {
+	_curScript->stack[--_curScript->sp] = _curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp];
+}
+
+void ScriptHelper::c1_pushBPAdd() {
+	_curScript->stack[--_curScript->sp] = _curScript->stack[(_parameter - 1) + _curScript->bp];
+}
+
+void ScriptHelper::c1_popRetOrPos() {
+	switch (_parameter) {
+		case 0:
+			_curScript->retValue = _curScript->stack[_curScript->sp++];
+		break;
+		
+		case 1:
+			if (_curScript->sp >= 60) {
+				_continue = false;
+				_curScript->ip = 0;
+			} else {
+				_curScript->bp = _curScript->stack[_curScript->sp++];
+				_curScript->ip = _curScript->dataPtr->data + (_curScript->stack[_curScript->sp++] << 1);
+			}
+		break;
+		
+		default:
+			_continue = false;
+			_curScript->ip = 0;
+		break;
+	}
+}
+
+void ScriptHelper::c1_popVar() {
+	_curScript->variables[_parameter] = _curScript->stack[_curScript->sp++];
+}
+
+void ScriptHelper::c1_popBPNeg() {
+	_curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp] = _curScript->stack[_curScript->sp++];
+}
+
+void ScriptHelper::c1_popBPAdd() {
+	_curScript->stack[(_parameter - 1) + _curScript->bp] = _curScript->stack[_curScript->sp++];
+}
+
+void ScriptHelper::c1_addSP() {
+	_curScript->sp += _parameter;
+}
+
+void ScriptHelper::c1_subSP() {
+	_curScript->sp -= _parameter;
+}
+
+void ScriptHelper::c1_execOpcode() {
+	assert((uint8)_parameter < _curScript->dataPtr->opcodeSize);
+	if (_curScript->dataPtr->opcodes[(uint8)_parameter] == &KyraEngine::cmd_dummy)
+		debug("calling unimplemented opcode(0x%.02X)", (uint8)_parameter);
+	_curScript->retValue = (_vm->*_curScript->dataPtr->opcodes[(uint8)_parameter])(_curScript);
+}
+
+void ScriptHelper::c1_ifNotJmp() {
+	if (!_curScript->stack[_curScript->sp++]) {
+		_parameter &= 0x7FFF;
+		_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
+	}
+}
+
+void ScriptHelper::c1_negate() {
+	int16 value = _curScript->stack[_curScript->sp];
+	switch (_parameter) {
+		case 0:
+			if (!value) {
+				_curScript->stack[_curScript->sp] = 1;
+			} else {
+				_curScript->stack[_curScript->sp] = 0;
+			}
+		break;
+		
+		case 1:
+			_curScript->stack[_curScript->sp] = -value;
+		break;
+		
+		case 2:
+			_curScript->stack[_curScript->sp] = ~value;
+		break;
+		
+		default:
+			_continue = false;
+		break;
+	}
+}
+
+void ScriptHelper::c1_eval() {
+	int16 ret = 0;
+	bool error = false;
+	
+	int16 val1 = _curScript->stack[_curScript->sp++];
+	int16 val2 = _curScript->stack[_curScript->sp++];
+	
+	switch (_parameter) {
+		case 0:
+			if (!val2 || !val1) {
+				ret = 0;
+			} else {
+				ret = 1;
+			}
+		break;
+		
+		case 1:
+			if (val2 || val1) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 2:
+			if (val1 == val2) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 3:
+			if (val1 != val2) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 4:
+			if (val1 > val2) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 5:
+			if (val1 >= val2) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 6:
+			if (val1 < val2) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 7:
+			if (val1 <= val2) {
+				ret = 1;
+			} else {
+				ret = 0;
+			}
+		break;
+		
+		case 8:
+			ret = val1 + val2;
+		break;
+		
+		case 9:
+			ret = val2 - val1;
+		break;
+		
+		case 10:
+			ret = val1 * val2;
+		break;
+		
+		case 11:
+			ret = val2 / val1;
+		break;
+		
+		case 12:
+			ret = val2 >> val1;
+		break;
+		
+		case 13:
+			ret = val2 << val1;
+		break;
+		
+		case 14:
+			ret = val1 & val2;
+		break;
+		
+		case 15:
+			ret = val1 | val2;
+		break;
+		
+		case 16:
+			ret = val2 % val1;
+		break;
+		
+		case 17:
+			ret = val1 ^ val2;
+		break;
+		
+		default:
+			warning("Unknown evaluate func: %d", _parameter);
+			error = true;
+		break;
+	}
+	
+	if (error) {
+		_curScript->ip = 0;
+		_continue = false;
+	} else {
+		_curScript->stack[--_curScript->sp] = ret;
+	}
+}
+
+void ScriptHelper::c1_setRetAndJmp() {
+	if (_curScript->sp >= 60) {
+		_continue = false;
+		_curScript->ip = 0;
+	} else {
+		_curScript->retValue = _curScript->stack[_curScript->sp++];
+		uint16 temp = _curScript->stack[_curScript->sp++];
+		_curScript->stack[60] = 0;
+		_curScript->ip = &_curScript->dataPtr->data[temp*2];
+	}
+}
 } // end of namespace Kyra

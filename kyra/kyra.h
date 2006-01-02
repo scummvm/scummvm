@@ -78,34 +78,9 @@ struct Room {
 	uint32 unkField3[12];
 };
 
-struct AnimObject {
-	uint8 index;
-	uint32 active;
-	uint32 refreshFlag;
-	uint32 bkgdChangeFlag;
-	uint32 unk1;
-	uint32 flags;
-	int16 drawY;
-	uint8 *sceneAnimPtr;
-	int16 animFrameNumber;
-	uint8 *background;
-	uint16 rectSize;
-	int16 x1, y1;
-	int16 x2, y2;
-	uint16 width;
-	uint16 height;
-	uint16 width2;
-	uint16 height2;
-	AnimObject *nextAnimObject;
-};
-
 struct Rect {
 	int x, y;
 	int x2, y2;
-};
-
-struct TalkCoords {
-	uint16 y, x, w;
 };
 
 struct Item {
@@ -143,6 +118,8 @@ struct ScriptState;
 struct ScriptData;
 class ScriptHelper;
 class Debugger;
+class ScreenAnimator;
+class TextDisplayer;
 class KyraEngine;
 
 struct Timer {
@@ -183,13 +160,9 @@ struct Button {
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
 	friend class Debugger;
+	friend class ScreenAnimator;
 public:
 
-	enum {
-		TALK_SUBSTRING_LEN = 80,
-		TALK_SUBSTRING_NUM = 3
-	};
-	
 	enum {
 		MUSIC_INTRO = 0
 	};
@@ -201,6 +174,8 @@ public:
 
 	Resource *resource() { return _res; }
 	Screen *screen() { return _screen; }
+	ScreenAnimator *animator() { return _animator; }
+	TextDisplayer *text() { return _text; }
 	MusicPlayer *midi() { return _midi; }
 	Movie *createWSAMovie();
 
@@ -234,8 +209,6 @@ public:
 	bool snd_voicePlaying();
 	void snd_playSoundEffect(int track);
 
-	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
-	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void drawSentenceCommand(char *sentence, int unk1);
 	void updateSentenceCommand(char *str1, char *str2, int unk1);
 	void updateTextFade();
@@ -250,8 +223,6 @@ public:
 
 	void waitTicks(int ticks);
 	void delayWithTicks(int ticks);
-	void updateAllObjectShapes();
-	void flagAllObjectsForRefresh();
 	void animRefreshNPC(int character);
 	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
 	int16 fetchAnimHeight(const uint8 *shape, int16 mult);
@@ -426,23 +397,13 @@ protected:
 
 	void startup();
 	void mainLoop();
-	void setTalkCoords(uint16 y);
-	int getCenterStringX(const char *str, int x1, int x2);
-	int getCharLength(const char *str, int len);
-	int dropCRIntoString(char *str, int offs);
-	char *preprocessString(const char *str);
-	int buildMessageSubstrings(const char *str);
-	int getWidestLineWidth(int linesCount);
-	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
-	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
-	void characterSays(char *msg, int8 charNum, int8 chatDuration);
 	int initCharacterChat(int8 charNum);
 	int8 getChatPartnerNum();
 	void backupChatPartnerAnimFrame(int8 charNum);
 	void restoreChatPartnerAnimFrame(int8 charNum);
 	void endCharacterChat(int8 charNum, int16 arg_4);
 	void waitForChatToFinish(int16 chatDuration, char *str, uint8 charNum);
-	void printCharacterText(char *text, int8 charNum);
+	void characterSays(char *chatStr, int8 charNum, int8 chatDuration);
 
 	void setCharacterDefaultFrame(int character);
 	void setCharactersPositions(int character);
@@ -472,13 +433,6 @@ protected:
 	void placeItemInGenericMapScene(int item, int index);
 	void initSceneObjectList(int brandonAlive);
 	void initSceneScreen(int brandonAlive);
-	void preserveAllBackgrounds();
-	void flagAllObjectsForBkgdChange();
-	void restoreAllObjectBackgrounds();
-	void preserveAnyChangedBackgrounds();
-	void preserveOrRestoreBackground(AnimObject *obj, bool restore);
-	void prepDrawAllObjects();
-	void copyChangedObjectsForward(int refreshFlag);
 	int findDuplicateItemShape(int shape);
 	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
 	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
@@ -533,9 +487,6 @@ protected:
 	void updatePlayerItemsForScene();
 	void redrawInventory(int page);
 	
-	void animRemoveGameItem(int index);
-	void animAddGameItem(int index, uint16 sceneId);
-	void animAddNPC(int character);
 	void drawJewelPress(int jewel, int drawSpecial);
 	void drawJewelsFadeOutStart();
 	void drawJewelsFadeOutEnd(int jewel);
@@ -543,11 +494,6 @@ protected:
 	void freeShapes123();
 	void setBrandonAnimSeqSize(int width, int height);
 	void resetBrandonAnimSeqSize();
-	
-	AnimObject *objectRemoveQueue(AnimObject *queue, AnimObject *rem);
-	AnimObject *objectAddHead(AnimObject *queue, AnimObject *head);
-	AnimObject *objectQueue(AnimObject *queue, AnimObject *add);
-	AnimObject *_animStates;
 	
 	void seq_demo();
 	void seq_intro();
@@ -637,12 +583,6 @@ protected:
 	bool _abortWalkFlag;
 	bool _abortWalkFlag2;
 	bool _mousePressFlag;
-	char _talkBuffer[300];
-	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
-	TalkCoords _talkCoords;
-	uint16 _talkMessageY;
-	uint16 _talkMessageH;
-	bool _talkMessagePrinted;
 	uint8 _flagsTable[53];
 	uint8 *_unkPtr1, *_unkPtr2;
 	uint8 *_hidPage, *_screenPage;
@@ -654,10 +594,8 @@ protected:
 	int8 _itemInHand;
 	int _mouseState;
 	bool _handleInput;
-	bool _updateScreen;
 	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
-	int _noDrawShapesFlag;
 	int _unkAmuletVar;
 	
 	int _brandonAnimSeqSizeWidth;
@@ -688,7 +626,7 @@ protected:
 	uint16 _brandonStatusBit;
 	int _brandonStatusBit0x02Flag;
 	int _brandonStatusBit0x20Flag;
-	uint8 _brandonPoisonFlagsGFX[256];	// this seem not to be posion flags, it is used for drawing once
+	uint8 _brandonPoisonFlagsGFX[256];
 	uint8 _deathHandler;
 	int _brandonInvFlag;
 	int8 _poisonDeathCounter;
@@ -731,9 +669,6 @@ protected:
 	bool _fadeText;
 
 	uint8 _configTalkspeed;
-	AnimObject *_objectQueue;
-	AnimObject *_charactersAnimState;
-	AnimObject *_animItems;
 	
 	int _curMusicTheme;
 	int _newMusicTheme;
@@ -742,9 +677,11 @@ protected:
 
 	Resource *_res;
 	Screen *_screen;
+	ScreenAnimator *_animator;
 	MusicPlayer *_midi;
 	SeqPlayer *_seq;
 	Sprites *_sprites;
+	TextDisplayer *_text;
 	ScriptHelper *_scriptInterpreter;
 	Debugger *_debugger;
 	Common::SaveFileManager *_saveFileMan;
