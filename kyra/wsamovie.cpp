@@ -26,64 +26,67 @@
 
 
 namespace Kyra {
+WSAMovieV1::WSAMovieV1(KyraEngine *vm) : Movie(vm) {}
+WSAMovieV1::~WSAMovieV1() { close(); }
 
-WSAMovieV1 *KyraEngine::wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf) {
-	debug(9, "KyraEngine::wsa_open('%s', %d, 0x%X)", filename, offscreenDecode, palBuf);
+void WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+	debug(9, "WSAMovieV1::open('%s', %d, 0x%X)", filename, offscreenDecode, palBuf);
+	close();
+
 	uint32 flags = 0;
 	uint32 fileSize;
-	uint8 *p = _res->fileData(filename, &fileSize);
+	uint8 *p = _vm->resource()->fileData(filename, &fileSize);
 	assert(p);
 	
-	WSAMovieV1 *wsa = new WSAMovieV1;
 	const uint8 *wsaData = p;
-	wsa->numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
-	wsa->width = READ_LE_UINT16(wsaData); wsaData += 2;
-	wsa->height = READ_LE_UINT16(wsaData); wsaData += 2;
-	wsa->deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
-	wsa->offscreenBuffer = NULL;
-	wsa->flags = 0;
-	if (_features & GF_TALKIE) {
+	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
+	_width = READ_LE_UINT16(wsaData); wsaData += 2;
+	_height = READ_LE_UINT16(wsaData); wsaData += 2;
+	_deltaBufferSize = READ_LE_UINT16(wsaData); wsaData += 2;
+	_offscreenBuffer = NULL;
+	_flags = 0;
+	if (_vm->features() & GF_TALKIE) {
 		flags = READ_LE_UINT16(wsaData); wsaData += 2;
 	}
 	
 	uint32 offsPal = 0;
 	if (flags & 1) {
 		offsPal = 0x300;
-		wsa->flags |= WF_HAS_PALETTE;
+		_flags |= WF_HAS_PALETTE;
 		if (palBuf) {
-			memcpy(palBuf, wsaData + (wsa->numFrames + 2) * 4, 0x300);
+			memcpy(palBuf, wsaData + (_numFrames + 2) * 4, 0x300);
 		}
 	}
 	
 	if (offscreenDecode) {
-		wsa->flags |= WF_OFFSCREEN_DECODE;
-		const int offscreenBufferSize = wsa->width * wsa->height;
-		wsa->offscreenBuffer = (uint8 *)malloc(offscreenBufferSize);
-		memset(wsa->offscreenBuffer, 0, offscreenBufferSize);
+		_flags |= WF_OFFSCREEN_DECODE;
+		const int offscreenBufferSize = _width * _height;
+		_offscreenBuffer = new uint8[offscreenBufferSize];
+		memset(_offscreenBuffer, 0, offscreenBufferSize);
 	}
 
-	if (wsa->numFrames & 0x8000) {
+	if (_numFrames & 0x8000) {
 		warning("Unhandled wsa flags 0x80");
-		wsa->flags |= 0x80;
-		wsa->numFrames &= 0x7FFF;
+		_flags |= 0x80;
+		_numFrames &= 0x7FFF;
 	}
-	wsa->currentFrame = wsa->numFrames;
+	_currentFrame = _numFrames;
 
-	wsa->deltaBuffer = (uint8 *)malloc(wsa->deltaBufferSize);
-	memset(wsa->deltaBuffer, 0, wsa->deltaBufferSize);
+	_deltaBuffer = new uint8[_deltaBufferSize];
+	memset(_deltaBuffer, 0, _deltaBufferSize);
 	
 	// read frame offsets
-	wsa->frameOffsTable = (uint32 *)malloc((wsa->numFrames + 2) * 4);
-	wsa->frameOffsTable[0] = 0;
+	_frameOffsTable = new uint32[_numFrames + 2];
+	_frameOffsTable[0] = 0;
 	uint32 frameDataOffs = READ_LE_UINT32(wsaData); wsaData += 4;
 	bool firstFrame = true;
 	if (frameDataOffs == 0) {
 		firstFrame = false;
 		frameDataOffs = READ_LE_UINT32(wsaData);
-		wsa->flags |= WF_NO_FIRST_FRAME;
+		_flags |= WF_NO_FIRST_FRAME;
 	}
-	for (int i = 1; i < wsa->numFrames + 2; ++i) {
-		wsa->frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
+	for (int i = 1; i < _numFrames + 2; ++i) {
+		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
 		wsaData += 4;
 	}
 	
@@ -92,75 +95,67 @@ WSAMovieV1 *KyraEngine::wsa_open(const char *filename, int offscreenDecode, uint
 	
 	// read frame data
 	const int frameDataSize = p + fileSize - wsaData;
-	wsa->frameData = (uint8 *)malloc(frameDataSize);
-	memcpy(wsa->frameData, wsaData, frameDataSize);
+	_frameData = new uint8[frameDataSize];
+	memcpy(_frameData, wsaData, frameDataSize);
 	
 	// decode first frame
 	if (firstFrame) {
-		Screen::decodeFrame4(wsa->frameData, wsa->deltaBuffer, wsa->deltaBufferSize);
+		Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
 	}
 	
-	delete[] p;
-	return wsa;
+	delete [] p;
+	_opened = true;
 }
 
-void KyraEngine::wsa_close(WSAMovieV1 *wsa) {
-	debug(9, "KyraEngine::wsa_close(0x%X)", wsa);
-	if (wsa) {
-		free(wsa->deltaBuffer);
-		free(wsa->offscreenBuffer);
-		free(wsa->frameOffsTable);
-		delete wsa;
+void WSAMovieV1::close() {
+	debug(9, "WSAMovieV1::close()");
+	if (_opened) {
+		delete [] _deltaBuffer;
+		delete [] _offscreenBuffer;
+		delete [] _frameOffsTable;
+		delete [] _frameData;
+		_opened = false;
 	}
 }
 
-uint16 KyraEngine::wsa_getNumFrames(WSAMovieV1 *wsa) const {
-	debug(9, "KyraEngine::wsa_getNumFrames(0x%X)", wsa);
-	uint16 n = 0;
-	if (wsa) {
-		n = wsa->numFrames;
-	}
-	return n;
-}
-
-void KyraEngine::wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum) {
-	debug(9, "KyraEngine::wsa_play(0x%X, %d, %d, %d, %d)", wsa, frameNum, x, y, pageNum);
-	if (frameNum > wsa->numFrames)
+void WSAMovieV1::displayFrame(int frameNum) {
+	debug(9, "WSAMovieV1::displayFrame(%d)", frameNum);
+	if (frameNum > _numFrames || !_opened)
 		return;
 
 	uint8 *dst;
-	if (wsa->flags & WF_OFFSCREEN_DECODE) {
-		dst = wsa->offscreenBuffer;
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		dst = _offscreenBuffer;
 	} else {
-		dst = _screen->getPagePtr(pageNum) + y * Screen::SCREEN_W + x;
+		dst = _vm->screen()->getPagePtr(_drawPage) + _y * Screen::SCREEN_W + _x;
 	}
 		
-	if (wsa->currentFrame == wsa->numFrames) {
-		if (!(wsa->flags & WF_OFFSCREEN_DECODE) && (_features & GF_TALKIE))
-			_screen->clearPage(pageNum);
-		if (!(wsa->flags & WF_NO_FIRST_FRAME)) {
-			if (wsa->flags & WF_OFFSCREEN_DECODE) {
-				Screen::decodeFrameDelta(dst, wsa->deltaBuffer);
+	if (_currentFrame == _numFrames) {
+		if (!(_flags & WF_OFFSCREEN_DECODE) && (_vm->features() & GF_TALKIE))
+			_vm->screen()->clearPage(_drawPage);
+		if (!(_flags & WF_NO_FIRST_FRAME)) {
+			if (_flags & WF_OFFSCREEN_DECODE) {
+				Screen::decodeFrameDelta(dst, _deltaBuffer);
 			} else {
-				Screen::decodeFrameDeltaPage(dst, wsa->deltaBuffer, wsa->width);
+				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width);
 			}
 		}
-		wsa->currentFrame = 0;
+		_currentFrame = 0;
 	}
 
 	// try to reduce the number of needed frame operations
-	int diffCount = ABS(wsa->currentFrame - frameNum);
+	int diffCount = ABS(_currentFrame - frameNum);
 	int frameStep = 1;
 	int frameCount;
-	if (wsa->currentFrame < frameNum) {
-		frameCount = wsa->numFrames - frameNum + wsa->currentFrame;
+	if (_currentFrame < frameNum) {
+		frameCount = _numFrames - frameNum + _currentFrame;
 		if (diffCount > frameCount) {
 			frameStep = -1;
 		} else {
 			frameCount = diffCount;
 		}
 	} else {
-		frameCount = wsa->numFrames - wsa->currentFrame + frameNum;
+		frameCount = _numFrames - _currentFrame + frameNum;
 		if (frameCount >= diffCount) {
 			frameStep = -1;
 			frameCount = diffCount;
@@ -169,42 +164,43 @@ void KyraEngine::wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageN
 	
 	// process
 	if (frameStep > 0) {
-		uint16 cf = wsa->currentFrame;
+		uint16 cf = _currentFrame;
 		while (frameCount--) {
 			cf += frameStep;
-			wsa_processFrame(wsa, cf, dst);
-			if (cf == wsa->numFrames) {
+			processFrame(cf, dst);
+			if (cf == _numFrames) {
 				cf = 0;
 			}
 		}
 	} else {
-		uint16 cf = wsa->currentFrame;
+		uint16 cf = _currentFrame;
 		while (frameCount--) {
 			if (cf == 0) {
-				cf = wsa->numFrames;
+				cf = _numFrames;
 			}
-			wsa_processFrame(wsa, cf, dst);
+			processFrame(cf, dst);
 			cf += frameStep;
 		}
 	}
 	
 	// display
-	wsa->currentFrame = frameNum;
-	if (wsa->flags & WF_OFFSCREEN_DECODE) {
-		_screen->copyBlockToPage(pageNum, x, y, wsa->width, wsa->height, wsa->offscreenBuffer);
+	_currentFrame = frameNum;
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
 	}
 }
 
-void KyraEngine::wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst) {
-	debug(9, "KyraEngine::wsa_processFrame(0x%X, %d, 0x%X)", wsa, frameNum, dst);
-	assert(frameNum <= wsa->numFrames);
-	const uint8 *src = wsa->frameData + wsa->frameOffsTable[frameNum];
-	Screen::decodeFrame4(src, wsa->deltaBuffer, wsa->deltaBufferSize);
-	if (wsa->flags & WF_OFFSCREEN_DECODE) {
-		Screen::decodeFrameDelta(dst, wsa->deltaBuffer);
+void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
+	debug(9, "WSAMovieV1::processFrame(%d, 0x%X)", frameNum, dst);
+	if (!_opened)
+		return;
+	assert(frameNum <= _numFrames);
+	const uint8 *src = _frameData + _frameOffsTable[frameNum];
+	Screen::decodeFrame4(src, _deltaBuffer, _deltaBufferSize);
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		Screen::decodeFrameDelta(dst, _deltaBuffer);
 	} else {
-		Screen::decodeFrameDeltaPage(dst, wsa->deltaBuffer, wsa->width);
+		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width);
 	}
 }
-	
 } // end of namespace Kyra

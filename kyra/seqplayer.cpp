@@ -28,6 +28,7 @@
 #include "kyra/resource.h"
 #include "kyra/screen.h"
 #include "kyra/sound.h"
+#include "kyra/wsamovie.h"
 
 #include "kyra/seqplayer.h"
 
@@ -51,6 +52,12 @@ SeqPlayer::SeqPlayer(KyraEngine* vm, OSystem* system) {
 
 SeqPlayer::~SeqPlayer() {
 	freeHandShapes();
+
+	for (int i = 0; i < ARRAYSIZE(_seqMovies); ++i) {
+		_seqMovies[i].movie->close();
+		delete _seqMovies[i].movie;
+		_seqMovies[i].movie = 0;
+	}
 }
 
 uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
@@ -81,6 +88,8 @@ void SeqPlayer::makeHandShapes() {
 	debug(9, "SeqPlayer::makeHandShapes()");
 	_vm->loadBitmap("WRITING.CPS", 3, 3, 0);
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
+		if (_handShapes[i])
+			free(_handShapes[i]);
 		_handShapes[i] = setPanPages(3, i);
 	}
 }
@@ -98,17 +107,19 @@ void SeqPlayer::s1_wsaOpen() {
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
 	uint8 offscreenDecode = *_seqData++;
 	_seqWsaCurDecodePage = _seqMovies[wsaObj].page = (offscreenDecode == 0) ? 0 : 3;
-	_seqMovies[wsaObj].wsa = _vm->wsa_open(_vm->seqWSATable()[wsaObj], offscreenDecode, 0);
+	if (!_seqMovies[wsaObj].movie)
+		_seqMovies[wsaObj].movie = _vm->createWSAMovie();
+	_seqMovies[wsaObj].movie->_drawPage = _seqMovies[wsaObj].page;
+	_seqMovies[wsaObj].movie->open(_vm->seqWSATable()[wsaObj], offscreenDecode, 0);
 	_seqMovies[wsaObj].frame = 0;
-	_seqMovies[wsaObj].numFrames = _vm->wsa_getNumFrames(_seqMovies[wsaObj].wsa) - 1;
+	_seqMovies[wsaObj].numFrames = _seqMovies[wsaObj].movie->frames() - 1;
 }
 
 void SeqPlayer::s1_wsaClose() {
 	uint8 wsaObj = *_seqData++;
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
-	if (_seqMovies[wsaObj].wsa) {
-		_vm->wsa_close(_seqMovies[wsaObj].wsa);
-		_seqMovies[wsaObj].wsa = 0;
+	if (_seqMovies[wsaObj].movie) {
+		_seqMovies[wsaObj].movie->close();
 	}
 }
 
@@ -118,7 +129,10 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	int16 frame = (int8)*_seqData++;
 	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
-	_vm->wsa_play(_seqMovies[wsaObj].wsa, frame, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, _seqMovies[wsaObj].page);
+	assert(_seqMovies[wsaObj].movie);
+	_seqMovies[wsaObj].movie->_x = _seqMovies[wsaObj].pos.x;
+	_seqMovies[wsaObj].movie->_y = _seqMovies[wsaObj].pos.y;
+	_seqMovies[wsaObj].movie->displayFrame(frame);
 	_seqMovies[wsaObj].frame = frame;
 }
 
@@ -130,7 +144,7 @@ void SeqPlayer::s1_wsaPlayNextFrame() {
 		frame = 0;
 		_seqMovies[wsaObj].frame = 0;
 	}
-	_vm->wsa_play(_seqMovies[wsaObj].wsa, frame, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, _seqMovies[wsaObj].page);
+	_seqMovies[wsaObj].movie->displayFrame(frame);
 }
 
 void SeqPlayer::s1_wsaPlayPrevFrame() {
@@ -141,7 +155,7 @@ void SeqPlayer::s1_wsaPlayPrevFrame() {
 		frame = _seqMovies[wsaObj].numFrames;
 		_seqMovies[wsaObj].frame = frame;
 	} else {
-		_vm->wsa_play(_seqMovies[wsaObj].wsa, frame, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, _seqMovies[wsaObj].page);
+		_seqMovies[wsaObj].movie->displayFrame(frame);
 	}
 }
 

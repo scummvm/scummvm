@@ -131,7 +131,7 @@ struct SceneExits {
 	uint8  westYPos;
 };
 
-struct WSAMovieV1;
+class Movie;
 
 class MusicPlayer;
 class SeqPlayer;
@@ -202,6 +202,7 @@ public:
 	Resource *resource() { return _res; }
 	Screen *screen() { return _screen; }
 	MusicPlayer *midi() { return _midi; }
+	Movie *createWSAMovie();
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
@@ -215,13 +216,13 @@ public:
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
 
-	const char **seqWSATable() { return (const char **)_seq_WSATable; }
-	const char **seqCPSTable() { return (const char **)_seq_CPSTable; }
-	const char **seqCOLTable() { return (const char **)_seq_COLTable; }
-	const char **seqTextsTable() { return (const char **)_seq_textsTable; }
+	const char **seqWSATable() { return const_cast<const char **>(_seq_WSATable); }
+	const char **seqCPSTable() { return const_cast<const char **>(_seq_CPSTable); }
+	const char **seqCOLTable() { return const_cast<const char **>(_seq_COLTable); }
+	const char **seqTextsTable() { return const_cast<const char **>(_seq_textsTable); }
 	
-	const uint8 **palTable1() { return (const uint8 **)&_specialPalettes[0]; }
-	const uint8 **palTable2() { return (const uint8 **)&_specialPalettes[29]; }
+	const uint8 **palTable1() { return const_cast<const uint8 **>(&_specialPalettes[0]); }
+	const uint8 **palTable2() { return const_cast<const uint8 **>(&_specialPalettes[29]); }
 
 	bool seq_skipSequence() const;
 	void quitGame();
@@ -246,11 +247,6 @@ public:
 	int16 getTimerDelay(uint8 timer);
 	void enableTimer(uint8 timer);
 	void disableTimer(uint8 timer);
-
-	WSAMovieV1 *wsa_open(const char *filename, int offscreenDecode, uint8 *palBuf);
-	void wsa_close(WSAMovieV1 *wsa);
-	uint16 wsa_getNumFrames(WSAMovieV1 *wsa) const;
-	void wsa_play(WSAMovieV1 *wsa, int frameNum, int x, int y, int pageNum);
 
 	void waitTicks(int ticks);
 	void delayWithTicks(int ticks);
@@ -576,8 +572,6 @@ protected:
 	void seq_fillFlaskWithWater(int item, int type);
 	void seq_playDrinkPotionAnim(int unk1, int unk2, int flags);
 
-	void wsa_processFrame(WSAMovieV1 *wsa, int frameNum, uint8 *dst);
-
 	void snd_startTrack();
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
@@ -669,7 +663,8 @@ protected:
 	int _brandonAnimSeqSizeWidth;
 	int _brandonAnimSeqSizeHeight;
 
-	WSAMovieV1 *_wsaObjects[10];
+	Movie *_movieObjects[10];
+
 	uint16 _entranceMouseCursorTracks[8];
 	uint16 _walkBlockNorth;
 	uint16 _walkBlockEast;

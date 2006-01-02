@@ -24,6 +24,7 @@
 #include "kyra/script.h"
 #include "kyra/screen.h"
 #include "kyra/sprites.h"
+#include "kyra/wsamovie.h"
 #include "common/system.h"
 
 namespace Kyra {
@@ -678,8 +679,8 @@ int KyraEngine::cmd_openWSAFile(ScriptState *script) {
 	char *filename = stackPosString(0);
 	int wsaIndex = stackPos(1);
 	
-	_wsaObjects[wsaIndex] = wsa_open(filename, 1, 0);
-	assert(_wsaObjects[wsaIndex]);
+	_movieObjects[wsaIndex]->open(filename, 1, 0);
+	assert(_movieObjects[wsaIndex]->opened());
 	
 	return 0;
 }
@@ -688,9 +689,8 @@ int KyraEngine::cmd_closeWSAFile(ScriptState *script) {
 	debug(3, "cmd_closeWSAFile(0x%X) (%d)", script, stackPos(0));
 	
 	int wsaIndex = stackPos(0);
-	if (_wsaObjects[wsaIndex]) {
-		wsa_close(_wsaObjects[wsaIndex]);
-		_wsaObjects[wsaIndex] = 0;
+	if (_movieObjects[wsaIndex]) {
+		_movieObjects[wsaIndex]->close();
 	}
 	
 	return 0;
@@ -710,10 +710,13 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 	int worldUpdate = stackPos(4);
 	int wsaFrame = 0;
 	
+	_movieObjects[wsaIndex]->_x = xpos;
+	_movieObjects[wsaIndex]->_y = ypos;
+	_movieObjects[wsaIndex]->_drawPage = 0;
 	while (running) {
-		wsa_play(_wsaObjects[wsaIndex], wsaFrame++, xpos, ypos, 0);
+		_movieObjects[wsaIndex]->displayFrame(wsaFrame++);
 		_updateScreen = true;
-		if (wsaFrame >= wsa_getNumFrames(_wsaObjects[wsaIndex]))
+		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
 		
 		uint32 continueTime = waitTime * _tickLength + _system->getMillis();
@@ -741,7 +744,10 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	int waitTime = stackPos(3);
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
-	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+	_movieObjects[wsaIndex]->_x = xpos;
+	_movieObjects[wsaIndex]->_y = ypos;
+	_movieObjects[wsaIndex]->_drawPage = 0;
+	_movieObjects[wsaIndex]->displayFrame(frame);
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
@@ -944,7 +950,10 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	int wsaIndex = stackPos(4);
 	
 	_screen->hideMouse();
-	wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 2);
+	_movieObjects[wsaIndex]->_x = xpos;
+	_movieObjects[wsaIndex]->_y = ypos;
+	_movieObjects[wsaIndex]->_drawPage = 2;
+	_movieObjects[wsaIndex]->displayFrame(frame);
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
@@ -967,14 +976,18 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 	int maxTime = stackPos(6);
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
-	
+
+	_movieObjects[wsaIndex]->_x = xpos;
+	_movieObjects[wsaIndex]->_y = ypos;
+	_movieObjects[wsaIndex]->_drawPage = 0;
+
 	int curTime = 0;
 	_screen->hideMouse();
 	while (curTime < maxTime) {
 		if (endFrame >= startFrame) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
-				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+				_movieObjects[wsaIndex]->displayFrame(frame);
 				_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				while (_system->getMillis() < continueTime) {
@@ -988,7 +1001,7 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 		} else {
 			int frame = startFrame;
 			while (endFrame <= frame) {
-				wsa_play(_wsaObjects[wsaIndex], frame, xpos, ypos, 0);
+				_movieObjects[wsaIndex]->displayFrame(frame);
 				_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				while (_system->getMillis() < continueTime) {
@@ -1448,8 +1461,12 @@ int KyraEngine::cmd_drinkPotionAnimation(ScriptState *script) {
 
 int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 	debug(3, "cmd_makeAmuletAppear(0x%X) ()", script);
-	WSAMovieV1 *amulet = wsa_open("AMULET.WSA", 1, 0);
-	if (amulet) {
+	WSAMovieV1 amulet(this);
+	amulet.open("AMULET.WSA", 1, 0);
+	amulet._drawPage = 0;
+	amulet._x = 224;
+	amulet._y = 152;
+	if (amulet.opened()) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();
 		// snd_kyraPlaySound(0x70);
@@ -1470,7 +1487,8 @@ int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 				// snd_kyraPlaySound(0x73);
 			}
 			
-			wsa_play(amulet, code, 224, 152, 0);
+			
+			amulet.displayFrame(code);
 			_updateScreen = true;
 			
 			while (_system->getMillis() < nextTime) {
@@ -1480,7 +1498,6 @@ int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 		}
 		_screen->showMouse();
 	}
-	wsa_close(amulet);
 	setGameFlag(0x2D);
 	return 0;
 }

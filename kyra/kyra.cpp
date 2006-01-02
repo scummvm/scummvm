@@ -339,7 +339,10 @@ int KyraEngine::init(GameDetector &detector) {
 	_debugger = new Debugger(this);
 	assert(_debugger);	
 	memset(_shapes, 0, sizeof(_shapes));
-	memset(_wsaObjects, 0, sizeof(_wsaObjects));
+
+	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
+		_movieObjects[i] = createWSAMovie();
+	}
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
@@ -407,6 +410,9 @@ int KyraEngine::init(GameDetector &detector) {
 }
 
 KyraEngine::~KyraEngine() {
+	_scriptInterpreter->unloadScript(_npcScriptData);
+	_scriptInterpreter->unloadScript(_scriptClickData);
+
 	delete _debugger;
 	delete _sprites;
 	delete _screen;
@@ -437,6 +443,7 @@ KyraEngine::~KyraEngine() {
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
 			free(_shapes[i]);
+			_shapes[i] = 0;
 			for (int i2 = 0; i2 < ARRAYSIZE(_shapes); i2++) {
 				if (_shapes[i2] == _shapes[i] && i2 != i) {
 					_shapes[i2] = 0;
@@ -695,8 +702,11 @@ void KyraEngine::mainLoop() {
 void KyraEngine::quitGame() {
 	res_unloadResources();
 
-	for (int i = 0; i < 10; i++)
-		wsa_close(_wsaObjects[i]);
+	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
+		_movieObjects[i]->close();
+		delete _movieObjects[i];
+		_movieObjects[i] = 0;
+	}
 
 	_system->quit();
 }
@@ -708,9 +718,9 @@ void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
 
 	if (palData && fileSize) {
 		debug(9, "Loading a palette of size %i from '%s'", fileSize, filename);
-		memcpy(palData, srcData, fileSize);		
+		memcpy(palData, srcData, fileSize);
 	}
-	delete[] srcData;
+	delete [] srcData;
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
@@ -1887,9 +1897,8 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 		moveCharacterToPos(0, facing, xpos, ypos);
 	}
 	
-	for (int i = 0; i < 10; ++i) {
-		wsa_close(_wsaObjects[i]);
-		_wsaObjects[i] = 0;
+	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
+		_movieObjects[i]->close();
 	}
 	
 	if (!brandonAlive) {
@@ -4836,6 +4845,11 @@ AnimObject *KyraEngine::objectQueue(AnimObject *queue, AnimObject *add) {
 #pragma mark -
 #pragma mark - Misc stuff
 #pragma mark -
+
+Movie *KyraEngine::createWSAMovie() {
+	// for kyra2 here could be added then WSAMovieV2
+	return new WSAMovieV1(this);
+}
 
 int16 KyraEngine::fetchAnimWidth(const uint8 *shape, int16 mult) {
 	debug(9, "fetchAnimWidth(0x%X, %d)", shape, mult);

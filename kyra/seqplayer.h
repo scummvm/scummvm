@@ -95,7 +95,7 @@ protected:
 	void s1_prefetchVocFile();
 
 	struct SeqMovie {
-		WSAMovieV1 *wsa;
+		Movie *movie;
 		int32 page;
 		int16 frame;
 		int16 numFrames;
