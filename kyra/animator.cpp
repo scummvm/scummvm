@@ -24,14 +24,21 @@
 #include "kyra/animator.h"
 #include "kyra/sprites.h"
 
+#include "common/system.h"
+
 namespace Kyra {
-ScreenAnimator::ScreenAnimator(KyraEngine *vm) {
+ScreenAnimator::ScreenAnimator(KyraEngine *vm, OSystem *system) {
 	_vm = vm;
 	_screen = vm->screen();
 	_initOk = false;
 	_updateScreen = false;
+	_system = system;
 	_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
 	_noDrawShapesFlag = 0;
+	
+	memset(&_kyragemFadingState, 0, sizeof(_kyragemFadingState));
+	_kyragemFadingState.gOffset = 0x13;
+	_kyragemFadingState.bOffset = 0x13;
 }
 
 ScreenAnimator::~ScreenAnimator() {
@@ -521,5 +528,75 @@ void ScreenAnimator::refreshObject(AnimObject *object) {
 	} else {
 		_objectQueue = objectAddHead(0, object);
 	}
+}
+
+void ScreenAnimator::updateKyragemFading() {
+	static const uint8 kyraGemPalette[0x28] = {
+		0x3F, 0x3B, 0x38, 0x34, 0x32, 0x2F, 0x2C, 0x29, 0x25, 0x22,
+		0x1F, 0x1C, 0x19, 0x16, 0x12, 0x0F, 0x0C, 0x0A, 0x06, 0x03,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	};
+	
+	if (_system->getMillis() < _kyragemFadingState.timerCount)
+		return;
+	
+	_kyragemFadingState.timerCount = _system->getMillis() + 4 * _vm->tickLength();
+	int palPos = 684;
+	for (int i = 0; i < 20; ++i) {
+		_screen->_currentPalette[palPos++] = kyraGemPalette[i + _kyragemFadingState.rOffset];
+		_screen->_currentPalette[palPos++] = kyraGemPalette[i + _kyragemFadingState.gOffset];
+		_screen->_currentPalette[palPos++] = kyraGemPalette[i + _kyragemFadingState.bOffset];
+	}
+	_screen->setScreenPalette(_screen->_currentPalette);
+	_updateScreen = true;
+	switch (_kyragemFadingState.nextOperation) {
+		case 0:
+			--_kyragemFadingState.bOffset;
+			if (_kyragemFadingState.bOffset >= 1)
+				return;
+			_kyragemFadingState.nextOperation = 1;
+			break;
+
+		case 1:
+			++_kyragemFadingState.rOffset;
+			if (_kyragemFadingState.rOffset < 19)
+				return;
+			_kyragemFadingState.nextOperation = 2;
+			break;
+
+		case 2:
+			--_kyragemFadingState.gOffset;
+			if (_kyragemFadingState.gOffset >= 1)
+				return;
+			_kyragemFadingState.nextOperation = 3;
+			break;
+		
+		case 3:
+			++_kyragemFadingState.bOffset;
+			if (_kyragemFadingState.bOffset < 19)
+				return;
+			_kyragemFadingState.nextOperation = 4;
+			break;
+		
+		case 4:
+			--_kyragemFadingState.rOffset;
+			if (_kyragemFadingState.rOffset >= 1)
+				return;
+			_kyragemFadingState.nextOperation = 5;
+			break;
+		
+		case 5:
+			++_kyragemFadingState.gOffset;
+			if (_kyragemFadingState.gOffset < 19)
+				return;
+			_kyragemFadingState.nextOperation = 0;
+			break;
+			
+		default:
+			break;
+	}
+	
+	_kyragemFadingState.timerCount = _system->getMillis() + 120 * _vm->tickLength();
 }
 } // end of namespace Kyra

@@ -177,6 +177,7 @@ public:
 	ScreenAnimator *animator() { return _animator; }
 	TextDisplayer *text() { return _text; }
 	MusicPlayer *midi() { return _midi; }
+	uint32 tickLength() const { return _tickLength; }
 	Movie *createWSAMovie();
 
 	uint8 game() const { return _game; }

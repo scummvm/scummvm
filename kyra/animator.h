@@ -49,7 +49,7 @@ struct AnimObject {
 
 class ScreenAnimator {
 public:
-	ScreenAnimator(KyraEngine *vm);
+	ScreenAnimator(KyraEngine *vm, OSystem *system);
 	virtual ~ScreenAnimator();
 
 	operator bool() const { return _initOk; }
@@ -78,12 +78,15 @@ public:
 	void clearQueue() { _objectQueue = 0; }
 	void addObjectToQueue(AnimObject *object);
 	void refreshObject(AnimObject *object);
+	
+	void updateKyragemFading();
 
 	int _noDrawShapesFlag;
 	bool _updateScreen;
 protected:
 	KyraEngine *_vm;
 	Screen *_screen;
+	OSystem *_system;
 	bool _initOk;
 
 	AnimObject *_screenObjects;
@@ -99,6 +102,14 @@ protected:
 	void preserveOrRestoreBackground(AnimObject *obj, bool restore);
 
 	AnimObject *_objectQueue;
+	
+	struct KyragemState {
+		uint16 nextOperation;
+		uint16 rOffset;
+		uint16 gOffset;
+		uint16 bOffset;
+		uint32 timerCount;
+	} _kyragemFadingState;
 };
 } // end of namespace Kyra
 

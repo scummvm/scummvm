@@ -93,7 +93,6 @@ void KyraEngine::updateGameTimers() {
 					(*this.*_timers[i].func)(i);
 
 				_timers[i].nextRun = _system->getMillis() + _timers[i].countdown * _tickLength;
-
 			}
 		}
 		if (_timers[i].nextRun < _timerNextRun)
@@ -119,8 +118,9 @@ int16 KyraEngine::getTimerDelay(uint8 timer) {
 void KyraEngine::setTimerCountdown(uint8 timer, int32 countdown) {
 	debug(9, "setTimerCountdown(%i, %i)", timer, countdown);
 	_timers[timer].countdown = countdown;
+	_timers[timer].nextRun = _system->getMillis() + countdown * _tickLength;
 
-	uint32 nextRun = _system->getMillis() + countdown;
+	uint32 nextRun = _system->getMillis() + countdown * _tickLength;
 	if (nextRun < _timerNextRun)
 		_timerNextRun = nextRun;
 }

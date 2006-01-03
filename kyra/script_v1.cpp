@@ -509,7 +509,27 @@ int KyraEngine::cmd_setSpecialEnterXAndY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
-	warning("STUB: cmd_runWSAFrames");
+	debug(3, "cmd_runWSAFrames(0x%X) (%d, %d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	int xpos = stackPos(0);
+	int ypos = stackPos(1);
+	int delayTime = stackPos(2);
+	int startFrame = stackPos(3);
+	int endFrame = stackPos(4);
+	int wsaIndex = stackPos(5);
+	_screen->hideMouse();
+	_movieObjects[wsaIndex]->_x = xpos;
+	_movieObjects[wsaIndex]->_y = ypos;
+	_movieObjects[wsaIndex]->_drawPage = 0;
+	for (; startFrame <= endFrame; ++startFrame) {
+		uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
+		_movieObjects[wsaIndex]->displayFrame(startFrame);
+		while (_system->getMillis() < nextRun) {
+			_sprites->updateSceneAnims();
+			_animator->updateAllObjectShapes();
+			delay(10);
+		}
+	}
+	_screen->showMouse();
 	return 0;
 }
 
@@ -1097,7 +1117,8 @@ int KyraEngine::cmd_bkgdScrollSceneAndMasksRight(ScriptState *script) {
 }
 
 int KyraEngine::cmd_dispelMagicAnimation(ScriptState *script) {
-	warning("STUB: cmd_dispelMagicAnimation");
+	debug(3, "cmd_dispelMagicAnimation(0x%X) ()", script);
+	seq_dispelMagicAnimation();
 	return 0;
 }
 

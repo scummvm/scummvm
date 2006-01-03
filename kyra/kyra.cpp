@@ -295,7 +295,7 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_sprites);
 	_seq = new SeqPlayer(this, _system);
 	assert(_seq);
-	_animator = new ScreenAnimator(this);
+	_animator = new ScreenAnimator(this, _system);
 	assert(_animator);
 	_animator->init(5, 11, 12);
 	assert(*_animator);
@@ -623,7 +623,7 @@ void KyraEngine::delay(uint32 amount, bool update) {
 			_animator->updateAllObjectShapes();
 
 		if (_currentCharacter->sceneId == 210) {
-			//XXX
+			_animator->updateKyragemFading();
 		}
 
 		if (amount > 0) {
@@ -668,6 +668,10 @@ void KyraEngine::mainLoop() {
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
+		if (_currentCharacter->sceneId == 210) {
+			_animator->updateKyragemFading();
+			// XXX
+		}
 		
 		if (_brandonStatusBit & 2) {
 			if (_brandonStatusBit0x02Flag)
@@ -780,10 +784,10 @@ void KyraEngine::delayWithTicks(int ticks) {
 	while (_system->getMillis() < nextTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
-		//if (_currentCharacter->sceneId == 210) {
-		//	updateKyragemFading();
+		if (_currentCharacter->sceneId == 210) {
+			_animator->updateKyragemFading();
 		//	seq_playEnd();
-		//}
+		}
 	}
 }
 
@@ -2066,7 +2070,7 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 	updateTextFade();
 
 	if (_currentCharacter->sceneId == 210) {
-		// XXX game_updateKyragemFading
+		_animator->updateKyragemFading();
 	}
 }
 
@@ -4892,7 +4896,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 			_animator->updateAllObjectShapes();
 			updateTextFade();
 			if (_currentCharacter->sceneId == 210) {
-				// XXX updateKyragemFading
+				_animator->updateKyragemFading();
 				// XXX playEnd
 				// XXX
 			}
