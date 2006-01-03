@@ -351,15 +351,6 @@ Broken Sword 2
   protocol.cpp with ones that copy the data to an aligned struct. This could be
   a lot of work...
 
-SIMON
-=====
-* Add support for auto decrunching the gameamiga file of demo version of Simon
-  the Sorcerer 1 (Amiga) via decrunch_file_amiga()
-* Add support for dictionary files in Amiga and Macintosh versons of
-  Simon the Sorcerer 2
-* Add support for Protracker music format used in Amiga versions
-* Add support for drawing main graphics correctly in Amiga versions
-
 #######################################################################
 # Backends
 #######################################################################
