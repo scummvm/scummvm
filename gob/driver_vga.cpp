@@ -30,7 +30,7 @@
 
 namespace Gob {
 
-void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
+void VGAVideoDriver::drawSprite(Video::SurfaceDesc *source, Video::SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
 	if (x >= 0 && x < dest->width && y >= 0 && y < dest->height) {
 		int16 width = (right - left) + 1;
 		int16 height = (bottom - top) + 1;
@@ -54,7 +54,7 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 le
 	}
 }
 
-void VGAVideoDriver::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) {
+void VGAVideoDriver::fillRect(Video::SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) {
 	if (left < dest->width && right < dest->width && top < dest->height && bottom < dest->height) {
 		byte *pos = dest->vidPtr + (top * dest->width) + left;
 		int16 width = (right - left) + 1;
@@ -69,12 +69,12 @@ void VGAVideoDriver::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 ri
 	}
 }
 
-void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) {
+void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, Video::SurfaceDesc *dest) {
 	if (x >= 0 && x < dest->width && y >= 0 && y < dest->height)
 		dest->vidPtr[(y * dest->width) + x] = color;
 }
 
-void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) {
+void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, Video::SurfaceDesc *dest) {
 	byte *src, *dst;
 	uint16 data;
 	int i, j;
@@ -103,16 +103,16 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y, FontDesc *
 }
 
 static void plotPixel(int x, int y, int color, void *data) {
-	SurfaceDesc *dest = (SurfaceDesc *)data;
+	Video::SurfaceDesc *dest = (Video::SurfaceDesc *)data;
 	if (x >= 0 && x < dest->width && y >= 0 && y < dest->height)
 		dest->vidPtr[(y * dest->width) + x] = color;
 }
 
-void VGAVideoDriver::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) {
+void VGAVideoDriver::drawLine(Video::SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) {
 	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, dest);
 }
 
-void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) {
+void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, Video::SurfaceDesc *dest) {
 	int destRight = x + width;
 	int destBottom = y + height;
 

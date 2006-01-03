@@ -24,75 +24,83 @@
 
 namespace Gob {
 
-extern int16 inter_animPalLowIndex;
-extern int16 inter_animPalHighIndex;
-extern int16 inter_animPalDir;
-extern uint32 inter_soundEndTimeKey;
-extern int16 inter_soundStopVal;
-extern char inter_terminate;
-extern char inter_breakFlag;
-extern int16 *inter_breakFromLevel;
-extern int16 *inter_nestLevel;
+class Inter {
+public:
+	int16 animPalLowIndex;
+	int16 animPalHighIndex;
+	int16 animPalDir;
+	uint32 soundEndTimeKey;
+	int16 soundStopVal;
+	char terminate;
+	char breakFlag;
+	int16 *breakFromLevel;
+	int16 *nestLevel;
 
-int16 inter_load16(void);
-int16 inter_peek16(char *ptr);
-int32 inter_peek32(char *ptr);
+	int16 load16(void);
+	int16 peek16(char *ptr);
+	int32 peek32(char *ptr);
 
-void inter_setMousePos(void);
-char inter_evalExpr(int16 *pRes);
-char inter_evalBoolResult(void);
-void inter_storeResult(void);
-void inter_printText(void);
-void inter_animPalette(void);
-void inter_animPalInit(void);
-void inter_loadMult(void);
-void inter_playMult(void);
-void inter_freeMult(void);
-void inter_initCursor(void);
-void inter_initCursorAnim(void);
-void inter_clearCursorAnim(void);
-void inter_drawOperations(void);
-void inter_getFreeMem(void);
-void inter_manageDataFile(void);
-void inter_getFreeMem(void);
-void inter_manageDataFile(void);
-void inter_writeData(void);
-void inter_checkData(void);
-void inter_readData(void);
-void inter_loadFont(void);
-void inter_freeFont(void);
-void inter_prepareStr(void);
-void inter_insertStr(void);
-void inter_cutStr(void);
-void inter_strstr(void);
-void inter_setFrameRate(void);
-void inter_strlen(void);
-void inter_strToLong(void);
-void inter_invalidate(void);
-void inter_loadSpriteContent(void);
-void inter_copySprite(void);
-void inter_putPixel(void);
-void inter_fillRect(void);
-void inter_drawLine(void);
-void inter_createSprite(void);
-void inter_freeSprite(void);
-void inter_renewTimeInVars(void);
-void inter_playComposition(void);
-void inter_stopSound(void);
-void inter_playSound(void);
-void inter_loadCursor(void);
-void inter_loadSpriteToPos(void);
-void inter_funcBlock(int16 retFlag);
-void inter_loadTot(void);
-void inter_storeKey(int16 key);
-void inter_keyFunc(void);
-void inter_checkSwitchTable(char **ppExec);
-void inter_repeatUntil(void);
-void inter_whileDo(void);
-void inter_funcBlock(int16 retFlag);
-void inter_callSub(int16 retFlag);
-void inter_initControlVars(void);
-void inter_callSub(int16 retFlag);
+	void setMousePos(void);
+	char evalExpr(int16 *pRes);
+	char evalBoolResult(void);
+	void storeResult(void);
+	void printText(void);
+	void animPalette(void);
+	void animPalInit(void);
+	void loadMult(void);
+	void playMult(void);
+	void freeMult(void);
+	void initCursor(void);
+	void initCursorAnim(void);
+	void clearCursorAnim(void);
+	void drawOperations(void);
+	void getFreeMem(void);
+	void manageDataFile(void);
+	void writeData(void);
+	void checkData(void);
+	void readData(void);
+	void loadFont(void);
+	void freeFont(void);
+	void prepareStr(void);
+	void insertStr(void);
+	void cutStr(void);
+	void strstr(void);
+	void setFrameRate(void);
+	void istrlen(void);
+	void strToLong(void);
+	void invalidate(void);
+	void loadSpriteContent(void);
+	void copySprite(void);
+	void putPixel(void);
+	void fillRect(void);
+	void drawLine(void);
+	void createSprite(void);
+	void freeSprite(void);
+	void renewTimeInVars(void);
+	void playComposition(void);
+	void stopSound(void);
+	void playSound(void);
+	void loadCursor(void);
+	void loadSpriteToPos(void);
+	void funcBlock(int16 retFlag);
+	void loadTot(void);
+	void storeKey(int16 key);
+	void keyFunc(void);
+	void checkSwitchTable(char **ppExec);
+	void repeatUntil(void);
+	void whileDo(void);
+	void callSub(int16 retFlag);
+	void initControlVars(void);
+
+	Inter(GobEngine *vm);
+
+protected:
+	GobEngine *_vm;
+
+	void evaluateStore(void);
+	void capturePush(void);
+	void capturePop(void);
+};
 
 }				// End of namespace Gob
 

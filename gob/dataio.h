@@ -23,36 +23,46 @@
 #define GOB_DATAIO_H
 
 #include "common/file.h"
+#include "gob/gob.h"
 
 namespace Gob {
 
 #define MAX_DATA_FILES	3
 #define MAX_SLOT_COUNT	4
 
-struct ChunkDesc {
-	char chunkName[13];
-	uint32 size;
-	uint32 offset;
-	byte packed;
-};
+class DataIO {
+public:
+	struct ChunkDesc {
+		char chunkName[13];
+		uint32 size;
+		uint32 offset;
+		byte packed;
+		ChunkDesc() : size(0), offset(0), packed(0) { chunkName[0] = 0; }
+	};
 
-int16 file_open(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
-Common::File *file_getHandle(int16 handle);
-int16 data_getChunk(const char *chunkName);
-char data_freeChunk(int16 handle);
-int32 data_readChunk(int16 handle, char *buf, int16 size);
-int16 data_seekChunk(int16 handle, int32 pos, int16 from);
-int32 data_getChunkSize(const char *chunkName);
-void data_openDataFile(const char *src);
-void data_closeDataFile(void);
-char *data_getUnpackedData(const char *name);
-void data_closeData(int16 handle);
-int16 data_openData(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
-int32 data_readData(int16 handle, char *buf, int16 size);
-void data_seekData(int16 handle, int32 pos, int16 from);
-int32 data_getDataSize(const char *name);
-char *data_getData(const char *path);
-char *data_getSmallData(const char *path);
+	int16 file_open(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
+	Common::File *file_getHandle(int16 handle);
+	int16 getChunk(const char *chunkName);
+	char freeChunk(int16 handle);
+	int32 readChunk(int16 handle, char *buf, int16 size);
+	int16 seekChunk(int16 handle, int32 pos, int16 from);
+	int32 getChunkSize(const char *chunkName);
+	void openDataFile(const char *src);
+	void closeDataFile(void);
+	char *getUnpackedData(const char *name);
+	void closeData(int16 handle);
+	int16 openData(const char *path, Common::File::AccessMode mode = Common::File::kFileReadMode);
+	int32 readData(int16 handle, char *buf, int16 size);
+	void seekData(int16 handle, int32 pos, int16 from);
+	int32 getDataSize(const char *name);
+	char *getData(const char *path);
+	char *getSmallData(const char *path);
+
+	DataIO(class GobEngine *vm);
+
+protected:
+	class GobEngine *_vm;
+};
 
 }				// End of namespace Gob
 

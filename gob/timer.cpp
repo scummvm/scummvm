@@ -22,13 +22,15 @@
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/sound.h"
+#include "gob/timer.h"
+
 namespace Gob {
 
-void timer_enableTimer() {
-	debug(4, "STUB: timer_enableTimer()");
+void GTimer::enableTimer() {
+	debug(4, "STUB: GTimer::enableTimer()");
 }
 
-void timer_disableTimer() {
-	debug(4, "STUB: timer_disableTimer()");
+void GTimer::disableTimer() {
+	debug(4, "STUB: GTimer::disableTimer()");
 }
 }

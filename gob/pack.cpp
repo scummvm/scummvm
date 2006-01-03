@@ -24,7 +24,7 @@
 
 namespace Gob {
 
-int32 unpackData(char *sourceBuf, char *destBuf) {
+int32 Pack::unpackData(char *sourceBuf, char *destBuf) {
 	uint32 realSize;
 	uint32 counter;
 	uint16 cmd;

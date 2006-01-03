@@ -31,81 +31,95 @@ namespace Gob {
 #define RENDERFLAG_CAPTUREPOP	8
 #define RENDERFLAG_USEDELTAS 	0x10
 
-typedef struct Draw_FontToSprite {
-	int8 sprite;
-	int8 base;
-	int8 width;
-	int8 height;
-} Draw_FontToSprite;
+class Draw {
+	public:
+		typedef struct FontToSprite {
+			int8 sprite;
+			int8 base;
+			int8 width;
+			int8 height;
+			FontToSprite() : sprite(0), base(0), width(0), height() {}
+		} FontToSprite;
 
-extern int16 draw_fontIndex;
-extern int16 draw_spriteLeft;
-extern int16 draw_spriteTop;
-extern int16 draw_spriteRight;
-extern int16 draw_spriteBottom;
-extern int16 draw_destSpriteX;
-extern int16 draw_destSpriteY;
-extern int16 draw_backColor;
-extern int16 draw_frontColor;
-extern char draw_letterToPrint;
-extern Draw_FontToSprite draw_fontToSprite[4];
-extern int16 draw_destSurface;
-extern int16 draw_sourceSurface;
-extern int16 draw_renderFlags;
-extern int16 draw_backDeltaX;
-extern int16 draw_backDeltaY;
-extern FontDesc *draw_fonts[4];
-extern char *draw_textToPrint;
-extern int16 draw_transparency;
-extern SurfaceDesc *draw_spritesArray[50];
+		int16 fontIndex;
+		int16 spriteLeft;
+		int16 spriteTop;
+		int16 spriteRight;
+		int16 spriteBottom;
+		int16 destSpriteX;
+		int16 destSpriteY;
+		int16 backColor;
+		int16 frontColor;
+		char letterToPrint;
+		FontToSprite fontToSprite[4];
+		int16 destSurface;
+		int16 sourceSurface;
+		int16 renderFlags;
+		int16 backDeltaX;
+		int16 backDeltaY;
+		Video::FontDesc *fonts[4];
+		char *textToPrint;
+		int16 transparency;
+		Video::SurfaceDesc *spritesArray[50];
 
-extern int16 draw_invalidatedCount;
-extern int16 draw_invalidatedTops[30];
-extern int16 draw_invalidatedLefts[30];
-extern int16 draw_invalidatedRights[30];
-extern int16 draw_invalidatedBottoms[30];
+		int16 invalidatedCount;
+		int16 invalidatedTops[30];
+		int16 invalidatedLefts[30];
+		int16 invalidatedRights[30];
+		int16 invalidatedBottoms[30];
 
-extern int8 draw_noInvalidated;
-extern int8 draw_doFullFlip;
-extern int8 draw_paletteCleared;
+		int8 noInvalidated;
+//		int8 doFullFlip; // Never used?!?
+		int8 paletteCleared;
 
-extern int16 draw_cursorIndex;
-extern int16 draw_transparentCursor;
+		int16 gcursorIndex;
+		int16 transparentCursor;
+		uint32 cursorTimeKey;
 
-extern SurfaceDesc *draw_backSurface;
-extern SurfaceDesc *draw_frontSurface;
+		Video::SurfaceDesc *backSurface;
+		Video::SurfaceDesc *frontSurface;
 
-extern int16 draw_unusedPalette1[18];
-extern int16 draw_unusedPalette2[16];
-extern Color draw_vgaPalette[256];
-extern Color draw_vgaSmallPalette[16];
+		int16 unusedPalette1[18];
+		int16 unusedPalette2[16];
+		Video::Color vgaPalette[256];
+		Video::Color vgaSmallPalette[16];
 
-extern int16 draw_cursorX;
-extern int16 draw_cursorY;
-extern int16 draw_cursorWidth;
-extern int16 draw_cursorHeight;
+		int16 cursorX;
+		int16 cursorY;
+		int16 cursorWidth;
+		int16 cursorHeight;
 
-extern int16 draw_cursorXDeltaVar;
-extern int16 draw_cursorYDeltaVar;
+		int16 cursorXDeltaVar;
+		int16 cursorYDeltaVar;
 
-extern SurfaceDesc *draw_cursorSprites;
-extern SurfaceDesc *draw_cursorBack;
-extern int16 draw_cursorAnim;
-extern int8 draw_cursorAnimLow[40];
-extern int8 draw_cursorAnimHigh[40];
-extern int8 draw_cursorAnimDelays[40];
-extern int8 draw_applyPal;
+		Video::SurfaceDesc *cursorSprites;
+		Video::SurfaceDesc *cursorBack;
+		int16 cursorAnim;
+		int8 cursorAnimLow[40];
+		int8 cursorAnimHigh[40];
+		int8 cursorAnimDelays[40];
+		int8 applyPal;
 
-void draw_invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
-void draw_blitInvalidated(void);
-void draw_setPalette(void);
-void draw_clearPalette(void);
-void draw_blitCursor(void);
+		int16 palLoadData1[4];
+		int16 palLoadData2[4];
+		
+		void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
+		void blitInvalidated(void);
+		void setPalette(void);
+		void clearPalette(void);
+		void blitCursor(void);
 
-void draw_spriteOperation(int16 operation);
-void draw_animateCursor(int16 cursor);
-void draw_interPalLoad(void);
-void draw_printText(void);
+		void spriteOperation(int16 operation);
+		void animateCursor(int16 cursor);
+		void interPalLoad(void);
+		void printText(void);
+
+		Draw(GobEngine *vm);
+
+	protected:
+		GobEngine *_vm;
+};
+
 // Draw operations
 
 #define DRAW_BLITSURF	0

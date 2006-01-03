@@ -28,47 +28,52 @@
 
 namespace Gob {
 
-static const int kKeyBufSize = 16;
+Util::Util(GobEngine *vm) : _vm(vm) {
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseButtons = 0;
+	for (int i = 0; i < KEYBUFSIZE; i++)
+		_keyBuffer[i] = 0;
+	_keyBufferHead = 0;
+	_keyBufferTail = 0;
+}
 
-static int16 _mouseX, _mouseY, _mouseButtons;
-static int16 _keyBuffer[kKeyBufSize], _keyBufferHead, _keyBufferTail;
-
-static void addKeyToBuffer(int16 key) {
-	if ((_keyBufferHead + 1) % kKeyBufSize == _keyBufferTail) {
+void Util::addKeyToBuffer(int16 key) {
+	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
 		warning("key buffer overflow!");
 		return;
 	}
 
 	_keyBuffer[_keyBufferHead] = key;
-	_keyBufferHead = (_keyBufferHead + 1) % kKeyBufSize;
+	_keyBufferHead = (_keyBufferHead + 1) % KEYBUFSIZE;
 }
 
-static bool keyBufferEmpty() {
+bool Util::keyBufferEmpty() {
 	return (_keyBufferHead == _keyBufferTail);
 }
 
-static bool getKeyFromBuffer(int16& key) {
+bool Util::getKeyFromBuffer(int16& key) {
 	if (_keyBufferHead == _keyBufferTail) return false;
 
 	key = _keyBuffer[_keyBufferTail];
-	_keyBufferTail = (_keyBufferTail + 1) % kKeyBufSize;
+	_keyBufferTail = (_keyBufferTail + 1) % KEYBUFSIZE;
 
 	return true;
 }
 
 
-void util_initInput(void) {
+void Util::initInput(void) {
 	_mouseX = _mouseY = _mouseButtons = 0;
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
-void util_waitKey(void) {
+void Util::waitKey(void) {
 	// FIXME: wrong function name? This functions clears the keyboard buffer.
-	util_processInput();
+	processInput();
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
-int16 util_translateKey(int16 key) {
+int16 Util::translateKey(int16 key) {
 	struct keyS {
 		int16 from;
 		int16 to;
@@ -104,32 +109,32 @@ int16 util_translateKey(int16 key) {
 	return key;
 }
 
-int16 util_getKey(void) {
+int16 Util::getKey(void) {
 	int16 key;
 
 	while (!getKeyFromBuffer(key)) {
-		util_processInput();
+		processInput();
 
 		if (keyBufferEmpty())
 			g_system->delayMillis(10);
 	}
-	return util_translateKey(key);
+	return translateKey(key);
 }
 
-int16 util_checkKey(void) {
+int16 Util::checkKey(void) {
 	int16 key;
 
 	if (!getKeyFromBuffer(key))
 		key = 0;
 
-	return util_translateKey(key);
+	return translateKey(key);
 }
 
-int16 util_getRandom(int16 max) {
+int16 Util::getRandom(int16 max) {
 	return _vm->_rnd.getRandomNumber(max - 1);
 }
 
-void util_processInput() {
+void Util::processInput() {
 	OSystem::Event event;
 	while (g_system->pollEvent(event)) {
 		switch (event.type) {
@@ -163,7 +168,7 @@ void util_processInput() {
 	}
 }
 
-void util_getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
+void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 	*pX = _mouseX;
 	*pY = _mouseY;
 
@@ -171,91 +176,90 @@ void util_getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 		*pButtons = _mouseButtons;
 }
 
-void util_setMousePos(int16 x, int16 y) {
+void Util::setMousePos(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
 
-void util_longDelay(uint16 msecs)
-{
+void Util::longDelay(uint16 msecs) {
 	uint32 time = g_system->getMillis() + msecs;
 	do {
-		vid_waitRetrace(videoMode);
-		util_processInput();
-		util_delay(25);
+		_vm->_video->waitRetrace(_vm->_global->videoMode);
+		processInput();
+		delay(25);
 	} while (g_system->getMillis() < time);
 }
 
-void util_delay(uint16 msecs) {
+void Util::delay(uint16 msecs) {
 	g_system->delayMillis(msecs);
 }
 
-void util_beep(int16 freq) {
-	if (soundFlags == 0)
+void Util::beep(int16 freq) {
+	if (_vm->_global->soundFlags == 0)
 		return;
 
-	snd_speakerOn(freq, 50);
+	_vm->_snd->speakerOn(freq, 50);
 }
 
-uint32 util_getTimeKey(void) {
+uint32 Util::getTimeKey(void) {
 	return g_system->getMillis();
 }
 
-void util_waitMouseUp(void) {
+void Util::waitMouseUp(void) {
 	int16 x;
 	int16 y;
 	int16 buttons;
 
 	do {
-		util_processInput();
-		util_getMouseState(&x, &y, &buttons);
-		if (buttons != 0) util_delay(10);
+		processInput();
+		getMouseState(&x, &y, &buttons);
+		if (buttons != 0) delay(10);
 	} while (buttons != 0);
 }
 
-void util_waitMouseDown(void) {
+void Util::waitMouseDown(void) {
 	int16 x;
 	int16 y;
 	int16 buttons;
 
 	do {
-		util_processInput();
-		util_getMouseState(&x, &y, &buttons);
-		if (buttons == 0) util_delay(10);
+		processInput();
+		getMouseState(&x, &y, &buttons);
+		if (buttons == 0) delay(10);
 	} while (buttons == 0);
 }
 
 /* NOT IMPLEMENTED */
-int16 util_calcDelayTime() {
+int16 Util::calcDelayTime() {
 	return 0;
 }
 
 /* NOT IMPLEMENTED */
-void util_checkJoystick() {
-	useJoystick = 0;
+void Util::checkJoystick() {
+	_vm->_global->useJoystick = 0;
 }
 
-void util_setFrameRate(int16 rate) {
+void Util::setFrameRate(int16 rate) {
 	if (rate == 0)
 		rate = 1;
 
-	frameWaitTime = 1000 / rate;
-	startFrameTime = util_getTimeKey();
+	_vm->_global->frameWaitTime = 1000 / rate;
+	_vm->_global->startFrameTime = getTimeKey();
 }
 
-void util_waitEndFrame() {
+void Util::waitEndFrame() {
 	int32 time;
 
-	vid_waitRetrace(videoMode);
+	_vm->_video->waitRetrace(_vm->_global->videoMode);
 
-	time = util_getTimeKey() - startFrameTime;
+	time = getTimeKey() - _vm->_global->startFrameTime;
 	if (time > 1000 || time < 0) {
-		startFrameTime = util_getTimeKey();
+		_vm->_global->startFrameTime = getTimeKey();
 		return;
 	}
-	if (frameWaitTime - time > 0) {
-		util_delay(frameWaitTime - time);
+	if (_vm->_global->frameWaitTime - time > 0) {
+		delay(_vm->_global->frameWaitTime - time);
 	}
-	startFrameTime = util_getTimeKey();
+	_vm->_global->startFrameTime = getTimeKey();
 }
 
 int16 joy_getState() {
@@ -266,14 +270,14 @@ int16 joy_calibrate() {
 	return 0;
 }
 
-FontDesc *util_loadFont(const char *path) {
-	FontDesc *fontDesc = (FontDesc *) malloc(sizeof(FontDesc));
+Video::FontDesc *Util::loadFont(const char *path) {
+	Video::FontDesc *fontDesc = (Video::FontDesc *) malloc(sizeof(Video::FontDesc));
 	char *data;
 
 	if (fontDesc == 0)
 		return 0;
 
-	data = data_getData(path);
+	data = _vm->_dataio->getData(path);
 	if (data == 0) {
 		free(fontDesc);
 		return 0;
@@ -298,20 +302,20 @@ FontDesc *util_loadFont(const char *path) {
 	return fontDesc;
 }
 
-void util_freeFont(FontDesc * fontDesc) {
+void Util::freeFont(Video::FontDesc * fontDesc) {
 	free(fontDesc->dataPtr - 4);
 	free(fontDesc);
 }
 
-void util_clearPalette(void) {
+void Util::clearPalette(void) {
 	int16 i;
 	byte colors[768];
 
-	if (videoMode != 0x13)
-		error("util_clearPalette: Video mode 0x%x is not supported!",
-		    videoMode);
+	if (_vm->_global->videoMode != 0x13)
+		error("clearPalette: Video mode 0x%x is not supported!",
+		    _vm->_global->videoMode);
 
-	if (setAllPalette) {
+	if (_vm->_global->setAllPalette) {
 		for (i = 0; i < 768; i++)
 			colors[i] = 0;
 		g_system->setPalette(colors, 0, 256);
@@ -320,10 +324,10 @@ void util_clearPalette(void) {
 	}
 
 	for (i = 0; i < 16; i++)
-		vid_setPalElem(i, 0, 0, 0, 0, videoMode);
+		_vm->_video->setPalElem(i, 0, 0, 0, 0, _vm->_global->videoMode);
 }
 
-void util_insertStr(const char *str1, char *str2, int16 pos) {
+void Util::insertStr(const char *str1, char *str2, int16 pos) {
 	int16 len1;
 	int16 i;
 	int16 from;
@@ -342,11 +346,11 @@ void util_insertStr(const char *str1, char *str2, int16 pos) {
 		str2[i + from] = str1[i];
 }
 
-void util_cutFromStr(char *str, int16 from, int16 cutlen) {
+void Util::cutFromStr(char *str, int16 from, int16 cutlen) {
 	int16 len;
 	int16 i;
 
-	//log_write("util_cutFromStr: str = %s, ", str);
+	//log_write("cutFromStr: str = %s, ", str);
 	len = strlen(str);
 	if (from >= len)
 		return;
@@ -364,12 +368,12 @@ void util_cutFromStr(char *str, int16 from, int16 cutlen) {
 	//log_write("res = %s\n", str);
 }
 
-int16 util_strstr(const char *str1, char *str2) {
+int16 Util::strstr(const char *str1, char *str2) {
 	char c;
 	uint16 len1;
 	uint16 i;
 
-	//log_write("util_strstr: str1 = %s, str2 = %s\n", str1, str2);
+	//log_write("strstr: str1 = %s, str2 = %s\n", str1, str2);
 
 	for (i = 0, len1 = strlen(str1); strlen(str2 + i) >= len1; i++) {
 		c = str2[i + len1];
@@ -383,10 +387,10 @@ int16 util_strstr(const char *str1, char *str2) {
 	return 0;
 }
 
-void util_listInsertFront(Util_List * list, void *data) {
-	Util_ListNode *node;
+void Util::listInsertFront(List * list, void *data) {
+	ListNode *node;
 
-	node = (Util_ListNode *) malloc(sizeof(Util_ListNode));
+	node = (ListNode *) malloc(sizeof(ListNode));
 	if (list->pHead != 0) {
 		node->pData = data;
 		node->pNext = list->pHead;
@@ -402,28 +406,28 @@ void util_listInsertFront(Util_List * list, void *data) {
 	}
 }
 
-void util_listInsertBack(Util_List * list, void *data) {
-	Util_ListNode *node;
+void Util::listInsertBack(List * list, void *data) {
+	ListNode *node;
 
 	if (list->pHead != 0) {
 		if (list->pTail == 0) {
 			list->pTail = list->pHead;
-			warning("util_listInsertBack: Broken list!");
+			warning("listInsertBack: Broken list!");
 		}
 
 		node =
-		    (Util_ListNode *) malloc(sizeof(Util_ListNode));
+		    (ListNode *) malloc(sizeof(ListNode));
 		node->pData = data;
 		node->pPrev = list->pTail;
 		node->pNext = 0;
 		list->pTail->pNext = node;
 		list->pTail = node;
 	} else {
-		util_listInsertFront(list, data);
+		listInsertFront(list, data);
 	}
 }
 
-void util_listDropFront(Util_List * list) {
+void Util::listDropFront(List * list) {
 	if (list->pHead->pNext == 0) {
 		free((list->pHead));
 		list->pHead = 0;
@@ -435,50 +439,50 @@ void util_listDropFront(Util_List * list) {
 	}
 }
 
-void util_deleteList(Util_List * list) {
+void Util::deleteList(List * list) {
 	while (list->pHead != 0) {
-		util_listDropFront(list);
+		listDropFront(list);
 	}
 
 	free(list);
 }
 
-char util_str1[] =
+const char Util::trStr1[] =
     "       '   + - :0123456789: <=>  abcdefghijklmnopqrstuvwxyz      abcdefghijklmnopqrstuvwxyz     ";
-char util_str2[] =
+const char Util::trStr2[] =
     " ueaaaaceeeiii     ooouu        aioun                                                           ";
-char util_str3[] = "                                ";
+const char Util::trStr3[] = "                                ";
 
-void util_prepareStr(char *str) {
+void Util::prepareStr(char *str) {
 	uint16 i;
 	int16 j;
 	char buf[300];
 
-	strcpy(buf, util_str1);
-	strcat(buf, util_str2);
-	strcat(buf, util_str3);
+	strcpy(buf, trStr1);
+	strcat(buf, trStr2);
+	strcat(buf, trStr3);
 
 	for (i = 0; i < strlen(str); i++)
 		str[i] = buf[str[i] - 32];
 
 	while (str[0] == ' ')
-		util_cutFromStr(str, 0, 1);
+		cutFromStr(str, 0, 1);
 
 	while (strlen(str) > 0 && str[strlen(str) - 1] == ' ')
-		util_cutFromStr(str, strlen(str) - 1, 1);
+		cutFromStr(str, strlen(str) - 1, 1);
 
-	i = util_strstr(" ", str);
+	i = strstr(" ", str);
 
 	while (1) {
 		if (i == 0)
 			return;
 
 		if (str[i] == ' ') {
-			util_cutFromStr(str, i - 1, 1);
+			cutFromStr(str, i - 1, 1);
 			continue;
 		}
 
-		j = util_strstr(" ", str + i);
+		j = strstr(" ", str + i);
 		if (j != 0)
 			i += j;
 		else
@@ -486,18 +490,18 @@ void util_prepareStr(char *str) {
 	}
 }
 
-void util_waitMouseRelease(char drawMouse) {
+void Util::waitMouseRelease(char drawMouse) {
 	int16 buttons;
 	int16 mouseX;
 	int16 mouseY;
 
 	do {
-		game_checkKeys(&mouseX, &mouseY, &buttons, drawMouse);
+		_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, drawMouse);
 		if (drawMouse != 0)
-			draw_animateCursor(2);
-		util_delay(10);
+			_vm->_draw->animateCursor(2);
+		delay(10);
 	} while (buttons != 0);
 }
 
-void keyboard_release(void) {;}
+void Util::keyboard_release(void) {;}
 } // End of namespace Gob

@@ -28,73 +28,76 @@
 
 namespace Gob {
 
-byte *cd_LICbuffer;
-char cd_curTrack[16];
-uint16 cd_numTracks;
-bool cd_globFlag;
-uint32 cd_trackStop;
-uint32 cd_startTime;
+CDROM::CDROM(GobEngine *vm) : _vm(vm) {
+	_cdPlaying = false;
+	_LICbuffer = 0;
+	for (int i = 0; i < 16; i++)
+		_curTrack[i] = 0;
+	_numTracks = 0;
+	_trackStop = 0;
+	_startTime = 0;
+}
 
-void cd_readLIC(const char *fname) {
+void CDROM::readLIC(const char *fname) {
 	char tmp[80];
 	int handle;
 	uint16 version, startChunk, pos;
 
-	cd_freeLICbuffer();
+	freeLICbuffer();
 
-	*cd_curTrack = 0;
+	*_curTrack = 0;
 
 	strcpy(tmp, fname);
 
-	handle = data_openData(tmp);
+	handle = _vm->_dataio->openData(tmp);
 
 	if (handle == -1)
 		return;
 
-	data_closeData(handle);
+	_vm->_dataio->closeData(handle);
 
-	data_getUnpackedData(tmp);
+	_vm->_dataio->getUnpackedData(tmp);
 
-	handle = data_openData(tmp);
+	handle = _vm->_dataio->openData(tmp);
 
-	data_readData(handle, (char *)&version, 2);
+	_vm->_dataio->readData(handle, (char *)&version, 2);
 	version = READ_LE_UINT16(&version);
 
-	data_readData(handle, (char *)&startChunk, 2);
+	_vm->_dataio->readData(handle, (char *)&startChunk, 2);
 	startChunk = READ_LE_UINT16(&startChunk);
 
-	data_readData(handle, (char *)&cd_numTracks, 2);
-	cd_numTracks = READ_LE_UINT16(&cd_numTracks);
+	_vm->_dataio->readData(handle, (char *)&_numTracks, 2);
+	_numTracks = READ_LE_UINT16(&_numTracks);
 
 	if (version != 3) {
 		error("Wrong file %s (%d)", fname, version);
 		return;
 	}
 
-	data_seekData(handle, 50, SEEK_SET);
+	_vm->_dataio->seekData(handle, 50, SEEK_SET);
 
 	for (int i = 0; i < startChunk; i++) {
-		data_readData(handle, (char *)&pos, 2);
+		_vm->_dataio->readData(handle, (char *)&pos, 2);
 		pos = READ_LE_UINT16(&pos);
 
 		if (!pos)
 			break;
 
-		data_seekData(handle, pos, SEEK_CUR);
+		_vm->_dataio->seekData(handle, pos, SEEK_CUR);
 	}
 
-	cd_LICbuffer = (byte *)malloc(cd_numTracks * 22);
-	data_readData(handle, (char *)cd_LICbuffer, cd_numTracks * 22);
+	_LICbuffer = (byte *)malloc(_numTracks * 22);
+	_vm->_dataio->readData(handle, (char *)_LICbuffer, _numTracks * 22);
 
-	data_closeData(handle);
+	_vm->_dataio->closeData(handle);
 }
 
-void cd_freeLICbuffer(void) {
-	free(cd_LICbuffer);
-	cd_LICbuffer = 0;
+void CDROM::freeLICbuffer(void) {
+	free(_LICbuffer);
+	_LICbuffer = 0;
 }
 
-void cd_playBgMusic() {
+void CDROM::playBgMusic() {
 	static const char *tracks[][2] = {
 		{"avt00.tot",  "mine"},
 		{"avt001.tot", "nuit"},
@@ -121,13 +124,13 @@ void cd_playBgMusic() {
 	};
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
-		if (!scumm_stricmp(game_curTotFile, tracks[i][0])) {
-			cd_startTrack(tracks[i][1]);
+		if (!scumm_stricmp(_vm->_game->curTotFile, tracks[i][0])) {
+			startTrack(tracks[i][1]);
 			break;
 		}
 }
 
-void cd_playMultMusic() {
+void CDROM::playMultMusic() {
 	static const char *tracks[][6] = {
 		{"avt005.tot", "fra1", "all1", "ang1", "esp1", "ita1"},
 		{"avt006.tot", "fra2", "all2", "ang2", "esp2", "ita2"},
@@ -138,25 +141,25 @@ void cd_playMultMusic() {
 	};
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
-		if (!scumm_stricmp(game_curTotFile, tracks[i][0])) {
-			cd_globFlag = true;
-			cd_startTrack(tracks[i][language + 1]);
+		if (!scumm_stricmp(_vm->_game->curTotFile, tracks[i][0])) {
+			_cdPlaying = true;
+			startTrack(tracks[i][_vm->_global->language + 1]);
 			break;
 		}
 }
 
-void cd_startTrack(const char *trackname) {
+void CDROM::startTrack(const char *trackname) {
 	byte *curPtr, *matchPtr;
 
-	if (!cd_LICbuffer)
+	if (!_LICbuffer)
 		return;
 
-	debug(3, "cd_startTrack(%s)", trackname);
+	debug(3, "startTrack(%s)", trackname);
 
 	matchPtr = 0;
-	curPtr = cd_LICbuffer;
+	curPtr = _LICbuffer;
 
-	for (int i = 0; i < cd_numTracks; i++) {
+	for (int i = 0; i < _numTracks; i++) {
 		if (!scumm_stricmp((char *)curPtr, trackname)) {
 			matchPtr = curPtr;
 			break;
@@ -169,64 +172,64 @@ void cd_startTrack(const char *trackname) {
 		return;
 	}
 
-	strcpy(cd_curTrack, trackname);
+	strcpy(_curTrack, trackname);
 
-	cd_stopPlaying();
+	stopPlaying();
 
-	while (cd_getTrackPos() != -1);
+	while (getTrackPos() != -1);
 
 	uint32 start, end;
 
 	start = READ_LE_UINT32(matchPtr + 12);
 	end   = READ_LE_UINT32(matchPtr + 16);
 
-	cd_play(start, end);
+	play(start, end);
 
-	cd_startTime = util_getTimeKey();
-	cd_trackStop = cd_startTime + (end - start + 1 + 150) * 40 / 3;
+	_startTime = _vm->_util->getTimeKey();
+	_trackStop = _startTime + (end - start + 1 + 150) * 40 / 3;
 }
 
-void cd_play(uint32 from, uint32 to) {
+void CDROM::play(uint32 from, uint32 to) {
 	// play from sector [from] to sector [to]
 	//
 	// format is HSG:
 	// HSG encodes frame information into a double word:
 	// minute multiplied by 4500, plus second multiplied by 75,
 	// plus frame, minus 150
-	debug(3, "cd_play(%d, %d)", from, to);
+	debug(3, "play(%d, %d)", from, to);
 
 	AudioCD.play(1, 0, from, to - from + 1);
 }
 
-int32 cd_getTrackPos(void) {
-	uint32 curPos = util_getTimeKey() - cd_startTime;
+int32 CDROM::getTrackPos(void) {
+	uint32 curPos = _vm->_util->getTimeKey() - _startTime;
 
-	if (AudioCD.isPlaying() && (util_getTimeKey() < cd_trackStop))
+	if (AudioCD.isPlaying() && (_vm->_util->getTimeKey() < _trackStop))
 		return curPos * 3 / 40;
 	else
 		return -1;
 }
 
-void cd_stopPlaying(void) {
-	cd_stop();
+void CDROM::stopPlaying(void) {
+	stop();
 
-	while (cd_getTrackPos() != -1);
+	while (getTrackPos() != -1);
 }
 
-void cd_stop(void) {
-	debug(3, "cd_stop()");
+void CDROM::stop(void) {
+	debug(3, "stop()");
 
 	AudioCD.stop();
 }
 
-void cd_testCD(int trySubst, const char *label) {
+void CDROM::testCD(int trySubst, const char *label) {
 	if (!trySubst) {
 		error("CDROM track substitution is not supported");
 		return;
 	}
 
-	cd_LICbuffer = 0;
-	cd_globFlag = false;
+	_LICbuffer = 0;
+	_cdPlaying = false;
 
 	// Original checked CD label here
 	// but will skip it as it will require OSystem extensions of direct

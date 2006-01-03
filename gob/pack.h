@@ -24,8 +24,11 @@
 
 namespace Gob {
 
-int32 asm_unpackData(char *source, char *dest, char *temp);
-int32 unpackData(char *source, char *dest);
+class Pack {
+public:
+	int32 asm_unpackData(char *source, char *dest, char *temp);
+	int32 unpackData(char *source, char *dest);
+};
 
 }				// End of namespace Gob
 

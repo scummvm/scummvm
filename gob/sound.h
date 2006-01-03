@@ -22,43 +22,82 @@
 #ifndef GOB_SOUND_H
 #define GOB_SOUND_H
 
+#include "sound/audiostream.h"
+
 namespace Gob {
 
-void snd_initSound(void);
-void snd_loopSounds(void);
-int16 snd_checkProAudio(void);
-int16 snd_checkAdlib(void);
-int16 snd_checkBlaster(void);
-void snd_setBlasterPort(int16 port);
-void snd_speakerOn(int16 frequency, int32 length);
-void snd_speakerOff(void);
-void snd_stopSound(int16 arg);
-void snd_setResetTimerFlag(char flag);
+class Snd {
+public:
+	typedef struct SoundDesc {
+		Audio::SoundHandle handle;
+		char *data;
+		int32 size;
+		int16 repCount;
+		int16 timerTicks;
+		int16 inClocks;
+		int16 frequency;
+		int16 flag;
+		SoundDesc() : data(0), size(0), repCount(0), timerTicks(0),
+					  inClocks(0), frequency(0), flag(0) {}
+	} SoundDesc;
 
-extern int16 snd_soundPort;
-extern char snd_playingSound;
+	typedef void (*CleanupFuncPtr) (int16);
 
-typedef void (*CleanupFuncPtr) (int16);
-extern CleanupFuncPtr snd_cleanupFunc;
+	SoundDesc *loopingSounds[5]; // Should be enough
+	int16 soundPort;
+	char playingSound;
+	CleanupFuncPtr cleanupFunc;
 
-void snd_writeAdlib(int16 port, int16 data);
+	Snd(GobEngine *vm);
+	void speakerOn(int16 frequency, int32 length);
+	void speakerOff(void);
+	SoundDesc *loadSoundData(const char *path);
+	void stopSound(int16 arg){return;}
+	void loopSounds(void);
+	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency);
+	void playComposition(Snd::SoundDesc ** samples, int16 *composit, int16 freqVal) {;}
+	void waitEndPlay(void) {;}
+	void freeSoundData(SoundDesc *sndDesc);
 
-typedef struct Snd_SoundDesc {
-	Audio::SoundHandle handle;
-	char *data;
-	int32 size;
-	int16 repCount;
-	int16 timerTicks;
-	int16 inClocks;
-	int16 frequency;
-	int16 flag;
-} Snd_SoundDesc;
+protected:
+	// TODO: This is a very primitive square wave generator. The only thing is
+	//       has in common with the PC speaker is that it sounds terrible.
+	class SquareWaveStream : public AudioStream {
+	private:
+		uint _rate;
+		bool _beepForever;
+		uint32 _periodLength;
+		uint32 _periodSamples;
+		uint32 _remainingSamples;
+		int16 _sampleValue;
 
-void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency);
-Snd_SoundDesc *snd_loadSoundData(const char *path);
-void snd_freeSoundData(Snd_SoundDesc *sndDesc);
-void snd_playComposition(Snd_SoundDesc **samples, int16 *composit, int16 freqVal);
-void snd_waitEndPlay(void);
+	public:
+		SquareWaveStream() {}
+		~SquareWaveStream() {}
+
+		void playNote(int freq, int32 ms, uint rate);
+
+		int readBuffer(int16 *buffer, const int numSamples);
+
+		bool endOfData() const	{ return _remainingSamples == 0; }
+		bool isStereo() const	{ return false; }
+		int getRate() const	{ return _rate; }
+	};
+
+	SquareWaveStream speakerStream;
+	Audio::SoundHandle speakerHandle;
+
+	GobEngine *_vm;
+
+	void cleanupFuncCallback() {;}
+	int16 checkProAudio(void) {return 0;}
+	int16 checkAdlib(void) {return 0;}
+	int16 checkBlaster(void) {return 0;}
+
+	void writeAdlib(int16 port, int16 data);
+	void setBlasterPort(int16 port);
+	void setResetTimerFlag(char flag){return;}
+};
 
 }				// End of namespace Gob
 

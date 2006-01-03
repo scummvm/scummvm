@@ -20,41 +20,14 @@
  *
  */
 
-#include "sound/audiostream.h"
-
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/sound.h"
 
 namespace Gob {
 
-// TODO: This is a very primitive square wave generator. The only thing is
-//       has in common with the PC speaker is that it sounds terrible.
-
-class SquareWaveStream : public AudioStream {
-private:
-	uint _rate;
-	bool _beepForever;
-	uint32 _periodLength;
-	uint32 _periodSamples;
-	uint32 _remainingSamples;
-	int16 _sampleValue;
-
-public:
-	SquareWaveStream() {}
-	~SquareWaveStream() {}
-
-	void playNote(int freq, int32 ms);
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool endOfData() const	{ return _remainingSamples == 0; }
-	bool isStereo() const	{ return false; }
-	int getRate() const	{ return _rate; }
-};
-
-void SquareWaveStream::playNote(int freq, int32 ms) {
-	_rate = _vm->_mixer->getOutputRate();
+void Snd::SquareWaveStream::playNote(int freq, int32 ms, uint rate) {
+	_rate = rate;
 	_periodLength = _rate / (2 * freq);
 	_periodSamples = 0;
 	_sampleValue = 6000;
@@ -67,7 +40,7 @@ void SquareWaveStream::playNote(int freq, int32 ms) {
 	}
 }
 
-int SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
+int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 
 	while (samples < numSamples && _remainingSamples > 0) {
@@ -84,48 +57,42 @@ int SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-SquareWaveStream speakerStream;
-Audio::SoundHandle speakerHandle;
-Snd_SoundDesc *snd_loopingSounds[5]; // Should be enough
-
-void snd_initSound(void) {
-	for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++)
-		snd_loopingSounds[i] = NULL;
+Snd::Snd(GobEngine *vm) : _vm(vm) {
+	//CleanupFuncPtr cleanupFunc;// = &snd_cleanupFuncCallback();
+	cleanupFunc = 0;
+	for (int i = 0; i < ARRAYSIZE(loopingSounds); i++)
+		loopingSounds[i] = NULL;
+	soundPort = 0;
+	playingSound = 0;
 }
 
-void snd_loopSounds(void) {
-	for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++) {
-		Snd_SoundDesc *snd = snd_loopingSounds[i];
+void Snd::loopSounds(void) {
+	for (int i = 0; i < ARRAYSIZE(loopingSounds); i++) {
+		SoundDesc *snd = loopingSounds[i];
 		if (snd && !_vm->_mixer->isSoundHandleActive(snd->handle)) {
 			if (snd->repCount-- > 0) {
 				_vm->_mixer->playRaw(&snd->handle, snd->data, snd->size, snd->frequency, 0);
 			} else {
-				snd_loopingSounds[i] = NULL;
+				loopingSounds[i] = NULL;
 			}
 		}
 	}
 }
 
-int16 snd_checkProAudio(void) {return 0;}
-int16 snd_checkAdlib(void) {return 0;}
-int16 snd_checkBlaster(void) {return 0;}
-void snd_setBlasterPort(int16 port) {return;}
+void Snd::setBlasterPort(int16 port) {return;}
 
-void snd_speakerOn(int16 frequency, int32 length) {
-	speakerStream.playNote(frequency, length);
+void Snd::speakerOn(int16 frequency, int32 length) {
+	speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
 	if (!_vm->_mixer->isSoundHandleActive(speakerHandle)) {
 		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &speakerHandle, &speakerStream, -1, 255, 0, false);
 	}
 }
 
-void snd_speakerOff(void) {
+void Snd::speakerOff(void) {
 	_vm->_mixer->stopHandle(speakerHandle);
 }
 
-void snd_stopSound(int16 arg){return;}
-void snd_setResetTimerFlag(char flag){return;}
-
-void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency) {
+void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
 	assert(frequency > 0);
 
 	if (!_vm->_mixer->isSoundHandleActive(sndDesc->handle)) {
@@ -136,9 +103,9 @@ void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency) {
 	sndDesc->frequency = frequency;
 
 	if (repCount > 1) {
-		for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++) {
-			if (!snd_loopingSounds[i]) {
-				snd_loopingSounds[i] = sndDesc;
+		for (int i = 0; i < ARRAYSIZE(loopingSounds); i++) {
+			if (!loopingSounds[i]) {
+				loopingSounds[i] = sndDesc;
 				return;
 			}
 		}
@@ -146,43 +113,33 @@ void snd_playSample(Snd_SoundDesc *sndDesc, int16 repCount, int16 frequency) {
 	}
 }
 
-void snd_cleanupFuncCallback() {;}
-CleanupFuncPtr (snd_cleanupFunc);
-//CleanupFuncPtr snd_cleanupFunc;// = &snd_cleanupFuncCallback();
-
-int16 snd_soundPort;
-char snd_playingSound;
-
-void snd_writeAdlib(int16 port, int16 data) {
+void Snd::writeAdlib(int16 port, int16 data) {
 	return;
 }
 
-Snd_SoundDesc *snd_loadSoundData(const char *path) {
-	Snd_SoundDesc *sndDesc;
+Snd::SoundDesc *Snd::loadSoundData(const char *path) {
+	Snd::SoundDesc *sndDesc;
 	int32 size;
 
-	size = data_getDataSize(path);
-	sndDesc = (Snd_SoundDesc *)malloc(size);
+	size = _vm->_dataio->getDataSize(path);
+	sndDesc = (Snd::SoundDesc *)malloc(size);
 	sndDesc->size = size;
-	sndDesc->data = data_getData(path);
+	sndDesc->data = _vm->_dataio->getData(path);
 
 	return sndDesc;
 }
 
-void snd_freeSoundData(Snd_SoundDesc *sndDesc) {
+void Snd::freeSoundData(Snd::SoundDesc *sndDesc) {
 	_vm->_mixer->stopHandle(sndDesc->handle);
 
-	for (int i = 0; i < ARRAYSIZE(snd_loopingSounds); i++) {
-		if (snd_loopingSounds[i] == sndDesc)
-			snd_loopingSounds[i] = NULL;
+	for (int i = 0; i < ARRAYSIZE(loopingSounds); i++) {
+		if (loopingSounds[i] == sndDesc)
+			loopingSounds[i] = NULL;
 	}
 
 	free(sndDesc->data);
 	free(sndDesc);
 }
-
-void snd_playComposition(Snd_SoundDesc ** samples, int16 *composit, int16 freqVal) {;}
-void snd_waitEndPlay(void) {;}
 
 }                               // End of namespace Gob
 

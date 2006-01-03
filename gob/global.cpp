@@ -24,135 +24,130 @@
 
 namespace Gob {
 
-char pressedKeys[128];
+Global::Global(GobEngine *vm) : _vm(vm) {
+	useMouse = UNDEF;
+	mousePresent = UNDEF;
 
-char useMouse = UNDEF;
-int16 mousePresent = UNDEF;
+	presentCGA = UNDEF;
+	presentEGA = UNDEF;
+	presentVGA = UNDEF;
+	presentHER = UNDEF;
 
-int16 presentCGA = UNDEF;
-int16 presentEGA = UNDEF;
-int16 presentVGA = UNDEF;
-int16 presentHER = UNDEF;
+	videoMode = 0;
 
-int16 videoMode = 0;
+	/* Sound */
+	presentSound = 0x8000;	/* undefined values */
+	soundFlags = 0x8000;
+	blasterPort = 0;
+	disableSoundCfg = 0;
 
-int16 disableVideoCfg;
+	//char playingSound = 0;
 
-/* Sound */
-uint16 presentSound = 0x8000;	/* undefined values */
-uint16 soundFlags = 0x8000;
-int16 blasterPort = 0;
-int16 disableSoundCfg = 0;
+	/* Mouse */
+	disableMouseCfg = 0;
 
-//char playingSound = 0;
+	mouseXShift = 3;
+	mouseYShift = 3;
 
-/* Mouse */
-int16 disableMouseCfg = 0;
+	mouseMaxCol = 320;
+	mouseMaxRow = 200;
 
-int16 mouseXShift = 3;
-int16 mouseYShift = 3;
+	/* Language */
+	disableLangCfg = 0x8000;
+	language = 0x8000;
 
-int16 mouseMaxCol = 320;
-int16 mouseMaxRow = 200;
+	/* Timer variables */
+	startTime = 0;
+	timer_delta = 1000;
 
-/* Language */
-uint16 disableLangCfg = 0x8000;
-uint16 language = 0x8000;
+	frameWaitTime = 0;
+	startFrameTime = 0;
 
-/* Timer variables */
-int32 startTime = 0;
-int16 timer_delta = 1000;
+	/* Timer and delays */
+	delayTime = 0;
 
-int16 frameWaitTime = 0;
-int32 startFrameTime = 0;
+	/* Joystick */
+	useJoystick = 1;
 
-/* Timer and delays */
-int16 delayTime = 0;
+	/* Data files */
+	packedSize = 0;
+	for (int i = 0; i < MAX_DATA_FILES; i++) {
+		dataFiles[i] = 0;
+		numDataChunks[i] = 0;
+		dataFileHandles[i] = -1;
+	}
 
-/* Joystick */
-char useJoystick = 1;
+	primaryWidth = 0;
+	primaryHeight = 0;
 
-/* Files */
-Common::File filesHandles[MAX_FILES];
+	sprAllocated = 0;
 
-/* Data files */
-struct ChunkDesc *dataFiles[MAX_DATA_FILES];
-int16 numDataChunks[MAX_DATA_FILES];
-int16 dataFileHandles[MAX_DATA_FILES];
-int32 chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
-int32 chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
-int32 chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
-char isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
-int32 packedSize = 0;
+	doRangeClamp = 0;
 
-int16 sprAllocated = 0;
+	setAllPalette = 0;
 
-SurfaceDesc primarySurfDesc;
-SurfaceDesc *pPrimarySurfDesc;
+	oldMode = 3;
+	dontSetPalette = 0;
+	curPrimaryDesc = 0;
+	allocatedPrimary = 0;
+	pPrimarySurfDesc = 0;
 
-int16 primaryWidth;
-int16 primaryHeight;
+	pPaletteDesc = 0;
 
-int16 doRangeClamp = 0;
+	unusedPalette1[0] = (int16)0;
+	unusedPalette1[1] = (int16)0x0b;
+	unusedPalette1[2] = (int16)0;
+	unusedPalette1[3] = (int16)0x5555;
+	unusedPalette1[4] = (int16)0xAAAA;
+	unusedPalette1[5] = (int16)0xFFFF;
+	unusedPalette1[6] = (int16)0;
+	unusedPalette1[7] = (int16)0x5555;
+	unusedPalette1[8] = (int16)0xAAAA;
+	unusedPalette1[9] = (int16)0xFFFF;
+	unusedPalette1[10] = (int16)0;
+	unusedPalette1[11] = (int16)0x5555;
+	unusedPalette1[12] = (int16)0xAAAA;
+	unusedPalette1[13] = (int16)0xFFFF;
+	unusedPalette1[14] = (int16)0;
+	unusedPalette1[15] = (int16)0x5555;
+	unusedPalette1[16] = (int16)0xAAAA;
+	unusedPalette1[17] = (int16)0xFFFF;
 
-char redPalette[256];
-char greenPalette[256];
-char bluePalette[256];
+	for (int i = 0; i < 16 ;i++)
+		unusedPalette2[i] = i;
 
-int16 setAllPalette = 0;
+	vgaPalette[0].red = 0x00; vgaPalette[0].green = 0x00; vgaPalette[0].blue = 0x00;
+	vgaPalette[1].red = 0x00; vgaPalette[1].green = 0x00; vgaPalette[1].blue = 0x2a;
+	vgaPalette[2].red = 0x00; vgaPalette[2].green = 0x2a; vgaPalette[2].blue = 0x00;
+	vgaPalette[3].red = 0x00; vgaPalette[3].green = 0x2a; vgaPalette[3].blue = 0x2a;
+	vgaPalette[4].red = 0x2a; vgaPalette[4].green = 0x00; vgaPalette[4].blue = 0x00;
+	vgaPalette[5].red = 0x2a; vgaPalette[5].green = 0x00; vgaPalette[5].blue = 0x2a;
+	vgaPalette[6].red = 0x2a; vgaPalette[6].green = 0x15; vgaPalette[6].blue = 0x00;
+	vgaPalette[7].red = 0x2a; vgaPalette[7].green = 0x2a; vgaPalette[7].blue = 0x2a;
+	vgaPalette[8].red = 0x15; vgaPalette[8].green = 0x15; vgaPalette[8].blue = 0x15;
+	vgaPalette[9].red = 0x15; vgaPalette[9].green = 0x15; vgaPalette[9].blue = 0x3f;
+	vgaPalette[10].red = 0x15; vgaPalette[10].green = 0x3f; vgaPalette[10].blue = 0x15;
+	vgaPalette[11].red = 0x15; vgaPalette[11].green = 0x3f; vgaPalette[11].blue = 0x3f;
+	vgaPalette[12].red = 0x3f; vgaPalette[12].green = 0x15; vgaPalette[12].blue = 0x15;
+	vgaPalette[13].red = 0x3f; vgaPalette[13].green = 0x15; vgaPalette[13].blue = 0x3f;
+	vgaPalette[14].red = 0x3f; vgaPalette[14].green = 0x3f; vgaPalette[14].blue = 0x15;
+	vgaPalette[15].red = 0x3f; vgaPalette[15].green = 0x3f; vgaPalette[15].blue = 0x3f;
 
-int16 oldMode = 3;
-char dontSetPalette = 0;
-SurfaceDesc *curPrimaryDesc = 0;
-SurfaceDesc *allocatedPrimary = 0;
+	debugFlag = 0;
+	inVM = 0;
+	colorCount = 16;
 
-PalDesc *pPaletteDesc = 0;
+	inter_resStr[0] = 0;
+	inter_resVal = 0;
 
-int16 unusedPalette1[18] = {
-	0, 0x0b, 0, (int16)0x5555, (int16)0xAAAA, (int16)0xFFFF, 0, (int16)0x5555,
-	(int16)0xAAAA, (int16)0xFFFF, 0, (int16)0x5555,
-	(int16)0xAAAA, (int16)0xFFFF, 0, (int16)0x5555, (int16)0xAAAA, (int16)0xFFFF
-};
+	inter_variables = 0;
+	inter_execPtr = 0;
+	inter_animDataSize = 10;
 
-int16 unusedPalette2[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-};
+	inter_mouseX = 0;
+	inter_mouseY = 0;
 
-Color vgaPalette[16] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x2a},
-	{0x00, 0x2a, 0x00},
-	{0x00, 0x2a, 0x2a},
-	{0x2a, 0x00, 0x00},
-	{0x2a, 0x00, 0x2a},
-	{0x2a, 0x15, 0x00},
-	{0x2a, 0x2a, 0x2a},
-	{0x15, 0x15, 0x15},
-	{0x15, 0x15, 0x3f},
-	{0x15, 0x3f, 0x15},
-	{0x15, 0x3f, 0x3f},
-	{0x3f, 0x15, 0x15},
-	{0x3f, 0x15, 0x3f},
-	{0x3f, 0x3f, 0x15},
-	{0x3f, 0x3f, 0x3f}
-};
-
-PalDesc paletteStruct;
-
-int16 debugFlag = 0;
-int16 inVM = 0;
-int16 colorCount = 16;
-
-char inter_resStr[200];
-int32 inter_resVal = 0;
-
-char *inter_variables = 0;
-char *inter_execPtr = 0;
-int16 inter_animDataSize = 10;
-
-int16 inter_mouseX = 0;
-int16 inter_mouseY = 0;
-
-char *tmpPalBuffer = 0;
+	tmpPalBuffer = 0;
+}
 
 } // End of namespace Gob

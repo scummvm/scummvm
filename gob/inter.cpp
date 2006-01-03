@@ -33,42 +33,44 @@
 
 namespace Gob {
 
-int16 inter_animPalLowIndex;
-int16 inter_animPalHighIndex;
-int16 inter_animPalDir;
-uint32 inter_soundEndTimeKey;
-int16 inter_soundStopVal;
-char inter_terminate = 0;
-char inter_breakFlag = 0;
-int16 *inter_breakFromLevel;
-int16 *inter_nestLevel;
+Inter::Inter(GobEngine *vm) : _vm(vm) {
+	terminate = 0;
+	breakFlag = 0;
+	animPalLowIndex = 0;
+	animPalHighIndex = 0;
+	animPalDir = 0;
+	soundEndTimeKey = 0;
+	soundStopVal = 0;
+	breakFromLevel = 0;
+	nestLevel = 0;
+}
 
-int16 inter_load16(void) {
-	int16 tmp = (int16)READ_LE_UINT16(inter_execPtr);
-	inter_execPtr += 2;
+int16 Inter::load16(void) {
+	int16 tmp = (int16)READ_LE_UINT16(_vm->_global->inter_execPtr);
+	_vm->_global->inter_execPtr += 2;
 	return tmp;
 }
 
-void inter_setMousePos(void) {
-	inter_mouseX = parse_parseValExpr();
-	inter_mouseY = parse_parseValExpr();
-	if (useMouse != 0)
-		util_setMousePos(inter_mouseX, inter_mouseY);
+void Inter::setMousePos(void) {
+	_vm->_global->inter_mouseX = _vm->_parse->parseValExpr();
+	_vm->_global->inter_mouseY = _vm->_parse->parseValExpr();
+	if (_vm->_global->useMouse != 0)
+		_vm->_util->setMousePos(_vm->_global->inter_mouseX, _vm->_global->inter_mouseY);
 }
 
-char inter_evalExpr(int16 *pRes) {
+char Inter::evalExpr(int16 *pRes) {
 	byte token;
 
 //
-	parse_printExpr(99);
+	_vm->_parse->printExpr(99);
 
-	parse_parseExpr(99, &token);
+	_vm->_parse->parseExpr(99, &token);
 	if (pRes == 0)
 		return token;
 
 	switch (token) {
 	case 20:
-		*pRes = inter_resVal;
+		*pRes = _vm->_global->inter_resVal;
 		break;
 
 	case 22:
@@ -83,291 +85,291 @@ char inter_evalExpr(int16 *pRes) {
 	return token;
 }
 
-char inter_evalBoolResult() {
+char Inter::evalBoolResult() {
 	byte token;
 
-	parse_printExpr(99);
+	_vm->_parse->printExpr(99);
 
-	parse_parseExpr(99, &token);
-	if (token == 24 || (token == 20 && inter_resVal != 0))
+	_vm->_parse->parseExpr(99, &token);
+	if (token == 24 || (token == 20 && _vm->_global->inter_resVal != 0))
 		return 1;
 	else
 		return 0;
 }
 
-void inter_evaluateStore(void) {
+void Inter::evaluateStore(void) {
 	char *savedPos;
 	int16 token;
 	int16 result;
 	int16 varOff;
 
-	savedPos = inter_execPtr;
-	varOff = parse_parseVarIndex();
-	token = inter_evalExpr(&result);
+	savedPos = _vm->_global->inter_execPtr;
+	varOff = _vm->_parse->parseVarIndex();
+	token = evalExpr(&result);
 	switch (savedPos[0]) {
 	case 23:
 	case 26:
-		WRITE_VAR_OFFSET(varOff, inter_resVal);
+		WRITE_VAR_OFFSET(varOff, _vm->_global->inter_resVal);
 		break;
 
 	case 25:
 	case 28:
 		if (token == 20)
-			*(inter_variables + varOff) = result;
+			*(_vm->_global->inter_variables + varOff) = result;
 		else
-			strcpy(inter_variables + varOff, inter_resStr);
+			strcpy(_vm->_global->inter_variables + varOff, _vm->_global->inter_resStr);
 		break;
 
 	}
 	return;
 }
 
-void inter_capturePush(void) {
+void Inter::capturePush(void) {
 	int16 left;
 	int16 top;
 	int16 width;
 	int16 height;
 
-	left = parse_parseValExpr();
-	top = parse_parseValExpr();
-	width = parse_parseValExpr();
-	height = parse_parseValExpr();
-	game_capturePush(left, top, width, height);
-	(*scen_pCaptureCounter)++;
+	left = _vm->_parse->parseValExpr();
+	top = _vm->_parse->parseValExpr();
+	width = _vm->_parse->parseValExpr();
+	height = _vm->_parse->parseValExpr();
+	_vm->_game->capturePush(left, top, width, height);
+	(*_vm->_scenery->pCaptureCounter)++;
 }
 
-void inter_capturePop(void) {
-	if (*scen_pCaptureCounter != 0) {
-		(*scen_pCaptureCounter)--;
-		game_capturePop(1);
+void Inter::capturePop(void) {
+	if (*_vm->_scenery->pCaptureCounter != 0) {
+		(*_vm->_scenery->pCaptureCounter)--;
+		_vm->_game->capturePop(1);
 	}
 }
 
-void inter_printText(void) {
+void Inter::printText(void) {
 	char buf[60];
 	int16 i;
 
-	debug(3, "inter_printText");
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
+	debug(3, "printText");
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
 
-	draw_backColor = parse_parseValExpr();
-	draw_frontColor = parse_parseValExpr();
-	draw_fontIndex = parse_parseValExpr();
-	draw_destSurface = 21;
-	draw_textToPrint = buf;
-	draw_transparency = 0;
+	_vm->_draw->backColor = _vm->_parse->parseValExpr();
+	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->fontIndex = _vm->_parse->parseValExpr();
+	_vm->_draw->destSurface = 21;
+	_vm->_draw->textToPrint = buf;
+	_vm->_draw->transparency = 0;
 
-	if (draw_backColor >= 16) {
-		draw_backColor = 0;
-		draw_transparency = 1;
+	if (_vm->_draw->backColor >= 16) {
+		_vm->_draw->backColor = 0;
+		_vm->_draw->transparency = 1;
 	}
 
 	do {
-		for (i = 0; *inter_execPtr != '.' && (byte)*inter_execPtr != 200;
-			 i++, inter_execPtr++) {
-			buf[i] = *inter_execPtr;
+		for (i = 0; *_vm->_global->inter_execPtr != '.' && (byte)*_vm->_global->inter_execPtr != 200;
+			 i++, _vm->_global->inter_execPtr++) {
+			buf[i] = *_vm->_global->inter_execPtr;
 		}
 
-		if ((byte)*inter_execPtr != 200) {
-			inter_execPtr++;
-			switch (*inter_execPtr) {
+		if ((byte)*_vm->_global->inter_execPtr != 200) {
+			_vm->_global->inter_execPtr++;
+			switch (*_vm->_global->inter_execPtr) {
 			case 23:
 			case 26:
-				sprintf(buf + i, "%d", VAR_OFFSET(parse_parseVarIndex()));
+				sprintf(buf + i, "%d", VAR_OFFSET(_vm->_parse->parseVarIndex()));
 				break;
 
 			case 25:
 			case 28:
-				sprintf(buf + i, "%s", inter_variables + parse_parseVarIndex());
+				sprintf(buf + i, "%s", _vm->_global->inter_variables + _vm->_parse->parseVarIndex());
 				break;
 			}
-			inter_execPtr++;
+			_vm->_global->inter_execPtr++;
 		} else {
 			buf[i] = 0;
 		}
-		draw_spriteOperation(DRAW_PRINTTEXT);
-	} while ((byte)*inter_execPtr != 200);
-	inter_execPtr++;
+		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+	} while ((byte)*_vm->_global->inter_execPtr != 200);
+	_vm->_global->inter_execPtr++;
 }
 
-void inter_animPalette(void) {
+void Inter::animPalette(void) {
 	int16 i;
-	Color col;
+	Video::Color col;
 
-	if (inter_animPalDir == 0)
+	if (animPalDir == 0)
 		return;
 
-	vid_waitRetrace(videoMode);
+	_vm->_video->waitRetrace(_vm->_global->videoMode);
 
-	if (inter_animPalDir == -1) {
-		col = draw_vgaSmallPalette[inter_animPalLowIndex];
+	if (animPalDir == -1) {
+		col = _vm->_draw->vgaSmallPalette[animPalLowIndex];
 
-		for (i = inter_animPalLowIndex; i < inter_animPalHighIndex; i++)
-			draw_vgaSmallPalette[i] = draw_vgaSmallPalette[i + 1];
+		for (i = animPalLowIndex; i < animPalHighIndex; i++)
+			_vm->_draw->vgaSmallPalette[i] = _vm->_draw->vgaSmallPalette[i + 1];
 
-		draw_vgaSmallPalette[inter_animPalHighIndex] = col;
+		_vm->_draw->vgaSmallPalette[animPalHighIndex] = col;
 	} else {
-		col = draw_vgaSmallPalette[inter_animPalHighIndex];
-		for (i = inter_animPalHighIndex; i > inter_animPalLowIndex; i--)
-			draw_vgaSmallPalette[i] = draw_vgaSmallPalette[i - 1];
+		col = _vm->_draw->vgaSmallPalette[animPalHighIndex];
+		for (i = animPalHighIndex; i > animPalLowIndex; i--)
+			_vm->_draw->vgaSmallPalette[i] = _vm->_draw->vgaSmallPalette[i - 1];
 
-		draw_vgaSmallPalette[inter_animPalLowIndex] = col;
+		_vm->_draw->vgaSmallPalette[animPalLowIndex] = col;
 	}
 
-	pPaletteDesc->vgaPal = draw_vgaSmallPalette;
-	vid_setFullPalette(pPaletteDesc);
+	_vm->_global->pPaletteDesc->vgaPal = _vm->_draw->vgaSmallPalette;
+	_vm->_video->setFullPalette(_vm->_global->pPaletteDesc);
 }
 
-void inter_animPalInit(void) {
-	inter_animPalDir = inter_load16();
-	inter_animPalLowIndex = parse_parseValExpr();
-	inter_animPalHighIndex = parse_parseValExpr();
+void Inter::animPalInit(void) {
+	animPalDir = load16();
+	animPalLowIndex = _vm->_parse->parseValExpr();
+	animPalHighIndex = _vm->_parse->parseValExpr();
 }
 
-void inter_loadMult(void) {
+void Inter::loadMult(void) {
 	int16 resId;
 
-	resId = inter_load16();
-	mult_loadMult(resId);
+	resId = load16();
+	_vm->_mult->loadMult(resId);
 }
 
-void inter_playMult(void) {
+void Inter::playMult(void) {
 	int16 checkEscape;
 
-	checkEscape = inter_load16();
-	mult_playMult(VAR(57), -1, checkEscape, 0);
+	checkEscape = load16();
+	_vm->_mult->playMult(VAR(57), -1, checkEscape, 0);
 }
 
-void inter_freeMult(void) {
-	inter_load16();		// unused
-	mult_freeMultKeys();
+void Inter::freeMult(void) {
+	load16();		// unused
+	_vm->_mult->freeMultKeys();
 }
 
-void inter_initCursor(void) {
+void Inter::initCursor(void) {
 	int16 width;
 	int16 height;
 	int16 count;
 	int16 i;
 
-	draw_cursorXDeltaVar = parse_parseVarIndex();
-	draw_cursorYDeltaVar = parse_parseVarIndex();
+	_vm->_draw->cursorXDeltaVar = _vm->_parse->parseVarIndex();
+	_vm->_draw->cursorYDeltaVar = _vm->_parse->parseVarIndex();
 
-	width = inter_load16();
+	width = load16();
 	if (width < 16)
 		width = 16;
 
-	height = inter_load16();
+	height = load16();
 	if (height < 16)
 		height = 16;
 
-	count = inter_load16();
+	count = load16();
 	if (count < 2)
 		count = 2;
 
-	if (width != draw_cursorWidth || height != draw_cursorHeight ||
-	    draw_cursorSprites->width != width * count) {
+	if (width != _vm->_draw->cursorWidth || height != _vm->_draw->cursorHeight ||
+	    _vm->_draw->cursorSprites->width != width * count) {
 
-		vid_freeSurfDesc(draw_cursorSprites);
-		vid_freeSurfDesc(draw_cursorBack);
+		_vm->_video->freeSurfDesc(_vm->_draw->cursorSprites);
+		_vm->_video->freeSurfDesc(_vm->_draw->cursorBack);
 
-		draw_cursorWidth = width;
-		draw_cursorHeight = height;
+		_vm->_draw->cursorWidth = width;
+		_vm->_draw->cursorHeight = height;
 
 		if (count < 0x80)
-			draw_transparentCursor = 1;
+			_vm->_draw->transparentCursor = 1;
 		else
-			draw_transparentCursor = 0;
+			_vm->_draw->transparentCursor = 0;
 
 		if (count > 0x80)
 			count -= 0x80;
 
-		draw_cursorSprites =
-		    vid_initSurfDesc(videoMode, draw_cursorWidth * count,
-		    draw_cursorHeight, 2);
-		draw_spritesArray[23] = draw_cursorSprites;
+		_vm->_draw->cursorSprites =
+		    _vm->_video->initSurfDesc(_vm->_global->videoMode, _vm->_draw->cursorWidth * count,
+		    _vm->_draw->cursorHeight, 2);
+		_vm->_draw->spritesArray[23] = _vm->_draw->cursorSprites;
 
-		draw_cursorBack =
-		    vid_initSurfDesc(videoMode, draw_cursorWidth,
-		    draw_cursorHeight, 0);
+		_vm->_draw->cursorBack =
+		    _vm->_video->initSurfDesc(_vm->_global->videoMode, _vm->_draw->cursorWidth,
+		    _vm->_draw->cursorHeight, 0);
 		for (i = 0; i < 40; i++) {
-			draw_cursorAnimLow[i] = -1;
-			draw_cursorAnimDelays[i] = 0;
-			draw_cursorAnimHigh[i] = 0;
+			_vm->_draw->cursorAnimLow[i] = -1;
+			_vm->_draw->cursorAnimDelays[i] = 0;
+			_vm->_draw->cursorAnimHigh[i] = 0;
 		}
-		draw_cursorAnimLow[1] = 0;
+		_vm->_draw->cursorAnimLow[1] = 0;
 	}
 }
 
-void inter_initCursorAnim(void) {
+void Inter::initCursorAnim(void) {
 	int16 ind;
 
-	ind = parse_parseValExpr();
-	draw_cursorAnimLow[ind] = inter_load16();
-	draw_cursorAnimHigh[ind] = inter_load16();
-	draw_cursorAnimDelays[ind] = inter_load16();
+	ind = _vm->_parse->parseValExpr();
+	_vm->_draw->cursorAnimLow[ind] = load16();
+	_vm->_draw->cursorAnimHigh[ind] = load16();
+	_vm->_draw->cursorAnimDelays[ind] = load16();
 }
 
-void inter_clearCursorAnim(void) {
+void Inter::clearCursorAnim(void) {
 	int16 ind;
 
-	ind = parse_parseValExpr();
-	draw_cursorAnimLow[ind] = -1;
-	draw_cursorAnimHigh[ind] = 0;
-	draw_cursorAnimDelays[ind] = 0;
+	ind = _vm->_parse->parseValExpr();
+	_vm->_draw->cursorAnimLow[ind] = -1;
+	_vm->_draw->cursorAnimHigh[ind] = 0;
+	_vm->_draw->cursorAnimDelays[ind] = 0;
 }
 
-void inter_drawOperations(void) {
+void Inter::drawOperations(void) {
 	byte cmd;
 	int16 i;
 
-	cmd = *inter_execPtr++;
+	cmd = *_vm->_global->inter_execPtr++;
 
-	debug(4, "inter_drawOperations(%d)", cmd);
+	debug(4, "drawOperations(%d)", cmd);
 
 	switch (cmd) {
 	case 0:
-		inter_loadMult();
+		loadMult();
 		break;
 
 	case 1:
-		inter_playMult();
+		playMult();
 		break;
 
 	case 2:
-		inter_freeMult();
+		freeMult();
 		break;
 
 	case 7:
-		inter_initCursor();
+		initCursor();
 		break;
 
 	case 8:
-		inter_initCursorAnim();
+		initCursorAnim();
 		break;
 
 	case 9:
-		inter_clearCursorAnim();
+		clearCursorAnim();
 		break;
 
 	case 10:
-		draw_renderFlags = parse_parseValExpr();
+		_vm->_draw->renderFlags = _vm->_parse->parseValExpr();
 		break;
 
 	case 11:
-		//word_23EC_DE = parse_parseValExpr();
+		//word_23EC_DE = _vm->_parse->parseValExpr();
 		break;
 
 	case 16:
-		scen_loadAnim(0);
+		_vm->_scenery->loadAnim(0);
 		break;
 
 	case 17:
-		scen_freeAnim(-1);
+		_vm->_scenery->freeAnim(-1);
 		break;
 
 	case 18:
-		scen_interUpdateAnim();
+		_vm->_scenery->interUpdateAnim();
 		break;
 
 	case 19:
@@ -375,50 +377,50 @@ void inter_drawOperations(void) {
 		break;
 
 	case 20:
-		mult_interInitMult();
+		_vm->_mult->interInitMult();
 		break;
 
 	case 21:
-		mult_freeMult();
+		_vm->_mult->freeMult();
 		break;
 
 	case 22:
-		mult_animate();
+		_vm->_mult->animate();
 		break;
 
 	case 23:
-		mult_interLoadMult();
+		_vm->_mult->interLoadMult();
 		break;
 
 	case 24:
-		scen_interStoreParams();
+		_vm->_scenery->interStoreParams();
 		break;
 
 	case 25:
-		mult_interGetObjAnimSize();
+		_vm->_mult->interGetObjAnimSize();
 		break;
 
 	case 26:
-		scen_loadStatic(0);
+		_vm->_scenery->loadStatic(0);
 		break;
 
 	case 27:
-		scen_freeStatic(-1);
+		_vm->_scenery->freeStatic(-1);
 		break;
 
 	case 28:
-		scen_interRenderStatic();
+		_vm->_scenery->interRenderStatic();
 		break;
 
 	case 29:
-		scen_interLoadCurLayer();
+		_vm->_scenery->interLoadCurLayer();
 		break;
 
 	case 32:
 		if (_vm->_features & GF_GOB1) {
 			// Used in gob1 CD
-			inter_evalExpr(0);
-			cd_startTrack(inter_resStr);
+			evalExpr(0);
+			_vm->_cdrom->startTrack(_vm->_global->inter_resStr);
 		} else {
 		}
 		break;
@@ -431,9 +433,9 @@ void inter_drawOperations(void) {
 			// This is a very nasty thing to do, so let's add a
 			// short delay here. It's probably a safe thing to do.
 
-			util_longDelay(1);
+			_vm->_util->longDelay(1);
 
-			int pos = cd_getTrackPos();
+			int pos = _vm->_cdrom->getTrackPos();
 			if (pos == -1)
 				pos = 32767;
 			WRITE_VAR(5, pos);
@@ -444,7 +446,7 @@ void inter_drawOperations(void) {
 	case 34:
 		if (_vm->_features & GF_GOB1) {
 			// Used in gob1 CD
-			cd_stopPlaying();
+			_vm->_cdrom->stopPlaying();
 		} else {
 		}
 		break;
@@ -465,19 +467,19 @@ void inter_drawOperations(void) {
 		break;
 
 	case 48:
-		i = inter_load16();
-		draw_fontToSprite[i].sprite = inter_load16();
-		draw_fontToSprite[i].base = inter_load16();
-		draw_fontToSprite[i].width = inter_load16();
-		draw_fontToSprite[i].height = inter_load16();
+		i = load16();
+		_vm->_draw->fontToSprite[i].sprite = load16();
+		_vm->_draw->fontToSprite[i].base = load16();
+		_vm->_draw->fontToSprite[i].width = load16();
+		_vm->_draw->fontToSprite[i].height = load16();
 		break;
 
 	case 49:
-		i = inter_load16();
-		draw_fontToSprite[i].sprite = -1;
-		draw_fontToSprite[i].base = -1;
-		draw_fontToSprite[i].width = -1;
-		draw_fontToSprite[i].height = -1;
+		i = load16();
+		_vm->_draw->fontToSprite[i].sprite = -1;
+		_vm->_draw->fontToSprite[i].base = -1;
+		_vm->_draw->fontToSprite[i].width = -1;
+		_vm->_draw->fontToSprite[i].height = -1;
 		break;
 
 	case 64:
@@ -585,309 +587,309 @@ void inter_drawOperations(void) {
 	}
 }
 
-void inter_getFreeMem(void) {
+void Inter::getFreeMem(void) {
 	int16 freeVar;
 	int16 maxFreeVar;
 
-	freeVar = parse_parseVarIndex();
-	maxFreeVar = parse_parseVarIndex();
+	freeVar = _vm->_parse->parseVarIndex();
+	maxFreeVar = _vm->_parse->parseVarIndex();
 
 	// HACK
 	WRITE_VAR_OFFSET(freeVar, 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
 }
 
-void inter_manageDataFile(void) {
-	inter_evalExpr(0);
+void Inter::manageDataFile(void) {
+	evalExpr(0);
 
-	if (inter_resStr[0] != 0)
-		data_openDataFile(inter_resStr);
+	if (_vm->_global->inter_resStr[0] != 0)
+		_vm->_dataio->openDataFile(_vm->_global->inter_resStr);
 	else
-		data_closeDataFile();
+		_vm->_dataio->closeDataFile();
 }
 
-void inter_writeData(void) {
+void Inter::writeData(void) {
 	int16 offset;
 	int16 handle;
 	int16 size;
 	int16 dataVar;
 	int16 retSize;
 
-	debug(4, "inter_writeData");
-	inter_evalExpr(0);
-	dataVar = parse_parseVarIndex();
-	size = parse_parseValExpr();
-	offset = parse_parseValExpr();
+	debug(4, "writeData");
+	evalExpr(0);
+	dataVar = _vm->_parse->parseVarIndex();
+	size = _vm->_parse->parseValExpr();
+	offset = _vm->_parse->parseValExpr();
 
 	WRITE_VAR(1, 1);
-	handle = data_openData(inter_resStr, Common::File::kFileWriteMode);
+	handle = _vm->_dataio->openData(_vm->_global->inter_resStr, Common::File::kFileWriteMode);
 
 	if (handle < 0)
 		return;
 
 	if (offset < 0) {
-		data_seekData(handle, -offset - 1, 2);
+		_vm->_dataio->seekData(handle, -offset - 1, 2);
 	} else {
-		data_seekData(handle, offset, 0);
+		_vm->_dataio->seekData(handle, offset, 0);
 	}
 
-	retSize = file_getHandle(handle)->write(inter_variables + dataVar, size);
+	retSize = _vm->_dataio->file_getHandle(handle)->write(_vm->_global->inter_variables + dataVar, size);
 
 	if (retSize == size)
 		WRITE_VAR(1, 0);
 
-	data_closeData(handle);
+	_vm->_dataio->closeData(handle);
 }
 
-void inter_checkData(void) {
+void Inter::checkData(void) {
 	int16 handle;
 	int16 varOff;
 
-	debug(4, "data_cheackData");
-	inter_evalExpr(0);
-	varOff = parse_parseVarIndex();
-	handle = data_openData(inter_resStr);
+	debug(4, "_vm->_dataio->cheackData");
+	evalExpr(0);
+	varOff = _vm->_parse->parseVarIndex();
+	handle = _vm->_dataio->openData(_vm->_global->inter_resStr);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	if (handle >= 0)
-		data_closeData(handle);
+		_vm->_dataio->closeData(handle);
 }
 
-void inter_readData(void) {
+void Inter::readData(void) {
 	int16 retSize;
 	int16 size;
 	int16 dataVar;
 	int16 offset;
 	int16 handle;
 
-	debug(4, "inter_readData");
-	inter_evalExpr(0);
-	dataVar = parse_parseVarIndex();
-	size = parse_parseValExpr();
-	offset = parse_parseValExpr();
+	debug(4, "readData");
+	evalExpr(0);
+	dataVar = _vm->_parse->parseVarIndex();
+	size = _vm->_parse->parseValExpr();
+	offset = _vm->_parse->parseValExpr();
 
-	if (game_extHandle >= 0)
-		data_closeData(game_extHandle);
+	if (_vm->_game->extHandle >= 0)
+		_vm->_dataio->closeData(_vm->_game->extHandle);
 
 	WRITE_VAR(1, 1);
-	handle = data_openData(inter_resStr);
+	handle = _vm->_dataio->openData(_vm->_global->inter_resStr);
 	if (handle >= 0) {
-		draw_animateCursor(4);
+		_vm->_draw->animateCursor(4);
 		if (offset < 0)
-			data_seekData(handle, -offset - 1, 2);
+			_vm->_dataio->seekData(handle, -offset - 1, 2);
 		else
-			data_seekData(handle, offset, 0);
+			_vm->_dataio->seekData(handle, offset, 0);
 
-		retSize = data_readData(handle, inter_variables + dataVar, size);
-		data_closeData(handle);
+		retSize = _vm->_dataio->readData(handle, _vm->_global->inter_variables + dataVar, size);
+		_vm->_dataio->closeData(handle);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);
 	}
 
-	if (game_extHandle >= 0)
-		game_extHandle = data_openData(game_curExtFile);
+	if (_vm->_game->extHandle >= 0)
+		_vm->_game->extHandle = _vm->_dataio->openData(_vm->_game->curExtFile);
 }
 
-void inter_loadFont(void) {
+void Inter::loadFont(void) {
 	int16 index;
 
-	debug(4, "inter_loadFont");
-	inter_evalExpr(0);
-	index = inter_load16();
+	debug(4, "loadFont");
+	evalExpr(0);
+	index = load16();
 
-	if (draw_fonts[index] != 0)
-		util_freeFont(draw_fonts[index]);
+	if (_vm->_draw->fonts[index] != 0)
+		_vm->_util->freeFont(_vm->_draw->fonts[index]);
 
-	draw_animateCursor(4);
-	if (game_extHandle >= 0)
-		data_closeData(game_extHandle);
+	_vm->_draw->animateCursor(4);
+	if (_vm->_game->extHandle >= 0)
+		_vm->_dataio->closeData(_vm->_game->extHandle);
 
-	draw_fonts[index] = util_loadFont(inter_resStr);
+	_vm->_draw->fonts[index] = _vm->_util->loadFont(_vm->_global->inter_resStr);
 
-	if (game_extHandle >= 0)
-		game_extHandle = data_openData(game_curExtFile);
+	if (_vm->_game->extHandle >= 0)
+		_vm->_game->extHandle = _vm->_dataio->openData(_vm->_game->curExtFile);
 }
 
-void inter_freeFont(void) {
+void Inter::freeFont(void) {
 	int16 index;
 
-	index = inter_load16();
-	if (draw_fonts[index] != 0)
-		util_freeFont(draw_fonts[index]);
+	index = load16();
+	if (_vm->_draw->fonts[index] != 0)
+		_vm->_util->freeFont(_vm->_draw->fonts[index]);
 
-	draw_fonts[index] = 0;
+	_vm->_draw->fonts[index] = 0;
 }
 
-void inter_prepareStr(void) {
+void Inter::prepareStr(void) {
 	int16 var;
 
-	var = parse_parseVarIndex();
-	util_prepareStr(inter_variables + var);
+	var = _vm->_parse->parseVarIndex();
+	_vm->_util->prepareStr(_vm->_global->inter_variables + var);
 }
 
-void inter_insertStr(void) {
+void Inter::insertStr(void) {
 	int16 pos;
 	int16 strVar;
 
-	strVar = parse_parseVarIndex();
-	inter_evalExpr(0);
-	pos = parse_parseValExpr();
-	util_insertStr(inter_resStr, inter_variables + strVar, pos);
+	strVar = _vm->_parse->parseVarIndex();
+	evalExpr(0);
+	pos = _vm->_parse->parseValExpr();
+	_vm->_util->insertStr(_vm->_global->inter_resStr, _vm->_global->inter_variables + strVar, pos);
 }
 
-void inter_cutStr(void) {
+void Inter::cutStr(void) {
 	int16 var;
 	int16 pos;
 	int16 size;
 
-	var = parse_parseVarIndex();
-	pos = parse_parseValExpr();
-	size = parse_parseValExpr();
-	util_cutFromStr(inter_variables + var, pos, size);
+	var = _vm->_parse->parseVarIndex();
+	pos = _vm->_parse->parseValExpr();
+	size = _vm->_parse->parseValExpr();
+	_vm->_util->cutFromStr(_vm->_global->inter_variables + var, pos, size);
 }
 
-void inter_strstr(void) {
+void Inter::strstr(void) {
 	int16 strVar;
 	int16 resVar;
 	int16 pos;
 
-	strVar = parse_parseVarIndex();
-	inter_evalExpr(0);
-	resVar = parse_parseVarIndex();
+	strVar = _vm->_parse->parseVarIndex();
+	evalExpr(0);
+	resVar = _vm->_parse->parseVarIndex();
 
-	pos = util_strstr(inter_resStr, inter_variables + strVar);
+	pos = _vm->_util->strstr(_vm->_global->inter_resStr, _vm->_global->inter_variables + strVar);
 	WRITE_VAR_OFFSET(resVar, pos - 1);
 }
 
-void inter_setFrameRate(void) {
-	util_setFrameRate(parse_parseValExpr());
+void Inter::setFrameRate(void) {
+	_vm->_util->setFrameRate(_vm->_parse->parseValExpr());
 }
 
-void inter_strlen(void) {
+void Inter::istrlen(void) {
 	int16 len;
 	int16 var;
 
-	var = parse_parseVarIndex();
-	len = strlen(inter_variables + var);
-	var = parse_parseVarIndex();
+	var = _vm->_parse->parseVarIndex();
+	len = strlen(_vm->_global->inter_variables + var);
+	var = _vm->_parse->parseVarIndex();
 
 	WRITE_VAR_OFFSET(var, len);
 }
 
-void inter_strToLong(void) {
+void Inter::strToLong(void) {
 	char str[20];
 	int16 strVar;
 	int16 destVar;
 	int32 res;
 
-	strVar = parse_parseVarIndex();
-	strcpy(str, inter_variables + strVar);
+	strVar = _vm->_parse->parseVarIndex();
+	strcpy(str, _vm->_global->inter_variables + strVar);
 	res = atol(str);
 
-	destVar = parse_parseVarIndex();
+	destVar = _vm->_parse->parseVarIndex();
 	WRITE_VAR_OFFSET(destVar, res);
 }
 
-void inter_invalidate(void) {
-	warning("inter_invalidate: 'bugged' function!");
-	draw_destSurface = inter_load16();
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
-	draw_spriteRight = parse_parseValExpr();
-	draw_frontColor = parse_parseValExpr();
-	draw_spriteOperation(DRAW_INVALIDATE);
+void Inter::invalidate(void) {
+	warning("invalidate: 'bugged' function!");
+	_vm->_draw->destSurface = load16();
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
 }
 
-void inter_loadSpriteContent(void) {
-	draw_spriteLeft = inter_load16();
-	draw_destSurface = inter_load16();
-	draw_transparency = inter_load16();
-	draw_destSpriteX = 0;
-	draw_destSpriteY = 0;
-	draw_spriteOperation(DRAW_LOADSPRITE);
+void Inter::loadSpriteContent(void) {
+	_vm->_draw->spriteLeft = load16();
+	_vm->_draw->destSurface = load16();
+	_vm->_draw->transparency = load16();
+	_vm->_draw->destSpriteX = 0;
+	_vm->_draw->destSpriteY = 0;
+	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 }
 
-void inter_copySprite(void) {
-	draw_sourceSurface = inter_load16();
-	draw_destSurface = inter_load16();
+void Inter::copySprite(void) {
+	_vm->_draw->sourceSurface = load16();
+	_vm->_draw->destSurface = load16();
 
-	draw_spriteLeft = parse_parseValExpr();
-	draw_spriteTop = parse_parseValExpr();
-	draw_spriteRight = parse_parseValExpr();
-	draw_spriteBottom = parse_parseValExpr();
+	_vm->_draw->spriteLeft = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteTop = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteBottom = _vm->_parse->parseValExpr();
 
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
 
-	draw_transparency = inter_load16();
-	draw_spriteOperation(DRAW_BLITSURF);
+	_vm->_draw->transparency = load16();
+	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 }
 
-void inter_putPixel(void) {
-	draw_destSurface = inter_load16();
+void Inter::putPixel(void) {
+	_vm->_draw->destSurface = load16();
 
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
-	draw_frontColor = parse_parseValExpr();
-	draw_spriteOperation(DRAW_PUTPIXEL);
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteOperation(DRAW_PUTPIXEL);
 }
 
-void inter_fillRect(void) {
-	draw_destSurface = inter_load16();
+void Inter::fillRect(void) {
+	_vm->_draw->destSurface = load16();
 
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
-	draw_spriteRight = parse_parseValExpr();
-	draw_spriteBottom = parse_parseValExpr();
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteBottom = _vm->_parse->parseValExpr();
 
-	draw_backColor = parse_parseValExpr();
-	draw_spriteOperation(DRAW_FILLRECT);
+	_vm->_draw->backColor = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 }
 
-void inter_drawLine(void) {
-	draw_destSurface = inter_load16();
+void Inter::drawLine(void) {
+	_vm->_draw->destSurface = load16();
 
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
-	draw_spriteRight = parse_parseValExpr();
-	draw_spriteBottom = parse_parseValExpr();
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteBottom = _vm->_parse->parseValExpr();
 
-	draw_frontColor = parse_parseValExpr();
-	draw_spriteOperation(DRAW_DRAWLINE);
+	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->spriteOperation(DRAW_DRAWLINE);
 }
 
-void inter_createSprite(void) {
+void Inter::createSprite(void) {
 	int16 index;
 	int16 height;
 	int16 width;
 	int16 flag;
 
-	index = inter_load16();
-	width = inter_load16();
-	height = inter_load16();
+	index = load16();
+	width = load16();
+	height = load16();
 
-	flag = inter_load16();
+	flag = load16();
 	if (flag == 1)
-		draw_spritesArray[index] = vid_initSurfDesc(videoMode, width, height, 2);
+		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->videoMode, width, height, 2);
 	else
-		draw_spritesArray[index] = vid_initSurfDesc(videoMode, width, height, 0);
+		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->videoMode, width, height, 0);
 
-	vid_clearSurf(draw_spritesArray[index]);
+	_vm->_video->clearSurf(_vm->_draw->spritesArray[index]);
 }
 
-void inter_freeSprite(void) {
+void Inter::freeSprite(void) {
 	int16 index;
 
-	index = inter_load16();
-	if (draw_spritesArray[index] == 0)
+	index = load16();
+	if (_vm->_draw->spritesArray[index] == 0)
 		return;
 
-	vid_freeSurfDesc(draw_spritesArray[index]);
-	draw_spritesArray[index] = 0;
+	_vm->_video->freeSurfDesc(_vm->_draw->spritesArray[index]);
+	_vm->_draw->spritesArray[index] = 0;
 }
 
-void inter_renewTimeInVars(void) {
+void Inter::renewTimeInVars(void) {
 	struct tm *t;
 	time_t now = time(NULL);
 
@@ -902,63 +904,63 @@ void inter_renewTimeInVars(void) {
 	WRITE_VAR(11, t->tm_sec);
 }
 
-void inter_playComposition(void) {
-	static int16 inter_composition[50];
+void Inter::playComposition(void) {
+	static int16 composition[50];
 	int16 i;
 	int16 dataVar;
 	int16 freqVal;
 
-	dataVar = parse_parseVarIndex();
-	freqVal = parse_parseValExpr();
+	dataVar = _vm->_parse->parseVarIndex();
+	freqVal = _vm->_parse->parseValExpr();
 	for (i = 0; i < 50; i++)
-		inter_composition[i] = (int16)VAR_OFFSET(dataVar + i * 4);
+		composition[i] = (int16)VAR_OFFSET(dataVar + i * 4);
 
-	snd_playComposition(game_soundSamples, inter_composition, freqVal);
+	_vm->_snd->playComposition(_vm->_game->soundSamples, composition, freqVal);
 }
 
-void inter_stopSound(void) {
-	snd_stopSound(parse_parseValExpr());
-	inter_soundEndTimeKey = 0;
+void Inter::stopSound(void) {
+	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
+	soundEndTimeKey = 0;
 }
 
-void inter_playSound(void) {
+void Inter::playSound(void) {
 	int16 frequency;
 	int16 freq2;
 	int16 repCount;
 	int16 index;
 
-	index = parse_parseValExpr();
-	repCount = parse_parseValExpr();
-	frequency = parse_parseValExpr();
+	index = _vm->_parse->parseValExpr();
+	repCount = _vm->_parse->parseValExpr();
+	frequency = _vm->_parse->parseValExpr();
 
-	snd_stopSound(0);
-	inter_soundEndTimeKey = 0;
-	if (game_soundSamples[index] == 0)
+	_vm->_snd->stopSound(0);
+	soundEndTimeKey = 0;
+	if (_vm->_game->soundSamples[index] == 0)
 		return;
 
 	if (repCount < 0) {
-		if (soundFlags < 2)
+		if (_vm->_global->soundFlags < 2)
 			return;
 
 		repCount = -repCount;
-		inter_soundEndTimeKey = util_getTimeKey();
+		soundEndTimeKey = _vm->_util->getTimeKey();
 
 		if (frequency == 0) {
-			freq2 = game_soundSamples[index]->frequency;
+			freq2 = _vm->_game->soundSamples[index]->frequency;
 		} else {
 			freq2 = frequency;
 		}
-		inter_soundStopVal =
-		    (10 * (game_soundSamples[index]->size / 2)) / freq2;
-		inter_soundEndTimeKey +=
-		    ((game_soundSamples[index]->size * repCount -
-			game_soundSamples[index]->size / 2) * 1000) / freq2;
+		soundStopVal =
+		    (10 * (_vm->_game->soundSamples[index]->size / 2)) / freq2;
+		soundEndTimeKey +=
+		    ((_vm->_game->soundSamples[index]->size * repCount -
+			_vm->_game->soundSamples[index]->size / 2) * 1000) / freq2;
 	}
-	snd_playSample(game_soundSamples[index], repCount, frequency);
+	_vm->_snd->playSample(_vm->_game->soundSamples[index], repCount, frequency);
 }
 
-void inter_loadCursor(void) {
-	Game_TotResItem *itemPtr;
+void Inter::loadCursor(void) {
+	Game::TotResItem *itemPtr;
 	int16 width;
 	int16 height;
 	int32 offset;
@@ -966,78 +968,78 @@ void inter_loadCursor(void) {
 	int16 id;
 	int8 index;
 
-	id = inter_load16();
-	index = *inter_execPtr++;
-	itemPtr = &game_totResourceTable->items[id];
+	id = load16();
+	index = *_vm->_global->inter_execPtr++;
+	itemPtr = &_vm->_game->totResourceTable->items[id];
 	offset = itemPtr->offset;
 
 	if (offset >= 0) {
 		dataBuf =
-		    ((char *)game_totResourceTable) + szGame_TotResTable +
-		    szGame_TotResItem * game_totResourceTable->itemsCount + offset;
+		    ((char *)_vm->_game->totResourceTable) + szGame_TotResTable +
+		    szGame_TotResItem * _vm->_game->totResourceTable->itemsCount + offset;
 	} else {
-		dataBuf = game_imFileData + (int32)READ_LE_UINT32(&((int32 *)game_imFileData)[-offset - 1]);
+		dataBuf = _vm->_game->imFileData + (int32)READ_LE_UINT32(&((int32 *)_vm->_game->imFileData)[-offset - 1]);
 	}
 
 	width = itemPtr->width;
 	height = itemPtr->height;
 
-	vid_fillRect(draw_cursorSprites, index * draw_cursorWidth, 0,
-	    index * draw_cursorWidth + draw_cursorWidth - 1,
-	    draw_cursorHeight - 1, 0);
+	_vm->_video->fillRect(_vm->_draw->cursorSprites, index * _vm->_draw->cursorWidth, 0,
+	    index * _vm->_draw->cursorWidth + _vm->_draw->cursorWidth - 1,
+	    _vm->_draw->cursorHeight - 1, 0);
 
-	vid_drawPackedSprite((byte*)dataBuf, width, height,
-	    index * draw_cursorWidth, 0, 0, draw_cursorSprites);
-	draw_cursorAnimLow[index] = 0;
+	_vm->_video->drawPackedSprite((byte*)dataBuf, width, height,
+	    index * _vm->_draw->cursorWidth, 0, 0, _vm->_draw->cursorSprites);
+	_vm->_draw->cursorAnimLow[index] = 0;
 }
 
-void inter_loadSpriteToPos(void) {
-	debug(4, "inter_loadSpriteToPos");
-	draw_spriteLeft = inter_load16();
+void Inter::loadSpriteToPos(void) {
+	debug(4, "loadSpriteToPos");
+	_vm->_draw->spriteLeft = load16();
 
-	draw_destSpriteX = parse_parseValExpr();
-	draw_destSpriteY = parse_parseValExpr();
+	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
 
-	draw_transparency = inter_execPtr[0];
-	draw_destSurface = (inter_execPtr[0] / 2) - 1;
+	_vm->_draw->transparency = _vm->_global->inter_execPtr[0];
+	_vm->_draw->destSurface = (_vm->_global->inter_execPtr[0] / 2) - 1;
 
-	if (draw_destSurface < 0)
-		draw_destSurface = 101;
-	draw_transparency &= 1;
-	inter_execPtr += 2;
-	draw_spriteOperation(DRAW_LOADSPRITE);
+	if (_vm->_draw->destSurface < 0)
+		_vm->_draw->destSurface = 101;
+	_vm->_draw->transparency &= 1;
+	_vm->_global->inter_execPtr += 2;
+	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 }
 
-void inter_loadTot(void) {
+void Inter::loadTot(void) {
 	char buf[20];
 	int8 size;
 	int16 i;
 
-	debug(4, "inter_loadTot");
-	if ((*inter_execPtr & 0x80) != 0) {
-		inter_execPtr++;
-		inter_evalExpr(0);
-		strcpy(buf, inter_resStr);
+	debug(4, "loadTot");
+	if ((*_vm->_global->inter_execPtr & 0x80) != 0) {
+		_vm->_global->inter_execPtr++;
+		evalExpr(0);
+		strcpy(buf, _vm->_global->inter_resStr);
 	} else {
-		size = *inter_execPtr++;
+		size = *_vm->_global->inter_execPtr++;
 		for (i = 0; i < size; i++)
-			buf[i] = *inter_execPtr++;
+			buf[i] = *_vm->_global->inter_execPtr++;
 
 		buf[size] = 0;
 	}
 
 	strcat(buf, ".tot");
-	inter_terminate = 1;
-	strcpy(game_totToLoad, buf);
+	terminate = 1;
+	strcpy(_vm->_game->totToLoad, buf);
 }
 
-void inter_storeKey(int16 key) {
-	WRITE_VAR(12, util_getTimeKey() - game_startTimeKey);
+void Inter::storeKey(int16 key) {
+	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->startTimeKey);
 
-	WRITE_VAR(2, inter_mouseX);
-	WRITE_VAR(3, inter_mouseY);
-	WRITE_VAR(4, game_mouseButtons);
-	WRITE_VAR(1, snd_playingSound);
+	WRITE_VAR(2, _vm->_global->inter_mouseX);
+	WRITE_VAR(3, _vm->_global->inter_mouseY);
+	WRITE_VAR(4, _vm->_game->mouseButtons);
+	WRITE_VAR(1, _vm->_snd->playingSound);
 
 	if (key == 0x4800)
 		key = 0x0b;
@@ -1055,93 +1057,93 @@ void inter_storeKey(int16 key) {
 	WRITE_VAR(0, key);
 
 	if (key != 0)
-		util_waitKey();
+		_vm->_util->waitKey();
 }
 
-void inter_keyFunc(void) {
+void Inter::keyFunc(void) {
 	int16 flag;
 	int16 key;
 
-	debug(4, "inter_keyFunc");
-	flag = inter_load16();
-	inter_animPalette();
-	draw_blitInvalidated();
+	debug(4, "keyFunc");
+	flag = load16();
+	animPalette();
+	_vm->_draw->blitInvalidated();
 
 	if (flag != 0) {
 
 		if (flag != 1) {
 			if (flag != 2) {
-				util_longDelay(flag);
+				_vm->_util->longDelay(flag);
 				return;
 			}
 
 			key = 0;
 
-			if (pressedKeys[0x48])
+			if (_vm->_global->pressedKeys[0x48])
 				key |= 1;
 
-			if (pressedKeys[0x50])
+			if (_vm->_global->pressedKeys[0x50])
 				key |= 2;
 
-			if (pressedKeys[0x4d])
+			if (_vm->_global->pressedKeys[0x4d])
 				key |= 4;
 
-			if (pressedKeys[0x4b])
+			if (_vm->_global->pressedKeys[0x4b])
 				key |= 8;
 
-			if (pressedKeys[0x1c])
+			if (_vm->_global->pressedKeys[0x1c])
 				key |= 0x10;
 
-			if (pressedKeys[0x39])
+			if (_vm->_global->pressedKeys[0x39])
 				key |= 0x20;
 
-			if (pressedKeys[1])
+			if (_vm->_global->pressedKeys[1])
 				key |= 0x40;
 
-			if (pressedKeys[0x1d])
+			if (_vm->_global->pressedKeys[0x1d])
 				key |= 0x80;
 
-			if (pressedKeys[0x2a])
+			if (_vm->_global->pressedKeys[0x2a])
 				key |= 0x100;
 
-			if (pressedKeys[0x36])
+			if (_vm->_global->pressedKeys[0x36])
 				key |= 0x200;
 
-			if (pressedKeys[0x38])
+			if (_vm->_global->pressedKeys[0x38])
 				key |= 0x400;
 
-			if (pressedKeys[0x3b])
+			if (_vm->_global->pressedKeys[0x3b])
 				key |= 0x800;
 
-			if (pressedKeys[0x3c])
+			if (_vm->_global->pressedKeys[0x3c])
 				key |= 0x1000;
 
-			if (pressedKeys[0x3d])
+			if (_vm->_global->pressedKeys[0x3d])
 				key |= 0x2000;
 
-			if (pressedKeys[0x3e])
+			if (_vm->_global->pressedKeys[0x3e])
 				key |= 0x4000;
 
 			WRITE_VAR(0, key);
-			util_waitKey();
+			_vm->_util->waitKey();
 			return;
 		}
-		key = game_checkKeys(&inter_mouseX, &inter_mouseY, &game_mouseButtons, 0);
+		key = _vm->_game->checkKeys(&_vm->_global->inter_mouseX, &_vm->_global->inter_mouseY, &_vm->_game->mouseButtons, 0);
 
-		inter_storeKey(key);
+		storeKey(key);
 		return;
 	} else {
-		key = game_checkCollisions(0, 0, 0, 0);
-		inter_storeKey(key);
+		key = _vm->_game->checkCollisions(0, 0, 0, 0);
+		storeKey(key);
 
 		if (flag == 1)
 			return;
 
-		util_waitKey();
+		_vm->_util->waitKey();
 	}
 }
 
-void inter_checkSwitchTable(char **ppExec) {
+void Inter::checkSwitchTable(char **ppExec) {
 	int16 i;
 	int16 len;
 	char found;
@@ -1152,116 +1154,116 @@ void inter_checkSwitchTable(char **ppExec) {
 	found = 0;
 	notFound = 1;
 	*ppExec = 0;
-	value = parse_parseVarIndex();
+	value = _vm->_parse->parseVarIndex();
 	value = VAR_OFFSET(value);
 
 	do {
-		len = *(int8*)inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms.
+		len = *(int8*)_vm->_global->inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms.
 
 		if (len == -5)
 			break;
 
 		for (i = 0; i < len; i++) {
-			inter_evalExpr(0);
+			evalExpr(0);
 
-			if (inter_terminate != 0)
+			if (terminate != 0)
 				return;
 
-			if (inter_resVal == value) {
+			if (_vm->_global->inter_resVal == value) {
 				found = 1;
 				notFound = 0;
 			}
 		}
 
 		if (found != 0)
-			*ppExec = inter_execPtr;
+			*ppExec = _vm->_global->inter_execPtr;
 
-		inter_execPtr += READ_LE_UINT16(inter_execPtr + 2) + 2;
+		_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 		found = 0;
 	} while (len != -5);
 
 	if (len != -5)
-		inter_execPtr++;
+		_vm->_global->inter_execPtr++;
 
-	defFlag = *inter_execPtr;
+	defFlag = *_vm->_global->inter_execPtr;
 	defFlag >>= 4;
 	if (defFlag != 4)
 		return;
-	inter_execPtr++;
+	_vm->_global->inter_execPtr++;
 
 	if (notFound)
-		*ppExec = inter_execPtr;
+		*ppExec = _vm->_global->inter_execPtr;
 
-	inter_execPtr += READ_LE_UINT16(inter_execPtr + 2) + 2;
+	_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 }
 
-void inter_repeatUntil(void) {
+void Inter::repeatUntil(void) {
 	char *blockPtr;
 	int16 size;
 	char flag;
 
-	debug(4, "inter_repeatUntil");
-	inter_nestLevel[0]++;
-	blockPtr = inter_execPtr;
+	debug(4, "repeatUntil");
+	nestLevel[0]++;
+	blockPtr = _vm->_global->inter_execPtr;
 
 	do {
-		inter_execPtr = blockPtr;
-		size = READ_LE_UINT16(inter_execPtr + 2) + 2;
+		_vm->_global->inter_execPtr = blockPtr;
+		size = READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 
-		inter_funcBlock(1);
-		inter_execPtr = blockPtr + size + 1;
-		flag = inter_evalBoolResult();
-	} while (flag == 0 && inter_breakFlag == 0 && inter_terminate == 0);
+		funcBlock(1);
+		_vm->_global->inter_execPtr = blockPtr + size + 1;
+		flag = evalBoolResult();
+	} while (flag == 0 && breakFlag == 0 && terminate == 0);
 
-	inter_nestLevel[0]--;
+	nestLevel[0]--;
 
-	if (*inter_breakFromLevel > -1) {
-		inter_breakFlag = 0;
-		*inter_breakFromLevel = -1;
+	if (*breakFromLevel > -1) {
+		breakFlag = 0;
+		*breakFromLevel = -1;
 	}
 }
 
-void inter_whileDo(void) {
+void Inter::whileDo(void) {
 	char *blockPtr;
 	char *savedIP;
 	char flag;
 	int16 size;
 
-	debug(4, "inter_whileDo");
-	inter_nestLevel[0]++;
+	debug(4, "whileDo");
+	nestLevel[0]++;
 	do {
-		savedIP = inter_execPtr;
-		flag = inter_evalBoolResult();
+		savedIP = _vm->_global->inter_execPtr;
+		flag = evalBoolResult();
 
-		if (inter_terminate != 0)
+		if (terminate != 0)
 			return;
 
-		blockPtr = inter_execPtr;
+		blockPtr = _vm->_global->inter_execPtr;
 
-		size = READ_LE_UINT16(inter_execPtr + 2) + 2;
+		size = READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 
 		if (flag != 0) {
-			inter_funcBlock(1);
-			inter_execPtr = savedIP;
+			funcBlock(1);
+			_vm->_global->inter_execPtr = savedIP;
 		} else {
-			inter_execPtr += size;
+			_vm->_global->inter_execPtr += size;
 		}
 
-		if (inter_breakFlag != 0 || inter_terminate != 0) {
-			inter_execPtr = blockPtr;
-			inter_execPtr += size;
+		if (breakFlag != 0 || terminate != 0) {
+			_vm->_global->inter_execPtr = blockPtr;
+			_vm->_global->inter_execPtr += size;
 			break;
 		}
 	} while (flag != 0);
 
-	inter_nestLevel[0]--;
-	if (*inter_breakFromLevel > -1) {
-		inter_breakFlag = 0;
-		*inter_breakFromLevel = -1;
+	nestLevel[0]--;
+	if (*breakFromLevel > -1) {
+		breakFlag = 0;
+		*breakFromLevel = -1;
 	}
 }
 
-void inter_funcBlock(int16 retFlag) {
+void Inter::funcBlock(int16 retFlag) {
 	char cmdCount;
 	int16 counter;
 	byte cmd;
@@ -1270,124 +1272,124 @@ void inter_funcBlock(int16 retFlag) {
 	char *callAddr;
 	char boolRes;
 
-	if (inter_execPtr == 0)
+	if (_vm->_global->inter_execPtr == 0)
 		return;
 
-	inter_breakFlag = 0;
-	inter_execPtr++;
-	cmdCount = *inter_execPtr++;
-	inter_execPtr += 2;
+	breakFlag = 0;
+	_vm->_global->inter_execPtr++;
+	cmdCount = *_vm->_global->inter_execPtr++;
+	_vm->_global->inter_execPtr += 2;
 
 	if (cmdCount == 0) {
-		inter_execPtr = 0;
+		_vm->_global->inter_execPtr = 0;
 		return;
 	}
 
 	counter = 0;
 	do {
-		if (inter_terminate != 0)
+		if (terminate != 0)
 			break;
 
-		cmd = (byte)*inter_execPtr;
+		cmd = (byte)*_vm->_global->inter_execPtr;
 		if ((cmd >> 4) >= 12) {
 			cmd2 = 16 - (cmd >> 4);
 			cmd &= 0xf;
 		} else
 			cmd2 = 0;
 
-		inter_execPtr++;
+		_vm->_global->inter_execPtr++;
 		counter++;
 
-		debug(4, "inter_funcBlock(%d, %d)", cmd2, cmd);
+		debug(4, "funcBlock(%d, %d)", cmd2, cmd);
 
 		switch (cmd2) {
 		case 0:
 			switch (cmd >> 4) {
 			case 0:
 			case 1:
-				storedIP = inter_execPtr;
-				inter_execPtr = (char *)game_totFileData + READ_LE_UINT16(inter_execPtr);
+				storedIP = _vm->_global->inter_execPtr;
+				_vm->_global->inter_execPtr = (char *)_vm->_game->totFileData + READ_LE_UINT16(_vm->_global->inter_execPtr);
 
 				if (counter == cmdCount && retFlag == 2)
 					return;
 
-				inter_callSub(2);
-				inter_execPtr = storedIP + 2;
+				callSub(2);
+				_vm->_global->inter_execPtr = storedIP + 2;
 				break;
 
 			case 2:
-				draw_printText();
+				_vm->_draw->printText();
 				break;
 
 			case 3:
-				inter_loadCursor();
+				loadCursor();
 				break;
 
 			case 5:
-				inter_checkSwitchTable(&callAddr);
-				storedIP = inter_execPtr;
-				inter_execPtr = callAddr;
+				checkSwitchTable(&callAddr);
+				storedIP = _vm->_global->inter_execPtr;
+				_vm->_global->inter_execPtr = callAddr;
 
 				if (counter == cmdCount && retFlag == 2)
 					return;
 
-				inter_funcBlock(0);
-				inter_execPtr = storedIP;
+				funcBlock(0);
+				_vm->_global->inter_execPtr = storedIP;
 				break;
 
 			case 6:
-				inter_repeatUntil();
+				repeatUntil();
 				break;
 
 			case 7:
-				inter_whileDo();
+				whileDo();
 				break;
 
 			case 8:
-				boolRes = inter_evalBoolResult();
+				boolRes = evalBoolResult();
 				if (boolRes != 0) {
 					if (counter == cmdCount
 					    && retFlag == 2)
 						return;
 
-					storedIP = inter_execPtr;
-					inter_funcBlock(0);
-					inter_execPtr = storedIP;
+					storedIP = _vm->_global->inter_execPtr;
+					funcBlock(0);
+					_vm->_global->inter_execPtr = storedIP;
 
-					inter_execPtr += READ_LE_UINT16(inter_execPtr + 2) + 2;
+					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 
-					debug(5, "cmd = %d", (int16)*inter_execPtr);
-					cmd = (byte)(*inter_execPtr) >> 4;
-					inter_execPtr++;
+					debug(5, "cmd = %d", (int16)*_vm->_global->inter_execPtr);
+					cmd = (byte)(*_vm->_global->inter_execPtr) >> 4;
+					_vm->_global->inter_execPtr++;
 					if (cmd != 12)
 						break;
 
-					inter_execPtr += READ_LE_UINT16(inter_execPtr + 2) + 2;
+					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 				} else {
-					inter_execPtr += READ_LE_UINT16(inter_execPtr + 2) + 2;
+					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 
-					debug(5, "cmd = %d", (int16)*inter_execPtr);
-					cmd = (byte)(*inter_execPtr) >> 4;
-					inter_execPtr++;
+					debug(5, "cmd = %d", (int16)*_vm->_global->inter_execPtr);
+					cmd = (byte)(*_vm->_global->inter_execPtr) >> 4;
+					_vm->_global->inter_execPtr++;
 					if (cmd != 12)
 						break;
 
 					if (counter == cmdCount && retFlag == 2)
 						return;
 
-					storedIP = inter_execPtr;
-					inter_funcBlock(0);
-					inter_execPtr = storedIP;
-					inter_execPtr += READ_LE_UINT16(inter_execPtr + 2) + 2;
+					storedIP = _vm->_global->inter_execPtr;
+					funcBlock(0);
+					_vm->_global->inter_execPtr = storedIP;
+					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
 				}
 				break;
 
 			case 9:
-				inter_evaluateStore();
+				evaluateStore();
 				break;
 
 			case 10:
-				inter_loadSpriteToPos();
+				loadSpriteToPos();
 				break;
 			}
 			break;
@@ -1395,39 +1397,39 @@ void inter_funcBlock(int16 retFlag) {
 		case 1:
 			switch (cmd) {
 			case 1:
-				inter_printText();
+				printText();
 				break;
 
 			case 2:
-				inter_loadTot();
+				loadTot();
 				break;
 
 			case 3:
-				draw_interPalLoad();
+				_vm->_draw->interPalLoad();
 				break;
 
 			case 4:
-				inter_keyFunc();
+				keyFunc();
 				break;
 
 			case 5:
-				inter_capturePush();
+				capturePush();
 				break;
 
 			case 6:
-				inter_capturePop();
+				capturePop();
 				break;
 
 			case 7:
-				inter_animPalInit();
+				animPalInit();
 				break;
 
 			case 14:
-				inter_drawOperations();
+				drawOperations();
 				break;
 
 			case 15:
-				cmdCount = *inter_execPtr++;
+				cmdCount = *_vm->_global->inter_execPtr++;
 				counter = 0;
 				break;
 			}
@@ -1438,37 +1440,37 @@ void inter_funcBlock(int16 retFlag) {
 			switch (cmd) {
 			case 0:
 				if (retFlag != 2)
-					inter_breakFlag = 1;
+					breakFlag = 1;
 
-				inter_execPtr = 0;
+				_vm->_global->inter_execPtr = 0;
 				return;
 
 			case 1:
-				inter_renewTimeInVars();
+				renewTimeInVars();
 				break;
 
 			case 2:
-				snd_speakerOn(parse_parseValExpr(), -1);
+				_vm->_snd->speakerOn(_vm->_parse->parseValExpr(), -1);
 				break;
 
 			case 3:
-				snd_speakerOff();
+				_vm->_snd->speakerOff();
 				break;
 
 			case 4:
-				inter_putPixel();
+				putPixel();
 				break;
 
 			case 5:
-				gob_interFunc();
+				_vm->_goblin->interFunc();
 				break;
 
 			case 6:
-				inter_createSprite();
+				createSprite();
 				break;
 
 			case 7:
-				inter_freeSprite();
+				freeSprite();
 				break;
 			}
 			break;
@@ -1477,78 +1479,78 @@ void inter_funcBlock(int16 retFlag) {
 			switch (cmd) {
 			case 0:
 				if (retFlag == 1) {
-					inter_breakFlag = 1;
-					inter_execPtr = 0;
+					breakFlag = 1;
+					_vm->_global->inter_execPtr = 0;
 					return;
 				}
 
-				if (*inter_nestLevel == 0)
+				if (*nestLevel == 0)
 					break;
 
-				*inter_breakFromLevel = *inter_nestLevel;
-				inter_breakFlag = 1;
-				inter_execPtr = 0;
+				*breakFromLevel = *nestLevel;
+				breakFlag = 1;
+				_vm->_global->inter_execPtr = 0;
 				return;
 
 			case 1:
-				inter_loadSpriteContent();
+				loadSpriteContent();
 				break;
 
 			case 2:
-				inter_copySprite();
+				copySprite();
 				break;
 
 			case 3:
-				inter_fillRect();
+				fillRect();
 				break;
 
 			case 4:
-				inter_drawLine();
+				drawLine();
 				break;
 
 			case 5:
-				inter_strToLong();
+				strToLong();
 				break;
 
 			case 6:
-				inter_invalidate();
+				invalidate();
 				break;
 
 			case 7:
-				draw_backDeltaX = parse_parseValExpr();
-				draw_backDeltaY = parse_parseValExpr();
+				_vm->_draw->backDeltaX = _vm->_parse->parseValExpr();
+				_vm->_draw->backDeltaY = _vm->_parse->parseValExpr();
 				break;
 
 			case 8:
-				inter_playSound();
+				playSound();
 				break;
 
 			case 9:
-				inter_stopSound();
+				stopSound();
 				break;
 
 			case 10:
-				game_interLoadSound(-1);
+				_vm->_game->interLoadSound(-1);
 				break;
 
 			case 11:
-				game_freeSoundSlot(-1);
+				_vm->_game->freeSoundSlot(-1);
 				break;
 
 			case 12:
-				snd_waitEndPlay();
+				_vm->_snd->waitEndPlay();
 				break;
 
 			case 13:
-				inter_playComposition();
+				playComposition();
 				break;
 
 			case 14:
-				inter_getFreeMem();
+				getFreeMem();
 				break;
 
 			case 15:
-				inter_checkData();
+				checkData();
 				break;
 			}
 			break;
@@ -1557,112 +1559,112 @@ void inter_funcBlock(int16 retFlag) {
 
 			switch (cmd) {
 			case 1:
-				inter_prepareStr();
+				prepareStr();
 				break;
 
 			case 2:
-				inter_insertStr();
+				insertStr();
 				break;
 
 			case 3:
-				inter_cutStr();
+				cutStr();
 				break;
 
 			case 4:
-				inter_strstr();
+				strstr();
 				break;
 
 			case 5:
-				inter_strlen();
+				istrlen();
 				break;
 
 			case 6:
-				inter_setMousePos();
+				setMousePos();
 				break;
 
 			case 7:
-				inter_setFrameRate();
+				setFrameRate();
 				break;
 
 			case 8:
-				draw_blitInvalidated();
-				util_waitEndFrame();
-				inter_animPalette();
-				inter_storeKey(game_checkKeys(&inter_mouseX,
-					&inter_mouseY, &game_mouseButtons, 0));
+				_vm->_draw->blitInvalidated();
+				_vm->_util->waitEndFrame();
+				animPalette();
+				storeKey(_vm->_game->checkKeys(&_vm->_global->inter_mouseX,
+					&_vm->_global->inter_mouseY, &_vm->_game->mouseButtons, 0));
 				break;
 
 			case 9:
-				draw_animateCursor(1);
+				_vm->_draw->animateCursor(1);
 				break;
 
 			case 10:
-				draw_blitCursor();
+				_vm->_draw->blitCursor();
 				break;
 
 			case 11:
-				inter_loadFont();
+				loadFont();
 				break;
 
 			case 12:
-				inter_freeFont();
+				freeFont();
 				break;
 
 			case 13:
-				inter_readData();
+				readData();
 				break;
 
 			case 14:
-				inter_writeData();
+				writeData();
 				break;
 
 			case 15:
-				inter_manageDataFile();
+				manageDataFile();
 				break;
 			}
 			break;
 
 		}
 
-		if (inter_breakFlag != 0) {
+		if (breakFlag != 0) {
 			if (retFlag != 2)
 				break;
 
-			if (*inter_breakFromLevel == -1)
-				inter_breakFlag = 0;
+			if (*breakFromLevel == -1)
+				breakFlag = 0;
 			break;
 		}
 	} while (counter != cmdCount);
 
-	inter_execPtr = 0;
+	_vm->_global->inter_execPtr = 0;
 	return;
 }
 
-void inter_initControlVars(void) {
-	*inter_nestLevel = 0;
-	*inter_breakFromLevel = -1;
+void Inter::initControlVars(void) {
+	*nestLevel = 0;
+	*breakFromLevel = -1;
 
-	*scen_pCaptureCounter = 0;
+	*_vm->_scenery->pCaptureCounter = 0;
 
-	inter_breakFlag = 0;
-	inter_terminate = 0;
-	inter_animPalDir = 0;
-	inter_soundEndTimeKey = 0;
+	breakFlag = 0;
+	terminate = 0;
+	animPalDir = 0;
+	soundEndTimeKey = 0;
 }
 
-void inter_callSub(int16 retFlag) {
+void Inter::callSub(int16 retFlag) {
 	int16 block;
-	while (inter_execPtr != 0 && (char *)inter_execPtr != game_totFileData) {
-		block = *inter_execPtr;
+	while (_vm->_global->inter_execPtr != 0 && (char *)_vm->_global->inter_execPtr != _vm->_game->totFileData) {
+		block = *_vm->_global->inter_execPtr;
 		if (block == 1) {
-			inter_funcBlock(retFlag);
+			funcBlock(retFlag);
 		} else if (block == 2) {
-			game_collisionsBlock();
+			_vm->_game->collisionsBlock();
 		}
 	}
 
-	if ((char *)inter_execPtr == game_totFileData)
-		inter_terminate = 1;
+	if ((char *)_vm->_global->inter_execPtr == _vm->_game->totFileData)
+		terminate = 1;
 }
 
 } // End of namespace Gob

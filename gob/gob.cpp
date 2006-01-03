@@ -31,6 +31,19 @@
 #include "gob/game.h"
 #include "gob/sound.h"
 #include "gob/init.h"
+#include "gob/inter.h"
+#include "gob/draw.h"
+#include "gob/anim.h"
+#include "gob/cdrom.h"
+#include "gob/goblin.h"
+#include "gob/map.h"
+#include "gob/mult.h"
+#include "gob/pack.h"
+#include "gob/palanim.h"
+#include "gob/parse.h"
+#include "gob/scenery.h"
+#include "gob/timer.h"
+#include "gob/util.h"
 
 enum {
 	// We only compute MD5 of the first megabyte of our data files.
@@ -50,53 +63,53 @@ struct GobGameSettings {
 
 static const GobGameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1, "1f499458837008058b8ba6ae07057214"},
-	{"gob1", "Gobliiins (Windows)", GF_GOB1, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
+	{"gob1", "Gobliiins (DOS EGA)", Gob::GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
+	{"gob1", "Gobliiins (DOS EGA)", Gob::GF_GOB1, "1f499458837008058b8ba6ae07057214"},
+	{"gob1", "Gobliiins (Windows)", Gob::GF_GOB1, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
 
 	// Supplied by Theruler76 in bug report #1201233
-	{"gob1", "Gobliiins (DOS VGA)", GF_GOB1, "a5e232fcd02733c7dffff107d22d36eb"},
+	{"gob1", "Gobliiins (DOS VGA)", Gob::GF_GOB1, "a5e232fcd02733c7dffff107d22d36eb"},
 
 	// CD 1.000 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, "037db48ebce94bdfe42e2c9510da9211"},
+	{"gob1", "Gobliiins (CD)", Gob::GF_GOB1 | Gob::GF_CD, "037db48ebce94bdfe42e2c9510da9211"},
 	// CD 1.02 version. Multilingual
-	{"gob1", "Gobliiins (CD)", GF_GOB1 | GF_CD, "45f9c1162dd7040fd05fd013ccc176e2"},
+	{"gob1", "Gobliiins (CD)", Gob::GF_GOB1 | Gob::GF_CD, "45f9c1162dd7040fd05fd013ccc176e2"},
 
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "d9f8736b7dc0ea891cd06592a72e8a72"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "69f9ae85252271e7dfa62883e581e5e9"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "26de406cb09228d902274446a6a2eceb"},
-	{"gob1", "Gobliiins (Amiga)", GF_GOB1, "baf88a95928edb3f51067983f2dffa93"},
+	{"gob1", "Gobliiins (Amiga)", Gob::GF_GOB1, "d9f8736b7dc0ea891cd06592a72e8a72"},
+	{"gob1", "Gobliiins (Amiga)", Gob::GF_GOB1, "69f9ae85252271e7dfa62883e581e5e9"},
+	{"gob1", "Gobliiins (Amiga)", Gob::GF_GOB1, "26de406cb09228d902274446a6a2eceb"},
+	{"gob1", "Gobliiins (Amiga)", Gob::GF_GOB1, "baf88a95928edb3f51067983f2dffa93"},
 
-	{"gob1", "Gobliiins (Interactive Demo)", GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
+	{"gob1", "Gobliiins (Interactive Demo)", Gob::GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
 
 #if 0
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "abb5f762f9979d4253002de20f6e7b56"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "9b6de65d811c08eebf50391b84fcba92"},
-	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "54d59c200e3823ad0af11a605a6fd06a"},
-	{"gob2", "Gobliins 2 (DOS Ru)", GF_GOB2, "b6d47494bf88398ae59c1b5656cafce4"},
+	{"gob2", "Gobliins 2 (DOS)", Gob::GF_GOB2, "abb5f762f9979d4253002de20f6e7b56"},
+	{"gob2", "Gobliins 2 (DOS)", Gob::GF_GOB2, "9b6de65d811c08eebf50391b84fcba92"},
+	{"gob2", "Gobliins 2 (DOS)", Gob::GF_GOB2, "54d59c200e3823ad0af11a605a6fd06a"},
+	{"gob2", "Gobliins 2 (DOS Ru)", Gob::GF_GOB2, "b6d47494bf88398ae59c1b5656cafce4"},
 	// CD 1.000.
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "02bf538fd8003b8da23a3546299c3df4"},
+	{"gob2", "Gobliins 2 (CD)", Gob::GF_GOB2, "02bf538fd8003b8da23a3546299c3df4"},
 	// CD 1.01
-	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "410e632682ab11969bc3b3b588066d95"},
-	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, "be8b111191f965ac9b28fe530580d14e"},
+	{"gob2", "Gobliins 2 (CD)", Gob::GF_GOB2, "410e632682ab11969bc3b3b588066d95"},
+	{"gob2", "Gobliins 2 (Demo)", Gob::GF_GOB2, "be8b111191f965ac9b28fe530580d14e"},
 
-	{"gob3", "Goblins Quest 3", GF_GOB3, "36d9b4032b39a794c8640e500e98893a"},
-	{"gob3", "Goblins Quest 3", GF_GOB3, "d129f639f6ca8d6b5f0f4e15edb91058"},
-	{"gob3", "Goblins Quest 3", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
+	{"gob3", "Goblins Quest 3", Gob::GF_GOB3, "36d9b4032b39a794c8640e500e98893a"},
+	{"gob3", "Goblins Quest 3", Gob::GF_GOB3, "d129f639f6ca8d6b5f0f4e15edb91058"},
+	{"gob3", "Goblins Quest 3", Gob::GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
 	// CD 1.000
-	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
+	{"gob3", "Goblins Quest 3 (CD)", Gob::GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
 	// CD 1.02. Spanish "Computer Gaming World"* distribution in Spain
-	{"gob3", "Goblins Quest 3 (CD)", GF_GOB3, "7d7ab9a987be7208b9b685846fbd3e82"},
+	{"gob3", "Goblins Quest 3 (CD)", Gob::GF_GOB3, "7d7ab9a987be7208b9b685846fbd3e82"},
 
-	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, "4986b44cec309589508d7904f924c217"},
-	{"gob3", "Goblins Quest 3 (Demo)", GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
-	{"gob3", "Goblins Quest 3 (Interactive Demo)", GF_GOB3, "59ab69dab5fddbbf698c77a84297a5a2"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", Gob::GF_GOB3, "4986b44cec309589508d7904f924c217"},
+	{"gob3", "Goblins Quest 3 (Demo)", Gob::GF_GOB3, "5024e7de8d6377fbbeabbaa92e0452bc"},
+	{"gob3", "Goblins Quest 3 (Interactive Demo)", Gob::GF_GOB3, "59ab69dab5fddbbf698c77a84297a5a2"},
 
 	// CD 1.0
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", Gob::GF_WOODRUFF, "c27402cee260d2ff1c4cecb2006a630a"},
 
 	// CD 1.00, German release (INTRO.STRK seems to be multilingual, though?)
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", GF_WOODRUFF, "751ba028d215e0db1e0254853de6a7e4"},
+	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble", Gob::GF_WOODRUFF, "751ba028d215e0db1e0254853de6a7e4"},
 #endif
 	{0, 0, 0, 0}
 };
@@ -111,8 +124,8 @@ static const struct GobGameList {
 		return dummy;
 	}
 } gob_list[] = {
-	{"gob1", "Gobliiins", GF_GOB1},
-	{"gob2", "Gobliins 2", GF_GOB2},
+	{"gob1", "Gobliiins", Gob::GF_GOB1},
+	{"gob2", "Gobliins 2", Gob::GF_GOB2},
 	{0, 0, 0}
 };
 
@@ -183,7 +196,6 @@ namespace Gob {
 GobEngine *_vm = NULL;
 
 GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
-
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -232,6 +244,25 @@ GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
 }
 
 GobEngine::~GobEngine() {
+	delete _game;
+	delete _snd;
+	delete _video;
+	delete _global;
+	delete _draw;
+	delete _anim;
+	delete _cdrom;
+	delete _dataio;
+	delete _goblin;
+	delete _init;
+	delete _inter;
+	delete _map;
+	delete _mult;
+	delete _pack;
+	delete _palanim;
+	delete _parse;
+	delete _scenery;
+	delete _gtimer;
+	delete _util;
 }
 
 void GobEngine::errorString(const char *buf1, char *buf2) {
@@ -239,6 +270,26 @@ void GobEngine::errorString(const char *buf1, char *buf2) {
 }
 
 int GobEngine::init(GameDetector &detector) {
+	_game = new Game(this);
+	_snd = new Snd(this);
+	_video = new Video(this);
+	_global = new Global(this);
+	_draw = new Draw(this);
+	_anim = new Anim();
+	_cdrom = new CDROM(this);
+	_dataio = new DataIO(this);
+	_goblin = new Goblin(this);
+	_init = new Init(this);
+	_inter = new Inter(this);
+	_map = new Map(this);
+	_mult = new Mult(this);
+	_pack = new Pack();
+	_palanim = new PalAnim(this);
+	_parse = new Parse(this);
+	_scenery = new Scenery(this);
+	_gtimer = new GTimer();
+	_util = new Util(this);
+
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		_system->initSize(320, 200);
@@ -252,30 +303,30 @@ int GobEngine::init(GameDetector &detector) {
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 
-	debugFlag = 1;
-	doRangeClamp = 1;
+	_global->debugFlag = 1;
+	_global->doRangeClamp = 1;
 
-	videoMode = 0x13;
-	snd_soundPort = 1;
-	useMouse = 1;
-	soundFlags = 0;
+	_global->videoMode = 0x13;
+	_snd->soundPort = 1;
+	_global->useMouse = 1;
+	_global->soundFlags = 0;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::FR_FRA:
-		language = 0;
+		_global->language = 0;
 		break;
 	case Common::DE_DEU:
-		language = 1;
+		_global->language = 1;
 		break;
 	case Common::ES_ESP:
-		language = 3;
+		_global->language = 3;
 		break;
 	case Common::IT_ITA:
-		language = 4;
+		_global->language = 4;
 		break;
 	default:
 		// Default to English
-		language = 2;
+		_global->language = 2;
 		break;
 	}
 
@@ -289,7 +340,7 @@ int GobEngine::init(GameDetector &detector) {
 }
 
 int GobEngine::go() {
-	init_initGame(0);
+	_init->initGame(0);
 
 	return 0;
 }

@@ -25,10 +25,12 @@
 
 namespace Gob {
 
-int16 anim_animAreaLeft;
-int16 anim_animAreaTop;
-int16 anim_animAreaWidth;
-int16 anim_animAreaHeight;
-SurfaceDesc *anim_underAnimSurf = 0;
+Anim::Anim() {
+	_areaLeft = 0;
+	_areaTop = 0;
+	_areaWidth = 0;
+	_areaHeight = 0;
+	_animSurf = 0;
+}
 
 }				// End of namespace Gob

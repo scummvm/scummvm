@@ -26,57 +26,80 @@
 
 namespace Gob {
 
-struct Util_ListNode;
-typedef struct Util_ListNode {
-	void *pData;
-	struct Util_ListNode *pNext;
-	struct Util_ListNode *pPrev;
-} Util_ListNode;
+#define KEYBUFSIZE 16
 
-typedef struct Util_List {
-	Util_ListNode *pHead;
-	Util_ListNode *pTail;
-} Util_List;
+class Util {
+public:
+	struct ListNode;
+	typedef struct ListNode {
+		void *pData;
+		struct ListNode *pNext;
+		struct ListNode *pPrev;
+		ListNode() : pData(0), pNext(0), pPrev(0) {}
+	} ListNode;
 
-void util_initInput(void);
-void util_processInput(void);
-void util_waitKey(void);
-int16 util_getKey(void);
-int16 util_checkKey(void);
-int16 util_getRandom(int16 max);
-void util_getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
-void util_setMousePos(int16 x, int16 y);
-void util_longDelay(uint16 msecs);
-void util_delay(uint16 msecs);
-void util_beep(int16 freq);
-uint32 util_getTimeKey(void);
-void util_waitMouseUp(void);
-void util_waitMouseDown(void);
+	typedef struct List {
+		ListNode *pHead;
+		ListNode *pTail;
+		List() : pHead(0), pTail(0) {}
+	} List;
 
-void keyboard_init(void);
-void keyboard_release(void);
+	void initInput(void);
+	void processInput(void);
+	void waitKey(void);
+	int16 getKey(void);
+	int16 checkKey(void);
+	int16 getRandom(int16 max);
+	void getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
+	void setMousePos(int16 x, int16 y);
+	void longDelay(uint16 msecs);
+	void delay(uint16 msecs);
+	void beep(int16 freq);
+	uint32 getTimeKey(void);
+	void waitMouseUp(void);
+	void waitMouseDown(void);
 
-void util_clearPalette(void);
+	void keyboard_init(void);
+	void keyboard_release(void);
 
-void asm_setPaletteBlock(char *tmpPalBuffer, int16 start, int16 end);
+	void clearPalette(void);
 
-void vid_waitRetrace(int16 mode);
+	void asm_setPaletteBlock(char *tmpPalBuffer, int16 start, int16 end);
 
-FontDesc *util_loadFont(const char *path);
-void util_freeFont(FontDesc * fontDesc);
-void util_clearPalette(void);
-void util_insertStr(const char *str1, char *str2, int16 pos);
-void util_cutFromStr(char *str, int16 from, int16 cutlen);
-int16 util_strstr(const char *str1, char *str2);
-void util_waitEndFrame();
-void util_setFrameRate(int16 rate);
+	void vid_waitRetrace(int16 mode);
 
-void util_listInsertBack(Util_List * list, void *data);
-void util_listInsertFront(Util_List * list, void *data);
-void util_listDropFront(Util_List * list);
-void util_deleteList(Util_List * list);
-void util_prepareStr(char *str);
-void util_waitMouseRelease(char drawMouse);
+	Video::FontDesc *loadFont(const char *path);
+	void freeFont(Video::FontDesc * fontDesc);
+	void insertStr(const char *str1, char *str2, int16 pos);
+	void cutFromStr(char *str, int16 from, int16 cutlen);
+	int16 strstr(const char *str1, char *str2);
+	void waitEndFrame();
+	void setFrameRate(int16 rate);
+
+	void listInsertBack(List * list, void *data);
+	void listInsertFront(List * list, void *data);
+	void listDropFront(List * list);
+	void deleteList(List * list);
+	void prepareStr(char *str);
+	void waitMouseRelease(char drawMouse);
+
+	static const char trStr1[];
+	static const char trStr2[];
+	static const char trStr3[];
+	Util(GobEngine *vm);
+
+protected:
+	int16 _mouseX, _mouseY, _mouseButtons;
+	int16 _keyBuffer[KEYBUFSIZE], _keyBufferHead, _keyBufferTail;
+	GobEngine *_vm;
+
+	void addKeyToBuffer(int16 key);
+	bool keyBufferEmpty();
+	bool getKeyFromBuffer(int16& key);
+	int16 translateKey(int16 key);
+	int16 calcDelayTime();
+	void checkJoystick();
+};
 
 }				// End of namespace Gob
 

@@ -24,11 +24,16 @@
 
 namespace Gob {
 
-extern int16 anim_animAreaLeft;
-extern int16 anim_animAreaTop;
-extern int16 anim_animAreaWidth;
-extern int16 anim_animAreaHeight;
-extern SurfaceDesc *anim_underAnimSurf;
+class Anim {
+public:
+	int16 _areaLeft;
+	int16 _areaTop;
+	int16 _areaWidth;
+	int16 _areaHeight;
+	Video::SurfaceDesc *_animSurf;
+
+	Anim();
+};
 
 }				// End of namespace Gob
 

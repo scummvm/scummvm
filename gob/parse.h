@@ -24,12 +24,29 @@
 
 namespace Gob {
 
-int16 parse_parseExpr(char stopToken, byte *resultPtr);
-void parse_skipExpr(char stopToken);
-int16 parse_parseValExpr(void);
-int16 parse_parseVarIndex(void);
-void parse_printExpr(char stopToken);
-void parse_printVarIndex(void);
+class Parse {
+public:
+	int16 parseExpr(char stopToken, byte *resultPtr);
+	void skipExpr(char stopToken);
+	int16 parseValExpr(void);
+	int16 parseVarIndex(void);
+	void printExpr(char stopToken);
+	void printVarIndex(void);
+	
+	Parse(GobEngine *vm);
+
+protected:
+	enum PointerType {
+		kExecPtr = 0,
+		kInterVar = 1,
+		kResStr = 2
+	};
+
+	GobEngine *_vm;
+
+	int32 encodePtr(char *ptr, int type);
+	char *decodePtr(int32 n);
+};
 
 }				// End of namespace Gob
 

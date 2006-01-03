@@ -26,66 +26,77 @@ namespace Gob {
 
 // The same numeric values are also used for the arrow keys.
 
-enum {
-	kDirNW = 0x4700,
-	kDirN  = 0x4800,
-	kDirNE = 0x4900,
-	kDirW  = 0x4b00,
-	kDirE  = 0x4d00,
-	kDirSW = 0x4f00,
-	kDirS  = 0x5000,
-	kDirSE = 0x5100
-};
+class Map {
+public:
+	enum {
+		kDirNW = 0x4700,
+		kDirN  = 0x4800,
+		kDirNE = 0x4900,
+		kDirW  = 0x4b00,
+		kDirE  = 0x4d00,
+		kDirSW = 0x4f00,
+		kDirS  = 0x5000,
+		kDirSE = 0x5100
+	};
+	enum {
+		kMapWidth  = 26,
+		kMapHeight = 28
+	};
 
 #pragma START_PACK_STRUCTS
 
-typedef struct Map_Point {
-	int16 x;
-	int16 y;
-} GCC_PACK Map_Point;
+	typedef struct Point {
+		int16 x;
+		int16 y;
+	} GCC_PACK Point;
 
 #define szMap_ItemPos 3
 
- typedef struct Map_ItemPos {
-	int8 x;
-	int8 y;
-	int8 orient;		// ??
-} GCC_PACK Map_ItemPos;
+	typedef struct ItemPos {
+		int8 x;
+		int8 y;
+		int8 orient;		// ??
+	} GCC_PACK ItemPos;
 
 #pragma END_PACK_STRUCTS
 
-enum {
-	kMapWidth  = 26,
-	kMapHeight = 28
+	int8 passMap[kMapHeight][kMapWidth];	// [y][x]
+	int16 itemsMap[kMapHeight][kMapWidth];	// [y][x]
+	Point wayPoints[40];
+	int16 nearestWayPoint;
+	int16 nearestDest;
+
+   	int16 curGoblinX;
+	int16 curGoblinY;
+	int16 destX;
+	int16 destY;
+	int8 loadFromAvo;
+
+	ItemPos itemPoses[40];
+	char sourceFile[15];
+
+	void placeItem(int16 x, int16 y, int16 id);
+
+	int16 getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
+	void findNearestToGob(void);
+	void findNearestToDest(void);
+	int16 checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1);
+	int16 checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
+	void optimizePoints(void);
+	void loadItemToObject(void);
+	void loadMapObjects(char *avjFile);
+	void loadDataFromAvo(char *dest, int16 size);
+	void loadMapsInitGobs(void);
+
+	Map(GobEngine *vm);
+
+protected:
+	char *avoDataPtr;
+	GobEngine *_vm;
+
+	int16 findNearestWayPoint(int16 x, int16 y);
+	uint16 loadFromAvo_LE_UINT16();
 };
-
-extern int8 map_passMap[kMapHeight][kMapWidth];	// [y][x]
-extern int16 map_itemsMap[kMapHeight][kMapWidth];	// [y][x]
-extern Map_Point map_wayPoints[40];
-extern int16 map_nearestWayPoint;
-extern int16 map_nearestDest;
-
-extern int16 map_curGoblinX;
-extern int16 map_curGoblinY;
-extern int16 map_destX;
-extern int16 map_destY;
-extern int8 map_loadFromAvo;
-
-extern Map_ItemPos map_itemPoses[40];
-extern char map_sourceFile[15];
-
-void map_placeItem(int16 x, int16 y, int16 id);
-
-int16 map_getDirection(int16 x0, int16 y0, int16 x1, int16 y1);
-void map_findNearestToGob(void);
-void map_findNearestToDest(void);
-int16 map_checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1);
-int16 map_checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16 i1);
-void map_optimizePoints(void);
-void map_loadItemToObject(void);
-void map_loadMapObjects(char *avjFile);
-void map_loadDataFromAvo(int8 *dest, int16 size);
-void map_loadMapsInitGobs(void);
 
 }				// End of namespace Gob
 

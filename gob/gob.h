@@ -29,14 +29,38 @@
 
 #include "base/engine.h"
 
-#define	VAR_OFFSET(offs)		(*(uint32 *)(inter_variables + (offs)))
+#include "gob/dataio.h"
+#include "gob/video.h"
+#include "common/file.h"
+
+namespace Gob {
+
+class Game;
+class Snd;
+class Video;
+class Global;
+class Draw;
+class Anim;
+class CDROM;
+class DataIO;
+class Goblin;
+class Init;
+class Inter;
+class Map;
+class Mult;
+class Pack;
+class PalAnim;
+class Parse;
+class Scenery;
+class GTimer;
+class Util;
+
+#define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->inter_variables + (offs)))
 #define	VAR(var)			VAR_OFFSET((var) << 2)
 #define VAR_ADDRESS(var)		(&VAR(var))
 
 #define	WRITE_VAR_OFFSET(offs, val)	(VAR_OFFSET(offs) = (val))
 #define WRITE_VAR(var, val)		WRITE_VAR_OFFSET((var) << 2, (val))
-
-// TODO: Should be in the Gob namespace, I guess
 
 enum {
 	GF_GOB1 = 1 << 0,
@@ -45,8 +69,6 @@ enum {
 	GF_WOODRUFF = 1 << 3,
 	GF_CD = 1 << 4
 };
-
-namespace Gob {
 
 class GobEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
@@ -64,6 +86,25 @@ public:
 	Common::RandomSource _rnd;
 
 	int32 _features;
+	Game *_game;
+	Snd *_snd;
+	Video *_video;
+	Global *_global;
+	Draw *_draw;
+	Anim *_anim;
+	CDROM *_cdrom;
+	DataIO *_dataio;
+	Goblin *_goblin;
+	Init *_init;
+	Inter *_inter;
+	Map *_map;
+	Mult *_mult;
+	Pack *_pack;
+	PalAnim *_palanim;
+	Parse *_parse;
+	Scenery *_scenery;
+	GTimer *_gtimer;
+	Util *_util;
 };
 
 extern GobEngine *_vm;

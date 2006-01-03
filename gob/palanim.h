@@ -24,11 +24,22 @@
 
 namespace Gob {
 
-extern int16 pal_fadeValue;
+class PalAnim {
+public:
+	int16 fadeValue;
 
-char pal_fadeColor(char from, char to);
-char pal_fadeStep(int16 oper);	// oper == 0 - fade all colors, 1, 2, 3 - red,green, blue
-void pal_fade(PalDesc * palDesc, int16 fade, int16 all);
+	char fadeColor(char from, char to);
+	char fadeStep(int16 oper);	// oper == 0 - fade all colors, 1, 2, 3 - red,green, blue
+	void fade(Video::PalDesc * palDesc, int16 fade, int16 all);
+
+	PalAnim(GobEngine *vm);
+
+protected:
+	byte toFadeRed[256];
+	byte toFadeGreen[256];
+	byte toFadeBlue[256];
+	GobEngine *_vm;
+};
 
 }				// End of namespace Gob
 

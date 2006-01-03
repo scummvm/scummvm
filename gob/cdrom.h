@@ -22,18 +22,31 @@
 
 namespace Gob {
 
-extern bool cd_globFlag;
+class CDROM {
+public:
+	bool _cdPlaying;
 
-void cd_readLIC(const char *fname);
-void cd_freeLICbuffer(void);
+	void readLIC(const char *fname);
+	void freeLICbuffer(void);
 
-void cd_startTrack(const char *s);
-void cd_playBgMusic();
-void cd_playMultMusic();
-void cd_play(uint32 from, uint32 to);
-int32 cd_getTrackPos(void);
-void cd_stopPlaying(void);
-void cd_stop(void);
-void cd_testCD(int trySubst, const char *label);
+	void startTrack(const char *s);
+	void playBgMusic();
+	void playMultMusic();
+	void play(uint32 from, uint32 to);
+	int32 getTrackPos(void);
+	void stopPlaying(void);
+	void stop(void);
+	void testCD(int trySubst, const char *label);
+
+	CDROM(GobEngine *vm);
+
+protected:
+	byte *_LICbuffer;
+	char _curTrack[16];
+	uint16 _numTracks;
+	uint32 _trackStop;
+	uint32 _startTime;
+	GobEngine *_vm;
+};
 
 } // End of namespace Gob

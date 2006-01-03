@@ -24,15 +24,18 @@
 
 namespace Gob {
 
-typedef void (* TickHandler) (void);
+class GTimer {
+public:
+	typedef void (* TickHandler) (void);
 
-void timer_enableTimer(void);
-void timer_disableTimer(void);
-void timer_setHandler(void);
-void timer_restoreHandler(void);
-void timer_addTicks(int16 ticks);
-void timer_setTickHandler(TickHandler handler);
-int32 timer_getTicks(void);
+	void enableTimer(void);
+	void disableTimer(void);
+	void setHandler(void);
+	void restoreHandler(void);
+	void addTicks(int16 ticks);
+	void setTickHandler(TickHandler handler);
+	int32 getTicks(void);
+};
 
 }				// End of namespace Gob
 

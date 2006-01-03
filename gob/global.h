@@ -29,28 +29,10 @@
 
 namespace Gob {
 
-extern char pressedKeys[128];
-
-extern char useMouse;
-extern int16 mousePresent;
-
-extern int16 presentCGA;
-extern int16 presentEGA;
-extern int16 presentVGA;
-extern int16 presentHER;
-
-extern int16 videoMode;
-
-extern int16 disableVideoCfg;
-
 #define VIDMODE_CGA	0x05
 #define VIDMODE_EGA	0x0d
 #define VIDMODE_VGA	0x13
 #define VIDMODE_HER	7
-
-extern uint16 presentSound;
-extern uint16 soundFlags;
-extern int16 disableSoundCfg;
 
 #define PROAUDIO_FLAG	0x10
 #define ADLIB_FLAG		0x08
@@ -58,9 +40,6 @@ extern int16 disableSoundCfg;
 #define INTERSOUND_FLAG	0x02
 #define SPEAKER_FLAG	0x01
 #define MIDI_FLAG		0x4000
-
-extern uint16 disableLangCfg;
-extern uint16 language;
 
 #define NO	0
 #define YES	1
@@ -75,41 +54,7 @@ extern uint16 language;
 #define ESCAPE	0x001b
 #define ENTER	0x000d
 
-/* Timer variables */
-extern int32 startTime;
-extern int16 timer_delta;
-
-extern int16 frameWaitTime;
-extern int32 startFrameTime;
-
-/* Mouse */
-extern int16 disableMouseCfg;
-
-extern int16 mouseXShift;
-extern int16 mouseYShift;
-extern int16 mouseMaxCol;
-extern int16 mouseMaxRow;
-
-/* Timer and delays */
-extern int16 delayTime;
-
-/* Joystick */
-extern char useJoystick;
-
-/* Files */
 #define MAX_FILES	30
-
-extern Common::File filesHandles[MAX_FILES];
-
-/* Data files */
-extern struct ChunkDesc *dataFiles[MAX_DATA_FILES];
-extern int16 numDataChunks[MAX_DATA_FILES];
-extern int16 dataFileHandles[MAX_DATA_FILES];
-extern int32 chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
-extern int32 chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
-extern int32 chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
-extern char isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
-extern int32 packedSize;
 
 /* Video drivers */
 #define UNK_DRIVER	0
@@ -118,49 +63,113 @@ extern int32 packedSize;
 #define CGA_DRIVER	3
 #define HER_DRIVER	4
 
-extern SurfaceDesc primarySurfDesc;
-extern SurfaceDesc *pPrimarySurfDesc;
-extern int16 sprAllocated;
+class Global {
+public:
+	char pressedKeys[128];
 
-extern int16 primaryWidth;
-extern int16 primaryHeight;
+	char useMouse;
+	int16 mousePresent;
 
-extern int16 doRangeClamp;
+	int16 presentCGA;
+	int16 presentEGA;
+	int16 presentVGA;
+	int16 presentHER;
 
-extern char redPalette[256];
-extern char greenPalette[256];
-extern char bluePalette[256];
+	int16 videoMode;
 
-extern int16 setAllPalette;
+	int16 disableVideoCfg;
 
-extern SurfaceDesc *curPrimaryDesc;
-extern SurfaceDesc *allocatedPrimary;
+	uint16 presentSound;
+	uint16 soundFlags;
+	int16 disableSoundCfg;
+	int16 blasterPort;
 
-extern int16 oldMode;
-extern char dontSetPalette;
+	uint16 disableLangCfg;
+	uint16 language;
 
-extern PalDesc *pPaletteDesc;
+	// Timer variables
+	int32 startTime;
+	int16 timer_delta;
 
-extern int16 unusedPalette1[18];
-extern int16 unusedPalette2[16];
-extern Color vgaPalette[16];
-extern PalDesc paletteStruct;
+	int16 frameWaitTime;
+	int32 startFrameTime;
 
-extern int16 debugFlag;
-extern int16 inVM;
-extern int16 colorCount;
+	// Mouse
+	int16 disableMouseCfg;
 
-extern char inter_resStr[200];
-extern int32 inter_resVal;
+	int16 mouseXShift;
+	int16 mouseYShift;
+	int16 mouseMaxCol;
+	int16 mouseMaxRow;
 
-extern char *inter_variables;
-extern char *inter_execPtr;
-extern int16 inter_animDataSize;
+	// Timer and delays
+	int16 delayTime;
 
-extern int16 inter_mouseX;
-extern int16 inter_mouseY;
+	// Joystick
+	char useJoystick;
 
-extern char *tmpPalBuffer;
+	// Files
+	Common::File filesHandles[MAX_FILES];
+
+	// Data files
+	struct DataIO::ChunkDesc *dataFiles[MAX_DATA_FILES];
+	int16 numDataChunks[MAX_DATA_FILES];
+	int16 dataFileHandles[MAX_DATA_FILES];
+	int32 chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	char isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 packedSize;
+
+	int16 sprAllocated;
+
+	int16 primaryWidth;
+	int16 primaryHeight;
+
+	int16 doRangeClamp;
+
+	char redPalette[256];
+	char greenPalette[256];
+	char bluePalette[256];
+
+	int16 setAllPalette;
+
+	Video::SurfaceDesc *curPrimaryDesc;
+	Video::SurfaceDesc *allocatedPrimary;
+	Video::SurfaceDesc_t primarySurfDesc;
+	Video::SurfaceDesc *pPrimarySurfDesc;
+
+	int16 oldMode;
+	char dontSetPalette;
+
+	Video::PalDesc *pPaletteDesc;
+
+	int16 unusedPalette1[18];
+	int16 unusedPalette2[16];
+	Video::Color vgaPalette[16];
+	Video::PalDesc paletteStruct;
+
+	int16 debugFlag;
+	int16 inVM;
+	int16 colorCount;
+
+	char inter_resStr[200];
+	int32 inter_resVal;
+
+	char *inter_variables;
+	char *inter_execPtr;
+	int16 inter_animDataSize;
+
+	int16 inter_mouseX;
+	int16 inter_mouseY;
+
+	char *tmpPalBuffer;
+
+	Global(GobEngine *vm);
+
+protected:
+	GobEngine *_vm;
+};
 
 } // End of namespace Gob
 

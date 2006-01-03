@@ -24,10 +24,22 @@
 
 namespace Gob {
 
-void init_findBestCfg(void);
-void init_soundVideo(int32 smallHeapSize, int16 flag);
+class Init {
+public:
+	void findBestCfg(void);
+	void soundVideo(int32 smallHeapSize, int16 flag);
 
-void init_initGame(char *totFile);
+	void initGame(char *totFile);
+
+	Init(GobEngine *vm);
+
+protected:
+	Video::PalDesc *palDesc;
+	static const char *fontNames[4];
+	GobEngine *_vm;
+
+	void cleanup(void);
+};
 
 }				// End of namespace Gob
 

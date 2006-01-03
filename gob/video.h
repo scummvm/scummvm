@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/util.h"
+#include "gob/gob.h"
 
 namespace Gob {
 
@@ -35,40 +36,34 @@ namespace Gob {
 #define TEXT_COL_COUNT	80
 #define TEXT_ROW_COUNT	25
 
+extern int16 setAllPalette;
 
-typedef struct SurfaceDesc_t {
-	int16 width;
-	int16 height;
-	int8 reserved1;
-	int8 flag;
-	int16 vidMode;
-	byte *vidPtr;
-	int16 reserved2;
-} SurfaceDesc;
-
-typedef struct FontDesc_t {
-	char *dataPtr;
-	int8 itemWidth;
-	int8 itemHeight;
-	int8 startItem;
-	int8 endItem;
-	int8 itemSize;
-	int8 bitWidth;
-	void *extraData;
-} FontDesc;
-
-
-class VideoDriver {
+class Video {
 public:
-	VideoDriver() {}
-	virtual ~VideoDriver() {}
-	virtual void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
-	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
-	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;
-	virtual void drawLetter(unsigned char item, int16 x, int16 y, FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;
-	virtual void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
-	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) = 0;
-};
+	typedef struct SurfaceDesc_t {
+		int16 width;
+		int16 height;
+		int8 reserved1;
+		int8 flag;
+		int16 vidMode;
+		byte *vidPtr;
+		int16 reserved2;
+		SurfaceDesc_t() : width(0), height(0), reserved1(0), flag(0),
+						  vidMode(0), vidPtr(0), reserved2(0) {}
+	} SurfaceDesc;
+
+	typedef struct FontDesc_t {
+		char *dataPtr;
+		int8 itemWidth;
+		int8 itemHeight;
+		int8 startItem;
+		int8 endItem;
+		int8 itemSize;
+		int8 bitWidth;
+		void *extraData;
+		FontDesc_t() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
+			               endItem(0), itemSize(0), bitWidth(0) {}
+	} FontDesc;
 
 #define GDR_VERSION	4
 
@@ -76,52 +71,69 @@ public:
 #define RETURN_PRIMARY		0x01
 #define DISABLE_SPR_ALLOC	0x20
 
-#if !defined(__GNUC__)
-	#pragma START_PACK_STRUCTS
-#endif
+#pragma START_PACK_STRUCTS
 
-typedef struct Color {
-	byte red;
-	byte green;
-	byte blue;
-} GCC_PACK Color;
+	typedef struct Color {
+		byte red;
+		byte green;
+		byte blue;
+	} GCC_PACK Color;
 
-#if !defined(__GNUC__)
-	#pragma END_PACK_STRUCTS
-#endif
+#pragma END_PACK_STRUCTS
 
-typedef struct PalDesc {
-	Color *vgaPal;
-	int16 *unused1;
-	int16 *unused2;
-} PalDesc;
+	typedef struct PalDesc {
+		Color *vgaPal;
+		int16 *unused1;
+		int16 *unused2;
+		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
+	} PalDesc;
 
-char vid_initDriver(int16 vidMode);
-void vid_freeDriver(void);
-int32 vid_getRectSize(int16 width, int16 height, int16 flag, int16 mode);
-SurfaceDesc *vid_initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
-void vid_freeSurfDesc(SurfaceDesc * surfDesc);
-int16 vid_clampValue(int16 val, int16 max);
-void vid_drawSprite(SurfaceDesc * source, SurfaceDesc * dest, int16 left,
-    int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
-void vid_fillRect(SurfaceDesc * dest, int16 left, int16 top, int16 right, int16 bottom,
-    int16 color);
-void vid_drawLine(SurfaceDesc * dest, int16 x0, int16 y0, int16 x1, int16 y1,
-    int16 color);
-void vid_putPixel(int16 x, int16 y, int16 color, SurfaceDesc * dest);
-void vid_drawLetter(unsigned char item, int16 x, int16 y, FontDesc * fontDesc, int16 color1,
-    int16 color2, int16 transp, SurfaceDesc * dest);
-void vid_clearSurf(SurfaceDesc * dest);
-void vid_drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
-    int16 transp, SurfaceDesc * dest);
-void vid_setPalElem(int16 index, char red, char green, char blue, int16 unused,
-    int16 vidMode);
-void vid_setPalette(PalDesc * palDesc);
-void vid_setFullPalette(PalDesc * palDesc);
-void vid_initPrimary(int16 mode);
-char vid_spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight, int16 x,
-    int16 y, int16 transp, SurfaceDesc * destDesc);
-void vid_setHandlers(void);
+	Video(class GobEngine *vm);
+	int32 getRectSize(int16 width, int16 height, int16 flag, int16 mode);
+	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags);
+	void freeSurfDesc(SurfaceDesc * surfDesc);
+	int16 clampValue(int16 val, int16 max);
+	void drawSprite(SurfaceDesc * source, SurfaceDesc * dest, int16 left,
+					int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
+	void fillRect(SurfaceDesc * dest, int16 left, int16 top, int16 right, int16 bottom,
+				  int16 color);
+	void drawLine(SurfaceDesc * dest, int16 x0, int16 y0, int16 x1, int16 y1,
+				  int16 color);
+	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc * dest);
+	void drawLetter(unsigned char item, int16 x, int16 y, FontDesc * fontDesc, int16 color1,
+					int16 color2, int16 transp, SurfaceDesc * dest);
+	void clearSurf(SurfaceDesc * dest);
+	void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y,
+						  int16 transp, SurfaceDesc * dest);
+	void setPalElem(int16 index, char red, char green, char blue, int16 unused,
+					int16 vidMode);
+	void setPalette(PalDesc * palDesc);
+	void setFullPalette(PalDesc * palDesc);
+	void initPrimary(int16 mode);
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight, int16 x,
+							int16 y, int16 transp, SurfaceDesc * destDesc);
+	void waitRetrace(int16);
+	void freeDriver(void);
+	void setHandlers();
+
+protected:
+	class VideoDriver *_videoDriver;
+	GobEngine *_vm;
+
+	char initDriver(int16 vidMode);
+};
+
+class VideoDriver {
+public:
+	VideoDriver() {}
+	virtual ~VideoDriver() {}
+	virtual void drawSprite(Video::SurfaceDesc *source, Video::SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
+	virtual void fillRect(Video::SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
+	virtual void putPixel(int16 x, int16 y, byte color, Video::SurfaceDesc *dest) = 0;
+	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, Video::SurfaceDesc *dest) = 0;
+	virtual void drawLine(Video::SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
+	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, Video::SurfaceDesc *dest) = 0;
+};
 
 }				// End of namespace Gob
 
