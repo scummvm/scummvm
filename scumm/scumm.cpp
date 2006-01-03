@@ -209,7 +209,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
 
 	/* Scumm Version 8 */
-	{"comi", "The Curse of The Secret of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
+	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, Common::kPlatformWindows},
 
 #endif
@@ -369,7 +369,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"037385a953789190298494d92b89b3d0", "Humongous Interactive Catalog (Updated)", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"8fec68383202d38c0d25e9e3b757c5df", "The Curse of The Secret of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
+	{"8fec68383202d38c0d25e9e3b757c5df", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows},
 
 	{"362c1d281fb9899254cda66ad246c66a", "The Dig (Demo)", GID_DIG, 7, 0, MDT_NONE,
