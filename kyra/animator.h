@@ -27,25 +27,25 @@ class KyraEngine;
 class Screen;
 
 struct AnimObject {
-		uint8 index;
-		uint32 active;
-		uint32 refreshFlag;
-		uint32 bkgdChangeFlag;
-		uint32 unk1;
-		uint32 flags;
-		int16 drawY;
-		uint8 *sceneAnimPtr;
-		int16 animFrameNumber;
-		uint8 *background;
-		uint16 rectSize;
-		int16 x1, y1;
-		int16 x2, y2;
-		uint16 width;
-		uint16 height;
-		uint16 width2;
-		uint16 height2;
-		AnimObject *nextAnimObject;
-	};
+	uint8 index;
+	uint32 active;
+	uint32 refreshFlag;
+	uint32 bkgdChangeFlag;
+	uint32 unk1;
+	uint32 flags;
+	int16 drawY;
+	uint8 *sceneAnimPtr;
+	int16 animFrameNumber;
+	uint8 *background;
+	uint16 rectSize;
+	int16 x1, y1;
+	int16 x2, y2;
+	uint16 width;
+	uint16 height;
+	uint16 width2;
+	uint16 height2;
+	AnimObject *nextAnimObject;
+};
 
 class ScreenAnimator {
 public:

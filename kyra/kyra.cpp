@@ -398,6 +398,8 @@ int KyraEngine::init(GameDetector &detector) {
 	
 	memset(_specialPalettes, 0, sizeof(_specialPalettes));
 	_mousePressFlag = false;
+	
+	 _targetName = detector._targetName;
 
 	return 0;
 }
@@ -523,7 +525,7 @@ void KyraEngine::startup() {
 			_roomTable[i].itemsTable[item] = 0xFF;
 			_roomTable[i].itemsXPos[item] = 0xFFFF;
 			_roomTable[i].itemsYPos[item] = 0xFF;
-			_roomTable[i].unkField3[item] = 0;
+			_roomTable[i].needInit[item] = 0;
 		}
 	}
 	loadCharacterShapes();
@@ -579,7 +581,7 @@ void KyraEngine::delay(uint32 amount, bool update) {
 					_debugger->attach();
 				} else if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
 						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT)) {
-					sprintf(saveLoadSlot, "KYRA1.00%i", event.kbd.keycode - '0');
+					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
 					if (event.kbd.flags == OSystem::KBD_CTRL)
 						loadGame(saveLoadSlot);
 					else
@@ -1331,6 +1333,7 @@ void KyraEngine::seq_makeBrandonNormal() {
 		delayWithTicks(10);
 		_brandonInvFlag -= 0x10;
 	}
+	_brandonInvFlag = 0;
 	_brandonStatusBit &= 0xFF9F;
 	_screen->showMouse();
 }
@@ -1716,27 +1719,27 @@ void KyraEngine::initMainButtonList() {
 	}
 }
 
-void KyraEngine::loadMainScreen() {
+void KyraEngine::loadMainScreen(int page) {
 	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
-		loadBitmap("MAIN_ENG.CPS", 3, 3, 0);
+		loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if(_features & GF_FRENCH)
-		loadBitmap("MAIN_FRE.CPS", 3, 3, 0);
+		loadBitmap("MAIN_FRE.CPS", page, page, 0);
 	else if(_features & GF_GERMAN)
-		loadBitmap("MAIN_GER.CPS", 3, 3, 0);
+		loadBitmap("MAIN_GER.CPS", page, page, 0);
 	else if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
-		loadBitmap("MAIN15.CPS", 3, 3, 0);
+		loadBitmap("MAIN15.CPS", page, page, 0);
 	else if (_features & GF_SPANISH)
-		loadBitmap("MAIN_SPA.CPS", 3, 3, 0);
+		loadBitmap("MAIN_SPA.CPS", page, page, 0);
 	else
 		warning("no main graphics file found");
 	
-	uint8 *_page3 = _screen->getPagePtr(3);
-	uint8 *_page0 = _screen->getPagePtr(0);
-	memcpy(_page0, _page3, 320*200);
+	uint8 *_pageSrc = _screen->getPagePtr(page);
+	uint8 *_pageDst = _screen->getPagePtr(0);
+	memcpy(_pageDst, _pageSrc, 320*200);
 }
 
 void KyraEngine::setCharactersInDefaultScene() {
-	static uint32 defaultSceneTable[][4] = {
+	static const uint32 defaultSceneTable[][4] = {
 		{ 0xFFFF, 0x0004, 0x0003, 0xFFFF },
 		{ 0xFFFF, 0x0022, 0xFFFF, 0x0000 },
 		{ 0xFFFF, 0x001D, 0x0021, 0xFFFF },
@@ -1745,14 +1748,14 @@ void KyraEngine::setCharactersInDefaultScene() {
 	
 	for (int i = 1; i < 5; ++i) {
 		Character *cur = &_characterList[i];
-		cur->field_20 = 0;
-		uint32 *curTable = defaultSceneTable[i-1];
+		//cur->field_20 = 0;
+		const uint32 *curTable = defaultSceneTable[i-1];
 		cur->sceneId = curTable[0];
 		if (cur->sceneId == _currentCharacter->sceneId) {
-			++cur->field_20;
-			cur->sceneId = curTable[cur->field_20];
+			//++cur->field_20;
+			cur->sceneId = curTable[1/*cur->field_20*/];
 		}
-		cur->field_23 = curTable[cur->field_20+1];
+		//cur->field_23 = curTable[cur->field_20+1];
 	}
 }
 
@@ -1765,7 +1768,7 @@ void KyraEngine::setCharacterDefaultFrame(int character) {
 	edit->sceneId = 0xFFFF;
 	edit->facing = 0;
 	edit->currentAnimFrame = initFrameTable[character];
-	edit->unk6 = 1;
+	// edit->unk6 = 1;
 }
 
 void KyraEngine::setCharactersPositions(int character) {
@@ -3242,7 +3245,7 @@ void KyraEngine::setupSceneItems() {
 	Room *currentRoom = &_roomTable[sceneId];
 	for (int i = 0; i < 12; ++i) {
 		uint8 item = currentRoom->itemsTable[i];
-		if (item == 0xFF || !currentRoom->unkField3[i]) {
+		if (item == 0xFF || !currentRoom->needInit[i]) {
 			continue;
 		}
 		
@@ -3269,7 +3272,7 @@ void KyraEngine::setupSceneItems() {
 					break;
 				}
 			} else {
-				currentRoom->unkField3[i] = 0;
+				currentRoom->needInit[i] = 0;
 			}
 		}
 	}
@@ -3483,7 +3486,7 @@ void KyraEngine::addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x,
 	currentRoom->itemsTable[itemIndex] = item;
 	currentRoom->itemsXPos[itemIndex] = x;
 	currentRoom->itemsYPos[itemIndex] = y;
-	currentRoom->unkField3[itemIndex] = 1;
+	currentRoom->needInit[itemIndex] = 1;
 }
 
 int KyraEngine::checkNoDropRects(int x, int y) {
@@ -5341,157 +5344,5 @@ void KyraEngine::runNpcScript(int func) {
 	while (_scriptInterpreter->validScript(_npcScript)) {
 		_scriptInterpreter->runScript(_npcScript);
 	}
-}
-
-#pragma mark -
-#pragma mark - Saving/loading
-#pragma mark -
-
-void KyraEngine::loadGame(const char *fileName) {
-	debug(9, "loadGame('%s')", fileName);
-	Common::InSaveFile *in;
-
-	if (!(in = _saveFileMan->openForLoading(fileName))) {
-		warning("Can't open file '%s', game not loaded", fileName);
-		return;
-	}
-
-	if (in->readByte() != 1) {
-		warning("Savegame is not the right version");
-		delete in;
-		return;
-	}
-
-	char saveName[31];
-	in->read(saveName, 31);
-
-	for (int i = 0; i < 11; i++) {
-		_characterList[i].sceneId = in->readUint16BE();
-		_characterList[i].height = in->readByte();
-		_characterList[i].facing = in->readByte();
-		_characterList[i].currentAnimFrame = in->readUint16BE();
-		_characterList[i].unk6 = in->readUint32BE();
-		in->read(_characterList[i].inventoryItems, 10);
-		_characterList[i].x1 = in->readSint16BE();
-		_characterList[i].y1 = in->readSint16BE();
-		_characterList[i].x2 = in->readSint16BE();
-		_characterList[i].y1 = in->readSint16BE();
-		_characterList[i].field_20 = in->readUint16BE();
-		_characterList[i].field_23 = in->readUint16BE();
-	}
-
-	_marbleVaseItem = in->readSint16BE();
-	_itemInHand = in->readByte();
-
-	for (int i = 0; i < 32; i++) {
-		_timers[i].countdown = in->readSint32BE();
-		_timers[i].nextRun = in->readUint32BE();
-	}
-	_timerNextRun = 0;
-
-	in->read(_flagsTable, sizeof(_flagsTable));
-
-	for (int i = 0; i < _roomTableSize; ++i) {
-		for (int item = 0; item < 12; ++item) {
-			_roomTable[i].itemsTable[item] = 0xFF;
-			_roomTable[i].itemsXPos[item] = 0xFFFF;
-			_roomTable[i].itemsYPos[item] = 0xFF;
-			_roomTable[i].unkField3[item] = 0;
-		}
-	}
-
-	uint16 sceneId;
-	uint8 itemCount;
-
-	while (!in->eos()) {
-		sceneId = in->readUint16BE();
-		if (sceneId == 0xffff)
-			break;
-
-		itemCount = in->readByte();
-		for (int i = 0; i < itemCount; i++) {
-			_roomTable[sceneId].itemsTable[i] = in->readByte();
-			_roomTable[sceneId].itemsXPos[i] = in->readUint16BE();
-			_roomTable[sceneId].itemsYPos[i] = in->readUint16BE();
-			_roomTable[sceneId].unkField3[i] = in->readUint32BE();
-			
-		}
-	}
-
-	createMouseItem(_itemInHand);
-	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
-
-	if (in->ioFailed())
-		error("Load failed.");
-	else
-		debug(1, "Loaded savegame '%s.'", saveName);
-
-	delete in;
-}
-
-void KyraEngine::saveGame(const char *fileName, const char *saveName) {
-	debug(9, "saveGame('%s', '%s')", fileName, saveName);
-	Common::OutSaveFile *out;
-
-	if (!(out = _saveFileMan->openForSaving(fileName))) {
-		warning("Can't create file '%s', game not saved", fileName);
-		return;
-	}
-
-	// Savegame version
-	out->writeByte(1);
-	out->write(saveName, 31);
-
-	for (int i = 0; i < 11; i++) {
-		out->writeUint16BE(_characterList[i].sceneId);
-		out->writeByte(_characterList[i].height);
-		out->writeByte(_characterList[i].facing);
-		out->writeUint16BE(_characterList[i].currentAnimFrame);
-		out->writeUint32BE(_characterList[i].unk6);
-		out->write(_characterList[i].inventoryItems, 10);
-		out->writeSint16BE(_characterList[i].x1);
-		out->writeSint16BE(_characterList[i].y1);
-		out->writeSint16BE(_characterList[i].x2);
-		out->writeSint16BE(_characterList[i].y1);
-		out->writeUint16BE(_characterList[i].field_20);
-		out->writeUint16BE(_characterList[i].field_23);
-	}
-	
-	out->writeSint16BE(_marbleVaseItem);
-	out->writeByte(_itemInHand);
-
-	for (int i = 0; i < 32; i++) {
-		out->writeSint32BE(_timers[i].countdown);
-		out->writeUint32BE(_timers[i].nextRun);
-	}
-
-	out->write(_flagsTable, sizeof(_flagsTable));
-
-	uint8 itemCount;
-	for (int i = 0; i < _roomTableSize; i++) {
-		itemCount = countItemsInScene(i);
-		if (itemCount > 0) {
-			out->writeUint16BE(i);
-			out->writeByte(itemCount);
-			for (int a = 0; a < 12; a++) {
-				if (_roomTable[i].itemsTable[a] != 0xff) {
-					out->writeByte(_roomTable[i].itemsTable[a]);
-					out->writeUint16BE(_roomTable[i].itemsXPos[a]);
-					out->writeUint16BE(_roomTable[i].itemsYPos[a]);
-					out->writeUint32BE(_roomTable[i].unkField3[a]);
-				}
-			}
-		}	
-	}
-
-	out->flush();
-
-	// check for errors
-	if (out->ioFailed())
-		warning("Can't write file '%s'. (Disk full?)", fileName);
-	else
-		debug(1, "Saved game '%s.'", saveName);
-
-	delete out;
 }
 } // End of namespace Kyra

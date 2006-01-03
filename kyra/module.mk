@@ -15,7 +15,8 @@ MODULE_OBJS := \
 	kyra/animator.o \
 	kyra/gui.o \
 	kyra/text.o \
-	kyra/timer.o
+	kyra/timer.o \
+	kyra/saveload.o
 
 MODULE_DIRS += \
 	kyra

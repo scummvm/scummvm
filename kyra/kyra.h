@@ -53,11 +53,8 @@ struct Character {
 	uint8 height;
 	uint8 facing;
 	uint16 currentAnimFrame;
-	uint32 unk6;
 	uint8 inventoryItems[10];
 	int16 x1, y1, x2, y2;
-	uint16 field_20;
-	uint16 field_23;
 };
 
 struct Shape {
@@ -75,7 +72,7 @@ struct Room {
 	uint8 itemsTable[12];
 	uint16 itemsXPos[12];
 	uint8 itemsYPos[12];
-	uint32 unkField3[12];
+	uint8 needInit[12];
 };
 
 struct Rect {
@@ -123,7 +120,7 @@ class TextDisplayer;
 class KyraEngine;
 
 struct Timer {
-	bool active;
+	uint8 active;
 	int32 countdown;
 	uint32 nextRun;
 	void (KyraEngine::*func)(int timerNum);
@@ -549,7 +546,7 @@ protected:
 	void loadItems();
 	void loadButtonShapes();
 	void initMainButtonList();
-	void loadMainScreen();
+	void loadMainScreen(int page = 3);
 	void setCharactersInDefaultScene();
 	void resetBrandonPosionFlags();
 	void initAnimStateList();
@@ -625,17 +622,17 @@ protected:
 	int8 _crystalState[2];
 
 	uint16 _brandonStatusBit;
-	int _brandonStatusBit0x02Flag;
-	int _brandonStatusBit0x20Flag;
+	uint8 _brandonStatusBit0x02Flag;
+	uint8 _brandonStatusBit0x20Flag;
 	uint8 _brandonPoisonFlagsGFX[256];
 	uint8 _deathHandler;
-	int _brandonInvFlag;
-	int8 _poisonDeathCounter;
+	int16 _brandonInvFlag;
+	uint8 _poisonDeathCounter;
 	int _brandonPosX;
 	int _brandonPosY;
 	int _brandonScaleX;
 	int _brandonScaleY;
-	int _brandonDrawFrame;
+	uint16 _brandonDrawFrame;
 
 	uint16 _currentChatPartnerBackupFrame;
 	uint16 _currentCharAnimFrame;
@@ -670,6 +667,8 @@ protected:
 	bool _fadeText;
 
 	uint8 _configTalkspeed;
+	
+	Common::String _targetName;
 	
 	int _curMusicTheme;
 	int _newMusicTheme;

@@ -409,7 +409,7 @@ void KyraEngine::res_loadRoomTable(const byte *src, Room **loadTo, int *size) {
 		memset(&(*loadTo)[i].itemsTable[6], 0, sizeof(byte)*6);
 		memset((*loadTo)[i].itemsXPos, 0, sizeof(uint16)*12);
 		memset((*loadTo)[i].itemsYPos, 0, sizeof(uint8)*12);
-		memset((*loadTo)[i].unkField3, 0, sizeof((*loadTo)[i].unkField3));
+		memset((*loadTo)[i].needInit, 0, sizeof((*loadTo)[i].needInit));
 	}
 }
 
