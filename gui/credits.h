@@ -165,6 +165,8 @@ static const char *credits[] = {
 "\\C\\c1""Code contributions",
 "\\C\\c0""Stuart Caie",
 "\\C\\c2""Decoders for Simon 1 Amiga data files",
+"\\C\\c0""Sven Hesse",
+"\\C\\c2""Help with gob engine",
 "\\C\\c0""Janne Huttunen",
 "\\C\\c2""V3 actor mask support, Dig/FT SMUSH audio",
 "\\C\\c0""Kovacs Endre Janos",
