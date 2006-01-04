@@ -26,8 +26,6 @@
 #include <string>
 #include <list>
 
-#define DEFAULT_COLORMAP "item.cmp"
-
 class Costume;
 class LipSynch;
 class TextObject;
@@ -94,9 +92,7 @@ public:
 	void setTalkChore(int index, int choreNumber, Costume *cost);
 	void setMumbleChore(int choreNumber, Costume *cost);
 
-	void setColormap(const char *map) {
-		strcpy(_colormap, map);
-	}
+	void setColormap(const char *map);
 	void pushCostume(const char *name);
 	void setCostume(const char *name);
 	void popCostume();
@@ -142,7 +138,6 @@ private:
 	Vector3d _pos;
 	float _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
-	char _colormap[256];
 
 	bool _constrain;	// Constrain to walkboxes
 	float _reflectionAngle;	// Maximum angle to turn by at walls

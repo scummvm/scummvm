@@ -23,6 +23,10 @@
 
 #include <string>
 
+#define DEFAULT_COLORMAP "item.cmp"
+
+typedef uint32 tag32;
+
 class TextSplitter;
 class Actor;
 
@@ -38,19 +42,8 @@ public:
 	void setChoreLastFrame(int num) { _chores[num].setLastFrame(); }
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
 	void stopChore(int num) { _chores[num].stop(); }
-	char *getColormap() { return _colormap; }
 	Model::HierNode *getModelNodes();
-	void setColormap(char *map) {
-		_colormap = map;
-		for(int i=0;i<_numComponents;i++) {
-			if (_components[i] == NULL)
-				continue;
-			// Needs to handle Main Models (pigeons) and normal Models
-			// (when Manny climbs the rope)
-			if (std::memcmp(_components[i]->tag(), "mmdl", 4) == 0 || std::memcmp(_components[i]->tag(), "mat ", 4) == 0)
-				_components[i]->setMapName(_colormap);
-		}
-	}
+	void setColormap(char *map);
 	void stopChores();
 	int isChoring(char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);
@@ -65,9 +58,11 @@ public:
 
 	class Component {
 	public:
-		Component(Component *parent, int parentID, char *tag);
+		Component(Component *parent, int parentID, tag32 tag);
 
-		char *tag() { return _tag; }
+		tag32 tag() { return _tag; }
+		CMap *cmap();
+		void setColormap(CMap *c);
 		Component *parent() { return _parent; }
 		virtual void setMatrix(Matrix4) { };
 		virtual void init() { }
@@ -80,7 +75,8 @@ public:
 		virtual ~Component() { }
 
 	protected:
-		char _tag[5];
+		ResPtr<CMap> _cmap;
+		tag32 _tag;
 		int _parentID;
 		Component *_parent, *_child, *_sibling;
 		Matrix4 _matrix;
@@ -92,8 +88,7 @@ public:
 	};
 
 private:
-	Component *loadComponent(char tag[4], Component *parent, int parentID, const char *name);
-	char *_colormap;
+	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
 	std::string _fname;
 	
 	int _numComponents;
@@ -145,6 +140,7 @@ private:
 		friend class Costume;
 	};
 
+	ResPtr<CMap> _cmap;
 	int _numChores;
 	Chore *_chores;
 	Matrix4 _matrix;
