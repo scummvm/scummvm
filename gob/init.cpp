@@ -36,92 +36,92 @@ namespace Gob {
 
 void game_start(void);
 
-const char *Init::fontNames[] = { "jeulet1.let", "jeulet2.let", "jeucar1.let", "jeumath.let" };
+const char *Init::_fontNames[] = { "jeulet1.let", "jeulet2.let", "jeucar1.let", "jeumath.let" };
 
 Init::Init(GobEngine *vm) : _vm(vm) {
-	palDesc = 0;
+	_palDesc = 0;
 }
 
 void Init::findBestCfg(void) {
-	_vm->_global->videoMode = VIDMODE_VGA;
-	_vm->_global->useMouse = _vm->_global->mousePresent;
-	if (_vm->_global->presentSound & BLASTER_FLAG)
-		_vm->_global->soundFlags = BLASTER_FLAG | SPEAKER_FLAG | MIDI_FLAG;
-	else if (_vm->_global->presentSound & PROAUDIO_FLAG)
-		_vm->_global->soundFlags = PROAUDIO_FLAG | SPEAKER_FLAG | MIDI_FLAG;
-	else if (_vm->_global->presentSound & ADLIB_FLAG)
-		_vm->_global->soundFlags = ADLIB_FLAG | SPEAKER_FLAG | MIDI_FLAG;
-	else if (_vm->_global->presentSound & INTERSOUND_FLAG)
-		_vm->_global->soundFlags = INTERSOUND_FLAG | SPEAKER_FLAG;
-	else if (_vm->_global->presentSound & SPEAKER_FLAG)
-		_vm->_global->soundFlags = SPEAKER_FLAG;
+	_vm->_global->_videoMode = VIDMODE_VGA;
+	_vm->_global->_useMouse = _vm->_global->_mousePresent;
+	if (_vm->_global->_presentSound & BLASTER_FLAG)
+		_vm->_global->_soundFlags = BLASTER_FLAG | SPEAKER_FLAG | MIDI_FLAG;
+	else if (_vm->_global->_presentSound & PROAUDIO_FLAG)
+		_vm->_global->_soundFlags = PROAUDIO_FLAG | SPEAKER_FLAG | MIDI_FLAG;
+	else if (_vm->_global->_presentSound & ADLIB_FLAG)
+		_vm->_global->_soundFlags = ADLIB_FLAG | SPEAKER_FLAG | MIDI_FLAG;
+	else if (_vm->_global->_presentSound & INTERSOUND_FLAG)
+		_vm->_global->_soundFlags = INTERSOUND_FLAG | SPEAKER_FLAG;
+	else if (_vm->_global->_presentSound & SPEAKER_FLAG)
+		_vm->_global->_soundFlags = SPEAKER_FLAG;
 	else
-		_vm->_global->soundFlags = 0;
+		_vm->_global->_soundFlags = 0;
 }
 
 void Init::soundVideo(int32 smallHeap, int16 flag) {
-	if (_vm->_global->videoMode != 0x13 && _vm->_global->videoMode != 0)
+	if (_vm->_global->_videoMode != 0x13 && _vm->_global->_videoMode != 0)
 		error("soundVideo: Video mode 0x%x is not supported!",
-		    _vm->_global->videoMode);
+		    _vm->_global->_videoMode);
 
 	//if ((flag & 4) == 0)
 	//	_vm->_video->findVideo();
 
-	_vm->_global->mousePresent = 1;
+	_vm->_global->_mousePresent = 1;
 
-	_vm->_global->inVM = 0;
+	_vm->_global->_inVM = 0;
 
-	_vm->_global->presentSound = 0; // FIXME: sound is not supported yet
+	_vm->_global->_presentSound = 0; // FIXME: sound is not supported yet
 
-	_vm->_global->sprAllocated = 0;
+	_vm->_global->_sprAllocated = 0;
 	_vm->_gtimer->enableTimer();
 
 	// _vm->_snd->setResetTimerFlag(debugFlag); // TODO
 
-	if (_vm->_global->videoMode == 0x13)
-		_vm->_global->colorCount = 256;
+	if (_vm->_global->_videoMode == 0x13)
+		_vm->_global->_colorCount = 256;
 
-	_vm->_global->pPaletteDesc = &_vm->_global->paletteStruct;
-	_vm->_global->pPaletteDesc->vgaPal = _vm->_global->vgaPalette;
-	_vm->_global->pPaletteDesc->unused1 = _vm->_global->unusedPalette1;
-	_vm->_global->pPaletteDesc->unused2 = _vm->_global->unusedPalette2;
-	_vm->_global->pPrimarySurfDesc = &_vm->_global->primarySurfDesc;
+	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_global->_vgaPalette;
+	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
+	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
+	_vm->_global->_pPrimarySurfDesc = &_vm->_global->_primarySurfDesc;
 
-	if (_vm->_global->videoMode != 0)
-		_vm->_video->initSurfDesc(_vm->_global->videoMode, 320, 200, PRIMARY_SURFACE);
+	if (_vm->_global->_videoMode != 0)
+		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, PRIMARY_SURFACE);
 
-	if (_vm->_global->soundFlags & MIDI_FLAG) {
-		_vm->_global->soundFlags &= _vm->_global->presentSound;
-		if (_vm->_global->presentSound & ADLIB_FLAG)
-			_vm->_global->soundFlags |= MIDI_FLAG;
+	if (_vm->_global->_soundFlags & MIDI_FLAG) {
+		_vm->_global->_soundFlags &= _vm->_global->_presentSound;
+		if (_vm->_global->_presentSound & ADLIB_FLAG)
+			_vm->_global->_soundFlags |= MIDI_FLAG;
 	} else {
-		_vm->_global->soundFlags &= _vm->_global->presentSound;
+		_vm->_global->_soundFlags &= _vm->_global->_presentSound;
 	}
 }
 
 void Init::cleanup(void) {
-	if (_vm->_global->debugFlag == 0)
+	if (_vm->_global->_debugFlag == 0)
 		_vm->_gtimer->disableTimer();
 
 	_vm->_video->freeDriver();
-	if (_vm->_global->curPrimaryDesc != 0) {
-		_vm->_video->freeSurfDesc(_vm->_global->curPrimaryDesc);
-		_vm->_video->freeSurfDesc(_vm->_global->allocatedPrimary);
-		_vm->_global->allocatedPrimary = 0;
-		_vm->_global->curPrimaryDesc = 0;
+	if (_vm->_global->_curPrimaryDesc != 0) {
+		_vm->_video->freeSurfDesc(_vm->_global->_curPrimaryDesc);
+		_vm->_video->freeSurfDesc(_vm->_global->_allocatedPrimary);
+		_vm->_global->_allocatedPrimary = 0;
+		_vm->_global->_curPrimaryDesc = 0;
 	}
-	_vm->_global->pPrimarySurfDesc = 0;
-	if (_vm->_snd->cleanupFunc != 0 && _vm->_snd->playingSound != 0) {
-		(*_vm->_snd->cleanupFunc) (0);
-		_vm->_snd->cleanupFunc = 0;
+	_vm->_global->_pPrimarySurfDesc = 0;
+	if (_vm->_snd->_cleanupFunc != 0 && _vm->_snd->_playingSound != 0) {
+		(*_vm->_snd->_cleanupFunc) (0);
+		_vm->_snd->_cleanupFunc = 0;
 	}
 	_vm->_snd->speakerOff();
 
 	_vm->_dataio->closeDataFile();
 
-	if (_vm->_global->sprAllocated != 0)
+	if (_vm->_global->_sprAllocated != 0)
 		error("cleanup: Error! Allocated sprites left: %d",
-		    _vm->_global->sprAllocated);
+		    _vm->_global->_sprAllocated);
 
 	_vm->_snd->stopSound(0);
 	_vm->_util->keyboard_release();
@@ -151,8 +151,8 @@ numFromTot	= word ptr -0Ah
 memAvail	= dword	ptr -6
 memBlocks	= word ptr -2*/
 
-	_vm->_global->disableVideoCfg = 0x11;
-	_vm->_global->disableMouseCfg = 0x15;
+	_vm->_global->_disableVideoCfg = 0x11;
+	_vm->_global->_disableMouseCfg = 0x15;
 	soundVideo(1000, 1);
 
 	handle2 = _vm->_dataio->openData("intro.stk");
@@ -164,23 +164,23 @@ memBlocks	= word ptr -2*/
 	_vm->_util->initInput();
 
 	_vm->_video->setHandlers();
-	_vm->_video->initPrimary(_vm->_global->videoMode);
-	_vm->_global->mouseXShift = 1;
-	_vm->_global->mouseYShift = 1;
+	_vm->_video->initPrimary(_vm->_global->_videoMode);
+	_vm->_global->_mouseXShift = 1;
+	_vm->_global->_mouseYShift = 1;
 
 	_vm->_game->totTextData = 0;
 	_vm->_game->totFileData = 0;
 	_vm->_game->totResourceTable = 0;
-	_vm->_global->inter_variables = 0;
-	palDesc = (Video::PalDesc *)malloc(12);
+	_vm->_global->_inter_variables = 0;
+	_palDesc = (Video::PalDesc *)malloc(12);
 
-	if (_vm->_global->videoMode != 0x13)
+	if (_vm->_global->_videoMode != 0x13)
 		error("initGame: Only 0x13 video mode is supported!");
 
-	palDesc->vgaPal = _vm->_draw->vgaPalette;
-	palDesc->unused1 = _vm->_draw->unusedPalette1;
-	palDesc->unused2 = _vm->_draw->unusedPalette2;
-	_vm->_video->setFullPalette(palDesc);
+	_palDesc->vgaPal = _vm->_draw->vgaPalette;
+	_palDesc->unused1 = _vm->_draw->unusedPalette1;
+	_palDesc->unused2 = _vm->_draw->unusedPalette2;
+	_vm->_video->setFullPalette(_palDesc);
 
 	for (i = 0; i < 4; i++)
 		_vm->_draw->fonts[i] = 0;
@@ -189,11 +189,11 @@ memBlocks	= word ptr -2*/
 
 	if (handle < 0) {
 		for (i = 0; i < 4; i++) {
-			handle2 = _vm->_dataio->openData(fontNames[i]);
+			handle2 = _vm->_dataio->openData(_fontNames[i]);
 			if (handle2 >= 0) {
 				_vm->_dataio->closeData(handle2);
 				_vm->_draw->fonts[i] =
-				    _vm->_util->loadFont(fontNames[i]);
+				    _vm->_util->loadFont(_fontNames[i]);
 			}
 		}
 	} else {
@@ -244,8 +244,8 @@ memBlocks	= word ptr -2*/
 		varsCount = FROM_LE_32(varsCount);
 		_vm->_dataio->closeData(handle);
 
-		_vm->_global->inter_variables = (char *)malloc(varsCount * 4);
-		memset(_vm->_global->inter_variables, 0, varsCount * 4);
+		_vm->_global->_inter_variables = (char *)malloc(varsCount * 4);
+		memset(_vm->_global->_inter_variables, 0, varsCount * 4);
 
 		strcpy(_vm->_game->curTotFile, buffer);
 
@@ -256,7 +256,7 @@ memBlocks	= word ptr -2*/
 		_vm->_cdrom->stopPlaying();
 		_vm->_cdrom->freeLICbuffer();
 
-		free(_vm->_global->inter_variables);
+		free(_vm->_global->_inter_variables);
 		free(_vm->_game->totFileData);
 		free(_vm->_game->totTextData);
 		free(_vm->_game->totResourceTable);
@@ -267,7 +267,7 @@ memBlocks	= word ptr -2*/
 			_vm->_util->freeFont(_vm->_draw->fonts[i]);
 	}
 
-	free(palDesc);
+	free(_palDesc);
 	_vm->_dataio->closeDataFile();
 	_vm->_video->initPrimary(-1);
 	cleanup();

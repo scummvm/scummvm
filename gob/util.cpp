@@ -183,7 +183,7 @@ void Util::setMousePos(int16 x, int16 y) {
 void Util::longDelay(uint16 msecs) {
 	uint32 time = g_system->getMillis() + msecs;
 	do {
-		_vm->_video->waitRetrace(_vm->_global->videoMode);
+		_vm->_video->waitRetrace(_vm->_global->_videoMode);
 		processInput();
 		delay(25);
 	} while (g_system->getMillis() < time);
@@ -194,7 +194,7 @@ void Util::delay(uint16 msecs) {
 }
 
 void Util::beep(int16 freq) {
-	if (_vm->_global->soundFlags == 0)
+	if (_vm->_global->_soundFlags == 0)
 		return;
 
 	_vm->_snd->speakerOn(freq, 50);
@@ -235,31 +235,31 @@ int16 Util::calcDelayTime() {
 
 /* NOT IMPLEMENTED */
 void Util::checkJoystick() {
-	_vm->_global->useJoystick = 0;
+	_vm->_global->_useJoystick = 0;
 }
 
 void Util::setFrameRate(int16 rate) {
 	if (rate == 0)
 		rate = 1;
 
-	_vm->_global->frameWaitTime = 1000 / rate;
-	_vm->_global->startFrameTime = getTimeKey();
+	_vm->_global->_frameWaitTime = 1000 / rate;
+	_vm->_global->_startFrameTime = getTimeKey();
 }
 
 void Util::waitEndFrame() {
 	int32 time;
 
-	_vm->_video->waitRetrace(_vm->_global->videoMode);
+	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 
-	time = getTimeKey() - _vm->_global->startFrameTime;
+	time = getTimeKey() - _vm->_global->_startFrameTime;
 	if (time > 1000 || time < 0) {
-		_vm->_global->startFrameTime = getTimeKey();
+		_vm->_global->_startFrameTime = getTimeKey();
 		return;
 	}
-	if (_vm->_global->frameWaitTime - time > 0) {
-		delay(_vm->_global->frameWaitTime - time);
+	if (_vm->_global->_frameWaitTime - time > 0) {
+		delay(_vm->_global->_frameWaitTime - time);
 	}
-	_vm->_global->startFrameTime = getTimeKey();
+	_vm->_global->_startFrameTime = getTimeKey();
 }
 
 int16 joy_getState() {
@@ -311,11 +311,11 @@ void Util::clearPalette(void) {
 	int16 i;
 	byte colors[768];
 
-	if (_vm->_global->videoMode != 0x13)
+	if (_vm->_global->_videoMode != 0x13)
 		error("clearPalette: Video mode 0x%x is not supported!",
-		    _vm->_global->videoMode);
+		    _vm->_global->_videoMode);
 
-	if (_vm->_global->setAllPalette) {
+	if (_vm->_global->_setAllPalette) {
 		for (i = 0; i < 768; i++)
 			colors[i] = 0;
 		g_system->setPalette(colors, 0, 256);
@@ -324,7 +324,7 @@ void Util::clearPalette(void) {
 	}
 
 	for (i = 0; i < 16; i++)
-		_vm->_video->setPalElem(i, 0, 0, 0, 0, _vm->_global->videoMode);
+		_vm->_video->setPalElem(i, 0, 0, 0, 0, _vm->_global->_videoMode);
 }
 
 void Util::insertStr(const char *str1, char *str2, int16 pos) {

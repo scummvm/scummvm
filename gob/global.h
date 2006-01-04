@@ -65,105 +65,105 @@ namespace Gob {
 
 class Global {
 public:
-	char pressedKeys[128];
+	char _pressedKeys[128];
 
-	char useMouse;
-	int16 mousePresent;
+	char _useMouse;
+	int16 _mousePresent;
 
-	int16 presentCGA;
-	int16 presentEGA;
-	int16 presentVGA;
-	int16 presentHER;
+	int16 _presentCGA;
+	int16 _presentEGA;
+	int16 _presentVGA;
+	int16 _presentHER;
 
-	int16 videoMode;
+	int16 _videoMode;
 
-	int16 disableVideoCfg;
+	int16 _disableVideoCfg;
 
-	uint16 presentSound;
-	uint16 soundFlags;
-	int16 disableSoundCfg;
-	int16 blasterPort;
+	uint16 _presentSound;
+	uint16 _soundFlags;
+	int16 _disableSoundCfg;
+	int16 _blasterPort;
 
-	uint16 disableLangCfg;
-	uint16 language;
+	uint16 _disableLangCfg;
+	uint16 _language;
 
 	// Timer variables
-	int32 startTime;
-	int16 timer_delta;
+	int32 _startTime;
+	int16 _timer_delta;
 
-	int16 frameWaitTime;
-	int32 startFrameTime;
+	int16 _frameWaitTime;
+	int32 _startFrameTime;
 
 	// Mouse
-	int16 disableMouseCfg;
+	int16 _disableMouseCfg;
 
-	int16 mouseXShift;
-	int16 mouseYShift;
-	int16 mouseMaxCol;
-	int16 mouseMaxRow;
+	int16 _mouseXShift;
+	int16 _mouseYShift;
+	int16 _mouseMaxCol;
+	int16 _mouseMaxRow;
 
 	// Timer and delays
-	int16 delayTime;
+	int16 _delayTime;
 
 	// Joystick
-	char useJoystick;
+	char _useJoystick;
 
 	// Files
-	Common::File filesHandles[MAX_FILES];
+	Common::File _filesHandles[MAX_FILES];
 
 	// Data files
-	struct DataIO::ChunkDesc *dataFiles[MAX_DATA_FILES];
-	int16 numDataChunks[MAX_DATA_FILES];
-	int16 dataFileHandles[MAX_DATA_FILES];
-	int32 chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	char isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 packedSize;
+	struct DataIO::ChunkDesc *_dataFiles[MAX_DATA_FILES];
+	int16 _numDataChunks[MAX_DATA_FILES];
+	int16 _dataFileHandles[MAX_DATA_FILES];
+	int32 _chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 _chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 _chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	char _isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32 _packedSize;
 
-	int16 sprAllocated;
+	int16 _sprAllocated;
 
-	int16 primaryWidth;
-	int16 primaryHeight;
+	int16 _primaryWidth;
+	int16 _primaryHeight;
 
-	int16 doRangeClamp;
+	int16 _doRangeClamp;
 
-	char redPalette[256];
-	char greenPalette[256];
-	char bluePalette[256];
+	char _redPalette[256];
+	char _greenPalette[256];
+	char _bluePalette[256];
 
-	int16 setAllPalette;
+	int16 _setAllPalette;
 
-	Video::SurfaceDesc *curPrimaryDesc;
-	Video::SurfaceDesc *allocatedPrimary;
-	Video::SurfaceDesc_t primarySurfDesc;
-	Video::SurfaceDesc *pPrimarySurfDesc;
+	Video::SurfaceDesc *_curPrimaryDesc;
+	Video::SurfaceDesc *_allocatedPrimary;
+	Video::SurfaceDesc_t _primarySurfDesc;
+	Video::SurfaceDesc *_pPrimarySurfDesc;
 
-	int16 oldMode;
-	char dontSetPalette;
+	int16 _oldMode;
+	char _dontSetPalette;
 
-	Video::PalDesc *pPaletteDesc;
+	Video::PalDesc *_pPaletteDesc;
 
-	int16 unusedPalette1[18];
-	int16 unusedPalette2[16];
-	Video::Color vgaPalette[16];
-	Video::PalDesc paletteStruct;
+	int16 _unusedPalette1[18];
+	int16 _unusedPalette2[16];
+	Video::Color _vgaPalette[16];
+	Video::PalDesc _paletteStruct;
 
-	int16 debugFlag;
-	int16 inVM;
-	int16 colorCount;
+	int16 _debugFlag;
+	int16 _inVM;
+	int16 _colorCount;
 
-	char inter_resStr[200];
-	int32 inter_resVal;
+	char _inter_resStr[200];
+	int32 _inter_resVal;
 
-	char *inter_variables;
-	char *inter_execPtr;
-	int16 inter_animDataSize;
+	char *_inter_variables;
+	char *_inter_execPtr;
+	int16 _inter_animDataSize;
 
-	int16 inter_mouseX;
-	int16 inter_mouseY;
+	int16 _inter_mouseX;
+	int16 _inter_mouseY;
 
-	char *tmpPalBuffer;
+	char *_tmpPalBuffer;
 
 	Global(GobEngine *vm);
 

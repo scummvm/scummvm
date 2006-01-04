@@ -303,30 +303,29 @@ int GobEngine::init(GameDetector &detector) {
 	if (cd_num >= 0)
 		_system->openCD(cd_num);
 
-	_global->debugFlag = 1;
-	_global->doRangeClamp = 1;
+	_global->_debugFlag = 1;
+	_global->_doRangeClamp = 1;
 
-	_global->videoMode = 0x13;
-	_snd->soundPort = 1;
-	_global->useMouse = 1;
-	_global->soundFlags = 0;
+	_global->_videoMode = 0x13;
+	_global->_useMouse = 1;
+	_global->_soundFlags = 0;
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
 	case Common::FR_FRA:
-		_global->language = 0;
+		_global->_language = 0;
 		break;
 	case Common::DE_DEU:
-		_global->language = 1;
+		_global->_language = 1;
 		break;
 	case Common::ES_ESP:
-		_global->language = 3;
+		_global->_language = 3;
 		break;
 	case Common::IT_ITA:
-		_global->language = 4;
+		_global->_language = 4;
 		break;
 	default:
 		// Default to English
-		_global->language = 2;
+		_global->_language = 2;
 		break;
 	}
 

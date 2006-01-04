@@ -39,10 +39,10 @@ int32 Parse::encodePtr(char *ptr, int type) {
 		offset = ptr - _vm->_game->totFileData;
 		break;
 	case kInterVar:
-		offset = ptr - _vm->_global->inter_variables;
+		offset = ptr - _vm->_global->_inter_variables;
 		break;
 	case kResStr:
-		offset = ptr - _vm->_global->inter_resStr;
+		offset = ptr - _vm->_global->_inter_resStr;
 		break;
 	default:
 		error("encodePtr: Unknown pointer type");
@@ -59,10 +59,10 @@ char *Parse::decodePtr(int32 n) {
 		ptr = _vm->_game->totFileData;
 		break;
 	case kInterVar:
-		ptr = _vm->_global->inter_variables;
+		ptr = _vm->_global->_inter_variables;
 		break;
 	case kResStr:
-		ptr = _vm->_global->inter_resStr;
+		ptr = _vm->_global->_inter_resStr;
 		break;
 	default:
 		error("decodePtr: Unknown pointer type");
@@ -98,13 +98,13 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 		stkPos++;
 		operPtr++;
 		valPtr++;
-		operation = *_vm->_global->inter_execPtr++;
+		operation = *_vm->_global->_inter_execPtr++;
 		if (operation >= 19 && operation <= 29) {
 			switch (operation) {
 			case 19:
 				*operPtr = 20;
-				*valPtr = READ_LE_UINT32(_vm->_global->inter_execPtr);
-				_vm->_global->inter_execPtr += 4;
+				*valPtr = READ_LE_UINT32(_vm->_global->_inter_execPtr);
+				_vm->_global->_inter_execPtr += 4;
 				break;
 
 			case 20:
@@ -114,8 +114,8 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 
 			case 22:
 				*operPtr = 22;
-				*valPtr = encodePtr(_vm->_global->inter_execPtr, kExecPtr);
-				_vm->_global->inter_execPtr += strlen(_vm->_global->inter_execPtr) + 1;
+				*valPtr = encodePtr(_vm->_global->_inter_execPtr, kExecPtr);
+				_vm->_global->_inter_execPtr += strlen(_vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 23:
@@ -126,12 +126,12 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 			case 25:
 				*operPtr = 22;
 				temp = _vm->_inter->load16() * 4;
-				*valPtr = encodePtr(_vm->_global->inter_variables + temp, kInterVar);
-				if (*_vm->_global->inter_execPtr == 13) {
-					_vm->_global->inter_execPtr++;
+				*valPtr = encodePtr(_vm->_global->_inter_variables + temp, kInterVar);
+				if (*_vm->_global->_inter_execPtr == 13) {
+					_vm->_global->_inter_execPtr++;
 					temp += parseValExpr();
 					*operPtr = 20;
-					*valPtr = (uint8)*(_vm->_global->inter_variables + temp);
+					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
 				}
 				break;
 
@@ -139,9 +139,9 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 			case 28:
 				*operPtr = operation - 6;
 				temp = _vm->_inter->load16();
-				dimCount = *_vm->_global->inter_execPtr++;
-				arrDescPtr = (byte *)_vm->_global->inter_execPtr;
-				_vm->_global->inter_execPtr += dimCount;
+				dimCount = *_vm->_global->_inter_execPtr++;
+				arrDescPtr = (byte *)_vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr += dimCount;
 				offset = 0;
 				dim = 0;
 				for (dim = 0; dim < dimCount; dim++) {
@@ -153,22 +153,22 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 					*valPtr = VAR(temp + offset);
 					break;
 				}
-				*valPtr = encodePtr(_vm->_global->inter_variables + temp * 4 + offset * _vm->_global->inter_animDataSize * 4, kInterVar);
-				if (*_vm->_global->inter_execPtr == 13) {
-					_vm->_global->inter_execPtr++;
+				*valPtr = encodePtr(_vm->_global->_inter_variables + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4, kInterVar);
+				if (*_vm->_global->_inter_execPtr == 13) {
+					_vm->_global->_inter_execPtr++;
 					temp2 = parseValExpr();
 					*operPtr = 20;
-					*valPtr = (uint8)*(_vm->_global->inter_variables + temp * 4 + offset * 4 * _vm->_global->inter_animDataSize + temp2);
+					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
 				break;
 
 			case 29:
-				operation = *_vm->_global->inter_execPtr++;
+				operation = *_vm->_global->_inter_execPtr++;
 				parseExpr(10, 0);
 
 				switch (operation) {
 				case 5:
-					_vm->_global->inter_resVal = _vm->_global->inter_resVal * _vm->_global->inter_resVal;
+					_vm->_global->_inter_resVal = _vm->_global->_inter_resVal * _vm->_global->_inter_resVal;
 					break;
 
 				case 0:
@@ -180,22 +180,22 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 					do {
 						prevPrevVal = prevVal;
 						prevVal = curVal;
-						curVal = (curVal + _vm->_global->inter_resVal / curVal) / 2;
+						curVal = (curVal + _vm->_global->_inter_resVal / curVal) / 2;
 					} while (curVal != prevVal && curVal != prevPrevVal);
-					_vm->_global->inter_resVal = curVal;
+					_vm->_global->_inter_resVal = curVal;
 					break;
 
 				case 10:
-					_vm->_global->inter_resVal = _vm->_util->getRandom(_vm->_global->inter_resVal);
+					_vm->_global->_inter_resVal = _vm->_util->getRandom(_vm->_global->_inter_resVal);
 					break;
 
 				case 7:
-					if (_vm->_global->inter_resVal < 0)
-						_vm->_global->inter_resVal = -_vm->_global->inter_resVal;
+					if (_vm->_global->_inter_resVal < 0)
+						_vm->_global->_inter_resVal = -_vm->_global->_inter_resVal;
 					break;
 				}
 				*operPtr = 20;
-				*valPtr = _vm->_global->inter_resVal;
+				*valPtr = _vm->_global->_inter_resVal;
 			}
 
 			if (stkPos > 0 && (operPtr[-1] == 1 || operPtr[-1] == 11)) {
@@ -220,11 +220,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 			switch (operPtr[-1]) {
 			case 2:
 				if (operPtr[-2] == 22) {
-					if (decodePtr(valPtr[-2]) != _vm->_global->inter_resStr) {
-						strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-2]));
-						valPtr[-2] = encodePtr(_vm->_global->inter_resStr, kResStr);
+					if (decodePtr(valPtr[-2]) != _vm->_global->_inter_resStr) {
+						strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-2]));
+						valPtr[-2] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 					}
-					strcat(_vm->_global->inter_resStr, decodePtr(valPtr[0]));
+					strcat(_vm->_global->_inter_resStr, decodePtr(valPtr[0]));
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
@@ -340,11 +340,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 					if (operStack[brackStart] == 20) {
 						values[brackStart] += valPtr[-1];
 					} else if (operStack[brackStart] == 22) {
-						if (decodePtr(values[brackStart]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(values[brackStart]));
-							values[brackStart] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(values[brackStart]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(values[brackStart]));
+							values[brackStart] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						strcat(_vm->_global->inter_resStr, decodePtr(valPtr[-1]));
+						strcat(_vm->_global->_inter_resStr, decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;
@@ -416,11 +416,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] < valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->inter_resStr, decodePtr(valPtr[-1])) < 0)
+						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) < 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -435,11 +435,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] <= valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->inter_resStr, decodePtr(valPtr[-1])) <= 0)
+						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) <= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -454,11 +454,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] > valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->inter_resStr, decodePtr(valPtr[-1])) > 0)
+						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) > 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -473,11 +473,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] >= valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->inter_resStr, decodePtr(valPtr[-1])) >= 0)
+						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) >= 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -492,11 +492,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] == valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->inter_resStr, decodePtr(valPtr[-1])) == 0)
+						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) == 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -511,11 +511,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						if (valPtr[-3] != valPtr[-1])
 							operPtr[-3] = 24;
 					} else if (var_C == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						if (strcmp(_vm->_global->inter_resStr, decodePtr(valPtr[-1])) != 0)
+						if (strcmp(_vm->_global->_inter_resStr, decodePtr(valPtr[-1])) != 0)
 							operPtr[-3] = 24;
 					}
 					stkPos -= 2;
@@ -551,7 +551,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 					} else {
 						skipExpr(arg_0);
 					}
-					operation = _vm->_global->inter_execPtr[-1];
+					operation = _vm->_global->_inter_execPtr[-1];
 					if (stkPos > 0 && operPtr[-1] == 11) {
 						if (operPtr[0] == 23)
 							operPtr[-1] = 24;
@@ -578,12 +578,12 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 
 			switch (operStack[0]) {
 			case 20:
-				_vm->_global->inter_resVal = values[0];
+				_vm->_global->_inter_resVal = values[0];
 				break;
 
 			case 22:
-				if (decodePtr(values[0]) != _vm->_global->inter_resStr)
-					strcpy(_vm->_global->inter_resStr, decodePtr(values[0]));
+				if (decodePtr(values[0]) != _vm->_global->_inter_resStr)
+					strcpy(_vm->_global->_inter_resStr, decodePtr(values[0]));
 				break;
 
 			case 11:
@@ -596,7 +596,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 				break;
 
 			default:
-				_vm->_global->inter_resVal = 0;
+				_vm->_global->_inter_resVal = 0;
 				if (arg_2 != 0)
 					*arg_2 = 20;
 				break;
@@ -613,11 +613,11 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 					if (operPtr[-3] == 20) {
 						valPtr[-3] += valPtr[-1];
 					} else if (operPtr[-3] == 22) {
-						if (decodePtr(valPtr[-3]) != _vm->_global->inter_resStr) {
-							strcpy(_vm->_global->inter_resStr, decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr(_vm->_global->inter_resStr, kResStr);
+						if (decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
+							strcpy(_vm->_global->_inter_resStr, decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr(_vm->_global->_inter_resStr, kResStr);
 						}
-						strcat(_vm->_global->inter_resStr, decodePtr(valPtr[-1]));
+						strcat(_vm->_global->_inter_resStr, decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;
@@ -648,46 +648,46 @@ void Parse::skipExpr(char arg_0) {
 
 	num = 0;
 	while (1) {
-		operation = *_vm->_global->inter_execPtr++;
+		operation = *_vm->_global->_inter_execPtr++;
 
 		if (operation >= 19 && operation <= 29) {
 			switch (operation) {
 			case 20:
 			case 23:
-				_vm->_global->inter_execPtr += 2;
+				_vm->_global->_inter_execPtr += 2;
 				break;
 
 			case 19:
-				_vm->_global->inter_execPtr += 4;
+				_vm->_global->_inter_execPtr += 4;
 				break;
 
 			case 22:
-				_vm->_global->inter_execPtr += strlen(_vm->_global->inter_execPtr) + 1;
+				_vm->_global->_inter_execPtr += strlen(_vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 25:
-				_vm->_global->inter_execPtr += 2;
-				if (*_vm->_global->inter_execPtr == 13) {
-					_vm->_global->inter_execPtr++;
+				_vm->_global->_inter_execPtr += 2;
+				if (*_vm->_global->_inter_execPtr == 13) {
+					_vm->_global->_inter_execPtr++;
 					skipExpr(12);
 				}
 				break;
 
 			case 26:
 			case 28:
-				dimCount = _vm->_global->inter_execPtr[2];
-				_vm->_global->inter_execPtr += 3 + dimCount;	// ???
+				dimCount = _vm->_global->_inter_execPtr[2];
+				_vm->_global->_inter_execPtr += 3 + dimCount;	// ???
 				for (dim = 0; dim < dimCount; dim++)
 					skipExpr(12);
 
-				if (operation == 28 && *_vm->_global->inter_execPtr == 13) {
-					_vm->_global->inter_execPtr++;
+				if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
+					_vm->_global->_inter_execPtr++;
 					skipExpr(12);
 				}
 				break;
 
 			case 29:
-				_vm->_global->inter_execPtr++;
+				_vm->_global->_inter_execPtr++;
 				skipExpr(10);
 			}
 			continue;
@@ -747,13 +747,13 @@ int16 Parse::parseValExpr() {
 		operPtr++;
 		valPtr++;
 
-		operation = *_vm->_global->inter_execPtr++;
+		operation = *_vm->_global->_inter_execPtr++;
 		if (operation >= 19 && operation <= 29) {
 			*operPtr = 20;
 			switch (operation) {
 			case 19:
-				*valPtr = READ_LE_UINT32(_vm->_global->inter_execPtr);
-				_vm->_global->inter_execPtr += 4;
+				*valPtr = READ_LE_UINT32(_vm->_global->_inter_execPtr);
+				_vm->_global->_inter_execPtr += 4;
 				break;
 
 			case 20:
@@ -766,17 +766,17 @@ int16 Parse::parseValExpr() {
 
 			case 25:
 				temp = _vm->_inter->load16() * 4;
-				_vm->_global->inter_execPtr++;
+				_vm->_global->_inter_execPtr++;
 				temp += parseValExpr();
-				*valPtr = (uint8)*(_vm->_global->inter_variables + temp);
+				*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
 				break;
 
 			case 26:
 			case 28:
 				temp = _vm->_inter->load16();
-				dimCount = *_vm->_global->inter_execPtr++;
-				arrDesc = (byte*)_vm->_global->inter_execPtr;
-				_vm->_global->inter_execPtr += dimCount;
+				dimCount = *_vm->_global->_inter_execPtr++;
+				arrDesc = (byte*)_vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr += dimCount;
 				offset = 0;
 				for (dim = 0; dim < dimCount; dim++) {
 					temp2 = parseValExpr();
@@ -785,25 +785,25 @@ int16 Parse::parseValExpr() {
 				if (operation == 26) {
 					*valPtr = (uint16)VAR(temp + offset);
 				} else {
-					_vm->_global->inter_execPtr++;
+					_vm->_global->_inter_execPtr++;
 					temp2 = parseValExpr();
-					*valPtr = (uint8)*(_vm->_global->inter_variables + temp * 4 + offset * 4 * _vm->_global->inter_animDataSize + temp2);
+					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
 				break;
 
 			case 29:
-				operation = *_vm->_global->inter_execPtr++;
+				operation = *_vm->_global->_inter_execPtr++;
 				parseExpr(10, 0);
 
 				if (operation == 5) {
-					_vm->_global->inter_resVal = _vm->_global->inter_resVal * _vm->_global->inter_resVal;
+					_vm->_global->_inter_resVal = _vm->_global->_inter_resVal * _vm->_global->_inter_resVal;
 				} else if (operation == 7) {
-					if (_vm->_global->inter_resVal < 0)
-						_vm->_global->inter_resVal = -_vm->_global->inter_resVal;
+					if (_vm->_global->_inter_resVal < 0)
+						_vm->_global->_inter_resVal = -_vm->_global->_inter_resVal;
 				} else if (operation == 10) {
-					_vm->_global->inter_resVal = _vm->_util->getRandom(_vm->_global->inter_resVal);
+					_vm->_global->_inter_resVal = _vm->_util->getRandom(_vm->_global->_inter_resVal);
 				}
-				*valPtr = _vm->_global->inter_resVal;
+				*valPtr = _vm->_global->_inter_resVal;
 				break;
 
 			}	// switch
@@ -950,15 +950,15 @@ int16 Parse::parseVarIndex() {
 	int16 offset;
 	int16 val;
 
-	operation = *_vm->_global->inter_execPtr++;
+	operation = *_vm->_global->_inter_execPtr++;
 	debug(5, "var parse = %d", operation);
 	switch (operation) {
 	case 23:
 	case 25:
 		temp = _vm->_inter->load16() * 4;
-		debug(5, "oper = %d", (int16)*_vm->_global->inter_execPtr);
-		if (operation == 25 && *_vm->_global->inter_execPtr == 13) {
-			_vm->_global->inter_execPtr++;
+		debug(5, "oper = %d", (int16)*_vm->_global->_inter_execPtr);
+		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
+			_vm->_global->_inter_execPtr++;
 			val = parseValExpr();
 			temp += val;
 			debug(5, "parse subscript = %d", val);
@@ -968,9 +968,9 @@ int16 Parse::parseVarIndex() {
 	case 26:
 	case 28:
 		temp = _vm->_inter->load16() * 4;
-		dimCount = *_vm->_global->inter_execPtr++;
-		arrDesc = _vm->_global->inter_execPtr;
-		_vm->_global->inter_execPtr += dimCount;
+		dimCount = *_vm->_global->_inter_execPtr++;
+		arrDesc = _vm->_global->_inter_execPtr;
+		_vm->_global->_inter_execPtr += dimCount;
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
 			temp2 = parseValExpr();
@@ -980,11 +980,11 @@ int16 Parse::parseVarIndex() {
 		if (operation != 28)
 			return temp + offset;
 
-		if (*_vm->_global->inter_execPtr == 13) {
-			_vm->_global->inter_execPtr++;
+		if (*_vm->_global->_inter_execPtr == 13) {
+			_vm->_global->_inter_execPtr++;
 			temp += parseValExpr();
 		}
-		return offset * _vm->_global->inter_animDataSize + temp;
+		return offset * _vm->_global->_inter_animDataSize + temp;
 
 	default:
 		return 0;
@@ -1006,19 +1006,19 @@ void Parse::printExpr(char arg_0) {
 	return;
 
 	if (savedPos == 0) {
-		savedPos = _vm->_global->inter_execPtr;
+		savedPos = _vm->_global->_inter_execPtr;
 		saved = 1;
 	}
 
 	num = 0;
 	while (1) {
-		operation = *_vm->_global->inter_execPtr++;
+		operation = *_vm->_global->_inter_execPtr++;
 
 		if (operation >= 19 && operation <= 29) {
 			switch (operation) {
 			case 19:
-				debug(5, "%l", READ_LE_UINT32(_vm->_global->inter_execPtr));
-				_vm->_global->inter_execPtr += 4;
+				debug(5, "%l", READ_LE_UINT32(_vm->_global->_inter_execPtr));
+				_vm->_global->_inter_execPtr += 4;
 				break;
 
 			case 20:
@@ -1026,8 +1026,8 @@ void Parse::printExpr(char arg_0) {
 				break;
 
 			case 22:
-				debug(5, "\42%s\42", _vm->_global->inter_execPtr);
-				_vm->_global->inter_execPtr += strlen(_vm->_global->inter_execPtr) + 1;
+				debug(5, "\42%s\42", _vm->_global->_inter_execPtr);
+				_vm->_global->_inter_execPtr += strlen(_vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 23:
@@ -1036,8 +1036,8 @@ void Parse::printExpr(char arg_0) {
 
 			case 25:
 				debug(5, "(&var_%d)", _vm->_inter->load16());
-				if (*_vm->_global->inter_execPtr == 13) {
-					_vm->_global->inter_execPtr++;
+				if (*_vm->_global->_inter_execPtr == 13) {
+					_vm->_global->_inter_execPtr++;
 					debug(5, "{");
 					printExpr(12);
 //                  debug(5, "}");
@@ -1050,9 +1050,9 @@ void Parse::printExpr(char arg_0) {
 					debug(5, "(&");
 
 				debug(5, "var_%d[", _vm->_inter->load16());
-				dimCount = *_vm->_global->inter_execPtr++;
-				arrDesc = _vm->_global->inter_execPtr;
-				_vm->_global->inter_execPtr += dimCount;
+				dimCount = *_vm->_global->_inter_execPtr++;
+				arrDesc = _vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr += dimCount;
 				for (dim = 0; dim < dimCount; dim++) {
 					printExpr(12);
 					debug(5, " of %d", (int16)arrDesc[dim]);
@@ -1063,8 +1063,8 @@ void Parse::printExpr(char arg_0) {
 				if (operation == 28)
 					debug(5, ")");
 
-				if (operation == 28 && *_vm->_global->inter_execPtr == 13) {
-					_vm->_global->inter_execPtr++;
+				if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
+					_vm->_global->_inter_execPtr++;
 					debug(5, "{");
 					printExpr(12);
 //                  debug(5, "}");
@@ -1072,7 +1072,7 @@ void Parse::printExpr(char arg_0) {
 				break;
 
 			case 29:
-				func = *_vm->_global->inter_execPtr++;
+				func = *_vm->_global->_inter_execPtr++;
 				if (func == 5)
 					debug(5, "sqr(");
 				else if (func == 10)
@@ -1204,7 +1204,7 @@ void Parse::printExpr(char arg_0) {
 			if (arg_0 != 10 || num < 0) {
 
 				if (saved != 0) {
-					_vm->_global->inter_execPtr = savedPos;
+					_vm->_global->_inter_execPtr = savedPos;
 					savedPos = 0;
 				}
 				return;
@@ -1220,16 +1220,16 @@ void Parse::printVarIndex() {
 	int16 operation;
 	int16 temp;
 
-	char *pos = _vm->_global->inter_execPtr;
+	char *pos = _vm->_global->_inter_execPtr;
 
-	operation = *_vm->_global->inter_execPtr++;
+	operation = *_vm->_global->_inter_execPtr++;
 	switch (operation) {
 	case 23:
 	case 25:
 		temp = _vm->_inter->load16() * 4;
 		debug(5, "&var_%d", temp);
-		if (operation == 25 && *_vm->_global->inter_execPtr == 13) {
-			_vm->_global->inter_execPtr++;
+		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
+			_vm->_global->_inter_execPtr++;
 			debug(5, "+");
 			printExpr(99);
 		}
@@ -1238,9 +1238,9 @@ void Parse::printVarIndex() {
 	case 26:
 	case 28:
 		debug(5, "&var_%d[", _vm->_inter->load16());
-		dimCount = *_vm->_global->inter_execPtr++;
-		arrDesc = _vm->_global->inter_execPtr;
-		_vm->_global->inter_execPtr += dimCount;
+		dimCount = *_vm->_global->_inter_execPtr++;
+		arrDesc = _vm->_global->_inter_execPtr;
+		_vm->_global->_inter_execPtr += dimCount;
 		for (dim = 0; dim < dimCount; dim++) {
 			printExpr(12);
 			debug(5, " of %d", (int16)arrDesc[dim]);
@@ -1249,8 +1249,8 @@ void Parse::printVarIndex() {
 		}
 		debug(5, "]");
 
-		if (operation == 28 && *_vm->_global->inter_execPtr == 13) {
-			_vm->_global->inter_execPtr++;
+		if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
+			_vm->_global->_inter_execPtr++;
 			debug(5, "+");
 			printExpr(99);
 		}
@@ -1261,7 +1261,7 @@ void Parse::printVarIndex() {
 		break;
 	}
 	debug(5, "\n");
-	_vm->_global->inter_execPtr = pos;
+	_vm->_global->_inter_execPtr = pos;
 	return;
 }
 

@@ -441,11 +441,11 @@ void Mult::interInitMult(void) {
 		objects = (Mult_Object *)malloc(sizeof(Mult_Object) * objCount);
 
 		for (i = 0; i < objCount; i++) {
-			objects[i].pPosX = (int32 *)(_vm->_global->inter_variables + i * 4 + (posXVar / 4) * 4);
-			objects[i].pPosY = (int32 *)(_vm->_global->inter_variables + i * 4 + (posYVar / 4) * 4);
+			objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);
+			objects[i].pPosY = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posYVar / 4) * 4);
 			objects[i].pAnimData =
-			    (Mult_AnimData *) (_vm->_global->inter_variables + animDataVar +
-			    i * 4 * _vm->_global->inter_animDataSize);
+			    (Mult_AnimData *) (_vm->_global->_inter_variables + animDataVar +
+			    i * 4 * _vm->_global->_inter_animDataSize);
 
 			objects[i].pAnimData->isStatic = 1;
 			objects[i].tick = 0;
@@ -467,7 +467,7 @@ void Mult::interInitMult(void) {
 	}
 
 	if (_vm->_anim->_animSurf == 0) {
-		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->videoMode,
+		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
 		    _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
 
 		_vm->_draw->spritesArray[22] = _vm->_anim->_animSurf;
@@ -480,7 +480,7 @@ void Mult::interInitMult(void) {
 
 	debug(4, "interInitMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
-	debug(4, "    objCount = %d, animation data size = %d", objCount, _vm->_global->inter_animDataSize);
+	debug(4, "    objCount = %d, animation data size = %d", objCount, _vm->_global->_inter_animDataSize);
 }
 
 void Mult::freeMult(void) {
@@ -511,11 +511,11 @@ void Mult::interLoadMult(void) {
 
 	lmultData = (char *)objects[objIndex].pAnimData;
 	for (i = 0; i < 11; i++) {
-		if ((char)READ_LE_UINT16(_vm->_global->inter_execPtr) == (char)99) {
+		if ((char)READ_LE_UINT16(_vm->_global->_inter_execPtr) == (char)99) {
 			_vm->_inter->evalExpr(&val);
 			lmultData[i] = val;
 		} else {
-			_vm->_global->inter_execPtr++;
+			_vm->_global->_inter_execPtr++;
 		}
 	}
 }
@@ -642,9 +642,9 @@ void Mult::drawText(char *pStop, char *pStopNoClear) {
 			frameStart = 0;
 		} else if (cmd == 3) {
 			*pStop = 0;
-			savedIP = _vm->_global->inter_execPtr;
-			_vm->_global->inter_execPtr = (char *)(&textKeys[index].index);
-			_vm->_global->inter_execPtr = savedIP;
+			savedIP = _vm->_global->_inter_execPtr;
+			_vm->_global->_inter_execPtr = (char *)(&textKeys[index].index);
+			_vm->_global->_inter_execPtr = savedIP;
 		}
 	}
 }
@@ -660,11 +660,11 @@ char Mult::prepPalAnim(char stop) {
 	if (palKeys[palKeyIndex].cmd == -1) {
 		stop = 0;
 		doPalSubst = 0;
-		_vm->_global->pPaletteDesc->vgaPal = oldPalette;
+		_vm->_global->_pPaletteDesc->vgaPal = oldPalette;
 
-		memcpy((char *)palAnimPalette, (char *)_vm->_global->pPaletteDesc->vgaPal, 768);
+		memcpy((char *)palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 
-		_vm->_video->setFullPalette(_vm->_global->pPaletteDesc);
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 	} else {
 		stop = 0;
 		doPalSubst = 1;
@@ -675,7 +675,7 @@ char Mult::prepPalAnim(char stop) {
 		palAnimIndices[2] = 0;
 		palAnimIndices[3] = 0;
 
-		_vm->_global->pPaletteDesc->vgaPal = palAnimPalette;
+		_vm->_global->_pPaletteDesc->vgaPal = palAnimPalette;
 	}
 	return stop;
 }
@@ -696,27 +696,27 @@ void Mult::doPalAnim(void) {
 			continue;
 
 		palAnimRed[index] =
-		    _vm->_global->pPaletteDesc->vgaPal[palKey->subst[0][index] - 1].red;
+		    _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][index] - 1].red;
 		palAnimGreen[index] =
-		    _vm->_global->pPaletteDesc->vgaPal[palKey->subst[0][index] - 1].green;
+		    _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][index] - 1].green;
 		palAnimBlue[index] =
-		    _vm->_global->pPaletteDesc->vgaPal[palKey->subst[0][index] - 1].blue;
+		    _vm->_global->_pPaletteDesc->vgaPal[palKey->subst[0][index] - 1].blue;
 
 		while (1) {
 			off = palKey->subst[(palAnimIndices[index] + 1) % 16][index];
 			if (off == 0) {
 				off = palKey->subst[palAnimIndices[index]][index] - 1;
 
-				_vm->_global->pPaletteDesc->vgaPal[off].red = palAnimRed[index];
-				_vm->_global->pPaletteDesc->vgaPal[off].green = palAnimGreen[index];
-				_vm->_global->pPaletteDesc->vgaPal[off].blue = palAnimBlue[index];
+				_vm->_global->_pPaletteDesc->vgaPal[off].red = palAnimRed[index];
+				_vm->_global->_pPaletteDesc->vgaPal[off].green = palAnimGreen[index];
+				_vm->_global->_pPaletteDesc->vgaPal[off].blue = palAnimBlue[index];
 			} else {
 				off = palKey->subst[(palAnimIndices[index] + 1) % 16][index] - 1;
 				off2 = palKey->subst[palAnimIndices[index]][index] - 1;
 
-				_vm->_global->pPaletteDesc->vgaPal[off2].red = _vm->_global->pPaletteDesc->vgaPal[off].red;
-				_vm->_global->pPaletteDesc->vgaPal[off2].green = _vm->_global->pPaletteDesc->vgaPal[off].green;
-				_vm->_global->pPaletteDesc->vgaPal[off2].blue = _vm->_global->pPaletteDesc->vgaPal[off].blue;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].red = _vm->_global->_pPaletteDesc->vgaPal[off].red;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].green = _vm->_global->_pPaletteDesc->vgaPal[off].green;
+				_vm->_global->_pPaletteDesc->vgaPal[off2].blue = _vm->_global->_pPaletteDesc->vgaPal[off].blue;
 			}
 
 			palAnimIndices[index] = (palAnimIndices[index] + 1) % 16;
@@ -727,33 +727,33 @@ void Mult::doPalAnim(void) {
 				palAnimIndices[index] = 0;
 				off = palKey->subst[0][index] - 1;
 
-				palAnimRed[index] = _vm->_global->pPaletteDesc->vgaPal[off].red;
-				palAnimGreen[index] = _vm->_global->pPaletteDesc->vgaPal[off].green;
-				palAnimBlue[index] = _vm->_global->pPaletteDesc->vgaPal[off].blue;
+				palAnimRed[index] = _vm->_global->_pPaletteDesc->vgaPal[off].red;
+				palAnimGreen[index] = _vm->_global->_pPaletteDesc->vgaPal[off].green;
+				palAnimBlue[index] = _vm->_global->_pPaletteDesc->vgaPal[off].blue;
 			}
 			if (palAnimIndices[index] == 0)
 				break;
 		}
 	}
 
-	if (_vm->_global->colorCount == 256) {
-		_vm->_video->waitRetrace(_vm->_global->videoMode);
+	if (_vm->_global->_colorCount == 256) {
+		_vm->_video->waitRetrace(_vm->_global->_videoMode);
 
-		palPtr = _vm->_global->pPaletteDesc->vgaPal;
+		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
 		for (counter = 0; counter < 16; counter++) {
 			_vm->_video->setPalElem(counter, palPtr->red, palPtr->green, palPtr->blue, 0, 0x13);
 			palPtr++;
 		}
 
-		palPtr = _vm->_global->pPaletteDesc->vgaPal;
+		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
 		for (counter = 0; counter < 16; counter++) {
-			_vm->_global->redPalette[counter] = palPtr->red;
-			_vm->_global->greenPalette[counter] = palPtr->green;
-			_vm->_global->bluePalette[counter] = palPtr->blue;
+			_vm->_global->_redPalette[counter] = palPtr->red;
+			_vm->_global->_greenPalette[counter] = palPtr->green;
+			_vm->_global->_bluePalette[counter] = palPtr->blue;
 			palPtr++;
 		}
 	} else {
-		_vm->_video->setFullPalette(_vm->_global->pPaletteDesc);
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 	}
 }
 
@@ -769,15 +769,15 @@ char Mult::doFadeAnim(char stop) {
 		stop = 0;
 		if ((fadeKey->flag & 1) == 0) {
 			if (fadeKey->fade == 0) {
-				_vm->_global->pPaletteDesc->vgaPal = fadePal[fadeKey->palIndex];
-				_vm->_video->setFullPalette(_vm->_global->pPaletteDesc);
+				_vm->_global->_pPaletteDesc->vgaPal = fadePal[fadeKey->palIndex];
+				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			} else {
-				_vm->_global->pPaletteDesc->vgaPal = fadePal[fadeKey->palIndex];
-				_vm->_palanim->fade(_vm->_global->pPaletteDesc, fadeKey->fade, 0);
+				_vm->_global->_pPaletteDesc->vgaPal = fadePal[fadeKey->palIndex];
+				_vm->_palanim->fade(_vm->_global->_pPaletteDesc, fadeKey->fade, 0);
 			}
 		} else {
-			_vm->_global->pPaletteDesc->vgaPal = fadePal[fadeKey->palIndex];
-			_vm->_palanim->fade(_vm->_global->pPaletteDesc, fadeKey->fade, -1);
+			_vm->_global->_pPaletteDesc->vgaPal = fadePal[fadeKey->palIndex];
+			_vm->_palanim->fade(_vm->_global->_pPaletteDesc, fadeKey->fade, -1);
 
 			palFadingRed = (fadeKey->flag >> 1) & 1;
 			palFadingGreen = (fadeKey->flag >> 2) & 1;
@@ -821,7 +821,7 @@ char Mult::doSoundAnim(char stop) {
 				    sndKey->freq, sndKey->channel);
 			}
 		} else {
-			if (_vm->_snd->playingSound)
+			if (_vm->_snd->_playingSound)
 				_vm->_snd->stopSound(sndKey->channel);
 		}
 	}
@@ -849,8 +849,8 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		palFadingGreen = 0;
 		palFadingBlue = 0;
 
-		oldPalette = _vm->_global->pPaletteDesc->vgaPal;
-		memcpy((char *)palAnimPalette, (char *)_vm->_global->pPaletteDesc->vgaPal, 768);
+		oldPalette = _vm->_global->_pPaletteDesc->vgaPal;
+		memcpy((char *)palAnimPalette, (char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 
 		if (_vm->_anim->_animSurf == 0) {
 			_vm->_util->setFrameRate(frameRate);
@@ -887,7 +887,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			}
 
 			_vm->_anim->_animSurf =
-			    _vm->_video->initSurfDesc(_vm->_global->videoMode, 320, 200, 0);
+			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
 			_vm->_draw->spritesArray[22] = _vm->_anim->_animSurf;
 
 			_vm->_video->drawSprite(_vm->_draw->backSurface, _vm->_anim->_animSurf,
@@ -927,7 +927,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (frame >= endFrame)
 			stopNoClear = 1;
 
-		if (_vm->_snd->playingSound)
+		if (_vm->_snd->_playingSound)
 			stop = 0;
 
 		_vm->_util->processInput();
@@ -962,7 +962,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			animDataAllocated = 0;
 		}
 
-		if (_vm->_snd->playingSound != 0)
+		if (_vm->_snd->_playingSound != 0)
 			_vm->_snd->stopSound(10);
 
 		WRITE_VAR(57, (uint32)-1);
@@ -1110,14 +1110,14 @@ void Mult::loadMult(int16 resId) {
 		switch (sndKeys[i].cmd) {
 		case 1:
 		case 4:
-			sndKeys[i].resId = READ_LE_UINT16(_vm->_global->inter_execPtr);
+			sndKeys[i].resId = READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 			for (j = 0; j < i; j++) {
 				if (sndKeys[i].resId ==
 				    sndKeys[j].resId) {
 					sndKeys[i].soundIndex =
 					    sndKeys[j].soundIndex;
-					_vm->_global->inter_execPtr += 2;
+					_vm->_global->_inter_execPtr += 2;
 					break;
 				}
 			}
@@ -1130,11 +1130,11 @@ void Mult::loadMult(int16 resId) {
 			break;
 
 		case 3:
-			_vm->_global->inter_execPtr += 6;
+			_vm->_global->_inter_execPtr += 6;
 			break;
 
 		case 5:
-			_vm->_global->inter_execPtr += sndKeys[i].freq * 2;
+			_vm->_global->_inter_execPtr += sndKeys[i].freq * 2;
 			break;
 		}
 	}

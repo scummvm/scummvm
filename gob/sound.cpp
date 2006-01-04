@@ -59,21 +59,20 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 
 Snd::Snd(GobEngine *vm) : _vm(vm) {
 	//CleanupFuncPtr cleanupFunc;// = &snd_cleanupFuncCallback();
-	cleanupFunc = 0;
-	for (int i = 0; i < ARRAYSIZE(loopingSounds); i++)
-		loopingSounds[i] = NULL;
-	soundPort = 0;
-	playingSound = 0;
+	_cleanupFunc = 0;
+	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++)
+		_loopingSounds[i] = NULL;
+	_playingSound = 0;
 }
 
 void Snd::loopSounds(void) {
-	for (int i = 0; i < ARRAYSIZE(loopingSounds); i++) {
-		SoundDesc *snd = loopingSounds[i];
+	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
+		SoundDesc *snd = _loopingSounds[i];
 		if (snd && !_vm->_mixer->isSoundHandleActive(snd->handle)) {
 			if (snd->repCount-- > 0) {
 				_vm->_mixer->playRaw(&snd->handle, snd->data, snd->size, snd->frequency, 0);
 			} else {
-				loopingSounds[i] = NULL;
+				_loopingSounds[i] = NULL;
 			}
 		}
 	}
@@ -82,14 +81,14 @@ void Snd::loopSounds(void) {
 void Snd::setBlasterPort(int16 port) {return;}
 
 void Snd::speakerOn(int16 frequency, int32 length) {
-	speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
-	if (!_vm->_mixer->isSoundHandleActive(speakerHandle)) {
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &speakerHandle, &speakerStream, -1, 255, 0, false);
+	_speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
+	if (!_vm->_mixer->isSoundHandleActive(_speakerHandle)) {
+		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle, &_speakerStream, -1, 255, 0, false);
 	}
 }
 
 void Snd::speakerOff(void) {
-	_vm->_mixer->stopHandle(speakerHandle);
+	_vm->_mixer->stopHandle(_speakerHandle);
 }
 
 void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
@@ -103,9 +102,9 @@ void Snd::playSample(Snd::SoundDesc *sndDesc, int16 repCount, int16 frequency) {
 	sndDesc->frequency = frequency;
 
 	if (repCount > 1) {
-		for (int i = 0; i < ARRAYSIZE(loopingSounds); i++) {
-			if (!loopingSounds[i]) {
-				loopingSounds[i] = sndDesc;
+		for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
+			if (!_loopingSounds[i]) {
+				_loopingSounds[i] = sndDesc;
 				return;
 			}
 		}
@@ -132,9 +131,9 @@ Snd::SoundDesc *Snd::loadSoundData(const char *path) {
 void Snd::freeSoundData(Snd::SoundDesc *sndDesc) {
 	_vm->_mixer->stopHandle(sndDesc->handle);
 
-	for (int i = 0; i < ARRAYSIZE(loopingSounds); i++) {
-		if (loopingSounds[i] == sndDesc)
-			loopingSounds[i] = NULL;
+	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
+		if (_loopingSounds[i] == sndDesc)
+			_loopingSounds[i] = NULL;
 	}
 
 	free(sndDesc->data);

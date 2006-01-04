@@ -43,10 +43,9 @@ public:
 
 	typedef void (*CleanupFuncPtr) (int16);
 
-	SoundDesc *loopingSounds[5]; // Should be enough
-	int16 soundPort;
-	char playingSound;
-	CleanupFuncPtr cleanupFunc;
+	SoundDesc *_loopingSounds[5]; // Should be enough
+	char _playingSound;
+	CleanupFuncPtr _cleanupFunc;
 
 	Snd(GobEngine *vm);
 	void speakerOn(int16 frequency, int32 length);
@@ -84,8 +83,8 @@ protected:
 		int getRate() const	{ return _rate; }
 	};
 
-	SquareWaveStream speakerStream;
-	Audio::SoundHandle speakerHandle;
+	SquareWaveStream _speakerStream;
+	Audio::SoundHandle _speakerHandle;
 
 	GobEngine *_vm;
 

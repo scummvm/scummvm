@@ -143,7 +143,7 @@ void CDROM::playMultMusic() {
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
 		if (!scumm_stricmp(_vm->_game->curTotFile, tracks[i][0])) {
 			_cdPlaying = true;
-			startTrack(tracks[i][_vm->_global->language + 1]);
+			startTrack(tracks[i][_vm->_global->_language + 1]);
 			break;
 		}
 }

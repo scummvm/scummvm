@@ -34,8 +34,8 @@ public:
 	Init(GobEngine *vm);
 
 protected:
-	Video::PalDesc *palDesc;
-	static const char *fontNames[4];
+	Video::PalDesc *_palDesc;
+	static const char *_fontNames[4];
 	GobEngine *_vm;
 
 	void cleanup(void);

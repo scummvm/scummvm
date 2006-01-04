@@ -83,14 +83,14 @@ int16 Scenery::loadStatic(char search) {
 
 	_vm->_inter->evalExpr(&sceneryIndex);
 	tmp = _vm->_inter->load16();
-	backsPtr = (int16 *)_vm->_global->inter_execPtr;
-	_vm->_global->inter_execPtr += tmp * 2;
+	backsPtr = (int16 *)_vm->_global->_inter_execPtr;
+	_vm->_global->_inter_execPtr += tmp * 2;
 	picsCount = _vm->_inter->load16();
 	resId = _vm->_inter->load16();
 	if (search) {
 		for (i = 0; i < 10; i++) {
 			if (staticPictCount[i] != -1 && staticResId[i] == resId) {
-				_vm->_global->inter_execPtr += 8 * staticPictCount[i];
+				_vm->_global->_inter_execPtr += 8 * staticPictCount[i];
 				return i;
 			}
 
@@ -170,7 +170,7 @@ int16 Scenery::loadStatic(char search) {
 			spriteRefs[sprIndex] = 1;
 			spriteResId[sprIndex] = sprResId;
 			_vm->_draw->spritesArray[sprIndex] =
-			    _vm->_video->initSurfDesc(_vm->_global->videoMode, width, height, 2);
+			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 
 			_vm->_video->clearSurf(_vm->_draw->spritesArray[sprIndex]);
 			_vm->_draw->destSurface = sprIndex;
@@ -407,7 +407,7 @@ int16 Scenery::loadAnim(char search) {
 		for (i = 0; i < 10; i++) {
 			if (animPictCount[i] != 0
 			    && animResId[i] == resId) {
-				_vm->_global->inter_execPtr += 8 * animPictCount[i];
+				_vm->_global->_inter_execPtr += 8 * animPictCount[i];
 				return i;
 			}
 
@@ -486,7 +486,7 @@ int16 Scenery::loadAnim(char search) {
 			spriteRefs[sprIndex] = 1;
 			spriteResId[sprIndex] = sprResId;
 			_vm->_draw->spritesArray[sprIndex] =
-			    _vm->_video->initSurfDesc(_vm->_global->videoMode, width, height, 2);
+			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 
 			_vm->_video->clearSurf(_vm->_draw->spritesArray[sprIndex]);
 			_vm->_draw->destSurface = sprIndex;

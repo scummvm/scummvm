@@ -55,7 +55,7 @@ class Scenery;
 class GTimer;
 class Util;
 
-#define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->inter_variables + (offs)))
+#define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->_inter_variables + (offs)))
 #define	VAR(var)			VAR_OFFSET((var) << 2)
 #define VAR_ADDRESS(var)		(&VAR(var))
 

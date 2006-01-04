@@ -36,8 +36,8 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 //XXX: Use this function to update the screen for now.
 //     This should be moved to a better location later on.
 void Video::waitRetrace(int16) {
-	if (_vm->_global->pPrimarySurfDesc) {
-		g_system->copyRectToScreen(_vm->_global->pPrimarySurfDesc->vidPtr, 320, 0, 0, 320, 200);
+	if (_vm->_global->_pPrimarySurfDesc) {
+		g_system->copyRectToScreen(_vm->_global->_pPrimarySurfDesc->vidPtr, 320, 0, 0, 320, 200);
 		g_system->updateScreen();
 	}
 }
@@ -91,10 +91,10 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 	SurfaceDesc *descPtr;
 
 	if (flags != PRIMARY_SURFACE)
-		_vm->_global->sprAllocated++;
+		_vm->_global->_sprAllocated++;
 
 	if (flags & RETURN_PRIMARY)
-		return _vm->_global->pPrimarySurfDesc;
+		return _vm->_global->_pPrimarySurfDesc;
 
 	if (vidMode != 0x13)
 		error("Video::initSurfDesc: Only VGA 0x13 mode is supported!");
@@ -109,10 +109,10 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 
 	if (flags & PRIMARY_SURFACE) {
 		vidMem = 0;
-		_vm->_global->primaryWidth = width;
-		_vm->_global->mouseMaxCol = width;
-		_vm->_global->primaryHeight = height;
-		_vm->_global->mouseMaxRow = height;
+		_vm->_global->_primaryWidth = width;
+		_vm->_global->_mouseMaxCol = width;
+		_vm->_global->_primaryHeight = height;
+		_vm->_global->_mouseMaxRow = height;
 		sprSize = 0;
 
 	} else {
@@ -122,7 +122,7 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 			someFlags += 0x80;
 	}
 	if (flags & PRIMARY_SURFACE) {
-		descPtr = _vm->_global->pPrimarySurfDesc;
+		descPtr = _vm->_global->_pPrimarySurfDesc;
 		vidMem = (byte *)malloc(320 * 200);
 	} else {
 		if (flags & DISABLE_SPR_ALLOC)
@@ -147,8 +147,8 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 }
 
 void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
-	_vm->_global->sprAllocated--;
-	if (surfDesc != _vm->_global->pPrimarySurfDesc)
+	_vm->_global->_sprAllocated--;
+	if (surfDesc != _vm->_global->_pPrimarySurfDesc)
 		free(surfDesc);
 	else
 		free(surfDesc->vidPtr);
@@ -170,7 +170,7 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	int16 destRight;
 	int16 destBottom;
 
-	if (_vm->_global->doRangeClamp) {
+	if (_vm->_global->_doRangeClamp) {
 		if (left > right) {
 			temp = left;
 			left = right;
@@ -240,7 +240,7 @@ void Video::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int1
 	    int16 color) {
 	int16 temp;
 
-	if (_vm->_global->doRangeClamp) {
+	if (_vm->_global->_doRangeClamp) {
 		if (left > right) {
 			temp = left;
 			left = right;
@@ -312,9 +312,9 @@ void Video::setPalElem(int16 index, char red, char green, char blue, int16 unuse
 	    int16 vidMode) {
 	byte pal[4];
 
-	_vm->_global->redPalette[index] = red;
-	_vm->_global->greenPalette[index] = green;
-	_vm->_global->bluePalette[index] = blue;
+	_vm->_global->_redPalette[index] = red;
+	_vm->_global->_greenPalette[index] = green;
+	_vm->_global->_bluePalette[index] = blue;
 
 	if (vidMode != 0x13)
 		error("Video::setPalElem: Video mode 0x%x is not supported!",
@@ -332,11 +332,11 @@ void Video::setPalette(PalDesc *palDesc) {
 	byte pal[1024];
 	int16 numcolors;
 
-	if (_vm->_global->videoMode != 0x13)
+	if (_vm->_global->_videoMode != 0x13)
 		error("Video::setPalette: Video mode 0x%x is not supported!",
-		    _vm->_global->videoMode);
+		    _vm->_global->_videoMode);
 
-	if (_vm->_global->setAllPalette)
+	if (_vm->_global->_setAllPalette)
 		numcolors = 256;
 	else
 		numcolors = 16;
@@ -356,12 +356,12 @@ void Video::setFullPalette(PalDesc *palDesc) {
 	int16 i;
 	byte pal[1024];
 
-	if (_vm->_global->setAllPalette) {
+	if (_vm->_global->_setAllPalette) {
 		colors = palDesc->vgaPal;
 		for (i = 0; i < 256; i++) {
-			_vm->_global->redPalette[i] = colors[i].red;
-			_vm->_global->greenPalette[i] = colors[i].green;
-			_vm->_global->bluePalette[i] = colors[i].blue;
+			_vm->_global->_redPalette[i] = colors[i].red;
+			_vm->_global->_greenPalette[i] = colors[i].green;
+			_vm->_global->_bluePalette[i] = colors[i].blue;
 		}
 
 		for (i = 0; i < 256; i++) {
@@ -378,36 +378,36 @@ void Video::setFullPalette(PalDesc *palDesc) {
 
 void Video::initPrimary(int16 mode) {
 	int16 old;
-	if (_vm->_global->curPrimaryDesc) {
-		Video::freeSurfDesc(_vm->_global->curPrimaryDesc);
-		Video::freeSurfDesc(_vm->_global->allocatedPrimary);
+	if (_vm->_global->_curPrimaryDesc) {
+		Video::freeSurfDesc(_vm->_global->_curPrimaryDesc);
+		Video::freeSurfDesc(_vm->_global->_allocatedPrimary);
 
-		_vm->_global->curPrimaryDesc = 0;
-		_vm->_global->allocatedPrimary = 0;
+		_vm->_global->_curPrimaryDesc = 0;
+		_vm->_global->_allocatedPrimary = 0;
 	}
 	if (mode != 0x13 && mode != 3 && mode != -1)
 		error("Video::initPrimary: Video mode 0x%x is not supported!",
 		    mode);
 
-	if (_vm->_global->videoMode != 0x13)
+	if (_vm->_global->_videoMode != 0x13)
 		error("Video::initPrimary: Video mode 0x%x is not supported!",
 		    mode);
 
-	old = _vm->_global->oldMode;
+	old = _vm->_global->_oldMode;
 	if (mode == -1)
 		mode = 3;
 
-	_vm->_global->oldMode = mode;
+	_vm->_global->_oldMode = mode;
 	if (mode != 3)
 		Video::initDriver(mode);
 
 	if (mode != 3) {
 		Video::initSurfDesc(mode, 320, 200, PRIMARY_SURFACE);
 
-		if (_vm->_global->dontSetPalette)
+		if (_vm->_global->_dontSetPalette)
 			return;
 
-		Video::setFullPalette(_vm->_global->pPaletteDesc);
+		Video::setFullPalette(_vm->_global->_pPaletteDesc);
 	}
 }
 
@@ -540,6 +540,6 @@ char Video::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	return 1;
 }
 
-void Video::setHandlers() { _vm->_global->setAllPalette = 1; }
+void Video::setHandlers() { _vm->_global->_setAllPalette = 1; }
 
 }				// End of namespace Gob

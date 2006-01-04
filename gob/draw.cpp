@@ -257,14 +257,14 @@ void Draw::blitInvalidated(void) {
 		return;
 	}
 
-	_vm->_global->doRangeClamp = 0;
+	_vm->_global->_doRangeClamp = 0;
 	for (i = 0; i < invalidatedCount; i++) {
 		_vm->_video->drawSprite(backSurface, frontSurface,
 		    invalidatedLefts[i], invalidatedTops[i],
 		    invalidatedRights[i], invalidatedBottoms[i],
 		    invalidatedLefts[i], invalidatedTops[i], 0);
 	}
-	_vm->_global->doRangeClamp = 1;
+	_vm->_global->_doRangeClamp = 1;
 
 	invalidatedCount = 0;
 	noInvalidated = 1;
@@ -272,14 +272,14 @@ void Draw::blitInvalidated(void) {
 }
 
 void Draw::setPalette(void) {
-	if (_vm->_global->videoMode != 0x13)
+	if (_vm->_global->_videoMode != 0x13)
 		error("setPalette: Video mode 0x%x is not supported!\n",
-		    _vm->_global->videoMode);
+		    _vm->_global->_videoMode);
 
-	_vm->_global->pPaletteDesc->unused1 = unusedPalette1;
-	_vm->_global->pPaletteDesc->unused2 = unusedPalette2;
-	_vm->_global->pPaletteDesc->vgaPal = vgaPalette;
-	_vm->_video->setFullPalette(_vm->_global->pPaletteDesc);
+	_vm->_global->_pPaletteDesc->unused1 = unusedPalette1;
+	_vm->_global->_pPaletteDesc->unused2 = unusedPalette2;
+	_vm->_global->_pPaletteDesc->vgaPal = vgaPalette;
+	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 	paletteCleared = 0;
 }
 
@@ -603,16 +603,16 @@ void Draw::animateCursor(int16 cursor) {
 			if (ptr->flags & 0xfff0)
 				continue;
 
-			if (ptr->left > _vm->_global->inter_mouseX)
+			if (ptr->left > _vm->_global->_inter_mouseX)
 				continue;
 
-			if (ptr->right < _vm->_global->inter_mouseX)
+			if (ptr->right < _vm->_global->_inter_mouseX)
 				continue;
 
-			if (ptr->top > _vm->_global->inter_mouseY)
+			if (ptr->top > _vm->_global->_inter_mouseY)
 				continue;
 
-			if (ptr->bottom < _vm->_global->inter_mouseY)
+			if (ptr->bottom < _vm->_global->_inter_mouseY)
 				continue;
 
 			if ((ptr->flags & 0xf) < 3)
@@ -655,8 +655,8 @@ void Draw::animateCursor(int16 cursor) {
 			cursorAnim = cursorAnimLow[gcursorIndex];
 		}
 
-		newX = _vm->_global->inter_mouseX;
-		newY = _vm->_global->inter_mouseY;
+		newX = _vm->_global->_inter_mouseX;
+		newY = _vm->_global->_inter_mouseY;
 		if (cursorXDeltaVar != -1) {
 			newX -= (uint16)VAR_OFFSET(gcursorIndex * 4 + (cursorXDeltaVar / 4) * 4);
 			newY -= (uint16)VAR_OFFSET(gcursorIndex * 4 + (cursorYDeltaVar / 4) * 4);
@@ -681,7 +681,7 @@ void Draw::animateCursor(int16 cursor) {
 			blitInvalidated();
 			gcursorIndex = cursorIndex;
 		} else {
-			_vm->_video->waitRetrace(_vm->_global->videoMode);
+			_vm->_video->waitRetrace(_vm->_global->_videoMode);
 		}
 
 		_vm->_video->drawSprite(backSurface, frontSurface,
@@ -705,7 +705,7 @@ void Draw::interPalLoad(void) {
 	byte cmd;
 	char *palPtr;
 
-	cmd = *_vm->_global->inter_execPtr++;
+	cmd = *_vm->_global->_inter_execPtr++;
 	applyPal = 0;
 	if (cmd & 0x80)
 		cmd &= 0x7f;
@@ -715,40 +715,40 @@ void Draw::interPalLoad(void) {
 	if (cmd == 49) {
 		warning("inter_palLoad: cmd == 49 is not supported");
 		//var_B = 1;
-		for (i = 0; i < 18; i++, _vm->_global->inter_execPtr++) {
+		for (i = 0; i < 18; i++, _vm->_global->_inter_execPtr++) {
 			if (i < 2) {
 				if (applyPal == 0)
 					continue;
 
-				unusedPalette1[i] = *_vm->_global->inter_execPtr;
+				unusedPalette1[i] = *_vm->_global->_inter_execPtr;
 				continue;
 			}
 			//if (*inter_execPtr != 0)
 			//      var_B = 0;
 
-			ind1 = *_vm->_global->inter_execPtr >> 4;
-			ind2 = (*_vm->_global->inter_execPtr & 0xf);
+			ind1 = *_vm->_global->_inter_execPtr >> 4;
+			ind2 = (*_vm->_global->_inter_execPtr & 0xf);
 
 			unusedPalette1[i] =
 			    ((palLoadData1[ind1] + palLoadData2[ind2]) << 8) +
 			    (palLoadData2[ind1] + palLoadData1[ind2]);
 		}
 
-		_vm->_global->pPaletteDesc->unused1 = unusedPalette1;
+		_vm->_global->_pPaletteDesc->unused1 = unusedPalette1;
 	}
 
 	switch (cmd) {
 	case 52:
-		for (i = 0; i < 16; i++, _vm->_global->inter_execPtr += 3) {
-			vgaSmallPalette[i].red = _vm->_global->inter_execPtr[0];
-			vgaSmallPalette[i].green = _vm->_global->inter_execPtr[1];
-			vgaSmallPalette[i].blue = _vm->_global->inter_execPtr[2];
+		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr += 3) {
+			vgaSmallPalette[i].red = _vm->_global->_inter_execPtr[0];
+			vgaSmallPalette[i].green = _vm->_global->_inter_execPtr[1];
+			vgaSmallPalette[i].blue = _vm->_global->_inter_execPtr[2];
 		}
 		break;
 
 	case 50:
-		for (i = 0; i < 16; i++, _vm->_global->inter_execPtr++)
-			unusedPalette2[i] = *_vm->_global->inter_execPtr;
+		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr++)
+			unusedPalette2[i] = *_vm->_global->_inter_execPtr;
 		break;
 
 	case 53:
@@ -761,15 +761,15 @@ void Draw::interPalLoad(void) {
 		break;
 	}
 	if (!applyPal) {
-		_vm->_global->pPaletteDesc->unused2 = unusedPalette2;
-		_vm->_global->pPaletteDesc->unused1 = unusedPalette1;
+		_vm->_global->_pPaletteDesc->unused2 = unusedPalette2;
+		_vm->_global->_pPaletteDesc->unused1 = unusedPalette1;
 
-		if (_vm->_global->videoMode != 0x13)
-			_vm->_global->pPaletteDesc->vgaPal = (Video::Color *)vgaSmallPalette;
+		if (_vm->_global->_videoMode != 0x13)
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)vgaSmallPalette;
 		else
-			_vm->_global->pPaletteDesc->vgaPal = (Video::Color *)vgaPalette;
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)vgaPalette;
 
-		_vm->_palanim->fade((Video::PalDesc *) _vm->_global->pPaletteDesc, 0, 0);
+		_vm->_palanim->fade((Video::PalDesc *) _vm->_global->_pPaletteDesc, 0, 0);
 	}
 }
 
@@ -883,7 +883,7 @@ void Draw::printText(void) {
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 
-				strcpy(buf, _vm->_global->inter_variables + val);
+				strcpy(buf, _vm->_global->_inter_variables + val);
 			} else {
 				val = READ_LE_UINT16(ptr2 + 18) * 4;
 

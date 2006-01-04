@@ -162,10 +162,10 @@ int16 Goblin::peekGoblin(Gob_Object *curGob) {
 				if (desc != goblins[i])
 					continue;
 
-				if (_vm->_global->inter_mouseX < desc->right &&
-				    _vm->_global->inter_mouseX > desc->left &&
-				    _vm->_global->inter_mouseY < desc->bottom &&
-				    _vm->_global->inter_mouseY > desc->top) {
+				if (_vm->_global->_inter_mouseX < desc->right &&
+				    _vm->_global->_inter_mouseX > desc->left &&
+				    _vm->_global->_inter_mouseY < desc->bottom &&
+				    _vm->_global->_inter_mouseY > desc->top) {
 					index = i + 1;
 				}
 			}
@@ -1079,10 +1079,10 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 
 void Goblin::moveCheckSelect(int16 framesCount, Gob_Object * gobDesc, int16 *pGobIndex,
 	    int16 *nextAct) {
-	if (gobDesc->right > _vm->_global->inter_mouseX &&
-	    gobDesc->left < _vm->_global->inter_mouseX &&
-	    gobDesc->bottom > _vm->_global->inter_mouseY &&
-	    gobDesc->bottom - 10 < _vm->_global->inter_mouseY && gobAction == 0) {
+	if (gobDesc->right > _vm->_global->_inter_mouseX &&
+	    gobDesc->left < _vm->_global->_inter_mouseX &&
+	    gobDesc->bottom > _vm->_global->_inter_mouseY &&
+	    gobDesc->bottom - 10 < _vm->_global->_inter_mouseY && gobAction == 0) {
 		if (gobDesc->curLookDir & 4)
 			*nextAct = 16;
 		else
@@ -1125,14 +1125,14 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 		forceNextState[2] = -1;
 
 		if (action == 3) {
-			posX = _vm->_global->inter_mouseX + 6;
-			posY = _vm->_global->inter_mouseY + 7;
+			posX = _vm->_global->_inter_mouseX + 6;
+			posY = _vm->_global->_inter_mouseY + 7;
 		} else if (action == 4) {
-			posX = _vm->_global->inter_mouseX + 7;
-			posY = _vm->_global->inter_mouseY + 12;
+			posX = _vm->_global->_inter_mouseX + 7;
+			posY = _vm->_global->_inter_mouseY + 12;
 		} else {
-			posX = _vm->_global->inter_mouseX;
-			posY = _vm->_global->inter_mouseY;
+			posX = _vm->_global->_inter_mouseX;
+			posY = _vm->_global->_inter_mouseY;
 		}
 
 		moveFindItem(posX, posY);
@@ -2394,7 +2394,7 @@ void Goblin::interFunc(void) {
 	retVarPtr = (int32 *)VAR_ADDRESS(59);
 
 	cmd = _vm->_inter->load16();
-	_vm->_global->inter_execPtr += 2;
+	_vm->_global->_inter_execPtr += 2;
 	if (cmd > 0 && cmd < 17) {
 		extraData = _vm->_inter->load16();
 		objDesc = objects[extraData];
@@ -3247,9 +3247,9 @@ void Goblin::interFunc(void) {
 
 	default:
 		warning("interFunc: Unknown command %d!", cmd);
-		_vm->_global->inter_execPtr -= 2;
+		_vm->_global->_inter_execPtr -= 2;
 		cmd = _vm->_inter->load16();
-		_vm->_global->inter_execPtr += cmd * 2;
+		_vm->_global->_inter_execPtr += cmd * 2;
 		break;
 	}
 	return;

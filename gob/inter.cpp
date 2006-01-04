@@ -46,16 +46,16 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 }
 
 int16 Inter::load16(void) {
-	int16 tmp = (int16)READ_LE_UINT16(_vm->_global->inter_execPtr);
-	_vm->_global->inter_execPtr += 2;
+	int16 tmp = (int16)READ_LE_UINT16(_vm->_global->_inter_execPtr);
+	_vm->_global->_inter_execPtr += 2;
 	return tmp;
 }
 
 void Inter::setMousePos(void) {
-	_vm->_global->inter_mouseX = _vm->_parse->parseValExpr();
-	_vm->_global->inter_mouseY = _vm->_parse->parseValExpr();
-	if (_vm->_global->useMouse != 0)
-		_vm->_util->setMousePos(_vm->_global->inter_mouseX, _vm->_global->inter_mouseY);
+	_vm->_global->_inter_mouseX = _vm->_parse->parseValExpr();
+	_vm->_global->_inter_mouseY = _vm->_parse->parseValExpr();
+	if (_vm->_global->_useMouse != 0)
+		_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 }
 
 char Inter::evalExpr(int16 *pRes) {
@@ -70,7 +70,7 @@ char Inter::evalExpr(int16 *pRes) {
 
 	switch (token) {
 	case 20:
-		*pRes = _vm->_global->inter_resVal;
+		*pRes = _vm->_global->_inter_resVal;
 		break;
 
 	case 22:
@@ -91,7 +91,7 @@ char Inter::evalBoolResult() {
 	_vm->_parse->printExpr(99);
 
 	_vm->_parse->parseExpr(99, &token);
-	if (token == 24 || (token == 20 && _vm->_global->inter_resVal != 0))
+	if (token == 24 || (token == 20 && _vm->_global->_inter_resVal != 0))
 		return 1;
 	else
 		return 0;
@@ -103,21 +103,21 @@ void Inter::evaluateStore(void) {
 	int16 result;
 	int16 varOff;
 
-	savedPos = _vm->_global->inter_execPtr;
+	savedPos = _vm->_global->_inter_execPtr;
 	varOff = _vm->_parse->parseVarIndex();
 	token = evalExpr(&result);
 	switch (savedPos[0]) {
 	case 23:
 	case 26:
-		WRITE_VAR_OFFSET(varOff, _vm->_global->inter_resVal);
+		WRITE_VAR_OFFSET(varOff, _vm->_global->_inter_resVal);
 		break;
 
 	case 25:
 	case 28:
 		if (token == 20)
-			*(_vm->_global->inter_variables + varOff) = result;
+			*(_vm->_global->_inter_variables + varOff) = result;
 		else
-			strcpy(_vm->_global->inter_variables + varOff, _vm->_global->inter_resStr);
+			strcpy(_vm->_global->_inter_variables + varOff, _vm->_global->_inter_resStr);
 		break;
 
 	}
@@ -166,14 +166,14 @@ void Inter::printText(void) {
 	}
 
 	do {
-		for (i = 0; *_vm->_global->inter_execPtr != '.' && (byte)*_vm->_global->inter_execPtr != 200;
-			 i++, _vm->_global->inter_execPtr++) {
-			buf[i] = *_vm->_global->inter_execPtr;
+		for (i = 0; *_vm->_global->_inter_execPtr != '.' && (byte)*_vm->_global->_inter_execPtr != 200;
+			 i++, _vm->_global->_inter_execPtr++) {
+			buf[i] = *_vm->_global->_inter_execPtr;
 		}
 
-		if ((byte)*_vm->_global->inter_execPtr != 200) {
-			_vm->_global->inter_execPtr++;
-			switch (*_vm->_global->inter_execPtr) {
+		if ((byte)*_vm->_global->_inter_execPtr != 200) {
+			_vm->_global->_inter_execPtr++;
+			switch (*_vm->_global->_inter_execPtr) {
 			case 23:
 			case 26:
 				sprintf(buf + i, "%d", VAR_OFFSET(_vm->_parse->parseVarIndex()));
@@ -181,16 +181,16 @@ void Inter::printText(void) {
 
 			case 25:
 			case 28:
-				sprintf(buf + i, "%s", _vm->_global->inter_variables + _vm->_parse->parseVarIndex());
+				sprintf(buf + i, "%s", _vm->_global->_inter_variables + _vm->_parse->parseVarIndex());
 				break;
 			}
-			_vm->_global->inter_execPtr++;
+			_vm->_global->_inter_execPtr++;
 		} else {
 			buf[i] = 0;
 		}
 		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
-	} while ((byte)*_vm->_global->inter_execPtr != 200);
-	_vm->_global->inter_execPtr++;
+	} while ((byte)*_vm->_global->_inter_execPtr != 200);
+	_vm->_global->_inter_execPtr++;
 }
 
 void Inter::animPalette(void) {
@@ -200,7 +200,7 @@ void Inter::animPalette(void) {
 	if (_animPalDir == 0)
 		return;
 
-	_vm->_video->waitRetrace(_vm->_global->videoMode);
+	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 
 	if (_animPalDir == -1) {
 		col = _vm->_draw->vgaSmallPalette[_animPalLowIndex];
@@ -217,8 +217,8 @@ void Inter::animPalette(void) {
 		_vm->_draw->vgaSmallPalette[_animPalLowIndex] = col;
 	}
 
-	_vm->_global->pPaletteDesc->vgaPal = _vm->_draw->vgaSmallPalette;
-	_vm->_video->setFullPalette(_vm->_global->pPaletteDesc);
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->vgaSmallPalette;
+	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
 void Inter::animPalInit(void) {
@@ -285,12 +285,12 @@ void Inter::initCursor(void) {
 			count -= 0x80;
 
 		_vm->_draw->cursorSprites =
-		    _vm->_video->initSurfDesc(_vm->_global->videoMode, _vm->_draw->cursorWidth * count,
+		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->cursorWidth * count,
 		    _vm->_draw->cursorHeight, 2);
 		_vm->_draw->spritesArray[23] = _vm->_draw->cursorSprites;
 
 		_vm->_draw->cursorBack =
-		    _vm->_video->initSurfDesc(_vm->_global->videoMode, _vm->_draw->cursorWidth,
+		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->cursorWidth,
 		    _vm->_draw->cursorHeight, 0);
 		for (i = 0; i < 40; i++) {
 			_vm->_draw->cursorAnimLow[i] = -1;
@@ -323,7 +323,7 @@ void Inter::drawOperations(void) {
 	byte cmd;
 	int16 i;
 
-	cmd = *_vm->_global->inter_execPtr++;
+	cmd = *_vm->_global->_inter_execPtr++;
 
 	debug(4, "drawOperations(%d)", cmd);
 
@@ -420,7 +420,7 @@ void Inter::drawOperations(void) {
 		if (_vm->_features & GF_GOB1) {
 			// Used in gob1 CD
 			evalExpr(0);
-			_vm->_cdrom->startTrack(_vm->_global->inter_resStr);
+			_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
 		} else {
 		}
 		break;
@@ -602,8 +602,8 @@ void Inter::getFreeMem(void) {
 void Inter::manageDataFile(void) {
 	evalExpr(0);
 
-	if (_vm->_global->inter_resStr[0] != 0)
-		_vm->_dataio->openDataFile(_vm->_global->inter_resStr);
+	if (_vm->_global->_inter_resStr[0] != 0)
+		_vm->_dataio->openDataFile(_vm->_global->_inter_resStr);
 	else
 		_vm->_dataio->closeDataFile();
 }
@@ -622,7 +622,7 @@ void Inter::writeData(void) {
 	offset = _vm->_parse->parseValExpr();
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataio->openData(_vm->_global->inter_resStr, Common::File::kFileWriteMode);
+	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr, Common::File::kFileWriteMode);
 
 	if (handle < 0)
 		return;
@@ -633,7 +633,7 @@ void Inter::writeData(void) {
 		_vm->_dataio->seekData(handle, offset, 0);
 	}
 
-	retSize = _vm->_dataio->file_getHandle(handle)->write(_vm->_global->inter_variables + dataVar, size);
+	retSize = _vm->_dataio->file_getHandle(handle)->write(_vm->_global->_inter_variables + dataVar, size);
 
 	if (retSize == size)
 		WRITE_VAR(1, 0);
@@ -648,7 +648,7 @@ void Inter::checkData(void) {
 	debug(4, "_vm->_dataio->cheackData");
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
-	handle = _vm->_dataio->openData(_vm->_global->inter_resStr);
+	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	if (handle >= 0)
@@ -672,7 +672,7 @@ void Inter::readData(void) {
 		_vm->_dataio->closeData(_vm->_game->extHandle);
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataio->openData(_vm->_global->inter_resStr);
+	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
 	if (handle >= 0) {
 		_vm->_draw->animateCursor(4);
 		if (offset < 0)
@@ -680,7 +680,7 @@ void Inter::readData(void) {
 		else
 			_vm->_dataio->seekData(handle, offset, 0);
 
-		retSize = _vm->_dataio->readData(handle, _vm->_global->inter_variables + dataVar, size);
+		retSize = _vm->_dataio->readData(handle, _vm->_global->_inter_variables + dataVar, size);
 		_vm->_dataio->closeData(handle);
 
 		if (retSize == size)
@@ -705,7 +705,7 @@ void Inter::loadFont(void) {
 	if (_vm->_game->extHandle >= 0)
 		_vm->_dataio->closeData(_vm->_game->extHandle);
 
-	_vm->_draw->fonts[index] = _vm->_util->loadFont(_vm->_global->inter_resStr);
+	_vm->_draw->fonts[index] = _vm->_util->loadFont(_vm->_global->_inter_resStr);
 
 	if (_vm->_game->extHandle >= 0)
 		_vm->_game->extHandle = _vm->_dataio->openData(_vm->_game->curExtFile);
@@ -725,7 +725,7 @@ void Inter::prepareStr(void) {
 	int16 var;
 
 	var = _vm->_parse->parseVarIndex();
-	_vm->_util->prepareStr(_vm->_global->inter_variables + var);
+	_vm->_util->prepareStr(_vm->_global->_inter_variables + var);
 }
 
 void Inter::insertStr(void) {
@@ -735,7 +735,7 @@ void Inter::insertStr(void) {
 	strVar = _vm->_parse->parseVarIndex();
 	evalExpr(0);
 	pos = _vm->_parse->parseValExpr();
-	_vm->_util->insertStr(_vm->_global->inter_resStr, _vm->_global->inter_variables + strVar, pos);
+	_vm->_util->insertStr(_vm->_global->_inter_resStr, _vm->_global->_inter_variables + strVar, pos);
 }
 
 void Inter::cutStr(void) {
@@ -746,7 +746,7 @@ void Inter::cutStr(void) {
 	var = _vm->_parse->parseVarIndex();
 	pos = _vm->_parse->parseValExpr();
 	size = _vm->_parse->parseValExpr();
-	_vm->_util->cutFromStr(_vm->_global->inter_variables + var, pos, size);
+	_vm->_util->cutFromStr(_vm->_global->_inter_variables + var, pos, size);
 }
 
 void Inter::strstr(void) {
@@ -758,7 +758,7 @@ void Inter::strstr(void) {
 	evalExpr(0);
 	resVar = _vm->_parse->parseVarIndex();
 
-	pos = _vm->_util->strstr(_vm->_global->inter_resStr, _vm->_global->inter_variables + strVar);
+	pos = _vm->_util->strstr(_vm->_global->_inter_resStr, _vm->_global->_inter_variables + strVar);
 	WRITE_VAR_OFFSET(resVar, pos - 1);
 }
 
@@ -771,7 +771,7 @@ void Inter::istrlen(void) {
 	int16 var;
 
 	var = _vm->_parse->parseVarIndex();
-	len = strlen(_vm->_global->inter_variables + var);
+	len = strlen(_vm->_global->_inter_variables + var);
 	var = _vm->_parse->parseVarIndex();
 
 	WRITE_VAR_OFFSET(var, len);
@@ -784,7 +784,7 @@ void Inter::strToLong(void) {
 	int32 res;
 
 	strVar = _vm->_parse->parseVarIndex();
-	strcpy(str, _vm->_global->inter_variables + strVar);
+	strcpy(str, _vm->_global->_inter_variables + strVar);
 	res = atol(str);
 
 	destVar = _vm->_parse->parseVarIndex();
@@ -871,9 +871,9 @@ void Inter::createSprite(void) {
 
 	flag = load16();
 	if (flag == 1)
-		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->videoMode, width, height, 2);
+		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 	else
-		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->videoMode, width, height, 0);
+		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 0);
 
 	_vm->_video->clearSurf(_vm->_draw->spritesArray[index]);
 }
@@ -939,7 +939,7 @@ void Inter::playSound(void) {
 		return;
 
 	if (repCount < 0) {
-		if (_vm->_global->soundFlags < 2)
+		if (_vm->_global->_soundFlags < 2)
 			return;
 
 		repCount = -repCount;
@@ -969,7 +969,7 @@ void Inter::loadCursor(void) {
 	int8 index;
 
 	id = load16();
-	index = *_vm->_global->inter_execPtr++;
+	index = *_vm->_global->_inter_execPtr++;
 	itemPtr = &_vm->_game->totResourceTable->items[id];
 	offset = itemPtr->offset;
 
@@ -1000,13 +1000,13 @@ void Inter::loadSpriteToPos(void) {
 	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
 	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
 
-	_vm->_draw->transparency = _vm->_global->inter_execPtr[0];
-	_vm->_draw->destSurface = (_vm->_global->inter_execPtr[0] / 2) - 1;
+	_vm->_draw->transparency = _vm->_global->_inter_execPtr[0];
+	_vm->_draw->destSurface = (_vm->_global->_inter_execPtr[0] / 2) - 1;
 
 	if (_vm->_draw->destSurface < 0)
 		_vm->_draw->destSurface = 101;
 	_vm->_draw->transparency &= 1;
-	_vm->_global->inter_execPtr += 2;
+	_vm->_global->_inter_execPtr += 2;
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 }
 
@@ -1016,14 +1016,14 @@ void Inter::loadTot(void) {
 	int16 i;
 
 	debug(4, "loadTot");
-	if ((*_vm->_global->inter_execPtr & 0x80) != 0) {
-		_vm->_global->inter_execPtr++;
+	if ((*_vm->_global->_inter_execPtr & 0x80) != 0) {
+		_vm->_global->_inter_execPtr++;
 		evalExpr(0);
-		strcpy(buf, _vm->_global->inter_resStr);
+		strcpy(buf, _vm->_global->_inter_resStr);
 	} else {
-		size = *_vm->_global->inter_execPtr++;
+		size = *_vm->_global->_inter_execPtr++;
 		for (i = 0; i < size; i++)
-			buf[i] = *_vm->_global->inter_execPtr++;
+			buf[i] = *_vm->_global->_inter_execPtr++;
 
 		buf[size] = 0;
 	}
@@ -1036,10 +1036,10 @@ void Inter::loadTot(void) {
 void Inter::storeKey(int16 key) {
 	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->startTimeKey);
 
-	WRITE_VAR(2, _vm->_global->inter_mouseX);
-	WRITE_VAR(3, _vm->_global->inter_mouseY);
+	WRITE_VAR(2, _vm->_global->_inter_mouseX);
+	WRITE_VAR(3, _vm->_global->_inter_mouseY);
 	WRITE_VAR(4, _vm->_game->mouseButtons);
-	WRITE_VAR(1, _vm->_snd->playingSound);
+	WRITE_VAR(1, _vm->_snd->_playingSound);
 
 	if (key == 0x4800)
 		key = 0x0b;
@@ -1079,56 +1079,56 @@ void Inter::keyFunc(void) {
 
 			key = 0;
 
-			if (_vm->_global->pressedKeys[0x48])
+			if (_vm->_global->_pressedKeys[0x48])
 				key |= 1;
 
-			if (_vm->_global->pressedKeys[0x50])
+			if (_vm->_global->_pressedKeys[0x50])
 				key |= 2;
 
-			if (_vm->_global->pressedKeys[0x4d])
+			if (_vm->_global->_pressedKeys[0x4d])
 				key |= 4;
 
-			if (_vm->_global->pressedKeys[0x4b])
+			if (_vm->_global->_pressedKeys[0x4b])
 				key |= 8;
 
-			if (_vm->_global->pressedKeys[0x1c])
+			if (_vm->_global->_pressedKeys[0x1c])
 				key |= 0x10;
 
-			if (_vm->_global->pressedKeys[0x39])
+			if (_vm->_global->_pressedKeys[0x39])
 				key |= 0x20;
 
-			if (_vm->_global->pressedKeys[1])
+			if (_vm->_global->_pressedKeys[1])
 				key |= 0x40;
 
-			if (_vm->_global->pressedKeys[0x1d])
+			if (_vm->_global->_pressedKeys[0x1d])
 				key |= 0x80;
 
-			if (_vm->_global->pressedKeys[0x2a])
+			if (_vm->_global->_pressedKeys[0x2a])
 				key |= 0x100;
 
-			if (_vm->_global->pressedKeys[0x36])
+			if (_vm->_global->_pressedKeys[0x36])
 				key |= 0x200;
 
-			if (_vm->_global->pressedKeys[0x38])
+			if (_vm->_global->_pressedKeys[0x38])
 				key |= 0x400;
 
-			if (_vm->_global->pressedKeys[0x3b])
+			if (_vm->_global->_pressedKeys[0x3b])
 				key |= 0x800;
 
-			if (_vm->_global->pressedKeys[0x3c])
+			if (_vm->_global->_pressedKeys[0x3c])
 				key |= 0x1000;
 
-			if (_vm->_global->pressedKeys[0x3d])
+			if (_vm->_global->_pressedKeys[0x3d])
 				key |= 0x2000;
 
-			if (_vm->_global->pressedKeys[0x3e])
+			if (_vm->_global->_pressedKeys[0x3e])
 				key |= 0x4000;
 
 			WRITE_VAR(0, key);
 			_vm->_util->waitKey();
 			return;
 		}
-		key = _vm->_game->checkKeys(&_vm->_global->inter_mouseX, &_vm->_global->inter_mouseY, &_vm->_game->mouseButtons, 0);
+		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->mouseButtons, 0);
 
 		storeKey(key);
 		return;
@@ -1158,7 +1158,7 @@ void Inter::checkSwitchTable(char **ppExec) {
 	value = VAR_OFFSET(value);
 
 	do {
-		len = *(int8*)_vm->_global->inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms.
+		len = *(int8*)_vm->_global->_inter_execPtr++; // must be a signed char typ and char is not default signed on all platforms.
 
 		if (len == -5)
 			break;
@@ -1169,32 +1169,32 @@ void Inter::checkSwitchTable(char **ppExec) {
 			if (_terminate)
 				return;
 
-			if (_vm->_global->inter_resVal == value) {
+			if (_vm->_global->_inter_resVal == value) {
 				found = 1;
 				notFound = 0;
 			}
 		}
 
 		if (found != 0)
-			*ppExec = _vm->_global->inter_execPtr;
+			*ppExec = _vm->_global->_inter_execPtr;
 
-		_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 		found = 0;
 	} while (len != -5);
 
 	if (len != -5)
-		_vm->_global->inter_execPtr++;
+		_vm->_global->_inter_execPtr++;
 
-	defFlag = *_vm->_global->inter_execPtr;
+	defFlag = *_vm->_global->_inter_execPtr;
 	defFlag >>= 4;
 	if (defFlag != 4)
 		return;
-	_vm->_global->inter_execPtr++;
+	_vm->_global->_inter_execPtr++;
 
 	if (notFound)
-		*ppExec = _vm->_global->inter_execPtr;
+		*ppExec = _vm->_global->_inter_execPtr;
 
-	_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+	_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 }
 
 void Inter::repeatUntil(void) {
@@ -1204,14 +1204,14 @@ void Inter::repeatUntil(void) {
 
 	debug(4, "repeatUntil");
 	_nestLevel[0]++;
-	blockPtr = _vm->_global->inter_execPtr;
+	blockPtr = _vm->_global->_inter_execPtr;
 
 	do {
-		_vm->_global->inter_execPtr = blockPtr;
-		size = READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+		_vm->_global->_inter_execPtr = blockPtr;
+		size = READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
 		funcBlock(1);
-		_vm->_global->inter_execPtr = blockPtr + size + 1;
+		_vm->_global->_inter_execPtr = blockPtr + size + 1;
 		flag = evalBoolResult();
 	} while (flag == 0 && !_breakFlag && !_terminate);
 
@@ -1232,26 +1232,26 @@ void Inter::whileDo(void) {
 	debug(4, "whileDo");
 	_nestLevel[0]++;
 	do {
-		savedIP = _vm->_global->inter_execPtr;
+		savedIP = _vm->_global->_inter_execPtr;
 		flag = evalBoolResult();
 
 		if (_terminate)
 			return;
 
-		blockPtr = _vm->_global->inter_execPtr;
+		blockPtr = _vm->_global->_inter_execPtr;
 
-		size = READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+		size = READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
 		if (flag != 0) {
 			funcBlock(1);
-			_vm->_global->inter_execPtr = savedIP;
+			_vm->_global->_inter_execPtr = savedIP;
 		} else {
-			_vm->_global->inter_execPtr += size;
+			_vm->_global->_inter_execPtr += size;
 		}
 
 		if (_breakFlag || _terminate) {
-			_vm->_global->inter_execPtr = blockPtr;
-			_vm->_global->inter_execPtr += size;
+			_vm->_global->_inter_execPtr = blockPtr;
+			_vm->_global->_inter_execPtr += size;
 			break;
 		}
 	} while (flag != 0);
@@ -1272,16 +1272,16 @@ void Inter::funcBlock(int16 retFlag) {
 	char *callAddr;
 	char boolRes;
 
-	if (_vm->_global->inter_execPtr == 0)
+	if (_vm->_global->_inter_execPtr == 0)
 		return;
 
 	_breakFlag = false;
-	_vm->_global->inter_execPtr++;
-	cmdCount = *_vm->_global->inter_execPtr++;
-	_vm->_global->inter_execPtr += 2;
+	_vm->_global->_inter_execPtr++;
+	cmdCount = *_vm->_global->_inter_execPtr++;
+	_vm->_global->_inter_execPtr += 2;
 
 	if (cmdCount == 0) {
-		_vm->_global->inter_execPtr = 0;
+		_vm->_global->_inter_execPtr = 0;
 		return;
 	}
 
@@ -1290,14 +1290,14 @@ void Inter::funcBlock(int16 retFlag) {
 		if (_terminate)
 			break;
 
-		cmd = (byte)*_vm->_global->inter_execPtr;
+		cmd = (byte)*_vm->_global->_inter_execPtr;
 		if ((cmd >> 4) >= 12) {
 			cmd2 = 16 - (cmd >> 4);
 			cmd &= 0xf;
 		} else
 			cmd2 = 0;
 
-		_vm->_global->inter_execPtr++;
+		_vm->_global->_inter_execPtr++;
 		counter++;
 
 		debug(4, "funcBlock(%d, %d)", cmd2, cmd);
@@ -1307,14 +1307,14 @@ void Inter::funcBlock(int16 retFlag) {
 			switch (cmd >> 4) {
 			case 0:
 			case 1:
-				storedIP = _vm->_global->inter_execPtr;
-				_vm->_global->inter_execPtr = (char *)_vm->_game->totFileData + READ_LE_UINT16(_vm->_global->inter_execPtr);
+				storedIP = _vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr = (char *)_vm->_game->totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 				if (counter == cmdCount && retFlag == 2)
 					return;
 
 				callSub(2);
-				_vm->_global->inter_execPtr = storedIP + 2;
+				_vm->_global->_inter_execPtr = storedIP + 2;
 				break;
 
 			case 2:
@@ -1327,14 +1327,14 @@ void Inter::funcBlock(int16 retFlag) {
 
 			case 5:
 				checkSwitchTable(&callAddr);
-				storedIP = _vm->_global->inter_execPtr;
-				_vm->_global->inter_execPtr = callAddr;
+				storedIP = _vm->_global->_inter_execPtr;
+				_vm->_global->_inter_execPtr = callAddr;
 
 				if (counter == cmdCount && retFlag == 2)
 					return;
 
 				funcBlock(0);
-				_vm->_global->inter_execPtr = storedIP;
+				_vm->_global->_inter_execPtr = storedIP;
 				break;
 
 			case 6:
@@ -1352,35 +1352,35 @@ void Inter::funcBlock(int16 retFlag) {
 					    && retFlag == 2)
 						return;
 
-					storedIP = _vm->_global->inter_execPtr;
+					storedIP = _vm->_global->_inter_execPtr;
 					funcBlock(0);
-					_vm->_global->inter_execPtr = storedIP;
+					_vm->_global->_inter_execPtr = storedIP;
 
-					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+					_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
-					debug(5, "cmd = %d", (int16)*_vm->_global->inter_execPtr);
-					cmd = (byte)(*_vm->_global->inter_execPtr) >> 4;
-					_vm->_global->inter_execPtr++;
+					debug(5, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
+					cmd = (byte)(*_vm->_global->_inter_execPtr) >> 4;
+					_vm->_global->_inter_execPtr++;
 					if (cmd != 12)
 						break;
 
-					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+					_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 				} else {
-					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+					_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
-					debug(5, "cmd = %d", (int16)*_vm->_global->inter_execPtr);
-					cmd = (byte)(*_vm->_global->inter_execPtr) >> 4;
-					_vm->_global->inter_execPtr++;
+					debug(5, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
+					cmd = (byte)(*_vm->_global->_inter_execPtr) >> 4;
+					_vm->_global->_inter_execPtr++;
 					if (cmd != 12)
 						break;
 
 					if (counter == cmdCount && retFlag == 2)
 						return;
 
-					storedIP = _vm->_global->inter_execPtr;
+					storedIP = _vm->_global->_inter_execPtr;
 					funcBlock(0);
-					_vm->_global->inter_execPtr = storedIP;
-					_vm->_global->inter_execPtr += READ_LE_UINT16(_vm->_global->inter_execPtr + 2) + 2;
+					_vm->_global->_inter_execPtr = storedIP;
+					_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 				}
 				break;
 
@@ -1429,7 +1429,7 @@ void Inter::funcBlock(int16 retFlag) {
 				break;
 
 			case 15:
-				cmdCount = *_vm->_global->inter_execPtr++;
+				cmdCount = *_vm->_global->_inter_execPtr++;
 				counter = 0;
 				break;
 			}
@@ -1442,7 +1442,7 @@ void Inter::funcBlock(int16 retFlag) {
 				if (retFlag != 2)
 					_breakFlag = true;
 
-				_vm->_global->inter_execPtr = 0;
+				_vm->_global->_inter_execPtr = 0;
 				return;
 
 			case 1:
@@ -1480,7 +1480,7 @@ void Inter::funcBlock(int16 retFlag) {
 			case 0:
 				if (retFlag == 1) {
 					_breakFlag = true;
-					_vm->_global->inter_execPtr = 0;
+					_vm->_global->_inter_execPtr = 0;
 					return;
 				}
 
@@ -1489,7 +1489,7 @@ void Inter::funcBlock(int16 retFlag) {
 
 				*_breakFromLevel = *_nestLevel;
 				_breakFlag = true;
-				_vm->_global->inter_execPtr = 0;
+				_vm->_global->_inter_execPtr = 0;
 				return;
 
 			case 1:
@@ -1590,8 +1590,8 @@ void Inter::funcBlock(int16 retFlag) {
 				_vm->_draw->blitInvalidated();
 				_vm->_util->waitEndFrame();
 				animPalette();
-				storeKey(_vm->_game->checkKeys(&_vm->_global->inter_mouseX,
-					&_vm->_global->inter_mouseY, &_vm->_game->mouseButtons, 0));
+				storeKey(_vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
+					&_vm->_global->_inter_mouseY, &_vm->_game->mouseButtons, 0));
 				break;
 
 			case 9:
@@ -1636,7 +1636,7 @@ void Inter::funcBlock(int16 retFlag) {
 		}
 	} while (counter != cmdCount);
 
-	_vm->_global->inter_execPtr = 0;
+	_vm->_global->_inter_execPtr = 0;
 	return;
 }
 
@@ -1654,8 +1654,8 @@ void Inter::initControlVars(void) {
 
 void Inter::callSub(int16 retFlag) {
 	int16 block;
-	while (_vm->_global->inter_execPtr != 0 && (char *)_vm->_global->inter_execPtr != _vm->_game->totFileData) {
-		block = *_vm->_global->inter_execPtr;
+	while (_vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->totFileData) {
+		block = *_vm->_global->_inter_execPtr;
 		if (block == 1) {
 			funcBlock(retFlag);
 		} else if (block == 2) {
@@ -1663,7 +1663,7 @@ void Inter::callSub(int16 retFlag) {
 		}
 	}
 
-	if ((char *)_vm->_global->inter_execPtr == _vm->_game->totFileData)
+	if ((char *)_vm->_global->_inter_execPtr == _vm->_game->totFileData)
 		_terminate = true;
 }
 
