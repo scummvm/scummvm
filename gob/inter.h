@@ -26,15 +26,15 @@ namespace Gob {
 
 class Inter {
 public:
-	int16 animPalLowIndex;
-	int16 animPalHighIndex;
-	int16 animPalDir;
-	uint32 soundEndTimeKey;
-	int16 soundStopVal;
-	char terminate;
-	char breakFlag;
-	int16 *breakFromLevel;
-	int16 *nestLevel;
+	int16 _animPalLowIndex;
+	int16 _animPalHighIndex;
+	int16 _animPalDir;
+	uint32 _soundEndTimeKey;
+	int16 _soundStopVal;
+	char _terminate;
+	char _breakFlag;
+	int16 *_breakFromLevel;
+	int16 *_nestLevel;
 
 	int16 load16(void);
 	int16 peek16(char *ptr);

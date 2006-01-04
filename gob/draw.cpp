@@ -233,7 +233,7 @@ void Draw::blitInvalidated(void) {
 	if (gcursorIndex == 4)
 		blitCursor();
 
-	if (_vm->_inter->terminate)
+	if (_vm->_inter->_terminate)
 		return;
 
 	if (noInvalidated && applyPal == 0)

@@ -60,20 +60,20 @@ public:
 
 #pragma END_PACK_STRUCTS
 
-	int8 passMap[kMapHeight][kMapWidth];	// [y][x]
-	int16 itemsMap[kMapHeight][kMapWidth];	// [y][x]
-	Point wayPoints[40];
-	int16 nearestWayPoint;
-	int16 nearestDest;
+	int8 _passMap[kMapHeight][kMapWidth];	// [y][x]
+	int16 _itemsMap[kMapHeight][kMapWidth];	// [y][x]
+	Point _wayPoints[40];
+	int16 _nearestWayPoint;
+	int16 _nearestDest;
 
-   	int16 curGoblinX;
-	int16 curGoblinY;
-	int16 destX;
-	int16 destY;
-	int8 loadFromAvo;
+   	int16 _curGoblinX;
+	int16 _curGoblinY;
+	int16 _destX;
+	int16 _destY;
+	int8 _loadFromAvo;
 
-	ItemPos itemPoses[40];
-	char sourceFile[15];
+	ItemPos _itemPoses[40];
+	char _sourceFile[15];
 
 	void placeItem(int16 x, int16 y, int16 id);
 
@@ -91,7 +91,7 @@ public:
 	Map(GobEngine *vm);
 
 protected:
-	char *avoDataPtr;
+	char *_avoDataPtr;
 	GobEngine *_vm;
 
 	int16 findNearestWayPoint(int16 x, int16 y);

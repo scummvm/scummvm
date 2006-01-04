@@ -34,35 +34,35 @@ namespace Gob {
 Map::Map(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < kMapHeight; i++)
 		for (int j = 0; j < kMapWidth; j++) {
-			passMap[i][j] = 0;
-			itemsMap[i][j] = 0;
+			_passMap[i][j] = 0;
+			_itemsMap[i][j] = 0;
 		}
 	for (int i = 0; i < 40; i++) {
-		wayPoints[i].x = 0;
-		wayPoints[i].y = 0;
+		_wayPoints[i].x = 0;
+		_wayPoints[i].y = 0;
 	}
 	for (int i = 0; i < 40; i++) {
-		itemPoses[i].x = 0;
-		itemPoses[i].y = 0;
-		itemPoses[i].orient = 0;
+		_itemPoses[i].x = 0;
+		_itemPoses[i].y = 0;
+		_itemPoses[i].orient = 0;
 	}
 
-	nearestWayPoint = 0;
-	nearestDest = 0;
-	curGoblinX = 0;
-	curGoblinY = 0;
-	destX = 0;
-	destY = 0;
-	loadFromAvo = 0;
-	sourceFile[0] = 0;
-	avoDataPtr = 0;
+	_nearestWayPoint = 0;
+	_nearestDest = 0;
+	_curGoblinX = 0;
+	_curGoblinY = 0;
+	_destX = 0;
+	_destY = 0;
+	_loadFromAvo = 0;
+	_sourceFile[0] = 0;
+	_avoDataPtr = 0;
 }
 
 void Map::placeItem(int16 x, int16 y, int16 id) {
-	if ((itemsMap[y][x] & 0xff00) != 0)
-		itemsMap[y][x] = (itemsMap[y][x] & 0xff00) | id;
+	if ((_itemsMap[y][x] & 0xff00) != 0)
+		_itemsMap[y][x] = (_itemsMap[y][x] & 0xff00) | id;
 	else
-		itemsMap[y][x] = (itemsMap[y][x] & 0x00ff) | (id << 8);
+		_itemsMap[y][x] = (_itemsMap[y][x] & 0x00ff) | (id << 8);
 }
 
 enum {
@@ -91,63 +91,63 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 	else if (x1 < x0)
 		dir |= kLeft;
 
-	if (passMap[y0][x0] == 3 && (dir & kUp)) {
-		if (passMap[y0 - 1][x0] != 0)
+	if (_passMap[y0][x0] == 3 && (dir & kUp)) {
+		if (_passMap[y0 - 1][x0] != 0)
 			return kDirN;
 	}
 
-	if (passMap[y0][x0] == 3 && (dir & kDown)) {
-		if (passMap[y0 + 1][x0] != 0)
+	if (_passMap[y0][x0] == 3 && (dir & kDown)) {
+		if (_passMap[y0 + 1][x0] != 0)
 			return kDirS;
 	}
 
-	if (passMap[y0][x0] == 6 && (dir & kUp)) {
-		if (passMap[y0 - 1][x0] != 0)
+	if (_passMap[y0][x0] == 6 && (dir & kUp)) {
+		if (_passMap[y0 - 1][x0] != 0)
 			return kDirN;
 	}
 
-	if (passMap[y0][x0] == 6 && (dir & kDown)) {
-		if (passMap[y0 + 1][x0] != 0)
+	if (_passMap[y0][x0] == 6 && (dir & kDown)) {
+		if (_passMap[y0 + 1][x0] != 0)
 			return kDirS;
 	}
 
 	if (dir == kLeft) {
-		if (x0 - 1 >= 0 && passMap[y0][x0 - 1] != 0)
+		if (x0 - 1 >= 0 && _passMap[y0][x0 - 1] != 0)
 			return kDirW;
 		return 0;
 	}
 
 	if (dir == kRight) {
-		if (x0 + 1 < kMapWidth && passMap[y0][x0 + 1] != 0)
+		if (x0 + 1 < kMapWidth && _passMap[y0][x0 + 1] != 0)
 			return kDirE;
 		return 0;
 	}
 
 	if (dir == kUp) {
-		if (y0 - 1 >= 0 && passMap[y0 - 1][x0] != 0)
+		if (y0 - 1 >= 0 && _passMap[y0 - 1][x0] != 0)
 			return kDirN;
 
 		if (y0 - 1 >= 0 && x0 - 1 >= 0
-		    && passMap[y0 - 1][x0 - 1] != 0)
+		    && _passMap[y0 - 1][x0 - 1] != 0)
 			return kDirNW;
 
 		if (y0 - 1 >= 0 && x0 + 1 < kMapWidth
-		    && passMap[y0 - 1][x0 + 1] != 0)
+		    && _passMap[y0 - 1][x0 + 1] != 0)
 			return kDirNE;
 
 		return 0;
 	}
 
 	if (dir == kDown) {
-		if (y0 + 1 < kMapHeight && passMap[y0 + 1][x0] != 0)
+		if (y0 + 1 < kMapHeight && _passMap[y0 + 1][x0] != 0)
 			return kDirS;
 
 		if (y0 + 1 < kMapHeight && x0 - 1 >= 0
-		    && passMap[y0 + 1][x0 - 1] != 0)
+		    && _passMap[y0 + 1][x0 - 1] != 0)
 			return kDirSW;
 
 		if (y0 + 1 < kMapHeight && x0 + 1 < kMapWidth
-		    && passMap[y0 + 1][x0 + 1] != 0)
+		    && _passMap[y0 + 1][x0 + 1] != 0)
 			return kDirSE;
 
 		return 0;
@@ -155,13 +155,13 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 	if (dir == (kRight | kUp)) {
 		if (y0 - 1 >= 0 && x0 + 1 < kMapWidth
-		    && passMap[y0 - 1][x0 + 1] != 0)
+		    && _passMap[y0 - 1][x0 + 1] != 0)
 			return kDirNE;
 
-		if (y0 - 1 >= 0 && passMap[y0 - 1][x0] != 0)
+		if (y0 - 1 >= 0 && _passMap[y0 - 1][x0] != 0)
 			return kDirN;
 
-		if (x0 + 1 < kMapWidth && passMap[y0][x0 + 1] != 0)
+		if (x0 + 1 < kMapWidth && _passMap[y0][x0 + 1] != 0)
 			return kDirE;
 
 		return 0;
@@ -169,13 +169,13 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 	if (dir == (kRight | kDown)) {
 		if (x0 + 1 < kMapWidth && y0 + 1 < kMapHeight
-		    && passMap[y0 + 1][x0 + 1] != 0)
+		    && _passMap[y0 + 1][x0 + 1] != 0)
 			return kDirSE;
 
-		if (y0 + 1 < kMapHeight && passMap[y0 + 1][x0] != 0)
+		if (y0 + 1 < kMapHeight && _passMap[y0 + 1][x0] != 0)
 			return kDirS;
 
-		if (x0 + 1 < kMapWidth && passMap[y0][x0 + 1] != 0)
+		if (x0 + 1 < kMapWidth && _passMap[y0][x0 + 1] != 0)
 			return kDirE;
 
 		return 0;
@@ -183,13 +183,13 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 	if (dir == (kLeft | kUp)) {
 		if (x0 - 1 >= 0 && y0 - 1 >= 0
-		    && passMap[y0 - 1][x0 - 1] != 0)
+		    && _passMap[y0 - 1][x0 - 1] != 0)
 			return kDirNW;
 
-		if (y0 - 1 >= 0 && passMap[y0 - 1][x0] != 0)
+		if (y0 - 1 >= 0 && _passMap[y0 - 1][x0] != 0)
 			return kDirN;
 
-		if (x0 - 1 >= 0 && passMap[y0][x0 - 1] != 0)
+		if (x0 - 1 >= 0 && _passMap[y0][x0 - 1] != 0)
 			return kDirW;
 
 		return 0;
@@ -197,13 +197,13 @@ int16 Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 
 	if (dir == (kLeft | kDown)) {
 		if (x0 - 1 >= 0 && y0 + 1 < kMapHeight
-		    && passMap[y0 + 1][x0 - 1] != 0)
+		    && _passMap[y0 + 1][x0 - 1] != 0)
 			return kDirSW;
 
-		if (y0 + 1 < kMapHeight && passMap[y0 + 1][x0] != 0)
+		if (y0 + 1 < kMapHeight && _passMap[y0 + 1][x0] != 0)
 			return kDirS;
 
-		if (x0 - 1 >= 0 && passMap[y0][x0 - 1] != 0)
+		if (x0 - 1 >= 0 && _passMap[y0][x0 - 1] != 0)
 			return kDirW;
 
 		return 0;
@@ -220,12 +220,12 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 	length = 30000;
 
 	for (i = 0; i < 40; i++) {
-		if (wayPoints[i].x < 0 ||
-				wayPoints[i].x >= kMapWidth ||
-				wayPoints[i].y < 0 || wayPoints[i].y >= kMapHeight)
+		if (_wayPoints[i].x < 0 ||
+				_wayPoints[i].x >= kMapWidth ||
+				_wayPoints[i].y < 0 || _wayPoints[i].y >= kMapHeight)
 			return -1;
 
-		tmp = ABS(x - wayPoints[i].x) + ABS(y - wayPoints[i].y);
+		tmp = ABS(x - _wayPoints[i].x) + ABS(y - _wayPoints[i].y);
 
 		if (tmp <= length) {
 			lnearestWayPoint = i;
@@ -237,17 +237,17 @@ int16 Map::findNearestWayPoint(int16 x, int16 y) {
 }
 
 void Map::findNearestToGob(void) {
-	int16 wayPoint = findNearestWayPoint(curGoblinX, curGoblinY);
+	int16 wayPoint = findNearestWayPoint(_curGoblinX, _curGoblinY);
 
 	if (wayPoint != -1)
-		nearestWayPoint = wayPoint;
+		_nearestWayPoint = wayPoint;
 }
 
 void Map::findNearestToDest(void) {
-	int16 wayPoint = findNearestWayPoint(destX, destY);
+	int16 wayPoint = findNearestWayPoint(_destX, _destY);
 
 	if (wayPoint != -1)
-		nearestDest = wayPoint;
+		_nearestDest = wayPoint;
 }
 
 int16 Map::checkDirectPath(int16 x0, int16 y0, int16 x1, int16 y1) {
@@ -324,20 +324,20 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 
 			nextLink = 0;
 			if (i0 > i1) {
-				curX = wayPoints[i0].x;
-				curY = wayPoints[i0].y;
+				curX = _wayPoints[i0].x;
+				curY = _wayPoints[i0].y;
 				i0--;
 			} else if (i0 < i1) {
-				curX = wayPoints[i0].x;
-				curY = wayPoints[i0].y;
+				curX = _wayPoints[i0].x;
+				curY = _wayPoints[i0].y;
 				i0++;
 			} else if (i0 == i1) {
-				curX = wayPoints[i0].x;
-				curY = wayPoints[i0].y;
+				curX = _wayPoints[i0].x;
+				curY = _wayPoints[i0].y;
 			}
 		}
-		if (i0 == i1 && wayPoints[i0].x == x0
-		    && wayPoints[i0].y == y0) {
+		if (i0 == i1 && _wayPoints[i0].x == x0
+		    && _wayPoints[i0].y == y0) {
 			if (checkDirectPath(x0, y0, x1, y1) == 1)
 				return 1;
 			return 0;
@@ -389,29 +389,29 @@ int16 Map::checkLongPath(int16 x0, int16 y0, int16 x1, int16 y1, int16 i0, int16
 void Map::optimizePoints(void) {
 	int16 i;
 
-	if (nearestWayPoint < nearestDest) {
-		for (i = nearestWayPoint; i <= nearestDest; i++) {
-			if (checkDirectPath(curGoblinX, curGoblinY,
-				wayPoints[i].x, wayPoints[i].y) == 1)
-				nearestWayPoint = i;
+	if (_nearestWayPoint < _nearestDest) {
+		for (i = _nearestWayPoint; i <= _nearestDest; i++) {
+			if (checkDirectPath(_curGoblinX, _curGoblinY,
+				_wayPoints[i].x, _wayPoints[i].y) == 1)
+				_nearestWayPoint = i;
 		}
-	} else if (nearestWayPoint > nearestDest) {
-		for (i = nearestWayPoint; i >= nearestDest; i--) {
-			if (checkDirectPath(curGoblinX, curGoblinY,
-				wayPoints[i].x, wayPoints[i].y) == 1)
-				nearestWayPoint = i;
+	} else if (_nearestWayPoint > _nearestDest) {
+		for (i = _nearestWayPoint; i >= _nearestDest; i--) {
+			if (checkDirectPath(_curGoblinX, _curGoblinY,
+				_wayPoints[i].x, _wayPoints[i].y) == 1)
+				_nearestWayPoint = i;
 		}
 	}
 }
 
 void Map::loadDataFromAvo(char *dest, int16 size) {
-	memcpy(dest, avoDataPtr, size);
-	avoDataPtr += size;
+	memcpy(dest, _avoDataPtr, size);
+	_avoDataPtr += size;
 }
 
 uint16 Map::loadFromAvo_LE_UINT16() {
-	uint16 tmp = READ_LE_UINT16(avoDataPtr);
-	avoDataPtr += 2;
+	uint16 tmp = READ_LE_UINT16(_avoDataPtr);
+	_avoDataPtr += 2;
 	return tmp;
 }
 
@@ -424,12 +424,12 @@ void Map::loadItemToObject(void) {
 	if (flag == 0)
 		return;
 
-	avoDataPtr += 1456;
+	_avoDataPtr += 1456;
 	count = loadFromAvo_LE_UINT16();
 	for (i = 0; i < count; i++) {
-		avoDataPtr += 20;
+		_avoDataPtr += 20;
 		_vm->_goblin->itemToObject[i] = loadFromAvo_LE_UINT16();
-		avoDataPtr += 5;
+		_avoDataPtr += 5;
 	}
 }
 
@@ -455,60 +455,60 @@ void Map::loadMapObjects(char *avjFile) {
 	int16 count2;
 	int16 count3;
 
-	strcpy(avoName, sourceFile);
+	strcpy(avoName, _sourceFile);
 	strcat(avoName, ".avo");
 
 	handle = _vm->_dataio->openData(avoName);
 	if (handle >= 0) {
-		loadFromAvo = 1;
+		_loadFromAvo = 1;
 		_vm->_dataio->closeData(handle);
-		avoDataPtr = _vm->_dataio->getData(avoName);
-		dataBuf = avoDataPtr;
-		loadDataFromAvo((char *)passMap, kMapHeight * kMapWidth);
+		_avoDataPtr = _vm->_dataio->getData(avoName);
+		dataBuf = _avoDataPtr;
+		loadDataFromAvo((char *)_passMap, kMapHeight * kMapWidth);
 
 		for (y = 0; y < kMapHeight; y++) {
 			for (x = 0; x < kMapWidth; x++) {
 				loadDataFromAvo(&item, 1);
-				itemsMap[y][x] = item;
+				_itemsMap[y][x] = item;
 			}
 		}
 
 		for (i = 0; i < 40; i++) {
-			wayPoints[i].x = loadFromAvo_LE_UINT16();
-			wayPoints[i].y = loadFromAvo_LE_UINT16();
+			_wayPoints[i].x = loadFromAvo_LE_UINT16();
+			_wayPoints[i].y = loadFromAvo_LE_UINT16();
 		}
-		loadDataFromAvo((char *)itemPoses, szMap_ItemPos * 20);
+		loadDataFromAvo((char *)_itemPoses, szMap_ItemPos * 20);
 	} else {
-		loadFromAvo = 0;
-		avoDataPtr = _vm->_dataio->getData(avjFile);
-		dataBuf = avoDataPtr;
+		_loadFromAvo = 0;
+		_avoDataPtr = _vm->_dataio->getData(avjFile);
+		dataBuf = _avoDataPtr;
 	}
 
-	avoDataPtr += 32;
-	avoDataPtr += 76;
-	avoDataPtr += 4;
-	avoDataPtr += 20;
+	_avoDataPtr += 32;
+	_avoDataPtr += 76;
+	_avoDataPtr += 4;
+	_avoDataPtr += 20;
 
 	for (i = 0; i < 3; i++) {
 		tmp = loadFromAvo_LE_UINT16();
-		avoDataPtr += tmp * 14;
+		_avoDataPtr += tmp * 14;
 	}
 
 	soundCount = loadFromAvo_LE_UINT16();
-	savedPtr = avoDataPtr;
+	savedPtr = _avoDataPtr;
 
-	avoDataPtr += 14 * soundCount;
-	avoDataPtr += 4;
-	avoDataPtr += 24;
+	_avoDataPtr += 14 * soundCount;
+	_avoDataPtr += 4;
+	_avoDataPtr += 24;
 
 	count2 = loadFromAvo_LE_UINT16();
 	count3 = loadFromAvo_LE_UINT16();
 
-	savedPtr2 = avoDataPtr;
-	avoDataPtr += count2 * 8;
+	savedPtr2 = _avoDataPtr;
+	_avoDataPtr += count2 * 8;
 
-	savedPtr3 = avoDataPtr;
-	avoDataPtr += count3 * 8;
+	savedPtr3 = _avoDataPtr;
+	_avoDataPtr += count3 * 8;
 
 	_vm->_goblin->gobsCount = loadFromAvo_LE_UINT16();
 	for (i = 0; i < _vm->_goblin->gobsCount; i++) {
@@ -533,9 +533,9 @@ void Map::loadMapObjects(char *avjFile) {
 
 		// FIXME: All is wrong further. We should unwind calls to loadDataFromAvo()
 		loadDataFromAvo((char *)_vm->_goblin->goblins[i]->stateMach, 40 * szGob_StateLine);
-		avoDataPtr += 160;
-		_vm->_goblin->goblins[i]->multObjIndex = *avoDataPtr;
-		avoDataPtr += 2;
+		_avoDataPtr += 160;
+		_vm->_goblin->goblins[i]->multObjIndex = *_avoDataPtr;
+		_avoDataPtr += 2;
 
 		_vm->_goblin->goblins[i]->realStateMach = _vm->_goblin->goblins[i]->stateMach;
 		for (state = 0; state < 40; state++) {
@@ -548,16 +548,16 @@ void Map::loadMapObjects(char *avjFile) {
 
 				tmpState->animation = loadFromAvo_LE_UINT16();
 				tmpState->layer = loadFromAvo_LE_UINT16();
-				avoDataPtr += 8;
+				_avoDataPtr += 8;
 				tmpState->unk0 = loadFromAvo_LE_UINT16();
 				tmpState->unk1 = loadFromAvo_LE_UINT16();
 
-				avoDataPtr += 2;
-				if (READ_LE_UINT32(avoDataPtr) != 0) {
-					avoDataPtr += 4;
+				_avoDataPtr += 2;
+				if (READ_LE_UINT32(_avoDataPtr) != 0) {
+					_avoDataPtr += 4;
 					tmpState->sndItem = loadFromAvo_LE_UINT16();
 				} else {
-					avoDataPtr += 6;
+					_avoDataPtr += 6;
 					tmpState->sndItem = -1;
 				}
 				tmpState->freq = loadFromAvo_LE_UINT16();
@@ -630,9 +630,9 @@ void Map::loadMapObjects(char *avjFile) {
 		_vm->_goblin->objects[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
 
 		loadDataFromAvo((char *)_vm->_goblin->objects[i]->stateMach, 40 * szGob_StateLine);
-		avoDataPtr += 160;
-		_vm->_goblin->objects[i]->multObjIndex = *avoDataPtr;
-		avoDataPtr += 2;
+		_avoDataPtr += 160;
+		_vm->_goblin->objects[i]->multObjIndex = *_avoDataPtr;
+		_avoDataPtr += 2;
 
 		_vm->_goblin->objects[i]->realStateMach = _vm->_goblin->objects[i]->stateMach;
 		for (state = 0; state < 40; state++) {
@@ -645,16 +645,16 @@ void Map::loadMapObjects(char *avjFile) {
 
 				tmpState->animation = loadFromAvo_LE_UINT16();
 				tmpState->layer = loadFromAvo_LE_UINT16();
-				avoDataPtr += 8;
+				_avoDataPtr += 8;
 				tmpState->unk0 = loadFromAvo_LE_UINT16();
 				tmpState->unk1 = loadFromAvo_LE_UINT16();
 
-				avoDataPtr += 2;
-				if (READ_LE_UINT32(avoDataPtr) != 0) {
-					avoDataPtr += 4;
+				_avoDataPtr += 2;
+				if (READ_LE_UINT32(_avoDataPtr) != 0) {
+					_avoDataPtr += 4;
 					tmpState->sndItem = loadFromAvo_LE_UINT16();
 				} else {
-					avoDataPtr += 6;
+					_avoDataPtr += 6;
 					tmpState->sndItem = -1;
 				}
 				tmpState->freq = loadFromAvo_LE_UINT16();
@@ -689,19 +689,19 @@ void Map::loadMapObjects(char *avjFile) {
 
 	state = loadFromAvo_LE_UINT16();
 	for (i = 0; i < state; i++) {
-		avoDataPtr += 30;
+		_avoDataPtr += 30;
 
 		loadDataFromAvo((char *)&flag, 4);
-		avoDataPtr += 56;
+		_avoDataPtr += 56;
 
 		if (flag != 0)
-			avoDataPtr += 30;
+			_avoDataPtr += 30;
 	}
 
 	loadDataFromAvo((char *)&tmp, 2);
-	avoDataPtr += 48;
+	_avoDataPtr += 48;
 	loadItemToObject();
-	avoDataPtr = savedPtr;
+	_avoDataPtr = savedPtr;
 
 	for (i = 0; i < soundCount; i++) {
 		loadDataFromAvo(buf, 14);
@@ -727,7 +727,7 @@ void Map::loadMapsInitGobs(void) {
 	int16 layer;
 	int16 i;
 
-	if (loadFromAvo == 0)
+	if (_loadFromAvo == 0)
 		error("load: Loading .pas/.pos files is not supported!");
 
 	for (i = 0; i < 3; i++) {

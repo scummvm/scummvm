@@ -28,19 +28,19 @@
 namespace Gob {
 
 PalAnim::PalAnim(GobEngine *vm) : _vm(vm) {
-	fadeValue = 1;
+	_fadeValue = 1;
 	for (int i = 0; i < 256; i++) {
-		toFadeRed[i] = 0;
-		toFadeGreen[i] = 0;
-		toFadeBlue[i] = 0;
+		_toFadeRed[i] = 0;
+		_toFadeGreen[i] = 0;
+		_toFadeBlue[i] = 0;
 	}
 }
 
 char PalAnim::fadeColor(char from, char to) {
-	if ((int16)from - fadeValue > (int16)to)
-		return from - fadeValue;
-	else if ((int16)from + fadeValue < (int16)to)
-		return from + fadeValue;
+	if ((int16)from - _fadeValue > (int16)to)
+		return from - _fadeValue;
+	else if ((int16)from + _fadeValue < (int16)to)
+		return from + _fadeValue;
 	else
 		return to;
 }
@@ -62,15 +62,9 @@ char PalAnim::fadeStep(int16 oper) {
 				error("fade: _vm->_global->inVM != 0 not supported.");
 
 			for (i = 0; i < 256; i++) {
-				newRed =
-				    fadeColor(_vm->_global->redPalette[i],
-				    toFadeRed[i]);
-				newGreen =
-				    fadeColor(_vm->_global->greenPalette[i],
-				    toFadeGreen[i]);
-				newBlue =
-				    fadeColor(_vm->_global->bluePalette[i],
-				    toFadeBlue[i]);
+				newRed = fadeColor(_vm->_global->redPalette[i], _toFadeRed[i]);
+				newGreen = fadeColor(_vm->_global->greenPalette[i], _toFadeGreen[i]);
+				newBlue = fadeColor(_vm->_global->bluePalette[i], _toFadeBlue[i]);
 
 				if (_vm->_global->redPalette[i] != newRed
 				    || _vm->_global->greenPalette[i] != newGreen
@@ -89,15 +83,15 @@ char PalAnim::fadeStep(int16 oper) {
 
 				_vm->_video->setPalElem(i,
 				    fadeColor(_vm->_global->redPalette[i],
-					toFadeRed[i]),
+					_toFadeRed[i]),
 				    fadeColor(_vm->_global->greenPalette[i],
-					toFadeGreen[i]),
+					_toFadeGreen[i]),
 				    fadeColor(_vm->_global->bluePalette[i],
-					toFadeBlue[i]), -1, _vm->_global->videoMode);
+					_toFadeBlue[i]), -1, _vm->_global->videoMode);
 
-				if (_vm->_global->redPalette[i] != toFadeRed[i] ||
-				    _vm->_global->greenPalette[i] != toFadeGreen[i] ||
-				    _vm->_global->bluePalette[i] != toFadeBlue[i])
+				if (_vm->_global->redPalette[i] != _toFadeRed[i] ||
+				    _vm->_global->greenPalette[i] != _toFadeGreen[i] ||
+				    _vm->_global->bluePalette[i] != _toFadeBlue[i])
 					stop = 0;
 			}
 		}
@@ -106,10 +100,10 @@ char PalAnim::fadeStep(int16 oper) {
 		stop = 1;
 		for (i = 0; i < 16; i++) {
 			_vm->_video->setPalElem(i,
-			    fadeColor(_vm->_global->redPalette[i], toFadeRed[i]),
+			    fadeColor(_vm->_global->redPalette[i], _toFadeRed[i]),
 			    _vm->_global->greenPalette[i], _vm->_global->bluePalette[i], -1, _vm->_global->videoMode);
 
-			if (_vm->_global->redPalette[i] != toFadeRed[i])
+			if (_vm->_global->redPalette[i] != _toFadeRed[i])
 				stop = 0;
 		}
 		return stop;
@@ -118,10 +112,10 @@ char PalAnim::fadeStep(int16 oper) {
 		for (i = 0; i < 16; i++) {
 			_vm->_video->setPalElem(i,
 			    _vm->_global->redPalette[i],
-			    fadeColor(_vm->_global->greenPalette[i], toFadeGreen[i]),
+			    fadeColor(_vm->_global->greenPalette[i], _toFadeGreen[i]),
 			    _vm->_global->bluePalette[i], -1, _vm->_global->videoMode);
 
-			if (_vm->_global->greenPalette[i] != toFadeGreen[i])
+			if (_vm->_global->greenPalette[i] != _toFadeGreen[i])
 				stop = 0;
 		}
 		return stop;
@@ -131,10 +125,10 @@ char PalAnim::fadeStep(int16 oper) {
 			_vm->_video->setPalElem(i,
 			    _vm->_global->redPalette[i],
 			    _vm->_global->greenPalette[i],
-			    fadeColor(_vm->_global->bluePalette[i], toFadeBlue[i]),
+			    fadeColor(_vm->_global->bluePalette[i], _toFadeBlue[i]),
 			    -1, _vm->_global->videoMode);
 
-			if (_vm->_global->bluePalette[i] != toFadeBlue[i])
+			if (_vm->_global->bluePalette[i] != _toFadeBlue[i])
 				stop = 0;
 		}
 		return stop;
@@ -147,9 +141,9 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 	int16 i;
 
 	if (fadeV < 0)
-		fadeValue = -fadeV;
+		_fadeValue = -fadeV;
 	else
-		fadeValue = 2;
+		_fadeValue = 2;
 
 	if (_vm->_global->colorCount < 256) {
 		if (palDesc != 0)
@@ -160,15 +154,15 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 	if (_vm->_global->setAllPalette == 0) {
 		if (palDesc == 0) {
 			for (i = 0; i < 16; i++) {
-				toFadeRed[i] = 0;
-				toFadeGreen[i] = 0;
-				toFadeBlue[i] = 0;
+				_toFadeRed[i] = 0;
+				_toFadeGreen[i] = 0;
+				_toFadeBlue[i] = 0;
 			}
 		} else {
 			for (i = 0; i < 16; i++) {
-				toFadeRed[i] = palDesc->vgaPal[i].red;
-				toFadeGreen[i] = palDesc->vgaPal[i].green;
-				toFadeBlue[i] = palDesc->vgaPal[i].blue;
+				_toFadeRed[i] = palDesc->vgaPal[i].red;
+				_toFadeGreen[i] = palDesc->vgaPal[i].green;
+				_toFadeBlue[i] = palDesc->vgaPal[i].blue;
 			}
 		}
 	} else {
@@ -177,15 +171,15 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 
 		if (palDesc == 0) {
 			for (i = 0; i < 256; i++) {
-				toFadeRed[i] = 0;
-				toFadeGreen[i] = 0;
-				toFadeBlue[i] = 0;
+				_toFadeRed[i] = 0;
+				_toFadeGreen[i] = 0;
+				_toFadeBlue[i] = 0;
 			}
 		} else {
 			for (i = 0; i < 256; i++) {
-				toFadeRed[i] = palDesc->vgaPal[i].red;
-				toFadeGreen[i] = palDesc->vgaPal[i].green;
-				toFadeBlue[i] = palDesc->vgaPal[i].blue;
+				_toFadeRed[i] = palDesc->vgaPal[i].red;
+				_toFadeGreen[i] = palDesc->vgaPal[i].green;
+				_toFadeBlue[i] = palDesc->vgaPal[i].blue;
 			}
 		}
 	}

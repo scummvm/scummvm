@@ -34,15 +34,15 @@
 namespace Gob {
 
 Inter::Inter(GobEngine *vm) : _vm(vm) {
-	terminate = 0;
-	breakFlag = 0;
-	animPalLowIndex = 0;
-	animPalHighIndex = 0;
-	animPalDir = 0;
-	soundEndTimeKey = 0;
-	soundStopVal = 0;
-	breakFromLevel = 0;
-	nestLevel = 0;
+	_terminate = false;
+	_breakFlag = false;
+	_animPalLowIndex = 0;
+	_animPalHighIndex = 0;
+	_animPalDir = 0;
+	_soundEndTimeKey = 0;
+	_soundStopVal = 0;
+	_breakFromLevel = 0;
+	_nestLevel = 0;
 }
 
 int16 Inter::load16(void) {
@@ -197,24 +197,24 @@ void Inter::animPalette(void) {
 	int16 i;
 	Video::Color col;
 
-	if (animPalDir == 0)
+	if (_animPalDir == 0)
 		return;
 
 	_vm->_video->waitRetrace(_vm->_global->videoMode);
 
-	if (animPalDir == -1) {
-		col = _vm->_draw->vgaSmallPalette[animPalLowIndex];
+	if (_animPalDir == -1) {
+		col = _vm->_draw->vgaSmallPalette[_animPalLowIndex];
 
-		for (i = animPalLowIndex; i < animPalHighIndex; i++)
+		for (i = _animPalLowIndex; i < _animPalHighIndex; i++)
 			_vm->_draw->vgaSmallPalette[i] = _vm->_draw->vgaSmallPalette[i + 1];
 
-		_vm->_draw->vgaSmallPalette[animPalHighIndex] = col;
+		_vm->_draw->vgaSmallPalette[_animPalHighIndex] = col;
 	} else {
-		col = _vm->_draw->vgaSmallPalette[animPalHighIndex];
-		for (i = animPalHighIndex; i > animPalLowIndex; i--)
+		col = _vm->_draw->vgaSmallPalette[_animPalHighIndex];
+		for (i = _animPalHighIndex; i > _animPalLowIndex; i--)
 			_vm->_draw->vgaSmallPalette[i] = _vm->_draw->vgaSmallPalette[i - 1];
 
-		_vm->_draw->vgaSmallPalette[animPalLowIndex] = col;
+		_vm->_draw->vgaSmallPalette[_animPalLowIndex] = col;
 	}
 
 	_vm->_global->pPaletteDesc->vgaPal = _vm->_draw->vgaSmallPalette;
@@ -222,9 +222,9 @@ void Inter::animPalette(void) {
 }
 
 void Inter::animPalInit(void) {
-	animPalDir = load16();
-	animPalLowIndex = _vm->_parse->parseValExpr();
-	animPalHighIndex = _vm->_parse->parseValExpr();
+	_animPalDir = load16();
+	_animPalLowIndex = _vm->_parse->parseValExpr();
+	_animPalHighIndex = _vm->_parse->parseValExpr();
 }
 
 void Inter::loadMult(void) {
@@ -920,7 +920,7 @@ void Inter::playComposition(void) {
 
 void Inter::stopSound(void) {
 	_vm->_snd->stopSound(_vm->_parse->parseValExpr());
-	soundEndTimeKey = 0;
+	_soundEndTimeKey = 0;
 }
 
 void Inter::playSound(void) {
@@ -934,7 +934,7 @@ void Inter::playSound(void) {
 	frequency = _vm->_parse->parseValExpr();
 
 	_vm->_snd->stopSound(0);
-	soundEndTimeKey = 0;
+	_soundEndTimeKey = 0;
 	if (_vm->_game->soundSamples[index] == 0)
 		return;
 
@@ -943,16 +943,16 @@ void Inter::playSound(void) {
 			return;
 
 		repCount = -repCount;
-		soundEndTimeKey = _vm->_util->getTimeKey();
+		_soundEndTimeKey = _vm->_util->getTimeKey();
 
 		if (frequency == 0) {
 			freq2 = _vm->_game->soundSamples[index]->frequency;
 		} else {
 			freq2 = frequency;
 		}
-		soundStopVal =
+		_soundStopVal =
 		    (10 * (_vm->_game->soundSamples[index]->size / 2)) / freq2;
-		soundEndTimeKey +=
+		_soundEndTimeKey +=
 		    ((_vm->_game->soundSamples[index]->size * repCount -
 			_vm->_game->soundSamples[index]->size / 2) * 1000) / freq2;
 	}
@@ -1029,7 +1029,7 @@ void Inter::loadTot(void) {
 	}
 
 	strcat(buf, ".tot");
-	terminate = 1;
+	_terminate = true;
 	strcpy(_vm->_game->totToLoad, buf);
 }
 
@@ -1166,7 +1166,7 @@ void Inter::checkSwitchTable(char **ppExec) {
 		for (i = 0; i < len; i++) {
 			evalExpr(0);
 
-			if (terminate != 0)
+			if (_terminate)
 				return;
 
 			if (_vm->_global->inter_resVal == value) {
@@ -1203,7 +1203,7 @@ void Inter::repeatUntil(void) {
 	char flag;
 
 	debug(4, "repeatUntil");
-	nestLevel[0]++;
+	_nestLevel[0]++;
 	blockPtr = _vm->_global->inter_execPtr;
 
 	do {
@@ -1213,13 +1213,13 @@ void Inter::repeatUntil(void) {
 		funcBlock(1);
 		_vm->_global->inter_execPtr = blockPtr + size + 1;
 		flag = evalBoolResult();
-	} while (flag == 0 && breakFlag == 0 && terminate == 0);
+	} while (flag == 0 && !_breakFlag && !_terminate);
 
-	nestLevel[0]--;
+	_nestLevel[0]--;
 
-	if (*breakFromLevel > -1) {
-		breakFlag = 0;
-		*breakFromLevel = -1;
+	if (*_breakFromLevel > -1) {
+		_breakFlag = false;
+		*_breakFromLevel = -1;
 	}
 }
 
@@ -1230,12 +1230,12 @@ void Inter::whileDo(void) {
 	int16 size;
 
 	debug(4, "whileDo");
-	nestLevel[0]++;
+	_nestLevel[0]++;
 	do {
 		savedIP = _vm->_global->inter_execPtr;
 		flag = evalBoolResult();
 
-		if (terminate != 0)
+		if (_terminate)
 			return;
 
 		blockPtr = _vm->_global->inter_execPtr;
@@ -1249,17 +1249,17 @@ void Inter::whileDo(void) {
 			_vm->_global->inter_execPtr += size;
 		}
 
-		if (breakFlag != 0 || terminate != 0) {
+		if (_breakFlag || _terminate) {
 			_vm->_global->inter_execPtr = blockPtr;
 			_vm->_global->inter_execPtr += size;
 			break;
 		}
 	} while (flag != 0);
 
-	nestLevel[0]--;
-	if (*breakFromLevel > -1) {
-		breakFlag = 0;
-		*breakFromLevel = -1;
+	_nestLevel[0]--;
+	if (*_breakFromLevel > -1) {
+		_breakFlag = false;
+		*_breakFromLevel = -1;
 	}
 }
 
@@ -1275,7 +1275,7 @@ void Inter::funcBlock(int16 retFlag) {
 	if (_vm->_global->inter_execPtr == 0)
 		return;
 
-	breakFlag = 0;
+	_breakFlag = false;
 	_vm->_global->inter_execPtr++;
 	cmdCount = *_vm->_global->inter_execPtr++;
 	_vm->_global->inter_execPtr += 2;
@@ -1287,7 +1287,7 @@ void Inter::funcBlock(int16 retFlag) {
 
 	counter = 0;
 	do {
-		if (terminate != 0)
+		if (_terminate)
 			break;
 
 		cmd = (byte)*_vm->_global->inter_execPtr;
@@ -1440,7 +1440,7 @@ void Inter::funcBlock(int16 retFlag) {
 			switch (cmd) {
 			case 0:
 				if (retFlag != 2)
-					breakFlag = 1;
+					_breakFlag = true;
 
 				_vm->_global->inter_execPtr = 0;
 				return;
@@ -1479,16 +1479,16 @@ void Inter::funcBlock(int16 retFlag) {
 			switch (cmd) {
 			case 0:
 				if (retFlag == 1) {
-					breakFlag = 1;
+					_breakFlag = true;
 					_vm->_global->inter_execPtr = 0;
 					return;
 				}
 
-				if (*nestLevel == 0)
+				if (*_nestLevel == 0)
 					break;
 
-				*breakFromLevel = *nestLevel;
-				breakFlag = 1;
+				*_breakFromLevel = *_nestLevel;
+				_breakFlag = true;
 				_vm->_global->inter_execPtr = 0;
 				return;
 
@@ -1626,12 +1626,12 @@ void Inter::funcBlock(int16 retFlag) {
 
 		}
 
-		if (breakFlag != 0) {
+		if (_breakFlag) {
 			if (retFlag != 2)
 				break;
 
-			if (*breakFromLevel == -1)
-				breakFlag = 0;
+			if (*_breakFromLevel == -1)
+				_breakFlag = false;
 			break;
 		}
 	} while (counter != cmdCount);
@@ -1641,15 +1641,15 @@ void Inter::funcBlock(int16 retFlag) {
 }
 
 void Inter::initControlVars(void) {
-	*nestLevel = 0;
-	*breakFromLevel = -1;
+	*_nestLevel = 0;
+	*_breakFromLevel = -1;
 
 	*_vm->_scenery->pCaptureCounter = 0;
 
-	breakFlag = 0;
-	terminate = 0;
-	animPalDir = 0;
-	soundEndTimeKey = 0;
+	_breakFlag = false;
+	_terminate = false;
+	_animPalDir = 0;
+	_soundEndTimeKey = 0;
 }
 
 void Inter::callSub(int16 retFlag) {
@@ -1664,7 +1664,7 @@ void Inter::callSub(int16 retFlag) {
 	}
 
 	if ((char *)_vm->_global->inter_execPtr == _vm->_game->totFileData)
-		terminate = 1;
+		_terminate = true;
 }
 
 } // End of namespace Gob

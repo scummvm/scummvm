@@ -660,16 +660,16 @@ void Goblin::switchGoblin(int16 index) {
 	else
 		next = index - 1;
 
-	if (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 3 ||
-	    _vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 6)
+	if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 3 ||
+	    _vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6)
 		return;
 
 	if (goblins[(currentGoblin + 1) % 3]->type != 0 &&
 	    goblins[(currentGoblin + 2) % 3]->type != 0)
 		return;
 
-	gobPositions[currentGoblin].x = _vm->_map->curGoblinX;
-	gobPositions[currentGoblin].y = _vm->_map->curGoblinY;
+	gobPositions[currentGoblin].x = _vm->_map->_curGoblinX;
+	gobPositions[currentGoblin].y = _vm->_map->_curGoblinY;
 
 	goblins[currentGoblin]->doAnim = 1;
 	goblins[currentGoblin]->nextState = 21;
@@ -691,15 +691,15 @@ void Goblin::switchGoblin(int16 index) {
 
 	tmp = gobPositions[currentGoblin].x;
 	pressedMapX = tmp;
-	_vm->_map->destX = tmp;
+	_vm->_map->_destX = tmp;
 	gobDestX = tmp;
-	_vm->_map->curGoblinX = tmp;
+	_vm->_map->_curGoblinX = tmp;
 
 	tmp = gobPositions[currentGoblin].y;
 	pressedMapY = tmp;
-	_vm->_map->destY = tmp;
+	_vm->_map->_destY = tmp;
 	gobDestY = tmp;
-	_vm->_map->curGoblinY = tmp;
+	_vm->_map->_curGoblinY = tmp;
 
 	*curGobVarPtr = currentGoblin;
 	pathExistence = 0;
@@ -713,9 +713,9 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 	int16 deltaPix;
 	int16 i;
 
-	if (_vm->_map->passMap[pressedMapY][pressedMapX] == 0 &&
+	if (_vm->_map->_passMap[pressedMapY][pressedMapX] == 0 &&
 	    (gobAction == 0
-		|| _vm->_map->itemsMap[pressedMapY][pressedMapX] == 0)) {
+		|| _vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0)) {
 
 		resDelta = -1;
 		resDeltaDir = 0;
@@ -723,7 +723,7 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 		for (i = 1;
 		    i <= pressedMapX
-		    && _vm->_map->passMap[pressedMapY][pressedMapX - i] == 0;
+		    && _vm->_map->_passMap[pressedMapY][pressedMapX - i] == 0;
 		    i++);
 
 		if (i <= pressedMapX) {
@@ -733,7 +733,7 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 		for (i = 1;
 				(i + pressedMapX) < Map::kMapWidth
-		    && _vm->_map->passMap[pressedMapY][pressedMapX + i] == 0;
+		    && _vm->_map->_passMap[pressedMapY][pressedMapX + i] == 0;
 		    i++);
 
 		if (pressedMapX + i < Map::kMapWidth) {
@@ -747,7 +747,7 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 		for (i = 1;
 				(i + pressedMapY) < Map::kMapHeight
-		    && _vm->_map->passMap[pressedMapY + i][pressedMapX] == 0;
+		    && _vm->_map->_passMap[pressedMapY + i][pressedMapX] == 0;
 		    i++);
 
 		if (pressedMapY + i < Map::kMapHeight) {
@@ -761,7 +761,7 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 		for (i = 1;
 		    i <= pressedMapY
-		    && _vm->_map->passMap[pressedMapY - i][pressedMapX] == 0;
+		    && _vm->_map->_passMap[pressedMapY - i][pressedMapX] == 0;
 		    i++);
 
 		if (i <= pressedMapY) {
@@ -796,18 +796,18 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 void Goblin::adjustTarget(void) {
 	if (gobAction == 4
-	    && _vm->_map->itemsMap[pressedMapY][pressedMapX] == 0) {
+	    && _vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0) {
 
 		if (pressedMapY > 0
-		    && _vm->_map->itemsMap[pressedMapY - 1][pressedMapX] !=
+		    && _vm->_map->_itemsMap[pressedMapY - 1][pressedMapX] !=
 		    0) {
 			pressedMapY--;
 		} else if (pressedMapX < Map::kMapWidth - 1
-		    && _vm->_map->itemsMap[pressedMapY][pressedMapX + 1] !=
+		    && _vm->_map->_itemsMap[pressedMapY][pressedMapX + 1] !=
 		    0) {
 			pressedMapX++;
 		} else if (pressedMapX < Map::kMapWidth - 1 && pressedMapY > 0
-		    && _vm->_map->itemsMap[pressedMapY - 1][pressedMapX +
+		    && _vm->_map->_itemsMap[pressedMapY - 1][pressedMapX +
 			1] != 0) {
 			pressedMapY--;
 			pressedMapX++;
@@ -816,16 +816,16 @@ void Goblin::adjustTarget(void) {
 }
 
 void Goblin::targetDummyItem(Gob_Object *gobDesc) {
-	if (_vm->_map->itemsMap[pressedMapY][pressedMapX] == 0 &&
-	    _vm->_map->passMap[pressedMapY][pressedMapX] == 1) {
+	if (_vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0 &&
+	    _vm->_map->_passMap[pressedMapY][pressedMapX] == 1) {
 		if (gobDesc->curLookDir == 0) {
-			_vm->_map->itemPoses[0].x = pressedMapX;
-			_vm->_map->itemPoses[0].y = pressedMapY;
-			_vm->_map->itemPoses[0].orient = -4;
+			_vm->_map->_itemPoses[0].x = pressedMapX;
+			_vm->_map->_itemPoses[0].y = pressedMapY;
+			_vm->_map->_itemPoses[0].orient = -4;
 		} else {
-			_vm->_map->itemPoses[0].x = pressedMapX;
-			_vm->_map->itemPoses[0].y = pressedMapY;
-			_vm->_map->itemPoses[0].orient = -1;
+			_vm->_map->_itemPoses[0].x = pressedMapX;
+			_vm->_map->_itemPoses[0].y = pressedMapY;
+			_vm->_map->_itemPoses[0].orient = -1;
 		}
 	}
 }
@@ -840,7 +840,7 @@ void Goblin::targetItem(void) {
 	Gob_Object *itemDesc;
 
 	if (gobAction == 3 || gobAction == 4) {
-		items = _vm->_map->itemsMap[pressedMapY][pressedMapX];
+		items = _vm->_map->_itemsMap[pressedMapY][pressedMapX];
 		if (gobAction == 4 && (items & 0xff00) != 0 &&
 		    objects[itemToObject[(items & 0xff00) >> 8]]->
 		    pickable == 1) {
@@ -862,71 +862,71 @@ void Goblin::targetItem(void) {
 			itemByteFlag = 0;
 		}
 
-		pressedMapY = _vm->_map->itemPoses[destItemId].y;
-		_vm->_map->destY = _vm->_map->itemPoses[destItemId].y;
-		gobDestY = _vm->_map->itemPoses[destItemId].y;
+		pressedMapY = _vm->_map->_itemPoses[destItemId].y;
+		_vm->_map->_destY = _vm->_map->_itemPoses[destItemId].y;
+		gobDestY = _vm->_map->_itemPoses[destItemId].y;
 
 		if (gobAction == 3 || destActionItem == 0) {
-			pressedMapX = _vm->_map->itemPoses[destItemId].x;
-			_vm->_map->destX = _vm->_map->itemPoses[destItemId].x;
-			gobDestX = _vm->_map->itemPoses[destItemId].x;
+			pressedMapX = _vm->_map->_itemPoses[destItemId].x;
+			_vm->_map->_destX = _vm->_map->_itemPoses[destItemId].x;
+			gobDestX = _vm->_map->_itemPoses[destItemId].x;
 		} else if ((items & 0xff00) != 0) {
-			if (_vm->_map->itemPoses[destItemId].orient == 4) {
-				if ((_vm->_map->itemsMap[pressedMapY]
+			if (_vm->_map->_itemPoses[destItemId].orient == 4) {
+				if ((_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX - 1] & 0xff00) ==
-				    (_vm->_map->itemsMap[pressedMapY]
+				    (_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX] & 0xff00)) {
 					pressedMapX--;
-					_vm->_map->destX = pressedMapX;
+					_vm->_map->_destX = pressedMapX;
 					gobDestX = pressedMapX;
 				}
-			} else if (_vm->_map->itemPoses[destItemId].orient == 0) {
+			} else if (_vm->_map->_itemPoses[destItemId].orient == 0) {
 
-				if ((_vm->_map->itemsMap[pressedMapY]
+				if ((_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX + 1] & 0xff00) ==
-				    (_vm->_map->itemsMap[pressedMapY]
+				    (_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX] & 0xff00)) {
 					pressedMapX++;
-					_vm->_map->destX = pressedMapX;
+					_vm->_map->_destX = pressedMapX;
 					gobDestX = pressedMapX;
 				}
 			}
 
-			if ((_vm->_map->itemsMap[pressedMapY +
+			if ((_vm->_map->_itemsMap[pressedMapY +
 				    1][pressedMapX] & 0xff00) ==
-			    (_vm->_map->itemsMap[pressedMapY][pressedMapX] &
+			    (_vm->_map->_itemsMap[pressedMapY][pressedMapX] &
 				0xff00)) {
 				pressedMapY++;
-				_vm->_map->destY = pressedMapY;
+				_vm->_map->_destY = pressedMapY;
 				gobDestY = pressedMapY;
 			}
 		} else {
-			if (_vm->_map->itemPoses[destItemId].orient == 4) {
-				if ((_vm->_map->itemsMap[pressedMapY]
+			if (_vm->_map->_itemPoses[destItemId].orient == 4) {
+				if ((_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX - 1]) ==
-				    (_vm->_map->itemsMap[pressedMapY]
+				    (_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX])) {
 					pressedMapX--;
-					_vm->_map->destX = pressedMapX;
+					_vm->_map->_destX = pressedMapX;
 					gobDestX = pressedMapX;
 				}
-			} else if (_vm->_map->itemPoses[destItemId].orient == 0) {
+			} else if (_vm->_map->_itemPoses[destItemId].orient == 0) {
 
-				if ((_vm->_map->itemsMap[pressedMapY]
+				if ((_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX + 1]) ==
-				    (_vm->_map->itemsMap[pressedMapY]
+				    (_vm->_map->_itemsMap[pressedMapY]
 					[pressedMapX])) {
 					pressedMapX++;
-					_vm->_map->destX = pressedMapX;
+					_vm->_map->_destX = pressedMapX;
 					gobDestX = pressedMapX;
 				}
 			}
 
-			if ((_vm->_map->itemsMap[pressedMapY +
+			if ((_vm->_map->_itemsMap[pressedMapY +
 				    1][pressedMapX]) ==
-			    (_vm->_map->itemsMap[pressedMapY][pressedMapX])) {
+			    (_vm->_map->_itemsMap[pressedMapY][pressedMapX])) {
 				pressedMapY++;
-				_vm->_map->destY = pressedMapY;
+				_vm->_map->_destY = pressedMapY;
 				gobDestY = pressedMapY;
 			}
 
@@ -960,18 +960,18 @@ void Goblin::targetItem(void) {
 			if ((tmpX % 12) < 6 && tmpPosX > 0)
 				tmpPosX--;
 
-			if (_vm->_map->itemPoses[destActionItem].orient == 0 ||
-			    _vm->_map->itemPoses[destActionItem].orient == -1) {
+			if (_vm->_map->_itemPoses[destActionItem].orient == 0 ||
+			    _vm->_map->_itemPoses[destActionItem].orient == -1) {
 				tmpPosX++;
 			}
 
-			if (_vm->_map->passMap[tmpPosY][tmpPosX] == 1) {
+			if (_vm->_map->_passMap[tmpPosY][tmpPosX] == 1) {
 				pressedMapX = tmpPosX;
-				_vm->_map->destX = tmpPosX;
+				_vm->_map->_destX = tmpPosX;
 				gobDestX = tmpPosX;
 
 				pressedMapY = tmpPosY;
-				_vm->_map->destY = tmpPosY;
+				_vm->_map->_destY = tmpPosY;
 				gobDestY = tmpPosY;
 			}
 		}
@@ -983,17 +983,17 @@ void Goblin::initiateMove(void) {
 	_vm->_map->findNearestToGob();
 	_vm->_map->optimizePoints();
 
-	pathExistence = _vm->_map->checkDirectPath(_vm->_map->curGoblinX, _vm->_map->curGoblinY,
+	pathExistence = _vm->_map->checkDirectPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
 	    pressedMapX, pressedMapY);
 
 	if (pathExistence == 3) {
-		if (_vm->_map->checkLongPath(_vm->_map->curGoblinX, _vm->_map->curGoblinY,
+		if (_vm->_map->checkLongPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
 			pressedMapX, pressedMapY,
-			_vm->_map->nearestWayPoint, _vm->_map->nearestDest) == 0) {
+			_vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
 			pathExistence = 0;
 		} else {
-			_vm->_map->destX = _vm->_map->wayPoints[_vm->_map->nearestWayPoint].x;
-			_vm->_map->destY = _vm->_map->wayPoints[_vm->_map->nearestWayPoint].y;
+			_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
+			_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
 		}
 	}
 }
@@ -1036,36 +1036,36 @@ void Goblin::moveFindItem(int16 posX, int16 posY) {
 		pressedMapX = posX / 12;
 		pressedMapY = posY / 6;
 
-		if (_vm->_map->itemsMap[pressedMapY][pressedMapX] == 0
+		if (_vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0
 		    && i < 20) {
 
-			if (_vm->_map->itemsMap[pressedMapY +
+			if (_vm->_map->_itemsMap[pressedMapY +
 				1][pressedMapX] != 0) {
 				pressedMapY++;
-			} else if (_vm->_map->itemsMap[pressedMapY +
+			} else if (_vm->_map->_itemsMap[pressedMapY +
 				1][pressedMapX + 1] != 0) {
 				pressedMapX++;
 				pressedMapY++;
 			} else
-			    if (_vm->_map->itemsMap[pressedMapY][pressedMapX +
+			    if (_vm->_map->_itemsMap[pressedMapY][pressedMapX +
 				1] != 0) {
 				pressedMapX++;
-			} else if (_vm->_map->itemsMap[pressedMapY -
+			} else if (_vm->_map->_itemsMap[pressedMapY -
 				1][pressedMapX + 1] != 0) {
 				pressedMapX++;
 				pressedMapY--;
-			} else if (_vm->_map->itemsMap[pressedMapY -
+			} else if (_vm->_map->_itemsMap[pressedMapY -
 				1][pressedMapX] != 0) {
 				pressedMapY--;
-			} else if (_vm->_map->itemsMap[pressedMapY -
+			} else if (_vm->_map->_itemsMap[pressedMapY -
 				1][pressedMapX - 1] != 0) {
 				pressedMapY--;
 				pressedMapX--;
 			} else
-			    if (_vm->_map->itemsMap[pressedMapY][pressedMapX -
+			    if (_vm->_map->_itemsMap[pressedMapY][pressedMapX -
 				1] != 0) {
 				pressedMapX--;
-			} else if (_vm->_map->itemsMap[pressedMapY +
+			} else if (_vm->_map->_itemsMap[pressedMapY +
 				1][pressedMapX - 1] != 0) {
 				pressedMapX--;
 				pressedMapY++;
@@ -1095,8 +1095,8 @@ void Goblin::moveCheckSelect(int16 framesCount, Gob_Object * gobDesc, int16 *pGo
 
 		if (*pGobIndex != 0) {
 			pathExistence = 0;
-		} else if (_vm->_map->curGoblinX == pressedMapX &&
-		    _vm->_map->curGoblinY == pressedMapY) {
+		} else if (_vm->_map->_curGoblinX == pressedMapX &&
+		    _vm->_map->_curGoblinY == pressedMapY) {
 
 			if (gobAction != 0)
 				readyToAct = 1;
@@ -1139,10 +1139,10 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 		adjustDest(posX, posY);
 		adjustTarget();
 
-		_vm->_map->destX = pressedMapX;
+		_vm->_map->_destX = pressedMapX;
 		gobDestX = pressedMapX;
 
-		_vm->_map->destY = pressedMapY;
+		_vm->_map->_destY = pressedMapY;
 		gobDestY = pressedMapY;
 
 		targetDummyItem(gobDesc);
@@ -1154,8 +1154,8 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 	} else {
 
 		if (readyToAct != 0 &&
-		    (_vm->_map->curGoblinX != pressedMapX ||
-			_vm->_map->curGoblinY != pressedMapY))
+		    (_vm->_map->_curGoblinX != pressedMapX ||
+			_vm->_map->_curGoblinY != pressedMapY))
 			readyToAct = 0;
 
 		if (gobDesc->type == 1) {
@@ -1169,57 +1169,57 @@ void Goblin::moveTreatRopeStairs(Gob_Object *gobDesc) {
 		return;
 
 	if (gobDesc->nextState == 28
-	    && _vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX] == 6) {
+	    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 6) {
 		forceNextState[0] = 28;
 		forceNextState[1] = -1;
 	}
 
 	if (gobDesc->nextState == 29
-	    && _vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX] == 6) {
+	    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 6) {
 		forceNextState[0] = 29;
 		forceNextState[1] = -1;
 	}
 
 	if ((gobDesc->nextState == 28 || gobDesc->nextState == 29
 		|| gobDesc->nextState == 20)
-	    && _vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 6) {
+	    && _vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6) {
 		if ((gobDesc->curLookDir == 0 || gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 2)
-		    && _vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX] == 6) {
+		    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 6) {
 			forceNextState[0] = 28;
 			forceNextState[1] = -1;
 		} else if ((gobDesc->curLookDir == 0
 			|| gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 6)
-		    && _vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX] == 6) {
+		    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 6) {
 			forceNextState[0] = 29;
 			forceNextState[1] = -1;
 		}
 	}
 
 	if (gobDesc->nextState == 8
-	    && _vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX] == 3) {
+	    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 3) {
 		forceNextState[0] = 8;
 		forceNextState[1] = -1;
 	}
 
 	if (gobDesc->nextState == 9
-	    && _vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX] == 3) {
+	    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 3) {
 		forceNextState[0] = 9;
 		forceNextState[1] = -1;
 	}
 
 	if (gobDesc->nextState == 20
-	    && _vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 3) {
+	    && _vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 3) {
 		if ((gobDesc->curLookDir == 0 || gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 2)
-		    && _vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX] == 3) {
+		    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 3) {
 			forceNextState[0] = 8;
 			forceNextState[1] = -1;
 		} else if ((gobDesc->curLookDir == 0
 			|| gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 6)
-		    && _vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX] == 3) {
+		    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 3) {
 			forceNextState[0] = 9;
 			forceNextState[1] = -1;
 		}
@@ -1229,76 +1229,76 @@ void Goblin::moveTreatRopeStairs(Gob_Object *gobDesc) {
 
 void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 	if (pathExistence == 1) {
-		_vm->_map->curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->curGoblinY = gobPositions[currentGoblin].y;
+		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
+		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
 
-		if (_vm->_map->curGoblinX == pressedMapX &&
-		    _vm->_map->curGoblinY == pressedMapY && gobAction != 0) {
+		if (_vm->_map->_curGoblinX == pressedMapX &&
+		    _vm->_map->_curGoblinY == pressedMapY && gobAction != 0) {
 			readyToAct = 1;
 			pathExistence = 0;
 		}
 
-		nextAct = _vm->_map->getDirection(_vm->_map->curGoblinX, _vm->_map->curGoblinY,
-		    _vm->_map->destX, _vm->_map->destY);
+		nextAct = _vm->_map->getDirection(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+		    _vm->_map->_destX, _vm->_map->_destY);
 
 		if (nextAct == 0)
 			pathExistence = 0;
 	} else if (pathExistence == 3) {
-		_vm->_map->curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->curGoblinY = gobPositions[currentGoblin].y;
+		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
+		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
 
-		if (_vm->_map->curGoblinX == gobDestX && _vm->_map->curGoblinY == gobDestY) {
+		if (_vm->_map->_curGoblinX == gobDestX && _vm->_map->_curGoblinY == gobDestY) {
 			pathExistence = 1;
-			_vm->_map->destX = pressedMapX;
-			_vm->_map->destY = pressedMapY;
+			_vm->_map->_destX = pressedMapX;
+			_vm->_map->_destY = pressedMapY;
 		} else {
 
-			if (_vm->_map->checkDirectPath(_vm->_map->curGoblinX, _vm->_map->curGoblinY,
+			if (_vm->_map->checkDirectPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
 				gobDestX, gobDestY) == 1) {
-				_vm->_map->destX = gobDestX;
-				_vm->_map->destY = gobDestY;
-			} else if (_vm->_map->curGoblinX == _vm->_map->destX && _vm->_map->curGoblinY == _vm->_map->destY) {
+				_vm->_map->_destX = gobDestX;
+				_vm->_map->_destY = gobDestY;
+			} else if (_vm->_map->_curGoblinX == _vm->_map->_destX && _vm->_map->_curGoblinY == _vm->_map->_destY) {
 
-				if (_vm->_map->nearestWayPoint > _vm->_map->nearestDest) {
+				if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints();
 
-					_vm->_map->destX =
-					    _vm->_map->wayPoints[_vm->_map->nearestWayPoint].
+					_vm->_map->_destX =
+					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].
 					    x;
-					_vm->_map->destY =
-					    _vm->_map->wayPoints[_vm->_map->nearestWayPoint].
+					_vm->_map->_destY =
+					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].
 					    y;
 
-					if (_vm->_map->nearestWayPoint > _vm->_map->nearestDest)
-						_vm->_map->nearestWayPoint--;
-				} else if (_vm->_map->nearestWayPoint < _vm->_map->nearestDest) {
+					if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest)
+						_vm->_map->_nearestWayPoint--;
+				} else if (_vm->_map->_nearestWayPoint < _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints();
 
-					_vm->_map->destX =
-					    _vm->_map->wayPoints[_vm->_map->nearestWayPoint].
+					_vm->_map->_destX =
+					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].
 					    x;
-					_vm->_map->destY =
-					    _vm->_map->wayPoints[_vm->_map->nearestWayPoint].
+					_vm->_map->_destY =
+					    _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].
 					    y;
 
-					if (_vm->_map->nearestWayPoint < _vm->_map->nearestDest)
-						_vm->_map->nearestWayPoint++;
+					if (_vm->_map->_nearestWayPoint < _vm->_map->_nearestDest)
+						_vm->_map->_nearestWayPoint++;
 				} else {
-					if (_vm->_map->checkDirectPath(_vm->_map->curGoblinX,
-						_vm->_map->curGoblinY, gobDestX,
-						gobDestY) == 3 && _vm->_map->passMap[pressedMapY][pressedMapX] != 0) {
-						_vm->_map->destX = _vm->_map->wayPoints[_vm->_map->nearestWayPoint].x;
-						_vm->_map->destY = _vm->_map->wayPoints[_vm->_map->nearestWayPoint].y;
+					if (_vm->_map->checkDirectPath(_vm->_map->_curGoblinX,
+						_vm->_map->_curGoblinY, gobDestX,
+						gobDestY) == 3 && _vm->_map->_passMap[pressedMapY][pressedMapX] != 0) {
+						_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
+						_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
 					} else {
 						pathExistence = 1;
-						_vm->_map->destX = pressedMapX;
-						_vm->_map->destY = pressedMapY;
+						_vm->_map->_destX = pressedMapX;
+						_vm->_map->_destY = pressedMapY;
 					}
 				}
 			}
 			nextAct =
-			    _vm->_map->getDirection(_vm->_map->curGoblinX, _vm->_map->curGoblinY,
-			    _vm->_map->destX, _vm->_map->destY);
+			    _vm->_map->getDirection(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+			    _vm->_map->_destX, _vm->_map->_destY);
 		}
 	}
 
@@ -1323,18 +1323,18 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	case Map::kDirN:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 6 &&
 		    currentGoblin != 1) {
 			pathExistence = 0;
 			break;
 		}
 
-		if (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 3) {
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 3) {
 			gobDesc->nextState = 8;
 			break;
 		}
 
-		if (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6 &&
 		    currentGoblin == 1) {
 			gobDesc->nextState = 28;
 			break;
@@ -1344,18 +1344,18 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	case Map::kDirS:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 6 &&
 		    currentGoblin != 1) {
 			pathExistence = 0;
 			break;
 		}
 
-		if (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 3) {
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 3) {
 			gobDesc->nextState = 9;
 			break;
 		}
 
-		if (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6 &&
 		    currentGoblin == 1) {
 			gobDesc->nextState = 29;
 			break;
@@ -1365,7 +1365,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	case Map::kDirSE:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX + 1] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX + 1] == 6 &&
 		    currentGoblin != 1) {
 			pathExistence = 0;
 			break;
@@ -1379,7 +1379,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	case Map::kDirSW:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY + 1][_vm->_map->curGoblinX - 1] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX - 1] == 6 &&
 		    currentGoblin != 1) {
 			pathExistence = 0;
 			break;
@@ -1393,7 +1393,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	case Map::kDirNW:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX - 1] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX - 1] == 6 &&
 		    currentGoblin != 1) {
 			pathExistence = 0;
 			break;
@@ -1407,7 +1407,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	case Map::kDirNE:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY - 1][_vm->_map->curGoblinX + 1] == 6 &&
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX + 1] == 6 &&
 		    currentGoblin != 1) {
 			pathExistence = 0;
 			break;
@@ -1448,7 +1448,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 			break;
 		}
 
-		switch (_vm->_map->itemPoses[destActionItem].orient) {
+		switch (_vm->_map->_itemPoses[destActionItem].orient) {
 		case 0:
 		case -4:
 			gobDesc->nextState = 10;
@@ -1466,8 +1466,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		break;
 
 	default:
-		if (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 3 ||
-		    (_vm->_map->passMap[_vm->_map->curGoblinY][_vm->_map->curGoblinX] == 6
+		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 3 ||
+		    (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6
 			&& currentGoblin == 1)) {
 			gobDesc->nextState = 20;
 			break;
@@ -1611,8 +1611,8 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 					    forceNextState[i + 1];
 			}
 
-			_vm->_map->curGoblinX = gobPositions[currentGoblin].x;
-			_vm->_map->curGoblinY = gobPositions[currentGoblin].y;
+			_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
+			_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
 
 			if (gobDesc->nextState != gobDesc->state) {
 				gobStateLayer = nextLayer(gobDesc);
@@ -1677,10 +1677,10 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 				    gobDesc->yPos, 0);
 
 				gobDesc->yPos =
-				    (_vm->_map->curGoblinY + 1) * 6 -
+				    (_vm->_map->_curGoblinY + 1) * 6 -
 				    (_vm->_scenery->toRedrawBottom - _vm->_scenery->animTop);
 				gobDesc->xPos =
-				    _vm->_map->curGoblinX * 12 - (_vm->_scenery->toRedrawLeft -
+				    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->toRedrawLeft -
 				    _vm->_scenery->animLeft);
 			}
 
@@ -1699,8 +1699,8 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 				    forceNextState[i + 1];
 		}
 
-		_vm->_map->curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->curGoblinY = gobPositions[currentGoblin].y;
+		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
+		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
 
 		gobStateLayer = nextLayer(gobDesc);
 		if (gobDesc->stateMach == gobDesc->realStateMach) {
@@ -1761,10 +1761,10 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 		    gobDesc->xPos, gobDesc->yPos, 0);
 
 		gobDesc->yPos =
-		    (_vm->_map->curGoblinY + 1) * 6 - (_vm->_scenery->toRedrawBottom -
+		    (_vm->_map->_curGoblinY + 1) * 6 - (_vm->_scenery->toRedrawBottom -
 		    _vm->_scenery->animTop);
 		gobDesc->xPos =
-		    _vm->_map->curGoblinX * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
+		    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
 
 		if ((gobDesc->state == 10 || gobDesc->state == 11)
 		    && currentGoblin != 0)
@@ -1792,8 +1792,8 @@ int16 Goblin::doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 	}
 
 	if (positionedGob != currentGoblin) {
-		_vm->_map->curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->curGoblinY = gobPositions[currentGoblin].y;
+		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
+		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
 	}
 
 	positionedGob = currentGoblin;
@@ -1897,9 +1897,9 @@ void Goblin::loadObjects(char *source) {
 
 	freeObjects();
 	initList();
-	strcpy(_vm->_map->sourceFile, source);
+	strcpy(_vm->_map->_sourceFile, source);
 
-	_vm->_map->sourceFile[strlen(_vm->_map->sourceFile) - 4] = 0;
+	_vm->_map->_sourceFile[strlen(_vm->_map->_sourceFile) - 4] = 0;
 	_vm->_map->loadMapObjects(source);
 
 	for (i = 0; i < gobsCount; i++)
@@ -2104,20 +2104,20 @@ void Goblin::pickItem(int16 indexToPocket, int16 idToPocket) {
 	for (y = 0; y < Map::kMapHeight; y++) {
 		for (x = 0; x < Map::kMapWidth; x++) {
 			if (itemByteFlag == 1) {
-				if (((_vm->_map->itemsMap[y][x] & 0xff00) >> 8) ==
+				if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8) ==
 				    idToPocket)
-					_vm->_map->itemsMap[y][x] &= 0xff;
+					_vm->_map->_itemsMap[y][x] &= 0xff;
 			} else {
-				if ((_vm->_map->itemsMap[y][x] & 0xff) == idToPocket)
-					_vm->_map->itemsMap[y][x] &= 0xff00;
+				if ((_vm->_map->_itemsMap[y][x] & 0xff) == idToPocket)
+					_vm->_map->_itemsMap[y][x] &= 0xff00;
 			}
 		}
 	}
 
 	if (idToPocket >= 0 && idToPocket < 20) {
-		_vm->_map->itemPoses[itemIdInPocket].x = 0;
-		_vm->_map->itemPoses[itemIdInPocket].y = 0;
-		_vm->_map->itemPoses[itemIdInPocket].orient = 0;
+		_vm->_map->_itemPoses[itemIdInPocket].x = 0;
+		_vm->_map->_itemPoses[itemIdInPocket].y = 0;
+		_vm->_map->_itemPoses[itemIdInPocket].orient = 0;
 	}
 }
 
@@ -2186,16 +2186,16 @@ void Goblin::placeItem(int16 indexInPocket, int16 idInPocket) {
 	}
 
 	if (idInPocket >= 0 && idInPocket < 20) {
-		_vm->_map->itemPoses[idInPocket].x = gobPositions[0].x;
-		_vm->_map->itemPoses[idInPocket].y = gobPositions[0].y;
-		_vm->_map->itemPoses[idInPocket].orient = lookDir;
-		if (_vm->_map->itemPoses[idInPocket].orient == 0) {
-//                      _vm->_map->itemPoses[idInPocket].x++;
-			if (_vm->_map->passMap[(int)_vm->_map->itemPoses[idInPocket].y][_vm->_map->itemPoses[idInPocket].x + 1] == 1)
-				_vm->_map->itemPoses[idInPocket].x++;
+		_vm->_map->_itemPoses[idInPocket].x = gobPositions[0].x;
+		_vm->_map->_itemPoses[idInPocket].y = gobPositions[0].y;
+		_vm->_map->_itemPoses[idInPocket].orient = lookDir;
+		if (_vm->_map->_itemPoses[idInPocket].orient == 0) {
+//                      _vm->_map->_itemPoses[idInPocket].x++;
+			if (_vm->_map->_passMap[(int)_vm->_map->_itemPoses[idInPocket].y][_vm->_map->_itemPoses[idInPocket].x + 1] == 1)
+				_vm->_map->_itemPoses[idInPocket].x++;
 		} else {
-			if (_vm->_map->passMap[(int)_vm->_map->itemPoses[idInPocket].y][_vm->_map->itemPoses[idInPocket].x - 1] == 1)
-				_vm->_map->itemPoses[idInPocket].x--;
+			if (_vm->_map->_passMap[(int)_vm->_map->_itemPoses[idInPocket].y][_vm->_map->_itemPoses[idInPocket].x - 1] == 1)
+				_vm->_map->_itemPoses[idInPocket].x--;
 		}
 	}
 }
@@ -2219,9 +2219,9 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	if (itemByteFlag == 0) {
 		for (y = 0; y < Map::kMapHeight; y++) {
 			for (x = 0; x < Map::kMapWidth; x++) {
-				if ((_vm->_map->itemsMap[y][x] & 0xff) == idToPick)
-					_vm->_map->itemsMap[y][x] =
-					    (_vm->_map->itemsMap[y][x] & 0xff00) +
+				if ((_vm->_map->_itemsMap[y][x] & 0xff) == idToPick)
+					_vm->_map->_itemsMap[y][x] =
+					    (_vm->_map->_itemsMap[y][x] & 0xff00) +
 					    idToPlace;
 			}
 		}
@@ -2229,26 +2229,26 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 
 		for (y = 0; y < Map::kMapHeight; y++) {
 			for (x = 0; x < Map::kMapWidth; x++) {
-				if (((_vm->_map->itemsMap[y][x] & 0xff00) >> 8) ==
+				if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8) ==
 				    idToPick)
-					_vm->_map->itemsMap[y][x] =
-					    (_vm->_map->itemsMap[y][x] & 0xff) +
+					_vm->_map->_itemsMap[y][x] =
+					    (_vm->_map->_itemsMap[y][x] & 0xff) +
 					    (idToPlace << 8);
 			}
 		}
 	}
 
 	if (idToPick >= 0 && idToPick < 20) {
-		_vm->_map->itemPoses[idToPlace].x =
-		    _vm->_map->itemPoses[itemIdInPocket].x;
-		_vm->_map->itemPoses[idToPlace].y =
-		    _vm->_map->itemPoses[itemIdInPocket].y;
-		_vm->_map->itemPoses[idToPlace].orient =
-		    _vm->_map->itemPoses[itemIdInPocket].orient;
+		_vm->_map->_itemPoses[idToPlace].x =
+		    _vm->_map->_itemPoses[itemIdInPocket].x;
+		_vm->_map->_itemPoses[idToPlace].y =
+		    _vm->_map->_itemPoses[itemIdInPocket].y;
+		_vm->_map->_itemPoses[idToPlace].orient =
+		    _vm->_map->_itemPoses[itemIdInPocket].orient;
 
-		_vm->_map->itemPoses[itemIdInPocket].x = 0;
-		_vm->_map->itemPoses[itemIdInPocket].y = 0;
-		_vm->_map->itemPoses[itemIdInPocket].orient = 0;
+		_vm->_map->_itemPoses[itemIdInPocket].x = 0;
+		_vm->_map->_itemPoses[itemIdInPocket].y = 0;
+		_vm->_map->_itemPoses[itemIdInPocket].orient = 0;
 	}
 
 	itemIndInPocket = -1;
@@ -2273,7 +2273,7 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	placeObj->yPos +=
 	    (gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
 
-	if (_vm->_map->itemPoses[idToPlace].orient == 4) {
+	if (_vm->_map->_itemPoses[idToPlace].orient == 4) {
 		placeObj->xPos += (gobPositions[0].x * 12 + 14)
 		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 	} else {
@@ -2608,107 +2608,107 @@ void Goblin::interFunc(void) {
 
 		for (y = 0; y < Map::kMapHeight; y++) {
 			for (x = 0; x < Map::kMapWidth; x++) {
-				if ((_vm->_map->itemsMap[y][x] & 0xff) == item) {
-					_vm->_map->itemsMap[y][x] &= 0xff00;
-				} else if (((_vm->_map->itemsMap[y][x] & 0xff00) >> 8)
+				if ((_vm->_map->_itemsMap[y][x] & 0xff) == item) {
+					_vm->_map->_itemsMap[y][x] &= 0xff00;
+				} else if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8)
 				    == item) {
-					_vm->_map->itemsMap[y][x] &= 0xff;
+					_vm->_map->_itemsMap[y][x] &= 0xff;
 				}
 			}
 		}
 
 		if (xPos < Map::kMapWidth - 1) {
 			if (yPos > 0) {
-				if ((_vm->_map->itemsMap[yPos][xPos] & 0xff00) != 0 ||
-				    (_vm->_map->itemsMap[yPos - 1][xPos] & 0xff00) !=
+				if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
+				    (_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
 				    0
-				    || (_vm->_map->itemsMap[yPos][xPos +
+				    || (_vm->_map->_itemsMap[yPos][xPos +
 					    1] & 0xff00) != 0
-				    || (_vm->_map->itemsMap[yPos - 1][xPos +
+				    || (_vm->_map->_itemsMap[yPos - 1][xPos +
 					    1] & 0xff00) != 0) {
 
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff00)
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
 					    + item;
 
-					_vm->_map->itemsMap[yPos - 1][xPos] =
-					    (_vm->_map->itemsMap[yPos -
+					_vm->_map->_itemsMap[yPos - 1][xPos] =
+					    (_vm->_map->_itemsMap[yPos -
 						1][xPos] & 0xff00) + item;
 
-					_vm->_map->itemsMap[yPos][xPos + 1] =
-					    (_vm->_map->itemsMap[yPos][xPos +
+					_vm->_map->_itemsMap[yPos][xPos + 1] =
+					    (_vm->_map->_itemsMap[yPos][xPos +
 						1] & 0xff00) + item;
 
-					_vm->_map->itemsMap[yPos - 1][xPos + 1] =
-					    (_vm->_map->itemsMap[yPos - 1][xPos +
+					_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
+					    (_vm->_map->_itemsMap[yPos - 1][xPos +
 						1] & 0xff00) + item;
 				} else {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff) +
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
 					    (item << 8);
 
-					_vm->_map->itemsMap[yPos - 1][xPos] =
-					    (_vm->_map->itemsMap[yPos -
+					_vm->_map->_itemsMap[yPos - 1][xPos] =
+					    (_vm->_map->_itemsMap[yPos -
 						1][xPos] & 0xff) + (item << 8);
 
-					_vm->_map->itemsMap[yPos][xPos + 1] =
-					    (_vm->_map->itemsMap[yPos][xPos +
+					_vm->_map->_itemsMap[yPos][xPos + 1] =
+					    (_vm->_map->_itemsMap[yPos][xPos +
 						1] & 0xff) + (item << 8);
 
-					_vm->_map->itemsMap[yPos - 1][xPos + 1] =
-					    (_vm->_map->itemsMap[yPos - 1][xPos +
+					_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
+					    (_vm->_map->_itemsMap[yPos - 1][xPos +
 						1] & 0xff) + (item << 8);
 				}
 			} else {
-				if ((_vm->_map->itemsMap[yPos][xPos] & 0xff00) != 0 ||
-				    (_vm->_map->itemsMap[yPos][xPos + 1] & 0xff00) !=
+				if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
+				    (_vm->_map->_itemsMap[yPos][xPos + 1] & 0xff00) !=
 				    0) {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff00)
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
 					    + item;
 
-					_vm->_map->itemsMap[yPos][xPos + 1] =
-					    (_vm->_map->itemsMap[yPos][xPos +
+					_vm->_map->_itemsMap[yPos][xPos + 1] =
+					    (_vm->_map->_itemsMap[yPos][xPos +
 						1] & 0xff00) + item;
 				} else {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff) +
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
 					    (item << 8);
 
-					_vm->_map->itemsMap[yPos][xPos + 1] =
-					    (_vm->_map->itemsMap[yPos][xPos +
+					_vm->_map->_itemsMap[yPos][xPos + 1] =
+					    (_vm->_map->_itemsMap[yPos][xPos +
 						1] & 0xff) + (item << 8);
 				}
 			}
 		} else {
 			if (yPos > 0) {
-				if ((_vm->_map->itemsMap[yPos][xPos] & 0xff00) != 0 ||
-				    (_vm->_map->itemsMap[yPos - 1][xPos] & 0xff00) !=
+				if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
+				    (_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
 				    0) {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff00)
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
 					    + item;
 
-					_vm->_map->itemsMap[yPos - 1][xPos] =
-					    (_vm->_map->itemsMap[yPos -
+					_vm->_map->_itemsMap[yPos - 1][xPos] =
+					    (_vm->_map->_itemsMap[yPos -
 						1][xPos] & 0xff00) + item;
 				} else {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff) +
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
 					    (item << 8);
 
-					_vm->_map->itemsMap[yPos - 1][xPos] =
-					    (_vm->_map->itemsMap[yPos -
+					_vm->_map->_itemsMap[yPos - 1][xPos] =
+					    (_vm->_map->_itemsMap[yPos -
 						1][xPos] & 0xff) + (item << 8);
 				}
 			} else {
-				if ((_vm->_map->itemsMap[yPos][xPos] & 0xff00) != 0) {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff00)
+				if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0) {
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
 					    + item;
 				} else {
-					_vm->_map->itemsMap[yPos][xPos] =
-					    (_vm->_map->itemsMap[yPos][xPos] & 0xff) +
+					_vm->_map->_itemsMap[yPos][xPos] =
+					    (_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
 					    (item << 8);
 				}
 			}
@@ -2717,31 +2717,31 @@ void Goblin::interFunc(void) {
 		if (item < 0 || item >= 20)
 			break;
 
-		if (xPos > 1 && _vm->_map->passMap[yPos][xPos - 2] == 1) {
-			_vm->_map->itemPoses[item].x = xPos - 2;
-			_vm->_map->itemPoses[item].y = yPos;
-			_vm->_map->itemPoses[item].orient = 4;
+		if (xPos > 1 && _vm->_map->_passMap[yPos][xPos - 2] == 1) {
+			_vm->_map->_itemPoses[item].x = xPos - 2;
+			_vm->_map->_itemPoses[item].y = yPos;
+			_vm->_map->_itemPoses[item].orient = 4;
 			break;
 		}
 
-		if (xPos < Map::kMapWidth - 2 && _vm->_map->passMap[yPos][xPos + 2] == 1) {
-			_vm->_map->itemPoses[item].x = xPos + 2;
-			_vm->_map->itemPoses[item].y = yPos;
-			_vm->_map->itemPoses[item].orient = 0;
+		if (xPos < Map::kMapWidth - 2 && _vm->_map->_passMap[yPos][xPos + 2] == 1) {
+			_vm->_map->_itemPoses[item].x = xPos + 2;
+			_vm->_map->_itemPoses[item].y = yPos;
+			_vm->_map->_itemPoses[item].orient = 0;
 			break;
 		}
 
-		if (xPos < Map::kMapWidth - 1 && _vm->_map->passMap[yPos][xPos + 1] == 1) {
-			_vm->_map->itemPoses[item].x = xPos + 1;
-			_vm->_map->itemPoses[item].y = yPos;
-			_vm->_map->itemPoses[item].orient = 0;
+		if (xPos < Map::kMapWidth - 1 && _vm->_map->_passMap[yPos][xPos + 1] == 1) {
+			_vm->_map->_itemPoses[item].x = xPos + 1;
+			_vm->_map->_itemPoses[item].y = yPos;
+			_vm->_map->_itemPoses[item].orient = 0;
 			break;
 		}
 
-		if (xPos > 0 && _vm->_map->passMap[yPos][xPos - 1] == 1) {
-			_vm->_map->itemPoses[item].x = xPos - 1;
-			_vm->_map->itemPoses[item].y = yPos;
-			_vm->_map->itemPoses[item].orient = 4;
+		if (xPos > 0 && _vm->_map->_passMap[yPos][xPos - 1] == 1) {
+			_vm->_map->_itemPoses[item].x = xPos - 1;
+			_vm->_map->_itemPoses[item].y = yPos;
+			_vm->_map->_itemPoses[item].orient = 4;
 			break;
 		}
 		break;
@@ -2756,10 +2756,10 @@ void Goblin::interFunc(void) {
 			yPos = VAR(yPos);
 		}
 
-		if ((_vm->_map->itemsMap[yPos][xPos] & 0xff00) != 0) {
-			*retVarPtr = (_vm->_map->itemsMap[yPos][xPos] & 0xff00) >> 8;
+		if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0) {
+			*retVarPtr = (_vm->_map->_itemsMap[yPos][xPos] & 0xff00) >> 8;
 		} else {
-			*retVarPtr = _vm->_map->itemsMap[yPos][xPos];
+			*retVarPtr = _vm->_map->_itemsMap[yPos][xPos];
 		}
 		break;
 
@@ -2767,7 +2767,7 @@ void Goblin::interFunc(void) {
 		xPos = _vm->_inter->load16();
 		yPos = _vm->_inter->load16();
 		val = _vm->_inter->load16();
-		_vm->_map->passMap[yPos][xPos] = val;
+		_vm->_map->_passMap[yPos][xPos] = val;
 		break;
 
 	case 50:
@@ -2866,11 +2866,11 @@ void Goblin::interFunc(void) {
 
 		gobPositions[item].x = xPos;
 		pressedMapX = xPos;
-		_vm->_map->curGoblinX = xPos;
+		_vm->_map->_curGoblinX = xPos;
 
 		gobPositions[item].y = yPos;
 		pressedMapY = yPos;
-		_vm->_map->curGoblinY = yPos;
+		_vm->_map->_curGoblinY = yPos;
 
 		*curGobScrXVarPtr = objDesc->xPos;
 		*curGobScrYVarPtr = objDesc->yPos;
@@ -2997,9 +2997,9 @@ void Goblin::interFunc(void) {
 		yPos = _vm->_inter->load16();
 		val = _vm->_inter->load16();
 
-		_vm->_map->itemPoses[item].x = xPos;
-		_vm->_map->itemPoses[item].y = yPos;
-		_vm->_map->itemPoses[item].orient = val;
+		_vm->_map->_itemPoses[item].x = xPos;
+		_vm->_map->_itemPoses[item].y = yPos;
+		_vm->_map->_itemPoses[item].orient = val;
 		break;
 
 	case 500:
@@ -3067,9 +3067,9 @@ void Goblin::interFunc(void) {
 		yPos = _vm->_inter->load16();
 		val = _vm->_inter->load16();
 
-		_vm->_map->itemPoses[item].x = xPos;
-		_vm->_map->itemPoses[item].y = yPos;
-		_vm->_map->itemPoses[item].orient = val;
+		_vm->_map->_itemPoses[item].x = xPos;
+		_vm->_map->_itemPoses[item].y = yPos;
+		_vm->_map->_itemPoses[item].orient = val;
 		break;
 
 	case 1000:
@@ -3174,11 +3174,11 @@ void Goblin::interFunc(void) {
 			gobDesc->toRedraw = 1;
 
 			pressedMapX = gobPositions[0].x;
-			_vm->_map->destX = gobPositions[0].x;
+			_vm->_map->_destX = gobPositions[0].x;
 			gobDestX = gobPositions[0].x;
 
 			pressedMapY = gobPositions[0].y;
-			_vm->_map->destY = gobPositions[0].y;
+			_vm->_map->_destY = gobPositions[0].y;
 			gobDestY = gobPositions[0].y;
 
 			*curGobVarPtr = 0;

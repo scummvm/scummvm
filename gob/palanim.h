@@ -26,8 +26,6 @@ namespace Gob {
 
 class PalAnim {
 public:
-	int16 fadeValue;
-
 	char fadeColor(char from, char to);
 	char fadeStep(int16 oper);	// oper == 0 - fade all colors, 1, 2, 3 - red,green, blue
 	void fade(Video::PalDesc * palDesc, int16 fade, int16 all);
@@ -35,9 +33,11 @@ public:
 	PalAnim(GobEngine *vm);
 
 protected:
-	byte toFadeRed[256];
-	byte toFadeGreen[256];
-	byte toFadeBlue[256];
+	int16 _fadeValue;
+
+	byte _toFadeRed[256];
+	byte _toFadeGreen[256];
+	byte _toFadeBlue[256];
 	GobEngine *_vm;
 };
 

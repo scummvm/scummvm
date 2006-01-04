@@ -457,10 +457,10 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char hand
 		    handleMouse);
 	}
 
-	if (_vm->_inter->soundEndTimeKey != 0
-	    && _vm->_util->getTimeKey() >= _vm->_inter->soundEndTimeKey) {
-		_vm->_snd->stopSound(_vm->_inter->soundStopVal);
-		_vm->_inter->soundEndTimeKey = 0;
+	if (_vm->_inter->_soundEndTimeKey != 0
+	    && _vm->_util->getTimeKey() >= _vm->_inter->_soundEndTimeKey) {
+		_vm->_snd->stopSound(_vm->_inter->_soundStopVal);
+		_vm->_inter->_soundEndTimeKey = 0;
 	}
 
 	if (_vm->_global->useMouse == 0)
@@ -515,7 +515,7 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 
 	timeKey = _vm->_util->getTimeKey();
 	while (1) {
-		if (_vm->_inter->terminate != 0) {
+		if (_vm->_inter->_terminate) {
 			if (handleMouse)
 				_vm->_draw->blitCursor();
 			return 0;
@@ -811,12 +811,11 @@ int16 Game::inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 b
 			if (key != 0 || activeCollResId != 0)
 				break;
 
-			if (_vm->_inter->terminate != 0)
+			if (_vm->_inter->_terminate)
 				return 0;
 		}
 
-		if (key == 0 || activeCollResId != 0
-		    || _vm->_inter->terminate != 0)
+		if (key == 0 || activeCollResId != 0 || _vm->_inter->_terminate)
 			return 0;
 
 		switch (key) {
@@ -1013,7 +1012,7 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 		    _vm->_global->inter_variables + collArea->key,
 		    inpDesc[*pCurPos].fontIndex, collArea->flags, &time);
 
-		if (_vm->_inter->terminate != 0)
+		if (_vm->_inter->_terminate)
 			return 0;
 
 		switch (key) {
@@ -1525,7 +1524,7 @@ void Game::collisionsBlock(void) {
 		WRITE_VAR(16, 0);
 		activeCollResId = 0;
 	}
-	while (activeCollResId == 0 && _vm->_inter->terminate == 0);
+	while (activeCollResId == 0 && !_vm->_inter->_terminate);
 
 	if (((uint16)activeCollResId & ~0x8000) == collResId) {
 		collStackPos = 0;
@@ -1595,7 +1594,7 @@ void Game::collisionsBlock(void) {
 	}
 
 	savedIP = 0;
-	if (_vm->_inter->terminate == 0) {
+	if (!_vm->_inter->_terminate) {
 		savedIP = (char *)totFileData +
 		    collisionAreas[activeCollIndex].funcLeave;
 
@@ -1741,13 +1740,13 @@ void Game::playTot(int16 skipPlay) {
 	char *savedIP;
 	int16 i;
 
-	oldNestLevel = _vm->_inter->nestLevel;
-	oldBreakFrom = _vm->_inter->breakFromLevel;
+	oldNestLevel = _vm->_inter->_nestLevel;
+	oldBreakFrom = _vm->_inter->_breakFromLevel;
 	oldCaptureCounter = _vm->_scenery->pCaptureCounter;
 	savedIP = _vm->_global->inter_execPtr;
 
-	_vm->_inter->nestLevel = &nestLevel;
-	_vm->_inter->breakFromLevel = &breakFrom;
+	_vm->_inter->_nestLevel = &nestLevel;
+	_vm->_inter->_breakFromLevel = &breakFrom;
 	_vm->_scenery->pCaptureCounter = &captureCounter;
 	strcpy(savedTotName, curTotFile);
 
@@ -1870,7 +1869,7 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_inter->callSub(2);
 
 			if (totToLoad[0] != 0)
-				_vm->_inter->terminate = 0;
+				_vm->_inter->_terminate = false;
 
 			variablesCount = READ_LE_UINT32((char *)totFileData + 0x2c);
 			_vm->_draw->blitInvalidated();
@@ -1921,8 +1920,8 @@ void Game::playTot(int16 skipPlay) {
 
 	strcpy(curTotFile, savedTotName);
 
-	_vm->_inter->nestLevel = oldNestLevel;
-	_vm->_inter->breakFromLevel = oldBreakFrom;
+	_vm->_inter->_nestLevel = oldNestLevel;
+	_vm->_inter->_breakFromLevel = oldBreakFrom;
 	_vm->_scenery->pCaptureCounter = oldCaptureCounter;
 	_vm->_global->inter_execPtr = savedIP;
 }
