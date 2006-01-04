@@ -1518,12 +1518,48 @@ int KyraEngine::cmd_setPaletteRange(ScriptState *script) {
 }
 
 int KyraEngine::cmd_shrinkBrandonDown(ScriptState *script) {
-	warning("STUB: cmd_shrinkBrandonDown");
+	debug(3, "cmd_shrinkBrandonDown(0x%X) (%d)", script, stackPos(0));
+	int delayTime = stackPos(0);
+	checkAmuletAnimFlags();
+	int scaleValue = _scaleTable[_currentCharacter->y1];
+	int scale = 0;
+	if (_scaleMode) {
+		scale = scaleValue;
+	} else {
+		scale = 256;
+	}
+	int scaleModeBackUp = _scaleMode;
+	_scaleMode = 1;
+	int scaleEnd = scale >> 1;
+	for (; scaleEnd <= scale; --scale) {
+		_scaleTable[_currentCharacter->y1] = scale;
+		animRefreshNPC(0);
+		delayWithTicks(1);
+	}
+	delayWithTicks(delayTime); // XXX
+	_scaleTable[_currentCharacter->y1] = scaleValue;
+	_scaleMode = scaleModeBackUp;
 	return 0;
 }
 
 int KyraEngine::cmd_growBrandonUp(ScriptState *script) {
-	warning("STUB: cmd_growBrandonUp");
+	debug(3, "cmd_growBrandonUp(0x%X) ()", script);
+	int scaleValue = _scaleTable[_currentCharacter->y1];
+	int scale = 0;
+	if (_scaleMode) {
+		scale = scaleValue;
+	} else {
+		scale = 256;
+	}
+	int scaleModeBackUp = _scaleMode;
+	_scaleMode = 1;
+	for (int curScale = scale >> 1; curScale <= scale; ++curScale) {
+		_scaleTable[_currentCharacter->y1] = curScale;
+		animRefreshNPC(0);
+		delayWithTicks(1);
+	}
+	_scaleTable[_currentCharacter->y1] = scaleValue;
+	_scaleMode = scaleModeBackUp;
 	return 0;
 }
 
