@@ -37,6 +37,8 @@
 #include "sound/voc.h"
 #include "sound/audiostream.h"
 
+#include "gui/message.h"
+
 #include "kyra/kyra.h"
 #include "kyra/resource.h"
 #include "kyra/screen.h"
@@ -395,6 +397,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_unkScreenVar1 = 1;
 	_unkScreenVar2 = 0;
 	_unkScreenVar3 = 0;
+	_unkAmuletVar = 0;
 	
 	memset(_specialPalettes, 0, sizeof(_specialPalettes));
 	_mousePressFlag = false;
@@ -673,6 +676,13 @@ void KyraEngine::mainLoop() {
 		if (_currentCharacter->sceneId == 210) {
 			_animator->updateKyragemFading();
 			// XXX
+		}
+		
+		if (_deathHandler != 0xFF) {
+			// this is only used until the original gui is implemented
+			GUI::MessageDialog dialog("Brandon is dead! Game over!", "Quit");
+			dialog.runModal();
+			break;
 		}
 		
 		if (_brandonStatusBit & 2) {

@@ -1204,12 +1204,13 @@ int KyraEngine::cmd_setFireberryGlowPalette(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setDeathHandlerFlag(ScriptState *script) {
-	warning("STUB: cmd_setDeathHandlerFlag");
+	debug(3, "cmd_drinkPotionAnimation(0x%X) (%d)", script, stackPos(0));
+	_deathHandler = stackPos(0);
 	return 0;
 }
 
 int KyraEngine::cmd_drinkPotionAnimation(ScriptState *script) {
-	debug(3, "cmd_drinkPotionAnimation(0x%X) (%d, %d, %d)", script);
+	debug(3, "cmd_drinkPotionAnimation(0x%X) (%d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2));
 	seq_playDrinkPotionAnim(stackPos(0), stackPos(1), stackPos(2));
 	return 0;
 }
