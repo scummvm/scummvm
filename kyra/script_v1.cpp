@@ -67,6 +67,8 @@ int KyraEngine::cmd_pauseTicks(ScriptState *script) {
 	debug(3, "cmd_pauseTicks(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
 	if (stackPos(1)) {
 		warning("STUB: special cmd_pauseTicks");
+		// delete this after correct implementing
+		delayWithTicks(stackPos(0));
 	} else {
 		delayWithTicks(stackPos(0));
 	}
@@ -482,13 +484,13 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	_movieObjects[wsaIndex]->_y = ypos;
 	_movieObjects[wsaIndex]->_drawPage = 0;
 	_movieObjects[wsaIndex]->displayFrame(frame);
+	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
 		delay(10);
 	}
-	_animator->_updateScreen = true;
 	_screen->showMouse();
 	return 0;
 }
@@ -523,6 +525,7 @@ int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
 	for (; startFrame <= endFrame; ++startFrame) {
 		uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
 		_movieObjects[wsaIndex]->displayFrame(startFrame);
+		_animator->_updateScreen = true;
 		while (_system->getMillis() < nextRun) {
 			_sprites->updateSceneAnims();
 			_animator->updateAllObjectShapes();
@@ -708,6 +711,7 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	_movieObjects[wsaIndex]->_y = ypos;
 	_movieObjects[wsaIndex]->_drawPage = 2;
 	_movieObjects[wsaIndex]->displayFrame(frame);
+	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
