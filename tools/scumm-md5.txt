@@ -45,7 +45,7 @@ Zak McKracken and the Alien Mindbenders
 	V2	DOS	en	675d71151e9b5a968c8ce46d9fbf4cbf	zak	Kirben
 	V2 (alt?)	DOS	en	debe337f73d660e951ece7c1f1c81add	zak	Andrea Petrucci
 	V2	DOS	fr	52a4bae0746a11d7b1e8554e91a6645c	zak	Andrea Petrucci
-	V2	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f	zak	Qvist
+	V2 (alt?)	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f	zak	Qvist
 	V2	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
 	V2 (from 5.25\" floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
 	V2	DOS	it	75ba23fff4fd63fa446c02864f2a5a4b	zak	Antti Leimi, Andrea Petrucci
@@ -89,6 +89,7 @@ Loom
 	EGA (same as IT?!?)	Amiga	fr	39cb9dec16fa16f38d79acd80effb059	loom	Gerald Vincent
 	EGA	Amiga	de	2fe369ad70f52a8cf7ad6077ee64f81a	loom	Norbert Lange
 	EGA (same as FR?!?)	Amiga	it	39cb9dec16fa16f38d79acd80effb059	loom	Andrea Petrucci
+	EGA	Amiga	es	48b9f04b348bc5013327753f0d12a144	loom	VooD
 	EGA	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
 	EGA	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
 	EGA	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
@@ -269,8 +270,8 @@ Full Throttle
 The Dig
 	CD	All	All	d8323015ecb8b10bf53474f6e6b0ae33	dig
 	CD	All	ru	d62047a6729349ab36f7ee065bf26509	dig	sev
-	CD	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
 	CD (bundle)	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
+	CD (bundle)	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
 
 	Demo	All	en	362c1d281fb9899254cda66ad246c66a	dig
 	Demo (bundle)	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
