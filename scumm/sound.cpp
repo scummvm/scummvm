@@ -328,7 +328,7 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 
-	// Support for later Backyard sports games sounds
+	// Support for sound in later Backyard sports games
 	else if (READ_UINT32(ptr) == MKID('RIFF')) {
 		uint16 type;
 		int blockAlign;
@@ -352,12 +352,16 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
-	// Support for Putt-Putt sounds - very hackish, too 8-)
+	// Support for sound in Humongous Entertainment games
 	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK') || READ_UINT32(ptr) == MKID('HSHD')) {
+		int priority;
+
 		if (READ_UINT32(ptr) == MKID('HSHD')) {
+			priority = READ_LE_UINT16(ptr + 10);
 			rate = READ_LE_UINT16(ptr + 14);
 			ptr += READ_BE_UINT32(ptr + 4);
 		} else {
+			priority = READ_LE_UINT16(ptr + 18);
 			rate = READ_LE_UINT16(ptr + 22);
 			ptr += 8 + READ_BE_UINT32(ptr + 12);
 		}
@@ -391,8 +395,8 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		memcpy(sound, ptr + heOffset + 8, size);
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
+	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
-		// pcm music in 3DO humongous games
 		ptr += 8 + READ_BE_UINT32(ptr+12);
 		if (READ_UINT32(ptr) != MKID('SDAT'))
 			return;

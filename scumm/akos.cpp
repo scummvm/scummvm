@@ -1538,7 +1538,6 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->_flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
-		case AKC_C042:
 			if (_heversion >= 61)
 				tmp = GB(2);
 			else
@@ -1662,8 +1661,11 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				break;
 			}
 			continue;
+		case AKC_C042:
+			akos_queCommand(9, a, a->_sound[GB(2)], 0);
+			continue;
 		case AKC_C044:
-			akos_queCommand(3, a, a->_sound[a->getAnimVar(GB(2))], 0);
+			akos_queCommand(9, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
 		case AKC_C045:
 			a->setUserCondition(GB(3), a->getAnimVar(GB(4)));
@@ -1785,6 +1787,9 @@ void ScummEngine::akos_processQueue() {
 			_string[0].color = a->_talkColor;
 			actorTalk(a->_heTalkQueue[param_1].sentence);
 
+			break;
+		case 9:
+			_sound->addSoundToQueue(param_1, 0, -1, 4);
 			break;
 		default:
 			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param_1, param_2);

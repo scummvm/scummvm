@@ -436,7 +436,7 @@ void ScummEngine_v70he::o70_startSound() {
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
-		debug(0,"o70_startSound: case 29 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
+		debug(0,"o70_startSound: case 23 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 25:
 		value = pop();
