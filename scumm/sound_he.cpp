@@ -438,7 +438,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_overrideFreq = 0;
 		}
 
-		if (heFlags & 1) {
+		if ((heFlags & 1) || (heFlags & 4)) {
 			flags |= Audio::Mixer::FLAG_LOOP;
 		}
 
