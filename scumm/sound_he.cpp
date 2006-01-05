@@ -87,7 +87,7 @@ int Sound::getSoundPriority(int sound) {
 }
 
 int Sound::getSoundVar(int sound, int var) {
-	checkRange(25, 0, var, "Illegal sound variable %d");
+	checkRange(26, 0, var, "Illegal sound variable %d");
 
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
@@ -104,7 +104,7 @@ int Sound::getSoundVar(int sound, int var) {
 }
 
 void Sound::setSoundVar(int sound, int var, int val) {
-	checkRange(25, 0, var, "Illegal sound variable %d");
+	checkRange(26, 0, var, "Illegal sound variable %d");
 
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
