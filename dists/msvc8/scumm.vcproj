@@ -648,6 +648,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\sound_he.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\sprite_he.cpp"
 			>
 		</File>

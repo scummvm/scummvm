@@ -247,6 +247,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\gob\inter_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\gob\inter_v2.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\gob\map.cpp"
 			>
 		</File>

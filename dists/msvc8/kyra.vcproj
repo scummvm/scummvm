@@ -159,11 +159,23 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\kyra\animator.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\animator.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\kyra\debugger.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\kyra\debugger.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\gui.cpp"
 			>
 		</File>
 		<File
@@ -180,6 +192,10 @@
 		</File>
 		<File
 			RelativePath="..\..\kyra\resource.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\saveload.cpp"
 			>
 		</File>
 		<File
@@ -228,6 +244,18 @@
 		</File>
 		<File
 			RelativePath="..\..\kyra\staticres.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\text.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\text.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\timer.cpp"
 			>
 		</File>
 		<File
