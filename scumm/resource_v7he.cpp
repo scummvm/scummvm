@@ -1779,12 +1779,7 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 				error("getSoundResourceSize: Not a valid WAV file");
 			}
 		} else {
-			if (READ_UINT32(ptr) == MKID('HSHD')) {
-				ptr += READ_BE_UINT32(ptr + 4);
-			} else {
-				ptr += 8 + READ_BE_UINT32(ptr + 12);
-			}
-
+			ptr += 8 + READ_BE_UINT32(ptr + 12);
 			if (READ_UINT32(ptr) == MKID('SBNG')) {
 				ptr += READ_BE_UINT32(ptr + 4);
 			}
