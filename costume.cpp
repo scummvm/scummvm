@@ -17,6 +17,7 @@
 
 #include "stdafx.h"
 #include "debug.h"
+#include "colormap.h"
 #include "costume.h"
 #include "actor.h"
 #include "textsplit.h"
