@@ -931,7 +931,9 @@ void Costume::playChore(int num) {
 }
 
 void Costume::setColormap(char *map) {
-	if (map == NULL)
+	// Sometimes setColormap is called on a null costume,
+	// see where raoul is gone in hh.set
+	if (this == NULL || map == NULL)
 		return;
 	_cmap = g_resourceloader->loadColormap(map);
 	for (int i = 0; i < _numComponents; i++)

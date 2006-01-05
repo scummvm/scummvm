@@ -216,8 +216,8 @@ static void PrintDebug() {
 		std::string msg = luaL_check_string(1);
 		
 		msg.insert(0, "Debug: ");
-		std::fputs(msg.c_str(), stderr);
 		msg.append("\n");
+		std::fputs(msg.c_str(), stderr);
 	}
 }
 
