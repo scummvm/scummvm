@@ -431,7 +431,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
-		debug(1,"o100_actorOps: case 21 (%d)", k);
+		debug(1,"o100_actorOps: case 22 (%d)", k);
 		break;
 	case 25:		// SO_COSTUME
 		a->setActorCostume(pop());
@@ -559,9 +559,10 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 142:
 		k = pop();
+		if (k == 0)
+			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
-		debug(1,"o100_actorOps: case 24 (%d)", k);
 		break;
 	case 143:		// SO_TEXT_OFFSET
 		a->_talkPosY = pop();

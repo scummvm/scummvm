@@ -96,7 +96,7 @@ int Sound::getSoundVar(int sound, int var) {
 	}
 
 	if (chan != -1) {
-		debug(1, "getSoundVar: sound %d var %d result %d\n", sound, var, _heChannel[chan].soundVars[var]);
+		debug(0, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
 		return 0;
@@ -113,6 +113,7 @@ void Sound::setSoundVar(int sound, int var, int val) {
 	}
 
 	if (chan != -1) {
+		debug(0, "setSoundVar: sound %d var %d val %d", sound, var, val);
 		_heChannel[chan].soundVars[var] = val;
 	}
 }

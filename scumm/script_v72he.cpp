@@ -1139,9 +1139,10 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 24: // HE 80+
 		k = pop();
+		if (k == 0)
+			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
-		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
 	case 43: // HE 90+
 		// HE games use reverse order of layering, so we adjust
