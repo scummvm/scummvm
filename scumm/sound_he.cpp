@@ -439,7 +439,8 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_overrideFreq = 0;
 		}
 
-		if ((heFlags & 1) || (heFlags & 4)) {
+		// Bit 3 is looping related too
+		if ((heFlags & 1)) {
 			flags |= Audio::Mixer::FLAG_LOOP;
 		}
 

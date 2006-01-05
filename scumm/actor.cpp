@@ -1563,7 +1563,7 @@ void Actor::setActorCostume(int c) {
 
 	if (_vm->_heversion >= 71 && _vm->getTalkingActor() == _number) {
 		if (_vm->_heversion <= 95 || (_vm->_heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
-			_vm->setTalkingActor(0);
+			//_vm->setTalkingActor(0);
 		}
 	}
 }
