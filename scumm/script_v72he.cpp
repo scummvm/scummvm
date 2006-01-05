@@ -868,9 +868,7 @@ void ScummEngine_v72he::o72_getTimer() {
 	int cmd = fetchScriptByte();
 
 	if (cmd == 10 || cmd == 50) {
-		checkRange(3, 1, timer, "o72_getTimer: Timer %d out of range(%d)");
-		int diff = _system->getMillis() - _timers[timer];
-		push(diff);
+		push(getHETimer(timer));
 	} else {
 		push(0);
 	}
@@ -881,8 +879,7 @@ void ScummEngine_v72he::o72_setTimer() {
 	int cmd = fetchScriptByte();
 
 	if (cmd == 158 || cmd == 61) {
-		checkRange(3, 1, timer, "o72_setTimer: Timer %d out of range(%d)");
-		_timers[timer] = _system->getMillis();
+		setHETimer(timer);
 	} else {
 		error("TIMER command %d?", cmd);
 	}
@@ -890,8 +887,7 @@ void ScummEngine_v72he::o72_setTimer() {
 
 void ScummEngine_v72he::o72_getSoundPosition() {
 	int snd = pop();
-	push(_sound->getSoundElapsedTime(snd) * 10);
-	debug(1,"o72_getSoundPosition (%d)", snd);
+	push(_sound->getSoundPos(snd));
 }
 
 void ScummEngine_v72he::o72_startScript() {

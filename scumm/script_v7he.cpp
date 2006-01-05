@@ -436,11 +436,13 @@ void ScummEngine_v70he::o70_startSound() {
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
+		_sound->setSoundVar(_heSndSoundId, var, value);
 		debug(0,"o70_startSound: case 23 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 25:
 		value = pop();
 		_heSndSoundId = pop();
+		debug(0, "o70_startSound: case 25 (ID %d, Offset 0, Channel 0, Flags 8)", _heSndSoundId);
 		_sound->addSoundToQueue(_heSndSoundId, 0, 0, 8);
 	case 56:
 		_heSndFlags |= 16;
@@ -467,7 +469,7 @@ void ScummEngine_v70he::o70_startSound() {
 		_heSndFlags |= 1;
 		break;
 	case 255:
-		debug(1, "o70_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+		debug(0, "o70_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_heSndFlags = 0;
 		break;

@@ -95,6 +95,16 @@ protected:
 	HEMusic *_heMusic;
 	int16 _heMusicTracks;
 
+public: // Used by createSound()
+	struct {
+		int sound;
+		int codeOffs;
+		int priority;
+		int sbngBlock;
+		int soundVars[27];
+		int timer;
+	} _heChannel[9];
+
 public:
 	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
 	Audio::SoundHandle _heSoundChannels[8];
@@ -109,9 +119,8 @@ public:
 	void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 	void processSound();
 	void processSoundQueues();
-	void setOverrideFreq(int freq);
-	void playSound(int soundID, int heOffset, int heChannel, int heFlags);
-	void startHETalkSound(uint32 offset);
+
+	void playSound(int soundID);
 	void startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
@@ -134,8 +143,19 @@ public:
 	void updateCD();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
-	void setupHEMusicFile();
+	// HE specific
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
+	int isSoundCodeUsed(int sound);
+	int getSoundPos(int sound);
+	int getSoundPriority(int sound);
+	int getSoundVar(int sound, int var);
+	void setSoundVar(int sound, int var, int val);
+	void playHESound(int soundID, int heOffset, int heChannel, int heFlags);
+	void processSoundCode();
+	void processSoundOpcodes(int sound, byte *codePtr, int *soundVars);
+	void setOverrideFreq(int freq);
+	void setupHEMusicFile();
+	void startHETalkSound(uint32 offset);
 
 	// Used by the save/load system:
 	void saveLoadWithSerializer(Serializer *ser);

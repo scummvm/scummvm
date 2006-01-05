@@ -129,7 +129,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_writeWordVar),
 		/* 44 */
 		OPCODE(o6_invalid),
-		OPCODE(o80_loadSBNG),
+		OPCODE(o80_createSound),
 		OPCODE(o80_getFileSize),
 		OPCODE(o6_wordArrayWrite),
 		/* 48 */
@@ -376,28 +376,25 @@ const char *ScummEngine_v80he::getOpcodeDesc(byte i) {
 	return _opcodesV80he[i].desc;
 }
 
-void ScummEngine_v80he::o80_loadSBNG() {
-	// Loads SBNG sound resource
+void ScummEngine_v80he::o80_createSound() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 27:
-		//loadSBNG(_heSBNGId, pop();
-		pop();
+		createSound(_heSndResId, pop());
 		break;
 	case 217:
-		//loadSBNG(_heSBNGId, -1);
+		createSound(_heSndResId, -1);
 		break;
 	case 232:
-		_heSBNGId = pop();
+		_heSndResId = pop();
 		break;
 	case 255:
 		// dummy case
 		break;
 	default:
-		error("o80_loadSBNG: default case %d", subOp);
+		error("o80_createSound: default case %d", subOp);
 	}
-	debug(1,"o80_loadSBNG stub (%d)",subOp);
 }
 
 void ScummEngine_v80he::o80_getFileSize() {
@@ -432,14 +429,9 @@ void ScummEngine_v80he::o80_stringToInt() {
 }
 
 void ScummEngine_v80he::o80_getSoundVar() {
-	// Checks sound variable
 	int var = pop();
 	int snd = pop();
-	int rnd = _rnd.getRandomNumberRng(1, 3);
-
-	checkRange(27, 0, var, "Illegal sound variable %d");
-	push (rnd);
-	debug(1,"o80_getSoundVar stub (snd %d, var %d)", snd, var);
+	push(_sound->getSoundVar(snd, var));
 }
 
 void ScummEngine_v80he::o80_localizeArrayToRoom() {

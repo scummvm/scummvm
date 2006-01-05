@@ -298,6 +298,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_PLATFORM = 78;  		// 1 is PC, 2 is Macintosh
  		VAR_WINDOWS_VERSION = 79; 	// 31 is Windows 3.1, 40 is Windows 95+
 		VAR_CURRENT_CHARSET = 80;
+		VAR_SOUNDCODE_TMR = 84;
 		VAR_KEY_STATE = 86;
 		VAR_NUM_SOUND_CHANNELS = 88;
 	if (_heversion >= 90) {
@@ -310,6 +311,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_U32_VERSION = 107;
 		VAR_U32_ARRAY_UNK = 116;
 		VAR_WIZ_TCOLOR = 117;
+		VAR_DEFAULT_SOUND_CHANNEL = 120;
 	}
 	if (_heversion >= 98) {
 		VAR_SKIP_RESET_TALK_ACTOR = 125;

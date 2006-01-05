@@ -1210,7 +1210,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
-	memset(_timers, 0, sizeof(_timers));
+	memset(_heTimers, 0, sizeof(_heTimers));
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
@@ -1340,6 +1340,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
 	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
+	VAR_SOUNDCODE_TMR = 0xFF;
+	VAR_DEFAULT_SOUND_CHANNEL = 0xFF;
 
 	VAR_NUM_SCRIPT_CYCLES = 0xFF;
 	VAR_SCRIPT_CYCLE = 0xFF;
@@ -1605,7 +1607,10 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 
 ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v72he(detector, syst, gs, md5sum, substResFileNameIndex) {
-	_heSBNGId = 0;
+	_heSndResId = 0;
+	_curSndId = 0;
+	_sndOffs1 = 0;
+	_sndOffs2 = 0;
 }
 
 ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
@@ -2489,6 +2494,9 @@ load_game:
 		_fullRedraw = true;
 	}
 
+	if (_heversion >= 80) {
+		_sound->processSoundCode();
+	}
 	runAllScripts();
 	checkExecVerbs();
 	checkAndRunSentenceScript();
@@ -2608,6 +2616,17 @@ load_game:
 #pragma mark -
 #pragma mark --- SCUMM ---
 #pragma mark -
+
+int ScummEngine::getHETimer(int timer) {
+	checkRange(15, 1, timer, "getHETimer: Timer %d out of range(%d)");
+	int time = _system->getMillis() - _heTimers[timer];
+	return time;
+}
+
+void ScummEngine::setHETimer(int timer) {
+	checkRange(15, 1, timer, "setHETimer: Timer %d out of range(%d)");
+	_heTimers[timer] = _system->getMillis();
+}
 
 void ScummEngine::pauseGame() {
 	pauseDialog();

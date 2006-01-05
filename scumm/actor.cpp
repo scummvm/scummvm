@@ -1146,9 +1146,14 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0 && _animProgress == 0) {
 		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
-			// Get sound var 19 of sound 1, if sound code is active.
-			// Otherwise choose random animation
-			setTalkCondition(_vm->_rnd.getRandomNumberRng(1, 10));
+			int talkState = 0;
+
+			if (_vm->_sound->isSoundCodeUsed(1))
+				talkState = _vm->_sound->getSoundVar(1, 19);
+			if (talkState == 0)
+				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
+
+			setTalkCondition(talkState);
 		} else {
 			setTalkCondition(1);
 		}
@@ -1557,8 +1562,7 @@ void Actor::setActorCostume(int c) {
 
 	if (_vm->_heversion >= 71 && _vm->getTalkingActor() == _number) {
 		if (_vm->_heversion <= 95 || (_vm->_heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
-			// TODO
-			// _vm->setTalkingActor(0);
+			_vm->setTalkingActor(0);
 		}
 	}
 }

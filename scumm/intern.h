@@ -1086,7 +1086,8 @@ protected:
 
 	const OpcodeEntryV80he *_opcodesV80he;
 
-	int32 _heSBNGId;
+	int32 _heSndResId;
+	int _curSndId, _sndOffs1, _sndOffs2;
 
 public:
 	ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
@@ -1102,11 +1103,13 @@ protected:
 
 	virtual void clearDrawQueues();
 
+	void createSound(int snd1id, int snd2id);
+
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);
 
 	/* HE version 80 script opcodes */
-	void o80_loadSBNG();
+	void o80_createSound();
 	void o80_getFileSize();
 	void o80_stringToInt();
 	void o80_getSoundVar();
@@ -1300,7 +1303,7 @@ protected:
 	void o100_resourceRoutines();
 	void o100_wizImageOps();
 	void o100_jumpToScript();
-	void o100_loadSBNG();
+	void o100_createSound();
 	void o100_dim2dim2Array();
 	void o100_paletteOps();
 	void o100_jumpToScriptUnk();

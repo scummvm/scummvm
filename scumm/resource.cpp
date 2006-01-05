@@ -1005,6 +1005,8 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 		return _sound->isSoundInUse(i);
 	case rtCharset:
 		return _charset->getCurID() == i;
+	case rtSpoolBuffer:
+		return _sound->isSoundRunning(10000 + i);
 	default:
 		return false;
 	}
@@ -1348,6 +1350,9 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
 	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkies, "talkie", 1);
 
+	if (_heversion >= 70) {
+		allocResTypeData(rtSpoolBuffer, MKID('NONE'), 9, "spool buffer", 0);
+	}
 }
 
 void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int length) {
@@ -1577,6 +1582,8 @@ const char *resTypeFromId(int id) {
 		return "Image";
 	case rtTalkie:
 		return "Talkie";
+	case rtSpoolBuffer:
+		return "SpoolBuffer";
 	case rtNumTypes:
 		return "NumTypes";
 	default:
