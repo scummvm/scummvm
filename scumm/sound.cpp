@@ -1267,13 +1267,21 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 	case MKID('Mac1'):
 	case MKID('RIFF'):
-	case MKID('HSHD'):
 	case MKID('TALK'):
 	case MKID('DIGI'):
 	case MKID('Crea'):
 	case MKID(0x460e200d):	// WORKAROUND bug # 1311447
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
+		ptr = res.createResource(type, idx, total_size);
+		_fileHandle->read(ptr, total_size - 8);
+		//dumpResource("sound-", idx, ptr);
+		return 1;
+
+	case MKID('HSHD'):
+		// HE sound type without SOUN header
+		_fileHandle->seek(-16, SEEK_CUR);
+		total_size = max_total_size + 8;
 		ptr = res.createResource(type, idx, total_size);
 		_fileHandle->read(ptr, total_size - 8);
 		//dumpResource("sound-", idx, ptr);

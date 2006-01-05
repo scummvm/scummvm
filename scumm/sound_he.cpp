@@ -398,19 +398,13 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
 	// Support for sound in Humongous Entertainment games
-	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK') || READ_UINT32(ptr) == MKID('HSHD')) {
+	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK')) {
 		byte *sndPtr = ptr;
 		int priority;
 
-		if (READ_UINT32(ptr) == MKID('HSHD')) {
-			priority = READ_LE_UINT16(ptr + 10);
-			rate = READ_LE_UINT16(ptr + 14);
-			ptr += READ_BE_UINT32(ptr + 4);
-		} else {
-			priority = READ_LE_UINT16(ptr + 18);
-			rate = READ_LE_UINT16(ptr + 22);
-			ptr += 8 + READ_BE_UINT32(ptr + 12);
-		}
+		priority = READ_LE_UINT16(ptr + 18);
+		rate = READ_LE_UINT16(ptr + 22);
+		ptr += 8 + READ_BE_UINT32(ptr + 12);
 
 		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
@@ -498,8 +492,11 @@ void Sound::startHETalkSound(uint32 offset) {
 
 	_sfxMode |= 2;
 	_vm->res.nukeResource(rtSound, 1);
+
 	_sfxFile->seek(offset + 4, SEEK_SET);
-	 size = _sfxFile->readUint32BE() - 8;
+	 size = _sfxFile->readUint32BE();
+	_sfxFile->seek(offset, SEEK_SET);
+
 	_vm->res.createResource(rtSound, 1, size);
 	ptr = _vm->getResourceAddress(rtSound, 1);
 	_sfxFile->read(ptr, size);
