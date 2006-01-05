@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 
 #include "base/engine.h"
+#include "base/gameDetector.h"
 
 #include "gob/dataio.h"
 #include "gob/video.h"
@@ -70,6 +71,17 @@ enum {
 	GF_CD = 1 << 4
 };
 
+typedef struct GobGameSettings {
+	const char *name;
+	const char *description;
+	uint32 features;
+	const char *md5sum;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, description, features };
+		return dummy;
+	}
+} GobGameSettings;
+
 class GobEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);
 
@@ -78,7 +90,7 @@ protected:
 	int init(GameDetector &detector);
 
 public:
-	GobEngine(GameDetector * detector, OSystem * syst);
+	GobEngine(GameDetector * detector, OSystem * syst, uint32 features);
 	virtual ~GobEngine();
 
 	void shutdown();
@@ -96,7 +108,6 @@ public:
 	DataIO *_dataio;
 	Goblin *_goblin;
 	Init *_init;
-	Inter *_inter;
 	Map *_map;
 	Mult *_mult;
 	Pack *_pack;
@@ -105,9 +116,8 @@ public:
 	Scenery *_scenery;
 	GTimer *_gtimer;
 	Util *_util;
+	Inter *_inter;
 };
-
-extern GobEngine *_vm;
 
 } // End of namespace Gob
 #endif

@@ -20,7 +20,6 @@
  */
 #include "common/stdafx.h"
 
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
 #include "common/md5.h"
@@ -50,18 +49,7 @@ enum {
 	kMD5FileSizeLimit = 1024 * 1024
 };
 
-struct GobGameSettings {
-	const char *name;
-	const char *description;
-	uint32 features;
-	const char *md5sum;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
-		return dummy;
-	}
-};
-
-static const GobGameSettings gob_games[] = {
+static const Gob::GobGameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
 	{"gob1", "Gobliiins (DOS EGA)", Gob::GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
 	{"gob1", "Gobliiins (DOS EGA)", Gob::GF_GOB1, "1f499458837008058b8ba6ae07057214"},
@@ -144,7 +132,7 @@ GameList Engine_GOB_gameList() {
 
 DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const GobGameSettings *g;
+	const Gob::GobGameSettings *g;
 	FSList::const_iterator file;
 
 	// Iterate over all files in the given directory
@@ -186,26 +174,6 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
-	return new Gob::GobEngine(detector, syst);
-}
-
-REGISTER_PLUGIN(GOB, "Gob Engine")
-
-namespace Gob {
-#define MAX_TIME_DELTA 100
-GobEngine *_vm = NULL;
-
-GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
-	// Setup mixer
-	if (!_mixer->isReady()) {
-		warning("Sound initialization failed.");
-	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
-	_vm = this;
-
 	// Detect game features based on MD5
 	uint8 md5sum[16];
 	char md5str[32 + 1];
@@ -215,20 +183,20 @@ GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
 			sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 		}
 	} else {
-		error("GobEngine::GobEngine(): Cannot find intro.stk");
+		error("Engine_GOB_create(): Cannot find intro.stk");
 	}
 
-	const GobGameSettings *g;
+	const Gob::GobGameSettings *g;
 	bool found = false;
 
 	// TODO
 	// Fallback. Maybe we will be able to determine game type from game
 	// data contents
-	_features = GF_GOB1;
+	uint32 features = Gob::GF_GOB1;
 
 	for (g = gob_games; g->name; g++) {
 		if (strcmp(g->md5sum, (char *)md5str) == 0) {
-			_features = g->features;
+			features = g->features;
 
 			if (g->description)
 				g_system->setWindowCaption(g->description);
@@ -241,6 +209,27 @@ GobEngine::GobEngine(GameDetector *detector, OSystem * syst) : Engine(syst) {
 	if (!found) {
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 	}
+
+	return new Gob::GobEngine(detector, syst, features);
+}
+
+REGISTER_PLUGIN(GOB, "Gob Engine")
+
+namespace Gob {
+#define MAX_TIME_DELTA 100
+//GobEngine *_vm = NULL;
+
+GobEngine::GobEngine(GameDetector *detector, OSystem * syst, uint32 features)
+ : Engine(syst) {
+	// Setup mixer
+	if (!_mixer->isReady()) {
+		warning("Sound initialization failed.");
+	}
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+
+	_features = features;
 }
 
 GobEngine::~GobEngine() {
@@ -263,10 +252,21 @@ GobEngine::~GobEngine() {
 	delete _scenery;
 	delete _gtimer;
 	delete _util;
+	delete _inter;
 }
 
 void GobEngine::errorString(const char *buf1, char *buf2) {
 	strcpy(buf2, buf1);
+}
+
+int GobEngine::go() {
+	_init->initGame(0);
+
+	return 0;
+}
+
+void GobEngine::shutdown() {
+	_system->quit();
 }
 
 int GobEngine::init(GameDetector &detector) {
@@ -280,7 +280,6 @@ int GobEngine::init(GameDetector &detector) {
 	_dataio = new DataIO(this);
 	_goblin = new Goblin(this);
 	_init = new Init(this);
-	_inter = new Inter(this);
 	_map = new Map(this);
 	_mult = new Mult(this);
 	_pack = new Pack();
@@ -289,6 +288,12 @@ int GobEngine::init(GameDetector &detector) {
 	_scenery = new Scenery(this);
 	_gtimer = new GTimer();
 	_util = new Util(this);
+	if (_features & Gob::GF_GOB1)
+		_inter = new Inter_v1(this);
+	else if (_features & Gob::GF_GOB2)
+		_inter = new Inter_v2(this);
+	else
+		error("GobEngine::init(): Unknown version of game engine");
 
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
@@ -336,16 +341,6 @@ int GobEngine::init(GameDetector &detector) {
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 
 	return 0;
-}
-
-int GobEngine::go() {
-	_init->initGame(0);
-
-	return 0;
-}
-
-void GobEngine::shutdown() {
-	_system->quit();
 }
 
 } // End of namespace Gob

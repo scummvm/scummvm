@@ -12,6 +12,8 @@ MODULE_OBJS := \
 	gob/goblin.o \
 	gob/init.o \
 	gob/inter.o \
+	gob/inter_v1.o \
+	gob/inter_v2.o \
 	gob/map.o \
 	gob/mult.o \
 	gob/pack.o \
