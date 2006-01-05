@@ -63,6 +63,7 @@ public:
 		tag32 tag() { return _tag; }
 		CMap *cmap();
 		void setColormap(CMap *c);
+		bool visible();
 		Component *parent() { return _parent; }
 		virtual void setMatrix(Matrix4) { };
 		virtual void init() { }
@@ -75,9 +76,9 @@ public:
 		virtual ~Component() { }
 
 	protected:
-		ResPtr<CMap> _cmap;
+		ResPtr<CMap> _cmap, _previousCmap;
 		tag32 _tag;
-		int _parentID;
+		int _parentID, _visible;
 		Component *_parent, *_child, *_sibling;
 		Matrix4 _matrix;
 		Costume *_cost;

@@ -199,15 +199,22 @@ void DriverTinyGL::drawModelFace(const Model::Face *face, float *vertices, float
 	tglEnd();
 }
 
+void DriverTinyGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
+	tglPushMatrix();
+
+	tglTranslatef(pos.x(), pos.y(), pos.z());
+	tglRotatef(yaw, 0, 0, 1);
+	tglRotatef(pitch, 1, 0, 0);
+	tglRotatef(roll, 0, 1, 0);
+}
+
+void DriverTinyGL::translateViewpoint() {
+	tglPopMatrix();
+}
+
 void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
+	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
-		tglPushMatrix();
-
-		tglTranslatef(node->_animPos.x() / node->_totalWeight, node->_animPos.y() / node->_totalWeight, node->_animPos.z() / node->_totalWeight);
-		tglRotatef(node->_animYaw / node->_totalWeight, 0, 0, 1);
-		tglRotatef(node->_animPitch / node->_totalWeight, 1, 0, 0);
-		tglRotatef(node->_animRoll / node->_totalWeight, 0, 1, 0);
-
 		if (node->_mesh != NULL && node->_meshVisible) {
 			tglPushMatrix();
 			tglTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
@@ -220,8 +227,8 @@ void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
 			node->_child->draw();
 			tglMatrixMode(TGL_MODELVIEW);
 		}
-		tglPopMatrix();
 	}
+	translateViewpoint();
 
 	if (node->_sibling != NULL)
 		node->_sibling->draw();

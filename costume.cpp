@@ -124,7 +124,6 @@ public:
 protected:
 	std::string _filename;
 	ResPtr<Model> _obj;
-	ResPtr<CMap> _previousCmap;
 	Model::HierNode *_hier;
 	Matrix4 _matrix;
 };
@@ -216,7 +215,6 @@ ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const c
 	} else {
 		_filename = filename;
 	}
-	_previousCmap = NULL;
 	if (prevComponent != NULL) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 		
@@ -231,13 +229,9 @@ void ModelComponent::init() {
 	// constructor before
 	if (_obj == NULL) {
 		CMap *cmap = this->cmap();
-		// If we still don't have the necessary colormap
-		// then try the one from the previous costume
-		if (cmap == NULL && _previousCmap != NULL)
-			cmap = _previousCmap;
-
-		// Get the default colormap if we still haven't
-		// found a valid colormap
+		
+		// Get the default colormap if we haven't found
+		// a valid colormap
 		if (cmap == NULL) {
 			if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 				warning("No colormap specified for %s, using %s\n", _filename.c_str(), DEFAULT_COLORMAP);
@@ -246,7 +240,12 @@ void ModelComponent::init() {
 		}
 		_obj = g_resourceloader->loadModel(_filename.c_str(), *cmap);
 		_hier = _obj->copyHierarchy();
-		reset();
+		// Use parent availablity to decide whether to default the
+		// component to being visible
+		if (_parent == NULL || !_parent->visible())
+			setKey(1);
+		else
+			setKey(0);
 	}
 
 	// If we're the child of a mesh component, put our nodes in the
@@ -262,32 +261,13 @@ void ModelComponent::init() {
 }
 
 void ModelComponent::setKey(int val) {
-	MainModelComponent *mmc;
-	ModelComponent *moc;
-	MeshComponent *mc;
-	
-	_hier->_hierVisible = (val != 0);
-	// If we're making a model component visible then assume
-	// that the parent mesh object should also become visible
-	if (_parent == NULL || val == 0)
-		return;
-	mc = dynamic_cast<MeshComponent *>(_parent);
-	if (mc == NULL)
-		return;
-	mc->node()->_meshVisible = true;
-	// Do the same thing with the parent of the mesh object
-	// but DO NOT handle the parent if it's a MMDL
-	if (mc->parent() == NULL)
-		return;
-	moc = dynamic_cast<ModelComponent *>(mc->parent());
-	mmc = dynamic_cast<MainModelComponent *>(mc->parent());
-	if (moc == NULL || mmc != NULL)
-		return;
-	moc->_hier->_hierVisible = true;
+	_visible = (val != 0);
+	_hier->_hierVisible = _visible;
 }
 
 void ModelComponent::reset() {
-	_hier->_hierVisible = false;
+	_visible = false;
+	_hier->_hierVisible = _visible;
 }
 
 // Reset the hierarchy nodes for any keyframe animations (which
@@ -318,11 +298,29 @@ ModelComponent::~ModelComponent() {
 	delete[] _hier;
 }
 
+void translateObject(Model::HierNode *node, bool reset) {
+	if (node->_parent != NULL)
+		translateObject(node->_parent, reset);
+
+	if(reset)
+		g_driver->translateViewpoint();
+	else
+		g_driver->translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
+}
+
 void ModelComponent::draw() {
-	if (_parent == NULL) 
-		// Otherwise it was already drawn by
-		// being included in the parent's hierarchy
-		_hier->draw();
+	// If the object was drawn by being a component
+	// of it's parent then don't draw it
+	if (_parent != NULL && _parent->visible())
+			return;
+	// Need to translate object to be in accordance
+	// with the setup of the parent
+	if (_hier->_parent != NULL)
+		translateObject(_hier->_parent, false);
+	_hier->draw();
+	// Need to un-translate when done
+	if (_hier->_parent != NULL)
+		translateObject(_hier->_parent, true);
 }
 
 MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag) :
@@ -341,7 +339,8 @@ MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID,
 
 void MainModelComponent::init() {
 	ModelComponent::init();
-	_hier->_hierVisible = true;
+	_visible = true;
+	_hier->_hierVisible = _visible;
 }
 
 void MainModelComponent::update() {
@@ -353,7 +352,8 @@ void MainModelComponent::update() {
 }
 
 void MainModelComponent::reset() {
-	_hier->_hierVisible = true;
+	_visible = true;
+	_hier->_hierVisible = _visible;
 }
 
 MainModelComponent::~MainModelComponent() {
@@ -721,6 +721,8 @@ Costume::~Costume() {
 }
 
 Costume::Component::Component(Component *parent, int parentID, tag32 tag) {
+	_visible = -1;
+	_previousCmap = NULL;
 	_cmap = NULL;
 	_cost = NULL;
 	_parent = NULL;
@@ -738,8 +740,16 @@ void Costume::Component::setColormap(CMap *c) {
 		mc->resetColormap();
 }
 
+bool Costume::Component::visible() {
+	if (_visible == -1 && _parent != NULL)
+		return _parent->visible();
+	return _visible;
+}
+
 CMap *Costume::Component::cmap() {
-	if (_cmap == NULL && _parent != NULL)
+	if (_cmap == NULL && _previousCmap != NULL)
+		return _previousCmap;
+	else if (_cmap == NULL && _parent != NULL)
 		return _parent->cmap();
 	else if (_cmap == NULL && _parent == NULL && _cost != NULL)
 		return _cost->_cmap;

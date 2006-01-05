@@ -146,16 +146,23 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
   glDisable( GL_ALPHA_TEST );
 }
 
+void DriverGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	glTranslatef(pos.x(), pos.y(), pos.z());
+	glRotatef(yaw, 0, 0, 1);
+	glRotatef(pitch, 1, 0, 0);
+	glRotatef(roll, 0, 1, 0);
+}
+
+void DriverGL::translateViewpoint() {
+	glPopMatrix();
+}
+
 void DriverGL::drawHierachyNode(const Model::HierNode *node) {
+	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(node->_animPos.x() / node->_totalWeight, node->_animPos.y() / node->_totalWeight, node->_animPos.z() / node->_totalWeight);
-		glRotatef(node->_animYaw / node->_totalWeight, 0, 0, 1);
-		glRotatef(node->_animPitch / node->_totalWeight, 1, 0, 0);
-		glRotatef(node->_animRoll / node->_totalWeight, 0, 1, 0);
-
 		if (node->_mesh != NULL && node->_meshVisible) {
 			glPushMatrix();
 			glTranslatef(node->_pivot.x(), node->_pivot.y(), node->_pivot.z());
@@ -168,8 +175,8 @@ void DriverGL::drawHierachyNode(const Model::HierNode *node) {
 			node->_child->draw();
 			glMatrixMode(GL_MODELVIEW);
 		}
-		glPopMatrix();
 	}
+	translateViewpoint();
 
 	if (node->_sibling != NULL)
 		node->_sibling->draw();

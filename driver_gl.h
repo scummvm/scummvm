@@ -49,6 +49,9 @@ public:
 	
 	void set3DMode();
 
+	void translateViewpoint(Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpoint();
+
 	void drawHierachyNode(const Model::HierNode *node);
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);
 
