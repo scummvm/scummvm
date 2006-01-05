@@ -22,7 +22,6 @@
 #include "actor.h"
 #include "textsplit.h"
 #include "engine.h"
-#include "colormap.h"
 #include "keyframe.h"
 #include "material.h"
 #include "model.h"
