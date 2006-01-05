@@ -1006,7 +1006,7 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 	case rtCharset:
 		return _charset->getCurID() == i;
 	case rtSpoolBuffer:
-		return _sound->isSoundRunning(10000 + i);
+		return _sound->isSoundRunning(10000 + i) != 0;
 	default:
 		return false;
 	}

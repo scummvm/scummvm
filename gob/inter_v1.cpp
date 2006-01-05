@@ -1475,7 +1475,7 @@ bool Inter_v1::o1_call(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 bool Inter_v1::o1_callBool(char &cmdCount, int16 &counter, int16 &retFlag) {
 	byte cmd;
-	bool boolRes = evalBoolResult();
+	bool boolRes = evalBoolResult() != 0;
 	if (boolRes != 0) {
 		if (counter == cmdCount
 				&& retFlag == 2)
