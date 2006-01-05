@@ -1153,6 +1153,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 			if (talkState == 0)
 				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
 
+			checkRange(13, 1, talkState, "Talk state %d out of range");
 			setTalkCondition(talkState);
 		} else {
 			setTalkCondition(1);
