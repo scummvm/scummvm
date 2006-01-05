@@ -22,12 +22,12 @@
 
 #include "common/stdafx.h"
 #include "scumm/actor.h"
+#include "scumm/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
 
@@ -96,7 +96,7 @@ int Sound::getSoundVar(int sound, int var) {
 	}
 
 	if (chan != -1) {
-		//debug(1, "getSoundVar: sound %d var %d result %d\n", sound, var, _heChannel[chan].soundVars[var]);
+		debug(1, "getSoundVar: sound %d var %d result %d\n", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
 		return 0;
@@ -411,8 +411,11 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			ptr += 8 + READ_BE_UINT32(ptr + 12);
 		}
 
-		//if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel]) && _heChannel[heChannel].priority > priority)
-		//	return;
+		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
+			int curSnd = _heChannel[heChannel].sound;
+			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
+				return;
+		}
 
 		int codeOffs = -1;
 		if (READ_UINT32(ptr) == MKID('SBNG')) {
@@ -442,7 +445,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + heOffset + 8, size);
-		//_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
+		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 
 		_vm->setHETimer(heChannel + 4);
@@ -471,9 +474,9 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else {
-		//if (_vm->_musicEngine) {
-		//	_vm->_musicEngine->startSound(soundID);
-		//}
+		if (_vm->_musicEngine) {
+			_vm->_musicEngine->startSound(soundID);
+		}
 	}
 
 	free(mallocedPtr);
