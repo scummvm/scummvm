@@ -28,7 +28,7 @@
 #include "backends/gp32/gp32std.h"
 #include "backends/gp32/gp32std_grap.h"
 
-#include "backends/gp32/gp32_launcher.h"
+#include "backends/gp32/globals.h"
 
 GPDRAWSURFACE lcdSurface[2];
 
@@ -36,6 +36,9 @@ uint8 flipIndex = 1;
 
 uint16 *frameBuffer1;
 uint16 *frameBuffer2;
+
+uint8 gammaLUT[256];
+uint8 gammaLUTInv[256];
 
 extern const unsigned char fontresEng1[];
 extern const unsigned char fontresKor1[];
@@ -87,15 +90,25 @@ void gp_fillRect(uint16 *frameBuffer, int16 x, int16 y, int16 w, int16 h, uint16
 	}
 }
 
+void gp_initGammaTable(float value)
+{
+	for(int i = 0; i < 256; i++) {
+		if(value == 1.0f) {
+			gammaLUT[i] = i;
+			gammaLUTInv[i] = i;
+		} else {
+			gammaLUT[i] = (uint8)(pow((double)i / 256, 1 / (double)value) * 256);
+			gammaLUTInv[i] = (uint8)(pow((double)i / 256, (double)value) * 256);
+		}
+	}
+}
+
 uint16 gp_RGBTo16(uint16 r, uint16 g, uint16 b) {
 	// GP32 16bit color 5551
-	if(g_gammaRamp != 100) {
-		r *= ((float)g_gammaRamp / 100);
-		g *= ((float)g_gammaRamp / 100);
-		b *= ((float)g_gammaRamp / 100);
-		r = r >= 255 ? 255 : r;
-		g = g >= 255 ? 255 : g;
-		b = b >= 255 ? 255 : b;
+	if(g_vars.gammaRamp != 10000) {
+		r = gammaLUT[r];
+		g = gammaLUT[g];
+		b = gammaLUT[b];
 	}
 	return (((r >> 3) & 0x1F) << 11) | (((g >> 3) & 0x1F) << 6) | ((b >> 3) & 0x1F) << 1;
 }
@@ -105,10 +118,10 @@ void gp_16ToRGB(uint16 color, uint8 *r, uint8 *g, uint8 *b) {
 	*g = ((((color) >> 6) & 0x1F) << 3);	//(((color>>5)&0x3F) << 2);
 	*b = ((((color) >> 1) & 0x1F) << 3);	//((color&0x1F) << 3);
 
-	if(g_gammaRamp != 100) {
-		*r /= ((float)g_gammaRamp / 100);
-		*g /= ((float)g_gammaRamp / 100);
-		*b /= ((float)g_gammaRamp / 100);
+	if(g_vars.gammaRamp != 10000) {
+		*r = gammaLUTInv[*r];
+		*g = gammaLUTInv[*g];
+		*b = gammaLUTInv[*b];
 	}
 }
 

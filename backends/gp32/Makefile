@@ -68,7 +68,7 @@ CFLAGS		=	-marm -march=armv4t -mtune=arm920 -mapcs \
 	       		-mno-thumb-interwork \
 				-I$(GPSDK)/include \
 				-g \
-	       		-O3 \
+	       		-O2 \
 	       		-fomit-frame-pointer
 
 CPPFLAGS	=	$(CFLAGS)

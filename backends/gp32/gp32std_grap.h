@@ -37,6 +37,7 @@ extern void gp_16ToRGB(uint16 color, uint8 *r, uint8 *g, uint8 *b);
 
 extern void gp_textOut(uint16 *frameBuffer, int x, int y, char* lpszText, uint16 wColor);
 
+extern void gp_initGammaTable(float value);
 extern void gp_initFrameBuffer();
 extern void gp_flipScreen();
 

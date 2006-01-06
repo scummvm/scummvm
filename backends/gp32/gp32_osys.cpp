@@ -28,6 +28,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
+#include "backends/gp32/globals.h"
+
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -646,6 +648,10 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 	NP("OSys::setSoundCallback()");
 
 	GPSOUNDBUF gpSoundBuf;
+
+	ConfMan.set("FM_medium_quality", (g_vars.fmQuality == FM_QUALITY_MED));
+	ConfMan.set("FM_high_quality", (g_vars.fmQuality == FM_QUALITY_HI));
+	//ConfMan.set("sample_rate", (int)g_vars.sampleRate);
 
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");

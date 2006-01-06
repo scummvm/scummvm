@@ -23,9 +23,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/scaler.h"
-#include "common/system.h"
-#include "backends/intern.h"
+#include "common/file.h"
 
 #include "base/engine.h"
 
@@ -35,17 +33,57 @@
 
 #include "backends/gp32/gfx_splash.h"
 #include "backends/gp32/gp32_launcher.h"
+#include "backends/gp32/globals.h"
 
 uint16 cpuSpeedTable[15] = {40, 66, 100, 120, 133, 144, 156, 160, 166, 172, 176, 180, 188, 192, 200};
-uint16 gammaTable[16] = {50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200};
+uint16 gammaTable[16] = {5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000};
 char *oplTable[3] = {"LOW", "MEDIUM", "HIGH"};
 uint16 sampleTable[3] = {11025, 22050, 44100};
 
 uint8 maxTable[5] = {15, 16, 3, 3, 2};
-uint8 currentSetting[5] = {3, 5, 1, 0, 0};
+uint8 currentSetting[5] = {2, 5, 1, 0, 0};
 
-int g_cpuSpeed = 120;
-int g_gammaRamp = 100;
+void writeConfigVars() {
+	Common::File file;
+
+	g_vars.cpuSpeed = cpuSpeedTable[currentSetting[0]];
+	g_vars.gammaRamp = gammaTable[currentSetting[1]];
+	g_vars.fmQuality = currentSetting[2];
+	g_vars.sampleRate = sampleTable[currentSetting[3]];
+
+	if (!file.open("scummvm.cfg", Common::File::kFileWriteMode, "gp:\\gpetc\\")) {
+		return;
+	}
+	file.writeByte(currentSetting[0]);
+	file.writeByte(currentSetting[1]);
+	file.writeByte(currentSetting[2]);
+	file.writeByte(currentSetting[3]);
+	file.close();
+}
+
+void readConfigVars() {
+	Common::File file;
+	if (!file.exists("scummvm.cfg", "gp:\\gpetc\\")) {
+		currentSetting[0] = 2;
+		currentSetting[1] = 5;
+		currentSetting[2] = 1;
+		currentSetting[3] = 0;
+		writeConfigVars();
+	} else {
+		if (!file.open("scummvm.cfg", Common::File::kFileReadMode, "gp:\\gpetc\\")) {
+			return;
+		}
+		currentSetting[0] = file.readByte();
+		currentSetting[1] = file.readByte();
+		currentSetting[2] = file.readByte();
+		currentSetting[3] = file.readByte();
+		g_vars.cpuSpeed = cpuSpeedTable[currentSetting[0]];
+		g_vars.gammaRamp = gammaTable[currentSetting[1]];
+		g_vars.fmQuality = currentSetting[2];
+		g_vars.sampleRate = sampleTable[currentSetting[3]];
+		file.close();
+	}
+}
 
 void configMenu() {
 	uint32 nKeyUD;
@@ -54,14 +92,17 @@ void configMenu() {
 	int currentSelect = 0;
 	char text[32];
 
+	// OK / CANCEL
+	currentSetting[4] = 0;
+
 	while (1) {
 		gp_fillRect(frameBuffer2, 0, 0, 320, 240, 0xffff);
 		gp_textOut(frameBuffer2, 90, 10, "Configuration Menu", 0);
 
 		gp_textOut(frameBuffer2, 30, 40, "CPU clock speed", 0);
 		gp_textOut(frameBuffer2, 30, 80, "Gamma ramp", 0);
-		gp_textOut(frameBuffer2, 30, 120, "FMOPL (AdLib) quality", gp_RGBTo16(128, 128, 128));
-		gp_textOut(frameBuffer2, 30, 160, "Sampling rate", gp_RGBTo16(128, 128, 128));
+		gp_textOut(frameBuffer2, 30, 120, "FMOPL (AdLib) quality", 0);
+		gp_textOut(frameBuffer2, 30, 160, "Sampling rate", 0);
 
 		gp_textOut(frameBuffer2, 100, 210, "OK         CANCEL", 0);
 
@@ -72,7 +113,7 @@ void configMenu() {
 
 		sprintf(text, "%d MHz", cpuSpeedTable[currentSetting[0]]);
 		gp_textOut(frameBuffer2, 220, 40, text, 0);
-		sprintf(text, "%d %%", gammaTable[currentSetting[1]]);
+		sprintf(text, "%.2f", (float)gammaTable[currentSetting[1]] / 10000);
 		gp_textOut(frameBuffer2, 220, 80, text, 0);
 		gp_textOut(frameBuffer2, 220, 120, oplTable[currentSetting[2]], gp_RGBTo16(128, 128, 128));
 		sprintf(text, "%d Hz", sampleTable[currentSetting[3]]);
@@ -91,12 +132,12 @@ void configMenu() {
 				currentSelect++;
 		}
 		if (gpd_getButtonDown(nKeyUD, GPC_VK_LEFT)) {
-			if (currentSelect <= 1)
+			if (currentSelect <= 3)
 				if (currentSetting[currentSelect] > 0)
 					currentSetting[currentSelect]--;
 		}
 		if (gpd_getButtonDown(nKeyUD, GPC_VK_RIGHT)) {
-			if (currentSelect <= 1)
+			if (currentSelect <= 3)
 				if (currentSetting[currentSelect] < maxTable[currentSelect] - 1)
 					currentSetting[currentSelect]++;
 		}
@@ -105,8 +146,7 @@ void configMenu() {
 			gpd_getButtonUp(nKeyUD, GPC_VK_FA)) {
 			if (currentSelect == 4) {
 				if (currentSetting[currentSelect] == 0) { // OK
-					g_cpuSpeed = cpuSpeedTable[currentSetting[0]];
-					g_gammaRamp = gammaTable[currentSetting[1]];
+					writeConfigVars();
 					return;
 				} else { // CANCEL
 					return;

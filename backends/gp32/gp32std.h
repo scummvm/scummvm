@@ -38,7 +38,7 @@
 #define LCD_WIDTH 320
 #define LCD_HEIGHT 240
 
-#define FCACHE_SIZE 8 * 1024	// speed up writes
+#define FCACHE_SIZE 8 * 1024
 
 typedef struct {
 	F_HANDLE handle;
@@ -79,6 +79,7 @@ extern void *	gp_malloc(size_t size);
 extern void *	gp_calloc(size_t nitems, size_t size);
 extern void 	gp_free(void *block);
 
+extern void		gp_setCpuSpeed(int freq);
 extern int		gp_printf(const char *fmt, ...);
 extern void		gp_delay(unsigned long msecs);
 extern void		gp_exit(int code);

@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2005 The ScummVM project
- * Copyright (C) 2005 Won Star - GP32 Backend
+ * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2006 Won Star - GP32 Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,22 @@
  *
  */
 
-#ifndef __GP32_LAUNCHER_H
-#define __GP32_LAUNCHER_H
+#ifndef __GLOBALS_H
+#define __GLOBALS_H
 
-#include "stdafx.h"
-#include "common/scummsys.h"
+enum {
+	FM_QUALITY_LOW = 0,
+	FM_QUALITY_MED,
+	FM_QUALITY_HI
+};
 
-extern void readConfigVars();
+struct GlobalVars {
+	uint16 cpuSpeed;
+	uint16 gammaRamp;
+	uint8 fmQuality;
+	uint32 sampleRate;
+};
 
-extern void splashScreen();
+extern GlobalVars g_vars;
 
 #endif
