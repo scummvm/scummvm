@@ -533,20 +533,20 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 104:		// SO_NUKE_SCRIPT
 		resid = pop();
-		res.setResourceCounter(rtScript, resid, 0x7F);
+		res.nukeResource(rtScript, resid);
 		break;
 	case 105:		// SO_NUKE_SOUND
 		resid = pop();
-		res.setResourceCounter(rtSound, resid, 0x7F);
+		res.nukeResource(rtSound, resid);
 		break;
 	case 106:		// SO_NUKE_COSTUME
 		resid = pop();
-		res.setResourceCounter(rtCostume, resid, 0x7F);
+		res.nukeResource(rtCostume, resid);
 		break;
 	case 107:		// SO_NUKE_ROOM
 		resid = pop();
-		res.setResourceCounter(rtRoom, resid, 0x7F);
-		res.setResourceCounter(rtRoomImage, resid, 0x7F);
+		res.nukeResource(rtRoom, resid);
+		res.nukeResource(rtRoomImage, resid);
 		break;
 	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
@@ -591,6 +591,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		res.unlock(rtRoomImage, resid);
 		break;
 	case 116:
+		error("CrunchHeap");
 		break;
 	case 117:		// SO_LOAD_CHARSET
 		resid = pop();
