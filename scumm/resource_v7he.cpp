@@ -1799,18 +1799,18 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	byte *sbng1Ptr, *sbng2Ptr;
 	byte *sdat1Ptr, *sdat2Ptr;
 	byte *src, *dst, *tmp;
-	int curOffs, len, offs, size;
+	int len, offs, size;
 
 	if (snd2id == -1) {
-		_sndOffs1 = 0;
-		_sndOffs2 = 0;
+		_sndPtrOffs = 0;
+		_sndTmrOffs = 0;
 		return;
 	}
 
 	if (snd1id != _curSndId) {
 		_curSndId = snd1id;
-		_sndOffs1 = 0;
-		_sndOffs2 = 0;
+		_sndPtrOffs = 0;
+		_sndTmrOffs = 0;
 	}
 
 	res.lock(rtSound, snd1id);
@@ -1833,7 +1833,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
 		if (chan != -1 && _sound->_heChannel[chan].codeOffs > 0) {
-			curOffs = _sound->_heChannel[chan].codeOffs;
+			int curOffs = _sound->_heChannel[chan].codeOffs;
 
 			src = snd1Ptr + curOffs;
 			dst = sbng1Ptr + 8;
@@ -1863,59 +1863,56 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		len = tmp - sbng2Ptr - 6;
 		memcpy(dst, src, len);
 
-		int time;
-		while (READ_LE_UINT16(dst) != 0) {
+		int32 time;
+		while ((size = READ_LE_UINT16(dst)) != 0) {
 			time = READ_LE_UINT32(dst + 2);
-			time += _sndOffs2;
-			size = READ_LE_UINT16(dst);
+			time += _sndTmrOffs;
 			WRITE_LE_UINT32(dst + 2, time);
 			dst += size;
 		}
 	}
 
-	int size1, size2;
-
+	int sdat1size, sdat2size;
 	sdat1Ptr = heFindResource(MKID('SDAT'), snd1Ptr);
 	assert(sdat1Ptr);
 	sdat2Ptr = heFindResource(MKID('SDAT'), snd2Ptr);
 	assert(sdat2Ptr);
 
-	size1 = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndOffs1;
-	size2 = READ_BE_UINT32(sdat2Ptr + 4) - 8;
+	sdat1size = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndPtrOffs;
+	sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
 
-	debug(0, "SDAT size1 %d size2 %d", size1, size2);
-
-	if (size1 <= 0) {
-		debug(0, "createSound: Invalid offset (%d) for sound (%d)", snd1id, size1);
+	debug(0, "SDAT size1 %d size2 %d", sdat1size, sdat2size);
+	if (sdat1size <= 0) {
+		debug(0, "createSound: Invalid offset (%d) for sound (%d)", snd1id, sdat1size);
 		return;
 	}
 
-	if (size2 < size1) {
+	if (sdat2size < sdat1size) {
 		src = sdat2Ptr + 8;
-		dst = sdat1Ptr + 8 + _sndOffs1;
-		len = size2;
+		dst = sdat1Ptr + 8 + _sndPtrOffs;
+		len = sdat2size;
 		
 		memcpy(dst, src, len);
 
-		_sndOffs1 += size2;
-		_sndOffs2 += size2;
+		_sndPtrOffs += len;
+		_sndTmrOffs += sdat2size;
 	} else {
 		src = sdat2Ptr + 8;
-		dst = sdat1Ptr + 8 + _sndOffs1;
-		len = size1;
+		dst = sdat1Ptr + 8 + _sndPtrOffs;
+		len = sdat1size;
 		
 		memcpy(dst, src, len);
 
-		if (size2 != size1) {
-			src = sdat2Ptr + 8 + size1;
+		if (sdat2size != sdat1size) {
+			src = sdat2Ptr + 8 + sdat1size;
 			dst = sdat1Ptr + 8;
-			len = size2 - size1;
+			len = sdat2size - sdat1size;
 		
 			memcpy(dst, src, len);
 		}
 
-		_sndOffs1 += size2 - size1;
-		_sndOffs2 += size2;
+		_sndPtrOffs += sdat2size - sdat1size;
+		_sndTmrOffs += sdat2size;
 	}
 }
 

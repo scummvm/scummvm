@@ -1087,7 +1087,7 @@ protected:
 	const OpcodeEntryV80he *_opcodesV80he;
 
 	int32 _heSndResId;
-	int _curSndId, _sndOffs1, _sndOffs2;
+	int _curSndId, _sndPtrOffs, _sndTmrOffs;
 
 public:
 	ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);

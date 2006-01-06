@@ -1609,8 +1609,8 @@ ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, cons
 	: ScummEngine_v72he(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_heSndResId = 0;
 	_curSndId = 0;
-	_sndOffs1 = 0;
-	_sndOffs2 = 0;
+	_sndPtrOffs = 0;
+	_sndTmrOffs = 0;
 }
 
 ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
