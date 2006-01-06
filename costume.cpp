@@ -325,11 +325,10 @@ void ModelComponent::draw() {
 
 MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag) :
 		ModelComponent(parent, parentID, filename, prevComponent, tag), _hierShared(false) {
-	_obj = NULL;
 	if (parentID == -2 && prevComponent != NULL) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 		
-		if (mmc != NULL) {
+		if (mmc != NULL && mmc->_filename == filename) {
 			_obj = mmc->_obj;
 			_hier = mmc->_hier;
 			_hierShared = true;
