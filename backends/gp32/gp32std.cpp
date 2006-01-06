@@ -158,7 +158,7 @@ GPFILE *gp_fopen(const char *fileName, const char *openMode) {
 		file->cachePos = 0;
 		mode = OPEN_W;
 		err = GpFileCreate(fileName, ALWAYS_CREATE, &file->handle);
-	} else if(tolower(openMode[0]) == 'a') {
+	} else if (tolower(openMode[0]) == 'a') {
 		warning("We do not support 'a' file open mode.");
 		free(file);
 		return NULL;

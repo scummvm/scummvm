@@ -115,9 +115,9 @@ void configMenu() {
 		gp_textOut(frameBuffer2, 220, 40, text, 0);
 		sprintf(text, "%.2f", (float)gammaTable[currentSetting[1]] / 10000);
 		gp_textOut(frameBuffer2, 220, 80, text, 0);
-		gp_textOut(frameBuffer2, 220, 120, oplTable[currentSetting[2]], gp_RGBTo16(128, 128, 128));
+		gp_textOut(frameBuffer2, 220, 120, oplTable[currentSetting[2]], 0);
 		sprintf(text, "%d Hz", sampleTable[currentSetting[3]]);
-		gp_textOut(frameBuffer2, 220, 160, text, gp_RGBTo16(128, 128, 128));
+		gp_textOut(frameBuffer2, 220, 160, text, 0);
 
 		gp_flipScreen();
 

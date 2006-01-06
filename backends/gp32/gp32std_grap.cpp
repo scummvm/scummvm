@@ -92,8 +92,8 @@ void gp_fillRect(uint16 *frameBuffer, int16 x, int16 y, int16 w, int16 h, uint16
 
 void gp_initGammaTable(float value)
 {
-	for(int i = 0; i < 256; i++) {
-		if(value == 1.0f) {
+	for (int i = 0; i < 256; i++) {
+		if (value == 1.0f) {
 			gammaLUT[i] = i;
 			gammaLUTInv[i] = i;
 		} else {
@@ -105,7 +105,7 @@ void gp_initGammaTable(float value)
 
 uint16 gp_RGBTo16(uint16 r, uint16 g, uint16 b) {
 	// GP32 16bit color 5551
-	if(g_vars.gammaRamp != 10000) {
+	if (g_vars.gammaRamp != 10000) {
 		r = gammaLUT[r];
 		g = gammaLUT[g];
 		b = gammaLUT[b];
@@ -118,7 +118,7 @@ void gp_16ToRGB(uint16 color, uint8 *r, uint8 *g, uint8 *b) {
 	*g = ((((color) >> 6) & 0x1F) << 3);	//(((color>>5)&0x3F) << 2);
 	*b = ((((color) >> 1) & 0x1F) << 3);	//((color&0x1F) << 3);
 
-	if(g_vars.gammaRamp != 10000) {
+	if (g_vars.gammaRamp != 10000) {
 		*r = gammaLUTInv[*r];
 		*g = gammaLUTInv[*g];
 		*b = gammaLUTInv[*b];
