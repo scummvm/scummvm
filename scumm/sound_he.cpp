@@ -301,7 +301,6 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 
 void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	debug(0,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
-	byte *mallocedPtr = NULL;
 	byte *ptr, *spoolPtr;
 	char *sound;
 	int size = -1;
@@ -358,9 +357,6 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID);
 			return;
 		}
-
-		// This pointer will be freed at the end of the function
-		mallocedPtr = spoolPtr;
 	}
 
 	if (soundID > _vm->_numSounds) {
@@ -474,8 +470,6 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_vm->_musicEngine->startSound(soundID);
 		}
 	}
-
-	free(mallocedPtr);
 }
 
 void Sound::startHETalkSound(uint32 offset) {
