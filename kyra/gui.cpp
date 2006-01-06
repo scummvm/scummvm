@@ -89,8 +89,8 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		return 1;
 	int jewel = caller->specialValue - 0x14;
 	if (_currentCharacter->sceneId == 210) {
-		//if (_unkSceneVar == 4 || _unkSceneVar == 6)
-		//	return 1;
+		if (_beadStateVar == 4 || _beadStateVar == 6)
+			return 1;
 	}
 	if (!queryGameFlag(0x2D))
 		return 1;

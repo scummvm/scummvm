@@ -103,6 +103,19 @@ struct SceneExits {
 	uint8  westYPos;
 };
 
+struct BeadState {
+	int16 x;
+	int16 y;
+	int16 width;
+	int16 height;
+	int16 dstX;
+	int16 dstY;
+	int16 width2;
+	int16 unk8;
+	int16 unk9;
+	int16 tableIndex;
+};
+
 class Movie;
 
 class MusicPlayer;
@@ -492,7 +505,7 @@ protected:
 	void freeShapes123();
 	void setBrandonAnimSeqSize(int width, int height);
 	void resetBrandonAnimSeqSize();
-	
+
 	void seq_demo();
 	void seq_intro();
 	void seq_introLogos();
@@ -515,6 +528,8 @@ protected:
 	void seq_dispelMagicAnimation();
 	void seq_fillFlaskWithWater(int item, int type);
 	void seq_playDrinkPotionAnim(int unk1, int unk2, int flags);
+	int seq_playEnd();
+	void seq_brandonToStone();
 
 	void snd_startTrack();
 	void snd_haltTrack();
@@ -550,6 +565,13 @@ protected:
 	void setCharactersInDefaultScene();
 	void resetBrandonPosionFlags();
 	void initAnimStateList();
+	void setupPanPages();
+	void freePanPages();
+	void closeFinalWsa();
+	int handleMalcolmFlag();
+	int handleBeadState();
+	void initBeadState(int x, int y, int x2, int y2, int unk1, BeadState *ptr);
+	int processBead(int x, int y, int &x2, int &y2, BeadState *ptr);
 	
 	void setTimer19();
 	void setupTimers();
@@ -594,11 +616,23 @@ protected:
 	bool _handleInput;
 	bool _changedScene;
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
+	int _beadStateVar;
 	int _unkAmuletVar;
 	
 	int _brandonAnimSeqSizeWidth;
 	int _brandonAnimSeqSizeHeight;
-
+	
+	int _malcolmFlag;
+	int _endSequenceSkipFlag;
+	int _endSequenceNeedLoading;
+	int _unkEndSeqVar2;
+	uint8 *_endSequenceBackUpRect;
+	int _unkEndSeqVar4;
+	int _unkEndSeqVar5;
+	int _lastDisplayedPanPage;
+	uint8 *_panPagesTable[20];
+	Movie *_finalA, *_finalB, *_finalC;
+	
 	Movie *_movieObjects[10];
 
 	uint16 _entranceMouseCursorTracks[8];

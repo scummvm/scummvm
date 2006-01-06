@@ -1631,7 +1631,9 @@ int KyraEngine::cmd_setNoItemDropRegion(ScriptState *script) {
 }
 
 int KyraEngine::cmd_walkMalcolmOn(ScriptState *script) {
-	warning("STUB: cmd_walkMalcolmOn");
+	debug(3, "cmd_walkMalcolmOn(0x%X) ()", script);
+	if (!_malcolmFlag)
+		_malcolmFlag = 1;
 	return 0;
 }
 

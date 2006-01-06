@@ -53,6 +53,7 @@ public:
 
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
+	bool printed() const { return _talkMessagePrinted; }
 private:
 	Screen *_screen;
 

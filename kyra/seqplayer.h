@@ -37,6 +37,8 @@ public:
 	void freeHandShapes();
 
 	bool playSequence(const uint8 *seqData, bool skipSeq);
+	
+	uint8 *setPanPages(int pageNum, int shape);
 
 protected:
 	KyraEngine *_vm;
@@ -54,8 +56,6 @@ protected:
 		SeqProc proc;
 		const char* desc;
 	};
-
-	uint8 *setPanPages(int pageNum, int shape);
 
 	// the sequence procs
 	void s1_wsaOpen();

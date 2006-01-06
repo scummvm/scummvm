@@ -209,7 +209,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 						shapesIndex = baseAnimFrameTable2[curObject->index];
 						int temp2 = 0;
 						if (curObject->index == 2) {
-							if (_vm->_characterList[2].sceneId == 0x4D || _vm->_characterList[2].sceneId == 0x56) {
+							if (_vm->_characterList[2].sceneId == 77 || _vm->_characterList[2].sceneId == 86) {
 								temp2 = 1;
 							} else {
 								temp2 = 0;
@@ -242,7 +242,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 						++xpos;
 					}
 					
-					if (curObject->index == 0) {
+					if (curObject->index == 0 && shapesIndex != -1) {
 						if (!(_vm->_brandonStatusBit & 2)) {
 							flagUnk3 = 0x100;
 							if ((flagUnk1 & 0x200) || (flagUnk2 & 0x4000)) {
@@ -251,25 +251,17 @@ void ScreenAnimator::prepDrawAllObjects() {
 							
 							int tempFlags = 0;
 							if (flagUnk3 & 0x100) {
-								if (curObject->flags & 1) {
-									tempFlags = 1;
-								}
+								tempFlags = curObject->flags & 1;
 								tempFlags |= 0x800 | flagUnk1 | 0x100;
 							}
 							
 							if (!(flagUnk3 & 0x100) && (flagUnk2 & 0x4000)) {
-								tempFlags = 0;
-								if (curObject->flags & 1) {
-									tempFlags = 1;
-								}
+								tempFlags = curObject->flags & 1;
 								tempFlags |= 0x900 | flagUnk1 | 0x4000;
-								_screen->drawShape(drawPage, _vm->_shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), int(0)/*XXX*/, drawLayer, _vm->_brandonScaleX, _vm->_brandonScaleY);
+								_screen->drawShape(drawPage, _vm->_shapes[4+shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), int(_vm->_brandonInvFlag), drawLayer, _vm->_brandonScaleX, _vm->_brandonScaleY);
 							} else {
 								if (!(flagUnk2 & 0x4000)) {
-									tempFlags = 0;
-									if (curObject->flags & 1) {
-										tempFlags = 1;
-									}
+									tempFlags = curObject->flags & 1;
 									tempFlags |= 0x900 | flagUnk1;
 								}
 								
@@ -307,7 +299,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 					if (flagUnk3 & 0x100) {
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_vm->_brandonPoisonFlagsGFX, int(1), drawLayer);
 					} else if (flagUnk3 & 0x4000) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, _vm->_brandonInvFlag, drawLayer);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4000, int(_vm->_brandonInvFlag), drawLayer);
 					} else {
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1, drawLayer);
 					}
@@ -315,7 +307,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 					if (flagUnk3 & 0x100) {
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x104, (uint8*)_vm->_brandonPoisonFlagsGFX, int(1), drawLayer, _vm->_brandonScaleX, _vm->_brandonScaleY);
 					} else if (flagUnk3 & 0x4000) {
-						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, int(0), drawLayer, _vm->_brandonInvFlag, _vm->_brandonScaleX, _vm->_brandonScaleY);
+						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4004, int(_vm->_brandonInvFlag), drawLayer, _vm->_brandonScaleX, _vm->_brandonScaleY);
 					} else {
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x4, drawLayer, _vm->_brandonScaleX, _vm->_brandonScaleY);
 					}
@@ -342,7 +334,7 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 				int xpos = 0, ypos = 0, width = 0, height = 0;
 				xpos = curObject->x1 - (curObject->width2+1);
 				ypos = curObject->y1 - curObject->height2;
-				width = (curObject->width + ((curObject->width2)>>3)+2)<<3;
+				width = (curObject->width + ((curObject->width2)>>3)+1)<<3;
 				height = curObject->height + curObject->height2*2;
 				
 				if (xpos < 8) {

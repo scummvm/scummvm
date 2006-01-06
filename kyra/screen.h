@@ -30,6 +30,7 @@ class OSystem;
 namespace Kyra {
 
 class KyraEngine;
+struct Rect;
 
 struct ScreenDim {
 	uint16 sx;
@@ -98,7 +99,8 @@ public:
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
 	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
-	void copyCurPageBlock(int x, int y, int h, int w, uint8 *dst);
+	void copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src);
+	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
 	void setAnimBlockPtr(int size);
@@ -131,6 +133,9 @@ public:
 	byte getShapeFlag2(int x, int y);
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
+	
+	void addBitBlitRect(int x, int y, int w, int w);
+	void bitBlitRects();
 
 	int _charWidth;
 	int _charOffset;
@@ -159,6 +164,9 @@ private:
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
 	int _mouseLockCount;
+	
+	Rect *_bitBlitRects;
+	int _bitBlitNum;
 
 	OSystem *_system;
 	KyraEngine *_vm;

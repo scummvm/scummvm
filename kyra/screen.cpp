@@ -26,6 +26,8 @@
 
 namespace Kyra {
 
+#define BITBLIT_RECTS 10
+
 Screen::Screen(KyraEngine *vm, OSystem *system)
 	: _system(system), _vm(vm) {
 	_curPage = 0;
@@ -63,6 +65,11 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
 	_mouseLockCount = 0;
+	
+	_bitBlitRects = new Rect[BITBLIT_RECTS];
+	assert(_bitBlitRects);
+	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
+	_bitBlitNum = 0;
 }
 
 Screen::~Screen() {
@@ -81,6 +88,7 @@ Screen::~Screen() {
 	for (int i = 0; i < 3; ++i) {
 		free(_palettes[i]);
 	}
+	delete [] _bitBlitRects;
 }
 
 void Screen::updateScreen() {
@@ -300,17 +308,41 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
 	debug(9, "Screen::copyBlockToPage(%d, %d, %d, %d, %d, 0x%X)", pageNum, x, y, w, h, src);
 	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H);
-	uint8 *dst = getPagePtr(pageNum) + y * Screen::SCREEN_W + x;
+	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
 	while (h--) {
-		for (int i = 0; i < w; ++i) {
-			dst[i] = src[i];
-		}
-		dst += Screen::SCREEN_W;
+		memcpy(dst, src, w);
+		dst += SCREEN_W;
 		src += w;
 	}
 }
 
-void Screen::copyCurPageBlock(int x, int y, int h, int w, uint8 *dst) {
+void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) {
+	debug(9, "Screen::copyFromCurPageBlock(%d, %d, %d, %d, 0x%X)", x, y, w, h, src);
+	if (x < 0) {
+		x = 0;	
+	} else if (x >= 40) {
+		return;
+	}
+	if (x + w > 40) {
+		w = 40 - x;
+	}
+	if (y < 0) {
+		y = 0;
+	} else if (y >= 200) {
+		return;
+	}
+	if (y + h > 200) {
+		h = 200 - y;
+	}
+	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
+	while (h--) {
+		memcpy(dst, src, w*8);
+		dst += SCREEN_W;
+		src += w*8;
+	}
+}
+
+void Screen::copyCurPageBlock(int x, int y, int w, int h, uint8 *dst) {
 	debug(9, "Screen::copyCurPageBlock(%d, %d, %d, %d, 0x%X)", x, y, w, h, dst);
 	assert(dst);
 	if (x < 0) {
@@ -333,7 +365,7 @@ void Screen::copyCurPageBlock(int x, int y, int h, int w, uint8 *dst) {
 	while (h--) {
 		memcpy(dst, src, w*8);
 		dst += w*8;
-		src += SCREEN_H;
+		src += SCREEN_W;
 	}
 }
 
@@ -1274,7 +1306,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 }
 
 uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
-	debug(9, "encodeShape(%d, %d, %d, %d, %d)", x, y, w, h, flags);
+	debug(9, "Screen::encodeShape(%d, %d, %d, %d, %d)", x, y, w, h, flags);
 	uint8 *srcPtr = &_pagePtrs[_curPage][y * SCREEN_W + x];
 	int16 shapeSize = 0;
 	uint8 *tmp = srcPtr;
@@ -1459,7 +1491,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 }
 
 int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
-	debug(9, "encodeShapeAndCalculateSize(0x%X, 0x%X, %d)", from, to, size_to);
+	debug(9, "Screen::encodeShapeAndCalculateSize(0x%X, 0x%X, %d)", from, to, size_to);
 	byte *fromPtrEnd = from + size_to;
 	bool skipPixel = true;
 	byte *tempPtr = 0;
@@ -1607,26 +1639,26 @@ int Screen::getRectSize(int x, int y) {
 }
 
 void Screen::hideMouse() {
-	debug(9, "hideMouse()");
+	debug(9, "Screen::hideMouse()");
 	//++_mouseLockCount;
 	_system->showMouse(false);
 }
 
 void Screen::showMouse() {
-	debug(9, "showMouse()");
+	debug(9, "Screen::showMouse()");
 	//if (--_mouseLockCount == 0) { 
 		_system->showMouse(true);
 	//}
 }
 
 void Screen::setShapePages(int page1, int page2) {
-	debug(9, "setShapePages(%d, %d)", page1, page2);
+	debug(9, "Screen::setShapePages(%d, %d)", page1, page2);
 	_shapePages[0] = _pagePtrs[page1];
 	_shapePages[1] = _pagePtrs[page2];
 }
 
 void Screen::setMouseCursor(int x, int y, byte *shape) {
-	debug(9, "setMouseCursor(%d, %d, 0x%X)", x, y, shape);
+	debug(9, "Screen::setMouseCursor(%d, %d, 0x%X)", x, y, shape);
 	if (!shape)
 		return;
 	// if mouseDisabled
@@ -1656,7 +1688,7 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 }
 
 void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
-	debug(9, "copyScreenFromRect(%d, %d, %d, %d, 0x%X)", x, y, w, h, ptr);
+	debug(9, "Screen::copyScreenFromRect(%d, %d, %d, %d, 0x%X)", x, y, w, h, ptr);
 	x <<= 3; w <<= 3;
 	uint8 *src = ptr;
 	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];
@@ -1668,7 +1700,7 @@ void Screen::copyScreenFromRect(int x, int y, int w, int h, uint8 *ptr) {
 }
 
 void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
-	debug(9, "copyScreenToRect(%d, %d, %d, %d, 0x%X)", x, y, w, h, ptr);
+	debug(9, "Screen::copyScreenToRect(%d, %d, %d, %d, 0x%X)", x, y, w, h, ptr);
 	x <<= 3; w <<= 3;
 	uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
 	uint8 *dst = ptr;
@@ -1680,7 +1712,7 @@ void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 }
 
 uint8 *Screen::getPalette(int num) {
-	debug(9, "getPalette(%d)", num);
+	debug(9, "Screen::getPalette(%d)", num);
 	assert(num >= 0 && num < 4);
 	if (num == 0) {
 		return _screenPalette;
@@ -1690,7 +1722,7 @@ uint8 *Screen::getPalette(int num) {
 }
 
 byte Screen::getShapeFlag1(int x, int y) {
-	debug(9, "getShapeFlag1(%d, %d)", x, y);
+	debug(9, "Screen::getShapeFlag1(%d, %d)", x, y);
 	uint8 color = _shapePages[0][y * SCREEN_W + x];
 	color &= 0x80;
 	color ^= 0x80;
@@ -1702,7 +1734,7 @@ byte Screen::getShapeFlag1(int x, int y) {
 }
 
 byte Screen::getShapeFlag2(int x, int y) {
-	debug(9, "getShapeFlag2(%d, %d)", x, y);
+	debug(9, "Screen::getShapeFlag2(%d, %d)", x, y);
 	uint8 color = _shapePages[0][y * SCREEN_W + x];
 	color &= 0x7F;
 	color &= 0x87;
@@ -1710,7 +1742,7 @@ byte Screen::getShapeFlag2(int x, int y) {
 }
 
 int Screen::setNewShapeHeight(uint8 *shape, int height) {
-	debug(9, "setNewShapeHeight(0x%X, %d)", shape, height);
+	debug(9, "Screen::setNewShapeHeight(0x%X, %d)", shape, height);
 	if (_vm->features() & GF_TALKIE)
 		shape += 2;
 	int oldHeight = shape[2];
@@ -1719,7 +1751,7 @@ int Screen::setNewShapeHeight(uint8 *shape, int height) {
 }
 
 int Screen::resetShapeHeight(uint8 *shape) {
-	debug(9, "setNewShapeHeight(0x%X)", shape);
+	debug(9, "Screen::setNewShapeHeight(0x%X)", shape);
 	if (_vm->features() & GF_TALKIE)
 		shape += 2;
 	int oldHeight = shape[2];
@@ -1727,4 +1759,25 @@ int Screen::resetShapeHeight(uint8 *shape) {
 	return oldHeight;
 }
 
+void Screen::addBitBlitRect(int x, int y, int w, int h) {
+	debug(9, "Screen::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
+	if (_bitBlitNum >= BITBLIT_RECTS) {
+		error("too many bit blit rects");
+	}
+	_bitBlitRects[_bitBlitNum].x = x;
+	_bitBlitRects[_bitBlitNum].y = y;
+	_bitBlitRects[_bitBlitNum].x2 = w;
+	_bitBlitRects[_bitBlitNum].y2 = h;
+	++_bitBlitNum;
+}
+
+void Screen::bitBlitRects() {
+	debug(9, "Screen::bitBlitRects()");
+	Rect *cur = _bitBlitRects;
+	while (_bitBlitNum) {
+		_bitBlitNum--;
+		copyRegion(cur->x, cur->y, cur->x, cur->y, cur->x2, cur->y2, 2, 0);
+		++cur;
+	}
+}
 } // End of namespace Kyra

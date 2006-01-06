@@ -88,7 +88,7 @@ void Sprites::setupSceneAnims() {
 			data += 4;
 			_anims[i].y = READ_LE_UINT16(data);
 			data += 4;
-			_anims[i].width = *(data);
+			_anims[i].width = (*(data) >> 3) + 1;
 			data += 4;
 			_anims[i].height = *(data);
 			data += 4;
@@ -107,7 +107,7 @@ void Sprites::setupSceneAnims() {
 
 			_anims[i].script = data;
 
-			int bkgdWidth = _anims[i].width;
+			int bkgdWidth = _anims[i].width << 3;
 			int bkgdHeight = _anims[i].height;
 
 			if (_anims[i].width2)
