@@ -577,6 +577,8 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			x += 16;
 			while (x + width >= _screenWidth)
 				width -= 16;
+			if (width < 0)
+				return;
 		}
 
 		_system->copyRectToScreen(_compositeBuf + x1 + y * _screenWidth, _screenWidth, x, y, width, height);
@@ -3025,6 +3027,7 @@ void ScummEngine::transitionEffect(int a) {
 			t = tab_2[i * 4 + 1];
 			r = tab_2[i * 4 + 2];
 			b = tab_2[i * 4 + 3];
+
 			if (t == b) {
 				while (l <= r) {
 					if (l >= 0 && l < gdi._numStrips && t < bottom) {
