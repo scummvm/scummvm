@@ -712,7 +712,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "atlantis", "playfate", kGenPC },
 	{ "atlantis", "indy4", kGenPC },
 	{ "atlantis", "indydemo", kGenPC },
-	{ "tentacle.000", "Day Of The Tentacle Data", kGenAsIs },
+	{ "tentacle.000", "Day of the Tentacle Data", kGenAsIs },
 	{ "tentacle", "dottdemo", kGenPC },
 	{ "tentacle.000", "Day of the Tentacle Demo Data", kGenAsIs },
 	{ "monkey", "monkey1", kGenPC },
