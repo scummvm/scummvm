@@ -1162,7 +1162,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 
 byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
-	int32 maxw, maxh;
+	int32 minx, miny, maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
 	byte transparency = (_vm->_heversion >= 61) ? palette[0] : 255;
 
@@ -1180,26 +1180,18 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	clip.top = _actorY + ymoveCur;
 	clip.right = clip.left + _width;
 	clip.bottom = clip.top + _height;
+
+	minx = miny = 0;
 	maxw = _out.w;
 	maxh = _out.h;
 
 	if (_vm->_heversion >= 71) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-			if (clip.left < _clipOverride.left)
-				clip.left = _clipOverride.left;
-
-			if (clip.right > _clipOverride.right)
-				clip.right = _clipOverride.right;
-
-			if (clip.top < _clipOverride.top)
-				clip.top = _clipOverride.top;
-
-			if (clip.bottom > _clipOverride.bottom)
-				clip.bottom = _clipOverride.bottom;
+			minx = _clipOverride.left;
+			miny = _clipOverride.top;
+			maxw = _clipOverride.right;
+			maxh = _clipOverride.bottom;
 		}
-
-		if (clip.isValidRect() == false)
-			return 0;
 	}
 
 	markRectAsDirty(clip);
@@ -1209,7 +1201,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	cur_x = _width - 1;
 	cur_y = _height - 1;
 
-	if (clip.left < 0) {
+	if (clip.left < minx) {
 		skip_x = -clip.left;
 		clip.left = 0;
 	}
@@ -1219,7 +1211,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		clip.right = maxw;
 	}
 
-	if (clip.top < 0) {
+	if (clip.top < miny) {
 		skip_y -= clip.top;
 		clip.top = 0;
 	}
