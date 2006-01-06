@@ -212,6 +212,7 @@ Day of the Tentacle
 	Floppy Version A ?	All?	en	acad97ab1c6fc2a5b2d98abf6db4a190	tentacle
 	Floppy Version B ?	DOS	en	2723fea3dae0cb47768c424b145ae0e7	tentacle	Andrej Sinicyn, Andrea Petrucci
 	Floppy	DOS	fr	92b078d9d6d9d751da9c26b8b3075779	tentacle	Nicolas Sauz&egrave;de, Andrea Petrucci
+	Floppy (alt?)	DOS	fr	94aaedbb8f26d71ed3ad6dd34490e29e	tentacle	Nicolas Joly
 	Floppy	DOS	de	57b0d89af79befe1cabce3bece869e7f	tentacle	Andrej Sinicyn, Andrea Petrucci
 	Floppy	DOS	it	50fcdc982a25063b78ad46bf389b8e8d	tentacle	Andrea Petrucci
 	Floppy	DOS	es	ae94f110a14ce71fc515d5b648827a8f	tentacle	abnog, Andrea Petrucci
