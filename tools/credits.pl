@@ -481,6 +481,7 @@ begin_credits("Credits");
 
 	  begin_section("Gob");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Sven Hesse", "DrMcCoy", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
@@ -618,7 +619,6 @@ begin_credits("Credits");
 	begin_section("Code contributions");
 	  begin_persons();
 		  add_person("Stuart Caie", "", "Decoders for Simon 1 Amiga data files");
-		  add_person("Sven Hesse", "", 'Help with gob engine');
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 		  add_person("Jeroen Janssen", "", "Numerous readability and bugfix patches");

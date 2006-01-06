@@ -44,6 +44,7 @@ ScummVM Team
 
     Gob:
        Torbjorn Andersson   
+       Sven Hesse           
        Eugene Sandulenko    
 
     Kyra:
@@ -150,7 +151,6 @@ Other contributions
   Code contributions
   ------------------
      Stuart Caie           - Decoders for Simon 1 Amiga data files
-     Sven Hesse            - Help with gob engine
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
      Kovacs Endre Janos    - Several fixes for Simon1
      Jeroen Janssen        - Numerous readability and bugfix patches
