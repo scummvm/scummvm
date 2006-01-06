@@ -1885,6 +1885,11 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 	debug(0, "SDAT size1 %d size2 %d", size1, size2);
 
+	if (size1 <= 0) {
+		debug(0, "createSound: Invalid offset (%d) for sound (%d)", snd1id, size1);
+		return;
+	}
+
 	if (size2 < size1) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndOffs1;
