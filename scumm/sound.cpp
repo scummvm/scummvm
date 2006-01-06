@@ -1283,7 +1283,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		_fileHandle->seek(-16, SEEK_CUR);
 		total_size = max_total_size + 8;
 		ptr = res.createResource(type, idx, total_size);
-		_fileHandle->read(ptr, total_size - 8);
+		_fileHandle->read(ptr, total_size);
 		//dumpResource("sound-", idx, ptr);
 		return 1;
 

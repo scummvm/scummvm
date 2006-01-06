@@ -1817,7 +1817,9 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	res.lock(rtSound, snd2id);
 
 	snd1Ptr = getResourceAddress(rtSound, snd1id);
+	assert(snd1Ptr);
 	snd2Ptr = getResourceAddress(rtSound, snd2id);
+	assert(snd2Ptr);
 
 	int i;
 	int chan = -1;
@@ -1837,8 +1839,11 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			dst = sbng1Ptr + 8;
 			size = READ_BE_UINT32(sbng1Ptr + 4);
 			len = sbng1Ptr - snd1Ptr + size - curOffs;
-			memcpy(dst, src, len);
 
+			byte *data = (byte *)malloc(len);
+			memcpy(data, src, len);
+			memcpy(dst, data, len);
+			free(data);
 
 			dst = sbng1Ptr + 8;
 			while ((offs = READ_LE_UINT16(dst)) != 0)
@@ -1878,6 +1883,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	size1 = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndOffs1;
 	size2 = READ_BE_UINT32(sdat2Ptr + 4) - 8;
 
+	debug(0, "SDAT size1 %d size2 %d", size1, size2);
+
 	if (size2 < size1) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndOffs1;
@@ -1894,17 +1901,17 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		
 		memcpy(dst, src, len);
 
-		int tmp3 = size2 - size1;
-		if (tmp3 != 0) {
-			// TODO: Additional copy
+		if (size2 != size1) {
+			src = sdat2Ptr + 8 + size1;
+			dst = sdat1Ptr + 8;
+			len = size2 - size1;
+		
+			memcpy(dst, src, len);
 		}
 
-		_sndOffs1 += tmp3;
+		_sndOffs1 += size2 - size1;
 		_sndOffs2 += size2;
 	}
-	
-	res.unlock(rtSound, snd1id);
-	res.unlock(rtSound, snd2id);
 }
 
 } // End of namespace Scumm
