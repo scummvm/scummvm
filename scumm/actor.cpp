@@ -1995,14 +1995,14 @@ bool Actor::isPlayer() {
 }
 
 void Actor::setUserCondition(int slot, int set) {
-	debug(1, "Actor::setUserCondition(%d, %d)", slot, set);
-	assert(slot >= 1 && slot <= 0x20);
+	const int condMaskCode = (_vm->_heversion >= 90) ? 0x1FFF : 0x3FF;
+	checkRange(32, 1, slot, "Condition %d out of range");
 	if (set == 0) {
 		_heCondMask &= ~(1 << (slot + 0xF));
 	} else {
 		_heCondMask |= 1 << (slot + 0xF);
 	}
-	if (_heCondMask & 0x3FF) {
+	if (_heCondMask & condMaskCode) {
 		_heCondMask &= ~1;
 	} else {
 		_heCondMask |= 1;
@@ -2010,17 +2010,17 @@ void Actor::setUserCondition(int slot, int set) {
 }
 
 bool Actor::isUserConditionSet(int slot) const {
-	assert(slot >= 1 && slot <= 0x20);
+	checkRange(32, 1, slot, "Condition %d out of range");
 	return (_heCondMask & (1 << (slot + 0xF))) != 0;
 }
 
 void Actor::setTalkCondition(int slot) {
-	debug(1, "Actor::setTalkCondition(%d)", slot);
-	assert(slot >= 1 && slot <= 0x10);
-	_heCondMask = (_heCondMask & ~0x3FF) | 1;
+	const int condMaskCode = (_vm->_heversion >= 90) ? 0x1FFF : 0x3FF;
+	checkRange(32, 1, slot, "Condition %d out of range");
+	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
 		_heCondMask |= 1 << (slot - 1);
-		if (_heCondMask & 0x3FF) {
+		if (_heCondMask & condMaskCode) {
 			_heCondMask &= ~1;
 		} else {
 			_heCondMask |= 1;
@@ -2029,7 +2029,7 @@ void Actor::setTalkCondition(int slot) {
 }
 
 bool Actor::isTalkConditionSet(int slot) const {
-	assert(slot >= 1 && slot <= 0x10);
+	checkRange(32, 1, slot, "Condition %d out of range");
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 
