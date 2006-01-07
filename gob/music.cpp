@@ -113,7 +113,7 @@ void Music::writeOPL(byte reg, byte val) {
 void Music::setFreqs(void) {
 	byte lin;
 	byte col;
-	long val;
+	long val = 0;
 
 	// Run through the 11 channels
 	for (lin = 0; lin < 11; lin ++) {
@@ -238,7 +238,7 @@ void Music::setKey(byte voice, byte note, bool on, bool spec) {
 
 	_notes[voice] = note;
 	note += _notCol[voice];
-	note = MIN(0x5F, note);
+	note = MIN(0x5F, (int)note);
 	octa = note / 12;
 	freq = _freqs[_notLin[voice]][note - octa * 12];
 
