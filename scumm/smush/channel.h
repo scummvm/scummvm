@@ -116,7 +116,6 @@ protected:
 	bool processBuffer();
 	bool handleMap(Chunk &);
 	bool handleFormat(Chunk &);
-	bool handleText(Chunk &);
 	bool handleRegion(Chunk &);
 	bool handleStop(Chunk &);
 	bool handleSubTags(int32 & offset);

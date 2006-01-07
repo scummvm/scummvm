@@ -124,10 +124,6 @@ bool ImuseChannel::handleFormat(Chunk &src) {
 	return true;
 }
 
-bool ImuseChannel::handleText(Chunk &src) {
-	return true;
-}
-
 bool ImuseChannel::handleRegion(Chunk &src) {
 	if (src.getSize() != 8)
 		error("invalid size for REGN Chunk");
@@ -148,7 +144,6 @@ bool ImuseChannel::handleMap(Chunk &map) {
 			handleFormat(*sub);
 			break;
 		case TYPE_TEXT:
-			handleText(*sub);
 			break;
 		case TYPE_REGN:
 			handleRegion(*sub);
