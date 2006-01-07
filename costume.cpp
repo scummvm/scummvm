@@ -640,7 +640,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		ts.scanString(" %d '%c%c%c%c'", 5, &which, &t[0], &t[1], &t[2], &t[3]);
 		// Force characters to upper case
 		for (int j = 0; j < 4; j++)
-			t[j] = std::toupper(t[j]);
+			t[j] = toupper(t[j]);
 		std::memcpy(&tags[which], t, sizeof(tag32));
 	}
 
@@ -720,7 +720,7 @@ Costume::~Costume() {
 }
 
 Costume::Component::Component(Component *parent, int parentID, tag32 tag) {
-	_visible = -1;
+	_visible = true;
 	_previousCmap = NULL;
 	_cmap = NULL;
 	_cost = NULL;
@@ -740,7 +740,7 @@ void Costume::Component::setColormap(CMap *c) {
 }
 
 bool Costume::Component::visible() {
-	if (_visible == -1 && _parent != NULL)
+	if (_visible && _parent != NULL)
 		return _parent->visible();
 	return _visible;
 }

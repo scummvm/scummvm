@@ -78,7 +78,8 @@ public:
 	protected:
 		ResPtr<CMap> _cmap, _previousCmap;
 		tag32 _tag;
-		int _parentID, _visible;
+		int _parentID;
+		bool _visible;
 		Component *_parent, *_child, *_sibling;
 		Matrix4 _matrix;
 		Costume *_cost;
