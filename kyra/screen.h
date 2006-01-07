@@ -134,7 +134,7 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 	
-	void addBitBlitRect(int x, int y, int w, int w);
+	void addBitBlitRect(int x, int y, int w, int h);
 	void bitBlitRects();
 
 	int _charWidth;
