@@ -43,6 +43,7 @@
 #include "gob/scenery.h"
 #include "gob/timer.h"
 #include "gob/util.h"
+#include "gob/music.h"
 
 enum {
 	// We only compute MD5 of the first megabyte of our data files.
@@ -216,8 +217,8 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 REGISTER_PLUGIN(GOB, "Gob Engine")
 
 namespace Gob {
+
 #define MAX_TIME_DELTA 100
-//GobEngine *_vm = NULL;
 
 GobEngine::GobEngine(GameDetector *detector, OSystem * syst, uint32 features)
  : Engine(syst) {
@@ -253,6 +254,7 @@ GobEngine::~GobEngine() {
 	delete _gtimer;
 	delete _util;
 	delete _inter;
+	delete _music;
 }
 
 void GobEngine::errorString(const char *buf1, char *buf2) {
@@ -288,6 +290,7 @@ int GobEngine::init(GameDetector &detector) {
 	_scenery = new Scenery(this);
 	_gtimer = new GTimer();
 	_util = new Util(this);
+	_music = new Music(this);
 	if (_features & Gob::GF_GOB1)
 		_inter = new Inter_v1(this);
 	else if (_features & Gob::GF_GOB2)

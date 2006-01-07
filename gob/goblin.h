@@ -91,91 +91,91 @@ public:
 	} GCC_PACK Gob_Pos;
 #pragma END_PACK_STRUCTS
 
-	Util::List *objList;
-	Gob_Object *goblins[4];
-	int16 currentGoblin;
-	Snd::SoundDesc *soundData[16];
-	int16 gobStateLayer;
-	char goesAtTarget;
-	char readyToAct;
-	int16 gobAction;	// 0 - move, 3 - do action, 4 - pick
+	Util::List *_objList;
+	Gob_Object *_goblins[4];
+	int16 _currentGoblin;
+	Snd::SoundDesc *_soundData[16];
+	int16 _gobStateLayer;
+	char _goesAtTarget;
+	char _readyToAct;
+	int16 _gobAction;	// 0 - move, 3 - do action, 4 - pick
 						// goblins  0 - picker, 1 - fighter, 2 - mage
-	Gob_Pos gobPositions[3];
-	int16 gobDestX;
-	int16 gobDestY;
-	int16 pressedMapX;
-	int16 pressedMapY;
-	char pathExistence;
+	Gob_Pos _gobPositions[3];
+	int16 _gobDestX;
+	int16 _gobDestY;
+	int16 _pressedMapX;
+	int16 _pressedMapY;
+	char _pathExistence;
 
 	// Pointers to interpreter variables
-	int32 *some0ValPtr;
+	int32 *_some0ValPtr;
 
-	int32 *gobRetVarPtr;
-	int32 *curGobVarPtr;
-	int32 *curGobXPosVarPtr;
-	int32 *curGobYPosVarPtr;
-	int32 *itemInPocketVarPtr;
+	int32 *_gobRetVarPtr;
+	int32 *_curGobVarPtr;
+	int32 *_curGobXPosVarPtr;
+	int32 *_curGobYPosVarPtr;
+	int32 *_itemInPocketVarPtr;
 
-	int32 *curGobStateVarPtr;
-	int32 *curGobFrameVarPtr;
-	int32 *curGobMultStateVarPtr;
-	int32 *curGobNextStateVarPtr;
-	int32 *curGobScrXVarPtr;
-	int32 *curGobScrYVarPtr;
-	int32 *curGobLeftVarPtr;
-	int32 *curGobTopVarPtr;
-	int32 *curGobRightVarPtr;
-	int32 *curGobBottomVarPtr;
-	int32 *curGobDoAnimVarPtr;
-	int32 *curGobOrderVarPtr;
-	int32 *curGobNoTickVarPtr;
-	int32 *curGobTypeVarPtr;
-	int32 *curGobMaxTickVarPtr;
-	int32 *curGobTickVarPtr;
-	int32 *curGobActStartStateVarPtr;
-	int32 *curGobLookDirVarPtr;
-	int32 *curGobPickableVarPtr;
-	int32 *curGobRelaxVarPtr;
-	int32 *curGobMaxFrameVarPtr;
+	int32 *_curGobStateVarPtr;
+	int32 *_curGobFrameVarPtr;
+	int32 *_curGobMultStateVarPtr;
+	int32 *_curGobNextStateVarPtr;
+	int32 *_curGobScrXVarPtr;
+	int32 *_curGobScrYVarPtr;
+	int32 *_curGobLeftVarPtr;
+	int32 *_curGobTopVarPtr;
+	int32 *_curGobRightVarPtr;
+	int32 *_curGobBottomVarPtr;
+	int32 *_curGobDoAnimVarPtr;
+	int32 *_curGobOrderVarPtr;
+	int32 *_curGobNoTickVarPtr;
+	int32 *_curGobTypeVarPtr;
+	int32 *_curGobMaxTickVarPtr;
+	int32 *_curGobTickVarPtr;
+	int32 *_curGobActStartStateVarPtr;
+	int32 *_curGobLookDirVarPtr;
+	int32 *_curGobPickableVarPtr;
+	int32 *_curGobRelaxVarPtr;
+	int32 *_curGobMaxFrameVarPtr;
 
-	int32 *destItemStateVarPtr;
-	int32 *destItemFrameVarPtr;
-	int32 *destItemMultStateVarPtr;
-	int32 *destItemNextStateVarPtr;
-	int32 *destItemScrXVarPtr;
-	int32 *destItemScrYVarPtr;
-	int32 *destItemLeftVarPtr;
-	int32 *destItemTopVarPtr;
-	int32 *destItemRightVarPtr;
-	int32 *destItemBottomVarPtr;
-	int32 *destItemDoAnimVarPtr;
-	int32 *destItemOrderVarPtr;
-	int32 *destItemNoTickVarPtr;
-	int32 *destItemTypeVarPtr;
-	int32 *destItemMaxTickVarPtr;
-	int32 *destItemTickVarPtr;
-	int32 *destItemActStartStVarPtr;
-	int32 *destItemLookDirVarPtr;
-	int32 *destItemPickableVarPtr;
-	int32 *destItemRelaxVarPtr;
-	int32 *destItemMaxFrameVarPtr;
+	int32 *_destItemStateVarPtr;
+	int32 *_destItemFrameVarPtr;
+	int32 *_destItemMultStateVarPtr;
+	int32 *_destItemNextStateVarPtr;
+	int32 *_destItemScrXVarPtr;
+	int32 *_destItemScrYVarPtr;
+	int32 *_destItemLeftVarPtr;
+	int32 *_destItemTopVarPtr;
+	int32 *_destItemRightVarPtr;
+	int32 *_destItemBottomVarPtr;
+	int32 *_destItemDoAnimVarPtr;
+	int32 *_destItemOrderVarPtr;
+	int32 *_destItemNoTickVarPtr;
+	int32 *_destItemTypeVarPtr;
+	int32 *_destItemMaxTickVarPtr;
+	int32 *_destItemTickVarPtr;
+	int32 *_destItemActStartStVarPtr;
+	int32 *_destItemLookDirVarPtr;
+	int32 *_destItemPickableVarPtr;
+	int32 *_destItemRelaxVarPtr;
+	int32 *_destItemMaxFrameVarPtr;
 
-	int16 destItemType;
-	int16 destItemState;
-	int16 itemToObject[20];
-	Gob_Object *objects[20];
-	int16 objCount;
-	int16 gobsCount;
-	int16 itemIndInPocket;
-	int16 itemIdInPocket;
-	char itemByteFlag;
-	int16 destItemId;
-	int16 destActionItem;
-	Gob_Object *actDestItemDesc;
-	int16 forceNextState[10];
-	char boreCounter;
-	int16 positionedGob;
-	char noPick;
+	int16 _destItemType;
+	int16 _destItemState;
+	int16 _itemToObject[20];
+	Gob_Object *_objects[20];
+	int16 _objCount;
+	int16 _gobsCount;
+	int16 _itemIndInPocket;
+	int16 _itemIdInPocket;
+	char _itemByteFlag;
+	int16 _destItemId;
+	int16 _destActionItem;
+	Gob_Object *_actDestItemDesc;
+	int16 _forceNextState[10];
+	char _boreCounter;
+	int16 _positionedGob;
+	char _noPick;
 
 	// Functions
 	char rotateState(int16 from, int16 to);
@@ -206,7 +206,7 @@ public:
 	Goblin(GobEngine *vm);
 
 protected:
-	int16 rotStates[4][4];
+	int16 _rotStates[4][4];
 	GobEngine *_vm;
 
 	int16 peekGoblin(Gob_Object *curGob);

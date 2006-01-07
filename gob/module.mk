@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	gob/inter_v2.o \
 	gob/map.o \
 	gob/mult.o \
+	gob/music.o \
 	gob/pack.o \
 	gob/palanim.o \
 	gob/parse.o \

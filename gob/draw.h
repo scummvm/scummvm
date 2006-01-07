@@ -41,67 +41,67 @@ public:
 		FontToSprite() : sprite(0), base(0), width(0), height() {}
 	} FontToSprite;
 
-	int16 fontIndex;
-	int16 spriteLeft;
-	int16 spriteTop;
-	int16 spriteRight;
-	int16 spriteBottom;
-	int16 destSpriteX;
-	int16 destSpriteY;
-	int16 backColor;
-	int16 frontColor;
-	char letterToPrint;
-	FontToSprite fontToSprite[4];
-	int16 destSurface;
-	int16 sourceSurface;
-	int16 renderFlags;
-	int16 backDeltaX;
-	int16 backDeltaY;
-	Video::FontDesc *fonts[4];
-	char *textToPrint;
-	int16 transparency;
-	Video::SurfaceDesc *spritesArray[50];
+	int16 _fontIndex;
+	int16 _spriteLeft;
+	int16 _spriteTop;
+	int16 _spriteRight;
+	int16 _spriteBottom;
+	int16 _destSpriteX;
+	int16 _destSpriteY;
+	int16 _backColor;
+	int16 _frontColor;
+	char _letterToPrint;
+	FontToSprite _fontToSprite[4];
+	int16 _destSurface;
+	int16 _sourceSurface;
+	int16 _renderFlags;
+	int16 _backDeltaX;
+	int16 _backDeltaY;
+	Video::FontDesc *_fonts[4];
+	char *_textToPrint;
+	int16 _transparency;
+	Video::SurfaceDesc *_spritesArray[50];
 
-	int16 invalidatedCount;
-	int16 invalidatedTops[30];
-	int16 invalidatedLefts[30];
-	int16 invalidatedRights[30];
-	int16 invalidatedBottoms[30];
+	int16 _invalidatedCount;
+	int16 _invalidatedTops[30];
+	int16 _invalidatedLefts[30];
+	int16 _invalidatedRights[30];
+	int16 _invalidatedBottoms[30];
 
-	int8 noInvalidated;
+	int8 _noInvalidated;
 //	int8 doFullFlip; // Never used?!?
-	int8 paletteCleared;
+	int8 _paletteCleared;
 
-	int16 gcursorIndex;
-	int16 transparentCursor;
-	uint32 cursorTimeKey;
+	int16 _cursorIndex;
+	int16 _transparentCursor;
+	uint32 _cursorTimeKey;
 
-	Video::SurfaceDesc *backSurface;
-	Video::SurfaceDesc *frontSurface;
+	Video::SurfaceDesc *_backSurface;
+	Video::SurfaceDesc *_frontSurface;
 
-	int16 unusedPalette1[18];
-	int16 unusedPalette2[16];
-	Video::Color vgaPalette[256];
-	Video::Color vgaSmallPalette[16];
+	int16 _unusedPalette1[18];
+	int16 _unusedPalette2[16];
+	Video::Color _vgaPalette[256];
+	Video::Color _vgaSmallPalette[16];
 
-	int16 cursorX;
-	int16 cursorY;
-	int16 cursorWidth;
-	int16 cursorHeight;
+	int16 _cursorX;
+	int16 _cursorY;
+	int16 _cursorWidth;
+	int16 _cursorHeight;
 
-	int16 cursorXDeltaVar;
-	int16 cursorYDeltaVar;
+	int16 _cursorXDeltaVar;
+	int16 _cursorYDeltaVar;
 
-	Video::SurfaceDesc *cursorSprites;
-	Video::SurfaceDesc *cursorBack;
-	int16 cursorAnim;
-	int8 cursorAnimLow[40];
-	int8 cursorAnimHigh[40];
-	int8 cursorAnimDelays[40];
-	int8 applyPal;
+	Video::SurfaceDesc *_cursorSprites;
+	Video::SurfaceDesc *_cursorBack;
+	int16 _cursorAnim;
+	int8 _cursorAnimLow[40];
+	int8 _cursorAnimHigh[40];
+	int8 _cursorAnimDelays[40];
+	int8 _applyPal;
 
-	int16 palLoadData1[4];
-	int16 palLoadData2[4];
+	int16 _palLoadData1[4];
+	int16 _palLoadData2[4];
 		
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated(void);

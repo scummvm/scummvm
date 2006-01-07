@@ -93,26 +93,26 @@ public:
 	} GCC_PACK InputDesc;
 #pragma END_PACK_STRUCTS
 
-	TotResTable *totResourceTable;
-	Collision *collisionAreas;
-	Collision *collStack[3];
+	TotResTable *_totResourceTable;
+	Collision *_collisionAreas;
+	Collision *_collStack[3];
 
-	TotTextTable *totTextData;
+	TotTextTable *_totTextData;
 
-	char curTotFile[14];
-	char curExtFile[14];
+	char _curTotFile[14];
+	char _curExtFile[14];
 
-	char *imFileData;
-	char *totFileData;
+	char *_imFileData;
+	char *_totFileData;
 
-	int16 extHandle;
+	int16 _extHandle;
 
-	Snd::SoundDesc *soundSamples[20];
+	Snd::SoundDesc *_soundSamples[20];
 
-	char totToLoad[20];
+	char _totToLoad[20];
 
-	int32 startTimeKey;
-	int16 mouseButtons;
+	int32 _startTimeKey;
+	int16 _mouseButtons;
 
 	Game(GobEngine *vm);
 
@@ -149,32 +149,32 @@ public:
 
 protected:
 
-	int16 lastCollKey;
-	int16 lastCollAreaIndex;
-	int16 lastCollId;
+	int16 _lastCollKey;
+	int16 _lastCollAreaIndex;
+	int16 _lastCollId;
 
-	int16 activeCollResId;
-	int16 activeCollIndex;
-	char ghandleMouse;
-	char forceHandleMouse;
+	int16 _activeCollResId;
+	int16 _activeCollIndex;
+	char _handleMouse;
+	char _forceHandleMouse;
 
-	char tempStr[256];
+	char _tempStr[256];
 
-	ExtTable *extTable;
-	char curImaFile[18];
+	ExtTable *_extTable;
+	char _curImaFile[18];
 
-	int16 collStackSize;
-	int16 collStackElemSizes[3];
+	int16 _collStackSize;
+	int16 _collStackElemSizes[3];
 
-	char soundFromExt[20];
+	char _soundFromExt[20];
 
-	char shouldPushColls;
+	char _shouldPushColls;
 
 	// Capture
-	static Common::Rect captureStack[20];
-	static int16 captureCount;
+	static Common::Rect _captureStack[20];
+	static int16 _captureCount;
 
-	char collStr[256];
+	char _collStr[256];
 
 	GobEngine *_vm;
 		

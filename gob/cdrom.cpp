@@ -124,7 +124,7 @@ void CDROM::playBgMusic() {
 	};
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
-		if (!scumm_stricmp(_vm->_game->curTotFile, tracks[i][0])) {
+		if (!scumm_stricmp(_vm->_game->_curTotFile, tracks[i][0])) {
 			startTrack(tracks[i][1]);
 			break;
 		}
@@ -141,7 +141,7 @@ void CDROM::playMultMusic() {
 	};
 
 	for (int i = 0; i < ARRAYSIZE(tracks); i++)
-		if (!scumm_stricmp(_vm->_game->curTotFile, tracks[i][0])) {
+		if (!scumm_stricmp(_vm->_game->_curTotFile, tracks[i][0])) {
 			_cdPlaying = true;
 			startTrack(tracks[i][_vm->_global->_language + 1]);
 			break;

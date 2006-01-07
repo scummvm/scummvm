@@ -55,6 +55,7 @@ class Parse;
 class Scenery;
 class GTimer;
 class Util;
+class Music;
 
 #define	VAR_OFFSET(offs)		(*(uint32 *)(_vm->_global->_inter_variables + (offs)))
 #define	VAR(var)			VAR_OFFSET((var) << 2)
@@ -117,6 +118,7 @@ public:
 	GTimer *_gtimer;
 	Util *_util;
 	Inter *_inter;
+	Music *_music;
 };
 
 } // End of namespace Gob

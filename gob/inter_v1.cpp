@@ -533,19 +533,19 @@ bool Inter_v1::o1_printText(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 i;
 
 	debug(3, "printText");
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
 
-	_vm->_draw->backColor = _vm->_parse->parseValExpr();
-	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
-	_vm->_draw->fontIndex = _vm->_parse->parseValExpr();
-	_vm->_draw->destSurface = 21;
-	_vm->_draw->textToPrint = buf;
-	_vm->_draw->transparency = 0;
+	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_fontIndex = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_textToPrint = buf;
+	_vm->_draw->_transparency = 0;
 
-	if (_vm->_draw->backColor >= 16) {
-		_vm->_draw->backColor = 0;
-		_vm->_draw->transparency = 1;
+	if (_vm->_draw->_backColor >= 16) {
+		_vm->_draw->_backColor = 0;
+		_vm->_draw->_transparency = 1;
 	}
 
 	do {
@@ -610,8 +610,8 @@ void Inter_v1::o1_initCursor(void) {
 	int16 count;
 	int16 i;
 
-	_vm->_draw->cursorXDeltaVar = _vm->_parse->parseVarIndex();
-	_vm->_draw->cursorYDeltaVar = _vm->_parse->parseVarIndex();
+	_vm->_draw->_cursorXDeltaVar = _vm->_parse->parseVarIndex();
+	_vm->_draw->_cursorYDeltaVar = _vm->_parse->parseVarIndex();
 
 	width = load16();
 	if (width < 16)
@@ -625,37 +625,37 @@ void Inter_v1::o1_initCursor(void) {
 	if (count < 2)
 		count = 2;
 
-	if (width != _vm->_draw->cursorWidth || height != _vm->_draw->cursorHeight ||
-	    _vm->_draw->cursorSprites->width != width * count) {
+	if (width != _vm->_draw->_cursorWidth || height != _vm->_draw->_cursorHeight ||
+	    _vm->_draw->_cursorSprites->width != width * count) {
 
-		_vm->_video->freeSurfDesc(_vm->_draw->cursorSprites);
-		_vm->_video->freeSurfDesc(_vm->_draw->cursorBack);
+		_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
+		_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
 
-		_vm->_draw->cursorWidth = width;
-		_vm->_draw->cursorHeight = height;
+		_vm->_draw->_cursorWidth = width;
+		_vm->_draw->_cursorHeight = height;
 
 		if (count < 0x80)
-			_vm->_draw->transparentCursor = 1;
+			_vm->_draw->_transparentCursor = 1;
 		else
-			_vm->_draw->transparentCursor = 0;
+			_vm->_draw->_transparentCursor = 0;
 
 		if (count > 0x80)
 			count -= 0x80;
 
-		_vm->_draw->cursorSprites =
-		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->cursorWidth * count,
-		    _vm->_draw->cursorHeight, 2);
-		_vm->_draw->spritesArray[23] = _vm->_draw->cursorSprites;
+		_vm->_draw->_cursorSprites =
+		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth * count,
+		    _vm->_draw->_cursorHeight, 2);
+		_vm->_draw->_spritesArray[23] = _vm->_draw->_cursorSprites;
 
-		_vm->_draw->cursorBack =
-		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->cursorWidth,
-		    _vm->_draw->cursorHeight, 0);
+		_vm->_draw->_cursorBack =
+		    _vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_draw->_cursorWidth,
+		    _vm->_draw->_cursorHeight, 0);
 		for (i = 0; i < 40; i++) {
-			_vm->_draw->cursorAnimLow[i] = -1;
-			_vm->_draw->cursorAnimDelays[i] = 0;
-			_vm->_draw->cursorAnimHigh[i] = 0;
+			_vm->_draw->_cursorAnimLow[i] = -1;
+			_vm->_draw->_cursorAnimDelays[i] = 0;
+			_vm->_draw->_cursorAnimHigh[i] = 0;
 		}
-		_vm->_draw->cursorAnimLow[1] = 0;
+		_vm->_draw->_cursorAnimLow[1] = 0;
 	}
 }
 
@@ -663,18 +663,18 @@ void Inter_v1::o1_initCursorAnim(void) {
 	int16 ind;
 
 	ind = _vm->_parse->parseValExpr();
-	_vm->_draw->cursorAnimLow[ind] = load16();
-	_vm->_draw->cursorAnimHigh[ind] = load16();
-	_vm->_draw->cursorAnimDelays[ind] = load16();
+	_vm->_draw->_cursorAnimLow[ind] = load16();
+	_vm->_draw->_cursorAnimHigh[ind] = load16();
+	_vm->_draw->_cursorAnimDelays[ind] = load16();
 }
 
 void Inter_v1::o1_clearCursorAnim(void) {
 	int16 ind;
 
 	ind = _vm->_parse->parseValExpr();
-	_vm->_draw->cursorAnimLow[ind] = -1;
-	_vm->_draw->cursorAnimHigh[ind] = 0;
-	_vm->_draw->cursorAnimDelays[ind] = 0;
+	_vm->_draw->_cursorAnimLow[ind] = -1;
+	_vm->_draw->_cursorAnimHigh[ind] = 0;
+	_vm->_draw->_cursorAnimDelays[ind] = 0;
 }
 
 bool Inter_v1::o1_drawOperations(char &cmdCount, int16 &counter, int16 &retFlag) {
@@ -772,8 +772,8 @@ bool Inter_v1::o1_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 	size = _vm->_parse->parseValExpr();
 	offset = _vm->_parse->parseValExpr();
 
-	if (_vm->_game->extHandle >= 0)
-		_vm->_dataio->closeData(_vm->_game->extHandle);
+	if (_vm->_game->_extHandle >= 0)
+		_vm->_dataio->closeData(_vm->_game->_extHandle);
 
 	WRITE_VAR(1, 1);
 	handle = _vm->_dataio->openData(_vm->_global->_inter_resStr);
@@ -791,8 +791,8 @@ bool Inter_v1::o1_readData(char &cmdCount, int16 &counter, int16 &retFlag) {
 			WRITE_VAR(1, 0);
 	}
 
-	if (_vm->_game->extHandle >= 0)
-		_vm->_game->extHandle = _vm->_dataio->openData(_vm->_game->curExtFile);
+	if (_vm->_game->_extHandle >= 0)
+		_vm->_game->_extHandle = _vm->_dataio->openData(_vm->_game->_curExtFile);
 	return false;
 }
 
@@ -803,17 +803,17 @@ bool Inter_v1::o1_loadFont(char &cmdCount, int16 &counter, int16 &retFlag) {
 	evalExpr(0);
 	index = load16();
 
-	if (_vm->_draw->fonts[index] != 0)
-		_vm->_util->freeFont(_vm->_draw->fonts[index]);
+	if (_vm->_draw->_fonts[index] != 0)
+		_vm->_util->freeFont(_vm->_draw->_fonts[index]);
 
 	_vm->_draw->animateCursor(4);
-	if (_vm->_game->extHandle >= 0)
-		_vm->_dataio->closeData(_vm->_game->extHandle);
+	if (_vm->_game->_extHandle >= 0)
+		_vm->_dataio->closeData(_vm->_game->_extHandle);
 
-	_vm->_draw->fonts[index] = _vm->_util->loadFont(_vm->_global->_inter_resStr);
+	_vm->_draw->_fonts[index] = _vm->_util->loadFont(_vm->_global->_inter_resStr);
 
-	if (_vm->_game->extHandle >= 0)
-		_vm->_game->extHandle = _vm->_dataio->openData(_vm->_game->curExtFile);
+	if (_vm->_game->_extHandle >= 0)
+		_vm->_game->_extHandle = _vm->_dataio->openData(_vm->_game->_curExtFile);
 	return false;
 }
 
@@ -821,10 +821,10 @@ bool Inter_v1::o1_freeFont(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 index;
 
 	index = load16();
-	if (_vm->_draw->fonts[index] != 0)
-		_vm->_util->freeFont(_vm->_draw->fonts[index]);
+	if (_vm->_draw->_fonts[index] != 0)
+		_vm->_util->freeFont(_vm->_draw->_fonts[index]);
 
-	_vm->_draw->fonts[index] = 0;
+	_vm->_draw->_fonts[index] = 0;
 	return false;
 }
 
@@ -907,74 +907,74 @@ bool Inter_v1::o1_strToLong(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 bool Inter_v1::o1_invalidate(char &cmdCount, int16 &counter, int16 &retFlag) {
 	warning("invalidate: 'bugged' function!");
-	_vm->_draw->destSurface = load16();
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
-	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSurface = load16();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->_frontColor = _vm->_parse->parseValExpr();
 	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
 	return false;
 }
 
 bool Inter_v1::o1_loadSpriteContent(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->spriteLeft = load16();
-	_vm->_draw->destSurface = load16();
-	_vm->_draw->transparency = load16();
-	_vm->_draw->destSpriteX = 0;
-	_vm->_draw->destSpriteY = 0;
+	_vm->_draw->_spriteLeft = load16();
+	_vm->_draw->_destSurface = load16();
+	_vm->_draw->_transparency = load16();
+	_vm->_draw->_destSpriteX = 0;
+	_vm->_draw->_destSpriteY = 0;
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 	return false;
 }
 
 bool Inter_v1::o1_copySprite(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->sourceSurface = load16();
-	_vm->_draw->destSurface = load16();
+	_vm->_draw->_sourceSurface = load16();
+	_vm->_draw->_destSurface = load16();
 
-	_vm->_draw->spriteLeft = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteTop = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteBottom = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteLeft = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteTop = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
 
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
 
-	_vm->_draw->transparency = load16();
+	_vm->_draw->_transparency = load16();
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 	return false;
 }
 
 bool Inter_v1::o1_putPixel(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->destSurface = load16();
+	_vm->_draw->_destSurface = load16();
 
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
-	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_frontColor = _vm->_parse->parseValExpr();
 	_vm->_draw->spriteOperation(DRAW_PUTPIXEL);
 	return false;
 }
 
 bool Inter_v1::o1_fillRect(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->destSurface = load16();
+	_vm->_draw->_destSurface = load16();
 
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteBottom = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
 
-	_vm->_draw->backColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	return false;
 }
 
 bool Inter_v1::o1_drawLine(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->destSurface = load16();
+	_vm->_draw->_destSurface = load16();
 
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteRight = _vm->_parse->parseValExpr();
-	_vm->_draw->spriteBottom = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteRight = _vm->_parse->parseValExpr();
+	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
 
-	_vm->_draw->frontColor = _vm->_parse->parseValExpr();
+	_vm->_draw->_frontColor = _vm->_parse->parseValExpr();
 	_vm->_draw->spriteOperation(DRAW_DRAWLINE);
 	return false;
 }
@@ -991,11 +991,11 @@ bool Inter_v1::o1_createSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	flag = load16();
 	if (flag == 1)
-		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
+		_vm->_draw->_spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 	else
-		_vm->_draw->spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 0);
+		_vm->_draw->_spritesArray[index] = _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 0);
 
-	_vm->_video->clearSurf(_vm->_draw->spritesArray[index]);
+	_vm->_video->clearSurf(_vm->_draw->_spritesArray[index]);
 	return false;
 }
 
@@ -1003,11 +1003,11 @@ bool Inter_v1::o1_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
 	int16 index;
 
 	index = load16();
-	if (_vm->_draw->spritesArray[index] == 0)
+	if (_vm->_draw->_spritesArray[index] == 0)
 		return false;
 
-	_vm->_video->freeSurfDesc(_vm->_draw->spritesArray[index]);
-	_vm->_draw->spritesArray[index] = 0;
+	_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[index]);
+	_vm->_draw->_spritesArray[index] = 0;
 	return false;
 }
 
@@ -1022,7 +1022,7 @@ bool Inter_v1::o1_playComposition(char &cmdCount, int16 &counter, int16 &retFlag
 	for (i = 0; i < 50; i++)
 		composition[i] = (int16)VAR_OFFSET(dataVar + i * 4);
 
-	_vm->_snd->playComposition(_vm->_game->soundSamples, composition, freqVal);
+	_vm->_snd->playComposition(_vm->_game->_soundSamples, composition, freqVal);
 	return false;
 }
 
@@ -1044,7 +1044,7 @@ bool Inter_v1::o1_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	_vm->_snd->stopSound(0);
 	_soundEndTimeKey = 0;
-	if (_vm->_game->soundSamples[index] == 0)
+	if (_vm->_game->_soundSamples[index] == 0)
 		return false;
 
 	if (repCount < 0) {
@@ -1055,17 +1055,17 @@ bool Inter_v1::o1_playSound(char &cmdCount, int16 &counter, int16 &retFlag) {
 		_soundEndTimeKey = _vm->_util->getTimeKey();
 
 		if (frequency == 0) {
-			freq2 = _vm->_game->soundSamples[index]->frequency;
+			freq2 = _vm->_game->_soundSamples[index]->frequency;
 		} else {
 			freq2 = frequency;
 		}
 		_soundStopVal =
-		    (10 * (_vm->_game->soundSamples[index]->size / 2)) / freq2;
+		    (10 * (_vm->_game->_soundSamples[index]->size / 2)) / freq2;
 		_soundEndTimeKey +=
-		    ((_vm->_game->soundSamples[index]->size * repCount -
-			_vm->_game->soundSamples[index]->size / 2) * 1000) / freq2;
+		    ((_vm->_game->_soundSamples[index]->size * repCount -
+			_vm->_game->_soundSamples[index]->size / 2) * 1000) / freq2;
 	}
-	_vm->_snd->playSample(_vm->_game->soundSamples[index], repCount, frequency);
+	_vm->_snd->playSample(_vm->_game->_soundSamples[index], repCount, frequency);
 	return false;
 }
 
@@ -1080,44 +1080,44 @@ bool Inter_v1::o1_loadCursor(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	id = load16();
 	index = *_vm->_global->_inter_execPtr++;
-	itemPtr = &_vm->_game->totResourceTable->items[id];
+	itemPtr = &_vm->_game->_totResourceTable->items[id];
 	offset = itemPtr->offset;
 
 	if (offset >= 0) {
 		dataBuf =
-		    ((char *)_vm->_game->totResourceTable) + szGame_TotResTable +
-		    szGame_TotResItem * _vm->_game->totResourceTable->itemsCount + offset;
+		    ((char *)_vm->_game->_totResourceTable) + szGame_TotResTable +
+		    szGame_TotResItem * _vm->_game->_totResourceTable->itemsCount + offset;
 	} else {
-		dataBuf = _vm->_game->imFileData + (int32)READ_LE_UINT32(&((int32 *)_vm->_game->imFileData)[-offset - 1]);
+		dataBuf = _vm->_game->_imFileData + (int32)READ_LE_UINT32(&((int32 *)_vm->_game->_imFileData)[-offset - 1]);
 	}
 
 	width = itemPtr->width;
 	height = itemPtr->height;
 
-	_vm->_video->fillRect(_vm->_draw->cursorSprites, index * _vm->_draw->cursorWidth, 0,
-	    index * _vm->_draw->cursorWidth + _vm->_draw->cursorWidth - 1,
-	    _vm->_draw->cursorHeight - 1, 0);
+	_vm->_video->fillRect(_vm->_draw->_cursorSprites, index * _vm->_draw->_cursorWidth, 0,
+	    index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
+	    _vm->_draw->_cursorHeight - 1, 0);
 
 	_vm->_video->drawPackedSprite((byte*)dataBuf, width, height,
-	    index * _vm->_draw->cursorWidth, 0, 0, _vm->_draw->cursorSprites);
-	_vm->_draw->cursorAnimLow[index] = 0;
+	    index * _vm->_draw->_cursorWidth, 0, 0, _vm->_draw->_cursorSprites);
+	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	return false;
 }
 
 bool Inter_v1::o1_loadSpriteToPos(char &cmdCount, int16 &counter, int16 &retFlag) {
 	debug(4, "loadSpriteToPos");
-	_vm->_draw->spriteLeft = load16();
+	_vm->_draw->_spriteLeft = load16();
 
-	_vm->_draw->destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
 
-	_vm->_draw->transparency = _vm->_global->_inter_execPtr[0];
-	_vm->_draw->destSurface = (_vm->_global->_inter_execPtr[0] / 2) - 1;
+	_vm->_draw->_transparency = _vm->_global->_inter_execPtr[0];
+	_vm->_draw->_destSurface = (_vm->_global->_inter_execPtr[0] / 2) - 1;
 
-	if (_vm->_draw->destSurface < 0)
-		_vm->_draw->destSurface = 101;
-	_vm->_draw->transparency &= 1;
+	if (_vm->_draw->_destSurface < 0)
+		_vm->_draw->_destSurface = 101;
+	_vm->_draw->_transparency &= 1;
 	_vm->_global->_inter_execPtr += 2;
 	_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 
@@ -1144,7 +1144,7 @@ bool Inter_v1::o1_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 	strcat(buf, ".tot");
 	_terminate = true;
-	strcpy(_vm->_game->totToLoad, buf);
+	strcpy(_vm->_game->_totToLoad, buf);
 
 	return false;
 }
@@ -1217,7 +1217,7 @@ bool Inter_v1::o1_keyFunc(char &cmdCount, int16 &counter, int16 &retFlag) {
 			_vm->_util->waitKey();
 			return false;
 		}
-		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->mouseButtons, 0);
+		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 
 		storeKey(key);
 		return false;
@@ -1302,7 +1302,7 @@ bool Inter_v1::o1_whileDo(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 void Inter_v1::o1_setRenderFlags(void) {
-	_vm->_draw->renderFlags = _vm->_parse->parseValExpr();
+	_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
 }
 
 void Inter_v1::o1_loadAnim(void) {
@@ -1385,18 +1385,18 @@ void Inter_v1::o1_stopCD(void) {
 
 void Inter_v1::o1_loadFontToSprite(void) {
 	int16 i = load16();
-	_vm->_draw->fontToSprite[i].sprite = load16();
-	_vm->_draw->fontToSprite[i].base = load16();
-	_vm->_draw->fontToSprite[i].width = load16();
-	_vm->_draw->fontToSprite[i].height = load16();
+	_vm->_draw->_fontToSprite[i].sprite = load16();
+	_vm->_draw->_fontToSprite[i].base = load16();
+	_vm->_draw->_fontToSprite[i].width = load16();
+	_vm->_draw->_fontToSprite[i].height = load16();
 }
 
 void Inter_v1::o1_freeFontToSprite(void) {
 	int16 i = load16();
-	_vm->_draw->fontToSprite[i].sprite = -1;
-	_vm->_draw->fontToSprite[i].base = -1;
-	_vm->_draw->fontToSprite[i].width = -1;
-	_vm->_draw->fontToSprite[i].height = -1;
+	_vm->_draw->_fontToSprite[i].sprite = -1;
+	_vm->_draw->_fontToSprite[i].base = -1;
+	_vm->_draw->_fontToSprite[i].width = -1;
+	_vm->_draw->_fontToSprite[i].height = -1;
 }
 
 void Inter_v1::executeDrawOpcode(byte i) {
@@ -1441,7 +1441,7 @@ const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j)
 
 bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 	char *storedIP = _vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr = (char *)_vm->_game->totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
+	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 	if (counter == cmdCount && retFlag == 2)
 		return true;
@@ -1570,8 +1570,8 @@ bool Inter_v1::o1_returnTo(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 bool Inter_v1::o1_setBackDelta(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->backDeltaX = _vm->_parse->parseValExpr();
-	_vm->_draw->backDeltaY = _vm->_parse->parseValExpr();
+	_vm->_draw->_backDeltaX = _vm->_parse->parseValExpr();
+	_vm->_draw->_backDeltaY = _vm->_parse->parseValExpr();
 	return false;
 }
 
@@ -1595,7 +1595,7 @@ bool Inter_v1::o1_animatePalette(char &cmdCount, int16 &counter, int16 &retFlag)
 	_vm->_util->waitEndFrame();
 	animPalette();
 	storeKey(_vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
-		&_vm->_global->_inter_mouseY, &_vm->_game->mouseButtons, 0));
+		&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0));
 	return false;
 }
 

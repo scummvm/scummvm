@@ -36,7 +36,7 @@ int32 Parse::encodePtr(char *ptr, int type) {
 
 	switch (type) {
 	case kExecPtr:
-		offset = ptr - _vm->_game->totFileData;
+		offset = ptr - _vm->_game->_totFileData;
 		break;
 	case kInterVar:
 		offset = ptr - _vm->_global->_inter_variables;
@@ -56,7 +56,7 @@ char *Parse::decodePtr(int32 n) {
 
 	switch (n >> 28) {
 	case kExecPtr:
-		ptr = _vm->_game->totFileData;
+		ptr = _vm->_game->_totFileData;
 		break;
 	case kInterVar:
 		ptr = _vm->_global->_inter_variables;

@@ -428,7 +428,7 @@ void Map::loadItemToObject(void) {
 	count = loadFromAvo_LE_UINT16();
 	for (i = 0; i < count; i++) {
 		_avoDataPtr += 20;
-		_vm->_goblin->itemToObject[i] = loadFromAvo_LE_UINT16();
+		_vm->_goblin->_itemToObject[i] = loadFromAvo_LE_UINT16();
 		_avoDataPtr += 5;
 	}
 }
@@ -510,41 +510,41 @@ void Map::loadMapObjects(char *avjFile) {
 	savedPtr3 = _avoDataPtr;
 	_avoDataPtr += count3 * 8;
 
-	_vm->_goblin->gobsCount = loadFromAvo_LE_UINT16();
-	for (i = 0; i < _vm->_goblin->gobsCount; i++) {
-		_vm->_goblin->goblins[i] = (Goblin::Gob_Object *)malloc(sizeof(Goblin::Gob_Object));
+	_vm->_goblin->_gobsCount = loadFromAvo_LE_UINT16();
+	for (i = 0; i < _vm->_goblin->_gobsCount; i++) {
+		_vm->_goblin->_goblins[i] = (Goblin::Gob_Object *)malloc(sizeof(Goblin::Gob_Object));
 
-		_vm->_goblin->goblins[i]->xPos = READ_LE_UINT16(savedPtr2);
+		_vm->_goblin->_goblins[i]->xPos = READ_LE_UINT16(savedPtr2);
 		savedPtr2 += 2;
 
-		_vm->_goblin->goblins[i]->yPos = READ_LE_UINT16(savedPtr2);
+		_vm->_goblin->_goblins[i]->yPos = READ_LE_UINT16(savedPtr2);
 		savedPtr2 += 2;
 
-		_vm->_goblin->goblins[i]->order = READ_LE_UINT16(savedPtr2);
+		_vm->_goblin->_goblins[i]->order = READ_LE_UINT16(savedPtr2);
 		savedPtr2 += 2;
 
-		_vm->_goblin->goblins[i]->state = READ_LE_UINT16(savedPtr2);
+		_vm->_goblin->_goblins[i]->state = READ_LE_UINT16(savedPtr2);
 		savedPtr2 += 2;
 
 		if (i == 3)
-			_vm->_goblin->goblins[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 70);
+			_vm->_goblin->_goblins[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 70);
 		else
-			_vm->_goblin->goblins[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
+			_vm->_goblin->_goblins[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
 
 		// FIXME: All is wrong further. We should unwind calls to loadDataFromAvo()
-		loadDataFromAvo((char *)_vm->_goblin->goblins[i]->stateMach, 40 * szGob_StateLine);
+		loadDataFromAvo((char *)_vm->_goblin->_goblins[i]->stateMach, 40 * szGob_StateLine);
 		_avoDataPtr += 160;
-		_vm->_goblin->goblins[i]->multObjIndex = *_avoDataPtr;
+		_vm->_goblin->_goblins[i]->multObjIndex = *_avoDataPtr;
 		_avoDataPtr += 2;
 
-		_vm->_goblin->goblins[i]->realStateMach = _vm->_goblin->goblins[i]->stateMach;
+		_vm->_goblin->_goblins[i]->realStateMach = _vm->_goblin->_goblins[i]->stateMach;
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
-				if (_vm->_goblin->goblins[i]->stateMach[state][col] == 0)
+				if (_vm->_goblin->_goblins[i]->stateMach[state][col] == 0)
 					continue;
 
 				Goblin::Gob_State *tmpState = (Goblin::Gob_State *)malloc(sizeof(Goblin::Gob_State));
-				_vm->_goblin->goblins[i]->stateMach[state][col] = tmpState;
+				_vm->_goblin->_goblins[i]->stateMach[state][col] = tmpState;
 
 				tmpState->animation = loadFromAvo_LE_UINT16();
 				tmpState->layer = loadFromAvo_LE_UINT16();
@@ -568,7 +568,7 @@ void Map::loadMapObjects(char *avjFile) {
 	}
 
 	pState = (Goblin::Gob_State *)malloc(sizeof(Goblin::Gob_State));
-	_vm->_goblin->goblins[0]->stateMach[39][0] = pState;
+	_vm->_goblin->_goblins[0]->stateMach[39][0] = pState;
 	pState->animation = 0;
 	pState->layer = 98;
 	pState->unk0 = 0;
@@ -576,7 +576,7 @@ void Map::loadMapObjects(char *avjFile) {
 	pState->sndItem = -1;
 
 	pState = (Goblin::Gob_State *) malloc(sizeof(Goblin::Gob_State));
-	_vm->_goblin->goblins[1]->stateMach[39][0] = pState;
+	_vm->_goblin->_goblins[1]->stateMach[39][0] = pState;
 	pState->animation = 0;
 	pState->layer = 99;
 	pState->unk0 = 0;
@@ -584,25 +584,25 @@ void Map::loadMapObjects(char *avjFile) {
 	pState->sndItem = -1;
 
 	pState = (Goblin::Gob_State *) malloc(sizeof(Goblin::Gob_State));
-	_vm->_goblin->goblins[2]->stateMach[39][0] = pState;
+	_vm->_goblin->_goblins[2]->stateMach[39][0] = pState;
 	pState->animation = 0;
 	pState->layer = 100;
 	pState->unk0 = 0;
 	pState->unk1 = 0;
 	pState->sndItem = -1;
 
-	_vm->_goblin->goblins[2]->stateMach[10][0]->sndFrame = 13;
-	_vm->_goblin->goblins[2]->stateMach[11][0]->sndFrame = 13;
-	_vm->_goblin->goblins[2]->stateMach[28][0]->sndFrame = 13;
-	_vm->_goblin->goblins[2]->stateMach[29][0]->sndFrame = 13;
+	_vm->_goblin->_goblins[2]->stateMach[10][0]->sndFrame = 13;
+	_vm->_goblin->_goblins[2]->stateMach[11][0]->sndFrame = 13;
+	_vm->_goblin->_goblins[2]->stateMach[28][0]->sndFrame = 13;
+	_vm->_goblin->_goblins[2]->stateMach[29][0]->sndFrame = 13;
 
-	_vm->_goblin->goblins[1]->stateMach[10][0]->sndFrame = 13;
-	_vm->_goblin->goblins[1]->stateMach[11][0]->sndFrame = 13;
+	_vm->_goblin->_goblins[1]->stateMach[10][0]->sndFrame = 13;
+	_vm->_goblin->_goblins[1]->stateMach[11][0]->sndFrame = 13;
 
 	for (state = 40; state < 70; state++) {
 		pState = (Goblin::Gob_State *)malloc(sizeof(Goblin::Gob_State));
-		_vm->_goblin->goblins[3]->stateMach[state][0] = pState;
-		_vm->_goblin->goblins[3]->stateMach[state][1] = 0;
+		_vm->_goblin->_goblins[3]->stateMach[state][0] = pState;
+		_vm->_goblin->_goblins[3]->stateMach[state][1] = 0;
 
 		pState->animation = 9;
 		pState->layer = state - 40;
@@ -610,38 +610,38 @@ void Map::loadMapObjects(char *avjFile) {
 		pState->sndFrame = 0;
 	}
 
-	_vm->_goblin->objCount = loadFromAvo_LE_UINT16();
-	for (i = 0; i < _vm->_goblin->objCount; i++) {
-		_vm->_goblin->objects[i] =
+	_vm->_goblin->_objCount = loadFromAvo_LE_UINT16();
+	for (i = 0; i < _vm->_goblin->_objCount; i++) {
+		_vm->_goblin->_objects[i] =
 		    (Goblin::Gob_Object *) malloc(sizeof(Goblin::Gob_Object));
 
-		_vm->_goblin->objects[i]->xPos = READ_LE_UINT16(savedPtr3);
+		_vm->_goblin->_objects[i]->xPos = READ_LE_UINT16(savedPtr3);
 		savedPtr3 += 2;
 
-		_vm->_goblin->objects[i]->yPos = READ_LE_UINT16(savedPtr3);
+		_vm->_goblin->_objects[i]->yPos = READ_LE_UINT16(savedPtr3);
 		savedPtr3 += 2;
 
-		_vm->_goblin->objects[i]->order = READ_LE_UINT16(savedPtr3);
+		_vm->_goblin->_objects[i]->order = READ_LE_UINT16(savedPtr3);
 		savedPtr3 += 2;
 
-		_vm->_goblin->objects[i]->state = READ_LE_UINT16(savedPtr3);
+		_vm->_goblin->_objects[i]->state = READ_LE_UINT16(savedPtr3);
 		savedPtr3 += 2;
 
-		_vm->_goblin->objects[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
+		_vm->_goblin->_objects[i]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
 
-		loadDataFromAvo((char *)_vm->_goblin->objects[i]->stateMach, 40 * szGob_StateLine);
+		loadDataFromAvo((char *)_vm->_goblin->_objects[i]->stateMach, 40 * szGob_StateLine);
 		_avoDataPtr += 160;
-		_vm->_goblin->objects[i]->multObjIndex = *_avoDataPtr;
+		_vm->_goblin->_objects[i]->multObjIndex = *_avoDataPtr;
 		_avoDataPtr += 2;
 
-		_vm->_goblin->objects[i]->realStateMach = _vm->_goblin->objects[i]->stateMach;
+		_vm->_goblin->_objects[i]->realStateMach = _vm->_goblin->_objects[i]->stateMach;
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
-				if (_vm->_goblin->objects[i]->stateMach[state][col] == 0)
+				if (_vm->_goblin->_objects[i]->stateMach[state][col] == 0)
 					continue;
 
 				Goblin::Gob_State *tmpState = (Goblin::Gob_State *)malloc(sizeof(Goblin::Gob_State));
-				_vm->_goblin->objects[i]->stateMach[state][col] = tmpState;
+				_vm->_goblin->_objects[i]->stateMach[state][col] = tmpState;
 
 				tmpState->animation = loadFromAvo_LE_UINT16();
 				tmpState->layer = loadFromAvo_LE_UINT16();
@@ -664,14 +664,14 @@ void Map::loadMapObjects(char *avjFile) {
 		}
 	}
 
-	_vm->_goblin->objects[10] = (Goblin::Gob_Object *)malloc(sizeof(Goblin::Gob_Object));
-	memset(_vm->_goblin->objects[10], 0, sizeof(Goblin::Gob_Object));
+	_vm->_goblin->_objects[10] = (Goblin::Gob_Object *)malloc(sizeof(Goblin::Gob_Object));
+	memset(_vm->_goblin->_objects[10], 0, sizeof(Goblin::Gob_Object));
 
-	_vm->_goblin->objects[10]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
-	memset(_vm->_goblin->objects[10]->stateMach, 0, szGob_StateLine * 40);
+	_vm->_goblin->_objects[10]->stateMach = (Goblin::Gob_StateLine *)malloc(szGob_StateLine * 40);
+	memset(_vm->_goblin->_objects[10]->stateMach, 0, szGob_StateLine * 40);
 
 	pState = (Goblin::Gob_State *)malloc(sizeof(Goblin::Gob_State));
-	_vm->_goblin->objects[10]->stateMach[0][0] = pState;
+	_vm->_goblin->_objects[10]->stateMach[0][0] = pState;
 
 	memset(pState, 0, sizeof(Goblin::Gob_State));
 	pState->animation = 9;
@@ -681,11 +681,11 @@ void Map::loadMapObjects(char *avjFile) {
 	pState->sndItem = -1;
 	pState->sndFrame = 0;
 
-	_vm->_goblin->placeObject(_vm->_goblin->objects[10], 1);
+	_vm->_goblin->placeObject(_vm->_goblin->_objects[10], 1);
 
-	_vm->_goblin->objects[10]->realStateMach = _vm->_goblin->objects[10]->stateMach;
-	_vm->_goblin->objects[10]->type = 1;
-	_vm->_goblin->objects[10]->unk14 = 1;
+	_vm->_goblin->_objects[10]->realStateMach = _vm->_goblin->_objects[10]->stateMach;
+	_vm->_goblin->_objects[10]->type = 1;
+	_vm->_goblin->_objects[10]->unk14 = 1;
 
 	state = loadFromAvo_LE_UINT16();
 	for (i = 0; i < state; i++) {
@@ -711,7 +711,7 @@ void Map::loadMapObjects(char *avjFile) {
 
 	free(dataBuf);
 
-	_vm->_goblin->soundData[14] = _vm->_snd->loadSoundData("diamant1.snd");
+	_vm->_goblin->_soundData[14] = _vm->_snd->loadSoundData("diamant1.snd");
 
 	for (i = 0; i < soundCount; i++) {
 		handle = _vm->_dataio->openData(sndNames[i]);
@@ -719,7 +719,7 @@ void Map::loadMapObjects(char *avjFile) {
 			continue;
 
 		_vm->_dataio->closeData(handle);
-		_vm->_goblin->soundData[i] = _vm->_snd->loadSoundData(sndNames[i]);
+		_vm->_goblin->_soundData[i] = _vm->_snd->loadSoundData(sndNames[i]);
 	}
 }
 
@@ -731,34 +731,34 @@ void Map::loadMapsInitGobs(void) {
 		error("load: Loading .pas/.pos files is not supported!");
 
 	for (i = 0; i < 3; i++) {
-		_vm->_goblin->nextLayer(_vm->_goblin->goblins[i]);
+		_vm->_goblin->nextLayer(_vm->_goblin->_goblins[i]);
 	}
 
 	for (i = 0; i < 3; i++) {
 
 		layer =
-		    _vm->_goblin->goblins[i]->stateMach[_vm->_goblin->goblins[i]->state][0]->layer;
+		    _vm->_goblin->_goblins[i]->stateMach[_vm->_goblin->_goblins[i]->state][0]->layer;
 
-		_vm->_scenery->updateAnim(layer, 0, _vm->_goblin->goblins[i]->animation, 0,
-		    _vm->_goblin->goblins[i]->xPos, _vm->_goblin->goblins[i]->yPos, 0);
+		_vm->_scenery->updateAnim(layer, 0, _vm->_goblin->_goblins[i]->animation, 0,
+		    _vm->_goblin->_goblins[i]->xPos, _vm->_goblin->_goblins[i]->yPos, 0);
 
-		_vm->_goblin->goblins[i]->yPos = (_vm->_goblin->gobPositions[i].y + 1) * 6 -
+		_vm->_goblin->_goblins[i]->yPos = (_vm->_goblin->_gobPositions[i].y + 1) * 6 -
 		    (_vm->_scenery->toRedrawBottom - _vm->_scenery->animTop);
 
-		_vm->_goblin->goblins[i]->xPos = _vm->_goblin->gobPositions[i].x * 12 -
+		_vm->_goblin->_goblins[i]->xPos = _vm->_goblin->_gobPositions[i].x * 12 -
 		    (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
 
-		_vm->_goblin->goblins[i]->order = _vm->_scenery->toRedrawBottom / 24 + 3;
+		_vm->_goblin->_goblins[i]->order = _vm->_scenery->toRedrawBottom / 24 + 3;
 	}
 
-	_vm->_goblin->currentGoblin = 0;
-	_vm->_goblin->pressedMapX = _vm->_goblin->gobPositions[0].x;
-	_vm->_goblin->pressedMapY = _vm->_goblin->gobPositions[0].y;
-	_vm->_goblin->pathExistence = 0;
+	_vm->_goblin->_currentGoblin = 0;
+	_vm->_goblin->_pressedMapX = _vm->_goblin->_gobPositions[0].x;
+	_vm->_goblin->_pressedMapY = _vm->_goblin->_gobPositions[0].y;
+	_vm->_goblin->_pathExistence = 0;
 
-	_vm->_goblin->goblins[0]->doAnim = 0;
-	_vm->_goblin->goblins[1]->doAnim = 1;
-	_vm->_goblin->goblins[2]->doAnim = 1;
+	_vm->_goblin->_goblins[0]->doAnim = 0;
+	_vm->_goblin->_goblins[1]->doAnim = 1;
+	_vm->_goblin->_goblins[2]->doAnim = 1;
 }
 
 }				// End of namespace Gob

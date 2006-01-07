@@ -36,130 +36,130 @@
 namespace Gob {
 
 Goblin::Goblin(GobEngine *vm) : _vm(vm) {
-	goesAtTarget = 0;
-	readyToAct = 0;
-	gobAction = 0;
-	itemIndInPocket = 5;
-	itemIdInPocket = 2;
-	itemByteFlag = 0;
-	destItemId = -1;
-	destActionItem = 0;
-	actDestItemDesc = 0;
-	forceNextState[0] = -1;
-	forceNextState[1] = -1;
-	forceNextState[2] = -1;
-	forceNextState[3] = -1;
-	forceNextState[4] = -1;
-	forceNextState[5] = -1;
-	forceNextState[6] = -1;
-	forceNextState[7] = 0;
-	forceNextState[8] = 0;
-	forceNextState[9] = 0;
+	_goesAtTarget = 0;
+	_readyToAct = 0;
+	_gobAction = 0;
+	_itemIndInPocket = 5;
+	_itemIdInPocket = 2;
+	_itemByteFlag = 0;
+	_destItemId = -1;
+	_destActionItem = 0;
+	_actDestItemDesc = 0;
+	_forceNextState[0] = -1;
+	_forceNextState[1] = -1;
+	_forceNextState[2] = -1;
+	_forceNextState[3] = -1;
+	_forceNextState[4] = -1;
+	_forceNextState[5] = -1;
+	_forceNextState[6] = -1;
+	_forceNextState[7] = 0;
+	_forceNextState[8] = 0;
+	_forceNextState[9] = 0;
 
-	rotStates[0][0] = 0; rotStates[0][1] = 22; rotStates[0][2] = 23; rotStates[0][3] = 24;
-	rotStates[1][0] = 13; rotStates[1][1] = 2; rotStates[1][2] = 12; rotStates[1][3] = 14;
-	rotStates[2][0] = 16; rotStates[2][1] = 15; rotStates[2][2] = 4; rotStates[2][3] = 17;
-	rotStates[3][0] = 27; rotStates[3][1] = 25; rotStates[3][2] = 26; rotStates[3][3] = 6;
+	_rotStates[0][0] = 0; _rotStates[0][1] = 22; _rotStates[0][2] = 23; _rotStates[0][3] = 24;
+	_rotStates[1][0] = 13; _rotStates[1][1] = 2; _rotStates[1][2] = 12; _rotStates[1][3] = 14;
+	_rotStates[2][0] = 16; _rotStates[2][1] = 15; _rotStates[2][2] = 4; _rotStates[2][3] = 17;
+	_rotStates[3][0] = 27; _rotStates[3][1] = 25; _rotStates[3][2] = 26; _rotStates[3][3] = 6;
 
-	boreCounter = 0;
-	positionedGob = 5;
+	_boreCounter = 0;
+	_positionedGob = 5;
 
-	noPick = 0;
-	objList = 0;
+	_noPick = 0;
+	_objList = 0;
 	for (int i = 0; i < 4; i++)
-		goblins[i] = 0;
-	currentGoblin = 0;
+		_goblins[i] = 0;
+	_currentGoblin = 0;
 	for (int i = 0; i < 16; i++)
-		soundData[i] = 0;
+		_soundData[i] = 0;
 	for (int i = 0; i < 3; i++) {
-		gobPositions[i].x = 0;
-		gobPositions[i].y = 0;
+		_gobPositions[i].x = 0;
+		_gobPositions[i].y = 0;
 	}
-	gobDestX = 0;
-	gobDestY = 0;
-	pressedMapX = 0;
-	pressedMapY = 0;
-	pathExistence = 0;
+	_gobDestX = 0;
+	_gobDestY = 0;
+	_pressedMapX = 0;
+	_pressedMapY = 0;
+	_pathExistence = 0;
 
-	some0ValPtr = 0;
+	_some0ValPtr = 0;
 
-	gobRetVarPtr = 0;
-	curGobVarPtr = 0;
-	curGobXPosVarPtr = 0;
-	curGobYPosVarPtr = 0;
-	itemInPocketVarPtr = 0;
+	_gobRetVarPtr = 0;
+	_curGobVarPtr = 0;
+	_curGobXPosVarPtr = 0;
+	_curGobYPosVarPtr = 0;
+	_itemInPocketVarPtr = 0;
 
-	curGobStateVarPtr = 0;
-	curGobFrameVarPtr = 0;
-	curGobMultStateVarPtr = 0;
-	curGobNextStateVarPtr = 0;
-	curGobScrXVarPtr = 0;
-	curGobScrYVarPtr = 0;
-	curGobLeftVarPtr = 0;
-	curGobTopVarPtr = 0;
-	curGobRightVarPtr = 0;
-	curGobBottomVarPtr = 0;
-	curGobDoAnimVarPtr = 0;
-	curGobOrderVarPtr = 0;
-	curGobNoTickVarPtr = 0;
-	curGobTypeVarPtr = 0;
-	curGobMaxTickVarPtr = 0;
-	curGobTickVarPtr = 0;
-	curGobActStartStateVarPtr = 0;
-	curGobLookDirVarPtr = 0;
-	curGobPickableVarPtr = 0;
-	curGobRelaxVarPtr = 0;
-	curGobMaxFrameVarPtr = 0;
+	_curGobStateVarPtr = 0;
+	_curGobFrameVarPtr = 0;
+	_curGobMultStateVarPtr = 0;
+	_curGobNextStateVarPtr = 0;
+	_curGobScrXVarPtr = 0;
+	_curGobScrYVarPtr = 0;
+	_curGobLeftVarPtr = 0;
+	_curGobTopVarPtr = 0;
+	_curGobRightVarPtr = 0;
+	_curGobBottomVarPtr = 0;
+	_curGobDoAnimVarPtr = 0;
+	_curGobOrderVarPtr = 0;
+	_curGobNoTickVarPtr = 0;
+	_curGobTypeVarPtr = 0;
+	_curGobMaxTickVarPtr = 0;
+	_curGobTickVarPtr = 0;
+	_curGobActStartStateVarPtr = 0;
+	_curGobLookDirVarPtr = 0;
+	_curGobPickableVarPtr = 0;
+	_curGobRelaxVarPtr = 0;
+	_curGobMaxFrameVarPtr = 0;
 
-	destItemStateVarPtr = 0;
-	destItemFrameVarPtr = 0;
-	destItemMultStateVarPtr = 0;
-	destItemNextStateVarPtr = 0;
-	destItemScrXVarPtr = 0;
-	destItemScrYVarPtr = 0;
-	destItemLeftVarPtr = 0;
-	destItemTopVarPtr = 0;
-	destItemRightVarPtr = 0;
-	destItemBottomVarPtr = 0;
-	destItemDoAnimVarPtr = 0;
-	destItemOrderVarPtr = 0;
-	destItemNoTickVarPtr = 0;
-	destItemTypeVarPtr = 0;
-	destItemMaxTickVarPtr = 0;
-	destItemTickVarPtr = 0;
-	destItemActStartStVarPtr = 0;
-	destItemLookDirVarPtr = 0;
-	destItemPickableVarPtr = 0;
-	destItemRelaxVarPtr = 0;
-	destItemMaxFrameVarPtr = 0;
+	_destItemStateVarPtr = 0;
+	_destItemFrameVarPtr = 0;
+	_destItemMultStateVarPtr = 0;
+	_destItemNextStateVarPtr = 0;
+	_destItemScrXVarPtr = 0;
+	_destItemScrYVarPtr = 0;
+	_destItemLeftVarPtr = 0;
+	_destItemTopVarPtr = 0;
+	_destItemRightVarPtr = 0;
+	_destItemBottomVarPtr = 0;
+	_destItemDoAnimVarPtr = 0;
+	_destItemOrderVarPtr = 0;
+	_destItemNoTickVarPtr = 0;
+	_destItemTypeVarPtr = 0;
+	_destItemMaxTickVarPtr = 0;
+	_destItemTickVarPtr = 0;
+	_destItemActStartStVarPtr = 0;
+	_destItemLookDirVarPtr = 0;
+	_destItemPickableVarPtr = 0;
+	_destItemRelaxVarPtr = 0;
+	_destItemMaxFrameVarPtr = 0;
 
-	destItemType = 0;
-	destItemState = 0;
+	_destItemType = 0;
+	_destItemState = 0;
 	for (int i = 0; i < 20; i++) {
-		itemToObject[i] = 0;
-		objects[i] = 0;
+		_itemToObject[i] = 0;
+		_objects[i] = 0;
 	}
-	objCount = 0;
-	gobsCount = 0;
+	_objCount = 0;
+	_gobsCount = 0;
 }
 
 char Goblin::rotateState(int16 from, int16 to) {
-	return rotStates[from / 2][to / 2];
+	return _rotStates[from / 2][to / 2];
 }
 
-int16 Goblin::peekGoblin(Gob_Object *curGob) {
+int16 Goblin::peekGoblin(Gob_Object *_curGob) {
 	Util::ListNode *ptr;
 	Gob_Object *desc;
 	int16 index;
 	int16 i;
 
-	ptr = objList->pHead;
+	ptr = _objList->pHead;
 	index = 0;
 	while (ptr != 0) {
 		desc = (Gob_Object *) ptr->pData;
-		if (desc != curGob) {
+		if (desc != _curGob) {
 			for (i = 0; i < 3; i++) {
-				if (desc != goblins[i])
+				if (desc != _goblins[i])
 					continue;
 
 				if (_vm->_global->_inter_mouseX < desc->right &&
@@ -176,9 +176,9 @@ int16 Goblin::peekGoblin(Gob_Object *curGob) {
 }
 
 void Goblin::initList(void) {
-	objList = (Util::List *) malloc(sizeof(Util::List));
-	objList->pHead = 0;
-	objList->pTail = 0;
+	_objList = (Util::List *) malloc(sizeof(Util::List));
+	_objList->pHead = 0;
+	_objList->pTail = 0;
 }
 
 void Goblin::sortByOrder(Util::List *list) {
@@ -199,7 +199,7 @@ void Goblin::sortByOrder(Util::List *list) {
 					if (objDesc->bottom != objDesc2->bottom)
 						continue;
 
-					if (objDesc != goblins[currentGoblin])
+					if (objDesc != _goblins[_currentGoblin])
 						continue;
 				}
 			}
@@ -225,8 +225,8 @@ void Goblin::drawObjects(void) {
 	Gob_Object *gobDesc2;
 	int16 layer;
 
-	ptr = objList->pHead;
-	for (ptr = objList->pHead; ptr != 0; ptr = ptr->pNext) {
+	ptr = _objList->pHead;
+	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
 		objDesc = (Gob_Object *) ptr->pData;
 
 		if (objDesc->type == 3)
@@ -235,12 +235,12 @@ void Goblin::drawObjects(void) {
 			objDesc->toRedraw = 0;
 	}
 
-	for (ptr = objList->pHead; ptr != 0; ptr = ptr->pNext) {
+	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
 		objDesc = (Gob_Object *) ptr->pData;
 		if (objDesc->toRedraw == 0)
 			continue;
 
-		_vm->_video->drawSprite(_vm->_anim->_animSurf, _vm->_draw->backSurface,
+		_vm->_video->drawSprite(_vm->_anim->_animSurf, _vm->_draw->_backSurface,
 		    objDesc->left, objDesc->top, objDesc->right,
 		    objDesc->bottom, objDesc->left, objDesc->top, 0);
 
@@ -278,8 +278,8 @@ void Goblin::drawObjects(void) {
 		objDesc->dirtyBottom = 199;
 	}
 
-	sortByOrder(objList);
-	for (ptr = objList->pHead; ptr != 0; ptr = ptr->pNext) {
+	sortByOrder(_objList);
+	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
 		objDesc = (Gob_Object *) ptr->pData;
 		if (objDesc->toRedraw) {
 			layer =
@@ -327,7 +327,7 @@ void Goblin::drawObjects(void) {
 		}
 
 		if (objDesc->type == 0 && objDesc->visible != 0) {
-			for (ptr2 = objList->pHead; ptr2 != 0;
+			for (ptr2 = _objList->pHead; ptr2 != 0;
 			    ptr2 = ptr2->pNext) {
 				gobDesc2 = (Gob_Object *) ptr2->pData;
 
@@ -364,7 +364,7 @@ void Goblin::drawObjects(void) {
 		}
 	}
 
-	for (ptr = objList->pHead; ptr != 0; ptr = ptr->pNext) {
+	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
 		objDesc = (Gob_Object *) ptr->pData;
 		if (objDesc->toRedraw == 0 || objDesc->type == 1)
 			continue;
@@ -388,7 +388,7 @@ void Goblin::drawObjects(void) {
 
 			if (objDesc->curFrame == sndFrame) {
 				if (sndItem != 0xff) {
-					playSound(soundData[sndItem],
+					playSound(_soundData[sndItem],
 					    repCount, freq);
 				}
 			}
@@ -400,7 +400,7 @@ void Goblin::drawObjects(void) {
 
 			if (objDesc->curFrame == sndFrame) {
 				if (sndItem != 0xff) {
-					playSound(soundData[sndItem],
+					playSound(_soundData[sndItem],
 					    repCount, freq);
 				}
 			}
@@ -413,7 +413,7 @@ void Goblin::drawObjects(void) {
 
 			if (objDesc->curFrame == sndFrame) {
 				if (sndItem != -1) {
-					playSound(soundData[sndItem],
+					playSound(_soundData[sndItem],
 					    repCount, freq);
 				}
 			}
@@ -429,7 +429,7 @@ void Goblin::animateObjects(void) {
 	Scenery::AnimLayer *pLayer;
 	int16 layer;
 
-	for (node = objList->pHead; node != 0; node = node->pNext) {
+	for (node = _objList->pHead; node != 0; node = node->pNext) {
 		objDesc = (Gob_Object *) node->pData;
 		if (objDesc->doAnim != 1 || objDesc->type != 0)
 			continue;
@@ -465,7 +465,7 @@ void Goblin::animateObjects(void) {
 
 			if (objDesc->multState != -1) {
 				if (objDesc->multState > 39) {
-					objDesc->stateMach = goblins[(int)(objDesc->multObjIndex)]->stateMach;
+					objDesc->stateMach = _goblins[(int)(objDesc->multObjIndex)]->stateMach;
 					objDesc->state = objDesc->multState - 40;
 				} else {
 					objDesc->stateMach = objDesc->realStateMach;
@@ -533,7 +533,7 @@ void Goblin::placeObject(Gob_Object *objDesc, char animated) {
 		objDesc->dirtyTop = objDesc->yPos;
 		objDesc->dirtyBottom = objDesc->yPos;
 
-		_vm->_util->listInsertBack(objList, objDesc);
+		_vm->_util->listInsertBack(_objList, objDesc);
 	}
 }
 
@@ -565,7 +565,7 @@ int16 Goblin::objIntersected(Gob_Object *obj1, Gob_Object *obj2) {
 }
 
 void Goblin::setMultStates(Gob_Object * gobDesc) {
-	gobDesc->stateMach = goblins[(int)gobDesc->multObjIndex]->stateMach;
+	gobDesc->stateMach = _goblins[(int)gobDesc->multObjIndex]->stateMach;
 }
 
 int16 Goblin::nextLayer(Gob_Object *gobDesc) {
@@ -599,7 +599,7 @@ void Goblin::showBoredom(int16 gobIndex) {
 	int16 state;
 	int16 boreFlag;
 
-	gobDesc = goblins[gobIndex];
+	gobDesc = _goblins[gobIndex];
 	layer = gobDesc->stateMach[gobDesc->state][0]->layer;
 
 	frameCount =
@@ -612,7 +612,7 @@ void Goblin::showBoredom(int16 gobIndex) {
 
 	boreFlag = 1 << _vm->_util->getRandom(7);
 
-	if (gobIndex != currentGoblin && _vm->_util->getRandom(3) != 0) {
+	if (gobIndex != _currentGoblin && _vm->_util->getRandom(3) != 0) {
 		if (state == 21) {
 			if ((boreFlag & 16) || (boreFlag & 32)) {
 				gobDesc->multState = 92 + gobIndex;
@@ -648,15 +648,15 @@ void Goblin::switchGoblin(int16 index) {
 	if (VAR(59) != 0)
 		return;
 
-	if (goblins[currentGoblin]->state <= 39 &&
-	    goblins[currentGoblin]->curFrame != 0)
+	if (_goblins[_currentGoblin]->state <= 39 &&
+	    _goblins[_currentGoblin]->curFrame != 0)
 		return;
 
-	if (index != 0 && goblins[index - 1]->type != 0)
+	if (index != 0 && _goblins[index - 1]->type != 0)
 		return;
 
 	if (index == 0)
-		next = (currentGoblin + 1) % 3;
+		next = (_currentGoblin + 1) % 3;
 	else
 		next = index - 1;
 
@@ -664,46 +664,46 @@ void Goblin::switchGoblin(int16 index) {
 	    _vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6)
 		return;
 
-	if (goblins[(currentGoblin + 1) % 3]->type != 0 &&
-	    goblins[(currentGoblin + 2) % 3]->type != 0)
+	if (_goblins[(_currentGoblin + 1) % 3]->type != 0 &&
+	    _goblins[(_currentGoblin + 2) % 3]->type != 0)
 		return;
 
-	gobPositions[currentGoblin].x = _vm->_map->_curGoblinX;
-	gobPositions[currentGoblin].y = _vm->_map->_curGoblinY;
+	_gobPositions[_currentGoblin].x = _vm->_map->_curGoblinX;
+	_gobPositions[_currentGoblin].y = _vm->_map->_curGoblinY;
 
-	goblins[currentGoblin]->doAnim = 1;
-	goblins[currentGoblin]->nextState = 21;
+	_goblins[_currentGoblin]->doAnim = 1;
+	_goblins[_currentGoblin]->nextState = 21;
 
-	nextLayer(goblins[currentGoblin]);
+	nextLayer(_goblins[_currentGoblin]);
 
-	currentGoblin = next;
-	if (goblins[currentGoblin]->type != 0)
-		currentGoblin = (currentGoblin + 1) % 3;
+	_currentGoblin = next;
+	if (_goblins[_currentGoblin]->type != 0)
+		_currentGoblin = (_currentGoblin + 1) % 3;
 
-	goblins[currentGoblin]->doAnim = 0;
-	if (goblins[currentGoblin]->curLookDir == 4)
-		goblins[currentGoblin]->nextState = 18;
+	_goblins[_currentGoblin]->doAnim = 0;
+	if (_goblins[_currentGoblin]->curLookDir == 4)
+		_goblins[_currentGoblin]->nextState = 18;
 	else
-		goblins[currentGoblin]->nextState = 19;
+		_goblins[_currentGoblin]->nextState = 19;
 
-	goblins[currentGoblin]->toRedraw = 1;
-	nextLayer(goblins[currentGoblin]);
+	_goblins[_currentGoblin]->toRedraw = 1;
+	nextLayer(_goblins[_currentGoblin]);
 
-	tmp = gobPositions[currentGoblin].x;
-	pressedMapX = tmp;
+	tmp = _gobPositions[_currentGoblin].x;
+	_pressedMapX = tmp;
 	_vm->_map->_destX = tmp;
-	gobDestX = tmp;
+	_gobDestX = tmp;
 	_vm->_map->_curGoblinX = tmp;
 
-	tmp = gobPositions[currentGoblin].y;
-	pressedMapY = tmp;
+	tmp = _gobPositions[_currentGoblin].y;
+	_pressedMapY = tmp;
 	_vm->_map->_destY = tmp;
-	gobDestY = tmp;
+	_gobDestY = tmp;
 	_vm->_map->_curGoblinY = tmp;
 
-	*curGobVarPtr = currentGoblin;
-	pathExistence = 0;
-	readyToAct = 0;
+	*_curGobVarPtr = _currentGoblin;
+	_pathExistence = 0;
+	_readyToAct = 0;
 }
 
 void Goblin::adjustDest(int16 posX, int16 posY) {
@@ -713,30 +713,30 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 	int16 deltaPix;
 	int16 i;
 
-	if (_vm->_map->_passMap[pressedMapY][pressedMapX] == 0 &&
-	    (gobAction == 0
-		|| _vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0)) {
+	if (_vm->_map->_passMap[_pressedMapY][_pressedMapX] == 0 &&
+	    (_gobAction == 0
+		|| _vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0)) {
 
 		resDelta = -1;
 		resDeltaDir = 0;
 		resDeltaPix = 0;
 
 		for (i = 1;
-		    i <= pressedMapX
-		    && _vm->_map->_passMap[pressedMapY][pressedMapX - i] == 0;
+		    i <= _pressedMapX
+		    && _vm->_map->_passMap[_pressedMapY][_pressedMapX - i] == 0;
 		    i++);
 
-		if (i <= pressedMapX) {
+		if (i <= _pressedMapX) {
 			resDeltaPix = (i - 1) * 12 + (posX % 12) + 1;
 			resDelta = i;
 		}
 
 		for (i = 1;
-				(i + pressedMapX) < Map::kMapWidth
-		    && _vm->_map->_passMap[pressedMapY][pressedMapX + i] == 0;
+				(i + _pressedMapX) < Map::kMapWidth
+		    && _vm->_map->_passMap[_pressedMapY][_pressedMapX + i] == 0;
 		    i++);
 
-		if (pressedMapX + i < Map::kMapWidth) {
+		if (_pressedMapX + i < Map::kMapWidth) {
 			deltaPix = (i * 12) - (posX % 12);
 			if (resDelta == -1 || deltaPix < resDeltaPix) {
 				resDeltaPix = deltaPix;
@@ -746,11 +746,11 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1;
-				(i + pressedMapY) < Map::kMapHeight
-		    && _vm->_map->_passMap[pressedMapY + i][pressedMapX] == 0;
+				(i + _pressedMapY) < Map::kMapHeight
+		    && _vm->_map->_passMap[_pressedMapY + i][_pressedMapX] == 0;
 		    i++);
 
-		if (pressedMapY + i < Map::kMapHeight) {
+		if (_pressedMapY + i < Map::kMapHeight) {
 			deltaPix = (i * 6) - (posY % 6);
 			if (resDelta == -1 || deltaPix < resDeltaPix) {
 				resDeltaPix = deltaPix;
@@ -760,11 +760,11 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		}
 
 		for (i = 1;
-		    i <= pressedMapY
-		    && _vm->_map->_passMap[pressedMapY - i][pressedMapX] == 0;
+		    i <= _pressedMapY
+		    && _vm->_map->_passMap[_pressedMapY - i][_pressedMapX] == 0;
 		    i++);
 
-		if (i <= pressedMapY) {
+		if (i <= _pressedMapY) {
 			deltaPix = (i * 6) + (posY % 6);
 			if (resDelta == -1 || deltaPix < resDeltaPix) {
 				resDeltaPix = deltaPix;
@@ -775,19 +775,19 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 
 		switch (resDeltaDir) {
 		case 0:
-			pressedMapX -= resDelta;
+			_pressedMapX -= resDelta;
 			break;
 
 		case 1:
-			pressedMapX += resDelta;
+			_pressedMapX += resDelta;
 			break;
 
 		case 2:
-			pressedMapY += resDelta;
+			_pressedMapY += resDelta;
 			break;
 
 		case 3:
-			pressedMapY -= resDelta;
+			_pressedMapY -= resDelta;
 			break;
 		}
 
@@ -795,36 +795,36 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 }
 
 void Goblin::adjustTarget(void) {
-	if (gobAction == 4
-	    && _vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0) {
+	if (_gobAction == 4
+	    && _vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0) {
 
-		if (pressedMapY > 0
-		    && _vm->_map->_itemsMap[pressedMapY - 1][pressedMapX] !=
+		if (_pressedMapY > 0
+		    && _vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX] !=
 		    0) {
-			pressedMapY--;
-		} else if (pressedMapX < Map::kMapWidth - 1
-		    && _vm->_map->_itemsMap[pressedMapY][pressedMapX + 1] !=
+			_pressedMapY--;
+		} else if (_pressedMapX < Map::kMapWidth - 1
+		    && _vm->_map->_itemsMap[_pressedMapY][_pressedMapX + 1] !=
 		    0) {
-			pressedMapX++;
-		} else if (pressedMapX < Map::kMapWidth - 1 && pressedMapY > 0
-		    && _vm->_map->_itemsMap[pressedMapY - 1][pressedMapX +
+			_pressedMapX++;
+		} else if (_pressedMapX < Map::kMapWidth - 1 && _pressedMapY > 0
+		    && _vm->_map->_itemsMap[_pressedMapY - 1][_pressedMapX +
 			1] != 0) {
-			pressedMapY--;
-			pressedMapX++;
+			_pressedMapY--;
+			_pressedMapX++;
 		}
 	}
 }
 
 void Goblin::targetDummyItem(Gob_Object *gobDesc) {
-	if (_vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0 &&
-	    _vm->_map->_passMap[pressedMapY][pressedMapX] == 1) {
+	if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0 &&
+	    _vm->_map->_passMap[_pressedMapY][_pressedMapX] == 1) {
 		if (gobDesc->curLookDir == 0) {
-			_vm->_map->_itemPoses[0].x = pressedMapX;
-			_vm->_map->_itemPoses[0].y = pressedMapY;
+			_vm->_map->_itemPoses[0].x = _pressedMapX;
+			_vm->_map->_itemPoses[0].y = _pressedMapY;
 			_vm->_map->_itemPoses[0].orient = -4;
 		} else {
-			_vm->_map->_itemPoses[0].x = pressedMapX;
-			_vm->_map->_itemPoses[0].y = pressedMapY;
+			_vm->_map->_itemPoses[0].x = _pressedMapX;
+			_vm->_map->_itemPoses[0].y = _pressedMapY;
 			_vm->_map->_itemPoses[0].orient = -1;
 		}
 	}
@@ -839,106 +839,106 @@ void Goblin::targetItem(void) {
 	int16 tmpPosY;
 	Gob_Object *itemDesc;
 
-	if (gobAction == 3 || gobAction == 4) {
-		items = _vm->_map->_itemsMap[pressedMapY][pressedMapX];
-		if (gobAction == 4 && (items & 0xff00) != 0 &&
-		    objects[itemToObject[(items & 0xff00) >> 8]]->
+	if (_gobAction == 3 || _gobAction == 4) {
+		items = _vm->_map->_itemsMap[_pressedMapY][_pressedMapX];
+		if (_gobAction == 4 && (items & 0xff00) != 0 &&
+		    _objects[_itemToObject[(items & 0xff00) >> 8]]->
 		    pickable == 1) {
-			destItemId = (items & 0xff00) >> 8;
-			destActionItem = (items & 0xff00) >> 8;
-			itemByteFlag = 1;
+			_destItemId = (items & 0xff00) >> 8;
+			_destActionItem = (items & 0xff00) >> 8;
+			_itemByteFlag = 1;
 		} else if ((items & 0xff) == 0) {
-			destItemId = (items & 0xff00) >> 8;
-			destActionItem = (items & 0xff00) >> 8;
-			itemByteFlag = 1;
-		} else if (gobAction == 3 && currentGoblin == 2 &&
+			_destItemId = (items & 0xff00) >> 8;
+			_destActionItem = (items & 0xff00) >> 8;
+			_itemByteFlag = 1;
+		} else if (_gobAction == 3 && _currentGoblin == 2 &&
 		    (items & 0xff00) != 0) {
-			destItemId = (items & 0xff00) >> 8;
-			destActionItem = (items & 0xff00) >> 8;
-			itemByteFlag = 1;
+			_destItemId = (items & 0xff00) >> 8;
+			_destActionItem = (items & 0xff00) >> 8;
+			_itemByteFlag = 1;
 		} else {
-			destItemId = items & 0xff;
-			destActionItem = items & 0xff;
-			itemByteFlag = 0;
+			_destItemId = items & 0xff;
+			_destActionItem = items & 0xff;
+			_itemByteFlag = 0;
 		}
 
-		pressedMapY = _vm->_map->_itemPoses[destItemId].y;
-		_vm->_map->_destY = _vm->_map->_itemPoses[destItemId].y;
-		gobDestY = _vm->_map->_itemPoses[destItemId].y;
+		_pressedMapY = _vm->_map->_itemPoses[_destItemId].y;
+		_vm->_map->_destY = _vm->_map->_itemPoses[_destItemId].y;
+		_gobDestY = _vm->_map->_itemPoses[_destItemId].y;
 
-		if (gobAction == 3 || destActionItem == 0) {
-			pressedMapX = _vm->_map->_itemPoses[destItemId].x;
-			_vm->_map->_destX = _vm->_map->_itemPoses[destItemId].x;
-			gobDestX = _vm->_map->_itemPoses[destItemId].x;
+		if (_gobAction == 3 || _destActionItem == 0) {
+			_pressedMapX = _vm->_map->_itemPoses[_destItemId].x;
+			_vm->_map->_destX = _vm->_map->_itemPoses[_destItemId].x;
+			_gobDestX = _vm->_map->_itemPoses[_destItemId].x;
 		} else if ((items & 0xff00) != 0) {
-			if (_vm->_map->_itemPoses[destItemId].orient == 4) {
-				if ((_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX - 1] & 0xff00) ==
-				    (_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX] & 0xff00)) {
-					pressedMapX--;
-					_vm->_map->_destX = pressedMapX;
-					gobDestX = pressedMapX;
+			if (_vm->_map->_itemPoses[_destItemId].orient == 4) {
+				if ((_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX - 1] & 0xff00) ==
+				    (_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX] & 0xff00)) {
+					_pressedMapX--;
+					_vm->_map->_destX = _pressedMapX;
+					_gobDestX = _pressedMapX;
 				}
-			} else if (_vm->_map->_itemPoses[destItemId].orient == 0) {
+			} else if (_vm->_map->_itemPoses[_destItemId].orient == 0) {
 
-				if ((_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX + 1] & 0xff00) ==
-				    (_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX] & 0xff00)) {
-					pressedMapX++;
-					_vm->_map->_destX = pressedMapX;
-					gobDestX = pressedMapX;
+				if ((_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX + 1] & 0xff00) ==
+				    (_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX] & 0xff00)) {
+					_pressedMapX++;
+					_vm->_map->_destX = _pressedMapX;
+					_gobDestX = _pressedMapX;
 				}
 			}
 
-			if ((_vm->_map->_itemsMap[pressedMapY +
-				    1][pressedMapX] & 0xff00) ==
-			    (_vm->_map->_itemsMap[pressedMapY][pressedMapX] &
+			if ((_vm->_map->_itemsMap[_pressedMapY +
+				    1][_pressedMapX] & 0xff00) ==
+			    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] &
 				0xff00)) {
-				pressedMapY++;
-				_vm->_map->_destY = pressedMapY;
-				gobDestY = pressedMapY;
+				_pressedMapY++;
+				_vm->_map->_destY = _pressedMapY;
+				_gobDestY = _pressedMapY;
 			}
 		} else {
-			if (_vm->_map->_itemPoses[destItemId].orient == 4) {
-				if ((_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX - 1]) ==
-				    (_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX])) {
-					pressedMapX--;
-					_vm->_map->_destX = pressedMapX;
-					gobDestX = pressedMapX;
+			if (_vm->_map->_itemPoses[_destItemId].orient == 4) {
+				if ((_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX - 1]) ==
+				    (_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX])) {
+					_pressedMapX--;
+					_vm->_map->_destX = _pressedMapX;
+					_gobDestX = _pressedMapX;
 				}
-			} else if (_vm->_map->_itemPoses[destItemId].orient == 0) {
+			} else if (_vm->_map->_itemPoses[_destItemId].orient == 0) {
 
-				if ((_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX + 1]) ==
-				    (_vm->_map->_itemsMap[pressedMapY]
-					[pressedMapX])) {
-					pressedMapX++;
-					_vm->_map->_destX = pressedMapX;
-					gobDestX = pressedMapX;
+				if ((_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX + 1]) ==
+				    (_vm->_map->_itemsMap[_pressedMapY]
+					[_pressedMapX])) {
+					_pressedMapX++;
+					_vm->_map->_destX = _pressedMapX;
+					_gobDestX = _pressedMapX;
 				}
 			}
 
-			if ((_vm->_map->_itemsMap[pressedMapY +
-				    1][pressedMapX]) ==
-			    (_vm->_map->_itemsMap[pressedMapY][pressedMapX])) {
-				pressedMapY++;
-				_vm->_map->_destY = pressedMapY;
-				gobDestY = pressedMapY;
+			if ((_vm->_map->_itemsMap[_pressedMapY +
+				    1][_pressedMapX]) ==
+			    (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX])) {
+				_pressedMapY++;
+				_vm->_map->_destY = _pressedMapY;
+				_gobDestY = _pressedMapY;
 			}
 
 		}
 
-		if (gobAction == 4 && destActionItem != 0 &&
-			itemToObject[destActionItem] != -1 &&
-		    objects[itemToObject[destActionItem]]->
+		if (_gobAction == 4 && _destActionItem != 0 &&
+			_itemToObject[_destActionItem] != -1 &&
+		    _objects[_itemToObject[_destActionItem]]->
 		    pickable == 1) {
 
 			itemDesc =
-			    objects[itemToObject[destActionItem]];
+			    _objects[_itemToObject[_destActionItem]];
 
 			itemDesc->animation =
 			    itemDesc->stateMach[itemDesc->state][0]->animation;
@@ -960,19 +960,19 @@ void Goblin::targetItem(void) {
 			if ((tmpX % 12) < 6 && tmpPosX > 0)
 				tmpPosX--;
 
-			if (_vm->_map->_itemPoses[destActionItem].orient == 0 ||
-			    _vm->_map->_itemPoses[destActionItem].orient == -1) {
+			if (_vm->_map->_itemPoses[_destActionItem].orient == 0 ||
+			    _vm->_map->_itemPoses[_destActionItem].orient == -1) {
 				tmpPosX++;
 			}
 
 			if (_vm->_map->_passMap[tmpPosY][tmpPosX] == 1) {
-				pressedMapX = tmpPosX;
+				_pressedMapX = tmpPosX;
 				_vm->_map->_destX = tmpPosX;
-				gobDestX = tmpPosX;
+				_gobDestX = tmpPosX;
 
-				pressedMapY = tmpPosY;
+				_pressedMapY = tmpPosY;
 				_vm->_map->_destY = tmpPosY;
-				gobDestY = tmpPosY;
+				_gobDestY = tmpPosY;
 			}
 		}
 	}
@@ -983,14 +983,14 @@ void Goblin::initiateMove(void) {
 	_vm->_map->findNearestToGob();
 	_vm->_map->optimizePoints();
 
-	pathExistence = _vm->_map->checkDirectPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
-	    pressedMapX, pressedMapY);
+	_pathExistence = _vm->_map->checkDirectPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+	    _pressedMapX, _pressedMapY);
 
-	if (pathExistence == 3) {
+	if (_pathExistence == 3) {
 		if (_vm->_map->checkLongPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
-			pressedMapX, pressedMapY,
+			_pressedMapX, _pressedMapY,
 			_vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
-			pathExistence = 0;
+			_pathExistence = 0;
 		} else {
 			_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
 			_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
@@ -1000,80 +1000,80 @@ void Goblin::initiateMove(void) {
 
 void Goblin::moveFindItem(int16 posX, int16 posY) {
 	int16 i;
-	if (gobAction == 3 || gobAction == 4) {
+	if (_gobAction == 3 || _gobAction == 4) {
 		for (i = 0; i < 20; i++) {
-			if (objects[i] == 0)
+			if (_objects[i] == 0)
 				continue;
 
-			if (objects[i]->type != 0)
+			if (_objects[i]->type != 0)
 				continue;
 
-			if (objects[i]->left > posX)
+			if (_objects[i]->left > posX)
 				continue;
 
-			if (objects[i]->right < posX)
+			if (_objects[i]->right < posX)
 				continue;
 
-			if (objects[i]->top > posY)
+			if (_objects[i]->top > posY)
 				continue;
 
-			if (objects[i]->bottom < posY)
+			if (_objects[i]->bottom < posY)
 				continue;
 
-			if (objects[i]->right - objects[i]->left < 40)
+			if (_objects[i]->right - _objects[i]->left < 40)
 				posX =
-				    (objects[i]->left +
-				    objects[i]->right) / 2;
+				    (_objects[i]->left +
+				    _objects[i]->right) / 2;
 
-			if (objects[i]->bottom - objects[i]->top < 40)
+			if (_objects[i]->bottom - _objects[i]->top < 40)
 				posY =
-				    (objects[i]->top +
-				    objects[i]->bottom) / 2;
+				    (_objects[i]->top +
+				    _objects[i]->bottom) / 2;
 
 			break;
 		}
 
-		pressedMapX = posX / 12;
-		pressedMapY = posY / 6;
+		_pressedMapX = posX / 12;
+		_pressedMapY = posY / 6;
 
-		if (_vm->_map->_itemsMap[pressedMapY][pressedMapX] == 0
+		if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX] == 0
 		    && i < 20) {
 
-			if (_vm->_map->_itemsMap[pressedMapY +
-				1][pressedMapX] != 0) {
-				pressedMapY++;
-			} else if (_vm->_map->_itemsMap[pressedMapY +
-				1][pressedMapX + 1] != 0) {
-				pressedMapX++;
-				pressedMapY++;
+			if (_vm->_map->_itemsMap[_pressedMapY +
+				1][_pressedMapX] != 0) {
+				_pressedMapY++;
+			} else if (_vm->_map->_itemsMap[_pressedMapY +
+				1][_pressedMapX + 1] != 0) {
+				_pressedMapX++;
+				_pressedMapY++;
 			} else
-			    if (_vm->_map->_itemsMap[pressedMapY][pressedMapX +
+			    if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX +
 				1] != 0) {
-				pressedMapX++;
-			} else if (_vm->_map->_itemsMap[pressedMapY -
-				1][pressedMapX + 1] != 0) {
-				pressedMapX++;
-				pressedMapY--;
-			} else if (_vm->_map->_itemsMap[pressedMapY -
-				1][pressedMapX] != 0) {
-				pressedMapY--;
-			} else if (_vm->_map->_itemsMap[pressedMapY -
-				1][pressedMapX - 1] != 0) {
-				pressedMapY--;
-				pressedMapX--;
+				_pressedMapX++;
+			} else if (_vm->_map->_itemsMap[_pressedMapY -
+				1][_pressedMapX + 1] != 0) {
+				_pressedMapX++;
+				_pressedMapY--;
+			} else if (_vm->_map->_itemsMap[_pressedMapY -
+				1][_pressedMapX] != 0) {
+				_pressedMapY--;
+			} else if (_vm->_map->_itemsMap[_pressedMapY -
+				1][_pressedMapX - 1] != 0) {
+				_pressedMapY--;
+				_pressedMapX--;
 			} else
-			    if (_vm->_map->_itemsMap[pressedMapY][pressedMapX -
+			    if (_vm->_map->_itemsMap[_pressedMapY][_pressedMapX -
 				1] != 0) {
-				pressedMapX--;
-			} else if (_vm->_map->_itemsMap[pressedMapY +
-				1][pressedMapX - 1] != 0) {
-				pressedMapX--;
-				pressedMapY++;
+				_pressedMapX--;
+			} else if (_vm->_map->_itemsMap[_pressedMapY +
+				1][_pressedMapX - 1] != 0) {
+				_pressedMapX--;
+				_pressedMapY++;
 			}
 		}
 	} else {
-		pressedMapX = posX / 12;
-		pressedMapY = posY / 6;
+		_pressedMapX = posX / 12;
+		_pressedMapY = posY / 6;
 	}
 }
 
@@ -1082,26 +1082,26 @@ void Goblin::moveCheckSelect(int16 framesCount, Gob_Object * gobDesc, int16 *pGo
 	if (gobDesc->right > _vm->_global->_inter_mouseX &&
 	    gobDesc->left < _vm->_global->_inter_mouseX &&
 	    gobDesc->bottom > _vm->_global->_inter_mouseY &&
-	    gobDesc->bottom - 10 < _vm->_global->_inter_mouseY && gobAction == 0) {
+	    gobDesc->bottom - 10 < _vm->_global->_inter_mouseY && _gobAction == 0) {
 		if (gobDesc->curLookDir & 4)
 			*nextAct = 16;
 		else
 			*nextAct = 23;
 
 		gobDesc->curFrame = framesCount - 1;
-		pathExistence = 0;
+		_pathExistence = 0;
 	} else {
 		*pGobIndex = peekGoblin(gobDesc);
 
 		if (*pGobIndex != 0) {
-			pathExistence = 0;
-		} else if (_vm->_map->_curGoblinX == pressedMapX &&
-		    _vm->_map->_curGoblinY == pressedMapY) {
+			_pathExistence = 0;
+		} else if (_vm->_map->_curGoblinX == _pressedMapX &&
+		    _vm->_map->_curGoblinY == _pressedMapY) {
 
-			if (gobAction != 0)
-				readyToAct = 1;
+			if (_gobAction != 0)
+				_readyToAct = 1;
 
-			pathExistence = 0;
+			_pathExistence = 0;
 		}
 	}
 }
@@ -1111,18 +1111,18 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 	int16 posX;
 	int16 posY;
 
-	if (cont != 0 && goesAtTarget == 0 &&
-	    readyToAct == 0 && VAR(59) == 0 &&
+	if (cont != 0 && _goesAtTarget == 0 &&
+	    _readyToAct == 0 && VAR(59) == 0 &&
 	    gobDesc->type != 1 &&
 	    gobDesc->state != 10 && gobDesc->state != 11) {
 		if (gobDesc->state >= 40) {
 			gobDesc->curFrame = framesCount - 1;
 		}
 
-		gobAction = action;
-		forceNextState[0] = -1;
-		forceNextState[1] = -1;
-		forceNextState[2] = -1;
+		_gobAction = action;
+		_forceNextState[0] = -1;
+		_forceNextState[1] = -1;
+		_forceNextState[2] = -1;
 
 		if (action == 3) {
 			posX = _vm->_global->_inter_mouseX + 6;
@@ -1139,11 +1139,11 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 		adjustDest(posX, posY);
 		adjustTarget();
 
-		_vm->_map->_destX = pressedMapX;
-		gobDestX = pressedMapX;
+		_vm->_map->_destX = _pressedMapX;
+		_gobDestX = _pressedMapX;
 
-		_vm->_map->_destY = pressedMapY;
-		gobDestY = pressedMapY;
+		_vm->_map->_destY = _pressedMapY;
+		_gobDestY = _pressedMapY;
 
 		targetDummyItem(gobDesc);
 
@@ -1153,10 +1153,10 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 		moveCheckSelect(framesCount, gobDesc, pGobIndex, pNextAct);
 	} else {
 
-		if (readyToAct != 0 &&
-		    (_vm->_map->_curGoblinX != pressedMapX ||
-			_vm->_map->_curGoblinY != pressedMapY))
-			readyToAct = 0;
+		if (_readyToAct != 0 &&
+		    (_vm->_map->_curGoblinX != _pressedMapX ||
+			_vm->_map->_curGoblinY != _pressedMapY))
+			_readyToAct = 0;
 
 		if (gobDesc->type == 1) {
 			*pGobIndex = peekGoblin(gobDesc);
@@ -1165,19 +1165,19 @@ void Goblin::moveInitStep(int16 framesCount, int16 action, int16 cont,
 }
 
 void Goblin::moveTreatRopeStairs(Gob_Object *gobDesc) {
-	if (currentGoblin != 1)
+	if (_currentGoblin != 1)
 		return;
 
 	if (gobDesc->nextState == 28
 	    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 6) {
-		forceNextState[0] = 28;
-		forceNextState[1] = -1;
+		_forceNextState[0] = 28;
+		_forceNextState[1] = -1;
 	}
 
 	if (gobDesc->nextState == 29
 	    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 6) {
-		forceNextState[0] = 29;
-		forceNextState[1] = -1;
+		_forceNextState[0] = 29;
+		_forceNextState[1] = -1;
 	}
 
 	if ((gobDesc->nextState == 28 || gobDesc->nextState == 29
@@ -1186,27 +1186,27 @@ void Goblin::moveTreatRopeStairs(Gob_Object *gobDesc) {
 		if ((gobDesc->curLookDir == 0 || gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 2)
 		    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 6) {
-			forceNextState[0] = 28;
-			forceNextState[1] = -1;
+			_forceNextState[0] = 28;
+			_forceNextState[1] = -1;
 		} else if ((gobDesc->curLookDir == 0
 			|| gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 6)
 		    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 6) {
-			forceNextState[0] = 29;
-			forceNextState[1] = -1;
+			_forceNextState[0] = 29;
+			_forceNextState[1] = -1;
 		}
 	}
 
 	if (gobDesc->nextState == 8
 	    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 3) {
-		forceNextState[0] = 8;
-		forceNextState[1] = -1;
+		_forceNextState[0] = 8;
+		_forceNextState[1] = -1;
 	}
 
 	if (gobDesc->nextState == 9
 	    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 3) {
-		forceNextState[0] = 9;
-		forceNextState[1] = -1;
+		_forceNextState[0] = 9;
+		_forceNextState[1] = -1;
 	}
 
 	if (gobDesc->nextState == 20
@@ -1214,49 +1214,49 @@ void Goblin::moveTreatRopeStairs(Gob_Object *gobDesc) {
 		if ((gobDesc->curLookDir == 0 || gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 2)
 		    && _vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 3) {
-			forceNextState[0] = 8;
-			forceNextState[1] = -1;
+			_forceNextState[0] = 8;
+			_forceNextState[1] = -1;
 		} else if ((gobDesc->curLookDir == 0
 			|| gobDesc->curLookDir == 4
 			|| gobDesc->curLookDir == 6)
 		    && _vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 3) {
-			forceNextState[0] = 9;
-			forceNextState[1] = -1;
+			_forceNextState[0] = 9;
+			_forceNextState[1] = -1;
 		}
 	}
 
 }
 
 void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
-	if (pathExistence == 1) {
-		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
+	if (_pathExistence == 1) {
+		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
+		_vm->_map->_curGoblinY = _gobPositions[_currentGoblin].y;
 
-		if (_vm->_map->_curGoblinX == pressedMapX &&
-		    _vm->_map->_curGoblinY == pressedMapY && gobAction != 0) {
-			readyToAct = 1;
-			pathExistence = 0;
+		if (_vm->_map->_curGoblinX == _pressedMapX &&
+		    _vm->_map->_curGoblinY == _pressedMapY && _gobAction != 0) {
+			_readyToAct = 1;
+			_pathExistence = 0;
 		}
 
 		nextAct = _vm->_map->getDirection(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
 		    _vm->_map->_destX, _vm->_map->_destY);
 
 		if (nextAct == 0)
-			pathExistence = 0;
-	} else if (pathExistence == 3) {
-		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
+			_pathExistence = 0;
+	} else if (_pathExistence == 3) {
+		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
+		_vm->_map->_curGoblinY = _gobPositions[_currentGoblin].y;
 
-		if (_vm->_map->_curGoblinX == gobDestX && _vm->_map->_curGoblinY == gobDestY) {
-			pathExistence = 1;
-			_vm->_map->_destX = pressedMapX;
-			_vm->_map->_destY = pressedMapY;
+		if (_vm->_map->_curGoblinX == _gobDestX && _vm->_map->_curGoblinY == _gobDestY) {
+			_pathExistence = 1;
+			_vm->_map->_destX = _pressedMapX;
+			_vm->_map->_destY = _pressedMapY;
 		} else {
 
 			if (_vm->_map->checkDirectPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
-				gobDestX, gobDestY) == 1) {
-				_vm->_map->_destX = gobDestX;
-				_vm->_map->_destY = gobDestY;
+				_gobDestX, _gobDestY) == 1) {
+				_vm->_map->_destX = _gobDestX;
+				_vm->_map->_destY = _gobDestY;
 			} else if (_vm->_map->_curGoblinX == _vm->_map->_destX && _vm->_map->_curGoblinY == _vm->_map->_destY) {
 
 				if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest) {
@@ -1285,14 +1285,14 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 						_vm->_map->_nearestWayPoint++;
 				} else {
 					if (_vm->_map->checkDirectPath(_vm->_map->_curGoblinX,
-						_vm->_map->_curGoblinY, gobDestX,
-						gobDestY) == 3 && _vm->_map->_passMap[pressedMapY][pressedMapX] != 0) {
+						_vm->_map->_curGoblinY, _gobDestX,
+						_gobDestY) == 3 && _vm->_map->_passMap[_pressedMapY][_pressedMapX] != 0) {
 						_vm->_map->_destX = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].x;
 						_vm->_map->_destY = _vm->_map->_wayPoints[_vm->_map->_nearestWayPoint].y;
 					} else {
-						pathExistence = 1;
-						_vm->_map->_destX = pressedMapX;
-						_vm->_map->_destY = pressedMapY;
+						_pathExistence = 1;
+						_vm->_map->_destX = _pressedMapX;
+						_vm->_map->_destY = _pressedMapY;
 					}
 				}
 			}
@@ -1302,7 +1302,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		}
 	}
 
-	if (readyToAct != 0 && (gobAction == 3 || gobAction == 4))
+	if (_readyToAct != 0 && (_gobAction == 3 || _gobAction == 4))
 		nextAct = 0x4dc8;
 
 	switch (nextAct) {
@@ -1324,8 +1324,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case Map::kDirN:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX] == 6 &&
-		    currentGoblin != 1) {
-			pathExistence = 0;
+		    _currentGoblin != 1) {
+			_pathExistence = 0;
 			break;
 		}
 
@@ -1335,7 +1335,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		}
 
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6 &&
-		    currentGoblin == 1) {
+		    _currentGoblin == 1) {
 			gobDesc->nextState = 28;
 			break;
 		}
@@ -1345,8 +1345,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case Map::kDirS:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX] == 6 &&
-		    currentGoblin != 1) {
-			pathExistence = 0;
+		    _currentGoblin != 1) {
+			_pathExistence = 0;
 			break;
 		}
 
@@ -1356,7 +1356,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 		}
 
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6 &&
-		    currentGoblin == 1) {
+		    _currentGoblin == 1) {
 			gobDesc->nextState = 29;
 			break;
 		}
@@ -1366,8 +1366,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case Map::kDirSE:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX + 1] == 6 &&
-		    currentGoblin != 1) {
-			pathExistence = 0;
+		    _currentGoblin != 1) {
+			_pathExistence = 0;
 			break;
 		}
 
@@ -1380,8 +1380,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case Map::kDirSW:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY + 1][_vm->_map->_curGoblinX - 1] == 6 &&
-		    currentGoblin != 1) {
-			pathExistence = 0;
+		    _currentGoblin != 1) {
+			_pathExistence = 0;
 			break;
 		}
 
@@ -1394,8 +1394,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case Map::kDirNW:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX - 1] == 6 &&
-		    currentGoblin != 1) {
-			pathExistence = 0;
+		    _currentGoblin != 1) {
+			_pathExistence = 0;
 			break;
 		}
 
@@ -1408,8 +1408,8 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case Map::kDirNE:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY - 1][_vm->_map->_curGoblinX + 1] == 6 &&
-		    currentGoblin != 1) {
-			pathExistence = 0;
+		    _currentGoblin != 1) {
+			_pathExistence = 0;
 			break;
 		}
 
@@ -1422,45 +1422,45 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 
 	case 0x4dc8:
 
-		if (currentGoblin == 0 && gobAction == 3
-		    && itemIndInPocket == -1) {
-			destItemId = -1;
-			readyToAct = 0;
+		if (_currentGoblin == 0 && _gobAction == 3
+		    && _itemIndInPocket == -1) {
+			_destItemId = -1;
+			_readyToAct = 0;
 			break;
 		}
 
-		if (currentGoblin == 0 && gobAction == 4 &&
-		    itemIndInPocket == -1 && destActionItem == 0) {
+		if (_currentGoblin == 0 && _gobAction == 4 &&
+		    _itemIndInPocket == -1 && _destActionItem == 0) {
 			gobDesc->multState = 104;
-			destItemId = -1;
-			readyToAct = 0;
+			_destItemId = -1;
+			_readyToAct = 0;
 			break;
 		}
 
-		if (currentGoblin == 0 && gobAction == 4 &&
-		    itemIndInPocket == -1 && destActionItem != 0 &&
-		    itemToObject[destActionItem] != -1 &&
-		    objects[itemToObject[destActionItem]]->
+		if (_currentGoblin == 0 && _gobAction == 4 &&
+		    _itemIndInPocket == -1 && _destActionItem != 0 &&
+		    _itemToObject[_destActionItem] != -1 &&
+		    _objects[_itemToObject[_destActionItem]]->
 		    pickable == 0) {
 			gobDesc->multState = 104;
-			destItemId = -1;
-			readyToAct = 0;
+			_destItemId = -1;
+			_readyToAct = 0;
 			break;
 		}
 
-		switch (_vm->_map->_itemPoses[destActionItem].orient) {
+		switch (_vm->_map->_itemPoses[_destActionItem].orient) {
 		case 0:
 		case -4:
 			gobDesc->nextState = 10;
 			gobDesc->curLookDir = 0;
-			destItemId = -1;
+			_destItemId = -1;
 			break;
 
 		case -1:
 		case 4:
 			gobDesc->nextState = 11;
 			gobDesc->curLookDir = 4;
-			destItemId = -1;
+			_destItemId = -1;
 			break;
 		}
 		break;
@@ -1468,7 +1468,7 @@ void Goblin::movePathFind(Gob_Object *gobDesc, int16 nextAct) {
 	default:
 		if (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 3 ||
 		    (_vm->_map->_passMap[_vm->_map->_curGoblinY][_vm->_map->_curGoblinX] == 6
-			&& currentGoblin == 1)) {
+			&& _currentGoblin == 1)) {
 			gobDesc->nextState = 20;
 			break;
 		}
@@ -1501,7 +1501,7 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 	if (gobDesc->curFrame == 1)
 		gobDesc->actionStartState = gobDesc->state;
 
-	if (goesAtTarget == 0
+	if (_goesAtTarget == 0
 	    && gobDesc->stateMach == gobDesc->realStateMach) {
 		switch (gobDesc->state) {
 		case 0:
@@ -1523,7 +1523,7 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 			break;
 
 		case 28:
-			if (currentGoblin != 1)
+			if (_currentGoblin != 1)
 				break;
 			gobDesc->curLookDir = 2;
 			break;
@@ -1537,7 +1537,7 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 			break;
 
 		case 29:
-			if (currentGoblin != 1)
+			if (_currentGoblin != 1)
 				break;
 
 			gobDesc->curLookDir = 6;
@@ -1559,22 +1559,22 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 		_vm->_snd->speakerOn(10 * _vm->_util->getRandom(3) + 50, 5);
 	}
 
-	if (currentGoblin == 0
+	if (_currentGoblin == 0
 	    && gobDesc->stateMach == gobDesc->realStateMach
 	    && (gobDesc->state == 10 || gobDesc->state == 11)
 	    && gobDesc->curFrame == 9) {
 		_vm->_snd->stopSound(0);
-		if (itemIndInPocket != -1) {
-			_vm->_snd->playSample(soundData[14], 1, 9000);
+		if (_itemIndInPocket != -1) {
+			_vm->_snd->playSample(_soundData[14], 1, 9000);
 		}
 
-		if (itemIndInPocket == -1) {
-			_vm->_snd->playSample(soundData[14], 1, 5000);
+		if (_itemIndInPocket == -1) {
+			_vm->_snd->playSample(_soundData[14], 1, 5000);
 		}
 	}
 
-	if (boreCounter++ == 120) {
-		boreCounter = 0;
+	if (_boreCounter++ == 120) {
+		_boreCounter = 0;
 		for (i = 0; i < 3; i++)
 			showBoredom(i);
 	}
@@ -1586,13 +1586,13 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 
 		newX =
 		    _vm->_scenery->animations[gobDesc->animation].
-		    layers[gobStateLayer]->animDeltaX + gobDesc->xPos;
+		    layers[_gobStateLayer]->animDeltaX + gobDesc->xPos;
 
 		newY =
 		    _vm->_scenery->animations[gobDesc->animation].
-		    layers[gobStateLayer]->animDeltaY + gobDesc->yPos;
+		    layers[_gobStateLayer]->animDeltaY + gobDesc->yPos;
 
-		gobStateLayer = nextLayer(gobDesc);
+		_gobStateLayer = nextLayer(gobDesc);
 
 		gobDesc->xPos = newX;
 		gobDesc->yPos = newY;
@@ -1600,79 +1600,79 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 		if (gobDesc->curFrame == 3 &&
 		    gobDesc->stateMach == gobDesc->realStateMach &&
 		    (gobDesc->state < 10 ||
-			(currentGoblin == 1 && (gobDesc->state == 28
+			(_currentGoblin == 1 && (gobDesc->state == 28
 				|| gobDesc->state == 29))
 		    )) {
 			flag = 0;
-			if (forceNextState[0] != -1) {
-				gobDesc->nextState = forceNextState[0];
+			if (_forceNextState[0] != -1) {
+				gobDesc->nextState = _forceNextState[0];
 				for (i = 0; i < 9; i++)
-					forceNextState[i] =
-					    forceNextState[i + 1];
+					_forceNextState[i] =
+					    _forceNextState[i + 1];
 			}
 
-			_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
-			_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
+			_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
+			_vm->_map->_curGoblinY = _gobPositions[_currentGoblin].y;
 
 			if (gobDesc->nextState != gobDesc->state) {
-				gobStateLayer = nextLayer(gobDesc);
+				_gobStateLayer = nextLayer(gobDesc);
 				flag = 1;
 			}
 
 			switch (gobDesc->state) {
 			case 0:
-				gobPositions[currentGoblin].x--;
+				_gobPositions[_currentGoblin].x--;
 				break;
 
 			case 2:
 			case 8:
-				gobPositions[currentGoblin].y--;
+				_gobPositions[_currentGoblin].y--;
 				break;
 
 			case 4:
-				gobPositions[currentGoblin].x++;
+				_gobPositions[_currentGoblin].x++;
 				break;
 
 			case 6:
 			case 9:
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].y++;
 				break;
 
 			case 1:
-				gobPositions[currentGoblin].x--;
-				gobPositions[currentGoblin].y--;
+				_gobPositions[_currentGoblin].x--;
+				_gobPositions[_currentGoblin].y--;
 				break;
 
 			case 3:
-				gobPositions[currentGoblin].x++;
-				gobPositions[currentGoblin].y--;
+				_gobPositions[_currentGoblin].x++;
+				_gobPositions[_currentGoblin].y--;
 				break;
 
 			case 5:
-				gobPositions[currentGoblin].x++;
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].x++;
+				_gobPositions[_currentGoblin].y++;
 				break;
 
 			case 7:
-				gobPositions[currentGoblin].x--;
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].x--;
+				_gobPositions[_currentGoblin].y++;
 				break;
 
 			case 38:
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].y++;
 				break;
 			}
 
-			if (currentGoblin == 1) {
+			if (_currentGoblin == 1) {
 				if (gobDesc->state == 28)
-					gobPositions[1].y--;
+					_gobPositions[1].y--;
 
 				if (gobDesc->state == 29)
-					gobPositions[1].y++;
+					_gobPositions[1].y++;
 			}
 
 			if (flag != 0) {
-				_vm->_scenery->updateAnim(gobStateLayer, 0,
+				_vm->_scenery->updateAnim(_gobStateLayer, 0,
 				    gobDesc->animation, 0, gobDesc->xPos,
 				    gobDesc->yPos, 0);
 
@@ -1685,79 +1685,79 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 			}
 
 			if ((gobDesc->state == 10 || gobDesc->state == 11)
-			    && currentGoblin != 0)
-				goesAtTarget = 1;
+			    && _currentGoblin != 0)
+				_goesAtTarget = 1;
 		}
 
 		if (gobDesc->curFrame != framesCount)
 			return;
 
-		if (forceNextState[0] != -1) {
-			gobDesc->nextState = forceNextState[0];
+		if (_forceNextState[0] != -1) {
+			gobDesc->nextState = _forceNextState[0];
 			for (i = 0; i < 10; i++)
-				forceNextState[i] =
-				    forceNextState[i + 1];
+				_forceNextState[i] =
+				    _forceNextState[i + 1];
 		}
 
-		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
+		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
+		_vm->_map->_curGoblinY = _gobPositions[_currentGoblin].y;
 
-		gobStateLayer = nextLayer(gobDesc);
+		_gobStateLayer = nextLayer(gobDesc);
 		if (gobDesc->stateMach == gobDesc->realStateMach) {
 
 			switch (gobDesc->nextState) {
 			case 0:
-				gobPositions[currentGoblin].x--;
+				_gobPositions[_currentGoblin].x--;
 				break;
 
 			case 2:
 			case 8:
-				gobPositions[currentGoblin].y--;
+				_gobPositions[_currentGoblin].y--;
 				break;
 
 			case 4:
-				gobPositions[currentGoblin].x++;
+				_gobPositions[_currentGoblin].x++;
 				break;
 
 			case 6:
 			case 9:
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].y++;
 				break;
 
 			case 1:
-				gobPositions[currentGoblin].x--;
-				gobPositions[currentGoblin].y--;
+				_gobPositions[_currentGoblin].x--;
+				_gobPositions[_currentGoblin].y--;
 				break;
 
 			case 3:
-				gobPositions[currentGoblin].x++;
-				gobPositions[currentGoblin].y--;
+				_gobPositions[_currentGoblin].x++;
+				_gobPositions[_currentGoblin].y--;
 				break;
 
 			case 5:
-				gobPositions[currentGoblin].x++;
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].x++;
+				_gobPositions[_currentGoblin].y++;
 				break;
 
 			case 7:
-				gobPositions[currentGoblin].x--;
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].x--;
+				_gobPositions[_currentGoblin].y++;
 				break;
 
 			case 38:
-				gobPositions[currentGoblin].y++;
+				_gobPositions[_currentGoblin].y++;
 				break;
 			}
-			if (currentGoblin == 1) {
+			if (_currentGoblin == 1) {
 				if (gobDesc->nextState == 28)
-					gobPositions[1].y--;
+					_gobPositions[1].y--;
 
 				if (gobDesc->nextState == 29)
-					gobPositions[1].y++;
+					_gobPositions[1].y++;
 			}
 		}
 
-		_vm->_scenery->updateAnim(gobStateLayer, 0, gobDesc->animation, 0,
+		_vm->_scenery->updateAnim(_gobStateLayer, 0, gobDesc->animation, 0,
 		    gobDesc->xPos, gobDesc->yPos, 0);
 
 		gobDesc->yPos =
@@ -1767,8 +1767,8 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 		    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
 
 		if ((gobDesc->state == 10 || gobDesc->state == 11)
-		    && currentGoblin != 0)
-			goesAtTarget = 1;
+		    && _currentGoblin != 0)
+			_goesAtTarget = 1;
 	}
 	return;
 }
@@ -1791,18 +1791,18 @@ int16 Goblin::doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 		gobDesc->order = (gobDesc->bottom) / 24 + 3;
 	}
 
-	if (positionedGob != currentGoblin) {
-		_vm->_map->_curGoblinX = gobPositions[currentGoblin].x;
-		_vm->_map->_curGoblinY = gobPositions[currentGoblin].y;
+	if (_positionedGob != _currentGoblin) {
+		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
+		_vm->_map->_curGoblinY = _gobPositions[_currentGoblin].y;
 	}
 
-	positionedGob = currentGoblin;
+	_positionedGob = _currentGoblin;
 
 	gobDesc->animation =
 	    gobDesc->stateMach[gobDesc->state][gobDesc->stateColumn]->
 	    animation;
 
-	gobStateLayer =
+	_gobStateLayer =
 	    gobDesc->stateMach[gobDesc->state][gobDesc->stateColumn]->layer;
 
 	moveInitStep(framesCount, action, cont, gobDesc, &gobIndex,
@@ -1819,54 +1819,54 @@ void Goblin::freeObjects(void) {
 	int16 col;
 
 	for (i = 0; i < 16; i++) {
-		if (soundData[i] == 0)
+		if (_soundData[i] == 0)
 			continue;
 
-		_vm->_snd->freeSoundData(soundData[i]);
-		soundData[i] = 0;
+		_vm->_snd->freeSoundData(_soundData[i]);
+		_soundData[i] = 0;
 	}
 
 	for (i = 0; i < 4; i++) {
-		if (goblins[i] == 0)
+		if (_goblins[i] == 0)
 			continue;
 
-		goblins[i]->stateMach = goblins[i]->realStateMach;
+		_goblins[i]->stateMach = _goblins[i]->realStateMach;
 
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
-				free(goblins[i]->stateMach[state][col]);
-				goblins[i]->stateMach[state][col] = 0;
+				free(_goblins[i]->stateMach[state][col]);
+				_goblins[i]->stateMach[state][col] = 0;
 			}
 		}
 
 		if (i == 3) {
 			for (state = 40; state < 70; state++) {
-				free(goblins[3]->stateMach[state][0]);
-				goblins[3]->stateMach[state][0] = 0;
+				free(_goblins[3]->stateMach[state][0]);
+				_goblins[3]->stateMach[state][0] = 0;
 			}
 		}
 
-		free(goblins[i]->stateMach);
-		free(goblins[i]);
-		goblins[i] = 0;
+		free(_goblins[i]->stateMach);
+		free(_goblins[i]);
+		_goblins[i] = 0;
 	}
 
 	for (i = 0; i < 20; i++) {
-		if (objects[i] == 0)
+		if (_objects[i] == 0)
 			continue;
 
-		objects[i]->stateMach = objects[i]->realStateMach;
+		_objects[i]->stateMach = _objects[i]->realStateMach;
 
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
-				free(objects[i]->stateMach[state][col]);
-				objects[i]->stateMach[state][col] = 0;
+				free(_objects[i]->stateMach[state][col]);
+				_objects[i]->stateMach[state][col] = 0;
 			}
 		}
 
-		free(objects[i]->stateMach);
-		free(objects[i]);
-		objects[i] = 0;
+		free(_objects[i]->stateMach);
+		free(_objects[i]);
+		_objects[i] = 0;
 	}
 }
 
@@ -1874,17 +1874,17 @@ void Goblin::zeroObjects(void) {
 	int16 i;
 
 	for (i = 0; i < 4; i++)
-		goblins[i] = 0;
+		_goblins[i] = 0;
 
 	for (i = 0; i < 20; i++)
-		objects[i] = 0;
+		_objects[i] = 0;
 
 	for (i = 0; i < 16; i++)
-		soundData[i] = 0;
+		_soundData[i] = 0;
 }
 
 void Goblin::freeAllObjects(void) {
-	_vm->_util->deleteList(objList);
+	_vm->_util->deleteList(_objList);
 	freeObjects();
 }
 
@@ -1893,7 +1893,7 @@ void Goblin::loadObjects(char *source) {
 
 	zeroObjects();
 	for (i = 0; i < 20; i++)
-		itemToObject[i] = 100;
+		_itemToObject[i] = 100;
 
 	freeObjects();
 	initList();
@@ -1902,190 +1902,190 @@ void Goblin::loadObjects(char *source) {
 	_vm->_map->_sourceFile[strlen(_vm->_map->_sourceFile) - 4] = 0;
 	_vm->_map->loadMapObjects(source);
 
-	for (i = 0; i < gobsCount; i++)
-		placeObject(goblins[i], 0);
+	for (i = 0; i < _gobsCount; i++)
+		placeObject(_goblins[i], 0);
 
-	for (i = 0; i < objCount; i++) {
-		placeObject(objects[i], 1);
+	for (i = 0; i < _objCount; i++) {
+		placeObject(_objects[i], 1);
 	}
 
 	initVarPointers();
-	actDestItemDesc = 0;
+	_actDestItemDesc = 0;
 }
 
 void Goblin::saveGobDataToVars(int16 xPos, int16 yPos, int16 someVal) {
 	Gob_Object *obj;
-	*some0ValPtr = someVal;
-	*curGobXPosVarPtr = xPos;
-	*curGobYPosVarPtr = yPos;
-	*itemInPocketVarPtr = itemIndInPocket;
+	*_some0ValPtr = someVal;
+	*_curGobXPosVarPtr = xPos;
+	*_curGobYPosVarPtr = yPos;
+	*_itemInPocketVarPtr = _itemIndInPocket;
 
-	obj = goblins[currentGoblin];
+	obj = _goblins[_currentGoblin];
 
-	*curGobStateVarPtr = obj->state;
-	*curGobFrameVarPtr = obj->curFrame;
-	*curGobMultStateVarPtr = obj->multState;
-	*curGobNextStateVarPtr = obj->nextState;
-	*curGobScrXVarPtr = obj->xPos;
-	*curGobScrYVarPtr = obj->yPos;
-	*curGobLeftVarPtr = obj->left;
-	*curGobTopVarPtr = obj->top;
-	*curGobRightVarPtr = obj->right;
-	*curGobBottomVarPtr = obj->bottom;
-	*curGobDoAnimVarPtr = obj->doAnim;
-	*curGobOrderVarPtr = obj->order;
-	*curGobNoTickVarPtr = obj->noTick;
-	*curGobTypeVarPtr = obj->type;
-	*curGobMaxTickVarPtr = obj->maxTick;
-	*curGobTickVarPtr = obj->tick;
-	*curGobActStartStateVarPtr = obj->actionStartState;
-	*curGobLookDirVarPtr = obj->curLookDir;
-	*curGobPickableVarPtr = obj->pickable;
-	*curGobRelaxVarPtr = obj->relaxTime;
-	*curGobMaxFrameVarPtr = getObjMaxFrame(obj);
+	*_curGobStateVarPtr = obj->state;
+	*_curGobFrameVarPtr = obj->curFrame;
+	*_curGobMultStateVarPtr = obj->multState;
+	*_curGobNextStateVarPtr = obj->nextState;
+	*_curGobScrXVarPtr = obj->xPos;
+	*_curGobScrYVarPtr = obj->yPos;
+	*_curGobLeftVarPtr = obj->left;
+	*_curGobTopVarPtr = obj->top;
+	*_curGobRightVarPtr = obj->right;
+	*_curGobBottomVarPtr = obj->bottom;
+	*_curGobDoAnimVarPtr = obj->doAnim;
+	*_curGobOrderVarPtr = obj->order;
+	*_curGobNoTickVarPtr = obj->noTick;
+	*_curGobTypeVarPtr = obj->type;
+	*_curGobMaxTickVarPtr = obj->maxTick;
+	*_curGobTickVarPtr = obj->tick;
+	*_curGobActStartStateVarPtr = obj->actionStartState;
+	*_curGobLookDirVarPtr = obj->curLookDir;
+	*_curGobPickableVarPtr = obj->pickable;
+	*_curGobRelaxVarPtr = obj->relaxTime;
+	*_curGobMaxFrameVarPtr = getObjMaxFrame(obj);
 
-	if (actDestItemDesc == 0)
+	if (_actDestItemDesc == 0)
 		return;
 
-	obj = actDestItemDesc;
-	*destItemStateVarPtr = obj->state;
-	*destItemFrameVarPtr = obj->curFrame;
-	*destItemMultStateVarPtr = obj->multState;
-	*destItemNextStateVarPtr = obj->nextState;
-	*destItemScrXVarPtr = obj->xPos;
-	*destItemScrYVarPtr = obj->yPos;
-	*destItemLeftVarPtr = obj->left;
-	*destItemTopVarPtr = obj->top;
-	*destItemRightVarPtr = obj->right;
-	*destItemBottomVarPtr = obj->bottom;
-	*destItemDoAnimVarPtr = obj->doAnim;
-	*destItemOrderVarPtr = obj->order;
-	*destItemNoTickVarPtr = obj->noTick;
-	*destItemTypeVarPtr = obj->type;
-	*destItemMaxTickVarPtr = obj->maxTick;
-	*destItemTickVarPtr = obj->tick;
-	*destItemActStartStVarPtr = obj->actionStartState;
-	*destItemLookDirVarPtr = obj->curLookDir;
-	*destItemPickableVarPtr = obj->pickable;
-	*destItemRelaxVarPtr = obj->relaxTime;
-	*destItemMaxFrameVarPtr = getObjMaxFrame(obj);
+	obj = _actDestItemDesc;
+	*_destItemStateVarPtr = obj->state;
+	*_destItemFrameVarPtr = obj->curFrame;
+	*_destItemMultStateVarPtr = obj->multState;
+	*_destItemNextStateVarPtr = obj->nextState;
+	*_destItemScrXVarPtr = obj->xPos;
+	*_destItemScrYVarPtr = obj->yPos;
+	*_destItemLeftVarPtr = obj->left;
+	*_destItemTopVarPtr = obj->top;
+	*_destItemRightVarPtr = obj->right;
+	*_destItemBottomVarPtr = obj->bottom;
+	*_destItemDoAnimVarPtr = obj->doAnim;
+	*_destItemOrderVarPtr = obj->order;
+	*_destItemNoTickVarPtr = obj->noTick;
+	*_destItemTypeVarPtr = obj->type;
+	*_destItemMaxTickVarPtr = obj->maxTick;
+	*_destItemTickVarPtr = obj->tick;
+	*_destItemActStartStVarPtr = obj->actionStartState;
+	*_destItemLookDirVarPtr = obj->curLookDir;
+	*_destItemPickableVarPtr = obj->pickable;
+	*_destItemRelaxVarPtr = obj->relaxTime;
+	*_destItemMaxFrameVarPtr = getObjMaxFrame(obj);
 
-	destItemState = obj->state;
-	destItemType = obj->type;
+	_destItemState = obj->state;
+	_destItemType = obj->type;
 }
 
 void Goblin::initVarPointers(void) {
-	gobRetVarPtr = (int32 *)VAR_ADDRESS(59);
-	curGobStateVarPtr = (int32 *)VAR_ADDRESS(60);
-	curGobFrameVarPtr = (int32 *)VAR_ADDRESS(61);
-	curGobMultStateVarPtr = (int32 *)VAR_ADDRESS(62);
-	curGobNextStateVarPtr = (int32 *)VAR_ADDRESS(63);
-	curGobScrXVarPtr = (int32 *)VAR_ADDRESS(64);
-	curGobScrYVarPtr = (int32 *)VAR_ADDRESS(65);
-	curGobLeftVarPtr = (int32 *)VAR_ADDRESS(66);
-	curGobTopVarPtr = (int32 *)VAR_ADDRESS(67);
-	curGobRightVarPtr = (int32 *)VAR_ADDRESS(68);
-	curGobBottomVarPtr = (int32 *)VAR_ADDRESS(69);
-	curGobDoAnimVarPtr = (int32 *)VAR_ADDRESS(70);
-	curGobOrderVarPtr = (int32 *)VAR_ADDRESS(71);
-	curGobNoTickVarPtr = (int32 *)VAR_ADDRESS(72);
-	curGobTypeVarPtr = (int32 *)VAR_ADDRESS(73);
-	curGobMaxTickVarPtr = (int32 *)VAR_ADDRESS(74);
-	curGobTickVarPtr = (int32 *)VAR_ADDRESS(75);
-	curGobActStartStateVarPtr = (int32 *)VAR_ADDRESS(76);
-	curGobLookDirVarPtr = (int32 *)VAR_ADDRESS(77);
-	curGobPickableVarPtr = (int32 *)VAR_ADDRESS(80);
-	curGobRelaxVarPtr = (int32 *)VAR_ADDRESS(81);
-	destItemStateVarPtr = (int32 *)VAR_ADDRESS(82);
-	destItemFrameVarPtr = (int32 *)VAR_ADDRESS(83);
-	destItemMultStateVarPtr = (int32 *)VAR_ADDRESS(84);
-	destItemNextStateVarPtr = (int32 *)VAR_ADDRESS(85);
-	destItemScrXVarPtr = (int32 *)VAR_ADDRESS(86);
-	destItemScrYVarPtr = (int32 *)VAR_ADDRESS(87);
-	destItemLeftVarPtr = (int32 *)VAR_ADDRESS(88);
-	destItemTopVarPtr = (int32 *)VAR_ADDRESS(89);
-	destItemRightVarPtr = (int32 *)VAR_ADDRESS(90);
-	destItemBottomVarPtr = (int32 *)VAR_ADDRESS(91);
-	destItemDoAnimVarPtr = (int32 *)VAR_ADDRESS(92);
-	destItemOrderVarPtr = (int32 *)VAR_ADDRESS(93);
-	destItemNoTickVarPtr = (int32 *)VAR_ADDRESS(94);
-	destItemTypeVarPtr = (int32 *)VAR_ADDRESS(95);
-	destItemMaxTickVarPtr = (int32 *)VAR_ADDRESS(96);
-	destItemTickVarPtr = (int32 *)VAR_ADDRESS(97);
-	destItemActStartStVarPtr = (int32 *)VAR_ADDRESS(98);
-	destItemLookDirVarPtr = (int32 *)VAR_ADDRESS(99);
-	destItemPickableVarPtr = (int32 *)VAR_ADDRESS(102);
-	destItemRelaxVarPtr = (int32 *)VAR_ADDRESS(103);
-	destItemMaxFrameVarPtr = (int32 *)VAR_ADDRESS(105);
-	curGobVarPtr = (int32 *)VAR_ADDRESS(106);
-	some0ValPtr = (int32 *)VAR_ADDRESS(107);
-	curGobXPosVarPtr = (int32 *)VAR_ADDRESS(108);
-	curGobYPosVarPtr = (int32 *)VAR_ADDRESS(109);
-	curGobMaxFrameVarPtr = (int32 *)VAR_ADDRESS(110);
+	_gobRetVarPtr = (int32 *)VAR_ADDRESS(59);
+	_curGobStateVarPtr = (int32 *)VAR_ADDRESS(60);
+	_curGobFrameVarPtr = (int32 *)VAR_ADDRESS(61);
+	_curGobMultStateVarPtr = (int32 *)VAR_ADDRESS(62);
+	_curGobNextStateVarPtr = (int32 *)VAR_ADDRESS(63);
+	_curGobScrXVarPtr = (int32 *)VAR_ADDRESS(64);
+	_curGobScrYVarPtr = (int32 *)VAR_ADDRESS(65);
+	_curGobLeftVarPtr = (int32 *)VAR_ADDRESS(66);
+	_curGobTopVarPtr = (int32 *)VAR_ADDRESS(67);
+	_curGobRightVarPtr = (int32 *)VAR_ADDRESS(68);
+	_curGobBottomVarPtr = (int32 *)VAR_ADDRESS(69);
+	_curGobDoAnimVarPtr = (int32 *)VAR_ADDRESS(70);
+	_curGobOrderVarPtr = (int32 *)VAR_ADDRESS(71);
+	_curGobNoTickVarPtr = (int32 *)VAR_ADDRESS(72);
+	_curGobTypeVarPtr = (int32 *)VAR_ADDRESS(73);
+	_curGobMaxTickVarPtr = (int32 *)VAR_ADDRESS(74);
+	_curGobTickVarPtr = (int32 *)VAR_ADDRESS(75);
+	_curGobActStartStateVarPtr = (int32 *)VAR_ADDRESS(76);
+	_curGobLookDirVarPtr = (int32 *)VAR_ADDRESS(77);
+	_curGobPickableVarPtr = (int32 *)VAR_ADDRESS(80);
+	_curGobRelaxVarPtr = (int32 *)VAR_ADDRESS(81);
+	_destItemStateVarPtr = (int32 *)VAR_ADDRESS(82);
+	_destItemFrameVarPtr = (int32 *)VAR_ADDRESS(83);
+	_destItemMultStateVarPtr = (int32 *)VAR_ADDRESS(84);
+	_destItemNextStateVarPtr = (int32 *)VAR_ADDRESS(85);
+	_destItemScrXVarPtr = (int32 *)VAR_ADDRESS(86);
+	_destItemScrYVarPtr = (int32 *)VAR_ADDRESS(87);
+	_destItemLeftVarPtr = (int32 *)VAR_ADDRESS(88);
+	_destItemTopVarPtr = (int32 *)VAR_ADDRESS(89);
+	_destItemRightVarPtr = (int32 *)VAR_ADDRESS(90);
+	_destItemBottomVarPtr = (int32 *)VAR_ADDRESS(91);
+	_destItemDoAnimVarPtr = (int32 *)VAR_ADDRESS(92);
+	_destItemOrderVarPtr = (int32 *)VAR_ADDRESS(93);
+	_destItemNoTickVarPtr = (int32 *)VAR_ADDRESS(94);
+	_destItemTypeVarPtr = (int32 *)VAR_ADDRESS(95);
+	_destItemMaxTickVarPtr = (int32 *)VAR_ADDRESS(96);
+	_destItemTickVarPtr = (int32 *)VAR_ADDRESS(97);
+	_destItemActStartStVarPtr = (int32 *)VAR_ADDRESS(98);
+	_destItemLookDirVarPtr = (int32 *)VAR_ADDRESS(99);
+	_destItemPickableVarPtr = (int32 *)VAR_ADDRESS(102);
+	_destItemRelaxVarPtr = (int32 *)VAR_ADDRESS(103);
+	_destItemMaxFrameVarPtr = (int32 *)VAR_ADDRESS(105);
+	_curGobVarPtr = (int32 *)VAR_ADDRESS(106);
+	_some0ValPtr = (int32 *)VAR_ADDRESS(107);
+	_curGobXPosVarPtr = (int32 *)VAR_ADDRESS(108);
+	_curGobYPosVarPtr = (int32 *)VAR_ADDRESS(109);
+	_curGobMaxFrameVarPtr = (int32 *)VAR_ADDRESS(110);
 
-	itemInPocketVarPtr = (int32 *)VAR_ADDRESS(114);
+	_itemInPocketVarPtr = (int32 *)VAR_ADDRESS(114);
 
-	*itemInPocketVarPtr = -2;
+	*_itemInPocketVarPtr = -2;
 }
 
 void Goblin::loadGobDataFromVars(void) {
 	Gob_Object *obj;
 
-	itemIndInPocket = *itemInPocketVarPtr;
+	_itemIndInPocket = *_itemInPocketVarPtr;
 
-	obj = goblins[currentGoblin];
+	obj = _goblins[_currentGoblin];
 
-	obj->state = *curGobStateVarPtr;
-	obj->curFrame = *curGobFrameVarPtr;
-	obj->multState = *curGobMultStateVarPtr;
-	obj->nextState = *curGobNextStateVarPtr;
-	obj->xPos = *curGobScrXVarPtr;
-	obj->yPos = *curGobScrYVarPtr;
-	obj->left = *curGobLeftVarPtr;
-	obj->top = *curGobTopVarPtr;
-	obj->right = *curGobRightVarPtr;
-	obj->bottom = *curGobBottomVarPtr;
-	obj->doAnim = *curGobDoAnimVarPtr;
-	obj->order = *curGobOrderVarPtr;
-	obj->noTick = *curGobNoTickVarPtr;
-	obj->type = *curGobTypeVarPtr;
-	obj->maxTick = *curGobMaxTickVarPtr;
-	obj->tick = *curGobTickVarPtr;
-	obj->actionStartState = *curGobActStartStateVarPtr;
-	obj->curLookDir = *curGobLookDirVarPtr;
-	obj->pickable = *curGobPickableVarPtr;
-	obj->relaxTime = *curGobRelaxVarPtr;
+	obj->state = *_curGobStateVarPtr;
+	obj->curFrame = *_curGobFrameVarPtr;
+	obj->multState = *_curGobMultStateVarPtr;
+	obj->nextState = *_curGobNextStateVarPtr;
+	obj->xPos = *_curGobScrXVarPtr;
+	obj->yPos = *_curGobScrYVarPtr;
+	obj->left = *_curGobLeftVarPtr;
+	obj->top = *_curGobTopVarPtr;
+	obj->right = *_curGobRightVarPtr;
+	obj->bottom = *_curGobBottomVarPtr;
+	obj->doAnim = *_curGobDoAnimVarPtr;
+	obj->order = *_curGobOrderVarPtr;
+	obj->noTick = *_curGobNoTickVarPtr;
+	obj->type = *_curGobTypeVarPtr;
+	obj->maxTick = *_curGobMaxTickVarPtr;
+	obj->tick = *_curGobTickVarPtr;
+	obj->actionStartState = *_curGobActStartStateVarPtr;
+	obj->curLookDir = *_curGobLookDirVarPtr;
+	obj->pickable = *_curGobPickableVarPtr;
+	obj->relaxTime = *_curGobRelaxVarPtr;
 
-	if (actDestItemDesc == 0)
+	if (_actDestItemDesc == 0)
 		return;
 
-	obj = actDestItemDesc;
+	obj = _actDestItemDesc;
 
-	obj->state = *destItemStateVarPtr;
-	obj->curFrame = *destItemFrameVarPtr;
-	obj->multState = *destItemMultStateVarPtr;
-	obj->nextState = *destItemNextStateVarPtr;
-	obj->xPos = *destItemScrXVarPtr;
-	obj->yPos = *destItemScrYVarPtr;
-	obj->left = *destItemLeftVarPtr;
-	obj->top = *destItemTopVarPtr;
-	obj->right = *destItemRightVarPtr;
-	obj->bottom = *destItemBottomVarPtr;
-	obj->doAnim = *destItemDoAnimVarPtr;
-	obj->order = *destItemOrderVarPtr;
-	obj->noTick = *destItemNoTickVarPtr;
-	obj->type = *destItemTypeVarPtr;
-	obj->maxTick = *destItemMaxTickVarPtr;
-	obj->tick = *destItemTickVarPtr;
-	obj->actionStartState = *destItemActStartStVarPtr;
-	obj->curLookDir = *destItemLookDirVarPtr;
-	obj->pickable = *destItemPickableVarPtr;
-	obj->relaxTime = *destItemRelaxVarPtr;
+	obj->state = *_destItemStateVarPtr;
+	obj->curFrame = *_destItemFrameVarPtr;
+	obj->multState = *_destItemMultStateVarPtr;
+	obj->nextState = *_destItemNextStateVarPtr;
+	obj->xPos = *_destItemScrXVarPtr;
+	obj->yPos = *_destItemScrYVarPtr;
+	obj->left = *_destItemLeftVarPtr;
+	obj->top = *_destItemTopVarPtr;
+	obj->right = *_destItemRightVarPtr;
+	obj->bottom = *_destItemBottomVarPtr;
+	obj->doAnim = *_destItemDoAnimVarPtr;
+	obj->order = *_destItemOrderVarPtr;
+	obj->noTick = *_destItemNoTickVarPtr;
+	obj->type = *_destItemTypeVarPtr;
+	obj->maxTick = *_destItemMaxTickVarPtr;
+	obj->tick = *_destItemTickVarPtr;
+	obj->actionStartState = *_destItemActStartStVarPtr;
+	obj->curLookDir = *_destItemLookDirVarPtr;
+	obj->pickable = *_destItemPickableVarPtr;
+	obj->relaxTime = *_destItemRelaxVarPtr;
 
-	if (obj->type != destItemType)
+	if (obj->type != _destItemType)
 		obj->toRedraw = 1;
 
-	if (obj->state != destItemState && obj->type == 0)
+	if (obj->state != _destItemState && obj->type == 0)
 		obj->toRedraw = 1;
 }
 
@@ -2093,17 +2093,17 @@ void Goblin::pickItem(int16 indexToPocket, int16 idToPocket) {
 	int16 x;
 	int16 y;
 
-	if (objects[indexToPocket]->pickable != 1)
+	if (_objects[indexToPocket]->pickable != 1)
 		return;
 
-	objects[indexToPocket]->type = 3;
+	_objects[indexToPocket]->type = 3;
 
-	itemIndInPocket = indexToPocket;
-	itemIdInPocket = idToPocket;
+	_itemIndInPocket = indexToPocket;
+	_itemIdInPocket = idToPocket;
 
 	for (y = 0; y < Map::kMapHeight; y++) {
 		for (x = 0; x < Map::kMapWidth; x++) {
-			if (itemByteFlag == 1) {
+			if (_itemByteFlag == 1) {
 				if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8) ==
 				    idToPocket)
 					_vm->_map->_itemsMap[y][x] &= 0xff;
@@ -2115,9 +2115,9 @@ void Goblin::pickItem(int16 indexToPocket, int16 idToPocket) {
 	}
 
 	if (idToPocket >= 0 && idToPocket < 20) {
-		_vm->_map->_itemPoses[itemIdInPocket].x = 0;
-		_vm->_map->_itemPoses[itemIdInPocket].y = 0;
-		_vm->_map->_itemPoses[itemIdInPocket].orient = 0;
+		_vm->_map->_itemPoses[_itemIdInPocket].x = 0;
+		_vm->_map->_itemPoses[_itemIdInPocket].y = 0;
+		_vm->_map->_itemPoses[_itemIdInPocket].orient = 0;
 	}
 }
 
@@ -2128,20 +2128,20 @@ void Goblin::placeItem(int16 indexInPocket, int16 idInPocket) {
 	int16 yPos;
 	int16 layer;
 
-	itemDesc = objects[indexInPocket];
-	lookDir = goblins[0]->curLookDir & 4;
+	itemDesc = _objects[indexInPocket];
+	lookDir = _goblins[0]->curLookDir & 4;
 
-	xPos = gobPositions[0].x;
-	yPos = gobPositions[0].y;
+	xPos = _gobPositions[0].x;
+	yPos = _gobPositions[0].y;
 
-	itemIndInPocket = -1;
-	itemIdInPocket = 0;
+	_itemIndInPocket = -1;
+	_itemIdInPocket = 0;
 
 	itemDesc->pickable = 1;
 	itemDesc->type = 0;
 	itemDesc->toRedraw = 1;
 	itemDesc->curFrame = 0;
-	itemDesc->order = goblins[0]->order;
+	itemDesc->order = _goblins[0]->order;
 	itemDesc->animation =
 	    itemDesc->stateMach[itemDesc->state][0]->animation;
 	layer =
@@ -2151,13 +2151,13 @@ void Goblin::placeItem(int16 indexInPocket, int16 idInPocket) {
 	    itemDesc->xPos, itemDesc->yPos, 0);
 
 	itemDesc->yPos +=
-	    (gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
+	    (_gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
 
 	if (lookDir == 4) {
-		itemDesc->xPos += (gobPositions[0].x * 12 + 14)
+		itemDesc->xPos += (_gobPositions[0].x * 12 + 14)
 		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 	} else {
-		itemDesc->xPos += (gobPositions[0].x * 12)
+		itemDesc->xPos += (_gobPositions[0].x * 12)
 		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 	}
 
@@ -2186,8 +2186,8 @@ void Goblin::placeItem(int16 indexInPocket, int16 idInPocket) {
 	}
 
 	if (idInPocket >= 0 && idInPocket < 20) {
-		_vm->_map->_itemPoses[idInPocket].x = gobPositions[0].x;
-		_vm->_map->_itemPoses[idInPocket].y = gobPositions[0].y;
+		_vm->_map->_itemPoses[idInPocket].x = _gobPositions[0].x;
+		_vm->_map->_itemPoses[idInPocket].y = _gobPositions[0].y;
 		_vm->_map->_itemPoses[idInPocket].orient = lookDir;
 		if (_vm->_map->_itemPoses[idInPocket].orient == 0) {
 //                      _vm->_map->_itemPoses[idInPocket].x++;
@@ -2208,15 +2208,15 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	int16 x;
 	int16 y;
 
-	pickObj = objects[indexToPick];
-	placeObj = objects[itemIndInPocket];
+	pickObj = _objects[indexToPick];
+	placeObj = _objects[_itemIndInPocket];
 
-	idToPlace = itemIdInPocket;
+	idToPlace = _itemIdInPocket;
 	pickObj->type = 3;
-	itemIndInPocket = indexToPick;
-	itemIdInPocket = idToPick;
+	_itemIndInPocket = indexToPick;
+	_itemIdInPocket = idToPick;
 
-	if (itemByteFlag == 0) {
+	if (_itemByteFlag == 0) {
 		for (y = 0; y < Map::kMapHeight; y++) {
 			for (x = 0; x < Map::kMapWidth; x++) {
 				if ((_vm->_map->_itemsMap[y][x] & 0xff) == idToPick)
@@ -2240,19 +2240,19 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 
 	if (idToPick >= 0 && idToPick < 20) {
 		_vm->_map->_itemPoses[idToPlace].x =
-		    _vm->_map->_itemPoses[itemIdInPocket].x;
+		    _vm->_map->_itemPoses[_itemIdInPocket].x;
 		_vm->_map->_itemPoses[idToPlace].y =
-		    _vm->_map->_itemPoses[itemIdInPocket].y;
+		    _vm->_map->_itemPoses[_itemIdInPocket].y;
 		_vm->_map->_itemPoses[idToPlace].orient =
-		    _vm->_map->_itemPoses[itemIdInPocket].orient;
+		    _vm->_map->_itemPoses[_itemIdInPocket].orient;
 
-		_vm->_map->_itemPoses[itemIdInPocket].x = 0;
-		_vm->_map->_itemPoses[itemIdInPocket].y = 0;
-		_vm->_map->_itemPoses[itemIdInPocket].orient = 0;
+		_vm->_map->_itemPoses[_itemIdInPocket].x = 0;
+		_vm->_map->_itemPoses[_itemIdInPocket].y = 0;
+		_vm->_map->_itemPoses[_itemIdInPocket].orient = 0;
 	}
 
-	itemIndInPocket = -1;
-	itemIdInPocket = 0;
+	_itemIndInPocket = -1;
+	_itemIdInPocket = 0;
 
 	placeObj->type = 0;
 	placeObj->nextState = -1;
@@ -2260,7 +2260,7 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	placeObj->unk14 = 0;
 	placeObj->toRedraw = 1;
 	placeObj->curFrame = 0;
-	placeObj->order = goblins[0]->order;
+	placeObj->order = _goblins[0]->order;
 
 	placeObj->animation =
 	    placeObj->stateMach[placeObj->state][0]->animation;
@@ -2271,13 +2271,13 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	    placeObj->yPos, 0);
 
 	placeObj->yPos +=
-	    (gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
+	    (_gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
 
 	if (_vm->_map->_itemPoses[idToPlace].orient == 4) {
-		placeObj->xPos += (gobPositions[0].x * 12 + 14)
+		placeObj->xPos += (_gobPositions[0].x * 12 + 14)
 		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 	} else {
-		placeObj->xPos += (gobPositions[0].x * 12)
+		placeObj->xPos += (_gobPositions[0].x * 12)
 		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 	}
 }
@@ -2286,7 +2286,7 @@ void Goblin::treatItemPick(int16 itemId) {
 	int16 itemIndex;
 	Gob_Object *gobDesc;
 
-	gobDesc = goblins[currentGoblin];
+	gobDesc = _goblins[_currentGoblin];
 
 	if (gobDesc->curFrame != 9)
 		return;
@@ -2294,31 +2294,31 @@ void Goblin::treatItemPick(int16 itemId) {
 	if (gobDesc->stateMach != gobDesc->realStateMach)
 		return;
 
-	readyToAct = 0;
-	goesAtTarget = 0;
+	_readyToAct = 0;
+	_goesAtTarget = 0;
 
-	itemIndex = itemToObject[itemId];
+	itemIndex = _itemToObject[itemId];
 	if (itemId != 0 && itemIndex != -1
-	    && objects[itemIndex]->pickable != 1)
+	    && _objects[itemIndex]->pickable != 1)
 		itemIndex = -1;
 
-	if (itemIndInPocket != -1 && itemIndInPocket == itemIndex)
+	if (_itemIndInPocket != -1 && _itemIndInPocket == itemIndex)
 		itemIndex = -1;
 
-	if (itemIndInPocket != -1 && itemIndex != -1
-	    && objects[itemIndex]->pickable == 1) {
+	if (_itemIndInPocket != -1 && itemIndex != -1
+	    && _objects[itemIndex]->pickable == 1) {
 		swapItems(itemIndex, itemId);
-		itemIndInPocket = itemIndex;
-		itemIdInPocket = itemId;
+		_itemIndInPocket = itemIndex;
+		_itemIdInPocket = itemId;
 		return;
 	}
 
-	if (itemIndInPocket != -1 && itemIndex == -1) {
-		placeItem(itemIndInPocket, itemIdInPocket);
+	if (_itemIndInPocket != -1 && itemIndex == -1) {
+		placeItem(_itemIndInPocket, _itemIdInPocket);
 		return;
 	}
 
-	if (itemIndInPocket == -1 && itemIndex != -1) {
+	if (_itemIndInPocket == -1 && itemIndex != -1) {
 		pickItem(itemIndex, itemId);
 		return;
 	}
@@ -2327,51 +2327,51 @@ void Goblin::treatItemPick(int16 itemId) {
 int16 Goblin::treatItem(int16 action) {
 	int16 state;
 
-	state = goblins[currentGoblin]->state;
+	state = _goblins[_currentGoblin]->state;
 	if ((state == 10 || state == 11) &&
-	    goblins[currentGoblin]->curFrame == 0) {
-		readyToAct = 0;
+	    _goblins[_currentGoblin]->curFrame == 0) {
+		_readyToAct = 0;
 	}
 
-	if (action == 3 && currentGoblin == 0 &&
-	    (state == 10 || state == 11) && goblins[0]->curFrame == 0) {
-		saveGobDataToVars(gobPositions[currentGoblin].x,
-		    gobPositions[currentGoblin].y, 0);
-		goesAtTarget = 1;
+	if (action == 3 && _currentGoblin == 0 &&
+	    (state == 10 || state == 11) && _goblins[0]->curFrame == 0) {
+		saveGobDataToVars(_gobPositions[_currentGoblin].x,
+		    _gobPositions[_currentGoblin].y, 0);
+		_goesAtTarget = 1;
 		return -1;
 	}
 
-	if (noPick == 0 && currentGoblin == 0 &&
+	if (_noPick == 0 && _currentGoblin == 0 &&
 	    (state == 10 || state == 11)) {
-		treatItemPick(destActionItem);
+		treatItemPick(_destActionItem);
 
-		saveGobDataToVars(gobPositions[currentGoblin].x,
-		    gobPositions[currentGoblin].y, 0);
+		saveGobDataToVars(_gobPositions[_currentGoblin].x,
+		    _gobPositions[_currentGoblin].y, 0);
 		return 0;
 	}
 
-	if (goesAtTarget == 0) {
-		saveGobDataToVars(gobPositions[currentGoblin].x,
-		    gobPositions[currentGoblin].y, 0);
+	if (_goesAtTarget == 0) {
+		saveGobDataToVars(_gobPositions[_currentGoblin].x,
+		    _gobPositions[_currentGoblin].y, 0);
 		return 0;
 	} else {
 
-		if (itemToObject[destActionItem] != 100 &&
-		    destActionItem != 0) {
+		if (_itemToObject[_destActionItem] != 100 &&
+		    _destActionItem != 0) {
 
-			if (itemToObject[destActionItem] == -1) {
-				actDestItemDesc = 0;
+			if (_itemToObject[_destActionItem] == -1) {
+				_actDestItemDesc = 0;
 			} else {
-				actDestItemDesc =
-				    objects[itemToObject
-				    [destActionItem]];
+				_actDestItemDesc =
+				    _objects[_itemToObject
+				    [_destActionItem]];
 			}
 		}
 
-		goesAtTarget = 0;
-		saveGobDataToVars(gobPositions[currentGoblin].x,
-		    gobPositions[currentGoblin].y, 0);
-		return destActionItem;
+		_goesAtTarget = 0;
+		saveGobDataToVars(_gobPositions[_currentGoblin].x,
+		    _gobPositions[_currentGoblin].y, 0);
+		return _destActionItem;
 	}
 }
 
@@ -2397,14 +2397,14 @@ void Goblin::interFunc(void) {
 	_vm->_global->_inter_execPtr += 2;
 	if (cmd > 0 && cmd < 17) {
 		extraData = _vm->_inter->load16();
-		objDesc = objects[extraData];
+		objDesc = _objects[extraData];
 		objDescSet = true;
 		extraData = _vm->_inter->load16();
 	}
 
 	if (cmd > 90 && cmd < 107) {
 		extraData = _vm->_inter->load16();
-		objDesc = goblins[extraData];
+		objDesc = _goblins[extraData];
 		objDescSet = true;
 		extraData = _vm->_inter->load16();
 		cmd -= 90;
@@ -2412,12 +2412,12 @@ void Goblin::interFunc(void) {
 
 	if (cmd > 110 && cmd < 128) {
 		extraData = _vm->_inter->load16();
-		objDesc = goblins[extraData];
+		objDesc = _goblins[extraData];
 		objDescSet = true;
 		cmd -= 90;
 	} else if (cmd > 20 && cmd < 38) {
 		extraData = _vm->_inter->load16();
-		objDesc = objects[extraData];
+		objDesc = _objects[extraData];
 		objDescSet = true;
 	}
 
@@ -2439,50 +2439,50 @@ void Goblin::interFunc(void) {
 	case 1:
 		objDesc->state = extraData;
 
-		if (objDesc == actDestItemDesc)
-			*destItemStateVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemStateVarPtr = extraData;
 		break;
 
 	case 2:
 		objDesc->curFrame = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemFrameVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemFrameVarPtr = extraData;
 		break;
 
 	case 3:
 		objDesc->nextState = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemNextStateVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemNextStateVarPtr = extraData;
 		break;
 
 	case 4:
 		objDesc->multState = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemMultStateVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemMultStateVarPtr = extraData;
 		break;
 
 	case 5:
 		objDesc->order = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemOrderVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemOrderVarPtr = extraData;
 		break;
 
 	case 6:
 		objDesc->actionStartState = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemActStartStVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemActStartStVarPtr = extraData;
 		break;
 
 	case 7:
 		objDesc->curLookDir = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemLookDirVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemLookDirVarPtr = extraData;
 		break;
 
 	case 8:
 		objDesc->type = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemTypeVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemTypeVarPtr = extraData;
 
 		if (extraData == 0)
 			objDesc->toRedraw = 1;
@@ -2490,44 +2490,44 @@ void Goblin::interFunc(void) {
 
 	case 9:
 		objDesc->noTick = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemNoTickVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemNoTickVarPtr = extraData;
 		break;
 
 	case 10:
 		objDesc->pickable = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemPickableVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemPickableVarPtr = extraData;
 		break;
 
 	case 12:
 		objDesc->xPos = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemScrXVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemScrXVarPtr = extraData;
 		break;
 
 	case 13:
 		objDesc->yPos = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemScrYVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemScrYVarPtr = extraData;
 		break;
 
 	case 14:
 		objDesc->doAnim = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemDoAnimVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemDoAnimVarPtr = extraData;
 		break;
 
 	case 15:
 		objDesc->relaxTime = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemRelaxVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemRelaxVarPtr = extraData;
 		break;
 
 	case 16:
 		objDesc->maxTick = extraData;
-		if (objDesc == actDestItemDesc)
-			*destItemMaxTickVarPtr = extraData;
+		if (objDesc == _actDestItemDesc)
+			*_destItemMaxTickVarPtr = extraData;
 		break;
 
 	case 21:
@@ -2775,10 +2775,10 @@ void Goblin::interFunc(void) {
 		xPos = _vm->_inter->load16();
 		yPos = _vm->_inter->load16();
 
-		gobPositions[item].x = xPos * 2;
-		gobPositions[item].y = yPos * 2;
+		_gobPositions[item].x = xPos * 2;
+		_gobPositions[item].y = yPos * 2;
 
-		objDesc = goblins[item];
+		objDesc = _goblins[item];
 		objDesc->nextState = 21;
 
 		nextLayer(objDesc);
@@ -2789,33 +2789,33 @@ void Goblin::interFunc(void) {
 		    objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->yPos =
-		    (gobPositions[item].y * 6 + 6) - (_vm->_scenery->toRedrawBottom -
+		    (_gobPositions[item].y * 6 + 6) - (_vm->_scenery->toRedrawBottom -
 		    _vm->_scenery->animTop);
 		objDesc->xPos =
-		    gobPositions[item].x * 12 - (_vm->_scenery->toRedrawLeft -
+		    _gobPositions[item].x * 12 - (_vm->_scenery->toRedrawLeft -
 		    _vm->_scenery->animLeft);
 
 		objDesc->curFrame = 0;
 		objDesc->state = 21;
-		if (currentGoblin == item) {
-			*curGobScrXVarPtr = objDesc->xPos;
-			*curGobScrYVarPtr = objDesc->yPos;
+		if (_currentGoblin == item) {
+			*_curGobScrXVarPtr = objDesc->xPos;
+			*_curGobScrYVarPtr = objDesc->yPos;
 
-			*curGobFrameVarPtr = 0;
-			*curGobStateVarPtr = 18;
-			pressedMapX = gobPositions[item].x;
-			pressedMapY = gobPositions[item].y;
+			*_curGobFrameVarPtr = 0;
+			*_curGobStateVarPtr = 18;
+			_pressedMapX = _gobPositions[item].x;
+			_pressedMapY = _gobPositions[item].y;
 		}
 		break;
 
 	case 52:
 		item = _vm->_inter->load16();
-		*retVarPtr = gobPositions[item].x >> 1;
+		*retVarPtr = _gobPositions[item].x >> 1;
 		break;
 
 	case 53:
 		item = _vm->_inter->load16();
-		*retVarPtr = gobPositions[item].y >> 1;
+		*retVarPtr = _gobPositions[item].y >> 1;
 		break;
 
 	case 150:
@@ -2823,7 +2823,7 @@ void Goblin::interFunc(void) {
 		xPos = _vm->_inter->load16();
 		yPos = _vm->_inter->load16();
 
-		objDesc = goblins[item];
+		objDesc = _goblins[item];
 		if (yPos == 0) {
 			objDesc->multState = xPos;
 			objDesc->nextState = xPos;
@@ -2838,15 +2838,15 @@ void Goblin::interFunc(void) {
 			    _vm->_scenery->animations[objDesc->animation].layers[layer]->
 			    posY;
 
-			*curGobScrXVarPtr = objDesc->xPos;
-			*curGobScrYVarPtr = objDesc->yPos;
-			*curGobFrameVarPtr = 0;
-			*curGobStateVarPtr = objDesc->state;
-			*curGobNextStateVarPtr = objDesc->nextState;
-			*curGobMultStateVarPtr = objDesc->multState;
-			*curGobMaxFrameVarPtr =
+			*_curGobScrXVarPtr = objDesc->xPos;
+			*_curGobScrYVarPtr = objDesc->yPos;
+			*_curGobFrameVarPtr = 0;
+			*_curGobStateVarPtr = objDesc->state;
+			*_curGobNextStateVarPtr = objDesc->nextState;
+			*_curGobMultStateVarPtr = objDesc->multState;
+			*_curGobMaxFrameVarPtr =
 			    getObjMaxFrame(objDesc);
-			noPick = 1;
+			_noPick = 1;
 			break;
 		}
 
@@ -2864,21 +2864,21 @@ void Goblin::interFunc(void) {
 		objDesc->xPos =
 		    xPos * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
 
-		gobPositions[item].x = xPos;
-		pressedMapX = xPos;
+		_gobPositions[item].x = xPos;
+		_pressedMapX = xPos;
 		_vm->_map->_curGoblinX = xPos;
 
-		gobPositions[item].y = yPos;
-		pressedMapY = yPos;
+		_gobPositions[item].y = yPos;
+		_pressedMapY = yPos;
 		_vm->_map->_curGoblinY = yPos;
 
-		*curGobScrXVarPtr = objDesc->xPos;
-		*curGobScrYVarPtr = objDesc->yPos;
-		*curGobFrameVarPtr = 0;
-		*curGobStateVarPtr = 21;
-		*curGobNextStateVarPtr = 21;
-		*curGobMultStateVarPtr = -1;
-		noPick = 0;
+		*_curGobScrXVarPtr = objDesc->xPos;
+		*_curGobScrYVarPtr = objDesc->yPos;
+		*_curGobFrameVarPtr = 0;
+		*_curGobStateVarPtr = 21;
+		*_curGobNextStateVarPtr = 21;
+		*_curGobMultStateVarPtr = -1;
+		_noPick = 0;
 		break;
 
 	case 250:
@@ -2886,10 +2886,10 @@ void Goblin::interFunc(void) {
 		xPos = _vm->_inter->load16();
 		yPos = _vm->_inter->load16();
 
-		gobPositions[item].x = xPos;
-		gobPositions[item].y = yPos;
+		_gobPositions[item].x = xPos;
+		_gobPositions[item].y = yPos;
 
-		objDesc = goblins[item];
+		objDesc = _goblins[item];
 		objDesc->nextState = 21;
 		nextLayer(objDesc);
 
@@ -2906,14 +2906,14 @@ void Goblin::interFunc(void) {
 		objDesc->curFrame = 0;
 		objDesc->state = 21;
 
-		if (currentGoblin == item) {
-			*curGobScrXVarPtr = objDesc->xPos;
-			*curGobScrYVarPtr = objDesc->yPos;
-			*curGobFrameVarPtr = 0;
-			*curGobStateVarPtr = 18;
+		if (_currentGoblin == item) {
+			*_curGobScrXVarPtr = objDesc->xPos;
+			*_curGobScrYVarPtr = objDesc->yPos;
+			*_curGobFrameVarPtr = 0;
+			*_curGobStateVarPtr = 18;
 
-			pressedMapX = gobPositions[item].x;
-			pressedMapY = gobPositions[item].y;
+			_pressedMapX = _gobPositions[item].x;
+			_pressedMapY = _gobPositions[item].y;
 		}
 		break;
 
@@ -2921,7 +2921,7 @@ void Goblin::interFunc(void) {
 		item = _vm->_inter->load16();
 		state = _vm->_inter->load16();
 
-		objDesc = goblins[item];
+		objDesc = _goblins[item];
 		objDesc->nextState = state;
 
 		nextLayer(objDesc);
@@ -2932,19 +2932,19 @@ void Goblin::interFunc(void) {
 		objDesc->yPos =
 		    _vm->_scenery->animations[objDesc->animation].layers[layer]->posY;
 
-		if (item == currentGoblin) {
-			*curGobScrXVarPtr = objDesc->xPos;
-			*curGobScrYVarPtr = objDesc->yPos;
-			*curGobFrameVarPtr = 0;
-			*curGobStateVarPtr = objDesc->state;
-			*curGobMultStateVarPtr = objDesc->multState;
+		if (item == _currentGoblin) {
+			*_curGobScrXVarPtr = objDesc->xPos;
+			*_curGobScrYVarPtr = objDesc->yPos;
+			*_curGobFrameVarPtr = 0;
+			*_curGobStateVarPtr = objDesc->state;
+			*_curGobMultStateVarPtr = objDesc->multState;
 		}
 		break;
 
 	case 252:
 		item = _vm->_inter->load16();
 		state = _vm->_inter->load16();
-		objDesc = objects[item];
+		objDesc = _objects[item];
 
 		objDesc->nextState = state;
 
@@ -2957,38 +2957,38 @@ void Goblin::interFunc(void) {
 
 		objDesc->toRedraw = 1;
 		objDesc->type = 0;
-		if (objDesc == actDestItemDesc) {
-			*destItemScrXVarPtr = objDesc->xPos;
-			*destItemScrYVarPtr = objDesc->yPos;
+		if (objDesc == _actDestItemDesc) {
+			*_destItemScrXVarPtr = objDesc->xPos;
+			*_destItemScrYVarPtr = objDesc->yPos;
 
-			*destItemStateVarPtr = objDesc->state;
-			*destItemNextStateVarPtr = -1;
-			*destItemMultStateVarPtr = -1;
-			*destItemFrameVarPtr = 0;
+			*_destItemStateVarPtr = objDesc->state;
+			*_destItemNextStateVarPtr = -1;
+			*_destItemMultStateVarPtr = -1;
+			*_destItemFrameVarPtr = 0;
 		}
 		break;
 
 	case 152:
 		item = _vm->_inter->load16();
 		val = _vm->_inter->load16();
-		objDesc = objects[item];
+		objDesc = _objects[item];
 		objDesc->unk14 = val;
 		break;
 
 	case 200:
-		itemIdInPocket = _vm->_inter->load16();
+		_itemIdInPocket = _vm->_inter->load16();
 		break;
 
 	case 201:
-		itemIndInPocket = _vm->_inter->load16();
+		_itemIndInPocket = _vm->_inter->load16();
 		break;
 
 	case 202:
-		*retVarPtr = itemIdInPocket;
+		*retVarPtr = _itemIdInPocket;
 		break;
 
 	case 203:
-		*retVarPtr = itemIndInPocket;
+		*retVarPtr = _itemIndInPocket;
 		break;
 
 	case 204:
@@ -3004,7 +3004,7 @@ void Goblin::interFunc(void) {
 
 	case 500:
 		extraData = _vm->_inter->load16();
-		objDesc = objects[extraData];
+		objDesc = _objects[extraData];
 
 		objDesc->relaxTime--;
 		if (objDesc->relaxTime < 0 &&
@@ -3017,34 +3017,34 @@ void Goblin::interFunc(void) {
 
 	case 502:
 		item = _vm->_inter->load16();
-		*retVarPtr = gobPositions[item].x;
+		*retVarPtr = _gobPositions[item].x;
 		break;
 
 	case 503:
 		item = _vm->_inter->load16();
-		*retVarPtr = gobPositions[item].y;
+		*retVarPtr = _gobPositions[item].y;
 		break;
 
 	case 600:
-		pathExistence = 0;
+		_pathExistence = 0;
 		break;
 
 	case 601:
 		extraData = _vm->_inter->load16();
-		goblins[extraData]->visible = 1;
+		_goblins[extraData]->visible = 1;
 		break;
 
 	case 602:
 		extraData = _vm->_inter->load16();
-		goblins[extraData]->visible = 0;
+		_goblins[extraData]->visible = 0;
 		break;
 
 	case 603:
 		extraData = _vm->_inter->load16();
 		item = _vm->_inter->load16();
 
-		objDesc = objects[extraData];
-		if (objIntersected(objDesc, goblins[item]) != 0)
+		objDesc = _objects[extraData];
+		if (objIntersected(objDesc, _goblins[item]) != 0)
 			*retVarPtr = 1;
 		else
 			*retVarPtr = 0;
@@ -3054,8 +3054,8 @@ void Goblin::interFunc(void) {
 		extraData = _vm->_inter->load16();
 		item = _vm->_inter->load16();
 
-		objDesc = goblins[extraData];
-		if (objIntersected(objDesc, goblins[item]) != 0)
+		objDesc = _goblins[extraData];
+		if (objIntersected(objDesc, _goblins[item]) != 0)
 			*retVarPtr = 1;
 		else
 			*retVarPtr = 0;
@@ -3074,11 +3074,11 @@ void Goblin::interFunc(void) {
 
 	case 1000:
 		extraData = _vm->_inter->load16();
-		if (_vm->_game->extHandle >= 0)
-			_vm->_dataio->closeData(_vm->_game->extHandle);
+		if (_vm->_game->_extHandle >= 0)
+			_vm->_dataio->closeData(_vm->_game->_extHandle);
 
 		loadObjects((char *)VAR_ADDRESS(extraData));
-		_vm->_game->extHandle = _vm->_dataio->openData(_vm->_game->curExtFile);
+		_vm->_game->_extHandle = _vm->_dataio->openData(_vm->_game->_curExtFile);
 		break;
 
 	case 1001:
@@ -3106,11 +3106,11 @@ void Goblin::interFunc(void) {
 
 		if ((uint16)VAR(xPos) == 0) {
 			item =
-			    doMove(goblins[currentGoblin], 1,
+			    doMove(_goblins[_currentGoblin], 1,
 			    (uint16)VAR(extraData));
 		} else {
 			item =
-			    doMove(goblins[currentGoblin], 1, 3);
+			    doMove(_goblins[_currentGoblin], 1, 3);
 		}
 
 		if (item != 0)
@@ -3139,59 +3139,59 @@ void Goblin::interFunc(void) {
 		break;
 
 	case 1010:
-		doMove(goblins[currentGoblin], 0, 0);
+		doMove(_goblins[_currentGoblin], 0, 0);
 		break;
 
 	case 1011:
 		extraData = _vm->_inter->load16();
 		if (VAR(extraData) != 0)
-			goesAtTarget = 1;
+			_goesAtTarget = 1;
 		else
-			goesAtTarget = 0;
+			_goesAtTarget = 0;
 		break;
 
 	case 1015:
 		extraData = _vm->_inter->load16();
 		extraData = VAR(extraData);
-		objects[10]->xPos = extraData;
+		_objects[10]->xPos = extraData;
 
 		extraData = _vm->_inter->load16();
 		extraData = VAR(extraData);
-		objects[10]->yPos = extraData;
+		_objects[10]->yPos = extraData;
 		break;
 
 	case 2005:
-		gobDesc = goblins[0];
-		if (currentGoblin != 0) {
-			goblins[currentGoblin]->doAnim = 1;
-			goblins[currentGoblin]->nextState = 21;
+		gobDesc = _goblins[0];
+		if (_currentGoblin != 0) {
+			_goblins[_currentGoblin]->doAnim = 1;
+			_goblins[_currentGoblin]->nextState = 21;
 
-			nextLayer(goblins[currentGoblin]);
-			currentGoblin = 0;
+			nextLayer(_goblins[_currentGoblin]);
+			_currentGoblin = 0;
 
 			gobDesc->doAnim = 0;
 			gobDesc->type = 0;
 			gobDesc->toRedraw = 1;
 
-			pressedMapX = gobPositions[0].x;
-			_vm->_map->_destX = gobPositions[0].x;
-			gobDestX = gobPositions[0].x;
+			_pressedMapX = _gobPositions[0].x;
+			_vm->_map->_destX = _gobPositions[0].x;
+			_gobDestX = _gobPositions[0].x;
 
-			pressedMapY = gobPositions[0].y;
-			_vm->_map->_destY = gobPositions[0].y;
-			gobDestY = gobPositions[0].y;
+			_pressedMapY = _gobPositions[0].y;
+			_vm->_map->_destY = _gobPositions[0].y;
+			_gobDestY = _gobPositions[0].y;
 
-			*curGobVarPtr = 0;
-			pathExistence = 0;
-			readyToAct = 0;
+			*_curGobVarPtr = 0;
+			_pathExistence = 0;
+			_readyToAct = 0;
 		}
 
-		if (gobDesc->state != 10 && itemIndInPocket != -1 &&
+		if (gobDesc->state != 10 && _itemIndInPocket != -1 &&
 		    getObjMaxFrame(gobDesc) == gobDesc->curFrame) {
 
 			gobDesc->stateMach = gobDesc->realStateMach;
-			xPos = gobPositions[0].x;
-			yPos = gobPositions[0].y;
+			xPos = _gobPositions[0].x;
+			yPos = _gobPositions[0].y;
 
 			gobDesc->nextState = 10;
 			layer = nextLayer(gobDesc);
@@ -3209,13 +3209,13 @@ void Goblin::interFunc(void) {
 		if (gobDesc->state != 10)
 			break;
 
-		if (itemIndInPocket == -1)
+		if (_itemIndInPocket == -1)
 			break;
 
 		if (gobDesc->curFrame != 10)
 			break;
 
-		objDesc = objects[itemIndInPocket];
+		objDesc = _objects[_itemIndInPocket];
 		objDesc->type = 0;
 		objDesc->toRedraw = 1;
 		objDesc->curFrame = 0;
@@ -3230,18 +3230,18 @@ void Goblin::interFunc(void) {
 		    objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->yPos +=
-		    (gobPositions[0].y * 6 + 5) - _vm->_scenery->toRedrawBottom;
+		    (_gobPositions[0].y * 6 + 5) - _vm->_scenery->toRedrawBottom;
 
 		if (gobDesc->curLookDir == 4) {
-			objDesc->xPos += gobPositions[0].x * 12 + 14
+			objDesc->xPos += _gobPositions[0].x * 12 + 14
 			    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 		} else {
-			objDesc->xPos += gobPositions[0].x * 12
+			objDesc->xPos += _gobPositions[0].x * 12
 			    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
 		}
 
-		itemIndInPocket = -1;
-		itemIdInPocket = -1;
+		_itemIndInPocket = -1;
+		_itemIdInPocket = -1;
 		_vm->_util->beep(50);
 		break;
 

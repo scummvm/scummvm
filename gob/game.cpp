@@ -36,49 +36,49 @@
 
 namespace Gob {
 
-int16 Game::captureCount = 0;
-Common::Rect Game::captureStack[20];
+int16 Game::_captureCount = 0;
+Common::Rect Game::_captureStack[20];
 
 Game::Game(GobEngine *vm) : _vm(vm) {
-	extTable = 0;
-	totFileData = 0;
-	totResourceTable = 0;
-	imFileData = 0;
-	extHandle = 0;
-	collisionAreas = 0;
-	shouldPushColls = 0;
-	totTextData = 0;
+	_extTable = 0;
+	_totFileData = 0;
+	_totResourceTable = 0;
+	_imFileData = 0;
+	_extHandle = 0;
+	_collisionAreas = 0;
+	_shouldPushColls = 0;
+	_totTextData = 0;
 
 	// Collisions stack
-	collStackSize = 0;
+	_collStackSize = 0;
 	for (int i = 0; i < 3; i++) {
-		collStack[i] = 0;
-		collStackElemSizes[i] = 0;
+		_collStack[i] = 0;
+		_collStackElemSizes[i] = 0;
 	}
 
 	for (int i = 0; i < 20; i++)
-		soundSamples[i] = 0;
+		_soundSamples[i] = 0;
 
-	curTotFile[0] = 0;
-	curExtFile[0] = 0;
-	totToLoad[0] = 0;
+	_curTotFile[0] = 0;
+	_curExtFile[0] = 0;
+	_totToLoad[0] = 0;
 
-	startTimeKey = 0;
-	mouseButtons = 0;
+	_startTimeKey = 0;
+	_mouseButtons = 0;
 
-	lastCollKey = 0;
-	lastCollAreaIndex = 0;
-	lastCollId = 0;
+	_lastCollKey = 0;
+	_lastCollAreaIndex = 0;
+	_lastCollId = 0;
 
-	activeCollResId = 0;
-	activeCollIndex = 0;
-	ghandleMouse = 0;
-	forceHandleMouse = 0;
+	_activeCollResId = 0;
+	_activeCollIndex = 0;
+	_handleMouse = 0;
+	_forceHandleMouse = 0;
 
-	tempStr[0] = 0;
-	curImaFile[0] = 0;
-	soundFromExt[0] = 0;
-	collStr[0] = 0;
+	_tempStr[0] = 0;
+	_curImaFile[0] = 0;
+	_soundFromExt[0] = 0;
+	_collStr[0] = 0;
 
 
 	// Capture
@@ -99,12 +99,12 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 	char *dataPtr;
 
 	itemId -= 30000;
-	if (extTable == 0)
+	if (_extTable == 0)
 		return 0;
 
 	commonHandle = -1;
-	itemsCount = extTable->itemsCount;
-	item = &extTable->items[itemId];
+	itemsCount = _extTable->itemsCount;
+	item = &_extTable->items[itemId];
 	tableSize = szGame_ExtTable + szGame_ExtItem * itemsCount;
 
 	offset = item->offset;
@@ -127,13 +127,13 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 
 	debug(7, "size: %d off: %d", size, offset);
 	if (offset >= 0) {
-		handle = extHandle;
+		handle = _extHandle;
 	} else {
 		offset = -(offset + 1);
 		tableSize = 0;
-		_vm->_dataio->closeData(extHandle);
+		_vm->_dataio->closeData(_extHandle);
 		strcpy(path, "commun.ex1");
-		path[strlen(path) - 1] = *(totFileData + 0x3c) + '0';
+		path[strlen(path) - 1] = *(_totFileData + 0x3c) + '0';
 		commonHandle = _vm->_dataio->openData(path);
 		handle = commonHandle;
 	}
@@ -155,7 +155,7 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 	_vm->_dataio->readData(handle, (char *)dataPtr, size);
 	if (commonHandle != -1) {
 		_vm->_dataio->closeData(commonHandle);
-		extHandle = _vm->_dataio->openData(curExtFile);
+		_extHandle = _vm->_dataio->openData(_curExtFile);
 	}
 
 	if (isPacked != 0) {
@@ -172,8 +172,8 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 void Game::clearCollisions() {
 	int16 i;
 	for (i = 0; i < 250; i++) {
-		collisionAreas[i].id = 0;
-		collisionAreas[i].left = -1;
+		_collisionAreas[i].id = 0;
+		_collisionAreas[i].left = -1;
 	}
 }
 
@@ -189,10 +189,10 @@ void Game::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 b
 	debug(5, "funcEnter = %d, funcLeave = %d", funcEnter, funcLeave);
 
 	for (i = 0; i < 250; i++) {
-		if (collisionAreas[i].left != -1)
+		if (_collisionAreas[i].left != -1)
 			continue;
 
-		ptr = &collisionAreas[i];
+		ptr = &_collisionAreas[i];
 		ptr->id = id;
 		ptr->left = left;
 		ptr->top = top;
@@ -211,8 +211,8 @@ void Game::freeCollision(int16 id) {
 	int16 i;
 
 	for (i = 0; i < 250; i++) {
-		if (collisionAreas[i].id == id)
-			collisionAreas[i].left = -1;
+		if (_collisionAreas[i].id == id)
+			_collisionAreas[i].left = -1;
 	}
 }
 
@@ -222,18 +222,18 @@ void Game::pushCollisions(char all) {
 	int16 size;
 
 	debug(4, "pushCollisions");
-	for (size = 0, srcPtr = collisionAreas; srcPtr->left != -1;
+	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1;
 	    srcPtr++) {
 		if (all || (srcPtr->id & 0x8000))
 			size++;
 	}
 
 	destPtr = (Collision *)malloc(size * sizeof(Collision));
-	collStack[collStackSize] = destPtr;
-	collStackElemSizes[collStackSize] = size;
-	collStackSize++;
+	_collStack[_collStackSize] = destPtr;
+	_collStackElemSizes[_collStackSize] = size;
+	_collStackSize++;
 
-	for (srcPtr = collisionAreas; srcPtr->left != -1; srcPtr++) {
+	for (srcPtr = _collisionAreas; srcPtr->left != -1; srcPtr++) {
 		if (all || (srcPtr->id & 0x8000)) {
 			memcpy(destPtr, srcPtr, sizeof(Collision));
 			srcPtr->left = -1;
@@ -248,15 +248,15 @@ void Game::popCollisions(void) {
 
 	debug(4, "popCollision");
 
-	collStackSize--;
-	for (destPtr = collisionAreas; destPtr->left != -1; destPtr++);
+	_collStackSize--;
+	for (destPtr = _collisionAreas; destPtr->left != -1; destPtr++);
 
-	srcPtr = collStack[collStackSize];
+	srcPtr = _collStack[_collStackSize];
 	memcpy(destPtr, srcPtr,
-	    collStackElemSizes[collStackSize] *
+	    _collStackElemSizes[_collStackSize] *
 	    sizeof(Collision));
 
-	free(collStack[collStackSize]);
+	free(_collStack[_collStackSize]);
 }
 
 int16 Game::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
@@ -268,7 +268,7 @@ int16 Game::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 
 	*resIndex = 0;
 
-	ptr = collisionAreas;
+	ptr = _collisionAreas;
 	for (i = 0; ptr->left != -1; ptr++, i++) {
 		if (all) {
 			if ((ptr->flags & 0xf) > 1)
@@ -295,7 +295,7 @@ int16 Game::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 			if ((ptr->flags & 0xf) != 1 && (ptr->flags & 0xf) != 2)
 				continue;
 
-			if ((ptr->flags & 0xf0) >> 4 != mouseButtons - 1
+			if ((ptr->flags & 0xf0) >> 4 != _mouseButtons - 1
 			    && (ptr->flags & 0xf0) >> 4 != 2)
 				continue;
 
@@ -312,7 +312,7 @@ int16 Game::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 		}
 	}
 
-	if (mouseButtons != 1 && all == 0)
+	if (_mouseButtons != 1 && all == 0)
 		return 0x11b;
 
 	return 0;
@@ -321,70 +321,70 @@ int16 Game::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
 	int16 right;
 
-	if (captureCount == 20)
+	if (_captureCount == 20)
 		error("capturePush: Capture stack overflow!");
 
-	captureStack[captureCount].left = left;
-	captureStack[captureCount].top = top;
-	captureStack[captureCount].right = left + width;
-	captureStack[captureCount].bottom = top + height;
+	_captureStack[_captureCount].left = left;
+	_captureStack[_captureCount].top = top;
+	_captureStack[_captureCount].right = left + width;
+	_captureStack[_captureCount].bottom = top + height;
 
-	_vm->_draw->spriteTop = top;
-	_vm->_draw->spriteBottom = height;
+	_vm->_draw->_spriteTop = top;
+	_vm->_draw->_spriteBottom = height;
 
 	right = left + width - 1;
 	left &= 0xfff0;
 	right |= 0xf;
 
-	_vm->_draw->spritesArray[30 + captureCount] =
+	_vm->_draw->_spritesArray[30 + _captureCount] =
 	    _vm->_video->initSurfDesc(_vm->_global->_videoMode, right - left + 1, height, 0);
 
-	_vm->_draw->sourceSurface = 21;
-	_vm->_draw->destSurface = 30 + captureCount;
+	_vm->_draw->_sourceSurface = 21;
+	_vm->_draw->_destSurface = 30 + _captureCount;
 
-	_vm->_draw->spriteLeft = left;
-	_vm->_draw->spriteRight = right - left + 1;
-	_vm->_draw->destSpriteX = 0;
-	_vm->_draw->destSpriteY = 0;
-	_vm->_draw->transparency = 0;
+	_vm->_draw->_spriteLeft = left;
+	_vm->_draw->_spriteRight = right - left + 1;
+	_vm->_draw->_destSpriteX = 0;
+	_vm->_draw->_destSpriteY = 0;
+	_vm->_draw->_transparency = 0;
 	_vm->_draw->spriteOperation(0);
-	captureCount++;
+	_captureCount++;
 }
 
 void Game::capturePop(char doDraw) {
-	if (captureCount <= 0)
+	if (_captureCount <= 0)
 		return;
 
-	captureCount--;
+	_captureCount--;
 	if (doDraw) {
-		_vm->_draw->destSpriteX = captureStack[captureCount].left;
-		_vm->_draw->destSpriteY = captureStack[captureCount].top;
-		_vm->_draw->spriteRight =
-		    captureStack[captureCount].width();
-		_vm->_draw->spriteBottom =
-		    captureStack[captureCount].height();
+		_vm->_draw->_destSpriteX = _captureStack[_captureCount].left;
+		_vm->_draw->_destSpriteY = _captureStack[_captureCount].top;
+		_vm->_draw->_spriteRight =
+		    _captureStack[_captureCount].width();
+		_vm->_draw->_spriteBottom =
+		    _captureStack[_captureCount].height();
 
-		_vm->_draw->transparency = 0;
-		_vm->_draw->sourceSurface = 30 + captureCount;
-		_vm->_draw->destSurface = 21;
-		_vm->_draw->spriteLeft = _vm->_draw->destSpriteX & 0xf;
-		_vm->_draw->spriteTop = 0;
+		_vm->_draw->_transparency = 0;
+		_vm->_draw->_sourceSurface = 30 + _captureCount;
+		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_spriteLeft = _vm->_draw->_destSpriteX & 0xf;
+		_vm->_draw->_spriteTop = 0;
 		_vm->_draw->spriteOperation(0);
 	}
-	_vm->_video->freeSurfDesc(_vm->_draw->spritesArray[30 + captureCount]);
+	_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[30 + _captureCount]);
 }
 
 char *Game::loadTotResource(int16 id) {
 	TotResItem *itemPtr;
 	int32 offset;
 
-	itemPtr = &totResourceTable->items[id];
+	itemPtr = &_totResourceTable->items[id];
 	offset = itemPtr->offset;
 	if (offset >= 0) {
-		return ((char *)totResourceTable) + szGame_TotResTable +
-		    szGame_TotResItem * totResourceTable->itemsCount + offset;
+		return ((char *)_totResourceTable) + szGame_TotResTable +
+		    szGame_TotResItem * _totResourceTable->itemsCount + offset;
 	} else {
-		return (char *)(imFileData + (int32)READ_LE_UINT32(&((int32 *)imFileData)[-offset - 1]));
+		return (char *)(_imFileData + (int32)READ_LE_UINT32(&((int32 *)_imFileData)[-offset - 1]));
 	}
 }
 
@@ -393,7 +393,7 @@ void Game::loadSound(int16 slot, char *dataPtr) {
 
 	soundDesc = (Snd::SoundDesc *)malloc(sizeof(Snd::SoundDesc));
 
-	soundSamples[slot] = soundDesc;
+	_soundSamples[slot] = soundDesc;
 
 	soundDesc->frequency = (dataPtr[4] << 8) + dataPtr[5];
 	soundDesc->size = (dataPtr[1] << 16) + (dataPtr[2] << 8) + dataPtr[3];
@@ -419,10 +419,10 @@ void Game::interLoadSound(int16 slot) {
 
 	if (id >= 30000) {
 		dataPtr = loadExtData(id, 0, 0);
-		soundFromExt[slot] = 1;
+		_soundFromExt[slot] = 1;
 	} else {
 		dataPtr = loadTotResource(id);
-		soundFromExt[slot] = 0;
+		_soundFromExt[slot] = 0;
 	}
 
 	loadSound(slot, dataPtr);
@@ -432,16 +432,16 @@ void Game::freeSoundSlot(int16 slot) {
 	if (slot == -1)
 		slot = _vm->_parse->parseValExpr();
 
-	if (soundSamples[slot] == 0)
+	if (_soundSamples[slot] == 0)
 		return;
 
-	if (soundFromExt[slot] == 1) {
-		free(soundSamples[slot]->data - 6);
-		soundFromExt[slot] = 0;
+	if (_soundFromExt[slot] == 1) {
+		free(_soundSamples[slot]->data - 6);
+		_soundFromExt[slot] = 0;
 	}
 
-	free(soundSamples[slot]);
-	soundSamples[slot] = 0;
+	free(_soundSamples[slot]);
+	_soundSamples[slot] = 0;
 }
 
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handleMouse) {
@@ -484,9 +484,9 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 	uint32 timeKey;
 
 	if (deltaTime >= -1) {
-		lastCollKey = 0;
-		lastCollAreaIndex = 0;
-		lastCollId = 0;
+		_lastCollKey = 0;
+		_lastCollAreaIndex = 0;
+		_lastCollId = 0;
 	}
 
 	if (pResId != 0)
@@ -494,16 +494,16 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 
 	resIndex = 0;
 
-	if (_vm->_draw->gcursorIndex == -1 && handleMouse != 0
-	    && lastCollKey == 0) {
-		lastCollKey =
-		    checkMousePoint(1, &lastCollId,
-		    &lastCollAreaIndex);
+	if (_vm->_draw->_cursorIndex == -1 && handleMouse != 0
+	    && _lastCollKey == 0) {
+		_lastCollKey =
+		    checkMousePoint(1, &_lastCollId,
+		    &_lastCollAreaIndex);
 
-		if (lastCollKey != 0 && (lastCollId & 0x8000) != 0) {
+		if (_lastCollKey != 0 && (_lastCollId & 0x8000) != 0) {
 			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = (char *)totFileData +
-			    collisionAreas[lastCollAreaIndex].funcEnter;
+			_vm->_global->_inter_execPtr = (char *)_totFileData +
+			    _collisionAreas[_lastCollAreaIndex].funcEnter;
 
 			_vm->_inter->funcBlock(0);
 			_vm->_global->_inter_execPtr = savedIP;
@@ -521,7 +521,7 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			return 0;
 		}
 
-		if (_vm->_draw->noInvalidated == 0) {
+		if (_vm->_draw->_noInvalidated == 0) {
 			if (handleMouse)
 				_vm->_draw->animateCursor(-1);
 			else
@@ -548,9 +548,9 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 		}
 
 		key = checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY,
-							 &mouseButtons, handleMouse);
+							 &_mouseButtons, handleMouse);
 
-		if (handleMouse == 0 && mouseButtons != 0) {
+		if (handleMouse == 0 && _mouseButtons != 0) {
 			_vm->_util->waitMouseRelease(0);
 			key = 3;
 		}
@@ -566,23 +566,23 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			if (pResIndex != 0)
 				*pResIndex = 0;
 
-			if (lastCollKey != 0 &&
-			    collisionAreas[lastCollAreaIndex].funcLeave != 0) {
+			if (_lastCollKey != 0 &&
+			    _collisionAreas[_lastCollAreaIndex].funcLeave != 0) {
 				savedIP = _vm->_global->_inter_execPtr;
-				_vm->_global->_inter_execPtr = (char *)totFileData +
-				    collisionAreas[lastCollAreaIndex].funcLeave;
+				_vm->_global->_inter_execPtr = (char *)_totFileData +
+				    _collisionAreas[_lastCollAreaIndex].funcLeave;
 
 				_vm->_inter->funcBlock(0);
 				_vm->_global->_inter_execPtr = savedIP;
 			}
 
-			lastCollKey = 0;
+			_lastCollKey = 0;
 			if (key != 0)
 				return key;
 		}
 
 		if (handleMouse != 0) {
-			if (mouseButtons != 0) {
+			if (_mouseButtons != 0) {
 				oldIndex = 0;
 
 				_vm->_draw->animateCursor(2);
@@ -604,44 +604,44 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 
 				if (key != 0 || (pResId != 0 && *pResId != 0)) {
 					if (handleMouse == 1 && (deltaTime <= 0
-						|| mouseButtons == 0))
+						|| _mouseButtons == 0))
 						_vm->_draw->blitCursor();
 
-					if (lastCollKey != 0 &&
-						collisionAreas[lastCollAreaIndex].funcLeave != 0) {
+					if (_lastCollKey != 0 &&
+						_collisionAreas[_lastCollAreaIndex].funcLeave != 0) {
 						savedIP = _vm->_global->_inter_execPtr;
 						_vm->_global->_inter_execPtr =
-						    (char *)totFileData +
-						    collisionAreas[lastCollAreaIndex].funcLeave;
+						    (char *)_totFileData +
+						    _collisionAreas[_lastCollAreaIndex].funcLeave;
 
 						_vm->_inter->funcBlock(0);
 						_vm->_global->_inter_execPtr = savedIP;
 					}
-					lastCollKey = 0;
+					_lastCollKey = 0;
 					return key;
 				}
 
-				if (lastCollKey != 0 &&
-				    collisionAreas[lastCollAreaIndex].funcLeave != 0) {
+				if (_lastCollKey != 0 &&
+				    _collisionAreas[_lastCollAreaIndex].funcLeave != 0) {
 					savedIP = _vm->_global->_inter_execPtr;
 					_vm->_global->_inter_execPtr =
-					    (char *)totFileData +
-					    collisionAreas[lastCollAreaIndex].funcLeave;
+					    (char *)_totFileData +
+					    _collisionAreas[_lastCollAreaIndex].funcLeave;
 
 					_vm->_inter->funcBlock(0);
 					_vm->_global->_inter_execPtr = savedIP;
 				}
 
-				lastCollKey =
-				    checkMousePoint(1, &lastCollId,
-				    &lastCollAreaIndex);
+				_lastCollKey =
+				    checkMousePoint(1, &_lastCollId,
+				    &_lastCollAreaIndex);
 
-				if (lastCollKey != 0
-				    && (lastCollId & 0x8000) != 0) {
+				if (_lastCollKey != 0
+				    && (_lastCollId & 0x8000) != 0) {
 					savedIP = _vm->_global->_inter_execPtr;
 					_vm->_global->_inter_execPtr =
-					    (char *)totFileData +
-					    collisionAreas[lastCollAreaIndex].funcEnter;
+					    (char *)_totFileData +
+					    _collisionAreas[_lastCollAreaIndex].funcEnter;
 
 					_vm->_inter->funcBlock(0);
 					_vm->_global->_inter_execPtr = savedIP;
@@ -649,32 +649,32 @@ int16 Game::checkCollisions(char handleMouse, int16 deltaTime, int16 *pResId,
 			} else {
 
 				if (handleMouse != 0 &&
-				    (_vm->_global->_inter_mouseX != _vm->_draw->cursorX
-					|| _vm->_global->_inter_mouseY != _vm->_draw->cursorY)) {
-					oldIndex = lastCollAreaIndex;
-					oldId = lastCollId;
+				    (_vm->_global->_inter_mouseX != _vm->_draw->_cursorX
+					|| _vm->_global->_inter_mouseY != _vm->_draw->_cursorY)) {
+					oldIndex = _lastCollAreaIndex;
+					oldId = _lastCollId;
 
 					key =
 					    checkMousePoint(1,
-					    &lastCollId,
-					    &lastCollAreaIndex);
+					    &_lastCollId,
+					    &_lastCollAreaIndex);
 
-					if (key != lastCollKey) {
-						if (lastCollKey != 0
+					if (key != _lastCollKey) {
+						if (_lastCollKey != 0
 						    && (oldId & 0x8000) != 0) {
 							savedIP = _vm->_global->_inter_execPtr;
-							_vm->_global->_inter_execPtr = (char *)totFileData +
-							    collisionAreas[oldIndex].funcLeave;
+							_vm->_global->_inter_execPtr = (char *)_totFileData +
+							    _collisionAreas[oldIndex].funcLeave;
 
 							_vm->_inter->funcBlock(0);
 							_vm->_global->_inter_execPtr = savedIP;
 						}
 
-						lastCollKey = key;
-						if (lastCollKey != 0 && (lastCollId & 0x8000) != 0) {
+						_lastCollKey = key;
+						if (_lastCollKey != 0 && (_lastCollId & 0x8000) != 0) {
 							savedIP = _vm->_global->_inter_execPtr;
-							_vm->_global->_inter_execPtr = (char *)totFileData +
-							    collisionAreas[lastCollAreaIndex].funcEnter;
+							_vm->_global->_inter_execPtr = (char *)_totFileData +
+							    _collisionAreas[_lastCollAreaIndex].funcEnter;
 
 							_vm->_inter->funcBlock(0);
 							_vm->_global->_inter_execPtr = savedIP;
@@ -707,115 +707,115 @@ int16 Game::inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 b
 	int16 flag;
 	int16 savedKey;
 
-	if (ghandleMouse != 0 &&
-	    (_vm->_global->_useMouse != 0 || forceHandleMouse != 0))
+	if (_handleMouse != 0 &&
+	    (_vm->_global->_useMouse != 0 || _forceHandleMouse != 0))
 		handleMouse = 1;
 	else
 		handleMouse = 0;
 
 	pos = strlen(str);
-	pFont = _vm->_draw->fonts[fontIndex];
+	pFont = _vm->_draw->_fonts[fontIndex];
 	editSize = width / pFont->itemWidth;
 
 	while (1) {
-		strcpy(tempStr, str);
-		strcat(tempStr, " ");
-		if (strlen(tempStr) > editSize)
-			strcpy(tempStr, str);
+		strcpy(_tempStr, str);
+		strcat(_tempStr, " ");
+		if (strlen(_tempStr) > editSize)
+			strcpy(_tempStr, str);
 
-		_vm->_draw->destSpriteX = xPos;
-		_vm->_draw->destSpriteY = yPos;
-		_vm->_draw->spriteRight = editSize * pFont->itemWidth;
-		_vm->_draw->spriteBottom = height;
+		_vm->_draw->_destSpriteX = xPos;
+		_vm->_draw->_destSpriteY = yPos;
+		_vm->_draw->_spriteRight = editSize * pFont->itemWidth;
+		_vm->_draw->_spriteBottom = height;
 
-		_vm->_draw->destSurface = 21;
-		_vm->_draw->backColor = backColor;
-		_vm->_draw->frontColor = frontColor;
-		_vm->_draw->textToPrint = tempStr;
-		_vm->_draw->transparency = 1;
-		_vm->_draw->fontIndex = fontIndex;
+		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_backColor = backColor;
+		_vm->_draw->_frontColor = frontColor;
+		_vm->_draw->_textToPrint = _tempStr;
+		_vm->_draw->_transparency = 1;
+		_vm->_draw->_fontIndex = fontIndex;
 		_vm->_draw->spriteOperation(DRAW_FILLRECT);
 
-		_vm->_draw->destSpriteY = yPos + (height - 8) / 2;
+		_vm->_draw->_destSpriteY = yPos + (height - 8) / 2;
 
 		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
 		if (pos == editSize)
 			pos--;
 
-		curSym = tempStr[pos];
+		curSym = _tempStr[pos];
 
 		flag = 1;
 
 		while (1) {
-			tempStr[0] = curSym;
-			tempStr[1] = 0;
+			_tempStr[0] = curSym;
+			_tempStr[1] = 0;
 
-			_vm->_draw->destSpriteX = xPos + pFont->itemWidth * pos;
-			_vm->_draw->destSpriteY = yPos + height - 1;
-			_vm->_draw->spriteRight = pFont->itemWidth;
-			_vm->_draw->spriteBottom = 1;
-			_vm->_draw->destSurface = 21;
-			_vm->_draw->backColor = frontColor;
+			_vm->_draw->_destSpriteX = xPos + pFont->itemWidth * pos;
+			_vm->_draw->_destSpriteY = yPos + height - 1;
+			_vm->_draw->_spriteRight = pFont->itemWidth;
+			_vm->_draw->_spriteBottom = 1;
+			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_backColor = frontColor;
 			_vm->_draw->spriteOperation(DRAW_FILLRECT);
 
 			if (flag != 0) {
 				key = checkCollisions(handleMouse, -1,
-				    &activeCollResId,
-				    &activeCollIndex);
+				    &_activeCollResId,
+				    &_activeCollIndex);
 			}
 			flag = 0;
 
 			key = checkCollisions(handleMouse, -300,
-			    &activeCollResId, &activeCollIndex);
+			    &_activeCollResId, &_activeCollIndex);
 
 			if (*pTotTime > 0) {
 				*pTotTime -= 300;
 				if (*pTotTime <= 1) {
 					key = 0;
-					activeCollResId = 0;
+					_activeCollResId = 0;
 					break;
 				}
 			}
 
-			tempStr[0] = curSym;
-			tempStr[1] = 0;
-			_vm->_draw->destSpriteX = xPos + pFont->itemWidth * pos;
-			_vm->_draw->destSpriteY = yPos + height - 1;
-			_vm->_draw->spriteRight = pFont->itemWidth;
-			_vm->_draw->spriteBottom = 1;
-			_vm->_draw->destSurface = 21;
-			_vm->_draw->backColor = backColor;
-			_vm->_draw->frontColor = frontColor;
-			_vm->_draw->textToPrint = tempStr;
-			_vm->_draw->transparency = 1;
+			_tempStr[0] = curSym;
+			_tempStr[1] = 0;
+			_vm->_draw->_destSpriteX = xPos + pFont->itemWidth * pos;
+			_vm->_draw->_destSpriteY = yPos + height - 1;
+			_vm->_draw->_spriteRight = pFont->itemWidth;
+			_vm->_draw->_spriteBottom = 1;
+			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_backColor = backColor;
+			_vm->_draw->_frontColor = frontColor;
+			_vm->_draw->_textToPrint = _tempStr;
+			_vm->_draw->_transparency = 1;
 			_vm->_draw->spriteOperation(DRAW_FILLRECT);
 
-			_vm->_draw->destSpriteY = yPos + (height - 8) / 2;
+			_vm->_draw->_destSpriteY = yPos + (height - 8) / 2;
 			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
 
-			if (key != 0 || activeCollResId != 0)
+			if (key != 0 || _activeCollResId != 0)
 				break;
 
 			key = checkCollisions(handleMouse, -300,
-			    &activeCollResId, &activeCollIndex);
+			    &_activeCollResId, &_activeCollIndex);
 
 			if (*pTotTime > 0) {
 				*pTotTime -= 300;
 				if (*pTotTime <= 1) {
 					key = 0;
-					activeCollResId = 0;
+					_activeCollResId = 0;
 					break;
 				}
 
 			}
-			if (key != 0 || activeCollResId != 0)
+			if (key != 0 || _activeCollResId != 0)
 				break;
 
 			if (_vm->_inter->_terminate)
 				return 0;
 		}
 
-		if (key == 0 || activeCollResId != 0 || _vm->_inter->_terminate)
+		if (key == 0 || _activeCollResId != 0 || _vm->_inter->_terminate)
 			return 0;
 
 		switch (key) {
@@ -867,10 +867,10 @@ int16 Game::inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 b
 			if (_vm->_global->_useMouse != 0)
 				continue;
 
-			forceHandleMouse = !forceHandleMouse;
+			_forceHandleMouse = !_forceHandleMouse;
 
-			if (ghandleMouse != 0 &&
-			    (_vm->_global->_useMouse != 0 || forceHandleMouse != 0))
+			if (_handleMouse != 0 &&
+			    (_vm->_global->_useMouse != 0 || _forceHandleMouse != 0))
 				handleMouse = 1;
 			else
 				handleMouse = 0;
@@ -915,10 +915,10 @@ int16 Game::inputArea(int16 xPos, int16 yPos, int16 width, int16 height, int16 b
 					key += ('A' - 'a');
 
 				pos++;
-				tempStr[0] = key;
-				tempStr[1] = 0;
+				_tempStr[0] = key;
+				_tempStr[1] = 0;
 
-				_vm->_util->insertStr(tempStr, str, pos - 1);
+				_vm->_util->insertStr(_tempStr, str, pos - 1);
 
 				//strupr(str);
 			}
@@ -935,7 +935,7 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 
 	descInd = 0;
 	for (i = 0; i < 250; i++) {
-		collArea = &collisionAreas[i];
+		collArea = &_collisionAreas[i];
 
 		if (collArea->left == -1)
 			continue;
@@ -949,22 +949,22 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 		if ((collArea->flags & 0x0f) > 10)
 			continue;
 
-		strcpy(tempStr, _vm->_global->_inter_variables + collArea->key);
+		strcpy(_tempStr, _vm->_global->_inter_variables + collArea->key);
 
-		_vm->_draw->destSpriteX = collArea->left;
-		_vm->_draw->destSpriteY = collArea->top;
-		_vm->_draw->spriteRight = collArea->right - collArea->left + 1;
-		_vm->_draw->spriteBottom = collArea->bottom - collArea->top + 1;
+		_vm->_draw->_destSpriteX = collArea->left;
+		_vm->_draw->_destSpriteY = collArea->top;
+		_vm->_draw->_spriteRight = collArea->right - collArea->left + 1;
+		_vm->_draw->_spriteBottom = collArea->bottom - collArea->top + 1;
 
-		_vm->_draw->destSurface = 21;
+		_vm->_draw->_destSurface = 21;
 
-		_vm->_draw->backColor = inpDesc[descInd].backColor;
-		_vm->_draw->frontColor = inpDesc[descInd].frontColor;
-		_vm->_draw->textToPrint = tempStr;
-		_vm->_draw->transparency = 1;
-		_vm->_draw->fontIndex = inpDesc[descInd].fontIndex;
+		_vm->_draw->_backColor = inpDesc[descInd].backColor;
+		_vm->_draw->_frontColor = inpDesc[descInd].frontColor;
+		_vm->_draw->_textToPrint = _tempStr;
+		_vm->_draw->_transparency = 1;
+		_vm->_draw->_fontIndex = inpDesc[descInd].fontIndex;
 		_vm->_draw->spriteOperation(DRAW_FILLRECT);
-		_vm->_draw->destSpriteY +=
+		_vm->_draw->_destSpriteY +=
 		    ((collArea->bottom - collArea->top + 1) - 8) / 2;
 
 		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
@@ -979,7 +979,7 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 		descInd = 0;
 
 		for (i = 0; i < 250; i++) {
-			collArea = &collisionAreas[i];
+			collArea = &_collisionAreas[i];
 
 			if (collArea->left == -1)
 				continue;
@@ -1003,7 +1003,7 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 
 		assert(found != -1);
 
-		collArea = &collisionAreas[found];
+		collArea = &_collisionAreas[found];
 
 		key = inputArea(collArea->left, collArea->top,
 		    collArea->right - collArea->left + 1,
@@ -1017,20 +1017,20 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 
 		switch (key) {
 		case 0:
-			if (activeCollResId == 0)
+			if (_activeCollResId == 0)
 				return 0;
 
-			if ((collisionAreas[activeCollIndex].
+			if ((_collisionAreas[_activeCollIndex].
 				flags & 0x0f) < 3)
 				return 0;
 
-			if ((collisionAreas[activeCollIndex].
+			if ((_collisionAreas[_activeCollIndex].
 				flags & 0x0f) > 10)
 				return 0;
 
 			*pCurPos = 0;
 			for (i = 0; i < 250; i++) {
-				collArea = &collisionAreas[i];
+				collArea = &_collisionAreas[i];
 
 				if (collArea->left == -1)
 					continue;
@@ -1044,7 +1044,7 @@ int16 Game::multiEdit(int16 time, int16 index, int16 *pCurPos, InputDesc * inpDe
 				if ((collArea->flags & 0x0f) > 10)
 					continue;
 
-				if (i == activeCollIndex)
+				if (i == _activeCollIndex)
 					break;
 
 				pCurPos[0]++;
@@ -1126,18 +1126,18 @@ void Game::collisionsBlock(void) {
 	int16 counter;
 	int16 var_24;
 	int16 var_26;
-	int16 collStackPos;
+	int16 _collStackPos;
 	Collision *collPtr;
 	int16 timeKey;
 	char *savedIP;
 
-	if (shouldPushColls)
+	if (_shouldPushColls)
 		pushCollisions(1);
 
 	collResId = -1;
 	_vm->_global->_inter_execPtr++;
 	count = *_vm->_global->_inter_execPtr++;
-	ghandleMouse = _vm->_global->_inter_execPtr[0];
+	_handleMouse = _vm->_global->_inter_execPtr[0];
 	deltaTime = 1000 * (byte)_vm->_global->_inter_execPtr[1];
 	descIndex2 = (byte)_vm->_global->_inter_execPtr[2];
 	stackPos2 = (byte)_vm->_global->_inter_execPtr[3];
@@ -1215,10 +1215,10 @@ void Game::collisionsBlock(void) {
 				    top,
 				    left +
 				    width *
-				    _vm->_draw->fonts[descArray[index].fontIndex]->
+				    _vm->_draw->_fonts[descArray[index].fontIndex]->
 				    itemWidth - 1, top + height - 1, cmd, key,
 				    0,
-				    _vm->_global->_inter_execPtr - (char *)totFileData);
+				    _vm->_global->_inter_execPtr - (char *)_totFileData);
 
 				_vm->_global->_inter_execPtr += 2;
 				_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
@@ -1227,7 +1227,7 @@ void Game::collisionsBlock(void) {
 				    top,
 				    left +
 				    width *
-				    _vm->_draw->fonts[descArray[index].fontIndex]->
+				    _vm->_draw->_fonts[descArray[index].fontIndex]->
 				    itemWidth - 1, top + height - 1, cmd, key,
 				    0, 0);
 			}
@@ -1243,7 +1243,7 @@ void Game::collisionsBlock(void) {
 			    left + width - 1,
 			    top + height - 1,
 			    (flags << 4) + cmdHigh + 2, key,
-			    _vm->_global->_inter_execPtr - (char *)totFileData, 0);
+			    _vm->_global->_inter_execPtr - (char *)_totFileData, 0);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
@@ -1262,7 +1262,7 @@ void Game::collisionsBlock(void) {
 			    left + width - 1,
 			    top + height - 1,
 			    (flags << 4) + cmdHigh + 2, key, 0,
-			    _vm->_global->_inter_execPtr - (char *)totFileData);
+			    _vm->_global->_inter_execPtr - (char *)_totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
@@ -1279,8 +1279,8 @@ void Game::collisionsBlock(void) {
 			    left + width - 1,
 			    top + height - 1,
 			    cmd + cmdHigh, key,
-			    startIP - (char *)totFileData,
-			    _vm->_global->_inter_execPtr - (char *)totFileData);
+			    startIP - (char *)_totFileData,
+			    _vm->_global->_inter_execPtr - (char *)_totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
@@ -1301,8 +1301,8 @@ void Game::collisionsBlock(void) {
 			    left + width - 1,
 			    top + height - 1,
 			    (flags << 4) + cmd + cmdHigh, key,
-			    startIP - (char *)totFileData,
-			    _vm->_global->_inter_execPtr - (char *)totFileData);
+			    startIP - (char *)_totFileData,
+			    _vm->_global->_inter_execPtr - (char *)_totFileData);
 
 			_vm->_global->_inter_execPtr += 2;
 			_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr);
@@ -1310,7 +1310,7 @@ void Game::collisionsBlock(void) {
 		}
 	}
 
-	forceHandleMouse = 0;
+	_forceHandleMouse = 0;
 	_vm->_util->waitKey();
 
 	do {
@@ -1321,30 +1321,30 @@ void Game::collisionsBlock(void) {
 
 			if (key == 0x1c0d) {
 				for (i = 0; i < 250; i++) {
-					if (collisionAreas[i].left == -1)
+					if (_collisionAreas[i].left == -1)
 						continue;
 
-					if ((collisionAreas[i].id & 0x8000) == 0)
+					if ((_collisionAreas[i].id & 0x8000) == 0)
 						continue;
 
-					if ((collisionAreas[i].flags & 1) != 0)
+					if ((_collisionAreas[i].flags & 1) != 0)
 						continue;
 
-					if ((collisionAreas[i].flags & 0x0f) <= 2)
+					if ((_collisionAreas[i].flags & 0x0f) <= 2)
 						continue;
 
-					collResId = collisionAreas[i].id;
-					activeCollResId = collResId;
+					collResId = _collisionAreas[i].id;
+					_activeCollResId = collResId;
 					collResId &= 0x7fff;
-					activeCollIndex = i;
+					_activeCollIndex = i;
 					break;
 				}
 				break;
 			}
 		} else {
 			key =
-			    checkCollisions(ghandleMouse, -deltaTime,
-			    &activeCollResId, &activeCollIndex);
+			    checkCollisions(_handleMouse, -deltaTime,
+			    &_activeCollResId, &_activeCollIndex);
 		}
 
 		if ((key & 0xff) >= ' ' && (key & 0xff) <= 0xff &&
@@ -1352,44 +1352,44 @@ void Game::collisionsBlock(void) {
 			key = '0' + (((key >> 8) - 1) % 10) + (key & 0xff00);
 		}
 
-		if (activeCollResId == 0) {
+		if (_activeCollResId == 0) {
 			if (key != 0) {
 				for (i = 0; i < 250; i++) {
-					if (collisionAreas[i].left == -1)
+					if (_collisionAreas[i].left == -1)
 						continue;
 
-					if ((collisionAreas[i].
+					if ((_collisionAreas[i].
 						id & 0x8000) == 0)
 						continue;
 
-					if (collisionAreas[i].key == key
-					    || collisionAreas[i].key ==
+					if (_collisionAreas[i].key == key
+					    || _collisionAreas[i].key ==
 					    0x7fff) {
 
-						activeCollResId =
-						    collisionAreas[i].id;
-						activeCollIndex = i;
+						_activeCollResId =
+						    _collisionAreas[i].id;
+						_activeCollIndex = i;
 						break;
 					}
 				}
 
-				if (activeCollResId == 0) {
+				if (_activeCollResId == 0) {
 					for (i = 0; i < 250; i++) {
-						if (collisionAreas[i].left == -1)
+						if (_collisionAreas[i].left == -1)
 							continue;
 
-						if ((collisionAreas[i].id & 0x8000) == 0)
+						if ((_collisionAreas[i].id & 0x8000) == 0)
 							continue;
 
-						if ((collisionAreas[i].key & 0xff00) != 0)
+						if ((_collisionAreas[i].key & 0xff00) != 0)
 							continue;
 
-						if (collisionAreas[i].key == 0)
+						if (_collisionAreas[i].key == 0)
 							continue;
 
-						if (adjustKey(key & 0xff) == adjustKey(collisionAreas[i].key) || collisionAreas[i].key == 0x7fff) {
-							activeCollResId = collisionAreas[i].id;
-							activeCollIndex = i;
+						if (adjustKey(key & 0xff) == adjustKey(_collisionAreas[i].key) || _collisionAreas[i].key == 0x7fff) {
+							_activeCollResId = _collisionAreas[i].id;
+							_activeCollIndex = i;
 							break;
 						}
 					}
@@ -1398,36 +1398,36 @@ void Game::collisionsBlock(void) {
 
 				if (deltaTime != 0 && VAR(16) == 0) {
 					if (stackPos2 != 0) {
-						collStackPos = 0;
-						collPtr = collisionAreas;
+						_collStackPos = 0;
+						collPtr = _collisionAreas;
 
-						for (i = 0, collPtr = collisionAreas; collPtr->left != -1; i++, collPtr++) {
+						for (i = 0, collPtr = _collisionAreas; collPtr->left != -1; i++, collPtr++) {
 							if ((collPtr->id & 0x8000) == 0)
 								continue;
 
-							collStackPos++;
-							if (collStackPos != stackPos2)
+							_collStackPos++;
+							if (_collStackPos != stackPos2)
 								continue;
 
-							activeCollResId = collPtr->id;
-							activeCollIndex = i;
+							_activeCollResId = collPtr->id;
+							_activeCollIndex = i;
 							WRITE_VAR(2, _vm->_global->_inter_mouseX);
 							WRITE_VAR(3, _vm->_global->_inter_mouseY);
-							WRITE_VAR(4, mouseButtons);
-							WRITE_VAR(16, array[(uint16)activeCollResId & ~0x8000]);
+							WRITE_VAR(4, _mouseButtons);
+							WRITE_VAR(16, array[(uint16)_activeCollResId & ~0x8000]);
 
 							if (collPtr->funcLeave != 0) {
 								timeKey = _vm->_util->getTimeKey();
 								savedIP = _vm->_global->_inter_execPtr;
-								_vm->_global->_inter_execPtr = (char *)totFileData + collPtr->funcLeave;
-								shouldPushColls = 1;
-								savedCollStackSize = collStackSize;
+								_vm->_global->_inter_execPtr = (char *)_totFileData + collPtr->funcLeave;
+								_shouldPushColls = 1;
+								savedCollStackSize = _collStackSize;
 								_vm->_inter->funcBlock(0);
 
-								if (savedCollStackSize != collStackSize)
+								if (savedCollStackSize != _collStackSize)
 									popCollisions();
 
-								shouldPushColls = 0;
+								_shouldPushColls = 0;
 								_vm->_global->_inter_execPtr = savedIP;
 								deltaTime = timeVal - (_vm->_util->getTimeKey() - timeKey);
 
@@ -1436,37 +1436,37 @@ void Game::collisionsBlock(void) {
 							}
 
 							if (VAR(16) == 0)
-								activeCollResId = 0;
+								_activeCollResId = 0;
 							break;
 						}
 					} else {
 						if (descIndex != 0) {
 							counter = 0;
 							for (i = 0; i < 250; i++) {
-								if (collisionAreas[i].left == -1)
+								if (_collisionAreas[i].left == -1)
 									continue;
 
-								if ((collisionAreas[i].id & 0x8000) == 0)
+								if ((_collisionAreas[i].id & 0x8000) == 0)
 									continue;
 
 								counter++;
 								if (counter != descIndex)
 									continue;
 
-								activeCollResId = collisionAreas[i].id;
-								activeCollIndex = i;
+								_activeCollResId = _collisionAreas[i].id;
+								_activeCollIndex = i;
 								break;
 							}
 						} else {
 							for (i = 0; i < 250; i++) {
-								if (collisionAreas[i].left == -1)
+								if (_collisionAreas[i].left == -1)
 									continue;
 
-								if ((collisionAreas[i].id & 0x8000) == 0)
+								if ((_collisionAreas[i].id & 0x8000) == 0)
 									continue;
 
-								activeCollResId = collisionAreas[i].id;
-								activeCollIndex = i;
+								_activeCollResId = _collisionAreas[i].id;
+								_activeCollIndex = i;
 								break;
 							}
 						}
@@ -1475,18 +1475,18 @@ void Game::collisionsBlock(void) {
 					if (descIndex2 != 0) {
 						counter = 0;
 						for (i = 0; i < 250; i++) {
-							if (collisionAreas[i].left == -1)
+							if (_collisionAreas[i].left == -1)
 								continue;
 
-							if ((collisionAreas[i].id & 0x8000) == 0)
+							if ((_collisionAreas[i].id & 0x8000) == 0)
 								continue;
 
 							counter++;
 							if (counter != descIndex2)
 								continue;
 
-							activeCollResId = collisionAreas[i].id;
-							activeCollIndex = i;
+							_activeCollResId = _collisionAreas[i].id;
+							_activeCollIndex = i;
 							break;
 						}
 					}
@@ -1494,92 +1494,92 @@ void Game::collisionsBlock(void) {
 			}
 		}
 
-		if (activeCollResId == 0)
+		if (_activeCollResId == 0)
 			continue;
 
-		if (collisionAreas[activeCollIndex].funcLeave != 0)
+		if (_collisionAreas[_activeCollIndex].funcLeave != 0)
 			continue;
 
 		WRITE_VAR(2, _vm->_global->_inter_mouseX);
 		WRITE_VAR(3, _vm->_global->_inter_mouseY);
-		WRITE_VAR(4, mouseButtons);
-		WRITE_VAR(16, array[(uint16)activeCollResId & ~0x8000]);
+		WRITE_VAR(4, _mouseButtons);
+		WRITE_VAR(16, array[(uint16)_activeCollResId & ~0x8000]);
 
-		if (collisionAreas[activeCollIndex].funcEnter != 0) {
+		if (_collisionAreas[_activeCollIndex].funcEnter != 0) {
 			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = (char *)totFileData +
-			    collisionAreas[activeCollIndex].
+			_vm->_global->_inter_execPtr = (char *)_totFileData +
+			    _collisionAreas[_activeCollIndex].
 			    funcEnter;
 
-			shouldPushColls = 1;
+			_shouldPushColls = 1;
 
-			collStackPos = collStackSize;
+			_collStackPos = _collStackSize;
 			_vm->_inter->funcBlock(0);
-			if (collStackPos != collStackSize)
+			if (_collStackPos != _collStackSize)
 				popCollisions();
-			shouldPushColls = 0;
+			_shouldPushColls = 0;
 			_vm->_global->_inter_execPtr = savedIP;
 		}
 
 		WRITE_VAR(16, 0);
-		activeCollResId = 0;
+		_activeCollResId = 0;
 	}
-	while (activeCollResId == 0 && !_vm->_inter->_terminate);
+	while (_activeCollResId == 0 && !_vm->_inter->_terminate);
 
-	if (((uint16)activeCollResId & ~0x8000) == collResId) {
-		collStackPos = 0;
+	if (((uint16)_activeCollResId & ~0x8000) == collResId) {
+		_collStackPos = 0;
 		var_24 = 0;
 		var_26 = 1;
 		for (i = 0; i < 250; i++) {
-			if (collisionAreas[i].left == -1)
+			if (_collisionAreas[i].left == -1)
 				continue;
 
-			if ((collisionAreas[i].id & 0x8000) == 0)
+			if ((_collisionAreas[i].id & 0x8000) == 0)
 				continue;
 
-			if ((collisionAreas[i].flags & 0x0f) < 3)
+			if ((_collisionAreas[i].flags & 0x0f) < 3)
 				continue;
 
-			if ((collisionAreas[i].flags & 0x0f) > 10)
+			if ((_collisionAreas[i].flags & 0x0f) > 10)
 				continue;
 
-			if ((collisionAreas[i].flags & 0x0f) > 8) {
-				strcpy(tempStr,
-				    _vm->_global->_inter_variables + collisionAreas[i].key);
+			if ((_collisionAreas[i].flags & 0x0f) > 8) {
+				strcpy(_tempStr,
+				    _vm->_global->_inter_variables + _collisionAreas[i].key);
 				while ((pos =
-					_vm->_util->strstr(" ", tempStr)) != 0) {
-					_vm->_util->cutFromStr(tempStr, pos - 1, 1);
-					pos = _vm->_util->strstr(" ", tempStr);
+					_vm->_util->strstr(" ", _tempStr)) != 0) {
+					_vm->_util->cutFromStr(_tempStr, pos - 1, 1);
+					pos = _vm->_util->strstr(" ", _tempStr);
 				}
-				strcpy(_vm->_global->_inter_variables + collisionAreas[i].key, tempStr);
+				strcpy(_vm->_global->_inter_variables + _collisionAreas[i].key, _tempStr);
 			}
 
-			if ((collisionAreas[i].flags & 0x0f) >= 5 &&
-			    (collisionAreas[i].flags & 0x0f) <= 8) {
+			if ((_collisionAreas[i].flags & 0x0f) >= 5 &&
+			    (_collisionAreas[i].flags & 0x0f) <= 8) {
 				str = descArray[var_24].ptr;
 
-				strcpy(tempStr, _vm->_global->_inter_variables + collisionAreas[i].key);
+				strcpy(_tempStr, _vm->_global->_inter_variables + _collisionAreas[i].key);
 
-				if ((collisionAreas[i].flags & 0x0f) < 7)
-					_vm->_util->prepareStr(tempStr);
+				if ((_collisionAreas[i].flags & 0x0f) < 7)
+					_vm->_util->prepareStr(_tempStr);
 
 				pos = 0;
 				do {
-					strcpy(collStr, str);
+					strcpy(_collStr, str);
 					pos += strlen(str) + 1;
 
 					str += strlen(str) + 1;
 
-					if ((collisionAreas[i].flags & 0x0f) < 7)
-						_vm->_util->prepareStr(collStr);
+					if ((_collisionAreas[i].flags & 0x0f) < 7)
+						_vm->_util->prepareStr(_collStr);
 
-					if (strcmp(tempStr, collStr) == 0) {
+					if (strcmp(_tempStr, _collStr) == 0) {
 						VAR(17)++;
 						WRITE_VAR(17 + var_26, 1);
 						break;
 					}
 				} while (READ_LE_UINT16(descArray[var_24].ptr - 2) > pos);
-				collStackPos++;
+				_collStackPos++;
 			} else {
 				VAR(17 + var_26) = 2;
 			}
@@ -1587,7 +1587,7 @@ void Game::collisionsBlock(void) {
 			var_26++;
 		}
 
-		if (collStackPos != (int16)VAR(17))
+		if (_collStackPos != (int16)VAR(17))
 			WRITE_VAR(17, 0);
 		else
 			WRITE_VAR(17, 1);
@@ -1595,15 +1595,15 @@ void Game::collisionsBlock(void) {
 
 	savedIP = 0;
 	if (!_vm->_inter->_terminate) {
-		savedIP = (char *)totFileData +
-		    collisionAreas[activeCollIndex].funcLeave;
+		savedIP = (char *)_totFileData +
+		    _collisionAreas[_activeCollIndex].funcLeave;
 
 		WRITE_VAR(2, _vm->_global->_inter_mouseX);
 		WRITE_VAR(3, _vm->_global->_inter_mouseY);
-		WRITE_VAR(4, mouseButtons);
+		WRITE_VAR(4, _mouseButtons);
 
 		if (VAR(16) == 0) {
-			WRITE_VAR(16, array[(uint16)activeCollResId & ~0x8000]);
+			WRITE_VAR(16, array[(uint16)_activeCollResId & ~0x8000]);
 		}
 	}
 
@@ -1618,47 +1618,47 @@ void Game::prepareStart(void) {
 
 	clearCollisions();
 
-	_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->unusedPalette2;
-	_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->unusedPalette1;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->vgaPalette;
+	_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
+	_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
-	_vm->_draw->backSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
+	_vm->_draw->_backSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
 
-	_vm->_video->fillRect(_vm->_draw->backSurface, 0, 0, 319, 199, 1);
-	_vm->_draw->frontSurface = _vm->_global->_pPrimarySurfDesc;
-	_vm->_video->fillRect(_vm->_draw->frontSurface, 0, 0, 319, 199, 1);
+	_vm->_video->fillRect(_vm->_draw->_backSurface, 0, 0, 319, 199, 1);
+	_vm->_draw->_frontSurface = _vm->_global->_pPrimarySurfDesc;
+	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0, 319, 199, 1);
 
 	_vm->_util->setMousePos(152, 92);
 
-	_vm->_draw->cursorX = 152;
+	_vm->_draw->_cursorX = 152;
 	_vm->_global->_inter_mouseX = 152;
 
-	_vm->_draw->cursorY = 92;
+	_vm->_draw->_cursorY = 92;
 	_vm->_global->_inter_mouseY = 92;
-	_vm->_draw->invalidatedCount = 0;
-	_vm->_draw->noInvalidated = 1;
-	_vm->_draw->applyPal = 0;
-	_vm->_draw->paletteCleared = 0;
-	_vm->_draw->cursorWidth = 16;
-	_vm->_draw->cursorHeight = 16;
-	_vm->_draw->transparentCursor = 1;
+	_vm->_draw->_invalidatedCount = 0;
+	_vm->_draw->_noInvalidated = 1;
+	_vm->_draw->_applyPal = 0;
+	_vm->_draw->_paletteCleared = 0;
+	_vm->_draw->_cursorWidth = 16;
+	_vm->_draw->_cursorHeight = 16;
+	_vm->_draw->_transparentCursor = 1;
 
 	for (i = 0; i < 40; i++) {
-		_vm->_draw->cursorAnimLow[i] = -1;
-		_vm->_draw->cursorAnimDelays[i] = 0;
-		_vm->_draw->cursorAnimHigh[i] = 0;
+		_vm->_draw->_cursorAnimLow[i] = -1;
+		_vm->_draw->_cursorAnimDelays[i] = 0;
+		_vm->_draw->_cursorAnimHigh[i] = 0;
 	}
 
-	_vm->_draw->cursorAnimLow[1] = 0;
-	_vm->_draw->cursorSprites = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 32, 16, 2);
-	_vm->_draw->cursorBack = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, 0);
-	_vm->_draw->renderFlags = 0;
-	_vm->_draw->backDeltaX = 0;
-	_vm->_draw->backDeltaY = 0;
+	_vm->_draw->_cursorAnimLow[1] = 0;
+	_vm->_draw->_cursorSprites = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 32, 16, 2);
+	_vm->_draw->_cursorBack = _vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, 0);
+	_vm->_draw->_renderFlags = 0;
+	_vm->_draw->_backDeltaX = 0;
+	_vm->_draw->_backDeltaY = 0;
 
-	startTimeKey = _vm->_util->getTimeKey();
+	_startTimeKey = _vm->_util->getTimeKey();
 }
 
 void Game::loadTotFile(char *path) {
@@ -1667,9 +1667,9 @@ void Game::loadTotFile(char *path) {
 	handle = _vm->_dataio->openData(path);
 	if (handle >= 0) {
 		_vm->_dataio->closeData(handle);
-		totFileData = _vm->_dataio->getData(path);
+		_totFileData = _vm->_dataio->getData(path);
 	} else {
-		totFileData = 0;
+		_totFileData = 0;
 	}
 }
 
@@ -1678,30 +1678,30 @@ void Game::loadExtTable(void) {
 
 	// Function is correct. [sev]
 
-	extHandle = _vm->_dataio->openData(curExtFile);
-	if (extHandle < 0)
+	_extHandle = _vm->_dataio->openData(_curExtFile);
+	if (_extHandle < 0)
 		return;
 
-	_vm->_dataio->readData(extHandle, (char *)&count, 2);
+	_vm->_dataio->readData(_extHandle, (char *)&count, 2);
 	count = FROM_LE_16(count);
 
-	_vm->_dataio->seekData(extHandle, 0, 0);
-	extTable = (ExtTable *)malloc(sizeof(ExtTable)
+	_vm->_dataio->seekData(_extHandle, 0, 0);
+	_extTable = (ExtTable *)malloc(sizeof(ExtTable)
 	    + sizeof(ExtItem) * count);
 
-	_vm->_dataio->readData(extHandle, (char *)&extTable->itemsCount, 2);
-	extTable->itemsCount = FROM_LE_16(extTable->itemsCount);
-	_vm->_dataio->readData(extHandle, (char *)&extTable->unknown, 1);
+	_vm->_dataio->readData(_extHandle, (char *)&_extTable->itemsCount, 2);
+	_extTable->itemsCount = FROM_LE_16(_extTable->itemsCount);
+	_vm->_dataio->readData(_extHandle, (char *)&_extTable->unknown, 1);
 
 	for (i = 0; i < count; i++) {
-		_vm->_dataio->readData(extHandle, (char *)&extTable->items[i].offset, 4);
-		extTable->items[i].offset = FROM_LE_32(extTable->items[i].offset);
-		_vm->_dataio->readData(extHandle, (char *)&extTable->items[i].size, 2);
-		extTable->items[i].size = FROM_LE_16(extTable->items[i].size);
-		_vm->_dataio->readData(extHandle, (char *)&extTable->items[i].width, 2);
-		extTable->items[i].width = FROM_LE_16(extTable->items[i].width);
-		_vm->_dataio->readData(extHandle, (char *)&extTable->items[i].height, 2);
-		extTable->items[i].height = FROM_LE_16(extTable->items[i].height);
+		_vm->_dataio->readData(_extHandle, (char *)&_extTable->items[i].offset, 4);
+		_extTable->items[i].offset = FROM_LE_32(_extTable->items[i].offset);
+		_vm->_dataio->readData(_extHandle, (char *)&_extTable->items[i].size, 2);
+		_extTable->items[i].size = FROM_LE_16(_extTable->items[i].size);
+		_vm->_dataio->readData(_extHandle, (char *)&_extTable->items[i].width, 2);
+		_extTable->items[i].width = FROM_LE_16(_extTable->items[i].width);
+		_vm->_dataio->readData(_extHandle, (char *)&_extTable->items[i].height, 2);
+		_extTable->items[i].height = FROM_LE_16(_extTable->items[i].height);
 	}
 }
 
@@ -1709,19 +1709,19 @@ void Game::loadImFile(void) {
 	char path[20];
 	int16 handle;
 
-	if (totFileData[0x3d] != 0 && totFileData[0x3b] == 0)
+	if (_totFileData[0x3d] != 0 && _totFileData[0x3b] == 0)
 		return;
 
 	strcpy(path, "commun.im1");
-	if (totFileData[0x3b] != 0)
-		path[strlen(path) - 1] = '0' + totFileData[0x3b];
+	if (_totFileData[0x3b] != 0)
+		path[strlen(path) - 1] = '0' + _totFileData[0x3b];
 
 	handle = _vm->_dataio->openData(path);
 	if (handle < 0)
 		return;
 
 	_vm->_dataio->closeData(handle);
-	imFileData = _vm->_dataio->getData(path);
+	_imFileData = _vm->_dataio->getData(path);
 }
 
 void Game::playTot(int16 skipPlay) {
@@ -1729,7 +1729,7 @@ void Game::playTot(int16 skipPlay) {
 	int16 *oldCaptureCounter;
 	int16 *oldBreakFrom;
 	int16 *oldNestLevel;
-	int16 captureCounter;
+	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
 	char needTextFree;
@@ -1747,16 +1747,16 @@ void Game::playTot(int16 skipPlay) {
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
-	_vm->_scenery->pCaptureCounter = &captureCounter;
-	strcpy(savedTotName, curTotFile);
+	_vm->_scenery->pCaptureCounter = &_captureCounter;
+	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay == 0) {
 		while (1) {
 			for (i = 0; i < 4; i++) {
-				_vm->_draw->fontToSprite[i].sprite = -1;
-				_vm->_draw->fontToSprite[i].base = -1;
-				_vm->_draw->fontToSprite[i].width = -1;
-				_vm->_draw->fontToSprite[i].height = -1;
+				_vm->_draw->_fontToSprite[i].sprite = -1;
+				_vm->_draw->_fontToSprite[i].base = -1;
+				_vm->_draw->_fontToSprite[i].width = -1;
+				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
 			_vm->_cdrom->stopPlaying();
@@ -1766,80 +1766,80 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_mult->zeroMultData();
 
 			for (i = 0; i < 20; i++)
-				_vm->_draw->spritesArray[i] = 0;
+				_vm->_draw->_spritesArray[i] = 0;
 
-			_vm->_draw->spritesArray[20] = _vm->_draw->frontSurface;
-			_vm->_draw->spritesArray[21] = _vm->_draw->backSurface;
-			_vm->_draw->spritesArray[23] = _vm->_draw->cursorSprites;
+			_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
+			_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
+			_vm->_draw->_spritesArray[23] = _vm->_draw->_cursorSprites;
 
 			for (i = 0; i < 20; i++)
-				soundSamples[i] = 0;
+				_soundSamples[i] = 0;
 
-			totTextData = 0;
-			totResourceTable = 0;
-			imFileData = 0;
-			extTable = 0;
-			extHandle = -1;
+			_totTextData = 0;
+			_totResourceTable = 0;
+			_imFileData = 0;
+			_extTable = 0;
+			_extHandle = -1;
 
 			needFreeResTable = 1;
 			needTextFree = 1;
 
-			totToLoad[0] = 0;
+			_totToLoad[0] = 0;
 
-			if (curTotFile[0] == 0 && totFileData == 0)
+			if (_curTotFile[0] == 0 && _totFileData == 0)
 				break;
 
-			loadTotFile(curTotFile);
-			if (totFileData == 0) {
+			loadTotFile(_curTotFile);
+			if (_totFileData == 0) {
 				_vm->_draw->blitCursor();
 				break;
 			}
 
-			strcpy(curImaFile, curTotFile);
-			strcpy(curExtFile, curTotFile);
+			strcpy(_curImaFile, _curTotFile);
+			strcpy(_curExtFile, _curTotFile);
 
-			curImaFile[strlen(curImaFile) - 4] = 0;
-			strcat(curImaFile, ".ima");
+			_curImaFile[strlen(_curImaFile) - 4] = 0;
+			strcat(_curImaFile, ".ima");
 
-			curExtFile[strlen(curExtFile) - 4] = 0;
-			strcat(curExtFile, ".ext");
+			_curExtFile[strlen(_curExtFile) - 4] = 0;
+			strcat(_curExtFile, ".ext");
 
-			debug(4, "IMA: %s", curImaFile);
-			debug(4, "EXT: %s", curExtFile);
+			debug(4, "IMA: %s", _curImaFile);
+			debug(4, "EXT: %s", _curExtFile);
 
-			filePtr = (char *)totFileData + 0x30;
+			filePtr = (char *)_totFileData + 0x30;
 
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
-				curPtr = totFileData;
-				totTextData =
+				curPtr = _totFileData;
+				_totTextData =
 				    (TotTextTable *) (curPtr +
-				    READ_LE_UINT32((char *)totFileData + 0x30));
+				    READ_LE_UINT32((char *)_totFileData + 0x30));
 
-				totTextData->itemsCount = (int16)READ_LE_UINT16(&totTextData->itemsCount);
+				_totTextData->itemsCount = (int16)READ_LE_UINT16(&_totTextData->itemsCount);
 
-				for (i = 0; i < totTextData->itemsCount; ++i) {
-					totTextData->items[i].offset = (int16)READ_LE_UINT16(&totTextData->items[i].offset);
-					totTextData->items[i].size = (int16)READ_LE_UINT16(&totTextData->items[i].size);
+				for (i = 0; i < _totTextData->itemsCount; ++i) {
+					_totTextData->items[i].offset = (int16)READ_LE_UINT16(&_totTextData->items[i].offset);
+					_totTextData->items[i].size = (int16)READ_LE_UINT16(&_totTextData->items[i].size);
 				}
 
 				needTextFree = 0;
 			}
 
-			filePtr = (char *)totFileData + 0x34;
+			filePtr = (char *)_totFileData + 0x34;
 			if (READ_LE_UINT32(filePtr) != (uint32)-1) {
-				curPtr = totFileData;
+				curPtr = _totFileData;
 
-				totResourceTable =
+				_totResourceTable =
 					(TotResTable *)(curPtr +
-				    READ_LE_UINT32((char *)totFileData + 0x34));
+				    READ_LE_UINT32((char *)_totFileData + 0x34));
 
-				totResourceTable->itemsCount = (int16)READ_LE_UINT16(&totResourceTable->itemsCount);
+				_totResourceTable->itemsCount = (int16)READ_LE_UINT16(&_totResourceTable->itemsCount);
 
-				for (i = 0; i < totResourceTable->itemsCount; ++i) {
-					totResourceTable->items[i].offset = (int32)READ_LE_UINT32(&totResourceTable->items[i].offset);
-					totResourceTable->items[i].size = (int16)READ_LE_UINT16(&totResourceTable->items[i].size);
-					totResourceTable->items[i].width = (int16)READ_LE_UINT16(&totResourceTable->items[i].width);
-					totResourceTable->items[i].height = (int16)READ_LE_UINT16(&totResourceTable->items[i].height);
+				for (i = 0; i < _totResourceTable->itemsCount; ++i) {
+					_totResourceTable->items[i].offset = (int32)READ_LE_UINT32(&_totResourceTable->items[i].offset);
+					_totResourceTable->items[i].size = (int16)READ_LE_UINT16(&_totResourceTable->items[i].size);
+					_totResourceTable->items[i].width = (int16)READ_LE_UINT16(&_totResourceTable->items[i].width);
+					_totResourceTable->items[i].height = (int16)READ_LE_UINT16(&_totResourceTable->items[i].height);
 				}
 
 				needFreeResTable = 0;
@@ -1848,16 +1848,16 @@ void Game::playTot(int16 skipPlay) {
 			loadImFile();
 			loadExtTable();
 
-			_vm->_global->_inter_animDataSize = READ_LE_UINT16((char *)totFileData + 0x38);
+			_vm->_global->_inter_animDataSize = READ_LE_UINT16((char *)_totFileData + 0x38);
 			if (_vm->_global->_inter_variables == 0) {
-				variablesCount = READ_LE_UINT32((char *)totFileData + 0x2c);
+				variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
 				_vm->_global->_inter_variables = (char *)malloc(variablesCount * 4);
 				for (i = 0; i < variablesCount; i++)
 					WRITE_VAR(i, 0);
 			}
 
-			_vm->_global->_inter_execPtr = (char *)totFileData;
-			_vm->_global->_inter_execPtr += READ_LE_UINT32((char *)totFileData + 0x64);
+			_vm->_global->_inter_execPtr = (char *)_totFileData;
+			_vm->_global->_inter_execPtr += READ_LE_UINT32((char *)_totFileData + 0x64);
 
 			_vm->_inter->renewTimeInVars();
 
@@ -1868,32 +1868,32 @@ void Game::playTot(int16 skipPlay) {
 
 			_vm->_inter->callSub(2);
 
-			if (totToLoad[0] != 0)
+			if (_totToLoad[0] != 0)
 				_vm->_inter->_terminate = false;
 
-			variablesCount = READ_LE_UINT32((char *)totFileData + 0x2c);
+			variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
 			_vm->_draw->blitInvalidated();
-			free(totFileData);
-			totFileData = 0;
+			free(_totFileData);
+			_totFileData = 0;
 
 			if (needTextFree)
-				free(totTextData);
-			totTextData = 0;
+				free(_totTextData);
+			_totTextData = 0;
 
 			if (needFreeResTable)
-				free(totResourceTable);
-			totResourceTable = 0;
+				free(_totResourceTable);
+			_totResourceTable = 0;
 
-			free(imFileData);
-			imFileData = 0;
+			free(_imFileData);
+			_imFileData = 0;
 
-			free(extTable);
-			extTable = 0;
+			free(_extTable);
+			_extTable = 0;
 
-			if (extHandle >= 0)
-				_vm->_dataio->closeData(extHandle);
+			if (_extHandle >= 0)
+				_vm->_dataio->closeData(_extHandle);
 
-			extHandle = -1;
+			_extHandle = -1;
 
 			for (i = 0; i < *_vm->_scenery->pCaptureCounter; i++)
 				capturePop(0);
@@ -1902,23 +1902,23 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_mult->freeAll();
 
 			for (i = 0; i < 20; i++) {
-				if (_vm->_draw->spritesArray[i] != 0)
-					_vm->_video->freeSurfDesc(_vm->_draw->spritesArray[i]);
-				_vm->_draw->spritesArray[i] = 0;
+				if (_vm->_draw->_spritesArray[i] != 0)
+					_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[i]);
+				_vm->_draw->_spritesArray[i] = 0;
 			}
 			_vm->_snd->stopSound(0);
 
 			for (i = 0; i < 20; i++)
 				freeSoundSlot(i);
 
-			if (totToLoad[0] == 0)
+			if (_totToLoad[0] == 0)
 				break;
 
-			strcpy(curTotFile, totToLoad);
+			strcpy(_curTotFile, _totToLoad);
 		}
 	}
 
-	strcpy(curTotFile, savedTotName);
+	strcpy(_curTotFile, savedTotName);
 
 	_vm->_inter->_nestLevel = oldNestLevel;
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
@@ -1927,15 +1927,15 @@ void Game::playTot(int16 skipPlay) {
 }
 
 void Game::start(void) {
-	collisionAreas = (Collision *)malloc(250 * sizeof(Collision));
+	_collisionAreas = (Collision *)malloc(250 * sizeof(Collision));
 	prepareStart();
 	playTot(0);
 
-	free(collisionAreas);
+	free(_collisionAreas);
 
-	_vm->_video->freeSurfDesc(_vm->_draw->cursorSprites);
-	_vm->_video->freeSurfDesc(_vm->_draw->cursorBack);
-	_vm->_video->freeSurfDesc(_vm->_draw->backSurface);
+	_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
+	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);
+	_vm->_video->freeSurfDesc(_vm->_draw->_backSurface);
 }
 
 } // End of namespace Gob

@@ -162,22 +162,22 @@ int16 Scenery::loadStatic(char search) {
 			    sprIndex;
 			spriteRefs[sprIndex]++;
 		} else {
-			for (sprIndex = 19; _vm->_draw->spritesArray[sprIndex] != 0;
+			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
 			    sprIndex--);
 
 			staticPictToSprite[7 * sceneryIndex + i] =
 			    sprIndex;
 			spriteRefs[sprIndex] = 1;
 			spriteResId[sprIndex] = sprResId;
-			_vm->_draw->spritesArray[sprIndex] =
+			_vm->_draw->_spritesArray[sprIndex] =
 			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 
-			_vm->_video->clearSurf(_vm->_draw->spritesArray[sprIndex]);
-			_vm->_draw->destSurface = sprIndex;
-			_vm->_draw->spriteLeft = sprResId;
-			_vm->_draw->transparency = 0;
-			_vm->_draw->destSpriteX = 0;
-			_vm->_draw->destSpriteY = 0;
+			_vm->_video->clearSurf(_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_draw->_destSurface = sprIndex;
+			_vm->_draw->_spriteLeft = sprResId;
+			_vm->_draw->_transparency = 0;
+			_vm->_draw->_destSpriteX = 0;
+			_vm->_draw->_destSpriteY = 0;
 			_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 		}
 	}
@@ -201,8 +201,8 @@ void Scenery::freeStatic(int16 index) {
 		spr = staticPictToSprite[index * 7 + i];
 		spriteRefs[spr]--;
 		if (spriteRefs[spr] == 0) {
-			_vm->_video->freeSurfDesc(_vm->_draw->spritesArray[spr]);
-			_vm->_draw->spritesArray[spr] = 0;
+			_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[spr]);
+			_vm->_draw->_spritesArray[spr] = 0;
 			spriteResId[spr] = -1;
 		}
 	}
@@ -239,12 +239,12 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 
 	layerPtr = ptr->layers[layer];
 
-	_vm->_draw->spriteLeft = layerPtr->backResId;
-	if (_vm->_draw->spriteLeft != -1) {
-		_vm->_draw->destSpriteX = 0;
-		_vm->_draw->destSpriteY = 0;
-		_vm->_draw->destSurface = 21;
-		_vm->_draw->transparency = 0;
+	_vm->_draw->_spriteLeft = layerPtr->backResId;
+	if (_vm->_draw->_spriteLeft != -1) {
+		_vm->_draw->_destSpriteX = 0;
+		_vm->_draw->_destSpriteY = 0;
+		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_transparency = 0;
 		_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 	}
 
@@ -258,21 +258,21 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 			pieceIndex = planePtr->pieceIndex;
 			pictIndex = planePtr->pictIndex - 1;
 
-			_vm->_draw->destSpriteX = planePtr->destX;
-			_vm->_draw->destSpriteY = planePtr->destY;
+			_vm->_draw->_destSpriteX = planePtr->destX;
+			_vm->_draw->_destSpriteY = planePtr->destY;
 			left = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].left);
 			right = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].right);
 			top = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].top);
 			bottom = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].bottom);
 
-			_vm->_draw->sourceSurface =
+			_vm->_draw->_sourceSurface =
 			    staticPictToSprite[scenery * 7 + pictIndex];
-			_vm->_draw->destSurface = 21;
-			_vm->_draw->spriteLeft = left;
-			_vm->_draw->spriteTop = top;
-			_vm->_draw->spriteRight = right - left + 1;
-			_vm->_draw->spriteBottom = bottom - top + 1;
-			_vm->_draw->transparency = planePtr->transp ? 3 : 0;
+			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_spriteLeft = left;
+			_vm->_draw->_spriteTop = top;
+			_vm->_draw->_spriteRight = right - left + 1;
+			_vm->_draw->_spriteBottom = bottom - top + 1;
+			_vm->_draw->_transparency = planePtr->transp ? 3 : 0;
 			_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		}
 	}
@@ -326,53 +326,53 @@ void Scenery::updateStatic(int16 orderFrom) {
 
 			pieceIndex = planePtr->pieceIndex;
 			pictIndex = planePtr->pictIndex - 1;
-			_vm->_draw->destSpriteX = planePtr->destX;
-			_vm->_draw->destSpriteY = planePtr->destY;
+			_vm->_draw->_destSpriteX = planePtr->destX;
+			_vm->_draw->_destSpriteY = planePtr->destY;
 
 			left = FROM_LE_16(pictPtr[pictIndex][pieceIndex].left);
 			right = FROM_LE_16(pictPtr[pictIndex][pieceIndex].right);
 			top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
 			bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
 
-			if (_vm->_draw->destSpriteX > toRedrawRight)
+			if (_vm->_draw->_destSpriteX > toRedrawRight)
 				continue;
 
-			if (_vm->_draw->destSpriteY > toRedrawBottom)
+			if (_vm->_draw->_destSpriteY > toRedrawBottom)
 				continue;
 
-			if (_vm->_draw->destSpriteX < toRedrawLeft) {
-				left += toRedrawLeft - _vm->_draw->destSpriteX;
-				_vm->_draw->destSpriteX = toRedrawLeft;
+			if (_vm->_draw->_destSpriteX < toRedrawLeft) {
+				left += toRedrawLeft - _vm->_draw->_destSpriteX;
+				_vm->_draw->_destSpriteX = toRedrawLeft;
 			}
 
-			if (_vm->_draw->destSpriteY < toRedrawTop) {
-				top += toRedrawTop - _vm->_draw->destSpriteY;
-				_vm->_draw->destSpriteY = toRedrawTop;
+			if (_vm->_draw->_destSpriteY < toRedrawTop) {
+				top += toRedrawTop - _vm->_draw->_destSpriteY;
+				_vm->_draw->_destSpriteY = toRedrawTop;
 			}
 
-			_vm->_draw->spriteLeft = left;
-			_vm->_draw->spriteTop = top;
-			_vm->_draw->spriteRight = right - left + 1;
-			_vm->_draw->spriteBottom = bottom - top + 1;
+			_vm->_draw->_spriteLeft = left;
+			_vm->_draw->_spriteTop = top;
+			_vm->_draw->_spriteRight = right - left + 1;
+			_vm->_draw->_spriteBottom = bottom - top + 1;
 
-			if (_vm->_draw->spriteRight <= 0 || _vm->_draw->spriteBottom <= 0)
+			if (_vm->_draw->_spriteRight <= 0 || _vm->_draw->_spriteBottom <= 0)
 				continue;
 
-			if (_vm->_draw->destSpriteX + _vm->_draw->spriteRight - 1 >
+			if (_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1 >
 			    toRedrawRight)
-				_vm->_draw->spriteRight =
-				    toRedrawRight - _vm->_draw->destSpriteX + 1;
+				_vm->_draw->_spriteRight =
+				    toRedrawRight - _vm->_draw->_destSpriteX + 1;
 
-			if (_vm->_draw->destSpriteY + _vm->_draw->spriteBottom - 1 >
+			if (_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1 >
 			    toRedrawBottom)
-				_vm->_draw->spriteBottom =
-				    toRedrawBottom - _vm->_draw->destSpriteY + 1;
+				_vm->_draw->_spriteBottom =
+				    toRedrawBottom - _vm->_draw->_destSpriteY + 1;
 
-			_vm->_draw->sourceSurface =
+			_vm->_draw->_sourceSurface =
 			    staticPictToSprite[curStatic * 7 +
 			    pictIndex];
-			_vm->_draw->destSurface = 21;
-			_vm->_draw->transparency = planePtr->transp ? 3 : 0;
+			_vm->_draw->_destSurface = 21;
+			_vm->_draw->_transparency = planePtr->transp ? 3 : 0;
 			_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		}
 	}
@@ -479,21 +479,21 @@ int16 Scenery::loadAnim(char search) {
 			animPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			spriteRefs[sprIndex]++;
 		} else {
-			for (sprIndex = 19; _vm->_draw->spritesArray[sprIndex] != 0;
+			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
 			    sprIndex--);
 
 			animPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			spriteRefs[sprIndex] = 1;
 			spriteResId[sprIndex] = sprResId;
-			_vm->_draw->spritesArray[sprIndex] =
+			_vm->_draw->_spritesArray[sprIndex] =
 			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 
-			_vm->_video->clearSurf(_vm->_draw->spritesArray[sprIndex]);
-			_vm->_draw->destSurface = sprIndex;
-			_vm->_draw->spriteLeft = sprResId;
-			_vm->_draw->transparency = 0;
-			_vm->_draw->destSpriteX = 0;
-			_vm->_draw->destSpriteY = 0;
+			_vm->_video->clearSurf(_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_draw->_destSurface = sprIndex;
+			_vm->_draw->_spriteLeft = sprResId;
+			_vm->_draw->_transparency = 0;
+			_vm->_draw->_destSpriteX = 0;
+			_vm->_draw->_destSpriteY = 0;
 			_vm->_draw->spriteOperation(DRAW_LOADSPRITE);
 		}
 	}
@@ -668,17 +668,17 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			continue;
 
 		if (doDraw) {
-			_vm->_draw->sourceSurface =
+			_vm->_draw->_sourceSurface =
 			    animPictToSprite[animation * 7 + pictIndex];
-			_vm->_draw->destSurface = 21;
+			_vm->_draw->_destSurface = 21;
 
-			_vm->_draw->spriteLeft = left;
-			_vm->_draw->spriteTop = top;
-			_vm->_draw->spriteRight = right - left + 1;
-			_vm->_draw->spriteBottom = bottom - top + 1;
-			_vm->_draw->destSpriteX = destX;
-			_vm->_draw->destSpriteY = destY;
-			_vm->_draw->transparency = transp;
+			_vm->_draw->_spriteLeft = left;
+			_vm->_draw->_spriteTop = top;
+			_vm->_draw->_spriteRight = right - left + 1;
+			_vm->_draw->_spriteBottom = bottom - top + 1;
+			_vm->_draw->_destSpriteX = destX;
+			_vm->_draw->_destSpriteY = destY;
+			_vm->_draw->_transparency = transp;
 			_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		}
 
@@ -723,9 +723,9 @@ void Scenery::freeAnim(int16 animation) {
 		spr = animPictToSprite[animation * 7 + i];
 		spriteRefs[spr]--;
 		if (spriteRefs[spr] == 0) {
-			_vm->_video->freeSurfDesc(_vm->_draw->spritesArray[spr]);
+			_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[spr]);
 
-			_vm->_draw->spritesArray[spr] = 0;
+			_vm->_draw->_spritesArray[spr] = 0;
 			spriteResId[spr] = -1;
 		}
 	}

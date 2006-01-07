@@ -254,15 +254,15 @@ void Mult::animate(void) {
 		if (pNeedRedraw[i] == 0 || objects[i].lastLeft == -1)
 			continue;
 
-		_vm->_draw->sourceSurface = 22;
-		_vm->_draw->destSurface = 21;
-		_vm->_draw->spriteLeft = pDirtyLefts[i] - _vm->_anim->_areaLeft;
-		_vm->_draw->spriteTop = pDirtyTops[i] - _vm->_anim->_areaTop;
-		_vm->_draw->spriteRight = pDirtyRights[i] - pDirtyLefts[i] + 1;
-		_vm->_draw->spriteBottom = pDirtyBottoms[i] - pDirtyTops[i] + 1;
-		_vm->_draw->destSpriteX = pDirtyLefts[i];
-		_vm->_draw->destSpriteY = pDirtyTops[i];
-		_vm->_draw->transparency = 0;
+		_vm->_draw->_sourceSurface = 22;
+		_vm->_draw->_destSurface = 21;
+		_vm->_draw->_spriteLeft = pDirtyLefts[i] - _vm->_anim->_areaLeft;
+		_vm->_draw->_spriteTop = pDirtyTops[i] - _vm->_anim->_areaTop;
+		_vm->_draw->_spriteRight = pDirtyRights[i] - pDirtyLefts[i] + 1;
+		_vm->_draw->_spriteBottom = pDirtyBottoms[i] - pDirtyTops[i] + 1;
+		_vm->_draw->_destSpriteX = pDirtyLefts[i];
+		_vm->_draw->_destSpriteY = pDirtyTops[i];
+		_vm->_draw->_transparency = 0;
 		_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		objects[i].lastLeft = -1;
 	}
@@ -470,10 +470,10 @@ void Mult::interInitMult(void) {
 		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
 		    _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
 
-		_vm->_draw->spritesArray[22] = _vm->_anim->_animSurf;
+		_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
 	}
 
-	_vm->_video->drawSprite(_vm->_draw->backSurface, _vm->_anim->_animSurf,
+	_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
 	    _vm->_anim->_areaLeft, _vm->_anim->_areaTop,
 	    _vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1,
 	    _vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1, 0, 0, 0);
@@ -577,7 +577,7 @@ char Mult::drawStatics(char stop) {
 
 		_vm->_scenery->curStatic = staticIndices[_vm->_scenery->curStatic];
 		_vm->_scenery->renderStatic(_vm->_scenery->curStatic, _vm->_scenery->curStaticLayer);
-		_vm->_video->drawSprite(_vm->_draw->backSurface, _vm->_anim->_animSurf,
+		_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
 		    0, 0, 319, 199, 0, 0, 0);
 	}
 	return stop;
@@ -811,13 +811,13 @@ char Mult::doSoundAnim(char stop) {
 			if (sndKey->cmd == 1) {
 				_vm->_snd->stopSound(0);
 				stop = 0;
-				playSound(_vm->_game->soundSamples[sndKey->soundIndex], sndKey->repCount,
+				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
 				    sndKey->freq, sndKey->channel);
 
 			} else if (sndKey->cmd == 4) {
 				_vm->_snd->stopSound(0);
 				stop = 0;
-				playSound(_vm->_game->soundSamples[sndKey->soundIndex], sndKey->repCount,
+				playSound(_vm->_game->_soundSamples[sndKey->soundIndex], sndKey->repCount,
 				    sndKey->freq, sndKey->channel);
 			}
 		} else {
@@ -888,9 +888,9 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 			_vm->_anim->_animSurf =
 			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, 320, 200, 0);
-			_vm->_draw->spritesArray[22] = _vm->_anim->_animSurf;
+			_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
 
-			_vm->_video->drawSprite(_vm->_draw->backSurface, _vm->_anim->_animSurf,
+			_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
 			    0, 0, 319, 199, 0, 0, 0);
 
 			animDataAllocated = 1;

@@ -168,22 +168,22 @@ memBlocks	= word ptr -2*/
 	_vm->_global->_mouseXShift = 1;
 	_vm->_global->_mouseYShift = 1;
 
-	_vm->_game->totTextData = 0;
-	_vm->_game->totFileData = 0;
-	_vm->_game->totResourceTable = 0;
+	_vm->_game->_totTextData = 0;
+	_vm->_game->_totFileData = 0;
+	_vm->_game->_totResourceTable = 0;
 	_vm->_global->_inter_variables = 0;
 	_palDesc = (Video::PalDesc *)malloc(12);
 
 	if (_vm->_global->_videoMode != 0x13)
 		error("initGame: Only 0x13 video mode is supported!");
 
-	_palDesc->vgaPal = _vm->_draw->vgaPalette;
-	_palDesc->unused1 = _vm->_draw->unusedPalette1;
-	_palDesc->unused2 = _vm->_draw->unusedPalette2;
+	_palDesc->vgaPal = _vm->_draw->_vgaPalette;
+	_palDesc->unused1 = _vm->_draw->_unusedPalette1;
+	_palDesc->unused2 = _vm->_draw->_unusedPalette2;
 	_vm->_video->setFullPalette(_palDesc);
 
 	for (i = 0; i < 4; i++)
-		_vm->_draw->fonts[i] = 0;
+		_vm->_draw->_fonts[i] = 0;
 
 	handle = _vm->_dataio->openData("intro.inf");
 
@@ -192,7 +192,7 @@ memBlocks	= word ptr -2*/
 			handle2 = _vm->_dataio->openData(_fontNames[i]);
 			if (handle2 >= 0) {
 				_vm->_dataio->closeData(handle2);
-				_vm->_draw->fonts[i] =
+				_vm->_draw->_fonts[i] =
 				    _vm->_util->loadFont(_fontNames[i]);
 			}
 		}
@@ -214,7 +214,7 @@ memBlocks	= word ptr -2*/
 			handle2 = _vm->_dataio->openData(buffer);
 			if (handle2 >= 0) {
 				_vm->_dataio->closeData(handle2);
-				_vm->_draw->fonts[i] = _vm->_util->loadFont(buffer);
+				_vm->_draw->_fonts[i] = _vm->_util->loadFont(buffer);
 			}
 
 			if (infPtr == infEnd)
@@ -247,7 +247,7 @@ memBlocks	= word ptr -2*/
 		_vm->_global->_inter_variables = (char *)malloc(varsCount * 4);
 		memset(_vm->_global->_inter_variables, 0, varsCount * 4);
 
-		strcpy(_vm->_game->curTotFile, buffer);
+		strcpy(_vm->_game->_curTotFile, buffer);
 
 		_vm->_cdrom->testCD(1, "GOB");
 		_vm->_cdrom->readLIC("gob.lic");
@@ -257,14 +257,14 @@ memBlocks	= word ptr -2*/
 		_vm->_cdrom->freeLICbuffer();
 
 		free(_vm->_global->_inter_variables);
-		free(_vm->_game->totFileData);
-		free(_vm->_game->totTextData);
-		free(_vm->_game->totResourceTable);
+		free(_vm->_game->_totFileData);
+		free(_vm->_game->_totTextData);
+		free(_vm->_game->_totResourceTable);
 	}
 
 	for (i = 0; i < 4; i++) {
-		if (_vm->_draw->fonts[i] != 0)
-			_vm->_util->freeFont(_vm->_draw->fonts[i]);
+		if (_vm->_draw->_fonts[i] != 0)
+			_vm->_util->freeFont(_vm->_draw->_fonts[i]);
 	}
 
 	free(_palDesc);

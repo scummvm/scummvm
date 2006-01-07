@@ -100,21 +100,21 @@ void Inter::animPalette(void) {
 	_vm->_video->waitRetrace(_vm->_global->_videoMode);
 
 	if (_animPalDir == -1) {
-		col = _vm->_draw->vgaSmallPalette[_animPalLowIndex];
+		col = _vm->_draw->_vgaSmallPalette[_animPalLowIndex];
 
 		for (i = _animPalLowIndex; i < _animPalHighIndex; i++)
-			_vm->_draw->vgaSmallPalette[i] = _vm->_draw->vgaSmallPalette[i + 1];
+			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i + 1];
 
-		_vm->_draw->vgaSmallPalette[_animPalHighIndex] = col;
+		_vm->_draw->_vgaSmallPalette[_animPalHighIndex] = col;
 	} else {
-		col = _vm->_draw->vgaSmallPalette[_animPalHighIndex];
+		col = _vm->_draw->_vgaSmallPalette[_animPalHighIndex];
 		for (i = _animPalHighIndex; i > _animPalLowIndex; i--)
-			_vm->_draw->vgaSmallPalette[i] = _vm->_draw->vgaSmallPalette[i - 1];
+			_vm->_draw->_vgaSmallPalette[i] = _vm->_draw->_vgaSmallPalette[i - 1];
 
-		_vm->_draw->vgaSmallPalette[_animPalLowIndex] = col;
+		_vm->_draw->_vgaSmallPalette[_animPalLowIndex] = col;
 	}
 
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->vgaSmallPalette;
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 
@@ -175,11 +175,11 @@ void Inter::funcBlock(int16 retFlag) {
 }
 
 void Inter::storeKey(int16 key) {
-	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->startTimeKey);
+	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
 
 	WRITE_VAR(2, _vm->_global->_inter_mouseX);
 	WRITE_VAR(3, _vm->_global->_inter_mouseY);
-	WRITE_VAR(4, _vm->_game->mouseButtons);
+	WRITE_VAR(4, _vm->_game->_mouseButtons);
 	WRITE_VAR(1, _vm->_snd->_playingSound);
 
 	if (key == 0x4800)
@@ -257,7 +257,7 @@ void Inter::checkSwitchTable(char **ppExec) {
 
 void Inter::callSub(int16 retFlag) {
 	int16 block;
-	while (_vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->totFileData) {
+	while (_vm->_global->_inter_execPtr != 0 && (char *)_vm->_global->_inter_execPtr != _vm->_game->_totFileData) {
 		block = *_vm->_global->_inter_execPtr;
 		if (block == 1) {
 			funcBlock(retFlag);
@@ -266,7 +266,7 @@ void Inter::callSub(int16 retFlag) {
 		}
 	}
 
-	if ((char *)_vm->_global->_inter_execPtr == _vm->_game->totFileData)
+	if ((char *)_vm->_global->_inter_execPtr == _vm->_game->_totFileData)
 		_terminate = true;
 }
 
