@@ -696,16 +696,6 @@ bool Sound::isMouthSyncOff(uint pos) {
 	return val;
 }
 
-
-int Sound::getSoundElapsedTime(int sound) const {
-	if (sound >= 10000) {
-		int channel = sound - 10000;
-		return _vm->_mixer->getSoundElapsedTime(_heSoundChannels[channel]);
-	} else {
-		return _vm->_mixer->getSoundElapsedTimeOfSoundID(sound);
-	}
-}
-
 int Sound::isSoundRunning(int sound) const {
 #ifndef DISABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)

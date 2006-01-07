@@ -124,7 +124,6 @@ public:
 	void startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle = NULL);
 	void stopTalkSound();
 	bool isMouthSyncOff(uint pos);
-	int getSoundElapsedTime(int sound) const;
 	int isSoundRunning(int sound) const;
 	bool isSoundInUse(int sound) const;
 	void stopSound(int sound);
