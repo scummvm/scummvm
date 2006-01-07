@@ -53,6 +53,7 @@ Smush::Smush() {
 	_channels = -1;
 	_freq = 22050;
 	_videoFinished = false;
+	_videoLooping = false;
 	_videoPause = true;
 	_updateNeeded = false;
 	_startPos = NULL;
