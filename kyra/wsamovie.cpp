@@ -36,7 +36,8 @@ void WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) 
 	uint32 flags = 0;
 	uint32 fileSize;
 	uint8 *p = _vm->resource()->fileData(filename, &fileSize);
-	assert(p);
+	if (!p)
+		return;
 	
 	const uint8 *wsaData = p;
 	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;

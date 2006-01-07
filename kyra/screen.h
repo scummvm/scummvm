@@ -78,6 +78,8 @@ public:
 	enum FontId {
 		FID_6_FNT = 0,
 		FID_8_FNT,
+		FID_CRED6_FNT,
+		FID_CRED8_FNT,
 		FID_NUM
 	};
 	
@@ -143,6 +145,8 @@ public:
 	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
 
+	const ScreenDim *_curDim;
+	
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
 private:
@@ -155,7 +159,6 @@ private:
 	uint8 *_pagePtrs[16];
 	uint8 *_screenPalette;
 	uint8 *_palettes[3];
-	const ScreenDim *_curDim;
 	FontId _currentFont;
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];

@@ -89,9 +89,9 @@ protected:
 	void s1_textDisplayEnable();
 	void s1_textDisplayDisable();
 	void s1_endOfScript();
-	void s1_miscUnk1();
+	void s1_loadIntroVRM();
 	void s1_playVocFile();
-	void s1_displayStory();
+	void s1_miscUnk3();
 	void s1_prefetchVocFile();
 
 	struct SeqMovie {
@@ -103,6 +103,7 @@ protected:
 	};
 
 	const uint8 *_seqData;
+	uint8 *_specialBuffer;
 	SeqMovie _seqMovies[12];
 	SeqLoop _seqLoopTable[20];
 	uint16 _seqWsaCurDecodePage;

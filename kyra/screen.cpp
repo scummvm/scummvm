@@ -235,8 +235,18 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 	debug(9, "Screen::copyToPage0(%d, %d, %d, 0x%X)", y, h, page, seqBuf);
 	assert(y + h <= SCREEN_H);
 	const uint8 *src = getPagePtr(page) + y * SCREEN_W;
-	memcpy(seqBuf, src, h * SCREEN_W);
-	memcpy(getPagePtr(0) + y * SCREEN_W, src, h * SCREEN_W);
+	uint8 *dstPage = getPagePtr(0) + y * SCREEN_W;
+	for (int i = 0; i < h; ++i) {
+		for (int x = 0; x < SCREEN_W; ++x) {
+			if (seqBuf[x] != src[x]) {
+				seqBuf[x] = src[x];
+				dstPage[x] = src[x];
+			}
+		}
+		src += SCREEN_W;
+		seqBuf += SCREEN_W;
+		dstPage += SCREEN_W;
+	}
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {

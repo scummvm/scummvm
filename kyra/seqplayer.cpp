@@ -46,6 +46,7 @@ SeqPlayer::SeqPlayer(KyraEngine* vm, OSystem* system) {
 	_res = vm->resource();
 
 	_copyViewOffs = false;
+	_specialBuffer = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i)
 		_handShapes[i] = 0;
@@ -180,6 +181,9 @@ void SeqPlayer::s1_copyWaitTicks() {
 void SeqPlayer::s1_shuffleScreen() {
 	_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
 	_screen->_curPage = 2;
+	if (_specialBuffer)
+		_screen->copyCurPageBlock(0, 16, 40, 128, _specialBuffer);
+	_screen->_curPage = 0;
 }
 
 void SeqPlayer::s1_copyView() {
@@ -187,7 +191,11 @@ void SeqPlayer::s1_copyView() {
 	if (!_copyViewOffs) {
 		y -= 8;
 	}
-	_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
+	if (_specialBuffer) {
+		_screen->copyToPage0(16, y, 3, _specialBuffer);
+	} else {
+		_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
+	}
 }
 
 void SeqPlayer::s1_loopInit() {
@@ -262,7 +270,7 @@ void SeqPlayer::s1_printTalkText() {
 	uint8 fillColor = *_seqData++;
 	int b;
 	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
-		if (_seqWsaCurDecodePage != 0) {
+		if (_seqWsaCurDecodePage != 0 && !_specialBuffer) {
 			b = 2;
 		} else {
 			b = 0;
@@ -271,7 +279,7 @@ void SeqPlayer::s1_printTalkText() {
 	}
 	_seqTalkTextPrinted = true;
 	_seqTalkTextRestored = false;
-	if (_seqWsaCurDecodePage != 0) {
+	if (_seqWsaCurDecodePage != 0 && !_specialBuffer) {
 		b = 2;
 	} else {
 		b = 0;
@@ -282,7 +290,7 @@ void SeqPlayer::s1_printTalkText() {
 void SeqPlayer::s1_restoreTalkText() {
 	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
 		int b;
-		if (_seqWsaCurDecodePage != 0) {
+		if (_seqWsaCurDecodePage != 0 && !_specialBuffer) {
 			b = 2;
 		} else {
 			b = 0;
@@ -409,7 +417,14 @@ void SeqPlayer::s1_allocTempBuffer() {
 	if (_vm->features() & GF_DEMO) {
 		_seqQuitFlag = true;
 	} else {
-		// allocate offscreen buffer, not needed
+		if (!_specialBuffer) {
+			_specialBuffer = new uint8[40960];
+			assert(_specialBuffer);
+			int page = _screen->_curPage;
+			_screen->_curPage = 0;
+			_screen->copyCurPageBlock(0, 0, 320, 128, _specialBuffer);
+			_screen->_curPage = page;
+		}
 	}
 }
 
@@ -425,8 +440,8 @@ void SeqPlayer::s1_endOfScript() {
 	_seqQuitFlag = true;
 }
 
-void SeqPlayer::s1_miscUnk1() {
-	warning("STUB: s1_miscUnk1");
+void SeqPlayer::s1_loadIntroVRM() {
+	_res->loadPakFile("INTRO.VRM");
 }
 
 void SeqPlayer::s1_playVocFile() {
@@ -437,9 +452,8 @@ void SeqPlayer::s1_playVocFile() {
 	_vm->snd_playVoiceFile(a);
 }
 
-void SeqPlayer::s1_displayStory() {
-	// nothing to do here since we handle it in
-	// KyraEngine::seq_introStory
+void SeqPlayer::s1_miscUnk3() {
+	warning("STUB: s1_miscUnk3");
 }
 
 void SeqPlayer::s1_prefetchVocFile() {
@@ -502,7 +516,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(2, s1_wsaPlayPrevFrame),
 		SEQOP(5, s1_drawShape),
 		SEQOP(3, s1_waitTicks),
-		SEQOP(3, s1_waitTicks),
+		SEQOP(3, s1_copyWaitTicks),
 		// 0x08
 		SEQOP(3, s1_copyWaitTicks),
 		SEQOP(1, s1_shuffleScreen),
@@ -535,9 +549,9 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(1, s1_textDisplayDisable),
 		// 0x20
 		SEQOP(1, s1_endOfScript),
-		SEQOP(1, s1_miscUnk1),
+		SEQOP(1, s1_loadIntroVRM),
 		SEQOP(2, s1_playVocFile),
-		SEQOP(1, s1_displayStory),
+		SEQOP(1, s1_miscUnk3),
 		// 0x24
 		SEQOP(2, s1_prefetchVocFile)
 	};
@@ -618,6 +632,8 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 
 		_screen->updateScreen();
 	}
+	delete [] _specialBuffer;
+	_specialBuffer = 0;
 	return seqSkippedFlag;
 }
 

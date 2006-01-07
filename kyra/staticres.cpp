@@ -26,7 +26,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 10
+#define RESFILE_VERSION 11
 
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
@@ -163,7 +163,7 @@ void KyraEngine::res_loadResources(int type) {
 	}
 	
 	
-	if ((type & RES_INTRO) || type == RES_ALL) {
+	if ((type & RES_INTRO) || (type & RES_OUTRO) || type == RES_ALL) {
 		loadRawFile(resFile, "FOREST.SEQ", _seq_Forest);
 		loadRawFile(resFile, "KALLAK-WRITING.SEQ", _seq_KallakWriting);
 		loadRawFile(resFile, "KYRANDIA-LOGO.SEQ", _seq_KyrandiaLogo);
@@ -180,6 +180,10 @@ void KyraEngine::res_loadResources(int type) {
 		loadTable(resFile, "INTRO-WSA.TXT", (byte***)&_seq_WSATable, &_seq_WSATable_Size);
 		
 		res_loadLangTable("INTRO-STRINGS.", &resFile, (byte***)&_seq_textsTable, &_seq_textsTable_Size, loadNativeLanguage);
+		
+		loadRawFile(resFile, "REUNION.SEQ", _seq_Reunion);
+		
+		res_loadLangTable("HOME.", &resFile, (byte***)&_homeString, &_homeString_Size, loadNativeLanguage);
 	}
 	
 	if ((type & RES_INGAME) || type == RES_ALL) {
@@ -241,6 +245,8 @@ void KyraEngine::res_loadResources(int type) {
 		
 		res_loadLangTable("FLASKFULL.", &resFile, (byte***)&_flaskFull, &_fullFlask_Size, loadNativeLanguage);
 		res_loadLangTable("FULLFLASK.", &resFile, (byte***)&_fullFlask, &_fullFlask_Size, loadNativeLanguage);
+		
+		res_loadLangTable("VERYCLEVER.", &resFile, (byte***)&_veryClever, &_veryClever_Size, loadNativeLanguage);
 	}
 
 #undef loadRooms
@@ -251,7 +257,7 @@ void KyraEngine::res_loadResources(int type) {
 
 void KyraEngine::res_unloadResources(int type) {
 	debug(9, "res_unloadResources(%d)", type);
-	if ((type & RES_INTRO) || type == RES_ALL) {
+	if ((type & RES_INTRO) || (type & RES_OUTRO) || type == RES_ALL) {
 		res_freeLangTable(&_seq_WSATable, &_seq_WSATable_Size);
 		res_freeLangTable(&_seq_CPSTable, &_seq_CPSTable_Size);
 		res_freeLangTable(&_seq_COLTable, &_seq_COLTable_Size);
@@ -267,6 +273,9 @@ void KyraEngine::res_unloadResources(int type) {
 		delete [] _seq_Demo2; _seq_Demo2 = 0;
 		delete [] _seq_Demo3; _seq_Demo3 = 0;
 		delete [] _seq_Demo4; _seq_Demo4 = 0;
+		
+		delete [] _seq_Reunion; _seq_Reunion = 0;
+		res_freeLangTable(&_homeString, &_homeString_Size);
 	}
 	
 	if ((type & RES_INGAME) || type == RES_ALL) {
@@ -350,6 +359,8 @@ void KyraEngine::res_unloadResources(int type) {
 		
 		res_freeLangTable(&_flaskFull, &_flaskFull_Size);
 		res_freeLangTable(&_fullFlask, &_fullFlask_Size);
+		
+		res_freeLangTable(&_veryClever, &_veryClever_Size);
 	}
 }
 

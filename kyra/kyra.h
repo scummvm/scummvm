@@ -530,7 +530,9 @@ protected:
 	void seq_playDrinkPotionAnim(int unk1, int unk2, int flags);
 	int seq_playEnd();
 	void seq_brandonToStone();
-
+	void seq_playEnding();
+	void seq_playCredits();
+	
 	void snd_startTrack();
 	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
@@ -541,7 +543,8 @@ protected:
 	enum {
 		RES_ALL = 0,
 		RES_INTRO = (1 << 0),
-		RES_INGAME = (1 << 1)
+		RES_INGAME = (1 << 1),
+		RES_OUTRO = (1 << 2)
 	};
 	
 	void res_loadResources(int type = RES_ALL);
@@ -749,6 +752,7 @@ protected:
 	uint8 *_seq_Demo2;
 	uint8 *_seq_Demo3;
 	uint8 *_seq_Demo4;
+	uint8 *_seq_Reunion;
 	
 	char **_seq_WSATable;
 	char **_seq_CPSTable;
@@ -776,6 +780,8 @@ protected:
 	char **_magicJewelString;
 	char **_flaskFull;
 	char **_fullFlask;
+	char **_veryClever;
+	char **_homeString;
 	
 	int _itemList_Size;
 	int _takenList_Size;
@@ -793,6 +799,8 @@ protected:
 	int _magicJewelString_Size;
 	int _flaskFull_Size;
 	int _fullFlask_Size;
+	int _veryClever_Size;
+	int _homeString_Size;
 	
 	char **_characterImageTable;
 	int _characterImageTableSize;

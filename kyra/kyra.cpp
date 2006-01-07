@@ -899,7 +899,7 @@ void KyraEngine::seq_intro() {
 	if (_features & GF_TALKIE) {
 		_res->unloadPakFile("INTRO.VRM");
 	}
-	res_unloadResources(RES_INTRO);
+	res_unloadResources(RES_INTRO | RES_OUTRO);
 }
 
 void KyraEngine::seq_introLogos() {
@@ -1616,7 +1616,7 @@ int KyraEngine::seq_playEnd() {
 			}
 			delete _finalA;
 			_finalA = 0;
-			// XXX play end sequence here
+			seq_playEnding();
 			return 1;
 		}
 	} else {
@@ -1641,6 +1641,50 @@ void KyraEngine::seq_brandonToStone() {
 	}
 	resetBrandonAnimSeqSize();
 	freeShapes123();
+	_screen->showMouse();
+}
+
+void KyraEngine::seq_playEnding() {
+	debug(9, "KyraEngine::seq_playEnding()");
+	_screen->hideMouse();
+	res_unloadResources(RES_INGAME);
+	res_loadResources(RES_OUTRO);
+	loadBitmap("REUNION.CPS", 3, 3, _screen->_currentPalette);
+	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+	_screen->_curPage = 0;
+	// XXX
+	assert(_homeString);
+	drawSentenceCommand(_homeString[0], 179);
+	_screen->_curPage = 0;
+	_screen->fadeToBlack();
+	_seq->playSequence(_seq_Reunion, false);
+	_screen->fadeToBlack();
+	_screen->showMouse();
+	seq_playCredits();
+}
+
+void KyraEngine::seq_playCredits() {
+	debug(9, "KyraEngine::seq_playCredits()");
+	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	_screen->hideMouse();
+	uint32 sz = 0;
+	if (_features & GF_FLOPPY) {
+		_screen->loadFont(Screen::FID_CRED6_FNT, _res->fileData("CREDIT6.FNT", &sz));
+		_screen->loadFont(Screen::FID_CRED8_FNT, _res->fileData("CREDIT8.FNT", &sz));
+	}
+	loadBitmap("CHALET.CPS", 2, 2, _screen->_currentPalette);
+	_screen->setScreenPalette(_screen->_currentPalette);
+	_screen->setCurPage(0);
+	_screen->clearCurPage();
+	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+	_screen->setTextColorMap(colorMap);
+	_screen->_charWidth = -1;
+	// delete
+	_screen->updateScreen();
+	// XXX
+	waitTicks(120); // wait until user presses escape normally
+	_screen->fadeToBlack();
+	_screen->clearCurPage();
 	_screen->showMouse();
 }
 
@@ -4673,8 +4717,8 @@ int KyraEngine::handleMalcolmFlag() {
 			if (!_beadStateVar) {
 				handleBeadState();
 				_screen->bitBlitRects();
-				//assert(_veryClever);
-				//_text->printTalkTextMessage(_veryClever, 60, 31, 5, 0, 2);
+				assert(_veryClever);
+				_text->printTalkTextMessage(_veryClever[0], 60, 31, 5, 0, 2);
 				timer2 = _system->getMillis() + 180 * _tickLength;
 				_malcolmFlag = 11;
 			}
