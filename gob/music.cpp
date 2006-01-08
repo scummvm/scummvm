@@ -178,7 +178,7 @@ void Music::setVoice(byte voice, byte instr, bool set) {
 			writeOPL(0xE0 | channel, (strct[26] & 3));
 		else
 			writeOPL(0xE0 | channel, (strct[14] & 3));
-		if (i & set)
+		if (i && set)
 			writeOPL(0x40 | channel, 0);
 	}
 }
