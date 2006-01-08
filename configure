@@ -55,7 +55,7 @@ _build_sword2=yes
 _build_queen=yes
 _build_saga=yes
 _build_gob=yes
-_build_kyra=no
+_build_kyra=yes
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -299,7 +299,7 @@ Optional Features:
   --disable-queen          don't build the Flight of the Amazon Queen engine
   --disable-saga           don't build the SAGA engine
   --disable-gob            don't build the Gobli*ns engine
-  --enable-kyra            build the Legend of Kyrandia engine
+  --disable-kyra           don't build the Legend of Kyrandia engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -363,7 +363,7 @@ for ac_option in $@; do
       --disable-queen)          _build_queen=no ;;
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
-      --enable-kyra)            _build_kyra=yes ;;
+      --disable-kyra)            _build_kyra=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
       --disable-alsa)           _alsa=no        ;;
