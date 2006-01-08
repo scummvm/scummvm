@@ -20,9 +20,10 @@ Table of Contents:
  * 3.5 Beneath a Steel Sky notes
  * 3.6 Inherit the Earth
  * 3.7 Gobliiins
- * 3.8 Maniac Mansion NES notes
- * 3.9 Commodore64 games notes
- * 3.10 Known Bugs
+ * 3.8 The Legend of Kyrandia notes
+ * 3.9 Maniac Mansion NES notes
+ * 3.10 Commodore64 games notes
+ * 3.11 Known Bugs
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -160,6 +161,7 @@ Other Games:
      Flight of the Amazon Queen                      [queen]
      Gobliiins                                       [gob1]
      Inherit the Earth: Quest for the Orb            [ite]
+     The Legend of Kyrandia                          [kyra1]
      Simon the Sorcerer 1                            [simon1]
      Simon the Sorcerer 2                            [simon2]
 
@@ -282,7 +284,17 @@ The CD version of Gobliiins contains one big audio track which you need to rip
 (See the section on using compressed audiofiles) and copy into the game
 directory.
 
-3.8) Maniac Mansion NES notes
+3.8) The Legend of Kyrandia notes
+---- ----------------------------
+To run The Legend of Kyrandia under ScummVM you need the kyra.dat file,
+which can be found in the Downloads section of the ScummVM website.
+
+Please note that as the menu system is not yet implemented, the
+only way of saving and loading is to use Alt+0-9 (for saving) and
+Ctrl+0-9 (for loading). Additionally, you must use 'q' to exit the
+game.
+
+3.9) Maniac Mansion NES notes
 ---- ------------------------
 Supported versions are English USA (E), French (F), Swedish (SW) and 
 European (U). ScummVM requires just PRG section to run and not whole ROM.
@@ -306,7 +318,7 @@ Most common mistakes which prevent game from running:
 Also it is possible to extract separate LFL files from PRG section. Use
 extract_mm_nes utility from tools package.
 
-3.9) Commodore64 games notes
+3.10) Commodore64 games notes
 ---- -----------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Either use extract_mm_c64 (but then game will not be autodetected)
@@ -314,7 +326,7 @@ or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
 respectively. If you add the game manually, make sure that platform is set to
 Commodore64.
 
-3.10) Known Problems in ScummVM 0.9.0CVS
+3.11) Known Problems in ScummVM 0.9.0CVS
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
@@ -671,6 +683,11 @@ simon games.
         v                      - Switch between subtitles only and
                                  combined speech & subtitles
                                  [Simon the Sorcerer 2 only]
+
+    The Legend of Kyrandia:
+        Ctrl 0-9 and Alt 0-9  -  Load and save game state
+        d                     -  Starts the debugger
+        q                     -  Exits the game
 
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
