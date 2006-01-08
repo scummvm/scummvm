@@ -64,10 +64,6 @@ void KyraEngine::loadGame(const char *fileName) {
 			warning("can not load cdrom savefile for this (non cdrom) gameversion!");
 			delete in;
 			return;
-		} else {
-			warning("unknown savefile!");
-			delete in;
-			return;
 		}
 	} else {
 		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
