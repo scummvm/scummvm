@@ -419,13 +419,6 @@ void ScummEngine::CHARSET_1() {
 			break;
 		}
 
-		// FIXME: This is a workaround for bug #864030: In COMI, some text
-		// contains ASCII character 11 = 0xB. It's not quite clear what it is
-		// good for; so for now we just ignore it, which seems to match the
-		// original engine (BTW, traditionally, this is a 'vertical tab').
-		if (c == 0x0B)
-			continue;
-
 		if (c == 13) {
 		newLine:;
 			_charset->_nextLeft = _string[0].xpos;
@@ -895,6 +888,15 @@ void ScummEngine_v6::drawBlastTexts() {
 
 			do {
 				c = *buf++;
+				
+				// FIXME: This is a workaround for bugs #864030 and #1399843:
+				// In COMI, some text contains ASCII character 11 = 0xB. It's
+				// not quite clear what it is good for; so for now we just ignore
+				// it, which seems to match the original engine (BTW, traditionally,
+				// this is a 'vertical tab').
+				if (c == 0x0B)
+					continue;
+				
 				if (c != 0 && c != 0xFF && c != '\n') {
 					if (c & 0x80 && _useCJKMode) {
 						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
