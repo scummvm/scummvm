@@ -70,6 +70,8 @@ static const Gob::GobGameSettings gob_games[] = {
 	{"gob1", "Gobliiins (Amiga)", Gob::GF_GOB1, "baf88a95928edb3f51067983f2dffa93"},
 
 	{"gob1", "Gobliiins (Interactive Demo)", Gob::GF_GOB1, "4f5bf4b9e4c39ebb93579747fc678e97"},
+	
+	{"gob1", "Gobliiins (Mac)", Gob::GF_GOB1 | Gob::GF_MAC, "4c0e8ce4a2f66ee8226952ad3c6c1155"},
 
 #if 0
 	{"gob2", "Gobliins 2 (DOS)", Gob::GF_GOB2, "abb5f762f9979d4253002de20f6e7b56"},
@@ -290,13 +292,14 @@ int GobEngine::init(GameDetector &detector) {
 	_scenery = new Scenery(this);
 	_gtimer = new GTimer();
 	_util = new Util(this);
-	_music = new Music(this);
 	if (_features & Gob::GF_GOB1)
 		_inter = new Inter_v1(this);
 	else if (_features & Gob::GF_GOB2)
 		_inter = new Inter_v2(this);
 	else
 		error("GobEngine::init(): Unknown version of game engine");
+	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1))
+		_music = new Music(this);
 
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);

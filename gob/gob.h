@@ -69,7 +69,8 @@ enum {
 	GF_GOB2 = 1 << 1,
 	GF_GOB3 = 1 << 2,
 	GF_WOODRUFF = 1 << 3,
-	GF_CD = 1 << 4
+	GF_CD = 1 << 4,
+	GF_MAC = 1 << 5
 };
 
 typedef struct GobGameSettings {

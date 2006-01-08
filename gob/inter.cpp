@@ -154,10 +154,10 @@ void Inter::funcBlock(int16 retFlag) {
 
 //		debug(4, "funcBlock(%d, %d)", cmd2, cmd);
 
-		if(cmd2 == 0)
+		if (cmd2 == 0)
 			cmd >>= 4;
 
-		if(executeFuncOpcode(cmd2, cmd, cmdCount, counter, retFlag))
+		if (executeFuncOpcode(cmd2, cmd, cmdCount, counter, retFlag))
 			return;
 
 		if (_breakFlag) {

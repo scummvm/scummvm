@@ -30,6 +30,7 @@
 #include "gob/mult.h"
 #include "gob/goblin.h"
 #include "gob/cdrom.h"
+#include "gob/music.h"
 
 namespace Gob {
 
@@ -1358,9 +1359,12 @@ void Inter_v1::o1_loadCurLayer(void) {
 }
 
 void Inter_v1::o1_playCDTrack(void) {
-	// Used in gob1 CD
 	evalExpr(0);
-	_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
+	if (_vm->_features & GF_MAC)
+		_vm->_music->playTrack(_vm->_global->_inter_resStr);
+	else
+		// Used in gob1 CD
+		_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
 }
 
 void Inter_v1::o1_getCDTrackPos(void) {
@@ -1379,8 +1383,11 @@ void Inter_v1::o1_getCDTrackPos(void) {
 }
 
 void Inter_v1::o1_stopCD(void) {
-	// Used in gob1 CD
-	_vm->_cdrom->stopPlaying();
+	if (_vm->_features & GF_MAC)
+		_vm->_music->stopPlay();
+	else
+		// Used in gob1 CD
+		_vm->_cdrom->stopPlaying();
 }
 
 void Inter_v1::o1_loadFontToSprite(void) {

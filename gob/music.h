@@ -42,6 +42,8 @@ public:
 	void setLooping(bool looping) { _looping = looping; }
 	void startPlay(void);
 	void stopPlay(void) { _playing = false; }
+	void playTrack(const char *trackname);
+	void playBgMusic(void);
 	bool loadMusic(const char *filename);
 	void unloadMusic(void);
 
@@ -55,6 +57,8 @@ public:
 	int getRate() const { return _rate; }
 	
 protected:
+	static const char *_tracks[][2];
+	static const char *_tracksToFiles[][2];
 	static const unsigned char _operators[];
 	static const unsigned char _volRegNums [];
 	FM_OPL *_opl;

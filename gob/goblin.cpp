@@ -32,6 +32,7 @@
 #include "gob/game.h"
 #include "gob/dataio.h"
 #include "gob/cdrom.h"
+#include "gob/music.h"
 
 namespace Gob {
 
@@ -3092,7 +3093,9 @@ void Goblin::interFunc(void) {
 	case 1003:
 		drawObjects();
 
-		if (_vm->_cdrom->getTrackPos() == -1)
+		if (_vm->_features & GF_MAC)
+			_vm->_music->playBgMusic();
+		else if (_vm->_cdrom->getTrackPos() == -1)
 			_vm->_cdrom->playBgMusic();
 		break;
 

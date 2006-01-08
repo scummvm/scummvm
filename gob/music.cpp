@@ -22,8 +22,44 @@
 
 #include "gob/music.h"
 #include "gob/gob.h"
+#include "gob/game.h"
 
 namespace Gob {
+
+const char *Music::_tracks[][2] = {
+	{"avt00.tot",  "mine"},
+	{"avt001.tot", "nuit"},
+	{"avt002.tot", "campagne"},
+	{"avt003.tot", "extsor1"},
+	{"avt004.tot", "interieure"},
+	{"avt005.tot", "zombie"},
+	{"avt006.tot", "zombie"},
+	{"avt007.tot", "campagne"},
+	{"avt008.tot", "campagne"},
+	{"avt009.tot", "extsor1"},
+	{"avt010.tot", "extsor1"},
+	{"avt011.tot", "interieure"},
+	{"avt012.tot", "zombie"},
+	{"avt014.tot", "nuit"},
+	{"avt015.tot", "interieure"},
+	{"avt016.tot", "statue"},
+	{"avt017.tot", "zombie"},
+	{"avt018.tot", "statue"},
+	{"avt019.tot", "mine"},
+	{"avt020.tot", "statue"},
+	{"avt021.tot", "mine"},
+	{"avt022.tot", "zombie"}
+};
+
+const char *Music::_tracksToFiles[][2] = {
+	{"campagne", "Musmac2.adl"},
+	{"extsor1", "Musmac3.adl"},
+	{"interieure", "Musmac4.adl"},
+	{"mine", "Musmac5.adl"},
+	{"nuit", "Musmac6.adl"},
+	{"statue", "Musmac2.adl"},
+	{"zombie", "Musmac3.adl"}
+};
 
 const unsigned char Music::_operators[] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
 const unsigned char Music::_volRegNums[] = { 
@@ -31,7 +67,6 @@ const unsigned char Music::_volRegNums[] = {
 	11, 12, 13,
 	19, 20, 21
 };
-
 
 Music::Music(GobEngine *vm) : _vm(vm) {
 	_data = 0;
@@ -71,7 +106,7 @@ void Music::premixerCall(int16 *buf, uint len) {
 			int16 *data = buf;
 			uint datalen = len;
 			while (datalen) {
-				if(_samplesTillPoll) {
+				if (_samplesTillPoll) {
 					render = (datalen > _samplesTillPoll) ? (_samplesTillPoll) : (datalen);
 					datalen -= render;
 					_samplesTillPoll -= render;
@@ -79,19 +114,19 @@ void Music::premixerCall(int16 *buf, uint len) {
 					data += render;
 				} else {
 					pollMusic();
-					if(_ended) {
+					if (_ended) {
 						memset(data, 0, datalen * sizeof(int16));
 						datalen = 0;
 					}
 				}
 			}
 		}
-		if(_ended) {
+		if (_ended) {
 			_first = true;
 			_ended = false;
 			_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 			_samplesTillPoll = 0;
-			if(_looping) {
+			if (_looping) {
 				reset();
 				setVoices();
 			}
@@ -347,6 +382,28 @@ void Music::startPlay(void) {
 		return;
 	
 	_playing = true;
+}
+
+void Music::playBgMusic(void) {
+	debug(2, "Music::playBgMusic()");
+	for (int i = 0; i < ARRAYSIZE(_tracks); i++)
+		if (!scumm_stricmp(_vm->_game->_curTotFile, _tracks[i][0])) {
+			playTrack(_tracks[i][1]);
+			break;
+		}
+}
+
+void Music::playTrack(const char *trackname) {
+	if (_playing) return;
+	
+	debug(2, "Music::playTrack()");
+	unloadMusic();
+	for (int i = 0; i < ARRAYSIZE(_tracksToFiles); i++)
+		if (!scumm_stricmp(trackname, _tracksToFiles[i][0])) {
+			loadMusic(_tracksToFiles[i][1]);
+			startPlay();
+			break;
+		}
 }
 
 bool Music::loadMusic(const char *filename) {

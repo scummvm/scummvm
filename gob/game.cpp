@@ -33,6 +33,7 @@
 #include "gob/util.h"
 #include "gob/goblin.h"
 #include "gob/cdrom.h"
+#include "gob/music.h"
 
 namespace Gob {
 
@@ -1759,7 +1760,10 @@ void Game::playTot(int16 skipPlay) {
 				_vm->_draw->_fontToSprite[i].height = -1;
 			}
 
-			_vm->_cdrom->stopPlaying();
+			if(_vm->_features & GF_MAC)
+				_vm->_music->stopPlay();
+			else
+				_vm->_cdrom->stopPlaying();
 			_vm->_draw->animateCursor(4);
 			_vm->_inter->initControlVars();
 			_vm->_mult->initAll();
