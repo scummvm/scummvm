@@ -26,7 +26,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#define CURRENT_VERSION 1
+#define CURRENT_VERSION 2
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
@@ -39,17 +39,39 @@ void KyraEngine::loadGame(const char *fileName) {
 	}
 
 	uint32 type = in->readUint32BE();
-	if (type != MKID('KYRA'))
+	if (type != MKID('KYRA')) {
+		warning("No Kyrandia 1 savefile header");
+		delete in;
 		return;
+	}
 	uint32 version = in->readUint32BE();
-	if (version < CURRENT_VERSION) {
+	if (version > CURRENT_VERSION) {
 		warning("Savegame is not the right version (%d)", version);
 		delete in;
 		return;
 	}
-
+	
 	char saveName[31];
 	in->read(saveName, 31);
+
+	if (version >= 2) {
+		uint32 gameFlags = in->readUint32BE();
+		if ((gameFlags & GF_FLOPPY) && !(_features & GF_FLOPPY)) {
+			warning("can not load floppy savefile for this (non floppy) gameversion!");
+			delete in;
+			return;
+		} else if ((gameFlags & GF_TALKIE) && !(_features & GF_TALKIE)) {
+			warning("can not load cdrom savefile for this (non cdrom) gameversion!");
+			delete in;
+			return;
+		} else {
+			warning("unknown savefile!");
+			delete in;
+			return;
+		}
+	} else {
+		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
+	}
 
 	int brandonX = 0, brandonY = 0;
 	for (int i = 0; i < 11; i++) {
@@ -131,7 +153,7 @@ void KyraEngine::loadGame(const char *fileName) {
 			_roomTable[sceneId].itemsTable[i] = in->readByte();
 			_roomTable[sceneId].itemsXPos[i] = in->readUint16BE();
 			_roomTable[sceneId].itemsYPos[i] = in->readUint16BE();
-			_roomTable[sceneId].needInit[i] = in->readByte();			
+			_roomTable[sceneId].needInit[i] = in->readByte();
 		}
 	}
 	
@@ -197,6 +219,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint32BE(MKID('KYRA'));
 	out->writeUint32BE(CURRENT_VERSION);
 	out->write(saveName, 31);
+	out->writeUint32BE(_features);
 
 	for (int i = 0; i < 11; i++) {
 		out->writeUint16BE(_characterList[i].sceneId);
