@@ -191,7 +191,7 @@ void SeqPlayer::s1_copyView() {
 	if (!_copyViewOffs) {
 		y -= 8;
 	}
-	if (_specialBuffer) {
+	if (_specialBuffer && !_copyViewOffs) {
 		_screen->copyToPage0(16, y, 3, _specialBuffer);
 	} else {
 		_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
@@ -516,7 +516,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(2, s1_wsaPlayPrevFrame),
 		SEQOP(5, s1_drawShape),
 		SEQOP(3, s1_waitTicks),
-		SEQOP(3, s1_copyWaitTicks),
+		SEQOP(3, s1_waitTicks),
 		// 0x08
 		SEQOP(3, s1_copyWaitTicks),
 		SEQOP(1, s1_shuffleScreen),
@@ -524,7 +524,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(2, s1_loopInit),
 		// 0x0C
 		SEQOP(4, s1_loopInc),
-		SEQOP(4, s1_loopInc), // Again?
+		SEQOP(4, s1_loopInc),
 		SEQOP(2, s1_skip),
 		SEQOP(2, s1_loadPalette),
 		// 0x10
