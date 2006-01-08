@@ -88,7 +88,7 @@ void Sprites::setupSceneAnims() {
 			data += 4;
 			_anims[i].y = READ_LE_UINT16(data);
 			data += 4;
-			_anims[i].width = *(data) + 1;
+			_anims[i].width = *(data)/8 + 1;
 			data += 4;
 			_anims[i].height = *(data);
 			data += 4;

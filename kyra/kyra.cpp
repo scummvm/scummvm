@@ -591,7 +591,7 @@ void KyraEngine::delay(uint32 amount, bool update) {
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 'q' || event.kbd.keycode == 27) {
+				if (event.kbd.keycode == 'q') {
 					_quitFlag = true;
 				} else if (event.kbd.keycode == 'd' && !_debugger->isAttached()) {
 					_debugger->attach();
