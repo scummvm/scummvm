@@ -417,7 +417,7 @@ void SeqPlayer::s1_allocTempBuffer() {
 	if (_vm->features() & GF_DEMO) {
 		_seqQuitFlag = true;
 	} else {
-		if (!_specialBuffer) {
+		if (!_specialBuffer && !_copyViewOffs) {
 			_specialBuffer = new uint8[40960];
 			assert(_specialBuffer);
 			int page = _screen->_curPage;

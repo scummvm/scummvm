@@ -2703,7 +2703,7 @@ void KyraEngine::initAnimStateList() {
 
 void KyraEngine::initSceneObjectList(int brandonAlive) {
 	debug(9, "KyraEngine::initSceneObjectList(%d)", brandonAlive);
-	for (int i = 0; i < 31; ++i) {
+	for (int i = 0; i < 28; ++i) {
 		_animator->actors()[i].active = 0;
 	}
 	

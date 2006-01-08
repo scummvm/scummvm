@@ -257,7 +257,7 @@ void KyraEngine::res_loadResources(int type) {
 
 void KyraEngine::res_unloadResources(int type) {
 	debug(9, "res_unloadResources(%d)", type);
-	if ((type & RES_INTRO) || (type & RES_OUTRO) || type == RES_ALL) {
+	if ((type & RES_INTRO) || (type & RES_OUTRO) || type & RES_ALL) {
 		res_freeLangTable(&_seq_WSATable, &_seq_WSATable_Size);
 		res_freeLangTable(&_seq_CPSTable, &_seq_CPSTable_Size);
 		res_freeLangTable(&_seq_COLTable, &_seq_COLTable_Size);
@@ -278,7 +278,7 @@ void KyraEngine::res_unloadResources(int type) {
 		res_freeLangTable(&_homeString, &_homeString_Size);
 	}
 	
-	if ((type & RES_INGAME) || type == RES_ALL) {
+	if ((type & RES_INGAME) || type & RES_ALL) {
 		res_freeLangTable(&_roomFilenameTable, &_roomFilenameTableSize);
 				
 		delete [] _roomTable; _roomTable = 0;
