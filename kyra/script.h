@@ -69,11 +69,10 @@ protected:
 	bool loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const uint32 chunk, byte *loadTo, uint32 ptrSize) const;
 	
 	KyraEngine *_vm;
-	ScriptState *_curScript;
 	int16 _parameter;
 	bool _continue;
 
-	typedef void (ScriptHelper::*CommandProc)();
+	typedef void (ScriptHelper::*CommandProc)(ScriptState*);
 	struct CommandEntry {
 		CommandProc proc;
 		const char* desc;
@@ -81,25 +80,25 @@ protected:
 	
 	const CommandEntry *_commands;
 private:
-	void c1_jmpTo();
-	void c1_setRetValue();
-	void c1_pushRetOrPos();
-	void c1_push();
+	void c1_jmpTo(ScriptState*);
+	void c1_setRetValue(ScriptState*);
+	void c1_pushRetOrPos(ScriptState*);
+	void c1_push(ScriptState*);
 	//void c1_push(); same as 03
-	void c1_pushVar();
-	void c1_pushBPNeg();
-	void c1_pushBPAdd();
-	void c1_popRetOrPos();
-	void c1_popVar();
-	void c1_popBPNeg();
-	void c1_popBPAdd();
-	void c1_addSP();
-	void c1_subSP();
-	void c1_execOpcode();
-	void c1_ifNotJmp();
-	void c1_negate();
-	void c1_eval();
-	void c1_setRetAndJmp();
+	void c1_pushVar(ScriptState*);
+	void c1_pushBPNeg(ScriptState*);
+	void c1_pushBPAdd(ScriptState*);
+	void c1_popRetOrPos(ScriptState*);
+	void c1_popVar(ScriptState*);
+	void c1_popBPNeg(ScriptState*);
+	void c1_popBPAdd(ScriptState*);
+	void c1_addSP(ScriptState*);
+	void c1_subSP(ScriptState*);
+	void c1_execOpcode(ScriptState*);
+	void c1_ifNotJmp(ScriptState*);
+	void c1_negate(ScriptState*);
+	void c1_eval(ScriptState*);
+	void c1_setRetAndJmp(ScriptState*);
 };
 } // end of namespace Kyra
 

@@ -192,15 +192,14 @@ bool ScriptHelper::validScript(ScriptState *script) {
 }
 
 bool ScriptHelper::runScript(ScriptState *script) {
-	_curScript = script;
 	_parameter = 0;
 	_continue = true;
 	
-	if (!_curScript->ip) {
+	if (!script->ip) {
 		return false;
 	}
 	
-	int16 code = READ_BE_UINT16(_curScript->ip); _curScript->ip += 2;
+	int16 code = READ_BE_UINT16(script->ip); script->ip += 2;
 	int16 opcode = (code >> 8) & 0x1F;
 
 	if (code & 0x8000) {
@@ -209,7 +208,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	} else if (code & 0x4000) {
 		_parameter = (int8)(code);
 	} else if (code & 0x2000) {
-		_parameter = READ_BE_UINT16(_curScript->ip); _curScript->ip += 2;
+		_parameter = READ_BE_UINT16(script->ip); script->ip += 2;
 	} else {
 		_parameter = 0;
 	}
@@ -218,10 +217,9 @@ bool ScriptHelper::runScript(ScriptState *script) {
 		error("Script unknown command: %d", opcode);
 	} else {
 		debug(5, "%s(%d)", _commands[opcode].desc, _parameter);
-		(this->*(_commands[opcode].proc))();
+		(this->*(_commands[opcode].proc))(script);
 	}
 	
-	_curScript = 0;
 	return _continue;
 }
 
@@ -299,123 +297,125 @@ bool ScriptHelper::loadIFFBlock(byte *start, byte *&data, uint32 maxSize, const 
 #pragma mark - Command implementations
 #pragma mark -
 
-void ScriptHelper::c1_jmpTo() {
-	_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
+void ScriptHelper::c1_jmpTo(ScriptState* script) {
+	script->ip = script->dataPtr->data + (_parameter << 1);
 }
 
-void ScriptHelper::c1_setRetValue() {
-	_curScript->retValue = _parameter;
+void ScriptHelper::c1_setRetValue(ScriptState* script) {
+	script->retValue = _parameter;
 }
 
-void ScriptHelper::c1_pushRetOrPos() {
+void ScriptHelper::c1_pushRetOrPos(ScriptState* script) {
 	switch (_parameter) {
 		case 0:
-			_curScript->stack[--_curScript->sp] = _curScript->retValue;
+			script->stack[--script->sp] = script->retValue;
 		break;
 		
 		case 1:
-			_curScript->stack[--_curScript->sp] = (_curScript->ip - _curScript->dataPtr->data) / 2 + 1;
-			_curScript->stack[--_curScript->sp] = _curScript->bp;
-			_curScript->bp = _curScript->sp + 2;
+			script->stack[--script->sp] = (script->ip - script->dataPtr->data) / 2 + 1;
+			script->stack[--script->sp] = script->bp;
+			script->bp = script->sp + 2;
 		break;
 		
 		default:
 			_continue = false;
-			_curScript->ip = 0;
+			script->ip = 0;
 		break;
 	}
 }
 
-void ScriptHelper::c1_push() {
-	_curScript->stack[--_curScript->sp] = _parameter;
+void ScriptHelper::c1_push(ScriptState* script) {
+	script->stack[--script->sp] = _parameter;
 }
 
-void ScriptHelper::c1_pushVar() {
-	_curScript->stack[--_curScript->sp] = _curScript->variables[_parameter];
+void ScriptHelper::c1_pushVar(ScriptState* script) {
+	script->stack[--script->sp] = script->variables[_parameter];
 }
 
-void ScriptHelper::c1_pushBPNeg() {
-	_curScript->stack[--_curScript->sp] = _curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp];
+void ScriptHelper::c1_pushBPNeg(ScriptState* script) {
+	script->stack[--script->sp] = script->stack[(-(int32)(_parameter + 2)) + script->bp];
 }
 
-void ScriptHelper::c1_pushBPAdd() {
-	_curScript->stack[--_curScript->sp] = _curScript->stack[(_parameter - 1) + _curScript->bp];
+void ScriptHelper::c1_pushBPAdd(ScriptState* script) {
+	script->stack[--script->sp] = script->stack[(_parameter - 1) + script->bp];
 }
 
-void ScriptHelper::c1_popRetOrPos() {
+void ScriptHelper::c1_popRetOrPos(ScriptState* script) {
 	switch (_parameter) {
 		case 0:
-			_curScript->retValue = _curScript->stack[_curScript->sp++];
+			script->retValue = script->stack[script->sp++];
 		break;
 		
 		case 1:
-			if (_curScript->sp >= 60) {
+			if (script->sp >= 60) {
 				_continue = false;
-				_curScript->ip = 0;
+				script->ip = 0;
 			} else {
-				_curScript->bp = _curScript->stack[_curScript->sp++];
-				_curScript->ip = _curScript->dataPtr->data + (_curScript->stack[_curScript->sp++] << 1);
+				script->bp = script->stack[script->sp++];
+				script->ip = script->dataPtr->data + (script->stack[script->sp++] << 1);
 			}
 		break;
 		
 		default:
 			_continue = false;
-			_curScript->ip = 0;
+			script->ip = 0;
 		break;
 	}
 }
 
-void ScriptHelper::c1_popVar() {
-	_curScript->variables[_parameter] = _curScript->stack[_curScript->sp++];
+void ScriptHelper::c1_popVar(ScriptState* script) {
+	script->variables[_parameter] = script->stack[script->sp++];
 }
 
-void ScriptHelper::c1_popBPNeg() {
-	_curScript->stack[(-(int32)(_parameter + 2)) + _curScript->bp] = _curScript->stack[_curScript->sp++];
+void ScriptHelper::c1_popBPNeg(ScriptState* script) {
+	script->stack[(-(int32)(_parameter + 2)) + script->bp] = script->stack[script->sp++];
 }
 
-void ScriptHelper::c1_popBPAdd() {
-	_curScript->stack[(_parameter - 1) + _curScript->bp] = _curScript->stack[_curScript->sp++];
+void ScriptHelper::c1_popBPAdd(ScriptState* script) {
+	script->stack[(_parameter - 1) + script->bp] = script->stack[script->sp++];
 }
 
-void ScriptHelper::c1_addSP() {
-	_curScript->sp += _parameter;
+void ScriptHelper::c1_addSP(ScriptState* script) {
+	script->sp += _parameter;
 }
 
-void ScriptHelper::c1_subSP() {
-	_curScript->sp -= _parameter;
+void ScriptHelper::c1_subSP(ScriptState* script) {
+	script->sp -= _parameter;
 }
 
-void ScriptHelper::c1_execOpcode() {
-	assert((uint8)_parameter < _curScript->dataPtr->opcodeSize);
-	if (_curScript->dataPtr->opcodes[(uint8)_parameter] == &KyraEngine::cmd_dummy)
+void ScriptHelper::c1_execOpcode(ScriptState* script) {
+	assert((uint8)_parameter < script->dataPtr->opcodeSize);
+	if (script->dataPtr->opcodes[(uint8)_parameter] == &KyraEngine::cmd_dummy)
 		debug("calling unimplemented opcode(0x%.02X)", (uint8)_parameter);
-	_curScript->retValue = (_vm->*_curScript->dataPtr->opcodes[(uint8)_parameter])(_curScript);
+	int val = (_vm->*script->dataPtr->opcodes[(uint8)_parameter])(script);
+	assert(script);
+	script->retValue = val;
 }
 
-void ScriptHelper::c1_ifNotJmp() {
-	if (!_curScript->stack[_curScript->sp++]) {
+void ScriptHelper::c1_ifNotJmp(ScriptState* script) {
+	if (!script->stack[script->sp++]) {
 		_parameter &= 0x7FFF;
-		_curScript->ip = _curScript->dataPtr->data + (_parameter << 1);
+		script->ip = script->dataPtr->data + (_parameter << 1);
 	}
 }
 
-void ScriptHelper::c1_negate() {
-	int16 value = _curScript->stack[_curScript->sp];
+void ScriptHelper::c1_negate(ScriptState* script) {
+	int16 value = script->stack[script->sp];
 	switch (_parameter) {
 		case 0:
 			if (!value) {
-				_curScript->stack[_curScript->sp] = 1;
+				script->stack[script->sp] = 1;
 			} else {
-				_curScript->stack[_curScript->sp] = 0;
+				script->stack[script->sp] = 0;
 			}
 		break;
 		
 		case 1:
-			_curScript->stack[_curScript->sp] = -value;
+			script->stack[script->sp] = -value;
 		break;
 		
 		case 2:
-			_curScript->stack[_curScript->sp] = ~value;
+			script->stack[script->sp] = ~value;
 		break;
 		
 		default:
@@ -424,12 +424,12 @@ void ScriptHelper::c1_negate() {
 	}
 }
 
-void ScriptHelper::c1_eval() {
+void ScriptHelper::c1_eval(ScriptState* script) {
 	int16 ret = 0;
 	bool error = false;
 	
-	int16 val1 = _curScript->stack[_curScript->sp++];
-	int16 val2 = _curScript->stack[_curScript->sp++];
+	int16 val1 = script->stack[script->sp++];
+	int16 val2 = script->stack[script->sp++];
 	
 	switch (_parameter) {
 		case 0:
@@ -543,22 +543,22 @@ void ScriptHelper::c1_eval() {
 	}
 	
 	if (error) {
-		_curScript->ip = 0;
+		script->ip = 0;
 		_continue = false;
 	} else {
-		_curScript->stack[--_curScript->sp] = ret;
+		script->stack[--script->sp] = ret;
 	}
 }
 
-void ScriptHelper::c1_setRetAndJmp() {
-	if (_curScript->sp >= 60) {
+void ScriptHelper::c1_setRetAndJmp(ScriptState* script) {
+	if (script->sp >= 60) {
 		_continue = false;
-		_curScript->ip = 0;
+		script->ip = 0;
 	} else {
-		_curScript->retValue = _curScript->stack[_curScript->sp++];
-		uint16 temp = _curScript->stack[_curScript->sp++];
-		_curScript->stack[60] = 0;
-		_curScript->ip = &_curScript->dataPtr->data[temp*2];
+		script->retValue = script->stack[script->sp++];
+		uint16 temp = script->stack[script->sp++];
+		script->stack[60] = 0;
+		script->ip = &script->dataPtr->data[temp*2];
 	}
 }
 } // end of namespace Kyra
