@@ -271,6 +271,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\gob\music.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\gob\music.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\gob\pack.cpp"
 			>
 		</File>
