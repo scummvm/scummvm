@@ -86,7 +86,7 @@ void ScummEngine::setupScummVars() {
 		VAR_USERPUT = 53;
 	}
 
-	if (_gameId == GID_LOOM256 || _version >= 5) {
+	if (_version >= 5) {
 		VAR_SOUNDPARAM = 64;
 		VAR_SOUNDPARAM2 = 65;
 		VAR_SOUNDPARAM3 = 66;
@@ -571,15 +571,6 @@ void ScummEngine_v7::initScummVars() {
 }
 #endif
 
-void ScummEngine_v60he::initScummVars() {
-	ScummEngine::initScummVars();
-
-	VAR(VAR_MACHINE_SPEED) = 2;
-
-	VAR(VAR_SOUNDPARAM) = 1;  // Soundblaster for music
-	VAR(VAR_SOUNDPARAM2) = 1; // Soundblaster for sound effects
-}
-
 #ifndef DISABLE_HE
 void ScummEngine_v70he::initScummVars() {
 	ScummEngine::initScummVars();
@@ -671,11 +662,6 @@ void ScummEngine::initScummVars() {
 				VAR(VAR_SOUNDCARD) = 3;
 			}
 		}
-		if (_gameId == GID_LOOM256 || _version >= 5) {
-			VAR(VAR_SOUNDPARAM) = 0;
-			VAR(VAR_SOUNDPARAM2) = 0;
-			VAR(VAR_SOUNDPARAM3) = 0;
-		}
 
 		if (_platform == Common::kPlatformFMTowns)
 			VAR(VAR_VIDEOMODE) = 42;
@@ -692,10 +678,8 @@ void ScummEngine::initScummVars() {
 		else
 			VAR(VAR_VIDEOMODE) = 19;
 
-		VAR(VAR_CURRENTDRIVE) = 0;
-
 		if (_platform == Common::kPlatformMacintosh && (_features & GF_OLD_BUNDLE)) {
-			// This is the for the Mac version of Indy3/Loom
+			// Set screen size for the Macintosh version of Indy3/Loom
 			VAR(39) = 320;
 		}
 		if (_platform == Common::kPlatformPC && _gameId == GID_LOOM) {
@@ -711,6 +695,14 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_MOUSEPRESENT) = 1;
 		if (_version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
+
+		if (_heversion >= 60) {
+			// Set fast speed, to enable all animations
+			VAR(VAR_MACHINE_SPEED) = 2;
+
+			VAR(VAR_SOUNDPARAM) = 1;  // Soundblaster for music
+			VAR(VAR_SOUNDPARAM2) = 1; // Soundblaster for sound effects
+		}
 	}
 
 	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {
