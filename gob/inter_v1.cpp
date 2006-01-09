@@ -517,13 +517,13 @@ bool Inter_v1::o1_capturePush(char &cmdCount, int16 &counter, int16 &retFlag) {
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
 	_vm->_game->capturePush(left, top, width, height);
-	(*_vm->_scenery->pCaptureCounter)++;
+	(*_vm->_scenery->_pCaptureCounter)++;
 	return false;
 }
 
 bool Inter_v1::o1_capturePop(char &cmdCount, int16 &counter, int16 &retFlag) {
-	if (*_vm->_scenery->pCaptureCounter != 0) {
-		(*_vm->_scenery->pCaptureCounter)--;
+	if (*_vm->_scenery->_pCaptureCounter != 0) {
+		(*_vm->_scenery->_pCaptureCounter)--;
 		_vm->_game->capturePop(1);
 	}
 	return false;

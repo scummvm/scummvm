@@ -743,12 +743,12 @@ void Map::loadMapsInitGobs(void) {
 		    _vm->_goblin->_goblins[i]->xPos, _vm->_goblin->_goblins[i]->yPos, 0);
 
 		_vm->_goblin->_goblins[i]->yPos = (_vm->_goblin->_gobPositions[i].y + 1) * 6 -
-		    (_vm->_scenery->toRedrawBottom - _vm->_scenery->animTop);
+		    (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
 
 		_vm->_goblin->_goblins[i]->xPos = _vm->_goblin->_gobPositions[i].x * 12 -
-		    (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
+		    (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 
-		_vm->_goblin->_goblins[i]->order = _vm->_scenery->toRedrawBottom / 24 + 3;
+		_vm->_goblin->_goblins[i]->order = _vm->_scenery->_toRedrawBottom / 24 + 3;
 	}
 
 	_vm->_goblin->_currentGoblin = 0;

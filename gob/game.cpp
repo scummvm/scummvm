@@ -449,12 +449,12 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char hand
 	_vm->_util->processInput();
 
 	if (VAR(58) != 0) {
-		if (_vm->_mult->frameStart != (int)VAR(58) - 1)
-			_vm->_mult->frameStart++;
+		if (_vm->_mult->_frameStart != (int)VAR(58) - 1)
+			_vm->_mult->_frameStart++;
 		else
-			_vm->_mult->frameStart = 0;
+			_vm->_mult->_frameStart = 0;
 
-		_vm->_mult->playMult(_vm->_mult->frameStart + VAR(57), _vm->_mult->frameStart + VAR(57), 1,
+		_vm->_mult->playMult(_vm->_mult->_frameStart + VAR(57), _vm->_mult->_frameStart + VAR(57), 1,
 		    handleMouse);
 	}
 
@@ -1743,12 +1743,12 @@ void Game::playTot(int16 skipPlay) {
 
 	oldNestLevel = _vm->_inter->_nestLevel;
 	oldBreakFrom = _vm->_inter->_breakFromLevel;
-	oldCaptureCounter = _vm->_scenery->pCaptureCounter;
+	oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
 	savedIP = _vm->_global->_inter_execPtr;
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
-	_vm->_scenery->pCaptureCounter = &_captureCounter;
+	_vm->_scenery->_pCaptureCounter = &_captureCounter;
 	strcpy(savedTotName, _curTotFile);
 
 	if (skipPlay == 0) {
@@ -1899,7 +1899,7 @@ void Game::playTot(int16 skipPlay) {
 
 			_extHandle = -1;
 
-			for (i = 0; i < *_vm->_scenery->pCaptureCounter; i++)
+			for (i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
 				capturePop(0);
 
 			_vm->_mult->checkFreeMult();
@@ -1926,7 +1926,7 @@ void Game::playTot(int16 skipPlay) {
 
 	_vm->_inter->_nestLevel = oldNestLevel;
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
-	_vm->_scenery->pCaptureCounter = oldCaptureCounter;
+	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 	_vm->_global->_inter_execPtr = savedIP;
 }
 

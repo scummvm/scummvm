@@ -257,20 +257,20 @@ void Goblin::drawObjects(void) {
 		_vm->_scenery->updateAnim(layer, objDesc->curFrame, objDesc->animation,
 		    0, objDesc->xPos, objDesc->yPos, 0);
 
-		if (_vm->_scenery->toRedrawLeft == -12345) {
+		if (_vm->_scenery->_toRedrawLeft == -12345) {
 			objDesc->dirtyLeft = objDesc->left;
 			objDesc->dirtyRight = objDesc->right;
 			objDesc->dirtyTop = objDesc->top;
 			objDesc->dirtyBottom = objDesc->bottom;
 		} else {
 			objDesc->dirtyLeft =
-			    MIN(objDesc->left, _vm->_scenery->toRedrawLeft);
+			    MIN(objDesc->left, _vm->_scenery->_toRedrawLeft);
 			objDesc->dirtyRight =
-			    MAX(objDesc->right, _vm->_scenery->toRedrawRight);
+			    MAX(objDesc->right, _vm->_scenery->_toRedrawRight);
 			objDesc->dirtyTop =
-			    MIN(objDesc->top, _vm->_scenery->toRedrawTop);
+			    MIN(objDesc->top, _vm->_scenery->_toRedrawTop);
 			objDesc->dirtyBottom =
-			    MAX(objDesc->bottom, _vm->_scenery->toRedrawBottom);
+			    MAX(objDesc->bottom, _vm->_scenery->_toRedrawBottom);
 		}
 
 		objDesc->dirtyLeft = 0;
@@ -300,21 +300,21 @@ void Goblin::drawObjects(void) {
 					    objDesc->animation, 2,
 					    objDesc->xPos, objDesc->yPos, 1);
 				}
-				if (_vm->_scenery->toRedrawLeft == -12345) {
+				if (_vm->_scenery->_toRedrawLeft == -12345) {
 					objDesc->left = 0;
 					objDesc->top = 0;
 					objDesc->right = 0;
 					objDesc->bottom = 0;
 				} else {
-					_vm->_draw->invalidateRect(_vm->_scenery->toRedrawLeft,
-					    _vm->_scenery->toRedrawTop,
-					    _vm->_scenery->toRedrawRight,
-					    _vm->_scenery->toRedrawBottom);
+					_vm->_draw->invalidateRect(_vm->_scenery->_toRedrawLeft,
+					    _vm->_scenery->_toRedrawTop,
+					    _vm->_scenery->_toRedrawRight,
+					    _vm->_scenery->_toRedrawBottom);
 
-					objDesc->left = _vm->_scenery->toRedrawLeft;
-					objDesc->top = _vm->_scenery->toRedrawTop;
-					objDesc->right = _vm->_scenery->toRedrawRight;
-					objDesc->bottom = _vm->_scenery->toRedrawBottom;
+					objDesc->left = _vm->_scenery->_toRedrawLeft;
+					objDesc->top = _vm->_scenery->_toRedrawTop;
+					objDesc->right = _vm->_scenery->_toRedrawRight;
+					objDesc->bottom = _vm->_scenery->_toRedrawBottom;
 					_vm->_scenery->updateStatic(objDesc->order);
 				}
 			} else {
@@ -347,10 +347,10 @@ void Goblin::drawObjects(void) {
 				if (gobDesc2->dirtyBottom < objDesc->top)
 					continue;
 
-				_vm->_scenery->toRedrawLeft = gobDesc2->dirtyLeft;
-				_vm->_scenery->toRedrawRight = gobDesc2->dirtyRight;
-				_vm->_scenery->toRedrawTop = gobDesc2->dirtyTop;
-				_vm->_scenery->toRedrawBottom = gobDesc2->dirtyBottom;
+				_vm->_scenery->_toRedrawLeft = gobDesc2->dirtyLeft;
+				_vm->_scenery->_toRedrawRight = gobDesc2->dirtyRight;
+				_vm->_scenery->_toRedrawTop = gobDesc2->dirtyTop;
+				_vm->_scenery->_toRedrawBottom = gobDesc2->dirtyBottom;
 
 				layer =
 				    objDesc->stateMach[objDesc->
@@ -447,7 +447,7 @@ void Goblin::animateObjects(void) {
 
 			layer = objDesc->stateMach[objDesc->state][0]->layer;
 			pLayer =
-			    _vm->_scenery->animations[objDesc->animation].layers[layer];
+			    _vm->_scenery->_animations[objDesc->animation].layers[layer];
 
 			if (objDesc->curFrame < pLayer->framesCount)
 				continue;
@@ -522,7 +522,7 @@ void Goblin::placeObject(Gob_Object *objDesc, char animated) {
 		_vm->_scenery->updateAnim(layer, 0, objDesc->animation, 0,
 		    objDesc->xPos, objDesc->yPos, 0);
 
-		objDesc->order = _vm->_scenery->toRedrawBottom / 24 + 3;
+		objDesc->order = _vm->_scenery->_toRedrawBottom / 24 + 3;
 
 		objDesc->left = objDesc->xPos;
 		objDesc->right = objDesc->xPos;
@@ -542,7 +542,7 @@ int16 Goblin::getObjMaxFrame(Gob_Object * objDesc) {
 	int16 layer;
 
 	layer = objDesc->stateMach[objDesc->state][0]->layer;
-	return _vm->_scenery->animations[objDesc->animation].layers[layer]->framesCount -
+	return _vm->_scenery->_animations[objDesc->animation].layers[layer]->framesCount -
 	    1;
 }
 
@@ -604,7 +604,7 @@ void Goblin::showBoredom(int16 gobIndex) {
 	layer = gobDesc->stateMach[gobDesc->state][0]->layer;
 
 	frameCount =
-	    _vm->_scenery->animations[gobDesc->animation].layers[layer]->framesCount;
+	    _vm->_scenery->_animations[gobDesc->animation].layers[layer]->framesCount;
 	state = gobDesc->state;
 	frame = gobDesc->curFrame;
 
@@ -950,8 +950,8 @@ void Goblin::targetItem(void) {
 			_vm->_scenery->updateAnim(layer, 0, itemDesc->animation, 0,
 			    itemDesc->xPos, itemDesc->yPos, 0);
 
-			tmpX = (_vm->_scenery->toRedrawRight + _vm->_scenery->toRedrawLeft) / 2;
-			tmpY = _vm->_scenery->toRedrawBottom;
+			tmpX = (_vm->_scenery->_toRedrawRight + _vm->_scenery->_toRedrawLeft) / 2;
+			tmpY = _vm->_scenery->_toRedrawBottom;
 
 			tmpPosY = tmpY / 6;
 			if ((tmpY % 3) < 3 && tmpPosY > 0)
@@ -1586,11 +1586,11 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 		gobDesc->multState = -1;
 
 		newX =
-		    _vm->_scenery->animations[gobDesc->animation].
+		    _vm->_scenery->_animations[gobDesc->animation].
 		    layers[_gobStateLayer]->animDeltaX + gobDesc->xPos;
 
 		newY =
-		    _vm->_scenery->animations[gobDesc->animation].
+		    _vm->_scenery->_animations[gobDesc->animation].
 		    layers[_gobStateLayer]->animDeltaY + gobDesc->yPos;
 
 		_gobStateLayer = nextLayer(gobDesc);
@@ -1679,10 +1679,10 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 
 				gobDesc->yPos =
 				    (_vm->_map->_curGoblinY + 1) * 6 -
-				    (_vm->_scenery->toRedrawBottom - _vm->_scenery->animTop);
+				    (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
 				gobDesc->xPos =
-				    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->toRedrawLeft -
-				    _vm->_scenery->animLeft);
+				    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->_toRedrawLeft -
+				    _vm->_scenery->_animLeft);
 			}
 
 			if ((gobDesc->state == 10 || gobDesc->state == 11)
@@ -1762,10 +1762,10 @@ void Goblin::moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount) 
 		    gobDesc->xPos, gobDesc->yPos, 0);
 
 		gobDesc->yPos =
-		    (_vm->_map->_curGoblinY + 1) * 6 - (_vm->_scenery->toRedrawBottom -
-		    _vm->_scenery->animTop);
+		    (_vm->_map->_curGoblinY + 1) * 6 - (_vm->_scenery->_toRedrawBottom -
+		    _vm->_scenery->_animTop);
 		gobDesc->xPos =
-		    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
+		    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 
 		if ((gobDesc->state == 10 || gobDesc->state == 11)
 		    && _currentGoblin != 0)
@@ -1785,7 +1785,7 @@ int16 Goblin::doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 
 	layer = gobDesc->stateMach[gobDesc->state][0]->layer;
 	framesCount =
-	    _vm->_scenery->animations[gobDesc->animation].layers[layer]->framesCount;
+	    _vm->_scenery->_animations[gobDesc->animation].layers[layer]->framesCount;
 
 	if (VAR(59) == 0 &&
 	    gobDesc->state != 30 && gobDesc->state != 31) {
@@ -2152,14 +2152,14 @@ void Goblin::placeItem(int16 indexInPocket, int16 idInPocket) {
 	    itemDesc->xPos, itemDesc->yPos, 0);
 
 	itemDesc->yPos +=
-	    (_gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
+	    (_gobPositions[0].y * 6) + 5 - _vm->_scenery->_toRedrawBottom;
 
 	if (lookDir == 4) {
 		itemDesc->xPos += (_gobPositions[0].x * 12 + 14)
-		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
+		    - (_vm->_scenery->_toRedrawLeft + _vm->_scenery->_toRedrawRight) / 2;
 	} else {
 		itemDesc->xPos += (_gobPositions[0].x * 12)
-		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
+		    - (_vm->_scenery->_toRedrawLeft + _vm->_scenery->_toRedrawRight) / 2;
 	}
 
 	_vm->_map->placeItem(xPos, yPos, idInPocket);
@@ -2272,14 +2272,14 @@ void Goblin::swapItems(int16 indexToPick, int16 idToPick) {
 	    placeObj->yPos, 0);
 
 	placeObj->yPos +=
-	    (_gobPositions[0].y * 6) + 5 - _vm->_scenery->toRedrawBottom;
+	    (_gobPositions[0].y * 6) + 5 - _vm->_scenery->_toRedrawBottom;
 
 	if (_vm->_map->_itemPoses[idToPlace].orient == 4) {
 		placeObj->xPos += (_gobPositions[0].x * 12 + 14)
-		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
+		    - (_vm->_scenery->_toRedrawLeft + _vm->_scenery->_toRedrawRight) / 2;
 	} else {
 		placeObj->xPos += (_gobPositions[0].x * 12)
-		    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
+		    - (_vm->_scenery->_toRedrawLeft + _vm->_scenery->_toRedrawRight) / 2;
 	}
 }
 
@@ -2790,11 +2790,11 @@ void Goblin::interFunc(void) {
 		    objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->yPos =
-		    (_gobPositions[item].y * 6 + 6) - (_vm->_scenery->toRedrawBottom -
-		    _vm->_scenery->animTop);
+		    (_gobPositions[item].y * 6 + 6) - (_vm->_scenery->_toRedrawBottom -
+		    _vm->_scenery->_animTop);
 		objDesc->xPos =
-		    _gobPositions[item].x * 12 - (_vm->_scenery->toRedrawLeft -
-		    _vm->_scenery->animLeft);
+		    _gobPositions[item].x * 12 - (_vm->_scenery->_toRedrawLeft -
+		    _vm->_scenery->_animLeft);
 
 		objDesc->curFrame = 0;
 		objDesc->state = 21;
@@ -2833,10 +2833,10 @@ void Goblin::interFunc(void) {
 			layer = objDesc->stateMach[objDesc->state][0]->layer;
 
 			objDesc->xPos =
-			    _vm->_scenery->animations[objDesc->animation].layers[layer]->
+			    _vm->_scenery->_animations[objDesc->animation].layers[layer]->
 			    posX;
 			objDesc->yPos =
-			    _vm->_scenery->animations[objDesc->animation].layers[layer]->
+			    _vm->_scenery->_animations[objDesc->animation].layers[layer]->
 			    posY;
 
 			*_curGobScrXVarPtr = objDesc->xPos;
@@ -2861,9 +2861,9 @@ void Goblin::interFunc(void) {
 		    objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->yPos =
-		    (yPos * 6 + 6) - (_vm->_scenery->toRedrawBottom - _vm->_scenery->animTop);
+		    (yPos * 6 + 6) - (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
 		objDesc->xPos =
-		    xPos * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
+		    xPos * 12 - (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 
 		_gobPositions[item].x = xPos;
 		_pressedMapX = xPos;
@@ -2900,9 +2900,9 @@ void Goblin::interFunc(void) {
 		    objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->yPos =
-		    (yPos * 6 + 6) - (_vm->_scenery->toRedrawBottom - _vm->_scenery->animTop);
+		    (yPos * 6 + 6) - (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
 		objDesc->xPos =
-		    xPos * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
+		    xPos * 12 - (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 
 		objDesc->curFrame = 0;
 		objDesc->state = 21;
@@ -2929,9 +2929,9 @@ void Goblin::interFunc(void) {
 		layer = objDesc->stateMach[objDesc->state][0]->layer;
 
 		objDesc->xPos =
-		    _vm->_scenery->animations[objDesc->animation].layers[layer]->posX;
+		    _vm->_scenery->_animations[objDesc->animation].layers[layer]->posX;
 		objDesc->yPos =
-		    _vm->_scenery->animations[objDesc->animation].layers[layer]->posY;
+		    _vm->_scenery->_animations[objDesc->animation].layers[layer]->posY;
 
 		if (item == _currentGoblin) {
 			*_curGobScrXVarPtr = objDesc->xPos;
@@ -2952,9 +2952,9 @@ void Goblin::interFunc(void) {
 		nextLayer(objDesc);
 		layer = objDesc->stateMach[objDesc->state][0]->layer;
 		objDesc->xPos =
-		    _vm->_scenery->animations[objDesc->animation].layers[layer]->posX;
+		    _vm->_scenery->_animations[objDesc->animation].layers[layer]->posX;
 		objDesc->yPos =
-		    _vm->_scenery->animations[objDesc->animation].layers[layer]->posY;
+		    _vm->_scenery->_animations[objDesc->animation].layers[layer]->posY;
 
 		objDesc->toRedraw = 1;
 		objDesc->type = 0;
@@ -3203,10 +3203,10 @@ void Goblin::interFunc(void) {
 			    gobDesc->xPos, gobDesc->yPos, 0);
 
 			gobDesc->yPos =
-			    (yPos * 6 + 6) - (_vm->_scenery->toRedrawBottom -
-			    _vm->_scenery->animTop);
+			    (yPos * 6 + 6) - (_vm->_scenery->_toRedrawBottom -
+			    _vm->_scenery->_animTop);
 			gobDesc->xPos =
-			    xPos * 12 - (_vm->_scenery->toRedrawLeft - _vm->_scenery->animLeft);
+			    xPos * 12 - (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 		}
 
 		if (gobDesc->state != 10)
@@ -3233,14 +3233,14 @@ void Goblin::interFunc(void) {
 		    objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->yPos +=
-		    (_gobPositions[0].y * 6 + 5) - _vm->_scenery->toRedrawBottom;
+		    (_gobPositions[0].y * 6 + 5) - _vm->_scenery->_toRedrawBottom;
 
 		if (gobDesc->curLookDir == 4) {
 			objDesc->xPos += _gobPositions[0].x * 12 + 14
-			    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
+			    - (_vm->_scenery->_toRedrawLeft + _vm->_scenery->_toRedrawRight) / 2;
 		} else {
 			objDesc->xPos += _gobPositions[0].x * 12
-			    - (_vm->_scenery->toRedrawLeft + _vm->_scenery->toRedrawRight) / 2;
+			    - (_vm->_scenery->_toRedrawLeft + _vm->_scenery->_toRedrawRight) / 2;
 		}
 
 		_itemIndInPocket = -1;

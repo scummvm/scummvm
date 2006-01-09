@@ -35,34 +35,34 @@ namespace Gob {
 
 Scenery::Scenery(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 20; i++) {
-		spriteRefs[i] = 0;
-		spriteResId[i] = 0;
+		_spriteRefs[i] = 0;
+		_spriteResId[i] = 0;
 	}
 	for (int i = 0; i < 70; i++ ) {
-		staticPictToSprite[i] = 0;
-		animPictToSprite[i] = 0;
+		_staticPictToSprite[i] = 0;
+		_animPictToSprite[i] = 0;
 	}
 	for (int i = 0; i < 10; i++) {
-		staticPictCount[i] = 0;
-		staticFromExt[i] = 0;
-		staticResId[i] = 0;
-		animPictCount[i] = 0;
-		animFromExt[i] = 0;
-		animResId[i] = 0;
+		_staticPictCount[i] = 0;
+		_staticFromExt[i] = 0;
+		_staticResId[i] = 0;
+		_animPictCount[i] = 0;
+		_animFromExt[i] = 0;
+		_animResId[i] = 0;
 	}
 
-	curStatic = 0;
-	curStaticLayer = 0;
+	_curStatic = 0;
+	_curStaticLayer = 0;
 
-	toRedrawLeft = 0;
-	toRedrawRight = 0;
-	toRedrawTop = 0;
-	toRedrawBottom = 0;
+	_toRedrawLeft = 0;
+	_toRedrawRight = 0;
+	_toRedrawTop = 0;
+	_toRedrawBottom = 0;
 
-	animTop = 0;
-	animLeft = 0;
+	_animTop = 0;
+	_animLeft = 0;
 
-	pCaptureCounter = 0;
+	_pCaptureCounter = 0;
 }
 
 int16 Scenery::loadStatic(char search) {
@@ -89,28 +89,28 @@ int16 Scenery::loadStatic(char search) {
 	resId = _vm->_inter->load16();
 	if (search) {
 		for (i = 0; i < 10; i++) {
-			if (staticPictCount[i] != -1 && staticResId[i] == resId) {
-				_vm->_global->_inter_execPtr += 8 * staticPictCount[i];
+			if (_staticPictCount[i] != -1 && _staticResId[i] == resId) {
+				_vm->_global->_inter_execPtr += 8 * _staticPictCount[i];
 				return i;
 			}
 
-			if (staticPictCount[i] == -1 && i < sceneryIndex)
+			if (_staticPictCount[i] == -1 && i < sceneryIndex)
 				sceneryIndex = i;
 		}
 	}
 
-	staticPictCount[sceneryIndex] = picsCount;
-	staticResId[sceneryIndex] = resId;
+	_staticPictCount[sceneryIndex] = picsCount;
+	_staticResId[sceneryIndex] = resId;
 
 	if (resId >= 30000) {
-		staticFromExt[sceneryIndex] = 1;
+		_staticFromExt[sceneryIndex] = 1;
 		dataPtr = _vm->_game->loadExtData(resId, 0, 0);
 	} else {
-		staticFromExt[sceneryIndex] = 0;
+		_staticFromExt[sceneryIndex] = 0;
 		dataPtr = _vm->_game->loadTotResource(resId);
 	}
 
-	ptr = &statics[sceneryIndex];
+	ptr = &_statics[sceneryIndex];
 	ptr->dataPtr = dataPtr;
 
 	ptr->layersCount = (int16)READ_LE_UINT16(dataPtr);
@@ -153,22 +153,22 @@ int16 Scenery::loadStatic(char search) {
 		height = _vm->_inter->load16();
 		sprResId = _vm->_inter->load16();
 		for (sprIndex = 0; sprIndex < 20; sprIndex++) {
-			if (spriteResId[sprIndex] == sprResId)
+			if (_spriteResId[sprIndex] == sprResId)
 				break;
 		}
 
 		if (sprIndex < 20) {
-			staticPictToSprite[7 * sceneryIndex + i] =
+			_staticPictToSprite[7 * sceneryIndex + i] =
 			    sprIndex;
-			spriteRefs[sprIndex]++;
+			_spriteRefs[sprIndex]++;
 		} else {
 			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
 			    sprIndex--);
 
-			staticPictToSprite[7 * sceneryIndex + i] =
+			_staticPictToSprite[7 * sceneryIndex + i] =
 			    sprIndex;
-			spriteRefs[sprIndex] = 1;
-			spriteResId[sprIndex] = sprResId;
+			_spriteRefs[sprIndex] = 1;
+			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->_spritesArray[sprIndex] =
 			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 
@@ -191,30 +191,30 @@ void Scenery::freeStatic(int16 index) {
 	if (index == -1)
 		_vm->_inter->evalExpr(&index);
 
-	if (staticPictCount[index] == -1)
+	if (_staticPictCount[index] == -1)
 		return;
 
-	for (i = 0; i < staticPictCount[index]; i++) {
-		if (statics[index].piecesFromExt[i] == 1)
-			free(statics[index].pieces[i]);
+	for (i = 0; i < _staticPictCount[index]; i++) {
+		if (_statics[index].piecesFromExt[i] == 1)
+			free(_statics[index].pieces[i]);
 
-		spr = staticPictToSprite[index * 7 + i];
-		spriteRefs[spr]--;
-		if (spriteRefs[spr] == 0) {
+		spr = _staticPictToSprite[index * 7 + i];
+		_spriteRefs[spr]--;
+		if (_spriteRefs[spr] == 0) {
 			_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[spr]);
 			_vm->_draw->_spritesArray[spr] = 0;
-			spriteResId[spr] = -1;
+			_spriteResId[spr] = -1;
 		}
 	}
 
-	free(statics[index].layers);
-	free(statics[index].pieces);
-	free(statics[index].piecesFromExt);
-	if (staticFromExt[index] == 1)
-		free(statics[index].dataPtr);
+	free(_statics[index].layers);
+	free(_statics[index].pieces);
+	free(_statics[index].piecesFromExt);
+	if (_staticFromExt[index] == 1)
+		free(_statics[index].dataPtr);
 
-	staticFromExt[index] = 0;
-	staticPictCount[index] = -1;
+	_staticFromExt[index] = 0;
+	_staticPictCount[index] = -1;
 }
 
 void Scenery::renderStatic(int16 scenery, int16 layer) {
@@ -233,7 +233,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 	int16 top;
 	int16 bottom;
 
-	ptr = &statics[scenery];
+	ptr = &_statics[scenery];
 	if (layer >= ptr->layersCount)
 		return;
 
@@ -266,7 +266,7 @@ void Scenery::renderStatic(int16 scenery, int16 layer) {
 			bottom = FROM_LE_16(ptr->pieces[pictIndex][pieceIndex].bottom);
 
 			_vm->_draw->_sourceSurface =
-			    staticPictToSprite[scenery * 7 + pictIndex];
+			    _staticPictToSprite[scenery * 7 + pictIndex];
 			_vm->_draw->_destSurface = 21;
 			_vm->_draw->_spriteLeft = left;
 			_vm->_draw->_spriteTop = top;
@@ -288,8 +288,8 @@ void Scenery::interRenderStatic(void) {
 }
 
 void Scenery::interLoadCurLayer(void) {
-	_vm->_inter->evalExpr(&curStatic);
-	_vm->_inter->evalExpr(&curStaticLayer);
+	_vm->_inter->evalExpr(&_curStatic);
+	_vm->_inter->evalExpr(&_curStaticLayer);
 }
 
 void Scenery::updateStatic(int16 orderFrom) {
@@ -307,14 +307,14 @@ void Scenery::updateStatic(int16 orderFrom) {
 	int16 top;
 	int16 bottom;
 
-	if (curStatic == -1)
+	if (_curStatic == -1)
 		return;
 
-	if (curStaticLayer >= statics[curStatic].layersCount)
+	if (_curStaticLayer >= _statics[_curStatic].layersCount)
 		return;
 
-	layerPtr = statics[curStatic].layers[curStaticLayer];
-	pictPtr = statics[curStatic].pieces;
+	layerPtr = _statics[_curStatic].layers[_curStaticLayer];
+	pictPtr = _statics[_curStatic].pieces;
 
 	planeCount = layerPtr->planeCount;
 
@@ -334,20 +334,20 @@ void Scenery::updateStatic(int16 orderFrom) {
 			top = FROM_LE_16(pictPtr[pictIndex][pieceIndex].top);
 			bottom = FROM_LE_16(pictPtr[pictIndex][pieceIndex].bottom);
 
-			if (_vm->_draw->_destSpriteX > toRedrawRight)
+			if (_vm->_draw->_destSpriteX > _toRedrawRight)
 				continue;
 
-			if (_vm->_draw->_destSpriteY > toRedrawBottom)
+			if (_vm->_draw->_destSpriteY > _toRedrawBottom)
 				continue;
 
-			if (_vm->_draw->_destSpriteX < toRedrawLeft) {
-				left += toRedrawLeft - _vm->_draw->_destSpriteX;
-				_vm->_draw->_destSpriteX = toRedrawLeft;
+			if (_vm->_draw->_destSpriteX < _toRedrawLeft) {
+				left += _toRedrawLeft - _vm->_draw->_destSpriteX;
+				_vm->_draw->_destSpriteX = _toRedrawLeft;
 			}
 
-			if (_vm->_draw->_destSpriteY < toRedrawTop) {
-				top += toRedrawTop - _vm->_draw->_destSpriteY;
-				_vm->_draw->_destSpriteY = toRedrawTop;
+			if (_vm->_draw->_destSpriteY < _toRedrawTop) {
+				top += _toRedrawTop - _vm->_draw->_destSpriteY;
+				_vm->_draw->_destSpriteY = _toRedrawTop;
 			}
 
 			_vm->_draw->_spriteLeft = left;
@@ -359,17 +359,17 @@ void Scenery::updateStatic(int16 orderFrom) {
 				continue;
 
 			if (_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1 >
-			    toRedrawRight)
+			    _toRedrawRight)
 				_vm->_draw->_spriteRight =
-				    toRedrawRight - _vm->_draw->_destSpriteX + 1;
+				    _toRedrawRight - _vm->_draw->_destSpriteX + 1;
 
 			if (_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1 >
-			    toRedrawBottom)
+			    _toRedrawBottom)
 				_vm->_draw->_spriteBottom =
-				    toRedrawBottom - _vm->_draw->_destSpriteY + 1;
+				    _toRedrawBottom - _vm->_draw->_destSpriteY + 1;
 
 			_vm->_draw->_sourceSurface =
-			    staticPictToSprite[curStatic * 7 +
+			    _staticPictToSprite[_curStatic * 7 +
 			    pictIndex];
 			_vm->_draw->_destSurface = 21;
 			_vm->_draw->_transparency = planePtr->transp ? 3 : 0;
@@ -405,29 +405,29 @@ int16 Scenery::loadAnim(char search) {
 
 	if (search) {
 		for (i = 0; i < 10; i++) {
-			if (animPictCount[i] != 0
-			    && animResId[i] == resId) {
-				_vm->_global->_inter_execPtr += 8 * animPictCount[i];
+			if (_animPictCount[i] != 0
+			    && _animResId[i] == resId) {
+				_vm->_global->_inter_execPtr += 8 * _animPictCount[i];
 				return i;
 			}
 
-			if (animPictCount[i] == 0 && i < sceneryIndex)
+			if (_animPictCount[i] == 0 && i < sceneryIndex)
 				sceneryIndex = i;
 		}
 	}
 
-	animPictCount[sceneryIndex] = picsCount;
-	animResId[sceneryIndex] = resId;
+	_animPictCount[sceneryIndex] = picsCount;
+	_animResId[sceneryIndex] = resId;
 
 	if (resId >= 30000) {
-		animFromExt[sceneryIndex] = 1;
+		_animFromExt[sceneryIndex] = 1;
 		dataPtr = _vm->_game->loadExtData(resId, 0, 0);
 	} else {
-		animFromExt[sceneryIndex] = 0;
+		_animFromExt[sceneryIndex] = 0;
 		dataPtr = _vm->_game->loadTotResource(resId);
 	}
 
-	ptr = &animations[sceneryIndex];
+	ptr = &_animations[sceneryIndex];
 	ptr->dataPtr = dataPtr;
 
 	ptr->layersCount = READ_LE_UINT16(dataPtr);
@@ -471,20 +471,20 @@ int16 Scenery::loadAnim(char search) {
 		height = _vm->_inter->load16();
 		sprResId = _vm->_inter->load16();
 		for (sprIndex = 0; sprIndex < 20; sprIndex++) {
-			if (spriteResId[sprIndex] == sprResId)
+			if (_spriteResId[sprIndex] == sprResId)
 				break;
 		}
 
 		if (sprIndex < 20) {
-			animPictToSprite[7 * sceneryIndex + i] = sprIndex;
-			spriteRefs[sprIndex]++;
+			_animPictToSprite[7 * sceneryIndex + i] = sprIndex;
+			_spriteRefs[sprIndex]++;
 		} else {
 			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
 			    sprIndex--);
 
-			animPictToSprite[7 * sceneryIndex + i] = sprIndex;
-			spriteRefs[sprIndex] = 1;
-			spriteResId[sprIndex] = sprResId;
+			_animPictToSprite[7 * sceneryIndex + i] = sprIndex;
+			_spriteRefs[sprIndex] = 1;
+			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->_spritesArray[sprIndex] =
 			    _vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, 2);
 
@@ -527,10 +527,10 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	int16 destX;
 	int16 destY;
 
-	if (layer >= animations[animation].layersCount)
+	if (layer >= _animations[animation].layersCount)
 		return;
 
-	layerPtr = animations[animation].layers[layer];
+	layerPtr = _animations[animation].layers[layer];
 
 	if (frame >= layerPtr->framesCount)
 		return;
@@ -540,16 +540,16 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		updateAnim(layer, frame, animation, 0, drawDeltaX,
 		    drawDeltaY, 0);
 
-		if (toRedrawLeft == -12345)	// Some magic number?
+		if (_toRedrawLeft == -12345)	// Some magic number?
 			return;
 
-		_vm->_game->capturePush(toRedrawLeft, toRedrawTop,
-		    toRedrawRight - toRedrawLeft + 1,
-		    toRedrawBottom - toRedrawTop + 1);
+		_vm->_game->capturePush(_toRedrawLeft, _toRedrawTop,
+		    _toRedrawRight - _toRedrawLeft + 1,
+		    _toRedrawBottom - _toRedrawTop + 1);
 
-		*pCaptureCounter = *pCaptureCounter + 1;
+		*_pCaptureCounter = *_pCaptureCounter + 1;
 	}
-	pictPtr = animations[animation].pieces;
+	pictPtr = _animations[animation].pieces;
 	framePtr = layerPtr->frames;
 
 	for (i = 0; i < frame; i++, framePtr++) {
@@ -558,17 +558,17 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	}
 
 	if ((flags & 4) == 0) {
-		toRedrawLeft = -12345;
+		_toRedrawLeft = -12345;
 	} else {
-		toRedrawLeft =
-		    MAX(toRedrawLeft, _vm->_anim->_areaLeft);
-		toRedrawTop =
-		    MAX(toRedrawTop, _vm->_anim->_areaTop);
-		toRedrawRight =
-		    MIN(toRedrawRight,
+		_toRedrawLeft =
+		    MAX(_toRedrawLeft, _vm->_anim->_areaLeft);
+		_toRedrawTop =
+		    MAX(_toRedrawTop, _vm->_anim->_areaTop);
+		_toRedrawRight =
+		    MIN(_toRedrawRight,
 		    (int16)(_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1));
-		toRedrawBottom =
-		    MIN(toRedrawBottom,
+		_toRedrawBottom =
+		    MIN(_toRedrawBottom,
 		    (int16)(_vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1));
 	}
 
@@ -643,25 +643,25 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				    1;
 
 		} else if (flags & 4) {
-			if (destX < toRedrawLeft) {
-				left += toRedrawLeft - destX;
-				destX = toRedrawLeft;
+			if (destX < _toRedrawLeft) {
+				left += _toRedrawLeft - destX;
+				destX = _toRedrawLeft;
 			}
 
 			if (left <= right
-			    && destX + right - left > toRedrawRight)
+			    && destX + right - left > _toRedrawRight)
 				right -=
-				    destX + right - left - toRedrawRight;
+				    destX + right - left - _toRedrawRight;
 
-			if (destY < toRedrawTop) {
-				top += toRedrawTop - destY;
-				destY = toRedrawTop;
+			if (destY < _toRedrawTop) {
+				top += _toRedrawTop - destY;
+				destY = _toRedrawTop;
 			}
 
 			if (top <= bottom
-			    && destY + bottom - top > toRedrawBottom)
+			    && destY + bottom - top > _toRedrawBottom)
 				bottom -=
-				    destY + bottom - top - toRedrawBottom;
+				    destY + bottom - top - _toRedrawBottom;
 		}
 
 		if (left > right || top > bottom)
@@ -669,7 +669,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		if (doDraw) {
 			_vm->_draw->_sourceSurface =
-			    animPictToSprite[animation * 7 + pictIndex];
+			    _animPictToSprite[animation * 7 + pictIndex];
 			_vm->_draw->_destSurface = 21;
 
 			_vm->_draw->_spriteLeft = left;
@@ -683,23 +683,23 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		}
 
 		if ((flags & 4) == 0) {
-			if (toRedrawLeft == -12345) {
-				toRedrawLeft = destX;
-				animLeft = destX;
-				toRedrawTop = destY;
-				animTop = destY;
-				toRedrawRight = destX + right - left;
-				toRedrawBottom = destY + bottom - top;
+			if (_toRedrawLeft == -12345) {
+				_toRedrawLeft = destX;
+				_animLeft = destX;
+				_toRedrawTop = destY;
+				_animTop = destY;
+				_toRedrawRight = destX + right - left;
+				_toRedrawBottom = destY + bottom - top;
 			} else {
-				toRedrawLeft =
-				    MIN(toRedrawLeft, destX);
-				toRedrawTop =
-				    MIN(toRedrawTop, destY);
-				toRedrawRight =
-				    MAX(toRedrawRight,
+				_toRedrawLeft =
+				    MIN(_toRedrawLeft, destX);
+				_toRedrawTop =
+				    MIN(_toRedrawTop, destY);
+				_toRedrawRight =
+				    MAX(_toRedrawRight,
 				    (int16)(destX + right - left));
-				toRedrawBottom =
-				    MAX(toRedrawBottom,
+				_toRedrawBottom =
+				    MAX(_toRedrawBottom,
 				    (int16)(destY + bottom - top));
 			}
 		}
@@ -713,31 +713,31 @@ void Scenery::freeAnim(int16 animation) {
 	if (animation == -1)
 		_vm->_inter->evalExpr(&animation);
 
-	if (animPictCount[animation] == 0)
+	if (_animPictCount[animation] == 0)
 		return;
 
-	for (i = 0; i < animPictCount[animation]; i++) {
-		if (animations[animation].piecesFromExt[i] == 1)
-			free(animations[animation].pieces[i]);
+	for (i = 0; i < _animPictCount[animation]; i++) {
+		if (_animations[animation].piecesFromExt[i] == 1)
+			free(_animations[animation].pieces[i]);
 
-		spr = animPictToSprite[animation * 7 + i];
-		spriteRefs[spr]--;
-		if (spriteRefs[spr] == 0) {
+		spr = _animPictToSprite[animation * 7 + i];
+		_spriteRefs[spr]--;
+		if (_spriteRefs[spr] == 0) {
 			_vm->_video->freeSurfDesc(_vm->_draw->_spritesArray[spr]);
 
 			_vm->_draw->_spritesArray[spr] = 0;
-			spriteResId[spr] = -1;
+			_spriteResId[spr] = -1;
 		}
 	}
 
-	free(animations[animation].layers);
-	free(animations[animation].pieces);
-	free(animations[animation].piecesFromExt);
-	if (animFromExt[animation] == 1)
-		free(animations[animation].dataPtr);
+	free(_animations[animation].layers);
+	free(_animations[animation].pieces);
+	free(_animations[animation].piecesFromExt);
+	if (_animFromExt[animation] == 1)
+		free(_animations[animation].dataPtr);
 
-	animFromExt[animation] = 0;
-	animPictCount[animation] = 0;
+	_animFromExt[animation] = 0;
+	_animPictCount[animation] = 0;
 }
 
 void Scenery::interUpdateAnim(void) {
@@ -767,7 +767,7 @@ void Scenery::interStoreParams(void) {
 
 	_vm->_inter->evalExpr(&animation);
 	_vm->_inter->evalExpr(&layer);
-	layerPtr = animations[animation].layers[layer];
+	layerPtr = _animations[animation].layers[layer];
 
 	var = _vm->_parse->parseVarIndex();
 	WRITE_VAR_OFFSET(var, layerPtr->animDeltaX);

@@ -800,7 +800,7 @@ void Draw::printText(void) {
 		_spriteBottom = READ_LE_UINT16(ptr + 6) - _destSpriteY + 1;
 		_vm->_game->capturePush(_destSpriteX, _destSpriteY,
 						 _spriteRight, _spriteBottom);
-		(*_vm->_scenery->pCaptureCounter)++;
+		(*_vm->_scenery->_pCaptureCounter)++;
 	}
 	_destSpriteX = READ_LE_UINT16(ptr);
 	destX = _destSpriteX;
@@ -942,8 +942,8 @@ void Draw::printText(void) {
 //              add     sp, 0Ch
 	}
 
-	if ((_renderFlags & RENDERFLAG_CAPTUREPOP) && *_vm->_scenery->pCaptureCounter != 0) {
-		(*_vm->_scenery->pCaptureCounter)--;
+	if ((_renderFlags & RENDERFLAG_CAPTUREPOP) && *_vm->_scenery->_pCaptureCounter != 0) {
+		(*_vm->_scenery->_pCaptureCounter)--;
 		_vm->_game->capturePop(1);
 	}
 }

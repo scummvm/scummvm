@@ -274,7 +274,7 @@ void Inter::initControlVars(void) {
 	*_nestLevel = 0;
 	*_breakFromLevel = -1;
 
-	*_vm->_scenery->pCaptureCounter = 0;
+	*_vm->_scenery->_pCaptureCounter = 0;
 
 	_breakFlag = false;
 	_terminate = false;

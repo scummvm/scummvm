@@ -93,33 +93,33 @@ public:
 
 	// Global variables
 
-	char spriteRefs[20];
-	int16 spriteResId[20];
+	char _spriteRefs[20];
+	int16 _spriteResId[20];
 
-	char staticPictToSprite[70];
-	int16 staticPictCount[10];
-	Static statics[10];
-	char staticFromExt[10];
-	int16 staticResId[10];
+	char _staticPictToSprite[70];
+	int16 _staticPictCount[10];
+	Static _statics[10];
+	char _staticFromExt[10];
+	int16 _staticResId[10];
 
-	char animPictToSprite[70];
-	int16 animPictCount[10];
-	char animFromExt[10];
-	Animation animations[10];
-	int16 animResId[10];
+	char _animPictToSprite[70];
+	int16 _animPictCount[10];
+	char _animFromExt[10];
+	Animation _animations[10];
+	int16 _animResId[10];
 
-	int16 curStatic;
-	int16 curStaticLayer;
+	int16 _curStatic;
+	int16 _curStaticLayer;
 
-	int16 toRedrawLeft;
-	int16 toRedrawRight;
-	int16 toRedrawTop;
-	int16 toRedrawBottom;
+	int16 _toRedrawLeft;
+	int16 _toRedrawRight;
+	int16 _toRedrawTop;
+	int16 _toRedrawBottom;
 
-	int16 animTop;
-	int16 animLeft;
+	int16 _animTop;
+	int16 _animLeft;
 
-	int16 *pCaptureCounter;
+	int16 *_pCaptureCounter;
 
 	// Functions
 

@@ -107,70 +107,70 @@ public:
 
 	// Globals
 
-	Mult_Object *objects;
-	int16 *renderData;
-	int16 objCount;
-	Video::SurfaceDesc *underAnimSurf;
+	Mult_Object *_objects;
+	int16 *_renderData;
+	int16 _objCount;
+	Video::SurfaceDesc *_underAnimSurf;
 
-	char *multData;
-	int16 frame;
-	char doPalSubst;
-	int16 counter;
-	int16 frameRate;
+	char *_multData;
+	int16 _frame;
+	char _doPalSubst;
+	int16 _counter;
+	int16 _frameRate;
 
-	int32 *animArrayX;
-	int32 *animArrayY;
+	int32 *_animArrayX;
+	int32 *_animArrayY;
 
-	Mult_AnimData *animArrayData;
+	Mult_AnimData *_animArrayData;
 
-	int16 index;
+	int16 _index;
 
 	// Static keys
-	int16 staticKeysCount;
-	Mult_StaticKey *staticKeys;
-	int16 staticIndices[10];
+	int16 _staticKeysCount;
+	Mult_StaticKey *_staticKeys;
+	int16 _staticIndices[10];
 
 	// Anim keys
-	Mult_AnimKey *animKeys[4];
-	int16 animKeysCount[4];
-	int16 animLayer;
-	int16 animIndices[10];
+	Mult_AnimKey *_animKeys[4];
+	int16 _animKeysCount[4];
+	int16 _animLayer;
+	int16 _animIndices[10];
 
 	// Text keys
-	int16 textKeysCount;
-	Mult_TextKey *textKeys;
+	int16 _textKeysCount;
+	Mult_TextKey *_textKeys;
 
-	int16 frameStart;
+	int16 _frameStart;
 
 	// Palette keys
-	int16 palKeyIndex;
-	int16 palKeysCount;
-	Mult_PalKey *palKeys;
-	Video::Color *oldPalette;
-	Video::Color palAnimPalette[256];
-	int16 palAnimKey;
-	int16 palAnimIndices[4];
-	int16 palAnimRed[4];
-	int16 palAnimGreen[4];
-	int16 palAnimBlue[4];
+	int16 _palKeyIndex;
+	int16 _palKeysCount;
+	Mult_PalKey *_palKeys;
+	Video::Color *_oldPalette;
+	Video::Color _palAnimPalette[256];
+	int16 _palAnimKey;
+	int16 _palAnimIndices[4];
+	int16 _palAnimRed[4];
+	int16 _palAnimGreen[4];
+	int16 _palAnimBlue[4];
 
 	// Palette fading
-	Mult_PalFadeKey *palFadeKeys;
-	int16 palFadeKeysCount;
-	char palFadingRed;
-	char palFadingGreen;
-	char palFadingBlue;
+	Mult_PalFadeKey *_palFadeKeys;
+	int16 _palFadeKeysCount;
+	char _palFadingRed;
+	char _palFadingGreen;
+	char _palFadingBlue;
 
-	char animDataAllocated;
+	char _animDataAllocated;
 
-	char *dataPtr;
-	int16 staticLoaded[10];
-	int16 animLoaded[10];
-	int16 sndSlotsCount;
+	char *_dataPtr;
+	int16 _staticLoaded[10];
+	int16 _animLoaded[10];
+	int16 _sndSlotsCount;
 
 	// Sound keys
-	int16 sndKeysCount;
-	Mult_SndKey *sndKeys;
+	int16 _sndKeysCount;
+	Mult_SndKey *_sndKeys;
 
 	void zeroMultData(void);
 	void loadMult(int16 resId);
@@ -191,7 +191,7 @@ public:
 	Mult(GobEngine *vm);
 
 protected:
-	Video::Color fadePal[5][16];
+	Video::Color _fadePal[5][16];
 	GobEngine *_vm;
 
 	char drawStatics(char stop);
