@@ -180,6 +180,8 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
 PAKFile::PAKFile(const Common::String& file) {
+	_filename = 0;
+
 	Common::File pakfile;
 	uint8 *buffer = 0;
 	_open = false;
