@@ -488,6 +488,7 @@ begin_credits("Credits");
 	  begin_section("Kyra");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Johannes Schickel", "LordHoto", "");
+		  add_person("Oystein Eftevaag", "vinterstum", "");
 	  end_section();
 
 	  begin_section("SAGA");
