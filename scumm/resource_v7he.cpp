@@ -1800,6 +1800,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	byte *sdat1Ptr, *sdat2Ptr;
 	byte *src, *dst, *tmp;
 	int len, offs, size;
+	int sdat1size, sdat2size;
 
 	if (snd2id == -1) {
 		_sndPtrOffs = 0;
@@ -1812,9 +1813,6 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		_sndPtrOffs = 0;
 		_sndTmrOffs = 0;
 	}
-
-	res.lock(rtSound, snd1id);
-	res.lock(rtSound, snd2id);
 
 	snd1Ptr = getResourceAddress(rtSound, snd1id);
 	assert(snd1Ptr);
@@ -1846,8 +1844,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			free(data);
 
 			dst = sbng1Ptr + 8;
-			while ((offs = READ_LE_UINT16(dst)) != 0)
-				dst += offs;
+			while ((size = READ_LE_UINT16(dst)) != 0)
+				dst += size;
 		} else {
 			dst = sbng1Ptr + 8;
 		}
@@ -1872,7 +1870,6 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		}
 	}
 
-	int sdat1size, sdat2size;
 	sdat1Ptr = heFindResource(MKID('SDAT'), snd1Ptr);
 	assert(sdat1Ptr);
 	sdat2Ptr = heFindResource(MKID('SDAT'), snd2Ptr);
@@ -1882,11 +1879,6 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
 
 	debug(0, "SDAT size1 %d size2 %d", sdat1size, sdat2size);
-	if (sdat1size <= 0) {
-		debug(0, "createSound: Invalid offset (%d) for sound (%d)", snd1id, sdat1size);
-		return;
-	}
-
 	if (sdat2size < sdat1size) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;
@@ -1894,7 +1886,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		
 		memcpy(dst, src, len);
 
-		_sndPtrOffs += len;
+		_sndPtrOffs += sdat2size;
 		_sndTmrOffs += sdat2size;
 	} else {
 		src = sdat2Ptr + 8;
@@ -1911,7 +1903,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			memcpy(dst, src, len);
 		}
 
-		_sndPtrOffs += sdat2size - sdat1size;
+		_sndPtrOffs = sdat2size - sdat1size;
 		_sndTmrOffs += sdat2size;
 	}
 }
