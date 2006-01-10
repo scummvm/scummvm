@@ -894,6 +894,9 @@ int SimonEngine::runScript() {
 
 		case 156:{									/* is bit set */
 				uint bit = getVarOrByte();
+				if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
+					bit = 50;
+				}
 				condition = (_bitArray[bit / 16] & (1 << (bit & 15))) != 0;
 			}
 			break;
