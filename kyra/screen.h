@@ -30,6 +30,7 @@ class OSystem;
 namespace Kyra {
 
 class KyraEngine;
+class Debugger;
 struct Rect;
 
 struct ScreenDim {
@@ -53,6 +54,7 @@ struct Font {
 };
 
 class Screen {
+	friend class Debugger;
 public:
 
 	enum {

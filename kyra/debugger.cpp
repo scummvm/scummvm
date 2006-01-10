@@ -85,6 +85,8 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 		
 		_vm->enterNewScene(room, _vm->_currentCharacter->facing, 0, 0, 1);
 		_vm->_system->showOverlay();
+		_vm->_screen->_mouseLockCount = 0;
+
 		_detach_now = true;
 		return false;
 	}

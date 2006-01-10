@@ -88,7 +88,7 @@ void Sprites::setupSceneAnims() {
 			data += 4;
 			_anims[i].y = READ_LE_UINT16(data);
 			data += 4;
-			_anims[i].width = *(data)/8 + 1;
+			_anims[i].width = *(data) - 1;
 			data += 4;
 			_anims[i].height = *(data);
 			data += 4;
@@ -111,14 +111,14 @@ void Sprites::setupSceneAnims() {
 			int bkgdHeight = _anims[i].height;
 
 			if (_anims[i].width2)
-				bkgdWidth += (_anims[i].width2 >> 3) + 1;
+				bkgdWidth += _anims[i].width2 << 3;
 
 			if (_anims[i].height2)
 				bkgdHeight += _anims[i].height2;
 
 			_anims[i].background = (uint8 *)malloc(_screen->getRectSize(bkgdWidth + 1, bkgdHeight));
 			memset(_anims[i].background, 0, _screen->getRectSize(bkgdWidth + 1, bkgdHeight));
-			//_anims[i].background = (uint8 *)malloc(100*100);
+
 			assert(_anims[i].background);
 		}
 	}
