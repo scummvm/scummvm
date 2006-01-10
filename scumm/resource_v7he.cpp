@@ -49,10 +49,10 @@ ResExtractor::~ResExtractor() {
 		CachedCursor *cc = &_cursorCache[i];
 		if (cc->valid) {
 			free(cc->bitmap);
-			cc->bitmap = NULL;
-			cc->valid = false;
+			free(cc->palette);
 		}
 	}
+	memset(_cursorCache, 0, sizeof(_cursorCache));
 }
 
 ResExtractor::CachedCursor *ResExtractor::findCachedCursor(int id) {
@@ -81,8 +81,8 @@ ResExtractor::CachedCursor *ResExtractor::getCachedCursorSlot() {
 	}
 	assert(r);
 	free(r->bitmap);
-	r->bitmap = NULL;
-	r->valid = false;
+	free(r->palette);
+	memset(r, 0, sizeof(CachedCursor));
 	return r;
 }
 
@@ -106,7 +106,7 @@ void ResExtractor::setCursor(int id) {
 	}
 
 	if (_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette) && cc->palette)
-			_vm->_system->setCursorPalette(cc->palette, 0, cc->palSize);
+		_vm->_system->setCursorPalette(cc->palette, 0, cc->palSize);
 
 	_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
 	_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
