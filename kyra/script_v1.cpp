@@ -1576,7 +1576,7 @@ int KyraEngine::cmd_setBrandonScaleXAndY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_resetScaleMode(ScriptState *script) {
-	debug(3, "cmd_setBrandonScaleXAndY(0x%X) ()", script);
+	debug(3, "cmd_resetScaleMode(0x%X) ()", script);
 	_scaleMode = 0;
 	return 0;
 }
