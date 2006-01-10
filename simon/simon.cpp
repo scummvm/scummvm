@@ -577,6 +577,7 @@ int SimonEngine::init(GameDetector &detector) {
 	midi.set_volume(ConfMan.getInt("music_volume"));
 
 	_debugMode = (gDebugLevel >= 0);
+	_language = Common::parseLanguage(ConfMan.get("language"));
 
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1)
 		midi.pause(_musicPaused ^= 1);
@@ -642,7 +643,6 @@ int SimonEngine::init(GameDetector &detector) {
 		SOUND_INDEX_BASE = 0;
 	}
 
-	_language = Common::parseLanguage(ConfMan.get("language"));
 	if (getGameType() == GType_FF) {
 		gss = PTR(feeblefiles_settings);
 	} else if (getGameType() == GType_SIMON2) {
