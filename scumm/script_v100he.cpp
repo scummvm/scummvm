@@ -1691,11 +1691,11 @@ void ScummEngine_v100he::o100_startSound() {
 		_heSndChannel = pop();
 		break;
 	case 130:
-		_heSndFlags |= 40;
+		_heSndFlags |= 64;
 		pop();
 		break;
 	case 131:
-		_heSndFlags |= 4;
+		_heSndFlags |= 1;
 		break;
 	case 132: // Music
 	case 134: // Sound
@@ -1705,14 +1705,14 @@ void ScummEngine_v100he::o100_startSound() {
 		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
 		break;
 	case 133:
-		_heSndFlags |= 80;
+		_heSndFlags |= 128;
 		pop();
 		break;
 	case 135:
 		_heSndFlags |= 4;
 		break;
 	case 136:
-		_heSndFlags |= 20;
+		_heSndFlags |= 32;
 		pop();
 		break;
 	default:
