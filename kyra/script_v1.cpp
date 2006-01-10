@@ -1431,7 +1431,9 @@ int KyraEngine::cmd_totalItemsInScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_restoreBrandonsMovementDelay(ScriptState *script) {
-	warning("STUB: cmd_restoreBrandonsMovementDelay");
+	debug(3, "cmd_restoreBrandonsMovemenyDelay(0x%X) ()", script);
+	//TODO: Use movement set by menu, instead of 5.
+	setTimerDelay(5, 5);
 	return 0;
 }
 
