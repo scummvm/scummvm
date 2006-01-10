@@ -687,7 +687,7 @@ void ScummEngine::initBGBuffers(int height) {
 		// Resize main virtual screen in V7 games. This is necessary
 		// because in V7, rooms may be higher than one screen, so we have
 		// to accomodate for that.
-		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, 1, 1);
+		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, true, true);
 	}
 
 	if (_heversion >= 70)

@@ -36,6 +36,13 @@
 
 namespace Scumm {
 
+
+
+#pragma mark -
+#pragma mark --- "High level" message code ---
+#pragma mark -
+
+
 void ScummEngine::printString(int m, const byte *msg) {
 	switch (m) {
 	case 0:
@@ -95,6 +102,95 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 }
 
+
+#pragma mark -
+#pragma mark --- V6 blast text queue code ---
+#pragma mark -
+
+
+void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
+	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
+	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
+
+	convertMessageToString(text, bt.text, sizeof(bt.text));
+	bt.xpos = x;
+	bt.ypos = y;
+	bt.color = color;
+	bt.charset = charset;
+	bt.center = center;
+}
+
+void ScummEngine_v6::drawBlastTexts() {
+	byte *buf;
+	int c;
+	int i;
+
+	for (i = 0; i < _blastTextQueuePos; i++) {
+
+		buf = _blastTextQueue[i].text;
+
+		_charset->_top = _blastTextQueue[i].ypos + _screenTop;
+		_charset->_right = _screenWidth - 1;
+		_charset->_center = _blastTextQueue[i].center;
+		_charset->setColor(_blastTextQueue[i].color);
+		_charset->_disableOffsX = _charset->_firstChar = true;
+		_charset->setCurID(_blastTextQueue[i].charset);
+
+		do {
+			_charset->_left = _blastTextQueue[i].xpos;
+
+			// Center text if necessary
+			if (_charset->_center) {
+				_charset->_left -= _charset->getStringWidth(0, buf) / 2;
+				if (_charset->_left < 0)
+					_charset->_left = 0;
+			}
+
+			do {
+				c = *buf++;
+				
+				// FIXME: This is a workaround for bugs #864030 and #1399843:
+				// In COMI, some text contains ASCII character 11 = 0xB. It's
+				// not quite clear what it is good for; so for now we just ignore
+				// it, which seems to match the original engine (BTW, traditionally,
+				// this is a 'vertical tab').
+				if (c == 0x0B)
+					continue;
+				
+				if (c != 0 && c != 0xFF && c != '\n') {
+					if (c & 0x80 && _useCJKMode) {
+						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
+							c = 0x20; //not in S-JIS
+						} else {
+							c += *buf++ * 256;
+						}
+					}
+					_charset->printChar(c, true);
+				}
+			} while (c && c != '\n');
+
+			_charset->_top += _charset->getFontHeight();
+		} while (c);
+
+		_blastTextQueue[i].rect = _charset->_str;
+	}
+}
+
+void ScummEngine_v6::removeBlastTexts() {
+	int i;
+
+	for (i = 0; i < _blastTextQueuePos; i++) {
+		restoreBG(_blastTextQueue[i].rect);
+	}
+	_blastTextQueuePos = 0;
+}
+
+
+#pragma mark -
+#pragma mark --- V7 subtitle queue code ---
+#pragma mark -
+
+
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v7::processSubtitleQueue() {
 	for (int i = 0; i < _subtitleQueuePos; ++i) {
@@ -134,6 +230,13 @@ void ScummEngine_v7::clearSubtitleQueue() {
 	_subtitleQueuePos = 0;
 }
 #endif
+
+
+
+#pragma mark -
+#pragma mark --- Core message/subtitle code ---
+#pragma mark -
+
 
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_a = 0;
@@ -817,6 +920,12 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	return 0;
 }
 
+
+#pragma mark -
+#pragma mark --- Charset initialisation ---
+#pragma mark -
+
+
 #ifndef DISABLE_HE
 void ScummEngine_v80he::initCharset(int charsetno) {
 	ScummEngine::initCharset(charsetno);
@@ -843,82 +952,11 @@ void ScummEngine::initCharset(int charsetno) {
 
 }
 
-void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
-	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
-	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
-	convertMessageToString(text, bt.text, sizeof(bt.text));
-	bt.xpos = x;
-	bt.ypos = y;
-	bt.color = color;
-	bt.charset = charset;
-	bt.center = center;
-}
+#pragma mark -
+#pragma mark --- Translation/localization code ---
+#pragma mark -
 
-void ScummEngine_v6::drawBlastTexts() {
-	byte *buf;
-	int c;
-	int i;
-
-	for (i = 0; i < _blastTextQueuePos; i++) {
-
-		buf = _blastTextQueue[i].text;
-
-		_charset->_top = _blastTextQueue[i].ypos + _screenTop;
-		_charset->_right = _screenWidth - 1;
-		_charset->_center = _blastTextQueue[i].center;
-		_charset->setColor(_blastTextQueue[i].color);
-		_charset->_disableOffsX = _charset->_firstChar = true;
-		_charset->setCurID(_blastTextQueue[i].charset);
-
-		do {
-			_charset->_left = _blastTextQueue[i].xpos;
-
-			// Center text if necessary
-			if (_charset->_center) {
-				_charset->_left -= _charset->getStringWidth(0, buf) / 2;
-				if (_charset->_left < 0)
-					_charset->_left = 0;
-			}
-
-			do {
-				c = *buf++;
-				
-				// FIXME: This is a workaround for bugs #864030 and #1399843:
-				// In COMI, some text contains ASCII character 11 = 0xB. It's
-				// not quite clear what it is good for; so for now we just ignore
-				// it, which seems to match the original engine (BTW, traditionally,
-				// this is a 'vertical tab').
-				if (c == 0x0B)
-					continue;
-				
-				if (c != 0 && c != 0xFF && c != '\n') {
-					if (c & 0x80 && _useCJKMode) {
-						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
-							c = 0x20; //not in S-JIS
-						} else {
-							c += *buf++ * 256;
-						}
-					}
-					_charset->printChar(c, true);
-				}
-			} while (c && c != '\n');
-
-			_charset->_top += _charset->getFontHeight();
-		} while (c);
-
-		_blastTextQueue[i].rect = _charset->_str;
-	}
-}
-
-void ScummEngine_v6::removeBlastTexts() {
-	int i;
-
-	for (i = 0; i < _blastTextQueuePos; i++) {
-		restoreBG(_blastTextQueue[i].rect);
-	}
-	_blastTextQueuePos = 0;
-}
 
 #ifndef DISABLE_SCUMM_7_8
 static int indexCompare(const void *p1, const void *p2) {
