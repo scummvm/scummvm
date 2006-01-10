@@ -22,6 +22,7 @@
 #include "kyra/kyra.h"
 #include "kyra/animator.h"
 #include "kyra/screen.h"
+#include "kyra/resource.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -67,6 +68,17 @@ void KyraEngine::loadGame(const char *fileName) {
 		}
 	} else {
 		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
+	}
+
+	// unload the current voice file should fix some problems with voices
+	if (_currentRoom != 0xFFFF && (_features & GF_TALKIE)) {
+		char file[32];
+		assert(_currentRoom < _roomTableSize);
+		int tableId = _roomTable[_currentRoom].nameIndex;
+		assert(tableId < _roomFilenameTableSize);
+		strcpy(file, _roomFilenameTable[tableId]);
+		strcat(file, ".VRM");
+		_res->unloadPakFile(file);
 	}
 
 	int brandonX = 0, brandonY = 0;
