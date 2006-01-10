@@ -701,7 +701,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 10 * 16, VER(8), VER(9)),
 		MKARRAY(ScummEngine, _charsetData[0][0], sleByte, 15 * 16, VER(10)),
 
-		MKLINE(ScummEngine, _curExecScript, sleUint16, VER(8)),
+		MK_OBSOLETE(ScummEngine, _curExecScript, sleUint16, VER(8), VER(62)),
 
 		MKLINE(ScummEngine, camera._dest.x, sleInt16, VER(8)),
 		MKLINE(ScummEngine, camera._dest.y, sleInt16, VER(8)),
@@ -1280,7 +1280,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s) {
 		MKLINE(FloodFillParameters, x, sleInt32, VER(51)),
 		MKLINE(FloodFillParameters, y, sleInt32, VER(51)),
 		MKLINE(FloodFillParameters, flags, sleInt32, VER(51)),
-		MKLINE(FloodFillParameters, unk1C, sleInt32, VER(51)),
+		MK_OBSOLETE(FloodFillParameters, unk1C, sleInt32, VER(51), VER(62)),
 		MKEND()
 	};
 

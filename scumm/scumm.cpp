@@ -1104,7 +1104,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_scriptOrgPointer = NULL;
 	_opcode = 0;
 	vm.numNestedScripts = 0;
-	_curExecScript = 0;
 	_lastCodePtr = NULL;
 	_resultVarNumber = 0;
 	_scummStackPos = 0;

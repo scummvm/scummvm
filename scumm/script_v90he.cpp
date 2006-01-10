@@ -1767,7 +1767,7 @@ void ScummEngine_v90he::o90_floodFill() {
 
 	switch (subOp) {
 	case 0:
-		_floodFillParams.unk1C = pop();
+		pop();
 		break;
 	case 3:
 		memset(&_floodFillParams, 0, sizeof(_floodFillParams));

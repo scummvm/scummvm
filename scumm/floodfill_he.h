@@ -32,7 +32,6 @@ struct FloodFillParameters {
 	int32 x;
 	int32 y;
 	int32 flags;
-	int32 unk1C; /* unused */
 };
 
 struct FloodFillLine {

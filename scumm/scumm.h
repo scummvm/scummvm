@@ -616,7 +616,6 @@ protected:
 	uint32 _localScriptOffsets[1024];
 	const byte *_scriptPointer, *_scriptOrgPointer;
 	byte _opcode, _currentScript;
-	uint16 _curExecScript;
 	const byte * const *_lastCodePtr;
 	int _resultVarNumber, _scummStackPos;
 	int _vmStack[150];

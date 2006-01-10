@@ -887,7 +887,7 @@ void ScummEngine_v100he::o100_floodFill() {
 		_floodFillParams.flags = pop();
 		break;
 	case 67:
-		_floodFillParams.unk1C = pop();
+		pop();
 		break;
 	case 92:
 		floodFill(&_floodFillParams, this);

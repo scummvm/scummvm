@@ -37,8 +37,8 @@
 
 namespace Scumm {
 
-ResExtractor::ResExtractor(ScummEngine_v70he *scumm) {
-	_vm = scumm;
+ResExtractor::ResExtractor(ScummEngine_v70he *scumm)
+	: _vm(scumm) {
 
 	_fileName[0] = 0;
 	memset(_cursorCache, 0, sizeof(_cursorCache));
