@@ -111,10 +111,10 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1DOS_RU,    "c95a0a1ee973e19c2a1c5d12026c139f", "stripped.txt", false},
 	{ GID_SIMON1DOS_RU,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
-	{ GID_SIMON1DOS_FR,    "00000000000000000000000000000000", "gamepc", false },
-	{ GID_SIMON1DOS_FR,    "00000000000000000000000000000000", "icon.dat", false},
-	{ GID_SIMON1DOS_FR,    "00000000000000000000000000000000", "stripped.txt", false},
-	{ GID_SIMON1DOS_FR,    "00000000000000000000000000000000", "tbllist", false},
+	{ GID_SIMON1DOS_FR,    "34759d0d4285a2f4b21b8e03b8fcefb3", "gamepc", false },
+	{ GID_SIMON1DOS_FR,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1DOS_FR,    "aa01e7386057abc0c3e27dbaa9c4ba5b", "stripped.txt", false},
+	{ GID_SIMON1DOS_FR,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
 	{ GID_SIMON1DOS_DE,    "063015e6ce7d90b570dbc21fe0c667b1", "gamepc", false },
 	{ GID_SIMON1DOS_DE,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
