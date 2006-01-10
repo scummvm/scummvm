@@ -934,8 +934,6 @@ void ScummEngine_v80he::initCharset(int charsetno) {
 #endif
 
 void ScummEngine::initCharset(int charsetno) {
-	int i;
-
 	if (_gameId == GID_FT) {
 		if (!res.isResourceLoaded(rtCharset, charsetno))
 			loadCharset(charsetno);
@@ -947,9 +945,7 @@ void ScummEngine::initCharset(int charsetno) {
 	_string[0]._default.charset = charsetno;
 	_string[1]._default.charset = charsetno;
 
-	for (i = 0; i < 16; i++)
-		_charsetColorMap[i] = _charsetData[charsetno][i];
-
+	memcpy(_charsetColorMap, _charsetData[charsetno], sizeof(_charsetColorMap));
 }
 
 

@@ -1404,15 +1404,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		break;
 
 	case Common::kRenderCGA:
-		if (!(_features & GF_16COLOR))
-			_renderMode = Common::kRenderDefault;
-		break;
-
 	case Common::kRenderEGA:
-		if (!(_features & GF_16COLOR))
-			_renderMode = Common::kRenderDefault;
-		break;
-
 	case Common::kRenderAmiga:
 		if (!(_features & GF_16COLOR))
 			_renderMode = Common::kRenderDefault;
