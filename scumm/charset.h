@@ -57,7 +57,6 @@ public:
 	bool _hasMask;	// True if "removable" text is visible somewhere (should be called _hasText or so)
 	VirtScreenNumber _textScreenID;	// ID of the virtual screen on which the text is visible.
 
-	bool _ignoreCharsetMask;
 	bool _blitAlso;
 	bool _firstChar;
 	bool _disableOffsX;
@@ -80,7 +79,7 @@ public:
 	void clearCharsetMask();
 	void clearTextSurface();
 
-	virtual void printChar(int chr) = 0;
+	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
 	virtual void drawChar(int chr, const Graphics::Surface &s, int x, int y) {}
 
 	int getStringWidth(int a, const byte *str);
@@ -130,7 +129,7 @@ protected:
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
-	void printChar(int chr);
+	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
 	int getCharWidth(byte chr);
@@ -146,7 +145,7 @@ public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
 	void setCurID(byte id) {}
-	void printChar(int chr);
+	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 
 	int getFontHeight() { return 8; }
@@ -160,7 +159,7 @@ protected:
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
-	void printChar(int chr);
+	void printChar(int chr, bool ignoreCharsetMask);
 	void drawChar(int chr, const Graphics::Surface &s, int x, int y);
 	void setCurID(byte id);
 	void setColor(byte color);
@@ -186,7 +185,7 @@ public:
 	CharsetRendererNut(ScummEngine *vm);
 	~CharsetRendererNut();
 
-	void printChar(int chr);
+	void printChar(int chr, bool ignoreCharsetMask);
 
 	void setCurID(byte id);
 

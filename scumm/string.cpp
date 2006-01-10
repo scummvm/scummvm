@@ -469,7 +469,7 @@ void ScummEngine::CHARSET_1() {
 				}
 			}
 			if (_version <= 3) {
-				_charset->printChar(c);
+				_charset->printChar(c, false);
 			} else {
 				if (_features & GF_HE_NOSUBTITLES) {
 					// HE games which use sprites for subtitles
@@ -481,7 +481,7 @@ void ScummEngine::CHARSET_1() {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it.
 				} else {
-					_charset->printChar(c);
+					_charset->printChar(c, false);
 				}
 			}
 			_charset->_nextLeft = _charset->_left;
@@ -554,9 +554,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	}
 
-	if (_version < 7)
-		_charset->_ignoreCharsetMask = true;
-
+	const bool ignoreCharsetMask = (_version < 7);
 
 	if (!buf[0]) {
 		buf[0] = ' ';
@@ -635,7 +633,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					}
 				}
 			}
-			_charset->printChar(c);
+			_charset->printChar(c, ignoreCharsetMask);
 			_charset->_blitAlso = false;
 
 			if (cmi_pos_hack) {
@@ -644,8 +642,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			}
 		}
 	}
-
-	_charset->_ignoreCharsetMask = false;
 
 	if (a == 0) {
 		_charset->_nextLeft = _charset->_left;
@@ -864,7 +860,6 @@ void ScummEngine_v6::drawBlastTexts() {
 	int c;
 	int i;
 
-	_charset->_ignoreCharsetMask = true;
 	for (i = 0; i < _blastTextQueuePos; i++) {
 
 		buf = _blastTextQueue[i].text;
@@ -905,7 +900,7 @@ void ScummEngine_v6::drawBlastTexts() {
 							c += *buf++ * 256;
 						}
 					}
-					_charset->printChar(c);
+					_charset->printChar(c, true);
 				}
 			} while (c && c != '\n');
 
@@ -914,7 +909,6 @@ void ScummEngine_v6::drawBlastTexts() {
 
 		_blastTextQueue[i].rect = _charset->_str;
 	}
-	_charset->_ignoreCharsetMask = false;
 }
 
 void ScummEngine_v6::removeBlastTexts() {

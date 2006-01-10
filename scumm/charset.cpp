@@ -198,7 +198,6 @@ CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_center = false;
 	_hasMask = false;
 	_textScreenID = kMainVirtScreen;
-	_ignoreCharsetMask = false;
 	_blitAlso = false;
 	_firstChar = false;
 	_disableOffsX = false;
@@ -1206,7 +1205,7 @@ void CharsetRendererCommon::enableShadow(bool enable) {
 }
 
 
-void CharsetRendererV3::printChar(int chr) {
+void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	// Indy3 / Zak256 / Loom
 	int width, height, origWidth, origHeight;
 	VirtScreen *vs;
@@ -1252,11 +1251,11 @@ void CharsetRendererV3::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 
-	if (!_ignoreCharsetMask) {
+	if (!ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
-	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
@@ -1313,7 +1312,7 @@ void CharsetRenderer::translateColor() {
 }
 
 
-void CharsetRendererClassic::printChar(int chr) {
+void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	int width, height, origWidth, origHeight;
 	int offsX, offsY;
 	VirtScreen *vs;
@@ -1404,14 +1403,14 @@ void CharsetRendererClassic::printChar(int chr) {
 	byte *dstPtr;
 	byte *back = NULL;
 
-	if (!_ignoreCharsetMask) {
+	if (!ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
 
 	if ((_vm->_heversion >= 71 && _bitDepth >= 8) || (_vm->_heversion >= 90 && _bitDepth == 0)) {
 #ifndef DISABLE_HE
-		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
 			dstPtr = (byte *)_textSurface.pixels;
@@ -1439,7 +1438,7 @@ void CharsetRendererClassic::printChar(int chr) {
 	} else {
 		Graphics::Surface dstSurface;
 		Graphics::Surface backSurface;
-		if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstSurface = *vs;
 			dstPtr = vs->getPixels(_left, drawTop);
 		} else {
@@ -1454,7 +1453,7 @@ void CharsetRendererClassic::printChar(int chr) {
 			dstPtr = vs->getBackPixels(_left, drawTop);
 		}
 
-		if (!_ignoreCharsetMask && vs->hasTwoBuffers) {
+		if (!ignoreCharsetMask && vs->hasTwoBuffers) {
 			drawTop = _top - _vm->_screenTop;
 		}
 
@@ -1472,7 +1471,7 @@ void CharsetRendererClassic::printChar(int chr) {
 			// once to each of the two buffers. That should hypothetically yield
 			// identical results, though I didn't try it and right now I don't know
 			// any spots where I can test this...
-			if (!_ignoreCharsetMask)
+			if (!ignoreCharsetMask)
 				warning("This might be broken -- please report where you encountered this to Fingolfin");
 
 			// Perform some clipping
@@ -1648,7 +1647,7 @@ int CharsetRendererNut::getFontHeight() {
 	return _current->getCharHeight('|');
 }
 
-void CharsetRendererNut::printChar(int chr) {
+void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	Common::Rect shadow;
 
 	assert(_current);
@@ -1680,13 +1679,13 @@ void CharsetRendererNut::printChar(int chr) {
 	shadow.bottom = _top + height + 2;
 
 	Graphics::Surface s;
-	if (!_ignoreCharsetMask) {
+	if (!ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = kMainVirtScreen;
 	}
 
 	int drawTop = _top;
-	if (_ignoreCharsetMask) {
+	if (ignoreCharsetMask) {
 		VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
 		s = *vs;
 		s.pixels = vs->getPixels(0, 0);
@@ -1711,7 +1710,7 @@ void CharsetRendererNut::printChar(int chr) {
 }
 #endif
 
-void CharsetRendererNES::printChar(int chr) {
+void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	int width, height, origWidth, origHeight;
 	VirtScreen *vs;
 	byte *charPtr, *dst;
@@ -1749,12 +1748,12 @@ void CharsetRendererNES::printChar(int chr) {
 
 	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
 
-	if (!_ignoreCharsetMask) {
+	if (!ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
 
-	if (_ignoreCharsetMask || !vs->hasTwoBuffers) {
+	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dst = vs->getPixels(_left, drawTop);
 		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
 	} else {
