@@ -201,7 +201,7 @@ public:
 	void swapItems(int16 indexToPick, int16 idToPick);
 	void treatItemPick(int16 itemId);
 	int16 treatItem(int16 action);
-	void interFunc(void);
+	int16 doMove(Gob_Object *gobDesc, int16 cont, int16 action);
 
 	Goblin(GobEngine *vm);
 
@@ -224,7 +224,6 @@ protected:
 	void moveTreatRopeStairs(Gob_Object *gobDesc);
 	void movePathFind(Gob_Object *gobDesc, int16 nextAct);
 	void moveAdvance(Gob_Object *gobDesc, int16 nextAct, int16 framesCount);
-	int16 doMove(Gob_Object *gobDesc, int16 cont, int16 action);
 };
 
 }				// End of namespace Gob

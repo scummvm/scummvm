@@ -35,6 +35,80 @@ namespace Gob {
 
 #define OPCODE(x) _OPCODE(Inter_v2, x)
 
+const int Inter_v2::_goblinFuncLookUp[][2] = {
+	{1, 0},
+	{2, 1},
+	{3, 2},
+	{4, 3},
+	{5, 4},
+	{6, 5},
+	{7, 6},
+	{8, 7},
+	{9, 8},
+	{10, 9},
+	{12, 10},
+	{13, 11},
+	{14, 12},
+	{15, 13},
+	{16, 14},
+	{21, 15},
+	{22, 16},
+	{23, 17},
+	{24, 18},
+	{25, 19},
+	{26, 20},
+	{27, 21},
+	{28, 22},
+	{29, 23},
+	{30, 24},
+	{32, 25},
+	{33, 26},
+	{34, 27},
+	{35, 28},
+	{36, 29},
+	{37, 30},
+	{40, 31},
+	{41, 32},
+	{42, 33},
+	{43, 34},
+	{44, 35},
+	{50, 36},
+	{52, 37},
+	{53, 38},
+	{150, 39},
+	{152, 40},
+	{200, 41},
+	{201, 42},
+	{202, 43},
+	{203, 44},
+	{204, 45},
+	{250, 46},
+	{251, 47},
+	{252, 48},
+	{500, 49},
+	{502, 50},
+	{503, 51},
+	{600, 52},
+	{601, 53},
+	{602, 54},
+	{603, 55},
+	{604, 56},
+	{605, 57},
+	{1000, 58},
+	{1001, 59},
+	{1002, 60},
+	{1003, 61},
+	{1004, 62},
+	{1005, 63},
+	{1006, 64},
+	{1008, 65},
+	{1009, 66},
+	{1010, 67},
+	{1011, 68},
+	{1015, 69},
+	{2005, 70}
+};
+
 Inter_v2::Inter_v2(GobEngine *vm) : Inter_v1(vm) {
 	setupOpcodes();
 }
@@ -411,7 +485,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_speakerOff),
 		/* 24 */
 		OPCODE(o1_putPixel),
-		OPCODE(o1_func),
+		OPCODE(o1_goblinFunc),
 		OPCODE(o1_createSprite),
 		OPCODE(o1_freeSprite),
 		/* 28 */
@@ -466,8 +540,101 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_manageDataFile),
 	};
 
+	static const OpcodeGoblinEntryV2 opcodesGoblin[71] = {
+		/* 00 */
+		OPCODE(o1_setState),
+		OPCODE(o1_setCurFrame),
+		OPCODE(o1_setNextState),
+		OPCODE(o1_setMultState),
+		/* 04 */
+		OPCODE(o1_setOrder),
+		OPCODE(o1_setActionStartState),
+		OPCODE(o1_setCurLookDir),
+		OPCODE(o1_setType),
+		/* 08 */
+		OPCODE(o1_setNoTick),
+		OPCODE(o1_setPickable),
+		OPCODE(o1_setXPos),
+		OPCODE(o1_setYPos),
+		/* 0C */
+		OPCODE(o1_setDoAnim),
+		OPCODE(o1_setRelaxTime),
+		OPCODE(o1_setMaxTick),
+		OPCODE(o1_getState),
+		/* 10 */
+		OPCODE(o1_getCurFrame),
+		OPCODE(o1_getNextState),
+		OPCODE(o1_getMultState),
+		OPCODE(o1_getOrder),
+		/* 14 */
+		OPCODE(o1_getActionStartState),
+		OPCODE(o1_getCurLookDir),
+		OPCODE(o1_getType),
+		OPCODE(o1_getNoTick),
+		/* 18 */
+		OPCODE(o1_getPickable),
+		OPCODE(o1_getObjMaxFrame),
+		OPCODE(o1_getXPos),
+		OPCODE(o1_getYPos),
+		/* 1C */
+		OPCODE(o1_getDoAnim),
+		OPCODE(o1_getRelaxTime),
+		OPCODE(o1_getMaxTick),
+		OPCODE(o1_manipulateMap),
+		/* 20 */
+		OPCODE(o1_getItem),
+		OPCODE(o1_manipulateMapIndirect),
+		OPCODE(o1_getItemIndirect),
+		OPCODE(o1_setPassMap),
+		/* 24 */
+		OPCODE(o1_setGoblinPosH),
+		OPCODE(o1_getGoblinPosXH),
+		OPCODE(o1_getGoblinPosYH),
+		OPCODE(o1_setGoblinMultState),
+		/* 28 */
+		OPCODE(o1_setGoblinUnk14),
+		OPCODE(o1_setItemIdInPocket),
+		OPCODE(o1_setItemIndInPocket),
+		OPCODE(o1_getItemIdInPocket),
+		/* 2C */
+		OPCODE(o1_getItemIndInPocket),
+		OPCODE(o1_setItemPos),
+		OPCODE(o1_setGoblinPos),
+		OPCODE(o1_setGoblinState),
+		/* 30 */
+		OPCODE(o1_setGoblinStateRedraw),
+		OPCODE(o1_decRelaxTime),
+		OPCODE(o1_getGoblinPosX),
+		OPCODE(o1_getGoblinPosY),
+		/* 34 */
+		OPCODE(o1_clearPathExistence),
+		OPCODE(o1_setGoblinVisible),
+		OPCODE(o1_setGoblinInvisible),
+		OPCODE(o1_getObjectIntersect),
+		/* 38 */
+		OPCODE(o1_getGoblinIntersect),
+		OPCODE(o1_setItemPos),
+		OPCODE(o1_loadObjects),
+		OPCODE(o1_freeObjects),
+		/* 3C */
+		OPCODE(o1_animateObjects),
+		OPCODE(o1_drawObjects),
+		OPCODE(o1_loadMap),
+		OPCODE(o1_moveGoblin),
+		/* 40 */
+		OPCODE(o1_switchGoblin),
+		OPCODE(o1_loadGoblin),
+		OPCODE(o1_writeTreatItem),
+		OPCODE(o1_moveGoblin0),
+		/* 44 */
+		OPCODE(o1_setGoblinTarget),
+		OPCODE(o1_setGoblinObjectsPos),
+		OPCODE(o1_initGoblin)
+	};
+
 	_opcodesDrawV2 = opcodesDraw;
 	_opcodesFuncV2 = opcodesFunc;
+	_opcodesGoblinV2 = opcodesGoblin;
 }
 
 void Inter_v2::executeDrawOpcode(byte i) {
@@ -498,6 +665,26 @@ bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 	return false;
 }
 
+void Inter_v2::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
+	debug(4, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
+
+	OpcodeGoblinProcV2 op = NULL;
+
+	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
+		if (_goblinFuncLookUp[j][0] == i) {
+			op = _opcodesGoblinV2[_goblinFuncLookUp[j][1]].proc;
+			break;
+		}
+
+	if (op == NULL) {
+		warning("unimplemented opcodeGoblin: %d", i);
+		_vm->_global->_inter_execPtr -= 2;
+		_vm->_global->_inter_execPtr += load16() * 2;
+	}
+	else
+		(this->*op) (extraData, retVarPtr, objDesc);
+}
+
 const char *Inter_v2::getOpcodeDrawDesc(byte i) {
 	return _opcodesDrawV2[i].desc;
 }
@@ -510,5 +697,11 @@ const char *Inter_v2::getOpcodeFuncDesc(byte i, byte j)
 	return _opcodesFuncV2[i*16 + j].desc;
 }
 
+const char *Inter_v2::getOpcodeGoblinDesc(byte i) {
+	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
+		if (_goblinFuncLookUp[j][0] == i)
+			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
+	return "";
+}
 
 } // End of namespace Gob

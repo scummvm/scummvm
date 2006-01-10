@@ -30,6 +30,7 @@
 #include "gob/mult.h"
 #include "gob/goblin.h"
 #include "gob/cdrom.h"
+#include "gob/map.h"
 
 namespace Gob {
 
@@ -295,6 +296,147 @@ void Inter::renewTimeInVars(void) {
 	WRITE_VAR(9, t->tm_hour);
 	WRITE_VAR(10, t->tm_min);
 	WRITE_VAR(11, t->tm_sec);
+}
+
+void Inter::manipulateMap(int16 xPos, int16 yPos, int16 item) {
+	for (int16 y = 0; y < Map::kMapHeight; y++) {
+		for (int16 x = 0; x < Map::kMapWidth; x++) {
+			if ((_vm->_map->_itemsMap[y][x] & 0xff) == item) {
+				_vm->_map->_itemsMap[y][x] &= 0xff00;
+			} else if (((_vm->_map->_itemsMap[y][x] & 0xff00) >> 8)
+					== item) {
+				_vm->_map->_itemsMap[y][x] &= 0xff;
+			}
+		}
+	}
+
+	if (xPos < Map::kMapWidth - 1) {
+		if (yPos > 0) {
+			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
+					(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
+					0
+					|| (_vm->_map->_itemsMap[yPos][xPos +
+						1] & 0xff00) != 0
+					|| (_vm->_map->_itemsMap[yPos - 1][xPos +
+						1] & 0xff00) != 0) {
+
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
+						+ item;
+
+				_vm->_map->_itemsMap[yPos - 1][xPos] =
+						(_vm->_map->_itemsMap[yPos -
+					1][xPos] & 0xff00) + item;
+
+				_vm->_map->_itemsMap[yPos][xPos + 1] =
+						(_vm->_map->_itemsMap[yPos][xPos +
+					1] & 0xff00) + item;
+
+				_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
+						(_vm->_map->_itemsMap[yPos - 1][xPos +
+					1] & 0xff00) + item;
+			} else {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
+						(item << 8);
+
+				_vm->_map->_itemsMap[yPos - 1][xPos] =
+						(_vm->_map->_itemsMap[yPos -
+					1][xPos] & 0xff) + (item << 8);
+
+				_vm->_map->_itemsMap[yPos][xPos + 1] =
+						(_vm->_map->_itemsMap[yPos][xPos +
+					1] & 0xff) + (item << 8);
+
+				_vm->_map->_itemsMap[yPos - 1][xPos + 1] =
+						(_vm->_map->_itemsMap[yPos - 1][xPos +
+					1] & 0xff) + (item << 8);
+			}
+		} else {
+			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
+					(_vm->_map->_itemsMap[yPos][xPos + 1] & 0xff00) !=
+					0) {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
+						+ item;
+
+				_vm->_map->_itemsMap[yPos][xPos + 1] =
+						(_vm->_map->_itemsMap[yPos][xPos +
+					1] & 0xff00) + item;
+			} else {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
+						(item << 8);
+
+				_vm->_map->_itemsMap[yPos][xPos + 1] =
+						(_vm->_map->_itemsMap[yPos][xPos +
+					1] & 0xff) + (item << 8);
+			}
+		}
+	} else {
+		if (yPos > 0) {
+			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0 ||
+					(_vm->_map->_itemsMap[yPos - 1][xPos] & 0xff00) !=
+					0) {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
+						+ item;
+
+				_vm->_map->_itemsMap[yPos - 1][xPos] =
+						(_vm->_map->_itemsMap[yPos -
+					1][xPos] & 0xff00) + item;
+			} else {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
+						(item << 8);
+
+				_vm->_map->_itemsMap[yPos - 1][xPos] =
+						(_vm->_map->_itemsMap[yPos -
+					1][xPos] & 0xff) + (item << 8);
+			}
+		} else {
+			if ((_vm->_map->_itemsMap[yPos][xPos] & 0xff00) != 0) {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff00)
+						+ item;
+			} else {
+				_vm->_map->_itemsMap[yPos][xPos] =
+						(_vm->_map->_itemsMap[yPos][xPos] & 0xff) +
+						(item << 8);
+			}
+		}
+	}
+
+	if (item < 0 || item >= 20)
+		return;
+
+	if (xPos > 1 && _vm->_map->_passMap[yPos][xPos - 2] == 1) {
+		_vm->_map->_itemPoses[item].x = xPos - 2;
+		_vm->_map->_itemPoses[item].y = yPos;
+		_vm->_map->_itemPoses[item].orient = 4;
+		return;
+	}
+
+	if (xPos < Map::kMapWidth - 2 && _vm->_map->_passMap[yPos][xPos + 2] == 1) {
+		_vm->_map->_itemPoses[item].x = xPos + 2;
+		_vm->_map->_itemPoses[item].y = yPos;
+		_vm->_map->_itemPoses[item].orient = 0;
+		return;
+	}
+
+	if (xPos < Map::kMapWidth - 1 && _vm->_map->_passMap[yPos][xPos + 1] == 1) {
+		_vm->_map->_itemPoses[item].x = xPos + 1;
+		_vm->_map->_itemPoses[item].y = yPos;
+		_vm->_map->_itemPoses[item].orient = 0;
+		return;
+	}
+
+	if (xPos > 0 && _vm->_map->_passMap[yPos][xPos - 1] == 1) {
+		_vm->_map->_itemPoses[item].x = xPos - 1;
+		_vm->_map->_itemPoses[item].y = yPos;
+		_vm->_map->_itemPoses[item].orient = 4;
+		return;
+	}
 }
 
 } // End of namespace Gob

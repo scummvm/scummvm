@@ -22,6 +22,8 @@
 #ifndef GOB_INTERPRET_H
 #define GOB_INTERPRET_H
 
+#include "gob/goblin.h"
+
 namespace Gob {
 
 // This is to help devices with small memory (PDA, smartphones, ...)
@@ -57,6 +59,7 @@ public:
 	void callSub(int16 retFlag);
 	void initControlVars(void);
 	void renewTimeInVars(void);
+	void manipulateMap(int16 xPos, int16 yPos, int16 item);
 
 	Inter(GobEngine *vm);
 	virtual ~Inter() {};
@@ -67,8 +70,10 @@ protected:
 	virtual void setupOpcodes(void) = 0;
 	virtual void executeDrawOpcode(byte i) = 0;
 	virtual bool executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) = 0;
+	virtual void executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) = 0;
 	virtual const char *getOpcodeDrawDesc(byte i) = 0;
 	virtual const char *getOpcodeFuncDesc(byte i, byte j) = 0;
+	virtual const char *getOpcodeGoblinDesc(byte i) = 0;
 };
 
 class Inter_v1 : public Inter {
@@ -79,6 +84,7 @@ public:
 protected:
 	typedef void (Inter_v1::*OpcodeDrawProcV1)(void);
 	typedef bool (Inter_v1::*OpcodeFuncProcV1)(char &, int16 &, int16 &);
+	typedef void (Inter_v1::*OpcodeGoblinProcV1)(int16 &, int32 *, Goblin::Gob_Object *);
   struct OpcodeDrawEntryV1 {
 		OpcodeDrawProcV1 proc;
 		const char *desc;
@@ -87,14 +93,22 @@ protected:
 		OpcodeFuncProcV1 proc;
 		const char *desc;
 		};
+  struct OpcodeGoblinEntryV1 {
+		OpcodeGoblinProcV1 proc;
+		const char *desc;
+		};
 	const OpcodeDrawEntryV1 *_opcodesDrawV1;
 	const OpcodeFuncEntryV1 *_opcodesFuncV1;
+	const OpcodeGoblinEntryV1 *_opcodesGoblinV1;
+	static const int _goblinFuncLookUp[][2];
 
 	virtual void setupOpcodes(void);
 	virtual void executeDrawOpcode(byte i);
 	virtual bool executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag);
+	virtual void executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 	virtual const char *getOpcodeDrawDesc(byte i);
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(byte i);
 
 	void o1_loadMult(void);
 	void o1_playMult(void);
@@ -169,7 +183,7 @@ protected:
 	bool o1_return(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_speakerOn(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_speakerOff(char &cmdCount, int16 &counter, int16 &retFlag);
-	bool o1_func(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o1_goblinFunc(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_returnTo(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_setBackDelta(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_loadSound(char &cmdCount, int16 &counter, int16 &retFlag);
@@ -178,6 +192,76 @@ protected:
 	bool o1_animatePalette(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_animateCursor(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o1_blitCursor(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o1_setState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setCurFrame(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setNextState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setMultState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setOrder(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setActionStartState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setCurLookDir(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setType(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setNoTick(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setXPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setYPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setDoAnim(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setRelaxTime(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setMaxTick(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getCurFrame(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getNextState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getMultState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getOrder(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getActionStartState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getCurLookDir(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getType(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getNoTick(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getPickable(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getObjMaxFrame(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getXPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getYPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getDoAnim(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getRelaxTime(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getMaxTick(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_manipulateMap(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getItem(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_manipulateMapIndirect(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getItemIndirect(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setPassMap(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinPosH(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getGoblinPosXH(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getGoblinPosYH(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinMultState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinState(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinStateRedraw(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinUnk14(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setItemIdInPocket(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setItemIndInPocket(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getItemIdInPocket(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getItemIndInPocket(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setItemPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_decRelaxTime(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getGoblinPosX(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getGoblinPosY(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_clearPathExistence(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinVisible(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinInvisible(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getObjectIntersect(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_getGoblinIntersect(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_loadObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_freeObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_animateObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_drawObjects(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_loadMap(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_moveGoblin(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_switchGoblin(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_loadGoblin(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_writeTreatItem(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_moveGoblin0(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinTarget(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_setGoblinObjectsPos(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
+	void o1_initGoblin(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 };
 
 class Inter_v2 : public Inter_v1 {
@@ -188,6 +272,7 @@ public:
 protected:
 	typedef void (Inter_v2::*OpcodeDrawProcV2)(void);
 	typedef bool (Inter_v2::*OpcodeFuncProcV2)(char &, int16 &, int16 &);
+	typedef void (Inter_v2::*OpcodeGoblinProcV2)(int16 &, int32 *, Goblin::Gob_Object *);
   struct OpcodeDrawEntryV2 {
 		OpcodeDrawProcV2 proc;
 		const char *desc;
@@ -196,14 +281,22 @@ protected:
 		OpcodeFuncProcV2 proc;
 		const char *desc;
 		};
+  struct OpcodeGoblinEntryV2 {
+		OpcodeGoblinProcV2 proc;
+		const char *desc;
+		};
 	const OpcodeDrawEntryV2 *_opcodesDrawV2;
 	const OpcodeFuncEntryV2 *_opcodesFuncV2;
+	const OpcodeGoblinEntryV2 *_opcodesGoblinV2;
+	static const int _goblinFuncLookUp[][2];
 
 	virtual void setupOpcodes(void);
 	virtual void executeDrawOpcode(byte i);
 	virtual bool executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag);
+	virtual void executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc);
 	virtual const char *getOpcodeDrawDesc(byte i);
 	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(byte i);
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
 };
