@@ -462,8 +462,13 @@ void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool 
 	byte flags;
 	int rate;
 
-	if (ambient) {
-		if (_ambientPaused || sound == _ambientPlaying)
+	if (ambient == true) {
+		if (sound == _ambientPlaying)
+			return;
+
+		_ambientPlaying = sound;
+
+		if (_ambientPaused)
 			return;
 	} else {
 		if (_effectsPaused)
@@ -480,10 +485,11 @@ void Sound::playSoundData(byte *soundData, uint sound, uint pan, uint vol, bool 
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, soundData + stream.pos(), size);
 
-	if (ambient && sound == _ambientPlaying) {
-		_mixer->playRaw(&_effectsHandle, buffer, size, rate, flags);
-	} else {
+	if (ambient == true) {
+		_mixer->stopHandle(_ambientHandle);
 		_mixer->playRaw(&_ambientHandle, buffer, size, rate, Audio::Mixer::FLAG_LOOP|flags);
+	} else {
+		_mixer->playRaw(&_effectsHandle, buffer, size, rate, flags);
 	}
 }
 
