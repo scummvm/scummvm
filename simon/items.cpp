@@ -1639,7 +1639,10 @@ void SimonEngine::o_unk_160(uint a) {
 void SimonEngine::o_unk_103() {
 	mouseOff();
 	removeIconArray(_curWindow);
-	showMessageFormat("\x0C");
+	if (getGameType() == GType_FF)
+		showMessageFormat("\x0E");
+	else
+		showMessageFormat("\x0C");
 	mouseOn();
 }
 
