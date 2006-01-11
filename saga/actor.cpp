@@ -960,13 +960,17 @@ int Actor::getFrameType(ActorFrameTypes frameType) {
 			return kFrameIHNMGesture;
 		case kFrameWait:
 			return kFrameIHNMWait;
+		case kFrameGive:
+		case kFramePickUp:
+		case kFrameLook:
+			error("Actor::getFrameType() unknown frame type %d", frameType);
+			return kFrameIHNMStand;
 		}
 	}
 	error("Actor::getFrameType() unknown frame type %d", frameType);
 }
 
 ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
-	ActorFrameRange * fr = NULL;
 	ActorData *actor;
 	int fourDirection;
 	static ActorFrameRange def = {0, 0};
