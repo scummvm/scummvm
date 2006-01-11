@@ -121,7 +121,7 @@ void WSAMovieV1::close() {
 
 void WSAMovieV1::displayFrame(int frameNum) {
 	debug(9, "WSAMovieV1::displayFrame(%d)", frameNum);
-	if (frameNum > _numFrames || !_opened)
+	if (frameNum >= _numFrames || !_opened)
 		return;
 
 	uint8 *dst;
