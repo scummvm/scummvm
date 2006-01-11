@@ -722,8 +722,17 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	maxWidth = (getGameType() == GType_FF) ? 640 : 20;
-	if (getGameType() == GType_SIMON2 && width > maxWidth) {
+	if (getGameType() == GType_FF) {
+		if (width > 640) {
+			debug(0, "Horizontal scrolling not supported");
+			return;
+		}
+		if (height > 480) {
+			debug(0, "Vertical scrolling not supported");
+			return;
+		}
+	}
+	if (getGameType() == GType_SIMON2 && width > 20) {
 		const byte *src;
 		byte *dst;
 		uint w;
@@ -749,11 +758,6 @@ void SimonEngine::vc10_draw() {
 
 		dx_unlock_attached();
 
-		return;
-	}
-
-	if (getGameType() == GType_FF && height > 480) {
-		debug(0, "Vertical scrolling not supported\n");
 		return;
 	}
 
@@ -2184,10 +2188,10 @@ void SimonEngine::vc76_setScaleXOffs() {
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadNextWord();
-	int16 xoffs = vcReadNextWord();
+	int16 x = vcReadNextWord();
 	int var = vcReadNextWord();
 
-	vsp->x += getScale(vsp->x, xoffs);
+	vsp->x += getScale(vsp->y, x);
 	_variableArray[var] = vsp->x;
 
 	if (_scrollXMax) {
@@ -2201,10 +2205,10 @@ void SimonEngine::vc77_setScaleYOffs() {
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadNextWord();
-	int16 yoffs = vcReadNextWord();
+	int16 x = vcReadNextWord();
 	int var = vcReadNextWord();
 
-	vsp->y += getScale(vsp->y, yoffs);
+	vsp->y += getScale(vsp->y, x);
 	_variableArray[var] = vsp->y;
 	vsp->flags = 0x40;
 }
@@ -2234,10 +2238,10 @@ void SimonEngine::vc78_computeXY() {
 
 void SimonEngine::vc79_computePosNum() {
 	uint a = (uint16)_variableArray[12];
-	uint pos = 0;
 	const uint16 *p = _pathFindArray[a - 1];
+	uint pos = 0;
 
-	int16 y = vcReadNextWord();
+	int16 y = _variableArray[16];
 	while(y > readUint16Wrapper(p + 1)) {
 		p += 2;
 		pos++;
