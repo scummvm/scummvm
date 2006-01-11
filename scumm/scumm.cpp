@@ -1567,6 +1567,7 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 	free(_heV7DiskOffsets);
 	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
+	free(_storedFlObjects);
 }
 
 ScummEngine_v71he::ScummEngine_v71he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
