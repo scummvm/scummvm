@@ -58,10 +58,10 @@ enum ActorFrameIds {
 	kFrameITELook = 7,
 //IHNM
 	kFrameIHNMStand = 0,
-	kFrameIHNMSpeak = 1, //Checked
+	kFrameIHNMSpeak = 1,
 	kFrameIHNMWait = 2,
 	kFrameIHNMGesture = 3,
-	kFrameIHNMWalk = 4 //Checked
+	kFrameIHNMWalk = 4
 };
 
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
