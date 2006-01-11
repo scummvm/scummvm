@@ -46,6 +46,24 @@
 
 namespace Saga {
 
+enum ActorFrameIds {
+//ITE
+	kFrameITEStand = 0,
+	kFrameITEWalk = 1,
+	kFrameITESpeak = 2,
+	kFrameITEGive = 3,
+	kFrameITEGesture = 4,
+	kFrameITEWait = 5,
+	kFrameITEPickUp = 6,
+	kFrameITELook = 7,
+//IHNM
+	kFrameIHNMStand = 0,
+	kFrameIHNMSpeak = 1, //Checked
+	kFrameIHNMWait = 2,
+	kFrameIHNMGesture = 3,
+	kFrameIHNMWalk = 4 //Checked
+};
+
 static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = obj1->_location.y - obj1->_location.z;
 	int p2 = obj2->_location.y - obj2->_location.z;
@@ -323,12 +341,19 @@ bool Actor::loadActorResources(ActorData *actor) {
 		MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
 
 		for (int i = 0; i < framesCount; i++) {
+			debug(9, "frameType %d", i);
 			for (int orient = 0; orient < ACTOR_DIRECTIONS_COUNT; orient++) {
 				// Load all four orientations
 				framesPointer[i].directions[orient].frameIndex = readS.readUint16();
-				framesPointer[i].directions[orient].frameCount = readS.readSint16();
+				if (_vm->getGameType() == GType_ITE) {
+					framesPointer[i].directions[orient].frameCount = readS.readSint16();
+				} else {
+					framesPointer[i].directions[orient].frameCount = readS.readByte();
+					readS.readByte();
+				}
 				if (framesPointer[i].directions[orient].frameCount < 0)
 					warning("frameCount < 0 (%d)", framesPointer[i].directions[orient].frameCount);
+				debug(9, "frameIndex %d frameCount %d", framesPointer[i].directions[orient].frameIndex, framesPointer[i].directions[orient].frameCount);
 			}
 		}
 
@@ -341,8 +366,8 @@ bool Actor::loadActorResources(ActorData *actor) {
 	} else {
 		warning("Frame List ID = 0 for actor index %d", actor->_index);
 
-		if (_vm->getGameType() == GType_ITE)
-			return true;
+		//if (_vm->getGameType() == GType_ITE)
+		return true;
 	}
 
 	if (actor->_spriteListResourceId) {
@@ -382,11 +407,13 @@ void Actor::loadActorSpriteList(ActorData *actor) {
 
 	_vm->_sprite->loadList(resourceId, actor->_spriteList);
 
-	if (actor->_flags & kExtended) {
-		while ((lastFrame >= actor->_spriteList.spriteCount)) {
-			resourceId++;
-			debug(9, "Appending to actor sprite list %d", resourceId);
-			_vm->_sprite->loadList(resourceId, actor->_spriteList);
+	if (_vm->getGameType() == GType_ITE) {
+		if (actor->_flags & kExtended) {
+			while ((lastFrame >= actor->_spriteList.spriteCount)) {
+				resourceId++;
+				debug(9, "Appending to actor sprite list %d", resourceId);
+				_vm->_sprite->loadList(resourceId, actor->_spriteList);
+			}
 		}
 	}
 }
@@ -488,10 +515,10 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i];
-		if (actor->_flags & kProtagonist) {
+		//if (actor->_flags & kProtagonist) {
 			loadActorResources(actor);
-			break;
-		}
+			//break;
+		//}
 	}
 
 	_centerActor = _protagonist = _actors[protagonistIdx];
@@ -899,28 +926,47 @@ void Actor::updateActorsScene(int actorsEntrance) {
 	}
 }
 
-int Actor::getFrameType(int frameType) {
-	if (_vm->getGameType() == GType_ITE)
-		return frameType;
-
-	switch (frameType) {
-	case kFrameStand:
-		return kFrameIHNMStand;
-	case kFrameWalk:
-		return kFrameIHNMWalk;
-	case kFrameSpeak:
-		return kFrameIHNMSpeak;
-	case kFrameGesture:
-		return kFrameIHNMGesture;
-	case kFrameWait:
-		return kFrameIHNMWait;
-	default:
-		warning("Actor::getFrameType() unknown frame type %d", frameType);
-		return kFrameIHNMStand;
+int Actor::getFrameType(ActorFrameTypes frameType) {
+	
+	if (_vm->getGameType() == GType_ITE) {
+		switch (frameType) {
+		case kFrameStand:
+			return kFrameITEStand;
+		case kFrameWalk:
+			return kFrameITEWalk;
+		case kFrameSpeak:
+			return kFrameITESpeak;
+		case kFrameGive:
+			return kFrameITEGive;
+		case kFrameGesture:
+			return kFrameITEGesture;
+		case kFrameWait:
+			return kFrameITEWait;
+		case kFramePickUp:
+			return kFrameITEPickUp;
+		case kFrameLook:
+			return kFrameITELook;
+		}
 	}
+	else {
+		switch (frameType) {
+		case kFrameStand:
+			return kFrameIHNMStand;
+		case kFrameWalk:
+			return kFrameIHNMWalk;
+		case kFrameSpeak:
+			return kFrameIHNMSpeak;
+		case kFrameGesture:
+			return kFrameIHNMGesture;
+		case kFrameWait:
+			return kFrameIHNMWait;
+		}
+	}
+	error("Actor::getFrameType() unknown frame type %d", frameType);
 }
 
 ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
+	ActorFrameRange * fr = NULL;
 	ActorData *actor;
 	int fourDirection;
 	static ActorFrameRange def = {0, 0};
@@ -929,16 +975,97 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 	if (actor->_disabled)
 		error("Actor::getActorFrameRange Wrong actorId 0x%X", actorId);
 
-	if (frameType >= actor->_framesCount) {
-		warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
-		return &def;
-	}
-
 	if ((actor->_facingDirection < kDirUp) || (actor->_facingDirection > kDirUpLeft))
 		error("Actor::getActorFrameRange Wrong direction 0x%X actorId 0x%X", actor->_facingDirection, actorId);
 
-	fourDirection = actorDirectectionsLUT[actor->_facingDirection];
-	return &actor->_frames[frameType].directions[fourDirection];
+	//if (_vm->getGameType() == GType_ITE) {
+		if (frameType >= actor->_framesCount) {
+			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+			return &def;
+		}
+
+
+		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+		return &actor->_frames[frameType].directions[fourDirection];
+/*
+	} else {
+		if (0 == actor->_framesCount) {
+			return &def;
+		}
+		
+		//TEST
+		if (actor->_id == 0x2000) {
+			if (actor->_framesCount <= _currentFrameIndex) {				
+				_currentFrameIndex = 0;
+			}
+			fr = actor->_frames[_currentFrameIndex].directions;			
+			return fr;
+		}
+		//TEST
+		if (frameType >= actor->_framesCount) {
+			frameType = actor->_framesCount - 1;
+		}
+		if (frameType < 0) {
+			frameType = 0;
+		}
+
+		if (frameType == kFrameIHNMWalk  ) {
+			switch (actor->_facingDirection) {
+			case kDirUpRight:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_RIGHT];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
+				break;
+			case kDirDownRight:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_FORWARD];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
+				break;
+			case kDirUpLeft:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_LEFT];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
+				break;
+			case kDirDownLeft:
+				if (frameType > 0)
+					fr = &actor->_frames[frameType - 1].directions[ACTOR_DIRECTION_BACK];
+				else
+					fr = &def;
+				if (!fr->frameCount) 
+					fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
+				break;
+			case kDirRight:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_RIGHT];
+				break;
+			case kDirLeft:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_LEFT];
+				break;
+			case kDirUp:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_BACK];
+				break;
+			case kDirDown:
+				fr = &actor->_frames[frameType].directions[ACTOR_DIRECTION_FORWARD];
+				break;			
+			}
+			return fr;
+		}
+		else {
+			if (frameType >= actor->_framesCount) {
+				error("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, actor->_framesCount, actorId);
+			}
+			fourDirection = actorDirectectionsLUT[actor->_facingDirection];
+			return &actor->_frames[frameType].directions[fourDirection];
+		}
+	}*/
 }
 
 void Actor::handleSpeech(int msec) {

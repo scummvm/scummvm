@@ -98,23 +98,14 @@ enum SpeechFlags {
 };
 
 enum ActorFrameTypes {
-	kFrameStand = 0,
-	kFrameWalk = 1,
-	kFrameSpeak = 2,
-	kFrameGive = 3,
-	kFrameGesture = 4,
-	kFrameWait = 5,
-	kFramePickUp = 6,
-	kFrameLook = 7,
-//...some special
-
-	// TODO: Verify that these are correct for IHNM
-	kFrameIHNMStand = 0,
-	kFrameIHNMSpeak = 1,
-	kFrameIHNMWait = 2,
-	kFrameIHNMGesture = 3,
-	kFrameIHNMWalkDiag = 4,
-	kFrameIHNMWalk = 5
+	kFrameStand,
+	kFrameWalk,
+	kFrameSpeak,
+	kFrameGive,
+	kFrameGesture,
+	kFrameWait,
+	kFramePickUp,
+	kFrameLook
 };
 
 enum ActorFlagsEx {
@@ -572,7 +563,7 @@ public:
 	void takeExit(uint16 actorId, const HitZone *hitZone);
 	bool actorEndWalk(uint16 actorId, bool recurse);
 	bool actorWalkTo(uint16 actorId, const Location &toLocation);
-	int getFrameType(int frameType);
+	int getFrameType(ActorFrameTypes frameType);
 	ActorFrameRange *getActorFrameRange(uint16 actorId, int frameType);
 	void actorFaceTowardsPoint(uint16 actorId, const Location &toLocation);
 	void actorFaceTowardsObject(uint16 actorId, uint16 objectId);
@@ -605,6 +596,11 @@ public:
 	void freeObjList();
 	void loadObjList(int objectCount, int objectsResourceID);
 
+	/*
+	uint16 _currentFrameIndex;
+	void frameTest() {
+		_currentFrameIndex++; 
+	}*/
 protected:
 	friend class Script;
 	bool loadActorResources(ActorData *actor);
