@@ -250,6 +250,7 @@ int KyraEngine::cmd_runSceneAnimUntilDone(ScriptState *script) {
 	while (_sprites->_anims[stackPos(0)].play) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
+		delay(10);
 	}
 	_animator->restoreAllObjectBackgrounds();
 	_screen->showMouse();
@@ -463,7 +464,8 @@ int KyraEngine::cmd_runWSAFromBeginningToEnd(ScriptState *script) {
 			} else {
 				_screen->updateScreen();
 			}
-			delay(10);
+			if (continueTime - _system->getMillis() >= 10)
+				delay(10);
 		}
 	}
 	
@@ -489,7 +491,8 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
-		delay(10);
+		if (continueTime - _system->getMillis() >= 10)
+			delay(10);
 	}
 	_screen->showMouse();
 	return 0;
@@ -529,7 +532,8 @@ int KyraEngine::cmd_runWSAFrames(ScriptState *script) {
 		while (_system->getMillis() < nextRun) {
 			_sprites->updateSceneAnims();
 			_animator->updateAllObjectShapes();
-			delay(10);
+			if (nextRun - _system->getMillis() >= 10)
+				delay(10);
 		}
 	}
 	_screen->showMouse();
@@ -716,7 +720,8 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
-		delay(10);
+		if (continueTime - _system->getMillis() >= 10)
+			delay(10);
 	}
 	_screen->showMouse();
 	
@@ -1254,6 +1259,8 @@ int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 			while (_system->getMillis() < nextTime) {
 				_sprites->updateSceneAnims();
 				_animator->updateAllObjectShapes();
+				if (nextTime - _system->getMillis() >= 10)
+					delay(10);
 			}
 		}
 		_screen->showMouse();

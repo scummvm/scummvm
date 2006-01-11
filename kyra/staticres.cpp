@@ -667,6 +667,7 @@ KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
 	Opcode(cmd_fillRect),
 	Opcode(cmd_dummy),
 	Opcode(cmd_dummy),
+	Opcode(cmd_dummy),
 	Opcode(cmd_dummy)
 };
 #undef Opcode

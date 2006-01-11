@@ -155,7 +155,7 @@ void Screen::fadeSpecialPalette(int palIndex, int startIndex, int size, int fade
 	uint8 tempPal[768];
 	memcpy(tempPal, _currentPalette, 768);
 	memcpy(&tempPal[startIndex*3], _vm->palTable1()[palIndex], size*3);
-	fadePalette(tempPal, fadeTime*9);
+	fadePalette(tempPal, fadeTime*18);
 	memcpy(&_currentPalette[startIndex*3], &tempPal[startIndex*3], size*3);
 	setScreenPalette(_currentPalette);
 	_system->updateScreen();
@@ -172,11 +172,11 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 			maxDiff = diff;
 		}
 	}
-	delay <<= 8;
+	int16 delayInc = delay << 8;
 	if (maxDiff != 0) {
-		delay /= maxDiff;
+		delayInc /= maxDiff;
 	}
-	int delayInc = delay;
+	delay = delayInc;
 	for (diff = 1; diff <= maxDiff; ++diff) {
 		if (delayInc >= 512) {
 			break;
