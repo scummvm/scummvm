@@ -219,7 +219,7 @@ public:
 	void snd_playVoiceFile(int id);
 	bool snd_voicePlaying();
 	void snd_playSoundEffect(int track);
-	void snd_playWanderScoreViaMap(int unk1, int unk2);
+	void snd_playWanderScoreViaMap(int command, int restart);
 
 	void drawSentenceCommand(char *sentence, int unk1);
 	void updateSentenceCommand(char *str1, char *str2, int unk1);
@@ -559,7 +559,7 @@ protected:
 	void res_freeLangTable(char ***sting, int *size);
 	
 	void waitForEvent();
-	void delay(uint32 millis, bool update = false);
+	void delay(uint32 millis, bool update = false, bool mainLoop = false);
 	void loadPalette(const char *filename, uint8 *palData);
 	void loadMouseShapes();
 	void loadCharacterShapes();
@@ -712,6 +712,7 @@ protected:
 	
 	int _curMusicTheme;
 	int _newMusicTheme;
+	int16 _lastMusicCommand;
 	AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
 

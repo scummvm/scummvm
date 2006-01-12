@@ -415,6 +415,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_mousePressFlag = false;
 	
 	 _targetName = detector._targetName;
+	 
+	 _lastMusicCommand = 0;
 
 	return 0;
 }
@@ -581,7 +583,7 @@ void KyraEngine::startup() {
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 }
 
-void KyraEngine::delay(uint32 amount, bool update) {
+void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 	OSystem::Event event;
 	char saveLoadSlot[20];
 
@@ -596,13 +598,13 @@ void KyraEngine::delay(uint32 amount, bool update) {
 				} else if (event.kbd.keycode == 'd' && !_debugger->isAttached()) {
 					_debugger->attach();
 				} else if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
-						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT)) {
+						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
 					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
 					if (event.kbd.flags == OSystem::KBD_CTRL)
 						loadGame(saveLoadSlot);
 					else
 						saveGame(saveLoadSlot, saveLoadSlot);
-				}	else if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'f') {
+				} else if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'f') {
 						_fastMode = !_fastMode;
 				}
 				break;
@@ -720,7 +722,7 @@ void KyraEngine::mainLoop() {
 		updateTextFade();
 
 		_handleInput = true;
-		delay((frameTime + _gameSpeed) - _system->getMillis(), true);
+		delay((frameTime + _gameSpeed) - _system->getMillis(), true, true);
 		_handleInput = false;
 	}
 }
@@ -1722,8 +1724,8 @@ void KyraEngine::snd_playSoundEffect(int track) {
 	}
 }
 
-void KyraEngine::snd_playWanderScoreViaMap(int unk1, int unk2) {
-	debug(9, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", unk1, unk2);
+void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
+	debug(9, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
 	const static int8 soundTable[] = {
 		-1,   0,  -1,   1,   0,   3,   0,   2,
 		 0,   4,   1,   2,   1,   3,   1,   4,
@@ -1743,16 +1745,23 @@ void KyraEngine::snd_playWanderScoreViaMap(int unk1, int unk2) {
 	//if (!_disableSound) {
 	//	XXX
 	//}
-	assert(unk1*2+1 < ARRAYSIZE(soundTable));
-	if (_curMusicTheme != soundTable[unk1*2]+1) {
-		if (soundTable[unk1*2] != -1) {
-			snd_playTheme(soundTable[unk1*2]+1);
+	assert(command*2+1 < ARRAYSIZE(soundTable));
+	if (_curMusicTheme != soundTable[command*2]+1) {
+		if (soundTable[command*2] != -1) {
+			snd_playTheme(soundTable[command*2]+1);
 		}
 	}
 	
-	if (unk1 != 1) {
-		snd_playTrack(soundTable[unk1*2+1], true);
+	if (restart)
+		_lastMusicCommand = -1;
+	
+	if (command != 1) {
+		if (_lastMusicCommand != command) {
+			_lastMusicCommand = command;
+			snd_playTrack(soundTable[command*2+1], true);
+		}
 	} else {
+		_lastMusicCommand = 1;
 		_midi->beginFadeOut();
 		while (_midi->fadeOut()) {
 			_system->delayMillis(10);

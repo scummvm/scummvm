@@ -27,7 +27,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#define CURRENT_VERSION 2
+#define CURRENT_VERSION 3
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
@@ -167,6 +167,11 @@ void KyraEngine::loadGame(const char *fileName) {
 			_roomTable[sceneId].needInit[i] = in->readByte();
 		}
 	}
+	if (version >= 3) {
+		_lastMusicCommand = in->readSint16BE();
+		if (_lastMusicCommand != -1)
+			snd_playWanderScoreViaMap(_lastMusicCommand, 1);
+	}
 	
 	if (queryGameFlag(0x2D)) {
 		loadMainScreen(8);
@@ -297,6 +302,8 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	}
 	// room table terminator
 	out->writeUint16BE(0xFFFF);
+	
+	out->writeSint16BE(_lastMusicCommand);
 
 	out->flush();
 
