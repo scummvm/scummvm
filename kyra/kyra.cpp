@@ -1763,9 +1763,6 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	} else {
 		_lastMusicCommand = 1;
 		_midi->beginFadeOut();
-		while (_midi->fadeOut()) {
-			_system->delayMillis(10);
-		}
 	}
 }
 

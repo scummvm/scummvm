@@ -234,6 +234,10 @@ void MusicPlayer::stopMusic() {
 		_parser = 0;
 		delete [] _parserSource;
 		_parserSource = 0;
+		
+		_fadeStartTime = 0;
+		_fadeMusicOut = false;
+		setVolume(255);
 	}
 }
 
@@ -263,6 +267,17 @@ void MusicPlayer::onTimer(void *refCon) {
 		music->_fadeMusicOut = false;
 		music->_isLooping = false;
 		music->_isPlaying = false;
+		
+		music->_eventFromMusic = true;
+		// from sound/midiparser.cpp
+		for (int i = 0; i < 128; ++i) {
+			for (int j = 0; j < 16; ++j) {
+				music->send(0x80 | j | i << 8);
+			}
+		}
+		for (int i = 0; i < 16; ++i) {
+			music->send(0x007BB0 | i);
+		}
 	}
 
 	if (music->_isPlaying) {
