@@ -82,7 +82,7 @@ void Init::soundVideo(int32 smallHeap, int16 flag) {
 		_vm->_global->_colorCount = 256;
 
 	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_global->_vgaPalette;
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
 	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
 	_vm->_global->_pPrimarySurfDesc = &_vm->_global->_primarySurfDesc;
