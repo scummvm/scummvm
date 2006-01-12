@@ -1619,6 +1619,16 @@ void SimonEngine::setup_cond_c_helper() {
 				goto out_of_here;
 			}
 
+			if (getGameType() == GType_FF) {
+				if (_variableArray[254] == 63) {
+					hitarea_stuff_helper();
+				} else if (_variableArray[254] == 75) {
+					hitarea_stuff_helper();
+					_variableArray[60] = 9999;
+					goto out_of_here;
+				}
+			}
+
 			delay(100);
 		} while (_lastHitArea3 == (HitArea *) 0xFFFFFFFF || _lastHitArea3 == 0);
 
