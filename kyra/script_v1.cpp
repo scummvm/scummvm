@@ -264,12 +264,14 @@ int KyraEngine::cmd_fadeSpecialPalette(ScriptState *script) {
 }
 
 int KyraEngine::cmd_playAdlibSound(ScriptState *script) {
-	warning("STUB: cmd_playAdlibSound");
+	debug(3, "cmd_playAdlibSound(0x%X) (%d)", script, stackPos(0));
+	snd_playSoundEffect(stackPos(0));
 	return 0;
 }
 
 int KyraEngine::cmd_playAdlibScore(ScriptState *script) {
-	warning("STUB: cmd_playAdlibScore");
+	debug(3, "cmd_playAdlibScore(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
+	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -1234,22 +1236,22 @@ int KyraEngine::cmd_makeAmuletAppear(ScriptState *script) {
 	if (amulet.opened()) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();
-		// snd_kyraPlaySound(0x70);
+		snd_playSoundEffect(0x70);
 		uint32 nextTime = 0;
 		for (int i = 0; _amuleteAnim[i] != 0xFF; ++i) {
 			nextTime = _system->getMillis() + 5 * _tickLength;
 			
 			uint8 code = _amuleteAnim[i];
 			if (code == 3 || code == 7) {
-				// snd_kyraPlaySound(0x71);
+				snd_playSoundEffect(0x71);
 			}
 			
 			if (code == 5) {
-				// snd_kyraPlaySound(0x72);
+				snd_playSoundEffect(0x72);
 			}
 			
 			if (code == 14) {
-				// snd_kyraPlaySound(0x73);
+				snd_playSoundEffect(0x73);
 			}
 			
 			
@@ -1694,6 +1696,18 @@ int KyraEngine::cmd_fillRect(ScriptState *script) {
 	_screen->_curPage = stackPos(0);
 	_screen->fillRect(stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	_screen->_curPage = videoPageBackup;
+	return 0;
+}
+
+int KyraEngine::cmd_vocUnload(ScriptState *script) {
+	debug(3, "cmd_vocUnload(0x%X) ()", script);
+	// this should unload all voc files (not needed)
+	return 0;
+}
+
+int KyraEngine::cmd_vocLoad(ScriptState *script) {
+	debug(3, "cmd_vocLoad(0x%X) (%d)", script, stackPos(0));
+	// this should load the specified voc file (not needed)
 	return 0;
 }
 

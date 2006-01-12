@@ -45,12 +45,12 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 	uint8 inventoryItem = _currentCharacter->inventoryItems[itemOffset];
 	if (_itemInHand == -1) {
 		if (inventoryItem == 0xFF) {
-			// snd_playSoundEffect(0x36);
+			snd_playSoundEffect(0x36);
 			return 0;
 		} else {
 			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
-			// snd_playSoundEffect(0x35);
+			snd_playSoundEffect(0x35);
 			setMouseItem(inventoryItem);
 			updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
 			_itemInHand = inventoryItem;
@@ -59,7 +59,7 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 		}
 	} else {
 		if (inventoryItem != 0xFF) {
-			// snd_playSoundEffect(0x35);
+			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
 			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
@@ -69,7 +69,7 @@ int KyraEngine::buttonInventoryCallback(Button *caller) {
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = inventoryItem;
 		} else {
-			// snd_playSoundEffect(0x32);
+			snd_playSoundEffect(0x32);
 			_screen->hideMouse();
 			_screen->drawShape(0, _shapes[220+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			_screen->setMouseCursor(1, 1, _shapes[4]);
@@ -156,9 +156,9 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 					// do not check for item in hand again as in the original since some strings are missing
 					// in the cd version
 					if (_currentCharacter->sceneId >= 109 && _currentCharacter->sceneId <= 198) {
-						// XXX
+						snd_playWanderScoreViaMap(1, 0);
 						seq_makeBrandonWisp();
-						// XXX
+						snd_playWanderScoreViaMap(17, 0);
 					} else {
 						seq_makeBrandonWisp();
 					}

@@ -58,6 +58,7 @@ public:
 	void playSoundEffect(uint8 track);
 
 	void beginFadeOut();
+	bool fadeOut() { return _fadeMusicOut; }
 
 	//MidiDriver interface implementation
 	int open();

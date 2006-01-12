@@ -665,9 +665,8 @@ KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
 	// 0x98
 	Opcode(cmd_setPaletteChangeFlag),
 	Opcode(cmd_fillRect),
-	Opcode(cmd_dummy),
-	Opcode(cmd_dummy),
-	Opcode(cmd_dummy),
+	Opcode(cmd_vocUnload),
+	Opcode(cmd_vocLoad),
 	Opcode(cmd_dummy)
 };
 #undef Opcode

@@ -69,6 +69,9 @@ void KyraEngine::loadGame(const char *fileName) {
 	} else {
 		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
 	}
+	
+	snd_playSoundEffect(0x0A);
+	snd_playWanderScoreViaMap(0, 1);
 
 	// unload the current voice file should fix some problems with voices
 	if (_currentRoom != 0xFFFF && (_features & GF_TALKIE)) {

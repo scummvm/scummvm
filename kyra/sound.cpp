@@ -110,7 +110,8 @@ void MusicPlayer::send(uint32 b) {
 			_virChannel[channel] = channel + 16;
 			if (!_channel[_virChannel[channel]])
 				_channel[_virChannel[channel]] = _driver->allocateChannel();
-			_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
+			if (_channel[_virChannel[channel]])
+				_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
 		}
 		return;
 	}
@@ -132,7 +133,8 @@ void MusicPlayer::send(uint32 b) {
 
 	if (!_channel[_virChannel[channel]]) {
 		_channel[_virChannel[channel]] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-		_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
+		if (_channel[_virChannel[channel]])
+			_channel[_virChannel[channel]]->volume(_channelVolume[channel] * _volume / 255);
 	}
 	if (_channel[_virChannel[channel]])
 		_channel[_virChannel[channel]]->send(b);
@@ -259,6 +261,8 @@ void MusicPlayer::onTimer(void *refCon) {
 		music->setVolume(255);
 		music->_fadeStartTime = 0;
 		music->_fadeMusicOut = false;
+		music->_isLooping = false;
+		music->_isPlaying = false;
 	}
 
 	if (music->_isPlaying) {

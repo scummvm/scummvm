@@ -1012,7 +1012,7 @@ void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int dra
 		0x152, 0x157, 0x15C, 0x161, 0x166, 0xFFFF
 	};
 	if (!noSound)
-		// snd_playSoundEffect(0x5F)
+		snd_playSoundEffect(0x5F);
 	_screen->hideMouse();
 	if (!drawOnly) {
 		for (int i = 0; specialJewelTable[i] != 0xFFFF; ++i) {
@@ -1067,7 +1067,7 @@ void KyraEngine::seq_brandonHealing() {
 	assert(_healingShapeTable);
 	setupShapes123(_healingShapeTable, 22, 0);
 	setBrandonAnimSeqSize(3, 48);
-	// snd_playSoundEffect(0x53);
+	snd_playSoundEffect(0x53);
 	for (int i = 123; i <= 144; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
@@ -1093,7 +1093,7 @@ void KyraEngine::seq_brandonHealing2() {
 	setupShapes123(_healingShape2Table, 30, 0);
 	resetBrandonPoisonFlags();
 	setBrandonAnimSeqSize(3, 48);
-	// snd_playSoundEffect(0x50);
+	snd_playSoundEffect(0x50);
 	for (int i = 123; i <= 152; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
@@ -1117,7 +1117,7 @@ void KyraEngine::seq_poisonDeathNow(int now) {
 	if (now)
 		_poisonDeathCounter = 2;
 	if (_poisonDeathCounter >= 2) {
-		// XXX
+		snd_playWanderScoreViaMap(1, 1);
 		assert(_thePoison);
 		characterSays(_thePoison[0], 0, -2);
 		characterSays(_thePoison[1], 0, -2);
@@ -1185,15 +1185,15 @@ void KyraEngine::seq_playFluteAnimation() {
 	
 	int delayTime = 0, soundType = 0;
 	if (queryGameFlag(0x85)) {
-		// snd_playSoundEffect(0x63);
+		snd_playSoundEffect(0x63);
 		delayTime = 9;
 		soundType = 3;
 	} else if (queryGameFlag(0x86)) {
-		// snd_playSoundEffect(0x61);
+		snd_playSoundEffect(0x61);
 		delayTime = 2;
 		soundType = 1;
 	} else {
-		// snd_playSoundEffect(0x62);
+		snd_playSoundEffect(0x62);
 		delayTime = 2;
 		soundType = 2;
 	}
@@ -1241,7 +1241,7 @@ void KyraEngine::seq_winterScroll1() {
 	}
 	
 	freeShapes123();
-	// snd_playSoundEffect(0x20);
+	snd_playSoundEffect(0x20);
 	setupShapes123(_winterScroll1Table, 35, 0);
 	
 	for (int i = 123; i <= 146; ++i) {
@@ -1251,7 +1251,7 @@ void KyraEngine::seq_winterScroll1() {
 	}
 	
 	if (_currentCharacter->sceneId == 41 && !queryGameFlag(0xA2)) {
-		// snd_playSoundEffect(0x20);
+		snd_playSoundEffect(0x20);
 		_sprites->_anims[0].play = false;
 		_animator->sprites()[0].active = 0;
 		_sprites->_anims[1].play = true;
@@ -1337,7 +1337,7 @@ void KyraEngine::seq_makeBrandonInv() {
 	_brandonStatusBit |= 0x20;
 	setTimerCountdown(18, 2700);
 	_brandonStatusBit |= 0x40;
-	// snd_playSoundEffect(0x77);
+	snd_playSoundEffect(0x77);
 	_brandonInvFlag = 0;
 	while (_brandonInvFlag <= 0x100) {
 		animRefreshNPC(0);
@@ -1352,7 +1352,7 @@ void KyraEngine::seq_makeBrandonNormal() {
 	debug(9, "seq_makeBrandonNormal()");
 	_screen->hideMouse();
 	_brandonStatusBit |= 0x40;
-	// snd_playSoundEffect(0x77);
+	snd_playSoundEffect(0x77);
 	_brandonInvFlag = 0x100;
 	while (_brandonInvFlag >= 0) {
 		animRefreshNPC(0);
@@ -1371,7 +1371,7 @@ void KyraEngine::seq_makeBrandonNormal2() {
 	setupShapes123(_brandonToWispTable, 26, 0);
 	setBrandonAnimSeqSize(5, 48);
 	_brandonStatusBit &= 0xFFFD;
-	// snd_playSoundEffect(0x6C);
+	snd_playSoundEffect(0x6C);
 	for (int i = 138; i >= 123; --i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
@@ -1403,7 +1403,7 @@ void KyraEngine::seq_makeBrandonWisp() {
 	assert(_brandonToWispTable);
 	setupShapes123(_brandonToWispTable, 26, 0);
 	setBrandonAnimSeqSize(5, 48);
-	// snd_playSoundEffect(0x6C);
+	snd_playSoundEffect(0x6C);
 	for (int i = 123; i <= 138; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
@@ -1450,7 +1450,7 @@ void KyraEngine::seq_dispelMagicAnimation() {
 	assert(_magicAnimationTable);
 	setupShapes123(_magicAnimationTable, 5, 0);
 	setBrandonAnimSeqSize(8, 49);
-	// snd_playSoundEffect(0x15);
+	snd_playSoundEffect(0x15);
 	for (int i = 123; i <= 127; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
@@ -1516,7 +1516,7 @@ void KyraEngine::seq_playDrinkPotionAnim(int unk1, int unk2, int flags) {
 		animRefreshNPC(0);
 		delayWithTicks(5);
 	}	
-	// snd_playSoundEffect(0x34);
+	snd_playSoundEffect(0x34);
 	for (int i = 0; i < 2; ++i) {
 		_currentCharacter->currentAnimFrame = 130;
 		animRefreshNPC(0);
@@ -1553,7 +1553,7 @@ int KyraEngine::seq_playEnd() {
 	}
 	_screen->_curPage = 2;
 	if (_endSequenceNeedLoading) {
-		// XXX
+		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
 		_finalA = new WSAMovieV1(this);
 		assert(_finalA);
@@ -1602,13 +1602,13 @@ int KyraEngine::seq_playEnd() {
 			_finalA->_x = _finalA->_y = 8;
 			_finalA->_drawPage = 0;
 			while (_system->getMillis() < nextTime) {}
-			// snd_playSoundEffect(0x40);
+			snd_playSoundEffect(0x40);
 			for (int i = 0; i < 22; ++i) {
 				while (_system->getMillis() < nextTime) {}
 				if (i == 4) {
-					// snd_playSoundEffect(0x3E);
+					snd_playSoundEffect(0x3E);
 				} else if (i == 20) {
-					// snd_playSoundEffect(0x0E);
+					snd_playSoundEffect(0x0E);
 				}
 				nextTime = _system->getMillis() + 8 * _tickLength;
 				_finalA->displayFrame(i);
@@ -1679,6 +1679,7 @@ void KyraEngine::seq_playCredits() {
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = -1;
+	snd_playWanderScoreViaMap(53, 1);
 	// delete
 	_screen->updateScreen();
 	// XXX
@@ -1701,9 +1702,9 @@ void KyraEngine::snd_playTheme(int file, int track) {
 	_midi->playTrack(track, false);
 }
 
-void KyraEngine::snd_playTrack(int track) {
-	debug(9, "KyraEngine::snd_playTrack(%d)", track);
-	_midi->playTrack(track, false);
+void KyraEngine::snd_playTrack(int track, bool looping) {
+	debug(9, "KyraEngine::snd_playTrack(%d, %d)", track, looping);
+	_midi->playTrack(track, looping);
 }
 
 void KyraEngine::snd_setSoundEffectFile(int file) {
@@ -1714,7 +1715,49 @@ void KyraEngine::snd_setSoundEffectFile(int file) {
 
 void KyraEngine::snd_playSoundEffect(int track) {
 	debug(9, "KyraEngine::snd_playSoundEffect(%d)", track);
-	_midi->playSoundEffect(track);
+	if (track == 49) {
+		snd_playWanderScoreViaMap(56, 1);
+	} else {
+		_midi->playSoundEffect(track);
+	}
+}
+
+void KyraEngine::snd_playWanderScoreViaMap(int unk1, int unk2) {
+	debug(9, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", unk1, unk2);
+	const static int8 soundTable[] = {
+		-1,   0,  -1,   1,   0,   3,   0,   2,
+		 0,   4,   1,   2,   1,   3,   1,   4,
+		 1, 0x5C,   1,   6,   1,   7,   2,   2,
+		 2,   3,   2,   4,   2,   5,   2,   6,
+		 2,   7,   3,   3,   3,   4,   1,   8,
+		 1,   9,   4,   2,   4,   3,   4,   4,
+		 4,   5,   4,   6,   4,   7,   4,   8,
+		 1, 0x0B,   1, 0x0C,   1, 0x0E,   1, 0x0D,
+		 4,   9,   5, 0x0C,   6,   2,   6,   6,
+		 6,   7,   6,   8,   6,   9,   6,   3,
+		 6,   4,   6,   5,   7,   2,   7,   3,
+		 7,   4,   7,   5,   7,   6,   7,   7,
+		 7,   8,   7,   9,   8,   2,   8,   3,
+		 8,   4,   8,   5,   6, 0x0B,   5, 0x0B
+	};
+	//if (!_disableSound) {
+	//	XXX
+	//}
+	assert(unk1*2+1 < ARRAYSIZE(soundTable));
+	if (_curMusicTheme != soundTable[unk1*2]+1) {
+		if (soundTable[unk1*2] != -1) {
+			snd_playTheme(soundTable[unk1*2]+1);
+		}
+	}
+	
+	if (unk1 != 1) {
+		snd_playTrack(soundTable[unk1*2+1], true);
+	} else {
+		_midi->beginFadeOut();
+		while (_midi->fadeOut()) {
+			_system->delayMillis(10);
+		}
+	}
 }
 
 void KyraEngine::snd_playVoiceFile(int id) {
@@ -1995,19 +2038,19 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
 	if (_currentCharacter->sceneId == 7 && sceneId == 24) {
-		_newMusicTheme = 2;
+		_newMusicTheme = 3;
 	} else if (_currentCharacter->sceneId == 25 && sceneId == 109) {
-		_newMusicTheme = 3;
-	} else if (_currentCharacter->sceneId == 120 && sceneId == 37) {
 		_newMusicTheme = 4;
-	} else if (_currentCharacter->sceneId == 52 && sceneId == 199) {
+	} else if (_currentCharacter->sceneId == 120 && sceneId == 37) {
 		_newMusicTheme = 5;
+	} else if (_currentCharacter->sceneId == 52 && sceneId == 199) {
+		_newMusicTheme = 6;
 	} else if (_currentCharacter->sceneId == 37 && sceneId == 120) {
-		_newMusicTheme = 3;
+		_newMusicTheme = 4;
 	} else if (_currentCharacter->sceneId == 109 && sceneId == 25) {
-		_newMusicTheme = 2;
+		_newMusicTheme = 3;
 	} else if (_currentCharacter->sceneId == 24 && sceneId == 7) {
-		_newMusicTheme = 1;
+		_newMusicTheme = 2;
 	}
 	if (_newMusicTheme != _curMusicTheme) {
 		snd_playTheme(_newMusicTheme);
@@ -3643,7 +3686,7 @@ void KyraEngine::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
 	currentRoom->itemsTable[itemIndex] = _itemInHand;
 	_itemInHand = item;
 	_animator->animAddGameItem(itemIndex, sceneId);
-	// XXX snd_kyraPlaySound 53
+	snd_playSoundEffect(53);
 	
 	setMouseItem(_itemInHand);
 	assert(_itemList && _takenList);
@@ -3720,7 +3763,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 		currentRoom->itemsXPos[freeItem] = destX;
 		currentRoom->itemsYPos[freeItem] = destY;
 		currentRoom->itemsTable[freeItem] = item;
-		// call kyraPlaySound(0x32)
+		snd_playSoundEffect(0x32);
 		_animator->animAddGameItem(freeItem, _currentCharacter->sceneId);
 		return;
 	}
@@ -3759,7 +3802,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 		}
 		
 		if (!skip) {
-			// call kyraPlaySound(0x47)
+			snd_playSoundEffect(0x47);
 			if (addY < 6)
 				addY = 6;
 			
@@ -3801,7 +3844,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 	currentRoom->itemsXPos[freeItem] = destX;
 	currentRoom->itemsYPos[freeItem] = destY;
 	currentRoom->itemsTable[freeItem] = item;
-	// call kyraPlaySound(0x32)
+	snd_playSoundEffect(0x32);
 	_animator->animAddGameItem(freeItem, _currentCharacter->sceneId);
 	_screen->showMouse();
 }
@@ -3810,7 +3853,7 @@ void KyraEngine::dropItem(int unk1, int item, int x, int y, int unk2) {
 	debug(9, "KyraEngine::dropItem(%d, %d, %d, %d, %d)", unk1, item, x, y, unk2);
 	if (processItemDrop(_currentCharacter->sceneId, item, x, y, unk1, unk2))
 		return;
-	// call kyraPlaySound(54)
+	snd_playSoundEffect(54);
 	if (12 == countItemsInScene(_currentCharacter->sceneId)) {
 		assert(_noDropList);
 		drawSentenceCommand(_noDropList[0], 6);
@@ -3860,7 +3903,7 @@ void KyraEngine::itemSpecialFX2(int x, int y, int item) {
 	int yAdd = (int8)(((16 - _itemTable[item].height) >> 1) & 0xFF);
 	backUpRect0(x, y);
 	if (item >= 80 && item <= 89) {
-		// snd_kyraPlaySound(55);
+		snd_playSoundEffect(55);
 	}
 	
 	for (int i = 201; i <= 205; ++i) {
@@ -3923,9 +3966,9 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 	}
 	
 	if (animIndex == 2) {
-		// snd_kyraPlaySound(0x5E);
+		snd_playSoundEffect(0x5E);
 	} else {
-		// snd_kyraPlaySound(0x37);
+		snd_playSoundEffect(0x37);
 	}
 	_screen->hideMouse();
 	backUpRect1(x, y);
@@ -4014,9 +4057,9 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 	_screen->hideMouse();
 	backUpRect1(x, y);
 	if (animIndex == 2) {
-		// snd_playSoundEffect(0x5E);
+		snd_playSoundEffect(0x5E);
 	} else {
-		// snd_playSoundEffect(0x37);
+		snd_playSoundEffect(0x37);
 	}
 	
 	for (int shape = _magicMouseItemStartFrame[animIndex]; shape <= _magicMouseItemEndFrame[animIndex]; ++shape) {
@@ -4234,7 +4277,7 @@ void KyraEngine::drawJewelPress(int jewel, int drawSpecial) {
 	} else {
 		shape = jewel + 0x149;
 	}
-	// snd_playSoundEffect(0x45);
+	snd_playSoundEffect(0x45);
 	_screen->drawShape(0, _shapes[4+shape], _amuletX2[jewel], _amuletY2[jewel], 0, 0);
 	_screen->updateScreen();
 	delayWithTicks(2);
@@ -4696,8 +4739,8 @@ int KyraEngine::handleMalcolmFlag() {
 			break;
 		
 		case 9:
-			// snd_playSoundEffect(12);
-			// snd_playSoundEffect(12);
+			snd_playSoundEffect(12);
+			snd_playSoundEffect(12);
 			_finalC->_x = 16;
 			_finalC->_y = 50;
 			_finalC->_drawPage = 0;
@@ -4707,7 +4750,7 @@ int KyraEngine::handleMalcolmFlag() {
 				_screen->updateScreen();
 				while (_system->getMillis() < timer2) {}
 			}
-			// XXX
+			snd_playWanderScoreViaMap(51, 1);
 			waitTicks(60);
 			_malcolmFlag = 0;
 			return 1;
@@ -4845,7 +4888,7 @@ int KyraEngine::handleBeadState() {
 					_unkEndSeqVar4 = 1;
 				}
 				if (_system->getMillis() > timer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
-					// snd_playSoundEffect(0x0B);
+					snd_playSoundEffect(0x0B);
 					if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&
 						(_brandonStatusBit & 0x20)) {
 						beadState1.unk8 = 290;
@@ -4875,8 +4918,8 @@ int KyraEngine::handleBeadState() {
 						_unkEndSeqVar5 = 2;
 						_beadStateVar = 6;
 					} else {
-						// XXX
-						// snd_playSoundEffect(0x0C);
+						snd_playWanderScoreViaMap(52, 1);
+						snd_playSoundEffect(0x0C);
 						_unkEndSeqVar5 = 1;
 						_beadStateVar = 0;
 					}
@@ -4912,7 +4955,7 @@ int KyraEngine::handleBeadState() {
 							_screen->updateScreen();
 							while (_system->getMillis() < nextRun) {}
 						}
-						// snd_playSoundEffect(0x0D);
+						snd_playSoundEffect(0x0D);
 						for (int i = 7; i >= 0; --i) {
 							nextRun = _system->getMillis() + _tickLength;
 							_finalB->displayFrame(i);
@@ -5768,7 +5811,7 @@ int KyraEngine::processInputHelper(int xpos, int ypos) {
 		if (_itemInHand == -1) {
 			_screen->hideMouse();
 			_animator->animRemoveGameItem(item);
-			// XXX call kyraPlaySound(53)
+			snd_playSoundEffect(53);
 			assert(_currentCharacter->sceneId < _roomTableSize);
 			Room *currentRoom = &_roomTable[_currentCharacter->sceneId];
 			int item2 = currentRoom->itemsTable[item];

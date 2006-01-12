@@ -215,10 +215,11 @@ public:
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void snd_playTheme(int file, int track = 0);
-	void snd_playTrack(int track);
+	void snd_playTrack(int track, bool looping = false);
 	void snd_playVoiceFile(int id);
 	bool snd_voicePlaying();
 	void snd_playSoundEffect(int track);
+	void snd_playWanderScoreViaMap(int unk1, int unk2);
 
 	void drawSentenceCommand(char *sentence, int unk1);
 	void updateSentenceCommand(char *str1, char *str2, int unk1);
@@ -400,6 +401,8 @@ public:
 	int cmd_setPaletteChangeFlag(ScriptState *script);
 	int cmd_fillRect(ScriptState *script);
 	int cmd_dummy(ScriptState *script);
+	int cmd_vocUnload(ScriptState *script);
+	int cmd_vocLoad(ScriptState *script);
 
 protected:
 
