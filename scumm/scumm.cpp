@@ -412,6 +412,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"75bff95816b84672b877d22a911ab811", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"ed2b074bc3166087a747acb2a3c6abb0", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated German Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Fritzi3demo
 
 	{"07b810e37be7489263f7bc7627d4765d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Unencrypted Russian)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
@@ -517,6 +519,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaNHD
+	{"a095e33061606d231ff37dca4c64c8ac", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated German)", GID_HEGAME, 6, 100, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PYJAMA
 	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PJSamDemo
 
@@ -526,6 +530,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaTAL
 	{"c6907d44f1166941d982864cd42cdc89", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PyjamaDBMN
+	{"4521138d15d1fd7649c31fb981746231", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated German Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PJP2DEMO
 
 	{"a2bb6aa0537402c1b3c2ea899ccef64b", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
@@ -582,6 +588,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // TEMPDEMO
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"fbb697d89d2beca87360a145f467bdae", "Putt-Putt Travels Through Time (Updated German Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ZEITDEMO
 
 	{"d7b247c26bf1f01f8f7daf142be84de3", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -807,6 +815,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "pajama", "Pajama Sam", kGenMac },
 	{ "pajama", "PajamaNHD", kGenPC },
 	{ "pajama", "PJS-DEMO", kGenPC },
+	{ "pajama", "PYJAMA", kGenPC },
 	{ "pajama", "SAMDEMO", kGenPC },
 	{ "pajama", "SAMDEMO", kGenMac }, // FR Mac demo
 	{ "pajama2", "Pajama Sam 2", kGenMac },
