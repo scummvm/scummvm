@@ -40,6 +40,8 @@
 
 namespace Saga {
 
+
+
 // Initializes the scripting module.
 // Loads script resource look-up table, initializes script data system
 Script::Script(SagaEngine *vm) : _vm(vm) {
@@ -58,11 +60,11 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 
 	_firstObjectSet = false;
 	_secondObjectNeeded = false;
-	_pendingVerb = kVerbNone;
-	_currentVerb = kVerbNone;
-	_stickyVerb = kVerbWalkTo;
-	_leftButtonVerb = kVerbNone;
-	_rightButtonVerb = kVerbNone;
+	_pendingVerb = getVerbType(kVerbNone);
+	_currentVerb = getVerbType(kVerbNone);
+	_stickyVerb = getVerbType(kVerbWalkTo);
+	_leftButtonVerb = getVerbType(kVerbNone);
+	_rightButtonVerb = getVerbType(kVerbNone);
 	_pointerObject = ID_NOTHING;
 
 	_staticSize = 0;
@@ -279,7 +281,7 @@ void Script::showVerb(int statusColor) {
 	const char *object2Name;
 	char statusString[STATUS_TEXT_LEN];
 
-	if (_leftButtonVerb == kVerbNone) {
+	if (_leftButtonVerb == getVerbType(kVerbNone)) {
 		_vm->_interface->setStatusText("");
 		return;
 	}
@@ -306,11 +308,11 @@ void Script::showVerb(int statusColor) {
 		object2Name = "";
 	}
 
-	if (_leftButtonVerb == kVerbGive) {
+	if (_leftButtonVerb == getVerbType(kVerbGive)) {
 		snprintf(statusString, STATUS_TEXT_LEN, _vm->getTextString(kTextGiveTo), object1Name, object2Name);
 		_vm->_interface->setStatusText(statusString, statusColor);
 	} else {
-		if (_leftButtonVerb == kVerbUse) {
+		if (_leftButtonVerb == getVerbType(kVerbUse)) {
 			snprintf(statusString, STATUS_TEXT_LEN, _vm->getTextString(kTextUseWidth), object1Name, object2Name);
 			_vm->_interface->setStatusText(statusString, statusColor);
 		} else {
@@ -318,6 +320,70 @@ void Script::showVerb(int statusColor) {
 			_vm->_interface->setStatusText(statusString, statusColor);
 		}
 	}
+}
+
+int Script::getVerbType(VerbTypes verbType) {
+	if (_vm->getGameType() == GType_ITE) {
+		switch (verbType) {
+		case kVerbNone:
+			return kVerbITENone;
+		case kVerbWalkTo:
+			return kVerbITEWalkTo;
+		case kVerbGive:
+			return kVerbITEGive;
+		case kVerbUse:
+			return kVerbITEUse;
+		case kVerbEnter:
+			return kVerbITEEnter;
+		case kVerbLookAt:
+			return kVerbITELookAt;
+		case kVerbPickUp:
+			return kVerbITEPickUp;
+		case kVerbOpen:
+			return kVerbITEOpen;
+		case kVerbClose:
+			return kVerbITEClose;
+		case kVerbTalkTo:
+			return kVerbITETalkTo;
+		case kVerbWalkOnly:
+			return kVerbITEWalkOnly;
+		case kVerbLookOnly:
+			return kVerbITELookOnly;
+		case kVerbOptions:
+			return kVerbITEOptions;
+		}
+	}
+	else {
+		switch (verbType) {
+		case kVerbNone:
+			return kVerbIHNMNone;
+		case kVerbWalkTo:
+			return kVerbIHNMWalk;
+		case kVerbGive:
+			return kVerbIHNMGive;
+		case kVerbUse:
+			return kVerbIHNMUse;
+		case kVerbEnter:
+			return kVerbIHNMEnter;
+		case kVerbLookAt:
+			return kVerbIHNMLookAt;
+		case kVerbPickUp:
+			return kVerbIHNMTake;
+		case kVerbOpen:
+			return -2;
+		case kVerbClose:
+			return -2;
+		case kVerbTalkTo:
+			return kVerbIHNMTalkTo;
+		case kVerbWalkOnly:
+			return kVerbIHNMWalkOnly;
+		case kVerbLookOnly:
+			return kVerbIHNMLookOnly;
+		case kVerbOptions:
+			return kVerbIHNMOptions;
+		}
+	}
+	error("Script::getVerbType() unknown verb type %d", verbType);
 }
 
 void Script::setVerb(int verb) {
@@ -343,10 +409,10 @@ void Script::setLeftButtonVerb(int verb) {
 	_currentVerb = _leftButtonVerb = verb;
 
 	if ((_currentVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
-			if (oldVerb > kVerbNone)
+			if (oldVerb > getVerbType(kVerbNone))
 				_vm->_interface->setVerbState(oldVerb, 2);
 
-			if (_currentVerb > kVerbNone)
+			if (_currentVerb > getVerbType(kVerbNone))
 				_vm->_interface->setVerbState(_currentVerb, 2);
 	}
 }
@@ -357,10 +423,10 @@ void Script::setRightButtonVerb(int verb) {
 	_rightButtonVerb = verb;
 
 	if ((_rightButtonVerb != oldVerb) && (_vm->_interface->getMode() == kPanelMain)){
-		if (oldVerb > kVerbNone)
+		if (oldVerb > getVerbType(kVerbNone))
 			_vm->_interface->setVerbState(oldVerb, 2);
 
-		if (_rightButtonVerb > kVerbNone)
+		if (_rightButtonVerb > getVerbType(kVerbNone))
 			_vm->_interface->setVerbState(_rightButtonVerb, 2);
 	}
 }
@@ -376,7 +442,7 @@ void Script::doVerb() {
 
 	objectType = objectTypeId(_pendingObject[0]);
 
-	if (_pendingVerb == kVerbGive) {
+	if (_pendingVerb == getVerbType(kVerbGive)) {
 		scriptEntrypointNumber = _vm->_actor->getObjectScriptEntrypointNumber(_pendingObject[1]);
 		if (_vm->_actor->getObjectFlags(_pendingObject[1]) & (kFollower|kProtagonist|kExtended)) {
 			scriptModuleNumber = 0;
@@ -384,7 +450,7 @@ void Script::doVerb() {
 			scriptModuleNumber = _vm->_scene->getScriptModuleNumber();
 		}
 	} else {
-		if (_pendingVerb == kVerbUse) {
+		if (_pendingVerb == getVerbType(kVerbUse)) {
 			if ((objectTypeId(_pendingObject[1]) > kGameObjectNone) && (objectType < objectTypeId(_pendingObject[1]))) {
 				SWAP(_pendingObject[0], _pendingObject[1]);
 				objectType = objectTypeId(_pendingObject[0]);
@@ -436,11 +502,11 @@ void Script::doVerb() {
 		}
 	}
 
-	if ((_currentVerb == kVerbWalkTo) || (_currentVerb == kVerbLookAt)) {
+	if ((_currentVerb == getVerbType(kVerbWalkTo)) || (_currentVerb == getVerbType(kVerbLookAt))) {
 		_stickyVerb = _currentVerb;
 	}
 
-	_pendingVerb = kVerbNone;
+	_pendingVerb = getVerbType(kVerbNone);
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
 	setLeftButtonVerb(_stickyVerb);
 
@@ -458,7 +524,7 @@ void Script::hitObject(bool leftButton) {
 	int verb;
 	verb = leftButton ? _leftButtonVerb : _rightButtonVerb;
 
-	if (verb > kVerbNone) {
+	if (verb > getVerbType(kVerbNone)) {
 		if (_firstObjectSet) {
 			if (_secondObjectNeeded) {
 				_pendingObject[0] = _currentObject[0];
@@ -466,7 +532,7 @@ void Script::hitObject(bool leftButton) {
 				_pendingVerb = verb;
 
 				_leftButtonVerb = verb;
-				if (_pendingVerb > kVerbNone)
+				if (_pendingVerb > getVerbType(kVerbNone))
 					showVerb(kITEColorBrightWhite);
 				else
 					showVerb();
@@ -476,10 +542,10 @@ void Script::hitObject(bool leftButton) {
 				return;
 			}
 		} else {
-			if (verb == kVerbGive) {
+			if (verb == getVerbType(kVerbGive)) {
 				_secondObjectNeeded = true;
 			} else {
-				if (verb == kVerbUse) {
+				if (verb == getVerbType(kVerbUse)) {
 
 					if (_currentObjectFlags[0] & kObjUseWith) {
 						_secondObjectNeeded = true;
@@ -500,7 +566,7 @@ void Script::hitObject(bool leftButton) {
 		}
 
 		_leftButtonVerb = verb;
-		if (_pendingVerb > kVerbNone)
+		if (_pendingVerb > getVerbType(kVerbNone))
 			showVerb(kITEColorBrightWhite);
 		else
 			showVerb();
@@ -521,8 +587,8 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		(_vm->_actor->_protagonist->_currentAction != kActionWalkToPoint)) {
 		return;
 	}
-	if (_pendingVerb > kVerbNone) {
-		setLeftButtonVerb(kVerbWalkTo);
+	if (_pendingVerb > getVerbType(kVerbNone)) {
+		setLeftButtonVerb(getVerbType(kVerbWalkTo));
 	}
 
 	if (_pointerObject != ID_NOTHING) {
@@ -530,7 +596,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	} else {
 		_pendingObject[0] = ID_NOTHING;
 		_pendingObject[1] = ID_NOTHING;
-		_pendingVerb = kVerbWalkTo;
+		_pendingVerb = getVerbType(kVerbWalkTo);
 	}
 
 
@@ -547,7 +613,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 	if (objectTypeId(_pendingObject[0]) == kGameObjectHitZone) {
 		 hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[0]));
 	} else {
-		if ((_pendingVerb == kVerbUse) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
+		if ((_pendingVerb == getVerbType(kVerbUse)) && (objectTypeId(_pendingObject[1]) == kGameObjectHitZone)) {
 			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(_pendingObject[1]));
 		}
 	}
@@ -577,27 +643,25 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 		}
 	}
 
-	switch (_pendingVerb) {
-	case kVerbWalkTo:
-	case kVerbPickUp:
-	case kVerbOpen:
-	case kVerbClose:
-	case kVerbUse:
-		_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
-		break;
-
-	case kVerbLookAt:
-		if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+	if ((_pendingVerb == getVerbType(kVerbWalkTo)) ||
+		(_pendingVerb == getVerbType(kVerbPickUp)) ||
+		(_pendingVerb == getVerbType(kVerbOpen)) ||
+		(_pendingVerb == getVerbType(kVerbClose)) ||
+		(_pendingVerb == getVerbType(kVerbUse))) {
 			_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+	} else {
+		if (_pendingVerb == getVerbType(kVerbLookAt)) {
+			if (objectTypeId(_pendingObject[0]) != kGameObjectActor ) {
+				_vm->_actor->actorWalkTo(ID_PROTAG, pickLocation);
+			} else {
+				doVerb();
+			}
 		} else {
-			doVerb();
+			if ((_pendingVerb == getVerbType(kVerbTalkTo)) ||
+				(_pendingVerb == getVerbType(kVerbGive))) {
+					doVerb();
+			}
 		}
-		break;
-
-	case kVerbTalkTo:
-	case kVerbGive:
-		doVerb();
-		break;
 	}
 }
 
@@ -617,7 +681,7 @@ void Script::whichObject(const Point& mousePoint) {
 	objectId = ID_NOTHING;
 	objectFlags = 0;
 	_leftButtonVerb = _currentVerb;
-	newRightButtonVerb = kVerbNone;
+	newRightButtonVerb = getVerbType(kVerbNone);
 
 	if (_vm->_actor->_protagonist->_currentAction != kActionWalkDir) {
 		if (_vm->_scene->getHeight() >= mousePoint.y) {
@@ -627,9 +691,9 @@ void Script::whichObject(const Point& mousePoint) {
 				if (objectTypeId(newObjectId) == kGameObjectObject) {
 					objectId = newObjectId;
 					objectFlags = 0;
-					newRightButtonVerb = kVerbLookAt;
+					newRightButtonVerb = getVerbType(kVerbLookAt);
 
-					if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
+					if ((_currentVerb == getVerbType(kVerbTalkTo)) || ((_currentVerb == getVerbType(kVerbGive)) && _firstObjectSet)) {
 						objectId = ID_NOTHING;
 						newObjectId = ID_NOTHING;
 					}
@@ -637,13 +701,13 @@ void Script::whichObject(const Point& mousePoint) {
 					actor = _vm->_actor->getActor(newObjectId);
 					objectId = newObjectId;
 					objectFlags = kObjUseWith;
-					newRightButtonVerb = kVerbTalkTo;
+					newRightButtonVerb = getVerbType(kVerbTalkTo);
 
-					if ((_currentVerb == kVerbPickUp) ||
-						(_currentVerb == kVerbOpen) ||
-						(_currentVerb == kVerbClose) ||
-						((_currentVerb == kVerbGive) && !_firstObjectSet) ||
-						((_currentVerb == kVerbUse) && !(actor->_flags & kFollower))) {
+					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
+						(_currentVerb == getVerbType(kVerbOpen)) ||
+						(_currentVerb == getVerbType(kVerbClose)) ||
+						((_currentVerb == getVerbType(kVerbGive)) && !_firstObjectSet) ||
+						((_currentVerb == getVerbType(kVerbUse)) && !(actor->_flags & kFollower))) {
 							objectId = ID_NOTHING;
 							newObjectId = ID_NOTHING;
 						}
@@ -668,38 +732,41 @@ void Script::whichObject(const Point& mousePoint) {
 					objectFlags = 0;
 					newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
 
-					if (newRightButtonVerb == kVerbWalkOnly) {
-						if (_firstObjectSet) {
-							objectId = ID_NOTHING;
-						} else {
-							newRightButtonVerb = _leftButtonVerb = kVerbWalkTo;
-						}
-					} else {
-						if (newRightButtonVerb == kVerbLookOnly) {
+					if (_vm->getGameType() == GType_ITE) {
+
+						if (newRightButtonVerb == getVerbType(kVerbWalkOnly)) {
 							if (_firstObjectSet) {
 								objectId = ID_NOTHING;
 							} else {
-								newRightButtonVerb = _leftButtonVerb = kVerbLookAt;
+								newRightButtonVerb = _leftButtonVerb = getVerbType(kVerbWalkTo);
 							}
+						} else {
+							if (newRightButtonVerb == getVerbType(kVerbLookOnly)) {
+								if (_firstObjectSet) {
+									objectId = ID_NOTHING;
+								} else {
+									newRightButtonVerb = _leftButtonVerb = getVerbType(kVerbLookAt);
+								}
+							}
+						}
+
+						if (newRightButtonVerb >= getVerbType(kVerbOptions)) {
+							newRightButtonVerb = getVerbType(kVerbNone);
 						}
 					}
 
-					if (newRightButtonVerb >= kVerbOptions) {
-						newRightButtonVerb = kVerbNone;
-					}
-
-					if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
+					if ((_currentVerb == getVerbType(kVerbTalkTo)) || ((_currentVerb == getVerbType(kVerbGive)) && _firstObjectSet)) {
 						objectId = ID_NOTHING;
 						newObjectId = ID_NOTHING;
 					}
 
-					if ((_leftButtonVerb == kVerbUse) && (hitZone->getRightButtonVerb() & 0x80)) {
+					if ((_leftButtonVerb == getVerbType(kVerbUse)) && (hitZone->getRightButtonVerb() & 0x80)) {
 						objectFlags = kObjUseWith;
 					}
 				}
 			}
 		} else {
-			if ((_currentVerb == kVerbTalkTo) || ((_currentVerb == kVerbGive) && _firstObjectSet)) {
+			if ((_currentVerb == getVerbType(kVerbTalkTo)) || ((_currentVerb == getVerbType(kVerbGive)) && _firstObjectSet)) {
 				// no way
 			} else {
 				panelButton = _vm->_interface->inventoryHitTest(mousePoint);
@@ -707,7 +774,7 @@ void Script::whichObject(const Point& mousePoint) {
 					objectId = _vm->_interface->getInventoryContentByPanelButton(panelButton);
 					if (objectId != 0) {
 						obj = _vm->_actor->getObj(objectId);
-						newRightButtonVerb = kVerbLookAt;
+						newRightButtonVerb = getVerbType(kVerbLookAt);
 						if (obj->_interactBits & kObjUseWith) {
 							objectFlags = kObjUseWith;
 						}
@@ -715,8 +782,8 @@ void Script::whichObject(const Point& mousePoint) {
 				}
 			}
 
-			if ((_currentVerb == kVerbPickUp) || (_currentVerb == kVerbTalkTo) || (_currentVerb == kVerbWalkTo)) {
-				_leftButtonVerb = kVerbLookAt;
+			if ((_currentVerb == getVerbType(kVerbPickUp)) || (_currentVerb == getVerbType(kVerbTalkTo)) || (_currentVerb == getVerbType(kVerbWalkTo))) {
+				_leftButtonVerb = getVerbType(kVerbLookAt);
 			}
 		}
 	}
@@ -725,7 +792,7 @@ void Script::whichObject(const Point& mousePoint) {
 		_pointerObject = objectId;
 		_currentObject[_firstObjectSet ? 1 : 0] = objectId;
 		_currentObjectFlags[_firstObjectSet ? 1 : 0] = objectFlags;
-		if (_pendingVerb == kVerbNone) {
+		if (_pendingVerb == getVerbType(kVerbNone)) {
 			showVerb();
 		}
 	}

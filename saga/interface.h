@@ -358,7 +358,7 @@ public:
 private:
 	void converseDisplayTextLines(Surface *ds);
 	PanelButton *getPanelButtonByVerbType(int verb) {
-		if ((verb < 0) || (verb >= kVerbTypesMax)) {
+		if ((verb < 0) || (verb >= kVerbTypeIdsMax)) {
 			error("Interface::getPanelButtonByVerbType wrong verb");
 		}
 		return _verbTypeToPanelButton[verb];
@@ -393,7 +393,7 @@ private:
 	PanelButton *_converseUpButton;
 	PanelButton *_converseDownButton;
 	SpriteList _scenePortraits;
-	PanelButton *_verbTypeToPanelButton[kVerbTypesMax];
+	PanelButton *_verbTypeToPanelButton[kVerbTypeIdsMax];
 	InterfacePanel _optionPanel;
 	PanelButton * _optionSaveFileSlider;
 	PanelButton * _optionSaveFilePanel;

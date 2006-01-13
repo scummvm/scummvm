@@ -260,7 +260,7 @@ int SagaEngine::init(GameDetector &detector) {
 	}
 
 	_interface->converseInit();
-	_script->setVerb(kVerbWalkTo);
+	_script->setVerb(_script->getVerbType(kVerbWalkTo));
 
 	_music->setVolume(-1, 1);
 
@@ -417,27 +417,26 @@ const char *SagaEngine::getTextString(int textStringId) {
 
 void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundResourceId) {
 	textString = NULL;
-	switch (verb) {
-	case kVerbPickUp:
+
+	if (verb == _script->getVerbType(kVerbPickUp)) {
 		textString = getTextString(kTextICantPickup);
 		soundResourceId = RID_BOAR_VOICE_007;
-		break;
-	case kVerbLookAt:
+	} else 
+		if (verb == _script->getVerbType(kVerbLookAt)) {
 		textString = getTextString(kTextNothingSpecial);
 		soundResourceId = RID_BOAR_VOICE_006;
-		break;
-	case kVerbOpen:
+		}
+		if (verb == _script->getVerbType(kVerbOpen)) {
 		textString = getTextString(kTextNoPlaceToOpen);
 		soundResourceId = RID_BOAR_VOICE_000;
-		break;
-	case kVerbClose:
+		}
+		if (verb == _script->getVerbType(kVerbClose)) {
 		textString = getTextString(kTextNoOpening);
 		soundResourceId = RID_BOAR_VOICE_002;
-		break;
-	case kVerbUse:
+		}
+		if (verb == _script->getVerbType(kVerbUse)) {
 		textString = getTextString(kTextDontKnow);
 		soundResourceId = RID_BOAR_VOICE_005;
-		break;
 	}
 }
 

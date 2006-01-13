@@ -650,7 +650,7 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 		event.time = 0;
 		event.param = _vm->_scene->getScriptModuleNumber(); // module number
 		event.param2 = hitZone->getScriptNumber();			// script entry point number
-		event.param3 = kVerbEnter;		// Action
+		event.param3 = _vm->_script->getVerbType(kVerbEnter);		// Action
 		event.param4 = ID_NOTHING;		// Object
 		event.param5 = ID_NOTHING;		// With Object
 		event.param6 = ID_PROTAG;		// Actor
@@ -1972,7 +1972,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 
 	if (actor == _protagonist) {
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
-		if (_vm->_script->_pendingVerb == kVerbWalkTo) {
+		if (_vm->_script->_pendingVerb == _vm->_script->getVerbType(kVerbWalkTo)) {
 			actor->_location.toScreenPointUV(testPoint);
 			hitZoneIndex = _vm->_scene->_actionMap->hitTest(testPoint);
 			if (hitZoneIndex != -1) {
@@ -1981,7 +1981,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 			} else {
 				_vm->_script->setNoPendingVerb();
 			}
-		} else if (_vm->_script->_pendingVerb != kVerbNone) {
+		} else if (_vm->_script->_pendingVerb != _vm->_script->getVerbType(kVerbNone)) {
 			_vm->_script->doVerb();
 		}
 	} else {

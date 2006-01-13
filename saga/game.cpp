@@ -53,14 +53,14 @@ static int detectGame(const FSList &fslist, bool mode = false, int start = -1);
 
 // ITE section
 static PanelButton ITE_MainPanelButtons[] = {
-	{kPanelButtonVerb,		52,4,	57,10,	kVerbWalkTo,'w',0,	0,1,0},
-	{kPanelButtonVerb,		52,15,	57,10,	kVerbLookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		52,26,	57,10,	kVerbPickUp,'p',0,	4,5,0},
-	{kPanelButtonVerb,		52,37,	57,10,	kVerbTalkTo,'t',0,	0,1,0},
-	{kPanelButtonVerb,		110,4,	56,10,	kVerbOpen,'o',0,	6,7,0},
-	{kPanelButtonVerb,		110,15,	56,10,	kVerbClose,'c',0,	8,9,0},
-	{kPanelButtonVerb,		110,26,	56,10,	kVerbUse,'u',0,		10,11,0},
-	{kPanelButtonVerb,		110,37,	56,10,	kVerbGive,'g',0,	12,13,0},
+	{kPanelButtonVerb,		52,4,	57,10,	kVerbITEWalkTo,'w',0,	0,1,0},
+	{kPanelButtonVerb,		52,15,	57,10,	kVerbITELookAt,'l',0,	2,3,0},
+	{kPanelButtonVerb,		52,26,	57,10,	kVerbITEPickUp,'p',0,	4,5,0},
+	{kPanelButtonVerb,		52,37,	57,10,	kVerbITETalkTo,'t',0,	0,1,0},
+	{kPanelButtonVerb,		110,4,	56,10,	kVerbITEOpen,'o',0,	6,7,0},
+	{kPanelButtonVerb,		110,15,	56,10,	kVerbITEClose,'c',0,	8,9,0},
+	{kPanelButtonVerb,		110,26,	56,10,	kVerbITEUse,'u',0,		10,11,0},
+	{kPanelButtonVerb,		110,37,	56,10,	kVerbITEGive,'g',0,	12,13,0},
 	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
 	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
 
@@ -533,14 +533,14 @@ static GamePatchDescription ITELinPatch_Files[] = {
 // IHNM section
 
 static PanelButton IHNM_MainPanelButtons[] = {
-	{kPanelButtonVerb,		106,12,		114,30,	kVerbWalkTo,'w',0,	0,1,0},
-	{kPanelButtonVerb,		106,44,		114,30,	kVerbLookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		106,76,		114,30, kVerbTake,'k',0,	4,5,0},
-	{kPanelButtonVerb,		106,108,	114,30, kVerbUse,'u',0,		6,7,0},
-	{kPanelButtonVerb,		223,12,		114,30, kVerbTalkTo,'t',0,	8,9,0},
-	{kPanelButtonVerb,		223,44,		114,30, kVerbSwallow,'s',0,	10,11,0},
-	{kPanelButtonVerb,		223,76,		114,30, kVerbGive,'g',0,	12,13,0},
-	{kPanelButtonVerb,		223,108,	114,30, kVerbPush,'p',0,	14,15,0},
+	{kPanelButtonVerb,		106,12,		114,30,	kVerbIHNMWalk,'w',0,	0,1,0},
+	{kPanelButtonVerb,		106,44,		114,30,	kVerbIHNMLookAt,'l',0,	2,3,0},
+	{kPanelButtonVerb,		106,76,		114,30, kVerbIHNMTake,'k',0,	4,5,0},
+	{kPanelButtonVerb,		106,108,	114,30, kVerbIHNMUse,'u',0,		6,7,0},
+	{kPanelButtonVerb,		223,12,		114,30, kVerbIHNMTalkTo,'t',0,	8,9,0},
+	{kPanelButtonVerb,		223,44,		114,30, kVerbIHNMSwallow,'s',0,	10,11,0},
+	{kPanelButtonVerb,		223,76,		114,30, kVerbIHNMGive,'g',0,	12,13,0},
+	{kPanelButtonVerb,		223,108,	114,30, kVerbIHNMPush,'p',0,	14,15,0},
 	{kPanelButtonArrow,		606,22,		20,25,	-1,'[',0,			0,0,0}, //TODO: arrow Sprite Numbers
 	{kPanelButtonArrow,		606,108,	20,25,	1,']',0,			0,0,0},
 

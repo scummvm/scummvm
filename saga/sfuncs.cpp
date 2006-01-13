@@ -566,7 +566,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
 
 	//TODO: placard stuff
-	_pendingVerb = kVerbNone;
+	_pendingVerb = _vm->_script->getVerbType(kVerbNone);
 	_currentObject[0] = _currentObject[1] = ID_NOTHING;
 	showVerb();
 }
@@ -1108,7 +1108,7 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	actor->_facingDirection = actor->_actionDirection = actorDirection;
 
 	if (!actor->_frames)
-		_vm->_actor->loadActorResources(actor);
+		_vm->_actor->loadActorResources(actor); //? is not it already loaded ?
 
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);

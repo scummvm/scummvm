@@ -55,30 +55,26 @@ enum AddressTypes {
 	kAddressIndex      = 7	// index from id*/
 };
 
-enum VerbTypes {
-	kVerbNone = 0,
-	kVerbPickUp = 1,
-	kVerbLookAt = 2,
-	kVerbWalkTo = 3,
-	kVerbTalkTo = 4,
-	kVerbOpen = 5,
-	kVerbClose = 6,
-	kVerbGive = 7,
-	kVerbUse = 8,
-	kVerbOptions = 9,
-	kVerbEnter = 10,
-	kVerbLeave = 11,
-	kVerbBegin = 12,
-	kVerbWalkOnly = 13,
-	kVerbLookOnly = 14,
+enum VerbTypeIds {
+	kVerbITENone = 0,
+	kVerbITEPickUp = 1,
+	kVerbITELookAt = 2,
+	kVerbITEWalkTo = 3,
+	kVerbITETalkTo = 4,
+	kVerbITEOpen = 5,
+	kVerbITEClose = 6,
+	kVerbITEGive = 7,
+	kVerbITEUse = 8,
+	kVerbITEOptions = 9,
+	kVerbITEEnter = 10,
+	kVerbITELeave = 11,
+	kVerbITEBegin = 12,
+	kVerbITEWalkOnly = 13,
+	kVerbITELookOnly = 14,
 
-//additional IHNM
-	kVerbTake = 15,
-	kVerbSwallow = 16,
-	kVerbPush = 17,
-/*
+
 	kVerbIHNMNone = 0,
-	kVerbIHNMWalkTo = 1,
+	kVerbIHNMWalk = 1,
 	kVerbIHNMLookAt = 2,
 	kVerbIHNMTake = 3,
 	kVerbIHNMUse = 4,
@@ -86,8 +82,30 @@ enum VerbTypes {
 	kVerbIHNMSwallow = 6,
 	kVerbIHNMGive = 7,
 	kVerbIHNMPush = 8,
-*/
-	kVerbTypesMax = kVerbPush + 1
+	kVerbIHNMOptions = 9,
+	kVerbIHNMEnter = 10,
+	kVerbIHNMLeave = 11,
+	kVerbIHNMBegin = 12,
+	kVerbIHNMWalkOnly = 13,
+	kVerbIHNMLookOnly = 14,
+
+	kVerbTypeIdsMax = kVerbITELookOnly + 1
+};
+
+enum VerbTypes {
+	kVerbNone,
+	kVerbWalkTo,
+	kVerbGive,
+	kVerbUse,
+	kVerbEnter,
+	kVerbLookAt,
+	kVerbPickUp,
+	kVerbOpen,
+	kVerbClose,
+	kVerbTalkTo,
+	kVerbWalkOnly,
+	kVerbLookOnly,
+	kVerbOptions
 };
 
 #define STHREAD_TIMESLICE 8
@@ -379,15 +397,16 @@ public:
 	void setRightButtonVerb(int verb);
 	int getRightButtonVerb() const { return _rightButtonVerb; }
 	void setNonPlayfieldVerb() {
-		setRightButtonVerb(kVerbNone);
+		setRightButtonVerb(getVerbType(kVerbNone));
 		_pointerObject = ID_NOTHING;
 		_currentObject[_firstObjectSet ? 1 : 0] = ID_NOTHING;
 	}
 	void setNoPendingVerb() {
-		_pendingVerb = kVerbNone;
+		_pendingVerb = getVerbType(kVerbNone);
 		_currentObject[0] = _currentObject[0] = ID_NOTHING;
 		setPointerVerb();
 	}
+	int getVerbType(VerbTypes verbType);
 
 private:
 	// When reading or writing data to the common buffer, we have to use a

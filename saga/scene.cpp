@@ -620,7 +620,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 		_inGame = true;
 
-		_vm->_script->setVerb(kVerbWalkTo);
+		_vm->_script->setVerb(_vm->_script->getVerbType(kVerbWalkTo));
 
 		if (loadSceneParams->sceneDescriptor == -2) {
 			return;
@@ -859,7 +859,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			event.time = 0;
 			event.param = _sceneDescription.scriptModuleNumber;
 			event.param2 = _sceneDescription.sceneScriptEntrypointNumber;
-			event.param3 = kVerbEnter;		// Action
+			event.param3 = _vm->_script->getVerbType(kVerbEnter);		// Action
 			event.param4 = _sceneNumber;	// Object
 			event.param5 = loadSceneParams->actorsEntrance;		// With Object
 			event.param6 = 0;		// Actor

@@ -50,7 +50,7 @@
 
 namespace Saga {
 
-static int verbTypeToTextStringsIdLUT[2][kVerbTypesMax] = {
+static int verbTypeToTextStringsIdLUT[2][kVerbTypeIdsMax] = {
 	{-1,
 	kTextPickUp,
 	kTextLookAt,
@@ -65,11 +65,16 @@ static int verbTypeToTextStringsIdLUT[2][kVerbTypesMax] = {
 	-1,
 	-1,
 	-1,
-	-1,
-	-1,
-	-1,
-	 -1},
-	{-1, -1, 2, 1, 5, -1, -1, 7, 4, -1, -1, -1, -1, -1, -1, 3, 6, 8}
+	-1},
+	{-1, 
+	3, //TODO:check
+	2, 
+	1, 
+	5, 
+	6, //TODO:check
+	8, //TODO:check
+	7, 
+	4}
 };
 
 Interface::Interface(SagaEngine *vm) : _vm(vm) {
@@ -86,7 +91,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_mainPanel.buttons = _vm->getDisplayInfo().mainPanelButtons;
 	_mainPanel.buttonsCount = _vm->getDisplayInfo().mainPanelButtonsCount;
 
-	for (i = 0; i < kVerbTypesMax; i++) {
+	for (i = 0; i < kVerbTypeIdsMax; i++) {
 		_verbTypeToPanelButton[i] = NULL;
 	}
 
@@ -632,7 +637,7 @@ void Interface::draw() {
 		_mainPanel.getRect(rect);
 		backBuffer->blit(rect, _mainPanel.image);
 
-		for (i = 0; i < kVerbTypesMax; i++) {
+		for (i = 0; i < kVerbTypeIdsMax; i++) {
 			if (_verbTypeToPanelButton[i] != NULL) {
 				drawVerbPanel(backBuffer, _verbTypeToPanelButton[i]);
 			}
@@ -681,6 +686,7 @@ void Interface::draw() {
 void Interface::calcOptionSaveSlider() {
 	int totalFiles = _vm->getSaveFilesCount();
 	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible;
+	if (_optionSaveFileSlider == NULL) return; //TODO:REMOVE
 	int height = _optionSaveFileSlider->height;
 	int sliderHeight;
 	int pos;
@@ -750,7 +756,8 @@ void Interface::drawOption() {
 	Rect rect2;
 	PanelButton *panelButton;
 	Point textPoint;
-
+	if (_optionSaveFileSlider == NULL) return;//TODO:REMOVE
+	
 	backBuffer = _vm->_gfx->getBackBuffer();
 
 	_optionPanel.getRect(rect);
@@ -1186,6 +1193,7 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 	bool releasedButton;
 
 	if (_vm->mouseButtonPressed()) {
+		if (_optionSaveFileSlider != NULL) //TODO:REMOVE
 		if (_optionSaveFileSlider->state > 0) {
 			_optionPanel.calcPanelButtonRect(_optionSaveFileSlider, rect);
 
@@ -1314,7 +1322,7 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 			event.time = 0;
 			event.param = _vm->_scene->getScriptModuleNumber();
 			event.param2 = script;
-			event.param3 = kVerbUse;		// Action
+			event.param3 = _vm->_script->getVerbType(kVerbUse);		// Action
 			event.param4 = obj;	// Object
 			event.param5 = 0;	// With Object
 			event.param6 = obj;		// Actor
@@ -1782,6 +1790,7 @@ void Interface::drawInventory(Surface *backBuffer) {
 
 void Interface::setVerbState(int verb, int state) {
 	PanelButton * panelButton = getPanelButtonByVerbType(verb);
+	if (panelButton == NULL) return;
 	if (state == 2) {
 		state = (_mainPanel.currentButton == panelButton) ? 1 : 0;
 	}

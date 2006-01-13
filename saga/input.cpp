@@ -97,6 +97,7 @@ int SagaEngine::processInput() {
 				_render->toggleFlag(RF_ACTOR_PATH_TEST);
 				break;
 			case 288: // F7
+				//_actor->frameTest();
 				break;
 			case 289: // F8
 				break;
