@@ -1349,8 +1349,14 @@ void Actor::handleActions(int msec, bool setup) {
 					}
 
 					actor->_partialTarget.fromScreenPoint(actor->_walkStepsPoints[actor->_walkStepIndex++]);
-					if (actor->_partialTarget.x > 224 * 2 * ACTOR_LMULT) {
-						actor->_partialTarget.x -= 256 * 2 * ACTOR_LMULT;
+					if (_vm->getGameType() == GType_ITE) {
+						if (actor->_partialTarget.x > 224 * 2 * ACTOR_LMULT) {
+							actor->_partialTarget.x -= 256 * 2 * ACTOR_LMULT;
+						}
+					} else {
+						if (actor->_partialTarget.x > 224 * 4 * ACTOR_LMULT) {
+							actor->_partialTarget.x -= 256 * 4 * ACTOR_LMULT;
+						}
 					}
 
 					actor->_partialTarget.delta(actor->_location, delta);
