@@ -442,6 +442,7 @@ Let's Explore the Jungle with Buzzy
 Pajama Sam 1: No Need to Hide When It's Dark Outside
 	CD	All	en	37aed3f91c1ef959e0bd265f9b13781f	pajama	Kirben
 	CD	All	en	672dec94b82f7f0877ebb5b5cf7f4bc1	pajama	khalek
+	CD	All	de	a095e33061606d231ff37dca4c64c8ac	pajama	Joachim Eberhard
 	CD	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	CD	Windows	en	898eaa21f79cf8d4f08db856244689ff	pajama	Joachim Eberhard
 
