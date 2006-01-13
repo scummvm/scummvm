@@ -1215,7 +1215,7 @@ int KyraEngine::cmd_setFireberryGlowPalette(ScriptState *script) {
 }
 
 int KyraEngine::cmd_setDeathHandlerFlag(ScriptState *script) {
-	debug(3, "cmd_drinkPotionAnimation(0x%X) (%d)", script, stackPos(0));
+	debug(3, "cmd_setDeathHandlerFlag(0x%X) (%d)", script, stackPos(0));
 	_deathHandler = stackPos(0);
 	return 0;
 }
@@ -1375,7 +1375,7 @@ int KyraEngine::cmd_setSceneAnimCurrXY(ScriptState *script) {
 }
 
 int KyraEngine::cmd_poisonBrandonAndRemaps(ScriptState *script) {
-	debug(3, "cmd_setSceneAnimCurrXY(0x%X) ()", script);
+	debug(3, "cmd_poisonBrandonAndRemaps(0x%X) ()", script);
 	setBrandonPoisonFlags(1);
 	return 0;
 }
@@ -1440,7 +1440,7 @@ int KyraEngine::cmd_totalItemsInScene(ScriptState *script) {
 }
 
 int KyraEngine::cmd_restoreBrandonsMovementDelay(ScriptState *script) {
-	debug(3, "cmd_restoreBrandonsMovemenyDelay(0x%X) ()", script);
+	debug(3, "cmd_restoreBrandonsMovementDelay(0x%X) ()", script);
 	//TODO: Use movement set by menu, instead of 5.
 	setTimerDelay(5, 5);
 	return 0;

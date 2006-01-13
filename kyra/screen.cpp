@@ -435,6 +435,79 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 	}
 }
 
+void Screen::drawBox(int x1, int y1, int x2, int y2, int color1, int color2) {
+	debug(9, "Screen::drawBox(%i, %i, %i, %i, %i, %i)", x1, y1, x2, y2, color1, color2);
+
+	//if (_menuUnk1 == 0)
+		//return;
+
+	hideMouse();
+
+	fillRect(x1, y1, x2, y1 + 1, color1);
+	fillRect(x2 - 1, y1, x2, y2, color1);
+
+	drawClippedLine(x1, y1, x1, y2, color2);
+	drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
+	drawClippedLine(x1, y2, x2, y2, color2);
+	drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
+
+	showMouse();
+}
+
+void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
+	debug(9, "Screen::drawClippedLine(%i, %i, %i, %i, %i)", x1, y1, x2, y2, color);
+
+	if (x1 < 0)
+		x1 = 0;
+	else if (x1 > 319)
+		x1 = 319;
+
+	if (x2 < 0)
+		x2 = 0;
+	else if (x2 > 319)
+		x2 = 319;
+
+	if (y1 < 0)
+		y1 = 0;
+	else if (y1 > 199)
+		y1 = 199;
+
+	if (y2 < 0)
+		y2 = 0;
+	else if (y2 > 199)
+		y2 = 199;
+
+	if (x1 == x2)
+		if (y1 > y2)
+			drawLine(true, x1, y2, y1 - y2 + 1, color);
+		else
+			drawLine(true, x1, y1, y2 - y1 + 1, color);
+	else
+		if (x1 > x2)
+			drawLine(false, x2, y1, x1 - x2 + 1, color);
+		else
+			drawLine(false, x1, y1, x2 - x1 + 1, color);
+}
+
+void Screen::drawLine(bool horizontal, int x, int y, int length, int color) {
+	debug(9, "Screen::drawLine(%i, %i, %i, %i, %i)", horizontal, x, y, length, color);
+
+	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W + x;
+
+	if (horizontal) {
+		assert((y + length) <= SCREEN_H);
+		int currLine = 0;
+		while (currLine < length) {
+			*ptr = color;
+			ptr += SCREEN_W;
+			currLine++;
+		}
+	} else {
+		assert((x + length) <= SCREEN_W);
+		memset(ptr, color, length);
+	}
+}
+
 void Screen::setAnimBlockPtr(int size) {
 	debug(9, "Screen::setAnimBlockPtr(%d)", size);
 	free(_animBlockPtr);

@@ -597,6 +597,8 @@ protected:
 	
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
+	int buttonMenuCallback(Button *caller);
+
 	Button *initButton(Button *list, Button *newButton);
 	void processButtonList(Button *list);
 	void processButton(Button *button);

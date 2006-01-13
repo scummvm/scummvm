@@ -107,6 +107,9 @@ public:
 	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
+	void drawLine(bool horizontal, int x, int y, int length, int color);
+	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
+	void drawBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void setAnimBlockPtr(int size);
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);

@@ -136,6 +136,8 @@ void Sprites::updateSceneAnims() {
 
 		if (_anims[i].reentry == 0) {
 			data = _anims[i].script;
+			if (READ_LE_UINT16(data) == 0xFF8B)
+				continue;
 		} else {
 			data = _anims[i].reentry;
 			_anims[i].reentry = 0;

@@ -5546,6 +5546,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	uint32 nextFrame = 0;
 	_abortWalkFlag = false;
 	_mousePressFlag = false;
+
 	while (running) {
 		if (_abortWalkFlag) {
 			*table = 8;

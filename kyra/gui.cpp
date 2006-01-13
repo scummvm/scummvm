@@ -289,5 +289,11 @@ void KyraEngine::processButton(Button *button) {
 		(this->*callback)(button);
 	}
 }
+
+int KyraEngine::buttonMenuCallback(Button *caller) {
+	warning("Menu not implemented yet!");
+	return 0;
+}
+
 } // end of namespace Kyra
  
