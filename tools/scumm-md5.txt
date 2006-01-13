@@ -587,6 +587,7 @@ Spy Fox 1: Dry Cereal
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
 	Demo	All	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
 	Demo	All	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
+	Demo	All	de	73b8197e236da4bf49adc99fe8f5fa1b	spyfox	Joachim Eberhard
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
