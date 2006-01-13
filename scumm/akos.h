@@ -67,6 +67,7 @@ protected:
 	const AkosOffset *akof;
 	const byte *akcd;
 	const byte *akct;
+	const uint8 *xmap;
 
 	struct {
 		byte unk5;
@@ -90,6 +91,7 @@ public:
 		akof = 0;
 		akcd = 0;
 		akct = 0;
+		xmap = 0;
 		_actorHitMode = false;
 	}
 
@@ -99,7 +101,7 @@ public:
 
 	void setPalette(byte *palette);
 	void setFacing(const Actor *a);
-	void setCostume(int costume);
+	void setCostume(int costume, int shadow);
 
 protected:
 	byte drawLimb(const Actor *a, int limb);
