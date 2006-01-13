@@ -552,6 +552,7 @@ Putt-Putt Travels Through Time
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	PuttTime	khalek
 	Demo	All	fr	59d5cfcc5e672a6e07baae01328b918b	PuttTime	Kirben
+	Demo	All	de	fbb697d89d2beca87360a145f467bdae	PuttTime	Joachim Eberhard
 	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	PuttTime	adutchguy
 
 Putt-Putt and Pep's Balloon-O-Rama
