@@ -45,7 +45,7 @@ Zak McKracken and the Alien Mindbenders
 	V2	DOS	en	675d71151e9b5a968c8ce46d9fbf4cbf	zak	Kirben
 	V2 (alt?)	DOS	en	debe337f73d660e951ece7c1f1c81add	zak	Andrea Petrucci
 	V2	DOS	fr	52a4bae0746a11d7b1e8554e91a6645c	zak	Andrea Petrucci
-	V2	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f	zak	Qvist
+	V2 (alt?)	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f	zak	Qvist
 	V2	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
 	V2 (from 5.25\" floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
 	V2	DOS	it	75ba23fff4fd63fa446c02864f2a5a4b	zak	Antti Leimi, Andrea Petrucci
@@ -89,6 +89,7 @@ Loom
 	EGA (same as IT?!?)	Amiga	fr	39cb9dec16fa16f38d79acd80effb059	loom	Gerald Vincent
 	EGA	Amiga	de	2fe369ad70f52a8cf7ad6077ee64f81a	loom	Norbert Lange
 	EGA (same as FR?!?)	Amiga	it	39cb9dec16fa16f38d79acd80effb059	loom	Andrea Petrucci
+	EGA	Amiga	es	48b9f04b348bc5013327753f0d12a144	loom	VooD
 	EGA	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
 	EGA	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
 	EGA	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
@@ -133,7 +134,7 @@ The Secret of Monkey Island
 	VGA	Amiga	es	870d1e3c86bc50846d808d14a36b4e08	monkey	Andreas Bylund
 	VGA (8 disk)	DOS	en	c7890e038806df2bb5c0c8c6f1986ea2	monkey	Andrea Petrucci
 	VGA (4 disk)	DOS	en	15e03ffbfeddb9c2aebc13dcb2a4a8f4	monkey
-	VGA (V1.1)	DOS	en	08646dd9698ddf1023ba9bf8a195e37b	monkey	crossbow777
+	VGA (V1.1)	DOS	en	08656dd9698ddf1023ba9bf8a195e37b	monkey	crossbow777
 	VGA (4 disk)	DOS	de	d0b531227a27c6662018d2bd05aac52a	monkey
 	VGA (4 disk)	DOS	it	66fd5ff9a810dfeb6d6bdada18221140	monkey	Andrea Petrucci
 	VGA (4 disk)	DOS	es	45152f7cf2ba8f43cf8a8ea2e740ae09	monkey
@@ -211,6 +212,7 @@ Day of the Tentacle
 	Floppy Version A ?	All?	en	acad97ab1c6fc2a5b2d98abf6db4a190	tentacle
 	Floppy Version B ?	DOS	en	2723fea3dae0cb47768c424b145ae0e7	tentacle	Andrej Sinicyn, Andrea Petrucci
 	Floppy	DOS	fr	92b078d9d6d9d751da9c26b8b3075779	tentacle	Nicolas Sauz&egrave;de, Andrea Petrucci
+	Floppy (alt?)	DOS	fr	94aaedbb8f26d71ed3ad6dd34490e29e	tentacle	Nicolas Joly
 	Floppy	DOS	de	57b0d89af79befe1cabce3bece869e7f	tentacle	Andrej Sinicyn, Andrea Petrucci
 	Floppy	DOS	it	50fcdc982a25063b78ad46bf389b8e8d	tentacle	Andrea Petrucci
 	Floppy	DOS	es	ae94f110a14ce71fc515d5b648827a8f	tentacle	abnog, Andrea Petrucci
@@ -269,8 +271,8 @@ Full Throttle
 The Dig
 	CD	All	All	d8323015ecb8b10bf53474f6e6b0ae33	dig
 	CD	All	ru	d62047a6729349ab36f7ee065bf26509	dig	sev
-	CD	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
 	CD (bundle)	Mac	en	35a2d3040fa512f8232d9e443319d84d	dig	fingolfin
+	CD (bundle)	Mac	fr	21a6592322f92550f144f68a8a4e685e	dig	kaminari
 
 	Demo	All	en	362c1d281fb9899254cda66ad246c66a	dig
 	Demo (bundle)	Mac	en	cd9c05e755d7bf8e9b9590ad1ebe273e	dig	fingolfin
@@ -372,6 +374,7 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	freddi3	khalek, sev
 	Demo	All	fr	bbadf7309c4a2c2763e4bbba3c3be634	freddi3	Kirben
+	Demo	All	de	ed2b074bc3166087a747acb2a3c6abb0	freddi3	Joachim Eberhard
 	Demo	Windows	nl	754feb59d3bf86b8a00840df74fd7b26	freddi3	adutchguy
 
 Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
@@ -440,6 +443,7 @@ Let's Explore the Jungle with Buzzy
 Pajama Sam 1: No Need to Hide When It's Dark Outside
 	CD	All	en	37aed3f91c1ef959e0bd265f9b13781f	pajama	Kirben
 	CD	All	en	672dec94b82f7f0877ebb5b5cf7f4bc1	pajama	khalek
+	CD	All	de	a095e33061606d231ff37dca4c64c8ac	pajama	Joachim Eberhard
 	CD	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	CD	Windows	en	898eaa21f79cf8d4f08db856244689ff	pajama	Joachim Eberhard
 
@@ -455,6 +459,7 @@ Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 
 	Demo	All	nl	30ba1e825d4ad2b448143ae8df18482a	pajama2	Kirben
 	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pajama2	sev
+	Demo	All	de	4521138d15d1fd7649c31fb981746231	pajama2	Joachim Eberhard
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	CD	All	en	f7711f9264d4d43c2a1518ec7c10a607	pajama3	Kirben
@@ -547,6 +552,7 @@ Putt-Putt Travels Through Time
 	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	PuttTime	khalek
 	Demo	All	fr	59d5cfcc5e672a6e07baae01328b918b	PuttTime	Kirben
+	Demo	All	de	fbb697d89d2beca87360a145f467bdae	PuttTime	Joachim Eberhard
 	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	PuttTime	adutchguy
 
 Putt-Putt and Pep's Balloon-O-Rama
@@ -583,6 +589,7 @@ Spy Fox 1: Dry Cereal
 	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
 	Demo	All	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
 	Demo	All	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
+	Demo	All	de	73b8197e236da4bf49adc99fe8f5fa1b	spyfox	Joachim Eberhard
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
