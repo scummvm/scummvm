@@ -145,7 +145,22 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		if (spriteInfo->decodedBuffer == NULL) {
 			memoryError("Sprite::loadList");
 		}
-		memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
+
+		// IHNM sprites are upside-down, for reasons which i can only
+		// assume are perverse. To simplify things, flip them now. Not
+		// at drawing time.
+
+		if (_vm->getGameType() == GType_IHNM) {
+			byte *src = _decodeBuf + spriteInfo->width * (spriteInfo->height - 1);
+			byte *dst = spriteInfo->decodedBuffer;
+
+			for (int j = 0; j < spriteInfo->height; j++) {
+				memcpy(dst, src, spriteInfo->width);
+				src -= spriteInfo->width;
+				dst += spriteInfo->width;
+			}
+		} else
+			memcpy(spriteInfo->decodedBuffer, _decodeBuf, outputLength);
 	}
 
 	free(spriteListData);
@@ -204,13 +219,6 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 		srcRowPointer += width * io;
 	}
 
-	int traverseSign = 1;
-
-	if (_vm->getGameType() == GType_IHNM) {
-		traverseSign = -1;
-		bufRowPointer += clipHeight * ds->pitch;
-	}
-
 	for (i = io; i < clipHeight; i++) {
 		for (j = jo; j < clipWidth; j++) {
 			assert((byte *)ds->pixels <= (byte *)(bufRowPointer + j + spritePointer.x));
@@ -223,7 +231,7 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 				*(bufRowPointer + j + spritePointer.x) = *(srcRowPointer + j);
 			}
 		}
-		bufRowPointer += ds->pitch * traverseSign;
+		bufRowPointer += ds->pitch;
 		srcRowPointer += width;
 	}
 }
@@ -252,7 +260,6 @@ void Sprite::draw(Surface *ds, const Rect &clipRect, SpriteList &spriteList, int
 	int yAlign, sph;
 	Point spritePointer;
 
-
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 	spw = (screenRect.width() - width) / 2;
 	sph = (screenRect.height() - height) / 2;
@@ -276,7 +283,6 @@ bool Sprite::hitTest(SpriteList &spriteList, int spriteNumber, const Point &scre
 	int xAlign;
 	int yAlign;
 	Point spritePointer;
-
 
 	getScaledSpriteBuffer(spriteList, spriteNumber, scale, width, height, xAlign, yAlign, spriteBuffer);
 
@@ -318,7 +324,6 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	byte *maskRowPointer;
 	int maskZ;
 
-
 	if (!_vm->_scene->isBGMaskPresent()) {
 		draw(ds, clipRect, spriteList, spriteNumber, screenCoord, scale);
 		return;
@@ -343,16 +348,9 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 	}
 
 	// Finally, draw the occluded sprite
-	sourceRowPointer = spriteBuffer + clipData.drawSource.x + (clipData.drawSource.y * width);
 
-	int traverseSign;
-	if (_vm->getGameType() == GType_IHNM) {
-		traverseSign = -1;
-		destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + ((clipData.drawDest.y + clipData.drawHeight) * ds->pitch);
-	} else {
-		traverseSign = 1;
-		destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + (clipData.drawDest.y * ds->pitch);
-	}
+	sourceRowPointer = spriteBuffer + clipData.drawSource.x + (clipData.drawSource.y * width);
+	destRowPointer = (byte *)ds->pixels + clipData.drawDest.x + (clipData.drawDest.y * ds->pitch);
 	maskRowPointer = maskBuffer + clipData.drawDest.x + (clipData.drawDest.y * maskWidth);
 
 	for (y = 0; y < clipData.drawHeight; y++) {
@@ -370,7 +368,7 @@ void Sprite::drawOccluded(Surface *ds, const Rect &clipRect, SpriteList &spriteL
 			destPointer++;
 			maskPointer++;
 		}
-		destRowPointer += ds->pitch * traverseSign;
+		destRowPointer += ds->pitch;
 		maskRowPointer += maskWidth;
 		sourceRowPointer += width;
 	}
