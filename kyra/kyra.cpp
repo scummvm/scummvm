@@ -998,19 +998,19 @@ void KyraEngine::seq_introKallakMalcolm() {
 
 void KyraEngine::seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly) {
 	debug(9, "seq_createAmuletJewel(%d, %d, %d, %d)", jewel, page, noSound, drawOnly);
-	const static uint16 specialJewelTable[] = {
+	static const uint16 specialJewelTable[] = {
 		0x167, 0x162, 0x15D, 0x158, 0x153, 0xFFFF
 	};
-	const static uint16 specialJewelTable1[] = {
+	static const uint16 specialJewelTable1[] = {
 		0x14F, 0x154, 0x159, 0x15E, 0x163, 0xFFFF
 	};
-	const static uint16 specialJewelTable2[] = {
+	static const uint16 specialJewelTable2[] = {
 		0x150, 0x155, 0x15A, 0x15F, 0x164, 0xFFFF
 	};
-	const static uint16 specialJewelTable3[] = {
+	static const uint16 specialJewelTable3[] = {
 		0x151, 0x156, 0x15B, 0x160, 0x165, 0xFFFF
 	};
-	const static uint16 specialJewelTable4[] = {
+	static const uint16 specialJewelTable4[] = {
 		0x152, 0x157, 0x15C, 0x161, 0x166, 0xFFFF
 	};
 	if (!noSound)
@@ -1726,7 +1726,7 @@ void KyraEngine::snd_playSoundEffect(int track) {
 
 void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	debug(9, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
-	const static int8 soundTable[] = {
+	static const int8 soundTable[] = {
 		-1,   0,  -1,   1,   0,   3,   0,   2,
 		 0,   4,   1,   2,   1,   3,   1,   4,
 		 1, 0x5C,   1,   6,   1,   7,   2,   2,
