@@ -34,8 +34,6 @@
 
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
-#include "sound/voc.h"
-#include "sound/audiostream.h"
 
 #include "gui/message.h"
 
@@ -264,7 +262,6 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 }
 
 int KyraEngine::init(GameDetector &detector) {
-	_currentVocFile = 0;
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		_system->initSize(320, 200);
@@ -282,10 +279,10 @@ int KyraEngine::init(GameDetector &detector) {
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 	}
 
-	_midi = new MusicPlayer(driver, this);
-	assert(_midi);
-	_midi->hasNativeMT32(native_mt32);
-	_midi->setVolume(255);
+	_sound = new SoundPC(driver, _mixer, this);
+	assert(_sound);
+	static_cast<SoundPC*>(_sound)->hasNativeMT32(native_mt32);
+	_sound->setVolume(255);
 	
 	_saveFileMan = _system->getSavefileManager();
 	assert(_saveFileMan);	
@@ -431,7 +428,7 @@ KyraEngine::~KyraEngine() {
 	delete _animator;
 	delete _screen;
 	delete _res;
-	delete _midi;
+	delete _sound;
 	delete _saveFileMan;
 	delete _seq;
 	delete _scriptInterpreter;
@@ -869,7 +866,7 @@ void KyraEngine::seq_demo() {
 	_screen->fadeFromBlack();
 	waitTicks(60);
 	_screen->fadeToBlack();
-	_midi->stopMusic();
+	_sound->stopMusic();
 }
 
 void KyraEngine::seq_intro() {
@@ -897,7 +894,7 @@ void KyraEngine::seq_intro() {
 	_text->setTalkCoords(136);
 	waitTicks(30);
 	_seq->setCopyViewOffs(false);
-	_midi->stopMusic();
+	_sound->stopMusic();
 	if (_features & GF_TALKIE) {
 		_res->unloadPakFile("INTRO.VRM");
 	}
@@ -1107,7 +1104,15 @@ void KyraEngine::seq_brandonHealing2() {
 	freeShapes123();
 	_screen->showMouse();
 	assert(_poisonGone);
+	if (_features & GF_TALKIE) {
+		snd_voiceWaitForFinish();
+		snd_playVoiceFile(2010);
+	}
 	characterSays(_poisonGone[0], 0, -2);
+	if (_features & GF_TALKIE) {
+		snd_voiceWaitForFinish();
+		snd_playVoiceFile(2011);
+	}
 	characterSays(_poisonGone[1], 0, -2);
 }
 
@@ -1121,13 +1126,29 @@ void KyraEngine::seq_poisonDeathNow(int now) {
 	if (_poisonDeathCounter >= 2) {
 		snd_playWanderScoreViaMap(1, 1);
 		assert(_thePoison);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(7000);
+		}
 		characterSays(_thePoison[0], 0, -2);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(7001);
+		}
 		characterSays(_thePoison[1], 0, -2);
 		seq_poisonDeathNowAnim();
 		_deathHandler = 3;
 	} else {
 		assert(_thePoison);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(7002);
+		}
 		characterSays(_thePoison[2], 0, -2);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(7004);
+		}
 		characterSays(_thePoison[3], 0, -2);
 	}
 }
@@ -1190,10 +1211,11 @@ void KyraEngine::seq_playFluteAnimation() {
 		snd_playSoundEffect(0x63);
 		delayTime = 9;
 		soundType = 3;
-	} else if (queryGameFlag(0x86)) {
+	} else if (!queryGameFlag(0x86)) {
 		snd_playSoundEffect(0x61);
 		delayTime = 2;
 		soundType = 1;
+		setGameFlag(0x86);
 	} else {
 		snd_playSoundEffect(0x62);
 		delayTime = 2;
@@ -1219,9 +1241,17 @@ void KyraEngine::seq_playFluteAnimation() {
 	
 	if (soundType == 1) {
 		assert(_fluteString);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(1000);
+		}
 		characterSays(_fluteString[0], 0, -2);
 	} else if (soundType == 2) {
 		assert(_fluteString);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(1001);
+		}
 		characterSays(_fluteString[1], 0, -2);
 	}
 }
@@ -1481,6 +1511,10 @@ void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
 	
 	if (item >= 60 && item <= 77) {
 		assert(_flaskFull);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(8006);
+		}
 		characterSays(_flaskFull[0], 0, -2);
 	} else if (item == 78) {
 		assert(type >= 0 && type < ARRAYSIZE(flaskTable1));
@@ -1499,6 +1533,14 @@ void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
 	_itemInHand = newItem;
 	assert(_fullFlask);
 	assert(type < _fullFlask_Size && type >= 0);
+	if (_features & GF_TALKIE) {
+		snd_voiceWaitForFinish();
+		static const uint16 voiceEntries[] = {
+			0x1F40, 0x1F41, 0x1F42, 0x1F45
+		};
+		assert(type < ARRAYSIZE(voiceEntries));
+		snd_playVoiceFile(voiceEntries[type]);
+	}
 	characterSays(_fullFlask[type], 0, -2);
 }
 
@@ -1700,19 +1742,19 @@ void KyraEngine::snd_playTheme(int file, int track) {
 	debug(9, "KyraEngine::snd_playTheme(%d)", file);
 	assert(file < _xmidiFilesCount);
 	_curMusicTheme = _newMusicTheme = file;
-	_midi->playMusic(_xmidiFiles[file]);
-	_midi->playTrack(track, false);
+	_sound->playMusic(_xmidiFiles[file]);
+	_sound->playTrack(track, false);
 }
 
 void KyraEngine::snd_playTrack(int track, bool looping) {
 	debug(9, "KyraEngine::snd_playTrack(%d, %d)", track, looping);
-	_midi->playTrack(track, looping);
+	_sound->playTrack(track, looping);
 }
 
 void KyraEngine::snd_setSoundEffectFile(int file) {
 	debug(9, "KyraEngine::snd_setSoundEffectFile(%d)", file);
 	assert(file < _xmidiFilesCount);
-	_midi->loadSoundEffectFile(_xmidiFiles[file]);
+	_sound->loadSoundEffectFile(_xmidiFiles[file]);
 }
 
 void KyraEngine::snd_playSoundEffect(int track) {
@@ -1720,7 +1762,7 @@ void KyraEngine::snd_playSoundEffect(int track) {
 	if (track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 	} else {
-		_midi->playSoundEffect(track);
+		_sound->playSoundEffect(track);
 	}
 }
 
@@ -1762,7 +1804,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 		}
 	} else {
 		_lastMusicCommand = 1;
-		_midi->beginFadeOut();
+		_sound->beginFadeOut();
 	}
 }
 
@@ -1771,31 +1813,32 @@ void KyraEngine::snd_playVoiceFile(int id) {
 	char vocFile[9];
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d.VOC", id);
-	uint32 fileSize = 0;
-	byte *fileData = 0;
-	fileData = _res->fileData(vocFile, &fileSize);
-	assert(fileData);
-	Common::MemoryReadStream vocStream(fileData, fileSize);
-	_mixer->stopHandle(_vocHandle);
-	_currentVocFile = makeVOCStream(vocStream);
-	if (_currentVocFile)
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
-	delete fileData;
-	fileSize = 0;
+	_sound->voicePlay(vocFile);
 }
 
 bool KyraEngine::snd_voicePlaying() {
-	return _mixer->isSoundHandleActive(_vocHandle);
+	return _sound->voiceIsPlaying();
+}
+
+void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
+	debug(9, "KyraEngine::snd_voiceWaitForFinish(%d)", ingame);
+	while (snd_voicePlaying() && !_fastMode) {
+		if (ingame) {
+			delay(10, true);
+		} else {
+			waitTicks(10);
+		}
+	}
 }
 
 void KyraEngine::snd_startTrack() {
 	debug(9, "KyraEngine::snd_startTrack()");
-	_midi->startTrack();
+	_sound->startTrack();
 }
 
 void KyraEngine::snd_haltTrack() {
 	debug(9, "KyraEngine::snd_haltTrack()");
-	_midi->haltTrack();
+	_sound->haltTrack();
 }
 
 void KyraEngine::loadMouseShapes() {

@@ -50,9 +50,7 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_characterSays(0x%X) (%d, '%s', %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
-		while (snd_voicePlaying() && !_fastMode) {
-			delay(10);
-		}
+		snd_voiceWaitForFinish();
 		snd_playVoiceFile(stackPos(0));
 		characterSays(stackPosString(1), stackPos(2), stackPos(3));
 	} else {
@@ -614,9 +612,7 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_customPrintTalkString(0x%X) (%d, '%s', %d, %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
-		while (snd_voicePlaying() && !_fastMode) {
-			delay(10);
-		}
+		snd_voiceWaitForFinish();
 		snd_playVoiceFile(stackPos(0));
 		_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {

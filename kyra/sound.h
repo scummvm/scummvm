@@ -28,13 +28,50 @@
 #include "sound/midiparser.h"
 #include "kyra/kyra.h"
 
+class AudioStream;
+
+namespace Audio {
+class Mixer;
+class SoundHandle;
+} // end of namespace Audio
+
 namespace Kyra {
 
-class MusicPlayer : public MidiDriver {
+class Sound {
+public:
+	Sound() {}
+	virtual ~Sound() {}
+	
+	virtual void setVolume(int volume) = 0;
+	virtual int getVolume() = 0;
+	
+	virtual void playMusic(const char *file) = 0;
+	virtual void playMusic(uint8 *data, uint32 size) = 0;
+	virtual void stopMusic() = 0;
+	
+	virtual void playTrack(uint8 track, bool looping = true) = 0;
+	virtual void haltTrack() = 0;
+	virtual void startTrack() = 0;
+	
+	virtual void loadSoundEffectFile(const char *file) = 0;
+	virtual void loadSoundEffectFile(uint8 *data, uint32 size) = 0;
+	virtual void stopSoundEffect() = 0;
+	
+	virtual void playSoundEffect(uint8 track) = 0;
+	
+	virtual void beginFadeOut() = 0;
+	virtual bool fadeOut() = 0;
+	
+	virtual void voicePlay(const char *file) = 0;
+	virtual void voiceUnload() = 0;
+	virtual bool voiceIsPlaying() = 0;
+};
+
+class SoundPC : public MidiDriver, public Sound {
 public:
 
-	MusicPlayer(MidiDriver *driver, KyraEngine *engine);
-	~MusicPlayer();
+	SoundPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine);
+	~SoundPC();
 
 	void setVolume(int volume);
 	int getVolume() { return _volume; }
@@ -42,23 +79,27 @@ public:
 	void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
 	bool isMT32() { return _nativeMT32; }
 
-	void playMusic(const char* file);
-	void playMusic(uint8* data, uint32 size);
+	void playMusic(const char *file);
+	void playMusic(uint8 *data, uint32 size);
 	void stopMusic();
 
-	void playTrack(uint8 track, bool looping = true);
+	void playTrack(uint8 track, bool looping);
 	void haltTrack() { _isPlaying = false; }
 	void startTrack() { _isPlaying = true; }
 	void setPassThrough(bool b)	{ _passThrough = b; }
 
-	void loadSoundEffectFile(const char* file);
-	void loadSoundEffectFile(uint8* data, uint32 size);
+	void loadSoundEffectFile(const char *file);
+	void loadSoundEffectFile(uint8 *data, uint32 size);
 	void stopSoundEffect();
 
 	void playSoundEffect(uint8 track);
 
 	void beginFadeOut();
 	bool fadeOut() { return _fadeMusicOut; }
+	
+	void voicePlay(const char *file);
+	void voiceUnload() {};
+	bool voiceIsPlaying();
 
 	//MidiDriver interface implementation
 	int open();
@@ -77,10 +118,10 @@ protected:
 
 	static void onTimer(void *data);
 
-	MidiChannel* _channel[32];
+	MidiChannel *_channel[32];
 	int _virChannel[16];
 	uint8 _channelVolume[16];
-	MidiDriver* _driver;
+	MidiDriver *_driver;
 	bool _nativeMT32;
 	bool _passThrough;
 	uint8 _volume;
@@ -95,8 +136,11 @@ protected:
 	MidiParser *_soundEffect;
 	byte *_soundEffectSource;
 	KyraEngine *_engine;
+	
+	Audio::Mixer *_mixer;
+	AudioStream *_currentVocFile;
+	Audio::SoundHandle _vocHandle;
 };
-
 } // end of namespace Kyra
 
 #endif

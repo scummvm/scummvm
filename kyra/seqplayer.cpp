@@ -42,7 +42,7 @@ SeqPlayer::SeqPlayer(KyraEngine* vm, OSystem* system) {
 	_system = system;
 
 	_screen = vm->screen();
-	_midi = vm->midi();
+	_sound = vm->sound();
 	_res = vm->resource();
 
 	_copyViewOffs = false;
@@ -374,7 +374,7 @@ void SeqPlayer::s1_fillRect() {
 void SeqPlayer::s1_playEffect() {
 	uint8 track = *_seqData++;
 	_vm->waitTicks(3);
-	_midi->playSoundEffect(track);
+	_sound->playSoundEffect(track);
 }
 
 void SeqPlayer::s1_playTrack() {
@@ -387,7 +387,7 @@ void SeqPlayer::s1_playTrack() {
 			// nothing to do here...
 			break;
 		case 1:
-			_midi->beginFadeOut();
+			_sound->beginFadeOut();
 			break;
 		case 56:
 			_vm->snd_playTheme(KyraEngine::MUSIC_INTRO, 3);
@@ -406,7 +406,7 @@ void SeqPlayer::s1_playTrack() {
 		if (msg == 0) {
 			// nothing to do here...
 		} else if (msg == 1) {
-			_midi->beginFadeOut();
+			_sound->beginFadeOut();
 		} else {
 			_vm->snd_playTrack(msg);
 		}
@@ -445,9 +445,7 @@ void SeqPlayer::s1_loadIntroVRM() {
 }
 
 void SeqPlayer::s1_playVocFile() {
-	while (_vm->snd_voicePlaying()) {
-		_system->delayMillis(10);
-	}
+	_vm->snd_voiceWaitForFinish(false);
 	uint8 a = *_seqData++;
 	_vm->snd_playVoiceFile(a);
 }

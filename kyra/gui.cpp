@@ -96,11 +96,19 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		return 1;
 	if (_itemInHand != -1) {
 		assert(_putDownFirst);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(2000);
+		}
 		characterSays(_putDownFirst[0], 0, -2);
 		return 1;
 	}
 	if (queryGameFlag(0xF1)) {
 		assert(_waitForAmulet);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(2001);
+		}
 		characterSays(_waitForAmulet[0], 0, -2);
 		return 1;
 	}
@@ -108,6 +116,10 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		assert(_blackJewel);
 		makeBrandonFaceMouse();
 		drawJewelPress(jewel, 1);
+		if (_features & GF_TALKIE) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(2002);
+		}
 		characterSays(_blackJewel[0], 0, -2);
 		return 1;
 	}
@@ -135,6 +147,10 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 			} else if (_brandonStatusBit == 0) {
 				seq_brandonHealing();
 				assert(_healingTip);
+				if (_features & GF_TALKIE) {
+					snd_voiceWaitForFinish();
+					snd_playVoiceFile(2003);
+				}
 				characterSays(_healingTip[0], 0, -2);
 			}
 			break;
@@ -146,6 +162,10 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		case 2:
 			if (_brandonStatusBit & 1) {
 				assert(_wispJewelStrings);
+				if (_features & GF_TALKIE) {
+					snd_voiceWaitForFinish();
+					snd_playVoiceFile(2004);
+				}
 				characterSays(_wispJewelStrings[0], 0, -2);
 			} else {
 				if (_brandonStatusBit & 2) {
@@ -170,6 +190,10 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 		case 3:
 			seq_dispelMagicAnimation();
 			assert(_magicJewelString);
+			if (_features & GF_TALKIE) {
+				snd_voiceWaitForFinish();
+				snd_playVoiceFile(2007);
+			}
 			characterSays(_magicJewelString[0], 0, -2);
 			break;
 		

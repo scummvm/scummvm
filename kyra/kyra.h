@@ -118,7 +118,7 @@ struct BeadState {
 
 class Movie;
 
-class MusicPlayer;
+class Sound;
 class SeqPlayer;
 class Resource;
 class PAKFile;
@@ -186,7 +186,7 @@ public:
 	Screen *screen() { return _screen; }
 	ScreenAnimator *animator() { return _animator; }
 	TextDisplayer *text() { return _text; }
-	MusicPlayer *midi() { return _midi; }
+	Sound *sound() { return _sound; }
 	uint32 tickLength() const { return _tickLength; }
 	Movie *createWSAMovie();
 
@@ -218,6 +218,7 @@ public:
 	void snd_playTrack(int track, bool looping = false);
 	void snd_playVoiceFile(int id);
 	bool snd_voicePlaying();
+	void snd_voiceWaitForFinish(bool ingame = true);
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
 
@@ -715,13 +716,11 @@ protected:
 	int _curMusicTheme;
 	int _newMusicTheme;
 	int16 _lastMusicCommand;
-	AudioStream *_currentVocFile;
-	Audio::SoundHandle _vocHandle;
 
 	Resource *_res;
 	Screen *_screen;
 	ScreenAnimator *_animator;
-	MusicPlayer *_midi;
+	Sound *_sound;
 	SeqPlayer *_seq;
 	Sprites *_sprites;
 	TextDisplayer *_text;

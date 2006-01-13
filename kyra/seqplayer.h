@@ -44,7 +44,7 @@ protected:
 	KyraEngine *_vm;
 	OSystem *_system;
 	Screen *_screen;
-	MusicPlayer *_midi;
+	Sound *_sound;
 	Resource *_res;
 
 	uint8 *_handShapes[3];

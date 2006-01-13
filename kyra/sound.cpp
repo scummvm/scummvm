@@ -24,9 +24,13 @@
 #include "kyra/resource.h"
 #include "kyra/sound.h"
 
+#include "sound/mixer.h"
+#include "sound/voc.h"
+#include "sound/audiostream.h"
+
 namespace Kyra {
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, KyraEngine *engine) {
+SoundPC::SoundPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine) : Sound() {
 	_engine = engine;
 	_driver = driver;
 	_passThrough = false;
@@ -49,14 +53,17 @@ MusicPlayer::MusicPlayer(MidiDriver *driver, KyraEngine *engine) {
 	if (ret != MERR_ALREADY_OPEN && ret != 0) {
 		error("couldn't open midi driver");
 	}
+	
+	_currentVocFile = 0;
+	_mixer = mixer;
 }
 
-MusicPlayer::~MusicPlayer() {
+SoundPC::~SoundPC() {
 	_driver->setTimerCallback(NULL, NULL);
 	close();
 }
 
-void MusicPlayer::setVolume(int volume) {
+void SoundPC::setVolume(int volume) {
 	if (volume < 0)
 		volume = 0;
 	else if (volume > 255)
@@ -77,7 +84,7 @@ void MusicPlayer::setVolume(int volume) {
 	}
 }
 
-int MusicPlayer::open() {
+int SoundPC::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
@@ -90,13 +97,13 @@ int MusicPlayer::open() {
 	return 0;
 }
 
-void MusicPlayer::close() {
+void SoundPC::close() {
 	if (_driver)
 		_driver->close();
 	_driver = 0;
 }
 
-void MusicPlayer::send(uint32 b) {
+void SoundPC::send(uint32 b) {
 	if (_passThrough) {
 		if ((b & 0xFFF0) == 0x007BB0)
 			return;
@@ -140,7 +147,7 @@ void MusicPlayer::send(uint32 b) {
 		_channel[_virChannel[channel]]->send(b);
 }
 
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
+void SoundPC::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:	// End of Track
 		if (_eventFromMusic) {
@@ -161,7 +168,7 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void MusicPlayer::playMusic(const char *file) {
+void SoundPC::playMusic(const char *file) {
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(file, &size);
 
@@ -173,7 +180,7 @@ void MusicPlayer::playMusic(const char *file) {
 	playMusic(data, size);
 }
 
-void MusicPlayer::playMusic(uint8 *data, uint32 size) {
+void SoundPC::playMusic(uint8 *data, uint32 size) {
 	stopMusic();
 
 	_parserSource = data;
@@ -193,7 +200,7 @@ void MusicPlayer::playMusic(uint8 *data, uint32 size) {
 	_parser->property(MidiParser::mpAutoLoop, false);
 }
 
-void MusicPlayer::loadSoundEffectFile(const char *file) {
+void SoundPC::loadSoundEffectFile(const char *file) {
 	uint32 size;
 	uint8 *data = (_engine->resource())->fileData(file, &size);
 
@@ -205,7 +212,7 @@ void MusicPlayer::loadSoundEffectFile(const char *file) {
 	loadSoundEffectFile(data, size);
 }
 
-void MusicPlayer::loadSoundEffectFile(uint8 *data, uint32 size) {
+void SoundPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 	stopSoundEffect();
 
 	_soundEffectSource = data;
@@ -225,7 +232,7 @@ void MusicPlayer::loadSoundEffectFile(uint8 *data, uint32 size) {
 	_soundEffect->property(MidiParser::mpAutoLoop, false);
 }
 
-void MusicPlayer::stopMusic() {
+void SoundPC::stopMusic() {
 	_isLooping = false;
 	_isPlaying = false;
 	if (_parser) {
@@ -241,7 +248,7 @@ void MusicPlayer::stopMusic() {
 	}
 }
 
-void MusicPlayer::stopSoundEffect() {
+void SoundPC::stopSoundEffect() {
 	_sfxIsPlaying = false;
 	if (_soundEffect) {
 		_soundEffect->unloadMusic();
@@ -252,8 +259,8 @@ void MusicPlayer::stopSoundEffect() {
 	}
 }
 
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
+void SoundPC::onTimer(void *refCon) {
+	SoundPC *music = (SoundPC *)refCon;
 
 	// this should be set to the fadeToBlack value
 	static const uint32 musicFadeTime = 2 * 1000;
@@ -295,7 +302,7 @@ void MusicPlayer::onTimer(void *refCon) {
 	}
 }
 
-void MusicPlayer::playTrack(uint8 track, bool loop) {
+void SoundPC::playTrack(uint8 track, bool loop) {
 	if (_parser) {
 		_isPlaying = true;
 		_isLooping = loop;
@@ -306,7 +313,7 @@ void MusicPlayer::playTrack(uint8 track, bool loop) {
 	}
 }
 
-void MusicPlayer::playSoundEffect(uint8 track) {
+void SoundPC::playSoundEffect(uint8 track) {
 	if (_soundEffect) {
 		_sfxIsPlaying = true;
 		_soundEffect->setTrack(track);
@@ -315,10 +322,27 @@ void MusicPlayer::playSoundEffect(uint8 track) {
 	}
 }
 
-void MusicPlayer::beginFadeOut() {
+void SoundPC::beginFadeOut() {
 	// this should be something like fade out...
 	_fadeMusicOut = true;
 	_fadeStartTime = _engine->_system->getMillis();
 }
 
+void SoundPC::voicePlay(const char *file) {
+	uint32 fileSize = 0;
+	byte *fileData = 0;
+	fileData = _engine->resource()->fileData(file, &fileSize);
+	assert(fileData);
+	Common::MemoryReadStream vocStream(fileData, fileSize);
+	_mixer->stopHandle(_vocHandle);
+	_currentVocFile = makeVOCStream(vocStream);
+	if (_currentVocFile)
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
+	delete fileData;
+	fileSize = 0;
+}
+
+bool SoundPC::voiceIsPlaying() {
+	return _mixer->isSoundHandleActive(_vocHandle);
+}
 } // end of namespace Kyra
