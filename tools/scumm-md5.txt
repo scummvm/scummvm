@@ -459,6 +459,7 @@ Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 
 	Demo	All	nl	30ba1e825d4ad2b448143ae8df18482a	pajama2	Kirben
 	Demo	All	en	36a6750e03fb505fc19fc2bf3e4dbe91	pajama2	sev
+	Demo	All	de	4521138d15d1fd7649c31fb981746231	pajama2	Joachim Eberhard
 
 Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	CD	All	en	f7711f9264d4d43c2a1518ec7c10a607	pajama3	Kirben
