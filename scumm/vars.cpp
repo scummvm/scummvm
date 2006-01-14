@@ -301,6 +301,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_SOUNDCODE_TMR = 84;
 		VAR_KEY_STATE = 86;
 		VAR_NUM_SOUND_CHANNELS = 88;
+		VAR_REDRAW_ALL_ACTORS = 95;
 	if (_heversion >= 90) {
 		VAR_SCRIPT_CYCLE = 103;
 		VAR_NUM_SCRIPT_CYCLES = 104;
