@@ -276,7 +276,7 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 80 */
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x80),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
@@ -701,6 +701,15 @@ const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
 	return "";
+}
+
+void Inter_v2::o2_stub0x80(void) {
+	_vm->_global->_inter_execPtr += 2;
+
+	int16 expr1 = _vm->_parse->parseValExpr();
+	int16 expr2 = _vm->_parse->parseValExpr();
+
+	warning("STUB: Gob2 drawOperation 0x80 (%d %d)", expr1, expr2);
 }
 
 } // End of namespace Gob

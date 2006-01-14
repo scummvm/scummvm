@@ -195,7 +195,16 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 	// TODO
 	// Fallback. Maybe we will be able to determine game type from game
 	// data contents
-	uint32 features = Gob::GF_GOB1;
+	Common::String realGame;
+	uint32 features;
+	if (ConfMan.hasKey("gameid"))
+		realGame = ConfMan.get("gameid");
+	else
+		realGame = detector->_targetName;
+	if (!strcmp(realGame.c_str(), "gob2"))
+		features = Gob::GF_GOB2;
+	else
+		features = Gob::GF_GOB1;
 
 	for (g = gob_games; g->name; g++) {
 		if (strcmp(g->md5sum, (char *)md5str) == 0) {

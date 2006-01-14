@@ -299,6 +299,7 @@ protected:
 	virtual const char *getOpcodeGoblinDesc(int i);
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
+	void o2_stub0x80(void);
 };
 
 }				// End of namespace Gob
