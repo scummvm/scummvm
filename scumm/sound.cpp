@@ -281,7 +281,7 @@ void Sound::playSound(int soundID) {
 		// I'll add some code to test that theory for now.
 
 		// Check if the resource has already been demangled
-		if ((_vm->_gameId == GID_MONKEY_SEGA) && (ptr[0] != 1))	{
+		if ((_vm->_platform == Common::kPlatformSegaCD) && (ptr[0] != 1))	{
 			for (int i = 0; i < size; i++)   {
 				ptr[i] ^= 0x16;
 				if (ptr[i] >= 0x7F) {

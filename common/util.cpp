@@ -181,6 +181,7 @@ const PlatformDescription g_platforms[] = {
 	{"pc", "dos", "DOS", kPlatformPC},
 	{"windows", "win", "Windows", kPlatformWindows},
 	{"acorn", "acorn", "Acorn", kPlatformAcorn},
+	{"segacd", "segacd", "SegaCD", kPlatformSegaCD},
 
 	{0, 0, "Default", kPlatformUnknown}
 };

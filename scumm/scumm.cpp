@@ -649,8 +649,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"e17db1ddf91b39ca6bbc8ad3ed19e883", "The Secret of Monkey Island (FM-TOWNS Jp)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"c13225cb1bbd3bc9fe578301696d8021", "The Secret of Monkey Island (SegaCD)", GID_MONKEY_SEGA, 5, 0, MDT_NONE,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
+	{"c13225cb1bbd3bc9fe578301696d8021", "The Secret of Monkey Island (SegaCD)", GID_MONKEY, 5, 0, MDT_NONE,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSegaCD},
 
 	{"3de99ef0523f8ca7958faa3afccd035a", "Spy Fox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -1812,9 +1812,6 @@ int ScummEngine::init(GameDetector &detector) {
 		if (_heversion >= 80 && _debugMode)
 			VAR(85) = 1;
 	}
-
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
 
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
