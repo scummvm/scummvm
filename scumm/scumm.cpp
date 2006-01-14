@@ -413,7 +413,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"75bff95816b84672b877d22a911ab811", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"ed2b074bc3166087a747acb2a3c6abb0", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated German Demo)", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Fritzi3demo
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Fritzi3demo
 
 	{"07b810e37be7489263f7bc7627d4765d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Unencrypted Russian)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
@@ -531,7 +531,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"c6907d44f1166941d982864cd42cdc89", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PyjamaDBMN
 	{"4521138d15d1fd7649c31fb981746231", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated German Demo)", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PJP2DEMO
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // PJP2DEMO
 
 	{"a2bb6aa0537402c1b3c2ea899ccef64b", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
