@@ -47,9 +47,9 @@ Table of Contents:
 9.0) Compiling
 
 1.0) About:
----- ------ 
+---- ------
 ScummVM is a collection of interpreters, capable of emulating several
-adventure game engines. ScummVM mainly supports games created using 
+adventure game engines. ScummVM mainly supports games created using
 SCUMM (Script Creation Utility for Maniac Mansion), used in various
 LucasArts games such as Monkey Island, Day of the Tentacle, and others.
 
@@ -59,7 +59,7 @@ and Simon the Sorcerer 1 & 2.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
-that many games can be completed with few major bugs, crashes can happen. 
+that many games can be completed with few major bugs, crashes can happen.
 
 If you enjoy ScummVM feel free to donate using the PayPal button on the
 ScummVM homepage. This will help us buy utilities needed to develop ScummVM
@@ -225,14 +225,14 @@ and the DOS version in the DOS directory of the CD.
 
 3.3) Broken Sword notes
 ---- ------------------
-Broken Sword 1 and 2 both come with in-game cutscenes compressed using 
+Broken Sword 1 and 2 both come with in-game cutscenes compressed using
 RAD Game Tools legacy Smacker(tm) format. As RAD is unwilling to open
 the older legacy versions of this format to us, and have requested we not
 reverse engineer it, Revolution Software has kindly allowed us to provide
 re-encoded Broken Sword cutscenes for download on our website.
 
 These cutscenes are provided in MPEG2 format with OGG Vorbis audio.
-Viewing these cutscenes thus requires a version of ScummVM compiled 
+Viewing these cutscenes thus requires a version of ScummVM compiled
 with both libmpeg2 (preferably 0.4.0 or greater) and libVorbis support.
 
 The cutscenes should be placed in the main game data directory. Note that
@@ -245,25 +245,25 @@ In order to use a non-freeware version of Flight of the Amazon Queen (i.e.
 your own), you will need to have the 'queen.tbl' file (available from the
 Compatibility page on our website) in either the directory containing the
 'queen.1' datafile or in the directory where your ScummVM executable resides.
-                  
+
 Alternatively, you can use the 'compress_queen' tool from the Tools module to
 'rebuild' your FOTAQ datafile to include the table for that specific version,
-and thus removing the run-time dependency on the 'queen.tbl' file. 
+and thus removing the run-time dependency on the 'queen.tbl' file.
 This tool also allows you to compress the speech and sound effects with MP3,
 OGG or FLAC.
 
 3.5) Beneath a Steel Sky notes
 ---- -------------------------
-As of ScummVM 0.8.0 you need the additional SKY.CPT file to run Beneath a 
+As of ScummVM 0.8.0 you need the additional SKY.CPT file to run Beneath a
 Steel Sky.
 
 This file is available on the 'Compatibility' page of the ScummVM
 website, you can place it in either the directory containing the other
-datafiles (SKY.DNR, SKY.DSK) or in your extrapath. 
+datafiles (SKY.DNR, SKY.DSK) or in your extrapath.
 
 3.6) Inherit the Earth notes
 ---- -----------------------
-In order to run the MacOS X Wyrmkeep re-release of the game you will need to
+In order to run the Mac OS X Wyrmkeep re-release of the game you will need to
 copy over data from the CD to your hard drive. If you're on a PC then consult:
 
   http://www.scummvm.org/documentation.php?view=maccd-howto
@@ -296,15 +296,15 @@ game.
 
 3.9) Maniac Mansion NES notes
 ---- ------------------------
-Supported versions are English USA (E), French (F), Swedish (SW) and 
+Supported versions are English USA (E), French (F), Swedish (SW) and
 European (U). ScummVM requires just PRG section to run and not whole ROM.
 
 In order to get the game working, you will have to strip out the first
-16 bytes from the ROM you are trying to work with. Any hex editor will work 
-as long as you are able to copy/paste.  After you open the ROM with the 
+16 bytes from the ROM you are trying to work with. Any hex editor will work
+as long as you are able to copy/paste.  After you open the ROM with the
 hex editor, copy everything from second row (17th byte) to the end. After
-you do this, paste it to a new hex file. Give the new file name 
-"Maniac Mansion (XX).prg" where XX depends on version you are  working 
+you do this, paste it to a new hex file. Give the new file name
+"Maniac Mansion (XX).prg" where XX depends on version you are  working
 with (E, F, SW, or U).  The final size should be exactly 262144 bytes.
 
 If you add game manually make sure that platform is set to NES.
@@ -353,7 +353,7 @@ the section on Reporting Bugs.
      Broken Sword 1:
           - Macintosh version isn't supported
           - PlayStation 1 version isn't supported
-          
+
      Broken Sword 2:
           - PlayStation 1 version isn't supported
 
@@ -367,12 +367,12 @@ the section on Reporting Bugs.
           - Amiga versions aren't supported
           - Subtitles aren't available in the English and German CD versions,
             they are missing the majority of subtitles.
-            
+
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
             cut off early, this is a limitation of the original game.
-          - Only default language (English) in data files is supported 
+          - Only default language (English) in data files is supported
             in Amiga and Macintosh versions.
 
      FM-TOWNS versions:
@@ -385,18 +385,20 @@ Links to these ports can be found either on the ScummVM web page or by a
 Google search. Many thanks to the effort of porters. If you have a port of
 ScummVM and wish to commit it into the main CVS, feel free to contact us!
 
-        Windows         - SDL
-        Windows Mobile  - SDL            (iPAQ and other handheld devices)
-        Linux           - X11/OSS audio  (includes iPAQs running Linux)
-        Mac OS X        - SDL
-        AmigaOS         - SDL
-        MorphOS         - Custom backend
-        BeOS            - SDL
-        RISC OS         - SDL
-        Dreamcast       - Custom backend 
-        GP32            - Custom backend
-        PalmOS          - Custom backend
-        UNIX            - SDL            (Linux, Solaris, IRIX, *BSD)
+Supported platforms include (but are not limited to):
+
+        UNIX            (Linux, Solaris, IRIX, *BSD)
+        Windows
+        Windows Mobile  (iPAQ and other handheld devices)
+        Mac OS X
+        AmigaOS
+        BeOS
+        Dreamcast
+        PalmOS
+        Playstation 2
+        Playstation Portable
+        RISC OS
+        Symbian
 
 The Dreamcast port does not support Curse of Monkey Island, nor The Dig.
 The PalmOS port does not support Curse of Monkey Island, Beneath a Steel
@@ -405,6 +407,22 @@ Palm devices (those with a large dynamic heap).
 
 In the Macintosh port, the right mouse button is emulated via Cmd-Click (that
 is, you click the mouse button while holding the Command/Apple/Propeller key).
+
+For the following platforms, custom backends were supported at one point
+but currently are not being maintained (usually due to lack of a qualified
+maintainer). In some cases (e.g. Linux), the standard SDL support works
+instead.
+
+        Linux           (includes iPAQs running Linux)
+        MorphOS
+        GP32
+
+We have reports about unofficial ports to the following platforms. Please
+note that this are not made by us, so we neither endorse nor support them.
+Use at your own risk!
+
+        Nintendo DS
+        Xbox
 
 
 5.0) Running ScummVM:
@@ -570,11 +588,11 @@ Simon the Sorcerer 1 & 2
 ---- -----------------
 ScummVM offers several anti-aliasing filters to attempt to improve visual
 quality. These are the same filters used in many other emulators, such as
-MAME. These filters take the original game graphics, and scale it by a 
+MAME. These filters take the original game graphics, and scale it by a
 certain fixed factor (usually 2x or 3x) before displaying them to you.
 So for example, if the game originally run at a resolution of 320x200
 (typical for most of the SCUMM games), then using a filter with scale
-factor 2x will effectively yield 640x400 graphics. Likewise with a 
+factor 2x will effectively yield 640x400 graphics. Likewise with a
 3x filter you'll get 960x600.
 
 They are:
@@ -603,8 +621,8 @@ Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
-Note #3: The FM-TOWNS version of Zak (zaktowns target) uses an original 
-resolution of 320x240 - hence for this game scalers will scale to 
+Note #3: The FM-TOWNS version of Zak (zaktowns target) uses an original
+resolution of 320x240 - hence for this game scalers will scale to
 640x480 or 960x720.
 
 5.4) Hot Keys:
@@ -699,7 +717,7 @@ Ctrl-f is not supported by the Broken Sword games.
 All LucasArts SCUMM based adventures except COMI also exist in versions for the
 Macintosh. ScummVM can use most (all?) of them, however, in some cases some
 additional work is required. First off, if you are not using a Macintosh for
-this, accessing the CD/floppy data might be tricky, since the mac uses a 
+this, accessing the CD/floppy data might be tricky, since the mac uses a
 special disk format called HFS which other systems usually do not support.
 However, there are various free tools on the net which allow reading such HFS
 volumes (for example "HFVExplorer" for Windows and "hfsutils" for Linux and
@@ -800,29 +818,30 @@ Windows example:
 ---- ----------
 Because ScummVM is still a beta product, it -can- crash and/or hang
 occasionally. As such, every five minutes it will save a game in Slot 0. This
-game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not, 
+game can be loaded via Ctrl-0, or the F5 menu. This autosaving does not,
 however, occur with Simon the Sorcerer 1 and 2, nor with Broken Sword 1 and 2.
 
 
-7.0) Music and Sound: 
+7.0) Music and Sound:
 ---- ----------------
 By default, on most operating systems, ScummVM will automatically use Adlib
 emulation. MIDI may not be available on all operating systems or may need
 manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
-        
+
         null       - Null output. Don't play any music.
 
         adlib      - Internal Adlib emulation (default)
         fluidsynth - FluidSynth MIDI emulation
         mt32       - Internal MT-32 emulation
-        pcjr       - Internal PCjr emulation 
+        pcjr       - Internal PCjr emulation
         pcspk      - Internal PC Speaker emulation
         towns      - Internal FM-TOWNS YM2612 emulation
 
         alsa       - Output using ALSA sequencer device. See below.
-        amidi      - Use the MorphOS MIDI system, for MorphOS users
         core       - CoreAudio sound, for Mac OS X users.
+        coremidi   - CoreMIDI sound, for Mac OS X users. Use only if you have
+                     a hardware MIDI synthesizer.
         qt         - Quicktime sound, for Macintosh users.
         seq        - Use /dev/sequencer for MIDI, *nix users. See below.
         windows    - Windows MIDI. Uses built-in sequencer, for Windows users
@@ -1007,7 +1026,7 @@ command line with the value after q specifying the desired quality from 0 to 10:
 ------ ------------------------------------
 Use flac or some other flac encoder to encode the audio tracks to files.
 Name the files track1.flac track2.flac etc. In your filesystem only allows
-three letter extensions, name the files track1.fla track2.fla etc. 
+three letter extensions, name the files track1.fla track2.fla etc.
 ScummVM must be compiled with flac support to use this option. You'll need to
 rip the files from the CD as a WAV file, then encode the flac files. This can
 be done with the following flac command line:
@@ -1015,7 +1034,7 @@ be done with the following flac command line:
   flac --best track1.wav
 
 Remember that the quality is always the same, varying encoder options will only
-affect the encoding time and resulting filesize. 
+affect the encoding time and resulting filesize.
 
 
 7.7.3) Compressing MONSTER.SOU with MP3:
@@ -1067,8 +1086,8 @@ enabled.
   compress_simon simon.voc   (For DOS CD version of Simon 1)
   compress_simon simon.wav   (For Windows CD version of Simon 1)
   compress_simon simon2.voc  (For DOS CD version of Simon 2)
-  compress_simon simon2.wav  (For Windows CD version of Simon 2) 
-  compress_simon mac         (For Macintosh version of Simon 2) 
+  compress_simon simon2.wav  (For Windows CD version of Simon 2)
+  compress_simon mac         (For Macintosh version of Simon 2)
 
 For Ogg Vorbis add --vorbis to the options, i.e.
 
@@ -1076,7 +1095,7 @@ For Ogg Vorbis add --vorbis to the options, i.e.
 
 For Flac add --flac and optional parameters, i.e.
 
-  compress_simon --flac --best -b 1152 
+  compress_simon --flac --best -b 1152
 
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game dir. You can safely remove the old file.
@@ -1175,7 +1194,7 @@ An example config file looks as follows:
         language=de
         path=C:\games\SteelSky\
         description=Beneath a Steel Sky w/ German subtitles
-        
+
         [germandott]
         gameid=tentacle
         path=C:\german\tentacle\
@@ -1192,7 +1211,7 @@ An example config file looks as follows:
         path=C:\loom\
         talkspeed=5
         savepath=C:\loom\saves\
-        
+
         [monkey2]
         path=C:\amiga_mi2\
         music_driver=windows
@@ -1290,12 +1309,12 @@ Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 USE_MAD. Tools for compressing .SOU files to .SO3 files can be
 found in the 'tools' CVS module, or in the 'scummvm-tools' package.
 
-Some parts of ScummVM, particularly scalers, have highly optimized versions 
-written in assembler. If you wish to use this option, you will need to install 
+Some parts of ScummVM, particularly scalers, have highly optimized versions
+written in assembler. If you wish to use this option, you will need to install
 nasm assembler (see http://nasm.sf.net). Note, that currently we have only x86
 MMX optimized versions, and they will not compile on other processors.
 
-On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug 
+On Win9x/NT/XP you can define USE_WINDBG and attach WinDbg to browse debug
 messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
     GCC:
@@ -1323,7 +1342,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Modify your include and library paths accordingly in EVC3/EVC4.
         * Open the ScummVM project dists\msevc4\PocketSCUMM.vcw
         * Modify the libraries and config parameters if necessary.
-        * Now it should compile successfully. 
+        * Now it should compile successfully.
 
     Debian GNU/Linux:
         * Install the packages 'build-essential', 'fakeroot', 'debhelper',
@@ -1334,7 +1353,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
           saves support).
         * Run 'make deb'.
         * Finally run 'dpkg -i ../scummvm-cvs*deb', and you're done.
-        
+
     Mac OS X:
         * Make sure you have the developer tools installed.
         * The SDL developer package for OS X available on the SDL web site is
@@ -1350,7 +1369,7 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
           in another way, you'll have to edit the Makefile).
 
     AmigaOS 4 (Cross-compiling with Cygwin):
-        * Make sure that you have SDL installed, you may also need 
+        * Make sure that you have SDL installed, you may also need
           libogg, libvorbis, libvorbisfile, zlib, libmad.
         * Type ./configure --host=ppc-amigaos
         * If you got an error about sdl-config, use --with-sdl-prefix
