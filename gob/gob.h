@@ -100,6 +100,8 @@ public:
 	Common::RandomSource _rnd;
 
 	int32 _features;
+	bool _copyProtection;
+
 	Game *_game;
 	Snd *_snd;
 	Video *_video;

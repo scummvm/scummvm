@@ -1616,15 +1616,14 @@ const char *Inter_v1::getOpcodeDrawDesc(byte i) {
 	return _opcodesDrawV1[i].desc;
 }
 
-const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j)
-{
+const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j) {
 	if ((i > 4) || (j > 15))
 		return "";
 
 	return _opcodesFuncV1[i*16 + j].desc;
 }
 
-const char *Inter_v1::getOpcodeGoblinDesc(byte i) {
+const char *Inter_v1::getOpcodeGoblinDesc(int i) {
 	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV1[_goblinFuncLookUp[j][1]].desc;
@@ -1633,7 +1632,21 @@ const char *Inter_v1::getOpcodeGoblinDesc(byte i) {
 
 bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 	char *storedIP = _vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
+
+//	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
+
+	uint16 offset = READ_LE_UINT16(_vm->_global->_inter_execPtr);
+	debug(5, "tot = \"%s\", offset = %d", _vm->_game->_curTotFile, offset);
+
+	// Skipping the copy protection screen in Gobliiins
+	if (!_vm->_copyProtection && (_vm->_features & GF_GOB1) && (offset == 3905)
+			&& !scumm_stricmp(_vm->_game->_curTotFile, "intro.tot")) {
+		debug(2, "Skipping copy protection screen");
+		_vm->_global->_inter_execPtr += 2;
+		return false;
+	}
+	
+	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + offset;
 
 	if (counter == cmdCount && retFlag == 2)
 		return true;

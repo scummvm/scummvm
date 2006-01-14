@@ -233,6 +233,7 @@ GobEngine::GobEngine(GameDetector *detector, OSystem * syst, uint32 features)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_features = features;
+	_copyProtection = ConfMan.getBool("copy_protection");
 }
 
 GobEngine::~GobEngine() {

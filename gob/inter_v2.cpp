@@ -689,15 +689,14 @@ const char *Inter_v2::getOpcodeDrawDesc(byte i) {
 	return _opcodesDrawV2[i].desc;
 }
 
-const char *Inter_v2::getOpcodeFuncDesc(byte i, byte j)
-{
+const char *Inter_v2::getOpcodeFuncDesc(byte i, byte j) {
 	if ((i > 4) || (j > 15))
 		return "";
 
 	return _opcodesFuncV2[i*16 + j].desc;
 }
 
-const char *Inter_v2::getOpcodeGoblinDesc(byte i) {
+const char *Inter_v2::getOpcodeGoblinDesc(int i) {
 	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
