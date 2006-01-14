@@ -1606,7 +1606,8 @@ void Inter_v1::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Go
 	if (op == NULL) {
 		warning("unimplemented opcodeGoblin: %d", i);
 		_vm->_global->_inter_execPtr -= 2;
-		_vm->_global->_inter_execPtr += load16() * 2;
+		int16 cmd = load16();
+		_vm->_global->_inter_execPtr += cmd * 2;
 	}
 	else
 		(this->*op) (extraData, retVarPtr, objDesc);
