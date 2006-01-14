@@ -626,6 +626,25 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	convertMessageToString(msg, buf, sizeof(buf));
 
+	if (_version >= 7) {
+		// I recently disabled charset mask related code for V7+ games, thinking
+		// that it should never be needed there. Well, I missed on case: In this
+		// method, it could potentially still be used. Now the question is:
+		// Does this actually ever happen? Basically, drawString is called from
+		// two spots: First off, from drawVerb, which I *think* is not used for
+		// V7+ games (but I am not 100% sure), and secondly from printString().
+		// The latter is much harder to predict. Maybe in some obscure place it
+		// is used after all?
+		//
+		// Hence I am adding this error message, hoping that either somebody
+		// triggers it (at which point I can investigate), or, if nobody ever
+		// triggers it, we can assume that it's safe to keep this error even
+		// after the release.
+		//
+		// TODO/FIXME: Remove or update this hack before the next release!
+		error("drawString(%d, '%s') -- please inform Fingolfin about this crash!", a, buf);
+	}
+
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
