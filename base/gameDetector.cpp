@@ -73,6 +73,8 @@ static const char USAGE_STRING[] =
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
+	"  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:\n"
+        "                           100) (only supported by some MIDI drivers)\n"
 	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
@@ -132,11 +134,12 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
 	ConfMan.registerDefault("enable_gs", false);
+	ConfMan.registerDefault("midi_gain", 100);
 //	ConfMan.registerDefault("music_driver", ???);
 
 	ConfMan.registerDefault("cdrom", 0);
 
-	// Game specifc
+	// Game specific
 	ConfMan.registerDefault("path", "");
 	ConfMan.registerDefault("savepath", "");
 
@@ -457,6 +460,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_OPTION_INT('r', "speech-volume")
 				settings["speech_volume"] = option;
+			END_OPTION
+
+			DO_LONG_OPTION_INT("midi-gain")
+				settings["midi_gain"] = option;
 			END_OPTION
 
 			DO_OPTION_CMD('t', "list-targets")

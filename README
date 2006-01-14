@@ -469,7 +469,9 @@ arguments - see the next section.
   -q, --language=LANG      Select language (see also section 5.2)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)
-  -r, --speech-volume=NUM   Set the voice volume, 0-255 (default: 192)
+  -r, --speech-volume=NUM  Set the voice volume, 0-255 (default: 192)
+  --midi-gain=NUM          Set the gain for MIDI playback, 0-1000 (default:100)
+                           (only supported by some MIDI drivers)
   -n, --subtitles          Enable subtitles (use with games that have voice)
   -b, --boot-param=NUM     Pass number to the boot script (boot param)
   -d, --debuglevel=NUM     Set debug verbosity level
@@ -864,6 +866,15 @@ best compatibility between machines and games.
 If ScummVM was build with libfluildsynth support it will be able to play MIDI
 music through the FluidSynth driver. You will have to specify a SoundFont to
 use, however.
+
+Since the default output volume from FluidSynth can be fairly low, ScummVM will
+set the gain by default to get a stronger signal. This can be further adjusted
+using the --midi-gain command-line option, or the "midi_gain" config file
+setting.
+
+The setting can take any value from 0 through 1000, with the default being 100.
+(This corresponds to FluidSynth's gain settings of 0.0 through 10.0, which are
+presumably measured in decibel.)
 
 NOTE: The processor requirements for FluidSynth can be fairly high in some
 cases. A fast CPU is recommended.
@@ -1269,6 +1280,8 @@ The following keywords are recognized:
         sfx_volume      number   The sfx volume setting (0-255)
         tempo           number   The music tempo (50-200) (default: 100)
         speech_volume   number   The speech volume setting (0-255)
+        midi_gain       number   The MIDI gain (0-1000) (default: 100) (Only
+                                 suported by some MIDI drivers.)
 
         copy_protection bool     Enable copy protection in SCUMM games, when
                                  ScummVM disables it by default.
