@@ -184,7 +184,7 @@ void Anim::returnFromCutaway(void) {
 }
 
 void Anim::clearCutaway(void) {
-	debug(0, "clearCutaway()\n");
+	debug(0, "clearCutaway()");
 
 	if (_cutawayActive) {
 		_cutawayActive = false;
