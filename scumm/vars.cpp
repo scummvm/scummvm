@@ -317,6 +317,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_SKIP_RESET_TALK_ACTOR = 125;
 	}
 	if (_heversion >= 99) {
+		VAR_MAIN_SCRIPT = 127;
 		VAR_NUM_PALETTES = 130;
 		VAR_NUM_UNK = 131;
 	}

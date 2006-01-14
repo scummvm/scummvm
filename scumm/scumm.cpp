@@ -1360,6 +1360,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_SOUNDCODE_TMR = 0xFF;
 	VAR_DEFAULT_SOUND_CHANNEL = 0xFF;
 
+	VAR_MAIN_SCRIPT = 0xFF;
 	VAR_NUM_SCRIPT_CYCLES = 0xFF;
 	VAR_SCRIPT_CYCLE = 0xFF;
 
@@ -2575,6 +2576,10 @@ load_game:
 			_doEffect = false;
 			fadeIn(_newEffect);
 			clearClickedStatus();
+		}
+
+		if (VAR_MAIN_SCRIPT != 0xFF && VAR(VAR_MAIN_SCRIPT) != 0) {
+			runScript(VAR(VAR_MAIN_SCRIPT), 0, 0, 0);
 		}
 
 		// Handle mouse over effects (for verbs).
