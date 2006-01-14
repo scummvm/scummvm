@@ -114,10 +114,14 @@ int MidiDriver_FluidSynth::open() {
 
 	_settings = new_fluid_settings();
 
-	// The default gain setting is ridiculously low, but we can't set it
-	// too high either or sound will be clipped. This may need tuning...
+	// The default gain setting is ridiculously low - at least for me. This
+	// cannot be fixed by ScummVM's volume settings because they can only
+	// soften the sound, not amplify it, so instead we add an option to
+	// adjust the gain of FluidSynth itself.
 
-	setNum("synth.gain", 2.1);
+	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
+
+	setNum("synth.gain", gain);
 	setNum("synth.sample-rate", _outputRate);
 
 	_synth = new_fluid_synth(_settings);

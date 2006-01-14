@@ -10,5 +10,14 @@ If ScummVM was build with libfluildsynth support it will be able to play MIDI
 music through the FluidSynth driver. You will have to specify a SoundFont to
 use, however.
 
+Since the default output volume from FluidSynth can be fairly low, ScummVM will
+set the gain by default to get a stronger signal. This can be further adjusted
+using the --midi-gain command-line option, or the ``midi\_gain'' config file
+setting.
+
+The setting can take any value from 0 through 1000, with the default being 100.
+(This corresponds to FluidSynth's gain settings of 0.0 through 10.0, which are
+presumably measured in decibel.)
+
 \textbf{NOTE:} The processor requirements for FluidSynth can be fairly high in
 some cases. A fast CPU is recommended.
