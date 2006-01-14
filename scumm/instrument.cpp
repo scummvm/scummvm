@@ -393,7 +393,7 @@ Instrument_Roland::Instrument_Roland (byte *data) {
 	memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 	_instrument_name[10] = '\0';
 	if (!_native_mt32 && getEquivalentGM() >= 128) {
-		warning ("MT-32 instrument \"%s\" not supported yet", _instrument_name);
+		debug(0, "MT-32 instrument \"%s\" not supported yet", _instrument_name);
 		_instrument_name[0] = '\0';
 	}
 }
