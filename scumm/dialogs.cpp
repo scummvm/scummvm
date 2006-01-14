@@ -794,7 +794,7 @@ void HelpDialog::displayKeyBindings() {
 
 	String titleStr, *keyStr, *dscStr;
 
-	ScummHelp::updateStrings(_vm->_gameId, _vm->_version, _page, titleStr, keyStr, dscStr);
+	ScummHelp::updateStrings(_vm->_gameId, _vm->_version, _vm->_platform, _page, titleStr, keyStr, dscStr);
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
