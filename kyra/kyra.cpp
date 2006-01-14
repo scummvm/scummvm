@@ -1826,7 +1826,7 @@ void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
 		if (ingame) {
 			delay(10, true);
 		} else {
-			waitTicks(10);
+			_system->delayMillis(10);
 		}
 	}
 }
