@@ -924,17 +924,22 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	s->saveLoadEntries(this, mainEntries);
 
 	// MD5 Operations: Backup on load, compare, and reset.
-	if (s->isLoading())
+	if (s->isLoading()) {
+		char md5str1[32+1], md5str2[32+1];
+		for (j = 0; j < 16; j++) {
+			sprintf(md5str1 + j*2, "%02x", (int)_gameMD5[j]);
+			sprintf(md5str2 + j*2, "%02x", (int)md5Backup[j]);
+		}
+
+		debug(2, "Save version: %d", s->getVersion());
+		debug(2, "Saved game MD5: %s", (s->getVersion() >= 39) ? md5str1 : "unknown");
+
 		if (memcmp(md5Backup, _gameMD5, 16) != 0) {
-			char md5str1[32+1], md5str2[32+1];
-			for (j = 0; j < 16; j++) {
-				sprintf(md5str1 + j*2, "%02x", (int)_gameMD5[j]);
-				sprintf(md5str2 + j*2, "%02x", (int)md5Backup[j]);
-			}
 			warning("Game was saved with different gamedata - you may encounter problems.");
 			debug(1, "You have %s and save is %s.", md5str2, md5str1);
  			memcpy(_gameMD5, md5Backup, 16);
 		}
+	}
 
 
 	// Starting V14, we extended the usage bits, to be able to cope with games
