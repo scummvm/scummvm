@@ -132,13 +132,11 @@ void WSAMovieV1::displayFrame(int frameNum) {
 	}
 		
 	if (_currentFrame == _numFrames) {
-		if (!(_flags & WF_OFFSCREEN_DECODE) && (_vm->features() & GF_TALKIE))
-			_vm->screen()->clearPage(_drawPage);
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
 			if (_flags & WF_OFFSCREEN_DECODE) {
 				Screen::decodeFrameDelta(dst, _deltaBuffer);
 			} else {
-				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width);
+				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, 1);
 			}
 		}
 		_currentFrame = 0;
@@ -201,7 +199,7 @@ void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
 	if (_flags & WF_OFFSCREEN_DECODE) {
 		Screen::decodeFrameDelta(dst, _deltaBuffer);
 	} else {
-		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width);
+		Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, 0);
 	}
 }
 } // end of namespace Kyra

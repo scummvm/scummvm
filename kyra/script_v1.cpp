@@ -411,12 +411,12 @@ int KyraEngine::cmd_setScaleMode(ScriptState *script) {
 }
 
 int KyraEngine::cmd_openWSAFile(ScriptState *script) {
-	debug(3, "cmd_openWSAFile(0x%X) ('%s', %d)", script, stackPosString(0), stackPos(1));
+	debug(3, "cmd_openWSAFile(0x%X) ('%s', %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2));
 	
 	char *filename = stackPosString(0);
 	int wsaIndex = stackPos(1);
 	
-	_movieObjects[wsaIndex]->open(filename, 1, 0);
+	_movieObjects[wsaIndex]->open(filename, (stackPos(2) != 0) ? 1 : 0, 0);
 	assert(_movieObjects[wsaIndex]->opened());
 	
 	return 0;

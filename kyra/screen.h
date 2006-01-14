@@ -125,7 +125,7 @@ public:
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static void decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src);
-	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch);
+	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int noXor);
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
 		

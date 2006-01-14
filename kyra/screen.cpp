@@ -1307,8 +1307,8 @@ void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src) {
 	}
 }
 
-void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
-	debug(9, "Screen::decodeFrameDeltaPage(0x%X, 0x%X, %d)", dst, src, pitch);
+void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int noXor) {
+	debug(9, "Screen::decodeFrameDeltaPage(0x%X, 0x%X, %d, %d)", dst, src, pitch, noXor);
 	int count = 0;
 	uint8 *dstNext = dst;
 	while (1) {
@@ -1317,7 +1317,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 			uint8 len = *src++;
 			code = *src++;
 			while (len--) {
-				*dst++ ^= code;
+				if (noXor) {
+					*dst++ = code;
+				} else {
+					*dst++ ^= code;
+				}
 				if (++count == pitch) {
 					count = 0;
 					dstNext += SCREEN_W;
@@ -1335,7 +1339,6 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 					dstNext += SCREEN_W;
 					dst = dstNext + count;
 				}
-				
 			} else {
 				uint16 subcode = READ_LE_UINT16(src); src += 2;
 				if (subcode == 0) {
@@ -1346,7 +1349,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 						uint16 len = subcode - 0x4000;
 						code = *src++;
 						while (len--) {
-							*dst++ ^= code;
+							if (noXor) {
+								*dst++ = code;
+							} else {
+								*dst++ ^= code;
+							}
 							if (++count == pitch) {
 								count = 0;
 								dstNext += SCREEN_W;
@@ -1355,7 +1362,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 						}
 					} else {
 						while (subcode--) {
-							*dst++ ^= *src++;
+							if (noXor) {
+								*dst++ = *src++;
+							} else {
+								*dst++ ^= *src++;
+							}
 							if (++count == pitch) {
 								count = 0;
 								dstNext += SCREEN_W;
@@ -1377,7 +1388,11 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch) {
 			}
 		} else {
 			while (code--) {
-				*dst++ ^= *src++;
+				if (noXor) {
+					*dst++ = *src++;
+				} else {
+					*dst++ ^= *src++;
+				}
 				if (++count == pitch) {
 					count = 0;
 					dstNext += SCREEN_W;
