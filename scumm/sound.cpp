@@ -767,6 +767,9 @@ bool Sound::isSoundInUse(int sound) const {
 	if (_vm->_imuse)
 		return _vm->_imuse->get_sound_active(sound);
 
+	if (_vm->_mixer->isSoundIDActive(sound))
+		return 1;
+
 	return false;
 }
 
