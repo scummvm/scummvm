@@ -74,8 +74,8 @@ int KyraEngine::cmd_pauseTicks(ScriptState *script) {
 }
 
 int KyraEngine::cmd_drawSceneAnimShape(ScriptState *script) {
-	debug(3, "cmd_drawSceneAnimShape(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_screen->drawShape(stackPos(4), _sprites->_sceneShapes[stackPos(0)], stackPos(1), stackPos(2), 0, stackPos(3));
+	debug(3, "cmd_drawSceneAnimShape(0x%X) (%d, %d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	_screen->drawShape(stackPos(4), _sprites->_sceneShapes[stackPos(0)], stackPos(1), stackPos(2), 0, (stackPos(3) != 0) ? 1 : 0);
 	return 0;
 }
 
@@ -202,7 +202,8 @@ int KyraEngine::cmd_createMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_savePageToDisk(ScriptState *script) {
-	warning("STUB: cmd_savePageToDisk");
+	debug(3, "cmd_savePageToDisk(0x%X) ('%s', %d)", script, stackPosString(0), stackPos(1));
+	_screen->savePageToDisk(stackPosString(0), stackPos(1));
 	return 0;
 }
 
@@ -605,7 +606,9 @@ int KyraEngine::cmd_setCustomPaletteRange(ScriptState *script) {
 }
 
 int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
-	warning("STUB: cmd_loadPageFromDisk");
+	debug(3, "cmd_loadPageFromDisk(0x%X) ('%s', %d)", script, stackPosString(0), stackPos(1));
+	_screen->loadPageFromDisk(stackPosString(0), stackPos(1));
+	_animator->_updateScreen = true;
 	return 0;
 }
 
@@ -678,7 +681,8 @@ int KyraEngine::cmd_copyWSARegion(ScriptState *script) {
 	int height = stackPos(3);
 	int srcPage = stackPos(4);
 	int dstPage = stackPos(5);
-	_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, srcPage, dstPage, 0);
+	_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, srcPage, dstPage);
+	_animator->_updateScreen = true;
 	return 0;
 }
 
@@ -709,12 +713,12 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	int wsaIndex = stackPos(4);
 	
 	_screen->hideMouse();
+	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	_movieObjects[wsaIndex]->_x = xpos;
 	_movieObjects[wsaIndex]->_y = ypos;
 	_movieObjects[wsaIndex]->_drawPage = 2;
 	_movieObjects[wsaIndex]->displayFrame(frame);
 	_animator->_updateScreen = true;
-	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
@@ -1032,12 +1036,9 @@ int KyraEngine::cmd_walkCharacterToPoint(ScriptState *script) {
 
 int KyraEngine::cmd_specialEventDisplayBrynnsNote(ScriptState *script) {
 	debug(3, "cmd_specialEventDisplayBrynnsNote(0x%X) ()", script);
-	_hidPage = (uint8*)malloc(320*200);
-	_screenPage = (uint8*)malloc(320*200);
-	assert(_hidPage && _screenPage);
 	_screen->hideMouse();
-	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenPage);
-	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _hidPage);
+	_screen->savePageToDisk("HIDPAGE.TMP", 2);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 	if (_features & GF_TALKIE) {
 		if (_features & GF_ENGLISH) {
 			loadBitmap("NOTEENG.CPS", 3, 3, 0);
@@ -1059,11 +1060,8 @@ int KyraEngine::cmd_specialEventDisplayBrynnsNote(ScriptState *script) {
 int KyraEngine::cmd_specialEventRemoveBrynnsNote(ScriptState *script) {
 	debug(3, "cmd_specialEventRemoveBrynnsNote(0x%X) ()", script);
 	_screen->hideMouse();
-	assert(_hidPage && _screenPage);
-	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenPage);
-	_screen->copyBlockToPage(2, 0, 0, 320, 200, _hidPage);
-	free(_screenPage);
-	free(_hidPage);
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->loadPageFromDisk("HIDPAGE.TMP", 2);
 	_screen->updateScreen();
 	_screen->showMouse();
 	_screen->setFont(Screen::FID_8_FNT);

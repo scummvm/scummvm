@@ -143,6 +143,9 @@ public:
 	
 	void addBitBlitRect(int x, int y, int w, int h);
 	void bitBlitRects();
+	
+	void savePageToDisk(const char *file, int page);
+	void loadPageFromDisk(const char *file, int page);
 
 	int _charWidth;
 	int _charOffset;
@@ -162,6 +165,7 @@ private:
 	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
 	uint8 *_pagePtrs[16];
+	uint8 *_saveLoadPage[8];
 	uint8 *_screenPalette;
 	uint8 *_palettes[3];
 	FontId _currentFont;

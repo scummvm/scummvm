@@ -389,8 +389,6 @@ int KyraEngine::init(GameDetector &detector) {
 	_lastProcessedItem = 0;
 	_lastProcessedItemHeight = 16;
 	
-	_hidPage = _screenPage = 0;
-	
 	_unkScreenVar1 = 1;
 	_unkScreenVar2 = 0;
 	_unkScreenVar3 = 0;

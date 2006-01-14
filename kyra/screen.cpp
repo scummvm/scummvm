@@ -70,6 +70,7 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	assert(_bitBlitRects);
 	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
 	_bitBlitNum = 0;
+	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
 }
 
 Screen::~Screen() {
@@ -89,6 +90,10 @@ Screen::~Screen() {
 		free(_palettes[i]);
 	}
 	delete [] _bitBlitRects;
+	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
+		delete [] _saveLoadPage[i];
+		_saveLoadPage[i] = 0;
+	}
 }
 
 void Screen::updateScreen() {
@@ -1880,5 +1885,21 @@ void Screen::bitBlitRects() {
 		copyRegion(cur->x, cur->y, cur->x, cur->y, cur->x2, cur->y2, 2, 0);
 		++cur;
 	}
+}
+
+void Screen::savePageToDisk(const char *file, int page) {
+	debug(9, "Screen::savePageToDisk('%s', %d)", file, page);
+	if (!_saveLoadPage[page/2]) {
+		_saveLoadPage[page/2] = new uint8[SCREEN_W * SCREEN_H];
+		assert(_saveLoadPage[page/2]);
+	}
+	memcpy(_saveLoadPage[page/2], getPagePtr(page), SCREEN_W * SCREEN_H);
+}
+
+void Screen::loadPageFromDisk(const char *file, int page) {
+	debug(9, "Screen::loadPageFromDisk('%s', %d)", file, page);
+	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
+	delete [] _saveLoadPage[page/2];
+	_saveLoadPage[page/2] = 0;
 }
 } // End of namespace Kyra

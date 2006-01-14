@@ -614,7 +614,6 @@ protected:
 	bool _mousePressFlag;
 	uint8 _flagsTable[53];
 	uint8 *_unkPtr1, *_unkPtr2;
-	uint8 *_hidPage, *_screenPage;
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint16 _tickLength;
