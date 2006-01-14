@@ -303,7 +303,7 @@ sub begin_persons {
 	if ($mode eq "HTML") {
 		print "<table style='margin-left:2em; margin-bottom: 1em'>\n";
 	} elsif ($mode eq "TEX") {
-		print '\item  \begin{tabular}[h]{p{4cm}l}' . "\n";
+		print '\item  \begin{tabular}[h]{p{0.3\linewidth}p{0.6\linewidth}}' . "\n";
 	}
 }
 
