@@ -2861,7 +2861,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		detectName[0] = '\0';
 
 		// TODO: we need to add cache here
-		for (int method = 0; method < 7; method++) {
+		for (int method = 0; method < 8; method++) {
 			switch (method) {
 			case 0:
 				strcpy(detectName, "00.LFL");
@@ -2887,6 +2887,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 			case 6:
 				strcpy(detectName, base);
 				strcat(detectName, ".sm0");
+				break;
+			case 7:
+				strcpy(detectName, "00.MAN");
 				break;
 			}
 			strcpy(tempName, detectName);
@@ -3201,29 +3204,32 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	ScummGameSettings game = *g;
 
-	for (int method = 0; method < 6 && !found; method++) {
+	for (int method = 0; method < 7 && !found; method++) {
 		switch (method) {
 		case 0:
-			strcpy(detectName, name);
-			strcat(detectName, ".000");
-			break;
-		case 1:
 			strcpy(detectName, "00.LFL");
 			break;
-		case 2:
+		case 1:
 			strcpy(detectName, "000.LFL");
 			break;
-		case 3:
+		case 2:
 			strcpy(detectName, name);
 			strcat(detectName, ".la0");
 			break;
-		case 4:
+		case 3:
 			strcpy(detectName, name);
 			strcat(detectName, ".he0");
+			break;
+		case 4:
+			strcpy(detectName, name);
+			strcat(detectName, ".000");
 			break;
 		case 5:
 			strcpy(detectName, name);
 			strcat(detectName, ".sm0");
+			break;
+		case 6:
+			strcpy(detectName, "00.MAN");
 			break;
 		}
 		strcpy(tempName, detectName);
