@@ -584,7 +584,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		"Simon the Sorcerer 1 (DOS CD)",
+		"Simon the Sorcerer 1 (English DOS CD)",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
