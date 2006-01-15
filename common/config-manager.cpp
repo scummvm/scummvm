@@ -229,7 +229,7 @@ void ConfigManager::flushToDisk() {
 //		return;
 
 	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
-		error("Unable to write configuration file: %s", _filename.c_str());
+		warning("Unable to write configuration file: %s", _filename.c_str());
 	} else {
 
 		// First write the domains in _domainSaveOrder, in that order.
