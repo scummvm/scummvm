@@ -68,13 +68,14 @@ Indiana Jones and the Last Crusade
 	EGA (1.3 8/14/89)	DOS	en	6b3ec67da214f558dc5ceaa2acd47453	indy3	tsuteiuQ, Andrea Petrucci
 	EGA (1.3 8/14/89 5.25\")	DOS	en	6508fd55530e6915507e1cc37f7f045d	indy3	Zer02
 	EGA	DOS	fr	66236cd1aec24e1d4aff4c4cc93b7e18	indy3	Andrea Petrucci
+	EGA (1.3 8/25/89)	DOS	fr	89cfc425566003ff74b7dc7b3e6fd469 	indy3	Jorpho
 	EGA	DOS	de	6f6ef668c608c7f534fea6e6d3878dde	indy3	dhewg
 	EGA	DOS	it	d62d248c3df6ec177405e2cb23d923b2	indy3	Andrea Petrucci
 	EGA	DOS	es	ce7fd0c382389a6791fc3e199c117ef4	indy3	abnog
 	EGA (alt?)	DOS	es	86be8ada36371d4fdc35659d0e912a26	indy3	Andrea Petrucci
 	EGA	Mac	en	1dd7aa088e09f96d06818aa9a9deabe0	indy3
 
-	VGA	DOS	All	1875b90fade138c9253a8e967007031a	indy3
+	VGA	DOS	en	1875b90fade138c9253a8e967007031a	indy3
 	VGA	DOS	de	399b217b0c8d65d0398076da486363a9	indy3
 	VGA	DOS	it	17b5d5e6af4ae89d62631641d66d5a05	indy3	Andrea Petrucci
 	VGA	DOS	ru	3cce1913a3bc586b51a75c3892ff18dd	indy3
@@ -93,11 +94,12 @@ Loom
 	EGA	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
 	EGA	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
 	EGA	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
-	EGA v1.0	DOS	en	28ef68ee3ed76d7e2ee8ee13c15fbd5b	loom
-	EGA v1.0 alternative	DOS	en	73e5ab7dbb9a8061cc6d25df02dbd1e7	loom	Andrea Petrucci
-	EGA (v1.1 16 Mar 90)	DOS	en	37f56ceb13e401a7ac7d9e6b37fecaf7	loom	Kirben, Andrea Petrucci
-	EGA (v1.1 29 Mar 90)	DOS	en	22f4ea88a09da12df9308ba30bcb7d0f	loom	James Grosbeck
+	EGA (1.0)	DOS	en	28ef68ee3ed76d7e2ee8ee13c15fbd5b	loom
+	EGA (1.0 alternative)	DOS	en	73e5ab7dbb9a8061cc6d25df02dbd1e7	loom	Andrea Petrucci
+	EGA (1.1 16 Mar 90)	DOS	en	37f56ceb13e401a7ac7d9e6b37fecaf7	loom	Kirben, Andrea Petrucci
+	EGA (1.1 29 Mar 90)	DOS	en	22f4ea88a09da12df9308ba30bcb7d0f	loom	James Grosbeck
 	EGA	DOS	fr	b886b0a5d909c7158a914e1d7c1c6c65	loom	Andrea Petrucci
+	EGA (1.2 26 Jun 90)	DOS	fr	6f8a22bfa397be1f7ed4b74aba0e397e	loom	Jorpho
 	EGA	DOS	de	fa127d7c4bb47d05bb1c33ddcaa9f767	loom
 	EGA	DOS	hb	187d315f6b5168f68680dfe8c3d76a3e	loom
 	EGA	DOS	it	c3df37df9d3b481b45f75283a9907c47	loom	Andrea Petrucci
@@ -468,7 +470,7 @@ Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pajama3	joostp
 	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pajama3	sev
 	Demo	All	de	0c45eb4baff0c12c3d9dfa889c8070ab	pajama3	Joachim Eberhard
-	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
+	Demo	All	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
 	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pajama3	khalek
 	Demo	Windows	en	3e48298920fab9b7aec5a971e1bd1fab	pajama3	eriktorbjorn
 
@@ -530,8 +532,8 @@ Putt-Putt Joins the Parade
 Putt-Putt Saves the Zoo
 	CD	All	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
 	CD	Mac	en	58fdf4c7ad13540a734e18f8584cad89	puttzoo	khalek
+	CD	Windows	All	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
 	CD	Windows	nl	c3b22fa4654bb580b20325ebf4174841	puttzoo	joostp
-	CD	Windows	en	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
 
 	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	puttzoo	khalek
 	Demo	Mac	de	d220d154aafbfa12bd6f3ab1b2dae420	puttzoo	Joachim Eberhard
@@ -581,8 +583,8 @@ Spy Fox 1: Dry Cereal
 	CD	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
 	CD	All	en	58436e634f4fae1d9973591c2ffa1fcb	spyfox	Joachim Eberhard
 	CD	All	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
+	CD	Windows	All	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	CD	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
-	CD	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	CD	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
 
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
@@ -593,7 +595,7 @@ Spy Fox 1: Dry Cereal
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
-	CD	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
+	CD	All	All	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
 	CD	All	de	bc4700bc0e12879f6d25d14d6be6cfdd	spyfox2	Joachim Eberhard
 	CD	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
 	CD	Windows	nl	71fe97c3108678cf604f14abe342341b	spyfox2	adutchguy
