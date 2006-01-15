@@ -1813,9 +1813,6 @@ int ScummEngine::init(GameDetector &detector) {
 			VAR(85) = 1;
 	}
 
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
-		_scummVars[74] = 1225;
-
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 	}

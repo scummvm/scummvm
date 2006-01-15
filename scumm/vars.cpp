@@ -572,15 +572,6 @@ void ScummEngine_v7::initScummVars() {
 }
 #endif
 
-void ScummEngine_v60he::initScummVars() {
-	ScummEngine::initScummVars();
-
-	VAR(VAR_MACHINE_SPEED) = 2;
-
-	VAR(VAR_SOUNDPARAM) = 1;  // Soundblaster for music
-	VAR(VAR_SOUNDPARAM2) = 1; // Soundblaster for sound effects
-}
-
 #ifndef DISABLE_HE
 void ScummEngine_v70he::initScummVars() {
 	ScummEngine::initScummVars();
@@ -713,6 +704,14 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_MOUSEPRESENT) = 1;
 		if (_version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
+
+		if (_heversion >= 60) {
+			// Set fast speed, to enable all animations
+			VAR(VAR_MACHINE_SPEED) = 2;
+
+			VAR(VAR_SOUNDPARAM) = 1;  // Soundblaster for music
+			VAR(VAR_SOUNDPARAM2) = 1; // Soundblaster for sound effects
+		}
 	}
 
 	if (VAR_ROOM_WIDTH != 0xFF && VAR_ROOM_HEIGHT != 0xFF) {

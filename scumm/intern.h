@@ -784,8 +784,6 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
-	virtual void initScummVars();
-
 	virtual void saveOrLoad(Serializer *s, uint32 savegameVersion);
 
 	void localizeArray(int slot, byte scriptSlot);
