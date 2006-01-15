@@ -1702,7 +1702,7 @@ void ScummEngine_v100he::o100_startSound() {
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
-		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
+		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		_heSndFlags = 0;
 		break;
 	case 133:

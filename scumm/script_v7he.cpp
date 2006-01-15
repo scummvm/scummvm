@@ -463,7 +463,7 @@ void ScummEngine_v70he::o70_startSound() {
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
-		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
+		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		break;
 	case 245:
 		_heSndFlags |= 1;

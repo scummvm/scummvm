@@ -102,7 +102,7 @@ public: // Used by createSound()
 		int priority;
 		int sbngBlock;
 		int soundVars[27];
-	} _heChannel[9];
+	} _heChannel[8];
 
 public:
 	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -143,6 +143,7 @@ public:
 
 	// HE specific
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
+	int findFreeSoundChannel();
 	int isSoundCodeUsed(int sound);
 	int getSoundPos(int sound);
 	int getSoundVar(int sound, int var);

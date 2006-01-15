@@ -43,6 +43,27 @@
 
 namespace Scumm {
 
+int Sound::findFreeSoundChannel() {
+	int chan, min;
+
+	min = _vm->VAR(_vm->VAR_RESERVED_SOUND_CHANNELS);
+	if (min == 0) {
+		_vm->VAR(_vm->VAR_RESERVED_SOUND_CHANNELS) = 8;
+		return 1;
+	}
+
+	if (min < 8) {
+		for (chan = min; min < ARRAYSIZE(_heChannel); chan++) {
+			if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) == 0)
+				return chan;
+		}
+	} else {
+		return 1;
+	}
+
+	return min;
+}
+
 int Sound::isSoundCodeUsed(int sound) {
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
@@ -290,20 +311,16 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 }
 
 void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
-	debug(0,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 	byte *ptr, *spoolPtr;
 	char *sound;
 	int size = -1;
 	int priority, rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 
-	if (heChannel == -1) {
-		if (_vm->_heversion >= 95 && _vm->VAR(_vm->VAR_DEFAULT_SOUND_CHANNEL) != 0) {
-			heChannel = _vm->VAR(_vm->VAR_DEFAULT_SOUND_CHANNEL);
-		} else {
-			heChannel = 1;
-		}
-	}
+	if (heChannel == -1)
+		heChannel = (_vm->VAR_RESERVED_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
+
+	debug(0,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 
 	if (soundID > _vm->_numSounds) {
 		if (soundID >= 10000) {
@@ -360,10 +377,19 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		return;
 	}
 
+	// TODO: Extra sound flags
+	if (heFlags & 1) {
+		//flags |= Audio::Mixer::FLAG_LOOP;
+	}
+
 	// Support for sound in later Backyard sports games
-	if (READ_UINT32(ptr) == MKID('RIFF')) {
+	if (READ_UINT32(ptr) == MKID('RIFF') || READ_UINT32(ptr) == MKID('WSOU')) {
 		uint16 type;
 		int blockAlign;
+
+		if (READ_UINT32(ptr) == MKID('WSOU'))
+			ptr += 8;
+
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream stream(ptr, size);
 
@@ -382,6 +408,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + stream.pos(), size);
 		}
+		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
 	// Support for sound in Humongous Entertainment games
@@ -392,12 +419,11 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		rate = READ_LE_UINT16(ptr + 22);
 		ptr += 8 + READ_BE_UINT32(ptr + 12);
 
-		// TODO
-		/* if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
+		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
 			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
 				return;
-		} */
+		}
 
 		int codeOffs = -1;
 		if (READ_UINT32(ptr) == MKID('SBNG')) {
@@ -420,14 +446,10 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_overrideFreq = 0;
 		}
 
-		// TODO
-		if (heFlags & 1) {
-			//flags |= Audio::Mixer::FLAG_LOOP;
-		}
-
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + heOffset + 8, size);
+		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 
 		_vm->setHETimer(heChannel + 4);
@@ -485,7 +507,7 @@ void Sound::startHETalkSound(uint32 offset) {
 	ptr = _vm->getResourceAddress(rtSound, 1);
 	_sfxFile->read(ptr, size);
 
-	int channel = (_vm->VAR_SOUND_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_SOUND_CHANNEL) : 0;
+	int channel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
 	addSoundToQueue2(1, 0, channel, 0);
 }
 
