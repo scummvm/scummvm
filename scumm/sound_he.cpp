@@ -420,6 +420,8 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
+			if (curSnd == 1 && soundID != 1)
+				return;
 			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
 				return;
 		}
