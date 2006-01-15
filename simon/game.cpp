@@ -190,7 +190,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2DOS,       "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS,       "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_SIMON2DOS_RU,    "b10ba182b738c22503489b79eb994d3a", "game32", false },
+	{ GID_SIMON2DOS_RU,    "7edfc633dd50f8caa719c478443db70b", "game32", false },
 	{ GID_SIMON2DOS_RU,    "ee92d1f84893195a60449f2430d07285", "icon.dat", false},
 	{ GID_SIMON2DOS_RU,    "eefcc32b1f2c0482c1a59a963a146345", "simon2.gme", false},
 	{ GID_SIMON2DOS_RU,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
@@ -202,7 +202,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2DOS2,      "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS2,      "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_SIMON2DOS2_RU,   "b10ba182b738c22503489b79eb994d3a", "game32", false },
+	{ GID_SIMON2DOS2_RU,   "7edfc633dd50f8caa719c478443db70b", "game32", false },
 	{ GID_SIMON2DOS2_RU,   "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2DOS2_RU,   "aa6840420899a31874204f90bb214108", "simon2.gme", false},
 	{ GID_SIMON2DOS2_RU,   "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
