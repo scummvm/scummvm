@@ -152,7 +152,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_getSoundElapsedTime),
+		OPCODE(o72_getSoundPosition),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),

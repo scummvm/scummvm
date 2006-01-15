@@ -155,7 +155,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_getSoundElapsedTime),
+		OPCODE(o72_getSoundPosition),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -432,14 +432,9 @@ void ScummEngine_v80he::o80_stringToInt() {
 }
 
 void ScummEngine_v80he::o80_getSoundVar() {
-	// Checks sound variable
 	int var = pop();
 	int snd = pop();
-	int rnd = _rnd.getRandomNumberRng(1, 3);
-
-	checkRange(27, 0, var, "Illegal sound variable %d");
-	push (rnd);
-	debug(1,"o80_getSoundVar stub (snd %d, var %d)", snd, var);
+	push(_sound->getSoundVar(snd, var));
 }
 
 void ScummEngine_v80he::o80_localizeArrayToRoom() {

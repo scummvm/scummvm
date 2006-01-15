@@ -80,6 +80,7 @@ Sound::Sound(ScummEngine *parent)
 	_sfxMode(0),
 	_heMusicTracks(0) {
 
+	memset(_heChannel, 0, sizeof(_heChannel));
 	memset(_soundQue, 0, sizeof(_soundQue));
 	memset(_soundQue2, 0, sizeof(_soundQue2));
 	memset(_mouthSyncTimes, 0, sizeof(_mouthSyncTimes));
@@ -93,9 +94,16 @@ Sound::~Sound() {
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
+
+	if (heFlags & 16) {
+		playHESound(sound, heOffset, heChannel, heFlags);
+		return;
+	}
+
 	// HE music resources are in separate file
 	if (sound <= _vm->_numSounds)
 		_vm->ensureResourceLoaded(rtSound, sound);
+
 	addSoundToQueue2(sound, heOffset, heChannel, heFlags);
 }
 
@@ -141,8 +149,12 @@ void Sound::processSoundQueues() {
 		heOffset = _soundQue2[_soundQue2Pos].offset;
 		heChannel = _soundQue2[_soundQue2Pos].channel;
 		heFlags = _soundQue2[_soundQue2Pos].flags;
-		if (snd)
-			playSound(snd, heOffset, heChannel, heFlags);
+		if (snd) {
+			if (_vm->_heversion>= 60)
+				playHESound(snd, heOffset, heChannel, heFlags);
+			else
+				playSound(snd);
+		}
 	}
 
 	while (i < _soundQuePos) {
@@ -169,64 +181,7 @@ void Sound::processSoundQueues() {
 	_soundQuePos = 0;
 }
 
-void Sound::setOverrideFreq(int freq) {
-	_overrideFreq = freq;
-}
-
-void Sound::setupHEMusicFile() {
-	int i, total_size;
-	char buf[32], buf1[128];
-	Common::File musicFile;
-
-	sprintf(buf, "%s.he4", _vm->getGameName());
-
-	if (_vm->_substResFileNameIndex > 0) {
-		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
-		strcpy(buf, buf1);
-	}
-	if (musicFile.open(buf) == true) {
-		musicFile.seek(4, SEEK_SET);
-		total_size = musicFile.readUint32BE();
-		musicFile.seek(16, SEEK_SET);
-		_heMusicTracks = musicFile.readUint32LE();
-		debug(0, "Total music tracks %d", _heMusicTracks);
-
-		int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
-		musicFile.seek(musicStart, SEEK_SET);
-
-		_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
-		for (i = 0; i < _heMusicTracks; i++) {
-			_heMusic[i].id = musicFile.readUint32LE();
-			_heMusic[i].offset = musicFile.readUint32LE();
-			_heMusic[i].size = musicFile.readUint32LE();
-
-			if (_vm->_heversion >= 80) {
-				musicFile.seek(+9, SEEK_CUR);
-			} else {
-				musicFile.seek(+13, SEEK_CUR);
-			}
-		}
-
-		musicFile.close();
-	}
-}
-
-bool Sound::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
-	int i;
-
-	for (i = 0; i < _heMusicTracks; i++) {
-		if (_heMusic[i].id == id) {
-			musicOffs = _heMusic[i].offset;
-			musicSize = _heMusic[i].size;
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
-	debug(5,"playSound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
+void Sound::playSound(int soundID) {
 	byte *mallocedPtr = NULL;
 	byte *ptr;
 	char *sound;
@@ -234,56 +189,10 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 	int rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 
-	if (heChannel == -1) {
-		heChannel = 1;
-	}
-	if (_vm->_heversion >= 70 && soundID > _vm->_numSounds) {
-		debug(1, "playSound #%d", soundID);
+	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID,
+		_vm->getResourceRoomNr(rtSound, soundID));
 
-		if (soundID >= 10000) {
-			// Special codes, used in pjgames
-			return;
-		}
-
-		int music_offs;
-		char buf[32], buf1[128];
-		Common::File musicFile;
-
-		sprintf(buf, "%s.he4", _vm->getGameName());
-
-		if (_vm->_substResFileNameIndex > 0) {
-			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
-			strcpy(buf, buf1);
-		}
-		if (musicFile.open(buf) == false) {
-			warning("playSound: Can't open music file %s", buf);
-			return;
-		}
-		if (!getHEMusicDetails(soundID, music_offs, size)) {
-			debug(0, "playSound: musicID %d not found", soundID);
-			return;
-		}
-
-		musicFile.seek(music_offs, SEEK_SET);
-		ptr = (byte *)malloc(size);
-		musicFile.read(ptr, size);
-		musicFile.close();
-
-		_vm->_mixer->stopID(_currentMusic);
-		_currentMusic = soundID;
-		if (_vm->_heversion == 70) {
-			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr, size, 11025, flags, soundID);
-			return;
-		}
-
-		// This pointer will be freed at the end of the function
-		mallocedPtr = ptr;
-	} else {
-		debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID,
-			_vm->getResourceRoomNr(rtSound, soundID));
-
-		ptr = _vm->getResourceAddress(rtSound, soundID);
-	}
+	ptr = _vm->getResourceAddress(rtSound, soundID);
 
 	if (!ptr) {
 		return;
@@ -305,7 +214,6 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		memcpy(sound, ptr, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-
 	// WORKAROUND bug # 1311447
 	else if (READ_UINT32(ptr) == MKID(0x460e200d)) {
 		// This sound resource occurs in the Macintosh version of Monkey Island.
@@ -326,87 +234,6 @@ void Sound::playSound(int soundID, int heOffset, int heChannel, int heFlags) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
-	}
-
-	// Support for later Backyard sports games sounds
-	else if (READ_UINT32(ptr) == MKID('RIFF')) {
-		uint16 type;
-		int blockAlign;
-		size = READ_LE_UINT32(ptr + 4);
-		Common::MemoryReadStream stream(ptr, size);
-
-		if (!loadWAVFromStream(stream, size, rate, flags, &type, &blockAlign)) {
-			error("playSound: Not a valid WAV file");
-		}
-
-		if (type == 17) {
-			AudioStream *voxStream = new ADPCMInputStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-
-			sound = (char *)malloc(size * 4);
-			size = voxStream->readBuffer((int16*)sound, size * 2);
-			size *= 2; // 16bits.
-		} else {
-			// Allocate a sound buffer, copy the data into it, and play
-			sound = (char *)malloc(size);
-			memcpy(sound, ptr + stream.pos(), size);
-		}
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
-	}
-	// Support for Putt-Putt sounds - very hackish, too 8-)
-	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK') || READ_UINT32(ptr) == MKID('HSHD')) {
-		if (READ_UINT32(ptr) == MKID('HSHD')) {
-			rate = READ_LE_UINT16(ptr + 14);
-			ptr += READ_BE_UINT32(ptr + 4);
-		} else {
-			rate = READ_LE_UINT16(ptr + 22);
-			ptr += 8 + READ_BE_UINT32(ptr + 12);
-		}
-
-		if (READ_UINT32(ptr) == MKID('SBNG')) {
-			ptr += READ_BE_UINT32(ptr + 4);
-		}
-
-		assert(READ_UINT32(ptr) == MKID('SDAT'));
-		size = READ_BE_UINT32(ptr+4) - 8;
-		if (heOffset < 0 || heOffset > size) {
-			// Occurs when making fireworks in puttmoon
-			debug(0, "playSound: Invalid sound offset (%d) in sound %d", heOffset, soundID);
-			heOffset = 0;
-		}
-		size -= heOffset;
-
-		if (_overrideFreq) {
-			// Used by the piano in Fatty Bear's Birthday Surprise
-			rate = _overrideFreq;
-			_overrideFreq = 0;
-		}
-
-		if (heFlags & 1) {
-			// TODO
-			// flags |= Audio::Mixer::FLAG_LOOP;
-		}
-
-		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
-		memcpy(sound, ptr + heOffset + 8, size);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
-	}
-	else if (READ_UINT32(ptr) == MKID('MRAW')) {
-		// pcm music in 3DO humongous games
-		ptr += 8 + READ_BE_UINT32(ptr+12);
-		if (READ_UINT32(ptr) != MKID('SDAT'))
-			return;
-
-		size = READ_BE_UINT32(ptr+4) - 8;
-		rate = 22050;
-		flags = Audio::Mixer::FLAG_AUTOFREE;
-
-		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
-		memcpy(sound, ptr + 8, size);
-		_vm->_mixer->stopID(_currentMusic);
-		_currentMusic = soundID;
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
@@ -693,30 +520,6 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 	return ((const MP3OffsetTable *)a)->org_offset - ((const MP3OffsetTable *)b)->org_offset;
 }
 
-void Sound::startHETalkSound(uint32 offset) {
-	byte *ptr;
-	int32 size;
-
-	if (ConfMan.getBool("speech_mute"))
-		return;
-
-	if (!_sfxFile->isOpen()) {
-		error("startHETalkSound: Speech file is not open");
-		return;
-	}
-
-	_sfxMode |= 2;
-	_vm->res.nukeResource(rtSound, 1);
-	_sfxFile->seek(offset + 4, SEEK_SET);
-	 size = _sfxFile->readUint32BE() - 8;
-	_vm->res.createResource(rtSound, 1, size);
-	ptr = _vm->getResourceAddress(rtSound, 1);
-	_sfxFile->read(ptr, size);
-
-	int channel = (_vm->VAR_SOUND_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_SOUND_CHANNEL) : 0;
-	addSoundToQueue2(1, 0, channel, 0);
-}
-
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
 	int size = 0;
@@ -895,15 +698,6 @@ bool Sound::isMouthSyncOff(uint pos) {
 }
 
 
-int Sound::getSoundElapsedTime(int sound) const {
-	if (sound >= 10000) {
-		int channel = sound - 10000;
-		return _vm->_mixer->getSoundElapsedTime(_heSoundChannels[channel]);
-	} else {
-		return _vm->_mixer->getSoundElapsedTimeOfSoundID(sound);
-	}
-}
-
 int Sound::isSoundRunning(int sound) const {
 #ifndef DISABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)
@@ -975,6 +769,9 @@ bool Sound::isSoundInUse(int sound) const {
 	if (_vm->_imuse)
 		return _vm->_imuse->get_sound_active(sound);
 
+	if (_vm->_mixer->isSoundIDActive(sound))
+		return 1;
+
 	return false;
 }
 
@@ -1005,7 +802,13 @@ void Sound::stopSound(int sound) {
 
 	if (_vm->_heversion >= 70) {
 		if ( sound >= 10000) {
-			_vm->_mixer->stopHandle(_heSoundChannels[sound - 10000]);
+			int chan = sound - 10000;
+			_vm->_mixer->stopHandle(_heSoundChannels[chan]);
+			_heChannel[chan].sound = 0;
+			_heChannel[chan].priority = 0;
+			_heChannel[chan].sbngBlock = 0;
+			_heChannel[chan].codeOffs = 0;
+			memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
 		}
 	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {
@@ -1030,6 +833,16 @@ void Sound::stopSound(int sound) {
 	if (_vm->_musicEngine)
 		_vm->_musicEngine->stopSound(sound);
 
+	for (i = 0; i < ARRAYSIZE(_heChannel); i++) {
+		if (_heChannel[i].sound == sound) {
+			_heChannel[i].sound = 0;
+			_heChannel[i].priority = 0;
+			_heChannel[i].sbngBlock = 0;
+			_heChannel[i].codeOffs = 0;
+			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
+		}
+	}
+
 	for (i = 0; i < ARRAYSIZE(_soundQue2); i++) {
 		if (_soundQue2[i].sound == sound) {
 			_soundQue2[i].sound = 0;
@@ -1046,6 +859,9 @@ void Sound::stopAllSounds() {
 		stopCD();
 		stopCDTimer();
 	}
+
+	// Clear sound channels for HE games
+	memset(_heChannel, 0, sizeof(_heChannel));
 
 	// Clear the (secondary) sound queue
 	_soundQue2Pos = 0;
@@ -1446,7 +1262,6 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 	case MKID('Mac1'):
 	case MKID('RIFF'):
-	case MKID('HSHD'):
 	case MKID('TALK'):
 	case MKID('DIGI'):
 	case MKID('Crea'):
@@ -1455,6 +1270,15 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		total_size = _fileHandle->readUint32BE();
 		ptr = res.createResource(type, idx, total_size);
 		_fileHandle->read(ptr, total_size - 8);
+		//dumpResource("sound-", idx, ptr);
+		return 1;
+
+	case MKID('HSHD'):
+		// HE sound type without SOUN header
+		_fileHandle->seek(-16, SEEK_CUR);
+		total_size = max_total_size + 8;
+		ptr = res.createResource(type, idx, total_size);
+		_fileHandle->read(ptr, total_size);
 		//dumpResource("sound-", idx, ptr);
 		return 1;
 

@@ -1143,13 +1143,19 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
 	bcr->_paletteNum = _hePaletteNum;
 
-	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0) {
-		_heCondMask = (_heCondMask & ~0x3FF) | 1;
-		if (_vm->getTalkingActor() == _number) {
-			// Checks if talk sound is active?
-			// Otherwise just do rand animation
-			int rnd = _vm->_rnd.getRandomNumberRng(1, 10);
-			setTalkCondition(rnd);
+	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0 && _animProgress == 0) {
+		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
+			int talkState = 0;
+
+			if (_vm->_sound->isSoundCodeUsed(1))
+				talkState = _vm->_sound->getSoundVar(1, 19);
+			if (talkState == 0)
+				talkState = _vm->_rnd.getRandomNumberRng(1, 10);
+
+			checkRange(13, 1, talkState, "Talk state %d out of range");
+			setTalkCondition(talkState);
+		} else {
+			setTalkCondition(1);
 		}
 	}
 	_heNoTalkAnimation = 0;
@@ -1250,7 +1256,7 @@ void ScummEngine::setActorRedrawFlags() {
 
 	// Redraw all actors if a full redraw was requested.
 	// Also redraw all actors in COMI (see bug #1066329 for details).
-	if (_fullRedraw || _version == 8) {
+	if (_fullRedraw || _version == 8 || (VAR_REDRAW_ALL_ACTORS != 0xFF && VAR(VAR_REDRAW_ALL_ACTORS) != 0)) {
 		for (j = 1; j < _numActors; j++) {
 			_actors[j]._needRedraw = true;
 		}
@@ -1983,14 +1989,14 @@ bool Actor::isPlayer() {
 }
 
 void Actor::setUserCondition(int slot, int set) {
-	debug(1, "Actor::setUserCondition(%d, %d)", slot, set);
-	assert(slot >= 1 && slot <= 0x20);
+	const int condMaskCode = (_vm->_heversion >= 90) ? 0x1FFF : 0x3FF;
+	checkRange(32, 1, slot, "Condition %d out of range");
 	if (set == 0) {
 		_heCondMask &= ~(1 << (slot + 0xF));
 	} else {
 		_heCondMask |= 1 << (slot + 0xF);
 	}
-	if (_heCondMask & 0x3FF) {
+	if (_heCondMask & condMaskCode) {
 		_heCondMask &= ~1;
 	} else {
 		_heCondMask |= 1;
@@ -1998,17 +2004,17 @@ void Actor::setUserCondition(int slot, int set) {
 }
 
 bool Actor::isUserConditionSet(int slot) const {
-	assert(slot >= 1 && slot <= 0x20);
+	checkRange(32, 1, slot, "Condition %d out of range");
 	return (_heCondMask & (1 << (slot + 0xF))) != 0;
 }
 
 void Actor::setTalkCondition(int slot) {
-	debug(1, "Actor::setTalkCondition(%d)", slot);
-	assert(slot >= 1 && slot <= 0x10);
-	_heCondMask = (_heCondMask & ~0x3FF) | 1;
+	const int condMaskCode = (_vm->_heversion >= 90) ? 0x1FFF : 0x3FF;
+	checkRange(32, 1, slot, "Condition %d out of range");
+	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
 		_heCondMask |= 1 << (slot - 1);
-		if (_heCondMask & 0x3FF) {
+		if (_heCondMask & condMaskCode) {
 			_heCondMask &= ~1;
 		} else {
 			_heCondMask |= 1;
@@ -2017,7 +2023,7 @@ void Actor::setTalkCondition(int slot) {
 }
 
 bool Actor::isTalkConditionSet(int slot) const {
-	assert(slot >= 1 && slot <= 0x10);
+	checkRange(32, 1, slot, "Condition %d out of range");
 	return (_heCondMask & (1 << (slot - 1))) != 0;
 }
 

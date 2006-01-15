@@ -1216,7 +1216,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_actorClipOverride.right = 640;
 
 	_skipDrawObject = 0;
-	memset(_timers, 0, sizeof(_timers));
+	memset(_heTimers, 0, sizeof(_heTimers));
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
 	_akosQueuePos = 0;
@@ -1343,9 +1343,15 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
 	VAR_VOICE_BUNDLE_LOADED = 0xFF;
 
+	VAR_REDRAW_ALL_ACTORS = 0xFF;
 	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
+
 	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
+	VAR_SOUNDCODE_TMR = 0xFF;
+	VAR_DEFAULT_SOUND_CHANNEL = 0xFF;
+
+	VAR_MAIN_SCRIPT = 0xFF;
 
 	VAR_NUM_SCRIPT_CYCLES = 0xFF;
 	VAR_SCRIPT_CYCLE = 0xFF;
@@ -2481,6 +2487,9 @@ load_game:
 		_fullRedraw = true;
 	}
 
+	if (_heversion >= 80) {
+		_sound->processSoundCode();
+	}
 	runAllScripts();
 	checkExecVerbs();
 	checkAndRunSentenceScript();
@@ -2551,6 +2560,10 @@ load_game:
 			clearClickedStatus();
 		}
 
+		if (VAR_MAIN_SCRIPT != 0xFF && VAR(VAR_MAIN_SCRIPT) != 0) {
+			runScript(VAR(VAR_MAIN_SCRIPT), 0, 0, 0);
+		}
+
 		// Handle mouse over effects (for verbs).
 		handleMouseOver(oldEgo != VAR(VAR_EGO));
 
@@ -2600,6 +2613,17 @@ load_game:
 #pragma mark -
 #pragma mark --- SCUMM ---
 #pragma mark -
+
+int ScummEngine::getHETimer(int timer) {
+	checkRange(15, 1, timer, "getHETimer: Timer %d out of range(%d)");
+	int time = _system->getMillis() - _heTimers[timer];
+	return time;
+}
+
+void ScummEngine::setHETimer(int timer) {
+	checkRange(15, 1, timer, "setHETimer: Timer %d out of range(%d)");
+	_heTimers[timer] = _system->getMillis();
+}
 
 void ScummEngine::pauseGame() {
 	pauseDialog();

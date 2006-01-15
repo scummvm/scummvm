@@ -1011,7 +1011,7 @@ protected:
 	void o72_captureWizImage();
 	void o72_getTimer();
 	void o72_setTimer();
-	void o72_getSoundElapsedTime();
+	void o72_getSoundPosition();
 	void o72_startScript();
 	void o72_startObject();
 	void o72_drawObject();

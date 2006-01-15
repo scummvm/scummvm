@@ -192,8 +192,9 @@ enum ResTypes {
 	rtRoomImage = 18,
 	rtImage = 19,
 	rtTalkie = 20,
-	rtLast = 20,
-	rtNumTypes = 21
+	rtSpoolBuffer = 21,
+	rtLast = 21,
+	rtNumTypes = 22
 };
 
 enum {
@@ -1070,13 +1071,18 @@ protected:
 	bool testGfxOtherUsageBits(int strip, int bit);
 
 public:
-	uint8 *_hePalettes;
-	byte _HEV7ActorPalette[256];
 	byte _roomPalette[256];
 	byte *_shadowPalette;
 	bool _skipDrawObject;
-	int _timers[4];
 	int _voiceMode;
+
+	// HE specific
+	byte _HEV7ActorPalette[256];
+	uint8 *_hePalettes;
+
+	int _heTimers[16];
+	int getHETimer(int timer);
+	void setHETimer(int timer);
 
 protected:
 	int _shadowPaletteSize;
@@ -1320,9 +1326,15 @@ public:
 	byte VAR_CLICK_AREA;
 
 	// HE specific variables
+	byte VAR_REDRAW_ALL_ACTORS;
 	byte VAR_SKIP_RESET_TALK_ACTOR;
+
 	byte VAR_MUSIC_CHANNEL;
 	byte VAR_SOUND_CHANNEL;
+	byte VAR_SOUNDCODE_TMR;
+	byte VAR_DEFAULT_SOUND_CHANNEL;
+
+	byte VAR_MAIN_SCRIPT;
 
 	byte VAR_SCRIPT_CYCLE;
 	byte VAR_NUM_SCRIPT_CYCLES;

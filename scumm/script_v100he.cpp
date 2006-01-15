@@ -309,7 +309,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_isScriptRunning),
 		OPCODE(o90_sin),
 		/* D8 */
-		OPCODE(o72_getSoundElapsedTime),
+		OPCODE(o72_getSoundPosition),
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o80_getSoundVar),
 		OPCODE(o100_getSpriteInfo),
@@ -430,7 +430,6 @@ void ScummEngine_v100he::o100_actorOps() {
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
-		debug(1,"o100_actorOps: case 21 (%d)", k);
 		break;
 	case 25:		// SO_COSTUME
 		a->setActorCostume(pop());
@@ -558,9 +557,10 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 142:
 		k = pop();
+		if (k == 0)
+			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
-		debug(1,"o100_actorOps: case 24 (%d)", k);
 		break;
 	case 143:		// SO_TEXT_OFFSET
 		a->_talkPosY = pop();
@@ -1644,7 +1644,8 @@ void ScummEngine_v100he::o100_startSound() {
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
-		debug(0,"o100_startSound: case 29 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
+		_sound->setSoundVar(_heSndSoundId, var, value);
+		debug(0,"o100_startSound: case 83 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 92:
 		debug(0, "o100_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
@@ -1657,11 +1658,11 @@ void ScummEngine_v100he::o100_startSound() {
 		_heSndChannel = pop();
 		break;
 	case 130:
-		_heSndFlags |= 40;
+		_heSndFlags |= 64;
 		pop();
 		break;
 	case 131:
-		_heSndFlags |= 4;
+		_heSndFlags |= 1;
 		break;
 	case 132: // Music
 	case 134: // Sound
@@ -1669,16 +1670,17 @@ void ScummEngine_v100he::o100_startSound() {
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndChannel = VAR(VAR_MUSIC_CHANNEL);
+		_heSndFlags = 0;
 		break;
 	case 133:
-		_heSndFlags |= 80;
+		_heSndFlags |= 128;
 		pop();
 		break;
 	case 135:
 		_heSndFlags |= 4;
 		break;
 	case 136:
-		_heSndFlags |= 20;
+		_heSndFlags |= 32;
 		pop();
 		break;
 	default:

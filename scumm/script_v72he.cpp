@@ -156,7 +156,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* 58 */
 		OPCODE(o72_getTimer),
 		OPCODE(o72_setTimer),
-		OPCODE(o72_getSoundElapsedTime),
+		OPCODE(o72_getSoundPosition),
 		OPCODE(o6_wordArrayDec),
 		/* 5C */
 		OPCODE(o6_if),
@@ -866,9 +866,7 @@ void ScummEngine_v72he::o72_getTimer() {
 	int cmd = fetchScriptByte();
 
 	if (cmd == 10 || cmd == 50) {
-		checkRange(3, 1, timer, "o72_getTimer: Timer %d out of range(%d)");
-		int diff = _system->getMillis() - _timers[timer];
-		push(diff);
+		push(getHETimer(timer));
 	} else {
 		push(0);
 	}
@@ -879,17 +877,15 @@ void ScummEngine_v72he::o72_setTimer() {
 	int cmd = fetchScriptByte();
 
 	if (cmd == 158 || cmd == 61) {
-		checkRange(3, 1, timer, "o72_setTimer: Timer %d out of range(%d)");
-		_timers[timer] = _system->getMillis();
+		setHETimer(timer);
 	} else {
 		error("TIMER command %d?", cmd);
 	}
 }
 
-void ScummEngine_v72he::o72_getSoundElapsedTime() {
+void ScummEngine_v72he::o72_getSoundPosition() {
 	int snd = pop();
-	push(_sound->getSoundElapsedTime(snd) * 10);
-	debug(1,"o72_getSoundElapsedTime (%d)", snd);
+	push(_sound->getSoundPos(snd));
 }
 
 void ScummEngine_v72he::o72_startScript() {
@@ -1137,13 +1133,13 @@ void ScummEngine_v72he::o72_actorOps() {
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
-		debug(1,"o72_actorOps: case 21 (%d)", k);
 		break;
 	case 24: // HE 80+
 		k = pop();
+		if (k == 0)
+			k = _rnd.getRandomNumberRng(1, 10);
 		a->_heNoTalkAnimation = 1;
 		a->setTalkCondition(k);
-		debug(1,"o72_actorOps: case 24 (%d)", k);
 		break;
 	case 43: // HE 90+
 		// HE games use reverse order of layering, so we adjust
