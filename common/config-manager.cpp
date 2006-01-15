@@ -115,6 +115,7 @@ void ConfigManager::loadDefaultConfigFile() {
 #endif
 
 	loadConfigFile(configFile);
+	flushToDisk();
 }
 
 void ConfigManager::loadConfigFile(const String &filename) {
@@ -135,7 +136,7 @@ void ConfigManager::loadFile(const String &filename) {
 	File cfg_file;
 
 	if (!cfg_file.open(filename.c_str())) {
-		warning("Unable to open configuration file: %s", filename.c_str());
+		printf("Creating configuration file: %s\n", filename.c_str());
 	} else {
 		char buf[MAXLINELEN];
 		String domain;
@@ -228,7 +229,7 @@ void ConfigManager::flushToDisk() {
 //		return;
 
 	if (!(cfg_file = fopen(_filename.c_str(), "w"))) {
-		warning("Unable to write configuration file: %s", _filename.c_str());
+		error("Unable to write configuration file: %s", _filename.c_str());
 	} else {
 
 		// First write the domains in _domainSaveOrder, in that order.
