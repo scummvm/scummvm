@@ -102,7 +102,6 @@ public: // Used by createSound()
 		int priority;
 		int sbngBlock;
 		int soundVars[27];
-		int timer;
 	} _heChannel[9];
 
 public:
@@ -146,7 +145,6 @@ public:
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 	int isSoundCodeUsed(int sound);
 	int getSoundPos(int sound);
-	int getSoundPriority(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
 	void playHESound(int soundID, int heOffset, int heChannel, int heFlags);

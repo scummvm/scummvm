@@ -1135,7 +1135,6 @@ void ScummEngine_v72he::o72_actorOps() {
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
-		debug(1,"o72_actorOps: case 21 (%d)", k);
 		break;
 	case 24: // HE 80+
 		k = pop();

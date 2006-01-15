@@ -72,20 +72,6 @@ int Sound::getSoundPos(int sound) {
 	}
 }
 
-int Sound::getSoundPriority(int sound) {
-	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
-		if (_heChannel[i].sound == sound)
-			chan = i;
-	}
-
-	if (chan != -1) {
-		return _heChannel[chan].priority;
-	} else {
-		return 0;
-	}
-}
-
 int Sound::getSoundVar(int sound, int var) {
 	if (_vm->_heversion >= 90 && var == 26) {
 		return isSoundCodeUsed(sound);
@@ -308,14 +294,15 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte *ptr, *spoolPtr;
 	char *sound;
 	int size = -1;
-	int rate;
+	int priority, rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 
 	if (heChannel == -1) {
-		if (_vm->_heversion >= 95 && _vm->VAR(_vm->VAR_DEFAULT_SOUND_CHANNEL) != 0)
+		if (_vm->_heversion >= 95 && _vm->VAR(_vm->VAR_DEFAULT_SOUND_CHANNEL) != 0) {
 			heChannel = _vm->VAR(_vm->VAR_DEFAULT_SOUND_CHANNEL);
-		else
+		} else {
 			heChannel = 1;
+		}
 	}
 
 	if (soundID > _vm->_numSounds) {
@@ -400,17 +387,17 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	// Support for sound in Humongous Entertainment games
 	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK')) {
 		byte *sndPtr = ptr;
-		int priority;
 
 		priority = *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 		ptr += 8 + READ_BE_UINT32(ptr + 12);
 
-		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
+		// TODO
+		/* if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
 			if (curSnd != 0 && curSnd != 1 && soundID != 1 && _heChannel[heChannel].priority > priority)
 				return;
-		}
+		} */
 
 		int codeOffs = -1;
 		if (READ_UINT32(ptr) == MKID('SBNG')) {
@@ -446,19 +433,19 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
-		_heChannel[heChannel].timer = 0;
-		_heChannel[heChannel].sbngBlock = (codeOffs != 0) ? 1 : 0;
+		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_UINT32(ptr) == MKID('MRAW')) {
+		priority = *(ptr + 18);
+		rate = READ_LE_UINT16(ptr + 22);
 		ptr += 8 + READ_BE_UINT32(ptr+12);
-		if (READ_UINT32(ptr) != MKID('SDAT'))
-			return;
 
+		assert(READ_UINT32(ptr) == MKID('SDAT'));
 		size = READ_BE_UINT32(ptr+4) - 8;
-		rate = 22050;
+
 		flags = Audio::Mixer::FLAG_AUTOFREE;
 
 		// Allocate a sound buffer, copy the data into it, and play
