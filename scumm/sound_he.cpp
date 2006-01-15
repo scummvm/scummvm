@@ -402,7 +402,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		byte *sndPtr = ptr;
 		int priority;
 
-		priority = READ_LE_UINT16(ptr + 18);
+		priority = *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 		ptr += 8 + READ_BE_UINT32(ptr + 12);
 
@@ -433,15 +433,14 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_overrideFreq = 0;
 		}
 
-		// Bit 3 is looping related too
-		if ((heFlags & 1)) {
-			flags |= Audio::Mixer::FLAG_LOOP;
+		// TODO
+		if (heFlags & 1) {
+			//flags |= Audio::Mixer::FLAG_LOOP;
 		}
 
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + heOffset + 8, size);
-		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 
 		_vm->setHETimer(heChannel + 4);
