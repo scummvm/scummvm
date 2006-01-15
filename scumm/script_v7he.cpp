@@ -591,7 +591,6 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		res.unlock(rtRoomImage, resid);
 		break;
 	case 116:
-		error("CrunchHeap");
 		break;
 	case 117:		// SO_LOAD_CHARSET
 		resid = pop();

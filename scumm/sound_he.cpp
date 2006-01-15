@@ -359,9 +359,8 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 		musicFile.close();
 
-		_vm->_mixer->stopID(_currentMusic);
-		_currentMusic = soundID;
 		if (_vm->_heversion == 70) {
+			_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID);
 			return;
 		}
@@ -379,7 +378,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 	// TODO: Extra sound flags
 	if (heFlags & 1) {
-		//flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::Mixer::FLAG_LOOP;
 	}
 
 	// Support for sound in later Backyard sports games
