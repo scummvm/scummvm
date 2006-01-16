@@ -207,6 +207,8 @@ static const char *credits[] = {
 "\\C\\c2""For Scumm16, the basis of ScummVM's older gfx codecs",
 "\\C\\c0""Ivan Dubrov",
 "\\C\\c2""For contributing the initial version of the Gobliiins engine",
+"\\C\\c0""Joachim Eberhard",
+"\\C\\c2""For numerous contributions to documentation",
 "\\C\\c0""Jezar",
 "\\C\\c2""For his freeverb filter implementation",
 "\\C\\c0""Jim Leiterman",

@@ -635,7 +635,7 @@ void Inter_v1::setupOpcodes(void) {
 	};
 
 	_opcodesDrawV1 = opcodesDraw;
-	_opcodesFuncV1 = opcodesFunc;
+	_opcodesFuncV1 = opcodesFunc; // EGroupe
 	_opcodesGoblinV1 = opcodesGoblin;
 }
 

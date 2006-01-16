@@ -396,7 +396,7 @@ void Music::playBgMusic(void) {
 void Music::playTrack(const char *trackname) {
 	if (_playing) return;
 	
-	debug(2, "Music::playTrack()");
+	debug(2, "Music::playTrack(%s)", trackname);
 	unloadMusic();
 	for (int i = 0; i < ARRAYSIZE(_tracksToFiles); i++)
 		if (!scumm_stricmp(trackname, _tracksToFiles[i][0])) {
