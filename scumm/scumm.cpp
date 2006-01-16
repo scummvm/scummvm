@@ -1608,15 +1608,7 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_NUM_COSTUMES = 0xFF;
 	VAR_NUM_IMAGES = 0xFF;
 	VAR_NUM_CHARSETS = 0xFF;
-	VAR_NUM_SPRITE_GROUPS = 0xFF;
-	VAR_NUM_SPRITES = 0xFF;
-	VAR_NUM_PALETTES = 0xFF;
-	VAR_NUM_UNK = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
-	VAR_PLATFORM = 0xFF;
-	VAR_WINDOWS_VERSION = 0xFF;
-	VAR_CURRENT_CHARSET = 0xFF;
-	VAR_U32_VERSION = 0xFF;
 }
 
 ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
@@ -1625,11 +1617,24 @@ ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, cons
 	_curSndId = 0;
 	_sndPtrOffs = 0;
 	_sndTmrOffs = 0;
+
+	VAR_PLATFORM = 0xFF;
+	VAR_WINDOWS_VERSION = 0xFF;
+	VAR_CURRENT_CHARSET = 0xFF;
+	VAR_COLOR_DEPTH = 0xFF;
 }
 
 ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v80he(detector, syst, gs, md5sum, substResFileNameIndex) {
 	_sprite = new Sprite(this);
+
+	VAR_NUM_SPRITE_GROUPS = 0xFF;
+	VAR_NUM_SPRITES = 0xFF;
+	VAR_NUM_PALETTES = 0xFF;
+	VAR_NUM_UNK = 0xFF;
+
+	VAR_U32_VERSION = 0xFF;
+	VAR_U32_ARRAY_UNK = 0xFF;
 }
 
 ScummEngine_v90he::~ScummEngine_v90he() {

@@ -294,18 +294,27 @@ void ScummEngine_v72he::setupScummVars() {
 	if (_heversion <= 73) {
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
-	if (_heversion >= 80)
-		VAR_PLATFORM = 78;  		// 1 is PC, 2 is Macintosh
- 		VAR_WINDOWS_VERSION = 79; 	// 31 is Windows 3.1, 40 is Windows 95+
-		VAR_CURRENT_CHARSET = 80;
-		VAR_SOUNDCODE_TMR = 84;
-		VAR_KEY_STATE = 86;
-		VAR_NUM_SOUND_CHANNELS = 88;
-		VAR_REDRAW_ALL_ACTORS = 95;
-	if (_heversion >= 90) {
-		VAR_SCRIPT_CYCLE = 103;
-		VAR_NUM_SCRIPT_CYCLES = 104;
-	}
+}
+
+void ScummEngine_v80he::setupScummVars() {
+	ScummEngine_v72he::setupScummVars();
+
+	VAR_PLATFORM = 78;  		// 1 is PC, 2 is Macintosh
+	VAR_WINDOWS_VERSION = 79; 	// 31 is Windows 3.1, 40 is Windows 95+
+	VAR_CURRENT_CHARSET = 80;
+	VAR_SOUNDCODE_TMR = 84;
+	VAR_KEY_STATE = 86;
+	VAR_NUM_SOUND_CHANNELS = 88;
+	VAR_COLOR_DEPTH = 89;
+	VAR_REDRAW_ALL_ACTORS = 95;
+}
+
+void ScummEngine_v90he::setupScummVars() {
+	ScummEngine_v80he::setupScummVars();
+
+	VAR_SCRIPT_CYCLE = 103;
+	VAR_NUM_SCRIPT_CYCLES = 104;
+
 	if (_heversion >= 95) {
 		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
@@ -604,6 +613,7 @@ void ScummEngine_v80he::initScummVars() {
 
 	VAR(VAR_PLATFORM) = 1;
 	VAR(VAR_WINDOWS_VERSION) = 40;
+	VAR(VAR_COLOR_DEPTH) = 256;
 }
 
 void ScummEngine_v90he::initScummVars() {

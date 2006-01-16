@@ -1329,21 +1329,21 @@ public:
 	byte VAR_CLICK_AREA;
 
 	// HE specific variables
-	byte VAR_REDRAW_ALL_ACTORS;
-	byte VAR_SKIP_RESET_TALK_ACTOR;
+	byte VAR_REDRAW_ALL_ACTORS;		// Used in setActorRedrawFlags()
+	byte VAR_SKIP_RESET_TALK_ACTOR;		// Used in setActorCostume()
 
-	byte VAR_SOUND_CHANNEL;
-	byte VAR_TALK_CHANNEL;
-	byte VAR_SOUNDCODE_TMR;
-	byte VAR_RESERVED_SOUND_CHANNELS;
+	byte VAR_SOUND_CHANNEL;			// Used in o_startSound()
+	byte VAR_TALK_CHANNEL;			// Used in startHETalkSound()
+	byte VAR_SOUNDCODE_TMR;			// Used in processSoundCode()
+	byte VAR_RESERVED_SOUND_CHANNELS;	// Used in findFreeSoundChannel()
 
-	byte VAR_MAIN_SCRIPT;
+	byte VAR_MAIN_SCRIPT;			// Used in scummLoop()
 
-	byte VAR_SCRIPT_CYCLE;
-	byte VAR_NUM_SCRIPT_CYCLES;
+	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
+	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
 
-	byte VAR_KEY_STATE;		// Used in parseEvents()
-	byte VAR_MOUSE_STATE;
+	byte VAR_KEY_STATE;			// Used in parseEvents()
+	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;

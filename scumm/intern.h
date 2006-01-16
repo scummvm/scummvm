@@ -1062,16 +1062,8 @@ protected:
 	byte VAR_NUM_COSTUMES;
 	byte VAR_NUM_IMAGES;
 	byte VAR_NUM_CHARSETS;
-	byte VAR_NUM_SPRITE_GROUPS;
-	byte VAR_NUM_SPRITES;
-	byte VAR_NUM_PALETTES;
-	byte VAR_NUM_UNK;
+
 	byte VAR_POLYGONS_ONLY;
-	byte VAR_PLATFORM;
-	byte VAR_WINDOWS_VERSION;
-	byte VAR_CURRENT_CHARSET;
-	byte VAR_U32_VERSION;
-	byte VAR_U32_ARRAY_UNK;
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {
@@ -1094,6 +1086,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void setupScummVars();
 	virtual void initScummVars();
 
 	virtual void initCharset(int charset);
@@ -1118,6 +1111,11 @@ protected:
 	void o80_drawWizPolygon();
 	void o80_drawLine();
 	void o80_pickVarRandom();
+
+	byte VAR_PLATFORM;
+	byte VAR_WINDOWS_VERSION;
+	byte VAR_CURRENT_CHARSET;
+	byte VAR_COLOR_DEPTH;
 };
 
 class ScummEngine_v90he : public ScummEngine_v80he {
@@ -1168,6 +1166,7 @@ protected:
 	virtual void executeOpcode(byte i);
 	virtual const char *getOpcodeDesc(byte i);
 
+	virtual void setupScummVars();
 	virtual void initScummVars();
 
 	virtual void saveOrLoad(Serializer *s);
@@ -1241,6 +1240,14 @@ protected:
 	void o90_getActorAnimProgress();
 	void o90_kernelGetFunctions();
 	void o90_kernelSetFunctions();
+
+	byte VAR_NUM_SPRITE_GROUPS;
+	byte VAR_NUM_SPRITES;
+	byte VAR_NUM_PALETTES;
+	byte VAR_NUM_UNK;
+
+	byte VAR_U32_VERSION;
+	byte VAR_U32_ARRAY_UNK;
 };
 
 class ScummEngine_v99he : public ScummEngine_v90he {
