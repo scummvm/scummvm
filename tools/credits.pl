@@ -642,7 +642,7 @@ begin_credits("Credits");
 
 
   # HACK!
-  $max_name_width = 15;
+  $max_name_width = 16;
 
   begin_section("Special thanks to");
     begin_persons();

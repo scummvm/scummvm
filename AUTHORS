@@ -172,17 +172,17 @@ Other contributions
 
 Special thanks to
 *****************
-   Sander Buskens  - For his work on the initial reversing of Monkey2
-   Canadacow       - For the original MT-32 emulator
-   Kevin Carnes    - For Scumm16, the basis of ScummVM's older gfx codecs
-   Ivan Dubrov     - For contributing the initial version of the Gobliiins
-                     engine
-   Joachim Eberhar - For numerous contributions to documentation
-   Jezar           - For his freeverb filter implementation
-   Jim Leiterman   - Various info on his FM-TOWNS/Marty SCUMM ports
-   lloyd           - For deep tech details about C64 Zak & MM
-   Jimmi Thogersen - For ScummRev, and much obscure code/documentation
-   Tristan         - For additional work on the original MT-32 emulator
+   Sander Buskens   - For his work on the initial reversing of Monkey2
+   Canadacow        - For the original MT-32 emulator
+   Kevin Carnes     - For Scumm16, the basis of ScummVM's older gfx codecs
+   Ivan Dubrov      - For contributing the initial version of the Gobliiins
+                      engine
+   Joachim Eberhard - For numerous contributions to documentation
+   Jezar            - For his freeverb filter implementation
+   Jim Leiterman    - Various info on his FM-TOWNS/Marty SCUMM ports
+   lloyd            - For deep tech details about C64 Zak & MM
+   Jimmi Thogersen  - For ScummRev, and much obscure code/documentation
+   Tristan          - For additional work on the original MT-32 emulator
 
    Tony Warriner and everyone at Revolution Software Ltd. for sharing with us
    the source of some of their brilliant games, allowing us to release
