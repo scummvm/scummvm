@@ -561,11 +561,6 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		readArrayFromIndexFile();
 		break;
 
-	case MKID('LECF'):
-		_fileHandle->seek(itemsize - 8, SEEK_CUR);
-		debug(2, "LECF index block not yet handled, skipping");
-		break;
-
 	default:
 		error("Bad ID %04X('%s') found in index file directory!", blocktype,
 				tag2str(blocktype));
