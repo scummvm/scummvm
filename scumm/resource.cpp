@@ -440,6 +440,10 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		_imuseDigital->setAudioNames(num, ptr);
 		break;
 
+	case MKID('DRSC'):		// Used by: COMI
+		readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
+		break;
+
 	default:
 		ScummEngine::readIndexBlock(blocktype, itemsize);
 	}
@@ -450,6 +454,18 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
+	case MKID('DIRI'):
+		readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
+		break;
+
+	case MKID('DIRM'):
+		readResTypeList(rtImage, MKID('AWIZ'), "images");
+		break;
+
+	case MKID('DIRT'):
+		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
+		break;
+
 	case MKID('DLFL'):
 		i = _fileHandle->readUint16LE();
 		_fileHandle->seek(-2, SEEK_CUR);
@@ -464,8 +480,8 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		break;
 
 	case MKID('SVER'):
+		// Index version number
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
-		debug(0, "SVER index block not yet handled, skipping");
 		break;
 
 	case MKID('INIB'):
@@ -516,25 +532,9 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		}
 		break;
 
-	case MKID('DIRM'):
-		readResTypeList(rtImage, MKID('AWIZ'), "images");
-		break;
-
-	case MKID('DIRT'):
-		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
-		break;
-
-	case MKID('DIRI'):
-		readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
-		break;
-
-	case MKID('DIRR'):
 	case MKID('DROO'):
+	case MKID('DIRR'):
 		readResTypeList(rtRoom, MKID('ROOM'), "room");
-		break;
-
-	case MKID('DRSC'):
-		readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
 		break;
 
 	case MKID('DSCR'):
