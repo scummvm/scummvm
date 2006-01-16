@@ -1973,7 +1973,11 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 	if (actor == _protagonist) {
 		_vm->_script->wakeUpActorThread(kWaitTypeWalk, actor);
 		if (_vm->_script->_pendingVerb == _vm->_script->getVerbType(kVerbWalkTo)) {
-			actor->_location.toScreenPointUV(testPoint);
+			if (_vm->getGameType() == GType_ITE)
+				actor->_location.toScreenPointUV(testPoint); // it's wrong calculation, but it is used in ITE
+			else
+				actor->_location.toScreenPointXY(testPoint);
+				
 			hitZoneIndex = _vm->_scene->_actionMap->hitTest(testPoint);
 			if (hitZoneIndex != -1) {
 				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
