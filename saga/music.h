@@ -27,7 +27,6 @@
 #define SAGA_MUSIC_H_
 
 #include "sound/audiocd.h"
-#include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 

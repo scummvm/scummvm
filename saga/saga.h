@@ -24,14 +24,10 @@
 #ifndef SAGA_H
 #define SAGA_H
 
-#include "common/stdafx.h"
-#include "common/scummsys.h"
 #include "base/engine.h"
-#include "base/gameDetector.h"
 #include "base/plugins.h"
 
 #include "common/stream.h"
-#include "common/rect.h"
 
 #include "saga/gfx.h"
 #include "saga/list.h"

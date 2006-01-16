@@ -26,7 +26,6 @@
 #ifndef SAGA_ACTOR_H__
 #define SAGA_ACTOR_H__
 
-#include "common/file.h"
 #include "common/savefile.h"
 
 #include "saga/sprite.h"

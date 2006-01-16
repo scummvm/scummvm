@@ -26,7 +26,6 @@
 #ifndef SAGA_RSCFILE_H__
 #define SAGA_RSCFILE_H__
 
-#include "backends/fs/fs.h"
 #include "common/file.h"
 
 namespace Saga {
