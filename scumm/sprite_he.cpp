@@ -43,7 +43,7 @@ void ScummEngine_v90he::allocateArrays() {
 
 void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound) {
 	checkRange(_varNumSprites, 1, spriteId, "Invalid sprite %d");
-	int16 spr_wiz_x, spr_wiz_y;
+	int32 spr_wiz_x, spr_wiz_y;
 	int angle, scale, x1, y1;
 	int32 w, h;
 
@@ -157,7 +157,7 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 
 			image = spi->curImage;
 			if (spi->maskImage) {
-				int16 x1, x2, y1, y2;
+				int32 x1, x2, y1, y2;
 
 				imageState = spi->curImageState % _vm->_wiz->getWizImageStates(spi->maskImage);
 
@@ -1233,7 +1233,7 @@ void Sprite::sortActiveSprites() {
 
 void Sprite::processImages(bool arg) {
 	int spr_flags;
-	int16 spr_wiz_x, spr_wiz_y;
+	int32 spr_wiz_x, spr_wiz_y;
 	int image, imageState;
 	Common::Rect *bboxPtr;
 	int angle, scale;

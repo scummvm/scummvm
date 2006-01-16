@@ -1682,7 +1682,7 @@ void ScummEngine_v90he::o90_getWizData() {
 	byte filename[4096];
 	int state, resId;
 	int32 w, h;
-	int16 x, y;
+	int32 x, y;
 
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
@@ -2621,7 +2621,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_wiz->_rectOverrideEnabled = false;
 		break;
 	case 714:
-		debug(0, "o90_kernelSetFunctions: case 714: type %d resId %d unk1 %d", args[1], args[2], args[3]);
+		debug(5, "o90_kernelSetFunctions: case 714: type %d resId %d unk1 %d", args[1], args[2], args[3]);
 		break;
 	case 1492:
 		// Remote start script function

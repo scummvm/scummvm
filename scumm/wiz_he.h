@@ -175,7 +175,7 @@ public:
 
 	void flushWizBuffer();
 
-	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
+	void loadImgSpot(int resId, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId);
 
 	void displayWizComplexImage(const WizParameters *params);

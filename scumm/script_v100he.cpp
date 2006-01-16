@@ -1681,7 +1681,7 @@ void ScummEngine_v100he::o100_startSound() {
 		debug(0,"o100_startSound: case 83 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 92:
-		debug(0, "o100_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+		debug(0, "o100_startSound: case 92 (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		break;
 	case 128:
@@ -2441,7 +2441,7 @@ void ScummEngine_v100he::o100_getWizData() {
 	byte filename[4096];
 	int resId, state, type;
 	int32 w, h;
-	int16 x, y;
+	int32 x, y;
 
 	byte subOp = fetchScriptByte();
 	subOp -= 20;

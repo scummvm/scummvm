@@ -1355,13 +1355,13 @@ void Wiz::flushWizBuffer() {
 	_imagesNum = 0;
 }
 
-void Wiz::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
+void Wiz::loadImgSpot(int resId, int state, int32 &x, int32 &y) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
 	assert(dataPtr);
 	uint8 *spotPtr = _vm->findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
 	if (spotPtr) {
-		x = (int16)READ_LE_UINT32(spotPtr + 0);
-		y = (int16)READ_LE_UINT32(spotPtr + 4);
+		x = READ_LE_UINT32(spotPtr + 0);
+		y = READ_LE_UINT32(spotPtr + 4);
 	} else {
 		x = 0;
 		y = 0;
@@ -1369,7 +1369,7 @@ void Wiz::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
 }
 
 void Wiz::loadWizCursor(int resId) {
-	int16 x, y;
+	int32 x, y;
 	loadImgSpot(resId, 0, x, y);
 	if (x < 0) {
 		x = 0;
@@ -1733,7 +1733,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
 
-	debug(0, "processWizImage: processMode %d", params->processMode);
+	debug(5, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo

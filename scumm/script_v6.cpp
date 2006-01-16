@@ -2260,7 +2260,7 @@ void ScummEngine_v6::o6_soundKludge() {
 void ScummEngine_v6::o6_isAnyOf() {
 	int list[100];
 	int num;
-	int16 val;
+	int32 val;
 
 	num = getStackList(list, ARRAYSIZE(list));
 	val = pop();
