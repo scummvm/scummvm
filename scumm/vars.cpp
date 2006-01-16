@@ -215,8 +215,8 @@ void ScummEngine_v70he::setupScummVars() {
 	VAR_MUSIC_TIMER = 0xFF;
 
 	VAR_NUM_SOUND_CHANNELS = 9;
-	VAR_SOUND_CHANNEL = 10;
-	VAR_MUSIC_CHANNEL = 14;
+	VAR_TALK_CHANNEL = 10;
+	VAR_SOUND_CHANNEL = 14;
 }
 
 void ScummEngine_v72he::setupScummVars() {
@@ -267,8 +267,8 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_CHARINC = 48;
 	VAR_TALK_ACTOR = 49;
 	VAR_LAST_SOUND = 50;
-	VAR_SOUND_CHANNEL = 51;
-	VAR_MUSIC_CHANNEL = 52;
+	VAR_TALK_CHANNEL = 51;
+	VAR_SOUND_CHANNEL = 52;
 
 	VAR_MEMORY_PERFORMANCE = 57;
 	VAR_VIDEO_PERFORMANCE = 58;
@@ -313,7 +313,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_U32_VERSION = 107;
 		VAR_U32_ARRAY_UNK = 116;
 		VAR_WIZ_TCOLOR = 117;
-		VAR_DEFAULT_SOUND_CHANNEL = 120;
+		VAR_RESERVED_SOUND_CHANNELS = 120;
 	}
 	if (_heversion >= 98) {
 		VAR_SKIP_RESET_TALK_ACTOR = 125;
@@ -580,8 +580,8 @@ void ScummEngine_v70he::initScummVars() {
 		VAR(VAR_MACHINE_SPEED) = 13;
 
 	VAR(VAR_NUM_SOUND_CHANNELS) = 8;
-	VAR(VAR_MUSIC_CHANNEL) = 1;
-	VAR(VAR_SOUND_CHANNEL) = 2;
+	VAR(VAR_SOUND_CHANNEL) = 1;
+	VAR(VAR_TALK_CHANNEL) = 2;
 }
 
 void ScummEngine_v72he::initScummVars() {

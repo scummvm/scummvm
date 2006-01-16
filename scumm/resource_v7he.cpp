@@ -1803,4 +1803,120 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 	return size;
 }
 
+void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
+	debug(0, "createSound: snd1id %d snd2id %d", snd1id, snd2id);
+
+	byte *snd1Ptr, *snd2Ptr;
+	byte *sbng1Ptr, *sbng2Ptr;
+	byte *sdat1Ptr, *sdat2Ptr;
+	byte *src, *dst, *tmp;
+	int len, offs, size;
+	int sdat1size, sdat2size;
+
+	if (snd2id == -1) {
+		_sndPtrOffs = 0;
+		_sndTmrOffs = 0;
+		return;
+	}
+
+	if (snd1id != _curSndId) {
+		_curSndId = snd1id;
+		_sndPtrOffs = 0;
+		_sndTmrOffs = 0;
+	}
+
+	snd1Ptr = getResourceAddress(rtSound, snd1id);
+	assert(snd1Ptr);
+	snd2Ptr = getResourceAddress(rtSound, snd2id);
+	assert(snd2Ptr);
+
+	int i;
+	int chan = -1;
+	for (i = 0; i < ARRAYSIZE(_sound->_heChannel); i++) {
+		if (_sound->_heChannel[i].sound == snd1id)
+			chan =  i;
+	}
+
+	sbng1Ptr = heFindResource(MKID('SBNG'), snd1Ptr);
+	sbng2Ptr = heFindResource(MKID('SBNG'), snd2Ptr);
+
+	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
+		if (chan != -1 && _sound->_heChannel[chan].codeOffs > 0) {
+			int curOffs = _sound->_heChannel[chan].codeOffs;
+
+			src = snd1Ptr + curOffs;
+			dst = sbng1Ptr + 8;
+			size = READ_BE_UINT32(sbng1Ptr + 4);
+			len = sbng1Ptr - snd1Ptr + size - curOffs;
+
+			byte *data = (byte *)malloc(len);
+			memcpy(data, src, len);
+			memcpy(dst, data, len);
+			free(data);
+
+			dst = sbng1Ptr + 8;
+			while ((size = READ_LE_UINT16(dst)) != 0)
+				dst += size;
+		} else {
+			dst = sbng1Ptr + 8;
+		}
+
+		_sound->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
+
+		tmp = sbng2Ptr + 8;
+		while ((offs = READ_LE_UINT16(tmp)) != 0) {
+			tmp += offs;
+		}
+
+		src = sbng2Ptr + 8;
+		len = tmp - sbng2Ptr - 6;
+		memcpy(dst, src, len);
+
+		int32 time;
+		while ((size = READ_LE_UINT16(dst)) != 0) {
+			time = READ_LE_UINT32(dst + 2);
+			time += _sndTmrOffs;
+			WRITE_LE_UINT32(dst + 2, time);
+			dst += size;
+		}
+	}
+
+	sdat1Ptr = heFindResource(MKID('SDAT'), snd1Ptr);
+	assert(sdat1Ptr);
+	sdat2Ptr = heFindResource(MKID('SDAT'), snd2Ptr);
+	assert(sdat2Ptr);
+
+	sdat1size = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndPtrOffs;
+	sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
+
+	debug(0, "SDAT size1 %d size2 %d", sdat1size, sdat2size);
+	if (sdat2size < sdat1size) {
+		src = sdat2Ptr + 8;
+		dst = sdat1Ptr + 8 + _sndPtrOffs;
+		len = sdat2size;
+		
+		memcpy(dst, src, len);
+
+		_sndPtrOffs += sdat2size;
+		_sndTmrOffs += sdat2size;
+	} else {
+		src = sdat2Ptr + 8;
+		dst = sdat1Ptr + 8 + _sndPtrOffs;
+		len = sdat1size;
+		
+		memcpy(dst, src, len);
+
+		if (sdat2size != sdat1size) {
+			src = sdat2Ptr + 8 + sdat1size;
+			dst = sdat1Ptr + 8;
+			len = sdat2size - sdat1size;
+		
+			memcpy(dst, src, len);
+		}
+
+		_sndPtrOffs = sdat2size - sdat1size;
+		_sndTmrOffs += sdat2size;
+	}
+}
+
 } // End of namespace Scumm

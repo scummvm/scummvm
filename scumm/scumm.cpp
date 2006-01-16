@@ -1346,10 +1346,10 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_REDRAW_ALL_ACTORS = 0xFF;
 	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
 
-	VAR_MUSIC_CHANNEL = 0xFF;
 	VAR_SOUND_CHANNEL = 0xFF;
+	VAR_TALK_CHANNEL = 0xFF;
 	VAR_SOUNDCODE_TMR = 0xFF;
-	VAR_DEFAULT_SOUND_CHANNEL = 0xFF;
+	VAR_RESERVED_SOUND_CHANNELS = 0xFF;
 
 	VAR_MAIN_SCRIPT = 0xFF;
 
@@ -1619,7 +1619,10 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 
 ScummEngine_v80he::ScummEngine_v80he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v72he(detector, syst, gs, md5sum, substResFileNameIndex) {
-	_heSBNGId = 0;
+	_heSndResId = 0;
+	_curSndId = 0;
+	_sndPtrOffs = 0;
+	_sndTmrOffs = 0;
 }
 
 ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)

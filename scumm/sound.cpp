@@ -111,7 +111,7 @@ void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags
 	if (_vm->_heversion >= 60 && _soundQue2Pos) {
 		int i = _soundQue2Pos;
 		while (i--) {
-			if (_soundQue2[i].sound == sound)
+			if (_soundQue2[i].sound == sound && !(heFlags & 2))
 				return;
 		}
 	}
@@ -696,7 +696,6 @@ bool Sound::isMouthSyncOff(uint pos) {
 	} while (pos > j);
 	return val;
 }
-
 
 int Sound::isSoundRunning(int sound) const {
 #ifndef DISABLE_SCUMM_7_8
