@@ -463,6 +463,16 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		_fileHandle->read(_heV7DiskOffsets, i);
 		break;
 
+	case MKID('SVER'):
+		_fileHandle->seek(itemsize - 8, SEEK_CUR);
+		debug(0, "SVER index block not yet handled, skipping");
+		break;
+
+	case MKID('INIB'):
+		_fileHandle->seek(itemsize - 8, SEEK_CUR);
+		debug(2, "INIB index block not yet handled, skipping");
+		break;
+
 	default:
 		ScummEngine::readIndexBlock(blocktype, itemsize);
 	}
@@ -512,16 +522,6 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID('DIRT'):
 		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
-		break;
-
-	case MKID('SVER'):
-		_fileHandle->seek(itemsize - 8, SEEK_CUR);
-		debug(0, "SVER index block not yet handled, skipping");
-		break;
-
-	case MKID('INIB'):
-		_fileHandle->seek(itemsize - 8, SEEK_CUR);
-		debug(2, "INIB index block not yet handled, skipping");
 		break;
 
 	case MKID('DIRI'):
