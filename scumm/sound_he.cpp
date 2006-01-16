@@ -107,7 +107,7 @@ int Sound::getSoundVar(int sound, int var) {
 	}
 
 	if (chan != -1) {
-		debug(0, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
+		debug(1, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
 		return 0;
@@ -124,7 +124,7 @@ void Sound::setSoundVar(int sound, int var, int val) {
 	}
 
 	if (chan != -1) {
-		debug(0, "setSoundVar: sound %d var %d val %d", sound, var, val);
+		debug(1, "setSoundVar: sound %d var %d val %d", sound, var, val);
 		_heChannel[chan].soundVars[var] = val;
 	}
 }
@@ -220,7 +220,7 @@ void Sound::processSoundCode() {
 				break;
 			}
 
-			debug(1, "Channel %d Timer %d Time %d", chan,tmr, time);
+			debug(1, "Channel %d Timer %d Time %d", chan, tmr, time);
 			if (time >= tmr)
 				break;
 
@@ -263,14 +263,18 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 		case 48: // Add
 			var = READ_LE_UINT16(codePtr); codePtr += 2;;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;;
-
+			if (edi == 2) {
+				val = getSoundVar(sound, val);
+			}
 			val = getSoundVar(sound, var) + val;
 			setSoundVar(sound, var, val);
 			break;
 		case 56: // Subtract
 			var = READ_LE_UINT16(codePtr); codePtr += 2;;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;;
-
+			if (edi == 2) {
+				val = getSoundVar(sound, val);
+			}
 			val = getSoundVar(sound, var) - val;
 			setSoundVar(sound, var, val);
 			break;
@@ -280,7 +284,6 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			if (edi == 2) {
 				val = getSoundVar(sound, val);
 			}
-
 			val = getSoundVar(sound, var) * val;
 			setSoundVar(sound, var, val);
 			break;
@@ -322,12 +325,12 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 	debug(0,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 
-	if (soundID > _vm->_numSounds) {
-		if (soundID >= 10000) {
-			// Special codes, used in pjgames
-			return;
-		}
+	if (soundID >= 10000) {
+		// Special codes, used in pjgames
+		return;
+	}
 
+	if (soundID > _vm->_numSounds) {
 		int music_offs;
 		char buf[32], buf1[128];
 		Common::File musicFile;
