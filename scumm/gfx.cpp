@@ -1622,16 +1622,23 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	// in decompressBitmap call drawStripHE()
 	_decomp_shr = code % 10;
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
-	code /= 10;
 		
 	switch (code) {
-	case 13:	
+	case 134:
+	case 135:
+	case 136:
+	case 137:
+	case 138:
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
-	case 14:
+	case 144:
+	case 145:
+	case 146:
+	case 147:
+	case 148:
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, true);
 		break;
-	case 15:
+	case 150:
 		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h);
 		break;
 	default:
@@ -1775,144 +1782,136 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 		return false;
 	}
 
-	byte code = *src++;
-	bool transpStrip = false;
-	
 	if ((_vm->_platform == Common::kPlatformAmiga) && (_vm->_version >= 4))
 		_paletteMod = 16;
 	else
 		_paletteMod = 0;
 
-	if (code <= 10) {
-		switch (code) {
-		case 1:
-			drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
-			break;
+	byte code = *src++;
+	bool transpStrip = false;
+	_decomp_shr = code % 10;
+	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 	
-		case 2:
-			unkDecode8(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
-			break;
-	
-		case 3:
-			unkDecode9(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
-			break;
-	
-		case 4:
-			unkDecode10(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
-			break;
-	
-		case 7:
-			unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
-			break;
-	
-		case 8:
-			// Used in 3DO versions of HE games
-			transpStrip = true;
-			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
-			break;
-	
-		case 9:
-			drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
-			break;
-	
-		case 10:
-			// Used in Amiga version of Monkey Island 1
-			drawStripEGA(dst, dstPitch, src, numLinesToProcess);
-			break;
+	switch (code) {
+	case 1:
+		drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
+		break;
 
-		default:
-			error("Gdi::decompressBitmap: default case %d", code);
-		}
-	} else {
-		_decomp_shr = code % 10;
-		_decomp_mask = 0xFF >> (8 - _decomp_shr);
-		
-		switch (code) {
-		case 14:
-		case 15:
-		case 16:
-		case 17:
-		case 18:
-			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
-			break;
-	
-		case 24:
-		case 25:
-		case 26:
-		case 27:
-		case 28:
-			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
-			break;
-	
-		case 34:
-		case 35:
-		case 36:
-		case 37:
-		case 38:
-			transpStrip = true;
-			drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
-			break;
-	
-		case 44:
-		case 45:
-		case 46:
-		case 47:
-		case 48:
-			transpStrip = true;
-			drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
-			break;
-	
-		case 64:
-		case 65:
-		case 66:
-		case 67:
-		case 68:
-		case 104:
-		case 105:
-		case 106:
-		case 107:
-		case 108:
-			drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
-			break;
-	
-		case 84:
-		case 85:
-		case 86:
-		case 87:
-		case 88:
-		case 124:
-		case 125:
-		case 126:
-		case 127:
-		case 128:
-			transpStrip = true;
-			drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
-			break;
-	
-		case 134:
-		case 135:
-		case 136:
-		case 137:
-		case 138:
-			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
-			break;
-	
-		case 144:
-		case 145:
-		case 146:
-		case 147:
-		case 148:
-			transpStrip = true;
-			drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
-			break;
+	case 2:
+		unkDecode8(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+		break;
 
-		case 149:
-			drawStripRaw(dst, dstPitch, src, numLinesToProcess, true);
-			break;
+	case 3:
+		unkDecode9(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
+		break;
 
-		default:
-			error("Gdi::decompressBitmap: default case %d", code);
-		}
+	case 4:
+		unkDecode10(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+		break;
+
+	case 7:
+		unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
+		break;
+
+	case 8:
+		// Used in 3DO versions of HE games
+		transpStrip = true;
+		drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
+		break;
+
+	case 9:
+		drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
+		break;
+
+	case 10:
+		// Used in Amiga version of Monkey Island 1
+		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
+		break;
+
+	case 14:
+	case 15:
+	case 16:
+	case 17:
+	case 18:
+		drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
+		break;
+
+	case 24:
+	case 25:
+	case 26:
+	case 27:
+	case 28:
+		drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
+		break;
+
+	case 34:
+	case 35:
+	case 36:
+	case 37:
+	case 38:
+		transpStrip = true;
+		drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
+		break;
+
+	case 44:
+	case 45:
+	case 46:
+	case 47:
+	case 48:
+		transpStrip = true;
+		drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
+		break;
+
+	case 64:
+	case 65:
+	case 66:
+	case 67:
+	case 68:
+	case 104:
+	case 105:
+	case 106:
+	case 107:
+	case 108:
+		drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
+		break;
+
+	case 84:
+	case 85:
+	case 86:
+	case 87:
+	case 88:
+	case 124:
+	case 125:
+	case 126:
+	case 127:
+	case 128:
+		transpStrip = true;
+		drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
+		break;
+
+	case 134:
+	case 135:
+	case 136:
+	case 137:
+	case 138:
+		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
+		break;
+
+	case 144:
+	case 145:
+	case 146:
+	case 147:
+	case 148:
+		transpStrip = true;
+		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
+		break;
+
+	case 149:
+		drawStripRaw(dst, dstPitch, src, numLinesToProcess, true);
+		break;
+
+	default:
+		error("Gdi::decompressBitmap: default case %d", code);
 	}
 	
 	return transpStrip;
