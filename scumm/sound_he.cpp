@@ -293,7 +293,6 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			if (edi == 2) {
 				val = getSoundVar(sound, val);
 			}
-
 			val = getSoundVar(sound, var) / val;
 			setSoundVar(sound, var, val);
 			break;
