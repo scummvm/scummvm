@@ -330,7 +330,7 @@ static const ScummGameSettings scumm_settings[] = {
 	{"baseball2001", "Backyard Baseball 2001", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
 	{"SoccerMLS", "Backyard Soccer MLS Edition", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version ?
 	{"basketball", "Backyard Basketball", GID_HEGAME, 6, 100, MDT_NONE,
