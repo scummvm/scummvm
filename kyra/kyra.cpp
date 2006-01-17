@@ -606,6 +606,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
+				_animator->_updateScreen = true;
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
