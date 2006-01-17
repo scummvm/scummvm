@@ -1185,9 +1185,8 @@ void ScummEngine_v6::o6_walkActorToObj() {
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (_gameId == GID_SAMNMAX && a2 == 0) {
-			// FIXME: This is a hack to work around bug #742676 SAM: Fish Farm.
-			// Note quite sure why it happens, though, if it's normal or due to
-			// a bug in the ScummVM code.
+			// WORKAROUND bug #742676 SAM: Fish Farm. Note quite sure why it
+			// happens, whether it's normal or due to a bug in the ScummVM code.
 			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
 			return;
 		}
@@ -1267,9 +1266,9 @@ void ScummEngine_v6::o6_animateActor() {
 	int act = pop();
 	if (_gameId == GID_TENTACLE && _roomResource == 57 &&
 		vm.slot[_currentScript].number == 19 && act == 593) {
-		// FIXME: This very odd case (animateActor(593,250)) occurs in DOTT, in the
-		// cutscene after George cuts down the "cherry tree" and the tree Laverne
-		// is trapped in vanishes... see bug #743363.
+		// WORKAROUND bug #743363: This very odd case (animateActor(593,250))
+		// occurs in DOTT, in the cutscene after George cuts down the "cherry
+		// tree" and the tree Laverne is trapped in vanishes...
 		// Not sure if this means animateActor somehow also must work for objects
 		// (593 is the time machine in room 57), or if this is simply a script bug.
 		act = 6;
@@ -1321,7 +1320,7 @@ void ScummEngine_v6::o6_pickupObject() {
 	putState(obj, 1);
 	markObjectRectAsDirty(obj);
 	clearDrawObjectQueue();
-	runInventoryScript(obj);									/* Difference */
+	runInventoryScript(obj);
 }
 
 void ScummEngine_v6::o6_loadRoomWithEgo() {
@@ -3048,7 +3047,8 @@ void ScummEngine_v6::o6_getDateTime() {
 }
 
 void ScummEngine_v6::o6_getPixel() {
-	// this opcode check ground area in minigame "Asteroid Lander" in the dig
+	// This opcode is used to check fir ground area in the "Asteroid Lander"
+	// minigame in "The Dig"
 	int x, y;
 
 	if (_heversion == 61) {
