@@ -308,6 +308,9 @@ int SkyEngine::init(GameDetector &detector) {
 	if (!_mixer->isReady())
 		warning("Sound initialisation failed");
 
+	if (ConfMan.getBool("sfx_mute")) {
+		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
+	}
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	 _mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_floppyIntro = ConfMan.getBool("alt_intro");
@@ -330,7 +333,6 @@ int SkyEngine::init(GameDetector &detector) {
 	}
 
 	if (isCDVersion()) {
-		_systemVars.systemFlags |= SF_ALLOW_SPEECH;
 		if (ConfMan.hasKey("nosubtitles")) {
 			warning("Configuration key 'nosubtitles' is deprecated. Use 'subtitles' instead");
 			if (!ConfMan.getBool("nosubtitles"))
@@ -339,6 +341,10 @@ int SkyEngine::init(GameDetector &detector) {
 
 		if (ConfMan.getBool("subtitles"))
 			_systemVars.systemFlags |= SF_ALLOW_TEXT;
+
+		if (!ConfMan.getBool("speech_mute"))
+			_systemVars.systemFlags |= SF_ALLOW_SPEECH;
+
 	} else
 		_systemVars.systemFlags |= SF_ALLOW_TEXT;
 
