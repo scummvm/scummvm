@@ -302,6 +302,7 @@ void ScummEngine_v72he::setupScummVars() {
 		VAR_SOUNDCODE_TMR = 84;
 		VAR_KEY_STATE = 86;
 		VAR_NUM_SOUND_CHANNELS = 88;
+		VAR_COLOR_DEPTH = 89;
 		VAR_REDRAW_ALL_ACTORS = 95;
 	if (_heversion >= 90) {
 		VAR_SCRIPT_CYCLE = 103;
@@ -603,6 +604,7 @@ void ScummEngine_v80he::initScummVars() {
 
 	VAR(VAR_PLATFORM) = 1;
 	VAR(VAR_WINDOWS_VERSION) = 40;
+	VAR(VAR_COLOR_DEPTH) = 256;
 }
 
 void ScummEngine_v90he::initScummVars() {
@@ -615,8 +617,8 @@ void ScummEngine_v90he::initScummVars() {
 		VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
 		VAR(VAR_NUM_SPRITES) = _numSprites - 1;
 		VAR(VAR_WIZ_TCOLOR) = 5;
+		VAR(VAR_RESERVED_SOUND_CHANNELS) = 9;
 	}
-
 	if (_heversion >= 98) {
 		VAR(VAR_U32_VERSION) = _logicHE->versionID();
 		VAR(VAR_U32_ARRAY_UNK) = 0;

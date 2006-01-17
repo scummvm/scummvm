@@ -1614,6 +1614,7 @@ ScummEngine_v72he::ScummEngine_v72he(GameDetector *detector, OSystem *syst, cons
 	VAR_PLATFORM = 0xFF;
 	VAR_WINDOWS_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
+	VAR_COLOR_DEPTH = 0xFF;
 	VAR_U32_VERSION = 0xFF;
 }
 
