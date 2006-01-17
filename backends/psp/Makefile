@@ -4,7 +4,6 @@
 #control build
 DISABLE_SCALERS = true
 DISABLE_HQ_SCALERS = true
-DISABLE_KYRA = true
 
 srcdir = ../..
 VPATH = $(srcdir)
