@@ -295,11 +295,6 @@ void Draw::blitCursor(void) {
 		return;
 
 	_cursorIndex = -1;
-	if (_cursorX + _cursorWidth > 320)
-		_cursorWidth = 320 - _cursorX;
-
-	if (_cursorY + _cursorHeight > 200)
-		_cursorHeight = 200 - _cursorY;
 
 	if (_noInvalidated) {
 		_vm->_video->drawSprite(_backSurface, _frontSurface,
