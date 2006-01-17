@@ -626,8 +626,8 @@ void ScummEngine_v90he::initScummVars() {
 		VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
 		VAR(VAR_NUM_SPRITES) = _numSprites - 1;
 		VAR(VAR_WIZ_TCOLOR) = 5;
+		VAR(VAR_RESERVED_SOUND_CHANNELS) = 9;
 	}
-
 	if (_heversion >= 98) {
 		VAR(VAR_U32_VERSION) = _logicHE->versionID();
 		VAR(VAR_U32_ARRAY_UNK) = 0;
