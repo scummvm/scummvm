@@ -586,10 +586,10 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"59d5cfcc5e672a6e07baae01328b918b", "Putt-Putt Travels Through Time (French Demo)", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // TEMPDEMO
+	{"fbb697d89d2beca87360a145f467bdae", "Putt-Putt Travels Through Time (Updated German Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ZEITDEMO
 	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"fbb697d89d2beca87360a145f467bdae", "Putt-Putt Travels Through Time (Updated German Demo)", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ZEITDEMO
 
 	{"d7b247c26bf1f01f8f7daf142be84de3", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
