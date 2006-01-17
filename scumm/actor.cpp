@@ -1316,22 +1316,20 @@ int ScummEngine::getActorFromPos(int x, int y) {
 
 #ifndef DISABLE_HE
 int ScummEngine_v70he::getActorFromPos(int x, int y) {
-	int i;
-	int result = 0;
+	int curActor, i;
 
 	if (!testGfxAnyUsageBits(x / 8))
 		return 0;
 
+	curActor = 0;
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]._top && y <= _actors[i]._bottom && _actors[i]._pos.y > _actors[result]._pos.y) {
-			if (_version > 2 || i != VAR(VAR_EGO)) {
-				result = i;
-			}
-		}
+			&& y >= _actors[i]._top && y <= _actors[i]._bottom
+			&& (_actors[i]._pos.y > _actors[curActor]._pos.y || curActor == 0)) 
+				curActor = i;
 	}
 
-	return result;
+	return curActor;
 }
 #endif
 
