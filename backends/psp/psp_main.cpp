@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2005 The ScummVM project
+ * Copyright (C) 2005-2006 The ScummVM project
  * Copyright (C) 2005 Joost Peters PSP Backend
  * Copyright (C) 2005 Thomas Mayer PSP Backend
  * Copyright (C) 2005 Paolo Costabel PSP Backend

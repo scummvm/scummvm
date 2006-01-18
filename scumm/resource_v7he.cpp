@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2004-2005 The ScummVM project
+ * Copyright (C) 2004-2006 The ScummVM project
  *
  * Parts of code heavily based on:
  * icoutils - A set of programs dealing with MS Windows icons and cursors.

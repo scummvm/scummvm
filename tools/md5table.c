@@ -1,5 +1,5 @@
 /* md5table - Convert a MD5 table to either PHP or C++ code
- * Copyright (C) 2003-2005 The ScummVM Team
+ * Copyright (C) 2003-2006 The ScummVM Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

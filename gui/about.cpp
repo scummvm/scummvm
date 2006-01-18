@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2005 The ScummVM project
+ * Copyright (C) 2002-2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,7 @@ enum {
 // an amount by which that line shall be indented (the indent of course would have
 // to be considered while performing any word wrapping, too).
 static const char *credits_intro[] = {
-"\\C""Copyright (C) 2002-2005 The ScummVM project",
+"\\C""Copyright (C) 2002-2006 The ScummVM project",
 "\\C""http://www.scummvm.org",
 "\\C""",
 "\\C""LucasArts SCUMM Games (C) LucasArts",
