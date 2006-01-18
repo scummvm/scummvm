@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2005 The ScummVM project
+ * Copyright (C) 2001-2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -501,13 +501,15 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"31b8fda4c8c7413fa6b39997e776eba4", "Loom (FM-TOWNS Jp)", GID_LOOM, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"3905799e081b80a61d4460b7b733c206", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
 	{"81bbfa181184cb494e7a81dcfa94fbd9", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
+	{"257f8c14d8c584f7ddd601bcb00920c7", "Maniac Mansion (NES G)", GID_MANIAC, 1, 0, MDT_NONE,
+	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
 	{"22d07d6c386c9c25aca5dac2a0c0d94b", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
-	{"3905799e081b80a61d4460b7b733c206", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
 	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "Maniac Mansion (v1)", GID_MANIAC, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
@@ -711,6 +713,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (U).prg", kGenAsIs },
+	{ "00.LFL", "Maniac Mansion (G).prg", kGenAsIs },
 	{ "00.LFL", "maniac1.d64", kGenAsIs }, // Do not
 	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these

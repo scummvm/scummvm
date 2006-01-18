@@ -74,10 +74,13 @@ public:
 		kROMsetEurope,
 		kROMsetSweden,
 		kROMsetFrance,
+		kROMsetGermany,
 		kROMsetNum
 	};
 
 	struct Resource;
+	struct LFLEntry;
+	struct LFL;
 
 private:
 	Common::MemoryReadStream *_stream;
@@ -87,9 +90,6 @@ private:
 	bool generateIndex();
 	bool generateResource(int res);
 	uint16 extractResource(Common::WriteStream *out, Resource *res);
-
-	uint32 resOffset(Resource *res);
-	uint16 resLength(Resource *res);
 
 	byte fileReadByte();
 	uint16 fileReadUint16LE();
