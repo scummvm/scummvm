@@ -355,7 +355,7 @@ static GameFileDescription ITEMULTICD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
-	{"Inherit the Earth: Quest for the Orb Voices", GAME_VOICEFILE | GAME_SWAPENDIAN},
+	{"Inherit the Earth Voices", GAME_VOICEFILE | GAME_SWAPENDIAN},
 	{"music.rsc", GAME_MUSICFILE}
 };
 
@@ -381,7 +381,7 @@ static GameFileDescription ITEMACCD_GameFiles[] = {
 	{"ite.rsc", GAME_RESOURCEFILE},
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
-	{"Inherit the Earth: Quest for the Orb Voices", GAME_VOICEFILE},
+	{"Inherit the Earth Voices", GAME_VOICEFILE},
 	{"music.rsc", GAME_MUSICFILE}
 };
 
@@ -771,7 +771,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_MACCD,    "adf1f46c1d0589083996a7060c798ad0", "scripts.rsc", false },
 	{ GID_ITE_MACCD,    "1a91cd60169f367ecb6c6e058d899b2f", "music.rsc", false },
 	{ GID_ITE_MACCD,    "95863b89a0916941f6c5e1789843ba14", "sounds.rsc", false },
-	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth: Quest for the Orb Voices", true },
+	{ GID_ITE_MACCD,    "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", true },
 
 	{ GID_ITE_MACCD_G,  "0bd506aa887bfc7965f695c6bd28237d", "ITE Resources.bin", true },
 	{ GID_ITE_MACCD_G,  "af0d7a2588e09ad3ecbc5b474ea238bf", "ITE Scripts.bin", true },
@@ -788,7 +788,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_MULTICD,  "a6433e34b97b15e64fe8214651012db9", "ite.rsc", false },
 	{ GID_ITE_MULTICD,  "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
 	{ GID_ITE_MULTICD,  "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
-	{ GID_ITE_MULTICD,  "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth: Quest for the Orb Voices", true },
+	{ GID_ITE_MULTICD,  "c14c4c995e7a0d3828e3812a494301b7", "Inherit the Earth Voices", true },
 	{ GID_ITE_MULTICD,  "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
 	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
