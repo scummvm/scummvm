@@ -142,17 +142,33 @@ void Sound::processSoundQueues() {
 	int snd, heOffset, heChannel, heFlags;
 	int data[16];
 
-	while (_soundQue2Pos) {
-		_soundQue2Pos--;
-		snd = _soundQue2[_soundQue2Pos].sound;
-		heOffset = _soundQue2[_soundQue2Pos].offset;
-		heChannel = _soundQue2[_soundQue2Pos].channel;
-		heFlags = _soundQue2[_soundQue2Pos].flags;
-		if (snd) {
-			if (_vm->_heversion>= 60)
-				playHESound(snd, heOffset, heChannel, heFlags);
-			else
-				playSound(snd);
+	if (_vm->_heversion >= 72) {
+		for (i = 0; i <_soundQue2Pos; i++) {
+			snd = _soundQue2[i].sound;
+			heOffset = _soundQue2[i].offset;
+			heChannel = _soundQue2[i].channel;
+			heFlags = _soundQue2[i].flags;
+			if (snd) {
+				if (_vm->_heversion>= 60)
+					playHESound(snd, heOffset, heChannel, heFlags);
+				else
+					playSound(snd);
+			}
+		}
+		_soundQue2Pos = 0;
+	} else {
+		while (_soundQue2Pos) {
+			_soundQue2Pos--;
+			snd = _soundQue2[_soundQue2Pos].sound;
+			heOffset = _soundQue2[_soundQue2Pos].offset;
+			heChannel = _soundQue2[_soundQue2Pos].channel;
+			heFlags = _soundQue2[_soundQue2Pos].flags;
+			if (snd) {
+				if (_vm->_heversion>= 60)
+					playHESound(snd, heOffset, heChannel, heFlags);
+				else
+					playSound(snd);
+			}
 		}
 	}
 

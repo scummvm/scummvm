@@ -416,7 +416,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK')) {
 		byte *sndPtr = ptr;
 
-		priority = *(ptr + 18);
+		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 		ptr += 8 + READ_BE_UINT32(ptr + 12);
 
@@ -480,7 +480,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_currentMusic = soundID;
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else {
+	else if (READ_UINT32(ptr) == MKID('MIDI')) {
 		if (_vm->_musicEngine) {
 			_vm->_musicEngine->startSound(soundID);
 		}
