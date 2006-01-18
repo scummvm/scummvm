@@ -250,7 +250,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
-	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_FREDDI2, 6, 80, MDT_NONE,
+	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -399,13 +399,13 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"c8aac5e3e701874e2fa4117896f9e1b1", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Macintosh Demo)", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_FREDDI2, 6, 100, MDT_NONE,
+	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
-	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_FREDDI2, 6, 99, MDT_NONE,
+	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated Russian)", GID_FREDDI2, 6, 100, MDT_NONE,
+	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated Russian)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
-	{"d37c55388294b66e53e7ced3af88fa68", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo Updated)", GID_FREDDI2, 6, 100, MDT_NONE,
+	{"d37c55388294b66e53e7ced3af88fa68", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FFHSDemo
 
 	{"83cedbe26aa8b58988e984e3d34cac8e", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,

@@ -800,7 +800,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 
 	while (1) {
 		chr = src[num++];
-		if ((_gameId == GID_FREDDI2) && (src[num - 1] == '(' && src[num] == 'P' && src[num + 1] == 'U')) {
+		if (_heversion >= 80 && (src[num - 1] == '(' && src[num] == 'P' && src[num + 1] == 'U')) {
 			while (src[num++] != ')');
 			continue;
 		}
