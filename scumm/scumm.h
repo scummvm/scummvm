@@ -235,7 +235,6 @@ enum ScummGameId {
 	GID_PUTTDEMO,
 	GID_FBEAR,
 	GID_FUNPACK,
-	GID_FREDDI2,
 	GID_WATER,
 	GID_PUTTRACE,
 	GID_FUNSHOP,	// Used for all three funshops

@@ -48,8 +48,8 @@ Zak McKracken and the Alien Mindbenders
 	V2 (alt?)	DOS	fr	c4787c3e8b5e2dfda90850ee800af00f	zak	Qvist
 	V2	DOS	de	cdd760228cf1010c2903f37e788ea31c	zak	Max Horn
 	V2 (from 5.25\" floppies)	DOS	de	d06fbe28818fef7bfc45c2cdf0c0849d	zak	Nicolas Sauz&egrave;de, Andrea Petrucci
-	V2	DOS	it	75ba23fff4fd63fa446c02864f2a5a4b	zak	Antti Leimi, Andrea Petrucci
-	V2 (alt?)	DOS	it	1900e501a52fbf55bde6e4196f6d2aa6	zak	Andrea Petrucci
+	V2	DOS	it	1900e501a52fbf55bde6e4196f6d2aa6	zak	Andrea Petrucci
+	V2 (alt?)	DOS	it	75ba23fff4fd63fa446c02864f2a5a4b	zak	Antti Leimi, Andrea Petrucci
 
 	FM-TOWNS	FM-TOWNS	en	2d4536a56e01da4b02eb021e7770afa2	zak
 	FM-TOWNS	FM-TOWNS	jp	1ca86e2cf9aaa2068738a1e5ba477e60	zak	Andrea Petrucci
@@ -68,13 +68,14 @@ Indiana Jones and the Last Crusade
 	EGA (1.3 8/14/89)	DOS	en	6b3ec67da214f558dc5ceaa2acd47453	indy3	tsuteiuQ, Andrea Petrucci
 	EGA (1.3 8/14/89 5.25\")	DOS	en	6508fd55530e6915507e1cc37f7f045d	indy3	Zer02
 	EGA	DOS	fr	66236cd1aec24e1d4aff4c4cc93b7e18	indy3	Andrea Petrucci
+	EGA (1.3 8/25/89)	DOS	fr	89cfc425566003ff74b7dc7b3e6fd469 	indy3	Jorpho
 	EGA	DOS	de	6f6ef668c608c7f534fea6e6d3878dde	indy3	dhewg
 	EGA	DOS	it	d62d248c3df6ec177405e2cb23d923b2	indy3	Andrea Petrucci
-	EGA	DOS	es	ce7fd0c382389a6791fc3e199c117ef4	indy3	abnog
-	EGA (alt?)	DOS	es	86be8ada36371d4fdc35659d0e912a26	indy3	Andrea Petrucci
+	EGA	DOS	es	86be8ada36371d4fdc35659d0e912a26	indy3	Andrea Petrucci
+	EGA (alt?)	DOS	es	ce7fd0c382389a6791fc3e199c117ef4	indy3	abnog
 	EGA	Mac	en	1dd7aa088e09f96d06818aa9a9deabe0	indy3
 
-	VGA	DOS	All	1875b90fade138c9253a8e967007031a	indy3
+	VGA	DOS	en	1875b90fade138c9253a8e967007031a	indy3
 	VGA	DOS	de	399b217b0c8d65d0398076da486363a9	indy3
 	VGA	DOS	it	17b5d5e6af4ae89d62631641d66d5a05	indy3	Andrea Petrucci
 	VGA	DOS	ru	3cce1913a3bc586b51a75c3892ff18dd	indy3
@@ -93,11 +94,12 @@ Loom
 	EGA	Atari	en	a0a7dea72003933b8b3f8b99b9f7ddeb	loom
 	EGA	Atari	fr	0e9b01430e31d9fcd94071d433bbc6bf	loom
 	EGA	Atari	de	c24c490373aeb48fbd54caa8e7ae376d	loom	Andreas Bylund
-	EGA v1.0	DOS	en	28ef68ee3ed76d7e2ee8ee13c15fbd5b	loom
-	EGA v1.0 alternative	DOS	en	73e5ab7dbb9a8061cc6d25df02dbd1e7	loom	Andrea Petrucci
-	EGA (v1.1 16 Mar 90)	DOS	en	37f56ceb13e401a7ac7d9e6b37fecaf7	loom	Kirben, Andrea Petrucci
-	EGA (v1.1 29 Mar 90)	DOS	en	22f4ea88a09da12df9308ba30bcb7d0f	loom	James Grosbeck
+	EGA (1.0)	DOS	en	28ef68ee3ed76d7e2ee8ee13c15fbd5b	loom
+	EGA (1.0 alternative)	DOS	en	73e5ab7dbb9a8061cc6d25df02dbd1e7	loom	Andrea Petrucci
+	EGA (1.1 16 Mar 90)	DOS	en	37f56ceb13e401a7ac7d9e6b37fecaf7	loom	Kirben, Andrea Petrucci
+	EGA (1.1 29 Mar 90)	DOS	en	22f4ea88a09da12df9308ba30bcb7d0f	loom	James Grosbeck
 	EGA	DOS	fr	b886b0a5d909c7158a914e1d7c1c6c65	loom	Andrea Petrucci
+	EGA (1.2 26 Jun 90)	DOS	fr	6f8a22bfa397be1f7ed4b74aba0e397e	loom	Jorpho
 	EGA	DOS	de	fa127d7c4bb47d05bb1c33ddcaa9f767	loom
 	EGA	DOS	hb	187d315f6b5168f68680dfe8c3d76a3e	loom
 	EGA	DOS	it	c3df37df9d3b481b45f75283a9907c47	loom	Andrea Petrucci
@@ -193,8 +195,8 @@ Indiana Jones and the Fate of Atlantis
 	Floppy	DOS	de	1fbebd7b2b692df5297870447a80cfed	atlantis
 	Floppy	DOS	it	8f3758ff98c9c5d78e5d635222cad026	atlantis	Andrea Petrucci
 	Floppy	DOS	es	9bd2a8f72613e715c199246dd511e10f	atlantis	abnog, Andrea Petrucci
-	Floppy	Mac	en	d6dd0646404768a63e963891a96daadd	atlantis	Fingolfin
-	Floppy (alt?)	Mac	en	06b187468113f9ae5a400b148a847fac	atlantis	Lars N sbye Christensen
+	Floppy	Mac	en	06b187468113f9ae5a400b148a847fac	atlantis	Lars N sbye Christensen
+	Floppy (alt?)	Mac	en	d6dd0646404768a63e963891a96daadd	atlantis	Fingolfin
 
 	CD	DOS	en	182344899c2e2998fca0bebcd82aa81a	atlantis
 	CD	Mac	en	1a6e5ae2777a6a33f06ffc0226210934	atlantis	Scott Summers
@@ -231,8 +233,8 @@ Day of the Tentacle
 	Demo (bundle)	Mac	en	2a41b53cf1a90b6e6f26c10cc6041084	tentacle
 
 Sam &amp; Max Hit the Road
-	Floppy	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
-	Floppy (alt?)	DOS	en	3b301b7892f883ce42ab4be6a274fea6	samnmax	Andrea Petrucci
+	Floppy	DOS	en	3b301b7892f883ce42ab4be6a274fea6	samnmax	Andrea Petrucci
+	Floppy (alt?)	DOS	en	a3036878840720fbefa41e6965fa4a0a	samnmax	Andrea Petrucci
 	Floppy	DOS	fr	ef347474f3c7be3b29584eaa133cca05	samnmax	Nicolas Sauz&egrave;de, Andrea Petrucci
 	Floppy	DOS	de	f27b1ba0eadaf2a6617b2b58192d1dbf	samnmax	dhewg, Andrea Petrucci
 	Floppy	DOS	it	b289a2a8cbedbf45786e0b4ad2f510f1	samnmax	Andrea Petrucci
@@ -288,6 +290,7 @@ Backyard Baseball
 
 Backyard Baseball 2001
 	CD	All	en	a86f9c49355579c30d4a55b477c0d869	baseball2001	Kirben
+
 	Demo	All	en	a194f15f51ee62badab74b9e7da97693	baseball2001	khalek, sev
 
 Backyard Baseball 2003
@@ -296,9 +299,9 @@ Backyard Baseball 2003
 Backyard Football
 	CD	All	en	7fc6cdb46b4c9d384c52327f4bca6416	football	sev
 
+	Demo	All	en	2e85f7aa054930c692a5b1bed1dfc295	football	khalek
 	Demo	All	en	425205754fa749f4f0b0dd9d09fa45fd	football	Joachim Eberhard
 	Demo	All	en	5bd335265a61caa3d78956ad9f88ba23	football	sev
-	Demo	All	en	2e85f7aa054930c692a5b1bed1dfc295	football	khalek
 
 Backyard Soccer
 	CD	All	en	701246819d1a70573f41bf33fc19214f	soccer	sev
@@ -354,23 +357,23 @@ Freddi Fish 1: The Case of the Missing Kelp Seeds
 	Demo	Windows	de	cf4ef315214c7d8cdab6302cdb7e50db	freddi	Joachim Eberhard
 
 Freddi Fish 2: The Case of the Haunted Schoolhouse
-	CD	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
 	CD	All	en	51305e929e330e24a75a0351c8f9975e	freddi2	Kirben
+	CD	All	en	8ee63cafb1fe9d62aa0d5a23117e70e7	freddi2	Kirben
 	CD	All	de	fce4b8010704b103acfeea9413788f32	freddi2	Joachim Eberhard
 	CD	Windows	All	5057fb0e99e5aa29df1836329232f101	freddi2	sev
 	CD	Windows	nl	ac62d50e39492ee3738b4e83a5ac780f	freddi2	joostp
 	CD	Windows	en	151071053a1d0021198216713939521d	freddi2	vampir_raziel
 	CD	Windows	ru	e41de1c2a15abbcdbf9977e2d7e8a340	freddi2	sev
 
-	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	freddi2	khalek, sev
 	Demo	All	en	d37c55388294b66e53e7ced3af88fa68	freddi2	khalek
+	Demo	All	en	fc8d197a22146e74766e9cb0cfcaf1da	freddi2	khalek, sev
 
 Freddi Fish 3: The Case of the Stolen Conch Shell
 	CD	All	All	8368f552b1e3eba559f8d559bcc4cadb	freddi3	Kirben, sev
 	CD	All	de	83cedbe26aa8b58988e984e3d34cac8e	freddi3	Joachim Eberhard
 	CD	Windows	nl	0cccfa5223099a60e76cfcca57a1a141	freddi3	adutchguy
-	CD	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 	CD	Windows	ru	75bff95816b84672b877d22a911ab811	freddi3	sev
+	CD	Windows	ru	898ce8eb1234a955ef75e87141902bb3	freddi3	sev
 
 	Demo	All	en	cb1559e8405d17a5a278a6b5ad9338d1	freddi3	khalek, sev
 	Demo	All	fr	bbadf7309c4a2c2763e4bbba3c3be634	freddi3	Kirben
@@ -381,12 +384,12 @@ Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	CD	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
 	CD	Windows	nl	14d48c95b43ddeb983254cf6c43851f1	freddi4	adutchguy
 	CD	Windows	de	b5298a5c15ffbe8b381d51ea4e26d35c	freddi4	Joachim Eberhard
-	CD	Windows	ru	78bd5f036ea35a878b74e4f47941f784	freddi4	sev
 	CD	Windows	ru	07b810e37be7489263f7bc7627d4765d	freddi4	sev
+	CD	Windows	ru	78bd5f036ea35a878b74e4f47941f784	freddi4	sev
 
 	Demo	All	en	7c2e76087027eeee9c8f8985f93a1cc5	freddi4	khalek
-	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	freddi4	sev
 	Demo	All	en	c25755b08a8d0d47695e05f1e2111bfc	freddi4	sev
+	Demo	All	en	ebd324dcf06a4c49e1ba5c231eee1060	freddi4	sev
 	Demo	All	de	688328c5bdc4c8ec4145688dfa077bf2	freddi4	Joachim Eberhard
 	Demo	Windows	nl	16effd200aa6b8abe9c569c3e578814d	freddi4	joostp
 	Demo	Windows	nl	499c958affc394f2a3868f1eb568c3ee	freddi4	adutchguy
@@ -415,8 +418,8 @@ Freddi Fish's One-Stop Fun Shop
 	CD	All	en	16542a7342a918bfe4ba512007d36c47	FreddisFunShop	Kirben
 
 Humongous Interactive Catalog
-	Demo	Windows	en	11e6e244078ff09b0f3832e35420e0a7	catalog	khalek, sev
 	Demo	Windows	en	037385a953789190298494d92b89b3d0	catalog	khalek, sev
+	Demo	Windows	en	11e6e244078ff09b0f3832e35420e0a7	catalog	khalek, sev
 
 Let's Explore the Airport with Buzzy
 	CD	Mac	en	d6334a5a9b61afe18c368540fdf522ca	airport	Joachim Eberhard
@@ -424,8 +427,8 @@ Let's Explore the Airport with Buzzy
 
 	Demo	Mac	en	7ea2da67ebabea4ac20cee9f4f9d2934	airport	khalek
 	Demo	Windows	en	86c9902b7bec1a17926d4dae85beaa45	airport	khalek
-	Demo	Windows	en	e144f5f49d9241d2a9dee2576b3d09cb	airport	khalek
 	Demo	Windows	en	8ffd618a776a4c0d8922bb28b09f8ce8	airport	khalek
+	Demo	Windows	en	e144f5f49d9241d2a9dee2576b3d09cb	airport	khalek
 
 Let's Explore the Farm with Buzzy
 	CD	Mac	en	fbbbb38a81fc9d6a61d509278390a290	farm	khalek
@@ -447,8 +450,8 @@ Pajama Sam 1: No Need to Hide When It's Dark Outside
 	CD	Windows	nl	4fa6870d9bc8c313b65d54b1da5a1891	pajama	joostp
 	CD	Windows	en	898eaa21f79cf8d4f08db856244689ff	pajama	Joachim Eberhard
 
-	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pajama	khalek, sev
 	Demo	All	en	d7ab7cd6105546016e6a0d46fb36b964	pajama	khalek
+	Demo	All	en	f237bf8a5ef9af78b2a6a4f3901da341	pajama	khalek, sev
 	Demo	All	fr	7f945525abcd48015adf1632637a44a1	pajama	Kirben
 	Demo	Windows	nl	0305e850382b812fec6e5998ef88a966	pajama	adutchguy
 
@@ -466,11 +469,11 @@ Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	CD	All	de	2e8a1f76ea33bc5e04347646feee173d	pajama3	Joachim Eberhard
 
 	Demo	All	nl	f08145577e4f13584cc90b3d6e9caa55	pajama3	joostp
+	Demo	All	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
 	Demo	All	en	a9f2f04b1ecaab9495b59befffe9bf88	pajama3	sev
 	Demo	All	de	0c45eb4baff0c12c3d9dfa889c8070ab	pajama3	Joachim Eberhard
-	Demo	Windows	en	a654fb60c3b67d6317a7894ffd9f25c5	pajama3	sev
-	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pajama3	khalek
 	Demo	Windows	en	3e48298920fab9b7aec5a971e1bd1fab	pajama3	eriktorbjorn
+	Demo	Windows	en	cf90b4db5486ef798db78fe6fbf897e5	pajama3	khalek
 
 Pajama Sam: Games to Play On Any Day
 	CD	All	en	8a484262363a8e18be87112454f1456b	pjgames	Kirben
@@ -530,18 +533,18 @@ Putt-Putt Joins the Parade
 Putt-Putt Saves the Zoo
 	CD	All	en	92e7727e67f5cd979d8a1070e4eb8cb3	puttzoo	cyx
 	CD	Mac	en	58fdf4c7ad13540a734e18f8584cad89	puttzoo	khalek
+	CD	Windows	All	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
 	CD	Windows	nl	c3b22fa4654bb580b20325ebf4174841	puttzoo	joostp
-	CD	Windows	en	1005456bfe351c1b679e1ff2dc2849e9	puttzoo	khalek
 
 	Demo	Mac	en	3486ede0f904789267d4bcc5537a46d4	puttzoo	khalek
 	Demo	Mac	de	d220d154aafbfa12bd6f3ab1b2dae420	puttzoo	Joachim Eberhard
-	Demo	Windows	en	f3d55aea441e260e9e9c7d2a187097e0	puttzoo	khalek
 	Demo	Windows	en	de4efb910210736813c9a1185384bace	puttzoo	khalek
+	Demo	Windows	en	f3d55aea441e260e9e9c7d2a187097e0	puttzoo	khalek
 	Demo	Windows	de	2a446817ffcabfef8716e0c456ecaf81	puttzoo	Joachim Eberhard
 
 Putt-Putt Travels Through Time
-	CD	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	CD	All	en	2108d83dcf09f8adb4bc524669c8cf51	PuttTime	Kirben
+	CD	All	en	a525c1753c1db5011c00417da37887ef	PuttTime	Kirben
 	CD	All	de	7c980a1b1596a93f26917318884f48f7	PuttTime	Joachim Eberhard
 	CD	Windows	nl	fcb78ebecab2757264c590890c319cc5	PuttTime	adutchguy
 	CD	Windows	en	63fdcdc95cdeea00060883aed38e5504	PuttTime	iziku
@@ -549,8 +552,8 @@ Putt-Putt Travels Through Time
 	CD	Windows	de	84e3c23a49ded8a6f9197735c8eb3de7	PuttTime	oncer
 	CD	Windows	ru	defb8cb9ec4b0f91acfb6b61c6129ad9	PuttTime	sev
 
-	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
 	Demo	All	en	0ab19be9e2a3f6938226638b2a3744fe	PuttTime	khalek
+	Demo	All	en	4e5867848ee61bc30d157e2c94eee9b4	PuttTime	khalek, sev
 	Demo	All	fr	59d5cfcc5e672a6e07baae01328b918b	PuttTime	Kirben
 	Demo	All	de	fbb697d89d2beca87360a145f467bdae	PuttTime	Joachim Eberhard
 	Demo	Windows	nl	6b19d0e25cbf720d05822379b8b90ed9	PuttTime	adutchguy
@@ -581,19 +584,19 @@ Spy Fox 1: Dry Cereal
 	CD	All	en	3de99ef0523f8ca7958faa3afccd035a	spyfox	Kirben
 	CD	All	en	58436e634f4fae1d9973591c2ffa1fcb	spyfox	Joachim Eberhard
 	CD	All	de	a28135a7ade38cc0208b04507c46efd1	spyfox	nachbarnebenan
+	CD	Windows	All	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	CD	Windows	nl	9bda5fee51d2fda5253d02c642016bf4	spyfox	joostp
-	CD	Windows	en	6bf70eee5de3d24d2403e0dd3d267e8a	spyfox	khalek
 	CD	Windows	ru	72ac6bc980d5101c2142189d746bd62f	spyfox	sev
 
 	Demo	All	en	53e94115b55dd51d4b8ff0871aa1df1e	spyfox	khalek, sev
-	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
 	Demo	All	en	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	spyfox	khalek
+	Demo	All	en	fbdd947d21e8f5bac6d6f7a316af1c5a	spyfox	sev
 	Demo	All	fr	ba888e6831517597859e91aa173f945c	spyfox	Kirben
 	Demo	All	de	73b8197e236da4bf49adc99fe8f5fa1b	spyfox	Joachim Eberhard
 	Demo	Windows	nl	4edbf9d03550f7ba01e7f34d69b678dd	spyfox	Kirben
 
 Spy Fox 2: Some Assembly Required
-	CD	All	en	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
+	CD	All	All	f79e60c17cca601e411f1f75e8ee9b5a	spyfox2	Kirben
 	CD	All	de	bc4700bc0e12879f6d25d14d6be6cfdd	spyfox2	Joachim Eberhard
 	CD	All	ru	cea91e3dd47f2518ea418e41611aa77f	spyfox2	sev
 	CD	Windows	nl	71fe97c3108678cf604f14abe342341b	spyfox2	adutchguy
