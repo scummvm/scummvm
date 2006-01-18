@@ -58,9 +58,9 @@ struct Sword2GameSettings {
 
 static const Sword2GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
-	{"sword2", "Broken Sword 2", GF_DEFAULT_TO_1X_SCALER, "players.clu" },
-	{"sword2alt", "Broken Sword 2 (alt)", GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
-	{"sword2demo", "Broken Sword 2 (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword2::GF_DEMO, "players.clu" },
+	{"sword2", "Broken Sword 2 - The Smoking Mirror", GF_DEFAULT_TO_1X_SCALER, "players.clu" },
+	{"sword2alt", "Broken Sword 2 - The Smoking Mirror (alt)", GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
+	{"sword2demo", "Broken Sword 2 - The Smoking Mirror (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword2::GF_DEMO, "players.clu" },
 	{NULL, NULL, 0, NULL}
 };
 
