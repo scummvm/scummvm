@@ -520,7 +520,7 @@ protected:
 	};
 
 	int _blastObjectQueuePos;
-	BlastObject _blastObjectQueue[128];
+	BlastObject _blastObjectQueue[200];
 
 	struct BlastText {
 		int16 xpos, ypos;
