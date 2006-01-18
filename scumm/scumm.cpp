@@ -2638,13 +2638,13 @@ load_game:
 #pragma mark -
 
 int ScummEngine::getHETimer(int timer) {
-	checkRange(15, 1, timer, "getHETimer: Timer %d out of range(%d)");
+	checkRange(15, 1, timer, "getHETimer: Timer out of range(%d)");
 	int time = _system->getMillis() - _heTimers[timer];
 	return time;
 }
 
 void ScummEngine::setHETimer(int timer) {
-	checkRange(15, 1, timer, "setHETimer: Timer %d out of range(%d)");
+	checkRange(15, 1, timer, "setHETimer: Timer out of range(%d)");
 	_heTimers[timer] = _system->getMillis();
 }
 
