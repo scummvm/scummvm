@@ -848,6 +848,8 @@ protected:
 	void setVerbObject(uint room, uint object, uint verb);
 
 public:
+	bool isValidActor(int id) const;
+
 	/* Should be in Actor class */
 	Actor *derefActor(int id, const char *errmsg = 0) const;
 	Actor *derefActorSafe(int id, const char *errmsg) const;
