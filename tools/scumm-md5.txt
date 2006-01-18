@@ -10,6 +10,7 @@ Maniac Mansion
 	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
 	V1.5 (extracted)	NES	en	17f7296f63c78642724f057fd8e736a7	maniac
 	V1.5 (extracted)	NES	en	91d5db93187fab54d823f73bd6441cb6	maniac
+	V1.5 (extracted)	NES	de	3a5ec90d556d4920976c5578bfbfaf79	maniac
 	V1.5 (extracted)	NES	fr	1c7e7db2cfab1ad62746ab680a634204	maniac
 	V1.5 (extracted)	NES	se	6b5a3fef241e90d4b2e77f1e222773ee	maniac
 
