@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2005 The ScummVM project
+ * Copyright (C) 2001-2006 The ScummVM project
  *
  * YM2612 tone generation code written by Tomoaki Hayasaka.
  * Used under the terms of the GNU General Public License.

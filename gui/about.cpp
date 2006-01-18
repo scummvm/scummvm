@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2005 The ScummVM project
+ * Copyright (C) 2002-2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,7 +49,7 @@ enum {
 // TODO: Add different font sizes (for bigger headlines)
 // TODO: Allow color change in the middle of a line...
 static const char *credits_intro[] = {
-"\\C""Copyright (C) 2002-2005 The ScummVM project",
+"\\C""Copyright (C) 2002-2006 The ScummVM project",
 "\\C""http://www.scummvm.org",
 "\\C""",
 "\\C""LucasArts SCUMM Games (C) LucasArts",

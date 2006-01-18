@@ -1,5 +1,5 @@
 /* ScummVM - Scumm Interpreter
- * Copyright (C) 2001-2005 The ScummVM project
+ * Copyright (C) 2001-2006 The ScummVM project
  * Copyright (C) 2003/2004 DJWillis - GP32 Backend
  * Copyright (C) 2005 Won Star - GP32 Backend
  *

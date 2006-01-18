@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2000 Jezar at Dreampoint
- * Copyright (C) 2004-2005 The ScummVM project
+ * Copyright (C) 2004-2006 The ScummVM project
  *
  * This code is public domain
  *
