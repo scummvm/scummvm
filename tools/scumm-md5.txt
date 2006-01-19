@@ -6,10 +6,12 @@ Maniac Mansion
 	V1.5	NES	en	d8d07efcb88f396bee0b402b10c3b1c9	maniac
 	V1.5	NES	en	3905799e081b80a61d4460b7b733c206	maniac
 	V1.5	NES	fr	81bbfa181184cb494e7a81dcfa94fbd9	maniac
+	V1.5	NES	de	257f8c14d8c584f7ddd601bcb00920c7	maniac
 	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
 	V1.5 (extracted)	NES	en	17f7296f63c78642724f057fd8e736a7	maniac
 	V1.5 (extracted)	NES	en	91d5db93187fab54d823f73bd6441cb6	maniac
 	V1.5 (extracted)	NES	fr	1c7e7db2cfab1ad62746ab680a634204	maniac
+	V1.5 (extracted)	NES	de	3a5ec90d556d4920976c5578bfbfaf79	maniac
 	V1.5 (extracted)	NES	se	6b5a3fef241e90d4b2e77f1e222773ee	maniac
 
 	V2	Amiga	en	e781230da44a44e2f0770edb2b3b3633	maniac	dhewg, Andrea Petrucci
@@ -326,7 +328,7 @@ Blue's ABC Time
 	Demo	All	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
 	Demo	All	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
 
-Fatty Bears Birthday Surprise
+Fatty Bear's Birthday Surprise
 	CD	3DO	en	5b08000a9c47b2887df6506ac767ca68	fbear	sev
 	CD	DOS	en	3824e60cdf639d22f6df92a03dc4b131	fbear	khalek
 	CD	DOS	hb	ef74d9071d4e564b037cb44bd6774de7	fbear	sev
@@ -337,7 +339,7 @@ Fatty Bears Birthday Surprise
 	Demo	Mac	en	6df20c50c1ab19799de9be7ae7716881	fbear	khalek
 	Demo	Windows	en	22c9eb04455440131ffc157aeb8d40a8	fbear	khalek
 
-Fatty Bears Fun Pack
+Fatty Bear's Fun Pack
 	CD	3DO	en	e01acc8c12ef44e8f778fe87e5f90f4e	fbpack	sev
 	CD	DOS	hb	f06e66fd45b2f8b0f4a2833ff4476050	fbpack	sev
 
@@ -382,8 +384,8 @@ Freddi Fish 3: The Case of the Stolen Conch Shell
 
 Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	CD	All	All	4f580a021eee026f3b4589e17d130d78	freddi4	Kirben, sev
+	CD	All	de	b5298a5c15ffbe8b381d51ea4e26d35c	freddi4	Joachim Eberhard
 	CD	Windows	nl	14d48c95b43ddeb983254cf6c43851f1	freddi4	adutchguy
-	CD	Windows	de	b5298a5c15ffbe8b381d51ea4e26d35c	freddi4	Joachim Eberhard
 	CD	Windows	ru	07b810e37be7489263f7bc7627d4765d	freddi4	sev
 	CD	Windows	ru	78bd5f036ea35a878b74e4f47941f784	freddi4	sev
 
