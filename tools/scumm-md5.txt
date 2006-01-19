@@ -5,8 +5,8 @@ Maniac Mansion
 
 	V1.5	NES	en	d8d07efcb88f396bee0b402b10c3b1c9	maniac
 	V1.5	NES	en	3905799e081b80a61d4460b7b733c206	maniac
-	V1.5	NES	de	257f8c14d8c584f7ddd601bcb00920c7	maniac
 	V1.5	NES	fr	81bbfa181184cb494e7a81dcfa94fbd9	maniac
+	V1.5	NES	de	257f8c14d8c584f7ddd601bcb00920c7	maniac
 	V1.5	NES	se	22d07d6c386c9c25aca5dac2a0c0d94b	maniac
 	V1.5 (extracted)	NES	en	17f7296f63c78642724f057fd8e736a7	maniac
 	V1.5 (extracted)	NES	en	91d5db93187fab54d823f73bd6441cb6	maniac
@@ -328,7 +328,7 @@ Blue's ABC Time
 	Demo	All	en	7ddeaf52c8b9a50551ce0aa2ac811d07	BluesABCTimeDemo	khalek, sev
 	Demo	All	en	810a9da887aefa597b0cf3c77d262897	BluesABCTimeDemo	sev
 
-Fatty Bears Birthday Surprise
+Fatty Bear's Birthday Surprise
 	CD	3DO	en	5b08000a9c47b2887df6506ac767ca68	fbear	sev
 	CD	DOS	en	3824e60cdf639d22f6df92a03dc4b131	fbear	khalek
 	CD	DOS	hb	ef74d9071d4e564b037cb44bd6774de7	fbear	sev
@@ -339,7 +339,7 @@ Fatty Bears Birthday Surprise
 	Demo	Mac	en	6df20c50c1ab19799de9be7ae7716881	fbear	khalek
 	Demo	Windows	en	22c9eb04455440131ffc157aeb8d40a8	fbear	khalek
 
-Fatty Bears Fun Pack
+Fatty Bear's Fun Pack
 	CD	3DO	en	e01acc8c12ef44e8f778fe87e5f90f4e	fbpack	sev
 	CD	DOS	hb	f06e66fd45b2f8b0f4a2833ff4476050	fbpack	sev
 
