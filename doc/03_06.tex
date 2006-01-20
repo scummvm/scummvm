@@ -1,14 +1,16 @@
+\subsection{Inherit the Earth notes}
+In order to run MacOS X wyrmkeep rerelease of the game you will need to copy
+over data from the CD to hard drive. If you're on PC then consult
 
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "readme"
-%%% End: 
+\url{http://www.scummvm.org/documentation.php?view=maccd-howto}
 
-\subsection{Known Problems in ScummVM 0.9.0CVS}
+Although it talks about SCUMM games, it describes HFVExplorer utility. Note
+that you will need to put speech data "Inherit the Earth Voices" in same
+directory as game data which is stored in
 
-This release has the following known problems. There is no need to report them,
-although patches to fix them are welcome. If you discover a bug that is not
-listed here, nor in the compatibility table on the web site, please see
-section \ref{sect-reporting-bugs}.
+\begin{verbatim}
+  Inherit the Earth.app/Contents/Resources
+\end{verbatim}
 
-This is a development version. It probably has a LOT of problems. 
+For old Mac OS9 release you will need to copy files in MacBinary format,
+i.e. they should have both resource and data forks. Just copy all 'ITE *' files.

@@ -4,162 +4,38 @@
 %%% TeX-master: "readme"
 %%% End: 
 
-\subsection{Using compressed audiofiles (MP3, Ogg Vorbis, Flac)}
-\label{sect-compressing-audiofiles}
+\subsection{Playing sound with Native MIDI}
+% FIXME: Hardcoding < and > here produces wrong output
+Use the appropriate -e<mode> command line option from the list above to
+select your preferred MIDI device. For example, if you wish to use the
+Windows MIDI driver, use the -ewindows option.
 
-\subsubsection{Using MP3 files for CD audio}
+\subsubsection{Using MIDI options to customize Native MIDI output}
+ScummVM supports a variety of MIDI modes, depending on the capabilities
+of your MIDI device.
 
-Use LAME or some other MP3 encoder to rip the CD audio tracks to files. Name
-the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
-to use this option. You'll need to rip the file from the CD as a WAV file,
-then encode the MP3 files in constant bit rate. This can be done with the 
-following LAME command line:
-\begin{verbatim}
-  lame -t -q 0 -b 96 track1.wav track1.mp3
-\end{verbatim}
+If --native-mt32 is specified, ScummVM will treat your device as a real
+MT-32. Because the instrument mappings and system exclusive commands of
+the MT-32 vary from those of General MIDI devices, you should only
+enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64,
+CM-32L, CM-500, or GS device with an MT-32 map.
 
+If --enable-gs is specified, ScummVM will initialize your GS-compatible
+device with settings that mimic the MT-32's reverb, (lack of) chorus,
+pitch bend sensitivity, etc. If it is specified in conjunction with
+--native-mt32, ScummVM will select the MT-32-compatible map and drumset on
+your GS device. This setting works better than default GM or GS emulation
+with games that do not have custom instrument mappings (Loom and Monkey1).
+You should only specify both settings if you are using a GS device that
+has an MT-32 map, such as an SC-55, SC-88, SC-88 Pro, SC-8820, SC-8850, etc.
+Please note that --enable-gs is automatically disabled in both DOTT and
+Samnmax, since they use General MIDI natively.
 
-\subsubsection{Using Ogg Vorbis files for CD audio}
+If neither of the above settings is enabled, ScummVM will initialize your
+device in General MIDI mode and use GM emulation in games with MT-32
+soundtracks.
 
-Use oggenc or some other vorbis encoder to encode the audio tracks to files.
-Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
-support to use this option. You'll need to rip the files from the CD as a WAV
-file, then encode the vorbis files. This can be done with the following oggenc
-command line with the value after q specifying the desired quality from 0 to 10:
-\begin{verbatim}
-  oggenc -q 5 track1.wav
-\end{verbatim}
+Some games contain sound effects that are exclusive to the Adlib soundtrack.
+For these games, you may wish to specify --multi-midi in order to combine
+MIDI music with Adlib sound effects.
 
-
-\subsubsection{Using Flac files for CD audio}
-Use flac or some other flac encoder to encode the audio tracks to files.
-Name the files track1.flac track2.flac etc. In your filesystem only allows 
-three letter extensions, name the files track1.fla track2.fla etc. 
-ScummVM must be compiled with flac support to use this option. You'll need to 
-rip the files from the CD as a WAV file, then encode the flac files. This can 
-be done with the following flac command line:
-\begin{verbatim}
-  flac --best track1.wav
-\end{verbatim}
-%
-Remember that the quality is always the same, varying encoder options will only
-affect the encoding time and resulting filesize. 
-
-
-\subsubsection{Compressing MONSTER.SOU with MP3}
-
-You need LAME, and our extract util from the scummvm-tools package to perform
-this task, and ScummVM must be compiled with MAD support.
-\begin{verbatim}
-  extract monster.sou
-\end{verbatim}
-%
-Eventually you will have a much smaller monster.so3 file, copy this file
-to your game directory. You can safely remove the monster.sou file.
-
-
-\subsubsection{Compressing MONSTER.SOU with Ogg Vorbis}
-
-As above, but ScummVM must be compiled with OGG support. Run:
-\begin{verbatim}
-  extract --vorbis monster.sou
-\end{verbatim}
-%
-This should produce a smaller monster.sog file, which you should copy to your
-game directory. Ogg encoding may take a considerable longer amount of time
-than MP3, so have a good book handy.
-
-
-\subsubsection{Compressing MONSTER.SOU with Flac}
-
-As above, but ScummVM must be compiled with Flac support. Run:
-\begin{verbatim}
-  extract --flac --best -b 1152 monster.sou
-\end{verbatim}
-%
-This should produce a smaller monster.sof file, which you should copy to your
-game directory. Remember that the quality is always the same, varying encoder
-options will only affect the encoding time and resulting  filesize. Playing
-with the blocksize (-b <value>), has the biggest impact on the resulting
-filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
-to read the encoder documentation before you use other values.
-
-
-\subsubsection{Compressing sfx/speech in Simon the Sorcerer 1 and 2}
-
-Use our simon2mp3 util from the scummvm-tools package to perform this task.
-You can choose between multiple target formats, but note that you can only use
-each if ScummVM was compiled with the respective decoder support enabled.
-
-\begin{tabular}[h]{ll}
-  simon2mp3 effects    &(For Acorn CD version of Simon 1)\\
-  simon2mp3 simon      &(For Acorn CD version of Simon 1)\\
-  simon2mp3 effects.voc&(For DOS CD version of Simon 1)\\
-  simon2mp3 simon.voc  &(For DOS CD version of Simon 1)\\
-  simon2mp3 simon.wav  &(For Windows CD version of Simon 1)\\
-  simon2mp3 simon2.voc &(For DOS CD version of Simon 2)\\
-  simon2mp3 simon2.wav &(For Windows CD version of Simon 2)\\
-  simon2mp3 mac        &(For Macintosh version of Simon 2)\\
-\end{tabular}
-
-For Ogg Vorbis add --vorbis to the options, i.e.
-\begin{verbatim}
-  simon2mp3 --vorbis
-\end{verbatim}
-%
-For Flac add --flac and optional parameters, i.e.
-\begin{verbatim}
-  simon2mp3 --flac --best -b 1152 
-\end{verbatim}
-%
-Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
-file to your game dir. You can safely remove the old file.
-
-\subsubsection{Compressing speech/music in Broken Sword 1}
-
-The sword1mp3 tool from the scummvm-tools package can encode music and speech
-to MP3 as well as Ogg Vorbis.
-Easiest way to encode the files is simply copying the executable into your
-BS1 directory (together with the lame encoder) and run it from there.
-This way, it'll automatically encode everything to MP3.
-Afterwards, you can manually remove the SPEECH?.CLU files and the wave music files.
-
-Running 
-\begin{verbatim}
-  sword1mp3 --vorbis
-\end{verbatim}
-%
-will compress the files using Ogg Vorbis instead of MP3.
-
-Use 
-\begin{verbatim}
-  sword1mp3 --help
-\end{verbatim}
-%
-to get a full list of the options.
-
-\subsubsection{Compressing speech/music in Broken Sword 2}
-
-Use our sword2mp3 util rom the scummvm-tools package to perform this task.
-You can choose between multiple target formats, but note  that you can only use
-each if ScummVM was compiled with the respective decoder support enabled.
-
-\begin{verbatim}
-  sword2mp3 speech1.clu
-  sword2mp3 music1.clu
-\end{verbatim}
-%
-For Ogg Vorbis add --vorbis to the options, i.e.
-\begin{verbatim}
-  sword2mp3 --vorbis
-\end{verbatim}
-%
-Eventually you will have a much smaller *.cl3 or *.clg file, copy this file to
-your game dir. You can safely remove the old file.
-
-It is possible to use Flac compression by adding the --flac option. However,
-the resulting *.clf file will actually be larger than the original.
-
-Please note that sword2mp3 will only work with the four speech/music files in
-Broken Sword 2. It will not work with any of the other *.clu files, nor will it
-work with the speech files from Broken Sword 1.

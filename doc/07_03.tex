@@ -4,38 +4,19 @@
 %%% TeX-master: "readme"
 %%% End: 
 
-\subsection{Playing sound with Native MIDI}
-% FIXME: Hardcoding < and > here produces wrong output
-Use the appropriate -e<mode> command line option from the list above to
-select your preferred MIDI device. For example, if you wish to use the
-Windows MIDI driver, use the -ewindows option.
+\subsection{Playing sound with MT-32 emulation}
 
-\subsubsection{Using MIDI options to customize Native MIDI output}
-ScummVM supports a variety of MIDI modes, depending on the capabilities
-of your MIDI device.
+Some games which contain MIDI music data also have improved tracks designed
+for MT-32 sound module. ScummVM can now emulate this card, however you should
+provide original MT-32 ROMs to make it work.
 
-If --native-mt32 is specified, ScummVM will treat your device as a real
-MT-32. Because the instrument mappings and system exclusive commands of
-the MT-32 vary from those of General MIDI devices, you should only
-enable this option if you are using an actual Roland MT-32, LAPC-I, CM-64,
-CM-32L, CM-500, or GS device with an MT-32 map.
+MT32_PCM.ROM     - IC21 (512KB)
+MT32_CONTROL.ROM - IC26 (32KB) and IC27 (32KB), interleaved byte-wise
 
-If --enable-gs is specified, ScummVM will initialize your GS-compatible
-device with settings that mimic the MT-32's reverb, (lack of) chorus,
-pitch bend sensitivity, etc. If it is specified in conjunction with
---native-mt32, ScummVM will select the MT-32-compatible map and drumset on
-your GS device. This setting works better than default GM or GS emulation
-with games that do not have custom instrument mappings (Loom and Monkey1).
-You should only specify both settings if you are using a GS device that
-has an MT-32 map, such as an SC-55, SC-88, SC-88 Pro, SC-8820, SC-8850, etc.
-Please note that --enable-gs is automatically disabled in both DOTT and
-Samnmax, since they use General MIDI natively.
+Place these ROMs in the game directory or a directory specified by extrapath.
 
-If neither of the above settings is enabled, ScummVM will initialize your
-device in General MIDI mode and use GM emulation in games with MT-32
-soundtracks.
+You don't need to specify --native-mt32 with this driver, as it automatically
+gets turned on.
 
-Some games contain sound effects that are exclusive to the Adlib soundtrack.
-For these games, you may wish to specify --multi-midi in order to combine
-MIDI music with Adlib sound effects.
-
+\textbf{NOTE:} The processor requirements for the emulator are quite high; a fast CPU is
+ strongly recommended.
