@@ -552,7 +552,7 @@ void ScummEngine_v5::initScummVars() {
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 
-	if (_gameId == GID_MONKEY || _gameId == GID_MONKEY_SEGA)
+	if (_gameId == GID_MONKEY)
 		_scummVars[74] = 1225;
 }
 

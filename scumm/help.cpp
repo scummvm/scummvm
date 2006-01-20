@@ -20,9 +20,12 @@
  */
 
 #include "common/stdafx.h"
+
+#include "common/str.h"
+#include "common/util.h"
+
 #include "scumm/help.h"
 #include "scumm/scumm.h"
-#include "common/str.h"
 
 namespace Scumm {
 
@@ -40,7 +43,6 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_LOOM256:
 	case GID_MONKEY_EGA:
 	case GID_MONKEY_VGA:
-	case GID_MONKEY_SEGA:
 	case GID_MONKEY:
 	case GID_MONKEY2:
 	case GID_INDY4:
@@ -64,8 +66,8 @@ int ScummHelp::numPages(byte gameId) {
 #define ADD_TEXT(d) ADD_BIND("",d)
 #define ADD_LINE ADD_BIND("","")
 
-void ScummHelp::updateStrings(byte gameId, byte version, int page,
-				String &title, String *&key, String *&dsc) {
+void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platform,
+				int page, String &title, String *&key, String *&dsc) {
 	key = new String[HELP_NUM_LINES];
 	dsc = new String[HELP_NUM_LINES];
 	int i = 0;
@@ -206,7 +208,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			ADD_BIND("f", "turn oFf");
 			break;
 		case GID_MONKEY:
-		case GID_MONKEY_SEGA:
 		case GID_MONKEY2:
 		case GID_INDY4:
 		case GID_TENTACLE:
@@ -219,7 +220,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, int page,
 			ADD_BIND("u", "Use");
 			ADD_BIND("s", "puSh");
 			ADD_BIND("y", "pull (Yank)");
-			if (gameId == GID_MONKEY_SEGA) {
+			if (platform == Common::kPlatformSegaCD) {
 			// FIXME look at scripts to figure all options out...
 			// keys 1->4 seem to do something as well
 				ADD_BIND("6", "Highlight prev dialogue");
