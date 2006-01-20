@@ -1,0 +1,32 @@
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "readme"
+%%% End: 
+
+\subsection{Output sample rate}
+
+The output sample rate tells ScummVM how many sound samples to play per channel
+per second. There is much that could be said on this subject, but most of it
+would be irrelevant here. The short version is that for most games 22050 Hz is
+fine, but in some cases 44100 Hz is preferable. On extremely low-end systems
+you may want to use 11025 Hz, but it's unlikely that you have to worry about
+that.
+
+To elaborate, most of the sounds ScummVM has to play were sampled at either
+22050 Hz or 11025 Hz. Using a higher sample rate will not magically improve the
+quality of these sounds. Hence, 22050 Hz is fine.
+
+Some games use CD audio. If you use compressed files for this, they are
+probably sampled at 44100 Hz, so for these games that may be a better choice of
+sample rate.
+
+When using the Adlib, FM Towns, PC Speaker or IBM PCjr music drivers, ScummVM
+is responsible for generating the samples. Usually 22050 Hz will be plenty for
+these, but there is at least one piece of Adlib music in Beneath a Steel Sky
+that will sound a lot better at 44100 Hz.
+
+Using frequencies in between is not recommended. For one thing, your sound card
+may not support it. In theory, ScummVM should fall back on a sensible frequency
+in that case, but don't count on it. More importantly, ScummVM has to resample
+all sounds to its output frequency. This is much easier to do well if the
+output frequency is a multiple of the original frequency.
