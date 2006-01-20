@@ -124,7 +124,6 @@ void deleteMutex(MutexRef mutex);
 #include <stdarg.h>
 #include <assert.h>
 #include <ctype.h>
-#include <stdint.h>
 #include <dirent.h>
 
 
