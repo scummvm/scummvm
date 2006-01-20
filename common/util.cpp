@@ -166,9 +166,11 @@ const char *getLanguageDescription(Language id) {
 
 
 const PlatformDescription g_platforms[] = {
+	{"acorn", "acorn", "Acorn", kPlatformAcorn},
 	{"amiga", "ami", "Amiga", kPlatformAmiga},
 	{"atari", "atari-st", "Atari ST", kPlatformAtariST},
 	{"c64", "c64", "Commodore 64", kPlatformC64},
+	{"pc", "dos", "DOS", kPlatformPC},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
@@ -178,7 +180,7 @@ const PlatformDescription g_platforms[] = {
 	{"linux", "linux", "Linux", kPlatformLinux},
 	{"macintosh", "mac", "Macintosh", kPlatformMacintosh},
 	{"nes", "nes", "NES", kPlatformNES},
-	{"pc", "dos", "DOS", kPlatformPC},
+	{"segacd", "segacd", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "Windows", kPlatformWindows},
 
 	{0, 0, "Default", kPlatformUnknown}
