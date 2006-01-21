@@ -208,7 +208,7 @@ void ConfigManager::loadFile(const String &filename) {
 				String key = rtrim(t);
 				String value = ltrim(p + 1);
 				set(key, value, domain);
-//printf("key : %s | %s\n");
+
 				// Store comment
 				if (_globalDomains.contains(domain)) {
 					_globalDomains[domain].setKVComment(key, comment);

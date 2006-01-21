@@ -95,8 +95,13 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			comment += buf;
 			comment += "\n";
 		} else if (buf[0] == '(') {
-			// Special case for map.ini included in mustard
-			// Includes comment within () on the first line
+			// HACK: The following is a hack added by Kirben to support the
+			// "map.ini" used in the HE SCUMM game "Spy Fox in Hold the Mustard".
+			//
+			// It would be nice if this hack could be restricted to that game,
+			// but the current design of this class doesn't allow to do that
+			// in a nice fashion (a "isMustard" parameter is *not* a nice
+			// solution). 
 			comment += buf;
 			comment += "\n";
 		} else if (buf[0] == '[') {
