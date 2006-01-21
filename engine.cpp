@@ -373,6 +373,9 @@ void Engine::doFlip() {
 	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
+	// don't kill CPU
+	SDL_Delay(10);
+
 	if (SHOWFPS_GLOBAL && _doFlip) {
 		_frameCounter++;
 		_timeAccum += _frameTime;
