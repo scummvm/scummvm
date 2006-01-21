@@ -53,7 +53,7 @@ int Sound::findFreeSoundChannel() {
 	}
 
 	if (min < 8) {
-		for (chan = min; min < ARRAYSIZE(_heChannel); chan++) {
+		for (chan = min; chan < ARRAYSIZE(_heChannel); chan++) {
 			if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) == 0)
 				return chan;
 		}
