@@ -1287,6 +1287,7 @@ void KyraEngine::seq_winterScroll1() {
 		_animator->sprites()[0].active = 0;
 		_sprites->_anims[1].play = true;
 		_animator->sprites()[1].active = 1;
+		setGameFlag(0xA2);
 	}
 	
 	for (int i = 147; i <= 157; ++i) {
@@ -1304,6 +1305,9 @@ void KyraEngine::seq_winterScroll1() {
 		memcpy(tmpPal, _screen->_currentPalette, 768);
 		memcpy(&tmpPal[684], palTable2()[0], 60);
 		_screen->fadePalette(tmpPal, 72);
+		memcpy(&_screen->_currentPalette[684], palTable2()[0], 60);
+		_screen->setScreenPalette(_screen->_currentPalette);
+		setGameFlag(0xB3);
 	} else {
 		delayWithTicks(120);
 	}
