@@ -478,8 +478,9 @@ arguments -- see the next section.
                            drive)
   --joystick[=NUM]         Enable input with joystick (default: 0 = first
                            joystick)
-  --platform=WORD          Specify version of game (allowed values: amiga,
-                           atari, c64, fmtowns, mac, nes, pc, windows)
+  --platform=WORD          Specify version of game (allowed values: acorn,
+                           amiga, atari, c64, fmtowns, mac, nes, pc, segacd,
+                           windows)
   --savepath=PATH          Path to where savegames are stored
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)
@@ -488,7 +489,7 @@ arguments -- see the next section.
   --enable-gs              Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --aspect-ratio           Enable aspect ratio correction
-  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen
+  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,
                            hercAmber, amiga)
   --force-1x-overlay       Make inner GUI 320x200
 
@@ -625,7 +626,7 @@ hence for this game scalers will scale to 640x480 or 960x720.
 5.4) Hot Keys:
 ---- ---------
 ScummVM supports various in game hotkeys. They differ between the SCUMM and
-simon games.
+other games.
 
     Common:
         Cmd-q                  - Quit (Mac OS X)
@@ -662,6 +663,7 @@ simon games.
 
     Beneath a Steel Sky:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-d                 - Starts the debugger
         Ctrl-g                 - Runs in really REALLY fast mode
         F5                     - Displays a save/load box
         Escape                 - Skips the game intro
@@ -683,6 +685,10 @@ simon games.
         Escape                 - Skips cutscenes
         Space                  - Skips current line of text
 
+    The Legend of Kyrandia:
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-d                 - Starts the debugger
+
     Simon the Sorcerer 1 & 2:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
@@ -693,16 +699,11 @@ simon games.
         m                      - Music on/off
         s                      - Sound effects on/off
         b                      - Background sounds on/off
-        p                      - Toggles pause
+        p                      - Pauses
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
                                  combined speech & subtitles
                                  [Simon the Sorcerer 2 only]
-
-    The Legend of Kyrandia:
-        Ctrl 0-9 and Alt 0-9   - Load and save game state
-        d                      - Starts the debugger
-        q                      - Exits the game
 
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
@@ -1167,7 +1168,7 @@ sample rate.
 
 When using the Adlib, FM Towns, PC Speaker or IBM PCjr music drivers, ScummVM
 is responsible for generating the samples. Usually 22050 Hz will be plenty for
-these, but there is at least one piece of Adlib music in Beneath a Steeel Sky
+these, but there is at least one piece of Adlib music in Beneath a Steel Sky
 that will sound a lot better at 44100 Hz.
 
 Using frequencies in between is not recommended. For one thing, your sound card
@@ -1222,7 +1223,6 @@ An example config file looks as follows:
         [monkey2]
         path=C:\amiga_mi2\
         music_driver=windows
-        amiga=true
 
 The following keywords are recognized:
 
