@@ -590,8 +590,6 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == 'q') {
 					_quitFlag = true;
-				} else if (event.kbd.keycode == 'd' && !_debugger->isAttached()) {
-					_debugger->attach();
 				} else if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
 						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
 					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
@@ -599,8 +597,11 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 						loadGame(saveLoadSlot);
 					else
 						saveGame(saveLoadSlot, saveLoadSlot);
-				} else if (event.kbd.flags == OSystem::KBD_CTRL && event.kbd.keycode == 'f') {
+				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
+					if (event.kbd.keycode == 'f')
 						_fastMode = !_fastMode;
+					else if (event.kbd.keycode == 'd')
+						_debugger->attach();
 				}
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
