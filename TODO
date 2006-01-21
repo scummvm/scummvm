@@ -62,6 +62,14 @@ README / Manual
     engine teams deem appropriate...
   - ...
 
+LaTeX docs
+==========
+* These are constantly out of sync with the README :-/
+* The files are currently named in a very dumb fashion -- using their section
+  IDs, which of course constantly change. Better would be to give them names
+  based on their content instead.
+
+
 Code
 ====
 * Add more Doxygen comments. However, quality is preferable over quantity
