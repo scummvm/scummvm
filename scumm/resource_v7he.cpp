@@ -158,7 +158,7 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	fi.file = new Common::File;
 
 	if (!_fileName[0]) { // We are running for the first time
-		snprintf(_fileName, 256, "%s.he3", _vm->getGameName());
+		snprintf(_fileName, 256, "%s.he3", _vm->getBaseName());
 
 		if (_vm->_substResFileNameIndex > 0) {
 			char buf1[128];
@@ -1292,7 +1292,7 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 		if (_vm->_substResFileNameIndex > 0) {
 			char buf1[128];
 
-			snprintf(buf1, 128, "%s.he3", _vm->getGameName());
+			snprintf(buf1, 128, "%s.he3", _vm->getBaseName());
 			_vm->generateSubstResFileName(buf1, _fileName, sizeof(buf1));
 
 			// Some programs write it as .bin. Try that too

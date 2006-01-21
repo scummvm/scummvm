@@ -1170,7 +1170,7 @@ void SmushPlayer::updateScreen() {
 #ifdef DUMP_SMUSH_FRAMES
 	char fileName[100];
 	// change path below for dump png files
-	sprintf(fileName, "/path/to/somethere/%s%04d.png", _vm->getGameName(), _frame);
+	sprintf(fileName, "/path/to/somethere/%s%04d.png", _vm->getBaseName(), _frame);
 	FILE *file = fopen(fileName, "wb");
 	if (file == NULL)
 		error("can't open file for writing png");

@@ -89,7 +89,7 @@ namespace Scumm {
 ScummEngine *g_scumm = 0;
 
 struct ScummGameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	byte id, version, heversion;
 	int midi; // MidiDriverFlags values
@@ -97,7 +97,7 @@ struct ScummGameSettings {
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
 };
@@ -109,13 +109,13 @@ enum {
 };
 
 
-struct ObsoleteTargets {
+struct ObsoleteGameIDs {
 	const char *from;
 	const char *to;
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { from, "Obsolete Target", 0 };
+		GameSettings dummy = { from, "Obsolete game ID", 0 };
 		return dummy;
 	}
 };
@@ -123,12 +123,12 @@ struct ObsoleteTargets {
 static const Common::Platform UNK = Common::kPlatformUnknown;
 
 /**
- * Conversion table mapping old obsolete target names to the
- * corresponding new target and platform combination.
+ * Conversion table mapping old obsolete game IDs to the
+ * corresponding new game ID and platform combination.
  *
  * We use an ugly macro 'UNK' here to make the following table more readable.
  */
-static ObsoleteTargets obsoleteTargetsTable[] = {
+static ObsoleteGameIDs obsoleteGameIDsTable[] = {
 	{"comidemo", "comi", UNK},
 	{"digdemo", "dig", UNK},
 	{"digdemoMac", "dig", Common::kPlatformMacintosh},
@@ -1389,7 +1389,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Allow the user to override the game name with a custom string.
 	// This allows some game versions to work which use filenames
 	// differing from the regular version(s) of that game.
-	_gameName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.name;
+	_baseName = ConfMan.hasKey("basename") ? ConfMan.get("basename") : gs.gameid;
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_demoMode = ConfMan.getBool("demo_mode");
@@ -2132,9 +2132,9 @@ void ScummEngine_v99he::scummInit() {
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
 
 	// Array 129 is set to base name
-	int len = resStrLen((const byte *)_gameName.c_str()) + 1;
+	int len = resStrLen((const byte *)_baseName.c_str()) + 1;
 	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
-	memcpy(ah->data, _gameName.c_str(), len);
+	memcpy(ah->data, _baseName.c_str(), len);
 
 }
 #endif
@@ -2838,9 +2838,9 @@ using namespace Scumm;
 
 GameList Engine_SCUMM_gameList() {
 	const ScummGameSettings *g = scumm_settings;
-	const ObsoleteTargets *o = obsoleteTargetsTable;
+	const ObsoleteGameIDs *o = obsoleteGameIDsTable;
 	GameList games;
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(g->toGameSettings());
 		g++;
 	}
@@ -2862,11 +2862,11 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	typedef Common::Map<Common::String, bool> StringSet;
 	StringSet fileSet;
 
-	for (g = scumm_settings; g->name; ++g) {
+	for (g = scumm_settings; g->gameid; ++g) {
 		// Determine the 'detectname' for this game, that is, the name of a
 		// file that *must* be presented if the directory contains the data
 		// for this game. For example, FOA requires atlantis.000
-		const char *base = g->name;
+		const char *base = g->gameid;
 		detectName[0] = '\0';
 
 		// TODO: we need to add cache here
@@ -3099,14 +3099,14 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				if (!exactMatch)
 					detectedGames.clear();	// Clear all the non-exact candidates
 
-				const char *target = elem->target;
+				const char *gameid = elem->gameid;
 
-				// Find the GameSettings for that target
-				for (g = scumm_settings; g->name; ++g) {
-					if (0 == scumm_stricmp(g->name, target))
+				// Find the GameSettings for that gameid
+				for (g = scumm_settings; g->gameid; ++g) {
+					if (0 == scumm_stricmp(g->gameid, gameid))
 							break;
 				}
-				assert(g->name);
+				assert(g->gameid);
 				// Insert the 'enhanced' game data into the candidate list
 				if (iter->_value == true) // This was HE Mac game
 					detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, Common::kPlatformMacintosh));
@@ -3173,39 +3173,49 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	return -1;
 }
 
+/**
+ * Create a ScummEngine instance, based on the given detector data.
+ *
+ * This is heavily based on our MD5 detection scheme.
+ */
 Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
-	const ObsoleteTargets *o = obsoleteTargetsTable;
+	// We start by checking whether the specified game ID is obsolete.
+	// If that is the case, we automaticlaly upgrade the target to use
+	// the correct new game ID (and platform, if specified).
+	const ObsoleteGameIDs *o = obsoleteGameIDsTable;
 	while (o->from) {
-		if (!scumm_stricmp(detector->_game.name, o->from)) {
-			detector->_game.name = o->to;
-
+		if (!scumm_stricmp(detector->_game.gameid, o->from)) {
+			// Match found, perform upgrade
+			detector->_game.gameid = o->to;
 			ConfMan.set("gameid", o->to);
 
 			if (o->platform != Common::kPlatformUnknown)
 				ConfMan.set("platform", Common::getPlatformCode(o->platform));
 
-			warning("Target upgraded from %s to %s", o->from, o->to);
+			warning("Target upgraded from game ID %s to %s", o->from, o->to);
 			ConfMan.flushToDisk();
 			break;
 		}
 		o++;
 	}
 
+	// Lookup the game ID in our database. If this lookup fails, then
+	// the game ID is unknown, and we have to abort.
 	const ScummGameSettings *g = scumm_settings;
-	while (g->name) {
-		if (!scumm_stricmp(detector->_game.name, g->name))
+	while (g->gameid) {
+		if (!scumm_stricmp(detector->_game.gameid, g->gameid))
 			break;
 		g++;
 	}
-	if (!g->name) {
-		error("Invalid game '%s'\n", detector->_game.name);
+	if (!g->gameid) {
+		error("Invalid game ID '%s'\n", detector->_game.gameid);
 		return 0;
 	}
 
 	// Calculate MD5 of the games detection file, for savegames etc.
-	const char *name = g->name;
+	const char *gameid = g->gameid;
 	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
 	int substLastIndex = 0;
@@ -3222,19 +3232,19 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			strcpy(detectName, "000.LFL");
 			break;
 		case 2:
-			strcpy(detectName, name);
+			strcpy(detectName, gameid);
 			strcat(detectName, ".la0");
 			break;
 		case 3:
-			strcpy(detectName, name);
+			strcpy(detectName, gameid);
 			strcat(detectName, ".he0");
 			break;
 		case 4:
-			strcpy(detectName, name);
+			strcpy(detectName, gameid);
 			strcat(detectName, ".000");
 			break;
 		case 5:
-			strcpy(detectName, name);
+			strcpy(detectName, gameid);
 			strcat(detectName, ".sm0");
 			break;
 		case 6:
@@ -3288,11 +3298,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// Now search our 'database' for the MD5; if a match is found, we use 
 	// the information in the 'database' to correct the GameSettings.
 	g = multiple_versions_md5_settings;
-	while (g->name) {
-		if (!scumm_stricmp(md5, g->name)) {
+	while (g->gameid) {
+		if (!scumm_stricmp(md5, g->gameid)) {
 			// Match found
 			game = *g;
-			game.name = name;
+			game.gameid = gameid;	// FIXME: Fingolfin wonders what this line is good for?
 			if (game.description)
 				g_system->setWindowCaption(game.description);
 			break;

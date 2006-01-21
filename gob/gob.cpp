@@ -107,11 +107,11 @@ static const Gob::GobGameSettings gob_games[] = {
 
 // Keep list of different supported games
 static const struct GobGameList {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	uint32 features;
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
 } gob_list[] = {
@@ -125,7 +125,7 @@ GameList Engine_GOB_gameList() {
 	GameList games;
 	const GobGameList *g = gob_list;
 
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(g->toGameSettings());
 		g++;
 	}
@@ -158,7 +158,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 		for (int i = 0; i < 16; i++) {
 			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
 		}
-		for (g = gob_games; g->name; g++) {
+		for (g = gob_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
 				detectedGames.push_back(g->toGameSettings());
 			}
@@ -167,7 +167,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 			const GobGameList *g1 = gob_list;
-			while (g1->name) {
+			while (g1->gameid) {
 				detectedGames.push_back(g1->toGameSettings());
 				g1++;
 			}
@@ -206,7 +206,7 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 	else
 		features = Gob::GF_GOB1;
 
-	for (g = gob_games; g->name; g++) {
+	for (g = gob_games; g->gameid; g++) {
 		if (strcmp(g->md5sum, (char *)md5str) == 0) {
 			features = g->features;
 

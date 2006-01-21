@@ -212,7 +212,7 @@ GameDetector::GameDetector() {
 	_plugin = 0;
 }
 
-/** List all supported games, i.e. all games which any loaded plugin supports. */
+/** List all supported game IDs, i.e. all games which any loaded plugin supports. */
 void listGames() {
 	const PluginList &plugins = PluginManager::instance().getPlugins();
 
@@ -223,7 +223,7 @@ void listGames() {
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->name, v->description);
+			printf("%-20s %s\n", v->gameid, v->description);
 		}
 	}
 }
@@ -242,7 +242,11 @@ void listTargets() {
 		String description(iter->_value.get("description"));
 
 		if (description.isEmpty()) {
-			GameSettings g = GameDetector::findGame(name);
+			// FIXME: At this point, we should check for a "gameid" override
+			// to find the proper desc. In fact, the platform probably should
+			// be take into consideration, too.
+			String gameid(name);
+			GameSettings g = GameDetector::findGame(gameid);
 			if (g.description)
 				description = g.description;
 		}
@@ -259,7 +263,7 @@ GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugi
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
-		if (result.name) {
+		if (result.gameid) {
 			if (plugin)
 				*plugin = *iter;
 			break;
@@ -364,7 +368,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			// To verify this, check if there is either a game domain (i.e.
 			// a configured target) matching this argument, or if we can
 			// find any target with that name.
-			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).name)) {
+			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).gameid)) {
 				setTarget(s);
 			} else {
 				if (current_option == NULL)
@@ -596,9 +600,9 @@ ShowHelpAndExit:
 
 }
 
-void GameDetector::setTarget(const String &name) {
-	_targetName = name;
-	ConfMan.setActiveDomain(name);
+void GameDetector::setTarget(const String &target) {
+	_targetName = target;
+	ConfMan.setActiveDomain(target);
 }
 
 bool GameDetector::detectGame() {
@@ -612,7 +616,7 @@ bool GameDetector::detectGame() {
 	printf("Looking for %s\n", realGame.c_str());
 	_game = findGame(realGame, &_plugin);
 
-	if (_game.name) {
+	if (_game.gameid) {
 		printf("Trying to start game '%s'\n", _game.description);
 		return true;
 	} else {

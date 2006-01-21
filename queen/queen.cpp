@@ -65,7 +65,7 @@ GameList Engine_QUEEN_gameList() {
 	GameList games;
 	const GameSettings *g = queen_setting;
 
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(*g);
 		g++;
 	}

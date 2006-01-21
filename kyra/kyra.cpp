@@ -58,14 +58,14 @@ enum {
 
 // Kyra MD5 detection brutally ripped from the Gobliins engine.
 struct KyraGameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	byte id;
 	uint32 features;
 	const char *md5sum;
 	const char *checkFile;
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
 };
@@ -96,11 +96,11 @@ static const KyraGameSettings kyra_games[] = {
 
 // Keep list of different supported games
 struct KyraGameList {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	uint32 features;
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
 };
@@ -114,7 +114,7 @@ GameList Engine_KYRA_gameList() {
 	GameList games;
 	const KyraGameList *g = kyra_list;
 
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(g->toGameSettings());
 		g++;
 	}
@@ -132,7 +132,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		if (file->isDirectory())
 			continue;
 
-		for (g = kyra_games; g->name; g++) {
+		for (g = kyra_games; g->gameid; g++) {
 			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
 				isFound = true;
 		}
@@ -150,7 +150,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		for (int i = 0; i < 16; i++) {
 			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
 		}
-		for (g = kyra_games; g->name; g++) {
+		for (g = kyra_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
 				detectedGames.push_back(g->toGameSettings());
 			}
@@ -159,7 +159,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 			debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 			const KyraGameList *g1 = kyra_list;
-			while (g1->name) {
+			while (g1->gameid) {
 				detectedGames.push_back(g1->toGameSettings());
 				g1++;
 			}
@@ -225,7 +225,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	// data contents
 	_features = 0;
 
-	for (g = kyra_games; g->name; g++) {
+	for (g = kyra_games; g->gameid; g++) {
 		if (!Common::File::exists(g->checkFile))
 			continue;
 

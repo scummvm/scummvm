@@ -138,7 +138,7 @@ void Sound::setupHEMusicFile() {
 	char buf[32], buf1[128];
 	Common::File musicFile;
 
-	sprintf(buf, "%s.he4", _vm->getGameName());
+	sprintf(buf, "%s.he4", _vm->getBaseName());
 
 	if (_vm->_substResFileNameIndex > 0) {
 		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
@@ -334,7 +334,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		char buf[32], buf1[128];
 		Common::File musicFile;
 
-		sprintf(buf, "%s.he4", _vm->getGameName());
+		sprintf(buf, "%s.he4", _vm->getBaseName());
 
 		if (_vm->_substResFileNameIndex > 0) {
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));

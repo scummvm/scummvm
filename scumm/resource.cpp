@@ -118,28 +118,28 @@ void ScummEngine::openRoom(const int room) {
 
 					switch(disk) {
 					case 2:
-						sprintf(buf, "%s.%s", _gameName.c_str(), "(b)");
+						sprintf(buf, "%s.%s", _baseName.c_str(), "(b)");
 						break;
 					case 1:
-						sprintf(buf, "%s.%s", _gameName.c_str(), "(a)");
+						sprintf(buf, "%s.%s", _baseName.c_str(), "(a)");
 						break;
 					default:
-						sprintf(buf, "%s.%s", _gameName.c_str(), "he0");
+						sprintf(buf, "%s.%s", _baseName.c_str(), "he0");
 					}
 				} else
-					sprintf(buf, "%s.he%.1d", _gameName.c_str(), room == 0 ? 0 : 1);
+					sprintf(buf, "%s.he%.1d", _baseName.c_str(), room == 0 ? 0 : 1);
 			} else if (_version >= 7) {
 				if (room > 0 && (_version == 8))
 					VAR(VAR_CURRENTDISK) = diskNumber;
-				sprintf(buf, "%s.la%d", _gameName.c_str(), diskNumber);
+				sprintf(buf, "%s.la%d", _baseName.c_str(), diskNumber);
 
-				sprintf(buf2, "%s.%.3d", _gameName.c_str(), diskNumber);
+				sprintf(buf2, "%s.%.3d", _baseName.c_str(), diskNumber);
 			} else if (_heversion >= 60) {
-				sprintf(buf, "%s.he%.1d", _gameName.c_str(), diskNumber);
+				sprintf(buf, "%s.he%.1d", _baseName.c_str(), diskNumber);
 			} else {
-				sprintf(buf, "%s.%.3d",  _gameName.c_str(), diskNumber);
+				sprintf(buf, "%s.%.3d", _baseName.c_str(), diskNumber);
 				if (_gameId == GID_SAMNMAX)
-					sprintf(buf2, "%s.sm%.1d",  _gameName.c_str(), diskNumber);
+					sprintf(buf2, "%s.sm%.1d", _baseName.c_str(), diskNumber);
 			}
 
 			encByte = (_features & GF_USE_KEY) ? 0x69 : 0;

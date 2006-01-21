@@ -31,7 +31,7 @@
 typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
 typedef const char *(*NameFunc)();
-typedef GameList (*TargetListFunc)();
+typedef GameList (*GameIDListFunc)();
 typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 
@@ -75,7 +75,7 @@ GameSettings Plugin::findGame(const char *gameName) const {
 	GameList games = getSupportedGames();
 	GameSettings result = {NULL, NULL, 0};
 	for (GameList::iterator g = games.begin(); g != games.end(); ++g) {
-		if (!scumm_stricmp(g->name, gameName)) {
+		if (!scumm_stricmp(g->gameid, gameName)) {
 			result = *g;
 			break;
 		}
@@ -194,8 +194,8 @@ bool DynamicPlugin::loadPlugin() {
 	}
 	_name = nameFunc();
 
-	// Query the plugin for the targets it supports
-	TargetListFunc gameListFunc = (TargetListFunc)findSymbol("PLUGIN_getSupportedGames");
+	// Query the plugin for the game ids it supports
+	GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_getSupportedGames");
 	if (!gameListFunc) {
 		unloadPlugin();
 		return false;

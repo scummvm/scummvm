@@ -434,7 +434,7 @@ public:
 
 	// Misc utility functions
 	uint32 _debugFlags;
-	const char *getGameName() const { return _gameName.c_str(); }
+	const char *getBaseName() const { return _baseName.c_str(); }
 
 	// Cursor/palette
 	void updateCursor();
@@ -696,7 +696,7 @@ public:
 
 protected:
 	int _resourceHeaderSize;
-	Common::String _gameName;	// This is the name we use for opening resource files
+	Common::String _baseName;	// This is the name we use for opening resource files
 	Common::String _targetName;	// This is the game the user calls it, so use for saving
 	byte _resourceMapper[128];
 	byte *_heV7DiskOffsets;

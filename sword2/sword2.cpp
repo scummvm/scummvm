@@ -46,12 +46,12 @@ extern bool isSmartphone();
 #endif
 
 struct Sword2GameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	uint32 features;
 	const char *detectname;
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
 };
@@ -67,7 +67,7 @@ static const Sword2GameSettings sword2_settings[] = {
 GameList Engine_SWORD2_gameList() {
 	const Sword2GameSettings *g = sword2_settings;
 	GameList games;
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(g->toGameSettings());
 		g++;
 	}
@@ -82,7 +82,7 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	// between the 'sword2' and 'sword2demo' targets. The current code
 	// can't do that since they use the same detectname.
 
-	for (g = sword2_settings; g->name; ++g) {
+	for (g = sword2_settings; g->gameid; ++g) {
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			if (!file->isDirectory()) {

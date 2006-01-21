@@ -1008,12 +1008,12 @@ ScummFile *Sound::openSfxFile() {
 	ScummFile *file = new ScummFile();
 	_offsetTable = NULL;
 
-	/* Try opening the file <_gameName>.sou first, e.g. tentacle.sou.
+	/* Try opening the file <baseName>.sou first, e.g. tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
 	 * same directory */
 
 	const char *basename[4] = { 0, 0, 0, 0 };
-	basename[0] = _vm->getGameName();
+	basename[0] = _vm->getBaseName();
 	basename[1] = "monster";
 	
 	if (_vm->_substResFileNameIndex > 0) {
@@ -1036,9 +1036,9 @@ ScummFile *Sound::openSfxFile() {
 
 	if (!file->isOpen()) {
 		if ((_vm->_heversion <= 61 && _vm->_platform == Common::kPlatformMacintosh) || (_vm->_heversion >= 70)) {
-			sprintf(buf, "%s.he2", _vm->getGameName());
+			sprintf(buf, "%s.he2", _vm->getBaseName());
 		} else {
-			sprintf(buf, "%s.tlk", _vm->getGameName());
+			sprintf(buf, "%s.tlk", _vm->getBaseName());
 		}
 
 		if (_vm->_substResFileNameIndex > 0) {

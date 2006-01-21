@@ -60,7 +60,7 @@ typedef struct {
 	const char *platform;
 	const char *language;
 	const char *md5;
-	const char *target;
+	const char *gameid;
 	const char *infoSource;
 } Entry;
 
@@ -127,7 +127,7 @@ static const char *c_header =
 	"\n"
 	"struct MD5Table {\n"
 	"	const char *md5;\n"
-	"	const char *target;\n"
+	"	const char *gameid;\n"
 	"	Common::Language language;\n"
 	"	Common::Platform platform;\n"
 	"};\n"
@@ -147,7 +147,7 @@ static void parseEntry(Entry *entry, char *line) {
 	entry->platform = strtok(NULL, "\t\n\r");
 	entry->language = strtok(NULL, "\t\n\r");
 	entry->md5 = strtok(NULL, "\t\n\r");
-	entry->target = strtok(NULL, "\t\n\r");
+	entry->gameid = strtok(NULL, "\t\n\r");
 	entry->infoSource = strtok(NULL, "\t\n\r");
 }
 
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 				fprintf(outFile, "\"%s\", ", entry.platform);
 				fprintf(outFile, "\"%s\", ", entry.language);
 				fprintf(outFile, "\"%s\", ", entry.md5);
-				fprintf(outFile, "\"%s\"", entry.target);
+				fprintf(outFile, "\"%s\"", entry.gameid);
 				if (entry.infoSource)
 					fprintf(outFile, ", \"%s\"", entry.infoSource);
 				fprintf(outFile, "); ?>\n");
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
 					entriesBuffer = realloc(entriesBuffer, maxEntries * entrySize);
 				}
 				snprintf(entriesBuffer + numEntries * entrySize, entrySize, "\t{ \"%s\", \"%s\", Common::%s, Common::%s },\n",
-					entry.md5, entry.target, mapStr(entry.language, langMap), mapStr(entry.platform, platformMap));
+					entry.md5, entry.gameid, mapStr(entry.language, langMap), mapStr(entry.platform, platformMap));
 				numEntries++;
 			}
 		} else {

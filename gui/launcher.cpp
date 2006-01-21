@@ -594,18 +594,18 @@ void LauncherDialog::updateListing() {
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		String name(iter->_value.get("gameid"));
+		String gameid(iter->_value.get("gameid"));
 		String description(iter->_value.get("description"));
 
-		if (name.isEmpty())
-			name = iter->_key;
+		if (gameid.isEmpty())
+			gameid = iter->_key;
 		if (description.isEmpty()) {
-			GameSettings g = GameDetector::findGame(name);
+			GameSettings g = GameDetector::findGame(gameid);
 			if (g.description)
 				description = g.description;
 		}
 
-		if (!name.isEmpty() && !description.isEmpty()) {
+		if (!gameid.isEmpty() && !description.isEmpty()) {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
@@ -669,7 +669,7 @@ void LauncherDialog::addGame() {
 			// The auto detector or the user made a choice.
 			// Pick a domain name which does not yet exist (after all, we
 			// are *adding* a game to the config, not replacing).
-			String domain(result.name);
+			String domain(result.gameid);
 			if (ConfMan.hasGameDomain(domain)) {
 				char suffix = 'a';
 				domain += suffix;
@@ -679,7 +679,7 @@ void LauncherDialog::addGame() {
 					suffix++;
 					domain += suffix;
 				}
-				ConfMan.set("gameid", result.name, domain);
+				ConfMan.set("gameid", result.gameid, domain);
 				ConfMan.set("description", result.description, domain);
 			}
 			ConfMan.set("path", dir.path(), domain);

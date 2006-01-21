@@ -74,12 +74,12 @@ enum {
 };
 
 typedef struct GobGameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	uint32 features;
 	const char *md5sum;
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
+		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
 } GobGameSettings;

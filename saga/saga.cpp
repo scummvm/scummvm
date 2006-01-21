@@ -65,7 +65,7 @@ GameList Engine_SAGA_gameList() {
 	GameList games;
 	const GameSettings *g = saga_games;
 
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(*g);
 		g++;
 	}

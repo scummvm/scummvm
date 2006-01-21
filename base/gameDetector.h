@@ -41,7 +41,7 @@ enum {
 };
 
 struct GameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	uint32 features;
 };

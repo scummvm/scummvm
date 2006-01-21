@@ -104,7 +104,7 @@ static const GameSettings simonGames[] = {
 GameList Engine_SIMON_gameList() {
 	GameList games;
 	const GameSettings *g = simonGames;
-	while (g->name) {
+	while (g->gameid) {
 		games.push_back(*g);
 		g++;
 	}
@@ -119,8 +119,8 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 	const ObsoleteTargets *o = obsoleteTargetsTable;
 	while (o->from) {
-		if (!scumm_stricmp(detector->_game.name, o->from)) {
-			detector->_game.name = o->to;
+		if (!scumm_stricmp(detector->_game.gameid, o->from)) {
+			detector->_game.gameid = o->to;
 
 			ConfMan.set("gameid", o->to);
 
