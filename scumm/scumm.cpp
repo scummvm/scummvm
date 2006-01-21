@@ -2852,6 +2852,65 @@ GameList Engine_SCUMM_gameList() {
 	return games;
 }
 
+enum {
+	kDetectNameMethodsCount = 8
+};
+
+static bool generateDetectName(const ScummGameSettings *g, int method, char *detectName) {
+	detectName[0] = '\0';
+
+	switch (method) {
+	case 0:
+		if (g->version > 3)
+			return false;
+		strcpy(detectName, "00.LFL");
+		break;
+	case 1:
+		if (g->version < 4 || g->version > 5)
+			return false;
+		strcpy(detectName, "000.LFL");
+		break;
+	case 2:
+		if (g->version < 4 || g->version > 6)
+			return false;
+		strcpy(detectName, g->gameid);
+		strcat(detectName, ".000");
+		break;
+	case 3:
+		if (g->version < 7)
+			return false;
+		strcpy(detectName, g->gameid);
+		strcat(detectName, ".la0");
+		break;
+	case 4:
+		if (g->heversion > 0)
+			return false;
+		strcpy(detectName, g->gameid);
+		strcat(detectName, ".he0");
+		break;
+	case 5:
+		// FIXME: Fingolfin asks: For which games is this case used? 
+		// Please document this. Also: Why was this case missing in
+		// Engine_SCUMM_create ? 
+		strcpy(detectName, g->gameid);
+		break;
+	case 6:
+		if (g->id != GID_SAMNMAX)
+			return false;
+		strcpy(detectName, g->gameid);
+		strcat(detectName, ".sm0");
+		break;
+	case 7:
+		if (g->id != GID_MANIAC)
+			return false;
+		strcpy(detectName, "00.MAN");
+		break;
+	}
+
+	return true;
+}
+
+
 DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
 	const ScummGameSettings *g;
@@ -2866,41 +2925,12 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 		// Determine the 'detectname' for this game, that is, the name of a
 		// file that *must* be presented if the directory contains the data
 		// for this game. For example, FOA requires atlantis.000
-		const char *base = g->gameid;
-		detectName[0] = '\0';
 
 		// TODO: we need to add cache here
-		for (int method = 0; method < 8; method++) {
-			switch (method) {
-			case 0:
-				strcpy(detectName, "00.LFL");
-				break;
-			case 1:
-				strcpy(detectName, "000.LFL");
-				break;
-			case 2:
-				strcpy(detectName, base);
-				strcat(detectName, ".la0");
-				break;
-			case 3:
-				strcpy(detectName, base);
-				strcat(detectName, ".he0");
-				break;
-			case 4:
-				strcpy(detectName, base);
-				break;
-			case 5:
-				strcpy(detectName, base);
-				strcat(detectName, ".000");
-				break;
-			case 6:
-				strcpy(detectName, base);
-				strcat(detectName, ".sm0");
-				break;
-			case 7:
-				strcpy(detectName, "00.MAN");
-				break;
-			}
+		for (int method = 0; method < kDetectNameMethodsCount; method++) {
+			if (!generateDetectName(g, method, detectName))
+				continue;
+
 			strcpy(tempName, detectName);
 
 			substLastIndex = 0;
@@ -3210,11 +3240,11 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		g++;
 	}
 	if (!g->gameid) {
-		error("Invalid game ID '%s'\n", detector->_game.gameid);
 		return 0;
 	}
 
-	// Calculate MD5 of the games detection file, for savegames etc.
+	// We now want to alculate the MD5 of the games detection file, so that we
+	// can store it in savegames etc..
 	const char *gameid = g->gameid;
 	char detectName[256], tempName[256], gameMD5[32+1];
 	uint8 md5sum[16];
@@ -3223,38 +3253,21 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 	ScummGameSettings game = *g;
 
-	for (int method = 0; method < 7 && !found; method++) {
-		switch (method) {
-		case 0:
-			strcpy(detectName, "00.LFL");
-			break;
-		case 1:
-			strcpy(detectName, "000.LFL");
-			break;
-		case 2:
-			strcpy(detectName, gameid);
-			strcat(detectName, ".la0");
-			break;
-		case 3:
-			strcpy(detectName, gameid);
-			strcat(detectName, ".he0");
-			break;
-		case 4:
-			strcpy(detectName, gameid);
-			strcat(detectName, ".000");
-			break;
-		case 5:
-			strcpy(detectName, gameid);
-			strcat(detectName, ".sm0");
-			break;
-		case 6:
-			strcpy(detectName, "00.MAN");
-			break;
-		}
+	// To this end, we first have to figure out what the proper detection file
+	// is (00.LFL, 000.LFL, ...). So we iterate over all possible names,
+	// and once we find a matching file, we assume that's it.
+	for (int method = 0; method < kDetectNameMethodsCount && !found; method++) {
+		if (!generateDetectName(g, method, detectName))
+			continue;
+
 		strcpy(tempName, detectName);
 
 		substLastIndex = 0;
 		while (substLastIndex != -1) {
+			// FIXME: Repeatedly calling File::exists like this is a bad idea.
+			// Instead, use the fs.h code to get a list of all files in that 
+			// directory and simply check whether that filename is contained 
+			// in it. 
 			if (File::exists(detectName, ConfMan.get("path").c_str())) {
 				found = true;
 				break;
@@ -3281,6 +3294,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			game.platform = Common::kPlatformMacintosh;
 	}
 
+	// Compute the MD5 of the file, and (if we succeeded) store a hex version
+	// of it in gameMD5 (useful to print it to the user in messages).
 	if (Common::md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
 		for (int j = 0; j < 16; j++) {
 			sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
@@ -3316,20 +3331,22 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		game.features |= GF_DEFAULT_TO_1X_SCALER;
 	}
 
-	// TODO: REMOVE DEPRECATED OPTION
-	// (Perhaps GUI should display a messagebox on encountering an unknown key?)
 
-	// Check for a user override of the platform
-	// TODO: Is it a good idea to allow for such an override? Ideally, shouldn't
-	// we simply fully rely on the auto detection of the platform?
-	// -> potentially might cause troubles with FM-Towns/amiga versions?
+	// Check for a user override of the platform. We allow the user to override
+	// the platform, to make it possible to add games which are not yet in 
+	// our MD5 database but require a specific platform setting.
 	if (ConfMan.hasKey("platform"))
 		game.platform = Common::parsePlatform(ConfMan.get("platform"));
 
+
+	// V3 FM-TOWNS games *always* should use the corresponding music driver,
+	// anything else makes no sense for them.
 	if (game.platform == Common::kPlatformFMTowns && game.version == 3) {
 		game.midi = MDT_TOWNS;
 	}
 
+	// Finally, we have massaged the GameSettings to our satisfaction, and can
+	// instantiate the appropriate game engine. Hooray!
 	switch (game.version) {
 	case 1:
 	case 2:
