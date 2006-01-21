@@ -3277,37 +3277,29 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		}
 	}
 
-	// Check if MD5 was overwritten
+	// Check if the MD5 was overwritten, if so, use that in the subsequent search
+	const char *md5;
 	if (ConfMan.hasKey("target_md5")) {
-		const char *md5 = ConfMan.get("target_md5").c_str();
-
-		g = multiple_versions_md5_settings;
-		while (g->name) {
-			if (!scumm_stricmp(md5, g->name))
-				break;
-			g++;
-		}
-		if (g->name) {
-			game = *g;
-			game.name = name;
-			if (game.description)
-				g_system->setWindowCaption(game.description);
-		}
+		md5 = ConfMan.get("target_md5").c_str();
 	} else {
-		// Perform MD5-based search
-		g = multiple_versions_md5_settings;
-		while (g->name) {
-			if (!scumm_stricmp(gameMD5, g->name))
-				break;
-			g++;
-		}
-		if (g->name) {
+		md5 = gameMD5;
+	}
+
+	// Now search our 'database' for the MD5; if a match is found, we use 
+	// the information in the 'database' to correct the GameSettings.
+	g = multiple_versions_md5_settings;
+	while (g->name) {
+		if (!scumm_stricmp(md5, g->name)) {
+			// Match found
 			game = *g;
 			game.name = name;
 			if (game.description)
 				g_system->setWindowCaption(game.description);
+			break;
 		}
+		g++;
 	}
+
 	// Starting from version 7.1, HE games use 640x480. We check this here since multiple
 	// versions _could_ use different resolutions (I haven't verified this, though).
 	if (game.heversion >= 71) {
