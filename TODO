@@ -67,7 +67,10 @@ LaTeX docs
 * These are constantly out of sync with the README :-/
 * The files are currently named in a very dumb fashion -- using their section
   IDs, which of course constantly change. Better would be to give them names
-  based on their content instead.
+  based on their content instead. E.g. create a subdir for each chapter,
+  move the (sub)section files into that directory and rename them to match 
+  their content, instead of their section number (which changes all the time).
+  -> Fingolfin would do it, but wants to wait until the SVN switch.
 
 
 Code
