@@ -49,9 +49,6 @@ md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > scumm/scumm-md5.h
 	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../web/docs/md5.inc
 
-md5simon: tools/md5table$(EXEEXT)
-	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/simon-md5.txt > simon/simon-md5.h
-
 
 #
 # Rules which automatically and implicitly rebuild the credits and 
@@ -61,9 +58,6 @@ md5simon: tools/md5table$(EXEEXT)
 # portability to system on which our tools can't (automatically) be
 # run for some reason.
 #
-
-#simon/simon-md5.h: $(srcdir)/tools/simon-md5.txt tools/md5table$(EXEEXT)
-#	tools/md5table$(EXEEXT) --c++ < $< > $@
 
 #scumm/scumm-md5.h: $(srcdir)/tools/scumm-md5.txt tools/md5table$(EXEEXT)
 #	tools/md5table$(EXEEXT) --c++ < $< > $@
