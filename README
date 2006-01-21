@@ -70,7 +70,7 @@ easier and quicker. If you cannot donate, help and contribute a patch!
 The easiest way to contact the ScummVM team is by submitting bug reports or
 commenting in our forums. You can also join and e-mail the scummvm-devel
 mailing list, or chat with us on irc (#scummvm on irc.freenode.net)
-Please do not ask us to support an unsupported game - read our homepages
+Please do not ask us to support an unsupported game -- read our homepages
 FAQ first.
 
 2.1) Reporting Bugs:
@@ -103,20 +103,18 @@ At the moment the following games have been reported to work, and should
 be playable to the end.
 
 SCUMM Games by LucasArts:
-     Title                                           Target
-     ----------------------------------------------  --------
-     Maniac Mansion                                  [maniac]
-     Zak McKracken and the Alien Mindbenders         [zak]
-     Indiana Jones and the Last Crusade              [indy3]
-     Loom                                            [loom]
-     The Secret of Monkey Island                     [monkey]
-     Monkey Island 2: LeChuck's Revenge              [monkey2]
-     Indiana Jones and the Fate of Atlantis          [atlantis]
-     Day of the Tentacle                             [tentacle]
-     Sam & Max Hit the Road                          [samnmax]
-     Full Throttle                                   [ft]
-     The Dig                                         [dig]
-     The Curse of Monkey Island                      [comi]
+     Maniac Mansion                              [maniac]
+     Zak McKracken and the Alien Mindbenders     [zak]
+     Indiana Jones and the Last Crusade          [indy3]
+     Loom                                        [loom]
+     The Secret of Monkey Island                 [monkey]
+     Monkey Island 2: LeChuck's Revenge          [monkey2]
+     Indiana Jones and the Fate of Atlantis      [atlantis]
+     Day of the Tentacle                         [tentacle]
+     Sam & Max Hit the Road                      [samnmax]
+     Full Throttle                               [ft]
+     The Dig                                     [dig]
+     The Curse of Monkey Island                  [comi]
 
 SCUMM Games by Humongous Entertainment:
      Backyard Football                                          [football]
@@ -152,27 +150,28 @@ SCUMM Games by Humongous Entertainment:
      Spy Fox in Hold the Mustard                                [mustard]
 
 Other Games:
-     Beneath a Steel Sky                             [sky]
-     Broken Sword 1: The Shadow of the Templars      [sword1]
-     Broken Sword 2: The Smoking Mirror              [sword2]
-     Flight of the Amazon Queen                      [queen]
-     Gobliiins                                       [gob1]
-     Inherit the Earth: Quest for the Orb            [ite]
-     The Legend of Kyrandia                          [kyra1]
-     Simon the Sorcerer 1                            [simon1]
-     Simon the Sorcerer 2                            [simon2]
+     Beneath a Steel Sky                         [sky]
+     Broken Sword 1: The Shadow of the Templars  [sword1]
+     Broken Sword 2: The Smoking Mirror          [sword2]
+     Flight of the Amazon Queen                  [queen]
+     Gobliiins                                   [gob1]
+     Inherit the Earth: Quest for the Orb        [ite]
+     The Legend of Kyrandia                      [kyra1]
+     Simon the Sorcerer 1                        [simon1]
+     Simon the Sorcerer 2                        [simon2]
 
 The following games should load, but are not yet fully playable. Play these at
 your own risk, and please do not file bug reports about them. If you want
 the latest updates on game compatibility, visit our web site and view the
 compatibility chart.
 
-     Backyard Baseball                                              [baseball]
-     Backyard Soccer                                                [soccer]
-     Big Thinkers First Grade                                       [thinker1]
-     Pajama Sam 3: You Are What You Eat From Your Head to Your Feet [pajama3]
-     Pajama Sam's Lost & Found                                      [lost]
-     Spy Fox 3: Operation Ozone                                     [spyozon]
+     Backyard Baseball                           [baseball]
+     Backyard Soccer                             [soccer]
+     Big Thinkers First Grade                    [thinker1]
+     Pajama Sam 3: You Are What You Eat
+         From Your Head to Your Feet             [pajama3]
+     Pajama Sam's Lost & Found                   [lost]
+     Spy Fox 3: Operation Ozone                  [spyozon]
 
 The following games are SCUMM engine, but NOT supported by ScummVM (yet).
 
@@ -440,7 +439,7 @@ the in-built launcher will activate. From this, you can add games (click
 'Add Game'), or launch games which have already been configured.
 
 ScummVM can also be launched into a game directly using Command Line
-arguments - see the next section.
+arguments -- see the next section.
 
 5.1) Command Line Options:
 ---- ---------------------
@@ -620,9 +619,8 @@ Note #2: Filters can be very slow when ScummVM is compiled in a debug
 configuration without optimizations. And there is always a speed impact when
 using any form of anti-aliasing/linear filtering.
 
-Note #3: The FM-TOWNS version of Zak (zaktowns target) uses an original
-resolution of 320x240 - hence for this game scalers will scale to
-640x480 or 960x720.
+Note #3: The FM-TOWNS version of Zak uses an original resolution of 320x240 -
+hence for this game scalers will scale to 640x480 or 960x720.
 
 5.4) Hot Keys:
 ---- ---------
@@ -702,9 +700,9 @@ simon games.
                                  [Simon the Sorcerer 2 only]
 
     The Legend of Kyrandia:
-        Ctrl 0-9 and Alt 0-9  -  Load and save game state
-        d                     -  Starts the debugger
-        q                     -  Exits the game
+        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        d                      - Starts the debugger
+        q                      - Exits the game
 
 Note that using ctrl-f and ctrl-g are not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
@@ -948,7 +946,8 @@ MIDI music with Adlib sound effects.
 7.6.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
 ------ ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
-variable "SCUMMVM_MIDI" to your sequencer device - e.g., /dev/sequencer
+variable "SCUMMVM_MIDI" to your sequencer device -- for example, to 
+/dev/sequencer
 
 If you have problems with not hearing audio in this configuration, it is
 possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2. This
@@ -1077,7 +1076,7 @@ This should produce a smaller monster.sof file, which you should copy to your
 game directory. Remember that the quality is always the same, varying encoder
 options will only affect the encoding time and resulting  filesize. Playing
 with the blocksize (-b <value>), has the biggest impact on the resulting
-filesize - 1152 seems to be a good value for those kind of soundfiles. Be sure
+filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
@@ -1112,7 +1111,7 @@ file to your game dir. You can safely remove the old file.
 ------ ------------------------------------------
 The compress_sword1 tool from the scummvm-tools package can encode music and
 speech to MP3 as well as Ogg Vorbis.
-Easiest way to encode the files is simply copying the executable into your
+The easiest way to encode the files is simply copying the executable into your
 BS1 directory (together with the lame encoder) and run it from there.
 This way, it'll automatically encode everything to MP3.
 Afterwards, you can manually remove the SPEECH?.CLU files and the wave music
