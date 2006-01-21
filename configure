@@ -385,49 +385,49 @@ for ac_option in $@; do
       --enable-mt32emu)         _mt32emu=yes    ;;
       --disable-mt32emu)        _mt32emu=no     ;;
       --with-fluidsynth-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        FLUIDSYNTH_CFLAGS="-I$_prefix/include"
-        FLUIDSYNTH_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        FLUIDSYNTH_CFLAGS="-I$arg/include"
+        FLUIDSYNTH_LIBS="-L$arg/lib"
         ;;
       --with-mpeg2-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        MPEG2_CFLAGS="-I$_prefix/include"
-        MPEG2_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        MPEG2_CFLAGS="-I$arg/include"
+        MPEG2_LIBS="-L$arg/lib"
         ;;
       --with-alsa-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        ALSA_CFLAGS="-I$_prefix/include"
-        ALSA_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        ALSA_CFLAGS="-I$arg/include"
+        ALSA_LIBS="-L$arg/lib"
         ;;
       --with-ogg-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        OGG_CFLAGS="-I$_prefix/include"
-        OGG_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        OGG_CFLAGS="-I$arg/include"
+        OGG_LIBS="-L$arg/lib"
         ;;
       --with-vorbis-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        VORBIS_CFLAGS="-I$_prefix/include"
-        VORBIS_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        VORBIS_CFLAGS="-I$arg/include"
+        VORBIS_LIBS="-L$arg/lib"
         ;;
       --with-tremor-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        TREMOR_CFLAGS="-I$_prefix/include"
-        TREMOR_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        TREMOR_CFLAGS="-I$arg/include"
+        TREMOR_LIBS="-L$arg/lib"
         ;;
       --with-flac-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        FLAC_CFLAGS="-I$_prefix/include"
-        FLAC_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        FLAC_CFLAGS="-I$arg/include"
+        FLAC_LIBS="-L$arg/lib"
         ;;
       --with-mad-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        MAD_CFLAGS="-I$_prefix/include"
-        MAD_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        MAD_CFLAGS="-I$arg/include"
+        MAD_LIBS="-L$arg/lib"
         ;;
       --with-zlib-prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        ZLIB_CFLAGS="-I$_prefix/include"
-        ZLIB_LIBS="-L$_prefix/lib"
+        arg=`echo $ac_option | cut -d '=' -f 2`
+        ZLIB_CFLAGS="-I$arg/include"
+        ZLIB_LIBS="-L$arg/lib"
         ;;
       --backend=*)
         _backend=`echo $ac_option | cut -d '=' -f 2`
