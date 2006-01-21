@@ -160,12 +160,13 @@ Config Manager
   setting is changed, the code doing so has to updated the SoundMixer etc.
   That's cumbersome, and error prone. Would be much nicer if updating the
   volume config value automatically notifies the SoundMixer, iMuse etc.
-* Split it into a Config Manager, and a Config File class. Maybe even follow
-  the pentagram (http://pentragram.sf.net) approach and have three class:
+* Modify the config manager to make use of the config file class
+* Maybe even follow the pentagram (http://pentragram.sf.net) approach and have
+  three classes:
   - SettingsManager (like our current ConfigManager)
   - ConfigFileManager (manages a set of config files, possibly merging the data
     from multiple config files)
-  - INIFile (a simple .ini file accessor).
+  - ConfigFile (a simple .ini file accessor).
   This makes it easy to add additional config sources (e.g. XMLConfigFile);
   makes it possible to treat the command line data like another config file
   (CommandLineConfig); and simply follows the good old MVC approach, which
@@ -252,7 +253,6 @@ Graphics
   - takes up less space in the executable (ascii vs. binary encoding)
   - allows for multi-color/anti-aliased fonts
 
-
 Launcher
 ========
 * Add more options to global options dialog
@@ -285,7 +285,12 @@ Plugins
   if the engine could specify why creating the engine instance failed (e.g.
   due to lack of memory, because a file couldn't be found, because the game
   was not recognized, etc.).
-
+* Currently, there is only a single list of game IDs return by each engine.
+  That list is both used to detect which engine handles a given user target,
+  and to display a list of supported game IDs. This leads to "-z" displaying
+  e.g. the obsolete "zakTowns" target. So we should separate the two. There
+  are multiple ways to do that, of course.
+  
 OSystem
 =======
 * Right now gBitFormat is part of common/scaler.cpp; we might want to move it
