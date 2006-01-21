@@ -68,6 +68,7 @@ Engine::Engine() :
 	_textSpeed = 6;
 	_mode = _previousMode = ENGINE_MODE_IDLE;
 	_flipEnable = true;
+	_lastUpdateTime = 0;
 	_refreshDrawNeeded = true;
 	g_searchFile = NULL;
 	_savedState = NULL;
@@ -217,6 +218,12 @@ void Engine::drawPrimitives() {
 void Engine::luaUpdate() {
 	// Update timing information
 	unsigned newStart = SDL_GetTicks();
+	if (newStart < _frameStart) {
+		_frameStart = newStart;
+		return;
+	}
+	if (newStart - _frameStart < 30)
+		return;
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
@@ -239,6 +246,17 @@ void Engine::luaUpdate() {
 }
 
 void Engine::updateDisplayScene() {
+	uint32 newTime = SDL_GetTicks();
+	if (newTime < _lastUpdateTime) {
+		_lastUpdateTime = newTime;
+		_doFlip = false;
+	}
+	if (newTime - _lastUpdateTime < 30) {
+		_doFlip = false;
+		return;
+	}
+	_lastUpdateTime = newTime;
+
 	_doFlip = true;
 
 	if (_mode == ENGINE_MODE_SMUSH) {
@@ -349,14 +367,11 @@ void Engine::updateDisplayScene() {
 }
 
 void Engine::doFlip() {
-	if (SHOWFPS_GLOBAL)
+	if (SHOWFPS_GLOBAL && _doFlip)
 		g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 
 	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
-
-	// don't kill CPU
-	SDL_Delay(1);
 
 	if (SHOWFPS_GLOBAL && _doFlip) {
 		_frameCounter++;
