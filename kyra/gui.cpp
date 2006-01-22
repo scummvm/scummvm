@@ -22,6 +22,11 @@
 #include "kyra/kyra.h"
 #include "kyra/screen.h"
 #include "kyra/script.h"
+#include "kyra/text.h"
+#include "kyra/animator.h"
+
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace Kyra {
 Button *KyraEngine::initButton(Button *list, Button *newButton) {
@@ -267,7 +272,7 @@ void KyraEngine::processButtonList(Button *list) {
 void KyraEngine::processButton(Button *button) {
 	if (!button)
 		return;
-		
+	
 	int processType = 0;
 	uint8 *shape = 0;
 	Button::ButtonCallback callback = 0;
@@ -314,8 +319,407 @@ void KyraEngine::processButton(Button *button) {
 	}
 }
 
+void KyraEngine::processAllMenuButtons() {
+	if (!_menuButtonList)
+		return;
+
+	Button *cur = _menuButtonList;
+	while (true) {
+		if (!cur->nextButton) {
+			break;
+		}
+		processMenuButton(cur);
+		cur = cur->nextButton;
+	}
+	return;
+}
+
+void KyraEngine::processMenuButton(Button *button) {
+	if (!_displayMenu)
+		return;
+
+	//_screen->hideMouse();
+
+	if ( !button || (button->flags & 8))
+		return;
+
+	if (button->flags2 & 1)
+		button->flags2 &= 0xf7;
+	else
+		button->flags2 |= 8;
+
+	button->flags2 &= 0xfc;
+
+	if (button->flags2 & 4)
+		button->flags2 |= 0x10;
+	else
+		button->flags2 &= 0xef;
+
+	button->flags2 &= 0xfb;
+
+	processButton(button);
+
+	//_screen->showMouse();
+}
+
+int KyraEngine::drawBoxCallback(Button *button) {
+	if (!_displayMenu)
+		return 0;
+
+	_screen->hideMouse();
+	_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 0xf8);
+	_screen->showMouse();
+
+	return 0;
+}
+
+int KyraEngine::drawShadedBoxCallback(Button *button) {
+
+	if (!_displayMenu)
+		return 0;
+	
+	_screen->hideMouse();
+	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xf9, 0xfa);
+	_screen->showMouse();
+
+	return 0;
+}
+
 int KyraEngine::buttonMenuCallback(Button *caller) {
-	warning("Menu not implemented yet!");
+	_displayMenu = true;
+
+	// XXX setLabels
+	if (_currentCharacter->sceneId == 210 || caller == 0) {
+		snd_playSoundEffect(0x36);
+		return 0;
+	}
+	// XXX
+
+	for (int i = 0; i < 6; i++) {
+		_menuButtonData[i].process0 = _menuButtonData[i].process1 = _menuButtonData[i].process2 = 4;
+		_menuButtonData[i].process0PtrCallback = &KyraEngine::drawShadedBoxCallback;
+		_menuButtonData[i].process1PtrCallback = &KyraEngine::drawBoxCallback;
+		_menuButtonData[i].process2PtrCallback = &KyraEngine::drawShadedBoxCallback;
+	}
+
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	calcCoords(_menu[0]);
+	calcCoords(_menu[1]);
+	calcCoords(_menu[2]);
+
+	initMenu(_menu[0]);
+	processAllMenuButtons();
+
+	_menuRestoreScreen = true;
+	while (_displayMenu) {
+		processButtonList(_menuButtonList);
+		gui_getInput();
+	}
+
+	if (_menuRestoreScreen) {
+		_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+		_animator->_updateScreen = true;
+	}
+	else
+		_screen->deletePageFromDisk(0);
+
+	return 0;
+}
+
+void KyraEngine::initMenu(Menu menu) {
+	int menu_x2 = menu.width  + menu.x - 1;
+	int menu_y2 = menu.height + menu.y - 1;
+
+	_menuButtonList = 0;
+
+	_screen->hideMouse();
+	_screen->fillRect(menu.x + 2, menu.y + 2, menu_x2 - 2, menu_y2 - 2, menu.bgcolor);
+	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2);
+
+	int textX;
+	int textY;
+
+	if (menu.field_10 != -1)
+		textX = menu.x;
+	else
+		textX = _text->getCenterStringX(menu.menuName, menu.x, menu_x2);
+
+	textY = menu.y + menu.field_12;
+
+	_text->printText(menu.menuName, textX - 1, textY + 1, 12, 248, 0);
+	_text->printText(menu.menuName, textX, textY, menu.textColor, 0, 0);
+
+	int x1, y1, x2, y2;
+	for (int i = 0; i < menu.nrOfItems; i++) {
+		if (!menu.item[i].enabled)
+			continue;
+
+		x1 = menu.x + menu.item[i].x;
+		y1 = menu.y + menu.item[i].y;
+
+		x2 = menu.x + menu.item[i].x + menu.item[i].width - 1;
+		y2 = menu.y + menu.item[i].y + menu.item[i].height - 1;
+
+		if (i < 6) {
+			_menuButtonData[i].nextButton = 0;
+			_menuButtonData[i].x = x1;
+			_menuButtonData[i].y = y1;
+			_menuButtonData[i].width  = menu.item[i].width  - 1;
+			_menuButtonData[i].height = menu.item[i].height - 1;
+			_menuButtonData[i].buttonCallback = menu.item[i].callback;
+			_menuButtonData[i].specialValue = menu.item[i].field_1b;
+			//_menuButtonData[i].field_6 = menu.item[i].field_25;
+			//_menuButtonData[i].field_8 = 0;
+
+			if (!_menuButtonList)
+				_menuButtonList = &_menuButtonData[i];
+			else
+				_menuButtonList = initButton(_menuButtonList, &_menuButtonData[i]);
+		}
+		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bgcolor);
+		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
+
+		if (menu.item[i].field_12 != -1)
+			textX = x1 + menu.item[i].field_12 + 3;
+		else
+			textX = _text->getCenterStringX(menu.item[i].itemString, x1, x2);
+
+		textY = y1 + 2;
+		_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
+
+		if (i == menu.field_14)
+			_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
+		else
+			_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].textColor, 0, 0);
+
+		if (menu.item[i].labelString) {
+			_text->printText(menu.item[i].labelString, menu.x + menu.item[i].field_21 - 1, menu.y + menu.item[i].field_23 + 1, 12, 0, 0);
+			_text->printText(menu.item[i].labelString, menu.x + menu.item[i].field_21, menu.y + menu.item[i].field_23, 253, 0, 0);
+		}
+	}
+
+	if (menu.scrollUpBtnX != -1) {
+		_scrollUpButton.x = menu.scrollUpBtnX + menu.x;
+		_scrollUpButton.y = menu.scrollUpBtnY + menu.y;
+		_scrollUpButton.buttonCallback = &KyraEngine::gui_scrollUp;
+		_scrollUpButton.nextButton = 0;
+		_menuButtonList = initButton(_menuButtonList, &_scrollUpButton);
+		processMenuButton(&_scrollUpButton);
+		
+		_scrollDownButton.x = menu.scrollDownBtnX + menu.x;
+		_scrollDownButton.y = menu.scrollDownBtnY + menu.y;
+		_scrollDownButton.buttonCallback = &KyraEngine::gui_scrollDown;
+		_scrollDownButton.nextButton = 0;
+		_menuButtonList = initButton(_menuButtonList, &_scrollDownButton);
+		processMenuButton(&_scrollDownButton);
+	}
+
+	_screen->showMouse();
+	_screen->updateScreen();
+}
+
+void KyraEngine::calcCoords(Menu &menu) {
+	if (menu.x == -1)
+		menu.x = (320 - menu.width)/2;
+
+	if (menu.y == -1)
+		menu.y = (200 - menu.height)/2;
+
+	assert(menu.nrOfItems < 7);
+	for (int i = 0; i < menu.nrOfItems; i++)
+		if (menu.item[i].x == -1)
+			menu.item[i].x = (menu.width - menu.item[i].width)/2;
+}
+
+void KyraEngine::gui_getInput() {
+	OSystem::Event event;
+
+	_mousePressFlag = false;
+	while (_system->pollEvent(event)) {
+		switch (event.type) {
+			case OSystem::EVENT_QUIT:
+				quitGame();
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+				_mousePressFlag = true;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				_system->updateScreen();
+				break;
+			default:
+				break;
+		}
+	}
+	_system->delayMillis(10);
+}
+
+int KyraEngine::gui_resumeGame(Button *button) {
+	debug(9, "KyraEngine::gui_resumeGame()");
+	processMenuButton(button);
+	_displayMenu = false;
+
+	return 0;
+}
+
+const char *KyraEngine::getSavegameName(int num) {
+	static char saveLoadSlot[12];
+
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
+	return saveLoadSlot;
+}
+
+void KyraEngine::setupSavegames(Menu &menu, int num) {
+	Common::InSaveFile *in;
+	static char savenames[5][31];
+
+	assert(num <= 5);
+
+	for (int i = 0; i < num; i++) {
+		if ((in = _saveFileMan->openForLoading(getSavegameName(i + _savegameOffset)))) {
+			in->skip(8);
+			in->read(savenames[i], 31);
+			menu.item[i].itemString = savenames[i];
+			menu.item[i].enabled = 1;
+			menu.item[i].field_1b = i + _savegameOffset;
+			delete in;
+		} else {
+			menu.item[i].enabled = 0;
+			//menu.item[i].itemString = "";
+			//menu.item[i].field_1b = -1;
+		}
+	}
+}
+
+int KyraEngine::gui_loadGameMenu(Button *button) {
+	debug(9, "KyraEngine::gui_loadGameMenu()");
+	processMenuButton(button);
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	_savegameOffset = 0;
+	setupSavegames(_menu[2], 5);
+	initMenu(_menu[2]);
+
+	_displayLoadGameMenu = true;
+	_cancelLoadGameMenu = false;
+
+	while (_displayLoadGameMenu) {
+		gui_getInput();
+		//processHighlights();
+		processButtonList(_menuButtonList);
+	}
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	if (_cancelLoadGameMenu) {
+		initMenu(_menu[0]);
+		processAllMenuButtons();
+	} else {
+		loadGame(getSavegameName(_gameToLoad));
+		_displayMenu = false;
+		_menuRestoreScreen = false;
+	}
+	return 0;
+}
+
+int KyraEngine::gui_loadGame(Button *button) {
+	debug(9, "KyraEngine::gui_loadGame()");
+	processMenuButton(button);
+	_displayLoadGameMenu = false;
+	_gameToLoad = button->specialValue;
+
+	return 0;
+}
+
+int KyraEngine::gui_cancelLoadGameMenu(Button *button) {
+	debug(9, "KyraEngine::gui_cancelLoadGameMenu()");
+	processMenuButton(button);
+	_displayLoadGameMenu = false;
+	_cancelLoadGameMenu = true;
+
+	return 0;
+}
+
+int KyraEngine::gui_quitPlaying(Button *button) {
+	debug(9, "KyraEngine::gui_quitPlaying()");
+
+	processMenuButton(button);
+	if (gui_quitConfirm("Are you sure you want to quit playing?"))
+		quitGame();
+	else {
+		initMenu(_menu[0]);
+		processAllMenuButtons();
+	}
+
+	return 0;
+}
+
+bool KyraEngine::gui_quitConfirm(const char *str) {
+	debug(9, "KyraEngine::gui_quitConfirm()");
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	_menu[1].menuName = str;
+	initMenu(_menu[1]);
+
+	_displayQuitConfirmDialog = true;
+	_quitConfirmed = false;
+
+	while (_displayQuitConfirmDialog) {
+		gui_getInput();
+		//processHighlights();
+		processButtonList(_menuButtonList);
+	}
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	return _quitConfirmed;
+}
+
+int KyraEngine::gui_quitConfirmYes(Button *button) {
+	debug(9, "KyraEngine::gui_quitConfirmYes()");
+	processMenuButton(button);
+	_displayQuitConfirmDialog = false;
+	_quitConfirmed = true;
+
+	return 0;
+}
+
+int KyraEngine::gui_quitConfirmNo(Button *button) {
+	debug(9, "KyraEngine::gui_quitConfirmNo()");
+	processMenuButton(button);
+	_displayQuitConfirmDialog = false;
+	_quitConfirmed = false;
+
+	return 0;
+}
+
+int KyraEngine::gui_scrollUp(Button *button) {
+	debug(9, "KyraEngine::gui_scrollUp()");
+	processMenuButton(button);
+
+	if (_savegameOffset > 0) {
+		_savegameOffset--;
+		setupSavegames(_menu[2], 5);
+		initMenu(_menu[2]);
+	}
+	return 0;
+}
+
+int KyraEngine::gui_scrollDown(Button *button) {
+	debug(9, "KyraEngine::gui_scrollDown()");
+	processMenuButton(button);
+
+	_savegameOffset++;
+	setupSavegames(_menu[2], 5);
+	initMenu(_menu[2]);
+
 	return 0;
 }
 

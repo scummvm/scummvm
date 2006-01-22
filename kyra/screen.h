@@ -109,7 +109,8 @@ public:
 	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1);
 	void drawLine(bool horizontal, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
-	void drawBox(int x1, int y1, int x2, int y2, int color1, int color2);
+	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
+	void drawBox(int x1, int y1, int x2, int y2, int color);
 	void setAnimBlockPtr(int size);
 	void setTextColorMap(const uint8 *cmap);
 	void setTextColor(const uint8 *cmap, int a, int b);
@@ -146,6 +147,7 @@ public:
 	
 	void savePageToDisk(const char *file, int page);
 	void loadPageFromDisk(const char *file, int page);
+	void deletePageFromDisk(int page);
 
 	int _charWidth;
 	int _charOffset;

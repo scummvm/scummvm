@@ -31,6 +31,22 @@ class AudioStream;
 
 namespace Kyra {
 
+class Movie;
+class Sound;
+class SeqPlayer;
+class Resource;
+class PAKFile;
+class Screen;
+class Sprites;
+class ScriptHelper;
+class Debugger;
+class ScreenAnimator;
+class TextDisplayer;
+class KyraEngine;
+
+struct ScriptState;
+struct ScriptData;
+
 enum {
 	GF_FLOPPY	= 1 <<  0,
 	GF_TALKIE	= 1 <<  1,
@@ -116,22 +132,6 @@ struct BeadState {
 	int16 tableIndex;
 };
 
-class Movie;
-
-class Sound;
-class SeqPlayer;
-class Resource;
-class PAKFile;
-class Screen;
-class Sprites;
-struct ScriptState;
-struct ScriptData;
-class ScriptHelper;
-class Debugger;
-class ScreenAnimator;
-class TextDisplayer;
-class KyraEngine;
-
 struct Timer {
 	uint8 active;
 	int32 countdown;
@@ -148,7 +148,7 @@ struct Button {
 	uint8 process2;
 	// uint8 unk
 	uint16 flags;
-	typedef int (KyraEngine::*ButtonCallback)(Button*);
+	typedef int (KyraEngine::*ButtonCallback)(Button*);	
 	// using 6 pointers instead of 3 as in the orignal here (safer for use with classes)
 	uint8 *process0PtrShape;
 	uint8 *process1PtrShape;
@@ -165,6 +165,53 @@ struct Button {
 	uint32 flags2;
 	ButtonCallback buttonCallback;
 	// uint8 unk[8];
+};
+
+struct MenuItem {
+	bool enabled;
+	uint16 field_1;
+	uint8 field_3;
+	const char *itemString;
+	int16 x;
+	int8 field_9;
+	uint16 y;
+	uint16 width;
+	uint16 height;
+	uint8 textColor;
+	uint8 highlightColor;
+	int8 field_12;
+	uint8 field_13;
+	uint8 bgcolor;
+	uint8 color1;
+	uint8 color2;
+	int (KyraEngine::*callback)(Button*);
+	int16 field_1b;
+	const char *labelString;
+	uint16 field_21;
+	uint8 field_23;
+	uint8 field_24;
+	uint32 field_25;
+};
+
+struct Menu {
+	int16 x;
+	int16 y;
+	uint16 width;
+	uint16 height;
+	uint8 bgcolor;
+	uint8 color1;
+	uint8 color2;
+	const char *menuName;
+	uint8 textColor;
+	int16 field_10;
+	uint16 field_12;
+	uint16 field_14;
+	uint8 nrOfItems;
+	int16 scrollUpBtnX;
+	int16 scrollUpBtnY;
+	int16 scrollDownBtnX;
+	int16 scrollDownBtnY;
+	MenuItem item[6];
 };
 
 class KyraEngine : public Engine {
@@ -599,11 +646,33 @@ protected:
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
 	int buttonMenuCallback(Button *caller);
+	int drawBoxCallback(Button *button);
+	int drawShadedBoxCallback(Button *button);
+	void calcCoords(Menu &menu);
+	void initMenu(Menu menu);
 
 	Button *initButton(Button *list, Button *newButton);
 	void processButtonList(Button *list);
 	void processButton(Button *button);
-	
+	void processMenuButton(Button *button);
+	void processAllMenuButtons();
+
+	const char *getSavegameName(int num);
+	void setupSavegames(Menu &menu, int num);
+
+	int gui_resumeGame(Button *button);
+	int gui_loadGameMenu(Button *button);
+	int gui_quitPlaying(Button *button);
+	int gui_quitConfirmYes(Button *button);
+	int gui_quitConfirmNo(Button *button);
+	int gui_loadGame(Button *button);
+	int gui_cancelLoadGameMenu(Button *button);
+	int gui_scrollUp(Button *button);
+	int gui_scrollDown(Button *button);
+
+	bool gui_quitConfirm(const char *str);
+	void gui_getInput();
+
 	uint8 _game;
 	bool _fastMode;
 	bool _quitFlag;
@@ -738,14 +807,16 @@ protected:
 	Character *_characterList;
 	
 	Button *_buttonList;
-	
-	uint8 *_buttonShape0;
-	uint8 *_buttonShape1;
-	uint8 *_buttonShape2;
-	uint8 *_buttonShape3;
-	uint8 *_buttonShape4;
-	uint8 *_buttonShape5;
-	
+	Button *_menuButtonList;
+	bool _displayMenu;
+	bool _menuRestoreScreen;
+	bool _displayQuitConfirmDialog;
+	bool _displayLoadGameMenu;
+	bool _cancelLoadGameMenu;
+	bool _quitConfirmed;
+	int _savegameOffset;
+	int _gameToLoad;
+
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;
 	uint8 *_seq_KyrandiaLogo;
@@ -867,6 +938,11 @@ protected:
 	
 	static Button _buttonData[];
 	static Button *_buttonDataListPtr[];
+	static Button _menuButtonData[];
+	static Button _scrollUpButton;
+	static Button _scrollDownButton;
+
+	static Menu _menu[];
 
 	static const uint8 _magicMouseItemStartFrame[];
 	static const uint8 _magicMouseItemEndFrame[];

@@ -440,11 +440,17 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 	}
 }
 
-void Screen::drawBox(int x1, int y1, int x2, int y2, int color1, int color2) {
-	debug(9, "Screen::drawBox(%i, %i, %i, %i, %i, %i)", x1, y1, x2, y2, color1, color2);
+void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
+	debug(9, "Screen::drawBox(%i, %i, %i, %i, %i)", x1, y1, x2, y2, color);
 
-	//if (_menuUnk1 == 0)
-		//return;
+	drawClippedLine(x1, y1, x2, y1, color);
+	drawClippedLine(x1, y1, x1, y2, color);
+	drawClippedLine(x2, y1, x2, y2, color);
+	drawClippedLine(x1, y2, x2, y2, color);
+}
+
+void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
+	debug(9, "Screen::drawShadedBox(%i, %i, %i, %i, %i, %i)", x1, y1, x2, y2, color1, color2);
 
 	hideMouse();
 
@@ -1750,11 +1756,12 @@ void Screen::hideMouse() {
 void Screen::showMouse() {
 	debug(9, "Screen::showMouse()");
 
+	if (_mouseLockCount == 1)
+		_system->showMouse(true);
+
 	if (_mouseLockCount > 0)
 		_mouseLockCount--;
 
-	if (_mouseLockCount == 0)
-		_system->showMouse(true);
 }
 
 void Screen::setShapePages(int page1, int page2) {
@@ -1902,4 +1909,11 @@ void Screen::loadPageFromDisk(const char *file, int page) {
 	delete [] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
 }
+
+void Screen::deletePageFromDisk(int page) {
+	debug(9, "Screen::deletePageFromDisk(%d)", page);
+	delete [] _saveLoadPage[page/2];
+	_saveLoadPage[page/2] = 0;
+}
+
 } // End of namespace Kyra

@@ -441,14 +441,14 @@ KyraEngine::~KyraEngine() {
 	delete [] _characterList;
 	
 	delete [] _movFacingTable;
-	
-	free(_buttonShape0);
-	free(_buttonShape1);
-	free(_buttonShape2);
-	free(_buttonShape3);
-	free(_buttonShape4);
-	free(_buttonShape5);
-	
+
+	free(_scrollUpButton.process0PtrShape);
+	free(_scrollUpButton.process1PtrShape);
+	free(_scrollUpButton.process2PtrShape);
+	free(_scrollDownButton.process0PtrShape);
+	free(_scrollDownButton.process1PtrShape);
+	free(_scrollDownButton.process2PtrShape);
+		
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
 			free(_shapes[i]);
@@ -581,6 +581,7 @@ void KyraEngine::startup() {
 void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 	OSystem::Event event;
 	char saveLoadSlot[20];
+	char savegameName[14];
 
 	_mousePressFlag = false;
 	uint32 start = _system->getMillis();
@@ -588,26 +589,28 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode == 'q') {
-					_quitFlag = true;
-				} else if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
+				if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
 						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
 					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
 					if (event.kbd.flags == OSystem::KBD_CTRL)
 						loadGame(saveLoadSlot);
-					else
-						saveGame(saveLoadSlot, saveLoadSlot);
+					else {
+						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
+						saveGame(saveLoadSlot, savegameName);
+					}
 				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
 					if (event.kbd.keycode == 'f')
 						_fastMode = !_fastMode;
 					else if (event.kbd.keycode == 'd')
 						_debugger->attach();
+					else if (event.kbd.keycode == 'q')
+						_quitFlag = true;
 				}
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
-				_animator->_updateScreen = true;
+				_system->updateScreen();
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
@@ -711,6 +714,8 @@ void KyraEngine::mainLoop() {
 			}
 		}
 		
+		_screen->showMouse();
+
 		processButtonList(_buttonList);
 		updateMousePointer();
 		updateGameTimers();
@@ -1974,12 +1979,12 @@ void KyraEngine::loadItems() {
 void KyraEngine::loadButtonShapes() {
 	loadBitmap("BUTTONS2.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
-	_buttonShape0 = _screen->encodeShape(0, 0, 24, 14, 1);
-	_buttonShape1 = _screen->encodeShape(24, 0, 24, 14, 1);
-	_buttonShape2 = _screen->encodeShape(48, 0, 24, 14, 1);
-	_buttonShape3 = _screen->encodeShape(0, 15, 24, 14, 1);
-	_buttonShape4 = _screen->encodeShape(24, 15, 24, 14, 1);
-	_buttonShape5 = _screen->encodeShape(48, 15, 24, 14, 1);
+	_scrollUpButton.process0PtrShape = _screen->encodeShape(0, 0, 24, 14, 1);
+	_scrollUpButton.process1PtrShape = _screen->encodeShape(24, 0, 24, 14, 1);
+	_scrollUpButton.process2PtrShape = _screen->encodeShape(48, 0, 24, 14, 1);
+	_scrollDownButton.process0PtrShape = _screen->encodeShape(0, 15, 24, 14, 1);
+	_scrollDownButton.process1PtrShape = _screen->encodeShape(24, 15, 24, 14, 1);
+	_scrollDownButton.process2PtrShape = _screen->encodeShape(48, 15, 24, 14, 1);
 	_screen->_curPage = 0;
 }
 
