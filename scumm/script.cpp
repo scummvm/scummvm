@@ -531,7 +531,7 @@ int ScummEngine::readVar(uint var) {
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			return _roomVars[var];
 
-		} else if (_version <= 3) {
+		} else if (_version <= 3 && !(_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns))) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
@@ -620,7 +620,7 @@ void ScummEngine::writeVar(uint var, int value) {
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			_roomVars[var] = value;
 
-		} else if (_version <= 3) {
+		} else if (_version <= 3 && !(_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns))) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
 			int bit = var & 0xF;
