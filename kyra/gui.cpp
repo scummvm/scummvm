@@ -413,6 +413,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 
 	_menuRestoreScreen = true;
 	while (_displayMenu) {
+		gui_processHighlights(_menu[0]);
 		processButtonList(_menuButtonList);
 		gui_getInput();
 	}
@@ -458,8 +459,8 @@ void KyraEngine::initMenu(Menu menu) {
 		x1 = menu.x + menu.item[i].x;
 		y1 = menu.y + menu.item[i].y;
 
-		x2 = menu.x + menu.item[i].x + menu.item[i].width - 1;
-		y2 = menu.y + menu.item[i].y + menu.item[i].height - 1;
+		x2 = x1 + menu.item[i].width - 1;
+		y2 = y1 + menu.item[i].height - 1;
 
 		if (i < 6) {
 			_menuButtonData[i].nextButton = 0;
@@ -488,7 +489,7 @@ void KyraEngine::initMenu(Menu menu) {
 		textY = y1 + 2;
 		_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
 
-		if (i == menu.field_14)
+		if (i == menu.highlightedItem)
 			_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
 		else
 			_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].textColor, 0, 0);
@@ -602,13 +603,14 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 	_savegameOffset = 0;
 	setupSavegames(_menu[2], 5);
 	initMenu(_menu[2]);
+	processAllMenuButtons();
 
 	_displayLoadGameMenu = true;
 	_cancelLoadGameMenu = false;
 
 	while (_displayLoadGameMenu) {
 		gui_getInput();
-		//processHighlights();
+		gui_processHighlights(_menu[2]);
 		processButtonList(_menuButtonList);
 	}
 
@@ -672,7 +674,7 @@ bool KyraEngine::gui_quitConfirm(const char *str) {
 
 	while (_displayQuitConfirmDialog) {
 		gui_getInput();
-		//processHighlights();
+		gui_processHighlights(_menu[1]);
 		processButtonList(_menuButtonList);
 	}
 
@@ -721,6 +723,70 @@ int KyraEngine::gui_scrollDown(Button *button) {
 	initMenu(_menu[2]);
 
 	return 0;
+}
+
+void KyraEngine::gui_processHighlights(Menu &menu) {
+	int x1, y1, x2, y2;
+
+	for (int i = 0; i < menu.nrOfItems; i++) {
+		if (!menu.item[i].enabled)
+			continue;
+
+		x1 = menu.x + menu.item[i].x;
+		y1 = menu.y + menu.item[i].y;
+
+		x2 = x1 + menu.item[i].width;
+		y2 = y1 + menu.item[i].height;
+
+		if (_mouseX > x1 && _mouseX < x2 &&
+			_mouseY > y1 && _mouseY < y2) {
+			
+			if (menu.highlightedItem != i) {
+				gui_redrawText(menu);
+				menu.highlightedItem = i;
+				gui_redrawHighlight(menu);
+				_screen->updateScreen();
+			}
+		}
+	}
+}
+
+void KyraEngine::gui_redrawText(Menu menu) {
+	int textX;
+	int i = menu.highlightedItem;
+
+	int x1 = menu.x + menu.item[i].x;
+	int y1 = menu.y + menu.item[i].y;
+
+	int x2 = x1 + menu.item[i].width - 1;
+
+	if (menu.item[i].field_12 != -1)
+		textX = x1 + menu.item[i].field_12 + 3;
+	else
+		textX = _text->getCenterStringX(menu.item[i].itemString, x1, x2);
+
+	int textY = y1 + 2;
+	_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
+	_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].textColor, 0, 0);
+}
+
+void KyraEngine::gui_redrawHighlight(Menu menu) {
+	int textX;
+	int i = menu.highlightedItem;
+
+	int x1 = menu.x + menu.item[i].x;
+	int y1 = menu.y + menu.item[i].y;
+
+	int x2 = x1 + menu.item[i].width - 1;
+
+	if (menu.item[i].field_12 != -1)
+		textX = x1 + menu.item[i].field_12 + 3;
+	else
+		textX = _text->getCenterStringX(menu.item[i].itemString, x1, x2);
+
+	int textY = y1 + 2;
+	_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
+	_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
 }
 
 } // end of namespace Kyra

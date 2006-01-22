@@ -730,7 +730,7 @@ void KyraEngine::mainLoop() {
 }
 
 void KyraEngine::quitGame() {
-	res_unloadResources();
+	res_unloadResources(RES_ALL);
 
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
 		_movieObjects[i]->close();

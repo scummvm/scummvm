@@ -205,7 +205,7 @@ struct Menu {
 	uint8 textColor;
 	int16 field_10;
 	uint16 field_12;
-	uint16 field_14;
+	uint16 highlightedItem;
 	uint8 nrOfItems;
 	int16 scrollUpBtnX;
 	int16 scrollUpBtnY;
@@ -672,6 +672,9 @@ protected:
 
 	bool gui_quitConfirm(const char *str);
 	void gui_getInput();
+	void gui_redrawText(Menu menu);
+	void gui_redrawHighlight(Menu menu);
+	void gui_processHighlights(Menu &menu);
 
 	uint8 _game;
 	bool _fastMode;
