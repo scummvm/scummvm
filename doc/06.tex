@@ -1,8 +1,16 @@
 \section {Savegames}
-Savegames are by default put in the current directory. You can specify the save
-in the config file by setting the savepath parameter. See the example config
-file later in this readme.
+Savegames are by default put in the current directory on some platforms and
+preset directories on others.  You can specify the save in the config file by
+setting the savepath parameter. See the example config file later in this
+readme.
 
+The platforms that currently have a different default directory are:
+%
+\begin{itemize}
+\item Mac OS X: \verb#$HOME/Documents/ScummVM Savegames/#
+\item Other unices: \verb#$HOME/.scummvm/#
+\end{itemize}
+%
 You can also use the environment variable SCUMMVM\_SAVEPATH to specify where to
 put save games. Don't forget the trailing directory separator. Also be aware
 that saved games may break between ScummVM releases.

@@ -464,8 +464,9 @@ arguments - see the next section.
                            drive)
   --joystick[=NUM]         Enable input with joystick (default: 0 = first
                            joystick)
-  --platform=WORD          Specify version of game (allowed values: amiga,
-                           atari, c64, fmtowns, mac, nes, pc, windows)
+  --platform=WORD          Specify version of game (allowed values: acorn,
+                           amiga, atari, c64, fmtowns, mac, nes, pc, segacd,
+                           windows)
   --savepath=PATH          Path to where savegames are stored
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)
@@ -474,7 +475,7 @@ arguments - see the next section.
   --enable-gs              Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
   --aspect-ratio           Enable aspect ratio correction
-  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen
+  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,
                            hercAmber, amiga)
   --force-1x-overlay       Make inner GUI 320x200
 
@@ -633,8 +634,8 @@ simon games.
 
     SCUMM:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
-        Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-d                 - Starts the debugger
+        Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-t                 - Switch been 'Speech only',
                                  'Speech and Subtitles' and 'Subtitles only'
         Tilde (~)              - Show/hide the debugging console
@@ -648,7 +649,7 @@ simon games.
         Tab                    - Simulate right mouse button press
 
     Beneath a Steel Sky:
-        Ctrl 0-9 and Alt 0-9   - Load and save game state
+        Ctrl-d                 - Starts the debugger
         Ctrl-g                 - Runs in really REALLY fast mode
         F5                     - Displays a save/load box
         Escape                 - Skips the game intro
@@ -680,7 +681,7 @@ simon games.
         m                      - Music on/off
         s                      - Sound effects on/off
         b                      - Background sounds on/off
-        p                      - Toggles pause
+        p                      - Pauses
         t                      - Switch between speech and subtitles
         v                      - Switch between subtitles only and
                                  combined speech & subtitles
@@ -1147,7 +1148,7 @@ sample rate.
 
 When using the Adlib, FM Towns, PC Speaker or IBM PCjr music drivers, ScummVM
 is responsible for generating the samples. Usually 22050 Hz will be plenty for
-these, but there is at least one piece of Adlib music in Beneath a Steeel Sky
+these, but there is at least one piece of Adlib music in Beneath a Steel Sky
 that will sound a lot better at 44100 Hz.
 
 Using frequencies in between is not recommended. For one thing, your sound card
@@ -1202,7 +1203,6 @@ An example config file looks as follows:
         [monkey2]
         path=C:\amiga_mi2\
         music_driver=windows
-        amiga=true
 
 The following keywords are recognized:
 

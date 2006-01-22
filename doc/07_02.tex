@@ -4,12 +4,20 @@
 %%% TeX-master: "readme"
 %%% End: 
 
-\subsection{Playing sound with MIDI emulation}
+\subsection{Playing sound with FluidSynth MIDI emulation}
 
-Some games (such as Sam and Max) only contain MIDI music data.  This once
-prevented music for these games from working on platforms that do not support
-MIDI, or soundcards that do not provide MIDI drivers (e.g, many soundcards will
-not play MIDI under Linux). ScummVM can now emulate MIDI mode using sampled
-waves and Adlib or MT-32 emulation using the -eadlib or -emt32 options respectively.  
-However, if you are capable of using native MIDI, we recommend using one of the
-MIDI modes below for best sound.
+If ScummVM was build with libfluildsynth support it will be able to play MIDI
+music through the FluidSynth driver. You will have to specify a SoundFont to
+use, however.
+
+Since the default output volume from FluidSynth can be fairly low, ScummVM will
+set the gain by default to get a stronger signal. This can be further adjusted
+using the --midi-gain command-line option, or the ``midi\_gain'' config file
+setting.
+
+The setting can take any value from 0 through 1000, with the default being 100.
+(This corresponds to FluidSynth's gain settings of 0.0 through 10.0, which are
+presumably measured in decibel.)
+
+\textbf{NOTE:} The processor requirements for FluidSynth can be fairly high in
+some cases. A fast CPU is recommended.

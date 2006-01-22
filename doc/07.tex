@@ -11,19 +11,21 @@ manual configuration. If you ARE using MIDI, you have several different
 choices of output, depending on your operating system and configuration.
 
 \begin{tabular}[h]{ll}
+  null       & Null output. Don't play any music.\\
+             & \\
   adlib      & Uses internal Adlib Emulation (default)\\
   fluidsynth & Uses FluidSynth MIDI Emulation\\
   mt32       & Uses internal MT-32 Emulation\\
   pcjr       & Uses internal PCjr Emulation \\
   pcspk      & Uses internal PC Speaker Emulation\\
   towns      & Uses FM-TOWNS YM2612 Emulation\\
-  windows    & Windows MIDI. Uses built-in sequencer, for Windows users\\
-  seq        & Uses /dev/sequencer for MIDI, *nix users. See below.\\
-  qt         & Quicktime sound, for Macintosh users.\\
-  core       & CoreAudio sound, for MacOS X users.\\
-  amidi      & Uses the MorphOS MIDI system, for MorphOS users\\
+             & \\
   alsa       & Output using ALSA sequencer device. See below.\\
-  null       & Null output. Don't play any music.\\
+  core       & CoreAudio sound, for Mac OS X users.\\
+  coremidi   & CoreMIDI sound, for Mac OS X users. Use only if you have a hardware MIDI synthesizer.\\
+  qt         & Quicktime sound, for Macintosh users.\\
+  seq        & Uses /dev/sequencer for MIDI, *nix users. See below.\\
+  windows    & Windows MIDI. Uses built-in sequencer, for Windows users\\
 \end{tabular}
 
 To select a sound driver, pass its name via the '-e' option to scummvm,
@@ -33,10 +35,10 @@ for example:
 \end{verbatim}
 
 \input {07_01.tex}
-\input {07_02b.tex}
-\input {07_02a.tex}
 \input {07_02.tex}
 \input {07_03.tex}
 \input {07_04.tex}
 \input {07_05.tex}
 \input {07_06.tex}
+\input {07_07.tex}
+\input {07_08.tex}

@@ -1,32 +1,87 @@
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "readme"
 %%% End: 
 
-\subsection{Output sample rate}
+\subsection{Playing sound with Sequencer MIDI}
 
-The output sample rate tells ScummVM how many sound samples to play per channel
-per second. There is much that could be said on this subject, but most of it
-would be irrelevant here. The short version is that for most games 22050 Hz is
-fine, but in some cases 44100 Hz is preferable. On extremely low-end systems
-you may want to use 11025 Hz, but it's unlikely that you have to worry about
-that.
+If your soundcard driver supports a sequencer, you may set the environment
+variable "SCUMMVM\_MIDI" to your sequencer device -- for example, to 
+/dev/sequencer
 
-To elaborate, most of the sounds ScummVM has to play were sampled at either
-22050 Hz or 11025 Hz. Using a higher sample rate will not magically improve the
-quality of these sounds. Hence, 22050 Hz is fine.
+If you have problems with not hearing audio in this configuration, it is
+possible you will need to set the "SCUMMVM\_MIDIPORT" variable to 1 or 2. This
+selects the port on the selected sequencer to use. Then start scummvm with the
+-eseq parameter. This should work on several cards, and may offer better
+performance and quality than Adlib emulation. However, for those systems where
+sequencer support does not work, you can always fall back on Adlib emulation.
 
-Some games use CD audio. If you use compressed files for this, they are
-probably sampled at 44100 Hz, so for these games that may be a better choice of
-sample rate.
 
-When using the Adlib, FM Towns, PC Speaker or IBM PCjr music drivers, ScummVM
-is responsible for generating the samples. Usually 22050 Hz will be plenty for
-these, but there is at least one piece of Adlib music in Beneath a Steel Sky
-that will sound a lot better at 44100 Hz.
+\subsubsection{Playing sound with ALSA sequencer}
 
-Using frequencies in between is not recommended. For one thing, your sound card
-may not support it. In theory, ScummVM should fall back on a sensible frequency
-in that case, but don't count on it. More importantly, ScummVM has to resample
-all sounds to its output frequency. This is much easier to do well if the
-output frequency is a multiple of the original frequency.
+If you have installed the ALSA driver with the sequencer support, then
+set the environment variable SCUMMVM\_PORT or the config file parameter
+alsa\_port to your sequencer port. The default is "65:0".
+
+Here is a little howto on how to use the ALSA sequencer with your soundcard.
+In all cases, to have a list of all the sequencer ports you have, try the
+command 
+\begin{verbatim}
+     aconnect -o -l
+\end{verbatim}
+This should give output similar to:
+\begin{verbatim}
+client 64: 'External MIDI 0' [type=kernel]
+    0 'MIDI 0-0        '
+client 65: 'Emu10k1 WaveTable' [type=kernel]
+    0 'Emu10k1 Port 0  '
+    1 'Emu10k1 Port 1  '
+    2 'Emu10k1 Port 2  '
+    3 'Emu10k1 Port 3  '
+client 128: 'Client-128' [type=user]
+    0 'TiMidity port 0 '
+    1 'TiMidity port 1 '
+\end{verbatim}
+%
+This means the external MIDI output of the sound card is located on the
+port 64:0, four WaveTable MIDI outputs in 65:0, 65:1, 65:2
+and 65:3, and two TiMidity ports, located at 128:0 and 128:1.
+
+If you have a FM-chip on your card, like the SB16, then you have to load
+the soundfonts using the sbiload software. \\
+Example:
+\begin{verbatim}
+  sbiload -p 65:0 /etc/std.o3 /etc/drums.o3
+\end{verbatim}
+%
+If you have a WaveTable capable sound card, you have to load a sbk or sf2
+soundfont using the sfxload software\\
+Example:
+\begin{verbatim}
+  sfxload /path/to/8mbgmsfx.sf2
+\end{verbatim}
+%
+If you don't have a MIDI capable soundcard, there are two options: FluidSynth
+and TiMidity. We recommend FluidSynth, as on many systems TiMidity will 'lag'
+behind music. This is very noticable in iMUSE-enabled games, which use fast
+and dynamic music transitions. Running TiMidity as root will allow it to
+setup real time priority, which may reduce music lag.
+
+Asking TiMidity to become an ALSA sequencer:
+\begin{verbatim}
+  timidity -iAqqq -B2,8 -Os1S -s 44100 &
+\end{verbatim}
+If you get distorted output with this setting, you can try dropping the 
+-B2,8 or changing the value.
+
+Asking FluidSynth to become an ALSA sequencer (using SoundFonts):
+\begin{verbatim}
+  fluidsynth -m alsa_seq /path/to/8mbgmsfx.sf2
+\end{verbatim}
+%
+Once either TiMidity or FluidSynth are running, use
+\begin{verbatim}
+      aconnect -o -l
+\end{verbatim}
+as described earlier in this section.
