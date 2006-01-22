@@ -476,7 +476,10 @@ void SkyEngine::delay(int32 amount) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				_keyFlags = event.kbd.flags;
-				_keyPressed = (byte)event.kbd.ascii;
+				if (_keyFlags == OSystem::KBD_CTRL)
+					_keyPressed = event.kbd.keycode;
+				else
+					_keyPressed = (byte)event.kbd.ascii;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED)) {
