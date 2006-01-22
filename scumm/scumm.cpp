@@ -2871,7 +2871,7 @@ static bool generateDetectName(const ScummGameSettings *g, int method, char *det
 		strcpy(detectName, "000.LFL");
 		break;
 	case 2:
-		if (g->version < 4 || g->version > 6)
+		if (g->version < 4 || g->version > 7)
 			return false;
 		strcpy(detectName, g->gameid);
 		strcat(detectName, ".000");
