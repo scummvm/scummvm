@@ -173,13 +173,13 @@ struct MenuItem {
 	uint8 field_3;
 	const char *itemString;
 	int16 x;
-	int8 field_9;
+	int16 field_9;
 	uint16 y;
 	uint16 width;
 	uint16 height;
 	uint8 textColor;
 	uint8 highlightColor;
-	int8 field_12;
+	int16 field_12;
 	uint8 field_13;
 	uint8 bgcolor;
 	uint8 color1;
