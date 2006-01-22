@@ -1121,7 +1121,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 
 	int act = getVarOrDirectByte(PARAM_1);
 
-	// FIXME: Work around for bug #1252606
+	// WORKAROUND bug #1252606
 	if (_gameId == GID_ZAK && _version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}

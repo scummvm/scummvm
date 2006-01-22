@@ -1236,11 +1236,12 @@ void ScummEngine_v5::o5_getDist() {
 	o2 = getVarOrDirectWord(PARAM_2);
 	r = getObjActToObjActDist(o1, o2);
 
-	// FIXME: MI2 race workaround, see bug #597022
+	// FIXME: MI2 race workaround, see bug #597022. We never quite figured out
+	// what the real cause of this, or if it maybe occurs in the original, too...
 	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60)
 		r = 60;
 
-	// FIXME: Workaround for bug #795937
+	// WORKAROUND bug #795937
 	if ((_gameId == GID_MONKEY_EGA || _gameId == GID_PASS) && o1 == 1 && o2 == 307  && vm.slot[_currentScript].number == 205 && r == 2)
 		r = 3;
 

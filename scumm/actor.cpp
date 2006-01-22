@@ -1397,7 +1397,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	} else {
 		int oldact;
 
-		// FIXME: Workaround for bug #770724
+		// WORKAROUND bug #770724
 		if (_gameId == GID_LOOM && _roomResource == 23 &&
 			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
 			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
