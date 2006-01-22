@@ -662,7 +662,6 @@ other games.
         Tab                    - Simulate right mouse button press
 
     Beneath a Steel Sky:
-        Ctrl 0-9 and Alt 0-9   - Load and save game state
         Ctrl-d                 - Starts the debugger
         Ctrl-g                 - Runs in really REALLY fast mode
         F5                     - Displays a save/load box
