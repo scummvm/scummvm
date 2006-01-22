@@ -613,7 +613,7 @@ resolution of 320x240 - hence for this game scalers will scale to
 5.4) Hot Keys:
 ---- ---------
 ScummVM supports various in game hotkeys. They differ between the SCUMM and
-simon games.
+other games.
 
     Common:
         Cmd-q                  - Quit (Mac OS X)
