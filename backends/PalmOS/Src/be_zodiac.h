@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,11 +25,11 @@
 #define BE_ZODIAC_H
 
 #include <tapwave.h>
-#include "be_os5.h"
+#include "be_os5ex.h"
 
 #define MIN_OFFSET	20
 
-class OSystem_PalmZodiac : public OSystem_PalmOS5 {
+class OSystem_PalmZodiac : public OSystem_PalmOS5Ex {
 private:
 	enum {
 		kRatioNone = 0,
@@ -51,7 +51,6 @@ private:
 	TwGfxPointType _srcPos;
 	TwGfxRectType _srcRect, _dstRect;
 	TwGfxBitmapType _srcBmp;
-	Boolean _stretched;
 
 	void int_initBackend();
 	void int_setShakePos(int shakeOffset);
@@ -79,11 +78,7 @@ public:
 
 	void updateScreen();
 	bool grabRawScreen(Graphics::Surface *surf);
-	
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
 
-	void showOverlay();
-	void hideOverlay();
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
