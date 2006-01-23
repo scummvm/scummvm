@@ -335,7 +335,7 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 
 void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	// Cursor image in both Looms are based on images from charset.
-	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
+	if (_gameId != GID_LOOM) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
 		error("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
@@ -379,7 +379,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 
 void ScummEngine_v5::redefineBuiltinCursorHotspot(int index, int x, int y) {
 	// Cursor image in both Looms are based on images from charset.
-	if (_gameId != GID_LOOM && _gameId != GID_LOOM256) {
+	if (_gameId != GID_LOOM) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
 		error("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);

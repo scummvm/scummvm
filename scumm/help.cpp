@@ -33,14 +33,12 @@ int ScummHelp::numPages(byte gameId) {
 	switch (gameId) {
 	case GID_MANIAC:
 	case GID_ZAK:
-	case GID_ZAK256:
 		return 4;
 		break;
 	case GID_INDY3:
 		return 6;
 		break;
 	case GID_LOOM:
-	case GID_LOOM256:
 	case GID_MONKEY_EGA:
 	case GID_MONKEY_VGA:
 	case GID_MONKEY:
@@ -113,13 +111,12 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		ADD_TEXT("  or incorrect game behaviour.");
 		break;
 	case 3:
-		if (gameId == GID_LOOM || gameId == GID_LOOM256)
+		if (gameId == GID_LOOM)
 			title = "Spinning drafts on the keyboard:";
 		else
 			title = "Main game controls:";
 		switch (gameId) {
 		case GID_ZAK:
-		case GID_ZAK256:
 		case GID_MANIAC:
 			// HACK. I know use of g_scumm here is evil, however, 
 			// introducing new GID and putting it everywhere will
@@ -182,7 +179,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("b", "To Henry / To Indy");
 			break;
 		case GID_LOOM:
-		case GID_LOOM256:
 			ADD_BIND("q, c", "play C minor on distaff");
 			ADD_BIND("w, d", "play D on distaff");
 			ADD_BIND("e, e", "play E on distaff");
@@ -260,10 +256,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		}
 		break;
 	case 4:
-		switch (gameId) {
-		case GID_MANIAC:
-		case GID_ZAK:
-			title = "Other game controls:";
+		title = "Other game controls:";
+		if (version <= 2) {
 			ADD_TEXT("Inventory: (not yet implemented)");
 			ADD_BIND("u", "Scroll list up");
 			ADD_BIND("j", "Scroll list down");
@@ -283,10 +277,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 				ADD_BIND("F3", "Melissa");
 				ADD_BIND("F4", "Leslie");
 			}
-			break;
-		case GID_INDY3:
-		case GID_ZAK256:
-			title = "Other game controls:";
+		} else if (gameId == GID_INDY3 || gameId == GID_ZAK) {
+			// Indy3, or FM-TOWNS Zak
 			ADD_TEXT("Inventory:");
 			ADD_BIND("y", "Upper left item");
 			ADD_BIND("h", "Middle left item");
@@ -296,7 +288,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("m", "Lower right item");
 			ADD_BIND("o", "Scroll list up");
 			ADD_BIND("l", "Scroll list down");
-			if (gameId == GID_ZAK256) {
+			if (gameId == GID_ZAK) {
 				ADD_LINE;
 				ADD_TEXT("Switching characters:");
 				ADD_BIND("F1", "Zak");
@@ -304,7 +296,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 				ADD_BIND("F3", "Melissa");
 				ADD_BIND("F4", "Leslie");
 			}
-			break;
 		}
 		break;
 	case 5:

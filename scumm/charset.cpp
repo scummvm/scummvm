@@ -1175,8 +1175,8 @@ void CharsetRendererV3::setColor(byte color)
 	bool useShadow = false;
 	_color = color;
 
-	// FM-TOWNS version of Loom uses old colour method as well
-	if ((_vm->_version >= 2) && (_vm->_features & GF_16COLOR || _vm->_gameId == GID_LOOM)) {
+	// FM-TOWNS version of Loom uses old color method as well
+	if ((_vm->_version >= 2) && (_vm->_features & GF_16COLOR || (_vm->_gameId == GID_LOOM && _vm->_version == 3))) {
 		useShadow = ((_color & 0xF0) != 0);
 		_color &= 0x0f;
 	} else if (_vm->_features & GF_OLD256) {

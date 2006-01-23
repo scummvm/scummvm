@@ -538,7 +538,7 @@ int ScummEngine::readVar(uint var) {
 			if (!_copyProtection) {
 				if (_gameId == GID_LOOM && (_platform == Common::kPlatformFMTowns) && var == 214 && bit == 15) {
 					return 0;
-				} else if (_gameId == GID_ZAK256 && var == 151 && bit == 8) {
+				} else if (_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns) && var == 151 && bit == 8) {
 					return 0;
 				}
 			}

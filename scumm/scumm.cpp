@@ -494,7 +494,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"6f0be328c64d689bb606d22a389e1b0f", "Loom (Macintosh)", GID_LOOM, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
 
-	{"5d88b9d6a88e6f8e90cded9d01b7f082", "Loom (256 color CD version)", GID_LOOM256, 4, 0, MDT_NONE,
+	{"5d88b9d6a88e6f8e90cded9d01b7f082", "Loom (256 color CD version)", GID_LOOM, 4, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
 	{"c5d10e190d4b4d59114b824f2fdbd00e", "Loom (FM-TOWNS)", GID_LOOM, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
@@ -677,18 +677,18 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"7020931d5a2be0a49d68e7a1882363e4", "Zak McKracken and the Alien Mindbenders (v1)", GID_ZAK, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
 
-	{"2d4536a56e01da4b02eb021e7770afa2", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"2d4536a56e01da4b02eb021e7770afa2", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"ce3edc99cd4f478c5b37104d70c68ca5", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"ce3edc99cd4f478c5b37104d70c68ca5", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"1ca86e2cf9aaa2068738a1e5ba477e60", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"1ca86e2cf9aaa2068738a1e5ba477e60", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"2d388339d6050d8ccaa757b64633954e", "Indy/Loom Demo (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"2d388339d6050d8ccaa757b64633954e", "Indy/Loom Demo (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"77f5c9cc0986eb729c1a6b4c8823bbae", "Zak/Loom Demo (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"77f5c9cc0986eb729c1a6b4c8823bbae", "Zak/Loom Demo (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"3938ee1aa4433fca9d9308c9891172b1", "Indy/Zak Demo (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
+	{"3938ee1aa4433fca9d9308c9891172b1", "Indy/Zak Demo (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, Common::kPlatformUnknown}
@@ -2340,7 +2340,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		if (_gameId == GID_ZAK256 || _gameId == GID_INDY3) {
+		if (_gameId == GID_ZAK || _gameId == GID_INDY3) {
 			// All versions of Indy3 set three extra timers
 			// FM-TOWNS version of Zak sets three extra timers
 			VAR(39) += delta;
@@ -2487,7 +2487,7 @@ load_game:
 		_charset->_hasMask = false;
 
 		// HACK as in game save stuff isn't supported currently
-		if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
+		if (_gameId == GID_LOOM) {
 			int args[16];
 			uint value;
 			memset(args, 0, sizeof(args));
@@ -2495,8 +2495,10 @@ load_game:
 
 			if (_platform == Common::kPlatformMacintosh)
 				value = 105;
+			else if (_version == 4)	// 256 color CD version
+				value = 150;
 			else
- 				value = (_gameId == GID_LOOM256) ? 150 : 100;
+ 				value = 100;
 			byte restoreScript = (_platform == Common::kPlatformFMTowns) ? 17 : 18;
 			// if verbs should be shown restore them
 			if (VAR(value) == 2)

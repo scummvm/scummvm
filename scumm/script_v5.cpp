@@ -563,7 +563,7 @@ void ScummEngine_v5::o5_add() {
 	// understand the reasoning behind this, compare script 210 and 218 in
 	// room 20. Apparently they made a mistake when converting the absolute
 	// delays into relative ones.
-	if (_gameId == GID_LOOM256 && vm.slot[_currentScript].number == 210 && _currentRoom == 20 && _resultVarNumber == 0x4000) {
+	if (_gameId == GID_LOOM && _version == 4 && vm.slot[_currentScript].number == 210 && _currentRoom == 20 && _resultVarNumber == 0x4000) {
 		switch (a) {
 		// Fix for the Var[250] == 11 case
 		case 138:
@@ -1740,7 +1740,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	case 6:			// SO_NUKE_SOUND
 	case 7:			// SO_NUKE_COSTUME
 	case 8:			// SO_NUKE_ROOM
-		if (_gameId == GID_ZAK256)
+		if (_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns))
 			error("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
 			res.setResourceCounter(resType[op-5], resid, 0x7F);
@@ -2266,12 +2266,12 @@ void ScummEngine_v5::o5_startScript() {
 
 	// FIXME: Script 171 loads a complete room resource, instead of the actual script.
 	// Causing invalid opcode cases, see bug #1290485
-	if (_gameId == GID_ZAK256 && script == 171)
+	if (_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns) && script == 171)
 		return;
 
 	if (!_copyProtection) {
 		// Method used by original games to skip copy protection scheme
-		if (_gameId == GID_LOOM && _currentRoom == 69 && script == 201)
+		if (_gameId == GID_LOOM && _version == 3 && _currentRoom == 69 && script == 201)
 			script = 205;
 		else if ((_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && script == 152)
 			return;
@@ -2321,7 +2321,7 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
-		if (_gameId != GID_LOOM256) {	/* FIXME - LOOM256 */
+		if (!(_gameId == GID_LOOM && _version == 4)) {	/* FIXME - LOOM256 */
 			if (ptr == NULL)
 				error("String %d does not exist", a);
 			ptr[b] = c;
@@ -2433,7 +2433,7 @@ void ScummEngine_v5::o5_verbOps() {
 					vs->curRect.top += 8;
 					break;
 				}
-			} else 	if (_gameId == GID_LOOM256) {
+			} else 	if (_gameId == GID_LOOM && _version == 4) {
 			// FIXME: hack loom notes into right spot
 				if ((verb >= 90) && (verb <= 97)) {	// Notes
 					switch (verb) {
@@ -2602,7 +2602,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		return;
 	}
 
-	if (_gameId == GID_LOOM256 && nr == 1 && nr2 == 0 &&
+	if (_gameId == GID_LOOM && _version == 4 && nr == 1 && nr2 == 0 &&
 		dist == 255 && vm.slot[_currentScript].number == 98) {
 		// WORKAROUND bug #743615: LoomCD script 98 contains this:
 		//   walkActorToActor(1,0,255)
@@ -2736,7 +2736,7 @@ void ScummEngine_v5::decodeParseString() {
 				int offset = (uint16)getVarOrDirectWord(PARAM_1);
 				int delay = (uint16)getVarOrDirectWord(PARAM_2);
 
-				if (_gameId == GID_LOOM256) {
+				if (_gameId == GID_LOOM && _version == 4) {
 					if (offset == 0 && delay == 0) {
 						VAR(VAR_MUSIC_TIMER) = 0;
 						_sound->stopCD();
@@ -2762,7 +2762,7 @@ void ScummEngine_v5::decodeParseString() {
 			// WORKAROUND: This happens when Chaos introduces
 			// herself to bishop Mandible. Of all the places to put
 			// a typo...
-			if (_gameId == GID_LOOM256 && strcmp((const char *) _scriptPointer, "I am Choas.") == 0)
+			if (_gameId == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0)
 				printString(textSlot, (const byte *) "I am Chaos.");
 			else
 				printString(textSlot, _scriptPointer);

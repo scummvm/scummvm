@@ -1105,7 +1105,7 @@ void ScummEngine::drawFlashlight() {
 		return;
 
 	// Calculate the area of the flashlight
-	if (_gameId == GID_ZAK256 || _version <= 2) {
+	if (_gameId == GID_ZAK || _gameId == GID_MANIAC) {
 		x = _mouse.x + vs->xstart;
 		y = _mouse.y - vs->topline;
 	} else {
@@ -1118,7 +1118,7 @@ void ScummEngine::drawFlashlight() {
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256)
+	if (_gameId == GID_LOOM)
 		_flashlight.y -= 12;
 
 	// Clip the flashlight at the borders
@@ -3153,7 +3153,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	// Speed up the effect for CD Loom since it uses it so often. I don't
 	// think the original had any delay at all, so on modern hardware it
 	// wasn't even noticeable.
-	if (_gameId == GID_LOOM256)
+	if (_gameId == GID_LOOM && (_version == 3))
 		blits_before_refresh *= 2;
 
 	for (i = 0; i < w * h; i++) {
@@ -3280,7 +3280,7 @@ void ScummEngine::scrollEffect(int dir) {
 
 void ScummEngine::unkScreenEffect6() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
-	if (_gameId == GID_LOOM256)
+	if (_gameId == GID_LOOM && (_version == 3))
 		dissolveEffect(1, 1);
 	else
 		dissolveEffect(8, 4);

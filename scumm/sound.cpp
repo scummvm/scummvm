@@ -1111,7 +1111,7 @@ void Sound::startCDTimer() {
 	// when Chaos first appears, and I have to use 101 for Monkey 1 or the
 	// intro music will be cut short.
 
-	if (_vm->_gameId == GID_LOOM256)
+	if (_vm->_gameId == GID_LOOM && _vm->_version == 4)
 		timer_interval = 100;
 	else
 		timer_interval = 101;
@@ -1766,7 +1766,7 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 		if (_gameId == GID_INDY3) {
 			// Note: since we fix ppqn at 480, ppqn/473 is almost 1
 			dw = 500000 * 256 / 473 * ppqn / ticks;
-		} else if (_gameId == GID_LOOM) {
+		} else if (_gameId == GID_LOOM && _version == 3) {
 			dw = 500000 * ppqn / 4 / ticks;
 		} else {
 			dw = 500000 * 256 / ticks;
@@ -2108,7 +2108,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%d)", idx);
 
-	if ((_gameId == GID_LOOM) && (_platform == Common::kPlatformPC) && VAR(VAR_SOUNDCARD) == 4) {
+	if ((_gameId == GID_LOOM) && (_version == 3) && (_platform == Common::kPlatformPC) && VAR(VAR_SOUNDCARD) == 4) {
 		// Roland resources in Loom are tagless
 		// So we add an RO tag to allow imuse to detect format
 		byte *ptr, *src_ptr;

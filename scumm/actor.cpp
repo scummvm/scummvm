@@ -253,7 +253,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// not necessary here because we never call the function unless the
 	// actor is in the current room anyway.
 
-	if (!_ignoreBoxes || (_vm->_gameId == GID_LOOM || _vm->_gameId == GID_LOOM256)) {
+	if (!_ignoreBoxes || _vm->_gameId == GID_LOOM) {
 		specdir = _vm->_extraBoxFlags[_walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {
@@ -1384,7 +1384,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
 	// FIXME: Workaround for bugs #770039 and #770049
-	if (_gameId == GID_LOOM || _gameId == GID_LOOM256) {
+	if (_gameId == GID_LOOM) {
 		if (!*_charsetBuffer)
 			return;
 	}

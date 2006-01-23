@@ -104,7 +104,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
 	DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
 
-	if (_vm->_gameId == GID_LOOM || _vm->_gameId == GID_LOOM256)
+	if (_vm->_gameId == GID_LOOM)
 		DCmd_Register("drafts", &ScummDebugger::Cmd_PrintDraft);
 
 	DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
@@ -824,7 +824,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	const char *notes = "cdefgabC";
 	int i, base, draft;
 
-	if (_vm->_gameId != GID_LOOM && _vm->_gameId != GID_LOOM256) {
+	if (_vm->_gameId != GID_LOOM) {
 		DebugPrintf("Command only works with Loom/LoomCD\n");
 		return true;
 	}
@@ -850,7 +850,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	// Possibly they store information on where and/or how the draft can
 	// be used. They appear to remain constant throughout the game.
 
-	base = (_vm->_gameId == GID_LOOM) ? 50 : 100;
+	base = (_vm->_version == 3) ? 50 : 100;
 
 	if (argc == 2) {
 		// We had to debug a problem at the end of the game that only

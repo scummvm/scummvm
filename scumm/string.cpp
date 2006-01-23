@@ -410,7 +410,7 @@ void ScummEngine::CHARSET_1() {
 	if (!_haveMsg)
 		return;
 
-	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK256 && getTalkingActor() == 0xFF)) {
+	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns) && getTalkingActor() == 0xFF)) {
 		if ((camera._dest.x / 8) != (camera._cur.x / 8) || camera._cur.x != camera._last.x)
 			return;
 	}
@@ -578,7 +578,7 @@ void ScummEngine::CHARSET_1() {
 					// HE games which use sprites for subtitles
 				} else if (_heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
 					// Special case for HE games
-				} else if ((_gameId == GID_LOOM256) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
+				} else if ((_gameId == GID_LOOM) && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for loomcd, since it only uses CD audio.for sound
 				} else if (!ConfMan.getBool("subtitles") && (!_haveActorSpeechMsg || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
 					// Subtitles are turned off, and there is a voice version

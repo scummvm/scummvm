@@ -167,7 +167,7 @@ void ScummEngine_v5::setupScummVars() {
 	if (_version >= 4) {
 		VAR_V5_TALK_STRING_Y = 54;
 	}
-	if (_gameId == GID_LOOM256 || _version >= 5) {
+	if ((_gameId == GID_LOOM && _version == 4) || _version >= 5) {
 		VAR_NOSUBTITLES = 60;
 	}
 }
@@ -655,7 +655,7 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_SOUNDCARD) = 3;
 			break;
 		default:
-			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || _gameId == GID_LOOM)
+			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || (_gameId == GID_LOOM && _version == 3))
 			   &&  (_platform == Common::kPlatformPC)) {
 				if (_gameId == GID_LOOM) {
 					char buf[50];
@@ -694,7 +694,7 @@ void ScummEngine::initScummVars() {
 			// Set screen size for the Macintosh version of Indy3/Loom
 			VAR(39) = 320;
 		}
-		if (_platform == Common::kPlatformPC && _gameId == GID_LOOM) {
+		if (_platform == Common::kPlatformPC && _gameId == GID_LOOM && _version == 3) {
 			// Set number of sound resources
 			VAR(39) = 80;
 		}
