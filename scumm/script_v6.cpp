@@ -2255,6 +2255,18 @@ void ScummEngine_v6::o6_soundKludge() {
 	int num = getStackList(list, ARRAYSIZE(list));
 
 	_sound->soundKludge(list, num);
+
+	// WORKAROUND for bug #1398195: The room-11-2016 script contains a
+	// slight bug causing it to busy-wait for a sound to finish. Even under
+	// the best of circumstances, this will cause the game to hang briefly.
+	// On platforms where threading is cooperative, it will cause the game
+	// to hang indefinitely. We identify the buggy part of the script by
+	// looking for a soundKludge() opcode immediately followed by a jump.
+
+	if (_gameId == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66) {
+		debug(3, "Working around script bug in room-11-2016");
+		o6_breakHere();
+	}
 }
 
 void ScummEngine_v6::o6_isAnyOf() {
