@@ -1,12 +1,19 @@
 #ifndef PALMVERSION_H
 #define PALMVERSION_H
 
-#if defined(PALMOS_68K)
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined(COMPILE_ZODIAC)
+#	include <tapwave.h>
+#else
 #	include <PalmOS.h>
 #	include <VFSMgr.h>
+#endif
 
-#elif defined(COMPILE_ZODIAC) && defined(PALMOS_ARM)
-#	include <tapwave.h>
+#ifdef __cplusplus
+}
 #endif
 
 #endif
