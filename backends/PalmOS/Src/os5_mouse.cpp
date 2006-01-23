@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,38 +35,22 @@ void OSystem_PalmOS5::setMouseCursor(const byte *buf, uint w, uint h, int hotspo
 
 	_mouseKeyColor = keycolor;
 
-#ifdef PALMOS_68K
-	// free old cursor if any
-	if (_mouseDataH)
-		WinDeleteWindow(_mouseDataH, false);
-
-	// allocate new cursor
-	Err e;
-	_mouseDataH = WinCreateOffscreenWindow(w, h, nativeFormat, &e);
-	_mouseDataP = (byte *)BmpGetBits(WinGetBitmap(_mouseDataH));
-
-	// set bitmap transparency
-	BmpSetTransparentValue(WinGetBitmap(_mouseDataH), _mouseKeyColor);
-
 	// copy new cursor
-	BitmapTypeV1 nfo = {
-		w, h, w,
-		{0,0,0,0,0,0,0,0,0},
-		8, BitmapVersionOne, 0
-	};
-
-	BitmapTypeV3 *v3 = BmpCreateBitmapV3((BitmapType*)&nfo, kDensityDouble, (void *)buf, 0);
-
-	WinSetDrawWindow(_mouseDataH);
-	WinDrawBitmap((BitmapPtr)v3, 0, 0);
-	BmpDelete((BitmapPtr)v3);
-#endif
+	byte *dst = _mouseDataP;
+	while (h--) {
+		memcpy(dst, buf, w);
+		dst += MAX_MOUSE_W;
+		buf += w;
+	}
 }
 
 void OSystem_PalmOS5::draw_mouse() {
 	if (_mouseDrawn || !_mouseVisible)
 		return;
-	_mouseDrawn = true;
+
+	byte *src = _mouseDataP;		// Image representing the mouse
+	byte color;
+	int width;
 
 	_mouseCurState.y = _mouseCurState.y >= _screenHeight ? _screenHeight - 1 : _mouseCurState.y;
 
@@ -81,10 +65,12 @@ void OSystem_PalmOS5::draw_mouse() {
 	// clip the mouse rect
 	if (x < 0) {
 		w += x;
+		src -= x;
 		x = 0;
 	}
 	if (y < 0) {
 		h += y;
+		src -= y * MAX_MOUSE_W;
 		y = 0;
 	}
 	if (w > _screenWidth - x)
@@ -103,31 +89,86 @@ void OSystem_PalmOS5::draw_mouse() {
 	_mouseOldState.w = w;
 	_mouseOldState.h = h;
 
-#ifdef PALMOS_68K
+	// Quick check to see if anything has to be drawn at all
+	if (w <= 0 || h <= 0)
+		return;
+
+	// Store the bounding box so that undraw mouse can restore the area the
+	// mouse currently covers to its original content.
+	_mouseOldState.x = x;
+	_mouseOldState.y = y;
+	_mouseOldState.w = w;
+	_mouseOldState.h = h;
+
 	// Backup the covered area draw the mouse cursor
 	if (_overlayVisible) {
+		int16 *bak = (int16 *)_mouseBackupP;			// Surface used to backup the area obscured by the mouse
+		int16 *dst = _overlayP + y * _screenWidth + x;
+		
+		do {
+			width = w;
+			do {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != _mouseKeyColor)	// transparent, don't draw
+					*dst = _nativePal[color];
+				dst++;
+			} while (--width);
+
+			src += MAX_MOUSE_W - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _screenWidth - w;
+		} while (--h);
+
 	} else {
-		// backup...
-		RectangleType r = {x, y, w, h};
-		WinCopyRectangle(_offScreenH, _mouseBackupH, &r, 0, 0, winPaint);
-		// ...and draw
-		WinSetDrawWindow(_offScreenH);
-		WinDrawBitmap(WinGetBitmap(_mouseDataH), draw_x, draw_y);
+		byte *bak = _mouseBackupP;						// Surface used to backup the area obscured by the mouse
+		byte *dst =_offScreenP + y * _screenWidth + x;	// Surface we are drawing into
+
+		do {
+			width = w;
+			do {
+				*bak++ = *dst;
+				color = *src++;
+				if (color != _mouseKeyColor)	// transparent, don't draw
+					*dst = color;
+				dst++;
+			} while (--width);
+
+			src += MAX_MOUSE_W - w;
+			bak += MAX_MOUSE_W - w;
+			dst += _screenWidth - w;
+		} while (--h);
 	}
-#endif
+
+	_mouseDrawn = true;
 }
 
 void OSystem_PalmOS5::undraw_mouse() {
 	if (!_mouseDrawn)
 		return;
-	_mouseDrawn = false;
 
-#ifdef PALMOS_68K
+	int h = _mouseOldState.h;
 	// No need to do clipping here, since draw_mouse() did that already
 	if (_overlayVisible) {
+		int16 *bak = (int16 *)_mouseBackupP;
+		int16 *dst = _overlayP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+
+		do {
+			memcpy(dst, bak, _mouseOldState.w * 2);
+			bak += MAX_MOUSE_W;
+			dst += _screenWidth;
+		} while (--h);
+
 	} else {
-		RectangleType r = {0, 0, _mouseOldState.w, _mouseOldState.h};
-		WinCopyRectangle(_mouseBackupH, _offScreenH, &r, _mouseOldState.x, _mouseOldState.y, winPaint);
+		byte *dst, *bak = _mouseBackupP;
+		dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
+		
+		do {
+			memcpy(dst, bak, _mouseOldState.w);
+			bak += MAX_MOUSE_W;
+			dst += _screenWidth;
+		} while (--h);
 	}
-#endif
+
+	_mouseDrawn = false;
 }

@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,30 +68,46 @@
 #	define CALLBACK_INIT(regs)
 #endif
 
+// TODO : change / remove this
+#define gfxMakeDisplayRGB_BigEndian(_r,_g,_b) \
+  ( (((_g) & 0xFC) << 11) | (((_b) & 0xF8) << 5) | ((_r) & 0xF8) | (((_g) & 0xFF) >> 5) )
+
+#define gfxMakeDisplayRGB_LittleEndian(_r,_g,_b) \
+  ( (((_r) & 0xF8) << 8) | (((_g) & 0xFC) << 3) | (((_b) & 0xF8) >> 3) )
+
+#if CPU_TYPE == CPU_68K
+#define gfxMakeDisplayRGB(_r,_g,_b) gfxMakeDisplayRGB_BigEndian(_r,_g,_b)
+#else
+#define gfxMakeDisplayRGB(_r,_g,_b) gfxMakeDisplayRGB_LittleEndian(_r,_g,_b)
+#endif
+
 typedef struct {
+	// for real thread version only
 	UInt32 __reg1;
 	UInt32 __reg2;
 
-	void *proc;
-	void *param;
+	// no real thread version
+	Boolean set;
+	UInt32	size;
+	void *dataP;
 
+	// default sound stuff
 	SndStreamRef handle;
-	Boolean	active;
-} SoundDataType;
-extern SoundDataType _sound;
-
-typedef struct {
-	UInt32 __r9;
-	UInt32 __r10;
-	TimerPtr timer;
-	UInt32 timerID;
-	UInt32 ticks;
-} TimerExType, *TimerExPtr;
+	SoundPtr sound;
+} SoundExType, *SoundExPtr;
+extern SoundExType _soundEx;
 
 class OSystem_PalmOS5 : public OSystem_PalmBase {
 private:
-	byte *_overlayP;
-	WinHandle _overlayH;
+	typedef void (OSystem_PalmOS5::*RendererProc)(RectangleType &r, PointType &p);
+	RendererProc _render;
+
+	OverlayColor *_overlayP;
+	WinHandle _overlayH, _workScreenH;
+	int16 _nativePal[256];
+	int16 *_workScreenP;
+	
+	Boolean _isSwitchable, _wasRotated;
 
 	virtual void int_initBackend();
 	virtual void int_updateScreen();
@@ -99,18 +115,26 @@ private:
 
 	virtual void unload_gfx_mode();
 	virtual void load_gfx_mode();
+	virtual void hotswap_gfx_mode(int mode);
 
 	void draw_mouse();
 	void undraw_mouse();
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y);
 	virtual bool check_event(Event &event, EventPtr ev);
+	virtual void extras_palette(uint8 index, uint8 r, uint8 g, uint8 b);
 
-#ifdef PALMOS_ARM
-	void timer_handler() {};
-#endif
+	void render_landscape(RectangleType &r, PointType &p);
+	void render_portrait(RectangleType &r, PointType &p);
+	void render_1x(RectangleType &r, PointType &p);
+	WinHandle alloc_screen(Coord w, Coord h);
+	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
+
+	virtual SndStreamVariableBufferCallback sound_callback();
+	virtual void sound_handler();
 
 protected:
 	UInt16 _sysOldCoord, _sysOldOrientation;
+	Boolean _stretched;
 
 public:
 	OSystem_PalmOS5();
@@ -119,25 +143,20 @@ public:
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	void clearScreen();
 
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
+	void showOverlay();
+	void hideOverlay();
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
-#ifdef PALMOS_ARM
-	void setTimerCallback(TimerProc callback, int interval);
-#endif
-
-	bool setSoundCallback(SoundProc proc, void *param);
+	virtual bool setSoundCallback(SoundProc proc, void *param);
 	void clearSoundCallback();
-	
-	void int_quit();
-	void setWindowCaption(const char *caption) {};
+
+	void setWindowCaption(const char *caption);
 
 };
 

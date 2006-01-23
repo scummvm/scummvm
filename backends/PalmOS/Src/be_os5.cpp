@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,66 +22,24 @@
  */
 
 #include "be_os5.h"
-#include "oscalls.h"
-#include "palmdefs.h"
 
 #ifndef __TWKEYS_H__
 #include <PalmNavigator.h>
 #include <HsKeyCommon.h>
 #endif
 
-static TimerExType _timerEx;
-
 OSystem_PalmOS5::OSystem_PalmOS5() : OSystem_PalmBase() {
 	_sound.active = false;
-	_timerEx.timerID = 0;
-	_timerEx.timer = &_timer;
-
-#ifdef PALMOS_ARM
-	// CHECK : is this ok for OS5 too ?
-	if (HALHRTimerTicksPerSecond(&_timerEx.ticks))
-		_timerEx.ticks = SysTicksPerSecond();
-#endif
-}
-
-#ifdef PALMOS_ARM
-
-static SYSTEM_CALLBACK void timer_handler(void *userDataP) {
-	CALLBACK_PROLOGUE
-	TimerExPtr _timerEx = (TimerExPtr)userDataP;
-	TimerPtr _timer = _timerEx->timer;
-	_timer->duration = _timer->callback(_timer->duration);
-	KALTimerSet(_timerEx->timerID, (_timer->duration * _timerEx->ticks / 1000));
-	CALLBACK_EPILOGUE
-}
-
-void OSystem_PalmOS5::setTimerCallback(TimerProc callback, int timer) {
-	if (_timer.active && _timerEx.timerID)
-		KALTimerDelete(_timerEx.timerID);
-
-	if (callback != NULL) {
-		Err e;
-		CALLBACK_INIT(_timerEx);
-		_timer.duration = timer;
-		_timer.callback = callback;
-
-		// create the timer
-		e = KALTimerCreate(&_timerEx.timerID, appFileCreator, &::timer_handler, &_timerEx);
-		if (!e) {
-			e = KALTimerSet(_timerEx.timerID, (timer * _timerEx.ticks / 1000));
-			if (e) KALTimerDelete(_timerEx.timerID);
-		}
-		_timer.active = (!e);
-
-	} else {
-		_timer.active = false;
-	}
+	_setPalette = false;
 	
-	if (!_timer.active)
-		_timerEx.timerID = 0;
-}
+	_workScreenH = NULL;
+	_overlayH = NULL;
+	_isSwitchable = false;
+	_wasRotated = false;
 
-#endif
+	MemSet(&_soundEx, sizeof(SoundExType), 0);
+	_soundEx.sound = &_sound;
+}
 
 void OSystem_PalmOS5::int_initBackend() {
 	if (OPTIONS_TST(kOpt5WayNavigatorV1)) {
@@ -93,8 +51,8 @@ void OSystem_PalmOS5::int_initBackend() {
 		_keyMouse.hasMore	= true;
 
 	} else if (OPTIONS_TST(kOpt5WayNavigatorV2)) {
-		_keyMouse.bitUp		= keyBitRockerUp;
-		_keyMouse.bitDown	= keyBitRockerDown;
+		_keyMouse.bitUp		= keyBitRockerUp|keyBitPageUp;
+		_keyMouse.bitDown	= keyBitRockerDown|keyBitPageDown;
 		_keyMouse.bitLeft	= keyBitRockerLeft;
 		_keyMouse.bitRight	= keyBitRockerRight;
 		_keyMouse.bitButLeft= keyBitRockerCenter;
@@ -102,12 +60,51 @@ void OSystem_PalmOS5::int_initBackend() {
 	}
 }
 
-void OSystem_PalmOS5::int_quit() {
-#ifdef PALMOS_ARM
-	if (_timerEx.timerID)
-		KALTimerDelete(_timerEx.timerID);
-#endif
-	clearSoundCallback();
-	unload_gfx_mode();
-	exit(0);
+void OSystem_PalmOS5::setWindowCaption(const char *caption) {
+	Err e;
+	Char buf[64];
+	Coord w, y, h = FntLineHeight() + 2;
+	const Char *loading = "Loading, please wait\0";
+
+	// allocate bitmap
+	BitmapTypeV3 *bmp2P;
+	BitmapType *bmp1P = BmpCreate(320, (h * 3), 8, NULL, &e);
+	WinHandle tmpH = WinCreateBitmapWindow(bmp1P, &e);
+
+	WinSetDrawWindow(tmpH);
+	WinSetBackColor(0);
+	WinSetTextColor(255);
+	WinEraseWindow();
+
+	// loading message
+	FntSetFont(boldFont);
+	w = FntCharsWidth(loading, StrLen(loading));
+	w = (320 - w) / 2;
+	WinDrawChars(loading, StrLen(loading), w, 0 + h);
+
+	// caption
+	FntSetFont(stdFont);
+	w = FntCharsWidth(caption, StrLen(caption));
+	w = (320 - w) / 2;
+	WinDrawChars(caption, StrLen(caption), w, 0);
+
+	// memory size
+	StrPrintF(buf, "memory : %ld KB", gVars->startupMemory);
+	w = FntCharsWidth(buf, StrLen(buf));
+	w = (320 - w) / 2;
+	WinDrawChars(buf, StrLen(buf), w, h * 2);
+
+	// set the bitmap as v3
+	bmp2P = BmpCreateBitmapV3(bmp1P, kDensityDouble, BmpGetBits(bmp1P), NULL);
+	y = (80 - (h / 4) - 5);
+
+	// draw it
+	WinSetDrawWindow(WinGetDisplayWindow());
+	WinEraseWindow();
+	WinDrawBitmap((BitmapPtr)bmp2P, 0, y);
+
+	// free
+	WinDeleteWindow(tmpH, 0);
+	BmpDelete((BitmapPtr)bmp2P);
+	BmpDelete(bmp1P);
 }

@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,41 +22,44 @@
  */
 
 #include "be_os5.h"
+#include "backends/intern.h"
 #include "common/config-manager.h"
 
-#ifdef PALMOS_68K
-static void initRegs(void *addr) {
-	asm (
-		move.l	addr, a0
-		move.l	a4, 0(a0)
-		move.l	a5, 4(a0)
-	);
-}
+SoundExType _soundEx;
 
 static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP) {
-	asm (
-//		movem.l a4-a5, -(sp)
-		move.l UserDataP, a0
-		move.l 0(a0), a4
-		move.l 4(a0), a5
-	);
+	SoundExType *_soundEx = (SoundExType *)UserDataP;
+	SoundType *_sound = _soundEx->sound;
+	
+	if (_soundEx->set && _soundEx->size) {
+		MemMove(bufferP, _soundEx->dataP, _soundEx->size);
+		*bufferSizeP = _soundEx->size;
+		_soundEx->set = false;
 
-	SoundDataType *_sound = (SoundDataType *)UserDataP;
-	((OSystem::SoundProc)_sound->proc)(_sound->param, (byte *)bufferP, *bufferSizeP);
-
-//	asm ( movem.l (sp)+, a4-a5 );
+	} else {
+		_soundEx->size = *bufferSizeP;
+		MemSet(bufferP, 128, 0);
+		*bufferSizeP = 128;
+	}
+	
 	return errNone;
 }
 
-#else
+void OSystem_PalmOS5::sound_handler() {
+	if (_sound.active) {
+		if (_soundEx.size && !_soundEx.set) {
+			if (!_soundEx.dataP)
+				_soundEx.dataP = MemPtrNew(_soundEx.size);
 
-static SYSTEM_CALLBACK Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP) {
-	SoundDataType *_sound = (SoundDataType *)UserDataP;
-	((OSystem::SoundProc)_sound->proc)(_sound->param, (byte *)bufferP, *bufferSizeP);
-	return errNone;
+			((SoundProc)_sound.proc)(_sound.param, (byte *)_soundEx.dataP, _soundEx.size);
+			_soundEx.set = true;
+		}
+	}// TODO : no Sound API case
 }
-#endif
 
+SndStreamVariableBufferCallback OSystem_PalmOS5::sound_callback() {
+	return sndCallback;
+}
 
 bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 	Err e;
@@ -68,47 +71,54 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 			ConfMan.set("FM_high_quality", (gVars->fmQuality == FM_QUALITY_HI));
 		}
 
+#if defined (COMPILE_OS5)
+		CALLBACK_INIT(_soundEx);
+#endif
 		_sound.proc = proc;
 		_sound.param = param;
-		_sound.active = true;		// always true when we call this function, false when sound is off
-		_sound.handle = NULL;
+		_sound.active = true;	// always true when we call this function, false when sound is off
+
+		_soundEx.handle = 0;
+		_soundEx.size = 0;		// set by the callback
+		_soundEx.set = false;
+		_soundEx.dataP = NULL;	// set by the handler
 
 		if (ConfMan.hasKey("output_rate"))
 			_samplesPerSec = ConfMan.getInt("output_rate");
 		else
-#ifdef PALMOS_ARM
-			_samplesPerSec = 44100;	// default value
-#else
-			_samplesPerSec = 8000;	// default value
-#endif
+			_samplesPerSec = SAMPLES_PER_SEC;
 
 		// try to create sound stream
-		if (1 || OPTIONS_TST(kOptPalmSoundAPI)) {
-#ifdef PALMOS_68K
-			initRegs(&_sound);
-#endif
+		if (OPTIONS_TST(kOptPalmSoundAPI)) {
 			e = SndStreamCreateExtended(
-						&_sound.handle,
+						&_soundEx.handle,
 						sndOutput,
 						sndFormatPCM,
 						_samplesPerSec,
-#ifdef PALMOS_ARM
-						sndInt16Little,
-#else
+#ifdef PALMOS_68K
 						sndInt16Big,
+#else
+						sndInt16Little,
 #endif
 						sndStereo,
-						(SndStreamVariableBufferCallback)sndCallback,
-						&_sound,
+						sound_callback(),
+						&_soundEx,
 						8192
 #ifdef PALMOS_68K
 						,false
+#elif defined (COMPILE_OS5)
+						,true
 #endif
 						);
 
-			e = e ? e : SndStreamStart(_sound.handle);
-			e = e ? e :	SndStreamSetVolume(_sound.handle, (32767L / 16) * gVars->palmVolume / 100);
+			e = e ? e : SndStreamStart(_soundEx.handle);
+			e = e ? e :	SndStreamSetVolume(_soundEx.handle, 1024L * gVars->palmVolume / 100);
 			success = (e == errNone);
+
+		// no Sound API
+		} else {
+			_soundEx.size = 512;
+			_soundEx.dataP = MemPtrNew(_soundEx.size);
 		}
 	}
 	// if not true some scenes (indy3 256,...) may freeze (ESC to skip)
@@ -117,12 +127,16 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 
 void OSystem_PalmOS5::clearSoundCallback() {
 	if (_sound.active) {
-		if (1 || OPTIONS_TST(kOptPalmSoundAPI)) {
-			SndStreamStop(_sound.handle);
-			SndStreamDelete(_sound.handle);
+		if (OPTIONS_TST(kOptPalmSoundAPI)) {
+			SndStreamStop(_soundEx.handle);
+			SndStreamDelete(_soundEx.handle);
 		}
+
+		if (_soundEx.dataP)
+			free(_soundEx.dataP);
 	}
-	
+
 	_sound.active = false;
-	_sound.handle = NULL;
+	_soundEx.handle = NULL;
+	_soundEx.dataP = NULL;
 }
