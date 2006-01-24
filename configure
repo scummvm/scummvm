@@ -60,6 +60,7 @@ _need_memalign=no
 _build_plugins=no
 _nasm=auto
 _build_hq_scalers=yes
+_build_scalers=yes
 # more defaults
 _backend=sdl
 _ranlib=ranlib
@@ -304,6 +305,7 @@ Optional Features:
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
+  --disable-scalers        exclude scalers
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -363,8 +365,9 @@ for ac_option in $@; do
       --disable-queen)          _build_queen=no ;;
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
-      --disable-kyra)            _build_kyra=no ;;
+      --disable-kyra)           _build_kyra=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
+      --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
       --disable-alsa)           _alsa=no        ;;
       --enable-vorbis)          _vorbis=yes     ;;
@@ -678,6 +681,12 @@ if test "$_build_hq_scalers" = no ; then
 	_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
 else
 	_mak_hq_scalers='# DISABLE_HQ_SCALERS = 1'
+fi
+
+if test "$_build_scalers" = no ; then
+	_mak_hq_scalers='DISABLE_SCALERS = 1'
+else
+	_mak_hq_scalers='# DISABLE_SCALERS = 1'
 fi
 
 if test -n "$_host"; then
@@ -1373,6 +1382,7 @@ $_mak_gob
 $_mak_mt32emu
 
 $_mak_hq_scalers
+$_mak_scalers
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
