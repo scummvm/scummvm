@@ -1123,7 +1123,13 @@ int main(void) {
 	return 1;
 }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
+
+	if test -n "$_host"; then
+		# don't execute while cross compiling
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
+	else
+		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO && _mpeg2=yes
+	fi
 fi
 if test "$_mpeg2" = yes ; then
 	_def_mpeg2='#define USE_MPEG2'
