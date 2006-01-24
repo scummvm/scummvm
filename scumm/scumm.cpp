@@ -2340,7 +2340,7 @@ int ScummEngine::scummLoop(int delta) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		if ((_gameId == GID_ZAK && _platform == Common::kPlatformFMTowns) || _gameId == GID_INDY3) {
+		if (_gameId == GID_ZAK || _gameId == GID_INDY3) {
 			// All versions of Indy3 set three extra timers
 			// FM-TOWNS version of Zak sets three extra timers
 			VAR(39) += delta;
