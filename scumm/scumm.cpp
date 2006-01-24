@@ -2885,7 +2885,7 @@ static bool generateDetectName(const ScummGameSettings *g, int method, char *det
 		strcat(detectName, ".la0");
 		break;
 	case 4:
-		if (g->heversion > 0)
+		if (g->heversion == 0)
 			return false;
 		strcpy(detectName, g->gameid);
 		strcat(detectName, ".he0");
