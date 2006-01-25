@@ -1,6 +1,6 @@
 ScummVM README
 Last updated:    $Date$
-Release version: 0.8.0
+Release version: 0.8.1
 ------------------------------------------------------------------------
 
 For more information, compatibility lists, details on donating, the latest
@@ -265,8 +265,8 @@ OGG or FLAC.
 
 3.5) Beneath a Steel Sky notes
 ---- -------------------------
-As of ScummVM 0.8.0 you need the additional SKY.CPT file to run Beneath a 
-Steel Sky.
+Since ScummVM 0.8.0 you need the additional SKY.CPT file to run Beneath
+a Steel Sky.
 
 This file is available on the 'Compatibility' page of the ScummVM
 website, you can place it in either the directory containing the other
@@ -327,7 +327,7 @@ or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
 respectively. If you add the game manually, make sure that platform is set to
 Commodore64.
 
-3.10) Known Problems in ScummVM 0.8.0
+3.10) Known Problems in ScummVM 0.8.1
 ---- -----------------------------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
