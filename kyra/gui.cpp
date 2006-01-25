@@ -742,7 +742,9 @@ void KyraEngine::gui_processHighlights(Menu &menu) {
 			_mouseY > y1 && _mouseY < y2) {
 			
 			if (menu.highlightedItem != i) {
-				gui_redrawText(menu);
+				if (menu.item[menu.highlightedItem].enabled )
+					gui_redrawText(menu);
+
 				menu.highlightedItem = i;
 				gui_redrawHighlight(menu);
 				_screen->updateScreen();
