@@ -11,7 +11,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
  SCUMM:
    - Fixed mouse button states in COMI.
-   - Fixed subtitles glitches in HE Games.
+   - Fixed overflow when using control panel for robot in the Dig.
+   - Added support for sound code, used by songs in HE games.
+   - Fixed subtitles glitches in HE games.
+   - Improved music/sound for HE games.
    - Improved support for international versions of HE games.
    - Improved support for Macintosh versions of games.
 
