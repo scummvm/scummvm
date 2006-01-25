@@ -32,6 +32,7 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 #include "base/plugins.h"
+#include "base/internal_version.h"
 #include "base/version.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -93,9 +94,9 @@
  * to setup, but I have no idea if/how one can also change files which are not
  * currently being commit'ed.
  */
-const char *gScummVMVersion = "0.9.0CVS";
+const char *gScummVMVersion = SCUMMVM_VERSION;
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
-const char *gScummVMFullVersion = "ScummVM 0.9.0CVS (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFeatures = ""
 #ifdef USE_TREMOR
 	"Tremor "

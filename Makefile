@@ -95,7 +95,7 @@ bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
-	cp $(srcdir)/Info.plist $(bundle_name)/Contents/
+	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
