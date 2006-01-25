@@ -41,7 +41,7 @@ if ($#ARGV >= 0) {
 }
 
 if ($mode eq "") {
-	print STDERR "Usage: credits.pl [--text | --html | --cpp | --xml | --rtf]\n";
+	print STDERR "Usage: $0 [--text | --html | --cpp | --xml | --rtf]\n";
 	print STDERR " Just pass --text / --html / --cpp / --xml / --rtf as parameter, and credits.pl\n";
 	print STDERR " will print out the corresponding version of the credits to stdout.\n";
 	exit 1;
