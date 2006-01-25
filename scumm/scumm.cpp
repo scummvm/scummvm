@@ -962,6 +962,32 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (!elem)
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
+	if (_gameId == GID_FT) {
+		// WORKAROUND for bug #1407789. See checkAndRunSentenceScript()
+		// for the actual workaround.
+
+		// FIXME: We do not yet have all necessary information, but the
+		// following is known:
+		//
+		// * The US PC version uses scripts 28 and 103.
+		// * The French PC version uses scripts 29 and 104.
+		// * The German, Italian, Portuguese and Spanish PC versions
+		//   use script 29. The other script is not currently known.
+		// * The US Mac demo uses script 28.
+		//
+		// For now, assume that the PC and Mac versions are the same,
+		// that all localized versions use scripts 29 and 104, and that
+		// any completely unknown version is localized.
+
+		if (elem && elem->language == Common::EN_USA) {
+			_defaultFTSentenceScript = 28;
+			_buggyFTSentenceScript = 103;
+		} else {
+			_defaultFTSentenceScript = 29;
+			_buggyFTSentenceScript = 104;
+		}
+	}
+
 	// Add default file directories.
 	if (((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST)) && (_version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak

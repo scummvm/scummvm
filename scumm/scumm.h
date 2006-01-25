@@ -618,6 +618,9 @@ protected:
 	int _vmStack[150];
 	int _keyScriptKey, _keyScriptNo;
 
+	// See the ScummEngine constructor and checkAndRunSentenceScript()
+	int _defaultFTSentenceScript, _buggyFTSentenceScript;
+
 	virtual void setupOpcodes() = 0;
 	virtual void executeOpcode(byte i) = 0;
 	virtual const char *getOpcodeDesc(byte i) = 0;

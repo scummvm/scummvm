@@ -1082,12 +1082,12 @@ void ScummEngine::checkAndRunSentenceScript() {
 		localParamList[1] = _sentence[_sentenceNum].objectA;
 		localParamList[2] = _sentence[_sentenceNum].objectB;
 
-		// WORKAROUND for bug #1407789. The script clearly assumes that
-		// one of the two objects is an actor. If that's not the case,
-		// fall back on what appears to be the usual sentence script.
+		// WORKAROUND for bug #1407789. The buggy script clearly
+		// assumes that one of the two objects is an actor. If that's
+		// not the case, fall back on the default sentence script.
 
-		if (_gameId == GID_FT && sentenceScript == 103 && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
-			sentenceScript = 28;
+		if (_gameId == GID_FT && sentenceScript == _buggyFTSentenceScript && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
+			sentenceScript = _defaultFTSentenceScript;
 		}
 	}
 	_currentScript = 0xFF;
