@@ -22,7 +22,7 @@ Table of Contents:
  * 3.8 The Legend of Kyrandia notes
  * 3.9 Maniac Mansion NES notes
  * 3.10 Commodore64 games notes
- * 3.11 Known Bugs
+ * 3.11 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -321,8 +321,8 @@ or name D64 disks as "maniac1.d64", "maniac2.d64" and "zak1.d64", "zak2.d64"
 respectively. If you add the game manually, make sure that platform is set to
 Commodore64.
 
-3.11) Known Problems in ScummVM 0.9.0CVS
----- -----------------------------------
+3.11) Known Problems
+---- ---------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
 listed here, nor in the compatibility table on the web site, please see
