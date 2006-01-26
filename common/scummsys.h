@@ -287,6 +287,12 @@
 	#define fprintf				ps2_fprintf
 	#define fsize(a)			ps2_fsize(a)
 
+	extern "C" time_t ps2_time(time_t *p);
+	extern "C" struct tm *ps2_localtime(const time_t *p);
+
+	#define time(a)	ps2_time(a)
+	#define localtime(a) ps2_localtime(a)
+
 	extern void ps2_disableHandleCaching(void);
 #elif defined (__PSP__)
 	#define	SCUMM_NEED_ALIGNMENT
