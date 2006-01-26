@@ -176,10 +176,6 @@ void ScummEngine_v6::setupScummVars() {
 	// Many vars are the same as in V5 & V6 games, so just call the inherited method first
 	ScummEngine::setupScummVars();
 
-	if (_heversion == 0) {
-		VAR_V6_SOUNDMODE = 9;
-	}
-
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
@@ -204,7 +200,10 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 
 	// Sam & Max specific
-	VAR_CHARSET_MASK = 123;
+	if (_gameId == GID_SAMNMAX) {
+		VAR_V6_SOUNDMODE = 9;
+		VAR_CHARSET_MASK = 123;
+	}
 }
 
 #ifndef DISABLE_HE
@@ -419,7 +418,9 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_FADE_DELAY = 117;
 
 	// Full Throttle specific
-	VAR_CHARSET_MASK = 119;
+	if (_gameId == GID_FT) {
+		VAR_CHARSET_MASK = 119;
+	}
 
 	VAR_VIDEONAME = 123;
 
@@ -690,7 +691,7 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_CURRENTDRIVE) = 0;
 
 		if (_platform == Common::kPlatformMacintosh && (_features & GF_OLD_BUNDLE)) {
-			// This is the for the Mac version of Indy3/Loom
+			// Set screen size for the Macintosh version of Indy3/Loom
 			VAR(39) = 320;
 		}
 		if (_platform == Common::kPlatformPC && _gameId == GID_LOOM) {
