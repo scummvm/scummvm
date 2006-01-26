@@ -106,7 +106,7 @@ void ResExtractor::setCursor(int id) {
 	}
 
 	if (_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette) && cc->palette)
-			_vm->_system->setCursorPalette(cc->palette, 0, cc->palSize);
+		_vm->_system->setCursorPalette(cc->palette, 0, cc->palSize);
 
 	_vm->setCursorHotspot(cc->hotspot_x, cc->hotspot_y);
 	_vm->setCursorFromBuffer(cc->bitmap, cc->w, cc->h, cc->w);
@@ -1661,7 +1661,7 @@ void ScummEngine_v70he::readGlobalObjects() {
 }
 
 void ScummEngine_v99he::readMAXS(int blockSize) {
-	debug(0, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(0, "ScummEngine_v99he readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
@@ -1689,12 +1689,10 @@ void ScummEngine_v99he::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 	_numGlobalScripts = 2048;
-
-	_shadowPalette = (byte *)calloc(65536, 1);
 }
 
 void ScummEngine_v90he::readMAXS(int blockSize) {
-	debug(0, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(0, "ScummEngine_v90he readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
@@ -1723,13 +1721,10 @@ void ScummEngine_v90he::readMAXS(int blockSize) {
 	else
 		_numGlobalScripts = 200;
 
-	if (_heversion >= 95) {
-		_shadowPalette = (byte *)calloc(65536, 1);
-	}
 }
 
 void ScummEngine_v72he::readMAXS(int blockSize) {
-	debug(0, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(0, "ScummEngine_v72he readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
@@ -1785,12 +1780,7 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 				error("getSoundResourceSize: Not a valid WAV file");
 			}
 		} else {
-			if (READ_UINT32(ptr) == MKID('HSHD')) {
-				ptr += READ_BE_UINT32(ptr + 4);
-			} else {
-				ptr += 8 + READ_BE_UINT32(ptr + 12);
-			}
-
+			ptr += 8 + READ_BE_UINT32(ptr + 12);
 			if (READ_UINT32(ptr) == MKID('SBNG')) {
 				ptr += READ_BE_UINT32(ptr + 4);
 			}

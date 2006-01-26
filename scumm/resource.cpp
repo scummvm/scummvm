@@ -553,11 +553,6 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		readArrayFromIndexFile();
 		break;
 
-	case MKID('LECF'):
-		_fileHandle->seek(itemsize - 8, SEEK_CUR);
-		debug(2, "LECF index block not yet handled, skipping");
-		break;
-
 	default:
 		error("Bad ID %04X('%s') found in index file directory!", blocktype,
 				tag2str(blocktype));
@@ -1103,7 +1098,7 @@ void ResourceManager::resourceStats() {
 }
 
 void ScummEngine_v5::readMAXS(int blockSize) {
-	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(9, "ScummEngine_v5 readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();      // 800
 	_fileHandle->readUint16LE();                      // 16
@@ -1133,7 +1128,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 #ifndef DISABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
-	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(9, "ScummEngine_v8 readMAXS: MAXS has blocksize %d", blockSize);
 
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
@@ -1163,7 +1158,7 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
-	debug(9, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(9, "ScummEngine_v7 readMAXS: MAXS has blocksize %d", blockSize);
 
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
 	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
@@ -1197,7 +1192,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 #endif
 
 void ScummEngine_v6::readMAXS(int blockSize) {
-	debug(0, "readMAXS: MAXS has blocksize %d", blockSize);
+	debug(0, "ScummEngine_v6 readMAXS: MAXS has blocksize %d", blockSize);
 
 	_numVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
@@ -1567,6 +1562,8 @@ const char *resTypeFromId(int id) {
 		return "Image";
 	case rtTalkie:
 		return "Talkie";
+	case rtSpoolBuffer:
+		return "SpoolBuffer";
 	case rtNumTypes:
 		return "NumTypes";
 	default:
