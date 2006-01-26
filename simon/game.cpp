@@ -285,15 +285,6 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2WIN_PL,    "7b9afcf82a94722707e0d025c0192be8", "simon2.gme", false },
 	{ GID_SIMON2WIN_PL,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2WIN_PL,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
-
-	{ GID_FEEBLEFILES_2CD, "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
-	{ GID_FEEBLEFILES_2CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
-
-	{ GID_FEEBLEFILES_4CD, "a8746407a5b20a7da0da0a14c380af1c", "game22", false },
-	{ GID_FEEBLEFILES_4CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
-
-	{ GID_FEEBLEFILES_DE, "bcd76ac080003eee3649df18db25b60e", "game22", false },
-	{ GID_FEEBLEFILES_DE, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
 };
 
 // Simon the Sorcerer 1
@@ -348,12 +339,6 @@ static GameFileDescription SIMON2_GameFiles[] = {
 	{"icon.dat", GAME_ICONFILE},
 	{"simon2.gme", GAME_GMEFILE},
 	{"stripped.txt", GAME_STRFILE},
-	{"tbllist", GAME_TBLFILE},
-};
-
-// The Feeble Files
-static GameFileDescription FEEBLEFILES_GameFiles[] = {
-	{"game22", GAME_BASEFILE},
 	{"tbllist", GAME_TBLFILE},
 };
 
@@ -903,45 +888,6 @@ static GameDescription gameDescriptions[] = {
 		SIMON2_GameFiles,
 		GF_TALKIE,
 		Common::PL_POL,
-		Common::kPlatformWindows,
-	},
-
-	// The Feeble Files - English 2CD
-	{
-		"feeble",
-		GType_FF,
-		GID_FEEBLEFILES_2CD,
-		"The Feeble Files (English 2CD)",
-		ARRAYSIZE(FEEBLEFILES_GameFiles),
-		FEEBLEFILES_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_USA,
-		Common::kPlatformWindows,
-	},
-
-	// The Feeble Files - English 4CD
-	{
-		"feeble",
-		GType_FF,
-		GID_FEEBLEFILES_4CD,
-		"The Feeble Files (English 4CD)",
-		ARRAYSIZE(FEEBLEFILES_GameFiles),
-		FEEBLEFILES_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_USA,
-		Common::kPlatformWindows,
-	},
-
-	// The Feeble Files - German 4CD
-	{
-		"feeble",
-		GType_FF,
-		GID_FEEBLEFILES_DE,
-		"The Feeble Files (German 4CD)",
-		ARRAYSIZE(FEEBLEFILES_GameFiles),
-		FEEBLEFILES_GameFiles,
-		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::DE_DEU,
 		Common::kPlatformWindows,
 	},
 };

@@ -30,9 +30,9 @@ namespace Simon {
 
 void SimonEngine::loadIconFile() {
 	Common::File in;
-	if (_game & GF_ACORN)
+	if (getPlatform() == Common::kPlatformAcorn)
 		in.open("ICONDATA");
-	else if (_game & GF_AMIGA)
+	else if (getPlatform() == Common::kPlatformAmiga)
 		in.open("icon.pkd");
 	else
 		in.open("ICON.DAT");
@@ -161,12 +161,12 @@ void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) 
 	_lockWord |= 0x8000;
 	dst = dx_lock_2();
 
-	if (!(_game & GF_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		// Simon 1
 		dst += (x + fcs->x) * 8;
 		dst += (y * 25 + fcs->y) * _dxSurfacePitch;
 
-		if (_game & GF_AMIGA) {
+		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
 			decompress_icon_amiga (dst, src, 0xE0, _dxSurfacePitch);
@@ -200,7 +200,7 @@ uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uin
 
 	ha = findEmptyHitArea();
 
-	if (!(_game & GF_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		ha->x = (x + fcs->x) << 3;
 		ha->y = y * 25 + fcs->y;
 		ha->item_ptr = item_ptr;

@@ -28,37 +28,6 @@ namespace Simon {
 	#pragma START_PACK_STRUCTS
 #endif
 
-// Feeble Files
-struct VgaFileHeader_Feeble {
-	uint16 x_1;
-	uint16 hdr2_start;
-	uint16 x_2, x_3;
-} GCC_PACK;
-
-struct VgaFileHeader2_Feeble {
-	uint16 imageCount;
-	uint16 x_2;
-	uint16 animationCount;
-	uint16 x_3;
-	uint16 imageTable;
-	uint16 x_4;
-	uint16 animationTable;
-	uint16 x_5;
-} GCC_PACK;
-
-struct ImageHeader_Feeble {
-	uint16 id;
-	uint16 x_1;
-	uint16 scriptOffs;
-	uint16 x_2;
-} GCC_PACK;
-
-struct AnimationHeader_Feeble {
-	uint16 scriptOffs;
-	uint16 x_2;
-	uint16 id;
-} GCC_PACK;
-
 // Simon 1/2
 struct VgaFileHeader_Simon {
 	uint16 x_1, x_2;

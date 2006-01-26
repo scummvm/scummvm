@@ -220,16 +220,6 @@ any answer. Chances are that it will work.
 
 3.2) Simon the Sorcerer 1 and 2 notes:
 ---- ---------------------------------
-The current game targets are:
- simon1acorn  - Use for Simon the Sorcerer 1 (Acorn CD)
- simon1dos    - Use for Simon the Sorcerer 1 (DOS Floppy)
- simon2dos    - Use for Simon the Sorcerer 2 (DOS Floppy)
- simon1talkie - Use for Simon the Sorcerer 1 (DOS/Windows CD)
- simon2talkie - Use for Simon the Sorcerer 2 (Amiga/DOS/Mac/Windows CD)
-
-Also make sure that the platform setting is correct, since it is used
-to tell the difference between the various ports of the games.
-
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
 then you will find the Windows version in the main directory of CD
 and the DOS version in the DOS directory of the CD.

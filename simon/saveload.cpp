@@ -108,7 +108,7 @@ int SimonEngine::display_savegame_list(int curpos, bool load, char *dst) {
 void SimonEngine::quick_load_or_save() {
 	// simon1demo subroutines are missing too many segments
 	// original demo didn't allow load or save either.
-	if (_game == GAME_SIMON1DEMO)
+	if (getGameId() == GID_SIMON1DEMO)
 		return;
 
 	bool success;
@@ -227,7 +227,7 @@ restart:;
 
 		fcs->textRow = unk132_result;
 
-		if (_language == 20) { //Hebrew
+		if (_language == Common::HB_ISR) { //Hebrew
 			// init x offset with a 2 character savegame number + a period (18 pix)
 			fcs->textColumn = 3;
 			fcs->textColumnOffset = 6;
@@ -244,7 +244,7 @@ restart:;
 		// now process entire savegame name to get correct x offset for cursor
 		name_len = 0;
 		while (name[name_len]) {
-			if (_language == 20) { //Hebrew
+			if (_language == Common::HB_ISR) { //Hebrew
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
 					width = _hebrew_char_widths [name[name_len] - 64];
@@ -412,11 +412,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 		return false;
 	}
 
-	if (_game == GAME_FEEBLEFILES) {
-		f->write(caption, 100);
-	} else {
-		f->write(caption, 18);
-	}
+	f->write(caption, 18);
 
 	f->writeUint32BE(_itemArrayInited - 1);
 	f->writeUint32BE(0xFFFFFFFF);
@@ -481,12 +477,6 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 	for (i = 0; i != 32; i++)
 		f->writeUint16BE(_bitArray[i]);
 
-	// Write the bits in array 3
-	if (_game == GAME_FEEBLEFILES) {
-		for (i = 33; i != 48; i++)
-			f->writeUint16BE(_bitArray[i]);
-	}
-
 	f->flush();
 	bool result = !f->ioFailed();
 
@@ -499,12 +489,7 @@ bool SimonEngine::save_game(uint slot, char *caption) {
 char *SimonEngine::gen_savename(int slot) {
 	static char buf[15];
 
-	if (_game == GAME_FEEBLEFILES) {
-		if (slot == 999)
-			sprintf(buf, "save.%.3d", slot);
-		else
-			sprintf(buf, "feeble.%.3d", slot);
-	} else if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		sprintf(buf, "simon2.%.3d", slot);
 	} else {
 		sprintf(buf, "simon1.%.3d", slot);
@@ -525,11 +510,7 @@ bool SimonEngine::load_game(uint slot) {
 		return false;
 	}
 
-	if (_game == GAME_FEEBLEFILES) {
-		f->read(ident, 100);
-	} else {
-		f->read(ident, 18);
-	}
+	f->read(ident, 18);
 
 	num = f->readUint32BE();
 
@@ -610,12 +591,6 @@ bool SimonEngine::load_game(uint slot) {
 	// Read the bits in array 1 & 2
 	for (i = 0; i != 32; i++)
 		_bitArray[i] = f->readUint16BE();
-
-	// Read the bits in array 3
-	if (_game == GAME_FEEBLEFILES) {
-		for (i = 33; i != 48; i++)
-			_bitArray[i] = f->readUint16BE();
-	}
 
 	if (f->ioFailed()) {
 		error("load failed");

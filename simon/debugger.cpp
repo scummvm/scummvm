@@ -106,10 +106,10 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 	if (argc > 1) {
 		uint music = atoi(argv[1]);
-		uint range = (_vm->_game & GF_SIMON2) ? 93 : 34;
+		uint range = (_vm->getGameType() == GType_SIMON2) ? 93 : 34;
 		if (music <= range) {
 			_vm->loadMusic (music);
-			if (_vm->_game & GF_SIMON2)
+			if (_vm->getGameType() == GType_SIMON2)
 				_vm->midi.startTrack (0);
 		} else
 			DebugPrintf("Music out of range (0 - %d)\n", range);
@@ -122,7 +122,7 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 	if (argc > 1) {
 		uint sound = atoi(argv[1]);
-		uint range = (_vm->_game & GF_SIMON2) ? 222 : 127;
+		uint range = (_vm->getGameType() == GType_SIMON2) ? 222 : 127;
 		if (sound <= range)
 			_vm->_sound->playEffects(sound);
 		else
@@ -136,7 +136,7 @@ bool Debugger::Cmd_PlaySound(int argc, const char **argv) {
 bool Debugger::Cmd_PlayVoice(int argc, const char **argv) {
 	if (argc > 1) {
 		uint voice = atoi(argv[1]);
-		uint range = (_vm->_game & GF_SIMON2) ? 3632 : 1996;
+		uint range = (_vm->getGameType() == GType_SIMON2) ? 3632 : 1996;
 		if (voice <= range)
 			_vm->_sound->playVoice(voice);
 		else

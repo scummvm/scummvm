@@ -37,11 +37,11 @@ const byte *SimonEngine::dumpOpcode(const byte *p) {
 	opcode = *p++;
 	if (opcode == 255)
 		return NULL;
-	if (_game & GF_SIMON2 && _game & GF_TALKIE) {
+	if (getGameType() == GType_SIMON2 && getFeatures() & GF_TALKIE) {
 		st = s = simon2talkie_opcode_name_table[opcode];
-	} else if (_game & GF_TALKIE) {
+	} else if (getFeatures() & GF_TALKIE) {
 		st = s = simon1talkie_opcode_name_table[opcode];
-	} else if (_game & GF_SIMON2) {
+	} else if (getGameType() == GType_SIMON2) {
 		st = s = simon2dos_opcode_name_table[opcode];
 	} else {
 		st = s = simon1dos_opcode_name_table[opcode];
@@ -174,7 +174,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 	const char *str, *strn;
 
 	do {
-		if (!(_game & GF_SIMON2)) {
+		if (getGameType() == GType_SIMON1) {
 			opcode = READ_BE_UINT16(src);
 			src += 2;
 		} else {
@@ -186,9 +186,7 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			return;
 		}
 
-		if (_game == GAME_FEEBLEFILES) {
-			strn = str = feeblefiles_video_opcode_name_table[opcode];
-		} else if (_game & GF_SIMON2) {
+		if (getGameType() == GType_SIMON2) {
 			strn = str = simon2_video_opcode_name_table[opcode];
 		} else {
 			strn = str = simon1_video_opcode_name_table[opcode];
@@ -198,7 +196,6 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 			strn++;
 		fprintf(_dumpFile, "%.2d: %s ", opcode, strn + 1);
 
-		int end = (_game == GAME_FEEBLEFILES) ? 9999 : 999;
 		for (; *str != '|'; str++) {
 			switch (*str) {
 			case 'x':
@@ -208,21 +205,21 @@ void SimonEngine::dump_video_script(const byte *src, bool one_opcode_only) {
 				fprintf(_dumpFile, "%d ", *src++);
 				break;
 			case 'd':
-				fprintf(_dumpFile, "%d ", readUint16Wrapper(src));
+				fprintf(_dumpFile, "%d ", READ_BE_UINT16(src));
 				src += 2;
 				break;
 			case 'v':
-				fprintf(_dumpFile, "[%d] ", readUint16Wrapper(src));
+				fprintf(_dumpFile, "[%d] ", READ_BE_UINT16(src));
 				src += 2;
 				break;
 			case 'i':
-				fprintf(_dumpFile, "%d ", (int16)readUint16Wrapper(src));
+				fprintf(_dumpFile, "%d ", (int16)READ_BE_UINT16(src));
 				src += 2;
 				break;
 			case 'q':
-				while (readUint16Wrapper(src) != end) {
-					fprintf(_dumpFile, "(%d,%d) ", readUint16Wrapper(src),
-									readUint16Wrapper(src + 2));
+				while (READ_BE_UINT16(src) != 999) {
+					fprintf(_dumpFile, "(%d,%d) ", READ_BE_UINT16(src),
+									READ_BE_UINT16(src + 2));
 					src += 4;
 				}
 				src++;

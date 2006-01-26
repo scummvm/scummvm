@@ -176,7 +176,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 	dst += READ_BE_UINT32(p);
 
 	memset(dst, 0, count);
-	if (_language == 20)
+	if (_language == Common::HB_ISR)
 		dst += width - 1; // For Hebrew, start at the right edge, not the left.
 
 	dst_org = dst;
@@ -185,13 +185,13 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 			dst_org += width * 10;
 			dst = dst_org;
 		} else if ((chr -= ' ') == 0) {
-			dst += (_language == 20 ? -6 : 6); // Hebrew moves to the left, all others to the right
+			dst += (_language == Common::HB_ISR ? -6 : 6); // Hebrew moves to the left, all others to the right
 		} else {
 			byte *img_hdr = src + 48 + chr * 4;
 			uint img_height = img_hdr[2];
 			uint img_width = img_hdr[3], i;
 			byte *img = src + READ_LE_UINT16(img_hdr);
-			if (_language == 20)
+			if (_language == Common::HB_ISR)
 				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;
 
@@ -211,7 +211,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 				cur_dst += width;
 			} while (--img_height);
 
-			if (_language != 20) // Hebrew character movement is done higher up
+			if (_language != Common::HB_ISR) // Hebrew character movement is done higher up
 				dst += img_width - 1;
 		}
 	}
@@ -302,7 +302,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 	} else if (c == 0xD || c == 0xA) {
 		video_putchar_newline(fcs);
 	} else if ((c == 1 && _language != 20) || (c == 8)) {
-		if (_language == 20) { //Hebrew
+		if (_language == Common::HB_ISR) { //Hebrew
 			if (b >= 64 && b < 91)
 				width = _hebrew_char_widths [b - 64];
 
@@ -334,7 +334,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 			fcs->textRow--;
 		}
 
-		if (_language == 20) { //Hebrew
+		if (_language == Common::HB_ISR) { //Hebrew
 			if (c >= 64 && c < 91)
 				width = _hebrew_char_widths [c - 64];
 			fcs->textColumnOffset  -= width;

@@ -96,30 +96,6 @@ static const char *const opcode_arg_table_simon2dos[256] = {
 	" ", " ", "BT ", " ", "B "
 };
 
-static const char *const opcode_arg_table_feeblefiles[256] = {
-	" ", "I ", "I ", "I ", "I ", "I ", "I ", "II ", "II ", "II ", "II ", "B ", "B ", "BN ", "BN ",
-	"BN ", "BN ", "BB ", "BB ", "BB ", "BB ", "II ", "II ", "N ", "I ", "I ", "I ", "IN ", "IB ",
-	"II ", "I ", "I ", "II ", "II ", "IBB ", "BIB ", "BB ", "B ", "BI ", "IB ", "B ", "B ", "BN ",
-	"BN ", "BN ", "BB ", "BB ", "BN ", "BN ", "BB ", "BB ", "BN ", "BB ", "BN ", "B ", "I ", "IB ",
-	"IB ", "II ", "I ", "I ", "IN ", "B ", "T ", "T ", "NNNNNB ", "BT ", "BTS ", "T ", " ", "B ",
-	"N ", "IBN ", "I ", "I ", "I ", "NN ", " ", " ", "IT ", "II ", "I ", "B ", " ", "IB ", "IBB ",
-	"IIB ", "T ", " ", " ", "IB ", "IB ", "IB ", "B ", "BB ", "IBB ", "NB ", "N ", "NNBNNN ", "NN ",
-	" ", "BNNNNNN ", "B ", " ", "B ", "B ", "BB ", "NNNNNIN ", "N ", "N ", "N ", "NNN ", "NBNN ",
-	"IBNN ", "IB ", "IB ", "IB ", "IB ", "N ", "N ", "N ", "BI ", " ", " ", "N ", "I ", "IBB ",
-	"NNB ", "N ", "N ", "Ban ", " ", " ", " ", " ", " ", "IB ", "B ", " ", "II ", " ", "BI ",
-	"N ", "I ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "IB ", "BI ", "BB ", "B ", "B ", "B ",
-	"B ", "IBB ", "IBN ", "IB ", "B ", "BNNN ", "BBTS ", "N ", " ", "Ian ", "B ", "B ", "B ", "B ",
-	"T ", "N ", " ", " ", "I ", " ", " ", "BBI ", "NNBB ", "BBB ", " ", " ", "T ", " ", "N ", "N ",
-	" ", " ", "BT ", " ", "B ", " ", "BBBB ", " ", " ", "BBBB ", "B ", "B ", "B ", "B "
-};
-
-uint16 SimonEngine::readUint16Wrapper(const void *src) {
-	if (_game == GAME_FEEBLEFILES)
-		return READ_LE_UINT16(src);
-	else
-		return READ_BE_UINT16(src);
-}
-
 void SimonEngine::loadGamePcFile(const char *filename) {
 	Common::File in;
 	int num_inited_objects;
@@ -172,11 +148,8 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 	_tablesHeapPtrOrg = _tablesHeapPtr;
 	_tablesHeapCurPosOrg = _tablesHeapCurPos;
 
-	if (_game == GAME_FEEBLEFILES)
-		return;
-
 	/* Read list of TEXT resources */
-	if (_game == GAME_SIMON1ACORN)
+	if (getPlatform() == Common::kPlatformAcorn)
 		in.open("STRIPPED");
 	else
 		in.open("STRIPPED.TXT");
@@ -287,13 +260,11 @@ byte *SimonEngine::readSingleOpcode(Common::File *in, byte *ptr) {
 
 	const char *const *table;
 
-	if (_game == GAME_FEEBLEFILES) {
-		table = opcode_arg_table_feeblefiles;
-	} else if ((_game & GF_SIMON2) && (_game & GF_TALKIE))
+	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE))
 		table = opcode_arg_table_simon2win;
-	else if (_game & GF_SIMON2)
+	else if (getGameType() == GType_SIMON2)
 		table = opcode_arg_table_simon2dos;
-	else if (_game & GF_TALKIE)
+	else if (getFeatures() & GF_TALKIE)
 		table = opcode_arg_table_simon1win;
 	else
 		table = opcode_arg_table_simon1dos;

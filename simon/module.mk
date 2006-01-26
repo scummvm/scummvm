@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	simon/cursor.o \
 	simon/debug.o \
 	simon/debugger.o \
+	simon/game.o \
 	simon/icons.o \
 	simon/items.o \
 	simon/midi.o \

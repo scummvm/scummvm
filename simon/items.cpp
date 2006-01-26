@@ -274,13 +274,7 @@ int SimonEngine::runScript() {
 		case 53:{									/* random */
 				uint var = getVarOrByte();
 				uint value = (uint16)getVarOrWord();
-
-				// Disable random in simon1amiga for now
-				// Since copy protection screen is currently unreadable
-				if (_game == GAME_SIMON1AMIGA)
-					writeVariable(var, 4);
-				else
-					writeVariable(var, _rnd.getRandomNumber(value - 1));
+				writeVariable(var, _rnd.getRandomNumber(value - 1));
 			}
 			break;
 
@@ -374,7 +368,7 @@ int SimonEngine::runScript() {
 		case 67:{									/* set item description */
 				uint var = getVarOrByte();
 				uint string_id = getNextStringID();
-				if (_game & GF_TALKIE) {
+				if (getFeatures() & GF_TALKIE) {
 					uint speech_id = getNextWord();
 					if (var < 20) {
 						_stringIdArray3[var] = string_id;
@@ -400,7 +394,7 @@ int SimonEngine::runScript() {
 		case 70:{									/* show string from array */
 				const char *str = (const char *)getStringPtrByID(_stringIdArray3[getVarOrByte()]);
 
-				if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					writeVariable(51, strlen(str) / 53 * 8 + 8);
 				}
 
@@ -449,7 +443,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 83:{									/* restart subroutine */
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					o_83_helper();
 				return -10;
 			}
@@ -527,7 +521,7 @@ int SimonEngine::runScript() {
 
 		case 98:{									/* start vga */
 				uint vga_res, vgaSpriteId, windowNum, x, y, palette;
-				if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					vga_res = getVarOrWord();
 					vgaSpriteId = getVarOrWord();
 				} else {
@@ -543,7 +537,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 99:{									/* kill sprite */
-				if (_game & GF_SIMON1) {
+				if (getGameType() == GType_SIMON1) {
 					o_kill_sprite_simon1(getVarOrWord());
 				} else {
 					uint a = getVarOrWord();
@@ -741,11 +735,7 @@ int SimonEngine::runScript() {
 
 		case 133:{									/* load game */
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-				if (_game == GAME_FEEBLEFILES) {
-					load_game(readVariable(55));
-				} else {
-					o_load_game();
-				}
+				o_load_game();
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
@@ -757,14 +747,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 135:{									/* quit if user presses y */
-				if (_game == GAME_FEEBLEFILES) {
-					// Switch CD
-					debug(1, "Switch to CD number %d", readVariable(97));
-				} else {
-					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-					o_quit_if_user_presses_y();
-					_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-				}
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+				o_quit_if_user_presses_y();
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			}
 			break;
 
@@ -862,6 +847,9 @@ int SimonEngine::runScript() {
 
 		case 156:{									/* is bit set? */
 				uint bit = getVarOrByte();
+				if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
+					bit = 50;
+				}
 				condition = (_bitArray[bit >> 4] & (1 << (bit & 15))) != 0;
 			}
 			break;
@@ -986,7 +974,7 @@ int SimonEngine::runScript() {
 
 				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
 				TextLocation *tl = getTextLocation(vgaSpriteId);
-				if (_game & GF_TALKIE)
+				if (getFeatures() & GF_TALKIE)
 					speech_id = _speechIdArray4[string_id];
 
 				if (_speech && speech_id != 0)
@@ -1003,7 +991,7 @@ int SimonEngine::runScript() {
 
 		case 181:{									/* force lock */
 				o_force_lock();
-				if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2) {
 					fcs_unk_2(1);
 					showMessageFormat("\xC");
 				}
@@ -1011,26 +999,18 @@ int SimonEngine::runScript() {
 			break;
 
 		case 182:{									/* read vgares 328 */
-				if (_game == GAME_FEEBLEFILES) {
-					// Load Smacker filename
-					debug(1,"Load Smacker: %s", getStringPtrByID(getNextStringID()));
-				} else if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
-				} else {
-					o_read_vgares_328();
-				}
+
+				o_read_vgares_328();
 			}
 			break;
 
 		case 183:{									/* read vgares 23 */
-				if (_game == GAME_FEEBLEFILES) {
-					// Play Smacker
-					debug(1, "Play Smacker");
-				} else if (_game & GF_SIMON2) {
+				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
-				} else {
-					o_read_vgares_23();
-				}
+
+				o_read_vgares_23();
 			}
 			break;
 
@@ -1040,10 +1020,11 @@ int SimonEngine::runScript() {
 			break;
 
 		case 185:{									/* midi sfx file number */
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
-					_soundFileId = getVarOrWord();
-				if (_game == GAME_SIMON1CD32) {
+
+				_soundFileId = getVarOrWord();
+				if (getPlatform() == Common::kPlatformAmiga && getFeatures() & GF_TALKIE) {
 					char buf[10];
 					sprintf(buf, "%d%s", _soundFileId, "Effects");
 					_sound->readSfxFile(buf);
@@ -1060,14 +1041,14 @@ int SimonEngine::runScript() {
 			break;
 
 		case 187:{									/* fade to black */
-				if (_game & GF_SIMON2)
+				if (getGameType() == GType_SIMON2)
 					goto invalid_opcode;
 				o_fade_to_black();
 			}
 			break;
 
 		case 188:									/* string2 is */
-			if (_game & GF_SIMON1)
+			if (getGameType() == GType_SIMON1)
 				goto invalid_opcode;
 			{
 				uint i = getVarOrByte();
@@ -1077,7 +1058,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 189:{									/* clear_op189_flag */
-				if (_game & GF_SIMON1)
+				if (getGameType() == GType_SIMON1)
 					goto invalid_opcode;
 				_marks = 0;
 			}
@@ -1085,79 +1066,11 @@ int SimonEngine::runScript() {
 
 		case 190:{
 				uint i;
-				if (_game & GF_SIMON1)
+				if (getGameType() == GType_SIMON1)
 					goto invalid_opcode;
 				i = getVarOrByte();
 				if (!(_marks & (1 << i)))
 					o_waitForMark(i);
-			}
-			break;
-
-		// Feeble opcodes
-		case 191:
-			warning("STUB: script opcode 191");
-			if (_bitArray[5] & 0x0008) {
-				// Clear some variables
-			} else {
-				// Clear some other variables
-			}
-			break;
-
-		case 192:{
-				uint a = getVarOrByte();
-				uint b = getVarOrByte();
-				uint c = getVarOrByte();
-				uint d = getVarOrByte();
-				if (_bitArray[5] & 0x0008) {
-					// Set some variables
-				} else {
-					// Set some other variables
-				}
-				warning("STUB: script opcode 192 (%d, %d, %d, %d)", a, b, c, d);
-			}
-			break;
-
-		case 193:
-			// pause clock
-			warning("STUB: script opcode 193");
-			break;
-
-		case 194:
-			// resume clock
-			warning("STUB: script opcode 194");
-			break;
-
-		case 195:{
-				// Set palette colour?
-				uint blue = getVarOrByte();
-				uint green = getVarOrByte();
-				uint red = getVarOrByte();
-				uint color = getVarOrByte();
-				warning("STUB: script opcode 195 (%d, %d, %d, %d)", blue, green, red, color);
-			}
-			break;
-
-		case 196:{									/* set bit3 */
-				uint bit = getVarOrByte();
-				_bitArray[(bit >> 4) + 32] |= 1 << (bit & 15);
-			}
-			break;
-
-		case 197:{									/* clear bit3 */
-				uint bit = getVarOrByte();
-				_bitArray[(bit >> 4) + 32] &= ~(1 << (bit & 15));
-			}
-			break;
-
-		case 198:{									/* is bit3 clear */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit >> 4) + 32] & (1 << (bit & 15))) == 0;
-			}
-			break;
-
-		case 199:{									/* is bit3 set */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit >> 4) + 32] & (1 << (bit & 15))) != 0;
 			}
 			break;
 
@@ -1309,7 +1222,7 @@ void SimonEngine::o_inventory_descriptions() {
 		tl = getTextLocation(vgaSpriteId);
 	}
 
-	if ((_game & GF_SIMON2) && (_game & GF_TALKIE)) {
+	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint speech_id = child->array[getOffsetOfChild2Param(child, 0x200)];
 
@@ -1361,7 +1274,7 @@ void SimonEngine::o_inventory_descriptions() {
 				talk_with_speech(speech_id, vgaSpriteId);
 		}
 
-	} else if (_game & GF_TALKIE) {
+	} else if (getFeatures() & GF_TALKIE) {
 		if (child != NULL && child->avail_props & 0x200) {
 			uint offs = getOffsetOfChild2Param(child, 0x200);
 			talk_with_speech(child->array[offs], vgaSpriteId);
@@ -1472,9 +1385,6 @@ int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
 start_over:;
 	_keyPressed = 0;
 
-	if (_game == GAME_SIMON1CD32)
-		goto start_over_3;
-
 start_over_2:;
 	_lastHitArea = _lastHitArea3 = 0;
 
@@ -1520,51 +1430,6 @@ start_over_2:;
 	if (ha->id >= 214)
 		goto start_over_2;
 	return ha->id - 208;
-
-//FIXME Hack to allow load and save file selection in simon1cd32
-//      Uses the follow keys for moving around
-//      1 - 6 to select slot to load/save
-//      Up Arrow to move up slots
-//      Down Arrow to move down slots
-//      X to exit
-start_over_3:;
-	if (_saveLoadFlag) {
-		*b = false;
-		delay(1);
-		return _keyPressed;
-	}
-
-	if (_keyPressed == 17) {
-		if (_saveLoadRowCurPos == 1)
-			goto start_over_3;
-		if (_saveLoadRowCurPos < 7)
-			_saveLoadRowCurPos = 1;
-		else
-			_saveLoadRowCurPos -= 6;
-
-		goto strange_jump;
-	}
-
-	if (_keyPressed == 18) {
-		if (!_saveDialogFlag)
-			goto start_over_3;
-		_saveLoadRowCurPos += 6;
-		if (_saveLoadRowCurPos >= _numSaveGameRows)
-			_saveLoadRowCurPos = _numSaveGameRows;
-		goto strange_jump;
-	}
-
-	if (_keyPressed == 120)
-		return 205;
-
-	if (_keyPressed > 48 && _keyPressed < 55) {
-		return _keyPressed - 49;
-	}
-
-
-	delay(1);
-	goto start_over_3;
-
 }
 
 void SimonEngine::o_unk_132_helper_3() {
@@ -1606,7 +1471,7 @@ void SimonEngine::o_play_music_resource() {
 	// actually start a track (so the resource is
 	// effectively preloaded so there's no latency when
 	// starting playback).
-	if (_game & GF_SIMON2) {
+	if (getGameType() == GType_SIMON2) {
 		int loop = getVarOrByte();
 
 		midi.setLoop (loop != 0);
@@ -1625,21 +1490,14 @@ void SimonEngine::o_play_music_resource() {
 
 void SimonEngine::o_unk_120(uint a) {
 	uint16 id = TO_BE_16(a);
-	if (_game & GF_SIMON2) {
-		_lockWord |= 0x8000;
-		_vcPtr = (byte *)&id;
-		vc15_wakeup_id();
-		_lockWord &= ~0x8000;
-	} else {
-		_lockWord |= 0x4000;
-		_vcPtr = (byte *)&id;
-		vc15_wakeup_id();
-		_lockWord &= ~0x4000;
-	}
+	_lockWord |= 0x8000;
+	_vcPtr = (byte *)&id;
+	vc15_wakeup_id();
+	_lockWord &= ~0x8000;
 }
 
 void SimonEngine::o_play_sound(uint sound_id) {
-	if (_game == GAME_SIMON1DOS)
+	if (getGameId() == GID_SIMON1DOS)
 		playSting(sound_id);
 	else
 		_sound->playEffects(sound_id);

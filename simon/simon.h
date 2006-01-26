@@ -24,6 +24,8 @@
 
 #include <stdio.h>
 #include "base/engine.h"
+#include "base/gameDetector.h"
+#include "base/plugins.h"
 #include "common/util.h"
 #include "simon/midi.h"
 #include "simon/sound.h"
@@ -101,6 +103,35 @@ struct VgaTimerEntry {
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
+enum SimonTypes {
+	GType_SIMON1,
+	GType_SIMON2
+};
+
+struct GameFileDescription {
+	const char *fileName;
+	uint16 fileType;
+};
+
+struct GameDescription {
+	const char *name;
+	SimonTypes gameType;
+	GameIds gameId;
+	const char *title;
+	int filesCount;
+	GameFileDescription *filesDescriptions;
+	uint32 features;
+	Common::Language language;
+	Common::Platform platform;
+
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { name, title, features };
+		return dummy;
+	}
+};
+
+DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
+
 struct GameSpecificSettings;
 
 class Debugger;
@@ -109,6 +140,17 @@ class SimonEngine : public Engine {
 	friend class Debugger;
 
 	void errorString(const char *buf_input, char *buf_output);
+public:
+	GameDescription *_gameDescription;
+
+	bool initGame(void);
+
+	int getGameId() const { return _gameDescription->gameId; }
+	int getGameType() const { return _gameDescription->gameType; }
+	uint32 getFeatures() const { return _gameDescription->features; }
+	Common::Language getLanguage() const { return _gameDescription->language; }
+	Common::Platform getPlatform() const { return _gameDescription->platform; }
+
 protected:
 	void playSting(uint a);
 
@@ -380,8 +422,6 @@ public:
 	virtual ~SimonEngine();
 
 protected:
-	uint16 readUint16Wrapper(const void *src);
-
 	int allocGamePcVars(Common::File *in);
 	void loginPlayerHelper(Item *item, int a, int b);
 	void loginPlayer();
@@ -694,16 +734,6 @@ public:
 	void vc72_play_track_2();
 	void vc73_setMark();
 	void vc74_clearMark();
-	void vc75_setScale();
-	void vc76_setScaleXOffs();
-	void vc77_setScaleYOffs();
-	void vc78_pathUnk1();
-	void vc79_pathUnk2();
-	void vc80_setOverlayImage();
-	void vc81_setRandom();
-	void vc82_pathUnk3();
-	void vc83_playSoundLoop();
-	void vc84_stopSoundLoop();
 
 protected:
 	void delete_vga_timer(VgaTimerEntry * vte);

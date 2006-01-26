@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/util.h"
 
+#include "simon/simon.h"
 #include "simon/sound.h"
 
 #include "sound/flac.h"
@@ -233,8 +234,8 @@ void FlacSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags)
 }
 #endif
 
-Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mixer)
-	: _game(game), _mixer(mixer) {
+Sound::Sound(SimonEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer)
+	: _vm(vm), _mixer(mixer) {
 	_voice = 0;
 	_effects = 0;
 
@@ -249,8 +250,8 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 	_hasVoiceFile = false;
 	_ambientPlaying = 0;
 
-	// simon1cd32 uses separate speech files
-	if (!(_game & GF_TALKIE) || (_game == GAME_SIMON1CD32))
+	// SIMON1CD32 uses separate speech files
+	if (!(_vm->getFeatures() & GF_TALKIE) || (_vm->getGameId() == GID_SIMON1CD32))
 		return;
 
 	File *file = new File();
@@ -282,7 +283,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 		}
 	}
 #endif
-	if (!_hasVoiceFile && (_game & GF_SIMON2)) {
+	if (!_hasVoiceFile && _vm->getGameType() == GType_SIMON2) {
 		// for simon2 mac/amiga, only read index file
 		file->open("voices.idx");
 		if (file->isOpen() == true) {
@@ -314,7 +315,7 @@ Sound::Sound(const byte game, const GameSpecificSettings *gss, Audio::Mixer *mix
 		}
 	}
 
-	if ((_game & GF_SIMON1) && (_game & GF_TALKIE)) {
+	if ((_vm->getGameType() == GType_SIMON1) && (_vm->getFeatures() & GF_TALKIE)) {
 		file = new File();
 #ifdef USE_MAD
 		if (!_hasEffectsFile && gss->mp3_effects_filename && gss->mp3_effects_filename[0]) {
@@ -385,7 +386,7 @@ void Sound::readSfxFile(const char *filename) {
 	}
 
 	delete _effects;
-	if (_game == GAME_SIMON1CD32) {
+	if (_vm->getGameId() == GID_SIMON1CD32) {
 		_effects = new VocSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
 	} else
 		_effects = new WavSound(_mixer, file);
@@ -394,7 +395,7 @@ void Sound::readSfxFile(const char *filename) {
 void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
-	if (_game & GF_WIN)
+	if (_vm->getPlatform() == Common::kPlatformWindows)
 		_effects = new WavSound(_mixer, gameFile, base);
 	else
 		_effects = new VocSound(_mixer, gameFile, base);
@@ -446,7 +447,7 @@ void Sound::playVoice(uint sound) {
 		return;
 
 	_mixer->stopHandle(_voiceHandle);
-	_voice->playSound(sound, &_voiceHandle, (_game == GAME_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
+	_voice->playSound(sound, &_voiceHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 
 void Sound::playEffects(uint sound) {
@@ -456,7 +457,7 @@ void Sound::playEffects(uint sound) {
 	if (_effectsPaused)
 		return;
 
-	_effects->playSound(sound, &_effectsHandle, (_game == GAME_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
+	_effects->playSound(sound, &_effectsHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 
 void Sound::playAmbient(uint sound) {
