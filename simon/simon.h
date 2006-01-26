@@ -140,6 +140,11 @@ class SimonEngine : public Engine {
 	friend class Debugger;
 
 	void errorString(const char *buf_input, char *buf_output);
+
+	typedef void (SimonEngine::*VgaOpcodeProc) ();
+	void setupVgaOpcodes();
+	const VgaOpcodeProc *_vga_opcode_table;
+
 public:
 	GameDescription *_gameDescription;
 

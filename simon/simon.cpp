@@ -242,6 +242,7 @@ SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
 	_gameOffsetsPtr = 0;
 
 	_debugger = 0;
+	setupVgaOpcodes();
 
 	_keyPressed = 0;
 
