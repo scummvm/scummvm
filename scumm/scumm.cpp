@@ -1803,7 +1803,7 @@ int ScummEngine::init(GameDetector &detector) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
 		res._maxHeapThreshold = 2500000;
-#ifdef __PLAYSTATION2__
+#if defined(__PLAYSTATION2__) || defined(__PSP__)
 		res._maxHeapThreshold = 6 * 1024 * 1024;
 #endif
 	} else {
