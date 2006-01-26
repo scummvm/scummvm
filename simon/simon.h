@@ -177,7 +177,6 @@ protected:
 	uint SOUND_INDEX_BASE;
 	const GameSpecificSettings *gss;
 
-	byte _game;
 	byte _keyPressed;
 
 	typedef enum {
