@@ -59,6 +59,12 @@ extern bool draw_keyboard;
 extern bool isSmartphone(void);
 #endif
 
+#ifdef __PLAYSTATION2__
+#define AUTO_SAVE_TIME 15 * 60 * 1000	// save every 15 minutes on ps2, MC is slow.
+#else
+#define AUTO_SAVE_TIME 5 * 60 * 1000	// save every 5 minutes
+#endif
+
 /*
  At the beginning the reverse engineers were happy, and did rejoice at
  their task, for the engine before them did shineth and was full of
@@ -234,13 +240,12 @@ int SkyEngine::go() {
 
 	_lastSaveTime = _system->getMillis();
 
+	uint32 delayCount = _system->getMillis();
 	while (1) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
-		int32 frameTime = (int32)_system->getMillis();
-
-		if (_system->getMillis() - _lastSaveTime > 5 * 60 * 1000) {
+		if (_system->getMillis() - _lastSaveTime > AUTO_SAVE_TIME) {
 			if (_skyControl->loadSaveAllowed()) {
 				_lastSaveTime = _system->getMillis();
 				_skyControl->doAutoSave();
@@ -252,7 +257,7 @@ int SkyEngine::go() {
 		handleKey();
 		while (_systemVars.paused) {
 			_system->updateScreen();
-			delay(300);
+			delay(50);
 			handleKey();
 		}
 
@@ -269,8 +274,15 @@ int SkyEngine::go() {
 			delay(0);
 		else if (_fastMode & 1)
 			delay(10);
-		else
-			delay((frameTime + _systemVars.gameSpeed) - _system->getMillis());
+		else {
+			delayCount += _systemVars.gameSpeed;
+			int needDelay = delayCount - (int)_system->getMillis();
+			if ((needDelay < 0) || (needDelay > 4 * _systemVars.gameSpeed)) {
+				needDelay = 0;
+				delayCount = _system->getMillis();
+			}
+			delay(needDelay);
+		}
 	}
 
 	return 0;
