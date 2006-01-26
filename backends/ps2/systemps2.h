@@ -105,6 +105,8 @@ public:
 
 	void powerOffCallback(void);
 	bool hddPresent(void);
+	bool usbMassPresent(void);
+	void setUsbMassConnected(bool stat);
 
 private:
 	volatile OSystem::TimerProc _scummTimerProc;
@@ -117,7 +119,7 @@ private:
 
 	void loadModules(void);
 	bool _mouseVisible;
-	bool _useMouse, _useKbd, _useHdd;
+	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _usbMassConnected;
 
 	Ps2SaveFileManager *_saveManager;
 

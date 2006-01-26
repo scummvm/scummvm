@@ -22,9 +22,11 @@
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <cdvd_rpc.h>
+#include "asyncfio.h"
+#include "systemps2.h"
 
-#define MAX_LIST_ENTRIES 512
+extern AsyncFio fio;
+extern OSystem_PS2 *g_systemPs2;
 
 class Ps2FilesystemNode : public AbstractFilesystemNode {
 protected:
@@ -39,7 +41,7 @@ public:
 	Ps2FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
-	virtual bool isValid() const { return true; }
+	virtual bool isValid() const { return !_isRoot; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual String path() const { return _path; }
 
@@ -59,20 +61,33 @@ AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
 Ps2FilesystemNode::Ps2FilesystemNode(void) {
 	_isDirectory = true;
 	_isRoot = true;
-	_displayName = "CD Root";
-	_path = "cdfs:";
+	_displayName = "PlayStation 2";
+	_path = "";
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
-	if (strcmp(path.c_str(), "cdfs:") == 0)
-		_isRoot = true;
 	_path = path;
-	const char *dsplName = NULL, *pos = path.c_str();
-	while (*pos)
-		if (*pos++ == '/')
-			dsplName = pos;
-	_displayName = String(dsplName);
 	_isDirectory = true;
+	if (strcmp(path.c_str(), "") == 0) {
+		_isRoot = true;
+		_displayName = String("PlayStation 2");
+	} else {
+		_isRoot = false;
+		const char *dsplName = NULL, *pos = path.c_str();
+		while (*pos)
+			if (*pos++ == '/')
+				dsplName = pos;
+		if (dsplName)
+			_displayName = String(dsplName);
+		else {
+			if (strncmp(path.c_str(), "cdfs", 4) == 0)
+				_displayName = "DVD Drive";
+			else if (strncmp(path.c_str(), "mass", 4) == 0)
+				_displayName = "USB Mass Storage";
+			else
+				_displayName = "Harddisk";
+		}
+	}
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode(const Ps2FilesystemNode *node) {
@@ -86,46 +101,64 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
 	FSList myList;
-	struct TocEntry *tocEntries = (struct TocEntry*)malloc(MAX_LIST_ENTRIES * sizeof(struct TocEntry));
-	int files;
-	char listDir[512];
-	sprintf(listDir, "%s/", _path.c_str() + 5);
 
-	switch(mode) {
-		case kListFilesOnly:
-			files = CDVD_GetDir(listDir, NULL, CDVD_GET_FILES_ONLY, tocEntries, MAX_LIST_ENTRIES, NULL);
-			break;
-		case kListDirectoriesOnly:
-			files = CDVD_GetDir(listDir, NULL, CDVD_GET_DIRS_ONLY, tocEntries, MAX_LIST_ENTRIES, NULL);
-			break;
-		default:
-			files = CDVD_GetDir(listDir, NULL, CDVD_GET_FILES_AND_DIRS, tocEntries, MAX_LIST_ENTRIES, NULL);
-			break;
-	}
+	if (_isRoot) {
+		Ps2FilesystemNode dirEntry;
+		dirEntry._isDirectory = true;
+		dirEntry._isRoot = false;
+		dirEntry._path = "cdfs:";
+		dirEntry._displayName = "DVD Drive";
+		myList.push_back(wrap(new Ps2FilesystemNode(&dirEntry)));
 
-	Ps2FilesystemNode dirEntry;
-	for (int fCnt = 0; fCnt < files; fCnt++) {
-		if (tocEntries[fCnt].filename[0] != '.') { // skip .. directory
-			dirEntry._isDirectory = (bool)(tocEntries[fCnt].fileProperties & 2);
-			dirEntry._isRoot = false;
-
-			dirEntry._path = _path;
-			dirEntry._path += "/";
-			dirEntry._path += tocEntries[fCnt].filename;
-
-			dirEntry._displayName = tocEntries[fCnt].filename;
+		if (g_systemPs2->hddPresent()) {
+			dirEntry._path = "pfs0:";
+			dirEntry._displayName = "Harddisk";
 			myList.push_back(wrap(new Ps2FilesystemNode(&dirEntry)));
 		}
+
+		if (g_systemPs2->usbMassPresent()) {
+			dirEntry._path = "mass:";
+			dirEntry._displayName = "USB Mass Storage";
+			myList.push_back(wrap(new Ps2FilesystemNode(&dirEntry)));
+		}
+	} else {
+		char listDir[256];
+		sprintf(listDir, "%s/", _path.c_str());
+		int fd = fio.dopen(listDir);
+		
+		if (fd >= 0) {
+			iox_dirent_t dirent;
+			Ps2FilesystemNode dirEntry;
+			int dreadRes;
+			while ((dreadRes = fio.dread(fd, &dirent)) > 0) {
+				if (dirent.name[0] == '.')
+					continue; // ignore '.' and '..'
+				if (((mode == kListDirectoriesOnly) && (dirent.stat.mode & FIO_S_IFDIR)) ||
+					((mode == kListFilesOnly) && !(dirent.stat.mode & FIO_S_IFDIR)) ||
+					(mode == kListAll)) {
+
+					dirEntry._isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);
+					dirEntry._isRoot = false;
+
+					dirEntry._path = _path;
+					dirEntry._path += "/";
+					dirEntry._path += dirent.name;
+
+					dirEntry._displayName = dirent.name;
+
+					myList.push_back(wrap(new Ps2FilesystemNode(&dirEntry)));
+				}
+			}
+			fio.dclose(fd);
+		}
 	}
-	free(tocEntries);
+
 	return myList;
 }
 
 AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
 	if (_isRoot)
 		return new Ps2FilesystemNode(this);
-
-	Ps2FilesystemNode *p = new Ps2FilesystemNode();
 
 	const char *slash = NULL;
 	const char *cnt = _path.c_str();
@@ -136,9 +169,9 @@ AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
 		cnt++;
 	}
 
-	p->_path = String(_path.c_str(), slash - _path.c_str());
-	p->_isDirectory = true;
-	p->_displayName = slash + 1;
-	return p;
+	if (slash)
+		return new Ps2FilesystemNode(String(_path.c_str(), slash - _path.c_str()));
+	else
+		return new Ps2FilesystemNode();
 }
 

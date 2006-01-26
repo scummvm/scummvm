@@ -422,9 +422,9 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 	}
 
 	if (!checkedPath && g_engine) {
-		// are we playing from HDD?
-		if (strncmp(g_engine->getGameDataPath(), "pfs0:", 5) == 0)
-			driveStop(); // yes we are. stop dvd drive. it's noisy.
+		// are we playing from cd/dvd?
+		if (strncmp(g_engine->getGameDataPath(), "cdfs:", 5) != 0)
+			driveStop(); // no, we aren't. stop the drive. it's noisy.
 		// now cache the dir tree
 		tocManager.readEntries(g_engine->getGameDataPath());
 		checkedPath = true;
@@ -653,7 +653,7 @@ void TocManager::readDir(const char *path, TocNode **node, int level) {
 		iox_dirent_t dirent;
 		int fd = fio.dopen(path);
 		if (fd >= 0) {
-			while (fio.dread(fd, &dirent) != 0)
+			while (fio.dread(fd, &dirent) > 0)
 				if (dirent.name[0] != '.') { // skip '.' and '..'
 					*node = new TocNode;
 					(*node)->sub = (*node)->next = NULL;

@@ -170,11 +170,6 @@ s32 timerInterruptHandler(s32 cause) {
 	return 0;
 }
 
-static int iSoundCallback(void *arg) {
-	iSignalSema((int)arg);
-	return 0;
-}
-
 void systemTimerThread(OSystem_PS2 *system) {
 	system->timerThread();
 }
@@ -185,6 +180,14 @@ void systemSoundThread(OSystem_PS2 *system) {
 
 void gluePowerOffCallback(void *system) {
 	((OSystem_PS2*)system)->powerOffCallback();
+}
+
+void mass_connect_cb(void *pkt, void *system) {
+	((OSystem_PS2*)system)->setUsbMassConnected(true);
+}
+
+void mass_disconnect_cb(void *pkt, void *system) {
+	((OSystem_PS2*)system)->setUsbMassConnected(false);
 }
 
 OSystem_PS2::OSystem_PS2(void) {
@@ -309,6 +312,11 @@ void OSystem_PS2::initTimer(void) {
 	T0_COUNT = 0;
 	T0_COMP = CLK_DIVIS; // (BUS_CLOCK / 256) / CLK_DIVIS = 100
 	T0_MODE = TIMER_MODE( 2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
+
+	DI();
+	SifAddCmdHandler(0x12, mass_connect_cb, this);
+	SifAddCmdHandler(0x13, mass_disconnect_cb, this);
+	EI();
 }
 
 void OSystem_PS2::timerThread(void) {
@@ -409,7 +417,7 @@ const char *irxModules[] = {
 
 void OSystem_PS2::loadModules(void) {
 
-	_useMouse = _useKbd = _useHdd = false;
+	_usbMassConnected = _usbMassLoaded = _useMouse = _useKbd = _useHdd = false;
 	static char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
 	static char pfsarg[] = "-m" "\0" "2" "\0" "-o" "\0" "16" "\0" "-n" "\0" "40" /*"\0" "-debug"*/;
 
@@ -433,6 +441,10 @@ void OSystem_PS2::loadModules(void) {
 			sioprintf("Cannot load module: RPCKBD.IRX (%d)", res);
 		else
 			_useKbd = true;
+		if ((res = SifLoadModule(IRX_PREFIX "USB_MASS.IRX" IRX_SUFFIX, 0, NULL)) < 0)
+			sioprintf("Cannot load module: USB_MASS.IRX (%d)", res);
+		else
+			_usbMassLoaded = true;
 	}
 
 	if ((res = fileXioInit()) < 0) {
@@ -455,11 +467,19 @@ void OSystem_PS2::loadModules(void) {
 			_useHdd = true;
 	}
 
-	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, HDD %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _useHdd ? "" : "not ");
+	sioprintf("Modules: UsbMouse %sloaded, UsbKbd %sloaded, UsbMass %sloaded, HDD %sloaded.", _useMouse ? "" : "not ", _useKbd ? "" : "not ", _usbMassLoaded ? "" : "not ", _useHdd ? "" : "not ");
 }
 
 bool OSystem_PS2::hddPresent(void) {
 	return _useHdd;
+}
+
+void OSystem_PS2::setUsbMassConnected(bool stat) {
+	_usbMassConnected = stat;
+}
+
+bool OSystem_PS2::usbMassPresent(void) {
+	return _usbMassConnected;
 }
 
 void OSystem_PS2::initSize(uint width, uint height, int overscale) {
@@ -760,11 +780,16 @@ void OSystem_PS2::quit(void) {
 }
 
 void OSystem_PS2::makeConfigPath(char *dest) {
-	FILE *handle = ps2_fopen("cdfs:/ScummVM.ini", "r");
-	if (handle) {
+	FILE *handle;
+	strcpy(dest, "cdfs:/ScummVM.ini");
+	handle = ps2_fopen(dest, "r");
+	if (_usbMassConnected && !handle) {
+		strcpy(dest, "mass:/ScummVM.ini");
+		handle = ps2_fopen(dest, "r");
+	}
+	if (handle)
 		ps2_fclose(handle);
-		strcpy(dest, "cdfs:/scummvm.ini");
-	} else
+	else
 		strcpy(dest, "mc0:ScummVM/scummvm.ini");
 }
 
