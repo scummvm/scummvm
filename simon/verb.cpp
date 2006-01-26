@@ -419,7 +419,7 @@ void SimonEngine::handle_verb_hitarea(HitArea *ha) {
 	if (ha == tmp)
 		return;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		if (tmp != NULL) {
 			tmp->flags |= 8;
 			video_toggle_colors(tmp, 0xd5, 0xd0, 0xd5, 0xA);
@@ -442,7 +442,7 @@ void SimonEngine::handle_verb_hitarea(HitArea *ha) {
 }
 
 void SimonEngine::hitarea_leave(HitArea *ha) {
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);
 	} else {
 		video_toggle_colors(ha, 0xe7, 0xe5, 0xe6, 1);

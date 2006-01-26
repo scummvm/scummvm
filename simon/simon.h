@@ -175,7 +175,6 @@ protected:
 	uint SOUND_INDEX_BASE;
 	const GameSpecificSettings *gss;
 
-	byte _game;
 	byte _keyPressed;
 
 	typedef enum {
@@ -519,7 +518,6 @@ protected:
 	void fcs_unk_2(uint a);
 	void o_unk_103();
 	void fcs_delete(uint a);
-	void o_unk_108(uint a);
 	void clear_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_x_y(uint hitarea, int x, int y);
@@ -532,11 +530,9 @@ protected:
 	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 
-	void o_unk_114();
 	void o_wait_for_vga(uint a);
 	void skip_speech();
 	void o_unk_120(uint a);
-	void o_unk_126();
 	void o_play_music_resource();
 	void o_save_game();
 	void o_load_game();

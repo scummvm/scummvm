@@ -533,7 +533,7 @@ int SimonEngine::init(GameDetector &detector) {
 	else if (ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32))
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	midi.mapMT32toGM (!(getGameType() == GType_SIMON2) && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
+	midi.mapMT32toGM (getGameType() == GType_SIMON1 && !(ConfMan.getBool("native_mt32") || (_midiDriver == MD_MT32)));
 
 	midi.set_driver(driver);
 	int ret = midi.open();
@@ -1711,7 +1711,7 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 
 	fcs_ptr = _fcsPtrArray3[fcs_index & 7];
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		width_div_3 = fcs_ptr->width / 3;
 		height_div_3 = fcs_ptr->height / 3;
 	} else {
@@ -1740,7 +1740,7 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 		num_sibs_with_flag = 0;
 		while (item_ptr && width_div_3 > num_sibs_with_flag) {
 			if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr))
-				if (!(getGameType() == GType_SIMON2)) {
+				if (getGameType() == GType_SIMON1) {
 					num_sibs_with_flag++;
 				} else {
 					num_sibs_with_flag += 20;
@@ -1764,7 +1764,7 @@ void SimonEngine::fcs_unk_proc_1(uint fcs_index, Item *item_ptr, int unk1, int u
 		if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr)) {
 			if (item_again == false) {
 				fcs_ptr->fcs_data->e[k].item = item_ptr;
-				if (!(getGameType() == GType_SIMON2)) {
+				if (getGameType() == GType_SIMON1) {
 					draw_icon_c(fcs_ptr, item_get_icon_number(item_ptr), x_pos * 3, y_pos);
 					fcs_ptr->fcs_data->e[k].hit_area =
 						setup_icon_hit_area(fcs_ptr, x_pos * 3, y_pos,
@@ -1811,7 +1811,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 
 	ha = findEmptyHitArea();
 	_scrollUpHitArea = ha - _hitAreas;
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		ha->x = 308;
 		ha->y = 149;
 		ha->width = 12;
@@ -1836,7 +1836,7 @@ void SimonEngine::setup_hit_areas(FillOrCopyStruct *fcs, uint fcs_index) {
 	ha = findEmptyHitArea();
 	_scrollDownHitArea = ha - _hitAreas;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		ha->x = 308;
 		ha->y = 176;
 		ha->width = 12;
@@ -2056,7 +2056,7 @@ startOver:
 void SimonEngine::hitarea_stuff_helper() {
 	time_t cur_time;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		uint subr_id = _variableArray[254];
 		if (subr_id != 0) {
 			Subroutine *sub = getSubroutineByID(subr_id);
@@ -2378,7 +2378,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	if (vga_res_id == 0) {
 
-		if (!(getGameType() == GType_SIMON2)) {
+		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
 		} else {
 			_dxUse3Or4ForLock = true;
@@ -2456,7 +2456,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 
 	_lockWord &= ~0x20;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		if (_unkPalFlag) {
 			_unkPalFlag = false;
 			while (_paletteColorCount != 0) {
@@ -2577,7 +2577,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 	// caused several glitches in this scene.
 	// We work around the problem by correcting the code_ptr for sprite
 	// 200 in this scene, if it is wrong.
-	if (!(getGameType() == GType_SIMON2) && (_language == 2) &&
+	if (getGameType() == GType_SIMON1 && (_language == 2) &&
 		(code_ptr - _vgaBufferPointers[cur_file].vgaFile1 == 4) && (cur_sprite == 200) && (cur_file == 2))
 		code_ptr += 0x66;
 
@@ -3023,7 +3023,7 @@ void SimonEngine::fcs_unk1(uint fcs_index) {
 
 	if (fcs->fcs_data->unk4 != -1) {
 		delete_hitarea_by_index(fcs->fcs_data->unk4);
-		if (!(getGameType() == GType_SIMON2))
+		if (getGameType() == GType_SIMON1)
 			fcs_unk_5(fcs, fcs_index);
 	}
 
@@ -3067,7 +3067,7 @@ void SimonEngine::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
 	_lockWord |= 0x8000;
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _fcsPtrArray3[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
 		if (_vgaVar6 && _fcsPtrArray3[2] == fcs) {
