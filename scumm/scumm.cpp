@@ -2407,7 +2407,12 @@ int ScummEngine::scummLoop(int delta) {
 	}
 
 	// Trigger autosave all 5 minutes.
+#ifdef __PLAYSTATION2__
+	// mc is slow, so only do an autosave every 15 minutes
+	if (!_saveLoadFlag && _system->getMillis() > _lastSaveTime + 15 * 60 * 1000) {
+#else
 	if (!_saveLoadFlag && _system->getMillis() > _lastSaveTime + 5 * 60 * 1000) {
+#endif
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
