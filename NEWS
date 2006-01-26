@@ -7,7 +7,8 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      cannot use it.
    - Fixed potential security vulnerability with oversized PATH environment
      variables.
-   - Lowered default gain for FluidSynth and made it configurable.
+   - Lowered the default gain for the FluidSynth music driver and made it
+     configurable.
 
  SCUMM:
    - Fixed mouse button states in COMI.
