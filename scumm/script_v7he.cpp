@@ -343,7 +343,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		/* F0 */
 		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
-		OPCODE(o6_invalid),
+		OPCODE(o70_isResourceLoaded),
 		OPCODE(o70_readINI),
 		/* F4 */
 		OPCODE(o70_writeINI),
@@ -533,20 +533,20 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 104:		// SO_NUKE_SCRIPT
 		resid = pop();
-		res.setResourceCounter(rtScript, resid, 0x7F);
+		res.nukeResource(rtScript, resid);
 		break;
 	case 105:		// SO_NUKE_SOUND
 		resid = pop();
-		res.setResourceCounter(rtSound, resid, 0x7F);
+		res.nukeResource(rtSound, resid);
 		break;
 	case 106:		// SO_NUKE_COSTUME
 		resid = pop();
-		res.setResourceCounter(rtCostume, resid, 0x7F);
+		res.nukeResource(rtCostume, resid);
 		break;
 	case 107:		// SO_NUKE_ROOM
 		resid = pop();
-		res.setResourceCounter(rtRoom, resid, 0x7F);
-		res.setResourceCounter(rtRoomImage, resid, 0x7F);
+		res.nukeResource(rtRoom, resid);
+		res.nukeResource(rtRoomImage, resid);
 		break;
 	case 108:		// SO_LOCK_SCRIPT
 		resid = pop();
@@ -909,6 +909,36 @@ void ScummEngine_v70he::o70_compareString() {
 
 	result = (*string1 > *string2) ? -1 : 1;
 	push(result);
+}
+
+void ScummEngine_v70he::o70_isResourceLoaded() {
+	// Reports percentage of resource loaded by queue
+	int type;
+
+	byte subOp = fetchScriptByte();
+	/* int idx = */ pop();
+
+	switch (subOp) {
+	case 18:
+		type = rtImage;
+		break;
+	case 226:
+		type = rtRoom;
+		break;
+	case 227:
+		type = rtCostume;
+		break;
+	case 228:
+		type = rtSound;
+		break;
+	case 229:
+		type = rtScript;
+		break;
+	default:
+		error("o70_isResourceLoaded: default case %d", subOp);
+	}
+
+	push(100);
 }
 
 void ScummEngine_v70he::o70_readINI() {

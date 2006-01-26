@@ -165,6 +165,7 @@ public:
 	void fillWizRect(const WizParameters *params);
 	void fillWizLine(const WizParameters *params);
 	void fillWizPixel(const WizParameters *params);
+	void fillWizFlood(const WizParameters *params);
 
 	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);
@@ -174,7 +175,7 @@ public:
 
 	void flushWizBuffer();
 
-	void loadImgSpot(int resId, int state, int16 &x, int16 &y);
+	void loadImgSpot(int resId, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId);
 
 	void displayWizComplexImage(const WizParameters *params);

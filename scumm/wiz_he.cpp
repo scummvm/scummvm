@@ -1003,7 +1003,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	int32 cw, ch;
 	if (flags & kWIFBlitToMemBuffer) {
 		dst = (uint8 *)malloc(width * height);
-		int color = 255; // FIXME: should be (VAR_WIZ_TCOLOR != 0xFF) ? VAR(VAR_WIZ_TCOLOR) : 5;
+		int color = 255;
 		memset(dst, color, width * height);
 		cw = width;
 		ch = height;
@@ -1341,7 +1341,7 @@ void Wiz::flushWizBuffer() {
 	_imagesNum = 0;
 }
 
-void Wiz::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
+void Wiz::loadImgSpot(int resId, int state, int32 &x, int32 &y) {
 	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
 	assert(dataPtr);
 	uint8 *spotPtr = _vm->findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
@@ -1355,7 +1355,7 @@ void Wiz::loadImgSpot(int resId, int state, int16 &x, int16 &y) {
 }
 
 void Wiz::loadWizCursor(int resId) {
-	int16 x, y;
+	int32 x, y;
 	loadImgSpot(resId, 0, x, y);
 	if (x < 0) {
 		x = 0;
@@ -1719,7 +1719,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
 
-	debug(1, "processWizImage: processMode %d", params->processMode);
+	debug(5, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
@@ -1842,19 +1842,18 @@ void Wiz::processWizImage(const WizParameters *params) {
 		fillWizPixel(params);
 		break;
 	case 12:
-		// Used in PuttsFunShop/SamsFunShop
-		// TODO: Flood Fill
+		fillWizFlood(params);
 		break;
 	case 13:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Start Font
 		break;
 	case 14:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: End Font
 		break;
 	case 15:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Create Font
 		break;
 	case 16:
@@ -1862,7 +1861,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		error("Render Font String");
 		break;
 	case 17:
-		// Used in PuttsFunShop/SamsFunShop
+		// Used in to draw circles in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Ellipse
 		break;
 	default:

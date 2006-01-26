@@ -226,4 +226,65 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	}
 }
 
+void Wiz::fillWizFlood(const WizParameters *params) {
+	if (params->processFlags & kWPFClipBox2) {
+		int px = params->box2.left;
+		int py = params->box2.top;
+		uint8 *dataPtr = _vm->getResourceAddress(rtImage, params->img.resNum);
+		if (dataPtr) {
+			int state = 0;
+			if (params->processFlags & kWPFNewState) {
+				state = params->img.state;
+			}
+			uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+			assert(wizh);
+			int c = READ_LE_UINT32(wizh + 0x0);
+			int w = READ_LE_UINT32(wizh + 0x4);
+			int h = READ_LE_UINT32(wizh + 0x8);
+			assert(c == 0);
+			Common::Rect imageRect(w, h);
+			if (params->processFlags & kWPFClipBox) {
+				if (!imageRect.intersects(params->box)) {
+					return;
+				}
+				imageRect.clip(params->box);
+			}
+			uint8 color = _vm->VAR(93);
+			if (params->processFlags & kWPFFillColor) {
+				color = params->fillColor;
+			}
+			if (imageRect.contains(px, py)) {
+				uint8 *wizd = _vm->findWrappedBlock(MKID('WIZD'), dataPtr, state, 0);
+				assert(wizd);
+
+				FloodFillState *ffs = new FloodFillState;
+				ffs->fillLineTableCount = h * 2;
+				ffs->fillLineTable = new FloodFillLine[ffs->fillLineTableCount];
+				ffs->color2 = color;
+				ffs->dst = wizd;
+				ffs->dst_w = w;
+				ffs->dst_h = h;
+				ffs->srcBox = imageRect;
+				ffs->fillLineTableCur = &ffs->fillLineTable[0];
+				ffs->fillLineTableEnd = &ffs->fillLineTable[ffs->fillLineTableCount];
+	
+				if (px < 0 || py < 0 || px >= w || py >= h) {
+					ffs->color1 = color;
+				} else {
+					ffs->color1 = *(wizd + py * w + px);
+				}
+	
+				debug(0, "floodFill() x=%d y=%d color1=%d", px, py, ffs->color1);
+
+				if (ffs->color1 != color) {
+					floodFillProcess(px, py, ffs, floodFillPixelCheck);
+				}
+	
+				delete[] ffs->fillLineTable;
+				delete ffs;
+			}
+		}
+	}
+}
+
 } // End of namespace Scumm

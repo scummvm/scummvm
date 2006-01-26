@@ -887,6 +887,7 @@ protected:
 	void o70_appendString();
 	void o70_concatString();
 	void o70_compareString();
+	void o70_isResourceLoaded();
 	void o70_readINI();
 	void o70_writeINI();
 	void o70_getStringLenForWidth();
@@ -1040,7 +1041,6 @@ protected:
 	void o72_getPixel();
 	void o72_pickVarRandom();
 	void o72_redimArray();
-	void o72_isResourceLoaded();
 	void o72_readINI();
 	void o72_writeINI();
 	void o72_getResourceSize();
@@ -1287,6 +1287,7 @@ protected:
 	void o100_dimArray();
 	void o100_drawLine();
 	void o100_drawObject();
+	void o100_floodFill();
 	void o100_setSpriteGroupInfo();
 	void o100_resourceRoutines();
 	void o100_wizImageOps();

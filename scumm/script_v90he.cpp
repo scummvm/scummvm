@@ -342,7 +342,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		/* F0 */
 		OPCODE(o70_concatString),
 		OPCODE(o70_compareString),
-		OPCODE(o72_isResourceLoaded),
+		OPCODE(o70_isResourceLoaded),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
@@ -1681,7 +1681,7 @@ void ScummEngine_v90he::o90_getWizData() {
 	byte filename[4096];
 	int state, resId;
 	int32 w, h;
-	int16 x, y;
+	int32 x, y;
 
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
@@ -1766,7 +1766,7 @@ void ScummEngine_v90he::o90_floodFill() {
 
 	switch (subOp) {
 	case 0:
-		_floodFillParams.unk1C = pop();
+		pop();
 		break;
 	case 3:
 		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
@@ -2620,9 +2620,10 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_wiz->_rectOverrideEnabled = false;
 		break;
 	case 714:
+		debug(5, "o90_kernelSetFunctions: case 714: type %d resId %d unk1 %d", args[1], args[2], args[3]);
 		break;
 	case 1492:
-		_sprite->setSpriteFlagDoubleBuffered(args[1], args[2]);
+		// Remote start script function
 		break;
 	case 1969:
 		a = derefActor(args[1], "o90_kernelSetFunctions: 1969");
