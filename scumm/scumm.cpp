@@ -679,8 +679,6 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 	{"2d4536a56e01da4b02eb021e7770afa2", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK256, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"ce3edc99cd4f478c5b37104d70c68ca5", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK256, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 	{"1ca86e2cf9aaa2068738a1e5ba477e60", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK256, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
@@ -800,6 +798,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "freddi4", "Freddi 4", kGenMac },
 	{ "freddi4", "Freddi 4 Demo", kGenMac },
 	{ "freddi4", "FreddiGS", kGenPC },
+	{ "freddi4", "FreddiGS", kGenMac },
 	{ "freddi4", "FreddiHRBG", kGenPC },
 	{ "freddicove", "FreddiCCC", kGenPC },
 	{ "freddicove", "FreddiCove", kGenMac },
