@@ -534,7 +534,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
 	
-	if (height <= 0)
+	if (height <= 0 || width <= 0)
 		return;
 	
 	// Compute screen etc. buffer pointers
@@ -723,7 +723,7 @@ void ScummEngine::initBGBuffers(int height) {
 		// Resize main virtual screen in V7 games. This is necessary
 		// because in V7, rooms may be higher than one screen, so we have
 		// to accomodate for that.
-		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, 1, 1);
+		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, true, true);
 	}
 
 	if (_heversion >= 70)
@@ -3063,6 +3063,7 @@ void ScummEngine::transitionEffect(int a) {
 			t = tab_2[i * 4 + 1];
 			r = tab_2[i * 4 + 2];
 			b = tab_2[i * 4 + 3];
+
 			if (t == b) {
 				while (l <= r) {
 					if (l >= 0 && l < gdi._numStrips && t < bottom) {

@@ -723,7 +723,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	gdi.disableZBuffer();
 
 	twobufs = vs->hasTwoBuffers;
-	vs->hasTwoBuffers = 0;
+	vs->hasTwoBuffers = false;
 
 	xstrip = x / 8;
 	ydiff = y - vs->topline;

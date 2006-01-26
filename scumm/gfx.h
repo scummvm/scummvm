@@ -88,10 +88,6 @@ struct VirtScreen : Graphics::Surface {
 	/**
 	 * Vertical position of the virtual screen. Tells how much the virtual
 	 * screen is shifted along the y axis relative to the real screen.
-	 * If you wonder why there is no horizontal position: there is none,
-	 * because all virtual screens are always exactly as wide as the
-	 * real screen. This might change in the future to allow smooth
-	 * horizontal scrolling in V7-V8 games.
 	 */
 	uint16 topline;
 
@@ -103,8 +99,8 @@ struct VirtScreen : Graphics::Surface {
 	uint16 xstart;
 
 	/**
-	 * Flag indicating  which tells whether this screen has a back buffer or
-	 * not. This is yet another feature which is only used by the main screen.
+	 * Flag indicating whether this screen has a back buffer or not. This is
+	 * yet another feature which is only used by the main screen.
 	 * Strictly spoken one could remove this variable and replace checks
 	 * on it with checks on backBuf. But since some code needs to temporarily
 	 * disable the backBuf (so it can abuse drawBitmap; see drawVerbBitmap()
