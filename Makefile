@@ -149,6 +149,7 @@ osxsnap: bundle doc/readme.pdf
 win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
+	cp gui/themes/default-theme.zip $(WIN32PATH)
 	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp COPYING $(WIN32PATH)/COPYING.txt
 	cp NEWS $(WIN32PATH)/NEWS.txt
