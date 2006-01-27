@@ -937,6 +937,7 @@ void ResourceManager::nukeResource(int type, int idx) {
 		debugC(DEBUG_RESOURCE, "nukeResource(%s,%d)", resTypeFromId(type), idx);
 		address[type][idx] = 0;
 		flags[type][idx] = 0;
+		status[type][idx] &= ~RS_MODIFIED;
 		_allocatedSize -= ((MemBlkHeader *)ptr)->size;
 		free(ptr);
 	}
@@ -1016,12 +1017,6 @@ void ResourceManager::setModified(int type, int i) {
 	if (!validateResource("Modified", type, i))
 		return;
 	status[type][i] |= RS_MODIFIED;
-}
-
-void ResourceManager::setUnModified(int type, int i) {
-	if (!validateResource("Modified", type, i))
-		return;
-	status[type][i] &= ~RS_MODIFIED;
 }
 
 bool ResourceManager::isModified(int type, int i) const {
