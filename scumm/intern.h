@@ -35,9 +35,6 @@ class LogicHE;
 class Sprite;
 #endif
 
-class NutRenderer; // V8 Font Renderer
-struct ArrayHeader;
-
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save abit of memory used by opcode names in the Scumm engine.
 #ifndef REDUCE_MEMORY_USAGE
