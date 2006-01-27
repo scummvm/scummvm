@@ -329,7 +329,7 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundStart], _colors[kWidgetBackgroundEnd], 2);
 	}
 
-	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND));
+	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
 void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kState state) {
