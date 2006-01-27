@@ -44,9 +44,6 @@ public:
 	//! update dynalum for the current room
 	void dynalumUpdate(int16 x, int16 y);
 
-	//! convert palette from RGB to RGBA (used before uploading to the backend)
-	void palConvert(uint8 *outPal, const uint8 *inPal, int start, int end);
-
 	//! update the palette
 	void palSet(const uint8 *pal, int start, int end, bool updateScreen = false);
 

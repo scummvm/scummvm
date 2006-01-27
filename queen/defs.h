@@ -254,9 +254,12 @@ enum {
 
 //! GameState vars
 enum {
-	VAR_DRESSING_MODE             =  19,
+	VAR_HOTEL_ITEMS_REMOVED       =   3,
+	VAR_JOE_DRESSING_MODE         =  19,
+	VAR_BYPASS_ZOMBIES            =  21,
 	VAR_BYPASS_FLODA_RECEPTIONIST =  35,
-	VAR_ESCAPE_FROM_HOTEL_COUNT   =  93,
+	VAR_GUARDS_TURNED_ON          =  85,
+	VAR_HOTEL_ESCAPE_STATE        =  93,
 	VAR_INTRO_PLAYED              = 117,
 	VAR_AZURA_IN_LOVE             = 167
 };

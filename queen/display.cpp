@@ -151,20 +151,17 @@ void Display::dynalumUpdate(int16 x, int16 y) {
 	}
 }
 
-void Display::palConvert(uint8 *outPal, const uint8 *inPal, int start, int end) {
-	for (int i = start; i <= end; i++) {
-		outPal[4 * i + 0] = inPal[3 * i + 0];
-		outPal[4 * i + 1] = inPal[3 * i + 1];
-		outPal[4 * i + 2] = inPal[3 * i + 2];
-		outPal[4 * i + 3] = 0;
-	}
-}
-
 void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 	debug(9, "Display::palSet(%d, %d)", start, end);
+	const int numColors = end - start + 1;
 	uint8 tempPal[256 * 4];
-	palConvert(tempPal, pal, start, end);
-	_system->setPalette(tempPal + start * 4, start, end - start + 1);
+	for (int i = 0; i < numColors; i++) {
+		tempPal[4 * i + 0] = *pal++;
+		tempPal[4 * i + 1] = *pal++;
+		tempPal[4 * i + 2] = *pal++;
+		tempPal[4 * i + 3] = 0;
+	}
+	_system->setPalette(tempPal, start, numColors);
 	if (updateScreen) {
 		_system->updateScreen();
 		_vm->input()->delay(20);
@@ -933,22 +930,26 @@ void Display::blankScreen() {
 }
 
 void Display::blankScreenEffect1() {
-	static const int inc[] = { -1, 1 };
 	uint8 buf[32 * 32];
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
 		for (int i = 0; i < 2; ++i) {
-			uint16 x = _rnd.getRandomNumber(SCREEN_W - 32 - 2) + 1;
-			uint16 y = _rnd.getRandomNumber(SCREEN_H - 32 - 2) + 1;
-			uint8 *p = _screenBuf + SCREEN_W * y + x;
-			uint8 *q = buf;
-			uint16 h = 32;
-			while (h--) {
-				memcpy(q, p, 32);
+			int x = _rnd.getRandomNumber(SCREEN_W - 32 - 2) + 1;
+			int y = _rnd.getRandomNumber(SCREEN_H - 32 - 2) + 1;
+			const uint8 *p = _screenBuf + SCREEN_W * y + x;
+			for (int j = 0; j < 32; ++j) {
+				memcpy(buf + j * 32, p, 32);
 				p += SCREEN_W;
-				q += 32;
 			}
-			x += inc[_rnd.getRandomNumber(1)];
-			y += inc[_rnd.getRandomNumber(1)];
+			if (_rnd.getRandomNumber(1)) {
+				++x;
+			} else {
+				--x;
+			}
+			if (_rnd.getRandomNumber(1)) {
+				++y;
+			} else {
+				--y;
+			}
 			_system->copyRectToScreen(buf, 32, x, y, 32, 32);
 			_system->updateScreen();
 			_vm->input()->delay(10);
@@ -958,8 +959,8 @@ void Display::blankScreenEffect1() {
 
 void Display::blankScreenEffect2() {
 	while (_vm->input()->idleTime() >= Input::DELAY_SCREEN_BLANKER) {
-		uint16 x = _rnd.getRandomNumber(SCREEN_W - 2);
-		uint16 y = _rnd.getRandomNumber(SCREEN_H - 2);
+		int x = _rnd.getRandomNumber(SCREEN_W - 2);
+		int y = _rnd.getRandomNumber(SCREEN_H - 2);
 		uint8 *p = _screenBuf + y * SCREEN_W + x;
 		uint8 c = 0;
 		switch (_rnd.getRandomNumber(3)) {
@@ -991,14 +992,11 @@ void Display::blankScreenEffect3() {
 			memset(_screenBuf, 0, SCREEN_W * SCREEN_H);
 			_system->copyRectToScreen(_screenBuf, SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 		} else {
-			uint16 x = _rnd.getRandomNumber(SCREEN_W - 2);
-			uint16 y = _rnd.getRandomNumber(SCREEN_H - 2);
+			int x = _rnd.getRandomNumber(SCREEN_W - 2);
+			int y = _rnd.getRandomNumber(SCREEN_H - 2);
 			uint8 *p = _screenBuf + SCREEN_W * y + x;
-			uint8 p0 = *p;
-			uint8 p1 = *(p + 1);
-			uint8 p2 = *(p + SCREEN_W);
-			uint8 p3 = *(p + SCREEN_W + 1);
-			uint8 c = (p0 + p1 + p2 + p3) / 4;
+			int sum = *p + *(p + 1) + *(p + SCREEN_W) + *(p + SCREEN_W + 1);
+			uint8 c = (uint8)(sum / 4);
 			memset(p, c, 2);
 			memset(p + SCREEN_W, c, 2);
 			++i;

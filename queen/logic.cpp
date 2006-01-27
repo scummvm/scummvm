@@ -815,7 +815,7 @@ void Logic::joeUseDress(bool showCut) {
 	if (showCut) {
 		joeFacing(DIR_FRONT);
 		joeFace();
-		if (gameState(VAR_DRESSING_MODE) == 0) {
+		if (gameState(VAR_JOE_DRESSING_MODE) == 0) {
 			playCutaway("cdres.CUT");
 			inventoryInsertItem(ITEM_CLOTHES);
 		} else {
@@ -825,7 +825,7 @@ void Logic::joeUseDress(bool showCut) {
 	_vm->display()->palSetJoeDress();
 	loadJoeBanks("JoeD_A.BBK", "JoeD_B.BBK");
 	inventoryDeleteItem(ITEM_DRESS);
-	gameState(VAR_DRESSING_MODE, 2);
+	gameState(VAR_JOE_DRESSING_MODE, 2);
 }
 
 void Logic::joeUseClothes(bool showCut) {
@@ -838,13 +838,13 @@ void Logic::joeUseClothes(bool showCut) {
 	_vm->display()->palSetJoeNormal();
 	loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
 	inventoryDeleteItem(ITEM_CLOTHES);
-	gameState(VAR_DRESSING_MODE, 0);
+	gameState(VAR_JOE_DRESSING_MODE, 0);
 }
 
 void Logic::joeUseUnderwear() {
 	_vm->display()->palSetJoeNormal();
 	loadJoeBanks("JoeU_A.BBK", "JoeU_B.BBK");
-	gameState(VAR_DRESSING_MODE, 1);
+	gameState(VAR_JOE_DRESSING_MODE, 1);
 }
 
 void Logic::makePersonSpeak(const char *sentence, Person *person, const char *voiceFilePrefix) {
@@ -1018,14 +1018,14 @@ void Logic::inventoryScroll(uint16 count, bool up) {
 }
 
 void Logic::removeHotelItemsFromInventory() {
-	if (currentRoom() == 1 && gameState(3) == 0) {
+	if (currentRoom() == 1 && gameState(VAR_HOTEL_ITEMS_REMOVED) == 0) {
 		inventoryDeleteItem(ITEM_CROWBAR, false);
 		inventoryDeleteItem(ITEM_DRESS, false);
 		inventoryDeleteItem(ITEM_CLOTHES, false);
 		inventoryDeleteItem(ITEM_HAY, false);
 		inventoryDeleteItem(ITEM_OIL, false);
 		inventoryDeleteItem(ITEM_CHICKEN, false);
-		gameState(3, 1);
+		gameState(VAR_HOTEL_ITEMS_REMOVED, 1);
 		inventoryRefresh();
 	}
 }
@@ -1137,14 +1137,17 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		break;
 	case ROOM_TEMPLE_ZOMBIES:
 		if (areaNum == 6) {
-			if (_gameState[21] == 0) {
+			switch (gameState(VAR_BYPASS_ZOMBIES)) {
+			case 0:
 				playCutaway("c50d.CUT", nextCut);
 				while (nextCut[0] != '\0') {
 					playCutaway(nextCut, nextCut);
 				}
-				_gameState[21] = 1;
-			} else {
+				gameState(VAR_BYPASS_ZOMBIES, 1);
+				break;
+			case 1:
 				playCutaway("c50h.CUT", nextCut);
+				break;
 			}
 		}
 		break;
@@ -1158,16 +1161,20 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		makeJoeSpeak(21);
 		break;
 	case ROOM_HOTEL_LOBBY:
-		if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 0) {
+		switch (gameState(VAR_HOTEL_ESCAPE_STATE)) {
+		case 0:
 			playCutaway("c73a.CUT");
-			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 1;
 			joeUseUnderwear();
 			joeFace();
-		} else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 1) {
+			gameState(VAR_HOTEL_ESCAPE_STATE, 1);
+			break;
+		case 1:
 			playCutaway("c73b.CUT");
-			_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] = 2;
-		} else if (_gameState[VAR_ESCAPE_FROM_HOTEL_COUNT] == 2) {
+			gameState(VAR_HOTEL_ESCAPE_STATE, 2);
+			break;
+		case 2:
 			playCutaway("c73c.CUT");
+			break;
 		}
 		break;
 	case ROOM_TEMPLE_MAZE_5:
@@ -1176,17 +1183,20 @@ void Logic::handleSpecialArea(Direction facing, uint16 areaNum, uint16 walkDataN
 		}
 		break;
 	case ROOM_TEMPLE_MAZE_6:
-		if (areaNum == 5 && _gameState[187] == 0) {
+		if (areaNum == 5 && gameState(187) == 0) {
 			playCutaway("c101b.CUT", nextCut);
 		}
 		break;
 	case ROOM_FLODA_FRONTDESK:
 		if (areaNum == 3) {
-			if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 1) {
-				playCutaway("c103e.CUT", nextCut);
-			} else if (_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] == 0) {
+			switch (gameState(VAR_BYPASS_FLODA_RECEPTIONIST)) {
+			case 0:
 				playCutaway("c103b.CUT", nextCut);
-				_gameState[VAR_BYPASS_FLODA_RECEPTIONIST] = 1;
+				gameState(VAR_BYPASS_FLODA_RECEPTIONIST, 1);
+				break;
+			case 1:
+				playCutaway("c103e.CUT", nextCut);
+				break;
 			}
 		}
 		break;
@@ -1377,7 +1387,7 @@ void Logic::loadState(uint32 ver, byte *&ptr) {
 void Logic::setupRestoredGame() {
 	_vm->sound()->playLastSong();
 
-	switch (gameState(VAR_DRESSING_MODE)) {
+	switch (gameState(VAR_JOE_DRESSING_MODE)) {
 	case 0:
 		_vm->display()->palSetJoeNormal();
 		loadJoeBanks("Joe_A.BBK", "Joe_B.BBK");
@@ -1675,7 +1685,7 @@ void Logic::asmPanToJoe() {
 }
 
 void Logic::asmTurnGuardOn() {
-	gameState(85, 1);
+	gameState(VAR_GUARDS_TURNED_ON, 1);
 }
 
 void Logic::asmPanLeft320To144() {
