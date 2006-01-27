@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	common/savefile.o \
 	common/system.o \
 	common/scaler.o \
-	common/scaler/thumbnail.o
+	common/scaler/thumbnail.o \
+	common/unzip.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \

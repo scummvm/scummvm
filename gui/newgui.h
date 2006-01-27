@@ -26,6 +26,7 @@
 #include "common/stack.h"
 #include "common/str.h"
 #include "graphics/fontman.h"
+#include "gui/theme.h"
 
 class OSystem;
 
@@ -67,17 +68,22 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
+	Theme *theme() { return _theme; }
+
+	const Graphics::Font &getFont() const { return *(_theme->getFont()); }
+	int getFontHeight() const { return _theme->getFontHeight(); }
+	int getStringWidth(const Common::String &str) const { return _theme->getStringWidth(str); }
+	int getCharWidth(byte c) const { return _theme->getCharWidth(c); }
+
 protected:
 	OSystem			*_system;
-	Graphics::Surface	_screen;
-	int			_screenPitch;
+
+	Theme		*_theme;
 
 	bool		_needRedraw;
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;
-
-	const Graphics::Font *_font;
 
 	// for continuous events (keyDown)
 	struct {
@@ -109,54 +115,6 @@ protected:
 	void loop();
 
 	void animateCursor();
-	void updateColors();
-
-	void updateScaleFactor();
-
-	OverlayColor *getBasePtr(int x, int y);
-
-public:
-	// Theme colors
-	OverlayColor _color, _shadowcolor;
-	OverlayColor _bgcolor;
-	OverlayColor _textcolor;
-	OverlayColor _textcolorhi;
-
-	// Font
-	const Graphics::Font &getFont() const;
-
-	// Screen surface
-	Graphics::Surface &getScreen() { return _screen; }
-
-	// Drawing primitives
-	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
-	void hLine(int x, int y, int x2, OverlayColor color);
-	void vLine(int x, int y, int y2, OverlayColor color);
-
-	/**
-	 * Copy the specified screen rectangle into a new graphics surfaces.
-	 * New memory for the GFX data is allocated via malloc; it is the
-	 * callers responsibilty to free that data.
-	 */
-	void copyToSurface(Graphics::Surface *s, int x, int y, int w, int h);
-
-	/**
-	 * Draw the graphics contained in the given surface at the specified coordinates.
-	 */
-	void drawSurface(const Graphics::Surface &s, int x, int y);
-
-	void blendRect(int x, int y, int w, int h, OverlayColor color, int level = 3);
-	void fillRect(int x, int y, int w, int h, OverlayColor color);
-	void frameRect(int x, int y, int w, int h, OverlayColor color);
-
-	void drawChar(byte c, int x, int y, OverlayColor color, const Graphics::Font *font = 0);
-	void drawString(const String &str, int x, int y, int w, OverlayColor color, Graphics::TextAlignment align = Graphics::kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
-
-	int getStringWidth(const String &str) const;
-	int getCharWidth(byte c) const;
-	int getFontHeight() const;
-
-	void addDirtyRect(int x, int y, int w, int h);
 };
 
 } // End of namespace GUI

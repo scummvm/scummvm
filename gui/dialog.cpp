@@ -40,7 +40,7 @@ namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false) {
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _mainDialog(false) {
 }
 
 Dialog::~Dialog() {
@@ -88,6 +88,18 @@ void Dialog::close() {
 	releaseFocus();
 }
 
+void Dialog::handleScreenChanged() {
+	// The screen has changed. That means the screen visual may also have
+	// changed, so any cached image may be invalid. The subsequent redraw
+	// should be treated as the very first draw.
+
+	Widget *w = _firstWidget;
+	while (w) {
+		w->setHints(THEME_HINT_FIRST_DRAW);
+		w = w->_next;
+	}
+}
+
 void Dialog::releaseFocus() {
 	if (_focusedWidget) {
 		_focusedWidget->lostFocus();
@@ -104,8 +116,7 @@ void Dialog::drawDialog() {
 	if (!isVisible())
 		return;
 
-	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
-	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), Theme::kStateEnabled, _mainDialog);
 
 	// Draw all children
 	Widget *w = _firstWidget;
@@ -113,9 +124,6 @@ void Dialog::drawDialog() {
 		w->draw();
 		w = w->_next;
 	}
-
-	// Flag the draw area as dirty
-	g_gui.addDirtyRect(_x, _y, _w, _h);
 }
 
 void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {

@@ -29,7 +29,7 @@ namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hasFocus(false) {
+	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW), _hasFocus(false) {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
 	_boss->_firstWidget = this;
@@ -52,16 +52,12 @@ void Widget::draw() {
 	_y = getAbsY();
 
 	// Clear background (unless alpha blending is enabled)
-	if (_flags & WIDGET_CLEARBG)
-		gui->fillRect(_x, _y, _w, _h, gui->_bgcolor);
+	//if (_flags & WIDGET_CLEARBG)
+	//	gui->fillRect(_x, _y, _w, _h, gui->_bgcolor);
 
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
-		OverlayColor colorA = gui->_color;
-		OverlayColor colorB = gui->_shadowcolor;
-		if ((_flags & WIDGET_INV_BORDER) == WIDGET_INV_BORDER)
-			SWAP(colorA, colorB);
-		gui->box(_x, _y, _w, _h, colorA, colorB);
+		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorder);
 		_x += 4;
 		_y += 4;
 		_w -= 8;
@@ -79,9 +75,6 @@ void Widget::draw() {
 		_h += 8;
 	}
 
-	// Flag the draw area as dirty
-	gui->addDirtyRect(_x, _y, _w, _h);
-
 	_x = oldX;
 	_y = oldY;
 
@@ -91,6 +84,8 @@ void Widget::draw() {
 		w->draw();
 		w = w->_next;
 	}
+
+	clearHints(THEME_HINT_FIRST_DRAW);
 }
 
 Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
@@ -137,8 +132,9 @@ void StaticTextWidget::setAlign(TextAlignment align) {
 
 
 void StaticTextWidget::drawWidget(bool hilite) {
-	NewGui *gui = &g_gui;
-	gui->drawString(_label, _x, _y, _w, isEnabled() ? gui->_textcolor : gui->_color, _align);
+	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label,
+							isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled,
+							g_gui.theme()->convertAligment(_align));
 }
 
 #pragma mark -
@@ -146,7 +142,7 @@ void StaticTextWidget::drawWidget(bool hilite) {
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
 	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter, ws), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
-	_flags = WIDGET_ENABLED | WIDGET_BORDER | WIDGET_CLEARBG;
+	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;
 }
 
@@ -156,11 +152,7 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget(bool hilite) {
-	NewGui *gui = &g_gui;
-	const int off = (_h - g_gui.getFontHeight()) / 2;
-	gui->drawString(_label, _x, _y + off, _w,
-					!isEnabled() ? gui->_color :
-					hilite ? gui->_textcolorhi : gui->_textcolor, _align);
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
 }
 
 #pragma mark -
@@ -187,39 +179,8 @@ void CheckboxWidget::setState(bool state) {
 }
 
 void CheckboxWidget::drawWidget(bool hilite) {
-	NewGui *gui = &g_gui;
-	int fontHeight = gui->getFontHeight();
-
-	// Draw the box
-	gui->box(_x, _y, fontHeight + 4, fontHeight + 4, gui->_color, gui->_shadowcolor);
-	gui->fillRect(_x + 2, _y + 2, fontHeight, fontHeight, gui->_bgcolor);
-
-	// If checked, draw cross inside the box
-	if (_state) {
-		Graphics::Surface &surf = gui->getScreen();
-		Common::Point p0, p1, p2, p3;
-		OverlayColor color = isEnabled() ? gui->_textcolor : gui->_color;
-
-		p0 = Common::Point(_x + 4, _y + 4);
-		p1 = Common::Point(_x + fontHeight - 1, _y + 4);
-		p2 = Common::Point(_x + 4, _y + fontHeight - 1);
-		p3 = Common::Point(_x + fontHeight - 1, _y + fontHeight - 1);
-
-		if (_ws == kBigWidgetSize) {
-			surf.drawLine(p0.x + 1, p0.y, p3.x, p3.y - 1, color);
-			surf.drawLine(p0.x, p0.y + 1, p3.x - 1, p3.y, color);
-			surf.drawLine(p0.x + 1, p0.y + 1, p3.x - 1, p3.y - 1, color);
-			surf.drawLine(p2.x + 1, p2.y - 1, p1.x - 1, p1.y + 1, color);
-			surf.drawLine(p2.x + 1, p2.y, p1.x, p1.y + 1, color);
-			surf.drawLine(p2.x, p2.y - 1, p1.x - 1, p1.y, color);
-		} else {
-			surf.drawLine(p0.x, p0.y, p3.x, p3.y, color);
-			surf.drawLine(p2.x, p2.y, p1.x, p1.y, color);
-		}
-	}
-
-	// Finally draw the label
-	gui->drawString(_label, _x + fontHeight + 10, _y + 3, _w, isEnabled() ? gui->_textcolor : gui->_color);
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state,
+								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled);
 }
 
 #pragma mark -
@@ -262,15 +223,8 @@ void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void SliderWidget::drawWidget(bool hilite) {
-	NewGui *gui = &g_gui;
-
-	// Draw the box
-	gui->box(_x, _y, _w, _h, gui->_color, gui->_shadowcolor);
-
-	// Draw the 'bar'
-	gui->fillRect(_x + 2, _y + 2, valueToPos(_value), _h - 4,
-				!isEnabled() ? gui->_color :
-				hilite ? gui->_textcolorhi : gui->_textcolor);
+	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x+_w, _y+_h), valueToPos(_value),
+							isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
 }
 
 int SliderWidget::valueToPos(int value) {
@@ -305,13 +259,9 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 }
 
 void GraphicsWidget::drawWidget(bool hilite) {
-	if (sizeof(OverlayColor) != _gfx.bytesPerPixel || !_gfx.pixels) {
-		// FIXME: It doesn't really make sense to render this text here, since
-		// this widget might be used for other things than rendering savegame
-		// graphics/previews...
-		g_gui.drawString("No preview", _x, _y + _h / 2 - g_gui.getFontHeight() / 2, _w, g_gui._textcolor, Graphics::kTextAlignCenter);
-	} else
-		g_gui.drawSurface(_gfx, _x, _y);
+	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
+		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx);
+	}
 }
 
 } // End of namespace GUI

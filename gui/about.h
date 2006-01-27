@@ -36,7 +36,6 @@ protected:
 	uint32		_lineHeight;
 	byte		_modifiers;
 	bool		_willClose;
-	Graphics::Surface	_canvas;
 
 	int xOff, yOff;
 
@@ -49,7 +48,6 @@ public:
 	void close();
 	void drawDialog();
 	void handleTickle();
-	void handleScreenChanged();
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 	void handleKeyUp(uint16 ascii, int keycode, int modifiers);

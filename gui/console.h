@@ -43,7 +43,6 @@ public:
 	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, char*& completion, void *refCon);
 
 protected:
-	Graphics::Surface	_canvas;
 	const Graphics::Font *_font;
 
 	char	_buffer[kBufferSize];

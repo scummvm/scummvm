@@ -490,6 +490,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 LauncherDialog::LauncherDialog(GameDetector &detector)
 	: Dialog(0, 0, 320, 200), _detector(detector) {
+	_mainDialog = true;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();

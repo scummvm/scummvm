@@ -45,7 +45,6 @@ enum {
 	WIDGET_WANT_TICKLE	= 1 << 7,
 	WIDGET_TRACK_MOUSE	= 1 << 8,
 	WIDGET_RETAIN_FOCUS	= 1 << 9		// Retain focus on mouse up. By default widgets lose focus on mouseup, but some widgets might want to retain it - widgets where you enter text, for instance
-
 };
 
 enum {
@@ -93,6 +92,7 @@ protected:
 	Widget		*_next;
 	uint16		_id;
 	uint16		_flags;
+	uint16		_hints;
 	bool		_hasFocus;
 
 public:
@@ -126,6 +126,10 @@ public:
 	void setFlags(int flags)	{ _flags |= flags; }
 	void clearFlags(int flags)	{ _flags &= ~flags; }
 	int getFlags() const		{ return _flags; }
+
+	void setHints(int hints)	{ _hints |= hints; }
+	void clearHints(int hints)	{ _hints &= ~hints; }
+	int getHints() const		{ return _hints; }
 
 	void setEnabled(bool e)		{ if (e) setFlags(WIDGET_ENABLED); else clearFlags(WIDGET_ENABLED); }
 	bool isEnabled() const		{ return _flags & WIDGET_ENABLED; }

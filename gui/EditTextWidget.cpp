@@ -59,15 +59,11 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 
 void EditTextWidget::drawWidget(bool hilite) {
-	// Draw a thin frame around us.
-	g_gui.hLine(_x, _y, _x + _w - 1, g_gui._color);
-	g_gui.hLine(_x, _y + _h - 1, _x +_w - 1, g_gui._shadowcolor);
-	g_gui.vLine(_x, _y, _y + _h - 1, g_gui._color);
-	g_gui.vLine(_x + _w - 1, _y, _y + _h - 1, g_gui._shadowcolor);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
 
 	// Draw the text
 	adjustOffset();
-	g_gui.drawString(_editString, _x + 2, _y + 2, getEditRect().width(), g_gui._textcolor, kTextAlignLeft, -_editScrollOffset, false);
+	g_gui.theme()->drawText(Common::Rect(_x+2,_y+2, _x+getEditRect().width()-2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

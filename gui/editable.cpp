@@ -143,7 +143,6 @@ void EditableWidget::drawCaret(bool erase) {
 
 	Common::Rect editRect = getEditRect();
 
-	int16 color = (erase ^ _caretInverse) ? g_gui._bgcolor : g_gui._textcolorhi;
 	int x = editRect.left;
 	int y = editRect.top + 1;
 
@@ -155,9 +154,8 @@ void EditableWidget::drawCaret(bool erase) {
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.vLine(x, y, y + editRect.height() - 2, color);
-	g_gui.addDirtyRect(x, y, 2, editRect.height() - 2);
-
+	g_gui.theme()->drawCaret(Common::Rect(x, y, x+editRect.width(), y+editRect.height()-2), erase);
+	
 	_caretVisible = !erase;
 }
 

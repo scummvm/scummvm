@@ -140,13 +140,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 
 void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	g_gui.hLine(_x, _y, _x+_w - 1, g_gui._color);
-	g_gui.hLine(_x, _y + _h - 1, _x + _w - 1, g_gui._shadowcolor);
-	g_gui.vLine(_x, _y, _y+_h - 1, g_gui._color);
-	g_gui.vLine(_x + _w - 1, _y, _y + _h - 1, g_gui._shadowcolor);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND, Theme::kWidgetBackgroundBorderSmall);
 
-	if (_twoColumns)
-		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);
+	/*if (_twoColumns)
+		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
 
 	// Draw the entries
 	int count = _popUpBoss->_entries.size();
@@ -155,11 +152,9 @@ void PopUpDialog::drawDialog() {
 	}
 
 	// The last entry may be empty. Fill it with black.
-	if (_twoColumns && (count & 1)) {
+	/*if (_twoColumns && (count & 1)) {
 		g_gui.fillRect(_x + 1 + _w / 2, _y + 1 + kLineHeight * (_entriesPerColumn - 1), _w / 2 - 1, kLineHeight, g_gui._bgcolor);
-	}
-
-	g_gui.addDirtyRect(_x, _y, _w, _h);
+	}*/
 }
 
 void PopUpDialog::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -322,15 +317,13 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 	Common::String &name = _popUpBoss->_entries[entry].name;
 
-	g_gui.fillRect(x, y, w, kLineHeight, hilite ? g_gui._textcolorhi : g_gui._bgcolor);
 	if (name.size() == 0) {
 		// Draw a separator
-		g_gui.hLine(x - 1, y + kLineHeight / 2, x + w, g_gui._shadowcolor);
-		g_gui.hLine(x, y + 1 + kLineHeight / 2, x + w, g_gui._color);
+		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
-		g_gui.drawString(name, x + 1, y + 2, w - 2, hilite ? g_gui._bgcolor : g_gui._textcolor);
+		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w-1, y+kLineHeight), name,	hilite ? Theme::kStateHighlight : Theme::kStateEnabled,
+								Theme::kTextAlignLeft);
 	}
-	g_gui.addDirtyRect(x, y, w, kLineHeight);
 }
 
 
@@ -343,6 +336,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, WidgetSize ws)
 	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss), _ws(ws), _label(label), _labelWidth(labelWidth) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
+	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
@@ -397,22 +391,19 @@ void PopUpWidget::setSelectedTag(uint32 tag) {
 }
 
 void PopUpWidget::drawWidget(bool hilite) {
-	NewGui	*gui = &g_gui;
 	int x = _x + _labelWidth;
 	int w = _w - _labelWidth;
 
+	// Draw a thin frame around us.
+	g_gui.theme()->drawWidgetBackground(Common::Rect(x, _y, x+w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
+
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		gui->drawString(_label, _x, _y + 3, _labelWidth, isEnabled() ? gui->_textcolor : gui->_color, kTextAlignRight);
-
-	// Draw a thin frame around us.
-	gui->hLine(x, _y, x + w - 1, gui->_color);
-	gui->hLine(x, _y +_h-1, x + w - 1, gui->_shadowcolor);
-	gui->vLine(x, _y, _y+_h-1, gui->_color);
-	gui->vLine(x + w - 1, _y, _y +_h - 1, gui->_shadowcolor);
+		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+_labelWidth, _y+g_gui.theme()->getFontHeight()), _label,
+								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, Theme::kTextAlignRight);
 
 	// Draw a set of arrows at the right end to signal this is a dropdown/popup
-	Common::Point p0, p1;
+	/*Common::Point p0, p1;
 
 	p0 = Common::Point(x + w + 1 - _h / 2, _y + 4);
 	p1 = Common::Point(x + w + 1 - _h / 2, _y + _h - 4);
@@ -425,12 +416,13 @@ void PopUpWidget::drawWidget(bool hilite) {
 	for (; p1.y - p0.y > 1; p0.y++, p0.x--, p1.y--, p1.x++) {
 		surf.drawLine(p0.x, p0.y, p1.x, p0.y, color);
 		surf.drawLine(p0.x, p1.y, p1.x, p1.y, color);
-	}
+	}*/
 
 	// Draw the selected entry, if any
 	if (_selectedItem >= 0) {
 		TextAlignment align = (g_gui.getStringWidth(_entries[_selectedItem].name) > w-6) ? kTextAlignRight : kTextAlignLeft;
-		gui->drawString(_entries[_selectedItem].name, x+2, _y+3, w-6, !isEnabled() ? gui->_color : gui->_textcolor, align);
+		g_gui.theme()->drawText(Common::Rect(x+2, _y+3, _x+w-6, _y+g_gui.theme()->getFontHeight()), _entries[_selectedItem].name,
+								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, g_gui.theme()->convertAligment(align));
 	}
 }
 

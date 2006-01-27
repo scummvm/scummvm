@@ -925,20 +925,10 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 }
 
 void ValueDisplayDialog::drawDialog() {
-	g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
-	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
-
 	const int labelWidth = _w - 8 - _percentBarWidth;
-
-	// Draw the label
-	g_gui.drawString(_label, _x + 4, _y + 4, labelWidth, g_gui._textcolor);
-
-	// Draw the percentage bar
-	g_gui.fillRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth * (_value - _min) / (_max - _min), _h - 8, g_gui._textcolorhi);
-	g_gui.frameRect(_x + 4 + labelWidth, _y + 4, _percentBarWidth, _h - 8, g_gui._textcolor);
-
-	// Flag the draw area as dirty
-	g_gui.addDirtyRect(_x, _y, _w, _h);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h));
+	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4, _y+g_gui.theme()->getFontHeight()+4), _label);
+	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4), _percentBarWidth * (_value - _min) / (_max - _min));
 }
 
 void ValueDisplayDialog::handleTickle() {

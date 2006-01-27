@@ -21,6 +21,8 @@
 
 #include "common/stdafx.h"
 #include "common/util.h"
+#include "common/debugger.cpp"
+
 #include "sky/debug.h"
 #include "sky/grid.h"
 #include "sky/logic.h"
@@ -29,8 +31,6 @@
 #include "sky/sky.h"
 #include "sky/struc.h"
 #include "sky/compact.h"
-
-#include "common/debugger.cpp"
 
 namespace Sky {
 
@@ -1278,7 +1278,7 @@ void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {
 
 
 Debugger::Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact)
-: _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
+: Common::Debugger<Debugger>(), _logic(logic), _mouse(mouse), _screen(screen), _skyCompact(skyCompact), _showGrid(false) {
 	DCmd_Register("exit", &Debugger::Cmd_Exit);
 	DCmd_Register("help", &Debugger::Cmd_Help);
 	DCmd_Register("info", &Debugger::Cmd_Info);

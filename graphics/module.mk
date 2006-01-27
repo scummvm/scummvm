@@ -10,7 +10,9 @@ MODULE_OBJS := \
 	graphics/newfont_big.o \
 	graphics/primitives.o \
 	graphics/scummfont.o \
-	graphics/surface.o
+	graphics/surface.o \
+	graphics/imageman.o \
+	graphics/imagedec.o
 
 MODULE_DIRS += \
 	graphics

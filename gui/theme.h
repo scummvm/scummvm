@@ -1,0 +1,361 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $Header $
+ */
+
+#ifndef GUI_THEME_H
+#define GUI_THEME_H
+
+#include "common/stdafx.h"
+#include "common/system.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "common/config-file.h"
+
+#include "graphics/surface.h"
+#include "graphics/fontman.h"
+
+namespace GUI {
+
+// Hints to the theme engine that the widget is used in a non-standard way.
+
+enum {
+	// Indicates that this is the first time the widget is drawn.
+	THEME_HINT_FIRST_DRAW = 1 << 0,
+
+	// Indicates that the widget will be redrawn often, e.g. list widgets.
+	// It may therefore be a good idea to save the background so that it
+	// can be redrawn quickly.
+	THEME_HINT_SAVE_BACKGROUND = 1 << 1
+};
+
+class Theme {
+public:
+	Theme() : _drawArea(), _configFile() {}
+	virtual ~Theme() {}
+
+	enum kTextAlign {
+		kTextAlignLeft,
+		kTextAlignCenter,
+		kTextAlignRight
+	};
+
+	enum kWidgetBackground {
+		kWidgetBackgroundNo,
+		kWidgetBackgroundPlain,
+		kWidgetBackgroundBorder,
+		kWidgetBackgroundBorderSmall
+	};
+
+	enum kState {
+		kStateDisabled,
+		kStateEnabled,
+		kStateHighlight
+	};
+
+	enum kScrollbarState {
+		kScrollbarStateNo,
+		kScrollbarStateUp,
+		kScrollbarStateDown,
+		kScrollbarStateSlider,
+		kScrollbarStateSinglePage
+	};
+
+	virtual bool init() = 0;
+	virtual void deinit() = 0;
+
+	virtual void refresh() = 0;
+
+	virtual void enable() = 0;
+	virtual void disable() = 0;
+
+	virtual void openDialog() = 0;
+	virtual void closeDialog() = 0;
+
+	virtual void clearAll() = 0;
+	virtual void drawAll() = 0;
+	
+	virtual void setDrawArea(const Common::Rect &r) { _drawArea = r; }
+	// resets the draw area to the screen size
+	virtual void resetDrawArea() = 0;
+	
+	virtual const Common::ConfigFile &getConfigFile() { return _configFile; }
+
+	virtual const Graphics::Font *getFont() const = 0;
+	virtual int getFontHeight() const = 0;
+	virtual int getStringWidth(const Common::String &str) const = 0;
+	virtual int getCharWidth(byte c) const = 0;
+
+	virtual void drawDialogBackground(const Common::Rect &r, kState state = kStateEnabled, bool mainDialog = false) = 0;
+	virtual void drawText(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled, kTextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true) = 0;
+	// this should ONLY be used by the debugger until we get a nicer solution
+	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state = kStateEnabled) = 0;
+
+	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background = kWidgetBackgroundPlain, kState state = kStateEnabled) = 0;
+	virtual void drawButton(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled) = 0;
+	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state = kStateEnabled) = 0;
+	virtual void drawSlider(const Common::Rect &r, int width, kState state = kStateEnabled) = 0;
+	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state = kStateEnabled) = 0;
+	virtual void drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state = kStateEnabled) = 0;
+	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state = kStateEnabled) = 0;
+	virtual void drawCaret(const Common::Rect &r, bool erase, kState state = kStateEnabled) = 0;
+	virtual void drawLineSeparator(const Common::Rect &r, kState state = kStateEnabled) = 0;
+
+	Graphics::TextAlignment convertAligment(kTextAlign align) const {
+		switch (align) {
+		case kTextAlignLeft:
+			return Graphics::kTextAlignLeft;
+			break;
+
+		case kTextAlignRight:
+			return Graphics::kTextAlignRight;
+			break;
+
+		default:
+			break;
+		};
+		return Graphics::kTextAlignCenter;
+	};
+	
+	kTextAlign convertAligment(Graphics::TextAlignment align) const {
+		switch (align) {
+		case Graphics::kTextAlignLeft:
+			return kTextAlignLeft;
+			break;
+
+		case Graphics::kTextAlignRight:
+			return kTextAlignRight;
+			break;
+
+		default:
+			break;
+		}
+		return kTextAlignCenter;
+	}
+
+protected:
+	Common::Rect _drawArea;
+	Common::ConfigFile _configFile;
+};
+
+#define OLDGUI_TRANSPARENCY
+
+class ThemeClassic : public Theme {
+public:
+	ThemeClassic(OSystem *system);
+	virtual ~ThemeClassic();
+
+	bool init();
+	void deinit();
+
+	void refresh();
+
+	void enable();
+	void disable();
+
+	void openDialog();
+	void closeDialog();
+
+	void clearAll();
+	void drawAll();
+	
+	void resetDrawArea();
+
+	const Graphics::Font *getFont() const { return _font; }
+	int getFontHeight() const { if (_initOk) return _font->getFontHeight(); return 0; }
+	int getStringWidth(const Common::String &str) const { if (_initOk) return _font->getStringWidth(str); return 0; }
+	int getCharWidth(byte c) const { if (_initOk) return _font->getCharWidth(c); return 0; }
+
+	void drawDialogBackground(const Common::Rect &r, kState state, bool mainDialog);
+	void drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
+
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
+	void drawButton(const Common::Rect &r, const Common::String &str, kState state);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
+	void drawSlider(const Common::Rect &r, int width, kState state);
+	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state);
+	void drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state);
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
+	void drawCaret(const Common::Rect &r, bool erase, kState state);
+	void drawLineSeparator(const Common::Rect &r, kState state);
+private:
+	void restoreBackground(Common::Rect r);
+	bool addDirtyRect(Common::Rect r);
+
+	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
+	void box(int x, int y, int width, int height);
+
+	OverlayColor getColor(kState state);
+
+	OSystem *_system;
+	Graphics::Surface _screen;
+
+#ifdef OLDGUI_TRANSPARENCY
+	struct DialogState {
+		Graphics::Surface screen;
+	} *_dialog;
+
+	void blendScreenToDialog();
+#endif
+
+	bool _initOk;
+
+	const Graphics::Font *_font;
+	OverlayColor _color, _shadowcolor;
+	OverlayColor _bgcolor;
+	OverlayColor _textcolor;
+	OverlayColor _textcolorhi;
+};
+
+class ThemeNew : public Theme {
+public:
+	ThemeNew(OSystem *system, Common::String stylefile);
+	virtual ~ThemeNew();
+
+	bool init();
+	void deinit();
+
+	void refresh();
+
+	void enable();
+	void disable();
+
+	void openDialog();
+	void closeDialog();
+
+	void clearAll();
+	void drawAll();
+	
+	void resetDrawArea();
+
+	const Graphics::Font *getFont() const { return _font; }
+	int getFontHeight() const { if (_font) return _font->getFontHeight(); return 0; }
+	int getStringWidth(const Common::String &str) const { if (_font) return _font->getStringWidth(str); return 0; }
+	int getCharWidth(byte c) const { if (_font) return _font->getCharWidth(c); return 0; }
+
+	void drawDialogBackground(const Common::Rect &r, kState state, bool mainDialog);
+	void drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
+
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
+	void drawButton(const Common::Rect &r, const Common::String &str, kState state);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
+	void drawSlider(const Common::Rect &r, int width, kState state);
+	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state);
+	void drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state);
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
+	void drawCaret(const Common::Rect &r, bool erase, kState state);
+	void drawLineSeparator(const Common::Rect &r, kState state);
+private:
+	bool addDirtyRect(Common::Rect r, bool backup = false);
+
+	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end);
+	void drawRect(const Common::Rect &r, const Graphics::Surface *corner,
+				const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill, int alpha);
+	void drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
+						const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
+						OverlayColor start, OverlayColor end, uint factor = 1);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha);
+	void drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha,
+							OverlayColor start, OverlayColor end, uint factor = 1);
+
+	OSystem *_system;
+	Graphics::Surface _screen;
+
+	bool _initOk;
+	bool _forceRedraw;
+
+	void restoreBackground(Common::Rect r);
+	OverlayColor getColor(kState state);
+
+	struct DialogState {
+		Graphics::Surface screen;
+	} *_dialog;
+
+	const Graphics::Font *_font;
+
+	enum kImageHandles {
+		kDialogBkgdCorner = 0,
+		kDialogBkgdTop = 1,
+		kDialogBkgdLeft = 2,
+		kDialogBkgd = 3,
+		kWidgetBkgdCorner = 4,
+		kWidgetBkgdTop = 5,
+		kWidgetBkgdLeft = 6,
+		kWidgetBkgd = 7,
+		kCheckboxEmpty = 8,
+		kCheckboxChecked = 9,
+		kWidgetArrow = 10,
+		kImageHandlesMax
+	};
+
+	const Common::String *_imageHandles;
+	const Graphics::Surface **_images;
+	
+	enum kColorHandles {
+		kMainDialogStart = 0,
+		kMainDialogEnd = 1,
+		
+		kDialogStart = 2,
+		kDialogEnd = 3,
+		
+		kColorStateDisabled = 4,
+		kColorStateHighlight = 5,
+		kColorStateEnabled = 6,
+		kColorTransparency = 7,
+		
+		kTextInvertedBackground = 8,
+		kTextInvertedColor = 9,
+		
+		kWidgetBackgroundStart = 10,
+		kWidgetBackgroundEnd = 11,
+		kWidgetBackgroundSmallStart = 12,
+		kWidgetBackgroundSmallEnd = 13,
+		
+		kButtonBackgroundStart = 14,
+		kButtonBackgroundEnd = 15,
+		kButtonTextEnabled = 16,
+		kButtonTextDisabled = 17,
+		kButtonTextHighlight = 18,
+		
+		kSliderBackgroundStart = 19,
+		kSliderBackgroundEnd = 20,
+		kSliderStart = 21,
+		kSliderEnd = 22,
+		
+		kTabBackgroundStart = 23,
+		kTabBackgroundEnd = 24,
+		
+		kScrollbarBackgroundStart = 25,
+		kScrollbarBackgroundEnd = 26,
+		kScrollbarButtonStart = 27,
+		kScrollbarButtonEnd = 28,
+		kScrollbarSliderStart = 29,
+		kScrollbarSliderEnd = 30,
+		
+		kCaretColor = 31,
+		
+		kColorHandlesMax
+	};
+	
+	OverlayColor _colors[kColorHandlesMax];
+};
+} // end of namespace GUI
+
+#endif // GUI_THEME_H

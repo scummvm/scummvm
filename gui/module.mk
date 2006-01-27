@@ -16,7 +16,9 @@ MODULE_OBJS := \
 	gui/PopUpWidget.o \
 	gui/ScrollBarWidget.o \
 	gui/TabWidget.o \
-	gui/widget.o
+	gui/widget.o \
+	gui/theme.o \
+	gui/ThemeNew.o
 
 MODULE_DIRS += \
 	gui

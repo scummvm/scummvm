@@ -44,6 +44,7 @@ protected:
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
 	bool	_visible;
+	bool	_mainDialog; // FIXME: find a better solution for this and change the Theme class to handle it then
 
 private:
 	int		_result;
@@ -73,7 +74,7 @@ protected:
 	virtual void handleKeyUp(uint16 ascii, int keycode, int modifiers);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleScreenChanged() {}
+	void handleScreenChanged();
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 

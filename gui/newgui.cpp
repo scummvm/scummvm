@@ -24,6 +24,8 @@
 #include "gui/newgui.h"
 #include "gui/dialog.h"
 
+#include "common/config-manager.h"
+
 DECLARE_SINGLETON(GUI::NewGui);
 
 namespace GUI {
@@ -55,7 +57,7 @@ enum {
 
 // Constructor
 NewGui::NewGui() : _needRedraw(false),
-	_stateIsSaved(false), _font(0), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 
 	_system = &OSystem::instance();
 
@@ -65,32 +67,26 @@ NewGui::NewGui() : _needRedraw(false),
 	// Reset key repeat
 	_currentKeyDown.keycode = 0;
 
-	// updates the scaling factor
-	updateScaleFactor();
-}
-
-void NewGui::updateColors() {
-	// Setup some default GUI colors.
-	_bgcolor = _system->RGBToColor(0, 0, 0);
-	_color = _system->RGBToColor(104, 104, 104);
-	_shadowcolor = _system->RGBToColor(64, 64, 64);
-	_textcolor = _system->RGBToColor(32, 160, 32);
-	_textcolorhi = _system->RGBToColor(0, 255, 0);
-}
-
-void NewGui::updateScaleFactor() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	// TODO: Perhaps we should also set the widget size here. That'd allow
-	// us to remove much of the screen size checking from the individual
-	// widgets.
-
-	if (screenW >= 400 && screenH >= 300) {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	ConfMan.registerDefault("gui_theme", "default-theme");
+	Common::String style = ConfMan.get("gui_theme");
+	if (scumm_stricmp(style.c_str(), "classic") == 0) {
+		_theme = new ThemeClassic(_system);
 	} else {
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		_theme = new ThemeNew(_system, style.c_str());
 	}
+	assert(_theme);
+
+	// Init the theme
+	if (!_theme->init()) {
+		warning("Could not initialize your preferred theme, falling back to classic style");
+		delete _theme;
+		_theme = new ThemeClassic(_system);
+		assert(_theme);
+		if (!_theme->init()) {
+			error("Couldn't initialize classic theme");
+		}
+	}
+	_theme->resetDrawArea();
 }
 
 void NewGui::runLoop() {
@@ -101,16 +97,13 @@ void NewGui::runLoop() {
 	if (activeDialog == 0)
 		return;
 
-	// Setup some default GUI colors. Normally this will be done whenever an
-	// EVENT_SCREEN_CHANGED is received. However, not yet all backends support
-	// that event, so we also do it "manually" whenever a run loop is entered.
-	updateColors();
-	updateScaleFactor();
-
 	if (!_stateIsSaved) {
 		saveState();
+		_theme->enable();
 		didSaveState = true;
 	}
+
+	_theme->openDialog();
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		activeDialog->handleTickle();
@@ -118,19 +111,20 @@ void NewGui::runLoop() {
 		if (_needRedraw) {
 			// Restore the overlay to its initial state, then draw all dialogs.
 			// This is necessary to get the blending right.
-			_system->clearOverlay();
-			_system->grabOverlay((OverlayColor *)_screen.pixels, _screenPitch);
+			_theme->clearAll();
 
+			for (int i = 0; i < _dialogStack.size(); ++i) {
+				_theme->closeDialog();
+			}
 			for (int i = 0; i < _dialogStack.size(); i++) {
-				// For each dialog we draw we have to ensure the correct
-				// scaling mode is active.
-				updateScaleFactor();
+				_theme->openDialog();
 				_dialogStack[i]->drawDialog();
 			}
 			_needRedraw = false;
 		}
 
 		animateCursor();
+		_theme->drawAll();
 		_system->updateScreen();
 
 		OSystem::Event event;
@@ -191,8 +185,9 @@ void NewGui::runLoop() {
 				_system->quit();
 				return;
 			case OSystem::EVENT_SCREEN_CHANGED:
-				updateColors();
-				updateScaleFactor();
+				// reinit the whole theme
+				_theme->refresh();
+				_needRedraw = true;
 				activeDialog->handleScreenChanged();
 				break;
 			}
@@ -211,8 +206,12 @@ void NewGui::runLoop() {
 		_system->delayMillis(10);
 	}
 
-	if (didSaveState)
+	_theme->closeDialog();
+
+	if (didSaveState) {
 		restoreState();
+		_theme->disable();
+	}
 }
 
 #pragma mark -
@@ -220,20 +219,6 @@ void NewGui::runLoop() {
 void NewGui::saveState() {
 	// Backup old cursor
 	_oldCursorMode = _system->showMouse(true);
-
-	// Enable the overlay
-	_system->showOverlay();
-
-	// Create a screen buffer for the overlay data, and fill it with
-	// whatever is visible on the screen rught now.
-	_screen.h = _system->getOverlayHeight();
-	_screen.w = _system->getOverlayWidth();
-	_screen.bytesPerPixel = sizeof(OverlayColor);
-	_screen.pitch = _screen.w * _screen.bytesPerPixel;
-	_screenPitch = _screen.w;
-	_screen.pixels = (OverlayColor*)calloc(_screen.w * _screen.h, sizeof(OverlayColor));
-
-	_system->grabOverlay((OverlayColor *)_screen.pixels, _screenPitch);
 
 	_currentKeyDown.keycode = 0;
 	_lastClick.x = _lastClick.y = 0;
@@ -245,12 +230,6 @@ void NewGui::saveState() {
 
 void NewGui::restoreState() {
 	_system->showMouse(_oldCursorMode);
-
-	_system->hideOverlay();
-	if (_screen.pixels) {
-		free(_screen.pixels);
-		_screen.pixels = 0;
-	}
 
 	_system->updateScreen();
 
@@ -270,194 +249,6 @@ void NewGui::closeTopDialog() {
 	// Remove the dialog from the stack
 	_dialogStack.pop();
 	_needRedraw = true;
-}
-
-#pragma mark -
-
-const Graphics::Font &NewGui::getFont() const {
-	return *_font;
-}
-
-OverlayColor *NewGui::getBasePtr(int x, int y) {
-	return (OverlayColor *)_screen.getBasePtr(x, y);
-}
-
-void NewGui::box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB) {
-	hLine(x + 1, y, x + width - 2, colorA);
-	hLine(x, y + 1, x + width - 1, colorA);
-	vLine(x, y + 1, y + height - 2, colorA);
-	vLine(x + 1, y, y + height - 1, colorA);
-
-	hLine(x + 1, y + height - 2, x + width - 1, colorB);
-	hLine(x + 1, y + height - 1, x + width - 2, colorB);
-	vLine(x + width - 1, y + 1, y + height - 2, colorB);
-	vLine(x + width - 2, y + 1, y + height - 1, colorB);
-}
-
-void NewGui::hLine(int x, int y, int x2, OverlayColor color) {
-	_screen.hLine(x, y, x2, color);
-}
-
-void NewGui::vLine(int x, int y, int y2, OverlayColor color) {
-	_screen.vLine(x, y, y2, color);
-}
-
-void NewGui::copyToSurface(Graphics::Surface *s, int x, int y, int w, int h) {
-	Common::Rect rect(x, y, x + w, y + h);
-	rect.clip(_screen.w, _screen.h);
-
-	if (!rect.isValidRect())
-		return;
-
-	s->w = rect.width();
-	s->h = rect.height();
-	s->bytesPerPixel = sizeof(OverlayColor);
-	s->pitch = s->w * s->bytesPerPixel;
-	s->pixels = (OverlayColor *)malloc(s->pitch * s->h);
-
-	w = s->w;
-	h = s->h;
-
-	OverlayColor *dst = (OverlayColor *)s->pixels;
-	OverlayColor *src = getBasePtr(rect.left, rect.top);
-
-	while (h--) {
-		memcpy(dst, src, s->pitch);
-		src += _screenPitch;
-		dst += s->w;
-	}
-}
-
-void NewGui::drawSurface(const Graphics::Surface &s, int x, int y) {
-	Common::Rect rect(x, y, x + s.w, y + s.h);
-	rect.clip(_screen.w, _screen.h);
-
-	if (!rect.isValidRect())
-		return;
-	
-	assert(s.bytesPerPixel == sizeof(OverlayColor));
-
-	OverlayColor *src = (OverlayColor *)s.pixels;
-	OverlayColor *dst = getBasePtr(rect.left, rect.top);
-
-	int w = rect.width();
-	int h = rect.height();
-
-	while (h--) {
-		memcpy(dst, src, s.pitch);
-		src += w;
-		dst += _screenPitch;
-	}
-}
-
-void NewGui::blendRect(int x, int y, int w, int h, OverlayColor color, int level) {
-#ifdef NEWGUI_256
-	fillRect(x, y, w, h, color);
-#else
-	Common::Rect rect(x, y, x + w, y + h);
-	rect.clip(_screen.w, _screen.h);
-
-	if (!rect.isValidRect())
-		return;
-
-	if (_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
-
-		int a, r, g, b;
-		uint8 aa, ar, ag, ab;
-		_system->colorToARGB(color, aa, ar, ag, ab);
-		a = aa*level/(level+1);
-		if (a < 1)
-			return;
-		r = ar * a;
-		g = ag * a;
-		b = ab * a;
-
-		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
-		
-		h = rect.height();
-		w = rect.width();
-		while (h--) {
-			for (int i = 0; i < w; i++) {
-				_system->colorToARGB(ptr[i], aa, ar, ag, ab);
-				int a2 = aa + a - (a*aa)/255;
-				ptr[i] = _system->ARGBToColor(a2,
-							      ((255-a)*aa*ar/255+r)/a2,
-							      ((255-a)*aa*ag/255+g)/a2,
-							      ((255-a)*aa*ab/255+b)/a2);
-			}
-			ptr += _screenPitch;
-		}
-
-	} else {
-
-		int r, g, b;
-		uint8 ar, ag, ab;
-		_system->colorToRGB(color, ar, ag, ab);
-		r = ar * level;
-		g = ag * level;
-		b = ab * level;
-
-		OverlayColor *ptr = getBasePtr(rect.left, rect.top);
-		
-		h = rect.height();
-		w = rect.width();
-
-		while (h--) {
-			for (int i = 0; i < w; i++) {
-				_system->colorToRGB(ptr[i], ar, ag, ab);
-				ptr[i] = _system->RGBToColor((ar + r) / (level+1),
-							     (ag + g) / (level+1),
-							     (ab + b) / (level+1));
-			}
-			ptr += _screenPitch;
-		}
-
-	}
-#endif
-}
-
-void NewGui::fillRect(int x, int y, int w, int h, OverlayColor color) {
-	_screen.fillRect(Common::Rect(x, y, x + w, y + h), color);
-}
-
-void NewGui::frameRect(int x, int y, int w, int h, OverlayColor color) {
-	_screen.frameRect(Common::Rect(x, y, x + w, y + h), color);
-}
-
-void NewGui::addDirtyRect(int x, int y, int w, int h) {
-	Common::Rect rect(x, y, x + w, y + h);
-	rect.clip(_screen.w, _screen.h);
-
-	if (!rect.isValidRect())
-		return;
-
-	// For now we don't keep yet another list of dirty rects but simply
-	// blit the affected area directly to the overlay. At least for our current
-	// GUI/widget/dialog code that is just fine.
-	OverlayColor *buf = getBasePtr(rect.left, rect.top);
-	_system->copyRectToOverlay(buf, _screenPitch, rect.left, rect.top, rect.width(), rect.height());
-}
-
-void NewGui::drawChar(byte chr, int xx, int yy, OverlayColor color, const Graphics::Font *font) {
-	if (font == 0)
-		font = &getFont();
-	font->drawChar(&_screen, chr, xx, yy, color);
-}
-
-int NewGui::getStringWidth(const String &str) const {
-	return getFont().getStringWidth(str);
-}
-
-int NewGui::getCharWidth(byte c) const {
-	return getFont().getCharWidth(c);
-}
-
-int NewGui::getFontHeight() const {
-	return getFont().getFontHeight();
-}
-
-void NewGui::drawString(const String &s, int x, int y, int w, OverlayColor color, TextAlignment align, int deltax, bool useEllipsis) {
-	getFont().drawString(&_screen, s, x, y, w, color, align, deltax, useEllipsis);
 }
 
 //

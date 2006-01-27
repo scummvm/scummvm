@@ -127,7 +127,7 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	return Widget::handleKeyDown(ascii, keycode, modifiers);
 }
 
-static void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool omitBottom) {
+/*static void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool omitBottom) {
 	NewGui &gui = g_gui;
 
 	gui.hLine(x + 1, y, x + width - 2, colorA);
@@ -141,36 +141,18 @@ static void box(int x, int y, int width, int height, OverlayColor colorA, Overla
 	}
 	gui.vLine(x + width - 1, y + 1, y + height - (omitBottom ? 1 : 2), colorB);
 	gui.vLine(x + width - 2, y + 1, y + height - (omitBottom ? 2 : 1), colorB);
-}
+}*/
 
 
 void TabWidget::drawWidget(bool hilite) {
-	NewGui *gui = &g_gui;
-
-	const int left1  = _x + 1;
-	const int right1 = _x + kTabLeftOffset + _activeTab * (_tabWidth + kTabSpacing);
-	const int left2  = right1 + _tabWidth;
-	const int right2 = _x + _w - 2;
-
-	// Draw horizontal line
-	gui->hLine(left1, _y + _tabHeight - 2, right1, gui->_shadowcolor);
-	gui->hLine(left2, _y + _tabHeight - 2, right2, gui->_shadowcolor);
-
 	// Iterate over all tabs and draw them
 	int i, x = _x + kTabLeftOffset;
 	for (i = 0; i < (int)_tabs.size(); ++i) {
-		OverlayColor color = (i == _activeTab) ? gui->_color : gui->_shadowcolor;
 		int yOffset = (i == _activeTab) ? 0 : 2;
-		box(x, _y + yOffset, _tabWidth, _tabHeight - yOffset, color, color, (i == _activeTab));
-		gui->drawString(_tabs[i].title, x + kTabPadding, _y + yOffset / 2 + (_tabHeight - gui->getFontHeight() - 3), _tabWidth - 2 * kTabPadding, gui->_textcolor, kTextAlignCenter);
+		g_gui.theme()->drawTab(Common::Rect(x, _y+yOffset, x+_tabWidth, _y+_tabHeight), _tabs[i].title, (i == _activeTab));
 		x += _tabWidth + kTabSpacing;
 	}
-
-	// Draw more horizontal lines
-	gui->hLine(left1, _y + _tabHeight - 1, right1, gui->_color);
-	gui->hLine(left2, _y + _tabHeight - 1, right2, gui->_color);
-	gui->hLine(_x+1, _y + _h - 2, _x + _w - 2, gui->_shadowcolor);
-	gui->hLine(_x+1, _y + _h - 1, _x + _w - 2, gui->_color);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y+_tabHeight-2, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
 }
 
 Widget *TabWidget::findWidget(int x, int y) {

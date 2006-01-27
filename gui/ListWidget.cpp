@@ -37,6 +37,7 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize w
 	}
 
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
+	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -297,27 +298,25 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 }
 
 void ListWidget::drawWidget(bool hilite) {
-	NewGui *gui = &g_gui;
 	int i, pos, len = _list.size();
 	Common::String buffer;
 	int deltax;
 
 	// Draw a thin frame around the list.
-	gui->hLine(_x, _y, _x + _w - 1, gui->_color);
-	gui->hLine(_x, _y + _h - 1, _x + _w - 1, gui->_shadowcolor);
-	gui->vLine(_x, _y, _y + _h - 1, gui->_color);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const OverlayColor textColor = (_selectedItem == pos && _hasFocus) ? gui->_bgcolor : gui->_textcolor;
 		const int y = _y + 2 + kLineHeight * i;
+		const int fontHeight = kLineHeight;
+		bool inverted = false;
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos) {
 			if (_hasFocus)
-				gui->fillRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+				inverted = true;
 			else
-				gui->frameRect(_x + 1, _y + 1 + kLineHeight * i, _w - 1, kLineHeight, gui->_textcolorhi);
+				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y + 1 + kLineHeight * i, _x+_w-1, y+fontHeight-1), _hints, Theme::kWidgetBackgroundBorderSmall);
 		}
 
 		// If in numbering mode, we first print a number prefix
@@ -325,7 +324,7 @@ void ListWidget::drawWidget(bool hilite) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			gui->drawString(buffer, _x + 2, y, _w - 4, textColor);
+			g_gui.theme()->drawText(Common::Rect(_x+2, y, _x+_w-2, y+fontHeight-1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		}
 
 		Common::Rect r(getEditRect());
@@ -335,11 +334,11 @@ void ListWidget::drawWidget(bool hilite) {
 			adjustOffset();
 			deltax = -_editScrollOffset;
 
-			gui->drawString(buffer, _x + r.left, y, r.width(), textColor, kTextAlignLeft, deltax, false);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left - deltax, y, _x+_w-2, y+fontHeight-1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		} else {
 			buffer = _list[pos];
 			deltax = 0;
-			gui->drawString(buffer, _x + r.left, y, r.width(), textColor);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x+_w-2, y+fontHeight-1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		}
 	}
 }

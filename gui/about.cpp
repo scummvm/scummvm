@@ -73,7 +73,6 @@ static const char *credits_intro[] = {
 
 #include "gui/credits.h"
 
-
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
 	_scrollPos(0), _scrollTime(0), _modifiers(0), _willClose(false) {
@@ -110,7 +109,6 @@ AboutDialog::AboutDialog()
 		}
 	}
 	_w += 2*xOff;
-
 
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
@@ -166,7 +164,7 @@ void AboutDialog::addLine(const char *str) {
 		_lines.push_back(format);
 	} else {
 		Common::StringList wrappedLines;
-		g_gui.getFont().wordWrapText(str, _w - 2*xOff, wrappedLines);
+		g_gui.getFont().wordWrapText(str, _w - 2 * xOff, wrappedLines);
 
 		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
@@ -180,27 +178,17 @@ void AboutDialog::open() {
 	_scrollPos = 0;
 	_modifiers = 0;
 	_willClose = false;
-	_canvas.pixels = NULL;
 
 	Dialog::open();
 }
 
 void AboutDialog::close() {
-	free(_canvas.pixels);
 	Dialog::close();
 }
 
 void AboutDialog::drawDialog() {
-	if (!_canvas.pixels) {
-		// Blend over the background. Since we can't afford to do that
-		// every time the text is updated (it's horribly CPU intensive)
-		// we do it just once and then use a copy of the result as our
-		// static background for the remainder of the credits.
-		g_gui.blendRect(_x, _y, _w, _h, g_gui._bgcolor);
-		g_gui.copyToSurface(&_canvas, _x, _y, _w, _h);
-	}
-
-	g_gui.drawSurface(_canvas, _x, _y);
+	g_gui.theme()->setDrawArea(Common::Rect(_x, _y, _x+_w, _y+_h));
+	Dialog::drawDialog();
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -213,35 +201,37 @@ void AboutDialog::drawDialog() {
 
 	for (int line = firstLine; line < lastLine; line++) {
 		const char *str = _lines[line].c_str();
-		Graphics::TextAlignment align = Graphics::kTextAlignCenter;
-		OverlayColor color = g_gui._textcolor;
+		Theme::kTextAlign align = Theme::kTextAlignCenter;
+		Theme::kState state = Theme::kStateEnabled;
 		while (str[0] == '\\') {
 			switch (str[1]) {
 			case 'C':
-				align = Graphics::kTextAlignCenter;
+				align = Theme::kTextAlignCenter;
 				break;
 			case 'L':
-				align = Graphics::kTextAlignLeft;
+				align = Theme::kTextAlignLeft;
 				break;
 			case 'R':
-				align = Graphics::kTextAlignRight;
+				align = Theme::kTextAlignRight;
 				break;
 			case 'c':
 				switch (str[2]) {
 				case '0':
-					color = g_gui._textcolor;
+					state = Theme::kStateEnabled;
 					break;
 				case '1':
-					color = g_gui._textcolorhi;
+					state = Theme::kStateHighlight;
 					break;
 				case '2':
-					color = g_gui._color;
+					state = Theme::kStateDisabled;
 					break;
 				case '3':
-					color = g_gui._shadowcolor;
+					warning("Need state for color 3");
+					// color = g_gui._shadowcolor;
 					break;
 				case '4':
-					color = g_gui._bgcolor;
+					warning("Need state for color 4");
+					// color = g_gui._bgcolor;
 					break;
 				default:
 					error("Unknown color type '%c'", str[2]);
@@ -255,31 +245,17 @@ void AboutDialog::drawDialog() {
 			str += 2;
 		}
 		// Trim leading whitespaces if center mode is on
-		if (align == Graphics::kTextAlignCenter)
+		if (align == Theme::kTextAlignCenter)
 			while (*str && *str == ' ')
 				str++;
 
-		g_gui.drawString(str, _x + xOff, y, _w - 2 * xOff, color, align, 0, false);
+		g_gui.theme()->drawText(Common::Rect(_x + xOff, y, _x + _w - xOff, y + g_gui.theme()->getFontHeight() + 4), str, state, align, false, 0, false);
 		y += _lineHeight;
 	}
-
-	// Draw a border
-	g_gui.box(_x, _y, _w, _h, g_gui._color, g_gui._shadowcolor);
-
-	// Finally blit it all to the screen
-	g_gui.addDirtyRect(_x, _y, _w, _h);
+	g_gui.theme()->resetDrawArea();
 }
 
-
 void AboutDialog::handleTickle() {
-	// We're in the process of doing a full redraw to re-create the
-	// background image for the text. That means we need to wait for the
-	// GUI itself to clear the overlay and call drawDialog() in all of the
-	// dialogs, otherwise we'll only redraw this one and it'll still have
-	// the remains of the old image, including the text that was on it.
-	if (!_canvas.pixels)
-		return;
-
 	const uint32 t = getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (scrollOffset > 0) {
@@ -302,16 +278,6 @@ void AboutDialog::handleTickle() {
 	}
 }
 
-void AboutDialog::handleScreenChanged() {
-	// The screen has changed. That means the overlay colors in the canvas
-	// may no longer be correct. Reset it, and issue a full redraw.
-	// TODO: We could check if the bit format has changed, like we do in
-	// the MPEG player.
-	free(_canvas.pixels);
-	_canvas.pixels = NULL;
-	draw();
-}
-
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	// Close upon any mouse click
 	close();
@@ -328,6 +294,5 @@ void AboutDialog::handleKeyUp(uint16 ascii, int keycode, int modifiers) {
 	if (ascii && _willClose)
 		close();
 }
-
 
 } // End of namespace GUI
