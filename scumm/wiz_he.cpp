@@ -1019,7 +1019,6 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			_vm->res.lock(rtImage, dstResNum);
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 			getWizImageDim(dstResNum, 0, cw, ch);
@@ -1261,7 +1260,6 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
 			assert(dstPtr);
-			_vm->res.lock(rtImage, dstResNum);
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 
