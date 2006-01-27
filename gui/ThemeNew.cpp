@@ -566,12 +566,12 @@ bool ThemeNew::addDirtyRect(Common::Rect r, bool backup) {
 	return true;
 }
 
-inline uint8 calcColor(uint8 start, uint8 end, int pos, int max) {
+inline uint8 calcGradient(uint8 start, uint8 end, int pos, int max) {
 	int diff = ((int)end - (int)start) * pos / max;
 	return start + diff;
 }
 
-OverlayColor calcColor(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
+OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
 	pos *= factor;
 	if (pos > max) {
 		pos = max;
@@ -596,9 +596,9 @@ OverlayColor calcColor(OverlayColor start, OverlayColor end, int pos, int max, u
 		eg = (end >> 5) & 0x1F;
 		eb = (end >> 0) & 0x1F;
 	}
-	uint8 cr = calcColor(sr, er, pos, max);
-	uint8 cg = calcColor(sg, eg, pos, max);
-	uint8 cb = calcColor(sb, eb, pos, max);
+	uint8 cr = calcGradient(sr, er, pos, max);
+	uint8 cg = calcGradient(sg, eg, pos, max);
+	uint8 cb = calcGradient(sb, eb, pos, max);
 	if (gBitFormat == 565) {
 		result = ((int)(cr & 0x1F) << 11) | ((int)(cg & 0x3F) << 5) | (int)(cb & 0x1F);
 	} else {
@@ -611,7 +611,7 @@ void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor
 	OverlayColor *ptr = (OverlayColor*)_screen.getBasePtr(r.left, r.top);
 	int h = r.height();
 	while (h--) {
-		OverlayColor col = calcColor(start, end, r.height()-h, r.height());
+		OverlayColor col = calcGradient(start, end, r.height()-h, r.height());
 		for (int i = 0; i < r.width(); ++i) {
 			ptr[i] = col;
 		}
@@ -666,8 +666,8 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 			usedHeight = specialHeight;
 		}
 
-		OverlayColor startCol = calcColor(start, end, yPos-r.top, r.height(), factor);
-		OverlayColor endCol = calcColor(start, end, yPos-r.top+usedHeight, r.height(), factor);
+		OverlayColor startCol = calcGradient(start, end, yPos-r.top, r.height(), factor);
+		OverlayColor endCol = calcGradient(start, end, yPos-r.top+usedHeight, r.height(), factor);
 
 		for (int i = 0; i < partsW; ++i) {
 
@@ -731,7 +731,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
 		for (int i = 0; i < r.height(); ++i) {
-			OverlayColor rowColor = calcColor(start, end, i, r.height(), factor);
+			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[x] != transparency && dst >= _screen.pixels) {
 					dst[x] = getColorAlpha(src[x], dst[x], alpha) & rowColor;
@@ -744,7 +744,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
 		for (int i = 0; i < r.height(); ++i) {
-			OverlayColor rowColor = calcColor(start, end, i, r.height(), factor);
+			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[drawWidth-x-1] != transparency && dst >= _screen.pixels) {
 					dst[x] = getColorAlpha(src[drawWidth-x-1], dst[x], alpha) & rowColor;
@@ -757,7 +757,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		src = (const OverlayColor*)surf->pixels;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
 		for (int i = 0; i < r.height(); ++i) {
-			OverlayColor rowColor = calcColor(start, end, i, r.height(), factor);
+			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[drawWidth-x-1] != transparency && dst >= _screen.pixels) {
 					dst[x] = getColorAlpha(src[drawWidth-x-1], dst[x], alpha) & rowColor;
@@ -770,7 +770,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 		src = (const OverlayColor*)surf->pixels;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
 		for (int i = 0; i < r.height(); ++i) {
-			OverlayColor rowColor = calcColor(start, end, i, r.height(), factor);
+			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[x] != transparency && dst >= _screen.pixels) {
 					dst[x] = getColorAlpha(src[x], dst[x], alpha) & rowColor;
