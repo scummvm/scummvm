@@ -166,6 +166,7 @@ public:
 	void fillWizLine(const WizParameters *params);
 	void fillWizPixel(const WizParameters *params);
 	void fillWizFlood(const WizParameters *params);
+	void remapWizImagePal(const WizParameters *params);
 
 	void getWizImageDim(int resNum, int state, int32 &w, int32 &h);
 	int getWizImageStates(int resnum);

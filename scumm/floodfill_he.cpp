@@ -22,9 +22,10 @@
 
 #include "common/stdafx.h"
 
-#include "scumm/intern.h"
-#include "scumm/scumm.h"
 #include "scumm/floodfill_he.h"
+#include "scumm/intern.h"
+#include "scumm/resource.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 	
@@ -285,6 +286,7 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 			}
 		}
 	}
+	_vm->res.setModified(rtImage, params->img.resNum);
 }
 
 } // End of namespace Scumm

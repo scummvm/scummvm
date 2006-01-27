@@ -33,7 +33,9 @@ enum {
 enum {
 	RF_LOCK = 0x80,
 	RF_USAGE = 0x7F,
-	RF_USAGE_MAX = RF_USAGE
+	RF_USAGE_MAX = RF_USAGE,
+
+ 	RS_MODIFIED = 0x10
 };
 
 

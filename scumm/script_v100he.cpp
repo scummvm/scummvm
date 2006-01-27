@@ -1117,10 +1117,12 @@ void ScummEngine_v100he::o100_resourceRoutines() {
 		}
 		break;
 	case 133:
-		if (_heResType == rtCharset)
+		if (_heResType == rtCharset) {
 			nukeCharset(_heResId);
-		else
+		} else {
+			res.setUnModified(_heResType, _heResId);
 			res.nukeResource(_heResType, _heResId);
+		}
 		break;
 	case 134:
 	case 135:
