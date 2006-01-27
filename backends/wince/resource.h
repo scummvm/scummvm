@@ -16,6 +16,7 @@
 #define ITEM_SOUND_OFF                  119
 #define ITEM_VIEW_PORTRAIT              120
 #define ITEM_VIEW_LANDSCAPE             122
+#define ITEM_BINDKEYS                   125
 #define IDS_CAP_MENUITEM40002           40003
 #define ID_MENU_GAMES                   40006
 #define IDM_SMARTFON_SCAN               40007
@@ -27,10 +28,10 @@
 #define IDM_SMARTFON_HELP               40021
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        123
+#define _APS_NEXT_RESOURCE_VALUE        126
 #define _APS_NEXT_COMMAND_VALUE         40022
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101

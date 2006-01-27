@@ -38,7 +38,7 @@
 #include "CEActionsPocket.h"
 #include "CEActionsSmartphone.h"
 #include "ItemAction.h"
-#include "gui/KeysDialog.h"
+#include "gui/KeysDialog.h" 
 
 #include "gui/message.h"
 
@@ -48,7 +48,7 @@
 #include "CEException.h"
 
 #ifdef USE_VORBIS
-#include <vorbis/vorbisfile.h>
+#include <tremor/vorbisfile.h>
 #endif
 
 using namespace CEGUI;
@@ -63,6 +63,7 @@ using namespace CEGUI;
 #define NAME_ITEM_SKIP			"Skip"
 #define NAME_ITEM_SOUND			"Sound"
 #define NAME_ITEM_ORIENTATION	"Orientation"
+#define NAME_ITEM_BINDKEYS		"Bindkeys"
 
 // Given to the true main, needed for backend adaptation
 
@@ -112,6 +113,26 @@ static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
 bool isSmartphone() {
 	//return _isSmartphone;
 	return _hasSmartphoneResolution;
+}
+
+// ********************************************************************************************
+
+// Dummy SDL functions
+
+
+void SDL_CDClose(SDL_CD *cdrom) {
+}
+int SDL_CDStop(SDL_CD *cdrom) {
+	return CD_ERROR;
+}
+SDL_CD *SDL_CDOpen(int drive) { 
+	return NULL;
+}
+int SDL_CDPlayTracks(SDL_CD *cdrom, int strack, int sframe, int ntracks, int nframes) {
+	return CD_ERROR;
+}
+CDstatus SDL_CDStatus(SDL_CD *cdrom) {
+	return CD_ERROR;
 }
 
 // ********************************************************************************************
@@ -214,10 +235,11 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(false), _newOrientation(false), _panelInitialized(false),
 	_panelVisible(false), _panelStateForced(false), _forceHideMouse(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0)
+	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
+	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL)
 {
 	_isSmartphone = CEDevice::isSmartphone();
-	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution();
+	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
 	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 	if (_isSmartphone) {
 		_mouseCurState.x = 20;
@@ -238,7 +260,16 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 
 void OSystem_WINCE3::swap_panel_visibility() {
 	if (!_forcePanelInvisible && !_panelStateForced) {
-		_panelVisible = !_panelVisible;
+		if (_panelVisible) {
+			if (_toolbarHandler.activeName() == NAME_PANEL_KEYBOARD)
+				_panelVisible = !_panelVisible;
+			else
+				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+		}
+		else {
+			_toolbarHandler.setActive(NAME_MAIN_PANEL);
+			_panelVisible = !_panelVisible;
+		}
 		_toolbarHandler.setVisible(_panelVisible);
 		if (_screenHeight > 240)
 			addDirtyRect(0, 400, 640, 80);
@@ -703,7 +734,7 @@ void OSystem_WINCE3::update_game_settings() {
 		Panel *panel;
 		_panelInitialized = true;
 		// Add the main panel
-		panel = new Panel(10, 40);
+		panel = new Panel(0, 32);
 		panel->setBackground(IMAGE_PANEL);
 		// Save
 		panel->add(NAME_ITEM_OPTIONS, new ItemAction(ITEM_OPTIONS, POCKET_ACTION_SAVE));
@@ -711,6 +742,8 @@ void OSystem_WINCE3::update_game_settings() {
 		panel->add(NAME_ITEM_SKIP, new ItemAction(ITEM_SKIP, POCKET_ACTION_SKIP));
 		// sound
 		panel->add(NAME_ITEM_SOUND, new ItemSwitch(ITEM_SOUND_OFF, ITEM_SOUND_ON, &_soundMaster));
+		// knakos patch : bind key icon
+		panel->add(NAME_ITEM_BINDKEYS, new ItemAction(ITEM_BINDKEYS, POCKET_ACTION_BINDKEYS));
 		// portrait/landscape - screen dependant
 		// FIXME : will still display the portrait/landscape icon when using a scaler (but will be disabled)
 		if (_screenWidth <= 320 && (isOzone() || !CEDevice::hasDesktopResolution())) {
@@ -735,6 +768,8 @@ void OSystem_WINCE3::update_game_settings() {
 		if (_hasSmartphoneResolution)
 			panel->setVisible(false);
 
+		_saveToolbarState = true;
+
 		// Set Smush Force Redraw rate for Full Throttle
 		if (!ConfMan.hasKey("Smush_force_redraw")) {
 			ConfMan.set("Smush_force_redraw", 30);
@@ -749,6 +784,9 @@ void OSystem_WINCE3::initSize(uint w, uint h, int overlayScale) {
 
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
+
+	if (_isSmartphone)
+		ConfMan.set("landscape", true);
 
 	switch (_transactionMode) {
 		case kTransactionActive:
@@ -830,7 +868,7 @@ bool OSystem_WINCE3::update_scalers() {
 	}
 
 //#ifdef WIN32_PLATFORM_WFSP
-	if (_hasSmartphoneResolution) {
+	if (CEDevice::hasSmartphoneResolution()) {
 		if (_screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
 		_scaleFactorXm = 2;
@@ -1162,11 +1200,14 @@ void OSystem_WINCE3::hotswapGFXMode() {
 void OSystem_WINCE3::update_keyboard() {
 
 	// Update the forced keyboard for Monkey Island copy protection
+	if (_monkeyKeyboard) {
+		_toolbarHandler.setVisible(true);
+	}
 	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
 		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
 			// Switch back to the normal panel now that the keyboard is not used anymore
 			_monkeyKeyboard = false;
-			_toolbarHandler.setActive(NAME_MAIN_PANEL);
+			_toolbarHandler.setActive(NAME_MAIN_PANEL);		 
 	}
 }
 
@@ -2004,7 +2045,6 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 
 	if (!keyEvent) {
 		if (_isSmartphone) {
-
 			if (_lastKeyPressed) {
 				if (currentTime > _keyRepeatTime + _keyRepeatTrigger) {
 					_keyRepeatTime = currentTime;

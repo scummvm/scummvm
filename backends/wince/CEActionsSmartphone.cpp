@@ -33,6 +33,8 @@
 
 #include "common/config-manager.h"
 
+#include "gui/KeysDialog.h"
+
 #ifdef _WIN32_WCE
 #define		KEY_ALL_SKIP	3457
 #endif
@@ -47,13 +49,14 @@ const String smartphoneActionNames[] = {
 	"Save",
 	"Skip",
 	"Zone",
-	"FT Cheat"
+	"FT Cheat",
+	"Bind Keys"
 };
 
 #ifdef SIMU_SMARTPHONE
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8, 0 };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { 0x111, 0x112, 0x114, 0x113, 0x11a, 0x11b, VK_LWIN, VK_ESCAPE, VK_F8, 0, VK_RETURN };
 #else
-const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0 };
+const int ACTIONS_SMARTPHONE_DEFAULT[] = { '4', '6', '8', '2', 0x11a, 0x11b, '0', VK_ESCAPE, '9', 0, VK_RETURN };
 #endif
 
 void CEActionsSmartphone::init(GameDetector &detector) {
@@ -150,6 +153,8 @@ void CEActionsSmartphone::initInstanceGame() {
 	// FT Cheat
 	_action_enabled[SMARTPHONE_ACTION_FT_CHEAT] = true;
 	_key_action[SMARTPHONE_ACTION_FT_CHEAT].setAscii(86); // shift-V
+	// Bind keys
+	_action_enabled[SMARTPHONE_ACTION_BINDKEYS] = true;
 }
 
 
@@ -157,6 +162,8 @@ CEActionsSmartphone::~CEActionsSmartphone() {
 }
 
 bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
+	static bool keydialogrunning = false;
+
 	if (!pushed) {
 		switch (action) {
 			case SMARTPHONE_ACTION_RIGHTCLICK:
@@ -200,6 +207,15 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 			return true; 
 		case SMARTPHONE_ACTION_ZONE:
 			_CESystem->switch_zone();
+			return true;
+		case SMARTPHONE_ACTION_BINDKEYS:
+			if (!keydialogrunning) {
+				keydialogrunning = true;
+				GUI::KeysDialog *keysDialog = new GUI::KeysDialog();
+				keysDialog->runModal();
+				delete keysDialog;
+				keydialogrunning = false;
+			}
 			return true;
 	}
 
