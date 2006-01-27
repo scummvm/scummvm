@@ -1,8 +1,9 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.8.1 (????-??-??)
+0.8.1 (2006-01-31)
  General:
+   - More descriptive game titles in all engines.
    - Fixed crash when trying to apply aspect-ratio correction to games that
      cannot use it.
    - Fixed potential security vulnerability with oversized PATH environment
@@ -11,16 +12,31 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      configurable.
 
  SCUMM:
+   - Scrolling fixes in COMI, so it is less CPU-hungry.
+   - Added support for Maniac Mansion NES German version.
    - Fixed mouse button states in COMI.
    - Fixed overflow when using control panel for robot in the Dig.
    - Added support for sound code, used by songs in HE games.
+   - Improved shadows in later HE games.
    - Fixed subtitles glitches in HE games.
    - Improved music/sound for HE games.
    - Improved support for international versions of HE games.
    - Improved support for Macintosh versions of games.
    - Fixed several minor bugs.
 
+ BASS:
+   - Fix crash when speed/volume sliders are clicked and then dragged out
+     of the scummvm window.
+
+ Gob:
+   - Fixed disappearing cursor when level password is typed in
+   - Warn user if he tries to run CD version directly from CD under Windows
+
+ SAGA:
+   - Fix digital music playback under BE systems.
+
  Simon:
+   - Implemented more precise MD5-based game detection.
    - Added Polish support for Simon the Sorcerer 2.
    - Fixed fades during ride to goblins camp in Simon the Sorcerer 2.
    - Fixed palette delay at the end of Simon the Sorcerer 1.
@@ -38,6 +54,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixes and cleanups to the end credits. The German credits work now.
    - Fixed missing speech/music in the second half of the game, reported to
      happen in some versions of the game.
+
+ PS2 Port:
+   - Completely reworked and now really goes official.
 
  PSP Port:
    - Fixed a bug that caused Broken Sword 1, and games that use ripped CDDA
