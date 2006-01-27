@@ -36,6 +36,12 @@ namespace Scumm {
 Sprite::Sprite(ScummEngine_v90he *vm) : _vm(vm) {
 }
 
+Sprite::~Sprite() {
+	free(_spriteGroups);
+	free(_spriteTable);
+	free(_activeSpritesTable);
+}
+
 void ScummEngine_v90he::allocateArrays() {
 	ScummEngine::allocateArrays();
 	_sprite->allocTables(_numSprites, MAX(64, _numSprites / 4), 64);

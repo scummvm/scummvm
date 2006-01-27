@@ -88,6 +88,9 @@ Sound::Sound(ScummEngine *parent)
 Sound::~Sound() {
 	stopCDTimer();
 	delete _sfxFile;
+
+	// HE Specific
+	free(_heMusic);
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {

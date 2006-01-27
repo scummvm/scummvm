@@ -1670,6 +1670,9 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 	if (_heversion >= 98) {
 		delete _logicHE;
 	}
+	if (_heversion >= 99) {
+		free(_hePalettes);
+	}
 }
 #endif
 

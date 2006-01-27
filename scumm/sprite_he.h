@@ -102,6 +102,7 @@ class ScummEngine_v90he;
 class Sprite {
 public:
 	Sprite(ScummEngine_v90he *vm);
+	virtual ~Sprite();
 
 	SpriteInfo *_spriteTable;
 	SpriteGroup *_spriteGroups;
