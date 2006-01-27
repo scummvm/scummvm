@@ -214,6 +214,12 @@ struct Menu {
 	MenuItem item[6];
 };
 
+struct KeyboardEvent {
+	bool pending;
+	uint32 repeat;
+	uint8 ascii;
+};
+
 class KyraEngine : public Engine {
 	friend class MusicPlayer;
 	friend class Debugger;
@@ -657,16 +663,20 @@ protected:
 	void processMenuButton(Button *button);
 	void processAllMenuButtons();
 
-	const char *getSavegameName(int num);
+	const char *getSavegameFilename(int num);
 	void setupSavegames(Menu &menu, int num);
+	int getNextSavegameSlot();
 
 	int gui_resumeGame(Button *button);
 	int gui_loadGameMenu(Button *button);
+	int gui_saveGameMenu(Button *button);
 	int gui_quitPlaying(Button *button);
 	int gui_quitConfirmYes(Button *button);
 	int gui_quitConfirmNo(Button *button);
 	int gui_loadGame(Button *button);
-	int gui_cancelLoadGameMenu(Button *button);
+	int gui_saveGame(Button *button);
+	int gui_savegameConfirm(Button *button);
+	int gui_cancelSubMenu(Button *button);
 	int gui_scrollUp(Button *button);
 	int gui_scrollDown(Button *button);
 
@@ -675,12 +685,15 @@ protected:
 	void gui_redrawText(Menu menu);
 	void gui_redrawHighlight(Menu menu);
 	void gui_processHighlights(Menu &menu);
+	void gui_updateSavegameString();
+	void gui_redrawTextfield();
 
 	uint8 _game;
 	bool _fastMode;
 	bool _quitFlag;
 	bool _skipIntroFlag;
 	bool _abortIntroFlag;
+	bool _menuDirectlyToLoad;
 	bool _abortWalkFlag;
 	bool _abortWalkFlag2;
 	bool _mousePressFlag;
@@ -813,12 +826,13 @@ protected:
 	Button *_menuButtonList;
 	bool _displayMenu;
 	bool _menuRestoreScreen;
-	bool _displayQuitConfirmDialog;
-	bool _displayLoadGameMenu;
-	bool _cancelLoadGameMenu;
-	bool _quitConfirmed;
+	bool _displaySubMenu;
+	bool _cancelSubMenu;
 	int _savegameOffset;
 	int _gameToLoad;
+	char _savegameName[31];
+	const char *_specialSavegameString;
+	KeyboardEvent _keyboardEvent;
 
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;

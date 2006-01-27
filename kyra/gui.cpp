@@ -389,7 +389,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	_displayMenu = true;
 
 	// XXX setLabels
-	if (_currentCharacter->sceneId == 210 || caller == 0) {
+	if (_currentCharacter->sceneId == 210) {
 		snd_playSoundEffect(0x36);
 		return 0;
 	}
@@ -407,11 +407,17 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	calcCoords(_menu[0]);
 	calcCoords(_menu[1]);
 	calcCoords(_menu[2]);
-
-	initMenu(_menu[0]);
-	processAllMenuButtons();
+	calcCoords(_menu[3]);
 
 	_menuRestoreScreen = true;
+
+	if (_menuDirectlyToLoad)
+		gui_loadGameMenu(0);
+	else {
+		initMenu(_menu[0]);
+		processAllMenuButtons();
+	}
+
 	while (_displayMenu) {
 		gui_processHighlights(_menu[0]);
 		processButtonList(_menuButtonList);
@@ -535,6 +541,7 @@ void KyraEngine::calcCoords(Menu &menu) {
 
 void KyraEngine::gui_getInput() {
 	OSystem::Event event;
+	uint32 now = _system->getMillis();
 
 	_mousePressFlag = false;
 	while (_system->pollEvent(event)) {
@@ -550,11 +557,24 @@ void KyraEngine::gui_getInput() {
 				_mouseY = event.mouse.y;
 				_system->updateScreen();
 				break;
+			case OSystem::EVENT_KEYDOWN:
+				_keyboardEvent.pending = true;
+				_keyboardEvent.repeat = now + 400;
+				_keyboardEvent.ascii = event.kbd.ascii;
+				break;
+			case OSystem::EVENT_KEYUP:
+				_keyboardEvent.repeat = 0;
+				break;
 			default:
 				break;
 		}
 	}
-	_system->delayMillis(10);
+
+	if (!_keyboardEvent.pending && _keyboardEvent.repeat && now >= _keyboardEvent.repeat) {
+		_keyboardEvent.pending = true;
+		_keyboardEvent.repeat = now + 100;
+	}
+	_system->delayMillis(3);
 }
 
 int KyraEngine::gui_resumeGame(Button *button) {
@@ -565,21 +585,43 @@ int KyraEngine::gui_resumeGame(Button *button) {
 	return 0;
 }
 
-const char *KyraEngine::getSavegameName(int num) {
+const char *KyraEngine::getSavegameFilename(int num) {
 	static char saveLoadSlot[12];
 
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
 	return saveLoadSlot;
 }
 
+int KyraEngine::getNextSavegameSlot() {
+	Common::InSaveFile *in;
+
+	for (int i = 1; i < 1000; i++) {
+		if ((in = _saveFileMan->openForLoading(getSavegameFilename(i)))) {
+			delete in;
+		} else {
+			return i;
+		}
+	}
+	warning("Didn't save: Ran out of savegame filenames!");
+	return 0;
+}
+
 void KyraEngine::setupSavegames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	static char savenames[5][31];
-
+	uint8 startSlot;
 	assert(num <= 5);
 
-	for (int i = 0; i < num; i++) {
-		if ((in = _saveFileMan->openForLoading(getSavegameName(i + _savegameOffset)))) {
+	if (_savegameOffset == 0) {
+		menu.item[0].itemString = _specialSavegameString;
+		menu.item[0].enabled = 1;
+		menu.item[0].field_1b = 0;
+		startSlot = 1;
+	} else
+		startSlot = 0;
+
+	for (int i = startSlot; i < num; i++) {
+		if ((in = _saveFileMan->openForLoading(getSavegameFilename(i + _savegameOffset)))) {
 			in->skip(8);
 			in->read(savenames[i], 31);
 			menu.item[i].itemString = savenames[i];
@@ -594,21 +636,29 @@ void KyraEngine::setupSavegames(Menu &menu, int num) {
 	}
 }
 
-int KyraEngine::gui_loadGameMenu(Button *button) {
-	debug(9, "KyraEngine::gui_loadGameMenu()");
+int KyraEngine::gui_saveGameMenu(Button *button) {
+	debug(9, "KyraEngine::gui_saveGameMenu()");
 	processMenuButton(button);
+	_menu[2].item[5].enabled = true;
+
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
+	_menu[2].menuName = "Select a position to save to:";
+	_specialSavegameString = "[ EMPTY SLOT ]";
+	for (int i = 0; i < 5; i++)
+		_menu[2].item[i].callback = &KyraEngine::gui_saveGame;
+
 	_savegameOffset = 0;
 	setupSavegames(_menu[2], 5);
+
 	initMenu(_menu[2]);
 	processAllMenuButtons();
 
-	_displayLoadGameMenu = true;
-	_cancelLoadGameMenu = false;
+	_displaySubMenu = true;
+	_cancelSubMenu = false;
 
-	while (_displayLoadGameMenu) {
+	while (_displaySubMenu) {
 		gui_getInput();
 		gui_processHighlights(_menu[2]);
 		processButtonList(_menuButtonList);
@@ -617,31 +667,163 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
-	if (_cancelLoadGameMenu) {
+	if (_cancelSubMenu) {
 		initMenu(_menu[0]);
 		processAllMenuButtons();
 	} else {
-		loadGame(getSavegameName(_gameToLoad));
+		_displayMenu = false;
+	}
+	return 0;
+}
+
+int KyraEngine::gui_loadGameMenu(Button *button) {
+	debug(9, "KyraEngine::gui_loadGameMenu()");
+	if (_menuDirectlyToLoad)
+		_menu[2].item[5].enabled = false;
+	else {
+		processMenuButton(button);
+		_menu[2].item[5].enabled = true;
+	}
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	_specialSavegameString = "[ START A NEW GAME ]";
+	_menu[2].menuName = "Which game would you like to reload?";	
+	for (int i = 0; i < 5; i++)
+		_menu[2].item[i].callback = &KyraEngine::gui_loadGame;
+
+	_savegameOffset = 0;
+	setupSavegames(_menu[2], 5);
+
+	initMenu(_menu[2]);
+	processAllMenuButtons();
+
+	_displaySubMenu = true;
+	_cancelSubMenu = false;
+
+	while (_displaySubMenu) {
+		gui_getInput();
+		gui_processHighlights(_menu[2]);
+		processButtonList(_menuButtonList);
+	}
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	if (_cancelSubMenu) {
+		initMenu(_menu[0]);
+		processAllMenuButtons();
+	} else {
+		loadGame(getSavegameFilename(_gameToLoad));
 		_displayMenu = false;
 		_menuRestoreScreen = false;
 	}
 	return 0;
 }
 
+void KyraEngine::gui_redrawTextfield() {
+	_screen->fillRect(38, 91, 287, 102, 250);
+	_text->printText(_savegameName, 38, 91, 30, 0, 0);
+	_screen->updateScreen();
+}
+
+void KyraEngine::gui_updateSavegameString() {
+	int length;
+
+	if (_keyboardEvent.pending && _keyboardEvent.ascii) {
+		length = strlen(_savegameName);
+
+		if (_keyboardEvent.ascii > 31 && _keyboardEvent.ascii < 127) {
+			if (length < 31) {
+				_savegameName[length] = _keyboardEvent.ascii;
+				_savegameName[length+1] = 0;
+				gui_redrawTextfield();
+			}
+		} else if (_keyboardEvent.ascii == 8 ||_keyboardEvent.ascii == 127) {
+			if (length > 0) {
+				_savegameName[length-1] = 0;
+				gui_redrawTextfield();
+			}
+		} else if (_keyboardEvent.ascii == 13) {
+			_displaySubMenu = false;
+		}
+	}
+
+	_keyboardEvent.pending = false;
+}
+
+int KyraEngine::gui_saveGame(Button *button) {
+	debug(9, "KyraEngine::gui_saveGame()");
+	processMenuButton(button);
+	_gameToLoad = button->specialValue;
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	initMenu(_menu[3]);
+	processAllMenuButtons();
+
+	_displaySubMenu = true;
+	_cancelSubMenu = false;
+
+	if (_savegameOffset == 0 && _gameToLoad == 0) {
+		_savegameName[0] = 0;
+	} else {
+		for (int i = 0; i < 5; i++) {
+			if (_menu[2].item[i].field_1b == _gameToLoad) {
+				strncpy(_savegameName, _menu[2].item[i].itemString, 31);
+				break;
+			}
+		}
+	}
+	gui_redrawTextfield();
+
+	_keyboardEvent.pending = 0;
+	while (_displaySubMenu) {
+		gui_getInput();
+		gui_updateSavegameString();
+		gui_processHighlights(_menu[3]);
+		processButtonList(_menuButtonList);
+	}
+
+	if (_cancelSubMenu) {
+		_displaySubMenu = true;
+		_cancelSubMenu = false;
+		initMenu(_menu[2]);
+		processAllMenuButtons();
+	} else {
+		if (_savegameOffset == 0 && _gameToLoad == 0)
+			_gameToLoad = getNextSavegameSlot();
+		if (_gameToLoad > 0)
+			saveGame(getSavegameFilename(_gameToLoad), _savegameName);
+	}
+
+	return 0;
+}
+
+int KyraEngine::gui_savegameConfirm(Button *button) {
+	debug(9, "KyraEngine::gui_savegameConfirm()");
+	processMenuButton(button);
+	_displaySubMenu = false;
+
+	return 0;
+}
+
 int KyraEngine::gui_loadGame(Button *button) {
 	debug(9, "KyraEngine::gui_loadGame()");
 	processMenuButton(button);
-	_displayLoadGameMenu = false;
+	_displaySubMenu = false;
 	_gameToLoad = button->specialValue;
 
 	return 0;
 }
 
-int KyraEngine::gui_cancelLoadGameMenu(Button *button) {
+int KyraEngine::gui_cancelSubMenu(Button *button) {
 	debug(9, "KyraEngine::gui_cancelLoadGameMenu()");
 	processMenuButton(button);
-	_displayLoadGameMenu = false;
-	_cancelLoadGameMenu = true;
+	_displaySubMenu = false;
+	_cancelSubMenu = true;
 
 	return 0;
 }
@@ -669,10 +851,10 @@ bool KyraEngine::gui_quitConfirm(const char *str) {
 	_menu[1].menuName = str;
 	initMenu(_menu[1]);
 
-	_displayQuitConfirmDialog = true;
-	_quitConfirmed = false;
+	_displaySubMenu = true;
+	_cancelSubMenu = true;
 
-	while (_displayQuitConfirmDialog) {
+	while (_displaySubMenu) {
 		gui_getInput();
 		gui_processHighlights(_menu[1]);
 		processButtonList(_menuButtonList);
@@ -681,14 +863,14 @@ bool KyraEngine::gui_quitConfirm(const char *str) {
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
-	return _quitConfirmed;
+	return !_cancelSubMenu;
 }
 
 int KyraEngine::gui_quitConfirmYes(Button *button) {
 	debug(9, "KyraEngine::gui_quitConfirmYes()");
 	processMenuButton(button);
-	_displayQuitConfirmDialog = false;
-	_quitConfirmed = true;
+	_displaySubMenu = false;
+	_cancelSubMenu = false;
 
 	return 0;
 }
@@ -696,8 +878,8 @@ int KyraEngine::gui_quitConfirmYes(Button *button) {
 int KyraEngine::gui_quitConfirmNo(Button *button) {
 	debug(9, "KyraEngine::gui_quitConfirmNo()");
 	processMenuButton(button);
-	_displayQuitConfirmDialog = false;
-	_quitConfirmed = false;
+	_displaySubMenu = false;
+	_cancelSubMenu = true;
 
 	return 0;
 }

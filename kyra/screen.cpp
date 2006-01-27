@@ -451,7 +451,7 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 
 void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
 	debug(9, "Screen::drawShadedBox(%i, %i, %i, %i, %i, %i)", x1, y1, x2, y2, color1, color2);
-
+	assert(x1 > 0 && y1 > 0);
 	hideMouse();
 
 	fillRect(x1, y1, x2, y1 + 1, color1);

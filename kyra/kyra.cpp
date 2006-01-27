@@ -410,6 +410,7 @@ int KyraEngine::init(GameDetector &detector) {
 	_mousePressFlag = false;
 	
 	 _targetName = detector._targetName;
+	_menuDirectlyToLoad = false;
 	 
 	 _lastMusicCommand = 0;
 
@@ -491,6 +492,8 @@ int KyraEngine::go() {
 		setGameFlag(0xFD);
 		setGameFlag(0xEF);
 		seq_intro();
+		if (_skipIntroFlag &&_abortIntroFlag)
+			resetGameFlag(0xEF);
 		startup();
 		resetGameFlag(0xEF);
 		mainLoop();
@@ -576,6 +579,14 @@ void KyraEngine::startup() {
 	snd_playTheme(1);
 	snd_setSoundEffectFile(1);
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
+	
+	if (_abortIntroFlag && _skipIntroFlag) {
+		_menuDirectlyToLoad = true;
+		_screen->setMouseCursor(1, 1, _shapes[4]);
+		buttonMenuCallback(0);
+		_menuDirectlyToLoad = false;
+	} else
+		saveGame(getSavegameFilename(0), "New game");
 }
 
 void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
@@ -589,7 +600,7 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' && 
+				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
 						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
 					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
 					if (event.kbd.flags == OSystem::KBD_CTRL)
@@ -887,7 +898,14 @@ void KyraEngine::seq_intro() {
 		&KyraEngine::seq_introKallakWriting,
 		&KyraEngine::seq_introKallakMalcolm
 	};
-	_skipIntroFlag = true; // only true if user already saved the game once
+
+	Common::InSaveFile *in;
+	if ((in = _saveFileMan->openForLoading(getSavegameFilename(0)))) {
+		delete in;
+		_skipIntroFlag = true;
+	} else
+		_skipIntroFlag = false;
+
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
 	snd_playTheme(MUSIC_INTRO, 2);
