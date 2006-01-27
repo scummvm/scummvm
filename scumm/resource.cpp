@@ -150,11 +150,12 @@ void ScummEngine::openRoom(const int room) {
 		// If we have substitute
 		if (_substResFileNameIndex > 0 && !(_platform == Common::kPlatformNES || _platform == Common::kPlatformC64)) {
 			char tmpBuf[128];
-
 			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
 			strcpy(buf, tmpBuf);
-			generateSubstResFileName(buf2, tmpBuf, sizeof(tmpBuf));
-			strcpy(buf2, tmpBuf);
+			if (buf2[0]) {
+				generateSubstResFileName(buf2, tmpBuf, sizeof(tmpBuf));
+				strcpy(buf2, tmpBuf);
+			}
 		}
 
 		result = openResourceFile(buf, encByte);

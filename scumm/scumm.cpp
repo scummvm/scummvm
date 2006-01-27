@@ -3183,16 +3183,20 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	if (index <= 0)
 		return -1;
 
-	char num = filename[strlen(filename) - 1];
+	size_t len = strlen(filename);
+	assert(len >= 5);
+
+	char num = filename[len - 1];
 
 	// In some cases we have .(a) and .(b) extensions
 	if (num == ')')
-		num = filename[strlen(filename) - 2];
+		num = filename[len - 2];
 
 	const char *ext = NULL;
 
 	ext = strrchr(filename, '.');
-	size_t len = (ext != NULL) ? ext - filename : strlen(filename);
+	if (ext)
+		len = ext - filename;
 
 	for (int i = index; substResFileNameTable[i].winName; i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
