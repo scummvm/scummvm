@@ -918,6 +918,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 			break;
 		}
 	}
+	_vm->res.setModified(rtImage, resNum);
 }
 
 void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
@@ -1441,18 +1442,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		dstResNum = params->dstResNum;
 	}
 	if (params->processFlags & kWPFRemapPalette) {
-		int st = (params->processFlags & kWPFNewState) ? params->img.state : 0;
-		int num = params->remapNum;
-		const uint8 *index = params->remapIndex;
-		uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
-		assert(iwiz);
-		uint8 *rmap = _vm->findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
-		assert(rmap);
-		WRITE_BE_UINT32(rmap, 0x01234567);
-		while (num--) {
-			uint8 idx = *index++;
-			rmap[4 + idx] = params->remapColor[idx];
-		}
+		remapWizImagePal(params);
 		flags |= kWIFRemapPalette;
 	}
 
@@ -1556,6 +1546,7 @@ void Wiz::createWizEmptyImage(const WizParameters *params) {
 		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
 		WRITE_BE_UINT32(res_data, 8 + img_w * img_h); res_data += 4;
 	}
+	_vm->res.setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::fillWizRect(const WizParameters *params) {
@@ -1600,6 +1591,7 @@ void Wiz::fillWizRect(const WizParameters *params) {
 			}
 		}
 	}
+	_vm->res.setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::fillWizLine(const WizParameters *params) {
@@ -1691,6 +1683,7 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			}
 		}
 	}
+	_vm->res.setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::fillWizPixel(const WizParameters *params) {
@@ -1727,6 +1720,23 @@ void Wiz::fillWizPixel(const WizParameters *params) {
 			}
 		}
 	}
+	_vm->res.setModified(rtImage, params->img.resNum);
+}
+
+void Wiz::remapWizImagePal(const WizParameters *params) {
+	int st = (params->processFlags & kWPFNewState) ? params->img.state : 0;
+	int num = params->remapNum;
+	const uint8 *index = params->remapIndex;
+	uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
+	assert(iwiz);
+	uint8 *rmap = _vm->findWrappedBlock(MKID('RMAP'), iwiz, st, 0) ;
+	assert(rmap);
+	WRITE_BE_UINT32(rmap, 0x01234567);
+	while (num--) {
+		uint8 idx = *index++;
+		rmap[4 + idx] = params->remapColor[idx];
+	}
+	_vm->res.setModified(rtImage, params->img.resNum);
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
@@ -1767,7 +1777,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
 						_vm->VAR(119) = -2;
 					} else {
-						_vm->res.lock(rtImage, params->img.resNum);
+						_vm->res.setModified(rtImage, params->img.resNum);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = 0;
 						_vm->VAR(119) = 0;
 					}
@@ -1824,24 +1834,14 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 6:
 		if (params->processFlags & kWPFRemapPalette) {
-			int state = (params->processFlags & kWPFNewState) ? params->img.state : 0;
-			int num = params->remapNum;
-			const uint8 *index = params->remapIndex;
-			uint8 *iwiz = _vm->getResourceAddress(rtImage, params->img.resNum);
-			assert(iwiz);
-			uint8 *rmap = _vm->findWrappedBlock(MKID('RMAP'), iwiz, state, 0) ;
-			assert(rmap);
-			WRITE_BE_UINT32(rmap, 0x01234567);
-			while (num--) {
-				uint8 idx = *index++;
-				rmap[4 + idx] = params->remapColor[idx];
-			}
+			remapWizImagePal(params);
 		}
 		break;
 	// HE 99+
 	case 7:
 		// Used in PuttsFunShop/SamsFunShop/soccer2004
 		// TODO: Capture polygon
+		_vm->res.setModified(rtImage, params->img.resNum);
 		break;
 	case 8:
 		createWizEmptyImage(params);
@@ -1877,6 +1877,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	case 17:
 		// Used in to draw circles in FreddisFunShop/PuttsFunShop/SamsFunShop
 		// TODO: Ellipse
+		_vm->res.setModified(rtImage, params->img.resNum);
 		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);

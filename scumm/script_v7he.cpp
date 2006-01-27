@@ -631,6 +631,7 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 		break;
 	case 192:
 		resid = pop();
+		res.setUnModified(rtImage, resid);
 		res.nukeResource(rtImage, resid);
 		break;
 	case 201:

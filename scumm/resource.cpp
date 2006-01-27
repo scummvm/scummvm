@@ -40,7 +40,9 @@ namespace Scumm {
 enum {
 	RF_LOCK = 0x80,
 	RF_USAGE = 0x7F,
-	RF_USAGE_MAX = RF_USAGE
+	RF_USAGE_MAX = RF_USAGE,
+
+	RS_MODIFIED = 0x10
 };
 
 
@@ -623,6 +625,7 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 	res.name[id] = name;
 	res.address[id] = (byte **)calloc(num, sizeof(void *));
 	res.flags[id] = (byte *)calloc(num, sizeof(byte));
+	res.status[id] = (byte *)calloc(num, sizeof(byte));
 
 	if (mode) {
 		res.roomno[id] = (byte *)calloc(num, sizeof(byte));
@@ -1000,11 +1003,31 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 		return _sound->isSoundInUse(i);
 	case rtCharset:
 		return _charset->getCurID() == i;
+	case rtImage:
+		return res.isModified(type, i) != 0;
 	case rtSpoolBuffer:
 		return _sound->isSoundRunning(10000 + i) != 0;
 	default:
 		return false;
 	}
+}
+
+void ResourceManager::setModified(int type, int i) {
+	if (!validateResource("Modified", type, i))
+		return;
+	status[type][i] |= RS_MODIFIED;
+}
+
+void ResourceManager::setUnModified(int type, int i) {
+	if (!validateResource("Modified", type, i))
+		return;
+	status[type][i] &= ~RS_MODIFIED;
+}
+
+bool ResourceManager::isModified(int type, int i) const {
+	if (!validateResource("isModified", type, i))
+		return false;
+	return (status[type][i] & RS_MODIFIED) != 0;
 }
 
 void ResourceManager::expireResources(uint32 size) {
@@ -1059,6 +1082,7 @@ void ResourceManager::freeResources() {
 		}
 		free(address[i]);
 		free(flags[i]);
+		free(status[i]);
 		free(roomno[i]);
 		free(roomoffs[i]);
 

@@ -327,6 +327,7 @@ public:
 	byte **address[rtNumTypes];
 protected:
 	byte *flags[rtNumTypes];
+	byte *status[rtNumTypes];
 public:
 	byte *roomno[rtNumTypes];
 	uint32 *roomoffs[rtNumTypes];
@@ -349,6 +350,10 @@ public:
 	void lock(int type, int i);
 	void unlock(int type, int i);
 	bool isLocked(int type, int i) const;
+
+	void setModified(int type, int i);
+	void setUnModified(int type, int i);
+	bool isModified(int type, int i) const;
 
 	void setResourceCounter(int type, int index, byte flag);
 	void increaseResourceCounter();
