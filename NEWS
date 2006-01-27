@@ -44,6 +44,12 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
      tracks (most notably the CD version of Monkey Island 1), to stop
      functioning properly after a while.
 
+ WinCE Port:
+   - Check backends/wince/README-WinCE for the latest news
+   - Fixed disappearing panel when opening a list widget in GUI
+   - Knakos patches (QVGA smartphones fix, easier key binding and panel
+     switching)
+
 0.8.0 (2005-10-30)
  New Games:
    - Added SAGA engine (for the games "I Have No Mouth and I Must Scream"
