@@ -284,11 +284,6 @@ directory.
 To run The Legend of Kyrandia under ScummVM you need the kyra.dat file,
 which can be found in the Downloads section of the ScummVM website.
 
-Please note that as the menu system is not yet implemented, the
-only way of saving and loading is to use Alt+0-9 (for saving) and
-Ctrl+0-9 (for loading). Additionally, you must use 'q' to exit the
-game.
-
 3.9) Maniac Mansion NES notes
 ---- ------------------------
 Supported versions are English USA (E), French (F), Swedish (SW) and
