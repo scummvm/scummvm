@@ -229,7 +229,7 @@ static int findGames(Game *games, int max)
     for(DetectedGameList::const_iterator ge = candidates.begin();
 	ge != candidates.end(); ++ge)
       if(curr_game < max) {
-	strcpy(games[curr_game].filename_base, ge->name);
+	strcpy(games[curr_game].filename_base, ge->gameid);
 	strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
 	if(uniqueGame(games[curr_game].filename_base,
 		      games[curr_game].dir, games, curr_game)) {
