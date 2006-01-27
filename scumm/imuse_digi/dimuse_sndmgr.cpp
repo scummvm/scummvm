@@ -48,6 +48,8 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		closeSound(&_sounds[l]);
 	}
+
+	delete _cacheBundleDir;
 }
 
 void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs) {

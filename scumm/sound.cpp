@@ -77,6 +77,7 @@ Sound::Sound(ScummEngine *parent)
 	_currentMusic(0),
 	_soundsPaused(false),
 	_sfxMode(0),
+	_heMusic(0),
 	_heMusicTracks(0) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));

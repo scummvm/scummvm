@@ -32,13 +32,14 @@ BundleDirCache::BundleDirCache() {
 		_budleDirCache[fileId].fileName[0] = 0;
 		_budleDirCache[fileId].numFiles = 0;
 		_budleDirCache[fileId].compressedBun = false;
+		_budleDirCache[fileId].indexTable = NULL;
 	}
 }
 
 BundleDirCache::~BundleDirCache() {
 	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
-		if (_budleDirCache[fileId].bundleTable != NULL)
-			free (_budleDirCache[fileId].bundleTable);
+		free(_budleDirCache[fileId].bundleTable);
+		free(_budleDirCache[fileId].indexTable);
 	}
 }
 

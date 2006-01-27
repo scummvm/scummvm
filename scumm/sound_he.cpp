@@ -404,7 +404,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			sound = (char *)malloc(size * 4);
 			size = voxStream->readBuffer((int16*)sound, size * 2);
 			size *= 2; // 16bits.
-			delete(voxStream);
+			delete voxStream;
 		} else {
 			// Allocate a sound buffer, copy the data into it, and play
 			sound = (char *)malloc(size);
