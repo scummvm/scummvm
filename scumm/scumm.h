@@ -352,7 +352,6 @@ public:
 	void unlock(int type, int i);
 
 	void setModified(int type, int i);
-	void setUnModified(int type, int i);
 	bool isModified(int type, int i) const;
 
 	void setResourceCounter(int type, int index, byte flag);
