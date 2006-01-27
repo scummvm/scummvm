@@ -30,7 +30,7 @@
 #include "sky/struc.h"
 #include "sky/compact.h"
 
-#include "common/debugger.h"
+#include "common/debugger.cpp"
 
 namespace Sky {
 
