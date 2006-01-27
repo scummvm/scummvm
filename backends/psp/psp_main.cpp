@@ -38,7 +38,7 @@
 #include "./trace.h"
 
 
-//#define	USERSPACE_ONLY
+#define	USERSPACE_ONLY
 
 
 /**
@@ -130,7 +130,7 @@ extern "C" int scummvm_main(int argc, char *argv[]);
 int main(void)
 {
 	//PSPDebugTrace("Init debug screen\n");
-	pspDebugScreenInit();
+	//pspDebugScreenInit();
 
 	//PSPDebugTrace("Setup callbacks\n");
 	SetupCallbacks();
