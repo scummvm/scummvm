@@ -266,11 +266,6 @@ void draw_blitCursor(void) {
 		return;
 
 	draw_cursorIndex = -1;
-	if (draw_cursorX + draw_cursorWidth > 320)
-		draw_cursorWidth = 320 - draw_cursorX;
-
-	if (draw_cursorY + draw_cursorHeight > 200)
-		draw_cursorHeight = 200 - draw_cursorY;
 
 	if (draw_noInvalidated) {
 		vid_drawSprite(draw_backSurface, draw_frontSurface,
