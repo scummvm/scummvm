@@ -39,15 +39,15 @@ Frequently Asked Questions
 ==========================
 
 Q:  What do I need to run the games?
-A:  A 1.00 or 1.50 firmware PSP (or on firmware 2.00 via an EBOOT loader)
-    and the necessary datafiles for the game you want to play and obviously
-    this ScummVM port.
+A:  A 1.00 or 1.50 firmware PSP (or an EBOOT loader on firmware 2.00 or
+    higher), and the necessary datafiles for the game you want to play and
+    obviously this ScummVM port.
 
-Q:  Can I run this on my 1.51/1.52/2.01/2.50 firmware PSP?
-A:  No, you can't do this 'directly' as of yet.
-    A method exists for 'downgrading' a 2.00 firmware PSP to 1.50,
-    so you could upgrade a 1.52 based PSP to 2.00 and then downgrade to 1.50,
-    however, the details of this are beyond the scope of this document.
+Q:  Can I run game X with this?
+A:  You can find the list of supported games on the compatibility page
+    on http://www.scummvm.org.
+    Note that ScummVM is NOT a 'DOS (game) emulator', but written
+    specifically for certain games/engines.
 
 Q:  My Monkey Island 1 doesn't have any music, what gives?
 A:  If your version of Monkey Island came on a CD then it has the music
