@@ -152,11 +152,13 @@ Other contributions
   Code contributions
   ------------------
      Stuart Caie           - Decoders for Simon 1 Amiga data files
+     Paolo Costabel        - PSP port contributions
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
      Kovacs Endre Janos    - Several fixes for Simon1
      Jeroen Janssen        - Numerous readability and bugfix patches
      Andreas Karlsson      - Initial port for EPOC/SymbianOS
      Claudio Matsuoka      - Daily Linux builds
+     Thomas Mayer          - PSP port contributions
      Mikesch Nepomuk       - MI1 VGA floppy patches
      Nicolas Noble         - Config file and ALSA support
      Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
