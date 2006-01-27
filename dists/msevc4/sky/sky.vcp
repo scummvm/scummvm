@@ -109,7 +109,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /O2 /M$(CECrtMT) /c
-# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "DISABLE_KYRA" /D "USE_MPEG2" /D "USE_ZLIB" /YX /O2 /M$(CECrtMT) /c
+# ADD CPP /nologo /W3 /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "NDEBUG" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "WIN32" /D "USE_MPEG2" /D "USE_ZLIB" /D "DISABLE_KYRA" /YX /O2 /M$(CECrtMT) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -135,7 +135,7 @@ BSC32=bscmake.exe
 # PROP Target_Dir ""
 CPP=clarm.exe
 # ADD BASE CPP /nologo /W3 /Zi /Od /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "_LIB" /YX /M$(CECrtMTDebug) /c
-# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "DISABLE_KYRA" /D "USE_ZLIB" /D "USE_WINDBG" /YX /M$(CECrtMTDebug) /c
+# ADD CPP /nologo /W3 /Zi /Od /I "../../../" /I "../../../common/" /I "../../../backends/wince/" /I "../../../backends/wince/missing/" /I "../../../backends/wince/CEgui" /I "../../../backends/wince/CEkeys" /D "_LIB" /D "DEBUG" /D _WIN32_WCE=$(CEVersion) /D "$(CePlatform)" /D "ARM" /D "_ARM_" /D "ARMV4" /D UNDER_CE=$(CEVersion) /D "UNICODE" /D "_UNICODE" /D "SCUMM_NEED_ALIGNMENT" /D "FPM_DEFAULT" /D "USE_MAD" /D "NONSTANDARD_PORT" /D "USE_VORBIS" /D "USE_TREMOR" /D "USE_MPEG2" /D "WIN32" /D "USE_ZLIB" /D "USE_WINDBG" /D "DISABLE_KYRA" /YX /M$(CECrtMTDebug) /c
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
@@ -365,6 +365,7 @@ NODEP_CPP_ADLIB=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -385,13 +386,13 @@ DEP_CPP_ADLIB=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\fmopl.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIB=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -510,6 +511,7 @@ NODEP_CPP_ADLIBM=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -533,13 +535,13 @@ DEP_CPP_ADLIBM=\
 	"..\..\..\sound\audiostream.h"\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_ADLIBM=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -663,6 +665,7 @@ NODEP_CPP_GMCHA=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -680,7 +683,6 @@ DEP_CPP_GMCHA=\
 	"..\..\..\sky\music\gmchannel.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMCHA=\
 	"..\..\..\common\config.h"\
@@ -688,6 +690,7 @@ NODEP_CPP_GMCHA=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -804,6 +807,7 @@ NODEP_CPP_GMMUS=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -826,7 +830,6 @@ DEP_CPP_GMMUS=\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GMMUS=\
 	"..\..\..\common\config.h"\
@@ -834,6 +837,7 @@ NODEP_CPP_GMMUS=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -959,6 +963,7 @@ NODEP_CPP_MT32M=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -980,7 +985,6 @@ DEP_CPP_MT32M=\
 	"..\..\..\sky\music\mt32music.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sound\mididrv.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MT32M=\
 	"..\..\..\common\config.h"\
@@ -988,6 +992,7 @@ NODEP_CPP_MT32M=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1103,6 +1108,7 @@ NODEP_CPP_MUSIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -1121,13 +1127,13 @@ DEP_CPP_MUSIC=\
 	"..\..\..\sky\disk.h"\
 	"..\..\..\sky\music\musicbase.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MUSIC=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1247,6 +1253,7 @@ NODEP_CPP_AUTOR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -1268,13 +1275,13 @@ DEP_CPP_AUTOR=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_AUTOR=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1402,6 +1409,7 @@ NODEP_CPP_COMPA=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -1430,13 +1438,13 @@ DEP_CPP_COMPA=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_COMPA=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1622,6 +1630,7 @@ NODEP_CPP_CONTR=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -1666,13 +1675,13 @@ DEP_CPP_CONTR=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_CONTR=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -1869,6 +1878,7 @@ NODEP_CPP_DEBUG=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -1908,13 +1918,13 @@ DEP_CPP_DEBUG=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DEBUG=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2083,6 +2093,7 @@ NODEP_CPP_DISK_=\
 	"..\..\..\common\palmversion.h"\
 	"..\..\..\sky\arm\macros.h"\
 	"..\..\..\sky\arm\native.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -2104,7 +2115,6 @@ DEP_CPP_DISK_=\
 	"..\..\..\sky\rnc_deco.h"\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_DISK_=\
 	"..\..\..\common\config.h"\
@@ -2113,6 +2123,7 @@ NODEP_CPP_DISK_=\
 	"..\..\..\common\palmversion.h"\
 	"..\..\..\sky\arm\macros.h"\
 	"..\..\..\sky\arm\native.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2237,6 +2248,7 @@ NODEP_CPP_GRID_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -2260,13 +2272,13 @@ DEP_CPP_GRID_=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_GRID_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2385,6 +2397,7 @@ NODEP_CPP_HUFFT=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	"..\..\..\sky\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -2397,7 +2410,6 @@ DEP_CPP_HUFFT=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_HUFFT=\
 	"..\..\..\common\config.h"\
@@ -2405,6 +2417,7 @@ NODEP_CPP_HUFFT=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
 	"..\..\..\sky\scumm_globals.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2526,6 +2539,7 @@ NODEP_CPP_INTRO=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -2556,13 +2570,13 @@ DEP_CPP_INTRO=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_INTRO=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2734,6 +2748,7 @@ NODEP_CPP_LOGIC=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -2768,13 +2783,13 @@ DEP_CPP_LOGIC=\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_LOGIC=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -2935,6 +2950,7 @@ NODEP_CPP_MOUSE=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -2962,13 +2978,13 @@ DEP_CPP_MOUSE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_MOUSE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -3088,6 +3104,7 @@ NODEP_CPP_RNC_D=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -3100,13 +3117,13 @@ DEP_CPP_RNC_D=\
 	"..\..\..\common\scummsys.h"\
 	"..\..\..\common\stdafx.h"\
 	"..\..\..\sky\rnc_deco.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_RNC_D=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -3223,6 +3240,7 @@ NODEP_CPP_SCREE=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -3250,13 +3268,13 @@ DEP_CPP_SCREE=\
 	"..\..\..\sky\sky.h"\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SCREE=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -3464,6 +3482,7 @@ NODEP_CPP_SKY_C=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -3515,7 +3534,6 @@ DEP_CPP_SKY_C=\
 	"..\..\..\sound\fmopl.h"\
 	"..\..\..\sound\mididrv.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SKY_C=\
 	"..\..\..\common\config.h"\
@@ -3523,6 +3541,7 @@ NODEP_CPP_SKY_C=\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\morphos_timer.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -3716,6 +3735,7 @@ NODEP_CPP_SOUND=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -3740,13 +3760,13 @@ DEP_CPP_SOUND=\
 	"..\..\..\sky\sound.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sound\mixer.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_SOUND=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
@@ -3883,6 +3903,7 @@ NODEP_CPP_TEXT_=\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARMV4) Debug"
@@ -3906,13 +3927,13 @@ DEP_CPP_TEXT_=\
 	"..\..\..\sky\skydefs.h"\
 	"..\..\..\sky\struc.h"\
 	"..\..\..\sky\text.h"\
-	{$(INCLUDE)}"SDL_byteorder.h"\
 	
 NODEP_CPP_TEXT_=\
 	"..\..\..\common\config.h"\
 	"..\..\..\common\extend.h"\
 	"..\..\..\common\globals.h"\
 	"..\..\..\common\palmversion.h"\
+	".\DL_byteorder.h"\
 	
 
 !ELSEIF  "$(CFG)" == "sky - Win32 (WCE ARM) Debug"
