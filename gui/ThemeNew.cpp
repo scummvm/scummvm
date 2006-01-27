@@ -109,6 +109,7 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
 	}
 	
 	static Common::String imageHandlesTable[kImageHandlesMax];
+
 	_configFile.getKey("dialog_corner", "pixmaps", imageHandlesTable[kDialogBkgdCorner]);
 	_configFile.getKey("dialog_top", "pixmaps", imageHandlesTable[kDialogBkgdTop]);
 	_configFile.getKey("dialog_left", "pixmaps", imageHandlesTable[kDialogBkgdLeft]);
@@ -168,7 +169,7 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
 	_images = new const Graphics::Surface*[ARRAYSIZE(imageHandlesTable)];
 	assert(_images);
 
-	for (int i = 0; _imageHandles[i] != "\0"; ++i) {
+	for (int i = 0; i < kImageHandlesMax; ++i) {
 		ImageMan.registerSurface(_imageHandles[i], 0);
 		_images[i] = ImageMan.getSurface(_imageHandles[i]);
 	}
