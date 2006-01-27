@@ -224,6 +224,8 @@ void ThemeNew::refresh() {
 }
 
 void ThemeNew::enable() {
+	init();
+	resetDrawArea();
 	_system->showOverlay();
 	clearAll();
 }

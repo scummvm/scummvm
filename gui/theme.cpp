@@ -77,6 +77,8 @@ void ThemeClassic::refresh() {
 }
 
 void ThemeClassic::enable() {
+	init();
+	resetDrawArea();
 	_system->showOverlay();
 	clearAll();
 }
