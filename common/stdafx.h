@@ -48,6 +48,7 @@
 #pragma warning( disable : 4121 ) // turn off "alignment of a member was sensitive to packing" warning
 #pragma warning( disable : 4511 ) // turn off "copy constructor could not be generated" warning
 #pragma warning( disable : 4512 ) // turn off "assignment operator could not be generated" warning
+#pragma warning( disable : 4351 ) // turn off "new behavior ... will be default initialized" warning
 
 // FIXME: 4702 & 4706 - may be enabled
 #pragma warning( disable : 4702 ) // turn off "unreachable code" warning
