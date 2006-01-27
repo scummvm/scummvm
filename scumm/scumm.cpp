@@ -3184,7 +3184,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 		return -1;
 
 	size_t len = strlen(filename);
-	assert(len >= 5);
+	assert(len > 0);
 
 	char num = filename[len - 1];
 
@@ -3192,9 +3192,7 @@ static int generateSubstResFileName_(const char *filename, char *buf, int bufsiz
 	if (num == ')')
 		num = filename[len - 2];
 
-	const char *ext = NULL;
-
-	ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename, '.');
 	if (ext)
 		len = ext - filename;
 
