@@ -33,7 +33,7 @@
 
 #include <common/stdafx.h>
 
-#include "util.h"
+//#include "util.h"
 
 #include "base/engine.h"
 #include "backends/fs/fs.h"
@@ -116,7 +116,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		debug(6, "fib == 0\n");
+		//debug(6, "fib == 0\n");
 		LEAVE();
 		return;
 	}
@@ -154,26 +154,26 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		if (IDOS->NameFromLock(pLock, name, bufsize) != DOSFALSE) {
 			_sPath = name;
 			_sDisplayName = pDisplayName ? pDisplayName : IDOS->FilePart(name);
-			delete name;
+			delete [] name;
 			break;
 		}
 
 		if (IDOS->IoErr() != ERROR_LINE_TOO_LONG) {
 			_bIsValid = false;
-			debug(6, "Error\n");
+			//debug(6, "Error\n");
 			LEAVE();
-			delete name;
+			delete [] name;
 			return;
 		}
 		bufsize *= 2;
-		delete name;
+		delete [] name;
 	}
 
 	_bIsValid =	false;
 
 	struct FileInfoBlock *fib = (struct	FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		debug(6, "fib == 0\n");
+		//debug(6, "fib == 0\n");
 		LEAVE();
 		return;
 	}
@@ -219,19 +219,19 @@ FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 	ENTER();
 
 	if (!_bIsValid) {
-		debug(6, "Invalid node\n");
+		//debug(6, "Invalid node\n");
 		LEAVE();
 		//return 0;
 	}
 
 	if (!_bIsDirectory) {
-		debug(6, "Not a directory\n");
+		//debug(6, "Not a directory\n");
 		LEAVE();
 		//return 0;
 	}
 
 	if (_pFileLock == 0) {
-		debug(6, "Root node\n");
+		//debug(6, "Root node\n");
 		LEAVE();
 		return listVolumes();
 	}
@@ -299,21 +299,21 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 	AmigaOSFilesystemNode *node;
 
 	if (!_bIsDirectory) {
-		debug(6, "No directory\n");
+		//debug(6, "No directory\n");
 		LEAVE();
 		return 0;
 	}
 
 	if (_pFileLock == 0) {
-		debug(6, "Root node\n");
+		//debug(6, "Root node\n");
 		LEAVE();
 		return clone();
 	}
 
-	BPTR parent = IDOS->ParentDir(_pFileLock);
-	if (parent) {
-		node = new AmigaOSFilesystemNode(parent);
-		IDOS->UnLock(parent);
+	BPTR parentDir = IDOS->ParentDir( _pFileLock );
+	if (parentDir) {
+		node = new AmigaOSFilesystemNode(parentDir);
+		IDOS->UnLock(parentDir);
 	}
 	else
 		node = new AmigaOSFilesystemNode();
@@ -334,7 +334,7 @@ FSList AmigaOSFilesystemNode::listVolumes(void)	const {
 
 	dosList = IDOS->LockDosList(lockFlags);
 	if (!dosList) {
-		debug(6, "Cannot lock dos list\n");
+		//debug(6, "Cannot lock dos list\n");
 		LEAVE();
 		return myList;
 	}
