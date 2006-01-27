@@ -53,8 +53,9 @@ SCUMM (Script Creation Utility for Maniac Mansion), used in various
 LucasArts games such as Monkey Island, Day of the Tentacle, and others.
 
 ScummVM also contains interpreters for several non-SCUMM games. Currently
-these are Beneath a Steel Sky, Broken Sword 1 & 2, Flight of the Amazon Queen
-and Simon the Sorcerer 1 & 2.
+these are Beneath a Steel Sky, Broken Sword 1 & 2, Flight of the Amazon Queen,
+Gobliiins, Inherit the Earth, Simon the Sorcerer 1 & 2 and The Legend of
+Kyrandia.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -68,9 +69,9 @@ easier and quicker. If you cannot donate, help and contribute a patch!
 ---- ----------
 The easiest way to contact the ScummVM team is by submitting bug reports or
 commenting in our forums. You can also join and e-mail the scummvm-devel
-mailing list, or chat with us on irc (#scummvm on irc.freenode.net)
-Please do not ask us to support an unsupported game -- read our homepages
-FAQ first.
+mailing list, or chat with us on IRC (#scummvm on irc.freenode.net)
+Please do not ask us to support an unsupported game -- read the FAQ on our
+web site first.
 
 2.1) Reporting Bugs:
 ---- ---------------
@@ -215,7 +216,7 @@ any answer. Chances are that it will work.
 3.2) Simon the Sorcerer 1 and 2 notes:
 ---- ---------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD,
-then you will find the Windows version in the main directory of CD
+then you will find the Windows version in the main directory of the CD
 and the DOS version in the DOS directory of the CD.
 
 3.3) Broken Sword notes
@@ -277,7 +278,8 @@ i.e. they should have both resource and data forks. Just copy all 'ITE *' files.
 ---- ---------------
 The CD version of Gobliiins contains one big audio track which you need to rip
 (See the section on using compressed audiofiles) and copy into the game
-directory.
+directory if you want to have music and not have the CD in the drive
+all the time.
 
 3.8) The Legend of Kyrandia notes
 ---- ----------------------------
@@ -357,7 +359,6 @@ the section on Reporting Bugs.
           - Amiga versions aren't supported
           - Subtitles aren't available in the English and German CD versions,
             they are missing the majority of subtitles.
-
 
      Simon the Sorcerer 2:
           - Combined speech and subtitles will often cause speech to be
@@ -985,7 +986,7 @@ soundfont using the sfxload software. Example:
 
 If you don't have a MIDI capable soundcard, there are two options: FluidSynth
 and TiMidity. We recommend FluidSynth, as on many systems TiMidity will 'lag'
-behind music. This is very noticable in iMUSE-enabled games, which use fast
+behind music. This is very noticeable in iMUSE-enabled games, which use fast
 and dynamic music transitions. Running TiMidity as root will allow it to
 setup real time priority, which may reduce music lag.
 
@@ -1040,8 +1041,8 @@ affect the encoding time and resulting filesize.
 
 7.7.3) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
-You need LAME, and our compress_scumm_sou util from the scummvm-tools package
-to perform this task, and ScummVM must be compiled with MAD support.
+You need LAME, and our compress_scumm_sou utility from the scummvm-tools
+package to perform this task, and ScummVM must be compiled with MAD support.
 
   compress_scumm_sou monster.sou
 
@@ -1099,7 +1100,7 @@ For Flac add --flac and optional parameters, i.e.
   compress_simon --flac --best -b 1152
 
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
-file to your game dir. You can safely remove the old file.
+file to your game directory. You can safely remove the old file.
 
 7.7.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
@@ -1132,7 +1133,7 @@ For Ogg Vorbis add --vorbis to the options, i.e.
   compress_sword2 --vorbis
 
 Eventually you will have a much smaller *.cl3 or *.clg file, copy this file to
-your game dir. You can safely remove the old file.
+your game directory. You can safely remove the old file.
 
 It is possible to use Flac compression by adding the --flac option. However,
 the resulting *.clf file will actually be larger than the original.
