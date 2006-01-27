@@ -8,23 +8,19 @@
 ; UID is the app's UID
 #{"ScummVM S80"},(0x101f9b57),0,80,3
 
-; Application file Launcher and actual exe
-"\epoc32\release\armi\urel\ScummVMS80.app"-"!:\system\apps\ScummVMS80\ScummVMS80.app"
-"\epoc32\release\armi\urel\ScummVM.exe"-"!:\system\apps\ScummVMS80\ScummVM.exe"
+; Platform type
+(0x101F8ED2), 0, 0, 0, {"Series80ProductID"}
 
-; AIF application information file
-"\epoc32\data\z\system\apps\ScummVMS80\ScummVMS80.aif"-"!:\system\apps\ScummVMS80\ScummVMS80.aif"
-
-; Resource file
-"\epoc32\data\z\system\apps\ScummVMS80\ScummVMS80.rsc"-"!:\system\apps\ScummVMS80\ScummVMS80.rsc"
-
-; Empty .placeholder file, ensures creation of c:\documents\ScummVM\ for future file saves
-"..\.placeholder"-"c:\documents\ScummVM\.placeholder"
+; Launcher, Application, AIF & Resource file
+"\epoc32\release\armi\urel\ScummVM.app"-"!:\system\apps\ScummVM\ScummVM.app"
+"\epoc32\release\armi\urel\ScummVM.exe"-"!:\system\apps\ScummVM\ScummVM.exe"
+"\epoc32\data\z\system\apps\ScummVM\ScummVM.aif"-"!:\system\apps\ScummVM\ScummVM.aif"
+"\epoc32\data\z\system\apps\ScummVM\ScummVM.rsc"-"!:\system\apps\ScummVM\ScummVM.rsc"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
-""-"c:\documents\ScummVM\scummvm.ini",FILENULL
-""-"c:\documents\ScummVM\scummvm.stdout.txt",FILENULL
-""-"c:\documents\ScummVM\scummvm.stderr.txt",FILENULL
+""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL
+""-"!:\system\apps\ScummVM\scummvm.stdout.txt",FILENULL
+""-"!:\system\apps\ScummVM\scummvm.stderr.txt",FILENULL
 ""-"!:\system\apps\ScummVM\sdl.ini",FILENULL
 
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.

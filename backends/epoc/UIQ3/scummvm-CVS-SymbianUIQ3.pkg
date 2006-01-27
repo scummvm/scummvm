@@ -2,32 +2,32 @@
 ;;; ScummVM .PKG file for .SIS gegeration
 ;;;
 
-; Languages
-;&EN
+
+; List of localised vendor names - one per language. At least one must be provided (English [EN]).
+; List must correspond to list of languages specified elsewhere in the .pkg
+%{"ScummVM"}
+; The non-localised, globally unique vendor name (mandatory)
+:"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM"},(0x101f9b57),0,80,3
+#{"ScummVM UIQ3"},(0xA0000657),0,80,3
 
-; Platform type
-(0x101F617B), 2, 0, 0, {"UIQ20ProductID"}
+; ProductID for UIQ 3.0
+; Product/platform version UID, Major, Minor, Build, Product ID
+(0x101F6300), 3, 0, 0, {"UIQ30ProductID"}
 
-; Application file
-"\epoc32\release\armi\urel\ScummVM.app"-"!:\system\apps\ScummVM\ScummVM.app"
-
-; AIF application information file
-"\epoc32\data\z\system\apps\ScummVM\ScummVM.aif"-"!:\system\apps\ScummVM\ScummVM.aif"
-
-; Resource file
-"\epoc32\data\z\system\apps\ScummVM\ScummVM.rsc"-"!:\system\apps\ScummVM\ScummVM.rsc"
-
-; Empty .placeholder file, ensures creation of c:\documents\ScummVM\ for future file saves
-"..\.placeholder"-"c:\documents\ScummVM\.placeholder"
+; Application, AIF & Resource file
+"\uiq3\epoc32\release\gcce\urel\ScummVM.exe"-"!:\sys\bin\ScummVM.exe"
+"\uiq3\epoc32\data\z\resource\apps\ScummVM.rsc"-"!:\resource\apps\ScummVM\ScummVM.rsc"
+"\uiq3\epoc32\Data\Z\resource\apps\scummvm_loc.rsc"-"!:\resource\apps\scummvm_loc.rsc"
+"\uiq3\epoc32\data\Z\resource\APPS\scummvm.MBM"-"!:\resource\apps\scummvm.MBM"
+"\uiq3\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
-""-"c:\documents\ScummVM\scummvm.ini",FILENULL
-""-"c:\documents\ScummVM\scummvm.stdout.txt",FILENULL
-""-"c:\documents\ScummVM\scummvm.stderr.txt",FILENULL
-""-"!:\system\apps\ScummVM\sdl.ini",FILENULL
+""-"!:\shared\ScummVM\scummvm.ini",FILENULL
+""-"!:\shared\ScummVM\scummvm.stdout.txt",FILENULL
+""-"!:\shared\ScummVM\scummvm.stderr.txt",FILENULL
+""-"!:\shared\ScummVM\ScummVM\sdl.ini",FILENULL
 
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
 ; It will remove the config file, std***.txt files & dirs on uninstall.
