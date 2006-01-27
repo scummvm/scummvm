@@ -47,7 +47,6 @@ public:
 
 	typedef Gob_State *Gob_PState;
 
-#define szGob_StateLine 24
 	typedef Gob_PState Gob_StateLine[6];
 
 	typedef struct Gob_Object {

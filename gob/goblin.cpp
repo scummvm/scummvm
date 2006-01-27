@@ -1835,19 +1835,19 @@ void Goblin::freeObjects(void) {
 
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
-				free(_goblins[i]->stateMach[state][col]);
+				delete _goblins[i]->stateMach[state][col];
 				_goblins[i]->stateMach[state][col] = 0;
 			}
 		}
 
 		if (i == 3) {
 			for (state = 40; state < 70; state++) {
-				free(_goblins[3]->stateMach[state][0]);
+				delete _goblins[3]->stateMach[state][0];
 				_goblins[3]->stateMach[state][0] = 0;
 			}
 		}
 
-		free(_goblins[i]->stateMach);
+		delete[] _goblins[i]->stateMach;
 		free(_goblins[i]);
 		_goblins[i] = 0;
 	}
@@ -1860,12 +1860,12 @@ void Goblin::freeObjects(void) {
 
 		for (state = 0; state < 40; state++) {
 			for (col = 0; col < 6; col++) {
-				free(_objects[i]->stateMach[state][col]);
+				delete _objects[i]->stateMach[state][col];
 				_objects[i]->stateMach[state][col] = 0;
 			}
 		}
 
-		free(_objects[i]->stateMach);
+		delete[] _objects[i]->stateMach;
 		free(_objects[i]);
 		_objects[i] = 0;
 	}
