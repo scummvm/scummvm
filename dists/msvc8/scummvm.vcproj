@@ -1014,10 +1014,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\gui\walkthrough.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\gui\widget.cpp"
 				>
 			</File>
