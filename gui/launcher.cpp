@@ -679,9 +679,9 @@ void LauncherDialog::addGame() {
 					suffix++;
 					domain += suffix;
 				}
-				ConfMan.set("gameid", result.name, domain);
 				ConfMan.set("description", result.description, domain);
 			}
+			ConfMan.set("gameid", result.name, domain);
 			ConfMan.set("path", dir.path(), domain);
 
 			const bool customLanguage = (result.language != Common::UNK_LANG);
