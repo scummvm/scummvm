@@ -75,8 +75,11 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	Track *track = _track[l];
-	flushTracks();
-	assert(!track->used);
+	while (track->used) {
+		// The designated track is not yet available. So, we call flushTracks()
+		// to get it processed (and thus made ready for us).
+		flushTracks();
+	}
 	track->pan = 64;
 	track->vol = volume * 1000;
 	track->volFadeDest = 0;
