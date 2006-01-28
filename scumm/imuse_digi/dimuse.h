@@ -99,7 +99,7 @@ private:
 	int32 _curMusicCue;
 
 	int _callbackFps;
-	int32 _lastTime, _thisTime, _interval, _counter, _diff;
+	int32 _lastTime, _thisTime, _interval, _counter;
 	bool _firstCall;
 
 	void switchToNextRegion(Track *track);
