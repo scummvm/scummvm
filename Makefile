@@ -118,6 +118,7 @@ scummvm-static: $(OBJS)
 		$(OSXOPT)/lib/libogg.a \
 		$(OSXOPT)/lib/libmpeg2.a \
 		$(OSXOPT)/lib/libFLAC.a \
+		-lSystemStubs \
 		-lz
 
 # Target for building the PDF version of the README
