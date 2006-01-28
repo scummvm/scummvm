@@ -31,6 +31,7 @@
 #include "scumm/util.h"
 #include "scumm/scumm.h"
 #include "scumm/verbs.h"
+#include "scumm/imuse_digi/dimuse.h"
 
 namespace Scumm {
 
@@ -463,7 +464,13 @@ void ScummEngine::executeScript() {
 			}
 			printf("\n");
 		}
+
+		if (_imuseDigital) {
+			_imuseDigital->callback();
+		}
+
 		executeOpcode(_opcode);
+
 	}
 	CHECK_HEAP;
 }

@@ -2341,9 +2341,11 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	start_time = _system->getMillis();
 
 	while (!_quit) {
-		parseEvents();
-
+		if (_imuseDigital) {
+			_imuseDigital->callback();
+		}
 		_sound->updateCD(); // Loop CD Audio if needed
+		parseEvents();
 		if (_system->getMillis() >= start_time + msec_delay)
 			break;
 		_system->delayMillis(10);

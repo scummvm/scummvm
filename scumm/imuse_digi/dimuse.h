@@ -45,8 +45,6 @@ class Serializer;
 class IMuseDigital : public MusicEngine {
 private:
 
-	int _callbackFps;
-
 	struct Track {
 		int trackId;
 
@@ -86,7 +84,6 @@ private:
 
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
-	Common::Mutex _mutex;
 	ScummEngine *_vm;
 	ImuseDigiSndMgr *_sound;
 
@@ -101,8 +98,10 @@ private:
 	int32 _curMusicSeq;
 	int32 _curMusicCue;
 
-	static void timer_handler(void *refConf);
-	void callback();
+	int _callbackFps;
+	int32 _lastTime, _thisTime, _interval, _counter, _diff;
+	bool _firstCall;
+
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
 	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, AudioStream *input, int hookId, int volume, int priority);
@@ -131,6 +130,9 @@ private:
 public:
 	IMuseDigital(ScummEngine *scumm, int fps);
 	virtual ~IMuseDigital();
+
+	void callback();
+	void addDiff(int32 diff) { _diff += diff; }
 
 	void setAudioNames(int32 num, char *names);
 

@@ -38,23 +38,20 @@ IMuseDigital::Track::Track()
 	: soundId(-1), used(false), stream(NULL), stream2(NULL) {
 }
 
-void IMuseDigital::timer_handler(void *refCon) {
-	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;
-	imuseDigital->callback();
-}
-
 IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 	: _vm(scumm) {
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
 	_callbackFps = fps;
+	_interval = 1000000 / fps;
+	_counter = _interval;
+	_firstCall = true;
 	resetState();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
 		_track[l]->trackId = l;
 		_track[l]->used = false;
 	}
-	_vm->_timer->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
 
 	_audioNames = NULL;
 	_numAudioNames = 0;
@@ -62,7 +59,6 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 
 IMuseDigital::~IMuseDigital() {
 	stopAllSounds();
-	_vm->_timer->removeTimerProc(timer_handler);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		delete _track[l];
 	}
@@ -79,8 +75,6 @@ void IMuseDigital::resetState() {
 }
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {
-	Common::StackLock lock(_mutex, "IMuseDigital::saveOrLoad()");
-
 	const SaveLoadEntry mainEntries[] = {
 		MK_OBSOLETE(IMuseDigital, _volVoice, sleInt32, VER(31), VER(42)),
 		MK_OBSOLETE(IMuseDigital, _volSfx, sleInt32, VER(31), VER(42)),
@@ -203,142 +197,154 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 }
 
 void IMuseDigital::callback() {
-	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
+	if (_firstCall) {
+		_thisTime = _vm->_system->getMillis();
+		_firstCall = false;
+	}
 
-	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->readyToRemove) {
-			if (track->toBeRemoved) {
-				track->readyToRemove = true;
-				continue;
-			}
+	_lastTime = _thisTime;
+	_thisTime = _vm->_system->getMillis();
+	int32 interval = 1000 * (_thisTime - _lastTime);
+	if (interval > 100000) {
+		warning("IMuseDigital::callback: long interval: %d", interval);
+		interval = _interval;
+	}
 
-			if (_pause || !_vm)
-				return;
+	_counter -= interval;
 
-			if (track->volFadeUsed) {
-				if (track->volFadeStep < 0) {
-					if (track->vol > track->volFadeDest) {
-						track->vol += track->volFadeStep;
-						if (track->vol < track->volFadeDest) {
-							track->vol = track->volFadeDest;
-							track->volFadeUsed = false;
-						}
-						if (track->vol == 0) {
-							track->toBeRemoved = true;
-						}
-					}
-				} else if (track->volFadeStep > 0) {
-					if (track->vol < track->volFadeDest) {
-						track->vol += track->volFadeStep;
+	while (_counter <= 0) {
+		_counter += _interval;
+
+		if (_vm->_quit)
+			return;
+
+		for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
+			Track *track = _track[l];
+			if (track->used && !track->toBeRemoved) {
+				if (track->volFadeUsed) {
+					if (track->volFadeStep < 0) {
 						if (track->vol > track->volFadeDest) {
-							track->vol = track->volFadeDest;
-							track->volFadeUsed = false;
+							track->vol += track->volFadeStep;
+							if (track->vol < track->volFadeDest) {
+								track->vol = track->volFadeDest;
+								track->volFadeUsed = false;
+							}
+							if (track->vol == 0) {
+								track->toBeRemoved = true;
+							}
+						}
+					} else if (track->volFadeStep > 0) {
+						if (track->vol < track->volFadeDest) {
+							track->vol += track->volFadeStep;
+						if (track->vol > track->volFadeDest) {
+								track->vol = track->volFadeDest;
+								track->volFadeUsed = false;
+							}
 						}
 					}
-				}
-				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
-			}
-
-			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-			const int vol = track->vol / 1000;
-			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-			if (track->volGroupId == 1)
-				type = Audio::Mixer::kSpeechSoundType;
-			if (track->volGroupId == 2)
-				type = Audio::Mixer::kSFXSoundType;
-			if (track->volGroupId == 3)
-				type = Audio::Mixer::kMusicSoundType;
-
-			if (track->stream) {
-				byte *data = NULL;
-				int32 result = 0;
-
-				if (track->curRegion == -1) {
-					switchToNextRegion(track);
-					if (track->toBeRemoved)
-						continue;
+					debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
 				}
 
-				int bits = _sound->getBits(track->soundHandle);
-				int channels = _sound->getChannels(track->soundHandle);
+				const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
+				const int vol = track->vol / 1000;
+				Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
 
-				int32 mixer_size = track->iteration / _callbackFps;
+				if (track->volGroupId == 1)
+					type = Audio::Mixer::kSpeechSoundType;
+				if (track->volGroupId == 2)
+					type = Audio::Mixer::kSFXSoundType;
+				if (track->volGroupId == 3)
+					type = Audio::Mixer::kMusicSoundType;
 
-				if (track->stream->endOfData()) {
-					mixer_size *= 2;
-				}
+				if (track->stream) {
+					byte *data = NULL;
+					int32 result = 0;
 
-				if ((bits == 12) || (bits == 16)) {
-					if (channels == 1)
-						mixer_size &= ~1;
-					if (channels == 2)
-						mixer_size &= ~3;
-				} else {
-					if (channels == 2)
-						mixer_size &= ~1;
-				}
-
-				if (mixer_size == 0)
-					continue;
-
-				do {
-					if (bits == 12) {
-						byte *ptr = NULL;
-
-						mixer_size += track->mod;
-						int mixer_size_12 = (mixer_size * 3) / 4;
-						int length = (mixer_size_12 / 3) * 4;
-						track->mod = mixer_size - length;
-
-						int32 offset = (track->regionOffset * 3) / 4;
-						int result2 = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &ptr, offset, mixer_size_12);
-						result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
-
-						free(ptr);
-					} else if (bits == 16) {
-						result = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &data, track->regionOffset, mixer_size);
-						if (channels == 1) {
-							result &= ~1;
-						}
-						if (channels == 2) {
-							result &= ~3;
-						}
-					} else if (bits == 8) {
-						result = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &data, track->regionOffset, mixer_size);
-						if (channels == 2) {
-							result &= ~1;
-						}
-					}
-
-					if (result > mixer_size)
-						result = mixer_size;
-
-					if (_vm->_mixer->isReady()) {
-						_vm->_mixer->setChannelVolume(track->handle, vol);
-						_vm->_mixer->setChannelBalance(track->handle, pan);
-						track->stream->append(data, result);
-						track->regionOffset += result;
-					}
-					free(data);
-
-					if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
+					if (track->curRegion == -1) {
 						switchToNextRegion(track);
 						if (track->toBeRemoved)
-							break;
+							continue;
 					}
-					mixer_size -= result;
-					assert(mixer_size >= 0);
-				} while (mixer_size != 0);
-			} else if (track->stream2) {
-				if (_vm->_mixer->isReady()) {
-					if (!track->started) {
-						track->started = true;
-						_vm->_mixer->playInputStream(type, &track->handle, track->stream2, -1, vol, pan, false);
+
+					int bits = _sound->getBits(track->soundHandle);
+					int channels = _sound->getChannels(track->soundHandle);
+
+					int32 mixer_size = track->iteration / _callbackFps;
+
+					if (track->stream->endOfData()) {
+						mixer_size *= 2;
+					}
+
+					if ((bits == 12) || (bits == 16)) {
+						if (channels == 1)
+							mixer_size &= ~1;
+						if (channels == 2)
+							mixer_size &= ~3;
 					} else {
-						_vm->_mixer->setChannelVolume(track->handle, vol);
-						_vm->_mixer->setChannelBalance(track->handle, pan);
+						if (channels == 2)
+							mixer_size &= ~1;
+					}
+
+					if (mixer_size == 0)
+						continue;
+
+					do {
+						if (bits == 12) {
+							byte *ptr = NULL;
+
+							mixer_size += track->mod;
+							int mixer_size_12 = (mixer_size * 3) / 4;
+							int length = (mixer_size_12 / 3) * 4;
+							track->mod = mixer_size - length;
+
+							int32 offset = (track->regionOffset * 3) / 4;
+							int result2 = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &ptr, offset, mixer_size_12);
+							result = BundleCodecs::decode12BitsSample(ptr, &data, result2);
+
+							free(ptr);
+						} else if (bits == 16) {
+							result = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &data, track->regionOffset, mixer_size);
+							if (channels == 1) {
+								result &= ~1;
+							}
+							if (channels == 2) {
+								result &= ~3;
+							}
+						} else if (bits == 8) {
+							result = _sound->getDataFromRegion(track->soundHandle, track->curRegion, &data, track->regionOffset, mixer_size);
+							if (channels == 2) {
+								result &= ~1;
+						}
+						}
+
+						if (result > mixer_size)
+							result = mixer_size;
+
+						if (_vm->_mixer->isReady()) {
+							_vm->_mixer->setChannelVolume(track->handle, vol);
+							_vm->_mixer->setChannelBalance(track->handle, pan);
+							track->stream->append(data, result);
+							track->regionOffset += result;
+						}
+						free(data);
+
+						if (_sound->isEndOfRegion(track->soundHandle, track->curRegion)) {
+							switchToNextRegion(track);
+							if (track->toBeRemoved)
+								break;
+						}
+						mixer_size -= result;
+						assert(mixer_size >= 0);
+					} while (mixer_size != 0);
+				} else if (track->stream2) {
+					if (_vm->_mixer->isReady()) {
+						if (!track->started) {
+							track->started = true;
+							_vm->_mixer->playInputStream(type, &track->handle, track->stream2, -1, vol, pan, false);
+						} else {
+							_vm->_mixer->setChannelVolume(track->handle, vol);
+							_vm->_mixer->setChannelBalance(track->handle, pan);
+						}
 					}
 				}
 			}

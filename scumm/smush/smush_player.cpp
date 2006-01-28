@@ -1102,8 +1102,6 @@ void SmushPlayer::parseNextFrame() {
 
 	if (_insanity)
 		_vm->_sound->processSound();
-
-	_vm->_imuseDigital->flushTracks();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1270,6 +1268,9 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
 			break;
 
+		_vm->_imuseDigital->callback();
+		_vm->_imuseDigital->flushTracks();
+
 		lastTime = thisTime;
 		thisTime = _vm->_system->getMillis();
 		interval = 1000 * (thisTime - lastTime - diff);
@@ -1284,7 +1285,7 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 				_vm->_system->warpMouse(_warpX, _warpY);
 				_warpNeeded = false;
 			}
-			
+
 			int32 before = _vm->_system->getMillis();
 			_vm->parseEvents();
 			_vm->processKbd(true);
