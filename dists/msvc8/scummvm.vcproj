@@ -367,6 +367,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\unzip.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\unzip.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\util.cpp"
 				>
 			</File>
@@ -994,6 +1002,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\gui\theme.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\theme.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeNew.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\gui\walkthrough.h"
 				>
 			</File>
@@ -1043,6 +1063,22 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\ilbm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\imagedec.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\imagedec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\imageman.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\imageman.h"
 				>
 			</File>
 			<File
