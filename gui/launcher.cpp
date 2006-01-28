@@ -181,6 +181,7 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GUI:  Add tab widget
 	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - buttonHeight - 8 - 2 * vBorder, ws);
+	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The game tab
@@ -490,7 +491,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 LauncherDialog::LauncherDialog(GameDetector &detector)
 	: Dialog(0, 0, 320, 200), _detector(detector) {
-	_mainDialog = true;
+	_drawingHints |= THEME_HINT_MAIN_DIALOG;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();

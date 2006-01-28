@@ -41,7 +41,13 @@ enum {
 	// Indicates that the widget will be redrawn often, e.g. list widgets.
 	// It may therefore be a good idea to save the background so that it
 	// can be redrawn quickly.
-	THEME_HINT_SAVE_BACKGROUND = 1 << 1
+	THEME_HINT_SAVE_BACKGROUND = 1 << 1,
+	
+	// Indicates that this is the launcher dialog (maybe delete this in the future)
+	THEME_HINT_MAIN_DIALOG = 1 << 2,
+	
+	// Indicates special colorfade
+	THEME_HINT_SPECIAL_COLOR = 1 << 3
 };
 
 class Theme {
@@ -101,7 +107,7 @@ public:
 	virtual int getStringWidth(const Common::String &str) const = 0;
 	virtual int getCharWidth(byte c) const = 0;
 
-	virtual void drawDialogBackground(const Common::Rect &r, kState state = kStateEnabled, bool mainDialog = false) = 0;
+	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state = kStateEnabled) = 0;
 	virtual void drawText(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled, kTextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true) = 0;
 	// this should ONLY be used by the debugger until we get a nicer solution
 	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state = kStateEnabled) = 0;
@@ -181,7 +187,7 @@ public:
 	int getStringWidth(const Common::String &str) const { if (_initOk) return _font->getStringWidth(str); return 0; }
 	int getCharWidth(byte c) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
-	void drawDialogBackground(const Common::Rect &r, kState state, bool mainDialog);
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
 	void drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
 
@@ -249,7 +255,7 @@ public:
 	int getStringWidth(const Common::String &str) const { if (_font) return _font->getStringWidth(str); return 0; }
 	int getCharWidth(byte c) const { if (_font) return _font->getCharWidth(c); return 0; }
 
-	void drawDialogBackground(const Common::Rect &r, kState state, bool mainDialog);
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
 	void drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
 

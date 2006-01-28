@@ -41,8 +41,7 @@ class ScummEngine;
 
 class ScummDialog : public GUI::Dialog {
 public:
-	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h)
-		: GUI::Dialog(x, y, w, h), _vm(scumm) {}
+	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h);
 
 protected:
 	typedef Common::String String;

@@ -515,6 +515,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - buttonHeight - 8 - 2 * vBorder, ws);
+	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The graphics tab

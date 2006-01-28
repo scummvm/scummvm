@@ -40,7 +40,8 @@ namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _mainDialog(false) {
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0) {
+	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
 Dialog::~Dialog() {
@@ -93,6 +94,7 @@ void Dialog::handleScreenChanged() {
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
 
+	_drawingHints |= THEME_HINT_FIRST_DRAW; 
 	Widget *w = _firstWidget;
 	while (w) {
 		w->setHints(THEME_HINT_FIRST_DRAW);
@@ -116,7 +118,8 @@ void Dialog::drawDialog() {
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), Theme::kStateEnabled, _mainDialog);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
+	_drawingHints &= ~THEME_HINT_FIRST_DRAW;
 
 	// Draw all children
 	Widget *w = _firstWidget;

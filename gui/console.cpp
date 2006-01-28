@@ -104,6 +104,8 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	// Display greetings & prompt
 	print(gScummVMFullVersion);
 	print("\nConsole is ready\n");
+	
+	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
 void ConsoleDialog::slideUpAndClose() {
@@ -119,6 +121,8 @@ void ConsoleDialog::open() {
 	// this effect: we simply move the console dialog just above (outside) the
 	// visible screen area, then shift it down in handleTickle() over a
 	// certain period of time.
+	
+	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 
 	_y = -_h;
 	_slideTime = g_system->getMillis();
@@ -140,7 +144,8 @@ void ConsoleDialog::drawDialog() {
 	int start = _scrollLine - _linesPerPage + 1;
 	int y = _y + 2;
 
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h));
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
+	_drawingHints = THEME_HINT_SAVE_BACKGROUND;
 
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;
@@ -175,6 +180,7 @@ void ConsoleDialog::handleTickle() {
 
 	// Perform the "slide animation".
 	if (_slideMode != kNoSlideMode) {
+		_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 		const float tmp = (float)(g_system->getMillis() - _slideTime) / kConsoleSlideDownDuration;
 		if (_slideMode == kUpSlideMode) {
 			_y = (int)(_h * (0.0 - tmp));

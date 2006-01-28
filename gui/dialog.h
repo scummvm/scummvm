@@ -44,7 +44,7 @@ protected:
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
 	bool	_visible;
-	bool	_mainDialog; // FIXME: find a better solution for this and change the Theme class to handle it then
+	uint16	_drawingHints;
 
 private:
 	int		_result;

@@ -33,6 +33,8 @@ Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
 	_boss->_firstWidget = this;
+	// HACK: we enable background saving for all widgets by default for now
+	_hints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
 Widget::~Widget() {

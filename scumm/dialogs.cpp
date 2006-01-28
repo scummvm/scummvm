@@ -153,6 +153,11 @@ static ResString string_map_table_v5[] = {
 
 #pragma mark -
 
+ScummDialog::ScummDialog(ScummEngine *scumm, int x, int y, int w, int h)
+	: GUI::Dialog(x, y, w, h), _vm(scumm) {
+_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
+}
+
 const Common::String ScummDialog::queryResString(int stringno) {
 	byte buf[256];
 	byte *result;
@@ -743,6 +748,7 @@ enum {
 
 HelpDialog::HelpDialog(ScummEngine *scumm)
 	: ScummDialog(scumm, 5, 5, 310, 190) {
+	_drawingHints &= ~GUI::THEME_HINT_SPECIAL_COLOR;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -926,7 +932,7 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 
 void ValueDisplayDialog::drawDialog() {
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h));
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::THEME_HINT_SAVE_BACKGROUND | GUI::THEME_HINT_FIRST_DRAW);
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4, _y+g_gui.theme()->getFontHeight()+4), _label);
 	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4), _percentBarWidth * (_value - _min) / (_max - _min));
 }

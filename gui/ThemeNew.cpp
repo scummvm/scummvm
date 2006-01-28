@@ -274,24 +274,32 @@ void ThemeNew::resetDrawArea() {
 
 #define surface(x) (_images[x])
 
-void ThemeNew::drawDialogBackground(const Common::Rect &r, kState state, bool mainDialog) {
+void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState state) {
 	if (!_initOk)
 		return;
-
-	if (mainDialog) {
-		colorFade(r, _colors[kMainDialogStart], _colors[kMainDialogEnd]);
-	} else {
-		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				255, _colors[kDialogStart], _colors[kDialogEnd]);
+		
+	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
+		restoreBackground(r);
+		return;
 	}
 
-	addDirtyRect(r, true);
+	if (hints & THEME_HINT_MAIN_DIALOG) {
+		colorFade(r, _colors[kMainDialogStart], _colors[kMainDialogEnd]);
+	} else if (hints & THEME_HINT_SPECIAL_COLOR) {
+		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
+				256, _colors[kMainDialogStart], _colors[kMainDialogEnd]);
+	} else {
+		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
+				256, _colors[kDialogStart], _colors[kDialogEnd], 2);
+	}
+
+	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
 void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis) {
 	if (!_initOk)
 		return;
-	Common::Rect r2(r.left, r.top, r.right, r.top+_font->getFontHeight());
+	Common::Rect r2(r.left, r.top, r.right, r.top+_font->getFontHeight()+2);
 
 	restoreBackground(r2);
 
@@ -326,10 +334,10 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 
 	if (background == kWidgetBackgroundBorderSmall) {
 		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundSmallStart], _colors[kWidgetBackgroundSmallEnd]);
+						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundSmallStart], _colors[kWidgetBackgroundSmallEnd], 3);
 	} else {
 		drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundStart], _colors[kWidgetBackgroundEnd], 2);
+						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundStart], _colors[kWidgetBackgroundEnd], 3);
 	}
 
 	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
@@ -340,7 +348,7 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 		return;
 
 	drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-					255, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd],  2);
+					256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd], 2);
 
 	const int off = (r.height() - _font->getFontHeight()) / 2;
 
@@ -394,7 +402,7 @@ void ThemeNew::drawSlider(const Common::Rect &r, int width, kState state) {
 	if (!_initOk)
 		return;
 
-	drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 255,
+	drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
 					_colors[kSliderBackgroundStart], _colors[kSliderBackgroundEnd]);
 
 	Common::Rect r2 = r;
@@ -447,12 +455,12 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	Common::Rect r2 = r;
 
 	// draws the scrollbar background
-	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 255,
+	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
 					_colors[kScrollbarBackgroundStart], _colors[kScrollbarBackgroundEnd]);
 
 	// draws the 'up' button
 	r2.bottom = r2.top + UP_DOWN_BOX_HEIGHT;
-	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 255,
+	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
 					_colors[kScrollbarButtonStart], _colors[kScrollbarButtonEnd]);
 
 	const Graphics::Surface *arrow = surface(kWidgetArrow);
@@ -460,7 +468,7 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	r2.right = r2.left + arrow->w;
 	r2.top += (r2.height() - arrow->h) / 2;
 	r2.bottom = r2.top + arrow->h;
-	drawSurface(r2, arrow, false, false, 255);
+	drawSurface(r2, arrow, false, false, 256);
 
 	// draws the slider
 	r2 = r;
@@ -468,24 +476,24 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	r2.right -= 2;
 	r2.top += sliderY;
 	r2.bottom = r2.top + sliderHeight / 2 + surface(kWidgetBkgdCorner)->h + 4;
-	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), 255,
+	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), 256,
 					_colors[kScrollbarSliderStart], _colors[kScrollbarSliderEnd]);
 	r2.top += sliderHeight / 2;
 	r2.bottom += sliderHeight / 2 - surface(kWidgetBkgdCorner)->h - 4;
-	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), 255,
+	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), 256,
 					_colors[kScrollbarSliderEnd], _colors[kScrollbarSliderStart]);
 
 	// draws the 'down' button
 	r2 = r;
 	r2.top = r2.bottom - UP_DOWN_BOX_HEIGHT;
-	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 255,
+	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
 					_colors[kScrollbarButtonStart], _colors[kScrollbarButtonEnd]);
 
 	r2.left += 1 + (r2.width() - arrow->w) / 2;
 	r2.right = r2.left + arrow->w;
 	r2.top += (r2.height() - arrow->h) / 2;
 	r2.bottom = r2.top + arrow->h;
-	drawSurface(r2, arrow, true, false, 255);
+	drawSurface(r2, arrow, true, false, 256);
 
 	addDirtyRect(r);
 }
@@ -497,7 +505,7 @@ void ThemeNew::drawCaret(const Common::Rect &r, bool erase, kState state) {
 	restoreBackground(Common::Rect(r.left, r.top, r.left+1, r.bottom));
 	if (!erase) {
 		_screen.vLine(r.left, r.top, r.bottom, _colors[kCaretColor]);
-	} else {
+	} else if (r.top >= 0) {
 		// FIXME: hack to restore the caret background correctly
 		const OverlayColor search = _colors[kTextInvertedBackground];
 		const OverlayColor *src = (const OverlayColor*)_screen.getBasePtr(r.left-1, r.top-1);
@@ -575,7 +583,7 @@ inline uint8 calcGradient(uint8 start, uint8 end, int pos, int max) {
 }
 
 OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
-	pos *= factor;
+	max /= factor;
 	if (pos > max) {
 		pos = max;
 	}

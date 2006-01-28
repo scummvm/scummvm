@@ -129,7 +129,7 @@ void ThemeClassic::resetDrawArea() {
 	}
 }
 
-void ThemeClassic::drawDialogBackground(const Common::Rect &r, kState state, bool mainDialog) {
+void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, kState state) {
 	if (!_initOk)
 		return;
 
