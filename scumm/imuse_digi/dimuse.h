@@ -132,7 +132,6 @@ public:
 	virtual ~IMuseDigital();
 
 	void callback();
-	void addDiff(int32 diff) { _diff += diff; }
 
 	void setAudioNames(int32 num, char *names);
 
