@@ -77,11 +77,12 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);
 			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
-			uint8 *buffer = new uint8[fileInfo.uncompressed_size];
+			uint8 *buffer = new uint8[fileInfo.uncompressed_size+1];
 			assert(buffer);
+			memset(buffer, 0, (fileInfo.uncompressed_size+1)*sizeof(uint8));
 			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
 			unzCloseCurrentFile(zipFile);
-			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size);
+			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
 			if (!_configFile.loadFromStream(stream)) {
 				warning("Can not find theme config file '%s'", (stylefile + ".ini").c_str());
 				unzClose(zipFile);
