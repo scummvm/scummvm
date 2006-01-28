@@ -730,8 +730,6 @@ void KyraEngine::mainLoop() {
 		processButtonList(_buttonList);
 		updateMousePointer();
 		updateGameTimers();
-		_sprites->updateSceneAnims();
-		_animator->updateAllObjectShapes();
 		updateTextFade();
 
 		_handleInput = true;

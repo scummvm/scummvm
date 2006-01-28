@@ -129,6 +129,9 @@ void Sprites::updateSceneAnims() {
 	uint32 currTime = _system->getMillis();
 	uint8 *data;
 	bool endLoop;
+	uint16 rndNr;
+	uint16 anim;
+	uint16 sound;
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
 		if (_anims[i].script == 0 || !_anims[i].play || _anims[i].nextRun != 0 && _anims[i].nextRun > currTime)
@@ -145,9 +148,6 @@ void Sprites::updateSceneAnims() {
 
 		endLoop = false;
 		while (READ_LE_UINT16(data) != 0xFF87 && !endLoop) {
-			uint16 rndNr;
-			uint16 anim;
-			uint16 sound;
 			assert((data - _anims[i].script) < _anims[i].length);
 			switch (READ_LE_UINT16(data)) {
 			case 0xFF88:
@@ -408,8 +408,8 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 	_engine->_northExitHeight = READ_LE_UINT16(_dat + 0x15);
 	if (_engine->_northExitHeight & 1)
 		_engine->_northExitHeight += 1;
-	// XXX	
-	memcpy(_screen->_currentPalette + 745 - 0x3D, _dat + 0x17, 0x3D);
+	// XXX
+	memcpy(_screen->_currentPalette + 744 - 60, _dat + 0x17, 60);
 	uint8 *data = _dat + 0x6B;
 
 	uint16 length = READ_LE_UINT16(data);

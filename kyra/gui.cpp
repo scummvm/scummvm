@@ -403,6 +403,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	}
 
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+	gui_fadePalette();
 
 	calcCoords(_menu[0]);
 	calcCoords(_menu[1]);
@@ -425,6 +426,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	}
 
 	if (_menuRestoreScreen) {
+		gui_restorePalette();
 		_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 		_animator->_updateScreen = true;
 	}
@@ -715,6 +717,7 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 		initMenu(_menu[0]);
 		processAllMenuButtons();
 	} else {
+		gui_restorePalette();
 		loadGame(getSavegameFilename(_gameToLoad));
 		_displayMenu = false;
 		_menuRestoreScreen = false;
@@ -724,7 +727,13 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 
 void KyraEngine::gui_redrawTextfield() {
 	_screen->fillRect(38, 91, 287, 102, 250);
-	_text->printText(_savegameName, 38, 91, 30, 0, 0);
+	_text->printText(_savegameName, 38, 92, 253, 0, 0);
+
+	_screen->_charWidth = -2;
+	int width = _screen->getTextWidth(_savegameName);
+	_screen->fillRect(39 + width, 93, 45 + width, 100, 254);
+	_screen->_charWidth = 0;
+
 	_screen->updateScreen();
 }
 
@@ -830,8 +839,8 @@ int KyraEngine::gui_cancelSubMenu(Button *button) {
 
 int KyraEngine::gui_quitPlaying(Button *button) {
 	debug(9, "KyraEngine::gui_quitPlaying()");
-
 	processMenuButton(button);
+
 	if (gui_quitConfirm("Are you sure you want to quit playing?"))
 		quitGame();
 	else {
@@ -972,6 +981,30 @@ void KyraEngine::gui_redrawHighlight(Menu menu) {
 	_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
 	_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
 }
+
+void KyraEngine::gui_fadePalette() {
+	static int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
+	int index = 0;
+
+	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
+
+	for (int i = 0; i < 768; i++) {
+		_screen->_currentPalette[i] /= 2;
+	}
+
+	while( menuPalIndexes[index] != -1) {
+		memcpy(&_screen->_currentPalette[menuPalIndexes[index]*3], &_screen->getPalette(2)[menuPalIndexes[index]*3], 3);
+		index++;
+	}
+
+	_screen->fadePalette(_screen->_currentPalette, 2);
+}
+
+void KyraEngine::gui_restorePalette() {
+	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->_currentPalette, 2);
+}
+
 
 } // end of namespace Kyra
  

@@ -687,6 +687,8 @@ protected:
 	void gui_processHighlights(Menu &menu);
 	void gui_updateSavegameString();
 	void gui_redrawTextfield();
+	void gui_fadePalette();
+	void gui_restorePalette();
 
 	uint8 _game;
 	bool _fastMode;
