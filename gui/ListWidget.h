@@ -100,6 +100,8 @@ protected:
 
 	void lostFocusWidget();
 	void scrollToCurrent();
+
+	int *_textWidth;
 };
 
 } // End of namespace GUI

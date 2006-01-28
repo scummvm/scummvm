@@ -55,9 +55,15 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize w
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
+
+	_textWidth = new int[_entriesPerPage];
+
+	for (int i = 0; i < _entriesPerPage; i++)
+		_textWidth[i] = 0;
 }
 
 ListWidget::~ListWidget() {
+	delete[] _textWidth;
 }
 
 void ListWidget::setSelected(int item) {
@@ -316,30 +322,41 @@ void ListWidget::drawWidget(bool hilite) {
 			if (_hasFocus)
 				inverted = true;
 			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y + 1 + kLineHeight * i, _x+_w-1, y+fontHeight-1), _hints, Theme::kWidgetBackgroundBorderSmall);
+				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y + 1 + kLineHeight * i, _x + _w - 1, y + fontHeight - 1), _hints, Theme::kWidgetBackgroundBorderSmall);
 		}
+
+		Common::Rect r(getEditRect());
 
 		// If in numbering mode, we first print a number prefix
 		if (_numberingMode != kListNumberingOff) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x+2, y, _x+_w-2, y+fontHeight-1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			g_gui.theme()->drawText(Common::Rect(_x + 2, y, _x + r.left, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		}
 
-		Common::Rect r(getEditRect());
-		if (_selectedItem == pos && _editMode) {
+		int width;
 
+		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
 			deltax = -_editScrollOffset;
-
-			g_gui.theme()->drawText(Common::Rect(_x + r.left - deltax, y, _x+_w-2, y+fontHeight-1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			width = _w - r.left + deltax - 2;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left - deltax, y, _x + r.left - deltax + width, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		} else {
+			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
 			deltax = 0;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x+_w-2, y+fontHeight-1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			if (_selectedItem != pos)
+				width = g_gui.getStringWidth(buffer);
+			else
+				width = _w - r.left - 2;
+			if (width > maxWidth)
+				maxWidth = width;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		}
+
+		_textWidth[i] = width;
 	}
 }
 
