@@ -1897,6 +1897,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 		break;
 
+	case 143: // Triggered by Russian water
 	case 144:
 	case 145:
 	case 146:
