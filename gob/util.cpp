@@ -368,25 +368,6 @@ void Util::cutFromStr(char *str, int16 from, int16 cutlen) {
 	//log_write("res = %s\n", str);
 }
 
-int16 Util::strstr(const char *str1, char *str2) {
-	char c;
-	uint16 len1;
-	uint16 i;
-
-	//log_write("strstr: str1 = %s, str2 = %s\n", str1, str2);
-
-	for (i = 0, len1 = strlen(str1); strlen(str2 + i) >= len1; i++) {
-		c = str2[i + len1];
-		str2[i + len1] = 0;
-		if (strcmp(str2 + i, str1) == 0) {
-			str2[i + len1] = c;
-			return i + 1;
-		}
-		str2[i + len1] = c;
-	}
-	return 0;
-}
-
 void Util::listInsertFront(List * list, void *data) {
 	ListNode *node;
 
@@ -454,7 +435,7 @@ const char Util::trStr3[] = "                                ";
 
 void Util::prepareStr(char *str) {
 	uint16 i;
-	int16 j;
+	char *start, *end;
 	char buf[300];
 
 	strcpy(buf, trStr1);
@@ -470,22 +451,19 @@ void Util::prepareStr(char *str) {
 	while (strlen(str) > 0 && str[strlen(str) - 1] == ' ')
 		cutFromStr(str, strlen(str) - 1, 1);
 
-	i = strstr(" ", str);
+	start = strchr(str, ' ');
 
-	while (1) {
-		if (i == 0)
-			return;
-
-		if (str[i] == ' ') {
-			cutFromStr(str, i - 1, 1);
+	while (start != 0) {
+		if (*(start+1) == ' ') {
+			cutFromStr(str, start - str, 1);
 			continue;
 		}
 
-		j = strstr(" ", str + i);
-		if (j != 0)
-			i += j;
+		end = strchr(start + 1, ' ');
+		if (end != 0)
+			start = end + 1;
 		else
-			i = 0;
+			start = 0;
 	}
 }
 

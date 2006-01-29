@@ -70,17 +70,16 @@ public:
 
 	Video::FontDesc *loadFont(const char *path);
 	void freeFont(Video::FontDesc * fontDesc);
-	void insertStr(const char *str1, char *str2, int16 pos);
-	void cutFromStr(char *str, int16 from, int16 cutlen);
-	int16 strstr(const char *str1, char *str2);
+	static void insertStr(const char *str1, char *str2, int16 pos);
+	static void cutFromStr(char *str, int16 from, int16 cutlen);
 	void waitEndFrame();
 	void setFrameRate(int16 rate);
 
-	void listInsertBack(List * list, void *data);
-	void listInsertFront(List * list, void *data);
-	void listDropFront(List * list);
-	void deleteList(List * list);
-	void prepareStr(char *str);
+	static void listInsertBack(List * list, void *data);
+	static void listInsertFront(List * list, void *data);
+	static void listDropFront(List * list);
+	static void deleteList(List * list);
+	static void prepareStr(char *str);
 	void waitMouseRelease(char drawMouse);
 
 	static const char trStr1[];

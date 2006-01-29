@@ -1122,7 +1122,6 @@ void Game::collisionsBlock(void) {
 	int16 descIndex;
 	int16 timeVal;
 	char *str;
-	int16 pos;
 	int16 savedCollStackSize;
 	int16 i;
 	int16 counter;
@@ -1546,12 +1545,12 @@ void Game::collisionsBlock(void) {
 				continue;
 
 			if ((_collisionAreas[i].flags & 0x0f) > 8) {
+				char *ptr;
 				strcpy(_tempStr,
 				    _vm->_global->_inter_variables + _collisionAreas[i].key);
-				while ((pos =
-					_vm->_util->strstr(" ", _tempStr)) != 0) {
-					_vm->_util->cutFromStr(_tempStr, pos - 1, 1);
-					pos = _vm->_util->strstr(" ", _tempStr);
+				while ((ptr = strchr(_tempStr, ' ')) != 0) {
+					_vm->_util->cutFromStr(_tempStr, (ptr - _tempStr), 1);
+					ptr = strchr(_tempStr, ' ');
 				}
 				strcpy(_vm->_global->_inter_variables + _collisionAreas[i].key, _tempStr);
 			}
@@ -1565,7 +1564,7 @@ void Game::collisionsBlock(void) {
 				if ((_collisionAreas[i].flags & 0x0f) < 7)
 					_vm->_util->prepareStr(_tempStr);
 
-				pos = 0;
+				int16 pos = 0;
 				do {
 					strcpy(_collStr, str);
 					pos += strlen(str) + 1;
