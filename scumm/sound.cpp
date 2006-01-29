@@ -2187,20 +2187,17 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		//     + some default instruments
 		byte *ptr;
 		if (_features & GF_OLD_BUNDLE) {
-			ptr = (byte *) calloc(ad_size - 4, 1);
+			ad_size -= 4;
 			_fileHandle->seek(ad_offs + 4, SEEK_SET);
-			_fileHandle->read(ptr, ad_size - 4);
-			convertADResource(type, idx, ptr, ad_size - 4);
-			free(ptr);
-			return 1;
 		} else {
-			ptr = (byte *) calloc(ad_size - 6, 1);
+			ad_size -= 6;
 			_fileHandle->seek(ad_offs, SEEK_SET);
-			_fileHandle->read(ptr, ad_size - 6);
-			convertADResource(type, idx, ptr, ad_size - 6);
-			free(ptr);
-			return 1;
 		}
+		ptr = (byte *) calloc(ad_size, 1);
+		_fileHandle->read(ptr, ad_size);
+		convertADResource(type, idx, ptr, ad_size);
+		free(ptr);
+		return 1;
 	} else if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
 		if (_features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
