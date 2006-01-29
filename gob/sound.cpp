@@ -118,11 +118,9 @@ void Snd::writeAdlib(int16 port, int16 data) {
 
 Snd::SoundDesc *Snd::loadSoundData(const char *path) {
 	Snd::SoundDesc *sndDesc;
-	int32 size;
 
-	size = _vm->_dataio->getDataSize(path);
-	sndDesc = (Snd::SoundDesc *)malloc(size);
-	sndDesc->size = size;
+	sndDesc = new Snd::SoundDesc;
+	sndDesc->size = _vm->_dataio->getDataSize(path);
 	sndDesc->data = _vm->_dataio->getData(path);
 
 	return sndDesc;
@@ -136,8 +134,8 @@ void Snd::freeSoundData(Snd::SoundDesc *sndDesc) {
 			_loopingSounds[i] = NULL;
 	}
 
-	free(sndDesc->data);
-	free(sndDesc);
+	delete[] sndDesc->data;
+	delete sndDesc;
 }
 
 }                               // End of namespace Gob

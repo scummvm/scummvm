@@ -45,18 +45,18 @@ public:
 
 #pragma START_PACK_STRUCTS
 
-	typedef struct Point {
+	struct Point {
 		int16 x;
 		int16 y;
-	} GCC_PACK Point;
+	} GCC_PACK;
 
 #define szMap_ItemPos 3
 
-	typedef struct ItemPos {
+	struct ItemPos {
 		int8 x;
 		int8 y;
 		int8 orient;		// ??
-	} GCC_PACK ItemPos;
+	} GCC_PACK;
 
 #pragma END_PACK_STRUCTS
 

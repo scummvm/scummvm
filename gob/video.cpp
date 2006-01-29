@@ -85,7 +85,7 @@ int32 Video::getRectSize(int16 width, int16 height, int16 flag, int16 mode) {
 
 Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
 	int8 flagsAnd2;
-	byte *vidMem;
+	byte *vidMem = 0;
 	int32 sprSize;
 	int16 someFlags = 1;
 	SurfaceDesc *descPtr;
@@ -108,27 +108,31 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 		flagsAnd2 = 0;
 
 	if (flags & PRIMARY_SURFACE) {
-		vidMem = 0;
 		_vm->_global->_primaryWidth = width;
 		_vm->_global->_mouseMaxCol = width;
 		_vm->_global->_primaryHeight = height;
 		_vm->_global->_mouseMaxRow = height;
 		sprSize = 0;
-
 	} else {
-		vidMem = 0;
 		sprSize = Video::getRectSize(width, height, flagsAnd2, vidMode);
 		if (flagsAnd2)
 			someFlags += 0x80;
 	}
 	if (flags & PRIMARY_SURFACE) {
 		descPtr = _vm->_global->_pPrimarySurfDesc;
-		vidMem = (byte *)malloc(320 * 200);
+		delete[] descPtr->vidPtr;
+		assert(descPtr);
+		vidMem = new byte[320 * 200];
 	} else {
-		if (flags & DISABLE_SPR_ALLOC)
-			descPtr = (SurfaceDesc *)malloc(sizeof(SurfaceDesc));
-		else
-			descPtr = (SurfaceDesc *)malloc(sizeof(SurfaceDesc) + sprSize);
+		if (flags & DISABLE_SPR_ALLOC) {
+			descPtr = new SurfaceDesc;
+			// this case causes vidPtr to be set to invalid memory
+			assert(false);
+		} else {
+			descPtr = new SurfaceDesc;
+			descPtr->vidPtr = new byte[sprSize];
+			vidMem = descPtr->vidPtr;
+		}
 	}
 	if (descPtr == 0)
 		return 0;
@@ -137,8 +141,6 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 	descPtr->height = height;
 	descPtr->flag = someFlags;
 	descPtr->vidMode = vidMode;
-	if (vidMem == 0)
-		vidMem = ((byte *)descPtr) + sizeof(SurfaceDesc);
 	descPtr->vidPtr = vidMem;
 
 	descPtr->reserved1 = 0;
@@ -147,11 +149,11 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 }
 
 void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
-	_vm->_global->_sprAllocated--;
-	if (surfDesc != _vm->_global->_pPrimarySurfDesc)
-		free(surfDesc);
-	else
-		free(surfDesc->vidPtr);
+	delete[] surfDesc->vidPtr;
+	if (surfDesc != _vm->_global->_pPrimarySurfDesc) {
+		_vm->_global->_sprAllocated--;
+		delete surfDesc;
+	}
 }
 
 int16 Video::clampValue(int16 val, int16 max) {
@@ -302,7 +304,7 @@ void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, i
 		return;
 
 	if ((dest->vidMode & 0x7f) != 0x13)
-		error("Video::drawPackedSprite: Vide mode 0x%x is not fully supported!",
+		error("Video::drawPackedSprite: Video mode 0x%x is not fully supported!",
 		    dest->vidMode & 0x7f);
 
 	_videoDriver->drawPackedSprite(sprBuf, width, height, x, y, transp, dest);
@@ -378,13 +380,6 @@ void Video::setFullPalette(PalDesc *palDesc) {
 
 void Video::initPrimary(int16 mode) {
 	int16 old;
-	if (_vm->_global->_curPrimaryDesc) {
-		Video::freeSurfDesc(_vm->_global->_curPrimaryDesc);
-		Video::freeSurfDesc(_vm->_global->_allocatedPrimary);
-
-		_vm->_global->_curPrimaryDesc = 0;
-		_vm->_global->_allocatedPrimary = 0;
-	}
 	if (mode != 0x13 && mode != 3 && mode != -1)
 		error("Video::initPrimary: Video mode 0x%x is not supported!",
 		    mode);
@@ -450,7 +445,7 @@ char Video::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		    srcHeight - 1, x, y, transp);
 		return 1;
 	} else {
-		memBuffer = (byte *)malloc(4114);
+		memBuffer = new byte[4114];
 		if (memBuffer == 0)
 			return 0;
 
@@ -520,13 +515,13 @@ char Video::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 						destPtr = linePtr;
 						curHeight++;
 						if (curHeight >= srcHeight) {
-							free(memBuffer);
+							delete[] memBuffer;
 							return 1;
 						}
 					}
 					sourceLeft--;
 					if (sourceLeft == 0) {
-						free(memBuffer);
+						delete[] memBuffer;
 						return 1;
 					}
 					memBuffer[bufPos] = temp;
@@ -536,7 +531,7 @@ char Video::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 			}
 		}
 	}
-	free(memBuffer);
+	delete[] memBuffer;
 	return 1;
 }
 

@@ -186,8 +186,7 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 
 	if (allColors == 0) {
 		do {
-			if (_vm->_global->_tmpPalBuffer == 0)
-				_vm->_video->waitRetrace(_vm->_global->_videoMode);
+			_vm->_video->waitRetrace(_vm->_global->_videoMode);
 
 			stop = fadeStep(0);
 
@@ -222,9 +221,6 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 		else
 			_vm->_util->clearPalette();
 	}
-
-	free(_vm->_global->_tmpPalBuffer);
-	_vm->_global->_tmpPalBuffer = 0;
 }
 
 }				// End of namespace Gob

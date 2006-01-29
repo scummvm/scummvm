@@ -104,13 +104,9 @@ void Init::cleanup(void) {
 		_vm->_gtimer->disableTimer();
 
 	_vm->_video->freeDriver();
-	if (_vm->_global->_curPrimaryDesc != 0) {
-		_vm->_video->freeSurfDesc(_vm->_global->_curPrimaryDesc);
-		_vm->_video->freeSurfDesc(_vm->_global->_allocatedPrimary);
-		_vm->_global->_allocatedPrimary = 0;
-		_vm->_global->_curPrimaryDesc = 0;
-	}
+	_vm->_video->freeSurfDesc(_vm->_global->_pPrimarySurfDesc);
 	_vm->_global->_pPrimarySurfDesc = 0;
+
 	if (_vm->_snd->_cleanupFunc != 0 && _vm->_snd->_playingSound != 0) {
 		(*_vm->_snd->_cleanupFunc) (0);
 		_vm->_snd->_cleanupFunc = 0;
@@ -172,7 +168,7 @@ memBlocks	= word ptr -2*/
 	_vm->_game->_totFileData = 0;
 	_vm->_game->_totResourceTable = 0;
 	_vm->_global->_inter_variables = 0;
-	_palDesc = (Video::PalDesc *)malloc(12);
+	_palDesc = new Video::PalDesc;
 
 	if (_vm->_global->_videoMode != 0x13)
 		error("initGame: Only 0x13 video mode is supported!");
@@ -224,8 +220,7 @@ memBlocks	= word ptr -2*/
 			if (infPtr == infEnd)
 				break;
 		}
-
-		free(infBuf);
+		delete[] infBuf;
 	}
 
 	if (totName != 0) {
@@ -244,7 +239,7 @@ memBlocks	= word ptr -2*/
 		varsCount = FROM_LE_32(varsCount);
 		_vm->_dataio->closeData(handle);
 
-		_vm->_global->_inter_variables = (char *)malloc(varsCount * 4);
+		_vm->_global->_inter_variables = new char[varsCount * 4];
 		memset(_vm->_global->_inter_variables, 0, varsCount * 4);
 
 		strcpy(_vm->_game->_curTotFile, buffer);
@@ -256,10 +251,10 @@ memBlocks	= word ptr -2*/
 		_vm->_cdrom->stopPlaying();
 		_vm->_cdrom->freeLICbuffer();
 
-		free(_vm->_global->_inter_variables);
-		free(_vm->_game->_totFileData);
-		free(_vm->_game->_totTextData);
-		free(_vm->_game->_totResourceTable);
+		delete[] _vm->_global->_inter_variables;
+		delete[] _vm->_game->_totFileData;
+		delete[] _vm->_game->_totTextData;
+		delete[] _vm->_game->_totResourceTable;
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -267,7 +262,7 @@ memBlocks	= word ptr -2*/
 			_vm->_util->freeFont(_vm->_draw->_fonts[i]);
 	}
 
-	free(_palDesc);
+	delete _palDesc;
 	_vm->_dataio->closeDataFile();
 	_vm->_video->initPrimary(-1);
 	cleanup();

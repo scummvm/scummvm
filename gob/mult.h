@@ -29,7 +29,7 @@ namespace Gob {
 class Mult {
 public:
 #pragma START_PACK_STRUCTS
-	typedef struct Mult_AnimData {
+	struct Mult_AnimData {
 		int8 animation;
 		int8 layer;
 		int8 frame;
@@ -43,9 +43,9 @@ public:
 		int8 newAnimation;
 		byte intersected;
 		int8 newCycle;
-	} GCC_PACK Mult_AnimData;
+	} GCC_PACK;
 
-	typedef struct Mult_Object {
+	struct Mult_Object {
 		int32 *pPosX;
 		int32 *pPosY;
 		Mult_AnimData *pAnimData;
@@ -54,47 +54,46 @@ public:
 		int16 lastRight;
 		int16 lastTop;
 		int16 lastBottom;
-	} Mult_Object;
+	};
 
-	// Mult
-	typedef struct Mult_StaticKey {
+	struct Mult_StaticKey {
 		int16 frame;
 		int16 layer;
-	} GCC_PACK Mult_StaticKey;
+	} GCC_PACK;
 
-	typedef struct Mult_AnimKey {
+	struct Mult_AnimKey {
 		int16 frame;
 		int16 layer;
 		int16 posX;
 		int16 posY;
 		int16 order;
-	} GCC_PACK Mult_AnimKey;
+	} GCC_PACK;
 
-	typedef struct Mult_TextKey {
+	struct Mult_TextKey {
 		int16 frame;
 		int16 cmd;
 		int16 unknown0[9];
 		int16 index;
 		int16 unknown1[2];
-	} GCC_PACK Mult_TextKey;
+	} GCC_PACK;
 
-	typedef struct Mult_PalKey {
+	struct Mult_PalKey {
 		int16 frame;
 		int16 cmd;
 		int16 rates[4];
 		int16 unknown0;
 		int16 unknown1;
 		int8 subst[16][4];
-	} GCC_PACK Mult_PalKey;
+	} GCC_PACK;
 
-	typedef struct Mult_PalFadeKey {
+	struct Mult_PalFadeKey {
 		int16 frame;
 		int16 fade;
 		int16 palIndex;
 		int8 flag;
-	} GCC_PACK Mult_PalFadeKey;
+	} GCC_PACK;
 
-	typedef struct Mult_SndKey {
+	struct Mult_SndKey {
 		int16 frame;
 		int16 cmd;
 		int16 freq;
@@ -102,7 +101,7 @@ public:
 		int16 repCount;
 		int16 resId;
 		int16 soundIndex;
-	} GCC_PACK Mult_SndKey;
+	} GCC_PACK;
 #pragma END_PACK_STRUCTS
 
 	// Globals

@@ -33,13 +33,13 @@ namespace Gob {
 
 class Draw {
 public:
-	typedef struct FontToSprite {
+	struct FontToSprite {
 		int8 sprite;
 		int8 base;
 		int8 width;
 		int8 height;
 		FontToSprite() : sprite(0), base(0), width(0), height() {}
-	} FontToSprite;
+	};
 
 	int16 _fontIndex;
 	int16 _spriteLeft;

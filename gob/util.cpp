@@ -271,7 +271,7 @@ int16 joy_calibrate() {
 }
 
 Video::FontDesc *Util::loadFont(const char *path) {
-	Video::FontDesc *fontDesc = (Video::FontDesc *) malloc(sizeof(Video::FontDesc));
+	Video::FontDesc *fontDesc = new Video::FontDesc;
 	char *data;
 
 	if (fontDesc == 0)
@@ -279,7 +279,7 @@ Video::FontDesc *Util::loadFont(const char *path) {
 
 	data = _vm->_dataio->getData(path);
 	if (data == 0) {
-		free(fontDesc);
+		delete fontDesc;
 		return 0;
 	}
 
@@ -303,8 +303,8 @@ Video::FontDesc *Util::loadFont(const char *path) {
 }
 
 void Util::freeFont(Video::FontDesc * fontDesc) {
-	free(fontDesc->dataPtr - 4);
-	free(fontDesc);
+	delete[] (fontDesc->dataPtr - 4);
+	delete fontDesc;
 }
 
 void Util::clearPalette(void) {
@@ -390,7 +390,7 @@ int16 Util::strstr(const char *str1, char *str2) {
 void Util::listInsertFront(List * list, void *data) {
 	ListNode *node;
 
-	node = (ListNode *) malloc(sizeof(ListNode));
+	node = new ListNode;
 	if (list->pHead != 0) {
 		node->pData = data;
 		node->pNext = list->pHead;
@@ -415,8 +415,7 @@ void Util::listInsertBack(List * list, void *data) {
 			warning("listInsertBack: Broken list!");
 		}
 
-		node =
-		    (ListNode *) malloc(sizeof(ListNode));
+		node = new ListNode;
 		node->pData = data;
 		node->pPrev = list->pTail;
 		node->pNext = 0;
@@ -429,12 +428,12 @@ void Util::listInsertBack(List * list, void *data) {
 
 void Util::listDropFront(List * list) {
 	if (list->pHead->pNext == 0) {
-		free((list->pHead));
+		delete list->pHead;
 		list->pHead = 0;
 		list->pTail = 0;
 	} else {
 		list->pHead = list->pHead->pNext;
-		free((list->pHead->pPrev));
+		delete list->pHead->pPrev;
 		list->pHead->pPrev = 0;
 	}
 }
@@ -444,7 +443,7 @@ void Util::deleteList(List * list) {
 		listDropFront(list);
 	}
 
-	free(list);
+	delete list;
 }
 
 const char Util::trStr1[] =

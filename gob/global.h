@@ -134,9 +134,7 @@ public:
 
 	int16 _setAllPalette;
 
-	Video::SurfaceDesc *_curPrimaryDesc;
-	Video::SurfaceDesc *_allocatedPrimary;
-	Video::SurfaceDesc_t _primarySurfDesc;
+	Video::SurfaceDesc _primarySurfDesc;
 	Video::SurfaceDesc *_pPrimarySurfDesc;
 
 	int16 _oldMode;
@@ -162,8 +160,6 @@ public:
 
 	int16 _inter_mouseX;
 	int16 _inter_mouseY;
-
-	char *_tmpPalBuffer;
 
 	Global(GobEngine *vm);
 

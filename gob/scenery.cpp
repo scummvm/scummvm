@@ -116,9 +116,9 @@ int16 Scenery::loadStatic(char search) {
 	ptr->layersCount = (int16)READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
-	ptr->layers = (StaticLayer **)malloc(sizeof(StaticLayer *) * ptr->layersCount);
-	ptr->pieces = (PieceDesc **)malloc(sizeof(PieceDesc *) * picsCount);
-	ptr->piecesFromExt = (int8 *)malloc(picsCount);
+	ptr->layers = new StaticLayer*[ptr->layersCount];
+	ptr->pieces = new PieceDesc*[picsCount];
+	ptr->piecesFromExt = new int8[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
@@ -196,7 +196,7 @@ void Scenery::freeStatic(int16 index) {
 
 	for (i = 0; i < _staticPictCount[index]; i++) {
 		if (_statics[index].piecesFromExt[i] == 1)
-			free(_statics[index].pieces[i]);
+			delete[] _statics[index].pieces[i];
 
 		spr = _staticPictToSprite[index * 7 + i];
 		_spriteRefs[spr]--;
@@ -207,11 +207,11 @@ void Scenery::freeStatic(int16 index) {
 		}
 	}
 
-	free(_statics[index].layers);
-	free(_statics[index].pieces);
-	free(_statics[index].piecesFromExt);
+	delete[] _statics[index].layers;
+	delete[] _statics[index].pieces;
+	delete[] _statics[index].piecesFromExt;
 	if (_staticFromExt[index] == 1)
-		free(_statics[index].dataPtr);
+		delete[] _statics[index].dataPtr;
 
 	_staticFromExt[index] = 0;
 	_staticPictCount[index] = -1;
@@ -433,13 +433,9 @@ int16 Scenery::loadAnim(char search) {
 	ptr->layersCount = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
-	ptr->layers =
-	    (AnimLayer **) malloc(sizeof(AnimLayer *) *
-	    ptr->layersCount);
-	ptr->pieces =
-	    (PieceDesc **) malloc(sizeof(PieceDesc *) *
-	    picsCount);
-	ptr->piecesFromExt = (int8 *) malloc(picsCount);
+	ptr->layers = new AnimLayer*[ptr->layersCount];
+	ptr->pieces = new PieceDesc*[picsCount];
+	ptr->piecesFromExt = new int8[picsCount];
 
 	for (i = 0; i < ptr->layersCount; i++) {
 		offset = (int16)READ_LE_UINT16(&((int16 *)dataPtr)[i]);
@@ -718,7 +714,7 @@ void Scenery::freeAnim(int16 animation) {
 
 	for (i = 0; i < _animPictCount[animation]; i++) {
 		if (_animations[animation].piecesFromExt[i] == 1)
-			free(_animations[animation].pieces[i]);
+			delete[] _animations[animation].pieces[i];
 
 		spr = _animPictToSprite[animation * 7 + i];
 		_spriteRefs[spr]--;
@@ -730,11 +726,11 @@ void Scenery::freeAnim(int16 animation) {
 		}
 	}
 
-	free(_animations[animation].layers);
-	free(_animations[animation].pieces);
-	free(_animations[animation].piecesFromExt);
+	delete[] _animations[animation].layers;
+	delete[] _animations[animation].pieces;
+	delete[] _animations[animation].piecesFromExt;
 	if (_animFromExt[animation] == 1)
-		free(_animations[animation].dataPtr);
+		delete[] _animations[animation].dataPtr;
 
 	_animFromExt[animation] = 0;
 	_animPictCount[animation] = 0;

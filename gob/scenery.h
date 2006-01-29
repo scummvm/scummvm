@@ -27,39 +27,39 @@ namespace Gob {
 class Scenery {
 public:
 #pragma START_PACK_STRUCTS
-	typedef struct PieceDesc {
+	struct PieceDesc {
 		int16 left;		//NOTE:
 		int16 right;		//These are stored in Little Endian format
 		int16 top;		//And should be converted by client code when accessed
 		int16 bottom;		//i.e. use FROM_LE_16()
-	} GCC_PACK PieceDesc;
+	} GCC_PACK;
 
-	typedef struct StaticPlane {
+	struct StaticPlane {
 		int8 pictIndex;
 		int8 pieceIndex;
 		int8 drawOrder;
 		int16 destX;
 		int16 destY;
 		int8 transp;
-	} GCC_PACK StaticPlane;
+	} GCC_PACK;
 
-	typedef struct StaticLayer {
+	struct StaticLayer {
 		int16 backResId;
 		int16 planeCount;
 		StaticPlane planes[1];
-	} GCC_PACK StaticLayer;
+	} GCC_PACK;
 
 	// Animations
 
-	typedef struct AnimFramePiece {
+	struct AnimFramePiece {
 		byte pictIndex;
 		byte pieceIndex;
 		int8 destX;
 		int8 destY;
 		int8 notFinal;
-	} GCC_PACK AnimFramePiece;
+	} GCC_PACK;
 
-	typedef struct AnimLayer {
+	struct AnimLayer {
 		int16 unknown0;
 		int16 posX;
 		int16 posY;
@@ -68,10 +68,10 @@ public:
 		int8 transp;
 		int16 framesCount;
 		AnimFramePiece frames[1];
-	} GCC_PACK AnimLayer;
+	} GCC_PACK;
 #pragma END_PACK_STRUCTS
 
-	typedef struct Static {
+	struct Static {
 		int16 layersCount;
 		StaticLayer **layers;
 		PieceDesc **pieces;
@@ -79,7 +79,7 @@ public:
 		char *dataPtr;
 		Static() : layersCount(0), layers(0), pieces(0),
 				   piecesFromExt(0), dataPtr(0) {}
-	} Static;
+	};
 
 	struct Animation {
 		int16 layersCount;

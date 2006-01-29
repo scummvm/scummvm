@@ -31,7 +31,7 @@ public:
 
 #pragma START_PACK_STRUCTS
 #define szGame_TotResItem (4 + 2 + 2 + 2)
-	typedef struct Collision {
+	struct Collision {
 		int16 id;
 		int16 left;
 		int16 top;
@@ -41,56 +41,56 @@ public:
 		int16 key;
 		int16 funcEnter;
 		int16 funcLeave;
-	} GCC_PACK Collision;
+	} GCC_PACK;
 
-	typedef struct TotResItem {
+	struct TotResItem {
 		int32 offset;	// if > 0, then offset from end of resource table.
 						// If < 0, then -offset-1 is index in .IM file table
 		int16 size;
 		int16 width;
 		int16 height;
-	} GCC_PACK TotResItem;
+	} GCC_PACK;
 
 #define szGame_TotResTable (2 + 1)
-	typedef struct TotResTable {
+	struct TotResTable {
 		int16 itemsCount;
 		byte unknown;
 		TotResItem items[1];
-	} GCC_PACK TotResTable;
+	} GCC_PACK;
 
 #define szGame_ExtItem (4 + 2 + 2 + 2)
-	typedef struct ExtItem {
+	struct ExtItem {
 		int32 offset;		// offset from the table end
 		uint16 size;
 		int16 width;		// width&0x7fff - width, width&0x8000 - pack flag
 		int16 height;		// not zero
-	} GCC_PACK ExtItem;
+	} GCC_PACK;
 
 #define szGame_ExtTable (2 + 1)
-	typedef struct ExtTable {
+	struct ExtTable {
 		int16 itemsCount;
 		byte unknown;
-		ExtItem items[1];
-	} GCC_PACK ExtTable;
+		ExtItem* items;
+	} GCC_PACK;
 
 #define szGame_TotTextItem (2 + 2)
-	typedef struct TotTextItem {
+	struct TotTextItem {
 		int16 offset;
 		int16 size;
-	} GCC_PACK TotTextItem;
+	} GCC_PACK;
 
 #define szGame_TotTextTable (2)
-	typedef struct TotTextTable {
+	struct TotTextTable {
 		int16 itemsCount;
 		TotTextItem items[1];
-	} GCC_PACK TotTextTable;
+	} GCC_PACK;
 
-	typedef struct InputDesc {
+	struct InputDesc {
 		int16 fontIndex;
 		int16 backColor;
 		int16 frontColor;
 		char *ptr;
-	} GCC_PACK InputDesc;
+	} GCC_PACK;
 #pragma END_PACK_STRUCTS
 
 	TotResTable *_totResourceTable;

@@ -73,7 +73,7 @@ enum {
 	GF_MAC = 1 << 5
 };
 
-typedef struct GobGameSettings {
+struct GobGameSettings {
 	const char *gameid;
 	const char *description;
 	uint32 features;
@@ -82,7 +82,7 @@ typedef struct GobGameSettings {
 		GameSettings dummy = { gameid, description, features };
 		return dummy;
 	}
-} GobGameSettings;
+};
 
 class GobEngine : public Engine {
 	void errorString(const char *buf_input, char *buf_output);

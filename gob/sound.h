@@ -28,7 +28,7 @@ namespace Gob {
 
 class Snd {
 public:
-	typedef struct SoundDesc {
+	struct SoundDesc {
 		Audio::SoundHandle handle;
 		char *data;
 		int32 size;
@@ -39,7 +39,7 @@ public:
 		int16 flag;
 		SoundDesc() : data(0), size(0), repCount(0), timerTicks(0),
 					  inClocks(0), frequency(0), flag(0) {}
-	} SoundDesc;
+	};
 
 	typedef void (*CleanupFuncPtr) (int16);
 

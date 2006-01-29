@@ -88,8 +88,6 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_oldMode = 3;
 	_dontSetPalette = 0;
-	_curPrimaryDesc = 0;
-	_allocatedPrimary = 0;
 	_pPrimarySurfDesc = 0;
 
 	_pPaletteDesc = 0;
@@ -146,8 +144,6 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_inter_mouseX = 0;
 	_inter_mouseY = 0;
-
-	_tmpPalBuffer = 0;
 }
 
 } // End of namespace Gob

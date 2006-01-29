@@ -40,7 +40,7 @@ int32 Pack::unpackData(char *sourceBuf, char *destBuf) {
 	realSize = READ_LE_UINT32(sourceBuf);
 	counter = READ_LE_UINT32(sourceBuf);
 
-	tmpBuf = (byte *)malloc(4114);
+	tmpBuf = new byte[4114];
 
 	/*
 	 * Can use assembler unpacker for small blocks - for speed.
@@ -91,7 +91,7 @@ int32 Pack::unpackData(char *sourceBuf, char *destBuf) {
 				*dest++ = tmpBuf[(off + i) % 4096];
 				counter--;
 				if (counter == 0) {
-					free(tmpBuf);
+					delete[] tmpBuf;
 					return realSize;
 				}
 				tmpBuf[tmpIndex] = tmpBuf[(off + i) % 4096];
@@ -100,7 +100,7 @@ int32 Pack::unpackData(char *sourceBuf, char *destBuf) {
 			}
 		}
 	}
-	free(tmpBuf);
+	delete[] tmpBuf;
 	return realSize;
 }
 

@@ -512,7 +512,7 @@ void Map::loadMapObjects(char *avjFile) {
 
 	_vm->_goblin->_gobsCount = loadFromAvo_LE_UINT16();
 	for (i = 0; i < _vm->_goblin->_gobsCount; i++) {
-		_vm->_goblin->_goblins[i] = (Goblin::Gob_Object *)malloc(sizeof(Goblin::Gob_Object));
+		_vm->_goblin->_goblins[i] = new Goblin::Gob_Object;
 
 		_vm->_goblin->_goblins[i]->xPos = READ_LE_UINT16(savedPtr2);
 		savedPtr2 += 2;
@@ -620,8 +620,7 @@ void Map::loadMapObjects(char *avjFile) {
 
 	_vm->_goblin->_objCount = loadFromAvo_LE_UINT16();
 	for (i = 0; i < _vm->_goblin->_objCount; i++) {
-		_vm->_goblin->_objects[i] =
-		    (Goblin::Gob_Object *) malloc(sizeof(Goblin::Gob_Object));
+		_vm->_goblin->_objects[i] = new Goblin::Gob_Object;
 
 		_vm->_goblin->_objects[i]->xPos = READ_LE_UINT16(savedPtr3);
 		savedPtr3 += 2;
@@ -681,7 +680,7 @@ void Map::loadMapObjects(char *avjFile) {
 		delete[] tempstatedata;
 	}
 
-	_vm->_goblin->_objects[10] = (Goblin::Gob_Object *)malloc(sizeof(Goblin::Gob_Object));
+	_vm->_goblin->_objects[10] = new Goblin::Gob_Object;
 	memset(_vm->_goblin->_objects[10], 0, sizeof(Goblin::Gob_Object));
 
 	_vm->_goblin->_objects[10]->stateMach = new Goblin::Gob_StateLine[40];
@@ -728,7 +727,7 @@ void Map::loadMapObjects(char *avjFile) {
 		strcpy(sndNames[i], buf);
 	}
 
-	free(dataBuf);
+	delete[] dataBuf;
 
 	_vm->_goblin->_soundData[14] = _vm->_snd->loadSoundData("diamant1.snd");
 

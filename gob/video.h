@@ -40,7 +40,7 @@ extern int16 setAllPalette;
 
 class Video {
 public:
-	typedef struct SurfaceDesc_t {
+	struct SurfaceDesc {
 		int16 width;
 		int16 height;
 		int8 reserved1;
@@ -48,11 +48,11 @@ public:
 		int16 vidMode;
 		byte *vidPtr;
 		int16 reserved2;
-		SurfaceDesc_t() : width(0), height(0), reserved1(0), flag(0),
+		SurfaceDesc() : width(0), height(0), reserved1(0), flag(0),
 						  vidMode(0), vidPtr(0), reserved2(0) {}
-	} SurfaceDesc;
+	};
 
-	typedef struct FontDesc_t {
+	struct FontDesc {
 		char *dataPtr;
 		int8 itemWidth;
 		int8 itemHeight;
@@ -61,9 +61,9 @@ public:
 		int8 itemSize;
 		int8 bitWidth;
 		void *extraData;
-		FontDesc_t() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
+		FontDesc() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
 			               endItem(0), itemSize(0), bitWidth(0) {}
-	} FontDesc;
+	};
 
 #define GDR_VERSION	4
 
@@ -73,20 +73,20 @@ public:
 
 #pragma START_PACK_STRUCTS
 
-	typedef struct Color {
+	struct Color {
 		byte red;
 		byte green;
 		byte blue;
-	} GCC_PACK Color;
+	} GCC_PACK;
 
 #pragma END_PACK_STRUCTS
 
-	typedef struct PalDesc {
+	struct PalDesc {
 		Color *vgaPal;
 		int16 *unused1;
 		int16 *unused2;
 		PalDesc() : vgaPal(0), unused1(0), unused2(0) {}
-	} PalDesc;
+	};
 
 	Video(class GobEngine *vm);
 	int32 getRectSize(int16 width, int16 height, int16 flag, int16 mode);

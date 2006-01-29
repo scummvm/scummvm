@@ -417,7 +417,7 @@ void Draw::spriteOperation(int16 operation) {
 				    _destSpriteX + _spriteRight - 1,
 				    _destSpriteY + _spriteBottom - 1);
 			}
-			free(dataBuf);
+			delete[] dataBuf;
 			break;
 		}
 		// Load from .TOT resources

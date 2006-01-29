@@ -185,7 +185,7 @@ void DataIO::openDataFile(const char *src) {
 	char path[128];
 	int16 i;
 	int16 file;
-	struct ChunkDesc *dataDesc;
+	ChunkDesc *dataDesc;
 
 	strcpy(path, src);
 	for (i = 0; path[i] != '.' && path[i] != 0; i++);
@@ -207,9 +207,8 @@ void DataIO::openDataFile(const char *src) {
 
 	debug(7, "DataChunks: %d [for %s]", _vm->_global->_numDataChunks[file], path);
 
-	_vm->_global->_dataFiles[file] = dataDesc =
-	    (struct ChunkDesc *)malloc(sizeof(struct ChunkDesc) *
-	    _vm->_global->_numDataChunks[file]);
+	dataDesc = new ChunkDesc[_vm->_global->_numDataChunks[file]];
+	_vm->_global->_dataFiles[file] = dataDesc;
 
 	for (i = 0; i < _vm->_global->_numDataChunks[file]; i++) {
 		file_getHandle(_vm->_global->_dataFileHandles[file])->read(dataDesc[i].chunkName, 13);
@@ -230,7 +229,7 @@ void DataIO::closeDataFile() {
 	int16 file;
 	for (file = MAX_DATA_FILES - 1; file >= 0; file--) {
 		if (_vm->_global->_dataFiles[file] != 0) {
-			free(_vm->_global->_dataFiles[file]);
+			delete[] _vm->_global->_dataFiles[file];
 			_vm->_global->_dataFiles[file] = 0;
 			file_getHandle(_vm->_global->_dataFileHandles[file])->close();
 			return;
@@ -254,13 +253,13 @@ char *DataIO::getUnpackedData(const char *name) {
 	if (chunk == -1)
 		return 0;
 
-	unpackBuf = (char *)malloc(realSize);
+	unpackBuf = new char[realSize];
 	if (unpackBuf == 0)
 		return 0;
 
-	packBuf = (char *)malloc(_vm->_global->_packedSize);
+	packBuf = new char[_vm->_global->_packedSize];
 	if (packBuf == 0) {
-		free(unpackBuf);
+		delete[] unpackBuf;
 		return 0;
 	}
 
@@ -274,7 +273,8 @@ char *DataIO::getUnpackedData(const char *name) {
 	readChunk(chunk, ptr, sizeLeft);
 	freeChunk(chunk);
 	_vm->_pack->unpackData(packBuf, unpackBuf);
-	free(packBuf);
+
+	delete[] packBuf;
 	return unpackBuf;
 }
 
@@ -346,7 +346,7 @@ char *DataIO::getData(const char *path) {
 		return data;
 
 	size = getDataSize(path);
-	data = (char *)malloc(size);
+	data = new char[size];
 	if (data == 0)
 		return 0;
 

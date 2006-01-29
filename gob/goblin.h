@@ -34,7 +34,7 @@ namespace Gob {
 class Goblin {
 public:
 #pragma START_PACK_STRUCTS
-	typedef struct Gob_State {
+	struct Gob_State {
 		int16 animation;// +0h
 		int16 layer;	// +2h
 		int16 unk0;		// +4h
@@ -43,13 +43,13 @@ public:
 		int16 freq;		// +Ah, high/low byte * 100 - frequency
 		int16 repCount;	// +Ch high/low byte - repeat count
 		int16 sndFrame;		// +Eh
-	} GCC_PACK Gob_State;
+	} GCC_PACK;
 
 	typedef Gob_State *Gob_PState;
 
 	typedef Gob_PState Gob_StateLine[6];
 
-	typedef struct Gob_Object {
+	struct Gob_Object {
 		int16 animation;	// +0h
 		int16 state;		// +2h
 		int16 stateColumn;	// +4h
@@ -82,12 +82,12 @@ public:
 		char multObjIndex;	// +37h, from which play mult animations
 		char unk14;			// +38h
 		char visible;		// +39h
-	} GCC_PACK Gob_Object;
+	} GCC_PACK;
 
-	typedef struct Gob_Pos {
+	struct Gob_Pos {
 		char x;
 		char y;
-	} GCC_PACK Gob_Pos;
+	} GCC_PACK;
 #pragma END_PACK_STRUCTS
 
 	Util::List *_objList;

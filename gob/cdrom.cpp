@@ -86,14 +86,14 @@ void CDROM::readLIC(const char *fname) {
 		_vm->_dataio->seekData(handle, pos, SEEK_CUR);
 	}
 
-	_LICbuffer = (byte *)malloc(_numTracks * 22);
+	_LICbuffer = new byte[_numTracks * 22];
 	_vm->_dataio->readData(handle, (char *)_LICbuffer, _numTracks * 22);
 
 	_vm->_dataio->closeData(handle);
 }
 
 void CDROM::freeLICbuffer(void) {
-	free(_LICbuffer);
+	delete[] _LICbuffer;
 	_LICbuffer = 0;
 }
 

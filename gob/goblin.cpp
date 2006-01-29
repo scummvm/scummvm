@@ -177,7 +177,7 @@ int16 Goblin::peekGoblin(Gob_Object *_curGob) {
 }
 
 void Goblin::initList(void) {
-	_objList = (Util::List *) malloc(sizeof(Util::List));
+	_objList = new Util::List;
 	_objList->pHead = 0;
 	_objList->pTail = 0;
 }
@@ -1848,7 +1848,7 @@ void Goblin::freeObjects(void) {
 		}
 
 		delete[] _goblins[i]->stateMach;
-		free(_goblins[i]);
+		delete _goblins[i];
 		_goblins[i] = 0;
 	}
 
@@ -1866,7 +1866,7 @@ void Goblin::freeObjects(void) {
 		}
 
 		delete[] _objects[i]->stateMach;
-		free(_objects[i]);
+		delete _objects[i];
 		_objects[i] = 0;
 	}
 }

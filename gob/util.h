@@ -31,18 +31,18 @@ namespace Gob {
 class Util {
 public:
 	struct ListNode;
-	typedef struct ListNode {
+	struct ListNode {
 		void *pData;
 		struct ListNode *pNext;
 		struct ListNode *pPrev;
 		ListNode() : pData(0), pNext(0), pPrev(0) {}
-	} ListNode;
+	};
 
-	typedef struct List {
+	struct List {
 		ListNode *pHead;
 		ListNode *pTail;
 		List() : pHead(0), pTail(0) {}
-	} List;
+	};
 
 	void initInput(void);
 	void processInput(void);

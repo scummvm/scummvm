@@ -141,10 +141,11 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 
 	debug(7, "off: %ld size: %ld", offset, tableSize);
 	_vm->_dataio->seekData(handle, offset + tableSize, SEEK_SET);
+	// CHECKME: is the below correct?
 	if (isPacked)
-		dataBuf = (char *)malloc(size);
+		dataBuf = new char[size];
 	else
-		dataBuf = (char *)malloc(size);
+		dataBuf = new char[size];
 
 	dataPtr = dataBuf;
 	while (size > 32000) {
@@ -161,9 +162,9 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 
 	if (isPacked != 0) {
 		packedBuf = dataBuf;
-		dataBuf = (char *)malloc(READ_LE_UINT32(packedBuf));
+		dataBuf = new char[READ_LE_UINT32(packedBuf)];
 		_vm->_pack->unpackData(packedBuf, dataBuf);
-		free(packedBuf);
+		delete[] packedBuf;
 	}
 
 	return dataBuf;
@@ -229,7 +230,7 @@ void Game::pushCollisions(char all) {
 			size++;
 	}
 
-	destPtr = (Collision *)malloc(size * sizeof(Collision));
+	destPtr = new Collision[size];
 	_collStack[_collStackSize] = destPtr;
 	_collStackElemSizes[_collStackSize] = size;
 	_collStackSize++;
@@ -392,7 +393,7 @@ char *Game::loadTotResource(int16 id) {
 void Game::loadSound(int16 slot, char *dataPtr) {
 	Snd::SoundDesc *soundDesc;
 
-	soundDesc = (Snd::SoundDesc *)malloc(sizeof(Snd::SoundDesc));
+	soundDesc = new Snd::SoundDesc;
 
 	_soundSamples[slot] = soundDesc;
 
@@ -437,11 +438,11 @@ void Game::freeSoundSlot(int16 slot) {
 		return;
 
 	if (_soundFromExt[slot] == 1) {
-		free(_soundSamples[slot]->data - 6);
+		delete[] (_soundSamples[slot]->data - 6);
 		_soundFromExt[slot] = 0;
 	}
 
-	free(_soundSamples[slot]);
+	delete _soundSamples[slot];
 	_soundSamples[slot] = 0;
 }
 
@@ -1687,8 +1688,10 @@ void Game::loadExtTable(void) {
 	count = FROM_LE_16(count);
 
 	_vm->_dataio->seekData(_extHandle, 0, 0);
-	_extTable = (ExtTable *)malloc(sizeof(ExtTable)
-	    + sizeof(ExtItem) * count);
+	_extTable = new ExtTable;
+	_extTable->items = 0;
+	if (count)
+		_extTable->items = new ExtItem[count];
 
 	_vm->_dataio->readData(_extHandle, (char *)&_extTable->itemsCount, 2);
 	_extTable->itemsCount = FROM_LE_16(_extTable->itemsCount);
@@ -1855,7 +1858,7 @@ void Game::playTot(int16 skipPlay) {
 			_vm->_global->_inter_animDataSize = READ_LE_UINT16((char *)_totFileData + 0x38);
 			if (_vm->_global->_inter_variables == 0) {
 				variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
-				_vm->_global->_inter_variables = (char *)malloc(variablesCount * 4);
+				_vm->_global->_inter_variables = new char[variablesCount * 4];
 				for (i = 0; i < variablesCount; i++)
 					WRITE_VAR(i, 0);
 			}
@@ -1877,21 +1880,23 @@ void Game::playTot(int16 skipPlay) {
 
 			variablesCount = READ_LE_UINT32((char *)_totFileData + 0x2c);
 			_vm->_draw->blitInvalidated();
-			free(_totFileData);
+			delete[] _totFileData;
 			_totFileData = 0;
 
 			if (needTextFree)
-				free(_totTextData);
+				delete[] _totTextData;
 			_totTextData = 0;
 
 			if (needFreeResTable)
-				free(_totResourceTable);
+				delete[] _totResourceTable;
 			_totResourceTable = 0;
 
-			free(_imFileData);
+			delete[] _imFileData;
 			_imFileData = 0;
 
-			free(_extTable);
+			if (_extTable)
+				delete[] _extTable->items;
+			delete _extTable;
 			_extTable = 0;
 
 			if (_extHandle >= 0)
@@ -1931,11 +1936,11 @@ void Game::playTot(int16 skipPlay) {
 }
 
 void Game::start(void) {
-	_collisionAreas = (Collision *)malloc(250 * sizeof(Collision));
+	_collisionAreas = new Collision[250];
 	prepareStart();
 	playTot(0);
 
-	free(_collisionAreas);
+	delete[] _collisionAreas;
 
 	_vm->_video->freeSurfDesc(_vm->_draw->_cursorSprites);
 	_vm->_video->freeSurfDesc(_vm->_draw->_cursorBack);

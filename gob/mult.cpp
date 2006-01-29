@@ -437,8 +437,8 @@ void Mult::interInitMult(void) {
 	animDataVar = _vm->_parse->parseVarIndex();
 
 	if (_objects == 0) {
-		_renderData = (int16 *)malloc(sizeof(int16) * _objCount * 9);
-		_objects = (Mult_Object *)malloc(sizeof(Mult_Object) * _objCount);
+		_renderData = new int16[_objCount * 9];
+		_objects = new Mult_Object[_objCount];
 
 		for (i = 0; i < _objCount; i++) {
 			_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);
@@ -487,8 +487,8 @@ void Mult::freeMult(void) {
 	if (_vm->_anim->_animSurf != 0)
 		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
 
-	free(_objects);
-	free(_renderData);
+	delete[] _objects;
+	delete[] _renderData;
 
 	_objects = 0;
 	_renderData = 0;
@@ -860,13 +860,13 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_vm->_anim->_areaHeight = 200;
 			_objCount = 4;
 
-			_objects = (Mult_Object *)malloc(sizeof(Mult_Object) * _objCount);
-			_renderData = (int16 *)malloc(sizeof(int16) * 9 * _objCount);
+			_objects = new Mult_Object[_objCount];
+			_renderData = new int16[9 * _objCount];
 
-			_animArrayX = (int32 *)malloc(sizeof(int32) * _objCount);
-			_animArrayY = (int32 *)malloc(sizeof(int32) * _objCount);
+			_animArrayX = new int32[_objCount];
+			_animArrayY = new int32[_objCount];
 
-			_animArrayData = (Mult_AnimData *)malloc(sizeof(Mult_AnimData) * _objCount);
+			_animArrayData = new Mult_AnimData[_objCount];
 
 			for (_counter = 0; _counter < _objCount; _counter++) {
 				multObj = &_objects[_counter];
@@ -940,19 +940,19 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 
 	if (stopNoClear == 0) {
 		if (_animDataAllocated) {
-			free(_objects);
+			delete[] _objects;
 			_objects = 0;
 
-			free(_renderData);
+			delete[] _renderData;
 			_renderData = 0;
 
-			free(_animArrayX);
+			delete[] _animArrayX;
 			_animArrayX = 0;
 
-			free(_animArrayY);
+			delete[] _animArrayY;
 			_animArrayY = 0;
 
-			free(_animArrayData);
+			delete[] _animArrayData;
 			_animArrayData = 0;
 
 			if (_vm->_anim->_animSurf)
@@ -1020,8 +1020,7 @@ void Mult::loadMult(int16 resId) {
 	_staticKeysCount = READ_LE_UINT16(_dataPtr);
 	_dataPtr += 2;
 
-	_staticKeys = (Mult_StaticKey *)malloc(sizeof(Mult_StaticKey) *
-	    _staticKeysCount);
+	_staticKeys = new Mult_StaticKey[_staticKeysCount];
 	for (i = 0; i < _staticKeysCount; i++, _dataPtr += 4) {
 		_staticKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
 		_staticKeys[i].layer = (int16)READ_LE_UINT16(_dataPtr + 2);
@@ -1031,7 +1030,7 @@ void Mult::loadMult(int16 resId) {
 		_animKeysCount[j] = READ_LE_UINT16(_dataPtr);
 		_dataPtr += 2;
 
-		_animKeys[j] = (Mult_AnimKey *) malloc(sizeof(Mult_AnimKey) * _animKeysCount[j]);
+		_animKeys[j] = new Mult_AnimKey[_animKeysCount[j]];
 		for (i = 0; i < _animKeysCount[j]; i++, _dataPtr += 10) {
 			_animKeys[j][i].frame = (int16)READ_LE_UINT16(_dataPtr);
 			_animKeys[j][i].layer = (int16)READ_LE_UINT16(_dataPtr + 2);
@@ -1052,7 +1051,7 @@ void Mult::loadMult(int16 resId) {
 
 	_palFadeKeysCount = READ_LE_UINT16(_dataPtr);
 	_dataPtr += 2;
-	_palFadeKeys = (Mult_PalFadeKey *)malloc(sizeof(Mult_PalFadeKey) * _palFadeKeysCount);
+	_palFadeKeys = new Mult_PalFadeKey[_palFadeKeysCount];
 
 	for (i = 0; i < _palFadeKeysCount; i++, _dataPtr += 7) {
 		_palFadeKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
@@ -1064,7 +1063,7 @@ void Mult::loadMult(int16 resId) {
 	_palKeysCount = READ_LE_UINT16(_dataPtr);
 	_dataPtr += 2;
 
-	_palKeys = (Mult_PalKey *)malloc(sizeof(Mult_PalKey) * _palKeysCount);
+	_palKeys = new Mult_PalKey[_palKeysCount];
 	for (i = 0; i < _palKeysCount; i++, _dataPtr += 80) {
 		_palKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
 		_palKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
@@ -1079,7 +1078,7 @@ void Mult::loadMult(int16 resId) {
 
 	_textKeysCount = READ_LE_UINT16(_dataPtr);
 	_dataPtr += 2;
-	_textKeys = (Mult_TextKey *) malloc(sizeof(Mult_TextKey) * _textKeysCount);
+	_textKeys = new Mult_TextKey[_textKeysCount];
 
 	for (i = 0; i < _textKeysCount; i++, _dataPtr += 28) {
 		_textKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
@@ -1094,7 +1093,7 @@ void Mult::loadMult(int16 resId) {
 	_sndKeysCount = READ_LE_UINT16(_dataPtr);
 	_dataPtr += 2;
 
-	_sndKeys = (Mult_SndKey *)malloc(sizeof(Mult_SndKey) * _sndKeysCount);
+	_sndKeys = new Mult_SndKey[_sndKeysCount];
 	for (i = 0; i < _sndKeysCount; i++) {
 		_sndKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
 		_sndKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
@@ -1149,7 +1148,7 @@ void Mult::freeMultKeys(void) {
 	staticCount = _dataPtr[0];
 	animCount = _dataPtr[1];
 
-	free(_dataPtr);
+	delete[] _dataPtr;
 
 	staticCount++;
 	animCount++;
@@ -1164,37 +1163,37 @@ void Mult::freeMultKeys(void) {
 			_vm->_scenery->freeAnim(_animIndices[i]);
 	}
 
-	free(_staticKeys);
+	delete[] _staticKeys;
 
 	for (i = 0; i < 4; i++)
-		free(_animKeys[i]);
+		delete[] _animKeys[i];
 
-	free(_palFadeKeys);
-	free(_palKeys);
-	free(_textKeys);
+	delete[] _palFadeKeys;
+	delete[] _palKeys;
+	delete[] _textKeys;
 
 	for (i = 0; i < _sndSlotsCount; i++) {
 		_vm->_game->freeSoundSlot(19 - i);
 	}
 
-	free(_sndKeys);
+	delete[] _sndKeys;
 
 	_multData = 0;
 
 	if (_animDataAllocated != 0) {
-		free(_objects);
+		delete[] _objects;
 		_objects = 0;
 
-		free(_renderData);
+		delete[] _renderData;
 		_renderData = 0;
 
-		free(_animArrayX);
+		delete[] _animArrayX;
 		_animArrayX = 0;
 
-		free(_animArrayY);
+		delete[] _animArrayY;
 		_animArrayY = 0;
 
-		free(_animArrayData);
+		delete[] _animArrayData;
 		_animArrayData = 0;
 
 		if (_vm->_anim->_animSurf)
