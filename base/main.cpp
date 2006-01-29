@@ -489,13 +489,15 @@ extern "C" int main(int argc, char *argv[]) {
 END_OF_MAIN();
 #endif
 
-static void debugHelper(char *buf) {
+static void debugHelper(char *buf, bool caret = true) {
 #ifndef _WIN32_WCE
-	printf("%s\n", buf);
+	if (caret)
+		printf("%s\n", buf);
 #endif
 
 #if defined( USE_WINDBG )
-	strcat(buf, "\n");
+	if (caret)
+		strcat(buf, "\n");
 #if defined( _WIN32_WCE )
 	TCHAR buf_unicode[1024];
 	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
@@ -520,6 +522,20 @@ void CDECL debug(int level, const char *s, ...) {
 	va_end(va);
 
 	debugHelper(buf);
+}
+
+void CDECL debugN(int level, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	if (level > gDebugLevel)
+		return;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+	debugHelper(buf, false);
 }
 
 void CDECL debug(const char *s, ...) {
