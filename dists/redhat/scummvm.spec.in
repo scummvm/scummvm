@@ -33,9 +33,11 @@ BuildRequires: SDL-devel >= 1.2.2
 #------------------------------------------------------------------------------
 %description
 ScummVM is an interpreter that will play graphic adventure games written for
-LucasArts' SCUMM virtual machine, Adventure Soft's Simon the Sorcerer 1 and 2,
-Revolution Software Ltd's Beneath a Steel Sky and Renegade Software's
-Flight of the Amazon Queen. It uses the SDL library for outputting graphics.
+LucasArts' SCUMM virtual machine (such as Day of the Tentacle and 
+Monkey Island), Adventure Soft's Simon the Sorcerer 1 and 2, 
+Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
+Interactive Binary Illusions' Flight of the Amazon Queen,
+Coktel Vision's Gobliiins, and Wyrmkeep's Inherit the Earth.
 
 #------------------------------------------------------------------------------
 #   install scripts
