@@ -27,7 +27,7 @@ namespace CEGUI {
 	Panel::Panel(int interleave_first, int interleave) : Toolbar()
 	{
 		_interleave = interleave;
-		_currentItem = _x + interleave_first;
+		_currentItem = interleave_first;
 	}
 
 

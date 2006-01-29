@@ -30,6 +30,8 @@
 
 #include "common/config-manager.h"
 
+#include "gui/KeysDialog.h"
+
 #ifdef _WIN32_WCE
 #define		KEY_ALL_SKIP	3457
 #endif
@@ -47,7 +49,8 @@ const String pocketActionNames[] = {
 	"Free look",
 	"Zoom up",
 	"Zoom down",
-	"FT Cheat"
+	"FT Cheat",
+	"Bind Keys"
 };
 
 void CEActionsPocket::init(GameDetector &detector) {
@@ -165,6 +168,8 @@ void CEActionsPocket::initInstanceGame() {
 	// FT Cheat
 	_action_enabled[POCKET_ACTION_FT_CHEAT] = true;
 	_key_action[POCKET_ACTION_FT_CHEAT].setAscii(86); // shift-V
+	// Key bind method
+	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
 }
 
 
@@ -172,6 +177,8 @@ CEActionsPocket::~CEActionsPocket() {
 }
 
 bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
+	static bool keydialogrunning = false;
+
 	if (!pushed) {
 		switch(action) {
 			case POCKET_ACTION_RIGHTCLICK:
@@ -220,9 +227,20 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 			_CESystem->swap_zoom_down();
 			return true;
 		case POCKET_ACTION_QUIT:
-			GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
-			if (alert.runModal() == GUI::kMessageOK)
-				_mainSystem->quit();
+			{
+				GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
+				if (alert.runModal() == GUI::kMessageOK)
+					_mainSystem->quit();
+				return true;
+			}
+		case POCKET_ACTION_BINDKEYS:
+			if (!keydialogrunning) {
+				keydialogrunning = true;
+				GUI::KeysDialog *keysDialog = new GUI::KeysDialog();
+				keysDialog->runModal();
+				delete keysDialog;
+				keydialogrunning = false;
+			}
 			return true;
 	}
 	return false;
