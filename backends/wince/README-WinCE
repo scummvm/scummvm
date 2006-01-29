@@ -1,6 +1,6 @@
 ScummVM Windows CE FAQ
-Last updated:    2005-03-26
-Release version: 0.7.1
+Last updated:    2006-01-31
+Release version: 0.8.1
 ------------------------------------------------------------------------
 
 This document is intended to give common answers to specific ScummVM
@@ -16,6 +16,17 @@ General questions
 
 Which devices are supported ?
 -----------------------------
+
+Official build
+--------------
+
+The official build is based on the ARM architecture and should work with any
+Pocket PC 2000, Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone
+2002, Smartphone 2003 or Windows Mobile based device.
+
+Support for old ARM architectures (Handheld PCs, Palm Size PCs) and other CPUs 
+(MIPS, SH3) is discontinued. Feel free to generate builds for these 
+architectures and contact me to include them on ScummVM website.
 
 Full support
 ------------
@@ -44,10 +55,14 @@ VGA games will be displayed in true VGA mode, which can takes a lot of memory
 and slow down the game (especially during scrollings). It will get better in
 the next releases or with faster devices.
 
-* Windows Mobile Smartphones (176x220)
+* Windows Mobile Smartphones (176x220 or 240x320)
 
 Early support is provided for all 320x200 games.
 The font can get hard to read (you should prefer talkie games, or wear glasses)
+
+* Support for Windows Mobile 5 is experimental but should work. "Flipping" devices
+such as the HTC Wizard or HTC Universal work only in portait (closed) mode for the
+moment.
 
 Partial / Discontinued support
 ------------------------------
@@ -146,6 +161,7 @@ screen to make the most common functions just a tap away
   * The movie icon skips a non interactive sequence, the current dialog or 
     behaves like the ESC key on a regular keyboard
   * The sound icon turns all sound effects and music off and on
+  * The key icon allow you to map a key action to a device button.
   * The monkey icon switches between portrait and landscape mode
 
 You can map additional actions on your device hardware buttons using the 
@@ -173,22 +189,36 @@ The following actions are available
   * Zoom down   : magnify the lower part of the screen for 640x480 games
     rendered on a 320x240 device.
   * FT Cheat    : win a Full Throttle action sequence
+  * Bind key    : map a key action to a device button
 
 If you start a game when a Right click mapping is necessary, ScummVM will ask
 you to map one of your hardware key to this action before playing. Just press
 the key you want to map if you see this message.
+
+How do I hide the toolbar ? (0.8.0+) 
+----------------------------
+
+A shortcut is available to hide the toolbar directly from the game screen from
+release 0.8.0. Double tapping the stylus at the top of the screen will switch
+between a visible toolbar panel, a virtual keyboard, and an invisible panel.
+
+The icons should not suddenly disappear without warning (0.8.0 bug)
 
 How do I play a game on a Microsoft Smartphone device ?
 -------------------------------------------------------
 
 When playing on a Smartphone, the cursor and mouse buttons are emulated by
 a set of default keys :
-      4            Move up
-      6            Move down
-      8		   Move left
-      2 	   Move right
-      Hotkey 1     Left mouse button click
-      Hotkey 2     Right mouse button click
+      4              Move up
+      6              Move down
+      8		     Move left
+      2 	     Move right
+      Hotkey 1       Left mouse button click
+      Hotkey 2       Right mouse button click
+      Return/Action  Open the key mapping menu
+
+Note that this mean that the input will be "inversed" on a 240x320 (Windows
+Mobile 2005) Smartphone. You'll have to remap the keys.
 
 A few options are also emulated by a set of default keys :
 
@@ -294,7 +324,7 @@ Even if it shouldn't happen (this port is running almost correctly on a
   * Play with the priority of the sound thread (change the 
     sound_thread_priority value - the higher the lower priority)
 
-And don't forget to report your progress in PocketMatrix ScummVM forum !
+And don't forget to report your progress in the ScummVM forum !
 
 ------------------------------------------------------------------------
 Game specific questions 
@@ -413,7 +443,8 @@ to lower these requirements.
 How can I scroll through my inventory items in Zak Mc Kracken ?
 -------------------------------------------------------------
 
-You need to map the hide toolbar button (see the General Questions section).
+You need to map the hide toolbar button (see the General Questions section) or
+double tap at the top of the screen (from 0.8.0+)
 
 --------------------
 -- Broken Sword 2 --
@@ -423,9 +454,20 @@ I've installed the movies pack but they are not playing
 -------------------------------------------------------
 
 MPEG 2 playback takes too much memory in the current release, and may prevent
-movies from playing in VGA mode. This will get better in the next releases.
+movies from playing in VGA mode. This may get better in the next releases.
 
-This should be fixed in 0.7.1. Waiting for reports ...
+----------------
+-- Gobliiins --
+----------------
+
+Cursor is grabled after loading a game 
+--------------------------------------
+
+Due to a bug in 0.8.0, you'll have to tap the stylus somewhere on the game
+screen between 2 letters when entering a code. Otherwise the cursor will get
+garbled.
+
+This has not been retested for 0.8.1 but should be fixed.
 
 ------------------------------------------------------------------------
 Support
@@ -435,22 +477,24 @@ Help, I've read everything and ...
 -----------------------------------
 
 Luckily, as there is a huge variety of Windows Mobile devices, a specific forum 
-is dedicated to this ScummVM port. You can ask your question on PocketMatrix
-ScummVM forum, available at http://www.pocketmatrix.com/forums/viewforum.php?f=20
-and will most probably get an answer quickly, as the community is always glad 
-to help and have dealt with all my bugs for more than one year :)
+is dedicated to this ScummVM port. You can ask your question on the WinCE
+ScummVM forum available at http://forums.scummvm.org/viewforum.php?f=6 
+
+Some older questions and very nice tutorials are still available on the historic
+PocketMatrix forum at http://www.pocketmatrix.com/forums/viewforum.php?f=20
+where  the community is always glad to help and have dealt with all my bugs for more 
+than three years now :)
 
 I think I found a bug, ScummVM crashes in ...
 ---------------------------------------------
 
 See the "Reporting Bugs" section in ScummVM readme. 
 
-If you have a Pocket PC or Handheld PC, be sure to tap the "PocketScumm" logo
-in the loader screen and include the information displayed on the first line
-in your bug report.
+If you have a Pocket PC or Handheld PC, be sure to include its resolution (obtained
+on the second dialog displayed on the "About" menu) in your bug report.
 
 If you cannot reproduce this bug on another ScummVM version, you can cross
-post your bug report on PocketMatrix ScummVM forum.
+post your bug report on ScummVM forums.
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
