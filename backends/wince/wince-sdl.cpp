@@ -1967,28 +1967,30 @@ bool OSystem_WINCE3::pollEvent(Event &event) {
 			fillMouseEvent(temp_event, ev.button.x, ev.button.y);
 
 			// Check keyboard tap zone
-			if (temp_event.mouse.y <= 20) {
-				// Already tap initiated ?
-				if (_tapTime) {
-					int deltaX; 
-					int deltaY;
-					if (temp_event.mouse.x > _tapX)
-						deltaX = temp_event.mouse.x - _tapX;
-					else
-						deltaX = _tapX - temp_event.mouse.x;
-					if (temp_event.mouse.y > _tapY)
-						deltaY = temp_event.mouse.y - _tapY;
-					else
-						deltaY = _tapY - temp_event.mouse.y;
-					if (deltaX <= 5 && deltaY <= 5 && (GetTickCount() - _tapTime < 1000))
-						swap_panel_visibility();
-					_tapTime = 0;
+			if (!_isSmartphone) {
+				if (temp_event.mouse.y <= 20) {
+					// Already tap initiated ?
+					if (_tapTime) {
+						int deltaX; 
+						int deltaY;
+						if (temp_event.mouse.x > _tapX)
+							deltaX = temp_event.mouse.x - _tapX;
+						else
+							deltaX = _tapX - temp_event.mouse.x;
+						if (temp_event.mouse.y > _tapY)
+							deltaY = temp_event.mouse.y - _tapY;
+						else
+							deltaY = _tapY - temp_event.mouse.y;
+						if (deltaX <= 5 && deltaY <= 5 && (GetTickCount() - _tapTime < 1000))
+							swap_panel_visibility();
+						_tapTime = 0;
 						
-				}
-				else {
-					_tapTime = GetTickCount();
-					_tapX = temp_event.mouse.x;
-					_tapY = temp_event.mouse.y;
+					}
+					else {
+						_tapTime = GetTickCount();
+						_tapX = temp_event.mouse.x;
+						_tapY = temp_event.mouse.y;
+					}
 				}
 			}
 
