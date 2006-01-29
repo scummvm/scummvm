@@ -1133,7 +1133,7 @@ struct PolygonDrawData {
 
   		int iaidx = p1->y - pto.y;
   		while (dy--) {
-  			assert(iaidx >= 0 && iaidx < areasNum);
+  			//assert(iaidx >= 0 && iaidx < areasNum);
   			InterArea *pia = &ia[iaidx];
   			int32 tx1 = x1_acc >> 0x10;
   			int32 tx3 = x3_acc >> 0x10;
@@ -1170,7 +1170,7 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 	getWizImageDim(resNum, state, w, h);
 
 	pts[1].x = pts[2].x = w / 2 - 1;
-	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
+	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
 	pts[2].y = pts[3].y = h / 2 - 1;
 
 	// transform points
@@ -1188,50 +1188,7 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 		pts[i].y += po_y;
 	}
 
-	Common::Rect bounds;
-	polygonCalcBoundBox(pts, 4, bounds);
-	int x1 = bounds.left;
-	int y1 = bounds.top;
-
-	if (scale != 256) {
-		debug(1, "drawWizComplexPolygon() scale not implemented");
-		//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstPtr, palette, xmapPtr);
-
-		drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
-	} else {
-		debug(1, "drawWizComplexPolygon() angle partially implemented");
-
-		angle %= 360;
-		if (angle < 0) {
-			angle += 360;
-		}
-
-		switch(angle) {
-		case 270:
-			flags |= kWIFFlipX | kWIFFlipY;
-			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, palette);
-
-			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
-			break;
-		case 180:
-			flags |= kWIFFlipX | kWIFFlipY;
-			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
-			break;
-		case 90:
-			//drawWizComplexPolygonHelper(resNum, state, x1, y1, r, flags, dstResNum, palette);
-
-			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
-			break;
-		case 0:
-			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
-			break;
-		default:
-			//drawWizPolygonTransform(resNum, state, pts, flags, VAR(VAR_WIZ_TCOLOR), r, dstResNum, palette, xmapPtr);
-
-			drawWizImage(resNum, state, x1, y1, 0, shadow, 0, r, flags, dstResNum, palette);
-			break;
-		}
-	}
+	drawWizPolygonTransform(resNum, state, pts, flags, shadow, dstResNum, palette);
 }
 
 void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette) {
@@ -1250,6 +1207,19 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 	if (wp->numVerts != 5) {
 		error("Invalid point count %d for Polygon %d", wp->numVerts, id);
 	}
+
+	drawWizPolygonTransform(resNum, state, wp->vert, flags, shadow, dstResNum, palette);
+}
+
+void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
+	debug(0, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d palette %d)", resNum, flags, shadow, palette);
+	int i;
+
+	if (flags & 0x800000) {
+		warning("0x800000 flags not supported");
+		return;
+	}
+
 	const Common::Rect *r = NULL;
 	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
 	if (srcWizBuf) {
@@ -1273,9 +1243,6 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 
 			getWizImageDim(resNum, state, wizW, wizH);
 		}
-		if (wp->bound.left < 0 || wp->bound.top < 0 || wp->bound.right >= pvs->w || wp->bound.bottom >= pvs->h) {
-			error("Invalid coords polygon %d", wp->id);
-		}
 
 		Common::Point bbox[4];
 		bbox[0].x = 0;
@@ -1288,14 +1255,19 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 		bbox[3].y = wizH - 1;
 
   		int16 xmin_p, xmax_p, ymin_p, ymax_p;
-  		xmin_p = xmax_p = wp->vert[0].x;
-  		ymin_p = ymax_p = wp->vert[0].y;
+  		xmin_p = ymin_p = 1234;
+  		xmax_p = ymax_p = -1234;
+
   		for (i = 1; i < 4; ++i) {
-  			xmin_p = MIN(wp->vert[i].x, xmin_p);
-  			xmax_p = MAX(wp->vert[i].x, xmax_p);
-  			ymin_p = MIN(wp->vert[i].y, ymin_p);
-  			ymax_p = MAX(wp->vert[i].y, ymax_p);
+  			xmin_p = MIN(wp[i].x, xmin_p);
+  			xmax_p = MAX(wp[i].x, xmax_p);
+  			ymin_p = MIN(wp[i].y, ymin_p);
+  			ymax_p = MAX(wp[i].y, ymax_p);
   		}
+
+		if (xmin_p < 0 || ymin_p < 0 || xmax_p >= pvs->w || ymax_p >= pvs->h) {
+			printf("Invalid coords polygon x %d y %d x2 %d y2 %d\n", xmin_p, ymax_p, xmax_p, ymax_p);
+		}
 
   		int16 xmin_b, xmax_b, ymin_b, ymax_b;
   		xmin_b = 0;
@@ -1308,9 +1280,9 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 		pdd.pto.y = ymin_p;
 
 		for (i = 0; i < 3; ++i) {
-			pdd.calcIntersection(&wp->vert[i], &wp->vert[i + 1], &bbox[i], &bbox[i + 1]);
+			pdd.calcIntersection(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
 		}
-		pdd.calcIntersection(&wp->vert[3], &wp->vert[0], &bbox[3], &bbox[0]);
+		pdd.calcIntersection(&wp[3], &wp[0], &bbox[3], &bbox[0]);
 
 		uint yoff = pdd.pto.y * pvs->w;
 		for (i = 0; i < pdd.areasNum; ++i) {
@@ -1331,10 +1303,11 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 			yoff += pvs->pitch;
 		}
 
+		Common::Rect bound(xmin_p, ymin_p, xmax_p + 1, ymax_p + 1);
 		if (flags & kWIFMarkBufferDirty) {
-			_vm->markRectAsDirty(kMainVirtScreen, wp->bound);
+			_vm->markRectAsDirty(kMainVirtScreen, bound);
 		} else {
-			_vm->gdi.copyVirtScreenBuffers(wp->bound);
+			_vm->gdi.copyVirtScreenBuffers(bound);
 		}
 
 		free(srcWizBuf);
