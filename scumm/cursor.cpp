@@ -188,7 +188,7 @@ void ScummEngine_v90he::setDefaultCursor() {
 	static byte palette[] = { 0xff, 0xff, 0xff, 0,
 							  0,    0,    0,    0};
 
-	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+	memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
 
 	_cursor.hotspotX = _cursor.hotspotY = 2;
 	src = default_he_cursor;
