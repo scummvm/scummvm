@@ -1004,11 +1004,6 @@ void Parse::printExpr(char stopToken) {
 	char saved = 0;
 	static char *savedPos = 0;
 
-	// printExpr() is not a necessary function, and might
-	// cause stability problems if it fails to parse an expression
-	// Enable it only temporarily when you need debugging.
-	return;
-
 	if (savedPos == 0) {
 		savedPos = _vm->_global->_inter_execPtr;
 		saved = 1;
@@ -1021,173 +1016,173 @@ void Parse::printExpr(char stopToken) {
 		if (operation >= 19 && operation <= 29) {
 			switch (operation) {
 			case 19:
-				debug(5, "%l", READ_LE_UINT32(_vm->_global->_inter_execPtr));
+				debugN(5, "%l", READ_LE_UINT32(_vm->_global->_inter_execPtr));
 				_vm->_global->_inter_execPtr += 4;
 				break;
 
 			case 20:
-				debug(5, "%d", _vm->_inter->load16());
+				debugN(5, "%d", _vm->_inter->load16());
 				break;
 
 			case 22:
-				debug(5, "\42%s\42", _vm->_global->_inter_execPtr);
+				debugN(5, "\42%s\42", _vm->_global->_inter_execPtr);
 				_vm->_global->_inter_execPtr += strlen(_vm->_global->_inter_execPtr) + 1;
 				break;
 
 			case 23:
 			{
 				int16 varnum = _vm->_inter->load16();
-				debug(5, "var_%d (val=%d)", varnum, READ_LE_UINT32(_vm->_global->_inter_variables + varnum * 4) );
+				debugN(5, "var_%d (val=%d)", varnum, READ_LE_UINT32(_vm->_global->_inter_variables + varnum * 4) );
 				break;
 			}
 			case 25:
-				debug(5, "(&var_%d)", _vm->_inter->load16());
+				debugN(5, "(&var_%d)", _vm->_inter->load16());
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					debug(5, "{");
+					debugN(5, "{");
 					printExpr(12);
-//                  debug(5, "}");
+					debugN(5, "}");
 				}
 				break;
 
 			case 26:
 			case 28:
 				if (operation == 28)
-					debug(5, "(&");
+					debugN(5, "(&");
 
-				debug(5, "var_%d[", _vm->_inter->load16());
+				debugN(5, "var_%d[", _vm->_inter->load16());
 				dimCount = *_vm->_global->_inter_execPtr++;
 				arrDesc = _vm->_global->_inter_execPtr;
 				_vm->_global->_inter_execPtr += dimCount;
 				for (dim = 0; dim < dimCount; dim++) {
 					printExpr(12);
-					debug(5, " of %d", (int16)arrDesc[dim]);
+					debugN(5, " of %d", (int16)arrDesc[dim]);
 					if (dim != dimCount - 1)
-						debug(5, ",");
+						debugN(5, ",");
 				}
-				debug(5, "]");
+				debugN(5, "]");
 				if (operation == 28)
-					debug(5, ")");
+					debugN(5, ")");
 
 				if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					debug(5, "{");
+					debugN(5, "{");
 					printExpr(12);
-//                  debug(5, "}");
+//                  debugN(5, "}");
 				}
 				break;
 
 			case 29:
 				func = *_vm->_global->_inter_execPtr++;
 				if (func == 5)
-					debug(5, "sqr(");
+					debugN(5, "sqr(");
 				else if (func == 10)
-					debug(5, "rand(");
+					debugN(5, "rand(");
 				else if (func == 7)
-					debug(5, "abs(");
+					debugN(5, "abs(");
 				else if (func == 0 || func == 1 || func == 6)
-					debug(5, "sqrt(");
+					debugN(5, "sqrt(");
 				else
-					debug(5, "id(");
+					debugN(5, "id(");
 				printExpr(10);
 				break;
 
 			default:
-				debug(5, "<%d>", (int16)operation);
+				debugN(5, "<%d>", (int16)operation);
 				break;
 			}
 			continue;
 		}		// if (operation >= 19 && operation <= 29)
 		switch (operation) {
 		case 9:
-			debug(5, "(");
+			debugN(5, "(");
 			break;
 
 		case 11:
-			debug(5, "!");
+			debugN(5, "!");
 			break;
 
 		case 10:
-			debug(5, ")");
+			debugN(5, ")");
 			break;
 
 		case 1:
-			debug(5, "-");
+			debugN(5, "-");
 			break;
 
 		case 2:
-			debug(5, "+");
+			debugN(5, "+");
 			break;
 
 		case 3:
-			debug(5, "-");
+			debugN(5, "-");
 			break;
 
 		case 4:
-			debug(5, "|");
+			debugN(5, "|");
 			break;
 
 		case 5:
-			debug(5, "*");
+			debugN(5, "*");
 			break;
 
 		case 6:
-			debug(5, "/");
+			debugN(5, "/");
 			break;
 
 		case 7:
-			debug(5, "%");
+			debugN(5, "%");
 			break;
 
 		case 8:
-			debug(5, "&");
+			debugN(5, "&");
 			break;
 
 		case 30:
-			debug(5, "||");
+			debugN(5, "||");
 			break;
 
 		case 31:
-			debug(5, "&&");
+			debugN(5, "&&");
 			break;
 
 		case 32:
-			debug(5, "<");
+			debugN(5, "<");
 			break;
 
 		case 33:
-			debug(5, "<=");
+			debugN(5, "<=");
 			break;
 
 		case 34:
-			debug(5, ">");
+			debugN(5, ">");
 			break;
 
 		case 35:
-			debug(5, ">=");
+			debugN(5, ">=");
 			break;
 
 		case 36:
-			debug(5, "==");
+			debugN(5, "==");
 			break;
 
 		case 37:
-			debug(5, "!=");
+			debugN(5, "!=");
 			break;
 
 		case 99:
-			debug(5, "\n");
+			debugN(5, "\n");
 			break;
 
 		case 12:
-			debug(5, "}");
+			debugN(5, "}");
 			if (stopToken != 12) {
-				debug(5, "Closing paren without opening?");
+				debugN(5, "Closing paren without opening?");
 			}
 			break;
 
 		default:
-			debug(5, "<%d>", (int16)operation);
+			debugN(5, "<%d>", (int16)operation);
 			break;
 		}
 
@@ -1232,40 +1227,40 @@ void Parse::printVarIndex() {
 	case 23:
 	case 25:
 		temp = _vm->_inter->load16() * 4;
-		debug(5, "&var_%d", temp);
+		debugN(5, "&var_%d", temp);
 		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
-			debug(5, "+");
+			debugN(5, "+");
 			printExpr(12);
 		}
 		break;
 
 	case 26:
 	case 28:
-		debug(5, "&var_%d[", _vm->_inter->load16());
+		debugN(5, "&var_%d[", _vm->_inter->load16());
 		dimCount = *_vm->_global->_inter_execPtr++;
 		arrDesc = _vm->_global->_inter_execPtr;
 		_vm->_global->_inter_execPtr += dimCount;
 		for (dim = 0; dim < dimCount; dim++) {
 			printExpr(12);
-			debug(5, " of %d", (int16)arrDesc[dim]);
+			debugN(5, " of %d", (int16)arrDesc[dim]);
 			if (dim != dimCount - 1)
-				debug(5, ",");
+				debugN(5, ",");
 		}
-		debug(5, "]");
+		debugN(5, "]");
 
 		if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
-			debug(5, "+");
+			debugN(5, "+");
 			printExpr(12);
 		}
 		break;
 
 	default:
-		debug(5, "var_0");
+		debugN(5, "var_0");
 		break;
 	}
-	debug(5, "\n");
+	debugN(5, "\n");
 	_vm->_global->_inter_execPtr = pos;
 	return;
 }
