@@ -286,6 +286,11 @@ struct InfoStuff {
 	uint32 playtime;
 };
 
+/**
+ * A list of resource types.
+ * WARNING: Do not change the order of these, as the savegame format relies
+ * on it; any change made here will break savegame compatibility!
+ */
 enum ResTypes {
 	rtFirst = 1,
 	rtRoom = 1,
