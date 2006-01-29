@@ -1256,8 +1256,8 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		bbox[3].y = wizH - 1;
 
   		int16 xmin_p, xmax_p, ymin_p, ymax_p;
-  		xmin_p = ymin_p = 1234;
-  		xmax_p = ymax_p = -1234;
+  		xmin_p = ymin_p = 12345;
+  		xmax_p = ymax_p = -12345;
 
   		for (i = 0; i < 4; ++i) {
   			xmin_p = MIN(wp[i].x, xmin_p);
@@ -1269,12 +1269,6 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		if (xmin_p < 0 || ymin_p < 0 || xmax_p >= pvs->w || ymax_p >= pvs->h) {
 			printf("Invalid coords polygon x %d y %d x2 %d y2 %d\n", xmin_p, ymax_p, xmax_p, ymax_p);
 		}
-
-  		int16 xmin_b, xmax_b, ymin_b, ymax_b;
-  		xmin_b = 0;
-  		xmax_b = wizW - 1;
-  		ymin_b = 0;
-  		ymax_b = wizH - 1;
 
 		PolygonDrawData pdd(ymax_p - ymin_p + 1);
 		pdd.pto.x = xmin_p;
