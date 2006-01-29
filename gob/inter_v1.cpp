@@ -1033,7 +1033,7 @@ bool Inter_v1::o1_strstr(char &cmdCount, int16 &counter, int16 &retFlag) {
 	resVar = _vm->_parse->parseVarIndex();
 
 	char *res = strstr(_vm->_global->_inter_variables + strVar, _vm->_global->_inter_resStr);
-	pos = res ? (res - (_vm->_global->_inter_variables + strVar)) : 0;
+	pos = res ? (res - (_vm->_global->_inter_variables + strVar)) : -1;
 	WRITE_VAR_OFFSET(resVar, pos);
 	return false;
 }
