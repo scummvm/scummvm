@@ -70,7 +70,7 @@ char *Parse::decodePtr(int32 n) {
 	return ptr + (n & 0x0FFFFFFF);
 }
 
-int16 Parse::parseExpr(char arg_0, byte *arg_2) {
+int16 Parse::parseExpr(char stopToken, byte *arg_2) {
 	int32 values[20];
 	byte operStack[20];
 	int32 prevPrevVal;
@@ -129,7 +129,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 				*valPtr = encodePtr(_vm->_global->_inter_variables + temp, kInterVar);
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					temp += parseValExpr();
+					temp += parseValExpr(12);
 					*operPtr = 20;
 					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
 				}
@@ -145,7 +145,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 				offset = 0;
 				dim = 0;
 				for (dim = 0; dim < dimCount; dim++) {
-					temp2 = parseValExpr();
+					temp2 = parseValExpr(12);
 					offset = offset * arrDescPtr[dim] + temp2;
 				}
 
@@ -156,7 +156,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 				*valPtr = encodePtr(_vm->_global->_inter_variables + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4, kInterVar);
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
-					temp2 = parseValExpr();
+					temp2 = parseValExpr(12);
 					*operPtr = 20;
 					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
@@ -262,10 +262,10 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 			continue;
 		}		// op>= 19 && op <= 29
 
-		if (operation == arg_0 || operation == 30 || operation == 31 || operation == 10) {
+		if (operation == stopToken || operation == 30 || operation == 31 || operation == 10) {
 			while (stkPos >= 2) {
 				var_1A = 0;
-				if (operPtr[-2] == 9 && (operation == 10 || operation == arg_0)) {
+				if (operPtr[-2] == 9 && (operation == 10 || operation == stopToken)) {
 					operPtr[-2] = operPtr[-1];
 					if (operPtr[-2] == 20 || operPtr[-2] == 22)
 						valPtr[-2] = valPtr[-1];
@@ -324,7 +324,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						}	// switch
 					}	// stkPos > 2
 
-					if (operation != arg_0)
+					if (operation != stopToken)
 						break;
 				}	// if (operPtr[-2] == 9 && ...)
 
@@ -549,7 +549,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 						operPtr -= 2;
 						valPtr -= 2;
 					} else {
-						skipExpr(arg_0);
+						skipExpr(stopToken);
 					}
 					operation = _vm->_global->_inter_execPtr[-1];
 					if (stkPos > 0 && operPtr[-1] == 11) {
@@ -570,7 +570,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 				valPtr--;
 			}
 
-			if (operation != arg_0)
+			if (operation != stopToken)
 				continue;
 
 			if (arg_2 != 0)
@@ -602,7 +602,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 				break;
 			}
 			return 0;
-		}		// operation == arg_0 || operation == 30 || operation == 31 || operation == 10
+		}		// operation == stopToken || operation == 30 || operation == 31 || operation == 10
 
 		if (operation < 1 || operation > 11) {
 			if (operation < 32 || operation > 37)
@@ -640,7 +640,7 @@ int16 Parse::parseExpr(char arg_0, byte *arg_2) {
 	}
 }
 
-void Parse::skipExpr(char arg_0) {
+void Parse::skipExpr(char stopToken) {
 	int16 dimCount;
 	char operation;
 	int16 num;
@@ -707,15 +707,15 @@ void Parse::skipExpr(char arg_0) {
 		if (operation == 10)
 			num--;
 
-		if (operation != arg_0)
+		if (operation != stopToken)
 			continue;
 
-		if (arg_0 != 10 || num < 0)
+		if (stopToken != 10 || num < 0)
 			return;
 	}
 }
 
-int16 Parse::parseValExpr() {
+int16 Parse::parseValExpr(unsigned stopToken) {
 	int16 values[20];
 	byte operStack[20];
 	int16 *valPtr;
@@ -735,7 +735,7 @@ int16 Parse::parseValExpr() {
 	oldflag = flag;
 	if (flag == 0) {
 		flag = 1;
-		printExpr(99);
+		printExpr(stopToken);
 	}
 
 	stkPos = -1;
@@ -767,7 +767,7 @@ int16 Parse::parseValExpr() {
 			case 25:
 				temp = _vm->_inter->load16() * 4;
 				_vm->_global->_inter_execPtr++;
-				temp += parseValExpr();
+				temp += parseValExpr(12);
 				*valPtr = (uint8)*(_vm->_global->_inter_variables + temp);
 				break;
 
@@ -779,14 +779,14 @@ int16 Parse::parseValExpr() {
 				_vm->_global->_inter_execPtr += dimCount;
 				offset = 0;
 				for (dim = 0; dim < dimCount; dim++) {
-					temp2 = parseValExpr();
+					temp2 = parseValExpr(12);
 					offset = arrDesc[dim] * offset + temp2;
 				}
 				if (operation == 26) {
 					*valPtr = (uint16)VAR(temp + offset);
 				} else {
 					_vm->_global->_inter_execPtr++;
-					temp2 = parseValExpr();
+					temp2 = parseValExpr(12);
 					*valPtr = (uint8)*(_vm->_global->_inter_variables + temp * 4 + offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 				}
 				break;
@@ -930,6 +930,9 @@ int16 Parse::parseValExpr() {
 		}
 
 		if (operation != 10) {
+			if (operation != stopToken) {
+				debug(5, "stoptoken error: %d != %d", operation, stopToken);
+			}
 			flag = oldflag;
 			return values[0];
 		}
@@ -959,7 +962,7 @@ int16 Parse::parseVarIndex() {
 		debug(5, "oper = %d", (int16)*_vm->_global->_inter_execPtr);
 		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
-			val = parseValExpr();
+			val = parseValExpr(12);
 			temp += val;
 			debug(5, "parse subscript = %d", val);
 		}
@@ -973,7 +976,7 @@ int16 Parse::parseVarIndex() {
 		_vm->_global->_inter_execPtr += dimCount;
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
-			temp2 = parseValExpr();
+			temp2 = parseValExpr(12);
 			offset = arrDesc[dim] * offset + temp2;
 		}
 		offset *= 4;
@@ -982,7 +985,7 @@ int16 Parse::parseVarIndex() {
 
 		if (*_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
-			temp += parseValExpr();
+			temp += parseValExpr(12);
 		}
 		return offset * _vm->_global->_inter_animDataSize + temp;
 
@@ -991,7 +994,7 @@ int16 Parse::parseVarIndex() {
 	}
 }
 
-void Parse::printExpr(char arg_0) {
+void Parse::printExpr(char stopToken) {
 	int16 dimCount;
 	char operation;
 	int16 num;
@@ -1001,8 +1004,9 @@ void Parse::printExpr(char arg_0) {
 	char saved = 0;
 	static char *savedPos = 0;
 
-	// printExpr() is not safe function. It suffers from unability to process
-	// stopTokens. So enable it only temporary when you need debugging.
+	// printExpr() is not a necessary function, and might
+	// cause stability problems if it fails to parse an expression
+	// Enable it only temporarily when you need debugging.
 	return;
 
 	if (savedPos == 0) {
@@ -1031,9 +1035,11 @@ void Parse::printExpr(char arg_0) {
 				break;
 
 			case 23:
-				debug(5, "var_%d", _vm->_inter->load16());
+			{
+				int16 varnum = _vm->_inter->load16();
+				debug(5, "var_%d (val=%d)", varnum, READ_LE_UINT32(_vm->_global->_inter_variables + varnum * 4) );
 				break;
-
+			}
 			case 25:
 				debug(5, "(&var_%d)", _vm->_inter->load16());
 				if (*_vm->_global->_inter_execPtr == 13) {
@@ -1084,10 +1090,6 @@ void Parse::printExpr(char arg_0) {
 				else
 					debug(5, "id(");
 				printExpr(10);
-				break;
-
-			case 12:
-				debug(5, "}");
 				break;
 
 			default:
@@ -1179,6 +1181,9 @@ void Parse::printExpr(char arg_0) {
 
 		case 12:
 			debug(5, "}");
+			if (stopToken != 12) {
+				debug(5, "Closing paren without opening?");
+			}
 			break;
 
 		default:
@@ -1200,8 +1205,8 @@ void Parse::printExpr(char arg_0) {
 		if (operation == 10)
 			num--;
 
-		if (operation == arg_0) {
-			if (arg_0 != 10 || num < 0) {
+		if (operation == stopToken) {
+			if (stopToken != 10 || num < 0) {
 
 				if (saved != 0) {
 					_vm->_global->_inter_execPtr = savedPos;
@@ -1231,7 +1236,7 @@ void Parse::printVarIndex() {
 		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
 			debug(5, "+");
-			printExpr(99);
+			printExpr(12);
 		}
 		break;
 
@@ -1252,7 +1257,7 @@ void Parse::printVarIndex() {
 		if (operation == 28 && *_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
 			debug(5, "+");
-			printExpr(99);
+			printExpr(12);
 		}
 		break;
 

@@ -28,7 +28,7 @@ class Parse {
 public:
 	int16 parseExpr(char stopToken, byte *resultPtr);
 	void skipExpr(char stopToken);
-	int16 parseValExpr(void);
+	int16 parseValExpr(unsigned stopToken=99);
 	int16 parseVarIndex(void);
 	void printExpr(char stopToken);
 	void printVarIndex(void);
