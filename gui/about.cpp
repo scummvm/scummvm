@@ -249,7 +249,7 @@ void AboutDialog::drawDialog() {
 			while (*str && *str == ' ')
 				str++;
 
-		g_gui.theme()->drawText(Common::Rect(_x + xOff, y, _x + _w - xOff, y + g_gui.theme()->getFontHeight() + 4), str, state, align, false, 0, false);
+		g_gui.theme()->drawText(Common::Rect(_x + xOff, y, _x + _w - xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
 		y += _lineHeight;
 	}
 	g_gui.theme()->resetDrawArea();

@@ -300,11 +300,10 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis) {
 	if (!_initOk)
 		return;
-	// FIXME:since the 'height' of the font seems not to be correct we just add 4 to it right now
-	// that should fix redraw bugs with the about dialog
-	Common::Rect r2(r.left, r.top, r.right, r.top+_font->getFontHeight()+4);
+	Common::Rect r2(r.left, r.top, r.right, r.top+_font->getFontHeight());
 
 	restoreBackground(r2);
+	r2.bottom += 4;
 
 	if (inverted) {
 		_screen.fillRect(r, _colors[kTextInvertedBackground]);
