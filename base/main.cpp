@@ -493,6 +493,8 @@ static void debugHelper(char *buf, bool caret = true) {
 #ifndef _WIN32_WCE
 	if (caret)
 		printf("%s\n", buf);
+	else
+		printf("%s", buf);
 #endif
 
 #if defined( USE_WINDBG )
