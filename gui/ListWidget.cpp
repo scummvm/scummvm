@@ -347,9 +347,11 @@ void ListWidget::drawWidget(bool hilite) {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
 			deltax = 0;
-			if (_selectedItem != pos)
+			if (_selectedItem != pos) {
 				width = g_gui.getStringWidth(buffer);
-			else
+				if (width > _w - r.left - 2)
+					width = _w - r.left - 2;
+			} else
 				width = _w - r.left - 2;
 			if (width > maxWidth)
 				maxWidth = width;
