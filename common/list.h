@@ -91,7 +91,11 @@ public:
 		}
 		T2& operator*() const {
 			assert(_node);
+#if (__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)
+			return static_cast<List<T>::Node<T2> *>(_node)->_data;
+#else
 			return static_cast<Node<T2>*>(_node)->_data;
+#endif
 		}
 		T2* operator->() const {
 			return &(operator*());
