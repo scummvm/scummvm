@@ -859,17 +859,17 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 
 		int w = rCapt.width();
 		int h = rCapt.height();
-		int tColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
 		// compute compressed size
 		int dataSize = 0;
 		int headerSize = palPtr ? 1080 : 36;
 		switch (compType) {
 		case 0:
-			dataSize = wizPackType0(0, src, pvs->pitch, rCapt, tColor);
+			dataSize = wizPackType0(0, src, pvs->pitch, rCapt, transColor);
 			break;
 		case 1:
-			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, tColor);
+			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, transColor);
 			break;
 		default:
 			error("unhandled compression type %d", compType);
@@ -909,10 +909,10 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		// write compressed data
 		switch (compType) {
 		case 0:
-			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
+			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt, transColor);
 			break;
 		case 1:
-			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, tColor);
+			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, transColor);
 			break;
 		default:
 			break;
@@ -1011,8 +1011,8 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	int32 cw, ch;
 	if (flags & kWIFBlitToMemBuffer) {
 		dst = (uint8 *)malloc(width * height);
-		int color = 255;
-		memset(dst, color, width * height);
+		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? (_vm->VAR(_vm->VAR_WIZ_TCOLOR)) : 5;
+		memset(dst, transColor, width * height);
 		cw = width;
 		ch = height;
 	} else {
@@ -1054,15 +1054,15 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		palPtr = rmap + 4;
 	}
 
-	int color = -1;
+	int transColor = -1;
 	if (_vm->VAR_WIZ_TCOLOR != 0xFF) {
 		uint8 *trns = _vm->findWrappedBlock(MKID('TRNS'), dataPtr, state, 0);
-		color = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
+		transColor = (trns == NULL) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : -1;
 	}
 
 	switch (comp) {
 	case 0:
-		copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor);
 		break;
 	case 1:
 		// TODO Adding masking for flags 0x80 and 0x100
@@ -1076,7 +1076,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr);
 		break;
 	case 2:
-		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, color);
+		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor);
 		break;
 	default:
 		error("drawWizImage: Unhandled wiz compression type %d", comp);
@@ -1133,7 +1133,7 @@ struct PolygonDrawData {
 
   		int iaidx = p1->y - pto.y;
   		while (dy--) {
-  			//assert(iaidx >= 0 && iaidx < areasNum);
+  			assert(iaidx >= 0 && iaidx < areasNum);
   			InterArea *pia = &ia[iaidx];
   			int32 tx1 = x1_acc >> 0x10;
   			int32 tx3 = x3_acc >> 0x10;
@@ -1226,6 +1226,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		uint8 *dst;
 		int32 wizW, wizH;
 		VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
+		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
@@ -1258,7 +1259,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
   		xmin_p = ymin_p = 1234;
   		xmax_p = ymax_p = -1234;
 
-  		for (i = 1; i < 4; ++i) {
+  		for (i = 0; i < 4; ++i) {
   			xmin_p = MIN(wp[i].x, xmin_p);
   			xmax_p = MAX(wp[i].x, xmax_p);
   			ymin_p = MIN(wp[i].y, ymin_p);
@@ -1298,7 +1299,9 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 				assert(srcWizOff < (uint32)(wizW * wizH));
 				x_acc += x_step;
 				y_acc += y_step;
-				*dstPtr++ = srcWizBuf[srcWizOff];
+				if (transColor == -1 || transColor != srcWizBuf[srcWizOff])
+					*dstPtr = srcWizBuf[srcWizOff];
+				dstPtr++;
 			}
 			yoff += pvs->pitch;
 		}

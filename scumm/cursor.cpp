@@ -132,9 +132,10 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 }
 
 void ScummEngine::updateCursor() {
+	const int transColor = (_heversion >= 80) ? 5 : 255;
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
-							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : 255),
+							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
 							(_heversion == 70 ? 2 : 1));
 }
 
