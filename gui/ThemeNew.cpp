@@ -348,8 +348,9 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	if (!_initOk)
 		return;
 
+	restoreBackground(r);
 	drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-					256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd], 2);
+					(state == kStateDisabled) ? 128 : 256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd], 2);
 
 	const int off = (r.height() - _font->getFontHeight()) / 2;
 
@@ -747,7 +748,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[x] != transparency && dst >= _screen.pixels) {
-					dst[x] = getColorAlpha(src[x], dst[x], alpha) & rowColor;
+					dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
 				}
 			}
 			dst += _screen.w;
@@ -760,7 +761,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[drawWidth-x-1] != transparency && dst >= _screen.pixels) {
-					dst[x] = getColorAlpha(src[drawWidth-x-1], dst[x], alpha) & rowColor;
+					dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
 				}
 			}
 			dst += _screen.w;
@@ -773,7 +774,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[drawWidth-x-1] != transparency && dst >= _screen.pixels) {
-					dst[x] = getColorAlpha(src[drawWidth-x-1], dst[x], alpha) & rowColor;
+					dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
 				}
 			}
 			dst += _screen.w;
@@ -786,7 +787,7 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
 				if (src[x] != transparency && dst >= _screen.pixels) {
-					dst[x] = getColorAlpha(src[x], dst[x], alpha) & rowColor;
+					dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
 				}
 			}
 			dst += _screen.w;
