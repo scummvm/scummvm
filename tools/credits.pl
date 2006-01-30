@@ -549,7 +549,7 @@ begin_credits("Credits");
 
     begin_section("Retired Team Members");
 	  begin_persons();
-		  add_person("Tore Anderson", "tore", "Formed Debian GNU/Linux maintainer");
+		  add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 		add_person('Vincent Hamm', 'yazoo', "Co-Founder");

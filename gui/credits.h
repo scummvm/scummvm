@@ -100,7 +100,7 @@ static const char *credits[] = {
 "\\C\\c0""",
 "\\C\\c1""Retired Team Members",
 "\\C\\c0""Tore Anderson",
-"\\C\\c2""Formed Debian GNU/Linux maintainer",
+"\\C\\c2""Former Debian GNU/Linux maintainer",
 "\\C\\c0""Ralph Brorsen",
 "\\C\\c2""Help with GUI implementation",
 "\\C\\c0""Jamieson Christian",
