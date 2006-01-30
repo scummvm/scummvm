@@ -19,7 +19,7 @@
  *
  */
 
-#include "text.h"
+#include "sky/text.h"
 
 namespace Sky {
 
