@@ -1099,8 +1099,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 }
 
 struct PolygonDrawData {
-	struct InterArea {
-		bool valid;
+	struct PolygonArea {
 		int32 xmin;
 		int32 xmax;
 		int32 x1;
@@ -1108,57 +1107,73 @@ struct PolygonDrawData {
 		int32 x2;
 		int32 y2;
 	};
-	Common::Point pto;
-	InterArea *ia;
-	int areasNum;
+	struct ResultArea {
+		int32 dst_offs;
+		int32 x_step;
+		int32 y_step;
+		int32 x_s;
+		int32 y_s;
+		int32 w;
+	};
+	Common::Point mat[4];
+	PolygonArea *pa;
+	ResultArea *ra;
+	int rAreasNum;
+	int pAreasNum;
 
 	PolygonDrawData(int n) {
-		areasNum = n;
-		ia = new InterArea[areasNum];
-		memset(ia, 0, sizeof(InterArea) * areasNum);
+		memset(mat, 0, sizeof(mat));
+		pa = new PolygonArea[n];
+		for (int i = 0; i < n; ++i) {
+			pa[i].xmin = 12345;
+			pa[i].xmax = -12345;
+		}
+		ra = new ResultArea[n];
+		rAreasNum = 0;
+		pAreasNum = n;
 	}
 
 	~PolygonDrawData() {
-		delete[] ia;
+		delete[] pa;
+		delete[] ra;
 	}
 
-	void calcIntersection(const Common::Point *p1, const Common::Point *p2, const Common::Point *p3, const Common::Point *p4) {
-		int32 x1_acc = p1->x << 0x10;
-		int32 x3_acc = p3->x << 0x10;
-		int32 y3_acc = p3->y << 0x10;
-  		uint16 dy = ABS(p2->y - p1->y) + 1;
-  		int32 x1_step = ((p2->x - p1->x) << 0x10) / dy;
-  		int32 x3_step = ((p4->x - p3->x) << 0x10) / dy;
-  		int32 y3_step = ((p4->y - p3->y) << 0x10) / dy;
+	void transform(const Common::Point *tp1, const Common::Point *tp2, const Common::Point *sp1, const Common::Point *sp2) {
+		int32 tx_acc = tp1->x << 16;
+		int32 sx_acc = sp1->x << 16;
+		int32 sy_acc = sp1->y << 16;
+  		uint16 dy = ABS(tp2->y - tp1->y) + 1;
+  		int32 tx_step = ((tp2->x - tp1->x) << 16) / dy;
+  		int32 sx_step = ((sp2->x - sp1->x) << 16) / dy;
+  		int32 sy_step = ((sp2->y - sp1->y) << 16) / dy;
 
-  		int iaidx = p1->y - pto.y;
+  		int y = tp1->y - mat[0].y;
   		while (dy--) {
-  			assert(iaidx >= 0 && iaidx < areasNum);
-  			InterArea *pia = &ia[iaidx];
-  			int32 tx1 = x1_acc >> 0x10;
-  			int32 tx3 = x3_acc >> 0x10;
-  			int32 ty3 = y3_acc >> 0x10;
+  			assert(y >= 0 && y < pAreasNum);
+  			PolygonArea *ppa = &pa[y];
+  			int32 ttx = tx_acc >> 16;
+  			int32 tsx = sx_acc >> 16;
+  			int32 tsy = sy_acc >> 16;
 
-  			if (!pia->valid || pia->xmin > tx1) {
-  				pia->xmin = tx1;
-  				pia->x1 = tx3;
-  				pia->y1 = ty3;
+  			if (ppa->xmin > ttx) {
+  				ppa->xmin = ttx;
+  				ppa->x1 = tsx;
+  				ppa->y1 = tsy;
 			}
-  			if (!pia->valid || pia->xmax < tx1) {
-  				pia->xmax = tx1;
-  				pia->x2 = tx3;
-  				pia->y2 = ty3;
+  			if (ppa->xmax < ttx) {
+  				ppa->xmax = ttx;
+  				ppa->x2 = tsx;
+  				ppa->y2 = tsy;
 			}
-  			pia->valid = true;
 
-  			x1_acc += x1_step;
-  			x3_acc += x3_step;
-  			y3_acc += y3_step;
+  			tx_acc += tx_step;
+  			sx_acc += sx_step;
+  			sy_acc += sy_step;
 
-  			if (p2->y <= p1->y) {
-  				--iaidx;
+  			if (tp2->y <= tp1->y) {
+  				--y;
   			} else {
-  				++iaidx;
+  				++y;
   			}
   		}
 	}
@@ -1212,7 +1227,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 }
 
 void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
-	debug(0, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d palette %d)", resNum, flags, shadow, palette);
+	debug(1, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
 	int i;
 
 	if (flags & 0x800000) {
@@ -1224,7 +1239,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
 	if (srcWizBuf) {
 		uint8 *dst;
-		int32 wizW, wizH;
+		int32 dstw, dsth, wizW, wizH;
 		VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
@@ -1233,17 +1248,18 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			assert(dstPtr);
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
-
-			getWizImageDim(dstResNum, 0, wizW, wizH);
+			getWizImageDim(dstResNum, 0, dstw, dsth);
 		} else {
 			if (flags & kWIFMarkBufferDirty) {
 				dst = pvs->getPixels(0, 0);
 			} else {
 				dst = pvs->getBackPixels(0, 0);
 			}
-
-			getWizImageDim(resNum, state, wizW, wizH);
+			dstw = pvs->w;
+			dsth = pvs->h;
 		}
+
+		getWizImageDim(resNum, state, wizW, wizH);
 
 		Common::Point bbox[4];
 		bbox[0].x = 0;
@@ -1256,8 +1272,8 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		bbox[3].y = wizH - 1;
 
   		int16 xmin_p, xmax_p, ymin_p, ymax_p;
-  		xmin_p = ymin_p = 12345;
-  		xmax_p = ymax_p = -12345;
+  		xmin_p = ymin_p = 0x7FFF;
+  		xmax_p = ymax_p = 0x8000;
 
   		for (i = 0; i < 4; ++i) {
   			xmin_p = MIN(wp[i].x, xmin_p);
@@ -1266,38 +1282,87 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
   			ymax_p = MAX(wp[i].y, ymax_p);
   		}
 
-		if (xmin_p < 0 || ymin_p < 0 || xmax_p >= pvs->w || ymax_p >= pvs->h) {
-			printf("Invalid coords polygon x %d y %d x2 %d y2 %d\n", xmin_p, ymax_p, xmax_p, ymax_p);
+  		int16 xmin_b, xmax_b, ymin_b, ymax_b;
+  		xmin_b = ymin_b = 0x7FFF;
+  		xmax_b = ymax_b = 0x8000;
+		
+		for (i = 0; i < 4; ++i) {
+  			xmin_b = MIN(bbox[i].x, xmin_b);
+  			xmax_b = MAX(bbox[i].x, xmax_b);
+  			ymin_b = MIN(bbox[i].y, ymin_b);
+  			ymax_b = MAX(bbox[i].y, ymax_b);			
 		}
 
 		PolygonDrawData pdd(ymax_p - ymin_p + 1);
-		pdd.pto.x = xmin_p;
-		pdd.pto.y = ymin_p;
+		pdd.mat[0].x = xmin_p;
+		pdd.mat[0].y = ymin_p;
+		pdd.mat[1].x = xmax_p;
+		pdd.mat[1].y = ymax_p;
+		pdd.mat[2].x = xmin_b;
+		pdd.mat[2].y = ymin_b;
+		pdd.mat[3].x = xmax_b;
+		pdd.mat[3].y = ymax_b;
 
+		// precompute the transformation which remaps 'bbox' pixels to 'wp'
 		for (i = 0; i < 3; ++i) {
-			pdd.calcIntersection(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
+			pdd.transform(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
 		}
-		pdd.calcIntersection(&wp[3], &wp[0], &bbox[3], &bbox[0]);
+		pdd.transform(&wp[3], &wp[0], &bbox[3], &bbox[0]);
 
-		uint yoff = pdd.pto.y * pvs->w;
-		for (i = 0; i < pdd.areasNum; ++i) {
-			PolygonDrawData::InterArea *pia = &pdd.ia[i];
-			uint16 dx = pia->xmax - pia->xmin + 1;
-			uint8 *dstPtr = dst + pia->xmin + yoff;
-			int32 x_acc = pia->x1 << 0x10;
-			int32 y_acc = pia->y1 << 0x10;
-			int32 x_step = ((pia->x2 - pia->x1) << 0x10) / dx;
-			int32 y_step = ((pia->y2 - pia->y1) << 0x10) / dx;
-			while (dx--) {
-				uint srcWizOff = (y_acc >> 0x10) * wizW + (x_acc >> 0x10);
-				assert(srcWizOff < (uint32)(wizW * wizH));
-				x_acc += x_step;
-				y_acc += y_step;
-				if (transColor == -1 || transColor != srcWizBuf[srcWizOff])
-					*dstPtr = srcWizBuf[srcWizOff];
+		pdd.rAreasNum = 0;
+		PolygonDrawData::ResultArea *pra = &pdd.ra[0];
+		int32 yoff = pdd.mat[0].y * dstw;
+		int16 y_start = pdd.mat[0].y;
+		for (i = 0; i < pdd.pAreasNum; ++i) {
+			PolygonDrawData::PolygonArea *ppa = &pdd.pa[i];
+			if (y_start >= 0 && y_start < dsth) {
+				int16 x1 = ppa->xmin;
+				if (x1 < 0) {
+					x1 = 0;
+				}
+				int16 x2 = ppa->xmax;
+				if (x2 >= dstw) {
+					x2 = dstw - 1;
+				}
+				int16 w = x2 - x1 + 1;
+				if (w > 0) {
+					int16 width = ppa->xmax - ppa->xmin + 1;
+					pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
+					pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
+					pra->dst_offs = yoff + x1;
+					pra->w = w;
+					pra->x_s = ppa->x1 << 16;
+					pra->y_s = ppa->y1 << 16;
+					int16 tmp = x1 - ppa->xmin;
+					if (tmp != 0) {
+						pra->x_s += pra->x_step * tmp;
+						pra->y_s += pra->y_step * tmp;
+					}
+					++pra;
+					++pdd.rAreasNum;
+				}
+			}
+			++ppa;
+			yoff += dstw;
+			++y_start;
+		}
+
+		pra = &pdd.ra[0];
+		for (i = 0; i < pdd.rAreasNum; ++i, ++pra) {
+			uint8 *dstPtr = dst + pra->dst_offs;
+			int32 w = pra->w;
+			int32 x_acc = pra->x_s;
+			int32 y_acc = pra->y_s;
+			while (--w) {
+				int32 src_offs = (y_acc >> 16) * wizW + (x_acc >> 16);
+				assert(src_offs < wizW * wizH);
+				x_acc += pra->x_step;
+				y_acc += pra->y_step;
+				if (transColor == -1 || transColor != srcWizBuf[src_offs]) {
+					*dstPtr = srcWizBuf[src_offs];
+				}
 				dstPtr++;
 			}
-			yoff += pvs->pitch;
 		}
 
 		Common::Rect bound(xmin_p, ymin_p, xmax_p + 1, ymax_p + 1);
