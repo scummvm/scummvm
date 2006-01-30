@@ -34,7 +34,7 @@
 
 #include "common/util.h"
 
-#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_ARM) || defined(__GP32__)
+#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__)
 #include "common/config-manager.h"
 #endif
 
