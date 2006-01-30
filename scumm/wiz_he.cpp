@@ -1185,9 +1185,8 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 	getWizImageDim(resNum, state, w, h);
 
 	// set the transformation origin to the center of the image
-	pts[0].x = pts[3].x = -(w / 2);
 	pts[1].x = pts[2].x = w / 2 - 1;
-	pts[0].y = pts[1].y = -(h / 2);
+	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
 	pts[2].y = pts[3].y = h / 2 - 1;
 
 	// scale
