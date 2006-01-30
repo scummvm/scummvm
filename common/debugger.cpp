@@ -320,7 +320,7 @@ bool Debugger<T>::TabComplete(const char *input, char*& completion) {
 // Variable registration function
 template <class T>
 void Debugger<T>::DVar_Register(const char *varname, void *pointer, int type, int optional) {
-	assert(_dvar_count < (int)sizeof(_dvars));
+	assert(_dvar_count < ARRAYSIZE(_dvars));
 	strcpy(_dvars[_dvar_count].name, varname);
 	_dvars[_dvar_count].type = type;
 	_dvars[_dvar_count].variable = pointer;
@@ -332,7 +332,7 @@ void Debugger<T>::DVar_Register(const char *varname, void *pointer, int type, in
 // Command registration function
 template <class T>
 void Debugger<T>::DCmd_Register(const char *cmdname, DebugProc pointer) {
-	assert(_dcmd_count < (int)sizeof(_dcmds));
+	assert(_dcmd_count < ARRAYSIZE(_dcmds));
 	strcpy(_dcmds[_dcmd_count].name, cmdname);
 	_dcmds[_dcmd_count].function = pointer;
 
