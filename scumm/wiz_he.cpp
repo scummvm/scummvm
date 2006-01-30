@@ -1125,8 +1125,8 @@ struct PolygonDrawData {
 		memset(mat, 0, sizeof(mat));
 		pa = new PolygonArea[n];
 		for (int i = 0; i < n; ++i) {
-			pa[i].xmin = 12345;
-			pa[i].xmax = -12345;
+			pa[i].xmin = 0x7FFFFFFF;
+			pa[i].xmax = 0x80000000;
 		}
 		ra = new ResultArea[n];
 		rAreasNum = 0;
