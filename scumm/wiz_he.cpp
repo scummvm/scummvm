@@ -1184,20 +1184,25 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 	int32 w, h;
 	getWizImageDim(resNum, state, w, h);
 
+	// set the transformation origin to the center of the image
+	pts[0].x = pts[3].x = -(w / 2);
 	pts[1].x = pts[2].x = w / 2 - 1;
-	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
+	pts[0].y = pts[1].y = -(h / 2);
 	pts[2].y = pts[3].y = h / 2 - 1;
 
-	// transform points
+	// scale
 	if (scale != 256) {
 		for (int i = 0; i < 4; ++i) {
 			pts[i].x = pts[i].x * scale / 256;
 			pts[i].y = pts[i].y * scale / 256;
 		}
 	}
+
+	// rotate
 	if (angle)
 		polygonRotatePoints(pts, 4, angle);
 
+	// translate
 	for (int i = 0; i < 4; ++i) {
 		pts[i].x += po_x;
 		pts[i].y += po_y;
