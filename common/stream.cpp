@@ -104,6 +104,14 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 
 		c = readByte();
 	}
+	
+	// This should fix a bug while using readLine with Common::File
+	// it seems that it sets the eos flag after an invalid read
+	// and at the same time the ioFailed flag
+	// the config file parser fails out of that reason for the new themes
+	if (eos()) {
+		clearIOFailed();
+	}
 
 	*p = 0;
 	return buf;
