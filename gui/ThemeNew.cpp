@@ -36,9 +36,15 @@ extern int gBitFormat;
 static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::String &value, OverlayColor &color) {
 	Common::String temp;
 	cfg.getKey(value, "colors", temp);
-	int r, g, b;
-	sscanf(temp.c_str(), "%d %d %d", &r, &g, &b);
-	color = OSystem::instance().RGBToColor(r, g, b);
+
+	int rgb[3], pos = 0;
+	const char *colors = temp.c_str();
+
+	for (int cnt = 0; cnt < 3; cnt++) {
+		rgb[cnt] = atoi(colors + pos);
+		pos = strchr(colors + pos, ' ') - colors + 1;
+	}
+	color = OSystem::instance().RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
 namespace GUI {
