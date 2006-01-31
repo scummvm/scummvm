@@ -264,12 +264,25 @@ void ThemeClassic::drawCheckbox(const Common::Rect &r, const Common::String &str
 	box(r.left, r.top, checkBoxSize, checkBoxSize, _color, _shadowcolor);
 
 	if (checked) {
-		// TODO: implement old style
-		r2.top += 2;
-		r2.bottom = r.top + checkBoxSize - 2;
-		r2.left += 2;
-		r2.right = r.left + checkBoxSize - 2;
-		_screen.fillRect(r2, getColor(state));
+		r2.top += 3;
+		r2.bottom = r.top + checkBoxSize - 4;
+		r2.left += 3;
+		r2.right = r.left + checkBoxSize - 4;
+
+		OverlayColor c = getColor(state);
+
+		// Draw a cross
+		_screen.drawLine(r2.left, r2.top, r2.right, r2.bottom, c);
+		_screen.drawLine(r2.left, r2.bottom, r2.right, r2.top, c);
+
+		if (r2.height() > 5) {
+			// Thicken the lines
+			_screen.drawLine(r2.left, r2.top + 1, r2.right - 1, r2.bottom, c);
+			_screen.drawLine(r2.left + 1, r2.top, r2.right, r2.bottom - 1, c);
+			_screen.drawLine(r2.left, r2.bottom - 1, r2.right - 1, r2.top, c);
+			_screen.drawLine(r2.left + 1, r2.bottom, r2.right, r2.top + 1, c);
+		}
+
 		r2 = r;
 	}
 
