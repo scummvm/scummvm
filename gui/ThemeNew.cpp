@@ -355,7 +355,6 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	if (!_initOk)
 		return;
 
-	restoreBackground(r);
 	drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
 					(state == kStateDisabled) ? 128 : 256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd], 2);
 
