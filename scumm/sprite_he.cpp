@@ -97,9 +97,10 @@ void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound)
 // spriteInfoGet functions
 //
 int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int type, int num, int *args) {
-	bool cond;
-	int code, classId, x, y;
 	debug(1, "findSprite: x %d, y %d, spriteGroup %d, type %d, num %d", x_pos, y_pos, spriteGroupId, type, num);
+	Common::Point pos[1];
+	bool cond;
+	int code, classId;
 
 	for (int i = (_numSpritesToProcess - 1); i >= 0; i--) {
 		SpriteInfo *spi = _activeSpritesTable[i];
@@ -149,14 +150,14 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 
 				imageState = spi->curImageState % _vm->_wiz->getWizImageStates(spi->maskImage);
 
-				x = x_pos - spi->pos.x;
-				y = y_pos - spi->pos.y;
+				pos[0].x = x_pos - spi->pos.x;
+				pos[0].y = y_pos - spi->pos.y;
 
 				_vm->_wiz->getWizImageSpot(spi->curImage, imageState, x1, y1);
 				_vm->_wiz->getWizImageSpot(spi->maskImage, imageState, x2, y2);
 
-				x += (x2 - x1);
-				y += (y2 - y1);
+				pos[0].x += (x2 - x1);
+				pos[0].y += (y2 - y1);
 			} else {
 				if (spi->bbox.left > spi->bbox.right)
 					continue;
@@ -171,8 +172,8 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 				if (spi->bbox.bottom < y_pos)
 					continue;
 
-				x = x_pos - spi->pos.x;
-				y = y_pos - spi->pos.y;
+				pos[0].x = x_pos - spi->pos.x;
+				pos[0].y = y_pos - spi->pos.y;
 				imageState = spi->curImageState;
 			}
 
@@ -180,21 +181,20 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 			scale = spi->curScale;
 			if ((spi->flags & kSFScaled) || (spi->flags & kSFRotated)) {
 				if (spi->flags & kSFScaled && scale) {
-					x = x * 256 / scale;
-					y = y * 256 / scale;
+					pos[0].x = pos[0].x * 256 / scale;
+					pos[0].y = pos[0].y * 256 / scale;
 				}
 				if (spi->flags & kSFRotated && angle) {
 					angle = (360 - angle) % 360;
-					Common::Point pts[1];
-					_vm->_wiz->polygonRotatePoints(pts, 1, angle);
+					_vm->_wiz->polygonRotatePoints(pos, 1, angle);
 				}
 
 				_vm->_wiz->getWizImageDim(image, imageState, w, h);
-				x += w / 2;
-				y += h / 2;
+				pos[0].x += w / 2;
+				pos[0].y += h / 2;
 			}
 
-			if (_vm->_wiz->isWizPixelNonTransparent(image, imageState, x, y, spi->curImgFlags))
+			if (_vm->_wiz->isWizPixelNonTransparent(image, imageState, pos[0].x, pos[0].y, spi->curImgFlags))
 				return spi->id;
 		}
 	}
