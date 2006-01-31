@@ -47,13 +47,24 @@ static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::Stri
 	color = OSystem::instance().RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
+static void getFactorFromConfig(const Common::ConfigFile &cfg, const Common::String &value, uint &factor) {
+	if (!cfg.hasKey(value, "gradients")) {
+		factor = 1;
+		return;
+	}
+	Common::String temp;
+	cfg.getKey(value, "gradients", temp);
+	factor = atoi(temp.c_str());
+}
+
 namespace GUI {
 ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
-_forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
+_forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
 	_initOk = false;
 	memset(&_screen, 0, sizeof(_screen));
 	memset(&_dialog, 0, sizeof(_dialog));
 	memset(&_colors, 0, sizeof(_colors));
+	memset(&_gradientFactors, 0, sizeof(_gradientFactors));
 
 	_screen.create(_system->getOverlayWidth(), _system->getOverlayHeight(), sizeof(OverlayColor));
 	if (_screen.pixels) {
@@ -78,8 +89,7 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
 #ifdef USE_ZLIB
 		// Maybe find a nicer solution to this
 		unzFile zipFile = unzOpen((stylefile + ".zip").c_str());
-		if (zipFile == NULL) return;
-		if (unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
+		if (zipFile && unzLocateFile(zipFile, (stylefile + ".ini").c_str(), 2) == UNZ_OK) {
 			unz_file_info fileInfo;
 			unzOpenCurrentFile(zipFile);
 			unzGetCurrentFileInfo(zipFile, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
@@ -109,26 +119,66 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
 
 	Common::String temp = "";
 	_configFile.getKey("version", "theme", temp);
-	if (temp != "1") {
+	if (temp != "2") {
 		// TODO: improve this detection and handle it nicer
-		warning("Theme config uses a different version");
+		warning("Theme config uses a different version (you have: '%s', needed is: '%d'", temp.c_str(), 2);
 		return;
 	}
 	
 	static Common::String imageHandlesTable[kImageHandlesMax];
 
+	// load the pixmap filenames from the config file
 	_configFile.getKey("dialog_corner", "pixmaps", imageHandlesTable[kDialogBkgdCorner]);
 	_configFile.getKey("dialog_top", "pixmaps", imageHandlesTable[kDialogBkgdTop]);
 	_configFile.getKey("dialog_left", "pixmaps", imageHandlesTable[kDialogBkgdLeft]);
 	_configFile.getKey("dialog_bkgd", "pixmaps", imageHandlesTable[kDialogBkgd]);
+	
 	_configFile.getKey("widget_corner", "pixmaps", imageHandlesTable[kWidgetBkgdCorner]);
 	_configFile.getKey("widget_top", "pixmaps", imageHandlesTable[kWidgetBkgdTop]);
 	_configFile.getKey("widget_left", "pixmaps", imageHandlesTable[kWidgetBkgdLeft]);
 	_configFile.getKey("widget_bkgd", "pixmaps", imageHandlesTable[kWidgetBkgd]);
+	
+	_configFile.getKey("widget_small_corner", "pixmaps", imageHandlesTable[kWidgetSmallBkgdCorner]);
+	_configFile.getKey("widget_small_top", "pixmaps", imageHandlesTable[kWidgetSmallBkgdTop]);
+	_configFile.getKey("widget_small_left", "pixmaps", imageHandlesTable[kWidgetSmallBkgdLeft]);
+	_configFile.getKey("widget_small_bkgd", "pixmaps", imageHandlesTable[kWidgetSmallBkgd]);
+	
 	_configFile.getKey("checkbox_empty", "pixmaps", imageHandlesTable[kCheckboxEmpty]);
 	_configFile.getKey("checkbox_checked", "pixmaps", imageHandlesTable[kCheckboxChecked]);
+	
 	_configFile.getKey("widget_arrow", "pixmaps", imageHandlesTable[kWidgetArrow]);
 	
+	_configFile.getKey("tab_corner", "pixmaps", imageHandlesTable[kTabBkgdCorner]);
+	_configFile.getKey("tab_top", "pixmaps", imageHandlesTable[kTabBkgdTop]);
+	_configFile.getKey("tab_left", "pixmaps", imageHandlesTable[kTabBkgdLeft]);
+	_configFile.getKey("tab_bkgd", "pixmaps", imageHandlesTable[kTabBkgd]);
+	
+	_configFile.getKey("slider_bkgd_corner", "pixmaps", imageHandlesTable[kSliderBkgdCorner]);
+	_configFile.getKey("slider_bkgd_top", "pixmaps", imageHandlesTable[kSliderBkgdTop]);
+	_configFile.getKey("slider_bkgd_left", "pixmaps", imageHandlesTable[kSliderBkgdLeft]);
+	_configFile.getKey("slider_bkgd_bkgd", "pixmaps", imageHandlesTable[kSliderBkgd]);
+	
+	_configFile.getKey("slider_corner", "pixmaps", imageHandlesTable[kSliderCorner]);
+	_configFile.getKey("slider_top", "pixmaps", imageHandlesTable[kSliderTop]);
+	_configFile.getKey("slider_left", "pixmaps", imageHandlesTable[kSliderLeft]);
+	_configFile.getKey("slider_bkgd", "pixmaps", imageHandlesTable[kSlider]);
+	
+	_configFile.getKey("scrollbar_bkgd_corner", "pixmaps", imageHandlesTable[kScrollbarBkgdCorner]);
+	_configFile.getKey("scrollbar_bkgd_top", "pixmaps", imageHandlesTable[kScrollbarBkgdTop]);
+	_configFile.getKey("scrollbar_bkgd_left", "pixmaps", imageHandlesTable[kScrollbarBkgdLeft]);
+	_configFile.getKey("scrollbar_bkgd_bkgd", "pixmaps", imageHandlesTable[kScrollbarBkgd]);
+	
+	_configFile.getKey("scrollbar_corner", "pixmaps", imageHandlesTable[kScrollbarCorner]);
+	_configFile.getKey("scrollbar_top", "pixmaps", imageHandlesTable[kScrollbarTop]);
+	_configFile.getKey("scrollbar_left", "pixmaps", imageHandlesTable[kScrollbarLeft]);
+	_configFile.getKey("scrollbar_bkgd", "pixmaps", imageHandlesTable[kScrollbar]);
+	
+	_configFile.getKey("button_corner", "pixmaps", imageHandlesTable[kButtonBkgdCorner]);
+	_configFile.getKey("button_top", "pixmaps", imageHandlesTable[kButtonBkgdTop]);
+	_configFile.getKey("button_left", "pixmaps", imageHandlesTable[kButtonBkgdLeft]);
+	_configFile.getKey("button_bkgd", "pixmaps", imageHandlesTable[kButtonBkgd]);
+	
+	// load the colors from the config file
 	getColorFromConfig(_configFile, "main_dialog_start", _colors[kMainDialogStart]);
 	getColorFromConfig(_configFile, "main_dialog_end", _colors[kMainDialogEnd]);
 	
@@ -170,6 +220,24 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors() {
 	getColorFromConfig(_configFile, "scrollbar_slider_end", _colors[kScrollbarSliderEnd]);
 	
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
+	
+	// load the gradient factors from the config file
+	getFactorFromConfig(_configFile, "main_dialog", _gradientFactors[kMainDialogFactor]);
+	getFactorFromConfig(_configFile, "dialog", _gradientFactors[kDialogFactor]);
+	getFactorFromConfig(_configFile, "dialog_special", _gradientFactors[kDialogSpecialFactor]);
+	
+	getFactorFromConfig(_configFile, "widget_small", _gradientFactors[kWidgetSmallFactor]);
+	getFactorFromConfig(_configFile, "widget", _gradientFactors[kWidgetFactor]);
+	
+	getFactorFromConfig(_configFile, "button", _gradientFactors[kButtonFactor]);
+	
+	getFactorFromConfig(_configFile, "slider", _gradientFactors[kSliderFactor]);
+	getFactorFromConfig(_configFile, "silder_bkgd", _gradientFactors[kSliderBackground]);
+	
+	getFactorFromConfig(_configFile, "tab", _gradientFactors[kTabFactor]);
+	
+	getFactorFromConfig(_configFile, "scrollbar", _gradientFactors[kScrollbarFactor]);
+	getFactorFromConfig(_configFile, "scrollbar_background", _gradientFactors[kScrollbarBkgdFactor]);
 
 	_imageHandles = imageHandlesTable;
 
@@ -291,13 +359,13 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 	}
 
 	if (hints & THEME_HINT_MAIN_DIALOG) {
-		colorFade(r, _colors[kMainDialogStart], _colors[kMainDialogEnd]);
+		colorFade(r, _colors[kMainDialogStart], _colors[kMainDialogEnd], _gradientFactors[kMainDialogFactor]);
 	} else if (hints & THEME_HINT_SPECIAL_COLOR) {
 		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				256, _colors[kMainDialogStart], _colors[kMainDialogEnd]);
+				256, _colors[kMainDialogStart], _colors[kMainDialogEnd], _gradientFactors[kDialogSpecialFactor]);
 	} else {
 		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				256, _colors[kDialogStart], _colors[kDialogEnd], 2);
+				256, _colors[kDialogStart], _colors[kDialogEnd], _gradientFactors[kDialogFactor]);
 	}
 
 	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
@@ -341,11 +409,13 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 	}
 
 	if (background == kWidgetBackgroundBorderSmall) {
-		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundSmallStart], _colors[kWidgetBackgroundSmallEnd], 3);
+		drawRectMasked(r, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
+						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundSmallStart], _colors[kWidgetBackgroundSmallEnd],
+						_gradientFactors[kWidgetSmallFactor]);
 	} else {
 		drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundStart], _colors[kWidgetBackgroundEnd], 3);
+						(state == kStateDisabled) ? 128 : 256, _colors[kWidgetBackgroundStart], _colors[kWidgetBackgroundEnd],
+						_gradientFactors[kWidgetFactor]);
 	}
 
 	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
@@ -355,8 +425,9 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	if (!_initOk)
 		return;
 
-	drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-					(state == kStateDisabled) ? 128 : 256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd], 2);
+	drawRectMasked(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
+					(state == kStateDisabled) ? 128 : 256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd],
+					_gradientFactors[kButtonFactor]);
 
 	const int off = (r.height() - _font->getFontHeight()) / 2;
 
@@ -410,8 +481,8 @@ void ThemeNew::drawSlider(const Common::Rect &r, int width, kState state) {
 	if (!_initOk)
 		return;
 
-	drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
-					_colors[kSliderBackgroundStart], _colors[kSliderBackgroundEnd]);
+	drawRectMasked(r, surface(kSliderBkgdCorner), surface(kSliderBkgdTop), surface(kSliderBkgdLeft), surface(kSliderBkgd), 256,
+					_colors[kSliderBackgroundStart], _colors[kSliderBackgroundEnd], _gradientFactors[kSliderBackground]);
 
 	Common::Rect r2 = r;
 	r2.left = r.left + 2;
@@ -422,8 +493,8 @@ void ThemeNew::drawSlider(const Common::Rect &r, int width, kState state) {
 		r2.right = r.right - 2;
 	}
 
-	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-				(state == kStateDisabled) ? 128 : 256, _colors[kSliderStart], _colors[kSliderEnd], 2);
+	drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
+				(state == kStateDisabled) ? 128 : 256, _colors[kSliderStart], _colors[kSliderEnd], _gradientFactors[kSliderFactor]);
 
 	addDirtyRect(r);
 }
@@ -446,8 +517,9 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 void ThemeNew::drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state) {
 	if (!_initOk)
 		return;
-	drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				(state == kStateDisabled) ? 128 : 256, _colors[kTabBackgroundStart], _colors[kTabBackgroundEnd], 2);
+	drawRectMasked(r, surface(kTabBkgdCorner), surface(kTabBkgdTop), surface(kTabBkgdLeft), surface(kTabBkgd),
+				(state == kStateDisabled) ? 128 : 256, _colors[kTabBackgroundStart], _colors[kTabBackgroundEnd],
+				_gradientFactors[kTabFactor], true);
 	if (active) {
 		_font->drawString(&_screen, str, r.left, r.top+2, r.width(), getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
 	} else {
@@ -463,13 +535,13 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	Common::Rect r2 = r;
 
 	// draws the scrollbar background
-	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
-					_colors[kScrollbarBackgroundStart], _colors[kScrollbarBackgroundEnd]);
+	drawRectMasked(r2, surface(kScrollbarBkgdCorner), surface(kScrollbarBkgdTop), surface(kScrollbarBkgdLeft), surface(kScrollbarBkgd), 256,
+					_colors[kScrollbarBackgroundStart], _colors[kScrollbarBackgroundEnd], _gradientFactors[kScrollbarBkgdFactor]);
 
 	// draws the 'up' button
 	r2.bottom = r2.top + UP_DOWN_BOX_HEIGHT;
-	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
-					_colors[kScrollbarButtonStart], _colors[kScrollbarButtonEnd]);
+	drawRectMasked(r2, surface(kScrollbarBkgdCorner), surface(kScrollbarBkgdTop), surface(kScrollbarBkgdLeft), surface(kScrollbarBkgd), 256,
+					_colors[kScrollbarButtonStart], _colors[kScrollbarButtonEnd], _gradientFactors[kScrollbarBkgdFactor]);
 
 	const Graphics::Surface *arrow = surface(kWidgetArrow);
 	r2.left += 1 + (r2.width() - arrow->w) / 2;
@@ -483,19 +555,19 @@ void ThemeNew::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeigh
 	r2.left += 2;
 	r2.right -= 2;
 	r2.top += sliderY;
-	r2.bottom = r2.top + sliderHeight / 2 + surface(kWidgetBkgdCorner)->h + 4;
-	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), 256,
-					_colors[kScrollbarSliderStart], _colors[kScrollbarSliderEnd]);
+	r2.bottom = r2.top + sliderHeight / 2 + surface(kScrollbarCorner)->h + 4;
+	drawRectMasked(r2, surface(kScrollbarCorner), surface(kScrollbarTop), surface(kScrollbarLeft), surface(kScrollbarBkgd), 256,
+					_colors[kScrollbarSliderStart], _colors[kScrollbarSliderEnd], _gradientFactors[kScrollbarFactor]);
 	r2.top += sliderHeight / 2;
-	r2.bottom += sliderHeight / 2 - surface(kWidgetBkgdCorner)->h - 4;
-	drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), 256,
-					_colors[kScrollbarSliderEnd], _colors[kScrollbarSliderStart]);
+	r2.bottom += sliderHeight / 2 - surface(kScrollbarCorner)->h - 4;
+	drawRectMasked(r2, surface(kScrollbarCorner), surface(kScrollbarTop), surface(kScrollbarLeft), surface(kScrollbarBkgd), 256,
+					_colors[kScrollbarSliderEnd], _colors[kScrollbarSliderStart], _gradientFactors[kScrollbarFactor]);
 
 	// draws the 'down' button
 	r2 = r;
 	r2.top = r2.bottom - UP_DOWN_BOX_HEIGHT;
-	drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), 256,
-					_colors[kScrollbarButtonStart], _colors[kScrollbarButtonEnd]);
+	drawRectMasked(r2, surface(kScrollbarBkgdCorner), surface(kScrollbarBkgdTop), surface(kScrollbarBkgdLeft), surface(kScrollbarBkgd), 256,
+					_colors[kScrollbarButtonStart], _colors[kScrollbarButtonEnd], _gradientFactors[kScrollbarBkgdFactor]);
 
 	r2.left += 1 + (r2.width() - arrow->w) / 2;
 	r2.right = r2.left + arrow->w;
@@ -627,11 +699,11 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 	return result;
 }
 
-void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end) {
+void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor) {
 	OverlayColor *ptr = (OverlayColor*)_screen.getBasePtr(r.left, r.top);
 	int h = r.height();
 	while (h--) {
-		OverlayColor col = calcGradient(start, end, r.height()-h, r.height());
+		OverlayColor col = calcGradient(start, end, r.height()-h, r.height(), factor);
 		for (int i = 0; i < r.width(); ++i) {
 			ptr[i] = col;
 		}
@@ -646,7 +718,7 @@ void ThemeNew::drawRect(const Common::Rect &r, const Surface *corner, const Surf
 
 void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 							const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
-							OverlayColor start, OverlayColor end, uint factor) {
+							OverlayColor start, OverlayColor end, uint factor, bool skipLastRow) {
 	int drawWidth = MIN(corner->w, MIN(top->w, MIN(left->w, fill->w)));
 	int drawHeight = MIN(corner->h, MIN(top->h, MIN(left->h, fill->h)));
 	int partsH = r.height() / drawHeight;
@@ -702,13 +774,13 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 
 			// draw the right surface
 			if (!i) {
-				if (!y || y == partsH - 1) {
+				if (!y || (y == partsH - 1 && !skipLastRow)) {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, false, alpha, startCol, endCol);
 				} else {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, false, alpha, startCol, endCol);
 				}
 			} else if (i == partsW - 1) {
-				if (!y || y == partsH - 1) {
+				if (!y || (y == partsH - 1 && !skipLastRow)) {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, true, alpha, startCol, endCol);
 				} else {
 					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, true, alpha, startCol, endCol);

@@ -271,12 +271,12 @@ public:
 private:
 	bool addDirtyRect(Common::Rect r, bool backup = false);
 
-	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end);
+	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
 	void drawRect(const Common::Rect &r, const Graphics::Surface *corner,
 				const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill, int alpha);
 	void drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 						const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
-						OverlayColor start, OverlayColor end, uint factor = 1);
+						OverlayColor start, OverlayColor end, uint factor = 1, bool skipLastRow = false);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha);
 	void drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha,
 							OverlayColor start, OverlayColor end, uint factor = 1);
@@ -301,13 +301,52 @@ private:
 		kDialogBkgdTop = 1,
 		kDialogBkgdLeft = 2,
 		kDialogBkgd = 3,
+		
 		kWidgetBkgdCorner = 4,
 		kWidgetBkgdTop = 5,
 		kWidgetBkgdLeft = 6,
 		kWidgetBkgd = 7,
+		
 		kCheckboxEmpty = 8,
 		kCheckboxChecked = 9,
+		
 		kWidgetArrow = 10,
+		
+		kTabBkgdCorner = 11,
+		kTabBkgdTop = 12,
+		kTabBkgdLeft = 13,
+		kTabBkgd = 14,
+		
+		kSliderBkgdCorner = 15,
+		kSliderBkgdTop = 16,
+		kSliderBkgdLeft = 17,
+		kSliderBkgd = 18,
+		
+		kSliderCorner = 19,
+		kSliderTop = 20,
+		kSliderLeft = 21,
+		kSlider = 22,
+		
+		kScrollbarBkgdCorner = 23,
+		kScrollbarBkgdTop = 24,
+		kScrollbarBkgdLeft = 25,
+		kScrollbarBkgd = 26,
+		
+		kScrollbarCorner = 27,
+		kScrollbarTop = 28,
+		kScrollbarLeft = 29,
+		kScrollbar = 30,
+		
+		kButtonBkgdCorner = 31,
+		kButtonBkgdTop = 32,
+		kButtonBkgdLeft = 33,
+		kButtonBkgd = 34,
+		
+		kWidgetSmallBkgdCorner = 35,
+		kWidgetSmallBkgdTop = 36,
+		kWidgetSmallBkgdLeft = 37,
+		kWidgetSmallBkgd = 38,
+		
 		kImageHandlesMax
 	};
 
@@ -361,6 +400,29 @@ private:
 	};
 	
 	OverlayColor _colors[kColorHandlesMax];
+	
+	enum kGradientFactors {
+		kMainDialogFactor = 0,
+		kDialogFactor = 1,
+		kDialogSpecialFactor = 2,
+		
+		kWidgetSmallFactor = 3,
+		kWidgetFactor = 4,
+		
+		kButtonFactor = 5,
+		
+		kSliderFactor = 6,
+		kSliderBackground = 7,
+		
+		kTabFactor = 7,
+		
+		kScrollbarFactor = 8,
+		kScrollbarBkgdFactor = 9,
+		
+		kMaxGradientFactors
+	};
+	
+	uint _gradientFactors[kMaxGradientFactors];
 };
 } // end of namespace GUI
 
