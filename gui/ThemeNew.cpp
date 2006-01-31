@@ -59,7 +59,7 @@ static void getFactorFromConfig(const Common::ConfigFile &cfg, const Common::Str
 
 namespace GUI {
 ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
-_forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
+_lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
 	_initOk = false;
 	memset(&_screen, 0, sizeof(_screen));
 	memset(&_dialog, 0, sizeof(_dialog));
@@ -179,45 +179,7 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradien
 	_configFile.getKey("button_bkgd", "pixmaps", imageHandlesTable[kButtonBkgd]);
 	
 	// load the colors from the config file
-	getColorFromConfig(_configFile, "main_dialog_start", _colors[kMainDialogStart]);
-	getColorFromConfig(_configFile, "main_dialog_end", _colors[kMainDialogEnd]);
-	
-	getColorFromConfig(_configFile, "dialog_start", _colors[kDialogStart]);
-	getColorFromConfig(_configFile, "dialog_end", _colors[kDialogEnd]);
-	
-	getColorFromConfig(_configFile, "color_state_disabled", _colors[kColorStateDisabled]);
-	getColorFromConfig(_configFile, "color_state_highlight", _colors[kColorStateHighlight]);
-	getColorFromConfig(_configFile, "color_state_enabled", _colors[kColorStateEnabled]);
-	getColorFromConfig(_configFile, "color_transparency", _colors[kColorTransparency]);
-	
-	getColorFromConfig(_configFile, "text_inverted_background", _colors[kTextInvertedBackground]);
-	getColorFromConfig(_configFile, "text_inverted_color", _colors[kTextInvertedColor]);
-	
-	getColorFromConfig(_configFile, "widget_bkgd_start", _colors[kWidgetBackgroundStart]);
-	getColorFromConfig(_configFile, "widget_bkgd_end", _colors[kWidgetBackgroundEnd]);
-	getColorFromConfig(_configFile, "widget_bkgd_small_start", _colors[kWidgetBackgroundSmallStart]);
-	getColorFromConfig(_configFile, "widget_bkgd_small_end", _colors[kWidgetBackgroundSmallEnd]);
-	
-	getColorFromConfig(_configFile, "button_bkgd_start", _colors[kButtonBackgroundStart]);
-	getColorFromConfig(_configFile, "button_bkgd_end", _colors[kButtonBackgroundEnd]);
-	getColorFromConfig(_configFile, "button_text_enabled", _colors[kButtonTextEnabled]);
-	getColorFromConfig(_configFile, "button_text_disabled", _colors[kButtonTextDisabled]);
-	getColorFromConfig(_configFile, "button_text_highlight", _colors[kButtonTextHighlight]);
-	
-	getColorFromConfig(_configFile, "slider_background_start", _colors[kSliderBackgroundStart]);
-	getColorFromConfig(_configFile, "slider_background_end", _colors[kSliderBackgroundEnd]);
-	getColorFromConfig(_configFile, "slider_start", _colors[kSliderStart]);
-	getColorFromConfig(_configFile, "slider_end", _colors[kSliderEnd]);
-	
-	getColorFromConfig(_configFile, "tab_background_start", _colors[kTabBackgroundStart]);
-	getColorFromConfig(_configFile, "tab_background_end", _colors[kTabBackgroundEnd]);
-	
-	getColorFromConfig(_configFile, "scrollbar_background_start", _colors[kScrollbarBackgroundStart]);
-	getColorFromConfig(_configFile, "scrollbar_background_end", _colors[kScrollbarBackgroundEnd]);
-	getColorFromConfig(_configFile, "scrollbar_button_start", _colors[kScrollbarButtonStart]);
-	getColorFromConfig(_configFile, "scrollbar_button_end", _colors[kScrollbarButtonEnd]);
-	getColorFromConfig(_configFile, "scrollbar_slider_start", _colors[kScrollbarSliderStart]);
-	getColorFromConfig(_configFile, "scrollbar_slider_end", _colors[kScrollbarSliderEnd]);
+	setupColors();
 	
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
 	
@@ -248,6 +210,8 @@ _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradien
 		ImageMan.registerSurface(_imageHandles[i], 0);
 		_images[i] = ImageMan.getSurface(_imageHandles[i]);
 	}
+	
+	_lastUsedBitMask = gBitFormat;
 }
 
 ThemeNew::~ThemeNew() {
@@ -295,11 +259,13 @@ void ThemeNew::deinit() {
 
 void ThemeNew::refresh() {
 	init();
+	resetupGuiRenderer();
 	_system->showOverlay();
 }
 
 void ThemeNew::enable() {
 	init();
+	resetupGuiRenderer();
 	resetDrawArea();
 	_system->showOverlay();
 	clearAll();
@@ -896,4 +862,66 @@ OverlayColor ThemeNew::getColor(kState state) {
 	return _colors[kColorStateEnabled];
 }
 
+void ThemeNew::resetupGuiRenderer() {
+	if (_lastUsedBitMask == gBitFormat || !_initOk) {
+		// ok same format no need to reload
+		return;
+	}
+	
+	_lastUsedBitMask = gBitFormat;
+	
+	for (int i = 0; i < kImageHandlesMax; ++i) {
+		ImageMan.unregisterSurface(_imageHandles[i]);
+	}
+	
+	for (int i = 0; i < kImageHandlesMax; ++i) {
+		ImageMan.registerSurface(_imageHandles[i], 0);
+		_images[i] = ImageMan.getSurface(_imageHandles[i]);
+	}
+	
+	setupColors();
+}
+
+void ThemeNew::setupColors() {
+	// load the colors from the config file
+	getColorFromConfig(_configFile, "main_dialog_start", _colors[kMainDialogStart]);
+	getColorFromConfig(_configFile, "main_dialog_end", _colors[kMainDialogEnd]);
+	
+	getColorFromConfig(_configFile, "dialog_start", _colors[kDialogStart]);
+	getColorFromConfig(_configFile, "dialog_end", _colors[kDialogEnd]);
+	
+	getColorFromConfig(_configFile, "color_state_disabled", _colors[kColorStateDisabled]);
+	getColorFromConfig(_configFile, "color_state_highlight", _colors[kColorStateHighlight]);
+	getColorFromConfig(_configFile, "color_state_enabled", _colors[kColorStateEnabled]);
+	getColorFromConfig(_configFile, "color_transparency", _colors[kColorTransparency]);
+	
+	getColorFromConfig(_configFile, "text_inverted_background", _colors[kTextInvertedBackground]);
+	getColorFromConfig(_configFile, "text_inverted_color", _colors[kTextInvertedColor]);
+	
+	getColorFromConfig(_configFile, "widget_bkgd_start", _colors[kWidgetBackgroundStart]);
+	getColorFromConfig(_configFile, "widget_bkgd_end", _colors[kWidgetBackgroundEnd]);
+	getColorFromConfig(_configFile, "widget_bkgd_small_start", _colors[kWidgetBackgroundSmallStart]);
+	getColorFromConfig(_configFile, "widget_bkgd_small_end", _colors[kWidgetBackgroundSmallEnd]);
+	
+	getColorFromConfig(_configFile, "button_bkgd_start", _colors[kButtonBackgroundStart]);
+	getColorFromConfig(_configFile, "button_bkgd_end", _colors[kButtonBackgroundEnd]);
+	getColorFromConfig(_configFile, "button_text_enabled", _colors[kButtonTextEnabled]);
+	getColorFromConfig(_configFile, "button_text_disabled", _colors[kButtonTextDisabled]);
+	getColorFromConfig(_configFile, "button_text_highlight", _colors[kButtonTextHighlight]);
+	
+	getColorFromConfig(_configFile, "slider_background_start", _colors[kSliderBackgroundStart]);
+	getColorFromConfig(_configFile, "slider_background_end", _colors[kSliderBackgroundEnd]);
+	getColorFromConfig(_configFile, "slider_start", _colors[kSliderStart]);
+	getColorFromConfig(_configFile, "slider_end", _colors[kSliderEnd]);
+	
+	getColorFromConfig(_configFile, "tab_background_start", _colors[kTabBackgroundStart]);
+	getColorFromConfig(_configFile, "tab_background_end", _colors[kTabBackgroundEnd]);
+	
+	getColorFromConfig(_configFile, "scrollbar_background_start", _colors[kScrollbarBackgroundStart]);
+	getColorFromConfig(_configFile, "scrollbar_background_end", _colors[kScrollbarBackgroundEnd]);
+	getColorFromConfig(_configFile, "scrollbar_button_start", _colors[kScrollbarButtonStart]);
+	getColorFromConfig(_configFile, "scrollbar_button_end", _colors[kScrollbarButtonEnd]);
+	getColorFromConfig(_configFile, "scrollbar_slider_start", _colors[kScrollbarSliderStart]);
+	getColorFromConfig(_configFile, "scrollbar_slider_end", _colors[kScrollbarSliderEnd]);
+}
 } // end of namespace GUI 

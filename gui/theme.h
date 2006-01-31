@@ -286,6 +286,10 @@ private:
 
 	bool _initOk;
 	bool _forceRedraw;
+	
+	int _lastUsedBitMask;
+	void resetupGuiRenderer();
+	void setupColors();
 
 	void restoreBackground(Common::Rect r);
 	OverlayColor getColor(kState state);
