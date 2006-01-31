@@ -38,7 +38,7 @@ void NewFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) con
 	assert(dst != 0);
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 
-	assert(desc.bits != 0 && desc.maxwidth <= 16);
+	assert(desc.bits != 0 && desc.maxwidth <= 17);
 	assert(dst->bytesPerPixel == 1 || dst->bytesPerPixel == 2);
 
 	// If this character is not included in the font, use the default char.
