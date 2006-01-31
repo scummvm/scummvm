@@ -562,6 +562,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				settings["copy_protection"] = boolValue ? "true" : "false";
 			END_OPTION
 
+			DO_LONG_OPTION("gui-theme")
+				settings["gui_theme"] = option;
+			END_OPTION
+
 #ifndef DISABLE_SCUMM
 			DO_LONG_OPTION("tempo")
 				// Use the special value '0' for the base in (int)strtol.
