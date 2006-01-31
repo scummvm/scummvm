@@ -233,17 +233,14 @@ void Sound::processSoundCode() {
 }
 
 void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
-	int edi, opcode, var, val;
+	int arg, opcode, var, val;
 
 	while(READ_LE_UINT16(codePtr) != 0) {
 		codePtr += 2;
 		opcode = READ_LE_UINT16(codePtr); codePtr += 2;
-		opcode &= ~0xF000;
-		opcode /= 16;
-		edi = opcode;
+		opcode = (opcode & 0xFFF) >> 4;
+		arg = opcode & 3;
 		opcode &= ~3;
-		edi &= 3;
-
 		debug(1, "processSoundOpcodes: sound %d opcode %d", sound, opcode);
 		switch (opcode) {
 		case 0: // Continue
@@ -255,42 +252,42 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 		case 32: // Set var
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
-			if (edi == 2) {
+			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
 			setSoundVar(sound, var, val);
 			break;
 		case 48: // Add
-			var = READ_LE_UINT16(codePtr); codePtr += 2;;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;;
-			if (edi == 2) {
+			var = READ_LE_UINT16(codePtr); codePtr += 2;
+			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
 			val = getSoundVar(sound, var) + val;
 			setSoundVar(sound, var, val);
 			break;
 		case 56: // Subtract
-			var = READ_LE_UINT16(codePtr); codePtr += 2;;
-			val = READ_LE_UINT16(codePtr); codePtr += 2;;
-			if (edi == 2) {
+			var = READ_LE_UINT16(codePtr); codePtr += 2;
+			val = READ_LE_UINT16(codePtr); codePtr += 2;
+			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
 			val = getSoundVar(sound, var) - val;
 			setSoundVar(sound, var, val);
 			break;
 		case 64: // Multiple
-			var = READ_LE_UINT16(codePtr); codePtr += 2;;
+			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
-			if (edi == 2) {
+			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
 			val = getSoundVar(sound, var) * val;
 			setSoundVar(sound, var, val);
 			break;
 		case 80: // Divide
-			var = READ_LE_UINT16(codePtr); codePtr += 2;;
+			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
-			if (edi == 2) {
+			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
 			val = getSoundVar(sound, var) / val;
