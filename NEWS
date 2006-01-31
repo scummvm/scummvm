@@ -49,8 +49,11 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed disappearing cursor when level password is typed in
    - Warn user if he tries to run CD version directly from CD under Windows
 
+ Queen:
+   - Fixed charset for Spanish version.
+
  SAGA:
-   - Fix digital music playback under BE systems.
+   - Fixed digital music playback under BE systems.
 
  Simon:
    - Implemented more precise MD5-based game detection.
