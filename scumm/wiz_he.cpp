@@ -133,7 +133,7 @@ void Wiz::polygonTransform(int resNum, int state, int po_x, int po_y, int angle,
 	}
 
 	// scale
-	if (scale != 256) {
+	if (scale != 0 && scale != 256) {
 		for (int i = 0; i < 4; ++i) {
 			pts[i].x = pts[i].x * scale / 256;
 			pts[i].y = pts[i].y * scale / 256;
@@ -141,7 +141,7 @@ void Wiz::polygonTransform(int resNum, int state, int po_x, int po_y, int angle,
 	}
 
 	// rotate
-	if (angle)
+	if (angle != 0)
 		polygonRotatePoints(pts, 4, angle);
 
 	// translate
