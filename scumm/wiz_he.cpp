@@ -121,9 +121,16 @@ void Wiz::polygonTransform(int resNum, int state, int po_x, int po_y, int angle,
 	getWizImageDim(resNum, state, w, h);
 
 	// set the transformation origin to the center of the image
-	pts[1].x = pts[2].x = w / 2 - 1;
-	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
-	pts[2].y = pts[3].y = h / 2 - 1;
+	if (_vm->_heversion >= 99) {
+		pts[0].x = pts[3].x = -(w / 2);
+		pts[1].x = pts[2].x = w / 2 - 1;
+		pts[0].y = pts[1].y = -(h / 2);
+		pts[2].y = pts[3].y = h / 2 - 1;
+	} else {
+		pts[1].x = pts[2].x = w / 2 - 1;
+		pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
+		pts[2].y = pts[3].y = h / 2 - 1;
+	}
 
 	// scale
 	if (scale != 256) {
