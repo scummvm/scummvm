@@ -656,6 +656,9 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 	int specialHeight = 0;
 	int specialWidth = 0;
 
+	if (alpha != 256)
+		restoreBackground(r);
+
 	if (drawHeight*2 > r.height()) {
 		drawHeight = r.height() / 2;
 		partsH = 2;
@@ -746,6 +749,9 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 	const OverlayColor *src = 0;
 
 	const OverlayColor transparency = _colors[kColorTransparency];
+
+	if (alpha != 256)
+		restoreBackground(r);
 
 	if (upDown && !leftRight) {	// upsidedown
 		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
