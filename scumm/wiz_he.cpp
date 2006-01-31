@@ -1246,7 +1246,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	uint8 *srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
 	if (srcWizBuf) {
 		uint8 *dst;
-		int32 dstw, dsth, wizW, wizH;
+		int32 dstw, dsth, dstpitch, wizW, wizH;
 		VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
@@ -1256,6 +1256,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			dst = _vm->findWrappedBlock(MKID('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 			getWizImageDim(dstResNum, 0, dstw, dsth);
+			dstpitch = dstw;
 		} else {
 			if (flags & kWIFMarkBufferDirty) {
 				dst = pvs->getPixels(0, 0);
@@ -1264,6 +1265,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			}
 			dstw = pvs->w;
 			dsth = pvs->h;
+			dstpitch = pvs->pitch;
 		}
 
 		getWizImageDim(resNum, state, wizW, wizH);
@@ -1318,7 +1320,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 
 		pdd.rAreasNum = 0;
 		PolygonDrawData::ResultArea *pra = &pdd.ra[0];
-		int32 yoff = pdd.mat[0].y * dstw;
+		int32 yoff = pdd.mat[0].y * dstpitch;
 		int16 y_start = pdd.mat[0].y;
 		for (i = 0; i < pdd.pAreasNum; ++i) {
 			PolygonDrawData::PolygonArea *ppa = &pdd.pa[i];
@@ -1350,7 +1352,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 				}
 			}
 			++ppa;
-			yoff += dstw;
+			yoff += dstpitch;
 			++y_start;
 		}
 
