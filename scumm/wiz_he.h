@@ -160,6 +160,7 @@ public:
 	bool polygonDefined(int id);
 	bool polygonContains(const WizPolygon &pol, int x, int y);
 	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
+	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
 
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);
@@ -176,7 +177,7 @@ public:
 
 	void flushWizBuffer();
 
-	void loadImgSpot(int resId, int state, int32 &x, int32 &y);
+	void getWizImageSpot(int resId, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId);
 
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);

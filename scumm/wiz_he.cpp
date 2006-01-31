@@ -115,6 +115,35 @@ void Wiz::polygonRotatePoints(Common::Point *pts, int num, int angle) {
 	}
 }
 
+void Wiz::polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int scale, Common::Point *pts) {
+	int32 w, h;
+
+	getWizImageDim(resNum, state, w, h);
+
+	// set the transformation origin to the center of the image
+	pts[1].x = pts[2].x = w / 2 - 1;
+	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
+	pts[2].y = pts[3].y = h / 2 - 1;
+
+	// scale
+	if (scale != 256) {
+		for (int i = 0; i < 4; ++i) {
+			pts[i].x = pts[i].x * scale / 256;
+			pts[i].y = pts[i].y * scale / 256;
+		}
+	}
+
+	// rotate
+	if (angle)
+		polygonRotatePoints(pts, 4, angle);
+
+	// translate
+	for (int i = 0; i < 4; ++i) {
+		pts[i].x += po_x;
+		pts[i].y += po_y;
+	}
+}
+
 void Wiz::polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect &bound) {
 	bound.left = 10000;
 	bound.top = 10000;
@@ -921,15 +950,6 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 	_vm->res.setModified(rtImage, resNum);
 }
 
-void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
-	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
-	assert(dataPtr);
-	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
-	assert(wizh);
-	w = READ_LE_UINT32(wizh + 0x4);
-	h = READ_LE_UINT32(wizh + 0x8);
-}
-
 void Wiz::displayWizImage(WizImage *pwi) {
 	if (_vm->_fullRedraw) {
 		assert(_imagesNum < ARRAYSIZE(_images));
@@ -1181,32 +1201,8 @@ struct PolygonDrawData {
 
 void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int scale, const Common::Rect *r, int flags, int dstResNum, int palette) {
 	Common::Point pts[4];
-	int32 w, h;
-	getWizImageDim(resNum, state, w, h);
 
-	// set the transformation origin to the center of the image
-	pts[1].x = pts[2].x = w / 2 - 1;
-	pts[0].x = pts[0].y = pts[1].y = pts[3].x = -(w / 2);
-	pts[2].y = pts[3].y = h / 2 - 1;
-
-	// scale
-	if (scale != 256) {
-		for (int i = 0; i < 4; ++i) {
-			pts[i].x = pts[i].x * scale / 256;
-			pts[i].y = pts[i].y * scale / 256;
-		}
-	}
-
-	// rotate
-	if (angle)
-		polygonRotatePoints(pts, 4, angle);
-
-	// translate
-	for (int i = 0; i < 4; ++i) {
-		pts[i].x += po_x;
-		pts[i].y += po_y;
-	}
-
+	polygonTransform(resNum, state, po_x, po_y, angle, scale, pts);
 	drawWizPolygonTransform(resNum, state, pts, flags, shadow, dstResNum, palette);
 }
 
@@ -1393,22 +1389,9 @@ void Wiz::flushWizBuffer() {
 	_imagesNum = 0;
 }
 
-void Wiz::loadImgSpot(int resId, int state, int32 &x, int32 &y) {
-	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
-	assert(dataPtr);
-	uint8 *spotPtr = _vm->findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
-	if (spotPtr) {
-		x = READ_LE_UINT32(spotPtr + 0);
-		y = READ_LE_UINT32(spotPtr + 4);
-	} else {
-		x = 0;
-		y = 0;
-	}
-}
-
 void Wiz::loadWizCursor(int resId) {
 	int32 x, y;
-	loadImgSpot(resId, 0, x, y);
+	getWizImageSpot(resId, 0, x, y);
 	if (x < 0) {
 		x = 0;
 	} else if (x > 32) {
@@ -1918,6 +1901,28 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	default:
 		error("Unhandled processWizImage mode %d", params->processMode);
+	}
+}
+
+void Wiz::getWizImageDim(int resNum, int state, int32 &w, int32 &h) {
+	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
+	assert(dataPtr);
+	uint8 *wizh = _vm->findWrappedBlock(MKID('WIZH'), dataPtr, state, 0);
+	assert(wizh);
+	w = READ_LE_UINT32(wizh + 0x4);
+	h = READ_LE_UINT32(wizh + 0x8);
+}
+
+void Wiz::getWizImageSpot(int resId, int state, int32 &x, int32 &y) {
+	uint8 *dataPtr = _vm->getResourceAddress(rtImage, resId);
+	assert(dataPtr);
+	uint8 *spotPtr = _vm->findWrappedBlock(MKID('SPOT'), dataPtr, state, 0);
+	if (spotPtr) {
+		x = READ_LE_UINT32(spotPtr + 0);
+		y = READ_LE_UINT32(spotPtr + 4);
+	} else {
+		x = 0;
+		y = 0;
 	}
 }
 

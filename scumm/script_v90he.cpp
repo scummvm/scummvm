@@ -1691,13 +1691,13 @@ void ScummEngine_v90he::o90_getWizData() {
 	case 0:
 		state = pop();
 		resId = pop();
-		_wiz->loadImgSpot(resId, state, x, y);
+		_wiz->getWizImageSpot(resId, state, x, y);
 		push(x);
 		break;
 	case 1:
 		state = pop();
 		resId = pop();
-		_wiz->loadImgSpot(resId, state, x, y);
+		_wiz->getWizImageSpot(resId, state, x, y);
 		push(y);
 		break;
 	case 2:

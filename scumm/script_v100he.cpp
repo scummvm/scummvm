@@ -2486,13 +2486,13 @@ void ScummEngine_v100he::o100_getWizData() {
 	case 65:
 		state = pop();
 		resId = pop();
-		_wiz->loadImgSpot(resId, state, x, y);
+		_wiz->getWizImageSpot(resId, state, x, y);
 		push(x);
 		break;
 	case 66:
 		state = pop();
 		resId = pop();
-		_wiz->loadImgSpot(resId, state, x, y);
+		_wiz->getWizImageSpot(resId, state, x, y);
 		push(y);
 		break;
 	case 111:
