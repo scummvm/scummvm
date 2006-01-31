@@ -446,11 +446,11 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 void ThemeNew::drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state) {
 	if (!_initOk)
 		return;
+	drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
+				(state == kStateDisabled) ? 128 : 256, _colors[kTabBackgroundStart], _colors[kTabBackgroundEnd], 2);
 	if (active) {
 		_font->drawString(&_screen, str, r.left, r.top+2, r.width(), getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
 	} else {
-		drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-					(state == kStateDisabled) ? 128 : 256, _colors[kTabBackgroundStart], _colors[kTabBackgroundEnd], 2);
 		_font->drawString(&_screen, str, r.left, r.top+2, r.width(), getColor(state), Graphics::kTextAlignCenter, 0, true);
 	}
 	addDirtyRect(r);
