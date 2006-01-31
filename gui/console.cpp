@@ -122,7 +122,7 @@ void ConsoleDialog::open() {
 	// visible screen area, then shift it down in handleTickle() over a
 	// certain period of time.
 	
-	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
+	_drawingHints |= THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 
 	_y = -_h;
 	_slideTime = g_system->getMillis();
@@ -145,7 +145,9 @@ void ConsoleDialog::drawDialog() {
 	int y = _y + 2;
 
 	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _drawingHints);
-	_drawingHints = THEME_HINT_SAVE_BACKGROUND;
+	// FIXME: for the old theme the frame around the console vanishes
+	// when any action is processed if we enable this
+	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
 
 	for (int line = 0; line < _linesPerPage; line++) {
 		int x = _x + 1;

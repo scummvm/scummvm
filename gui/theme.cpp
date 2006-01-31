@@ -132,10 +132,16 @@ void ThemeClassic::resetDrawArea() {
 void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, kState state) {
 	if (!_initOk)
 		return;
-
+	
 	restoreBackground(r);
+	
+	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW)) {
+		addDirtyRect(r);
+		return;
+	}
+
 	box(r.left, r.top, r.width(), r.height(), _color, _shadowcolor);
-	addDirtyRect(r);
+	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
 void ThemeClassic::drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis) {
@@ -391,6 +397,7 @@ void ThemeClassic::drawLineSeparator(const Common::Rect &r, kState state) {
 
 void ThemeClassic::restoreBackground(Common::Rect r) {
 	r.clip(_screen.w, _screen.h);
+	r.clip(_drawArea);
 #ifndef OLDGUI_TRANSPARENCY
 	_screen.fillRect(r, _bgcolor);
 #else
@@ -415,12 +422,24 @@ void ThemeClassic::restoreBackground(Common::Rect r) {
 #endif
 }
 
-bool ThemeClassic::addDirtyRect(Common::Rect r) {
+bool ThemeClassic::addDirtyRect(Common::Rect r, bool save) {
 	// TODO: implement proper dirty rect handling
 	// FIXME: problem with the 'pitch'
 	r.clip(_screen.w, _screen.h);
 	r.clip(_drawArea);
 	_system->copyRectToOverlay((OverlayColor*)_screen.getBasePtr(r.left, r.top), _screen.w, r.left, r.top, r.width(), r.height());
+	if (_dialog && save) {
+		if (_dialog->screen.pixels) {
+			OverlayColor *dst = (OverlayColor*)_dialog->screen.getBasePtr(r.left, r.top);
+			const OverlayColor *src = (const OverlayColor*)_screen.getBasePtr(r.left, r.top);
+			int h = r.height();
+			while (h--) {
+				memcpy(dst, src, r.width()*sizeof(OverlayColor));
+				dst += _dialog->screen.w;
+				src += _screen.w;
+			}
+		}
+	}
 	return true;
 }
 

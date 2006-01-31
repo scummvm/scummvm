@@ -202,7 +202,7 @@ public:
 	void drawLineSeparator(const Common::Rect &r, kState state);
 private:
 	void restoreBackground(Common::Rect r);
-	bool addDirtyRect(Common::Rect r);
+	bool addDirtyRect(Common::Rect r, bool save = false);
 
 	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
 	void box(int x, int y, int width, int height);
