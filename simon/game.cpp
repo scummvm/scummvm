@@ -142,6 +142,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1TALKIE,    "f3b27a3fbb45dcd323a48159496e45e8", "stripped.txt", false},
 	{ GID_SIMON1TALKIE,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
+	{ GID_SIMON1TALKIE2,    "c0b948b6821d2140f8b977144f21027a", "gamepc", false },
+	{ GID_SIMON1TALKIE2,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1TALKIE2,    "64f73e94639b63af846ac4a8a94a23d8", "simon.gme", false },
+	{ GID_SIMON1TALKIE2,    "f3b27a3fbb45dcd323a48159496e45e8", "stripped.txt", false},
+	{ GID_SIMON1TALKIE2,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+
 	{ GID_SIMON1TALKIE_FR, "3cfb9d1ff4ec725af9924140126cf69f", "gamepc", false },
 	{ GID_SIMON1TALKIE_FR, "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
 	{ GID_SIMON1TALKIE_FR, "638049fa5d41b81fb6fb11671721b871", "simon.gme", false },
@@ -590,6 +596,19 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
+		"Simon the Sorcerer 1 (English DOS CD)",
+		ARRAYSIZE(SIMON1_GameFiles),
+		SIMON1_GameFiles,
+		GF_TALKIE,
+		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 1 - English DOS CD alternate?
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1TALKIE2,
 		"Simon the Sorcerer 1 (English DOS CD)",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
