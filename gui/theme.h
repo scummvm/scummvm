@@ -47,7 +47,10 @@ enum {
 	THEME_HINT_MAIN_DIALOG = 1 << 2,
 	
 	// Indicates special colorfade
-	THEME_HINT_SPECIAL_COLOR = 1 << 3
+	THEME_HINT_SPECIAL_COLOR = 1 << 3,
+	
+	// Indictaes that a shadows should be drawn around the background
+	THEME_HINT_USE_SHADOW = 1 << 4
 };
 
 class Theme {
@@ -248,6 +251,7 @@ public:
 	void clearAll();
 	void drawAll();
 	
+	void setDrawArea(const Common::Rect &r);
 	void resetDrawArea();
 
 	const Graphics::Font *getFont() const { return _font; }
@@ -269,7 +273,7 @@ public:
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
 private:
-	bool addDirtyRect(Common::Rect r, bool backup = false);
+	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
 
 	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
 	void drawRect(const Common::Rect &r, const Graphics::Surface *corner,
@@ -281,8 +285,12 @@ private:
 	void drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha,
 							OverlayColor start, OverlayColor end, uint factor = 1);
 
+	int _shadowLeftWidth, _shadowRightWidth;
+	int _shadowTopHeight, _shadowBottomHeight;
+
 	OSystem *_system;
 	Graphics::Surface _screen;
+	Common::Rect _shadowDrawArea;
 
 	bool _initOk;
 	bool _forceRedraw;
@@ -291,7 +299,7 @@ private:
 	void resetupGuiRenderer();
 	void setupColors();
 
-	void restoreBackground(Common::Rect r);
+	void restoreBackground(Common::Rect r, bool special = false);
 	OverlayColor getColor(kState state);
 
 	struct DialogState {
@@ -399,6 +407,17 @@ private:
 		kScrollbarSliderEnd = 30,
 		
 		kCaretColor = 31,
+		
+		kSliderHighStart = 32,
+		kSliderHighEnd = 33,
+		
+		kButtonBackgroundHighlightStart = 34,
+		kButtonBackgroundHighlightEnd = 35,
+		
+		kScrollbarButtonHighlightStart = 36,
+		kScrollbarButtonHighlightEnd = 37,
+		kScrollbarSliderHighlightStart = 38,
+		kScrollbarSliderHighlightEnd = 39,
 		
 		kColorHandlesMax
 	};

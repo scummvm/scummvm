@@ -140,7 +140,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 
 void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND, Theme::kWidgetBackgroundBorderSmall);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW, Theme::kWidgetBackgroundBorderSmall);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/

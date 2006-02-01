@@ -198,8 +198,8 @@ public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{}
-	virtual void handleMouseLeft(int button)	{}
+	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 
 	void setState(bool state);
 	void toggleState()			{ setState(!_state); }

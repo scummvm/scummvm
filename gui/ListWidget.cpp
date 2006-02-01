@@ -309,7 +309,7 @@ void ListWidget::drawWidget(bool hilite) {
 	int deltax;
 
 	// Draw a thin frame around the list.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorder);
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {

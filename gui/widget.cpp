@@ -182,7 +182,7 @@ void CheckboxWidget::setState(bool state) {
 
 void CheckboxWidget::drawWidget(bool hilite) {
 	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state,
-								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled);
+								isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
 }
 
 #pragma mark -
