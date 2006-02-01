@@ -140,7 +140,7 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY, WidgetSize w
 
 void PopUpDialog::drawDialog() {
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW, Theme::kWidgetBackgroundBorderSmall);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
@@ -395,7 +395,7 @@ void PopUpWidget::drawWidget(bool hilite) {
 	int w = _w - _labelWidth;
 
 	// Draw a thin frame around us.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(x, _y, x+w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(x, _y, x+w, _y+_h), _hints | THEME_HINT_USE_SHADOW, Theme::kWidgetBackgroundBorderSmall);
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
