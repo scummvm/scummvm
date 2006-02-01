@@ -79,6 +79,7 @@ int16 Util::translateKey(int16 key) {
 		int16 to;
 	} keys[] = {
 		{8,   0x0e08},	// Backspace
+		{32,  0x3920},  // Space
 		{13,  0x1C0D},	// Enter
 		{27,  0x011b},	// ESC
 		{127, 0x5300},	// Del
