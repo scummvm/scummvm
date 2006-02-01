@@ -312,8 +312,11 @@ void ConsoleDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	case 256 + 25:	// pagedown
 		if (modifiers == OSystem::KBD_SHIFT) {
 			_scrollLine += _linesPerPage - 1;
-			if (_scrollLine > _promptEndPos / _lineWidth)
+			if (_scrollLine > _promptEndPos / _lineWidth) {
 				_scrollLine = _promptEndPos / _lineWidth;
+				if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
+					_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
+			}
 			updateScrollBuffer();
 			draw();
 		}
