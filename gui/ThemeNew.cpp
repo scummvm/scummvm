@@ -586,8 +586,8 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	const Graphics::Surface *checkBox = surface(checked ? kCheckboxChecked : kCheckboxEmpty);
 	int checkBoxSize = checkBox->w;
 	
+	restoreBackground(Common::Rect(r.left, r.top, r.left+checkBox->w, r.top+checkBox->h));
 	if (state == kStateHighlight && !checked) {
-		restoreBackground(Common::Rect(r.left, r.top, r.left+checkBox->w, r.top+checkBox->h));
 		checkBox = surface(!checked ? kCheckboxChecked : kCheckboxEmpty);
 		drawSurface(Common::Rect(r.left, r.top, r.left+checkBox->w, r.top+checkBox->h), checkBox, false, false, 128);
 	} else {
