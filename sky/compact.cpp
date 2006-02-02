@@ -27,6 +27,8 @@
 
 namespace Sky {
 
+#define	SKY_CPT_SIZE	419427	
+	
 #define OFFS(type,item) (((long)(&((type*)0)->item)))
 #define MK32(type,item) OFFS(type, item),0,0,0
 #define MK16(type,item) OFFS(type, item),0
@@ -130,6 +132,12 @@ SkyCompact::SkyCompact(void) {
 	if (fileVersion != 0)
 		error("unknown \"sky.cpt\" version");
 
+	if (SKY_CPT_SIZE != _cptFile->size()) {
+		GUI::MessageDialog dialog("The \"sky.cpt\" file has an incorrect size.\nPlease (re)download it from www.scummvm.org", "OK", NULL);
+		dialog.runModal();
+		error("Incorrect sky.cpt size (%d, expected: %d)", _cptFile->size(), SKY_CPT_SIZE);
+	}
+	
 	// set the necessary data structs up...
 	_numDataLists = _cptFile->readUint16LE();
 	_cptNames	  = (char***)malloc(_numDataLists * sizeof(char**));
