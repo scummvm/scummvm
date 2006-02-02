@@ -30,6 +30,7 @@
 #include "gob/mult.h"
 #include "gob/goblin.h"
 #include "gob/cdrom.h"
+#include "gob/palanim.h"
 
 namespace Gob {
 
@@ -128,7 +129,7 @@ void Inter_v2::setupOpcodes(void) {
 		/* 08 */
 		OPCODE(o1_initCursorAnim),
 		OPCODE(o1_clearCursorAnim),
-		OPCODE(o1_setRenderFlags),
+		OPCODE(o2_setRenderFlags),
 		{NULL, ""},
 		/* 0C */
 		{NULL, ""},
@@ -159,7 +160,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_stub0x23),
 		/* 24 */
 		OPCODE(o2_drawStub),
 		OPCODE(o2_drawStub),
@@ -450,7 +451,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_whileDo),
 		/* 08 */
 		OPCODE(o1_callBool),
-		OPCODE(o1_evaluateStore),
+		OPCODE(o2_evaluateStore),
 		OPCODE(o1_loadSpriteToPos),
 		{NULL, ""},
 		/* 0C */
@@ -461,8 +462,8 @@ void Inter_v2::setupOpcodes(void) {
 		/* 10 */
 		{NULL, ""},
 		OPCODE(o1_printText),
-		OPCODE(o1_loadTot),
-		OPCODE(o1_palLoad),
+		OPCODE(o2_loadTot),
+		OPCODE(o2_palLoad),
 		/* 14 */
 		OPCODE(o1_keyFunc),
 		OPCODE(o1_capturePush),
@@ -710,6 +711,286 @@ void Inter_v2::o2_stub0x80(void) {
 	int16 expr2 = _vm->_parse->parseValExpr();
 
 	warning("STUB: Gob2 drawOperation 0x80 (%d %d)", expr1, expr2);
+}
+
+void Inter_v2::o2_stub0x23(void) {
+	byte result;
+	char str[40];
+	
+	result = evalExpr(NULL);
+	strcpy(str, _vm->_global->_inter_resStr);
+
+	warning("STUB: Gob2 drawOperation 0x23 (%d, \"%s\")", result, str);
+}
+
+bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) {
+	char *savedPos;
+	int16 varOff;
+	int16 token;
+	int16 result;
+	byte loopCount;
+
+	savedPos = _vm->_global->_inter_execPtr;
+	varOff = _vm->_parse->parseVarIndex();
+
+	if (*_vm->_global->_inter_execPtr == 99) {
+		_vm->_global->_inter_execPtr++;
+		loopCount = *_vm->_global->_inter_execPtr++;
+	}
+	else
+		loopCount = 1;
+
+	for (int i = 0; i < loopCount; i++) {
+		token = evalExpr(&result);
+		switch (savedPos[0]) {
+		case 16:
+		case 18:
+			*(_vm->_global->_inter_variables + varOff + i) = _vm->_global->_inter_resVal;
+			break;
+
+		case 17:
+		case 27:
+			*(uint16*)(_vm->_global->_inter_variables + varOff + i * 2) = _vm->_global->_inter_resVal;
+			break;
+
+		case 23:
+		case 26:
+			WRITE_VAR_OFFSET(varOff + i * 4, _vm->_global->_inter_resVal);
+			break;
+
+		case 24:
+			*(uint16*)(_vm->_global->_inter_variables + varOff + i * 4) = _vm->_global->_inter_resVal;
+			break;
+
+		case 25:
+		case 28:
+			if (token == 20)
+				*(_vm->_global->_inter_variables + varOff) = result;
+			else
+				strcpy(_vm->_global->_inter_variables + varOff, _vm->_global->_inter_resStr);
+			break;
+		}
+	}
+
+	return false;
+}
+
+bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 i;
+	int16 ind1;
+	int16 ind2;
+	byte cmd;
+	char *palPtr;
+
+	cmd = *_vm->_global->_inter_execPtr++;
+
+	switch(cmd & 0x7f) {
+	case 48:
+		if ((_vm->_global->_videoMode < 0x32) || (_vm->_global->_videoMode > 0x63)) {
+			_vm->_global->_inter_execPtr += 48;
+			return false;
+		}
+		break;
+
+	case 49:
+		if ((_vm->_global->_videoMode != 5) && (_vm->_global->_videoMode != 7)) {
+			_vm->_global->_inter_execPtr += 18;
+			return false;
+		}
+		break;
+
+	case 50:
+		if (_vm->_global->_videoMode != 0x0D) { // || (word_2D479 == 256) {
+			_vm->_global->_inter_execPtr += 16;
+			return false;
+		}
+		break;
+
+	case 51:
+		if (_vm->_global->_videoMode < 0x64) {
+			_vm->_global->_inter_execPtr += 2;
+			return false;
+		}
+		break;
+
+	case 52:
+		if (_vm->_global->_videoMode != 0x0D) { // || (word_2D479 == 256) {
+			_vm->_global->_inter_execPtr += 48;
+			return false;
+		}
+		break;
+
+	case 53:
+		if (_vm->_global->_videoMode < 0x13) {
+			_vm->_global->_inter_execPtr += 2;
+			return false;
+		}
+		break;
+
+	case 54:
+		if (_vm->_global->_videoMode < 0x13) {
+			return false;
+		}
+		break;
+
+	case 61:
+		if (_vm->_global->_videoMode < 0x13) {
+			*_vm->_global->_inter_execPtr += 4;
+			return false;
+		}
+		break;
+	}
+
+	if ((cmd & 0x7f) == 0x30) {
+		_vm->_global->_inter_execPtr += 48;
+		return false;
+	}
+
+	_vm->_draw->_applyPal = 0;
+	if (cmd & 0x80)
+		cmd &= 0x7f;
+	else
+		_vm->_draw->_applyPal = 1;
+
+	if (cmd == 49) {
+		int dl;
+		for (i = 2; i < 18; i++) {
+			dl = 1;
+			if(_vm->_global->_inter_execPtr[i] != 0)
+				dl = 0;
+		}
+		if (dl != 0) {
+			warning("GOB2 Stub! sub_27413");
+/*			sub_27413(_draw_frontSurface);
+			byte_2E521 = 0;
+			_vm->_global->_inter_execPtr += 18;
+			break;*/
+		}
+//		byte_2E521 = 1;
+
+		for (i = 0; i < 18; i++, _vm->_global->_inter_execPtr++) {
+			if (i < 2) {
+				if (_vm->_draw->_applyPal == 0)
+					continue;
+
+				_vm->_draw->_unusedPalette1[i] = *_vm->_global->_inter_execPtr;
+				continue;
+			}
+
+			ind1 = *_vm->_global->_inter_execPtr >> 4;
+			ind2 = (*_vm->_global->_inter_execPtr & 0xf);
+
+			_vm->_draw->_unusedPalette1[i] =
+			    ((_vm->_draw->_palLoadData1[ind1] + _vm->_draw->_palLoadData2[ind2]) << 8) +
+			    (_vm->_draw->_palLoadData2[ind1] + _vm->_draw->_palLoadData1[ind2]);
+		}
+
+		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+		return false;
+	}
+
+	switch (cmd) {
+	case 50:
+		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr++)
+			_vm->_draw->_unusedPalette2[i] = *_vm->_global->_inter_execPtr;
+		break;
+
+	case 52:
+		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr += 3) {
+			_vm->_draw->_vgaSmallPalette[i].red = _vm->_global->_inter_execPtr[0];
+			_vm->_draw->_vgaSmallPalette[i].green = _vm->_global->_inter_execPtr[1];
+			_vm->_draw->_vgaSmallPalette[i].blue = _vm->_global->_inter_execPtr[2];
+		}
+		_vm->_global->_inter_execPtr += 48;
+		if (_vm->_global->_videoMode >= 0x13)
+			return false;
+		break;
+
+	case 53:
+		palPtr = _vm->_game->loadTotResource(_vm->_inter->load16());
+		memcpy((char *)_vm->_draw->_vgaPalette, palPtr, 768);
+		break;
+
+	case 54:
+		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
+		break;
+
+	case 61:
+		ind1 = *_vm->_global->_inter_execPtr++;
+		ind2 = (*_vm->_global->_inter_execPtr++ - ind1 + 1) * 3;
+		palPtr = _vm->_game->loadTotResource(_vm->_inter->load16());
+		memcpy((char *)_vm->_draw->_vgaPalette + ind1 * 3, palPtr + ind1 * 3, ind2);
+		if (_vm->_draw->_applyPal) {
+			_vm->_draw->_applyPal = 0;
+			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+			return false;
+		}
+		break;
+	}
+	
+	if (!_vm->_draw->_applyPal) {
+		_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
+		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
+		if (_vm->_global->_videoMode < 0x13) {
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)_vm->_draw->_vgaSmallPalette;
+			_vm->_palanim->fade((Video::PalDesc *) _vm->_global->_pPaletteDesc, 0, 0);
+			return false;
+		}
+		if ((_vm->_global->_videoMode < 0x32) || (_vm->_global->_videoMode >= 0x64)) {
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)_vm->_draw->_vgaPalette;
+			_vm->_palanim->fade((Video::PalDesc *) _vm->_global->_pPaletteDesc, 0, 0);
+			return false;
+		}
+		_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)_vm->_draw->_vgaSmallPalette;
+		_vm->_palanim->fade((Video::PalDesc *) _vm->_global->_pPaletteDesc, 0, 0);
+	}
+
+	return false;
+}
+
+void Inter_v2::o2_setRenderFlags(void) {
+	int16 expr;
+
+	expr = _vm->_parse->parseValExpr();
+	
+	if (expr & 0x8000) {
+		if (expr & 0x4000)
+			_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
+		else
+			_vm->_draw->_renderFlags &= expr & 0x3fff;
+	}
+	else
+		_vm->_draw->_renderFlags |= expr & 0x3fff;
+}
+
+bool Inter_v2::o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
+	char buf[20];
+	int8 size;
+	int16 i;
+
+	if ((*_vm->_global->_inter_execPtr & 0x80) != 0) {
+		_vm->_global->_inter_execPtr++;
+		evalExpr(0);
+		strcpy(buf, _vm->_global->_inter_resStr);
+	} else {
+		size = *_vm->_global->_inter_execPtr++;
+		for (i = 0; i < size; i++)
+			buf[i] = *_vm->_global->_inter_execPtr++;
+
+		buf[size] = 0;
+	}
+
+	if (strcmp(buf, "INSTALL") == 0) {
+		warning("GOB2 Stub! word_2E515 = _inter_variables[0E8h]");
+	}
+
+	strcat(buf, ".tot");
+	if (_terminate != 2)
+		_terminate = true;
+	strcpy(_vm->_game->_totToLoad, buf);
+
+	return false;
 }
 
 } // End of namespace Gob

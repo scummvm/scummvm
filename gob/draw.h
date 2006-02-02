@@ -111,7 +111,6 @@ public:
 
 	void spriteOperation(int16 operation);
 	void animateCursor(int16 cursor);
-	void interPalLoad(void);
 	void printText(void);
 
 	Draw(GobEngine *vm);

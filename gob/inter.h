@@ -300,6 +300,11 @@ protected:
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
 	void o2_stub0x80(void);
+	void o2_stub0x23(void);
+	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_setRenderFlags(void);
+	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
 };
 
 }				// End of namespace Gob

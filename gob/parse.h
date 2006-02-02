@@ -26,14 +26,15 @@ namespace Gob {
 
 class Parse {
 public:
-	int16 parseExpr(char stopToken, byte *resultPtr);
 	void skipExpr(char stopToken);
-	int16 parseValExpr(unsigned stopToken=99);
-	int16 parseVarIndex(void);
 	void printExpr(char stopToken);
 	void printVarIndex(void);
+	virtual int16 parseVarIndex(void) = 0;
+	virtual int16 parseValExpr(unsigned stopToken=99) = 0;
+	virtual int16 parseExpr(char stopToken, byte *resultPtr) = 0;
 	
 	Parse(GobEngine *vm);
+	virtual ~Parse() {};
 
 protected:
 	enum PointerType {
@@ -46,6 +47,26 @@ protected:
 
 	int32 encodePtr(char *ptr, int type);
 	char *decodePtr(int32 n);
+};
+
+class Parse_v1 : public Parse {
+public:
+	Parse_v1(GobEngine *vm);
+	virtual ~Parse_v1() {};
+
+	virtual int16 parseVarIndex(void);
+	virtual int16 parseValExpr(unsigned stopToken=99);
+	virtual int16 parseExpr(char stopToken, byte *resultPtr);
+};
+
+class Parse_v2 : public Parse_v1 {
+public:
+	Parse_v2(GobEngine *vm);
+	virtual ~Parse_v2() {};
+
+	virtual int16 parseVarIndex(void);
+	virtual int16 parseValExpr(unsigned stopToken=99);
+	virtual int16 parseExpr(char stopToken, byte *resultPtr);
 };
 
 }				// End of namespace Gob

@@ -20,6 +20,8 @@ MODULE_OBJS := \
 	gob/pack.o \
 	gob/palanim.o \
 	gob/parse.o \
+	gob/parse_v1.o \
+	gob/parse_v2.o \
 	gob/scenery.o \
 	gob/sound.o \
 	gob/timer.o \

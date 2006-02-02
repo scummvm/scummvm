@@ -298,14 +298,17 @@ int GobEngine::init(GameDetector &detector) {
 	_mult = new Mult(this);
 	_pack = new Pack();
 	_palanim = new PalAnim(this);
-	_parse = new Parse(this);
 	_scenery = new Scenery(this);
 	_gtimer = new GTimer();
 	_util = new Util(this);
-	if (_features & Gob::GF_GOB1)
+	if (_features & Gob::GF_GOB1) {
 		_inter = new Inter_v1(this);
-	else if (_features & Gob::GF_GOB2)
+		_parse = new Parse_v1(this);
+	}
+	else if (_features & Gob::GF_GOB2) {
 		_inter = new Inter_v2(this);
+		_parse = new Parse_v2(this);
+	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");
 	if ((_features & Gob::GF_MAC) || (_features & Gob::GF_GOB1))

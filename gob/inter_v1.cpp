@@ -32,6 +32,7 @@
 #include "gob/cdrom.h"
 #include "gob/music.h"
 #include "gob/map.h"
+#include "gob/palanim.h"
 
 namespace Gob {
 
@@ -1722,7 +1723,78 @@ bool Inter_v1::o1_callBool(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 bool Inter_v1::o1_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_draw->interPalLoad();
+	int16 i;
+	int16 ind1;
+	int16 ind2;
+	byte cmd;
+	char *palPtr;
+
+	cmd = *_vm->_global->_inter_execPtr++;
+	_vm->_draw->_applyPal = 0;
+	if (cmd & 0x80)
+		cmd &= 0x7f;
+	else
+		_vm->_draw->_applyPal = 1;
+
+	if (cmd == 49) {
+		warning("o1_palLoad: cmd == 49 is not supported");
+		//var_B = 1;
+		for (i = 0; i < 18; i++, _vm->_global->_inter_execPtr++) {
+			if (i < 2) {
+				if (_vm->_draw->_applyPal == 0)
+					continue;
+
+				_vm->_draw->_unusedPalette1[i] = *_vm->_global->_inter_execPtr;
+				continue;
+			}
+			//if (*inter_execPtr != 0)
+			//      var_B = 0;
+
+			ind1 = *_vm->_global->_inter_execPtr >> 4;
+			ind2 = (*_vm->_global->_inter_execPtr & 0xf);
+
+			_vm->_draw->_unusedPalette1[i] =
+			    ((_vm->_draw->_palLoadData1[ind1] + _vm->_draw->_palLoadData2[ind2]) << 8) +
+			    (_vm->_draw->_palLoadData2[ind1] + _vm->_draw->_palLoadData1[ind2]);
+		}
+
+		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
+	}
+
+	switch (cmd) {
+	case 52:
+		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr += 3) {
+			_vm->_draw->_vgaSmallPalette[i].red = _vm->_global->_inter_execPtr[0];
+			_vm->_draw->_vgaSmallPalette[i].green = _vm->_global->_inter_execPtr[1];
+			_vm->_draw->_vgaSmallPalette[i].blue = _vm->_global->_inter_execPtr[2];
+		}
+		break;
+
+	case 50:
+		for (i = 0; i < 16; i++, _vm->_global->_inter_execPtr++)
+			_vm->_draw->_unusedPalette2[i] = *_vm->_global->_inter_execPtr;
+		break;
+
+	case 53:
+		palPtr = _vm->_game->loadTotResource(_vm->_inter->load16());
+		memcpy((char *)_vm->_draw->_vgaPalette, palPtr, 768);
+		break;
+
+	case 54:
+		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
+		break;
+	}
+	if (!_vm->_draw->_applyPal) {
+		_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
+		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
+
+		if (_vm->_global->_videoMode != 0x13)
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)_vm->_draw->_vgaSmallPalette;
+		else
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)_vm->_draw->_vgaPalette;
+
+		_vm->_palanim->fade((Video::PalDesc *) _vm->_global->_pPaletteDesc, 0, 0);
+	}
 	return false;
 }
 
