@@ -328,7 +328,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
 	while (gm->name) {
-		_gfxPopUp->appendEntry(gm->name, gm->id);
+		_gfxPopUp->appendEntry(gm->description, gm->id);
 		gm++;
 	}
 
