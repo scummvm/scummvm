@@ -182,7 +182,7 @@
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
 
-#if !defined(COMPILE_ZODIAC) && !defined(PALMOS_ARM)
+#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
 	#define NEWGUI_256
 #else
 	#undef UNUSED
