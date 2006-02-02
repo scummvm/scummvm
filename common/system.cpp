@@ -76,7 +76,7 @@ bool OSystem::setGraphicsMode(const char *name) {
 	if (!name)
 		return false;
 
-	// Sepcial case for the 'default' filter
+	// Special case for the 'default' filter
 	if (!scumm_stricmp(name, "normal") || !scumm_stricmp(name, "default")) {
 		return setGraphicsMode(getDefaultGraphicsMode());
 	}
