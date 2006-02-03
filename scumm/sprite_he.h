@@ -38,7 +38,6 @@ enum SpriteFlags {
 	kSFAutoAnim          = 0x200000,
 	kSFMarkDirty         = 0x400000,
 	kSFBlitDirectly      = 0x2000000,
-	kSF30                = 0x20000000,
 	kSFImageless         = 0x40000000
 };
 

@@ -1105,7 +1105,7 @@ void Sprite::resetBackground() {
 					}
 					refreshScreen = true;
 				}
-				if (!(spi->flags & (kSFNeedRedraw | kSF30)) && spi->image)
+				if (!(spi->flags & kSFNeedRedraw) && spi->image)
 					spi->flags |= kSFNeedRedraw;
 			}
 		}
@@ -1119,7 +1119,7 @@ void Sprite::setRedrawFlags(bool checkZOrder) {
 	VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
-		if (!(spi->flags & (kSFNeedRedraw | kSF30))) {
+		if (!(spi->flags & kSFNeedRedraw)) {
 			if ((!checkZOrder || spi->priority >= 0) && (spi->flags & kSFMarkDirty)) {
 				int lp = spi->bbox.left / 8;
 				lp = MAX(0, lp);
@@ -1196,8 +1196,7 @@ void Sprite::sortActiveSprites() {
 
 		if (spi->flags & kSFActive) {
 			if (!(spi->flags & kSFMarkDirty)) {
-				if (!(spi->flags & kSF30))
-					spi->flags |= kSFNeedRedraw;
+				spi->flags |= kSFNeedRedraw;
 				if (!(spi->flags & kSFImageless))
 					spi->flags |= kSFChanged;
 			}

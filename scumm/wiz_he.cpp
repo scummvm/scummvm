@@ -739,8 +739,8 @@ void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPi
 	}
 }
 
-static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 tColor) {
-	debug(9, "wizPackType1(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
+static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 transColor) {
+	debug(9, "wizPackType1(%d, [%d,%d,%d,%d])", transColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	src += rCapt.top * srcPitch + rCapt.left;
 	int w = rCapt.width();
 	int h = rCapt.height();
@@ -779,7 +779,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 					runCountDiff = 0;
 				}
 				++runCountSame;
-				if (prevColor == tColor) {
+				if (prevColor == transColor) {
 					if (runCountSame == 0x7F) {
 						if (dst) {
 							*dst++ = (runCountSame << 1) | 1;
@@ -799,7 +799,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 				}
 			} else {
 				if (runCountSame != 0) {
-					if (prevColor == tColor) {
+					if (prevColor == transColor) {
 						if (dst) {
 							*dst++ = (runCountSame << 1) | 1;
 						}
@@ -828,7 +828,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 			prevColor = color;
 		}
 		if (runCountSame != 0) {
-			if (prevColor == tColor) {
+			if (prevColor == transColor) {
 				if (dst) {
 					*dst++ = (runCountSame << 1) | 1;
 				}
@@ -858,8 +858,8 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	return dataSize;
 }
 
-static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 tColor) {
-	debug(9, "wizPackType0(%d, [%d,%d,%d,%d])", tColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
+static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt) {
+	debug(9, "wizPackType0([%d,%d,%d,%d])", rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
 	int w = rCapt.width();
 	int h = rCapt.height();
 	int size = w * h;
@@ -902,7 +902,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		int headerSize = palPtr ? 1080 : 36;
 		switch (compType) {
 		case 0:
-			dataSize = wizPackType0(0, src, pvs->pitch, rCapt, transColor);
+			dataSize = wizPackType0(0, src, pvs->pitch, rCapt);
 			break;
 		case 1:
 			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, transColor);
@@ -945,7 +945,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		// write compressed data
 		switch (compType) {
 		case 0:
-			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt, transColor);
+			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt);
 			break;
 		case 1:
 			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, transColor);
