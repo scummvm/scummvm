@@ -475,7 +475,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				if (cond == 0) {
 					decflag = 1;
 				} else {
-					uint32 type = cond & 0xC0000000;
+					uint32 type = cond & ~0x3FFFFFFF;
 					cond &= 0x3FFFFFFF;
 					if (_vm->_heversion >= 90) {
 						shadowMask = cond & 0xE000;
