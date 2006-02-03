@@ -67,12 +67,13 @@ Goblin::Goblin(GobEngine *vm) : _vm(vm) {
 
 	_noPick = 0;
 	_objList = 0;
-	for (int i = 0; i < 4; i++)
+	int i;
+	for (i = 0; i < 4; i++)
 		_goblins[i] = 0;
 	_currentGoblin = 0;
-	for (int i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++)
 		_soundData[i] = 0;
-	for (int i = 0; i < 3; i++) {
+	for (i = 0; i < 3; i++) {
 		_gobPositions[i].x = 0;
 		_gobPositions[i].y = 0;
 	}
@@ -136,7 +137,7 @@ Goblin::Goblin(GobEngine *vm) : _vm(vm) {
 
 	_destItemType = 0;
 	_destItemState = 0;
-	for (int i = 0; i < 20; i++) {
+	for (i = 0; i < 20; i++) {
 		_itemToObject[i] = 0;
 		_objects[i] = 0;
 	}

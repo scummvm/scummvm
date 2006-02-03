@@ -113,10 +113,12 @@ void NewGui::runLoop() {
 			// This is necessary to get the blending right.
 			_theme->clearAll();
 
-			for (int i = 0; i < _dialogStack.size(); ++i) {
+			int i;
+
+			for (i = 0; i < _dialogStack.size(); ++i) {
 				_theme->closeDialog();
 			}
-			for (int i = 0; i < _dialogStack.size(); i++) {
+			for (i = 0; i < _dialogStack.size(); i++) {
 				_theme->openDialog();
 				_dialogStack[i]->drawDialog();
 			}

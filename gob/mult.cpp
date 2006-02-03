@@ -54,15 +54,16 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 
 	_staticKeysCount = 0;
 	_staticKeys = 0;
-	for (int i = 0; i < 10; i++)
+	int i;
+	for (i = 0; i < 10; i++)
 		_staticIndices[i] = 0;
 
-	for (int i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++) {
 		_animKeys[i] = 0;
 		_animKeysCount[i] = 0;
 	}
 	_animLayer = 0;
-	for (int i = 0; i < 10; i++)
+	for (i = 0; i < 10; i++)
 		_animIndices[i] = 0;
 
 	_textKeysCount = 0;
@@ -75,12 +76,12 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 	_palKeys = 0;
 	_oldPalette = 0;
 	_palAnimKey = 0;
-	for (int i = 0; i < 256; i++) {
+	for (i = 0; i < 256; i++) {
 		_palAnimPalette[i].red = 0;
 		_palAnimPalette[i].green = 0;
 		_palAnimPalette[i].blue = 0;
 	}
-	for (int i = 0; i < 4; i++) {
+	for (i = 0; i < 4; i++) {
 		_palAnimIndices[i] = 0;
 		_palAnimRed[i] = 0;
 		_palAnimGreen[i] = 0;
@@ -96,7 +97,7 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 	_animDataAllocated = 0;
 
 	_dataPtr = 0;
-	for (int i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++) {
 		_staticLoaded[i] = 0;
 		_animLoaded[i] = 0;
 	}
@@ -105,7 +106,7 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 	_sndKeysCount = 0;
 	_sndKeys = 0;
 
-	for (int i = 0; i < 5; i++)
+	for (i = 0; i < 5; i++)
 		for (int j = 0; j < 16; j++) {
 			_fadePal[i][j].red = 0;
 			_fadePal[i][j].green = 0;

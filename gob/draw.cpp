@@ -51,17 +51,19 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_backDeltaX = 0;
 	_backDeltaY = 0;
 	
-	for (int i = 0; i < 4; i++)
+	int i;
+
+	for (i = 0; i < 4; i++)
 		_fonts[i] = 0;
 	
 	_textToPrint = 0;
 	_transparency = 0;
 
-	for (int i = 0; i < 50; i++)
+	for (i = 0; i < 50; i++)
 		_spritesArray[i] = 0;
 
 	_invalidatedCount = 0;
-	for (int i = 0; i < 30; i++) {
+	for (i = 0; i < 30; i++) {
 		_invalidatedTops[i] = 0;
 		_invalidatedLefts[i] = 0;
 		_invalidatedRights[i] = 0;
@@ -75,16 +77,16 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_backSurface = 0;
 	_frontSurface = 0;
 
-	for (int i = 0; i < 18; i++)
+	for (i = 0; i < 18; i++)
 		_unusedPalette1[i] = 0;
-	for (int i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++)
 		_unusedPalette2[i] = 0;
-	for (int i = 0; i < 256; i++) {
+	for (i = 0; i < 256; i++) {
 		_vgaPalette[i].red = 0;
 		_vgaPalette[i].blue = 0;
 		_vgaPalette[i].green = 0;
 	}
-	for (int i = 0; i < 16; i++) {
+	for (i = 0; i < 16; i++) {
 		_vgaSmallPalette[i].red = 0;
 		_vgaSmallPalette[i].blue = 0;
 		_vgaSmallPalette[i].green = 0;
@@ -98,7 +100,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_cursorXDeltaVar = -1;
 	_cursorYDeltaVar = -1;
 
-	for (int i = 0; i < 40; i++) {
+	for (i = 0; i < 40; i++) {
 		_cursorAnimLow[i] = 0;
 		_cursorAnimHigh[i] = 0;
 		_cursorAnimDelays[i] = 0;

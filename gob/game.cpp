@@ -52,12 +52,14 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 
 	// Collisions stack
 	_collStackSize = 0;
-	for (int i = 0; i < 3; i++) {
+	int i;
+
+	for (i = 0; i < 3; i++) {
 		_collStack[i] = 0;
 		_collStackElemSizes[i] = 0;
 	}
 
-	for (int i = 0; i < 20; i++)
+	for (i = 0; i < 20; i++)
 		_soundSamples[i] = 0;
 
 	_curTotFile[0] = 0;

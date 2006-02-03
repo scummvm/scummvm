@@ -32,16 +32,18 @@
 namespace Gob {
 
 Map::Map(GobEngine *vm) : _vm(vm) {
-	for (int i = 0; i < kMapHeight; i++)
+	int i;
+
+	for (i = 0; i < kMapHeight; i++)
 		for (int j = 0; j < kMapWidth; j++) {
 			_passMap[i][j] = 0;
 			_itemsMap[i][j] = 0;
 		}
-	for (int i = 0; i < 40; i++) {
+	for (i = 0; i < 40; i++) {
 		_wayPoints[i].x = 0;
 		_wayPoints[i].y = 0;
 	}
-	for (int i = 0; i < 40; i++) {
+	for (i = 0; i < 40; i++) {
 		_itemPoses[i].x = 0;
 		_itemPoses[i].y = 0;
 		_itemPoses[i].orient = 0;

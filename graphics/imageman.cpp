@@ -41,8 +41,8 @@ ImageManager::~ImageManager() {
 	}
 	_surfaces.clear();
 #ifdef USE_ZLIB
-	for (ZipIterator pos = _archives.begin(); pos != _archives.end(); ++pos) {
-		unzClose(*pos);
+	for (ZipIterator pos2 = _archives.begin(); pos2 != _archives.end(); ++pos2) {
+		unzClose(*pos2);
 	}
 	_archives.clear();
 #endif

@@ -34,15 +34,17 @@
 namespace Gob {
 
 Scenery::Scenery(GobEngine *vm) : _vm(vm) {
-	for (int i = 0; i < 20; i++) {
+	int i;
+
+	for (i = 0; i < 20; i++) {
 		_spriteRefs[i] = 0;
 		_spriteResId[i] = 0;
 	}
-	for (int i = 0; i < 70; i++ ) {
+	for (i = 0; i < 70; i++ ) {
 		_staticPictToSprite[i] = 0;
 		_animPictToSprite[i] = 0;
 	}
-	for (int i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++) {
 		_staticPictCount[i] = 0;
 		_staticFromExt[i] = 0;
 		_staticResId[i] = 0;

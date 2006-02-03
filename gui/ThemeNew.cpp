@@ -1032,11 +1032,12 @@ void ThemeNew::resetupGuiRenderer() {
 	
 	_lastUsedBitMask = gBitFormat;
 	
-	for (int i = 0; i < kImageHandlesMax; ++i) {
+	int i;
+	for (i = 0; i < kImageHandlesMax; ++i) {
 		ImageMan.unregisterSurface(_imageHandles[i]);
 	}
 	
-	for (int i = 0; i < kImageHandlesMax; ++i) {
+	for (i = 0; i < kImageHandlesMax; ++i) {
 		ImageMan.registerSurface(_imageHandles[i], 0);
 		_images[i] = ImageMan.getSurface(_imageHandles[i]);
 	}

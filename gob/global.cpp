@@ -71,7 +71,9 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	/* Data files */
 	_packedSize = 0;
-	for (int i = 0; i < MAX_DATA_FILES; i++) {
+	int i;
+
+	for (i = 0; i < MAX_DATA_FILES; i++) {
 		_dataFiles[i] = 0;
 		_numDataChunks[i] = 0;
 		_dataFileHandles[i] = -1;
@@ -111,7 +113,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_unusedPalette1[16] = (int16)0xAAAA;
 	_unusedPalette1[17] = (int16)0xFFFF;
 
-	for (int i = 0; i < 16 ;i++)
+	for (i = 0; i < 16 ;i++)
 		_unusedPalette2[i] = i;
 
 	_vgaPalette[0].red = 0x00; _vgaPalette[0].green = 0x00; _vgaPalette[0].blue = 0x00;

@@ -98,7 +98,7 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 			strcpy(candidateName, &path[i + 1]);
 			candidateName[strlen(candidateName) - 1] = '\0';
 			for (i=0; i<candidates.size(); i++) {
-				if (scumm_stricmp(candidateName, candidates[i].name) == 0) {
+				if (scumm_stricmp(candidateName, candidates[i].description) == 0) {
 					idx = i;
 					break;
 				}
@@ -118,7 +118,7 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).
-	String domain(result.name);
+	String domain(result.description);
 	if (ConfMan.hasGameDomain(domain)) {
 		char suffix = 'a';
 		domain += suffix;
@@ -128,7 +128,7 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 			suffix++;
 			domain += suffix;
 		}
-		ConfMan.set("gameid", result.name, domain);
+		ConfMan.set("gameid", result.description, domain);
 		ConfMan.set("description", result.description, domain);
 	}
 	ConfMan.set("path", path, domain);
