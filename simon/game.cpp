@@ -142,6 +142,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON1TALKIE,    "f3b27a3fbb45dcd323a48159496e45e8", "stripped.txt", false},
 	{ GID_SIMON1TALKIE,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
 
+	{ GID_SIMON1TALKIE2,    "c0b948b6821d2140f8b977144f21027a", "gamepc", false },
+	{ GID_SIMON1TALKIE2,    "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
+	{ GID_SIMON1TALKIE2,    "64f73e94639b63af846ac4a8a94a23d8", "simon.gme", false },
+	{ GID_SIMON1TALKIE2,    "f3b27a3fbb45dcd323a48159496e45e8", "stripped.txt", false},
+	{ GID_SIMON1TALKIE2,    "d198a80de2c59e4a0cd24b98814849e8", "tbllist", false},
+
 	{ GID_SIMON1TALKIE_FR, "3cfb9d1ff4ec725af9924140126cf69f", "gamepc", false },
 	{ GID_SIMON1TALKIE_FR, "22107c24dfb31b66ac503c28a6e20b19", "icon.dat", false},
 	{ GID_SIMON1TALKIE_FR, "638049fa5d41b81fb6fb11671721b871", "simon.gme", false },
@@ -243,6 +249,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2TALKIE_DE, "6c5fdfdd0eab9038767c2d22858406b2", "simon2.gme", false },
 	{ GID_SIMON2TALKIE_DE, "6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
 	{ GID_SIMON2TALKIE_DE, "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
+	{ GID_SIMON2TALKIE_DE2,"a76ea940076b5d9316796dea225a9b69", "gsptr30", false },
+	{ GID_SIMON2TALKIE_DE2,"72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2TALKIE_DE2,"ec9f0f24fd895e7ea72e3c8e448c0240", "simon2.gme", false },
+	{ GID_SIMON2TALKIE_DE2,"6de6292c9ac11bfb2e70fdb0f773ba85", "stripped.txt", false},
+	{ GID_SIMON2TALKIE_DE2,"2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
 	{ GID_SIMON2TALKIE_HB, "952a2b1be23c3c609ba8d988a9a1627d", "gsptr30", false },
 	{ GID_SIMON2TALKIE_HB, "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
@@ -577,6 +589,19 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
+	// Simon the Sorcerer 1 - English DOS CD alternate?
+	{
+		"simon1",
+		GType_SIMON1,
+		GID_SIMON1TALKIE2,
+		"Simon the Sorcerer 1 (English DOS CD)",
+		ARRAYSIZE(SIMON1_GameFiles),
+		SIMON1_GameFiles,
+		GF_TALKIE,
+		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
 	// Simon the Sorcerer 1 - French DOS CD
 	{
 		"simon1",
@@ -791,6 +816,19 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_DE,
+		"Simon the Sorcerer 2 (German DOS CD)",
+		ARRAYSIZE(SIMON2_GameFiles),
+		SIMON2_GameFiles,
+		GF_TALKIE,
+		Common::DE_DEU,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 2 - German DOS CD alternate?
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2TALKIE_DE2,
 		"Simon the Sorcerer 2 (German DOS CD)",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
