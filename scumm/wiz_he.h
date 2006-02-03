@@ -160,6 +160,7 @@ public:
 	bool polygonDefined(int id);
 	bool polygonContains(const WizPolygon &pol, int x, int y);
 	void polygonRotatePoints(Common::Point *pts, int num, int alpha);
+	void polygonTransform(int resNum, int state, int po_x, int po_y, int angle, int zoom, Common::Point *vert);
 
 	void createWizEmptyImage(const WizParameters *params);
 	void fillWizRect(const WizParameters *params);
@@ -179,13 +180,15 @@ public:
 	void loadImgSpot(int resId, int state, int32 &x, int32 &y);
 	void loadWizCursor(int resId);
 
+	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
 	void displayWizComplexImage(const WizParameters *params);
 	void displayWizImage(WizImage *pwi);
-	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
+	void processWizImage(const WizParameters *params);
+
 	uint8 *drawWizImage(int resNum, int state, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int palette);
 	void drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette);
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
-	void processWizImage(const WizParameters *params);
+	void drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette);
 
 	static void copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch);
 	static void copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);

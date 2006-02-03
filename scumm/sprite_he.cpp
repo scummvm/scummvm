@@ -69,33 +69,15 @@ void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound)
 		angle = spi->angle;
 		scale = spi->scale;
 		_vm->_wiz->getWizImageDim(spi->image, spi->imageState, w, h);
-		if (!(spi->flags & (kSFScaled | kSFRotated))) {
+		if (spi->flags & (kSFScaled | kSFRotated)) {
+			Common::Point pts[4];
+			_vm->_wiz->polygonTransform(spi->image, spi->imageState, x1, y1, angle, scale, pts);
+			_vm->_wiz->polygonCalcBoundBox(pts, 4, bound);
+		} else {
 			bound.left = x1;
 			bound.top = y1;
 			bound.right = x1 + w;
 			bound.bottom = y1 + h;
-		} else {
-			Common::Point pts[4];
-
-			pts[1].x = pts[2].x = w / 2 - 1;
-			pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
-			pts[2].y = pts[3].y = h / 2 - 1;
-
-			if ((spi->flags & kSFScaled) && scale) {
-				for (int j = 0; j < 4; ++j) {
-					pts[j].x = pts[j].x * scale / 256;
-					pts[j].y = pts[j].y * scale / 256;
-				}
-			}
-			if ((spi->flags & kSFRotated) && angle)
-				_vm->_wiz->polygonRotatePoints(pts, 4, angle);
-
-			for (int j = 0; j < 4; ++j) {
-				pts[j].x += x1;
-				pts[j].y += y1;
-			}
-
-			_vm->_wiz->polygonCalcBoundBox(pts, 4, bound);
 		}
 	} else {
 		bound.left = 1234;
@@ -109,9 +91,10 @@ void Sprite::getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound)
 // spriteInfoGet functions
 //
 int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int type, int num, int *args) {
-	bool cond;
-	int code, classId, x, y;
 	debug(1, "findSprite: x %d, y %d, spriteGroup %d, type %d, num %d", x_pos, y_pos, spriteGroupId, type, num);
+	Common::Point pos[1];
+	bool cond;
+	int code, classId;
 
 	for (int i = (_numSpritesToProcess - 1); i >= 0; i--) {
 		SpriteInfo *spi = _activeSpritesTable[i];
@@ -161,14 +144,14 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 
 				imageState = spi->curImageState % _vm->_wiz->getWizImageStates(spi->maskImage);
 
-				x = x_pos - spi->pos.x;
-				y = y_pos - spi->pos.y;
+				pos[0].x = x_pos - spi->pos.x;
+				pos[0].y = y_pos - spi->pos.y;
 
 				_vm->_wiz->loadImgSpot(spi->curImage, imageState, x1, y1);
 				_vm->_wiz->loadImgSpot(spi->maskImage, imageState, x2, y2);
 
-				x += (x2 - x1);
-				y += (y2 - y1);
+				pos[0].x += (x2 - x1);
+				pos[0].y += (y2 - y1);
 			} else {
 				if (spi->bbox.left > spi->bbox.right)
 					continue;
@@ -183,8 +166,8 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 				if (spi->bbox.bottom < y_pos)
 					continue;
 
-				x = x_pos - spi->pos.x;
-				y = y_pos - spi->pos.y;
+				pos[0].x = x_pos - spi->pos.x;
+				pos[0].y = y_pos - spi->pos.y;
 				imageState = spi->curImageState;
 			}
 
@@ -192,21 +175,20 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 			scale = spi->curScale;
 			if ((spi->flags & kSFScaled) || (spi->flags & kSFRotated)) {
 				if (spi->flags & kSFScaled && scale) {
-					x = x * 256 / scale;
-					y = y * 256 / scale;
+					pos[0].x = pos[0].x * 256 / scale;
+					pos[0].y = pos[0].y * 256 / scale;
 				}
 				if (spi->flags & kSFRotated && angle) {
 					angle = (360 - angle) % 360;
-					Common::Point pts[1];
-					_vm->_wiz->polygonRotatePoints(pts, 1, angle);
+					_vm->_wiz->polygonRotatePoints(pos, 1, angle);
 				}
 
 				_vm->_wiz->getWizImageDim(image, imageState, w, h);
-				x += w / 2;
-				y += h / 2;
+				pos[0].x += w / 2;
+				pos[0].y += h / 2;
 			}
 
-			if (_vm->_wiz->isWizPixelNonTransparent(image, imageState, x, y, spi->curImgFlags))
+			if (_vm->_wiz->isWizPixelNonTransparent(image, imageState, pos[0].x, pos[0].y, spi->curImgFlags))
 				return spi->id;
 		}
 	}
@@ -1291,33 +1273,15 @@ void Sprite::processImages(bool arg) {
 			angle = spi->angle;
 			scale = spi->scale;
 			_vm->_wiz->getWizImageDim(image, imageState, w, h);
-			if (!(spi->flags & (kSFScaled | kSFRotated))) {
+			if (spi->flags & (kSFScaled | kSFRotated)) {
+				Common::Point pts[4];
+				_vm->_wiz->polygonTransform(image, imageState, wiz.img.x1, wiz.img.y1, angle, scale, pts);
+				_vm->_wiz->polygonCalcBoundBox(pts, 4, spi->bbox);
+			} else {
 				bboxPtr->left = wiz.img.x1;
 				bboxPtr->top = wiz.img.y1;
 				bboxPtr->right = wiz.img.x1 + w;
 				bboxPtr->bottom = wiz.img.y1 + h;
-			} else {
-				Common::Point pts[4];
-
-				pts[1].x = pts[2].x = w / 2 - 1;
-				pts[0].x = pts[0].y = pts[1].y = pts[3].x = -w / 2;
-				pts[2].y = pts[3].y = h / 2 - 1;
-
-				if ((spi->flags & kSFScaled) && scale) {
-					for (int j = 0; j < 4; ++j) {
-						pts[j].x = pts[j].x * scale / 256;
-						pts[j].y = pts[j].y * scale / 256;
-					}
-				}
-				if ((spi->flags & kSFRotated) && angle)
-					_vm->_wiz->polygonRotatePoints(pts, 4, angle);
-
-				for (int j = 0; j < 4; ++j) {
-					pts[j].x += wiz.img.x1;
-					pts[j].y += wiz.img.y1;
-				}
-
-				_vm->_wiz->polygonCalcBoundBox(pts, 4, spi->bbox);
 			}
 		} else {
 			bboxPtr->left = 1234;

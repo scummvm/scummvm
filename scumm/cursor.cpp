@@ -132,9 +132,10 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 }
 
 void ScummEngine::updateCursor() {
+	const int transColor = (_heversion >= 80) ? 5 : 255;
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
-							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : 255),
+							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
 							(_heversion == 70 ? 2 : 1));
 }
 
@@ -187,7 +188,7 @@ void ScummEngine_v90he::setDefaultCursor() {
 	static byte palette[] = { 0xff, 0xff, 0xff, 0,
 							  0,    0,    0,    0};
 
-	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+	memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
 
 	_cursor.hotspotX = _cursor.hotspotY = 2;
 	src = default_he_cursor;
