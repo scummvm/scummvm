@@ -1,6 +1,21 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.8.1a (2006-02-xx)
+ General:
+   - Fixed OS X bundle building when using GCC 3.3.
+   - Fixed compiling with GCC 2.95.
+   - Fixed LaTeX documentation.
+   - Use new logo on Mac OS X, too. (Fix already included in the
+     official 0.8.1 Mac OS X builds?)
+
+ Sword2:
+   - Fixed last-minute crash when playing sound effects.
+
+ WinCE Port:
+   - Fixed Smartphone double click crash. (Fix already included in the
+     official 0.8.1 WinCE builds?)
+
 0.8.1 (2006-01-31)
  General:
    - More descriptive game titles in all engines.
