@@ -288,8 +288,8 @@ which can be found in the Downloads section of the ScummVM website.
 
 3.9) Maniac Mansion NES notes
 ---- ------------------------
-Supported versions are English USA (E), French (F), Swedish (SW) and
-European (U). ScummVM requires just PRG section to run and not whole ROM.
+Supported versions are English USA (E), French (F), German (G), Swedish (SW)
+and European (U). ScummVM requires just PRG section to run and not whole ROM.
 
 In order to get the game working, you will have to strip out the first
 16 bytes from the ROM you are trying to work with. Any hex editor will work
@@ -297,7 +297,7 @@ as long as you are able to copy/paste.  After you open the ROM with the
 hex editor, copy everything from second row (17th byte) to the end. After
 you do this, paste it to a new hex file. Give the new file name
 "Maniac Mansion (XX).prg" where XX depends on version you are  working
-with (E, F, SW, or U).  The final size should be exactly 262144 bytes.
+with (E, F, G, SW, or U).  The final size should be exactly 262144 bytes.
 
 If you add game manually make sure that platform is set to NES.
 
@@ -642,8 +642,8 @@ other games.
 
     SCUMM:
         Ctrl 0-9 and Alt 0-9   - Load and save game state
-        Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-d                 - Starts the debugger
+        Ctrl-g                 - Runs in really REALLY fast mode
         Ctrl-t                 - Switch been 'Speech only',
                                  'Speech and Subtitles' and 'Subtitles only'
         Tilde (~)              - Show/hide the debugging console
@@ -941,7 +941,7 @@ MIDI music with Adlib sound effects.
 7.6.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
 ------ ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
-variable "SCUMMVM_MIDI" to your sequencer device -- for example, to 
+variable "SCUMMVM_MIDI" to your sequencer device -- for example, to
 /dev/sequencer
 
 If you have problems with not hearing audio in this configuration, it is
