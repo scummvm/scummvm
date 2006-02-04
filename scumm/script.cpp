@@ -465,9 +465,11 @@ void ScummEngine::executeScript() {
 			printf("\n");
 		}
 
+#ifndef DISABLE_SCUMM_7_8
 		if (_imuseDigital) {
 			_imuseDigital->callback();
 		}
+#endif
 
 		executeOpcode(_opcode);
 

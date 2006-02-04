@@ -2339,9 +2339,11 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	start_time = _system->getMillis();
 
 	while (!_quit) {
+#ifndef DISABLE_SCUMM_7_8
 		if (_imuseDigital) {
 			_imuseDigital->callback();
 		}
+#endif
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
 		if (_system->getMillis() >= start_time + msec_delay)
