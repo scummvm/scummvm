@@ -1293,7 +1293,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s) {
 		MKLINE(ScummEngine_v90he, _curMaxSpriteId, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _curSpriteId, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _curSpriteGroupId, sleInt32, VER(51)),
-		MKLINE(ScummEngine_v90he, _numSpritesToProcess, sleInt32, VER(51)),
+		MK_OBSOLETE(ScummEngine_v90he, _numSpritesToProcess, sleInt32, VER(51), VER(63)),
 		MKLINE(ScummEngine_v90he, _heObject, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _heObjectNum, sleInt32, VER(51)),
 		MKLINE(ScummEngine_v90he, _hePaletteNum, sleInt32, VER(51)),
@@ -1304,9 +1304,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s) {
 
 	s->saveLoadArrayOf(&_floodFillParams, 1, sizeof(_floodFillParams), floodFillEntries);
 
-	_numSpritesToProcess = _sprite->_numSpritesToProcess;
 	s->saveLoadEntries(this, HE90Entries);
-	_sprite->_numSpritesToProcess = _numSpritesToProcess;
 }
 
 void ScummEngine_v99he::saveOrLoad(Serializer *s) {
