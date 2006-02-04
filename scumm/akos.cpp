@@ -490,6 +490,10 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 					} else {
 						decflag = (a->_heCondMask & cond) ? 1 : 0;
 					}
+
+					if (_vm->_heversion >= 90) {
+						_shadow_mode = ((shadowMask & 0x8000) && xmap) ? 3 : 0;
+					}
 				}
 			}
 
@@ -497,10 +501,6 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 			if (decflag == 0)
 				continue;
-
-			if (_vm->_heversion >= 90) {
-				_shadow_mode = ((shadowMask & 0x8000) && xmap) ? 3 : 0;
-			}
 
 			switch (codec) {
 			case 1:
