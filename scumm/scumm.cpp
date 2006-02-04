@@ -2670,15 +2670,23 @@ void ScummEngine::restart() {
 	for (i = 0; i < _numGlobalObjects; i++)
 		clearOwnerOf(i);
 
-	// Reinit things
-	allocateArrays();                   // Reallocate arrays
-	readIndexFile();                    // Reread index (reset objectstate etc)
-	scummInit();                       // Reinit scumm variables
+	// Reallocate arrays
+	allocateArrays();
+
+	// Reread index (reset objectstate etc)
+	readIndexFile();
+
+	// Reinit scumm variables
+	scummInit();          
 	initScummVars();
+
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 	}
-	_sound->setupSound();               // Reinit sound engine
+
+	// Reinit sound engine
+	if (_version >= 5)
+		_sound->setupSound();
 
 	// Re-run bootscript
 	int args[16];
