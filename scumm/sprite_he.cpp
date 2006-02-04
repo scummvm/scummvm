@@ -1421,9 +1421,15 @@ void Sprite::saveOrLoadSpriteData(Serializer *s) {
 		MKEND()
 	};
 
-	s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
-	s->saveLoadArrayOf(_spriteTable, _varNumSprites, sizeof(_spriteTable[0]), spriteEntries);
-	s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups, sizeof(_spriteGroups[0]), spriteGroupEntries);
+	if (s->getVersion() >= VER(64)) {
+		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites + 1, sizeof(_activeSpritesTable[0]), spriteEntries);
+		s->saveLoadArrayOf(_spriteTable, _varNumSprites + 1, sizeof(_spriteTable[0]), spriteEntries);
+		s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups + 1, sizeof(_spriteGroups[0]), spriteGroupEntries);
+	} else {
+		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
+		s->saveLoadArrayOf(_spriteTable, _varNumSprites, sizeof(_spriteTable[0]), spriteEntries);
+		s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups, sizeof(_spriteGroups[0]), spriteGroupEntries);
+	}
 }
 
 } // End of namespace Scumm
