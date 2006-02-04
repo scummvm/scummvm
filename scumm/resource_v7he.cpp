@@ -25,7 +25,7 @@
 
 #include "common/stdafx.h"
 #include "scumm/scumm.h"
-#include "scumm/intern.h"
+#include "scumm/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/resource_v7he.h"
 #include "scumm/sound.h"

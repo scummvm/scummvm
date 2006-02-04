@@ -28,6 +28,7 @@
 #include "scumm/charset.h"
 #include "scumm/costume.h"
 #include "scumm/intern.h"
+#include "scumm/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"

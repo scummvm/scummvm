@@ -21,7 +21,7 @@
 
 #include "common/stdafx.h"
 
-#include "scumm/intern.h"
+#include "scumm/intern_he.h"
 #include "scumm/logic_he.h"
 
 namespace Scumm {
@@ -35,6 +35,10 @@ LogicHE::LogicHE(ScummEngine_v90he *vm) : _vm(vm) {
 LogicHE::~LogicHE() {
 	free(_userData);
 	free(_userDataD);
+}
+
+void LogicHE::writeScummVar(int var, int32 value) {
+	_vm->writeVar(var, value);
 }
 
 static int32 scumm_round(double arg) {

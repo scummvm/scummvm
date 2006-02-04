@@ -25,6 +25,9 @@
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
 #include "scumm/intern.h"
+#ifndef DISABLE_HE
+#include "scumm/intern_he.h"
+#endif
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"

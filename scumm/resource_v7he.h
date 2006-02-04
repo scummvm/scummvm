@@ -114,6 +114,8 @@ namespace Scumm {
 	if (!check_offset(fi->memory, fi->total_size, fi->file->name(), x, s)) \
 		return (r);
 
+class ScummEngine_v70he;
+
 class ResExtractor {
 public:
 	ResExtractor(ScummEngine_v70he *scumm);

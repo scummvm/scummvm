@@ -24,9 +24,9 @@
 
 #include "common/stdafx.h"
 
-#include "scumm/intern.h"
-
 namespace Scumm {
+
+class ScummEngine_v90he;
 
 class LogicHE {
 public:
@@ -37,7 +37,7 @@ public:
 	LogicHE(ScummEngine_v90he *vm);
 	virtual ~LogicHE();
 
-	void writeScummVar(int var, int32 value) { _vm->writeVar(var, value); }
+	void writeScummVar(int var, int32 value);
 	int getFromArray(int arg0, int idx2, int idx1);
 	void putInArray(int arg0, int idx2, int idx1, int val);
 

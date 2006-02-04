@@ -31,6 +31,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse.h"
 #include "scumm/intern.h"
+#include "scumm/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/saveload.h"

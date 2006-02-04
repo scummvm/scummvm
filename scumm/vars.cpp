@@ -24,6 +24,9 @@
 #include "common/config-manager.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
+#ifndef DISABLE_HE
+#include "scumm/intern_he.h"
+#endif
 #include "scumm/logic_he.h"
 #include "sound/mididrv.h"
 

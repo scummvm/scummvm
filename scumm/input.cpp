@@ -32,6 +32,9 @@
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse.h"
+#ifndef DISABLE_HE
+#include "scumm/intern_he.h"
+#endif
 #include "scumm/logic_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"

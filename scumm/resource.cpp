@@ -28,6 +28,9 @@
 #include "scumm/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
+#ifndef DISABLE_HE
+#include "scumm/intern_he.h"
+#endif
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -52,7 +55,9 @@ extern const char *resTypeFromId(int id);
 static uint16 newTag2Old(uint32 newTag);
 static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
+#ifndef DISABLE_HE
 static bool checkTryMedia(BaseScummFile *handle);
+#endif
 
 
 /* Open a room */

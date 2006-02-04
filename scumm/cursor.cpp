@@ -25,6 +25,7 @@
 #include "scumm/bomp.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
+#include "scumm/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource_v7he.h"
 #include "scumm/saveload.h"

@@ -43,6 +43,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/insane/insane.h"
 #include "scumm/intern.h"
+#include "scumm/intern_he.h"
 #include "scumm/logic_he.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_v1.h"
