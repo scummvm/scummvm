@@ -466,11 +466,13 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				_ymove -= lastDy;
 			}
 
-			uint16 shadowMask = 0;
+			if (_vm->_heversion >= 90)
+				_shadow_mode = 0;
 
 			if (!useCondMask || !akct) {
 				decflag = 1;
 			} else {
+				uint16 shadowMask = 0;
 				uint32 cond = READ_LE_UINT32(akct + cost.heCondMaskTable[limb] + heCondMaskIndex[i] * 4);
 				if (cond == 0) {
 					decflag = 1;
@@ -491,9 +493,8 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 						decflag = (a->_heCondMask & cond) ? 1 : 0;
 					}
 
-					if (_vm->_heversion >= 90) {
-						_shadow_mode = ((shadowMask & 0x8000) && xmap) ? 3 : 0;
-					}
+					if (_vm->_heversion >= 90 && (shadowMask & 0x8000) && xmap)
+						_shadow_mode = 3;
 				}
 			}
 
