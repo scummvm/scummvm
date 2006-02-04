@@ -1273,9 +1273,7 @@ void ScummEngine_v90he::saveOrLoad(Serializer *s, uint32 savegameVersion) {
 
 	s->saveLoadArrayOf(&_floodFillParams, 1, sizeof(_floodFillParams), floodFillEntries);
 
-	_numSpritesToProcess = _sprite->_numSpritesToProcess;
 	s->saveLoadEntries(this, HE90Entries);
-	_sprite->_numSpritesToProcess = _numSpritesToProcess;
 }
 
 void ScummEngine_v99he::saveOrLoad(Serializer *s, uint32 savegameVersion) {

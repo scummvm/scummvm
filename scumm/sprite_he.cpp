@@ -1419,6 +1419,11 @@ void Sprite::saveOrLoadSpriteData(Serializer *s, uint32 savegameVersion) {
 	s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
 	s->saveLoadArrayOf(_spriteTable, _varNumSprites, sizeof(_spriteTable[0]), spriteEntries);
 	s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups, sizeof(_spriteGroups[0]), spriteGroupEntries);
+
+	// Reset active sprite table
+	if (s->isLoading())
+		_numSpritesToProcess = 0;
+
 }
 
 } // End of namespace Scumm
