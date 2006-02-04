@@ -449,31 +449,31 @@ int Sprite::getGroupDstResNum(int spriteGroupId) {
 	return _spriteGroups[spriteGroupId].image;
 }
 
-int Sprite::getGroupScale_x_ratio_mul(int spriteGroupId) {
+int Sprite::getGroupXMul(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_x_ratio_mul;
 }
 
-int Sprite::getGroupScale_x_ratio_div(int spriteGroupId) {
+int Sprite::getGroupXDiv(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_x_ratio_div;
 }
 
-int Sprite::getGroupScale_y_ratio_mul(int spriteGroupId) {
+int Sprite::getGroupYMul(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_y_ratio_mul;
 }
 
-int Sprite::getGroupScale_y_ratio_div(int spriteGroupId) {
+int Sprite::getGroupYDiv(int spriteGroupId) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	return _spriteGroups[spriteGroupId].scale_y_ratio_div;
 }
 
-void Sprite::getGrouptx_ty(int spriteGroupId, int32 &tx, int32 &ty) {
+void Sprite::getGroupPosition(int spriteGroupId, int32 &tx, int32 &ty) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	tx = _spriteGroups[spriteGroupId].tx;
@@ -976,7 +976,7 @@ void Sprite::setGroupScaling(int spriteGroupId) {
 
 }
 
-void Sprite::setGroupScale_x_ratio_mul(int spriteGroupId, int value) {
+void Sprite::setGroupXMul(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_mul != value) {
@@ -986,11 +986,11 @@ void Sprite::setGroupScale_x_ratio_mul(int spriteGroupId, int value) {
 	}
 }
 
-void Sprite::setGroupScale_x_ratio_div(int spriteGroupId, int value) {
+void Sprite::setGroupXDiv(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	if (value == 0)
-		error("setGroupScale_x_ratio_div: Divisor must not be 0");
+		error("setGroupXDiv: Divisor must not be 0");
 
 	if (_spriteGroups[spriteGroupId].scale_x_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_x_ratio_div = value;
@@ -999,7 +999,7 @@ void Sprite::setGroupScale_x_ratio_div(int spriteGroupId, int value) {
 	}
 }
 
-void Sprite::setGroupScale_y_ratio_mul(int spriteGroupId, int value) {
+void Sprite::setGroupYMul(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_mul != value) {
@@ -1009,11 +1009,11 @@ void Sprite::setGroupScale_y_ratio_mul(int spriteGroupId, int value) {
 	}
 }
 
-void Sprite::setGroupScale_y_ratio_div(int spriteGroupId, int value) {
+void Sprite::setGroupYDiv(int spriteGroupId, int value) {
 	checkRange(_varNumSpriteGroups, 1, spriteGroupId, "Invalid sprite group %d");
 
 	if (value == 0)
-		error("setGroupScale_y_ratio_div: Divisor must not be 0");
+		error("setGroupYDiv: Divisor must not be 0");
 
 	if (_spriteGroups[spriteGroupId].scale_y_ratio_div != value) {
 		_spriteGroups[spriteGroupId].scale_y_ratio_div = value;

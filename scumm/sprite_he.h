@@ -119,7 +119,6 @@ public:
 	void processImages(bool arg);
 	void updateImages();
 
-	void getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound);
 	int findSpriteWithClassOf(int x, int y, int spriteGroupId, int d, int num, int *args);
 	int getSpriteClass(int spriteId, int num, int *args);
 	int getSpriteFlagDoubleBuffered(int spriteId);
@@ -145,17 +144,18 @@ public:
 	int getSpriteSourceImage(int spriteId);
 	int getSpriteMaskImage(int spriteId);
 	int getSpriteGeneralProperty(int spriteId, int type);
+	void getSpriteBounds(int spriteId, bool checkGroup, Common::Rect &bound);
 	void getSpriteImageDim(int spriteId, int32 &w, int32 &h);
 	void getSpritePosition(int spriteId, int32 &tx, int32 &ty);
 	void getSpriteDist(int spriteId, int32 &dx, int32 &dy);
 
 	int getGroupPriority(int spriteGroupId);
 	int getGroupDstResNum(int spriteGroupId);
-	int getGroupScale_x_ratio_mul(int spriteGroupId);
-	int getGroupScale_x_ratio_div(int spriteGroupId);
-	int getGroupScale_y_ratio_mul(int spriteGroupId);
-	int getGroupScale_y_ratio_div(int spriteGroupId);
-	void getGrouptx_ty(int spriteGroupId, int32 &tx, int32 &ty);
+	int getGroupXMul(int spriteGroupId);
+	int getGroupXDiv(int spriteGroupId);
+	int getGroupYMul(int spriteGroupId);
+	int getGroupYDiv(int spriteGroupId);
+	void getGroupPosition(int spriteGroupId, int32 &tx, int32 &ty);
 
 	void setSpritePalette(int spriteId, int value);
 	void setSpriteSourceImage(int spriteId, int value);
@@ -185,8 +185,8 @@ public:
 	void setSpriteField84(int spriteId, int value);
 	void setSpriteGeneralProperty(int spriteId, int type, int value);
 
-	void redrawSpriteGroup(int spriteGroupId);
 	void moveGroupMembers(int spriteGroupId, int value1, int value2);
+	void redrawSpriteGroup(int spriteGroupId);
 	void setGroupMembersPriority(int spriteGroupId, int value);
 	void setGroupMembersGroup(int spriteGroupId, int value);
 	void setGroupMembersUpdateType(int spriteGroupId, int value);
@@ -194,16 +194,17 @@ public:
 	void setGroupMembersAnimationSpeed(int spriteGroupId, int value);
 	void setGroupMembersAutoAnimFlag(int spriteGroupId, int value);
 	void setGroupMembersShadow(int spriteGroupId, int value);
+
+	void moveGroup(int spriteGroupId, int value1, int value2);
 	void setGroupBounds(int spriteGroupId, int x1, int y1, int x2, int y2);
 	void setGroupPriority(int spriteGroupId, int value);
 	void setGroupPosition(int spriteGroupId, int value1, int value2);
-	void moveGroup(int spriteGroupId, int value1, int value2);
 	void setGroupImage(int spriteGroupId, int value);
 	void setGroupScaling(int spriteGroupId);
-	void setGroupScale_x_ratio_mul(int spriteGroupId, int value);
-	void setGroupScale_x_ratio_div(int spriteGroupId, int value);
-	void setGroupScale_y_ratio_mul(int spriteGroupId, int value);
-	void setGroupScale_y_ratio_div(int spriteGroupId, int value);
+	void setGroupXMul(int spriteGroupId, int value);
+	void setGroupXDiv(int spriteGroupId, int value);
+	void setGroupYMul(int spriteGroupId, int value);
+	void setGroupYDiv(int spriteGroupId, int value);
 	void resetGroupBounds(int spriteGroupId);
 
 	void allocTables(int numSprites, int numGroups, int numMaxSprites);

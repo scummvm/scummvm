@@ -1460,7 +1460,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 30:
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			_sprite->getGrouptx_ty(spriteGroupId, tx, ty);
+			_sprite->getGroupPosition(spriteGroupId, tx, ty);
 			push(tx);
 		} else {
 			push(0);
@@ -1469,7 +1469,7 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 	case 31:
 		spriteGroupId = pop();
 		if (spriteGroupId) {
-			_sprite->getGrouptx_ty(spriteGroupId, tx, ty);
+			_sprite->getGroupPosition(spriteGroupId, tx, ty);
 			push(ty);
 		} else {
 			push(0);
@@ -1481,16 +1481,16 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 		if (spriteGroupId) {
 			switch(type) {
 			case 0:
-				push(_sprite->getGroupScale_x_ratio_mul(spriteGroupId));
+				push(_sprite->getGroupXMul(spriteGroupId));
 				break;
 			case 1:
-				push(_sprite->getGroupScale_x_ratio_div(spriteGroupId));
+				push(_sprite->getGroupXDiv(spriteGroupId));
 				break;
 			case 2:
-				push(_sprite->getGroupScale_y_ratio_mul(spriteGroupId));
+				push(_sprite->getGroupYMul(spriteGroupId));
 				break;
 			case 3:
-				push(_sprite->getGroupScale_y_ratio_div(spriteGroupId));
+				push(_sprite->getGroupYDiv(spriteGroupId));
 				break;
 			default:
 				push(0);
@@ -1603,16 +1603,16 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 
 		switch (type) {
 		case 0:
-			_sprite->setGroupScale_x_ratio_mul(_curSpriteGroupId, value1);
+			_sprite->setGroupXMul(_curSpriteGroupId, value1);
 			break;
 		case 1:
-			_sprite->setGroupScale_x_ratio_div(_curSpriteGroupId, value1);
+			_sprite->setGroupXDiv(_curSpriteGroupId, value1);
 			break;
 		case 2:
-			_sprite->setGroupScale_y_ratio_mul(_curSpriteGroupId, value1);
+			_sprite->setGroupYMul(_curSpriteGroupId, value1);
 			break;
 		case 3:
-			_sprite->setGroupScale_y_ratio_div(_curSpriteGroupId, value1);
+			_sprite->setGroupYDiv(_curSpriteGroupId, value1);
 			break;
 		default:
 			error("o90_setSpriteGroupInfo subOp 5: Unknown case %d", subOp);
