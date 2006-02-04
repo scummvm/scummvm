@@ -430,9 +430,6 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		case 16:
 			result |= codec16(xmoveCur, ymoveCur);
 			break;
-		case 32:
-			result |= codec32(xmoveCur, ymoveCur);
-			break;
 		default:
 			error("akos_drawLimb: invalid codec %d", codec);
 		}
@@ -450,7 +447,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		for (i = 0; i != extra; i++) {
 			code = p[4];
 			if (code & 0x80)
-				code = ((code & 0xF) << 8) | p[5];
+				code = ((code & 0xF) << 8) | (p[5] & 0xFFF);
 			off = akof + code;
 
 			_srcptr = akcd + READ_LE_UINT32(&off->akcd);
