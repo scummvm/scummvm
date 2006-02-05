@@ -198,7 +198,6 @@ void Scene::setupLights() {
 	}
 
 	for (int i = 0; i < _numLights; i++) {
-		assert(i < TGL_MAX_LIGHTS);
 		g_driver->setupLight(&_lights[i], i);
 	}
 }

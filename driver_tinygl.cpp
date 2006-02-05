@@ -239,6 +239,7 @@ void DriverTinyGL::disableLights() {
 }
 
 void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
+	assert(lightId < TGL_MAX_LIGHTS);
 	tglEnable(TGL_LIGHTING);
 	float ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	float diffuseLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
