@@ -1,4 +1,4 @@
-ScummVM-PS2 0.8.1 Readme
+ScummVM-PS2 0.8.2 Readme
 ========================
 
 You need a PlayStation 2 with a modchip of your choice in order to run ScummVM.

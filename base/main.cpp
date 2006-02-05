@@ -93,9 +93,9 @@
  * to setup, but I have no idea if/how one can also change files which are not
  * currently being commit'ed.
  */
-const char *gScummVMVersion = "0.8.1";
+const char *gScummVMVersion = "0.8.2";
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
-const char *gScummVMFullVersion = "ScummVM 0.8.1 (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ScummVM 0.8.2 (" __DATE__ " " __TIME__ ")";
 const char *gScummVMFeatures = ""
 #ifdef USE_TREMOR
 	"Tremor "

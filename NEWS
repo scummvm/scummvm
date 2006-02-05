@@ -1,11 +1,9 @@
 For a more comprehensive changelog for the latest experimental CVS code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.8.2 (2006-02-xx)
+0.8.2 (2006-02-08)
  General:
    - Fixed OS X bundle building when using GCC 3.3.
-   - Fixed compiling with GCC 2.95.
-   - Fixed LaTeX documentation.
    - Use new logo on Mac OS X, too. (Fix already included in the
      official 0.8.1 Mac OS X builds?)
 
@@ -23,6 +21,9 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
 
 0.8.1 (2006-01-31)
  General:
+   - Fixed compiling with GCC 2.95.
+   - Fixed LaTeX documentation.
+   - Switched to new improved logo which matches new site design.
    - More descriptive game titles in all engines.
    - Fixed crash when trying to apply aspect-ratio correction to games that
      cannot use it.

@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.8.1, Copyright 2001-2005 The ScummVM team</string>
+	<string>0.8.2, Copyright 2001-2006 The ScummVM team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -21,12 +21,12 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.1</string>
+	<string>0.8.2</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.1</string>
+	<string>0.8.2</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2005 The ScummVM team</string>
+	<string>Copyright 2001-2006 The ScummVM team</string>
 </dict>
 </plist>
