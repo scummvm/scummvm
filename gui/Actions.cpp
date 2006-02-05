@@ -51,7 +51,7 @@ Actions::~Actions() {
 void Actions::init(GameDetector &detector) {
 #ifdef _WIN32_WCE
 	// For WinCE: now use software + Factory pattern to create correct objects
-	if (!CEDevice::hasSmartphoneResolution())
+	if (!CEDevice::isSmartphone())
 		CEActionsPocket::init(detector);
 	else
 		CEActionsSmartphone::init(detector);
