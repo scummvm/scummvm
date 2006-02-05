@@ -378,10 +378,12 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 			if (track->curHookId == sampleHookId) {
 				if (fadeDelay != 0) {
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
-					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
-					fadeTrack->regionOffset = 0;
-					debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
-					fadeTrack->curHookId = 0;
+					if (fadeTrack) {
+						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
+						fadeTrack->regionOffset = 0;
+						debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+						fadeTrack->curHookId = 0;
+					}
 				}
 				track->curRegion = region;
 				debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
@@ -390,9 +392,11 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		} else {
 			if (fadeDelay != 0) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
-				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
-				fadeTrack->regionOffset = 0;
-				debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				if (fadeTrack) {
+					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundHandle, fadeTrack->curRegion);
+					fadeTrack->regionOffset = 0;
+					debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				}
 			}
 			track->curRegion = region;
 			debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
