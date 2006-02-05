@@ -366,6 +366,9 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	bool useCondMask;
 	int lastDx, lastDy;
 
+	if (_vm->_heversion >= 90)
+		_shadow_mode = 0;
+
 	lastDx = lastDy = 0;
 	for (i = 0; i < 32; ++i) {
 		heCondMaskIndex[i] = i;
@@ -463,9 +466,6 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				_xmove += lastDx;
 				_ymove -= lastDy;
 			}
-
-			if (_vm->_heversion >= 90)
-				_shadow_mode = 0;
 
 			if (!useCondMask || !akct) {
 				decflag = 1;
