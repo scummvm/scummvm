@@ -36,6 +36,12 @@ public:
 	DriverSDL() : _samplesPerSec(22050) { ; }
 	virtual ~DriverSDL() { ; }
 
+	const ControlDescriptor *listControls();
+	int getNumControls();
+	bool controlIsAxis(int num);
+	int getControlAxis(int num);
+	bool getControlState(int num);
+	bool pollEvent(Event &event);
 	uint32 getMillis();
 	void delayMillis(uint msecs);
 	void setTimerCallback(TimerProc callback, int interval);

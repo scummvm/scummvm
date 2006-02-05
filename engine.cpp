@@ -28,14 +28,11 @@
 
 #include "imuse/imuse.h"
 
-#include <SDL.h>
 #include <assert.h>
 
 // CHAR_KEY tests to see whether a keycode is for
 // a "character" handler or a "button" handler
-#define CHAR_KEY(k) (k >= SDLK_a && k <= SDLK_z) || (k >= SDLK_0 && k <= SDLK_9) || k == SDLK_SPACE
-// numupper provides conversion between number keys and their "upper case"
-const char numupper[] = {')', '!', '@', '#', '$', '%', '^', '&', '*', '('};
+#define CHAR_KEY(k) (k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' '
 
 Engine *g_engine = NULL;
 
@@ -61,7 +58,10 @@ Actor *g_currentUpdatedActor = NULL;
 
 Engine::Engine() :
 		_currScene(NULL), _selectedActor(NULL) {
-	for (int i = 0; i < SDLK_EXTRA_LAST; i++)
+
+	int lastKey = g_driver->getNumControls();
+	_controlsEnabled = new bool[lastKey];
+	for (int i = 0; i < lastKey; i++)
 		_controlsEnabled[i] = false;
 	_speechMode = 3; // VOICE + TEXT
 	_textSpeed = 6;
@@ -103,7 +103,12 @@ Engine::Engine() :
 	printLineDefaults.justify = 2;
 }
 
-void Engine::handleButton(int operation, int key, int keyModifier) {
+Engine::~Engine()
+{
+	delete[] _controlsEnabled;
+}
+
+void Engine::handleButton(int operation, int key, int keyModifier, uint16 ascii) {
 	lua_Object handler, system_table, userPaintHandler;
 	
 	// If we're not supposed to handle the key then don't
@@ -113,23 +118,17 @@ void Engine::handleButton(int operation, int key, int keyModifier) {
 	lua_beginblock();
 	system_table = lua_getglobal("system");
 	userPaintHandler = getTableValue(system_table, "userPaintHandler");
-	if (userPaintHandler != LUA_NOOBJECT && CHAR_KEY(key)) {
+	if (userPaintHandler != LUA_NOOBJECT && CHAR_KEY(ascii)) {
 		handler = getTableFunction(userPaintHandler, "characterHandler");
-		// Ignore SDL_KEYUP so there are not duplicate keystrokes, but
+		// Ignore EVENT_KEYUP so there are not duplicate keystrokes, but
 		// don't pass on to the normal buttonHandler since it doesn't
 		// recognize character codes
-		if (handler != LUA_NOOBJECT && operation == SDL_KEYDOWN) {
+		if (handler != LUA_NOOBJECT && operation == Driver::EVENT_KEYDOWN) {
 			char keychar[2];
 			
 			lua_beginblock();
 			lua_pushobject(userPaintHandler);
-			if (keyModifier & KMOD_SHIFT)
-				if (isalpha(key))
-					keychar[0] = toupper(key);
-				else
-					keychar[0] = numupper[key - SDLK_0];
-			else
-				keychar[0] = key;
+			keychar[0] = ascii;
 			keychar[1] = '\0';
 			lua_pushstring(keychar);
 			lua_pushnil();
@@ -139,7 +138,7 @@ void Engine::handleButton(int operation, int key, int keyModifier) {
 	} else {
 		// Only allow the "Q" safe-exit when in-game, otherwise
 		// it interferes with menu operation
-		if (key == SDLK_q) {
+		if (ascii == 'q') {
 			lua_beginblock();
 			lua_Object handler = getEventHandler("exitHandler");
 			if (handler != LUA_NOOBJECT)
@@ -149,7 +148,7 @@ void Engine::handleButton(int operation, int key, int keyModifier) {
 			handler = getEventHandler("buttonHandler");
 			if (handler != LUA_NOOBJECT) {
 				lua_pushnumber(key);
-				if (operation == SDL_KEYDOWN)
+				if (operation == Driver::EVENT_KEYDOWN)
 					lua_pushnumber(1);
 				else
 					lua_pushnil();
@@ -413,25 +412,20 @@ void Engine::mainLoop() {
 			continue;
 
 		// Process events
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
+		Driver::Event event;
+		while (g_driver->pollEvent(event)) {
 			// Handle any button operations
-			if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-				handleButton(event.type, event.key.keysym.sym, event.key.keysym.mod);
+			if (event.type == Driver::EVENT_KEYDOWN || event.type == Driver::EVENT_KEYUP)
+				handleButton(event.type, event.kbd.num, event.kbd.flags, event.kbd.ascii);
 			// Check for "Hard" quit"
-			if (event.type == SDL_QUIT)
+			if (event.type == Driver::EVENT_QUIT)
 				return;
-			if (event.type == SDL_VIDEOEXPOSE)
+			if (event.type == Driver::EVENT_REFRESH)
 				_refreshDrawNeeded = true;
-			if (event.type == SDL_KEYDOWN) {
-				if (event.key.keysym.sym == SDLK_z
-						&& (event.key.keysym.mod & KMOD_CTRL)) {
+			if (event.type == Driver::EVENT_KEYDOWN) {
+				if (event.kbd.ascii == 'z'
+						&& (event.kbd.flags & Driver::KBD_CTRL)) {
 					handleDebugLoadResource();
-				}
-				if ((event.key.keysym.sym == SDLK_RETURN ||
-						event.key.keysym.sym == SDLK_KP_ENTER) &&
-						(event.key.keysym.mod & KMOD_ALT)) {
-					g_driver->toggleFullscreenMode();
 				}
 			}
 		}
