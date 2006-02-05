@@ -527,13 +527,15 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 			array, base, idx, FROM_LE_16(ah->dim1), FROM_LE_16(ah->dim2));
 	}
 
+	int val;
 	if (FROM_LE_16(ah->type) != kIntArray) {
-		return ah->data[offset];
+		val = ah->data[offset];
 	} else if (_version == 8) {
-		return (int32)READ_LE_UINT32(ah->data + offset * 4);
+		val = (int32)READ_LE_UINT32(ah->data + offset * 4);
 	} else {
-		return (int16)READ_LE_UINT16(ah->data + offset * 2);
+		val = (int16)READ_LE_UINT16(ah->data + offset * 2);
 	}
+	return val;
 }
 
 void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
@@ -2042,7 +2044,8 @@ void ScummEngine_v6::o6_verbOps() {
 void ScummEngine_v6::o6_getActorFromXY() {
 	int y = pop();
 	int x = pop();
-	push(getActorFromPos(x, y));
+	int r = getActorFromPos(x, y);
+	push(r);
 }
 
 void ScummEngine_v6::o6_findObject() {
