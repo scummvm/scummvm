@@ -512,7 +512,7 @@ void ScummEngine::initRoomSubBlocks() {
 
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.
-	if (_version >= 4 && _heversion <= 60) {
+	if (_version >= 4 && _heversion <= 61) {
 		ptr = findResourceData(MKID('CYCL'), roomptr);
 		if (ptr) {
 			initCycl(ptr);
