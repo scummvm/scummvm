@@ -1200,7 +1200,7 @@ void OSystem_WINCE3::hotswapGFXMode() {
 void OSystem_WINCE3::update_keyboard() {
 
 	// Update the forced keyboard for Monkey Island copy protection
-	if (_monkeyKeyboard) {
+	if (_monkeyKeyboard && !_isSmartphone) {
 		_toolbarHandler.setVisible(true);
 	}
 	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
