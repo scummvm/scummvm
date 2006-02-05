@@ -357,7 +357,7 @@ bool DriverSDL::setSoundCallback(SoundProc proc, void *param) {
 
 	memset(&desired, 0, sizeof(desired));
 
-	desired.freq = 22050;
+	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = 2048;
