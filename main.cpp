@@ -158,6 +158,10 @@ needshelp:
 
 	atexit(quit);
 
+	if (TINYGL_GLOBAL)
+		g_driver = new DriverTinyGL(640, 480, 16, fullscreen);
+	else
+		g_driver = new DriverGL(640, 480, 24, fullscreen);
 	g_engine = new Engine();
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
@@ -165,10 +169,6 @@ needshelp:
 	g_mixer->setVolume(255);
 	g_timer = new Timer();
 	g_smush = new Smush();
-	if (TINYGL_GLOBAL)
-		g_driver = new DriverTinyGL(640, 480, 16, fullscreen);
-	else
-		g_driver = new DriverGL(640, 480, 24, fullscreen);
 	g_imuse = new Imuse(20);
 
 	Bitmap *splash_bm = NULL;
