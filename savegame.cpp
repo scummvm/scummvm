@@ -24,7 +24,7 @@
 
 // Constructor. Should create/open a saved game
 SaveGame::SaveGame(char *filename, bool saving) :
-	_currentSection(0), _saving(saving)
+	_saving(saving), _currentSection(0)
 {
 	if (_saving) {
 		uint32 tag = SAVEGAME_HEADERTAG;
