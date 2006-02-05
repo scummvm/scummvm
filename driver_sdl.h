@@ -36,6 +36,8 @@ public:
 	DriverSDL() : _samplesPerSec(22050) { ; }
 	virtual ~DriverSDL() { ; }
 
+	char *getVideoDeviceName();
+
 	const ControlDescriptor *listControls();
 	int getNumControls();
 	bool controlIsAxis(int num);
@@ -49,6 +51,8 @@ public:
 	bool setSoundCallback(SoundProc proc, void *param);
 	void clearSoundCallback();
 	int getOutputSampleRate() const;
+
+	void quit();
 
 private:
 	int _samplesPerSec;

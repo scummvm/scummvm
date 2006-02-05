@@ -265,6 +265,10 @@ static byte SDLModToDriverKeyFlags(SDLMod mod) {
 	return b;
 }
 
+char *DriverSDL::getVideoDeviceName() {
+	return "SDL Video Device";
+}
+
 const Driver::ControlDescriptor *DriverSDL::listControls() {
 	return controls;
 }
@@ -380,3 +384,13 @@ int DriverSDL::getOutputSampleRate() const {
 	return _samplesPerSec;
 }
 
+/* This function sends the SDL signal to
+ * go ahead and exit the game
+ */
+void DriverSDL::quit() {
+	SDL_Event event;
+	
+	event.type = SDL_QUIT;
+	if (SDL_PushEvent(&event) != 0)
+		error("Unable to push exit event!");
+}

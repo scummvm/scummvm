@@ -37,7 +37,6 @@
 
 #include <cstdio>
 #include <cmath>
-#include <SDL.h>
 #include <zlib.h>
 
 extern Imuse *g_imuse;
@@ -752,7 +751,7 @@ static void EnumerateVideoDevices() {
 	DEBUG_FUNCTION();
 	lua_pushobject(result);
 	lua_pushnumber(0.0); // id of device
-	lua_pushstring("SDL Video Device"); // name of device
+	lua_pushstring(g_driver->getVideoDeviceName()); // name of device
 	lua_settable();
 	lua_pushobject(result);
 }
@@ -2266,16 +2265,9 @@ static void CleanBuffer() {
 	g_driver->copyStoredToDisplay();
 }
  
-/* This function sends the SDL signal to
- * go ahead and exit the game
- */
 static void Exit() {
-	SDL_Event event;
-	
 	DEBUG_FUNCTION();
-	event.type = SDL_QUIT;
-	if (SDL_PushEvent(&event) != 0)
-		error("Unable to push exit event!");
+	g_driver->quit();
 }
 
 /* Check for an existing object by a certain name

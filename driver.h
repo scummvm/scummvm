@@ -102,6 +102,7 @@ public:
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
 
+	virtual char *getVideoDeviceName() = 0;
 
 	/** @name Events and Time */
 	//@{
@@ -261,6 +262,12 @@ public:
 	 */
 	virtual int getOutputSampleRate() const = 0;
 
+	//@}
+
+	/** @name Miscellaneous */
+	//@{
+	/** Quit (exit) the application. */
+	virtual void quit() = 0;
 	//@}
 
 protected:
