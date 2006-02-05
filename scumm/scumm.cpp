@@ -3046,7 +3046,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								*/
 								} else if (buf[4] == '0' && buf[5] == 'R') {
 									// newer V3 game
-									if (g->version != 3 || (g->features & GF_OLD_BUNDLE))
+									if (g->version != 3)
 										break;
 									// Candidates: indy3, indy3Towns, zakTowns, loomTowns
 								/*
