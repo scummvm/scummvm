@@ -31,7 +31,6 @@
 #include "scumm/util.h"
 #include "scumm/scumm.h"
 #include "scumm/verbs.h"
-#include "scumm/imuse_digi/dimuse.h"
 
 namespace Scumm {
 
