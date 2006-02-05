@@ -428,18 +428,18 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	int i;
 	Actor *a;
 
-	DebugPrintf("+-----------------------------------------------------+\n");
-	DebugPrintf("|# |  x |  y | w |elev|cos|box|mov| zp|frm|scl|dir|cls|\n");
-	DebugPrintf("+--+----+----+---+----+---+---+---+---+---+---+---+---+\n");
+	DebugPrintf("+-----------------------------------------------------------+\n");
+	DebugPrintf("|# |  x |  y | w |elev|cos|box|mov| zp|frm|scl|dir|   cls   |\n");
+	DebugPrintf("+--+----+----+---+----+---+---+---+---+---+---+---+---------+\n");
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = &_vm->_actors[i];
 		if (a->_visible)
-			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%02x|\n",
+			DebugPrintf("|%2d|%4d|%4d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
 						 a->_number, a->_pos.x, a->_pos.y, a->_width, a->getElevation(),
 						 a->_costume, a->_walkbox, a->_moving, a->_forceClip, a->_frame,
-						 a->_scalex, a->getFacing(), int(_vm->_classData[a->_number]&0xFF));
+						 a->_scalex, a->getFacing(), _vm->_classData[a->_number]);
 	}
-	DebugPrintf("+-----------------------------------------------------+\n");
+	DebugPrintf("\n");
 	return true;
 }
 
@@ -447,16 +447,18 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 	int i;
 	ObjectData *o;
 	DebugPrintf("Objects in current room\n");
-	DebugPrintf("+---------------------------------+--+\n");
-	DebugPrintf("|num |  x |  y |width|height|state|fl|\n");
-	DebugPrintf("+----+----+----+-----+------+-----+--+\n");
+	DebugPrintf("+---------------------------------+------------+\n");
+	DebugPrintf("|num |  x |  y |width|height|state|fl|   cls   |\n");
+	DebugPrintf("+----+----+----+-----+------+-----+--+---------+\n");
 
 	for (i = 1; (i < _vm->_numLocalObjects) && (_vm->_objs[i].obj_nr != 0) ; i++) {
 		o = &(_vm->_objs[i]);
-		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|\n",
-				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state, o->fl_object_index);
+		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
+				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state,
+				o->fl_object_index, _vm->_classData[o->obj_nr]);
 	}
 	DebugPrintf("\n");
+
 	return true;
 }
 
