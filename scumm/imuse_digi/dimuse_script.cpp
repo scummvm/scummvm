@@ -163,7 +163,7 @@ void IMuseDigital::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->toBeRemoved) {
+		if (track->used && track->readyToRemove) {
 			if (track->stream) {
 				if (!track->stream->endOfStream()) {
 	 				track->stream->finish();
@@ -192,7 +192,7 @@ void IMuseDigital::refreshScripts() {
 	bool found = false;
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			found = true;
 		}
 	}
@@ -236,7 +236,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 	if (msPos < 65536) {
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
-			if ((track->soundId == soundId) && track->used) {
+			if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
 				_sound->getSyncSizeAndPtrById(track->soundHandle, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
 					sync_size /= 4;
@@ -263,7 +263,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 int32 IMuseDigital::getPosInMs(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used) {
+		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
 			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->iteration / 200);
 			return pos;
 		}
@@ -278,7 +278,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
 			if ((track->stream2 && _vm->_mixer->isSoundHandleActive(track->handle)) ||
-				(track->stream && track->used)) {
+				(track->stream && track->used && !track->readyToRemove)) {
 					return 1;
 			}
 		}
@@ -291,7 +291,7 @@ void IMuseDigital::stopSound(int soundId) {
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used) {
+		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
 			track->toBeRemoved = true;
 		}
 	}
@@ -302,7 +302,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundId = track->soundId;
 		}
 	}
@@ -335,7 +335,7 @@ int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundId = track->soundId;
 		}
 	}
@@ -353,7 +353,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundId = track->soundId;
 		}
 	}
@@ -381,13 +381,14 @@ void IMuseDigital::stopAllSounds() {
 		if (!foundNotRemoved)
 			break;
 		flushTracks();
+		_vm->_system->delayMillis(50);
+#if defined(_WIN32_WCE) || defined (PALMOS_MODE) || defined(__SYMBIAN32__)
+		_vm->parseEvents(); // timers are events, we need to consume them
+#endif
 	}
 }
 
 void IMuseDigital::pause(bool p) {
-	if ((_pause) && (!p)) {
-		_thisTime = _vm->_system->getMillis();
-	}
 	_pause = p;
 }
 

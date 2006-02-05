@@ -1268,7 +1268,6 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
 			break;
 
-		_vm->_imuseDigital->callback();
 		_vm->_imuseDigital->flushTracks();
 
 		lastTime = thisTime;
