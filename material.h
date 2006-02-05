@@ -21,8 +21,6 @@
 #include "resource.h"
 
 #include <cstring>
-#include <SDL.h>
-#include "tinygl/gl.h"
 
 class CMap;
 

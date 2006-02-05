@@ -25,7 +25,6 @@
 #include "driver.h"
 
 #include <string>
-#include <SDL.h>
 
 class PrimitiveObject {
 public:

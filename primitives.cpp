@@ -23,7 +23,6 @@
 #include "primitives.h"
 
 #include <string>
-#include <SDL.h>
 
 PrimitiveObject::PrimitiveObject() {
 	_x1 = 0;

@@ -26,6 +26,8 @@
 #include "imuse/imuse.h"
 #include "imuse/imuse_sndmgr.h"
 
+#include <SDL.h>
+
 void Imuse::flushTracks() {
 	// flushTracks should not lock the stack since all the functions
 	// that call it already do (stopAllSounds, startSound)

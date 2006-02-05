@@ -21,8 +21,6 @@
 #include "stdafx.h"
 #include "bits.h"
 
-#include <SDL.h>
-
 class AudioStream;
 class Channel;
 

@@ -25,7 +25,6 @@
 #include "driver.h"
 
 #include <cstring>
-#include <SDL.h>
 
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
 	Resource(filename), _numMaterials(0), _numGeosets(0) {

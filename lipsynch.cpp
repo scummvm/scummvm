@@ -21,7 +21,6 @@
 #include "lipsynch.h"
 
 #include <cstring>
-#include <SDL_endian.h>
 
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE

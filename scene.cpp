@@ -28,7 +28,6 @@
 
 #include "imuse/imuse.h"
 
-#include <SDL.h>
 #include <cmath>
 
 Scene::Scene(const char *name, const char *buf, int len) :

@@ -24,7 +24,6 @@
 #include "driver.h"
 
 #include <string>
-#include <SDL.h>
 
 struct TextObjectDefaults {
 	Color fgColor;

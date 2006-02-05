@@ -22,9 +22,6 @@
 #include "vector3d.h"
 
 #include <string>
-#include <SDL.h>
-
-#include "tinygl/gl.h"
 
 class TextSplitter;
 

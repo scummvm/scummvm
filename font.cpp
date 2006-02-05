@@ -22,7 +22,6 @@
 #include "driver.h"
 
 #include <cstring>
-#include <SDL_endian.h>
 
 Font::Font(const char *filename, const char *data, int /*len*/) :
 	Resource(filename) {

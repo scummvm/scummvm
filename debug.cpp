@@ -21,7 +21,6 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <SDL.h>
 
 const char *tag2str(uint32 tag) {
 	static char str[5];

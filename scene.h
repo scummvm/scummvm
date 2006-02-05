@@ -25,8 +25,6 @@
 #include "walkplane.h"
 #include "objectstate.h"
 
-#include <SDL.h>
-#include "tinygl/gl.h"
 #include <string>
 
 class CMap;

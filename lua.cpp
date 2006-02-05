@@ -39,6 +39,7 @@
 #include <cmath>
 #include <SDL_keysym.h>
 #include <SDL_keyboard.h>
+#include <SDL_events.h>
 #include <zlib.h>
 
 extern Imuse *g_imuse;

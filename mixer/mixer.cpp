@@ -23,6 +23,8 @@
 #include "mixer/rate.h"
 #include "mixer/audiostream.h"
 
+#include <SDL.h>
+
 SoundMixer *g_mixer = NULL;
 
 /**
