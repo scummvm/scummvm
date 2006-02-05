@@ -33,3 +33,31 @@ void DriverSDL::setTimerCallback(TimerProc callback, int timer) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 
+bool DriverSDL::setSoundCallback(SoundProc proc, void *param) {
+	SDL_AudioSpec desired;
+
+	memset(&desired, 0, sizeof(desired));
+
+	desired.freq = 22050;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 2;
+	desired.samples = 2048;
+	desired.callback = proc;
+	desired.userdata = param;
+
+	if (SDL_OpenAudio(&desired, NULL) != 0) {
+		return false;
+	}
+
+	SDL_PauseAudio(0);
+	return true;
+}
+
+void DriverSDL::clearSoundCallback() {
+	SDL_CloseAudio();
+}
+
+int DriverSDL::getOutputSampleRate() const {
+	return _samplesPerSec;
+}
+

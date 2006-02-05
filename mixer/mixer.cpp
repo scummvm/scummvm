@@ -18,12 +18,11 @@
 #include "stdafx.h"
 #include "bits.h"
 #include "debug.h"
+#include "driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/rate.h"
 #include "mixer/audiostream.h"
-
-#include <SDL.h>
 
 SoundMixer *g_mixer = NULL;
 
@@ -83,18 +82,21 @@ public:
 SoundMixer::SoundMixer() {
 	_mutex = createMutex();
 	_premixChannel = NULL;
-	_outputRate = 22050;
 	_globalVolume = 0;
 	_paused = false;
 
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		_channels[i] = NULL;
 
-	_mixerReady = setSoundProc(mixCallback, this);
+	_mixerReady = g_driver->setSoundCallback(mixCallback, this);
+	_outputRate = (uint)g_driver->getOutputSampleRate();
+
+	if (_outputRate == 0)
+		error("OSystem returned invalid sample rate");
 }
 
 SoundMixer::~SoundMixer() {
-	SDL_CloseAudio();
+	g_driver->clearSoundCallback();
 	stopAll(true);
 
 	delete _premixChannel;
@@ -105,26 +107,6 @@ SoundMixer::~SoundMixer() {
 
 bool SoundMixer::isPaused() {
 	return _paused;
-}
-
-bool SoundMixer::setSoundProc(SoundProc proc, void *param) {
-	SDL_AudioSpec desired;
-
-	memset(&desired, 0, sizeof(desired));
-
-	desired.freq = 22050;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = 2048;
-	desired.callback = proc;
-	desired.userdata = param;
-
-	if (SDL_OpenAudio(&desired, NULL) != 0) {
-		return false;
-	}
-
-	SDL_PauseAudio(0);
-	return true;
 }
 
 void SoundMixer::setupPremix(AudioStream *stream) {

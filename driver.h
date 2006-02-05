@@ -136,6 +136,36 @@ public:
 
 	//@}
 
+	/** @name Sound */
+	//@{
+	typedef void (*SoundProc)(void *param, byte *buf, int len);
+
+	/**
+	 * Set the audio callback which is invoked whenever samples need to be generated.
+	 * Currently, only the 16-bit signed mode is ever used for GF
+	 * @param proc		pointer to the callback.
+	 * @param param		an arbitrary parameter which is stored and passed to proc.
+	 */
+	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
+
+	/**
+	 * Remove any audio callback previously set via setSoundCallback, thus effectively
+	 * stopping all audio output immediately.
+	 * @see setSoundCallback
+	 */
+	virtual void clearSoundCallback() = 0;
+
+	/**
+	 * Determine the output sample rate. Audio data provided by the sound
+	 * callback will be played using this rate.
+	 * @note Client code other than the sound mixer should _not_ use this
+	 *       method. Instead, call Mixer::getOutputRate()!
+	 * @return the output sample rate
+	 */
+	virtual int getOutputSampleRate() const = 0;
+
+	//@}
+
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;

@@ -33,12 +33,19 @@
 
 class DriverSDL : public Driver {
 public:
-	DriverSDL() { ; }
+	DriverSDL() : _samplesPerSec(22050) { ; }
 	virtual ~DriverSDL() { ; }
 
 	uint32 getMillis();
 	void delayMillis(uint msecs);
 	void setTimerCallback(TimerProc callback, int interval);
+
+	bool setSoundCallback(SoundProc proc, void *param);
+	void clearSoundCallback();
+	int getOutputSampleRate() const;
+
+private:
+	int _samplesPerSec;
 };
 
 #endif

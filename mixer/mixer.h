@@ -235,9 +235,6 @@ public:
 	uint getOutputRate() const { return _outputRate; }
 
 private:
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	bool setSoundProc(SoundProc proc, void *param);
-
 	void insertChannel(PlayingSoundHandle *handle, Channel *chan);
 
 	/**
