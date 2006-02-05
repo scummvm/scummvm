@@ -417,11 +417,10 @@ void ScummEngine_v60he::o60_setState() {
 
 void ScummEngine_v60he::o60_roomOps() {
 	int a, b, c, d, e;
-	byte op;
 
-	op = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (op) {
+	switch (subOp) {
 	case 172:		// SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
@@ -549,7 +548,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		setRoomPalette(a, b);
 		break;
 	default:
-		error("o60_roomOps: default case %d", op);
+		error("o60_roomOps: default case %d", subOp);
 	}
 }
 
@@ -581,9 +580,8 @@ void ScummEngine_v60he::o60_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[8];
-	byte subOp;
 
-	subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	if (subOp == 197) {
 		_curActor = pop();
 		return;
@@ -1134,6 +1132,7 @@ void ScummEngine_v60he::o60_writeFile() {
 void ScummEngine_v60he::o60_soundOps() {
 	byte subOp = fetchScriptByte();
 	int arg = pop();
+
 	switch (subOp) {
 	case 0xde:
 		_imuse->setMusicVolume(arg);
@@ -1204,15 +1203,15 @@ void ScummEngine_v60he::o60_readFilePos() {
 }
 
 void ScummEngine_v60he::o60_redimArray() {
-	int subcode, newX, newY;
+	int newX, newY;
 	newY = pop();
 	newX = pop();
 
 	if (newY == 0)
 		SWAP(newX, newY);
 
-	subcode = fetchScriptByte();
-	switch (subcode) {
+	byte subOp = fetchScriptByte();
+	switch (subOp) {
 	case 199:
 		redimArray(fetchScriptWord(), newX, newY, kIntArray);
 		break;
@@ -1220,7 +1219,7 @@ void ScummEngine_v60he::o60_redimArray() {
 		redimArray(fetchScriptWord(), newX, newY, kByteArray);
 		break;
 	default:
-		error("o60_redimArray: default type %d", subcode);
+		error("o60_redimArray: default type %d", subOp);
 	}
 }
 
@@ -1251,11 +1250,10 @@ void ScummEngine_v60he::redimArray(int arrayId, int newX, int newY, int type) {
 }
 
 void ScummEngine_v60he::decodeParseString(int m, int n) {
-	byte b;
 	int i, colors;
 	int args[31];
 
-	b = fetchScriptByte();
+	byte b = fetchScriptByte();
 
 	switch (b) {
 	case 65:		// SO_AT

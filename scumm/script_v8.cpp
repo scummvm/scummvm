@@ -460,9 +460,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 }
 
 void ScummEngine_v8::decodeParseString(int m, int n) {
-	byte b;
-
-	b = fetchScriptByte();
+	byte b = fetchScriptByte();
 
 	switch (b) {
 	case 0xC8:		// SO_PRINT_BASEOP
@@ -1049,6 +1047,7 @@ void ScummEngine_v8::o8_actorOps() {
 
 void ScummEngine_v8::o8_cameraOps() {
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
 		//debug(0, "freezeCamera NYI");

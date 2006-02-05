@@ -560,7 +560,7 @@ void ScummEngine_v90he::o90_videoOps() {
 
 void ScummEngine_v90he::o90_getVideoData() {
 	// Uses Smacker video
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 32;
 
 	switch (subOp) {
@@ -593,6 +593,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 
 void ScummEngine_v90he::o90_wizImageOps() {
 	int a, b;
+
 	int subOp = fetchScriptByte();
 	subOp -= 46;
 
@@ -812,8 +813,9 @@ void ScummEngine_v90he::o90_wizImageOps() {
 }
 
 void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
-	byte subOp = fetchScriptByte();
 	int x1, y1, z1, x2, y2, z2, dx, dy, dz, d;
+
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 23: // HE100
@@ -2030,9 +2032,10 @@ void ScummEngine_v90he::o90_cond() {
 
 void ScummEngine_v90he::o90_dim2dim2Array() {
 	int data, dim1start, dim1end, dim2start, dim2end;
-	int type = fetchScriptByte();
 
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 2:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -2052,7 +2055,7 @@ void ScummEngine_v90he::o90_dim2dim2Array() {
 		data = kStringArray;
 		break;
 	default:
-		error("o90_dim2dim2Array: default case %d", type);
+		error("o90_dim2dim2Array: default case %d", subOp);
 	}
 
 	if (pop() == 2) {
@@ -2310,7 +2313,6 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 }
 
 void ScummEngine_v90he::o90_sortArray() {
-	// Sorts array via qsort
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2333,7 +2335,6 @@ void ScummEngine_v90he::o90_sortArray() {
 }
 
 void ScummEngine_v90he::o90_getObjectData() {
-	// Object related
 	byte subOp = fetchScriptByte();
 	subOp -= 32;
 

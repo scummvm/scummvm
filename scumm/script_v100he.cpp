@@ -377,10 +377,9 @@ void ScummEngine_v100he::o100_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[32];
-	byte subOp;
 	byte string[256];
 
-	subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	if (subOp == 129) {
 		_curActor = pop();
 		return;
@@ -733,8 +732,9 @@ void ScummEngine_v100he::o100_createSound() {
 void ScummEngine_v100he::o100_dim2dimArray() {
 	int data, dim1end, dim2end;
 
-	byte type = fetchScriptByte();
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -754,7 +754,7 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 		data = kStringArray;
 		break;
 	default:
-		error("o100_dim2dimArray: default case %d", type);
+		error("o100_dim2dimArray: default case %d", subOp);
 	}
 
 	dim1end = pop();
@@ -764,9 +764,10 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 
 void ScummEngine_v100he::o100_dimArray() {
 	int data;
-	int type = fetchScriptByte();
 
-	switch (type) {
+	int subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -789,7 +790,7 @@ void ScummEngine_v100he::o100_dimArray() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o100_dimArray: default case %d", type);
+		error("o100_dimArray: default case %d", subOp);
 	}
 
 	defineArray(fetchScriptWord(), data, 0, 0, 0, pop());
@@ -823,8 +824,9 @@ void ScummEngine_v100he::o100_drawLine() {
 }
 
 void ScummEngine_v100he::o100_drawObject() {
-	byte subOp = fetchScriptByte();
 	int state, y, x;
+
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 6:
@@ -865,6 +867,7 @@ void ScummEngine_v100he::o100_drawObject() {
 
 void ScummEngine_v100he::o100_floodFill() {
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
 	case 0:
 		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
@@ -1374,9 +1377,10 @@ void ScummEngine_v100he::o100_wizImageOps() {
 
 void ScummEngine_v100he::o100_dim2dim2Array() {
 	int data, dim1start, dim1end, dim2start, dim2end;
-	int type = fetchScriptByte();
 
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 41:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -1396,7 +1400,7 @@ void ScummEngine_v100he::o100_dim2dim2Array() {
 		data = kStringArray;
 		break;
 	default:
-		error("o100_dim2dim2Array: default case %d", type);
+		error("o100_dim2dim2Array: default case %d", subOp);
 	}
 
 	if (pop() == 2) {
@@ -1442,6 +1446,7 @@ void ScummEngine_v100he::o100_paletteOps() {
 	int a, b, c, d, e;
 
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
 	case 0:
 		_hePaletteNum = pop();
@@ -1539,6 +1544,7 @@ void ScummEngine_v100he::o100_redimArray() {
 	newX = pop();
 
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
 	case 42:
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
@@ -1556,12 +1562,11 @@ void ScummEngine_v100he::o100_redimArray() {
 
 void ScummEngine_v100he::o100_roomOps() {
 	int a, b, c, d, e;
-	byte op;
 	byte filename[100];
 
-	op = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (op) {
+	switch (subOp) {
 	case 63:		// SO_ROOM_PALETTE
 		d = pop();
 		c = pop();
@@ -1649,7 +1654,7 @@ void ScummEngine_v100he::o100_roomOps() {
 		break;
 
 	default:
-		error("o100_roomOps: default case %d", op);
+		error("o100_roomOps: default case %d", subOp);
 	}
 }
 
@@ -2182,7 +2187,7 @@ void ScummEngine_v100he::o100_cursorCommand() {
 
 void ScummEngine_v100he::o100_videoOps() {
 	// Uses Bink video
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 0:
@@ -2232,6 +2237,7 @@ void ScummEngine_v100he::o100_wait() {
 	int actnum;
 	int offs = -2;
 	Actor *a;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2268,8 +2274,9 @@ void ScummEngine_v100he::o100_wait() {
 }
 
 void ScummEngine_v100he::o100_writeFile() {
-	int resID = pop();
+	int32 resID = pop();
 	int slot = pop();
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2572,6 +2579,7 @@ void ScummEngine_v100he::o100_getPaletteData() {
 void ScummEngine_v100he::o100_readFile() {
 	int slot, val;
 	int32 size;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {

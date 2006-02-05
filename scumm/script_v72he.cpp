@@ -865,7 +865,7 @@ void ScummEngine_v72he::o72_captureWizImage() {
 
 void ScummEngine_v72he::o72_getTimer() {
 	int timer = pop();
-	int cmd = fetchScriptByte();
+	byte cmd = fetchScriptByte();
 
 	if (cmd == 10 || cmd == 50) {
 		push(getHETimer(timer));
@@ -876,7 +876,7 @@ void ScummEngine_v72he::o72_getTimer() {
 
 void ScummEngine_v72he::o72_setTimer() {
 	int timer = pop();
-	int cmd = fetchScriptByte();
+	byte cmd = fetchScriptByte();
 
 	if (cmd == 158 || cmd == 61) {
 		setHETimer(timer);
@@ -1015,12 +1015,11 @@ void ScummEngine_v72he::o72_getNumFreeArrays() {
 
 void ScummEngine_v72he::o72_roomOps() {
 	int a, b, c, d, e;
-	byte op;
 	byte filename[100];
 
-	op = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (op) {
+	switch (subOp) {
 	case 172:		// SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
@@ -1108,7 +1107,7 @@ void ScummEngine_v72he::o72_roomOps() {
 		break;
 
 	default:
-		error("o72_roomOps: default case %d", op);
+		error("o72_roomOps: default case %d", subOp);
 	}
 }
 
@@ -1116,10 +1115,9 @@ void ScummEngine_v72he::o72_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[32];
-	byte subOp;
 	byte string[256];
 
-	subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	if (subOp == 197) {
 		_curActor = pop();
 		return;
@@ -1313,11 +1311,10 @@ void ScummEngine_v72he::o72_actorOps() {
 void ScummEngine_v72he::o72_verbOps() {
 	int slot, a, b;
 	VerbSlot *vs;
-	byte op;
 	byte name[200];
 
-	op = fetchScriptByte();
-	if (op == 196) {
+	byte subOp = fetchScriptByte();
+	if (subOp == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
 		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
@@ -1325,7 +1322,7 @@ void ScummEngine_v72he::o72_verbOps() {
 	}
 	vs = &_verbs[_curVerbSlot];
 	slot = _curVerbSlot;
-	switch (op) {
+	switch (subOp) {
 	case 124:		// SO_VERB_IMAGE
 		a = pop();
 		if (_curVerbSlot) {
@@ -1424,7 +1421,7 @@ void ScummEngine_v72he::o72_verbOps() {
 		verbMouseOver(0);
 		break;
 	default:
-		error("o72_verbops: default case %d", op);
+		error("o72_verbops: default case %d", subOp);
 	}
 }
 
@@ -1624,9 +1621,10 @@ void ScummEngine_v72he::o72_talkEgo() {
 
 void ScummEngine_v72he::o72_dimArray() {
 	int data;
-	int type = fetchScriptByte();
 
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 2:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -1649,7 +1647,7 @@ void ScummEngine_v72he::o72_dimArray() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o72_dimArray: default case %d", type);
+		error("o72_dimArray: default case %d", subOp);
 	}
 
 	defineArray(fetchScriptWord(), data, 0, 0, 0, pop());
@@ -1659,8 +1657,9 @@ void ScummEngine_v72he::o72_dimArray() {
 void ScummEngine_v72he::o72_dim2dimArray() {
 	int data, dim1end, dim2end;
 
-	byte type = fetchScriptByte();
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 2:		// SO_BIT_ARRAY
 		data = kBitArray;
 		break;
@@ -1680,7 +1679,7 @@ void ScummEngine_v72he::o72_dim2dimArray() {
 		data = kStringArray;
 		break;
 	default:
-		error("o72_dim2dimArray: default case %d", type);
+		error("o72_dim2dimArray: default case %d", subOp);
 	}
 
 	dim1end = pop();
@@ -1995,6 +1994,7 @@ void ScummEngine_v72he::o72_redimArray() {
 	newX = pop();
 
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
 	case 5:
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
@@ -2146,12 +2146,12 @@ void ScummEngine_v72he::o72_readINI() {
 	byte option[128];
 	ArrayHeader *ah;
 	const char *entry;
-	int len, type;
+	int len;
 
 	copyScriptString(option, sizeof(option));
-	type = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (type) {
+	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
 		if (!strcmp((char *)option, "NoPrinting")) {
@@ -2174,19 +2174,19 @@ void ScummEngine_v72he::o72_readINI() {
 		push(readVar(0));
 		break;
 	default:
-		error("o72_readINI: default type %d", type);
+		error("o72_readINI: default type %d", subOp);
 	}
 
 	debug(0, "o72_readINI: Option %s", option);
 }
 
 void ScummEngine_v72he::o72_writeINI() {
-	int type, value;
+	int value;
 	byte option[256], string[1024];
 
-	type = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (type) {
+	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
 		value = pop();
@@ -2215,7 +2215,7 @@ void ScummEngine_v72he::o72_writeINI() {
 		debug(0, "o72_writeINI: Option %s String %s", option, string);
 		break;
 	default:
-		error("o72_writeINI: default type %d", type);
+		error("o72_writeINI: default type %d", subOp);
 	}
 
 	ConfMan.flushToDisk();
@@ -2269,9 +2269,9 @@ void ScummEngine_v72he::o72_setFilePath() {
 void ScummEngine_v72he::o72_setWindowCaption() {
 	byte name[1024];
 	copyScriptString(name, sizeof(name));
-	int id = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	debug(1,"o72_setWindowCaption: (%d) %s", id, name);
+	debug(1,"o72_setWindowCaption: (%d) %s", subOp, name);
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {

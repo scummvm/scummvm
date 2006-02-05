@@ -509,9 +509,9 @@ void ScummEngine_v70he::o70_getActorRoom() {
 }
 
 void ScummEngine_v70he::o70_resourceRoutines() {
-	int objidx, resid, subOp;
+	int objidx, resid;
 
-	subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 100:		// SO_LOAD_SCRIPT
@@ -1086,9 +1086,9 @@ void ScummEngine_v70he::o70_setFilePath() {
 }
 
 void ScummEngine_v70he::o70_setWindowCaption() {
-	int num = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	int len = resStrLen(_scriptPointer);
-	debug(1,"stub o70_setWindowCaption(%d, \"%s\")", num, _scriptPointer);
+	debug(1,"stub o70_setWindowCaption(%d, \"%s\")", subOp, _scriptPointer);
 	_scriptPointer += len + 1;
 }
 

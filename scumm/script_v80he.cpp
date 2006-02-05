@@ -453,8 +453,9 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	Common::ConfigFile ConfFile;
 	ConfFile.loadFromFile((const char *)filename);
 
-	byte type = fetchScriptByte();
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
 		ConfFile.getKey((const char *)option, (const char *)section, entry);
@@ -472,7 +473,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 		push(readVar(0));
 		break;
 	default:
-		error("o80_readConfigFile: default type %d", type);
+		error("o80_readConfigFile: default type %d", subOp);
 	}
 
 	debug(0, "o80_readConfigFile: Filename %s Section %s Option %s Value %s", filename, section, option, entry.c_str());
@@ -482,8 +483,9 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	byte filename[256], section[256], option[256], string[1024];
 	int value;
 
-	byte type = fetchScriptByte();
-	switch (type) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
 		value = pop();
@@ -502,7 +504,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		convertFilePath(filename, true);
 		break;
 	default:
-		error("o80_writeConfigFile: default type %d", type);
+		error("o80_writeConfigFile: default type %d", subOp);
 	}
 
 	Common::ConfigFile ConfFile;
@@ -515,6 +517,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 void ScummEngine_v80he::o80_cursorCommand() {
 	int a, i;
 	int args[16];
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {

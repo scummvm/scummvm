@@ -943,7 +943,8 @@ void ScummEngine_v6::o6_freezeUnfreeze() {
 void ScummEngine_v6::o6_cursorCommand() {
 	int a, i;
 	int args[16];
-	int subOp = fetchScriptByte();
+
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
@@ -1532,10 +1533,11 @@ void ScummEngine_v6::o6_createBoxMatrix() {
 }
 
 void ScummEngine_v6::o6_resourceRoutines() {
-	int resid, op;
-	op = fetchScriptByte();
+	int resid;
 
-	switch (op) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
 		if (_version >= 7)
@@ -1633,18 +1635,17 @@ void ScummEngine_v6::o6_resourceRoutines() {
 			break;
 		}
 	default:
-		error("o6_resourceRoutines: default case %d", op);
+		error("o6_resourceRoutines: default case %d", subOp);
 	}
 }
 
 
 void ScummEngine_v6::o6_roomOps() {
 	int a, b, c, d, e;
-	byte op;
 
-	op = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
-	switch (op) {
+	switch (subOp) {
 	case 172:		// SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
@@ -1763,7 +1764,7 @@ void ScummEngine_v6::o6_roomOps() {
 			setPalette(a);
 		break;
 	default:
-		error("o6_roomOps: default case %d", op);
+		error("o6_roomOps: default case %d", subOp);
 	}
 }
 
@@ -1771,9 +1772,8 @@ void ScummEngine_v6::o6_actorOps() {
 	Actor *a;
 	int i, j, k;
 	int args[8];
-	byte subOp;
 
-	subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	if (subOp == 197) {
 		_curActor = pop();
 		return;
@@ -1924,10 +1924,9 @@ void ScummEngine_v6::o6_actorOps() {
 void ScummEngine_v6::o6_verbOps() {
 	int slot, a, b;
 	VerbSlot *vs;
-	byte op;
 
-	op = fetchScriptByte();
-	if (op == 196) {
+	byte subOp = fetchScriptByte();
+	if (subOp == 196) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
 		checkRange(_numVerbs - 1, 0, _curVerbSlot, "Illegal new verb slot %d");
@@ -1935,7 +1934,7 @@ void ScummEngine_v6::o6_verbOps() {
 	}
 	vs = &_verbs[_curVerbSlot];
 	slot = _curVerbSlot;
-	switch (op) {
+	switch (subOp) {
 	case 124:		// SO_VERB_IMAGE
 		a = pop();
 		if (_curVerbSlot) {
@@ -2036,7 +2035,7 @@ void ScummEngine_v6::o6_verbOps() {
 		verbMouseOver(0);
 		break;
 	default:
-		error("o6_verbops: default case %d", op);
+		error("o6_verbops: default case %d", subOp);
 	}
 }
 
@@ -2181,6 +2180,7 @@ void ScummEngine_v6::o6_wait() {
 	int actnum;
 	int offs = -2;
 	Actor *a;
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2288,6 +2288,7 @@ void ScummEngine_v6::o6_isAnyOf() {
 
 void ScummEngine_v6::o6_systemOps() {
 	byte subOp = fetchScriptByte();
+
 	switch (subOp) {
 	case 158:		// SO_RESTART
 		restart();
@@ -2374,7 +2375,9 @@ void ScummEngine_v6::o6_talkEgo() {
 void ScummEngine_v6::o6_dimArray() {
 	int data;
 
-	switch (fetchScriptByte()) {
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 199:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
@@ -2394,7 +2397,7 @@ void ScummEngine_v6::o6_dimArray() {
 		nukeArray(fetchScriptWord());
 		return;
 	default:
-		error("o6_dimArray: default case");
+		error("o6_dimArray: default case %d", subOp);
 	}
 
 	defineArray(fetchScriptWord(), data, 0, pop());
@@ -2408,7 +2411,10 @@ void ScummEngine_v6::o6_dummy() {
 
 void ScummEngine_v6::o6_dim2dimArray() {
 	int a, b, data;
-	switch (fetchScriptByte()) {
+
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
 	case 199:		// SO_INT_ARRAY
 		data = kIntArray;
 		break;
@@ -2425,7 +2431,7 @@ void ScummEngine_v6::o6_dim2dimArray() {
 		data = kStringArray;
 		break;
 	default:
-		error("o6_dim2dimArray: default case");
+		error("o6_dim2dimArray: default case %d", subOp);
 	}
 
 	b = pop();
@@ -3121,9 +3127,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 }
 
 void ScummEngine_v6::decodeParseString(int m, int n) {
-	byte b;
-
-	b = fetchScriptByte();
+	byte b = fetchScriptByte();
 
 	switch (b) {
 	case 65:		// SO_AT
