@@ -216,6 +216,14 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 	return sr;
 }
 
+void SmushPlayer::timerCallback(void *refCon) {
+	((SmushPlayer *)refCon)->parseNextFrame();
+#ifdef _WIN32_WCE
+	((SmushPlayer *)refCon)->_inTimer = true;
+	((SmushPlayer *)refCon)->_inTimerCount++;
+#endif
+}
+
 SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_vm = scumm;
 	_version = -1;
@@ -243,11 +251,16 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_IACTpos = 0;
 	_soundFrequency = 22050;
 	_initDone = false;
-	_speed = 1000000 / speed;
+	_speed = speed;
 	_insanity = false;
 	_middleAudio = false;
 	_skipPalette = false;
 	_IACTstream = NULL;
+#ifdef _WIN32_WCE
+	_inTimer = false;
+	_inTimerCount = 0;
+	_inTimerCountRedraw = ConfMan.getInt("Smush_force_redraw");
+#endif
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -273,6 +286,7 @@ void SmushPlayer::init() {
 	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
 
 	_smixer = new SmushMixer(_vm->_mixer);
+	Common::g_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
 
 	_initDone = true;
 }
@@ -280,6 +294,8 @@ void SmushPlayer::init() {
 void SmushPlayer::release() {
 	if (!_initDone)
 		return;
+
+	_vm->_timer->removeTimerProc(&timerCallback);
 
 	_vm->_smushVideoShouldFinish = true;
 
@@ -317,10 +333,12 @@ void SmushPlayer::release() {
 	// issues, see the mentioned bug report for details.
 	_vm->_doEffect = false;
 
+
 	// HACK HACK HACK: This is an *evil* trick, beware! See above for
 	// some explanation.
 	_vm->virtscr[0].pitch = _origPitch;
 	_vm->gdi._numStrips = _origNumStrips;
+
 
 	_initDone = false;
 }
@@ -906,6 +924,9 @@ void SmushPlayer::handleFrame(Chunk &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	_skipNext = false;
 
+	uint32 start_time, end_time;
+	start_time = _vm->_system->getMillis();
+
 	if (_insanity) {
 		_vm->_insane->procPreRendering();
 	}
@@ -973,8 +994,21 @@ void SmushPlayer::handleFrame(Chunk &b) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
 
-	updateScreen();
+	end_time = _vm->_system->getMillis();
+
+	if (_width != 0 && _height != 0) {
+#ifdef _WIN32_WCE
+		if (!_inTimer || _inTimerCount == _inTimerCountRedraw) {
+			updateScreen();
+			_inTimerCount = 0;
+		}
+#else
+		updateScreen();
+#endif
+	}
 	_smixer->handleFrame();
+
+	debugC(DEBUG_SMUSH, "Smush stats: FRME( %03d ), Limit(%d)", end_time - start_time, _speed);
 
 	_frame++;
 }
@@ -1102,6 +1136,8 @@ void SmushPlayer::parseNextFrame() {
 
 	if (_insanity)
 		_vm->_sound->processSound();
+
+	_vm->_imuseDigital->flushTracks();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1134,7 +1170,7 @@ void SmushPlayer::updateScreen() {
 #ifdef DUMP_SMUSH_FRAMES
 	char fileName[100];
 	// change path below for dump png files
-	sprintf(fileName, "/path/to/somewhere/%s%04d.png", _vm->getBaseName(), _frame);
+	sprintf(fileName, "/path/to/somethere/%s%04d.png", _vm->getBaseName(), _frame);
 	FILE *file = fopen(fileName, "wb");
 	if (file == NULL)
 		error("can't open file for writing png");
@@ -1182,7 +1218,10 @@ void SmushPlayer::updateScreen() {
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 #endif
 
+	uint32 end_time, start_time = _vm->_system->getMillis();
 	_updateNeeded = true;
+	end_time = _vm->_system->getMillis();
+	debugC(DEBUG_SMUSH, "Smush stats: updateScreen( %03d )", end_time - start_time);
 }
 
 void SmushPlayer::insanity(bool flag) {
@@ -1235,6 +1274,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 }
 
 void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
+
 	// Verify the specified file exists
 	ScummFile f;
 	_vm->openFile(f, filename);
@@ -1256,66 +1296,55 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 	_seekFile = filename;
 	_seekPos = offset;
 	_seekFrame = startFrame;
-	_base = NULL;
+	_base = 0;
 
 	setupAnim(filename);
 	init();
 
-	int32 lastTime, thisTime, interval = _speed, counter = _speed, diff = 0;
-	thisTime = _vm->_system->getMillis();
-
 	for (;;) {
-		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
-			break;
-
-		_vm->_imuseDigital->flushTracks();
-
-		lastTime = thisTime;
-		thisTime = _vm->_system->getMillis();
-		interval = 1000 * (thisTime - lastTime - diff);
-		diff = 0;
-		counter -= interval;
-
-		while (counter <= 0) {
-			counter += _speed;
-			parseNextFrame();
-
-			if (_warpNeeded) {
-				_vm->_system->warpMouse(_warpX, _warpY);
-				_warpNeeded = false;
-			}
-
-			int32 before = _vm->_system->getMillis();
-			_vm->parseEvents();
-			_vm->processKbd(true);
-			diff += _vm->_system->getMillis() - before;
-
-			if (_palDirtyMax >= _palDirtyMin) {
-				byte palette_colors[1024];
-				byte *p = palette_colors;
-
-				for (int i = _palDirtyMin; i <= _palDirtyMax; i++) {
-					byte *data = _pal + i * 3;
-
-					*p++ = data[0];
-					*p++ = data[1];
-					*p++ = data[2];
-					*p++ = 0;
-				}
-
-				_vm->_system->setPalette(palette_colors, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
-
-				_palDirtyMax = -1;
-				_palDirtyMin = 256;
-			}
+		if (_warpNeeded) {
+			_vm->_system->warpMouse(_warpX, _warpY);
+			_warpNeeded = false;
 		}
+		_vm->parseEvents();
+		_vm->processKbd(true);
+		if (_palDirtyMax >= _palDirtyMin) {
+			byte palette_colors[1024];
+			byte *p = palette_colors;
 
+			for (int i = _palDirtyMin; i <= _palDirtyMax; i++) {
+				byte *data = _pal + i * 3;
+
+				*p++ = data[0];
+				*p++ = data[1];
+				*p++ = data[2];
+				*p++ = 0;
+			}
+
+			_vm->_system->setPalette(palette_colors, _palDirtyMin, _palDirtyMax - _palDirtyMin + 1);
+
+			_palDirtyMax = -1;
+			_palDirtyMin = 256;
+		}
 		if (_updateNeeded) {
+			uint32 end_time, start_time;
+
+			start_time = _vm->_system->getMillis();
 			_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
 			_vm->_system->updateScreen();
 			_updateNeeded = false;
-		}
+#ifdef _WIN32_WCE
+			_inTimer = false;
+			_inTimerCount = 0;
+#endif
 
+			end_time = _vm->_system->getMillis();
+
+			debugC(DEBUG_SMUSH, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
+
+		}
+		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
+			break;
 		_vm->_system->delayMillis(10);
 	}
 
@@ -1326,3 +1355,4 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 }
 
 } // End of namespace Scumm
+

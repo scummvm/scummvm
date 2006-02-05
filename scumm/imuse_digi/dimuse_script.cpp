@@ -163,13 +163,15 @@ void IMuseDigital::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->readyToRemove) {
+		if (track->used && (track->readyToRemove ||
+				(_vm->_insaneRunning && track->toBeRemoved))) { // INSANE hack for sync timer mode
 			if (track->stream) {
 				if (!track->stream->endOfStream()) {
 	 				track->stream->finish();
 	 			}
 				if (track->stream->endOfStream()
-						|| _vm->_mixer->isPaused()) { // hack for paused Mixer
+						|| _vm->_mixer->isPaused() // hack for paused Mixer
+						|| _vm->_insaneRunning) { // INSANE hack for sync timer mode
 					_vm->_mixer->stopHandle(track->handle);
 					delete track->stream;
 					track->stream = NULL;
