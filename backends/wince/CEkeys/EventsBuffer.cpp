@@ -52,7 +52,11 @@ namespace CEKEYS {
 
 	bool EventsBuffer::simulateMouseLeftClick(int x, int y, bool pushed) {
 		SDL_Event ev = {0};
+		static bool state = false; // Knakos : avoid double click
 
+		if (pushed == state)
+			return true;
+		state = pushed;
 		ev.type = (pushed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP);
 		ev.button.button = SDL_BUTTON_LEFT;
 		ev.button.x = x;
@@ -62,7 +66,11 @@ namespace CEKEYS {
 
 	bool EventsBuffer::simulateMouseRightClick(int x, int y, bool pushed) {
 		SDL_Event ev = {0};
+		static bool state = false; // Knakos : avoid double click
 
+		if (pushed == state)
+			return true;
+		state = pushed;
 		ev.type = (pushed ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP);
 		ev.button.button = SDL_BUTTON_RIGHT;
 		ev.button.x = x;
