@@ -765,7 +765,7 @@ void ScummEngine_v100he::o100_dim2dimArray() {
 void ScummEngine_v100he::o100_dimArray() {
 	int data;
 
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 41:		// SO_BIT_ARRAY
@@ -2853,7 +2853,7 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 
 void ScummEngine_v100he::o100_getVideoData() {
 	// Uses Bink video
-	int subOp = fetchScriptByte();
+	byte subOp = fetchScriptByte();
 	subOp -= 26;
 
 	switch (subOp) {

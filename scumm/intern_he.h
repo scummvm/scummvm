@@ -262,7 +262,7 @@ protected:
 	void copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int len1, byte **data, int *size, int *num);
 	virtual int setupStringArray(int size);
 	int readFileToArray(int slot, int32 size);
-	void writeFileFromArray(int slot, int resID);
+	void writeFileFromArray(int slot, int32 resID);
 
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);

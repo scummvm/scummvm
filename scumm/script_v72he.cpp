@@ -1851,7 +1851,7 @@ void ScummEngine_v72he::o72_readFile() {
 	debug(1, "o72_readFile: slot %d, subOp %d val %d", slot, subOp, val);
 }
 
-void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
+void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resID);
 	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
 		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
@@ -1860,7 +1860,7 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int resID) {
 }
 
 void ScummEngine_v72he::o72_writeFile() {
-	int resID = pop();
+	int32 resID = pop();
 	int slot = pop();
 	byte subOp = fetchScriptByte();
 
