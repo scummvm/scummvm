@@ -16,8 +16,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - Fixed last-minute crash when playing sound effects.
 
  WinCE Port:
-   - Fixed Smartphone double click crash. (Fix already included in the
-     official 0.8.1 WinCE builds?)
+   - Should fix weird crashes with DOTT stamp and in FOA (#1399830 #1392815)
+   - Fixed Monkey Island blocking keyboard panel on Smartphones (thks Knakos)
+   - Fixed QVGA Smartphone detection (mean it this time :p)
+   - Fixed Smartphone double right click issue. 
 
 0.8.1 (2006-01-31)
  General:
