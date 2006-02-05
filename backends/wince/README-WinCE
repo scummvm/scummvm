@@ -17,16 +17,29 @@ General questions
 Which devices are supported ?
 -----------------------------
 
-Official build
---------------
+Official builds
+---------------
 
-The official build is based on the ARM architecture and should work with any
-Pocket PC 2000, Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone
-2002, Smartphone 2003 or Windows Mobile based device.
+My official build is based on the ARM-Xscale architecture, done with
+Embedded Visual C++ 4.0 + SP4 and should work with any Pocket PC 2003
+Pocket PC 2003 SE, Smartphone 2003 or Windows Mobile based device. 
+
+Kostas Nakos (Knakos) is providing an alternative official build done with
+Embedded Visual C++ 3.0 that should work with any "recent" ARM based 
+device (including Pocket PC 2000, Pocket PC 2002 and Smartphone 2002)
 
 Support for old ARM architectures (Handheld PCs, Palm Size PCs) and other CPUs 
 (MIPS, SH3) is discontinued. Feel free to generate builds for these 
 architectures and contact me to include them on ScummVM website.
+
+Note for builders
+-----------------
+
+Due to an optimizer bug you'll have to disable optimization when building
+on Embedded Visual C++ for scumm/object.cpp
+
+Remember to add if you're not using the official project files, or strange
+crashs may occur (see bug items #1392815, #1399830 and similar)
 
 Full support
 ------------
@@ -202,7 +215,8 @@ A shortcut is available to hide the toolbar directly from the game screen from
 release 0.8.0. Double tapping the stylus at the top of the screen will switch
 between a visible toolbar panel, a virtual keyboard, and an invisible panel.
 
-The icons should not suddenly disappear without warning (0.8.0 bug)
+The icons should not suddenly disappear without warning (0.8.0 bug fixed in
+0.8.1+)
 
 How do I play a game on a Microsoft Smartphone device ?
 -------------------------------------------------------
@@ -217,7 +231,7 @@ a set of default keys :
       Hotkey 2       Right mouse button click
       Return/Action  Open the key mapping menu
 
-Note that this mean that the input will be "inversed" on a 240x320 (Windows
+Note that this mean that the input will be "inverted" on a 240x320 (Windows
 Mobile 2005) Smartphone. You'll have to remap the keys.
 
 A few options are also emulated by a set of default keys :
