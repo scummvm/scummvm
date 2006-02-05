@@ -303,6 +303,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\gob\parse_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\gob\parse_v2.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\gob\scenery.cpp"
 			>
 		</File>

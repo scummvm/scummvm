@@ -444,6 +444,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\scumm\intern_he.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\scumm\logic_he.cpp"
 			>
 		</File>
