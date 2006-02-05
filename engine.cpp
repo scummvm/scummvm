@@ -29,7 +29,6 @@
 #include "imuse/imuse.h"
 
 #include <SDL.h>
-#include <SDL_timer.h>
 #include <assert.h>
 
 // CHAR_KEY tests to see whether a keycode is for
@@ -217,7 +216,7 @@ void Engine::drawPrimitives() {
 
 void Engine::luaUpdate() {
 	// Update timing information
-	unsigned newStart = SDL_GetTicks();
+	unsigned newStart = g_driver->getMillis();
 	if (newStart < _frameStart) {
 		_frameStart = newStart;
 		return;
@@ -246,7 +245,7 @@ void Engine::luaUpdate() {
 }
 
 void Engine::updateDisplayScene() {
-	uint32 newTime = SDL_GetTicks();
+	uint32 newTime = g_driver->getMillis();
 	if (newTime < _lastUpdateTime) {
 		_lastUpdateTime = newTime;
 		_doFlip = false;
@@ -374,7 +373,7 @@ void Engine::doFlip() {
 		g_driver->flipBuffer();
 
 	// don't kill CPU
-	SDL_Delay(10);
+	g_driver->delayMillis(10);
 
 	if (SHOWFPS_GLOBAL && _doFlip) {
 		_frameCounter++;
@@ -390,7 +389,7 @@ void Engine::doFlip() {
 void Engine::mainLoop() {
 	_movieTime = 0;
 	_frameTime = 0;
-	_frameStart = SDL_GetTicks();
+	_frameStart = g_driver->getMillis();
 	_frameCounter = 0;
 	_timeAccum = 0;
 	_frameTimeCollection = 0;

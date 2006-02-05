@@ -25,11 +25,12 @@
 #include "colormap.h"
 #include "bitmap.h"
 #include "driver.h"
+#include "driver_sdl.h"
 
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-class DriverGL : public Driver {
+class DriverGL : public DriverSDL {
 public:
 	DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen = false);
 	virtual ~DriverGL();

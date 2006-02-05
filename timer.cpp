@@ -19,8 +19,7 @@
 #include "bits.h"
 #include "debug.h"
 #include "timer.h"
-
-#include <SDL.h>
+#include "driver.h"
 
 Timer *g_timer = NULL;
 
@@ -39,14 +38,14 @@ Timer::Timer() :
 		_timerSlots[i].counter = 0;
 	}
 
-	_thisTime = SDL_GetTicks();
+	_thisTime = g_driver->getMillis();
 
 	// Set the timer last, after everything has been initialised
-	SDL_SetTimer(10, (SDL_TimerCallback) timer_handler);
+	g_driver->setTimerCallback(timer_handler, 10);
 }
 
 Timer::~Timer() {
-	SDL_SetTimer(0, NULL);
+	g_driver->setTimerCallback(NULL, 0);
 
 	{
 		StackLock lock(_mutex);
@@ -71,7 +70,7 @@ int Timer::handler(int t) {
 	uint32 interval, l;
 
 	_lastTime = _thisTime;
-	_thisTime = SDL_GetTicks();
+	_thisTime = g_driver->getMillis();
 	interval = 1000 * (_thisTime - _lastTime);
 
 	for (l = 0; l < MAX_TIMERS; l++) {

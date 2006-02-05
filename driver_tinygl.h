@@ -25,13 +25,14 @@
 #include "colormap.h"
 #include "bitmap.h"
 #include "driver.h"
+#include "driver_sdl.h"
 
 #include "tinygl/gl.h"
 #include "tinygl/zgl.h"
 
 #include <SDL.h>
 
-class DriverTinyGL : public Driver {
+class DriverTinyGL : public DriverSDL {
 public:
 	DriverTinyGL(int screenW, int screenH, int screenBPP, bool fullscreen = false);
 	virtual ~DriverTinyGL();

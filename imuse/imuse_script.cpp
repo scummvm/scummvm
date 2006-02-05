@@ -19,14 +19,13 @@
 #include "bits.h"
 #include "debug.h"
 #include "timer.h"
+#include "driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
 #include "imuse/imuse.h"
 #include "imuse/imuse_sndmgr.h"
-
-#include <SDL.h>
 
 void Imuse::flushTracks() {
 	// flushTracks should not lock the stack since all the functions
@@ -160,7 +159,7 @@ void Imuse::stopAllSounds() {
 		if (!foundNotRemoved)
 			break;
 		flushTracks();
-		SDL_Delay(50);
+		g_driver->delayMillis(50);
 	}
 }
 

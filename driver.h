@@ -102,6 +102,40 @@ public:
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
 
+
+	/** @name Events and Time */
+	//@{
+
+	typedef int (*TimerProc)(int interval);
+
+	/** Get the number of milliseconds since the program was started. */
+	virtual uint32 getMillis() = 0;
+
+	/** Delay/sleep for the specified amount of milliseconds. */
+	virtual void delayMillis(uint msecs) = 0;
+
+	/**
+	 * Set the timer callback, a function which is periodically invoked by the
+	 * driver. This can for example be done via a background thread.
+	 * There is at most one active timer; if this method is called while there
+	 * is already an active timer, then the new timer callback should replace
+	 * the previous one. In particular, passing a callback pointer value of 0
+	 * is legal and can be used to clear the current timer callback.
+	 * @see Timer
+	 * @note The implementation of this method must be 'atomic' in the sense
+	 *       that when the method returns, the previously set callback must
+	 *       not be in use anymore (in particular, if timers are implemented
+	 *       via threads, then it must be ensured that the timer thread is
+	 *       not using the old callback function anymore).
+	 *
+	 * @param callback	pointer to the callback. May be 0 to reset the timer
+	 * @param interval	the interval (in milliseconds) between invocations
+	 *                  of the callback
+	 */
+	virtual void setTimerCallback(TimerProc callback, int interval) = 0;
+
+	//@}
+
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;

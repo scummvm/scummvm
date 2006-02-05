@@ -61,6 +61,7 @@ OBJS =\
 	blocky16.o \
 	costume.o \
 	debug.o \
+	driver_sdl.o \
 	driver_gl.o \
 	driver_tinygl.o \
 	engine.o \
