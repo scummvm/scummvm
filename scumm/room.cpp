@@ -415,6 +415,19 @@ void ScummEngine::loadRoomSubBlocks() {
 				_HEV7ActorPalette[i] = i;
 		}
 	}
+	
+	
+	// WORKAROUND bug #1074444: The dreaded DOTT "Can't get teeth" bug
+	// makes it impossible to go on playing w/o cheating in some way.
+	// It's not quite clear what causes it, but the effect is that object
+	// 182, the teeth, are still in class 32 (kObjectClassUntouchable),
+	// when they shouldn't be. Luckily, bitvar69 is set to 1 if and only if
+	// the teeth are trapped and have not yet been taken by the player. So
+	// we can make use of that fact to fix the object class of obj 182.
+	if (_gameId == GID_TENTACLE && _roomResource == 26 && readVar(0x8000 + 69)
+			&& getClass(182, kObjectClassUntouchable)) {
+		putClass(182, kObjectClassUntouchable, 0);
+	}
 
 	gdi.roomChanged(roomptr, _IM00_offs, trans);
 }
