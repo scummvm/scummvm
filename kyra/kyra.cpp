@@ -79,6 +79,8 @@ static const KyraGameSettings kyra_games[] = {
 										"abf8eb360e79a6c2a837751fbd4d3d24", "GEMCUT.EMC" },
 	{ "kyra1", "The Legend of Kyrandia (German/Floppy)",	GI_KYRA1, GF_GERMAN | GF_FLOPPY, 
 										"6018e1dfeaca7fe83f8d0b00eb0dd049", "GEMCUT.EMC"},
+	{ "kyra1", "The Legend of Kyrandia (German/Floppy)",	GI_KYRA1, GF_GERMAN | GF_FLOPPY, // from Arne.F 
+										"f0b276781f47c130f423ec9679fe9ed9", "GEMCUT.EMC"},
 	{ "kyra1", "The Legend of Kyrandia (Spanish/Floppy)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // from VooD
 										"8909b41596913b3f5deaf3c9f1017b01", "GEMCUT.EMC"},
 	{ "kyra1", "The Legend of Kyrandia (Spanish/Floppy)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // floppy 1.8 from clemmy
@@ -89,7 +91,7 @@ static const KyraGameSettings kyra_games[] = {
 										"230f54e6afc007ab4117159181a1c722", "GEMCUT.PAK" },
 	{ "kyra1", "The Legend of Kyrandia (French/CD)",		GI_KYRA1, GF_FRENCH | GF_TALKIE, 
 										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
-	{ "kyra1", "The Legend of Kyrandia (Demo)",			GI_KYRA1, GF_DEMO | GF_ENGLISH,
+	{ "kyra1", "The Legend of Kyrandia (Demo)",				GI_KYRA1, GF_DEMO | GF_ENGLISH,
 										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
