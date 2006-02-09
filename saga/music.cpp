@@ -479,6 +479,9 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	}
 
 	if (xmidiParser->loadMusic(resourceData, resourceSize)) {
+		if (_vm->getGameType() == GType_ITE)
+			_player->setGM(false);
+
 		parser = xmidiParser;
 	} else {
 		if (smfParser->loadMusic(resourceData, resourceSize)) {
