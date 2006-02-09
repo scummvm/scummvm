@@ -1,4 +1,5 @@
-# $Header$
+# $URL$
+# $Id$
 
 ronindir = /usr/local/ronin
 
