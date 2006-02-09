@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -92,6 +93,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 		currPage = _screen->_curPage;
 		_screen->_curPage = 2;
 		_text->printCharacterText(chatStr, charNum, _characterList[charNum].x1);
+		_animator->_updateScreen = true;
 		_screen->_curPage = currPage;
 
 		_animator->copyChangedObjectsForward(0);
@@ -104,7 +106,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 			switch (event.type) {
 			case OSystem::EVENT_KEYDOWN:
 				if (event.kbd.keycode == '.')
-					runLoop = false;
+					_skipFlag = true;
 				break;
 			case OSystem::EVENT_QUIT:
 				quitGame();
@@ -116,7 +118,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 			}
 		}
 		
-		if (_fastMode)
+		if (_skipFlag)
 			runLoop = false;
 
 		delayTime = (loopStart + _gameSpeed) - _system->getMillis();

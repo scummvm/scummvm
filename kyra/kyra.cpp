@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -347,7 +348,6 @@ int KyraEngine::init(GameDetector &detector) {
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
-	_fastMode = false;
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
 	_talkingCharNum = -1;
@@ -415,6 +415,9 @@ int KyraEngine::init(GameDetector &detector) {
 	_menuDirectlyToLoad = false;
 	 
 	 _lastMusicCommand = 0;
+
+	_gameSpeed = 60;
+	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
 	return 0;
 }
@@ -553,9 +556,6 @@ void KyraEngine::startup() {
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
 
-	_gameSpeed = 50;
-	_tickLength = (uint8)(1000.0 / _gameSpeed);
-
 	if (!_scriptInterpreter->loadScript("_STARTUP.EMC", _npcScriptData, _opcodeTable, _opcodeTableSize, 0)) {
 		error("Could not load \"_STARTUP.EMC\" script");
 	}
@@ -576,7 +576,7 @@ void KyraEngine::startup() {
 	snd_setSoundEffectFile(1);
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	
-	if (_abortIntroFlag && _skipIntroFlag) {
+	if (_abortIntroFlag && _skipFlag) {
 		_menuDirectlyToLoad = true;
 		_screen->setMouseCursor(1, 1, _shapes[4]);
 		buttonMenuCallback(0);
@@ -585,116 +585,13 @@ void KyraEngine::startup() {
 		saveGame(getSavegameFilename(0), "New game");
 }
 
-void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
-	OSystem::Event event;
-	char saveLoadSlot[20];
-	char savegameName[14];
-
-	_mousePressFlag = false;
-	uint32 start = _system->getMillis();
-	do {
-		while (_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
-						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
-					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
-					if (event.kbd.flags == OSystem::KBD_CTRL)
-						loadGame(saveLoadSlot);
-					else {
-						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
-						saveGame(saveLoadSlot, savegameName);
-					}
-				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'f')
-						_fastMode = !_fastMode;
-					else if (event.kbd.keycode == 'd')
-						_debugger->attach();
-					else if (event.kbd.keycode == 'q')
-						_quitFlag = true;
-				}
-				break;
-			case OSystem::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-				_system->updateScreen();
-				break;
-			case OSystem::EVENT_QUIT:
-				quitGame();
-				break;
-			case OSystem::EVENT_LBUTTONDOWN:
-				_mousePressFlag = true;
-				if (_abortWalkFlag2) {
-					_abortWalkFlag = true;
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
-				}
-				if (_handleInput) {
-					_mouseX = event.mouse.x;
-					_mouseY = event.mouse.y;
-					_handleInput = false;
-					processInput(_mouseX, _mouseY);
-					_handleInput = true;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (_debugger->isAttached())
-			_debugger->onFrame();
-
-		_sprites->updateSceneAnims();
-		if (update)
-			_animator->updateAllObjectShapes();
-
-		if (_currentCharacter->sceneId == 210) {
-			_animator->updateKyragemFading();
-		}
-
-		if (amount > 0) {
-			_system->delayMillis((amount > 10) ? 10 : amount);
-		}
-	} while (!_fastMode && _system->getMillis() < start + amount);
-}
-
-void KyraEngine::waitForEvent() {
-	bool finished = false;
-	OSystem::Event event;
-	while (!finished) {
-		while (_system->pollEvent(event)) {
-			switch (event.type) {
-			case OSystem::EVENT_KEYDOWN:
-				finished = true;
-				break;
-			case OSystem::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-				break;
-			case OSystem::EVENT_QUIT:
-				quitGame();
-				break;
-			case OSystem::EVENT_LBUTTONDOWN:
-				finished = true;
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (_debugger->isAttached())
-			_debugger->onFrame();
-
-		_system->delayMillis(10);
-	}
-}
-
 void KyraEngine::mainLoop() {
 	debug(9, "KyraEngine::mainLoop()");
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
+		_skipFlag = false;
+
 		if (_currentCharacter->sceneId == 210) {
 			_animator->updateKyragemFading();
 			if (seq_playEnd()) {
@@ -746,37 +643,120 @@ void KyraEngine::quitGame() {
 	_system->quit();
 }
 
-void KyraEngine::waitTicks(int ticks) {
-	debug(9, "KyraEngine::waitTicks(%d)", ticks);
-	const uint32 end = _system->getMillis() + ticks * 1000 / 60;
+void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
+	OSystem::Event event;
+	char saveLoadSlot[20];
+	char savegameName[14];
+
+	_mousePressFlag = false;
+	uint32 start = _system->getMillis();
 	do {
-		OSystem::Event event;
 		while (_system->pollEvent(event)) {
 			switch (event.type) {
+			case OSystem::EVENT_KEYDOWN:
+				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
+						(event.kbd.flags == OSystem::KBD_CTRL || event.kbd.flags == OSystem::KBD_ALT) && isMainLoop) {
+					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
+					if (event.kbd.flags == OSystem::KBD_CTRL)
+						loadGame(saveLoadSlot);
+					else {
+						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
+						saveGame(saveLoadSlot, savegameName);
+					}
+				} else if (event.kbd.flags == OSystem::KBD_CTRL) {
+					if (event.kbd.keycode == 'd')
+						_debugger->attach();
+					else if (event.kbd.keycode == 'q')
+						_quitFlag = true;
+				} else if (event.kbd.keycode == '.')
+						_skipFlag = true;
+				else if (event.kbd.keycode == 13 || event.kbd.keycode == 32 || event.kbd.keycode == 27) {
+					_abortIntroFlag = true;
+					_skipFlag = true;
+				}
+
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				_system->updateScreen();
+				break;
 			case OSystem::EVENT_QUIT:
-				_quitFlag = true;
 				quitGame();
 				break;
-			case OSystem::EVENT_KEYDOWN:
-				if (event.kbd.flags == OSystem::KBD_CTRL) {
-					if (event.kbd.keycode == 'f') {
-						_fastMode = !_fastMode;
-					}
-				} else if (event.kbd.keycode == 13 || event.kbd.keycode == 32 || event.kbd.keycode == 27) {
-					_abortIntroFlag = true;
+			case OSystem::EVENT_LBUTTONDOWN:
+				_mousePressFlag = true;
+				if (_abortWalkFlag2) {
+					_abortWalkFlag = true;
+					_mouseX = event.mouse.x;
+					_mouseY = event.mouse.y;
 				}
+				if (_handleInput) {
+					_mouseX = event.mouse.x;
+					_mouseY = event.mouse.y;
+					_handleInput = false;
+					processInput(_mouseX, _mouseY);
+					_handleInput = true;
+				} else
+					_skipFlag = true;
 				break;
 			default:
 				break;
 			}
 		}
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
+		if (update)
+			_sprites->updateSceneAnims();
+			_animator->updateAllObjectShapes();
+
+		if (_currentCharacter && _currentCharacter->sceneId == 210) {
+			_animator->updateKyragemFading();
+		}
+
+		if (amount > 0 && !_skipFlag) {
+			_system->delayMillis((amount > 10) ? 10 : amount);
+		}
+	} while (!_skipFlag && _system->getMillis() < start + amount);
+	
+}
+
+void KyraEngine::waitForEvent() {
+	bool finished = false;
+	OSystem::Event event;
+	while (!finished) {
+		while (_system->pollEvent(event)) {
+			switch (event.type) {
+			case OSystem::EVENT_KEYDOWN:
+				finished = true;
+				break;
+			case OSystem::EVENT_MOUSEMOVE:
+				_mouseX = event.mouse.x;
+				_mouseY = event.mouse.y;
+				break;
+			case OSystem::EVENT_QUIT:
+				quitGame();
+				break;
+			case OSystem::EVENT_LBUTTONDOWN:
+				finished = true;
+				_skipFlag = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (_debugger->isAttached())
+			_debugger->onFrame();
+
 		_system->delayMillis(10);
-	} while (!_fastMode && _system->getMillis() < end);
+	}
 }
 
 void KyraEngine::delayWithTicks(int ticks) {
 	uint32 nextTime = _system->getMillis() + ticks * _tickLength;
-	while (_system->getMillis() < nextTime) {
+	while (_system->getMillis() < nextTime && !_skipFlag) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
 		if (_currentCharacter->sceneId == 210) {
@@ -1247,7 +1227,7 @@ int KyraEngine::handleMalcolmFlag() {
 				while (_system->getMillis() < timer2) {}
 			}
 			snd_playWanderScoreViaMap(51, 1);
-			waitTicks(60);
+			delay(60*_tickLength);
 			_malcolmFlag = 0;
 			return 1;
 			break;

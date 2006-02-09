@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -170,7 +171,7 @@ void SeqPlayer::s1_drawShape() {
 
 void SeqPlayer::s1_waitTicks() {
 	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
-	_vm->waitTicks(ticks);
+	_vm->delay(ticks);
 }
 
 void SeqPlayer::s1_copyWaitTicks() {
@@ -373,7 +374,7 @@ void SeqPlayer::s1_fillRect() {
 
 void SeqPlayer::s1_playEffect() {
 	uint8 track = *_seqData++;
-	_vm->waitTicks(3);
+	_vm->delay(3 * _vm->tickLength());
 	_sound->playSoundEffect(track);
 }
 

@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -225,7 +226,8 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 		}
 		setScreenPalette(fadePal);
 		_system->updateScreen();
-		_system->delayMillis((delayAcc >> 8) * 1000 / 60);
+		//_system->delayMillis((delayAcc >> 8) * 1000 / 60);
+		_vm->delay((delayAcc >> 8) * 1000 / 60);
 		delayAcc &= 0xFF;
 	}
 }
@@ -415,8 +417,11 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 		int i = _vm->_rnd.getRandomNumber(h - 1);
 		SWAP(y_offs[y], y_offs[i]);
 	}
-	
+
+	int32 start, now;
+	int wait;
 	for (y = 0; y < h; ++y) {
+		start = (int32)_system->getMillis();
 		int y_cur = y;
 		for (x = 0; x < w; ++x) {
 			int i = sx + x_offs[x];
@@ -431,7 +436,11 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 			}
 		}
 		updateScreen();
-		_system->delayMillis(ticks * 1000 / 60);
+		now = (int32)_system->getMillis();
+		wait = ticks * _vm->tickLength() - (now - start);
+		if (wait > 0) {
+			_vm->delay(wait);
+		}
 	}
 }
 

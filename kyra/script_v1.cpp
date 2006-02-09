@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -40,14 +41,7 @@ int KyraEngine::cmd_magicInMouseItem(ScriptState *script) {
 }
 
 int KyraEngine::cmd_characterSays(ScriptState *script) {
-	// Japanese version?
-	/*const char *str1 = "âuâëâôââôüAé?é¢ùêé¢é+é®üH";
-	const char *str2 = "âuâëâôâ\\âôüAé?é¢ùêé¢é+é®üH";
-
-	if (strcmp(stackPosString(0), str1) == 0)
-		characterSays((char *)str2, stackPos(1), stackPos(2));
-	else*/
-
+	_skipFlag = false;
 	if (_features & GF_TALKIE) {
 		debug(3, "cmd_characterSays(0x%X) (%d, '%s', %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
 		snd_voiceWaitForFinish();
@@ -351,8 +345,9 @@ int KyraEngine::cmd_setBrandonStatusBit(ScriptState *script) {
 
 int KyraEngine::cmd_pauseSeconds(ScriptState *script) {
 	debug(3, "cmd_pauseSeconds(0x%X) (%d)", script, stackPos(0));
-	if (stackPos(0) > 0)
+	if (stackPos(0) > 0 && !_skipFlag)
 		delay(stackPos(0)*1000, true);
+	_skipFlag = false;
 	return 0;
 }
 
@@ -489,7 +484,7 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	_movieObjects[wsaIndex]->displayFrame(frame);
 	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-	while (_system->getMillis() < continueTime) {
+	while (_system->getMillis() < continueTime && !_skipFlag) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
 		if (continueTime - _system->getMillis() >= 10)
@@ -617,12 +612,14 @@ int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 		debug(3, "cmd_customPrintTalkString(0x%X) (%d, '%s', %d, %d, %d)", script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
 		snd_voiceWaitForFinish();
 		snd_playVoiceFile(stackPos(0));
+		_skipFlag = false;
 		_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {
 		debug(3, "cmd_customPrintTalkString(0x%X) ('%s', %d, %d, %d)", script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
+		_skipFlag = false;
 		_text->printTalkTextMessage(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF, 0, 2);
 	}
-	_animator->_updateScreen = true;
+	_screen->updateScreen();
 	return 0;
 }
 
@@ -755,7 +752,7 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 				_movieObjects[wsaIndex]->displayFrame(frame);
 				_animator->_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				while (_system->getMillis() < continueTime) {
+				while (_system->getMillis() < continueTime && !_skipFlag) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
 					if (continueTime - _system->getMillis() >= 10)
@@ -769,7 +766,7 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 				_movieObjects[wsaIndex]->displayFrame(frame);
 				_animator->_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				while (_system->getMillis() < continueTime) {
+				while (_system->getMillis() < continueTime && !_skipFlag) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
 					if (continueTime - _system->getMillis() >= 10)
@@ -778,7 +775,10 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 				--frame;
 			}
 		}
-		++curTime;
+		if (!_skipFlag)
+			break;
+		else
+			++curTime;
 	}
 	_screen->showMouse();
 	

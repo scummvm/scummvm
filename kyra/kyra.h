@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -266,6 +267,7 @@ public:
 	const uint8 **palTable2() { return const_cast<const uint8 **>(&_specialPalettes[29]); }
 
 	bool seq_skipSequence() const;
+	void delay(uint32 millis, bool update = false, bool mainLoop = false);
 	void quitGame();
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
@@ -600,7 +602,6 @@ protected:
 	void res_freeLangTable(char ***sting, int *size);
 	
 	void waitForEvent();
-	void delay(uint32 millis, bool update = false, bool mainLoop = false);
 	void loadPalette(const char *filename, uint8 *palData);
 	void loadMouseShapes();
 	void loadCharacterShapes();
@@ -676,8 +677,8 @@ protected:
 	void gui_restorePalette();
 
 	uint8 _game;
-	bool _fastMode;
 	bool _quitFlag;
+	bool _skipFlag;
 	bool _skipIntroFlag;
 	bool _abortIntroFlag;
 	bool _menuDirectlyToLoad;

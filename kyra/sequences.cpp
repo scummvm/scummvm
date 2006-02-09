@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -43,7 +44,7 @@ void KyraEngine::seq_demo() {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
-	waitTicks(60);
+	delay(60 * _tickLength);
 	_screen->fadeToBlack();
 
 	_screen->clearPage(0);
@@ -55,8 +56,7 @@ void KyraEngine::seq_demo() {
 	_screen->fadeFromBlack();
 	
 	_seq->playSequence(_seq_WestwoodLogo, true);
-	waitTicks(60);
-
+	delay(60 * _tickLength);
 	_seq->playSequence(_seq_KyrandiaLogo, true);
 
 	_screen->fadeToBlack();
@@ -80,13 +80,14 @@ void KyraEngine::seq_demo() {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
-	waitTicks(60);
+	delay(60 * _tickLength);
 	_screen->fadeToBlack();
 	_sound->stopMusic();
 }
 
 void KyraEngine::seq_intro() {
 	debug(9, "KyraEngine::seq_intro()");
+
 	if (_features & GF_TALKIE) {
 		_res->loadPakFile("INTRO.VRM");
 	}
@@ -115,7 +116,7 @@ void KyraEngine::seq_intro() {
 		(this->*introProcTable[i])();
 	}
 	_text->setTalkCoords(136);
-	waitTicks(30);
+	delay(30 * _tickLength);
 	_seq->setCopyViewOffs(false);
 	_sound->stopMusic();
 	if (_features & GF_TALKIE) {
@@ -135,13 +136,13 @@ void KyraEngine::seq_introLogos() {
 	_system->copyRectToScreen(_screen->getPagePtr(0), 320, 0, 0, 320, 200);
 	_screen->fadeFromBlack();
 	
-	if (_seq->playSequence(_seq_WestwoodLogo, _skipIntroFlag)) {
+	if (_seq->playSequence(_seq_WestwoodLogo, _skipFlag)) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
-	waitTicks(60);
-	if (_seq->playSequence(_seq_KyrandiaLogo, _skipIntroFlag)) {
+	delay(60 * _tickLength);
+	if (_seq->playSequence(_seq_KyrandiaLogo, _skipFlag) && !seq_skipSequence()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -152,9 +153,12 @@ void KyraEngine::seq_introLogos() {
 	int h1 = 175;
 	int y2 = 176;
 	int h2 = 0;
+	int32 start, now;
+	int wait;
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 2);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 2);
 	do {
+		start = (int32)_system->getMillis();
 		if (h1 > 0) {
 			_screen->copyRegion(0, y1, 0, 8, 320, h1, 2, 0);
 		}
@@ -166,7 +170,11 @@ void KyraEngine::seq_introLogos() {
 		--y2;
 		++h2;
 		_screen->updateScreen();
-		waitTicks(1);
+		now = (int32)_system->getMillis();
+		wait = _tickLength - (now - start);
+		if (wait > 0) {
+			delay(wait);
+		}
 	} while (y2 >= 64);
 
 	_seq->playSequence(_seq_Forest, true);
@@ -176,22 +184,23 @@ void KyraEngine::seq_introStory() {
 	debug(9, "KyraEngine::seq_introStory()");
 	_screen->clearPage(3);
 	_screen->clearPage(0);
-	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) {
-		loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
+	if (_features & GF_TALKIE) {
+		return;
+	} else if (_features & GF_ENGLISH) {
+		loadBitmap("TEXT.CPS", 3, 3, 0);
 	} else if (_features & GF_GERMAN) {
 		loadBitmap("TEXT_GER.CPS", 3, 3, 0);
 	} else if (_features & GF_FRENCH) {
 		loadBitmap("TEXT_FRE.CPS", 3, 3, 0);
 	} else if (_features & GF_SPANISH) {
 		loadBitmap("TEXT_SPA.CPS", 3, 3, 0);
-	} else if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY)) {
-		loadBitmap("TEXT.CPS", 3, 3, 0);
 	} else {
 		warning("no story graphics file found");
 	}
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
 	_screen->updateScreen();
-	waitTicks(360);
+	debug("skipFlag %i, %i", _skipFlag, _tickLength);
+	delay(360 * _tickLength);
 }
 
 void KyraEngine::seq_introMalcolmTree() {
@@ -852,7 +861,7 @@ int KyraEngine::seq_playEnd() {
 			_screen->_curPage = 0;
 			checkAmuletAnimFlags();
 			seq_brandonToStone();
-			waitTicks(60);
+			delay(60 * _tickLength);
 			return 1;
 		} else {
 			_endSequenceSkipFlag = 1;
@@ -862,7 +871,7 @@ int KyraEngine::seq_playEnd() {
 			_screen->_curPage = 0;
 			_screen->hideMouse();
 			_screen->fadeSpecialPalette(32, 228, 20, 60);
-			waitTicks(60);
+			delay(60 * _tickLength);
 			loadBitmap("GEMHEAL.CPS", 3, 3, _screen->_currentPalette);
 			_screen->setScreenPalette(_screen->_currentPalette);
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, 1, 0);
@@ -954,7 +963,7 @@ void KyraEngine::seq_playCredits() {
 	// delete
 	_screen->updateScreen();
 	// XXX
-	waitTicks(120); // wait until user presses escape normally
+	delay(120 * _tickLength); // wait until user presses escape normally
 	_screen->fadeToBlack();
 	_screen->clearCurPage();
 	_screen->showMouse();

@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -421,7 +422,7 @@ void KyraEngine::snd_playVoiceFile(int id) {
 
 void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
 	debug(9, "KyraEngine::snd_voiceWaitForFinish(%d)", ingame);
-	while (_sound->voiceIsPlaying() && !_fastMode) {
+	while (_sound->voiceIsPlaying() && !_skipFlag) {
 		if (ingame) {
 			delay(10, true);
 		} else {
