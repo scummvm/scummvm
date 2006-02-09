@@ -31,7 +31,7 @@
 #include "sword2/maketext.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
-#include "sword2/driver/animation.h"
+#include "sword2/animation.h"
 
 namespace Sword2 {
 

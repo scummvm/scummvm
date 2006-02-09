@@ -29,7 +29,7 @@
 #include "sword2/build_display.h"
 
 #ifdef BACKEND_8BIT
-#include "sword2/driver/animation.h"
+#include "sword2/animation.h"
 #endif
 
 namespace Sword2 {
