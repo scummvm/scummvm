@@ -29,6 +29,14 @@
 #include "common/system.h"
 
 namespace Kyra {
+
+void KyraEngine::initMainButtonList() {
+	_buttonList = &_buttonData[0];
+	for (int i = 0; _buttonDataListPtr[i]; ++i) {
+		_buttonList = initButton(_buttonList, _buttonDataListPtr[i]);
+	}
+}
+
 Button *KyraEngine::initButton(Button *list, Button *newButton) {
 	if (!newButton)
 		return list;

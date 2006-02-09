@@ -24,6 +24,7 @@
 #include "kyra/resource.h"
 #include "kyra/script.h"
 #include "kyra/wsamovie.h"
+#include "kyra/screen.h"
 
 namespace Kyra {
 Resource::Resource(KyraEngine* engine) {
@@ -279,5 +280,48 @@ uint32 PAKFile::getFileSize(const char* file) {
 	}
 	return 0;
 }
+
+void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
+	debug(9, "KyraEngine::loadPalette('%s' 0x%X)", filename, palData);
+	uint32 fileSize = 0;
+	uint8 *srcData = _res->fileData(filename, &fileSize);
+
+	if (palData && fileSize) {
+		debug(9, "Loading a palette of size %i from '%s'", fileSize, filename);
+		memcpy(palData, srcData, fileSize);
+	}
+	delete [] srcData;
+}
+
+void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
+	debug(9, "KyraEngine::copyBitmap('%s', %d, %d, 0x%X)", filename, tempPage, dstPage, palData);
+	uint32 fileSize;
+	uint8 *srcData = _res->fileData(filename, &fileSize);
+	uint8 compType = srcData[2];
+	uint32 imgSize = READ_LE_UINT32(srcData + 4);
+	uint16 palSize = READ_LE_UINT16(srcData + 8);
+	if (palData && palSize) {
+		debug(9, "Loading a palette of size %i from %s", palSize, filename);
+		memcpy(palData, srcData + 10, palSize);		
+	}
+	uint8 *srcPtr = srcData + 10 + palSize;
+	uint8 *dstData = _screen->getPagePtr(dstPage);
+	switch (compType) {
+	case 0:
+		memcpy(dstData, srcPtr, imgSize);
+		break;
+	case 3:
+		Screen::decodeFrame3(srcPtr, dstData, imgSize);
+		break;
+	case 4:
+		Screen::decodeFrame4(srcPtr, dstData, imgSize);
+		break;
+	default:
+		error("Unhandled bitmap compression %d", compType);
+		break;
+	}
+	delete[] srcData;
+}
+
 } // end of namespace Kyra
 

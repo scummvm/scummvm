@@ -408,7 +408,7 @@ void SeqPlayer::s1_playTrack() {
 		} else if (msg == 1) {
 			_sound->beginFadeOut();
 		} else {
-			_vm->snd_playTrack(msg);
+			_sound->playTrack(msg);
 		}
 //	}
 }
@@ -634,5 +634,6 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	_specialBuffer = 0;
 	return seqSkippedFlag;
 }
+
 
 } // End of namespace Kyra

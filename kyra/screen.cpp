@@ -71,6 +71,11 @@ Screen::Screen(KyraEngine *vm, OSystem *system)
 	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
 	_bitBlitNum = 0;
 	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
+
+	_unkPtr1 = (uint8*)malloc(getRectSize(1, 144));
+	memset(_unkPtr1, 0, getRectSize(1, 144));
+	_unkPtr2 = (uint8*)malloc(getRectSize(1, 144));
+	memset(_unkPtr2, 0, getRectSize(1, 144));
 }
 
 Screen::~Screen() {
@@ -94,6 +99,9 @@ Screen::~Screen() {
 		delete [] _saveLoadPage[i];
 		_saveLoadPage[i] = 0;
 	}
+
+	free(_unkPtr1);
+	free(_unkPtr2);
 }
 
 void Screen::updateScreen() {
@@ -1914,6 +1922,152 @@ void Screen::deletePageFromDisk(int page) {
 	debug(9, "Screen::deletePageFromDisk(%d)", page);
 	delete [] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
+}
+
+void Screen::blockInRegion(int x, int y, int width, int height) {
+	debug(9, "Screen::blockInRegion(%d, %d, %d, %d)", x, y, width, height);
+	assert(_shapePages[0]);
+	byte *toPtr = _shapePages[0] + (y * 320 + x);
+	for (int i = 0; i < height; ++i) {
+		byte *backUpTo = toPtr;
+		for (int i2 = 0; i2 < width; ++i2) {
+			*toPtr++ &= 0x7F;
+		}
+		toPtr = (backUpTo + 320);
+	}
+}
+
+void Screen::blockOutRegion(int x, int y, int width, int height) {
+	debug(9, "Screen::blockOutRegion(%d, %d, %d, %d)", x, y, width, height);
+	assert(_shapePages[0]);
+	byte *toPtr = _shapePages[0] + (y * 320 + x);
+	for (int i = 0; i < height; ++i) {
+		byte *backUpTo = toPtr;
+		for (int i2 = 0; i2 < width; ++i2) {
+			*toPtr++ |= 0x80;
+		}
+		toPtr = (backUpTo + 320);
+	}
+}
+
+void Screen::rectClip(int &x, int &y, int w, int h) {
+	if (x < 0) {
+		x = 0;
+	} else if (x + w >= 320) {
+		x = 320 - w;
+	}
+	if (y < 0) {
+		y = 0;
+	} else if (y + h >= 200) {
+		y = 200 - h;
+	}
+}
+
+void Screen::backUpRect0(int xpos, int ypos) {
+	debug(9, "Screen::backUpRect0(%d, %d)", xpos, ypos);
+	rectClip(xpos, ypos, 3<<3, 24);
+	copyRegionToBuffer(_curPage, xpos, ypos, 3<<3, 24, _vm->shapes()[0]);
+}
+
+void Screen::restoreRect0(int xpos, int ypos) {
+	debug(9, "Screen::restoreRect0(%d, %d)", xpos, ypos);
+	rectClip(xpos, ypos, 3<<3, 24);
+	copyBlockToPage(_curPage, xpos, ypos, 3<<3, 24, _vm->shapes()[0]);
+}
+
+void Screen::backUpRect1(int xpos, int ypos) {
+	debug(9, "Screen::backUpRect1(%d, %d)", xpos, ypos);
+	rectClip(xpos, ypos, 4<<3, 32);
+	copyRegionToBuffer(_curPage, xpos, ypos, 4<<3, 32, _vm->shapes()[1]);
+}
+
+void Screen::restoreRect1(int xpos, int ypos) {
+	debug(9, "Screen::restoreRect1(%d, %d)", xpos, ypos);
+	rectClip(xpos, ypos, 4<<3, 32);
+	copyBlockToPage(_curPage, xpos, ypos, 4<<3, 32, _vm->shapes()[1]);
+}
+
+int Screen::getDrawLayer(int x, int y) {
+	debug(9, "Screen::getDrawLayer(%d, %d)", x, y);
+	int xpos = x - 8;
+	int ypos = y - 1;
+	int layer = 1;
+	for (int curX = xpos; curX < xpos + 16; ++curX) {
+		int tempLayer = getShapeFlag2(curX, ypos);
+		if (layer < tempLayer) {
+			layer = tempLayer;
+		}
+		if (layer >= 7) {
+			return 7;
+		}
+	}
+	return layer;
+}
+
+int Screen::getDrawLayer2(int x, int y, int height) {
+	debug(9, "Screen::getDrawLayer2(%d, %d, %d)", x, y, height);
+	int xpos = x - 8;
+	int ypos = y - 1;
+	int layer = 1;
+	
+	for (int useX = xpos; useX < xpos + 16; ++useX) {
+		for (int useY = ypos - height; useY < ypos; ++useY) {
+			int tempLayer = getShapeFlag2(useX, useY);
+			if (tempLayer > layer) {
+				layer = tempLayer;
+			}
+			
+			if (tempLayer >= 7) {
+				return 7;
+			}
+		}
+	}	
+	return layer;
+}
+
+void Screen::copyBackgroundBlock(int x, int page, int flag) {
+	debug(9, "Screen::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
+	
+	if (x < 1)
+		return;
+	
+	int height = 128;
+	if (flag)
+		height += 8;	
+	if (!(x & 1))
+		++x;
+	if (x == 19)
+		x = 17;
+	uint8 *ptr1 = _unkPtr1;
+	uint8 *ptr2 = _unkPtr2;
+	int oldVideoPage = _curPage;
+	_curPage = page;
+	
+	int curX = x;
+	hideMouse();
+	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
+	for (int i = 0; i < 19; ++i) {
+		int tempX = curX + 1;
+		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr1);
+		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr2);
+		int newXPos = curX + x;
+		if (newXPos > 37) {
+			newXPos = newXPos % 38;
+		}
+		tempX = newXPos + 1;
+		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr2);
+		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr1);
+		curX += x*2;
+		if (curX > 37) {
+			curX = curX % 38;
+		}
+	}
+	showMouse();
+	_curPage = oldVideoPage;
+}
+
+void Screen::copyBackgroundBlock2(int x) {
+	copyBackgroundBlock(x, 4, 1);
 }
 
 } // End of namespace Kyra

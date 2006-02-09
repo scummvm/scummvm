@@ -149,6 +149,19 @@ public:
 	void loadPageFromDisk(const char *file, int page);
 	void deletePageFromDisk(int page);
 
+	void blockInRegion(int x, int y, int width, int height);
+	void blockOutRegion(int x, int y, int width, int height);
+
+	void backUpRect0(int xpos, int ypos);
+	void restoreRect0(int xpos, int ypos);
+	void backUpRect1(int xpos, int ypos);
+	void restoreRect1(int xpos, int ypos);
+	void copyBackgroundBlock(int x, int page, int flag);
+	void copyBackgroundBlock2(int x);
+	void rectClip(int &x, int &y, int w, int h);
+	int getDrawLayer(int x, int y);
+	int getDrawLayer2(int x, int y, int height);
+
 	int _charWidth;
 	int _charOffset;
 	int _curPage;
@@ -181,6 +194,7 @@ private:
 	
 	Rect *_bitBlitRects;
 	int _bitBlitNum;
+	uint8 *_unkPtr1, *_unkPtr2;
 
 	OSystem *_system;
 	KyraEngine *_vm;

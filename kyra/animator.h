@@ -62,6 +62,7 @@ public:
 	AnimObject *items() { return _items; }
 	AnimObject *sprites() { return _sprites; }
 
+	void initAnimStateList();
 	void preserveAllBackgrounds();
 	void flagAllObjectsForBkgdChange();
 	void flagAllObjectsForRefresh();

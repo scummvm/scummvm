@@ -65,6 +65,48 @@ void ScreenAnimator::close() {
 	}
 }
 
+void ScreenAnimator::initAnimStateList() {
+	AnimObject *animStates = _screenObjects;
+	animStates[0].index = 0;
+	animStates[0].active = 1;
+	animStates[0].flags = 0x800;
+	animStates[0].background = _vm->_shapes[2];
+	animStates[0].rectSize = _screen->getRectSize(4, 48);
+	animStates[0].width = 4;
+	animStates[0].height = 48;
+	animStates[0].width2 = 4;
+	animStates[0].height2 = 3;
+	
+	for (int i = 1; i <= 4; ++i) {
+		animStates[i].index = i;
+		animStates[i].active = 0;
+		animStates[i].flags = 0x800;
+		animStates[i].background = _vm->_shapes[3];
+		animStates[i].rectSize = _screen->getRectSize(4, 64);
+		animStates[i].width = 4;
+		animStates[i].height = 48;
+		animStates[i].width2 = 4;
+		animStates[i].height2 = 3;
+	}
+	
+	for (int i = 5; i < 16; ++i) {
+		animStates[i].index = i;
+		animStates[i].active = 0;
+		animStates[i].flags = 0;
+	}
+	
+	for (int i = 16; i < 28; ++i) {
+		animStates[i].index = i;
+		animStates[i].flags = 0;
+		animStates[i].background = _vm->_shapes[349+i];
+		animStates[i].rectSize = _screen->getRectSize(3, 24);
+		animStates[i].width = 3;
+		animStates[i].height = 16;
+		animStates[i].width2 = 0;
+		animStates[i].height2 = 0;
+	}
+}
+
 void ScreenAnimator::preserveAllBackgrounds() {
 	debug(9, "ScreenAnimator::preserveAllBackgrounds()");
 	uint8 curPage = _screen->_curPage;

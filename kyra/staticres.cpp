@@ -453,6 +453,146 @@ void KyraEngine::res_freeLangTable(char ***string, int *size) {
 	*string = 0;
 }
 
+void KyraEngine::loadMouseShapes() {
+	loadBitmap("MOUSE.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+	_shapes[4] = _screen->encodeShape(0, 0, 8, 10, 0);
+	_shapes[5] = _screen->encodeShape(0, 0x17, 0x20, 7, 0);
+	_shapes[6] = _screen->encodeShape(0x50, 0x12, 0x10, 9, 0);
+	_shapes[7] = _screen->encodeShape(0x60, 0x12, 0x10, 11, 0);
+	_shapes[8] = _screen->encodeShape(0x70, 0x12, 0x10, 9, 0);
+	_shapes[9] = _screen->encodeShape(0x80, 0x12, 0x10, 11, 0);
+	_shapes[10] = _screen->encodeShape(0x90, 0x12, 0x10, 10, 0);
+	_shapes[364] = _screen->encodeShape(0x28, 0, 0x10, 13, 0);
+	_screen->setMouseCursor(1, 1, 0);
+	_screen->setMouseCursor(1, 1, _shapes[4]);
+	_screen->setShapePages(5, 3);
+}
+
+void KyraEngine::loadCharacterShapes() {
+	int curImage = 0xFF;
+	int videoPage = _screen->_curPage;
+	_screen->_curPage = 2;
+	for (int i = 0; i < 115; ++i) {	
+		assert(i < _defaultShapeTableSize);
+		Shape *shape = &_defaultShapeTable[i];
+		if (shape->imageIndex == 0xFF) {
+			_shapes[i+7+4] = 0;
+			continue;
+		}
+		if (shape->imageIndex != curImage) {
+			assert(shape->imageIndex < _characterImageTableSize);
+			loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
+			curImage = shape->imageIndex;
+		}
+		_shapes[i+7+4] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
+	}
+	_screen->_curPage = videoPage;
+}
+
+void KyraEngine::loadSpecialEffectShapes() {
+	loadBitmap("EFFECTS.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+ 
+	int currShape; 
+	for (currShape = 173; currShape < 183; currShape++)
+		_shapes[4 + currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
+ 
+	for (currShape = 183; currShape < 190; currShape++)
+		_shapes[4 + currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
+ 
+	for (currShape = 190; currShape < 201; currShape++)
+		_shapes[4 + currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
+ 
+	for (currShape = 201; currShape < 206; currShape++)
+		_shapes[4 + currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
+}
+
+void KyraEngine::loadItems() {
+	int shape;
+
+	loadBitmap("JEWELS3.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+
+	_shapes[327] = 0;
+
+	for (shape = 1; shape < 6; shape++ )
+		_shapes[327 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
+
+	for (shape = 330; shape <= 334; shape++)
+		_shapes[4 + shape] = _screen->encodeShape((shape-330) * 32, 102, 32, 17, 0);
+
+	for (shape = 335; shape <= 339; shape++)
+		_shapes[4 + shape] = _screen->encodeShape((shape-335) * 32, 17,  32, 17, 0);
+
+	for (shape = 340; shape <= 344; shape++)
+		_shapes[4 + shape] = _screen->encodeShape((shape-340) * 32, 34,  32, 17, 0);
+
+	for (shape = 345; shape <= 349; shape++)
+		_shapes[4 + shape] = _screen->encodeShape((shape-345) * 32, 51,  32, 17, 0);
+
+	for (shape = 350; shape <= 354; shape++)
+		_shapes[4 + shape] = _screen->encodeShape((shape-350) * 32, 68,  32, 17, 0);
+
+	for (shape = 355; shape <= 359; shape++)
+		_shapes[4 + shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
+
+
+	loadBitmap("ITEMS.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+
+	for (int i = 0; i < 107; i++) {
+		shape = findDuplicateItemShape(i);
+
+		if (shape != -1)
+			_shapes[220 + i] = _shapes[220 + shape];
+		else
+			_shapes[220 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
+	}
+
+	uint32 size;
+	uint8 *fileData = _res->fileData("_ITEM_HT.DAT", &size);
+	assert(fileData);
+
+	for (int i = 0; i < 107; i++) {
+		_itemTable[i].height = fileData[i];
+		_itemTable[i].unk1 = _itemTable[i].unk2 = 0;
+	}
+
+	delete[] fileData;
+}
+
+void KyraEngine::loadButtonShapes() {
+	loadBitmap("BUTTONS2.CPS", 3, 3, 0);
+	_screen->_curPage = 2;
+	_scrollUpButton.process0PtrShape = _screen->encodeShape(0, 0, 24, 14, 1);
+	_scrollUpButton.process1PtrShape = _screen->encodeShape(24, 0, 24, 14, 1);
+	_scrollUpButton.process2PtrShape = _screen->encodeShape(48, 0, 24, 14, 1);
+	_scrollDownButton.process0PtrShape = _screen->encodeShape(0, 15, 24, 14, 1);
+	_scrollDownButton.process1PtrShape = _screen->encodeShape(24, 15, 24, 14, 1);
+	_scrollDownButton.process2PtrShape = _screen->encodeShape(48, 15, 24, 14, 1);
+	_screen->_curPage = 0;
+}
+
+void KyraEngine::loadMainScreen(int page) {
+	if ((_features & GF_ENGLISH) && (_features & GF_TALKIE)) 
+		loadBitmap("MAIN_ENG.CPS", page, page, 0);
+	else if(_features & GF_FRENCH)
+		loadBitmap("MAIN_FRE.CPS", page, page, 0);
+	else if(_features & GF_GERMAN)
+		loadBitmap("MAIN_GER.CPS", page, page, 0);
+	else if ((_features & GF_ENGLISH) && (_features & GF_FLOPPY))
+		loadBitmap("MAIN15.CPS", page, page, 0);
+	else if (_features & GF_SPANISH)
+		loadBitmap("MAIN_SPA.CPS", page, page, 0);
+	else
+		warning("no main graphics file found");
+	
+	uint8 *_pageSrc = _screen->getPagePtr(page);
+	uint8 *_pageDst = _screen->getPagePtr(0);
+	memcpy(_pageDst, _pageSrc, 320*200);
+}
+
 const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00 },

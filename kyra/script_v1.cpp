@@ -112,13 +112,13 @@ int KyraEngine::cmd_setSpecialExitList(ScriptState *script) {
 
 int KyraEngine::cmd_blockInWalkableRegion(ScriptState *script) {
 	debug(3, "cmd_blockInWalkableRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	_screen->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
 int KyraEngine::cmd_blockOutWalkableRegion(ScriptState *script) {
 	debug(3, "cmd_blockOutWalkableRegion(0x%X) (%d, %d, %d, %d)", script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	_screen->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
 	return 0;
 }
 
@@ -1113,8 +1113,8 @@ int KyraEngine::cmd_getCharactersFacing(ScriptState *script) {
 
 int KyraEngine::cmd_bkgdScrollSceneAndMasksRight(ScriptState *script) {
 	debug(3, "cmd_bkgdScrollSceneAndMasksRight(0x%X) (%d)", script, stackPos(0));
-	copyBackgroundBlock(stackPos(0), 2, 0);
-	copyBackgroundBlock2(stackPos(0));
+	_screen->copyBackgroundBlock(stackPos(0), 2, 0);
+	_screen->copyBackgroundBlock2(stackPos(0));
 	// update the whole screen
 	_screen->copyRegion(7, 7, 7, 7, 305, 129, 3, 0);
 	_screen->updateScreen();

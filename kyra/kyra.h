@@ -245,6 +245,8 @@ public:
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
+
+	uint8 **shapes() { return _shapes; }
 	
 	Common::RandomSource _rnd;
 	int16 _northExitHeight;
@@ -268,9 +270,7 @@ public:
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void snd_playTheme(int file, int track = 0);
-	void snd_playTrack(int track, bool looping = false);
 	void snd_playVoiceFile(int id);
-	bool snd_voicePlaying();
 	void snd_voiceWaitForFinish(bool ingame = true);
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
@@ -489,8 +489,6 @@ protected:
 	void setCharacterPositionHelper(int character, int *facingTable);
 	int getOppositeFacingDirection(int dir);
 	void loadSceneMSC();
-	void blockInRegion(int x, int y, int width, int height);
-	void blockOutRegion(int x, int y, int width, int height);
 	void startSceneScript(int brandonAlive);
 	void setupSceneItems();
 	void initSceneData(int facing, int unk1, int brandonAlive);
@@ -515,13 +513,6 @@ protected:
 	void destroyMouseItem();
 	void setMouseItem(int item);
 	void wipeDownMouseItem(int xpos, int ypos);
-	void rectClip(int &x, int &y, int w, int h);
-	void backUpRect0(int xpos, int ypos);
-	void restoreRect0(int xpos, int ypos);
-	void backUpRect1(int xpos, int ypos);
-	void restoreRect1(int xpos, int ypos);
-	void copyBackgroundBlock(int x, int page, int flag);
-	void copyBackgroundBlock2(int x);
 	void makeBrandonFaceMouse();
 	void setBrandonPoisonFlags(int reset);
 	void resetBrandonPoisonFlags();
@@ -539,8 +530,6 @@ protected:
 	int processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2);
 	void exchangeItemWithMouseItem(uint16 sceneId, int itemIndex);
 	void addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y);
-	int getDrawLayer(int x, int y);
-	int getDrawLayer2(int x, int y, int height);
 	int checkNoDropRects(int x, int y);
 	int isDropable(int x, int y);
 	void itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item);
@@ -590,8 +579,6 @@ protected:
 	void seq_playEnding();
 	void seq_playCredits();
 	
-	void snd_startTrack();
-	void snd_haltTrack();
 	void snd_setSoundEffectFile(int file);
 	
 	static OpcodeProc _opcodeTable[];
@@ -623,8 +610,6 @@ protected:
 	void initMainButtonList();
 	void loadMainScreen(int page = 3);
 	void setCharactersInDefaultScene();
-	void resetBrandonPosionFlags();
-	void initAnimStateList();
 	void setupPanPages();
 	void freePanPages();
 	void closeFinalWsa();
@@ -700,7 +685,6 @@ protected:
 	bool _abortWalkFlag2;
 	bool _mousePressFlag;
 	uint8 _flagsTable[53];
-	uint8 *_unkPtr1, *_unkPtr2;
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
 	uint16 _tickLength;

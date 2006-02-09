@@ -345,4 +345,89 @@ void SoundPC::voicePlay(const char *file) {
 bool SoundPC::voiceIsPlaying() {
 	return _mixer->isSoundHandleActive(_vocHandle);
 }
+
+void KyraEngine::snd_playTheme(int file, int track) {
+	debug(9, "KyraEngine::snd_playTheme(%d)", file);
+	assert(file < _xmidiFilesCount);
+	_curMusicTheme = _newMusicTheme = file;
+	_sound->playMusic(_xmidiFiles[file]);
+	_sound->playTrack(track, false);
+}
+
+void KyraEngine::snd_setSoundEffectFile(int file) {
+	debug(9, "KyraEngine::snd_setSoundEffectFile(%d)", file);
+	assert(file < _xmidiFilesCount);
+	_sound->loadSoundEffectFile(_xmidiFiles[file]);
+}
+
+void KyraEngine::snd_playSoundEffect(int track) {
+	debug(9, "KyraEngine::snd_playSoundEffect(%d)", track);
+	if (track == 49) {
+		snd_playWanderScoreViaMap(56, 1);
+	} else {
+		_sound->playSoundEffect(track);
+	}
+}
+
+void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
+	debug(9, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+	static const int8 soundTable[] = {
+		-1,   0,  -1,   1,   0,   3,   0,   2,
+		 0,   4,   1,   2,   1,   3,   1,   4,
+		 1, 0x5C,   1,   6,   1,   7,   2,   2,
+		 2,   3,   2,   4,   2,   5,   2,   6,
+		 2,   7,   3,   3,   3,   4,   1,   8,
+		 1,   9,   4,   2,   4,   3,   4,   4,
+		 4,   5,   4,   6,   4,   7,   4,   8,
+		 1, 0x0B,   1, 0x0C,   1, 0x0E,   1, 0x0D,
+		 4,   9,   5, 0x0C,   6,   2,   6,   6,
+		 6,   7,   6,   8,   6,   9,   6,   3,
+		 6,   4,   6,   5,   7,   2,   7,   3,
+		 7,   4,   7,   5,   7,   6,   7,   7,
+		 7,   8,   7,   9,   8,   2,   8,   3,
+		 8,   4,   8,   5,   6, 0x0B,   5, 0x0B
+	};
+	//if (!_disableSound) {
+	//	XXX
+	//}
+	assert(command*2+1 < ARRAYSIZE(soundTable));
+	if (_curMusicTheme != soundTable[command*2]+1) {
+		if (soundTable[command*2] != -1) {
+			snd_playTheme(soundTable[command*2]+1);
+		}
+	}
+	
+	if (restart)
+		_lastMusicCommand = -1;
+	
+	if (command != 1) {
+		if (_lastMusicCommand != command) {
+			_lastMusicCommand = command;
+			_sound->playTrack(soundTable[command*2+1], true);
+		}
+	} else {
+		_lastMusicCommand = 1;
+		_sound->beginFadeOut();
+	}
+}
+
+void KyraEngine::snd_playVoiceFile(int id) {
+	debug(9, "KyraEngine::snd_playVoiceFile(%d)", id);
+	char vocFile[9];
+	assert(id >= 0 && id < 9999);
+	sprintf(vocFile, "%03d.VOC", id);
+	_sound->voicePlay(vocFile);
+}
+
+void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
+	debug(9, "KyraEngine::snd_voiceWaitForFinish(%d)", ingame);
+	while (_sound->voiceIsPlaying() && !_fastMode) {
+		if (ingame) {
+			delay(10, true);
+		} else {
+			_system->delayMillis(10);
+		}
+	}
+}
+
 } // end of namespace Kyra
