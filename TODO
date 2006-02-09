@@ -354,9 +354,6 @@ Broken Sword 2
 * Enable the CD swapping code. (Partly done.)
 * Fix the credits so they look more like the original. (Did we ever get the
   source code for that?)
-* Eventually I would like to get rid of the "driver" sub-directory. We already
-  have a cross-platform infrastructure for ScummVM, so this separation is not
-  necessary.
 * Maybe work around script bug which causes the mop to disappear briefly when
   trying to pick it up from the top of the boat at the London docks. (The event
   to hide the mop is sent too early.) See bug #1214168.
