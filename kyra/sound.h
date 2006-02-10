@@ -141,6 +141,14 @@ protected:
 	Audio::Mixer *_mixer;
 	AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
+	Common::File _compressHandle;
+	
+	struct SpeechCodecs {
+		const char *fileext;
+		AudioStream *(*streamFunc)(Common::File*, uint32);
+	};
+	
+	static const SpeechCodecs _supportedCodes[];
 };
 } // end of namespace Kyra
 

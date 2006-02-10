@@ -28,7 +28,7 @@
 #include "kyra/screen.h"
 
 namespace Kyra {
-Resource::Resource(KyraEngine* engine) {
+Resource::Resource(KyraEngine *engine) {
 	_engine = engine;
 
 	// No PAK files in the demo version
@@ -40,13 +40,13 @@ Resource::Resource(KyraEngine* engine) {
 	// ugly a hardcoded list
 	// TODO: use the FS Backend to get all .PAK Files and load them
 	// or any other thing to get all files
-	static const char* kyra1Filelist[] = {
+	static const char *kyra1Filelist[] = {
 		"A_E.PAK", "DAT.PAK", "F_L.PAK", "MAP_5.PAK", "MSC.PAK", "M_S.PAK",
 		"S_Z.PAK", "WSA1.PAK", "WSA2.PAK", "WSA3.PAK", "WSA4.PAK", "WSA5.PAK",
 		"WSA6.PAK", 0
 	};
 
-	static const char* kyra1CDFilelist[] = {
+	static const char *kyra1CDFilelist[] = {
 		"ALTAR.APK", "BELROOM.APK", "BONKBG.APK", "BROKEN.APK", "CASTLE.APK", "CAVE.APK", "CGATE.APK",
 		"DEAD.APK", "DNSTAIR.APK", "DRAGON1.APK", "DRAGON2.APK", "EXTPOT.APK", "FORESTA.APK", "FORESTB.APK",
 		"FOUNTN.APK", "FOYER.APK", "GATECV.APK", "GEM.APK", "GEMCUT.APK", "GENHALL.APK", "GLADE.APK", 
@@ -72,7 +72,7 @@ Resource::Resource(KyraEngine* engine) {
 		"CHAPTER1.VRM", 0
 	};
 
-	const char** usedFilelist = 0;
+	const char **usedFilelist = 0;
 
 	if (_engine->features() & GF_FLOPPY)
 		usedFilelist = kyra1Filelist;
@@ -83,7 +83,7 @@ Resource::Resource(KyraEngine* engine) {
 
 	for (uint32 tmp = 0; usedFilelist[tmp]; ++tmp) {
 		// prefetch file
-		PAKFile* file = new PAKFile(usedFilelist[tmp]);
+		PAKFile *file = new PAKFile(usedFilelist[tmp]);
 		assert(file);
 
 		PakFileEntry newPak;
@@ -110,7 +110,7 @@ Resource::~Resource() {
 bool Resource::loadPakFile(const char *filename) {
 	if (isInPakList(filename))
 		return true;
-	PAKFile* file = new PAKFile(filename);
+	PAKFile *file = new PAKFile(filename);
 	if (!file) {
 		error("couldn't load file: '%s'", filename);
 	}
@@ -142,8 +142,8 @@ bool Resource::isInPakList(const char *filename) {
 	return false;
 }
 
-uint8* Resource::fileData(const char* file, uint32* size) {
-	uint8* buffer = 0;
+uint8 *Resource::fileData(const char *file, uint32 *size) {
+	uint8 *buffer = 0;
 	Common::File file_;
 
 	// test to open it in the main dir
@@ -176,6 +176,28 @@ uint8* Resource::fileData(const char* file, uint32* size) {
 	}
 
 	return buffer;
+}
+
+bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehandle) {
+	filehandle.close();
+
+	if (filehandle.open(file))
+		return true;
+
+	Common::List<PakFileEntry>::iterator start = _pakfiles.begin();
+
+	for (;start != _pakfiles.end(); ++start) {
+		*size = start->_file->getFileSize(file);
+		
+		if (!(*size))
+			continue;
+
+		if (start->_file->getFileHandle(file, filehandle)) {
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 ///////////////////////////////////////////
@@ -256,7 +278,7 @@ PAKFile::~PAKFile() {
 	}
 }
 
-uint8* PAKFile::getFile(const char* file) {
+uint8 *PAKFile::getFile(const char *file) {
 	for (PAKFile_Iterate) {
 		if (!scumm_stricmp((*start)->_name, file)) {
 			Common::File pakfile;
@@ -272,6 +294,22 @@ uint8* PAKFile::getFile(const char* file) {
 		}
 	}
 	return 0;
+}
+
+bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
+	filehandle.close();
+
+	for (PAKFile_Iterate) {
+		if (!scumm_stricmp((*start)->_name, file)) {
+			if (!filehandle.open(_filename)) {
+				debug(3, "couldn't open pakfile '%s'\n", _filename);
+				return 0;
+			}
+			filehandle.seek((*start)->_start);
+			return true;
+		}
+	}
+	return false;
 }
 
 uint32 PAKFile::getFileSize(const char* file) {

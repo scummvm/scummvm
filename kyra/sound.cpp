@@ -29,6 +29,10 @@
 #include "sound/voc.h"
 #include "sound/audiostream.h"
 
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
+
 namespace Kyra {
 
 SoundPC::SoundPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine) : Sound() {
@@ -332,14 +336,38 @@ void SoundPC::beginFadeOut() {
 void SoundPC::voicePlay(const char *file) {
 	uint32 fileSize = 0;
 	byte *fileData = 0;
-	fileData = _engine->resource()->fileData(file, &fileSize);
-	assert(fileData);
-	Common::MemoryReadStream vocStream(fileData, fileSize);
-	_mixer->stopHandle(_vocHandle);
-	_currentVocFile = makeVOCStream(vocStream);
+	bool found = false;
+	char filenamebuffer[25];
+
+	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+		strcpy(filenamebuffer, file);
+		strcat(filenamebuffer, _supportedCodes[i].fileext);
+
+		_engine->resource()->fileHandle(filenamebuffer, &fileSize, _compressHandle);
+		if (!_compressHandle.isOpen())
+			continue;
+		
+		_currentVocFile = _supportedCodes[i].streamFunc(&_compressHandle, fileSize);
+		found = true;
+		break;
+	}
+
+	if (!found) {
+		strcpy(filenamebuffer, file);
+		strcat(filenamebuffer, ".VOC");
+		
+		fileData = _engine->resource()->fileData(filenamebuffer, &fileSize);
+		if (!fileData)
+			return;
+
+		Common::MemoryReadStream vocStream(fileData, fileSize);
+		_mixer->stopHandle(_vocHandle);
+		_currentVocFile = makeVOCStream(vocStream);
+	}
+
 	if (_currentVocFile)
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
-	delete fileData;
+	delete [] fileData;
 	fileSize = 0;
 }
 
@@ -416,7 +444,7 @@ void KyraEngine::snd_playVoiceFile(int id) {
 	debug(9, "KyraEngine::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
 	assert(id >= 0 && id < 9999);
-	sprintf(vocFile, "%03d.VOC", id);
+	sprintf(vocFile, "%03d", id);
 	_sound->voicePlay(vocFile);
 }
 
@@ -430,5 +458,20 @@ void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
 		}
 	}
 }
+
+// static res
+
+const SoundPC::SpeechCodecs SoundPC::_supportedCodes[] = {
+#ifdef USE_MAD
+	{ ".VO3", makeMP3Stream },
+#endif // USE_MAD
+#ifdef USE_VORBIS
+	{ ".VOG", makeVorbisStream },
+#endif // USE_VORBIS
+#ifdef USE_FLAC
+	{ ".VOF", makeFlacStream },
+#endif // USE_FLAC
+	{ 0, 0 }
+};
 
 } // end of namespace Kyra

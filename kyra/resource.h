@@ -43,11 +43,12 @@ class PAKFile {
 
 public:
 
-	PAKFile(const Common::String& file);
+	PAKFile(const Common::String &file);
 	~PAKFile();
 
-	uint8* getFile(const char* file);
-	uint32 getFileSize(const char* file);
+	uint8* getFile(const char *file);
+	bool getFileHandle(const char *file, Common::File &filehandle);
+	uint32 getFileSize(const char *file);
 
 	bool isValid(void) const { return (_filename != 0); }
 	bool isOpen(void) const { return _open; }
@@ -66,14 +67,18 @@ class VMContext;
 class Resource {
 public:
 
-	Resource(KyraEngine* engine);
+	Resource(KyraEngine *engine);
 	~Resource();
 	
 	bool loadPakFile(const char *filename);
 	void unloadPakFile(const char *filename);
 	bool isInPakList(const char *filename);
 
-	uint8* fileData(const char* file, uint32* size);
+	uint8* fileData(const char *file, uint32 *size);
+	// it gives back a file handle (used for the speech player)
+	// it could be that the needed file is embedded in the returned
+	// handle
+	bool fileHandle(const char *file, uint32 *size, Common::File &filehandle);
 
 protected:
 	struct PakFileEntry {
