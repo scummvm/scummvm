@@ -1524,7 +1524,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 							table[0x100+tableIndex] = value;
 							table[value] = tableIndex;
 							++tableIndex;
-							value = tableIndex;
+							value = table[value];
 						}
 					} else {
 						value = table[value];
