@@ -71,28 +71,30 @@ struct KyraGameSettings {
 	}
 };
 
+// We could get rid of md5 detection at least for kyra 1 since we can locate all
+// needed files for detecting the right language and version (Floppy, Talkie)
 static const KyraGameSettings kyra_games[] = {
-	{ "kyra1", "The Legend of Kyrandia (English/Floppy)",	GI_KYRA1, GF_ENGLISH | GF_FLOPPY, // english floppy 1.0 from Malice
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_FLOPPY, // english floppy 1.0 from Malice
 										"3c244298395520bb62b5edfe41688879", "GEMCUT.EMC" },
-	{ "kyra1", "The Legend of Kyrandia (English/Floppy)",	GI_KYRA1, GF_ENGLISH | GF_FLOPPY, 
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_FLOPPY, 
 										"796e44863dd22fa635b042df1bf16673", "GEMCUT.EMC" },
-	{ "kyra1", "The Legend of Kyrandia (French/Floppy)",	GI_KYRA1, GF_FRENCH | GF_FLOPPY,
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_FRENCH | GF_FLOPPY,
 										"abf8eb360e79a6c2a837751fbd4d3d24", "GEMCUT.EMC" },
-	{ "kyra1", "The Legend of Kyrandia (German/Floppy)",	GI_KYRA1, GF_GERMAN | GF_FLOPPY, 
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_GERMAN | GF_FLOPPY, 
 										"6018e1dfeaca7fe83f8d0b00eb0dd049", "GEMCUT.EMC"},
-	{ "kyra1", "The Legend of Kyrandia (German/Floppy)",	GI_KYRA1, GF_GERMAN | GF_FLOPPY, // from Arne.F 
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_GERMAN | GF_FLOPPY, // from Arne.F 
 										"f0b276781f47c130f423ec9679fe9ed9", "GEMCUT.EMC"},
-	{ "kyra1", "The Legend of Kyrandia (Spanish/Floppy)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // from VooD
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_SPANISH | GF_FLOPPY, // from VooD
 										"8909b41596913b3f5deaf3c9f1017b01", "GEMCUT.EMC"},
-	{ "kyra1", "The Legend of Kyrandia (Spanish/Floppy)",	GI_KYRA1, GF_SPANISH | GF_FLOPPY, // floppy 1.8 from clemmy
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_SPANISH | GF_FLOPPY, // floppy 1.8 from clemmy
 										"747861d2a9c643c59fdab570df5b9093", "GEMCUT.EMC"},
-	{ "kyra1", "The Legend of Kyrandia (English/CD)",		GI_KYRA1, GF_ENGLISH | GF_TALKIE, 
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_TALKIE, 
 										"fac399fe62f98671e56a005c5e94e39f", "GEMCUT.PAK" },
-	{ "kyra1", "The Legend of Kyrandia (German/CD)",		GI_KYRA1, GF_GERMAN | GF_TALKIE, 
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_GERMAN | GF_TALKIE, 
 										"230f54e6afc007ab4117159181a1c722", "GEMCUT.PAK" },
-	{ "kyra1", "The Legend of Kyrandia (French/CD)",		GI_KYRA1, GF_FRENCH | GF_TALKIE, 
+	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_FRENCH | GF_TALKIE, 
 										"b037c41768b652a040360ffa3556fd2a", "GEMCUT.PAK" },
-	{ "kyra1", "The Legend of Kyrandia (Demo)",				GI_KYRA1, GF_DEMO | GF_ENGLISH,
+	{ "kyra1", "The Legend of Kyrandia Demo",	GI_KYRA1, GF_DEMO | GF_ENGLISH,
 										"fb722947d94897512b13b50cc84fd648", "DEMO1.WSA" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
@@ -112,6 +114,34 @@ static const KyraGameList kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia", 0 },
 	{ 0, 0, 0 }
 };
+
+struct KyraLanguageTable {
+	const char *file;
+	uint32 language;
+	Common::Language detLanguage;
+};
+
+static const KyraLanguageTable kyra_languages[] = {
+	{ "MAIN15.CPS", GF_ENGLISH, Common::EN_USA },
+	{ "MAIN_ENG.CPS", GF_ENGLISH, Common::EN_USA },
+	{ "MAIN_FRE.CPS", GF_FRENCH, Common::FR_FRA },
+	{ "MAIN_GER.CPS", GF_GERMAN, Common::DE_DEU },
+	{ "MAIN_SPA.CPS", GF_SPANISH, Common::ES_ESP },
+	{ 0, 0, Common::UNK_LANG }
+};
+
+static Common::Language convertKyraLang(uint32 features) {
+	if (features & GF_ENGLISH) {
+		return Common::EN_USA;
+	} else if (features & GF_FRENCH) {
+		return Common::FR_FRA;
+	} else if (features & GF_GERMAN) {
+		return Common::DE_DEU;
+	} else if (features & GF_SPANISH) {
+		return Common::ES_ESP;
+	}
+	return Common::UNK_LANG;
+}
 
 GameList Engine_KYRA_gameList() {
 	GameList games;
@@ -155,7 +185,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		}
 		for (g = kyra_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(g->toGameSettings());
+				detectedGames.push_back(DetectedGame(g->toGameSettings(), convertKyraLang(g->features), Common::kPlatformUnknown));
 			}
 		}
 		if (detectedGames.isEmpty()) {
@@ -253,13 +283,27 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 
 	if (!found) {
 		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
-		_features = GF_LNGUNK;
+		_features = 0;
 		_game = GI_KYRA1;
 		Common::File test;
 		if (test.open("INTRO.VRM")) {
 			_features |= GF_TALKIE;
 		} else {
 			_features |= GF_FLOPPY;
+		}
+		
+		// tries to detect the language
+		const KyraLanguageTable *lang = kyra_languages;
+		for (; lang->file; ++lang) {
+			if (test.open(lang->file)) {
+				_features |= lang->language;
+				found = true;
+				break;
+			}
+		}
+		
+		if (!found) {
+			_features |= GF_LNGUNK;
 		}
 	}
 }
