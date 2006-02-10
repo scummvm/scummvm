@@ -171,7 +171,7 @@ void SeqPlayer::s1_drawShape() {
 
 void SeqPlayer::s1_waitTicks() {
 	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
-	_vm->delay(ticks);
+	_vm->delay(ticks * _vm->tickLength());
 }
 
 void SeqPlayer::s1_copyWaitTicks() {
