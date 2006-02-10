@@ -410,6 +410,13 @@ static GameFileDescription ITEDISK_GameFiles[] = {
 	{"voices.rsc", GAME_SOUNDFILE | GAME_VOICEFILE}
 };
 
+static GameFileDescription ITEDISK2_GameFiles[] = {
+	{"ite.rsc", GAME_RESOURCEFILE},
+	{"scripts.rsc", GAME_SCRIPTFILE},
+	{"voices.rsc", GAME_SOUNDFILE | GAME_VOICEFILE},
+	{"music.rsc", GAME_MUSICFILE}
+};
+
 static GameFontDescription ITEDISK_GameFonts[] = {
 	{2},
 	{0},
@@ -431,6 +438,14 @@ static GameFileDescription ITECD_GameFiles[] = {
 	{"scripts.rsc", GAME_SCRIPTFILE},
 	{"sounds.rsc", GAME_SOUNDFILE},
 	{"voices.rsc", GAME_VOICEFILE}
+};
+
+static GameFileDescription ITECD2_GameFiles[] = {
+	{"ite.rsc", GAME_RESOURCEFILE},
+	{"scripts.rsc", GAME_SCRIPTFILE},
+	{"sounds.rsc", GAME_SOUNDFILE},
+	{"voices.rsc", GAME_VOICEFILE},
+	{"music.rsc", GAME_MUSICFILE}
 };
 
 static GameFontDescription ITECD_GameFonts[] = {
@@ -741,10 +756,21 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_DISK_G,   "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
 	{ GID_ITE_DISK_G,   "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc", false },
 
+	{ GID_ITE_DISK_G2,  "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_DISK_G2,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
+	{ GID_ITE_DISK_G2,  "c46e4392fcd2e89bc91e5567db33b62d", "voices.rsc", false },
+	{ GID_ITE_DISK_G2,  "d6454756517f042f01210458abe8edd4", "music.rsc", false },
+
 	{ GID_ITE_CD_G,     "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
 	{ GID_ITE_CD_G,     "50a0d2d7003c926a3832d503c8534e90", "scripts.rsc", false },
 	{ GID_ITE_CD_G,     "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
 	{ GID_ITE_CD_G,     "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
+
+	{ GID_ITE_CD_G2,    "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
+	{ GID_ITE_CD_G2,    "50a0d2d7003c926a3832d503c8534e90", "scripts.rsc", false },
+	{ GID_ITE_CD_G2,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_CD_G2,    "41bb6b95d792dde5196bdb78740895a6", "voices.rsc", false },
+	{ GID_ITE_CD_G2,    "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
 	{ GID_ITE_CD,       "8f4315a9bb10ec839253108a032c8b54", "ite.rsc", false },
 	{ GID_ITE_CD,       "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
@@ -756,6 +782,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_CD_DE,    "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
 	{ GID_ITE_CD_DE,    "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
 	{ GID_ITE_CD_DE,    "2fbad5d10b9b60a3415dc4aebbb11718", "voices.rsc", false },
+
+	{ GID_ITE_CD_DE2,   "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
+	{ GID_ITE_CD_DE2,   "a891405405edefc69c9d6c420c868b84", "scripts.rsc", false },
+	{ GID_ITE_CD_DE2,   "e2ccb61c325d6d1ead3be0e731fe29fe", "sounds.rsc", false },
+	{ GID_ITE_CD_DE2,   "2fbad5d10b9b60a3415dc4aebbb11718", "voices.rsc", false },
+	{ GID_ITE_CD_DE2,   "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
 	{ GID_ITE_DEMO_G,   "986c79c4d2939dbe555576529fd37932", "ite.rsc", false },
 	{ GID_ITE_DEMO_G,   "d5697dd3240a3ceaddaa986c47e1a2d7", "scripts.rsc", false },
@@ -794,6 +826,11 @@ static GameMD5 gameMD5[] = {
 	{ GID_ITE_DISK_DE,  "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
 	{ GID_ITE_DISK_DE,  "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
 	{ GID_ITE_DISK_DE,  "0c9113e630f97ef0996b8c3114badb08", "voices.rsc", false },
+
+	{ GID_ITE_DISK_DE2, "869fc23c8f38f575979ec67152914fee", "ite.rsc", false },
+	{ GID_ITE_DISK_DE2, "516f7330f8410057b834424ea719d1ef", "scripts.rsc", false },
+	{ GID_ITE_DISK_DE2, "0c9113e630f97ef0996b8c3114badb08", "voices.rsc", false },
+	{ GID_ITE_DISK_DE2, "d6454756517f042f01210458abe8edd4", "music.rsc", false },
 
 	{ GID_ITE_WINDEMO2, "3a450852cbf3c80773984d565647e6ac", "ited.rsc", false },
 	{ GID_ITE_WINDEMO2, "3f12b67fa93e56e1a6be39d2921d80bb", "scriptsd.rsc", false },
@@ -1177,6 +1214,29 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
+	// Inherit the earth - DOS CD version with digital music
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_CD_G2,
+		"Inherit the Earth: Quest for the Orb (DOS CD Version)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD2_GameFiles),
+		ITECD2_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+		GF_CD_FX,
+		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
 	// Inherit the earth - DOS CD German version
 	{
 		"ite",
@@ -1193,6 +1253,29 @@ static GameDescription gameDescriptions[] = {
 		&ITECD_GameSound,
 		&ITECD_GameSound,
 		NULL,
+		0,
+		NULL,
+		GF_CD_FX,
+		Common::DE_DEU,
+		Common::kPlatformPC,
+	},
+
+	// Inherit the earth - DOS CD German version with digital music
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_CD_DE2,
+		"Inherit the Earth: Quest for the Orb (De DOS CD Version)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITECD2_GameFiles),
+		ITECD2_GameFiles,
+		ARRAYSIZE(ITECD_GameFonts),
+		ITECD_GameFonts,
+		&ITECD_GameSound,
+		&ITECD_GameSound,
+		&ITEMACCD_GameMusic,
 		0,
 		NULL,
 		GF_CD_FX,
@@ -1246,6 +1329,29 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 	},
 
+	// Inherit the earth - German Floppy version with digital music
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_DISK_DE2,
+		"Inherit the Earth: Quest for the Orb (De DOS Floppy)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK2_GameFiles),
+		ITEDISK2_GameFiles,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		&ITEMACCD_GameMusic,
+		0,
+		NULL,
+		0,
+		Common::DE_DEU,
+		Common::kPlatformPC,
+	},
+
 	// Inherit the earth - Disk version
 	{
 		"ite",
@@ -1262,6 +1368,29 @@ static GameDescription gameDescriptions[] = {
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
 		NULL,
+		0,
+		NULL,
+		0,
+		Common::EN_USA,
+		Common::kPlatformPC,
+	},
+
+	// Inherit the earth - Disk version with digital music
+	{
+		"ite",
+		GType_ITE,
+		GID_ITE_DISK_G2,
+		"Inherit the Earth: Quest for the Orb (DOS Floppy)",
+		&ITE_DisplayInfo,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEDISK2_GameFiles),
+		ITEDISK2_GameFiles,
+		ARRAYSIZE(ITEDISK_GameFonts),
+		ITEDISK_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		&ITEMACCD_GameMusic,
 		0,
 		NULL,
 		0,

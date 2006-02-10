@@ -256,7 +256,9 @@ enum GameIds {
 	// Dreamers Guild
 	GID_ITE_DEMO_G = 0,
 	GID_ITE_DISK_G,
+	GID_ITE_DISK_G2,
 	GID_ITE_CD_G,
+	GID_ITE_CD_G2,
 	GID_ITE_MACCD_G,
 
 	// Wyrmkeep
@@ -273,10 +275,12 @@ enum GameIds {
 
 	// German
 	GID_ITE_DISK_DE,
+	GID_ITE_DISK_DE2,
 	GID_ITE_AMIGACD_DE, // TODO
 	GID_ITE_OLDMAC_DE,  // TODO
 	GID_ITE_AMIGA_FL_DE,// TODO
 	GID_ITE_CD_DE,      // reported by mld. Bestsellergamers cover disk
+	GID_ITE_CD_DE2,
 	GID_ITE_AMIGA_AGA_DEMO, // TODO
 	GID_ITE_AMIGA_ECS_DEMO, // TODO
 
