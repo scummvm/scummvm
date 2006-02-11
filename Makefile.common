@@ -36,7 +36,7 @@ MODULES := tools base $(MODULES)
 ifdef DISABLE_SCUMM
 DEFINES += -DDISABLE_SCUMM
 else
-MODULES += scumm
+MODULES += engines/scumm
 
 ifdef DISABLE_SCUMM_7_8
 DEFINES += -DDISABLE_SCUMM_7_8
@@ -51,55 +51,55 @@ endif
 ifdef DISABLE_SIMON
 DEFINES += -DDISABLE_SIMON
 else
-MODULES += simon
+MODULES += engines/simon
 endif
 
 ifdef DISABLE_SKY
 DEFINES += -DDISABLE_SKY
 else
-MODULES += sky
+MODULES += engines/sky
 endif
 
 ifdef DISABLE_SWORD1
 DEFINES += -DDISABLE_SWORD1
 else
-MODULES += sword1
+MODULES += engines/sword1
 endif
 
 ifdef DISABLE_SWORD2
 DEFINES += -DDISABLE_SWORD2
 else
-MODULES += sword2
+MODULES += engines/sword2
 endif
 
 ifdef DISABLE_QUEEN
 DEFINES += -DDISABLE_QUEEN
 else
-MODULES += queen
+MODULES += engines/queen
 endif
 
 ifdef DISABLE_SAGA
 DEFINES += -DDISABLE_SAGA
 else 
-MODULES += saga
+MODULES += engines/saga
 endif
 
 ifdef DISABLE_KYRA
 DEFINES += -DDISABLE_KYRA
 else 
-MODULES += kyra
+MODULES += engines/kyra
 endif
 
 ifdef DISABLE_GOB
 DEFINES += -DDISABLE_GOB
 else 
-MODULES += gob
+MODULES += engines/gob
 endif
 
 ifdef DISABLE_LURE
 DEFINES += -DDISABLE_LURE
 else
-MODULES += lure
+MODULES += engines/lure
 endif
 
 # After the game specific modules follow the shared modules
