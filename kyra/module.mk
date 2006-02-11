@@ -14,7 +14,7 @@ MODULE_OBJS := \
 	kyra/debugger.o \
 	kyra/animator.o \
 	kyra/gui.o \
-	kyra/sequences.o \
+	kyra/sequences_v1.o \
 	kyra/items.o \
 	kyra/scene.o \
 	kyra/text.o \
