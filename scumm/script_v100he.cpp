@@ -190,7 +190,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_delaySeconds),
 		OPCODE(o100_startSound),
 		/* 78 */
-		OPCODE(o6_invalid),
+		OPCODE(o80_sourceDebug),
 		OPCODE(o100_setSpriteInfo),
 		OPCODE(o6_stampObject),
 		OPCODE(o72_startObject),

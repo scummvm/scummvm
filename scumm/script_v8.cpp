@@ -377,19 +377,11 @@ const char *ScummEngine_v8::getOpcodeDesc(byte i) {
 
 // In V8, the word size is 4 byte, not 2 bytes as in V6/V7 games
 uint ScummEngine_v8::fetchScriptWord() {
-	int a;
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
-		getScriptBaseAddress();
-		_scriptPointer = _scriptOrgPointer + oldoffs;
-	}
-	a = READ_LE_UINT32(_scriptPointer);
-	_scriptPointer += 4;
-	return a;
+	return fetchScriptDWord();
 }
 
 int ScummEngine_v8::fetchScriptWordSigned() {
-	return (int32)fetchScriptWord();
+	return (int32)fetchScriptDWordSigned();
 }
 
 int ScummEngine_v8::readVar(uint var) {

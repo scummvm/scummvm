@@ -136,7 +136,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
-		OPCODE(o6_invalid),
+		OPCODE(o80_sourceDebug),
 		OPCODE(o80_readConfigFile),
 		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_wordVarInc),

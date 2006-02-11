@@ -766,15 +766,7 @@ int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
 }
 
 void ScummEngine_v72he::o72_pushDWord() {
-	int a;
-	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
-		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
-		getScriptBaseAddress();
-		_scriptPointer = _scriptOrgPointer + oldoffs;
-	}
-	a = READ_LE_UINT32(_scriptPointer);
-	_scriptPointer += 4;
-	push(a);
+	push(fetchScriptDWordSigned());
 }
 
 void ScummEngine_v72he::o72_getScriptString() {

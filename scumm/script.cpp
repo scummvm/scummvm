@@ -495,6 +495,22 @@ int ScummEngine::fetchScriptWordSigned() {
 	return (int16)fetchScriptWord();
 }
 
+uint ScummEngine::fetchScriptDWord() {
+	int a;
+	if (*_lastCodePtr + sizeof(MemBlkHeader) != _scriptOrgPointer) {
+		uint32 oldoffs = _scriptPointer - _scriptOrgPointer;
+		getScriptBaseAddress();
+		_scriptPointer = _scriptOrgPointer + oldoffs;
+	}
+	a = READ_LE_UINT32(_scriptPointer);
+	_scriptPointer += 4;
+	return a;
+}
+
+int ScummEngine::fetchScriptDWordSigned() {
+	return (int32)fetchScriptDWord();
+}
+
 int ScummEngine::readVar(uint var) {
 	int a;
 

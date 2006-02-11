@@ -370,6 +370,7 @@ protected:
 	void o80_stringToInt();
 	void o80_getSoundVar();
 	void o80_localizeArrayToRoom();
+	void o80_sourceDebug();
 	void o80_readConfigFile();
 	void o80_writeConfigFile();
 	void o80_cursorCommand();

@@ -565,6 +565,7 @@ Putt-Putt and Pep's Balloon-O-Rama
 	CD	All	en	8e3241ddd6c8dadf64305e8740d45e13	balloon	Kirben
 	CD	Windows	en	d7b247c26bf1f01f8f7daf142be84de3	balloon	iziku
 	CD	Windows	ru	145bd3373574feb668cc2eea2ec6cf86	balloon	sev
+	CD	Windows	es	2232b0b9411575b1f9961713ebc9de61	balloon	exiltd
 
 Putt-Putt and Pep's Dog on a Stick
 	CD	All	en	eae95b2b3546d8ba86ae1d397c383253	dog	Kirben

@@ -138,7 +138,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o80_localizeArrayToRoom),
 		OPCODE(o6_wordArrayIndexedWrite),
 		/* 4C */
-		OPCODE(o6_invalid),
+		OPCODE(o80_sourceDebug),
 		OPCODE(o80_readConfigFile),
 		OPCODE(o80_writeConfigFile),
 		OPCODE(o6_wordVarInc),
@@ -437,6 +437,11 @@ void ScummEngine_v80he::o80_getSoundVar() {
 void ScummEngine_v80he::o80_localizeArrayToRoom() {
 	int slot = pop();
 	localizeArray(slot, 0xFF);
+}
+
+void ScummEngine_v80he::o80_sourceDebug() {
+	fetchScriptDWord();
+	fetchScriptDWord();
 }
 
 void ScummEngine_v80he::o80_readConfigFile() {

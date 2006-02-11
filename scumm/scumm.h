@@ -677,6 +677,8 @@ protected:
 	byte fetchScriptByte();
 	virtual uint fetchScriptWord();
 	virtual int fetchScriptWordSigned();
+	uint fetchScriptDWord();
+	int fetchScriptDWordSigned();
 	void ignoreScriptWord() { fetchScriptWord(); }
 	void ignoreScriptByte() { fetchScriptByte(); }
 	virtual void getResultPos();
