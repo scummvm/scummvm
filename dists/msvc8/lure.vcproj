@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="sword2"
-	ProjectGUID="{6CC3E421-779D-4E80-8100-520886A0F9FF}"
+	Name="lure"
+	ProjectGUID="{1A1CA028-61B5-4A6C-A918-F5D8721AB1AC}"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="sword2_Debug"
-			IntermediateDirectory="sword2_Debug"
+			OutputDirectory="lure_Debug"
+			IntermediateDirectory="lure_Debug"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -41,7 +41,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword2.lib"
+				OutputFile="$(OutDir)/lure.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -86,8 +86,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="sword2_Release"
-			IntermediateDirectory="sword2_Release"
+			OutputDirectory="lure_Release"
+			IntermediateDirectory="lure_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -113,7 +113,7 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword2.lib"
+				OutputFile="$(OutDir)/lure.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -159,219 +159,175 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\sword2\_mouse.cpp"
+			RelativePath="..\..\lure\animseq.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\animation.cpp"
+			RelativePath="..\..\lure\animseq.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\animation.h"
+			RelativePath="..\..\lure\debug-input.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\anims.cpp"
+			RelativePath="..\..\lure\debug-input.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\build_display.cpp"
+			RelativePath="..\..\lure\debug-methods.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\build_display.h"
+			RelativePath="..\..\lure\debug-methods.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\console.cpp"
+			RelativePath="..\..\lure\decode.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\console.h"
+			RelativePath="..\..\lure\decode.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\controls.cpp"
+			RelativePath="..\..\lure\disk.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\controls.h"
+			RelativePath="..\..\lure\disk.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\d_draw.cpp"
+			RelativePath="..\..\lure\events.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\debug.cpp"
+			RelativePath="..\..\lure\events.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\debug.h"
+			RelativePath="..\..\lure\game.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\defs.h"
+			RelativePath="..\..\lure\game.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\events.cpp"
+			RelativePath="..\..\lure\hotspots.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\function.cpp"
+			RelativePath="..\..\lure\hotspots.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\header.h"
+			RelativePath="..\..\lure\intro.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\icons.cpp"
+			RelativePath="..\..\lure\intro.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\icons.h"
+			RelativePath="..\..\lure\lure.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\interpreter.cpp"
+			RelativePath="..\..\lure\lure.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\interpreter.h"
+			RelativePath="..\..\lure\luredefs.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\layers.cpp"
+			RelativePath="..\..\lure\memory.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\layers.h"
+			RelativePath="..\..\lure\memory.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\logic.cpp"
+			RelativePath="..\..\lure\menu.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\logic.h"
+			RelativePath="..\..\lure\menu.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\maketext.cpp"
+			RelativePath="..\..\lure\palette.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\maketext.h"
+			RelativePath="..\..\lure\palette.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\memory.cpp"
+			RelativePath="..\..\lure\res.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\memory.h"
+			RelativePath="..\..\lure\res.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\menu.cpp"
+			RelativePath="..\..\lure\res_struct.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\mouse.cpp"
+			RelativePath="..\..\lure\res_struct.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\mouse.h"
+			RelativePath="..\..\lure\room.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\music.cpp"
+			RelativePath="..\..\lure\room.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\object.h"
+			RelativePath="..\..\lure\screen.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\palette.cpp"
+			RelativePath="..\..\lure\screen.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\protocol.cpp"
+			RelativePath="..\..\lure\scripts.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\rdwin.cpp"
+			RelativePath="..\..\lure\scripts.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\render.cpp"
+			RelativePath="..\..\lure\strings.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\resman.cpp"
+			RelativePath="..\..\lure\strings.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\resman.h"
+			RelativePath="..\..\lure\surface.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\router.cpp"
+			RelativePath="..\..\lure\surface.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\router.h"
+			RelativePath="..\..\lure\system.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\save_rest.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\save_rest.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\scroll.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\speech.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\sprite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\startup.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\sword2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\sword2.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\sync.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\sword2\walker.cpp"
+			RelativePath="..\..\lure\system.h"
 			>
 		</File>
 	</Files>

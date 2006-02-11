@@ -179,6 +179,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\kyra\items.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\kyra\kyra.cpp"
 			>
 		</File>
@@ -196,6 +200,10 @@
 		</File>
 		<File
 			RelativePath="..\..\kyra\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\scene.cpp"
 			>
 		</File>
 		<File
@@ -224,6 +232,10 @@
 		</File>
 		<File
 			RelativePath="..\..\kyra\seqplayer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\kyra\sequences_v1.cpp"
 			>
 		</File>
 		<File
