@@ -854,7 +854,7 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 		_vm->_draw->_applyPal = 1;
 
 	if (cmd == 49) {
-		int dl;
+		int dl = 0;
 		for (i = 2; i < 18; i++) {
 			dl = 1;
 			if(_vm->_global->_inter_execPtr[i] != 0)
