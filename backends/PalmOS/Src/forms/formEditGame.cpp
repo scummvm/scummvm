@@ -1,4 +1,31 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include <PalmOS.h>
+#include <VFSMgr.h>
+#include <FileBrowserLibCommon.h>
+#include <FileBrowserLib68K.h>
 
 #include "formTabs.h"
 #include "forms.h"
@@ -81,19 +108,19 @@ static Err GameTabSave(GameInfoType *gameInfoP) {
 	// test case
 	if (!gameInfoP) {
 		if (FldGetTextLength(fld1P) == 0) {
-			FrmCustomAlert(FrmWarnAlert,"You must specified an entry name.",0,0);
+			FrmCustomAlert(FrmWarnAlert,"You must specify an entry name.",0,0);
 			TabSetActive(frmP, myTabP, 0);
 			FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabGameInfoEntryNameField));
 			return errBadParam;
 
 		} else if (FldGetTextLength(fld2P) == 0) {
-			FrmCustomAlert(FrmWarnAlert,"You must specified a path.",0,0);
+			FrmCustomAlert(FrmWarnAlert,"You must specify a path.",0,0);
 			TabSetActive(frmP, myTabP, 0);
 			FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabGameInfoPathField));
 			return errBadParam;
 
 		} else if (FldGetTextLength(fld3P) == 0) {
-			FrmCustomAlert(FrmWarnAlert,"You must specified a game.",0,0);
+			FrmCustomAlert(FrmWarnAlert,"You must specify a game.",0,0);
 			TabSetActive(frmP, myTabP, 0);
 			FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabGameInfoGameField));
 			return errBadParam;
@@ -150,7 +177,7 @@ static Err DisplaySave(GameInfoType *gameInfoP) {
 	cck6P = (ControlType *)GetObjectPtr(TabGameDisplayFilterCheckbox);
 	cck7P = (ControlType *)GetObjectPtr(TabGameDisplayFullscreenCheckbox);
 	cck8P = (ControlType *)GetObjectPtr(TabGameDisplayAspectRatioCheckbox);
-	
+
 	if (!gameInfoP) {
 	} else {
 		gameInfoP->gfxMode = LstGetSelection(list1P);
@@ -249,13 +276,13 @@ static Err OptionsSave(GameInfoType *gameInfoP) {
 
 	if (!gameInfoP) {
 		if (FldGetTextLength(fld5P) == 0 && CtlGetValue(cck2P) == 1) {
-			FrmCustomAlert(FrmWarnAlert,"You must specified a room number.",0,0);
+			FrmCustomAlert(FrmWarnAlert,"You must specify a room number.",0,0);
 			TabSetActive(frmP, myTabP, 2);
 			FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabGameOptionsStartRoomField));
 			return errBadParam;
 
 		} else if (FldGetTextLength(fld6P) == 0 && CtlGetValue(cck5P) == 1) {
-			FrmCustomAlert(FrmWarnAlert,"You must specified a talk speed.",0,0);
+			FrmCustomAlert(FrmWarnAlert,"You must specify a talk speed.",0,0);
 			TabSetActive(frmP, myTabP, 2);
 			FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabGameOptionsTalkSpeedField));
 			return errBadParam;
@@ -287,6 +314,10 @@ static void GameManInit(UInt16 index) {
 	TabAddContent(&frmP, tabP, "Game", TabGameInfoForm);
 	TabAddContent(&frmP, tabP, "Display", TabGameDisplayForm);
 	TabAddContent(&frmP, tabP, "Options", TabGameOptionsForm);
+
+	UInt16 refNum;
+	if (SysLibFind(kFileBrowserLibName, &refNum))
+		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabGameInfoBrowsePushButton));
 
 	if (index != dmMaxRecordIndex) {
 		MemHandle recordH = NULL;
@@ -413,13 +444,68 @@ void EditGameFormDelete(Boolean direct) {
 	}
 }
 
-void EditGameCancel() {
+static void EditGameCancel() {
 	if (itemsText) {
 		MemPtrFree(itemsText);
 		itemsText = NULL;
 	}
 	TabDeleteTabs(myTabP);
 	FrmReturnToMain();
+}
+
+static void EditGameBowser() {
+	UInt16 refNum;
+	Err e;
+
+	ControlPtr butP = (ControlType *)GetObjectPtr(TabGameInfoBrowsePushButton);
+	CtlSetValue(butP, 0);
+
+	e = SysLibFind (kFileBrowserLibName, &refNum);
+	if (!e) {
+		e = FileBrowserLibOpen (refNum);
+		if (!e) {
+			UInt16 volRefNum = gPrefs->card.volRefNum;
+			Char *textP, *pathP = (Char *)MemPtrNew(kFileBrowserLibPathBufferSize);
+			pathP[0] = chrNull;
+			
+			if (FileBrowserLibShowOpenDialog(refNum, &volRefNum, pathP, 0, 0, 0, "Game Data Path", kFileBrowserLibFlagNoFiles)) {
+				FieldPtr fldP;
+				MemHandle textH;
+				Int16 offset, copySize, maxSize;
+				
+				fldP = (FieldType *)GetObjectPtr(TabGameInfoPathField);
+				maxSize = FldGetMaxChars(fldP);				
+				textH = FldGetTextHandle(fldP);
+
+				FldSetTextHandle(fldP, NULL);
+				textP = (Char *)MemHandleLock(textH);
+				offset = 0;
+				copySize = StrLen(pathP);
+
+				if (StrNCaselessCompare(pathP, "/Palm/Programs/ScummVM/Games/", 29) == 0) {
+					if (StrLen(pathP) == 29) {
+						copySize = 1;
+						pathP[0] = '.';
+					} else {
+						copySize -= 29;
+						offset = 29;
+					}
+				}
+
+				if (copySize > maxSize)
+					copySize = maxSize;
+				StrNCopy(textP, pathP + offset, copySize);
+
+				MemHandleUnlock(textH);
+				FldSetTextHandle(fldP, textH);
+				FldDrawField(fldP);
+				FldGrabFocus(fldP);
+			}
+
+			MemPtrFree(pathP);
+			FileBrowserLibClose(refNum);
+		}
+	}
 }
 
 Boolean EditGameFormHandleEvent(EventPtr eventP) {
@@ -483,6 +569,10 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 				
 				case GameEditDeleteButton:
 					EditGameFormDelete(false);
+					break;
+					
+				case TabGameInfoBrowsePushButton:
+					EditGameBowser();
 					break;
 
 				case TabGameInfoEnginePopTrigger:
