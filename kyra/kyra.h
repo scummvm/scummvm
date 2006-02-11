@@ -248,12 +248,13 @@ public:
 	uint32 features() const { return _features; }
 
 	uint8 **shapes() { return _shapes; }
-	
+	Character *currentCharacter() { return _currentCharacter; }
+	Character *characterList() { return _characterList; }
+	uint16 brandonStatus() { return _brandonStatusBit; }
+
+	int _paletteChanged;
 	Common::RandomSource _rnd;
 	int16 _northExitHeight;
-
-	Character *_currentCharacter;
-	int _paletteChanged;
 
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
@@ -291,9 +292,6 @@ public:
 
 	void waitTicks(int ticks);
 	void delayWithTicks(int ticks);
-	void animRefreshNPC(int character);
-	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
-	int16 fetchAnimHeight(const uint8 *shape, int16 mult);
 	
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
@@ -475,9 +473,7 @@ protected:
 	void waitForChatToFinish(int16 chatDuration, char *str, uint8 charNum);
 	void characterSays(char *chatStr, int8 charNum, int8 chatDuration);
 
-	void setCharacterDefaultFrame(int character);
 	void setCharactersPositions(int character);
-	void setCharactersHeight();
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag);
 	int resetGameFlag(int flag);
@@ -515,7 +511,6 @@ protected:
 	void destroyMouseItem();
 	void setMouseItem(int item);
 	void wipeDownMouseItem(int xpos, int ypos);
-	void makeBrandonFaceMouse();
 	void setBrandonPoisonFlags(int reset);
 	void resetBrandonPoisonFlags();
 
@@ -551,8 +546,6 @@ protected:
 	void drawJewelsFadeOutEnd(int jewel);
 	void setupShapes123(const Shape *shapeTable, int endShape, int flags);
 	void freeShapes123();
-	void setBrandonAnimSeqSize(int width, int height);
-	void resetBrandonAnimSeqSize();
 
 	void seq_demo();
 	void seq_intro();
@@ -580,6 +573,7 @@ protected:
 	void seq_brandonToStone();
 	void seq_playEnding();
 	void seq_playCredits();
+	void updateKyragemFading();
 	
 	void snd_setSoundEffectFile(int file);
 	
@@ -698,10 +692,7 @@ protected:
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
 	int _beadStateVar;
 	int _unkAmuletVar;
-	
-	int _brandonAnimSeqSizeWidth;
-	int _brandonAnimSeqSizeHeight;
-	
+		
 	int _malcolmFlag;
 	int _endSequenceSkipFlag;
 	int _endSequenceNeedLoading;
@@ -744,9 +735,6 @@ protected:
 	uint8 _poisonDeathCounter;
 	int _brandonPosX;
 	int _brandonPosY;
-	int _brandonScaleX;
-	int _brandonScaleY;
-	uint16 _brandonDrawFrame;
 
 	uint16 _currentChatPartnerBackupFrame;
 	uint16 _currentCharAnimFrame;
@@ -808,6 +796,7 @@ protected:
 	ScriptData *_scriptClickData;
 	
 	Character *_characterList;
+	Character *_currentCharacter;
 	
 	Button *_buttonList;
 	Button *_menuButtonList;
@@ -820,6 +809,14 @@ protected:
 	char _savegameName[31];
 	const char *_specialSavegameString;
 	KeyboardEvent _keyboardEvent;
+
+	struct KyragemState {
+		uint16 nextOperation;
+		uint16 rOffset;
+		uint16 gOffset;
+		uint16 bOffset;
+		uint32 timerCount;
+	} _kyragemFadingState;
 
 	uint8 *_seq_Forest;
 	uint8 *_seq_KallakWriting;

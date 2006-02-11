@@ -22,6 +22,8 @@
 
 #include "kyra/kyra.h"
 #include "kyra/screen.h"
+#include "kyra/animator.h"
+
 #include "common/system.h"
 
 namespace Kyra {
@@ -151,8 +153,8 @@ void KyraEngine::timerUpdateHeadAnims(int timerNum) {
 	if (frameTable[currentFrame] == -1)
 		currentFrame = 0;
 
-	animRefreshNPC(0);
-	animRefreshNPC(_talkingCharNum);
+	_animator->animRefreshNPC(0);
+	_animator->animRefreshNPC(_talkingCharNum);
 }
 
 void KyraEngine::timerSetFlags1(int timerNum) {

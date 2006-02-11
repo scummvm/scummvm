@@ -128,7 +128,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	in->read(_brandonPoisonFlagsGFX, 256);
 	_brandonInvFlag = in->readSint16BE();
 	_poisonDeathCounter = in->readByte();
-	_brandonDrawFrame = in->readUint16BE();
+	_animator->_brandonDrawFrame = in->readUint16BE();
 
 	for (int i = 0; i < 32; i++) {
 		_timers[i].active = in->readByte();
@@ -193,14 +193,14 @@ void KyraEngine::loadGame(const char *fileName) {
 	}
 	
 	createMouseItem(_itemInHand);
-	setBrandonAnimSeqSize(5, 48);
+	_animator->setBrandonAnimSeqSize(5, 48);
 	_animator->_noDrawShapesFlag = 1;
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	_animator->_noDrawShapesFlag = 0;
 	
 	_currentCharacter->x1 = brandonX;
 	_currentCharacter->y1 = brandonY;
-	animRefreshNPC(0);
+	_animator->animRefreshNPC(0);
 	_animator->restoreAllObjectBackgrounds();
 	_animator->preserveAnyChangedBackgrounds();
 	_animator->prepDrawAllObjects();
@@ -276,7 +276,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->write(_brandonPoisonFlagsGFX, 256);
 	out->writeSint16BE(_brandonInvFlag);
 	out->writeByte(_poisonDeathCounter);
-	out->writeUint16BE(_brandonDrawFrame);
+	out->writeUint16BE(_animator->_brandonDrawFrame);
 
 	for (int i = 0; i < 32; i++) {
 		out->writeByte(_timers[i].active);

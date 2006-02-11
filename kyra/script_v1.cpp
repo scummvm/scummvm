@@ -555,11 +555,11 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 	if (changeScaleMode) {
 		curAnim->x1 = _currentCharacter->x1;
 		curAnim->y1 = _currentCharacter->y1;
-		_brandonScaleY = _scaleTable[_currentCharacter->y1];
-		_brandonScaleX = _brandonScaleY;
+		_animator->_brandonScaleY = _scaleTable[_currentCharacter->y1];
+		_animator->_brandonScaleX = _animator->_brandonScaleY;
 		
-		int animWidth = fetchAnimWidth(curAnim->sceneAnimPtr, _brandonScaleX) >> 1;
-		int animHeight = fetchAnimHeight(curAnim->sceneAnimPtr, _brandonScaleY);
+		int animWidth = _animator->fetchAnimWidth(curAnim->sceneAnimPtr, _animator->_brandonScaleX) >> 1;
+		int animHeight = _animator->fetchAnimHeight(curAnim->sceneAnimPtr, _animator->_brandonScaleY);
 		
 		animWidth = (xOffset * animWidth) /  width;
 		animHeight = (yOffset * animHeight) / height;
@@ -576,7 +576,7 @@ int KyraEngine::cmd_popBrandonIntoScene(ScriptState *script) {
 		_scaleMode = 1;
 	}
 	
-	animRefreshNPC(0);
+	_animator->animRefreshNPC(0);
 	_animator->preserveAllBackgrounds();
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
@@ -662,7 +662,7 @@ int KyraEngine::cmd_changeCharactersFacing(ScriptState *script) {
 		_characterList[character].currentAnimFrame = newAnimFrame;
 	}
 	_characterList[character].facing = facing;
-	animRefreshNPC(character);
+	_animator->animRefreshNPC(character);
 	_animator->preserveAllBackgrounds();
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
@@ -795,7 +795,7 @@ int KyraEngine::cmd_drawCharacterStanding(ScriptState *script) {
 	if (newFacing != -1) {
 		_characterList[character].facing = newFacing;
 	}
-	animRefreshNPC(character);
+	_animator->animRefreshNPC(character);
 	if (updateShapes) {
 		_animator->updateAllObjectShapes();
 	}
@@ -1543,7 +1543,7 @@ int KyraEngine::cmd_shrinkBrandonDown(ScriptState *script) {
 	int scaleEnd = scale >> 1;
 	for (; scaleEnd <= scale; --scale) {
 		_scaleTable[_currentCharacter->y1] = scale;
-		animRefreshNPC(0);
+		_animator->animRefreshNPC(0);
 		delayWithTicks(1);
 	}
 	delayWithTicks(delayTime); // XXX
@@ -1565,7 +1565,7 @@ int KyraEngine::cmd_growBrandonUp(ScriptState *script) {
 	_scaleMode = 1;
 	for (int curScale = scale >> 1; curScale <= scale; ++curScale) {
 		_scaleTable[_currentCharacter->y1] = curScale;
-		animRefreshNPC(0);
+		_animator->animRefreshNPC(0);
 		delayWithTicks(1);
 	}
 	_scaleTable[_currentCharacter->y1] = scaleValue;
@@ -1575,8 +1575,8 @@ int KyraEngine::cmd_growBrandonUp(ScriptState *script) {
 
 int KyraEngine::cmd_setBrandonScaleXAndY(ScriptState *script) {
 	debug(3, "cmd_setBrandonScaleXAndY(0x%X) (%d, %d)", script, stackPos(0), stackPos(1));
-	_brandonScaleX = stackPos(0);
-	_brandonScaleY = stackPos(1);
+	_animator->_brandonScaleX = stackPos(0);
+	_animator->_brandonScaleY = stackPos(1);
 	return 0;
 }
 

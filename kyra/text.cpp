@@ -74,8 +74,8 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 			hasUpdatedNPCs = true;
 			disableTimer(15);
 			_currHeadShape = 4;
-			animRefreshNPC(0);
-			animRefreshNPC(_talkingCharNum);
+			_animator->animRefreshNPC(0);
+			_animator->animRefreshNPC(_talkingCharNum);
 
 			if (_charSayUnk2 != -1) {
 				_animator->sprites()[_charSayUnk2].active = 0;
@@ -144,7 +144,7 @@ void KyraEngine::endCharacterChat(int8 charNum, int16 convoInitialized) {
 	if (convoInitialized != 0) {
 		_talkingCharNum = -1;
 		_currentCharacter->currentAnimFrame = 7;
-		animRefreshNPC(0);
+		_animator->animRefreshNPC(0);
 		_animator->updateAllObjectShapes();
 	}
 }
@@ -154,11 +154,11 @@ void KyraEngine::restoreChatPartnerAnimFrame(int8 charNum) {
 
 	if (charNum > 0 && charNum < 5) {
 		_characterList[charNum].currentAnimFrame = _currentChatPartnerBackupFrame;
-		animRefreshNPC(charNum);
+		_animator->animRefreshNPC(charNum);
 	}
 
 	_currentCharacter->currentAnimFrame = 7;
-	animRefreshNPC(0);
+	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 }
 
@@ -173,7 +173,7 @@ void KyraEngine::backupChatPartnerAnimFrame(int8 charNum) {
 	else
 		_currentCharacter->currentAnimFrame = _currentCharAnimFrame;
 
-	animRefreshNPC(0);
+	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 }
 
@@ -208,7 +208,7 @@ int KyraEngine::initCharacterChat(int8 charNum) {
 		else
 			_currentCharacter->currentAnimFrame = 16;
 
-		animRefreshNPC(0);
+		_animator->animRefreshNPC(0);
 		_animator->updateAllObjectShapes();
 	}
 
@@ -250,7 +250,7 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 		_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
 		_charSayUnk3 = charNum;
 		_talkingCharNum = charNum;
-		animRefreshNPC(charNum);
+		_animator->animRefreshNPC(charNum);
 	}
 
 	char *processedString = _text->preprocessString(chatStr);

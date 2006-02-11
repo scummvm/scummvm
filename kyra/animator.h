@@ -76,15 +76,27 @@ public:
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);
 	void animAddNPC(int character);
+	void animRefreshNPC(int character);
 
 	void clearQueue() { _objectQueue = 0; }
 	void addObjectToQueue(AnimObject *object);
 	void refreshObject(AnimObject *object);
 	
-	void updateKyragemFading();
+	void makeBrandonFaceMouse();
+	void setBrandonAnimSeqSize(int width, int height);
+	void resetBrandonAnimSeqSize();
+	void setCharacterDefaultFrame(int character);
+	void setCharactersHeight();
+
+	int16 fetchAnimWidth(const uint8 *shape, int16 mult);
+	int16 fetchAnimHeight(const uint8 *shape, int16 mult);
 
 	int _noDrawShapesFlag;
 	bool _updateScreen;
+	uint16 _brandonDrawFrame;
+	int _brandonScaleX;
+	int _brandonScaleY;
+
 protected:
 	KyraEngine *_vm;
 	Screen *_screen;
@@ -104,14 +116,10 @@ protected:
 	void preserveOrRestoreBackground(AnimObject *obj, bool restore);
 
 	AnimObject *_objectQueue;
+
+	int _brandonAnimSeqSizeWidth;
+	int _brandonAnimSeqSizeHeight;
 	
-	struct KyragemState {
-		uint16 nextOperation;
-		uint16 rOffset;
-		uint16 gOffset;
-		uint16 bOffset;
-		uint32 timerCount;
-	} _kyragemFadingState;
 };
 } // end of namespace Kyra
 

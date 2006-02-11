@@ -297,7 +297,7 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 	updateTextFade();
 
 	if (_currentCharacter->sceneId == 210) {
-		_animator->updateKyragemFading();
+		updateKyragemFading();
 	}
 }
 
@@ -411,7 +411,7 @@ void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
 			ch->currentAnimFrame = 88;
 	}
 	
-	animRefreshNPC(character);
+	_animator->animRefreshNPC(character);
 }
 
 int KyraEngine::getOppositeFacingDirection(int dir) {
@@ -694,11 +694,11 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		curAnimState->x1 = _currentCharacter->x1;
 		curAnimState->y1 = _currentCharacter->y1;
 		
-		_brandonScaleX = _scaleTable[_currentCharacter->y1];
-		_brandonScaleY = _scaleTable[_currentCharacter->y1];
+		_animator->_brandonScaleX = _scaleTable[_currentCharacter->y1];
+		_animator->_brandonScaleY = _scaleTable[_currentCharacter->y1];
 		
-		curAnimState->x1 += (_brandonScaleX * xOffset) >> 8;
-		curAnimState->y1 += (_brandonScaleY * yOffset) >> 8;
+		curAnimState->x1 += (_animator->_brandonScaleX * xOffset) >> 8;
+		curAnimState->y1 += (_animator->_brandonScaleY * yOffset) >> 8;
 	} else {
 		curAnimState->x1 = _currentCharacter->x1 + xOffset;
 		curAnimState->y1 = _currentCharacter->y1 + yOffset;
@@ -734,11 +734,11 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 			curAnimState->x1 = ch->x1;
 			curAnimState->y1 = ch->y1;
 		
-			_brandonScaleX = _scaleTable[ch->y1];
-			_brandonScaleY = _scaleTable[ch->y1];
+			_animator->_brandonScaleX = _scaleTable[ch->y1];
+			_animator->_brandonScaleY = _scaleTable[ch->y1];
 		
-			curAnimState->x1 += (_brandonScaleX * xOffset) >> 8;
-			curAnimState->y1 += (_brandonScaleY * yOffset) >> 8;
+			curAnimState->x1 += (_animator->_brandonScaleX * xOffset) >> 8;
+			curAnimState->y1 += (_animator->_brandonScaleY * yOffset) >> 8;
 		} else {
 			curAnimState->x1 = ch->x1 + xOffset;
 			curAnimState->y1 = ch->y1 + yOffset;
@@ -809,8 +809,8 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 			curAnimState->y1 = curRoom->itemsYPos[i];
 			curAnimState->x1 = curRoom->itemsXPos[i];
 			
-			curAnimState->x1 -= (fetchAnimWidth(curAnimState->sceneAnimPtr, _scaleTable[curAnimState->drawY])) >> 1;
-			curAnimState->y1 -= fetchAnimHeight(curAnimState->sceneAnimPtr, _scaleTable[curAnimState->drawY]);
+			curAnimState->x1 -= (_animator->fetchAnimWidth(curAnimState->sceneAnimPtr, _scaleTable[curAnimState->drawY])) >> 1;
+			curAnimState->y1 -= _animator->fetchAnimHeight(curAnimState->sceneAnimPtr, _scaleTable[curAnimState->drawY]);
 			
 			curAnimState->x2 = curAnimState->x1;
 			curAnimState->y2 = curAnimState->y1;
@@ -953,7 +953,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 		if (_abortWalkFlag) {
 			*table = 8;
 			_currentCharacter->currentAnimFrame = 7;
-			animRefreshNPC(0);
+			_animator->animRefreshNPC(0);
 			_animator->updateAllObjectShapes();
 			processInput(_mouseX, _mouseY);
 			return 0;
@@ -1012,7 +1012,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 			_animator->updateAllObjectShapes();
 			updateTextFade();
 			if (_currentCharacter->sceneId == 210) {
-				_animator->updateKyragemFading();
+				updateKyragemFading();
 				if (seq_playEnd() || _beadStateVar == 4 || _beadStateVar == 5) {
 					*table = 8;
 					running = false;
@@ -1027,7 +1027,7 @@ int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
 	if (frameReset && !(_brandonStatusBit & 2)) {
 		_currentCharacter->currentAnimFrame = 7;
 	}
-	animRefreshNPC(0);
+	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 	return returnValue;
 }
@@ -1089,7 +1089,7 @@ int KyraEngine::changeScene(int facing) {
 			}
 			
 			_currentCharacter->facing = facing;
-			animRefreshNPC(0);
+			_animator->animRefreshNPC(0);
 			_animator->updateAllObjectShapes();
 			enterNewScene(sceneId, facing, unk1, unk2, 0);
 			resetGameFlag(0xEE);

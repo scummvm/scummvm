@@ -318,21 +318,21 @@ void Sprites::updateSceneAnims() {
 				data += 2;
 				debug(6, "func: Set Brandon's X coordinate");
 				debug(6, "X %i", READ_LE_UINT16(data));
-				_engine->_currentCharacter->x1 = READ_LE_UINT16(data);
+				_engine->currentCharacter()->x1 = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAE:
 				data += 2;
 				debug(6, "func: Set Brandon's Y coordinate");
 				debug(6, "Y %i", READ_LE_UINT16(data));
-				_engine->_currentCharacter->y1 = READ_LE_UINT16(data);
+				_engine->currentCharacter()->y1 = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAF:
 				data += 2;
 				debug(6, "func: Set Brandon's sprite");
 				debug(6, "Sprite %i", READ_LE_UINT16(data));
-				_engine->_currentCharacter->currentAnimFrame = READ_LE_UINT16(data);
+				_engine->currentCharacter()->currentAnimFrame = READ_LE_UINT16(data);
 				data += 2;
 				break;
 			case 0xFFAA:
@@ -342,7 +342,7 @@ void Sprites::updateSceneAnims() {
 			case 0xFFAB:
 				data += 2;
 				debug(6, "func: Update Brandon's sprite");
-				_engine->animRefreshNPC(0);
+				_engine->animator()->animRefreshNPC(0);
 				_engine->animator()->flagAllObjectsForRefresh();
 				_engine->animator()->updateAllObjectShapes();
 				break;

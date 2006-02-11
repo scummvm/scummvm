@@ -128,7 +128,7 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 	}
 	if (!queryGameFlag(0x55+jewel)) {
 		assert(_blackJewel);
-		makeBrandonFaceMouse();
+		_animator->makeBrandonFaceMouse();
 		drawJewelPress(jewel, 1);
 		if (_features & GF_TALKIE) {
 			snd_voiceWaitForFinish();
