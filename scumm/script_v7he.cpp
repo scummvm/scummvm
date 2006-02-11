@@ -437,12 +437,10 @@ void ScummEngine_v70he::o70_startSound() {
 		var = pop();
 		_heSndSoundId = pop();
 		_sound->setSoundVar(_heSndSoundId, var, value);
-		debug(0,"o70_startSound: case 23 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 25:
 		value = pop();
 		_heSndSoundId = pop();
-		debug(0, "o70_startSound: case 25 (ID %d, Offset 0, Channel 0, Flags 8)", _heSndSoundId);
 		_sound->addSoundToQueue(_heSndSoundId, 0, 0, 8);
 	case 56:
 		_heSndFlags |= 16;
@@ -469,7 +467,6 @@ void ScummEngine_v70he::o70_startSound() {
 		_heSndFlags |= 1;
 		break;
 	case 255:
-		debug(0, "o70_startSound (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_heSndFlags = 0;
 		break;
@@ -783,7 +780,6 @@ void ScummEngine_v70he::o70_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-	debug(1, "o70_kernelSetFunctions: case %d (param count %d)", args[0], num);
 	switch (args[0]) {
 	case 1:
 		// Used to restore images when decorating cake in
@@ -975,7 +971,7 @@ void ScummEngine_v70he::o70_readINI() {
 	default:
 		error("o70_readINI: default type %d", type);
 	}
-	debug(0, "o70_readINI: Option %s", option);
+	debug(1, "o70_readINI: Option %s", option);
 }
 
 void ScummEngine_v70he::o70_writeINI() {
@@ -993,14 +989,14 @@ void ScummEngine_v70he::o70_writeINI() {
 	switch (type) {
 	case 1: // number
 		ConfMan.set((char *)option, value);
-		debug(0, "o70_writeINI: Option %s Value %d", option, value);
+		debug(1, "o70_writeINI: Option %s Value %d", option, value);
 		break;
 	case 2: // string
 		convertMessageToString(_scriptPointer, string, sizeof(string));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 		ConfMan.set((char *)option, (char *)string);
-		debug(0, "o70_writeINI: Option %s String %s", option, string);
+		debug(1, "o70_writeINI: Option %s String %s", option, string);
 		break;
 	default:
 		error("o70_writeINI: default type %d", type);

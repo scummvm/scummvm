@@ -430,7 +430,6 @@ void ScummEngine_v100he::o100_actorOps() {
 		for (i = 0; i < k; ++i) {
 			a->setUserCondition(args[i] & 0x7F, args[i] & 0x80);
 		}
-		debug(1,"o100_actorOps: case 22 (%d)", k);
 		break;
 	case 25:		// SO_COSTUME
 		a->setActorCostume(pop());
@@ -440,7 +439,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case 32:
 		i = pop();
-		debug(1,"o100_actorOps: case 32 (%d)", i);
+		debug(0,"o100_actorOps: case 32 (%d)", i);
 		break;
 	case 52:		// SO_ACTOR_NAME
 		copyScriptString(string, sizeof(string));
@@ -585,7 +584,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	debug(1,"o100_arrayOps: array %d case %d", array, subOp);
+	debug(9,"o100_arrayOps: array %d case %d", array, subOp);
 
 	switch (subOp) {
 	case 35:
@@ -906,7 +905,6 @@ void ScummEngine_v100he::o100_setSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o100_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		_curSpriteGroupId = pop();
@@ -1372,7 +1370,6 @@ void ScummEngine_v100he::o100_wizImageOps() {
 	default:
 		error("o100_wizImageOps: Unknown case %d", subOp);
 	}
-	debug(1,"o100_wizImageOps (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_dim2dim2Array() {
@@ -1510,7 +1507,6 @@ void ScummEngine_v100he::o100_paletteOps() {
 	default:
 		error("o100_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1, "o100_paletteOps (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_jumpToScriptUnk() {
@@ -1683,10 +1679,8 @@ void ScummEngine_v100he::o100_startSound() {
 		var = pop();
 		_heSndSoundId = pop();
 		_sound->setSoundVar(_heSndSoundId, var, value);
-		debug(0,"o100_startSound: case 83 (snd %d, var %d, value %d)", _heSndSoundId, var, value);
 		break;
 	case 92:
-		debug(0, "o100_startSound: case 92 (ID %d, Offset %d, Channel %d, Flags %d)", _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
 		break;
 	case 128:
@@ -1734,7 +1728,6 @@ void ScummEngine_v100he::o100_setSpriteInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o100_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		_curMaxSpriteId = pop();
@@ -2230,7 +2223,7 @@ void ScummEngine_v100he::o100_videoOps() {
 		error("o100_videoOps: unhandled case %d", subOp);
 	}
 
-	debug(0,"o100_videoOps stub (%d)", subOp);
+	debug(1,"o100_videoOps stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_wait() {
@@ -2296,7 +2289,6 @@ void ScummEngine_v100he::o100_writeFile() {
 	default:
 		error("o100_writeFile: default case %d", subOp);
 	}
-	debug(1, "o100_writeFile: slot %d, subOp %d", slot, subOp);
 }
 
 void ScummEngine_v100he::o100_isResourceLoaded() {
@@ -2368,7 +2360,6 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o100_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 5:
 		spriteGroupId = pop();
@@ -2573,7 +2564,6 @@ void ScummEngine_v100he::o100_getPaletteData() {
 	default:
 		error("o100_getPaletteData: Unknown case %d", subOp);
 	}
-	debug(0, "o100_getPaletteData stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::o100_readFile() {
@@ -2608,7 +2598,6 @@ void ScummEngine_v100he::o100_readFile() {
 	default:
 		error("o100_readFile: default case %d", subOp);
 	}
-	debug(1, "o100_readFile: slot %d, subOp %d val %d", slot, subOp, val);
 }
 
 void ScummEngine_v100he::o100_getSpriteInfo() {
@@ -2618,7 +2607,6 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o100_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 3:
 		spriteId = pop();
@@ -2881,7 +2869,7 @@ void ScummEngine_v100he::o100_getVideoData() {
 	}
 
 	push(-1);
-	debug(0,"o100_getVideoData stub (%d)", subOp);
+	debug(1,"o100_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v100he::decodeParseString(int m, int n) {

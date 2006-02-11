@@ -481,7 +481,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 		error("o80_readConfigFile: default type %d", subOp);
 	}
 
-	debug(0, "o80_readConfigFile: Filename %s Section %s Option %s Value %s", filename, section, option, entry.c_str());
+	debug(1, "o80_readConfigFile: Filename %s Section %s Option %s Value %s", filename, section, option, entry.c_str());
 }
 
 void ScummEngine_v80he::o80_writeConfigFile() {
@@ -516,7 +516,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	ConfFile.loadFromFile((const char *)filename);
 	ConfFile.setKey((char *)option, (char *)section, (char *)string);
 	ConfFile.saveToFile((const char *)filename);
-	debug(0,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
+	debug(1,"o80_writeConfigFile: Filename %s Section %s Option %s String %s", filename, section, option, string);
 }
 
 void ScummEngine_v80he::o80_cursorCommand() {
@@ -609,8 +609,6 @@ void ScummEngine_v80he::o80_drawWizPolygon() {
  * @param id	the id of an actor, wizimage or color (low bit) & flag (high bit)
  */
 void ScummEngine_v80he::drawLine(int x1, int y1, int x, int y, int step, int type, int id) {
-	debug(0,"drawLine: x1 %d y1 %d x %d y %d, step %d type %d id %d", x1, y1, x, y, step, type, id);
-
 	if (step < 0) {
 		step = -step;
 	}

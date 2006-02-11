@@ -555,7 +555,7 @@ void ScummEngine_v90he::o90_videoOps() {
 		error("o90_videoOps: unhandled case %d", subOp);
 	}
 
-	debug(0, "o90_videoOps stub (%d)", subOp);
+	debug(1, "o90_videoOps stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getVideoData() {
@@ -588,7 +588,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 	}
 
 	push(-1);
-	debug(0, "o90_getVideoData stub (%d)", subOp);
+	debug(1, "o90_getVideoData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_wizImageOps() {
@@ -808,8 +808,6 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	default:
 		error("o90_wizImageOps: unhandled case %d", subOp);
 	}
-
-	debug(1, "o90_wizImageOps (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
@@ -864,7 +862,6 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 30;
 
-	debug(1, "o90_getSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		spriteId = pop();
@@ -1119,7 +1116,6 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 34;
 
-	debug(1, "o90_setSpriteInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		args[0] = pop();
@@ -1450,7 +1446,6 @@ void ScummEngine_v90he::o90_getSpriteGroupInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	debug(1, "o90_getSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 8: // HE 99+
 		spriteGroupId = pop();
@@ -1532,7 +1527,6 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 	byte subOp = fetchScriptByte();
 	subOp -= 37;
 
-	debug(1, "o90_setSpriteGroupInfo (%d)", subOp);
 	switch (subOp) {
 	case 0:
 		type = pop() - 1;
@@ -2272,7 +2266,7 @@ static int compareDwordArrayReverse(const void *a, const void *b) {
 }
 
 void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim1start, int dim1end, int sortOrder) {
-	debug(5, "sortArray(%d, [%d,%d,%d,%d], %d)", array, dim2start, dim2end, dim1start, dim1end, sortOrder);
+	debug(9, "sortArray(%d, [%d,%d,%d,%d], %d)", array, dim2start, dim2end, dim1start, dim1end, sortOrder);
 
 	assert(dim1start == dim1end);
 	checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
@@ -2381,7 +2375,6 @@ void ScummEngine_v90he::o90_getObjectData() {
 	default:
 		error("o90_getObjectData: Unknown case %d", subOp);
 	}
-	debug(1, "o90_getObjectData (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
@@ -2430,7 +2423,6 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);
 	}
-	debug(1, "o90_getPaletteData stub (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_paletteOps() {
@@ -2502,7 +2494,6 @@ void ScummEngine_v90he::o90_paletteOps() {
 	default:
 		error("o90_paletteOps: Unknown case %d", subOp);
 	}
-	debug(1, "o90_paletteOps (%d)", subOp);
 }
 
 void ScummEngine_v90he::o90_fontUnk() {
@@ -2584,7 +2575,6 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-	debug(1, "o90_kernelSetFunctions: case %d (param count %d)", args[0], num);
 	switch (args[0]) {
 	case 20:
 		a = derefActor(args[1], "o90_kernelSetFunctions: 20");

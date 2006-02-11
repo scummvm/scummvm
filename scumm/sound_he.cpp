@@ -107,7 +107,7 @@ int Sound::getSoundVar(int sound, int var) {
 	}
 
 	if (chan != -1) {
-		debug(1, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
+		debug(5, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {
 		return 0;
@@ -124,7 +124,7 @@ void Sound::setSoundVar(int sound, int var, int val) {
 	}
 
 	if (chan != -1) {
-		debug(1, "setSoundVar: sound %d var %d val %d", sound, var, val);
+		debug(5, "setSoundVar: sound %d var %d val %d", sound, var, val);
 		_heChannel[chan].soundVars[var] = val;
 	}
 }
@@ -149,7 +149,7 @@ void Sound::setupHEMusicFile() {
 		total_size = musicFile.readUint32BE();
 		musicFile.seek(16, SEEK_SET);
 		_heMusicTracks = musicFile.readUint32LE();
-		debug(0, "Total music tracks %d", _heMusicTracks);
+		debug(5, "Total music tracks %d", _heMusicTracks);
 
 		int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
 		musicFile.seek(musicStart, SEEK_SET);
@@ -220,7 +220,7 @@ void Sound::processSoundCode() {
 				break;
 			}
 
-			debug(1, "Channel %d Timer %d Time %d", chan, tmr, time);
+			debug(5, "Channel %d Timer %d Time %d", chan, tmr, time);
 			if (time >= tmr)
 				break;
 
@@ -241,7 +241,7 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 		opcode = (opcode & 0xFFF) >> 4;
 		arg = opcode & 3;
 		opcode &= ~3;
-		debug(1, "processSoundOpcodes: sound %d opcode %d", sound, opcode);
+		debug(5, "processSoundOpcodes: sound %d opcode %d", sound, opcode);
 		switch (opcode) {
 		case 0: // Continue
 			break;
@@ -319,7 +319,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	if (heChannel == -1)
 		heChannel = (_vm->VAR_RESERVED_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
 
-	debug(0,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
+	debug(5,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 
 	if (soundID >= 10000) {
 		// Special codes, used in pjgames

@@ -397,7 +397,7 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 
 	id = findFreeArrayId();
 
-	debug(5,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
+	debug(9,"defineArray (array %d, dim2start %d, dim2end %d dim1start %d dim1end %d", id, dim2start, dim2end, dim1start, dim1end);
 
 	if (array & 0x80000000) {
 		error("Can't define bit variable as array pointer");
@@ -429,7 +429,7 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 }
 
 int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
-	debug(5, "readArray (array %d, idx2 %d, idx1 %d)", readVar(array), idx2, idx1);
+	debug(9, "readArray (array %d, idx2 %d, idx1 %d)", readVar(array), idx2, idx1);
 
 	if (readVar(array) == 0)
 		error("readArray: Reference to zeroed array pointer");
@@ -465,7 +465,7 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 }
 
 void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
-	debug(5, "writeArray (array %d, idx2 %d, idx1 %d, value %d)", readVar(array), idx2, idx1, value);
+	debug(9, "writeArray (array %d, idx2 %d, idx1 %d, value %d)", readVar(array), idx2, idx1, value);
 
 	if (readVar(array) == 0)
 		error("writeArray: Reference to zeroed array pointer");
@@ -525,7 +525,7 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 }
 
 int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
-	debug(0, "convertFilePath: original filePath is %s", dst);
+	debug(1, "convertFilePath: original filePath is %s", dst);
 
 	// Switch all \ to / for portablity
 	int len = resStrLen(dst) + 1;
@@ -552,7 +552,7 @@ int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 			sprintf(filePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
 		}
 		strcpy((char *)dst, filePath);
-		debug(0, "convertFilePath: filePath is %s", dst);
+		debug(1, "convertFilePath: filePath is %s", dst);
 	}
 
 	return r;
@@ -1157,7 +1157,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case 68: // HE 90+
 		k = pop();
-		debug(1,"o72_actorOps: case 68 (%d)", k);
+		debug(0,"o72_actorOps: case 68 (%d)", k);
 		break;
 	case 76:		// SO_COSTUME
 		a->setActorCostume(pop());
@@ -1434,7 +1434,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
-	debug(1,"o72_arrayOps: array %d case %d", array, subOp);
+	debug(9,"o72_arrayOps: array %d case %d", array, subOp);
 
 	switch (subOp) {
 	case 7:			// SO_ASSIGN_STRING
@@ -1745,7 +1745,7 @@ void ScummEngine_v72he::o72_openFile() {
 	mode = pop();
 	copyScriptString(filename, sizeof(filename));
 
-	debug(0,"Original filename %s", filename);
+	debug(1,"Original filename %s", filename);
 
 	// There are Macintosh specific versions of HE7.2 games.
 	if (_heversion >= 80 && _platform == Common::kPlatformMacintosh) {
@@ -1764,7 +1764,7 @@ void ScummEngine_v72he::o72_openFile() {
 	}
 
 	int r = convertFilePath(filename);
-	debug(0,"Final filename to %s", filename + r);
+	debug(1,"Final filename to %s", filename + r);
 
 	slot = -1;
 	for (i = 1; i < 17; i++) {
@@ -1840,7 +1840,6 @@ void ScummEngine_v72he::o72_readFile() {
 	default:
 		error("o72_readFile: default case %d", subOp);
 	}
-	debug(1, "o72_readFile: slot %d, subOp %d val %d", slot, subOp, val);
 }
 
 void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
@@ -1873,7 +1872,6 @@ void ScummEngine_v72he::o72_writeFile() {
 	default:
 		error("o72_writeFile: default case %d", subOp);
 	}
-	debug(1, "o72_writeFile: slot %d, subOp %d", slot, subOp);
 }
 
 void ScummEngine_v72he::o72_findAllObjects() {
@@ -2051,7 +2049,6 @@ void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, 
 void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
 				int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end)
 {
-	debug(5, "ScummEngine_v72he::copyArray(%d, [%d,%d,%d,%d], %d, [%d,%d,%d,%d])", array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end, array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
 	byte *dst, *src;
 	int dstPitch, srcPitch;
 	int rowSize;
@@ -2169,7 +2166,7 @@ void ScummEngine_v72he::o72_readINI() {
 		error("o72_readINI: default type %d", subOp);
 	}
 
-	debug(0, "o72_readINI: Option %s", option);
+	debug(1, "o72_readINI: Option %s", option);
 }
 
 void ScummEngine_v72he::o72_writeINI() {
@@ -2184,7 +2181,7 @@ void ScummEngine_v72he::o72_writeINI() {
 		value = pop();
 		copyScriptString(option, sizeof(option));
 		ConfMan.set((char *)option, value);
-		debug(0, "o72_writeINI: Option %s Value %d", option, value);
+		debug(1, "o72_writeINI: Option %s Value %d", option, value);
 		break;
 	case 77: // HE 100
 	case 7: // string
@@ -2204,7 +2201,7 @@ void ScummEngine_v72he::o72_writeINI() {
 			return;
 
 		ConfMan.set((char *)option, (char *)string);
-		debug(0, "o72_writeINI: Option %s String %s", option, string);
+		debug(1, "o72_writeINI: Option %s String %s", option, string);
 		break;
 	default:
 		error("o72_writeINI: default type %d", subOp);

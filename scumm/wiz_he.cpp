@@ -50,7 +50,6 @@ void Wiz::polygonClear() {
 void Wiz::polygonLoad(const uint8 *polData) {
 	int slots = READ_LE_UINT32(polData);
 	polData += 4;
-	debug(1, "Loading %d polygon slots", slots);
 
 	bool flag = 1;
 	int id, points, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
@@ -444,10 +443,10 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 
 void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRect, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
 	if (flags & kWIFFlipX) {
-		debug(0, "decompressWizImage: Unhandled flag kWIFFlipX");
+		debug(1, "decompressWizImage: Unhandled flag kWIFFlipX");
 	}
 	if (flags & kWIFFlipY) {
-		debug(0, "decompressWizImage: Unhandled flag kWIFFlipY");
+		debug(1, "decompressWizImage: Unhandled flag kWIFFlipY");
 	}
 
 	const uint8 *dataPtr, *dataPtrNext;
@@ -1214,7 +1213,6 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 }
 
 void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette) {
-	debug(1, "drawWizPolygon(resNum %d, id %d, flags 0x%X, shadow %d palette %d)", resNum, id, flags, shadow, palette);
 	int i;
 	WizPolygon *wp = NULL;
 	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
@@ -1234,7 +1232,7 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 }
 
 void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
-	debug(1, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
+	debug(2, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
 	int i;
 
 	if (flags & 0x800000) {
@@ -1507,7 +1505,6 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 }
 
 void Wiz::createWizEmptyImage(const WizParameters *params) {
-	debug(1, "ScummEngine_v90he::createWizEmptyImage(%d, %d, %d)", params->img.resNum, params->resDefImgW, params->resDefImgH);
 	int img_w = 640;
 	if (params->processFlags & kWPFUseDefImgWidth) {
 		img_w = params->resDefImgW;
@@ -1772,7 +1769,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 	char buf[512];
 	unsigned int i;
 
-	debug(5, "processWizImage: processMode %d", params->processMode);
+	debug(2, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
 	case 0:
 		// Used in racedemo
