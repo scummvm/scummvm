@@ -1,3 +1,27 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include <PalmOS.h>
 #include <SonyClie.h>
 
@@ -223,7 +247,7 @@ Err AppStart(void) {
 	gVars->indicator.on	= 255;
 	gVars->indicator.off = 0;
 	gVars->HRrefNum = sysInvalidRefNum;
-	gVars->VFS.volRefNum = sysInvalidRefNum;
+	gVars->VFS.volRefNum = vfsInvalidVolRef;
 	gVars->slkRefNum = sysInvalidRefNum;
 	gVars->options = kOptNone;
 
@@ -241,7 +265,7 @@ Err AppStart(void) {
 		// reset all elements
 		MemSet(gPrefs, dataSize, 0);
 
-		gPrefs->card.volRefNum = sysInvalidRefNum;
+		gPrefs->card.volRefNum = vfsInvalidVolRef;
 		gPrefs->card.cacheSize = 4096;
 		gPrefs->card.useCache = true;
 		gPrefs->card.showLED = true;
@@ -251,15 +275,16 @@ Err AppStart(void) {
 		gPrefs->debug = false;
 		gPrefs->exitLauncher = true;
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
-		gPrefs->arm = OPTIONS_TST(kOptDeviceARM);
 		gPrefs->stylusClick = true;
 		
 	} else {
 		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
 	}
 
-	error = AppStartCheckMathLib();
-	if (error) return (error);
+	if (!OPTIONS_TST(kOptDeviceARM)) {
+		error = AppStartCheckMathLib();
+		if (error) return (error);
+	}
 
 	error = AppStartCheckHRmode();
 	if (error) return (error);
@@ -267,7 +292,7 @@ Err AppStart(void) {
 	bDirectMode = (AppStartLoadSkin() != errNone);
 
 	// if volref previously defined, check if it's a valid one
-	if (gPrefs->card.volRefNum != sysInvalidRefNum) {
+	if (gPrefs->card.volRefNum != vfsInvalidVolRef) {
 		VolumeInfoType volInfo;
 		Err err = VFSVolumeInfo(gPrefs->card.volRefNum, &volInfo);
 		if (err)
@@ -275,7 +300,7 @@ Err AppStart(void) {
 	}
 	else
 		gPrefs->card.volRefNum = parseCards();
-	if (gPrefs->card.volRefNum != sysInvalidRefNum)
+	if (gPrefs->card.volRefNum != vfsInvalidVolRef)
 		CardSlotCreateDirs();
 
 	// open games database
@@ -285,11 +310,6 @@ Err AppStart(void) {
 
 	AppStartCheckScreenSize();
 	AppStartCheckNotify(); 		// not fatal error if not avalaible
-
-	if (!error)
-		if (bDirectMode)
-			// force ARM option if bDirectMode
-			gPrefs->arm = OPTIONS_TST(kOptDeviceARM);
 
 	return error;
 }
@@ -345,7 +365,8 @@ void AppStop(void) {
 
 	// stop all
 	AppStopCheckNotify();
-	AppStopMathLib();
+	if (!OPTIONS_TST(kOptDeviceARM))
+		AppStopMathLib();
 	AppStopHRMode();
 
 	if (!bLaunched)
