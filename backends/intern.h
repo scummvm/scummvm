@@ -30,11 +30,10 @@
  */
 extern OSystem *OSystem_SDL_create();
 extern OSystem *OSystem_NULL_create();
-extern OSystem *OSystem_MorphOS_create(int gfx_driver, bool full_screen);
+extern OSystem *OSystem_MorphOS_create();
 extern OSystem *OSystem_Dreamcast_create();
 extern OSystem *OSystem_WINCE3_create();
 extern OSystem *OSystem_X11_create();
-extern OSystem *OSystem_MAC_create(int gfx_mode, bool full_screen);
 extern OSystem *OSystem_GP32_create();
 extern OSystem *OSystem_PALMOS_create();
 extern OSystem *OSystem_PS2_create();
