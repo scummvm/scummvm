@@ -32,3 +32,9 @@ public:
 MidiDriver *MidiDriver_NULL_create() {
 	return new MidiDriver_NULL();
 }
+
+#ifdef DISABLE_ADLIB
+MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
+	return new MidiDriver_NULL();
+}
+#endif
