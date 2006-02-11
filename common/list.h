@@ -72,7 +72,11 @@ public:
 		}
 		// Postfix inc
 		Iterator<T2> operator++(int) {
+#ifndef PALMOS_MODE
 			Iterator<T2> tmp(_node);
+#else
+			Iterator tmp(_node);
+#endif
 			if (_node)
 				_node = _node->_next;
 			return tmp;
@@ -85,7 +89,11 @@ public:
 		}
 		// Postfix dec
 		Iterator<T2> operator--(int) {
+#ifndef PALMOS_MODE
 			Iterator<T2> tmp(_node);
+#else
+			Iterator tmp(_node);
+#endif
 			if (_node)
 				_node = _node->_prev;
 			return tmp;
@@ -177,15 +185,9 @@ public:
 	}
 
 	iterator erase(iterator first, iterator last) {
-		while (first != last) {
-#ifndef PALMOS_MODE
+		while (first != last)
 			erase(first++);
-#else
-			iterator tmp = first._node->_next;
-			erase(first);
-			first = tmp;
-#endif
-		}
+
 		return last;
 	}
 
