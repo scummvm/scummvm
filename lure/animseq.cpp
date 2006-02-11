@@ -65,7 +65,7 @@ void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
 		// Get line length
 		len = (uint16) *pLines++;
 		if (len == 0) {
-			len = *((uint16 *) pLines);
+			len = READ_LE_UINT16(pLines);
 			pLines += 2;
 		}
 	
@@ -78,7 +78,7 @@ void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
 		// Get the offset inc amount
 		len = (uint16) *pLines++;
 		if (len == 0) {
-			len = *((uint16 *) pLines);
+			len = READ_LE_UINT16(pLines);
 			pLines += 2;
 		}
 
