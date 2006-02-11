@@ -17,7 +17,8 @@
  *
  * MorphOS-specific header file
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 

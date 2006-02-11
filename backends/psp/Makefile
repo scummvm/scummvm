@@ -1,5 +1,6 @@
 # SCUMMVM-PSP MakeFile
-# $Header$
+# $URL$
+# $Id$
 
 #control build
 DISABLE_SCALERS = true

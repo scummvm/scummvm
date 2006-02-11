@@ -17,7 +17,8 @@
  *
  * MorphOS startup handling
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 

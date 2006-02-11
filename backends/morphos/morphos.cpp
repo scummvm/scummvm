@@ -17,7 +17,8 @@
  *
  * MorphOS interface
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 

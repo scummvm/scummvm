@@ -17,7 +17,8 @@
  *
  * MorphOS sound support
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
