@@ -112,7 +112,7 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinRecord *rec) {
 	h2DestFrame = rec->h2DestFrame;
 	h2Unknown = READ_LE_UINT16(&rec->h2Unknown);
 	blocked = rec->blocked;
-	unknown = rec->unknown;
+	unknown = READ_LE_UINT32(&rec->unknown);
 }
 
 // Hotspot action record
