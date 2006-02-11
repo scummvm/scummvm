@@ -454,6 +454,8 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 
 	for (i = 1; i < _vm->_numLocalObjects ; i++) {
 		o = &(_vm->_objs[i]);
+		if (o->obj_nr == 0)
+			continue;
 		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
 				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state,
 				o->fl_object_index, _vm->_classData[o->obj_nr]);
