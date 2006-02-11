@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,6 +45,7 @@ typedef	struct {
 	Boolean stylusClick;
 
 	UInt16 listPosition;
+	UInt16 autoSavePeriod;
 
 	struct {
 		UInt16 volRefNum;
@@ -60,8 +62,10 @@ typedef	struct {
 	Boolean stdPalette;
 	Boolean demoMode;
 	Boolean copyProtection;
-	Boolean arm;
+	Boolean oldarm;// TODO : free slot...
 	Boolean altIntro;
+	Boolean autoSave;
+	Boolean advancedMode;
 
 	struct {
 		Boolean enable;
@@ -78,7 +82,7 @@ extern Boolean bLaunched;
 
 #define appPrefID				0x00
 #define appVersionNum			0x01
-#define appPrefVersionNum		0x01
+#define appPrefVersionNum		0x02
 
 #define STACK_DEFAULT			8192
 #define STACK_LARGER			16384

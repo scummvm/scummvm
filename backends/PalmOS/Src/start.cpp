@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -265,12 +266,12 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData) {
 			if (gPrefs) {	// gPrefs exists ? so we are in the palm selector
 				CardSlotFormUpdate(); // redraw card list if needed
 
-				if (gPrefs->card.volRefNum == sysInvalidRefNum) {
+				if (gPrefs->card.volRefNum == vfsInvalidVolRef) {
 					VFSAnyMountParamType *notifyDetailsP = (VFSAnyMountParamType *)pData->notifyDetailsP;
 					gPrefs->card.volRefNum = notifyDetailsP->volRefNum;
 
 					if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
-						if (gPrefs->card.volRefNum != sysInvalidRefNum) {
+						if (gPrefs->card.volRefNum != vfsInvalidVolRef) {
 							CardSlotCreateDirs();
 							FrmUpdateForm(MainForm, frmRedrawUpdateMSImport);
 						}
@@ -283,7 +284,7 @@ static void AppLaunchCmdNotify(UInt16 LaunchFlags, SysNotifyParamType * pData) {
 				CardSlotFormUpdate();
 
 				if (gPrefs->card.volRefNum == (UInt16)pData->notifyDetailsP) {
-					gPrefs->card.volRefNum = sysInvalidRefNum;
+					gPrefs->card.volRefNum = vfsInvalidVolRef;
 
 					if (FrmGetFormPtr(MainForm) == FrmGetActiveForm())
 						FrmUpdateForm(MainForm, frmRedrawUpdateMS);
@@ -320,7 +321,7 @@ static UInt32 ScummVMPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 #endif
 			break;
 
-		case sysAppLaunchCmdNormalLaunch:	
+		case sysAppLaunchCmdNormalLaunch:
 			error = AppStart();
 			if (error) 
 				goto end;
