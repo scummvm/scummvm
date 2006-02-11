@@ -489,7 +489,7 @@ void KyraEngine::seq_playFluteAnimation() {
 }
 
 void KyraEngine::seq_winterScroll1() {
-	debug(9, "seq_winterScroll1()");
+	debug(1, "seq_winterScroll1()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
 	assert(_winterScrollTable);
@@ -505,10 +505,21 @@ void KyraEngine::seq_winterScroll1() {
 	}
 	
 	freeShapes123();
-	snd_playSoundEffect(0x20);
-	setupShapes123(_winterScroll1Table, 35, 0);
 	
-	for (int i = 123; i <= 146; ++i) {
+	snd_playSoundEffect(0x20);
+
+	uint8 endEncode, midpoint, endpoint;
+	if (_features & GF_TALKIE) {
+		endEncode = 18;
+		midpoint = 135;
+		endpoint = 140;
+	} else {
+		endEncode = 35;
+		midpoint = 146;
+		endpoint = 157;
+	}
+	setupShapes123(_winterScroll1Table, endEncode, 0);
+	for (int i = 123; i <= midpoint; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
 		delayWithTicks(8);
@@ -523,7 +534,7 @@ void KyraEngine::seq_winterScroll1() {
 		setGameFlag(0xA2);
 	}
 	
-	for (int i = 147; i <= 157; ++i) {
+	for (int i = midpoint+1; i <= endpoint; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		animRefreshNPC(0);
 		delayWithTicks(8);
