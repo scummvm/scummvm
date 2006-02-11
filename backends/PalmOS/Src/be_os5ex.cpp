@@ -17,7 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -37,7 +38,7 @@ OSystem_PalmOS5Ex::OSystem_PalmOS5Ex() : OSystem_PalmOS5() {
 	_timerEx.timer = &_timer;
 	_timerEx.ticks = SysTicksPerSecond();
 }
-
+/*
 static SYSTEM_CALLBACK void timer_handler(void *userDataP) {
 	CALLBACK_PROLOGUE
 	TimerExPtr _timerEx = (TimerExPtr)userDataP;
@@ -72,7 +73,7 @@ void OSystem_PalmOS5Ex::setTimerCallback(TimerProc callback, int timer) {
 	if (!_timer.active)
 		_timerEx.timerID = 0;
 }
-
+*/
 OSystem::MutexRef OSystem_PalmOS5Ex::createMutex() {
 	UInt32 mutexID;
 	Err e = KALMutexCreate(&mutexID, appFileCreator);
@@ -94,8 +95,9 @@ void OSystem_PalmOS5Ex::deleteMutex(MutexRef mutex) {
 	if (mutex)
 		KALMutexDelete((UInt32)mutex);
 }
-
+/*
 void OSystem_PalmOS5Ex::int_quit() {
 	if (_timerEx.timerID)
 		KALTimerDelete(_timerEx.timerID);
 }
+*/

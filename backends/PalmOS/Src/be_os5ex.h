@@ -17,7 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -25,6 +26,8 @@
 #define BE_OS5EX_H
 
 #include "be_os5.h"
+
+#undef dprintf	// fix compilation in Zodiac mode
 
 #ifndef PALMOS_ARM
 // Not usable with 68k mode (?), so ...
@@ -42,9 +45,9 @@ typedef struct {
 
 class OSystem_PalmOS5Ex : public OSystem_PalmOS5 {
 private:
-	void timer_handler() {};
+//	void timer_handler() {};
 	void sound_handler() {};
-	void int_quit();
+//	void int_quit();
 
 	SndStreamVariableBufferCallback sound_callback();
 
@@ -52,7 +55,7 @@ public:
 	OSystem_PalmOS5Ex();
 	static OSystem *create();
 
-	void setTimerCallback(TimerProc callback, int interval);
+//	void setTimerCallback(TimerProc callback, int interval);
 
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);
