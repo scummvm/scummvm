@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,16 +25,20 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
-#define curItemVersion sysMakeROMVersion(3,4,0,0,0)
+#define curItemVersion sysMakeROMVersion(3,5,2,0,0)	// Added : Lure engine
 
-#define itemVersion_33 sysMakeROMVersion(3,3,0,0,0)
-#define itemVersion_32 sysMakeROMVersion(3,2,0,0,0)
-#define itemVersion_31 sysMakeROMVersion(3,1,0,0,0)
-#define itemVersion_30 sysMakeROMVersion(3,0,0,0,0)
-#define itemVersion_27 sysMakeROMVersion(2,7,0,0,0)
-#define itemVersion_26 sysMakeROMVersion(2,6,0,0,0)
-#define itemVersion_25 sysMakeROMVersion(2,5,0,0,0)
-#define itemVersion_20 sysMakeROMVersion(2,0,0,0,0)
+
+#define itemVersion_351 sysMakeROMVersion(3,5,1,0,0)	// Added : Sega CD platform
+#define itemVersion_350 sysMakeROMVersion(3,5,0,0,0)
+#define itemVersion_340 sysMakeROMVersion(3,4,0,0,0)
+#define itemVersion_330 sysMakeROMVersion(3,3,0,0,0)
+#define itemVersion_320 sysMakeROMVersion(3,2,0,0,0)
+#define itemVersion_310 sysMakeROMVersion(3,1,0,0,0)
+#define itemVersion_300 sysMakeROMVersion(3,0,0,0,0)
+#define itemVersion_270 sysMakeROMVersion(2,7,0,0,0)
+#define itemVersion_260 sysMakeROMVersion(2,6,0,0,0)
+#define itemVersion_250 sysMakeROMVersion(2,5,0,0,0)
+#define itemVersion_200 sysMakeROMVersion(2,0,0,0,0)
 
 // old config structs
 typedef struct {
@@ -88,7 +93,7 @@ typedef struct {
 	struct {
 		UInt16 palm;
 		UInt16 music;
-		UInt16 sfx;
+		UInt16 sfx;		// TODO : remove
 		UInt16 speech;
 		UInt16 audiocd;
 	} volume;
@@ -143,30 +148,18 @@ typedef struct {
 //	Boolean use16Bit;		// |-	v3.3	// removed
 	UInt8 fmQuality;		// |-	v3.4	// replace use16Bit
 } GameInfoType;
-/*
-enum {
-	ENGINE_SCUMM = 0,
-	ENGINE_SIMON,
-	ENGINE_QUEEN,
-	ENGINE_SWORD1,
-	ENGINE_SKY,
-	ENGINE_SAGA,
-	ENGINE_GOB,
-	ENGINE_KYRA,
-	ENGINE_SWORD2
-};
-*/
 
 enum {
 	ENGINE_SKY = 0,
 	ENGINE_SWORD1,
 	ENGINE_SWORD2,
 	ENGINE_QUEEN,
+	ENGINE_LURE,
 	ENGINE_GOB,
 	ENGINE_KYRA,
 	ENGINE_SAGA,
-	ENGINE_SIMON,
 	ENGINE_SCUMM,
+	ENGINE_SIMON,
 	ENGINE_COUNT
 };
 
@@ -178,11 +171,12 @@ static const struct {
 	{ "sword1",	"Broken Sword 1" },
 	{ "sword2",	"Broken Sword 2" },
 	{ "queen",	"Flight of the Amazon Queen" },
+	{ "lure",	"Lure of the Tempress" },
 	{ "gob",	"Gobliiins" },
 	{ "kyra",	"Kyrandia" },
 	{ "saga",	"SAGA Engine" },
-	{ "simon",	"Simon the Sorcerer" },
 	{ "scumm",	"Scumm Games" },
+	{ "simon",	"Simon the Sorcerer" },
 };
 
 

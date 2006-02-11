@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +54,7 @@ static Err GamUpdateList() {
 			MemHandleUnlock(tmpH);
 
 			// check record
-			if (version != curItemVersion && size != sizeof(GameInfoType)) {
+			if (version != curItemVersion || size != sizeof(GameInfoType)) {
 				UInt16 index;
 				GameInfoType gitCur;
 				void *tmpP;
@@ -68,22 +69,27 @@ static Err GamUpdateList() {
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_33 ||
-					version == itemVersion_32 ||
-					version == itemVersion_31 ||
-					version == itemVersion_30 ||
-					version == itemVersion_27 ||
-					version == itemVersion_26 ||
-					version == itemVersion_25) {
-
+				if (version == itemVersion_351 ||
+					version == itemVersion_350 ||
+					version == itemVersion_340 ||
+					version == itemVersion_330 ||
+					version == itemVersion_320 ||
+					version == itemVersion_310 ||
+					version == itemVersion_300 ||
+					version == itemVersion_270 ||
+					version == itemVersion_260 ||
+					version == itemVersion_250) {
 					for (index = 0; index < numRecs; index++) {
 						// get old data
 						tmpH = DmQueryRecord(gameDB, index);
 						tmpP = MemHandleLock(tmpH);
 						MemMove(&gitCur, tmpP, MemHandleSize(tmpH));
 						MemHandleUnlock(tmpH);
+
+						// new format
+						gitCur.version = curItemVersion;
 						
-						if (version < itemVersion_30) {
+						if (version < itemVersion_300) {
 							gitCur.musicInfo.volume.palm = 50;
 							gitCur.musicInfo.volume.music = 192;
 							gitCur.musicInfo.volume.sfx = 192;
@@ -95,17 +101,16 @@ static Err GamUpdateList() {
 							gitCur.musicInfo.sound.firstTrack = 1;
 						}
 
-						if (version < itemVersion_31)
+						if (version < itemVersion_310)
 							gitCur.engine = 0;
 						
-						if (version < itemVersion_32)
+						if (version < itemVersion_320)
 							gitCur.renderMode = 0;
 
-						gitCur.renderMode = 0;
-						gitCur.fmQuality = 0;
-						gitCur.gfxMode = (gitCur.gfxMode == 3 ? 1 : 0); // v3.4 only 2 modes
+						if (version <= itemVersion_330) {
+							gitCur.fmQuality = 0;
+							gitCur.gfxMode = (gitCur.gfxMode == 3 ? 1 : 0); // v3.4 only 2 modes
 
-						if (version <= itemVersion_33) {
 									if (gitCur.engine == 0) gitCur.engine = 8;
 							else	if (gitCur.engine == 1) gitCur.engine = 7;
 							else	if (gitCur.engine == 2) gitCur.engine = 3;
@@ -115,7 +120,7 @@ static Err GamUpdateList() {
 							else	if (gitCur.engine == 6) gitCur.engine = 4;
 							else	if (gitCur.engine == 7) gitCur.engine = 5;
 							else	if (gitCur.engine == 8) gitCur.engine = 2;
-							
+
 									if (gitCur.renderMode == 1) gitCur.renderMode = 4;
 							else	if (gitCur.renderMode == 2) gitCur.renderMode = 5;
 							else	if (gitCur.renderMode == 3) gitCur.renderMode = 2;
@@ -145,7 +150,30 @@ static Err GamUpdateList() {
 							else	if (gitCur.musicInfo.sound.drvMusic == 4) gitCur.musicInfo.sound.drvMusic = 2;
 							else	if (gitCur.musicInfo.sound.drvMusic == 5) gitCur.musicInfo.sound.drvMusic = 1;
 						}
+
+						if (version <= itemVersion_340) {
+							gitCur.platform++;
+							
+							if (gitCur.language == 3)
+								gitCur.language = 0;
+							else if (gitCur.language >= 11)
+								gitCur.language++;
+						}
 						
+						if (version <= itemVersion_350)
+							if (gitCur.platform >= 9)
+								gitCur.platform++;
+								
+						if (version <= itemVersion_351) {
+							if (gitCur.engine >= ENGINE_LURE)	// newly added engine
+								gitCur.engine++;
+							
+							if (gitCur.engine == ENGINE_SCUMM)	// reorder
+								gitCur.engine = ENGINE_SIMON;
+							else if (gitCur.engine == ENGINE_SIMON)
+								gitCur.engine = ENGINE_SCUMM;
+						}
+
 						if (gitCur.musicInfo.volume.palm > 100)
 							gitCur.musicInfo.volume.palm = 50;
 
@@ -156,8 +184,8 @@ static Err GamUpdateList() {
 						MemPtrUnlock(tmpP);
 					}
 
-				} else if (version == itemVersion_20) {
-					// need conversion from V2 -> V3.4
+				} else if (version == itemVersion_200) {
+					// need conversion from V2 -> V3.5.2
 					GameInfoTypeV2 git0;
 
 					for (index = 0; index < numRecs; index++) {
@@ -223,6 +251,19 @@ static Err GamUpdateList() {
 						else	if (gitCur.musicInfo.sound.drvMusic == 4) gitCur.musicInfo.sound.drvMusic = 2;
 						else	if (gitCur.musicInfo.sound.drvMusic == 5) gitCur.musicInfo.sound.drvMusic = 1;
 
+						// to V3.5
+						gitCur.platform++;
+						
+						if (gitCur.language == 3)
+							gitCur.language = 0;
+						else if (gitCur.language >= 11)
+							gitCur.language++;
+							
+						// to V3.5.1
+						if (gitCur.platform >= 9)
+							gitCur.platform++;
+
+						// -----
 						gitCur.engine = ENGINE_SCUMM;
 
 						tmpH = DmResizeRecord(gameDB, index, sizeof(GameInfoType));	// TODO : check error on resize tmpH==NULL
@@ -231,7 +272,7 @@ static Err GamUpdateList() {
 						MemPtrUnlock(tmpP);
 					}
 				} else {
-					// need conversion from V0 -> V3.4
+					// need conversion from V0 -> V3.5.2
 					GameInfoTypeV0 git0;
 
 					for (index = 0; index < numRecs; index++) {
@@ -254,6 +295,7 @@ static Err GamUpdateList() {
 						gitCur.autoLoad = git0.autoLoad;
 						gitCur.bootParam = git0.bootParam;
 						gitCur.setPlatform = git0.amiga;	// amiga become platform amiga/atari-st/machintosh
+						gitCur.platform = 1;
 						gitCur.subtitles = git0.subtitles;
 						gitCur.talkSpeed = git0.talkSpeed;
 
@@ -317,7 +359,7 @@ Err GamOpenDatabase() {
 }
 
 void GamImportDatabase() {
-	if (gPrefs->card.volRefNum != sysInvalidRefNum && gPrefs->card.moveDB) {
+	if (gPrefs->card.volRefNum != vfsInvalidVolRef && gPrefs->card.moveDB) {
 		FileRef file;
 		Err e;
 
@@ -357,7 +399,7 @@ void GamCloseDatabase(Boolean ignoreCardParams) {
 		DmCloseDatabase(gameDB);
 
 		if (!ignoreCardParams) {
-			if (gPrefs->card.moveDB && gPrefs->card.volRefNum != sysInvalidRefNum) {
+			if (gPrefs->card.moveDB && gPrefs->card.volRefNum != vfsInvalidVolRef) {
 				VFSFileRename(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", "listdata-old.pdb");
 				Err e = VFSExportDatabaseToFile(gPrefs->card.volRefNum, "/Palm/Programs/ScummVM/listdata.pdb", cardNo, dbID);
 				if (!e) {
