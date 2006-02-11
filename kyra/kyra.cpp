@@ -1314,7 +1314,7 @@ int KyraEngine::handleBeadState() {
 	static const int table1[] = {
 		-1, -2, -4, -5, -6, -7, -6, -5,
 		-4, -2, -1,  0,  1,  2,  4,  5,
-		 6,  7,  6,  5,  4,  2,  1,  0
+		 6,  7,  6,  5,  4,  2,  1,  0, 0
 	};
 	static const int table2[] = {
 		0, 0, 1, 1, 2, 2, 3, 3,
@@ -1322,7 +1322,7 @@ int KyraEngine::handleBeadState() {
 		3, 3, 2, 2, 1, 1, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0
+		0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 	
 	switch (_beadStateVar) {

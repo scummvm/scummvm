@@ -798,6 +798,7 @@ int KyraEngine::gui_saveGame(Button *button) {
 	gui_redrawTextfield();
 
 	_keyboardEvent.pending = 0;
+	_keyboardEvent.repeat = 0;
 	while (_displaySubMenu) {
 		gui_getInput();
 		gui_updateSavegameString();
