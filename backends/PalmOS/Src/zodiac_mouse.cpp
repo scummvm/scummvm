@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,27 +23,6 @@
  */
 
 #include "be_zodiac.h"
-
-void OSystem_PalmZodiac::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
-	if (w == 0 || h == 0)
-		return;
-
-	_mouseCurState.w = w;
-	_mouseCurState.h = h;
-
-	_mouseHotspotX = hotspotX;
-	_mouseHotspotY = hotspotY;
-
-	_mouseKeyColor = keycolor;
-
-	// copy new cursor
-	byte *dst = _mouseDataP;
-	while (h--) {
-		memcpy(dst, buf, w);
-		dst += MAX_MOUSE_W;
-		buf += w;
-	}
-}
 
 void OSystem_PalmZodiac::draw_mouse() {
 	if (_mouseDrawn || !_mouseVisible)
