@@ -54,6 +54,7 @@ struct Anim {
 	uint16 drawY;
 	uint16 unk2;
 	uint8 *background;
+	bool disable;
 };
 
 class Sprites {

@@ -115,7 +115,7 @@ void ScreenAnimator::preserveAllBackgrounds() {
 
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
-		if (curObject->active && !curObject->unk1) {
+		if (curObject->active && !curObject->disable) {
 			preserveOrRestoreBackground(curObject, false);
 			curObject->bkgdChangeFlag = 0;
 		}
@@ -148,7 +148,7 @@ void ScreenAnimator::restoreAllObjectBackgrounds() {
 	_screen->_curPage = 2;
 	
 	while (curObject) {
-		if (curObject->active && !curObject->unk1) {
+		if (curObject->active && !curObject->disable) {
 			preserveOrRestoreBackground(curObject, true);
 			curObject->x2 = curObject->x1;
 			curObject->y2 = curObject->y1;
@@ -165,7 +165,7 @@ void ScreenAnimator::preserveAnyChangedBackgrounds() {
 	_screen->_curPage = 2;
 	
 	while (curObject) {
-		if (curObject->active && !curObject->unk1 && curObject->bkgdChangeFlag) {
+		if (curObject->active && !curObject->disable && curObject->bkgdChangeFlag) {
 			preserveOrRestoreBackground(curObject, false);
 			curObject->bkgdChangeFlag = 0;
 		}
@@ -202,7 +202,7 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	if (temp >= 136) {
 		y = 136 - height;
 	}
-	
+
 	if (restore) {
 		_screen->copyBlockToPage(_screen->_curPage, x, y, width, height, obj->background);
 	} else {
@@ -230,7 +230,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 			int drawLayer = 0;
 			if (!(curObject->flags & 0x800)) {
 				drawLayer = 7;
-			} else if (curObject->unk1) {
+			} else if (curObject->disable) {
 				drawLayer = 0;
 			} else {
 				drawLayer = _vm->_sprites->getDrawLayer(curObject->drawY);

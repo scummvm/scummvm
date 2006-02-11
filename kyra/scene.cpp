@@ -770,8 +770,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 			curAnimState->active = 1;
 			curAnimState->refreshFlag = 1;
 			curAnimState->bkgdChangeFlag = 1;
-		}
-		else {
+		} else {
 			curAnimState->active = 0;
 			curAnimState->refreshFlag = 0;
 			curAnimState->bkgdChangeFlag = 0;
@@ -786,7 +785,9 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		curAnimState->background = _sprites->_anims[i].background;
 		curAnimState->sceneAnimPtr = _sprites->_sceneShapes[_sprites->_anims[i].sprite];
 		
-		if(_sprites->_anims[i].unk2)
+		curAnimState->disable = _sprites->_anims[i].disable;
+		
+		if (_sprites->_anims[i].unk2)
 			curAnimState->flags = 0x800;
 		else
 			curAnimState->flags = 0;

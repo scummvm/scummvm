@@ -271,7 +271,7 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 	_text->_talkMessageH = lineNum * 10;
 	_animator->restoreAllObjectBackgrounds();
 
-	_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 308, _text->_talkMessageH, 2, 2);
+	_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
 	_screen->hideMouse();
 
 	_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
@@ -286,12 +286,12 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 
 	_animator->restoreAllObjectBackgrounds();
 
-	_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 308, _text->_talkMessageH, 2, 2);
+	_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);
 	_animator->preserveAllBackgrounds();
 	_animator->prepDrawAllObjects();
 	_screen->hideMouse();
 
-	_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 308, _text->_talkMessageH, 2, 0);
+	_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 0);
 	_screen->showMouse();
 	_animator->flagAllObjectsForRefresh();
 	_animator->copyChangedObjectsForward(0);

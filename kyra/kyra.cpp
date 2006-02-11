@@ -311,6 +311,8 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 int KyraEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
+		//for debug reasons (see Screen::updateScreen)
+		//_system->initSize(640, 200);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 

@@ -71,7 +71,7 @@ void Sprites::setupSceneAnims() {
 			assert( READ_LE_UINT16(data) == 0xFF86 );
 			data += 4;
 
-			//sceneUnk16[i] = READ_LE_UINT16(data);
+			_anims[i].disable = READ_LE_UINT16(data) != 0;
 			data += 4;
 			_anims[i].unk2 = READ_LE_UINT16(data);
 			data += 4;

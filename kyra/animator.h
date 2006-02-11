@@ -32,7 +32,7 @@ struct AnimObject {
 	uint32 active;
 	uint32 refreshFlag;
 	uint32 bkgdChangeFlag;
-	uint32 unk1;
+	bool disable;
 	uint32 flags;
 	int16 drawY;
 	uint8 *sceneAnimPtr;

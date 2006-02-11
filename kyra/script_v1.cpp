@@ -234,10 +234,10 @@ int KyraEngine::cmd_destroyMouseItem(ScriptState *script) {
 
 int KyraEngine::cmd_runSceneAnimUntilDone(ScriptState *script) {
 	debug(3, "cmd_runSceneAnimUntilDone(0x%X) (%d)", script, stackPos(0));
-	_sprites->_anims[stackPos(0)].play = true;
-	_animator->sprites()[stackPos(0)].active = 1;
 	_screen->hideMouse();
 	_animator->restoreAllObjectBackgrounds();
+	_sprites->_anims[stackPos(0)].play = true;
+	_animator->sprites()[stackPos(0)].active = 1;
 	_animator->flagAllObjectsForBkgdChange();
 	_animator->preserveAnyChangedBackgrounds();
 	while (_sprites->_anims[stackPos(0)].play) {

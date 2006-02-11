@@ -108,6 +108,8 @@ Screen::~Screen() {
 void Screen::updateScreen() {
 	debug(9, "Screen::updateScreen()");
 	_system->copyRectToScreen(getPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+	//for debug reasons (needs 640x200 screen)
+	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
 	_system->updateScreen();
 }
 
