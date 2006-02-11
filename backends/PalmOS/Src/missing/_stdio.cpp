@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <PmPalmOSNVFS.h>
 
 #define	CACHE_SIZE	1024
 enum {
@@ -35,7 +37,7 @@ FILE gStdioOutput = {0,0,0,0,0,0};
 static void dummy(Boolean) {};
 
 static LedProc	gStdioLedProc = dummy;
-static UInt16	gStdioVolRefNum = sysInvalidRefNum;
+static UInt16	gStdioVolRefNum = vfsInvalidVolRef;
 static UInt32	gCacheSize = CACHE_SIZE;
 
 // TODO : implement "errno"
@@ -160,7 +162,7 @@ FILE *fopen(const Char *filename, const Char *type) { // DONE
 
 	if (cache) {
 							fileP->cacheSize = gCacheSize;
-		if (gCacheSize)		fileP->cache = (UInt8 *)MemGluePtrNew(gCacheSize);
+		if (gCacheSize)		fileP->cache = (UInt8 *)malloc(gCacheSize);	// was MemGluePtrNew
 		if (!fileP->cache)	fileP->cacheSize = 0;
 	}
 
@@ -171,7 +173,7 @@ FILE *fopen(const Char *filename, const Char *type) { // DONE
 		//if err (not found ?) parse each avalaible card for the specified file
 		if (err) {
 			UInt16 volRefNum;
-			UInt32 volIterator = vfsIteratorStart;
+			UInt32 volIterator = vfsIteratorStart|vfsIncludePrivateVolumes;
 			while (volIterator != vfsIteratorStop) {
 				err = VFSVolumeEnumerate(&volRefNum, &volIterator);
 
@@ -569,7 +571,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 				mod++;
 
 			// prepare new format
-#if !defined(COMPILE_ZODIAC) || defined(PALMOS_68K)
+#if !defined(PALMOS_ARM)
 			if (*mod == 'c') {
 				StrCopy(tmp, "`c`%c%c");
 
@@ -633,7 +635,7 @@ Int32 vsprintf(Char* s, const Char* formatStr, _Palm_va_list argParam) {
 	
 	// Copy result in a temp buffer to process last formats
 	StrVPrintF(result, format, argParam);
-#if !defined(COMPILE_ZODIAC) || defined(PALMOS_68K)
+#if !defined(PALMOS_ARM)
 	StrProcC_(result, 256);
 #endif
 	StrProcXO(result, 256, tmp);
