@@ -42,7 +42,7 @@ public:
 	uint32 size() { return _size; }
 
 	void empty();
-	void memset(int c, size_t startIndex, size_t num);
+	void memorySet(int c, size_t startIndex, size_t num);
 	void copyFrom(MemoryBlock *src);
 	void copyFrom(MemoryBlock *src, uint32 srcPos, uint32 destPos, uint32 srcLen);
 	void copyFrom(const byte *src, uint32 srcPos, uint32 destPos, uint32 srcLen);

@@ -104,7 +104,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 		_numFrames = 1;
 		_frameNumber = 0;
 		_frames = new Surface(1, 1);
-		_frames->data().memset(_data->colourOffset, 0, 1);
+		_frames->data().memorySet(_data->colourOffset, 0, 1);
 		return;
 	}
 
@@ -124,7 +124,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	
 	_frames = new Surface(_data->width * _numFrames, _data->height);
 
-	_frames->data().memset(_data->colourOffset, 0, _frames->data().size());
+	_frames->data().memorySet(_data->colourOffset, 0, _frames->data().size());
 
 	byte *pSrc = dest->data() + 0x40;
 	byte *pDest;
