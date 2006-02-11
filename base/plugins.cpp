@@ -329,6 +329,9 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_GOB
 	LINK_PLUGIN(GOB)
 	#endif
+	#ifndef DISABLE_LURE
+	LINK_PLUGIN(LURE)
+	#endif
 
 #endif
 }

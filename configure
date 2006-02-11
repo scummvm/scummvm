@@ -56,6 +56,7 @@ _build_queen=yes
 _build_saga=yes
 _build_gob=yes
 _build_kyra=yes
+_build_lure=yes
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -301,6 +302,7 @@ Optional Features:
   --disable-saga           don't build the SAGA engine
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
+  --disable-lure           don't build the Lure of the Temptress engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -366,6 +368,7 @@ for ac_option in $@; do
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
       --disable-kyra)           _build_kyra=no ;;
+      --disable-lure)           _build_lure=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -675,6 +678,12 @@ if test "$_build_gob" = no ; then
 	_mak_gob='DISABLE_GOB = 1'
 else
 	_mak_gob='# DISABLE_GOB = 1'
+fi
+
+if test "$_build_lure" = no ; then
+	_mak_lure='DISABLE_LURE = 1'
+else
+	_mak_lure='# DISABLE_LURE = 1'
 fi
 
 if test "$_build_hq_scalers" = no ; then
@@ -1242,6 +1251,9 @@ fi
 if test "$_build_gob" = yes ; then
 	echo "    Gobli*ns"
 fi
+if test "$_build_lure" = yes ; then
+	echo "    Lure of the Temptress"
+fi
 
 echo
 
@@ -1379,6 +1391,7 @@ $_mak_queen
 $_mak_kyra
 $_mak_saga
 $_mak_gob
+$_mak_lure
 $_mak_mt32emu
 
 $_mak_hq_scalers

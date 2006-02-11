@@ -1,0 +1,183 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2005-2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#ifndef __luredefs_h__
+#define __luredefs_h__
+
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/list.h"
+
+namespace Lure {
+
+#define LURE_DEBUG 1
+
+#define READ_LE_INT16(x) (int16) READ_LE_UINT16(x)
+#define READ_LE_INT32(x) (int32) READ_LE_UINT32(x)
+
+enum {
+	GF_FLOPPY	= 1 <<  0,
+	GF_ENGLISH	= 1 <<  1,
+	GF_LNGUNK	= 1 << 15
+};
+
+enum {
+	GI_LURE = 0
+};
+
+enum Action {
+	GET = 1,
+	DROP = 0,
+	PUSH = 3,
+	PULL = 4,
+	OPERATE = 5,
+	OPEN = 6,
+	CLOSE = 7,
+	LOCK = 8,
+	UNLOCK = 9,
+	USE = 10,
+	GIVE = 11,
+	TALK_TO = 12,
+	TELL = 13,
+	BUY = 14,
+	LOOK = 15,
+	LOOK_AT = 16,
+	LOOK_THROUGH = 17,
+	ASK = 18,
+	EAT = 0,
+	DRINK = 20,
+	STATUS = 21,
+	GO_TO = 22,
+	RETURN = 23,
+	BRIBE = 24,
+	EXAMINE = 25,
+	NONE = 0xffff
+};
+
+// Basic game dimensions
+#define FULL_SCREEN_WIDTH 320
+#define FULL_SCREEN_HEIGHT 200
+#define GAME_COLOURS 256
+#define SCREEN_SIZE (FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH)
+
+#define SUPPORT_FILENAME "lure.dat"
+#define LURE_DAT_MAJOR 1
+#define LURE_DAT_MINOR 1
+
+// Some resources include multiple packed palettes of 64 entries each
+#define SUB_PALETTE_SIZE 64
+// Palette resources have 220 palette entries
+#define RES_PALETTE_ENTRIES 220
+// Palette colour increment amouns for palette fade in/outs
+#define PALETTE_FADE_INC_SIZE 4
+
+// Specifies the maximum buffer sized allocated for decoding animation data
+#define MAX_ANIM_DECODER_BUFFER_SIZE 200000
+
+#define MAX_DESC_SIZE 1024
+#define MAX_HOTSPOT_NAME_SIZE 80
+#define MAX_ACTION_NAME_SIZE 15
+
+// Menubar constants
+#define MENUBAR_Y_SIZE 8
+
+// Cursor definitions
+#define CURSOR_WIDTH 16
+#define CURSOR_HEIGHT 16
+#define CURSOR_SIZE 256
+#define  CURSOR_RESOURCE_ID 1
+#define CURSOR_ARROW 0
+#define CURSOR_DISK 1
+#define CURSOR_TIME_START 2
+#define CURSOR_TIME_END 9
+#define CURSOR_CROSS 10
+#define CURSOR_MENUBAR 17
+
+// Font details
+#define FONT_RESOURCE_ID 4
+#define NUM_CHARS_IN_FONT 122
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 8
+
+// Menu constants
+#define MENUBAR_SELECTED_COLOUR 0xf7
+#define MENU_UNSELECTED_COLOUR 0xe2
+#define MENU_SELECTED_COLOUR 0xe3
+#define MENUITEM_NONE 0
+#define MENUITEM_CREDITS 1 
+#define MENUITEM_RESTART_GAME 2 
+#define MENUITEM_SAVE_GAME 3 
+#define MENUITEM_RESTORE_GAME 4 
+#define MENUITEM_QUIT 5 
+#define MENUITEM_TEXT_SPEED 6 
+#define MENUITEM_SOUND 7
+
+// Mouse change needed to change an item in a popup menu
+#define POPMENU_CHANGE_SENSITIVITY 5
+
+// Dialog related defines
+#define DIALOG_EDGE_SIZE 9
+#define	DIALOG_TEXT_COLOUR 0xe2
+#define DIALOG_WHITE_COLOUR 0xe3
+#define INFO_DIALOG_X 69
+#define INFO_DIALOG_Y 61
+#define INFO_DIALOG_WIDTH 191
+
+// Strings defines
+#define STRINGS_RESOURCE_ID 0x10
+#define STRINGS_2_RESOURCE_ID 0x11
+#define STRINGS_3_RESOURCE_ID 0x12
+#define STRING_ID_RANGE 0x7d0
+#define STRING_ID_UPPER 0xfa0
+
+// Custom resources stored in lure.dat
+#define GAME_PALETTE_RESOURCE_ID 0x3f01
+#define ALT_PALETTE_RESOURCE_ID 0x3f02
+#define DIALOG_RESOURCE_ID 0x3f03
+#define ROOM_DATA_RESOURCE_ID 0x3f04
+#define HOTSPOT_DATA_RESOURCE_ID 0x3f05
+#define HOTSPOT_OVERRIDE_DATA_RESOURCE_ID 0x3f06
+#define ROOM_EXITS_RESOURCE_ID 0x3f07
+#define ROOM_EXIT_JOINS_RESOURCE_ID 0x3f08
+#define ANIM_DATA_RESOURCE_ID 0x3f09
+#define SCRIPT_DATA_RESOURCE_ID 0x3f0a
+#define SCRIPT2_DATA_RESOURCE_ID 0x3f0b
+#define HOTSPOT_SCRIPT_LIST_RESOURCE_ID 0x3f0c
+#define	MESSAGES_LIST_RESOURCE_ID 0x3f0d
+#define ACTION_LIST_RESOURCE_ID 0x3f0e
+
+// Script constants
+#define STARTUP_SCRIPT 0x23FC
+
+// Miscellaneous resources
+#define CREDITS_RESOURCE_ID 0x7800
+#define NAMES_RESOURCE_ID 9
+#define PLAYER_ID 0x3E8
+#define RATPOUCH_ID 0x3E9
+#define START_NONVISUAL_HOTSPOT_ID 0x7530
+
+// Milliseconds delay between game frames
+#define GAME_FRAME_DELAY 100
+
+} // End of namespace Lure
+
+#endif

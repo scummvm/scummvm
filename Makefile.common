@@ -96,6 +96,12 @@ else
 MODULES += gob
 endif
 
+ifdef DISABLE_LURE
+DEFINES += -DDISABLE_LURE
+else
+MODULES += lure
+endif
+
 # After the game specific modules follow the shared modules
 MODULES += \
 	gui \
