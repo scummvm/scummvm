@@ -1,3 +1,27 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include <PalmOS.h>
 
 #include "start.h"
@@ -5,28 +29,18 @@
 #include "forms.h"
 #include "globals.h"
 
-/***********************************************************************
- *
- * FUNCTION:    MiscOptionsFormSave
- * FUNCTION:    MiscOptionsFormInit
- * FUNCTION:    MiscOptionsFormHandleEvent
- *
- * DESCRIPTION: Misc. Options form functions
- *
- * REVISION HISTORY:
- *
- *
- ***********************************************************************/
 static TabType *myTabP;
 static UInt16 lastTab = 0;
 
 static Boolean ScummVMTabSave() {
-	FieldType *fld1P;
+	FieldType *fld1P, *fld2P;
 	ControlType *cckP[11];
 	FormPtr frmP;
 
 	fld1P = (FieldType *)GetObjectPtr(TabMiscScummVMDebugLevelField);
+	fld2P = (FieldType *)GetObjectPtr(TabMiscScummVMAutosaveField);
 	
+	cckP[0] = (ControlType *)GetObjectPtr(TabMiscScummVMAutosaveCheckbox);
 	cckP[3] = (ControlType *)GetObjectPtr(TabMiscScummVMDebugCheckbox);
 	cckP[6] = (ControlType *)GetObjectPtr(TabMiscScummVMDemoCheckbox);
 	cckP[9] = (ControlType *)GetObjectPtr(TabMiscScummVMCopyProtectionCheckbox);
@@ -36,16 +50,24 @@ static Boolean ScummVMTabSave() {
 	if (FldGetTextLength(fld1P) == 0 && CtlGetValue(cckP[3]) == 1) {
 		TabSetActive(frmP, myTabP, 1);
 		FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabMiscScummVMDebugLevelField));
-		FrmCustomAlert(FrmWarnAlert,"You must specified a debug level.",0,0);
+		FrmCustomAlert(FrmWarnAlert,"You must specify a debug level.",0,0);
+		return false;
+
+	} else if (FldGetTextLength(fld2P) == 0 && CtlGetValue(cckP[0]) == 1) {
+		TabSetActive(frmP, myTabP, 1);
+		FrmSetFocus(frmP, FrmGetObjectIndex(frmP, TabMiscScummVMAutosaveField));
+		FrmCustomAlert(FrmWarnAlert,"You must specify a period.",0,0);
 		return false;
 	}
 
+	gPrefs->autoSave = CtlGetValue(cckP[0]);
 	gPrefs->debug = CtlGetValue(cckP[3]);
 	gPrefs->demoMode = CtlGetValue(cckP[6]);
 	gPrefs->copyProtection = CtlGetValue(cckP[9]);
 	gPrefs->altIntro = CtlGetValue(cckP[10]);
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
+	gPrefs->autoSavePeriod = StrAToI(FldGetTextPtr(fld2P));
 	
 	return true;
 }
@@ -53,9 +75,9 @@ static Boolean ScummVMTabSave() {
 static void PalmOSTabSave() {
 	ControlType *cckP[11];
 
-	if (OPTIONS_TST(kOptDeviceARM)) {
-		cckP[10]= (ControlType *)GetObjectPtr(TabMiscPalmOSARMCheckbox);
-		gPrefs->arm = CtlGetValue(cckP[10]);
+	if (OPTIONS_TST(kOptDeviceARM) && !OPTIONS_TST(kOptDeviceZodiac)) {
+		cckP[3]= (ControlType *)GetObjectPtr(TabMiscPalmOSAdvancedCheckbox);
+		gPrefs->advancedMode = CtlGetValue(cckP[3]);
 	}
 
 	cckP[0] = (ControlType *)GetObjectPtr(TabMiscPalmOSVibratorCheckbox);
@@ -90,28 +112,36 @@ static void ExtsTabSave() {
 }
 
 static void ScummVMTabInit() {
-	FieldType *fld1P;
-	Char *levelP;
-	MemHandle levelH;
+	FieldType *fld1P, *fld2P;
+	Char *levelP, *periodP;
+	MemHandle levelH, periodH;
 
+	CtlSetValue((ControlType *)GetObjectPtr(TabMiscScummVMAutosaveCheckbox), gPrefs->autoSave);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscScummVMDebugCheckbox), gPrefs->debug);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscScummVMDemoCheckbox), gPrefs->demoMode);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscScummVMCopyProtectionCheckbox), gPrefs->copyProtection);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscScummVMAltIntroCheckbox), gPrefs->altIntro);
 
 	fld1P = (FieldType *)GetObjectPtr(TabMiscScummVMDebugLevelField);
+	fld2P = (FieldType *)GetObjectPtr(TabMiscScummVMAutosaveField);
 
 	levelH = MemHandleNew(FldGetMaxChars(fld1P)+1);
 	levelP = (Char *)MemHandleLock(levelH);
 	StrIToA(levelP, gPrefs->debugLevel);
 	MemHandleUnlock(levelH);
 
+	periodH = MemHandleNew(FldGetMaxChars(fld2P)+1);
+	periodP = (Char *)MemHandleLock(periodH);
+	StrIToA(periodP, gPrefs->autoSavePeriod);
+	MemHandleUnlock(periodH);
+
 	FldSetTextHandle(fld1P, levelH);
+	FldSetTextHandle(fld2P, periodH);
 }
 
 static void PalmOSTabInit() {
-	if (OPTIONS_TST(kOptDeviceARM))
-		CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSARMCheckbox), gPrefs->arm);
+	if (OPTIONS_TST(kOptDeviceARM) && !OPTIONS_TST(kOptDeviceZodiac))
+		CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSAdvancedCheckbox), gPrefs->advancedMode);
 
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSExitLauncherCheckbox), gPrefs->exitLauncher);
 	CtlSetValue((ControlType *)GetObjectPtr(TabMiscPalmOSLargerStackCheckbox), gPrefs->setStack);
@@ -152,8 +182,8 @@ static void MiscFormInit() {
 	TabAddContent(&frmP, tabP, "ScummVM", TabMiscScummVMForm);
 	TabAddContent(&frmP, tabP, "More ...", TabMiscExtsForm);
 
-	if (!OPTIONS_TST(kOptDeviceARM)) {
-		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSARMCheckbox));
+	if (!OPTIONS_TST(kOptDeviceARM) || OPTIONS_TST(kOptDeviceZodiac)) {
+		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscPalmOSAdvancedCheckbox));
 	}
 	if (!OPTIONS_TST(kOptGoLcdAPI)) {
 		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscExtsGolcdCheckbox));
