@@ -15,7 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 #include "common/stdafx.h"
@@ -451,7 +452,7 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 	DebugPrintf("|num |  x |  y |width|height|state|fl|   cls   |\n");
 	DebugPrintf("+----+----+----+-----+------+-----+--+---------+\n");
 
-	for (i = 1; (i < _vm->_numLocalObjects) && (_vm->_objs[i].obj_nr != 0) ; i++) {
+	for (i = 1; i < _vm->_numLocalObjects ; i++) {
 		o = &(_vm->_objs[i]);
 		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
 				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state,
