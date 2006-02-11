@@ -57,8 +57,11 @@ static const MidiDriverDescription s_musicDrivers[] = {
 #endif
 
 #if defined(PALMOS_MODE)
+#	if defined(COMPILE_CLIE)
 	{"ypa1", "Yamaha Pa1", MD_YPA1, MDT_MIDI},
+#	elif defined(COMPILE_ZODIAC) && (defined(DISABLE_SCUMM) || !defined(PALMOS_ARM))
 	{"zodiac", "Tapwave Zodiac", MD_ZODIAC, MDT_MIDI},
+#	endif
 #endif
 
 #if defined(__MORPHOS__)
@@ -229,7 +232,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #if defined(PALMOS_MODE)
 #if defined(COMPILE_CLIE)
 	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
-#elif defined(COMPILE_ZODIAC)
+#elif defined(COMPILE_ZODIAC) && (defined(DISABLE_SCUMM) || !defined(PALMOS_ARM))
 	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #endif
@@ -256,4 +259,3 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	error("Invalid midi driver selected");
 	return NULL;
 }
-
