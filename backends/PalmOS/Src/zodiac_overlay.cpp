@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2005 The ScummVM project
  * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
@@ -17,27 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $Header: /cvsroot/scummvm/scummvm/backends/PalmOS/Src/zodiac_overlay.cpp,v 1.3 2005/11/05 11:25:09 chrilith Exp $
  *
  */
 
 #include "be_zodiac.h"
-
-void OSystem_PalmZodiac::showOverlay() {
-	// hide fight indicator
-	draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, false);
-
-	undraw_mouse();
-	_overlayVisible = true;
-	clearOverlay();	
-}
-
-void OSystem_PalmZodiac::hideOverlay() {
-	undraw_mouse();
-	_overlayVisible = false;
-	_redawOSD = true;
-}
 
 void OSystem_PalmZodiac::clearOverlay() {
 	if (!_overlayVisible)
