@@ -105,7 +105,7 @@ uint8 Menu::execute() {
 	_selectedIndex = 0;
 
 	while (_mouse.lButton()) {
-		if (_events.pollEvent()) {
+		while (_events.pollEvent()) {
 			// handle events
 		}
 
@@ -147,6 +147,7 @@ uint8 Menu::execute() {
 			_selectedIndex = index;
 			if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
 		}
+		_system.delayMillis(10);
 	}
 
 	if (_surfaceMenu) delete _surfaceMenu;

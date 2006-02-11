@@ -95,8 +95,9 @@ void Game::execute() {
 		}
 		res.delayList().tick();
 		r.update();
+		system.delayMillis(10);
 
-		if (events.pollEvent()) {
+		while (events.pollEvent()) {
 			if (events.type() == OSystem::EVENT_KEYDOWN) {
 				uint16 roomNum = r.roomNumber();
 
@@ -170,7 +171,7 @@ void Game::execute() {
 			// This code eventually needs to be moved into the main loop so that,
 			// amongst other things, the tick handlers controlling animation can work
 			while (!events.quitFlag && !mouse.lButton() && !mouse.rButton()) {
-				if (events.pollEvent()) {
+				while (events.pollEvent()) {
 					if ((events.type() == OSystem::EVENT_KEYDOWN) && 
 						(events.event().kbd.ascii == 27))
 						events.quitFlag = true;
@@ -184,6 +185,7 @@ void Game::execute() {
 				}
 				res.delayList().tick();
 				r.update();
+				system.delayMillis(10);
 			}
 
 			fields.setField(NEW_ROOM_NUMBER, 0);
@@ -373,6 +375,7 @@ void Game::doShowCredits() {
 }
 
 void Game::doQuit() {
+	OSystem &system = System::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -390,6 +393,7 @@ void Game::doQuit() {
 				if ((key >= 'A') && (key <= 'Z')) key += 'a' - 'A';
 			}
 		}
+		system.delayMillis(10);
 	} while (((uint8) key != 27) && (key != 'y') && (key != 'n'));
 
 	events.quitFlag = key == 'y';

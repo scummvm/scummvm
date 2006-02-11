@@ -99,6 +99,7 @@ void Mouse::waitForRelease() {
 
 	do {
 		e.pollEvent();
+		_system.delayMillis(10);
 	} while (!e.quitFlag && (lButton() || rButton()));
 }
 
@@ -153,6 +154,7 @@ void Events::waitForPress() {
 				_mouse.waitForRelease();				
 			}
 		}
+		_system.delayMillis(10);
 	}
 }
 
