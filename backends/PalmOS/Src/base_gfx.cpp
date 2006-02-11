@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -33,7 +34,7 @@
  */
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"normal", "Normal", GFX_NORMAL},
+	{"1x", "Normal", GFX_NORMAL},
 	{"wide", "Wide", GFX_WIDE},
 	{0, 0, 0}
 };
@@ -137,16 +138,21 @@ void OSystem_PalmBase::setShakePos(int shakeOffset) {
 void OSystem_PalmBase::updateScreen() {
 	// Check whether the palette was changed in the meantime and update the
 	// screen surface accordingly. 
-	if (_paletteDirtyEnd != 0) {
+	if (_paletteDirtyEnd != 0 && _setPalette) {
 		WinSetDrawWindow(WinGetDisplayWindow());
 		WinPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart, _currentPalette + _paletteDirtyStart);
 		_paletteDirtyEnd = 0;
+		//_redawOSD = true;
 
-/*		UInt8 oldCol;
+#ifdef PALMOS_68Ks
+		UInt8 oldCol;
 		oldCol = gVars->indicator.on;
 		gVars->indicator.on = RGBToColor(0,255,0);
 
-		if (oldCol != gVars->indicator.on) {
+		if (oldCol != gVars->indicator.on)
+			_redrawOSD = true;
+
+/*		 {
 			// redraw if needed
 			if (_lastKeyModifier)
 				draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, getHeight() + 2, true);
@@ -155,12 +161,17 @@ void OSystem_PalmBase::updateScreen() {
 				draw1BitGfx(kDrawNumPad, (getWidth() >> 1) - 32, getHeight() + 2, true);
 
 			if (_showBatLow)
-				draw1BitGfx(kDrawBatLow, (getWidth() >> 1), -16, true);			
-		}
-*/	}
-
+				draw1BitGfx(kDrawBatLow, (getWidth() >> 1), -16, true);		
+		}*/	
+#endif
+	}
+	if (_redawOSD) {
+		_redawOSD = false;
+		draw_osd(kDrawBatLow, _screenDest.w - 18, -16, _showBatLow, 2);
+		draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, (_useNumPad && !_overlayVisible), 1);
+	}
 	int_updateScreen();
-	draw_mouse();
+
 }
 
 void OSystem_PalmBase::clearScreen() {
@@ -170,7 +181,59 @@ void OSystem_PalmBase::clearScreen() {
 }
 
 void OSystem_PalmBase::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {
+//return;
+
+#ifdef PALMOS_68K
 	MemHandle hTemp = DmGetResource(bitmapRsc, id);
+#else
+	MemHandle hTemp = DmGetResource('abmp', id + 100);
+#endif
+
+	if (hTemp) {
+		/*static const UInt32 pal[3] = {
+			(TwGfxComponentsToPackedRGB(0,255,0)),
+			(TwGfxComponentsToPackedRGB(255,255,0)),
+			(TwGfxComponentsToPackedRGB(255,0,0))
+		};*/
+
+		BitmapType *bmTemp;
+		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
+
+		Coord w, h;
+#ifdef PALMOS_68K
+		BmpGlueGetDimensions(bmTemp, &w, &h, 0);
+#else
+		BmpGetDimensions(bmTemp, &w, &h, 0);
+#endif
+		PointType dst = { _screenOffset.x + x, _screenOffset.y + y };
+		RectangleType r = { dst.x, dst.y, w, h };
+
+		RectangleType c;
+
+		UInt16 old = WinSetCoordinateSystem(kCoordinatesNative);
+		WinGetClip(&c);
+		WinResetClip();
+		if (show) {
+			WinSetDrawWindow(_screenH);
+			WinSetBackColor(0);
+			WinSetForeColor(120);	// pal[color]
+			WinFillRectangle(&r, 0);
+			WinSetDrawMode(winOverlay);
+			WinDrawBitmap(bmTemp, 0, 0);
+			WinSetDrawMode(winPaint);
+
+		} else {
+			WinSetBackColor(0);
+			WinFillRectangle(&r, 0);
+		}
+		WinSetClip(&c);
+		WinSetCoordinateSystem(old);
+
+		MemPtrUnlock(bmTemp);
+		DmReleaseResource(hTemp);
+	}
+
+/*	MemHandle hTemp = DmGetResource(bitmapRsc, id);
 	
 	if (hTemp) {
 		BitmapType *bmTemp;
@@ -213,5 +276,5 @@ void OSystem_PalmBase::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8
 
 		MemHandleUnlock(hTemp);
 		DmReleaseResource(hTemp);
-	}
+	}*/
 }
