@@ -368,7 +368,7 @@ for ac_option in $@; do
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
       --disable-kyra)           _build_kyra=no ;;
-      --enable-lure)            _build_lure=no ;;
+      --enable-lure)            _build_lure=yes ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
