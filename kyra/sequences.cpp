@@ -489,7 +489,7 @@ void KyraEngine::seq_playFluteAnimation() {
 }
 
 void KyraEngine::seq_winterScroll1() {
-	debug(1, "seq_winterScroll1()");
+	debug(9, "seq_winterScroll1()");
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
 	assert(_winterScrollTable);
@@ -505,7 +505,6 @@ void KyraEngine::seq_winterScroll1() {
 	}
 	
 	freeShapes123();
-	
 	snd_playSoundEffect(0x20);
 
 	uint8 endEncode, midpoint, endpoint;
