@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -39,6 +40,7 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_setMode = GFX_NORMAL;
 	_mode = _setMode;
 	_redawOSD = false;
+	_setPalette = true;
 	
 	_offScreenH = NULL;
 	_screenH = NULL;
@@ -63,6 +65,7 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	MemSet(&_mouseCurState, sizeof(_mouseCurState), 0);
 	MemSet(&_mouseOldState, sizeof(_mouseOldState), 0);
 	MemSet(&_timer, sizeof(TimerType), 0);
+	MemSet(&_sound, sizeof(SoundType), 0);
 }
 
 void OSystem_PalmBase::initBackend() {
@@ -100,4 +103,11 @@ void OSystem_PalmBase::setTimerCallback(TimerProc callback, int timer) {
 	} else {
 		_timer.active = false;
 	}
+}
+
+void OSystem_PalmBase::quit() {
+	int_quit();
+	clearSoundCallback();
+	unload_gfx_mode();
+	exit(0);
 }

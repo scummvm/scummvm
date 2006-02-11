@@ -1,7 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
- * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,14 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
 #ifndef BE_BASE_H
 #define BE_BASE_H
-
-#define ALLOW_ACCESS_TO_INTERNALS_OF_BITMAPS
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
@@ -51,10 +50,16 @@ enum {
 #define kDrawFight		3030
 
 typedef struct {
-	uint32 duration, nextExpiry;
-	bool active;
+	UInt32 duration, nextExpiry;
+	Boolean active;
 	OSystem::TimerProc callback;
 } TimerType, *TimerPtr;
+
+typedef struct {
+	Boolean	active;
+	void *proc;
+	void *param;
+} SoundType, *SoundPtr;
 
 extern "C" void SysEventGet(EventType *, Int32);
 
@@ -83,7 +88,7 @@ private:
 	void battery_handler();
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y) = 0;
 	void simulate_mouse(Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr);
-	virtual void sound_handler() {};
+	virtual void sound_handler() = 0;
 
 protected:
 	virtual void draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color = 0);
@@ -105,6 +110,7 @@ protected:
 	};
 
 	TimerType _timer;
+	SoundType _sound;
 
 	RGBColorType _currentPalette[256];
 	uint _paletteDirtyStart, _paletteDirtyEnd;
@@ -125,7 +131,7 @@ protected:
 	int _new_shake_pos;
 
 	Boolean _overlayVisible;
-	Boolean _redawOSD;
+	Boolean _redawOSD, _setPalette;
 
 	UInt32 _keyMouseMask;
 	struct {
@@ -222,22 +228,22 @@ public:
 	
 	virtual void setTimerCallback(TimerProc callback, int interval);
 
-	MutexRef createMutex() { return NULL; }
-	void lockMutex(MutexRef mutex) {}
-	void unlockMutex(MutexRef mutex) {}
-	void deleteMutex(MutexRef mutex) {}
+	virtual MutexRef createMutex() { return NULL; }
+	virtual void lockMutex(MutexRef mutex) {}
+	virtual void unlockMutex(MutexRef mutex) {}
+	virtual void deleteMutex(MutexRef mutex) {}
 	
 	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
 	virtual void clearSoundCallback() = 0;
 	int getOutputSampleRate() const { return _samplesPerSec; }
 
-	bool openCD(int drive) { return true;};
-	bool pollCD() { return true;};
+	bool openCD(int drive) { return false;};
+	bool pollCD() { return false;};
 	void playCD(int track, int num_loops, int start_frame, int duration) {};
 	void stopCD() {};
 	void updateCD() {};
 	
-	void quit() { int_quit(); }
+	void quit();
 	virtual void setWindowCaption(const char *caption) = 0;
 	
 	Common::SaveFileManager *getSavefileManager();
