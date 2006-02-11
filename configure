@@ -56,7 +56,7 @@ _build_queen=yes
 _build_saga=yes
 _build_gob=yes
 _build_kyra=yes
-_build_lure=yes
+_build_lure=no
 _need_memalign=no
 _build_plugins=no
 _nasm=auto
@@ -302,7 +302,7 @@ Optional Features:
   --disable-saga           don't build the SAGA engine
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
-  --disable-lure           don't build the Lure of the Temptress engine
+  --enable-lure            build the Lure of the Temptress engine
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -368,7 +368,7 @@ for ac_option in $@; do
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
       --disable-kyra)           _build_kyra=no ;;
-      --disable-lure)           _build_lure=no ;;
+      --enable-lure)            _build_lure=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
