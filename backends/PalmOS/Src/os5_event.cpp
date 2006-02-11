@@ -17,7 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header$
+ * $URL$
+ * $Id$
  *
  */
 
@@ -50,20 +51,6 @@ bool OSystem_PalmOS5::check_event(Event &event, EventPtr ev) {
 			event.mouse.x = _mouseCurState.x;
 			event.mouse.y = _mouseCurState.y;
 			return true;
-
-		// trun off
-		case vchrAutoOff:
-		case vchrPowerOff:
-			// pause the sound thread if any
-			if (_sound.active)
-				SndStreamPause(_soundEx.handle, true);
-			break;
-		
-		case vchrLateWakeup:
-			// resume the sound thread if any
-			if (_sound.active)
-				SndStreamPause(_soundEx.handle, false);
-			break;
 		}
 		
 		if (_keyMouse.hasMore) {
