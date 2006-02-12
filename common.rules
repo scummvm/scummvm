@@ -10,7 +10,7 @@ ifdef PLUGIN
 # TODO: Right now, for Mac OS X only. We either will have to generate this
 # via the configure script, or put in some 'if' statements to choose from
 # one of several build rules
-PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(MODULE)$(PLUGIN_SUFFIX)
+PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(notdir $(MODULE))$(PLUGIN_SUFFIX)
 $(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
 	$(MKDIR) plugins
 	$(CXX) $(PLUGIN_LDFLAGS) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) -o $@
