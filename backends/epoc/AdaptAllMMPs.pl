@@ -26,7 +26,7 @@ Preparing to update all the Symbian MMP project files with objects from module.m
 	
 my @section_empty = (""); # section standard: no #ifdef's in module.mk files
 my @sections_scumm = ("", "DISABLE_SCUMM_7_8", "DISABLE_HE"); # special sections for engine SCUMM
-my @base_excludes = ("mt32","fluidsynth"); # case insensitive exclusions for sound
+my @base_excludes = ("mt32","fluidsynth","i386","part","partial","partialmanager","synth","tables","freeverb"); # case insensitive exclusions for sound
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])
 #ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
@@ -34,12 +34,12 @@ ParseModule("_base",	"common",	\@section_empty);
 ParseModule("_base",	"gui",		\@section_empty);
 ParseModule("_base",	"graphics",	\@section_empty);
 ParseModule("_base",	"sound",	\@section_empty,		\@base_excludes);
-
+chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm);
 ParseModule("_queen",	"queen",	\@section_empty);
 ParseModule("_simon",	"simon",	\@section_empty);
-ParseModule("_sky",		"sky",		\@section_empty);
-ParseModule("_gob",		"gob",		\@section_empty);
+ParseModule("_sky",	"sky",		\@section_empty);
+ParseModule("_gob",	"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@section_empty);
 
 ParseModule("_kyra",	"kyra",		\@section_empty);
