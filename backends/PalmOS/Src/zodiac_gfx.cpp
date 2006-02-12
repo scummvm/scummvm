@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2005 The ScummVM project
  * Copyright (C) 2002-2005 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
@@ -17,8 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $Header: /cvsroot/scummvm/scummvm/backends/PalmOS/Src/zodiac_gfx.cpp,v 1.4 2005/11/05 11:18:56 chrilith Exp $
  *
  */
 
@@ -52,17 +51,14 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 		return;
 	_gfxLoaded = true;
 
-	OPTIONS_RST(kOptDisableOnScrDisp); // TODO
-
 	// get command line config
-	_fullscreen = ConfMan.getBool("fullscreen");	// (NORMAL mode)
+	_fullscreen = ConfMan.getBool("fullscreen");	// TODO : (NORMAL mode)
 	_ratio.adjustAspect = ConfMan.getBool("aspect_ratio") ? kRatioHeight : kRatioNone;
 
 	// precalc ratio (WIDE mode)
 	_ratio.width = ((float)_screenWidth / _screenHeight * gVars->screenFullHeight);
 	_ratio.height = ((float)_screenHeight / _screenWidth * gVars->screenFullWidth);
 
-	_sysOldCoord = WinSetCoordinateSystem(kCoordinatesNative);
 	_sysOldOrientation = SysGetOrientation();
 	SysSetOrientation(sysOrientationLandscape);
 
@@ -74,11 +70,14 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	MemSet(_nativePal, sizeof(_nativePal), 0);
 	MemSet(_currentPalette, sizeof(_currentPalette), 0);
 
-	UInt32 depth = 16;		
+	UInt32 depth = 16;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
+
+	gVars->indicator.on = RGBToColor(0,255,0);
+	gVars->indicator.off = RGBToColor(0,0,0);
+
 	_screenH = WinGetDisplayWindow();
-	_screenP = (byte *)WinScreenLock(winLockDontCare);	// TODO : change this !
-	WinScreenUnlock();
+	_screenP = (byte *)BmpGetBits(WinGetBitmap(_screenH));
 
 	e = _TwGfxOpen((void **)&_gfxH, 0);
 	e = TwGfxGetPalmDisplaySurface(_gfxH, &_palmScreenP);
@@ -118,7 +117,6 @@ void OSystem_PalmZodiac::hotswap_gfx_mode(int mode) {
 	_screenDest.h = _screenHeight;
 
 	// prevent bad DIA redraw (Stat part)
-	WinSetCoordinateSystem(kCoordinatesStandard);
 	if (mode  == GFX_NORMAL) {
 		_redawOSD = true;
 		_stretched = (_screenWidth > gVars->screenWidth);
@@ -145,9 +143,9 @@ void OSystem_PalmZodiac::hotswap_gfx_mode(int mode) {
 
 		calc_rect(true);
 	}
-	WinSetCoordinateSystem(kCoordinatesNative);
 
-	if (_stretched) {		
+	if (_stretched) {
+		OPTIONS_SET(kOptDisableOnScrDisp);
 		TwGfxSetClip(_palmScreenP, &_dstRect);
 
 		if (!_tmpScreenP) {
@@ -161,6 +159,7 @@ void OSystem_PalmZodiac::hotswap_gfx_mode(int mode) {
 			e = TwGfxAllocSurface(_gfxH, &_tmpScreenP, &nfo);
 		}
 	} else {
+		OPTIONS_RST(kOptDisableOnScrDisp);
 		if (_tmpScreenP) {
 			e = TwGfxFreeSurface(_tmpScreenP);
 			_tmpScreenP = NULL;
@@ -198,7 +197,6 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 	MemPtrFree(_offScreenP);
 
 	SysSetOrientation(_sysOldOrientation);
-	WinSetCoordinateSystem(_sysOldCoord);
 	StatShow();
 	PINSetInputAreaState(pinInputAreaOpen);
 }
@@ -217,12 +215,6 @@ void OSystem_PalmZodiac::int_setShakePos(int shakeOffset) {
 
 void OSystem_PalmZodiac::updateScreen() {
 	Err e;
-
-	if (_redawOSD) {
-		_redawOSD = false;
-		draw_osd(kDrawBatLow, _screenDest.w - 18, -16, _showBatLow, 2);
-		draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, (_useNumPad && !_overlayVisible), 1);
-	}
 
 	// draw the mouse pointer
 	draw_mouse();		
@@ -291,41 +283,39 @@ void OSystem_PalmZodiac::extras_palette(uint8 index, uint8 r, uint8 g, uint8 b) 
 void OSystem_PalmZodiac::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {
 	if (_mode != GFX_NORMAL)
 		return;
-
 	MemHandle hTemp = DmGetResource(bitmapRsc, id + 100);
 
 	if (hTemp) {
-		static const UInt32 pal[3] = {
-			(TwGfxComponentsToPackedRGB(0,255,0)),
-			(TwGfxComponentsToPackedRGB(255,255,0)),
-			(TwGfxComponentsToPackedRGB(255,0,0))
+		RGBColorType oldRGB;
+		static const RGBColorType pal[4] = {
+			{0,0,255,0},
+			{0,255,255,0},
+			{0,255,0,0},
+			{0,0,0,0}
 		};
 
 		BitmapType *bmTemp;
 		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
 
 		Coord w, h;
-		BmpGetDimensions(bmTemp, &w, &h, 0);
-		TwGfxPointType dst = { _screenOffset.x + x, _screenOffset.y + y };
-		TwGfxRectType r = { dst.x, dst.y, w, h };
+		WinGetBitmapDimensions(bmTemp, &w, &h);	// return the size of the low density bmp
 
-		TwGfxRectType c;
-		TwGfxGetClip(_palmScreenP, &c);
-		TwGfxSetClip(_palmScreenP, 0);
+		PointType dst = { _screenOffset.x + x, _screenOffset.y + y };
+		RectangleType c, r = { dst.x, dst.y, w * 2, h * 2 };
+
+		UInt16 old = WinSetCoordinateSystem(kCoordinatesNative);
+		WinSetDrawWindow(_screenH);
 		if (show) {
-			WinSetDrawWindow(_screenH);
-			TwGfxFillRect(_palmScreenP, &r, pal[color]);
-			WinSetDrawMode(winOverlay);
-			WinPaintBitmap(bmTemp,dst.x, dst.y);
-			WinSetDrawMode(winPaint);
-
+			WinSetForeColorRGB(&pal[3], &oldRGB);
+			WinSetBackColorRGB(&pal[color], &oldRGB);
+			WinPaintBitmap(bmTemp, dst.x, dst.y);
 		} else {
-			TwGfxFillRect(_palmScreenP, &r, 0);
+			WinSetBackColorRGB(&pal[3], &oldRGB);
+			WinFillRectangle(&r, 0);
 		}
-		TwGfxSetClip(_palmScreenP, &c);
+		WinSetCoordinateSystem(old);
 
 		MemPtrUnlock(bmTemp);
 		DmReleaseResource(hTemp);
-		
 	}
 }
