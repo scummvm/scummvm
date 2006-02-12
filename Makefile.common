@@ -33,37 +33,12 @@ OBJS =\
 	imuse/imuse_sndmgr.o \
 	imuse/imuse_tables.o \
 	imuse/imuse_track.o \
-	tinygl/api.o \
-	tinygl/arrays.o \
-	tinygl/clear.o \
-	tinygl/clip.o \
-	tinygl/error.o \
-	tinygl/get.o \
-	tinygl/image_util.o \
-	tinygl/init.o \
-	tinygl/light.o \
-	tinygl/list.o \
-	tinygl/matrix.o \
-	tinygl/memory.o \
-	tinygl/misc.o \
-	tinygl/msghandling.o \
-	tinygl/select.o \
-	tinygl/specbuf.o \
-	tinygl/texture.o \
-	tinygl/vertex.o \
-	tinygl/zbuffer.o \
-	tinygl/zdither.o \
-	tinygl/zline.o \
-	tinygl/zmath.o \
-	tinygl/ztriangle.o \
 	actor.o \
 	bitmap.o \
 	blocky16.o \
 	costume.o \
 	debug.o \
-	driver_sdl.o \
-	driver_gl.o \
-	driver_tinygl.o \
+	$(DRIVER_OBJS) \
 	engine.o \
 	savegame.o \
 	font.o \
@@ -89,12 +64,44 @@ OBJS =\
 	vima.o \
 	walkplane.o
 
+DRIVER_OBJS ?=\
+	driver_sdl.o \
+	driver_gl.o \
+	driver_tinygl.o \
+	$(TINYGL_OBJS)
+
+TINYGL_OBJS =\
+	tinygl/api.o \
+	tinygl/arrays.o \
+	tinygl/clear.o \
+	tinygl/clip.o \
+	tinygl/error.o \
+	tinygl/get.o \
+	tinygl/image_util.o \
+	tinygl/init.o \
+	tinygl/light.o \
+	tinygl/list.o \
+	tinygl/matrix.o \
+	tinygl/memory.o \
+	tinygl/misc.o \
+	tinygl/msghandling.o \
+	tinygl/select.o \
+	tinygl/specbuf.o \
+	tinygl/texture.o \
+	tinygl/vertex.o \
+	tinygl/zbuffer.o \
+	tinygl/zdither.o \
+	tinygl/zline.o \
+	tinygl/zmath.o \
+	tinygl/ztriangle.o
+
 DEPS = $(OBJS:.o=.d)
 
 residual: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 .cpp.o:
+	@test -d $(*D) || mkdir -p $(*D)
 	$(CXX) $(CXXFLAGS) -Wp,-MMD,"$*.d",-MQ,"$*.o",-MP -c $(<) -o $*.o
 
 clean: 
