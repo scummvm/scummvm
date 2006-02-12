@@ -129,6 +129,8 @@ static const char *c_header =
 	"struct MD5Table {\n"
 	"	const char *md5;\n"
 	"	const char *gameid;\n"
+	"	const char *variant;\n"
+	"	const char *extra;\n"
 	"	Common::Language language;\n"
 	"	Common::Platform platform;\n"
 	"};\n"
@@ -136,7 +138,7 @@ static const char *c_header =
 	"static const MD5Table md5table[] = {\n";
 
 static const char *c_footer =
-	"	{ 0, 0, Common::UNK_LANG, Common::kPlatformUnknown }\n"
+	"	{ 0, 0, 0, 0, Common::UNK_LANG, Common::kPlatformUnknown }\n"
 	"};\n";
 
 static void parseEntry(Entry *entry, char *line) {
@@ -144,11 +146,10 @@ static void parseEntry(Entry *entry, char *line) {
 	assert(line);
 	
 	/* Split at the tabs */
-	entry->desc = strtok(line, "\t\n\r");
-	entry->platform = strtok(NULL, "\t\n\r");
+	entry->md5 = strtok(line, "\t\n\r");
 	entry->language = strtok(NULL, "\t\n\r");
-	entry->md5 = strtok(NULL, "\t\n\r");
-	entry->gameid = strtok(NULL, "\t\n\r");
+	entry->platform = strtok(NULL, "\t\n\r");
+	entry->desc = strtok(NULL, "\t\n\r");
 	entry->infoSource = strtok(NULL, "\t\n\r");
 }
 
@@ -180,6 +181,7 @@ void showhelp(const char *exename)
 	printf("\nParams:\n");
 	printf(" --c++   output C++ code for inclusion in ScummVM (default)\n");
 	printf(" --php   output PHP code for the web site\n");
+	printf(" --txt   output TXT file (should be identical to input file)\n");
 	exit(2);
 }
 
@@ -194,25 +196,35 @@ int main(int argc, char *argv[])
 	FILE *inFile = stdin;
 	FILE *outFile = stdout;
 	char buffer[1024];
-	char section[1024];
+	char section[256];
+	char gameid[32];
 	char *line;
 	int err;
 	int i;
 	time_t theTime;
 	const char *generationDate;
+	int firstSection = 1;
 
 	const int entrySize = 256;
 	int numEntries = 0, maxEntries = 1;
 	char *entriesBuffer = malloc(maxEntries * entrySize);
 
-	int phpOutput = 0;
+	typedef enum {
+		kCPPOutput,
+		kPHPOutput,
+		kTXTOutput
+	} OutputMode;
+
+	OutputMode outputMode = kCPPOutput;
 
 	if (argc != 2)
 		showhelp(argv[0]);
 	if (strcmp(argv[1], "--c++") == 0) {
-		phpOutput = 0;
+		outputMode = kCPPOutput;
 	} else if (strcmp(argv[1], "--php") == 0) {
-		phpOutput = 1;
+		outputMode = kPHPOutput;
+	} else if (strcmp(argv[1], "--txt") == 0) {
+		outputMode = kTXTOutput;
 	} else {
 		showhelp(argv[0]);
 	}
@@ -220,9 +232,11 @@ int main(int argc, char *argv[])
 	time(&theTime);
 	generationDate = strdup(asctime(gmtime(&theTime)));
 
-	if (phpOutput)
+	if (outputMode == kPHPOutput)
 		fprintf(outFile, php_header, generationDate);
 
+	section[0] = 0;
+	gameid[0] = 0;
 	while ((line = fgets(buffer, sizeof(buffer), inFile))) {
 		/* Parse line */
 		if (line[0] == '#' || isEmptyLine(line))
@@ -231,32 +245,60 @@ int main(int argc, char *argv[])
 			Entry entry;
 			assert(section[0]);
 			parseEntry(&entry, line+1);
-			if (phpOutput) {
+			if (outputMode == kPHPOutput) {
 				fprintf(outFile, "\t\t<?php addEntry(");
 				fprintf(outFile, "\"%s\", ", entry.desc);
 				fprintf(outFile, "\"%s\", ", entry.platform);
 				fprintf(outFile, "\"%s\", ", entry.language);
 				fprintf(outFile, "\"%s\", ", entry.md5);
-				fprintf(outFile, "\"%s\"", entry.gameid);
+				fprintf(outFile, "\"%s\"", gameid);
 				if (entry.infoSource)
 					fprintf(outFile, ", \"%s\"", entry.infoSource);
 				fprintf(outFile, "); ?>\n");
+			} else if (outputMode == kTXTOutput) {
+				fprintf(outFile, "\t%s\t%s\t%s\t%s\t%s\n",
+					entry.md5,
+					entry.language,
+					entry.platform,
+					entry.desc,
+					entry.infoSource ? entry.infoSource : ""
+					);
 			} else if (entry.md5) {
 				if (numEntries >= maxEntries) {
 					maxEntries *= 2;
 					entriesBuffer = realloc(entriesBuffer, maxEntries * entrySize);
 				}
-				snprintf(entriesBuffer + numEntries * entrySize, entrySize, "\t{ \"%s\", \"%s\", Common::%s, Common::%s },\n",
-					entry.md5, entry.gameid, mapStr(entry.language, langMap), mapStr(entry.platform, platformMap));
+				snprintf(entriesBuffer + numEntries * entrySize, entrySize,
+					"\t{ \"%s\", \"%s\", \"TODO\", \"%s\", Common::%s, Common::%s },\n",
+					entry.md5, gameid, entry.desc, mapStr(entry.language, langMap), mapStr(entry.platform, platformMap));
 				numEntries++;
 			}
 		} else {
-			for (i = 0; buffer[i] && buffer[i] != '\n'; ++i)
-				section[i] = buffer[i];
+			// Read the gameid, followed by a tab
+			for (i = 0; *line && *line != '\t'; ++i)
+				gameid[i] = *line++;
+			assert(i > 0);
+			gameid[i] = 0;
+			assert(*line != 0);
+			line++;
+
+			// Read the section header (usually the full game name)
+			for (i = 0; *line && *line != '\n'; ++i)
+				section[i] = *line++;
+			assert(i > 0);
 			section[i] = 0;
-			if (phpOutput) {
+
+			// If in PHP or TXT mode, we write the output immediately
+			if (outputMode == kPHPOutput) {
 				fprintf(outFile, "\t<tr><td colspan='7'><strong>%s</strong></td></tr>\n", section);
+			} else if (outputMode == kTXTOutput) {
+				// If this isn't the first section, print a newline to end the previous section.
+				if (!firstSection)
+					fprintf(outFile, "\n");
+				fprintf(outFile, "%s\t%s\n", gameid, section);
 			}
+
+			firstSection = 0;
 		}
 	}
 
@@ -264,7 +306,7 @@ int main(int argc, char *argv[])
 	if (err)
 		error("Failed reading from input file, error %d", err);
 
-	if (!phpOutput) {
+	if (outputMode == kCPPOutput) {
 		/* Printf header */
 		fprintf(outFile, c_header, generationDate);
 		/* Now sort the MD5 table (this allows for binary searches) */
