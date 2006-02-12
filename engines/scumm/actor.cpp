@@ -1580,7 +1580,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		return;
 	}
 
-	if (_vm->_version <= 3) {
+	if (_vm->_version <= 4) {
 		abr.x = destX;
 		abr.y = destY;
 	} else {
