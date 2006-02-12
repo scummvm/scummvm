@@ -117,6 +117,12 @@ static GameDescription gameDescriptions[] = {
 	{ "comi", "The Curse of Monkey Island" },
 #endif
 
+	{ "fbear", "Fatty Bear's Birthday Surprise" },
+	{ "fbpack", "Fatty Bear's Fun Pack" },
+	{ "funpack", "Putt-Putt's Fun Pack" },
+	{ "puttmoon", "Putt-Putt Goes to the Moon" },
+	{ "puttputt", "Putt-Putt Joins the Parade" },
+
 #ifndef DISABLE_HE
 	{ "activity", "Putt-Putt & Fatty Bear's Activity Pack" },
 	{ "airport", "Let's Explore the Airport with Buzzy" },
@@ -132,8 +138,6 @@ static GameDescription gameDescriptions[] = {
 	{ "chase", "Spy Fox in Cheese Chase" },
 	{ "dog", "Putt-Putt and Pep's Dog on a Stick" },
 	{ "farm", "Let's Explore the Farm with Buzzy" },
-	{ "fbear", "Fatty Bear's Birthday Surprise" },
-	{ "fbpack", "Fatty Bear's Fun Pack" },
 	{ "football", "Backyard Football" },
 	{ "freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds" },
 	{ "freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse" },
@@ -141,7 +145,6 @@ static GameDescription gameDescriptions[] = {
 	{ "freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch" },
 	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
 	{ "FreddisFunShop", "Freddi Fish's One-Stop Fun Shop" },
-	{ "funpack", "Putt-Putt's Fun Pack" },
 	{ "jungle", "Let's Explore the Jungle with Buzzy" },
 	{ "lost", "Pajama Sam's Lost & Found" },
 	{ "maze", "Freddi Fish and Luther's Maze Madness" },
@@ -151,8 +154,6 @@ static GameDescription gameDescriptions[] = {
 	{ "pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet" },
 	{ "pjgames", "Pajama Sam: Games to Play On Any Day" },
 	{ "puttcircus", "Putt-Putt Joins the Circus" },
-	{ "puttmoon", "Putt-Putt Goes to the Moon" },
-	{ "puttputt", "Putt-Putt Joins the Parade" },
 	{ "puttrace", "Putt-Putt Enters the Race" },
 	{ "PuttsFunShop", "Putt-Putt's One-Stop Fun Shop" },
 	{ "putttime", "Putt-Putt Travels Through Time" },
