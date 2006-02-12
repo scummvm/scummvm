@@ -1,26 +1,26 @@
 MODULE := sound
 
 MODULE_OBJS := \
-	sound/adpcm.o \
-	sound/audiocd.o \
-	sound/audiostream.o \
-	sound/flac.o \
-	sound/fmopl.o \
-	sound/mididrv.o \
-	sound/midiparser.o \
-	sound/midiparser_smf.o \
-	sound/midiparser_xmidi.o \
-	sound/mixer.o \
-	sound/mp3.o \
-	sound/mpu401.o \
-	sound/rate.o \
-	sound/voc.o \
-	sound/vorbis.o \
-	sound/wave.o \
-	sound/softsynth/adlib.o \
-	sound/softsynth/ym2612.o \
-	sound/softsynth/fluidsynth.o \
-	sound/softsynth/mt32.o \
+	adpcm.o \
+	audiocd.o \
+	audiostream.o \
+	flac.o \
+	fmopl.o \
+	mididrv.o \
+	midiparser.o \
+	midiparser_smf.o \
+	midiparser_xmidi.o \
+	mixer.o \
+	mp3.o \
+	mpu401.o \
+	rate.o \
+	voc.o \
+	vorbis.o \
+	wave.o \
+	softsynth/adlib.o \
+	softsynth/ym2612.o \
+	softsynth/fluidsynth.o \
+	softsynth/mt32.o \
 
 MODULE_DIRS += \
 	sound \

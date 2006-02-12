@@ -1,25 +1,25 @@
 MODULE := engines/kyra
 
 MODULE_OBJS := \
-	engines/kyra/kyra.o \
-	engines/kyra/resource.o \
-	engines/kyra/screen.o \
-	engines/kyra/script_v1.o \
-	engines/kyra/script.o \
-	engines/kyra/seqplayer.o \
-	engines/kyra/sound.o \
-	engines/kyra/staticres.o \
-	engines/kyra/sprites.o \
-	engines/kyra/wsamovie.o \
-	engines/kyra/debugger.o \
-	engines/kyra/animator.o \
-	engines/kyra/gui.o \
-	engines/kyra/sequences_v1.o \
-	engines/kyra/items.o \
-	engines/kyra/scene.o \
-	engines/kyra/text.o \
-	engines/kyra/timer.o \
-	engines/kyra/saveload.o
+	kyra.o \
+	resource.o \
+	screen.o \
+	script_v1.o \
+	script.o \
+	seqplayer.o \
+	sound.o \
+	staticres.o \
+	sprites.o \
+	wsamovie.o \
+	debugger.o \
+	animator.o \
+	gui.o \
+	sequences_v1.o \
+	items.o \
+	scene.o \
+	text.o \
+	timer.o \
+	saveload.o
 
 MODULE_DIRS += \
 	engines/kyra

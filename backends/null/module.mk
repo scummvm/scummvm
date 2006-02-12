@@ -1,12 +1,10 @@
-MODULE := backends/sdl
+MODULE := backends/null
 
 MODULE_OBJS := \
-	events.o \
-	graphics.o \
-	sdl.o
+	null.o
 
 MODULE_DIRS += \
-	backends/sdl
+	backends/null
 
 # We don't use the common.rules here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)

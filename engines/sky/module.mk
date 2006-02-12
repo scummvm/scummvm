@@ -1,27 +1,27 @@
 MODULE := engines/sky
 
 MODULE_OBJS := \
-	engines/sky/autoroute.o \
-	engines/sky/compact.o \
-	engines/sky/control.o \
-	engines/sky/debug.o \
-	engines/sky/disk.o \
-	engines/sky/grid.o \
-	engines/sky/hufftext.o \
-	engines/sky/intro.o \
-	engines/sky/logic.o \
-	engines/sky/mouse.o \
-	engines/sky/rnc_deco.o \
-	engines/sky/screen.o \
-	engines/sky/sky.o \
-	engines/sky/sound.o \
-	engines/sky/text.o \
-	engines/sky/music/adlibchannel.o \
-	engines/sky/music/adlibmusic.o \
-	engines/sky/music/gmchannel.o \
-	engines/sky/music/gmmusic.o \
-	engines/sky/music/mt32music.o \
-	engines/sky/music/musicbase.o
+	autoroute.o \
+	compact.o \
+	control.o \
+	debug.o \
+	disk.o \
+	grid.o \
+	hufftext.o \
+	intro.o \
+	logic.o \
+	mouse.o \
+	rnc_deco.o \
+	screen.o \
+	sky.o \
+	sound.o \
+	text.o \
+	music/adlibchannel.o \
+	music/adlibmusic.o \
+	music/gmchannel.o \
+	music/gmmusic.o \
+	music/mt32music.o \
+	music/musicbase.o
 
 MODULE_DIRS += \
 	engines/sky \

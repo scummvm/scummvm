@@ -3,7 +3,7 @@
 # Copy the list of objects to a new variable. The name of the new variable
 # contains the module name, a trick we use so we can keep multiple different
 # module object lists, one for each module.
-MODULE_OBJS-$(MODULE) := $(MODULE_OBJS)
+MODULE_OBJS-$(MODULE) := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 
 ifdef PLUGIN
 # Plugin build rule
@@ -11,7 +11,7 @@ ifdef PLUGIN
 # via the configure script, or put in some 'if' statements to choose from
 # one of several build rules
 PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(MODULE)$(PLUGIN_SUFFIX)
-$(PLUGIN-$(MODULE)): $(MODULE_OBJS) $(PLUGIN_EXTRA_DEPS)
+$(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
 	$(MKDIR) plugins
 	$(CXX) $(PLUGIN_LDFLAGS) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) -o $@
 PLUGIN:=
@@ -28,7 +28,7 @@ MODULE_LIB-$(MODULE) := $(MODULE)/lib$(notdir $(MODULE)).a
 OBJS += $(MODULE_LIB-$(MODULE))
 
 # Convenience library target
-$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS)
+$(MODULE_LIB-$(MODULE)): $(MODULE_OBJS-$(MODULE))
 	-$(RM) $@
 	$(AR) $@ $+
 	$(RANLIB) $@ 

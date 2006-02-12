@@ -1,38 +1,38 @@
 MODULE := common
 
 MODULE_OBJS := \
-	common/config-file.o \
-	common/config-manager.o \
-	common/file.o \
-	common/md5.o \
-	common/mutex.o \
-	common/str.o \
-	common/stream.o \
-	common/timer.o \
-	common/util.o \
-	common/savefile.o \
-	common/system.o \
-	common/scaler.o \
-	common/scaler/thumbnail.o \
-	common/unzip.o
+	config-file.o \
+	config-manager.o \
+	file.o \
+	md5.o \
+	mutex.o \
+	str.o \
+	stream.o \
+	timer.o \
+	util.o \
+	savefile.o \
+	system.o \
+	scaler.o \
+	scaler/thumbnail.o \
+	unzip.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \
-	common/scaler/2xsai.o \
-	common/scaler/aspect.o \
-	common/scaler/scale2x.o \
-	common/scaler/scale3x.o \
-	common/scaler/scalebit.o
+	scaler/2xsai.o \
+	scaler/aspect.o \
+	scaler/scale2x.o \
+	scaler/scale3x.o \
+	scaler/scalebit.o
 
 ifndef DISABLE_HQ_SCALERS
 MODULE_OBJS += \
-	common/scaler/hq2x.o \
-	common/scaler/hq3x.o
+	scaler/hq2x.o \
+	scaler/hq3x.o
 
 ifdef HAVE_NASM
 MODULE_OBJS += \
-	common/scaler/hq2x_i386.o \
-	common/scaler/hq3x_i386.o
+	scaler/hq2x_i386.o \
+	scaler/hq3x_i386.o
 endif
 
 endif

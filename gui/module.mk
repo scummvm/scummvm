@@ -1,24 +1,24 @@
 MODULE := gui
 
 MODULE_OBJS := \
-	gui/about.o \
-	gui/browser.o \
-	gui/chooser.o \
-	gui/console.o \
-	gui/dialog.o \
-	gui/editable.o \
-	gui/EditTextWidget.o \
-	gui/launcher.o \
-	gui/ListWidget.o \
-	gui/message.o \
-	gui/newgui.o \
-	gui/options.o \
-	gui/PopUpWidget.o \
-	gui/ScrollBarWidget.o \
-	gui/TabWidget.o \
-	gui/widget.o \
-	gui/theme.o \
-	gui/ThemeNew.o
+	about.o \
+	browser.o \
+	chooser.o \
+	console.o \
+	dialog.o \
+	editable.o \
+	EditTextWidget.o \
+	launcher.o \
+	ListWidget.o \
+	message.o \
+	newgui.o \
+	options.o \
+	PopUpWidget.o \
+	ScrollBarWidget.o \
+	TabWidget.o \
+	widget.o \
+	theme.o \
+	ThemeNew.o
 
 MODULE_DIRS += \
 	gui

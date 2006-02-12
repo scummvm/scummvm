@@ -1,19 +1,19 @@
 MODULE := backends
 
 MODULE_OBJS := \
-	backends/fs/fs.o \
-	backends/fs/posix/posix-fs.o \
-	backends/fs/morphos/abox-fs.o \
-	backends/fs/windows/windows-fs.o \
-	backends/fs/amigaos4/amigaos4-fs.o \
-	backends/midi/alsa.o \
-	backends/midi/coreaudio.o \
-	backends/midi/coremidi.o \
-	backends/midi/morphos.o \
-	backends/midi/null.o \
-	backends/midi/quicktime.o \
-	backends/midi/seq.o \
-	backends/midi/windows.o
+	fs/fs.o \
+	fs/posix/posix-fs.o \
+	fs/morphos/abox-fs.o \
+	fs/windows/windows-fs.o \
+	fs/amigaos4/amigaos4-fs.o \
+	midi/alsa.o \
+	midi/coreaudio.o \
+	midi/coremidi.o \
+	midi/morphos.o \
+	midi/null.o \
+	midi/quicktime.o \
+	midi/seq.o \
+	midi/windows.o
 
 MODULE_DIRS += \
 	backends \

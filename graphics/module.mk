@@ -1,18 +1,18 @@
 MODULE := graphics
 
 MODULE_OBJS := \
-	graphics/animation.o \
-	graphics/consolefont.o \
-	graphics/font.o \
-	graphics/fontman.o \
-	graphics/ilbm.o \
-	graphics/newfont.o \
-	graphics/newfont_big.o \
-	graphics/primitives.o \
-	graphics/scummfont.o \
-	graphics/surface.o \
-	graphics/imageman.o \
-	graphics/imagedec.o
+	animation.o \
+	consolefont.o \
+	font.o \
+	fontman.o \
+	ilbm.o \
+	newfont.o \
+	newfont_big.o \
+	primitives.o \
+	scummfont.o \
+	surface.o \
+	imageman.o \
+	imagedec.o
 
 MODULE_DIRS += \
 	graphics

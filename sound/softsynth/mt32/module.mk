@@ -1,14 +1,14 @@
 MODULE := sound/softsynth/mt32
 
 MODULE_OBJS := \
-	sound/softsynth/mt32/mt32_file.o \
-	sound/softsynth/mt32/i386.o \
-	sound/softsynth/mt32/part.o \
-	sound/softsynth/mt32/partial.o \
-	sound/softsynth/mt32/partialManager.o \
-	sound/softsynth/mt32/synth.o \
-	sound/softsynth/mt32/tables.o \
-	sound/softsynth/mt32/freeverb.o
+	mt32_file.o \
+	i386.o \
+	part.o \
+	partial.o \
+	partialManager.o \
+	synth.o \
+	tables.o \
+	freeverb.o
 
 MODULE_DIRS += \
 	sound/softsynth/mt32
