@@ -70,7 +70,7 @@ public:
 	virtual const char *getGameDataPath() const;
 
 	/** Specific for each engine: prepare error string. */
-	virtual void errorString(const char *buf_input, char *buf_output) = 0;
+	virtual void errorString(const char *buf_input, char *buf_output);
 
 	void initCommonGFX(GameDetector &detector);
 

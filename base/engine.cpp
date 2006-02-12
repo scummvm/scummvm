@@ -148,6 +148,10 @@ const char *Engine::getGameDataPath() const {
 	return _gameDataPath.c_str();
 }
 
+void Engine::errorString(const char *buf1, char *buf2) {
+	strcpy(buf2, buf1);
+}
+
 void NORETURN CDECL error(const char *s, ...) {
 	char buf_input[STRINGBUFLEN];
 	char buf_output[STRINGBUFLEN];
