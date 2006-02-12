@@ -73,6 +73,13 @@ int Timer::handler(int t) {
 	_thisTime = g_driver->getMillis();
 	interval = 1000 * (_thisTime - _lastTime);
 
+	// If the timer has been frozen for a long time, don't
+	// call the procedures a silly number of times, just resynchronize
+	if(interval > 1000000) {
+		interval = 0;
+		warning("Timer skipped forward");
+	}
+
 	for (l = 0; l < MAX_TIMERS; l++) {
 		if (_timerSlots[l].procedure && _timerSlots[l].interval > 0) {
 			_timerSlots[l].counter -= interval;
