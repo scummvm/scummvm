@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -112,7 +112,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				ExceptionHandling="1"
@@ -159,195 +159,195 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\gob\anim.cpp"
+			RelativePath="..\..\engines\gob\anim.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\anim.h"
+			RelativePath="..\..\engines\gob\anim.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\cdrom.cpp"
+			RelativePath="..\..\engines\gob\cdrom.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\cdrom.h"
+			RelativePath="..\..\engines\gob\cdrom.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\dataio.cpp"
+			RelativePath="..\..\engines\gob\dataio.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\dataio.h"
+			RelativePath="..\..\engines\gob\dataio.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\draw.cpp"
+			RelativePath="..\..\engines\gob\draw.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\draw.h"
+			RelativePath="..\..\engines\gob\draw.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\driver_vga.cpp"
+			RelativePath="..\..\engines\gob\driver_vga.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\driver_vga.h"
+			RelativePath="..\..\engines\gob\driver_vga.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\game.cpp"
+			RelativePath="..\..\engines\gob\game.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\game.h"
+			RelativePath="..\..\engines\gob\game.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\global.cpp"
+			RelativePath="..\..\engines\gob\global.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\global.h"
+			RelativePath="..\..\engines\gob\global.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\gob.cpp"
+			RelativePath="..\..\engines\gob\gob.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\gob.h"
+			RelativePath="..\..\engines\gob\gob.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\goblin.cpp"
+			RelativePath="..\..\engines\gob\goblin.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\goblin.h"
+			RelativePath="..\..\engines\gob\goblin.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\init.cpp"
+			RelativePath="..\..\engines\gob\init.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\init.h"
+			RelativePath="..\..\engines\gob\init.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\inter.cpp"
+			RelativePath="..\..\engines\gob\inter.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\inter.h"
+			RelativePath="..\..\engines\gob\inter.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\inter_v1.cpp"
+			RelativePath="..\..\engines\gob\inter_v1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\inter_v2.cpp"
+			RelativePath="..\..\engines\gob\inter_v2.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\map.cpp"
+			RelativePath="..\..\engines\gob\map.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\map.h"
+			RelativePath="..\..\engines\gob\map.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\mult.cpp"
+			RelativePath="..\..\engines\gob\mult.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\mult.h"
+			RelativePath="..\..\engines\gob\mult.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\music.cpp"
+			RelativePath="..\..\engines\gob\music.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\music.h"
+			RelativePath="..\..\engines\gob\music.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\pack.cpp"
+			RelativePath="..\..\engines\gob\pack.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\pack.h"
+			RelativePath="..\..\engines\gob\pack.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\palanim.cpp"
+			RelativePath="..\..\engines\gob\palanim.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\palanim.h"
+			RelativePath="..\..\engines\gob\palanim.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\parse.cpp"
+			RelativePath="..\..\engines\gob\parse.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\parse.h"
+			RelativePath="..\..\engines\gob\parse.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\parse_v1.cpp"
+			RelativePath="..\..\engines\gob\parse_v1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\parse_v2.cpp"
+			RelativePath="..\..\engines\gob\parse_v2.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\scenery.cpp"
+			RelativePath="..\..\engines\gob\scenery.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\scenery.h"
+			RelativePath="..\..\engines\gob\scenery.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\sound.cpp"
+			RelativePath="..\..\engines\gob\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\sound.h"
+			RelativePath="..\..\engines\gob\sound.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\timer.cpp"
+			RelativePath="..\..\engines\gob\timer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\timer.h"
+			RelativePath="..\..\engines\gob\timer.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\util.cpp"
+			RelativePath="..\..\engines\gob\util.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\util.h"
+			RelativePath="..\..\engines\gob\util.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\video.cpp"
+			RelativePath="..\..\engines\gob\video.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\gob\video.h"
+			RelativePath="..\..\engines\gob\video.h"
 			>
 		</File>
 	</Files>

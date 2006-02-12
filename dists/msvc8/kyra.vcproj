@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -112,7 +112,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				ExceptionHandling="1"
@@ -159,123 +159,123 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\kyra\animator.cpp"
+			RelativePath="..\..\engines\kyra\animator.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\animator.h"
+			RelativePath="..\..\engines\kyra\animator.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\debugger.cpp"
+			RelativePath="..\..\engines\kyra\debugger.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\debugger.h"
+			RelativePath="..\..\engines\kyra\debugger.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\gui.cpp"
+			RelativePath="..\..\engines\kyra\gui.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\items.cpp"
+			RelativePath="..\..\engines\kyra\items.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\kyra.cpp"
+			RelativePath="..\..\engines\kyra\kyra.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\kyra.h"
+			RelativePath="..\..\engines\kyra\kyra.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\resource.cpp"
+			RelativePath="..\..\engines\kyra\resource.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\resource.h"
+			RelativePath="..\..\engines\kyra\resource.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\saveload.cpp"
+			RelativePath="..\..\engines\kyra\saveload.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\scene.cpp"
+			RelativePath="..\..\engines\kyra\scene.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\screen.cpp"
+			RelativePath="..\..\engines\kyra\screen.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\screen.h"
+			RelativePath="..\..\engines\kyra\screen.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\script.cpp"
+			RelativePath="..\..\engines\kyra\script.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\script.h"
+			RelativePath="..\..\engines\kyra\script.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\script_v1.cpp"
+			RelativePath="..\..\engines\kyra\script_v1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\seqplayer.cpp"
+			RelativePath="..\..\engines\kyra\seqplayer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\seqplayer.h"
+			RelativePath="..\..\engines\kyra\seqplayer.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\sequences_v1.cpp"
+			RelativePath="..\..\engines\kyra\sequences_v1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\sound.cpp"
+			RelativePath="..\..\engines\kyra\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\sound.h"
+			RelativePath="..\..\engines\kyra\sound.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\sprites.cpp"
+			RelativePath="..\..\engines\kyra\sprites.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\sprites.h"
+			RelativePath="..\..\engines\kyra\sprites.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\staticres.cpp"
+			RelativePath="..\..\engines\kyra\staticres.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\text.cpp"
+			RelativePath="..\..\engines\kyra\text.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\text.h"
+			RelativePath="..\..\engines\kyra\text.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\timer.cpp"
+			RelativePath="..\..\engines\kyra\timer.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\wsamovie.cpp"
+			RelativePath="..\..\engines\kyra\wsamovie.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\kyra\wsamovie.h"
+			RelativePath="..\..\engines\kyra\wsamovie.h"
 			>
 		</File>
 	</Files>

@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -112,7 +112,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
 				StringPooling="true"
 				ExceptionHandling="1"
@@ -159,219 +159,219 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\sword2\_mouse.cpp"
+			RelativePath="..\..\engines\sword2\_mouse.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\animation.cpp"
+			RelativePath="..\..\engines\sword2\animation.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\animation.h"
+			RelativePath="..\..\engines\sword2\animation.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\anims.cpp"
+			RelativePath="..\..\engines\sword2\anims.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\build_display.cpp"
+			RelativePath="..\..\engines\sword2\build_display.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\build_display.h"
+			RelativePath="..\..\engines\sword2\build_display.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\console.cpp"
+			RelativePath="..\..\engines\sword2\console.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\console.h"
+			RelativePath="..\..\engines\sword2\console.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\controls.cpp"
+			RelativePath="..\..\engines\sword2\controls.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\controls.h"
+			RelativePath="..\..\engines\sword2\controls.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\d_draw.cpp"
+			RelativePath="..\..\engines\sword2\d_draw.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\debug.cpp"
+			RelativePath="..\..\engines\sword2\debug.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\debug.h"
+			RelativePath="..\..\engines\sword2\debug.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\defs.h"
+			RelativePath="..\..\engines\sword2\defs.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\events.cpp"
+			RelativePath="..\..\engines\sword2\events.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\function.cpp"
+			RelativePath="..\..\engines\sword2\function.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\header.h"
+			RelativePath="..\..\engines\sword2\header.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\icons.cpp"
+			RelativePath="..\..\engines\sword2\icons.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\icons.h"
+			RelativePath="..\..\engines\sword2\icons.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\interpreter.cpp"
+			RelativePath="..\..\engines\sword2\interpreter.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\interpreter.h"
+			RelativePath="..\..\engines\sword2\interpreter.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\layers.cpp"
+			RelativePath="..\..\engines\sword2\layers.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\layers.h"
+			RelativePath="..\..\engines\sword2\layers.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\logic.cpp"
+			RelativePath="..\..\engines\sword2\logic.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\logic.h"
+			RelativePath="..\..\engines\sword2\logic.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\maketext.cpp"
+			RelativePath="..\..\engines\sword2\maketext.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\maketext.h"
+			RelativePath="..\..\engines\sword2\maketext.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\memory.cpp"
+			RelativePath="..\..\engines\sword2\memory.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\memory.h"
+			RelativePath="..\..\engines\sword2\memory.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\menu.cpp"
+			RelativePath="..\..\engines\sword2\menu.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\mouse.cpp"
+			RelativePath="..\..\engines\sword2\mouse.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\mouse.h"
+			RelativePath="..\..\engines\sword2\mouse.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\music.cpp"
+			RelativePath="..\..\engines\sword2\music.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\object.h"
+			RelativePath="..\..\engines\sword2\object.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\palette.cpp"
+			RelativePath="..\..\engines\sword2\palette.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\protocol.cpp"
+			RelativePath="..\..\engines\sword2\protocol.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\rdwin.cpp"
+			RelativePath="..\..\engines\sword2\rdwin.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\render.cpp"
+			RelativePath="..\..\engines\sword2\render.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\resman.cpp"
+			RelativePath="..\..\engines\sword2\resman.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\resman.h"
+			RelativePath="..\..\engines\sword2\resman.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\router.cpp"
+			RelativePath="..\..\engines\sword2\router.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\router.h"
+			RelativePath="..\..\engines\sword2\router.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\save_rest.cpp"
+			RelativePath="..\..\engines\sword2\save_rest.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\save_rest.h"
+			RelativePath="..\..\engines\sword2\save_rest.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\scroll.cpp"
+			RelativePath="..\..\engines\sword2\scroll.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\sound.cpp"
+			RelativePath="..\..\engines\sword2\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\sound.h"
+			RelativePath="..\..\engines\sword2\sound.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\speech.cpp"
+			RelativePath="..\..\engines\sword2\speech.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\sprite.cpp"
+			RelativePath="..\..\engines\sword2\sprite.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\startup.cpp"
+			RelativePath="..\..\engines\sword2\startup.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\sword2.cpp"
+			RelativePath="..\..\engines\sword2\sword2.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\sword2.h"
+			RelativePath="..\..\engines\sword2\sword2.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\sync.cpp"
+			RelativePath="..\..\engines\sword2\sync.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword2\walker.cpp"
+			RelativePath="..\..\engines\sword2\walker.cpp"
 			>
 		</File>
 	</Files>

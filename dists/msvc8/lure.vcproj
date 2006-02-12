@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -112,7 +112,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				ExceptionHandling="1"
@@ -159,175 +159,175 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\lure\animseq.cpp"
+			RelativePath="..\..\engines\lure\animseq.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\animseq.h"
+			RelativePath="..\..\engines\lure\animseq.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\debug-input.cpp"
+			RelativePath="..\..\engines\lure\debug-input.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\debug-input.h"
+			RelativePath="..\..\engines\lure\debug-input.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\debug-methods.cpp"
+			RelativePath="..\..\engines\lure\debug-methods.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\debug-methods.h"
+			RelativePath="..\..\engines\lure\debug-methods.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\decode.cpp"
+			RelativePath="..\..\engines\lure\decode.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\decode.h"
+			RelativePath="..\..\engines\lure\decode.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\disk.cpp"
+			RelativePath="..\..\engines\lure\disk.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\disk.h"
+			RelativePath="..\..\engines\lure\disk.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\events.cpp"
+			RelativePath="..\..\engines\lure\events.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\events.h"
+			RelativePath="..\..\engines\lure\events.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\game.cpp"
+			RelativePath="..\..\engines\lure\game.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\game.h"
+			RelativePath="..\..\engines\lure\game.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\hotspots.cpp"
+			RelativePath="..\..\engines\lure\hotspots.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\hotspots.h"
+			RelativePath="..\..\engines\lure\hotspots.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\intro.cpp"
+			RelativePath="..\..\engines\lure\intro.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\intro.h"
+			RelativePath="..\..\engines\lure\intro.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\lure.cpp"
+			RelativePath="..\..\engines\lure\lure.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\lure.h"
+			RelativePath="..\..\engines\lure\lure.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\luredefs.h"
+			RelativePath="..\..\engines\lure\luredefs.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\memory.cpp"
+			RelativePath="..\..\engines\lure\memory.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\memory.h"
+			RelativePath="..\..\engines\lure\memory.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\menu.cpp"
+			RelativePath="..\..\engines\lure\menu.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\menu.h"
+			RelativePath="..\..\engines\lure\menu.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\palette.cpp"
+			RelativePath="..\..\engines\lure\palette.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\palette.h"
+			RelativePath="..\..\engines\lure\palette.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\res.cpp"
+			RelativePath="..\..\engines\lure\res.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\res.h"
+			RelativePath="..\..\engines\lure\res.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\res_struct.cpp"
+			RelativePath="..\..\engines\lure\res_struct.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\res_struct.h"
+			RelativePath="..\..\engines\lure\res_struct.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\room.cpp"
+			RelativePath="..\..\engines\lure\room.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\room.h"
+			RelativePath="..\..\engines\lure\room.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\screen.cpp"
+			RelativePath="..\..\engines\lure\screen.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\screen.h"
+			RelativePath="..\..\engines\lure\screen.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\scripts.cpp"
+			RelativePath="..\..\engines\lure\scripts.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\scripts.h"
+			RelativePath="..\..\engines\lure\scripts.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\strings.cpp"
+			RelativePath="..\..\engines\lure\strings.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\strings.h"
+			RelativePath="..\..\engines\lure\strings.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\surface.cpp"
+			RelativePath="..\..\engines\lure\surface.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\surface.h"
+			RelativePath="..\..\engines\lure\surface.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\system.cpp"
+			RelativePath="..\..\engines\lure\system.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\lure\system.h"
+			RelativePath="..\..\engines\lure\system.h"
 			>
 		</File>
 	</Files>

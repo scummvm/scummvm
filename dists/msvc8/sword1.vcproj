@@ -40,7 +40,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -112,7 +112,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
 				StringPooling="true"
 				ExceptionHandling="1"
@@ -159,159 +159,159 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\sword1\animation.cpp"
+			RelativePath="..\..\engines\sword1\animation.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\animation.h"
+			RelativePath="..\..\engines\sword1\animation.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\collision.h"
+			RelativePath="..\..\engines\sword1\collision.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\control.cpp"
+			RelativePath="..\..\engines\sword1\control.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\control.h"
+			RelativePath="..\..\engines\sword1\control.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\credits.cpp"
+			RelativePath="..\..\engines\sword1\credits.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\credits.h"
+			RelativePath="..\..\engines\sword1\credits.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\debug.cpp"
+			RelativePath="..\..\engines\sword1\debug.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\debug.h"
+			RelativePath="..\..\engines\sword1\debug.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\eventman.cpp"
+			RelativePath="..\..\engines\sword1\eventman.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\eventman.h"
+			RelativePath="..\..\engines\sword1\eventman.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\logic.cpp"
+			RelativePath="..\..\engines\sword1\logic.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\logic.h"
+			RelativePath="..\..\engines\sword1\logic.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\memman.cpp"
+			RelativePath="..\..\engines\sword1\memman.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\memman.h"
+			RelativePath="..\..\engines\sword1\memman.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\menu.cpp"
+			RelativePath="..\..\engines\sword1\menu.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\menu.h"
+			RelativePath="..\..\engines\sword1\menu.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\mouse.cpp"
+			RelativePath="..\..\engines\sword1\mouse.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\mouse.h"
+			RelativePath="..\..\engines\sword1\mouse.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\music.cpp"
+			RelativePath="..\..\engines\sword1\music.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\music.h"
+			RelativePath="..\..\engines\sword1\music.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\object.h"
+			RelativePath="..\..\engines\sword1\object.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\objectman.cpp"
+			RelativePath="..\..\engines\sword1\objectman.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\objectman.h"
+			RelativePath="..\..\engines\sword1\objectman.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\resman.cpp"
+			RelativePath="..\..\engines\sword1\resman.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\resman.h"
+			RelativePath="..\..\engines\sword1\resman.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\router.cpp"
+			RelativePath="..\..\engines\sword1\router.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\router.h"
+			RelativePath="..\..\engines\sword1\router.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\screen.cpp"
+			RelativePath="..\..\engines\sword1\screen.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\screen.h"
+			RelativePath="..\..\engines\sword1\screen.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\sound.cpp"
+			RelativePath="..\..\engines\sword1\sound.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\sound.h"
+			RelativePath="..\..\engines\sword1\sound.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\staticres.cpp"
+			RelativePath="..\..\engines\sword1\staticres.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\sword1.cpp"
+			RelativePath="..\..\engines\sword1\sword1.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\sword1.h"
+			RelativePath="..\..\engines\sword1\sword1.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\sworddefs.h"
+			RelativePath="..\..\engines\sword1\sworddefs.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\swordres.h"
+			RelativePath="..\..\engines\sword1\swordres.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\text.cpp"
+			RelativePath="..\..\engines\sword1\text.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\sword1\text.h"
+			RelativePath="..\..\engines\sword1\text.h"
 			>
 		</File>
 	</Files>
