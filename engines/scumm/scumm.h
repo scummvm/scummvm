@@ -213,7 +213,8 @@ enum ScummGameId {
 	GID_WATER,
 	GID_PUTTRACE,
 	GID_FUNSHOP,	// Used for all three funshops
-	GID_FOOTBALL
+	GID_FOOTBALL,
+	GID_SOCCER
 };
 
 struct SentenceTab {

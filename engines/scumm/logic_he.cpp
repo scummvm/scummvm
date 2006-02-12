@@ -623,7 +623,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 	default:
 		LogicHE::dispatch(op, numArgs, args);
-		error("Tell me how to reproduce it");
+		error("Tell sev how to reproduce it");
 	}
 
 	return res;
@@ -768,5 +768,69 @@ int LogicHEfootball::op_1024(int32 *args) {
 	return 1;
 }
 
+
+/***********************
+ * Backyard Soccer
+ *
+ */
+
+int LogicHEsoccer::versionID() {
+	return 1;
+}
+
+int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
+	int res = 0;
+
+	switch (op) {
+	case 1001:
+		res = op_1001(args);
+		break;
+
+	case 1002:
+		res = op_1002(args);
+		break;
+
+	case 1004:
+		res = op_1004(args);
+		break;
+
+	case 8221968:
+		// Someone had a fun and used his birthday as opcode number
+		res = getFromArray(args[0], args[1], args[2]);
+		break;
+
+	default:
+		// original range is 1001 - 1021
+		LogicHE::dispatch(op, numArgs, args);
+		warning("Tell sev how to reproduce it");
+	}
+
+	return res;
+}
+
+int LogicHEsoccer::op_1001(int32 *args) {
+	return args[0] * sin(args[1]);
+}
+
+int LogicHEsoccer::op_1002(int32 *args) {
+	return _vm->VAR(2) * args[0];
+}
+
+int LogicHEsoccer::op_1004(int32 *args) {
+	double res, a2, a4, a5;
+
+	a5 = ((double)args[4] - (double)args[1]) / ((double)args[5] - (double)args[2]);
+	a4 = ((double)args[3] - (double)args[0]) / ((double)args[5] - (double)args[2]);
+	a2 = (double)args[2] - (double)args[0] * a4 - args[1] * a5;
+
+	res = (double)args[6] * a4 + (double)args[7] * a5 + a2;
+	writeScummVar(108, (int32)res);
+
+	writeScummVar(109, (int32)a2);
+	writeScummVar(110, (int32)a5);
+	writeScummVar(111, (int32)a4);
+
+	return 1;
+}
 
 } // End of namespace Scumm

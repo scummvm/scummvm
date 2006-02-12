@@ -298,7 +298,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"soccer", "Backyard Soccer", GID_HEGAME, 6, 98, MDT_NONE,
+	{"soccer", "Backyard Soccer", GID_SOCCER, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Global scripts increased to 2048
@@ -2142,6 +2142,10 @@ void ScummEngine_v90he::scummInit() {
 
 		case GID_FOOTBALL:
 			_logicHE = new LogicHEfootball(this);
+			break;
+
+		case GID_SOCCER:
+			_logicHE = new LogicHEsoccer(this);
 			break;
 
 		default:

@@ -106,6 +106,19 @@ private:
 	int op_1024(int32 *args);
 };
 
+class LogicHEsoccer : public LogicHE {
+public:
+	LogicHEsoccer(ScummEngine_v90he *vm) : LogicHE(vm) {}
+
+	int versionID();
+	int32 dispatch(int op, int numArgs, int32 *args);
+
+private:
+	int op_1001(int32 *args);
+	int op_1002(int32 *args);
+	int op_1004(int32 *args);
+};
+
 } // End of namespace Scumm
 
 #endif
