@@ -1,7 +1,6 @@
 MODULE := engines/sword2
 
 MODULE_OBJS := \
-	_mouse.o \
 	animation.o \
 	anims.o \
 	console.o \
