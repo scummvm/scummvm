@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +31,6 @@
 #ifdef PALMOS_68K
 
 #include "scumm_globals.h"
-#include "arm/pnodefs.h"
 
 enum {
 	kMemScummOldCostGames = 0,
@@ -40,12 +40,6 @@ enum {
 
 	kMemGamesCount
 };
-
-typedef struct {
-	char headerBuffer[sizeof(PnoEntryHeader) + 2];
-	PnoEntryHeader *alignedHeader;
-	PnoDescriptor pnoDesc;
-} PNOInitType;
 
 #endif
 
@@ -86,21 +80,22 @@ typedef struct {
 	UInt16 slkRefNum;
 	Coord screenWidth, screenHeight;			// silkarea shown
 	Coord screenFullWidth, screenFullHeight;	// silkarea hidden
+	Int16 autoSave;
+	struct {
+		Int16 on;
+		Int16 off;
+		Int16 showLED;
+	} indicator;
 
 	// 1 byte part
 	Boolean vibrator;
-	Boolean screenLocked;
 	Boolean stdPalette;
 	Boolean filter;
 	Boolean stylusClick;
 	UInt8 init;
 	UInt8 palmVolume;
 	UInt8 fmQuality;
-	struct {
-		UInt8 showLED;
-		UInt8 on;
-		UInt8 off;
-	} indicator;
+	UInt8 advancedMode;
 
 #ifdef PALMOS_68K
 	// 68k only part
@@ -114,7 +109,6 @@ typedef struct {
 
 	DmOpenRef globals[GBVARS_COUNT];
 	UInt32 memory[kMemGamesCount];
-	PNOInitType arm[ARM_COUNT];
 #endif
 
 } GlobalsDataType, *GlobalsDataPtr;
@@ -122,7 +116,7 @@ typedef struct {
 extern GlobalsDataPtr gVars;
 
 #define VARS_EXPORT()		gVars->_4B = 6; \
-							gVars->_2B = 8;
+							gVars->_2B = 12;
 
 #define DO_VARS(z, t, o) \
 	{	Int8 *tmp = (Int8 *)gVars + o + 8; \
