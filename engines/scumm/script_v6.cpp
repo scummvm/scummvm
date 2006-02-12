@@ -2192,8 +2192,13 @@ void ScummEngine_v6::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:168");
-		if (a->isInCurrentRoom() && a->_moving)
-			break;
+		if (_version >= 7) {
+			if (a->isInCurrentRoom() && a->_moving)
+				break;
+		} else {
+			if (a->_moving)
+				break;
+		}
 		return;
 	case 169:		// SO_WAIT_FOR_MESSAGE Wait for message
 		if (VAR(VAR_HAVE_MSG))

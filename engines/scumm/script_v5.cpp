@@ -2551,7 +2551,7 @@ void ScummEngine_v5::o5_wait() {
 	case 1:		// SO_WAIT_FOR_ACTOR
 		{
 			Actor *a = derefActorSafe(getVarOrDirectByte(PARAM_1), "o5_wait");
-			if (a && a->isInCurrentRoom() && a->_moving)
+			if (a && a->_moving)
 				break;
 			return;
 		}

@@ -75,7 +75,6 @@ protected:
 	void o60_setState();
 	void o60_roomOps();
 	void o60_actorOps();
-	void o60_wait();
 	void o60_kernelSetFunctions();
 	void o60_kernelGetFunctions();
 	void o60_openFile();

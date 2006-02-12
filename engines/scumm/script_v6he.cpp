@@ -277,7 +277,7 @@ void ScummEngine_v60he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
-		OPCODE(o60_wait),
+		OPCODE(o6_wait),
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o6_getActorAnimCounter1),
 		/* AC */
@@ -735,45 +735,6 @@ void ScummEngine_v60he::o60_actorOps() {
 	default:
 		error("o60_actorOps: default case %d", subOp);
 	}
-}
-
-void ScummEngine_v60he::o60_wait() {
-	int actnum;
-	int offs = -2;
-	Actor *a;
-	byte subOp = fetchScriptByte();
-
-	switch (subOp) {
-	case 168:		// SO_WAIT_FOR_ACTOR Wait for actor
-		offs = fetchScriptWordSigned();
-		actnum = pop();
-		a = derefActor(actnum, "o60_wait:168");
-		if (a->_moving)
-			break;
-		return;
-	case 169:		// SO_WAIT_FOR_MESSAGE Wait for message
-		if (VAR(VAR_HAVE_MSG))
-			break;
-		return;
-	case 170:		// SO_WAIT_FOR_CAMERA Wait for camera
-		if (camera._cur.x / 8 != camera._dest.x / 8)
-			break;
-		return;
-	case 171:		// SO_WAIT_FOR_SENTENCE
-		if (_sentenceNum) {
-			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-				return;
-			break;
-		}
-		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
-			return;
-		break;
-	default:
-		error("o60_wait: default case 0x%x", subOp);
-	}
-
-	_scriptPointer += offs;
-	o6_breakHere();
 }
 
 void ScummEngine_v60he::o60_kernelSetFunctions() {

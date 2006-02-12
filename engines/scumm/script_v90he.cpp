@@ -253,7 +253,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o6_pop),
 		/* A8 */
 		OPCODE(o6_getActorWidth),
-		OPCODE(o60_wait),
+		OPCODE(o6_wait),
 		OPCODE(o6_getActorScaleX),
 		OPCODE(o90_getActorAnimProgress),
 		/* AC */
