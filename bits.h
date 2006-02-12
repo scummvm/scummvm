@@ -136,7 +136,7 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 
 	#if defined(__DECCXX) // Assume alpha architecture
 	#define INVERSE_MKID
-	#define SCUMM_NEED_ALIGNMENT
+	#define SYSTEM_NEED_ALIGNMENT
 	#endif
 
 	#if defined(__GNUC__)
@@ -165,8 +165,8 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 	#define scumm_strnicmp strnicmp
 	#define CHECK_HEAP
 
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
+	#define SYSTEM_BIG_ENDIAN
+	#define SYSTEM_NEED_ALIGNMENT
 
 	#define FORCEINLINE inline
 	#define CDECL
@@ -196,8 +196,8 @@ template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
 #elif defined(__DC__)
 
 	#define CHECK_HEAP
-	#define SCUMM_LITTLE_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
+	#define SYSTEM_LITTLE_ENDIAN
+	#define SYSTEM_NEED_ALIGNMENT
 
 	#define FORCEINLINE inline
 	#define NORETURN __attribute__((__noreturn__))
