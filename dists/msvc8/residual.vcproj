@@ -689,6 +689,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\driver_sdl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\driver_sdl.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\driver_tinygl.cpp"
 			>
 		</File>
