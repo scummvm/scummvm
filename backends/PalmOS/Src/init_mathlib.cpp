@@ -1,5 +1,4 @@
 #include <PalmOS.h>
-#include "enginersc.h"
 
 #include "globals.h"
 #include "init_mathlib.h"
