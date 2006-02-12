@@ -193,7 +193,7 @@ void NORETURN CDECL error(const char *s, ...) {
 #endif
 
 #ifdef __SYMBIAN32__
-	SymbianFatalError(buf_output);
+	Symbian::FatalError(buf_output);
 #endif
 	// Finally exit. quit() will terminate the program if g_system iss present
 	if (g_system)

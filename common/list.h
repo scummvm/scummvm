@@ -55,7 +55,7 @@ public:
 		friend class List<T>;
 		NodeBase *_node;
 
-#ifndef PALMOS_MODE
+#if !defined (PALMOS_MODE) && !defined (__WINSCW__)
 		explicit Iterator<T2>(NodeBase *node) : _node(node) {}
 #else
 		Iterator<T2>(NodeBase *node) : _node(node) {}
@@ -72,7 +72,7 @@ public:
 		}
 		// Postfix inc
 		Iterator<T2> operator++(int) {
-#ifndef PALMOS_MODE
+#if !defined (PALMOS_MODE) && !defined (__SYMBIAN32__)
 			Iterator<T2> tmp(_node);
 #else
 			Iterator tmp(_node);

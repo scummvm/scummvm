@@ -131,6 +131,11 @@ const char *gScummVMFeatures = ""
 	"FluidSynth "
 #endif
 
+#ifdef __SYMBIAN32__
+// we want a list of compiled in engines visible in the program,
+// because we also release special builds with only one engine
+#include "backends/epoc/src/main_features.inl"
+#endif
 	;
 
 #if defined(__amigaos4__)
@@ -142,9 +147,6 @@ const char* stackCookie = "$STACK: 655360\0";
 #include <cstdio>
 #define STDOUT_FILE	TEXT("stdout.txt")
 #define STDERR_FILE	TEXT("stderr.txt")
-#elif defined(__SYMBIAN32__) // Symbian does not like any output to the console through any *print* function
-#define STDOUT_FILE		SYMBIAN32_DOC_DIR "scummvm.stdout.txt"
-#define STDERR_FILE		SYMBIAN32_DOC_DIR "scummvm.stderr.txt"
 #endif
 
 #if defined(QTOPIA)
@@ -340,6 +342,13 @@ extern "C" int main(int argc, char *argv[]) {
 // Code copied from SDL_main
 #if (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
 // Symbian does not like any output to the console through any *print* function
+#if defined(__SYMBIAN32__)
+	char STDOUT_FILE[255], STDERR_FILE[255]; // shhh, don't tell anybody :)
+	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
+	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
+	strcat(STDOUT_FILE, "scummvm.stdout.txt");
+	strcat(STDERR_FILE, "scummvm.stderr.txt");
+#endif
 
 	/* Flush the output in case anything is queued */
 	fclose(stdout);

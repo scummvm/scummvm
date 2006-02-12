@@ -109,7 +109,8 @@ void ConfigManager::loadDefaultConfigFile() {
 	#elif defined(__PSP__)
 		strcpy(configFile, "ms0:/" DEFAULT_CONFIG_FILE);
 	#elif defined (__SYMBIAN32__)
-		strcpy(configFile, SYMBIAN32_DOC_DIR DEFAULT_CONFIG_FILE);
+		strcpy(configFile, Symbian::GetExecutablePath());
+		strcat(configFile, DEFAULT_CONFIG_FILE);
 	#else
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	#endif

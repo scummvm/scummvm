@@ -46,6 +46,10 @@
 #else
 #define DEFAULT_SAVE_PATH ".scummvm"
 #endif
+#else if defined(__SYMBIAN32__)
+#include <errno.h>
+#include <sys/stat.h>
+#define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
@@ -199,8 +203,17 @@ GameDetector::GameDetector() {
 			ConfMan.registerDefault("savepath", savePath);
 		}
 	}
+#else if defined(__SYMBIAN32__)
+	strcpy(savePath, Symbian::GetExecutablePath());
+	strcat(savePath, DEFAULT_SAVE_PATH);
+	struct stat sb;
+	if (stat(savePath, &sb) == -1)
+		if (errno == ENOENT)// create the dir if it does not exist
+			if (mkdir(savePath, 0755) != 0)
+				error("mkdir for '%s' failed!", savePath);
+	ConfMan.registerDefault("savepath", savePath); // this should be enough...
 #endif
-#endif
+#endif // #ifdef DEFAULT_SAVE_PATH
 
 	_dumpScripts = false;
 
