@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
@@ -31,7 +31,6 @@
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				DebugInformationFormat="4"/>
 			<Tool
@@ -66,7 +65,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
@@ -76,7 +75,6 @@
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -99,70 +97,70 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\simon\charset.cpp">
+			RelativePath="..\..\engines\simon\charset.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\cursor.cpp">
+			RelativePath="..\..\engines\simon\cursor.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\debug.cpp">
+			RelativePath="..\..\engines\simon\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\debug.h">
+			RelativePath="..\..\engines\simon\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\simon\debugger.cpp">
+			RelativePath="..\..\engines\simon\debugger.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\debugger.h">
+			RelativePath="..\..\engines\simon\debugger.h">
 		</File>
 		<File
-			RelativePath="..\..\simon\icons.cpp">
+			RelativePath="..\..\engines\simon\game.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\intern.h">
+			RelativePath="..\..\engines\simon\icons.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\items.cpp">
+			RelativePath="..\..\engines\simon\intern.h">
 		</File>
 		<File
-			RelativePath="..\..\simon\midi.cpp">
+			RelativePath="..\..\engines\simon\items.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\midi.h">
+			RelativePath="..\..\engines\simon\midi.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\midiparser_s1d.cpp">
+			RelativePath="..\..\engines\simon\midi.h">
 		</File>
 		<File
-			RelativePath="..\..\simon\res.cpp">
+			RelativePath="..\..\engines\simon\midiparser_s1d.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\saveload.cpp">
+			RelativePath="..\..\engines\simon\res.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\simon-md5.h">
+			RelativePath="..\..\engines\simon\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\simon.cpp">
+			RelativePath="..\..\engines\simon\simon.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\simon.h">
+			RelativePath="..\..\engines\simon\simon.h">
 		</File>
 		<File
-			RelativePath="..\..\simon\sound.cpp">
+			RelativePath="..\..\engines\simon\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\sound.h">
+			RelativePath="..\..\engines\simon\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\simon\verb.cpp">
+			RelativePath="..\..\engines\simon\verb.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\vga.cpp">
+			RelativePath="..\..\engines\simon\vga.cpp">
 		</File>
 		<File
-			RelativePath="..\..\simon\vga.h">
+			RelativePath="..\..\engines\simon\vga.h">
 		</File>
 	</Files>
 	<Globals>

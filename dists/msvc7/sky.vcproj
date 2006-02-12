@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
@@ -31,7 +31,6 @@
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				DebugInformationFormat="4"/>
 			<Tool
@@ -65,7 +64,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="../../;../../common"
+				AdditionalIncludeDirectories="../..;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
@@ -76,7 +75,6 @@
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -102,134 +100,134 @@
 			Name="music"
 			Filter="">
 			<File
-				RelativePath="..\..\sky\music\adlibchannel.cpp">
+				RelativePath="..\..\engines\sky\music\adlibchannel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\adlibchannel.h">
+				RelativePath="..\..\engines\sky\music\adlibchannel.h">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\adlibmusic.cpp">
+				RelativePath="..\..\engines\sky\music\adlibmusic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\adlibmusic.h">
+				RelativePath="..\..\engines\sky\music\adlibmusic.h">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\gmchannel.cpp">
+				RelativePath="..\..\engines\sky\music\gmchannel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\gmchannel.h">
+				RelativePath="..\..\engines\sky\music\gmchannel.h">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\gmmusic.cpp">
+				RelativePath="..\..\engines\sky\music\gmmusic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\gmmusic.h">
+				RelativePath="..\..\engines\sky\music\gmmusic.h">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\mt32music.cpp">
+				RelativePath="..\..\engines\sky\music\mt32music.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\mt32music.h">
+				RelativePath="..\..\engines\sky\music\mt32music.h">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\musicbase.cpp">
+				RelativePath="..\..\engines\sky\music\musicbase.cpp">
 			</File>
 			<File
-				RelativePath="..\..\sky\music\musicbase.h">
+				RelativePath="..\..\engines\sky\music\musicbase.h">
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\sky\autoroute.cpp">
+			RelativePath="..\..\engines\sky\autoroute.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\autoroute.h">
+			RelativePath="..\..\engines\sky\autoroute.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\compact.cpp">
+			RelativePath="..\..\engines\sky\compact.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\compact.h">
+			RelativePath="..\..\engines\sky\compact.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\control.cpp">
+			RelativePath="..\..\engines\sky\control.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\control.h">
+			RelativePath="..\..\engines\sky\control.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\debug.cpp">
+			RelativePath="..\..\engines\sky\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\debug.h">
+			RelativePath="..\..\engines\sky\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\disk.cpp">
+			RelativePath="..\..\engines\sky\disk.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\disk.h">
+			RelativePath="..\..\engines\sky\disk.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\grid.cpp">
+			RelativePath="..\..\engines\sky\grid.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\grid.h">
+			RelativePath="..\..\engines\sky\grid.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\hufftext.cpp">
+			RelativePath="..\..\engines\sky\hufftext.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\intro.cpp">
+			RelativePath="..\..\engines\sky\intro.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\intro.h">
+			RelativePath="..\..\engines\sky\intro.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\logic.cpp">
+			RelativePath="..\..\engines\sky\logic.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\logic.h">
+			RelativePath="..\..\engines\sky\logic.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\mouse.cpp">
+			RelativePath="..\..\engines\sky\mouse.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\mouse.h">
+			RelativePath="..\..\engines\sky\mouse.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\rnc_deco.cpp">
+			RelativePath="..\..\engines\sky\rnc_deco.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\rnc_deco.h">
+			RelativePath="..\..\engines\sky\rnc_deco.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\screen.cpp">
+			RelativePath="..\..\engines\sky\screen.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\screen.h">
+			RelativePath="..\..\engines\sky\screen.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\sky.cpp">
+			RelativePath="..\..\engines\sky\sky.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\sky.h">
+			RelativePath="..\..\engines\sky\sky.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\skydefs.h">
+			RelativePath="..\..\engines\sky\skydefs.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\sound.cpp">
+			RelativePath="..\..\engines\sky\sound.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\sound.h">
+			RelativePath="..\..\engines\sky\sound.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\struc.h">
+			RelativePath="..\..\engines\sky\struc.h">
 		</File>
 		<File
-			RelativePath="..\..\sky\text.cpp">
+			RelativePath="..\..\engines\sky\text.cpp">
 		</File>
 		<File
-			RelativePath="..\..\sky\text.h">
+			RelativePath="..\..\engines\sky\text.h">
 		</File>
 	</Files>
 	<Globals>

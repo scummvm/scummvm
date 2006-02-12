@@ -20,8 +20,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU"
+				AdditionalIncludeDirectories="../..;../../engines"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;DISABLE_LURE"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -32,14 +32,13 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
 				SuppressStartupBanner="FALSE"
 				DebugInformationFormat="4"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zlibstat.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
@@ -75,8 +74,8 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="../../;../../common"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU"
+				AdditionalIncludeDirectories="../..;../../engines"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;DISABLE_LURE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="TRUE"
@@ -87,13 +86,12 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="TRUE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zlibstat.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -246,6 +244,12 @@
 			</File>
 			<File
 				RelativePath="..\..\common\timer.h">
+			</File>
+			<File
+				RelativePath="..\..\common\unzip.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\unzip.h">
 			</File>
 			<File
 				RelativePath="..\..\common\util.cpp">
@@ -615,6 +619,9 @@
 				RelativePath="..\..\gui\TabWidget.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\ThemeNew.cpp">
+			</File>
+			<File
 				RelativePath="..\..\gui\about.cpp">
 			</File>
 			<File
@@ -681,6 +688,12 @@
 				RelativePath="..\..\gui\options.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\theme.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\theme.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\widget.cpp">
 			</File>
 			<File
@@ -710,6 +723,24 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\fontman.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\ilbm.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\ilbm.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\imagedec.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\imagedec.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\imageman.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\imageman.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\newfont.cpp">
