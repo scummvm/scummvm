@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef _MAKETEXT_H
-#define _MAKETEXT_H
+#ifndef SWORD2_MAKETEXT_H
+#define SWORD2_MAKETEXT_H
 
 #include "sword2/debug.h"
 

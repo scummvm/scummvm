@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	SAVE_REST_H
-#define	SAVE_REST_H
+#ifndef	SWORD2_SAVELOAD_H
+#define	SWORD2_SAVELOAD_H
 
 namespace Sword2 {
 

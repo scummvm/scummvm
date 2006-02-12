@@ -17,11 +17,10 @@
  *
  * $URL$
  * $Id$
- *
  */
 
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef SWORD2_ANIMATION_H
+#define SWORD2_ANIMATION_H
 
 #include "graphics/animation.h"
 #include "sound/mixer.h"

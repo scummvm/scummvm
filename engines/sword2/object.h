@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	_SCRIPT_STRUCTURES
-#define	_SCRIPT_STRUCTURES
+#ifndef	SWORD2_OBJECT_H
+#define	SWORD2_OBJECT_H
 
 #include "common/stream.h"
 

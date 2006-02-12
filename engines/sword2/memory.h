@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	MEMORY_H
-#define	MEMORY_H
+#ifndef	SWORD2_MEMORY_H
+#define	SWORD2_MEMORY_H
 
 #define MAX_MEMORY_BLOCKS 999
 

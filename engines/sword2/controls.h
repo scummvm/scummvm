@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	_CONTROL_S
-#define	_CONTROL_S
+#ifndef	SWORD2_CONTROL_H
+#define	SWORD2_CONTROL_H
 
 #include "sword2/defs.h"
 

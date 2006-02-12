@@ -21,8 +21,8 @@
 
 // logic management
 
-#ifndef _LOGIC
-#define _LOGIC
+#ifndef SWORD2_LOGIC_H
+#define SWORD2_LOGIC_H
 
 #include "sword2/memory.h"
 

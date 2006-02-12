@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef SWORD2_MOUSE_H
+#define SWORD2_MOUSE_H
 
 #define	MAX_SUBJECT_LIST 30	// is that enough?
 

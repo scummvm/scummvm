@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	_SWORD2
-#define	_SWORD2
+#ifndef	SWORD2_H
+#define	SWORD2_H
 
 // Enable this to make it possible to clear the mouse cursor luggage by
 // right-clicking. The original didn't do this, but it feels natural to me.

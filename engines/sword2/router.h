@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef _ROUTER_H
-#define _ROUTER_H
+#ifndef SWORD2_ROUTER_H
+#define SWORD2_ROUTER_H
 
 // This used to be a variable, but it was never set. Actually, it wasn't even
 // initialised!

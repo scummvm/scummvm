@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	_HEADER
-#define	_HEADER
+#ifndef	SWORD2_HEADER_H
+#define	SWORD2_HEADER_H
 
 #include "common/stream.h"
 

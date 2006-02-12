@@ -29,8 +29,8 @@
  *
  ****************************************************************************/
 
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef SWORD2_SOUND_H
+#define SWORD2_SOUND_H
 
 #include "common/file.h"
 #include "sound/audiostream.h"

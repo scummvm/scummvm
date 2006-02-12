@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	C_ONSOLE_H
-#define	C_ONSOLE_H
+#ifndef	SWORD2_CONSOLE_H
+#define	SWORD2_CONSOLE_H
 
 #include "common/debugger.h"
 #include "sword2/debug.h"

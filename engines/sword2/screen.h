@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	_BUILD_DISPLAY
-#define	_BUILD_DISPLAY
+#ifndef	SWORD2_SCREEN_H
+#define	SWORD2_SCREEN_H
 
 #include "common/rect.h"
 #include "common/stream.h"

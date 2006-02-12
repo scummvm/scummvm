@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef _INTERPRETER
-#define _INTERPRETER
+#ifndef SWORD2_INTERPRETER_H
+#define SWORD2_INTERPRETER_H
 
 namespace Sword2 {
 

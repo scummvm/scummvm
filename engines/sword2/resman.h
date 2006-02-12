@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	RESMAN_H
-#define	RESMAN_H
+#ifndef	SWORD2_RESMAN_H
+#define	SWORD2_RESMAN_H
 
 namespace Common {
 	class File;

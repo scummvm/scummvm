@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	_ICONS
-#define	_ICONS
+#ifndef	SWORD2_ICONS_H
+#define	SWORD2_ICONS_H
 
 #define MENU_MASTER_OBJECT	44
 #define TOTAL_subjects		(375 - 256 + 1)	// the speech subject bar

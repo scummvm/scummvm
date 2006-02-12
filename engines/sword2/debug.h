@@ -19,8 +19,8 @@
  * $Id$
  */
 
-#ifndef	D_DEBUG
-#define D_DEBUG
+#ifndef	SWORD2_DEBUG_H
+#define SWORD2_DEBUG_H
 
 // FIXME: I don't know how large this constant used to be
 #define MAX_DEBUG_TEXTS 55
