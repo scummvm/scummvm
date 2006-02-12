@@ -1575,6 +1575,11 @@ void Actor::setActorCostume(int c) {
 void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
+	if (!isInCurrentRoom() && _vm->_version >= 7) {
+		debug(0, "startWalkActor: attempting to walk actor %d who is not in this room", _number);
+		return;
+	}
+
 	if (_vm->_version <= 3) {
 		abr.x = destX;
 		abr.y = destY;
@@ -1582,15 +1587,11 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 		abr = adjustXYToBeInBox(destX, destY);
 	}
 
-	if (!isInCurrentRoom()) {
-		if (_vm->_version <= 6) {
-			_pos.x = abr.x;
-			_pos.y = abr.y;
-			if (_ignoreTurns == false && dir != -1)
-				_facing = dir;
-		} else {
-			debug(0, "startWalkActor: attempting to walk actor %d who is not in this room", _number);
-		}
+	if (!isInCurrentRoom() && _vm->_version <= 6) {
+		_pos.x = abr.x;
+		_pos.y = abr.y;
+		if (_ignoreTurns == false && dir != -1)
+			_facing = dir;
 		return;
 	}
 
