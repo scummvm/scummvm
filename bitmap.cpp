@@ -108,10 +108,14 @@ void Bitmap::draw() const {
 }
 
 Bitmap::~Bitmap() {
-	for (int i = 0; i < _numImages; i++)
-		delete[] _data[i];
+	if(_data != NULL) {
+		for (int i = 0; i < _numImages; i++)
+			if(_data[i])
+				delete[] _data[i];
 
-	delete[] _data;
+		delete[] _data;
+		_data = NULL;
+	}
 	g_driver->destroyBitmap(this);
 }
 
