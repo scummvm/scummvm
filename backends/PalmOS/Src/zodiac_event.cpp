@@ -99,13 +99,13 @@ bool OSystem_PalmZodiac::check_event(Event &event, EventPtr ev) {
 		case vchrPowerOff:
 			// pause the sound thread if any
 			if (_sound.active)
-				SndStreamPause(_sound.handle, true);
+				SndStreamPause(_soundEx.handle, true);
 			break;
 		
 		case vchrLateWakeup:
 			// resume the sound thread if any
 			if (_sound.active)
-				SndStreamPause(_sound.handle, false);
+				SndStreamPause(_soundEx.handle, false);
 			break;
 		}
 
