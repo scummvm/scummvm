@@ -1,6 +1,7 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
  * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,80 +22,52 @@
  *
  */
  
-#include <PalmOS.h>
-#include <string.h>
-
-#include "extend.h"
+#include <stdlib.h>
 #include "globals.h"
-#include "enginersc.h"
+
+#include "modulesrsc.h"
 
 const Char *SCUMMVM_SAVEPATH = "/PALM/Programs/ScummVM/Saved/";
 
 void PalmFatalError(const Char *err) {
 	WinSetDrawWindow(WinGetDisplayWindow());
 	WinPalette(winPaletteSetToDefault,0,0,0);
-	
-	if (OPTIONS_TST(kOptModeHiDensity))
-		WinSetCoordinateSystem(kCoordinatesStandard);
-
+	WinSetBackColor(0);
 	WinEraseWindow();
 	FrmCustomAlert(FrmFatalErrorAlert, err, 0,0);
 }
-
 
 void DrawStatus(Boolean show) {
 	if (OPTIONS_TST(kOptDisableOnScrDisp))
 		return;
 
-	UInt8 x,y;
-	UInt8 *screen = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
-	UInt8 color = (show? gVars->indicator.on : gVars->indicator.off);
+	UInt8 x,y;	
+	UInt32 depth, d1;
+	Boolean d2;
+	WinScreenMode(winScreenModeGet, &d1, &d1, &depth, &d2);
+	Int16 color = (show ? gVars->indicator.on : gVars->indicator.off);
 
-	screen += gVars->screenPitch + 1;
-	for(y=0; y < 4; y++) {
-		for(x=0; x < 4; x++)
-			screen[x] = color;
+	if (depth == 8) {
+		UInt8 *src = (UInt8 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
+		src += gVars->screenPitch + 1;
+		for(y=0; y < 4; y++) {
+			for(x=0; x < 4; x++)
+				src[x] = color;
 
-		screen += gVars->screenPitch;
+			src += gVars->screenPitch;
+		}
+
+	} else if (depth == 16) {
+		Int16 *src = (Int16 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
+		src += gVars->screenPitch + 1;
+		for(y=0; y < 4; y++) {
+			for(x=0; x < 4; x++)
+				src[x] = color;
+
+			src += gVars->screenPitch;
+		}
 	}
 }
-
-UInt16 StrReplace(Char *ioStr, UInt16 inMaxLen, const Char *inParamStr, const Char *fndParamStr) {
-	Char *found;
-	Boolean quit = false;
-	UInt16 occurences = 0;
-	UInt16 newLength;
-	UInt16 l1 = StrLen(fndParamStr);
-	UInt16 l2 = 0;
-	UInt16 l3 = StrLen(ioStr);
-	UInt16 next = 0;
-		
-	if (inParamStr)
-		l2 = StrLen(inParamStr); // can be null to know how many occur.
-	
-	while (((found = StrStr(ioStr+next, fndParamStr)) != NULL) && (!quit)) {
-		occurences++;
-		newLength = (StrLen(ioStr) - l1 + l2);
-
-		if ( newLength > inMaxLen ) {
-			quit = true;
-			occurences--;
-
-		} else if (inParamStr) {
-			MemMove(found + l2, found + l1, inMaxLen-(found-ioStr+l2));
-			MemMove(found, inParamStr, l2);
-			next = found - ioStr + l2;
-
-		} else
-			next = found - ioStr + l1;
-	}
-	
-	if (inParamStr)
-		ioStr[l3 + l2*occurences - l1*occurences] = 0;
-
-	return occurences;
-}
-
 
 #ifndef PALMOS_ARM
 
@@ -111,25 +84,25 @@ void *operator new [] (UInt32 size) {
 	MemSet(ptr, 0, size);
 	return ptr;
 }
-#else
-/*
+#elif defined(COMPILE_OS5)
+
 __inline void *operator new(UInt32 size) {
-	void *ptr = MemPtrNew(size);
+	void *ptr = malloc(size);
 	MemSet(ptr, 0, size);
 	return ptr;
 }
 
 __inline void *operator new [] (UInt32 size) {
-	void *ptr = MemPtrNew(size);
+	void *ptr = malloc(size);
 	MemSet(ptr, 0, size);
 	return ptr;
 }
 
 __inline void operator delete(void *ptr) throw() {
-	if (ptr) MemPtrFree(ptr);
+	if (ptr) free(ptr);
 }
 
 __inline void operator delete[](void *ptr) throw() {
-	if (ptr) MemPtrFree(ptr);
-}*/
+	if (ptr) free(ptr);
+}
 #endif
