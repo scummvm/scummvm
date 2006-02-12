@@ -1583,10 +1583,14 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	}
 
 	if (!isInCurrentRoom()) {
-		_pos.x = abr.x;
-		_pos.y = abr.y;
-		if (!(_vm->_version == 6 && _ignoreTurns) && dir != -1)
-			setDirection(dir);
+		if (_vm->_version <= 6) {
+			_pos.x = abr.x;
+			_pos.y = abr.y;
+			if (_ignoreTurns == false && dir != -1)
+				_facing = dir;
+		} else {
+			debug(0, "startWalkActor: attempting to walk actor %d who is not in this room", _number);
+		}
 		return;
 	}
 
