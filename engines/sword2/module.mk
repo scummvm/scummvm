@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	_mouse.o \
 	animation.o \
 	anims.o \
-	build_display.o \
 	console.o \
 	controls.o \
 	d_draw.o \
@@ -26,7 +25,8 @@ MODULE_OBJS := \
 	render.o \
 	resman.o \
 	router.o \
-	save_rest.o \
+	saveload.o \
+	screen.o \
 	scroll.o \
 	sound.o \
 	speech.o \

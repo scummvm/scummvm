@@ -666,7 +666,7 @@ void Sword2Engine::unpauseGame() {
 	_mouse->unpauseGame();
 	_sound->unpauseAllSound();
 
-	// Put back game screen palette; see build_display.cpp
+	// Put back game screen palette; see screen.cpp
 	_screen->setFullPalette(-1);
 
 	// If graphics level at max, turn up again

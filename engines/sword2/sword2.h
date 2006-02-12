@@ -33,11 +33,11 @@
 
 #include "common/util.h"
 
-#include "sword2/build_display.h"
+#include "sword2/screen.h"
 #include "sword2/header.h"
 #include "sword2/icons.h"
 #include "sword2/object.h"
-#include "sword2/save_rest.h"
+#include "sword2/saveload.h"
 
 #define	MAX_starts	100
 #define	MAX_description	100

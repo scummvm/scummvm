@@ -383,7 +383,7 @@ void Mouse::systemMenuMouse() {
 	processMenu();
 
 	// Reset game palette, but not after a successful restore or restart!
-	// See RestoreFromBuffer() in save_rest.cpp
+	// See RestoreFromBuffer() in saveload.cpp
 
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 

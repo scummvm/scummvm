@@ -23,7 +23,7 @@
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
-#include "sword2/build_display.h"
+#include "sword2/screen.h"
 
 namespace Sword2 {
 
