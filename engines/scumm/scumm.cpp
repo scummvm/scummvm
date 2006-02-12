@@ -401,7 +401,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"cf4ef315214c7d8cdab6302cdb7e50db", "Freddi Fish 1: The Case of the Missing Kelp Seeds (German Demo)", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"c8aac5e3e701874e2fa4117896f9e1b1", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Macintosh Demo)", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformMacintosh},
 
 	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
@@ -562,7 +562,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins the Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
 	  GF_USE_KEY, Common::kPlatformPC},
 	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins the Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
-	  GF_USE_KEY, Common::kPlatformPC},
+	  GF_USE_KEY, Common::kPlatformMacintosh},
 	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins the Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins the Parade (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
