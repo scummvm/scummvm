@@ -352,7 +352,7 @@ void tglViewport(int x,int y,int width,int height)
 }
 
 void tglFrustum(double left,double right,double bottom,double top,
-               double near,double farv)
+               double nearv,double farv)
 {
   TGLParam p[7];
 
@@ -361,7 +361,7 @@ void tglFrustum(double left,double right,double bottom,double top,
   p[2].f=(float)right;
   p[3].f=(float)bottom;
   p[4].f=(float)top;
-  p[5].f=(float)near;
+  p[5].f=(float)nearv;
   p[6].f=(float)farv;
 
   gl_add_op(p);

@@ -733,7 +733,7 @@ void tglScalef(float x,float y,float z);
 
 void tglViewport(int x,int y,int width,int height);
 void tglFrustum(double left,double right,double bottom,double top,
-               double near,double far);
+               double nearv,double farv);
 
 /* lists */
 unsigned int tglGenLists(int range);
