@@ -55,7 +55,7 @@ private:
 
 	void detectGame();
 public:
-	LureEngine(GameDetector *detector, OSystem *system);
+	LureEngine(OSystem *system);
 	~LureEngine();
 	
 	virtual int init(GameDetector &detector);

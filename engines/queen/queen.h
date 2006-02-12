@@ -80,7 +80,7 @@ class Walk;
 class QueenEngine : public Engine {
 public:
 
-	QueenEngine(GameDetector *detector, OSystem *syst);
+	QueenEngine(OSystem *syst);
 	virtual ~QueenEngine();
 
 	BamScene *bam() const { return _bam; }

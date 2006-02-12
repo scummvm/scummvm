@@ -78,7 +78,7 @@ protected:
 	Intro *_skyIntro;
 
 public:
-	SkyEngine(GameDetector *detector, OSystem *syst);
+	SkyEngine(OSystem *syst);
 	virtual ~SkyEngine();
 
 	static bool isDemo(void);

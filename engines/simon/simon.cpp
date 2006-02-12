@@ -135,7 +135,7 @@ Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 		o++;
 	}
 
-	return new Simon::SimonEngine(detector, syst);
+	return new Simon::SimonEngine(syst);
 }
 
 REGISTER_PLUGIN(SIMON, "Simon the Sorcerer")
@@ -252,7 +252,7 @@ static const GameSpecificSettings feeblefiles_settings = {
 };
 #endif
 
-SimonEngine::SimonEngine(GameDetector *detector, OSystem *syst)
+SimonEngine::SimonEngine(OSystem *syst)
 	: Engine(syst), midi(syst) {
 	_vcPtr = 0;
 	_vc_get_out_of_code = 0;

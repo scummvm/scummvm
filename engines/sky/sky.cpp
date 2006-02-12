@@ -106,7 +106,7 @@ DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_SKY_create(GameDetector *detector, OSystem *syst) {
-	return new Sky::SkyEngine(detector, syst);
+	return new Sky::SkyEngine(syst);
 }
 
 REGISTER_PLUGIN(SKY, "Beneath a Steel Sky")
@@ -118,7 +118,7 @@ void *SkyEngine::_itemList[300];
 
 SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false, false };
 
-SkyEngine::SkyEngine(GameDetector *detector, OSystem *syst)
+SkyEngine::SkyEngine(OSystem *syst)
 	: Engine(syst), _fastMode(0), _debugger(0) {
 }
 

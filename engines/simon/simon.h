@@ -437,7 +437,7 @@ protected:
 	byte _hebrew_char_widths[32];
 
 public:
-	SimonEngine(GameDetector *detector, OSystem *syst);
+	SimonEngine(OSystem *syst);
 	virtual ~SimonEngine();
 
 protected:

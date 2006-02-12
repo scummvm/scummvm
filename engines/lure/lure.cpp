@@ -146,14 +146,14 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 }
 
 Engine *Engine_LURE_create(GameDetector *detector, OSystem *system) {
-	return new LureEngine(detector, system);
+	return new LureEngine(system);
 }
 
 REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine")
 
 namespace Lure {
 
-LureEngine::LureEngine(GameDetector *detector, OSystem *system): Engine(system) {
+LureEngine::LureEngine(OSystem *system): Engine(system) {
 	// Setup mixer
 /*
 	if (!_mixer->isReady()) {
