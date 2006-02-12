@@ -1,3 +1,27 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2002-2006 Chris Apers - PalmOS Backend
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include <PalmOS.h>
 #include "StarterRsc.h"
 
@@ -8,34 +32,37 @@
 #include "globals.h"
 #include "features.h"
 #include "formUtil.h"
+#include "formCards.h"
+#include "palmdefs.h"
+
+#include "init_palmos.h"
+#include "init_stuffs.h"
 
 #include "modules.h"
 #include "args.h"
 
-/*
-static Boolean checkPath(const Char *pathP) {
-	FILE *tmpRef;
 
-	if (!(tmpRef = fopen(pathP, "r"))) {
-		return false;
-	} else {
-		fclose(tmpRef);
-		return true;
-	}
-}
-*/
+#define BUILD_ERROR(m)	\
+	{	StrCopy(msg, m);	\
+		StrCat(msg, "\n\nPlease check that all required files are installed on your card, and you have enough free storage memory.");	\
+		goto onError; }
 
 #define BUILD_FILE(h,m)	\
 	StrCopy(filename, "/Palm/Programs/ScummVM/Mods/");	\
 	StrCat(filename, h);	\
 	StrCat(filename, m);
 
-#define CHECK_FILE() \
+#define CHECK_FILE(m) \
 	e = VFSFileOpen(volRefNum, filename, vfsModeRead, &file);	\
 	if (e)	\
-		goto onError;	\
+		BUILD_ERROR(m)	\
 	else	\
-	VFSFileClose(file);
+		VFSFileClose(file);
+
+#define IMPRT_FILE(m) \
+	e = VFSImportDatabaseFromFile(volRefNum, filename, &cardNo, &dbID);	\
+	if (e)	\
+		BUILD_ERROR(m)
 
 #define DELET_FILE(f) \
 	del_dbID = DmFindDatabase(0, f);	\
@@ -56,7 +83,7 @@ static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
 	if (dbRef) {
 		MemHandle pref = DmGetResource('pref',0);
 		UInt32 size = 0;
-
+		
 		if (pref) {
 			SysAppPrefsType *data = (SysAppPrefsType *)MemHandleLock(pref);
 			size = data->stackSize;
@@ -76,19 +103,15 @@ static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
 	}
 }
 
-static Err ModImport(UInt16 volRefNum, UInt8 engine) {
-	const Char *files[] = {
-		{ "scumm" },
-		{ "simon" },
-		{ "queen" },
-		{ "sword1" },
-		{ "sky" }
-	};
-
+static Err ModImport(UInt16 volRefNum, UInt8 engine, Boolean *armP) {
+#ifndef _DEBUG_ENGINE
 	char filename[256];
-	UInt16 dum1;
-	UInt32 dum2;
+	UInt16 cardNo;
+	LocalID dbID;
+	UInt32 result;
 	FileRef file;
+#endif
+	char msg[256];
 	FormPtr ofmP, frmP;
 	Err e = errNone;
 
@@ -97,21 +120,30 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine) {
 	FrmSetActiveForm(frmP);
 	FrmDrawForm(frmP);
 
-#ifndef _DEBUG_ENGINE
 	// In debug mode, the engine files are directly uploaded to the simulator
-	BUILD_FILE(files[engine], ".engine");	// engine file ?
-	CHECK_FILE();
-	BUILD_FILE(files[engine], ".data");		// data file ?
-	CHECK_FILE();
-	BUILD_FILE("common", ".data")			// common data ?
-	CHECK_FILE();
+#ifndef _DEBUG_ENGINE
+	// engine file ?
+	BUILD_FILE(engines[engine].fileP, ".engine");
+	CHECK_FILE("ScummVM engine file was not found !");
+	IMPRT_FILE("Cannot import engine file !");
 
-	BUILD_FILE("common", ".data");
-	e = (e) ? e : VFSImportDatabaseFromFile(volRefNum, filename, &dum1, &dum2);
-	BUILD_FILE(files[engine], ".data");
-	e = (e) ? e : VFSImportDatabaseFromFile(volRefNum, filename, &dum1, &dum2);
-	BUILD_FILE(files[engine], ".engine");
-	e = (e) ? e : VFSImportDatabaseFromFile(volRefNum, filename, &dum1, &dum2);
+	// need more files ?
+	dbID = DmFindDatabase(0, "ScummVM-Engine");	// be sure to have the correct dbID
+	e = SysAppLaunch(cardNo, dbID, 0, sysAppLaunchCustomEngineGetInfo, 0, &result);
+	*armP = ((result & GET_MODEARM) == GET_MODEARM);
+
+	// common file ?
+	if (!e && (result & GET_DATACOMMON)) {
+		BUILD_FILE("common", ".data");
+		CHECK_FILE("Common data file was not found !");
+		IMPRT_FILE("Cannot import common data file !");
+	}
+	// data file ?
+	if (!e && (result & GET_DATAENGINE)) {
+		BUILD_FILE(engines[engine].fileP, ".data");
+		CHECK_FILE("Engine data file was not found !");
+		IMPRT_FILE("Cannot import engine data file !");
+	}
 #endif
 	// if error, cleanup
 	if (e) ModDelete();
@@ -119,7 +151,10 @@ static Err ModImport(UInt16 volRefNum, UInt8 engine) {
 onError:
 	FrmEraseForm(frmP);
 	FrmDeleteForm(frmP);
-	if (e && ofmP) FrmSetActiveForm(ofmP);
+	if (e) {
+		if (ofmP) FrmSetActiveForm(ofmP);
+		FrmCustomAlert(FrmErrorAlert, msg, 0, 0);
+	}
 
 	return e;
 }
@@ -132,7 +167,7 @@ Boolean StartScummVM() {
 	Char **argvP;
 	UInt8 lightspeed, argc	= 0;
 	UInt32 stackSize;
-	Boolean toLauncher;
+	Boolean toLauncher, direct, isARM;
 	UInt8 engine;
 
 	UInt16 musicDriver = sysInvalidRefNum; // for launch call
@@ -141,18 +176,57 @@ Boolean StartScummVM() {
 	Char num[6];
 
 	argvP = ArgsInit();
+	direct = false;
 
+	// start command line (exec name)
+	ArgsAdd(&argvP[argc], "-", NULL, &argc);
+
+	// no game selected
 	if (index == dmMaxRecordIndex) {
+		ListPtr listP;
 		UInt16 whichButton;
+		
+		// init form
 		FormPtr frmP = FrmInitForm(EngineForm);
+		listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, EngineListList));
+		itemsText = (Char **)MemPtrNew(ENGINE_COUNT * sizeof(Char *));
+		
+		for (int i = 0; i < ENGINE_COUNT; i++)
+			itemsText[i] = (Char *)engines[i].nameP;
+			
+		LstSetListChoices (listP, itemsText, ENGINE_COUNT);
+		LstSetSelection(listP, 0);	
+		
 		whichButton = FrmDoDialog(frmP);
+		engine = LstGetSelection(listP);
+
 		FrmDeleteForm(frmP);
-
-		if (whichButton == EngineCancelButton)
+		MemPtrFree(itemsText);
+		itemsText = NULL;
+		
+		if (whichButton == EngineCancelButton) {
+			if (bDirectMode) {
+				// and force exit if nothing selected
+				EventType event;
+				event.eType = keyDownEvent;
+				event.data.keyDown.chr = vchrLaunch;
+				event.data.keyDown.modifiers = commandKeyMask;
+				EvtAddUniqueEventToQueue(&event, 0, true);
+			}
+			// free args
+			ArgsFree(argvP);
 			return false;
+		}
 
-		engine = (whichButton - Engine0Button);
+		// default values
+		if (bDirectMode)
+			gPrefs->card.volRefNum = parseCards();	// always use the first removable card available (?)
+		gVars->filter		= true;
+		gVars->palmVolume	= 50;
+		gVars->fmQuality	= FM_QUALITY_INI;
+		direct = true;
 
+	// somthing selected
 	} else {
 		Char pathP[256];
 		MemHandle recordH;
@@ -165,28 +239,16 @@ Boolean StartScummVM() {
 		// build path
 		StrCopy(pathP,"/Palm/Programs/ScummVM/Games/");
 		if (gameInfoP->pathP[0] == '/')
-			StrCopy(pathP,gameInfoP->pathP);
-		else
-			StrCat(pathP,gameInfoP->pathP);
-
-/*		// path exists ?
-		if (!checkPath(pathP)) {
-			MemHandleUnlock(recordH);
-			FrmCustomAlert(FrmErrorAlert,"The specified path was not found !",0,0);
-			ArgsFree(argvP);
-			return false;
-		}
-*/
-
-		// ScummVM
-		ArgsAdd(&argvP[argc], "-", NULL, &argc);
+			StrCopy(pathP, gameInfoP->pathP);
+		else if (!(gameInfoP->pathP[0] == '.' && StrLen(gameInfoP->pathP) == 1))
+			StrCat(pathP, gameInfoP->pathP);
 
 		// path
 		ArgsAdd(&argvP[argc], "-p", pathP, &argc);
 
 		// language
 		if (gameInfoP->language > 0) {
-			const Char *lang = "en\0de\0fr\0it\0pt\0es\0jp\0zh\0kr\0hb\0ru\0cz\0nl\0";
+			const Char *lang = "zh\0cz\0gb\0en\0fr\0de\0hb\0it\0jp\0kr\0pl\0pt\0ru\0es\0se\0";
 			ArgsAdd(&argvP[argc], "-q", (lang + (gameInfoP->language - 1) * 3), &argc);
 		}
 
@@ -198,23 +260,29 @@ Boolean StartScummVM() {
 		ArgsAdd(&argvP[argc], (gameInfoP->aspectRatio ? "--aspect-ratio" : "--no-aspect-ratio"), NULL, &argc);
 
 		// gfx mode
-		gVars->flipping.pageAddr1 = (UInt8 *)(BmpGetBits(WinGetBitmap(WinGetDisplayWindow())));
-		gVars->flipping.pageAddr2 = gVars->flipping.pageAddr1; // default if not flipping mode
 		gVars->filter = gameInfoP->filter;
+
+		switch (gameInfoP->renderMode) {
+			case 1:
+				ArgsAdd(&argvP[argc], "--render-mode=", "amiga", &argc);
+				break;
+			case 2:
+				ArgsAdd(&argvP[argc], "--render-mode=", "cga", &argc);
+				break;
+			case 3:
+				ArgsAdd(&argvP[argc], "--render-mode=", "ega", &argc);
+				break;
+			case 4:
+				ArgsAdd(&argvP[argc], "--render-mode=", "hercAmber", &argc);
+				break;
+			case 5:
+				ArgsAdd(&argvP[argc], "--render-mode=", "hercGreen", &argc);
+				break;
+		}		
 
 		switch (gameInfoP->gfxMode)	{
 			case 1:
-				ArgsAdd(&argvP[argc], "-g", "flipping", &argc);
-				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockDontCare);
-				WinScreenUnlock();
-				break;
-			case 2:
-				ArgsAdd(&argvP[argc], "-g", "buffered", &argc);
-				break;
-			case 3:
 				ArgsAdd(&argvP[argc], "-g", "wide", &argc);
-				gVars->flipping.pageAddr1 = (UInt8 *)WinScreenLock(winLockDontCare);
-				WinScreenUnlock();
 				break;
 			default:
 				ArgsAdd(&argvP[argc], "-g", "normal", &argc);
@@ -233,26 +301,20 @@ Boolean StartScummVM() {
 		}
 		// not a PC version
 		if (gameInfoP->setPlatform) {
-			switch (gameInfoP->platform) {
-				case 0:
-					ArgsAdd(&argvP[argc], "--platform=", "amiga", &argc);
-					break;
-				case 1:
-					ArgsAdd(&argvP[argc], "--platform=", "atari", &argc);
-					break;
-				case 2:
-					ArgsAdd(&argvP[argc], "--platform=", "mac", &argc);
-					break;
-				case 3:
-					ArgsAdd(&argvP[argc], "--platform=", "pc", &argc);
-					break;
-				case 4:
-					ArgsAdd(&argvP[argc], "--platform=", "fmtowns", &argc);
-					break;
-				case 5:
-					ArgsAdd(&argvP[argc], "--platform=", "windows", &argc);
-					break;
-			}
+			static const char *platform[] = {
+				"acorn",
+				"amiga",
+				"atari",
+				"c64",
+				"pc",
+				"fmtowns",
+				"linux",
+				"mac",
+				"nes",
+				"segacd",
+				"windows"
+			};
+			ArgsAdd(&argvP[argc], "--platform=", platform[gameInfoP->platform], &argc);	
 		}
 
 		// subtitles
@@ -267,6 +329,9 @@ Boolean StartScummVM() {
 			// music tempo
 			StrIToA(num, gameInfoP->musicInfo.sound.tempo);
 			ArgsAdd(&argvP[argc], "--tempo=", num, &argc);
+		}
+
+		if (engine == ENGINE_SCUMM || engine == ENGINE_SAGA) {
 			// talk speed
 			if (gameInfoP->talkSpeed) {
 				StrIToA(num, gameInfoP->talkValue);
@@ -275,14 +340,26 @@ Boolean StartScummVM() {
 		}
 
 		// music driver
-		musicDriver =gameInfoP->musicInfo.sound.music;
+		musicDriver = gameInfoP->musicInfo.sound.music;
 		if (musicDriver) {
 			switch (gameInfoP->musicInfo.sound.drvMusic) {
 				case 0:	// NULL
 					ArgsAdd(&argvP[argc], "-e", "null", &argc);
 					break;
 
-				case 1:	// built-in MIDI
+				case 1: // AdLib
+					ArgsAdd(&argvP[argc], "-e", "adlib", &argc);
+					break;
+
+				case 2: // FM Towns
+					ArgsAdd(&argvP[argc], "-e", "towns", &argc);
+					break;
+
+				case 3: // IBM PCjr
+					ArgsAdd(&argvP[argc], "-e", "pcjr", &argc);
+					break;
+
+				case 4:	// built-in MIDI
 					if (OPTIONS_TST(kOptDeviceZodiac))
 						ArgsAdd(&argvP[argc], "-e", "zodiac", &argc);	// Tapwave Zodiac
 					else if (OPTIONS_TST(kOptSonyPa1LibAPI))
@@ -291,23 +368,15 @@ Boolean StartScummVM() {
 						ArgsAdd(&argvP[argc], "-e", "null", &argc);		// error, no music driver
 					break;
 
-				case 2: // PC Speaker
+				case 5: // PC Speaker
 					ArgsAdd(&argvP[argc], "-e", "pcspk", &argc);
 					break;
-				case 3: // IBM PCjr
-					ArgsAdd(&argvP[argc], "-e", "pcjr", &argc);
-				case 4: // FM Towns
-					ArgsAdd(&argvP[argc], "-e", "towns", &argc);
-				case 5: // AdLib
-					ArgsAdd(&argvP[argc], "-e", "adlib", &argc);
-			}
+			}		
 		}
 		else	// NULL as default
 			ArgsAdd(&argvP[argc], "-e", "null", &argc);
 
 		// volume control
-		StrIToA(num, gameInfoP->musicInfo.volume.master);
-		ArgsAdd(&argvP[argc], "-o", num, &argc);
 		StrIToA(num, gameInfoP->musicInfo.volume.sfx);
 		ArgsAdd(&argvP[argc], "-s", num, &argc);
 		StrIToA(num, gameInfoP->musicInfo.volume.music);
@@ -317,18 +386,21 @@ Boolean StartScummVM() {
 
 		// output rate
 		if (gameInfoP->musicInfo.sound.sfx) {
-			UInt32 rates[] = {8000, 11025, 22050};
+			UInt32 rates[] = {4000, 8000, 11025, 22050, 44100};
 			StrIToA(num, rates[gameInfoP->musicInfo.sound.rate]);
 			ArgsAdd(&argvP[argc], "--output-rate=", num, &argc);
 		}
+
+		// FM quality
+		gVars->fmQuality = gameInfoP->fmQuality;
 
 		// game name
 		ArgsAdd(&argvP[argc], gameInfoP->gameP, NULL, &argc);
 
 		// use sound
-		if (!gameInfoP->musicInfo.sound.sfx) {
-			OPTIONS_RST(kOptSonyPa1LibAPI);
-			OPTIONS_RST(kOptPalmSoundAPI);
+		if (!gameInfoP->musicInfo.sound.sfx) { // FIXME : not the good way to do it
+//			OPTIONS_RST(kOptSonyPa1LibAPI);
+//			OPTIONS_RST(kOptPalmSoundAPI);
 		}
 
 		// others globals data
@@ -338,9 +410,12 @@ Boolean StartScummVM() {
 		gVars->CD.volume = gameInfoP->musicInfo.volume.audiocd;
 		gVars->CD.defaultTrackLength = gameInfoP->musicInfo.sound.defaultTrackLength;
 		gVars->CD.firstTrack = gameInfoP->musicInfo.sound.firstTrack;
+		gVars->palmVolume = musicDriver ? gameInfoP->musicInfo.volume.palm : 0;
 
 		MemHandleUnlock(recordH);
-	}
+	} // end no game / game selected
+
+	// common command line options
 
 	// debug level
 	if (gPrefs->debug) {
@@ -353,42 +428,49 @@ Boolean StartScummVM() {
 		if (gPrefs->altIntro)
 			ArgsAdd(&argvP[argc], "--alt-intro", NULL, &argc);
 	}
-
-	if (engine == ENGINE_SCUMM) {
+	
+	if (engine == ENGINE_SCUMM || engine == ENGINE_SAGA) {
 		// copy protection ?
 		if (gPrefs->copyProtection)
 			ArgsAdd(&argvP[argc], "--copy-protection", NULL, &argc);
+	}
+	
+	if (engine == ENGINE_SCUMM) {
 		// demo mode ?
 		if (gPrefs->demoMode)
 			ArgsAdd(&argvP[argc], "--demo-mode", NULL, &argc);
 	}
 
+	// exceed max args ?
 	if (argc > MAX_ARG)
 		FrmCustomAlert(FrmErrorAlert, "Too many parameters.",0,0);
 
+	// set some common options
 	stackSize = (gPrefs->setStack ? STACK_LARGER : STACK_DEFAULT);
 	lightspeed= (gPrefs->lightspeed.enable ? gPrefs->lightspeed.mode : 255);
 	toLauncher= (gPrefs->exitLauncher);
 
-	// gVars values
+	// gVars values 
 	// (gVars->HRrefNum defined in checkHRmode on Clié)
-	gVars->screenLocked	= false;
-	gVars->volRefNum	= gPrefs->card.volRefNum;
-	gVars->vibrator		= gPrefs->vibrator;
-	gVars->stdPalette	= gPrefs->stdPalette;
+	gVars->VFS.volRefNum	= gPrefs->card.volRefNum;
+	gVars->vibrator			= gPrefs->vibrator;
+	gVars->stdPalette		= gPrefs->stdPalette;
+	gVars->VFS.cacheSize	= (gPrefs->card.useCache ? gPrefs->card.cacheSize : 0);
+	gVars->indicator.showLED= gPrefs->card.showLED;
+	gVars->stylusClick		= gPrefs->stylusClick;
+	gVars->autoSave			= (gPrefs->autoSave ? gPrefs->autoSavePeriod : -1);
+	gVars->advancedMode		= gPrefs->advancedMode;
 
 	// user params
 	HWR_RSTALL();
-
+	
+	if (gPrefs->goLCD)
+		HWR_SET(INIT_GOLCD);
+	else
+		OPTIONS_RST(kOptGoLcdAPI);
+	
 	if (!gPrefs->autoOff)
 		HWR_SET(INIT_AUTOOFF);
-
-	if (!gPrefs->arm) {
-		OPTIONS_RST(kOptDeviceARM);
-		OPTIONS_RST(kOptDeviceProcX86);
-	} else {
-		HWR_SET(INIT_ARM);
-	}
 
 	if (gVars->vibrator)
 		HWR_SET(INIT_VIBRATOR);
@@ -400,10 +482,24 @@ Boolean StartScummVM() {
 		HWR_SET(INIT_PA1LIB);
 	}
 
-	if (ModImport(gVars->volRefNum, engine) != errNone) {
-		FrmCustomAlert(FrmErrorAlert, "Error importing files:\nplease check that all required files are installed on the selected memory card, and you have enough free storage memory.", 0, 0);
+	if (ModImport(gVars->VFS.volRefNum, engine, &isARM) != errNone) {
+		if (bDirectMode) {
+			// and force exit if nothing selected
+			EventType event;
+			event.eType = keyDownEvent;
+			event.data.keyDown.chr = vchrLaunch;
+			event.data.keyDown.modifiers = commandKeyMask;
+			EvtAddUniqueEventToQueue(&event, 0, true);
+		}
 		ArgsFree(argvP);
 		return false;
+	}
+
+	// reset mode if screen rotation occured (DIA only)
+	if (!direct && OPTIONS_TST(kOptCollapsible)) {
+		UInt8 mode = PalmScreenSize(0,0, &(gVars->screenFullWidth), &(gVars->screenFullHeight));
+		OPTIONS_RST(kOptModeLandscape);
+		OPTIONS_SET((mode == PALM_LANDSCAPE) ? kOptModeLandscape : kOptNone);
 	}
 
 	// free and save globals pref memory
@@ -423,7 +519,11 @@ Boolean StartScummVM() {
 
 		cardNo = 0;
 		dbID = DmFindDatabase(0, "ScummVM-Engine");
-		ModSetStack(stackSize, cardNo, dbID);
+
+		if (isARM)
+			FtrSet(appFileCreator, ftrStack , (stackSize * 4));
+		else
+			ModSetStack(stackSize, cardNo, dbID);
 
 		cmdPBP->args.argc = argc;
 		cmdPBP->args.argv = argvP;
