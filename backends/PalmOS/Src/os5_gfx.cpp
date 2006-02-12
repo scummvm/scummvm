@@ -85,7 +85,6 @@ void OSystem_PalmOS5::load_gfx_mode() {
 void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 	Err e;
 	UInt32 device;
-	Boolean isT3;
 
 	if (_mode != GFX_NORMAL && !_isSwitchable)
 		return;
@@ -94,8 +93,8 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 		WinDeleteWindow(_workScreenH, false);
 	_workScreenH = NULL;
 
-	isT3 = false;
 #ifdef PALMOS_ARM
+	Boolean isT3 = false;
 	if (!FtrGet(sysFileCSystem, sysFtrNumOEMDeviceID, &device))
 		isT3 = (device == kPalmOneDeviceIDTungstenT3);
 #endif
