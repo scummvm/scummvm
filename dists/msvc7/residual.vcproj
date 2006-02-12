@@ -19,13 +19,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\lua\include"
+				AdditionalIncludeDirectories="..\.."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="4"/>
@@ -35,7 +36,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
 /NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="sdl.lib libz.lib lua.lib"
+				AdditionalDependencies="sdl.lib zdll.lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -69,13 +70,14 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories="..\..\lua\include"
+				AdditionalIncludeDirectories="..\.."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
+				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -85,7 +87,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="OpenGL32.Lib GlAux.Lib GLU32.Lib SDL.Lib SDLMain.Lib
 /NODEFAULTLIB:LIBCMTD"
-				AdditionalDependencies="sdl.lib libz.lib lua.lib"
+				AdditionalDependencies="sdl.lib zdll.lib"
 				OutputFile="$(OutDir)/residual.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
@@ -127,25 +129,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="3DPrimitives"
-			Filter="">
-			<File
-				RelativePath="..\..\matrix3.cpp">
-			</File>
-			<File
-				RelativePath="..\..\matrix3.h">
-			</File>
-			<File
-				RelativePath="..\..\matrix4.cpp">
-			</File>
-			<File
-				RelativePath="..\..\matrix4.h">
-			</File>
-			<File
-				RelativePath="..\..\vector3d.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="mixer"
 			Filter="">
 			<File
@@ -165,6 +148,285 @@
 			</File>
 			<File
 				RelativePath="..\..\mixer\rate.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="imuse"
+			Filter="">
+			<File
+				RelativePath="..\..\imuse\imuse.cpp">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse.h">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_mcmp_mgr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_mcmp_mgr.h">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_music.cpp">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_script.cpp">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_sndmgr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_sndmgr.h">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_tables.cpp">
+			</File>
+			<File
+				RelativePath="..\..\imuse\imuse_track.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="lua"
+			Filter="">
+			<File
+				RelativePath="..\..\lua\lapi.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lapi.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lauxlib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lauxlib.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lbuffer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lbuiltin.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lbuiltin.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\ldo.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\ldo.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lfunc.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lfunc.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lgc.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lgc.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\liolib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\llex.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\llex.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lmathlib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lmem.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lmem.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lobject.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lobject.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lopcodes.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lparser.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lparser.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lrestore.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lsave.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lstate.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lstate.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lstring.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lstring.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lstrlib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\ltable.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\ltable.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\ltask.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\ltask.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\ltm.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\ltm.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lua.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\luadebug.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lualib.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lundump.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lundump.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lvm.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lvm.h">
+			</File>
+			<File
+				RelativePath="..\..\lua\lzio.cpp">
+			</File>
+			<File
+				RelativePath="..\..\lua\lzio.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="tinygl"
+			Filter="">
+			<File
+				RelativePath="..\..\tinygl\api.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\arrays.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\clear.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\clip.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\error.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\get.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\gl.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\image_util.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\init.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\light.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\list.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\matrix.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\memory.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\misc.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\msghandling.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\msghandling.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\opinfo.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\select.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\specbuf.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\specbuf.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\texture.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\vertex.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zbuffer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zbuffer.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zdither.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zfeatures.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zgl.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zline.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zline.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zmath.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\zmath.h">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\ztriangle.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tinygl\ztriangle.h">
 			</File>
 		</Filter>
 		<File
@@ -207,16 +469,37 @@
 			RelativePath="..\..\debug.h">
 		</File>
 		<File
+			RelativePath="..\..\driver.h">
+		</File>
+		<File
 			RelativePath="..\..\driver_gl.cpp">
 		</File>
 		<File
 			RelativePath="..\..\driver_gl.h">
 		</File>
 		<File
+			RelativePath="..\..\driver_sdl.cpp">
+		</File>
+		<File
+			RelativePath="..\..\driver_sdl.h">
+		</File>
+		<File
+			RelativePath="..\..\driver_tinygl.cpp">
+		</File>
+		<File
+			RelativePath="..\..\driver_tinygl.h">
+		</File>
+		<File
 			RelativePath="..\..\engine.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engine.h">
+		</File>
+		<File
+			RelativePath="..\..\font.cpp">
+		</File>
+		<File
+			RelativePath="..\..\font.h">
 		</File>
 		<File
 			RelativePath="..\..\keyframe.cpp">
@@ -229,6 +512,12 @@
 		</File>
 		<File
 			RelativePath="..\..\lab.h">
+		</File>
+		<File
+			RelativePath="..\..\lipsynch.cpp">
+		</File>
+		<File
+			RelativePath="..\..\lipsynch.h">
 		</File>
 		<File
 			RelativePath="..\..\localize.cpp">
@@ -252,6 +541,18 @@
 			RelativePath="..\..\material.h">
 		</File>
 		<File
+			RelativePath="..\..\matrix3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\matrix3.h">
+		</File>
+		<File
+			RelativePath="..\..\matrix4.cpp">
+		</File>
+		<File
+			RelativePath="..\..\matrix4.h">
+		</File>
+		<File
 			RelativePath="..\..\model.cpp">
 		</File>
 		<File
@@ -262,6 +563,12 @@
 		</File>
 		<File
 			RelativePath="..\..\objectstate.h">
+		</File>
+		<File
+			RelativePath="..\..\primitives.cpp">
+		</File>
+		<File
+			RelativePath="..\..\primitives.h">
 		</File>
 		<File
 			RelativePath="..\..\registry.cpp">
@@ -276,28 +583,22 @@
 			RelativePath="..\..\resource.h">
 		</File>
 		<File
+			RelativePath="..\..\savegame.cpp">
+		</File>
+		<File
+			RelativePath="..\..\savegame.h">
+		</File>
+		<File
 			RelativePath="..\..\scene.cpp">
 		</File>
 		<File
 			RelativePath="..\..\scene.h">
 		</File>
 		<File
-			RelativePath="..\..\screen.cpp">
-		</File>
-		<File
-			RelativePath="..\..\screen.h">
-		</File>
-		<File
 			RelativePath="..\..\smush.cpp">
 		</File>
 		<File
 			RelativePath="..\..\smush.h">
-		</File>
-		<File
-			RelativePath="..\..\sound.cpp">
-		</File>
-		<File
-			RelativePath="..\..\sound.h">
 		</File>
 		<File
 			RelativePath="..\..\stdafx.h">
