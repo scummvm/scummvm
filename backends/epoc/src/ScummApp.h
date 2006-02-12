@@ -28,7 +28,8 @@
 #include <eikapp.h>
 #include <e32base.h>
 #include <sdlapp.h>
-#ifdef EPOC_AS_APP
+
+#if defined (EPOC_AS_APP) && !defined (UIQ3) && !(__SERIES60_30__)
 #include "ECompXL.h"
 #endif
 
@@ -38,8 +39,10 @@ public:
 	~CScummApp();
 
 	TUid AppDllUid() const;
-#ifdef EPOC_AS_APP
+#if defined (EPOC_AS_APP) && !defined (UIQ3) && !(__SERIES60_30__)
 	TECompXL    iECompXL;
 #endif
 };
 #endif
+
+

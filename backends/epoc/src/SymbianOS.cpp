@@ -24,27 +24,26 @@
 
 #include "backends/epoc/src/SymbianOS.h"
 #include "backends/epoc/src/SymbianActions.h"
+#include "common/config-manager.h"
 #include "gui/Actions.h"
 #include "gui/Key.h"
 #include "gui/message.h"
 
-#include <eikenv.h> // for CEikonEnv::Static() @ SymbianFatalError()
+#include <eikenv.h> // for CEikonEnv::Static() @ Symbian::FatalError()
+#include "ESDL/sdlapp.h" // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 
-#include "common/config-manager.h"
+////////// extern "C" ///////////////////////////////////////////////////
 
 extern Common::ConfigManager *g_config;
-
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Fullscreen", GFX_NORMAL},
-	{0, 0, 0}
-};
 
 OSystem *OSystem_SymbianOS_create() {
 	return new OSystem_SDL_Symbian();
 }
 
+namespace Symbian {
+
 // Show a simple Symbian Info win with Msg & exit
-void SymbianFatalError(const char *msg) {
+void FatalError(const char *msg) {
 	TPtrC8 msgPtr((const TUint8 *)msg); 
 	TBuf<512> msg16Bit;
 	msg16Bit.Copy(msgPtr);
@@ -53,6 +52,21 @@ void SymbianFatalError(const char *msg) {
 	if (g_system)
 		g_system->quit();
 }
+
+// make this easily available everywhere
+char* GetExecutablePath()
+{
+	return CSDLApp::GetExecutablePathCStr();	
+}
+
+} // namespace Symbian {
+
+////////// OSystem_SDL_Symbian //////////////////////////////////////////
+
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{"1x", "Fullscreen", GFX_NORMAL},
+	{0, 0, 0}
+};
 
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 	switch(f) {

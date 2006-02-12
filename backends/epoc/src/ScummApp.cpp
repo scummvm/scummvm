@@ -27,7 +27,7 @@
 #include "backends/epoc/src/ScummVM.hrh"
 #define _PAGESIZE_ 0x1000
 
-#if defined (__WINS__)
+#if defined (__WINS__) && !defined (__SERIES60_30__)
 extern "C" int _chkstk(int /*a*/) {
 _asm {
 	push ecx 
@@ -63,16 +63,31 @@ _asm {
 #endif
 
 #ifdef EPOC_AS_APP
-// this function is called by Symbian to deliver the new CApaApplication object
-EXPORT_C CApaApplication *NewApplication() {
+
+// this function is called automatically by the SymbianOS to deliver the new CApaApplication object
+#if !defined (UIQ3)
+EXPORT_C 
+#endif
+CApaApplication* NewApplication() {
 	// Return pointer to newly created CQMApp
-	return (new CScummApp);
+	return new CScummApp;
+}
+
+#if defined (UIQ3) || defined (__SERIES60_30__)
+#include <eikstart.h>
+// E32Main() contains the program's start up code, the entry point for an EXE.
+GLDEF_C TInt E32Main() {
+ 	return EikStart::RunApplication(NewApplication);
 }
 #endif
 
+#endif // EPOC_AS_APP
+
+#if !defined (UIQ3) && !defined (__SERIES60_30__)
 GLDEF_C  TInt E32Dll(TDllReason) {
 	return KErrNone;
 }
+#endif
 
 CScummApp::CScummApp() {
 }

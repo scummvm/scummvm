@@ -34,8 +34,6 @@
 #include <e32std.h>
 #include <math.h>
 
-// the place in Symbian FS where scummvm.ini & std***.txt are saved
-#define SYMBIAN32_DOC_DIR "C:\\documents\\ScummVM\\" // includes final \\!
 #define DISABLE_SCALERS // we only need 1x
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
@@ -136,7 +134,8 @@ void inline *scumm_bsearch(const void *key, const void *base, size_t nmemb, size
 }
 #define bsearch						scumm_bsearch
 
-// make sure SymbianFatalError() @ SymbianOS.cpp is known in error() @ engine.cpp
-extern void SymbianFatalError(const char *msg) ;
-
-
+// we cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp)
+namespace Symbian {
+extern void FatalError(const char *msg);
+extern char* GetExecutablePath();
+}

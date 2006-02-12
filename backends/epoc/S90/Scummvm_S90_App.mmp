@@ -25,22 +25,24 @@
 // MAKEFILE.MMP S90 ScummVM Launcher
 //
 
-TARGET			ScummVMS90.app
-TARGETPATH		system\apps\ScummVMS90
+TARGET			ScummVM.app
+TARGETPATH		system\apps\ScummVM
 TARGETTYPE		app
 
 UID				0x100039ce 0x101f9b57
-RESOURCE		SCUMMVMS90.rss
+sourcepath		..\res
+RESOURCE		SCUMMVM.rss
 
 SOURCEPATH		.
 USERINCLUDE		.
 SYSTEMINCLUDE	\epoc32\include \epoc32\include\libc
 
 // app source
+sourcepath ..\src
 SOURCE ScummVMApp.cpp
 
 sourcepath ..
-AIF			ScummVmS90.Aif ..\res\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp
+AIF			ScummVm.Aif ..\res\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp
 
 // libraries
 LIBRARY cone.lib  EIKCORE.lib 

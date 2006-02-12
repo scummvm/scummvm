@@ -18,67 +18,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
  */
 
-#ifndef ScummVMapps60h
-#define ScummVMapps60h
-
-#include <eikapp.h>
-#include <e32base.h>
-#include <coecntrl.h>
-#include <eikenv.h>
-#include <coeview.h>
-#include <eikappui.h>
-
-class CScummVM : public CEikApplication {
-public:
-	CScummVM();
-	~CScummVM();
-
-	CApaDocument *CreateDocumentL();
-	TUid AppDllUid() const;
-};
-
-
-#include <eikdoc.h>
-
-class CScummVMDoc : public CEikDocument {
-public:
-	CScummVMDoc(CEikApplication &aApplicaiton);
-	~CScummVMDoc();
-
-	CEikAppUi *CreateAppUiL();
-	void ConstructL();
-};
-
-#include <eikappui.h>
-class CScummVMUi;
-class CScummWatcher : public CActive {
-public:
-	CScummWatcher();
-	~CScummWatcher();
-
-	void DoCancel();
-	void RunL();
-	CScummVMUi *iAppUi;
-};
-
-class CScummVMUi : public CEikAppUi {
-public:
-	CScummVMUi();
-	~CScummVMUi();
-
-	void ConstructL();
-	void HandleCommandL(TInt aCommand);
-	void HandleForegroundEventL(TBool aForeground);
-	void BringUpEmulatorL();
-
-private:
-	TThreadId iThreadId;
-	TInt iExeWgId;
-	RThread iThreadWatch;
-	CScummWatcher *iWatcher;
-};
+#ifdef USE_VIBRA_SE_PXXX
+	"Vibra "
+#endif
+	"\n"
+	
+// we want a list of supported engines visible in the program,
+// because we also release special builds with only one engine
+#ifndef DISABLE_SCUMM
+	"SCUMM "
+#endif
+#ifndef DISABLE_SIMON
+	"Simon "
+#endif
+#ifndef DISABLE_SKY
+	"Sky "
+#endif
+#ifndef DISABLE_QUEEN
+	"Queen "
+#endif
+#ifndef DISABLE_GOB
+	"Gob "
+#endif
+#ifndef DISABLE_SAGA
+	"Saga "
+#endif
+#ifndef DISABLE_KYRA
+	"Kyra "
+#endif
+#ifndef DISABLE_SWORD1
+	"Sword1 "
+#endif
+#ifndef DISABLE_SWORD2
+	"Sword2 "
 #endif

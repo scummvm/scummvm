@@ -6,16 +6,17 @@
 ;&EN
 
 ; UID is the app's UID
-#{"ScummVM S60v3"},(0x101f9b57),0,80,3
+#{"ScummVM S60v3"},(0xA0000657),0,82.0
 
 ; Platform type
 (0x101F6F88), 0, 0, 0, {"Series60ProductID"}
 
 ; Launcher, Application, AIF & Resource file
-"\epoc32\release\armi\urel\ScummVM.app"-"!:\system\apps\ScummVM\ScummVM.app"
-"\epoc32\release\armi\urel\ScummVM.exe"-"!:\system\apps\ScummVM\ScummVM.exe"
-"\epoc32\data\z\system\apps\ScummVM\ScummVM.aif"-"!:\system\apps\ScummVM\ScummVM.aif"
-"\epoc32\data\z\system\apps\ScummVM\ScummVM.rsc"-"!:\system\apps\ScummVM\ScummVM.rsc"
+"\s60v3\epoc32\release\gcce\urel\ScummVM.exe"-		"!:\sys\bin\ScummVM.exe"
+"\s60v3\epoc32\data\z\resource\apps\ScummVM.rsc"-	"!:\resource\apps\ScummVM.rsc"
+"\s60v3\epoc32\Data\Z\resource\apps\scummvm_loc.rsc"-	"!:\resource\apps\scummvm_loc.rsc"
+"\s60v3\epoc32\data\Z\resource\APPS\scummvm.MBM"-	"!:\resource\apps\scummvm.MBM"
+"\s60v3\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL

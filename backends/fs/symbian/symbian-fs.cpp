@@ -114,6 +114,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 		RFs fs = CEikonEnv::Static()->FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
+		TUint driveLetterValue;
 		TVolumeInfo volumeInfo;
 		TBuf8<30> driveLabel8;
 		TBuf8<30> driveString8;
@@ -122,12 +123,16 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 			TInt err = fs.Volume(volumeInfo, driveNumber);
 			if (err != KErrNone)
 				continue; 
-			User::LeaveIfError(fs.DriveToChar(driveNumber,driveLetter));
+			if(fs.DriveToChar(driveNumber,driveLetter) != KErrNone)
+				continue;
+
+			driveLetterValue = driveLetter;
+
 			if(volumeInfo.iName.Length() > 0) {				
 				driveLabel8.Copy(volumeInfo.iName); // 16 to 8bit des // enabling this line alone gives KERN-EXEC 3 with non-optimized GCC? WHY? grrr
-				driveString8.Format(_L8("Drive %c: (%S)"), driveLetter, &driveLabel8);
+				driveString8.Format(_L8("Drive %c: (%S)"), driveLetterValue, &driveLabel8);
 			} else {
-				driveString8.Format(_L8("Drive %c:"), driveLetter);
+				driveString8.Format(_L8("Drive %c:"), driveLetterValue);
 			}
 				
 			char path[10];

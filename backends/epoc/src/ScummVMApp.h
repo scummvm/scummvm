@@ -18,12 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
  */
 
-#ifndef ScummVMapps60h
-#define ScummVMapps60h
+#ifndef ScummVMapph
+#define ScummVMapph
 
 #include <eikapp.h>
 #include <e32base.h>

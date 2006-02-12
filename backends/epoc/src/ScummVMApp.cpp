@@ -18,17 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
  */
 
 #include "ScummVMapp.h"
-#include <scummvms60.rsg>
+#include <scummvm.rsg>
 #include <apgcli.h>
 #include <eikdll.h>
+#include <apgtask.h>
 
-EXPORT_C CApaApplication* NewApplication() {
-        return (new CScummVM);
+EXPORT_C CApaApplication *NewApplication() {
+	return (new CScummVM);
 }
 
 CScummVM::CScummVM() {
@@ -37,29 +36,27 @@ CScummVM::CScummVM() {
 CScummVM::~CScummVM() {
 }
 
-CApaDocument* CScummVM::CreateDocumentL()
-{
-	return new (ELeave) CScummVMDoc(*this);
+CApaDocument *CScummVM::CreateDocumentL() {
+	return new (ELeave)CScummVMDoc(*this);
 }
 
-TUid CScummVM::AppDllUid() const
-{
+TUid CScummVM::AppDllUid() const {
 	return TUid::Uid(0x101f9b57);
 }
 
-CScummVMDoc::CScummVMDoc(CEikApplication& aApp):CAknDocument(aApp) {
+CScummVMDoc::CScummVMDoc(CEikApplication &aApp) : CEikDocument(aApp) {
 }
 
 CScummVMDoc::~CScummVMDoc() {
 }
 
-CEikAppUi* CScummVMDoc::CreateAppUiL() {
-	return new (ELeave) CScummVMUi;
+CEikAppUi *CScummVMDoc::CreateAppUiL() {
+	return new (ELeave)CScummVMUi;
 }
 
 void CScummVMUi::HandleForegroundEventL(TBool aForeground) {
 	if(aForeground) {
-		BringUpEmulatorL();	
+		BringUpEmulatorL();
 	}
 }
 
@@ -71,6 +68,7 @@ CScummVMUi::~CScummVMUi() {
 		iThreadWatch.LogonCancel(iWatcher->iStatus);
 		iWatcher->Cancel();
 	}
+
 	delete iWatcher;
 
 	iThreadWatch.Close();
@@ -78,45 +76,53 @@ CScummVMUi::~CScummVMUi() {
 
 void CScummVMUi::ConstructL() {
 	BaseConstructL();
-	TApaTaskList taskList(iEikonEnv->WsSession());
-	TApaTask myTask=taskList.FindApp(TUid::Uid(0x101f9b57));
-	myTask.SendToBackground();
-
 	TBuf<128> startFile;
 	startFile = iEikonEnv->EikAppUi()->Application()->AppFullName();
 	TParse parser;
 	parser.Set(startFile,NULL,NULL);
-	
+
 	startFile = parser.DriveAndPath();
 #ifndef __WINS__
 	startFile.Append( _L("ScummVM.exe"));
 #else
 	startFile.Append( _L("ScummVM.dll"));
 #endif
-	CApaCommandLine* cmdLine=CApaCommandLine::NewLC(startFile);
+	CApaCommandLine *cmdLine = CApaCommandLine::NewLC(startFile);
 	RApaLsSession lsSession;
+
 	lsSession.Connect();
 	CleanupClosePushL(lsSession);
-	lsSession.StartApp(*cmdLine,iThreadId);
+	lsSession.StartApp(*cmdLine, iThreadId);
+
 	CleanupStack::PopAndDestroy();//close lsSession
 	CleanupStack::PopAndDestroy(cmdLine);
+
 	User::After(500000);// Let the application start
-	TApaTask exeTask=taskList.FindByPos(0);
+
+	TApaTaskList taskList(iEikonEnv->WsSession());
+
+	TApaTask myTask = taskList.FindApp(TUid::Uid(0x101f9b57));
+	myTask.SendToBackground();
+
+	TApaTask exeTask = taskList.FindByPos(0);
+
 	iExeWgId=exeTask.WgId();
+	exeTask.BringToForeground();
 
 	if(iExeWgId == myTask.WgId()) { // Should n't be the same
 		Exit();
 	}
-	if(iThreadWatch.Open(iThreadId)==KErrNone) {
+	if(iThreadWatch.Open(iThreadId) == KErrNone) {
 		iWatcher = new (ELeave)CScummWatcher;
-		iWatcher->iAppUi=this;
-		iThreadWatch.Logon(iWatcher->iStatus);	
+		iWatcher->iAppUi = this;
+		iThreadWatch.Logon(iWatcher->iStatus);
 	}
 }
 
-CScummWatcher::CScummWatcher():CActive(EPriorityStandard) {
+CScummWatcher::CScummWatcher() : CActive(EPriorityStandard) {
 	CActiveScheduler::Add(this);
-	iStatus=KRequestPending;
+
+	iStatus = KRequestPending;
 	SetActive();
 }
 
@@ -132,31 +138,30 @@ void CScummWatcher::RunL() {
 
 void CScummVMUi::BringUpEmulatorL() {
 	RThread thread;
-	if(thread.Open(iThreadId)==KErrNone) {
+
+	if(thread.Open(iThreadId) == KErrNone) {
 		thread.Close();
 		TApaTask apaTask(iEikonEnv->WsSession());
 		apaTask.SetWgId(iExeWgId);
 		apaTask.BringToForeground();
-	}
-	else
-	{
-		iExeWgId=-1;
+	} else {
+		iExeWgId = -1;
+		Exit();
 	}
 }
 
 void CScummVMUi::HandleCommandL(TInt aCommand) {
 	switch(aCommand) {
 	case EEikCmdExit:
-	{
-		RThread thread;
-		if(thread.Open(iThreadId)==KErrNone)
 		{
-			thread.Terminate(0);
-			thread.Close();
+			RThread thread;
+			if(thread.Open(iThreadId) == KErrNone) {
+				thread.Terminate(0);
+				thread.Close();
+			}
+			Exit();
 		}
-		Exit();
-	} 
-	break;
+		break;
 	}
 }
 

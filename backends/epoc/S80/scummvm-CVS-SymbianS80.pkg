@@ -8,8 +8,8 @@
 ; UID is the app's UID
 #{"ScummVM S80"},(0x101f9b57),0,80,3
 
-; Platform type
-(0x101F8ED2), 0, 0, 0, {"Series80ProductID"}
+; Platform type -- disabled: seems to be causing trouble
+;(0x101F8ED2), 0, 0, 0, {"Series80ProductID"}
 
 ; Launcher, Application, AIF & Resource file
 "\epoc32\release\armi\urel\ScummVM.app"-"!:\system\apps\ScummVM\ScummVM.app"

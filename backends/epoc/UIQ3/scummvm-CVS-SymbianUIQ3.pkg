@@ -18,16 +18,16 @@
 
 ; Application, AIF & Resource file
 "\uiq3\epoc32\release\gcce\urel\ScummVM.exe"-"!:\sys\bin\ScummVM.exe"
-"\uiq3\epoc32\data\z\resource\apps\ScummVM.rsc"-"!:\resource\apps\ScummVM\ScummVM.rsc"
+"\uiq3\epoc32\data\z\resource\apps\ScummVM.rsc"-	"!:\resource\apps\ScummVM.rsc"
 "\uiq3\epoc32\Data\Z\resource\apps\scummvm_loc.rsc"-"!:\resource\apps\scummvm_loc.rsc"
 "\uiq3\epoc32\data\Z\resource\APPS\scummvm.MBM"-"!:\resource\apps\scummvm.MBM"
 "\uiq3\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
-""-"!:\shared\ScummVM\scummvm.ini",FILENULL
-""-"!:\shared\ScummVM\scummvm.stdout.txt",FILENULL
-""-"!:\shared\ScummVM\scummvm.stderr.txt",FILENULL
-""-"!:\shared\ScummVM\ScummVM\sdl.ini",FILENULL
+""-"d:\shared\ScummVM\scummvm.ini",FILENULL
+""-"d:\shared\ScummVM\scummvm.stdout.txt",FILENULL
+""-"d:\shared\ScummVM\scummvm.stderr.txt",FILENULL
+""-"d:\shared\ScummVM\sdl.ini",FILENULL
 
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
 ; It will remove the config file, std***.txt files & dirs on uninstall.
