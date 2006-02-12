@@ -90,16 +90,110 @@ namespace Scumm {
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
 
-struct ScummGameSettings {
+
+struct GameDescription {
 	const char *gameid;
 	const char *description;
+};
+
+/**
+ * Lookup table mapping game IDs to game descriptions.
+ */
+static GameDescription gameDescriptions[] = {
+	{ "atlantis", "Indiana Jones and the Fate of Atlantis" },
+	{ "indy3", "Indiana Jones and the Last Crusade" },
+	{ "loom", "Loom" },
+	{ "maniac", "Maniac Mansion" },
+	{ "monkey", "The Secret of Monkey Island" },
+	{ "monkey2", "Monkey Island 2: LeChuck's Revenge" },
+	{ "pass", "Passport to Adventure" },
+	{ "samnmax", "Sam & Max Hit the Road" },
+	{ "tentacle", "Day of the Tentacle" },
+	{ "zak", "Zak McKracken and the Alien Mindbenders" },
+
+#ifndef DISABLE_SCUMM_7_8
+	{ "ft", "Full Throttle" },
+	{ "dig", "The Dig" },
+	{ "comi", "The Curse of Monkey Island" },
+#endif
+
+#ifndef DISABLE_HE
+	{ "activity", "Putt-Putt & Fatty Bear's Activity Pack" },
+	{ "airport", "Let's Explore the Airport with Buzzy" },
+	{ "artdemo", "Blue's Art Time Activities (Demo)" },
+	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
+	{ "baseball", "Backyard Baseball" },
+	{ "baseball2001", "Backyard Baseball 2001" },
+	{ "Baseball2003", "Backyard Baseball 2003" },
+	{ "basketball", "Backyard Basketball" },
+	{ "BluesABCTimeDemo", "Blue's ABC Time (Demo)" },
+	{ "BluesBirthdayDemo", "Blue's Birthday Adventure (Demo)" },
+	{ "catalog", "Humongous Interactive Catalog" },
+	{ "chase", "Spy Fox in Cheese Chase" },
+	{ "dog", "Putt-Putt and Pep's Dog on a Stick" },
+	{ "farm", "Let's Explore the Farm with Buzzy" },
+	{ "fbear", "Fatty Bear's Birthday Surprise" },
+	{ "fbpack", "Fatty Bear's Fun Pack" },
+	{ "football", "Backyard Football" },
+	{ "freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds" },
+	{ "freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse" },
+	{ "freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell" },
+	{ "freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch" },
+	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
+	{ "FreddisFunShop", "Freddi Fish's One-Stop Fun Shop" },
+	{ "funpack", "Putt-Putt's Fun Pack" },
+	{ "jungle", "Let's Explore the Jungle with Buzzy" },
+	{ "lost", "Pajama Sam's Lost & Found" },
+	{ "maze", "Freddi Fish and Luther's Maze Madness" },
+	{ "mustard", "Spy Fox in Hold the Mustard" },
+	{ "pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside" },
+	{ "pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening" },
+	{ "pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet" },
+	{ "pjgames", "Pajama Sam: Games to Play On Any Day" },
+	{ "puttcircus", "Putt-Putt Joins the Circus" },
+	{ "puttmoon", "Putt-Putt Goes to the Moon" },
+	{ "puttputt", "Putt-Putt Joins the Parade" },
+	{ "puttrace", "Putt-Putt Enters the Race" },
+	{ "PuttsFunShop", "Putt-Putt's One-Stop Fun Shop" },
+	{ "putttime", "Putt-Putt Travels Through Time" },
+	{ "puttzoo", "Putt-Putt Saves the Zoo" },
+	{ "readdemo", "Blue's Reading Time Activities (Demo)" },
+	{ "SamsFunShop", "Pajama Sam's One-Stop Fun Shop" },
+	{ "soccer", "Backyard Soccer" },
+	{ "Soccer2004", "Backyard Soccer 2004" },
+	{ "SoccerMLS", "Backyard Soccer MLS Edition" },
+	{ "socks", "Pajama Sam's Sock Works" },
+	{ "spyfox", "Spy Fox 1: Dry Cereal" },
+	{ "spyfox2", "Spy Fox 2: Some Assembly Required" },
+	{ "spyozon", "Spy Fox 3: Operation Ozone" },
+	{ "thinker1", "Big Thinkers First Grade" },
+	{ "thinkerk", "Big Thinkers Kindergarten" },
+	{ "water", "Freddi Fish and Luther's Water Worries" },
+#endif
+	{ 0, 0 }
+};
+
+static const char *findDescriptionFromGameID(const char *gameid) {
+	GameDescription *g = gameDescriptions;
+	while (g->gameid) {
+		if (!strcmp(g->gameid, gameid)) {
+			return g->description;
+		}
+		g++;
+	}
+	error("Unknown gameid encountered in findDescriptionFromGameID");
+}
+
+struct ScummGameSettings {
+	const char *gameid;
+	const char *extra;
 	byte id, version, heversion;
 	int midi; // MidiDriverFlags values
 	uint32 features;
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
+		GameSettings dummy = { gameid, findDescriptionFromGameID(gameid), features };
 		return dummy;
 	}
 };
@@ -166,193 +260,193 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 1 */
 	/* Scumm Version 2 */
 
-	{"maniac", "Maniac Mansion", GID_MANIAC, 2, 0, MDT_PCSPK,
+	{"maniac", 0, GID_MANIAC, 2, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"zak",         "Zak McKracken and the Alien Mindbenders", GID_ZAK, 2, 0, MDT_PCSPK,
+	{"zak", 0, GID_ZAK, 2, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	/* Scumm Version 3 */
-	{"indy3", "Indiana Jones and the Last Crusade", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"indy3", 0, GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"loom", "Loom", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"loom", 0, GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	/* Scumm Version 4 */
-	{"pass", "Passport to Adventure", GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB,
+	{"pass", 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 
 	/* Scumm version 5, small header -- we treat these as V4 games, since internally
 	   they really are much closer to the V4 games than to all other V5 games. */
-	{"monkey", "The Secret of Monkey Island", GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"monkey", 0, GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm version 5 */
-	{"monkey2", "Monkey Island 2: LeChuck's Revenge", GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
+	{"monkey2", 0, GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
-	{"atlantis", "Indiana Jones and the Fate of Atlantis", GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI,
+	{"atlantis", 0, GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
 	/* Scumm Version 6 */
-	{"tentacle", "Day of the Tentacle", GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
+	{"tentacle", 0, GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
-	{"samnmax", "Sam & Max Hit the Road", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
+	{"samnmax", 0, GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformPC},
 
 //	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_NEW_OPCODES, Common::kPlatformUnknown},
 
 #ifndef DISABLE_SCUMM_7_8
 	/* Scumm Version 7 */
-	{"ft", "Full Throttle", GID_FT, 7, 0, MDT_NONE,
+	{"ft", 0, GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
 
-	{"dig", "The Dig", GID_DIG, 7, 0, MDT_NONE,
+	{"dig", 0, GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
 
 	/* Scumm Version 8 */
-	{"comi", "The Curse of Monkey Island", GID_CMI, 8, 0, MDT_NONE,
+	{"comi", 0, GID_CMI, 8, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, Common::kPlatformWindows},
 
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"puttputt", "Putt-Putt Joins the Parade", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
+	{"puttputt", 0, GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"puttmoon", "Putt-Putt Goes to the Moon", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
+	{"puttmoon", 0, GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"funpack", "Putt-Putt's Fun Pack", GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI,
+	{"funpack", 0, GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"fbpack", "Fatty Bear's Fun Pack", GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
+	{"fbpack", 0, GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"fbear", "Fatty Bear's Birthday Surprise", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI,
+	{"fbear", 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 
 #ifndef DISABLE_HE
-	{"activity", "Putt-Putt & Fatty Bear's Activity Pack", GID_HEGAME, 6, 70, MDT_NONE,
+	{"activity", 0, GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 7.1
 	// The first version to use 640x480 resolution
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
-	{"catalog", "Humongous Interactive Catalog", GID_HEGAME, 6, 71, MDT_NONE,
+	{"catalog", 0, GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds", GID_HEGAME, 6, 71, MDT_NONE,
+	{"freddi", 0, GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 7.2
-	{"airport", "Let's Explore the Airport with Buzzy", GID_HEGAME, 6, 72, MDT_NONE,
+	{"airport", 0, GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"puttzoo", "Putt-Putt Saves the Zoo", GID_HEGAME, 6, 72, MDT_NONE,
+	{"puttzoo", 0, GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Changed o_getResourceSize to cover all resource types
-	{"farm", "Let's Explore the Farm with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
+	{"farm", 0, GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"jungle", "Let's Explore the Jungle with Buzzy", GID_HEGAME, 6, 73, MDT_NONE,
+	{"jungle", 0, GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
-	{"freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse", GID_HEGAME, 6, 80, MDT_NONE,
+	{"freddi2", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside", GID_HEGAME, 6, 80, MDT_NONE,
+	{"pajama", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"putttime", "Putt-Putt Travels Through Time", GID_HEGAME, 6, 80, MDT_NONE,
+	{"putttime", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"balloon", "Putt-Putt and Pep's Balloon-O-Rama", GID_HEGAME, 6, 80, MDT_NONE,
+	{"balloon", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"dog", "Putt-Putt and Pep's Dog on a Stick", GID_HEGAME, 6, 80, MDT_NONE,
+	{"dog", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"maze", "Freddi Fish and Luther's Maze Madness", GID_HEGAME, 6, 80, MDT_NONE,
+	{"maze", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"socks", "Pajama Sam's Sock Works", GID_HEGAME, 6, 80, MDT_NONE,
+	{"socks", 0, GID_HEGAME, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"water", "Freddi Fish and Luther's Water Worries", GID_WATER, 6, 80, MDT_NONE,
+	{"water", 0, GID_WATER, 6, 80, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.0 ?  Scummsys.90
-	{"baseball", "Backyard Baseball", GID_HEGAME, 6, 90, MDT_NONE,
+	{"baseball", 0, GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"thinkerk", "Big Thinkers Kindergarten", GID_HEGAME, 6, 90, MDT_NONE,
+	{"thinkerk", 0, GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"thinker1", "Big Thinkers First Grade", GID_HEGAME, 6, 90, MDT_NONE,
+	{"thinker1", 0, GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell", GID_HEGAME, 6, 90, MDT_NONE,
+	{"freddi3", 0, GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"spyfox", "Spy Fox 1: Dry Cereal", GID_HEGAME, 6, 90, MDT_NONE,
+	{"spyfox", 0, GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
-	{"pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening", GID_HEGAME, 6, 95, MDT_NONE,
+	{"pajama2", 0, GID_HEGAME, 6, 95, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"chase", "Spy Fox in Cheese Chase", GID_HEGAME, 6, 95, MDT_NONE,
+	{"chase", 0, GID_HEGAME, 6, 95, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.8 ?  Scummsys.98
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
-	{"lost", "Pajama Sam's Lost & Found", GID_HEGAME, 6, 98, MDT_NONE,
+	{"lost", 0, GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
-	{"puttrace", "Putt-Putt Enters the Race", GID_PUTTRACE, 6, 98, MDT_NONE,
+	{"puttrace", 0, GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"BluesABCTimeDemo", "Blue's ABC Time (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"BluesABCTimeDemo", 0, GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"soccer", "Backyard Soccer", GID_SOCCER, 6, 98, MDT_NONE,
+	{"soccer", 0, GID_SOCCER, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// Global scripts increased to 2048
-	{"freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch", GID_HEGAME, 6, 98, MDT_NONE,
+	{"freddi4", 0, GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
 	// Humongous Entertainment Scumm Version 9.9 ?  Scummsys.99
-	{"football", "Backyard Football", GID_FOOTBALL, 6, 99, MDT_NONE,
+	{"football", 0, GID_FOOTBALL, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet", GID_HEGAME, 6, 99, MDT_NONE,
+	{"pajama3", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"puttcircus", "Putt-Putt Joins the Circus", GID_HEGAME, 6, 99, MDT_NONE,
+	{"puttcircus", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"spyfox2", "Spy Fox 2: Some Assembly Required", GID_HEGAME, 6, 99, MDT_NONE,
+	{"spyfox2", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"mustard", "Spy Fox in Hold the Mustard", GID_HEGAME, 6, 99, MDT_NONE,
+	{"mustard", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
 
 	// Added the use of fonts
-	{"FreddisFunShop", "Freddi Fish's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, MDT_NONE,
+	{"FreddisFunShop", 0, GID_FUNSHOP, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"SamsFunShop", "Pajama Sam's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, MDT_NONE,
+	{"SamsFunShop", 0, GID_FUNSHOP, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
-	{"PuttsFunShop", "Putt-Putt's One-Stop Fun Shop", GID_FUNSHOP, 6, 99, MDT_NONE,
+	{"PuttsFunShop", 0, GID_FUNSHOP, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED, Common::kPlatformWindows},
 
 	// Added 16bit color
-	{"baseball2001", "Backyard Baseball 2001", GID_HEGAME, 6, 99, MDT_NONE,
+	{"baseball2001", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"SoccerMLS", "Backyard Soccer MLS Edition", GID_HEGAME, 6, 99, MDT_NONE,
+	{"SoccerMLS", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave", GID_HEGAME, 6, 99, MDT_NONE,
+	{"freddicove", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_LOCALIZED | GF_HE_NOSUBTITLES | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"spyozon", "Spy Fox 3: Operation Ozone", GID_HEGAME, 6, 99, MDT_NONE,
+	{"spyozon", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
 	// Restructured the Scumm engine
-	{"pjgames", "Pajama Sam: Games to Play On Any Day", GID_HEGAME, 6, 100, MDT_NONE,
+	{"pjgames", 0, GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
 	// Uses bink in external files for logos
-	{"Baseball2003", "Backyard Baseball 2003", GID_HEGAME, 6, 100, MDT_NONE,
+	{"Baseball2003", 0, GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"basketball", "Backyard Basketball", GID_HEGAME, 6, 100, MDT_NONE,
+	{"basketball", 0, GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"Soccer2004", "Backyard Soccer 2004", GID_HEGAME, 6, 100, MDT_NONE,
+	{"Soccer2004", 0, GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
 
 	// Uses smacker in external files, for testing only
-	{"BluesBirthdayDemo", "Blue's Birthday Adventure (Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"BluesBirthdayDemo", 0, GID_HEGAME, 6, 98, MDT_NONE,
 	GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"artdemo", "Blue's Art Time Activities (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"artdemo", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"readdemo", "Blue's Reading Time Activities (Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"readdemo", 0, GID_HEGAME, 6, 99, MDT_NONE,
 	GF_USE_KEY | GF_NEW_COSTUMES | GF_16BIT_COLOR, Common::kPlatformWindows},
 
 
@@ -367,327 +461,327 @@ static const ScummGameSettings scumm_settings[] = {
 // Please, add new entries sorted alpabetically by string name
 static const ScummGameSettings multiple_versions_md5_settings[] = {
 #ifndef PALMOS_68K
-	{"2e85f7aa054930c692a5b1bed1dfc295", "Backyard Football 2002 (Demo Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"2e85f7aa054930c692a5b1bed1dfc295", "Demo Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown}, // Football2002
 
-	{"037385a953789190298494d92b89b3d0", "Humongous Interactive Catalog (Updated)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"037385a953789190298494d92b89b3d0", "Updated", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"8fec68383202d38c0d25e9e3b757c5df", "The Curse of Monkey Island (Demo)", GID_CMI, 8, 0, MDT_NONE,
+	{"8fec68383202d38c0d25e9e3b757c5df", "Demo", GID_CMI, 8, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows},
 
-	{"362c1d281fb9899254cda66ad246c66a", "The Dig (Demo)", GID_DIG, 7, 0, MDT_NONE,
+	{"362c1d281fb9899254cda66ad246c66a", "Demo", GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC},
-	{"cd9c05e755d7bf8e9b9590ad1ebe273e", "The Dig (Demo Mac)", GID_DIG, 7, 0, MDT_NONE,
+	{"cd9c05e755d7bf8e9b9590ad1ebe273e", "Demo Mac", GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
 
-	{"179879b6e35c1ead0d93aab26db0951b", "Fatty Bear's Birthday Surprise (Windows)", GID_FBEAR, 6, 70, MDT_NONE,
+	{"179879b6e35c1ead0d93aab26db0951b", "Windows", GID_FBEAR, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"22c9eb04455440131ffc157aeb8d40a8", "Fatty Bear's Birthday Surprise (Windows Demo)", GID_FBEAR, 6, 70, MDT_NONE,
+	{"22c9eb04455440131ffc157aeb8d40a8", "Windows Demo", GID_FBEAR, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"cf8ef3a1fb483c5c4b1c584d1167b2c4", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated German)", GID_HEGAME, 6, 73, MDT_NONE,
+	{"cf8ef3a1fb483c5c4b1c584d1167b2c4", "Updated German", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"df047cc4792150f601290357566d36a6", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"df047cc4792150f601290357566d36a6", "Updated", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"746e88c172a5b7a1ae89ac0ee3ee681a", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated Russian)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"746e88c172a5b7a1ae89ac0ee3ee681a", "Updated Russian", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"507bb360688dc4180fdf0d7597352a69", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Updated Swedish)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"507bb360688dc4180fdf0d7597352a69", "Updated Swedish", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"0855496dde35356b1a9691e22ba84cdc", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
+	{"0855496dde35356b1a9691e22ba84cdc", "Demo", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"566165a7338fa11029e7c14d94fa70d0", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Demo)", GID_HEGAME, 6, 73, MDT_NONE,
+	{"566165a7338fa11029e7c14d94fa70d0", "Demo", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"cf4ef315214c7d8cdab6302cdb7e50db", "Freddi Fish 1: The Case of the Missing Kelp Seeds (German Demo)", GID_HEGAME, 6, 73, MDT_NONE,
+	{"cf4ef315214c7d8cdab6302cdb7e50db", "German Demo", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"c8aac5e3e701874e2fa4117896f9e1b1", "Freddi Fish 1: The Case of the Missing Kelp Seeds (Macintosh Demo)", GID_HEGAME, 6, 73, MDT_NONE,
+	{"c8aac5e3e701874e2fa4117896f9e1b1", "Macintosh Demo", GID_HEGAME, 6, 73, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformMacintosh},
 
-	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
-	{"51305e929e330e24a75a0351c8f9975e", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"51305e929e330e24a75a0351c8f9975e", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Updated Russian)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Updated Russian", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
-	{"d37c55388294b66e53e7ced3af88fa68", "Freddi Fish 2: The Case of the Haunted Schoolhouse (Demo Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"d37c55388294b66e53e7ced3af88fa68", "Demo Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FFHSDemo
 
-	{"83cedbe26aa8b58988e984e3d34cac8e", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"83cedbe26aa8b58988e984e3d34cac8e", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"75bff95816b84672b877d22a911ab811", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"75bff95816b84672b877d22a911ab811", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"ed2b074bc3166087a747acb2a3c6abb0", "Freddi Fish 3: The Case of the Stolen Conch Shell (Updated German Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"ed2b074bc3166087a747acb2a3c6abb0", "Updated German Demo", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Fritzi3demo
 
-	{"07b810e37be7489263f7bc7627d4765d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Unencrypted Russian)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"07b810e37be7489263f7bc7627d4765d", "Unencrypted Russian", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"b5298a5c15ffbe8b381d51ea4e26d35c", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"b5298a5c15ffbe8b381d51ea4e26d35c", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"78bd5f036ea35a878b74e4f47941f784", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"78bd5f036ea35a878b74e4f47941f784", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"16effd200aa6b8abe9c569c3e578814d", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Dutch Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"16effd200aa6b8abe9c569c3e578814d", "Updated Dutch Demo", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ff4demo
-	{"499c958affc394f2a3868f1eb568c3ee", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Dutch Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"499c958affc394f2a3868f1eb568c3ee", "Updated Dutch Demo", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ff4demo
-	{"ebd324dcf06a4c49e1ba5c231eee1060", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"ebd324dcf06a4c49e1ba5c231eee1060", "Updated Demo", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"e03ed1474ec14de78359970e0457a820", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (Updated Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"e03ed1474ec14de78359970e0457a820", "Updated Demo", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"688328c5bdc4c8ec4145688dfa077bf2", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch (German Demo)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"688328c5bdc4c8ec4145688dfa077bf2", "German Demo", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Ff4demo
 
-	{"b8955d7d23b4972229060d1592489fef", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Dutch)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"b8955d7d23b4972229060d1592489fef", "Updated Dutch", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FreddiDZZ
-	{"4ce2d5b355964bbcb5e5ce73236ef868", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Russian)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"4ce2d5b355964bbcb5e5ce73236ef868", "Updated Russian", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Freddi Fish 5: The Case of the Creature of Coral Cave (Unencrypted Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Unencrypted Russian", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"45082a5c9f42ba14dacfe1fdeeba819d", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"45082a5c9f42ba14dacfe1fdeeba819d", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"6b257bb2827dd894b8109a50a1a18b5a", "Freddi Fish 5: The Case of the Creature of Coral Cave (Updated Dutch Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"6b257bb2827dd894b8109a50a1a18b5a", "Updated Dutch Demo", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FF5Demo
 
-	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Freddi Fish and Luther's Maze Madness (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"f1b0e0d587b85052de5534a3847e68fe", "Freddi Fish and Luther's Water Worries (Updated)", GID_WATER, 6, 99, MDT_NONE,
+	{"f1b0e0d587b85052de5534a3847e68fe", "Updated", GID_WATER, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"9d7b67be003fea60be4dcbd193611936", "Full Throttle (Mac Demo)", GID_FT, 7, 0, MDT_NONE,
+	{"9d7b67be003fea60be4dcbd193611936", "Mac Demo", GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
-	{"32a433dea56b86a55b59e4ff7d755711", "Full Throttle (PC Demo)", GID_FT, 7, 0, MDT_NONE,
+	{"32a433dea56b86a55b59e4ff7d755711", "PC Demo", GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC},
 
-	{"157367c3c21e0d03a0cba44361b4cf65", "Indiana Jones and the Last Crusade (AtariST)", GID_INDY3, 3, 0, MDT_PCSPK,
+	{"157367c3c21e0d03a0cba44361b4cf65", "AtariST", GID_INDY3, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"0f9c7a76657f0840b8f7ccb5bffeb9f4", "Indiana Jones and the Last Crusade (AtariST Fr)", GID_INDY3, 3, 0, MDT_PCSPK,
+	{"0f9c7a76657f0840b8f7ccb5bffeb9f4", "AtariST Fr", GID_INDY3, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"1dd7aa088e09f96d06818aa9a9deabe0", "Indiana Jones and the Last Crusade (Macintosh)", GID_INDY3, 3, 0, MDT_PCSPK,
+	{"1dd7aa088e09f96d06818aa9a9deabe0", "Macintosh", GID_INDY3, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
 
-	{"1875b90fade138c9253a8e967007031a", "Indiana Jones and the Last Crusade (VGA)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"1875b90fade138c9253a8e967007031a", "VGA", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"399b217b0c8d65d0398076da486363a9", "Indiana Jones and the Last Crusade (VGA De)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"399b217b0c8d65d0398076da486363a9", "VGA De", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"17b5d5e6af4ae89d62631641d66d5a05", "Indiana Jones and the Last Crusade (VGA It)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"17b5d5e6af4ae89d62631641d66d5a05", "VGA It", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"3cce1913a3bc586b51a75c3892ff18dd", "Indiana Jones and the Last Crusade (VGA Ru)", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
+	{"3cce1913a3bc586b51a75c3892ff18dd", "VGA Ru", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
 
-	{"04687cdf7f975a89d2474929f7b80946", "Indiana Jones and the Last Crusade (FM-TOWNS)", GID_INDY3, 3, 0, MDT_TOWNS,
+	{"04687cdf7f975a89d2474929f7b80946", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"3a0c35f3c147b98a2bdf8d400cfc4ab5", "Indiana Jones and the Last Crusade (FM-TOWNS Jp)", GID_INDY3, 3, 0, MDT_TOWNS,
+	{"3a0c35f3c147b98a2bdf8d400cfc4ab5", "FM-TOWNS Jp", GID_INDY3, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"86c9902b7bec1a17926d4dae85beaa45", "Let's Explore the Airport with Buzzy (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
+	{"86c9902b7bec1a17926d4dae85beaa45", "Demo", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Let's Explore the Farm with Buzzy (Demo)", GID_HEGAME, 6, 71, MDT_NONE,
+	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Demo", GID_HEGAME, 6, 71, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"8d479e36f35e80257dfc102cf4b8a912", "Let's Explore the Farm with Buzzy (Updated Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"8d479e36f35e80257dfc102cf4b8a912", "Updated Demo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"0557df19f046a84c2fdc63507c6616cb", "Let's Explore the Farm with Buzzy (Updated Dutch Demo)", GID_HEGAME, 6, 72, MDT_NONE,
+	{"0557df19f046a84c2fdc63507c6616cb", "Updated Dutch Demo", GID_HEGAME, 6, 72, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"a0a7dea72003933b8b3f8b99b9f7ddeb", "Loom (AtariST)", GID_LOOM, 3, 0, MDT_PCSPK,
+	{"a0a7dea72003933b8b3f8b99b9f7ddeb", "AtariST", GID_LOOM, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"c24c490373aeb48fbd54caa8e7ae376d", "Loom (AtariST De)", GID_LOOM, 3, 0, MDT_PCSPK,
+	{"c24c490373aeb48fbd54caa8e7ae376d", "AtariST De", GID_LOOM, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"0e9b01430e31d9fcd94071d433bbc6bf", "Loom (AtariST Fr)", GID_LOOM, 3, 0, MDT_PCSPK,
+	{"0e9b01430e31d9fcd94071d433bbc6bf", "AtariST Fr", GID_LOOM, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"6f0be328c64d689bb606d22a389e1b0f", "Loom (Macintosh)", GID_LOOM, 3, 0, MDT_PCSPK,
+	{"6f0be328c64d689bb606d22a389e1b0f", "Macintosh", GID_LOOM, 3, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
 
-	{"5d88b9d6a88e6f8e90cded9d01b7f082", "Loom (256 color CD version)", GID_LOOM, 4, 0, MDT_NONE,
+	{"5d88b9d6a88e6f8e90cded9d01b7f082", "256 color CD version", GID_LOOM, 4, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"c5d10e190d4b4d59114b824f2fdbd00e", "Loom (FM-TOWNS)", GID_LOOM, 3, 0, MDT_TOWNS,
+	{"c5d10e190d4b4d59114b824f2fdbd00e", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"31b8fda4c8c7413fa6b39997e776eba4", "Loom (FM-TOWNS Jp)", GID_LOOM, 3, 0, MDT_TOWNS,
+	{"31b8fda4c8c7413fa6b39997e776eba4", "FM-TOWNS Jp", GID_LOOM, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"3905799e081b80a61d4460b7b733c206", "Maniac Mansion (NES E)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"3905799e081b80a61d4460b7b733c206", "NES E", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
-	{"81bbfa181184cb494e7a81dcfa94fbd9", "Maniac Mansion (NES F)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"81bbfa181184cb494e7a81dcfa94fbd9", "NES F", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
-	{"257f8c14d8c584f7ddd601bcb00920c7", "Maniac Mansion (NES G)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"257f8c14d8c584f7ddd601bcb00920c7", "NES G", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
-	{"22d07d6c386c9c25aca5dac2a0c0d94b", "Maniac Mansion (NES SW)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"22d07d6c386c9c25aca5dac2a0c0d94b", "NES SW", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
-	{"d8d07efcb88f396bee0b402b10c3b1c9", "Maniac Mansion (NES U)", GID_MANIAC, 1, 0, MDT_NONE,
+	{"d8d07efcb88f396bee0b402b10c3b1c9", "NES U", GID_MANIAC, 1, 0, MDT_NONE,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
-	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "Maniac Mansion (v1)", GID_MANIAC, 1, 0, MDT_PCSPK,
+	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "v1", GID_MANIAC, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
 
-	{"898eaa21f79cf8d4f08db856244689ff", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"898eaa21f79cf8d4f08db856244689ff", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"a095e33061606d231ff37dca4c64c8ac", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"a095e33061606d231ff37dca4c64c8ac", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PYJAMA
-	{"37aed3f91c1ef959e0bd265f9b13781f", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"37aed3f91c1ef959e0bd265f9b13781f", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaNHD
-	{"d7ab7cd6105546016e6a0d46fb36b964", "Pajama Sam: No Need To Hide When It's Dark Outside (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"d7ab7cd6105546016e6a0d46fb36b964", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PJSamDemo
 
-	{"30ba1e825d4ad2b448143ae8df18482a", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated Dutch Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"30ba1e825d4ad2b448143ae8df18482a", "Updated Dutch Demo", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Pjs2demo
-	{"32709cbeeb3044b34129950860a83f14", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"32709cbeeb3044b34129950860a83f14", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaTAL
-	{"c6907d44f1166941d982864cd42cdc89", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"c6907d44f1166941d982864cd42cdc89", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PyjamaDBMN
-	{"4521138d15d1fd7649c31fb981746231", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening (Updated German Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"4521138d15d1fd7649c31fb981746231", "Updated German Demo", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // PJP2DEMO
 
-	{"a2bb6aa0537402c1b3c2ea899ccef64b", "Pajama Sam's Lost & Found (Test)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"a2bb6aa0537402c1b3c2ea899ccef64b", "Test", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
-	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Pajama Sam's Lost & Found (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 
-	{"055ffe4f47753e47594ac67823220c54", "Putt-Putt Enters the Race (German)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	{"055ffe4f47753e47594ac67823220c54", "German", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // ToffRennen
-	{"6af2419fe3db5c2fdb091ae4e5833770", "Putt-Putt Enters the Race (Dutch Demo)", GID_PUTTRACE, 6, 98, MDT_NONE,
+	{"6af2419fe3db5c2fdb091ae4e5833770", "Dutch Demo", GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
-	{"aaa587701cde7e74692c68c1024b85eb", "Putt-Putt Enters the Race (Updated Dutch Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	{"aaa587701cde7e74692c68c1024b85eb", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"663743c03ae0c007f3d665cf631c0e6b", "Putt-Putt Enters the Race (German Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	{"663743c03ae0c007f3d665cf631c0e6b", "German Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Rennen
-	{"7c8100e360e8ef05f88069d4cfa0afd1", "Putt-Putt Enters the Race (UK Demo)", GID_PUTTRACE, 6, 99, MDT_NONE,
+	{"7c8100e360e8ef05f88069d4cfa0afd1", "UK Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
-	{"9c92eeaf517a31b7221ec2546ab669fd", "Putt-Putt Goes To The Moon (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"9c92eeaf517a31b7221ec2546ab669fd", "Windows", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"9c143c5905055d5df7a0f014ab379aee", "Putt-Putt Goes To The Moon (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"9c143c5905055d5df7a0f014ab379aee", "Windows Demo", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"0b3222aaa7efcf283eb621e0cefd26cc", "Putt-Putt Joins the Parade (Russian)", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_MIDI,
+	{"0b3222aaa7efcf283eb621e0cefd26cc", "Russian", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_MIDI,
 	 GF_USE_KEY, Common::kPlatformWindows},
-	{"31aa57f460a3d12429f0552a46a90b39", "Putt-Putt Joins the Parade (Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
+	{"31aa57f460a3d12429f0552a46a90b39", "Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
 	  GF_USE_KEY, Common::kPlatformPC},
-	{"f40a7f495f59188ca57a9d1d50301bb6", "Putt-Putt Joins the Parade (Macintosh Demo)", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
+	{"f40a7f495f59188ca57a9d1d50301bb6", "Macintosh Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
 	  GF_USE_KEY, Common::kPlatformMacintosh},
-	{"6a30a07f353a75cdc602db27d73e1b42", "Putt-Putt Joins the Parade (Windows)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"6a30a07f353a75cdc602db27d73e1b42", "Windows", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"37ff1b308999c4cca7319edfcc1280a0", "Putt-Putt Joins the Parade (Windows Demo)", GID_HEGAME, 6, 70, MDT_NONE,
+	{"37ff1b308999c4cca7319edfcc1280a0", "Windows Demo", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Putt-Putt Saves the Zoo (Updated)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Updated", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
-	{"2108d83dcf09f8adb4bc524669c8cf51", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"2108d83dcf09f8adb4bc524669c8cf51", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"d4aac997e2f4e15341f0bfbf905419bd", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"d4aac997e2f4e15341f0bfbf905419bd", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"7c980a1b1596a93f26917318884f48f7", "Putt-Putt Travels Through Time (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"7c980a1b1596a93f26917318884f48f7", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"defb8cb9ec4b0f91acfb6b61c6129ad9", "Putt-Putt Travels Through Time (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"defb8cb9ec4b0f91acfb6b61c6129ad9", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"a525c1753c1db5011c00417da37887ef", "Putt-Putt Travels Through Time (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"a525c1753c1db5011c00417da37887ef", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"fcb78ebecab2757264c590890c319cc5", "Putt-Putt Travels Through Time (Updated Dutch)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"fcb78ebecab2757264c590890c319cc5", "Updated Dutch", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"4e5867848ee61bc30d157e2c94eee9b4", "Putt-Putt Travels Through Time (Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"4e5867848ee61bc30d157e2c94eee9b4", "Demo", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"6b19d0e25cbf720d05822379b8b90ed9", "Putt-Putt Travels Through Time (Dutch Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"6b19d0e25cbf720d05822379b8b90ed9", "Dutch Demo", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"59d5cfcc5e672a6e07baae01328b918b", "Putt-Putt Travels Through Time (French Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"59d5cfcc5e672a6e07baae01328b918b", "French Demo", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // TEMPDEMO
-	{"fbb697d89d2beca87360a145f467bdae", "Putt-Putt Travels Through Time (Updated German Demo)", GID_HEGAME, 6, 90, MDT_NONE,
+	{"fbb697d89d2beca87360a145f467bdae", "Updated German Demo", GID_HEGAME, 6, 90, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ZEITDEMO
-	{"0ab19be9e2a3f6938226638b2a3744fe", "Putt-Putt Travels Through Time (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"0ab19be9e2a3f6938226638b2a3744fe", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"d7b247c26bf1f01f8f7daf142be84de3", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"d7b247c26bf1f01f8f7daf142be84de3", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"8e3241ddd6c8dadf64305e8740d45e13", "Putt-Putt and Pep's Balloon-O-Rama (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Putt-Putt and Pep's Dog on a Stick (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"8e3241ddd6c8dadf64305e8740d45e13", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"1d05cd189e4908f79b57e78a4402f292", "The Secret of Monkey Island (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"1d05cd189e4908f79b57e78a4402f292", "EGA", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"49210e124e4c2b30f1290a9ef6306301", "The Secret of Monkey Island (EGA)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"49210e124e4c2b30f1290a9ef6306301", "EGA", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"e98b982ceaf9d253d730bde8903233d6", "The Secret of Monkey Island (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"e98b982ceaf9d253d730bde8903233d6", "EGA De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"fc6b6148e80d67939d9a18697c0f626a", "The Secret of Monkey Island (EGA De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"fc6b6148e80d67939d9a18697c0f626a", "EGA De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"ce6a4cef315b20fef58a95bc40a2d8d3", "The Secret of Monkey Island (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"ce6a4cef315b20fef58a95bc40a2d8d3", "EGA Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"aa7a07d94ae853f6460be4ce0a1bf530", "The Secret of Monkey Island (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"aa7a07d94ae853f6460be4ce0a1bf530", "EGA Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"1dd3c11ea4439adfe681e4e405b624e1", "The Secret of Monkey Island (EGA Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"1dd3c11ea4439adfe681e4e405b624e1", "EGA Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"477dbafbd66a53c98416dc01aef019ad", "The Secret of Monkey Island (EGA It)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"477dbafbd66a53c98416dc01aef019ad", "EGA It", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"910e31cffb28226bd68c569668a0d6b4", "The Secret of Monkey Island (EGA Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
+	{"910e31cffb28226bd68c569668a0d6b4", "EGA Sp", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"c666a998af90d81db447eccba9f72c8d", "The Secret of Monkey Island (Atari)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
+	{"c666a998af90d81db447eccba9f72c8d", "Atari", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"927a764615c7fcdd72f591355e089d8c", "The Secret of Monkey Island (Atari De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
+	{"927a764615c7fcdd72f591355e089d8c", "Atari De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"9e5e0fb43bd22f4628719b7501adb717", "The Secret of Monkey Island (Atari Fr)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
+	{"9e5e0fb43bd22f4628719b7501adb717", "Atari Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"0a41311d462b6639fc45297b9044bf16", "The Secret of Monkey Island (Atari Sp)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
+	{"0a41311d462b6639fc45297b9044bf16", "Atari Sp", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"71523b539491527d9860f4407faf0411", "The Secret of Monkey Island (Demo)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
+	{"71523b539491527d9860f4407faf0411", "Demo", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"771bc18ec6f93837b839c992b211904b", "The Secret of Monkey Island (Demo De)", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
+	{"771bc18ec6f93837b839c992b211904b", "Demo De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 
-	{"2d1e891fe52df707c30185e52c50cd92", "The Secret of Monkey Island (CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"2d1e891fe52df707c30185e52c50cd92", "CD", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"305d3dd57c96c65b017bc70c8c7cfb5e", "The Secret of Monkey Island (CD De)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"305d3dd57c96c65b017bc70c8c7cfb5e", "CD De", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"f049e38c1f8302b5db6170f1872af89a", "The Secret of Monkey Island (CD Sp)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"f049e38c1f8302b5db6170f1872af89a", "CD Sp", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"da6269b18fcb08189c0aa9c95533cce2", "The Secret of Monkey Island (CD It)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"da6269b18fcb08189c0aa9c95533cce2", "CD It", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"aa8a0cb65f3afbbe2c14c3f9f92775a3", "The Secret of Monkey Island (CD Fr)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"aa8a0cb65f3afbbe2c14c3f9f92775a3", "CD Fr", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "The Secret of Monkey Island (Mac CD)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Mac CD", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh},
 
-	{"8eb84cee9b429314c7f0bdcf560723eb", "The Secret of Monkey Island (FM-TOWNS)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"8eb84cee9b429314c7f0bdcf560723eb", "FM-TOWNS", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"e17db1ddf91b39ca6bbc8ad3ed19e883", "The Secret of Monkey Island (FM-TOWNS Jp)", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	{"e17db1ddf91b39ca6bbc8ad3ed19e883", "FM-TOWNS Jp", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"c13225cb1bbd3bc9fe578301696d8021", "The Secret of Monkey Island (SegaCD)", GID_MONKEY, 5, 0, MDT_NONE,
+	{"c13225cb1bbd3bc9fe578301696d8021", "SegaCD", GID_MONKEY, 5, 0, MDT_NONE,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSegaCD},
 
-	{"3de99ef0523f8ca7958faa3afccd035a", "Spy Fox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"3de99ef0523f8ca7958faa3afccd035a", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"58436e634f4fae1d9973591c2ffa1fcb", "Spy Fox 1: Dry Cereal (Updated)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"58436e634f4fae1d9973591c2ffa1fcb", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"9bda5fee51d2fda5253d02c642016bf4", "Spy Fox 1: Dry Cereal (Updated Dutch)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"9bda5fee51d2fda5253d02c642016bf4", "Updated Dutch", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"a28135a7ade38cc0208b04507c46efd1", "Spy Fox 1: Dry Cereal (Updated German)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"a28135a7ade38cc0208b04507c46efd1", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"72ac6bc980d5101c2142189d746bd62f", "Spy Fox 1: Dry Cereal (Updated Russian)", GID_HEGAME, 6, 99, MDT_NONE,
+	{"72ac6bc980d5101c2142189d746bd62f", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // SPYFoxDC
-	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Spy Fox 1: Dry Cereal (Updated Demo)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"4edbf9d03550f7ba01e7f34d69b678dd", "Spy Fox 1: Dry Cereal (Updated Dutch Demo)", GID_HEGAME, 6, 98, MDT_NONE,
+	{"4edbf9d03550f7ba01e7f34d69b678dd", "Updated Dutch Demo", GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
-	{"90c755e1c9b9b8a4129d37b2259d0655", "Spy Fox in Cheese Chase (Updated)", GID_HEGAME, 6, 100, MDT_NONE,
+	{"90c755e1c9b9b8a4129d37b2259d0655", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
-	{"b23f7cd7c304d7dff08e92a96120d5b4", "Zak McKracken and the Alien Mindbenders (v1)", GID_ZAK, 1, 0, MDT_PCSPK,
+	{"b23f7cd7c304d7dff08e92a96120d5b4", "v1", GID_ZAK, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
-	{"7020931d5a2be0a49d68e7a1882363e4", "Zak McKracken and the Alien Mindbenders (v1)", GID_ZAK, 1, 0, MDT_PCSPK,
+	{"7020931d5a2be0a49d68e7a1882363e4", "v1", GID_ZAK, 1, 0, MDT_PCSPK,
 	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
 
-	{"2d4536a56e01da4b02eb021e7770afa2", "Zak McKracken and the Alien Mindbenders (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
+	{"2d4536a56e01da4b02eb021e7770afa2", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"1ca86e2cf9aaa2068738a1e5ba477e60", "Zak McKracken and the Alien Mindbenders (FM-TOWNS Jp)", GID_ZAK, 3, 0, MDT_TOWNS,
+	{"1ca86e2cf9aaa2068738a1e5ba477e60", "FM-TOWNS Jp", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
-	{"2d388339d6050d8ccaa757b64633954e", "Indy/Loom Demo (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
+	{"2d388339d6050d8ccaa757b64633954e", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"77f5c9cc0986eb729c1a6b4c8823bbae", "Zak/Loom Demo (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
+	{"77f5c9cc0986eb729c1a6b4c8823bbae", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"3938ee1aa4433fca9d9308c9891172b1", "Indy/Zak Demo (FM-TOWNS)", GID_ZAK, 3, 0, MDT_TOWNS,
+	{"3938ee1aa4433fca9d9308c9891172b1", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
 	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, Common::kPlatformUnknown}
@@ -3359,8 +3453,17 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			// Match found
 			game = *g;
 			game.gameid = gameid;	// FIXME: Fingolfin wonders what this line is good for?
-			if (game.description)
-				g_system->setWindowCaption(game.description);
+			if (game.extra) {
+				Common::String desc(findDescriptionFromGameID(gameid));
+				desc += " (";
+				desc += game.extra;
+				desc += ")";
+
+				// FIXME: Unconditionally setting the window caption here seems
+				// quite wrong. In particular, we override whatever custom
+				// description the user has set.
+				g_system->setWindowCaption(desc.c_str());
+			}
 			break;
 		}
 		g++;
