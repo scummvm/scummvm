@@ -21,7 +21,7 @@
  */
 
 #include "common/stdafx.h"
-#include "backends/epoc/src/SymbianActions.h"
+#include "backends/symbian/src/SymbianActions.h"
 
 #include "gui/message.h"
 #include "scumm/scumm.h"

@@ -45,6 +45,7 @@ ParseModule("_saga",	"saga",		\@section_empty);
 ParseModule("_kyra",	"kyra",		\@section_empty);
 ParseModule("_sword1",	"sword1",	\@section_empty);
 ParseModule("_sword2",	"sword2",	\@section_empty);
+ParseModule("_lure",	"lure",		\@section_empty);
 
 print "
 =======================================================================================

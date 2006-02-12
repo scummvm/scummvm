@@ -22,9 +22,9 @@
  * $Id$
  */
 
-#include "backends/epoc/src/ScummApp.h"
+#include "backends/symbian/src/ScummApp.h"
+#include "backends/symbian/src/ScummVM.hrh"
 
-#include "backends/epoc/src/ScummVM.hrh"
 #define _PAGESIZE_ 0x1000
 
 #if defined (__WINS__) && !defined (__SERIES60_30__)
