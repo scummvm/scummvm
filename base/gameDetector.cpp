@@ -203,7 +203,7 @@ GameDetector::GameDetector() {
 			ConfMan.registerDefault("savepath", savePath);
 		}
 	}
-#else if defined(__SYMBIAN32__)
+#elif defined(__SYMBIAN32__)
 	strcpy(savePath, Symbian::GetExecutablePath());
 	strcat(savePath, DEFAULT_SAVE_PATH);
 	struct stat sb;
