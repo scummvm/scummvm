@@ -57,11 +57,11 @@ typedef struct {
 } StringMap;
 
 typedef struct {
-	const char *desc;
-	const char *platform;
-	const char *language;
 	const char *md5;
-	const char *gameid;
+	const char *language;
+	const char *platform;
+	const char *desc;
+	const char *comments;
 	const char *infoSource;
 } Entry;
 
@@ -76,11 +76,11 @@ static const StringMap platformMap[] = {
 	{ "Atari",		"kPlatformAtariST" },
 	{ "C64",		"kPlatformC64" },
 	{ "DOS",		"kPlatformPC" },
-	{ "FM-TOWNS",		"kPlatformFMTowns" },
+	{ "FM-TOWNS",	"kPlatformFMTowns" },
 	{ "Mac",		"kPlatformMacintosh" },
 	{ "NES",		"kPlatformNES" },
 	{ "SEGA",		"kPlatformSegaCD" },
-	{ "Windows",		"kPlatformWindows" },
+	{ "Windows",	"kPlatformWindows" },
 
 	{ "All?",		"kPlatformUnknown" },
 	{ "All",		"kPlatformUnknown" },
@@ -203,7 +203,6 @@ int main(int argc, char *argv[])
 	int i;
 	time_t theTime;
 	const char *generationDate;
-	int firstSection = 1;
 
 	const int entrySize = 256;
 	int numEntries = 0, maxEntries = 1;
@@ -239,8 +238,11 @@ int main(int argc, char *argv[])
 	gameid[0] = 0;
 	while ((line = fgets(buffer, sizeof(buffer), inFile))) {
 		/* Parse line */
-		if (line[0] == '#' || isEmptyLine(line))
+		if (line[0] == '#' || isEmptyLine(line)) {
+			if (outputMode == kTXTOutput)
+				fprintf(outFile, "%s", line);
 			continue;	/* Skip comments & empty lines */
+		}
 		if (line[0] == '\t') {
 			Entry entry;
 			assert(section[0]);
@@ -292,13 +294,8 @@ int main(int argc, char *argv[])
 			if (outputMode == kPHPOutput) {
 				fprintf(outFile, "\t<tr><td colspan='7'><strong>%s</strong></td></tr>\n", section);
 			} else if (outputMode == kTXTOutput) {
-				// If this isn't the first section, print a newline to end the previous section.
-				if (!firstSection)
-					fprintf(outFile, "\n");
 				fprintf(outFile, "%s\t%s\n", gameid, section);
 			}
-
-			firstSection = 0;
 		}
 	}
 
