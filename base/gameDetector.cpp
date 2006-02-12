@@ -46,7 +46,7 @@
 #else
 #define DEFAULT_SAVE_PATH ".scummvm"
 #endif
-#else if defined(__SYMBIAN32__)
+#elif defined(__SYMBIAN32__)
 #include <errno.h>
 #include <sys/stat.h>
 #define DEFAULT_SAVE_PATH "Savegames"
