@@ -146,7 +146,7 @@ struct ScreenInfo {
 	uint16 number_of_layers;
 	uint8 new_palette;		// Set to non zero to start the
 					// palette held within layer file
-					// fading up after a build_display
+					// fading up after a buildDisplay()
 	uint8 scroll_flag;		// Scroll mode 0 off 1 on
 	bool mask_flag;			// Using shading mask
 };
