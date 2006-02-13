@@ -356,7 +356,7 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	}
 #endif
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#if defined(SYSTEM_BIG_ENDIAN)
 
 inline float get_float(const char *data) {
 	const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
