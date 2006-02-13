@@ -172,26 +172,31 @@ void ThemeClassic::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWi
 	if (!_initOk || background == kWidgetBackgroundNo)
 		return;
 
+	restoreBackground(r);
+	
+	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW)) {
+		addDirtyRect(r);
+		return;
+	}
+
 	switch (background) {
 	case kWidgetBackgroundBorder:
-		restoreBackground(r);
 		box(r.left, r.top, r.width(), r.height(), _color, _shadowcolor);
 		break;
 
 	case kWidgetBackgroundBorderSmall:
-		restoreBackground(r);
 		box(r.left, r.top, r.width(), r.height());
 		break;
 
 	case kWidgetBackgroundPlain:
-		restoreBackground(r);
+		// nothing to do here
 		break;
 
 	default:
 		break;
 	};
 
-	addDirtyRect(r);
+	addDirtyRect(r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
 void ThemeClassic::drawButton(const Common::Rect &r, const Common::String &str, kState state) {
@@ -299,12 +304,27 @@ void ThemeClassic::drawCheckbox(const Common::Rect &r, const Common::String &str
 	addDirtyRect(r);
 }
 
-void ThemeClassic::drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state) {
+void ThemeClassic::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state) {
 	if (!_initOk)
 		return;
 	restoreBackground(r);
-	box(r.left, r.top, r.width(), r.height(), _color, _shadowcolor);
-	_font->drawString(&_screen, str, r.left, r.top+2, r.width(), getColor(state), Graphics::kTextAlignCenter, 0, true);
+
+	for (int i = 0; i < (int)tabs.size(); ++i) {
+		if (i == active)
+			continue;
+		box(r.left + i * tabWidth, r.top+2, tabWidth, tabHeight-2, _color, _shadowcolor);
+		_font->drawString(&_screen, tabs[i], r.left + i * tabWidth, r.top+4, tabWidth, getColor(state), Graphics::kTextAlignCenter, 0, true);
+	}
+	
+	box(r.left + active * tabWidth, r.top, tabWidth, tabHeight, _color, _shadowcolor, true);
+	_font->drawString(&_screen, tabs[active], r.left + active * tabWidth, r.top+2, tabWidth, getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
+
+	_screen.hLine(r.left, r.top + tabHeight, r.left + active * tabWidth + 1, _color);
+	_screen.hLine(r.left + active * tabWidth + tabWidth - 2, r.top + tabHeight, r.right, _color);
+	_screen.hLine(r.left, r.bottom - 1, r.right - 1, _shadowcolor);
+	_screen.vLine(r.left, r.top + tabHeight, r.bottom - 1, _color);
+	_screen.vLine(r.right - 1, r.top + tabHeight, r.bottom - 1, _shadowcolor);
+	
 	addDirtyRect(r);
 }
 
@@ -444,7 +464,7 @@ bool ThemeClassic::addDirtyRect(Common::Rect r, bool save) {
 	return true;
 }
 
-void ThemeClassic::box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB) {
+void ThemeClassic::box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool skipLastRow) {
 	if (y >= 0) {
 		_screen.hLine(x + 1, y, x + width - 2, colorA);
 		_screen.hLine(x, y + 1, x + width - 1, colorA);
@@ -456,12 +476,12 @@ void ThemeClassic::box(int x, int y, int width, int height, OverlayColor colorA,
 	}
 	_screen.vLine(x, drawY + 1, drawY + height - 2, colorA);
 	_screen.vLine(x + 1, drawY, drawY + height - 1, colorA);
+	_screen.vLine(x + width - 1, drawY + 1, drawY + height - 2, colorB);
+	_screen.vLine(x + width - 2, drawY + 1, drawY + height - 1, colorB);
 
-	if (y + height >= 0) {
+	if (y + height >= 0 && !skipLastRow) {
 		_screen.hLine(x + 1, drawY + height - 2, x + width - 1, colorB);
 		_screen.hLine(x + 1, drawY + height - 1, x + width - 2, colorB);
-		_screen.vLine(x + width - 1, drawY + 1, drawY + height - 2, colorB);
-		_screen.vLine(x + width - 2, drawY + 1, drawY + height - 1, colorB);
 	}
 }
 

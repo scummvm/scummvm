@@ -121,7 +121,7 @@ public:
 	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state = kStateEnabled) = 0;
 	virtual void drawSlider(const Common::Rect &r, int width, kState state = kStateEnabled) = 0;
 	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state = kStateEnabled) = 0;
-	virtual void drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state = kStateEnabled) = 0;
+	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state = kStateEnabled) = 0;
 	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state = kStateEnabled) = 0;
 	virtual void drawCaret(const Common::Rect &r, bool erase, kState state = kStateEnabled) = 0;
 	virtual void drawLineSeparator(const Common::Rect &r, kState state = kStateEnabled) = 0;
@@ -200,7 +200,7 @@ public:
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
 	void drawSlider(const Common::Rect &r, int width, kState state);
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state);
-	void drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
@@ -208,7 +208,7 @@ private:
 	void restoreBackground(Common::Rect r);
 	bool addDirtyRect(Common::Rect r, bool save = false);
 
-	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB);
+	void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool skipLastRow = false);
 	void box(int x, int y, int width, int height);
 
 	OverlayColor getColor(kState state);
@@ -269,7 +269,7 @@ public:
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
 	void drawSlider(const Common::Rect &r, int width, kState state);
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state);
-	void drawTab(const Common::Rect &r, const Common::String &str, bool active, kState state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);

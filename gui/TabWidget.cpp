@@ -128,32 +128,12 @@ bool TabWidget::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 	return Widget::handleKeyDown(ascii, keycode, modifiers);
 }
 
-/*static void box(int x, int y, int width, int height, OverlayColor colorA, OverlayColor colorB, bool omitBottom) {
-	NewGui &gui = g_gui;
-
-	gui.hLine(x + 1, y, x + width - 2, colorA);
-	gui.hLine(x, y + 1, x + width - 1, colorA);
-	gui.vLine(x, y + 1, y + height - (omitBottom ? 1 : 2), colorA);
-	gui.vLine(x + 1, y, y + height - (omitBottom ? 2 : 1), colorA);
-
-	if (!omitBottom) {
-		gui.hLine(x + 1, y + height - 2, x + width - 1, colorB);
-		gui.hLine(x + 1, y + height - 1, x + width - 2, colorB);
-	}
-	gui.vLine(x + width - 1, y + 1, y + height - (omitBottom ? 1 : 2), colorB);
-	gui.vLine(x + width - 2, y + 1, y + height - (omitBottom ? 2 : 1), colorB);
-}*/
-
-
 void TabWidget::drawWidget(bool hilite) {
-	// Iterate over all tabs and draw them
-	int i, x = _x + kTabLeftOffset;
-	for (i = 0; i < (int)_tabs.size(); ++i) {
-		int yOffset = (i == _activeTab) ? 0 : 2;
-		g_gui.theme()->drawTab(Common::Rect(x, _y+yOffset, x+_tabWidth, _y+_tabHeight), _tabs[i].title, (i == _activeTab));
-		x += _tabWidth + kTabSpacing;
+	Common::Array<Common::String> tabs;
+	for (int i = 0; i < (int)_tabs.size(); ++i) {
+		tabs.push_back(_tabs[i].title);
 	}
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y+_tabHeight-2, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorderSmall);
+	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x+_w, _y+_h), _tabHeight, _tabWidth, tabs, _activeTab, _hints);
 }
 
 Widget *TabWidget::findWidget(int x, int y) {
