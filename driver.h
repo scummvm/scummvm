@@ -234,6 +234,49 @@ public:
 
 	//@}
 
+	/**
+	 * @name Mutex handling
+	 * Historically, the OSystem API used to have a method which allowed
+	 * creating threads. Hence mutex support was needed for thread syncing.
+	 * To ease portability, though, we decided to remove the threading API.
+	 * Instead, we now use timers (see setTimerCallback() and Timer).
+	 * But since those may be implemented using threads (and in fact, that's
+	 * how our primary backend, the SDL one, does it on many systems), we
+	 * still have to do mutex syncing in our timer callbacks.
+	 *
+	 * Hence backends which do not use threads to implement the timers simply
+	 * can use dummy implementations for these methods.
+	 */
+	//@{
+
+	/**
+	 * Create a new mutex.
+	 * @return the newly created mutex, or 0 if an error occured.
+	 */
+	virtual MutexRef createMutex() = 0;
+
+	/**
+	 * Lock the given mutex.
+	 * @param mutex	the mutex to lock.
+	 */
+	virtual void lockMutex(MutexRef mutex) = 0;
+
+	/**
+	 * Unlock the given mutex.
+	 * @param mutex	the mutex to unlock.
+	 */
+	virtual void unlockMutex(MutexRef mutex) = 0;
+
+	/**
+	 * Delete the given mutex. Make sure the mutex is unlocked before you delete it.
+	 * If you delete a locked mutex, the behavior is undefined, in particular, your
+	 * program may crash.
+	 * @param mutex	the mutex to delete.
+	 */
+	virtual void deleteMutex(MutexRef mutex) = 0;
+
+	//@}
+
 	/** @name Sound */
 	//@{
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
@@ -276,5 +319,16 @@ protected:
 };
 
 extern Driver *g_driver;
+
+class StackLock {
+	MutexRef _mutex;
+public:
+	StackLock(MutexRef mutex) : _mutex(mutex) {
+		g_driver->lockMutex(_mutex);
+	}
+	~StackLock() {
+		g_driver->unlockMutex(_mutex);
+	}
+};
 
 #endif

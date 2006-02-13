@@ -28,7 +28,7 @@ Timer::Timer() :
 	_timerHandler(0),
 	_lastTime(0) {
 
-	_mutex = createMutex();
+	_mutex = g_driver->createMutex();
 
 	g_timer = this;
 
@@ -56,7 +56,7 @@ Timer::~Timer() {
 		}
 	}
 
-	deleteMutex(_mutex);
+	g_driver->deleteMutex(_mutex);
 }
 
 int Timer::timer_handler(int t) {

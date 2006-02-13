@@ -356,6 +356,22 @@ void DriverSDL::setTimerCallback(TimerProc callback, int timer) {
 	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
 }
 
+MutexRef DriverSDL::createMutex() {
+	return (MutexRef)SDL_CreateMutex();
+}
+
+void DriverSDL::lockMutex(MutexRef mutex) {
+	SDL_mutexP((SDL_mutex *)mutex);
+}
+
+void DriverSDL::unlockMutex(MutexRef mutex) {
+	SDL_mutexV((SDL_mutex *)mutex);
+}
+
+void DriverSDL::deleteMutex(MutexRef mutex) {
+	SDL_DestroyMutex((SDL_mutex *)mutex);
+}
+
 bool DriverSDL::setSoundCallback(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
 

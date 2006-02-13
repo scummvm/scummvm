@@ -46,7 +46,7 @@ void Imuse::timerHandler(void *refCon) {
 }
 
 Imuse::Imuse(int fps) {
-	_mutex = createMutex();
+	_mutex = g_driver->createMutex();
 	_pause = false;
 	_sound = new ImuseSndMgr();
 	_volVoice = 0;
@@ -73,7 +73,7 @@ Imuse::~Imuse() {
 		delete _track[l];
 	}
 	delete _sound;
-	deleteMutex(_mutex);
+	g_driver->deleteMutex(_mutex);
 }
 
 void Imuse::resetState() {

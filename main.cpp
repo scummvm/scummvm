@@ -262,28 +262,3 @@ void quit() {
 	}
 	SDL_Quit();
 }
-
-StackLock::StackLock(MutexRef mutex) :
-		_mutex(mutex) {
-	lockMutex(_mutex);
-}
-
-StackLock::~StackLock() {
-	unlockMutex(_mutex);
-}
-
-MutexRef createMutex() {
-	return (MutexRef)SDL_CreateMutex();
-}
-
-void lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *)mutex);
-}
-
-void unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *)mutex);
-}
-
-void deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *)mutex);
-}

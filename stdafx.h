@@ -21,18 +21,6 @@
 
 typedef struct Mutex *MutexRef;
 
-class StackLock {
-	MutexRef _mutex;
-public:
-	StackLock(MutexRef mutex);
-	~StackLock();
-};
-
-MutexRef createMutex();
-void lockMutex(MutexRef mutex);
-void unlockMutex(MutexRef mutex);
-void deleteMutex(MutexRef mutex);
-
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif

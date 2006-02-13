@@ -18,6 +18,7 @@
 #include "stdafx.h"
 #include "bits.h"
 #include "debug.h"
+#include "driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"

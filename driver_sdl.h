@@ -48,6 +48,11 @@ public:
 	void delayMillis(uint msecs);
 	void setTimerCallback(TimerProc callback, int interval);
 
+	MutexRef createMutex();
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
+
 	bool setSoundCallback(SoundProc proc, void *param);
 	void clearSoundCallback();
 	int getOutputSampleRate() const;

@@ -80,7 +80,7 @@ public:
 
 
 SoundMixer::SoundMixer() {
-	_mutex = createMutex();
+	_mutex = g_driver->createMutex();
 	_premixChannel = NULL;
 	_globalVolume = 0;
 	_paused = false;
@@ -102,7 +102,7 @@ SoundMixer::~SoundMixer() {
 	delete _premixChannel;
 	_premixChannel = NULL;
 
-	deleteMutex(_mutex);
+	g_driver->deleteMutex(_mutex);
 }
 
 bool SoundMixer::isPaused() {

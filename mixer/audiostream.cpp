@@ -17,6 +17,7 @@
 
 #include "stdafx.h"
 #include "debug.h"
+#include "driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
@@ -132,13 +133,13 @@ AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStrea
 	_pos = _end = _bufferStart;
 	_bufferEnd = _bufferStart + bufferSize;
 
-	_mutex = createMutex();
+	_mutex = g_driver->createMutex();
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
 	free(_bufferStart);
-	deleteMutex(_mutex);
+	g_driver->deleteMutex(_mutex);
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
