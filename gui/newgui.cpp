@@ -68,13 +68,17 @@ NewGui::NewGui() : _needRedraw(false),
 	// Reset key repeat
 	_currentKeyDown.keycode = 0;
 
+#ifndef DISABLE_FANCY_THEMES
 	ConfMan.registerDefault("gui_theme", "default-theme");
 	Common::String style = ConfMan.get("gui_theme");
 	if (scumm_stricmp(style.c_str(), "classic") == 0) {
+#endif
 		_theme = new ThemeClassic(_system);
+#ifndef DISABLE_FANCY_THEMES
 	} else {
 		_theme = new ThemeNew(_system, style.c_str());
 	}
+#endif
 	assert(_theme);
 
 	// Init the theme
