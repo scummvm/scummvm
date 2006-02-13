@@ -26,15 +26,13 @@ MKSFO	= mksfo
 PACK_PBP = pack-pbp
 FIXUP	= psp-fixup-imports
 
-INCDIR = ../../
-
 #check PSPSDK presence
 ifeq ($(PSPSDK),)
 $(error $$(PSPSDK) is undefined.  Use "PSPSDK := $$(shell psp-config --pspsdk-path)" in your Makefile)
 endif
 
 # Add in PSPSDK includes and libraries.
-INCDIR   := $(INCDIR) . $(PSPSDK)/include
+INCDIR   := $(srcdir) . $(srcdir)/engines/ . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
 CFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags` 
