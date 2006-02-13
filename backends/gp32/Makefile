@@ -102,7 +102,7 @@ LIBS		+=	-L$(GPSDK)/lib \
 				-lgpmem -lgpos -lgpstdio -lgpstdlib -lgpsound -lgpgraphic -lgpfont \
 				-lm -lc -lgcc
 
-INCLUDES	+=	-Ibackends/gp32 -I$(GPSDK)/include
+INCLUDES	+=	-Ibackends/gp32 -Iengines -I$(GPSDK)/include
 
 MODULES		+=	backends/gp32
 
