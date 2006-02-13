@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	items.o \
 	midi.o \
 	midiparser_s1d.o \
+ 	oracle.o \
 	res.o \
 	saveload.o \
 	sound.o \

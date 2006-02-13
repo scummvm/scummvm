@@ -990,6 +990,22 @@ int SimonEngine::runScript() {
 			}
 			break;
 
+		case 171:{									/* oracle hyperlink on */
+				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+					goto invalid_opcode;
+
+				hyperLinkOn(getVarOrWord());
+			}
+			break;
+
+		case 172:{									/* oracle hyperlink off */
+				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+					goto invalid_opcode;
+
+				hyperLinkOff();
+			}
+			break;
+
 		case 175:{									/* vga pointer op 1 */
 				o_lockZone();
 			}

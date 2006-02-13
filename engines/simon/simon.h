@@ -265,6 +265,9 @@ protected:
 	const byte *_scrollImage;
 	byte _vgaVar8;
 
+ 	uint16 _hyperLink;
+ 	uint16 _oracleMaxScrollY, _noOracleScroll;
+ 
 	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
 	int16 _scriptAdj1, _scriptAdj2;
 
@@ -580,6 +583,9 @@ protected:
 
 	void o_inventory_descriptions();
 
+ 	void hyperLinkOn(uint16 x);
+ 	void hyperLinkOff();
+ 
 	void mouseOff();
 	void mouseOn();
 

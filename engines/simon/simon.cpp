@@ -509,6 +509,10 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_saveOrLoad = false;
 	_saveLoadFlag = false;
 
+	_hyperLink = 0;
+	_oracleMaxScrollY = 0;
+	_noOracleScroll = 0;
+
 	_sdlMouseX = 0;
 	_sdlMouseY = 0;
 
@@ -3508,6 +3512,10 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 }
 
 void SimonEngine::printText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
+	// FIXME
+	if (getGameType() == GType_FF)
+		return;
+
 	char convertedString[320];
 	char *convertedString2 = convertedString;
 	int16 height, talkDelay;
