@@ -2,11 +2,15 @@
 ;;; ScummVM .PKG file for .SIS gegeration
 ;;;
 
-; Languages
-;&EN
+
+; List of localised vendor names - one per language. At least one must be provided (English [EN]).
+; List must correspond to list of languages specified elsewhere in the .pkg
+%{"ScummVM"}
+; The non-localised, globally unique vendor name (mandatory)
+:"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM S60v3"},(0xA0000657),0,82.0
+#{"ScummVM S60v3"},(0xA0000657),0,90,0
 
 ; Platform type
 (0x101F6F88), 0, 0, 0, {"Series60ProductID"}
@@ -19,10 +23,10 @@
 "\s60v3\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
-""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL
-""-"!:\system\apps\ScummVM\scummvm.stdout.txt",FILENULL
-""-"!:\system\apps\ScummVM\scummvm.stderr.txt",FILENULL
-""-"!:\system\apps\ScummVM\sdl.ini",FILENULL
+""-"C:\shared\ScummVM\scummvm.ini",FILENULL
+""-"C:\shared\ScummVM\scummvm.stdout.txt",FILENULL
+""-"C:\shared\ScummVM\scummvm.stderr.txt",FILENULL
+""-"C:\shared\ScummVM\sdl.ini",FILENULL
 
 ; This install layout will let you upgrade to newer versions wihout loss of scummvm.ini.
 ; It will remove the config file, std***.txt files & dirs on uninstall.
