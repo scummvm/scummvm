@@ -30,6 +30,8 @@
 		(dst)[3] = (src)[3];	\
 	} while (0)
 
+#if defined(SYSTEM_BIG_ENDIAN)
+
 #define WRITE_2X1_LINE(dst, v)		\
 	do {				\
 		(dst)[0] = (byte)((v >> 8) & 0xFF);	\
@@ -43,6 +45,24 @@
 		(dst)[2] = (byte)((v >>  8) & 0xFF);	\
 		(dst)[3] = (byte)((v >>  0) & 0xFF);	\
 	} while (0)
+
+#else /* SYSTEM_BIG_ENDIAN */
+
+#define WRITE_2X1_LINE(dst, v)		\
+	do {				\
+		(dst)[0] = (byte)((v >> 0) & 0xFF);	\
+		(dst)[1] = (byte)((v >> 8) & 0xFF);	\
+	} while (0)
+
+#define WRITE_4X1_LINE(dst, v)		\
+	do {				\
+		(dst)[0] = (byte)((v >>  0) & 0xFF);	\
+		(dst)[1] = (byte)((v >>  8) & 0XFF);	\
+		(dst)[2] = (byte)((v >> 16) & 0xFF);	\
+		(dst)[3] = (byte)((v >> 24) & 0xFF);	\
+	} while (0)
+
+#endif
 
 #else /* SYSTEM_NEED_ALIGNMENT */
 
