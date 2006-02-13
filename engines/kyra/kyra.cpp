@@ -425,7 +425,8 @@ int KyraEngine::init(GameDetector &detector) {
 	_movFacingTable[0] = 8;
 
 	_configTalkspeed = 1;
-	
+	_skipFlag = false;
+
 	_marbleVaseItem = -1;
 	memset(_foyerItemTable, -1, sizeof(_foyerItemTable));
 	_mouseState = _itemInHand = -1;
