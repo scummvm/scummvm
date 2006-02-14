@@ -54,7 +54,7 @@ static LanguageTypes languages[] = {
 };
 
 void KyraEngine::res_loadResources(int type) {
-	debug(9, "res_loadResources(%d)", type);
+	debug(9, kDebugLevelMain, "KyraEngine::res_loadResources(%d)", type);
 	PAKFile resFile("KYRA.DAT");
 	if (!resFile.isValid() || !resFile.isOpen()) {
 		error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
@@ -257,7 +257,7 @@ void KyraEngine::res_loadResources(int type) {
 }
 
 void KyraEngine::res_unloadResources(int type) {
-	debug(9, "res_unloadResources(%d)", type);
+	debug(9, kDebugLevelMain, "KyraEngine::res_unloadResources(%d)", type);
 	if ((type & RES_INTRO) || (type & RES_OUTRO) || type & RES_ALL) {
 		res_freeLangTable(&_seq_WSATable, &_seq_WSATable_Size);
 		res_freeLangTable(&_seq_CPSTable, &_seq_CPSTable_Size);

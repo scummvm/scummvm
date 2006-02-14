@@ -589,7 +589,7 @@ void KyraEngine::gui_getInput() {
 }
 
 int KyraEngine::gui_resumeGame(Button *button) {
-	debug(9, "KyraEngine::gui_resumeGame()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_resumeGame()");
 	processMenuButton(button);
 	_displayMenu = false;
 
@@ -648,7 +648,7 @@ void KyraEngine::setupSavegames(Menu &menu, int num) {
 }
 
 int KyraEngine::gui_saveGameMenu(Button *button) {
-	debug(9, "KyraEngine::gui_saveGameMenu()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_saveGameMenu()");
 	processMenuButton(button);
 	_menu[2].item[5].enabled = true;
 
@@ -688,7 +688,7 @@ int KyraEngine::gui_saveGameMenu(Button *button) {
 }
 
 int KyraEngine::gui_loadGameMenu(Button *button) {
-	debug(9, "KyraEngine::gui_loadGameMenu()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_loadGameMenu()");
 	if (_menuDirectlyToLoad)
 		_menu[2].item[5].enabled = false;
 	else {
@@ -772,7 +772,7 @@ void KyraEngine::gui_updateSavegameString() {
 }
 
 int KyraEngine::gui_saveGame(Button *button) {
-	debug(9, "KyraEngine::gui_saveGame()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_saveGame()");
 	processMenuButton(button);
 	_gameToLoad = button->specialValue;
 
@@ -822,7 +822,7 @@ int KyraEngine::gui_saveGame(Button *button) {
 }
 
 int KyraEngine::gui_savegameConfirm(Button *button) {
-	debug(9, "KyraEngine::gui_savegameConfirm()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_savegameConfirm()");
 	processMenuButton(button);
 	_displaySubMenu = false;
 
@@ -830,7 +830,7 @@ int KyraEngine::gui_savegameConfirm(Button *button) {
 }
 
 int KyraEngine::gui_loadGame(Button *button) {
-	debug(9, "KyraEngine::gui_loadGame()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_loadGame()");
 	processMenuButton(button);
 	_displaySubMenu = false;
 	_gameToLoad = button->specialValue;
@@ -839,7 +839,7 @@ int KyraEngine::gui_loadGame(Button *button) {
 }
 
 int KyraEngine::gui_cancelSubMenu(Button *button) {
-	debug(9, "KyraEngine::gui_cancelLoadGameMenu()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_cancelLoadGameMenu()");
 	processMenuButton(button);
 	_displaySubMenu = false;
 	_cancelSubMenu = true;
@@ -848,7 +848,7 @@ int KyraEngine::gui_cancelSubMenu(Button *button) {
 }
 
 int KyraEngine::gui_quitPlaying(Button *button) {
-	debug(9, "KyraEngine::gui_quitPlaying()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_quitPlaying()");
 	processMenuButton(button);
 
 	if (gui_quitConfirm("Are you sure you want to quit playing?"))
@@ -862,7 +862,7 @@ int KyraEngine::gui_quitPlaying(Button *button) {
 }
 
 bool KyraEngine::gui_quitConfirm(const char *str) {
-	debug(9, "KyraEngine::gui_quitConfirm()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_quitConfirm()");
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
@@ -886,7 +886,7 @@ bool KyraEngine::gui_quitConfirm(const char *str) {
 }
 
 int KyraEngine::gui_quitConfirmYes(Button *button) {
-	debug(9, "KyraEngine::gui_quitConfirmYes()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_quitConfirmYes()");
 	processMenuButton(button);
 	_displaySubMenu = false;
 	_cancelSubMenu = false;
@@ -895,7 +895,7 @@ int KyraEngine::gui_quitConfirmYes(Button *button) {
 }
 
 int KyraEngine::gui_quitConfirmNo(Button *button) {
-	debug(9, "KyraEngine::gui_quitConfirmNo()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_quitConfirmNo()");
 	processMenuButton(button);
 	_displaySubMenu = false;
 	_cancelSubMenu = true;
@@ -904,7 +904,7 @@ int KyraEngine::gui_quitConfirmNo(Button *button) {
 }
 
 int KyraEngine::gui_scrollUp(Button *button) {
-	debug(9, "KyraEngine::gui_scrollUp()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_scrollUp()");
 	processMenuButton(button);
 
 	if (_savegameOffset > 0) {
@@ -916,7 +916,7 @@ int KyraEngine::gui_scrollUp(Button *button) {
 }
 
 int KyraEngine::gui_scrollDown(Button *button) {
-	debug(9, "KyraEngine::gui_scrollDown()");
+	debug(9, kDebugLevelGUI, "KyraEngine::gui_scrollDown()");
 	processMenuButton(button);
 
 	_savegameOffset++;

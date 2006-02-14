@@ -32,7 +32,7 @@
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
-	debug(9, "loadGame('%s')", fileName);
+	debug(9, kDebugLevelMain, "loadGame('%s')", fileName);
 	Common::InSaveFile *in;
 
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
@@ -218,13 +218,13 @@ void KyraEngine::loadGame(const char *fileName) {
 	if (in->ioFailed())
 		error("Load failed.");
 	else
-		debug(1, "Loaded savegame '%s.'", saveName);
+		debug(1, kDebugLevelMain, "Loaded savegame '%s.'", saveName);
 
 	delete in;
 }
 
 void KyraEngine::saveGame(const char *fileName, const char *saveName) {
-	debug(9, "saveGame('%s', '%s')", fileName, saveName);
+	debug(9, kDebugLevelMain, "saveGame('%s', '%s')", fileName, saveName);
 	Common::OutSaveFile *out;
 
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
@@ -312,7 +312,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	if (out->ioFailed())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 	else
-		debug(1, "Saved game '%s.'", saveName);
+		debug(1, kDebugLevelMain, "Saved game '%s.'", saveName);
 
 	delete out;
 }

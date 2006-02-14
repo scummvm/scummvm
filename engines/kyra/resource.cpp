@@ -93,7 +93,7 @@ Resource::Resource(KyraEngine *engine) {
 			_pakfiles.push_back(newPak);
 		else {
 			delete file;
-			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
+			::debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
 		}
 	}
 }
@@ -211,7 +211,7 @@ PAKFile::PAKFile(const Common::String& file) {
 	_open = false;
 
 	if (!pakfile.open(file.c_str())) {
-		debug(3, "couldn't open pakfile '%s'\n", file.c_str());
+		::debug(3, "couldn't open pakfile '%s'\n", file.c_str());
 		return;
 	}
 
@@ -283,7 +283,7 @@ uint8 *PAKFile::getFile(const char *file) {
 		if (!scumm_stricmp((*start)->_name, file)) {
 			Common::File pakfile;
 			if (!pakfile.open(_filename)) {
-				debug(3, "couldn't open pakfile '%s'\n", _filename);
+				::debug(3, "couldn't open pakfile '%s'\n", _filename);
 				return 0;
 			}
 			pakfile.seek((*start)->_start);
@@ -302,7 +302,7 @@ bool PAKFile::getFileHandle(const char *file, Common::File &filehandle) {
 	for (PAKFile_Iterate) {
 		if (!scumm_stricmp((*start)->_name, file)) {
 			if (!filehandle.open(_filename)) {
-				debug(3, "couldn't open pakfile '%s'\n", _filename);
+				::debug(3, "couldn't open pakfile '%s'\n", _filename);
 				return 0;
 			}
 			filehandle.seek((*start)->_start);
@@ -321,26 +321,26 @@ uint32 PAKFile::getFileSize(const char* file) {
 }
 
 void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
-	debug(9, "KyraEngine::loadPalette('%s' 0x%X)", filename, palData);
+	debug( 9, kDebugLevelMain, "KyraEngine::loadPalette('%s' 0x%X)", filename, palData);
 	uint32 fileSize = 0;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 
 	if (palData && fileSize) {
-		debug(9, "Loading a palette of size %i from '%s'", fileSize, filename);
+		debug( 9, kDebugLevelMain,"Loading a palette of size %i from '%s'", fileSize, filename);
 		memcpy(palData, srcData, fileSize);
 	}
 	delete [] srcData;
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
-	debug(9, "KyraEngine::copyBitmap('%s', %d, %d, 0x%X)", filename, tempPage, dstPage, palData);
+	debug( 9, kDebugLevelMain,"KyraEngine::copyBitmap('%s', %d, %d, 0x%X)", filename, tempPage, dstPage, palData);
 	uint32 fileSize;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 	uint8 compType = srcData[2];
 	uint32 imgSize = READ_LE_UINT32(srcData + 4);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 	if (palData && palSize) {
-		debug(9, "Loading a palette of size %i from %s", palSize, filename);
+		debug( 9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
 		memcpy(palData, srcData + 10, palSize);		
 	}
 	uint8 *srcPtr = srcData + 10 + palSize;

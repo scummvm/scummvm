@@ -217,7 +217,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	if (opcode > 18) {
 		error("Script unknown command: %d", opcode);
 	} else {
-		debug(5, "%s(%d)", _commands[opcode].desc, _parameter);
+		debug(5, kDebugLevelScript, "%s([%d/%u])", _commands[opcode].desc, _parameter, (uint)_parameter);
 		(this->*(_commands[opcode].proc))(script);
 	}
 	
@@ -387,7 +387,7 @@ void ScriptHelper::c1_subSP(ScriptState* script) {
 void ScriptHelper::c1_execOpcode(ScriptState* script) {
 	assert((uint8)_parameter < script->dataPtr->opcodeSize);
 	if (script->dataPtr->opcodes[(uint8)_parameter] == &KyraEngine::cmd_dummy)
-		debug("calling unimplemented opcode(0x%.02X)", (uint8)_parameter);
+		warning("calling unimplemented opcode(0x%.02X)", (uint8)_parameter);
 	int val = (_vm->*script->dataPtr->opcodes[(uint8)_parameter])(script);
 	assert(script);
 	script->retValue = val;

@@ -53,7 +53,7 @@ int KyraEngine::findDuplicateItemShape(int shape) {
 }
 
 void KyraEngine::addToNoDropRects(int x, int y, int w, int h) {
-	debug(9, "KyraEngine::addToNoDropRects(%d, %d, %d, %d)", x, y, w, h);
+	debug(9, kDebugLevelMain, "KyraEngine::addToNoDropRects(%d, %d, %d, %d)", x, y, w, h);
 	for (int rect = 0; rect < 11; ++rect) {
 		if (_noDropRects[rect].x == -1) {
 			_noDropRects[rect].x = x;
@@ -66,12 +66,12 @@ void KyraEngine::addToNoDropRects(int x, int y, int w, int h) {
 }
 
 void KyraEngine::clearNoDropRects() {
-	debug(9, "KyraEngine::clearNoDropRects()");
+	debug(9, kDebugLevelMain, "KyraEngine::clearNoDropRects()");
 	memset(_noDropRects, -1, sizeof(_noDropRects));
 }
 
 byte KyraEngine::findFreeItemInScene(int scene) {
-	debug(9, "KyraEngine::findFreeItemInScene(%d)", scene);
+	debug(9, kDebugLevelMain, "KyraEngine::findFreeItemInScene(%d)", scene);
 	assert(scene < _roomTableSize);
 	Room *room = &_roomTable[scene];
 	for (int i = 0; i < 12; ++i) {
@@ -82,7 +82,7 @@ byte KyraEngine::findFreeItemInScene(int scene) {
 }
 
 byte KyraEngine::findItemAtPos(int x, int y) {
-	debug(9, "KyraEngine::findItemAtPos(%d, %d)", x, y);
+	debug(9, kDebugLevelMain, "KyraEngine::findItemAtPos(%d, %d)", x, y);
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	const uint8 *itemsTable = _roomTable[_currentCharacter->sceneId].itemsTable;
 	const uint16 *xposOffset = _roomTable[_currentCharacter->sceneId].itemsXPos;
@@ -118,7 +118,7 @@ byte KyraEngine::findItemAtPos(int x, int y) {
 }
 
 void KyraEngine::placeItemInGenericMapScene(int item, int index) {
-	debug(9, "KyraEngine::placeItemInGenericMapScene(%d, %d)", item, index);
+	debug(9, kDebugLevelMain, "KyraEngine::placeItemInGenericMapScene(%d, %d)", item, index);
 	static const uint16 itemMapSceneMinTable[] = {
 		0x0000, 0x0011, 0x006D, 0x0025, 0x00C7, 0x0000
 	};
@@ -175,7 +175,7 @@ void KyraEngine::placeItemInGenericMapScene(int item, int index) {
 }
 
 void KyraEngine::createMouseItem(int item) {
-	debug(9, "KyraEngine::createMouseItem(%d)", item);
+	debug(9, kDebugLevelMain, "KyraEngine::createMouseItem(%d)", item);
 	_screen->hideMouse();
 	setMouseItem(item);
 	_itemInHand = item;
@@ -183,7 +183,7 @@ void KyraEngine::createMouseItem(int item) {
 }
 
 void KyraEngine::destroyMouseItem() {
-	debug(9, "KyraEngine::destroyMouseItem()");
+	debug(9, kDebugLevelMain, "KyraEngine::destroyMouseItem()");
 	_screen->hideMouse();
 	_screen->setMouseCursor(1, 1, _shapes[4]);
 	_itemInHand = -1;
@@ -191,7 +191,7 @@ void KyraEngine::destroyMouseItem() {
 }
 
 void KyraEngine::setMouseItem(int item) {
-	debug(9, "KyraEngine::setMouseItem(%d)", item);
+	debug(9, kDebugLevelMain, "KyraEngine::setMouseItem(%d)", item);
 	if (item == -1) {
 		_screen->setMouseCursor(1, 1, _shapes[10]);
 	} else {
@@ -200,7 +200,7 @@ void KyraEngine::setMouseItem(int item) {
 }
 
 void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
-	debug(9, "KyraEngine::wipeDownMouseItem(%d, %d)", xpos, ypos);
+	debug(9, kDebugLevelMain, "KyraEngine::wipeDownMouseItem(%d, %d)", xpos, ypos);
 	if (_itemInHand == -1)
 		return;
 	xpos -= 8;
@@ -227,7 +227,7 @@ void KyraEngine::wipeDownMouseItem(int xpos, int ypos) {
 }
 
 void KyraEngine::setupSceneItems() {
-	debug(9, "KyraEngine::setupSceneItems()");
+	debug(9, kDebugLevelMain, "KyraEngine::setupSceneItems()");
 	uint16 sceneId = _currentCharacter->sceneId;
 	assert(sceneId < _roomTableSize);
 	Room *currentRoom = &_roomTable[sceneId];
@@ -267,7 +267,7 @@ void KyraEngine::setupSceneItems() {
 }
 
 int KyraEngine::countItemsInScene(uint16 sceneId) {
-	debug(9, "KyraEngine::countItemsInScene(%d)", sceneId);
+	debug(9, kDebugLevelMain, "KyraEngine::countItemsInScene(%d)", sceneId);
 	assert(sceneId < _roomTableSize);
 	Room *currentRoom = &_roomTable[sceneId];
 	
@@ -283,7 +283,7 @@ int KyraEngine::countItemsInScene(uint16 sceneId) {
 }
 
 int KyraEngine::processItemDrop(uint16 sceneId, uint8 item, int x, int y, int unk1, int unk2) {
-	debug(9, "KyraEngine::processItemDrop(%d, %d, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
+	debug(9, kDebugLevelMain, "KyraEngine::processItemDrop(%d, %d, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
 	int freeItem = -1;
 	uint8 itemIndex = findItemAtPos(x, y);
 	if (unk1) {
@@ -448,7 +448,7 @@ int KyraEngine::processItemDrop(uint16 sceneId, uint8 item, int x, int y, int un
 }
 
 void KyraEngine::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
-	debug(9, "KyraEngine::exchangeItemWithMouseItem(%d, %d)", sceneId, itemIndex);
+	debug(9, kDebugLevelMain, "KyraEngine::exchangeItemWithMouseItem(%d, %d)", sceneId, itemIndex);
 	_screen->hideMouse();
 	_animator->animRemoveGameItem(itemIndex);
 	assert(sceneId < _roomTableSize);
@@ -468,7 +468,7 @@ void KyraEngine::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
 }
 
 void KyraEngine::addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y) {
-	debug(9, "KyraEngine::addItemToRoom(%d, %d, %d, %d, %d)", sceneId, item, itemIndex, x, y);
+	debug(9, kDebugLevelMain, "KyraEngine::addItemToRoom(%d, %d, %d, %d, %d)", sceneId, item, itemIndex, x, y);
 	assert(sceneId < _roomTableSize);
 	Room *currentRoom = &_roomTable[sceneId];
 	currentRoom->itemsTable[itemIndex] = item;
@@ -478,7 +478,7 @@ void KyraEngine::addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x,
 }
 
 int KyraEngine::checkNoDropRects(int x, int y) {
-	debug(9, "KyraEngine::checkNoDropRects(%d, %d)", x, y);
+	debug(9, kDebugLevelMain, "KyraEngine::checkNoDropRects(%d, %d)", x, y);
 	if (_lastProcessedItemHeight < 1 || _lastProcessedItemHeight > 16) {
 		_lastProcessedItemHeight = 16;
 	}
@@ -511,7 +511,7 @@ int KyraEngine::checkNoDropRects(int x, int y) {
 }
 
 int KyraEngine::isDropable(int x, int y) {
-	debug(9, "KyraEngine::isDropable(%d, %d)", x, y);
+	debug(9, kDebugLevelMain, "KyraEngine::isDropable(%d, %d)", x, y);
 	x -= 8;
 	y -= 1;
 	
@@ -528,7 +528,7 @@ int KyraEngine::isDropable(int x, int y) {
 }
 
 void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem, int item) {
-	debug(9, "KyraEngine::itemDropDown(%d, %d, %d, %d, %d, %d)", x, y, destX, destY, freeItem, item);
+	debug(9, kDebugLevelMain, "KyraEngine::itemDropDown(%d, %d, %d, %d, %d, %d)", x, y, destX, destY, freeItem, item);
 	assert(_currentCharacter->sceneId < _roomTableSize);
 	Room *currentRoom = &_roomTable[_currentCharacter->sceneId];
 	if (x == destX && y == destY) {
@@ -622,7 +622,7 @@ void KyraEngine::itemDropDown(int x, int y, int destX, int destY, byte freeItem,
 }
 
 void KyraEngine::dropItem(int unk1, int item, int x, int y, int unk2) {
-	debug(9, "KyraEngine::dropItem(%d, %d, %d, %d, %d)", unk1, item, x, y, unk2);
+	debug(9, kDebugLevelMain, "KyraEngine::dropItem(%d, %d, %d, %d, %d)", unk1, item, x, y, unk2);
 	if (processItemDrop(_currentCharacter->sceneId, item, x, y, unk1, unk2))
 		return;
 	snd_playSoundEffect(54);
@@ -636,7 +636,7 @@ void KyraEngine::dropItem(int unk1, int item, int x, int y, int unk2) {
 }
 
 void KyraEngine::itemSpecialFX(int x, int y, int item) {
-	debug(9, "KyraEngine::itemSpecialFX(%d, %d, %d)", x, y, item);
+	debug(9, kDebugLevelMain, "KyraEngine::itemSpecialFX(%d, %d, %d)", x, y, item);
 	if (item == 41) {
 		itemSpecialFX1(x, y, item);
 	} else {
@@ -645,7 +645,7 @@ void KyraEngine::itemSpecialFX(int x, int y, int item) {
 }
 
 void KyraEngine::itemSpecialFX1(int x, int y, int item) {
-	debug(9, "KyraEngine::itemSpecialFX1(%d, %d, %d)", x, y, item);
+	debug(9, kDebugLevelMain, "KyraEngine::itemSpecialFX1(%d, %d, %d)", x, y, item);
 	uint8 *shape = _shapes[220+item];
 	x -= 8;
 	int startY = y;
@@ -669,7 +669,7 @@ void KyraEngine::itemSpecialFX1(int x, int y, int item) {
 }
 
 void KyraEngine::itemSpecialFX2(int x, int y, int item) {
-	debug(9, "KyraEngine::itemSpecialFX2(%d, %d, %d)", x, y, item);
+	debug(9, kDebugLevelMain, "KyraEngine::itemSpecialFX2(%d, %d, %d)", x, y, item);
 	x -= 8;
 	y -= 15;
 	int yAdd = (int8)(((16 - _itemTable[item].height) >> 1) & 0xFF);
@@ -704,7 +704,7 @@ void KyraEngine::itemSpecialFX2(int x, int y, int item) {
 }
 
 void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
-	debug(9, "KyraEngine::magicOutMouseItem(%d, %d)", animIndex, itemPos);
+	debug(9, kDebugLevelMain, "KyraEngine::magicOutMouseItem(%d, %d)", animIndex, itemPos);
 	int videoPageBackUp = _screen->_curPage;
 	_screen->_curPage = 0;
 	int x = 0, y = 0;
@@ -797,7 +797,7 @@ void KyraEngine::magicOutMouseItem(int animIndex, int itemPos) {
 }
 
 void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
-	debug(9, "KyraEngine::magicInMouseItem(%d, %d, %d)", animIndex, item, itemPos);
+	debug(9, kDebugLevelMain, "KyraEngine::magicInMouseItem(%d, %d, %d)", animIndex, item, itemPos);
 	int videoPageBackUp = _screen->_curPage;
 	_screen->_curPage = 0;
 	int x = 0, y = 0;
@@ -878,7 +878,7 @@ void KyraEngine::magicInMouseItem(int animIndex, int item, int itemPos) {
 }
 
 void KyraEngine::specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops) {
-	debug(9, "KyraEngine::specialMouseItemFX(%d, %d, %d, %d, %d, %d, %d)", shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
+	debug(9, kDebugLevelMain, "KyraEngine::specialMouseItemFX(%d, %d, %d, %d, %d, %d, %d)", shape, x, y, animIndex, tableIndex, loopStart, maxLoops);
 	static const uint8 table1[] = {
 		0x23, 0x45, 0x55, 0x72, 0x84, 0xCF, 0x00, 0x00
 	};
@@ -902,7 +902,7 @@ void KyraEngine::specialMouseItemFX(int shape, int x, int y, int animIndex, int 
 }
 
 void KyraEngine::processSpecialMouseItemFX(int shape, int x, int y, int tableValue, int loopStart, int maxLoops) {
-	debug(9, "KyraEngine::processSpecialMouseItemFX(%d, %d, %d, %d, %d, %d)", shape, x, y, tableValue, loopStart, maxLoops);
+	debug(9, kDebugLevelMain, "KyraEngine::processSpecialMouseItemFX(%d, %d, %d, %d, %d, %d)", shape, x, y, tableValue, loopStart, maxLoops);
 	uint8 shapeColorTable[16];
 	uint8 *shapePtr = _shapes[4+shape] + 10;
 	if (_features & GF_TALKIE)
@@ -921,7 +921,7 @@ void KyraEngine::processSpecialMouseItemFX(int shape, int x, int y, int tableVal
 }
 
 void KyraEngine::updatePlayerItemsForScene() {
-	debug(9, "KyraEngine::updatePlayerItemsForScene()");
+	debug(9, kDebugLevelMain, "KyraEngine::updatePlayerItemsForScene()");
 	if (_itemInHand >= 29 && _itemInHand < 33) {
 		++_itemInHand;
 		if (_itemInHand > 33)

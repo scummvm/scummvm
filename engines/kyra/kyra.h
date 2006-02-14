@@ -65,6 +65,24 @@ enum {
 	GI_KYRA1 = 0
 };
 
+// TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
+// in the future we maybe merge some flags  and/or create new ones
+enum kDebugLevels {
+	kDebugLevelScriptFuncs = 1 << 0,		// prints debug output of cmd_* functions
+	kDebugLevelScript = 1 << 1,				// prints debug output of "ScriptHelper" functions
+	kDebugLevelSprites = 1 << 2,			// prints debug output of "Sprites" functions
+	kDebugLevelScreen = 1 << 3,				// prints debug output of "Screen" functions
+	kDebugLevelSound = 1 << 4,				// prints debug output of "Sound" functions
+	kDebugLevelAnimator = 1 << 5,			// prints debug output of "ScreenAnimator" functions
+	kDebugLevelMain = 1 << 6,				// prints debug output of common "KyraEngine*" functions && "TextDisplayer" functions
+	kDebugLevelGUI = 1 << 7,				// prints debug output of "KyraEngine*" gui functions
+	kDebugLevelSequence = 1 << 8,			// prints debug output of "SeqPlayer" functions
+	kDebugLevelMovie = 1 << 9				// prints debug output of movie specific funtions
+};
+
+// our intern debug function
+void debug(int level, int level2, const char *s, ...);
+
 struct Character {
 	uint16 sceneId;
 	uint8 height;
@@ -246,6 +264,10 @@ public:
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
+	
+	void enableDebugLevel(int level) { _debugLevelsEnabled |= level; }
+	void disableDebugLevel(int level) { _debugLevelsEnabled &= ~level; }
+	int debugLevels() const { return _debugLevelsEnabled; }
 
 	uint8 **shapes() { return _shapes; }
 	Character *currentCharacter() { return _currentCharacter; }
@@ -669,6 +691,8 @@ protected:
 	void gui_redrawTextfield();
 	void gui_fadePalette();
 	void gui_restorePalette();
+	
+	int _debugLevelsEnabled;	// the enabled debug levels
 
 	uint8 _game;
 	bool _quitFlag;

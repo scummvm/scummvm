@@ -189,7 +189,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 			}
 		}
 		if (detectedGames.isEmpty()) {
-			debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
+			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 			const KyraGameList *g1 = kyra_list;
 			while (g1->gameid) {
@@ -209,8 +209,33 @@ REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine")
 
 namespace Kyra {
 
+// never use this!
+KyraEngine *gKyraEngine = 0;
+void debug(int level, int level2, const char *s, ...) {
+	if (!(gKyraEngine->debugLevels() & level2))
+		return;
+	char buf[120];
+	va_list va;
+	va_start(va, s);
+	vsnprintf(buf, 120, s, va);
+	va_end(va);
+	::debug(level, buf);
+}
+
 KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	: Engine(system) {
+	gKyraEngine = this;
+	
+	// if we have an debug level enable all by default for now
+	if (gDebugLevel != -1) {
+		_debugLevelsEnabled = kDebugLevelScriptFuncs | kDebugLevelScript | kDebugLevelSprites |
+							  kDebugLevelScreen | kDebugLevelSound | kDebugLevelAnimator |
+							  kDebugLevelMain | kDebugLevelGUI | kDebugLevelSequence |
+							  kDebugLevelMovie;
+	} else {
+		_debugLevelsEnabled = 0;
+	}
+
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
 	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 =
 	_seq_Demo4 = 0;
@@ -282,7 +307,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	}
 
 	if (!found) {
-		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
 		_features = 0;
 		_game = GI_KYRA1;
 		Common::File test;
@@ -555,7 +580,7 @@ int KyraEngine::go() {
 }
 
 void KyraEngine::startup() {
-	debug(9, "KyraEngine::startup()");
+	debug( 9, kDebugLevelMain, "KyraEngine::startup()");
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
 //	_screen->setFont(Screen::FID_6_FNT);
@@ -635,7 +660,7 @@ void KyraEngine::startup() {
 }
 
 void KyraEngine::mainLoop() {
-	debug(9, "KyraEngine::mainLoop()");
+	debug( 9, kDebugLevelMain, "KyraEngine::mainLoop()");
 
 	while (!_quitFlag) {
 		int32 frameTime = (int32)_system->getMillis();
@@ -820,7 +845,7 @@ void KyraEngine::delayWithTicks(int ticks) {
 #pragma mark -
 
 void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
-	debug(9, "KyraEngine::setupShapes123(0x%X, startShape, flags)", shapeTable, endShape, flags);
+	debug( 9, kDebugLevelMain, "KyraEngine::setupShapes123(0x%X, startShape, flags)", shapeTable, endShape, flags);
 	for (int i = 123; i <= 172; ++i) {
 		_shapes[4+i] = NULL;
 	}
@@ -848,7 +873,7 @@ void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags
 }
 
 void KyraEngine::freeShapes123() {
-	debug(9, "KyraEngine::freeShapes123()");
+	debug( 9, kDebugLevelMain, "KyraEngine::freeShapes123()");
 	for (int i = 123; i <= 172; ++i) {
 		free(_shapes[4+i]);
 		_shapes[4+i] = NULL;
@@ -879,7 +904,7 @@ int KyraEngine::resetGameFlag(int flag) {
 }
 
 void KyraEngine::setBrandonPoisonFlags(int reset) {
-	debug(9, "KyraEngine::setBrandonPoisonFlags(%d)", reset);
+	debug( 9, kDebugLevelMain, "KyraEngine::setBrandonPoisonFlags(%d)", reset);
 	_brandonStatusBit |= 1;
 	if (reset)
 		_poisonDeathCounter = 0;
@@ -894,7 +919,7 @@ void KyraEngine::setBrandonPoisonFlags(int reset) {
 }
 
 void KyraEngine::resetBrandonPoisonFlags() {
-	debug(9, "KyraEngine::resetBrandonPoisonFlags()");
+	debug( 9, kDebugLevelMain, "KyraEngine::resetBrandonPoisonFlags()");
 	_brandonStatusBit = 0;
 	for (int i = 0; i < 0x100; ++i) {
 		_brandonPoisonFlagsGFX[i] = i;
@@ -906,7 +931,7 @@ void KyraEngine::resetBrandonPoisonFlags() {
 #pragma mark -
 
 void KyraEngine::processInput(int xpos, int ypos) {
-	debug(9, "KyraEngine::processInput(%d, %d)", xpos, ypos);
+	debug( 9, kDebugLevelMain, "KyraEngine::processInput(%d, %d)", xpos, ypos);
 	_abortWalkFlag2 = false;
 
 	if (processInputHelper(xpos, ypos)) {
@@ -966,7 +991,7 @@ void KyraEngine::processInput(int xpos, int ypos) {
 }
 
 int KyraEngine::processInputHelper(int xpos, int ypos) {
-	debug(9, "KyraEngine::processInputHelper(%d, %d)", xpos, ypos);
+	debug( 9, kDebugLevelMain, "KyraEngine::processInputHelper(%d, %d)", xpos, ypos);
 	uint8 item = findItemAtPos(xpos, ypos);
 	if (item != 0xFF) {
 		if (_itemInHand == -1) {
@@ -993,7 +1018,7 @@ int KyraEngine::processInputHelper(int xpos, int ypos) {
 }
 
 int KyraEngine::clickEventHandler(int xpos, int ypos) {
-	debug(9, "KyraEngine::clickEventHandler(%d, %d)", xpos, ypos);
+	debug( 9, kDebugLevelMain, "KyraEngine::clickEventHandler(%d, %d)", xpos, ypos);
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
 	_scriptClick->variables[1] = xpos;
 	_scriptClick->variables[2] = ypos;
@@ -1121,7 +1146,7 @@ void KyraEngine::updateMousePointer(bool forceUpdate) {
 }
 
 bool KyraEngine::hasClickedOnExit(int xpos, int ypos) {
-	debug(9, "KyraEngine::hasClickedOnExit(%d, %d)", xpos, ypos);
+	debug( 9, kDebugLevelMain, "KyraEngine::hasClickedOnExit(%d, %d)", xpos, ypos);
 	if (xpos < 16 || xpos >= 304) {
 		return true;
 	}
@@ -1134,7 +1159,7 @@ bool KyraEngine::hasClickedOnExit(int xpos, int ypos) {
 }
 
 void KyraEngine::clickEventHandler2() {
-	debug(9, "KyraEngine::clickEventHandler2()");
+	debug( 9, kDebugLevelMain, "KyraEngine::clickEventHandler2()");
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
 	_scriptClick->variables[0] = _currentCharacter->sceneId;
 	_scriptClick->variables[1] = _mouseX;
@@ -1148,7 +1173,7 @@ void KyraEngine::clickEventHandler2() {
 }
 
 int KyraEngine::checkForNPCScriptRun(int xpos, int ypos) {
-	debug(9, "KyraEngine::checkForNPCScriptRun(%d, %d)", xpos, ypos);
+	debug( 9, kDebugLevelMain, "KyraEngine::checkForNPCScriptRun(%d, %d)", xpos, ypos);
 	int returnValue = -1;
 	const Character *currentChar = _currentCharacter;
 	int charLeft = 0, charRight = 0, charTop = 0, charBottom = 0;
@@ -1202,7 +1227,7 @@ int KyraEngine::checkForNPCScriptRun(int xpos, int ypos) {
 }
 
 void KyraEngine::runNpcScript(int func) {
-	debug(9, "KyraEngine::runNpcScript(%d)", func);
+	debug( 9, kDebugLevelMain, "KyraEngine::runNpcScript(%d)", func);
 	_scriptInterpreter->initScript(_npcScript, _npcScriptData);
 	_scriptInterpreter->startScript(_npcScript, func);
 	_npcScript->variables[0] = _currentCharacter->sceneId;
