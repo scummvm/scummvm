@@ -134,8 +134,12 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	// the CD. The rest of the data files are in game/itedata
 	Common::File::addDefaultDirectory(_gameDataPath + "game/itedata/");
 
+	// Linux demo
+	Common::File::addDefaultDirectory(_gameDataPath + "itedata/");
+
 	// Mac CD Wyrmkeep
 	Common::File::addDefaultDirectory(_gameDataPath + "patch/");
+
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -188,18 +192,6 @@ int SagaEngine::init(GameDetector &detector) {
 		_readingSpeed = 0;
 
 	_resource = new Resource(this);
-
-	// Add some default directories
-	// Win32 demo & full game
-	Common::File::addDefaultDirectory("graphics");
-	Common::File::addDefaultDirectory("music");
-	Common::File::addDefaultDirectory("sound");
-
-	// Linux demo
-	Common::File::addDefaultDirectory("itedata");
-
-	// Mac demos & full game
-	Common::File::addDefaultDirectory("patch");
 
 	// Process command line
 
