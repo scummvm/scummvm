@@ -675,7 +675,7 @@ void SimonEngine::vc10_draw() {
 	_vcPtr += 2;
 	state.x = (int16)vcReadNextWord();
 
-	if (getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
 		state.x -= _scrollX;
 	}
 	state.y = (int16)vcReadNextWord();
