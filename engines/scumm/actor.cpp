@@ -2242,6 +2242,10 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 		MKARRAY(Actor, _cost.start[0], sleUint16, 16, VER(8)),
 		MKARRAY(Actor, _cost.end[0], sleUint16, 16, VER(8)),
 		MKARRAY(Actor, _cost.frame[0], sleUint16, 16, VER(8)),
+
+		MKARRAY(Actor, _cost.heJumpOffsetTable[0], sleUint16, 16, VER(65)),
+		MKARRAY(Actor, _cost.heJumpCountTable[0], sleUint16, 16, VER(65)),
+		MKARRAY(Actor, _cost.heCondMaskTable[0], sleUint32, 16, VER(65)),
 		MKEND()
 	};
 
