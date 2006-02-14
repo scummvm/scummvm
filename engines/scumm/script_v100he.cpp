@@ -23,6 +23,8 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/intern_he.h"
@@ -183,7 +185,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 70 */
 		OPCODE(o6_invalid),
 		OPCODE(o6_setBoxSet),
-		OPCODE(o72_setSystemMessage),
+		OPCODE(o100_setSystemMessage),
 		OPCODE(o6_shuffle),
 		/* 74 */
 		OPCODE(o6_delay),
@@ -1652,6 +1654,24 @@ void ScummEngine_v100he::o100_roomOps() {
 
 	default:
 		error("o100_roomOps: default case %d", subOp);
+	}
+}
+
+void ScummEngine_v100he::o100_setSystemMessage() {
+	byte name[1024];
+
+	copyScriptString(name, sizeof(name));
+	byte subOp = fetchScriptByte();
+
+	switch (subOp) {
+	case 80: // Set Window Caption
+		_system->setWindowCaption((const char *)name);
+		break;
+	case 131:  // Set Version
+		debug(1,"o100_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	default:
+		error("o100_setSystemMessage: default case %d", subOp);
 	}
 }
 

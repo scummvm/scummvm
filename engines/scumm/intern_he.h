@@ -580,6 +580,7 @@ protected:
 	void o100_startScriptUnk();
 	void o100_redimArray();
 	void o100_roomOps();
+	void o100_setSystemMessage();
 	void o100_startSound();
 	void o100_setSpriteInfo();
 	void o100_startScript();
