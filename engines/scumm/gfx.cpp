@@ -1705,8 +1705,6 @@ void Gdi::copyVirtScreenBuffers(Common::Rect rect, int dirtybit) {
 	byte *src, *dst;
 	VirtScreen *vs = &_vm->virtscr[0];
 
-	debug(1,"copyVirtScreenBuffers: Left %d Right %d Top %d Bottom %d", rect.left, rect.right, rect.top, rect.bottom);
-
 	if (rect.top > vs->h || rect.bottom < 0)
 		return;
 

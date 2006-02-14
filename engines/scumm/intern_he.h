@@ -168,7 +168,7 @@ protected:
 	void o70_getStringLenForWidth();
 	void o70_getCharIndexInString();
 	void o70_setFilePath();
-	void o70_setWindowCaption();
+	void o70_setSystemMessage();
 	void o70_polygonOps();
 	void o70_polygonHit();
 
@@ -320,7 +320,7 @@ protected:
 	void o72_writeINI();
 	void o72_getResourceSize();
 	void o72_setFilePath();
-	void o72_setWindowCaption();
+	void o72_setSystemMessage();
 
 	byte VAR_NUM_ROOMS;
 	byte VAR_NUM_SCRIPTS;

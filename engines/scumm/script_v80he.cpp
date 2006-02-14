@@ -356,7 +356,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		/* F8 */
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
-		OPCODE(o72_setWindowCaption),
+		OPCODE(o72_setSystemMessage),
 		OPCODE(o70_polygonOps),
 		/* FC */
 		OPCODE(o70_polygonHit),

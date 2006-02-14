@@ -357,7 +357,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		/* F8 */
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_setFilePath),
-		OPCODE(o72_setWindowCaption),
+		OPCODE(o72_setSystemMessage),
 		OPCODE(o70_polygonOps),
 		/* FC */
 		OPCODE(o70_polygonHit),
@@ -2240,7 +2240,7 @@ void ScummEngine_v72he::o72_getResourceSize() {
 		type = rtScript;
 		break;
 	default:
-		error("o80_getResourceSize: default type %d", subOp);
+		error("o72_getResourceSize: default type %d", subOp);
 	}
 
 	ptr = getResourceAddress(type, resid);
@@ -2250,18 +2250,34 @@ void ScummEngine_v72he::o72_getResourceSize() {
 }
 
 void ScummEngine_v72he::o72_setFilePath() {
-	// File related
 	byte filename[255];
+
 	copyScriptString(filename, sizeof(filename));
 	debug(1,"o72_setFilePath: %s", filename);
 }
 
-void ScummEngine_v72he::o72_setWindowCaption() {
+void ScummEngine_v72he::o72_setSystemMessage() {
 	byte name[1024];
+
 	copyScriptString(name, sizeof(name));
 	byte subOp = fetchScriptByte();
 
-	debug(1,"o72_setWindowCaption: (%d) %s", subOp, name);
+	switch (subOp) {
+	case 240:
+		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	case 241:  // Set Version
+		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	case 242:
+		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	case 243: // Set Window Caption
+		_system->setWindowCaption((const char *)name);
+		break;
+	default:
+		error("o72_setSystemMessage: default case %d", subOp);
+	}
 }
 
 void ScummEngine_v72he::decodeParseString(int m, int n) {

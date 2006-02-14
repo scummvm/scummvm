@@ -24,6 +24,7 @@
 #include "common/stdafx.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -354,7 +355,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o70_setFilePath),
-		OPCODE(o70_setWindowCaption),
+		OPCODE(o70_setSystemMessage),
 		OPCODE(o70_polygonOps),
 		/* FC */
 		OPCODE(o70_polygonHit),
@@ -1070,23 +1071,42 @@ void ScummEngine_v70he::o70_getCharIndexInString() {
 }
 
 void ScummEngine_v70he::o70_setFilePath() {
-	// File related
 	int len;
 	byte filename[100];
 
 	convertMessageToString(_scriptPointer, filename, sizeof(filename));
-
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
 	debug(1,"stub o70_setFilePath(%s)", filename);
 }
 
-void ScummEngine_v70he::o70_setWindowCaption() {
+void ScummEngine_v70he::o70_setSystemMessage() {
+	int len;
+	byte name[255];
+
 	byte subOp = fetchScriptByte();
-	int len = resStrLen(_scriptPointer);
-	debug(1,"stub o70_setWindowCaption(%d, \"%s\")", subOp, _scriptPointer);
+
+	convertMessageToString(_scriptPointer, name, sizeof(name));
+	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
+
+	switch (subOp) {
+	case 240:
+		debug(1,"o70_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	case 241:  // Set Version
+		debug(1,"o70_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	case 242:
+		debug(1,"o70_setSystemMessage: (%d) %s", subOp, name);
+		break;
+	case 243: // Set Window Caption
+		_system->setWindowCaption((const char *)name);
+		break;
+	default:
+		error("o70_setSystemMessage: default case %d", subOp);
+	}
 }
 
 void ScummEngine_v70he::o70_polygonOps() {
