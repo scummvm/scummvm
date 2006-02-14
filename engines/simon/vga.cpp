@@ -680,6 +680,10 @@ void SimonEngine::vc10_draw() {
 	}
 	state.y = (int16)vcReadNextWord();
 
+	if (getGameType() == GType_FF) {
+		state.y -= _scrollY;
+	}
+
 	if (getGameType() == GType_SIMON1) {
 		state.flags = vcReadNextWord();
 	} else {
