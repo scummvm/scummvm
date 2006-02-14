@@ -45,7 +45,6 @@ Debugger::Debugger(KyraEngine *vm)
 	DCmd_Register("timers",				&Debugger::cmd_listTimers);
 	DCmd_Register("settimercountdown",	&Debugger::cmd_setTimerCountdown);
 	DCmd_Register("give",				&Debugger::cmd_giveItem);
-	DCmd_Register("toggle_debug",		&Debugger::cmd_toggleDebug);
 }
 
 void Debugger::preEnter() {
@@ -202,64 +201,6 @@ bool Debugger::cmd_giveItem(int argc, const char **argv) {
 	} else
 		DebugPrintf("Syntax: give <itemid>\n");
 		
-	return true;
-}
-
-bool Debugger::cmd_toggleDebug(int argc, const char **argv) {
-	if (argc < 2) {
-		DebugPrintf("Syntax: toggle_debug <level>\n");
-		DebugPrintf("Where level is one of:\n");
-		DebugPrintf("ScriptFuncs, Script, Sprites, Screen, Sound, Animator, Main, GUI, Sequence, Movie\n");
-		DebugPrintf("or: EALL for enabling all and DALL for disabling all\n");
-		return true;
-	}
-	
-	struct ArgList {
-		const char* param;
-		int level;
-	};
-	
-	static const ArgList argList[] = {
-		{ "ScriptFuncs", kDebugLevelScriptFuncs },
-		{ "Script", kDebugLevelScript },
-		{ "Sprites", kDebugLevelSprites },
-		{ "Screen", kDebugLevelScreen },
-		{ "Sound", kDebugLevelSound },
-		{ "Animator", kDebugLevelAnimator },
-		{ "Main", kDebugLevelMain },
-		{ "GUI", kDebugLevelGUI },
-		{ "Sequence", kDebugLevelSequence },
-		{ "Movie", kDebugLevelMovie },
-		{ 0, 0 },
-	};
-	
-	for (int i = 0; argList[i].param != 0; ++i) {
-		if (!scumm_stricmp(argList[i].param, argv[1])) {
-			if (!(_vm->debugLevels() & argList[i].level)) {
-				_vm->enableDebugLevel(argList[i].level);
-				DebugPrintf("Enabled debug level: '%s'\n", argList[i].param);
-			} else {
-				_vm->disableDebugLevel(argList[i].level);
-				DebugPrintf("Disabled debug level: '%s'\n", argList[i].param);
-			}
-			return true;
-		}
-	}
-	
-	if (!scumm_stricmp("EALL", argv[1])) {
-		for (int i = 0; argList[i].param != 0; ++i) {
-			_vm->enableDebugLevel(argList[i].level);
-		}
-		DebugPrintf("Enabled all debug levels!\n");
-	} else if (!scumm_stricmp("DALL", argv[1])) {
-		for (int i = 0; argList[i].param != 0; ++i) {
-			_vm->disableDebugLevel(argList[i].level);
-		}
-		DebugPrintf("Disabled all debug levels!\n");
-	} else {
-		DebugPrintf("Unknown debug level: '%s'\n", argv[1]);
-	}
-	
 	return true;
 }
 } // End of namespace Kyra

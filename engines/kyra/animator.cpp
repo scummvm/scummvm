@@ -43,7 +43,7 @@ ScreenAnimator::~ScreenAnimator() {
 }
 
 void ScreenAnimator::init(int actors_, int items_, int sprites_) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::init(%d, %d, %d)", actors_, items_, sprites_);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::init(%d, %d, %d)", actors_, items_, sprites_);
 	_screenObjects = new AnimObject[actors_ + items_ + sprites_];
 	assert(_screenObjects);
 	memset(_screenObjects, 0, sizeof(AnimObject) * (actors_ + items_ + sprites_));
@@ -56,7 +56,7 @@ void ScreenAnimator::init(int actors_, int items_, int sprites_) {
 }
 
 void ScreenAnimator::close() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::close()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::close()");
 	if (_initOk) {
 		_initOk = false;
 		delete [] _screenObjects;
@@ -107,7 +107,7 @@ void ScreenAnimator::initAnimStateList() {
 }
 
 void ScreenAnimator::preserveAllBackgrounds() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::preserveAllBackgrounds()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::preserveAllBackgrounds()");
 	uint8 curPage = _screen->_curPage;
 	_screen->_curPage = 2;
 
@@ -123,7 +123,7 @@ void ScreenAnimator::preserveAllBackgrounds() {
 }
 
 void ScreenAnimator::flagAllObjectsForBkgdChange() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::flagAllObjectsForBkgdChange()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::flagAllObjectsForBkgdChange()");
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
 		curObject->bkgdChangeFlag = 1;
@@ -132,7 +132,7 @@ void ScreenAnimator::flagAllObjectsForBkgdChange() {
 }
 
 void ScreenAnimator::flagAllObjectsForRefresh() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::flagAllObjectsForRefresh()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::flagAllObjectsForRefresh()");
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
 		curObject->refreshFlag = 1;
@@ -141,7 +141,7 @@ void ScreenAnimator::flagAllObjectsForRefresh() {
 }
 
 void ScreenAnimator::restoreAllObjectBackgrounds() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::restoreAllObjectBackground()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::restoreAllObjectBackground()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
 	
@@ -158,7 +158,7 @@ void ScreenAnimator::restoreAllObjectBackgrounds() {
 }
 
 void ScreenAnimator::preserveAnyChangedBackgrounds() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::preserveAnyChangedBackgrounds()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::preserveAnyChangedBackgrounds()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
 	
@@ -174,7 +174,7 @@ void ScreenAnimator::preserveAnyChangedBackgrounds() {
 }
 
 void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::preserveOrRestoreBackground(0x%X, restore)", obj, restore);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::preserveOrRestoreBackground(0x%X, restore)", obj, restore);
 	int x = 0, y = 0, width = obj->width << 3, height = obj->height;
 	
 	if (restore) {
@@ -209,7 +209,7 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 }
 
 void ScreenAnimator::prepDrawAllObjects() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::prepDrawAllObjects()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::prepDrawAllObjects()");
 	AnimObject *curObject = _objectQueue;
 	int drawPage = 2;
 	int flagUnk1 = 0, flagUnk2 = 0, flagUnk3 = 0;
@@ -366,7 +366,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 }
 
 void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::copyChangedObjectsForward(%d)", refreshFlag);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::copyChangedObjectsForward(%d)", refreshFlag);
 	AnimObject *curObject = _objectQueue;
 
 	while (curObject) {
@@ -404,7 +404,7 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 }
 
 void ScreenAnimator::updateAllObjectShapes() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::updateAllObjectShapes()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::updateAllObjectShapes()");
 	restoreAllObjectBackgrounds();
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
@@ -412,7 +412,7 @@ void ScreenAnimator::updateAllObjectShapes() {
 }
 
 void ScreenAnimator::animRemoveGameItem(int index) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::animRemoveGameItem(%d)", index);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::animRemoveGameItem(%d)", index);
 	restoreAllObjectBackgrounds();
 	
 	AnimObject *animObj = &_items[index];
@@ -427,7 +427,7 @@ void ScreenAnimator::animRemoveGameItem(int index) {
 }
 
 void ScreenAnimator::animAddGameItem(int index, uint16 sceneId) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::animRemoveGameItem(%d, %d)", index, sceneId);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::animRemoveGameItem(%d, %d)", index, sceneId);
 	restoreAllObjectBackgrounds();
 	assert(sceneId < _vm->_roomTableSize);
 	Room *currentRoom = &_vm->_roomTable[sceneId];
@@ -453,7 +453,7 @@ void ScreenAnimator::animAddGameItem(int index, uint16 sceneId) {
 }
 
 void ScreenAnimator::animAddNPC(int character) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::animAddNPC(%d)", character);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::animAddNPC(%d)", character);
 	restoreAllObjectBackgrounds();
 	AnimObject *animObj = &_actors[character];
 	const Character *ch = &_vm->_characterList[character];
@@ -477,7 +477,7 @@ void ScreenAnimator::animAddNPC(int character) {
 }
 
 AnimObject *ScreenAnimator::objectRemoveQueue(AnimObject *queue, AnimObject *rem) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::objectRemoveQueue(0x%X, 0x%X)", queue, rem);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::objectRemoveQueue(0x%X, 0x%X)", queue, rem);
 	AnimObject *cur = queue;
 	AnimObject *prev = queue;
 
@@ -513,13 +513,13 @@ AnimObject *ScreenAnimator::objectRemoveQueue(AnimObject *queue, AnimObject *rem
 }
 
 AnimObject *ScreenAnimator::objectAddHead(AnimObject *queue, AnimObject *head) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::objectAddHead(0x%X, 0x%X)", queue, head);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::objectAddHead(0x%X, 0x%X)", queue, head);
 	head->nextAnimObject = queue;
 	return head;
 }
 
 AnimObject *ScreenAnimator::objectQueue(AnimObject *queue, AnimObject *add) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::objectQueue(0x%X, 0x%X)", queue, add);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::objectQueue(0x%X, 0x%X)", queue, add);
 	if (add->drawY <= queue->drawY || !queue) {
 		add->nextAnimObject = queue;
 		return add;
@@ -545,7 +545,7 @@ AnimObject *ScreenAnimator::objectQueue(AnimObject *queue, AnimObject *add) {
 }
 
 void ScreenAnimator::addObjectToQueue(AnimObject *object) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::addObjectToQueue(0x%X)", object);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::addObjectToQueue(0x%X)", object);
 	if (!_objectQueue) {
 		_objectQueue = objectAddHead(0, object);
 	} else {
@@ -554,7 +554,7 @@ void ScreenAnimator::addObjectToQueue(AnimObject *object) {
 }
 
 void ScreenAnimator::refreshObject(AnimObject *object) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::refreshObject(0x%X)", object);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::refreshObject(0x%X)", object);
 	_objectQueue = objectRemoveQueue(_objectQueue, object);
 	if (_objectQueue) {
 		_objectQueue = objectQueue(_objectQueue, object);
@@ -564,7 +564,7 @@ void ScreenAnimator::refreshObject(AnimObject *object) {
 }
 
 void ScreenAnimator::makeBrandonFaceMouse() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::makeBrandonFaceMouse()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::makeBrandonFaceMouse()");
 	if (_vm->mouseX() >= _vm->_currentCharacter->x1) {
 		_vm->_currentCharacter->facing = 3;
 	} else {
@@ -575,21 +575,21 @@ void ScreenAnimator::makeBrandonFaceMouse() {
 }
 
 int16 ScreenAnimator::fetchAnimWidth(const uint8 *shape, int16 mult) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::fetchAnimWidth(0x%X, %d)", shape, mult);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::fetchAnimWidth(0x%X, %d)", shape, mult);
 	if (_vm->features() & GF_TALKIE)
 		shape += 2;
 	return (((int16)READ_LE_UINT16((shape+3))) * mult) >> 8;
 }
 
 int16 ScreenAnimator::fetchAnimHeight(const uint8 *shape, int16 mult) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::fetchAnimHeight(0x%X, %d)", shape, mult);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::fetchAnimHeight(0x%X, %d)", shape, mult);
 	if (_vm->features() & GF_TALKIE)
 		shape += 2;
 	return (int16)(((int8)*(shape+2)) * mult) >> 8;
 }
 
 void ScreenAnimator::setBrandonAnimSeqSize(int width, int height) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::setBrandonAnimSeqSize(%d, %d)", width, height);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::setBrandonAnimSeqSize(%d, %d)", width, height);
 	restoreAllObjectBackgrounds();
 	_brandonAnimSeqSizeWidth = _actors[0].width;
 	_brandonAnimSeqSizeHeight = _actors[0].height;
@@ -599,7 +599,7 @@ void ScreenAnimator::setBrandonAnimSeqSize(int width, int height) {
 }
 
 void ScreenAnimator::resetBrandonAnimSeqSize() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::resetBrandonAnimSeqSize()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::resetBrandonAnimSeqSize()");
 	restoreAllObjectBackgrounds();
 	_actors[0].width = _brandonAnimSeqSizeWidth;
 	_actors[0].height = _brandonAnimSeqSizeHeight;
@@ -607,7 +607,7 @@ void ScreenAnimator::resetBrandonAnimSeqSize() {
 }
 
 void ScreenAnimator::animRefreshNPC(int character) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::animRefreshNPC(%d)", character);
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::animRefreshNPC(%d)", character);
 	AnimObject *animObj = &_actors[character];
 	Character *ch = &_vm->characterList()[character];
 
@@ -664,7 +664,7 @@ void ScreenAnimator::animRefreshNPC(int character) {
 }
 
 void ScreenAnimator::setCharacterDefaultFrame(int character) {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::setCharacterDefaultFrame()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::setCharacterDefaultFrame()");
 	static uint16 initFrameTable[] = {
 		7, 41, 77, 0, 0
 	};
@@ -677,7 +677,7 @@ void ScreenAnimator::setCharacterDefaultFrame(int character) {
 }
 
 void ScreenAnimator::setCharactersHeight() {
-	debug(9, kDebugLevelAnimator, "ScreenAnimator::setCharactersHeight()");
+	debugC(9, kDebugLevelAnimator, "ScreenAnimator::setCharactersHeight()");
 	static int8 initHeightTable[] = {
 		48, 40, 48, 47, 56,
 		44, 42, 47, 38, 35,

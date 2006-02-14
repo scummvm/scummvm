@@ -50,7 +50,6 @@ protected:
 	bool cmd_listTimers(int argc, const char **argv);
 	bool cmd_setTimerCountdown(int argc, const char **argv);
 	bool cmd_giveItem(int argc, const char **argv);
-	bool cmd_toggleDebug(int argc, const char **argv);
 };
 
 } // End of namespace Kyra

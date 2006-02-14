@@ -217,7 +217,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	if (opcode > 18) {
 		error("Script unknown command: %d", opcode);
 	} else {
-		debug(5, kDebugLevelScript, "%s([%d/%u])", _commands[opcode].desc, _parameter, (uint)_parameter);
+		debugC(5, kDebugLevelScript, "%s([%d/%u])", _commands[opcode].desc, _parameter, (uint)_parameter);
 		(this->*(_commands[opcode].proc))(script);
 	}
 	

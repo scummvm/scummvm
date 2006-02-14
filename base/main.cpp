@@ -274,7 +274,7 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 	return (dlg.runModal() != -1);
 }
 
-static int runGame(GameDetector &detector, OSystem &system) {
+static int runGame(GameDetector &detector, OSystem &system, const Common::String &edebuglevels) {
 	// Create the game engine
 	Engine *engine = detector.createEngine(&system);
 	if (!engine) {
@@ -285,6 +285,8 @@ static int runGame(GameDetector &detector, OSystem &system) {
 		return 0;
 	}
 
+	// Now the engine should've set up all debug levels so we can use the command line arugments here
+	enableSpecialDebugLevelList(edebuglevels);
 
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
@@ -314,6 +316,9 @@ static int runGame(GameDetector &detector, OSystem &system) {
 		result = engine->go();
 	}
 
+	// We clear all debug levels again even though the engine should do it
+	Common::clearAllSpecialDebugLevels();
+
 	// Free up memory
 	delete engine;
 
@@ -331,6 +336,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 extern "C" int main(int argc, char *argv[]) {
 #endif
 	char *cfgFilename = NULL;
+	Common::String specialDebug = "";
 	char *s=NULL;//argv[1]; SumthinWicked says: cannot assume that argv!=NULL here! eg. Symbian's CEBasicAppUI::SDLStartL() calls as main(0,NULL), if you want to change plz #ifdef __SYMBIAN32__
 	bool running = true;
 
@@ -387,13 +393,20 @@ extern "C" int main(int argc, char *argv[]) {
 	// Quick preparse of command-line, looking for alt configfile path
 	for (int i = argc - 1; i >= 1; i--) {
 		s = argv[i];
-		bool shortOpt = (s[0] == '-' && tolower(s[1]) == 'c');
-		bool longOpt  = (s[0] == '-' && s[1] == '-'  && s[2] == 'c' && s[3] == 'o' \
-				 && s[4] == 'n' && s[5] == 'f' && s[6] == 'i' && s[7] == 'g');
+		bool shortOpt = !scumm_strnicmp(s, "-c", 2);
+		bool longOpt = !strncmp(s, "--config", 8);
 
 		if (shortOpt || longOpt) {
-			if (longOpt) s+=9;
-			if (shortOpt) s+=2;
+			if (longOpt) {
+				if (strlen(s) < 9)
+					continue;
+				s+=9;
+			}
+			if (shortOpt) {
+				if (strlen(s) < 2)
+					continue;
+				s+=2;
+			}
 
 			if (*s == '\0')
 				break;
@@ -416,6 +429,24 @@ extern "C" int main(int argc, char *argv[]) {
 	if (!ConfMan.hasKey("autosave_period")) {
 		// By default, trigger autosave every 5 minutes
 		ConfMan.set("autosave_period", 5 * 60, Common::ConfigManager::kApplicationDomain);
+	}
+
+	// Quick preparse of command-line, looking for special debug flags
+	for (int i = argc - 1; i >= 1; i--) {
+		s = argv[i];
+		bool found = !strncmp(s, "--debugflags", 12);
+
+		if (found) {
+			if (strlen(s) < 13)
+				continue;
+
+			s+=13;
+			if (*s == '\0')
+				break;
+
+			specialDebug = s;
+			break;
+		}
 	}
 
 	// Load the plugins
@@ -469,7 +500,7 @@ extern "C" int main(int argc, char *argv[]) {
 			// to save memory
 			PluginManager::instance().unloadPluginsExcept(detector._plugin);
 
-			int result = runGame(detector, system);
+			int result = runGame(detector, system, specialDebug);
 			if (result == 0)
 				break;
 

@@ -95,6 +95,10 @@ protected:
 	void DVar_Register(const char *varname, void *pointer, int type, int optional);
 	void DCmd_Register(const char *cmdname, DebugProc pointer);
 
+	bool Cmd_DebugFlagsList(int argc, const char **argv);
+	bool Cmd_DebugFlagEnable(int argc, const char **argv);
+	bool Cmd_DebugFlagDisable(int argc, const char **argv);
+
 #if USE_CONSOLE
 	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
 	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon);

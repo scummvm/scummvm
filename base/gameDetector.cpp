@@ -83,6 +83,8 @@ static const char USAGE_STRING[] =
 	"  -n, --subtitles          Enable subtitles (use with games that have voice)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
+	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
+	"                           (separated by commas)\n"
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
 	"                           exists in the current directory\n"
 	"\n"
@@ -409,6 +411,10 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			DO_OPTION_OPT('d', "debuglevel")
 				gDebugLevel = option ? (int)strtol(option, 0, 10) : 0;
 				printf("Debuglevel (from command line): %d\n", gDebugLevel);
+			END_OPTION
+
+			DO_LONG_OPTION("debugflags")
+				// Dummy
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")

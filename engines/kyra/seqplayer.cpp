@@ -64,7 +64,7 @@ SeqPlayer::~SeqPlayer() {
 }
 
 uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
-	debug( 9, kDebugLevelSequence, "SeqPlayer::setPanPages(%d, %d)", pageNum, shape);
+	debugC( 9, kDebugLevelSequence, "SeqPlayer::setPanPages(%d, %d)", pageNum, shape);
 	uint8 *panPage = 0;
 	const uint8 *data = _screen->getPagePtr(pageNum);
 	uint16 numShapes = READ_LE_UINT16(data);
@@ -88,7 +88,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 }
 
 void SeqPlayer::makeHandShapes() {
-	debug( 9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
+	debugC( 9, kDebugLevelSequence, "SeqPlayer::makeHandShapes()");
 	_vm->loadBitmap("WRITING.CPS", 3, 3, 0);
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		if (_handShapes[i])
@@ -98,7 +98,7 @@ void SeqPlayer::makeHandShapes() {
 }
 
 void SeqPlayer::freeHandShapes() {
-	debug( 9, kDebugLevelSequence, "SeqPlayer::freeHandShapes()");
+	debugC( 9, kDebugLevelSequence, "SeqPlayer::freeHandShapes()");
 	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		free(_handShapes[i]);
 		_handShapes[i] = 0;
@@ -461,7 +461,7 @@ void SeqPlayer::s1_prefetchVocFile() {
 }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
-	debug( 9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
+	debugC( 9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
 	assert(seqData);
 	
 	static SeqEntry floppySeqProcs[] = {
@@ -623,7 +623,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		uint8 seqCode = *_seqData++;
 		if (seqCode < numCommands) {
 			SeqProc currentProc = commands[seqCode].proc;
-			debug( 5, kDebugLevelSequence, "seqCode = %d (%s)", seqCode, commands[seqCode].desc);
+			debugC( 5, kDebugLevelSequence, "seqCode = %d (%s)", seqCode, commands[seqCode].desc);
 			(this->*currentProc)();
 		} else {
 			error("Invalid sequence opcode %d", seqCode);

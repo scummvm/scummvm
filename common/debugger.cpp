@@ -43,6 +43,10 @@ Debugger<T>::Debugger() {
 	_debuggerDialog = new GUI::ConsoleDialog(1.0, 0.67F);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
+
+	DCmd_Register("debugflag_list",			&Debugger<T>::Cmd_DebugFlagsList);
+	DCmd_Register("debugflag_enable",		&Debugger<T>::Cmd_DebugFlagEnable);
+	DCmd_Register("debugflag_disable",		&Debugger<T>::Cmd_DebugFlagDisable);
 }
 
 template <class T>
@@ -338,6 +342,51 @@ void Debugger<T>::DCmd_Register(const char *cmdname, DebugProc pointer) {
 	_dcmds[_dcmd_count].function = pointer;
 
 	_dcmd_count++;
+}
+
+template <class T>
+bool Debugger<T>::Cmd_DebugFlagsList(int argc, const char **argv) {
+	const Common::Array<Common::EngineDebugLevel> &debugLevels = Common::listSpecialDebugLevels();
+
+	DebugPrintf("Engine debug levels:\n");
+	DebugPrintf("--------------------\n");
+	if (!debugLevels.size()) {
+		DebugPrintf("No engine debug levels\n");
+		return true;
+	}
+	for (uint i = 0; i < debugLevels.size(); ++i) {
+		DebugPrintf("'%s' - Description: %s\n", debugLevels[i].option.c_str(), debugLevels[i].description.c_str());
+	}
+	DebugPrintf("\n");
+	return true;
+}
+
+template <class T>
+bool Debugger<T>::Cmd_DebugFlagEnable(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("debugflag_enable <flag>\n");
+	} else {
+		if (Common::enableSpecialDebugLevel(argv[1])) {
+			DebugPrintf("Enabled debug flag '%s'\n", argv[1]);
+		} else {
+			DebugPrintf("Failed to enable debug flag '%s'\n", argv[1]);
+		}
+	}
+	return true;
+}
+
+template <class T>
+bool Debugger<T>::Cmd_DebugFlagDisable(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("debugflag_disable <flag>\n");
+	} else {
+		if (Common::disableSpecialDebugLevel(argv[1])) {
+			DebugPrintf("Disabled debug flag '%s'\n", argv[1]);
+		} else {
+			DebugPrintf("Failed to disable debug flag '%s'\n", argv[1]);
+		}
+	}
+	return true;
 }
 
 // Console handler

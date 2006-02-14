@@ -23,6 +23,8 @@
 #define COMMON_UTIL_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
+#include "common/array.h"
 
 #if defined (__INNOTEK_LIBC__)
 #undef MIN
@@ -45,8 +47,6 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 namespace Common {
-
-class String;
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
@@ -196,6 +196,67 @@ extern RenderMode parseRenderMode(const String &str);
 extern const char *getRenderModeCode(RenderMode id);
 extern const char *getRenderModeDescription(RenderMode id);
 
+
+struct EngineDebugLevel {
+	EngineDebugLevel() : option(""), description(""), level(0), enabled(false) {}
+	EngineDebugLevel(uint32 l, const String &o, const String &d)
+		: option(o), description(d), level(l), enabled(false) {}
+	EngineDebugLevel(const EngineDebugLevel &copy)
+		: option(copy.option), description(copy.description), level(copy.level), enabled(copy.enabled) {}
+
+	EngineDebugLevel &operator =(const EngineDebugLevel &copy) {
+		option = copy.option;
+		description = copy.description;
+		level = copy.level;
+		enabled = copy.enabled;
+		return *this;
+	}
+
+	String option;
+	String description;
+
+	uint32 level;
+	bool enabled;
+};
+
+/**
+ * Adds a engine debug level.
+ * @param level the level flag (should be OR-able i.e. first one should be 1 than 2,4,...)
+ * @param option the option name which is used in the debugger/on the command line to enable
+ *               this special debug level, the option will be compared case !insentiv! later
+ * @param descripton the description which shows up in the debugger
+ * @return true on success false on failure
+ */
+bool addSpecialDebugLevel(uint32 level, const String &option, const String &description);
+
+/**
+ * Resets all engine debug levels
+ */
+void clearAllSpecialDebugLevels();
+
+/**
+ * Enables a engine debug level
+ * @param option the option which should be enabled
+ * @return true on success false on failure
+ */
+bool enableSpecialDebugLevel(const String &option);
+
+// only used for parsing the levels from the commandline
+void enableSpecialDebugLevelList(const String &option);
+
+/**
+ * Disables a engine debug level
+ * @param option the option to disable
+ * @return true on success false on failure
+ */
+bool disableSpecialDebugLevel(const String &option);
+
+/**
+ * Lists all debug levels
+ * @return returns a arry with all debug levels
+ */
+const Array<EngineDebugLevel> &listSpecialDebugLevels();
+
 }	// End of namespace Common
 
 
@@ -212,6 +273,8 @@ void CDECL debug(int level, const char *s, ...);
 void CDECL debug(const char *s, ...);
 void CDECL debugN(int level, const char *s, ...);
 void checkHeap();
+
+void CDECL debugC(int level, uint32 engine_level, const char *s, ...);
 
 extern int gDebugLevel;
 

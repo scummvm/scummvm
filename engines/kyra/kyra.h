@@ -80,9 +80,6 @@ enum kDebugLevels {
 	kDebugLevelMovie = 1 << 9				// prints debug output of movie specific funtions
 };
 
-// our intern debug function
-void debug(int level, int level2, const char *s, ...);
-
 struct Character {
 	uint16 sceneId;
 	uint8 height;
@@ -264,10 +261,6 @@ public:
 
 	uint8 game() const { return _game; }
 	uint32 features() const { return _features; }
-	
-	void enableDebugLevel(int level) { _debugLevelsEnabled |= level; }
-	void disableDebugLevel(int level) { _debugLevelsEnabled &= ~level; }
-	int debugLevels() const { return _debugLevelsEnabled; }
 
 	uint8 **shapes() { return _shapes; }
 	Character *currentCharacter() { return _currentCharacter; }
@@ -691,8 +684,6 @@ protected:
 	void gui_redrawTextfield();
 	void gui_fadePalette();
 	void gui_restorePalette();
-	
-	int _debugLevelsEnabled;	// the enabled debug levels
 
 	uint8 _game;
 	bool _quitFlag;

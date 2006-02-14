@@ -275,5 +275,82 @@ const char *getRenderModeDescription(RenderMode id) {
 	return 0;
 }
 
+#pragma mark -
+
+Array<EngineDebugLevel> gDebugLevels;
+uint32 gDebugLevelsEnabled = 0;
+
+bool addSpecialDebugLevel(uint32 level, const String &option, const String &description) {
+	for (uint i = 0; i < gDebugLevels.size(); ++i) {
+		if (!scumm_stricmp(option.c_str(), gDebugLevels[i].option.c_str())) {
+			warning("Declared engine debug level '%s' again", option.c_str());
+			gDebugLevels[i] = EngineDebugLevel(level, option, description);
+			return true;
+		}
+	}
+	gDebugLevels.push_back(EngineDebugLevel(level, option, description));
+	return true;
+}
+
+void clearAllSpecialDebugLevels() {
+	gDebugLevelsEnabled = 0;
+	gDebugLevels.clear();
+}
+
+bool enableSpecialDebugLevel(const String &option) {
+	for (uint i = 0; i < gDebugLevels.size(); ++i) {
+		if (!scumm_stricmp(option.c_str(), gDebugLevels[i].option.c_str())) {
+			gDebugLevelsEnabled |= gDebugLevels[i].level;
+			gDebugLevels[i].enabled = true;
+			return true;
+		}
+	}
+	return false;
+}
+
+void enableSpecialDebugLevelList(const String &option) {
+	uint start = 0;
+	uint end = 0;
+	
+	const char *str = option.c_str();
+	for (end = start + 1; end <= option.size(); ++end) {
+		if (str[end] == ',' || end == option.size()) {
+			if (!enableSpecialDebugLevel(Common::String(&str[start], end-start))) {
+				warning("Engine does not support debug level '%s'", Common::String(&str[start], end-start).c_str());
+			}
+			start = end + 1;
+		}
+	}
+}
+
+bool disableSpecialDebugLevel(const String &option) {
+	for (uint i = 0; i < gDebugLevels.size(); ++i) {
+		if (!scumm_stricmp(option.c_str(), gDebugLevels[i].option.c_str())) {
+			gDebugLevelsEnabled &= ~gDebugLevels[i].level;
+			gDebugLevels[i].enabled = false;
+			return true;
+		}
+	}
+	return false;
+}
+
+const Array<EngineDebugLevel> &listSpecialDebugLevels() {
+	return gDebugLevels;
+}
 
 }	// End of namespace Common
+
+void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
+		return;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+	// pass it to debug for now
+	debug(level, buf);
+}
