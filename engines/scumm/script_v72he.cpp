@@ -2189,8 +2189,8 @@ void ScummEngine_v72he::o72_writeINI() {
 		copyScriptString(string, sizeof(string));
 		copyScriptString(option, sizeof(option));
 
-		// Filter out useless settings
-		if (!strcmp((char *)option, "HETest") || !strcmp((char *)option, "Version"))
+		// Filter out useless setting
+		if (!strcmp((char *)option, "HETest"))
 			return;
 
 		// Filter out confusing subtitle setting
