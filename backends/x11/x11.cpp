@@ -56,195 +56,156 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <backends/x11/x11.h>
 
-class OSystem_X11:public OSystem {
-public:
-	// Determine whether the backend supports the specified feature.
-	bool hasFeature(Feature f);
+OSystem *OSystem_X11_create() {
+	return OSystem_X11::create(0, 0);
+}
 
-	// En-/disable the specified feature.
-	void setFeatureState(Feature f, bool enable);
+OSystem *OSystem_X11::create(int gfx_mode, bool full_screen) {
+	OSystem_X11 *syst = new OSystem_X11();
+	return syst;
+}
 
-	// Query the state of the specified feature.
-	bool getFeatureState(Feature f);
+OSystem_X11::OSystem_X11() {
+	/* Some members initialization */
+	_fake_right_mouse = 0;
+	_report_presses = 1;
+	_current_shake_pos = 0;
+	_new_shake_pos = 0;
+	_palette_changed = false;
+	_num_of_dirty_rects = 0;
+	_overlay_visible = false;
+	_mouse_state_changed = true;
+	_mouse_visible = true;
+	_ms_buf = NULL;
+	_curMouseState.x = 0;
+	_curMouseState.y = 0;
+	_curMouseState.hot_x = 0;
+	_curMouseState.hot_y = 0;
+	_curMouseState.w = 0;
+	_curMouseState.h = 0;
+	_palette16 = 0;
+	_palette32 = 0;
+	_bytesPerPixel = 0;
+	_image = 0;
+	_local_fb = 0;
+	_local_fb_overlay = 0;
+}
 
-	// Retrieve a list of all graphics modes supported by this backend.
-	const GraphicsMode *getSupportedGraphicsModes() const;
+OSystem_X11::~OSystem_X11() {
+	XFree(_image);
+	if (_palette16)
+		free(_palette16);
 
-	// Return the ID of the 'default' graphics mode.
-	int getDefaultGraphicsMode() const;
+	if (_palette32)
+		free(_palette32);
 
-	// Switch to the specified graphics mode.
-	bool setGraphicsMode(int mode);
+	if (_ms_buf)
+		free(_ms_buf);
 
-	// Determine which graphics mode is currently active.
-	int getGraphicsMode() const;
+	free(_local_fb_overlay);
+	free(_local_fb);
+}
 
-	// Set colors of the palette
-	void setPalette(const byte *colors, uint start, uint num);
+void OSystem_X11::initBackend() {
+	char buf[512];
+	XWMHints *wm_hints;
+	XGCValues values;
+	XTextProperty window_name;
+	char *name = (char *)&buf;
+	/* For the_window title */
+	sprintf(buf, "ScummVM");
 
-	// Set the size of the video bitmap.
-	// Typically, 320x200
-	void initSize(uint w, uint h, int overlaySize);
+	_display = XOpenDisplay(NULL);
+	if (_display == NULL) {
+		error("Could not open display !\n");
+		exit(1);
+	}
 
-	// Draw a bitmap to screen.
-	// The screen will not be updated to reflect the new bitmap
-	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	if (XShmQueryExtension(_display)!=True)
+		error("No Shared Memory Extension present");
 
-	// Update the dirty areas of the screen
-	void updateScreen();
+	_screen = DefaultScreen(_display);
+	_depth = DefaultDepth(_display, _screen);
+	switch (_depth) {
+		case 16 :
+			_bytesPerPixel = 2;
+			break;
+		case 24 :
+		case 32 :
+			_bytesPerPixel = 4;
+			break;
+	}
 
-	// Either show or hide the mouse cursor
-	bool showMouse(bool visible);
+	if (!_bytesPerPixel)
+		error("Your screen depth is %ibit. Values other than 16, 24 and 32bit are currently not supported", _depth);
 
-	// Set the position of the mouse cursor
-	void set_mouse_pos(int x, int y);
+	_window_width = 320;
+	_window_height = 200;
+	_scumm_x = 0;
+	_scumm_y = 0;
+	_window = XCreateSimpleWindow(_display, XRootWindow(_display, _screen), 0, 0, 320, 200, 0, 0, 0);
+	wm_hints = XAllocWMHints();
+	if (wm_hints == NULL) {
+		error("Not enough memory to allocate Hints !\n");
+		exit(1);
+	}
+	wm_hints->flags = InputHint | StateHint;
+	wm_hints->input = True;
+	wm_hints->initial_state = NormalState;
+	XStringListToTextProperty(&name, 1, &window_name);
+	XSetWMProperties(_display, _window, &window_name, &window_name,
+	                 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
+	                 wm_hints, NULL /* class hints */ );
+	XFree(wm_hints);
 
-	// Warp the mouse cursor. Where set_mouse_pos() only informs the
-	// backend of the mouse cursor's current position, this function
-	// actually moves the cursor to the specified position.
-	void warpMouse(int x, int y);
+	XSelectInput(_display, _window,
+	             ExposureMask | KeyPressMask | KeyReleaseMask |
+	             PointerMotionMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
 
-	// Set the bitmap that's used when drawing the cursor.
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor);
+	values.foreground = BlackPixel(_display, _screen);
+	_black_gc = XCreateGC(_display, _window, GCForeground, &values);
 
-	// Shaking is used in SCUMM. Set current shake position.
-	void setShakePos(int shake_pos);
+	XMapWindow(_display, _window);
+	XFlush(_display);
 
-	// Get the number of milliseconds since the program was started.
-	uint32 getMillis();
+	_fb_width = 0;
+	_fb_height = 0;
 
-	// Delay for a specified amount of milliseconds
-	void delayMillis(uint msecs);
+	if (!_palette16)
+		_palette16 = (uint16 *)calloc(256, sizeof(uint16));
+	if (!_palette32 && _bytesPerPixel == 4)
+	_palette32 = (uint32 *)calloc(256, sizeof(uint32));
 
-	// Get the next event.
-	// Returns true if an event was retrieved.
-	bool pollEvent(Event &event);
+	while (1) {
+		XEvent event;
+		XNextEvent(_display, &event);
+		switch (event.type) {
+		case Expose:
+			goto out_of_loop;
+		}
+	}
+out_of_loop:
+	create_empty_cursor();
 
-	// Set function that generates samples
-	bool setSoundCallback(SoundProc proc, void *param);
-	void clearSoundCallback();
+	/* Initialize the timer routines */
+	_timer_active = false;
 
-	// Determine the output sample rate. Audio data provided by the sound
-	// callback will be played using this rate.
-	int getOutputSampleRate() const;
+	/* And finally start the local timer */
+	gettimeofday(&_start_time, NULL);
 
-	// Initialise the specified CD drive for audio playback.
-	bool openCD(int drive);
-
-	// Poll cdrom status
-	// Returns true if cd audio is playing
-	bool pollCD();
-
-	// Play cdrom audio track
-	void playCD(int track, int num_loops, int start_frame, int duration);
-
-	// Stop cdrom audio track
-	void stopCD();
-
-	// Update cdrom audio status
-	void updateCD();
-
-	// Quit
-	void quit();
-
-	// Add a callback timer
-	void setTimerCallback(TimerProc callback, int interval);
-
-	// Mutex handling
-	MutexRef createMutex();
-	void lockMutex(MutexRef mutex);
-	void unlockMutex(MutexRef mutex);
-	void deleteMutex(MutexRef mutex);
-
-	// Overlay handling for the new menu system
-	void showOverlay();
-	void hideOverlay();
-	void clearOverlay();
-	void grabOverlay(int16 *, int);
-	void copyRectToOverlay(const int16 *, int, int, int, int, int);
-	virtual int16 getHeight();
-	virtual int16 getWidth();
-
-	// Set a window caption or any other comparable status display to the
-	// given value.
-	void setWindowCaption(const char *caption);
-
-
-	static OSystem *create(int gfx_mode, bool full_screen);
-
-private:
-	  OSystem_X11();
-
-	typedef struct {
-		int x, y, w, h;
-	} dirty_square;
-
-	void create_empty_cursor();
-	void draw_mouse(dirty_square *dout);
-	void undraw_mouse();
-	void updateScreen_helper(const dirty_square * d, dirty_square * dout);
-	void blit_convert(const dirty_square * d, uint16 *dst, int pitch);
-
-	uint8 *local_fb;
-	uint16 *local_fb_overlay;
-	bool _overlay_visible;
-
-	int window_width, window_height;
-	int fb_width, fb_height;
-	int scumm_x, scumm_y;
-
-	uint16 *palette;
-	bool _palette_changed;
-	Display *display;
-	int screen, depth;
-	Window window;
-	GC black_gc;
-	XImage *image;
-	pthread_t sound_thread;
-
-	int fake_right_mouse;
-	int report_presses;
-	int current_shake_pos;
-	int new_shake_pos;
-	struct timeval start_time;
-
-	enum {
-		MAX_NUMBER_OF_DIRTY_SQUARES = 32
-	};
-	dirty_square ds[MAX_NUMBER_OF_DIRTY_SQUARES];
-	int num_of_dirty_square;
-
-	typedef struct {
-		int x, y;
-		int w, h;
-		int hot_x, hot_y;
-	} mouse_state;
-	mouse_state old_state, cur_state;
-	byte *_ms_buf;
-	bool _mouse_visible;
-	bool _mouse_state_changed;
-	byte _mouseKeycolor;
-
-	uint32 _timer_duration, _timer_next_expiry;
-	bool _timer_active;
-	int (*_timer_callback) (int);
-};
-
-typedef struct {
-	OSystem::SoundProc sound_proc;
-	void *param;
-} THREAD_PARAM;
+}
 
 #undef CAPTURE_SOUND
-
 #define FRAG_SIZE 4096
+
 static void *sound_and_music_thread(void *params) {
 	/* Init sound */
 	int sound_fd, param, frag_size;
 	uint8 sound_buffer[FRAG_SIZE];
-	OSystem::SoundProc sound_proc = ((THREAD_PARAM *) params)->sound_proc;
-	void *proc_param = ((THREAD_PARAM *) params)->param;
+	OSystem::SoundProc sound_proc = ((THREAD_PARAM *)params)->sound_proc;
+	void *proc_param = ((THREAD_PARAM *)params)->param;
 
 #ifdef CAPTURE_SOUND
 	FILE *f = fopen("sound.raw", "wb");
@@ -253,8 +214,8 @@ static void *sound_and_music_thread(void *params) {
 	sound_fd = open("/dev/dsp", O_WRONLY);
 	audio_buf_info info;
 	if (sound_fd < 0) {
-		error("Error opening sound device !\n");
-		exit(1);
+		warning("Error opening sound device!\n");
+		return NULL;
 	}
 	param = 0;
 	frag_size = FRAG_SIZE /* audio fragment size */ ;
@@ -265,39 +226,39 @@ static void *sound_and_music_thread(void *params) {
 	param--;
 	param |= /* audio_fragment_num */ 3 << 16;
 	if (ioctl(sound_fd, SNDCTL_DSP_SETFRAGMENT, &param) != 0) {
-		error("Error in the SNDCTL_DSP_SETFRAGMENT ioctl !\n");
-		exit(1);
+		warning("Error in the SNDCTL_DSP_SETFRAGMENT ioctl!\n");
+		return NULL;
 	}
 	param = AFMT_S16_LE;
 	if (ioctl(sound_fd, SNDCTL_DSP_SETFMT, &param) == -1) {
-		perror("Error in the SNDCTL_DSP_SETFMT ioctl !\n");
-		exit(1);
+		warning("Error in the SNDCTL_DSP_SETFMT ioctl!\n");
+		return NULL;;
 	}
 	if (param != AFMT_S16_LE) {
-		error("AFMT_S16_LE not supported !\n");
-		exit(1);
+		warning("AFMT_S16_LE not supported!\n");
+		return NULL;
 	}
 	param = 2;
 	if (ioctl(sound_fd, SNDCTL_DSP_CHANNELS, &param) == -1) {
-		error("Error in the SNDCTL_DSP_CHANNELS ioctl !\n");
-		exit(1);
+		warning("Error in the SNDCTL_DSP_CHANNELS ioctl!\n");
+		return NULL;
 	}
 	if (param != 2) {
-		error("Stereo mode not supported !\n");
-		exit(1);
+		warning("Stereo mode not supported!\n");
+		return NULL;
 	}
 	param = SAMPLES_PER_SEC;
 	if (ioctl(sound_fd, SNDCTL_DSP_SPEED, &param) == -1) {
-		perror("Error in the SNDCTL_DSP_SPEED ioctl !\n");
-		exit(1);
+		warning("Error in the SNDCTL_DSP_SPEED ioctl!\n");
+		return NULL;
 	}
 	if (param != SAMPLES_PER_SEC) {
-		error("%d kHz not supported !\n", SAMPLES_PER_SEC);
-		exit(1);
+		warning("%d kHz not supported!\n", SAMPLES_PER_SEC);
+		return NULL;
 	}
 	if (ioctl(sound_fd, SNDCTL_DSP_GETOSPACE, &info) != 0) {
-		perror("SNDCTL_DSP_GETOSPACE");
-		exit(-1);
+		warning("SNDCTL_DSP_GETOSPACE");
+		return NULL;
 	}
 
 	sched_yield();
@@ -329,110 +290,12 @@ void OSystem_X11::create_empty_cursor() {
 	static const char data[] = { 0 };
 
 	bg.red = bg.green = bg.blue = 0x0000;
-	pixmapBits = XCreateBitmapFromData(display, XRootWindow(display, screen), data, 1, 1);
+	pixmapBits = XCreateBitmapFromData(_display, XRootWindow(_display, _screen), data, 1, 1);
 	if (pixmapBits) {
-		cursor = XCreatePixmapCursor(display, pixmapBits, pixmapBits, &bg, &bg, 0, 0);
-		XFreePixmap(display, pixmapBits);
+		cursor = XCreatePixmapCursor(_display, pixmapBits, pixmapBits, &bg, &bg, 0, 0);
+		XFreePixmap(_display, pixmapBits);
 	}
-	XDefineCursor(display, window, cursor);
-}
-
-OSystem *OSystem_X11_create() {
-	return OSystem_X11::create(0, 0);
-}
-
-OSystem *OSystem_X11::create(int gfx_mode, bool full_screen) {
-	OSystem_X11 *syst = new OSystem_X11();
-	return syst;
-}
-
-OSystem_X11::OSystem_X11() {
-	char buf[512];
-	XWMHints *wm_hints;
-	XGCValues values;
-	XTextProperty window_name;
-	char *name = (char *)&buf;
-
-	/* Some members initialization */
-	fake_right_mouse = 0;
-	report_presses = 1;
-	current_shake_pos = 0;
-	new_shake_pos = 0;
-	_palette_changed = false;
-	num_of_dirty_square = 0;
-	_overlay_visible = false;
-	_mouse_state_changed = true;
-	_mouse_visible = true;
-	_ms_buf = NULL;
-	cur_state.x = 0;
-	cur_state.y = 0;
-	cur_state.hot_x = 0;
-	cur_state.hot_y = 0;
-	cur_state.w = 0;
-	cur_state.h = 0;
-
-	/* For the window title */
-	sprintf(buf, "ScummVM");
-
-	display = XOpenDisplay(NULL);
-	if (display == NULL) {
-		error("Could not open display !\n");
-		exit(1);
-	}
-
-	if (XShmQueryExtension(display)!=True)
-		error("No Shared Memory Extension present");
-
-	screen = DefaultScreen(display);
-	depth = DefaultDepth(display,screen);
-	if (depth != 16)
-		error("Your screen depth is %ibit. Values other than 16bit are currently not supported", depth);
-
-	window_width = 320;
-	window_height = 200;
-	scumm_x = 0;
-	scumm_y = 0;
-	window = XCreateSimpleWindow(display, XRootWindow(display, screen), 0, 0, 320, 200, 0, 0, 0);
-	wm_hints = XAllocWMHints();
-	if (wm_hints == NULL) {
-		error("Not enough memory to allocate Hints !\n");
-		exit(1);
-	}
-	wm_hints->flags = InputHint | StateHint;
-	wm_hints->input = True;
-	wm_hints->initial_state = NormalState;
-	XStringListToTextProperty(&name, 1, &window_name);
-	XSetWMProperties(display, window, &window_name, &window_name,
-	                 NULL /* argv */ , 0 /* argc */ , NULL /* size hints */ ,
-	                 wm_hints, NULL /* class hints */ );
-	XFree(wm_hints);
-
-	XSelectInput(display, window,
-	             ExposureMask | KeyPressMask | KeyReleaseMask |
-	             PointerMotionMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask);
-
-	values.foreground = BlackPixel(display, screen);
-	black_gc = XCreateGC(display, window, GCForeground, &values);
-
-	XMapWindow(display, window);
-	XFlush(display);
-
-	while (1) {
-		XEvent event;
-		XNextEvent(display, &event);
-		switch (event.type) {
-		case Expose:
-			goto out_of_loop;
-		}
-	}
-out_of_loop:
-	create_empty_cursor();
-
-	/* Initialize the timer routines */
-	_timer_active = false;
-
-	/* And finally start the local timer */
-	gettimeofday(&start_time, NULL);
+	XDefineCursor(_display, _window, cursor);
 }
 
 bool OSystem_X11::hasFeature(Feature f) {
@@ -447,7 +310,8 @@ bool OSystem_X11::getFeatureState(Feature f) {
 }
 
 const OSystem::GraphicsMode *OSystem_X11::getSupportedGraphicsModes() const {
-	return NULL;	// TODO / FIXME
+	static const OSystem::GraphicsMode mode = {"1x", "Normal mode", 0};
+	return &mode;
 }
 
 int OSystem_X11::getDefaultGraphicsMode() const {
@@ -466,46 +330,53 @@ int OSystem_X11::getGraphicsMode() const {
 uint32 OSystem_X11::getMillis() {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
-	return (uint32)(((current_time.tv_sec - start_time.tv_sec) * 1000) +
-	                ((current_time.tv_usec - start_time.tv_usec) / 1000));
+	return (uint32)(((current_time.tv_sec - _start_time.tv_sec) * 1000) +
+	                ((current_time.tv_usec - _start_time.tv_usec) / 1000));
 }
 
 void OSystem_X11::initSize(uint w, uint h, int overlaySize) {
+	//debug("initSize(%i, %i, %i)", w, h, overlaySize);
 	static XShmSegmentInfo shminfo;
 
-	fb_width = w;
-	fb_height = h;
+	if (((uint)_fb_width != w) || ((uint)_fb_height != w)) {
+		_fb_width = w;
+		_fb_height = h;
 
-	if ((fb_width != 320) || (fb_height != 200)) {
-		/* We need to change the size of the X11 window */
+		/* We need to change the size of the X11_window */
 		XWindowChanges new_values;
 
-		new_values.width = fb_width;
-		new_values.height = fb_height;
+		new_values.width = _fb_width;
+		new_values.height = _fb_height;
 
-		XConfigureWindow(display, window, CWWidth | CWHeight, &new_values);
+		XConfigureWindow(_display,_window, CWWidth | CWHeight, &new_values);
+
+		if (_image)
+			XFree(_image);
+		_image = XShmCreateImage(_display, DefaultVisual(_display, _screen), _depth, ZPixmap, NULL, &shminfo,_fb_width,_fb_height);
+		if (!_image)
+			error("Couldn't get image by XShmCreateImage()");
+
+		shminfo.shmid = shmget(IPC_PRIVATE, _image->bytes_per_line * _image->height, IPC_CREAT | 0700);
+		if (shminfo.shmid < 0)
+			error("Couldn't allocate image data by shmget()");
+
+		_image->data = shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
+		shminfo.readOnly = False;
+		if (XShmAttach(_display, &shminfo) == 0) {
+			error("Could not attach shared memory segment !\n");
+			exit(1);
+		}
+		shmctl(shminfo.shmid, IPC_RMID, 0);
+
+		if (_local_fb)
+			free(_local_fb);
+		if (_local_fb_overlay)
+			free(_local_fb_overlay);	
+		/* Initialize the 'local' frame buffer and the palette */
+		_local_fb = (uint8 *)calloc(_fb_width * _fb_height, sizeof(uint8));
+		_local_fb_overlay = (uint16 *)calloc(_fb_width * _fb_height, sizeof(uint16));
+
 	}
-
-	image =	XShmCreateImage(display, DefaultVisual(display, screen), depth, ZPixmap, NULL, &shminfo, fb_width, fb_height);
-	if (!image)
-		error("Couldn't get image by XShmCreateImage()");
-
-	shminfo.shmid = shmget(IPC_PRIVATE, image->bytes_per_line * image->height, IPC_CREAT | 0700);
-	if (shminfo.shmid < 0)
-		error("Couldn't allocate image data by shmget()");
-
-	image->data = shminfo.shmaddr = (char *)shmat(shminfo.shmid, 0, 0);
-	shminfo.readOnly = False;
-	if (XShmAttach(display, &shminfo) == 0) {
-		error("Could not attach shared memory segment !\n");
-		exit(1);
-	}
-	shmctl(shminfo.shmid, IPC_RMID, 0);
-
-	/* Initialize the 'local' frame buffer and the palette */
-	local_fb = (uint8 *)calloc(fb_width * fb_height, sizeof(uint8));
-	local_fb_overlay = (uint16 *)calloc(fb_width * fb_height, sizeof(uint16));
-	palette = (uint16 *)calloc(256, sizeof(uint16));
 }
 
 bool OSystem_X11::setSoundCallback(SoundProc proc, void *param) {
@@ -515,7 +386,7 @@ bool OSystem_X11::setSoundCallback(SoundProc proc, void *param) {
 	thread_param.param = param;
 	thread_param.sound_proc = proc;
 
-	pthread_create(&sound_thread, NULL, sound_and_music_thread, (void *)&thread_param);
+	pthread_create(&_sound_thread, NULL, sound_and_music_thread, (void *)&thread_param);
 
 	return true;
 }
@@ -530,8 +401,15 @@ void OSystem_X11::clearSoundCallback() {
 
 
 void OSystem_X11::setPalette(const byte *colors, uint start, uint num) {
+	uint16 *pal = &(_palette16[start]);
 	const byte *data = colors;
-	uint16 *pal = &(palette[start]);
+
+	if (_bytesPerPixel == 4) {
+			for (uint i = start; i < start+num; i++) {
+				//_palette32[i] = ((uint32 *)colors)[i];
+				_palette32[i] = (colors[i * 4 + 0] << 16) | (colors[i * 4 + 1] << 8) | (colors[i * 4 + 2] << 0);
+			}
+	}
 
 	do {
 		*pal++ = ((data[0] & 0xF8) << 8) | ((data[1] & 0xFC) << 3) | (data[2] >> 3);
@@ -543,12 +421,12 @@ void OSystem_X11::setPalette(const byte *colors, uint start, uint num) {
 }
 
 #define AddDirtyRec(xi,yi,wi,hi) 				\
-  if (num_of_dirty_square < MAX_NUMBER_OF_DIRTY_SQUARES) {	\
-    ds[num_of_dirty_square].x = xi;				\
-    ds[num_of_dirty_square].y = yi;				\
-    ds[num_of_dirty_square].w = wi;				\
-    ds[num_of_dirty_square].h = hi;				\
-    num_of_dirty_square++;					\
+  if (_num_of_dirty_rects < MAX_NUMBER_OF_DIRTY_RECTS) {	\
+    _ds[_num_of_dirty_rects].x = xi;				\
+    _ds[_num_of_dirty_rects].y = yi;				\
+    _ds[_num_of_dirty_rects].w = wi;				\
+    _ds[_num_of_dirty_rects].h = hi;				\
+    _num_of_dirty_rects++;					\
   }
 
 void OSystem_X11::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
@@ -559,11 +437,11 @@ void OSystem_X11::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 		buf -= y * pitch;
 		y = 0;
 	}
-	if (h > (fb_height - y)) {
-		h = fb_height - y;
+	if (h > (_fb_height - y)) {
+		h = _fb_height - y;
 	}
 
-	dst = local_fb + fb_width * y + x;
+	dst = _local_fb + _fb_width * y + x;
 
 	if (h <= 0)
 		return;
@@ -571,37 +449,86 @@ void OSystem_X11::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	AddDirtyRec(x, y, w, h);
 	while (h-- > 0) {
 		memcpy(dst, buf, w);
-		dst += fb_width;
+		dst +=_fb_width;
 		buf += pitch;
 	}
 }
 
-void OSystem_X11::blit_convert(const dirty_square * d, uint16 *dst, int pitch) {
-	uint8 *ptr_src  = local_fb + (fb_width * d->y) + d->x;
-	uint16 *ptr_dst = dst + (fb_width * d->y) + d->x;
+void OSystem_X11::blit(const DirtyRect *d, uint16 *dst, int pitch) {
+	uint8 *ptr_src = _local_fb + (_fb_width * d->y) + d->x;
+	uint16 *ptr_dst = dst + ((_fb_width * d->y) + d->x);
 	int x, y;
 
 	for (y = 0; y < d->h; y++) {
 		for (x = 0; x < d->w; x++) {
-			*ptr_dst++ = palette[*ptr_src++];
+			*ptr_dst++ = _palette16[*ptr_src++];
 		}
 		ptr_dst += pitch - d->w;
-		ptr_src += fb_width - d->w;
+		ptr_src +=_fb_width - d->w;
 	}
 }
 
-void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dout) {
+void OSystem_X11::blit_convert(const DirtyRect *d, uint8 *dst, int pitch) {
+	uint8 *ptr_src = _local_fb + (_fb_width * d->y) + d->x;
+	uint8 *ptr_dst = dst + ((_fb_width * d->y) + d->x) * _bytesPerPixel;
+	int x, y;
+
+	switch (_bytesPerPixel) {
+		case 2:
+			for (y = 0; y < d->h; y++) {
+				for (x = 0; x < d->w; x++) {
+					*ptr_dst = _palette16[*ptr_src++];
+					ptr_dst += _bytesPerPixel;
+				}
+				ptr_dst += (pitch - d->w) * _bytesPerPixel;
+				ptr_src +=_fb_width - d->w;
+			}
+			break;
+		case 4:
+			for (y = 0; y < d->h; y++) {
+				for (x = 0; x < d->w; x++) {
+					*(uint32 *)ptr_dst = _palette32[*ptr_src];
+					ptr_dst += _bytesPerPixel;
+					ptr_src++;
+				}
+				ptr_dst += (pitch - d->w) * _bytesPerPixel;
+				ptr_src += _fb_width - d->w;
+			}
+	}
+}
+
+void OSystem_X11::updateScreen_helper(const DirtyRect *d, DirtyRect *dout) {
+
 	if (_overlay_visible == false) {
-		blit_convert(d, (uint16 *) image->data, fb_width);
+		blit_convert(d, (uint8 *)_image->data, _fb_width);
 	} else {
-		uint16 *ptr_src = local_fb_overlay + (fb_width * d->y) + d->x;
-		uint16 *ptr_dst = ((uint16 *)image->data) + (fb_width * d->y) + d->x;
+		uint16 *ptr_src = _local_fb_overlay + (_fb_width * d->y) + d->x;
+		uint8 *ptr_dst = (uint8 *)_image->data + ((_fb_width * d->y) + d->x) * _bytesPerPixel;
+
 		int y;
 
-		for (y = 0; y < d->h; y++) {
-			memcpy(ptr_dst, ptr_src, d->w * sizeof(uint16));
-			ptr_dst += fb_width;
-			ptr_src += fb_width;
+		switch (_bytesPerPixel) {
+				case 2:
+					for (y = 0; y < d->h; y++) {
+						memcpy(ptr_dst, ptr_src, d->w * sizeof(uint16));
+						ptr_dst += _fb_width * sizeof(uint16);
+						ptr_src += _fb_width;
+					}
+					break;
+				case 4:
+					uint16 currLine, x;
+					register uint16 currPixel;
+					for (y = d->y; y < d->y + d->h; y++) {
+						currLine = y * _fb_width;
+						for (x = d->x; x < d->x + d->w; x++) {
+							currPixel = _local_fb_overlay[(currLine + x)];
+							*(uint32 *)ptr_dst = ((currPixel & 0xF800) << 8) + ((currPixel & 0x07E0) << 5) + 
+													((currPixel & 0x001F) << 3);
+							ptr_dst += sizeof(uint32);
+						}
+						ptr_dst += (_fb_width - d->w) * _bytesPerPixel;
+					}
+
 		}
 	}
 	if (d->x < dout->x)
@@ -617,47 +544,47 @@ void OSystem_X11::updateScreen_helper(const dirty_square * d, dirty_square * dou
 void OSystem_X11::updateScreen() {
 	bool full_redraw = false;
 	bool need_redraw = false;
-	static const dirty_square ds_full = { 0, 0, fb_width, fb_height };
-	dirty_square dout = { fb_width, fb_height, 0, 0 };
+	static const DirtyRect ds_full = { 0, 0, _fb_width, _fb_height };
+	DirtyRect dout = {_fb_width, _fb_height, 0, 0 };
 
 	if (_palette_changed) {
 		full_redraw = true;
-		num_of_dirty_square = 0;
+		_num_of_dirty_rects = 0;
 		_palette_changed = false;
-	} else if (num_of_dirty_square >= MAX_NUMBER_OF_DIRTY_SQUARES) {
+	} else if (_num_of_dirty_rects >= MAX_NUMBER_OF_DIRTY_RECTS) {
 		full_redraw = true;
-		num_of_dirty_square = 0;
+		_num_of_dirty_rects = 0;
 	}
 
 	if (full_redraw) {
 		updateScreen_helper(&ds_full, &dout);
 		need_redraw = true;
-	} else if ((num_of_dirty_square > 0) || (_mouse_state_changed == true)) {
+	} else if ((_num_of_dirty_rects > 0) || (_mouse_state_changed == true)) {
 		need_redraw = true;
-		while (num_of_dirty_square > 0) {
-			num_of_dirty_square--;
-			updateScreen_helper(&(ds[num_of_dirty_square]), &dout);
+		while (_num_of_dirty_rects > 0) {
+			_num_of_dirty_rects--;
+			updateScreen_helper(&(_ds[_num_of_dirty_rects]), &dout);
 		}
 	}
 
 	/* Then 'overlay' the mouse on the image */
 	draw_mouse(&dout);
 
-	if (current_shake_pos != new_shake_pos) {
+	if (_current_shake_pos != _new_shake_pos) {
 		/* Redraw first the 'black borders' in case of resize */
-		if (current_shake_pos < new_shake_pos)
-			XFillRectangle(display, window, black_gc, 0, current_shake_pos, window_width, new_shake_pos);
+		if (_current_shake_pos < _new_shake_pos)
+			XFillRectangle(_display,_window, _black_gc, 0, _current_shake_pos, _window_width, _new_shake_pos);
 		else
-			XFillRectangle(display, window, black_gc, 0, window_height - current_shake_pos,
-			               window_width, window_height - new_shake_pos);
-		XShmPutImage(display, window, DefaultGC(display, screen), image,
-		             0, 0, scumm_x, scumm_y + new_shake_pos, fb_width, fb_height, 0);
-		current_shake_pos = new_shake_pos;
+			XFillRectangle(_display,_window, _black_gc, 0, _window_height - _current_shake_pos,
+			              _window_width,_window_height - _new_shake_pos);
+		XShmPutImage(_display, _window, DefaultGC(_display, _screen), _image,
+		             0, 0, _scumm_x, _scumm_y + _new_shake_pos, _fb_width, _fb_height, 0);
+		_current_shake_pos = _new_shake_pos;
 	} else if (need_redraw == true) {
-		XShmPutImage(display, window, DefaultGC(display, screen), image,
-		             dout.x, dout.y, scumm_x + dout.x, scumm_y + dout.y + current_shake_pos,
+		XShmPutImage(_display, _window, DefaultGC(_display, _screen), _image,
+		             dout.x, dout.y, _scumm_x + dout.x, _scumm_y + dout.y + _current_shake_pos,
 		             dout.w - dout.x, dout.h - dout.y, 0);
-		XFlush(display);
+		XFlush(_display);
 	}
 }
 
@@ -682,26 +609,28 @@ void OSystem_X11::quit() {
 }
 
 void OSystem_X11::setWindowCaption(const char *caption) {
+	//debug("setWindowCaption('%s')", caption);
 }
 
 void OSystem_X11::undraw_mouse() {
-	AddDirtyRec(old_state.x, old_state.y, old_state.w, old_state.h);
+	AddDirtyRec(_oldMouseState.x, _oldMouseState.y, _oldMouseState.w, _oldMouseState.h);
 }
 
-void OSystem_X11::draw_mouse(dirty_square *dout) {
+void OSystem_X11::draw_mouse(DirtyRect *dout) {
+	//debug("draw_mouse()");
 	_mouse_state_changed = false;
 
 	if (_mouse_visible == false)
 		return;
 
-	int xdraw = cur_state.x - cur_state.hot_x;
-	int ydraw = cur_state.y - cur_state.hot_y;
-	int w = cur_state.w;
-	int h = cur_state.h;
+	int xdraw = _curMouseState.x - _curMouseState.hot_x;
+	int ydraw = _curMouseState.y - _curMouseState.hot_y;
+	int w = _curMouseState.w;
+	int h = _curMouseState.h;
 	int real_w;
 	int real_h;
 
-	uint16 *dst;
+	uint8 *dst;
 	const byte *buf = _ms_buf;
 
 	if (ydraw < 0) {
@@ -709,17 +638,17 @@ void OSystem_X11::draw_mouse(dirty_square *dout) {
 		buf += (-ydraw) * w;
 		ydraw = 0;
 	} else {
-		real_h = (ydraw + h) > fb_height ? (fb_height - ydraw) : h;
+		real_h = (ydraw + h) > _fb_height ? (_fb_height - ydraw) : h;
 	}
 	if (xdraw < 0) {
 		real_w = w + xdraw;
 		buf += (-xdraw);
 		xdraw = 0;
 	} else {
-		real_w = (xdraw + w) > fb_width ? (fb_width - xdraw) : w;
+		real_w = (xdraw + w) > _fb_width ? (_fb_width - xdraw) : w;
 	}
 
-	dst = ((uint16 *) image->data) + (ydraw * fb_width) + xdraw;
+	dst = (uint8 *)_image->data + ((ydraw *_fb_width) + xdraw) * _bytesPerPixel;
 
 	if ((real_h == 0) || (real_w == 0)) {
 		return;
@@ -735,32 +664,36 @@ void OSystem_X11::draw_mouse(dirty_square *dout) {
 	if ((ydraw + real_h) > dout->h)
 		dout->h = ydraw + real_h;
 
-	old_state.x = xdraw;
-	old_state.y = ydraw;
-	old_state.w = real_w;
-	old_state.h = real_h;
+	_oldMouseState.x = xdraw;
+	_oldMouseState.y = ydraw;
+	_oldMouseState.w = real_w;
+	_oldMouseState.h = real_h;
 
 	while (real_h > 0) {
 		int width = real_w;
 		while (width > 0) {
 			byte color = *buf;
 			if (color != _mouseKeycolor) {
-				*dst = palette[color];
+				if (_depth == 16)
+					*(uint16 *)dst = _palette16[color];
+				else {
+					*(uint32 *)dst = _palette32[color];
+				}
 			}
 			buf++;
-			dst++;
+			dst += _bytesPerPixel;
 			width--;
 		}
 		buf += w - real_w;
-		dst += fb_width - real_w;
+		dst += (_fb_width - real_w) * _bytesPerPixel;
 		real_h--;
 	}
 }
 
 void OSystem_X11::set_mouse_pos(int x, int y) {
-	if ((x != cur_state.x) || (y != cur_state.y)) {
-		cur_state.x = x;
-		cur_state.y = y;
+	if ((x != _curMouseState.x) || (y != _curMouseState.y)) {
+		_curMouseState.x = x;
+		_curMouseState.y = y;
 		if (_mouse_state_changed == false) {
 			undraw_mouse();
 		}
@@ -772,11 +705,11 @@ void OSystem_X11::warpMouse(int x, int y) {
 	set_mouse_pos(x, y);
 }
 
-void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor) {
-	cur_state.w = w;
-	cur_state.h = h;
-	cur_state.hot_x = hotspot_x;
-	cur_state.hot_y = hotspot_y;
+void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+	_curMouseState.w = w;
+	_curMouseState.h = h;
+	_curMouseState.hot_x = hotspot_x;
+	_curMouseState.hot_y = hotspot_y;
 
 	if (_ms_buf)
 		free(_ms_buf);
@@ -791,13 +724,13 @@ void OSystem_X11::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 }
 
 void OSystem_X11::setShakePos(int shake_pos) {
-	if (new_shake_pos != shake_pos) {
+	if (_new_shake_pos != shake_pos) {
 		if (_mouse_state_changed == false) {
 			undraw_mouse();
 		}
 		_mouse_state_changed = true;
 	}
-	new_shake_pos = shake_pos;
+	_new_shake_pos = shake_pos;
 }
 
 int OSystem_X11::getOutputSampleRate() const {
@@ -834,10 +767,10 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 		_timer_next_expiry = current_msecs + _timer_duration;
 	}
 
-	while (XPending(display)) {
+	while (XPending(_display)) {
 		XEvent event;
 
-		XNextEvent(display, &event);
+		XNextEvent(_display, &event);
 		switch (event.type) {
 		case Expose:{
 				int real_w, real_h;
@@ -846,28 +779,28 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 				real_y = event.xexpose.y;
 				real_w = event.xexpose.width;
 				real_h = event.xexpose.height;
-				if (real_x < scumm_x) {
-					real_w -= scumm_x - real_x;
+				if (real_x < _scumm_x) {
+					real_w -= _scumm_x - real_x;
 					real_x = 0;
 				} else {
-					real_x -= scumm_x;
+					real_x -= _scumm_x;
 				}
-				if (real_y < scumm_y) {
-					real_h -= scumm_y - real_y;
+				if (real_y < _scumm_y) {
+					real_h -= _scumm_y - real_y;
 					real_y = 0;
 				} else {
-					real_y -= scumm_y;
+					real_y -= _scumm_y;
 				}
 				if ((real_h <= 0) || (real_w <= 0))
 					break;
-				if ((real_x >= fb_width) || (real_y >= fb_height))
+				if ((real_x >=_fb_width) || (real_y >=_fb_height))
 					break;
 
-				if ((real_x + real_w) >= fb_width) {
-					real_w = fb_width - real_x;
+				if ((real_x + real_w) >=_fb_width) {
+					real_w =_fb_width - real_x;
 				}
-				if ((real_y + real_h) >= fb_height) {
-					real_h = fb_height - real_y;
+				if ((real_y + real_h) >=_fb_height) {
+					real_h =_fb_height - real_y;
 				}
 
 				/* Compute the intersection of the expose event with the real ScummVM display zone */
@@ -907,16 +840,16 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 					break;
 
 				case 132:
-					report_presses = 0;
+					_report_presses = 0;
 					break;
 
 				case 133:
-					fake_right_mouse = 1;
+					_fake_right_mouse = 1;
 					break;
 
 				default:{
 						KeySym xsym;
-						xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
+						xsym = XKeycodeToKeysym(_display, event.xkey.keycode, 0);
 						keycode = xsym;
 						if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
 							xsym &= ~0x20;		/* Handle shifted keys */
@@ -949,16 +882,16 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 					mode |= KBD_ALT;
 				switch (event.xkey.keycode) {
 				case 132:							/* 'Q' on the iPAQ */
-					report_presses = 1;
+					_report_presses = 1;
 					break;
 
 				case 133:							/* Arrow on the iPAQ */
-					fake_right_mouse = 0;
+					_fake_right_mouse = 0;
 					break;
 
 				default:{
 						KeySym xsym;
-						xsym = XKeycodeToKeysym(display, event.xkey.keycode, 0);
+						xsym = XKeycodeToKeysym(_display, event.xkey.keycode, 0);
 						keycode = xsym;
 						if ((xsym >= 'a') && (xsym <= 'z') && (event.xkey.state & 0x01))
 							xsym &= ~0x20;		/* Handle shifted keys */
@@ -976,51 +909,51 @@ bool OSystem_X11::pollEvent(Event &scumm_event) {
 			break;
 
 		case ButtonPress:
-			if (report_presses != 0) {
+			if (_report_presses != 0) {
 				if (event.xbutton.button == 1) {
-					if (fake_right_mouse == 0) {
+					if (_fake_right_mouse == 0) {
 						scumm_event.type = EVENT_LBUTTONDOWN;
 					} else {
 						scumm_event.type = EVENT_RBUTTONDOWN;
 					}
 				} else if (event.xbutton.button == 3)
 					scumm_event.type = EVENT_RBUTTONDOWN;
-				scumm_event.mouse.x = event.xbutton.x - scumm_x;
-				scumm_event.mouse.y = event.xbutton.y - scumm_y;
+				scumm_event.mouse.x = event.xbutton.x - _scumm_x;
+				scumm_event.mouse.y = event.xbutton.y - _scumm_y;
 				return true;
 			}
 			break;
 
 		case ButtonRelease:
-			if (report_presses != 0) {
+			if (_report_presses != 0) {
 				if (event.xbutton.button == 1) {
-					if (fake_right_mouse == 0) {
+					if (_fake_right_mouse == 0) {
 						scumm_event.type = EVENT_LBUTTONUP;
 					} else {
 						scumm_event.type = EVENT_RBUTTONUP;
 					}
 				} else if (event.xbutton.button == 3)
 					scumm_event.type = EVENT_RBUTTONUP;
-				scumm_event.mouse.x = event.xbutton.x - scumm_x;
-				scumm_event.mouse.y = event.xbutton.y - scumm_y;
+				scumm_event.mouse.x = event.xbutton.x - _scumm_x;
+				scumm_event.mouse.y = event.xbutton.y - _scumm_y;
 				return true;
 			}
 			break;
 
 		case MotionNotify:
 			scumm_event.type = EVENT_MOUSEMOVE;
-			scumm_event.mouse.x = event.xmotion.x - scumm_x;
-			scumm_event.mouse.y = event.xmotion.y - scumm_y;
+			scumm_event.mouse.x = event.xmotion.x - _scumm_x;
+			scumm_event.mouse.y = event.xmotion.y - _scumm_y;
 			set_mouse_pos(scumm_event.mouse.x, scumm_event.mouse.y);
 			return true;
 
 		case ConfigureNotify:{
-				if ((window_width != event.xconfigure.width) || (window_height != event.xconfigure.height)) {
-					window_width = event.xconfigure.width;
-					window_height = event.xconfigure.height;
-					scumm_x = (window_width - fb_width) / 2;
-					scumm_y = (window_height - fb_height) / 2;
-					XFillRectangle(display, window, black_gc, 0, 0, window_width, window_height);
+				if ((_window_width != event.xconfigure.width) || (_window_height != event.xconfigure.height)) {
+					_window_width = event.xconfigure.width;
+					_window_height = event.xconfigure.height;
+					_scumm_x = (_window_width -_fb_width) / 2;
+					_scumm_y = (_window_height -_fb_height) / 2;
+					XFillRectangle(_display, _window, _black_gc, 0, 0, _window_width, _window_height);
 				}
 			}
 			break;
@@ -1076,37 +1009,40 @@ void OSystem_X11::hideOverlay() {
 void OSystem_X11::clearOverlay() {
 	if (_overlay_visible == false)
 		return;
-	dirty_square d = { 0, 0, fb_width, fb_height };
-	AddDirtyRec(0, 0, fb_width, fb_height);
-	blit_convert(&d, local_fb_overlay, fb_width);
+	DirtyRect d = { 0, 0, _fb_width, _fb_height };
+	AddDirtyRec(0, 0, _fb_width, _fb_height);
+	blit(&d, _local_fb_overlay, _fb_width);
 }
 
 void OSystem_X11::grabOverlay(int16 *dest, int pitch) {
 	if (_overlay_visible == false)
 		return;
 
-	dirty_square d = { 0, 0, fb_width, fb_height };
-	blit_convert(&d, (uint16 *) dest, pitch);
+	DirtyRect d = { 0, 0, _fb_width, _fb_height };
+	blit(&d, (uint16 *)dest, pitch);
 }
 
 void OSystem_X11::copyRectToOverlay(const int16 *src, int pitch, int x, int y, int w, int h) {
 	if (_overlay_visible == false)
 		return;
-	uint16 *dst = local_fb_overlay + x + (y * fb_width);
+	uint16 *dst = _local_fb_overlay + x + (y * _fb_width);
 	AddDirtyRec(x, y, w, h);
 	while (h > 0) {
 		memcpy(dst, src, w * sizeof(*dst));
-		dst += fb_width;
+		dst +=_fb_width;
 		src += pitch;
 		h--;
 	}
 }
 
 int16 OSystem_X11::getHeight() {
-	return fb_height;
+	return _fb_height;
 }
 
 int16 OSystem_X11::getWidth() {
-	return fb_width;
+	return _fb_width;
 }
 
+void OSystem_X11::grabPalette(byte *colors, uint start, uint num) {
+	warning("Dummy: grabPalette()");
+}
