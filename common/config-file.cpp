@@ -97,7 +97,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			comment += "\n";
 		} else if (buf[0] == '(') {
 			// HACK: The following is a hack added by Kirben to support the
-			// "map.ini" used in the HE SCUMM game "Spy Fox in Hold the Mustard".
+			// "map.ini" used in the HE SCUMM game "SPY Fox in Hold the Mustard".
 			//
 			// It would be nice if this hack could be restricted to that game,
 			// but the current design of this class doesn't allow to do that

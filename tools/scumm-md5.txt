@@ -579,7 +579,7 @@ funpack	Putt-Putt's Fun Pack
 PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	en	All	CD	Kirben
 
-spyfox	Spy Fox 1: Dry Cereal
+spyfox	SPY Fox 1: Dry Cereal
 	3de99ef0523f8ca7958faa3afccd035a	en	All	CD	Kirben
 	58436e634f4fae1d9973591c2ffa1fcb	en	All	CD	Joachim Eberhard
 	a28135a7ade38cc0208b04507c46efd1	de	All	CD	nachbarnebenan
@@ -594,7 +594,7 @@ spyfox	Spy Fox 1: Dry Cereal
 	73b8197e236da4bf49adc99fe8f5fa1b	de	All	Demo	Joachim Eberhard
 	4edbf9d03550f7ba01e7f34d69b678dd	nl	Windows	Demo	Kirben
 
-spyfox2	Spy Fox 2: Some Assembly Required
+spyfox2	SPY Fox 2: Some Assembly Required
 	f79e60c17cca601e411f1f75e8ee9b5a	All	All	CD	Kirben
 	bc4700bc0e12879f6d25d14d6be6cfdd	de	All	CD	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	ru	All	CD	sev
@@ -605,16 +605,16 @@ spyfox2	Spy Fox 2: Some Assembly Required
 	732845548b1d6c2da572cb6a1bf81b07	de	All	Demo	Joachim Eberhard
 	19bf6938a94698296bcb0c99c31c91a7	en	Windows	Demo	eriktorbjorn
 
-spyozon	Spy Fox 3: Operation Ozone
+spyozon	SPY Fox 3: Operation Ozone
 	600abd3e9f47e63e670188b7e4e86ac7	en	All	CD	Kirben
 	96a3069a3c63caa7329588ce1fef41ee	ru	All	CD	sev
 	be39a5d4db60e8aa736b9086778cb45c	en	Windows	CD	
 	ebd0b2c8a387f18887282afe6cad894a	en	All	Demo	Kirben
 
-chase	Spy Fox in Cheese Chase
+chase	SPY Fox in Cheese Chase
 	589601b676c98b1c0c987bc031ab68b3	en	All	CD	Kirben
 	90c755e1c9b9b8a4129d37b2259d0655	en	All	CD	Kirben
 	9cdd327c1034c046cb595d251c44da2f	ru	Windows	CD	sev
 
-mustard	Spy Fox in Hold the Mustard
+mustard	SPY Fox in Hold the Mustard
 	225e18566e810c634bf7de63e7568e3e	en	All	CD	Kirben
