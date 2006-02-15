@@ -1233,35 +1233,37 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 #endif
 
 void ScummEngine_v6::readMAXS(int blockSize) {
-	debug(0, "ScummEngine_v6 readMAXS: MAXS has blocksize %d", blockSize);
+	if (blockSize == 38) {
+		debug(0, "ScummEngine_v6 readMAXS: MAXS has blocksize %d", blockSize);
 
-	_numVariables = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE();
-	_numBitVariables = _fileHandle->readUint16LE();
-	_numLocalObjects = _fileHandle->readUint16LE();
-	_numArray = _fileHandle->readUint16LE();
-	_fileHandle->readUint16LE();
-	_numVerbs = _fileHandle->readUint16LE();
-	_numFlObject = _fileHandle->readUint16LE();
-	_numInventory = _fileHandle->readUint16LE();
-	_numRooms = _fileHandle->readUint16LE();
-	_numScripts = _fileHandle->readUint16LE();
-	_numSounds = _fileHandle->readUint16LE();
-	_numCharsets = _fileHandle->readUint16LE();
-	_numCostumes = _fileHandle->readUint16LE();
-	_numGlobalObjects = _fileHandle->readUint16LE();
-	_numNewNames = 50;
+		_numVariables = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();
+		_numBitVariables = _fileHandle->readUint16LE();
+		_numLocalObjects = _fileHandle->readUint16LE();
+		_numArray = _fileHandle->readUint16LE();
+		_fileHandle->readUint16LE();
+		_numVerbs = _fileHandle->readUint16LE();
+		_numFlObject = _fileHandle->readUint16LE();
+		_numInventory = _fileHandle->readUint16LE();
+		_numRooms = _fileHandle->readUint16LE();
+		_numScripts = _fileHandle->readUint16LE();
+		_numSounds = _fileHandle->readUint16LE();
+		_numCharsets = _fileHandle->readUint16LE();
+		_numCostumes = _fileHandle->readUint16LE();
+		_numGlobalObjects = _fileHandle->readUint16LE();
+		_numNewNames = 50;
 
-	_objectRoomTable = NULL;
-	_numGlobalScripts = 200;
+		_objectRoomTable = NULL;
+		_numGlobalScripts = 200;
 
-	if (_heversion >= 70) {
-		_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
-	}
+		if (_heversion >= 70) {
+			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
+		}
 
-	if (_heversion <= 70) {
-		_shadowPaletteSize = 256;
-		_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+		if (_heversion <= 70) {
+			_shadowPaletteSize = 256;
+			_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
+		}
 	}
 }
 
