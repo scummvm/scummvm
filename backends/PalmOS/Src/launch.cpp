@@ -285,7 +285,7 @@ Boolean StartScummVM() {
 				ArgsAdd(&argvP[argc], "-g", "wide", &argc);
 				break;
 			default:
-				ArgsAdd(&argvP[argc], "-g", "normal", &argc);
+				ArgsAdd(&argvP[argc], "-g", "1x", &argc);
 				break;
 		}
 
