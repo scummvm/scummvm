@@ -7,8 +7,8 @@
 use strict;
 
 if ($#ARGV+1 < 3 or $#ARGV+1 > 4) {
-	# TODO: Allow the user to specify the version as "1.2.3cvs"
-	# and automatically split that into 1, 2, 3, cvs
+	# TODO: Allow the user to specify the version as "1.2.3svn"
+	# and automatically split that into 1, 2, 3, svn
 	print STDERR "Usage: $0 MAJOR MINOR PATCH [EXTRA]\n";
 	print STDERR "  TODO\n";
 	exit 1;

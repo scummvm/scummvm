@@ -77,7 +77,7 @@ web site first.
 ---- ---------------
 To report a bug, please create a SourceForge account and follow the bugs
 link from our homepage. Please make sure the bug is reproducible, and
-still occurs in the latest daily build/current CVS version. Also check
+still occurs in the latest daily build/current SVN version. Also check
 the known bugs list (below) and compatibility listing for that game, to
 ensure the issue is not already known.
 
@@ -86,7 +86,7 @@ in the 'Supported Games' section, or compatibility list. We -know- those
 games have bugs.
 
 Please include the following information:
-        - ScummVM version (PLEASE test the latest CVS/Daily build)
+        - ScummVM version (PLEASE test the latest SVN/Daily build)
         - Bug details, including instructions on reproducing
         - Language of game (English, German, ...)
         - Version of game (talkie, floppy, ...)
@@ -374,7 +374,7 @@ the section on Reporting Bugs.
 ScummVM has been ported to run on many platforms and operating systems.
 Links to these ports can be found either on the ScummVM web page or by a
 Google search. Many thanks to the effort of porters. If you have a port of
-ScummVM and wish to commit it into the main CVS, feel free to contact us!
+ScummVM and wish to commit it into the main SVN, feel free to contact us!
 
 Supported platforms include (but are not limited to):
 
@@ -1310,7 +1310,7 @@ a supported compiler. Several compilers, including GCC, mingw and Microsoft
 Visual C++ are supported. If you wish to use MP3-compressed CD tracks or
 .SOU files, you will need to install the MAD library and define
 USE_MAD. Tools for compressing .SOU files to .SO3 files can be
-found in the 'tools' CVS module, or in the 'scummvm-tools' package.
+found in the 'tools' SVN module, or in the 'scummvm-tools' package.
 
 Some parts of ScummVM, particularly scalers, have highly optimized versions
 written in assembler. If you wish to use this option, you will need to install
