@@ -29,7 +29,7 @@
 #include "scumm/he/logic_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/he/resource_v7he.h"
+#include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/he/sprite_he.h"

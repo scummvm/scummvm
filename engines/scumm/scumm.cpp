@@ -51,7 +51,7 @@
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
-#include "scumm/he/resource_v7he.h"
+#include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/he/sprite_he.h"

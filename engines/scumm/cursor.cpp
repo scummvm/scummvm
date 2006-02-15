@@ -28,7 +28,7 @@
 #include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
-#include "scumm/he/resource_v7he.h"
+#include "scumm/he/resource_he.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 

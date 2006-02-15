@@ -39,7 +39,7 @@ MODULE_OBJS := \
 	script_v2.o \
 	script_v5.o \
 	script_v6.o \
-	he/script_v6he.o \
+	he/script_v60he.o \
 	scumm.o \
 	sound.o \
 	he/sound_he.o \
@@ -83,8 +83,8 @@ MODULE_OBJS += \
 	he/floodfill_he.o \
 	he/logic_he.o \
 	he/palette_he.o \
-	he/resource_v7he.o \
-	he/script_v7he.o \
+	he/resource_he.o \
+	he/script_v70he.o \
 	he/script_v72he.o \
 	he/script_v80he.o \
 	he/script_v90he.o \

@@ -28,7 +28,7 @@
 #include "scumm/scumm.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
-#include "scumm/he/resource_v7he.h"
+#include "scumm/he/resource_he.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 #include "sound/wave.h"
