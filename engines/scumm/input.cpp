@@ -34,9 +34,9 @@
 #include "scumm/insane/insane.h"
 #include "scumm/imuse.h"
 #ifndef DISABLE_HE
-#include "scumm/intern_he.h"
+#include "scumm/he/intern_he.h"
+#include "scumm/he/logic_he.h"
 #endif
-#include "scumm/logic_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 

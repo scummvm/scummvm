@@ -27,11 +27,11 @@
 #include "scumm/charset.h"
 #include "scumm/intern.h"
 #ifndef DISABLE_HE
-#include "scumm/intern_he.h"
+#include "scumm/he/intern_he.h"
 #endif
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
-#include "scumm/wiz_he.h"
+#include "scumm/he/wiz_he.h"
 
 namespace Scumm {
 

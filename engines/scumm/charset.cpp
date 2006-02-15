@@ -24,7 +24,7 @@
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/util.h"
-#include "scumm/wiz_he.h"
+#include "scumm/he/wiz_he.h"
 
 namespace Scumm {
 

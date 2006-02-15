@@ -22,8 +22,8 @@
 
 #include "common/stdafx.h"
 
-#include "scumm/intern_he.h"
-#include "scumm/logic_he.h"
+#include "scumm/he/intern_he.h"
+#include "scumm/he/logic_he.h"
 
 namespace Scumm {
 

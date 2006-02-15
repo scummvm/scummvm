@@ -25,14 +25,14 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/intern_he.h"
-#include "scumm/logic_he.h"
+#include "scumm/he/intern_he.h"
+#include "scumm/he/logic_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
-#include "scumm/resource_v7he.h"
+#include "scumm/he/resource_v7he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/sprite_he.h"
+#include "scumm/he/sprite_he.h"
 #include "scumm/util.h"
 
 namespace Scumm {

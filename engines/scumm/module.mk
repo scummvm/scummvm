@@ -39,10 +39,10 @@ MODULE_OBJS := \
 	script_v2.o \
 	script_v5.o \
 	script_v6.o \
-	script_v6he.o \
+	he/script_v6he.o \
 	scumm.o \
 	sound.o \
-	sound_he.o \
+	he/sound_he.o \
 	string.o \
 	usage_bits.o \
 	util.o \
@@ -80,17 +80,17 @@ endif
 
 ifndef DISABLE_HE
 MODULE_OBJS += \
-	floodfill_he.o \
-	logic_he.o \
-	palette_he.o \
-	resource_v7he.o \
-	script_v7he.o \
-	script_v72he.o \
-	script_v80he.o \
-	script_v90he.o \
-	script_v100he.o \
-	sprite_he.o \
-	wiz_he.o
+	he/floodfill_he.o \
+	he/logic_he.o \
+	he/palette_he.o \
+	he/resource_v7he.o \
+	he/script_v7he.o \
+	he/script_v72he.o \
+	he/script_v80he.o \
+	he/script_v90he.o \
+	he/script_v100he.o \
+	he/sprite_he.o \
+	he/wiz_he.o
 endif
 
 MODULE_DIRS += \

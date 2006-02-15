@@ -29,10 +29,10 @@
 #include "scumm/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
-#include "scumm/intern_he.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
-#include "scumm/wiz_he.h"
+#include "scumm/he/wiz_he.h"
 
 namespace Scumm {
 

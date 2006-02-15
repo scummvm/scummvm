@@ -32,7 +32,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #ifndef DISABLE_HE
-#include "scumm/intern_he.h"
+#include "scumm/he/intern_he.h"
 #endif
 #include "scumm/verbs.h"
 #include "scumm/sound.h"

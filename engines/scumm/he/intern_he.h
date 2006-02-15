@@ -26,8 +26,8 @@
 
 #include "scumm/intern.h"
 #ifndef DISABLE_HE
-#include "scumm/floodfill_he.h"
-#include "scumm/wiz_he.h"
+#include "scumm/he/floodfill_he.h"
+#include "scumm/he/wiz_he.h"
 #endif
 
 namespace Scumm {

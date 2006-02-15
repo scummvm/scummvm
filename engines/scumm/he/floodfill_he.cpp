@@ -23,8 +23,8 @@
 
 #include "common/stdafx.h"
 
-#include "scumm/floodfill_he.h"
-#include "scumm/intern_he.h"
+#include "scumm/he/floodfill_he.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 

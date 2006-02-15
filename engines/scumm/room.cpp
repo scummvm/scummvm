@@ -27,7 +27,7 @@
 #include "scumm/boxes.h"
 #include "scumm/intern.h"
 #ifndef DISABLE_HE
-#include "scumm/intern_he.h"
+#include "scumm/he/intern_he.h"
 #endif
 #include "scumm/object.h"
 #include "scumm/resource.h"
