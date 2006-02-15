@@ -1237,8 +1237,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	int i;
 
 	if (flags & 0x800000) {
-		warning("0x800000 flags not supported");
-		return;
+		debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
 	}
 
 	const Common::Rect *r = NULL;
@@ -1497,7 +1496,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, shadow, rotationAngle, scale, r, flags, dstResNum, palette);
 		} else {
 			if (flags & kWIFIsPolygon) {
-				drawWizPolygon(params->img.resNum, state, po_x, flags, shadow, dstResNum, palette); // XXX , VAR(VAR_WIZ_TCOLOR));
+				drawWizPolygon(params->img.resNum, state, po_x, flags, shadow, dstResNum, palette);
 			} else {
 				drawWizImage(params->img.resNum, state, po_x, po_y, params->img.zorder, shadow, field_390, r, flags, dstResNum, palette);
 			}
