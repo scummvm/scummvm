@@ -275,6 +275,12 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 
+	// WORKAROUND bug #795214: Object 819 could be set to a state of 1 in old save games
+	// Object 819 is part of the exit of the church and should not be drawn.
+	if (hdr.ver < VER(59) && _gameId == GID_MONKEY_VGA) {
+		putState(819, 0);
+	}
+
 	if (hdr.ver < VER(33) && _version >= 7) {
 		// For a long time, we didn't set these vars to default values.
 		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
