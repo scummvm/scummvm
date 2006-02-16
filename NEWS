@@ -9,7 +9,10 @@ For a more comprehensive changelog for the latest experimental CVS code, see:
    - ...
 
  General:
-   - ...
+   - Switched from CVS to Subversion.
+   - Restructured our source tree partially.
+   - Fixed a bug that prevented you from overriding the scaler from the command
+     line for 640x480 games.
 
  SCUMM:
    - ...

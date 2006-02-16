@@ -540,6 +540,7 @@ int SimonEngine::init(GameDetector &detector) {
 	if (getGameType() == GType_FF) {
 		_screenWidth = 640;
 		_screenHeight = 480;
+		detector._game.features |= GF_DEFAULT_TO_1X_SCALER;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
@@ -555,8 +556,6 @@ int SimonEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
 		initCommonGFX(detector);
 		_system->initSize(_screenWidth, _screenHeight);
-		if (getGameType() == GType_FF)
-			_system->setGraphicsMode("1x");
 	_system->endGFXTransaction();
 
 	// Setup midi driver

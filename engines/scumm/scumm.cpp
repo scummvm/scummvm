@@ -1804,16 +1804,14 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Initialize backend
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_system->initSize(Common::kHercW, Common::kHercH, 1);
 			_features |= GF_DEFAULT_TO_1X_SCALER;
-			_system->setGraphicsMode("1x");
+			detector._game.features |= GF_DEFAULT_TO_1X_SCALER;
 		} else {
 			_system->initSize(_screenWidth, _screenHeight, (detector._force1xOverlay ? 1 : 2));
-			if (_features & GF_DEFAULT_TO_1X_SCALER)
-				_system->setGraphicsMode("1x");
 		}
+		initCommonGFX(detector);
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.

@@ -62,9 +62,12 @@ Engine::~Engine() {
 
 void Engine::initCommonGFX(GameDetector &detector) {
 	const bool useDefaultGraphicsMode =
+		!ConfMan.hasKey("gfx_mode", Common::ConfigManager::kTransientDomain) &&
+		(
 		!ConfMan.hasKey("gfx_mode", detector._targetName) ||
 		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "normal") ||
-		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default");
+		!scumm_stricmp(ConfMan.get("gfx_mode", detector._targetName).c_str(), "default")
+		);
 
 	// See if the game should default to 1x scaler
 	if (useDefaultGraphicsMode && (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
