@@ -180,7 +180,6 @@ public:
 				  char handleMouse);
 	void animate(void);
 	void interGetObjAnimSize(void);
-	void interInitMult(void);
 	void freeMult(void);
 	void interLoadMult(void);
 	void freeAll(void);

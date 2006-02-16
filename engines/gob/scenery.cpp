@@ -290,11 +290,6 @@ void Scenery::interRenderStatic(void) {
 	renderStatic(index, layer);
 }
 
-void Scenery::interLoadCurLayer(void) {
-	_vm->_inter->evalExpr(&_curStatic);
-	_vm->_inter->evalExpr(&_curStaticLayer);
-}
-
 void Scenery::updateStatic(int16 orderFrom) {
 	StaticLayer *layerPtr;
 	PieceDesc **pictPtr;

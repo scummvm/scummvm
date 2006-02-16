@@ -32,6 +32,7 @@
 #include "gob/goblin.h"
 #include "gob/cdrom.h"
 #include "gob/palanim.h"
+#include "gob/anim.h"
 
 namespace Gob {
 
@@ -143,7 +144,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_updateAnim),
 		OPCODE(o2_drawStub),
 		/* 14 */
-		OPCODE(o1_initMult),
+		OPCODE(o2_initMult),
 		OPCODE(o1_multFreeMult),
 		OPCODE(o1_animate),
 		OPCODE(o1_multLoadMult),
@@ -154,7 +155,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_freeStatic),
 		/* 1C */
 		OPCODE(o1_renderStatic),
-		OPCODE(o1_loadCurLayer),
+		OPCODE(o2_loadCurLayer),
 		{NULL, ""},
 		{NULL, ""},
 		/* 20 */
@@ -489,7 +490,7 @@ void Inter_v2::setupOpcodes(void) {
 		OPCODE(o1_putPixel),
 		OPCODE(o1_goblinFunc),
 		OPCODE(o1_createSprite),
-		OPCODE(o1_freeSprite),
+		OPCODE(o2_freeSprite),
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -992,6 +993,139 @@ bool Inter_v2::o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
 	strcpy(_vm->_game->_totToLoad, buf);
 
 	return false;
+}
+
+void Inter_v2::o2_initMult(void) {
+	int16 oldAnimHeight;
+	int16 oldAnimWidth;
+	int16 oldObjCount;
+	int16 i;
+	int16 posXVar;
+	int16 posYVar;
+	int16 animDataVar;
+
+	oldAnimWidth = _vm->_anim->_areaWidth;
+	oldAnimHeight = _vm->_anim->_areaHeight;
+	oldObjCount = _vm->_mult->_objCount;
+
+	_vm->_anim->_areaLeft = load16();
+	_vm->_anim->_areaTop = load16();
+	_vm->_anim->_areaWidth = load16();
+	_vm->_anim->_areaHeight = load16();
+	_vm->_mult->_objCount = load16();
+	posXVar = _vm->_parse->parseVarIndex();
+	posYVar = _vm->_parse->parseVarIndex();
+	animDataVar = _vm->_parse->parseVarIndex();
+
+	if (_vm->_mult->_objects == 0) {
+		// GOB2: _vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 2];
+		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
+		if (_vm->_inter->_terminate)
+			return;
+		warning("GOB2 Stub! dword_2FC74 = new int8[_vm->_mult->_objCount];");
+		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
+
+		for (i = 0; i < _vm->_mult->_objCount; i++) {
+			_vm->_mult->_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);
+			_vm->_mult->_objects[i].pPosY = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posYVar / 4) * 4);
+			_vm->_mult->_objects[i].pAnimData =
+			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables + animDataVar +
+			    i * 4 * _vm->_global->_inter_animDataSize);
+
+			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
+			_vm->_mult->_objects[i].tick = 0;
+			_vm->_mult->_objects[i].lastLeft = -1;
+			_vm->_mult->_objects[i].lastRight = -1;
+			_vm->_mult->_objects[i].lastTop = -1;
+			_vm->_mult->_objects[i].lastBottom = -1;
+		}
+	} else if (oldObjCount != _vm->_mult->_objCount) {
+		error("o2_initMult: Object count changed, but storage didn't (old count = %d, new count = %d)",
+		    oldObjCount, _vm->_mult->_objCount);
+	}
+
+	if (_vm->_anim->_animSurf != 0 &&
+	    (oldAnimWidth != _vm->_anim->_areaWidth
+		|| oldAnimHeight != _vm->_anim->_areaHeight)) {
+		if (_vm->_anim->_animSurf->flag & 0x80)
+			delete _vm->_anim->_animSurf;
+		else
+			_vm->_draw->freeSprite(0x16);
+	}
+
+	_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 0);
+
+	warning("===> %d", _vm->_global->_videoMode);
+	if (_vm->_anim->_animSurf == 0) {
+		if (_vm->_global->_videoMode == 18) {
+			_vm->_anim->_animSurf = new Video::SurfaceDesc;
+			memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
+			_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
+			_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FF8) - 1;
+			_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
+			_vm->_anim->_animSurf->vidPtr += 0x0C000;
+		} else {
+			if (_vm->_global->_videoMode == 20) {
+				if (((_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height) / 2
+						+ (_vm->_anim->_areaWidth * _vm->_anim->_areaHeight) / 4) < 65536) {
+					_vm->_anim->_animSurf = new Video::SurfaceDesc;
+					memcpy(_vm->_anim->_animSurf, _vm->_draw->_frontSurface, sizeof(Video::SurfaceDesc));
+					_vm->_anim->_animSurf->width = (_vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1) | 7;
+					_vm->_anim->_animSurf->width -= (_vm->_anim->_areaLeft & 0x0FF8) - 1;
+					_vm->_anim->_animSurf->height = _vm->_anim->_areaHeight;
+					_vm->_anim->_animSurf->vidPtr = _vm->_draw->_backSurface->vidPtr +
+						_vm->_draw->_backSurface->width * _vm->_draw->_backSurface->height / 4;
+				} else
+					_vm->_draw->initBigSprite(0x16, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+			} else
+				_vm->_draw->initBigSprite(0x16, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+		}
+		if (_terminate)
+			return;
+
+/*		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
+		    _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+
+		_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;*/
+	}
+
+	_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 1);
+
+/*	_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
+	    _vm->_anim->_areaLeft, _vm->_anim->_areaTop,
+	    _vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1,
+	    _vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1, 0, 0, 0);*/
+
+	_vm->_draw->_sourceSurface = 21;
+	_vm->_draw->_destSurface = 22;
+	_vm->_draw->_spriteLeft = _vm->_anim->_areaLeft;
+	_vm->_draw->_spriteTop = _vm->_anim->_areaTop;
+	_vm->_draw->_spriteRight = _vm->_anim->_areaWidth;
+	_vm->_draw->_spriteBottom = _vm->_anim->_areaHeight;
+	_vm->_draw->_destSpriteX = 0;
+	_vm->_draw->_destSpriteY = 0;
+	_vm->_draw->spriteOperation(0);
+
+	debug(4, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
+		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
+	debug(4, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
+}
+
+bool Inter_v2::o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 index;
+
+	index = load16();
+	if (_vm->_draw->_spritesArray[index] == 0)
+		return false;
+
+	_vm->_draw->freeSprite(index);
+
+	return false;
+}
+
+void Inter_v2::o2_loadCurLayer(void) {
+	_vm->_scenery->_curStatic = _vm->_parse->parseValExpr();
+	_vm->_scenery->_curStaticLayer = _vm->_parse->parseValExpr();
 }
 
 } // End of namespace Gob

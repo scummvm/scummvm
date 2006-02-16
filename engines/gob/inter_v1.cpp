@@ -34,6 +34,7 @@
 #include "gob/music.h"
 #include "gob/map.h"
 #include "gob/palanim.h"
+#include "gob/anim.h"
 
 namespace Gob {
 
@@ -1480,7 +1481,73 @@ void Inter_v1::o1_updateAnim(void) {
 }
 
 void Inter_v1::o1_initMult(void) {
-	_vm->_mult->interInitMult();
+	int16 oldAnimHeight;
+	int16 oldAnimWidth;
+	int16 oldObjCount;
+	int16 i;
+	int16 posXVar;
+	int16 posYVar;
+	int16 animDataVar;
+
+	oldAnimWidth = _vm->_anim->_areaWidth;
+	oldAnimHeight = _vm->_anim->_areaHeight;
+	oldObjCount = _vm->_mult->_objCount;
+
+	_vm->_anim->_areaLeft = load16();
+	_vm->_anim->_areaTop = load16();
+	_vm->_anim->_areaWidth = load16();
+	_vm->_anim->_areaHeight = load16();
+	_vm->_mult->_objCount = load16();
+	posXVar = _vm->_parse->parseVarIndex();
+	posYVar = _vm->_parse->parseVarIndex();
+	animDataVar = _vm->_parse->parseVarIndex();
+
+	if (_vm->_mult->_objects == 0) {
+		_vm->_mult->_renderData = new int16[_vm->_mult->_objCount * 9];
+		_vm->_mult->_objects = new Mult::Mult_Object[_vm->_mult->_objCount];
+
+		for (i = 0; i < _vm->_mult->_objCount; i++) {
+			_vm->_mult->_objects[i].pPosX = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posXVar / 4) * 4);
+			_vm->_mult->_objects[i].pPosY = (int32 *)(_vm->_global->_inter_variables + i * 4 + (posYVar / 4) * 4);
+			_vm->_mult->_objects[i].pAnimData =
+			    (Mult::Mult_AnimData *) (_vm->_global->_inter_variables + animDataVar +
+			    i * 4 * _vm->_global->_inter_animDataSize);
+
+			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
+			_vm->_mult->_objects[i].tick = 0;
+			_vm->_mult->_objects[i].lastLeft = -1;
+			_vm->_mult->_objects[i].lastRight = -1;
+			_vm->_mult->_objects[i].lastTop = -1;
+			_vm->_mult->_objects[i].lastBottom = -1;
+		}
+	} else if (oldObjCount != _vm->_mult->_objCount) {
+		error("o1_initMult: Object count changed, but storage didn't (old count = %d, new count = %d)",
+		    oldObjCount, _vm->_mult->_objCount);
+	}
+
+	if (_vm->_anim->_animSurf != 0 &&
+	    (oldAnimWidth != _vm->_anim->_areaWidth
+		|| oldAnimHeight != _vm->_anim->_areaHeight)) {
+		_vm->_video->freeSurfDesc(_vm->_anim->_animSurf);
+		_vm->_anim->_animSurf = 0;
+	}
+
+	if (_vm->_anim->_animSurf == 0) {
+		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
+		    _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
+
+		_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;
+	}
+
+	_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
+	    _vm->_anim->_areaLeft, _vm->_anim->_areaTop,
+	    _vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1,
+	    _vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1, 0, 0, 0);
+
+	debug(4, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
+		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
+	debug(4, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
+//	_vm->_mult->interInitMult();
 }
 
 void Inter_v1::o1_multFreeMult(void) {
@@ -1516,7 +1583,8 @@ void Inter_v1::o1_renderStatic(void) {
 }
 
 void Inter_v1::o1_loadCurLayer(void) {
-	_vm->_scenery->interLoadCurLayer();
+	evalExpr(&_vm->_scenery->_curStatic);
+	evalExpr(&_vm->_scenery->_curStaticLayer);
 }
 
 void Inter_v1::o1_playCDTrack(void) {

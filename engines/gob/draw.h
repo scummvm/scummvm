@@ -62,6 +62,10 @@ public:
 	char *_textToPrint;
 	int16 _transparency;
 	Video::SurfaceDesc *_spritesArray[50];
+	Video::SurfaceDesc *_sprites1[50];
+	Video::SurfaceDesc *_sprites2[50];
+	Video::SurfaceDesc *_sprites3[50];
+	uint16 _spritesWidths[50];
 
 	int16 _invalidatedCount;
 	int16 _invalidatedTops[30];
@@ -113,6 +117,10 @@ public:
 	void spriteOperation(int16 operation);
 	void animateCursor(int16 cursor);
 	void printText(void);
+
+	void freeSprite(int16 index);
+	void adjustCoords(int16 *coord1, int16 *coord2, char adjust);
+	void initBigSprite(int16 index, int16 height, int16 width, int16 flags);
 
 	Draw(GobEngine *vm);
 

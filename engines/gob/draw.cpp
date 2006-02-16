@@ -60,8 +60,13 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_textToPrint = 0;
 	_transparency = 0;
 
-	for (i = 0; i < 50; i++)
+	for (i = 0; i < 50; i++) {
 		_spritesArray[i] = 0;
+		_sprites1[i] = 0;
+		_sprites2[i] = 0;
+		_sprites3[i] = 0;
+		_spritesWidths[i] = 0;
+	}
 
 	_invalidatedCount = 0;
 	for (i = 0; i < 30; i++) {
@@ -869,6 +874,97 @@ void Draw::printText(void) {
 		(*_vm->_scenery->_pCaptureCounter)--;
 		_vm->_game->capturePop(1);
 	}
+}
+
+void Draw::freeSprite(int16 index) {
+	// .-- sub_CD84 ---
+	if (_spritesArray[index] == 0)
+		return;
+	_vm->_video->freeSurfDesc(_spritesArray[index]);
+
+//	warning("GOB2 Stub! freeSprite: dword_2EFB4, dword_2EFB8, dword_2EFBC");
+
+	if (_sprites1[index] != 0)
+		_vm->_video->freeSurfDesc(_sprites1[index]);
+	if (_sprites2[index] != 0)
+		_vm->_video->freeSurfDesc(_sprites2[index]);
+	if (_sprites3[index] != 0)
+		_vm->_video->freeSurfDesc(_sprites3[index]);
+
+	// '------
+
+	_spritesArray[index] = 0;
+}
+
+void Draw::adjustCoords(int16 *coord1, int16 *coord2, char adjust) {
+	warning("GOB2 Stub! if (word_2E8E2 == 2) return;");
+	if (adjust == 0) {
+		if (coord2 != 0)
+			*coord2 *= 2;
+		if (coord1 != 0)
+			*coord2 *= 2;
+	}
+	else if (adjust == 1) {
+		if (coord2 != 0)
+			*coord2 = (signed) ((unsigned) (*coord2 + 1) / 2);
+		if (coord1 != 0)
+			*coord1 = (signed) ((unsigned) (*coord1 + 1) / 2);
+	}
+	else if (adjust == 2) {
+		if (coord2 != 0)
+			*coord2 = *coord2 * 2 + 1;
+		if (coord1 != 0)
+			*coord1 = *coord1 * 2 + 1;
+	}
+}
+
+//			sub_EDFC(0x16, _anim_animAreaWidth, _anim_animAreaHeight, 0);
+void Draw::initBigSprite(int16 index, int16 height, int16 width, int16 flags) {
+	int16 realwidth;
+	int16 widthdiff;
+	Gob::Video::SurfaceDesc **fragment;
+
+	if (flags != 0)
+		flags = 2;
+
+	// .-- sub_CBD0 ---
+
+	_sprites1[index] = 0;
+	_sprites2[index] = 0;
+	_sprites3[index] = 0;
+	_spritesWidths[index] = width;
+
+	if (_vm->_video->getRectSize(width, height, flags, _vm->_global->_videoMode) > 6500) {
+		_spritesWidths[index] = width & 0xFFFE;
+		while (_vm->_video->getRectSize(_spritesWidths[index],
+					height, flags, _vm->_global->_videoMode) > 6500)
+			_spritesWidths[index] -= 2;
+
+		realwidth = _spritesWidths[index];
+		_spritesArray[index] =
+			_vm->_video->initSurfDesc(realwidth, height, flags, _vm->_global->_videoMode);
+		
+		fragment = _sprites1 + index;
+		while (realwidth < width) {
+			widthdiff = width - realwidth;
+			if (_spritesWidths[index] >= widthdiff) {
+				*fragment = _vm->_video->initSurfDesc(widthdiff, height, flags, _vm->_global->_videoMode);
+				realwidth = width;
+			}
+			else {
+				*fragment = _vm->_video->initSurfDesc(_spritesWidths[index], height,
+					flags, _vm->_global->_videoMode);
+				realwidth += _spritesWidths[index];
+			}
+			_vm->_video->clearSurf(*fragment++);
+		}
+	} else
+		_spritesArray[index] =
+			_vm->_video->initSurfDesc(width, height, flags, _vm->_global->_videoMode);
+
+	_vm->_video->clearSurf(_spritesArray[index]);
+	
+	// '------
 }
 
 }				// End of namespace Gob

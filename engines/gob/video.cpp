@@ -151,6 +151,8 @@ Video::SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height
 
 void Video::freeSurfDesc(SurfaceDesc * surfDesc) {
 	delete[] surfDesc->vidPtr;
+	// GOB2: surfDesc != _vm->_draw->_frontSurface (since _frontSurface is set
+	// to _pPrimarySurfDesc in Game::prepareStart(), is there a difference?)
 	if (surfDesc != _vm->_global->_pPrimarySurfDesc) {
 		_vm->_global->_sprAllocated--;
 		delete surfDesc;

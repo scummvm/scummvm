@@ -306,6 +306,9 @@ protected:
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
 	void o2_setRenderFlags(void);
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_initMult(void);
+	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_loadCurLayer(void);
 };
 
 }				// End of namespace Gob
