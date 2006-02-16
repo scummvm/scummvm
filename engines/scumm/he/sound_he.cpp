@@ -499,8 +499,10 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MIDI')) {
-		if (_vm->_musicEngine) {
-			_vm->_musicEngine->startSound(soundID);
+		if (_vm->_imuse) {
+			_vm->_imuse->stopSound(_currentMusic);
+			_currentMusic = soundID;
+			_vm->_imuse->startSound(soundID);
 		}
 	}
 }
