@@ -159,10 +159,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\sword2\_mouse.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\sword2\animation.cpp"
 			>
 		</File>
@@ -172,14 +168,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\anims.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\build_display.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\build_display.h"
 			>
 		</File>
 		<File
@@ -244,10 +232,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\layers.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\layers.h"
 			>
 		</File>
 		<File
@@ -327,11 +311,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\save_rest.cpp"
+			RelativePath="..\..\engines\sword2\saveload.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\save_rest.h"
+			RelativePath="..\..\engines\sword2\saveload.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sword2\screen.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sword2\screen.h"
 			>
 		</File>
 		<File

@@ -212,6 +212,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\simon\oracle.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\simon\res.cpp"
 			>
 		</File>
