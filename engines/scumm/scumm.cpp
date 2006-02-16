@@ -2318,15 +2318,15 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2A(this);
 	} else if ((_platform == Common::kPlatformAmiga) && (_version == 3)) {
 		_musicEngine = new Player_V3A(this);
-	} else if ((_platform == Common::kPlatformAmiga) && (_version < 5)) {
+	} else if ((_platform == Common::kPlatformAmiga) && (_version <= 4)) {
 		_musicEngine = NULL;
 	} else if (_gameId == GID_MANIAC && (_version == 1)) {
 		_musicEngine = new Player_V1(this, midiDriver != MD_PCSPK);
 	} else if (_version <= 2) {
 		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
-	} else if ((_musicType == MDT_PCSPK) && ((_version > 2) && (_version < 5))) {
+	} else if ((_musicType == MDT_PCSPK) && ((_version > 2) && (_version <= 4))) {
 		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
-	} else if (_version > 2 && _heversion <= 61) {
+	} else if (_version >= 3 && _heversion <= 61 && _platform != Common::kPlatform3DO) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 

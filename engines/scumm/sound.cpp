@@ -732,14 +732,14 @@ int Sound::isSoundRunning(int sound) const {
 		}
 	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {
-			return !isSfxFinished();
+			return _vm->_mixer->getSoundID(_heSoundChannels[0]);
 		} else if (sound == -1) {
-			// getSoundStatus(), with a -1, will return the
-			// ID number of the first active music it finds.
-			if (_currentMusic)
-				return (_vm->_mixer->isSoundIDActive(_currentMusic) ? _currentMusic : 0);
-			else if (_vm->_imuse)
-				return (_vm->_imuse->getSoundStatus(sound));
+			if (_vm->_platform == Common::kPlatform3DO) {
+				return _vm->_mixer->isSoundIDActive(_currentMusic);
+			} else {
+				if (_vm->_imuse)
+					return _vm->_imuse->getSoundStatus(_currentMusic);
+			}
 		}
 	}
 
@@ -825,12 +825,9 @@ void Sound::stopSound(int sound) {
 		}
 	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {
+			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
-			// Stop current music
-			if (_currentMusic)
-				_vm->_mixer->stopID(_currentMusic);
-			else if (_vm->_imuse)
-				_vm->_imuse->stopSound(_vm->_imuse->getSoundStatus(-1));
+			sound = _currentMusic;
 		}
 	}
 
