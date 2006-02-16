@@ -1,620 +1,643 @@
+# This file is separated into multiple section. Each section represents a
+# specific SCUMM gameid, and is started by a special line, which contains two
+# tab separated fields:
+# GAMEID <TAB> DESCRIPTION
+# After this follows an arbitrary number of lines start with a tab. Each line
+# describes one specific variant of the game. It contains tab separated data:
+#  - MD5
+#  - Language (two letter code)
+#  - Platform
+#  - Variant id
+#    -> optional ID, used in an internal lookup table to distinguish
+#       of a game.
+#  - Description
+#    -> optional short text that will be added to the description displayed by
+#       ScummVM, and is also visible on our website.
+#  - Extra description
+#    -> Some additional description text, only shown on the website
+#  - Source
+#    -> The source of the information, useful in case it has to be verified
+#
+# TODO: We really should have a separate target for "Misc FM-TOWNS demos", so
+#       that their description in the launcher doesn't start with "Zak McKracken"
+#
 maniac	Maniac Mansion
-	d831f7c048574dd9d5d85db2a1468099	en	C64	VC64	
-	c4a7f7398ac9ae588940f9912ea5fd8f	de	C64	VC64	
-	7f45ddd6dbfbf8f80c0c0efea4c295bc	en	DOS	V1	
+	d831f7c048574dd9d5d85db2a1468099	en	C64	-	-	-	
+	c4a7f7398ac9ae588940f9912ea5fd8f	de	C64	-	-	-	
+	7f45ddd6dbfbf8f80c0c0efea4c295bc	en	DOS	V1	V1	-	
 
-	d8d07efcb88f396bee0b402b10c3b1c9	en	NES	V1.5	
-	3905799e081b80a61d4460b7b733c206	en	NES	V1.5	
-	81bbfa181184cb494e7a81dcfa94fbd9	fr	NES	V1.5	
-	257f8c14d8c584f7ddd601bcb00920c7	de	NES	V1.5	
-	22d07d6c386c9c25aca5dac2a0c0d94b	se	NES	V1.5	
-	17f7296f63c78642724f057fd8e736a7	en	NES	V1.5 (extracted)	
-	91d5db93187fab54d823f73bd6441cb6	en	NES	V1.5 (extracted)	
-	1c7e7db2cfab1ad62746ab680a634204	fr	NES	V1.5 (extracted)	
-	3a5ec90d556d4920976c5578bfbfaf79	de	NES	V1.5 (extracted)	
-	6b5a3fef241e90d4b2e77f1e222773ee	se	NES	V1.5 (extracted)	
+	d8d07efcb88f396bee0b402b10c3b1c9	en	NES	NES	-	-	
+	3905799e081b80a61d4460b7b733c206	en	NES	NES	-	-	
+	81bbfa181184cb494e7a81dcfa94fbd9	fr	NES	NES	-	-	
+	257f8c14d8c584f7ddd601bcb00920c7	de	NES	NES	-	-	
+	22d07d6c386c9c25aca5dac2a0c0d94b	se	NES	NES	-	-	
+	17f7296f63c78642724f057fd8e736a7	en	NES	NES	extracted	-	
+	91d5db93187fab54d823f73bd6441cb6	en	NES	NES	extracted	-	
+	1c7e7db2cfab1ad62746ab680a634204	fr	NES	NES	extracted	-	
+	3a5ec90d556d4920976c5578bfbfaf79	de	NES	NES	extracted	-	
+	6b5a3fef241e90d4b2e77f1e222773ee	se	NES	NES	extracted	-	
 
-	e781230da44a44e2f0770edb2b3b3633	en	Amiga	V2	dhewg, Andrea Petrucci
-	ce7733f185b838e248927c7ba1a04204	fr	Amiga	V2	Tobias Fleischer
-	9bc548e179cdb0767009401c094d0895	de	Amiga	V2	Norbert Lange
-	a570381b028972d891052ee1e51dc011	en	Atari	V2	Andreas Bylund
-	dd30a53035393baa5a5e222e716559af	fr	Atari	V2	Andreas Bylund
-	be83e882b44f2767bc08d4f766ebc347	de	Atari	V2	Joachim Eberhard
-	15240c59d3681ed53f714f8d925cb2d6	es	Atari	V2	VooD
-	624cdb93654667c869d204a64af7e57f	en	DOS	V2	Kirben, Andrea Petrucci
-	b250d0f9cc83f80ced56fe11a4fb057c	en	DOS	V2 (alt?)	Andrea Petrucci
-	114acdc2659a273c220f86ee9edb24c1	fr	DOS	V2	Nicolas Sauz&egrave;de
-	99a3699f80b8f776efae592b44b9b991	fr	DOS	V2 (DOTT)	Nicolas Sauz&egrave;de, Andrea Petrucci
-	183d7464902d40d00800e8ee1f04117c	de	DOS	V2	
-	87f6e8037b7cc996e13474b491a7a98e	it	DOS	V2 (DOTT)	Andrea Petrucci
-	0d1b69471605201ef2fa9cec1f5f02d2	es	DOS	V2	abnog, Andrea Petrucci
+	e781230da44a44e2f0770edb2b3b3633	en	Amiga	-	V2	-	dhewg, Andrea Petrucci
+	ce7733f185b838e248927c7ba1a04204	fr	Amiga	-	V2	-	Tobias Fleischer
+	9bc548e179cdb0767009401c094d0895	de	Amiga	-	V2	-	Norbert Lange
+	a570381b028972d891052ee1e51dc011	en	Atari	-	V2	-	Andreas Bylund
+	dd30a53035393baa5a5e222e716559af	fr	Atari	-	V2	-	Andreas Bylund
+	be83e882b44f2767bc08d4f766ebc347	de	Atari	-	V2	-	Joachim Eberhard
+	15240c59d3681ed53f714f8d925cb2d6	es	Atari	-	V2	-	VooD
+	624cdb93654667c869d204a64af7e57f	en	DOS	-	V2	-	Kirben, Andrea Petrucci
+	b250d0f9cc83f80ced56fe11a4fb057c	en	DOS	-	V2	alt?	Andrea Petrucci
+	114acdc2659a273c220f86ee9edb24c1	fr	DOS	-	V2	-	Nicolas Sauz&egrave;de
+	99a3699f80b8f776efae592b44b9b991	fr	DOS	-	V2	from DOTT	Nicolas Sauz&egrave;de, Andrea Petrucci
+	183d7464902d40d00800e8ee1f04117c	de	DOS	-	V2	-	
+	87f6e8037b7cc996e13474b491a7a98e	it	DOS	-	V2	from DOTT	Andrea Petrucci
+	0d1b69471605201ef2fa9cec1f5f02d2	es	DOS	-	V2	-	abnog, Andrea Petrucci
 
-	40564ec47da48a67787d1f9bd043902a	en	DOS	V2 Demo (non-interactive)	
+	40564ec47da48a67787d1f9bd043902a	en	DOS	V2	Demo	non-interactive	
 
 zak	Zak McKracken and the Alien Mindbenders
-	55d3987641bf229c83bc729210173383	en	C64	VC64	
-	4973bbc3899e3826dbf316e1d7271ec7	de	C64	VC64	
-	7020931d5a2be0a49d68e7a1882363e4	en	DOS	V1	
-	b23f7cd7c304d7dff08e92a96120d5b4	en	DOS	V1 (alt?)	Andrea Petrucci
+	55d3987641bf229c83bc729210173383	en	C64	-	-	-	
+	4973bbc3899e3826dbf316e1d7271ec7	de	C64	-	-	-	
+	7020931d5a2be0a49d68e7a1882363e4	en	DOS	V1	V1	-	
+	b23f7cd7c304d7dff08e92a96120d5b4	en	DOS	V1	V1	alt?	Andrea Petrucci
 
-	e94c7cc3686fce406d3c91b5eae5a72d	en	Amiga	V2	dhweg
-	91469353f7be1b122fa88d23480a1320	fr	Amiga	V2	Tobias Fleischer
-	6027e9ca9c35746d95dee2068cec17e5	de	Amiga	V2	Norbert Lange
-	27b3a4224ad63d5b04627595c1c1a025	it	Amiga	V2	Andrea Petrucci
-	d55eff37c2100f5065cde9de428621fa	en	Atari	V2	
-	613f64f78ea26c7353b2a5940eb61d6a	fr	Atari	V2	Andreas Bylund
-	ff05c07990061d97647f059c48c1d05a	de	Atari	V2	
-	675d71151e9b5a968c8ce46d9fbf4cbf	en	DOS	V2	Kirben
-	debe337f73d660e951ece7c1f1c81add	en	DOS	V2 (alt?)	Andrea Petrucci
-	52a4bae0746a11d7b1e8554e91a6645c	fr	DOS	V2	Andrea Petrucci
-	c4787c3e8b5e2dfda90850ee800af00f	fr	DOS	V2 (alt?)	Qvist
-	cdd760228cf1010c2903f37e788ea31c	de	DOS	V2	Max Horn
-	d06fbe28818fef7bfc45c2cdf0c0849d	de	DOS	V2 (from 5.25\" floppies)	Nicolas Sauz&egrave;de, Andrea Petrucci
-	1900e501a52fbf55bde6e4196f6d2aa6	it	DOS	V2	Andrea Petrucci
-	75ba23fff4fd63fa446c02864f2a5a4b	it	DOS	V2 (alt?)	Antti Leimi, Andrea Petrucci
+	e94c7cc3686fce406d3c91b5eae5a72d	en	Amiga	-	V2	-	dhweg
+	91469353f7be1b122fa88d23480a1320	fr	Amiga	-	V2	-	Tobias Fleischer
+	6027e9ca9c35746d95dee2068cec17e5	de	Amiga	-	V2	-	Norbert Lange
+	27b3a4224ad63d5b04627595c1c1a025	it	Amiga	-	V2	-	Andrea Petrucci
+	d55eff37c2100f5065cde9de428621fa	en	Atari	-	V2	-	
+	613f64f78ea26c7353b2a5940eb61d6a	fr	Atari	-	V2	-	Andreas Bylund
+	ff05c07990061d97647f059c48c1d05a	de	Atari	-	V2	-	
+	675d71151e9b5a968c8ce46d9fbf4cbf	en	DOS	-	V2	-	Kirben
+	debe337f73d660e951ece7c1f1c81add	en	DOS	-	V2	alt?	Andrea Petrucci
+	52a4bae0746a11d7b1e8554e91a6645c	fr	DOS	-	V2	-	Andrea Petrucci
+	c4787c3e8b5e2dfda90850ee800af00f	fr	DOS	-	V2	alt?	Qvist
+	cdd760228cf1010c2903f37e788ea31c	de	DOS	-	V2	-	Max Horn
+	d06fbe28818fef7bfc45c2cdf0c0849d	de	DOS	-	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
+	1900e501a52fbf55bde6e4196f6d2aa6	it	DOS	-	V2	-	Andrea Petrucci
+	75ba23fff4fd63fa446c02864f2a5a4b	it	DOS	-	V2	alt?	Antti Leimi, Andrea Petrucci
 
-	2d4536a56e01da4b02eb021e7770afa2	en	FM-TOWNS	FM-TOWNS	
-	1ca86e2cf9aaa2068738a1e5ba477e60	jp	FM-TOWNS	FM-TOWNS	Andrea Petrucci
+	2d4536a56e01da4b02eb021e7770afa2	en	FM-TOWNS	FM-TOWNS	-	-	
+	1ca86e2cf9aaa2068738a1e5ba477e60	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 
-	8299d9b8a1b0e7b881bae7a9971dc5e2	en	Atari	V2 Demo (non-interactive)	
+	8299d9b8a1b0e7b881bae7a9971dc5e2	en	Atari	V2	Demo	non-interactive	
 
 indy3	Indiana Jones and the Last Crusade
-	9c0fee288ad564a7d25ec3e841810d79	en	Amiga	EGA	dhewg
-	e689bdf67f98b1d760ce4487ec0e8d06	fr	Amiga	EGA	Gerald Vincent
-	330f631502e381a4e199a3f7cb483c20	de	Amiga	EGA	dhewg
-	df03ee021aa9b81d90cab9c26da07614	it	Amiga	EGA	Andrea Petrucci
-	62b8c16b6db226ba95aaa8be73f9885c	es	Amiga	EGA	
-	157367c3c21e0d03a0cba44361b4cf65	en	Atari	EGA	Andreas Bylund
-	0f9c7a76657f0840b8f7ccb5bffeb9f4	fr	Atari	EGA	Andreas Bylund
-	5fbe557049892eb4b709d90916ec97ca	en	DOS	EGA (1.0 7/09/89)	
-	6b3ec67da214f558dc5ceaa2acd47453	en	DOS	EGA (1.3 8/14/89)	tsuteiuQ, Andrea Petrucci
-	6508fd55530e6915507e1cc37f7f045d	en	DOS	EGA (1.3 8/14/89 5.25\")	Zer02
-	66236cd1aec24e1d4aff4c4cc93b7e18	fr	DOS	EGA	Andrea Petrucci
-	89cfc425566003ff74b7dc7b3e6fd469 	fr	DOS	EGA (1.3 8/25/89)	Jorpho
-	6f6ef668c608c7f534fea6e6d3878dde	de	DOS	EGA	dhewg
-	d62d248c3df6ec177405e2cb23d923b2	it	DOS	EGA	Andrea Petrucci
-	86be8ada36371d4fdc35659d0e912a26	es	DOS	EGA	Andrea Petrucci
-	ce7fd0c382389a6791fc3e199c117ef4	es	DOS	EGA (alt?)	abnog
-	1dd7aa088e09f96d06818aa9a9deabe0	en	Mac	EGA	
+	9c0fee288ad564a7d25ec3e841810d79	en	Amiga	EGA	EGA	-	dhewg
+	e689bdf67f98b1d760ce4487ec0e8d06	fr	Amiga	EGA	EGA	-	Gerald Vincent
+	330f631502e381a4e199a3f7cb483c20	de	Amiga	EGA	EGA	-	dhewg
+	df03ee021aa9b81d90cab9c26da07614	it	Amiga	EGA	EGA	-	Andrea Petrucci
+	62b8c16b6db226ba95aaa8be73f9885c	es	Amiga	EGA	EGA	-	
+	157367c3c21e0d03a0cba44361b4cf65	en	Atari	EGA	EGA	-	Andreas Bylund
+	0f9c7a76657f0840b8f7ccb5bffeb9f4	fr	Atari	EGA	EGA	-	Andreas Bylund
+	5fbe557049892eb4b709d90916ec97ca	en	DOS	EGA	EGA	1.0 7/09/89	
+	6b3ec67da214f558dc5ceaa2acd47453	en	DOS	EGA	EGA	1.3 8/14/89	tsuteiuQ, Andrea Petrucci
+	6508fd55530e6915507e1cc37f7f045d	en	DOS	EGA	EGA	1.3 8/14/89 5.25\"	Zer02
+	66236cd1aec24e1d4aff4c4cc93b7e18	fr	DOS	EGA	EGA	-	Andrea Petrucci
+	89cfc425566003ff74b7dc7b3e6fd469 	fr	DOS	EGA	EGA	1.3 8/25/89	Jorpho
+	6f6ef668c608c7f534fea6e6d3878dde	de	DOS	EGA	EGA	-	dhewg
+	d62d248c3df6ec177405e2cb23d923b2	it	DOS	EGA	EGA	-	Andrea Petrucci
+	86be8ada36371d4fdc35659d0e912a26	es	DOS	EGA	EGA	-	Andrea Petrucci
+	ce7fd0c382389a6791fc3e199c117ef4	es	DOS	EGA	EGA	alt?	abnog
+	1dd7aa088e09f96d06818aa9a9deabe0	en	Mac	EGA	EGA	-	
 
-	1875b90fade138c9253a8e967007031a	en	DOS	VGA	
-	399b217b0c8d65d0398076da486363a9	de	DOS	VGA	
-	17b5d5e6af4ae89d62631641d66d5a05	it	DOS	VGA	Andrea Petrucci
-	3cce1913a3bc586b51a75c3892ff18dd	ru	DOS	VGA	
+	1875b90fade138c9253a8e967007031a	en	DOS	VGA	VGA	VGA	
+	399b217b0c8d65d0398076da486363a9	de	DOS	VGA	VGA	VGA	
+	17b5d5e6af4ae89d62631641d66d5a05	it	DOS	VGA	VGA	VGA	Andrea Petrucci
+	3cce1913a3bc586b51a75c3892ff18dd	ru	DOS	VGA	VGA	VGA	
 
-	04687cdf7f975a89d2474929f7b80946	en	FM-TOWNS	FM-TOWNS	
-	3a0c35f3c147b98a2bdf8d400cfc4ab5	jp	FM-TOWNS	FM-TOWNS	Paul Priest, Andrea Petrucci
+	04687cdf7f975a89d2474929f7b80946	en	FM-TOWNS	FM-TOWNS	-	-	
+	3a0c35f3c147b98a2bdf8d400cfc4ab5	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
-	b597e0403cc0002f69170e6caba7edd9	en	DOS	EGA Demo (non-interactive)	
+	b597e0403cc0002f69170e6caba7edd9	en	DOS	EGA	Demo	non-interactive	
 
 loom	Loom
-	4dc780f1bc587a193ce8a97652791438	en	Amiga	EGA	Antti Leimi, Andrea Petrucci
-	39cb9dec16fa16f38d79acd80effb059	fr	Amiga	EGA (same as IT?!?)	Gerald Vincent
-	2fe369ad70f52a8cf7ad6077ee64f81a	de	Amiga	EGA	Norbert Lange
-	39cb9dec16fa16f38d79acd80effb059	it	Amiga	EGA (same as FR?!?)	Andrea Petrucci
-	48b9f04b348bc5013327753f0d12a144	es	Amiga	EGA	VooD
-	a0a7dea72003933b8b3f8b99b9f7ddeb	en	Atari	EGA	
-	0e9b01430e31d9fcd94071d433bbc6bf	fr	Atari	EGA	
-	c24c490373aeb48fbd54caa8e7ae376d	de	Atari	EGA	Andreas Bylund
-	28ef68ee3ed76d7e2ee8ee13c15fbd5b	en	DOS	EGA (1.0)	
-	73e5ab7dbb9a8061cc6d25df02dbd1e7	en	DOS	EGA (1.0 alternative)	Andrea Petrucci
-	37f56ceb13e401a7ac7d9e6b37fecaf7	en	DOS	EGA (1.1 16 Mar 90)	Kirben, Andrea Petrucci
-	22f4ea88a09da12df9308ba30bcb7d0f	en	DOS	EGA (1.1 29 Mar 90)	James Grosbeck
-	b886b0a5d909c7158a914e1d7c1c6c65	fr	DOS	EGA	Andrea Petrucci
-	6f8a22bfa397be1f7ed4b74aba0e397e	fr	DOS	EGA (1.2 26 Jun 90)	Jorpho
-	fa127d7c4bb47d05bb1c33ddcaa9f767	de	DOS	EGA	
-	187d315f6b5168f68680dfe8c3d76a3e	hb	DOS	EGA	
-	c3df37df9d3b481b45f75283a9907c47	it	DOS	EGA	Andrea Petrucci
-	2a208ffbcd0e83e86f4356e6f64aa6e1	es	DOS	EGA	abnog, Andrea Petrucci
-	6f0be328c64d689bb606d22a389e1b0f	en	Mac	EGA	
+	4dc780f1bc587a193ce8a97652791438	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
+	39cb9dec16fa16f38d79acd80effb059	fr	Amiga	EGA	EGA	same as IT?!?	Gerald Vincent
+	2fe369ad70f52a8cf7ad6077ee64f81a	de	Amiga	EGA	EGA	-	Norbert Lange
+	39cb9dec16fa16f38d79acd80effb059	it	Amiga	EGA	EGA	same as FR?!?	Andrea Petrucci
+	48b9f04b348bc5013327753f0d12a144	es	Amiga	EGA	EGA	-	VooD
+	a0a7dea72003933b8b3f8b99b9f7ddeb	en	Atari	EGA	EGA	-	
+	0e9b01430e31d9fcd94071d433bbc6bf	fr	Atari	EGA	EGA	-	
+	c24c490373aeb48fbd54caa8e7ae376d	de	Atari	EGA	EGA	-	Andreas Bylund
+	28ef68ee3ed76d7e2ee8ee13c15fbd5b	en	DOS	EGA	EGA	1.0	
+	73e5ab7dbb9a8061cc6d25df02dbd1e7	en	DOS	EGA	EGA	1.0 alt	Andrea Petrucci
+	37f56ceb13e401a7ac7d9e6b37fecaf7	en	DOS	EGA	EGA	1.1 16 Mar 90	Kirben, Andrea Petrucci
+	22f4ea88a09da12df9308ba30bcb7d0f	en	DOS	EGA	EGA	1.1 29 Mar 90	James Grosbeck
+	b886b0a5d909c7158a914e1d7c1c6c65	fr	DOS	EGA	EGA	-	Andrea Petrucci
+	6f8a22bfa397be1f7ed4b74aba0e397e	fr	DOS	EGA	EGA	1.2 26 Jun 90	Jorpho
+	fa127d7c4bb47d05bb1c33ddcaa9f767	de	DOS	EGA	EGA	-	
+	187d315f6b5168f68680dfe8c3d76a3e	hb	DOS	EGA	EGA	-	
+	c3df37df9d3b481b45f75283a9907c47	it	DOS	EGA	EGA	-	Andrea Petrucci
+	2a208ffbcd0e83e86f4356e6f64aa6e1	es	DOS	EGA	EGA	-	abnog, Andrea Petrucci
+	6f0be328c64d689bb606d22a389e1b0f	en	Mac	EGA	EGA	-	
 
-	5d88b9d6a88e6f8e90cded9d01b7f082	en	DOS	VGA CD	
+	5d88b9d6a88e6f8e90cded9d01b7f082	en	DOS	VGA	VGA CD	-	
 
-	c5d10e190d4b4d59114b824f2fdbd00e	en	FM-TOWNS	FM-TOWNS	dhewg, Andrea Petrucci
-	31b8fda4c8c7413fa6b39997e776eba4	jp	FM-TOWNS	FM-TOWNS	khalek, Andrea Petrucci
+	c5d10e190d4b4d59114b824f2fdbd00e	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+	31b8fda4c8c7413fa6b39997e776eba4	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
 
-	5a35e36fd777e9c37a49c5b2faca52f9	en	DOS	EGA Demo (non-interactive)	
-	a00554c31d623fdb9fcb0f924b89b42b	en	DOS	EGA Demo (non-interactive)	Adrian C. Fruehwirth
+	5a35e36fd777e9c37a49c5b2faca52f9	en	DOS	EGA	EGA Demo	non-interactive	
+	a00554c31d623fdb9fcb0f924b89b42b	en	DOS	EGA	EGA Demo	non-interactive	Adrian C. Fruehwirth
 
 monkey	The Secret of Monkey Island
-	c666a998af90d81db447eccba9f72c8d	en	Atari	EGA	
-	9e5e0fb43bd22f4628719b7501adb717	fr	Atari	EGA	Andreas Bylund
-	927a764615c7fcdd72f591355e089d8c	de	Atari	EGA	Joachim Eberhard
-	0a41311d462b6639fc45297b9044bf16	es	Atari	EGA	
-	49210e124e4c2b30f1290a9ef6306301	en	DOS	EGA (8 disk)	
-	1dd3c11ea4439adfe681e4e405b624e1	fr	DOS	EGA (8 disk)	Andrea Petrucci
-	fc6b6148e80d67939d9a18697c0f626a	de	DOS	EGA (8 disk)	ghoostkilla
-	910e31cffb28226bd68c569668a0d6b4	es	DOS	EGA (8 disk)	Andrea Petrucci
-	1d05cd189e4908f79b57e78a4402f292	en	DOS	EGA (4 disk)	Andrea Petrucci
-	ce6a4cef315b20fef58a95bc40a2d8d3	fr	DOS	EGA (4 disk)	Matthieu Milan
-	aa7a07d94ae853f6460be4ce0a1bf530	fr	DOS	EGA (4 disk v1.0,9/7/90 II)	Parazythum
-	e98b982ceaf9d253d730bde8903233d6	de	DOS	EGA (4 disk)	Joachim Eberhard
-	477dbafbd66a53c98416dc01aef019ad	it	DOS	EGA (4 disk)	Andrea Petrucci
+	c666a998af90d81db447eccba9f72c8d	en	Atari	EGA	EGA	-	
+	9e5e0fb43bd22f4628719b7501adb717	fr	Atari	EGA	EGA	-	Andreas Bylund
+	927a764615c7fcdd72f591355e089d8c	de	Atari	EGA	EGA	-	Joachim Eberhard
+	0a41311d462b6639fc45297b9044bf16	es	Atari	EGA	EGA	-	
+	49210e124e4c2b30f1290a9ef6306301	en	DOS	EGA	EGA	8 disk	
+	1dd3c11ea4439adfe681e4e405b624e1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
+	fc6b6148e80d67939d9a18697c0f626a	de	DOS	EGA	EGA	8 disk	ghoostkilla
+	910e31cffb28226bd68c569668a0d6b4	es	DOS	EGA	EGA	8 disk	Andrea Petrucci
+	1d05cd189e4908f79b57e78a4402f292	en	DOS	EGA	EGA	4 disk	Andrea Petrucci
+	ce6a4cef315b20fef58a95bc40a2d8d3	fr	DOS	EGA	EGA	4 disk	Matthieu Milan
+	aa7a07d94ae853f6460be4ce0a1bf530	fr	DOS	EGA	EGA	4 disk v1.0,9/7/90 II	Parazythum
+	e98b982ceaf9d253d730bde8903233d6	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
+	477dbafbd66a53c98416dc01aef019ad	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
 
-	6c2bff0e327f2962e809c2e1a82d7309	en	Amiga	VGA	dhweg
-	3433be9866ca4261b2d5d25374e3f243	fr	Amiga	VGA	Gerald Vincent
-	0a212fa35fa8421f31c1f3961272caf0	de	Amiga	VGA (V1.1)	Andreas Bylund
-	319a4dde52c7960b5aae8a1ec348d918	de	Amiga	VGA (V1.2r)	ghoostkilla
-	fb66aa42de21675116346213f176a366	it	Amiga	VGA	Andrea Petrucci
-	870d1e3c86bc50846d808d14a36b4e08	es	Amiga	VGA	Andreas Bylund
-	c7890e038806df2bb5c0c8c6f1986ea2	en	DOS	VGA (8 disk)	Andrea Petrucci
-	15e03ffbfeddb9c2aebc13dcb2a4a8f4	en	DOS	VGA (4 disk)	
-	08656dd9698ddf1023ba9bf8a195e37b	en	DOS	VGA (V1.1)	crossbow777
-	d0b531227a27c6662018d2bd05aac52a	de	DOS	VGA (4 disk)	
-	66fd5ff9a810dfeb6d6bdada18221140	it	DOS	VGA (4 disk)	Andrea Petrucci
-	45152f7cf2ba8f43cf8a8ea2e740ae09	es	DOS	VGA (4 disk)	
-	2ccd8891ce4d3f1a334d21bff6a88ca2	en	Mac	VGA	Lars N&aelig;sbye Christensen
+	6c2bff0e327f2962e809c2e1a82d7309	en	Amiga	VGA	VGA	-	dhweg
+	3433be9866ca4261b2d5d25374e3f243	fr	Amiga	VGA	VGA	-	Gerald Vincent
+	0a212fa35fa8421f31c1f3961272caf0	de	Amiga	VGA	VGA	V1.1	Andreas Bylund
+	319a4dde52c7960b5aae8a1ec348d918	de	Amiga	VGA	VGA	V1.2r	ghoostkilla
+	fb66aa42de21675116346213f176a366	it	Amiga	VGA	VGA	-	Andrea Petrucci
+	870d1e3c86bc50846d808d14a36b4e08	es	Amiga	VGA	VGA	-	Andreas Bylund
+	c7890e038806df2bb5c0c8c6f1986ea2	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
+	15e03ffbfeddb9c2aebc13dcb2a4a8f4	en	DOS	VGA	VGA	4 disk	
+	08656dd9698ddf1023ba9bf8a195e37b	en	DOS	VGA	VGA	V1.1	crossbow777
+	d0b531227a27c6662018d2bd05aac52a	de	DOS	VGA	VGA	4 disk	
+	66fd5ff9a810dfeb6d6bdada18221140	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
+	45152f7cf2ba8f43cf8a8ea2e740ae09	es	DOS	VGA	VGA	4 disk	
+	2ccd8891ce4d3f1a334d21bff6a88ca2	en	Mac	VGA	VGA	-	Lars N&aelig;sbye Christensen
 
-	2d1e891fe52df707c30185e52c50cd92	en	DOS	CD	
-	aa8a0cb65f3afbbe2c14c3f9f92775a3	fr	DOS	CD	Andrej Sinicyn, Andrea Petrucci
-	305d3dd57c96c65b017bc70c8c7cfb5e	de	DOS	CD	
-	da6269b18fcb08189c0aa9c95533cce2	it	DOS	CD	Andrej Sinicyn, Andrea Petrucci
-	f049e38c1f8302b5db6170f1872af89a	es	DOS	CD	Andrej Sinicyn, Andrea Petrucci
-	c13225cb1bbd3bc9fe578301696d8021	en	SEGA	CD	
+	2d1e891fe52df707c30185e52c50cd92	en	DOS	CD	CD	-	
+	aa8a0cb65f3afbbe2c14c3f9f92775a3	fr	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
+	305d3dd57c96c65b017bc70c8c7cfb5e	de	DOS	CD	CD	-	
+	da6269b18fcb08189c0aa9c95533cce2	it	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
+	f049e38c1f8302b5db6170f1872af89a	es	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
+	c13225cb1bbd3bc9fe578301696d8021	en	SEGA	SEGA	-	-	
 
-	8eb84cee9b429314c7f0bdcf560723eb	en	FM-TOWNS	FM-TOWNS	Paul Priest, Andrea Petrucci
-	e17db1ddf91b39ca6bbc8ad3ed19e883	jp	FM-TOWNS	FM-TOWNS	Paul Priest, Andrea Petrucci
+	8eb84cee9b429314c7f0bdcf560723eb	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
+	e17db1ddf91b39ca6bbc8ad3ed19e883	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
-	71523b539491527d9860f4407faf0411	en	DOS	EGA Demo	
-	771bc18ec6f93837b839c992b211904b	de	DOS	EGA Demo	khalek
-	54a936ad06161ff7bfefcb96200f7bff	en	Amiga	VGA Demo	khalek
+	71523b539491527d9860f4407faf0411	en	DOS	EGA	EGA Demo	-	
+	771bc18ec6f93837b839c992b211904b	de	DOS	EGA	EGA Demo	-	khalek
+	54a936ad06161ff7bfefcb96200f7bff	en	Amiga	VGA	VGA Demo	-	khalek
 
 pass	Passport to Adventure
-	e6cd81b25ab1453a8a6d3482118c391e	en	DOS	-	
+	e6cd81b25ab1453a8a6d3482118c391e	en	DOS	-	-	-	
 
 zak	Misc FM-TOWNS demos
-	2d388339d6050d8ccaa757b64633954e	en	FM-TOWNS	indy/loom (non-interactive)	khalek
-	77f5c9cc0986eb729c1a6b4c8823bbae	en	FM-TOWNS	zak/loom (non-interactive)	khalek
-	3938ee1aa4433fca9d9308c9891172b1	en	FM-TOWNS	indy/zak (non-interactive)	khalek
+	2d388339d6050d8ccaa757b64633954e	en	FM-TOWNS	FM-TOWNS	-	indy/loom (non-interactive)	khalek
+	77f5c9cc0986eb729c1a6b4c8823bbae	en	FM-TOWNS	FM-TOWNS	-	zak/loom (non-interactive)	khalek
+	3938ee1aa4433fca9d9308c9891172b1	en	FM-TOWNS	FM-TOWNS	-	indy/zak (non-interactive)	khalek
 
 monkey2	Monkey Island 2: LeChuck's Revenge
-	132bff65e6367c09cc69318ce1b59333	en	Amiga	Floppy	
-	c30ef068add4277104243c31ce46c12b	fr	Amiga	Floppy	Andreas Bylund
-	da669b20271b85182e9c17a2a37ea02e	de	Amiga	Floppy	Andreas Bylund, Norbert Lange
-	11ddf1fde76e3156eb3a38da213f484e	it	Amiga	Floppy	Andrea Petrucci
-	6ea966b4d660c870b9ee790d1fbfc535	es	Amiga	Floppy	Andreas Bylund
-	3686cf8f89e102ececf4366e1d2c8126	en	DOS	Floppy	
-	8e4ee4db46954bfe2912e259a16fad82	fr	DOS	Floppy	Nicolas Sauz&egrave;de, Andrea Petrucci
-	6886e5d08cee329b1f2e743ae2e3ceed	de	DOS	Floppy	
-	69ea626f1f87eecb78ea0d6c6b983a1d	it	DOS	Floppy	Andrea Petrucci
-	bd126753de619a495f9f22adc951c8d5	it	DOS	Floppy (alt?)	Andrea Petrucci
-	7974365d3dc0f43a2748c975f91ff042	es	DOS	Floppy	Andrea Petrucci
-	4cb9c3618f71668f8e4346c8f323fa82	en	Mac	Floppy	
-	e246e02db9630533a40d99c9f54a8e01	en	Mac	Floppy (alt?)	Lars N&aelig;sbye Christensen
+	132bff65e6367c09cc69318ce1b59333	en	Amiga	-	-	-	
+	c30ef068add4277104243c31ce46c12b	fr	Amiga	-	-	-	Andreas Bylund
+	da669b20271b85182e9c17a2a37ea02e	de	Amiga	-	-	-	Andreas Bylund, Norbert Lange
+	11ddf1fde76e3156eb3a38da213f484e	it	Amiga	-	-	-	Andrea Petrucci
+	6ea966b4d660c870b9ee790d1fbfc535	es	Amiga	-	-	-	Andreas Bylund
+	3686cf8f89e102ececf4366e1d2c8126	en	DOS	-	-	-	
+	8e4ee4db46954bfe2912e259a16fad82	fr	DOS	-	-	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	6886e5d08cee329b1f2e743ae2e3ceed	de	DOS	-	-	-	
+	69ea626f1f87eecb78ea0d6c6b983a1d	it	DOS	-	-	-	Andrea Petrucci
+	bd126753de619a495f9f22adc951c8d5	it	DOS	-	-	alt?	Andrea Petrucci
+	7974365d3dc0f43a2748c975f91ff042	es	DOS	-	-	-	Andrea Petrucci
+	4cb9c3618f71668f8e4346c8f323fa82	en	Mac	-	-	-	
+	e246e02db9630533a40d99c9f54a8e01	en	Mac	-	-	alt?	Lars N&aelig;sbye Christensen
 
-	da09e666fc8f5b78d7b0ac65d1a3b56e	en	FM-TOWNS	FM-TOWNS	dhewg, Andrea Petrucci
-	430bc518017b6fac046f58bab6baad5d	jp	FM-TOWNS	FM-TOWNS	Antti Leimi, Andrea Petrucci
+	da09e666fc8f5b78d7b0ac65d1a3b56e	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
+	430bc518017b6fac046f58bab6baad5d	jp	FM-TOWNS	-	-	-	Antti Leimi, Andrea Petrucci
 
-	387a544b8b10b26912d8413bab63a853	en	DOS	Demo (non-interactive)	khalek
+	387a544b8b10b26912d8413bab63a853	en	DOS	-	Demo	non-interactive	khalek
 
 atlantis	Indiana Jones and the Fate of Atlantis
-	3a03dab514e4038df192d8a8de469788	en	Amiga	Floppy	dhewg
-	20da6fce37805423966aaa8f3c2426aa	fr	Amiga	Floppy	Joachim Eberhard
-	4f267a901719623de7dde83e47d5b474	de	Amiga	Floppy	ghoostkilla
-	e534d29afb3c6e0ee9dc3d53c5956714	de	Amiga	Floppy (alt?)	Tobias Fleischer
-	5798972220cd458be2626d54c80f71d7	it	Amiga	Floppy	Andrea Petrucci
-	15f588e887e857e8c56fe6ade4956168	es	Amiga	Floppy	VooD
-	c63ee46143ba65f9ce14cf539ca51bd7	en	DOS	Floppy	Andrea Petrucci
-	edfdb24a499d92c59f824c52987c0eec	fr	DOS	Floppy	Nicolas Sauz&egrave;de, Andrea Petrucci
-	1fbebd7b2b692df5297870447a80cfed	de	DOS	Floppy	
-	8f3758ff98c9c5d78e5d635222cad026	it	DOS	Floppy	Andrea Petrucci
-	9bd2a8f72613e715c199246dd511e10f	es	DOS	Floppy	abnog, Andrea Petrucci
-	06b187468113f9ae5a400b148a847fac	en	Mac	Floppy	Lars N sbye Christensen
-	d6dd0646404768a63e963891a96daadd	en	Mac	Floppy (alt?)	Fingolfin
+	3a03dab514e4038df192d8a8de469788	en	Amiga	-	Floppy	-	dhewg
+	20da6fce37805423966aaa8f3c2426aa	fr	Amiga	-	Floppy	-	Joachim Eberhard
+	4f267a901719623de7dde83e47d5b474	de	Amiga	-	Floppy	-	ghoostkilla
+	e534d29afb3c6e0ee9dc3d53c5956714	de	Amiga	-	Floppy	alt?	Tobias Fleischer
+	5798972220cd458be2626d54c80f71d7	it	Amiga	-	Floppy	-	Andrea Petrucci
+	15f588e887e857e8c56fe6ade4956168	es	Amiga	-	Floppy	-	VooD
+	c63ee46143ba65f9ce14cf539ca51bd7	en	DOS	-	Floppy	-	Andrea Petrucci
+	edfdb24a499d92c59f824c52987c0eec	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	1fbebd7b2b692df5297870447a80cfed	de	DOS	-	Floppy	-	
+	8f3758ff98c9c5d78e5d635222cad026	it	DOS	-	Floppy	-	Andrea Petrucci
+	9bd2a8f72613e715c199246dd511e10f	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
+	06b187468113f9ae5a400b148a847fac	en	Mac	-	Floppy	-	Lars N sbye Christensen
+	d6dd0646404768a63e963891a96daadd	en	Mac	-	Floppy	alt?	Fingolfin
 
-	182344899c2e2998fca0bebcd82aa81a	en	DOS	CD	
-	1a6e5ae2777a6a33f06ffc0226210934	en	Mac	CD	Scott Summers
-	2d9d46f23cb07bbc90b8ad464d3e4ff8	en	Mac	CD (bundle)	Joachim Eberhard
+	182344899c2e2998fca0bebcd82aa81a	en	DOS	-	CD	-	
+	1a6e5ae2777a6a33f06ffc0226210934	en	Mac	-	CD	-	Scott Summers
+	2d9d46f23cb07bbc90b8ad464d3e4ff8	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 
-	c7be10f775404fd9785a8b92a06d240c	en	FM-TOWNS	FM-TOWNS	dhewg, Andrea Petrucci
-	4d34042713958b971cb139fba4658586	jp	FM-TOWNS	FM-TOWNS	Andrea Petrucci
+	c7be10f775404fd9785a8b92a06d240c	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
+	4d34042713958b971cb139fba4658586	jp	FM-TOWNS	-	-	-	Andrea Petrucci
 
-	035deab53b47bc43abc763560d0f8d4b	en	DOS	Demo	
-	98744fe66ff730e8c2b3b1f58803ab0b	en	DOS	Demo	Simon Krumrein, sev
-	99b6f822b0b2612415407865438697d6	en	DOS	Demo (non-interactive)	
-	28d24a33448fab6795850bc9f159a4a2	jp	FM-TOWNS	Demo (non-interactive)	khalek
+	035deab53b47bc43abc763560d0f8d4b	en	DOS	-	Demo	-	
+	98744fe66ff730e8c2b3b1f58803ab0b	en	DOS	-	Demo	-	Simon Krumrein, sev
+	99b6f822b0b2612415407865438697d6	en	DOS	-	Demo	non-interactive	
+	28d24a33448fab6795850bc9f159a4a2	jp	FM-TOWNS	-	Demo	non-interactive	khalek
 
 tentacle	Day of the Tentacle
-	acad97ab1c6fc2a5b2d98abf6db4a190	en	All?	Floppy Version A ?	
-	2723fea3dae0cb47768c424b145ae0e7	en	DOS	Floppy Version B ?	Andrej Sinicyn, Andrea Petrucci
-	92b078d9d6d9d751da9c26b8b3075779	fr	DOS	Floppy	Nicolas Sauz&egrave;de, Andrea Petrucci
-	94aaedbb8f26d71ed3ad6dd34490e29e	fr	DOS	Floppy (alt?)	Nicolas Joly
-	57b0d89af79befe1cabce3bece869e7f	de	DOS	Floppy	Andrej Sinicyn, Andrea Petrucci
-	50fcdc982a25063b78ad46bf389b8e8d	it	DOS	Floppy	Andrea Petrucci
-	ae94f110a14ce71fc515d5b648827a8f	es	DOS	Floppy	abnog, Andrea Petrucci
+	acad97ab1c6fc2a5b2d98abf6db4a190	en	All?	-	Floppy	Version A ?	
+	2723fea3dae0cb47768c424b145ae0e7	en	DOS	-	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci
+	92b078d9d6d9d751da9c26b8b3075779	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	94aaedbb8f26d71ed3ad6dd34490e29e	fr	DOS	-	Floppy	alt?	Nicolas Joly
+	57b0d89af79befe1cabce3bece869e7f	de	DOS	-	Floppy	-	Andrej Sinicyn, Andrea Petrucci
+	50fcdc982a25063b78ad46bf389b8e8d	it	DOS	-	Floppy	-	Andrea Petrucci
+	ae94f110a14ce71fc515d5b648827a8f	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
 
-	4167a92a1d46baa4f4127d918d561f88	en	All?	CD	
-	8aa05d3cdb0e795436043f0546af2da2	fr	All?	CD?	Andrea Petrucci
-	6e959d65358eedf9b68b81e304b97fa4	de	All?	CD	
-	4fbbe9f64b8bc547503a379a301183ce	it	All?	CD	Andrea Petrucci
-	883af4b0af4f77a92f1dcf1d0a283140	es	All?	CD	Andrea Petrucci
-	cc04a076779379524ed4d9c5ee3c6fb1	en	Mac	CD (bundle)	Joachim Eberhard
-	f73883f13b5a302749a5bad31d909780	de	Mac	CD (bundle)	morrissey
+	4167a92a1d46baa4f4127d918d561f88	en	All?	-	CD	-	
+	8aa05d3cdb0e795436043f0546af2da2	fr	All?	-	CD?	-	Andrea Petrucci
+	6e959d65358eedf9b68b81e304b97fa4	de	All?	-	CD	-	
+	4fbbe9f64b8bc547503a379a301183ce	it	All?	-	CD	-	Andrea Petrucci
+	883af4b0af4f77a92f1dcf1d0a283140	es	All?	-	CD	-	Andrea Petrucci
+	cc04a076779379524ed4d9c5ee3c6fb1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+	f73883f13b5a302749a5bad31d909780	de	Mac	-	CD	Mac bundle	morrissey
 
-	c83079157ec765a28de445aec9768d60	en	All	Demo	
-	17fa250eb72dae2dad511ba79c0b6b0a	fr	DOS	Demo	cyx
-	ac1642b6edfb8521ca03760126f1c250	de	DOS	Demo	Simon Krumrein, sev
-	2a41b53cf1a90b6e6f26c10cc6041084	en	Mac	Demo (bundle)	
+	c83079157ec765a28de445aec9768d60	en	All	-	Demo	-	
+	17fa250eb72dae2dad511ba79c0b6b0a	fr	DOS	-	Demo	-	cyx
+	ac1642b6edfb8521ca03760126f1c250	de	DOS	-	Demo	-	Simon Krumrein, sev
+	2a41b53cf1a90b6e6f26c10cc6041084	en	Mac	-	Demo	Mac bundle	
 
 samnmax	Sam &amp; Max Hit the Road
-	3b301b7892f883ce42ab4be6a274fea6	en	DOS	Floppy	Andrea Petrucci
-	a3036878840720fbefa41e6965fa4a0a	en	DOS	Floppy (alt?)	Andrea Petrucci
-	ef347474f3c7be3b29584eaa133cca05	fr	DOS	Floppy	Nicolas Sauz&egrave;de, Andrea Petrucci
-	f27b1ba0eadaf2a6617b2b58192d1dbf	de	DOS	Floppy	dhewg, Andrea Petrucci
-	b289a2a8cbedbf45786e0b4ad2f510f1	it	DOS	Floppy	Andrea Petrucci
-	fc53ce0e5f6562b1c1e1b4b8203acafb	es	DOS	Floppy	Andrea Petrucci
+	3b301b7892f883ce42ab4be6a274fea6	en	DOS	-	Floppy	-	Andrea Petrucci
+	a3036878840720fbefa41e6965fa4a0a	en	DOS	-	Floppy	alt?	Andrea Petrucci
+	ef347474f3c7be3b29584eaa133cca05	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	f27b1ba0eadaf2a6617b2b58192d1dbf	de	DOS	-	Floppy	-	dhewg, Andrea Petrucci
+	b289a2a8cbedbf45786e0b4ad2f510f1	it	DOS	-	Floppy	-	Andrea Petrucci
+	fc53ce0e5f6562b1c1e1b4b8203acafb	es	DOS	-	Floppy	-	Andrea Petrucci
 
-	d917f311a448e3cc7239c31bddb00dd2	en	All?	CD	
-	7edd665bbede7ea8b7233f8e650be6f8	fr	All?	CD	Andrea Petrucci
-	0fb73eddfcf584c02ba097984df131ba	de	All?	CD	
-	0f6f2e716ba896a44e5059bba1de7ca9	it	All?	CD	Andrea Petrucci
-	4ba7fb331296c283e73d8f5b2096e551	es	All?	CD	Andrea Petrucci
-	d43352a805d78b5f4936c6d7779bf575	ru	DOS	CD	
-	166553538ff320c69edafeee29525419	en	Mac	CD (bundle)	Joachim Eberhard
+	d917f311a448e3cc7239c31bddb00dd2	en	All?	-	CD	-	
+	7edd665bbede7ea8b7233f8e650be6f8	fr	All?	-	CD	-	Andrea Petrucci
+	0fb73eddfcf584c02ba097984df131ba	de	All?	-	CD	-	
+	0f6f2e716ba896a44e5059bba1de7ca9	it	All?	-	CD	-	Andrea Petrucci
+	4ba7fb331296c283e73d8f5b2096e551	es	All?	-	CD	-	Andrea Petrucci
+	d43352a805d78b5f4936c6d7779bf575	ru	DOS	-	CD	-	
+	166553538ff320c69edafeee29525419	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 
-	c3196c5349e53e387aaff1533d95e53a	en	DOS	Demo	
-	0e4c5d54a0ad4b26132e78b5ea76642a	en	DOS	Demo (WIP)	
-	d9d0dd93d16ab4dec55cabc2b86bbd17	en	DOS	Demo (non-interactive)	
-	cc8ba2b0df2f9c450bcf055fe2711979	de	DOS	Demo	Simon Krumrein, sev
-	0425954a9db5c340861672892c3e678d	en	Mac	Demo	
-	6dead580b0ff14d5f7b33b4219f04159	en	Mac	Demo (bundle)	
+	c3196c5349e53e387aaff1533d95e53a	en	DOS	-	Demo	-	
+	0e4c5d54a0ad4b26132e78b5ea76642a	en	DOS	-	Demo	Demo (WIP)	
+	d9d0dd93d16ab4dec55cabc2b86bbd17	en	DOS	-	Demo	Demo (non-interactive)	
+	cc8ba2b0df2f9c450bcf055fe2711979	de	DOS	-	Demo	-	Simon Krumrein, sev
+	0425954a9db5c340861672892c3e678d	en	Mac	-	Demo	-	
+	6dead580b0ff14d5f7b33b4219f04159	en	Mac	-	Demo	Demo (bundle)	
 
 ft	Full Throttle
-	09820417db26687bb7fe0c83cc4c553b	en	All?	CD Version A	
-	60ba818dc3bede86d40357e3913f8505	en	All?	CD Version B	sev
-	4bedb49943df95a9c900a5a82ccbe9de	fr	All?	CD	cyx
-	8bdb0bf87b5e303dd35693afb9351215	de	All?	CD	dhewg
-	55518cd73cf9c6d23ea29c51ee06bdfe	it	All?	CD	delfino
-	55e4cc866ff9046824e1c638ba2b8c7f	ru	All?	CD	sev
-	e72bb4c2b613db2cf50f89ff6350e70a	es	All?	CD	
-	fe381e45117878b1e942cb876b050fd6	en	Mac	CD (bundle)	fingolfin
-	04401d747f1a2c1c4b388daff71ed378	de	Mac	CD (bundle)	fingolfin
+	09820417db26687bb7fe0c83cc4c553b	en	All?	-	Version A	-	
+	60ba818dc3bede86d40357e3913f8505	en	All?	-	Version B	-	sev
+	4bedb49943df95a9c900a5a82ccbe9de	fr	All?	-	-	-	cyx
+	8bdb0bf87b5e303dd35693afb9351215	de	All?	-	-	-	dhewg
+	55518cd73cf9c6d23ea29c51ee06bdfe	it	All?	-	-	-	delfino
+	55e4cc866ff9046824e1c638ba2b8c7f	ru	All?	-	-	-	sev
+	e72bb4c2b613db2cf50f89ff6350e70a	es	All?	-	-	-	
+	fe381e45117878b1e942cb876b050fd6	en	Mac	-	-	Mac bundle	fingolfin
+	04401d747f1a2c1c4b388daff71ed378	de	Mac	-	-	Mac bundle	fingolfin
 
-	32a433dea56b86a55b59e4ff7d755711	en	DOS	Demo	
-	9d7b67be003fea60be4dcbd193611936	en	Mac	Demo	
-	9b7452b5cd6d3ffb2b2f5118010af84f	en	Mac	Demo (bundle)	Joachim Eberhard
+	32a433dea56b86a55b59e4ff7d755711	en	DOS	-	Demo	-	
+	9d7b67be003fea60be4dcbd193611936	en	Mac	-	Demo	-	
+	9b7452b5cd6d3ffb2b2f5118010af84f	en	Mac	-	Demo	Mac bundle	Joachim Eberhard
 
 dig	The Dig
-	d8323015ecb8b10bf53474f6e6b0ae33	All	All	CD	
-	d62047a6729349ab36f7ee065bf26509	ru	All	CD	sev
-	35a2d3040fa512f8232d9e443319d84d	en	Mac	CD (bundle)	fingolfin
-	21a6592322f92550f144f68a8a4e685e	fr	Mac	CD (bundle)	kaminari
+	d8323015ecb8b10bf53474f6e6b0ae33	All	All	-	-	-	
+	d62047a6729349ab36f7ee065bf26509	ru	All	-	-	-	sev
+	35a2d3040fa512f8232d9e443319d84d	en	Mac	-	-	Mac bundle	fingolfin
+	21a6592322f92550f144f68a8a4e685e	fr	Mac	-	-	Mac bundle	kaminari
 
-	362c1d281fb9899254cda66ad246c66a	en	All	Demo	
-	cd9c05e755d7bf8e9b9590ad1ebe273e	en	Mac	Demo (bundle)	fingolfin
+	362c1d281fb9899254cda66ad246c66a	en	All	-	Demo	-	
+	cd9c05e755d7bf8e9b9590ad1ebe273e	en	Mac	-	Demo	Mac bundle	fingolfin
 
 comi	The Curse of Monkey Island
-	fe60d6b5ff51b0553ac59963123b5777	All	All	CD	
-	861e59ed72a1cd0e6d454f7ee7e2bf3d	ru	All	CD	
+	fe60d6b5ff51b0553ac59963123b5777	All	All	-	-	-	
+	861e59ed72a1cd0e6d454f7ee7e2bf3d	ru	All	-	-	-	
 
-	8fec68383202d38c0d25e9e3b757c5df	All	All	Demo	
+	8fec68383202d38c0d25e9e3b757c5df	All	All	-	Demo	-	
 
 baseball	Backyard Baseball
-	cf8d13446ec6cb6222287a925fd47c1d	en	All	CD	sev
+	cf8d13446ec6cb6222287a925fd47c1d	en	All	-	-	-	sev
 
 baseball2001	Backyard Baseball 2001
-	a86f9c49355579c30d4a55b477c0d869	en	All	CD	Kirben
-	a194f15f51ee62badab74b9e7da97693	en	All	Demo	khalek, sev
+	a86f9c49355579c30d4a55b477c0d869	en	All	-	-	-	Kirben
+	a194f15f51ee62badab74b9e7da97693	en	All	-	Demo	-	khalek, sev
 
 baseball2003	Backyard Baseball 2003
-	efe0a04a703e765ebebe92b6c8aa6b86	en	All	CD	Kirben, sev
+	efe0a04a703e765ebebe92b6c8aa6b86	en	All	-	-	-	Kirben, sev
 
 football	Backyard Football
-	7fc6cdb46b4c9d384c52327f4bca6416	en	All	CD	sev
-	2e85f7aa054930c692a5b1bed1dfc295	en	All	Demo	khalek
-	425205754fa749f4f0b0dd9d09fa45fd	en	All	Demo	Joachim Eberhard
-	5bd335265a61caa3d78956ad9f88ba23	en	All	Demo	sev
+	7fc6cdb46b4c9d384c52327f4bca6416	en	All	-	-	-	sev
+	2e85f7aa054930c692a5b1bed1dfc295	en	All	-	Demo	-	khalek
+	425205754fa749f4f0b0dd9d09fa45fd	en	All	-	Demo	-	Joachim Eberhard
+	5bd335265a61caa3d78956ad9f88ba23	en	All	-	Demo	-	sev
 
 soccer	Backyard Soccer
-	701246819d1a70573f41bf33fc19214f	en	All	CD	sev
+	701246819d1a70573f41bf33fc19214f	en	All	-	-	-	sev
 
 SoccerMLS	Backyard Soccer MLS Edition
-	bfdf584b01503f0762baded581f6a0a2	en	Windows	CD	sev
+	bfdf584b01503f0762baded581f6a0a2	en	Windows	-	-	-	sev
 
 Soccer2004	Backyard Soccer 2004
-	c4ffae9fac495475d6bc3343ccc8faf9	en	All	CD	Kirben, sev
+	c4ffae9fac495475d6bc3343ccc8faf9	en	All	-	-	-	Kirben, sev
 
 thinker1	Big Thinkers First Grade
-	5c21fc49aee8f46e58fef21579e614a1	en	All	CD	Kirben
-	0f5935bd5e88ba6f09e558d64459746d	en	Windows	Demo	khalek
+	5c21fc49aee8f46e58fef21579e614a1	en	All	-	-	-	Kirben
+	0f5935bd5e88ba6f09e558d64459746d	en	Windows	-	Demo	-	khalek
 
 thinkerk	Big Thinkers Kindergarten
-	92fc0073a4cf259ff36070ecb8628ba8	en	All	CD	Kirben
-	695fe0b3963333b7e15b37514db3c745	en	All	Demo	khalek, sev
+	92fc0073a4cf259ff36070ecb8628ba8	en	All	-	-	-	Kirben
+	695fe0b3963333b7e15b37514db3c745	en	All	-	Demo	-	khalek, sev
 
 BluesABCTimeDemo	Blue's ABC Time
-	7ddeaf52c8b9a50551ce0aa2ac811d07	en	All	Demo	khalek, sev
-	810a9da887aefa597b0cf3c77d262897	en	All	Demo	sev
+	7ddeaf52c8b9a50551ce0aa2ac811d07	en	All	-	Demo	-	khalek, sev
+	810a9da887aefa597b0cf3c77d262897	en	All	-	Demo	-	sev
 
 fbear	Fatty Bear's Birthday Surprise
-	5b08000a9c47b2887df6506ac767ca68	en	3DO	CD	sev
-	3824e60cdf639d22f6df92a03dc4b131	en	DOS	CD	khalek
-	ef74d9071d4e564b037cb44bd6774de7	hb	DOS	CD	sev
-	3df6ead57930488bc61e6e41901d0e97	en	Mac	CD	khalek
-	179879b6e35c1ead0d93aab26db0951b	en	Windows	CD	khalek
+	5b08000a9c47b2887df6506ac767ca68	en	3DO	-	-	-	sev
+	3824e60cdf639d22f6df92a03dc4b131	en	DOS	-	-	-	khalek
+	ef74d9071d4e564b037cb44bd6774de7	hb	DOS	-	-	-	sev
+	3df6ead57930488bc61e6e41901d0e97	en	Mac	-	-	-	khalek
+	179879b6e35c1ead0d93aab26db0951b	en	Windows	-	-	-	khalek
 
-	47e75b1bdcb44c78cb94883d1731ccf8	en	DOS	Demo	khalek
-	6df20c50c1ab19799de9be7ae7716881	en	Mac	Demo	khalek
-	22c9eb04455440131ffc157aeb8d40a8	en	Windows	Demo	khalek
+	47e75b1bdcb44c78cb94883d1731ccf8	en	DOS	-	Demo	-	khalek
+	6df20c50c1ab19799de9be7ae7716881	en	Mac	-	Demo	-	khalek
+	22c9eb04455440131ffc157aeb8d40a8	en	Windows	-	Demo	-	khalek
 
 fbpack	Fatty Bear's Fun Pack
-	e01acc8c12ef44e8f778fe87e5f90f4e	en	3DO	CD	sev
-	f06e66fd45b2f8b0f4a2833ff4476050	hb	DOS	CD	sev
+	e01acc8c12ef44e8f778fe87e5f90f4e	en	3DO	-	-	-	sev
+	f06e66fd45b2f8b0f4a2833ff4476050	hb	DOS	-	-	-	sev
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
-	df047cc4792150f601290357566d36a6	en	All	CD	khalek
-	d4cccb5af88f3e77f370896e9ba8c5f9	All	Windows	CD	sev
-	c0039ad982999c92d0de81910d640fa0	nl	Windows	CD	adutchguy
-	cf8ef3a1fb483c5c4b1c584d1167b2c4	de	Windows	CD	Oncer
-	e63a0b9249b5ca4cc4d3ac34305ae360	nb	Windows	CD	Karl Ove Hufthammer
-	746e88c172a5b7a1ae89ac0ee3ee681a	ru	Windows	CD	sev
-	507bb360688dc4180fdf0d7597352a69	se	Windows	CD	Sven Arvidsson
+	df047cc4792150f601290357566d36a6	en	All	-	-	-	khalek
+	d4cccb5af88f3e77f370896e9ba8c5f9	All	Windows	-	-	-	sev
+	c0039ad982999c92d0de81910d640fa0	nl	Windows	-	-	-	adutchguy
+	cf8ef3a1fb483c5c4b1c584d1167b2c4	de	Windows	-	-	-	Oncer
+	e63a0b9249b5ca4cc4d3ac34305ae360	nb	Windows	-	-	-	Karl Ove Hufthammer
+	746e88c172a5b7a1ae89ac0ee3ee681a	ru	Windows	-	-	-	sev
+	507bb360688dc4180fdf0d7597352a69	se	Windows	-	-	-	Sven Arvidsson
 
-	c8aac5e3e701874e2fa4117896f9e1b1	en	Mac	Demo	khalek, sev
-	084ed0fa98a6d1e9368d67fe9cfbd417	en	Windows	Demo	khalek
-	0855496dde35356b1a9691e22ba84cdc	en	Windows	Demo	khalek
-	566165a7338fa11029e7c14d94fa70d0	en	Windows	Demo	khalek
-	cf4ef315214c7d8cdab6302cdb7e50db	de	Windows	Demo	Joachim Eberhard
+	c8aac5e3e701874e2fa4117896f9e1b1	en	Mac	-	Demo	-	khalek, sev
+	084ed0fa98a6d1e9368d67fe9cfbd417	en	Windows	-	Demo	-	khalek
+	0855496dde35356b1a9691e22ba84cdc	en	Windows	-	Demo	-	khalek
+	566165a7338fa11029e7c14d94fa70d0	en	Windows	-	Demo	-	khalek
+	cf4ef315214c7d8cdab6302cdb7e50db	de	Windows	-	Demo	-	Joachim Eberhard
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
-	51305e929e330e24a75a0351c8f9975e	en	All	CD	Kirben
-	8ee63cafb1fe9d62aa0d5a23117e70e7	en	All	CD	Kirben
-	fce4b8010704b103acfeea9413788f32	de	All	CD	Joachim Eberhard
-	5057fb0e99e5aa29df1836329232f101	All	Windows	CD	sev
-	ac62d50e39492ee3738b4e83a5ac780f	nl	Windows	CD	joostp
-	151071053a1d0021198216713939521d	en	Windows	CD	vampir_raziel
-	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	CD	sev
+	51305e929e330e24a75a0351c8f9975e	en	All	-	-	-	Kirben
+	8ee63cafb1fe9d62aa0d5a23117e70e7	en	All	-	-	-	Kirben
+	fce4b8010704b103acfeea9413788f32	de	All	-	-	-	Joachim Eberhard
+	5057fb0e99e5aa29df1836329232f101	All	Windows	-	-	-	sev
+	ac62d50e39492ee3738b4e83a5ac780f	nl	Windows	-	-	-	joostp
+	151071053a1d0021198216713939521d	en	Windows	-	-	-	vampir_raziel
+	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	-	-	-	sev
 
-	d37c55388294b66e53e7ced3af88fa68	en	All	Demo	khalek
-	fc8d197a22146e74766e9cb0cfcaf1da	en	All	Demo	khalek, sev
+	d37c55388294b66e53e7ced3af88fa68	en	All	-	Demo	-	khalek
+	fc8d197a22146e74766e9cb0cfcaf1da	en	All	-	Demo	-	khalek, sev
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
-	8368f552b1e3eba559f8d559bcc4cadb	All	All	CD	Kirben, sev
-	83cedbe26aa8b58988e984e3d34cac8e	de	All	CD	Joachim Eberhard
-	0cccfa5223099a60e76cfcca57a1a141	nl	Windows	CD	adutchguy
-	75bff95816b84672b877d22a911ab811	ru	Windows	CD	sev
-	898ce8eb1234a955ef75e87141902bb3	ru	Windows	CD	sev
+	8368f552b1e3eba559f8d559bcc4cadb	All	All	-	-	-	Kirben, sev
+	83cedbe26aa8b58988e984e3d34cac8e	de	All	-	-	-	Joachim Eberhard
+	0cccfa5223099a60e76cfcca57a1a141	nl	Windows	-	-	-	adutchguy
+	75bff95816b84672b877d22a911ab811	ru	Windows	-	-	-	sev
+	898ce8eb1234a955ef75e87141902bb3	ru	Windows	-	-	-	sev
 
-	cb1559e8405d17a5a278a6b5ad9338d1	en	All	Demo	khalek, sev
-	bbadf7309c4a2c2763e4bbba3c3be634	fr	All	Demo	Kirben
-	ed2b074bc3166087a747acb2a3c6abb0	de	All	Demo	Joachim Eberhard
-	754feb59d3bf86b8a00840df74fd7b26	nl	Windows	Demo	adutchguy
+	cb1559e8405d17a5a278a6b5ad9338d1	en	All	-	Demo	-	khalek, sev
+	bbadf7309c4a2c2763e4bbba3c3be634	fr	All	-	Demo	-	Kirben
+	ed2b074bc3166087a747acb2a3c6abb0	de	All	-	Demo	-	Joachim Eberhard
+	754feb59d3bf86b8a00840df74fd7b26	nl	Windows	-	Demo	-	adutchguy
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
-	4f580a021eee026f3b4589e17d130d78	All	All	CD	Kirben, sev
-	b5298a5c15ffbe8b381d51ea4e26d35c	de	All	CD	Joachim Eberhard
-	14d48c95b43ddeb983254cf6c43851f1	nl	Windows	CD	adutchguy
-	07b810e37be7489263f7bc7627d4765d	ru	Windows	CD	sev
-	78bd5f036ea35a878b74e4f47941f784	ru	Windows	CD	sev
+	4f580a021eee026f3b4589e17d130d78	All	All	-	-	-	Kirben, sev
+	b5298a5c15ffbe8b381d51ea4e26d35c	de	All	-	-	-	Joachim Eberhard
+	14d48c95b43ddeb983254cf6c43851f1	nl	Windows	-	-	-	adutchguy
+	07b810e37be7489263f7bc7627d4765d	ru	Windows	-	-	-	sev
+	78bd5f036ea35a878b74e4f47941f784	ru	Windows	-	-	-	sev
 
-	7c2e76087027eeee9c8f8985f93a1cc5	en	All	Demo	khalek
-	c25755b08a8d0d47695e05f1e2111bfc	en	All	Demo	sev
-	ebd324dcf06a4c49e1ba5c231eee1060	en	All	Demo	sev
-	688328c5bdc4c8ec4145688dfa077bf2	de	All	Demo	Joachim Eberhard
-	16effd200aa6b8abe9c569c3e578814d	nl	Windows	Demo	joostp
-	499c958affc394f2a3868f1eb568c3ee	nl	Windows	Demo	adutchguy
-	e03ed1474ec14de78359970e0457a820	en	Windows	Demo	eriktorbjorn
+	7c2e76087027eeee9c8f8985f93a1cc5	en	All	-	Demo	-	khalek
+	c25755b08a8d0d47695e05f1e2111bfc	en	All	-	Demo	-	sev
+	ebd324dcf06a4c49e1ba5c231eee1060	en	All	-	Demo	-	sev
+	688328c5bdc4c8ec4145688dfa077bf2	de	All	-	Demo	-	Joachim Eberhard
+	16effd200aa6b8abe9c569c3e578814d	nl	Windows	-	Demo	-	joostp
+	499c958affc394f2a3868f1eb568c3ee	nl	Windows	-	Demo	-	adutchguy
+	e03ed1474ec14de78359970e0457a820	en	Windows	-	Demo	-	eriktorbjorn
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
-	590e6546aacd0d374b7f3a4f53013ab1	All	All	CD	cyx
-	b8955d7d23b4972229060d1592489fef	nl	Windows	CD	adutchguy
-	21abe302e1b1e2b66d6f5c12e241ebfd	ru	Windows	CD	sev
-	4ce2d5b355964bbcb5e5ce73236ef868	ru	Windows	CD	sev
+	590e6546aacd0d374b7f3a4f53013ab1	All	All	-	-	-	cyx
+	b8955d7d23b4972229060d1592489fef	nl	Windows	-	-	-	adutchguy
+	21abe302e1b1e2b66d6f5c12e241ebfd	ru	Windows	-	-	-	sev
+	4ce2d5b355964bbcb5e5ce73236ef868	ru	Windows	-	-	-	sev
 
-	6b257bb2827dd894b8109a50a1a18b5a	nl	All	Demo	Kirben, sev
-	45082a5c9f42ba14dacfe1fdeeba819d	en	All	Demo	sev
+	6b257bb2827dd894b8109a50a1a18b5a	nl	All	-	Demo	-	Kirben, sev
+	45082a5c9f42ba14dacfe1fdeeba819d	en	All	-	Demo	-	sev
 
 maze	Freddi Fish and Luther's Maze Madness
-	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	CD	Kirben
-	4f04b321a95d4315ce6d65f8e1dd0368	en	All	CD	Kirben
+	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	-	-	-	Kirben
+	4f04b321a95d4315ce6d65f8e1dd0368	en	All	-	-	-	Kirben
 
 water	Freddi Fish and Luther's Water Worries
-	4ba37f835be11a59d969f90f272f575b	en	All	CD	Kirben
-	f1b0e0d587b85052de5534a3847e68fe	en	All	CD	Joachim Eberhard
-	2012f854d83d9cc6f73b2b544cd8bbf8	ru	Windows	CD	sev
-	6271130f440066830eca9056c1d7926f	ru	Windows	CD	sev
+	4ba37f835be11a59d969f90f272f575b	en	All	-	-	-	Kirben
+	f1b0e0d587b85052de5534a3847e68fe	en	All	-	-	-	Joachim Eberhard
+	2012f854d83d9cc6f73b2b544cd8bbf8	ru	Windows	-	-	-	sev
+	6271130f440066830eca9056c1d7926f	ru	Windows	-	-	-	sev
 
 FreddisFunShop	Freddi Fish's One-Stop Fun Shop
-	16542a7342a918bfe4ba512007d36c47	en	All	CD	Kirben
+	16542a7342a918bfe4ba512007d36c47	en	All	-	-	-	Kirben
 
 catalog	Humongous Interactive Catalog
-	037385a953789190298494d92b89b3d0	en	Windows	Demo	khalek, sev
-	11e6e244078ff09b0f3832e35420e0a7	en	Windows	Demo	khalek, sev
+	037385a953789190298494d92b89b3d0	en	Windows	-	Demo	-	khalek, sev
+	11e6e244078ff09b0f3832e35420e0a7	en	Windows	-	Demo	-	khalek, sev
 
 airport	Let's Explore the Airport with Buzzy
-	d6334a5a9b61afe18c368540fdf522ca	en	Mac	CD	Joachim Eberhard
-	07433205acdca3bc553d0e731588b35f	en	Windows	CD	Kirben
+	d6334a5a9b61afe18c368540fdf522ca	en	Mac	-	-	-	Joachim Eberhard
+	07433205acdca3bc553d0e731588b35f	en	Windows	-	-	-	Kirben
 
-	7ea2da67ebabea4ac20cee9f4f9d2934	en	Mac	Demo	khalek
-	86c9902b7bec1a17926d4dae85beaa45	en	Windows	Demo	khalek
-	8ffd618a776a4c0d8922bb28b09f8ce8	en	Windows	Demo	khalek
-	e144f5f49d9241d2a9dee2576b3d09cb	en	Windows	Demo	khalek
+	7ea2da67ebabea4ac20cee9f4f9d2934	en	Mac	-	Demo	-	khalek
+	86c9902b7bec1a17926d4dae85beaa45	en	Windows	-	Demo	-	khalek
+	8ffd618a776a4c0d8922bb28b09f8ce8	en	Windows	-	Demo	-	khalek
+	e144f5f49d9241d2a9dee2576b3d09cb	en	Windows	-	Demo	-	khalek
 
 farm	Let's Explore the Farm with Buzzy
-	fbbbb38a81fc9d6a61d509278390a290	en	Mac	CD	khalek
-	a85856675429fe88051744f755b72f93	en	Windows	CD	Kirben
+	fbbbb38a81fc9d6a61d509278390a290	en	Mac	-	-	-	khalek
+	a85856675429fe88051744f755b72f93	en	Windows	-	-	-	Kirben
 
-	39fd6db10d0222d817025c4d3346e3b4	en	Mac	Demo	Joachim Eberhard
-	0557df19f046a84c2fdc63507c6616cb	nl	Windows	Demo	adutchguy
-	8d479e36f35e80257dfc102cf4b8a912	en	Windows	Demo	khalek, sev
-	bf8b52fdd9a69c67f34e8e9fec72661c	en	Windows	Demo	khalek, sev
+	39fd6db10d0222d817025c4d3346e3b4	en	Mac	-	Demo	-	Joachim Eberhard
+	0557df19f046a84c2fdc63507c6616cb	nl	Windows	-	Demo	-	adutchguy
+	8d479e36f35e80257dfc102cf4b8a912	en	Windows	-	Demo	-	khalek, sev
+	bf8b52fdd9a69c67f34e8e9fec72661c	en	Windows	-	Demo	-	khalek, sev
 
 jungle	Let's Explore the Jungle with Buzzy
-	659942b9a6b519f123a13cca3c333a13	en	Mac	CD	Joachim Eberhard
-	8801fb4a1200b347f7a38523339526dd	en	Windows	CD	Kirben
+	659942b9a6b519f123a13cca3c333a13	en	Mac	-	-	-	Joachim Eberhard
+	8801fb4a1200b347f7a38523339526dd	en	Windows	-	-	-	Kirben
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
-	37aed3f91c1ef959e0bd265f9b13781f	en	All	CD	Kirben
-	672dec94b82f7f0877ebb5b5cf7f4bc1	en	All	CD	khalek
-	a095e33061606d231ff37dca4c64c8ac	de	All	CD	Joachim Eberhard
-	4fa6870d9bc8c313b65d54b1da5a1891	nl	Windows	CD	joostp
-	898eaa21f79cf8d4f08db856244689ff	en	Windows	CD	Joachim Eberhard
+	37aed3f91c1ef959e0bd265f9b13781f	en	All	-	-	-	Kirben
+	672dec94b82f7f0877ebb5b5cf7f4bc1	en	All	-	-	-	khalek
+	a095e33061606d231ff37dca4c64c8ac	de	All	-	-	-	Joachim Eberhard
+	4fa6870d9bc8c313b65d54b1da5a1891	nl	Windows	-	-	-	joostp
+	898eaa21f79cf8d4f08db856244689ff	en	Windows	-	-	-	Joachim Eberhard
 
-	d7ab7cd6105546016e6a0d46fb36b964	en	All	Demo	khalek
-	f237bf8a5ef9af78b2a6a4f3901da341	en	All	Demo	khalek, sev
-	7f945525abcd48015adf1632637a44a1	fr	All	Demo	Kirben
-	0305e850382b812fec6e5998ef88a966	nl	Windows	Demo	adutchguy
+	d7ab7cd6105546016e6a0d46fb36b964	en	All	-	Demo	-	khalek
+	f237bf8a5ef9af78b2a6a4f3901da341	en	All	-	Demo	-	khalek, sev
+	7f945525abcd48015adf1632637a44a1	fr	All	-	Demo	-	Kirben
+	0305e850382b812fec6e5998ef88a966	nl	Windows	-	Demo	-	adutchguy
 
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
-	d4e79c3d8645b8266cd78c325bc35154	en	All	CD	Kirben
-	c6907d44f1166941d982864cd42cdc89	de	All	CD	nachbarnebenan
-	32709cbeeb3044b34129950860a83f14	ru	Windows	CD	sev
+	d4e79c3d8645b8266cd78c325bc35154	en	All	-	-	-	Kirben
+	c6907d44f1166941d982864cd42cdc89	de	All	-	-	-	nachbarnebenan
+	32709cbeeb3044b34129950860a83f14	ru	Windows	-	-	-	sev
 
-	30ba1e825d4ad2b448143ae8df18482a	nl	All	Demo	Kirben
-	36a6750e03fb505fc19fc2bf3e4dbe91	en	All	Demo	sev
-	4521138d15d1fd7649c31fb981746231	de	All	Demo	Joachim Eberhard
+	30ba1e825d4ad2b448143ae8df18482a	nl	All	-	Demo	-	Kirben
+	36a6750e03fb505fc19fc2bf3e4dbe91	en	All	-	Demo	-	sev
+	4521138d15d1fd7649c31fb981746231	de	All	-	Demo	-	Joachim Eberhard
 
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
-	f7711f9264d4d43c2a1518ec7c10a607	en	All	CD	Kirben
-	2e8a1f76ea33bc5e04347646feee173d	de	All	CD	Joachim Eberhard
+	f7711f9264d4d43c2a1518ec7c10a607	en	All	-	-	-	Kirben
+	2e8a1f76ea33bc5e04347646feee173d	de	All	-	-	-	Joachim Eberhard
 
-	f08145577e4f13584cc90b3d6e9caa55	nl	All	Demo	joostp
-	a654fb60c3b67d6317a7894ffd9f25c5	en	All	Demo	sev
-	a9f2f04b1ecaab9495b59befffe9bf88	en	All	Demo	sev
-	0c45eb4baff0c12c3d9dfa889c8070ab	de	All	Demo	Joachim Eberhard
-	3e48298920fab9b7aec5a971e1bd1fab	en	Windows	Demo	eriktorbjorn
-	cf90b4db5486ef798db78fe6fbf897e5	en	Windows	Demo	khalek
+	f08145577e4f13584cc90b3d6e9caa55	nl	All	-	Demo	-	joostp
+	a654fb60c3b67d6317a7894ffd9f25c5	en	All	-	Demo	-	sev
+	a9f2f04b1ecaab9495b59befffe9bf88	en	All	-	Demo	-	sev
+	0c45eb4baff0c12c3d9dfa889c8070ab	de	All	-	Demo	-	Joachim Eberhard
+	3e48298920fab9b7aec5a971e1bd1fab	en	Windows	-	Demo	-	eriktorbjorn
+	cf90b4db5486ef798db78fe6fbf897e5	en	Windows	-	Demo	-	khalek
 
 pjgames	Pajama Sam: Games to Play On Any Day
-	8a484262363a8e18be87112454f1456b	en	All	CD	Kirben
+	8a484262363a8e18be87112454f1456b	en	All	-	-	-	Kirben
 
 lost	Pajama Sam's Lost & Found
-	a561d2e2413cc1c71d5a1bf87bf493ea	en	All	CD	Kirben
-	ed361270102e355afe5236954216aba2	en	All	CD	Kirben
-	a2bb6aa0537402c1b3c2ea899ccef64b	en	Windows	Demo	Kirben
+	a561d2e2413cc1c71d5a1bf87bf493ea	en	All	-	-	-	Kirben
+	ed361270102e355afe5236954216aba2	en	All	-	-	-	Kirben
+	a2bb6aa0537402c1b3c2ea899ccef64b	en	Windows	-	Demo	-	Kirben
 
 SamsFunShop	Pajama Sam's One-Stop Fun Shop
-	68155a6bf082221525f431c2cbdac8ab	en	All	CD	Kirben
+	68155a6bf082221525f431c2cbdac8ab	en	All	-	-	-	Kirben
 
 socks	Pajama Sam's Sock Works
-	5e8fb66971a60e523e5afbc4c129c0e8	en	All	CD	Kirben
-	19263586f749a560c1adf8b3393a9593	ru	Windows	CD	sev
+	5e8fb66971a60e523e5afbc4c129c0e8	en	All	-	-	-	Kirben
+	19263586f749a560c1adf8b3393a9593	ru	Windows	-	-	-	sev
 
 puttrace	Putt-Putt Enters the Race
-	981e1e1891f2be7e25a01f50ae55a5af	en	All	CD	Kirben
-	055ffe4f47753e47594ac67823220c54	de	All	CD	Joachim Eberhard
+	981e1e1891f2be7e25a01f50ae55a5af	en	All	-	-	-	Kirben
+	055ffe4f47753e47594ac67823220c54	de	All	-	-	-	Joachim Eberhard
 
-	6af2419fe3db5c2fdb091ae4e5833770	nl	All	Demo	Kirben
-	aaa587701cde7e74692c68c1024b85eb	nl	All	Demo	joostp
-	0ac41e2e3d2174e5a042a6b565328dba	en	All	Demo	sev
-	663743c03ae0c007f3d665cf631c0e6b	de	All	Demo	Joachim Eberhard
-	7c8100e360e8ef05f88069d4cfa0afd1	en	Windows	Demo	eriktorbjorn
+	6af2419fe3db5c2fdb091ae4e5833770	nl	All	-	Demo	-	Kirben
+	aaa587701cde7e74692c68c1024b85eb	nl	All	-	Demo	-	joostp
+	0ac41e2e3d2174e5a042a6b565328dba	en	All	-	Demo	-	sev
+	663743c03ae0c007f3d665cf631c0e6b	de	All	-	Demo	-	Joachim Eberhard
+	7c8100e360e8ef05f88069d4cfa0afd1	en	Windows	-	Demo	-	eriktorbjorn
 
 puttmoon	Putt-Putt Goes to the Moon
-	a9543ef0d79bcb47cd76ec197ad0a967	en	3DO	CD	sev
-	780e4a0ae2ff17dc296f4a79543b44f8	All	DOS	CD	khalek
-	697c9b7c55a05d8199c48b48e379d2c8	hb	DOS	CD	sev
-	9dc02577bf50d4cfaf3de3fbac06fbe2	en	Mac	CD	khalek
-	9c92eeaf517a31b7221ec2546ab669fd	en	Windows	CD	khalek
+	a9543ef0d79bcb47cd76ec197ad0a967	en	3DO	-	-	-	sev
+	780e4a0ae2ff17dc296f4a79543b44f8	All	DOS	-	-	-	khalek
+	697c9b7c55a05d8199c48b48e379d2c8	hb	DOS	-	-	-	sev
+	9dc02577bf50d4cfaf3de3fbac06fbe2	en	Mac	-	-	-	khalek
+	9c92eeaf517a31b7221ec2546ab669fd	en	Windows	-	-	-	khalek
 
-	aa6a91b7f6f119d1b7b1f2a4c9e24d59	en	DOS	Demo	
-	4af4a6b248103c1fe9edef619677f540	en	Mac	Demo	khalek
-	9c143c5905055d5df7a0f014ab379aee	en	Windows	Demo	khalek
+	aa6a91b7f6f119d1b7b1f2a4c9e24d59	en	DOS	-	Demo	-	
+	4af4a6b248103c1fe9edef619677f540	en	Mac	-	Demo	-	khalek
+	9c143c5905055d5df7a0f014ab379aee	en	Windows	-	Demo	-	khalek
 
 puttcircus	Putt-Putt Joins the Circus
-	ab0693e9324cfcf498fdcbb12acf8bb4	en	All	CD	sev
-	7bad72e332a59f9fcc1d437f4edad32a	ru	All	CD	sev
-	a7cacad9c40c4dc9e1812abf6c8af9d5	en	All	Demo	Kirben, sev
+	ab0693e9324cfcf498fdcbb12acf8bb4	en	All	-	-	-	sev
+	7bad72e332a59f9fcc1d437f4edad32a	ru	All	-	-	-	sev
+	a7cacad9c40c4dc9e1812abf6c8af9d5	en	All	-	Demo	-	Kirben, sev
 
 puttputt	Putt-Putt Joins the Parade
-	7e151c17adf624f1966c8fc5827c95e9	en	3DO	CD	khalek
-	9708cf716ed8bcc9ff3fcfc69413b746	en	DOS	CD	khalek
-	e361a7058ed8e8ebb462663c0a3ae8d6	hb	DOS	CD	sev
-	0b3222aaa7efcf283eb621e0cefd26cc	ru	DOS	CD	sev
-	684732efb5799c0f78804c99d8de9aba	en	Mac	CD	khalek
-	6a30a07f353a75cdc602db27d73e1b42	en	Windows	CD	khalek
+	7e151c17adf624f1966c8fc5827c95e9	en	3DO	-	-	-	khalek
+	9708cf716ed8bcc9ff3fcfc69413b746	en	DOS	-	-	-	khalek
+	e361a7058ed8e8ebb462663c0a3ae8d6	hb	DOS	-	-	-	sev
+	0b3222aaa7efcf283eb621e0cefd26cc	ru	DOS	-	-	-	sev
+	684732efb5799c0f78804c99d8de9aba	en	Mac	-	-	-	khalek
+	6a30a07f353a75cdc602db27d73e1b42	en	Windows	-	-	-	khalek
 
-	31aa57f460a3d12429f0552a46a90b39	en	DOS	Demo	
-	f40a7f495f59188ca57a9d1d50301bb6	en	Mac	Demo	khalek
-	37ff1b308999c4cca7319edfcc1280a0	en	Windows	Demo	khalek
+	31aa57f460a3d12429f0552a46a90b39	en	DOS	-	Demo	-	
+	f40a7f495f59188ca57a9d1d50301bb6	en	Mac	-	Demo	-	khalek
+	37ff1b308999c4cca7319edfcc1280a0	en	Windows	-	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
-	92e7727e67f5cd979d8a1070e4eb8cb3	en	All	CD	cyx
-	58fdf4c7ad13540a734e18f8584cad89	en	Mac	CD	khalek
-	1005456bfe351c1b679e1ff2dc2849e9	All	Windows	CD	khalek
-	c3b22fa4654bb580b20325ebf4174841	nl	Windows	CD	joostp
+	92e7727e67f5cd979d8a1070e4eb8cb3	en	All	-	-	-	cyx
+	58fdf4c7ad13540a734e18f8584cad89	en	Mac	-	-	-	khalek
+	1005456bfe351c1b679e1ff2dc2849e9	All	Windows	-	-	-	khalek
+	c3b22fa4654bb580b20325ebf4174841	nl	Windows	-	-	-	joostp
 
-	3486ede0f904789267d4bcc5537a46d4	en	Mac	Demo	khalek
-	d220d154aafbfa12bd6f3ab1b2dae420	de	Mac	Demo	Joachim Eberhard
-	de4efb910210736813c9a1185384bace	en	Windows	Demo	khalek
-	f3d55aea441e260e9e9c7d2a187097e0	en	Windows	Demo	khalek
-	2a446817ffcabfef8716e0c456ecaf81	de	Windows	Demo	Joachim Eberhard
+	3486ede0f904789267d4bcc5537a46d4	en	Mac	-	Demo	-	khalek
+	d220d154aafbfa12bd6f3ab1b2dae420	de	Mac	-	Demo	-	Joachim Eberhard
+	de4efb910210736813c9a1185384bace	en	Windows	-	Demo	-	khalek
+	f3d55aea441e260e9e9c7d2a187097e0	en	Windows	-	Demo	-	khalek
+	2a446817ffcabfef8716e0c456ecaf81	de	Windows	-	Demo	-	Joachim Eberhard
 
 PuttTime	Putt-Putt Travels Through Time
-	2108d83dcf09f8adb4bc524669c8cf51	en	All	CD	Kirben
-	a525c1753c1db5011c00417da37887ef	en	All	CD	Kirben
-	7c980a1b1596a93f26917318884f48f7	de	All	CD	Joachim Eberhard
-	fcb78ebecab2757264c590890c319cc5	nl	Windows	CD	adutchguy
-	63fdcdc95cdeea00060883aed38e5504	en	Windows	CD	iziku
-	d4aac997e2f4e15341f0bfbf905419bd	en	Windows	CD	eriktorbjorn
-	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	CD	oncer
-	defb8cb9ec4b0f91acfb6b61c6129ad9	ru	Windows	CD	sev
+	2108d83dcf09f8adb4bc524669c8cf51	en	All	-	-	-	Kirben
+	a525c1753c1db5011c00417da37887ef	en	All	-	-	-	Kirben
+	7c980a1b1596a93f26917318884f48f7	de	All	-	-	-	Joachim Eberhard
+	fcb78ebecab2757264c590890c319cc5	nl	Windows	-	-	-	adutchguy
+	63fdcdc95cdeea00060883aed38e5504	en	Windows	-	-	-	iziku
+	d4aac997e2f4e15341f0bfbf905419bd	en	Windows	-	-	-	eriktorbjorn
+	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	-	-	-	oncer
+	defb8cb9ec4b0f91acfb6b61c6129ad9	ru	Windows	-	-	-	sev
 
-	0ab19be9e2a3f6938226638b2a3744fe	en	All	Demo	khalek
-	4e5867848ee61bc30d157e2c94eee9b4	en	All	Demo	khalek, sev
-	59d5cfcc5e672a6e07baae01328b918b	fr	All	Demo	Kirben
-	fbb697d89d2beca87360a145f467bdae	de	All	Demo	Joachim Eberhard
-	6b19d0e25cbf720d05822379b8b90ed9	nl	Windows	Demo	adutchguy
+	0ab19be9e2a3f6938226638b2a3744fe	en	All	-	Demo	-	khalek
+	4e5867848ee61bc30d157e2c94eee9b4	en	All	-	Demo	-	khalek, sev
+	59d5cfcc5e672a6e07baae01328b918b	fr	All	-	Demo	-	Kirben
+	fbb697d89d2beca87360a145f467bdae	de	All	-	Demo	-	Joachim Eberhard
+	6b19d0e25cbf720d05822379b8b90ed9	nl	Windows	-	Demo	-	adutchguy
 
 balloon	Putt-Putt and Pep's Balloon-O-Rama
-	08cc5c3eedaf72ebe12734eee94f7fa2	en	All	CD	Kirben
-	8e3241ddd6c8dadf64305e8740d45e13	en	All	CD	Kirben
-	d7b247c26bf1f01f8f7daf142be84de3	en	Windows	CD	iziku
-	145bd3373574feb668cc2eea2ec6cf86	ru	Windows	CD	sev
-	2232b0b9411575b1f9961713ebc9de61	es	Windows	CD	exiltd
+	08cc5c3eedaf72ebe12734eee94f7fa2	en	All	-	-	-	Kirben
+	8e3241ddd6c8dadf64305e8740d45e13	en	All	-	-	-	Kirben
+	d7b247c26bf1f01f8f7daf142be84de3	en	Windows	-	-	-	iziku
+	145bd3373574feb668cc2eea2ec6cf86	ru	Windows	-	-	-	sev
+	2232b0b9411575b1f9961713ebc9de61	es	Windows	-	-	-	exiltd
 
 dog	Putt-Putt and Pep's Dog on a Stick
-	eae95b2b3546d8ba86ae1d397c383253	en	All	CD	Kirben
-	d4b8ee426b1afd3e53bc0cf020418cf6	en	Windows	CD	sev
+	eae95b2b3546d8ba86ae1d397c383253	en	All	-	-	-	Kirben
+	d4b8ee426b1afd3e53bc0cf020418cf6	en	Windows	-	-	-	sev
 
 activity	Putt-Putt & Fatty Bear's Activity Pack
-	b628506f7def772e40de0aa5440fb8e1	en	Windows	CD	
+	b628506f7def772e40de0aa5440fb8e1	en	Windows	-	-	-	
 
 funpack	Putt-Putt's Fun Pack
-	8afb3cf9f95abf208358e984f0c9e738	en	3DO	CD	sev
-	3d219e7546039543307b55a91282bf18	en	DOS	CD	iziku
-	46b53fd430adcfbed791b48a0d4b079f	en	DOS	CD	khalek
-	90a329d8ad5b7ce0690429e98cfbb32f	hb	DOS	CD	
+	8afb3cf9f95abf208358e984f0c9e738	en	3DO	-	-	-	sev
+	3d219e7546039543307b55a91282bf18	en	DOS	-	-	-	iziku
+	46b53fd430adcfbed791b48a0d4b079f	en	DOS	-	-	-	khalek
+	90a329d8ad5b7ce0690429e98cfbb32f	hb	DOS	-	-	-	
 
 PuttsFunShop	Putt-Putt's One-Stop Fun Shop
-	5262a27afcaee04e5c4900220bd463e7	en	All	CD	Kirben
+	5262a27afcaee04e5c4900220bd463e7	en	All	-	-	-	Kirben
 
 spyfox	SPY Fox 1: Dry Cereal
-	3de99ef0523f8ca7958faa3afccd035a	en	All	CD	Kirben
-	58436e634f4fae1d9973591c2ffa1fcb	en	All	CD	Joachim Eberhard
-	a28135a7ade38cc0208b04507c46efd1	de	All	CD	nachbarnebenan
-	6bf70eee5de3d24d2403e0dd3d267e8a	All	Windows	CD	khalek
-	9bda5fee51d2fda5253d02c642016bf4	nl	Windows	CD	joostp
-	72ac6bc980d5101c2142189d746bd62f	ru	Windows	CD	sev
+	3de99ef0523f8ca7958faa3afccd035a	en	All	-	-	-	Kirben
+	58436e634f4fae1d9973591c2ffa1fcb	en	All	-	-	-	Joachim Eberhard
+	a28135a7ade38cc0208b04507c46efd1	de	All	-	-	-	nachbarnebenan
+	6bf70eee5de3d24d2403e0dd3d267e8a	All	Windows	-	-	-	khalek
+	9bda5fee51d2fda5253d02c642016bf4	nl	Windows	-	-	-	joostp
+	72ac6bc980d5101c2142189d746bd62f	ru	Windows	-	-	-	sev
 
-	53e94115b55dd51d4b8ff0871aa1df1e	en	All	Demo	khalek, sev
-	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	en	All	Demo	khalek
-	fbdd947d21e8f5bac6d6f7a316af1c5a	en	All	Demo	sev
-	ba888e6831517597859e91aa173f945c	fr	All	Demo	Kirben
-	73b8197e236da4bf49adc99fe8f5fa1b	de	All	Demo	Joachim Eberhard
-	4edbf9d03550f7ba01e7f34d69b678dd	nl	Windows	Demo	Kirben
+	53e94115b55dd51d4b8ff0871aa1df1e	en	All	-	Demo	-	khalek, sev
+	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	en	All	-	Demo	-	khalek
+	fbdd947d21e8f5bac6d6f7a316af1c5a	en	All	-	Demo	-	sev
+	ba888e6831517597859e91aa173f945c	fr	All	-	Demo	-	Kirben
+	73b8197e236da4bf49adc99fe8f5fa1b	de	All	-	Demo	-	Joachim Eberhard
+	4edbf9d03550f7ba01e7f34d69b678dd	nl	Windows	-	Demo	-	Kirben
 
 spyfox2	SPY Fox 2: Some Assembly Required
-	f79e60c17cca601e411f1f75e8ee9b5a	All	All	CD	Kirben
-	bc4700bc0e12879f6d25d14d6be6cfdd	de	All	CD	Joachim Eberhard
-	cea91e3dd47f2518ea418e41611aa77f	ru	All	CD	sev
-	71fe97c3108678cf604f14abe342341b	nl	Windows	CD	adutchguy
+	f79e60c17cca601e411f1f75e8ee9b5a	All	All	-	-	-	Kirben
+	bc4700bc0e12879f6d25d14d6be6cfdd	de	All	-	-	-	Joachim Eberhard
+	cea91e3dd47f2518ea418e41611aa77f	ru	All	-	-	-	sev
+	71fe97c3108678cf604f14abe342341b	nl	Windows	-	-	-	adutchguy
 
-	1c792d28376d45e145cb916bca0400a2	nl	All	Demo	joostp
-	7222f260253f325c21fcfa68b5bfab67	en	All	Demo	Kirben
-	732845548b1d6c2da572cb6a1bf81b07	de	All	Demo	Joachim Eberhard
-	19bf6938a94698296bcb0c99c31c91a7	en	Windows	Demo	eriktorbjorn
+	1c792d28376d45e145cb916bca0400a2	nl	All	-	Demo	-	joostp
+	7222f260253f325c21fcfa68b5bfab67	en	All	-	Demo	-	Kirben
+	732845548b1d6c2da572cb6a1bf81b07	de	All	-	Demo	-	Joachim Eberhard
+	19bf6938a94698296bcb0c99c31c91a7	en	Windows	-	Demo	-	eriktorbjorn
 
 spyozon	SPY Fox 3: Operation Ozone
-	600abd3e9f47e63e670188b7e4e86ac7	en	All	CD	Kirben
-	96a3069a3c63caa7329588ce1fef41ee	ru	All	CD	sev
-	be39a5d4db60e8aa736b9086778cb45c	en	Windows	CD	
-	ebd0b2c8a387f18887282afe6cad894a	en	All	Demo	Kirben
+	600abd3e9f47e63e670188b7e4e86ac7	en	All	-	-	-	Kirben
+	96a3069a3c63caa7329588ce1fef41ee	ru	All	-	-	-	sev
+	be39a5d4db60e8aa736b9086778cb45c	en	Windows	-	-	-	
+	ebd0b2c8a387f18887282afe6cad894a	en	All	-	Demo	-	Kirben
 
 chase	SPY Fox in Cheese Chase
-	589601b676c98b1c0c987bc031ab68b3	en	All	CD	Kirben
-	90c755e1c9b9b8a4129d37b2259d0655	en	All	CD	Kirben
-	9cdd327c1034c046cb595d251c44da2f	ru	Windows	CD	sev
+	589601b676c98b1c0c987bc031ab68b3	en	All	-	-	-	Kirben
+	90c755e1c9b9b8a4129d37b2259d0655	en	All	-	-	-	Kirben
+	9cdd327c1034c046cb595d251c44da2f	ru	Windows	-	-	-	sev
 
 mustard	SPY Fox in Hold the Mustard
-	225e18566e810c634bf7de63e7568e3e	en	All	CD	Kirben
+	225e18566e810c634bf7de63e7568e3e	en	All	-	-	-	Kirben
