@@ -333,7 +333,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte *ptr, *spoolPtr;
 	int size = -1;
 	int priority, rate;
-	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	if (heChannel == -1)
 		heChannel = (_vm->VAR_RESERVED_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
