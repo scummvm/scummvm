@@ -92,7 +92,7 @@ static const char USAGE_STRING[] =
 	"                           drive)\n"
 	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
-	"  --platform=WORD          Specify version of game (allowed values: acorn,\n"
+	"  --platform=WORD          Specify version of game (allowed values: 3do, acorn,\n"
 	"                           amiga, atari, c64, fmtowns, nes, mac, pc, segacd,\n"
 	"                           windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"

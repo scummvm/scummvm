@@ -473,7 +473,7 @@ arguments -- see the next section.
                            drive)
   --joystick[=NUM]         Enable input with joystick (default: 0 = first
                            joystick)
-  --platform=WORD          Specify version of game (allowed values: acorn,
+  --platform=WORD          Specify version of game (allowed values: 3do, acorn,
                            amiga, atari, c64, fmtowns, mac, nes, pc, segacd,
                            windows)
   --savepath=PATH          Path to where savegames are stored
