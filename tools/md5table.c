@@ -71,7 +71,7 @@ typedef struct {
  * common/util.h).
  */
 static const StringMap platformMap[] = {
-	{ "3DO",		"kPlatformUnknown" },
+	{ "3DO",		"kPlatform3DO" },
 	{ "Amiga",		"kPlatformAmiga" },
 	{ "Atari",		"kPlatformAtariST" },
 	{ "C64",		"kPlatformC64" },

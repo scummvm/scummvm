@@ -167,6 +167,7 @@ const char *getLanguageDescription(Language id) {
 
 
 const PlatformDescription g_platforms[] = {
+	("3do", "3do", "3DO", kPlatform3DO),
 	{"acorn", "acorn", "Acorn", kPlatformAcorn},
 	{"amiga", "ami", "Amiga", kPlatformAmiga},
 	{"atari", "atari-st", "Atari ST", kPlatformAtariST},

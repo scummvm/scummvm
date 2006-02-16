@@ -143,7 +143,8 @@ enum Platform {
 	kPlatformC64 = 7,
 	kPlatformLinux = 8,
 	kPlatformAcorn = 9,
-	kPlatformSegaCD = 10
+	kPlatformSegaCD = 10,
+	kPlatform3DO = 11
 /*
 	kPlatformPCEngine
 */
