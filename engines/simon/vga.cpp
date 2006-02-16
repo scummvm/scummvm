@@ -847,10 +847,25 @@ void SimonEngine::vc10_draw() {
 }
 
 void SimonEngine::drawImages_Feeble(VC10_state *state) {
+	if (state->flags & 0x10) {
+		// This is an "overlay" sprite, meaning that it's not affected
+		// by scrolling. The Oracle icon uses it, for instance.
+
+		state->x += _scrollX;
+		state->y += _scrollY;
+	}
+		
 	state->surf2_addr += state->x + state->y * state->surf2_pitch;
 	state->surf_addr += state->x + state->y * state->surf_pitch;
 
-	if (state->flags & 0x20) {
+	if (state->flags & 0x10) {
+		// TODO: See the original ScaleClip() for further details.
+		//
+		// As far as I understand, overlay sprites are basically
+		// uncompressed picture data (with 0 marking transparency).
+		// However, scaling is currently not implemented.
+		debug(0, "TODO: Overlay sprites not completely supported");
+	} else if (state->flags & 0x20) {
 		if (vcGetBit(81) == false) {
 			// TODO: Compare Feeble rect
 		}
@@ -863,7 +878,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 		vc10_skip_cols(state);
 
-			dst_org = state->surf_addr;
+		dst_org = state->surf_addr;
 		w = 0;
 		do {
 			byte color;
@@ -881,85 +896,83 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			} while (++h != state->draw_height);
 			dst_org++;
 		} while (++w != state->draw_width);
-	} else {
-		if (state->flags & 0x8) {
-			uint w, h;
-			byte *src, *dst, *dst_org;
+	} else if (state->flags & 0x8) {
+		uint w, h;
+		byte *src, *dst, *dst_org;
 
-			state->dl = state->width;
-			state->dh = state->height;
+		state->dl = state->width;
+		state->dh = state->height;
 
-			vc10_skip_cols(state);
+		vc10_skip_cols(state);
 
-			if (state->flags & 2) {
-				dst_org = state->surf_addr;
-				w = 0;
+		if (state->flags & 2) {
+			dst_org = state->surf_addr;
+			w = 0;
+			do {
+				src = vc10_depack_column(state);
+				dst = dst_org;
+
+				h = 0;
 				do {
-					src = vc10_depack_column(state);
-					dst = dst_org;
-
-					h = 0;
-					do {
-						*dst = *src;
-						dst += _screenWidth;
-						src++;
-					} while (++h != state->draw_height);
-					dst_org++;
-				} while (++w != state->draw_width);
-			} else {
-				dst_org = state->surf_addr;
-				w = 0;
-				do {
-					byte color;
-
-					src = vc10_depack_column(state);
-					dst = dst_org;
-
-					h = 0;
-					do {
-						color = *src;
-						if (color)
-							*dst = color;
-						dst += _screenWidth;
-						src++;
-					} while (++h != state->draw_height);
-					dst_org++;
-				} while (++w != state->draw_width);
-			}
+					*dst = *src;
+					dst += _screenWidth;
+					src++;
+				} while (++h != state->draw_height);
+				dst_org++;
+			} while (++w != state->draw_width);
 		} else {
-			const byte *src;
-			byte *dst;
-			uint count;
+			dst_org = state->surf_addr;
+			w = 0;
+			do {
+				byte color;
 
-			src = state->depack_src + state->width * state->y_skip;
-			dst = state->surf_addr;
-			if (state->flags & 0x80) {
-				do {
-					for (count = 0; count != state->draw_width; count++) {
-						byte color;
-						color = src[count + state->x_skip];
-						if (color) {
-							if (color == 220)
-								color = 244;
+				src = vc10_depack_column(state);
+				dst = dst_org;
 
-							dst[count] = color;
-						}
-					}
-					dst += _screenWidth;
-					src += state->width;
-				} while (--state->draw_height);
-			} else {
+				h = 0;
 				do {
-					for (count = 0; count != state->draw_width; count++) {
-						byte color;
-						color = src[count + state->x_skip];
-						if (color)
-							dst[count] = color;
-					}
+					color = *src;
+					if (color)
+						*dst = color;
 					dst += _screenWidth;
-					src += state->width;
-				} while (--state->draw_height);
-			}
+					src++;
+				} while (++h != state->draw_height);
+				dst_org++;
+			} while (++w != state->draw_width);
+		}
+	} else {
+		const byte *src;
+		byte *dst;
+		uint count;
+
+		src = state->depack_src + state->width * state->y_skip;
+		dst = state->surf_addr;
+		if (state->flags & 0x80) {
+			do {
+				for (count = 0; count != state->draw_width; count++) {
+					byte color;
+					color = src[count + state->x_skip];
+					if (color) {
+						if (color == 220)
+							color = 244;
+
+						dst[count] = color;
+					}
+				}
+				dst += _screenWidth;
+				src += state->width;
+			} while (--state->draw_height);
+		} else {
+			do {
+				for (count = 0; count != state->draw_width; count++) {
+					byte color;
+					color = src[count + state->x_skip];
+					if (color)
+						dst[count] = color;
+				}
+				dst += _screenWidth;
+				src += state->width;
+			} while (--state->draw_height);
 		}
 	}
 }
