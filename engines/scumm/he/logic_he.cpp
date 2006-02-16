@@ -809,7 +809,7 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEsoccer::op_1001(int32 *args) {
-	return args[0] * sin(args[1]);
+	return args[0] * sin((float)args[1]);
 }
 
 int LogicHEsoccer::op_1002(int32 *args) {
