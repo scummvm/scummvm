@@ -774,6 +774,7 @@ public:
 protected:
 	void drawImages(VC10_state *state);
 	void drawImages_Feeble(VC10_state *state);
+	bool drawImages_clip(VC10_state *state);
 
 	void delete_vga_timer(VgaTimerEntry * vte);
 	void vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);

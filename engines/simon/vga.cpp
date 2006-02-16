@@ -656,12 +656,8 @@ void SimonEngine::decodeStripA(byte *dst, const byte *src, int height) {
 void SimonEngine::vc10_draw() {
 	byte *p2;
 	uint width, height;
-	uint maxWidth, maxHeight;
 	byte flags;
-	const uint16 *vlut;
 	VC10_state state;
-
-	int cur;
 
 	state.image = (int16)vcReadNextWord();
 	if (state.image == 0)
@@ -674,15 +670,10 @@ void SimonEngine::vc10_draw() {
 	}
 	_vcPtr += 2;
 	state.x = (int16)vcReadNextWord();
+	state.x -= _scrollX;
 
-	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF) {
-		state.x -= _scrollX;
-	}
 	state.y = (int16)vcReadNextWord();
-
-	if (getGameType() == GType_FF) {
-		state.y -= _scrollY;
-	}
+	state.y -= _scrollY;
 
 	if (getGameType() == GType_SIMON1) {
 		state.flags = vcReadNextWord();
@@ -774,61 +765,8 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	vlut = &_video_windows[_windowNum * 4];
-
 	state.width = state.draw_width = width;	/* cl */
 	state.height = state.draw_height = height;	/* ch */
-	
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		state.draw_width = width * 2;
-	} 
-
-	state.x_skip = 0;							/* colums to skip = bh */
-	state.y_skip = 0;							/* rows to skip   = bl */
-
-	cur = state.x;
-	if (cur < 0) {
-		do {
-			if (!--state.draw_width)
-				return;
-			state.x_skip++;
-		} while (++cur);
-	}
-	state.x = cur;
-
-	maxWidth = (getGameType() == GType_FF) ? 640 : (vlut[2] * 2);
-	cur += state.draw_width - maxWidth;
-	if (cur > 0) {
-		do {
-			if (!--state.draw_width)
-				return;
-		} while (--cur);
-	}
-
-	cur = state.y;
-	if (cur < 0) {
-		do {
-			if (!--state.draw_height)
-				return;
-			state.y_skip++;
-		} while (++cur);
-	}
-	state.y = cur;
-
-	maxHeight = (getGameType() == GType_FF) ? 480 : vlut[3];
-	cur += state.draw_height - maxHeight;
-	if (cur > 0) {
-		do {
-			if (!--state.draw_height)
-				return;
-		} while (--cur);
-	}
-
-	assert(state.draw_width != 0 && state.draw_height != 0);
-
-	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		state.draw_width *= 4;
-	}
 
 	state.surf2_addr = dx_lock_2();
 	state.surf2_pitch = _dxSurfacePitch;
@@ -846,139 +784,174 @@ void SimonEngine::vc10_draw() {
 	dx_unlock_attached();
 }
 
-void SimonEngine::drawImages_Feeble(VC10_state *state) {
-	if (state->flags & 0x10) {
-		// This is an "overlay" sprite, meaning that it's not affected
-		// by scrolling. The Oracle icon uses it, for instance.
+bool SimonEngine::drawImages_clip(VC10_state *state) {
+	const uint16 *vlut;
+	uint maxWidth, maxHeight;
+	int cur;
 
-		state->x += _scrollX;
-		state->y += _scrollY;
-	}
-		
-	state->surf2_addr += state->x + state->y * state->surf2_pitch;
-	state->surf_addr += state->x + state->y * state->surf_pitch;
+	vlut = &_video_windows[_windowNum * 4];
 
-	if (state->flags & 0x10) {
-		// TODO: See the original ScaleClip() for further details.
-		//
-		// As far as I understand, overlay sprites are basically
-		// uncompressed picture data (with 0 marking transparency).
-		// However, scaling is currently not implemented.
-		debug(0, "TODO: Overlay sprites not completely supported");
-	} else if (state->flags & 0x20) {
-		if (vcGetBit(81) == false) {
-			// TODO: Compare Feeble rect
-		}
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		state->draw_width = state->width * 2;
+	} 
 
-		uint w, h;
-		byte *src, *dst, *dst_org;
+	state->x_skip = 0;				/* colums to skip = bh */
+	state->y_skip = 0;				/* rows to skip   = bl */
 
-		state->dl = state->width;
-		state->dh = state->height;
-
-		vc10_skip_cols(state);
-
-		dst_org = state->surf_addr;
-		w = 0;
+	cur = state->x;
+	if (cur < 0) {
 		do {
-			byte color;
+			if (!--state->draw_width)
+				return 0;
+			state->x_skip++;
+		} while (++cur);
+	}
+	state->x = cur;
 
-			src = vc10_depack_column(state);
-			dst = dst_org;
+	maxWidth = (getGameType() == GType_FF) ? 640 : (vlut[2] * 2);
+	cur += state->draw_width - maxWidth;
+	if (cur > 0) {
+		do {
+			if (!--state->draw_width)
+				return 0;
+		} while (--cur);
+	}
 
-			h = 0;
-			do {
-				color = *src;
-				if (color)
-					*dst = color;
-				dst += _screenWidth;
-				src++;
-			} while (++h != state->draw_height);
-			dst_org++;
-		} while (++w != state->draw_width);
-	} else if (state->flags & 0x8) {
-		uint w, h;
-		byte *src, *dst, *dst_org;
+	cur = state->y;
+	if (cur < 0) {
+		do {
+			if (!--state->draw_height)
+				return 0;
+			state->y_skip++;
+		} while (++cur);
+	}
+	state->y = cur;
 
-		state->dl = state->width;
-		state->dh = state->height;
+	maxHeight = (getGameType() == GType_FF) ? 480 : vlut[3];
+	cur += state->draw_height - maxHeight;
+	if (cur > 0) {
+		do {
+			if (!--state->draw_height)
+				return 0;
+		} while (--cur);
+	}
 
-		vc10_skip_cols(state);
+	assert(state->draw_width != 0 && state->draw_height != 0);
 
-		if (state->flags & 2) {
-			dst_org = state->surf_addr;
-			w = 0;
-			do {
-				src = vc10_depack_column(state);
-				dst = dst_org;
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+		state->draw_width *= 4;
+	}
 
-				h = 0;
-				do {
-					*dst = *src;
-					dst += _screenWidth;
-					src++;
-				} while (++h != state->draw_height);
-				dst_org++;
-			} while (++w != state->draw_width);
+	return 1;
+}
+
+void SimonEngine::drawImages_Feeble(VC10_state *state) {
+	if (state->flags & 0x8) {
+		if (state->flags & 0x40) {
+			// TODO::Add support for image scaling in Feeble Files
+
+		} else 	if (state->flags & 0x10) {
+			// TODO::Add support for image overlay in Feeble Files
+
 		} else {
-			dst_org = state->surf_addr;
-			w = 0;
-			do {
-				byte color;
+			if (drawImages_clip(state) == 0)
+				return;
 
-				src = vc10_depack_column(state);
-				dst = dst_org;
+			state->surf2_addr += state->x + state->y * state->surf2_pitch;
+			state->surf_addr += state->x + state->y * state->surf_pitch;
 
-				h = 0;
+			uint w, h;
+			byte *src, *dst, *dst_org;
+
+			if (state->flags & 0x20) {
+				if (vcGetBit(81) == false) {
+				// TODO: Compare Feeble rect
+				}
+
+				state->dl = state->width;
+				state->dh = state->height;
+
+				vc10_skip_cols(state);
+
+				dst_org = state->surf_addr;
+				w = 0;
 				do {
-					color = *src;
-					if (color)
-						*dst = color;
-					dst += _screenWidth;
-					src++;
-				} while (++h != state->draw_height);
-				dst_org++;
-			} while (++w != state->draw_width);
+					byte color;
+
+					src = vc10_depack_column(state);
+					dst = dst_org;
+
+					h = 0;
+					do {
+						color = *src;
+						if (color)
+							*dst = color;
+						dst += _screenWidth;
+						src++;
+					} while (++h != state->draw_height);
+					dst_org++;
+				} while (++w != state->draw_width);
+			} else {
+				state->dl = state->width;
+				state->dh = state->height;
+
+				vc10_skip_cols(state);
+
+				dst_org = state->surf_addr;
+				w = 0;
+				do {
+					byte color;
+
+					src = vc10_depack_column(state);
+					dst = dst_org;
+
+					h = 0;
+					do {
+						color = *src;
+						if ((state->flags & 2) || color != 0)
+							*dst = color;
+						dst += _screenWidth;
+						src++;
+					} while (++h != state->draw_height);
+					dst_org++;
+				} while (++w != state->draw_width);
+			}
 		}
 	} else {
+		if (drawImages_clip(state) == 0)
+			return;
+
+		state->surf2_addr += state->x + state->y * state->surf2_pitch;
+		state->surf_addr += state->x + state->y * state->surf_pitch;
+
 		const byte *src;
 		byte *dst;
 		uint count;
 
 		src = state->depack_src + state->width * state->y_skip;
 		dst = state->surf_addr;
-		if (state->flags & 0x80) {
-			do {
-				for (count = 0; count != state->draw_width; count++) {
-					byte color;
-					color = src[count + state->x_skip];
-					if (color) {
-						if (color == 220)
-							color = 244;
+		do {
+			for (count = 0; count != state->draw_width; count++) {
+				byte color;
+				color = src[count + state->x_skip];
+				if (color) {
+					if ((state->flags & 0x80) && color == 220)
+						color = 244;
 
-						dst[count] = color;
-					}
+					dst[count] = color;
 				}
-				dst += _screenWidth;
-				src += state->width;
-			} while (--state->draw_height);
-		} else {
-			do {
-				for (count = 0; count != state->draw_width; count++) {
-					byte color;
-					color = src[count + state->x_skip];
-					if (color)
-						dst[count] = color;
-				}
-				dst += _screenWidth;
-				src += state->width;
-			} while (--state->draw_height);
-		}
-	}
+			}
+			dst += _screenWidth;
+			src += state->width;
+		} while (--state->draw_height);
+	} 
 }
 
 void SimonEngine::drawImages(VC10_state *state) {
 	const uint16 *vlut = &_video_windows[_windowNum * 4];
+
+	if (drawImages_clip(state) == 0)
+		return;
 
 	uint offs, offs2;
 	// Allow one section of Simon the Sorcerer 1 introduction to be displayed
