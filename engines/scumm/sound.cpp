@@ -732,14 +732,9 @@ int Sound::isSoundRunning(int sound) const {
 		}
 	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {
-			return _vm->_mixer->getSoundID(_heSoundChannels[0]);
+			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
-			if (_vm->_platform == Common::kPlatform3DO) {
-				return _vm->_mixer->isSoundIDActive(_currentMusic);
-			} else {
-				if (_vm->_imuse)
-					return _vm->_imuse->getSoundStatus(_currentMusic);
-			}
+			sound = _currentMusic;
 		}
 	}
 
