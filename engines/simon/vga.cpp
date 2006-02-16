@@ -709,12 +709,18 @@ void SimonEngine::vc10_draw() {
 											 state.palette);
 	// TODO::Add support for image overlay and scaling in Feeble Files
 
-	if (flags & 0x80 && !(state.flags & 0x10)) {
-		if (state.flags & 1) {
-			state.flags &= ~1;
-			state.flags |= 0x10;
-		} else {
+	if (getGameType() == GType_FF) {
+		if (flags & 0x80) {
 			state.flags |= 0x8;
+		}
+	} else {
+		if (flags & 0x80 && !(state.flags & 0x10)) {
+			if (state.flags & 1) {
+				state.flags &= ~1;
+				state.flags |= 0x10;
+			} else {
+				state.flags |= 0x8;
+			}
 		}
 	}
 
