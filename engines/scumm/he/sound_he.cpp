@@ -367,18 +367,13 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		musicFile.seek(music_offs, SEEK_SET);
 
-		if (_vm->_heversion == 70) {
-			spoolPtr = (byte *)malloc(size);
-			musicFile.read(spoolPtr, size);
-		} else {
-			spoolPtr = _vm->res.createResource(rtSpoolBuffer, heChannel, size);
-			assert(spoolPtr);
-			musicFile.read(spoolPtr, size);
-		}
+		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
+		spoolPtr = _vm->res.createResource(rtSpoolBuffer, heChannel, size);
+		assert(spoolPtr);
+		musicFile.read(spoolPtr, size);
 		musicFile.close();
 
 		if (_vm->_heversion == 70) {
-			_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID);
 			return;
 		}
