@@ -1806,8 +1806,6 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 }
 
 void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
-	debug(0, "createSound: snd1id %d snd2id %d", snd1id, snd2id);
-
 	byte *snd1Ptr, *snd2Ptr;
 	byte *sbng1Ptr, *sbng2Ptr;
 	byte *sdat1Ptr, *sdat2Ptr;
@@ -1891,7 +1889,6 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	sdat1size = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndPtrOffs;
 	sdat2size = READ_BE_UINT32(sdat2Ptr + 4) - 8;
 
-	debug(0, "SDAT size1 %d size2 %d", sdat1size, sdat2size);
 	if (sdat2size < sdat1size) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;

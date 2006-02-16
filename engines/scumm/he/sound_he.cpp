@@ -331,7 +331,6 @@ void Sound::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 
 void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte *ptr, *spoolPtr;
-	char *sound;
 	int size = -1;
 	int priority, rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
@@ -404,6 +403,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	if (READ_UINT32(ptr) == MKID('RIFF') || READ_UINT32(ptr) == MKID('WSOU')) {
 		uint16 type;
 		int blockAlign;
+		char *sound;
 
 		if (READ_UINT32(ptr) == MKID('WSOU'))
 			ptr += 8;
@@ -467,11 +467,8 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			_overrideFreq = 0;
 		}
 
-		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
-		memcpy(sound, ptr + heOffset + 8, size);
 		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID);
 
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
@@ -491,12 +488,9 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		flags = Audio::Mixer::FLAG_AUTOFREE;
 
-		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
-		memcpy(sound, ptr + 8, size);
 		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID);
 	}
 	else if (READ_UINT32(ptr) == MKID('MIDI')) {
 		if (_vm->_imuse) {
