@@ -44,6 +44,25 @@
 
 namespace Scumm {
 
+void Sound::stopSoundChannel(int chan) {
+	_vm->_mixer->stopHandle(_heSoundChannels[chan]);
+
+	_heChannel[chan].sound = 0;
+	_heChannel[chan].priority = 0;
+	_heChannel[chan].sbngBlock = 0;
+	_heChannel[chan].codeOffs = 0;
+	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
+
+	for (int i = 0; i < ARRAYSIZE(_soundQue2); i++) {
+		if (_soundQue2[i].channel == chan) {
+			_soundQue2[i].sound = 0;
+			_soundQue2[i].offset = 0;
+			_soundQue2[i].channel = 0;
+			_soundQue2[i].flags = 0;
+		}
+	}
+}
+
 int Sound::findFreeSoundChannel() {
 	int chan, min;
 

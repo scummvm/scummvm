@@ -821,13 +821,7 @@ void Sound::stopSound(int sound) {
 
 	if (_vm->_heversion >= 70) {
 		if ( sound >= 10000) {
-			int chan = sound - 10000;
-			_vm->_mixer->stopHandle(_heSoundChannels[chan]);
-			_heChannel[chan].sound = 0;
-			_heChannel[chan].priority = 0;
-			_heChannel[chan].sbngBlock = 0;
-			_heChannel[chan].codeOffs = 0;
-			memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
+			stopSoundChannel(sound - 10000);
 		}
 	} else if (_vm->_heversion >= 60) {
 		if (sound == -2) {

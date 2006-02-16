@@ -155,6 +155,7 @@ public:
 	void setOverrideFreq(int freq);
 	void setupHEMusicFile();
 	void startHETalkSound(uint32 offset);
+	void stopSoundChannel(int chan);
 
 	// Used by the save/load system:
 	void saveLoadWithSerializer(Serializer *ser);
