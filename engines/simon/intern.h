@@ -92,7 +92,7 @@ struct FillOrCopyStruct {
 	uint16 textColumn, textRow;
 	uint16 scrollY;
 	uint8 textColumnOffset, textLength, textMaxLength;
-    uint8 fill_color, text_color, unk5;
+	uint8 fill_color, text_color, unk5;
 	FillOrCopyData *fcs_data;
 	FillOrCopyStruct() { memset(this, 0, sizeof(*this)); }
 };
