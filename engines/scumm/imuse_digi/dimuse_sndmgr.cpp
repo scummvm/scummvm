@@ -42,6 +42,7 @@ ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 	_vm = scumm;
 	_disk = 0;
 	_cacheBundleDir = new BundleDirCache();
+	assert(_cacheBundleDir);
 	BundleCodecs::initializeImcTables();
 }
 
@@ -101,8 +102,11 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, soundStruct *soun
 	sound->numJumps = file->readUint32BE();
 	sound->numSyncs = file->readUint32BE();
 	sound->region = (_region *)malloc(sizeof(_region) * sound->numRegions);
+	assert(sound->region);
 	sound->jump = (_jump *)malloc(sizeof(_jump) * sound->numJumps);
+	assert(sound->jump);
 	sound->sync = (_sync *)malloc(sizeof(_sync) * sound->numSyncs);
+	assert(sound->sync);
 	for (l = 0; l < sound->numRegions; l++) {
 		sound->region[l].offset = file->readUint32BE();
 		sound->region[l].length = file->readUint32BE();
@@ -129,7 +133,9 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 		int16 code = READ_LE_UINT16(ptr + 24);
 
 		sound->region = (_region *)malloc(sizeof(_region) * 70);
+		assert(sound->region);
 		sound->jump = (_jump *)malloc(sizeof(_jump));
+		assert(sound->jump);
 		sound->resPtr = ptr;
 		sound->bits = 8;
 		sound->channels = 1;
@@ -197,8 +203,11 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 		sound->numSyncs = 0;
 		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs);
 		sound->region = (_region *)malloc(sizeof(_region) * sound->numRegions);
+		assert(sound->region);
 		sound->jump = (_jump *)malloc(sizeof(_jump) * sound->numJumps);
+		assert(sound->jump);
 		sound->sync = (_sync *)malloc(sizeof(_sync) * sound->numSyncs);
+		assert(sound->sync);
 
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
@@ -263,6 +272,7 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 	bool result = false;
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
+	assert(sound->bundle);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
 			result = sound->bundle->open("music.bun", sound->compressed);
@@ -297,6 +307,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 	bool result = false;
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
+	assert(sound->bundle);
 	if (_vm->_gameId == GID_CMI) {
 		if (_vm->_features & GF_DEMO) {
 			result = sound->bundle->open("voice.bun", sound->compressed);
@@ -573,9 +584,11 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 		size = soundHandle->bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
 	} else if (soundHandle->resPtr) {
 		*buf = (byte *)malloc(size);
+		assert(*buf);
 		memcpy(*buf, soundHandle->resPtr + start + offset + header_size, size);
 	} else if ((soundHandle->bundle) && (soundHandle->compressed)) {
 		*buf = (byte *)malloc(size);
+		assert(*buf);
 		char fileName[24];
 		sprintf(fileName, "%s_reg%03d", soundHandle->name, region);
 		if (scumm_stricmp(fileName, soundHandle->lastFileName) != 0) {

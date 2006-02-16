@@ -31,6 +31,7 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 	uint32 loop_size = size / 3;
 	uint32 s_size = loop_size * 4;
 	byte *ptr = *dst = (byte *)malloc(s_size);
+	assert(ptr);
 
 	uint32 tmp;
 	while (loop_size--) {
@@ -224,6 +225,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
+		assert(t_table);
 
 		src = comp_output;
 		length = (output_size << 3) / 12;
@@ -265,6 +267,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
+		assert(t_table);
 
 		src = comp_output;
 		length = (output_size << 3) / 12;
@@ -306,6 +309,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
+		assert(t_table);
 
 		src = comp_output;
 		length = (output_size << 3) / 12;
@@ -348,6 +352,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
+		assert(t_table);
 		memcpy(t_table, p, output_size);
 
 		offset1 = output_size / 3;
@@ -401,6 +406,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
+		assert(t_table);
 		memcpy(t_table, p, output_size);
 
 		offset1 = output_size / 3;
@@ -454,6 +460,7 @@ int32 decompressCodec(int32 codec, byte *comp_input, byte *comp_output, int32 in
 			p[z] += p[z - 1];
 
 		t_table = (byte *)malloc(output_size);
+		assert(t_table);
 		memcpy(t_table, p, output_size);
 
 		offset1 = output_size / 3;

@@ -94,12 +94,14 @@ int BundleDirCache::matchFile(const char *filename) {
 
 		strcpy(_budleDirCache[freeSlot].fileName, filename);
 		_budleDirCache[freeSlot].numFiles = file.readUint32BE();
-		_budleDirCache[freeSlot].bundleTable = (AudioTable *) malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));
+		_budleDirCache[freeSlot].bundleTable = (AudioTable *)malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));
+		assert(_budleDirCache[freeSlot].bundleTable);
 
 		file.seek(offset, SEEK_SET);
 
 		_budleDirCache[freeSlot].indexTable =
 				(IndexNode *)calloc(_budleDirCache[freeSlot].numFiles, sizeof(IndexNode));
+		assert(_budleDirCache[freeSlot].indexTable);
 
 		for (int32 i = 0; i < _budleDirCache[freeSlot].numFiles; i++) {
 			char name[24], c;
@@ -222,6 +224,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 	}
 
 	_compTable = (CompTable *)malloc(sizeof(CompTable) * _numCompItems);
+	assert(_compTable);
 	int32 maxSize = 0;
 	for (int i = 0; i < _numCompItems; i++) {
 		_compTable[i].offset = _file.readUint32BE();
@@ -233,6 +236,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 	}
 	// CMI hack: one more byte at the end of input buffer
 	_compInput = (byte *)malloc(maxSize + 1);
+	assert(_compInput);
 
 	return true;
 }
@@ -272,6 +276,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 
 	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
 	*comp_final = (byte *)malloc(blocks_final_size);
+	assert(*comp_final);
 	final_size = 0;
 
 	skip = (offset + header_size) % 0x2000;

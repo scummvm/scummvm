@@ -48,10 +48,12 @@ IMuseDigital::IMuseDigital(ScummEngine *scumm, int fps)
 	: _vm(scumm) {
 	_pause = false;
 	_sound = new ImuseDigiSndMgr(_vm);
+	assert(_sound);
 	_callbackFps = fps;
 	resetState();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
+		assert(_track[l]);
 		_track[l]->trackId = l;
 		_track[l]->used = false;
 	}
