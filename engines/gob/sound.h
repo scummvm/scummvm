@@ -24,6 +24,7 @@
 #define GOB_SOUND_H
 
 #include "sound/audiostream.h"
+#include "sound/mixer.h"
 
 namespace Gob {
 

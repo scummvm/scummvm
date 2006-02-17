@@ -25,15 +25,8 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
-#include "sound/mixer.h"
-#include "common/config-manager.h"
 
 #include "base/engine.h"
-#include "base/gameDetector.h"
-
-#include "gob/dataio.h"
-#include "gob/video.h"
-#include "common/file.h"
 
 namespace Gob {
 
@@ -72,17 +65,6 @@ enum {
 	GF_WOODRUFF = 1 << 3,
 	GF_CD = 1 << 4,
 	GF_MAC = 1 << 5
-};
-
-struct GobGameSettings {
-	const char *gameid;
-	const char *description;
-	uint32 features;
-	const char *md5sum;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
-		return dummy;
-	}
 };
 
 class GobEngine : public Engine {

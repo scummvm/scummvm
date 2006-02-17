@@ -21,6 +21,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "gob/music.h"
 #include "gob/gob.h"
 #include "gob/game.h"

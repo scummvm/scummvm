@@ -21,8 +21,10 @@
  */
 #include "common/stdafx.h"
 
+#include "base/gameDetector.h"
 #include "base/plugins.h"
 #include "backends/fs/fs.h"
+#include "common/config-manager.h"
 #include "common/md5.h"
 
 #include "gob/gob.h"
@@ -51,7 +53,18 @@ enum {
 	kMD5FileSizeLimit = 1024 * 1024
 };
 
-static const Gob::GobGameSettings gob_games[] = {
+struct GobGameSettings {
+	const char *gameid;
+	const char *description;
+	uint32 features;
+	const char *md5sum;
+	GameSettings toGameSettings() const {
+		GameSettings dummy = { gameid, description, features };
+		return dummy;
+	}
+};
+
+static const GobGameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
 	{"gob1", "Gobliiins (DOS EGA)", Gob::GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
 	{"gob1", "Gobliiins (DOS EGA)", Gob::GF_GOB1, "1f499458837008058b8ba6ae07057214"},
@@ -128,7 +141,7 @@ GameList Engine_GOB_gameList() {
 
 DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const Gob::GobGameSettings *g;
+	const GobGameSettings *g;
 	FSList::const_iterator file;
 
 	// Iterate over all files in the given directory
@@ -182,7 +195,7 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 		error("Engine_GOB_create(): Cannot find intro.stk");
 	}
 
-	const Gob::GobGameSettings *g;
+	const GobGameSettings *g;
 	bool found = false;
 
 	// TODO
