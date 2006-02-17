@@ -51,16 +51,12 @@ enum {
 };
 
 struct LureGameSettings {
-	const char *name;
+	const char *gameid;
 	const char *description;
 	byte id;
 	uint32 features;
 	const char *md5sum;
 	const char *checkFile;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
-		return dummy;
-	}
 };
 
 //
@@ -72,27 +68,17 @@ static const LureGameSettings lure_games[] = {
 
 // Keep list of different supported games
 
-struct LureGameList {
-	const char *name;
-	const char *description;
-	uint32 features;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description, features };
-		return dummy;
-	}
-};
-
-static const LureGameList lure_list[] = {
+static const GameSettings lure_list[] = {
 	{ "lure", "Lure of the Temptress", 0 },
 	{ 0, 0, 0 }
 };
 
 GameList Engine_LURE_gameList() {
 	GameList games;
-	const LureGameList *g = lure_list;
+	const GameSettings *g = lure_list;
 
-	while (g->name) {
-		games.push_back(g->toGameSettings());
+	while (g->gameid) {
+		games.push_back(*g);
 		g++;
 	}
 	return games;
@@ -109,7 +95,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		if (file->isDirectory())
 			continue;
 
-		for (g = lure_games; g->name; g++) {
+		for (g = lure_games; g->gameid; g++) {
 			if (scumm_stricmp(file->displayName().c_str(), g->checkFile) == 0)
 				isFound = true;
 		}
@@ -127,17 +113,17 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		for (int i = 0; i < 16; i++) {
 			sprintf(md5str + i * 2, "%02x", (int)md5sum[i]);
 		}
-		for (g = lure_games; g->name; g++) {
+		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(g->toGameSettings());
+				detectedGames.push_back(toGameSettings(*g));
 			}
 		}
 		if (detectedGames.isEmpty()) {
 			debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-			const LureGameList *g1 = lure_list;
-			while (g1->name) {
-				detectedGames.push_back(g1->toGameSettings());
+			const GameSettings *g1 = lure_list;
+			while (g1->gameid) {
+				detectedGames.push_back(*g1);
 				g1++;
 			}
 		}
@@ -212,7 +198,7 @@ void LureEngine::detectGame() {
 
 	*md5str = 0;
 
-	for (g = lure_games; g->name; g++) {
+	for (g = lure_games; g->gameid; g++) {
 		if (!Common::File::exists(g->checkFile))
 			continue;
 

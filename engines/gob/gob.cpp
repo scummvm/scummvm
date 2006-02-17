@@ -107,15 +107,7 @@ static const Gob::GobGameSettings gob_games[] = {
 };
 
 // Keep list of different supported games
-static const struct GobGameList {
-	const char *gameid;
-	const char *description;
-	uint32 features;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
-		return dummy;
-	}
-} gob_list[] = {
+static const GameSettings gob_list[] = {
 	{"gob1", "Gobliiins", Gob::GF_GOB1},
 	{"gob2", "Gobliins 2", Gob::GF_GOB2},
 	{0, 0, 0}
@@ -124,10 +116,10 @@ static const struct GobGameList {
 
 GameList Engine_GOB_gameList() {
 	GameList games;
-	const GobGameList *g = gob_list;
+	const GameSettings *g = gob_list;
 
 	while (g->gameid) {
-		games.push_back(g->toGameSettings());
+		games.push_back(*g);
 		g++;
 	}
 
@@ -167,9 +159,9 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 		if (detectedGames.isEmpty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-			const GobGameList *g1 = gob_list;
+			const GameSettings *g1 = gob_list;
 			while (g1->gameid) {
-				detectedGames.push_back(g1->toGameSettings());
+				detectedGames.push_back(*g1);
 				g1++;
 			}
 		}

@@ -65,10 +65,6 @@ struct KyraGameSettings {
 	uint32 features;
 	const char *md5sum;
 	const char *checkFile;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
-		return dummy;
-	}
 };
 
 // We could get rid of md5 detection at least for kyra 1 since we can locate all
@@ -100,17 +96,7 @@ static const KyraGameSettings kyra_games[] = {
 };
 
 // Keep list of different supported games
-struct KyraGameList {
-	const char *gameid;
-	const char *description;
-	uint32 features;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
-		return dummy;
-	}
-};
-
-static const KyraGameList kyra_list[] = {
+static const GameSettings kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia", 0 },
 	{ 0, 0, 0 }
 };
@@ -145,10 +131,10 @@ static Common::Language convertKyraLang(uint32 features) {
 
 GameList Engine_KYRA_gameList() {
 	GameList games;
-	const KyraGameList *g = kyra_list;
+	const GameSettings *g = kyra_list;
 
 	while (g->gameid) {
-		games.push_back(g->toGameSettings());
+		games.push_back(*g);
 		g++;
 	}
 	return games;
@@ -185,15 +171,15 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		}
 		for (g = kyra_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(DetectedGame(g->toGameSettings(), convertKyraLang(g->features), Common::kPlatformUnknown));
+				detectedGames.push_back(DetectedGame(toGameSettings(*g), convertKyraLang(g->features), Common::kPlatformUnknown));
 			}
 		}
 		if (detectedGames.isEmpty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-			const KyraGameList *g1 = kyra_list;
+			const GameSettings *g1 = kyra_list;
 			while (g1->gameid) {
-				detectedGames.push_back(g1->toGameSettings());
+				detectedGames.push_back(*g1);
 				g1++;
 			}
 		}

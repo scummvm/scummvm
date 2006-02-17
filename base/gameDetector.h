@@ -43,9 +43,25 @@ enum {
 
 struct GameSettings {
 	const char *gameid;
-	const char *description;
-	uint32 features;
+	const char *description;	// TODO: Rename this to "title" or so
+	uint32 features;			// TODO: Probably should get rid of this field
 };
+
+/**
+ * This template function allows to easily convert structs that mimic GameSettings
+ * to a GameSettings instance.
+ *
+ * Normally, one would just subclass GameSettings to get this effect much easier.
+ * However, subclassing a struct turns it into a non-POD type. One of the
+ * consequences is that you can't have inline intialized arrays of that type.
+ * But we heavily rely on those, hence we can't subclass GameSettings...
+ */
+template <class T>
+GameSettings toGameSettings(const T &g) {
+	GameSettings dummy = { g.gameid, g.description, g.features };
+	return dummy;
+}
+
 
 class GameDetector {
 	typedef Common::String String;

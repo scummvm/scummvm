@@ -51,10 +51,6 @@ struct Sword2GameSettings {
 	const char *description;
 	uint32 features;
 	const char *detectname;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
-		return dummy;
-	}
 };
 
 static const Sword2GameSettings sword2_settings[] = {
@@ -69,7 +65,7 @@ GameList Engine_SWORD2_gameList() {
 	const Sword2GameSettings *g = sword2_settings;
 	GameList games;
 	while (g->gameid) {
-		games.push_back(g->toGameSettings());
+		games.push_back(toGameSettings(*g));
 		g++;
 	}
 	return games;
@@ -91,7 +87,7 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 
 				if (0 == scumm_stricmp(g->detectname, gameName)) {
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(g->toGameSettings());
+					detectedGames.push_back(toGameSettings(*g));
 					break;
 				}
 			}
