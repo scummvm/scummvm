@@ -276,11 +276,11 @@ samnmax	Sam &amp; Max Hit the Road
 	166553538ff320c69edafeee29525419	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 
 	c3196c5349e53e387aaff1533d95e53a	en	DOS	-	Demo	-	
-	0e4c5d54a0ad4b26132e78b5ea76642a	en	DOS	-	Demo	Demo (WIP)	
-	d9d0dd93d16ab4dec55cabc2b86bbd17	en	DOS	-	Demo	Demo (non-interactive)	
+	0e4c5d54a0ad4b26132e78b5ea76642a	en	DOS	-	Demo	WIP	
+	d9d0dd93d16ab4dec55cabc2b86bbd17	en	DOS	-	Demo	non-interactive	
 	cc8ba2b0df2f9c450bcf055fe2711979	de	DOS	-	Demo	-	Simon Krumrein, sev
 	0425954a9db5c340861672892c3e678d	en	Mac	-	Demo	-	
-	6dead580b0ff14d5f7b33b4219f04159	en	Mac	-	Demo	Demo (bundle)	
+	6dead580b0ff14d5f7b33b4219f04159	en	Mac	-	Demo	Mac bundle	
 
 ft	Full Throttle
 	09820417db26687bb7fe0c83cc4c553b	en	All?	-	Version A	-	
