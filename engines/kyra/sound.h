@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
+#include "sound/mixer.h"
 #include "kyra/kyra.h"
 
 class AudioStream;

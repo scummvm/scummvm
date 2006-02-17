@@ -25,8 +25,6 @@
 
 #include "base/engine.h"
 #include "common/rect.h"
-#include "sound/mixer.h"
-#include "common/file.h"
 
 class AudioStream;
 

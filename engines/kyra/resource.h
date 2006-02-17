@@ -26,8 +26,8 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/file.h"
 #include "common/list.h"
-#include "common/map.h"
 
 #include "kyra/kyra.h"
 

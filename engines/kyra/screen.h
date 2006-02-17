@@ -24,7 +24,6 @@
 #define KYRASCREEN_H
 
 #include "common/util.h"
-#include <stdarg.h>
 
 class OSystem;
 
