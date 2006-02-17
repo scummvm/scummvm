@@ -60,7 +60,7 @@ Engine::~Engine() {
 	g_engine = NULL;
 }
 
-void Engine::initCommonGFX(GameDetector &detector) {
+void Engine::initCommonGFX(GameDetector &detector, bool defaultTo1XScaler) {
 	const bool useDefaultGraphicsMode =
 		!ConfMan.hasKey("gfx_mode", Common::ConfigManager::kTransientDomain) &&
 		(
@@ -70,7 +70,7 @@ void Engine::initCommonGFX(GameDetector &detector) {
 		);
 
 	// See if the game should default to 1x scaler
-	if (useDefaultGraphicsMode && (detector._game.features & GF_DEFAULT_TO_1X_SCALER)) {
+	if (useDefaultGraphicsMode && defaultTo1XScaler) {
 		// FIXME: As a hack, we use "1x" here. Would be nicer to use
 		// getDefaultGraphicsMode() instead, but right now, we do not specify
 		// whether that is a 1x scaler or not...

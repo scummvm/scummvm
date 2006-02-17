@@ -72,7 +72,7 @@ public:
 	/** Specific for each engine: prepare error string. */
 	virtual void errorString(const char *buf_input, char *buf_output);
 
-	void initCommonGFX(GameDetector &detector);
+	void initCommonGFX(GameDetector &detector, bool defaultTo1XScaler);
 
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();

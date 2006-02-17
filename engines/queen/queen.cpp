@@ -404,7 +404,7 @@ int QueenEngine::go() {
 
 int QueenEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
+		initCommonGFX(detector, false);
 		_system->initSize(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->endGFXTransaction();
 

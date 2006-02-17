@@ -244,7 +244,7 @@ void LureEngine::detectGame() {
 
 int LureEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
+		initCommonGFX(detector, false);
 		_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->endGFXTransaction();
 

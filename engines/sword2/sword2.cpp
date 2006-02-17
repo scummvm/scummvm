@@ -232,7 +232,7 @@ int Sword2Engine::init(GameDetector &detector) {
 	// away
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
+		initCommonGFX(detector, true);
 		_screen = new Screen(this, 640, 480);
 	_system->endGFXTransaction();
 

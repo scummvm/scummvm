@@ -157,7 +157,7 @@ SwordEngine::~SwordEngine() {
 int SwordEngine::init(GameDetector &detector) {
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
+		initCommonGFX(detector, true);
 		_system->initSize(640, 480);
 	_system->endGFXTransaction();
 

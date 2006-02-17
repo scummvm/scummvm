@@ -1811,7 +1811,7 @@ int ScummEngine::init(GameDetector &detector) {
 		} else {
 			_system->initSize(_screenWidth, _screenHeight, (detector._force1xOverlay ? 1 : 2));
 		}
-		initCommonGFX(detector);
+		initCommonGFX(detector, (_features & GF_DEFAULT_TO_1X_SCALER) != 0);
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.

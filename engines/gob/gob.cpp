@@ -316,7 +316,7 @@ int GobEngine::init(GameDetector &detector) {
 		_music = new Music(this);
 
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
+		initCommonGFX(detector, false);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 

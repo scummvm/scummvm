@@ -318,6 +318,12 @@ General
 =======
 * Fix engines so they clean up after themselves, to allow proper re-entry
   to the launcher. See "FIXME: LAUNCHERHACK" in base/main.cpp
+* Get rid of GF_DEFAULT_TO_1X_SCALER and the 'defaultTo1XScaler' parameter of
+  Engine::initCommonGFX. They form a crude hack to better support 640x480 games
+  and are meant to prevent those games from being accidentally scaled to a size
+  that won't fit on the screen. However, the proper fix would be to modify the
+  backends so that they simply fall back to a smaller scaler when a combination
+  is requested that can't be satisfied.
 
 SCUMM
 =====

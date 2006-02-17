@@ -302,7 +302,7 @@ int SkyEngine::go() {
 
 int SkyEngine::init(GameDetector &detector) {
 	_system->beginGFXTransaction();
-		initCommonGFX(detector);
+		initCommonGFX(detector, false);
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
