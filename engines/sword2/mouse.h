@@ -19,15 +19,22 @@
  * $Id$
  */
 
+#include "common/rect.h"
+
 #ifndef SWORD2_MOUSE_H
 #define SWORD2_MOUSE_H
 
+#define MENU_MASTER_OBJECT	44
+
 #define	MAX_SUBJECT_LIST 30	// is that enough?
 
+#define TOTAL_subjects		(375 - 256 + 1)	// the speech subject bar
+#define TOTAL_engine_pockets	(15 + 10)	// +10 for overflow
 #define	TOTAL_mouse_list 50
 
 namespace Sword2 {
 
+class MenuObject;
 struct BuildUnit;
 
 // Menubar defines.
@@ -102,6 +109,14 @@ struct MouseUnit {
  struct SubjectUnit {
 	uint32 res;
 	uint32 ref;
+};
+
+// define these in a script and then register them with the system
+
+struct MenuObject {
+	int32 icon_resource;	// icon graphic graphic
+	int32 luggage_resource;	// luggage icon resource (for attaching to
+				// mouse pointer)
 };
 
 class Mouse {

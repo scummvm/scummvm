@@ -21,8 +21,10 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
+
 #include "sword2/sword2.h"
 #include "sword2/mouse.h"
+#include "sword2/screen.h"
 
 namespace Sword2 {
 

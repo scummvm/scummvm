@@ -20,8 +20,10 @@
  */
 
 #include "common/stdafx.h"
+
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"

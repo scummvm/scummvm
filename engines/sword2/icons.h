@@ -22,19 +22,9 @@
 #ifndef	SWORD2_ICONS_H
 #define	SWORD2_ICONS_H
 
-#define MENU_MASTER_OBJECT	44
-#define TOTAL_subjects		(375 - 256 + 1)	// the speech subject bar
-#define TOTAL_engine_pockets	(15 + 10)	// +10 for overflow
+#error "This file is about to be removed"
 
 namespace Sword2 {
-
-// define these in a script and then register them with the system
-
-struct MenuObject {
-	int32 icon_resource;	// icon graphic graphic
-	int32 luggage_resource;	// luggage icon resource (for attaching to
-				// mouse pointer)
-};
 
 } // End of namespace Sword2
 

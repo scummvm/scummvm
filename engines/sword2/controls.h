@@ -23,6 +23,7 @@
 #define	SWORD2_CONTROL_H
 
 #include "sword2/defs.h"
+#include "sword2/saveload.h"
 
 #define MAX_WIDGETS 25
 

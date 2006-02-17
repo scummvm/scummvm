@@ -20,10 +20,13 @@
  */
 
 #include "common/stdafx.h"
+#include "common/rect.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/header.h"
 #include "sword2/mouse.h"
+#include "sword2/screen.h"
 
 namespace Sword2 {
 

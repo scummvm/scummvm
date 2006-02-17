@@ -28,6 +28,7 @@
 #include "common/stdafx.h"
 #include "common/file.h"
 #include "common/system.h"
+
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/flac.h"
@@ -36,6 +37,7 @@
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/header.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 

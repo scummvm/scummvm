@@ -26,10 +26,13 @@
 #include "sword2/console.h"
 #include "sword2/controls.h"
 #include "sword2/defs.h"
+#include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/mouse.h"
+#include "sword2/object.h"
 #include "sword2/resman.h"
+#include "sword2/screen.h"
 #include "sword2/sound.h"
 
 namespace Sword2 {
