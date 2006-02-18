@@ -89,7 +89,6 @@ static const GobGameSettings gob_games[] = {
 	
 	{"gob1", "Gobliiins (Mac)", GF_GOB1 | GF_MAC, "4c0e8ce4a2f66ee8226952ad3c6c1155"},
 
-#if 0
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "abb5f762f9979d4253002de20f6e7b56"},
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "9b6de65d811c08eebf50391b84fcba92"},
 	{"gob2", "Gobliins 2 (DOS)", GF_GOB2, "54d59c200e3823ad0af11a605a6fd06a"},
@@ -100,6 +99,7 @@ static const GobGameSettings gob_games[] = {
 	{"gob2", "Gobliins 2 (CD)", GF_GOB2, "410e632682ab11969bc3b3b588066d95"},
 	{"gob2", "Gobliins 2 (Demo)", GF_GOB2, "be8b111191f965ac9b28fe530580d14e"},
 
+#if 0
 	{"gob3", "Goblins Quest 3", GF_GOB3, "36d9b4032b39a794c8640e500e98893a"},
 	{"gob3", "Goblins Quest 3", GF_GOB3, "d129f639f6ca8d6b5f0f4e15edb91058"},
 	{"gob3", "Goblins Quest 3", GF_GOB3, "8d17b0abc514b1512fdedc6072acd48b"},
