@@ -127,8 +127,8 @@ DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
-		if (!scumm_stricmp(detector->_game.gameid, o->from)) {
-			detector->_game.gameid = o->to;
+		if (!scumm_stricmp(detector->_gameid.c_str(), o->from)) {
+			detector->_gameid = o->to;
 
 			ConfMan.set("gameid", o->to);
 

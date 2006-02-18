@@ -3361,9 +3361,9 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// the correct new game ID (and platform, if specified).
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
-		if (!scumm_stricmp(detector->_game.gameid, o->from)) {
+		if (!scumm_stricmp(detector->_gameid.c_str(), o->from)) {
 			// Match found, perform upgrade
-			detector->_game.gameid = o->to;
+			detector->_gameid = o->to;
 			ConfMan.set("gameid", o->to);
 
 			if (o->platform != Common::kPlatformUnknown)
@@ -3380,7 +3380,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// the game ID is unknown, and we have to abort.
 	const ScummGameSettings *g = scumm_settings;
 	while (g->gameid) {
-		if (!scumm_stricmp(detector->_game.gameid, g->gameid))
+		if (!scumm_stricmp(detector->_gameid.c_str(), g->gameid))
 			break;
 		g++;
 	}

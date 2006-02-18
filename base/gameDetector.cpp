@@ -225,7 +225,6 @@ GameDetector::GameDetector() {
 	_force1xOverlay = false;
 #endif
 
-	memset(&_game, 0, sizeof(_game));
 	_plugin = 0;
 }
 
@@ -630,36 +629,27 @@ void GameDetector::setTarget(const String &target) {
 	ConfMan.setActiveDomain(target);
 }
 
-bool GameDetector::detectGame() {
-	String realGame;
-
-	if (ConfMan.hasKey("gameid"))
-		realGame = ConfMan.get("gameid");
-	else
-		realGame = _targetName;
-
-	printf("Looking for %s\n", realGame.c_str());
-	_game = findGame(realGame, &_plugin);
-
-	if (_game.gameid) {
-		printf("Trying to start game '%s'\n", _game.description);
-		return true;
-	} else {
-		printf("Failed game detection\n");
-		return false;
-	}
-}
-
 bool GameDetector::detectMain() {
 	if (_targetName.isEmpty()) {
 		warning("No game was specified...");
 		return false;
 	}
 
-	if (!detectGame()) {
+	if (ConfMan.hasKey("gameid"))
+		_gameid = ConfMan.get("gameid");
+	else
+		_gameid = _targetName;
+
+	printf("Looking for %s\n", _gameid.c_str());
+	GameSettings game = findGame(_gameid, &_plugin);
+
+	if (!game.gameid) {
+		printf("Failed game detection\n");
 		warning("%s is an invalid target. Use the --list-targets option to list targets", _targetName.c_str());
 		return false;
 	}
+
+	printf("Trying to start game '%s'\n", game.description);
 
 	String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.isEmpty()) {

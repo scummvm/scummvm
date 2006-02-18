@@ -65,14 +65,13 @@ public:
 	bool detectMain();
 
 	String _targetName;
-	GameSettings _game;	// TODO: Eventually get rid of this?!
-	const Plugin *_plugin;
+	String _gameid;
 
 	bool _dumpScripts;
 
 	bool _force1xOverlay;
 
-	void setTarget(const String &name);
+	const Plugin *_plugin;	// TODO: This should be protected
 
 public:
 	Engine *createEngine(OSystem *system);
@@ -81,8 +80,8 @@ public:
 
 	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
 
-protected:
-	bool detectGame(void);
+//protected:
+	void setTarget(const String &name);	// TODO: This should be protected
 };
 
 #endif
