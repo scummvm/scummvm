@@ -59,7 +59,7 @@ struct GobGameSettings {
 	uint32 features;
 	const char *md5sum;
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description, features };
+		GameSettings dummy = { gameid, description };
 		return dummy;
 	}
 };
@@ -121,9 +121,9 @@ static const GobGameSettings gob_games[] = {
 
 // Keep list of different supported games
 static const GameSettings gob_list[] = {
-	{"gob1", "Gobliiins", Gob::GF_GOB1},
-	{"gob2", "Gobliins 2", Gob::GF_GOB2},
-	{0, 0, 0}
+	{"gob1", "Gobliiins"},
+	{"gob2", "Gobliins 2"},
+	{0, 0}
 };
 
 

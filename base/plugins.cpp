@@ -74,7 +74,7 @@ GameSettings Plugin::findGame(const char *gameName) const {
 	// Find the GameSettings for this game
 	assert(gameName);
 	GameList games = getSupportedGames();
-	GameSettings result = {NULL, NULL, 0};
+	GameSettings result = {NULL, NULL};
 	for (GameList::iterator g = games.begin(); g != games.end(); ++g) {
 		if (!scumm_stricmp(g->gameid, gameName)) {
 			result = *g;

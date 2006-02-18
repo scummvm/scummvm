@@ -56,10 +56,10 @@ bool isSmartphone();
 
 /* Flight of the Amazon Queen */
 static const GameSettings queen_setting[] = {
-	{ "queen", "Flight of the Amazon Queen", 0 },
-	{ "queen", "Flight of the Amazon Queen (Demo)", 0 },
-	{ "queen", "Flight of the Amazon Queen (Interview)", 0 },
-	{ 0, 0, 0 }
+	{ "queen", "Flight of the Amazon Queen" },
+	{ "queen", "Flight of the Amazon Queen (Demo)" },
+	{ "queen", "Flight of the Amazon Queen (Interview)" },
+	{ 0, 0 }
 };
 
 GameList Engine_QUEEN_gameList() {

@@ -275,7 +275,7 @@ void listTargets() {
 GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugin) {
 	// Find the GameSettings for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
-	GameSettings result = {NULL, NULL, 0};
+	GameSettings result = {NULL, NULL};
 
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {

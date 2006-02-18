@@ -49,9 +49,9 @@ using namespace Sword1;
 
 /* Broken Sword 1 */
 static const GameSettings sword1FullSettings =
-	{"sword1", "Broken Sword 1: The Shadow of the Templars", GF_DEFAULT_TO_1X_SCALER};
+	{"sword1", "Broken Sword 1: The Shadow of the Templars"};
 static const GameSettings sword1DemoSettings =
-	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword1::GF_DEMO };
+	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)"};
 
 // check these subdirectories (if present)
 static const char *g_dirNames[] = {	"clusters",	"speech" };
@@ -126,7 +126,11 @@ void SwordEngine::errorString(const char *buf1, char *buf2) {
 SwordEngine::SwordEngine(GameDetector *detector, OSystem *syst)
 	: Engine(syst) {
 
-	_features = detector->_game.features;
+	if (0 == strcmp(detector->_game.gameid, "sword1demo"))
+		_features = GF_DEMO;
+	else
+		_features = 0;
+	
 
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");

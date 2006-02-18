@@ -57,9 +57,9 @@ struct Sword2GameSettings {
 
 static const Sword2GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
-	{"sword2", "Broken Sword 2: The Smoking Mirror", GF_DEFAULT_TO_1X_SCALER, "players.clu" },
-	{"sword2alt", "Broken Sword 2: The Smoking Mirror (alt)", GF_DEFAULT_TO_1X_SCALER, "r2ctlns.ocx" },
-	{"sword2demo", "Broken Sword 2: The Smoking Mirror (Demo)", GF_DEFAULT_TO_1X_SCALER | Sword2::GF_DEMO, "players.clu" },
+	{"sword2", "Broken Sword 2: The Smoking Mirror", 0, "players.clu" },
+	{"sword2alt", "Broken Sword 2: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
+	{"sword2demo", "Broken Sword 2: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu" },
 	{NULL, NULL, 0, NULL}
 };
 
@@ -115,7 +115,11 @@ Sword2Engine::Sword2Engine(GameDetector *detector, OSystem *syst) : Engine(syst)
 	Common::File::addDefaultDirectory(_gameDataPath + "sword2/");
 	Common::File::addDefaultDirectory(_gameDataPath + "video/");
 
-	_features = detector->_game.features;
+	if (0 == strcmp(detector->_game.gameid, "sword2demo"))
+		_features = GF_DEMO;
+	else
+		_features = 0;
+	
 	_targetName = detector->_targetName;
 
 	_bootParam = ConfMan.getInt("boot_param");

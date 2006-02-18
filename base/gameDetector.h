@@ -34,17 +34,9 @@ namespace Audio {
 	class Mixer;
 }
 
-/** Global (shared) game feature flags. */
-enum {
-//	GF_HAS_SPEECH = 1 << 28,
-//	GF_HAS_SUBTITLES = 1 << 29,
-	GF_DEFAULT_TO_1X_SCALER = 1 << 30
-};
-
 struct GameSettings {
 	const char *gameid;
 	const char *description;	// TODO: Rename this to "title" or so
-	uint32 features;			// TODO: Probably should get rid of this field
 };
 
 /**
@@ -58,7 +50,7 @@ struct GameSettings {
  */
 template <class T>
 GameSettings toGameSettings(const T &g) {
-	GameSettings dummy = { g.gameid, g.description, g.features };
+	GameSettings dummy = { g.gameid, g.description };
 	return dummy;
 }
 

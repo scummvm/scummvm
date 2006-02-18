@@ -57,9 +57,9 @@
 #include "saga/resnames.h"
 
 static const GameSettings saga_games[] = {
-	{"ite", "Inherit the Earth", 0},
-	{"ihnm", "I Have No Mouth and I Must Scream", GF_DEFAULT_TO_1X_SCALER },
-	{0, 0, 0}
+	{"ite", "Inherit the Earth"},
+	{"ihnm", "I Have No Mouth and I Must Scream"},
+	{0, 0}
 };
 
 GameList Engine_SAGA_gameList() {

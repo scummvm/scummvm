@@ -78,7 +78,7 @@ extern bool isSmartphone(void);
 */
 
 static const GameSettings skySetting =
-	{"sky", "Beneath a Steel Sky", 0 };
+	{"sky", "Beneath a Steel Sky" };
 
 GameList Engine_SKY_gameList() {
 	GameList games;

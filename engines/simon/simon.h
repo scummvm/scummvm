@@ -128,7 +128,7 @@ struct GameDescription {
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, title, features };
+		GameSettings dummy = { name, title };
 		return dummy;
 	}
 };

@@ -57,7 +57,7 @@ struct ObsoleteTargets {
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { from, "Obsolete Target", 0 };
+		GameSettings dummy = { from, "Obsolete Target" };
 		return dummy;
 	}
 };
@@ -83,23 +83,23 @@ static ObsoleteTargets obsoleteTargetsTable[] = {
 
 static const GameSettings simonGames[] = {
 	// Simon the Sorcerer 1 & 2 (not SCUMM games)
-	{"feeble", "The Feeble Files", 0},
-	{"simon1", "Simon the Sorcerer 1", 0},
-	{"simon2", "Simon the Sorcerer 2", 0},
+	{"feeble", "The Feeble Files"},
+	{"simon1", "Simon the Sorcerer 1"},
+	{"simon2", "Simon the Sorcerer 2"},
 
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)", 0},
-	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)", 0},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)", 0},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)", 0},
-	{"simon1dos", "Simon the Sorcerer 1 (DOS)", 0},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie", 0},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)", 0},
-	{"simon2dos", "Simon the Sorcerer 2 (DOS)", 0},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie", 0},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)", 0},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)", 0},
+	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)"},
+	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)"},
+	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)"},
+	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)"},
+	{"simon1dos", "Simon the Sorcerer 1 (DOS)"},
+	{"simon1talkie", "Simon the Sorcerer 1 Talkie"},
+	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)"},
+	{"simon2dos", "Simon the Sorcerer 2 (DOS)"},
+	{"simon2talkie", "Simon the Sorcerer 2 Talkie"},
+	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)"},
+	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)"},
 
-	{NULL, NULL, 0}
+	{NULL, NULL}
 };
 
 GameList Engine_SIMON_gameList() {

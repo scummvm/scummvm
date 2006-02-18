@@ -194,7 +194,7 @@ struct ScummGameSettings {
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, findDescriptionFromGameID(gameid), features };
+		GameSettings dummy = { gameid, findDescriptionFromGameID(gameid) };
 		return dummy;
 	}
 };
@@ -212,7 +212,7 @@ struct ObsoleteGameIDs {
 	Common::Platform platform;
 
 	GameSettings toGameSettings() const {
-		GameSettings dummy = { from, "Obsolete game ID", 0 };
+		GameSettings dummy = { from, "Obsolete game ID" };
 		return dummy;
 	}
 };
@@ -307,7 +307,7 @@ static const ScummGameSettings scumm_settings[] = {
 
 	/* Scumm Version 8 */
 	{"comi", 0, GID_CMI, 8, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER, Common::kPlatformWindows},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformWindows},
 
 #endif
 
@@ -469,7 +469,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"8fec68383202d38c0d25e9e3b757c5df", "Demo", GID_CMI, 8, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEFAULT_TO_1X_SCALER | GF_DEMO, Common::kPlatformWindows},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
 
 	{"362c1d281fb9899254cda66ad246c66a", "Demo", GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC},
@@ -1565,14 +1565,15 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (_platform == Common::kPlatformFMTowns && _version == 3) {	// FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
-	} else if (_features & GF_DEFAULT_TO_1X_SCALER) {
+	} else if (_version == 8 || _heversion >= 71) {
+		// COMI uses 640x480. Likewise starting from version 7.1, HE games use
+		// 640x480, too.
 		_screenWidth = 640;
 		_screenHeight = 480;
 	} else if (_platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
 	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		_features |= GF_DEFAULT_TO_1X_SCALER;
 		_screenWidth = 320;
 		_screenHeight = 200;
 	} else {
@@ -1804,14 +1805,15 @@ int ScummEngine::init(GameDetector &detector) {
 
 	// Initialize backend
 	_system->beginGFXTransaction();
+		bool defaultTo1XScaler = false;
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_system->initSize(Common::kHercW, Common::kHercH, 1);
-			_features |= GF_DEFAULT_TO_1X_SCALER;
-			detector._game.features |= GF_DEFAULT_TO_1X_SCALER;
+			defaultTo1XScaler = true;
 		} else {
 			_system->initSize(_screenWidth, _screenHeight, (detector._force1xOverlay ? 1 : 2));
+			defaultTo1XScaler = (_screenWidth > 320);
 		}
-		initCommonGFX(detector, (_features & GF_DEFAULT_TO_1X_SCALER) != 0);
+		initCommonGFX(detector, defaultTo1XScaler);
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.
@@ -3467,13 +3469,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		}
 		g++;
 	}
-
-	// Starting from version 7.1, HE games use 640x480. We check this here since multiple
-	// versions _could_ use different resolutions (I haven't verified this, though).
-	if (game.heversion >= 71) {
-		game.features |= GF_DEFAULT_TO_1X_SCALER;
-	}
-
 
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in 

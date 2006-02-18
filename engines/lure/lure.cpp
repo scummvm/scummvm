@@ -69,8 +69,8 @@ static const LureGameSettings lure_games[] = {
 // Keep list of different supported games
 
 static const GameSettings lure_list[] = {
-	{ "lure", "Lure of the Temptress", 0 },
-	{ 0, 0, 0 }
+	{ "lure", "Lure of the Temptress" },
+	{ 0, 0 }
 };
 
 GameList Engine_LURE_gameList() {

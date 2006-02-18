@@ -97,8 +97,8 @@ static const KyraGameSettings kyra_games[] = {
 
 // Keep list of different supported games
 static const GameSettings kyra_list[] = {
-	{ "kyra1", "The Legend of Kyrandia", 0 },
-	{ 0, 0, 0 }
+	{ "kyra1", "The Legend of Kyrandia" },
+	{ 0, 0 }
 };
 
 struct KyraLanguageTable {
