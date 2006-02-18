@@ -51,15 +51,10 @@ extern bool isSmartphone(void);
 
 using Common::File;
 
-struct ObsoleteTargets {
+struct ObsoleteGameID {
 	const char *from;
 	const char *to;
 	Common::Platform platform;
-
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { from, "Obsolete Target" };
-		return dummy;
-	}
 };
 
 /**
@@ -67,7 +62,7 @@ struct ObsoleteTargets {
  * corresponding new target and platform combination.
  *
  */
-static ObsoleteTargets obsoleteTargetsTable[] = {
+static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"simon1acorn", "simon1", Common::kPlatformAcorn},
 	{"simon1amiga", "simon1", Common::kPlatformAmiga},
 	{"simon1cd32", "simon1", Common::kPlatformAmiga},
@@ -82,27 +77,15 @@ static ObsoleteTargets obsoleteTargetsTable[] = {
 };
 
 static const GameSettings simonGames[] = {
-	// Simon the Sorcerer 1 & 2 (not SCUMM games)
+	// Simon the Sorcerer 1 & 2
 	{"feeble", "The Feeble Files"},
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
 
-	{"simon1acorn", "Simon the Sorcerer 1 (Acorn)"},
-	{"simon1amiga", "Simon the Sorcerer 1 (Amiga)"},
-	{"simon1cd32", "Simon the Sorcerer 1 Talkie (Amiga CD32)"},
-	{"simon1demo", "Simon the Sorcerer 1 (DOS Demo)"},
-	{"simon1dos", "Simon the Sorcerer 1 (DOS)"},
-	{"simon1talkie", "Simon the Sorcerer 1 Talkie"},
-	{"simon1win", "Simon the Sorcerer 1 Talkie (Windows)"},
-	{"simon2dos", "Simon the Sorcerer 2 (DOS)"},
-	{"simon2talkie", "Simon the Sorcerer 2 Talkie"},
-	{"simon2win", "Simon the Sorcerer 2 Talkie (Windows)"},
-	{"simon2mac", "Simon the Sorcerer 2 Talkie (Amiga or Mac)"},
-
 	{NULL, NULL}
 };
 
-GameList Engine_SIMON_gameList() {
+GameList Engine_SIMON_gameIDList() {
 	GameList games;
 	const GameSettings *g = simonGames;
 	while (g->gameid) {
@@ -113,12 +96,36 @@ GameList Engine_SIMON_gameList() {
 	return games;
 }
 
+GameSettings Engine_SIMON_findGameID(const char *gameid) {
+	// First search the list of supported game IDs.
+	const GameSettings *g = simonGames;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			return *g;
+		g++;
+	}
+
+	// If we didn't find the gameid in the main list, check if it
+	// is an obsolete game id.
+	GameSettings gs = { 0, 0 };
+	const ObsoleteGameID *o = obsoleteGameIDsTable;
+	while (o->from) {
+		if (0 == strcmp(gameid, o->from)) {
+			gs.gameid = gameid;
+			gs.gameid = "Obsolete game ID";
+			return gs;
+		}
+		o++;
+	}
+	return gs;
+}
+
 DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
 	return Simon::GAME_ProbeGame(fslist);
 }
 
 Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
-	const ObsoleteTargets *o = obsoleteTargetsTable;
+	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
 		if (!scumm_stricmp(detector->_game.gameid, o->from)) {
 			detector->_game.gameid = o->to;

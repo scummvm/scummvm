@@ -66,11 +66,20 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 	// the engine needs several more files to work, but checking these should be sufficient
 };
 
-GameList Engine_SWORD1_gameList() {
+GameList Engine_SWORD1_gameIDList() {
 	GameList games;
 	games.push_back(sword1FullSettings);
 	games.push_back(sword1DemoSettings);
 	return games;
+}
+
+GameSettings Engine_SWORD1_findGameID(const char *gameid) {
+	if (0 == strcmp(gameid, sword1FullSettings.gameid))
+		return sword1FullSettings;
+	if (0 == strcmp(gameid, sword1DemoSettings.gameid))
+		return sword1DemoSettings;
+	GameSettings dummy = { 0, 0 };
+	return dummy;
 }
 
 void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {

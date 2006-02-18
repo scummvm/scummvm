@@ -41,14 +41,16 @@ typedef Common::Array<GameSettings> GameList;
  * A detected game. Carries the GameSettings, but also (optionally)
  * information about the language and platform of the detected game.
  */
-struct DetectedGame : GameSettings {
+struct DetectedGame {
+	const char *gameid;
+	const char *description;
 	Common::Language language;
 	Common::Platform platform;
 	DetectedGame() : language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {}
 	DetectedGame(const GameSettings &game,
 	             Common::Language l = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown)
-		: GameSettings(game), language(l), platform(p) {}
+		: gameid(game.gameid), description(game.description), language(l), platform(p) {}
 };
 
 /** List of detected games. */
@@ -71,7 +73,7 @@ public:
 	virtual int getVersion() const	{ return 0; }	// TODO!
 
 	virtual GameList getSupportedGames() const = 0;
-	virtual GameSettings findGame(const char *gameName) const;
+	virtual GameSettings findGame(const char *gameid) const = 0;
 	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
@@ -84,6 +86,21 @@ public:
  * makes it possible to compile the very same code in a module
  * both as a static and a dynamic plugin.
  *
+ * Each plugin has to define the following functions:
+ * - GameList Engine_##ID##_gameIDList()
+ *   -> returns a list of gameid/desc pairs. Only used to implement '--list-games'.
+ * - GameSettings Engine_##ID##_findGameID(const char *gameid)
+ *   -> asks the Engine for a GameSettings matching the gameid. If that is not
+ *      possible, the engine MUST set the gameid of the returned value to 0.
+ *      Note: This MUST succeed for every gameID on the list returned by
+ *      gameIDList(), but MAY also work for additional gameids (e.g. to support
+ *      obsolete targets).
+ * - DetectedGameList Engine_##ID##_detectGames(const FSList &fslist)
+ *   -> scans through the given file list (usually the contents of a directory),
+ *      and attempts to detects games present in that location.
+ * - Engine *Engine_##ID##_create(GameDetector *detector, OSystem *syst)
+ *   -> factory function, create an instance of the Engine class.
+ *
  * @todo	add some means to query the plugin API version etc.
  */
 
@@ -91,13 +108,19 @@ public:
 #define REGISTER_PLUGIN(ID,name) \
 	PluginRegistrator *g_##ID##_PluginReg; \
 	void g_##ID##_PluginReg_alloc() { \
-		g_##ID##_PluginReg = new PluginRegistrator(name, Engine_##ID##_gameList(), Engine_##ID##_create, Engine_##ID##_detectGames);\
+		g_##ID##_PluginReg = new PluginRegistrator(name, \
+			Engine_##ID##_gameIDList(), \
+			Engine_##ID##_findGameID, \
+			Engine_##ID##_create, \
+			Engine_##ID##_detectGames \
+			);\
 	}
 #else
 #define REGISTER_PLUGIN(ID,name) \
 	extern "C" { \
 		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
-		PLUGIN_EXPORT GameList PLUGIN_getSupportedGames() { return Engine_##ID##_gameList(); } \
+		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
+		PLUGIN_EXPORT GameSettings PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
 		PLUGIN_EXPORT Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	}
@@ -111,17 +134,19 @@ public:
 class PluginRegistrator {
 	friend class StaticPlugin;
 public:
+	typedef GameSettings (*GameIDQueryFunc)(const char *gameid);
 	typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 protected:
 	const char *_name;
+	GameIDQueryFunc _qf;
 	EngineFactory _ef;
 	DetectFunc _df;
 	GameList _games;
 
 public:
-	PluginRegistrator(const char *name, GameList games, EngineFactory ef, DetectFunc df);
+	PluginRegistrator(const char *name, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df);
 };
 #endif
 

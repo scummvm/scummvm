@@ -266,7 +266,7 @@ int GobEngine::init(GameDetector &detector) {
 
 using namespace Gob;
 
-GameList Engine_GOB_gameList() {
+GameList Engine_GOB_gameIDList() {
 	GameList games;
 	const GameSettings *g = gob_list;
 
@@ -276,6 +276,16 @@ GameList Engine_GOB_gameList() {
 	}
 
 	return games;
+}
+
+GameSettings Engine_GOB_findGameID(const char *gameid) {
+	const GameSettings *g = gob_list;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return *g;
 }
 
 DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {

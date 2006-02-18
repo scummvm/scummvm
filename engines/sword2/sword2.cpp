@@ -63,7 +63,7 @@ static const Sword2GameSettings sword2_settings[] = {
 	{NULL, NULL, 0, NULL}
 };
 
-GameList Engine_SWORD2_gameList() {
+GameList Engine_SWORD2_gameIDList() {
 	const Sword2GameSettings *g = sword2_settings;
 	GameList games;
 	while (g->gameid) {
@@ -71,6 +71,16 @@ GameList Engine_SWORD2_gameList() {
 		g++;
 	}
 	return games;
+}
+
+GameSettings Engine_SWORD2_findGameID(const char *gameid) {
+	const Sword2GameSettings *g = sword2_settings;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return toGameSettings(*g);
 }
 
 DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {

@@ -129,7 +129,7 @@ static Common::Language convertKyraLang(uint32 features) {
 	return Common::UNK_LANG;
 }
 
-GameList Engine_KYRA_gameList() {
+GameList Engine_KYRA_gameIDList() {
 	GameList games;
 	const GameSettings *g = kyra_list;
 
@@ -138,6 +138,16 @@ GameList Engine_KYRA_gameList() {
 		g++;
 	}
 	return games;
+}
+
+GameSettings Engine_KYRA_findGameID(const char *gameid) {
+	const GameSettings *g = kyra_list;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return *g;
 }
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {

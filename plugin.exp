@@ -1,4 +1,5 @@
 _PLUGIN_createEngine
 _PLUGIN_detectGames
-_PLUGIN_getSupportedGames
+_PLUGIN_gameIDList
+_PLUGIN_findGameID
 _PLUGIN_name

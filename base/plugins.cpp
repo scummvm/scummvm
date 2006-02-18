@@ -32,6 +32,7 @@
 typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
 typedef const char *(*NameFunc)();
+typedef GameSettings (*GameIDQueryFunc)(const char *gameid);
 typedef GameList (*GameIDListFunc)();
 typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
@@ -60,29 +61,13 @@ typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
 #else
 
-PluginRegistrator::PluginRegistrator(const char *name, GameList games, EngineFactory ef, DetectFunc df)
-	: _name(name), _ef(ef), _df(df), _games(games) {
+PluginRegistrator::PluginRegistrator(const char *name, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
+	: _name(name), _qf(qf), _ef(ef), _df(df), _games(games) {
 	//printf("Automatically registered plugin '%s'\n", name);
 }
 
 #endif
 
-
-#pragma mark -
-
-GameSettings Plugin::findGame(const char *gameName) const {
-	// Find the GameSettings for this game
-	assert(gameName);
-	GameList games = getSupportedGames();
-	GameSettings result = {NULL, NULL};
-	for (GameList::iterator g = games.begin(); g != games.end(); ++g) {
-		if (!scumm_stricmp(g->gameid, gameName)) {
-			result = *g;
-			break;
-		}
-	}
-	return result;
-}
 
 #pragma mark -
 
@@ -92,6 +77,7 @@ class StaticPlugin : public Plugin {
 public:
 	StaticPlugin(PluginRegistrator *plugin)
 		: _plugin(plugin) {
+		assert(_plugin);
 	}
 	
 	~StaticPlugin() {
@@ -101,11 +87,19 @@ public:
 	const char *getName() const { return _plugin->_name; }
 
 	Engine *createInstance(GameDetector *detector, OSystem *syst) const {
+		assert(_plugin->_ef);
 		return (*_plugin->_ef)(detector, syst);
 	}
 
 	GameList getSupportedGames() const { return _plugin->_games; }
+
+	GameSettings findGame(const char *gameid) const {
+		assert(_plugin->_qf);
+		return (*_plugin->_qf)(gameid);
+	}
+
 	DetectedGameList detectGames(const FSList &fslist) const {
+		assert(_plugin->_df);
 		return (*_plugin->_df)(fslist);
 	}
 };
@@ -120,6 +114,7 @@ class DynamicPlugin : public Plugin {
 	Common::String _filename;
 
 	Common::String _name;
+	GameIDQueryFunc _qf;
 	EngineFactory _ef;
 	DetectFunc _df;
 	GameList _games;
@@ -128,7 +123,7 @@ class DynamicPlugin : public Plugin {
 
 public:
 	DynamicPlugin(const Common::String &filename)
-		: _dlHandle(0), _filename(filename), _ef(0), _df(0), _games() {}
+		: _dlHandle(0), _filename(filename), _qf(0), _ef(0), _df(0), _games() {}
 
 	const char *getName() const					{ return _name.c_str(); }
 
@@ -138,6 +133,12 @@ public:
 	}
 
 	GameList getSupportedGames() const { return _games; }
+
+	GameSettings findGame(const char *gameid) const {
+		assert(_qf);
+		return (*_qf)(gameid);
+	}
+
 	DetectedGameList detectGames(const FSList &fslist) const {
 		assert(_df);
 		return (*_df)(fslist);
@@ -196,12 +197,19 @@ bool DynamicPlugin::loadPlugin() {
 	_name = nameFunc();
 
 	// Query the plugin for the game ids it supports
-	GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_getSupportedGames");
+	GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_gameIDList");
 	if (!gameListFunc) {
 		unloadPlugin();
 		return false;
 	}
 	_games = gameListFunc();
+
+	// Retrieve the gameid query function
+	_qf = (GameIDQueryFunc)findSymbol("PLUGIN_findGameID");
+	if (!_qf) {
+		unloadPlugin();
+		return false;
+	}
 
 	// Retrieve the factory function
 	_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
@@ -225,23 +233,18 @@ bool DynamicPlugin::loadPlugin() {
 }
 
 void DynamicPlugin::unloadPlugin() {
-#if defined(UNIX) || defined(__DC__)
 	if (_dlHandle) {
+#if defined(UNIX) || defined(__DC__)
 		if (dlclose(_dlHandle) != 0)
 			warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
-	}
-}
-#else
-#if defined(_WIN32)
-	if (_dlHandle) {
+#elif defined(_WIN32)
 		if (!FreeLibrary((HMODULE)_dlHandle))
 			warning("Failed unloading plugin '%s'", _filename.c_str());
-	}
-}
 #else
 #error TODO
 #endif
-#endif
+	}
+}
 
 #endif	// DYNAMIC_MODULES
 

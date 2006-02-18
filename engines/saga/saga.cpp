@@ -62,7 +62,7 @@ static const GameSettings saga_games[] = {
 	{0, 0}
 };
 
-GameList Engine_SAGA_gameList() {
+GameList Engine_SAGA_gameIDList() {
 	GameList games;
 	const GameSettings *g = saga_games;
 
@@ -72,6 +72,16 @@ GameList Engine_SAGA_gameList() {
 	}
 
 	return games;
+}
+
+GameSettings Engine_SAGA_findGameID(const char *gameid) {
+	const GameSettings *g = saga_games;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return *g;
 }
 
 DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {

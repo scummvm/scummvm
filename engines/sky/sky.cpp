@@ -80,10 +80,17 @@ extern bool isSmartphone(void);
 static const GameSettings skySetting =
 	{"sky", "Beneath a Steel Sky" };
 
-GameList Engine_SKY_gameList() {
+GameList Engine_SKY_gameIDList() {
 	GameList games;
 	games.push_back(skySetting);
 	return games;
+}
+
+GameSettings Engine_SKY_findGameID(const char *gameid) {
+	if (0 == strcmp(gameid, skySetting.gameid))
+		return skySetting;
+	GameSettings dummy = { 0, 0 };
+	return dummy;
 }
 
 DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {

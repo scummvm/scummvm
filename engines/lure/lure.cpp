@@ -73,7 +73,7 @@ static const GameSettings lure_list[] = {
 	{ 0, 0 }
 };
 
-GameList Engine_LURE_gameList() {
+GameList Engine_LURE_gameIDList() {
 	GameList games;
 	const GameSettings *g = lure_list;
 
@@ -82,6 +82,16 @@ GameList Engine_LURE_gameList() {
 		g++;
 	}
 	return games;
+}
+
+GameSettings Engine_LURE_findGameID(const char *gameid) {
+	const GameSettings *g = lure_list;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return *g;
 }
 
 DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {

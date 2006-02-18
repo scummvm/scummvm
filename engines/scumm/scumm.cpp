@@ -91,15 +91,10 @@ namespace Scumm {
 ScummEngine *g_scumm = 0;
 
 
-struct GameDescription {
-	const char *gameid;
-	const char *description;
-};
-
 /**
  * Lookup table mapping game IDs to game descriptions.
  */
-static GameDescription gameDescriptions[] = {
+static const GameSettings gameDescriptions[] = {
 	{ "atlantis", "Indiana Jones and the Fate of Atlantis" },
 	{ "indy3", "Indiana Jones and the Last Crusade" },
 	{ "loom", "Loom" },
@@ -175,7 +170,7 @@ static GameDescription gameDescriptions[] = {
 };
 
 static const char *findDescriptionFromGameID(const char *gameid) {
-	GameDescription *g = gameDescriptions;
+	const GameSettings *g = gameDescriptions;
 	while (g->gameid) {
 		if (!strcmp(g->gameid, gameid)) {
 			return g->description;
@@ -206,15 +201,10 @@ enum {
 };
 
 
-struct ObsoleteGameIDs {
+struct ObsoleteGameID {
 	const char *from;
 	const char *to;
 	Common::Platform platform;
-
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { from, "Obsolete game ID" };
-		return dummy;
-	}
 };
 
 static const Common::Platform UNK = Common::kPlatformUnknown;
@@ -225,7 +215,7 @@ static const Common::Platform UNK = Common::kPlatformUnknown;
  *
  * We use an ugly macro 'UNK' here to make the following table more readable.
  */
-static ObsoleteGameIDs obsoleteGameIDsTable[] = {
+static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"comidemo", "comi", UNK},
 	{"digdemo", "dig", UNK},
 	{"digdemoMac", "dig", Common::kPlatformMacintosh},
@@ -2970,21 +2960,40 @@ int ScummEngine::generateSubstResFileName(const char *filename, char *buf, int b
 
 using namespace Scumm;
 
-GameList Engine_SCUMM_gameList() {
-	const ScummGameSettings *g = scumm_settings;
-	const ObsoleteGameIDs *o = obsoleteGameIDsTable;
+GameList Engine_SCUMM_gameIDList() {
+	const GameSettings *g = gameDescriptions;
 	GameList games;
 	while (g->gameid) {
-		games.push_back(g->toGameSettings());
+		games.push_back(*g);
 		g++;
-	}
-
-	while (o->from) {
-		games.push_back(o->toGameSettings());
-		o++;
 	}
 	return games;
 }
+
+GameSettings Engine_SCUMM_findGameID(const char *gameid) {
+	// First search the list of supported game IDs.
+	const GameSettings *g = gameDescriptions;
+	while (g->gameid) {
+		if (0 == strcmp(gameid, g->gameid))
+			return *g;
+		g++;
+	}
+
+	// If we didn't find the gameid in the main list, check if it
+	// is an obsolete game id.
+	GameSettings gs = { 0, 0 };
+	const ObsoleteGameID *o = obsoleteGameIDsTable;
+	while (o->from) {
+		if (0 == strcmp(gameid, o->from)) {
+			gs.gameid = gameid;
+			gs.gameid = "Obsolete game ID";
+			return gs;
+		}
+		o++;
+	}
+	return gs;
+}
+
 
 enum {
 	kDetectNameMethodsCount = 8
@@ -3350,7 +3359,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	// We start by checking whether the specified game ID is obsolete.
 	// If that is the case, we automaticlaly upgrade the target to use
 	// the correct new game ID (and platform, if specified).
-	const ObsoleteGameIDs *o = obsoleteGameIDsTable;
+	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
 		if (!scumm_stricmp(detector->_game.gameid, o->from)) {
 			// Match found, perform upgrade

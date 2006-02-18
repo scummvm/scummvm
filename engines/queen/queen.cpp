@@ -62,16 +62,19 @@ static const GameSettings queen_setting[] = {
 	{ 0, 0 }
 };
 
-GameList Engine_QUEEN_gameList() {
+GameList Engine_QUEEN_gameIDList() {
 	GameList games;
-	const GameSettings *g = queen_setting;
-
-	while (g->gameid) {
-		games.push_back(*g);
-		g++;
-	}
+	games.push_back(queen_setting[0]);
 	return games;
 }
+
+GameSettings Engine_QUEEN_findGameID(const char *gameid) {
+	if (0 == strcmp(gameid, queen_setting[0].gameid))
+		return queen_setting[0];
+	GameSettings dummy = { 0, 0 };
+	return dummy;
+}
+
 
 GameSettings determineTarget(uint32 size) {
 	switch (size) {
