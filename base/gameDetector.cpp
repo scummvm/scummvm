@@ -261,7 +261,7 @@ void listTargets() {
 		if (description.isEmpty()) {
 			// FIXME: At this point, we should check for a "gameid" override
 			// to find the proper desc. In fact, the platform probably should
-			// be take into consideration, too.
+			// be taken into account, too.
 			String gameid(name);
 			GameSettings g = GameDetector::findGame(gameid);
 			if (g.description)
