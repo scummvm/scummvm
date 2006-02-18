@@ -114,7 +114,7 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	EditGameDialog(const String &domain, GameSettings target);
+	EditGameDialog(const String &domain, const char *desc);
 
 	void open();
 	void close();
@@ -137,7 +137,7 @@ protected:
 	CheckboxWidget *_globalVolumeOverride;
 };
 
-EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
+EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 	: OptionsDialog(domain, 10, 40, 320 - 2 * 10, 140) {
 
 	const int screenW = g_system->getOverlayWidth();
@@ -176,8 +176,8 @@ EditGameDialog::EditGameDialog(const String &domain, GameSettings target)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.isEmpty() && target.description) {
-		description = target.description;
+	if (description.isEmpty() && desc) {
+		description = desc;
 	}
 
 	// GUI:  Add tab widget
@@ -714,7 +714,7 @@ void LauncherDialog::addGame() {
 			}
 
 			// Display edit dialog for the new entry
-			EditGameDialog editDialog(domain, result);
+			EditGameDialog editDialog(domain, result.description);
 			if (editDialog.runModal() > 0) {
 				// User pressed OK, so make changes permanent
 
@@ -761,7 +761,7 @@ void LauncherDialog::editGame(int item) {
 	String gameId(ConfMan.get("gameid", _domains[item]));
 	if (gameId.isEmpty())
 		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId));
+	EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId).description);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 
