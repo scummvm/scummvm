@@ -66,7 +66,7 @@ void MemoryBlock::empty() {
 	::memset(_data, 0, _size);
 }
 
-void MemoryBlock::memorySet(int c, size_t startIndex, size_t num) {
+void MemoryBlock::setBytes(int c, size_t startIndex, size_t num) {
 	byte *p = _data + startIndex;
 	::memset(p, c, num);
 }
