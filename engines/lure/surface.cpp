@@ -287,24 +287,13 @@ uint16 Surface::textWidth(const char *s, int numChars) {
 	return result;
 }
 
-Surface *Surface::newDialog(uint16 width, uint8 numLines, char **lines, bool varLength, uint8 colour) {
-	Surface *s = new Surface(width, (DIALOG_EDGE_SIZE + 3) * 2 + 
-		numLines * (FONT_HEIGHT - 1));
-	s->createDialog();
-
-	for (uint8 ctr = 0; ctr < numLines; ++ctr)
-		s->writeString(DIALOG_EDGE_SIZE + 3, DIALOG_EDGE_SIZE + 3 + 
-			(ctr * (FONT_HEIGHT - 1)), lines[ctr], true, colour, varLength);
-	return s;
-}
-
-Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
-	uint8 numLines = 1;
+void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines) {
+	numLines = 1;
 	uint16 lineWidth = 0;
-	char *s, *lineCopy;
+	char *s;
 	bool newLine;
 
-	s = lineCopy = strdup(line);
+	s = text;
 
 	// Scan through the text and insert NULLs to break the line into allowable widths
 
@@ -320,20 +309,25 @@ Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
 			newLine = false;
 		}
 
-		if (wordEnd) --wordEnd; // move back one to end of word
-		else wordEnd = strchr(s, '\0') - 1;
+		if (wordEnd) {
+			if (!newLine) --wordEnd;
+		} else {
+			wordEnd = strchr(s, '\0') - 1;
+		}
 
 		uint16 wordSize = textWidth(s, (int) (wordEnd - s + 1));
 
-		if (lineWidth + wordSize > width - (DIALOG_EDGE_SIZE + 3) * 2) {
+		if (lineWidth + wordSize > width) {
 			// Break word onto next line
 			*(wordStart - 1) = '\0';
 			++numLines;
-			lineWidth = textWidth(wordStart, (int) (wordEnd - wordStart + 1));
+			if (newLine)
+				lineWidth = 0;
+			else
+				lineWidth = textWidth(wordStart, (int) (wordEnd - wordStart + 1));
 		} else if (newLine) {
 			// Break on newline
 			++numLines;
-			++wordEnd;
 			*wordEnd = '\0';
 			lineWidth = 0;
 		} else {
@@ -345,10 +339,29 @@ Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
 	}
 
 	// Set up a list for the start of each line 
-	char **lines = (char **) Memory::alloc(sizeof(char *) * numLines);
-	lines[0] = lineCopy;
+	lines = (char **) Memory::alloc(sizeof(char *) * numLines);
+	lines[0] = text;
 	for (int ctr = 1; ctr < numLines; ++ctr) 
 		lines[ctr] = strchr(lines[ctr-1], 0) + 1;
+}
+
+Surface *Surface::newDialog(uint16 width, uint8 numLines, char **lines, bool varLength, uint8 colour) {
+	Surface *s = new Surface(width, (DIALOG_EDGE_SIZE + 3) * 2 + 
+		numLines * (FONT_HEIGHT - 1));
+	s->createDialog();
+
+	for (uint8 ctr = 0; ctr < numLines; ++ctr)
+		s->writeString(DIALOG_EDGE_SIZE + 3, DIALOG_EDGE_SIZE + 3 + 
+			(ctr * (FONT_HEIGHT - 1)), lines[ctr], true, colour, varLength);
+	return s;
+}
+
+Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
+	char **lines;
+	char *lineCopy = strdup(line);
+	uint8 numLines;
+	wordWrap(lineCopy, width - (DIALOG_EDGE_SIZE + 3) * 2, lines, numLines);
+
 
 	// Create the dialog 
 	Surface *result = newDialog(width, numLines, lines, true, colour);
@@ -387,12 +400,11 @@ void Dialog::show(const char *text) {
 
 void Dialog::show(uint16 stringId) {
 	char buffer[MAX_DESC_SIZE];
+	Resources &res = Resources::getReference();
 	Room &r = Room::getReference();
 	StringData &sl = StringData::getReference();
 
-	Action action = r.getCurrentAction();
-
-	const char *actionName = (action == NONE) ? NULL : actionList[action];
+	const char *actionName = res.getCurrentActionStr();
 	char hotspotName[MAX_HOTSPOT_NAME_SIZE];
 	if (r.hotspotId() == 0) 
 		strcpy(hotspotName, "");
@@ -451,6 +463,91 @@ void Dialog::showMessage(uint16 messageId, uint16 characterId) {
 		/* still to be decoded */
 
 	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+TalkDialog::TalkDialog(uint16 characterId, uint16 descId) {
+	StringData &strings = StringData::getReference();
+	Resources &res = Resources::getReference();
+	HotspotData *character = res.getHotspot(characterId);
+	char charName[MAX_DESC_SIZE];
+	strings.getString(character->nameId, charName, NULL, NULL);
+	strings.getString(descId, _desc, NULL, NULL);
+
+	// Apply word wrapping to figure out the needed size of the dialog
+	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE * 2 - 2,
+		_lines, _numLines);
+
+	_surface = new Surface(TALK_DIALOG_WIDTH, 
+		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
+
+	// Draw the dialog
+	byte *pSrc = res.getTalkDialogData().data();
+	byte *pDest = _surface->data().data();
+	int xPos, yPos;
+
+	// Handle the dialog top
+	for (yPos = 0; yPos < TALK_DIALOG_EDGE_SIZE; ++yPos) {
+		*pDest++ = *pSrc++;
+		*pDest++ = *pSrc++;
+
+		for (xPos = 0; xPos < TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE - 2; ++xPos) 
+			*pDest++ = *pSrc;
+		++pSrc;
+
+		for (xPos = 0; xPos < TALK_DIALOG_EDGE_SIZE; ++xPos)
+			*pDest++ = *pSrc++;
+	}
+
+	// Handle the middle section
+	for (yPos = 0; yPos < _surface->height() - TALK_DIALOG_EDGE_SIZE * 2; ++yPos) {
+		byte *pSrcTemp = pSrc;
+
+		// Left edge
+		for (xPos = 0; xPos < TALK_DIALOG_EDGE_SIZE; ++xPos)
+			*pDest++ = *pSrcTemp++;
+		
+		// Middle section
+		for (xPos = 0; xPos < _surface->width() - TALK_DIALOG_EDGE_SIZE * 2; ++xPos)
+			*pDest++ = *pSrcTemp;
+		++pSrcTemp;
+
+		// Right edge
+		for (xPos = 0; xPos < TALK_DIALOG_EDGE_SIZE; ++xPos)
+			*pDest++ = *pSrcTemp++;
+	}
+
+	//  Bottom section
+	pSrc += TALK_DIALOG_EDGE_SIZE * 2 + 1;
+	for (yPos = 0; yPos < TALK_DIALOG_EDGE_SIZE; ++yPos) {
+		for (xPos = 0; xPos < TALK_DIALOG_EDGE_SIZE; ++xPos)
+			*pDest++ = *pSrc++;
+
+		for (xPos = 0; xPos < TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE - 2; ++xPos) 
+			*pDest++ = *pSrc;
+		++pSrc;
+
+		*pDest++ = *pSrc++;
+		*pDest++ = *pSrc++;
+	}
+
+	// Write out the character name
+	uint16 charWidth = Surface::textWidth(charName);
+	_surface->writeString((TALK_DIALOG_WIDTH-charWidth)/2, TALK_DIALOG_EDGE_SIZE + 2,
+		charName, true, DIALOG_WHITE_COLOUR);
+
+	// TEMPORARY CODE - write out description. More properly, the text is meant to
+	// be displayed slowly, word by word
+	for (int lineCtr = 0; lineCtr < _numLines; ++lineCtr) 
+		_surface->writeString(TALK_DIALOG_EDGE_SIZE + 2, 
+			TALK_DIALOG_EDGE_SIZE + 4 + (lineCtr + 1) * FONT_HEIGHT,
+			_lines[lineCtr], true);
+}
+
+TalkDialog::~TalkDialog() {
+	delete _lines;
+	delete _surface;
 }
 
 } // end of namespace Lure

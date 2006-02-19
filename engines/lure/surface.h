@@ -66,6 +66,7 @@ public:
 	void centerOnScreen();
 
 	static uint16 textWidth(const char *s, int numChars = 0);
+	static void wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines);
 	static Surface *newDialog(uint16 width, uint8 numLines, char **lines, bool varLength = true, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *newDialog(uint16 width, const char *lines, uint8 colour = DIALOG_TEXT_COLOUR);
 	static Surface *getScreen(uint16 resourceId);
@@ -76,6 +77,20 @@ public:
 	static void show(const char *text);
 	static void show(uint16 stringId);
 	static void showMessage(uint16 messageId, uint16 characterId);
+};
+
+class TalkDialog {
+private:
+	Surface *_surface;
+	char _desc[MAX_DESC_SIZE];
+	char **_lines;
+	uint8 _numLines;
+public:
+	TalkDialog(uint16 characterId, uint16 descId);
+	~TalkDialog();
+
+	char *desc() { return _desc; }
+	Surface &surface() { return *_surface; }
 };
 
 } // End of namespace Lure
