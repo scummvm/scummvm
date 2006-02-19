@@ -39,6 +39,20 @@ extern const char *actionList[];
 #pragma START_PACK_STRUCTS
 #endif
 
+struct VersionStructure {
+	uint16 id;
+	byte vMajor;
+	byte vMinor;
+} GCC_PACK;
+
+struct FileEntry {
+	uint16 id;
+	byte unused;
+	byte sizeExtension;
+	uint16 size;
+	uint16 offset;
+} GCC_PACK;
+
 struct HotspotResource {
 	uint16 hotspotId;
 	uint16 nameId;
@@ -50,10 +64,14 @@ struct HotspotResource {
 	byte layer;
 	byte scriptLoadFlag;
 	uint16 loadOffset;
-	int16 startX;
-	int16 startY;
+	uint16 startX;
+	uint16 startY;
 	uint16 width;
 	uint16 height;
+	uint16 widthCopy;
+	uint16 heightCopy;
+	int8 talkX;
+	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
 	uint16 sequenceOffset;
@@ -88,6 +106,8 @@ struct RoomResource {
 	uint16 numLayers;
 	uint16 layers[4];
 	uint16 sequenceOffset;
+	int16 clippingXStart;
+	int16 clippingXEnd;
 	uint16 numExits;
 } GCC_PACK;
 
@@ -104,7 +124,7 @@ struct HotspotOverrideResource {
 	int16 xs, xe, ys, ye;
 } GCC_PACK;
 
-struct RoomExitHotspotRecord {
+struct RoomExitHotspotResource {
 	uint16 hotspotId;
 	int16 xs, xe;
 	int16 ys, ye;
@@ -112,7 +132,7 @@ struct RoomExitHotspotRecord {
 	uint16 destRoomNumber;
 } GCC_PACK;
 
-struct RoomExitJoinRecord {
+struct RoomExitJoinResource {
 	uint16 hotspot1Id;
 	byte h1CurrentFrame;
 	byte h1DestFrame;
@@ -125,23 +145,32 @@ struct RoomExitJoinRecord {
 	uint32 unknown;
 } GCC_PACK;
 
-struct HotspotActionRecord {
+struct HotspotActionResource {
 	byte action;
 	uint16 sequenceOffset;
 } GCC_PACK;
 
-struct FileEntry {
-	uint16 id;
-	byte unused;
-	byte sizeExtension;
-	uint16 size;
+struct TalkHeaderResource {
+	uint16 hotspotId;
 	uint16 offset;
 } GCC_PACK;
 
-struct VersionStructure {
-	uint16 id;
-	byte vMajor;
-	byte vMinor;
+struct TalkDataHeaderResource {
+	uint16 recordId;
+	uint16 listOffset;
+	uint16 responsesOffset;
+} GCC_PACK;
+
+struct TalkDataResource {
+	uint16 preSequenceId;
+	uint16 descId;
+	uint16 postSequenceId;
+} GCC_PACK;
+
+struct TalkResponseResource {
+	uint16 sequenceId1;
+	uint16 sequenceId2;
+	uint16 sequenceId3;
 } GCC_PACK;
 
 #if !defined(__GNUC__)
@@ -189,7 +218,7 @@ enum Direction {UP, DOWN, LEFT, RIGHT, NO_DIRECTION};
 
 class RoomExitHotspotData {
 public:
-	RoomExitHotspotData(RoomExitHotspotRecord *rec);
+	RoomExitHotspotData(RoomExitHotspotResource *rec);
 
 	uint16 hotspotId;
 	int16 xs, xe;
@@ -228,6 +257,8 @@ public:
 	uint16 numLayers;
 	uint16 layers[MAX_NUM_LAYERS];
 	uint16 sequenceOffset;
+	int16 clippingXStart;
+	int16 clippingXEnd;
 	RoomExitHotspotList exitHotspots;
 	RoomExitList exits;
 };
@@ -236,7 +267,7 @@ typedef ManagedList<RoomData *> RoomDataList;
 
 class RoomExitJoinData {
 public:
-	RoomExitJoinData(RoomExitJoinRecord *rec);
+	RoomExitJoinData(RoomExitJoinResource *rec);
 
 	uint16 hotspot1Id;
 	byte h1CurrentFrame;
@@ -254,7 +285,7 @@ typedef ManagedList<RoomExitJoinData *> RoomExitJoinList;
 
 class HotspotActionData {
 public:
-	HotspotActionData(HotspotActionRecord *rec);
+	HotspotActionData(HotspotActionResource *rec);
 
 	Action action;
 	uint16 sequenceOffset;
@@ -292,6 +323,10 @@ public:
 	int16 startY;
 	uint16 width;
 	uint16 height;
+	uint16 widthCopy;
+	uint16 heightCopy;
+	int8 talkX;
+	int8 talkY;
 	uint16 colourOffset;
 	uint16 animRecordId;
 	uint16 sequenceOffset;
@@ -344,6 +379,47 @@ public:
 
 typedef ManagedList<HotspotAnimData *> HotspotAnimList;
 
+// Talk header list
+
+class TalkHeaderData {
+private:
+	uint16 *_data;
+	int _numEntries;
+public:
+	TalkHeaderData(uint16 charId, uint16 *entries);
+	~TalkHeaderData();
+
+	uint16 characterId;
+	uint16 getEntry(int index);
+};
+
+typedef ManagedList<TalkHeaderData *> TalkHeaderList;
+
+class TalkEntryData {
+public:
+	TalkEntryData(TalkDataResource *rec);
+
+	uint16 preSequenceId;
+	uint16 descId;
+	uint16 postSequenceId;
+};
+
+typedef ManagedList<TalkEntryData *> TalkEntryList;
+
+struct TalkData {
+public:
+	TalkData(uint16 id);
+	~TalkData();
+
+	uint16 recordId;
+	TalkEntryList entries;
+	TalkEntryList responses;
+
+	TalkEntryData *getResponse(int index);
+};
+
+typedef ManagedList<TalkData *> TalkDataList;
+
 // The following classes hold any sequence offsets that are being delayed
 
 class SequenceDelayData {
@@ -374,10 +450,12 @@ enum FieldName {
 	SEQUENCE_RESULT = 4,
 	GENERAL = 5,
 	NEW_ROOM_NUMBER = 7,
-	GENERAL_STATUS = 8,
+	OLD_ROOM_NUMBER = 8,
+	CELL_DOOR_STATE = 9,
 	TORCH_HIDE = 10,
 	PRISONER_DEAD = 15,
 	BOTTLE_FILLED = 18,
+	TALK_INDEX = 19,
 	SACK_CUT = 20
 };
 

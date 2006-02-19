@@ -42,11 +42,14 @@ RoomData::RoomData(RoomResource *rec) {
 
 	for (int ctr = 0; ctr < 4; ++ctr)
 		layers[ctr] = READ_LE_UINT16(&rec->layers[ctr]);
+
+	clippingXStart = READ_LE_UINT16(&rec->clippingXStart);
+	clippingXEnd = READ_LE_UINT16(&rec->clippingXEnd);
 }
 
 // Room exit hotspot area holding class
 
-RoomExitHotspotData::RoomExitHotspotData(RoomExitHotspotRecord *rec) {
+RoomExitHotspotData::RoomExitHotspotData(RoomExitHotspotResource *rec) {
 	hotspotId = READ_LE_UINT16(&rec->hotspotId);
 	xs = READ_LE_INT16(&rec->xs);
 	ys = READ_LE_INT16(&rec->ys);
@@ -102,7 +105,7 @@ RoomExitData *RoomExitList::checkExits(int16 xp, int16 yp) {
 
 // Room exit joins class
 
-RoomExitJoinData::RoomExitJoinData(RoomExitJoinRecord *rec) {
+RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 	hotspot1Id = READ_LE_UINT16(&rec->hotspot1Id);
 	h1CurrentFrame = rec->h1CurrentFrame;
 	h1DestFrame = rec->h1DestFrame;
@@ -112,12 +115,12 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinRecord *rec) {
 	h2DestFrame = rec->h2DestFrame;
 	h2Unknown = READ_LE_UINT16(&rec->h2Unknown);
 	blocked = rec->blocked;
-	unknown = READ_LE_UINT32(&rec->unknown);
+	unknown = rec->unknown;
 }
 
 // Hotspot action record
 
-HotspotActionData::HotspotActionData(HotspotActionRecord *rec) {
+HotspotActionData::HotspotActionData(HotspotActionResource *rec) {
 	action = (Action) rec->action;
 	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 }
@@ -153,6 +156,10 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	startY = READ_LE_INT16(&rec->startY);
 	width = READ_LE_UINT16(&rec->width);
 	height = READ_LE_UINT16(&rec->height);
+	widthCopy = READ_LE_UINT16(&rec->widthCopy);
+	heightCopy = READ_LE_UINT16(&rec->heightCopy);
+	talkX = rec->talkX;
+	talkY = rec->talkY;
 	colourOffset = READ_LE_UINT16(&rec->colourOffset);
 	animRecordId = READ_LE_UINT16(&rec->animRecordId);
 	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
@@ -221,7 +228,7 @@ HotspotActionList::HotspotActionList(uint16 id, byte *data) {
 	uint16  numItems = READ_LE_UINT16(data);
 	data += 2;
 
-	HotspotActionRecord *actionRec = (HotspotActionRecord *) data;
+	HotspotActionResource *actionRec = (HotspotActionResource *) data;
 	
 	for (int actionCtr = 0; actionCtr < numItems; ++actionCtr, ++actionRec) {
 		HotspotActionData *actionEntry = new HotspotActionData(actionRec);
@@ -237,6 +244,68 @@ HotspotActionList *HotspotActionSet::getActions(uint16 recordId) {
 	}
 
 	return NULL;
+}
+
+// The following class holds the set of offsets for a character's talk set
+
+TalkHeaderData::TalkHeaderData(uint16 charId, uint16 *entries) {
+	uint16 *src, *dest;
+	characterId = charId;
+
+	// Get number of entries
+	_numEntries = 0;
+	src = entries;
+	while (READ_LE_UINT16(src) != 0xffff) { ++src; ++_numEntries; }
+
+	// Duplicate the list
+	_data = (uint16 *) Memory::alloc(_numEntries * sizeof(uint16));
+	src = entries; dest = _data;
+
+	for (int ctr = 0; ctr < _numEntries; ++ctr, ++src, ++dest)
+		*dest = READ_LE_UINT16(src);
+}
+
+TalkHeaderData::~TalkHeaderData() {
+	free(_data);
+}
+
+uint16 TalkHeaderData::getEntry(int index) {
+	if (index >= _numEntries) 
+		error("Invalid talk index %d specified for hotspot %xh", 
+			_numEntries, characterId);
+	return _data[index];
+}
+
+// The following class holds a single talking entry
+
+TalkEntryData::TalkEntryData(TalkDataResource *rec) {
+	preSequenceId = FROM_LE_16(rec->preSequenceId);
+	descId = FROM_LE_16(rec->descId);
+	postSequenceId = FROM_LE_16(rec->postSequenceId);
+}
+
+// The following class acts as a container for all the talk entries and
+// responses for a single record Id
+
+TalkData::TalkData(uint16 id) {
+	recordId = id;
+}
+
+TalkData::~TalkData() {
+	entries.clear();
+	responses.clear();
+}
+
+TalkEntryData *TalkData::getResponse(int index) {
+	TalkEntryList::iterator i = responses.begin();
+	int v = index;
+	while (v-- > 0) {
+		if (i == responses.end()) 
+			error("Invalid talk response index %d specified", index);
+		++i;
+	}
+
+	return *i;
 }
 
 // The following classes hold any sequence offsets that are being delayed
@@ -278,8 +347,8 @@ ValueTableData::ValueTableData() {
 }
 
 bool ValueTableData::isKnownField(uint16 fieldIndex) {
-	return (fieldIndex <= 8) || (fieldIndex == 10) || (fieldIndex == 15) || 
-		(fieldIndex == 18) || (fieldIndex == 20);
+	return ((fieldIndex <= 10) && (fieldIndex != 6)) ||
+		(fieldIndex == 15) || ((fieldIndex >= 18) && (fieldIndex <= 20));
 }
 
 uint16 ValueTableData::getField(uint16 fieldIndex) {
