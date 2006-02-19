@@ -292,11 +292,13 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		}
 	}
 
-	switch(table->opcode) {
+	switch (table->opcode) {
 		case 0:
+			fadeOutMusic(120);
+			break;
 		case 8:
 		case 9:
-			fadeOutMusic(120);
+			setHookId(table->soundId, table->soundId);
 			break;
 		case 1:
 			if (table->filename[0] == 0) {
