@@ -92,7 +92,8 @@ ScummEngine *g_scumm = 0;
 
 
 /**
- * Lookup table mapping game IDs to game descriptions.
+ * This table contains all game IDs supported by the SCUMM engine, and maps
+ * them to the full humand readable game name.
  */
 static const GameSettings gameDescriptions[] = {
 	{ "atlantis", "Indiana Jones and the Fate of Atlantis" },
@@ -444,6 +445,107 @@ static const ScummGameSettings scumm_settings[] = {
 #endif
 	{NULL, NULL, 0, 0, 0, MDT_NONE, 0, Common::kPlatformUnknown}
 };
+
+
+#if 0
+// The following table is currently *unused*. It's work in progress for a refined detector;
+// the purpose of this particular table is to replace multiple_versions_md5_settings, 
+// and maybe also scumm_settings. 
+static const ScummGameSettings extra_versions[] = {
+#ifndef PALMOS_68K
+	{"comi", "",     GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformWindows},
+	{"comi", "Demo", GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
+
+	{"dig", "",     GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
+	{"dig", "Demo", GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, 0},
+
+	{"ft", "",     GID_FT, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
+	{"ft", "Demo", GID_FT, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, 0},
+
+	{"indy3", "EGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
+	{"indy3", "No Adlib", GID_INDY3, 3, 0, MDT_PCSPK,             GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
+	{"indy3", "VGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
+	{"indy3", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,             GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+
+	{"loom", "EGA",      GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
+	{"loom", "No Adlib", GID_LOOM, 3, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
+	{"loom", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	{"loom", "VGA",      GID_LOOM, 4, 0, MDT_NONE,                         GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
+
+
+	// The C64 version of MM is detected & special-cased via the platform field and hence has no seperate entry in this list
+	{"maniac", "",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"maniac", "NES", GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
+	{"maniac", "V1",  GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
+
+
+	{"monkey", "VGA",      GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_USE_KEY, Common::kPlatformPC},
+	{"monkey", "EGA",      GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
+	{"monkey", "No Adlib", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
+	{"monkey", "Demo",     GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,            GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
+	{"monkey", "CD",       GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, 0},
+	{"monkey", "CD",       GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, 0},
+	{"monkey", "FM-TOWNS", GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	{"monkey", "SEGA",     GID_MONKEY,     5, 0, MDT_NONE,  GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSegaCD},
+
+
+	// The C64 version of Zak is detected & special-cased via the platform field and hence has no seperate entry in this list
+	{"zak", "",         GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+
+
+
+	{"", "Windows", GID_FBEAR, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"", "Updated", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"", "German", GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // ToffRennen
+	{"", "Dutch Demo", GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
+	{"", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"", "German Demo", GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Rennen
+	{"", "UK Demo", GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+
+
+
+
+	{"", "Russian", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformWindows},
+	{"", "Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,  GF_USE_KEY, Common::kPlatformPC},
+	{"", "Macintosh Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,  GF_USE_KEY, Common::kPlatformMacintosh},
+
+	{"", "Demo Updated", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown}, // Football2002
+
+	{"", "Macintosh Demo", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformMacintosh},
+
+
+	{"", "Unencrypted Russian", GID_HEGAME, 6, 98, MDT_NONE, GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+
+	{"", "Updated Dutch", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FreddiDZZ
+	{"", "Updated Russian", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
+	{"", "Unencrypted Russian", GID_HEGAME, 6, 99, MDT_NONE, GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
+	{"", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
+	{"", "Updated Dutch Demo", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FF5Demo
+
+	{"", "Test", GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+	{"", "Updated", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+
+
+
+	{"", "HE 70", GID_HEGAME, 6, 70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"", "HE 71", GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"", "HE 72", GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"", "HE 73", GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+
+	{"", "HE 90", GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"", "HE 98", GID_HEGAME, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"", "HE 99", GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"", "HE 100", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+#endif
+	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, Common::kPlatformUnknown}
+};
+#endif
+
 
 // This additional table is used for MD5-based search
 //
@@ -957,8 +1059,8 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "TimeDemo", kGenMac },
 	{ "putttime", "TEMPDEMO", kGenPC },
 	{ "putttime", "Tempdemo", kGenMac }, // FR Mac demo
-	{ "putttime", "toffzeit", kGenPC }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
-	{ "putttime", "toffzeit", kGenMac }, // German T’¨¢öff-T’¨¢öff: Reist durch die Zeit
+	{ "putttime", "toffzeit", kGenPC }, // German Toeff-Toeff: Reist durch die Zeit
+	{ "putttime", "toffzeit", kGenMac }, // German Toeff-Toeff: Reist durch die Zeit
 	{ "putttime", "ZeitDemo", kGenMac },
 	{ "putttime", "ZEITDEMO", kGenPC },
 	{ "puttzoo", "Puttzoo Demo", kGenMac },

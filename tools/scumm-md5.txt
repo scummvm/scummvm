@@ -52,7 +52,7 @@ maniac	Maniac Mansion
 	87f6e8037b7cc996e13474b491a7a98e	it	DOS	-	V2	from DOTT	Andrea Petrucci
 	0d1b69471605201ef2fa9cec1f5f02d2	es	DOS	-	V2	-	abnog, Andrea Petrucci
 
-	40564ec47da48a67787d1f9bd043902a	en	DOS	V2	Demo	non-interactive	
+	40564ec47da48a67787d1f9bd043902a	en	DOS	-	Demo	non-interactive	
 
 zak	Zak McKracken and the Alien Mindbenders
 	55d3987641bf229c83bc729210173383	en	C64	-	-	-	
@@ -79,7 +79,7 @@ zak	Zak McKracken and the Alien Mindbenders
 	2d4536a56e01da4b02eb021e7770afa2	en	FM-TOWNS	FM-TOWNS	-	-	
 	1ca86e2cf9aaa2068738a1e5ba477e60	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 
-	8299d9b8a1b0e7b881bae7a9971dc5e2	en	Atari	V2	Demo	non-interactive	
+	8299d9b8a1b0e7b881bae7a9971dc5e2	en	Atari	-	Demo	non-interactive	
 
 indy3	Indiana Jones and the Last Crusade
 	9c0fee288ad564a7d25ec3e841810d79	en	Amiga	EGA	EGA	-	dhewg
@@ -87,8 +87,8 @@ indy3	Indiana Jones and the Last Crusade
 	330f631502e381a4e199a3f7cb483c20	de	Amiga	EGA	EGA	-	dhewg
 	df03ee021aa9b81d90cab9c26da07614	it	Amiga	EGA	EGA	-	Andrea Petrucci
 	62b8c16b6db226ba95aaa8be73f9885c	es	Amiga	EGA	EGA	-	
-	157367c3c21e0d03a0cba44361b4cf65	en	Atari	EGA	EGA	-	Andreas Bylund
-	0f9c7a76657f0840b8f7ccb5bffeb9f4	fr	Atari	EGA	EGA	-	Andreas Bylund
+	157367c3c21e0d03a0cba44361b4cf65	en	Atari	No Adlib	EGA	-	Andreas Bylund
+	0f9c7a76657f0840b8f7ccb5bffeb9f4	fr	Atari	No Adlib	EGA	-	Andreas Bylund
 	5fbe557049892eb4b709d90916ec97ca	en	DOS	EGA	EGA	1.0 7/09/89	
 	6b3ec67da214f558dc5ceaa2acd47453	en	DOS	EGA	EGA	1.3 8/14/89	tsuteiuQ, Andrea Petrucci
 	6508fd55530e6915507e1cc37f7f045d	en	DOS	EGA	EGA	1.3 8/14/89 5.25\"	Zer02
@@ -98,7 +98,7 @@ indy3	Indiana Jones and the Last Crusade
 	d62d248c3df6ec177405e2cb23d923b2	it	DOS	EGA	EGA	-	Andrea Petrucci
 	86be8ada36371d4fdc35659d0e912a26	es	DOS	EGA	EGA	-	Andrea Petrucci
 	ce7fd0c382389a6791fc3e199c117ef4	es	DOS	EGA	EGA	alt?	abnog
-	1dd7aa088e09f96d06818aa9a9deabe0	en	Mac	EGA	EGA	-	
+	1dd7aa088e09f96d06818aa9a9deabe0	en	Mac	No Adlib	EGA	-	
 
 	1875b90fade138c9253a8e967007031a	en	DOS	VGA	VGA	VGA	
 	399b217b0c8d65d0398076da486363a9	de	DOS	VGA	VGA	VGA	
@@ -108,7 +108,7 @@ indy3	Indiana Jones and the Last Crusade
 	04687cdf7f975a89d2474929f7b80946	en	FM-TOWNS	FM-TOWNS	-	-	
 	3a0c35f3c147b98a2bdf8d400cfc4ab5	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
-	b597e0403cc0002f69170e6caba7edd9	en	DOS	EGA	Demo	non-interactive	
+	b597e0403cc0002f69170e6caba7edd9	en	DOS	EGA	EGA Demo	non-interactive	
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -116,9 +116,9 @@ loom	Loom
 	2fe369ad70f52a8cf7ad6077ee64f81a	de	Amiga	EGA	EGA	-	Norbert Lange
 	39cb9dec16fa16f38d79acd80effb059	it	Amiga	EGA	EGA	same as FR?!?	Andrea Petrucci
 	48b9f04b348bc5013327753f0d12a144	es	Amiga	EGA	EGA	-	VooD
-	a0a7dea72003933b8b3f8b99b9f7ddeb	en	Atari	EGA	EGA	-	
-	0e9b01430e31d9fcd94071d433bbc6bf	fr	Atari	EGA	EGA	-	
-	c24c490373aeb48fbd54caa8e7ae376d	de	Atari	EGA	EGA	-	Andreas Bylund
+	a0a7dea72003933b8b3f8b99b9f7ddeb	en	Atari	No Adlib	EGA	-	
+	0e9b01430e31d9fcd94071d433bbc6bf	fr	Atari	No Adlib	EGA	-	
+	c24c490373aeb48fbd54caa8e7ae376d	de	Atari	No Adlib	EGA	-	Andreas Bylund
 	28ef68ee3ed76d7e2ee8ee13c15fbd5b	en	DOS	EGA	EGA	1.0	
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	en	DOS	EGA	EGA	1.0 alt	Andrea Petrucci
 	37f56ceb13e401a7ac7d9e6b37fecaf7	en	DOS	EGA	EGA	1.1 16 Mar 90	Kirben, Andrea Petrucci
@@ -129,9 +129,9 @@ loom	Loom
 	187d315f6b5168f68680dfe8c3d76a3e	hb	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	it	DOS	EGA	EGA	-	Andrea Petrucci
 	2a208ffbcd0e83e86f4356e6f64aa6e1	es	DOS	EGA	EGA	-	abnog, Andrea Petrucci
-	6f0be328c64d689bb606d22a389e1b0f	en	Mac	EGA	EGA	-	
+	6f0be328c64d689bb606d22a389e1b0f	en	Mac	No Adlib	EGA	-	
 
-	5d88b9d6a88e6f8e90cded9d01b7f082	en	DOS	VGA	VGA CD	-	
+	5d88b9d6a88e6f8e90cded9d01b7f082	en	DOS	VGA	VGA	Talkie	
 
 	c5d10e190d4b4d59114b824f2fdbd00e	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
@@ -140,10 +140,10 @@ loom	Loom
 	a00554c31d623fdb9fcb0f924b89b42b	en	DOS	EGA	EGA Demo	non-interactive	Adrian C. Fruehwirth
 
 monkey	The Secret of Monkey Island
-	c666a998af90d81db447eccba9f72c8d	en	Atari	EGA	EGA	-	
-	9e5e0fb43bd22f4628719b7501adb717	fr	Atari	EGA	EGA	-	Andreas Bylund
-	927a764615c7fcdd72f591355e089d8c	de	Atari	EGA	EGA	-	Joachim Eberhard
-	0a41311d462b6639fc45297b9044bf16	es	Atari	EGA	EGA	-	
+	c666a998af90d81db447eccba9f72c8d	en	Atari	No Adlib	EGA	-	
+	9e5e0fb43bd22f4628719b7501adb717	fr	Atari	No Adlib	EGA	-	Andreas Bylund
+	927a764615c7fcdd72f591355e089d8c	de	Atari	No Adlib	EGA	-	Joachim Eberhard
+	0a41311d462b6639fc45297b9044bf16	es	Atari	No Adlib	EGA	-	
 	49210e124e4c2b30f1290a9ef6306301	en	DOS	EGA	EGA	8 disk	
 	1dd3c11ea4439adfe681e4e405b624e1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	fc6b6148e80d67939d9a18697c0f626a	de	DOS	EGA	EGA	8 disk	ghoostkilla
@@ -178,8 +178,8 @@ monkey	The Secret of Monkey Island
 	8eb84cee9b429314c7f0bdcf560723eb	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 	e17db1ddf91b39ca6bbc8ad3ed19e883	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
-	71523b539491527d9860f4407faf0411	en	DOS	EGA	EGA Demo	-	
-	771bc18ec6f93837b839c992b211904b	de	DOS	EGA	EGA Demo	-	khalek
+	71523b539491527d9860f4407faf0411	en	DOS	Demo	EGA Demo	-	
+	771bc18ec6f93837b839c992b211904b	de	DOS	Demo	EGA Demo	-	khalek
 	54a936ad06161ff7bfefcb96200f7bff	en	Amiga	VGA	VGA Demo	-	khalek
 
 pass	Passport to Adventure
@@ -293,9 +293,9 @@ ft	Full Throttle
 	fe381e45117878b1e942cb876b050fd6	en	Mac	-	-	Mac bundle	fingolfin
 	04401d747f1a2c1c4b388daff71ed378	de	Mac	-	-	Mac bundle	fingolfin
 
-	32a433dea56b86a55b59e4ff7d755711	en	DOS	-	Demo	-	
-	9d7b67be003fea60be4dcbd193611936	en	Mac	-	Demo	-	
-	9b7452b5cd6d3ffb2b2f5118010af84f	en	Mac	-	Demo	Mac bundle	Joachim Eberhard
+	32a433dea56b86a55b59e4ff7d755711	en	DOS	Demo	Demo	-	
+	9d7b67be003fea60be4dcbd193611936	en	Mac	Demo	Demo	-	
+	9b7452b5cd6d3ffb2b2f5118010af84f	en	Mac	Demo	Demo	Mac bundle	Joachim Eberhard
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	All	All	-	-	-	
@@ -303,14 +303,14 @@ dig	The Dig
 	35a2d3040fa512f8232d9e443319d84d	en	Mac	-	-	Mac bundle	fingolfin
 	21a6592322f92550f144f68a8a4e685e	fr	Mac	-	-	Mac bundle	kaminari
 
-	362c1d281fb9899254cda66ad246c66a	en	All	-	Demo	-	
-	cd9c05e755d7bf8e9b9590ad1ebe273e	en	Mac	-	Demo	Mac bundle	fingolfin
+	362c1d281fb9899254cda66ad246c66a	en	All	Demo	Demo	-	
+	cd9c05e755d7bf8e9b9590ad1ebe273e	en	Mac	Demo	Demo	Mac bundle	fingolfin
 
 comi	The Curse of Monkey Island
 	fe60d6b5ff51b0553ac59963123b5777	All	All	-	-	-	
 	861e59ed72a1cd0e6d454f7ee7e2bf3d	ru	All	-	-	-	
 
-	8fec68383202d38c0d25e9e3b757c5df	All	All	-	Demo	-	
+	8fec68383202d38c0d25e9e3b757c5df	All	All	Demo	Demo	-	
 
 baseball	Backyard Baseball
 	cf8d13446ec6cb6222287a925fd47c1d	en	All	-	-	-	sev
@@ -380,22 +380,22 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	cf4ef315214c7d8cdab6302cdb7e50db	de	Windows	-	Demo	-	Joachim Eberhard
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
-	51305e929e330e24a75a0351c8f9975e	en	All	-	-	-	Kirben
-	8ee63cafb1fe9d62aa0d5a23117e70e7	en	All	-	-	-	Kirben
+	51305e929e330e24a75a0351c8f9975e	en	All	HE 99	-	-	Kirben
+	8ee63cafb1fe9d62aa0d5a23117e70e7	en	All	HE 100	-	-	Kirben
 	fce4b8010704b103acfeea9413788f32	de	All	-	-	-	Joachim Eberhard
 	5057fb0e99e5aa29df1836329232f101	All	Windows	-	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	nl	Windows	-	-	-	joostp
 	151071053a1d0021198216713939521d	en	Windows	-	-	-	vampir_raziel
-	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	-	-	-	sev
+	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	HE 100	-	-	sev
 
-	d37c55388294b66e53e7ced3af88fa68	en	All	-	Demo	-	khalek
+	d37c55388294b66e53e7ced3af88fa68	en	All	HE 100	Demo	-	khalek
 	fc8d197a22146e74766e9cb0cfcaf1da	en	All	-	Demo	-	khalek, sev
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	8368f552b1e3eba559f8d559bcc4cadb	All	All	-	-	-	Kirben, sev
-	83cedbe26aa8b58988e984e3d34cac8e	de	All	-	-	-	Joachim Eberhard
+	83cedbe26aa8b58988e984e3d34cac8e	de	All	HE 99	-	-	Joachim Eberhard
 	0cccfa5223099a60e76cfcca57a1a141	nl	Windows	-	-	-	adutchguy
-	75bff95816b84672b877d22a911ab811	ru	Windows	-	-	-	sev
+	75bff95816b84672b877d22a911ab811	ru	Windows	HE 99	-	-	sev
 	898ce8eb1234a955ef75e87141902bb3	ru	Windows	-	-	-	sev
 
 	cb1559e8405d17a5a278a6b5ad9338d1	en	All	-	Demo	-	khalek, sev
@@ -405,18 +405,18 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	All	All	-	-	-	Kirben, sev
-	b5298a5c15ffbe8b381d51ea4e26d35c	de	All	-	-	-	Joachim Eberhard
+	b5298a5c15ffbe8b381d51ea4e26d35c	de	All	HE 99	-	-	Joachim Eberhard
 	14d48c95b43ddeb983254cf6c43851f1	nl	Windows	-	-	-	adutchguy
 	07b810e37be7489263f7bc7627d4765d	ru	Windows	-	-	-	sev
-	78bd5f036ea35a878b74e4f47941f784	ru	Windows	-	-	-	sev
+	78bd5f036ea35a878b74e4f47941f784	ru	Windows	HE 99	-	-	sev
 
 	7c2e76087027eeee9c8f8985f93a1cc5	en	All	-	Demo	-	khalek
 	c25755b08a8d0d47695e05f1e2111bfc	en	All	-	Demo	-	sev
-	ebd324dcf06a4c49e1ba5c231eee1060	en	All	-	Demo	-	sev
-	688328c5bdc4c8ec4145688dfa077bf2	de	All	-	Demo	-	Joachim Eberhard
-	16effd200aa6b8abe9c569c3e578814d	nl	Windows	-	Demo	-	joostp
-	499c958affc394f2a3868f1eb568c3ee	nl	Windows	-	Demo	-	adutchguy
-	e03ed1474ec14de78359970e0457a820	en	Windows	-	Demo	-	eriktorbjorn
+	ebd324dcf06a4c49e1ba5c231eee1060	en	All	HE 99	Demo	-	sev
+	688328c5bdc4c8ec4145688dfa077bf2	de	All	HE 99	Demo	-	Joachim Eberhard
+	16effd200aa6b8abe9c569c3e578814d	nl	Windows	HE 99	Demo	-	joostp
+	499c958affc394f2a3868f1eb568c3ee	nl	Windows	HE 99	Demo	-	adutchguy
+	e03ed1474ec14de78359970e0457a820	en	Windows	HE 99	Demo	-	eriktorbjorn
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	590e6546aacd0d374b7f3a4f53013ab1	All	All	-	-	-	cyx
@@ -428,7 +428,7 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	45082a5c9f42ba14dacfe1fdeeba819d	en	All	-	Demo	-	sev
 
 maze	Freddi Fish and Luther's Maze Madness
-	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	-	-	-	Kirben
+	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	HE 100	-	-	Kirben
 	4f04b321a95d4315ce6d65f8e1dd0368	en	All	-	-	-	Kirben
 
 water	Freddi Fish and Luther's Water Worries
@@ -467,21 +467,21 @@ jungle	Let's Explore the Jungle with Buzzy
 	8801fb4a1200b347f7a38523339526dd	en	Windows	-	-	-	Kirben
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
-	37aed3f91c1ef959e0bd265f9b13781f	en	All	-	-	-	Kirben
+	37aed3f91c1ef959e0bd265f9b13781f	en	All	HE 100	-	-	Kirben
 	672dec94b82f7f0877ebb5b5cf7f4bc1	en	All	-	-	-	khalek
-	a095e33061606d231ff37dca4c64c8ac	de	All	-	-	-	Joachim Eberhard
+	a095e33061606d231ff37dca4c64c8ac	de	All	HE 99	-	-	Joachim Eberhard
 	4fa6870d9bc8c313b65d54b1da5a1891	nl	Windows	-	-	-	joostp
-	898eaa21f79cf8d4f08db856244689ff	en	Windows	-	-	-	Joachim Eberhard
+	898eaa21f79cf8d4f08db856244689ff	en	Windows	HE 99	-	-	Joachim Eberhard
 
-	d7ab7cd6105546016e6a0d46fb36b964	en	All	-	Demo	-	khalek
+	d7ab7cd6105546016e6a0d46fb36b964	en	All	HE 100	Demo	-	khalek
 	f237bf8a5ef9af78b2a6a4f3901da341	en	All	-	Demo	-	khalek, sev
 	7f945525abcd48015adf1632637a44a1	fr	All	-	Demo	-	Kirben
 	0305e850382b812fec6e5998ef88a966	nl	Windows	-	Demo	-	adutchguy
 
 pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	en	All	-	-	-	Kirben
-	c6907d44f1166941d982864cd42cdc89	de	All	-	-	-	nachbarnebenan
-	32709cbeeb3044b34129950860a83f14	ru	Windows	-	-	-	sev
+	c6907d44f1166941d982864cd42cdc89	de	All	HE 99	-	-	nachbarnebenan
+	32709cbeeb3044b34129950860a83f14	ru	Windows	HE 99	-	-	sev
 
 	30ba1e825d4ad2b448143ae8df18482a	nl	All	-	Demo	-	Kirben
 	36a6750e03fb505fc19fc2bf3e4dbe91	en	All	-	Demo	-	sev
@@ -564,16 +564,16 @@ puttzoo	Putt-Putt Saves the Zoo
 	2a446817ffcabfef8716e0c456ecaf81	de	Windows	-	Demo	-	Joachim Eberhard
 
 PuttTime	Putt-Putt Travels Through Time
-	2108d83dcf09f8adb4bc524669c8cf51	en	All	-	-	-	Kirben
-	a525c1753c1db5011c00417da37887ef	en	All	-	-	-	Kirben
-	7c980a1b1596a93f26917318884f48f7	de	All	-	-	-	Joachim Eberhard
-	fcb78ebecab2757264c590890c319cc5	nl	Windows	-	-	-	adutchguy
+	2108d83dcf09f8adb4bc524669c8cf51	en	All	HE 99	-	-	Kirben
+	a525c1753c1db5011c00417da37887ef	en	All	HE 100	-	-	Kirben
+	7c980a1b1596a93f26917318884f48f7	de	All	HE 99	-	-	Joachim Eberhard
+	fcb78ebecab2757264c590890c319cc5	nl	Windows	HE 100	-	-	adutchguy
 	63fdcdc95cdeea00060883aed38e5504	en	Windows	-	-	-	iziku
-	d4aac997e2f4e15341f0bfbf905419bd	en	Windows	-	-	-	eriktorbjorn
+	d4aac997e2f4e15341f0bfbf905419bd	en	Windows	HE 99	-	-	eriktorbjorn
 	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	-	-	-	oncer
-	defb8cb9ec4b0f91acfb6b61c6129ad9	ru	Windows	-	-	-	sev
+	defb8cb9ec4b0f91acfb6b61c6129ad9	ru	Windows	HE 99	-	-	sev
 
-	0ab19be9e2a3f6938226638b2a3744fe	en	All	-	Demo	-	khalek
+	0ab19be9e2a3f6938226638b2a3744fe	en	All	HE 100	Demo	-	khalek
 	4e5867848ee61bc30d157e2c94eee9b4	en	All	-	Demo	-	khalek, sev
 	59d5cfcc5e672a6e07baae01328b918b	fr	All	-	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	de	All	-	Demo	-	Joachim Eberhard
@@ -581,14 +581,14 @@ PuttTime	Putt-Putt Travels Through Time
 
 balloon	Putt-Putt and Pep's Balloon-O-Rama
 	08cc5c3eedaf72ebe12734eee94f7fa2	en	All	-	-	-	Kirben
-	8e3241ddd6c8dadf64305e8740d45e13	en	All	-	-	-	Kirben
-	d7b247c26bf1f01f8f7daf142be84de3	en	Windows	-	-	-	iziku
+	8e3241ddd6c8dadf64305e8740d45e13	en	All	HE 100	-	-	Kirben
+	d7b247c26bf1f01f8f7daf142be84de3	en	Windows	HE 99	-	-	iziku
 	145bd3373574feb668cc2eea2ec6cf86	ru	Windows	-	-	-	sev
 	2232b0b9411575b1f9961713ebc9de61	es	Windows	-	-	-	exiltd
 
 dog	Putt-Putt and Pep's Dog on a Stick
 	eae95b2b3546d8ba86ae1d397c383253	en	All	-	-	-	Kirben
-	d4b8ee426b1afd3e53bc0cf020418cf6	en	Windows	-	-	-	sev
+	d4b8ee426b1afd3e53bc0cf020418cf6	en	Windows	HE 99	-	-	sev
 
 activity	Putt-Putt & Fatty Bear's Activity Pack
 	b628506f7def772e40de0aa5440fb8e1	en	Windows	-	-	-	
@@ -604,11 +604,11 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 
 spyfox	SPY Fox 1: Dry Cereal
 	3de99ef0523f8ca7958faa3afccd035a	en	All	-	-	-	Kirben
-	58436e634f4fae1d9973591c2ffa1fcb	en	All	-	-	-	Joachim Eberhard
-	a28135a7ade38cc0208b04507c46efd1	de	All	-	-	-	nachbarnebenan
+	58436e634f4fae1d9973591c2ffa1fcb	en	All	HE 99	-	-	Joachim Eberhard
+	a28135a7ade38cc0208b04507c46efd1	de	All	HE 99	-	-	nachbarnebenan
 	6bf70eee5de3d24d2403e0dd3d267e8a	All	Windows	-	-	-	khalek
 	9bda5fee51d2fda5253d02c642016bf4	nl	Windows	-	-	-	joostp
-	72ac6bc980d5101c2142189d746bd62f	ru	Windows	-	-	-	sev
+	72ac6bc980d5101c2142189d746bd62f	ru	Windows	HE 99	-	-	sev
 
 	53e94115b55dd51d4b8ff0871aa1df1e	en	All	-	Demo	-	khalek, sev
 	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	en	All	-	Demo	-	khalek
@@ -636,7 +636,7 @@ spyozon	SPY Fox 3: Operation Ozone
 
 chase	SPY Fox in Cheese Chase
 	589601b676c98b1c0c987bc031ab68b3	en	All	-	-	-	Kirben
-	90c755e1c9b9b8a4129d37b2259d0655	en	All	-	-	-	Kirben
+	90c755e1c9b9b8a4129d37b2259d0655	en	All	HE 100	-	-	Kirben
 	9cdd327c1034c046cb595d251c44da2f	ru	Windows	-	-	-	sev
 
 mustard	SPY Fox in Hold the Mustard
