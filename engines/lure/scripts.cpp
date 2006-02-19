@@ -27,6 +27,16 @@
 
 namespace Lure {
 
+// This list of hotspot Ids are used by sequence method #5 to deallocate a set 
+// of hotspot Ids at once
+uint16 dealloc_list_1[] = {0x13F2, 0x418, 0x2711, 0x2712, 0x40D, 0x3EA, 0x411, 0};
+uint16 dealloc_list_2[] = {0x2729, 0x272A, 0x272B, 0x272C, 0x272E, 0x272E, 0x272F, 0};
+uint16 dealloc_list_3[] = {0x3EF, 0x3E9, 0x3EB, 0x3EC, 0x3ED, 0x3EE, 0x3F0, 0x3F1, 
+	0x420, 0x429, 0x436, 0x2715, 0x2716, 0x2717, 0x2718, 0x2719, 0x271A, 0x271E, 
+	0x271F, 0x2720, 0x2721, 0x2722, 0x2725, 0x2726, 0};
+uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list_2[0],
+	&dealloc_list_3[1], &dealloc_list_3[0]};
+
 /*------------------------------------------------------------------------*/
 /*-  Script Method List                                                  -*/
 /*-                                                                      -*/
@@ -53,6 +63,20 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 
 void Script::clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3) {
 	Resources::getReference().delayList().clear();
+}
+
+// Deactivates a set of predefined of hotspots in a given list index
+
+void Script::deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3) {
+	if (listIndex >= 3) 
+		error("Script::deactiveHotspotSet - Invalid list index");
+	Resources &res = Resources::getReference();
+	uint16 *hotspotId = hotspot_dealloc_set[listIndex];
+
+	while (*hotspotId != 0) {
+		res.deactivateHotspot(*hotspotId);
+		++hotspotId;
+	}
 }
 
 // deactivates the specified hotspot from active animation
@@ -110,6 +134,12 @@ void Script::setHotspotName(uint16 hotspotId, uint16 nameId, uint16 v3) {
 	hotspot->nameId = nameId;
 }
 
+// Unsure about this method, but at the moment I think it plays a sound
+
+void Script::playSound(uint16 v1, uint16 v2, uint16 v3) {
+	// No implementation currently	
+}
+
 // Displays the given string resource Id in a dialog
 
 void Script::displayDialog(uint16 stringId, uint16 v2, uint16 v3) {
@@ -120,8 +150,10 @@ void Script::displayDialog(uint16 stringId, uint16 v2, uint16 v3) {
 
 void Script::remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3) {
 	Hotspot *player = Resources::getReference().getActiveHotspot(PLAYER_ID);
+
 	player->setTickProc(0); // disable player actions
-	Game::getReference().setRemoteView();
+	Resources::getReference().fieldList().setField(OLD_ROOM_NUMBER,
+		player->roomNumber());
 }
 
 // Gets the current blocked state for the given door and stores it in the
@@ -131,6 +163,15 @@ void Script::getDoorBlocked(uint16 hotspotId, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	RoomExitJoinData *joinRec = res.getExitJoin(hotspotId);
 	res.fieldList().setField(GENERAL, joinRec->blocked);
+}
+
+// Checks whether the Skorl is in the cell
+
+void Script::isSkorlInCell(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	HotspotData *hotspot = res.getHotspot(SKORL_ID);
+	uint16 v = (hotspot->roomNumber == 1) ? 0 : 1;
+	res.fieldList().setField(GENERAL, v);
 }
 
 // Decrements the number of inventory itemst he player has
@@ -154,6 +195,17 @@ void Script::disableHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	hotspot->flags |= 0x20;	
 }
 
+// Called when the sack is cut with the knife
+
+void Script::cutSack(uint16 hotspotId, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	HotspotData *data = res.getHotspot(SACK_ID);
+	data->startY = 138;
+	Hotspot *activeHotspot = res.getActiveHotspot(SACK_ID);
+	if (activeHotspot)
+		activeHotspot->setPosition(data->startX, data->startY);
+}
+
 // Increase the player's number by the specified amount
 
 void Script::increaseNumGroats(uint16 v1, uint16 numGroats, uint16 v3) {
@@ -167,6 +219,22 @@ void Script::enableHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	HotspotData *hotspot = Resources::getReference().getHotspot(hotspotId);
 	// Clear flag 0x20 and add flag 0x80
 	hotspot->flags = (hotspot->flags & 0xdf) | 0x80;
+}
+
+// Transforms the player
+
+void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
+	Resources &res = Resources::getReference();
+	HotspotData *hotspot = res.getHotspot(TRANSFORM_ID);
+	HotspotData *player = res.getHotspot(PLAYER_ID);
+
+	hotspot->roomNumber = player->roomNumber;
+	hotspot->startX = player->startX - 14;
+	hotspot->startY = player->startY - 10;
+	
+	Hotspot *activeHotspot = res.addHotspot(TRANSFORM_ID);
+	activeHotspot->setFrameNumber(0);
+	activeHotspot->setScript(0x630);
 }
 
 // Marks the door in room 14 for closing
@@ -272,20 +340,25 @@ SequenceMethodRecord scriptMethods[] = {
 	{0, Script::activateHotspot}, 
 	{1, Script::setHotspotScript},
 	{4, Script::clearSequenceDelayList},
+	{5, Script::deactivateHotspotSet},
 	{6, Script::deactivateHotspot},
 	{8, Script::addDelayedSequence},
 	{10, Script::characterInRoom},
 	{11, Script::setActionsOffset},
 	{12, Script::setHotspotName},
+	{13, Script::playSound},
 	{16, Script::displayDialog},
 	{18, Script::remoteRoomViewSetup},
 	{20, Script::checkCellDoor},
 	{22, Script::getDoorBlocked},
+	{23, Script::isSkorlInCell},
 	{28, Script::decrInventoryItems},
 	{30, Script::setFrameNumber},
 	{32, Script::disableHotspot},
+	{33, Script::cutSack},
 	{34, Script::increaseNumGroats},
 	{35, Script::enableHotspot},
+	{37, Script::transformPlayer},
 	{39, Script::room14DoorClose},
 	{40, Script::checkDroppedDesc},
 	{42, Script::doorClose},
