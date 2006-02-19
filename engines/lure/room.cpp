@@ -67,15 +67,18 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
 Room::Room(): _screen(Screen::getReference()) {
 	int_room = this;
 
 	_roomData = NULL;
+	_talkDialog = NULL;
 	_hotspotName[0] = '\0';
 	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr) _layers[ctr] = NULL;
 	_numLayers = 0;
 	_showInfo = false;
-	_currentAction = NONE;
+	_isExit = false;
 }
 
 Room::~Room() {
@@ -83,6 +86,7 @@ Room::~Room() {
 		if (_layers[layerNum])
 			delete _layers[layerNum];
 
+	if (_talkDialog) delete _talkDialog;
 	int_room = NULL;
 }
 
@@ -133,8 +137,8 @@ void Room::loadRoomHotspots() {
 
 void Room::checkRoomHotspots() {
 	Mouse &m = Mouse::getReference();
-	Resources &r = Resources::getReference();
-	HotspotDataList &list = r.hotspotData();
+	Resources &res = Resources::getReference();
+	HotspotDataList &list = res.hotspotData();
 	HotspotData *entry = NULL;
 	int16 currentX = m.x();
 	int16 currentY = m.y();
@@ -151,10 +155,11 @@ void Room::checkRoomHotspots() {
 		}
 
 		if ((!skipFlag) && (entry->hotspotId < 0x409))
-			skipFlag = sub_112();
+			// For character hotspots, validate they're in clipping range
+			skipFlag = !res.checkHotspotExtent(entry);
 		
 		if (!skipFlag && (entry->hotspotId >= 0x2710) && (entry->hotspotId <= 0x27ff)) {
-			RoomExitJoinData *rec = r.getExitJoin(entry->hotspotId);
+			RoomExitJoinData *rec = res.getExitJoin(entry->hotspotId);
 			if ((rec) && (!rec->blocked))
 				// Hotspot is over a room exit, and it's not blocked, so don't 
 				// register it as an active hotspot
@@ -163,7 +168,7 @@ void Room::checkRoomHotspots() {
 
 		if (!skipFlag) {
 			// Check for a hotspot override
-			HotspotOverrideData *hsEntry = r.getHotspotOverride(entry->hotspotId);
+			HotspotOverrideData *hsEntry = res.getHotspotOverride(entry->hotspotId);
 
 			if (hsEntry) {
 				// Check whether cursor is in override hotspot area
@@ -189,12 +194,13 @@ void Room::checkRoomHotspots() {
 		_hotspotNameId = entry->nameId;
 		_hotspot = entry;
 		_hotspotId = entry->hotspotId;
+		_isExit = false;
 	}
 }
 
 uint8 Room::checkRoomExits() {
 	Mouse &m = Mouse::getReference();
-	Resources &r = Resources::getReference();
+	Resources &res = Resources::getReference();
 
 	RoomExitHotspotList &exits = _roomData->exitHotspots;
 	if (exits.isEmpty()) return CURSOR_ARROW;
@@ -207,7 +213,7 @@ uint8 Room::checkRoomExits() {
 		skipFlag = false;
 
 		if (rec->hotspotId != 0) {
-			join = r.getExitJoin(rec->hotspotId);
+			join = res.getExitJoin(rec->hotspotId);
 			if ((join) && (join->blocked != 0))
 				skipFlag = true;
 		}
@@ -218,7 +224,13 @@ uint8 Room::checkRoomExits() {
 			uint8 cursorNum = rec->cursorNum;
 
 			// If it's a hotspotted exit, change arrow to the + arrow
-			if (rec->hotspotId != 0) cursorNum += 7;
+			if (rec->hotspotId != 0) {
+				_hotspotId = rec->hotspotId;
+				_hotspot = res.getHotspot(_hotspotId);
+				_hotspotNameId = _hotspot->nameId;
+				_isExit = true;
+				cursorNum += 7;
+			}
 
 			return cursorNum;
 		}
@@ -259,7 +271,7 @@ void Room::addAnimation(Hotspot &h) {
 		int16 x = h.x();
 		int16 y = h.y();
 		if ((x >= 0) && (x <= 319) && (y >= 0) && (y <= 200)) {
-			sprintf(buffer, "%x", h.resource().hotspotId);
+			sprintf(buffer, "%x", h.hotspotId());
 			strcat(buffer, "h");
 			s.writeString(h.x(), h.y(), buffer, false);
 		}
@@ -338,8 +350,9 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 
 void Room::update() {
 	Surface &s = _screen.screen();
-	Resources &r = Resources::getReference();
-	HotspotList &hotspots = r.activeHotspots();
+	Resources &res = Resources::getReference();
+	StringData &strings = StringData::getReference();
+	HotspotList &hotspots = res.activeHotspots();
 	HotspotList::iterator i;
 
 	memset(_cells, 0x81, NUM_HORIZ_RECTS*NUM_VERT_RECTS);
@@ -395,14 +408,30 @@ void Room::update() {
 		}
 	}
 
+	// Show any active talk dialog and voice
+	if (_talkDialog)  {
+		_talkDialog->surface().copyTo(&s, _talkDialogX, _talkDialogY);
+	}
+
 	// Handle showing name of highlighted hotspot
-	if (_hotspotName[0] != '\0') {
-		if (_currentAction == NONE) {
+	if (_hotspotId != 0) {
+		Action action = res.getCurrentAction();
+		uint16 usedId = res.fieldList().getField(USE_HOTSPOT_ID);
+
+		if (action == NONE) {
 			s.writeString(0, 0, _hotspotName, false, DIALOG_TEXT_COLOUR);
 		} else {
-			char buffer[MAX_ACTION_NAME_SIZE + MAX_HOTSPOT_NAME_SIZE];
-			strcpy(buffer, actionList[_currentAction]);
+			char buffer[MAX_DESC_SIZE];
+			strcpy(buffer, res.getCurrentActionStr());
 			strcat(buffer, " ");
+
+			if (usedId != 0xffff) {
+				uint16 nameId = res.getHotspot(usedId)->nameId;
+				strings.getString(nameId, buffer + strlen(buffer), NULL, NULL);
+				if (action == GIVE) strcat(buffer, " to ");
+				else strcat(buffer, " on ");
+			}
+
 			strcat(buffer, _hotspotName);
 			s.writeString(0, 0, buffer, false, DIALOG_WHITE_COLOUR);
 		}
@@ -415,8 +444,6 @@ void Room::update() {
 		sprintf(buffer, "Room %d Pos (%d,%d)", _roomNumber, m.x(), m.y());
 		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, DIALOG_TEXT_COLOUR);
 	}
-
-	_screen.update();
 }
 
 void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
@@ -453,33 +480,93 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	if (_roomData->sequenceOffset != 0xffff)
 		Script::execute(_roomData->sequenceOffset);
 	loadRoomHotspots();
-	cursorMoved();
+	checkCursor();
 
 	update();
 }
 
-// cursorMoved
-// Called as the cursor moves to handle any changes that must occur
+// checkCursor
+// Called repeatedly to check if any changes to the cursor are required
 
-void Room::cursorMoved() {
-	uint16 cursorNew = CURSOR_ARROW;
+void Room::checkCursor() {
+	Mouse &mouse = Mouse::getReference();
+	Resources &res = Resources::getReference();
 	uint16 oldHotspotId = _hotspotId;
+	uint16 currentCursor = mouse.getCursorNum();
+	uint16 newCursor = currentCursor;
 
-	Mouse &m = Mouse::getReference();
-	checkRoomHotspots();
-
-	if (_hotspotId != 0) {
-		cursorNew = CURSOR_CROSS;
+	if ((currentCursor >= CURSOR_TIME_START) && (currentCursor <= CURSOR_TIME_END)) {
+		++newCursor;
+		if (newCursor == CURSOR_CROSS) newCursor = CURSOR_TIME_START;
+	} else if (checkInTalkDialog()) {
+		newCursor = CURSOR_TALK;
+	} else if (res.getTalkData()) {
+		newCursor = CURSOR_ARROW;
+	} else if (mouse.y() < MENUBAR_Y_SIZE) {
+		// If viewing a room remotely, then don't change to the menu cursor
+		uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
+		if (oldRoomNumber != 0) return;
+		
+		newCursor = CURSOR_MENUBAR;
+	} else {
+		// Check for a highlighted hotspot
+		checkRoomHotspots();
+		
+		if (_hotspotId != 0) {
+			newCursor = CURSOR_CROSS;
+		} else {
+			newCursor = checkRoomExits();
+		}
 
 		if (oldHotspotId != _hotspotId) 
 			StringData::getReference().getString(_hotspotNameId, _hotspotName, NULL, NULL);
-	} else {
-		_hotspotName[0] = '\0';
-		cursorNew = checkRoomExits();
 	}
 
-	if (m.getCursorNum() != cursorNew) 
-		m.setCursorNum(cursorNew);
+	if (mouse.getCursorNum() != newCursor) 
+		mouse.setCursorNum(newCursor);
+}
+
+void Room::setTalkDialog(uint16 characterId, uint16 stringId) {
+	if (_talkDialog) {
+		delete _talkDialog;
+		_talkDialog = NULL;
+	}
+
+	Resources &res = Resources::getReference();
+	res.setTalkingCharacter(characterId);
+
+	if (characterId == 0) {
+		if (res.getTalkState() == TALK_RESPONSE_WAIT)
+			res.setTalkState(TALK_RESPOND_2);
+		return;
+	}
+
+	HotspotData *character = res.getHotspot(characterId);
+	if (character->roomNumber != _roomNumber)
+		return;
+
+	_talkDialog = new TalkDialog(characterId, stringId);
+	_talkDialogX = character->startX + (character->width / 2) - (TALK_DIALOG_WIDTH / 2);
+
+	if (_talkDialogX < 0) _talkDialogX = 0;
+	if (_talkDialogX + TALK_DIALOG_WIDTH >= FULL_SCREEN_WIDTH - 10)
+		_talkDialogX = FULL_SCREEN_WIDTH - 10 - TALK_DIALOG_WIDTH; 
+
+	_talkDialogY = TALK_DIALOG_Y;
+}
+
+// Checks to see if a talk dialog is active, and if so if the mouse is in
+// within it
+
+bool Room::checkInTalkDialog() {
+	// Make sure there is a talk dialog active
+	if (!_talkDialog) return false;
+
+	// Check boundaries
+	Mouse &mouse = Mouse::getReference();
+	return ((mouse.x() >= _talkDialogX) && (mouse.y() >= _talkDialogY) &&
+		(mouse.x() < _talkDialogX + _talkDialog->surface().width()) &&
+		(mouse.y() < _talkDialogY + _talkDialog->surface().height()));
 }
 
 } // end of namespace Lure

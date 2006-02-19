@@ -62,7 +62,7 @@ private:
 	uint16 _descId;
 	uint16 _hotspotId;
 	uint16 _hotspotNameId;
-	Action _currentAction;
+	bool _isExit;
 	char _hotspotName[MAX_HOTSPOT_NAME_SIZE + MAX_ACTION_NAME_SIZE];
 	HotspotData *_hotspot;
 	bool _showInfo;
@@ -70,6 +70,8 @@ private:
 	RoomLayer *_layers[MAX_NUM_LAYERS];
 	byte _cells[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
 	byte _cells2[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
+	TalkDialog *_talkDialog;
+	int16 _talkDialogX, _talkDialogY;
 
 	void checkRoomHotspots();
 	uint8 checkRoomExits();
@@ -86,20 +88,20 @@ public:
 	
 	void update();
 	void nextFrame();
-	void cursorMoved();
+	void checkCursor();
 	uint16 roomNumber() { return _roomNumber; }
 	void setRoomNumber(uint16 newRoomNumber, bool showOverlay = false);
 	void leaveRoom();
-	void setAction(Action action) {	_currentAction = action; }
-	Action getCurrentAction() { return _currentAction; }
 	uint16 hotspotId() { return _hotspotId; }
+	uint16 isExit() { return _isExit; }
 	uint32 hotspotActions() { return _hotspot->actions & 0x10ffffff; }
 	uint8 hotspotFlags() { return (_hotspot->actions >> 24) & 0xfe; }
 	HotspotData &hotspot() { return *_hotspot; }
 	uint16 descId() { return _descId; }
 	bool showInfo() { return _showInfo; }
 	void setShowInfo(bool value) { _showInfo = value; }
-	uint32 xyzzy() { return (uint32) _layers[3]; }
+	void setTalkDialog(uint16 characterId, uint16 descId);
+	bool checkInTalkDialog();
 };
 
 } // end of namespace Lure
