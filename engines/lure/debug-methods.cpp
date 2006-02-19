@@ -61,10 +61,10 @@ void showActiveHotspots() {
 		s += strlen(s);
 
 		sprintf(s, "h pos=(%d,%d,%d) size=(%d,%d) - ",
-			h.resource().roomNumber, h.x(), h.y(), h.width(), h.height());
+			h.roomNumber(), h.x(), h.y(), h.width(), h.height());
 		s += strlen(s);
 
-		uint16 nameId = h.resource().nameId;
+		uint16 nameId = h.nameId();
 		if (nameId != 0) {
 			StringData::getReference().getString(nameId, s, NULL, NULL);
 			s += strlen(s);
