@@ -21,6 +21,8 @@
  */
 
 #include "lure/events.h"
+#include "lure/system.h"
+#include "lure/res.h"
 
 namespace Lure {
 
@@ -30,7 +32,7 @@ Mouse &Mouse::getReference() {
 	return *int_mouse; 
 }
 
-Mouse::Mouse(OSystem &system): _system(system), _cursors(Disk::getReference().getEntry(CURSOR_RESOURCE_ID)) {
+Mouse::Mouse() {
 	int_mouse = this;
 
 	_lButton = false; 
@@ -40,7 +42,6 @@ Mouse::Mouse(OSystem &system): _system(system), _cursors(Disk::getReference().ge
 }
 
 Mouse::~Mouse() {
-	delete _cursors;
 }
 
 void Mouse::handleEvent(OSystem::Event event) {
@@ -67,11 +68,11 @@ void Mouse::handleEvent(OSystem::Event event) {
 
 
 void Mouse::cursorOn() {
-	_system.showMouse(true);
+	System::getReference().showMouse(true);
 }
 
 void Mouse::cursorOff() {
-	_system.showMouse(false);
+	System::getReference().showMouse(false);
 }
 
 void Mouse::setCursorNum(uint8 cursorNum) {
@@ -85,13 +86,16 @@ void Mouse::setCursorNum(uint8 cursorNum) {
 }
 
 void Mouse::setCursorNum(uint8 cursorNum, int hotspotX, int hotspotY) {
+	Resources &res = Resources::getReference();
+	OSystem &system = System::getReference();
+
 	_cursorNum = cursorNum;
-	byte *cursorAddr = _cursors->data() + (cursorNum * CURSOR_SIZE);
-	_system.setMouseCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
+	byte *cursorAddr = res.getCursor(cursorNum);
+	system.setMouseCursor(cursorAddr, CURSOR_WIDTH, CURSOR_HEIGHT, hotspotX, hotspotY, 0);
 }
 
 void Mouse::setPosition(int newX, int newY) {
-	_system.warpMouse(newX, newY);
+	System::getReference().warpMouse(newX, newY);
 }
 
 void Mouse::waitForRelease() {
@@ -99,7 +103,6 @@ void Mouse::waitForRelease() {
 
 	do {
 		e.pollEvent();
-		_system.delayMillis(10);
 	} while (!e.quitFlag && (lButton() || rButton()));
 }
 
@@ -107,8 +110,9 @@ void Mouse::waitForRelease() {
 
 static Events *int_events = NULL;
 
-Events::Events(OSystem &system, Mouse &mouse): _system(system), _mouse(mouse), quitFlag(false) {
+Events::Events() {
 	int_events = this;
+	quitFlag = false;
 }
 
 Events &Events::getReference() {
@@ -117,7 +121,7 @@ Events &Events::getReference() {
 
 
 bool Events::pollEvent() {
-	if (!_system.pollEvent(_event)) return false;
+	if (!System::getReference().pollEvent(_event)) return false;
 
 	// Handle keypress
 	switch (_event.type) {
@@ -132,7 +136,7 @@ bool Events::pollEvent() {
 	case OSystem::EVENT_MOUSEMOVE:
 	case OSystem::EVENT_WHEELUP:
 	case OSystem::EVENT_WHEELDOWN:
-		_mouse.handleEvent(_event);
+		Mouse::getReference().handleEvent(_event);
 		break;
 
 	default:
@@ -151,10 +155,9 @@ void Events::waitForPress() {
 			else if ((_event.type == OSystem::EVENT_LBUTTONDOWN) ||
 				(_event.type == OSystem::EVENT_RBUTTONDOWN)) {
 				keyButton = true;
-				_mouse.waitForRelease();				
+				Mouse::getReference().waitForRelease();				
 			}
 		}
-		_system.delayMillis(10);
 	}
 }
 
