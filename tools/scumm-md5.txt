@@ -368,16 +368,16 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	df047cc4792150f601290357566d36a6	en	All	-	-	-	khalek
 	d4cccb5af88f3e77f370896e9ba8c5f9	All	Windows	-	-	-	sev
 	c0039ad982999c92d0de81910d640fa0	nl	Windows	-	-	-	adutchguy
-	cf8ef3a1fb483c5c4b1c584d1167b2c4	de	Windows	-	-	-	Oncer
+	cf8ef3a1fb483c5c4b1c584d1167b2c4	de	Windows	HE 73	-	-	Oncer
 	e63a0b9249b5ca4cc4d3ac34305ae360	nb	Windows	-	-	-	Karl Ove Hufthammer
 	746e88c172a5b7a1ae89ac0ee3ee681a	ru	Windows	-	-	-	sev
 	507bb360688dc4180fdf0d7597352a69	se	Windows	-	-	-	Sven Arvidsson
 
 	c8aac5e3e701874e2fa4117896f9e1b1	en	Mac	-	Demo	-	khalek, sev
 	084ed0fa98a6d1e9368d67fe9cfbd417	en	Windows	-	Demo	-	khalek
-	0855496dde35356b1a9691e22ba84cdc	en	Windows	-	Demo	-	khalek
-	566165a7338fa11029e7c14d94fa70d0	en	Windows	-	Demo	-	khalek
-	cf4ef315214c7d8cdab6302cdb7e50db	de	Windows	-	Demo	-	Joachim Eberhard
+	0855496dde35356b1a9691e22ba84cdc	en	Windows	HE 73	Demo	-	khalek
+	566165a7338fa11029e7c14d94fa70d0	en	Windows	HE 73	Demo	-	khalek
+	cf4ef315214c7d8cdab6302cdb7e50db	de	Windows	HE 73	Demo	-	Joachim Eberhard
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	51305e929e330e24a75a0351c8f9975e	en	All	HE 99	-	-	Kirben
@@ -441,7 +441,7 @@ FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 	16542a7342a918bfe4ba512007d36c47	en	All	-	-	-	Kirben
 
 catalog	Humongous Interactive Catalog
-	037385a953789190298494d92b89b3d0	en	Windows	-	Demo	-	khalek, sev
+	037385a953789190298494d92b89b3d0	en	Windows	HE 72	Demo	-	khalek, sev
 	11e6e244078ff09b0f3832e35420e0a7	en	Windows	-	Demo	-	khalek, sev
 
 airport	Let's Explore the Airport with Buzzy
@@ -449,7 +449,7 @@ airport	Let's Explore the Airport with Buzzy
 	07433205acdca3bc553d0e731588b35f	en	Windows	-	-	-	Kirben
 
 	7ea2da67ebabea4ac20cee9f4f9d2934	en	Mac	-	Demo	-	khalek
-	86c9902b7bec1a17926d4dae85beaa45	en	Windows	-	Demo	-	khalek
+	86c9902b7bec1a17926d4dae85beaa45	en	Windows	HE 71	Demo	-	khalek
 	8ffd618a776a4c0d8922bb28b09f8ce8	en	Windows	-	Demo	-	khalek
 	e144f5f49d9241d2a9dee2576b3d09cb	en	Windows	-	Demo	-	khalek
 
@@ -458,9 +458,9 @@ farm	Let's Explore the Farm with Buzzy
 	a85856675429fe88051744f755b72f93	en	Windows	-	-	-	Kirben
 
 	39fd6db10d0222d817025c4d3346e3b4	en	Mac	-	Demo	-	Joachim Eberhard
-	0557df19f046a84c2fdc63507c6616cb	nl	Windows	-	Demo	-	adutchguy
-	8d479e36f35e80257dfc102cf4b8a912	en	Windows	-	Demo	-	khalek, sev
-	bf8b52fdd9a69c67f34e8e9fec72661c	en	Windows	-	Demo	-	khalek, sev
+	0557df19f046a84c2fdc63507c6616cb	nl	Windows	HE 72	Demo	-	adutchguy
+	8d479e36f35e80257dfc102cf4b8a912	en	Windows	HE 72	Demo	-	khalek, sev
+	bf8b52fdd9a69c67f34e8e9fec72661c	en	Windows	HE 71	Demo	-	khalek, sev
 
 jungle	Let's Explore the Jungle with Buzzy
 	659942b9a6b519f123a13cca3c333a13	en	Mac	-	-	-	Joachim Eberhard
@@ -528,11 +528,11 @@ puttmoon	Putt-Putt Goes to the Moon
 	780e4a0ae2ff17dc296f4a79543b44f8	All	DOS	-	-	-	khalek
 	697c9b7c55a05d8199c48b48e379d2c8	hb	DOS	-	-	-	sev
 	9dc02577bf50d4cfaf3de3fbac06fbe2	en	Mac	-	-	-	khalek
-	9c92eeaf517a31b7221ec2546ab669fd	en	Windows	-	-	-	khalek
+	9c92eeaf517a31b7221ec2546ab669fd	en	Windows	HE 70	-	-	khalek
 
 	aa6a91b7f6f119d1b7b1f2a4c9e24d59	en	DOS	-	Demo	-	
 	4af4a6b248103c1fe9edef619677f540	en	Mac	-	Demo	-	khalek
-	9c143c5905055d5df7a0f014ab379aee	en	Windows	-	Demo	-	khalek
+	9c143c5905055d5df7a0f014ab379aee	en	Windows	HE 70	Demo	-	khalek
 
 puttcircus	Putt-Putt Joins the Circus
 	ab0693e9324cfcf498fdcbb12acf8bb4	en	All	-	-	-	sev
@@ -545,11 +545,11 @@ puttputt	Putt-Putt Joins the Parade
 	e361a7058ed8e8ebb462663c0a3ae8d6	hb	DOS	-	-	-	sev
 	0b3222aaa7efcf283eb621e0cefd26cc	ru	DOS	-	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	en	Mac	-	-	-	khalek
-	6a30a07f353a75cdc602db27d73e1b42	en	Windows	-	-	-	khalek
+	6a30a07f353a75cdc602db27d73e1b42	en	Windows	HE 70	-	-	khalek
 
 	31aa57f460a3d12429f0552a46a90b39	en	DOS	-	Demo	-	
 	f40a7f495f59188ca57a9d1d50301bb6	en	Mac	-	Demo	-	khalek
-	37ff1b308999c4cca7319edfcc1280a0	en	Windows	-	Demo	-	khalek
+	37ff1b308999c4cca7319edfcc1280a0	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
 	92e7727e67f5cd979d8a1070e4eb8cb3	en	All	-	-	-	cyx
