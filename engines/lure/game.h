@@ -38,9 +38,9 @@ namespace Lure {
 class Game {
 private:
 	bool _slowSpeedFlag, _soundFlag;
-	bool _remoteView;
 
 	void handleMenuResponse(uint8 selection);
+	void handleClick();
 	void handleRightClickMenu();
 	void handleLeftClick();
 public:
@@ -49,7 +49,6 @@ public:
 
 	void nextFrame();
 	void execute();
-	void setRemoteView() { _remoteView = true; }
 
 	// Menu item support methods
 	void doDebugMenu();

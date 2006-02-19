@@ -41,22 +41,36 @@ Game::Game() {
 	int_game = this;
 	_slowSpeedFlag = true;
 	_soundFlag = true;
-	_remoteView = false;
 }
 
 void Game::nextFrame() {
-	Resources &r = Resources::getReference();
-	HotspotList::iterator i = r.activeHotspots().begin();
-	HotspotList::iterator iTemp;
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	HotspotList::iterator i;
 
-	// Note the somewhat more complicated loop style as a hotspot tick handler may
-	// unload the hotspot and accompanying record
-	for (; i != r.activeHotspots().end(); i = iTemp) {
-		iTemp = i;
-		++iTemp;
-		Hotspot &h = *i.operator*();
-		h.tick();
+	room.checkCursor();
+	room.update();
+
+	// Call the tick method for each hotspot - this is somewaht complicated
+	// by the fact that a tick proc can unload both itself and/or others,
+	// so we first get a list of the Ids, and call the tick proc for each 
+	// id in sequence if it's still active
+
+	uint16 *idList = new uint16[res.activeHotspots().size()];
+	int idSize = 0;
+	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
+		Hotspot *hotspot = *i;
+		idList[idSize++] = hotspot->hotspotId();
 	}
+
+	for (int idCtr = 0; idCtr < idSize; ++idCtr) {
+		Hotspot *hotspot = res.getActiveHotspot(idList[idCtr]);
+		if (hotspot)
+			hotspot->tick();
+	}
+
+	delete idList;
+	Screen::getReference().update();
 }
 
 void Game::execute() {
@@ -94,10 +108,8 @@ void Game::execute() {
 			nextFrame();			
 		}
 		res.delayList().tick();
-		r.update();
-		system.delayMillis(10);
 
-		while (events.pollEvent()) {
+		if (events.pollEvent()) {
 			if (events.type() == OSystem::EVENT_KEYDOWN) {
 				uint16 roomNum = r.roomNumber();
 
@@ -141,58 +153,17 @@ void Game::execute() {
 				}
 			}
 
-			if (mouse.y() < MENUBAR_Y_SIZE) 
-			{
-				if (mouse.getCursorNum() != CURSOR_MENUBAR) mouse.setCursorNum(CURSOR_MENUBAR);
-				if ((mouse.getCursorNum() == CURSOR_MENUBAR) && mouse.lButton())
-				{
-					uint8 responseId = menu.execute();
-					mouse.setCursorNum((mouse.y() < MENUBAR_Y_SIZE) ? CURSOR_MENUBAR : CURSOR_ARROW);
-					if (responseId != MENUITEM_NONE)
-						handleMenuResponse(responseId);
-				}
-			} else {
-				if (mouse.getCursorNum() == CURSOR_MENUBAR) mouse.setCursorNum(CURSOR_ARROW);
-				
-				if (events.type() == OSystem::EVENT_MOUSEMOVE)
-					r.cursorMoved();
-
-				if (mouse.rButton()) handleRightClickMenu();
-				else if (mouse.lButton()) handleLeftClick();
-			}
+			if ((events.type() == OSystem::EVENT_LBUTTONDOWN) ||
+				(events.type() == OSystem::EVENT_RBUTTONDOWN)) 
+				handleClick();
 		}
 
 		uint16 destRoom = fields.getField(NEW_ROOM_NUMBER);
-		if (_remoteView && (destRoom != 0)) {
-			// Show a remote view of the specified room
-			uint16 currentRoom = r.roomNumber();
-			r.setRoomNumber(destRoom, true);
-
-			// This code eventually needs to be moved into the main loop so that,
-			// amongst other things, the tick handlers controlling animation can work
-			while (!events.quitFlag && !mouse.lButton() && !mouse.rButton()) {
-				while (events.pollEvent()) {
-					if ((events.type() == OSystem::EVENT_KEYDOWN) && 
-						(events.event().kbd.ascii == 27))
-						events.quitFlag = true;
-					if (events.type() == OSystem::EVENT_MOUSEMOVE)
-						r.cursorMoved();
-				}
-
-				if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
-					timerVal = system.getMillis();
-					nextFrame();			
-				}
-				res.delayList().tick();
-				r.update();
-				system.delayMillis(10);
-			}
-
+		if (destRoom != 0) {
+			// Need to change the current room
+			bool remoteFlag = fields.getField(OLD_ROOM_NUMBER) != 0;
+			r.setRoomNumber(destRoom, remoteFlag);
 			fields.setField(NEW_ROOM_NUMBER, 0);
-			Hotspot *player = res.getActiveHotspot(PLAYER_ID);
-			player->setTickProc(0x5e44); // reattach player handler
-			_remoteView = false;
-			r.setRoomNumber(currentRoom);
 		}
 	}
 
@@ -267,19 +238,51 @@ void Game::handleMenuResponse(uint8 selection) {
 	}
 }
 
-void Game::handleRightClickMenu() {
-	Room &r = Room::getReference();
+void Game::handleClick() {
 	Resources &res = Resources::getReference();
-	ValueTableData &fields = Resources::getReference().fieldList();
+	Room &room = Room::getReference();
+	ValueTableData &fields = res.fieldList();
+	Mouse &mouse = Mouse::getReference();
+	uint16 oldRoomNumber = fields.getField(OLD_ROOM_NUMBER);
+
+	if (room.checkInTalkDialog()) {
+		// Close the active talk dialog
+		room.setTalkDialog(0, 0);
+	} else if (oldRoomNumber != 0) {
+		// Viewing a room remotely - handle returning to prior room
+		// TODO: check data_1138 check when room number is 35
+
+		// Reset player tick proc and signal to change back to the old room
+		res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID); 
+		fields.setField(NEW_ROOM_NUMBER, oldRoomNumber);
+		fields.setField(OLD_ROOM_NUMBER, 0);
+	} else if (res.getTalkState() != TALK_NONE) {
+		// Currently talking, so let it's tick proc handle it
+	} else if (mouse.y() < MENUBAR_Y_SIZE) {
+		uint8 response = Menu::getReference().execute();
+		if (response != MENUITEM_NONE)
+			handleMenuResponse(response);
+	} else {
+		if (mouse.lButton())
+			handleLeftClick();
+		else
+			handleRightClickMenu();
+	}
+}
+
+void Game::handleRightClickMenu() {
+	Room &room = Room::getReference();
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	HotspotData *hotspot;
 	Action action;
 	uint32 actions;
 	uint16 itemId;
 
-	if (r.hotspotId() != 0) {
+	if (room.hotspotId() != 0) {
 		// Get hotspot actions
-		actions = r.hotspotActions();
+		actions = room.hotspotActions();
 	} else {
 		// Standard actions - drink, examine, look, status
 		actions = 0x1184000;
@@ -288,6 +291,10 @@ void Game::handleRightClickMenu() {
 	// If no inventory items remove entries that require them
 	if (res.numInventoryItems() == 0) 
 		actions &= 0xFEF3F9FD;
+
+	// If the player hasn't any money, remove any bribe entry
+	if (res.fieldList().numGroats() == 0)
+		actions &= 0xFF7FFFFF;
 
 	action = NONE;
 	hotspot = NULL;
@@ -307,7 +314,7 @@ void Game::handleRightClickMenu() {
 		case EXAMINE:
 		case DRINK:
 			if (action != DRINK)
-				hotspot = res.getHotspot(r.hotspotId());
+				hotspot = res.getHotspot(room.hotspotId());
 			itemId = PopupMenu::ShowInventory();
 			breakFlag = (itemId != 0xffff);
 			if (breakFlag) 
@@ -315,7 +322,7 @@ void Game::handleRightClickMenu() {
 			break;
 
 		default:
-			hotspot = res.getHotspot(r.hotspotId());
+			hotspot = res.getHotspot(room.hotspotId());
 			breakFlag = true;
 			break;
 		}
@@ -326,31 +333,45 @@ void Game::handleRightClickMenu() {
 	if (hotspot) {
 		fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
 		if ((action != USE) && (action != GIVE)) {
-			fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
-		}
+			fields.setField(USE_HOTSPOT_ID, 0xffff);
+		} 
 	}
 
-	if (action != NONE)
+	if (action != NONE) {
+		res.setCurrentAction(action);
+		room.update();
+		Screen::getReference().update();
 		player->doAction(action, hotspot);
+
+		if (action != TALK_TO)
+			res.setCurrentAction(NONE);
+	}
 }
 
 void Game::handleLeftClick() {
 	Room &room = Room::getReference();
 	Mouse &mouse = Mouse::getReference();
-	Resources &resources = Resources::getReference();
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
 
-	if (room.hotspotId()) {
+	if (room.hotspotId() && !room.isExit()) {
 		// Handle look at hotspot
-		HotspotData *hs = resources.getHotspot(room.hotspotId());
-		Hotspot *player = resources.getActiveHotspot(PLAYER_ID);
-		room.setAction(LOOK_AT);
+		HotspotData *hs = res.getHotspot(room.hotspotId());
+		Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+
+		fields.setField(CHARACTER_HOTSPOT_ID, PLAYER_ID);
+		fields.setField(ACTIVE_HOTSPOT_ID, hs->hotspotId);
+		fields.setField(USE_HOTSPOT_ID, 0xffff);
+
+		res.setCurrentAction(LOOK_AT);
 		room.update();
+		Screen::getReference().update();
 		player->doAction(LOOK_AT, hs);
-		room.setAction(NONE);
+		res.setCurrentAction(NONE);
 	} else {
 		// Walk to mouse click. TODO: still need to recognise other actions,
 		// such as to room exits or closing an on-screen floating dialog
-		Hotspot *hs =  resources.getActiveHotspot(PLAYER_ID);
+		Hotspot *hs =  res.getActiveHotspot(PLAYER_ID);
 		hs->walkTo(mouse.x(), mouse.y(), 0);
 	}
 }
@@ -375,7 +396,6 @@ void Game::doShowCredits() {
 }
 
 void Game::doQuit() {
-	OSystem &system = System::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -393,7 +413,6 @@ void Game::doQuit() {
 				if ((key >= 'A') && (key <= 'Z')) key += 'a' - 'A';
 			}
 		}
-		system.delayMillis(10);
 	} while (((uint8) key != 27) && (key != 'y') && (key != 'n'));
 
 	events.quitFlag = key == 'y';
