@@ -71,14 +71,13 @@ char *MenuRecord::getEntry(uint8 index) {
 
 static Menu *int_menu = NULL;
 
-Menu::Menu(OSystem &system): _system(system), _screen(Screen::getReference()),
-	_events(Events::getReference()), _mouse(Mouse::getReference()) {
+Menu::Menu() {
 	int_menu = this;
 
-	MemoryBlock *res = Disk::getReference().getEntry(5);
+	MemoryBlock *data = Disk::getReference().getEntry(MENU_RESOURCE_ID);
 	PictureDecoder decoder;
-	_menu = decoder.decode(res, SCREEN_SIZE);
-	delete res;
+	_menu = decoder.decode(data, SCREEN_SIZE);
+	delete data;
 
 	_menus[0] = new MenuRecord(40, 87, 20, 80, "Credits");
 	_menus[1] = new MenuRecord(127, 179, 100, 120, "Restart game,Save game,Restore game");
@@ -96,58 +95,66 @@ Menu &Menu::getReference() {
 }
 
 uint8 Menu::execute() {
-	_mouse.setCursorNum(CURSOR_ARROW);
-	_system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
-	_system.updateScreen();
+	OSystem &system = System::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Events &events = Events::getReference();
+	Screen &screen = Screen::getReference();
+
+	mouse.setCursorNum(CURSOR_ARROW);
+	system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, 
+		FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
+	system.updateScreen();
 
 	_selectedMenu = NULL;
 	_surfaceMenu = NULL;
 	_selectedIndex = 0;
 
-	while (_mouse.lButton()) {
-		while (_events.pollEvent()) {
-			// handle events
-		}
+	while (mouse.lButton() || mouse.rButton()) {
+		if (events.pollEvent()) {
+			if (events.quitFlag) return MENUITEM_NONE;
 
-		if (_mouse.y() < MENUBAR_Y_SIZE)
-		{
-			MenuRecord *p = getMenuAt(_mouse.x());
+			if (mouse.y() < MENUBAR_Y_SIZE)
+			{
+				MenuRecord *p = getMenuAt(mouse.x());
 
-			if (_selectedMenu != p) {
-				// If necessary, remove prior menu
-				if (_selectedMenu) {
-					toggleHighlight(_selectedMenu);
-					_screen.updateArea(_selectedMenu->xstart(), MENUBAR_Y_SIZE,
-						_surfaceMenu->width(), _surfaceMenu->height());
-					delete _surfaceMenu;
-					_surfaceMenu = NULL;
-					_selectedIndex = 0;
-				}						
+				if (_selectedMenu != p) {
+					// If necessary, remove prior menu
+					if (_selectedMenu) {
+						toggleHighlight(_selectedMenu);
+//						screen.updateArea(_selectedMenu->xstart(), MENUBAR_Y_SIZE,
+//							_surfaceMenu->width(), _surfaceMenu->height());
+						screen.updateArea(0, MENUBAR_Y_SIZE, FULL_SCREEN_WIDTH, 
+							_surfaceMenu->height());
+						delete _surfaceMenu;
+						_surfaceMenu = NULL;
+						_selectedIndex = 0;
+					}						
 
-				_selectedMenu = p;
+					_selectedMenu = p;
 
-				// If a new menu is selected, show it
-				if (_selectedMenu) {
-					toggleHighlight(_selectedMenu);
-					_surfaceMenu = Surface::newDialog(
-						_selectedMenu->width(), _selectedMenu->numEntries(), 
-						_selectedMenu->entries(), false, MENU_UNSELECTED_COLOUR);
-					_surfaceMenu->copyToScreen(_selectedMenu->xstart(), MENUBAR_Y_SIZE);
+					// If a new menu is selected, show it
+					if (_selectedMenu) {
+						toggleHighlight(_selectedMenu);
+						_surfaceMenu = Surface::newDialog(
+							_selectedMenu->width(), _selectedMenu->numEntries(), 
+							_selectedMenu->entries(), false, MENU_UNSELECTED_COLOUR);
+						_surfaceMenu->copyToScreen(_selectedMenu->xstart(), MENUBAR_Y_SIZE);
+					}
+
+					system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, 
+						FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
+					system.updateScreen();
 				}
+			}
 
-				_system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
-				_system.updateScreen();
+			// Check for changing selected index
+			uint8 index = getIndexAt(mouse.x(), mouse.y());
+			if (index != _selectedIndex) {
+				if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
+				_selectedIndex = index;
+				if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
 			}
 		}
-
-		// Check for changing selected index
-		uint8 index = getIndexAt(_mouse.x(), _mouse.y());
-		if (index != _selectedIndex) {
-			if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
-			_selectedIndex = index;
-			if (_selectedIndex != 0) toggleHighlightItem(_selectedIndex);
-		}
-		_system.delayMillis(10);
 	}
 
 	if (_surfaceMenu) delete _surfaceMenu;
@@ -157,9 +164,9 @@ uint8 Menu::execute() {
 		toggleHighlight(_selectedMenu);
 
 	// Restore the previous screen
-	_screen.update();
+	screen.update();
 	
-	if (_selectedMenu == NULL) return MENUITEM_NONE;
+	if ((_selectedMenu == NULL) || (_selectedIndex == 0)) return MENUITEM_NONE;
 	else if (_selectedMenu == _menus[0]) return MENUITEM_CREDITS;
 	else if (_selectedMenu == _menus[1]) {
 		switch (_selectedIndex) {

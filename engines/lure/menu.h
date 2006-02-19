@@ -57,10 +57,6 @@ public:
 
 class Menu {
 private:
-	OSystem &_system;
-	Screen &_screen;
-	Events &_events;
-	Mouse &_mouse;
 	MemoryBlock *_menu;
 	MenuRecord *_menus[NUM_MENUS];
 	MenuRecord *_selectedMenu;
@@ -72,7 +68,7 @@ private:
 	void toggleHighlight(MenuRecord *menuRec);
 	void toggleHighlightItem(uint8 index);
 public:
-	Menu(OSystem &system);
+	Menu();
 	~Menu();
 	static Menu &getReference();
 	uint8 execute();
