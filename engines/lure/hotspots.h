@@ -36,12 +36,14 @@ typedef void(*HandlerMethodPtr)(Hotspot &h);
 
 class HotspotTickHandlers {
 private:
+	// Handler methods
 	static void defaultHandler(Hotspot &h);
 	static void standardAnimHandler(Hotspot &h);
 	static void roomExitAnimHandler(Hotspot &h);
 	static void playerAnimHandler(Hotspot &h);
 	static void droppingTorchAnimHandler(Hotspot &h);
 	static void fireAnimHandler(Hotspot &h);
+	static void talkAnimHandler(Hotspot &h);
 	static void headAnimationHandler(Hotspot &h);
 
 public:
@@ -55,62 +57,29 @@ private:
 	HotspotAnimData *_anim;
 	HandlerMethodPtr _tickHandler;
 	Surface *_frames;
+	uint16 _hotspotId;
+	uint16 _roomNumber;
 	int16 _startX, _startY;
 	uint16 _height, _width;
+	uint16 _heightCopy, _widthCopy;
+	int8 _talkX, _talkY;
 	uint16 _numFrames;
 	uint16 _frameNumber;
+	uint8 _layer;
+	uint16 _sequenceOffset;
 	uint16 _tickCtr;
+	uint32 _actions;
+	uint8 _colourOffset;
 	bool _persistant;
+	HotspotOverrideData *_override;
 
 	int16 _destX, _destY;
 	uint16 _destHotspotId;
-public:
-	Hotspot(HotspotData *res);
-	~Hotspot();
 
-	void setAnimation(uint16 newAnimId);
-	void setAnimation(HotspotAnimData *newRecord);
-	uint16 hotspotId() { return _data->hotspotId; }
-	Surface &frames() { return *_frames; }
-	HotspotAnimData &anim() { return *_anim; }
-	HotspotData &resource() { return *_data; }
-	uint16 numFrames() { return _numFrames; }
-	uint16 frameNumber() { return _frameNumber; }
-	void setFrameNumber(uint16 v) { _frameNumber = v; }
-	void incFrameNumber();
-	uint16 frameWidth() { return _width; }
-	int16 x() { return _startX; }
-	int16 y() { return _startY; }
-	int16 destX() { return _destX; }
-	int16 destY() { return _destY; }
-	uint16 destHotspotId() { return _destHotspotId; }
-	uint16 width() { return _width; }
-	uint16 height() { return _height; }
-	uint16 roomNumber() { return _data->roomNumber; }
-	uint16 script() { return _data->sequenceOffset; }
-	uint8 layer() { return _data->layer; }
-	uint16 tickCtr() { return _tickCtr; }
-	void setTickCtr(uint16 newVal) { _tickCtr = newVal; }
-	void setTickProc(uint16 newVal);
-	bool persistant() { return _persistant; }
-	void setPersistant(bool value) { _persistant = value; }
-	void setRoomNumber(uint16 roomNum) { _data->roomNumber = roomNum; }
-	bool isActiveAnimation();
-	void setPosition(int16 newX, int16 newY);
-	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
-	void setSize(uint16 newWidth, uint16 newHeight);
-	void setScript(uint16 offset) { _data->sequenceOffset = offset; }
-	void setActions(uint32 newActions) { _data->actions = newActions; }
-
-	void copyTo(Surface *dest);
-	bool executeScript();
-	void tick();
-	void walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot = 0, bool immediate = false);
-	void setDirection(Direction dir);
+	// Support methods
+	void startTalk(HotspotData *charHotspot);
 
 	// Action set
-	void doAction(Action action, HotspotData *hotspot);
-	bool isRoomExit(uint16 id);
 	void doGet(HotspotData *hotspot);
 	void doOperate(HotspotData *hotspot, Action action);
 	void doOpen(HotspotData *hotspot);
@@ -128,6 +97,65 @@ public:
 	void doBribe(HotspotData *hotspot);
 	void doExamine();
 	void doSimple(HotspotData *hotspot, Action action);
+public:
+	Hotspot(HotspotData *res);
+	Hotspot(Hotspot *character, uint16 objType);
+	~Hotspot();
+
+	void setAnimation(uint16 newAnimId);
+	void setAnimation(HotspotAnimData *newRecord);
+	uint16 hotspotId() { return _hotspotId; }
+	Surface &frames() { return *_frames; }
+	HotspotAnimData &anim() { return *_anim; }
+	HotspotData *resource() { return _data; }
+	uint16 numFrames() { return _numFrames; }
+	uint16 frameNumber() { return _frameNumber; }
+	void setFrameNumber(uint16 v) { _frameNumber = v; }
+	void incFrameNumber();
+	uint16 frameWidth() { return _width; }
+	int16 x() { return _startX; }
+	int16 y() { return _startY; }
+	int16 destX() { return _destX; }
+	int16 destY() { return _destY; }
+	int8 talkX() { return _talkX; }
+	int8 talkY() { return _talkY; }
+	uint16 destHotspotId() { return _destHotspotId; }
+	uint16 width() { return _width; }
+	uint16 height() { return _height; }
+	uint16 widthCopy() { return _widthCopy; }
+	uint16 heightCopy() { return _heightCopy; }
+	uint16 roomNumber() { return _roomNumber; }
+	uint16 script() { return _sequenceOffset; }
+	uint8 layer() { return _layer; }
+	uint16 tickCtr() { return _tickCtr; }
+	void setTickCtr(uint16 newVal) { _tickCtr = newVal; }
+	void setTickProc(uint16 newVal);
+	bool persistant() { return _persistant; }
+	void setPersistant(bool value) { _persistant = value; }
+	void setRoomNumber(uint16 roomNum) { 
+		_roomNumber = roomNum; 
+		if (_data) _data->roomNumber = roomNum;
+	}
+	uint16 nameId();
+	bool isActiveAnimation();
+	void setPosition(int16 newX, int16 newY);
+	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
+	void setSize(uint16 newWidth, uint16 newHeight);
+	void setScript(uint16 offset) {
+		_sequenceOffset = offset;
+		_data->sequenceOffset = offset; 
+	}
+	void setActions(uint32 newActions) { _actions = newActions; }
+
+	void copyTo(Surface *dest);
+	bool executeScript();
+	void tick();
+	void walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot = 0, bool immediate = false);
+	void setDirection(Direction dir);
+	bool isRoomExit(uint16 id);
+
+	// Action set
+	void doAction(Action action, HotspotData *hotspot);
 };
 
 typedef ManagedList<Hotspot *> HotspotList;
