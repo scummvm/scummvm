@@ -365,31 +365,31 @@ fbpack	Fatty Bear's Fun Pack
 	f06e66fd45b2f8b0f4a2833ff4476050	hb	DOS	-	-	-	sev
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
-	df047cc4792150f601290357566d36a6	en	All	-	-	-	khalek
-	d4cccb5af88f3e77f370896e9ba8c5f9	All	Windows	-	-	-	sev
-	c0039ad982999c92d0de81910d640fa0	nl	Windows	-	-	-	adutchguy
+	df047cc4792150f601290357566d36a6	en	All	HE 90	Updated	-	khalek
+	d4cccb5af88f3e77f370896e9ba8c5f9	All	Windows	HE 71	-	-	sev
+	c0039ad982999c92d0de81910d640fa0	nl	Windows	HE 71	-	-	adutchguy
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	de	Windows	HE 73	-	-	Oncer
-	e63a0b9249b5ca4cc4d3ac34305ae360	nb	Windows	-	-	-	Karl Ove Hufthammer
-	746e88c172a5b7a1ae89ac0ee3ee681a	ru	Windows	-	-	-	sev
-	507bb360688dc4180fdf0d7597352a69	se	Windows	-	-	-	Sven Arvidsson
+	e63a0b9249b5ca4cc4d3ac34305ae360	nb	Windows	HE 71	-	-	Karl Ove Hufthammer
+	746e88c172a5b7a1ae89ac0ee3ee681a	ru	Windows	HE 90	Updated	-	sev
+	507bb360688dc4180fdf0d7597352a69	se	Windows	HE 90	Updated	-	Sven Arvidsson
 
-	c8aac5e3e701874e2fa4117896f9e1b1	en	Mac	-	Demo	-	khalek, sev
-	084ed0fa98a6d1e9368d67fe9cfbd417	en	Windows	-	Demo	-	khalek
+	c8aac5e3e701874e2fa4117896f9e1b1	en	Mac	HE 73	Demo	-	khalek, sev
+	084ed0fa98a6d1e9368d67fe9cfbd417	en	Windows	HE 71	Demo	-	khalek
 	0855496dde35356b1a9691e22ba84cdc	en	Windows	HE 73	Demo	-	khalek
 	566165a7338fa11029e7c14d94fa70d0	en	Windows	HE 73	Demo	-	khalek
 	cf4ef315214c7d8cdab6302cdb7e50db	de	Windows	HE 73	Demo	-	Joachim Eberhard
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
-	51305e929e330e24a75a0351c8f9975e	en	All	HE 99	-	-	Kirben
-	8ee63cafb1fe9d62aa0d5a23117e70e7	en	All	HE 100	-	-	Kirben
-	fce4b8010704b103acfeea9413788f32	de	All	-	-	-	Joachim Eberhard
-	5057fb0e99e5aa29df1836329232f101	All	Windows	-	-	-	sev
-	ac62d50e39492ee3738b4e83a5ac780f	nl	Windows	-	-	-	joostp
-	151071053a1d0021198216713939521d	en	Windows	-	-	-	vampir_raziel
-	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	HE 100	-	-	sev
+	51305e929e330e24a75a0351c8f9975e	en	All	HE 99	Updated	-	Kirben
+	8ee63cafb1fe9d62aa0d5a23117e70e7	en	All	HE 100	Updated	-	Kirben
+	fce4b8010704b103acfeea9413788f32	de	All	HE 80	-	-	Joachim Eberhard
+	5057fb0e99e5aa29df1836329232f101	All	Windows	HE 80	-	-	sev
+	ac62d50e39492ee3738b4e83a5ac780f	nl	Windows	HE 80	-	-	joostp
+	151071053a1d0021198216713939521d	en	Windows	HE 80	-	-	vampir_raziel
+	e41de1c2a15abbcdbf9977e2d7e8a340	ru	Windows	HE 100	Updated	-	sev
 
-	d37c55388294b66e53e7ced3af88fa68	en	All	HE 100	Demo	-	khalek
-	fc8d197a22146e74766e9cb0cfcaf1da	en	All	-	Demo	-	khalek, sev
+	d37c55388294b66e53e7ced3af88fa68	en	All	HE 100	Updated Demo	-	khalek
+	fc8d197a22146e74766e9cb0cfcaf1da	en	All	HE 80	Demo	-	khalek, sev
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	8368f552b1e3eba559f8d559bcc4cadb	All	All	-	-	-	Kirben, sev
@@ -400,7 +400,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 
 	cb1559e8405d17a5a278a6b5ad9338d1	en	All	-	Demo	-	khalek, sev
 	bbadf7309c4a2c2763e4bbba3c3be634	fr	All	-	Demo	-	Kirben
-	ed2b074bc3166087a747acb2a3c6abb0	de	All	-	Demo	-	Joachim Eberhard
+	ed2b074bc3166087a747acb2a3c6abb0	de	All	HE 98.5	Demo	-	Joachim Eberhard
 	754feb59d3bf86b8a00840df74fd7b26	nl	Windows	-	Demo	-	adutchguy
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
@@ -483,9 +483,9 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	c6907d44f1166941d982864cd42cdc89	de	All	HE 99	-	-	nachbarnebenan
 	32709cbeeb3044b34129950860a83f14	ru	Windows	HE 99	-	-	sev
 
-	30ba1e825d4ad2b448143ae8df18482a	nl	All	-	Demo	-	Kirben
+	30ba1e825d4ad2b448143ae8df18482a	nl	All	HE 98.5	Demo	-	Kirben
 	36a6750e03fb505fc19fc2bf3e4dbe91	en	All	-	Demo	-	sev
-	4521138d15d1fd7649c31fb981746231	de	All	-	Demo	-	Joachim Eberhard
+	4521138d15d1fd7649c31fb981746231	de	All	HE 98.5	Demo	-	Joachim Eberhard
 
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	en	All	-	-	-	Kirben
@@ -552,7 +552,7 @@ puttputt	Putt-Putt Joins the Parade
 	37ff1b308999c4cca7319edfcc1280a0	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
-	92e7727e67f5cd979d8a1070e4eb8cb3	en	All	-	-	-	cyx
+	92e7727e67f5cd979d8a1070e4eb8cb3	en	All	HE 98.5	-	-	cyx
 	58fdf4c7ad13540a734e18f8584cad89	en	Mac	-	-	-	khalek
 	1005456bfe351c1b679e1ff2dc2849e9	All	Windows	-	-	-	khalek
 	c3b22fa4654bb580b20325ebf4174841	nl	Windows	-	-	-	joostp
@@ -568,30 +568,30 @@ PuttTime	Putt-Putt Travels Through Time
 	a525c1753c1db5011c00417da37887ef	en	All	HE 100	-	-	Kirben
 	7c980a1b1596a93f26917318884f48f7	de	All	HE 99	-	-	Joachim Eberhard
 	fcb78ebecab2757264c590890c319cc5	nl	Windows	HE 100	-	-	adutchguy
-	63fdcdc95cdeea00060883aed38e5504	en	Windows	-	-	-	iziku
+	63fdcdc95cdeea00060883aed38e5504	en	Windows	HE 80	-	-	iziku
 	d4aac997e2f4e15341f0bfbf905419bd	en	Windows	HE 99	-	-	eriktorbjorn
-	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	-	-	-	oncer
+	84e3c23a49ded8a6f9197735c8eb3de7	de	Windows	HE 80	-	-	oncer
 	defb8cb9ec4b0f91acfb6b61c6129ad9	ru	Windows	HE 99	-	-	sev
 
 	0ab19be9e2a3f6938226638b2a3744fe	en	All	HE 100	Demo	-	khalek
-	4e5867848ee61bc30d157e2c94eee9b4	en	All	-	Demo	-	khalek, sev
-	59d5cfcc5e672a6e07baae01328b918b	fr	All	-	Demo	-	Kirben
-	fbb697d89d2beca87360a145f467bdae	de	All	-	Demo	-	Joachim Eberhard
-	6b19d0e25cbf720d05822379b8b90ed9	nl	Windows	-	Demo	-	adutchguy
+	4e5867848ee61bc30d157e2c94eee9b4	en	All	HE 90	Demo	-	khalek, sev
+	59d5cfcc5e672a6e07baae01328b918b	fr	All	HE 90	Demo	-	Kirben
+	fbb697d89d2beca87360a145f467bdae	de	All	HE 90	Demo	-	Joachim Eberhard
+	6b19d0e25cbf720d05822379b8b90ed9	nl	Windows	HE 90	Demo	-	adutchguy
 
 balloon	Putt-Putt and Pep's Balloon-O-Rama
-	08cc5c3eedaf72ebe12734eee94f7fa2	en	All	-	-	-	Kirben
-	8e3241ddd6c8dadf64305e8740d45e13	en	All	HE 100	-	-	Kirben
-	d7b247c26bf1f01f8f7daf142be84de3	en	Windows	HE 99	-	-	iziku
-	145bd3373574feb668cc2eea2ec6cf86	ru	Windows	-	-	-	sev
-	2232b0b9411575b1f9961713ebc9de61	es	Windows	-	-	-	exiltd
+	08cc5c3eedaf72ebe12734eee94f7fa2	en	All	HE 80	-	-	Kirben
+	8e3241ddd6c8dadf64305e8740d45e13	en	All	HE 100	Updated	-	Kirben
+	d7b247c26bf1f01f8f7daf142be84de3	en	Windows	HE 99	Updated	-	iziku
+	145bd3373574feb668cc2eea2ec6cf86	ru	Windows	HE 80	-	-	sev
+	2232b0b9411575b1f9961713ebc9de61	es	Windows	HE 80	-	-	exiltd
 
 dog	Putt-Putt and Pep's Dog on a Stick
 	eae95b2b3546d8ba86ae1d397c383253	en	All	-	-	-	Kirben
 	d4b8ee426b1afd3e53bc0cf020418cf6	en	Windows	HE 99	-	-	sev
 
 activity	Putt-Putt & Fatty Bear's Activity Pack
-	b628506f7def772e40de0aa5440fb8e1	en	Windows	-	-	-	
+	b628506f7def772e40de0aa5440fb8e1	en	Windows	HE 70	-	-	
 
 funpack	Putt-Putt's Fun Pack
 	8afb3cf9f95abf208358e984f0c9e738	en	3DO	-	-	-	sev
@@ -607,7 +607,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	58436e634f4fae1d9973591c2ffa1fcb	en	All	HE 99	-	-	Joachim Eberhard
 	a28135a7ade38cc0208b04507c46efd1	de	All	HE 99	-	-	nachbarnebenan
 	6bf70eee5de3d24d2403e0dd3d267e8a	All	Windows	-	-	-	khalek
-	9bda5fee51d2fda5253d02c642016bf4	nl	Windows	-	-	-	joostp
+	9bda5fee51d2fda5253d02c642016bf4	nl	Windows	HE 98.5	-	-	joostp
 	72ac6bc980d5101c2142189d746bd62f	ru	Windows	HE 99	-	-	sev
 
 	53e94115b55dd51d4b8ff0871aa1df1e	en	All	-	Demo	-	khalek, sev
@@ -615,7 +615,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	fbdd947d21e8f5bac6d6f7a316af1c5a	en	All	-	Demo	-	sev
 	ba888e6831517597859e91aa173f945c	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	de	All	-	Demo	-	Joachim Eberhard
-	4edbf9d03550f7ba01e7f34d69b678dd	nl	Windows	-	Demo	-	Kirben
+	4edbf9d03550f7ba01e7f34d69b678dd	nl	Windows	HE 98.5	Demo	-	Kirben
 
 spyfox2	SPY Fox 2: Some Assembly Required
 	f79e60c17cca601e411f1f75e8ee9b5a	All	All	-	-	-	Kirben
@@ -635,9 +635,9 @@ spyozon	SPY Fox 3: Operation Ozone
 	ebd0b2c8a387f18887282afe6cad894a	en	All	-	Demo	-	Kirben
 
 chase	SPY Fox in Cheese Chase
-	589601b676c98b1c0c987bc031ab68b3	en	All	-	-	-	Kirben
-	90c755e1c9b9b8a4129d37b2259d0655	en	All	HE 100	-	-	Kirben
-	9cdd327c1034c046cb595d251c44da2f	ru	Windows	-	-	-	sev
+	589601b676c98b1c0c987bc031ab68b3	en	All	HE 95	-	-	Kirben
+	90c755e1c9b9b8a4129d37b2259d0655	en	All	HE 100	Updated	-	Kirben
+	9cdd327c1034c046cb595d251c44da2f	ru	Windows	HE 95	-	-	sev
 
 mustard	SPY Fox in Hold the Mustard
 	225e18566e810c634bf7de63e7568e3e	en	All	-	-	-	Kirben
