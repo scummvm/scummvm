@@ -41,7 +41,7 @@ void PictureDecoder::writeByte(MemoryBlock *dest, byte v) {
 void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
 	if (outputOffset + numBytes > dest->size()) 
 		error("Decoded data exceeded allocated output buffer size");
-	dest->memorySet(v, outputOffset, numBytes);
+	dest->setBytes(v, outputOffset, numBytes);
 	outputOffset += numBytes;
 }
 
