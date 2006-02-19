@@ -300,7 +300,8 @@ bool DriverSDL::pollEvent(Event &event) {
 
 	while(SDL_PollEvent(&ev)) {
 
-		if ((ev.key.keysym.sym == SDLK_RETURN ||
+		if (ev.type == SDL_KEYDOWN &&
+		    (ev.key.keysym.sym == SDLK_RETURN ||
 		     ev.key.keysym.sym == SDLK_KP_ENTER) &&
 		    (ev.key.keysym.mod & KMOD_ALT)) {
 			toggleFullscreenMode();
