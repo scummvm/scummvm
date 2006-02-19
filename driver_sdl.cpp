@@ -281,7 +281,7 @@ bool DriverSDL::controlIsAxis(int num) {
 	return num >= SDLK_AXIS_JOY1_X && num <= SDLK_AXIS_MOUSE_Z;
 }
 
-int DriverSDL::getControlAxis(int num) {
+float DriverSDL::getControlAxis(int num) {
 	return 0;
 }
 

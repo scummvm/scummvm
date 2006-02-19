@@ -41,7 +41,7 @@ public:
 	const ControlDescriptor *listControls();
 	int getNumControls();
 	bool controlIsAxis(int num);
-	int getControlAxis(int num);
+	float getControlAxis(int num);
 	bool getControlState(int num);
 	bool pollEvent(Event &event);
 	uint32 getMillis();

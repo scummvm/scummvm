@@ -190,9 +190,9 @@ public:
 	virtual bool controlIsAxis(int num) = 0;
 
 	/**
-	 * Read the current value of an axis control
+	 * Read the current value of an axis control (-1.0 .. 1.0)
 	 */
-	virtual int getControlAxis(int num) = 0;
+	virtual float getControlAxis(int num) = 0;
 
 	/**
 	 * Read the current state of a non-axis control
