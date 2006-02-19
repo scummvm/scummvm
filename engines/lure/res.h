@@ -32,10 +32,17 @@
 
 namespace Lure {
 
+enum TalkState {TALK_NONE, TALK_SELECT, TALK_RESPOND, TALK_RESPONSE_WAIT,
+	TALK_RESPOND_2};
+
+#define MAX_TALK_SELECTIONS 4
+typedef TalkEntryData *TalkSelections[MAX_TALK_SELECTIONS];
+
 class Resources {
 private:
 	Common::RandomSource _rnd;
 	Palette *_paletteSubset;
+	MemoryBlock *_cursors;
 	RoomDataList _roomData;
 	HotspotDataList _hotspotData;
 	HotspotOverrideList _hotspotOverrides;
@@ -48,7 +55,18 @@ private:
 	HotspotList _activeHotspots;
 	ValueTableData _fieldList;
 	HotspotActionSet _actionsList;
+	TalkHeaderList _talkHeaders;
+	TalkDataList _talkData;
 	SequenceDelayList _delayList;
+	Action _currentAction;
+	MemoryBlock *_talkDialogData;
+
+	TalkData *_activeTalkData;
+	TalkState _talkState;
+	TalkSelections _talkSelections;
+	int _talkSelection;
+	int _talkStartEntry;
+	uint16 _talkingCharacter;
 
 	void freeData();
 public:
@@ -60,8 +78,12 @@ public:
 	byte *getResource(uint16 resId);
 	RoomDataList &roomData() { return _roomData; }
 	RoomData *getRoom(uint16 roomNumber);
+	bool checkHotspotExtent(HotspotData *hotspot);
 	void insertPaletteSubset(Palette &p);
 
+	byte *getCursor(uint8 cursorNum) { 
+		return _cursors->data() + (cursorNum * CURSOR_SIZE);
+	}
 	HotspotDataList &hotspotData() { return _hotspotData; }
 	HotspotOverrideList &hotspotOverrides() { return _hotspotOverrides; }
 	HotspotAnimList &animRecords() { return _animData; }
@@ -79,14 +101,33 @@ public:
 	RoomExitJoinData *getExitJoin(uint16 hotspotId);
 	uint16 getHotspotAction(uint16 actionsOffset, Action action);
 	HotspotActionList *getHotspotActions(uint16 actionsOffset);
+	TalkHeaderData *getTalkHeader(uint16 hotspotId);
 	ValueTableData &fieldList() { return _fieldList; }
 	SequenceDelayList &delayList() { return _delayList; }
+	MemoryBlock &getTalkDialogData() { return *_talkDialogData; }
+	void copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y);
+
 	uint16 numInventoryItems();
-	
+	void setTalkData(uint16 offset);
+	TalkData *getTalkData() { return _activeTalkData; }
+	void setTalkState(TalkState state) { _talkState = state; }
+	TalkState getTalkState() { return _talkState; }
+	TalkSelections &getTalkSelections() { return _talkSelections; }	
+	void setTalkSelection(int index) { _talkSelection = index; }
+	int getTalkSelection() { return _talkSelection; }
+	void setTalkStartEntry(int index) { _talkStartEntry = index; }
+	int getTalkStartEntry() { return _talkStartEntry; }
+	uint16 getTalkingCharacter() { return _talkingCharacter; }
+	void setTalkingCharacter(uint16 id);
+
+	void setCurrentAction(Action action) { _currentAction = action; }
+	Action getCurrentAction() { return _currentAction; }
+	const char *getCurrentActionStr() { return actionList[_currentAction]; }
+
 	void activateHotspot(uint16 hotspotId);
 	Hotspot *addHotspot(uint16 hotspotId);
-	void deactivateHotspot(uint16 hotspotId);
-
+	void addHotspot(Hotspot *hotspot);
+	void deactivateHotspot(uint16 hotspotId, bool isDestId = false);
 };
 
 } // End of namespace Lure

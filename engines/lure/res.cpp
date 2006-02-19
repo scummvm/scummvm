@@ -57,6 +57,7 @@ void Resources::freeData() {
 	delete _script2Data;
 	delete _hotspotScriptData;
 	delete _messagesData;
+	delete _cursors;
 }
 
 struct AnimRecordTemp {
@@ -68,6 +69,7 @@ void Resources::reloadData() {
 	Disk &d = Disk::getReference();
 	MemoryBlock *mb;
 	uint16 *offset, offsetVal;
+	uint16 recordId;
 	int ctr;
 
 	// Get the palette subset data
@@ -107,7 +109,7 @@ void Resources::reloadData() {
 		if (offsetVal != 0) {
 			RoomData *room = getRoom(ctr);
 			if (room) {
-				RoomExitHotspotRecord *re = (RoomExitHotspotRecord *) 
+				RoomExitHotspotResource *re = (RoomExitHotspotResource *) 
 					(mb->data() + offsetVal);
 				while (READ_LE_UINT16(&re->hotspotId) != 0xffff) {
 					RoomExitHotspotData *newEntry = new RoomExitHotspotData(re);
@@ -122,7 +124,7 @@ void Resources::reloadData() {
 
 	// Load room joins
 	mb = d.getEntry(ROOM_EXIT_JOINS_RESOURCE_ID);
-	RoomExitJoinRecord *joinRec = (RoomExitJoinRecord *) mb->data();
+	RoomExitJoinResource *joinRec = (RoomExitJoinResource *) mb->data();
 	while (READ_LE_UINT16(&joinRec->hotspot1Id) != 0xffff) {
 		RoomExitJoinData *newEntry = new RoomExitJoinData(joinRec);
 		_exitJoins.push_back(newEntry);
@@ -194,7 +196,6 @@ void Resources::reloadData() {
 	// Handle the hotspot action lists
 	mb = d.getEntry(ACTION_LIST_RESOURCE_ID);
 	uint16 *v = (uint16 *) mb->data();
-	uint16 recordId;
 	while ((recordId = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
 		offsetVal = READ_LE_UINT16(v);
@@ -206,12 +207,62 @@ void Resources::reloadData() {
 	}
 	delete mb;
 
+	// Read in the talk data header
+	mb = d.getEntry(TALK_HEADER_RESOURCE_ID);
+	TalkHeaderResource *thHeader = (TalkHeaderResource *) mb->data();
+	uint16 hotspotId;
+	while ((hotspotId = FROM_LE_16(thHeader->hotspotId)) != 0xffff) {
+		uint16 *offsets = (uint16 *) (mb->data() + FROM_LE_16(thHeader->offset));
+		TalkHeaderData *newEntry = new TalkHeaderData(hotspotId, offsets);
+
+		_talkHeaders.push_back(newEntry);
+		++thHeader;
+	}
+	delete mb;
+
+	// Read in the talk data entries
+	mb = d.getEntry(TALK_DATA_RESOURCE_ID);
+	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *) mb->data();
+
+	while ((recordId = FROM_LE_16(tdHeader->recordId)) != 0xffff) {
+		TalkData *data = new TalkData(recordId);
+
+		TalkDataResource *entry = (TalkDataResource *) (mb->data() +
+			FROM_LE_16(tdHeader->listOffset));
+		while (FROM_LE_16(entry->preSequenceId) != 0xffff) {
+			TalkEntryData *newEntry = new TalkEntryData(entry);
+			data->entries.push_back(newEntry);
+			++entry;
+		}
+
+		entry = (TalkDataResource *) (mb->data() +
+			FROM_LE_16(tdHeader->responsesOffset));
+		while (FROM_LE_16(entry->preSequenceId) != 0xffff) {
+			TalkEntryData *newEntry = new TalkEntryData(entry);
+			data->responses.push_back(newEntry);
+			++entry;
+		}
+
+		_talkData.push_back(data);
+		++tdHeader;
+	}
+	delete mb;
+
+	// Initialise delay list
 	_delayList.clear();
 
 	// Load miscellaneous data
+	_cursors = d.getEntry(CURSOR_RESOURCE_ID);
 	_scriptData = d.getEntry(SCRIPT_DATA_RESOURCE_ID);
 	_script2Data = d.getEntry(SCRIPT2_DATA_RESOURCE_ID);
 	_messagesData = d.getEntry(MESSAGES_LIST_RESOURCE_ID);
+	_talkDialogData = d.getEntry(TALK_DIALOG_RESOURCE_ID);
+
+	_activeTalkData = NULL;
+	_currentAction = NONE;
+	_talkState = TALK_NONE;
+	_talkSelection = 0;
+	_talkStartEntry = 0;
 }
 
 RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
@@ -240,6 +291,14 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 	}
 
 	return NULL;
+}
+
+bool Resources::checkHotspotExtent(HotspotData *hotspot) {
+	uint16 roomNum = hotspot->roomNumber;
+	RoomData *room = getRoom(roomNum);
+	
+	return (hotspot->startX >= room->clippingXStart) && ((room->clippingXEnd == 0) || 
+			(hotspot->startX + 32 < room->clippingXEnd));
 }
 
 void Resources::insertPaletteSubset(Palette &p) {
@@ -298,8 +357,34 @@ uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 	return list->getActionOffset(action);
 }
 
+TalkHeaderData *Resources::getTalkHeader(uint16 hotspotId) {
+	TalkHeaderList::iterator i;
+	for (i = _talkHeaders.begin(); i != _talkHeaders.end(); ++i) {
+		TalkHeaderData *rec = *i;
+		if (rec->characterId == hotspotId) return rec;
+	}
+	return NULL;
+}
+
 HotspotActionList *Resources::getHotspotActions(uint16 actionsOffset) {
 	return _actionsList.getActions(actionsOffset);
+}
+
+void Resources::setTalkingCharacter(uint16 id) { 
+	if (_talkingCharacter != 0)
+		deactivateHotspot(_talkingCharacter, true);
+
+	_talkingCharacter = id; 
+	
+	if (_talkingCharacter != 0) {
+		Hotspot *character = getActiveHotspot(id);
+		if (!character)
+			error("Set talking character to non-active hotspot id");
+
+		// Add the special "voice" animation above the character
+		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_ID);
+		addHotspot(hotspot);
+	}
 }
 
 void Resources::activateHotspot(uint16 hotspotId) {
@@ -372,15 +457,22 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 	return hotspot;
 }
 
-void Resources::deactivateHotspot(uint16 hotspotId) {
+void Resources::addHotspot(Hotspot *hotspot) {
+	_activeHotspots.push_back(hotspot);
+}
+
+void Resources::deactivateHotspot(uint16 hotspotId, bool isDestId) {
 	HotspotList::iterator i = _activeHotspots.begin();
 
 	while (i != _activeHotspots.end()) {
 		Hotspot *h = *i;
-		if (h->hotspotId() == hotspotId) 
-			i = _activeHotspots.erase(i);
-		else 
-			i++;
+		if ((!isDestId && (h->hotspotId() == hotspotId)) ||
+			(isDestId && (h->destHotspotId() == hotspotId) && (h->hotspotId() == 0xffff))) {
+			_activeHotspots.erase(i);
+			break;
+		}
+		
+		i++;
 	}
 }
 
@@ -394,6 +486,38 @@ uint16 Resources::numInventoryItems() {
 	}
 
 	return numItems;
+}
+
+void Resources::copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y) {
+	byte *pSrc = getCursor(cursorNum);
+	byte *pDest = s->data().data() + (y * FULL_SCREEN_WIDTH) + x;
+
+	for (int yP = 0; yP < CURSOR_HEIGHT; ++yP) {
+		for (int xP = 0; xP < CURSOR_WIDTH; ++xP) {
+			if (*pSrc != 0) *pDest = *pSrc;
+			++pSrc;
+			++pDest;
+		}
+		pDest += FULL_SCREEN_WIDTH - CURSOR_WIDTH;
+	}
+}
+
+void Resources::setTalkData(uint16 offset) {
+	if (offset == 0) {
+		_activeTalkData = NULL;
+		return;
+	}
+
+	TalkDataList::iterator i;
+	for (i = _talkData.begin(); i != _talkData.end(); ++i) {
+		TalkData *rec = *i;
+		if (rec->recordId == offset) {
+			_activeTalkData = rec;
+			return;
+		}
+	}
+
+	error("Unknown talk entry offset %d requested", offset);
 }
 
 } // end of namespace Lure
