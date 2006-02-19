@@ -81,7 +81,7 @@ enum Action {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 1
+#define LURE_DAT_MINOR 3
 
 // Some resources include multiple packed palettes of 64 entries each
 #define SUB_PALETTE_SIZE 64
@@ -104,12 +104,13 @@ enum Action {
 #define CURSOR_WIDTH 16
 #define CURSOR_HEIGHT 16
 #define CURSOR_SIZE 256
-#define  CURSOR_RESOURCE_ID 1
+#define CURSOR_RESOURCE_ID 1
 #define CURSOR_ARROW 0
 #define CURSOR_DISK 1
 #define CURSOR_TIME_START 2
 #define CURSOR_TIME_END 9
 #define CURSOR_CROSS 10
+#define CURSOR_TALK 16
 #define CURSOR_MENUBAR 17
 
 // Font details
@@ -119,6 +120,7 @@ enum Action {
 #define FONT_HEIGHT 8
 
 // Menu constants
+#define MENU_RESOURCE_ID 5
 #define MENUBAR_SELECTED_COLOUR 0xf7
 #define MENU_UNSELECTED_COLOUR 0xe2
 #define MENU_SELECTED_COLOUR 0xe3
@@ -141,6 +143,9 @@ enum Action {
 #define INFO_DIALOG_X 69
 #define INFO_DIALOG_Y 61
 #define INFO_DIALOG_WIDTH 191
+#define TALK_DIALOG_WIDTH 128
+#define TALK_DIALOG_EDGE_SIZE 3
+#define TALK_DIALOG_Y 33
 
 // Strings defines
 #define STRINGS_RESOURCE_ID 0x10
@@ -153,17 +158,20 @@ enum Action {
 #define GAME_PALETTE_RESOURCE_ID 0x3f01
 #define ALT_PALETTE_RESOURCE_ID 0x3f02
 #define DIALOG_RESOURCE_ID 0x3f03
-#define ROOM_DATA_RESOURCE_ID 0x3f04
-#define HOTSPOT_DATA_RESOURCE_ID 0x3f05
-#define HOTSPOT_OVERRIDE_DATA_RESOURCE_ID 0x3f06
-#define ROOM_EXITS_RESOURCE_ID 0x3f07
-#define ROOM_EXIT_JOINS_RESOURCE_ID 0x3f08
-#define ANIM_DATA_RESOURCE_ID 0x3f09
-#define SCRIPT_DATA_RESOURCE_ID 0x3f0a
-#define SCRIPT2_DATA_RESOURCE_ID 0x3f0b
-#define HOTSPOT_SCRIPT_LIST_RESOURCE_ID 0x3f0c
-#define	MESSAGES_LIST_RESOURCE_ID 0x3f0d
-#define ACTION_LIST_RESOURCE_ID 0x3f0e
+#define TALK_DIALOG_RESOURCE_ID 0x3f04
+#define ROOM_DATA_RESOURCE_ID 0x3f05
+#define HOTSPOT_DATA_RESOURCE_ID 0x3f06
+#define HOTSPOT_OVERRIDE_DATA_RESOURCE_ID 0x3f07
+#define ROOM_EXITS_RESOURCE_ID 0x3f08
+#define ROOM_EXIT_JOINS_RESOURCE_ID 0x3f09
+#define ANIM_DATA_RESOURCE_ID 0x3f0a
+#define SCRIPT_DATA_RESOURCE_ID 0x3f0b
+#define SCRIPT2_DATA_RESOURCE_ID 0x3f0c
+#define HOTSPOT_SCRIPT_LIST_RESOURCE_ID 0x3f0d
+#define	MESSAGES_LIST_RESOURCE_ID 0x3f0e
+#define ACTION_LIST_RESOURCE_ID 0x3f0f
+#define TALK_HEADER_RESOURCE_ID 0x3f10
+#define TALK_DATA_RESOURCE_ID 0x3f11
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
@@ -173,10 +181,27 @@ enum Action {
 #define NAMES_RESOURCE_ID 9
 #define PLAYER_ID 0x3E8
 #define RATPOUCH_ID 0x3E9
+#define SKORL_ID 0x3EA
+#define SACK_ID 0x40D
+#define TRANSFORM_ID 0x425
+
 #define START_NONVISUAL_HOTSPOT_ID 0x7530
 
 // Milliseconds delay between game frames
 #define GAME_FRAME_DELAY 100
+
+// Tick proc constants
+#define TALK_TICK_PROC_ID 0x8ABD
+#define PLAYER_TICK_PROC_ID 0x5E44
+#define VOICE_TICK_PROC_ID 0x625E
+
+// String constants
+#define STRANGER_ID 0x17A
+#define TALK_MAGIC_ID 0x424
+#define TALK_RESPONSE_MAGIC_ID 0x1092
+
+// Misc constants
+#define VOICE_ANIM_ID 0x5810
 
 } // End of namespace Lure
 
