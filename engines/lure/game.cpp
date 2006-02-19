@@ -80,7 +80,7 @@ void Game::execute() {
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Screen &screen = Screen::getReference();
-	Menu &menu = Menu::getReference();
+	//Menu &menu = Menu::getReference();
 	ValueTableData &fields = res.fieldList();
 
 	uint32 timerVal = system.getMillis();
