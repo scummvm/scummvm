@@ -154,8 +154,8 @@ find_sdlconfig()
 	
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
 	for path_dir in $_sdlpath; do
-                #reset separator to parse sdlconfigs
-                IFS=":"
+		#reset separator to parse sdlconfigs
+		IFS=":"
 		for sdlconfig in $sdlconfigs; do
 			if test -x "$path_dir/$sdlconfig" ; then
 				_sdlconfig="$path_dir/$sdlconfig"
@@ -518,11 +518,11 @@ esac
 #
 case $_host_os in
 os2-emx* )
-        SEPARATOR=";"
-        ;;
+	SEPARATOR=";"
+	;;
 * )
-        SEPARATOR=":"
-        ;;
+	SEPARATOR=":"
+	;;
 esac
 
 #
@@ -769,9 +769,9 @@ else
 			LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
 			OBJS="$OBJS scummvmico.o"
 			;;
-                os2-emx*)
-                        DEFINES="$DEFINES -DUNIX"
-                        ;;
+		os2-emx*)
+			DEFINES="$DEFINES -DUNIX"
+			;;
 		# given this is a shell script assume some type of unix
 		*)
 			echo "WARNING: could not establish system type, assuming unix like"
