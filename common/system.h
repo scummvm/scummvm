@@ -896,8 +896,13 @@ public:
 
 	/**
 	 * Set a window caption or any other comparable status display to the
-	 * given value.
-	 * @param caption	the window caption to use from now on
+	 * given value. The caption must be a pure ASCII string. Passing a
+	 * non-ASCII string may lead to unexpected behavior, even crashes.
+	 *
+	 * In a future revision of this API, this may be changed to allowing
+	 * UTF-8 or UTF-16 encoded data, or maybe ISO LATIN 1.
+	 *
+	 * @param caption	the window caption to use, as an ASCII string
 	 */
 	virtual void setWindowCaption(const char *caption) {}
 
