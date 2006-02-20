@@ -71,7 +71,9 @@ static const int s_gfxModeSwitchTable[][4] = {
 		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
 	};
 
+#ifndef DISABLE_SCALERS
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
+#endif
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
