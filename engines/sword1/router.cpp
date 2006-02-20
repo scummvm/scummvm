@@ -290,13 +290,7 @@ int32 Router::SmoothestPath()
 	int32	dSD;
 	int32	dDS;
 	int32	dDD;
-	int32	SS;
-	int32	SD;
-	int32	DS;
-	int32	DD;
 	int32	i;
-	int32	j;
-	int32	temp;
 	int32	steps;
 	int32	option;
 	int32	options;
@@ -305,7 +299,7 @@ int32 Router::SmoothestPath()
 	int32 nextDirD;
 	int32 tempturns[4];
 	int32 turns[4];
-	int32 turntable[NO_DIRECTIONS] = {0,1,3,5,7,5,3,1};
+	int32 turntable[NO_DIRECTIONS] = { 0, 1, 3, 5, 7, 5, 3, 1 };
 
 //	targetDir;// no warnings
 
@@ -360,48 +354,30 @@ int32 Router::SmoothestPath()
 		dDS = turntable[dDS];
 		// get the best path out ie assume next section uses best direction
 		if (dSD < dSS)
-		{
 			dSS = dSD;
-		}
 		if (dDS < dDD)
-		{
 			dDD = dDS;
-		}
-		// rate each option
-		SS = dS + dSS + 3;		// Split routes look crap so weight against them
-		SD = dS + dDD;
-		DS = dD + dSS;
-		DD = dD + dDD + 3;
-		// set up turns as a sorted	array of the turn values
-		tempturns[0] = SS;
+
+		// Rate each option. Split routes look crap so weight against
+		// them
+		tempturns[0] = dS + dSS + 3;
 		turns[0] = 0;
-		tempturns[1] = SD;
+		tempturns[1] = dS + dDD;
 		turns[1] = 1;
-		tempturns[2] = DS;
+		tempturns[2] = dD + dSS;
 		turns[2] = 2;
-		tempturns[3] = DD;
+		tempturns[3] = dD + dDD + 3;
 		turns[3] = 3;
-		i = 0;
-		do
-		{
-			j = 0;
-			do
-			{
-				if (tempturns[j] > tempturns[j + 1])
-				{
-					temp = turns[j];
-					turns[j] = turns[j+1];
-					turns[j+1] = temp;
-					temp = tempturns[j];
-					tempturns[j] = tempturns[j+1];
-					tempturns[j+1] = temp;
+
+		// set up turns as a sorted	array of the turn values
+		for (i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (tempturns[j] > tempturns[j + 1]) {
+					SWAP(turns[j], turns[j + 1]);
+					SWAP(tempturns[j], tempturns[j + 1]);
 				}
-				j = j + 1;
 			}
-			while (j < 3);
-			i = i + 1;
 		}
-		while (i < 3);
 
 		// best option matched in order of the priority we would like to see on the screen
 		// but each option must be checked to see if it can be walked

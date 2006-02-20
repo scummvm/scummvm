@@ -435,22 +435,16 @@ int32 Router::smoothestPath() {
 
 		// Rate each option. Split routes look crap so weight against
 		// them
-
-		int32 SS = dS + dSS + 3;
-		int32 SD = dS + dDD;
-		int32 DS = dD + dSS;
-		int32 DD = dD + dDD + 3;
+		tempturns[0] = dS + dSS + 3;
+		turns[0] = 0;
+		tempturns[1] = dS + dDD;
+		turns[1] = 1;
+		tempturns[2] = dD + dSS;
+		turns[2] = 2;
+		tempturns[3] = dD + dDD + 3;
+		turns[3] = 3;
 
 		// set up turns as a sorted array of the turn values
-
-		tempturns[0] = SS;
-		turns[0] = 0;
-		tempturns[1] = SD;
-		turns[1] = 1;
-		tempturns[2] = DS;
-		turns[2] = 2;
-		tempturns[3] = DD;
-		turns[3] = 3;
 
 		for (i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
