@@ -320,6 +320,24 @@ enum ResTypes {
 	rtNumTypes = 22
 };
 
+/**
+ * Descriptor of a specific SCUMM game. Used internally to store
+ * information about the tons of game variants that exist.
+ */
+struct ScummGameSettings {
+	const char *gameid;
+	const char *extra;
+	byte id, version, heversion;
+	int midi; // MidiDriverFlags values
+	uint32 features;
+	Common::Platform platform;
+
+};
+
+/**
+ * The 'resource manager' class. Currently doesn't really deserve to be called
+ * a 'class', at least until somebody gets around to OOfying this more.
+ */
 class ResourceManager {
 	friend class ScummDebugger;
 	friend class ScummEngine;
@@ -371,6 +389,9 @@ protected:
 	bool validateResource(const char *str, int type, int index) const;
 };
 
+/**
+ * Base class for all SCUMM engines.
+ */
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class SmushPlayer;

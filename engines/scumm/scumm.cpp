@@ -181,20 +181,10 @@ static const char *findDescriptionFromGameID(const char *gameid) {
 	error("Unknown gameid encountered in findDescriptionFromGameID");
 }
 
-struct ScummGameSettings {
-	const char *gameid;
-	const char *extra;
-	byte id, version, heversion;
-	int midi; // MidiDriverFlags values
-	uint32 features;
-	Common::Platform platform;
-
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, findDescriptionFromGameID(gameid) };
-		return dummy;
-	}
-};
-
+GameSettings toGameSettings(const ScummGameSettings &g) {
+	GameSettings dummy = { g.gameid, findDescriptionFromGameID(g.gameid) };
+	return dummy;
+}
 
 enum {
 	// We only compute the MD5 of the first megabyte of our data files.
@@ -3351,23 +3341,23 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							if (substLastIndex > 0 && // HE Mac versions.
 								(substResFileNameTable[substLastIndex].genMethod == kGenMac ||
 								 substResFileNameTable[substLastIndex].genMethod == kGenMacNoParens)) {
-								detectedGames.push_back(DetectedGame(g->toGameSettings(),
+								detectedGames.push_back(DetectedGame(toGameSettings(*g),
 																	 Common::UNK_LANG,
 																	 Common::kPlatformMacintosh));
 								fileSet[file->path()] = true;
 							} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
 									   (buf[0] == 0xbc || buf[0] == 0xa0)) {
-								detectedGames.push_back(DetectedGame(g->toGameSettings(),
+								detectedGames.push_back(DetectedGame(toGameSettings(*g),
 																	 Common::UNK_LANG,
 																	 Common::kPlatformNES));
 							} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
 									   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
 										(buf[0] == 0xcd && buf[1] == 0xfe))) {
-								detectedGames.push_back(DetectedGame(g->toGameSettings(),
+								detectedGames.push_back(DetectedGame(toGameSettings(*g),
 																	 Common::UNK_LANG,
 																	 Common::kPlatformC64));
 							} else {
-								detectedGames.push_back(g->toGameSettings());
+								detectedGames.push_back(toGameSettings(*g));
 								fileSet[file->path()] = false;
 							}
 							break;
@@ -3409,9 +3399,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				assert(g->gameid);
 				// Insert the 'enhanced' game data into the candidate list
 				if (iter->_value == true) // This was HE Mac game
-					detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, Common::kPlatformMacintosh));
+					detectedGames.push_back(DetectedGame(toGameSettings(*g), elem->language, Common::kPlatformMacintosh));
 				else
-					detectedGames.push_back(DetectedGame(g->toGameSettings(), elem->language, elem->platform));
+					detectedGames.push_back(DetectedGame(toGameSettings(*g), elem->language, elem->platform));
 				exactMatch = true;
 			}
 		}
@@ -3587,9 +3577,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	g = multiple_versions_md5_settings;
 	while (g->gameid) {
 		if (!scumm_stricmp(md5, g->gameid)) {
-			// Match found
+			// Match found. Copy the data and ensure that we use the correct
+			// gameid (since we abused that field to store the MD5).
 			game = *g;
-			game.gameid = gameid;	// FIXME: Fingolfin wonders what this line is good for?
+			game.gameid = gameid;
 			if (game.extra) {
 				Common::String desc(findDescriptionFromGameID(gameid));
 				desc += " (";
