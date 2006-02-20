@@ -2273,7 +2273,19 @@ void ScummEngine_v72he::o72_setSystemMessage() {
 		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 243: // Set Window Caption
-		_system->setWindowCaption((const char *)name);
+		// TODO: The 'name' string can contain non-ASCII data. This can lead to
+		// problems, because (a) the encoding used for "name" is not clear,
+		// (b) OSystem::setWindowCaption only supports ASCII. As a result, odd
+		// behavior can occur, from strange wrong titles, up to crashes (happens
+		// under Mac OS X).
+		//
+		// Possible fixes/workarounds: 
+		// - Simply stop using this. It's a rather unimportant "feature" anyway.
+		// - Try to translate the text to ASCII.
+		// - Refine OSystem to accept window captions that are non-ASCII, e.g.
+		//   by enhancing all backends to deal with UTF-8 data. Of course, then
+		//   one still would have to convert 'name' to the correct encoding.
+		//_system->setWindowCaption((const char *)name);
 		break;
 	default:
 		error("o72_setSystemMessage: default case %d", subOp);
