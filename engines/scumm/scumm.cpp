@@ -511,13 +511,13 @@ static const ScummGameSettings extra_versions[] = {
 	// targets and no user visible differences to the current behavior.
 
 
-	{"fbear", 0,         GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
-	{"fbear", "Windows", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"fbear", "HE 61", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
+	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 #ifndef DISABLE_HE
 
-	{"water", 0,         GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"water", "Updated", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"water", "HE 80", GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"water", "HE 99", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 
 	{"puttrace", "HE 98",   GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -525,9 +525,9 @@ static const ScummGameSettings extra_versions[] = {
 	{"puttrace", "HE 99",   GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 
-	{"puttputt", "Russian",        GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformWindows},
-	{"puttputt", "Demo",           GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,  GF_USE_KEY, Common::kPlatformPC},
-	{"puttputt", "Macintosh Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,  GF_USE_KEY, Common::kPlatformMacintosh},
+	{"puttputt", "HE 61", GID_HEGAME,   6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
+	{"puttputt", "HE 60", GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformWindows},
+	{"puttputt", "Demo",  GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 
 	{"freddi4", "Unencrypted Russian", GID_HEGAME, 6, 98, MDT_NONE, GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},

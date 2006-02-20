@@ -350,15 +350,15 @@ BluesABCTimeDemo	Blue's ABC Time
 	810a9da887aefa597b0cf3c77d262897	en	All	-	Demo	-	sev
 
 fbear	Fatty Bear's Birthday Surprise
-	5b08000a9c47b2887df6506ac767ca68	en	3DO	-	-	-	sev
-	3824e60cdf639d22f6df92a03dc4b131	en	DOS	-	-	-	khalek
-	ef74d9071d4e564b037cb44bd6774de7	hb	DOS	-	-	-	sev
-	3df6ead57930488bc61e6e41901d0e97	en	Mac	-	-	-	khalek
-	179879b6e35c1ead0d93aab26db0951b	en	Windows	-	-	-	khalek
+	5b08000a9c47b2887df6506ac767ca68	en	3DO	HE 61	-	-	sev
+	3824e60cdf639d22f6df92a03dc4b131	en	DOS	HE 61	-	-	khalek
+	ef74d9071d4e564b037cb44bd6774de7	hb	DOS	HE 61	-	-	sev
+	3df6ead57930488bc61e6e41901d0e97	en	Mac	HE 61	-	-	khalek
+	179879b6e35c1ead0d93aab26db0951b	en	Windows	HE 70	-	-	khalek
 
-	47e75b1bdcb44c78cb94883d1731ccf8	en	DOS	-	Demo	-	khalek
-	6df20c50c1ab19799de9be7ae7716881	en	Mac	-	Demo	-	khalek
-	22c9eb04455440131ffc157aeb8d40a8	en	Windows	-	Demo	-	khalek
+	47e75b1bdcb44c78cb94883d1731ccf8	en	DOS	HE 61	Demo	-	khalek
+	6df20c50c1ab19799de9be7ae7716881	en	Mac	HE 61	Demo	-	khalek
+	22c9eb04455440131ffc157aeb8d40a8	en	Windows	HE 70	Demo	-	khalek
 
 fbpack	Fatty Bear's Fun Pack
 	e01acc8c12ef44e8f778fe87e5f90f4e	en	3DO	-	-	-	sev
@@ -428,17 +428,17 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
 	45082a5c9f42ba14dacfe1fdeeba819d	en	All	-	Demo	-	sev
 
 maze	Freddi Fish and Luther's Maze Madness
-	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	HE 100	-	-	Kirben
-	4f04b321a95d4315ce6d65f8e1dd0368	en	All	-	-	-	Kirben
+	4dbff3787aedcd96b0b325f2d92d7ad9	en	All	HE 100	Updated	-	Kirben
+	4f04b321a95d4315ce6d65f8e1dd0368	en	All	HE 80	-	-	Kirben
 
 water	Freddi Fish and Luther's Water Worries
-	4ba37f835be11a59d969f90f272f575b	en	All	-	-	-	Kirben
-	f1b0e0d587b85052de5534a3847e68fe	en	All	-	-	-	Joachim Eberhard
-	2012f854d83d9cc6f73b2b544cd8bbf8	ru	Windows	-	-	-	sev
-	6271130f440066830eca9056c1d7926f	ru	Windows	-	-	-	sev
+	4ba37f835be11a59d969f90f272f575b	en	All	HE 80	-	-	Kirben
+	f1b0e0d587b85052de5534a3847e68fe	en	All	HE 99	Updated	-	Joachim Eberhard
+	2012f854d83d9cc6f73b2b544cd8bbf8	ru	Windows	HE 80	-	-	sev
+	6271130f440066830eca9056c1d7926f	ru	Windows	HE 80	-	-	sev
 
 FreddisFunShop	Freddi Fish's One-Stop Fun Shop
-	16542a7342a918bfe4ba512007d36c47	en	All	-	-	-	Kirben
+	16542a7342a918bfe4ba512007d36c47	en	All	HE 99L	-	-	Kirben
 
 catalog	Humongous Interactive Catalog
 	037385a953789190298494d92b89b3d0	en	Windows	HE 72	Demo	-	khalek, sev
@@ -510,8 +510,8 @@ SamsFunShop	Pajama Sam's One-Stop Fun Shop
 	68155a6bf082221525f431c2cbdac8ab	en	All	-	-	-	Kirben
 
 socks	Pajama Sam's Sock Works
-	5e8fb66971a60e523e5afbc4c129c0e8	en	All	-	-	-	Kirben
-	19263586f749a560c1adf8b3393a9593	ru	Windows	-	-	-	sev
+	5e8fb66971a60e523e5afbc4c129c0e8	en	All	HE 80	-	-	Kirben
+	19263586f749a560c1adf8b3393a9593	ru	Windows	HE 80	-	-	sev
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	en	All	HE 98	-	-	Kirben
@@ -540,15 +540,15 @@ puttcircus	Putt-Putt Joins the Circus
 	a7cacad9c40c4dc9e1812abf6c8af9d5	en	All	-	Demo	-	Kirben, sev
 
 puttputt	Putt-Putt Joins the Parade
-	7e151c17adf624f1966c8fc5827c95e9	en	3DO	-	-	-	khalek
-	9708cf716ed8bcc9ff3fcfc69413b746	en	DOS	-	-	-	khalek
-	e361a7058ed8e8ebb462663c0a3ae8d6	hb	DOS	-	-	-	sev
-	0b3222aaa7efcf283eb621e0cefd26cc	ru	DOS	-	-	-	sev
-	684732efb5799c0f78804c99d8de9aba	en	Mac	-	-	-	khalek
+	7e151c17adf624f1966c8fc5827c95e9	en	3DO	HE 61	-	-	khalek
+	9708cf716ed8bcc9ff3fcfc69413b746	en	DOS	HE 61	-	-	khalek
+	e361a7058ed8e8ebb462663c0a3ae8d6	hb	DOS	HE 61	-	-	sev
+	0b3222aaa7efcf283eb621e0cefd26cc	ru	DOS	HE 60	-	-	sev
+	684732efb5799c0f78804c99d8de9aba	en	Mac	HE 61	-	-	khalek
 	6a30a07f353a75cdc602db27d73e1b42	en	Windows	HE 70	-	-	khalek
 
-	31aa57f460a3d12429f0552a46a90b39	en	DOS	-	Demo	-	
-	f40a7f495f59188ca57a9d1d50301bb6	en	Mac	-	Demo	-	khalek
+	31aa57f460a3d12429f0552a46a90b39	en	DOS	Demo	Demo	-	
+	f40a7f495f59188ca57a9d1d50301bb6	en	Mac	Demo	Demo	-	khalek
 	37ff1b308999c4cca7319edfcc1280a0	en	Windows	HE 70	Demo	-	khalek
 
 puttzoo	Putt-Putt Saves the Zoo
