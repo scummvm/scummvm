@@ -24,7 +24,8 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/scaler.h"
+
+#include "graphics/scaler.h"
 
 #include "gui/about.h"
 #include "gui/chooser.h"

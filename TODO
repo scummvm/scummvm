@@ -112,9 +112,6 @@ General
   reachable :-)
 * Some source files should be moved. But that's a pain with CVS, so let's
   wait until we switch to something better, like Subversion. In particular:
-  - common/scaler* stuff should either be moved to graphics/, or maybe
-    to backends/ (while it is portable code, it's something to be used by
-    the backends only)
   - consider moving the MIDI stuff from sound/ to sound/midi/ 
   - move fmopl code to softsynth dir
   - move fonts to graphics/fonts/ dir

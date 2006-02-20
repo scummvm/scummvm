@@ -21,8 +21,8 @@
  *
  */
 
-#include "common/scaler/intern.h"
-#include "common/scaler/scalebit.h"
+#include "graphics/scaler/intern.h"
+#include "graphics/scaler/scalebit.h"
 #include "common/util.h"
 
 

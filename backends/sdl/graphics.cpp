@@ -22,10 +22,10 @@
  */
 
 #include "backends/sdl/sdl-common.h"
-#include "common/scaler.h"
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/scaler.h"
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
