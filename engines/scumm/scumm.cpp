@@ -530,10 +530,10 @@ static const ScummGameSettings extra_versions[] = {
 	{"water", "Updated", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 
-	{"puttrace", "German",             GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // ToffRennen
-	{"puttrace", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"puttrace", "German Demo",        GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Rennen
-	{"puttrace", "UK Demo",            GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	{"puttrace", "German",             GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ToffRennen
+	{"puttrace", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"puttrace", "German Demo",        GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Rennen
+	{"puttrace", "UK Demo",            GID_PUTTRACE, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"puttrace", "Dutch Demo",         GID_PUTTRACE, 6, 98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
 
@@ -757,15 +757,15 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 
 	{"055ffe4f47753e47594ac67823220c54", "German", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // ToffRennen
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ToffRennen
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Dutch Demo", GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
 	{"aaa587701cde7e74692c68c1024b85eb", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"663743c03ae0c007f3d665cf631c0e6b", "German Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Rennen
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Rennen
 	{"7c8100e360e8ef05f88069d4cfa0afd1", "UK Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"9c92eeaf517a31b7221ec2546ab669fd", "Windows", GID_HEGAME, 6, 70, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
