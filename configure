@@ -291,6 +291,7 @@ Special configuration feature:
 
 Optional Features:
   --disable-debug          disable building with debugging symbols
+  --enable-Werror          treat warnings as errors
   --disable-scumm          don't build the SCUMM engine
   --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
   --disable-he             exclude HE70+ games in SCUMM engine
@@ -443,6 +444,9 @@ for ac_option in $@; do
         ;;
       --disable-debug)
         DEBFLAGS=""
+        ;;
+      --enable-Werror)
+        CXXFLAGS="$CXXFLAGS -Werror"
         ;;
       --enable-release)
         DEBFLAGS="-O2"
