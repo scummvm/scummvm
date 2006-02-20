@@ -13,42 +13,42 @@ MODULE_OBJS := \
 	debugger.o \
 	dialogs.o \
 	gfx.o \
-	imuse.o \
-	imuse_player.o \
-	input.o \
-	instrument.o \
+	he/script_v60he.o \
+	he/sound_he.o \
 	help.o \
-	midiparser_ro.o \
+	imuse/imuse_player.o \
+	imuse/imuse.o \
+	imuse/instrument.o \
+	input.o \
 	midiparser_eup.o \
+	midiparser_ro.o \
 	object.o \
 	palette.o \
 	player_mod.o \
-	player_v1.o \
 	player_nes.o \
+	player_v1.o \
 	player_v2.o \
 	player_v2a.o \
 	player_v3a.o \
-	resource.o \
 	resource_v2.o \
 	resource_v3.o \
 	resource_v4.o \
+	resource.o \
 	room.o \
 	saveload.o \
-	script.o \
 	script_c64.o \
 	script_v2.o \
 	script_v5.o \
 	script_v6.o \
-	he/script_v60he.o \
+	script.o \
 	scumm.o \
 	sound.o \
-	he/sound_he.o \
 	string.o \
+	thumbnail.o \
 	usage_bits.o \
 	util.o \
 	vars.o \
-	verbs.o \
-	thumbnail.o
+	verbs.o
 
 ifndef DISABLE_SCUMM_7_8
 MODULE_OBJS += \
@@ -95,6 +95,8 @@ endif
 
 MODULE_DIRS += \
 	engines/scumm \
+	engines/scumm/he \
+	engines/scumm/imuse \
 	engines/scumm/imuse_digi \
 	engines/scumm/insane \
 	engines/scumm/smush

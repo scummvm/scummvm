@@ -25,7 +25,7 @@
 #include "common/util.h"
 #include "base/engine.h"
 
-#include "scumm/imuse_internal.h"
+#include "scumm/imuse/imuse_internal.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 

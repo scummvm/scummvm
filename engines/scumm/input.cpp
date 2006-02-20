@@ -32,7 +32,7 @@
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #ifndef DISABLE_HE
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"

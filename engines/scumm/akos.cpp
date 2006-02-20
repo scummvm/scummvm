@@ -26,7 +26,7 @@
 #include "scumm/actor.h"
 #include "scumm/akos.h"
 #include "scumm/bomp.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/he/intern_he.h"

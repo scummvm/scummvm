@@ -31,7 +31,7 @@
 #include "scumm/actor.h"
 #include "scumm/sound.h"
 
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 
 #include "scumm/smush/smush_player.h"

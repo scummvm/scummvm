@@ -23,7 +23,7 @@
 
 #include "common/stdafx.h"
 #include "scumm/actor.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"

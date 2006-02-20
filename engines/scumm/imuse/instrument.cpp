@@ -23,7 +23,7 @@
 #include "common/stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
-#include "scumm/instrument.h"
+#include "scumm/imuse/instrument.h"
 #include "sound/mididrv.h"
 
 namespace Scumm {

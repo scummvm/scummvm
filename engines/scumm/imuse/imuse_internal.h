@@ -24,7 +24,7 @@
 #define DEFINED_IMUSE_INTERNAL
 
 #include "common/scummsys.h"
-#include "scumm/instrument.h"
+#include "scumm/imuse/instrument.h"
 #include "scumm/saveload.h"
 #include "sound/mididrv.h"
 

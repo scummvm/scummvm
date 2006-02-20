@@ -27,7 +27,7 @@
 #include "scumm/smush/channel.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 
 #include "sound/mixer.h"
 

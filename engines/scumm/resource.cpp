@@ -26,7 +26,7 @@
 
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #ifndef DISABLE_HE

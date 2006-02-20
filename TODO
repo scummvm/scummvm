@@ -115,7 +115,6 @@ General
   - consider moving the MIDI stuff from sound/ to sound/midi/ 
   - move fmopl code to softsynth dir
   - maybe common/system.h / system.cpp should go to backends/, too ?
-  - move the iMuse source files in scumm/ to a new dir scumm/imuse/
 * The following things should be put into namespaces:
   - AudioStream and subclasses into Audio
   - MIDI related classes either to Audio, or a new "MIDI" namespace

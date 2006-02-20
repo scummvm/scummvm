@@ -30,7 +30,7 @@
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
 #include "scumm/debugger.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/object.h"
 #include "scumm/player_v2.h"
 #include "scumm/scumm.h"

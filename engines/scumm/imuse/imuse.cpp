@@ -28,9 +28,9 @@
 #include "common/util.h"
 #include "common/system.h"
 
-#include "scumm/imuse.h"
-#include "scumm/imuse_internal.h"
-#include "scumm/instrument.h"
+#include "scumm/imuse/imuse.h"
+#include "scumm/imuse/imuse_internal.h"
+#include "scumm/imuse/instrument.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"

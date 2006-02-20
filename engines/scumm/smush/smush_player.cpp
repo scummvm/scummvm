@@ -32,7 +32,7 @@
 
 #include "scumm/bomp.h"
 #include "scumm/imuse_digi/dimuse.h"
-#include "scumm/imuse.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/smush/channel.h"
