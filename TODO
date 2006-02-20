@@ -114,7 +114,6 @@ General
   wait until we switch to something better, like Subversion. In particular:
   - consider moving the MIDI stuff from sound/ to sound/midi/ 
   - move fmopl code to softsynth dir
-  - move fonts to graphics/fonts/ dir
   - maybe common/system.h / system.cpp should go to backends/, too ?
   - move the iMuse source files in scumm/ to a new dir scumm/imuse/
 * The following things should be put into namespaces:

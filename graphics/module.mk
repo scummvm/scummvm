@@ -2,18 +2,18 @@ MODULE := graphics
 
 MODULE_OBJS := \
 	animation.o \
-	consolefont.o \
 	font.o \
 	fontman.o \
+	fonts/consolefont.o \
+	fonts/newfont_big.o \
+	fonts/newfont.o \
+	fonts/scummfont.o \
 	ilbm.o \
 	imagedec.o \
 	imageman.o \
-	newfont_big.o \
-	newfont.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail.o \
-	scummfont.o \
 	surface.o
 
 ifndef DISABLE_SCALERS
@@ -41,6 +41,7 @@ endif
 
 MODULE_DIRS += \
 	graphics \
+	graphics/fonts \
 	graphics/scaler
 
 # Include common rules 
