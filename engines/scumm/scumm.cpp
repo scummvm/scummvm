@@ -452,53 +452,79 @@ static const ScummGameSettings scumm_settings[] = {
 // the purpose of this particular table is to replace multiple_versions_md5_settings, 
 // and maybe also scumm_settings. 
 static const ScummGameSettings extra_versions[] = {
-#ifndef PALMOS_68K
-	{"comi", "",     GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformWindows},
-	{"comi", "Demo", GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
-
-	{"dig", "",     GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
-	{"dig", "Demo", GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, 0},
-
-	{"ft", "",     GID_FT, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, 0},
-	{"ft", "Demo", GID_FT, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, 0},
-
-	{"indy3", "EGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
-	{"indy3", "No Adlib", GID_INDY3, 3, 0, MDT_PCSPK,             GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
-	{"indy3", "VGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"indy3", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,             GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-
-	{"loom", "EGA",      GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
-	{"loom", "No Adlib", GID_LOOM, 3, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, 0},
-	{"loom", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"loom", "VGA",      GID_LOOM, 4, 0, MDT_NONE,                         GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-
-
-	// The C64 version of MM is detected & special-cased via the platform field and hence has no seperate entry in this list
-	{"maniac", "",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	// The C64 version of MM is detected via the platform field and hence has no seperate entry in this list
+	{"maniac", "",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"maniac", "NES", GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformNES},
 	{"maniac", "V1",  GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR | GF_OLD_BUNDLE | GF_NO_SCALING, Common::kPlatformPC},
 
+	// The C64 version of Zak is detected via the platform field and hence has no seperate entry in this list
+	{"zak", "",         GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+
+	{"indy3", "EGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"indy3", "No Adlib", GID_INDY3, 3, 0, MDT_PCSPK,             GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"indy3", "VGA",      GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
+	{"indy3", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,             GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+
+	{"loom", "EGA",      GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"loom", "No Adlib", GID_LOOM, 3, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"loom", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,                        GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	{"loom", "VGA",      GID_LOOM, 4, 0, MDT_NONE,                         GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
+
+	{"pass", 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 
 	{"monkey", "VGA",      GID_MONKEY_VGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_USE_KEY, Common::kPlatformPC},
 	{"monkey", "EGA",      GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
 	{"monkey", "No Adlib", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,                        GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
 	{"monkey", "Demo",     GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,            GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"monkey", "CD",       GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, 0},
-	{"monkey", "CD",       GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, 0},
+	{"monkey", "CD",       GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, UNK},
+	{"monkey", "CD",       GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, UNK},
 	{"monkey", "FM-TOWNS", GID_MONKEY,     5, 0, MDT_ADLIB, GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 	{"monkey", "SEGA",     GID_MONKEY,     5, 0, MDT_NONE,  GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSegaCD},
 
 
-	// The C64 version of Zak is detected & special-cased via the platform field and hence has no seperate entry in this list
-	{"zak", "",         GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
+	/* Scumm Version 5 */
+	{"monkey2", 0, GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
 
+	{"atlantis", 0, GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+
+
+	/* Scumm Version 6 */
+	{"tentacle", 0, GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+
+	{"samnmax", 0, GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+
+
+#ifndef DISABLE_SCUMM_7_8
+	/* Scumm Version 7 */
+	{"ft", "",     GID_FT, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, UNK},
+	{"ft", "Demo", GID_FT, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, UNK},
+
+	{"dig", "",     GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, UNK},
+	{"dig", "Demo", GID_DIG, 7, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, UNK},
+
+	/* Scumm Version 8 */
+	{"comi", "",     GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformWindows},
+	{"comi", "Demo", GID_CMI, 8, 0, MDT_NONE, GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
+#endif
+
+
+	// TODO: Maybe the HE games (at least those which are using GID_HEGAME) should
+	// be using a seperate table: Most of them in the existing scumm_settings table
+	// could be realized by mapping to one of "HE NNN" entries found at the end
+	// of this table. This would both slightly reduce the executable's size as
+	// well as simplify maintanance.
+	// To do this, we could add an "alias" table that maps a game ID to another
+	// game/variant ID, but *only* internally (for purposes of setting up the
+	// version/heversion/features etc). In particular, no auto-upgrading of
+	// targets and no user visible differences to the current behavior.
 
 
 	{"fbear", 0,         GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"fbear", "Windows", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
+#ifndef DISABLE_HE
 
 	{"water", 0,         GID_WATER, 6, 80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"water", "Updated", GID_WATER, 6, 99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -532,19 +558,19 @@ static const ScummGameSettings extra_versions[] = {
 
 
 	// The following are meant to be generic HE game variants and as such do not specify a game ID
-	{"", "HE 70",   GID_HEGAME, 6,  70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 71",   GID_HEGAME, 6,  71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 72",   GID_HEGAME, 6,  72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 73",   GID_HEGAME, 6,  73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 80",   GID_HEGAME, 6,  80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 90",   GID_HEGAME, 6,  90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 95",   GID_HEGAME, 6,  95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 98",   GID_HEGAME, 6,  98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 98.5", GID_HEGAME, 6,  98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, 0},
-	{"", "HE 99",   GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
-	{"", "HE 100",  GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, 0},
+	{"", "HE 70",   GID_HEGAME, 6,  70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 71",   GID_HEGAME, 6,  71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 72",   GID_HEGAME, 6,  72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 73",   GID_HEGAME, 6,  73, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 80",   GID_HEGAME, 6,  80, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 90",   GID_HEGAME, 6,  90, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 95",   GID_HEGAME, 6,  95, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 98",   GID_HEGAME, 6,  98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 98.5", GID_HEGAME, 6,  98, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, UNK},
+	{"", "HE 99",   GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
+	{"", "HE 100",  GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 #endif
-	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, Common::kPlatformUnknown}
+	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, UNK}
 };
 #endif
 
