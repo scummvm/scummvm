@@ -43,10 +43,10 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const
 
 	_numStrips = numStrips;
 
-	if (_vm->_version == 1) {
+	if (_vm->_game.version == 1) {
 		_xmove = 0;
 		_ymove = 0;
-	} else if (_vm->_features & GF_OLD_BUNDLE) {
+	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
 		_xmove = -72;
 		_ymove = -100;
 	} else {

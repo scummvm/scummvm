@@ -134,11 +134,11 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 }
 
 void ScummEngine::updateCursor() {
-	const int transColor = (_heversion >= 80) ? 5 : 255;
+	const int transColor = (_game.heversion >= 80) ? 5 : 255;
 	_system->setMouseCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
-							(_platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
-							(_heversion == 70 ? 2 : 1));
+							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
+							(_game.heversion == 70 ? 2 : 1));
 }
 
 void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
@@ -230,18 +230,18 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	findObjectInRoom(&foir, foCodeHeader | foImageHeader | foCheckAlreadyLoaded, img, room);
 	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), foir.obim);
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		setCursorHotspot(READ_LE_UINT32(&imhd->v8.hotspot[0].x),
 		                  READ_LE_UINT32(&imhd->v8.hotspot[0].y));
 		w = READ_LE_UINT32(&imhd->v8.width) / 8;
 		h = READ_LE_UINT32(&imhd->v8.height) / 8;
-	} else if (_version == 7) {
+	} else if (_game.version == 7) {
 		setCursorHotspot(READ_LE_UINT16(&imhd->v7.hotspot[0].x),
 		                  READ_LE_UINT16(&imhd->v7.hotspot[0].y));
 		w = READ_LE_UINT16(&imhd->v7.width) / 8;
 		h = READ_LE_UINT16(&imhd->v7.height) / 8;
 	} else {
-		if (_heversion == 0) {
+		if (_game.heversion == 0) {
 			setCursorHotspot(READ_LE_UINT16(&imhd->old.hotspot[0].x),
 		        	          READ_LE_UINT16(&imhd->old.hotspot[0].y));
 		}
@@ -251,7 +251,7 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 
 	dataptr = getObjectImage(foir.obim, imgindex);
 	assert(dataptr);
-	if (_version == 8) {
+	if (_game.version == 8) {
 		bomp = dataptr;
 	} else {
 		size = READ_BE_UINT32(dataptr + 4);
@@ -326,7 +326,7 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	_cursor.animate = 0;
 
 	// Skip the header
-	if (_version == 8) {
+	if (_game.version == 8) {
 		im += 16;
 	} else {
 		im += 18;
@@ -338,7 +338,7 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 
 void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	// Cursor image in both Looms are based on images from charset.
-	if (_gameId != GID_LOOM) {
+	if (_game.id != GID_LOOM) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
 		error("V3--V5 SO_CURSOR_IMAGE(%d,%d) called - tell Fingolfin where you saw this!", index, chr);
@@ -348,9 +348,9 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 
 //	const int oldID = _charset->getCurID();
 
-	if (_version == 3) {
+	if (_game.version == 3) {
 		_charset->setCurID(0);
-	} else if (_version >= 4) {
+	} else if (_game.version >= 4) {
 		_charset->setCurID(1);
 	}
 
@@ -382,7 +382,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 
 void ScummEngine_v5::redefineBuiltinCursorHotspot(int index, int x, int y) {
 	// Cursor image in both Looms are based on images from charset.
-	if (_gameId != GID_LOOM) {
+	if (_game.id != GID_LOOM) {
 		// FIXME: Actually: is this opcode ever called by a non-Loom game?
 		// Which V3-V5 game besides Loom makes use of custom cursors, ever?
 		error("V3--V5 SO_CURSOR_HOTSPOT(%d,%d,%d) called - tell Fingolfin where you saw this!", index, x, y);
@@ -400,12 +400,12 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	if (_version == 1)
+	if (_game.version == 1)
 		color = default_v1_cursor_colors[idx];
 	else
 		color = default_cursor_colors[idx];
 
-	if (_platform == Common::kPlatformNES) {
+	if (_game.platform == Common::kPlatformNES) {
 		_cursor.width = 8;
 		_cursor.height = 8;
 		_cursor.hotspotX = 0;
@@ -422,7 +422,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				*dst++ = palette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | ((idx == 3) ? 4 : 0)];
 		}
 
-	} else if (_version <= 2 && _platform == Common::kPlatformAmiga) {
+	} else if (_game.version <= 2 && _game.platform == Common::kPlatformAmiga) {
 		_cursor.width = 15;
 		_cursor.height = 15;
 		_cursor.hotspotX = 7;
@@ -451,7 +451,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			*(hotspot - _cursor.width * (3 + i) + i) = color;
 			*(hotspot + _cursor.width * (3 + i) + i) = color;
 		}
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		_cursor.width = 23;
 		_cursor.height = 21;
 		_cursor.hotspotX = 11;

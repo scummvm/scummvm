@@ -413,7 +413,7 @@ void ScummEngine_v5::o5_actorOps() {
 	int i, j;
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
-		if (_features & GF_SMALL_HEADER)
+		if (_game.features & GF_SMALL_HEADER)
 			_opcode = (_opcode & 0xE0) | convertTable[(_opcode & 0x1F) - 1];
 
 		switch (_opcode & 0x1F) {
@@ -500,7 +500,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->_width = getVarOrDirectByte(PARAM_1);
 			break;
 		case 17:		// SO_ACTOR_SCALE
-			if (_version == 4) {
+			if (_game.version == 4) {
 				i = j = getVarOrDirectByte(PARAM_1);
 			} else {
 				i = getVarOrDirectByte(PARAM_1);
@@ -545,7 +545,7 @@ void ScummEngine_v5::o5_setClass() {
 		if (newClass == 0) {
 			// Class '0' means: clean all class data
 			_classData[obj] = 0;
-			if ((_features & GF_SMALL_HEADER) && obj <= _numActors) {
+			if ((_game.features & GF_SMALL_HEADER) && obj <= _numActors) {
 				Actor *a = derefActor(obj, "o5_setClass");
 				a->_ignoreBoxes = false;
 				a->_forceClip = 0;
@@ -564,7 +564,7 @@ void ScummEngine_v5::o5_add() {
 	// understand the reasoning behind this, compare script 210 and 218 in
 	// room 20. Apparently they made a mistake when converting the absolute
 	// delays into relative ones.
-	if (_gameId == GID_LOOM && _version == 4 && vm.slot[_currentScript].number == 210 && _currentRoom == 20 && _resultVarNumber == 0x4000) {
+	if (_game.id == GID_LOOM && _game.version == 4 && vm.slot[_currentScript].number == 210 && _currentRoom == 20 && _resultVarNumber == 0x4000) {
 		switch (a) {
 		// Fix for the Var[250] == 11 case
 		case 138:
@@ -605,7 +605,7 @@ void ScummEngine_v5::o5_animateActor() {
 
 	// WORKAROUND bug #820357: This seems to be yet another script bug which
 	// the original engine let slip by. For details, refer to the tracker item.
-	if (_gameId == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
+	if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
 		return;
 	}
 
@@ -635,7 +635,7 @@ void ScummEngine_v5::o5_chainScript() {
 	// called via chainScript by script 32, and in there Local[5] is defined
 	// to the  actor ID of the opposing soldier. So, we copy that value over
 	// to the Local[5] variable of script 33.
-	if (_gameId == GID_INDY3 && vm.slot[cur].number == 32 && script == 33) {
+	if (_game.id == GID_INDY3 && vm.slot[cur].number == 32 && script == 33) {
 		vars[5] = vm.localvar[cur][5];
 	}
 
@@ -700,7 +700,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		initCharset(getVarOrDirectByte(PARAM_1));
 		break;
 	case 14:											/* unk */
-		if (_version == 3) {
+		if (_game.version == 3) {
 			/*int a = */ getVarOrDirectByte(PARAM_1);
 			/*int b = */ getVarOrDirectByte(PARAM_2);
 			// This is some kind of "init charset" opcode. However, we don't have to do anything
@@ -714,7 +714,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 		break;
 	}
 
-	if (_version >= 4) {
+	if (_game.version >= 4) {
 		VAR(VAR_CURSORSTATE) = _cursor.state;
 		VAR(VAR_USERPUT) = _userPut;
 	}
@@ -811,7 +811,7 @@ void ScummEngine_v5::o5_drawObject() {
 	xpos = ypos = 255;
 	obj = getVarOrDirectWord(PARAM_1);
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		xpos = getVarOrDirectWord(PARAM_2);
 		ypos = getVarOrDirectWord(PARAM_3);
 	} else {
@@ -1053,7 +1053,7 @@ void ScummEngine_v5::o5_getActorRoom() {
 	// WORKAROUND bug #746349. This is a really odd bug in either the script
 	// or in our script engine. Might be a good idea to investigate this
 	// further by e.g. looking at the FOA engine a bit closer.
-	if (_gameId == GID_INDY4 && _roomResource == 94 && vm.slot[_currentScript].number == 206 && !isValidActor(act)) {
+	if (_game.id == GID_INDY4 && _roomResource == 94 && vm.slot[_currentScript].number == 206 && !isValidActor(act)) {
 		setResult(0);
 		return;
 	}
@@ -1066,7 +1066,7 @@ void ScummEngine_v5::o5_getActorScale() {
 	Actor *a;
 
 	// INDY3 uses this opcode for waitForActor
-	if (_gameId == GID_INDY3) {
+	if (_game.id == GID_INDY3) {
 		const byte *oldaddr = _scriptPointer - 1;
 		a = derefActor(getVarOrDirectByte(PARAM_1), "o5_getActorScale (wait)");
 		if (a->_moving) {
@@ -1100,7 +1100,7 @@ void ScummEngine_v5::o5_getActorX() {
 	int a;
 	getResultPos();
 
-	if ((_gameId == GID_INDY3) && !(_platform == Common::kPlatformMacintosh))
+	if ((_game.id == GID_INDY3) && !(_game.platform == Common::kPlatformMacintosh))
 		a = getVarOrDirectByte(PARAM_1);
 	else
 		a = getVarOrDirectWord(PARAM_1);
@@ -1112,7 +1112,7 @@ void ScummEngine_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if ((_gameId == GID_INDY3) && !(_platform == Common::kPlatformMacintosh)) {
+	if ((_game.id == GID_INDY3) && !(_game.platform == Common::kPlatformMacintosh)) {
 		a = getVarOrDirectByte(PARAM_1);
 
 		// WORKAROUND bug #636433 (can't get into Zeppelin)
@@ -1132,14 +1132,14 @@ void ScummEngine_v5::o5_saveLoadGame() {
 	byte slot = (a & 0x1F) + 1;
 	byte result = 0;
 
-	if ((_gameId == GID_MANIAC) && (_version == 1)) {
+	if ((_game.id == GID_MANIAC) && (_game.version == 1)) {
 		// Convert older load/save screen
 		// 1 Load
 		// 2 Save
 		slot = 1;
 		if (a == 1)
 			_opcode = 0x40;
-		else if ((a == 2) || (_platform == Common::kPlatformNES))
+		else if ((a == 2) || (_game.platform == Common::kPlatformNES))
 			_opcode = 0x80;
 	} else {
 		_opcode = a & 0xE0;
@@ -1150,7 +1150,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 		result = 100;
 		break;
 	case 0x20: // drive
-		if (_gameId == GID_INDY3) {
+		if (_game.id == GID_INDY3) {
 			// 0 = hard drive
 			// 1 = disk drive
 			result = 0;
@@ -1190,7 +1190,7 @@ void ScummEngine_v5::o5_saveLoadGame() {
 }
 
 void ScummEngine_v5::o5_getAnimCounter() {
-	if (_version == 3) {
+	if (_game.version == 3) {
 		o5_saveLoadGame();
 		return;
 	}
@@ -1239,11 +1239,11 @@ void ScummEngine_v5::o5_getDist() {
 
 	// FIXME: MI2 race workaround, see bug #597022. We never quite figured out
 	// what the real cause of this, or if it maybe occurs in the original, too...
-	if (_gameId == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60)
+	if (_game.id == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60)
 		r = 60;
 
 	// WORKAROUND bug #795937
-	if ((_gameId == GID_MONKEY_EGA || _gameId == GID_PASS) && o1 == 1 && o2 == 307  && vm.slot[_currentScript].number == 205 && r == 2)
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_PASS) && o1 == 1 && o2 == 307  && vm.slot[_currentScript].number == 205 && r == 2)
 		r = 3;
 
 	setResult(r);
@@ -1260,7 +1260,7 @@ void ScummEngine_v5::o5_getObjectOwner() {
 }
 
 void ScummEngine_v5::o5_getObjectState() {
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		o5_ifState();
 	} else {
 		getResultPos();
@@ -1350,7 +1350,7 @@ void ScummEngine_v5::o5_isEqual() {
 	int16 a, b;
 	int var;
 
-	if (_version <= 2)
+	if (_game.version <= 2)
 		var = fetchScriptByte();
 	else
 		var = fetchScriptWord();
@@ -1362,12 +1362,12 @@ void ScummEngine_v5::o5_isEqual() {
 	// other sound effect (the bartender spitting) which is only played on
 	// type 3 soundcards.
 
-	if (_gameId == GID_MONKEY2 && var == VAR_SOUNDCARD && b == 5)
+	if (_game.id == GID_MONKEY2 && var == VAR_SOUNDCARD && b == 5)
 		b = a;
 
 	// HACK: To allow demo script of Maniac Mansion V2
 	// The camera x position is only 100, instead of 180, after game title name scrolls.
-	if (_gameId == GID_MANIAC && _version == 2 && _demoMode && isScriptRunning(173) && b == 180)
+	if (_game.id == GID_MANIAC && _game.version == 2 && _demoMode && isScriptRunning(173) && b == 180)
 		b = 100;
 
 	if (b == a)
@@ -1409,7 +1409,7 @@ void ScummEngine_v5::o5_lessOrEqual() {
 	int16 b = getVarOrDirectWord(PARAM_1);
 
 	// WORKAROUND bug #820507 : Work around a bug in Indy3Town.
-	if (_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns) &&
+	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) &&
 	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
 	    _currentRoom == 70 && b == -256) {
 		o5_jumpRelative();
@@ -1482,7 +1482,7 @@ void ScummEngine_v5::o5_loadRoom() {
 
 	if (!_copyProtection) {
 		// Skip copy protection scheme
-		if (_gameId == GID_INDY3 && (_features & GF_OLD_BUNDLE) && room == 92) {
+		if (_game.id == GID_INDY3 && (_game.features & GF_OLD_BUNDLE) && room == 92) {
 			VAR(57) = 1;
 			return;
 		}
@@ -1491,7 +1491,7 @@ void ScummEngine_v5::o5_loadRoom() {
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
 	// and others. OTOH, it seems to cause a problem in newer games.
-	if (!(_features & GF_SMALL_HEADER) || room != _currentRoom)
+	if (!(_game.features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, 0, 0);
 
 	_fullRedraw = true;
@@ -1518,7 +1518,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 	startScene(a->_room, a, obj);
 	VAR(VAR_WALKTO_OBJ) = 0;
 
-	if (_version <= 4) {
+	if (_game.version <= 4) {
 		if (whereIsObject(obj) != WIO_ROOM)
 			error("o5_loadRoomWithEgo: Object %d is not in room %d", obj, _currentRoom);
 		if (!_egoPositioned) {
@@ -1544,7 +1544,7 @@ void ScummEngine_v5::o5_loadRoomWithEgo() {
 void ScummEngine_v5::o5_matrixOps() {
 	int a, b;
 
-	if (_version == 3) {
+	if (_game.version == 3) {
 		a = getVarOrDirectByte(PARAM_1);
 		b = fetchScriptByte();
 		setBoxFlags(a, b);
@@ -1606,7 +1606,7 @@ void ScummEngine_v5::o5_panCameraTo() {
 
 void ScummEngine_v5::o5_pickupObject() {
 	int obj, room;
-	if (_version == 3 || _version == 4) {
+	if (_game.version == 3 || _game.version == 4) {
 		o5_drawObject();
 		return;
 	}
@@ -1708,7 +1708,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	_opcode = fetchScriptByte();
 	if (_opcode != 17)
 		resid = getVarOrDirectByte(PARAM_1);
-	if (!(_platform == Common::kPlatformFMTowns)) {
+	if (!(_game.platform == Common::kPlatformFMTowns)) {
 		// FIXME - this probably can be removed eventually, I don't think the following
 		// check will ever be triggered, but then I could be wrong and it's better
 		// to play it safe.
@@ -1725,7 +1725,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		ensureResourceLoaded(resType[op - 1], resid);
 		break;
 	case 4:			// SO_LOAD_ROOM
-		if (_version == 3) {
+		if (_game.version == 3) {
 			ensureResourceLoaded(rtRoom, resid);
 			if (resid > 0x7F)
 				resid = _resourceMapper[resid & 0x7F];
@@ -1741,7 +1741,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 	case 6:			// SO_NUKE_SOUND
 	case 7:			// SO_NUKE_COSTUME
 	case 8:			// SO_NUKE_ROOM
-		if (_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns))
+		if (_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns))
 			error("o5_resourceRoutines %d should not occur in Zak256", op);
 		else
 			res.setResourceCounter(resType[op-5], resid, 0x7F);
@@ -1829,7 +1829,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 void ScummEngine_v5::o5_roomOps() {
 	int a = 0, b = 0, c, d, e;
 
-	if (_version == 3) {
+	if (_game.version == 3) {
 		a = getVarOrDirectWord(PARAM_1);
 		b = getVarOrDirectWord(PARAM_2);
 	}
@@ -1837,7 +1837,7 @@ void ScummEngine_v5::o5_roomOps() {
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
 	case 1:		// SO_ROOM_SCROLL
-		if (_version != 3) {
+		if (_game.version != 3) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
@@ -1853,8 +1853,8 @@ void ScummEngine_v5::o5_roomOps() {
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 	case 2:		// SO_ROOM_COLOR
-		if (_features & GF_SMALL_HEADER) {
-			if (_version != 3) {
+		if (_game.features & GF_SMALL_HEADER) {
+			if (_game.version != 3) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
@@ -1867,15 +1867,15 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 
 	case 3:		// SO_ROOM_SCREEN
-		if (_version != 3) {
+		if (_game.version != 3) {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);
 		}
 		initScreens(a, b);
 		break;
 	case 4:		// SO_ROOM_PALETTE
-		if (_features & GF_SMALL_HEADER) {
-			if (_version != 3) {
+		if (_game.features & GF_SMALL_HEADER) {
+			if (_game.version != 3) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
@@ -1908,8 +1908,8 @@ void ScummEngine_v5::o5_roomOps() {
 		setScaleSlot(e - 1, 0, b, a, 0, d, c);
 		break;
 	case 8:		// SO_ROOM_INTENSITY
-		if (_features & GF_SMALL_HEADER) {
-			if (_version != 3) {
+		if (_game.features & GF_SMALL_HEADER) {
+			if (_game.version != 3) {
 				a = getVarOrDirectWord(PARAM_1);
 				b = getVarOrDirectWord(PARAM_2);
 			}
@@ -1930,7 +1930,7 @@ void ScummEngine_v5::o5_roomOps() {
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
-			if (_platform == Common::kPlatformFMTowns) {
+			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
 				case 8: // compose kMainVirtScreen over a screen buffer
 				case 9: // call 0x110:0x20 _ax=0x601 _edx=2
@@ -2135,7 +2135,7 @@ void ScummEngine_v5::o5_setVarRange() {
 	} while (--a);
 
 	// Macintosh verison of indy3ega used different interface, so adjust values.
-	if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 		VAR(68) = 0;
 		VAR(69) = 0;
 		VAR(70) = 168;
@@ -2154,7 +2154,7 @@ void ScummEngine_v5::o5_setVarRange() {
 }
 
 void ScummEngine_v5::o5_startMusic() {
-	if (_platform == Common::kPlatformFMTowns && _version == 3) {
+	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 		// In FM-TOWNS games this is some kind of Audio CD status query function.
 		// See also bug #762589 (thanks to Hibernatus for providing the information).
 		getResultPos();
@@ -2197,7 +2197,7 @@ void ScummEngine_v5::o5_startSound() {
 	// Woodtick music often resumes before Largo's theme has finished. As
 	// far as I can tell, this is a script bug.
 
-	if (_gameId == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
+	if (_game.id == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
 		debug(1, "Delaying Woodtick music until Largo's theme has finished\n");
 		_scriptPointer = oldaddr;
 		o5_breakHere();
@@ -2229,7 +2229,7 @@ void ScummEngine_v5::o5_isSoundRunning() {
 void ScummEngine_v5::o5_soundKludge() {
 	int items[16];
 
-	if (_features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
+	if (_game.features & GF_SMALL_HEADER) {	// Is WaitForSentence in SCUMM V3
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
@@ -2267,14 +2267,14 @@ void ScummEngine_v5::o5_startScript() {
 
 	// FIXME: Script 171 loads a complete room resource, instead of the actual script.
 	// Causing invalid opcode cases, see bug #1290485
-	if (_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns) && script == 171)
+	if (_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns) && script == 171)
 		return;
 
 	if (!_copyProtection) {
 		// Method used by original games to skip copy protection scheme
-		if (_gameId == GID_LOOM && _version == 3 && _currentRoom == 69 && script == 201)
+		if (_game.id == GID_LOOM && _game.version == 3 && _currentRoom == 69 && script == 201)
 			script = 205;
-		else if ((_gameId == GID_MONKEY_VGA || _gameId == GID_MONKEY_EGA) && script == 152)
+		else if ((_game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY_EGA) && script == 152)
 			return;
 	}
 
@@ -2295,7 +2295,7 @@ void ScummEngine_v5::o5_stopScript() {
 
 	script = getVarOrDirectByte(PARAM_1);
 
-	if (_gameId == GID_INDY4 && script == 164 &&
+	if (_game.id == GID_INDY4 && script == 164 &&
 		_roomResource == 50 && vm.slot[_currentScript].number == 213 && VAR(VAR_HAVE_MSG)) {
 		// WORKAROUND bug #1308033: Due to a script bug, a line of text is skipped
 		// which Indy is supposed to speak when he finds Orichalcum in some old
@@ -2333,7 +2333,7 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
-		if (!(_gameId == GID_LOOM && _version == 4)) {	/* FIXME - LOOM256 */
+		if (!(_game.id == GID_LOOM && _game.version == 4)) {	/* FIXME - LOOM256 */
 			if (ptr == NULL)
 				error("String %d does not exist", a);
 			ptr[b] = c;
@@ -2413,7 +2413,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh verison of indy3ega used different interface, so adjust values.
-			if ((_platform == Common::kPlatformMacintosh) && (_gameId == GID_INDY3)) {
+			if ((_game.platform == Common::kPlatformMacintosh) && (_game.id == GID_INDY3)) {
 				switch (verb) {
 				case 1:
 				case 2:
@@ -2445,7 +2445,7 @@ void ScummEngine_v5::o5_verbOps() {
 					vs->curRect.top += 8;
 					break;
 				}
-			} else 	if (_gameId == GID_LOOM && _version == 4) {
+			} else 	if (_game.id == GID_LOOM && _game.version == 4) {
 			// FIXME: hack loom notes into right spot
 				if ((verb >= 90) && (verb <= 97)) {	// Notes
 					switch (verb) {
@@ -2493,7 +2493,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs = &_verbs[slot];
 			vs->verbid = verb;
 			vs->color = 2;
-			vs->hicolor = (_version == 3) ? 14 : 0;
+			vs->hicolor = (_game.version == 3) ? 14 : 0;
 			vs->dimcolor = 8;
 			vs->type = kTextVerbType;
 			vs->charset_nr = _string[0]._default.charset;
@@ -2553,7 +2553,7 @@ void ScummEngine_v5::o5_verbOps() {
 void ScummEngine_v5::o5_wait() {
 	const byte *oldaddr = _scriptPointer - 1;
 
-	if ((_gameId == GID_INDY3) && !(_platform == Common::kPlatformMacintosh)) {
+	if ((_game.id == GID_INDY3) && !(_game.platform == Common::kPlatformMacintosh)) {
 		_opcode = 2;
 	} else
 		_opcode = fetchScriptByte();
@@ -2609,12 +2609,12 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	int nr2 = getVarOrDirectByte(PARAM_2);
 	int dist = fetchScriptByte();
 
-	if (nr == 106 && _gameId == GID_INDY4) {
+	if (nr == 106 && _game.id == GID_INDY4) {
 		printf("Bypassing Indy4 bug\n");
 		return;
 	}
 
-	if (_gameId == GID_LOOM && _version == 4 && nr == 1 && nr2 == 0 &&
+	if (_game.id == GID_LOOM && _game.version == 4 && nr == 1 && nr2 == 0 &&
 		dist == 255 && vm.slot[_currentScript].number == 98) {
 		// WORKAROUND bug #743615: LoomCD script 98 contains this:
 		//   walkActorToActor(1,0,255)
@@ -2623,7 +2623,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		return;
 	}
 
-	if (_gameId == GID_INDY4 && nr == 1 && nr2 == 106 &&
+	if (_game.id == GID_INDY4 && nr == 1 && nr2 == 106 &&
 		dist == 255 && vm.slot[_currentScript].number == 210) {
 		// WORKAROUND bug: Work around an invalid actor bug when using the
 		// camel in Fate of Atlantis, the "wits" path. The room-65-210 script
@@ -2642,7 +2642,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	if (!a2->isInCurrentRoom())
 		return;
 
-	if (_version <= 2)
+	if (_game.version <= 2)
 		dist *= 8;
 	else if (dist == 0xFF) {
 		dist = a->_scalex * a->_width / 0xFF;
@@ -2655,7 +2655,7 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	else
 		x -= dist;
 
-	if (_version <= 3) {
+	if (_game.version <= 3) {
 		AdjustBoxResult abr = a->adjustXYToBeInBox(x, y);
 		x = abr.x;
 		y = abr.y;
@@ -2734,7 +2734,7 @@ void ScummEngine_v5::decodeParseString() {
 			_string[textSlot].overhead = false;
 			break;
 		case 6:		// SO_LEFT
-			if (_version == 3) {
+			if (_game.version == 3) {
 				_string[textSlot].height = getVarOrDirectWord(PARAM_1);
 			} else {
 				_string[textSlot].center = false;
@@ -2748,7 +2748,7 @@ void ScummEngine_v5::decodeParseString() {
 				int offset = (uint16)getVarOrDirectWord(PARAM_1);
 				int delay = (uint16)getVarOrDirectWord(PARAM_2);
 
-				if (_gameId == GID_LOOM && _version == 4) {
+				if (_game.id == GID_LOOM && _game.version == 4) {
 					if (offset == 0 && delay == 0) {
 						VAR(VAR_MUSIC_TIMER) = 0;
 						_sound->stopCD();
@@ -2774,7 +2774,7 @@ void ScummEngine_v5::decodeParseString() {
 			// WORKAROUND: This happens when Chaos introduces
 			// herself to bishop Mandible. Of all the places to put
 			// a typo...
-			if (_gameId == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0)
+			if (_game.id == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0)
 				printString(textSlot, (const byte *) "I am Chaos.");
 			else
 				printString(textSlot, _scriptPointer);
@@ -2792,7 +2792,7 @@ void ScummEngine_v5::decodeParseString() {
 			// Note: We can't use saveDefault() here because we only want to
 			// save the position and color. In particular, we do not want to
 			// save the 'center' flag. See bug #933168.
-			if (_version <= 3) {
+			if (_game.version <= 3) {
 				_string[textSlot]._default.xpos = _string[textSlot].xpos;
 				_string[textSlot]._default.ypos = _string[textSlot].ypos;
 				_string[textSlot]._default.height = _string[textSlot].height;
@@ -2815,7 +2815,7 @@ void ScummEngine_v5::o5_oldRoomEffect() {
 		a = getVarOrDirectWord(PARAM_1);
 
 #if 1
-		if (_platform == Common::kPlatformFMTowns && _version == 3) {
+		if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 			// FIXME / TODO: OK the first thing to note is: at least in Zak256,
 			// maybe also in other games, this opcode does a bit more. I added
 			// some stubs here, but somebody with a full IDA or more knowledge

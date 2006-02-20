@@ -94,7 +94,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	int i;
 	int arrow_color, color, hi_color;
 
-	if (_version == 1) {
+	if (_game.version == 1) {
 		color = 16;
 		hi_color = 7;
 		arrow_color = 6;
@@ -275,7 +275,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 }
 
 void ScummEngine_v2::checkV2Inventory(int x, int y) {
-	int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
+	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 	int object = 0;
 
 	y -= virtscr[kVerbVirtScreen].topline;
@@ -316,8 +316,8 @@ void ScummEngine_v2::redrawV2Inventory() {
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
-	int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
-	int maxChars = (_platform == Common::kPlatformNES) ? 13: 18;
+	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
+	int maxChars = (_game.platform == Common::kPlatformNES) ? 13: 18;
 
 	_mouseOverBoxV2 = -1;
 
@@ -364,7 +364,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 		_string[1].xpos = _mouseOverBoxesV2[kInventoryUpArrow].rect.left;
 		_string[1].ypos = _mouseOverBoxesV2[kInventoryUpArrow].rect.top + vs->topline;
 		_string[1].color = _mouseOverBoxesV2[kInventoryUpArrow].color;
-		if (_platform == Common::kPlatformNES)
+		if (_game.platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7E");
 		else
 			drawString(1, (const byte *)" \1\2");
@@ -375,7 +375,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 		_string[1].xpos = _mouseOverBoxesV2[kInventoryDownArrow].rect.left;
 		_string[1].ypos = _mouseOverBoxesV2[kInventoryDownArrow].rect.top + vs->topline;
 		_string[1].color = _mouseOverBoxesV2[kInventoryDownArrow].color;
-		if (_platform == Common::kPlatformNES)
+		if (_game.platform == Common::kPlatformNES)
 			drawString(1, (const byte *)"\x7F");
 		else
 			drawString(1, (const byte *)" \3\4");
@@ -383,7 +383,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 }
 
 void ScummEngine::redrawVerbs() {
-	if (_version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
+	if (_game.version <= 2 && !(_userState & 128)) // Don't draw verbs unless active
 		return;
 
 	int i, verb = 0;
@@ -452,7 +452,7 @@ void ScummEngine::checkExecVerbs() {
 			}
 		}
 
-		if ((_gameId == GID_INDY4 || _gameId == GID_PASS) && _mouseAndKeyboardStat >= '0' && _mouseAndKeyboardStat <= '9') {
+		if ((_game.id == GID_INDY4 || _game.id == GID_PASS) && _mouseAndKeyboardStat >= '0' && _mouseAndKeyboardStat <= '9') {
 			// To support keyboard fighting in FOA, we need to remap the number keys.
 			// FOA apparently expects PC scancode values (see script 46 if you want
 			// to know where I got these numbers from). Oddly enough, the The Indy 3
@@ -472,12 +472,12 @@ void ScummEngine::checkExecVerbs() {
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
-		int inventoryArea = (_platform == Common::kPlatformNES) ? 48: 32;
+		int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 
-		if (_version <= 2 && zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
+		if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
 			runInputScript(5, 0, 0);
-		} else if (_version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
+		} else if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			((ScummEngine_v2 *)this)->checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
@@ -502,7 +502,7 @@ void ScummEngine_c64::checkExecVerbs() {
 
 	if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 		// TODO
-	} else if (_version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
+	} else if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
 		// Click into V2 inventory
 		checkV2Inventory(_mouse.x, _mouse.y);
 	} else {
@@ -539,10 +539,10 @@ void ScummEngine_c64::checkExecVerbs() {
 
 void ScummEngine::verbMouseOver(int verb) {
 	// Don't do anything unless verbs are active
-	if (_version <= 2 && !(_userState & 128))
+	if (_game.version <= 2 && !(_userState & 128))
 		return;
 
-	if (_gameId == GID_FT)
+	if (_game.id == GID_FT)
 		return;
 
 	if (_verbMouseOver == verb)
@@ -689,7 +689,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
-	} else if (_gameId != GID_FT) {
+	} else if (_game.id != GID_FT) {
 		restoreVerbBG(verb);
 	}
 }
@@ -731,11 +731,11 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 
 	obim = getResourceAddress(rtVerb, verb);
 	assert(obim);
-	if (_features & GF_OLD_BUNDLE) {
+	if (_game.features & GF_OLD_BUNDLE) {
 		imgw = obim[0];
 		imgh = obim[1] / 8;
 		imptr = obim + 2;
-	} else if (_features & GF_SMALL_HEADER) {
+	} else if (_game.features & GF_SMALL_HEADER) {
 		size = READ_LE_UINT32(obim);
 
 		imgw = (*(obim + size + 11));
@@ -743,7 +743,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 		imptr = getObjectImage(obim, 1);
 	} else {
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			imgw = READ_LE_UINT16(&imhd->v7.width) / 8;
 			imgh = READ_LE_UINT16(&imhd->v7.height) / 8;
 		} else {
@@ -790,7 +790,7 @@ void ScummEngine::killVerb(int slot) {
 
 	res.nukeResource(rtVerb, slot);
 
-	if (_version <= 6 && vs->saveid == 0) {
+	if (_game.version <= 6 && vs->saveid == 0) {
 		drawVerb(slot, 0);
 		verbMouseOver(0);
 	}
@@ -804,14 +804,14 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 	FindObjectInRoom foir;
 	int i;
 
-	if (_heversion >= 70) { // Windows titles. Here we always ignore room
+	if (_game.heversion >= 70) { // Windows titles. Here we always ignore room
 		room = getObjectRoom(object);
 	}
 
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
-	if (_features & GF_OLD_BUNDLE) {
+	if (_game.features & GF_OLD_BUNDLE) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
@@ -824,7 +824,7 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 				return;
 			}
 		}
-	} else if (_features & GF_SMALL_HEADER) {
+	} else if (_game.features & GF_SMALL_HEADER) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
 				// FIXME - the only thing we need from the OBCD is the image size!

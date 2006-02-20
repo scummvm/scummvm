@@ -168,7 +168,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	loadCostume(a->_costume);
 
-	if (_vm->_version >= 7 && hasManyDirections())
+	if (_vm->_game.version >= 7 && hasManyDirections())
 		anim = toSimpleDir(1, a->getFacing()) + frame * 8;
 	else
 		anim = newDirToOldDir(a->getFacing()) + frame * 4;
@@ -302,7 +302,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
 
-	if (_vm->_heversion >= 99 && _paletteNum) {
+	if (_vm->_game.heversion >= 99 && _paletteNum) {
 		for (i = 0; i < size; i++)
 			palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
 	} else {
@@ -311,7 +311,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 		}
 	}
 
-	if (_vm->_heversion == 70) {
+	if (_vm->_game.heversion == 70) {
 		for (i = 0; i < size; i++)
 			palette[i] = _vm->_HEV7ActorPalette[palette[i]];
 	} 
@@ -375,7 +375,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (_skipLimbs)
 		return 0;
 
-	if (_vm->_heversion >= 70 && cost.active[limb] == 8)
+	if (_vm->_game.heversion >= 70 && cost.active[limb] == 8)
 		return 0;
 
 	if (!cost.active[limb] || cost.stopped & (1 << limb))
@@ -476,11 +476,11 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				} else {
 					uint32 type = cond & ~0x3FFFFFFF;
 					cond &= 0x3FFFFFFF;
-					if (_vm->_heversion >= 90) {
+					if (_vm->_game.heversion >= 90) {
 						shadowMask = cond & 0xE000;
 						cond &= ~0xE000;
 					}
-					if (_vm->_heversion >= 90 && cond == 0) {
+					if (_vm->_game.heversion >= 90 && cond == 0) {
 						decflag = 1;
 					} else if (type == 0x40000000) { // restored_bit
 						decflag = (a->_heCondMask & cond) ? 1 : 0;
@@ -497,7 +497,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			if (decflag == 0)
 				continue;
 
-			if (_vm->_heversion >= 90) {
+			if (_vm->_game.heversion >= 90) {
 				_shadow_mode = ((shadowMask & 0x8000) && xmap) ? 3 : 0;
 			}
 
@@ -572,7 +572,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
 						} else if (_shadow_mode == 3) {
-							if (_vm->_heversion >= 90) {
+							if (_vm->_game.heversion >= 90) {
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = xmap[pcolor];
 							} else if (pcolor < 8) {
@@ -765,7 +765,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	byte drawFlag = 1;
 	Codec1 v1;
 
-	const int scaletableSize = (_vm->_heversion >= 61) ? 128 : 384;
+	const int scaletableSize = (_vm->_game.heversion >= 61) ? 128 : 384;
 
 	/* implement custom scale table */
 
@@ -774,7 +774,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	// smallCostumeScaleTable from costume.cpp is used here
 	// So I had to put copy of it back here as it was before 1.227 revision
 	// of this file.
-	v1.scaletable = (_vm->_heversion >= 61) ? smallCostumeScaleTableAKOS : bigCostumeScaleTable;
+	v1.scaletable = (_vm->_game.heversion >= 61) ? smallCostumeScaleTableAKOS : bigCostumeScaleTable;
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->res.isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
@@ -897,7 +897,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	if (_vm->_heversion >= 71) {
+	if (_vm->_game.heversion >= 71) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
 			if (rect.left < _clipOverride.left)
 				rect.left = _clipOverride.left;
@@ -1148,7 +1148,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 	while (t_height--) {
 		akos16DecodeLine(tmp_buf, t_width, dir);
 		bompApplyMask(akos16.buffer, maskptr, maskbit, t_width, transparency);
-		bool HE7Check = (_vm->_heversion == 70);
+		bool HE7Check = (_vm->_game.heversion == 70);
 		bompApplyShadow(_shadow_mode, _shadow_table, akos16.buffer, dest, t_width, transparency, HE7Check);
 
 		if (numskip_after != 0)	{
@@ -1163,7 +1163,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
 	int32 minx, miny, maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
-	byte transparency = (_vm->_heversion >= 61) ? palette[0] : 255;
+	byte transparency = (_vm->_game.heversion >= 61) ? palette[0] : 255;
 
 	if (_actorHitMode) {
 		error("codec16: _actorHitMode not yet implemented");
@@ -1184,7 +1184,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	maxw = _out.w;
 	maxh = _out.h;
 
-	if (_vm->_heversion >= 71) {
+	if (_vm->_game.heversion >= 71) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
 			minx = _clipOverride.left;
 			miny = _clipOverride.top;
@@ -1319,7 +1319,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		_draw_bottom = dst.bottom;
 
 	const uint8 *palPtr = NULL;
-	if (_vm->_heversion >= 99) {
+	if (_vm->_game.heversion >= 99) {
 		palPtr = _vm->_hePalettes + 1792;
 	}
 
@@ -1413,7 +1413,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
-				if (_heversion >= 61) 
+				if (_game.heversion >= 61) 
 					curpos += 6;
 				else
 					curpos += 8;
@@ -1529,7 +1529,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			a->_flip = GW(2) != 0;
 			continue;
 		case AKC_CmdQue3:
-			if (_heversion >= 61)
+			if (_game.heversion >= 61)
 				tmp = GB(2);
 			else
 				tmp = GB(2) - 1;
@@ -1555,7 +1555,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			akos_queCommand(5, a, GB(2), 0);
 			continue;
 		case AKC_SoundStuff:
-			if (_heversion >= 61)
+			if (_game.heversion >= 61)
 				continue;
 			tmp = GB(2) - 1;
 			if (tmp >= 8)
@@ -1572,7 +1572,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			if (akfo == NULL)
 				error("akos_increaseAnim: no AKFO table");
 			tmp = a->getAnimVar(GB(2)) - 1;
-			if (_heversion >= 80) {
+			if (_game.heversion >= 80) {
 				if (tmp < 0 || tmp > a->_cost.heJumpCountTable[chan] - 1)
 					error("akos_increaseAnim: invalid jump value %d", tmp);
 				curpos = READ_LE_UINT16(akfo + a->_cost.heJumpOffsetTable[chan] + tmp * 2);
@@ -1615,7 +1615,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 			continue;
 
 		case AKC_Ignore2:
-			if (_heversion >= 71)
+			if (_game.heversion >= 71)
 				akos_queCommand(3, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
 
@@ -1763,7 +1763,7 @@ void ScummEngine::akos_processQueue() {
 			break;
 		case 7:
 #ifndef DISABLE_HE
-			assert(_heversion >= 71);
+			assert(_game.heversion >= 71);
 			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param_1);
 #endif
 			break;

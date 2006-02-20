@@ -31,7 +31,7 @@ namespace Scumm {
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
-	if (_language == Common::JA_JPN && _version <= 5) { // FM-TOWNS v3 / v5 Kanji
+	if (_language == Common::JA_JPN && _game.version <= 5) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
 		_2byteHeight = 16;
@@ -53,11 +53,11 @@ void ScummEngine::loadCJKFont() {
 			numChar = 2350;
 			break;
 		case Common::JA_JPN:
-			fontFile = (_gameId == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
+			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
 			numChar = 1024; //FIXME
 			break;
 		case Common::ZH_TWN:
-			if (_gameId == GID_CMI) {
+			if (_game.id == GID_CMI) {
 				fontFile = "chinese.fnt";
 				numChar = 1; //FIXME
 			}
@@ -234,7 +234,7 @@ void CharsetRendererCommon::setCurID(byte id) {
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
 
-	if (_vm->_version == 4)
+	if (_vm->_game.version == 4)
 		_fontPtr += 17;
 	else
 		_fontPtr += 29;
@@ -295,12 +295,12 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int width = 1;
 	byte chr;
 	int oldID = getCurID();
-	int code = (_vm->_heversion >= 80) ? 127 : 64;
+	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
 		if (chr == '\n' || chr == '\r')
 			break;
-		if (_vm->_heversion >= 72) {
+		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = text[pos++];
 				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
@@ -316,7 +316,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		} else {
 			if (chr == '@')
 				continue;
-			if (chr == 255 || (_vm->_version <= 6 && chr == 254)) {
+			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = text[pos++];
 				if (chr == 3)	// 'WAIT'
 					break;
@@ -359,10 +359,10 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int curw = 1;
 	byte chr;
 	int oldID = getCurID();
-	int code = (_vm->_heversion >= 80) ? 127 : 64;
+	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = str[pos++]) != 0) {
-		if (_vm->_heversion >= 72) {
+		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = str[pos++];
 				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
@@ -382,7 +382,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		} else {
 			if (chr == '@')
 				continue;
-			if (chr == 255 || (_vm->_version <= 6 && chr == 254)) {
+			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = str[pos++];
 				if (chr == 3) // 'Wait'
 					break;
@@ -1177,10 +1177,10 @@ void CharsetRendererV3::setColor(byte color)
 	_color = color;
 
 	// FM-TOWNS version of Loom uses old color method as well
-	if ((_vm->_version >= 2) && (_vm->_features & GF_16COLOR || (_vm->_gameId == GID_LOOM && _vm->_version == 3))) {
+	if ((_vm->_game.version >= 2) && (_vm->_game.features & GF_16COLOR || (_vm->_game.id == GID_LOOM && _vm->_game.version == 3))) {
 		useShadow = ((_color & 0xF0) != 0);
 		_color &= 0x0f;
-	} else if (_vm->_features & GF_OLD256) {
+	} else if (_vm->_game.features & GF_OLD256) {
 		useShadow = ((_color & 0x80) != 0);
 		_color &= 0x7f;
 	} else
@@ -1193,7 +1193,7 @@ void CharsetRendererV3::setColor(byte color)
 
 void CharsetRendererCommon::enableShadow(bool enable) {
 	if (enable) {
-		if (_vm->_platform == Common::kPlatformFMTowns) {
+		if (_vm->_game.platform == Common::kPlatformFMTowns) {
 			_shadowColor = 8;
 			_shadowMode = kFMTOWNSShadowMode;
 		} else {
@@ -1409,7 +1409,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		_textScreenID = vs->number;
 	}
 
-	if ((_vm->_heversion >= 71 && _bitDepth >= 8) || (_vm->_heversion >= 90 && _bitDepth == 0)) {
+	if ((_vm->_game.heversion >= 71 && _bitDepth >= 8) || (_vm->_game.heversion >= 90 && _bitDepth == 0)) {
 #ifndef DISABLE_HE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
@@ -1606,7 +1606,7 @@ CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 
 	for (int i = 0; i < 5; i++) {
 		char fontname[256];
-		if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO) && (i == 4))
+		if ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO) && (i == 4))
 			break;
 		sprintf(fontname, "font%d.nut", i);
 		_fr[i] = new NutRenderer(_vm);
@@ -1619,7 +1619,7 @@ CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
 
 CharsetRendererNut::~CharsetRendererNut() {
 	for (int i = 0; i < 5; i++) {
-		if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO) && (i == 4))
+		if ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO) && (i == 4))
 			break;
 		delete _fr[i];
 	}

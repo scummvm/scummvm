@@ -87,7 +87,7 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 		break;
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
-		if ((_vm->_gameId == GID_DIG) && (_vm->_features & GF_DEMO)) {
+		if ((_vm->_game.id == GID_DIG) && (_vm->_game.features & GF_DEMO)) {
 			if (b == 1) {
 				fadeOutMusic(200);
 				startMusic(1, 127);
@@ -97,7 +97,7 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 					startMusic(2, 127);
 				}
 			}
-		} else if ((_vm->_gameId == GID_CMI) && (_vm->_features & GF_DEMO)) {
+		} else if ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO)) {
 			fadeOutMusic(120);
 			if (b == 2) {
 				startMusic("in1.imx", 1100, 0, 127);
@@ -112,34 +112,34 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 			} else {
 				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, _vm->_currentRoom);
 			}
-		} else if (_vm->_gameId == GID_DIG) {
+		} else if (_vm->_game.id == GID_DIG) {
 			setDigMusicState(b);
-		} else if (_vm->_gameId == GID_CMI) {
+		} else if (_vm->_game.id == GID_CMI) {
 			setComiMusicState(b);
-		} else if (_vm->_gameId == GID_FT) {
+		} else if (_vm->_game.id == GID_FT) {
 			setFtMusicState(b);
 		}
 		break;
 	case 0x1001: // ImuseSetSequence
 		debug(5, "ImuseSetSequence (%d)", b);
-		if (_vm->_gameId == GID_DIG) {
+		if (_vm->_game.id == GID_DIG) {
 			setDigMusicSequence(b);
-		} else if (_vm->_gameId == GID_CMI) {
+		} else if (_vm->_game.id == GID_CMI) {
 			setComiMusicSequence(b);
-		} else if (_vm->_gameId == GID_FT) {
+		} else if (_vm->_game.id == GID_FT) {
 			setFtMusicSequence(b);
 		}
 		break;
 	case 0x1002: // ImuseSetCuePoint
 		debug(5, "ImuseSetCuePoint (%d)", b);
-		if (_vm->_gameId == GID_FT) {
+		if (_vm->_game.id == GID_FT) {
 			setFtMusicCuePoint(b);
 		}
 		break;
 	case 0x1003: // ImuseSetAttribute
 		debug(5, "ImuseSetAttribute (%d, %d)", b, c);
-		assert((_vm->_gameId == GID_DIG) || (_vm->_gameId == GID_FT));
-		if (_vm->_gameId == GID_DIG) {
+		assert((_vm->_game.id == GID_DIG) || (_vm->_game.id == GID_FT));
+		if (_vm->_game.id == GID_DIG) {
 			_attributes[b] = c;
 		}
 		break;

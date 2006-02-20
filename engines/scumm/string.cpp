@@ -69,7 +69,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 	byte buffer[500];
 	convertMessageToString(msg, buffer, sizeof(buffer));
 
-//	if ((_gameId == GID_CMI) && _debugMode) {	// In CMI, debugMessage is used for printDebug output
+//	if ((_game.id == GID_CMI) && _debugMode) {	// In CMI, debugMessage is used for printDebug output
 	if ((buffer[0] != 0xFF) && _debugMode) {
 		debug(0, "DEBUG: %s", buffer);
 		return;
@@ -84,7 +84,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 
 		// Sam and Max uses a caching system, printing empty messages
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch 609791.
-		if (_gameId == GID_SAMNMAX)
+		if (_game.id == GID_SAMNMAX)
 			channel = VAR(VAR_V6_SOUNDMODE);
 
 		 if (channel != 2)
@@ -250,7 +250,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	byte *buffer = _charsetBuffer + _charsetBufPos;
 	while (!endLoop) {
 		c = *buffer++;
-		if (!(c == 0xFF || (_version <= 6 && c == 0xFE))) {
+		if (!(c == 0xFF || (_game.version <= 6 && c == 0xFE))) {
 			break;
 		}
 		c = *buffer++;
@@ -265,7 +265,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			endLoop = true;
 			break;
 		case 3:
-			_haveMsg = (_version >= 7) ? 1 : 0xFF;
+			_haveMsg = (_game.version >= 7) ? 1 : 0xFF;
 			_keepText = false;
 			endLoop = true;
 			break;
@@ -287,7 +287,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
 			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
-			if (_heversion >= 60) {
+			if (_game.heversion >= 60) {
 				_sound->startHETalkSound(talk_sound_a);
 			} else {
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
@@ -324,7 +324,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 
 #ifndef DISABLE_HE
 bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
-	const int charsetCode = (_heversion >= 80) ? 127 : 64;
+	const int charsetCode = (_game.heversion >= 80) ? 127 : 64;
 	uint32 talk_sound_a = 0;
 	uint32 talk_sound_b = 0;
 	int i, c = 0;
@@ -406,7 +406,7 @@ void ScummEngine::CHARSET_1() {
 	byte *subtitleLine = subtitleBuffer;
 	Common::Point subtitlePos;
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		((ScummEngine_v7 *)this)->processSubtitleQueue();
 	}
 #endif
@@ -414,7 +414,7 @@ void ScummEngine::CHARSET_1() {
 	if (!_haveMsg)
 		return;
 
-	if (!(_features & GF_NEW_CAMERA) && !(_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns) && getTalkingActor() == 0xFF)) {
+	if (!(_game.features & GF_NEW_CAMERA) && !(_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns) && getTalkingActor() == 0xFF)) {
 		if ((camera._dest.x / 8) != (camera._cur.x / 8) || camera._cur.x != camera._last.x)
 			return;
 	}
@@ -429,7 +429,7 @@ void ScummEngine::CHARSET_1() {
 		_string[0].xpos = a->_pos.x - virtscr[0].xstart;
 		_string[0].ypos = a->_pos.y - a->getElevation() - _screenTop;
 
-		if (_version <= 5) {
+		if (_game.version <= 5) {
 
 			if (VAR(VAR_V5_TALK_STRING_Y) < 0) {
 				s = (a->_scaley * (int)VAR(VAR_V5_TALK_STRING_Y)) / 0xFF;
@@ -469,13 +469,13 @@ void ScummEngine::CHARSET_1() {
 	else
 		_charset->setCurID(_string[0].charset);
 
-	if (_version >= 5)
+	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	if (_talkDelay)
 		return;
 
-	if ((_version <= 6 && _haveMsg == 1) || (_version == 7 && _haveMsg != 1) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
+	if ((_game.version <= 6 && _haveMsg == 1) || (_game.version == 7 && _haveMsg != 1) || (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
 		if ((_sound->_sfxMode & 2) == 0)
 			stopTalk();
 		return;
@@ -489,7 +489,7 @@ void ScummEngine::CHARSET_1() {
 	_talkDelay = (VAR_DEFAULT_TALK_DELAY != 0xFF) ? VAR(VAR_DEFAULT_TALK_DELAY) : 60;
 
 	if (!_keepText) {
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
 			((ScummEngine_v7 *)this)->clearSubtitleQueue();
 			_charset->_nextLeft = _string[0].xpos;
@@ -507,7 +507,7 @@ void ScummEngine::CHARSET_1() {
 		t *= 2;
 	}
 
-	if (_version > 3)
+	if (_game.version > 3)
 		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, t);
 
 	if (_charset->_center) {
@@ -521,7 +521,7 @@ void ScummEngine::CHARSET_1() {
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
-			_haveMsg = (_version >= 7) ? 2 : 1;
+			_haveMsg = (_game.version >= 7) ? 2 : 1;
 			_keepText = false;
 			break;
 		}
@@ -530,7 +530,7 @@ void ScummEngine::CHARSET_1() {
 		newLine:;
 			_charset->_nextLeft = _string[0].xpos;
 #ifndef DISABLE_SCUMM_7_8			
-			if (_version >= 7 && subtitleLine != subtitleBuffer) {
+			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 				subtitleLine = subtitleBuffer;
 			}
@@ -539,14 +539,14 @@ void ScummEngine::CHARSET_1() {
 				_charset->_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 			}
 
-			if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+			if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
 				break;
-			} else if (!(_platform == Common::kPlatformFMTowns) && _string[0].height) {
+			} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 				_charset->_nextTop += _string[0].height;
 			} else {
 				_charset->_nextTop += _charset->getFontHeight();
 			}
-			if (_version > 3) {
+			if (_game.version > 3) {
 				// FIXME - is this really needed?
 				_charset->_disableOffsX = true;
 			}
@@ -556,7 +556,7 @@ void ScummEngine::CHARSET_1() {
 		_charset->_left = _charset->_nextLeft;
 		_charset->_top = _charset->_nextTop;
 
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
 			if (subtitleLine == subtitleBuffer) {
 				subtitlePos.x = _charset->_left;
@@ -575,14 +575,14 @@ void ScummEngine::CHARSET_1() {
 					_charsetBufPos = buffer - _charsetBuffer;
 				}
 			}
-			if (_version <= 3) {
+			if (_game.version <= 3) {
 				_charset->printChar(c, false);
 			} else {
-				if (_features & GF_HE_NOSUBTITLES) {
+				if (_game.features & GF_HE_NOSUBTITLES) {
 					// HE games which use sprites for subtitles
-				} else if (_heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
+				} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
 					// Special case for HE games
-				} else if (_gameId == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
+				} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for Loom (CD), since it only uses CD audio.for sound
 				} else if (!ConfMan.getBool("subtitles") && (!_haveActorSpeechMsg || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
 					// Subtitles are turned off, and there is a voice version
@@ -595,24 +595,24 @@ void ScummEngine::CHARSET_1() {
 			_charset->_nextTop = _charset->_top;
 		}
 
-		if (_version <= 2) {
+		if (_game.version <= 2) {
 			_talkDelay += _defaultTalkDelay;
 			VAR(VAR_CHARCOUNT)++;
 		} else {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 		// Handle line overflow for V3
-		if (_version == 3 && _charset->_nextLeft > _screenWidth) {
+		if (_game.version == 3 && _charset->_nextLeft > _screenWidth) {
 			_charset->_nextLeft = _screenWidth;
 		}
 		// Handle line breaks for V1-V2
-		if (_version <= 2 && _charset->_nextLeft > _screenWidth) {
+		if (_game.version <= 2 && _charset->_nextLeft > _screenWidth) {
 			goto newLine;
 		}
 	}
 
 #ifndef DISABLE_SCUMM_7_8
-	if (_version >= 7 && subtitleLine != subtitleBuffer) {
+	if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 		((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 	}
 #endif
@@ -624,13 +624,13 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	int i, c;
 	byte fontHeight = 0;
 	uint color;
-	int code = (_heversion >= 80) ? 127 : 64;
+	int code = (_game.heversion >= 80) ? 127 : 64;
 
 	bool cmi_pos_hack = false;
 
 	convertMessageToString(msg, buf, sizeof(buf));
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		// I recently disabled charset mask related code for V7+ games, thinking
 		// that it should never be needed there. Well, I missed on case: In this
 		// method, it could potentially still be used. Now the question is:
@@ -657,7 +657,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	if (_version >= 5)
+	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	fontHeight = _charset->getFontHeight();
@@ -680,7 +680,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	}
 
-	const bool ignoreCharsetMask = (_version < 7);
+	const bool ignoreCharsetMask = (_game.version < 7);
 
 	if (!buf[0]) {
 		buf[0] = ' ';
@@ -688,7 +688,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 
 	for (i = 0; (c = buf[i++]) != 0;) {
-		if (_heversion >= 72 && c == code) {
+		if (_game.heversion >= 72 && c == code) {
 			c = buf[i++];
 			switch (c) {
 			case 110:
@@ -700,7 +700,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				_charset->_top += fontHeight;
 				break;
 			}
-		} else if (c == 0xFF || (_version <= 6 && c == 0xFE)) {
+		} else if (c == 0xFF || (_game.version <= 6 && c == 0xFE)) {
 			c = buf[i++];
 			switch (c) {
 			case 9:
@@ -716,7 +716,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
-				if (!(_platform == Common::kPlatformFMTowns) && _string[0].height) {
+				if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 					_charset->_nextTop += _string[0].height;
 				} else {
 					_charset->_top += fontHeight;
@@ -732,7 +732,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				break;
 			}
 		} else {
-			if (a == 1 && _version >= 6) {
+			if (a == 1 && _game.version >= 6) {
 				// FIXME: The following code is a bit nasty. It is used for the
 				// Highway surfing game in Sam&Max; there, _blitAlso is set to
 				// true when writing the highscore numbers. It is also in DOTT
@@ -753,7 +753,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					c = 0x20; //not in S-JIS
 				} else {
 					c += buf[i++] * 256;
-					if (_gameId == GID_CMI) {
+					if (_game.id == GID_CMI) {
 						cmi_pos_hack = true;
 						_charset->_top += 6;
 					}
@@ -793,7 +793,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		return 0;
 	}
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		translateText(msg, transBuf);
 		src = transBuf;
 	} else {
@@ -804,11 +804,11 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 
 	while (1) {
 		chr = src[num++];
-		if (_heversion >= 80 && (src[num - 1] == '(' && src[num] == 'P' && src[num + 1] == 'U')) {
+		if (_game.heversion >= 80 && (src[num - 1] == '(' && src[num] == 'P' && src[num + 1] == 'U')) {
 			while (src[num++] != ')');
 			continue;
 		}
-		if ((_features & GF_HE_LOCALIZED) && chr == '[') {
+		if ((_game.features & GF_HE_LOCALIZED) && chr == '[') {
 			while (src[num++] != ']');
 			continue;
 		}
@@ -821,7 +821,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			// WORKAROUND for bug #985948, a script bug in Indy3. Apparently,
 			// a german 'sz' was encoded incorrectly as 0xFF2E. We replace
 			// this by the correct encoding here. See also ScummEngine::resStrLen().
-			if (_gameId == GID_INDY3 && chr == 0x2E) {
+			if (_game.id == GID_INDY3 && chr == 0x2E) {
 				*dst++ = 0xE1;
 				continue;
 			}
@@ -831,7 +831,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				*dst++ = 0xFF;
 				*dst++ = chr;
 			} else {
-				val = (_version == 8) ? READ_LE_UINT32(src + num) : READ_LE_UINT16(src + num);
+				val = (_game.version == 8) ? READ_LE_UINT32(src + num) : READ_LE_UINT16(src + num);
 				switch (chr) {
 				case 4:
 					dst += convertIntMessage(dst, end - dst, val);
@@ -855,7 +855,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					*dst++ = chr;
 					*dst++ = src[num+0];
 					*dst++ = src[num+1];
-					if (_version == 8) {
+					if (_game.version == 8) {
 						*dst++ = src[num+2];
 						*dst++ = src[num+3];
 					}
@@ -863,10 +863,10 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				default:
 					error("convertMessageToString(): string escape sequence %d unknown", chr);
 				}
-				num += (_version == 8) ? 4 : 2;
+				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if (!(chr == '@' && _heversion <= 71)) {
+			if (!(chr == '@' && _game.heversion <= 71)) {
 				*dst++ = chr;
 			}
 		}
@@ -918,7 +918,7 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	const byte *ptr;
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		byte chr;
 		int i = 0;
 		while ((chr = (byte)_scummVars[var++])) {
@@ -931,7 +931,7 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 		return i;
 	}
 
-	if (_version == 3 || (_version >= 6 && _heversion < 72))
+	if (_game.version == 3 || (_game.version >= 6 && _game.heversion < 72))
 		var = readVar(var);
 
 	if (var) {
@@ -957,7 +957,7 @@ void ScummEngine_v80he::initCharset(int charsetno) {
 #endif
 
 void ScummEngine::initCharset(int charsetno) {
-	if (_gameId == GID_FT) {
+	if (_game.id == GID_FT) {
 		if (!res.isResourceLoaded(rtCharset, charsetno))
 			loadCharset(charsetno);
 	} else {
@@ -990,9 +990,9 @@ void ScummEngine_v7::loadLanguageBundle() {
 	ScummFile file;
 	int32 size;
 
-	if (_gameId == GID_DIG) {
+	if (_game.id == GID_DIG) {
 		openFile(file, "language.bnd");
-	} else if (_gameId == GID_CMI) {
+	} else if (_game.id == GID_CMI) {
 		openFile(file, "language.tab");
 	} else {
 		return;
@@ -1032,7 +1032,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 
 	ptr = _languageBuffer;
 
-	if (_gameId == GID_DIG) {
+	if (_game.id == GID_DIG) {
 		int lineCount = _languageIndexSize;
 		const char *baseTag = "";
 		byte enc = 0;	// Initially assume the language file is not encoded
@@ -1133,12 +1133,12 @@ void ScummEngine_v7::loadLanguageBundle() {
 }
 
 void ScummEngine_v7::playSpeech(const byte *ptr) {
-	if ((_gameId == GID_DIG || _gameId == GID_CMI) && ptr[0]) {
+	if ((_game.id == GID_DIG || _game.id == GID_CMI) && ptr[0]) {
 		char pointer[20];
 		strcpy(pointer, (const char *)ptr);
 
 		// Play speech
-		if (!(_features & GF_DEMO) && (_gameId == GID_CMI)) // CMI demo does not have .IMX for voice
+		if (!(_game.features & GF_DEMO) && (_game.id == GID_CMI)) // CMI demo does not have .IMX for voice
 			strcat(pointer, ".IMX");
 
 		_sound->stopTalkSound();
@@ -1157,7 +1157,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	_lastStringTag[0] = 0;
 
 	// WORKAROUND for bug #1172655.
-	if (_gameId == GID_DIG && text[0] != '/') {
+	if (_game.id == GID_DIG && text[0] != '/') {
 		if (!strcmp((const char *)text, "faint light"))
 			text = (const byte *)"/NEW.007/faint light";
 		else if (!strcmp((const char *)text, "glowing crystal"))
@@ -1185,7 +1185,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	}
 
 
-	if (_version >= 7 && text[0] == '/') {
+	if (_game.version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../
 		for (i = 0; (i < 12) && (text[i + 1] != '/'); i++)
 			_lastStringTag[i] = target.tag[i] = toupper(text[i + 1]);
@@ -1210,7 +1210,7 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	if (found != NULL) {
 		strcpy((char *)trans_buff, _languageBuffer + found->offset);
 
-		if ((_gameId == GID_DIG) && !(_features & GF_DEMO)) {
+		if ((_game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
 			// Replace any '%___' by the corresponding special codes in the source text
 			const byte *src = text;
 			char *dst = (char *)trans_buff;

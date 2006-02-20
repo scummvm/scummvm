@@ -279,7 +279,7 @@ bool IMuseInternal::startSound(int sound) {
 	// workaround is to clear the trigger if the player listens to Rex or
 	// Wally before tune 81 has finished on its own.
 
-	if (g_scumm->_gameId == GID_SAMNMAX && sound == 82 && getSoundStatus(81, false))
+	if (g_scumm->_game.id == GID_SAMNMAX && sound == 82 && getSoundStatus(81, false))
 		ImClearTrigger(81, 1);
 
 	player->clear();
@@ -776,7 +776,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 			debug(0, "IMuse doCommand(16) - set_volchan (%d, %d)", a[1], a[2]);
 			return set_volchan(a[1], a[2]);
 		case 17:
-			if (g_scumm->_gameId != GID_SAMNMAX) {
+			if (g_scumm->_game.id != GID_SAMNMAX) {
 				debug(0, "IMuse doCommand(17) - set_channel_volume (%d, %d)", a[1], a[2]);
 				return set_channel_volume(a[1], a[2]);
 			} else {
@@ -791,7 +791,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 				}
 			}
 		case 18:
-			if (g_scumm->_gameId != GID_SAMNMAX) {
+			if (g_scumm->_game.id != GID_SAMNMAX) {
 				return set_volchan_entry(a[1], a[2]);
 			} else {
 				// Sam & Max: ImCheckTrigger.
@@ -839,7 +839,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 
 		switch (cmd) {
 		case 0:
-			if (g_scumm->_gameId == GID_SAMNMAX) {
+			if (g_scumm->_game.id == GID_SAMNMAX) {
 				if (a[3] == 1) // Measure number
 					return ((player->getBeatIndex() - 1) >> 2) + 1;
 				else if (a[3] == 2) // Beat number
@@ -849,7 +849,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 				return player->getParam(a[2], a[3]);
 			}
 		case 1:
-			if (g_scumm->_gameId == GID_SAMNMAX) {
+			if (g_scumm->_game.id == GID_SAMNMAX) {
 				// FIXME: Could someone verify this?
 				//
 				// This jump instruction is known to be used in

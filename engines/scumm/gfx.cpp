@@ -205,7 +205,7 @@ void Gdi::init() {
 	_numStrips = _vm->_screenWidth / 8;
 
 	// Increase the number of screen strips by one; needed for smooth scrolling
-	if (_vm->_version >= 7) {
+	if (_vm->_game.version >= 7) {
 		// We now have mostly working smooth scrolling code in place for V7+ games
 		// (i.e. The Dig, Full Throttle and COMI). It seems to work very well so far.
 		// One area which still may need some work are the AKOS codecs (except for
@@ -222,8 +222,8 @@ void Gdi::init() {
 }
 
 void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
-	if (_vm->_version == 1) {
-		if (_vm->_platform == Common::kPlatformNES) {
+	if (_vm->_game.version == 1) {
+		if (_vm->_game.platform == Common::kPlatformNES) {
 			decodeNESGfx(roomptr);
 		} else {
 			for (int i = 0; i < 4; i++){
@@ -236,7 +236,7 @@ void Gdi::roomChanged(byte *roomptr, uint32 IM00_offs, byte transparentColor) {
 			decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
 			_objectMode = true;
 		}
-	} else if (_vm->_version == 2) {
+	} else if (_vm->_game.version == 2) {
 		_roomStrips = generateStripTable(roomptr + IM00_offs, _vm->_roomWidth, _vm->_roomHeight, _roomStrips);
 	}
 	
@@ -265,14 +265,14 @@ void ScummEngine::initScreens(int b, int h) {
 		// in pre-V7 for the games messages (like 'Pause', Yes/No dialogs,
 		// version display, etc.). I don't know about V7, maybe the same is the
 		// case there. If so, we could probably just remove it completely.
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			initVirtScreen(kUnkVirtScreen, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
 		} else {
 			initVirtScreen(kUnkVirtScreen, 80, _screenWidth, 13, false, false);
 		}
 	}
 
-	if ((_platform == Common::kPlatformNES) && (h != _screenHeight)) {
+	if ((_game.platform == Common::kPlatformNES) && (h != _screenHeight)) {
 		// This is a hack to shift the whole screen downwards to match the original.
 		// Otherwise we would have to do lots of coordinate adjustments all over
 		// the code.
@@ -297,7 +297,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	assert(height >= 0);
 	assert(slot >= 0 && slot < 4);
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		if (slot == kMainVirtScreen && (_roomHeight != 0))
 			height = _roomHeight;
 	}
@@ -312,7 +312,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	vs->bytesPerPixel = 1;
 	vs->pitch = width;
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		// Increase the pitch by one; needed to accomodate the extra
 		// screen strip which we use to implement smooth scrolling.
 		// See Gdi::init()
@@ -327,7 +327,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 		// very little of the screen has to be redrawn, and we have a very low
 		// memory overhead (namely for every pixel we want to scroll, we need
 		// one additional byte in the buffer).
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			size += vs->pitch * 8;
 		} else {
 			size += vs->pitch * 4;
@@ -380,7 +380,7 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 			lp = 0;
 
 		rp = (right + vs->xstart) / 8;
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			if (rp > 409)
 				rp = 409;
 		} else {
@@ -424,7 +424,7 @@ void ScummEngine::drawDirtyScreenParts() {
 	updateDirtyScreen(kTextVirtScreen);
 
 	// Update game area ("stage")
-	if (camera._last.x != camera._cur.x || (_features & GF_NEW_CAMERA && (camera._cur.y != camera._last.y))) {
+	if (camera._last.x != camera._cur.x || (_game.features & GF_NEW_CAMERA && (camera._cur.y != camera._last.y))) {
 		// Camera moved: redraw everything
 		VirtScreen *vs = &virtscr[kMainVirtScreen];
 		drawStripToScreen(vs, 0, vs->w, 0, vs->h);
@@ -448,14 +448,14 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 	// texts have to be drawn before the blast objects. Unless
 	// someone can think of a better way to achieve this effect.
 
-	if (_version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
+	if (_game.version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
 		drawBlastTexts();
 		drawBlastObjects();
 	} else {
 		drawBlastObjects();
 		drawBlastTexts();
 	}
-	if (_version == 8)
+	if (_game.version == 8)
 		processUpperActors();
 
 	// Call the original method.
@@ -540,7 +540,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	const byte *src = vs->getPixels(x, top);
 	byte *dst = _compositeBuf + x + y * _screenWidth;
 
-	if (_version < 7) {
+	if (_game.version < 7) {
 		// Handle the text mask in older games; newer (V7/V8) games do not use it anymore.
 		const byte *text = (byte *)_charset->_textSurface.pixels + x + y * _charset->_textSurface.pitch;
 	
@@ -577,7 +577,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		// NES can address negative number strips and that poses problem for
 		// our code. So instead adding zillions of fixes and potentially break
 		// other games we shift it right on rendering stage
-		if ((_platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
+		if ((_game.platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
 			x += 16;
 			while (x + width >= _screenWidth)
 				width -= 16;
@@ -615,7 +615,7 @@ void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, in
 
 		idx1 = (y + y1) % 2;
 
-		if (_version == 2)
+		if (_game.version == 2)
 			idx1 = 0;
 
 		for (int x1 = 0; x1 < width; x1++) {
@@ -687,26 +687,26 @@ void ScummEngine::initBGBuffers(int height) {
 	int size, itemsize, i;
 	byte *room;
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		// Resize main virtual screen in V7 games. This is necessary
 		// because in V7, rooms may be higher than one screen, so we have
 		// to accomodate for that.
 		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, true, true);
 	}
 
-	if (_heversion >= 70)
+	if (_game.heversion >= 70)
 		room = getResourceAddress(rtRoomImage, _roomResource);
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
-	if (_version <= 3) {
+	if (_game.version <= 3) {
 		gdi._numZBuffer = 2;
-	} else if (_features & GF_SMALL_HEADER) {
+	} else if (_game.features & GF_SMALL_HEADER) {
 		int off;
 		ptr = findResourceData(MKID('SMAP'), room);
 		gdi._numZBuffer = 0;
 
-		if (_features & GF_16COLOR)
+		if (_game.features & GF_16COLOR)
 			off = READ_LE_UINT16(ptr);
 		else
 			off = READ_LE_UINT32(ptr);
@@ -716,11 +716,11 @@ void ScummEngine::initBGBuffers(int height) {
 			ptr += off;
 			off = READ_LE_UINT16(ptr);
 		}
-	} else if (_version == 8) {
+	} else if (_game.version == 8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
 		ptr = findResource(MKID('RMHD'), room);
 		gdi._numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
-	} else if (_heversion >= 70) {
+	} else if (_game.heversion >= 70) {
 		ptr = findResource(MKID('RMIH'), room);
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	} else {
@@ -729,7 +729,7 @@ void ScummEngine::initBGBuffers(int height) {
 	}
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 8);
 
-	if (_version >= 7)
+	if (_game.version >= 7)
 		itemsize = (_roomHeight + 10) * gdi._numStrips;
 	else
 		itemsize = (_roomHeight + 4) * gdi._numStrips;
@@ -755,8 +755,8 @@ void ScummEngine::redrawBGAreas() {
 	int diff;
 	int val = 0;
 
-	if (!(_features & GF_NEW_CAMERA))
-		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_version > 3 && _gameId != GID_PASS))
+	if (!(_game.features & GF_NEW_CAMERA))
+		if (camera._cur.x != camera._last.x && _charset->_hasMask && (_game.version > 3 && _game.id != GID_PASS))
 			stopTalk();
 
 	// Redraw parts of the background which are marked as dirty.
@@ -768,7 +768,7 @@ void ScummEngine::redrawBGAreas() {
 		}
 	}
 
-	if (_features & GF_NEW_CAMERA) {
+	if (_game.features & GF_NEW_CAMERA) {
 		diff = camera._cur.x / 8 - camera._last.x / 8;
 		if (_fullRedraw || ABS(diff) >= gdi._numStrips) {
 			_bgNeedsRedraw = false;
@@ -828,7 +828,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	for (int i = 0; i < num; i++)
 		setGfxUsageBit(s + i, USAGE_BIT_DIRTY);
 
-	if (_heversion >= 70)
+	if (_game.heversion >= 70)
 		room = getResourceAddress(rtRoomImage, _roomResource);
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
@@ -1059,7 +1059,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			byte *mask = (byte *)_charset->_textSurface.pixels + _charset->_textSurface.pitch * (y - _screenTop) + x;
 			fill(mask, _charset->_textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
 		}
-	} else if (_heversion == 100) {
+	} else if (_game.heversion == 100) {
 		// Flags are used for different methods in HE games
 		int32 flags = color;
 		if (flags & 0x4000000) {
@@ -1109,7 +1109,7 @@ void ScummEngine::drawFlashlight() {
 		return;
 
 	// Calculate the area of the flashlight
-	if (_gameId == GID_ZAK || _gameId == GID_MANIAC) {
+	if (_game.id == GID_ZAK || _game.id == GID_MANIAC) {
 		x = _mouse.x + vs->xstart;
 		y = _mouse.y - vs->topline;
 	} else {
@@ -1122,7 +1122,7 @@ void ScummEngine::drawFlashlight() {
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
-	if (_gameId == GID_LOOM)
+	if (_game.id == GID_LOOM)
 		_flashlight.y -= 12;
 
 	// Clip the flashlight at the borders
@@ -1303,7 +1303,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	int numzbuf;
 	int i;
 
-	if ((_vm->_features & GF_SMALL_HEADER) || _vm->_version == 8)
+	if ((_vm->_game.features & GF_SMALL_HEADER) || _vm->_game.version == 8)
 		zplane_list[0] = ptr;
 	else if (bmapImage)
 		zplane_list[0] = _vm->findResource(MKID('BMAP'), ptr);
@@ -1312,18 +1312,18 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
-	else if (_numZBuffer <= 1 || (_vm->_version <= 2))
+	else if (_numZBuffer <= 1 || (_vm->_game.version <= 2))
 		numzbuf = _numZBuffer;
 	else {
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= 9);
 		
-		if (_vm->_features & GF_SMALL_HEADER) {
-			if (_vm->_features & GF_16COLOR)
+		if (_vm->_game.features & GF_SMALL_HEADER) {
+			if (_vm->_game.features & GF_16COLOR)
 				zplane_list[1] = ptr + READ_LE_UINT16(ptr);
 			else {
 				zplane_list[1] = ptr + READ_LE_UINT32(ptr);
-				if (_vm->_features & GF_OLD256) {
+				if (_vm->_game.features & GF_OLD256) {
 					if (0 == READ_LE_UINT32(zplane_list[1]))
 						zplane_list[1] = 0;
 				}
@@ -1331,7 +1331,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 			for (i = 2; i < numzbuf; i++) {
 				zplane_list[i] = zplane_list[i-1] + READ_LE_UINT16(zplane_list[i-1]);
 			}
-		} else if (_vm->_version == 8) {
+		} else if (_vm->_game.version == 8) {
 			// Find the OFFS chunk of the ZPLN chunk
 			const byte *zplnOffsChunkStart = ptr + 24 + READ_BE_UINT32(ptr + 12);
 			
@@ -1391,8 +1391,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 	_objectMode = (flag & dbObjectMode) == dbObjectMode;
 	
-	if (_objectMode && _vm->_version == 1) {
-		if (_vm->_platform == Common::kPlatformNES) {
+	if (_objectMode && _vm->_game.version == 1) {
+		if (_vm->_game.platform == Common::kPlatformNES) {
 			decodeNESObject(ptr, x, y, width, height);
 		} else {
 			decodeC64Gfx(ptr, _C64.objectMap, (width / 8) * (height / 8) * 3);
@@ -1400,9 +1400,9 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	}
 
 	CHECK_HEAP;
-	if (_vm->_features & GF_SMALL_HEADER) {
+	if (_vm->_game.features & GF_SMALL_HEADER) {
 		smap_ptr = ptr;
-	} else if (_vm->_version == 8) {
+	} else if (_vm->_game.version == 8) {
 		// Skip to the BSTR->WRAP->OFFS chunk
 		smap_ptr = ptr + 24;
 	} else
@@ -1413,7 +1413,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	numzbuf = getZPlanes(ptr, zplane_list, false);
 	
 	const byte *tmsk_ptr = NULL;
-	if (_vm->_heversion >= 72) {
+	if (_vm->_game.heversion >= 72) {
 		tmsk_ptr = _vm->findResource(MKID('TMSK'), ptr);
 	}
 
@@ -1431,7 +1431,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	// dificult to draw only parts of a room/object. We handle the V2 graphics
 	// differently from all other (newer) graphic formats for this reason.
 	//
-	if (_vm->_version == 2)
+	if (_vm->_game.version == 2)
 		drawBitmapV2Helper(ptr, vs, x, y, width, height, stripnr, numstrip);
 
 	sx = x - vs->xstart / 8;
@@ -1471,8 +1471,8 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		else
 			dstPtr = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
 
-		if (_vm->_version == 1) {
-			if (_vm->_platform == Common::kPlatformNES) {
+		if (_vm->_game.version == 1) {
+			if (_vm->_game.platform == Common::kPlatformNES) {
 				mask_ptr = getMaskBuffer(x + k, y, 1);
 				drawStripNES(dstPtr, mask_ptr, vs->pitch, stripnr, y, height);
 			}
@@ -1480,7 +1480,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				drawStripC64Object(dstPtr, vs->pitch, stripnr, width, height);
 			else
 				drawStripC64Background(dstPtr, vs->pitch, stripnr, height);
-		} else if (_vm->_version == 2) {
+		} else if (_vm->_game.version == 2) {
 			// Do nothing here for V2 games - drawing was already handled.
 		} else {
 			// Do some input verification and make sure the strip/strip offset
@@ -1488,11 +1488,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			// but if e.g. a savegame gets corrupted, we can easily get into
 			// trouble here. See also bug #795214.
 			int offset = -1, smapLen;
-			if (_vm->_features & GF_16COLOR) {
+			if (_vm->_game.features & GF_16COLOR) {
 				smapLen = READ_LE_UINT16(smap_ptr);
 				if (stripnr * 2 + 2 < smapLen)
 					offset = READ_LE_UINT16(smap_ptr + stripnr * 2 + 2);
-			} else if (_vm->_features & GF_SMALL_HEADER) {
+			} else if (_vm->_game.features & GF_SMALL_HEADER) {
 				smapLen = READ_LE_UINT32(smap_ptr);
 				if (stripnr * 4 + 4 < smapLen)
 					offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 4);
@@ -1519,17 +1519,17 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		CHECK_HEAP;
 
 		// COMI and HE games only uses flag value
-		if (_vm->_version == 8 || _vm->_heversion >= 60)
+		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
 			transpStrip = true;
 
-		if (_vm->_version == 1) {
+		if (_vm->_game.version == 1) {
 			mask_ptr = getMaskBuffer(x + k, y, 1);
-			if (_vm->_platform == Common::kPlatformNES) {
+			if (_vm->_game.platform == Common::kPlatformNES) {
 				drawStripNESMask(mask_ptr, stripnr, y, height);
 			} else {
 				drawStripC64Mask(mask_ptr, stripnr, width, height);
 			}
-		} else if (_vm->_version == 2) {
+		} else if (_vm->_game.version == 2) {
 			// Do nothing here for V2 games - zplane was already handled.
 		} else if (flag & dbDrawMaskOnAll) {
 			// Sam & Max uses dbDrawMaskOnAll for things like the inventory
@@ -1548,7 +1548,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 			// don't know what for. At the time of writing, these games
 			// are still too unstable for me to investigate.
 
-			if (_vm->_version == 8)
+			if (_vm->_game.version == 8)
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT32(zplane_list[1] + stripnr * 4 + 8);
 			else
 				z_plane_ptr = zplane_list[1] + READ_LE_UINT16(zplane_list[1] + stripnr * 2 + 8);
@@ -1566,13 +1566,13 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				if (!zplane_list[i])
 					continue;
 
-				if (_vm->_features & GF_OLD_BUNDLE)
+				if (_vm->_game.features & GF_OLD_BUNDLE)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2);
-				else if (_vm->_features & GF_OLD256)
+				else if (_vm->_game.features & GF_OLD256)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 4);
-				else if (_vm->_features & GF_SMALL_HEADER)
+				else if (_vm->_game.features & GF_SMALL_HEADER)
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 2);
-				else if (_vm->_version == 8)
+				else if (_vm->_game.version == 8)
 					offs = READ_LE_UINT32(zplane_list[i] + stripnr * 4 + 8);
 				else
 					offs = READ_LE_UINT16(zplane_list[i] + stripnr * 2 + 8);
@@ -1779,12 +1779,12 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLinesToProcess) {
 	assert(numLinesToProcess);
 	
-	if (_vm->_features & GF_16COLOR) {
+	if (_vm->_game.features & GF_16COLOR) {
 		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 		return false;
 	}
 
-	if ((_vm->_platform == Common::kPlatformAmiga) && (_vm->_version >= 4))
+	if ((_vm->_game.platform == Common::kPlatformAmiga) && (_vm->_game.version >= 4))
 		_paletteMod = 16;
 	else
 		_paletteMod = 0;
@@ -2753,7 +2753,7 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
 	int x;
 
-	if (_vm->_features & GF_OLD256) {
+	if (_vm->_game.features & GF_OLD256) {
 		uint h = height;
 		x = 8;
 		for (;;) {
@@ -2942,7 +2942,7 @@ void ScummEngine::fadeOut(int effect) {
 	VirtScreen *vs = &virtscr[0];
 
 	vs->setDirtyRange(0, 0);
-	if (!(_features & GF_NEW_CAMERA))
+	if (!(_game.features & GF_NEW_CAMERA))
 		camera._last.x = camera._cur.x;
 
 	if (_switchRoomEffect >= 130 && _switchRoomEffect <= 133) {
@@ -3156,7 +3156,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	// Speed up the effect for CD Loom since it uses it so often. I don't
 	// think the original had any delay at all, so on modern hardware it
 	// wasn't even noticeable.
-	if (_gameId == GID_LOOM && (_version == 4))
+	if (_game.id == GID_LOOM && (_game.version == 4))
 		blits_before_refresh *= 2;
 
 	for (i = 0; i < w * h; i++) {
@@ -3283,7 +3283,7 @@ void ScummEngine::scrollEffect(int dir) {
 
 void ScummEngine::unkScreenEffect6() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
-	if (_gameId == GID_LOOM && (_version == 4))
+	if (_game.id == GID_LOOM && (_game.version == 4))
 		dissolveEffect(1, 1);
 	else
 		dissolveEffect(8, 4);

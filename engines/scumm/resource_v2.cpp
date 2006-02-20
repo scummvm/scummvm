@@ -32,14 +32,14 @@ namespace Scumm {
 void ScummEngine_v2::readClassicIndexFile() {
 	int i;
 
-	if (_gameId == GID_MANIAC) {
-		if (_platform == Common::kPlatformC64) {
+	if (_game.id == GID_MANIAC) {
+		if (_game.platform == Common::kPlatformC64) {
 			_numGlobalObjects = 256;
 			_numRooms = 55;
 			_numCostumes = 25;
 			_numScripts = 160;
 			_numSounds = 70;
-		} else if (_platform == Common::kPlatformNES) {
+		} else if (_game.platform == Common::kPlatformNES) {
 			_numGlobalObjects = 775;
 			_numRooms = 55;
 
@@ -58,8 +58,8 @@ void ScummEngine_v2::readClassicIndexFile() {
 			_numScripts = 200;
 			_numSounds = 100;
 		}
-	} else if (_gameId == GID_ZAK) {
-		if (_platform == Common::kPlatformC64) {
+	} else if (_game.id == GID_ZAK) {
+		if (_game.platform == Common::kPlatformC64) {
 			_numGlobalObjects = 775;
 			_numRooms = 59;
 			_numCostumes = 38;
@@ -178,19 +178,19 @@ void ScummEngine_v2::readIndexFile() {
 			break;
 		case 0x0A31:
 			printf("Classic V1 game detected\n");
-			_version = 1;
+			_game.version = 1;
 			readClassicIndexFile();
 			break;
 		case 0x4643:
-			if (!(_platform == Common::kPlatformNES))
+			if (!(_game.platform == Common::kPlatformNES))
 				error("Use maniac target");
 			printf("NES V1 game detected\n");
-			_version = 1;
+			_game.version = 1;
 			readClassicIndexFile();
 			break;
 		case 0x132:
 			printf("C64 V1 game detected\n");
-			_version = 1;
+			_game.version = 1;
 			readClassicIndexFile();
 			break;
 		default:

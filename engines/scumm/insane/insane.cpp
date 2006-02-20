@@ -55,7 +55,7 @@ Insane::Insane(ScummEngine_v6 *scumm) {
 
 	initvars();
 
-	if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
+	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
 		readFileToMem("roadrash.rip", &_smush_roadrashRip);
 		readFileToMem("roadrsh2.rip", &_smush_roadrsh2Rip);
 		readFileToMem("roadrsh3.rip", &_smush_roadrsh3Rip);
@@ -179,7 +179,7 @@ void Insane::initvars(void) {
 		_iactBits[i] = 0;
 
 
-	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 63, "endcrshr.san",
 						 25, 15, 16, 26, 11, 3);
 	} else {
@@ -634,7 +634,7 @@ void Insane::putActors(void) {
 
 void Insane::readState(void) { // PATCH
 
-	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		_actor[0].inventory[INV_CHAIN] = 0;
 		_actor[0].inventory[INV_CHAINSAW] = 0;
 		_actor[0].inventory[INV_MACE] = 0;
@@ -803,7 +803,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 
 	debugC(DEBUG_INSANE, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
-	if (((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) || !loadScenePropSounds(idx))
+	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) || !loadScenePropSounds(idx))
 			return;
 
 	_actor[0].defunct = arg_4;
@@ -900,7 +900,7 @@ int32 Insane::weaponDamage(int32 actornum) {
 }
 
 void Insane::reinitActors(void) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_setActorCostume(0, 0, readArray(13));
 		smlayer_setActorCostume(0, 1, readArray(12));
@@ -956,7 +956,7 @@ void Insane::escapeKeyHandler(void) {
 	struct fluConf *flu;
 
 	// Demos have just one scene
-	if (!_insaneIsRunning || _vm->_features & GF_DEMO) {
+	if (!_insaneIsRunning || _vm->_game.features & GF_DEMO) {
 		smush_setToFinish();
 		return;
 	}
@@ -1182,7 +1182,7 @@ void Insane::smlayer_setActorLayer(int actornum, int actnum, int layer) {
 }
 
 void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
-	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
 		return;
 
 	//	  if (shut_flag)
@@ -1298,7 +1298,7 @@ void Insane::procSKIP(Chunk &b) {
 	int16 par1, par2;
 	_player->_skipNext = false;
 
-	if ((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		_player->checkBlock(b, TYPE_SKIP, 2);
 		par1 = b.getWord();
 		if (isBitSet(par1))

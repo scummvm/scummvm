@@ -125,7 +125,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	int h = _vm->_2byteHeight;
 
 	byte *src = _vm->get2byteCharPtr(idx);
-	byte *dst = buffer + dst_width * (y + (_vm->_gameId == GID_CMI ? 7 : (_vm->_gameId == GID_DIG ? 2 : 0))) + x;
+	byte *dst = buffer + dst_width * (y + (_vm->_game.id == GID_CMI ? 7 : (_vm->_game.id == GID_DIG ? 2 : 0))) + x;
 	byte bits = 0;
 
 	char color = (_color != -1) ? _color : 1;
@@ -133,7 +133,7 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 	if (_new_colors)
 		color = (char)0xff;
 
-	if (_vm->_gameId == GID_FT)
+	if (_vm->_game.id == GID_FT)
 		color = 1;
 
 	for (int j = 0; j < h; j++) {

@@ -203,7 +203,7 @@ void ScummEngine::setupV1Palette() {
 	setPalColor(13,  85, 255,  85);
 	setPalColor(14,  85,  85, 255);
 
-	if (_gameId == GID_ZAK)
+	if (_game.id == GID_ZAK)
 		setPalColor(15, 170, 170, 170);
 	else
 		setPalColor(15,  85,  85,  85);
@@ -216,8 +216,8 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	byte *dest, r, g, b;
 
 	if (numcolor < 0) {
-		if (_features & GF_SMALL_HEADER) {
-			if (_features & GF_OLD256)
+		if (_game.features & GF_SMALL_HEADER) {
+			if (_game.features & GF_OLD256)
 				numcolor = READ_LE_UINT16(ptr);
 			else
 				numcolor = READ_LE_UINT16(ptr) / 3;
@@ -237,8 +237,8 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		b = *ptr++;
 
 		// Only SCUMM 5/6 games use 6/6/6 style palettes
-		if (_version >= 5 && _version <= 6) {
-			if ((_heversion <= 73 && i < 15) || i == 15 || r < 252 || g < 252 || b < 252) {
+		if (_game.version >= 5 && _game.version <= 6) {
+			if ((_game.heversion <= 73 && i < 15) || i == 15 || r < 252 || g < 252 || b < 252) {
 				*dest++ = r;
 				*dest++ = g;
 				*dest++ = b;
@@ -252,7 +252,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		}
 	}
 
-	if (_heversion >= 90 || _version == 8) {
+	if (_game.heversion >= 90 || _game.version == 8) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
@@ -272,7 +272,7 @@ void ScummEngine::initCycl(const byte *ptr) {
 
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		cycl = _colorCycle;
 		for (j = 0; j < 16; ++j, ++cycl) {
 			uint16 delay = READ_BE_UINT16(ptr);
@@ -397,7 +397,7 @@ void ScummEngine::cyclePalette() {
 			doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
 			if (_shadowPalette) {
-				if (_version >= 7) {
+				if (_game.version >= 7) {
 					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
 						doCycleIndirectPalette(_shadowPalette + j * 256, cycl->start, cycl->end, !(cycl->flags & 2));
 				} else {
@@ -580,7 +580,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 	// from within Room 23 (the big machine), as it has no shadow effects
 	// and thus doesn't result in any visual differences.
 
-	if (_gameId == GID_SAMNMAX) {
+	if (_game.id == GID_SAMNMAX) {
 		for (i = 0; i < 256; i++)
 			_shadowPalette[i] = i;
 	}
@@ -613,7 +613,7 @@ void ScummEngine::setupShadowPalette(int redScale, int greenScale, int blueScale
 
 void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
 	int max;
-	if (_version >= 5 && _version <= 6 && _heversion <= 60) {
+	if (_game.version >= 5 && _game.version <= 6 && _game.heversion <= 60) {
 		max = 252;
 	} else {
 		max = 255;
@@ -624,16 +624,16 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		const byte *palptr;
 		int color, idx, j;
 
-		if (_heversion >= 90 || _version == 8) {
+		if (_game.heversion >= 90 || _game.version == 8) {
 			palptr = _darkenPalette;
 		} else {
 			palptr = getPalettePtr(_curPalIndex, _roomResource);
 		}
 		for (j = startColor; j <= endColor; j++) {
-			idx = (_heversion == 70) ? _HEV7ActorPalette[j] : j;
+			idx = (_game.heversion == 70) ? _HEV7ActorPalette[j] : j;
 			cptr = palptr + idx * 3;
 
-			if (_heversion == 70)
+			if (_game.heversion == 70)
 				setDirtyColors(idx, idx);
 
 			color = *cptr++;
@@ -654,7 +654,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 				color = max;
 			_currentPalette[idx * 3 + 2] = color;
 		}
-		if (_heversion != 70)
+		if (_game.heversion != 70)
 			setDirtyColors(startColor, endColor);
 	}
 }
@@ -760,7 +760,7 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	int ar, ag, ab;
 	uint sum, bestsum, bestitem = 0;
 
-	int startColor = (_version == 8) ? 24 : 1;
+	int startColor = (_game.version == 8) ? 24 : 1;
 	byte *pal = _currentPalette + startColor * 3;
 
 	if (r > 255)
@@ -777,7 +777,7 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	b &= ~3;
 
 	for (i = startColor; i < 255; i++, pal += 3) {
-		if (_version == 7 && _colorUsedByCycle[i])
+		if (_game.version == 7 && _colorUsedByCycle[i])
 			continue;
 
 		ar = pal[0] & ~3;
@@ -850,13 +850,13 @@ void ScummEngine::copyPalColor(int dst, int src) {
 }
 
 void ScummEngine::setPalColor(int idx, int r, int g, int b) {
-	if (_heversion == 70)
+	if (_game.heversion == 70)
 		idx = _HEV7ActorPalette[idx];
 
 	_currentPalette[idx * 3 + 0] = r;
 	_currentPalette[idx * 3 + 1] = g;
 	_currentPalette[idx * 3 + 2] = b;
-	if (_version == 8) {
+	if (_game.version == 8) {
 		_darkenPalette[idx * 3 + 0] = r;
 		_darkenPalette[idx * 3 + 1] = g;
 		_darkenPalette[idx * 3 + 2] = b;
@@ -919,7 +919,7 @@ void ScummEngine::updatePalette() {
 	if (_palDirtyMax == -1)
 		return;
 
-	bool noir_mode = (_gameId == GID_SAMNMAX && readVar(0x8000));
+	bool noir_mode = (_game.id == GID_SAMNMAX && readVar(0x8000));
 	int first = _palDirtyMin;
 	int num = _palDirtyMax - first + 1;
 	int i;
@@ -930,7 +930,7 @@ void ScummEngine::updatePalette() {
 	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
 		byte *data;
 
-		if (_features & GF_SMALL_HEADER && _version > 2)
+		if (_game.features & GF_SMALL_HEADER && _game.version > 2)
 			data = _currentPalette + _shadowPalette[i] * 3;
 		else
 			data = _currentPalette + i * 3;

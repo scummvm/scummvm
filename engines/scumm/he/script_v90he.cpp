@@ -981,14 +981,14 @@ void ScummEngine_v90he::o90_getSpriteInfo() {
 			push(0);
 		break;
 	case 15:
-		if (_heversion == 99) {
+		if (_game.heversion == 99) {
 			flags = getStackList(args, ARRAYSIZE(args));
 			type = pop();
 			groupId = pop();
 			y = pop();
 			x = pop();
 			push(_sprite->findSpriteWithClassOf(x, y, groupId, type, flags, args));
-		} else if (_heversion == 98) {
+		} else if (_game.heversion == 98) {
 			type = pop();
 			groupId = pop();
 			y = pop();
@@ -1231,7 +1231,7 @@ void ScummEngine_v90he::o90_setSpriteInfo() {
 			_sprite->setSpriteAngle(spriteId, args[0]);
 		break;
 	case 23:
-		if (_features & GF_HE_985 || _heversion >= 99) {
+		if (_game.features & GF_HE_985 || _game.heversion >= 99) {
 			_curMaxSpriteId = pop();
 			_curSpriteId = pop();
 
@@ -1876,7 +1876,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 			if (dist >= 2) {
 				dist = (int)sqrt((double)(dist + 1));
 			}
-			if (_heversion >= 98) {
+			if (_game.heversion >= 98) {
 				push((dist <= args1[2]) ? 1 : 0);
 			} else {
 				push((dist > args1[2]) ? 1 : 0);

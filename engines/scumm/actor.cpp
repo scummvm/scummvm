@@ -45,7 +45,7 @@ ScummEngine *Actor::_vm = 0;
 
 void Actor::initActorClass(ScummEngine *scumm) {
 	_vm = scumm;
-	if (_vm->_features & GF_SMALL_HEADER) {
+	if (_vm->_game.features & GF_SMALL_HEADER) {
 		kInvalidBox = 255;
 	}
 }
@@ -90,7 +90,7 @@ void Actor::initActor(int mode) {
 		_facing = 180;
 		_heCondMask = 1;
 		_heNoTalkAnimation = 0;
-		if (_vm->_version >= 7)
+		if (_vm->_game.version >= 7)
 			_visible = false;
 		_heSkipLimbs = false;
 	} else if (mode == 2) {
@@ -116,21 +116,21 @@ void Actor::initActor(int mode) {
 
 	setActorWalkSpeed(8, 2);
 	_animSpeed = 0;
-	if (_vm->_version >= 6)
+	if (_vm->_game.version >= 6)
 		_animProgress = 0;
 
 	_ignoreBoxes = false;
-	_forceClip = (_vm->_version >= 7) ? 100 : 0;
+	_forceClip = (_vm->_game.version >= 7) ? 100 : 0;
 	_ignoreTurns = false;
 
-	if (_vm->_heversion >= 61)
+	if (_vm->_game.heversion >= 61)
 		_flip = 0;
 
 	_talkFrequency = 256;
 	_talkPan = 64;
 	_talkVolume = 127;
 
-	if (_vm->_version <= 2) {
+	if (_vm->_game.version <= 2) {
 		_initFrame = 2;
 		_walkFrame = 0;
 		_standFrame = 1;
@@ -153,7 +153,7 @@ void Actor::initActor(int mode) {
 	_auxBlock.reset();
 	_hePaletteNum = 0;
 
-	_vm->_classData[_number] = (_vm->_version >= 7) ? _vm->_classData[0] : 0;
+	_vm->_classData[_number] = (_vm->_game.version >= 7) ? _vm->_classData[0] : 0;
 }
 
 void Actor::stopActorMoving() {
@@ -175,7 +175,7 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 }
 
 int ScummEngine::getAngleFromPos(int x, int y) const {
-	if (_gameId == GID_DIG || _gameId == GID_CMI) {
+	if (_game.id == GID_DIG || _game.id == GID_CMI) {
 		double temp = atan2((double)x, (double)-y);
 		return normalizeAngle((int)(temp * 180 / PI));
 	} else {
@@ -255,7 +255,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// not necessary here because we never call the function unless the
 	// actor is in the current room anyway.
 
-	if (!_ignoreBoxes || _vm->_gameId == GID_LOOM) {
+	if (!_ignoreBoxes || _vm->_game.id == GID_LOOM) {
 		specdir = _vm->_extraBoxFlags[_walkbox];
 		if (specdir) {
 			if (specdir & 0x8000) {
@@ -287,7 +287,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 
 		switch (flags & 7) {
 		case 1:
-			if (_vm->_version >= 7) {
+			if (_vm->_game.version >= 7) {
 				if (dir < 180)
 					return 90;
 				else
@@ -299,7 +299,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 					return (dir == 90) ? 90 : 270;
 			}
 		case 2:
-			if (_vm->_version >= 7) {
+			if (_vm->_game.version >= 7) {
 				if (dir > 90 && dir < 270)
 					return 180;
 				else
@@ -330,15 +330,15 @@ int Actor::updateActorDirection(bool is_walking) {
 	int dir;
 	bool shouldInterpolate;
 
-	if ((_vm->_version == 6) && _ignoreTurns)
+	if ((_vm->_game.version == 6) && _ignoreTurns)
 		return _facing;
 
-	dirType = (_vm->_version >= 7) ? _vm->_costumeLoader->hasManyDirections(_costume) : false;
+	dirType = (_vm->_game.version >= 7) ? _vm->_costumeLoader->hasManyDirections(_costume) : false;
 
 	from = toSimpleDir(dirType, _facing);
 	dir = remapDirection(_targetFacing, is_walking);
 
-	if (_vm->_version >= 7)
+	if (_vm->_game.version >= 7)
 		// Direction interpolation interfers with walk scripts in Dig; they perform
 		// (much better) interpolation themselves.
 		shouldInterpolate = false;
@@ -425,7 +425,7 @@ int Actor::actorWalkStep() {
 
 void Actor::setupActorScale() {
 
-	if (_vm->_features & GF_NO_SCALING) {
+	if (_vm->_game.features & GF_NO_SCALING) {
 		_scalex = 0xFF;
 		_scaley = 0xFF;
 		return;
@@ -437,7 +437,7 @@ void Actor::setupActorScale() {
 	// For some boxes, we ignore the scaling and use whatever values the
 	// scripts set. This is used e.g. in the Mystery Vortex in Sam&Max.
 	// Older games used the flag 0x20 differently, though.
-	if (_vm->_gameId == GID_SAMNMAX && (_vm->getBoxFlags(_walkbox) & kBoxIgnoreScale))
+	if (_vm->_game.id == GID_SAMNMAX && (_vm->getBoxFlags(_walkbox) & kBoxIgnoreScale))
 		return;
 
 	_boxscale = _vm->getBoxScale(_walkbox);
@@ -449,7 +449,7 @@ void Actor::setupActorScale() {
 }
 
 void Actor::startAnimActor(int f) {
-	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
+	if (_vm->_game.version >= 7 && !((_vm->_game.id == GID_FT) && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
 		switch (f) {
 		case 1001:
 			f = _initFrame;
@@ -503,7 +503,7 @@ void Actor::startAnimActor(int f) {
 			_needRedraw = true;
 			// V1 - V2 games don't seem to need a _cost.reset() at this point.
 			// Causes Zak to lose his body in several scenes, see bug #771508
-			if (_vm->_version >= 3 && f == _initFrame) {
+			if (_vm->_game.version >= 3 && f == _initFrame) {
 				_cost.reset();
 				_auxBlock.reset();
 			}
@@ -516,7 +516,7 @@ void Actor::startAnimActor(int f) {
 void Actor::animateActor(int anim) {
 	int cmd, dir;
 
-	if (_vm->_version >= 7 && !((_vm->_gameId == GID_FT) && (_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
+	if (_vm->_game.version >= 7 && !((_vm->_game.id == GID_FT) && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
 
 		if (anim == 0xFF)
 			anim = 2000;
@@ -547,7 +547,7 @@ void Actor::animateActor(int anim) {
 		turnToDirection(dir);
 		break;
 	default:
-		if (_vm->_version <= 2)
+		if (_vm->_game.version <= 2)
 			startAnimActor(anim / 4);
 		else
 			startAnimActor(anim);
@@ -576,7 +576,7 @@ void Actor::setDirection(int direction) {
 		vald = _cost.frame[i];
 		if (vald == 0xFFFF)
 			continue;
-		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_version <= 2) ? 0xFFFF : aMask);
+		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_game.version <= 2) ? 0xFFFF : aMask);
 	}
 
 	_needRedraw = true;
@@ -613,7 +613,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 	// WORKAROUND: The green transparency of the tank in the Hall of Oddities is
 	// is positioned one pixel too far to the left. This appears to be a
 	// bug in the original game as well.
-	if (_vm->_gameId == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236)
+	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236)
 		dstX++;
 
 	_pos.x = dstX;
@@ -634,7 +634,7 @@ void Actor::putActor(int dstX, int dstY, byte newRoom) {
 			adjustActorPos();
 		} else {
 #ifndef DISABLE_HE
-			if (_vm->_heversion >= 71)
+			if (_vm->_game.heversion >= 71)
 				((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
 			hideActor();
@@ -661,7 +661,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	int tmpDist, bestDist, threshold, numBoxes;
 	byte flags, bestBox;
 	int box;
-	const int firstValidBox = (_vm->_features & GF_SMALL_HEADER) ? 0 : 1;
+	const int firstValidBox = (_vm->_game.features & GF_SMALL_HEADER) ? 0 : 1;
 
 	abr.x = dstX;
 	abr.y = dstY;
@@ -677,8 +677,8 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 		if (numBoxes < firstValidBox)
 			return abr;
 
-		bestDist = (_vm->_version >= 7) ? 0x7FFFFFFF : 0xFFFF;
-		if (_vm->_version <= 2)
+		bestDist = (_vm->_game.version >= 7) ? 0x7FFFFFFF : 0xFFFF;
+		if (_vm->_game.version <= 2)
 			bestDist *= 8*2;	// Adjust for the fact that we multiply x by 8 and y by 2
 		bestBox = kInvalidBox;
 
@@ -778,7 +778,7 @@ void Actor::turnToDirection(int newdir) {
 	_moving &= ~MF_TURN;
 
 	if (newdir != _facing) {
-		if (_vm->_version <= 6)
+		if (_vm->_game.version <= 6)
 			_moving = MF_TURN;
 		else
 			_moving |= MF_TURN;
@@ -811,7 +811,7 @@ void Actor::showActor() {
 
 	if (_costumeNeedsInit) {
 		startAnimActor(_initFrame);
-		if (_vm->_version <= 2) {
+		if (_vm->_game.version <= 2) {
 			startAnimActor(_standFrame);
 			startAnimActor(_talkStopFrame);
 		}
@@ -819,7 +819,7 @@ void Actor::showActor() {
 	}
 
 	// FIXME: Evil hack to work around bug #770717
-	if (!_moving && _vm->_version <= 2)
+	if (!_moving && _vm->_game.version <= 2)
 		startAnimActor(_standFrame);
 
 	stopActorMoving();
@@ -831,14 +831,14 @@ void Actor::showActor() {
 // an internal variable. Emulate this to prevent overwriting script vars...
 // Maniac NES (V1), however, DOES have a ScummVar for VAR_TALK_ACTOR
 int ScummEngine::getTalkingActor() {
-	if (_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES))
+	if (_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES))
 		return _V1TalkingActor;
 	else
 		return VAR(VAR_TALK_ACTOR);
 }
 
 void ScummEngine::setTalkingActor(int value) {
-	if (_gameId == GID_MANIAC && _version == 1 && !(_platform == Common::kPlatformNES))
+	if (_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES))
 		_V1TalkingActor = value;
 	else
 		VAR(VAR_TALK_ACTOR) = value;
@@ -866,7 +866,7 @@ void ScummEngine::setupV1ActorTalkColor() {
 	int i;
 
 	for (i = 1; i < _numActors; i++) {
-		if (_platform == Common::kPlatformC64) {
+		if (_game.platform == Common::kPlatformC64) {
 			_actors[i]._talkColor = c64MMActorTalkColor[i];
 		} else {
 			_actors[i]._talkColor = v1MMActorTalkColor[i];
@@ -888,7 +888,7 @@ void ScummEngine::walkActors() {
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i].isInCurrentRoom())
-			if (_version <= 3)
+			if (_game.version <= 3)
 				_actors[i].walkActorOld();
 			else
 				_actors[i].walkActor();
@@ -947,7 +947,7 @@ void ScummEngine::processActors() {
 
 	// Make a list of all actors in this room
 	for (int i = 1; i < _numActors; i++) {
-		if (_version == 8 && _actors[i]._layer < 0)
+		if (_game.version == 8 && _actors[i]._layer < 0)
 			continue;
 		if (_actors[i].isInCurrentRoom()) {
 			_sortedActors[numactors++] = &_actors[i];
@@ -973,7 +973,7 @@ void ScummEngine::processActors() {
 	// and, according to cyx, neither do newer ones. At least not FT and
 	// COMI. See bug #1220168 for more details.
 
-	if (_gameId == GID_SAMNMAX) {
+	if (_game.id == GID_SAMNMAX) {
 		for (int j = 0; j < numactors; ++j) {
 			for (int i = 0; i < numactors; ++i) {
 				int sc_actor1 = _sortedActors[j]->_pos.y;
@@ -1015,7 +1015,7 @@ void ScummEngine::processActors() {
 		}
 	}
 
-	if (_features & GF_NEW_COSTUMES)
+	if (_game.features & GF_NEW_COSTUMES)
 		akos_processQueue();
 }
 
@@ -1084,12 +1084,12 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_actorX = _pos.x + _offsX - _vm->virtscr[0].xstart;
 	bcr->_actorY = _pos.y + _offsY - _elevation;
 
-	if (_vm->_platform == Common::kPlatformNES) {
+	if (_vm->_game.platform == Common::kPlatformNES) {
 		// In the NES version, when the actor is facing right,
 		// we need to shift it 8 pixels to the left
 		if (_facing == 90)
 			bcr->_actorX -= 8;
-	} else if (_vm->_version <= 2) {
+	} else if (_vm->_game.version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
 		// V2 games. However, it is not quite clear to me why. And to fully
 		// match the original, it seems we have to offset by 2 strips if the
@@ -1098,13 +1098,13 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		// to adjust the 270 degree case...
 		if (_facing == 270)
 			bcr->_actorX += 16;
-		else if (_vm->_version == 2)
+		else if (_vm->_game.version == 2)
 			bcr->_actorX += 8;
 	}
 
 	bcr->_clipOverride = _clipOverride;
 
-	if (_vm->_version == 4 && _boxscale & 0x8000) {
+	if (_vm->_game.version == 4 && _boxscale & 0x8000) {
 		bcr->_scaleX = bcr->_scaleY = _vm->getScaleFromSlot((_boxscale & 0x7fff) + 1, _pos.x, _pos.y);
 	} else {
 		bcr->_scaleX = _scalex;
@@ -1112,9 +1112,9 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	}
 
 	bcr->_shadow_mode = _shadowMode;
-	if (_vm->_version >= 5 && _vm->_heversion == 0) {
+	if (_vm->_game.version >= 5 && _vm->_game.heversion == 0) {
 		bcr->_shadow_table = _vm->_shadowPalette;
-	} else if (_vm->_heversion == 70) {
+	} else if (_vm->_game.heversion == 70) {
 		bcr->_shadow_table = _vm->_HEV7ActorPalette;
 	}
 
@@ -1122,7 +1122,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->setPalette(_palette);
 	bcr->setFacing(this);
 
-	if (_vm->_version >= 7) {
+	if (_vm->_game.version >= 7) {
 
 		bcr->_zbuf = _forceClip;
 		if (bcr->_zbuf == 100) {
@@ -1150,7 +1150,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
 	bcr->_paletteNum = _hePaletteNum;
 
-	if (_vm->_heversion >= 80 && _heNoTalkAnimation == 0 && _animProgress == 0) {
+	if (_vm->_game.heversion >= 80 && _heNoTalkAnimation == 0 && _animProgress == 0) {
 		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
 			int talkState = 0;
 
@@ -1170,7 +1170,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	// If the actor is partially hidden, redraw it next frame.
 	// Only done for pre-AKOS, though.
 	if (bcr->drawCostume(_vm->virtscr[0], _vm->gdi._numStrips, this, _drawToBackBuf) & 1) {
-		_needRedraw = (_vm->_version <= 6);
+		_needRedraw = (_vm->_game.version <= 6);
 	}
 
 	if (!hitTestMode) {
@@ -1263,7 +1263,7 @@ void ScummEngine::setActorRedrawFlags() {
 
 	// Redraw all actors if a full redraw was requested.
 	// Also redraw all actors in COMI (see bug #1066329 for details).
-	if (_fullRedraw || _version == 8 || (VAR_REDRAW_ALL_ACTORS != 0xFF && VAR(VAR_REDRAW_ALL_ACTORS) != 0)) {
+	if (_fullRedraw || _game.version == 8 || (VAR_REDRAW_ALL_ACTORS != 0xFF && VAR(VAR_REDRAW_ALL_ACTORS) != 0)) {
 		for (j = 1; j < _numActors; j++) {
 			_actors[j]._needRedraw = true;
 		}
@@ -1312,7 +1312,7 @@ int ScummEngine::getActorFromPos(int x, int y) {
 	for (i = 1; i < _numActors; i++) {
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
 			&& y >= _actors[i]._top && y <= _actors[i]._bottom) {
-			if (_version > 2 || i != VAR(VAR_EGO))
+			if (_game.version > 2 || i != VAR(VAR_EGO))
 				return i;
 		}
 	}
@@ -1348,7 +1348,7 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
-	if ((_version == 7 && !_keepText) || (_version == 8 && VAR(VAR_HAVE_MSG))) {
+	if ((_game.version == 7 && !_keepText) || (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
 		stopTalk();
 	}
 	if (_actorToPrintStrFor == 0xFF) {
@@ -1371,11 +1371,11 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
-	if (_version == 7)
+	if (_game.version == 7)
 		VAR(VAR_HAVE_MSG) = 0xFF;
 	_haveActorSpeechMsg = true;
 	CHARSET_1();
-	if (_version == 8)
+	if (_game.version == 8)
 		VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
 }
 #endif
@@ -1386,7 +1386,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
 	// FIXME: Workaround for bugs #770039 and #770049
-	if (_gameId == GID_LOOM) {
+	if (_game.id == GID_LOOM) {
 		if (!*_charsetBuffer)
 			return;
 	}
@@ -1400,7 +1400,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 		int oldact;
 
 		// WORKAROUND bug #770724
-		if (_gameId == GID_LOOM && _roomResource == 23 &&
+		if (_game.id == GID_LOOM && _roomResource == 23 &&
 			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
 			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
 		}
@@ -1424,9 +1424,9 @@ void ScummEngine::actorTalk(const byte *msg) {
 			return;
 	}
 
-	if (_heversion >= 72 || getTalkingActor() > 0x7F) {
+	if (_game.heversion >= 72 || getTalkingActor() > 0x7F) {
 		_charsetColor = (byte)_string[0].color;
-	} else if (_platform == Common::kPlatformNES) {
+	} else if (_game.platform == Common::kPlatformNES) {
 		if (_NES_lastTalkingActor != getTalkingActor())
 			_NES_talkColor ^= 1;
 		_NES_lastTalkingActor = getTalkingActor();
@@ -1446,7 +1446,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 }
 
 void Actor::runActorTalkScript(int f) {
-	if (_vm->_version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2)
+	if (_vm->_game.version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 2)
 		return;
 
 	if (_talkScript) {
@@ -1474,21 +1474,21 @@ void ScummEngine::stopTalk() {
 	act = getTalkingActor();
 	if (act && act < 0x80) {
 		Actor *a = derefActor(act, "stopTalk");
-		if ((_version >= 7 && !_string[0].no_talk_anim) ||
-			(_version <= 6 && a->isInCurrentRoom() && _useTalkAnims)) {
+		if ((_game.version >= 7 && !_string[0].no_talk_anim) ||
+			(_game.version <= 6 && a->isInCurrentRoom() && _useTalkAnims)) {
 			a->runActorTalkScript(a->_talkStopFrame);
 			_useTalkAnims = false;
 		}
-		if (_version <= 7 && _heversion == 0)
+		if (_game.version <= 7 && _game.heversion == 0)
 			setTalkingActor(0xFF);
 		a->_heTalking = false;
 	}
-	if (_version == 8 || _heversion >= 60)
+	if (_game.version == 8 || _game.heversion >= 60)
 		setTalkingActor(0);
-	if (_version == 8)
+	if (_game.version == 8)
 		VAR(VAR_HAVE_MSG) = 0;
 	_keepText = false;
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 #ifndef DISABLE_SCUMM_7_8
 		((ScummEngine_v7 *)this)->clearSubtitleQueue();
 #endif
@@ -1500,7 +1500,7 @@ void ScummEngine::stopTalk() {
 void Actor::setActorCostume(int c) {
 	int i;
 
-	if (_vm->_heversion >= 61 && (c == -1  || c == -2)) {
+	if (_vm->_game.heversion >= 61 && (c == -1  || c == -2)) {
 		_heSkipLimbs = (c == -1);
 		_needRedraw = true;
 		return;
@@ -1508,16 +1508,16 @@ void Actor::setActorCostume(int c) {
 
 	// Based on disassembly. It seems that high byte is not used at all, though
 	// it is attached to all horizontally flipped object, like left eye.
-	if (_vm->_heversion == 61)
+	if (_vm->_game.heversion == 61)
 		c &= 0xff;
 
 	_costumeNeedsInit = true;
 
-	if (_vm->_features & GF_NEW_COSTUMES) {
+	if (_vm->_game.features & GF_NEW_COSTUMES) {
 		memset(_animVariable, 0, sizeof(_animVariable));
 
 #ifndef DISABLE_HE
-		if (_vm->_heversion >= 71)
+		if (_vm->_game.heversion >= 71)
 			((ScummEngine_v71he *)_vm)->queueAuxBlock(this);
 #endif
 
@@ -1545,18 +1545,18 @@ void Actor::setActorCostume(int c) {
 
 
 	// V1 zak uses palette[] as a dynamic costume color array.
-	if (_vm->_version == 1)
+	if (_vm->_game.version == 1)
 		return;
 
-	if (_vm->_features & GF_NEW_COSTUMES) {
+	if (_vm->_game.features & GF_NEW_COSTUMES) {
 		for (i = 0; i < 256; i++)
 			_palette[i] = 0xFF;
-	} else if (_vm->_features & GF_OLD_BUNDLE) {
+	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
 		for (i = 0; i < 16; i++)
 			_palette[i] = i;
 
 		// Make stuff more visible on CGA. Based on disassembly
-		if (_vm->_renderMode == Common::kRenderCGA && _vm->_version > 2) {
+		if (_vm->_renderMode == Common::kRenderCGA && _vm->_game.version > 2) {
 			_palette[6] = 5;
 			_palette[7] = 15;
 		}
@@ -1565,8 +1565,8 @@ void Actor::setActorCostume(int c) {
 			_palette[i] = 0xFF;
 	}
 
-	if (_vm->_heversion >= 71 && _vm->getTalkingActor() == _number) {
-		if (_vm->_heversion <= 95 || (_vm->_heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
+	if (_vm->_game.heversion >= 71 && _vm->getTalkingActor() == _number) {
+		if (_vm->_game.heversion <= 95 || (_vm->_game.heversion >= 98 && _vm->VAR(_vm->VAR_SKIP_RESET_TALK_ACTOR) == 0)) {
 			//_vm->setTalkingActor(0);
 		}
 	}
@@ -1575,19 +1575,19 @@ void Actor::setActorCostume(int c) {
 void Actor::startWalkActor(int destX, int destY, int dir) {
 	AdjustBoxResult abr;
 
-	if (!isInCurrentRoom() && _vm->_version >= 7) {
+	if (!isInCurrentRoom() && _vm->_game.version >= 7) {
 		debug(0, "startWalkActor: attempting to walk actor %d who is not in this room", _number);
 		return;
 	}
 
-	if (_vm->_version <= 4) {
+	if (_vm->_game.version <= 4) {
 		abr.x = destX;
 		abr.y = destY;
 	} else {
 		abr = adjustXYToBeInBox(destX, destY);
 	}
 
-	if (!isInCurrentRoom() && _vm->_version <= 6) {
+	if (!isInCurrentRoom() && _vm->_game.version <= 6) {
 		_pos.x = abr.x;
 		_pos.y = abr.y;
 		if (_ignoreTurns == false && dir != -1)
@@ -1658,7 +1658,7 @@ void Actor::walkActor() {
 	int new_dir, next_box;
 	Common::Point foundPath;
 
-	if (_vm->_version >= 7) {
+	if (_vm->_game.version >= 7) {
 		if (_moving & MF_FROZEN) {
 			if (_moving & MF_TURN) {
 				new_dir = updateActorDirection(false);
@@ -1837,7 +1837,7 @@ void Actor::walkActorOld() {
 
 		// WORKAROUND: To fully fix bug #774783, we add a special case
 		// here, resulting in a different next_box value for Hitler.
-		if ((_vm->_gameId == GID_INDY3) && _vm->_roomResource == 46 && _walkbox == 1 && _walkdata.destbox == 0 && _number == 9)
+		if ((_vm->_game.id == GID_INDY3) && _vm->_roomResource == 46 && _walkbox == 1 && _walkdata.destbox == 0 && _number == 9)
 			next_box = 1;
 
 		if (next_box < 0) {
@@ -1856,7 +1856,7 @@ void Actor::walkActorOld() {
 
 		_walkdata.curbox = next_box;
 
-		if (_vm->_version <= 2) {
+		if (_vm->_game.version <= 2) {
 			_vm->getClosestPtOnBox(_walkdata.curbox, _pos.x, _pos.y, p2.x, p2.y);
 			_vm->getClosestPtOnBox(_walkbox, p2.x, p2.y, p3.x, p3.y);
 // FIXME: Work in progress
@@ -1997,14 +1997,14 @@ bool Actor::isInClass(int cls) {
 }
 
 bool Actor::isPlayer() {
-	if (_vm->_version <= 2)
+	if (_vm->_game.version <= 2)
 		return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
 	else
 		return isInClass(kObjectClassPlayer);
 }
 
 void Actor::setUserCondition(int slot, int set) {
-	const int condMaskCode = (_vm->_heversion >= 90) ? 0x1FFF : 0x3FF;
+	const int condMaskCode = (_vm->_game.heversion >= 90) ? 0x1FFF : 0x3FF;
 	checkRange(32, 1, slot, "Condition %d out of range");
 	if (set == 0) {
 		_heCondMask &= ~(1 << (slot + 0xF));
@@ -2024,7 +2024,7 @@ bool Actor::isUserConditionSet(int slot) const {
 }
 
 void Actor::setTalkCondition(int slot) {
-	const int condMaskCode = (_vm->_heversion >= 90) ? 0x1FFF : 0x3FF;
+	const int condMaskCode = (_vm->_game.heversion >= 90) ? 0x1FFF : 0x3FF;
 	checkRange(32, 1, slot, "Condition %d out of range");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {

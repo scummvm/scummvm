@@ -1130,12 +1130,7 @@ static int compareMD5Table(const void *a, const void *b) {
 
 ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: Engine(syst),
-	  _gameId(gs.id),
-	  _version(gs.version),
-	  _heversion(gs.heversion),
-	  _features(gs.features),
-	  _platform(gs.platform),
-	  _midi(gs.midi),
+	  _game(gs),
 	  _substResFileNameIndex(substResFileNameIndex),
 	  _substResFileNameIndexBundle(0),
 	  _debugger(0),
@@ -1163,7 +1158,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	if (!elem)
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-	if (_gameId == GID_FT) {
+	if (_game.id == GID_FT) {
 		// WORKAROUND for bug #1407789. See checkAndRunSentenceScript()
 		// for the actual workaround.
 
@@ -1190,13 +1185,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	// Add default file directories.
-	if (((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST)) && (_version <= 4)) {
+	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
 		File::addDefaultDirectory(_gameDataPath + "ROOMS/");
 		File::addDefaultDirectory(_gameDataPath + "rooms/");
 	}
 
-	if ((_platform == Common::kPlatformMacintosh) && (_version == 3)) {
+	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
 		// This is for the Mac version of Indy3/Loom
 		File::addDefaultDirectory(_gameDataPath + "Rooms 1/");
 		File::addDefaultDirectory(_gameDataPath + "Rooms 2/");
@@ -1205,7 +1200,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 #ifndef DISABLE_SCUMM_7_8
 #ifdef MACOSX
-	if (_version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
+	if (_game.version == 8 && !memcmp(_gameDataPath.c_str(), "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
 		// on the volume name. Hence if playing from CD, we'd get a problem.
 		// So if loading of a resource file fails, we fall back to the (fixed)
@@ -1220,13 +1215,13 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		File::addDefaultDirectory("/Volumes/MONKEY3_2/resource/");
 	} else
 #endif
-	if (_version == 8) {
+	if (_game.version == 8) {
 		// This is for COMI
 		File::addDefaultDirectory(_gameDataPath + "RESOURCE/");
 		File::addDefaultDirectory(_gameDataPath + "resource/");
 	}
 
-	if (_version == 7) {
+	if (_game.version == 7) {
 		// This is for Full Throttle & The Dig
 		File::addDefaultDirectory(_gameDataPath + "VIDEO/");
 		File::addDefaultDirectory(_gameDataPath + "video/");
@@ -1237,17 +1232,17 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
-	if ((_platform == Common::kPlatformNES) && _substResFileNameIndex) {
+	if ((_game.platform == Common::kPlatformNES) && _substResFileNameIndex) {
 		char tmpBuf[128];
 		generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
 		_fileHandle = new ScummNESFile();
 		_containerFile = tmpBuf;
-	} else if ((_platform == Common::kPlatformC64) && _substResFileNameIndex) {
+	} else if ((_game.platform == Common::kPlatformC64) && _substResFileNameIndex) {
 		char tmpBuf1[128], tmpBuf2[128];
 		generateSubstResFileName("00.LFL", tmpBuf1, sizeof(tmpBuf1));
 		generateSubstResFileName("01.LFL", tmpBuf2, sizeof(tmpBuf2));
 
-		_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _gameId == GID_MANIAC);
+		_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
 
 		_containerFile = tmpBuf1;
 	} else
@@ -1261,8 +1256,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// (we do that here); the rest is handled by the  ScummFile class and 
 	// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 	// handling).
-	if (_version >= 5 && _heversion == 0 && _substResFileNameIndex &&
-		_platform == Common::kPlatformMacintosh && 
+	if (_game.version >= 5 && _game.heversion == 0 && _substResFileNameIndex &&
+		_game.platform == Common::kPlatformMacintosh && 
 		substResFileNameTable[_substResFileNameIndex].genMethod == kGenAsIs) {
 		if (_fileHandle->open(substResFileNameTable[_substResFileNameIndex].macName)) {
 			_containerFile = substResFileNameTable[_substResFileNameIndex].macName;
@@ -1645,20 +1640,20 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 
 	// Do some render mode restirctions
-	if (_version == 1)
+	if (_game.version == 1)
 		_renderMode = Common::kRenderDefault;
 
 	switch (_renderMode) {
 	case Common::kRenderHercA:
 	case Common::kRenderHercG:
-		if (_version > 2 && _gameId != GID_MONKEY_EGA)
+		if (_game.version > 2 && _game.id != GID_MONKEY_EGA)
 			_renderMode = Common::kRenderDefault;
 		break;
 
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderAmiga:
-		if (!(_features & GF_16COLOR))
+		if (!(_game.features & GF_16COLOR))
 			_renderMode = Common::kRenderDefault;
 		break;
 
@@ -1669,15 +1664,15 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_platform == Common::kPlatformFMTowns && _version == 3) {	// FM-TOWNS V3 games use 320x240
+	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
-	} else if (_version == 8 || _heversion >= 71) {
+	} else if (_game.version == 8 || _game.heversion >= 71) {
 		// COMI uses 640x480. Likewise starting from version 7.1, HE games use
 		// 640x480, too.
 		_screenWidth = 640;
 		_screenHeight = 480;
-	} else if (_platform == Common::kPlatformNES) {
+	} else if (_game.platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
 	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
@@ -1794,7 +1789,7 @@ ScummEngine_v6::ScummEngine_v6(GameDetector *detector, OSystem *syst, const Scum
 #ifndef DISABLE_HE
 ScummEngine_v70he::ScummEngine_v70he(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
 	: ScummEngine_v60he(detector, syst, gs, md5sum, substResFileNameIndex) {
-	if (_platform == Common::kPlatformMacintosh && (_heversion >= 72 && _heversion <= 73))
+	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 73))
 		_resExtractor = new MacResExtractor(this);
 	else
 		_resExtractor = new Win32ResExtractor(this);
@@ -1871,10 +1866,10 @@ ScummEngine_v90he::ScummEngine_v90he(GameDetector *detector, OSystem *syst, cons
 
 ScummEngine_v90he::~ScummEngine_v90he() {
 	delete _sprite;
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		delete _logicHE;
 	}
-	if (_heversion >= 99) {
+	if (_game.heversion >= 99) {
 		free(_hePalettes);
 	}
 }
@@ -1924,18 +1919,18 @@ int ScummEngine::init(GameDetector &detector) {
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.
-	if (_features & GF_AUDIOTRACKS)
+	if (_game.features & GF_AUDIOTRACKS)
 		checkCD();
 
 	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0 && (_features & GF_AUDIOTRACKS))
+	if (cd_num >= 0 && (_game.features & GF_AUDIOTRACKS))
 		_system->openCD(cd_num);
 
 	// Create the sound manager
 	_sound = new Sound(this);
 
 	// Setup the music engine
-	setupMusic(_midi);
+	setupMusic(_game.midi);
 
 	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
 	// Rather we should explicitly translate them.
@@ -1948,27 +1943,27 @@ int ScummEngine::init(GameDetector &detector) {
 	loadCJKFont();
 
 	// Create the charset renderer
-	if (_platform == Common::kPlatformNES)
+	if (_game.platform == Common::kPlatformNES)
 		_charset = new CharsetRendererNES(this);
-	else if (_version <= 2)
+	else if (_game.version <= 2)
 		_charset = new CharsetRendererV2(this, _language);
-	else if (_version == 3)
+	else if (_game.version == 3)
 		_charset = new CharsetRendererV3(this);
 #ifndef DISABLE_SCUMM_7_8
-	else if (_version == 8)
+	else if (_game.version == 8)
 		_charset = new CharsetRendererNut(this);
 #endif
 	else
 		_charset = new CharsetRendererClassic(this);
 
 	// Create the costume renderer
-	if (_features & GF_NEW_COSTUMES) {
+	if (_game.features & GF_NEW_COSTUMES) {
 		_costumeRenderer = new AkosRenderer(this);
 		_costumeLoader = new AkosCostumeLoader(this);
-	} else if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+	} else if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
 		_costumeRenderer = new C64CostumeRenderer(this);
 		_costumeLoader = new C64CostumeLoader(this);
-	} else if (_platform == Common::kPlatformNES) {
+	} else if (_game.platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
 	} else {
@@ -1978,7 +1973,7 @@ int ScummEngine::init(GameDetector &detector) {
 
 #ifndef DISABLE_SCUMM_7_8
 	// Create FT INSANE object
-	if (_gameId == GID_FT)
+	if (_game.id == GID_FT)
 		_insane = new Insane((ScummEngine_v6 *)this);
 	else
 #endif
@@ -1995,46 +1990,46 @@ int ScummEngine::init(GameDetector &detector) {
 
 	setupOpcodes();
 
-	if (_version == 8)
+	if (_game.version == 8)
 		_numActors = 80;
-	else if (_version == 7)
+	else if (_game.version == 7)
 		_numActors = 30;
-	else if (_gameId == GID_SAMNMAX)
+	else if (_game.id == GID_SAMNMAX)
 		_numActors = 30;
-	else if (_gameId == GID_MANIAC)
+	else if (_game.id == GID_MANIAC)
 		_numActors = 25;
-	else if (_heversion >= 80)
+	else if (_game.heversion >= 80)
 		_numActors = 62;
-	else if (_heversion >= 72)
+	else if (_game.heversion >= 72)
 		_numActors = 30;
 	else
 		_numActors = 13;
 
-	if (_version >= 7)
+	if (_game.version >= 7)
 		OF_OWNER_ROOM = 0xFF;
 	else
 		OF_OWNER_ROOM = 0x0F;
 
-	// if (_gameId==GID_MONKEY2 && _bootParam == 0)
+	// if (_game.id==GID_MONKEY2 && _bootParam == 0)
 	//	_bootParam = 10001;
 
-	if (!_copyProtection && _gameId == GID_INDY4 && _bootParam == 0) {
+	if (!_copyProtection && _game.id == GID_INDY4 && _bootParam == 0) {
 		_bootParam = -7873;
 	}
 
-	if (!_copyProtection && _gameId == GID_SAMNMAX && _bootParam == 0) {
+	if (!_copyProtection && _game.id == GID_SAMNMAX && _bootParam == 0) {
 		_bootParam = -1;
 	}
 
 	readIndexFile();
 
 #ifdef PALMOS_68K
-	if (_features & GF_NEW_COSTUMES)
+	if (_game.features & GF_NEW_COSTUMES)
 		res._maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
 	else
 		res._maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
 #else
-	if (_features & GF_NEW_COSTUMES) {
+	if (_game.features & GF_NEW_COSTUMES) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
 		res._maxHeapThreshold = 6 * 1024 * 1024;
@@ -2049,7 +2044,7 @@ int ScummEngine::init(GameDetector &detector) {
 
 	if (VAR_DEBUGMODE != 0xFF) {
 		VAR(VAR_DEBUGMODE) = _debugMode;
-		if (_heversion >= 80 && _debugMode)
+		if (_game.heversion >= 80 && _debugMode)
 			VAR(85) = 1;
 	}
 
@@ -2057,7 +2052,7 @@ int ScummEngine::init(GameDetector &detector) {
 		_imuse->setBase(res.address[rtSound]);
 	}
 
-	if (_version >= 5)
+	if (_game.version >= 5)
 		_sound->setupSound();
 
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
@@ -2077,12 +2072,12 @@ void ScummEngine::scummInit() {
 	_tempMusic = 0;
 	debug(9, "scummInit");
 
-	if ((_gameId == GID_MANIAC) && (_version == 1) && !(_platform == Common::kPlatformNES)) {
-		if (_platform == Common::kPlatformC64)
+	if ((_game.id == GID_MANIAC) && (_game.version == 1) && !(_game.platform == Common::kPlatformNES)) {
+		if (_game.platform == Common::kPlatformC64)
 			initScreens(8, 144);
 		else
 			initScreens(16, 152);
-	} else if (_version >= 7 || _heversion >= 71) {
+	} else if (_game.version >= 7 || _game.heversion >= 71) {
 		initScreens(0, _screenHeight);
 	} else {
 		initScreens(16, 144);
@@ -2092,20 +2087,20 @@ void ScummEngine::scummInit() {
 
 	for (i = 0; i < 256; i++)
 		_roomPalette[i] = i;
-	if (_version == 1) {
+	if (_game.version == 1) {
 		// Use 17 color table for v1 games to allow
 		// correct color for inventory and sentence
 		// line
 		// Original games used some kind of dynamic
 		// color table remapping between rooms
-		if (_platform == Common::kPlatformC64) {
+		if (_game.platform == Common::kPlatformC64) {
 			setupC64Palette();
-		} else if (_platform == Common::kPlatformNES) {
+		} else if (_game.platform == Common::kPlatformNES) {
 			setupNESPalette();
 		} else {
 			setupV1Palette();
 		}
-	} else if (_features & GF_16COLOR) {
+	} else if (_game.features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
 			_shadowPalette[i] = i;
 
@@ -2128,17 +2123,17 @@ void ScummEngine::scummInit() {
 			break;
 
 		default:
-			if ((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST))
+			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
 				setupAmigaPalette();
 			else
 				setupEGAPalette();
 		}
 	}
 
-	if (_version > 3 && _version < 8)
+	if (_game.version > 3 && _game.version < 8)
 		loadCharset(1);
 
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		loadCharset(0);	// FIXME - HACK ?
 
 	setShake(0);
@@ -2153,13 +2148,13 @@ void ScummEngine::scummInit() {
 		_actors[i].initActor(1);
 
 		// this is from IDB
-		if ((_version == 1) || (_gameId == GID_MANIAC && _demoMode))
+		if ((_game.version == 1) || (_game.id == GID_MANIAC && _demoMode))
 			_actors[i].setActorCostume(i);
 	}
 
-	if (_gameId == GID_MANIAC && _version == 1) {
+	if (_game.id == GID_MANIAC && _game.version == 1) {
 		setupV1ActorTalkColor();
-	} else if (_gameId == GID_MANIAC && _version == 2 && _demoMode) {
+	} else if (_game.id == GID_MANIAC && _game.version == 2 && _demoMode) {
 		// HACK Some palette changes needed for demo script
 		// in Maniac Mansion (Enhanced)
 		_actors[3].setPalette(3, 1);
@@ -2190,18 +2185,18 @@ void ScummEngine::scummInit() {
 		_verbs[i].key = 0;
 	}
 
-	if (_version == 7) {
+	if (_game.version == 7) {
 		VAR(VAR_CAMERA_THRESHOLD_X) = 100;
 		VAR(VAR_CAMERA_THRESHOLD_Y) = 70;
 		VAR(VAR_CAMERA_ACCEL_X) = 100;
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
-	} else if (!(_features & GF_NEW_CAMERA)) {
-		if (_platform == Common::kPlatformNES) {
+	} else if (!(_game.features & GF_NEW_CAMERA)) {
+		if (_game.platform == Common::kPlatformNES) {
 			camera._leftTrigger = 6;	// 6
 			camera._rightTrigger = 21;	// 25
 		} else {
 			camera._leftTrigger = 10;
-			camera._rightTrigger = (_heversion >= 71) ? 70 : 30;
+			camera._rightTrigger = (_game.heversion >= 71) ? 70 : 30;
 		}
 		camera._mode = 0;
 	}
@@ -2249,11 +2244,11 @@ void ScummEngine::scummInit() {
 
 	clearDrawObjectQueue();
 
-	if (_platform == Common::kPlatformNES)
+	if (_game.platform == Common::kPlatformNES)
 		decodeNESBaseTiles();
 
 	for (i = 0; i < 6; i++) {
-		if (_version == 3) { // FIXME - what is this?
+		if (_game.version == 3) { // FIXME - what is this?
 			_string[i]._default.xpos = 0;
 			_string[i]._default.ypos = 0;
 		} else {
@@ -2282,7 +2277,7 @@ void ScummEngine_c64::scummInit() {
 void ScummEngine_v2::scummInit() {
 	ScummEngine::scummInit();
 
-	if (_platform == Common::kPlatformNES) {
+	if (_game.platform == Common::kPlatformNES) {
 		initNESMouseOver();
 		_switchRoomEffect2 = _switchRoomEffect = 6;
 	} else {
@@ -2307,7 +2302,7 @@ void ScummEngine_v60he::scummInit() {
 	// HACK cursor hotspot is wrong
 	// Original games used
 	// setCursorHotspot(8, 7);
-	if (_gameId == GID_FUNPACK)
+	if (_game.id == GID_FUNPACK)
 		setCursorHotspot(16, 16);
 }
 
@@ -2329,11 +2324,11 @@ void ScummEngine_v90he::scummInit() {
 	_sprite->resetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 
-	if (_features & GF_HE_CURSORLESS)
+	if (_game.features & GF_HE_CURSORLESS)
 		setDefaultCursor();
 
-	if (_heversion >= 98) {
-		switch (_gameId) {
+	if (_game.heversion >= 98) {
+		switch (_game.id) {
 		case GID_PUTTRACE:
 			_logicHE = new LogicHErace(this);
 			break;
@@ -2395,7 +2390,7 @@ void ScummEngine::setupMusic(int midi) {
 	}
 	
 	// FIXME: MD_TOWNS should not be _midi_native in the first place!! iMuse code needs to be restructured.
-	if ((_gameId == GID_TENTACLE) || (_gameId == GID_SAMNMAX) || (midiDriver == MD_TOWNS))
+	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX) || (midiDriver == MD_TOWNS))
 		_enable_gs = false;
 	else
 		_enable_gs = ConfMan.getBool("enable_gs");
@@ -2412,28 +2407,28 @@ void ScummEngine::setupMusic(int midi) {
 	}
 
 	// Init iMuse
-	if (_features & GF_DIGI_IMUSE) {
+	if (_game.features & GF_DIGI_IMUSE) {
 #ifndef DISABLE_SCUMM_7_8
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
 #endif
-	} else if (_platform == Common::kPlatformC64) {
+	} else if (_game.platform == Common::kPlatformC64) {
 		// TODO
 		_musicEngine = NULL;
-	} else if (_platform == Common::kPlatformNES) {
+	} else if (_game.platform == Common::kPlatformNES) {
 		_musicEngine = new Player_NES(this);
-	} else if ((_platform == Common::kPlatformAmiga) && (_version == 2)) {
+	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version == 2)) {
 		_musicEngine = new Player_V2A(this);
-	} else if ((_platform == Common::kPlatformAmiga) && (_version == 3)) {
+	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version == 3)) {
 		_musicEngine = new Player_V3A(this);
-	} else if ((_platform == Common::kPlatformAmiga) && (_version <= 4)) {
+	} else if ((_game.platform == Common::kPlatformAmiga) && (_game.version <= 4)) {
 		_musicEngine = NULL;
-	} else if (_gameId == GID_MANIAC && (_version == 1)) {
+	} else if (_game.id == GID_MANIAC && (_game.version == 1)) {
 		_musicEngine = new Player_V1(this, midiDriver != MD_PCSPK);
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
-	} else if ((_musicType == MDT_PCSPK) && ((_version > 2) && (_version <= 4))) {
+	} else if ((_musicType == MDT_PCSPK) && ((_game.version > 2) && (_game.version <= 4))) {
 		_musicEngine = new Player_V2(this, midiDriver != MD_PCSPK);
-	} else if (_version >= 3 && _heversion <= 61 && _platform != Common::kPlatform3DO) {
+	} else if (_game.version >= 3 && _game.heversion <= 61 && _game.platform != Common::kPlatform3DO) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
@@ -2444,7 +2439,7 @@ void ScummEngine::setupMusic(int midi) {
 		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
 		if (_musicType == MDT_ADLIB || multi_midi) {
 			adlibMidiDriver = MidiDriver_ADLIB_create(_mixer);
-			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_features & GF_SMALL_HEADER) ? 1 : 0);
+			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 
 		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
@@ -2453,7 +2448,7 @@ void ScummEngine::setupMusic(int midi) {
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 			_imuse->property(IMuse::PROP_GS, _enable_gs);
-			if (_heversion >= 60 || midi == MDT_TOWNS) {
+			if (_game.heversion >= 60 || midi == MDT_TOWNS) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
@@ -2498,12 +2493,12 @@ int ScummEngine::go() {
 
 		_saveLoadFlag = 0;
 #ifndef DISABLE_HE
-		if (_heversion >= 98) {
+		if (_game.heversion >= 98) {
 			((ScummEngine_v90he *)this)->_logicHE->initOnce();
 			((ScummEngine_v90he *)this)->_logicHE->beforeBootScript();
 		}
 #endif
-		if (_gameId == GID_MANIAC && _demoMode)
+		if (_game.id == GID_MANIAC && _demoMode)
 			runScript(9, 0, 0, args);
 		else
 			runScript(1, 0, 0, args);
@@ -2563,15 +2558,15 @@ int ScummEngine::scummLoop(int delta) {
 	_rnd.getRandomNumber(2);
 
 #ifndef DISABLE_HE
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->startOfFrame();
 	}
 #endif
-	if (_version > 2) {
+	if (_game.version > 2) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
-		if (_gameId == GID_ZAK || _gameId == GID_INDY3) {
+		if (_game.id == GID_ZAK || _game.id == GID_INDY3) {
 			// All versions of Indy3 set three extra timers
 			// FM-TOWNS version of Zak sets three extra timers
 			VAR(39) += delta;
@@ -2599,30 +2594,30 @@ int ScummEngine::scummLoop(int delta) {
 
 	// In V1-V3 games, CHARSET_1 is called much earlier than in newer games.
 	// See also bug #770042 for a case were this makes a difference.
-	if (_version <= 3)
+	if (_game.version <= 3)
 		CHARSET_1();
 
 	processKbd(false);
 
-	if (_features & GF_NEW_CAMERA) {
+	if (_game.features & GF_NEW_CAMERA) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x / 8;
 	} else {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 	}
-	if (_version <= 7)
+	if (_game.version <= 7)
 		VAR(VAR_HAVE_MSG) = _haveMsg;
 
-	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
 		// TODO
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		VAR(VAR_VIRT_MOUSE_X) = _virtualMouse.x / 8;
 		VAR(VAR_VIRT_MOUSE_Y) = _virtualMouse.y / 2;
 
 		// Adjust mouse coordinates as narrow rooms in NES are centered
-		if (_platform == Common::kPlatformNES && _NESStartStrip > 0) {
+		if (_game.platform == Common::kPlatformNES && _NESStartStrip > 0) {
 			VAR(VAR_VIRT_MOUSE_X) -= 2;
 			if (VAR(VAR_VIRT_MOUSE_X) < 0)
 				VAR(VAR_VIRT_MOUSE_X) = 0;
@@ -2638,7 +2633,7 @@ int ScummEngine::scummLoop(int delta) {
 		}
 	}
 
-	if (_features & GF_AUDIOTRACKS) {
+	if (_game.features & GF_AUDIOTRACKS) {
 		// Covered automatically by the Sound class
 	} else if (VAR_MUSIC_TIMER != 0xFF) {
 		if (_musicEngine) {
@@ -2682,7 +2677,7 @@ load_game:
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values). Temp disabled for V8
 			// because of odd timing issue with scripts and the variable reset
-			if (success && _saveTemporaryState && !(_features & GF_SMALL_HEADER) && _version < 8)
+			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER) && _game.version < 8)
 				VAR(VAR_GAME_LOADED) = 201;
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState);
@@ -2691,7 +2686,7 @@ load_game:
 
 			// Ender: Disabled for small_header games, as can overwrite game
 			//  variables (eg, Zak256 cashcard values).
-			if (success && _saveTemporaryState && !(_features & GF_SMALL_HEADER))
+			if (success && _saveTemporaryState && !(_game.features & GF_SMALL_HEADER))
 				VAR(VAR_GAME_LOADED) = 203;
 		}
 
@@ -2718,23 +2713,23 @@ load_game:
 		_charset->_hasMask = false;
 
 		// HACK as in game save stuff isn't supported currently
-		if (_gameId == GID_LOOM) {
+		if (_game.id == GID_LOOM) {
 			int args[16];
 			uint value;
 			memset(args, 0, sizeof(args));
 			args[0] = 2;
 
-			if (_platform == Common::kPlatformMacintosh)
+			if (_game.platform == Common::kPlatformMacintosh)
 				value = 105;
-			else if (_version == 4)	// 256 color CD version
+			else if (_game.version == 4)	// 256 color CD version
 				value = 150;
 			else
  				value = 100;
-			byte restoreScript = (_platform == Common::kPlatformFMTowns) ? 17 : 18;
+			byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
 			// if verbs should be shown restore them
 			if (VAR(value) == 2)
 				runScript(restoreScript, 0, 0, args);
-		} else if (_version > 3) {
+		} else if (_game.version > 3) {
 			for (int i = 0; i < _numVerbs; i++)
 				drawVerb(i, 0);
 		} else {
@@ -2747,7 +2742,7 @@ load_game:
 		_fullRedraw = true;
 	}
 
-	if (_heversion >= 80) {
+	if (_game.heversion >= 80) {
 		_sound->processSoundCode();
 	}
 	runAllScripts();
@@ -2766,32 +2761,32 @@ load_game:
 	}
 
 	if (_currentRoom == 0) {
-		if (_version > 3)
+		if (_game.version > 3)
 			CHARSET_1();
 		drawDirtyScreenParts();
 	} else {
 		walkActors();
 		moveCamera();
 		updateObjectStates();
-		if (_version > 3)
+		if (_game.version > 3)
 			CHARSET_1();
 
 		if (camera._cur.x != camera._last.x || _bgNeedsRedraw || _fullRedraw
-				|| ((_features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
+				|| ((_game.features & GF_NEW_CAMERA) && camera._cur.y != camera._last.y)) {
 			redrawBGAreas();
 		}
 
 		processDrawQue();
 
-		if (_heversion >= 99)
+		if (_game.heversion >= 99)
 			_fullRedraw = false;
 
 		// Full Throttle always redraws verbs and draws verbs before actors
-		if (_version >= 7)
+		if (_game.version >= 7)
 			redrawVerbs();
 
 #ifndef DISABLE_HE
-		if (_heversion >= 90) {
+		if (_game.heversion >= 90) {
 			((ScummEngine_v90he *)this)->_sprite->resetBackground();
 			((ScummEngine_v90he *)this)->_sprite->sortActiveSprites();
 		}
@@ -2811,7 +2806,7 @@ load_game:
 
 		_fullRedraw = false;
 
-		if (_version >= 4 && _heversion <= 61)
+		if (_game.version >= 4 && _game.heversion <= 61)
 			cyclePalette();
 		palManipulate();
 		if (_doEffect) {
@@ -2830,7 +2825,7 @@ load_game:
 		// Render everything to the screen.
 		drawDirtyScreenParts();
 
-		if (_version <= 5)
+		if (_game.version <= 5)
 			playActorSounds();
 	}
 
@@ -2839,7 +2834,7 @@ load_game:
 #ifndef DISABLE_SCUMM_7_8
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
-		if ( ((_gameId == GID_DIG) && (!(_features & GF_DEMO))) || (_gameId == GID_CMI) )
+		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
 			_imuseDigital->refreshScripts();
 	}
 #endif
@@ -2856,10 +2851,10 @@ load_game:
 	_system->showMouse(_cursor.state > 0);
 
 #ifndef DISABLE_HE
-	if (_heversion >= 90) {
+	if (_game.heversion >= 90) {
 		((ScummEngine_v90he *)this)->_sprite->updateImages();
 	}
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->endOfFrame();
 	}
 #endif
@@ -2935,14 +2930,14 @@ void ScummEngine::restart() {
 	}
 
 	// Reinit sound engine
-	if (_version >= 5)
+	if (_game.version >= 5)
 		_sound->setupSound();
 
 	// Re-run bootscript
 	int args[16];
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;
-	if (_gameId == GID_MANIAC && _demoMode)
+	if (_game.id == GID_MANIAC && _demoMode)
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);

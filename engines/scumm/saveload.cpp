@@ -157,7 +157,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(50) && _heversion >= 71) {
+	if (hdr.ver < VER(50) && _game.heversion >= 71) {
 		warning("Unsupported version of '%s'", filename);
 		delete in;
 		return false;
@@ -250,7 +250,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	initScummVars();
 
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		loadCharset(0); // FIXME - HACK ?
 
 	//
@@ -264,7 +264,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	setupVolumes();
 
 	// Init NES costume data
-	if (_platform == Common::kPlatformNES) {
+	if (_game.platform == Common::kPlatformNES) {
 		if (hdr.ver < VER(47))
 			_NESCostumeSet = 0;
 		NES_loadCostumeSet(_NESCostumeSet);
@@ -277,21 +277,21 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	// WORKAROUND bug #795214: Object 819 could be set to a state of 1 in old save games
 	// Object 819 is part of the exit of the church and should not be drawn.
-	if (hdr.ver < VER(59) && _gameId == GID_MONKEY_VGA) {
+	if (hdr.ver < VER(59) && _game.id == GID_MONKEY_VGA) {
 		putState(819, 0);
 	}
 
-	if (hdr.ver < VER(33) && _version >= 7) {
+	if (hdr.ver < VER(33) && _game.version >= 7) {
 		// For a long time, we didn't set these vars to default values.
 		VAR(VAR_DEFAULT_TALK_DELAY) = 60;
-		if (_version == 7)
+		if (_game.version == 7)
 			VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
 	}
 
 	if (hdr.ver < VER(30)) {
 		// For a long time, we used incorrect location, causing it to default to zero.
-		if (_version == 8)
-			_scummVars[VAR_CHARINC] = (_features & GF_DEMO) ? 3 : 1;
+		if (_game.version == 8)
+			_scummVars[VAR_CHARINC] = (_game.features & GF_DEMO) ? 3 : 1;
 		// Needed due to subtitle speed changes
 		_defaultTalkDelay /= 20;
 	}
@@ -300,7 +300,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// scumm vars. We now know the proper locations. To be able to properly use
 	// old save games, we update the old (bad) variables to the new (correct)
 	// ones.
-	if (hdr.ver < VER(28) && _version == 8) {
+	if (hdr.ver < VER(28) && _game.version == 8) {
 		_scummVars[VAR_CAMERA_MIN_X] = _scummVars[101];
 		_scummVars[VAR_CAMERA_MAX_X] = _scummVars[102];
 		_scummVars[VAR_CAMERA_MIN_Y] = _scummVars[103];
@@ -327,15 +327,15 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// anyway. There was a time, though, when re-initializing was necessary
 	// for backwards compatibility, and it may still prove useful if we
 	// ever add options for using different 16-colour palettes.
-	if (_version == 1) {
-		if (_platform == Common::kPlatformC64) {
+	if (_game.version == 1) {
+		if (_game.platform == Common::kPlatformC64) {
 			setupC64Palette();
-		} else if (_platform == Common::kPlatformNES) {
+		} else if (_game.platform == Common::kPlatformNES) {
 			setupNESPalette();
 		} else {
 			setupV1Palette();
 		}
-	} else if (_features & GF_16COLOR) {
+	} else if (_game.features & GF_16COLOR) {
 		switch (_renderMode) {
 		case Common::kRenderEGA:
 			setupEGAPalette();
@@ -355,7 +355,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 			break;
 
 		default:
-			if ((_platform == Common::kPlatformAmiga) || (_platform == Common::kPlatformAtariST))
+			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
 				setupAmigaPalette();
 			else
 				setupEGAPalette();
@@ -364,13 +364,13 @@ bool ScummEngine::loadState(int slot, bool compat) {
 		setDirtyColors(0, 255);
 
 
-	if (hdr.ver < VER(35) && _gameId == GID_MANIAC && _version == 1)
+	if (hdr.ver < VER(35) && _game.id == GID_MANIAC && _game.version == 1)
 		setupV1ActorTalkColor();
 
 	// Load the static room data
 	loadRoomSubBlocks();
 
-	if (!(_features & GF_NEW_CAMERA)) {
+	if (!(_game.features & GF_NEW_CAMERA)) {
 		camera._last.x = camera._cur.x;
 	}
 
@@ -457,7 +457,7 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(57) && _heversion >= 60) {
+	if (hdr.ver < VER(57) && _game.heversion >= 60) {
 		strcpy(desc, "Unsupported version");
 		return false;
 	}
@@ -1073,7 +1073,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
  				// For V1-V5 games, there used to be no object name resources.
  				// At some point this changed. But since old savegames rely on
  				// unchanged resource counts, we have to hard code the following check
- 				if (_version < 6 && type == rtObjectName)
+ 				if (_game.version < 6 && type == rtObjectName)
  					continue;
  				for (idx = 1; idx < res.num[type]; idx++)
  					saveLoadResource(s, type, idx);
@@ -1096,7 +1096,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
-		if (s->getVersion() >= VER(21) && _version < 5)
+		if (s->getVersion() >= VER(21) && _game.version < 5)
 			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
 	}
 
@@ -1143,9 +1143,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	else
 		s->saveLoadArrayOf(_scummVars, _numVariables, sizeof(_scummVars[0]), sleInt32);
 
-	if (_gameId == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
+	if (_game.id == GID_TENTACLE)	// Maybe misplaced, but that's the main idea
 		_scummVars[120] = var120Backup;
-	if (_gameId == GID_INDY4)
+	if (_game.id == GID_INDY4)
 		_scummVars[98] = var98Backup;
 
 	s->saveLoadArrayOf(_bitVars, _numBitVariables >> 3, 1, sleByte);
@@ -1391,7 +1391,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 	assert(res.address[type][idx]);
 
-	if ((res.mode[type] == 0) || (_heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
+	if ((res.mode[type] == 0) || (_game.heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
 		byte *ptr = res.address[type][idx];
 		uint32 size = ((MemBlkHeader *)ptr)->size;
 
@@ -1408,7 +1408,7 @@ void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 }
 
 void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
-	if ((res.mode[type] == 0) || (_heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
+	if ((res.mode[type] == 0) || (_game.heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
 		uint32 size = ser->loadUint32();
 		assert(size);
 		res.createResource(type, idx, size);

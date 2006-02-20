@@ -90,7 +90,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 	
 	const int scaletableSize = 128;
-	const bool newAmiCost = (_vm->_version == 5) && (_vm->_platform == Common::kPlatformAmiga);
+	const bool newAmiCost = (_vm->_game.version == 5) && (_vm->_game.platform == Common::kPlatformAmiga);
 
 	CHECK_HEAP
 
@@ -219,7 +219,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	v1.skip_width = _width;
 	v1.scaleXstep = _mirror ? 1 : -1;
 
-	if (_vm->_version == 1)
+	if (_vm->_game.version == 1)
 		// V1 games uses 8 x 8 pixels for actors
 		_vm->markRectAsDirty(kMainVirtScreen, rect.left, rect.right + 8, rect.top, rect.bottom, _actorID);
 	else
@@ -357,11 +357,11 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 	if (!(_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 		palette[2] = 11;
 		palette[3] = 11;
-	} else if (_vm->_gameId == GID_MANIAC) {
+	} else if (_vm->_game.id == GID_MANIAC) {
 		palette[1] = v1MMActorPalatte1[actor];
 		palette[2] = v1MMActorPalatte2[actor];
 	} else {
-		palette[1] = (_vm->_platform == Common::kPlatformC64) ? 10 : 8;
+		palette[1] = (_vm->_game.platform == Common::kPlatformC64) ? 10 : 8;
 		palette[2] = _palette[actor];
 	}
 	mask = v1.mask_ptr;
@@ -549,11 +549,11 @@ void ClassicCostumeLoader::loadCostume(int id) {
 	_id = id;
 	byte *ptr = _vm->getResourceAddress(rtCostume, id);
 
-	if (_vm->_version >= 6)
+	if (_vm->_game.version >= 6)
 		ptr += 8;
-	else if (_vm->_features & GF_OLD_BUNDLE)
+	else if (_vm->_game.features & GF_OLD_BUNDLE)
 		ptr += -2;
-	else if (_vm->_features & GF_SMALL_HEADER)
+	else if (_vm->_game.features & GF_SMALL_HEADER)
 		ptr += 0;
 	else
 		ptr += 2;
@@ -589,7 +589,7 @@ void ClassicCostumeLoader::loadCostume(int id) {
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
 	// In addition, all offsets are shifted by 2; we accomodate that via a separate
 	// _baseptr value (instead of adding tons of if's throughout the code).
-	if (_vm->_features & GF_OLD_BUNDLE) {
+	if (_vm->_game.features & GF_OLD_BUNDLE) {
 		_numColors = (_format == 0x57) ? 0 : 1;
 		_baseptr += 2;
 	}
@@ -716,7 +716,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (code != 0x7B) {
 		_srcptr = _loaded._baseptr + READ_LE_UINT16(frameptr + code * 2);
 
-		if (!(_vm->_features & GF_OLD256) || code < 0x79) {
+		if (!(_vm->_game.features & GF_OLD256) || code < 0x79) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
 
@@ -781,7 +781,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 		return;
 	}
 
-	if (_vm->_version == 1) {
+	if (_vm->_game.version == 1) {
 		mask = *r++ << 8;
 	} else {
 		mask = READ_LE_UINT16(r);
@@ -790,7 +790,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 	i = 0;
 	do {
 		if (mask & 0x8000) {
-			if (_vm->_version <= 3) {
+			if (_vm->_game.version <= 3) {
 				j = *r++;
 
 				if (j == 0xFF)
@@ -836,7 +836,7 @@ void ClassicCostumeRenderer::setPalette(byte *palette) {
 
 	if (_loaded._format == 0x57) {
 		memcpy(_palette, palette, 13);
-	} else if (_vm->_features & GF_OLD_BUNDLE) {
+	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
 		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
 			memcpy(_palette, palette, 16);
 		} else {
@@ -891,7 +891,7 @@ byte ClassicCostumeLoader::increaseAnim(Actor *a, int slot) {
 	end = a->_cost.end[slot];
 	code = _animCmds[i] & 0x7F;
 	
-	if (_vm->_version <= 3) {
+	if (_vm->_game.version <= 3) {
 		if (_animCmds[i] & 0x80)
 			a->_cost.soundCounter++;
 	}
@@ -911,9 +911,9 @@ byte ClassicCostumeLoader::increaseAnim(Actor *a, int slot) {
 			if (a->_cost.start[slot] != end)
 				continue;
 		} else {
-			if (_vm->_version >= 6) {
+			if (_vm->_game.version >= 6) {
 				if (nc >= 0x71 && nc <= 0x78) {
-					uint sound = (_vm->_heversion == 60) ? 0x78 - nc : nc - 0x71;
+					uint sound = (_vm->_game.heversion == 60) ? 0x78 - nc : nc - 0x71;
 					_vm->_sound->addSoundToQueue2(a->_sound[sound]);
 					if (a->_cost.start[slot] != end)
 						continue;

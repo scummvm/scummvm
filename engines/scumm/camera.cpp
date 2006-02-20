@@ -29,7 +29,7 @@
 namespace Scumm {
 
 void ScummEngine::setCameraAtEx(int at) {
-	if (!(_features & GF_NEW_CAMERA)) {
+	if (!(_game.features & GF_NEW_CAMERA)) {
 		camera._mode = kNormalCameraMode;
 		camera._cur.x = at;
 		setCameraAt(at, 0);
@@ -55,7 +55,7 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 	}
 
 	// If the camera moved and text is visible, remove it
-	if (camera._cur.x != camera._last.x && _charset->_hasMask && _version > 3)
+	if (camera._cur.x != camera._last.x && _charset->_hasMask && _game.version > 3)
 		stopTalk();
 }
 
@@ -176,7 +176,7 @@ void ScummEngine::moveCamera() {
 
 void ScummEngine::cameraMoved() {
 	int screenLeft;
-	if (_features & GF_NEW_CAMERA) {
+	if (_game.features & GF_NEW_CAMERA) {
 		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 	} else {
 		if (camera._cur.x < (_screenWidth / 2)) {
@@ -190,7 +190,7 @@ void ScummEngine::cameraMoved() {
 	_screenEndStrip = _screenStartStrip + gdi._numStrips - 1;
 
 	_screenTop = camera._cur.y - (_screenHeight / 2);
-	if (_features & GF_NEW_CAMERA) {
+	if (_game.features & GF_NEW_CAMERA) {
 		screenLeft = camera._cur.x - (_screenWidth / 2);
 	} else {
 		screenLeft = _screenStartStrip * 8;
@@ -206,7 +206,7 @@ void ScummEngine::panCameraTo(int x, int y) {
 }
 
 void ScummEngine::actorFollowCamera(int act) {
-	if (!(_features & GF_NEW_CAMERA)) {
+	if (!(_game.features & GF_NEW_CAMERA)) {
 		int old;
 
 		old = camera._follows;

@@ -385,7 +385,7 @@ const char *ScummEngine_v6::getOpcodeDesc(byte i) {
 int ScummEngine_v6::popRoomAndObj(int *room) {
 	int obj;
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		obj = pop();
 		*room = getObjectRoom(obj);
 	} else {
@@ -404,7 +404,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 	assert(0 <= type && type <= 5);
 
 
-	if (_heversion >= 61) {
+	if (_game.heversion >= 61) {
 		if (type == kBitArray || type == kNibbleArray)
 			type = kByteArray;
 	} else {
@@ -422,7 +422,7 @@ ScummEngine_v6::ArrayHeader *ScummEngine_v6::defineArray(int array, int type, in
 
 	id = findFreeArrayId();
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		if (array & 0x40000000) {
 		}
 
@@ -461,12 +461,12 @@ void ScummEngine_v6::nukeArray(int a) {
 
 	data = readVar(a);
 
-	if (_heversion >= 80)
+	if (_game.heversion >= 80)
 		data &= ~0x33539000;
 
 	if (data)
 		res.nukeResource(rtString, data);
-	if (_heversion >= 60)
+	if (_game.heversion >= 60)
 		_arraySlot[data] = 0;
 
 	writeVar(a, 0);
@@ -517,7 +517,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// [03BD] (5D)           if ((localvar13 != -1) && (localvar14 != -1)) {
 	// [03CF] (B6)             printDebug.begin()
 	// ...
-	if (_gameId == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
+	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
 		return 0;
 	}
 
@@ -531,7 +531,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	int val;
 	if (FROM_LE_16(ah->type) != kIntArray) {
 		val = ah->data[offset];
-	} else if (_version == 8) {
+	} else if (_game.version == 8) {
 		val = (int32)READ_LE_UINT32(ah->data + offset * 4);
 	} else {
 		val = (int16)READ_LE_UINT16(ah->data + offset * 2);
@@ -553,7 +553,7 @@ void ScummEngine_v6::writeArray(int array, int idx, int base, int value) {
 
 	if (FROM_LE_16(ah->type) != kIntArray) {
 		ah->data[offset] = value;
-	} else if (_version == 8) {
+	} else if (_game.version == 8) {
 		WRITE_LE_UINT32(ah->data + offset * 4, value);
 	} else {
 		WRITE_LE_UINT16(ah->data + offset * 2, value);
@@ -825,7 +825,7 @@ void ScummEngine_v6::o6_startScript() {
 	// the Wally and Rex dinosaurs will always restart their speech, instead of
 	// stopping and starting their speech. This was a script bug in the original
 	// game.
-	if (_gameId == GID_SAMNMAX && _roomResource == 59 &&
+	if (_game.id == GID_SAMNMAX && _roomResource == 59 &&
 		vm.slot[_currentScript].number == 201 && script == 48) {
 		o6_breakHere();
 	}
@@ -837,7 +837,7 @@ void ScummEngine_v6::o6_startScript() {
 	// text in this spot, for the above reason. Since the data files are
 	// unchanged, it must have been an engine hack job. No idea how they did
 	// it exactly, but this here is how we do it :-)
-	if (_gameId == GID_CMI && script == 204 &&
+	if (_game.id == GID_CMI && script == 204 &&
 		_currentRoom == 15 && vm.slot[_currentScript].number == 421 &&
 		_language == Common::DE_DEU) {
 
@@ -983,7 +983,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
 		{
 			int room, obj;
-			if (_heversion >= 70) {
+			if (_game.heversion >= 70) {
 				obj = pop();
 				room = getObjectRoom(obj);
 			} else {
@@ -1029,7 +1029,7 @@ void ScummEngine_v6::o6_ifClassOfIs() {
 	num = getStackList(args, ARRAYSIZE(args));
 	obj = pop();
 
-	if (_heversion >= 80 && num == 0) {
+	if (_game.heversion >= 80 && num == 0) {
 		push(_classData[obj]);
 		return;
 	}
@@ -1091,11 +1091,11 @@ void ScummEngine_v6::o6_startSound() {
 	// In Fatty Bear's Birthday Surprise the piano uses offsets 1 - 23 to
 	// indicate which note to play, but only when using the standard piano
 	// sound. See also o60_soundOps()
-	if (_heversion >= 60 && (_gameId != GID_PUTTDEMO))
+	if (_game.heversion >= 60 && (_game.id != GID_PUTTDEMO))
 		offset = pop();
 
 #ifndef DISABLE_SCUMM_7_8
-	if (_features & GF_DIGI_IMUSE)
+	if (_game.features & GF_DIGI_IMUSE)
 		_imuseDigital->startSfx(pop(), 64);
 	else
 #endif
@@ -1107,7 +1107,7 @@ void ScummEngine_v6::o6_stopSound() {
 }
 
 void ScummEngine_v6::o6_startMusic() {
-	if (_features & GF_DIGI_IMUSE)
+	if (_game.features & GF_DIGI_IMUSE)
 		error("o6_startMusic() It shouldn't be called here for imuse digital");
 
 	_sound->addSoundToQueue(pop());
@@ -1118,7 +1118,7 @@ void ScummEngine_v6::o6_stopObjectScript() {
 }
 
 void ScummEngine_v6::o6_panCameraTo() {
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		int y = pop();
 		int x = pop();
 		panCameraTo(x, y);
@@ -1128,14 +1128,14 @@ void ScummEngine_v6::o6_panCameraTo() {
 }
 
 void ScummEngine_v6::o6_actorFollowCamera() {
-	if (_version >= 7)
+	if (_game.version >= 7)
 		setCameraFollows(derefActor(pop(), "actorFollowCamera"));
 	else
 		actorFollowCamera(pop());
 }
 
 void ScummEngine_v6::o6_setCameraAt() {
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		int x, y;
 
 		camera._follows = 0;
@@ -1153,7 +1153,7 @@ void ScummEngine_v6::o6_setCameraAt() {
 void ScummEngine_v6::o6_loadRoom() {
 	int room = pop();
 	startScene(room, 0, 0);
-	if (_heversion >= 61) {
+	if (_game.heversion >= 61) {
 		setCameraAt(camera._cur.x, 0);
 	}
 	_fullRedraw = true;
@@ -1188,7 +1188,7 @@ void ScummEngine_v6::o6_walkActorToObj() {
 		a->startWalkActor(x, y, dir);
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (_gameId == GID_SAMNMAX && a2 == 0) {
+		if (_game.id == GID_SAMNMAX && a2 == 0) {
 			// WORKAROUND bug #742676 SAM: Fish Farm. Note quite sure why it
 			// happens, whether it's normal or due to a bug in the ScummVM code.
 			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
@@ -1268,7 +1268,7 @@ void ScummEngine_v6::o6_faceActor() {
 void ScummEngine_v6::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
-	if (_gameId == GID_TENTACLE && _roomResource == 57 &&
+	if (_game.id == GID_TENTACLE && _roomResource == 57 &&
 		vm.slot[_currentScript].number == 19 && act == 593) {
 		// WORKAROUND bug #743363: This very odd case (animateActor(593,250))
 		// occurs in DOTT, in the cutscene after George cuts down the "cherry
@@ -1277,7 +1277,7 @@ void ScummEngine_v6::o6_animateActor() {
 		// (593 is the time machine in room 57), or if this is simply a script bug.
 		act = 6;
 	}
-	if (_gameId == GID_SAMNMAX && _roomResource == 35 &&
+	if (_game.id == GID_SAMNMAX && _roomResource == 35 &&
 		vm.slot[_currentScript].number == 202 && act == 4 && anim == 14) {
 		// WORKAROUND bug #1223621 (Animation glitch at World of Fish).
 		// Before starting animation 14 of the fisherman, make sure he isn't
@@ -1294,7 +1294,7 @@ void ScummEngine_v6::o6_doSentence() {
 	int verb, objectA, objectB, dummy = 0;
 
 	objectB = pop();
-	if (_version < 8)
+	if (_game.version < 8)
 		dummy = pop();	// dummy pop (in Sam&Max, seems to be always 0 or 130)
 	objectA = pop();
 	verb = pop();
@@ -1344,7 +1344,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 	startScene(a->_room, a, obj);
 	VAR(VAR_WALKTO_OBJ) = 0;
 
-	if (_version == 6) {
+	if (_game.version == 6) {
 		camera._cur.x = camera._dest.x = a->_pos.x;
 		setCameraFollows(a);
 	}
@@ -1531,7 +1531,7 @@ void ScummEngine_v6::o6_setBoxFlags() {
 void ScummEngine_v6::o6_createBoxMatrix() {
 	createBoxMatrix();
 
-	if ((_gameId == GID_DIG) || (_gameId == GID_CMI))
+	if ((_game.id == GID_DIG) || (_game.id == GID_CMI))
 		putActors();
 }
 
@@ -1543,7 +1543,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 	switch (subOp) {
 	case 100:		// SO_LOAD_SCRIPT
 		resid = pop();
-		if (_version >= 7)
+		if (_game.version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
 		ensureResourceLoaded(rtScript, resid);
@@ -1562,7 +1562,7 @@ void ScummEngine_v6::o6_resourceRoutines() {
 		break;
 	case 104:		// SO_NUKE_SCRIPT
 		resid = pop();
-		if (_version >= 7)
+		if (_game.version >= 7)
 			if (resid >= _numGlobalScripts)
 				break;
 		res.setResourceCounter(rtScript, resid, 0x7F);
@@ -1697,7 +1697,7 @@ void ScummEngine_v6::o6_roomOps() {
 		_saveTemporaryState = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
-		if (_gameId == GID_TENTACLE)
+		if (_game.id == GID_TENTACLE)
 			_saveSound = (_saveLoadSlot != 0);
 		break;
 
@@ -1761,7 +1761,7 @@ void ScummEngine_v6::o6_roomOps() {
 		// this way, we avoid some graphics glitches that the original
 		// interpreter had.
 
-		if (_gameId == GID_SAMNMAX && vm.slot[_currentScript].number == 64)
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 64)
 			setDirtyColors(0, 255);
 		else
 			setPalette(a);
@@ -1860,13 +1860,13 @@ void ScummEngine_v6::o6_actorOps() {
 		break;
 	case 95:		// SO_IGNORE_BOXES
 		a->_ignoreBoxes = 1;
-		a->_forceClip = (_version >= 7) ? 100 : 0;
+		a->_forceClip = (_game.version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
 	case 96:		// SO_FOLLOW_BOXES
 		a->_ignoreBoxes = 0;
-		a->_forceClip = (_version >= 7) ? 100 : 0;
+		a->_forceClip = (_game.version >= 7) ? 100 : 0;
 		if (a->isInCurrentRoom())
 			a->putActor(a->_pos.x, a->_pos.y, a->_room);
 		break;
@@ -1943,7 +1943,7 @@ void ScummEngine_v6::o6_verbOps() {
 		if (_curVerbSlot) {
 			setVerbObject(_roomResource, a, slot);
 			vs->type = kImageVerbType;
-			if (_heversion >= 61)
+			if (_game.heversion >= 61)
 				vs->imgindex = a;
 		}
 		break;
@@ -1969,7 +1969,7 @@ void ScummEngine_v6::o6_verbOps() {
 		vs->curmode = 0;
 		break;
 	case 131:		// SO_VERB_DELETE
-		if (_heversion >= 60) {
+		if (_game.heversion >= 60) {
 			slot = getVerbSlot(pop(), 0);
 		}
 		killVerb(slot);
@@ -2126,7 +2126,7 @@ void ScummEngine_v6::o6_saveRestoreVerbs() {
 	a = pop();
 
 	byte subOp = fetchScriptByte();
-	if (_version == 8) {
+	if (_game.version == 8) {
 		subOp = (subOp - 141) + 0xB4;
 	}
 
@@ -2192,7 +2192,7 @@ void ScummEngine_v6::o6_wait() {
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o6_wait:168");
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			if (a->isInCurrentRoom() && a->_moving)
 				break;
 		} else {
@@ -2205,7 +2205,7 @@ void ScummEngine_v6::o6_wait() {
 			break;
 		return;
 	case 170:		// SO_WAIT_FOR_CAMERA Wait for camera
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			if (camera._dest != camera._cur)
 				break;
 		} else {
@@ -2271,7 +2271,7 @@ void ScummEngine_v6::o6_soundKludge() {
 	// to hang indefinitely. We identify the buggy part of the script by
 	// looking for a soundKludge() opcode immediately followed by a jump.
 
-	if (_gameId == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66) {
+	if (_game.id == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66) {
 		debug(3, "Working around script bug in room-11-2016");
 		o6_breakHere();
 	}
@@ -2413,7 +2413,7 @@ void ScummEngine_v6::o6_dimArray() {
 }
 
 void ScummEngine_v6::o6_dummy() {
-	if (_heversion >= 60) {
+	if (_game.heversion >= 60) {
 		stopObjectCode();
 	}
 }
@@ -2513,7 +2513,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 
 	num = getStackList(args, ARRAYSIZE(args));
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		switch (args[0]) {
 		case 4:
 			grabCursor(args[1], args[2], args[3], args[4]);
@@ -2532,14 +2532,14 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 					SmushPlayer *sp = new SmushPlayer(this, _smushFrameRate);
 
 					// Correct incorrect smush filename in Macintosh FT demo
-					if ((_gameId == GID_FT) && (_features & GF_DEMO) && (_platform == Common::kPlatformMacintosh) &&
+					if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
 					    (strcmp((char *)getStringAddressVar(VAR_VIDEONAME), "jumpgorge.san") == 0))
 						sp->play("jumpgorg.san");
 					else
 						sp->play((char *)getStringAddressVar(VAR_VIDEONAME));
 					delete sp;
-				} else if (_gameId == GID_FT) {
-					const int insaneVarNum = ((_features & GF_DEMO) && (_platform == Common::kPlatformPC))
+				} else if (_game.id == GID_FT) {
+					const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
 						? 232 : 233;
 
 					_insaneRunning = true;
@@ -2651,7 +2651,7 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 			break;
 		case 114:
 			// Sam & Max film noir mode
-			if (_gameId == GID_SAMNMAX) {
+			if (_game.id == GID_SAMNMAX) {
 				// At this point ScummVM will already have set
 				// variable 0x8000 to indicate that the game is
 				// in film noir mode. All we have to do here is
@@ -2938,7 +2938,7 @@ void ScummEngine_v6::o6_stampObject() {
 	y = pop();
 	x = pop();
 	object = pop();
-	if (_version >= 7 && object < 30) {
+	if (_game.version >= 7 && object < 30) {
 		if (state == 0)
 			state = 255;
 
@@ -3069,7 +3069,7 @@ void ScummEngine_v6::o6_getDateTime() {
 	VAR(VAR_TIMEDATE_HOUR) = t->tm_hour;
 	VAR(VAR_TIMEDATE_MINUTE) = t->tm_min;
 
-	if (_version == 8)
+	if (_game.version == 8)
 		VAR(VAR_TIMEDATE_SECOND) = t->tm_sec;
 }
 
@@ -3078,7 +3078,7 @@ void ScummEngine_v6::o6_getPixel() {
 	// minigame in "The Dig"
 	int x, y;
 
-	if (_heversion == 61) {
+	if (_game.heversion == 61) {
 		x = pop();
 		y = pop();
 	} else {
@@ -3131,7 +3131,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 	assert(matrix);
 	memcpy(matrix, boxm + 8, mboxSize);
 
-	if (_version == 7)
+	if (_game.version == 7)
 		putActors();
 }
 

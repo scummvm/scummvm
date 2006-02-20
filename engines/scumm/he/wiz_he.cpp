@@ -121,7 +121,7 @@ void Wiz::polygonTransform(int resNum, int state, int po_x, int po_y, int angle,
 	getWizImageDim(resNum, state, w, h);
 
 	// set the transformation origin to the center of the image
-	if (_vm->_heversion >= 99) {
+	if (_vm->_game.heversion >= 99) {
 		pts[0].x = pts[3].x = -(w / 2);
 		pts[1].x = pts[2].x = w / 2 - 1;
 		pts[0].y = pts[1].y = -(h / 2);
@@ -887,7 +887,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
 		const uint8 *palPtr;
-		if (_vm->_heversion >= 99) {
+		if (_vm->_game.heversion >= 99) {
 			palPtr = _vm->_hePalettes + 1024;
 		} else {
 			palPtr = _vm->_currentPalette;
@@ -985,7 +985,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	uint8 *dst = NULL;
 
 	const uint8 *palPtr = NULL;
-	if (_vm->_heversion >= 99) {
+	if (_vm->_game.heversion >= 99) {
 		if (palette) {
 			palPtr = _vm->_hePalettes + palette * 1024 + 768;
 		} else {
@@ -1024,7 +1024,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	if (flags & kWIFRemapPalette) {
 		rmap = _vm->findWrappedBlock(MKID('RMAP'), dataPtr, state, 0);
 		assert(rmap);
-		if (_vm->_heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
+		if (_vm->_game.heversion <= 80 || READ_BE_UINT32(rmap) != 0x01234567) {
 			uint8 *rgbs = _vm->findWrappedBlock(MKID('RGBS'), dataPtr, state, 0);
 			assert(rgbs);
 			_vm->remapHEPalette(rgbs, rmap + 4);
@@ -1533,7 +1533,7 @@ void Wiz::createWizEmptyImage(const WizParameters *params) {
 	res_size += 8 + img_w * img_h;
 
 	const uint8 *palPtr;
-	if (_vm->_heversion >= 99) {
+	if (_vm->_game.heversion >= 99) {
 		palPtr = _vm->_hePalettes + 1024;
 	} else {
 		palPtr = _vm->_currentPalette;
@@ -1996,7 +1996,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 		}
 		switch (c) {
 		case 0:
-			if (_vm->_heversion >= 99) {
+			if (_vm->_game.heversion >= 99) {
 				ret = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
 			} else {
 				ret = 0;
@@ -2030,7 +2030,7 @@ uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
 	assert(wizd);
 	switch (c) {
 	case 0:
-		if (_vm->_heversion >= 99) {
+		if (_vm->_game.heversion >= 99) {
 			color = getRawWizPixelColor(wizd, x, y, w, h, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		} else {
 			color = _vm->VAR(_vm->VAR_WIZ_TCOLOR);

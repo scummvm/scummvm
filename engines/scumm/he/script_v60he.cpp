@@ -406,7 +406,7 @@ void ScummEngine_v60he::o60_setState() {
 	if (state & 0x8000) {
 		state &= 0x7FFF;
 		putState(obj, state);
-		if (_heversion >= 72)
+		if (_game.heversion >= 72)
 			removeObjectFromDrawQue(obj);
 	} else {
 		putState(obj, state);
@@ -440,7 +440,7 @@ void ScummEngine_v60he::o60_roomOps() {
 	case 174:		// SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
-		if (_heversion >= 71)
+		if (_game.heversion >= 71)
 			initScreens(a, _screenHeight);
 		else
 			initScreens(a, b);
@@ -477,7 +477,7 @@ void ScummEngine_v60he::o60_roomOps() {
 
 	case 181:		// SO_ROOM_FADE
 		a = pop();
-		if (_heversion >= 70) {
+		if (_game.heversion >= 70) {
 			// Defaults to 1 but doesn't use fade effects
 		} else if (a) {
 			_switchRoomEffect = (byte)(a & 0xFF);
@@ -502,7 +502,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
-		if (_heversion == 60)
+		if (_game.heversion == 60)
 			setupShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
@@ -594,7 +594,7 @@ void ScummEngine_v60he::o60_actorOps() {
 
 	switch (subOp) {
 	case 30:
-		// _heversion >= 70
+		// _game.heversion >= 70
 		_actorClipOverride.bottom = pop();
 		_actorClipOverride.right = pop();
 		_actorClipOverride.top = pop();
@@ -1051,7 +1051,7 @@ void ScummEngine_v60he::o60_readFile() {
 	int val;
 
 	// Fatty Bear uses positive values
-	if ((_platform == Common::kPlatformPC) && (_gameId == GID_FBEAR))
+	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
 		size = -size;
 
 	if (size == -2) {
@@ -1079,7 +1079,7 @@ void ScummEngine_v60he::o60_writeFile() {
 	int slot = pop();
 
 	// Fatty Bear uses positive values
-	if ((_platform == Common::kPlatformPC) && (_gameId == GID_FBEAR))
+	if ((_game.platform == Common::kPlatformPC) && (_game.id == GID_FBEAR))
 		size = -size;
 
 	if (size == -2) {
@@ -1114,7 +1114,7 @@ void ScummEngine_v60he::o60_soundOps() {
 }
 
 void ScummEngine_v60he::localizeArray(int slot, byte scriptSlot) {
-	if (_heversion >= 80)
+	if (_game.heversion >= 80)
 		slot &= ~0x33539000;
 
 	if (slot >= _numArray)

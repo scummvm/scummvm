@@ -63,7 +63,7 @@ bool ScummEngine::getClass(int obj, int cls) const {
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in getClass");
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		// Translate the new (V5) object classes to the old classes
 		// (for those which differ).
 		switch (cls) {
@@ -90,7 +90,7 @@ void ScummEngine::putClass(int obj, int cls, bool set) {
 	cls &= 0x7F;
 	checkRange(32, 1, cls, "Class %d out of range in putClass");
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		// Translate the new (V5) object classes to the old classes
 		// (for those which differ).
 		switch (cls) {
@@ -114,7 +114,7 @@ void ScummEngine::putClass(int obj, int cls, bool set) {
 	else
 		_classData[obj] &= ~(1 << (cls - 1));
 
-	if (_version <= 4 && obj >= 1 && obj < _numActors) {
+	if (_game.version <= 4 && obj >= 1 && obj < _numActors) {
 		_actors[obj].classChanged(cls, set);
 	}
 }
@@ -143,7 +143,7 @@ int ScummEngine::getState(int obj) {
 		// the it. Fortunately it does not prevent frustrated players from
 		// blowing up the mansion, should they feel the urge to.
 
-		if (_gameId == GID_MANIAC && (obj == 182 || obj == 193))
+		if (_game.id == GID_MANIAC && (obj == 182 || obj == 193))
 			_objectStateTable[obj] |= 0x08;
 	}
 
@@ -234,7 +234,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 	const byte *ptr;
 	const ImageHeader *imhd;
 
-	if (_version >= 6) {
+	if (_game.version >= 6) {
 		state = getState(object) - 1;
 		if (state < 0)
 			state = 0;
@@ -249,7 +249,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		}
 		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
 		assert(imhd);
-		if (_version == 8) {
+		if (_game.version == 8) {
 			switch (FROM_LE_32(imhd->v8.version)) {
 			case 800:
 				x = od.x_pos + (int32)READ_LE_UINT32((const byte *)imhd + 8 * state + 0x44);
@@ -262,7 +262,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			default:
 				error("Unsupported image header version %d\n", FROM_LE_32(imhd->v8.version));
 			}
-		} else if (_version == 7) {
+		} else if (_game.version == 7) {
 			x = od.x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].y);
 		} else {
@@ -273,7 +273,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 		x = od.walk_x;
 		y = od.walk_y;
 	}
-	if (_version == 8)
+	if (_game.version == 8)
 		dir = fromSimpleDir(1, od.actordir);
 	else
 		dir = oldDirToNewDir(od.actordir & 3);
@@ -316,7 +316,7 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	}
 
 	// Now compute the distance between the two points
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		// For V1/V2 games, distances are measured in the original "character"
 		// based coordinate system, instead of pixels. Otherwise various scripts
 		// will break. See bugs #853874, #774529
@@ -332,17 +332,17 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
-	const int mask = (_version <= 2) ? 0x8 : 0xF;
+	const int mask = (_game.version <= 2) ? 0x8 : 0xF;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 
-		if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
 			if (_objs[i].flags == 0 && _objs[i].state & 0x2)
 				continue;
 		} else {
-			if (_version <= 2 && _objs[i].state & 0x2)
+			if (_game.version <= 2 && _objs[i].state & 0x2)
 				continue;
 		}
 
@@ -352,7 +352,7 @@ int ScummEngine::findObject(int x, int y) {
 			b = _objs[b].parent;
 			if (b == 0) {
 #ifndef DISABLE_HE
-				if (_heversion >= 70) {
+				if (_game.heversion >= 70) {
 					if (((ScummEngine_v70he *)this)->_wiz->polygonHit(_objs[i].obj_nr, x, y))
 						return _objs[i].obj_nr;
 				}
@@ -371,7 +371,7 @@ int ScummEngine::findObject(int x, int y) {
 void ScummEngine::drawRoomObject(int i, int arg) {
 	ObjectData *od;
 	byte a;
-	const int mask = (_version <= 2) ? 0x8 : 0xF;
+	const int mask = (_game.version <= 2) ? 0x8 : 0xF;
 
 	od = &_objs[i];
 	if ((i < 1) || (od->obj_nr < 1) || !od->state)
@@ -380,7 +380,7 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 	do {
 		a = od->parentstate;
 		if (!od->parent) {
-			if (_version <= 6 || od->fl_object_index == 0)
+			if (_game.version <= 6 || od->fl_object_index == 0)
 				drawObject(i, arg);
 			break;
 		}
@@ -390,9 +390,9 @@ void ScummEngine::drawRoomObject(int i, int arg) {
 
 void ScummEngine::drawRoomObjects(int arg) {
 	int i;
-	const int mask = (_version <= 2) ? 0x8 : 0xF;
+	const int mask = (_game.version <= 2) ? 0x8 : 0xF;
 
-	if (_heversion >= 60) {
+	if (_game.heversion >= 60) {
 		// In HE games, normal objects are drawn, followed by FlObjects.
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index == 0)
@@ -402,7 +402,7 @@ void ScummEngine::drawRoomObjects(int arg) {
 			if (_objs[i].obj_nr > 0 && (_objs[i].state & mask) && _objs[i].fl_object_index != 0)
 				drawRoomObject(i, arg);
 		}
-	} else if (_gameId == GID_SAMNMAX) {
+	} else if (_game.id == GID_SAMNMAX) {
 		// In Sam & Max, objects are drawn in reverse order.
 		for (i = 1; i < _numLocalObjects; i++)
 			if (_objs[i].obj_nr > 0)
@@ -465,7 +465,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 	ptr = getOBIMFromObjectData(od);
 
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		ptr += 0;
 	else
 		ptr = getObjectImage(ptr, getState(od.obj_nr));
@@ -494,11 +494,11 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 		// Sam & Max needs this to fix object-layering problems with
 		// the inventory and conversation icons.
-		if ((_gameId == GID_SAMNMAX && getClass(od.obj_nr, kObjectClassIgnoreBoxes)) ||
-		    (_gameId == GID_FT && getClass(od.obj_nr, kObjectClassPlayer)))
+		if ((_game.id == GID_SAMNMAX && getClass(od.obj_nr, kObjectClassIgnoreBoxes)) ||
+		    (_game.id == GID_FT && getClass(od.obj_nr, kObjectClassPlayer)))
 			flags |= Gdi::dbDrawMaskOnAll;
 
-		if (_heversion >= 70 && findResource(MKID('SMAP'), ptr) == NULL)
+		if (_game.heversion >= 70 && findResource(MKID('SMAP'), ptr) == NULL)
 			gdi.drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
 			gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
@@ -508,7 +508,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 void ScummEngine::clearRoomObjects() {
 	int i;
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		for (i = 0; i < _numLocalObjects; i++) {
 			_objs[i].obj_nr = 0;
 		}
@@ -528,7 +528,7 @@ void ScummEngine::clearRoomObjects() {
 					res.nukeResource(rtFlObject, _objs[i].fl_object_index);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
-				} else if (_heversion >= 70) {
+				} else if (_game.heversion >= 70) {
 					storeFlObject(i);
 					_objs[i].obj_nr = 0;
 					_objs[i].fl_object_index = 0;
@@ -580,7 +580,7 @@ void ScummEngine::loadRoomObjects() {
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	if (_version == 8)
+	if (_game.version == 8)
 		searchptr = rootptr = getResourceAddress(rtRoomScripts, _roomResource);
 	else
 		searchptr = rootptr = room;
@@ -598,9 +598,9 @@ void ScummEngine::loadRoomObjects() {
 		od->OBCDoffset = ptr - rootptr;
 		cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), ptr);
 
-		if (_version >= 7)
+		if (_game.version >= 7)
 			od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
-		else if (_version == 6)
+		else if (_game.version == 6)
 			od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
 		else
 			od->obj_nr = READ_LE_UINT16(&(cdhd->v5.obj_id));
@@ -651,7 +651,7 @@ void ScummEngine_v3old::loadRoomObjects() {
 	if (_numObjectsInRoom > _numLocalObjects)
 		error("More than %d objects in room %d", _numLocalObjects, _roomResource);
 
-	if (_version <= 2)
+	if (_game.version <= 2)
 		ptr = room + 28;
 	else
 		ptr = room + 29;
@@ -759,7 +759,7 @@ void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byt
 	assert(room);
 	const byte *ptr = room + od->OBCDoffset;
 
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		ptr -= 2;
 
 	od->obj_nr = READ_LE_UINT16(ptr + 6);
@@ -768,14 +768,14 @@ void ScummEngine_v4::setupRoomObject(ObjectData *od, const byte *room, const byt
 	od->y_pos = ((*(ptr + 10)) & 0x7F) * 8;
 
 	od->parentstate = (*(ptr + 10) & 0x80) ? 1 : 0;
-	if (_version <= 2)
+	if (_game.version <= 2)
 		od->parentstate *= 8;
 
 	od->width = *(ptr + 11) * 8;
 
 	od->parent = *(ptr + 12);
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		od->walk_x = *(ptr + 13) * 8;
 		od->walk_y = (*(ptr + 14) & 0x1f) * 8;
 		od->actordir = (*(ptr + 15)) & 7;
@@ -795,7 +795,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 	assert(room);
 
 	if (searchptr == NULL) {
-		if (_version == 8)
+		if (_game.version == 8)
 			searchptr = getResourceAddress(rtRoomScripts, _roomResource);
 		else
 			searchptr = room;
@@ -809,7 +809,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 
 	od->flags = Gdi::dbAllowMaskOr;
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -824,7 +824,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		if (FROM_LE_32(imhd->v8.version) == 801)
 			od->flags = ((((byte)READ_LE_UINT32(&imhd->v8.flags)) & 16) == 0) ? Gdi::dbAllowMaskOr : 0;
 
-	} else if (_version == 7) {
+	} else if (_game.version == 7) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
 
 		od->parent = cdhd->v7.parent;
@@ -836,7 +836,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->height = READ_LE_UINT16(&imhd->v7.height);
 		od->actordir = (byte)READ_LE_UINT16(&imhd->v7.actordir);
 
-	} else if (_version == 6) {
+	} else if (_game.version == 6) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
 
 		od->width = READ_LE_UINT16(&cdhd->v6.w);
@@ -851,7 +851,7 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 		od->parent = cdhd->v6.parent;
 		od->actordir = cdhd->v6.actordir;
 
-		if (_heversion >= 60 && imhd)
+		if (_game.heversion >= 60 && imhd)
 			od->flags = ((imhd->old.flags & 1) != 0) ? Gdi::dbAllowMaskOr : 0;
 
 	} else {
@@ -1021,12 +1021,12 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	if (objptr == NULL)
 		return NULL;
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		byte offset = 0;
 
-		if (_version <= 2)
+		if (_game.version <= 2)
 			offset = *(objptr + 14);
-		else if (_features & GF_OLD_BUNDLE)
+		else if (_game.features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
 		else
 			offset = *(objptr + 18);
@@ -1093,7 +1093,7 @@ byte *ScummEngine::getOBCDFromObject(int obj) {
 				if (_objs[i].fl_object_index) {
 					assert(_objs[i].OBCDoffset == 8);
 					ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index);
-				} else if (_version == 8)
+				} else if (_game.version == 8)
 					ptr = getResourceAddress(rtRoomScripts, _roomResource);
 				else
 					ptr = getResourceAddress(rtRoom, _roomResource);
@@ -1121,11 +1121,11 @@ const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 
 const byte *ScummEngine::getObjectImage(const byte *ptr, int state) {
 	assert(ptr);
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		ptr += 0;
-	else if (_features & GF_SMALL_HEADER) {
+	else if (_game.features & GF_SMALL_HEADER) {
 		ptr += 8;
-	} else if (_version == 8) {
+	} else if (_game.version == 8) {
 		// The OBIM contains an IMAG, which in turn contains a WRAP, which contains
 		// an OFFS chunk and multiple BOMP/SMAP chunks. To find the right BOMP/SMAP,
 		// we use the offsets in the OFFS chunk,
@@ -1164,9 +1164,9 @@ int ScummEngine::getObjectImageCount(int object) {
 	if (!imhd)
 		return 0;
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		return (READ_LE_UINT32(&imhd->v8.image_count));
-	} else if (_version == 7) {
+	} else if (_game.version == 7) {
 		return(READ_LE_UINT16(&imhd->v7.image_count));
 	} else {
 		return (READ_LE_UINT16(&imhd->old.image_count));
@@ -1191,7 +1191,7 @@ int ScummEngine_v7::getObjectIdFromOBIM(const byte *obim) {
 #endif
 
 int ScummEngine::getObjectIdFromOBIM(const byte *obim) {
-	if (_features & GF_SMALL_HEADER)
+	if (_game.features & GF_SMALL_HEADER)
 		return READ_LE_UINT16(obim + 6);
 
 	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
@@ -1215,9 +1215,9 @@ void ScummEngine::addObjectToInventory(uint obj, uint room) {
 		size = READ_BE_UINT32(ptr + 4);
 	} else {
 		findObjectInRoom(&foir, foCodeHeader, obj, room);
-		if (_features & GF_OLD_BUNDLE)
+		if (_game.features & GF_OLD_BUNDLE)
 			size = READ_LE_UINT16(foir.obcd);
-		else if (_features & GF_SMALL_HEADER)
+		else if (_game.features & GF_SMALL_HEADER)
 			size = READ_LE_UINT32(foir.obcd);
 		else
 			size = READ_BE_UINT32(foir.obcd + 4);
@@ -1243,7 +1243,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 
 	id2 = getObjectIndex(id);
 	if (findWhat & foCheckAlreadyLoaded && id2 != -1) {
-		assert(_version >= 6);
+		assert(_game.version >= 6);
 		if (findWhat & foCodeHeader) {
 			fo->obcd = obcdptr = getOBCDFromObject(id);
 			assert(obcdptr);
@@ -1260,14 +1260,14 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	if (!roomptr)
 		error("findObjectInRoom: failed getting roomptr to %d", room);
 
-	if (_features & GF_OLD_BUNDLE) {
+	if (_game.features & GF_OLD_BUNDLE) {
 		numobj = roomptr[20];
 	} else {
 		const RoomHeader *roomhdr = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 
-		if (_version == 8)
+		if (_game.version == 8)
 			numobj = READ_LE_UINT32(&(roomhdr->v8.numObjects));
-		else if (_version == 7)
+		else if (_game.version == 7)
 			numobj = READ_LE_UINT16(&(roomhdr->v7.numObjects));
 		else
 			numobj = READ_LE_UINT16(&(roomhdr->old.numObjects));
@@ -1278,8 +1278,8 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	if (numobj > _numLocalObjects)
 		error("findObjectInRoom: More (%d) than %d objects in room %d", numobj, _numLocalObjects, room);
 
-	if (_features & GF_OLD_BUNDLE) {
-		if (_version <= 2)
+	if (_game.features & GF_OLD_BUNDLE) {
+		if (_game.version <= 2)
 			searchptr = roomptr + 28;
 		else
 			searchptr = roomptr + 29;
@@ -1305,23 +1305,23 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	}
 
 	if (findWhat & foCodeHeader) {
-		if (_version == 8)
+		if (_game.version == 8)
 			searchptr = getResourceAddress(rtRoomScripts, room);
 		else
 			searchptr = roomptr;
 		assert(searchptr);
-		ResourceIterator	obcds(searchptr, (_features & GF_SMALL_HEADER) != 0);
+		ResourceIterator	obcds(searchptr, (_game.features & GF_SMALL_HEADER) != 0);
 		for (i = 0; i < numobj; i++) {
 			obcdptr = obcds.findNext(MKID('OBCD'));
 			if (obcdptr == NULL)
 				error("findObjectInRoom: Not enough code blocks in room %d", room);
 			cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
 
-			if (_features & GF_SMALL_HEADER)
+			if (_game.features & GF_SMALL_HEADER)
 				id2 = READ_LE_UINT16(obcdptr + 6);
-			else if (_version >= 7)
+			else if (_game.version >= 7)
 				id2 = READ_LE_UINT16(&(cdhd->v7.obj_id));
-			else if (_version == 6)
+			else if (_game.version == 6)
 				id2 = READ_LE_UINT16(&(cdhd->v6.obj_id));
 			else
 				id2 = READ_LE_UINT16(&(cdhd->v5.obj_id));
@@ -1338,7 +1338,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 
 	roomptr = fo->roomptr;
 	if (findWhat & foImageHeader) {
-		ResourceIterator	obims(roomptr, (_features & GF_SMALL_HEADER) != 0);
+		ResourceIterator	obims(roomptr, (_game.features & GF_SMALL_HEADER) != 0);
 		for (i = 0; i < numobj; i++) {
 			obimptr = obims.findNext(MKID('OBIM'));
 			if (obimptr == NULL)
@@ -1373,7 +1373,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	// it probably applies to all V6+ games. See bugs #493153 and #907113.
 	// FT disassembly is checked, behaviour is correct. [sev]
 
-	int arg = (_version >= 6) ? obj : 0;
+	int arg = (_game.version >= 6) ? obj : 0;
 
 	if (owner == 0) {
 		clearOwnerOf(obj);
@@ -1469,7 +1469,7 @@ void ScummEngine::setObjectState(int obj, int state, int x, int y) {
 	}
 
 	addObjectToDrawQue(i);
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		int imagecount;
 		if (state == 0xFF) {
 			state = getState(obj);
@@ -1593,7 +1593,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		error("BlastObject object %d image not found", eo->number);
 
 	const byte *img = getObjectImage(ptr, eo->image);
-	if (_version == 8) {
+	if (_game.version == 8) {
 		assert(img);
 		bomp = img + 8;
 	} else {
@@ -1606,7 +1606,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	if (!bomp)
 		error("object %d is not a blast object", eo->number);
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		bdd.srcwidth = READ_LE_UINT32(&((const BompHeader *)bomp)->v8.width);
 		bdd.srcheight = READ_LE_UINT32(&((const BompHeader *)bomp)->v8.height);
 	} else {
@@ -1617,7 +1617,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	bdd.dst = *vs;
 	bdd.dst.pixels = vs->getPixels(0, 0);
 	// Skip the bomp header
-	if (_version == 8) {
+	if (_game.version == 8) {
 		bdd.dataptr = bomp + 8;
 	} else {
 		bdd.dataptr = bomp + 10;
@@ -1749,7 +1749,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	isRoomScriptsLocked = res.isLocked(rtRoomScripts, room);
 	if (!isRoomLocked)
 		res.lock(rtRoom, room);
-	if (_version == 8 && !isRoomScriptsLocked)
+	if (_game.version == 8 && !isRoomScriptsLocked)
 		res.lock(rtRoomScripts, room);
 
 	// Allocate slot & memory for floating object
@@ -1767,7 +1767,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	// Unlock room/roomScripts
 	if (!isRoomLocked)
 		res.unlock(rtRoom, room);
-	if (_version == 8 && !isRoomScriptsLocked)
+	if (_game.version == 8 && !isRoomScriptsLocked)
 		res.unlock(rtRoomScripts, room);
 
 	// Setup local object flags

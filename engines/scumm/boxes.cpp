@@ -88,7 +88,7 @@ static Common::Point closestPtOnLine(const Common::Point &start, const Common::P
 byte ScummEngine::getMaskFromBox(int box) {
 	// Fix for bug #740244 and #755863. This appears to have been a
 	// long standing bug in the original engine?
-	if (_version <= 3 && box == 255)
+	if (_game.version <= 3 && box == 255)
 		return 1;
 
 	Box *ptr = getBoxBaseAddr(box);
@@ -97,12 +97,12 @@ byte ScummEngine::getMaskFromBox(int box) {
 
 	// WORKAROUND for bug #847827: This is a bug in the data files, as it also
 	// occurs with the original engine. We work around it here anyway.
-	if (_gameId == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8)
+	if (_game.id == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8)
 		return 0;
 
-	if (_version == 8)
+	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
-	else if (_version <= 2)
+	else if (_game.version <= 2)
 		return ptr->v2.mask;
 	else
 		return ptr->old.mask;
@@ -119,9 +119,9 @@ void ScummEngine::setBoxFlags(int box, int val) {
 		Box *ptr = getBoxBaseAddr(box);
 		if (!ptr)
 			return;
-		if (_version == 8)
+		if (_game.version == 8)
 			ptr->v8.flags = TO_LE_32(val);
-		else if (_version <= 2)
+		else if (_game.version <= 2)
 			ptr->v2.flags = val;
 		else
 			ptr->old.flags = val;
@@ -132,9 +132,9 @@ byte ScummEngine::getBoxFlags(int box) {
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 0;
-	if (_version == 8)
+	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.flags);
-	else if (_version <= 2)
+	else if (_game.version <= 2)
 		return ptr->v2.flags;
 	else
 		return ptr->old.flags;
@@ -143,9 +143,9 @@ byte ScummEngine::getBoxFlags(int box) {
 void ScummEngine::setBoxScale(int box, int scale) {
 	Box *ptr = getBoxBaseAddr(box);
 	assert(ptr);
-	if (_version == 8)
+	if (_game.version == 8)
 		ptr->v8.scale = TO_LE_32(scale);
-	else if (_version <= 2)
+	else if (_game.version <= 2)
 		error("This should not ever be called!");
 	else
 		ptr->old.scale = TO_LE_16(scale);
@@ -158,7 +158,7 @@ void ScummEngine::setBoxScaleSlot(int box, int slot) {
 }
 
 int ScummEngine::getScale(int box, int x, int y) {
-	if (_features & GF_NO_SCALING)
+	if (_game.features & GF_NO_SCALING)
 		return 255;
 
 	Box *ptr = getBoxBaseAddr(box);
@@ -167,7 +167,7 @@ int ScummEngine::getScale(int box, int x, int y) {
 
 	int slot , scale;
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		// COMI has a separate field for the scale slot...
 		slot = FROM_LE_32(ptr->v8.scaleSlot);
 		scale = FROM_LE_32(ptr->v8.scale);
@@ -225,12 +225,12 @@ int ScummEngine::getScaleFromSlot(int slot, int x, int y) {
 }
 
 int ScummEngine::getBoxScale(int box) {
-	if (_features & GF_NO_SCALING)
+	if (_game.features & GF_NO_SCALING)
 		return 255;
 	Box *ptr = getBoxBaseAddr(box);
 	if (!ptr)
 		return 255;
-	if (_version == 8)
+	if (_game.version == 8)
 		return FROM_LE_32(ptr->v8.scale);
 	else
 		return READ_LE_UINT16(&ptr->old.scale);
@@ -359,7 +359,7 @@ byte ScummEngine::getNumBoxes() {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
 	if (!ptr)
 		return 0;
-	if (_version == 8)
+	if (_game.version == 8)
 		return (byte) READ_LE_UINT32(ptr);
 	else
 		return ptr[0];
@@ -372,7 +372,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 
 	// The NES version of Maniac Mansion attempts to set flags for boxes 2-4
 	// when there are only three boxes (0-2) when walking out to the garage.
-	if ((_gameId == GID_MANIAC) && (_platform == Common::kPlatformNES) && (box >= ptr[0]))
+	if ((_game.id == GID_MANIAC) && (_game.platform == Common::kPlatformNES) && (box >= ptr[0]))
 		return NULL;
 
 	// FIXME: In "pass to adventure", the loom demo, when bobbin enters
@@ -389,17 +389,17 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	// checking at all. All the problems so far have been cases where
 	// the value was exactly one more than what we consider the maximum.
 	// So it's very well possible that all of these are script errors.
-	if (_version <= 4 && ptr[0] == box)
+	if (_game.version <= 4 && ptr[0] == box)
 	    box--;
 
 	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
-	if (_version <= 2)
+	if (_game.version <= 2)
 		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
-	else if (_version == 3)
+	else if (_game.version == 3)
 		return (Box *)(ptr + box * SIZEOF_BOX_V3 + 1);
-	else if (_features & GF_SMALL_HEADER)
+	else if (_game.features & GF_SMALL_HEADER)
 		return (Box *)(ptr + box * SIZEOF_BOX + 1);
-	else if (_version == 8)
+	else if (_game.version == 8)
 		return (Box *)(ptr + box * SIZEOF_BOX_V8 + 4);
 	else
 		return (Box *)(ptr + box * SIZEOF_BOX + 2);
@@ -473,7 +473,7 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 	Box *bp = getBoxBaseAddr(boxnum);
 	assert(bp);
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		box->ul.x = (short)FROM_LE_32(bp->v8.ulx);
 		box->ul.y = (short)FROM_LE_32(bp->v8.uly);
 		box->ur.x = (short)FROM_LE_32(bp->v8.urx);
@@ -501,7 +501,7 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ul, box->ur);
 			SWAP(box->ll, box->lr);
 		}
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		box->ul.x = bp->v2.ulx * 8;
 		box->ul.y = bp->v2.uy * 2;
 		box->ur.x = bp->v2.urx * 8;
@@ -720,7 +720,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 
 	boxm = getBoxMatrixBaseAddr();
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
 		// The first numOfBoxes bytes contain indices to the start of the corresponding
 		// row (although that seems unnecessary to me - the value is easily computable.
@@ -744,7 +744,7 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 	// WORKAROUND #2: In addition to the above, we have to add this special
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
 	// See bug #770690 and also bug #774783.
-	if ((_gameId == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
+	if ((_game.id == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
 		return 0;
 
 	// Skip up to the matrix data for box 'from'
@@ -1145,7 +1145,7 @@ void Actor::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::Poin
 	if (box2 == finalBox) {
 		// In Indy3, the masks (= z-level) have to match, too -- needed for the
 		// 'maze' in the zeppeling (see bug #1032964).
-		if (_vm->_gameId != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
+		if (_vm->_game.id != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
 			// Is the actor (x,y) between both gates?
 			if (compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateA[0].x, gateA[0].y) !=
 					compareSlope(_pos.x, _pos.y, _walkdata.dest.x, _walkdata.dest.y, gateB[0].x, gateB[0].y) &&

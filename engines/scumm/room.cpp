@@ -56,13 +56,13 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	if (_currentScript != 0xFF) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
-			if (ss->cutsceneOverride && _version >= 5)
+			if (ss->cutsceneOverride && _game.version >= 5)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
 
 			nukeArrays(_currentScript);
 			_currentScript = 0xFF;
 		} else if (ss->where == WIO_LOCAL) {
-			if (ss->cutsceneOverride && _version >= 5)
+			if (ss->cutsceneOverride && _game.version >= 5)
 				error("Script %d stopped with active cutscene/override in exit", ss->number);
 
 			nukeArrays(_currentScript);
@@ -76,7 +76,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	runExitScript();
 
 	killScriptsAndResources();
-	if (_version >= 4 && _heversion <= 61)
+	if (_game.version >= 4 && _game.heversion <= 61)
 		stopCycle(0);
 	_sound->processSound();
 
@@ -91,7 +91,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		_actors[i].hideActor();
 	}
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 		// Set the shadow palette(s) to all black. This fixes
 		// bug #795940, and actually makes some sense (after all,
 		// shadows tend to be rather black, don't they? ;-)
@@ -102,7 +102,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			if (_shadowPalette)
 				_shadowPalette[i] = i;
 		}
-		if (_features & GF_SMALL_HEADER)
+		if (_game.features & GF_SMALL_HEADER)
 			setDirtyColors(0, 255);
 	}
 
@@ -115,7 +115,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
 
-	if (room >= 0x80 && _version < 7 && _heversion <= 71)
+	if (room >= 0x80 && _game.version < 7 && _game.heversion <= 71)
 		_roomResource = _resourceMapper[room & 0x7F];
 	else
 		_roomResource = room;
@@ -151,13 +151,13 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
 	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
 
-	if (_features & GF_NEW_CAMERA) {
+	if (_game.features & GF_NEW_CAMERA) {
 		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;
 		VAR(VAR_CAMERA_MAX_Y) = _roomHeight - (_screenHeight / 2);
 		setCameraAt(_screenWidth / 2, _screenHeight / 2);
 	} else {
 		camera._mode = kNormalCameraMode;
-		if (_version > 2)
+		if (_game.version > 2)
 			camera._cur.x = camera._dest.x = _screenWidth / 2;
 		camera._cur.y = camera._dest.y = _screenHeight / 2;
 	}
@@ -167,7 +167,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 
-	if (_version >= 5 && a) {
+	if (_game.version >= 5 && a) {
 		where = whereIsObject(objectNr);
 		if (where != WIO_ROOM && where != WIO_FLOBJECT)
 			error("startScene: Object %d is not in room %d", objectNr,
@@ -177,7 +177,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		a->putActor(x, y, _currentRoom);
 		a->setDirection(dir + 180);
 		a->stopActorMoving();
-		if (_gameId == GID_SAMNMAX) {
+		if (_game.id == GID_SAMNMAX) {
 			camera._cur.x = camera._dest.x = a->_pos.x;
 			setCameraAt(a->_pos.x, a->_pos.y);
 		}
@@ -187,16 +187,16 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	_egoPositioned = false;
 	runEntryScript();
-	if ((_version <= 2) && !(_platform == Common::kPlatformC64)) {
+	if ((_game.version <= 2) && !(_game.platform == Common::kPlatformC64)) {
 		runScript(5, 0, 0, 0);
-	} else if (_version >= 5 && _version <= 6) {
+	} else if (_game.version >= 5 && _game.version <= 6) {
 		if (a && !_egoPositioned) {
 			int x, y;
 			getObjectXYPos(objectNr, x, y);
 			a->putActor(x, y, _currentRoom);
 			a->_moving = 0;
 		}
-	} else if (_version >= 7) {
+	} else if (_game.version >= 7) {
 		if (camera._follows) {
 			a = derefActor(camera._follows, "startScene: follows");
 			setCameraAt(a->_pos.x, a->_pos.y);
@@ -229,7 +229,7 @@ void ScummEngine::loadRoomSubBlocks() {
 
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
-	if (_version == 8)
+	if (_game.version == 8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	if (!roomptr || !roomResPtr)
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
@@ -239,11 +239,11 @@ void ScummEngine::loadRoomSubBlocks() {
 	//
 	rmhd = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		_roomWidth = READ_LE_UINT32(&(rmhd->v8.width));
 		_roomHeight = READ_LE_UINT32(&(rmhd->v8.height));
 		_numObjectsInRoom = (byte)READ_LE_UINT32(&(rmhd->v8.numObjects));
-	} else if (_version == 7) {
+	} else if (_game.version == 7) {
 		_roomWidth = READ_LE_UINT16(&(rmhd->v7.width));
 		_roomHeight = READ_LE_UINT16(&(rmhd->v7.height));
 		_numObjectsInRoom = (byte)READ_LE_UINT16(&(rmhd->v7.numObjects));
@@ -256,11 +256,11 @@ void ScummEngine::loadRoomSubBlocks() {
 	//
 	// Find the room image data
 	//
-	if (_version == 8) {
+	if (_game.version == 8) {
 		_IM00_offs = getObjectImage(roomptr, 1) - roomptr;
-	} else if (_features & GF_SMALL_HEADER) {
+	} else if (_game.features & GF_SMALL_HEADER) {
 		_IM00_offs = findResourceData(MKID('IM00'), roomptr) - roomptr;
-	} else if (_heversion >= 70) {
+	} else if (_game.heversion >= 70) {
 		byte *roomImagePtr = getResourceAddress(rtRoomImage, _roomResource);
 		_IM00_offs = findResource(MKID('IM00'), roomImagePtr) - roomImagePtr;
 	} else {
@@ -291,13 +291,13 @@ void ScummEngine::loadRoomSubBlocks() {
 
 	// Determine the room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
-	if (_version == 8)
+	if (_game.version == 8)
 		roomResPtr = getResourceAddress(rtRoomScripts, _roomResource);
 	searchptr = roomResPtr;
 
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		ResourceIterator localScriptIterator(searchptr, true);
 		while ((ptr = localScriptIterator.findNext(MKID('LSCR'))) != NULL) {
 			int id = 0;
@@ -312,7 +312,7 @@ void ScummEngine::loadRoomSubBlocks() {
 
 			_localScriptOffsets[id - _numGlobalScripts] = ptr + 1 - roomptr;
 		}
-	} else if (_heversion >= 90) {
+	} else if (_game.heversion >= 90) {
 		ResourceIterator localScriptIterator2(searchptr, false);
 		while ((ptr = localScriptIterator2.findNext(MKID('LSC2'))) != NULL) {
 			int id = 0;
@@ -354,11 +354,11 @@ void ScummEngine::loadRoomSubBlocks() {
 
 			ptr += _resourceHeaderSize;	/* skip tag & size */
 
-			if (_version == 8) {
+			if (_game.version == 8) {
 				id = READ_LE_UINT32(ptr);
 				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 				_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
-			} else if (_version == 7) {
+			} else if (_game.version == 7) {
 				id = READ_LE_UINT16(ptr);
 				checkRange(_numLocalScripts + _numGlobalScripts, _numGlobalScripts, id, "Invalid local script %d");
 				_localScriptOffsets[id - _numGlobalScripts] = ptr + 2 - roomResPtr;
@@ -386,7 +386,7 @@ void ScummEngine::loadRoomSubBlocks() {
 		_CLUT_offs = ptr - roomptr;
 
 	// Locate the standard room palettes (for V6+ games).
-	if (_version >= 6) {
+	if (_game.version >= 6) {
 		ptr = findResource(MKID('PALS'), roomptr);
 		if (ptr) {
 			_PALS_offs = ptr - roomptr;
@@ -395,7 +395,7 @@ void ScummEngine::loadRoomSubBlocks() {
 
 	// Transparent color
 	byte trans;
-	if (_version == 8)
+	if (_game.version == 8)
 		trans = (byte)READ_LE_UINT32(&(rmhd->v8.transparency));
 	else {
 		ptr = findResourceData(MKID('TRNS'), roomptr);
@@ -406,7 +406,7 @@ void ScummEngine::loadRoomSubBlocks() {
 	}
 
 	// Actor Palette in HE 70 games
-	if (_heversion == 70) {
+	if (_game.heversion == 70) {
 		ptr = findResourceData(MKID('REMP'), roomptr);
 		if (ptr) {
 			for (i = 0; i < 256; i++)
@@ -425,7 +425,7 @@ void ScummEngine::loadRoomSubBlocks() {
 	// when they shouldn't be. Luckily, bitvar69 is set to 1 if and only if
 	// the teeth are trapped and have not yet been taken by the player. So
 	// we can make use of that fact to fix the object class of obj 182.
-	if (_gameId == GID_TENTACLE && _roomResource == 26 && readVar(0x8000 + 69)
+	if (_game.id == GID_TENTACLE && _roomResource == 26 && readVar(0x8000 + 69)
 			&& getClass(182, kObjectClassUntouchable)) {
 		putClass(182, kObjectClassUntouchable, 0);
 	}
@@ -456,12 +456,12 @@ void ScummEngine::initRoomSubBlocks() {
 
 	res.nukeResource(rtMatrix, 1);
 	res.nukeResource(rtMatrix, 2);
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		ptr = findResourceData(MKID('BOXD'), roomptr);
 		if (ptr) {
 			byte numOfBoxes = *ptr;
 			int size;
-			if (_version == 3)
+			if (_game.version == 3)
 				size = numOfBoxes * SIZEOF_BOX_V3 + 1;
 			else
 				size = numOfBoxes * SIZEOF_BOX + 1;
@@ -506,7 +506,7 @@ void ScummEngine::initRoomSubBlocks() {
 	ptr = findResourceData(MKID('SCAL'), roomptr);
 	if (ptr) {
 		int s1, s2, y1, y2;
-		if (_version == 8) {
+		if (_game.version == 8) {
 			for (i = 1; i < res.num[rtScaleTable]; i++, ptr += 16) {
 				s1 = READ_LE_UINT32(ptr);
 				y1 = READ_LE_UINT32(ptr + 4);
@@ -529,7 +529,7 @@ void ScummEngine::initRoomSubBlocks() {
 
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.
-	if (_version >= 4 && _heversion <= 61) {
+	if (_game.version >= 4 && _game.heversion <= 61) {
 		ptr = findResourceData(MKID('CYCL'), roomptr);
 		if (ptr) {
 			initCycl(ptr);
@@ -538,7 +538,7 @@ void ScummEngine::initRoomSubBlocks() {
 
 #ifndef DISABLE_HE
 	// Polygons in HE 80+ games
-	if (_heversion >= 80) {
+	if (_game.heversion >= 80) {
 		ptr = findResourceData(MKID('POLD'), roomptr);
 		if (ptr) {
 			((ScummEngine_v70he *)this)->_wiz->polygonLoad(ptr);
@@ -572,8 +572,8 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	//
 	rmhd = (const RoomHeader *)(roomptr + 4);
 
-	if (_version == 1) {
-		if (_platform == Common::kPlatformNES) {
+	if (_game.version == 1) {
+		if (_game.platform == Common::kPlatformNES) {
 			_roomWidth = READ_LE_UINT16(&(rmhd->old.width)) * 8;
 			_roomHeight = READ_LE_UINT16(&(rmhd->old.height)) * 8;
 
@@ -595,7 +595,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	//
 	// Find the room image data
 	//
-	if (_version == 1) {
+	if (_game.version == 1) {
 		_IM00_offs = 0;
 	} else {
 		_IM00_offs = READ_LE_UINT16(roomptr + 0x0A);
@@ -605,7 +605,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	// Look for an exit script
 	//
 	int EXCD_len = -1;
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		_EXCD_offs = READ_LE_UINT16(roomptr + 0x18);
 		EXCD_len = READ_LE_UINT16(roomptr + 0x1A) - _EXCD_offs + _resourceHeaderSize;	// HACK
 	} else {
@@ -619,7 +619,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	// Look for an entry script
 	//
 	int ENCD_len = -1;
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		_ENCD_offs = READ_LE_UINT16(roomptr + 0x1A);
 		ENCD_len = READ_LE_UINT16(roomptr) - _ENCD_offs + _resourceHeaderSize; // HACK
 	} else {
@@ -649,7 +649,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 	int num_sounds;
 	int num_scripts;
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		num_sounds = *(roomptr + 22);
 		num_scripts = *(roomptr + 23);
 		ptr = roomptr + 28 + num_objects * 4;
@@ -657,7 +657,7 @@ void ScummEngine_v3old::loadRoomSubBlocks() {
 			loadResource(rtSound, *ptr++);
 		while (num_scripts--)
 			loadResource(rtScript, *ptr++);
-	} else /* if (_version == 3) */ {
+	} else /* if (_game.version == 3) */ {
 		num_sounds = *(roomptr + 23);
 		num_scripts = *(roomptr + 24);
 		ptr = roomptr + 29 + num_objects * 4 + num_sounds + num_scripts;
@@ -698,7 +698,7 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 		error("Room %d: data not found (" __FILE__  ":%d)", _roomResource, __LINE__);
 
 	// Reset room color for V1 zak
-	if (_version == 1)
+	if (_game.version == 1)
 		_roomPalette[0] = 0;
 
 	//
@@ -708,17 +708,17 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	res.nukeResource(rtMatrix, 2);
 
 	// TODO: Convert older walkbox format
-	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) 
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) 
 		return;
 
-	if (_version <= 2)
+	if (_game.version <= 2)
 		ptr = roomptr + *(roomptr + 0x15);
 	else
 		ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
 	if (ptr) {
 		byte numOfBoxes = *ptr;
 		int size;
-		if (_version <= 2)
+		if (_game.version <= 2)
 			size = numOfBoxes * SIZEOF_BOX_V2 + 1;
 		else
 			size = numOfBoxes * SIZEOF_BOX_V3 + 1;
@@ -726,7 +726,7 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 		res.createResource(rtMatrix, 2, size);
 		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
 		ptr += size;
-		if (_version <= 2) {
+		if (_game.version <= 2) {
 			size = numOfBoxes * (numOfBoxes + 1);
 		} else {
 			// FIXME. This is an evil HACK!!!

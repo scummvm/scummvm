@@ -35,7 +35,7 @@ void ScummEngine_v70he::remapHEPalette(const uint8 *src, uint8 *dst) {
 	uint8 *palPtr;
 	src += 30;
 
-	if (_heversion >= 99) {
+	if (_game.heversion >= 99) {
 		palPtr = _hePalettes + 1024 + 30;
 	} else {
 		palPtr = _currentPalette + 30;

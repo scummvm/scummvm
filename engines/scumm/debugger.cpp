@@ -84,7 +84,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 
 	DVar_Register("scumm_gamename", &_vm->_targetName, DVAR_STRING, 0);
 	DVar_Register("scumm_exename", &_vm->_baseName, DVAR_STRING, 0);
-	DVar_Register("scumm_gameid", &_vm->_gameId, DVAR_BYTE, 0);
+	DVar_Register("scumm_gameid", &_vm->_game.id, DVAR_BYTE, 0);
 
 	// Register commands
 	DCmd_Register("continue", &ScummDebugger::Cmd_Exit);
@@ -105,7 +105,7 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("scripts", &ScummDebugger::Cmd_PrintScript);
 	DCmd_Register("importres", &ScummDebugger::Cmd_ImportRes);
 
-	if (_vm->_gameId == GID_LOOM)
+	if (_vm->_game.id == GID_LOOM)
 		DCmd_Register("drafts", &ScummDebugger::Cmd_PrintDraft);
 
 	DCmd_Register("loadgame", &ScummDebugger::Cmd_LoadGame);
@@ -324,11 +324,11 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 			DebugPrintf("Could not open file %s\n", argv[2]);
 			return true;
 		}
-		if (_vm->_features & GF_SMALL_HEADER) {
+		if (_vm->_game.features & GF_SMALL_HEADER) {
 			size = file.readUint16LE();
 			file.seek(-2, SEEK_CUR);
-		} else if (_vm->_features & GF_SMALL_HEADER) {
-			if (_vm->_version == 4)
+		} else if (_vm->_game.features & GF_SMALL_HEADER) {
+			if (_vm->_game.version == 4)
 				file.seek(8, SEEK_CUR);
 			size = file.readUint32LE();
 			file.readUint16LE();
@@ -660,11 +660,11 @@ bool ScummDebugger::Cmd_PrintBoxMatrix(int argc, const char **argv) {
 	int i, j;
 
 	DebugPrintf("Walk matrix:\n");
-	if (_vm->_version <= 2)
+	if (_vm->_game.version <= 2)
 		boxm += num;
 	for (i = 0; i < num; i++) {
 		DebugPrintf("%d: ", i);
-		if (_vm->_version <= 2) {
+		if (_vm->_game.version <= 2) {
 			for (j = 0; j < num; j++)
 				DebugPrintf("[%d] ", *boxm++);
 		} else {
@@ -829,7 +829,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	const char *notes = "cdefgabC";
 	int i, base, draft;
 
-	if (_vm->_gameId != GID_LOOM) {
+	if (_vm->_game.id != GID_LOOM) {
 		DebugPrintf("Command only works with Loom/LoomCD\n");
 		return true;
 	}
@@ -855,7 +855,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	// Possibly they store information on where and/or how the draft can
 	// be used. They appear to remain constant throughout the game.
 
-	base = (_vm->_version == 3) ? 50 : 100;
+	base = (_vm->_game.version == 3) ? 50 : 100;
 
 	if (argc == 2) {
 		// We had to debug a problem at the end of the game that only

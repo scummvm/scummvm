@@ -415,11 +415,7 @@ public:
 	ScummDebugger *_debugger;
 
 	// Core variables
-	byte _gameId;
-	byte _version;
-	uint8 _heversion;
-	uint32 _features;						// Should only be accessed for reading (TODO enforce it compiler-wise with making it private and creating an accessor)
-	Common::Platform _platform;
+	ScummGameSettings _game;
 	uint8 _gameMD5[16];
 
 	/** Random number generator */
@@ -1143,7 +1139,6 @@ protected:
 	int _saveSound;
 	bool _native_mt32;
 	bool _enable_gs;
-	int _midi;
 	MidiDriverFlags _musicType;
 	bool _copyProtection;
 	bool _demoMode;

@@ -112,7 +112,7 @@ void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags)
 }
 
 void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
-	if (_vm->_heversion >= 60 && _soundQue2Pos) {
+	if (_vm->_game.heversion >= 60 && _soundQue2Pos) {
 		int i = _soundQue2Pos;
 		while (i--) {
 			if (_soundQue2[i].sound == sound && !(heFlags & 2))
@@ -129,13 +129,13 @@ void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags
 }
 
 void Sound::processSound() {
-	if (_vm->_heversion >= 60) {
+	if (_vm->_game.heversion >= 60) {
 		processSoundQueues();
 		processSfxQueues();
 	} else {
 		processSfxQueues();
 
-		if (_vm->_features & GF_DIGI_IMUSE)
+		if (_vm->_game.features & GF_DIGI_IMUSE)
 			return;
 
 		processSoundQueues();
@@ -147,14 +147,14 @@ void Sound::processSoundQueues() {
 	int snd, heOffset, heChannel, heFlags;
 	int data[16];
 
-	if (_vm->_heversion >= 72) {
+	if (_vm->_game.heversion >= 72) {
 		for (i = 0; i <_soundQue2Pos; i++) {
 			snd = _soundQue2[i].sound;
 			heOffset = _soundQue2[i].offset;
 			heChannel = _soundQue2[i].channel;
 			heFlags = _soundQue2[i].flags;
 			if (snd) {
-				if (_vm->_heversion>= 60)
+				if (_vm->_game.heversion>= 60)
 					playHESound(snd, heOffset, heChannel, heFlags);
 				else
 					playSound(snd);
@@ -169,7 +169,7 @@ void Sound::processSoundQueues() {
 			heChannel = _soundQue2[_soundQue2Pos].channel;
 			heFlags = _soundQue2[_soundQue2Pos].flags;
 			if (snd) {
-				if (_vm->_heversion>= 60)
+				if (_vm->_game.heversion>= 60)
 					playHESound(snd, heOffset, heChannel, heFlags);
 				else
 					playSound(snd);
@@ -302,7 +302,7 @@ void Sound::playSound(int soundID) {
 		// I'll add some code to test that theory for now.
 
 		// Check if the resource has already been demangled
-		if ((_vm->_platform == Common::kPlatformSegaCD) && (ptr[0] != 1))	{
+		if ((_vm->_game.platform == Common::kPlatformSegaCD) && (ptr[0] != 1))	{
 			for (int i = 0; i < size; i++)   {
 				ptr[i] ^= 0x16;
 				if (ptr[i] >= 0x7F) {
@@ -327,10 +327,10 @@ void Sound::playSound(int soundID) {
 		memcpy(sound, ptr + 6, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else if ((_vm->_platform == Common::kPlatformFMTowns && _vm->_version == 3) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
 
 		bool tows = READ_UINT32(ptr) == MKID('TOWS');
-		if (_vm->_version == 3) {
+		if (_vm->_game.version == 3) {
 			size = READ_LE_UINT32(ptr);
 		} else {
 			size = READ_BE_UINT32(ptr + 4) - 2;
@@ -410,7 +410,7 @@ void Sound::playSound(int soundID) {
 			break;
 		}
 	}
-	else if ((_vm->_gameId == GID_LOOM) && (_vm->_platform == Common::kPlatformMacintosh))  {
+	else if ((_vm->_game.id == GID_LOOM) && (_vm->_game.platform == Common::kPlatformMacintosh))  {
 		// Mac version of Loom uses yet another sound format
 		/*
 		playSound #9 (room 70)
@@ -433,7 +433,7 @@ void Sound::playSound(int soundID) {
 		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
 		*/
 	}
-	else if ((_vm->_platform == Common::kPlatformMacintosh) && (_vm->_gameId == GID_INDY3) && (ptr[26] == 0)) {
+	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && (ptr[26] == 0)) {
 		size = READ_BE_UINT16(ptr + 12);
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
@@ -443,10 +443,10 @@ void Sound::playSound(int soundID) {
 	}
 	else {
 
-		if (_vm->_gameId == GID_MONKEY_VGA || _vm->_gameId == GID_MONKEY_EGA
-			|| (_vm->_gameId == GID_MONKEY && _vm->_platform == Common::kPlatformMacintosh)) {
+		if (_vm->_game.id == GID_MONKEY_VGA || _vm->_game.id == GID_MONKEY_EGA
+			|| (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformMacintosh)) {
 			// Sound is currently not supported at all in the amiga versions of these games
-			if (_vm->_platform == Common::kPlatformAmiga) {
+			if (_vm->_game.platform == Common::kPlatformAmiga) {
 				int track = -1;
 				if (soundID == 50)
 					track = 17;
@@ -500,13 +500,13 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
-		} else if (_vm->_heversion >= 60) {
+		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
 			finished = !_vm->_mixer->isSoundHandleActive(_talkChannelHandle);
 		}
 
-		if ((uint) act < 0x80 && ((_vm->_version == 8) || (_vm->_version <= 7 && !_vm->_string[0].no_talk_anim))) {
+		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
 				if (isMouthSyncOff(_curSoundPos) && !_mouthSyncMode) {
@@ -518,13 +518,13 @@ void Sound::processSfxQueues() {
 					_mouthSyncMode = 1;
 				}
 
-				if (_vm->_version <= 6 && finished)
+				if (_vm->_game.version <= 6 && finished)
 					a->runActorTalkScript(a->_talkStopFrame);
 			}
 		}
 
-		if ((!ConfMan.getBool("subtitles") && finished && _vm->_version <= 6) || (finished && _vm->_talkDelay == 0)) {
-			if (!(_vm->_version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 0))
+		if ((!ConfMan.getBool("subtitles") && finished && _vm->_game.version <= 6) || (finished && _vm->_talkDelay == 0)) {
+			if (!(_vm->_game.version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 0))
 				_vm->stopTalk();
 		}
 	}
@@ -545,12 +545,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 	int size = 0;
 	int id = -1;
 
-	if (_vm->_gameId == GID_CMI) {
+	if (_vm->_game.id == GID_CMI) {
 		_sfxMode |= mode;
 		return;
-	} else if (_vm->_gameId == GID_DIG) {
+	} else if (_vm->_game.id == GID_DIG) {
 		_sfxMode |= mode;
-		if (!(_vm->_features & GF_DEMO))
+		if (!(_vm->_game.features & GF_DEMO))
 			return;
 
 		char filename[30];
@@ -599,7 +599,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		// automatically stop any other that may be playing at that time. So
 		// that is what we do here, but we make an exception for speech.
 
-		if (mode == 1 && (_vm->_gameId == GID_TENTACLE || _vm->_gameId == GID_SAMNMAX)) {
+		if (mode == 1 && (_vm->_game.id == GID_TENTACLE || _vm->_game.id == GID_SAMNMAX)) {
 			id = 777777 + _talk_sound_channel;
 			_vm->_mixer->stopID(id);
 		}
@@ -691,7 +691,7 @@ void Sound::stopTalkSound() {
 #ifndef DISABLE_SCUMM_7_8
 			_vm->_imuseDigital->stopSound(kTalkSoundID);
 #endif
-		} else if (_vm->_heversion >= 60) {
+		} else if (_vm->_game.heversion >= 60) {
 			stopSound(1);
 		} else {
 			_vm->_mixer->stopHandle(_talkChannelHandle);
@@ -726,11 +726,11 @@ int Sound::isSoundRunning(int sound) const {
 	if (sound == _currentCDSound)
 		return pollCD();
 
-	if (_vm->_heversion >= 70) {
+	if (_vm->_game.heversion >= 70) {
 		if (sound >= 10000) {
 			return _vm->_mixer->getSoundID(_heSoundChannels[sound - 10000]);
 		}
-	} else if (_vm->_heversion >= 60) {
+	} else if (_vm->_game.heversion >= 60) {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
@@ -814,11 +814,11 @@ bool Sound::isSoundInQueue(int sound) const {
 void Sound::stopSound(int sound) {
 	int i;
 
-	if (_vm->_heversion >= 70) {
+	if (_vm->_game.heversion >= 70) {
 		if ( sound >= 10000) {
 			stopSoundChannel(sound - 10000);
 		}
-	} else if (_vm->_heversion >= 60) {
+	} else if (_vm->_game.heversion >= 60) {
 		if (sound == -2) {
 			sound = _heChannel[0].sound;
 		} else if (sound == -1) {
@@ -832,7 +832,7 @@ void Sound::stopSound(int sound) {
 		stopCDTimer();
 	}
 
-	if (!(_vm->_features & GF_DIGI_IMUSE))
+	if (!(_vm->_game.features & GF_DIGI_IMUSE))
 		_vm->_mixer->stopID(sound);
 
 	if (_vm->_musicEngine)
@@ -910,7 +910,7 @@ void Sound::soundKludge(int *list, int num) {
 }
 
 void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
-	if (_vm->_version >= 6 && ConfMan.getBool("speech_mute"))
+	if (_vm->_game.version >= 6 && ConfMan.getBool("speech_mute"))
 		return;
 
 	if (mode == 1) {
@@ -937,11 +937,11 @@ void Sound::setupSound() {
 
 	_sfxFile = openSfxFile();
 
-	if (_vm->_heversion >= 70) {
+	if (_vm->_game.heversion >= 70) {
 		setupHEMusicFile();
 	}
 
-	if (_vm->_gameId == GID_FT) {
+	if (_vm->_game.id == GID_FT) {
 		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFile->isOpen();
 	}
 }
@@ -966,7 +966,7 @@ void Sound::pauseSounds(bool pause) {
 
 	_vm->_mixer->pauseAll(pause);
 
-	if ((_vm->_features & GF_AUDIOTRACKS) && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
+	if ((_vm->_game.features & GF_AUDIOTRACKS) && _vm->VAR(_vm->VAR_MUSIC_TIMER) > 0) {
 		if (pause)
 			stopCDTimer();
 		else
@@ -1026,7 +1026,7 @@ ScummFile *Sound::openSfxFile() {
 	}
 
 	if (!file->isOpen()) {
-		if ((_vm->_heversion <= 61 && _vm->_platform == Common::kPlatformMacintosh) || (_vm->_heversion >= 70)) {
+		if ((_vm->_game.heversion <= 61 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
 			sprintf(buf, "%s.he2", _vm->getBaseName());
 		} else {
 			sprintf(buf, "%s.tlk", _vm->getBaseName());
@@ -1036,7 +1036,7 @@ ScummFile *Sound::openSfxFile() {
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 			strcpy(buf, buf1);
 		}
-		if (file->open(buf) && _vm->_heversion <= 73)
+		if (file->open(buf) && _vm->_game.heversion <= 73)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	}
@@ -1102,7 +1102,7 @@ void Sound::startCDTimer() {
 	// when Chaos first appears, and I have to use 101 for Monkey 1 or the
 	// intro music will be cut short.
 
-	if (_vm->_gameId == GID_LOOM && _vm->_version == 4)
+	if (_vm->_game.id == GID_LOOM && _vm->_game.version == 4)
 		timer_interval = 100;
 	else
 		timer_interval = 101;
@@ -1754,10 +1754,10 @@ void ScummEngine::convertADResource(int type, int idx, byte *src_ptr, int size) 
 		// Convert the ticks into a MIDI tempo.
 		// Unfortunate LOOM and INDY3 have different interpretation
 		// of the ticks value.
-		if (_gameId == GID_INDY3) {
+		if (_game.id == GID_INDY3) {
 			// Note: since we fix ppqn at 480, ppqn/473 is almost 1
 			dw = 500000 * 256 / 473 * ppqn / ticks;
-		} else if (_gameId == GID_LOOM && _version == 3) {
+		} else if (_game.id == GID_LOOM && _game.version == 3) {
 			dw = 500000 * ppqn / 4 / ticks;
 		} else {
 			dw = 500000 * 256 / ticks;
@@ -2099,7 +2099,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 
 	debug(4, "readSoundResourceSmallHeader(%d)", idx);
 
-	if ((_gameId == GID_LOOM) && (_version == 3) && (_platform == Common::kPlatformPC) && VAR(VAR_SOUNDCARD) == 4) {
+	if ((_game.id == GID_LOOM) && (_game.version == 3) && (_game.platform == Common::kPlatformPC) && VAR(VAR_SOUNDCARD) == 4) {
 		// Roland resources in Loom are tagless
 		// So we add an RO tag to allow imuse to detect format
 		byte *ptr, *src_ptr;
@@ -2114,12 +2114,12 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		memcpy(ptr, "RO", 2); ptr += 2;
 		memcpy(ptr, src_ptr, ro_size - 4); ptr += ro_size - 4;
 		return 1;
-	} else if (_features & GF_OLD_BUNDLE) {
+	} else if (_game.features & GF_OLD_BUNDLE) {
 		wa_offs = _fileHandle->pos();
 		wa_size = _fileHandle->readUint16LE();
 		_fileHandle->seek(wa_size - 2, SEEK_CUR);
 
-		if (!(_platform == Common::kPlatformAtariST || _platform == Common::kPlatformMacintosh)) {
+		if (!(_game.platform == Common::kPlatformAtariST || _game.platform == Common::kPlatformMacintosh)) {
 			ad_offs = _fileHandle->pos();
 			ad_size = _fileHandle->readUint16LE();
 		}
@@ -2173,7 +2173,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		//   7 bytes MIDI tempo sysex
 		//     + some default instruments
 		byte *ptr;
-		if (_features & GF_OLD_BUNDLE) {
+		if (_game.features & GF_OLD_BUNDLE) {
 			ad_size -= 4;
 			_fileHandle->seek(ad_offs + 4, SEEK_SET);
 		} else {
@@ -2186,7 +2186,7 @@ int ScummEngine::readSoundResourceSmallHeader(int type, int idx) {
 		free(ptr);
 		return 1;
 	} else if ((_musicType == MDT_PCSPK) && wa_offs != 0) {
-		if (_features & GF_OLD_BUNDLE) {
+		if (_game.features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs, SEEK_SET);
 			_fileHandle->read(res.createResource(type, idx, wa_size), wa_size);
 		} else {

@@ -345,12 +345,12 @@ static const uint16 pcjr_freq_table[12] = {
 Player_V2::Player_V2(ScummEngine *scumm, bool pcjr) {
 	int i;
 
-	_isV3Game = (scumm->_version >= 3);
+	_isV3Game = (scumm->_game.version >= 3);
 	_vm = scumm;
 	_mixer = scumm->_mixer;
 	_sample_rate = _mixer->getOutputRate();
 
-	_header_len = (scumm->_features & GF_OLD_BUNDLE) ? 4 : 6;
+	_header_len = (scumm->_game.features & GF_OLD_BUNDLE) ? 4 : 6;
 
 	// Initialize sound queue
 	_current_nr = _next_nr = 0;

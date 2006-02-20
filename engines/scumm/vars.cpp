@@ -81,7 +81,7 @@ void ScummEngine::setupScummVars() {
 	VAR_SOUNDCARD = 48;
 	VAR_VIDEOMODE = 49;
 
-	if (_version >= 4) {
+	if (_game.version >= 4) {
 		VAR_SCROLL_SCRIPT = 27;
 		VAR_DEBUGMODE = 39;
 		VAR_MAINMENU_KEY = 50;
@@ -90,12 +90,12 @@ void ScummEngine::setupScummVars() {
 		VAR_USERPUT = 53;
 	}
 
-	if (_version >= 5) {
+	if (_game.version >= 5) {
 		VAR_SOUNDPARAM = 64;
 		VAR_SOUNDPARAM2 = 65;
 		VAR_SOUNDPARAM3 = 66;
 	}
-	if (_version >= 5) {
+	if (_game.version >= 5) {
 		VAR_SOUNDRESULT = 56;
 		VAR_TALKSTOP_KEY = 57;
 		VAR_FADE_DELAY = 59;
@@ -168,10 +168,10 @@ void ScummEngine_v5::setupScummVars() {
 
 	VAR_CURRENT_LIGHTS = 9;
 
-	if (_version >= 4) {
+	if (_game.version >= 4) {
 		VAR_V5_TALK_STRING_Y = 54;
 	}
-	if ((_gameId == GID_LOOM && _version == 4) || _version >= 5) {
+	if ((_game.id == GID_LOOM && _game.version == 4) || _game.version >= 5) {
 		VAR_NOSUBTITLES = 60;
 	}
 }
@@ -183,7 +183,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_ROOM_WIDTH = 41;
 	VAR_ROOM_HEIGHT = 54;
 
-	if (_heversion >= 60) {
+	if (_game.heversion >= 60) {
 		VAR_NOSUBTITLES = 60;
 	} else {
 		VAR_VOICE_MODE = 60; // 0 is voice, 1 is voice+text, 2 is text only
@@ -204,7 +204,7 @@ void ScummEngine_v6::setupScummVars() {
 	VAR_TIMEDATE_MINUTE = 126;
 
 	// Sam & Max specific
-	if (_gameId == GID_SAMNMAX) {
+	if (_game.id == GID_SAMNMAX) {
 		VAR_V6_SOUNDMODE = 9;
 		VAR_CHARSET_MASK = 123;
 	}
@@ -295,7 +295,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_MOUSE_STATE = 75;
 	VAR_POLYGONS_ONLY = 76;
 
-	if (_heversion <= 73) {
+	if (_game.heversion <= 73) {
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
 }
@@ -319,7 +319,7 @@ void ScummEngine_v90he::setupScummVars() {
 	VAR_SCRIPT_CYCLE = 103;
 	VAR_NUM_SCRIPT_CYCLES = 104;
 
-	if (_heversion >= 95) {
+	if (_game.heversion >= 95) {
 		VAR_NUM_SPRITE_GROUPS = 105;
 		VAR_NUM_SPRITES = 106;
 		VAR_U32_VERSION = 107;
@@ -327,10 +327,10 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_WIZ_TCOLOR = 117;
 		VAR_RESERVED_SOUND_CHANNELS = 120;
 	}
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		VAR_SKIP_RESET_TALK_ACTOR = 125;
 	}
-	if (_heversion >= 99) {
+	if (_game.heversion >= 99) {
 		VAR_MAIN_SCRIPT = 127;
 		VAR_NUM_PALETTES = 130;
 		VAR_NUM_UNK = 131;
@@ -430,7 +430,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_FADE_DELAY = 117;
 
 	// Full Throttle specific
-	if (_gameId == GID_FT) {
+	if (_game.id == GID_FT) {
 		VAR_CHARSET_MASK = 119;
 	}
 
@@ -543,21 +543,21 @@ void ScummEngine_v8::setupScummVars() {
 
 void ScummEngine_v2::initScummVars() {
 
-	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC) {
+	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
 		VAR(VAR_EGO) = 3;
 	}
 
 	// This needs to be at least greater than 40 to get the more
 	// elaborate version of the EGA Zak into. I don't know where
 	// else it makes any difference.
-	if (_gameId == GID_ZAK)
+	if (_game.id == GID_ZAK)
 		VAR(VAR_MACHINE_SPEED) = 0x7FFF;
 }
 
 void ScummEngine_v5::initScummVars() {
 	ScummEngine::initScummVars();
 
-	if (_version >= 4 && _version <= 5)
+	if (_game.version >= 4 && _game.version <= 5)
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
 	if (VAR_CURRENT_LIGHTS != 0xFF) {
@@ -565,7 +565,7 @@ void ScummEngine_v5::initScummVars() {
 		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 	}
 
-	if (_gameId == GID_MONKEY)
+	if (_game.id == GID_MONKEY)
 		_scummVars[74] = 1225;
 }
 
@@ -573,7 +573,7 @@ void ScummEngine_v5::initScummVars() {
 void ScummEngine_v7::initScummVars() {
 	ScummEngine::initScummVars();
 
-	if (_version == 8) {	// FIXME: How do we deal with non-cd installs?
+	if (_game.version == 8) {	// FIXME: How do we deal with non-cd installs?
 		VAR(VAR_CURRENTDISK) = 1;
 		VAR(VAR_LANGUAGE) = _language;
 	} else {
@@ -626,13 +626,13 @@ void ScummEngine_v90he::initScummVars() {
 	VAR(VAR_SCRIPT_CYCLE) = 1;
 	VAR(VAR_NUM_SCRIPT_CYCLES) = 1;
 
-	if (_heversion >= 95) {
+	if (_game.heversion >= 95) {
 		VAR(VAR_NUM_SPRITE_GROUPS) = MAX(64, _numSprites / 4) - 1;
 		VAR(VAR_NUM_SPRITES) = _numSprites - 1;
 		VAR(VAR_WIZ_TCOLOR) = 5;
 		VAR(VAR_RESERVED_SOUND_CHANNELS) = 9;
 	}
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		VAR(VAR_U32_VERSION) = _logicHE->versionID();
 		VAR(VAR_U32_ARRAY_UNK) = 0;
 	}
@@ -647,7 +647,7 @@ void ScummEngine_v99he::initScummVars() {
 #endif
 
 void ScummEngine::initScummVars() {
-	if (_heversion < 70 && _version <= 6) {
+	if (_game.heversion < 70 && _game.version <= 6) {
 		switch (_musicType) {
 		case MDT_NONE:
 			VAR(VAR_SOUNDCARD) = 0;
@@ -659,9 +659,9 @@ void ScummEngine::initScummVars() {
 			VAR(VAR_SOUNDCARD) = 3;
 			break;
 		default:
-			if ((_gameId == GID_MONKEY_EGA || _gameId == GID_MONKEY_VGA || (_gameId == GID_LOOM && _version == 3))
-			   &&  (_platform == Common::kPlatformPC)) {
-				if (_gameId == GID_LOOM) {
+			if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_LOOM && _game.version == 3))
+			   &&  (_game.platform == Common::kPlatformPC)) {
+				if (_game.id == GID_LOOM) {
 					char buf[50];
 					Common::File f;
 					for (int i = 82; i < 85; i++) {
@@ -669,7 +669,7 @@ void ScummEngine::initScummVars() {
 						if (!Common::File::exists(buf))
 							error("Native MIDI support requires Roland patch from LucasArts");
 					}
-				} else if (_gameId == GID_MONKEY_EGA) {
+				} else if (_game.id == GID_MONKEY_EGA) {
 					if (!Common::File::exists("DISK09.LEC"))
 						error("Native MIDI support requires Roland patch from LucasArts");
 				}
@@ -679,11 +679,11 @@ void ScummEngine::initScummVars() {
 			}
 		}
 
-		if (_platform == Common::kPlatformFMTowns)
+		if (_game.platform == Common::kPlatformFMTowns)
 			VAR(VAR_VIDEOMODE) = 42;
-		else if (_platform == Common::kPlatformMacintosh)
+		else if (_game.platform == Common::kPlatformMacintosh)
 			VAR(VAR_VIDEOMODE) = 50;
-		else if (_platform == Common::kPlatformAmiga)
+		else if (_game.platform == Common::kPlatformAmiga)
 			VAR(VAR_VIDEOMODE) = 82;
 		else if (_renderMode == Common::kRenderCGA)
 			VAR(VAR_VIDEOMODE) = 4;
@@ -694,25 +694,25 @@ void ScummEngine::initScummVars() {
 		else
 			VAR(VAR_VIDEOMODE) = 19;
 
-		if (_platform == Common::kPlatformMacintosh && (_features & GF_OLD_BUNDLE)) {
+		if (_game.platform == Common::kPlatformMacintosh && (_game.features & GF_OLD_BUNDLE)) {
 			// Set screen size for the Macintosh version of Indy3/Loom
 			VAR(39) = 320;
 		}
-		if (_platform == Common::kPlatformPC && _gameId == GID_LOOM && _version == 3) {
+		if (_game.platform == Common::kPlatformPC && _game.id == GID_LOOM && _game.version == 3) {
 			// Set number of sound resources
 			VAR(39) = 80;
 		}
 
-		if (_gameId == GID_LOOM || _version >= 4)
+		if (_game.id == GID_LOOM || _game.version >= 4)
 			VAR(VAR_HEAPSPACE) = 1400;
-		if (_version >= 4)
+		if (_game.version >= 4)
 			VAR(VAR_FIXEDDISK) = 1;
-		if (_version >= 5)
+		if (_game.version >= 5)
 			VAR(VAR_MOUSEPRESENT) = 1;
-		if (_version == 6)
+		if (_game.version == 6)
 			VAR(VAR_V6_EMSSPACE) = 10000;
 
-		if (_heversion >= 60) {
+		if (_game.heversion >= 60) {
 			// Set fast speed, to enable all animations
 			VAR(VAR_MACHINE_SPEED) = 2;
 

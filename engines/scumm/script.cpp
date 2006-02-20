@@ -67,7 +67,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	}
 
 	if (cycle == 0)
-		cycle = (_heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+		cycle = (_game.heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
 
 	slot = getScriptSlot();
 
@@ -95,7 +95,7 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 	if (!object)
 		return;
 
-	if (!recursive && (_version >= 3))
+	if (!recursive && (_game.version >= 3))
 		stopObjectScript(object);
 
 	where = whereIsObject(object);
@@ -116,7 +116,7 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 		return;
 
 	if (cycle == 0)
-		cycle = (_heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+		cycle = (_game.heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
 
 	s = &vm.slot[slot];
 	s->number = object;
@@ -155,13 +155,13 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	objptr = getOBCDFromObject(obj);
 	assert(objptr);
 
-	if (_platform == Common::kPlatformC64 && _gameId == GID_MANIAC)
+	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC)
 		verbptr = objptr + 14;
-	else if (_version <= 2)
+	else if (_game.version <= 2)
 		verbptr = objptr + 15;
-	else if (_features & GF_OLD_BUNDLE)
+	else if (_game.features & GF_OLD_BUNDLE)
 		verbptr = objptr + 17;
-	else if (_features & GF_SMALL_HEADER)
+	else if (_game.features & GF_SMALL_HEADER)
 		verbptr = objptr + 19;
 	else
 		verbptr = findResource(MKID('VERB'), objptr);
@@ -170,10 +170,10 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 
 	verboffs = verbptr - objptr;
 
-	if (!(_features & GF_SMALL_HEADER))
+	if (!(_game.features & GF_SMALL_HEADER))
 		verbptr += _resourceHeaderSize;
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 		const uint32 *ptr = (const uint32 *)verbptr;
 		uint32 verb;
 		do {
@@ -185,7 +185,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 			ptr += 2;
 		} while (1);
 		return verboffs + 8 + READ_LE_UINT32(ptr + 1);
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		do {
 			if (!*verbptr)
 				return 0;
@@ -204,7 +204,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 			verbptr += 3;
 		} while (1);
 
-		if (_features & GF_SMALL_HEADER)
+		if (_game.features & GF_SMALL_HEADER)
 			return READ_LE_UINT16(verbptr + 1);
 		else
 			return verboffs + READ_LE_UINT16(verbptr + 1);
@@ -225,7 +225,7 @@ void ScummEngine::stopScript(int script) {
 		if (script == ss->number && ss->status != ssDead &&
 			(ss->where == WIO_GLOBAL || ss->where == WIO_LOCAL)) {
 			if (ss->cutsceneOverride)
-				if (_version >= 5)
+				if (_game.version >= 5)
 					error("Script %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
@@ -265,7 +265,7 @@ void ScummEngine::stopObjectScript(int script) {
 		if (script == ss->number && ss->status != ssDead &&
 		    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 			if (ss->cutsceneOverride)
-				if (_version >= 5)
+				if (_game.version >= 5)
 					error("Object %d stopped with active cutscene/override", script);
 			ss->number = 0;
 			ss->status = ssDead;
@@ -364,7 +364,7 @@ void ScummEngine::updateScriptPtr() {
 void ScummEngine::nukeArrays(byte scriptSlot) {
 	int i;
 
-	if (_heversion == 0 || scriptSlot == 0)
+	if (_game.heversion == 0 || scriptSlot == 0)
 		return;
 
 	for (i = 1; i < _numArray; i++) {
@@ -396,7 +396,7 @@ void ScummEngine::getScriptBaseAddress() {
 
 	case WIO_LOCAL:
 	case WIO_ROOM:								/* room script */
-		if (_version == 8) {
+		if (_game.version == 8) {
 			_scriptOrgPointer = getResourceAddress(rtRoomScripts, _roomResource);
 			assert(_roomResource < res.num[rtRoomScripts]);
 			_lastCodePtr = &res.address[rtRoomScripts][_roomResource];
@@ -426,7 +426,7 @@ void ScummEngine::getScriptBaseAddress() {
 	}
 
 	// The following fixes bug #1202487. Confirmed against disasm.
-	if (_version <= 2 && _scriptOrgPointer == NULL) {
+	if (_game.version <= 2 && _scriptOrgPointer == NULL) {
 		ss->status = ssDead;
 		_currentScript = 0xFF;
 	}
@@ -517,7 +517,7 @@ int ScummEngine::readVar(uint var) {
 
 	debugC(DEBUG_VARS, "readvar(%d)", var);
 
-	if ((var & 0x2000) && (_version <= 5)) {
+	if ((var & 0x2000) && (_game.version <= 5)) {
 		a = fetchScriptWord();
 		if (a & 0x2000)
 			var += readVar(a & ~0x2000);
@@ -528,7 +528,7 @@ int ScummEngine::readVar(uint var) {
 
 	if (!(var & 0xF000)) {
 		if (!_copyProtection) {
-			if (var == 490 && _gameId == GID_MONKEY2) {
+			if (var == 490 && _game.id == GID_MONKEY2) {
 				var = 518;
 			}
 		}
@@ -545,19 +545,19 @@ int ScummEngine::readVar(uint var) {
 	}
 
 	if (var & 0x8000) {
-		if (_heversion >= 80) {
+		if (_game.heversion >= 80) {
 			var &= 0xFFF;
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			return _roomVars[var];
 
-		} else if (_version <= 3 && !(_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns))) {
+		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns))) {
 			int bit = var & 0xF;
 			var = (var >> 4) & 0xFF;
 
 			if (!_copyProtection) {
-				if (_gameId == GID_LOOM && (_platform == Common::kPlatformFMTowns) && var == 214 && bit == 15) {
+				if (_game.id == GID_LOOM && (_game.platform == Common::kPlatformFMTowns) && var == 214 && bit == 15) {
 					return 0;
-				} else if (_gameId == GID_ZAK && (_platform == Common::kPlatformFMTowns) && var == 151 && bit == 8) {
+				} else if (_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns) && var == 151 && bit == 8) {
 					return 0;
 				}
 			}
@@ -567,7 +567,7 @@ int ScummEngine::readVar(uint var) {
 		} else {
 			var &= 0x7FFF;
 			if (!_copyProtection) {
-				if (_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns) && var == 1508)
+				if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) && var == 1508)
 					return 0;
 			}
 
@@ -577,13 +577,13 @@ int ScummEngine::readVar(uint var) {
 	}
 
 	if (var & 0x4000) {
-		if (_features & GF_FEW_LOCALS) {
+		if (_game.features & GF_FEW_LOCALS) {
 			var &= 0xF;
 		} else {
 			var &= 0xFFF;
 		}
 
-		if (_heversion >= 80)
+		if (_game.heversion >= 80)
 			checkRange(25, 0, var, "Local variable %d out of range(r)");
 		else
 			checkRange(20, 0, var, "Local variable %d out of range(r)");
@@ -602,14 +602,14 @@ void ScummEngine::writeVar(uint var, int value) {
 
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
 			// Ignore default setting in HE72-73 games
-			if (_heversion <= 73 && vm.slot[_currentScript].number == 1)
+			if (_game.heversion <= 73 && vm.slot[_currentScript].number == 1)
 				return;
 			assert(value == 0 || value == 1);
 			ConfMan.set("subtitles", value);
 		}
 		if (VAR_NOSUBTITLES != 0xFF && var == VAR_NOSUBTITLES) {
 			// Ignore default setting in HE60-71 games
-			if (_heversion >= 60 && vm.slot[_currentScript].number == 1)
+			if (_game.heversion >= 60 && vm.slot[_currentScript].number == 1)
 				return;
 			assert(value == 0 || value == 1);
 			ConfMan.set("subtitles", !value);
@@ -634,12 +634,12 @@ void ScummEngine::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x8000) {
-		if (_heversion >= 80) {
+		if (_game.heversion >= 80) {
 			var &= 0xFFF;
 			checkRange(_numRoomVariables - 1, 0, var, "Room variable %d out of range(w)");
 			_roomVars[var] = value;
 
-		} else if (_version <= 3 && !(_gameId == GID_INDY3 && (_platform == Common::kPlatformFMTowns))) {
+		} else if (_game.version <= 3 && !(_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns))) {
 			// In the old games, the bit variables were using the same memory
 			// as the normal variables!
 			int bit = var & 0xF;
@@ -662,13 +662,13 @@ void ScummEngine::writeVar(uint var, int value) {
 	}
 
 	if (var & 0x4000) {
-		if (_features & GF_FEW_LOCALS) {
+		if (_game.features & GF_FEW_LOCALS) {
 			var &= 0xF;
 		} else {
 			var &= 0xFFF;
 		}
 
-		if (_heversion >= 80)
+		if (_game.heversion >= 80)
 			checkRange(25, 0, var, "Local variable %d out of range(w)");
 		else
 			checkRange(20, 0, var, "Local variable %d out of range(w)");
@@ -725,13 +725,13 @@ void ScummEngine::stopObjectCode() {
 
 	if (ss->where != WIO_GLOBAL && ss->where != WIO_LOCAL) {
 		if (ss->cutsceneOverride) {
-			if (_version >= 5)
+			if (_game.version >= 5)
 				warning("Object %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
 	} else {
 		if (ss->cutsceneOverride) {
-			if (_version >= 5)
+			if (_game.version >= 5)
 				warning("Script %d ending with active cutscene/override (%d)", ss->number, ss->cutsceneOverride);
 			ss->cutsceneOverride = 0;
 		}
@@ -747,7 +747,7 @@ void ScummEngine::runInventoryScript(int i) {
 	memset(args, 0, sizeof(args));
 	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
-		if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
+		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 			inventoryScript();
 		} else {
 			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
@@ -848,7 +848,7 @@ void ScummEngine::inventoryScript() {
 void ScummEngine::freezeScripts(int flag) {
 	int i;
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 			if (_currentScript != i && vm.slot[i].status != ssDead && !vm.slot[i].freezeResistant) {
 				vm.slot[i].status |= 0x80;
@@ -877,7 +877,7 @@ void ScummEngine::freezeScripts(int flag) {
 void ScummEngine::unfreezeScripts() {
 	int i;
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
 			vm.slot[i].status &= 0x7F;
 			vm.slot[i].freezeCount = 0;
@@ -907,7 +907,7 @@ void ScummEngine::runAllScripts() {
 		vm.slot[i].didexec = 0;
 
 	_currentScript = 0xFF;
-	int numCycles = (_heversion >= 90) ? VAR(VAR_NUM_SCRIPT_CYCLES) : 1;
+	int numCycles = (_game.heversion >= 90) ? VAR(VAR_NUM_SCRIPT_CYCLES) : 1;
 
 	for (int cycle = 1; cycle <= numCycles; cycle++) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
@@ -922,7 +922,7 @@ void ScummEngine::runAllScripts() {
 }
 
 void ScummEngine::runExitScript() {
-	if (_version > 2 && VAR(VAR_EXIT_SCRIPT))
+	if (_game.version > 2 && VAR(VAR_EXIT_SCRIPT))
 		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, 0);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
@@ -939,7 +939,7 @@ void ScummEngine::runExitScript() {
 		// FIXME: the exit script of room 7 in indy3 only seems to have a size
 		// and tag not actual data not even a 00 (stop code). Maybe we should
 		// be limiting ourselves to strictly reading the size from the header?
-		if (_gameId == GID_INDY3 && !(_features & GF_OLD_BUNDLE)) {
+		if (_game.id == GID_INDY3 && !(_game.features & GF_OLD_BUNDLE)) {
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
 			const byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
 			if (!excd || (getResourceDataSize(excd) < 1)) {
@@ -951,12 +951,12 @@ void ScummEngine::runExitScript() {
 		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
-	if (_version > 2 && VAR(VAR_EXIT_SCRIPT2))
+	if (_game.version > 2 && VAR(VAR_EXIT_SCRIPT2))
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
 }
 
 void ScummEngine::runEntryScript() {
-	if (_version > 2 && VAR(VAR_ENTRY_SCRIPT))
+	if (_game.version > 2 && VAR(VAR_ENTRY_SCRIPT))
 		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, 0);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
@@ -972,7 +972,7 @@ void ScummEngine::runEntryScript() {
 		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
-	if (_version > 2 && VAR(VAR_ENTRY_SCRIPT2))
+	if (_game.version > 2 && VAR(VAR_ENTRY_SCRIPT2))
 		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
 }
 
@@ -984,7 +984,7 @@ void ScummEngine::killScriptsAndResources() {
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
 			if (ss->cutsceneOverride) {
-				if (_version >= 5)
+				if (_game.version >= 5)
 					warning("Object %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
@@ -992,7 +992,7 @@ void ScummEngine::killScriptsAndResources() {
 			ss->status = ssDead;
 		} else if (ss->where == WIO_LOCAL) {
 			if (ss->cutsceneOverride) {
-				if (_version >= 5)
+				if (_game.version >= 5)
 					warning("Script %d stopped with active cutscene/override in exit", ss->number);
 				ss->cutsceneOverride = 0;
 			}
@@ -1010,12 +1010,12 @@ void ScummEngine::killScriptsAndResources() {
 				// We can delete custom name resources if either the object is
 				// no longer in use (i.e. not owned by anyone anymore); or if
 				// it is an object which is owned by a room.
-				if (owner == 0 || (_version < 7 && owner == OF_OWNER_ROOM)) {
+				if (owner == 0 || (_game.version < 7 && owner == OF_OWNER_ROOM)) {
 					// WORKAROUND for a problem mentioned in bug report #941275:
 					// In FOA in the sentry room, in the chest plate of the statue,
 					// the pegs may be renamed to mouth: this custom name is lost
 					// when leaving the room; this hack prevents this).
-					if (owner == OF_OWNER_ROOM && _gameId == GID_INDY4 && 336 <= obj && obj <= 340)
+					if (owner == OF_OWNER_ROOM && _game.id == GID_INDY4 && 336 <= obj && obj <= 340)
 						continue;
 
 					_newNames[i] = 0;
@@ -1030,7 +1030,7 @@ void ScummEngine::killAllScriptsExceptCurrent() {
 	for (int i = 0; i < NUM_SCRIPT_SLOT; i++) {
 		if (i != _currentScript) {
 			vm.slot[i].status = ssDead;
-			if (_version == 6)
+			if (_game.version == 6)
 				vm.slot[i].cutsceneOverride = 0;
 		}
 	}
@@ -1039,7 +1039,7 @@ void ScummEngine::killAllScriptsExceptCurrent() {
 void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 	SentenceTab *st;
 
-	if (_version >= 7) {
+	if (_game.version >= 7) {
 
 		if (objectA == objectB)
 			return;
@@ -1069,7 +1069,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 	int localParamList[24];
 	const ScriptSlot *ss;
 	int sentenceScript;
-	if (_version <= 2)
+	if (_game.version <= 2)
 		sentenceScript = 2;
 	else
 		sentenceScript = VAR(VAR_SENTENCE_SCRIPT);
@@ -1087,11 +1087,11 @@ void ScummEngine::checkAndRunSentenceScript() {
 
 	_sentenceNum--;
 
-	if (_version < 7)
+	if (_game.version < 7)
 		if (_sentence[_sentenceNum].preposition && _sentence[_sentenceNum].objectB == _sentence[_sentenceNum].objectA)
 			return;
 
-	if (_version <= 2) {
+	if (_game.version <= 2) {
 		_scummVars[VAR_ACTIVE_VERB] = _sentence[_sentenceNum].verb;
 		_scummVars[VAR_ACTIVE_OBJECT1] = _sentence[_sentenceNum].objectA;
 		_scummVars[VAR_ACTIVE_OBJECT2] = _sentence[_sentenceNum].objectB;
@@ -1105,7 +1105,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 		// assumes that one of the two objects is an actor. If that's
 		// not the case, fall back on the default sentence script.
 
-		if (_gameId == GID_FT && sentenceScript == _buggyFTSentenceScript && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
+		if (_game.id == GID_FT && sentenceScript == _buggyFTSentenceScript && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
 			sentenceScript = _defaultFTSentenceScript;
 		}
 	}
@@ -1118,11 +1118,11 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 	int args[24];
 	int verbScript;
 
-	if (_gameId == GID_MANIAC && _platform == Common::kPlatformC64) {
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
 		verbScript = 3;
 		//_scummVars[9] = cmd;
 
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		verbScript = 4;
 		_scummVars[VAR_CLICK_AREA] = a;
 		switch (a) {
@@ -1142,13 +1142,13 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 	args[1] = cmd;
 	args[2] = mode;
 	// All HE 72+ games but only some HE 71 games.
-	if (_heversion >= 71) {
+	if (_game.heversion >= 71) {
 		args[3] = VAR(VAR_VIRT_MOUSE_X);
 		args[4] = VAR(VAR_VIRT_MOUSE_Y);
 	}
 
 	// Macintosh verison of indy3ega used different interface, so adjust values.
-	if (_gameId == GID_INDY3 && _platform == Common::kPlatformMacintosh) {
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 		if (a == 1 && (cmd >= 101 && cmd <= 108)) {
 			if (cmd == 107) {
 				VAR(67) -= 2;
@@ -1236,12 +1236,12 @@ int ScummEngine::resStrLen(const byte *src) const {
 
 			// WORKAROUND for bug #985948, a script bug in Indy3. See also
 			// the corresponding code in ScummEngine::convertMessageToString().
-			if (_gameId == GID_INDY3 && chr == 0x2E) {
+			if (_game.id == GID_INDY3 && chr == 0x2E) {
 				continue;
 			}
 
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				if (_version == 8) {
+				if (_game.version == 8) {
 					src += 4;
 					num += 4;
 				} else {
@@ -1318,7 +1318,7 @@ void ScummEngine::abortCutscene() {
 		// Proper fix might be to let SMUSH/INSANE run from outside the script
 		// engine but that would require lots of changes and may actually have
 		// negative effects, too. So we cheat here, to fix bug #751670.
-		if (_version == 7)
+		if (_game.version == 7)
 			getScriptEntryPoint();
 
 	}
@@ -1348,7 +1348,7 @@ void ScummEngine::endOverride() {
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
 
-	if (_version > 3)
+	if (_game.version > 3)
 		VAR(VAR_OVERRIDE) = 0;
 }
 

@@ -122,7 +122,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			// HACK. I know use of g_scumm here is evil, however, 
 			// introducing new GID and putting it everywhere will
 			// pollute code much more that this single instance
-			if (g_scumm->_platform == Common::kPlatformNES) {
+			if (g_scumm->_game.platform == Common::kPlatformNES) {
 				ADD_BIND("q", "Push");
 				ADD_BIND("a", "Pull");
 				ADD_BIND("z", "Give");

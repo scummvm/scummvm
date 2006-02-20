@@ -166,11 +166,11 @@ const Common::String ScummDialog::queryResString(int stringno) {
 	if (stringno == 0)
 		return String();
 
-	if (_vm->_version >= 7)
+	if (_vm->_game.version >= 7)
 		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
-	else if (_vm->_version == 6)
+	else if (_vm->_game.version == 6)
 		result = _vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
-	else if (_vm->_version == 5)
+	else if (_vm->_game.version == 5)
 		result = _vm->getStringAddress(string_map_table_v5[stringno - 1].num);
 	else
 		// TODO: For V8 games, maybe grab the strings from the language file?
@@ -717,7 +717,7 @@ void ConfigDialog::close() {
 		else
 			_vm->_voiceMode = ConfMan.getBool("subtitles");
 
-		if (_vm->_version >= 7)
+		if (_vm->_game.version >= 7)
 			_vm->VAR(_vm->VAR_VOICE_MODE) = _vm->_voiceMode;
 	}
 
@@ -785,7 +785,7 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 	}
 
 	_page = 1;
-	_numPages = ScummHelp::numPages(scumm->_gameId);
+	_numPages = ScummHelp::numPages(scumm->_game.id);
 
 	int y = 5 + lineHeight * (HELP_NUM_LINES + 2) + 2;
 
@@ -801,7 +801,7 @@ void HelpDialog::displayKeyBindings() {
 
 	String titleStr, *keyStr, *dscStr;
 
-	ScummHelp::updateStrings(_vm->_gameId, _vm->_version, _vm->_platform, _page, titleStr, keyStr, dscStr);
+	ScummHelp::updateStrings(_vm->_game.id, _vm->_game.version, _vm->_game.platform, _page, titleStr, keyStr, dscStr);
 
 	_title->setLabel(titleStr);
 	for (int i = 0; i < HELP_NUM_LINES; i++) {

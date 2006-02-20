@@ -93,17 +93,17 @@ void ScummEngine::openRoom(const int room) {
 		if (room_offs == -1)
 			break;
 
-		if (room_offs != 0 && room != 0 && _heversion < 98) {
+		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
 			_fileOffset = res.roomoffs[rtRoom][room];
 			return;
 		}
-		if (_version <= 3) {
+		if (_game.version <= 3) {
 			sprintf(buf, "%.2d.lfl", room);
 			// Maniac Mansion demo has .man instead of .lfl
-			if (_gameId == GID_MANIAC)
+			if (_game.id == GID_MANIAC)
 				sprintf(buf2, "%.2d.man", room);
-			encByte = (_features & GF_USE_KEY) ? 0xFF : 0;
-		} else if (_features & GF_SMALL_HEADER) {
+			encByte = (_game.features & GF_USE_KEY) ? 0xFF : 0;
+		} else if (_game.features & GF_SMALL_HEADER) {
 			if (room == 0 || room >= 900) {
 				sprintf(buf, "%.3d.lfl", room);
 				encByte = 0;
@@ -118,8 +118,8 @@ void ScummEngine::openRoom(const int room) {
 			}
 		} else {
 
-			if (_heversion >= 70) { // Windows titles
-				if (_heversion >= 98) {
+			if (_game.heversion >= 70) { // Windows titles
+				if (_game.heversion >= 98) {
 					int disk = 0;
 					if (_heV7DiskOffsets)
 						disk = _heV7DiskOffsets[room];
@@ -136,25 +136,25 @@ void ScummEngine::openRoom(const int room) {
 					}
 				} else
 					sprintf(buf, "%s.he%.1d", _baseName.c_str(), room == 0 ? 0 : 1);
-			} else if (_version >= 7) {
-				if (room > 0 && (_version == 8))
+			} else if (_game.version >= 7) {
+				if (room > 0 && (_game.version == 8))
 					VAR(VAR_CURRENTDISK) = diskNumber;
 				sprintf(buf, "%s.la%d", _baseName.c_str(), diskNumber);
 
 				sprintf(buf2, "%s.%.3d", _baseName.c_str(), diskNumber);
-			} else if (_heversion >= 60) {
+			} else if (_game.heversion >= 60) {
 				sprintf(buf, "%s.he%.1d", _baseName.c_str(), diskNumber);
 			} else {
 				sprintf(buf, "%s.%.3d", _baseName.c_str(), diskNumber);
-				if (_gameId == GID_SAMNMAX)
+				if (_game.id == GID_SAMNMAX)
 					sprintf(buf2, "%s.sm%.1d", _baseName.c_str(), diskNumber);
 			}
 
-			encByte = (_features & GF_USE_KEY) ? 0x69 : 0;
+			encByte = (_game.features & GF_USE_KEY) ? 0x69 : 0;
 		}
 
 		// If we have substitute
-		if (_substResFileNameIndex > 0 && !(_platform == Common::kPlatformNES || _platform == Common::kPlatformC64)) {
+		if (_substResFileNameIndex > 0 && !(_game.platform == Common::kPlatformNES || _game.platform == Common::kPlatformC64)) {
 			char tmpBuf[128];
 			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
 			strcpy(buf, tmpBuf);
@@ -168,7 +168,7 @@ void ScummEngine::openRoom(const int room) {
 		if ((result == false) && (buf2[0])) {
 			result = openResourceFile(buf2, encByte);
 			// We have .man files so set demo mode
-			if (_gameId == GID_MANIAC)
+			if (_game.id == GID_MANIAC)
 				_demoMode = true;
 		}
 
@@ -222,7 +222,7 @@ void ScummEngine::readRoomsOffsets() {
 
 	debug(9, "readRoomOffsets()");
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		_fileHandle->seek(12, SEEK_SET);	// Directly searching for the room offset block would be more generic...
 	} else {
 		_fileHandle->seek(16, SEEK_SET);
@@ -302,7 +302,7 @@ bool ScummEngine::openResourceFile(const char *filename, byte encByte) {
 void ScummEngine::askForDisk(const char *filename, int disknum) {
 	char buf[128];
 
-	if (_version == 8) {
+	if (_game.version == 8) {
 #ifndef DISABLE_SCUMM_7_8
 		char result;
 
@@ -336,7 +336,7 @@ void ScummEngine::readIndexFile() {
 	closeRoom();
 	openRoom(0);
 
-	if (_version <= 5) {
+	if (_game.version <= 5) {
 		// Figure out the sizes of various resources
 		while (!_fileHandle->eof()) {
 			blocktype = fileReadDword();
@@ -519,7 +519,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID('RNAM'):
 		// Names of rooms. Maybe we should put them into a table, for use by the debugger?
-		if (_heversion >= 80) {
+		if (_game.heversion >= 80) {
 			for (int room; (room = _fileHandle->readUint16LE()); ) {
 				char buf[100];
 				i = 0;
@@ -586,7 +586,7 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 
 	debug(9, "readResTypeList(%s,%s,%s)", resTypeFromId(id), tag2str(TO_BE_32(tag)), name);
 
-	if (_version == 8)
+	if (_game.version == 8)
 		num = _fileHandle->readUint32LE();
 	else
 		num = _fileHandle->readUint16LE();
@@ -595,7 +595,7 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		error("Invalid number of %ss (%d) in directory", name, num);
 	}
 
-	if (_features & GF_SMALL_HEADER) {
+	if (_game.features & GF_SMALL_HEADER) {
 		for (i = 0; i < num; i++) {
 			res.roomno[id][i] = _fileHandle->readByte();
 			res.roomoffs[id][i] = _fileHandle->readUint32LE();
@@ -607,11 +607,11 @@ void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
 		for (i = 0; i < num; i++) {
 			res.roomoffs[id][i] = _fileHandle->readUint32LE();
 
-			if (id == rtRoom && _heversion >= 70)
+			if (id == rtRoom && _game.heversion >= 70)
 				_heV7RoomIntOffsets[i] = res.roomoffs[id][i];
 		}
 
-		if (_heversion >= 70) {
+		if (_game.heversion >= 70) {
 			for (i = 0; i < num; i++) {
 				res.globsize[id][i] = _fileHandle->readUint32LE();
 			}
@@ -639,7 +639,7 @@ void ScummEngine::allocResTypeData(int id, uint32 tag, int num, const char *name
 		res.roomoffs[id] = (uint32 *)calloc(num, sizeof(uint32));
 	}
 
-	if (_heversion >= 70) {
+	if (_game.heversion >= 70) {
 		res.globsize[id] = (uint32 *)calloc(num, sizeof(uint32));
 
 		if (id == rtRoom)
@@ -654,11 +654,11 @@ void ScummEngine::loadCharset(int no) {
 	debugC(DEBUG_GENERAL, "loadCharset(%d)", no);
 
 	/* FIXME - hack around crash in Indy4 (occurs if you try to load after dieing) */
-	if (_gameId == GID_INDY4 && no == 0)
+	if (_game.id == GID_INDY4 && no == 0)
 		no = 1;
 
 	/* for Humongous catalogs */
-	if (_heversion >= 70 && _numCharsets == 1) {
+	if (_game.heversion >= 70 && _numCharsets == 1) {
 		debug(0, "Not loading charset as it doesn't seem to exist?");
 		return;
 	}
@@ -683,7 +683,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", resTypeFromId(type), i);
 
-	if ((type == rtRoom) && i > 0x7F && _version < 7 && _heversion <= 71) {
+	if ((type == rtRoom) && i > 0x7F && _game.version < 7 && _game.heversion <= 71) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
@@ -709,7 +709,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 
 	loadResource(type, i);
 
-	if (_version == 5 && type == rtRoom && i == _roomResource)
+	if (_game.version == 5 && type == rtRoom && i == _roomResource)
 		VAR(VAR_ROOM_FLAG) = 1;
 }
 
@@ -720,7 +720,7 @@ int ScummEngine::loadResource(int type, int idx) {
 
 	debugC(DEBUG_RESOURCE, "loadResource(%s,%d)", resTypeFromId(type),idx);
 
-	if (type == rtCharset && (_features & GF_SMALL_HEADER)) {
+	if (type == rtCharset && (_game.features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
 		return (1);
 	}
@@ -734,9 +734,9 @@ int ScummEngine::loadResource(int type, int idx) {
 		roomNr = _roomResource;
 
 	if (type == rtRoom) {
-		if (_version == 8)
+		if (_game.version == 8)
 			fileOffs = 8;
-		else if (_heversion >= 70)
+		else if (_game.heversion >= 70)
 			fileOffs = _heV7RoomIntOffsets[idx];
 		else
 			fileOffs = 0;
@@ -750,20 +750,20 @@ int ScummEngine::loadResource(int type, int idx) {
 
 	_fileHandle->seek(fileOffs + _fileOffset, SEEK_SET);
 
-	if (_features & GF_OLD_BUNDLE) {
-		if ((_version == 3) && !(_platform == Common::kPlatformAmiga) && (type == rtSound)) {
+	if (_game.features & GF_OLD_BUNDLE) {
+		if ((_game.version == 3) && !(_game.platform == Common::kPlatformAmiga) && (type == rtSound)) {
 			return readSoundResourceSmallHeader(type, idx);
 		} else {
 			size = _fileHandle->readUint16LE();
 			_fileHandle->seek(-2, SEEK_CUR);
 		}
-	} else if (_features & GF_SMALL_HEADER) {
-		if (_version == 4)
+	} else if (_game.features & GF_SMALL_HEADER) {
+		if (_game.version == 4)
 			_fileHandle->seek(8, SEEK_CUR);
 		size = _fileHandle->readUint32LE();
 		tag = _fileHandle->readUint16LE();
 		_fileHandle->seek(-6, SEEK_CUR);
-		if ((type == rtSound) && !(_platform == Common::kPlatformAmiga) && !(_platform == Common::kPlatformFMTowns)) {
+		if ((type == rtSound) && !(_game.platform == Common::kPlatformAmiga) && !(_game.platform == Common::kPlatformFMTowns)) {
 			return readSoundResourceSmallHeader(type, idx);
 		}
 	} else {
@@ -773,7 +773,7 @@ int ScummEngine::loadResource(int type, int idx) {
 
 		tag = fileReadDword();
 
-		if (tag != res.tags[type] && _heversion < 70) {
+		if (tag != res.tags[type] && _game.heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
 					res.name[type], idx, roomNr,
 					_fileOffset, fileOffs, _fileHandle->name());
@@ -799,7 +799,7 @@ int ScummEngine::loadResource(int type, int idx) {
 }
 
 int ScummEngine::getResourceRoomNr(int type, int idx) {
-	if (type == rtRoom && _heversion < 70)
+	if (type == rtRoom && _game.heversion < 70)
 		return idx;
 	return res.roomno[type][idx];
 }
@@ -816,7 +816,7 @@ byte *ScummEngine::getResourceAddress(int type, int idx) {
 
 	CHECK_HEAP
 
-	if (_heversion >= 80 && type == rtString)
+	if (_game.heversion >= 80 && type == rtString)
 		idx &= ~0x33539000;
 
 	if (!res.validateResource("getResourceAddress", type, idx))
@@ -889,7 +889,7 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 	if (!validateResource("allocating", type, idx))
 		return NULL;
 
-	if (_vm->_version <= 2) {
+	if (_vm->_game.version <= 2) {
 		// Nuking and reloading a resource can be harmful in some
 		// cases. For instance, Zak tries to reload the intro music
 		// while it's playing. See bug #1253171.
@@ -951,9 +951,9 @@ void ResourceManager::nukeResource(int type, int idx) {
 }
 
 const byte *ScummEngine::findResourceData(uint32 tag, const byte *ptr) {
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		error("findResourceData must not be used in GF_OLD_BUNDLE games");
-	else if (_features & GF_SMALL_HEADER)
+	else if (_game.features & GF_SMALL_HEADER)
 		ptr = findResourceSmall(tag, ptr);
 	else
 		ptr = findResource(tag, ptr);
@@ -967,9 +967,9 @@ int ScummEngine::getResourceDataSize(const byte *ptr) const {
 	if (ptr == NULL)
 		return 0;
 
-	if (_features & GF_OLD_BUNDLE)
+	if (_game.features & GF_OLD_BUNDLE)
 		return READ_LE_UINT16(ptr) - _resourceHeaderSize;
-	else if (_features & GF_SMALL_HEADER)
+	else if (_game.features & GF_SMALL_HEADER)
 		return READ_LE_UINT32(ptr) - _resourceHeaderSize;
 	else
 		return READ_BE_UINT32(ptr - 4) - _resourceHeaderSize;
@@ -1221,8 +1221,8 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
-	if ((_gameId == GID_FT) && (_features & GF_DEMO) &&
-		(_platform == Common::kPlatformPC))
+	if ((_game.id == GID_FT) && (_game.features & GF_DEMO) &&
+		(_game.platform == Common::kPlatformPC))
 		_numGlobalScripts = 300;
 	else
 		_numGlobalScripts = 2000;
@@ -1256,11 +1256,11 @@ void ScummEngine_v6::readMAXS(int blockSize) {
 		_objectRoomTable = NULL;
 		_numGlobalScripts = 200;
 
-		if (_heversion >= 70) {
+		if (_game.heversion >= 70) {
 			_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 		}
 
-		if (_heversion <= 70) {
+		if (_game.heversion <= 70) {
 			_shadowPaletteSize = 256;
 			_shadowPalette = (byte *)calloc(_shadowPaletteSize, 1);
 		}
@@ -1346,14 +1346,14 @@ void ScummEngine::allocateArrays() {
 	_roomVars = (int32 *)calloc(_numRoomVariables, sizeof(int32));
 	_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
 	_bitVars = (byte *)calloc(_numBitVariables >> 3, 1);
-	if (_heversion >= 60) {
+	if (_game.heversion >= 60) {
 		_arraySlot = (byte *)calloc(_numArray, 1);
 	}
-	if (_heversion >= 70) {
+	if (_game.heversion >= 70) {
 		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 	}
 
-	allocResTypeData(rtCostume, (_features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
+	allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
 								_numCostumes, "costume", 1);
 	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
 	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
@@ -1373,7 +1373,7 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
 	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkies, "talkie", 1);
 
-	if (_heversion >= 70) {
+	if (_game.heversion >= 70) {
 		allocResTypeData(rtSpoolBuffer, MKID('NONE'), 9, "spool buffer", 0);
 	}
 }
@@ -1385,9 +1385,9 @@ void ScummEngine::dumpResource(const char *tag, int idx, const byte *ptr, int le
 	uint32 size;
 	if (length >= 0)
 		size = length;
-	else if (_features & GF_OLD_BUNDLE)
+	else if (_game.features & GF_OLD_BUNDLE)
 		size = READ_LE_UINT16(ptr);
-	else if (_features & GF_SMALL_HEADER)
+	else if (_game.features & GF_SMALL_HEADER)
 		size = READ_LE_UINT32(ptr);
 	else
 		size = READ_BE_UINT32(ptr + 4);
@@ -1462,7 +1462,7 @@ const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
 	debugC(DEBUG_RESOURCE, "findResource(%s, %lx)", tag2str(tag), searchin);
 
 	if (!searchin) {
-		if (_heversion >= 70) {
+		if (_game.heversion >= 70) {
 			searchin = _resourceLastSearchBuf;
 			totalsize = _resourceLastSearchSize;
 			curpos = 0;

@@ -158,7 +158,7 @@ void Player_V3A::startSound(int nr) {
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
-	if ((_vm->_gameId != GID_INDY3) && (_vm->_gameId != GID_LOOM))
+	if ((_vm->_game.id != GID_INDY3) && (_vm->_game.id != GID_LOOM))
 		error("player_v3a - unknown game!");
 
 	if (!_isinit) {
@@ -167,7 +167,7 @@ void Player_V3A::startSound(int nr) {
 		int offset = 4;
 		int numInstruments;
 
-		if (_vm->_gameId == GID_INDY3) {
+		if (_vm->_game.id == GID_INDY3) {
 			ptr = _vm->getResourceAddress(rtSound, 83);
 			numInstruments = 12;
 		} else {
@@ -195,7 +195,7 @@ void Player_V3A::startSound(int nr) {
 				_wavetable[i]->_oct[j] = READ_BE_UINT16(ptr + offset + 8);
 				offset += 10;
 			}
-			if (_vm->_gameId == GID_INDY3) {
+			if (_vm->_game.id == GID_INDY3) {
 				_wavetable[i]->_pitadjust = 0;
 				offset += 2;
 			} else {
@@ -239,7 +239,7 @@ void Player_V3A::startSound(int nr) {
 		}
 		_sfx[i].id = nr;
 		_sfx[i].dur = looped ? -1 : (1 + 60 * size / rate);
-		if ((_vm->_gameId == GID_INDY3) && (nr == 60))
+		if ((_vm->_game.id == GID_INDY3) && (nr == 60))
 			_sfx[i].dur = 240;
 		_mod->startChannel(nr | 0x100, sound, size, rate, vol, loopStart, loopEnd);
 	}

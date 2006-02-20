@@ -406,12 +406,12 @@ ScummEngine_v72he::ArrayHeader *ScummEngine_v72he::defineArray(int array, int ty
 
 	size = arrayDataSizes[type];
 
-	if (_heversion >= 80)
+	if (_game.heversion >= 80)
 		id |= 0x33539000;
 
 	writeVar(array, id);
 
-	if (_heversion >= 80)
+	if (_game.heversion >= 80)
 		id &= ~0x33539000;
 
 	size *= dim2end - dim2start + 1;
@@ -1749,10 +1749,10 @@ void ScummEngine_v72he::o72_openFile() {
 	debug(1,"Original filename %s", filename);
 
 	// There are Macintosh specific versions of HE7.2 games.
-	if (_heversion >= 80 && _platform == Common::kPlatformMacintosh) {
+	if (_game.heversion >= 80 && _game.platform == Common::kPlatformMacintosh) {
 		// Work around for filename difference in HE7 file, needs to
 		// open 'Water (7)' instead of 'Water Worries (7)'.
-		if (_gameId == GID_WATER && _heversion == 99 && !strcmp((char *)filename, "Water.he7")) {
+		if (_game.id == GID_WATER && _game.heversion == 99 && !strcmp((char *)filename, "Water.he7")) {
 			strcpy((char *)filename, "Water (7)");
 		} else {
 			char buf1[128];
@@ -2216,7 +2216,7 @@ void ScummEngine_v72he::o72_getResourceSize() {
 	int size, type;
 
 	int resid = pop();
-	if (_heversion == 72) {
+	if (_game.heversion == 72) {
 		push(getSoundResourceSize(resid));
 		return;
 	}

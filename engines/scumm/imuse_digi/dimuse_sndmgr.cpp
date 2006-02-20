@@ -273,8 +273,8 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	assert(sound->bundle);
-	if (_vm->_gameId == GID_CMI) {
-		if (_vm->_features & GF_DEMO) {
+	if (_vm->_game.id == GID_CMI) {
+		if (_vm->_game.features & GF_DEMO) {
 			result = sound->bundle->open("music.bun", sound->compressed);
 		} else {
 			char musicfile[20];
@@ -293,7 +293,7 @@ bool ImuseDigiSndMgr::openMusicBundle(soundStruct *sound, int disk) {
 			// FIXME: Shouldn't we only set _disk if result == true?
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
-	} else if (_vm->_gameId == GID_DIG)
+	} else if (_vm->_game.id == GID_DIG)
 		result = sound->bundle->open("digmusic.bun", sound->compressed, true);
 	else
 		error("ImuseDigiSndMgr::openMusicBundle() Don't know which bundle file to load");
@@ -308,8 +308,8 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
 	assert(sound->bundle);
-	if (_vm->_gameId == GID_CMI) {
-		if (_vm->_features & GF_DEMO) {
+	if (_vm->_game.id == GID_CMI) {
+		if (_vm->_game.features & GF_DEMO) {
 			result = sound->bundle->open("voice.bun", sound->compressed);
 		} else {
 			char voxfile[20];
@@ -328,7 +328,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(soundStruct *sound, int disk) {
 			// FIXME: Shouldn't we only set _disk if result == true?
 			_disk = (byte)_vm->VAR(_vm->VAR_CURRENTDISK);
 		}
-	} else if (_vm->_gameId == GID_DIG)
+	} else if (_vm->_game.id == GID_DIG)
 		result = sound->bundle->open("digvoice.bun", sound->compressed);
 	else
 		error("ImuseDigiSndMgr::openVoiceBundle() Don't know which bundle file to load");
@@ -347,7 +347,7 @@ ImuseDigiSndMgr::soundStruct *ImuseDigiSndMgr::openSound(int32 soundId, const ch
 		error("ImuseDigiSndMgr::openSound() can't alloc free sound slot");
 	}
 
-	const bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
+	const bool header_outside = ((_vm->_game.id == GID_CMI) && !(_vm->_game.features & GF_DEMO));
 	bool result = false;
 	byte *ptr = NULL;
 
@@ -579,7 +579,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(soundStruct *soundHandle, int region, b
 	}
 
 	int header_size = soundHandle->offsetData;
-	bool header_outside = ((_vm->_gameId == GID_CMI) && !(_vm->_features & GF_DEMO));
+	bool header_outside = ((_vm->_game.id == GID_CMI) && !(_vm->_game.features & GF_DEMO));
 	if ((soundHandle->bundle) && (!soundHandle->compressed)) {
 		size = soundHandle->bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
 	} else if (soundHandle->resPtr) {

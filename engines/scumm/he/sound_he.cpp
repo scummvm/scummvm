@@ -114,7 +114,7 @@ int Sound::getSoundPos(int sound) {
 }
 
 int Sound::getSoundVar(int sound, int var) {
-	if (_vm->_heversion >= 90 && var == 26) {
+	if (_vm->_game.heversion >= 90 && var == 26) {
 		return isSoundCodeUsed(sound);
 	}
 
@@ -171,7 +171,7 @@ void Sound::setupHEMusicFile() {
 		_heMusicTracks = musicFile.readUint32LE();
 		debug(5, "Total music tracks %d", _heMusicTracks);
 
-		int musicStart = (_vm->_heversion >= 80) ? 56 : 20;
+		int musicStart = (_vm->_game.heversion >= 80) ? 56 : 20;
 		musicFile.seek(musicStart, SEEK_SET);
 
 		_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
@@ -180,7 +180,7 @@ void Sound::setupHEMusicFile() {
 			_heMusic[i].offset = musicFile.readUint32LE();
 			_heMusic[i].size = musicFile.readUint32LE();
 
-			if (_vm->_heversion >= 80) {
+			if (_vm->_game.heversion >= 80) {
 				musicFile.seek(+9, SEEK_CUR);
 			} else {
 				musicFile.seek(+13, SEEK_CUR);
@@ -373,7 +373,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		musicFile.read(spoolPtr, size);
 		musicFile.close();
 
-		if (_vm->_heversion == 70) {
+		if (_vm->_game.heversion == 70) {
 			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID);
 			return;
 		}

@@ -434,7 +434,7 @@ void SmushPlayer::handleIACT(Chunk &b) {
 	int32 size = b.getDword();
 	int32 bsize = b.getSize() - 18;
 
-	if (_vm->_gameId != GID_CMI) {
+	if (_vm->_game.id != GID_CMI) {
 		int32 track = track_id;
 		if (track_flags == 1) {
 			track = track_id + 100;
@@ -568,7 +568,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	}
 
 	byte transBuf[512];
-	if (_vm->_gameId == GID_CMI) {
+	if (_vm->_game.id == GID_CMI) {
 		_vm->translateText((const byte *)str - 1, transBuf);
 		while (*str++ != '/')
 			;
@@ -646,7 +646,7 @@ void SmushPlayer::handleTextResource(Chunk &b) {
 	assert(sf != NULL);
 	sf->setColor(color);
 
-	if (_vm->_gameId == GID_CMI && string2[0] != 0) {
+	if (_vm->_game.id == GID_CMI && string2[0] != 0) {
 		str = string2;
 	}
 
@@ -1034,13 +1034,13 @@ void SmushPlayer::setupAnim(const char *file) {
 	char file_font[11];
 
 	if (_insanity) {
-		if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC)))
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
 			readString("mineroad.trs");
 	} else
 		readString(file);
 
-	if (_vm->_gameId == GID_FT) {
-		if (!((_vm->_features & GF_DEMO) && (_vm->_platform == Common::kPlatformPC))) {
+	if (_vm->_game.id == GID_FT) {
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
 			_sf[0] = new SmushFont(_vm, true, false);
 			_sf[1] = new SmushFont(_vm, true, false);
 			_sf[2] = new SmushFont(_vm, true, false);
@@ -1050,17 +1050,17 @@ void SmushPlayer::setupAnim(const char *file) {
 			_sf[2]->loadFont("titlfnt.nut");
 			_sf[3]->loadFont("specfnt.nut");
 		}
-	} else if (_vm->_gameId == GID_DIG) {
-		if (!(_vm->_features & GF_DEMO)) {
+	} else if (_vm->_game.id == GID_DIG) {
+		if (!(_vm->_game.features & GF_DEMO)) {
 			for (i = 0; i < 4; i++) {
 				sprintf(file_font, "font%d.nut", i);
 				_sf[i] = new SmushFont(_vm, i != 0, false);
 				_sf[i]->loadFont(file_font);
 			}
 		}
-	} else if (_vm->_gameId == GID_CMI) {
+	} else if (_vm->_game.id == GID_CMI) {
 		for (i = 0; i < 5; i++) {
-			if ((_vm->_features & GF_DEMO) && (i == 4))
+			if ((_vm->_game.features & GF_DEMO) && (i == 4))
 				break;
 			sprintf(file_font, "font%d.nut", i);
 			_sf[i] = new SmushFont(_vm, false, true);

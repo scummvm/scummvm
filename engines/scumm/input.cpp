@@ -87,10 +87,10 @@ void ScummEngine::parseEvents() {
 				// because that's what MI2 looks for in
 				// its "instant win" cheat.
 				_keyPressed = event.kbd.keycode + 154;
-			} else if (event.kbd.ascii == 315 && (_gameId == GID_CMI && !(_features & GF_DEMO))) {
+			} else if (event.kbd.ascii == 315 && (_game.id == GID_CMI && !(_game.features & GF_DEMO))) {
 				// FIXME: support in-game menu screen. For now, this remaps F1 to F5 in COMI
 				_keyPressed = 319;
-			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _version >= 7) {
+			} else if (event.kbd.ascii < 273 || event.kbd.ascii > 276 || _game.version >= 7) {
 				// don't let game have arrow keys as we currently steal them
 				// for keyboard cursor control
 				// this fixes bug with up arrow (273) corresponding to
@@ -101,7 +101,7 @@ void ScummEngine::parseEvents() {
 				_keyPressed = event.kbd.ascii;	// Normal key press, pass on to the game.
 			}
 
-			if (_heversion >= 80) {
+			if (_game.heversion >= 80) {
 				// Keyboard is controlled via variable
 				int _keyState = 0;
 
@@ -198,7 +198,7 @@ void ScummEngine::clearClickedStatus() {
 	_keyPressed = 0;
 
 #ifndef DISABLE_HE
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
 	}
 #endif
@@ -211,14 +211,14 @@ void ScummEngine::processKbd(bool smushMode) {
 	int saveloadkey;
 
 #ifndef DISABLE_HE
-	if (_heversion >= 98) {
+	if (_game.heversion >= 98) {
 		((ScummEngine_v90he *)this)->_logicHE->processKeyStroke(_keyPressed);
 	}
 #endif
 
 	_lastKeyHit = _keyPressed;
 	_keyPressed = 0;
-	if (((_version <= 2) || (_platform == Common::kPlatformFMTowns && _version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
+	if (((_game.version <= 2) || (_game.platform == Common::kPlatformFMTowns && _game.version == 3)) && 315 <= _lastKeyHit && _lastKeyHit < 315+12) {
 		// Convert F-Keys for V1/V2 games (they start at 1 instead of at 315)
 		_lastKeyHit -= 314;
 	}
@@ -238,7 +238,7 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
 	_virtualMouse.y = _mouse.y - virtscr[0].topline;
-	if (_features & GF_NEW_CAMERA)
+	if (_game.features & GF_NEW_CAMERA)
 		_virtualMouse.y += _screenTop;
 
 	if (_virtualMouse.y < 0)
@@ -262,14 +262,14 @@ void ScummEngine::processKbd(bool smushMode) {
 		}
 	}
 
-	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked && _version >= 4) {
+	if (_leftBtnPressed & msClicked && _rightBtnPressed & msClicked && _game.version >= 4) {
 		// Pressing both mouse buttons is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing both
 		// mouse buttons also skips the current cutscene.
 		_mouseAndKeyboardStat = 0;
 		_lastKeyHit = (uint)VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (_rightBtnPressed & msClicked && (_version <= 3 && _gameId != GID_LOOM)) {
+	} else if (_rightBtnPressed & msClicked && (_game.version <= 3 && _game.id != GID_LOOM)) {
 		// Pressing right mouse button is treated as if you pressed
 		// the cutscene exit key (i.e. ESC in most games). That mimicks
 		// the behaviour of the original engine where pressing right
@@ -282,11 +282,11 @@ void ScummEngine::processKbd(bool smushMode) {
 		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 	}
 
-	if (_version >= 6) {
+	if (_game.version >= 6) {
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 
-		if (_version >= 7) {
+		if (_game.version >= 7) {
 			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
 			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
 		}
@@ -324,7 +324,7 @@ void ScummEngine::processKbd(bool smushMode) {
 	}
 #endif
 
-	if (_version >= 6 && _lastKeyHit == 20) {
+	if (_game.version >= 6 && _lastKeyHit == 20) {
 		char buf[256];
 
 		_voiceMode++;
@@ -358,7 +358,7 @@ void ScummEngine::processKbd(bool smushMode) {
 	}
 
 	if (VAR_RESTART_KEY != 0xFF && _lastKeyHit == VAR(VAR_RESTART_KEY) ||
-	   (((_version <= 2) || (_platform == Common::kPlatformFMTowns && _version == 3)) && _lastKeyHit == 8)) {
+	   (((_game.version <= 2) || (_game.platform == Common::kPlatformFMTowns && _game.version == 3)) && _lastKeyHit == 8)) {
 		confirmRestartDialog();
 		return;
 	}
@@ -371,26 +371,26 @@ void ScummEngine::processKbd(bool smushMode) {
 
 	// COMI version string is hard coded
 	// Dig/FT version strings are partly hard coded too
-	if (_version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
+	if (_game.version == 7 && _lastKeyHit == VAR(VAR_VERSION_KEY)) {
 		versionDialog();
 		return;
 	}
 
-	if ((_version <= 2) || (_platform == Common::kPlatformFMTowns && _version == 3))
+	if ((_game.version <= 2) || (_game.platform == Common::kPlatformFMTowns && _game.version == 3))
 		saveloadkey = 5;	// F5
-	else if ((_version <= 3) || (_gameId == GID_SAMNMAX) || (_gameId == GID_CMI) || (_heversion >= 72))
+	else if ((_game.version <= 3) || (_game.id == GID_SAMNMAX) || (_game.id == GID_CMI) || (_game.heversion >= 72))
 		saveloadkey = 319;	// F5
 	else
 		saveloadkey = VAR(VAR_MAINMENU_KEY);
 
-	if ((_platform == Common::kPlatformC64 && _gameId == GID_MANIAC && _lastKeyHit == 27) || 
+	if ((_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && _lastKeyHit == 27) || 
 		(VAR_CUTSCENEEXIT_KEY != 0xFF && _lastKeyHit == VAR(VAR_CUTSCENEEXIT_KEY))) {
 #ifndef DISABLE_SCUMM_7_8
 		// Skip cutscene (or active SMUSH video). For the V2 games, which
 		// normally use F4 for this, we add in a hack that makes escape work,
 		// too (just for convenience).
 		if (smushMode) {
-			if (_gameId == GID_FT)
+			if (_game.id == GID_FT)
 				_insane->escapeKeyHandler();
 			else
 				_smushVideoShouldFinish = true;
@@ -398,7 +398,7 @@ void ScummEngine::processKbd(bool smushMode) {
 #endif
 		if (!smushMode || _smushVideoShouldFinish)
 			abortCutscene();
-		if (_version <= 2) {
+		if (_game.version <= 2) {
 			// Ensure that the input script also sees the key press.
 			// This is necessary so you can abort the airplane travel
 			// in Zak.
@@ -450,7 +450,7 @@ void ScummEngine::processKbd(bool smushMode) {
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	} else if (_lastKeyHit == '~' || _lastKeyHit == '#') { // Debug console
 		_debugger->attach();
-	} else if (_version <= 2) {
+	} else if (_game.version <= 2) {
 		// Store the input type. So far we can't distinguish
 		// between 1, 3 and 5.
 		// 1) Verb	2) Scene	3) Inv.		4) Key
