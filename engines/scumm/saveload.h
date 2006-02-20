@@ -24,6 +24,7 @@
 #define SAVELOAD_H
 
 #include "common/scummsys.h"
+#include <stddef.h>
 
 namespace Common {
 	class InSaveFile;
@@ -72,7 +73,7 @@ namespace Scumm {
  * current reality (many of our complex structs are non-POD; for an explanation of
  * what POD means refer to http://www-cpd.fnal.gov/personal/wb/boost/ISOcxx/doc/POD.html)
  */
-#define OFFS(type,item) (((long)(&((type*)42)->type::item))-42)
+#define OFFS(type,item) (((ptrdiff_t)(&((type*)42)->type::item))-42)
 
 /**
  * Similar to the OFFS macro, this macro computes the size (in bytes) of a
