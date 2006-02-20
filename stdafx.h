@@ -97,7 +97,9 @@ typedef struct Mutex *MutexRef;
 #endif
 #if !defined(macintosh)
 #include <sys/types.h>
+#if !defined(__DC__)
 #include <sys/uio.h>
+#endif
 #endif
 #if !defined (__BEOS__)
 #include <unistd.h>
@@ -112,7 +114,11 @@ typedef struct Mutex *MutexRef;
 #include <stdarg.h>
 #include <assert.h>
 #include <ctype.h>
+#if defined(__DC__)
+#include <ronin/cdfs.h>
+#else
 #include <dirent.h>
+#endif
 
 
 #endif

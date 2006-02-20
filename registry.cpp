@@ -24,6 +24,7 @@
 Registry *g_registry = NULL;
 
 Registry::Registry() : _dirty(false) {
+#ifndef __DC__
 #ifdef WIN32
 	std::string filename = "residual.ini";
 #else
@@ -46,6 +47,7 @@ Registry::Registry() : _dirty(false) {
 		}
 		std::fclose(f);
 	}
+#endif
 }
 
 const char *Registry::get(const char *key, const char *defval) const {
@@ -74,6 +76,7 @@ void Registry::save() {
 	if (!_dirty)
 		return;
 
+#ifndef __DC__
 #ifdef WIN32
 	std::string filename = "residual.ini";
 #else
@@ -91,5 +94,6 @@ void Registry::save() {
 		std::fprintf(f, "%s=%s\n", i->first.c_str(), i->second.c_str());
 
 	std::fclose(f);
+#endif
 	_dirty = false;
 }
