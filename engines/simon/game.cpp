@@ -215,6 +215,12 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2DOS2_RU,   "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS2_RU,   "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
+	{ GID_SIMON2DOS_DE,    "eb6e3e37fe52993f948d7e2d6b869828", "game32", false },
+	{ GID_SIMON2DOS_DE,    "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
+	{ GID_SIMON2DOS_DE,    "5fa9d080b04c610f526bd685be1bf747", "simon2.gme", false},
+	{ GID_SIMON2DOS_DE,    "fd30df01cc248ecbaef302af855e0212", "stripped.txt", false},
+	{ GID_SIMON2DOS_DE,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
+
 	{ GID_SIMON2DOS_IT,    "3e11d400bea0638f360a724687005cd1", "game32", false },
 	{ GID_SIMON2DOS_IT,    "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2DOS_IT,    "f306a397565d7f13bec7ecf14c723de7", "simon2.gme", false},
@@ -758,6 +764,19 @@ static GameDescription gameDescriptions[] = {
 		SIMON2DOS_GameFiles,
 		0,
 		Common::RU_RUS,
+		Common::kPlatformPC,
+	},
+
+	// Simon the Sorcerer 2 - German DOS Floppy
+	{
+		"simon2",
+		GType_SIMON2,
+		GID_SIMON2DOS_DE,
+		"Simon the Sorcerer 2 (German DOS Floppy)",
+		ARRAYSIZE(SIMON2DOS_GameFiles),
+		SIMON2DOS_GameFiles,
+		0,
+		Common::DE_DEU,
 		Common::kPlatformPC,
 	},
 
