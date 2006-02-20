@@ -21,7 +21,7 @@
  *
  */
 
-#include "common/scaler/intern.h"
+#include "graphics/scaler/intern.h"
 
 #ifdef USE_NASM
 // Assembly version of HQ2x
@@ -128,13 +128,13 @@ static bool isAltiVecAvailable()  {
 
 #define bitFormat 565
 void HQ2x_565(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	#include "common/scaler/hq2x.h"
+	#include "graphics/scaler/hq2x.h"
 }
 #undef bitFormat
 
 #define bitFormat 555
 void HQ2x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	#include "common/scaler/hq2x.h"
+	#include "graphics/scaler/hq2x.h"
 }
 #undef bitFormat
 
@@ -144,13 +144,13 @@ void HQ2x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 	#define bitFormat 565
 	void HQ2x_565_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-		#include "common/scaler/hq2x.h"
+		#include "graphics/scaler/hq2x.h"
 	}
 	#undef bitFormat
 
 	#define bitFormat 555
 	void HQ2x_555_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-		#include "common/scaler/hq2x.h"
+		#include "graphics/scaler/hq2x.h"
 	}
 	#undef bitFormat
 #endif

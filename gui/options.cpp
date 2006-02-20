@@ -29,7 +29,7 @@
 
 #include "backends/fs/fs.h"
 #include "common/config-manager.h"
-#include "common/scaler.h"
+#include "graphics/scaler.h"
 #include "common/system.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

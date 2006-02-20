@@ -25,7 +25,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "common/scaler/intern.h"
+#include "graphics/scaler.h"
+#include "graphics/scaler/intern.h"
 
 template<int bitFormat>
 uint16 quadBlockInterpolate(const uint8* src, uint32 srcPitch) {
@@ -68,8 +69,6 @@ void createThumbnail_4(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 
 		src += 4 * srcPitch;
 	}
 }
-
-#include "common/scaler.h"
 
 void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height) {
 	// only 1/2 and 1/4 downscale supported

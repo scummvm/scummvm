@@ -24,7 +24,7 @@
 #include "common/stdafx.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "common/scaler.h"
+#include "graphics/scaler.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {

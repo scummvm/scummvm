@@ -21,7 +21,7 @@
  *
  */
 
-#include "common/scaler/intern.h"
+#include "graphics/scaler/intern.h"
 
 #ifdef USE_NASM
 // Assembly version of HQ3x
@@ -129,13 +129,13 @@ static bool isAltiVecAvailable()  {
 
 #define bitFormat 565
 void HQ3x_565(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	#include "common/scaler/hq3x.h"
+	#include "graphics/scaler/hq3x.h"
 }
 #undef bitFormat
 
 #define bitFormat 555
 void HQ3x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	#include "common/scaler/hq3x.h"
+	#include "graphics/scaler/hq3x.h"
 }
 #undef bitFormat
 
@@ -145,13 +145,13 @@ void HQ3x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 	#define bitFormat 565
 	void HQ3x_565_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-		#include "common/scaler/hq3x.h"
+		#include "graphics/scaler/hq3x.h"
 	}
 	#undef bitFormat
 
 	#define bitFormat 555
 	void HQ3x_555_Altivec(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-		#include "common/scaler/hq3x.h"
+		#include "graphics/scaler/hq3x.h"
 	}
 	#undef bitFormat
 #endif
