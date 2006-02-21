@@ -431,7 +431,7 @@ void Game::interLoadSound(int16 slot) {
 	}
 
 	if (_vm->_features & Gob::GF_GOB2) {
-		warning("STUB: interLoadSound());
+		warning("STUB: interLoadSound()");
 		return;
 	}
 
