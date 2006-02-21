@@ -28,7 +28,6 @@
 
 namespace Sword1 {
 
-#define EXTRA_GRID_SIZE 20
 #define O_GRID_SIZE 200
 
 #if !defined(__GNUC__)
@@ -99,20 +98,16 @@ public:
 	Router(ObjectMan *pObjMan, ResMan *pResMan);
 	int32 routeFinder(int32 id, Object *mega, int32 x, int32 y, int32 dir);
 	void setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance);
-	void resetExtraData(void);
 
 	// these should be private but are read by Screen for debugging:
-	BarData   bars[O_GRID_SIZE+EXTRA_GRID_SIZE];
-	NodeData  node[O_GRID_SIZE+EXTRA_GRID_SIZE];
+	BarData   bars[O_GRID_SIZE];
+	NodeData  node[O_GRID_SIZE];
 	int32 nbars, nnodes;
 private:
 	// when the player collides with another mega, we'll receive a ReRouteRequest here.
 	// that's why we need to remember the player's target coordinates
 	int32 _playerTargetX, _playerTargetY, _playerTargetDir, _playerTargetStance;
-	// additional route data to block parts of the floor and enable routine around megas:
-	int32 _numExtraBars, _numExtraNodes;
-	BarData _extraBars[EXTRA_GRID_SIZE];
-	NodeData _extraNodes[EXTRA_GRID_SIZE];
+
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 
@@ -171,8 +166,6 @@ private:
 
 	int32 SolidPath();
 	int32 SolidWalkAnimator(WalkData *walkAnim);
-	void RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour);
-	void BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour);
 };
 
 } // End of namespace Sword1

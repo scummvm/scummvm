@@ -68,13 +68,10 @@ namespace Sword1 {
 #define		SLOW_IN								3
 #define		SLOW_OUT							7
 #define		ROUTE_END_FLAG				255
-//#define		PLOT_PATHS						1
-#undef		PLOT_PATHS
 
 Router::Router(ObjectMan *pObjMan, ResMan *pResMan) {
 	_objMan = pObjMan;
 	_resMan = pResMan;
-	_numExtraBars = _numExtraNodes = 0;
 	nnodes = nbars = 0;
 	_playerTargetX = _playerTargetY = _playerTargetDir = _playerTargetStance = 0;
 	diagonalx = diagonaly = 0;
@@ -401,19 +398,6 @@ int32 Router::SmoothestPath()
 			i = i + 1;
 		}
 		while ((steps == 0) && (i < 4));
-
-#ifdef PLOT_PATHS	// plot the best path
-		if (steps != 0)
-		{
-			i = 0;
-			do
-			{
-				RouteLine(smoothPath[i].x, smoothPath[i].y, smoothPath[i+1].x, smoothPath[i+1].y, 228);
-				i = i + 1;
-			}
-			while (i < steps);
-		}
-#endif
 
 		if (steps == 0)
 		{
@@ -1537,9 +1521,6 @@ int32 Router::SolidWalkAnimator(WalkData *walkAnim)
 	{
 		if (!Check(modularPath[i].x, modularPath[i].y, modularPath[i+1].x, modularPath[i+1].y))
 			p=0;
-#ifdef PLOT_PATHS
-		RouteLine(modularPath[i].x, modularPath[i].y, modularPath[i+1].x, modularPath[i+1].y, 227);
-#endif
 		i += 1;
 	}
 	while (i<p-1);
@@ -1696,14 +1677,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 			{
 				steps = step1 + step2;	// yes
 				options = options + 2;
-#ifdef PLOT_PATHS
-				if (status == 1)
-					RouteLine(x1, y1, x1+dx, y1, 231);
-#endif
-#ifdef PLOT_PATHS
-				if (status == 1)
-					RouteLine(x1+dx, y1, x2, y2, 231);
-#endif
 			}
 		}
 		//diagonal, square a code 2 route
@@ -1717,14 +1690,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 				{
 					steps = step1 + step2;	// yes
 					options = options + 4;
-#ifdef PLOT_PATHS
-					if (status == 1)
-						RouteLine(x1, y1, x1+dlx,y1+dly, 231);
-#endif
-#ifdef PLOT_PATHS
-					if (status == 1)
-						RouteLine(x1+dlx, y2, x2, y2, 231);
-#endif
 				}
 			}
 		}
@@ -1742,18 +1707,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 					{
 						steps = step1 + step2 + step3;	// yes
 						options = options + 1;
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1, y1, x1+dx/2, y1, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1+dx/2, y1, x1+dx/2+dlx, y2, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1+dx/2+dlx, y2, x2, y2, 231);
-#endif
 					}
 				}
 			}
@@ -1771,18 +1724,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1+dlx/2, y1+dly/2, x1+dx+dlx/2, y1+dly/2, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1+dx+dlx/2, y1+dly/2, x2, y2, 231);
-#endif
 						options = options + 8;
 					}
 				}
@@ -1808,14 +1749,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 			if (step2 != 0)
 			{
 				steps = step1 + step2;	// yes
-#ifdef PLOT_PATHS
-				if (status == 1)
-					RouteLine(x1 ,y1 ,x1 ,y1+dy, 231);
-#endif
-#ifdef PLOT_PATHS
-				if (status == 1)
-					RouteLine(x1 ,y1+dy ,x2, y2, 231);
-#endif
 				options = options + 2;
 			}
 		}
@@ -1829,14 +1762,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 				if (step2 != 0)
 				{
 					steps = step1 + step2;	// yes
-#ifdef PLOT_PATHS
-					if (status == 1)
-						RouteLine(x1, y1, x2, y1+dly, 231);
-#endif
-#ifdef PLOT_PATHS
-					if (status == 1)
-						RouteLine(x2, y1+dly, x2, y2, 231);
-#endif
 					options = options + 4;
 				}
 			}
@@ -1854,18 +1779,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 					if (step3 != 0)
 					{
 						steps = step1 + step2 + step3;	// yes
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1, y1, x1, y1+dy/2, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1, y1+dy/2, x2, y1+dy/2+dly, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x2, y1+dy/2+dly, x2, y2, 231);
-#endif
 						options = options + 1;
 					}
 				}
@@ -1885,18 +1798,6 @@ int32 Router::NewCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2)
 					{
 						steps = step1 + step2 + step3;	// yes
 						options = options + 8;
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1, y1, x1+dlx/2, y1+dly/2, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1+dlx/2, y1+dly/2, x1+dlx/2, y1+dy+dly/2, 231);
-#endif
-#ifdef PLOT_PATHS
-						if (status == 1)
-							RouteLine(x1+dlx/2, y1+dy+dly/2, x2, y2, 231);
-#endif
 					}
 				}
 			}
@@ -2219,7 +2120,6 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 {
 	WalkGridHeader	floorHeader;
 	int32 	i;
-	int32 	j;
 	uint8  *fPolygrid;
 	uint8  *fMegaWalkData;
 
@@ -2302,28 +2202,6 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 
 
 	// floor grid loaded
-	// if its george copy extra bars and nodes
-
-	if (megaId == GEORGE)
-	{
-		// copy any extra bars from extraBars array
-
-		//Zdebug("%d", nExtraBars);
-
-	 	memmove(&bars[nbars], &_extraBars[0], _numExtraBars*sizeof(BarData));
-		nbars += _numExtraBars;
-
-		// copy any extra nodes from extraNode array
-		j = 0;
-		while (j < _numExtraNodes)//array starts at 0
-		{
-			node[nnodes+j].x = _extraNodes[j].x ;
-			node[nnodes+j].y = _extraNodes[j].y ;
-			j++;
-		}
-
-		nnodes += _numExtraNodes;
-	}
 
 // copy the mega structure into the local variables for use in all subroutines
 
@@ -2463,9 +2341,6 @@ void	Router::ExtractRoute()
 	p = 0;
 	do
 	{
-#ifdef PLOT_PATHS
-		BresenhamLine(route[p+1].x-128,route[p+1].y-128, route[p].x-128,route[p].y-128, (uint8*)screen_ad, true_pixel_size_x, pixel_size_y, ROUTE_END_FLAG);
-#endif
 		dx = route[p+1].x - route[p].x;
 		dy = route[p+1].y - route[p].y;
 		dirx = 1;
@@ -2513,19 +2388,6 @@ void	Router::ExtractRoute()
 	return;
 }
 
-#define screen_ad NULL
-#define pixel_size_y 1
-#define true_pixel_size_x 1
-void Router::RouteLine(int32 x1,int32 y1,int32 x2,int32 y2 ,int32 colour)
-{
-	BresenhamLine(x1-128, y1-128, x2-128, y2-128, (uint8*)screen_ad, true_pixel_size_x, pixel_size_y, colour);
-	return;
-}
-
-void Router::BresenhamLine(int32 x1,int32 y1,int32 x2,int32 y2, uint8 *screen, int32 width, int32 height, int32 colour) {
-
-}
-
 #define DIAGONALX 36
 #define DIAGONALY 8
 int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
@@ -2566,10 +2428,6 @@ int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 			tar_dir = 7;
 	}
 	return tar_dir;
-}
-
-void Router::resetExtraData(void) {
-	_numExtraBars = _numExtraNodes = 0;
 }
 
 void Router::setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance) {

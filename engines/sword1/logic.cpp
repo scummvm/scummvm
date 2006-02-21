@@ -87,7 +87,6 @@ void Logic::initialize(void) {
 	_screen->useTextManager(_textMan);
 	_textRunning = _speechRunning = false;
 	_speechFinished = true;
-	_router->resetExtraData();
 }
 
 void Logic::newScreen(uint32 screen) {
@@ -1390,7 +1389,6 @@ int Logic::fnWalk(Object *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stan
 	int32 routeRes = _router->routeFinder(id, cpt, x, y, dir);
 
 	if (id == PLAYER) {
-		_router->resetExtraData();
 		if ((routeRes == 1) || (routeRes == 2)) {
 			_scriptVars[MEGA_ON_GRID] = 0;
 			_scriptVars[REROUTE_GEORGE] = 0;
