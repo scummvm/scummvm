@@ -43,14 +43,11 @@ namespace Lure {
 
 class RoomLayer: public Surface {
 private:
-	byte _cells[FULL_HORIZ_RECTS*FULL_VERT_RECTS];
+	bool _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
 public:
 	RoomLayer(uint16 screenId, bool backgroundLayer);
-	byte cellVal(byte cellX, byte cellY) { 
-		return _cells[FULL_HORIZ_RECTS*cellY + cellX]; 
-	}
 	bool isOccupied(byte cellX, byte cellY) { 
-		return cellVal(cellX, cellY) != 0xff; 
+		return _cells[cellY][cellX];
 	}
 };
 
@@ -68,8 +65,7 @@ private:
 	bool _showInfo;
 	uint8 _numLayers;
 	RoomLayer *_layers[MAX_NUM_LAYERS];
-	byte _cells[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
-	byte _cells2[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
+	bool _cells[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
 	TalkDialog *_talkDialog;
 	int16 _talkDialogX, _talkDialogY;
 

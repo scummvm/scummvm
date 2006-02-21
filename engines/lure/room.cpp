@@ -35,10 +35,12 @@ static Room *int_room;
 RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer): 
 		Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT) {
 	loadScreen(screenId);	
-	byte cellIndex = 0;
 	byte *screenData = data().data();
 
-	memset(_cells, 0xff, FULL_HORIZ_RECTS*FULL_VERT_RECTS);
+	// Reset all the cells to false
+	for (int cellY = 0; cellY < FULL_VERT_RECTS; ++cellY) 
+		for (int cellX = 0; cellX < FULL_HORIZ_RECTS; ++cellX) 
+			_cells[cellY][cellX] = false;
 
 	// Loop through each cell of the screen
 	for (int cellY = 0; cellY < NUM_VERT_RECTS; ++cellY) {
@@ -61,8 +63,7 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 				}
 			}
 
-			_cells[(cellY + NUM_EDGE_RECTS) * FULL_HORIZ_RECTS + NUM_EDGE_RECTS +
-				cellX] = !hasPixels ? 0xff : cellIndex++;
+			_cells[cellY + NUM_EDGE_RECTS][cellX + NUM_EDGE_RECTS] = hasPixels;
 		}
 	}
 }
@@ -242,7 +243,7 @@ uint8 Room::checkRoomExits() {
 
 void Room::flagCoveredCells(Hotspot &h) {
 	int16 yStart = (h.y() - MENUBAR_Y_SIZE) / RECT_SIZE;
-	int16 yEnd = (h.y() + h.height() - 1 - MENUBAR_Y_SIZE) / RECT_SIZE;
+	int16 yEnd = (h.y() + h.heightCopy() - 1 - MENUBAR_Y_SIZE) / RECT_SIZE;
 	int16 numY = yEnd - yStart + 1;
 	int16 xStart = h.x() / RECT_SIZE;
 	int16 xEnd = (h.x() + h.width() - 1) / RECT_SIZE;
@@ -255,8 +256,7 @@ void Room::flagCoveredCells(Hotspot &h) {
 			int indexPos = index + xP;
 			if ((indexPos < 0) || (indexPos >= NUM_HORIZ_RECTS*NUM_VERT_RECTS)) 
 				continue;
-			_cells[index+xP] |= 0x81;
-			_cells2[index+xP] |= 1;
+			_cells[index+xP] = true;
 		}
 		index += NUM_HORIZ_RECTS;
 	}
@@ -286,7 +286,7 @@ void Room::addLayers(Hotspot &h) {
 	int16 xEnd = (hsX + h.width()) / RECT_SIZE;
 	int16 numX = xEnd - xStart + 1;
 	int16 yStart = hsY / RECT_SIZE;
-	int16 yEnd = (hsY + h.height() - 1) / RECT_SIZE;
+	int16 yEnd = (hsY + h.heightCopy() - 1) / RECT_SIZE;
 	int16 numY = yEnd - yStart + 1;
 
 	for (int16 xCtr = 0; xCtr < numX; ++xCtr, ++xStart) {
@@ -294,16 +294,9 @@ void Room::addLayers(Hotspot &h) {
 		if (xs < 0) continue;
 
 		// Check foreground layers for an occupied one
-/* DEBUG
-		int layerNum = 1;
-		while ((layerNum < _numLayers) &&
-					!_layers[layerNum]->isOccupied(xStart, yEnd)) 
-			++layerNum;
-		if (layerNum == _numLayers) continue;
-*/
+
 		int layerNum = _numLayers - 1;
-		while ((layerNum > 0) &&
-					!_layers[layerNum]->isOccupied(xStart, yEnd)) 
+		while ((layerNum > 0) && !_layers[layerNum]->isOccupied(xStart, yEnd)) 
 			--layerNum;
 		if (layerNum == 0) continue;
 
@@ -321,11 +314,7 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	while ((layerNum > 0) && !_layers[layerNum]->isOccupied(xp+4, yp+4))
 		--layerNum;
 	if (layerNum == 0) return;
-/* DEBUG
-	while ((layerNum < _numLayers) && !_layers[layerNum]->isOccupied(xp+4, yp+4))
-		++layerNum;
-	if (layerNum == _numLayers) return;
-*/
+
 	RoomLayer *layer = _layers[layerNum];
 
 	int index = ((yp * RECT_SIZE + 8) * FULL_SCREEN_WIDTH) + (xp * RECT_SIZE);
@@ -342,10 +331,6 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 		srcPos += FULL_SCREEN_WIDTH - RECT_SIZE;
 		destPos += FULL_SCREEN_WIDTH - RECT_SIZE;
 	}
-
-	// Note: old version of screen layers load compresses loaded layers down to
-	// only a set of the non-empty rects. Since modern memory allows me to load
-	// all the layers completely, I'm bypassing the need to use cell index values
 }
 
 void Room::update() {
@@ -355,12 +340,10 @@ void Room::update() {
 	HotspotList &hotspots = res.activeHotspots();
 	HotspotList::iterator i;
 
-	memset(_cells, 0x81, NUM_HORIZ_RECTS*NUM_VERT_RECTS);
-	memset(_cells2, 0x81, NUM_HORIZ_RECTS*NUM_VERT_RECTS);
+	memset(_cells, false, NUM_HORIZ_RECTS*NUM_VERT_RECTS);
 
+	// Copy the background to the temporary srceen surface
 	_layers[0]->copyTo(&s);
-	for (int ctr = 1; ctr < _numLayers; ++ctr)
-		_layers[ctr]->transparentCopyTo(&s);
 
 	// Handle first layer (layer 3)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
@@ -380,15 +363,12 @@ void Room::update() {
 		if ((h->roomNumber() != _roomNumber) || !h->isActiveAnimation() 
 				|| (h->layer() != 1)) 
 			continue;
-		int16 endY = h->y() + h->height();
+		int16 endY = h->y() + h->heightCopy();
 
 		for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
 			Hotspot *hTemp = iTemp.operator*();
-			int16 tempY = hTemp->y() + hTemp->height();
-			if (endY < tempY) {
-				if (iTemp != tempList.begin()) --iTemp;
-				break;
-			}
+			int16 tempY = hTemp->y() + hTemp->heightCopy();
+			if (endY < tempY) break; 
 		}
 		tempList.insert(iTemp, h);
 	}
@@ -408,7 +388,21 @@ void Room::update() {
 		}
 	}
 
-	// Show any active talk dialog and voice
+	// Loop to add in any remaining cells
+	for (int yp = 0; yp < NUM_VERT_RECTS; ++yp) {
+		for (int xp = 0; xp < NUM_HORIZ_RECTS; ++xp) {
+			if (_cells[yp*NUM_HORIZ_RECTS+xp]) continue;
+
+			int layerNum = _numLayers - 1;
+			while ((layerNum > 0) && !_layers[layerNum]->isOccupied(xp+4, yp+4))
+				--layerNum;
+			if (layerNum != 0) 
+				// Add in the cell
+				addCell(xp, yp, layerNum);
+		}
+	}
+
+	// Show any active talk dialog 
 	if (_talkDialog)  {
 		_talkDialog->surface().copyTo(&s, _talkDialogX, _talkDialogY);
 	}
