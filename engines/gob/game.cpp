@@ -430,6 +430,11 @@ void Game::interLoadSound(int16 slot) {
 		_soundFromExt[slot] = 0;
 	}
 
+	if (_vm->_features & Gob::GF_GOB2) {
+		warning("STUB: interLoadSound());
+		return;
+	}
+
 	loadSound(slot, dataPtr);
 }
 
