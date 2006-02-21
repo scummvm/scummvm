@@ -480,94 +480,81 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 
 	while (h--) {
 		xoff = srcRect.left;
-		off = READ_LE_UINT16(dataPtr);
-		w = srcRect.right - srcRect.left;
-		dstPtrNext = dstPitch + dstPtr;
-		dataPtrNext = off + 2 + dataPtr;
-		dataPtr += 2;
-		if (off == 0)
-			goto dec_next;
-
-		// Skip over the leftmost 'srcRect->left' pixels.
-		// TODO: This code could be merged (at a loss of efficency) with the
-		// loop below which does the actual drawing.
-		while (xoff > 0) {
-			code = *dataPtr++;
-			databit = code & 1;
-			code >>= 1;
-			if (databit) {
-				xoff -= code;
-				if (xoff < 0) {
-					code = -xoff;
-					goto dec_sub1;
-				}
-			} else {
+		w = srcRect.width();
+		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
+		dstPtrNext = dstPtr + dstPitch;
+		dataPtrNext = dataPtr + off;
+		if (off != 0) {
+			while (w > 0) {
+				code = *dataPtr++;
 				databit = code & 1;
-				code = (code >> 1) + 1;
+				code >>= 1;
 				if (databit) {
-					++dataPtr;
-					xoff -= code;
-					if (xoff < 0) {
+					if (xoff > 0) {
+						xoff -= code;
+						if (xoff >= 0)
+							continue;
+
 						code = -xoff;
-						--dataPtr;
-						goto dec_sub2;
 					}
+
+					dstPtr += code;
+					w -= code;
 				} else {
-					dataPtr += code;
-					xoff -= code;
-					if (xoff < 0) {
-						dataPtr += xoff;
-						code = -xoff;
-						goto dec_sub3;
-					}
-				}
-			}
-		}
+					databit = code & 1;
+					code = (code >> 1) + 1;
 
-		while (w > 0) {
-			code = *dataPtr++;
-			databit = code & 1;
-			code >>= 1;
-			if (databit) {
-dec_sub1:		dstPtr += code;
-				w -= code;
-			} else {
-				databit = code & 1;
-				code = (code >> 1) + 1;
-				if (databit) {
-dec_sub2:			w -= code;
-					if (w < 0) {
-						code += w;
-					}
-					while (code--) {
-						if (xmapPtr) {
-							*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
-							dstPtr++;
+					if (xoff > 0) {
+						xoff -= code;
+						if (databit) {
+							++dataPtr;
+							if (xoff >= 0)
+								continue;
+
+							code = -xoff;
+							--dataPtr;
 						} else {
-							*dstPtr++ = palPtr[*dataPtr];
+							dataPtr += code;
+							if (xoff >= 0)
+								continue;
+
+							code = -xoff;
+							dataPtr += xoff;
 						}
 					}
-					dataPtr++;
-				} else {
-dec_sub3:			w -= code;
+
+					w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					while (code--) {
-						if (xmapPtr) {
-							*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
-							dstPtr++;
-						} else {
-							*dstPtr++ = palPtr[*dataPtr++];
+
+					if (databit) {
+						while (code--) {
+							if (xmapPtr) {
+								*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
+								dstPtr++;
+							} else {
+								*dstPtr++ = palPtr[*dataPtr];
+							}
+						}
+						dataPtr++;
+					} else {
+						while (code--) {
+							if (xmapPtr) {
+								*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
+								dstPtr++;
+							} else {
+								*dstPtr++ = palPtr[*dataPtr++];
+							}
 						}
 					}
 				}
 			}
 		}
-dec_next:
 		dataPtr = dataPtrNext;
 		dstPtr = dstPtrNext;
 	}
+
 }
 
 int Wiz::isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h) {
