@@ -652,7 +652,7 @@ void Inter_v2::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debug(4, "opcodeFunc %d (%s)", i, getOpcodeFuncDesc(i, j));
+	debug(4, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -957,13 +957,14 @@ void Inter_v2::o2_setRenderFlags(void) {
 	expr = _vm->_parse->parseValExpr();
 	
 	if (expr & 0x8000) {
-		if (expr & 0x4000)
-			_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
-		else
-			_vm->_draw->_renderFlags &= expr & 0x3fff;
-	}
-	else
 		_vm->_draw->_renderFlags |= expr & 0x3fff;
+	}
+	else {
+		if (expr & 0x4000)
+			_vm->_draw->_renderFlags &= expr & 0x3fff;
+		else
+			_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
+	}
 }
 
 bool Inter_v2::o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
@@ -1048,9 +1049,9 @@ void Inter_v2::o2_initMult(void) {
 	    (oldAnimWidth != _vm->_anim->_areaWidth
 		|| oldAnimHeight != _vm->_anim->_areaHeight)) {
 		if (_vm->_anim->_animSurf->flag & 0x80)
-			delete _vm->_anim->_animSurf;
-		else
 			_vm->_draw->freeSprite(0x16);
+		else
+			delete _vm->_anim->_animSurf;
 	}
 
 	_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 0);

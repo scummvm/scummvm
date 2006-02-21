@@ -24,6 +24,7 @@
 #define GOB_MULT_H
 
 #include "gob/sound.h"
+#include "gob/video.h"
 
 namespace Gob {
 
@@ -173,7 +174,6 @@ public:
 	Mult_SndKey *_sndKeys;
 
 	void zeroMultData(void);
-	void loadMult(int16 resId);
 	void freeMultKeys(void);
 	void checkFreeMult(void);
 	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
@@ -187,7 +187,10 @@ public:
 	void playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 				   int16 channel);
 
+	virtual void loadMult(int16 resId) = 0;
+
 	Mult(GobEngine *vm);
+	virtual ~Mult() {};
 
 protected:
 	Video::Color _fadePal[5][16];
@@ -200,6 +203,78 @@ protected:
 	void doPalAnim(void);
 	char doFadeAnim(char stop);
 	char doSoundAnim(char stop);
+};
+
+class Mult_v1 : public Mult {
+public:
+	Mult_v1(GobEngine *vm);
+	virtual ~Mult_v1() {};
+
+	virtual void loadMult(int16 resId);
+};
+
+class Mult_v2 : public Mult_v1 {
+public:
+#pragma START_PACK_STRUCTS
+	struct Mult_Data {
+		int16 palFadeKeysCount;
+		Mult_PalFadeKey *palFadeKeys;
+
+		int16 palKeysCount;
+		Mult_PalKey *palKeys;
+
+		int16 staticKeysCount;
+		Mult_StaticKey *staticKeys;
+		int8 staticCount;
+		int16 staticIndices[10];
+		int16 staticLoaded[10];
+
+		int16 animKeysCount[4];
+		Mult_AnimKey *animKeys[4];
+		int8 animCount;
+		int16 animIndices[10];
+		int16 animLoaded[10];
+		int16 animKeysIndices1[4]; // Not sure with these
+		int16 animKeysIndices2[4]; // "
+
+		int16 textKeysCount;
+		Mult_TextKey *textKeys;
+
+		int16 sndKeysCount;
+		Mult_SndKey *sndKeys;
+
+		int16 sndSlotsCount;
+		int16 sndSlot;
+		int16 frameRate;      
+
+		Video::Color fadePal[5][16];
+		int16 palAnimIndices[4]; // Not sure here either
+		int16 frameStart;
+
+		int8 field_156;
+		int16 field_157[4];
+		int16 field_15F[4][4];
+		int16 field_17F[4][4];
+
+		int16 somepointer05size[4];
+		char *somepointer05[4]; // Seems to be similar to staticKeys/animKeys
+		int16 somepointer05indices[4];
+		char *somepointer09; // ?
+		char *somepointer10; // ?
+		char *execPtr;
+	} GCC_PACK;
+#pragma END_PACK_STRUCTS
+
+	Mult_Data *_multData2; // TODO: This'll be _multData once every function using it
+	                       //       in GOB2 is done
+												 // TODO: Maybe changing Mult_v1::_multData to struct Mult_Data as well?
+												 //       Could help minimizing code dup...
+	Mult_Data *_multDatas[8];
+
+	Mult_v2(GobEngine *vm);
+	virtual ~Mult_v2() {};
+
+	virtual void loadMult(int16 resId);
 };
 
 }				// End of namespace Gob

@@ -1647,7 +1647,7 @@ void Inter_v1::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debug(4, "opcodeFunc %d (%s)", i, getOpcodeFuncDesc(i, j));
+	debug(4, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);

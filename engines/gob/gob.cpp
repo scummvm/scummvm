@@ -195,7 +195,6 @@ int GobEngine::init(GameDetector &detector) {
 	_goblin = new Goblin(this);
 	_init = new Init(this);
 	_map = new Map(this);
-	_mult = new Mult(this);
 	_pack = new Pack();
 	_palanim = new PalAnim(this);
 	_scenery = new Scenery(this);
@@ -204,10 +203,12 @@ int GobEngine::init(GameDetector &detector) {
 	if (_features & Gob::GF_GOB1) {
 		_inter = new Inter_v1(this);
 		_parse = new Parse_v1(this);
+		_mult = new Mult_v1(this);
 	}
 	else if (_features & Gob::GF_GOB2) {
 		_inter = new Inter_v2(this);
 		_parse = new Parse_v2(this);
+		_mult = new Mult_v2(this);
 	}
 	else
 		error("GobEngine::init(): Unknown version of game engine");

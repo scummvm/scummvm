@@ -16,6 +16,8 @@ MODULE_OBJS := \
 	inter_v2.o \
 	map.o \
 	mult.o \
+	mult_v1.o \
+	mult_v2.o \
 	music.o \
 	pack.o \
 	palanim.o \
