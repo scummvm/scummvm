@@ -335,6 +335,9 @@ void PluginManager::loadPlugins() {
 	#ifndef DISABLE_LURE
 	LINK_PLUGIN(LURE)
 	#endif
+	#ifndef DISABLE_CINE
+	LINK_PLUGIN(CINE)
+	#endif
 
 #endif
 }
