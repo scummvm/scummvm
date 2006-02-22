@@ -29,7 +29,8 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
       ac_TEMP_PATH="$ac_TEMP_PATH/$ac_dir"
     fi
   done
-  export PATH="$ac_TEMP_PATH"
+  PATH="$ac_TEMP_PATH"
+  export PATH
   unset ac_TEMP_PATH
 fi
 
@@ -557,7 +558,7 @@ fi
 
 echocheck "compiler version"
 
-cxx_name=`( $cc -v ) 2>&1 | tail -n 1 | cut -d ' ' -f 1`
+cxx_name=`( $cc -v ) 2>&1 | tail -1l | cut -d ' ' -f 1`
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
 	cxx_version="not found"
@@ -749,7 +750,7 @@ else
 	echo_n "Checking hosttype... "
 	echo $_host_os
 	case $_host_os in
-		linux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
+		linux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | solaris* | hpux* | beos*)
 			DEFINES="$DEFINES -DUNIX"
 			;;
 		irix*)
