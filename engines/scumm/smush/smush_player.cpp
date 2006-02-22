@@ -1329,9 +1329,19 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 		}
 		if (_updateNeeded) {
 			uint32 end_time, start_time;
+			int w = _width, h = _height;
 
 			start_time = _vm->_system->getMillis();
-			_vm->_system->copyRectToScreen(_dst, _width, 0, 0, _width, _height);
+
+			// Workaround for bug #1386333: "FT DEMO: assertion triggered 
+			// when playing movie". Some frames there are 384 x 224
+			if (w > _vm->_screenWidth)
+				w = _vm->_screenWidth;
+
+			if (h > _vm->_screenHeight)
+				h = _vm->_screenHeight;
+
+			_vm->_system->copyRectToScreen(_dst, _width, 0, 0, w, h);
 			_vm->_system->updateScreen();
 			_updateNeeded = false;
 #ifdef _WIN32_WCE
