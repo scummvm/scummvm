@@ -473,6 +473,12 @@ begin_credits("Credits");
 		  add_person("Jonathan Gray", "khalek", "");
 	  end_section();
 
+	  begin_section("Cinematique evo 1");
+		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+		  add_person("Gregory Montoir", "cyx", "");
+		  add_person("Eugene Sandulenko", "sev", "");
+	  end_section();
+
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
 		  add_person("David Eriksson", "twogood", "");
 		  add_person("Gregory Montoir", "cyx", "");
@@ -549,10 +555,10 @@ begin_credits("Credits");
 
     begin_section("Retired Team Members");
 	  begin_persons();
-		  add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
+		add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
-		add_person('Vincent Hamm', 'yazoo', "Co-Founder");
+		add_person('Vincent Hamm', 'yazoo', "Co-Founder, original CinE engine author");
 		add_person("Ruediger Hanke", "", "Port: MorphOS");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");

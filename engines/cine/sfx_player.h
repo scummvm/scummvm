@@ -1,0 +1,59 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2006 The ScummVM project
+ *
+ * cinE Engine is (C) 2004-2005 by CinE Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#ifndef CINE_SFXPLAYER_H_
+#define CINE_SFXPLAYER_H_
+
+typedef struct {
+	char name[14];
+	u32 offset;
+	u32 size;
+	u32 unpackedSize;
+} BasesonEntryStruct;
+
+typedef struct {
+	u8 *songData;
+	int currentInstrumentChannel[4];
+	u8 *instruments[15];
+	int currentOrder;
+	int currentPos;
+	int numOrders;
+} sfxStateStruct;
+
+extern u16 snd_eventsDelay;
+extern int snd_songIsPlaying;
+extern u8 snd_nullInstrument[];
+extern sfxStateStruct snd_sfxState;
+
+extern int snd_loadBasesonEntries(const char *fileName);
+extern void snd_clearBasesonEntries();
+extern void snd_stopSong();
+extern void snd_freeSong();
+extern int snd_loadSong(const char *songName);
+extern void snd_fadeOutSong();
+extern void snd_playSong();
+extern void snd_handleEvents();
+extern void snd_handlePattern(int channelNum, const u8 *patternData);
+
+#endif				/* _SFXPLAYER_H_ */

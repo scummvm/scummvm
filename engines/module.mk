@@ -66,3 +66,10 @@ DEFINES += -DDISABLE_LURE
 else
 MODULES += engines/lure
 endif
+
+ifdef DISABLE_CINE
+DEFINES += -DDISABLE_CINE
+else 
+MODULES += engines/cine
+endif
+
