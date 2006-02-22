@@ -695,9 +695,9 @@ else
 fi
 
 if test "$_build_cine" = no ; then
-	_mak_lure='DISABLE_CINE = 1'
+	_mak_cine='DISABLE_CINE = 1'
 else
-	_mak_lure='# DISABLE_CINE = 1'
+	_mak_cine='# DISABLE_CINE = 1'
 fi
 
 if test "$_build_hq_scalers" = no ; then
