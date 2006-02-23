@@ -212,11 +212,9 @@ void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint
 }
 
 void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
-	ASSERT(objIdx <= NUM_MAX_OBJECT);
-
 	paramIdx--;
 
-	ASSERT(paramIdx >= 0 && paramIdx <= 5);
+	ASSERT(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:
@@ -257,11 +255,9 @@ void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 }
 
 void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
-	ASSERT(objIdx <= NUM_MAX_OBJECT);
-
 	paramIdx--;
 
-	ASSERT(paramIdx >= 0 && paramIdx <= 5);
+	ASSERT(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:
@@ -302,11 +298,9 @@ void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 }
 
 void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
-	ASSERT(objIdx <= NUM_MAX_OBJECT);
-
 	paramIdx--;
 
-	ASSERT(paramIdx >= 0 && paramIdx <= 5);
+	ASSERT(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:
@@ -450,7 +444,7 @@ int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 
 	paramIdx--;
 
-	ASSERT(paramIdx >= 0 && paramIdx <= 5);
+	ASSERT(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:

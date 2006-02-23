@@ -1345,7 +1345,7 @@ void makeCommandLine(void) {
 	} else {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
-			processInventory(x, y + 8);
+			//processInventory(x, y + 8);
 			playerCommand = -1;
 			commandVar1 = 0;
 			strcpy(commandBuffer, "");
@@ -2657,9 +2657,7 @@ void drawOverlays(void) {
 				int16 x;
 				int16 y;
 
-				ASSERT(currentOverlay->objIdx >= 0
-				    && currentOverlay->objIdx <=
-				    NUM_MAX_OBJECT);
+				ASSERT(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
@@ -2755,9 +2753,7 @@ void drawOverlays(void) {
 				int16 x;
 				int16 y;
 
-				ASSERT(currentOverlay->objIdx >= 0
-				    && currentOverlay->objIdx <=
-				    NUM_MAX_OBJECT);
+				ASSERT(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
@@ -2794,9 +2790,7 @@ void drawOverlays(void) {
 
 				var5 = currentOverlay->x;
 
-				ASSERT(currentOverlay->objIdx >= 0
-				    && currentOverlay->objIdx <=
-				    NUM_MAX_OBJECT);
+				ASSERT(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
@@ -2804,7 +2798,7 @@ void drawOverlays(void) {
 				y = objPtr->y;
 
 				if (objPtr->frame >= 0) {
-					if (var5 >= 0 && var5 <= 8) {
+					if (var5 <= 8) {
 						if (additionalBgTable[var5]) {
 							if (animDataTable
 							    [objPtr->frame].

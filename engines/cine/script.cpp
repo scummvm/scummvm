@@ -428,18 +428,18 @@ uint16 computeScriptStackFromScript(byte *scriptPtr, uint16 currentPosition,
 	    (uint16) scriptSize, labelIdx, currentPosition);
 }
 
-void palRotate(uint8 var1, uint8 var2, uint8 var3) {
+void palRotate(uint8 a, uint8 b, uint8 c) {
 	int16 i;
 	uint16 currentColor;
 
-	if (var3 == 1) {
-		currentColor = c_palette[var2];
+	if (c == 1) {
+		currentColor = c_palette[b];
 
-		for (i = var2; i > var1; i--) {
+		for (i = b; i > a; i--) {
 			c_palette[i] = c_palette[i - 1];
 		}
 
-		c_palette[var1] = currentColor;
+		c_palette[a] = currentColor;
 	}
 }
 
@@ -606,18 +606,18 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 	return 0;
 }
 
-uint16 compareVars(int16 var1, int16 var2) {
+uint16 compareVars(int16 a, int16 b) {
 	uint16 flag = 0;
 
-	if (var1 == var2) {
+	if (a == b) {
 		flag |= 1;
 	}
 
-	if (var1 > var2) {
+	if (a > b) {
 		flag |= 2;
 	}
 
-	if (var1 < var2) {
+	if (a < b) {
 		flag |= 4;
 	}
 
@@ -1241,7 +1241,6 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 						    varIdx, value);
 
 						ASSERT(varIdx < 50);
-						ASSERT(value < 256);
 
 						scriptElement->compareResult =
 						    compareVars(scriptElement->
@@ -1440,7 +1439,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 				    labelIdx);
 
 				ASSERT(scriptElement->stack[labelIdx] !=
-				    0xFFFF);
+				    -1);
 				currentPosition =
 				    scriptElement->stack[labelIdx];
 
@@ -1459,7 +1458,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					DEBUG_SCRIPT(currentLine,
 					    "if(>) goto %d (true)", labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -1482,7 +1481,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					DEBUG_SCRIPT(currentLine,
 					    "if(>=) goto %d (true)", labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -1506,7 +1505,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					DEBUG_SCRIPT(currentLine,
 					    "if(<) goto %d (true)", labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -1529,7 +1528,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					DEBUG_SCRIPT(currentLine,
 					    "if(<=) goto %d (true)", labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -1552,7 +1551,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					DEBUG_SCRIPT(currentLine,
 					    "if(==) goto %d (true)", labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -1575,7 +1574,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					DEBUG_SCRIPT(currentLine,
 					    "if(!=) goto %d (true)", labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -1605,7 +1604,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "loop(var[%]) goto %d (continue)",
 					    varIdx, labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    scriptElement->stack[labelIdx];
 				} else {
@@ -2390,7 +2389,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "if(>) goto nearest %d (true)",
 					    labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    computeScriptStackFromScript
 					    (scriptElement->scriptPtr,
@@ -2419,7 +2418,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "if(>=) goto nearest %d (true)",
 					    labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    computeScriptStackFromScript
 					    (scriptElement->scriptPtr,
@@ -2448,7 +2447,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "if(<) goto nearest %d (true)",
 					    labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    computeScriptStackFromScript
 					    (scriptElement->scriptPtr,
@@ -2477,7 +2476,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "if(<=) goto nearest %d (true)",
 					    labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    computeScriptStackFromScript
 					    (scriptElement->scriptPtr,
@@ -2505,7 +2504,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "if(==) goto nearest %d (true)",
 					    labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    computeScriptStackFromScript
 					    (scriptElement->scriptPtr,
@@ -2533,7 +2532,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 					    "if(!=) goto nearest %d (true)",
 					    labelIdx);
 					ASSERT(scriptElement->
-					    stack[labelIdx] != 0xFFFF);
+					    stack[labelIdx] != -1);
 					currentPosition =
 					    computeScriptStackFromScript
 					    (scriptElement->scriptPtr,
@@ -2645,7 +2644,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 
 				DEBUG_SCRIPT(currentLine, "useBg(%d)", temp);
 
-				ASSERT(temp >= 0 && temp <= 8);
+				ASSERT(temp <= 8);
 
 				if (additionalBgTable[temp]) {
 					currentAdditionalBgIdx = temp;
@@ -2665,7 +2664,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 				DEBUG_SCRIPT(currentLine, "useBgScroll(%d)",
 				    temp);
 
-				ASSERT(temp >= 0 && temp <= 8);
+				ASSERT(temp <= 8);
 
 				if (additionalBgTable[temp]) {
 					currentAdditionalBgIdx2 = temp;
