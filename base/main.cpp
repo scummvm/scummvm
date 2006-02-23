@@ -286,7 +286,7 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	}
 
 	// Now the engine should've set up all debug levels so we can use the command line arugments here
-	enableSpecialDebugLevelList(edebuglevels);
+	Common::enableSpecialDebugLevelList(edebuglevels);
 
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
