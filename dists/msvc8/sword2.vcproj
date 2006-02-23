@@ -219,10 +219,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\icons.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\sword2\interpreter.cpp"
 			>
 		</File>

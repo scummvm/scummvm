@@ -387,6 +387,34 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="imuse"
+			>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_internal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\instrument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\instrument.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\engines\scumm\actor.cpp"
 			>
@@ -484,31 +512,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\imuse.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\imuse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\imuse_internal.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\imuse_player.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\input.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\instrument.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\instrument.h"
 			>
 		</File>
 		<File
