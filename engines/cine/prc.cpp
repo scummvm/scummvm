@@ -52,7 +52,7 @@ void freePrcLinkedList(void) {
 	resetglobalScriptsHead();
 }
 
-void loadPrc(char *pPrcName) {
+void loadPrc(const char *pPrcName) {
 	uint8 i;
 	uint16 numEntry;
 
