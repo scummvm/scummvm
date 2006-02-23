@@ -211,6 +211,89 @@
 				RelativePath="..\..\engines\scumm\insane\insane_scenes.cpp">
 			</File>
 		</Filter>
+		<Filter
+			Name="he"
+			Filter="">
+			<File
+				RelativePath="..\..\engines\scumm\he\floodfill_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\floodfill_he.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\intern_he.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\logic_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\logic_he.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\palette_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\resource_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\resource_he.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\script_v100he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\script_v60he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\script_v70he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\script_v72he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\script_v80he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\script_v90he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\sound_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\sprite_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\sprite_he.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\wiz_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\wiz_he.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="imuse"
+			Filter="">
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_internal.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\instrument.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\instrument.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\engines\scumm\actor.cpp">
 		</File>
@@ -272,12 +355,6 @@
 			RelativePath="..\..\engines\scumm\dialogs.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\floodfill_he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\floodfill_he.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\gfx.cpp">
 		</File>
 		<File
@@ -290,37 +367,10 @@
 			RelativePath="..\..\engines\scumm\help.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\imuse.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\imuse.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\imuse_internal.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\imuse_player.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\input.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\instrument.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\instrument.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\intern.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\intern_he.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\logic_he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\logic_he.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\midiparser_eup.cpp">
@@ -345,9 +395,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\palette.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\palette_he.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\player_mod.cpp">
@@ -401,12 +448,6 @@
 			RelativePath="..\..\engines\scumm\resource_v4.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\resource_v7he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\resource_v7he.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\room.cpp">
 		</File>
 		<File
@@ -425,9 +466,6 @@
 			RelativePath="..\..\engines\scumm\script_c64.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\script_v100he.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\script_v2.cpp">
 		</File>
 		<File
@@ -437,22 +475,7 @@
 			RelativePath="..\..\engines\scumm\script_v6.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\script_v6he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v72he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v7he.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\script_v8.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v80he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v90he.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\scumm-md5.h">
@@ -468,15 +491,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\sound.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\sound_he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\sprite_he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\sprite_he.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\string.cpp">
@@ -504,12 +518,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\verbs.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\wiz_he.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\wiz_he.h">
 		</File>
 	</Files>
 	<Globals>

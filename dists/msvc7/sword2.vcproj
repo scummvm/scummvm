@@ -96,9 +96,6 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\engines\sword2\_mouse.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\sword2\animation.cpp">
 		</File>
 		<File
@@ -106,12 +103,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\anims.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\build_display.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\build_display.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\console.cpp">
@@ -150,9 +141,6 @@
 			RelativePath="..\..\engines\sword2\icons.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\icons.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\sword2\interpreter.cpp">
 		</File>
 		<File
@@ -160,9 +148,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\layers.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\sword2\layers.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\logic.cpp">
@@ -222,10 +207,16 @@
 			RelativePath="..\..\engines\sword2\router.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\save_rest.cpp">
+			RelativePath="..\..\engines\sword2\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sword2\save_rest.h">
+			RelativePath="..\..\engines\sword2\saveload.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\sword2\screen.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\sword2\screen.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\sword2\scroll.cpp">

@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib cine_debug/cine.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib simon_debug/simon.lib sky_debug/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib cine_release/cine.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib simon_release/simon.lib sky_release/sky.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -204,12 +204,6 @@
 				RelativePath="..\..\common\savefile.h">
 			</File>
 			<File
-				RelativePath="..\..\common\scaler.cpp">
-			</File>
-			<File
-				RelativePath="..\..\common\scaler.h">
-			</File>
-			<File
 				RelativePath="..\..\common\scummsys.h">
 			</File>
 			<File
@@ -257,90 +251,6 @@
 			<File
 				RelativePath="..\..\common\util.h">
 			</File>
-			<Filter
-				Name="scaler"
-				Filter="">
-				<File
-					RelativePath="..\..\common\scaler\2xsai.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\aspect.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\hq2x.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\hq2x.h">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\hq2x_i386.asm">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
-"
-							Outputs="$(OutDir)\$(InputName).obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
-"
-							Outputs="$(OutDir)\$(InputName).obj"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\hq3x.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\hq3x.h">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\hq3x_i386.asm">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
-"
-							Outputs="$(OutDir)\$(InputName).obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
-"
-							Outputs="$(OutDir)\$(InputName).obj"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\intern.h">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\scale2x.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\scale2x.h">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\scale3x.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\scale3x.h">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\scalebit.cpp">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\scalebit.h">
-				</File>
-				<File
-					RelativePath="..\..\common\scaler\thumbnail.cpp">
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="sound"
@@ -710,9 +620,6 @@
 				RelativePath="..\..\graphics\animation.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\consolefont.cpp">
-			</File>
-			<File
 				RelativePath="..\..\graphics\font.cpp">
 			</File>
 			<File
@@ -743,19 +650,16 @@
 				RelativePath="..\..\graphics\imageman.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\newfont.cpp">
-			</File>
-			<File
-				RelativePath="..\..\graphics\newfont_big.cpp">
-			</File>
-			<File
 				RelativePath="..\..\graphics\primitives.cpp">
 			</File>
 			<File
 				RelativePath="..\..\graphics\primitives.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\scummfont.cpp">
+				RelativePath="..\..\graphics\scaler.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\scaler.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\surface.cpp">
@@ -763,6 +667,106 @@
 			<File
 				RelativePath="..\..\graphics\surface.h">
 			</File>
+			<Filter
+				Name="scaler"
+				Filter="">
+				<File
+					RelativePath="..\..\graphics\scaler\2xsai.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\aspect.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\hq2x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\hq2x.h">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\hq2x_i386.asm">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\hq3x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\hq3x.h">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\hq3x_i386.asm">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
+"
+							Outputs="$(OutDir)\$(InputName).obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\intern.h">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\scale2x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\scale2x.h">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\scale3x.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\scale3x.h">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\scalebit.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\scalebit.h">
+				</File>
+				<File
+					RelativePath="..\..\graphics\scaler\thumbnail.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="fonts"
+				Filter="">
+				<File
+					RelativePath="..\..\graphics\fonts\consolefont.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\fonts\newfont.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\fonts\newfont_big.cpp">
+				</File>
+				<File
+					RelativePath="..\..\graphics\fonts\scummfont.cpp">
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

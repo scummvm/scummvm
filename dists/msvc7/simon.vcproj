@@ -136,6 +136,9 @@
 			RelativePath="..\..\engines\simon\midiparser_s1d.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\simon\oracle.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\simon\res.cpp">
 		</File>
 		<File
