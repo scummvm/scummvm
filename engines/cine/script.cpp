@@ -403,10 +403,9 @@ u16 computeScriptStackSub(u8 mode, byte *scriptPtr, s16 *stackPtr,
 			}
 		default:
 			{
-				printf
-				    ("Unsupported opcode %X in computeScriptStack\n",
+				error
+				    ("Unsupported opcode %X in computeScriptStack",
 				    opcode - 1);
-				exit(1);
 			}
 		}
 
@@ -2752,8 +2751,7 @@ void executeScript(prcLinkedListStruct *scriptElement, u16 param) {
 			}
 		default:
 			{
-				printf("Unsupported opcode %X\n", opcode - 1);
-				exit(1);
+				error("Unsupported opcode %X", opcode - 1);
 			}
 		}
 	}

@@ -436,10 +436,9 @@ u8 compareObjectParam(u8 objIdx, u8 param1, s16 param2) {
 		}
 	default:
 		{
-			printf
-			    ("Unsupported compare type: %d in compareObjectParam\n",
+			error
+			    ("Unsupported compare type: %d in compareObjectParam",
 			    param1 - 1);
-			exit(1);
 		}
 	}
 

@@ -48,7 +48,7 @@ void manageEvents(void) {
 			mouseData.Y = event.mouse.y;
 			break;
 		case OSystem::EVENT_QUIT:
-			exit(0);
+			g_system->quit();
 			break;
 		default:
 			break;
