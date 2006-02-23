@@ -1,0 +1,122 @@
+/* ScummVM - Scumm Interpreter
+ * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
+ * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
+ * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
+ * Copyright (C) 2005-2006 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+//
+// EPOC S60 MMP makefile project for ScummVM
+//
+
+// *** Definitions
+
+TARGET          ScummVM.exe
+TARGETPATH      sys\bin
+TARGETTYPE      EXE
+
+UID             0x100039ce 0xA0000657 
+
+START RESOURCE  ScummVM_reg.rss
+TARGETPATH              \private\10003a3f\apps
+END
+
+START RESOURCE  ScummVM_loc.rss
+TARGETPATH              \Resource\Apps
+LANG                    SC
+END
+
+SOURCEPATH 	..\res
+START RESOURCE  ScummVM.rss
+HEADER
+TARGETPATH              \Resource\Apps
+LANG                    SC
+END
+
+START BITMAP    ScummVM.mbm
+TARGETPATH              \Resource\Apps
+SOURCEPATH              ..\res
+// Source Color-depth Source-bitmap-list
+// c denotes whether the bitmap is a colour bitmap and the digits represent the
+// colour-depth of the bitmap and the bitmap mask respectively
+SOURCE  c24             ScummSmall.bmp
+SOURCE  8               ScummSmallMask.bmp
+SOURCE  c24             ScummLarge.bmp
+SOURCE  8               ScummLargeMask.bmp
+SOURCE  c24             ScummxLarge.bmp
+SOURCE  8               ScummxLargeMask.bmp
+END
+
+EPOCSTACKSIZE	0x0000F000
+EPOCHEAPSIZE	2048000	16192000
+
+MACRO			S60
+MACRO			EPOC_AS_APP
+//START_AUTO_MACROS_SLAVE//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_MACROS_SLAVE//
+
+// *** Static Libraries
+
+STATICLIBRARY esdl.lib
+
+// *** Include paths
+
+USERINCLUDE	    ..\..\.. ..\..\..\common ..\..\..\gui ..\..\..\engines
+USERINCLUDE		..\..\..\backends\fs ..\src ..\..\..\backends\sdl ..\..\..\sound
+
+SYSTEMINCLUDE 	\epoc32\include\ESDL
+SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   ..\src // for portdefs.h
+
+// *** SOURCE files
+
+SOURCEPATH ..\..\..\base
+
+//START_AUTO_OBJECTS_BASE_//
+
+	// empty base file, will be updated by Perl build scripts
+
+//STOP_AUTO_OBJECTS_BASE_//
+
+SOURCEPATH ..\..\..
+
+// backend EPOC/SDL/ESDL specific includes
+SOURCE backends\sdl\events.cpp
+SOURCE backends\sdl\graphics.cpp
+SOURCE backends\sdl\sdl.cpp
+SOURCE backends\fs\symbian\symbian-fs.cpp
+SOURCE backends\symbian\src\SymbianOS.cpp 
+SOURCE backends\symbian\src\SymbianActions.cpp 
+SOURCE backends\symbian\src\ScummApp.cpp
+
+SOURCE gui\Key.cpp
+SOURCE gui\KeysDialog.cpp
+SOURCE gui\Actions.cpp
+
+// *** Dynamic Libraries
+LIBRARY cone.lib  eikcore.lib 
+LIBRARY euser.lib apparc.lib fbscli.lib  
+LIBRARY estlib.lib 
+LIBRARY gdi.lib hal.lib bitgdi.lib
+LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
+library avkon.lib

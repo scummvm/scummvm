@@ -4,15 +4,36 @@ use Cwd;
 $buildDir = getcwd();
 chdir("../../");
 
+# list of project files to process
+@mmp_files = (
+	"mmp/scummvm_scumm.mmp", 
+	"mmp/scummvm_queen.mmp", 
+	"mmp/scummvm_simon.mmp", 
+	"mmp/scummvm_sky.mmp", 
+	"mmp/scummvm_gob.mmp", 
+	"mmp/scummvm_saga.mmp", 
+	"mmp/scummvm_kyra.mmp", 
+	"mmp/scummvm_sword1.mmp", 
+	"mmp/scummvm_sword2.mmp", 
+	"mmp/scummvm_lure.mmp", 
+
+	"S60/ScummVM_S60.mmp",  
+	"S60v3/ScummVM_S60v3.mmp", 
+	"S80/ScummVM_S80.mmp", 
+	"S90/ScummVM_S90.mmp",
+	"UIQ2/ScummVM_UIQ2.mmp", 
+	"UIQ3/ScummVM_UIQ3.mmp" 
+);
+
+# do this first to set all *.mmp & *.inf files to *.*.in states
+ResetProjectFiles();
+
 print "
 =======================================================================================
 Updating slave MACRO settings in MMP files from master 'scummvm_base.mmp'
 =======================================================================================
 
 ";
-
-@mmp_files = (	"mmp/scummvm_scumm.mmp", "mmp/scummvm_queen.mmp", "mmp/scummvm_simon.mmp", "mmp/scummvm_sky.mmp", "mmp/scummvm_gob.mmp", "mmp/scummvm_saga.mmp", "mmp/scummvm_kyra.mmp", "mmp/scummvm_sword1.mmp", "mmp/scummvm_sword2.mmp", 
-				"UIQ2/ScummVM_UIQ2.mmp", "UIQ3/ScummVM_UIQ3.mmp", "S60/ScummVM_S60.mmp",  "S60v3/ScummVM_S60v3.mmp", "S80/ScummVM_S80.mmp", "S90/ScummVM_S90.mmp");
 
 # do this first so we have @DisableDefines for correct inclusion of SOURCE files later
 UpdateSlaveMacros();
@@ -26,20 +47,36 @@ Preparing to update all the Symbian MMP project files with objects from module.m
 	
 my @section_empty = (""); # section standard: no #ifdef's in module.mk files
 my @sections_scumm = ("", "DISABLE_SCUMM_7_8", "DISABLE_HE"); # special sections for engine SCUMM
-my @base_excludes = ("mt32","fluidsynth","i386","part","partial","partialmanager","synth","tables","freeverb"); # case insensitive exclusions for sound
+
+# files excluded from build, case insensitive, will be matched in filename string only
+my @excludes_snd = ( 
+	"mt32",
+	"fluidsynth",
+	"i386",
+	"part.cpp",
+	"partial.cpp",
+	"partialmanager.cpp",
+	"synth.cpp",
+	"tables.cpp",
+	"freeverb.cpp"
+); 
+my @excludes_gui = ( 
+	"ThemeNew",
+); 
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])
-#ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
+ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
 ParseModule("_base",	"common",	\@section_empty);
-ParseModule("_base",	"gui",		\@section_empty);
+ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty);
-ParseModule("_base",	"sound",	\@section_empty,		\@base_excludes);
+ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
+
 chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm);
 ParseModule("_queen",	"queen",	\@section_empty);
 ParseModule("_simon",	"simon",	\@section_empty);
-ParseModule("_sky",	"sky",		\@section_empty);
-ParseModule("_gob",	"gob",		\@section_empty);
+ParseModule("_sky",		"sky",		\@section_empty);
+ParseModule("_gob",		"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@section_empty);
 
 ParseModule("_kyra",	"kyra",		\@section_empty);
@@ -97,9 +134,10 @@ sub CheckForModuleMK
 	if (-f $item and $item =~ /.*\/module.mk$/)
 	{
 		my $sec = "";
-		my $secnum = 0;
+		my $ObjectsSelected = 0;
+		my $ObjectsTotal = 0;
 		
-		print "Parsing  $item for section '$section' ... ";
+		print "$item for section '$section' ... ";
 
 		open FILE, $item;
 		my @lines = <FILE>;
@@ -121,6 +159,8 @@ sub CheckForModuleMK
 				# handle this section?
 				if ($sec eq $section)
 				{
+					$ObjectsTotal++;
+
 					$line =~ s/^\s*//g; # remove possible leading whitespace
 					$line =~ s/ \\//; # remove possible trailing ' \'
 					$line =~ s/\//\\/g; # replace / with \
@@ -129,9 +169,9 @@ sub CheckForModuleMK
 					# do we need to skip this file? According to our own @exclusions array
 					foreach $exclusion (@exclusions)
 					{
-						if ($line =~ /$exclusion/)
+						if ($line =~ /$exclusion/i)
 						{
-							print "\n         !$line (excluded, \@exclusions)";
+							print "\n      ! $line (excluded, \@exclusions[$exclusion])";
 							next A;
 						}
 					}
@@ -146,13 +186,13 @@ sub CheckForModuleMK
 						}
 					}
 										
-					$secnum++;
+					$ObjectsSelected++;
 					#print "\n         $line";
 					$output .= "SOURCE $line\n";
 				}
 			}
 		}
-		print " -- $secnum objects selected\n";
+		print " -- $ObjectsSelected/$ObjectsTotal objects selected\n";
 	}
 }
 
@@ -165,25 +205,35 @@ sub UpdateProjectFile
 	my $n = "AUTO_OBJECTS_".uc($module)."_$section";
 	my $a = "\/\/START_$n\/\/";
 	my $b = "\/\/STOP_$n\/\/";
-	my $name = "mmp/scummvm$mmp.mmp";	
-	my $file = "$buildDir/$name";
 	my $updated = " Updated @ ".localtime();
+	my $name;
+	my @mmp_files_plus_one = @mmp_files;
+	unshift @mmp_files_plus_one, "mmp/scummvm_base.mmp";	
 
-	print "     ===>Updating backends/epoc/$name @ $n ... ";
+	foreach $name (@mmp_files_plus_one)
+	{
+		my $file = "$buildDir/$name";
 
-	open FILE, "$file";
-	my @lines = <FILE>;
-	close FILE;
+		open FILE, "$file";
+		my @lines = <FILE>;
+		close FILE;
+		
+		my $onestr = join("",@lines);
+		
+		if ($onestr =~ /$n/)
+		{
+
+			print "      - $name @ $n updating ... ";
 	
-	my $onestr = join("",@lines);
-	$onestr =~ s/$a.*$b/$a$updated\n$output$b/s;
-	
-	open FILE, ">$file";
-	print FILE $onestr;
-	close FILE;
-	
-	print "done.\n";
-	
+			$onestr =~ s/$a.*$b/$a$updated\n$output$b/s;
+			open FILE, ">$file";
+			print FILE $onestr;
+			close FILE;
+			
+			print "done.\n";
+		}
+	}
+		
 	$output = "";
 }
 
@@ -195,7 +245,7 @@ sub UpdateSlaveMacros
 
 	my $name = "mmp/scummvm_base.mmp";	
 	my $file = "$buildDir/$name";
-	print "Reading master MACROS from backends/epoc/$name ... ";
+	print "Reading master MACROS from backends/symbian/$name ... ";
 
 	open FILE, "$file";
 	my @lines = <FILE>;
@@ -261,7 +311,8 @@ sub UpdateSlaveMacros
 	{
 		$file = "$buildDir/$name";
 		$fileBLDINF = $buildDir .'/'. substr($name, 0, rindex($name, "/")) . "/BLD.INF";
-		print "Updating macros in backends/epoc/$name ... ";
+		print "Updating macros   in $file ... ";
+		#print "Updating macros in backends/symbian/$name ... ";
 	
 		open FILE, "$file";	@lines = <FILE>; close FILE;
 		$onestr = join("",@lines);
@@ -292,5 +343,39 @@ sub UpdateSlaveMacros
 		}
 	}
 }		
+
+##################################################################################################################
+
+sub ResetProjectFiles()
+{
+	my $onestr, @lines;
+	my @mmp_files_plus_one = @mmp_files;
+#	unshift @mmp_files_plus_one, "mmp/scummvm_base.mmp";	
+	
+	print "Resetting project files: ";
+	
+	# we don't need to do mmp/scummvm_base.mmp", it was done in BuildPackageUpload.pl before the call to this script
+	foreach $name (@mmp_files_plus_one)
+	{
+		my $file  = "$buildDir/$name";
+
+		print "$name ";
+		open FILE, "$file.in";	@lines = <FILE>; close FILE;
+		$onestr = join("",@lines);
+		open FILE, ">$file"; print FILE $onestr; close FILE;
+
+		# also do BLD.INF if it is there...
+		my $fileBLDINF = $buildDir .'/'. substr($name, 0, rindex($name, "/")) . "/BLD.INF";
+		if (-e "$fileBLDINF.in")
+		{
+			print substr($name, 0, rindex($name, "/")) . "/BLD.INF ";
+			open FILE, "$fileBLDINF.in";	@lines = <FILE>; close FILE;
+			$onestr = join("",@lines);
+			open FILE, ">$fileBLDINF"; print FILE $onestr; close FILE;
+		}
+	}	
+
+	print "... done.\n";
+}
 
 ##################################################################################################################
