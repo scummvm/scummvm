@@ -38,8 +38,7 @@ typedef struct {
 extern scriptStruct scriptTable[NUM_MAX_SCRIPT];
 
 void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize);
-void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize,
-					 uint16 scriptIdx);
+void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
 #define OP_loadPart                     0x3F
