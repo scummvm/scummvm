@@ -63,7 +63,7 @@ void Mult_v2::loadMult(int16 resId) {
 	staticCount++;
 	animCount++;
 
-	hbstaticCount = staticCount & 0x80;
+	hbstaticCount = (staticCount & 0x80) != 0;
 	staticCount &= 0x7F;
 
 	debug(7, "statics: %u, anims: %u, hb: %u", staticCount, animCount, hbstaticCount);

@@ -34,7 +34,7 @@
 
 namespace Sword2 {
 
-class MenuObject;
+struct MenuObject;
 struct BuildUnit;
 
 // Menubar defines.
