@@ -68,8 +68,7 @@ void mainLoopSub2(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 uint16 errorVar;
 uint8 menuVar;
 
-void gfxFuncGen1(uint8 *param1, uint8 *param2, uint8 *param3, uint8 *param4,
-    int16 param5) {
+void gfxFuncGen1(uint8 *param1, uint8 *param2, uint8 *param3, uint8 *param4, int16 param5) {
 }
 
 uint8 *page0c;
@@ -135,13 +134,13 @@ commandeType defaultActionCommand[] = {
 	"NOACTION"
 // french
 /*
-  "EXAMINER",
-  "PRENDRE",
-  "INVENTAIRE",
-  "UTILISER",
-  "ACTIONNER",
-  "PARLER",
-  "NOACTION"
+	"EXAMINER",
+	"PRENDRE",
+	"INVENTAIRE",
+	"UTILISER",
+	"ACTIONNER",
+	"PARLER",
+	"NOACTION"
 */
 };
 
@@ -163,7 +162,6 @@ int16 stopObjectScript(int16 entryIdx) {
 	while (currentHead) {
 		if (currentHead->scriptIdx == entryIdx) {
 			currentHead->scriptIdx = -1;
-
 			return 0;
 		}
 
@@ -189,8 +187,7 @@ void runObjectScript(int16 entryIdx) {
 		currentHead = tempHead->next;
 	}
 
-	pNewElement =
-	    (prcLinkedListStruct *) malloc(sizeof(prcLinkedListStruct));
+	pNewElement = (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
 
 	ASSERT_PTR(pNewElement);
 
@@ -209,11 +206,10 @@ void runObjectScript(int16 entryIdx) {
 	pNewElement->compareResult = 0;
 	pNewElement->scriptPosition = 0;
 
-	pNewElement->scriptPtr = (byte *) relTable[entryIdx].ptr0;
+	pNewElement->scriptPtr = (byte *)relTable[entryIdx].ptr0;
 	pNewElement->scriptIdx = entryIdx;
 
-	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack,
-	    relTable[entryIdx].var4);
+	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].var4);
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2,
@@ -222,8 +218,7 @@ int16 getRelEntryForObject(uint16 param1, uint16 param2,
 	int16 di = -1;
 
 	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].ptr0 && relTable[i].var6 == param1
-		    && relTable[i].var8 == pSelectedObject->idx) {
+		if (relTable[i].ptr0 && relTable[i].var6 == param1 && relTable[i].var8 == pSelectedObject->idx) {
 			if (param2 == 1) {
 				di = i;
 			} else if (param2 == 2) {
@@ -258,17 +253,14 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 				objX = objectTable[currentHead->objIdx].x;
 				objY = objectTable[currentHead->objIdx].y;
 
-				frame =
-				    abs((int16) (objectTable[currentHead->
-					    objIdx].frame));
+				frame = abs((int16)(objectTable[currentHead->objIdx].frame));
 
 				part = objectTable[currentHead->objIdx].part;
 
 				if (currentHead->type == 0) {
 					treshold = animDataTable[frame].var1;
 				} else {
-					treshold =
-					    animDataTable[frame].width / 2;
+					treshold = animDataTable[frame].width / 2;
 				}
 
 				height = animDataTable[frame].var2;
@@ -276,38 +268,18 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 				xdif = x - objX;
 				ydif = y - objY;
 
-				if ((xdif >= 0) && ((treshold << 4) > xdif)
-				    && (ydif > 0) && (ydif < height)) {
+				if ((xdif >= 0) && ((treshold << 4) > xdif) && (ydif > 0) && (ydif < height)) {
 					if (animDataTable[frame].ptr1) {
 						if (gameType == Cine::GID_OS)
-							return currentHead->
-							    objIdx;
+							return currentHead->objIdx;
 
-						if (currentHead->type == 0)	// use generated mask
-						{
-							if (gfxGetBit(x - objX,
-								y - objY,
-								animDataTable
-								[frame].ptr2,
-								animDataTable
-								[frame].
-								width)) {
-								return
-								    currentHead->
-								    objIdx;
+						if (currentHead->type == 0)	{ // use generated mask
+							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].ptr2, animDataTable[frame].width)) {
+								return currentHead->objIdx;
 							}
-						} else if (currentHead->type == 1)	// is mask
-						{
-							if (gfxGetBit(x - objX,
-								y - objY,
-								animDataTable
-								[frame].ptr1,
-								animDataTable
-								[frame].width *
-								4)) {
-								return
-								    currentHead->
-								    objIdx;
+						} else if (currentHead->type == 1) { // is mask
+							if (gfxGetBit(x - objX, y - objY, animDataTable[frame].ptr1, animDataTable[frame].width * 4)) {
+								return currentHead->objIdx;
 							}
 						}
 					}
@@ -372,7 +344,7 @@ void loadObjectScritpFromSave(Common::File *fHandle) {
 	}
 
 	newElement =
-	    (prcLinkedListStruct *) malloc(sizeof(prcLinkedListStruct));
+	    (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -394,9 +366,9 @@ void loadObjectScritpFromSave(Common::File *fHandle) {
 	flipU16(&newElement->scriptPosition);
 
 	fHandle->read(&newElement->scriptIdx, 2);
-	flipU16((uint16 *) & newElement->scriptIdx);
+	flipU16((uint16 *)&newElement->scriptIdx);
 
-	newElement->scriptPtr = (byte *) relTable[newElement->scriptIdx].ptr0;
+	newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].ptr0;
 }
 
 void loadGlobalScritpFromSave(Common::File *fHandle) {
@@ -413,8 +385,7 @@ void loadGlobalScritpFromSave(Common::File *fHandle) {
 		currentHead = tempHead->next;
 	}
 
-	newElement =
-	    (prcLinkedListStruct *) malloc(sizeof(prcLinkedListStruct));
+	newElement = (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -453,16 +424,16 @@ void loadOverlayFromSave(Common::File *fHandle) {
 		currentHead = tempHead->next;
 	}
 
-	newElement = (overlayHeadElement *) malloc(sizeof(overlayHeadElement));
+	newElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
 
 	fHandle->read(newElement, 0x14);
 
 	flipU16(&newElement->objIdx);
 	flipU16(&newElement->type);
-	flipU16((uint16 *) & newElement->x);
-	flipU16((uint16 *) & newElement->y);
-	flipU16((uint16 *) & newElement->var10);
-	flipU16((uint16 *) & newElement->var12);
+	flipU16((uint16 *)&newElement->x);
+	flipU16((uint16 *)&newElement->y);
+	flipU16((uint16 *)&newElement->var10);
+	flipU16((uint16 *)&newElement->var12);
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -480,8 +451,7 @@ void setupGlobalScriptList(void) {
 	prcLinkedListStruct *currentHead = globalScriptsHead.next;
 
 	while (currentHead) {
-		currentHead->scriptPtr =
-		    scriptTable[currentHead->scriptIdx].ptr;
+		currentHead->scriptPtr = scriptTable[currentHead->scriptIdx].ptr;
 
 		currentHead = currentHead->next;
 	}
@@ -491,9 +461,7 @@ void setupObjectScriptList(void) {
 	prcLinkedListStruct *currentHead = objScriptList.next;
 
 	while (currentHead) {
-		currentHead->scriptPtr =
-		    (byte *)relTable[currentHead->scriptIdx].ptr0;
-
+		currentHead->scriptPtr = (byte *)relTable[currentHead->scriptIdx].ptr0;
 		currentHead = currentHead->next;
 	}
 }
@@ -508,7 +476,7 @@ int16 makeLoad(char *saveName) {
 	if (!fHandle.isOpen()) {
 		drawString("Cette sauvegarde n'existe pas ...", 0);
 		waitPlayerInput();
-		//  restoreScreen();
+		// restoreScreen();
 		checkDataDisk(-1);
 		return -1;
 	}
@@ -524,7 +492,6 @@ int16 makeLoad(char *saveName) {
 	for (i = 0; i < NUM_MAX_REL; i++) {
 		if (relTable[i].ptr0) {
 			free(relTable[i].ptr0);
-
 			relTable[i].ptr0 = NULL;
 			relTable[i].var4 = 0;
 			relTable[i].var6 = 0;
@@ -536,7 +503,6 @@ int16 makeLoad(char *saveName) {
 	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
 		if (scriptTable[i].ptr) {
 			free(scriptTable[i].ptr);
-
 			scriptTable[i].ptr = NULL;
 			scriptTable[i].var4 = 0;
 		}
@@ -594,13 +560,13 @@ int16 makeLoad(char *saveName) {
 	checkForPendingDataLoadSwitch = 0;
 
 	fHandle.read(&currentDisk, 2);
-	flipU16((uint16 *) & currentDisk);
+	flipU16((uint16 *)&currentDisk);
 
 	fHandle.read(currentPartName, 13);
 	fHandle.read(currentDatName, 13);
 
 	fHandle.read(&saveVar2, 2);
-	flipU16((uint16 *) & saveVar2);
+	flipU16((uint16 *)&saveVar2);
 
 	fHandle.read(currentPrcName, 13);
 	fHandle.read(currentRelName, 13);
@@ -610,16 +576,16 @@ int16 makeLoad(char *saveName) {
 
 	fHandle.read(&i, 2);
 	fHandle.read(&i, 2);
-	flipU16((uint16 *) & i);
+	flipU16((uint16 *)&i);
 
 	fHandle.read(objectTable, i * 255);
 
 	for (i = 0; i < NUM_MAX_OBJECT; i++) {
-		flipU16((uint16 *) & objectTable[i].x);
-		flipU16((uint16 *) & objectTable[i].y);
+		flipU16((uint16 *)&objectTable[i].x);
+		flipU16((uint16 *)&objectTable[i].y);
 		flipU16(&objectTable[i].mask);
-		flipU16((uint16 *) & objectTable[i].frame);
-		flipU16((uint16 *) & objectTable[i].costume);
+		flipU16((uint16 *)&objectTable[i].frame);
+		flipU16((uint16 *)&objectTable[i].costume);
 		flipU16(&objectTable[i].part);
 	}
 
@@ -645,7 +611,7 @@ int16 makeLoad(char *saveName) {
 
 	fHandle.read(&commandVar3, 8);
 	for (i = 0; i < 4; i++) {
-		flipU16((uint16 *) & commandVar3[i]);
+		flipU16((uint16 *)&commandVar3[i]);
 	}
 
 	fHandle.read(commandBuffer, 0x50);
@@ -660,10 +626,10 @@ int16 makeLoad(char *saveName) {
 	flipU16(&allowPlayerInput);
 
 	fHandle.read(&playerCommand, 2);
-	flipU16((uint16 *) & playerCommand);
+	flipU16((uint16 *)&playerCommand);
 
 	fHandle.read(&commandVar1, 2);
-	flipU16((uint16 *) & commandVar1);
+	flipU16((uint16 *)&commandVar1);
 
 	fHandle.read(&isDrawCommandEnabled, 2);
 	flipU16(&isDrawCommandEnabled);
@@ -681,7 +647,7 @@ int16 makeLoad(char *saveName) {
 	flipU16(&var2);
 
 	fHandle.read(&commandVar2, 2);
-	flipU16((uint16 *) & commandVar2);
+	flipU16((uint16 *)&commandVar2);
 
 	fHandle.read(&defaultMenuBoxColor2, 2);
 	flipU16(&defaultMenuBoxColor2);
@@ -695,34 +661,34 @@ int16 makeLoad(char *saveName) {
 		flipU16(&animDataTable[i].var1);
 		flipU16(&animDataTable[i].field_4);
 		flipU16(&animDataTable[i].var2);
-		flipU16((uint16 *) & animDataTable[i].fileIdx);
-		flipU16((uint16 *) & animDataTable[i].frameIdx);
+		flipU16((uint16 *)&animDataTable[i].fileIdx);
+		flipU16((uint16 *)&animDataTable[i].frameIdx);
 	}
 
 	fHandle.seek(12, SEEK_CUR);	// TODO: handle screen params (realy required ?)
 
 	fHandle.read(&size, 2);
-	flipU16((uint16 *) & size);
+	flipU16((uint16 *)&size);
 	for (i = 0; i < size; i++) {
 		loadGlobalScritpFromSave(&fHandle);
 	}
 
 	fHandle.read(&size, 2);
-	flipU16((uint16 *) & size);
+	flipU16((uint16 *)&size);
 	for (i = 0; i < size; i++) {
 		loadObjectScritpFromSave(&fHandle);
 	}
 
 	fHandle.read(&size, 2);
-	flipU16((uint16 *) & size);
+	flipU16((uint16 *)&size);
 	for (i = 0; i < size; i++) {
 		loadOverlayFromSave(&fHandle);
 	}
 
 	fHandle.read(&size, 2);
-	flipU16((uint16 *) & size);
+	flipU16((uint16 *)&size);
 	for (i = 0; i < size; i++) {
-		//  loadBgIncrustFromSave(fHandle);
+		// loadBgIncrustFromSave(&fHandle);
 	}
 
 	fHandle.close();
@@ -761,13 +727,12 @@ int16 makeLoad(char *saveName) {
 	processPendingUpdates(0);
 
 	if (strlen(currentDatName)) {
-/*    i = saveVar2;
-    saveVar2 = 0;
-    loadMusic();
-    if(i)
-    {
-      playMusic();
-    }*/
+/*		i = saveVar2;
+		saveVar2 = 0;
+		loadMusic();
+		if (i) {
+			playMusic();
+		}*/
 	}
 
 	return (0);
@@ -849,8 +814,8 @@ void makeSave(char *saveFileName) {
 		flipU16(&animDataTable[i].var1);
 		flipU16(&animDataTable[i].field_4);
 		flipU16(&animDataTable[i].var2);
-		flipU16((uint16 *) & animDataTable[i].fileIdx);
-		flipU16((uint16 *) & animDataTable[i].frameIdx);
+		flipU16((uint16 *)&animDataTable[i].fileIdx);
+		flipU16((uint16 *)&animDataTable[i].frameIdx);
 
 		fHandle.write(&animDataTable[i], sizeof(animDataStruct));
 
@@ -858,8 +823,8 @@ void makeSave(char *saveFileName) {
 		flipU16(&animDataTable[i].var1);
 		flipU16(&animDataTable[i].field_4);
 		flipU16(&animDataTable[i].var2);
-		flipU16((uint16 *) & animDataTable[i].fileIdx);
-		flipU16((uint16 *) & animDataTable[i].frameIdx);
+		flipU16((uint16 *)&animDataTable[i].fileIdx);
+		flipU16((uint16 *)&animDataTable[i].frameIdx);
 	}
 
 	saveU16(0, &fHandle);	// Screen params, unhandled
@@ -951,19 +916,19 @@ void makeSave(char *saveFileName) {
 		while (currentHead) {
 			flipU16(&currentHead->objIdx);
 			flipU16(&currentHead->type);
-			flipU16((uint16 *) & currentHead->x);
-			flipU16((uint16 *) & currentHead->y);
-			flipU16((uint16 *) & currentHead->var10);
-			flipU16((uint16 *) & currentHead->var12);
+			flipU16((uint16 *)&currentHead->x);
+			flipU16((uint16 *)&currentHead->y);
+			flipU16((uint16 *)&currentHead->var10);
+			flipU16((uint16 *)&currentHead->var12);
 
 			fHandle.write(currentHead, 0x14);
 
 			flipU16(&currentHead->objIdx);
 			flipU16(&currentHead->type);
-			flipU16((uint16 *) & currentHead->x);
-			flipU16((uint16 *) & currentHead->y);
-			flipU16((uint16 *) & currentHead->var10);
-			flipU16((uint16 *) & currentHead->var12);
+			flipU16((uint16 *)&currentHead->x);
+			flipU16((uint16 *)&currentHead->y);
+			flipU16((uint16 *)&currentHead->var10);
+			flipU16((uint16 *)&currentHead->var12);
 
 			currentHead = currentHead->next;
 		}
@@ -985,13 +950,11 @@ void makeSystemMenu(void) {
 
 	if (!allowSystemMenu) {
 		manageEvents();
-		getMouseData(mouseUpdateStatus, (uint16 *) & mouseButton,
-		    (uint16 *) & mouseX, (uint16 *) & mouseY);
+		getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton,(uint16 *)&mouseX, (uint16 *)&mouseY);
 
 		while (mouseButton) {
 			manageEvents();
-			getMouseData(mouseUpdateStatus, (uint16 *) & mouseButton,
-			    (uint16 *) & mouseX, (uint16 *) & mouseY);
+			getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 		}
 
 		numEntry = 6;
@@ -1000,8 +963,7 @@ void makeSystemMenu(void) {
 			numEntry--;
 		}
 
-		systemCommand =
-		    makeMenuChoice(systemMenu, numEntry, mouseX, mouseY, 140);
+		systemCommand = makeMenuChoice(systemMenu, numEntry, mouseX, mouseY, 140);
 
 		switch (systemCommand) {
 		case 0:
@@ -1012,22 +974,16 @@ void makeSystemMenu(void) {
 			}
 		case 1:
 			{
-				getMouseData(mouseUpdateStatus,
-				    (uint16 *) & mouseButton, (uint16 *) & mouseX,
-				    (uint16 *) & mouseY);
-				if (!makeMenuChoice(confirmMenu, 2, mouseX,
-					mouseY + 8, 100)) {
+				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 					//reinitEngine();
 				}
 				break;
 			}
 		case 2:
 			{
-				getMouseData(mouseUpdateStatus,
-				    (uint16 *) & mouseButton, (uint16 *) & mouseX,
-				    (uint16 *) & mouseY);
-				if (!makeMenuChoice(confirmMenu, 2, mouseX,
-					mouseY + 8, 100)) {
+				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 					exitEngine = 1;
 				}
 				break;
@@ -1041,61 +997,36 @@ void makeSystemMenu(void) {
 				if (loadSaveDirectory()) {
 					int16 selectedSave;
 
-					getMouseData(mouseUpdateStatus,
-					    (uint16 *) & mouseButton,
-					    (uint16 *) & mouseX,
-					    (uint16 *) & mouseY);
-					selectedSave =
-					    makeMenuChoice(currentSaveName, 10,
-					    mouseX, mouseY + 8, 180);
+					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+					selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
 
 					if (selectedSave >= 0) {
 						char saveNameBuffer[256];
 						if (gameType == Cine::GID_FW)
-							sprintf(saveNameBuffer,
-							    "FW.%1d",
-							    selectedSave);
+							sprintf(saveNameBuffer, "FW.%1d", selectedSave);
 						else
-							sprintf(saveNameBuffer,
-							    "OS.%1d",
-							    selectedSave);
+							sprintf(saveNameBuffer, "OS.%1d", selectedSave);
 
-						getMouseData(mouseUpdateStatus,
-						    (uint16 *) & mouseButton,
-						    (uint16 *) & mouseX,
-						    (uint16 *) & mouseY);
-						if (!makeMenuChoice
-						    (confirmMenu, 2, mouseX,
-							mouseY + 8, 100)) {
+						getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+						if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 							char loadString[256];
 
-							sprintf(loadString,
-							    "Chargement de | %s",
-							    currentSaveName
-							    [selectedSave]);
-							drawString(loadString,
-							    0);
+							sprintf(loadString, "Chargement de | %s", currentSaveName[selectedSave]);
+							drawString(loadString, 0);
 
-							makeLoad
-							    (saveNameBuffer);
+							makeLoad(saveNameBuffer);
 						} else {
-							drawString
-							    ("Chargement Annulé ...",
-							    0);
+							drawString("Chargement Annulé ...", 0);
 							waitPlayerInput();
 							checkDataDisk(-1);
 						}
 					} else {
-						drawString
-						    ("Chargement Annulé ...",
-						    0);
+						drawString("Chargement Annulé ...", 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
 				} else {
-					drawString
-					    ("Aucune sauvegarde dans le lecteur ...",
-					    0);
+					drawString("Aucune sauvegarde dans le lecteur ...", 0);
 					waitPlayerInput();
 					checkDataDisk(-1);
 				}
@@ -1106,61 +1037,40 @@ void makeSystemMenu(void) {
 				int16 selectedSave;
 
 				loadSaveDirectory();
-				selectedSave =
-				    makeMenuChoice(currentSaveName, 10, mouseX,
-				    mouseY + 8, 180);
+				selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
 
 				if (selectedSave >= 0) {
 					char saveFileName[256];
-					//makeTextEntryMenu("Veuillez entrer le Nom de la Sauvegarde .",&currentSaveName[selectedSave],120);
-					sprintf(currentSaveName[selectedSave],
-					    "temporary save name");
+					//makeTextEntryMenu("Veuillez entrer le Nom de la Sauvegarde .", &currentSaveName[selectedSave], 120);
+					sprintf(currentSaveName[selectedSave], "temporary save name");
 
 					if (gameType == Cine::GID_FW)
-						sprintf(saveFileName, "FW.%1d",
-						    selectedSave);
+						sprintf(saveFileName, "FW.%1d", selectedSave);
 					else
-						sprintf(saveFileName, "OS.%1d",
-						    selectedSave);
+						sprintf(saveFileName, "OS.%1d", selectedSave);
 
-					getMouseData(mouseUpdateStatus,
-					    (uint16 *) & mouseButton,
-					    (uint16 *) & mouseX,
-					    (uint16 *) & mouseY);
-					if (!makeMenuChoice(confirmMenu, 2,
-						mouseX, mouseY + 8, 100)) {
+					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 						char saveString[256];
 
 						Common::File fHandle;
 
 						if (gameType == Cine::GID_FW)
-							fHandle.open("FW.DIR",
-							    Common::File::
-							    kFileWriteMode,
-							    savePath);
+							fHandle.open("FW.DIR", Common::File::kFileWriteMode, savePath);
 						else
-							fHandle.open("OS.DIR",
-							    Common::File::
-							    kFileWriteMode,
-							    savePath);
+							fHandle.open("OS.DIR", Common::File::kFileWriteMode, savePath);
 
-						fHandle.write(currentSaveName,
-						    200);
+						fHandle.write(currentSaveName, 200);
 						fHandle.close();
 
-						sprintf(saveString,
-						    "Sauvegarde de |%s",
-						    currentSaveName
-						    [selectedSave]);
+						sprintf(saveString, "Sauvegarde de |%s", currentSaveName[selectedSave]);
 						drawString(saveString, 0);
 
 						makeSave(saveFileName);
 
 						checkDataDisk(-1);
 					} else {
-						drawString
-						    ("Sauvegarde Annulée ...",
-						    0);
+						drawString("Sauvegarde Annulée ...", 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
@@ -1262,8 +1172,7 @@ int16 selectSubObject(int16 x, int16 y) {
 		return -2;
 	}
 
-	selectedObject =
-	    makeMenuChoice(objectListCommand, listSize, x, y, 140);
+	selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140);
 
 	if (selectedObject == -1)
 		return -1;
@@ -1279,8 +1188,7 @@ int16 selectSubObject2(int16 x, int16 y, int16 param) {
 		return -2;
 	}
 
-	selectedObject =
-	    makeMenuChoice2(objectListCommand, listSize, x, y, 140);
+	selectedObject = makeMenuChoice2(objectListCommand, listSize, x, y, 140);
 
 	if (selectedObject == -1)
 		return -1;
@@ -1307,8 +1215,7 @@ void makeCommandLine(void) {
 		strcpy(commandBuffer, "");
 	}
 
-	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2))	// need object selection ?
-	{
+	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2)) {	// need object selection ?
 		int16 si;
 
 		getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
@@ -1316,8 +1223,7 @@ void makeCommandLine(void) {
 		if (gameType == Cine::GID_FW) {
 			si = selectSubObject(x, y + 8);
 		} else {
-			si = selectSubObject2(x, y + 8,
-			    -subObjectUseTable[playerCommand]);
+			si = selectSubObject2(x, y + 8, -subObjectUseTable[playerCommand]);
 		}
 
 		if (si < 0) {
@@ -1327,8 +1233,7 @@ void makeCommandLine(void) {
 			if (gameType == Cine::GID_OS) {
 				if (si >= 8000) {
 					si -= 8000;
-					canUseOnObject =
-					    canUseOnItemTable[playerCommand];
+					canUseOnObject = canUseOnItemTable[playerCommand];
 				} else {
 					canUseOnObject = 0;
 				}
@@ -1338,8 +1243,7 @@ void makeCommandLine(void) {
 			commandVar1 = 1;
 
 			strcat(commandBuffer, " ");
-			strcat(commandBuffer,
-			    objectTable[commandVar3[0]].name);
+			strcat(commandBuffer, objectTable[commandVar3[0]].name);
 			strcat(commandBuffer, " sur");
 		}
 	} else {
@@ -1353,14 +1257,12 @@ void makeCommandLine(void) {
 	}
 
 	if (gameType == Cine::GID_OS) {
-		if (playerCommand != -1 && canUseOnObject != 0)	// call use on sub object
-		{
+		if (playerCommand != -1 && canUseOnObject != 0)	{ // call use on sub object
 			int16 si;
 
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
 
-			si = selectSubObject2(x, y + 8,
-			    -subObjectUseTable[playerCommand]);
+			si = selectSubObject2(x, y + 8, -subObjectUseTable[playerCommand]);
 
 			if (si) {
 				if (si >= 8000) {
@@ -1376,13 +1278,8 @@ void makeCommandLine(void) {
 
 			isDrawCommandEnabled = 1;
 
-			if (playerCommand != -1
-			    && choiceResultTable[playerCommand] ==
-			    commandVar1) {
-				int16 di =
-				    getRelEntryForObject(playerCommand,
-				    commandVar1,
-				    (selectedObjStruct *) & commandVar3);
+			if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
+				int16 di = getRelEntryForObject(playerCommand, commandVar1, (selectedObjStruct *) & commandVar3);
 
 				if (di != -1) {
 					runObjectScript(di);
@@ -1445,8 +1342,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	currentY = Y + 4;
 
 	for (i = 0; i < height; i++) {
-		gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 9,
-		    color2, page1Raw);
+		gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 9, color2, page1Raw);
 		currentX = X + 4;
 
 		for (j = 0; j < strlen(commandList[i]); j++) {
@@ -1455,16 +1351,11 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 			if (currentChar == ' ') {
 				currentX += 5;
 			} else {
-				uint8 characterWidth =
-				    fontParamTable[currentChar].characterWidth;
+				uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					uint8 characterIdx =
-					    fontParamTable[currentChar].
-					    characterIdx;
-					drawSpriteRaw(textTable[characterIdx]
-					    [0], textTable[characterIdx][1], 2,
-					    8, page1Raw, currentX, currentY);
+					uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
 					currentX += characterWidth + 1;
 				}
 			}
@@ -1506,15 +1397,11 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 		if (currentChar == ' ') {
 			currentX += 5;
 		} else {
-			uint8 characterWidth =
-			    fontParamTable[currentChar].characterWidth;
+			uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 			if (characterWidth) {
-				uint8 characterIdx =
-				    fontParamTable[currentChar].characterIdx;
-				drawSpriteRaw(textTable[characterIdx][0],
-				    textTable[characterIdx][1], 2, 8, page1Raw,
-				    currentX, di);
+				uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 				currentX += characterWidth + 1;
 			}
 		}
@@ -1523,8 +1410,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	blitRawScreen(page1Raw);
 
 	manageEvents();
-	getMouseData(mouseUpdateStatus, &button, (uint16 *) & mouseX,
-	    (uint16 *) & mouseY);
+	getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
 
 	var_16 = mouseX;
 	var_14 = mouseY;
@@ -1533,8 +1419,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 	do {
 		manageEvents();
-		getMouseData(mouseUpdateStatus, &button, (uint16 *) & mouseX,
-		    (uint16 *) & mouseY);
+		getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
 
 		if (button) {
 			var_A = 1;
@@ -1547,20 +1432,17 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 				mainLoopSub6();
 			}
 
-			if (menuVar4 && currentSelection > 0)	// go up
-			{
+			if (menuVar4 && currentSelection > 0) {	// go up
 				currentSelection--;
 			}
 
-			if (menuVar5)	// go down
-			{
+			if (menuVar5) {	// go down
 				if (height - 1 > currentSelection) {
 					currentSelection++;
 				}
 			}
 		} else {
-			if (mouseX > X && mouseX < X + width && mouseY > Y
-			    && mouseY < Y + height * 9) {
+			if (mouseX > X && mouseX < X + width && mouseY > Y && mouseY < Y + height * 9) {
 				currentSelection = (mouseY - (Y + 4)) / 9;
 
 				if (currentSelection < 0)
@@ -1571,8 +1453,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 			}
 		}
 
-		if (currentSelection != oldSelection)	// old != new
-		{
+		if (currentSelection != oldSelection) {	// old != new
 			if (needMouseSave) {
 				hideMouse();
 			}
@@ -1589,19 +1470,11 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth =
-					    fontParamTable[currentChar].
-					    characterWidth;
+					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx =
-						    fontParamTable
-						    [currentChar].characterIdx;
-						drawSpriteRaw(textTable
-						    [characterIdx][0],
-						    textTable[characterIdx][1],
-						    2, 8, page1Raw, currentX,
-						    di);
+						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
 				}
@@ -1615,25 +1488,16 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 			for (j = 0; j < strlen(commandList[currentSelection]);
 			    j++) {
-				uint8 currentChar =
-				    commandList[currentSelection][j];
+				uint8 currentChar = commandList[currentSelection][j];
 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth =
-					    fontParamTable[currentChar].
-					    characterWidth;
+					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx =
-						    fontParamTable
-						    [currentChar].characterIdx;
-						drawSpriteRaw(textTable
-						    [characterIdx][0],
-						    textTable[characterIdx][1],
-						    2, 8, page1Raw, currentX,
-						    di);
+						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
 				}
@@ -1661,8 +1525,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (button);
 
-	if (var_4 == 2)		// recheck
-	{
+	if (var_4 == 2)	{	// recheck
 		return -1;
 	}
 
@@ -1713,8 +1576,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 	currentY = Y + 4;
 
 	for (i = 0; i < height; i++) {
-		gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 9,
-		    color2, page1Raw);
+		gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 9, color2, page1Raw);
 		currentX = X + 4;
 
 		for (j = 0; j < strlen(commandList[i]); j++) {
@@ -1723,16 +1585,11 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 			if (currentChar == ' ') {
 				currentX += 5;
 			} else {
-				uint8 characterWidth =
-				    fontParamTable[currentChar].characterWidth;
+				uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					uint8 characterIdx =
-					    fontParamTable[currentChar].
-					    characterIdx;
-					drawSpriteRaw(textTable[characterIdx]
-					    [0], textTable[characterIdx][1], 2,
-					    8, page1Raw, currentX, currentY);
+					uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
 					currentX += characterWidth + 1;
 				}
 			}
@@ -1774,15 +1631,11 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 		if (currentChar == ' ') {
 			currentX += 5;
 		} else {
-			uint8 characterWidth =
-			    fontParamTable[currentChar].characterWidth;
+			uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 			if (characterWidth) {
-				uint8 characterIdx =
-				    fontParamTable[currentChar].characterIdx;
-				drawSpriteRaw(textTable[characterIdx][0],
-				    textTable[characterIdx][1], 2, 8, page1Raw,
-				    currentX, di);
+				uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 				currentX += characterWidth + 1;
 			}
 		}
@@ -1791,8 +1644,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 	blitRawScreen(page1Raw);
 
 	manageEvents();
-	getMouseData(mouseUpdateStatus, &button, (uint16 *) & mouseX,
-	    (uint16 *) & mouseY);
+	getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
 
 	var_16 = mouseX;
 	var_14 = mouseY;
@@ -1801,8 +1653,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 
 	do {
 		manageEvents();
-		getMouseData(mouseUpdateStatus, &button, (uint16 *) & mouseX,
-		    (uint16 *) & mouseY);
+		getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
 
 		if (button) {
 			var_A = 1;
@@ -1815,20 +1666,17 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 				mainLoopSub6();
 			}
 
-			if (menuVar4 && currentSelection > 0)	// go up
-			{
+			if (menuVar4 && currentSelection > 0) {	// go up
 				currentSelection--;
 			}
 
-			if (menuVar5)	// go down
-			{
+			if (menuVar5) {	// go down
 				if (height - 1 > currentSelection) {
 					currentSelection++;
 				}
 			}
 		} else {
-			if (mouseX > X && mouseX < X + width && mouseY > Y
-			    && mouseY < Y + height * 9) {
+			if (mouseX > X && mouseX < X + width && mouseY > Y && mouseY < Y + height * 9) {
 				currentSelection = (mouseY - (Y + 4)) / 9;
 
 				if (currentSelection < 0)
@@ -1839,8 +1687,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 			}
 		}
 
-		if (currentSelection != oldSelection)	// old != new
-		{
+		if (currentSelection != oldSelection) {	// old != new
 			if (needMouseSave) {
 				hideMouse();
 			}
@@ -1857,19 +1704,11 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth =
-					    fontParamTable[currentChar].
-					    characterWidth;
+					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx =
-						    fontParamTable
-						    [currentChar].characterIdx;
-						drawSpriteRaw(textTable
-						    [characterIdx][0],
-						    textTable[characterIdx][1],
-						    2, 8, page1Raw, currentX,
-						    di);
+						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
 				}
@@ -1883,25 +1722,16 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 
 			for (j = 0; j < strlen(commandList[currentSelection]);
 			    j++) {
-				uint8 currentChar =
-				    commandList[currentSelection][j];
+				uint8 currentChar = commandList[currentSelection][j];
 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth =
-					    fontParamTable[currentChar].
-					    characterWidth;
+					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx =
-						    fontParamTable
-						    [currentChar].characterIdx;
-						drawSpriteRaw(textTable
-						    [characterIdx][0],
-						    textTable[characterIdx][1],
-						    2, 8, page1Raw, currentX,
-						    di);
+						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
 				}
@@ -1929,8 +1759,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (button);
 
-	if (var_4 == 2)		// recheck
-	{
+	if (var_4 == 2)	{	// recheck
 		return currentSelection + 8000;
 	}
 
@@ -1959,15 +1788,11 @@ void drawMenuBox(char *command, int16 x, int16 y) {
 		if (currentChar == ' ') {
 			x += 5;
 		} else {
-			uint8 characterWidth =
-			    fontParamTable[currentChar].characterWidth;
+			uint8 characterWidth = fontParamTable[currentChar].characterWidth;
 
 			if (characterWidth) {
-				uint8 characterIdx =
-				    fontParamTable[currentChar].characterIdx;
-				drawSpriteRaw(textTable[characterIdx][0],
-				    textTable[characterIdx][1], 2, 8, page2Raw,
-				    x, y);
+				uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page2Raw, x, y);
 				x += characterWidth + 1;
 			}
 		}
@@ -1997,12 +1822,10 @@ uint16 executePlayerInput(void) {
 
 		if (isDrawCommandEnabled) {
 			drawMenuBox(commandBuffer, 10, defaultMenuBoxColor);
-
 			isDrawCommandEnabled = 0;
 		}
 
-		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX,
-		    &mouseY);
+		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && currentEntry < 200) {
 			if (mouseButton & 1) {
@@ -2013,8 +1836,7 @@ uint16 executePlayerInput(void) {
 				di |= 2;
 			}
 
-			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX,
-			    &mouseY);
+			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 			currentEntry++;
 		}
@@ -2031,9 +1853,7 @@ uint16 executePlayerInput(void) {
 					int16 si;
 					do {
 						manageEvents();
-						getMouseData(mouseUpdateStatus,
-						    &mouseButton, &dummyU16,
-						    &dummyU16);
+						getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
 					} while (mouseButton);
 
 					si = getObjectUnderCursor(mouseX,
@@ -2044,31 +1864,19 @@ uint16 executePlayerInput(void) {
 						commandVar1++;
 
 						strcat(commandBuffer, " ");
-						strcat(commandBuffer,
-						    objectTable[si].name);
+						strcat(commandBuffer, objectTable[si].name);
 
 						isDrawCommandEnabled = 1;
 
-						if (choiceResultTable
-						    [playerCommand] ==
-						    commandVar1) {
+						if (choiceResultTable[playerCommand] == commandVar1) {
 							int16 relEntry;
 
-							drawMenuBox
-							    (commandBuffer, 10,
-							    defaultMenuBoxColor);
+							drawMenuBox(commandBuffer, 10, defaultMenuBoxColor);
 
-							relEntry =
-							    getRelEntryForObject
-							    (playerCommand,
-							    commandVar1,
-							    (selectedObjStruct
-								*)
-							    commandVar3);
+							relEntry = getRelEntryForObject(playerCommand, commandVar1, (selectedObjStruct *)commandVar3);
 
 							if (relEntry != -1) {
-								runObjectScript
-								    (relEntry);
+								runObjectScript(relEntry);
 							} else {
 								//addPlayerCommandMessage(playerCommand);
 							}
@@ -2076,8 +1884,7 @@ uint16 executePlayerInput(void) {
 							playerCommand = -1;
 
 							commandVar1 = 0;
-							strcpy(commandBuffer,
-							    "");
+							strcpy(commandBuffer, "");
 						}
 					} else {
 						globalVars[249] = mouseX;
@@ -2091,47 +1898,33 @@ uint16 executePlayerInput(void) {
 					}
 
 					if (gameType == Cine::GID_OS) {
-						playerCommand =
-						    makeMenuChoice2
-						    (defaultActionCommand, 6,
-						    mouseX, mouseY, 70);
+						playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
 
 						if (playerCommand >= 8000) {
 							playerCommand -= 8000;
 							canUseOnObject = 1;
 						}
 					} else {
-						playerCommand =
-						    makeMenuChoice
-						    (defaultActionCommand, 6,
-						    mouseX, mouseY, 70);
+						playerCommand =  makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
 					}
 
 					makeCommandLine();
 				} else {
 					int16 objIdx;
 
-					objIdx =
-					    getObjectUnderCursor(mouseX,
-					    mouseY);
+					objIdx = getObjectUnderCursor(mouseX, mouseY);
 
 					if (commandVar2 != objIdx) {
 						if (objIdx != -1) {
 							char command[256];
 
-							strcpy(command,
-							    commandBuffer);
+							strcpy(command, commandBuffer);
 							strcat(command, " ");
-							strcat(command,
-							    objectTable
-							    [objIdx].name);
+							strcat(command, objectTable[objIdx].name);
 
-							drawMenuBox(command,
-							    10,
-							    defaultMenuBoxColor);
+							drawMenuBox(command, 10, defaultMenuBoxColor);
 						} else {
-							isDrawCommandEnabled =
-							    1;
+							isDrawCommandEnabled = 1;
 						}
 					}
 
@@ -2142,20 +1935,14 @@ uint16 executePlayerInput(void) {
 			if (mouseButton & 2) {
 				if (!(mouseButton & 1)) {
 					if (gameType == Cine::GID_OS) {
-						playerCommand =
-						    makeMenuChoice2
-						    (defaultActionCommand, 6,
-						    mouseX, mouseY, 70);
+						playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
 
 						if (playerCommand >= 8000) {
 							playerCommand -= 8000;
 							canUseOnObject = 1;
 						}
 					} else {
-						playerCommand =
-						    makeMenuChoice
-						    (defaultActionCommand, 6,
-						    mouseX, mouseY, 70);
+						playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
 					}
 
 					makeCommandLine();
@@ -2175,24 +1962,16 @@ uint16 executePlayerInput(void) {
 
 						globalVars[250] = mouseY;
 
-						objIdx =
-						    getObjectUnderCursor
-						    (mouseX, mouseY);
+						objIdx = getObjectUnderCursor(mouseX, mouseY);
 
 						if (objIdx != -1) {
-							currentSelectedObject.
-							    idx = objIdx;
-							currentSelectedObject.
-							    param = -1;
+							currentSelectedObject.idx = objIdx;
+							currentSelectedObject.param = -1;
 
-							relEntry =
-							    getRelEntryForObject
-							    (6, 1,
-							    &currentSelectedObject);
+							relEntry = getRelEntryForObject(6, 1, &currentSelectedObject);
 
 							if (relEntry != -1) {
-								runObjectScript
-								    (relEntry);
+								runObjectScript(relEntry);
 							}
 						}
 					} else {
@@ -2203,8 +1982,7 @@ uint16 executePlayerInput(void) {
 		}
 	} else {
 		uint16 di = 0;
-		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX,
-		    &mouseY);
+		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton) {
 			if (mouseButton & 1) {
@@ -2216,8 +1994,7 @@ uint16 executePlayerInput(void) {
 			}
 
 			manageEvents();
-			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX,
-			    &mouseY);
+			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 		}
 
 		if (di) {
@@ -2237,8 +2014,7 @@ uint16 executePlayerInput(void) {
 		var_2 = 0;
 	}
 
-	if (inputVar1 && allowPlayerInput)	// use keyboard
-	{
+	if (inputVar1 && allowPlayerInput) {	// use keyboard
 		inputVar1 = 0;
 
 		switch (globalVars[253]) {
@@ -2305,10 +2081,8 @@ uint16 executePlayerInput(void) {
 		}
 
 		bgVar0 = var_5E;
-	} else			// don't use keyboard for move -> shortcuts to commands
-	{
-		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX,
-		    &mouseY);
+	} else {		// don't use keyboard for move -> shortcuts to commands
+		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		switch (var_2 - 59) {
 		case 0:
@@ -2409,10 +2183,10 @@ void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
 	 
 			maskSpriteIdx = objectTable[pCurrentOverlay->objIdx].frame;
 	 
-			maskWidth = animDataTable[maskSpriteIdx].width/2;
+			maskWidth = animDataTable[maskSpriteIdx].width / 2;
 			maskHeight = animDataTable[maskSpriteIdx].var2;
 	 
-			gfxSpriteFunc2(spritePtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, maskX-x ,maskY-y, i++);
+			gfxSpriteFunc2(spritePtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, maskX - x,maskY - y, i++);
 		}
 	 
 		pCurrentOverlay = pCurrentOverlay->next;
@@ -2425,9 +2199,7 @@ void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
 #endif
 
 	if (gameType == Cine::GID_OS) {
-		drawSpriteRaw2(spritePtr,
-		    objectTable[currentOverlay->objIdx].part, width, height,
-		    page, x, y);
+		drawSpriteRaw2(spritePtr, objectTable[currentOverlay->objIdx].part, width, height, page, x, y);
 	} else {
 		drawSpriteRaw(spritePtr, maskPtr, width, height, page, x, y);
 	}
@@ -2453,21 +2225,16 @@ void backupOverlayPage(void) {
 			for (i = additionalBgVScroll;
 			    i < 200 + additionalBgVScroll; i++) {
 				if (i > 200) {
-					memcpy(page1Raw + (i -
-						additionalBgVScroll) * 320,
-					    scrollBg + (i - 200) * 320, 320);
+					memcpy(page1Raw + (i - additionalBgVScroll) * 320, scrollBg + (i - 200) * 320, 320);
 				} else {
-					memcpy(page1Raw + (i -
-						additionalBgVScroll) * 320,
-					    bgPage + (i) * 320, 320);
+					memcpy(page1Raw + (i - additionalBgVScroll) * 320, bgPage + (i) * 320, 320);
 				}
 			}
 		}
 	}
 }
 
-uint16 computeMessageLength(uint8 *ptr, uint16 width, uint16 *numWords,
-						 uint16 *messageWidth, uint16 *lineResult) {
+uint16 computeMessageLength(uint8 *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
 	uint8 *localPtr = ptr;
 
 	uint16 var_2 = 0;
@@ -2500,8 +2267,7 @@ uint16 computeMessageLength(uint8 *ptr, uint16 width, uint16 *numWords,
 			si = 0;
 		} else {
 			if (fontParamTable[character].characterWidth) {
-				uint16 var_C =
-				    fontParamTable[character].characterWidth;
+				uint16 var_C = fontParamTable[character].characterWidth;
 
 				if (si + var_C < width) {
 					si += var_C;
@@ -2568,9 +2334,7 @@ void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 colo
 
 		messagePtr += messageLength;
 
-		messageLength =
-		    computeMessageLength((uint8 *) messagePtr, localWidth,
-		    &numWords, &messageWidth, &lineResult);
+		messageLength = computeMessageLength((uint8 *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
 
 		endOfMessagePtr = messagePtr + messageLength;
 
@@ -2589,8 +2353,7 @@ void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 colo
 			interWordSizeRemain = 0;
 		}
 
-		gfxDrawPlainBoxRaw(x, localY, x + width, localY + 9, color,
-		    page1Raw);
+		gfxDrawPlainBoxRaw(x, localY, x + width, localY + 9, color, page1Raw);
 
 		do {
 			currentChar = *(messagePtr++);
@@ -2603,21 +2366,15 @@ void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 colo
 				if (interWordSizeRemain)
 					interWordSizeRemain = 0;
 			} else {
-				characterWidth =
-				    fontParamTable[currentChar].characterWidth;
+				characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					uint8 characterIdx =
-					    fontParamTable[currentChar].
-					    characterIdx;
-					drawSpriteRaw(textTable[characterIdx]
-					    [0], textTable[characterIdx][1], 2,
-					    8, page1Raw, localX, localY);
+					uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
 					localX += characterWidth;
 				}
 			}
-		} while ((messagePtr < endOfMessagePtr)
-		    && !endOfMessageReached);
+		} while ((messagePtr < endOfMessagePtr) && !endOfMessageReached);
 
 		localX = x + 4;
 		localY += 9;
@@ -2669,20 +2426,13 @@ void drawOverlays(void) {
 						uint16 partVar1;
 						uint16 partVar2;
 						animDataStruct *pPart;
-						pPart =
-						    &animDataTable[objPtr->
-						    frame];
+						pPart = &animDataTable[objPtr->frame];
 
 						partVar1 = pPart->var1;
 						partVar2 = pPart->var2;
 
 						if (pPart->ptr1) {
-							drawSprite
-							    (currentOverlay,
-							    pPart->ptr1,
-							    pPart->ptr1,
-							    partVar1, partVar2,
-							    page1Raw, x, y);
+							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
 						}
 					} else {
 						uint16 partVar1;
@@ -2690,24 +2440,15 @@ void drawOverlays(void) {
 						animDataStruct *pPart;
 						int16 part = objPtr->part;
 
-						ASSERT(part >= 0
-						    && part <=
-						    NUM_MAX_PARTDATA);
+						ASSERT(part >= 0 && part <= NUM_MAX_PARTDATA);
 
-						pPart =
-						    &animDataTable[objPtr->
-						    frame];
+						pPart = &animDataTable[objPtr->frame];
 
 						partVar1 = pPart->var1;
 						partVar2 = pPart->var2;
 
 						if (pPart->ptr1) {
-							drawSprite
-							    (currentOverlay,
-							    pPart->ptr1,
-							    pPart->ptr2,
-							    partVar1, partVar2,
-							    page1Raw, x, y);
+							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr2, partVar1, partVar2, page1Raw, x, y);
 						}
 					}
 				}
@@ -2721,8 +2462,8 @@ void drawOverlays(void) {
 				uint16 partVar1;
 				uint16 partVar2;
 
-				/*      gfxWaitVSync();
-				 * hideMouse(); */
+				// gfxWaitVSync();
+				// hideMouse();
 
 				messageIdx = currentOverlay->objIdx;
 				x = currentOverlay->x;
@@ -2732,10 +2473,9 @@ void drawOverlays(void) {
 
 				blitRawScreen(page1Raw);
 
-				drawDialogueMessage(messageIdx, x, y, partVar1,
-				    partVar2);
+				drawDialogueMessage(messageIdx, x, y, partVar1, partVar2);
 
-				//blitScreen(page0,NULL);
+				//blitScreen(page0, NULL);
 
 				gfxFuncGen2();
 
@@ -2766,8 +2506,7 @@ void drawOverlays(void) {
 					animDataStruct *pPart;
 					int16 part = objPtr->part;
 
-					ASSERT(part >= 0
-					    && part <= NUM_MAX_PARTDATA);
+					ASSERT(part >= 0 && part <= NUM_MAX_PARTDATA);
 
 					pPart = &animDataTable[objPtr->frame];
 
@@ -2775,9 +2514,7 @@ void drawOverlays(void) {
 					partVar2 = pPart->var2;
 
 					if (pPart->ptr1) {
-						gfxFillSprite(pPart->ptr1,
-						    partVar1, partVar2,
-						    page1Raw, x, y);
+						gfxFillSprite(pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
 					}
 				}
 				break;
@@ -2810,7 +2547,8 @@ void drawOverlays(void) {
 								y2 = animDataTable[objPtr->frame].var2;
 
 								if (animDataTable[objPtr->frame].ptr1) {
-									//  drawSpriteRaw(animDataTable[objPtr->frame].ptr1,animDataTable[objPtr->frame].ptr1,x2,y2,additionalBgTable[currentAdditionalBgIdx],x,y);
+									// drawSpriteRaw(animDataTable[objPtr->frame].ptr1, animDataTable[objPtr->frame].ptr1, x2, y2,
+									//				additionalBgTable[currentAdditionalBgIdx], x, y);
 								}
 							}
 						}
@@ -2937,8 +2675,7 @@ void addMessage(uint8 param1, int16 param2, int16 param3, int16 param4, int16 pa
 
 unkListElementStruct unkList;
 
-void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3,
-    int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
+void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
 	unkListElementStruct *currentHead = &unkList;
 	unkListElementStruct *tempHead = currentHead;
 	unkListElementStruct *newElement;
@@ -2950,8 +2687,7 @@ void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3,
 		currentHead = tempHead->next;
 	}
 
-	newElement =
-	    (unkListElementStruct *) malloc(sizeof(unkListElementStruct));
+	newElement = (unkListElementStruct *)malloc(sizeof(unkListElementStruct));
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -3072,7 +2808,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 
 	}
 
-	if(var_1A) {
+	if (var_1A) {
 		currentHead = var_16;
 		var_22 = var_1E->next;
 		var_1E->next = currentHead;
@@ -3092,8 +2828,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 #endif
 }
 
-uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, unkListElementStruct *element,
-    uint16 param3, int16 *param4) {
+uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, unkListElementStruct *element, uint16 param3, int16 *param4) {
 	uint8 *currentPtr = ptr;
 	uint8 *ptrData;
 	uint8 *ptr2;
@@ -3103,7 +2838,7 @@ uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, unkListElementStruct *el
 	ASSERT_PTR(element);
 	ASSERT_PTR(param4);
 
-	dummyU16 = *(uint16 *) ((currentPtr + param1 * 2) + 8);
+	dummyU16 = *(uint16 *)((currentPtr + param1 * 2) + 8);
 	flipU16(&dummyU16);
 
 	ptrData = ptr + dummyU16;
@@ -3117,9 +2852,9 @@ uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, unkListElementStruct *el
 		return 0;
 	}
 
-	objectTable[param2].x += (int8) ptr2[4];
-	objectTable[param2].y += (int8) ptr2[5];
-	objectTable[param2].mask += (int8) ptr2[6];
+	objectTable[param2].x += (int8)ptr2[4];
+	objectTable[param2].y += (int8)ptr2[5];
+	objectTable[param2].mask += (int8)ptr2[6];
 
 	if (objectTable[param2].frame) {
 		resetGfxEntityEntry(param2);
@@ -3164,9 +2899,7 @@ void processUnkListElement(unkListElementStruct *element) {
 
 		if (element->varC == 255) {
 			if (globalVars[249] || globalVars[250]) {
-				computeMove1(element, ptr1[4] + x, ptr1[5] + y,
-				    param1, param2, globalVars[249],
-				    globalVars[250]);
+				computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[249], globalVars[250]);
 			} else {
 				element->var16 = 0;
 				element->var14 = 0;
@@ -3185,9 +2918,7 @@ void processUnkListElement(unkListElementStruct *element) {
 		var_4 = -1;
 
 		if ((element->var16 == 1
-			&& !addAni(3, element->var6, ptr1, element, 0, &var_4))
-		    || (element->var16 == 2
-			&& !addAni(2, element->var6, ptr1, element, 0,
+			&& !addAni(3, element->var6, ptr1, element, 0, &var_4)) || (element->var16 == 2	&& !addAni(2, element->var6, ptr1, element, 0,
 			    &var_4))) {
 			if (element->varC == 255) {
 				globalVars[250] = 0;
@@ -3195,27 +2926,22 @@ void processUnkListElement(unkListElementStruct *element) {
 		}
 
 		if ((element->var14 == 1
-			&& !addAni(0, element->var6, ptr1, element, 1,
-			    &var_2))) {
+			&& !addAni(0, element->var6, ptr1, element, 1, &var_2))) {
 			if (element->varC == 255) {
 				globalVars[249] = 0;
 
 				if (var_4 != -1) {
-					objectTable[element->var6].costume =
-					    var_4;
+					objectTable[element->var6].costume = var_4;
 				}
 			}
 		}
 
-		if ((element->var14 == 2
-			&& !addAni(1, element->var6, ptr1, element, 1,
-			    &var_2))) {
+		if ((element->var14 == 2 && !addAni(1, element->var6, ptr1, element, 1, &var_2))) {
 			if (element->varC == 255) {
 				globalVars[249] = 0;
 
 				if (var_4 != -1) {
-					objectTable[element->var6].costume =
-					    var_4;
+					objectTable[element->var6].costume = var_4;
 				}
 			}
 		}
@@ -3227,8 +2953,7 @@ void processUnkListElement(unkListElementStruct *element) {
 					element->var1E = 0;
 				}
 
-				addAni(element->var1C + 3, element->var6, ptr1,
-				    element, 1, (int16 *) & var2);
+				addAni(element->var1C + 3, element->var6, ptr1, element, 1, (int16 *) & var2);
 
 			}
 		}

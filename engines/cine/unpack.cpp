@@ -38,26 +38,26 @@ uint16 swap16(uint16 r) {
     d |= (*(--p)) << 24;\
 }
 #define store(p, b) *(--p) = b
-#define getbit(p, b) {\
-    b = bitbucket & 1;\
-    bitbucket >>= 1;\
-    if (!bitbucket) {\
-        loadd(p, bitbucket);\
-	crc ^= bitbucket;\
-	b = bitbucket & 1;\
-	bitbucket >>= 1;\
-	bitbucket |= 0x80000000;\
-    }\
+#define getbit(p, b) {			\
+	b = bitbucket & 1;			\
+	bitbucket >>= 1;			\
+	if (!bitbucket) {			\
+		loadd(p, bitbucket);	\
+		crc ^= bitbucket;		\
+		b = bitbucket & 1;		\
+		bitbucket >>= 1;		\
+		bitbucket |= 0x80000000;\
+	}							\
 }
 
-#define loadbits(p, b) {\
-    b = 0;\
-    do {\
-	getbit(p, bit);\
-	b <<= 1;\
-	b |= bit;\
-	nbits--;\
-    } while (nbits);\
+#define loadbits(p, b) {	\
+	b = 0;					\
+	do {					\
+		getbit(p, bit);		\
+		b <<= 1;			\
+		b |= bit;			\
+		nbits--;			\
+	} while (nbits);		\
 }
 
 int decomp(uint8 *in, uint8 *out, int size) {

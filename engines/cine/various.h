@@ -31,10 +31,8 @@ extern int gameType;
 
 typedef char commandeType[20];
 
-int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
-    uint16 width);
-int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
-    uint16 width);
+int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width);
+int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width);
 
 extern int16 allowSystemMenu;
 
@@ -89,8 +87,7 @@ void mainLoopSub2(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 extern uint16 errorVar;
 extern uint8 menuVar;
 
-void gfxFuncGen1(uint8 *param1, uint8 *param2, uint8 *param3, uint8 *param4,
-    int16 param5);
+void gfxFuncGen1(uint8 *param1, uint8 *param2, uint8 *param3, uint8 *param4, int16 param5);
 
 extern uint8 *page0;
 extern uint8 *page0c;
@@ -186,8 +183,8 @@ typedef struct mouseStatusStruct mouseStatusStruct;
 
 extern int16 additionalBgVScroll;
 
-void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3,
-    int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
+void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
 void resetUnkList();
 void processUnkList(void);
+
 #endif

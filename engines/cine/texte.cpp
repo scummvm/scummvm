@@ -62,18 +62,14 @@ void loadTextData(const char *pFileName, uint8 *pDestinationBuffer) {
 		loadRelatedPalette(pFileName);
 
 		for (i = 0; i < 0x4E; i++) {
-			gfxConvertSpriteToRaw(textTable[i][0], tempBuffer, 16,
-			    8);
-			generateMask(textTable[i][0], textTable[i][1], 16 * 8,
-			    0);
+			gfxConvertSpriteToRaw(textTable[i][0], tempBuffer, 16, 8);
+			generateMask(textTable[i][0], textTable[i][1], 16 * 8, 0);
 			tempBuffer += dataSize;
 		}
 	} else {
 		for (i = 0; i < 90; i++) {
-			gfxConvertSpriteToRaw(textTable[i][0], tempBuffer, 8,
-			    8);
-			generateMask(textTable[i][0], textTable[i][1], 8 * 8,
-			    0);
+			gfxConvertSpriteToRaw(textTable[i][0], tempBuffer, 8, 8);
+			generateMask(textTable[i][0], textTable[i][1], 8 * 8, 0);
 			tempBuffer += 0x40;
 		}
 	}

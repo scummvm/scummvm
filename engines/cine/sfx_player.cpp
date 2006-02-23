@@ -51,9 +51,7 @@ int snd_loadBasesonEntries(const char *fileName) {
 
 	snd_numBasesonEntries = snd_baseSndFile->readUint16BE();
 	snd_baseSndFile->readUint16BE();	/* entry_size */
-	snd_basesonEntries =
-	    (BasesonEntryStruct *) malloc(snd_numBasesonEntries *
-	    sizeof(BasesonEntryStruct));
+	snd_basesonEntries = (BasesonEntryStruct *)malloc(snd_numBasesonEntries * sizeof(BasesonEntryStruct));
 	if (snd_basesonEntries) {
 		for (i = 0; i < snd_numBasesonEntries; ++i) {
 			BasesonEntryStruct *be = &snd_basesonEntries[i];
@@ -105,32 +103,25 @@ static uint8 *snd_loadBasesonEntry(const char *entryName) {
 	} else {
 		entryNum = snd_findBasesonEntry(entryName);
 		if (entryNum != -1 && entryNum < snd_numBasesonEntries) {
-			const BasesonEntryStruct *be =
-			    &snd_basesonEntries[entryNum];
-			entryData = (uint8 *) malloc(be->unpackedSize);
+			const BasesonEntryStruct *be = &snd_basesonEntries[entryNum];
+			entryData = (uint8 *)malloc(be->unpackedSize);
 			if (entryData) {
 				if (be->unpackedSize > be->size) {
-					uint8 *tempData = (uint8 *) malloc(be->size);
+					uint8 *tempData = (uint8 *)malloc(be->size);
 					if (tempData) {
-						snd_baseSndFile->seek(be->
-						    offset, SEEK_SET);
-						snd_baseSndFile->read(tempData,
-						    be->size);
-						decomp(tempData + be->size - 4,
-						    entryData +
-						    be->unpackedSize,
-						    be->unpackedSize);
+						snd_baseSndFile->seek(be->offset, SEEK_SET);
+						snd_baseSndFile->read(tempData, be->size);
+						decomp(tempData + be->size - 4, entryData + be->unpackedSize, be->unpackedSize);
 						free(tempData);
 					}
 				} else {
-					snd_baseSndFile->seek(be->offset,
-					    SEEK_SET);
-					snd_baseSndFile->read(entryData,
-					    be->size);
+					snd_baseSndFile->seek(be->offset, SEEK_SET);
+					snd_baseSndFile->read(entryData, be->size);
 				}
 			}
 		}
 	}
+
 	return entryData;
 }
 
@@ -183,8 +174,7 @@ int snd_loadSong(const char *songName) {
 
 	for (i = 0; i < 15; ++i) {
 		char instrumentName[13];
-		memcpy(instrumentName, snd_sfxState.songData + 20 + i * 30,
-		    12);
+		memcpy(instrumentName, snd_sfxState.songData + 20 + i * 30, 12);
 		instrumentName[12] = '\0';
 
 		snd_sfxState.instruments[i] = snd_nullInstrument;
@@ -222,8 +212,7 @@ void snd_playSong() {
 		snd_sfxState.currentOrder = 0;
 		snd_sfxState.currentPos = 0;
 		snd_sfxState.numOrders = snd_sfxState.songData[470];
-		snd_eventsDelay =
-		    (252 - snd_sfxState.songData[471]) * 25 * 2 / 1060;
+		snd_eventsDelay = (252 - snd_sfxState.songData[471]) * 25 * 2 / 1060;
 		snd_songTicksCounter = 0;
 		snd_songIsPlaying = 1;
 	}
@@ -236,8 +225,7 @@ void snd_handleEvents() {
 	uint16 patternNum = orderTable[snd_sfxState.currentOrder] * 1024;
 
 	for (i = 0; i < 4; ++i) {
-		snd_handlePattern(i,
-		    patternData + patternNum + snd_sfxState.currentPos);
+		snd_handlePattern(i, patternData + patternNum + snd_sfxState.currentPos);
 		patternData += 4;
 	}
 
@@ -257,31 +245,23 @@ void snd_handlePattern(int channelNum, const uint8 *patternData) {
 	uint16 instrNum = patternData[2] >> 4;
 	snd_adlibInstrumentsTable[channelNum] = snd_nullInstrument;
 	if (instrNum != 0) {
-		if (snd_sfxState.currentInstrumentChannel[channelNum] !=
-		    instrNum) {
-			snd_sfxState.currentInstrumentChannel[channelNum] =
-			    instrNum;
-			(*snd_driver.setupChannel) (channelNum,
-			    snd_sfxState.instruments[instrNum - 1],
-			    instrNum - 1);
+		if (snd_sfxState.currentInstrumentChannel[channelNum] != instrNum) {
+			snd_sfxState.currentInstrumentChannel[channelNum] = instrNum;
+			(*snd_driver.setupChannel) (channelNum, snd_sfxState.instruments[instrNum - 1], instrNum - 1);
 		} else if (snd_fadeOutCounter != 0) {
-			instrNum =
-			    snd_sfxState.currentInstrumentChannel[channelNum];
+			instrNum = snd_sfxState.currentInstrumentChannel[channelNum];
 			if (instrNum != 0)
-				(*snd_driver.setupChannel) (channelNum,
-				    snd_sfxState.instruments[instrNum - 1],
-				    instrNum - 1);
+				(*snd_driver.setupChannel)(channelNum, snd_sfxState.instruments[instrNum - 1], instrNum - 1);
 		}
-		snd_adlibInstrumentsTable[channelNum] =
-		    snd_sfxState.instruments[instrNum - 1];
+		snd_adlibInstrumentsTable[channelNum] = snd_sfxState.instruments[instrNum - 1];
 	}
 	if (snd_mute != 0)
-		(*snd_driver.stopChannel) (channelNum);
+		(*snd_driver.stopChannel)(channelNum);
 	else {
-		int16 freq = (int16) readU16BE(patternData);
+		int16 freq = (int16)readU16BE(patternData);
 		if (freq > 0) {
-			(*snd_driver.stopChannel) (channelNum);
-			(*snd_driver.setChannelFrequency) (channelNum, freq);
+			(*snd_driver.stopChannel)(channelNum);
+			(*snd_driver.setChannelFrequency)(channelNum, freq);
 		}
 	}
 }

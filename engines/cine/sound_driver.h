@@ -38,8 +38,7 @@
 #define ADLIB_REG_WAVE_SELECT 0xE0
 
 typedef struct {
-	void (*setupChannel) (int channelNum, const uint8 * data,
-	    int instrumentNum);
+	void (*setupChannel) (int channelNum, const uint8 * data, int instrumentNum);
 	void (*setChannelFrequency) (int channelNum, int frequency);
 	void (*stopChannel) (int channelNum);
 	void (*playSound) (uint8 * data, int channelNum, int volume);

@@ -68,8 +68,7 @@ static const int16 snd_adlibNoteFreqTable[] = {
 	0x0017, 0x0016, 0x0015, 0x0013, 0x0012, 0x0011, 0x0010, 0x000F
 };
 
-static void snd_adlibWriteData(int port, int value)
-{
+static void snd_adlibWriteData(int port, int value) {
 	OPLWriteReg(g_cine_adlib->getOPL(), port, value);
 }
 
@@ -88,14 +87,12 @@ static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int chan
 		adlibOp1 = snd_adlibOpTable[snd_adlibNoteTable[ch * 2 + 0]];
 		adlibOp2 = snd_adlibOpTable[snd_adlibNoteTable[ch * 2 + 1]];
 	} else {
-		adlibOp1 =
-		    snd_adlibOpTable[snd_adlibNoteTable[channelNum * 2 + 0]];
-		adlibOp2 =
-		    snd_adlibOpTable[snd_adlibNoteTable[channelNum * 2 + 1]];
+		adlibOp1 = snd_adlibOpTable[snd_adlibNoteTable[channelNum * 2 + 0]];
+		adlibOp2 = snd_adlibOpTable[snd_adlibNoteTable[channelNum * 2 + 1]];
 	}
 
 	if (fl == 0 || ch == 6) {
-		/* vibrato */
+		// vibrato
 		tmp = 0;
 		if (readU16LE(instrumentData + 18) != 0)
 			tmp |= 0x80;
@@ -108,7 +105,7 @@ static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int chan
 		tmp |= (readU16LE(instrumentData + 2) & 0xF);
 		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_EG_KS + adlibOp1, tmp);
 
-		/* key scaling */
+		// key scaling
 		tmp = 0x3F - (readU16LE(instrumentData + 16) & 0x3F);
 		tmp = snd_adlibChannelVolume[channelNum] * tmp;
 		tmp += tmp + 0x7F;
@@ -116,46 +113,34 @@ static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int chan
 		if (readU16LE(instrumentData + 24) != 0)
 			tmp = readU16LE(instrumentData + 16) & 0x3F;
 		tmp |= readU16LE(instrumentData) << 6;
-		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT +
-		    adlibOp1, tmp);
+		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + adlibOp1, tmp);
 
-		/* attack/decay rates */
-		tmp =
-		    (readU16LE(instrumentData +
-			6) << 4) | (readU16LE(instrumentData + 12) & 0xF);
-		snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE + adlibOp1,
-		    tmp);
+		// attack/decay rates
+		tmp = (readU16LE(instrumentData + 6) << 4) | (readU16LE(instrumentData + 12) & 0xF);
+		snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE + adlibOp1, tmp);
 
-		/* sustain/release rates */
-		tmp =
-		    (readU16LE(instrumentData +
-			8) << 4) | (readU16LE(instrumentData + 14) & 0xF);
-		snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 +
-		    adlibOp1, tmp);
+		// sustain/release rates
+		tmp = (readU16LE(instrumentData + 8) << 4) | (readU16LE(instrumentData + 14) & 0xF);
+		snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 + adlibOp1, tmp);
 
 		if (fl != 0) {
 			tmp = readU16LE(instrumentData + 4) * 2;
 			if (readU16LE(instrumentData + 24) == 0)
 				tmp |= 1;
 
-			snd_adlibWriteData
-			    (ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE + ch,
-			    tmp);
+			snd_adlibWriteData(ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE + ch, tmp);
 		} else {
 			tmp = readU16LE(instrumentData + 4) * 2;
 			if (readU16LE(instrumentData + 24) == 0)
 				tmp |= 1;
 
-			snd_adlibWriteData
-			    (ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE +
-			    channelNum, tmp);
+			snd_adlibWriteData(ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE + channelNum, tmp);
 		}
-		snd_adlibWriteData(ADLIB_REG_WAVE_SELECT + adlibOp1,
-		    waveSelect1);
+		snd_adlibWriteData(ADLIB_REG_WAVE_SELECT + adlibOp1, waveSelect1);
 		instrumentData += 26;
 	}
 
-	/* vibrato */
+	// vibrato
 	tmp = 0;
 	if (readU16LE(instrumentData + 18) != 0)
 		tmp |= 0x80;
@@ -168,27 +153,21 @@ static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int chan
 	tmp |= (readU16LE(instrumentData + 2) & 0xF);
 	snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_EG_KS + adlibOp2, tmp);
 
-	/* key scaling */
+	// key scaling
 	tmp = 0x3F - (readU16LE(instrumentData + 16) & 0x3F);
 	tmp = snd_adlibChannelVolume[channelNum] * tmp;
 	tmp += tmp + 0x7F;
 	tmp = 0x3F - (tmp / 0xFE);
 	tmp |= readU16LE(instrumentData) << 6;
-	snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + adlibOp2,
-	    tmp);
+	snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + adlibOp2, tmp);
 
-	/* attack/decay rates */
-	tmp =
-	    (readU16LE(instrumentData + 6) << 4) | (readU16LE(instrumentData +
-		12) & 0xF);
+	// attack/decay rates */
+	tmp =(readU16LE(instrumentData + 6) << 4) | (readU16LE(instrumentData + 12) & 0xF);
 	snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE + adlibOp2, tmp);
 
-	/* sustain/release rates */
-	tmp =
-	    (readU16LE(instrumentData + 8) << 4) | (readU16LE(instrumentData +
-		14) & 0xF);
-	snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 + adlibOp2,
-	    tmp);
+	// sustain/release rates */
+	tmp = (readU16LE(instrumentData + 8) << 4) | (readU16LE(instrumentData + 14) & 0xF);
+	snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 + adlibOp2, tmp);
 	snd_adlibWriteData(ADLIB_REG_WAVE_SELECT + adlibOp2, waveSelect2);
 }
 
@@ -200,8 +179,7 @@ static void snd_adlibInterrupt(void *param, int16 *buf, int len) {
 	while (len != 0) {
 		int count;
 		if (samplesLeft == 0) {
-			if (snd_songIsPlaying || (snd_fadeOutCounter != 0
-				&& snd_fadeOutCounter < 100)) {
+			if (snd_songIsPlaying || (snd_fadeOutCounter != 0 && snd_fadeOutCounter < 100)) {
 				++snd_songTicksCounter;
 				if (snd_songTicksCounter > snd_eventsDelay) {
 					snd_handleEvents();
@@ -227,8 +205,7 @@ static void snd_adlibInterrupt(void *param, int16 *buf, int len) {
 	}
 }
 
-static void snd_adlibDriverSetupChannel(int channelNum, const uint8 *data,
-										int instrumentNum) {
+static void snd_adlibDriverSetupChannel(int channelNum, const uint8 *data, int instrumentNum) {
 	int16 vol = snd_sfxState.songData[instrumentNum];
 	if (vol != 0 && vol < 0x50)
 		vol = 0x50;
@@ -259,14 +236,14 @@ static void snd_getAdlibFrequency(int frequency, int *adlibFreq) {
 
 static void snd_adlibDriverSetChannelFrequency(int channelNum, int frequency) {
 	const uint8 *instr = snd_adlibInstrumentsTable[channelNum];
-	uint8 fl = *instr++;	/* var2 */
-	uint8 ch = *instr++;	/* var1 */
+	uint8 fl = *instr++;	// var2
+	uint8 ch = *instr++;	// var1
 
 	if (fl != 0 && ch == 6)
 		channelNum = 6;
 
 	if (fl == 0 || channelNum == 6) {
-		uint16 freqLow, freqHigh;	/* var8 */
+		uint16 freqLow, freqHigh;	// var8
 		int adlibFreq;
 
 		snd_getAdlibFrequency(frequency, &adlibFreq);
@@ -274,44 +251,39 @@ static void snd_adlibDriverSetChannelFrequency(int channelNum, int frequency) {
 			adlibFreq %= 12;
 
 		freqLow = snd_adlibFreqTable[adlibFreq % 12];
-		snd_adlibWriteData(ADLIB_REG_FREQUENCY_0 + channelNum,
-		    freqLow);
+		snd_adlibWriteData(ADLIB_REG_FREQUENCY_0 + channelNum, freqLow);
 		freqHigh = ((adlibFreq / 12) << 2) | ((freqLow & 0x300) >> 8);
 		if (fl == 0)
 			freqHigh |= 0x20;
 
-		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 +
-		    channelNum, freqHigh);
+		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 + channelNum, freqHigh);
 	}
 	if (fl != 0) {
 		snd_adlibVibrato |= 1 << (10 - ch);
-		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_RHYTHM,
-		    snd_adlibVibrato);
+		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_RHYTHM, snd_adlibVibrato);
 	}
 }
 
 static void snd_adlibDriverStopChannel(int channelNum) {
 	const uint8 *instr = snd_adlibInstrumentsTable[channelNum];
-	uint8 fl = *instr++;	/* var2 */
-	uint8 ch = *instr++;	/* var1 */
+	uint8 fl = *instr++;	// var2
+	uint8 ch = *instr++;	// var1
 
 	if (fl != 0 && ch == 6)
 		channelNum = 6;
 
 	if (fl == 0 || channelNum == 6)
-		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 +
-		    channelNum, 0);
+		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 + channelNum, 0);
 
 	if (fl != 0) {
 		snd_adlibVibrato &= (1 << (10 - ch)) ^ 0xFF;
-		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_RHYTHM,
-		    snd_adlibVibrato);
+		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_RHYTHM, snd_adlibVibrato);
 	}
 }
 
 static void snd_adlibDriverPlaySound(uint8 * data, int channelNum, int volume) {
-/*  if (_snd_mute) return;*/
-	uint8 fl, ch;		/* var2, var1 */
+//  if (_snd_mute) return;
+	uint8 fl, ch;		// var2, var1
 
 	assert(channelNum < 4);
 	data += 257;
@@ -328,19 +300,16 @@ static void snd_adlibDriverPlaySound(uint8 * data, int channelNum, int volume) {
 	if (fl == 0 || channelNum == 6) {
 		uint16 freqLow, freqHigh;
 		freqLow = snd_adlibFreqTable[0];
-		snd_adlibWriteData(ADLIB_REG_FREQUENCY_0 + channelNum,
-		    freqLow);
+		snd_adlibWriteData(ADLIB_REG_FREQUENCY_0 + channelNum, freqLow);
 		freqHigh = 4 | ((freqLow & 0x300) >> 8);
 		if (fl == 0)
 			freqHigh |= 0x20;
 
-		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 +
-		    channelNum, freqHigh);
+		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 + channelNum, freqHigh);
 	}
 	if (fl != 0) {
 		snd_adlibVibrato = 1 << (10 - ch);
-		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_RHYTHM,
-		    snd_adlibVibrato);
+		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_RHYTHM, snd_adlibVibrato);
 	}
 }
 
@@ -355,8 +324,7 @@ void snd_adlibDriverStopSong() {
 	int i;
 
 	for (i = 0; i < 18; ++i)
-		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT +
-		    snd_adlibOpTable[i], 0x3F);
+		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + snd_adlibOpTable[i], 0x3F);
 
 	for (i = 0; i < 9; ++i)
 		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 + i, 0);
@@ -383,27 +351,22 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer) {
 	int i;
 
 	for (i = 0; i < 18; ++i)
-		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT +
-		    snd_adlibOpTable[i], 0);
+		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + snd_adlibOpTable[i], 0);
 
 	for (i = 0; i < 9; ++i)
 		snd_adlibWriteData(ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 + i, 0);
 
 	for (i = 0; i < 9; ++i)
-		snd_adlibWriteData(ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE
-		    + i, 0);
+		snd_adlibWriteData(ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE + i, 0);
 
 	for (i = 0; i < 18; ++i)
-		snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE +
-		    snd_adlibOpTable[i], 0);
+		snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE + snd_adlibOpTable[i], 0);
 
 	for (i = 0; i < 18; ++i)
-		snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 +
-		    snd_adlibOpTable[i], 0);
+		snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 + snd_adlibOpTable[i], 0);
 
 	for (i = 0; i < 18; ++i)
-		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_EG_KS +
-		    snd_adlibOpTable[i], 0);
+		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_EG_KS + snd_adlibOpTable[i], 0);
 
 	for (i = 0; i < 18; ++i)
 		snd_adlibWriteData(ADLIB_REG_WAVE_SELECT + snd_adlibOpTable[i],
