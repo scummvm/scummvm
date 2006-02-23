@@ -93,15 +93,14 @@ void loadPrc(const char *pPrcName) {
 			size = scriptTable[i].var4;
 
 			if (size) {
-				scriptTable[i].ptr = (byte *) malloc(size);
+				scriptTable[i].ptr = (byte *)malloc(size);
 
 				ASSERT_PTR(scriptTable[i].ptr);
 
 				memcpy(scriptTable[i].ptr, readPtr, size);
 				readPtr += size;
 
-				computeScriptStack(scriptTable[i].ptr,
-				    scriptTable[i].stack, size);
+				computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 			}
 		}
 	} else {
@@ -136,8 +135,7 @@ void loadPrc(const char *pPrcName) {
 				memcpy(scriptTable[i].ptr, ptr, size);
 				ptr += size;
 
-				computeScriptStack(scriptTable[i].ptr,
-				    scriptTable[i].stack, size);
+				computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 			}
 		}
 	}

@@ -37,7 +37,6 @@ void loadPart(const char *partName) {
 
 	for (i = 0; i < 255; i++) {
 		partBuffer[i].part_name[0] = 0;
-
 		partBuffer[i].offset = 0;
 		partBuffer[i].packed_size = 0;
 		partBuffer[i].unpacked_size = 0;
@@ -191,7 +190,6 @@ void readFromPart(int16 idx, uint8 *dataPtr) {
 	processPendingUpdates(1);
 
 	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
-
 	partFileHandle.read(dataPtr, partBuffer[idx].packed_size);
 }
 
@@ -201,22 +199,17 @@ uint8 *readBundleFile(int16 foundFileIdx) {
 	dataPtr = (uint8 *) malloc(partBuffer[foundFileIdx].unpacked_size + 2);
 	memset(dataPtr, 0, partBuffer[foundFileIdx].unpacked_size + 2);
 
-	if (partBuffer[foundFileIdx].unpacked_size !=
-	    partBuffer[foundFileIdx].packed_size) {
+	if (partBuffer[foundFileIdx].unpacked_size != partBuffer[foundFileIdx].packed_size) {
 		uint8 *unpackBuffer;
 		uint16 realSize;
 
-		unpackBuffer =
-		    (uint8 *) malloc(partBuffer[foundFileIdx].packed_size + 500);
+		unpackBuffer = (uint8 *)malloc(partBuffer[foundFileIdx].packed_size + 500);
 		readFromPart(foundFileIdx, unpackBuffer);
 
-		realSize =
-		    *(uint16 *) (unpackBuffer +
-		    partBuffer[foundFileIdx].packed_size - 2);
+		realSize = *(uint16 *)(unpackBuffer + partBuffer[foundFileIdx].packed_size - 2);
 		flipU16(&realSize);
 
-		decomp(unpackBuffer + partBuffer[foundFileIdx].packed_size - 4,
-		    dataPtr + realSize, realSize);
+		decomp(unpackBuffer + partBuffer[foundFileIdx].packed_size - 4, dataPtr + realSize, realSize);
 		free(unpackBuffer);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);

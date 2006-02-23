@@ -38,7 +38,7 @@ uint8 page2Raw[320 * 200];
 uint8 page3Raw[320 * 200];
 
 void init_video() {
-	screenBuffer = (byte *) malloc(320 * 200 * 3);
+	screenBuffer = (byte *)malloc(320 * 200 * 3);
 	assert(screenBuffer);
 
 	page0 = (unsigned char *)malloc(0x8000);
@@ -182,8 +182,7 @@ void gfxResetRawPage(uint8 *pageRaw) {
 
 void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 height) {
 	int x, y;
-	uint8 b1, b2, b3, b4, b5, b6, b7, b8, d1a, d1b, d2a, d2b, d3a, d3b, d4a,
-	    d4b;
+	uint8 b1, b2, b3, b4, b5, b6, b7, b8, d1a, d1b, d2a, d2b, d3a, d3b, d4a, d4b;
 
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < (width >> 3); x++) {
@@ -198,36 +197,20 @@ void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 heig
 
 			d1a = d1b = d2a = d2b = d3a = d3b = d4a = d4b = 0;
 
-			d1a |=
-			    (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) <<
-				2) | ((b1 & 1) << 3)) << 0;
-			d1b |=
-			    (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) <<
-				1) | ((b1 & 2) << 2)) << 0;
-			d2a |=
-			    (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >>
-				0) | ((b1 & 4) << 1)) << 0;
-			d2b |=
-			    (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >>
-				1) | ((b1 & 8) >> 0)) << 0;
+			d1a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
+			d1b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
+			d2a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
+			d2b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
 
 			b1 >>= 4;
 			b2 >>= 4;
 			b3 >>= 4;
 			b4 >>= 4;
 
-			d3a |=
-			    (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) <<
-				2) | ((b1 & 1) << 3)) << 0;
-			d3b |=
-			    (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) <<
-				1) | ((b1 & 2) << 2)) << 0;
-			d4a |=
-			    (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >>
-				0) | ((b1 & 4) << 1)) << 0;
-			d4b |=
-			    (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >>
-				1) | ((b1 & 8) >> 0)) << 0;
+			d3a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
+			d3b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
+			d4a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
+			d4b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
 
 			*(dest++) = d4b;
 			*(dest++) = d4a;
@@ -245,36 +228,20 @@ void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 heig
 
 			d1a = d1b = d2a = d2b = d3a = d3b = d4a = d4b = 0;
 
-			d1a |=
-			    (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) <<
-				2) | ((b1 & 1) << 3)) << 0;
-			d1b |=
-			    (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) <<
-				1) | ((b1 & 2) << 2)) << 0;
-			d2a |=
-			    (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >>
-				0) | ((b1 & 4) << 1)) << 0;
-			d2b |=
-			    (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >>
-				1) | ((b1 & 8) >> 0)) << 0;
+			d1a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
+			d1b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
+			d2a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
+			d2b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
 
 			b1 >>= 4;
 			b2 >>= 4;
 			b3 >>= 4;
 			b4 >>= 4;
 
-			d3a |=
-			    (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) <<
-				2) | ((b1 & 1) << 3)) << 0;
-			d3b |=
-			    (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) <<
-				1) | ((b1 & 2) << 2)) << 0;
-			d4a |=
-			    (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >>
-				0) | ((b1 & 4) << 1)) << 0;
-			d4b |=
-			    (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >>
-				1) | ((b1 & 8) >> 0)) << 0;
+			d3a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
+			d3b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
+			d4a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
+			d4b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
 
 			*(dest++) = d4b;
 			*(dest++) = d4a;
@@ -324,12 +291,9 @@ void gfxFlipRawPage(uint8 *frontBuffer) {
 		g_system->setPalette(pal, 0, 256);
 	} else {
 		for (i = 0; i < 16; i++) {
-			pal[i * 4 + 2] =
-			    ((c_palette[i] & 0x00f) >> 0) * 255 / 7;
-			pal[i * 4 + 1] =
-			    ((c_palette[i] & 0x0f0) >> 4) * 255 / 7;
-			pal[i * 4 + 0] =
-			    ((c_palette[i] & 0xf00) >> 8) * 255 / 7;
+			pal[i * 4 + 2] = ((c_palette[i] & 0x00f) >> 0) * 255 / 7;
+			pal[i * 4 + 1] = ((c_palette[i] & 0x0f0) >> 4) * 255 / 7;
+			pal[i * 4 + 0] = ((c_palette[i] & 0xf00) >> 8) * 255 / 7;
 			pal[i * 4 + 3] = 0;
 		}
 		g_system->setPalette(pal, 0, 16);
@@ -350,9 +314,8 @@ void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height,
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
-			if (((gameType == Cine::GID_FW && !(*maskPtr))
-				|| (gameType == Cine::GID_OS)) && (x + j >= 0
-				&& x + j < 320 && i + y >= 0 && i + y < 200)) {
+			if (((gameType == Cine::GID_FW && !(*maskPtr)) || (gameType == Cine::GID_OS)) && (x + j >= 0
+					&& x + j < 320 && i + y >= 0 && i + y < 200)) {
 				*(destPtr++) = *(spritePtr++);
 			} else {
 				destPtr++;
@@ -374,8 +337,7 @@ void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 heigh
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
-			if ((*(spritePtr) != transColor) && (x + j >= 0
-				&& x + j < 320 && i + y >= 0 && i + y < 200)) {
+			if ((*(spritePtr) != transColor) && (x + j >= 0 && x + j < 320 && i + y >= 0 && i + y < 200)) {
 				*(destPtr++) = *(spritePtr++);
 			} else {
 				destPtr++;

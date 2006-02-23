@@ -128,10 +128,8 @@ CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	}
 
 	cine_g_mixer = _mixer;
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-	    ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-	    ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_dataPath = getGameDataPath();
 	_savePath = _saveFileMan->getSavePath();
@@ -157,8 +155,8 @@ void CineEngine::errorString(const char *buf1, char *buf2) {
 int CineEngine::init(GameDetector &detector) {
 	// Initialize backend
 	_system->beginGFXTransaction();
-		initCommonGFX(detector, false);
-		_system->initSize(320, 200);
+	initCommonGFX(detector, false);
+	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
 	g_cine_adlib = new AdlibMusic(_mixer);
@@ -190,9 +188,9 @@ static void initialize() {
 
 	init_video();
 
-	textDataPtr = (uint8 *) malloc(8000);
+	textDataPtr = (uint8 *)malloc(8000);
 
-	partBuffer = (partBufferStruct *) malloc(255 * sizeof(animDataStruct));
+	partBuffer = (partBufferStruct *)malloc(255 * sizeof(animDataStruct));
 
 	loadTextData("texte.dat", textDataPtr);
 	snd_loadBasesonEntries("BASESON.SND");

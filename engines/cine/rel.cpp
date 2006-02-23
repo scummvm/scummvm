@@ -79,19 +79,19 @@ void loadRel(char *pRelName) {
 	ASSERT(numEntry <= NUM_MAX_REL);
 
 	for (i = 0; i < numEntry; i++) {
-		relTable[i].var4 = *(uint16 *) ptr;
+		relTable[i].var4 = *(uint16 *)ptr;
 		ptr += 2;
 		flipU16(&relTable[i].var4);
 
-		relTable[i].var6 = *(uint16 *) ptr;
+		relTable[i].var6 = *(uint16 *)ptr;
 		ptr += 2;
 		flipU16(&relTable[i].var6);
 
-		relTable[i].var8 = *(uint16 *) ptr;
+		relTable[i].var8 = *(uint16 *)ptr;
 		ptr += 2;
 		flipU16(&relTable[i].var8);
 
-		relTable[i].varA = *(uint16 *) ptr;
+		relTable[i].varA = *(uint16 *)ptr;
 		ptr += 2;
 		flipU16(&relTable[i].varA);
 	}

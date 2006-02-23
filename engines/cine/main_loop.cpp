@@ -172,16 +172,14 @@ void mainLoop(int bootScriptIdx) {
 
 			do {
 				manageEvents();
-				getMouseData(mouseUpdateStatus, &mouseButton,
-				    &dummyU16, &dummyU16);
+				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
 			} while (mouseButton != 0);
 
 			menuVar = 0;
 
 			do {
 				manageEvents();
-				getMouseData(mouseUpdateStatus, &mouseButton,
-				    &dummyU16, &dummyU16);
+				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
 
 				if (mouseButton == 0) {
 					if (processKeyboard(menuVar)) {
@@ -198,8 +196,7 @@ void mainLoop(int bootScriptIdx) {
 
 			do {
 				manageEvents();
-				getMouseData(mouseUpdateStatus, &mouseButton,
-				    &dummyU16, &dummyU16);
+				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
 			} while (mouseButton != 0);
 
 			waitForPlayerClick = 0;

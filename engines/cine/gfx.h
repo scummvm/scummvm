@@ -62,10 +62,8 @@ void gfxResetRawPage(uint8 *pageRaw);
 void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 height);
 void gfxCopyRawPage(uint8 *source, uint8 * dest);
 void gfxFlipRawPage(uint8 *frontBuffer);
-void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height,
-    uint8 *page, int16 x, int16 y);
+void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height, uint8 *page, int16 x, int16 y);
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page);
-void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 height,
-    uint8 *page, int16 x, int16 y);
+void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 height, uint8 *page, int16 x, int16 y);
 
 #endif

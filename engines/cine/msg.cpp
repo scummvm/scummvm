@@ -64,8 +64,7 @@ void loadMsg(char *pMsgName) {
 
 	for (i = 0; i < msgVar0; i++) {
 		if (messageTable[i].len) {
-			messageTable[i].ptr =
-			    (uint8 *) malloc(messageTable[i].len);
+			messageTable[i].ptr = (uint8 *) malloc(messageTable[i].len);
 
 			ASSERT_PTR(messageTable[i].ptr);
 

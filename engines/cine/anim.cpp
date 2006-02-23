@@ -206,8 +206,8 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 	if (!isMask) {		// sprite + generated mask
 		frameSize = width * height;
 
-		animDataTable[i].ptr1 = (uint8 *) malloc(frameSize);
-		animDataTable[i].ptr2 = (uint8 *) malloc(frameSize);
+		animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
+		animDataTable[i].ptr2 = (uint8 *)malloc(frameSize);
 
 		animDataTable[i].width = width;
 		animDataTable[i].var1 = width >> 3;
@@ -220,7 +220,7 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 		// mask
 		frameSize = width * height * 8;
 
-		animDataTable[i].ptr1 = (uint8 *) malloc(frameSize);
+		animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
 		animDataTable[i].ptr2 = NULL;
 
 		animDataTable[i].width = width;
@@ -251,8 +251,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 
 	frameSize = width * height;
 
-	if (type == 4)		// 16 color sprites to 256
-	{
+	if (type == 4) {		// 16 color sprites to 256
 		frameSize *= 2;
 		type = 8;
 		width *= 2;
@@ -264,7 +263,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 
 	frameSize *= 2;
 
-	animDataTable[i].ptr1 = (uint8 *) malloc(frameSize);
+	animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
 
 	ASSERT_PTR(animDataTable[i].ptr1);
 
@@ -296,8 +295,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 
 	frameSize = width * height;
 
-	if (type == 4)		// 256 color sprites
-	{
+	if (type == 4) {		// 256 color sprites
 		frameSize *= 2;
 		type = 8;
 		width *= 2;
@@ -309,7 +307,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 
 	frameSize *= 2;
 
-	animDataTable[i].ptr1 = (uint8 *) malloc(frameSize);
+	animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
 
 	ASSERT_PTR(animDataTable[i].ptr1);
 
@@ -381,13 +379,11 @@ void loadSpl(char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	entry =
-	    allocFrame((uint16) partBuffer[foundFileIdx].unpacked_size, 1, -1);
+	entry = allocFrame((uint16) partBuffer[foundFileIdx].unpacked_size, 1, -1);
 
 	ASSERT(entry != -1);
 
-	memcpy(animDataTable[entry].ptr1, dataPtr,
-	    (uint16) partBuffer[foundFileIdx].unpacked_size);
+	memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpacked_size);
 
 	animDataTable[entry].fileIdx = foundFileIdx;
 	animDataTable[entry].frameIdx = 0;
@@ -414,14 +410,11 @@ void loadMsk(char *resourceName) {
 	flipU16(&animHeader.numFrames);
 
 	for (i = 0; i < animHeader.numFrames; i++) {
-		entry =
-		    allocFrame(animHeader.frameWidth * 2,
-		    animHeader.frameHeight, 1);
+		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 1);
 
 		ASSERT(entry != -1);
 
-		convertMask(animDataTable[entry].ptr1, ptr,
-		    animHeader.frameWidth, animHeader.frameHeight);
+		convertMask(animDataTable[entry].ptr1, ptr, animHeader.frameWidth, animHeader.frameHeight);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
 
 		animDataTable[entry].fileIdx = foundFileIdx;
@@ -458,9 +451,7 @@ void loadAni(char *resourceName) {
 	for (i = 0; i < animHeader.numFrames; i++) {
 		uint8 *animPtr;
 
-		entry =
-		    allocFrame(animHeader.frameWidth * 2,
-		    animHeader.frameHeight, 0);
+		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 0);
 
 		ASSERT(entry != -1);
 
@@ -481,18 +472,14 @@ void loadAni(char *resourceName) {
 			}
 		}
 
-		animPtr = (uint8 *) malloc(fullSize);
+		animPtr = (uint8 *)malloc(fullSize);
 
 		memcpy(animPtr, ptr, fullSize);
 		ptr += fullSize;
 
-		gfxConvertSpriteToRaw(animDataTable[entry].ptr1, animPtr,
-		    animHeader.frameWidth, animHeader.frameHeight);
+		gfxConvertSpriteToRaw(animDataTable[entry].ptr1, animPtr, animHeader.frameWidth, animHeader.frameHeight);
 
-		generateMask(animDataTable[entry].ptr1,
-		    animDataTable[entry].ptr2,
-		    animHeader.frameWidth * 2 * animHeader.frameHeight,
-		    transparentColor);
+		generateMask(animDataTable[entry].ptr1, animDataTable[entry].ptr2, animHeader.frameWidth * 2 * animHeader.frameHeight, transparentColor);
 
 		free(animPtr);
 
@@ -632,7 +619,7 @@ void loadSet(char *resourceName) {
 
 	ptr = dataPtr + 4;
 
-	numSpriteInAnim = *(uint16 *) ptr;
+	numSpriteInAnim = *(uint16 *)ptr;
 	flipU16(&numSpriteInAnim);
 	ptr += 2;
 
@@ -640,8 +627,7 @@ void loadSet(char *resourceName) {
 
 	for (i = 0; i < numSpriteInAnim; i++) {
 		int16 typeParam;
-		uint8 table[16] =
-		    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		uint8 table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 		memcpy(&header2, ptr, 0x10);
 		ptr += 0x10;
@@ -665,18 +651,12 @@ void loadSet(char *resourceName) {
 		}
 
 		if (typeParam) {
-			entry =
-			    allocFrame2(header2.width * 2, header2.height,
-			    header2.type);
+			entry = allocFrame2(header2.width * 2, header2.height, header2.type);
 		} else {
 			if (header2.type == 1) {
-				entry =
-				    allocFrame2(header2.width * 2,
-				    header2.height, header2.type);
+				entry = allocFrame2(header2.width * 2, header2.height, header2.type);
 			} else {
-				entry =
-				    allocFrame2(header2.width * 2,
-				    header2.height, header2.type);
+				entry = allocFrame2(header2.width * 2, header2.height, header2.type);
 			}
 		}
 
@@ -686,21 +666,17 @@ void loadSet(char *resourceName) {
 
 		if (typeParam) {
 			memcpy(animDataTable[entry].ptr1, table, 0x10);
-			gfxConvertSpriteToRaw(animDataTable[entry].ptr1,
-			    dataPtr, header2.width, header2.height);
-			//memcpy(animDataTable[entry].ptr1+0x10,dataPtr,fullSize);
+			gfxConvertSpriteToRaw(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
+			//memcpy(animDataTable[entry].ptr1 + 0x10, dataPtr, fullSize);
 		} else {
 			if (header2.type == 1) {
-				convert4BBP(animDataTable[entry].ptr1, dataPtr,
-				    header2.width, header2.height);
+				convert4BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 5) {
-				convert8BBP(animDataTable[entry].ptr1, dataPtr,
-				    header2.width, header2.height);
+				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 4) {
 				ASSERT(0);
 			} else {
-				convert8BBP2(animDataTable[entry].ptr1,
-				    dataPtr, header2.width, header2.height);
+				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			}
 		}
 
@@ -736,8 +712,7 @@ void loadSetAbs(char *resourceName, uint16 idx) {
 
 	for (i = 0; i < numSpriteInAnim; i++) {
 		int16 typeParam;
-		uint8 table[16] =
-		    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		uint8 table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 		memcpy(&header2, ptr, 0x10);
 		ptr += 0x10;
@@ -761,18 +736,12 @@ void loadSetAbs(char *resourceName, uint16 idx) {
 		}
 
 		if (typeParam) {
-			entry =
-			    reserveFrame(header2.width * 2, header2.height,
-			    header2.type, idx + i);
+			entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
 		} else {
 			if (header2.type == 1) {
-				entry =
-				    reserveFrame(header2.width * 2,
-				    header2.height, header2.type, idx + i);
+				entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
 			} else {
-				entry =
-				    reserveFrame(header2.width * 2,
-				    header2.height, header2.type, idx + i);
+				entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
 			}
 		}
 
@@ -782,21 +751,17 @@ void loadSetAbs(char *resourceName, uint16 idx) {
 
 		if (typeParam) {
 			memcpy(animDataTable[entry].ptr1, table, 0x10);
-			gfxConvertSpriteToRaw(animDataTable[entry].ptr1,
-			    dataPtr, header2.width, header2.height);
-			//memcpy(animDataTable[entry].ptr1+0x10,dataPtr,fullSize);
+			gfxConvertSpriteToRaw(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
+			//memcpy(animDataTable[entry].ptr1 + 0x10, dataPtr, fullSize);
 		} else {
 			if (header2.type == 1) {
-				convert4BBP(animDataTable[entry].ptr1, dataPtr,
-				    header2.width, header2.height);
+				convert4BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 5) {
-				convert8BBP(animDataTable[entry].ptr1, dataPtr,
-				    header2.width, header2.height);
+				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 4) {
 				ASSERT(0);
 			} else {
-				convert8BBP2(animDataTable[entry].ptr1,
-				    dataPtr, header2.width, header2.height);
+				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			}
 		}
 
@@ -814,11 +779,9 @@ void loadSeq(char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	entry =
-	    allocFrame2((uint16) partBuffer[foundFileIdx].unpacked_size, 1, 0);
+	entry = allocFrame2((uint16) partBuffer[foundFileIdx].unpacked_size, 1, 0);
 
-	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16,
-	    (uint16) partBuffer[foundFileIdx].unpacked_size - 0x16);
+	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpacked_size - 0x16);
 }
 
 void loadSeqAbs(char *resourceName, uint16 idx) {
@@ -829,12 +792,9 @@ void loadSeqAbs(char *resourceName, uint16 idx) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	entry =
-	    reserveFrame((uint16) partBuffer[foundFileIdx].unpacked_size, 1, 0,
-	    idx);
+	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpacked_size, 1, 0, idx);
 
-	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16,
-	    (uint16) partBuffer[foundFileIdx].unpacked_size - 0x16);
+	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpacked_size - 0x16);
 }
 
 void loadResource(char *resourceName) {
@@ -843,27 +803,21 @@ void loadResource(char *resourceName) {
 
 	if (strstr(resourceName, ".SPL")) {
 		loadSpl(resourceName);
-
 		return;
 	} else if (strstr(resourceName, ".MSK")) {
 		loadMsk(resourceName);
-
 		return;
 	} else if (strstr(resourceName, ".ANI")) {
 		loadAni(resourceName);
-
 		return;
 	} else if (strstr(resourceName, ".ANM")) {
 		loadAni(resourceName);
-
 		return;
 	} else if (strstr(resourceName, ".SET")) {
 		loadSet(resourceName);
-
 		return;
 	} else if (strstr(resourceName, ".SEQ")) {
 		loadSeq(resourceName);
-
 		return;
 	}
 
@@ -876,7 +830,6 @@ void loadAbs(char *resourceName, uint16 idx) {
 
 	if (strstr(resourceName, ".SET")) {
 		loadSetAbs(resourceName, idx);
-
 		return;
 	} else if (strstr(resourceName, ".H32")) {
 		return;
@@ -934,15 +887,12 @@ void loadResourcesFromSave() {
 			}
 
 			if (isSpl) {
-				animHeader.frameWidth =
-				    (uint16) partBuffer[foundFileIdx].
-				    unpacked_size;
+				animHeader.frameWidth = (uint16) partBuffer[foundFileIdx].unpacked_size;
 				animHeader.frameHeight = 1;
 				animHeader.numFrames = 1;
 				isMask = -1;
 			} else {
-				memcpy(&animHeader, ptr,
-				    sizeof(animHeaderStruct));
+				memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
 				ptr += sizeof(animHeaderStruct);
 
 				flipU16(&animHeader.frameWidth);
@@ -955,17 +905,13 @@ void loadResourcesFromSave() {
 				uint16 i;
 				uint8 transparentColor;
 
-				fullSize =
-				    animHeader.frameWidth *
-				    animHeader.frameHeight;
+				fullSize = animHeader.frameWidth * animHeader.frameHeight;
 
 				loadRelatedPalette(animName);
 
-				transparentColor =
-				    findAnimInHardcodedData(animName);
+				transparentColor = findAnimInHardcodedData(animName);
 
-				for (i = 0; i < animHeader.numFrames; i++)	// load all the frames
-				{
+				for (i = 0; i < animHeader.numFrames; i++) { // load all the frames
 					int16 entry;
 					uint8 *animPtr;
 
@@ -987,66 +933,38 @@ void loadResourcesFromSave() {
 					}
 
 					currentPtr[i].ptr1 = NULL;
-					entry =
-					    allocFrame(animHeader.frameWidth *
-					    2, animHeader.frameHeight, isMask);
+					entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, isMask);
 
 					currentPtr->fileIdx = foundFileIdx;
 
 					ASSERT(entry != -1);
 
 					if (isSpl) {
-						memcpy(animDataTable[entry].
-						    ptr1, ptr, fullSize);
+						memcpy(animDataTable[entry].ptr1, ptr, fullSize);
 						ptr += fullSize;
 					} else {
 						if (!isMask) {
-							animPtr =
-							    (uint8 *)
-							    malloc(fullSize);
-
-							memcpy(animPtr, ptr,
-							    fullSize);
+							animPtr = (uint8 *)malloc(fullSize);
+							memcpy(animPtr, ptr, fullSize);
 							ptr += fullSize;
 
-							gfxConvertSpriteToRaw
-							    (animDataTable
-							    [entry].ptr1,
-							    animPtr,
-							    animHeader.
-							    frameWidth,
-							    animHeader.
-							    frameHeight);
-
-							generateMask
-							    (animDataTable
-							    [entry].ptr1,
-							    animDataTable
-							    [entry].ptr2,
-							    animHeader.
-							    frameWidth * 2 *
-							    animHeader.
-							    frameHeight,
-							    transparentColor);
+							gfxConvertSpriteToRaw(animDataTable[entry].ptr1, animPtr,
+										animHeader.frameWidth, animHeader.frameHeight);
+							generateMask(animDataTable[entry].ptr1, animDataTable[entry].ptr2,
+										animHeader.frameWidth * 2 *animHeader.frameHeight, transparentColor);
 
 							free(animPtr);
 						} else {
-							convertMask
-							    (animDataTable
-							    [entry].ptr1, ptr,
-							    animHeader.
-							    frameWidth,
-							    animHeader.
-							    frameHeight);
+							convertMask(animDataTable[entry].ptr1, ptr, animHeader.frameWidth,
+										animHeader.frameHeight);
 							ptr += fullSize;
 						}
 					}
 
-					// animDataTable[entry].fileIdx = foundFileIdx; // Only when reading from bundles
+					//animDataTable[entry].fileIdx = foundFileIdx; // Only when reading from bundles
 
 					animDataTable[entry].frameIdx = i;
-					strcpy(animDataTable[entry].name,
-					    currentPartName);
+					strcpy(animDataTable[entry].name, currentPartName);
 				}
 			}
 

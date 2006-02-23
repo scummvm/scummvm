@@ -100,10 +100,8 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 
 	currentHeadPtr = tempHead->next;
 
-	while (currentHeadPtr && (objIdx == currentHeadPtr->objIdx
-		|| param == currentHeadPtr->type)) {
+	while (currentHeadPtr && (objIdx == currentHeadPtr->objIdx || param == currentHeadPtr->type)) {
 		tempHead = currentHeadPtr;
-
 		currentHeadPtr = tempHead->next;
 	}
 
@@ -134,8 +132,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 	overlayHeadElement *tempHead = &overlayHead;
 	overlayHeadElement *tempPtr2;
 
-	while (currentHeadPtr && ((currentHeadPtr->objIdx != objIdx)
-		|| (currentHeadPtr->type != param))) {
+	while (currentHeadPtr && ((currentHeadPtr->objIdx != objIdx) || (currentHeadPtr->type != param))) {
 		tempHead = currentHeadPtr;
 		currentHeadPtr = tempHead->next;
 	}
@@ -144,8 +141,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 		return -1;
 	}
 
-	if (!((currentHeadPtr->objIdx == objIdx)
-		&& (currentHeadPtr->type == param))) {
+	if (!((currentHeadPtr->objIdx == objIdx) && (currentHeadPtr->type == param))) {
 		return -1;
 	}
 
@@ -174,15 +170,12 @@ void loadOverlayElement(uint16 objIdx, uint16 param) {
 
 	currentHeadPtr = tempHead->next;
 
-	while (currentHeadPtr
-	    && (objectTable[currentHeadPtr->objIdx].mask < si)) {
+	while (currentHeadPtr && (objectTable[currentHeadPtr->objIdx].mask < si)) {
 		tempHead = currentHeadPtr;
-
 		currentHeadPtr = tempHead->next;
 	}
 
-	pNewElement =
-	    (overlayHeadElement *) malloc(sizeof(overlayHeadElement));
+	pNewElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
 
 	ASSERT_PTR(pNewElement);
 
