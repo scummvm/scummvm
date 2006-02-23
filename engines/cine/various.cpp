@@ -884,8 +884,6 @@ void makeSave(char *saveFileName) {
 		currentHead = globalScriptsHead.next;
 
 		while (currentHead) {
-			int16 i;
-
 			for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
 				saveU16(currentHead->stack[i], &fHandle);
 			}
@@ -918,8 +916,6 @@ void makeSave(char *saveFileName) {
 		currentHead = objScriptList.next;
 
 		while (currentHead) {
-			int16 i;
-
 			for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
 				saveU16(currentHead->stack[i], &fHandle);
 			}
