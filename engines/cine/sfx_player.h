@@ -27,23 +27,23 @@
 
 typedef struct {
 	char name[14];
-	u32 offset;
-	u32 size;
-	u32 unpackedSize;
+	uint32 offset;
+	uint32 size;
+	uint32 unpackedSize;
 } BasesonEntryStruct;
 
 typedef struct {
-	u8 *songData;
+	uint8 *songData;
 	int currentInstrumentChannel[4];
-	u8 *instruments[15];
+	uint8 *instruments[15];
 	int currentOrder;
 	int currentPos;
 	int numOrders;
 } sfxStateStruct;
 
-extern u16 snd_eventsDelay;
+extern uint16 snd_eventsDelay;
 extern int snd_songIsPlaying;
-extern u8 snd_nullInstrument[];
+extern uint8 snd_nullInstrument[];
 extern sfxStateStruct snd_sfxState;
 
 extern int snd_loadBasesonEntries(const char *fileName);
@@ -54,6 +54,6 @@ extern int snd_loadSong(const char *songName);
 extern void snd_fadeOutSong();
 extern void snd_playSong();
 extern void snd_handleEvents();
-extern void snd_handlePattern(int channelNum, const u8 *patternData);
+extern void snd_handlePattern(int channelNum, const uint8 *patternData);
 
 #endif				/* _SFXPLAYER_H_ */

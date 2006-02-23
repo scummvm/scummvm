@@ -28,32 +28,32 @@
 #include "sound/mixer.h"
 #include "sound/fmopl.h"
 
-u8 snd_useAdlib = 0;
-u16 snd_fadeOutCounter = 0;
-u16 snd_songTicksCounter = 0;
-u8 *snd_adlibInstrumentsTable[4];
+uint8 snd_useAdlib = 0;
+uint16 snd_fadeOutCounter = 0;
+uint16 snd_songTicksCounter = 0;
+uint8 *snd_adlibInstrumentsTable[4];
 sndDriverStruct snd_driver;
 
-static u8 snd_adlibVibrato = 0;
-static s16 snd_adlibChannelVolume[4];
+static uint8 snd_adlibVibrato = 0;
+static int16 snd_adlibChannelVolume[4];
 
-static const u16 snd_adlibFreqTable[] = {
+static const uint16 snd_adlibFreqTable[] = {
 	0x0157, 0x016C, 0x0181, 0x0198, 0x01B1, 0x01CB, 0x01E6, 0x0203,
 	0x0222, 0x0243, 0x0266, 0x028A
 };
 
-static const u8 snd_adlibOpTable[] = {
+static const uint8 snd_adlibOpTable[] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x08, 0x09, 0x0A,
 	0x0B, 0x0C, 0x0D, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15
 };
 
-static const u8 snd_adlibNoteTable[] = {
+static const uint8 snd_adlibNoteTable[] = {
 	0x00, 0x03, 0x01, 0x04, 0x02, 0x05, 0x06, 0x09, 0x07,
 	0x0A, 0x08, 0x0B, 0x0C, 0x0F, 0x10, 0x10, 0x0E, 0x0E,
 	0x11, 0x11, 0x0D, 0x0D, 0x00, 0x00
 };
 
-static const s16 snd_adlibNoteFreqTable[] = {
+static const int16 snd_adlibNoteFreqTable[] = {
 	0x0EEE, 0x0E17, 0x0D4D, 0x0C8C, 0x0BD9, 0x0B2F, 0x0A8E, 0x09F7,
 	0x0967, 0x08E0, 0x0861, 0x07E8, 0x0777, 0x070B, 0x06A6, 0x0647,
 	0x05EC, 0x0597, 0x0547, 0x04FB, 0x04B3, 0x0470, 0x0430, 0x03F4,
@@ -73,16 +73,16 @@ static void snd_adlibWriteData(int port, int value)
 	OPLWriteReg(g_cine_adlib->getOPL(), port, value);
 }
 
-static void snd_adlibDriverSetupInstrument(const u8 *instrumentData, int channelNum) {
-	s16 tmp;
+static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int channelNum) {
+	int16 tmp;
 
-	u8 waveSelect1 = instrumentData[54] & 3;	/* var2 */
-	u8 waveSelect2 = instrumentData[56] & 3;	/* var1 */
+	uint8 waveSelect1 = instrumentData[54] & 3;	/* var2 */
+	uint8 waveSelect2 = instrumentData[56] & 3;	/* var1 */
 
-	u8 fl = *instrumentData++;	/* varB */
-	u8 ch = *instrumentData++;	/* var4 */
+	uint8 fl = *instrumentData++;	/* varB */
+	uint8 ch = *instrumentData++;	/* var4 */
 
-	u8 adlibOp1, adlibOp2;	/* _di, varA */
+	uint8 adlibOp1, adlibOp2;	/* _di, varA */
 
 	if (fl != 0) {
 		adlibOp1 = snd_adlibOpTable[snd_adlibNoteTable[ch * 2 + 0]];
@@ -192,7 +192,7 @@ static void snd_adlibDriverSetupInstrument(const u8 *instrumentData, int channel
 	snd_adlibWriteData(ADLIB_REG_WAVE_SELECT + adlibOp2, waveSelect2);
 }
 
-static void snd_adlibInterrupt(void *param, s16 *buf, int len) {
+static void snd_adlibInterrupt(void *param, int16 *buf, int len) {
 	int16 *origData = buf;
 	uint origLen = len;
 	static int samplesLeft = 0;
@@ -227,9 +227,9 @@ static void snd_adlibInterrupt(void *param, s16 *buf, int len) {
 	}
 }
 
-static void snd_adlibDriverSetupChannel(int channelNum, const u8 *data,
+static void snd_adlibDriverSetupChannel(int channelNum, const uint8 *data,
 										int instrumentNum) {
-	s16 vol = snd_sfxState.songData[instrumentNum];
+	int16 vol = snd_sfxState.songData[instrumentNum];
 	if (vol != 0 && vol < 0x50)
 		vol = 0x50;
 
@@ -258,15 +258,15 @@ static void snd_getAdlibFrequency(int frequency, int *adlibFreq) {
 }
 
 static void snd_adlibDriverSetChannelFrequency(int channelNum, int frequency) {
-	const u8 *instr = snd_adlibInstrumentsTable[channelNum];
-	u8 fl = *instr++;	/* var2 */
-	u8 ch = *instr++;	/* var1 */
+	const uint8 *instr = snd_adlibInstrumentsTable[channelNum];
+	uint8 fl = *instr++;	/* var2 */
+	uint8 ch = *instr++;	/* var1 */
 
 	if (fl != 0 && ch == 6)
 		channelNum = 6;
 
 	if (fl == 0 || channelNum == 6) {
-		u16 freqLow, freqHigh;	/* var8 */
+		uint16 freqLow, freqHigh;	/* var8 */
 		int adlibFreq;
 
 		snd_getAdlibFrequency(frequency, &adlibFreq);
@@ -291,9 +291,9 @@ static void snd_adlibDriverSetChannelFrequency(int channelNum, int frequency) {
 }
 
 static void snd_adlibDriverStopChannel(int channelNum) {
-	const u8 *instr = snd_adlibInstrumentsTable[channelNum];
-	u8 fl = *instr++;	/* var2 */
-	u8 ch = *instr++;	/* var1 */
+	const uint8 *instr = snd_adlibInstrumentsTable[channelNum];
+	uint8 fl = *instr++;	/* var2 */
+	uint8 ch = *instr++;	/* var1 */
 
 	if (fl != 0 && ch == 6)
 		channelNum = 6;
@@ -309,9 +309,9 @@ static void snd_adlibDriverStopChannel(int channelNum) {
 	}
 }
 
-static void snd_adlibDriverPlaySound(u8 * data, int channelNum, int volume) {
+static void snd_adlibDriverPlaySound(uint8 * data, int channelNum, int volume) {
 /*  if (_snd_mute) return;*/
-	u8 fl, ch;		/* var2, var1 */
+	uint8 fl, ch;		/* var2, var1 */
 
 	assert(channelNum < 4);
 	data += 257;
@@ -326,7 +326,7 @@ static void snd_adlibDriverPlaySound(u8 * data, int channelNum, int volume) {
 		channelNum = 6;
 
 	if (fl == 0 || channelNum == 6) {
-		u16 freqLow, freqHigh;
+		uint16 freqLow, freqHigh;
 		freqLow = snd_adlibFreqTable[0];
 		snd_adlibWriteData(ADLIB_REG_FREQUENCY_0 + channelNum,
 		    freqLow);

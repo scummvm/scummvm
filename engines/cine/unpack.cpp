@@ -24,10 +24,10 @@
 
 #include "cine/cine.h"
 
-u32 crc;			// variable at 5C5A
-u32 bitbucket;			// dx:bx
+uint32 crc;			// variable at 5C5A
+uint32 bitbucket;			// dx:bx
 
-u16 swap16(u16 r) {
+uint16 swap16(uint16 r) {
 	return (r >> 8) | (r << 8);
 }
 
@@ -60,14 +60,14 @@ u16 swap16(u16 r) {
     } while (nbits);\
 }
 
-int decomp(u8 *in, u8 *out, int size) {
-	u8 bit;			// Carry flag
-	u8 nbits;		// cl
-	u8 byte = 0;		// ch
-	u16 counter;		// bp
-	u16 var = 0;		// variable at 5C58
-	u16 ptr;
-	u16 flags;
+int decomp(uint8 *in, uint8 *out, int size) {
+	uint8 bit;			// Carry flag
+	uint8 nbits;		// cl
+	uint8 byte = 0;		// ch
+	uint16 counter;		// bp
+	uint16 var = 0;		// variable at 5C58
+	uint16 ptr;
+	uint16 flags;
 
 	enum {
 		DO_COPY,

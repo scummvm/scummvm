@@ -50,9 +50,9 @@ void releaseObjectScripts(void) {
 }
 
 void loadRel(char *pRelName) {
-	u16 numEntry;
-	u16 i;
-	u8 *ptr;
+	uint16 numEntry;
+	uint16 i;
+	uint8 *ptr;
 
 	checkDataDisk(-1);
 
@@ -72,26 +72,26 @@ void loadRel(char *pRelName) {
 
 	processPendingUpdates(1);
 
-	numEntry = *(u16 *) ptr;
+	numEntry = *(uint16 *) ptr;
 	ptr += 2;
 	flipU16(&numEntry);
 
 	ASSERT(numEntry <= NUM_MAX_REL);
 
 	for (i = 0; i < numEntry; i++) {
-		relTable[i].var4 = *(u16 *) ptr;
+		relTable[i].var4 = *(uint16 *) ptr;
 		ptr += 2;
 		flipU16(&relTable[i].var4);
 
-		relTable[i].var6 = *(u16 *) ptr;
+		relTable[i].var6 = *(uint16 *) ptr;
 		ptr += 2;
 		flipU16(&relTable[i].var6);
 
-		relTable[i].var8 = *(u16 *) ptr;
+		relTable[i].var8 = *(uint16 *) ptr;
 		ptr += 2;
 		flipU16(&relTable[i].var8);
 
-		relTable[i].varA = *(u16 *) ptr;
+		relTable[i].varA = *(uint16 *) ptr;
 		ptr += 2;
 		flipU16(&relTable[i].varA);
 	}
@@ -110,8 +110,8 @@ void loadRel(char *pRelName) {
 #ifdef DUMP_SCRIPTS_OBJ
 
 	{
-		u16 i;
-		u8 buffer[256];
+		uint16 i;
+		uint8 buffer[256];
 
 		for (i = 0; i < numEntry; i++) {
 			if (relTable[i].var4) {

@@ -25,9 +25,9 @@
 #ifndef CINE_TEXTE_H_
 #define CINE_TEXTE_H_
 
-extern u8 *textDataPtr;
-extern u8 textTable[256][2][16 * 8];
+extern uint8 *textDataPtr;
+extern uint8 textTable[256][2][16 * 8];
 
-void loadTextData(const char *pFileName, u8 *pDestinationBuffer);
+void loadTextData(const char *pFileName, uint8 *pDestinationBuffer);
 
 #endif

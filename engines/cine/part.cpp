@@ -24,14 +24,14 @@
 
 #include "cine/cine.h"
 
-u16 numElementInPart;
-u16 partVar1;
+uint16 numElementInPart;
+uint16 partVar1;
 
 animDataStruct animDataTable[NUM_MAX_PARTDATA];
 partBufferStruct *partBuffer;
 
 void loadPart(const char *partName) {
-	u16 i;
+	uint16 i;
 
 	ASSERT(sizeof(partBufferStruct) == 0x1E);
 
@@ -77,7 +77,7 @@ void loadPart(const char *partName) {
 		loadPal(partName);
 }
 
-void freePartEntry(u8 idx) {
+void freePartEntry(uint8 idx) {
 	if (animDataTable[idx].ptr1) {
 		//free(animDataTable[idx].ptr1);
 
@@ -91,8 +91,8 @@ void freePartEntry(u8 idx) {
 	}
 }
 
-void freePartRange(u8 startIdx, u8 numIdx) {
-	u8 i;
+void freePartRange(uint8 startIdx, uint8 numIdx) {
+	uint8 i;
 
 	for (i = 0; i < numIdx; i++) {
 		freePartEntry(i + startIdx);
@@ -156,11 +156,11 @@ const char *bundleNames[] = {
 */
 };
 
-s16 findFileInBundle(const char *fileName) {
-	u16 i;
+int16 findFileInBundle(const char *fileName) {
+	uint16 i;
 
 	if (gameType == Cine::GID_OS) {
-		u16 j;
+		uint16 j;
 
 		for (i = 0; i < numElementInPart; i++) {
 			if (!strcmp(fileName, partBuffer[i].part_name)) {
@@ -187,7 +187,7 @@ s16 findFileInBundle(const char *fileName) {
 	return -1;
 }
 
-void readFromPart(s16 idx, u8 *dataPtr) {
+void readFromPart(int16 idx, uint8 *dataPtr) {
 	processPendingUpdates(1);
 
 	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
@@ -195,23 +195,23 @@ void readFromPart(s16 idx, u8 *dataPtr) {
 	partFileHandle.read(dataPtr, partBuffer[idx].packed_size);
 }
 
-u8 *readBundleFile(s16 foundFileIdx) {
-	u8 *dataPtr;
+uint8 *readBundleFile(int16 foundFileIdx) {
+	uint8 *dataPtr;
 
-	dataPtr = (u8 *) malloc(partBuffer[foundFileIdx].unpacked_size + 2);
+	dataPtr = (uint8 *) malloc(partBuffer[foundFileIdx].unpacked_size + 2);
 	memset(dataPtr, 0, partBuffer[foundFileIdx].unpacked_size + 2);
 
 	if (partBuffer[foundFileIdx].unpacked_size !=
 	    partBuffer[foundFileIdx].packed_size) {
-		u8 *unpackBuffer;
-		u16 realSize;
+		uint8 *unpackBuffer;
+		uint16 realSize;
 
 		unpackBuffer =
-		    (u8 *) malloc(partBuffer[foundFileIdx].packed_size + 500);
+		    (uint8 *) malloc(partBuffer[foundFileIdx].packed_size + 500);
 		readFromPart(foundFileIdx, unpackBuffer);
 
 		realSize =
-		    *(u16 *) (unpackBuffer +
+		    *(uint16 *) (unpackBuffer +
 		    partBuffer[foundFileIdx].packed_size - 2);
 		flipU16(&realSize);
 

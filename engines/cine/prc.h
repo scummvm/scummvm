@@ -27,12 +27,12 @@
 
 struct prcLinkedListStruct {
 	struct prcLinkedListStruct *next;
-	s16 stack[SCRIPT_STACK_SIZE];
-	s16 localVars[50];
-	u16 compareResult;
-	u16 scriptPosition;
+	int16 stack[SCRIPT_STACK_SIZE];
+	int16 localVars[50];
+	uint16 compareResult;
+	uint16 scriptPosition;
 	byte *scriptPtr;
-	s16 scriptIdx;
+	int16 scriptIdx;
 };
 
 typedef struct prcLinkedListStruct prcLinkedListStruct;

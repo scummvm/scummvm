@@ -24,11 +24,11 @@
 
 #include "cine/cine.h"
 
-u16 msgVar0;
+uint16 msgVar0;
 
 void loadMsg(char *pMsgName) {
-	u16 i;
-	u8 *ptr;
+	uint16 i;
+	uint8 *ptr;
 
 	checkDataDisk(-1);
 
@@ -50,14 +50,14 @@ void loadMsg(char *pMsgName) {
 
 	processPendingUpdates(1);
 
-	msgVar0 = *(u16 *) ptr;
+	msgVar0 = *(uint16 *) ptr;
 	ptr += 2;
 	flipU16(&msgVar0);
 
 	ASSERT(msgVar0 <= NUM_MAX_MESSAGE);
 
 	for (i = 0; i < msgVar0; i++) {
-		messageTable[i].len = *(u16 *) ptr;
+		messageTable[i].len = *(uint16 *) ptr;
 		ptr += 2;
 		flipU16(&messageTable[i].len);
 	}
@@ -65,7 +65,7 @@ void loadMsg(char *pMsgName) {
 	for (i = 0; i < msgVar0; i++) {
 		if (messageTable[i].len) {
 			messageTable[i].ptr =
-			    (u8 *) malloc(messageTable[i].len);
+			    (uint8 *) malloc(messageTable[i].len);
 
 			ASSERT_PTR(messageTable[i].ptr);
 

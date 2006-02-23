@@ -26,16 +26,16 @@
 
 byte *screenBuffer;
 
-u16 c_palette[256];
+uint16 c_palette[256];
 
 unsigned char *page0;
 unsigned char *page1;
 unsigned char *page2;
 unsigned char *page3;
 
-u8 page1Raw[320 * 200];
-u8 page2Raw[320 * 200];
-u8 page3Raw[320 * 200];
+uint8 page1Raw[320 * 200];
+uint8 page2Raw[320 * 200];
+uint8 page3Raw[320 * 200];
 
 void init_video() {
 	screenBuffer = (byte *) malloc(320 * 200 * 3);
@@ -47,10 +47,10 @@ void init_video() {
 	page3 = (unsigned char *)malloc(0x8000);
 }
 
-u16 transformColor(u16 baseColor, s8 r, s8 g, s8 b) {
-	s8 oriR = (baseColor & 0x7);
-	s8 oriG = (baseColor & 0x70) >> 4;
-	s8 oriB = (baseColor & 0x700) >> 8;
+uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
+	int8 oriR = (baseColor & 0x7);
+	int8 oriG = (baseColor & 0x70) >> 4;
+	int8 oriB = (baseColor & 0x700) >> 8;
 
 	oriR += r;
 	oriG += g;
@@ -77,8 +77,8 @@ u16 transformColor(u16 baseColor, s8 r, s8 g, s8 b) {
 	return (oriR | (oriG << 4) | (oriB << 8));
 }
 
-void transformPaletteRange(u8 startColor, u8 stopColor, s8 r, s8 g, s8 b) {
-	u8 i;
+void transformPaletteRange(uint8 startColor, uint8 stopColor, int8 r, int8 g, int8 b) {
+	uint8 i;
 
 	for (i = startColor; i <= stopColor; i++) {
 		c_palette[i] = transformColor(tempPalette[i], b, g, r);
@@ -86,12 +86,12 @@ void transformPaletteRange(u8 startColor, u8 stopColor, s8 r, s8 g, s8 b) {
 	//gfxFlipPage(page2);
 }
 
-void gfxFillSprite(u8 *spritePtr, u16 width, u16 height, u8 *page, s16 x, s16 y) {
-	s16 i;
-	s16 j;
+void gfxFillSprite(uint8 *spritePtr, uint16 width, uint16 height, uint8 *page, int16 x, int16 y) {
+	int16 i;
+	int16 j;
 
 	for (i = 0; i < height; i++) {
-		u8 *destPtr = page + x + y * 320;
+		uint8 *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
@@ -110,8 +110,8 @@ void gfxFillSprite(u8 *spritePtr, u16 width, u16 height, u8 *page, s16 x, s16 y)
 	}
 }
 
-void gfxDrawLine(s16 x1, s16 y1, s16 x2, s16 y2, u8 color, u8 *page) {
-	s16 t;
+void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page) {
+	int16 t;
 	if (x1 == x2) {
 		if (y1 > y2) {
 			t = y1;
@@ -136,8 +136,8 @@ void gfxDrawLine(s16 x1, s16 y1, s16 x2, s16 y2, u8 color, u8 *page) {
 
 }
 
-void gfxDrawPlainBoxRaw(s16 x1, s16 y1, s16 x2, s16 y2, u8 color, u8 *page) {
-	s16 t;
+void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page) {
+	int16 t;
 
 	if (x1 > x2) {
 		t = x1;
@@ -162,8 +162,8 @@ void gfxDrawPlainBoxRaw(s16 x1, s16 y1, s16 x2, s16 y2, u8 color, u8 *page) {
 	}
 }
 
-s16 gfxGetBit(s16 x, s16 y, u8 *ptr, s16 width) {
-	u8 *ptrToData = (ptr) + y * width + x;
+int16 gfxGetBit(int16 x, int16 y, uint8 *ptr, int16 width) {
+	uint8 *ptrToData = (ptr) + y * width + x;
 
 	if (x > width) {
 		return 0;
@@ -176,13 +176,13 @@ s16 gfxGetBit(s16 x, s16 y, u8 *ptr, s16 width) {
 	return (1);
 }
 
-void gfxResetRawPage(u8 *pageRaw) {
+void gfxResetRawPage(uint8 *pageRaw) {
 	memset(pageRaw, 0, 320 * 200);
 }
 
-void gfxConvertSpriteToRaw(u8 *dest, u8 *source, u16 width, u16 height) {
+void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 height) {
 	int x, y;
-	u8 b1, b2, b3, b4, b5, b6, b7, b8, d1a, d1b, d2a, d2b, d3a, d3b, d4a,
+	uint8 b1, b2, b3, b4, b5, b6, b7, b8, d1a, d1b, d2a, d2b, d3a, d3b, d4a,
 	    d4b;
 
 	for (y = 0; y < height; y++) {
@@ -289,14 +289,14 @@ void gfxConvertSpriteToRaw(u8 *dest, u8 *source, u16 width, u16 height) {
 	}
 }
 
-void gfxCopyRawPage(u8 *source, u8 *dest) {
+void gfxCopyRawPage(uint8 *source, uint8 *dest) {
 	memcpy(dest, source, 320 * 200);
 }
 
-void gfxFlipRawPage(u8 *frontBuffer) {
-	u8 *page = frontBuffer;
+void gfxFlipRawPage(uint8 *frontBuffer) {
+	uint8 *page = frontBuffer;
 	int x, y;
-	u8 *pixels = (u8 *) screenBuffer;
+	uint8 *pixels = (uint8 *) screenBuffer;
 	byte c;
 
 	for (y = 0; y < 200; y++) {
@@ -340,13 +340,13 @@ void gfxFlipRawPage(u8 *frontBuffer) {
 	g_system->delayMillis(100);
 }
 
-void drawSpriteRaw(u8 *spritePtr, u8 *maskPtr, s16 width, s16 height,
-				   u8 *page, s16 x, s16 y) {
-	s16 i;
-	s16 j;
+void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height,
+				   uint8 *page, int16 x, int16 y) {
+	int16 i;
+	int16 j;
 
 	for (i = 0; i < height; i++) {
-		u8 *destPtr = page + x + y * 320;
+		uint8 *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
@@ -364,13 +364,13 @@ void drawSpriteRaw(u8 *spritePtr, u8 *maskPtr, s16 width, s16 height,
 	}
 }
 
-void drawSpriteRaw2(u8 *spritePtr, u8 transColor, s16 width, s16 height,
-					u8 *page, s16 x, s16 y) {
-	s16 i;
-	s16 j;
+void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 height,
+					uint8 *page, int16 x, int16 y) {
+	int16 i;
+	int16 j;
 
 	for (i = 0; i < height; i++) {
-		u8 *destPtr = page + x + y * 320;
+		uint8 *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {

@@ -53,8 +53,8 @@ void freePrcLinkedList(void) {
 }
 
 void loadPrc(char *pPrcName) {
-	u8 i;
-	u16 numEntry;
+	uint8 i;
+	uint16 numEntry;
 
 	ASSERT_PTR(pPrcName);
 
@@ -88,7 +88,7 @@ void loadPrc(char *pPrcName) {
 		}
 
 		for (i = 0; i < numEntry; i++) {
-			u16 size;
+			uint16 size;
 
 			size = scriptTable[i].var4;
 
@@ -105,26 +105,26 @@ void loadPrc(char *pPrcName) {
 			}
 		}
 	} else {
-		u8 *ptr = readBundleFile(findFileInBundle(pPrcName));
+		uint8 *ptr = readBundleFile(findFileInBundle(pPrcName));
 
 		ASSERT_PTR(ptr);
 
 		processPendingUpdates(1);
 
-		numEntry = *(u16 *) ptr;
+		numEntry = *(uint16 *) ptr;
 		ptr += 2;
 		flipU16(&numEntry);
 
 		ASSERT(numEntry <= NUM_MAX_SCRIPT);
 
 		for (i = 0; i < numEntry; i++) {
-			scriptTable[i].var4 = *(u16 *) ptr;
+			scriptTable[i].var4 = *(uint16 *) ptr;
 			ptr += 2;
 			flipU16(&scriptTable[i].var4);
 		}
 
 		for (i = 0; i < numEntry; i++) {
-			u16 size;
+			uint16 size;
 
 			size = scriptTable[i].var4;
 

@@ -25,6 +25,6 @@
 #ifndef CINE_RESOURCE_H_
 #define CINE_RESOURCE_H_
 
-void checkDataDisk(s16 param);
+void checkDataDisk(int16 param);
 
 #endif

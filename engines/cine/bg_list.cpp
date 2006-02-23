@@ -24,13 +24,13 @@
 
 #include "cine/cine.h"
 
-void createVar9Element(s16 objIdx, s16 param);
+void createVar9Element(int16 objIdx, int16 param);
 
-void addSpriteFilledToBGList(s16 idx) {
-	s16 x;
-	s16 y;
-	s16 width;
-	s16 height;
+void addSpriteFilledToBGList(int16 idx) {
+	int16 x;
+	int16 y;
+	int16 width;
+	int16 height;
 
 	x = objectTable[idx].x;
 	y = objectTable[idx].y;

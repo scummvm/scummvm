@@ -28,17 +28,17 @@
 
 #include "cine/cine.h"
 
-u16 snd_eventsDelay;
+uint16 snd_eventsDelay;
 int snd_songIsPlaying = 0;
-u8 snd_nullInstrument[] = { 0, 0 };
+uint8 snd_nullInstrument[] = { 0, 0 };
 sfxStateStruct snd_sfxState;
 
-static u8 snd_mute = 0;
+static uint8 snd_mute = 0;
 static char snd_songFileName[30];
 
 /* LVDT specific */
 static Common::File *snd_baseSndFile = NULL;
-static u16 snd_numBasesonEntries = 0;
+static uint16 snd_numBasesonEntries = 0;
 static BasesonEntryStruct *snd_basesonEntries = NULL;
 
 int snd_loadBasesonEntries(const char *fileName) {
@@ -94,9 +94,9 @@ static int snd_findBasesonEntry(const char *entryName) {
 	return -1;
 }
 
-static u8 *snd_loadBasesonEntry(const char *entryName) {
+static uint8 *snd_loadBasesonEntry(const char *entryName) {
 	int entryNum;
-	u8 *entryData = NULL;
+	uint8 *entryData = NULL;
 
 	if (gameType == Cine::GID_OS) {
 		entryNum = findFileInBundle((const char *)entryName);
@@ -107,10 +107,10 @@ static u8 *snd_loadBasesonEntry(const char *entryName) {
 		if (entryNum != -1 && entryNum < snd_numBasesonEntries) {
 			const BasesonEntryStruct *be =
 			    &snd_basesonEntries[entryNum];
-			entryData = (u8 *) malloc(be->unpackedSize);
+			entryData = (uint8 *) malloc(be->unpackedSize);
 			if (entryData) {
 				if (be->unpackedSize > be->size) {
-					u8 *tempData = (u8 *) malloc(be->size);
+					uint8 *tempData = (uint8 *) malloc(be->size);
 					if (tempData) {
 						snd_baseSndFile->seek(be->
 						    offset, SEEK_SET);
@@ -231,9 +231,9 @@ void snd_playSong() {
 
 void snd_handleEvents() {
 	int i;
-	const u8 *patternData = snd_sfxState.songData + 600;
-	const u8 *orderTable = snd_sfxState.songData + 472;
-	u16 patternNum = orderTable[snd_sfxState.currentOrder] * 1024;
+	const uint8 *patternData = snd_sfxState.songData + 600;
+	const uint8 *orderTable = snd_sfxState.songData + 472;
+	uint16 patternNum = orderTable[snd_sfxState.currentOrder] * 1024;
 
 	for (i = 0; i < 4; ++i) {
 		snd_handlePattern(i,
@@ -253,8 +253,8 @@ void snd_handleEvents() {
 	}
 }
 
-void snd_handlePattern(int channelNum, const u8 *patternData) {
-	u16 instrNum = patternData[2] >> 4;
+void snd_handlePattern(int channelNum, const uint8 *patternData) {
+	uint16 instrNum = patternData[2] >> 4;
 	snd_adlibInstrumentsTable[channelNum] = snd_nullInstrument;
 	if (instrNum != 0) {
 		if (snd_sfxState.currentInstrumentChannel[channelNum] !=
@@ -278,7 +278,7 @@ void snd_handlePattern(int channelNum, const u8 *patternData) {
 	if (snd_mute != 0)
 		(*snd_driver.stopChannel) (channelNum);
 	else {
-		s16 freq = (s16) readU16BE(patternData);
+		int16 freq = (int16) readU16BE(patternData);
 		if (freq > 0) {
 			(*snd_driver.stopChannel) (channelNum);
 			(*snd_driver.setChannelFrequency) (channelNum, freq);

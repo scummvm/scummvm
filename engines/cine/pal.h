@@ -27,17 +27,17 @@
 
 struct palEntryStruct {
 	char name[10];
-	u8 pal1[16];
-	u8 pal2[16];
+	uint8 pal1[16];
+	uint8 pal2[16];
 };
 
 typedef struct palEntryStruct palEntryStruct;
 
 void loadPal(const char *fileName);
 
-extern u16 tempPalette[256];
-extern u8 colorMode256;
-extern u8 palette256[256 * 3];
+extern uint16 tempPalette[256];
+extern uint8 colorMode256;
+extern uint8 palette256[256 * 3];
 
 void loadRelatedPalette(const char *fileName);
 

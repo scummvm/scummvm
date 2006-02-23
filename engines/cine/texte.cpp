@@ -24,19 +24,19 @@
 
 #include "cine/cine.h"
 
-u8 *textDataPtr;
+uint8 *textDataPtr;
 
-u8 textTable[256][2][16 * 8];
+uint8 textTable[256][2][16 * 8];
 
-void generateMask(u8 *sprite, u8 *mask, u16 size, u8 transparency);
+void generateMask(uint8 *sprite, uint8 *mask, uint16 size, uint8 transparency);
 
-void loadTextData(const char *pFileName, u8 *pDestinationBuffer) {
+void loadTextData(const char *pFileName, uint8 *pDestinationBuffer) {
 	Common::File pFileHandle;
-	u16 entrySize;
-	u16 numEntry;
-	u16 i;
-	u8 *tempBuffer;
-	u16 dataSize;
+	uint16 entrySize;
+	uint16 numEntry;
+	uint16 i;
+	uint8 *tempBuffer;
+	uint16 dataSize;
 
 	assert(pFileName);
 	assert(pDestinationBuffer);

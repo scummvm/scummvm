@@ -186,11 +186,11 @@ int CineEngine::go() {
 int gameType;
 
 static void initialize() {
-	u16 i;
+	uint16 i;
 
 	init_video();
 
-	textDataPtr = (u8 *) malloc(8000);
+	textDataPtr = (uint8 *) malloc(8000);
 
 	partBuffer = (partBufferStruct *) malloc(255 * sizeof(animDataStruct));
 

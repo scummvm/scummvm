@@ -25,6 +25,6 @@
 #ifndef CINE_BGLIST_H_
 #define CINE_BGLIST_H_
 
-void addSpriteFilledToBGList(s16 idx);
+void addSpriteFilledToBGList(int16 idx);
 
 #endif

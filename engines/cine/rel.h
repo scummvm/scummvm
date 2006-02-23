@@ -27,10 +27,10 @@
 
 typedef struct relData {
 	char *ptr0;
-	u16 var4;
-	u16 var6;
-	u16 var8;
-	u16 varA;
+	uint16 var4;
+	uint16 var6;
+	uint16 var8;
+	uint16 varA;
 } relStruct;
 
 #define NUM_MAX_REL 255

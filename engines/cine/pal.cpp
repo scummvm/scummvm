@@ -24,20 +24,20 @@
 
 #include "cine/cine.h"
 
-u16 tempPalette[256];
+uint16 tempPalette[256];
 
-u8 colorMode256 = 0;
-u8 palette256[256 * 3];
+uint8 colorMode256 = 0;
+uint8 palette256[256 * 3];
 
-u16 palVar;
-u16 palVar0;
+uint16 palVar;
+uint16 palVar0;
 
 Common::File palFileHandle;
 
 palEntryStruct *palPtr;
 
-u8 paletteBuffer1[16];
-u8 paletteBuffer2[16];
+uint8 paletteBuffer1[16];
+uint8 paletteBuffer2[16];
 
 void loadPal(const char *fileName) {
 	char buffer[20];
@@ -70,10 +70,10 @@ void loadPal(const char *fileName) {
 	palFileHandle.read(palPtr, palVar * palVar0);
 }
 
-s16 findPaletteFromName(const char *fileName) {
+int16 findPaletteFromName(const char *fileName) {
 	char buffer[10];
-	u16 position = 0;
-	u16 i;
+	uint16 position = 0;
+	uint16 i;
 
 	strcpy(buffer, fileName);
 
@@ -97,8 +97,8 @@ s16 findPaletteFromName(const char *fileName) {
 
 void loadRelatedPalette(const char *fileName) {
 	char localName[16];
-	u8 i;
-	s16 paletteIndex;
+	uint8 i;
+	int16 paletteIndex;
 
 	removeExtention(localName, fileName);
 

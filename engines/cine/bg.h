@@ -25,15 +25,15 @@
 #ifndef CINE_BG_H_
 #define CINE_BG_H_
 
-u8 loadBg(const char *bgName);
-u8 loadCt(const char *bgName);
+uint8 loadBg(const char *bgName);
+uint8 loadCt(const char *bgName);
 
-extern u8 *additionalBgTable[9];
-extern u8 currentAdditionalBgIdx;
-extern u8 currentAdditionalBgIdx2;
+extern uint8 *additionalBgTable[9];
+extern uint8 currentAdditionalBgIdx;
+extern uint8 currentAdditionalBgIdx2;
 
-void addBackground(char *bgName, u16 bgIdx);
+void addBackground(char *bgName, uint16 bgIdx);
 
-extern u16 bgVar0;
+extern uint16 bgVar0;
 
 #endif

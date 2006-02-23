@@ -24,19 +24,19 @@
 
 #include "cine/cine.h"
 
-u16 bgVar0;
+uint16 bgVar0;
 
-void loadCtHigh(u8 * currentPtr) {
+void loadCtHigh(uint8 * currentPtr) {
 	currentPtr += 256 * 3;
 
 	memcpy(page3Raw, currentPtr, 320 * 200);
 }
 
-u8 loadCt(const char *ctName) {
-	u8 *ptr;
-	u8 *currentPtr;
-	u8 i;
-	u16 header[0x20];
+uint8 loadCt(const char *ctName) {
+	uint8 *ptr;
+	uint8 *currentPtr;
+	uint8 i;
+	uint16 header[0x20];
 
 	///
 
@@ -45,7 +45,7 @@ u8 loadCt(const char *ctName) {
 	currentPtr = ptr = readBundleFile(findFileInBundle(ctName));
 
 	if (gameType == Cine::GID_OS) {
-		if (*(u16 *) currentPtr == 0x800)	// detect 256 color background
+		if (*(uint16 *) currentPtr == 0x800)	// detect 256 color background
 		{
 			loadCtHigh(currentPtr + 2);
 			return 0;
@@ -83,11 +83,11 @@ void loadBgHigh(char *currentPtr) {
 	colorMode256 = 1;
 }
 
-u8 loadBg(const char *bgName) {
-	u8 *ptr;
-	u8 *currentPtr;
-	u8 i;
-	u8 fileIdx;
+uint8 loadBg(const char *bgName) {
+	uint8 *ptr;
+	uint8 *currentPtr;
+	uint8 i;
+	uint8 fileIdx;
 
 	strcpy(currentBgName[0], bgName);
 
@@ -95,7 +95,7 @@ u8 loadBg(const char *bgName) {
 
 	currentPtr = ptr = readBundleFile(fileIdx);
 
-	if (*(u16 *) currentPtr == 0x800)	// detect 256 color background
+	if (*(uint16 *) currentPtr == 0x800)	// detect 256 color background
 	{
 		loadBgHigh((char *)currentPtr + 2);
 		return 0;
@@ -121,15 +121,15 @@ u8 loadBg(const char *bgName) {
 	return 0;
 }
 
-u8 *additionalBgTable[9] =
+uint8 *additionalBgTable[9] =
     { page2Raw, NULL, NULL, NULL, NULL, NULL, NULL, NULL, page3Raw };
-u8 currentAdditionalBgIdx = 0;
-u8 currentAdditionalBgIdx2 = 0;
+uint8 currentAdditionalBgIdx = 0;
+uint8 currentAdditionalBgIdx2 = 0;
 
-void addBackground(char *bgName, u16 bgIdx) {
-	u8 *ptr;
-	u8 *currentPtr;
-	u8 fileIdx;
+void addBackground(char *bgName, uint16 bgIdx) {
+	uint8 *ptr;
+	uint8 *currentPtr;
+	uint8 fileIdx;
 
 	strcpy(currentBgName[bgIdx], bgName);
 
@@ -137,9 +137,9 @@ void addBackground(char *bgName, u16 bgIdx) {
 
 	currentPtr = ptr = readBundleFile(fileIdx);
 
-	additionalBgTable[bgIdx] = (u8 *) malloc(320 * 200);
+	additionalBgTable[bgIdx] = (uint8 *) malloc(320 * 200);
 
-	if (*(u16 *) currentPtr == 0x800)	// detect 256 color background
+	if (*(uint16 *) currentPtr == 0x800)	// detect 256 color background
 	{
 		memcpy(additionalBgTable[bgIdx], currentPtr + 2 + 3 * 256,
 		    320 * 200);

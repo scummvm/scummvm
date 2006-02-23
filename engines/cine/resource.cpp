@@ -24,5 +24,5 @@
 
 #include "cine/cine.h"
 
-void checkDataDisk(s16 param) {
+void checkDataDisk(int16 param) {
 }

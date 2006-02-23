@@ -26,24 +26,24 @@
 #define CINE_OBJECT_H_
 
 typedef struct {
-	s16 x;
-	s16 y;
-	u16 mask;
-	s16 frame;
-	s16 costume;
+	int16 x;
+	int16 y;
+	uint16 mask;
+	int16 frame;
+	int16 costume;
 	char name[20];
-	u16 part;
+	uint16 part;
 } objectStruct;
 
 struct overlayHeadElement {
 	struct overlayHeadElement *next;
 	struct overlayHeadElement *previous;
-	u16 objIdx;
-	u16 type;
-	s16 x;
-	s16 y;
-	s16 var10;
-	s16 var12;
+	uint16 objIdx;
+	uint16 type;
+	int16 x;
+	int16 y;
+	int16 var10;
+	int16 var12;
 };
 
 typedef struct overlayHeadElement overlayHeadElement;
@@ -52,7 +52,7 @@ typedef struct overlayHeadElement overlayHeadElement;
 #define NUM_MAX_OBJECTDATA 255
 
 extern objectStruct objectTable[NUM_MAX_OBJECT];
-extern u16 globalVars[NUM_MAX_OBJECTDATA];
+extern uint16 globalVars[NUM_MAX_OBJECTDATA];
 
 extern overlayHeadElement overlayHead;
 
@@ -60,17 +60,17 @@ void unloadAllMasks(void);
 void resetMessageHead(void);
 
 void loadObject(char *pObjectName);
-void setupObject(u8 objIdx, u16 param1, u16 param2, u16 param3, u16 param4);
-void modifyObjectParam(u8 objIdx, u8 paramIdx, s16 newValue);
+void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
+void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
 
-void loadOverlayElement(u16 objIdx, u16 param);
-s8 removeOverlayElement(u16 objIdx, u16 param);
+void loadOverlayElement(uint16 objIdx, uint16 param);
+int8 removeOverlayElement(uint16 objIdx, uint16 param);
 
-s16 getObjectParam(u16 objIdx, u16 paramIdx);
-s16 freeOverlay(u16 objIdx, u16 param);
+int16 getObjectParam(uint16 objIdx, uint16 paramIdx);
+int16 freeOverlay(uint16 objIdx, uint16 param);
 
-void addObjectParam(u8 objIdx, u8 paramIdx, s16 newValue);
-void subObjectParam(u8 objIdx, u8 paramIdx, s16 newValue);
-u8 compareObjectParam(u8 objIdx, u8 param1, s16 param2);
+void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
+void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
+uint8 compareObjectParam(uint8 objIdx, uint8 param1, int16 param2);
 
 #endif

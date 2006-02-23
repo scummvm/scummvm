@@ -25,6 +25,6 @@
 #ifndef CINE_UNPACK_H_
 #define CINE_UNPACK_H_
 
-int decomp(u8 *in, u8 *out, int size);
+int decomp(uint8 *in, uint8 *out, int size);
 
 #endif

@@ -25,7 +25,7 @@
 #include "cine/cine.h"
 
 objectStruct objectTable[NUM_MAX_OBJECT];
-u16 globalVars[NUM_MAX_OBJECTDATA];
+uint16 globalVars[NUM_MAX_OBJECTDATA];
 overlayHeadElement overlayHead;
 
 void unloadAllMasks(void) {
@@ -48,10 +48,10 @@ void resetMessageHead(void) {
 }
 
 void loadObject(char *pObjectName) {
-	u16 numEntry;
-	u16 entrySize;
-	u16 i;
-	u8 *ptr;
+	uint16 numEntry;
+	uint16 entrySize;
+	uint16 i;
+	uint8 *ptr;
 
 	checkDataDisk(-1);
 
@@ -59,11 +59,11 @@ void loadObject(char *pObjectName) {
 
 	processPendingUpdates(1);
 
-	numEntry = *(u16 *) ptr;
+	numEntry = *(uint16 *) ptr;
 	ptr += 2;
 	flipU16(&numEntry);
 
-	entrySize = *(u16 *) ptr;
+	entrySize = *(uint16 *) ptr;
 	ptr += 2;
 	flipU16(&entrySize);
 
@@ -75,11 +75,11 @@ void loadObject(char *pObjectName) {
 		{
 			memcpy(&objectTable[i], ptr, entrySize);
 
-			flipU16((u16 *) & objectTable[i].x);
-			flipU16((u16 *) & objectTable[i].y);
+			flipU16((uint16 *) & objectTable[i].x);
+			flipU16((uint16 *) & objectTable[i].y);
 			flipU16(&objectTable[i].mask);
-			flipU16((u16 *) & objectTable[i].frame);
-			flipU16((u16 *) & objectTable[i].costume);
+			flipU16((uint16 *) & objectTable[i].frame);
+			flipU16((uint16 *) & objectTable[i].costume);
 			flipU16(&objectTable[i].part);
 		}
 
@@ -93,7 +93,7 @@ void loadObject(char *pObjectName) {
 	}
 }
 
-s8 removeOverlayElement(u16 objIdx, u16 param) {
+int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 	overlayHeadElement *currentHeadPtr = &overlayHead;
 	overlayHeadElement *tempHead = currentHeadPtr;
 	overlayHeadElement *tempPtr2;
@@ -129,7 +129,7 @@ s8 removeOverlayElement(u16 objIdx, u16 param) {
 	return (0);
 }
 
-s16 freeOverlay(u16 objIdx, u16 param) {
+int16 freeOverlay(uint16 objIdx, uint16 param) {
 	overlayHeadElement *currentHeadPtr = overlayHead.next;
 	overlayHeadElement *tempHead = &overlayHead;
 	overlayHeadElement *tempPtr2;
@@ -164,11 +164,11 @@ s16 freeOverlay(u16 objIdx, u16 param) {
 	return 0;
 }
 
-void loadOverlayElement(u16 objIdx, u16 param) {
+void loadOverlayElement(uint16 objIdx, uint16 param) {
 	overlayHeadElement *currentHeadPtr = &overlayHead;
 	overlayHeadElement *pNewElement;
 
-	u16 si = objectTable[objIdx].mask;
+	uint16 si = objectTable[objIdx].mask;
 
 	overlayHeadElement *tempHead = currentHeadPtr;
 
@@ -200,7 +200,7 @@ void loadOverlayElement(u16 objIdx, u16 param) {
 	currentHeadPtr->previous = pNewElement;
 }
 
-void setupObject(u8 objIdx, u16 param1, u16 param2, u16 param3, u16 param4) {
+void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 	objectTable[objIdx].x = param1;
 	objectTable[objIdx].y = param2;
 	objectTable[objIdx].mask = param3;
@@ -211,7 +211,7 @@ void setupObject(u8 objIdx, u16 param1, u16 param2, u16 param3, u16 param4) {
 	}
 }
 
-void subObjectParam(u8 objIdx, u8 paramIdx, s16 newValue) {
+void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	ASSERT(objIdx <= NUM_MAX_OBJECT);
 
 	paramIdx--;
@@ -256,7 +256,7 @@ void subObjectParam(u8 objIdx, u8 paramIdx, s16 newValue) {
 	}
 }
 
-void addObjectParam(u8 objIdx, u8 paramIdx, s16 newValue) {
+void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	ASSERT(objIdx <= NUM_MAX_OBJECT);
 
 	paramIdx--;
@@ -301,7 +301,7 @@ void addObjectParam(u8 objIdx, u8 paramIdx, s16 newValue) {
 	}
 }
 
-void modifyObjectParam(u8 objIdx, u8 paramIdx, s16 newValue) {
+void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	ASSERT(objIdx <= NUM_MAX_OBJECT);
 
 	paramIdx--;
@@ -350,8 +350,8 @@ void modifyObjectParam(u8 objIdx, u8 paramIdx, s16 newValue) {
 	}
 }
 
-u8 compareObjectParam(u8 objIdx, u8 param1, s16 param2) {
-	u8 compareResult = 0;
+uint8 compareObjectParam(uint8 objIdx, uint8 param1, int16 param2) {
+	uint8 compareResult = 0;
 
 	switch (param1 - 1) {
 	case 0:
@@ -445,7 +445,7 @@ u8 compareObjectParam(u8 objIdx, u8 param1, s16 param2) {
 	return (compareResult);
 }
 
-s16 getObjectParam(u16 objIdx, u16 paramIdx) {
+int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 	ASSERT(objIdx <= NUM_MAX_OBJECT);
 
 	paramIdx--;

@@ -29,17 +29,17 @@
 
 typedef struct {
 	byte *ptr;
-	u16 var4;
-	s16 stack[SCRIPT_STACK_SIZE];
+	uint16 var4;
+	int16 stack[SCRIPT_STACK_SIZE];
 } scriptStruct;
 
 #define NUM_MAX_SCRIPT 50
 
 extern scriptStruct scriptTable[NUM_MAX_SCRIPT];
 
-void computeScriptStack(byte *scriptPtr, s16 *stackPtr, u16 scriptSize);
-void decompileScript(byte *scriptPtr, s16 *stackPtr, u16 scriptSize,
-					 u16 scriptIdx);
+void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize);
+void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize,
+					 uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
 #define OP_loadPart                     0x3F
@@ -49,11 +49,11 @@ void dumpScript(char *dumpName);
 #define OP_changeDataDisk               0x6B
 #define OP_79                           0x79
 
-void addScriptToList0(u16 idx);
-s16 checkCollision(s16 objIdx, s16 x, s16 y, s16 numZones, s16 zoneIdx);
+void addScriptToList0(uint16 idx);
+int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);
 
-void runObjectScript(s16 entryIdx);
-s16 stopObjectScript(s16 entryIdx);
+void runObjectScript(int16 entryIdx);
+int16 stopObjectScript(int16 entryIdx);
 
 void executeList1(void);
 void executeList0(void);

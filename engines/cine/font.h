@@ -26,8 +26,8 @@
 #define CINE_FONT_H_
 
 struct characterEntry {
-	u8 characterIdx;
-	u8 characterWidth;
+	uint8 characterIdx;
+	uint8 characterWidth;
 };
 
 typedef struct characterEntry characterEntry;

@@ -26,11 +26,11 @@
 
 mouseStatusStruct mouseData;
 
-u16 mouseRight = 0;
-u16 mouseLeft = 0;
+uint16 mouseRight = 0;
+uint16 mouseLeft = 0;
 
-u16 mouseUpdateStatus;
-u16 dummyU16;
+uint16 mouseUpdateStatus;
+uint16 dummyU16;
 
 void manageEvents(void) {
 	OSystem::Event event;
@@ -62,7 +62,7 @@ void manageEvents(void) {
 	mouseRight = 0;
 }
 
-void getMouseData(u16 param, u16 *pButton, u16 *pX, u16 *pY) {
+void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
 	*pX = mouseData.X;
 	*pY = mouseData.Y;
 
@@ -78,11 +78,11 @@ void getMouseData(u16 param, u16 *pButton, u16 *pX, u16 *pY) {
 }
 
 void mainLoop(int bootScriptIdx) {
-	u16 var_6;
-	u16 var_2;
-	u16 i;
+	uint16 var_6;
+	uint16 var_2;
+	uint16 i;
 	char *di;
-	u16 mouseButton;
+	uint16 mouseButton;
 
 	closeEngine3();
 	resetMessageHead();

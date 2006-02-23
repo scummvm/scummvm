@@ -25,10 +25,10 @@
 #ifndef CINE_FLIPSUPPORT_H_
 #define CINE_FLIPSUPPORT_H_
 
-void flipU16(u16 *);
-void flipU32(u32 *);
-u16 readU16LE(const void *ptr);
-u16 readU16BE(const void *ptr);
-u32 readU32BE(const void *ptr);
+void flipU16(uint16 *);
+void flipU32(uint32 *);
+uint16 readU16LE(const void *ptr);
+uint16 readU16BE(const void *ptr);
+uint32 readU32BE(const void *ptr);
 
 #endif

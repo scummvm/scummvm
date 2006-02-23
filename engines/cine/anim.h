@@ -25,34 +25,34 @@
 #ifndef CINE_ANIM_H_
 #define CINE_ANIM_H_
 
-extern u16 frameVar0;
+extern uint16 frameVar0;
 
 struct animHeaderStruct {
-	u8 field_0;
-	u8 field_1;
-	u8 field_2;
-	u8 field_3;
-	u16 frameWidth;
-	u16 frameHeight;
-	u8 field_8;
-	u8 field_9;
-	u8 field_A;
-	u8 field_B;
-	u8 field_C;
-	u8 field_D;
-	u16 numFrames;
-	u8 field_10;
-	u8 field_11;
-	u8 field_12;
-	u8 field_13;
-	u16 field_14;
+	uint8 field_0;
+	uint8 field_1;
+	uint8 field_2;
+	uint8 field_3;
+	uint16 frameWidth;
+	uint16 frameHeight;
+	uint8 field_8;
+	uint8 field_9;
+	uint8 field_A;
+	uint8 field_B;
+	uint8 field_C;
+	uint8 field_D;
+	uint16 numFrames;
+	uint8 field_10;
+	uint8 field_11;
+	uint8 field_12;
+	uint8 field_13;
+	uint16 field_14;
 };
 
 typedef struct animHeaderStruct animHeaderStruct;
 
 struct animDataEntry {
 	char name[9];
-	u8 param;
+	uint8 param;
 };
 
 typedef struct animDataEntry animDataEntry;
@@ -60,7 +60,7 @@ typedef struct animDataEntry animDataEntry;
 extern animDataEntry animData[];
 
 void loadResource(char *animName);
-void loadAbs(char *resourceName, u16 idx);
+void loadAbs(char *resourceName, uint16 idx);
 void loadResourcesFromSave();
 
 #endif

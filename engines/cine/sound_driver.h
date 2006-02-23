@@ -38,15 +38,15 @@
 #define ADLIB_REG_WAVE_SELECT 0xE0
 
 typedef struct {
-	void (*setupChannel) (int channelNum, const u8 * data,
+	void (*setupChannel) (int channelNum, const uint8 * data,
 	    int instrumentNum);
 	void (*setChannelFrequency) (int channelNum, int frequency);
 	void (*stopChannel) (int channelNum);
-	void (*playSound) (u8 * data, int channelNum, int volume);
+	void (*playSound) (uint8 * data, int channelNum, int volume);
 } sndDriverStruct;
 
-extern u16 snd_fadeOutCounter, snd_songTicksCounter;
-extern u8 *snd_adlibInstrumentsTable[4];
+extern uint16 snd_fadeOutCounter, snd_songTicksCounter;
+extern uint8 *snd_adlibInstrumentsTable[4];
 extern sndDriverStruct snd_driver;
 
 extern void snd_adlibDriverInit();
