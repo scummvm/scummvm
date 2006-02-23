@@ -41,7 +41,7 @@ uint16 var3;
 uint16 var4;
 uint16 var5;
 
-void drawString(char *string, uint8 param) {
+void drawString(const char *string, uint8 param) {
 }
 
 void blitRawScreen(uint8 *frontBuffer) {
@@ -2385,12 +2385,12 @@ uint16 executePlayerInput(void) {
 
 void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
 				uint8 *maskPtr, uint16 width, uint16 height, uint8 *page, int16 x, int16 y) {
+#if 0
 	uint8 *ptr = NULL;
 	uint8 i = 0;
 	uint16 si = 0;
 	overlayHeadElement *pCurrentOverlay = currentOverlay;
 
-#if 0
 	while(pCurrentOverlay) { // unfinished, probably for mask handling..
 		if (pCurrentOverlay->type == 5) {
 			int16 maskX;

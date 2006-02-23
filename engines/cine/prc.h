@@ -42,6 +42,6 @@ extern prcLinkedListStruct objScriptList;
 
 void resetglobalScriptsHead(void);
 void freePrcLinkedList(void);
-void loadPrc(char *pPrcName);
+void loadPrc(const char *pPrcName);
 
 #endif

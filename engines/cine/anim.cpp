@@ -838,8 +838,8 @@ void loadSeqAbs(char *resourceName, uint16 idx) {
 }
 
 void loadResource(char *resourceName) {
-	uint8 isMask = 0;
-	uint8 isSpl = 0;
+	/* uint8 isMask = 0; */
+	/* uint8 isSpl = 0; */
 
 	if (strstr(resourceName, ".SPL")) {
 		loadSpl(resourceName);
@@ -871,8 +871,8 @@ void loadResource(char *resourceName) {
 }
 
 void loadAbs(char *resourceName, uint16 idx) {
-	uint8 isMask = 0;
-	uint8 isSpl = 0;
+	/* uint8 isMask = 0; */
+	/* uint8 isSpl = 0; */
 
 	if (strstr(resourceName, ".SET")) {
 		loadSetAbs(resourceName, idx);
