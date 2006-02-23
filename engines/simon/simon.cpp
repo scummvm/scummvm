@@ -4153,13 +4153,21 @@ void SimonEngine::delay(uint amount) {
 				_sdlMouseY = event.mouse.y;
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
+				if (getGameType() == GType_FF)
+					_bitArray[5] |= 0x0200;
 				_leftButtonDown++;
 #if defined (_WIN32_WCE) || defined(PALMOS_MODE)
 				_sdlMouseX = event.mouse.x;
 				_sdlMouseY = event.mouse.y;
 #endif
 				break;
+			case OSystem::EVENT_LBUTTONUP:
+				if (getGameType() == GType_FF)
+					_bitArray[5] &= ~0x0200;
+				break;
 			case OSystem::EVENT_RBUTTONDOWN:
+				if (getGameType() == GType_FF)
+					_bitArray[5] &= ~0x1000;
 				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 					_skipSpeech = true;
 				else
