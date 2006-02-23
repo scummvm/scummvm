@@ -1640,7 +1640,7 @@ void SimonEngine::setup_cond_c_helper() {
 			}
 
 			delay(100);
-		} while (_lastHitArea3 == (HitArea *) 0xFFFFFFFF || _lastHitArea3 == 0);
+		} while (_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0);
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {
@@ -1782,7 +1782,7 @@ void SimonEngine::handle_mouse_moved() {
 	setup_hitarea_from_pos(_mouseX, _mouseY, x);
 	_lastHitArea3 = _lastHitArea;
 	if (x == 1 && _lastHitArea == NULL)
-		_lastHitArea3 = (HitArea *) - 1;
+		_lastHitArea3 = (HitArea *) -1;
 
 get_out:
 	drawMousePointer();
@@ -2089,7 +2089,7 @@ startOver:
 			if (_keyPressed == 35)
 				f10_key();
 			processSpecialKeys();
-			if (_lastHitArea3 == (HitArea *) 0xFFFFFFFF)
+			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
 			if (_lastHitArea3 != 0)
 				break;
