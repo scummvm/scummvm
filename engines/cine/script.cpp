@@ -624,7 +624,7 @@ uint16 compareVars(int16 a, int16 b) {
 	return flag;
 }
 
-void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
+void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 	byte *currentScriptPtr;
 	uint16 closeScript;
 	uint16 currentPosition;
@@ -1622,7 +1622,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(param >= 0 && param < NUM_MAX_SCRIPT);
+				ASSERT(param < NUM_MAX_SCRIPT);
 
 				DEBUG_SCRIPT(currentLine, "startScript(%d)",
 				    param);
@@ -1720,7 +1720,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(param >= 0 && param <= 3);
+				ASSERT(param <= 3);
 
 				switch (param) {
 				case 0:
@@ -1841,23 +1841,23 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 			}
 		case 0x4A:
 			{
-				uint8 var1;
-				uint8 var2;
-				uint8 var3;
+				uint8 a;
+				uint8 b;
+				uint8 c;
 
-				var1 = *(currentScriptPtr + currentPosition);
+				a = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				var2 = *(currentScriptPtr + currentPosition);
+				b = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				var3 = *(currentScriptPtr + currentPosition);
+				c = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine,
-				    "palRotate(%d,%d,%d)", var1, var2, var3);
+				    "palRotate(%d,%d,%d)", a, b, c);
 
-				palRotate(var1, var2, var3);
+				palRotate(a, b, c);
 				break;
 			}
 		case 0x4F:	// break;
@@ -1885,7 +1885,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 			{
 				DEBUG_SCRIPT(currentLine, "endScript");
 
-				if (param == 0) {
+				if (params == 0) {
 					endScript0(scriptElement->scriptIdx);
 				} else {
 					endScript1(scriptElement->scriptIdx);
@@ -2004,20 +2004,20 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 				currentPosition++;
 
 				if (type) {
-					uint8 var2;
+					uint8 b;
 
-					var2 =
+					b =
 					    *(currentScriptPtr +
 					    currentPosition);
 					currentPosition++;
 
 					DEBUG_SCRIPT(currentLine,
 					    "compare globalVars[%d] and var[%d]",
-					    idx, var2);
+					    idx, b);
 
 					scriptElement->compareResult =
 					    compareVars(globalVars[idx],
-					    scriptElement->localVars[var2]);
+					    scriptElement->localVars[b]);
 				} else {
 					uint16 newData;
 
@@ -2066,7 +2066,6 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 				numIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(startIdx <= NUM_MAX_PARTDATA);
 				ASSERT(startIdx + numIdx <= NUM_MAX_PARTDATA);
 
 				DEBUG_SCRIPT(currentLine,
@@ -2338,37 +2337,37 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 param) {
 			}
 		case 0x80:
 			{
-				uint8 var1;
-				uint8 var2;
+				uint8 a;
+				uint8 b;
 
-				var1 = *(currentScriptPtr + currentPosition);
+				a = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				var2 = *(currentScriptPtr + currentPosition);
+				b = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine,
-				    "removeSeq(%d,%d) -> TODO", var1, var2);
+				    "removeSeq(%d,%d) -> TODO", a, b);
 
-				removeSeq(var1, 0, var2);
+				removeSeq(a, 0, b);
 
 				break;
 			}
 		case 0x83:
 			{
-				uint8 var1;
-				uint8 var2;
+				uint8 a;
+				uint8 b;
 
-				var1 = *(currentScriptPtr + currentPosition);
+				a = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				var2 = *(currentScriptPtr + currentPosition);
+				b = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine,
-				    "OP83(%d,%d) -> TODO", var1, var2);
+				    "OP83(%d,%d) -> TODO", a, b);
 
-				if (isSeqRunning(var1, 0, var2)) {
+				if (isSeqRunning(a, 0, b)) {
 					scriptElement->compareResult = 1;
 				} else {
 					scriptElement->compareResult = 0;
