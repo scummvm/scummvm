@@ -487,7 +487,7 @@ void addScriptToList0(u16 idx) {
 
 #ifdef _DEBUG
 #define DEBUG_SCRIPT debugScript
-void debugScript(int currentLine, char *string, ...) {
+void debugScript(int currentLine, const char *string, ...) {
 	va_list va;
 
 	va_start(va, string);
@@ -497,7 +497,7 @@ void debugScript(int currentLine, char *string, ...) {
 }
 #else
 #define DEBUG_SCRIPT debugScriptInline
-void debugScriptInline(int currentLine, char *string, ...) {
+void debugScriptInline(int currentLine, const char *string, ...) {
 }
 #endif
 

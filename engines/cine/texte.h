@@ -28,6 +28,6 @@
 extern u8 *textDataPtr;
 extern u8 textTable[256][2][16 * 8];
 
-void loadTextData(char *pFileName, u8 *pDestinationBuffer);
+void loadTextData(const char *pFileName, u8 *pDestinationBuffer);
 
 #endif

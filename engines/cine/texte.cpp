@@ -30,7 +30,7 @@ u8 textTable[256][2][16 * 8];
 
 void generateMask(u8 *sprite, u8 *mask, u16 size, u8 transparency);
 
-void loadTextData(char *pFileName, u8 *pDestinationBuffer) {
+void loadTextData(const char *pFileName, u8 *pDestinationBuffer) {
 	Common::File pFileHandle;
 	u16 entrySize;
 	u16 numEntry;
