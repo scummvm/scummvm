@@ -394,64 +394,91 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	if (!calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, srcRect, dstRect)) {
 		return;
 	}
-	dst += dstRect.top * ((dstw + (srcRect.left & 7)) >> 3) + ((dstRect.left + (srcRect.left & 7)) >> 3);
-	uint8 mask = 1 << (7 - (dstRect.left & 7));
-	for (int y = 0; y < srcRect.top; ++y) {
-		src += READ_LE_UINT16(src) + 2;
-	}
-	int h = srcRect.height();
+	dstw = (dstw & 7) / 8;
+	dst += dstRect.top * dstw + ((dstRect.left & 7) / 8);
+
+	const uint8 *dataPtr, *dataPtrNext;
+	uint8 *dstPtr, *dstPtrNext;
+	uint32 code;
+	uint8 databit, mask;
+	int h, w, xoff;
+	uint16 off;
+
+	dstPtr = dst;
+	dataPtr = src;
+
+	// Skip over the first 'srcRect->top' lines in the data
+	h = srcRect.top;
 	while (h--) {
-		uint16 off = READ_LE_UINT16(src); src += 2;
-		uint8 *dstNextLine = dst + dstw;
-		const uint8 *srcNextLine = src + off;
+		dataPtr += READ_LE_UINT16(dataPtr) + 2;
+	}
+	h = srcRect.height();
+	w = srcRect.width();
+	if (h <= 0 || w <= 0)
+		return;
+
+	while (h--) {
+		xoff = srcRect.left;
+		w = srcRect.width();
+		mask = 1 << (7 - (dstRect.left & 7));
+		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
+		dstPtrNext = dstPtr + dstw;
+		dataPtrNext = dataPtr + off;
 		if (off != 0) {
-			int x = srcRect.left;
-			int w = srcRect.width();
 			while (w > 0) {
-				uint8 code = *src++;
-				if (code & 1) {
+				code = *dataPtr++;
+				databit = code & 1;
+				code >>= 1;
+				if (databit) {
 					code >>= 1;
-					if (x > 0) {
-						x -= code;
-						if (x >= 0) continue;
-						code = -x;
+					if (xoff > 0) {
+						xoff -= code;
+						if (xoff >= 0)
+							continue;
+
+						code = -xoff;
 					}
-					decodeWizMask(dst, mask, code, maskT);
+					decodeWizMask(dstPtr, mask, code, maskT);
 					w -= code;
 				} else {
-					bool setColor = (code & 2) == 2;
-					code = (code >> 2) + 1;
-					if (x > 0) {
-						x -= code;
-						if (x >= 0) {
-							if (setColor) {
-								++src;
-							} else {
-								src += code;
-							}
-							continue;				
+					databit = code & 1;
+					code = (code >> 1) + 1;
+
+					if (xoff > 0) {
+						xoff -= code;
+						if (databit) {
+							++dataPtr;
+							if (xoff >= 0)
+								continue;
+
+							code = -xoff;
+							--dataPtr;
+						} else {
+							dataPtr += code;
+							if (xoff >= 0)
+								continue;
+
+							code = -xoff;
+							dataPtr += xoff;
 						}
-						if (!setColor) {
-							src += x;
-						}
-						code = -x;
 					}
+
 					w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					if (setColor) {
-						decodeWizMask(dst, mask, code, maskP);
-						++src;
+					if (databit) {
+						decodeWizMask(dstPtr, mask, code, maskP);
+						dataPtr++;
 					} else {
-						decodeWizMask(dst, mask, code, maskP);
-						src += code;
+						decodeWizMask(dstPtr, mask, code, maskP);
+						dataPtr += code;
 					}
 				}
 			}
 		}
-		dst = dstNextLine;
-		src = srcNextLine;
+		dataPtr = dataPtrNext;
+		dstPtr = dstPtrNext;
 	}
 }
 
@@ -1180,8 +1207,10 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		break;
 	case 1:
 		if (flags & 0x80) {
+			dst = _vm->getMaskBuffer(0, 0, 1);
 			copyWizImageWithMask(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 		} else if (flags & 0x100) {
+			dst = _vm->getMaskBuffer(0, 0, 1);
 			copyWizImageWithMask(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 1);
 		} else {
 			copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr);
