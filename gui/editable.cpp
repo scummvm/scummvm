@@ -155,7 +155,7 @@ void EditableWidget::drawCaret(bool erase) {
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x+editRect.width(), y+editRect.height()-2), erase);
+	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height() - 2), erase);
 	
 	_caretVisible = !erase;
 }

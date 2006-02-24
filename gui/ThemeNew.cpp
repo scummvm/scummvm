@@ -729,7 +729,7 @@ void ThemeNew::drawCaret(const Common::Rect &r, bool erase, kState state) {
 	if (!_initOk)
 		return;
 
-	restoreBackground(Common::Rect(r.left, r.top, r.left+1, r.bottom));
+	restoreBackground(r);
 	if (!erase) {
 		_screen.vLine(r.left, r.top, r.bottom, _colors[kCaretColor]);
 	} else if (r.top >= 0) {
