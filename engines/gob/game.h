@@ -115,6 +115,8 @@ public:
 	int32 _startTimeKey;
 	int16 _mouseButtons;
 
+	char _soundFromExt[20];
+
 	Game(GobEngine *vm);
 
 	char *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight);
@@ -123,7 +125,6 @@ public:
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 
 	void capturePop(char doDraw);
-	void interLoadSound(int16 slot);
 	void freeSoundSlot(int16 slot);
 	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons,
 					char handleMouse);
@@ -166,8 +167,6 @@ protected:
 
 	int16 _collStackSize;
 	int16 _collStackElemSizes[3];
-
-	char _soundFromExt[20];
 
 	char _shouldPushColls;
 

@@ -26,6 +26,7 @@
 #include "gob/game.h"
 #include "gob/scenery.h"
 #include "gob/global.h"
+#include "gob/inter.h"
 
 namespace Gob {
 
@@ -178,7 +179,7 @@ void Mult_v1::loadMult(int16 resId) {
 				}
 			}
 			if (i == j) {
-				_vm->_game->interLoadSound(19 - _sndSlotsCount);
+				_vm->_inter->loadSound(19 - _sndSlotsCount);
 				_sndKeys[i].soundIndex =
 				    19 - _sndSlotsCount;
 				_sndSlotsCount++;
@@ -194,6 +195,10 @@ void Mult_v1::loadMult(int16 resId) {
 			break;
 		}
 	}
+}
+
+void Mult_v1::setMultData(uint16 multindex) {
+	error("Switching mults not supported for Gob1");
 }
 
 } // End of namespace Gob

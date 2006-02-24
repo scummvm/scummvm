@@ -181,7 +181,12 @@ void Mult_v2::loadMult(int16 resId) {
 
 	_multData2->sndKeys = new Mult_SndKey[_multData2->sndKeysCount];
 
+	warning("SoundKeyCount: %d", _multData2->sndKeysCount);
+
+	// TODO: There's still something wrong here, preventing GOB2 floppy
+	//       to start correctly
 	for (i = 0; i < _multData2->sndKeysCount; i++) {
+		warning("-> %d", i);
 		_multData2->sndKeys[i].frame = (int16)READ_LE_UINT16(_dataPtr);
 		_multData2->sndKeys[i].cmd = (int16)READ_LE_UINT16(_dataPtr + 2);
 		_multData2->sndKeys[i].freq = (int16)READ_LE_UINT16(_dataPtr + 4);
@@ -213,9 +218,10 @@ void Mult_v2::loadMult(int16 resId) {
 			if (i == j) {
 				warning("GOB2 Stub! Mult_Data.sndSlot");
 				warning("GOB2 Stub! Game::interLoadSound() differs!");
-				// _multData2->sndSlot[_multData2->sndSlotsCount] = _vm->_game->interLoadSound(1);
+				_multData2->sndSlot[_multData2->sndSlotsCount] = _vm->_inter->loadSound(1);
+				_vm->_inter->loadSound(1);
 				// _multData2->sndKeys[i].soundIndex = _multData2->sndSlot[_multData2->sndSlotsCount] & 0x7FFF;
-				// _multData2->sndSlotsCount++;
+				_multData2->sndSlotsCount++;
 			}
 
 			break;
@@ -258,6 +264,14 @@ void Mult_v2::loadMult(int16 resId) {
 	}
 
 	delete[] extData;
+}
+
+void Mult_v2::setMultData(uint16 multindex) {
+	if (multindex > 7)
+		error("Multindex out of range");
+
+	debug(4, "Switching to mult %d", multindex);
+	_multData2 = _multDatas[multindex];
 }
 
 } // End of namespace Gob

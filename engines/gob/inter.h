@@ -61,6 +61,7 @@ public:
 	void initControlVars(void);
 	void renewTimeInVars(void);
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
+	virtual int16 loadSound(int16 slot) = 0;
 
 	Inter(GobEngine *vm);
 	virtual ~Inter() {};
@@ -81,6 +82,7 @@ class Inter_v1 : public Inter {
 public:
 	Inter_v1(GobEngine *vm);
 	virtual ~Inter_v1() {};
+	virtual int16 loadSound(int16 slot);
 
 protected:
 	typedef void (Inter_v1::*OpcodeDrawProcV1)(void);
@@ -269,6 +271,7 @@ class Inter_v2 : public Inter_v1 {
 public:
 	Inter_v2(GobEngine *vm);
 	virtual ~Inter_v2() {};
+	virtual int16 loadSound(int16 search);
 
 protected:
 	typedef void (Inter_v2::*OpcodeDrawProcV2)(void);
@@ -301,14 +304,20 @@ protected:
 
 	void o2_drawStub(void) { warning("Gob2 stub"); }
 	void o2_stub0x80(void);
-	void o2_stub0x23(void);
 	bool o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag);
 	bool o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag);
-	void o2_setRenderFlags(void);
 	bool o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag);
-	void o2_initMult(void);
 	bool o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag);
+	bool o2_loadSound(char &cmdCount, int16 &counter, int16 &retFlag);
+	void o2_setRenderFlags(void);
+	void o2_initMult(void);
 	void o2_loadCurLayer(void);
+	void o2_playCDTrack(void);
+	void o2_stopCD(void);
+	void o2_readLIC(void);
+	void o2_freeLIC(void);
+	void o2_getCDTrackPos(void);
+	void o2_playMult(void);
 };
 
 }				// End of namespace Gob

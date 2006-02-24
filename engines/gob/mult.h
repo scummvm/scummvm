@@ -187,6 +187,7 @@ public:
 	void playSound(Snd::SoundDesc * soundDesc, int16 repCount, int16 freq,
 				   int16 channel);
 
+	virtual void setMultData(uint16 multindex) = 0;
 	virtual void loadMult(int16 resId) = 0;
 
 	Mult(GobEngine *vm);
@@ -210,6 +211,7 @@ public:
 	Mult_v1(GobEngine *vm);
 	virtual ~Mult_v1() {};
 
+	virtual void setMultData(uint16 multindex);
 	virtual void loadMult(int16 resId);
 };
 
@@ -244,7 +246,7 @@ public:
 		Mult_SndKey *sndKeys;
 
 		int16 sndSlotsCount;
-		int16 sndSlot;
+		int16 sndSlot[60];
 		int16 frameRate;      
 
 		Video::Color fadePal[5][16];
@@ -274,6 +276,7 @@ public:
 	Mult_v2(GobEngine *vm);
 	virtual ~Mult_v2() {};
 
+	virtual void setMultData(uint16 multindex);
 	virtual void loadMult(int16 resId);
 };
 

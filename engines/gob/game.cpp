@@ -83,9 +83,6 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_curImaFile[0] = 0;
 	_soundFromExt[0] = 0;
 	_collStr[0] = 0;
-
-
-	// Capture
 }
 
 char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
@@ -407,35 +404,6 @@ void Game::loadSound(int16 slot, char *dataPtr) {
 
 	soundDesc->inClocks = (soundDesc->frequency * 10) / 182;
 	soundDesc->flag = 0;
-}
-
-void Game::interLoadSound(int16 slot) {
-	char *dataPtr;
-	int16 id;
-
-	if (slot == -1)
-		slot = _vm->_parse->parseValExpr();
-
-	id = _vm->_inter->load16();
-	if (id == -1) {
-		_vm->_global->_inter_execPtr += 9;
-		return;
-	}
-
-	if (id >= 30000) {
-		dataPtr = loadExtData(id, 0, 0);
-		_soundFromExt[slot] = 1;
-	} else {
-		dataPtr = loadTotResource(id);
-		_soundFromExt[slot] = 0;
-	}
-
-	if (_vm->_features & Gob::GF_GOB2) {
-		warning("STUB: interLoadSound()");
-		return;
-	}
-
-	loadSound(slot, dataPtr);
 }
 
 void Game::freeSoundSlot(int16 slot) {

@@ -120,7 +120,7 @@ void Inter_v2::setupOpcodes(void) {
 	static const OpcodeDrawEntryV2 opcodesDraw[256] = {
 		/* 00 */
 		OPCODE(o1_loadMult),
-		OPCODE(o1_playMult),
+		OPCODE(o2_playMult),
 		OPCODE(o1_freeMult),
 		{NULL, ""},
 		/* 04 */
@@ -159,13 +159,13 @@ void Inter_v2::setupOpcodes(void) {
 		{NULL, ""},
 		{NULL, ""},
 		/* 20 */
+		OPCODE(o2_playCDTrack),
 		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
-		OPCODE(o2_stub0x23),
+		OPCODE(o2_stopCD),
+		OPCODE(o2_readLIC),
 		/* 24 */
-		OPCODE(o2_drawStub),
-		OPCODE(o2_drawStub),
+		OPCODE(o2_freeLIC),
+		OPCODE(o2_getCDTrackPos),
 		{NULL, ""},
 		{NULL, ""},
 		/* 28 */
@@ -514,7 +514,7 @@ void Inter_v2::setupOpcodes(void) {
 		/* 38 */
 		OPCODE(o1_playSound),
 		OPCODE(o1_stopSound),
-		OPCODE(o1_loadSound),
+		OPCODE(o2_loadSound),
 		OPCODE(o1_freeSoundSlot),
 		/* 3C */
 		OPCODE(o1_waitEndPlay),
@@ -715,14 +715,156 @@ void Inter_v2::o2_stub0x80(void) {
 	warning("STUB: Gob2 drawOperation 0x80 (%d %d)", expr1, expr2);
 }
 
-void Inter_v2::o2_stub0x23(void) {
-	byte result;
-	char str[40];
-	
-	result = evalExpr(NULL);
-	strcpy(str, _vm->_global->_inter_resStr);
+int16 Inter_v2::loadSound(int16 search) {
+	int16 id;
+	int16 slot;
+/*	int i;
+	int8 var_7;
+	char *pointer;
+	char sndfile[14];
 
-	warning("STUB: Gob2 drawOperation 0x23 (%d, \"%s\")", result, str);
+	char *dword_2EBF0[60];
+	int16 word_2EAFE[60];
+	int8 byte_2EB8A[60];
+
+	for (i = 0; i < 60; i++)
+		dword_2EBF0[i] = 0;*/
+
+	warning("STUB: loadSound()");
+
+	slot = 0;
+	if (search == 0) {
+		slot = _vm->_parse->parseValExpr();
+	}
+	id = load16();
+
+//	warning("==> %d %d", slot, id);
+
+	if (id == -1)
+		_vm->_global->_inter_execPtr += 9;
+
+	return slot;
+
+/*	var_7 = 0;
+	if (search == 0) {
+		slot = _vm->_parse->parseValExpr();
+		if (slot < 0) {
+			var_7 = 1;
+			slot = -slot;
+		}
+		id = load16();
+	}
+	else {
+		// loc_961D
+		id = load16();
+
+		for (slot = 0; slot < 60; slot++)
+			if ((dword_2EBF0[slot] != 0) && (word_2EAFE[slot] = id))
+				return slot | 0x8000;
+
+		for (slot = 59; slot >= 0; slot--)
+			if (dword_2EBF0[slot] == 0) break;
+
+	}
+
+	if (dword_2EBF0[slot] != 0)
+		_vm->_game->freeSoundSlot(slot);
+
+	word_2EAFE[slot] = id;
+
+	if (id == -1) {
+		strcpy(sndfile, _vm->_global->_inter_execPtr);
+		_vm->_global->_inter_execPtr += 9;
+		if (var_7 == 0) {
+			// loc_96EB
+			strcat(sndfile, ".SND");
+//			dword_2EBF0[slot] = sub_1F5D0(sndfile);
+		}
+		else {
+			strcat(sndfile, ".ADL");
+			dword_2EBF0[slot] = _vm->_dataio->getData(sndfile);
+		}
+		byte_2EB8A[slot] = 2;
+		// loc_969D
+	}
+	else {
+		// loc_9735
+		if (id >= 30000) {
+			// loc_973E
+			if ((var_7 == 0) &&
+			   (_vm->_global->_soundFlags & 0x14) &&
+			   (_vm->_game->_totFileData[0x29] >= 51)) {
+				// loc_9763
+				if (_vm->_global->_soundFlags & 0x14) {
+				// loc_976E
+//					var_E = new char[16];
+					if (_vm->_inter->_terminate)
+						return slot;
+					pointer = _vm->_game->loadExtData(id, NULL, NULL);
+					if (pointer == NULL) {
+//						delete[] var_E;
+						return slot;
+					}
+					// loc_97C5
+//					var_E->pointer = pointer+6;
+//					var_E->0x0C = pointer[4] << 8 + pointer[5];
+					// ...
+//					dword_2EBF0[slot] = var_E;
+					delete[] pointer;
+					return slot;
+				}
+				else {
+					// loc_9A59
+					return slot;
+				}
+			}
+			else {
+				// loc_99BC
+				pointer = _vm->_game->loadExtData(id, NULL, NULL);
+				// ...
+				delete[] pointer;
+				return slot;
+			}
+		}
+		else {
+			// loc_9A13
+//			pointer = _vm->_game->loadTotResource(id);
+			return slot;
+		}
+	}
+
+	if (var_7 != 0)
+		byte_2EB8A[slot] |= 8;
+
+	if (dword_2EBF0[slot])
+		delete[] dword_2EBF0[slot];
+
+	return slot;*/
+	
+/*	char *dataPtr;
+	int16 id;
+
+	if (slot == -1)
+		slot = _vm->_parse->parseValExpr();
+
+	id = load16();
+	if (id == -1) {
+		_vm->_global->_inter_execPtr += 9;
+		return;
+	}
+
+	if (id >= 30000) {
+		dataPtr = _vm->_game->loadExtData(id, 0, 0);
+		_vm->_game->_soundFromExt[slot] = 1;
+	} else {
+		dataPtr = _vm->_game->loadTotResource(id);
+		_vm->_game->_soundFromExt[slot] = 0;
+	}
+
+	warning("STUB: loadSound()");
+	return;
+
+	_vm->_game->loadSound(slot, dataPtr);*/
 }
 
 bool Inter_v2::o2_evaluateStore(char &cmdCount, int16 &counter, int16 &retFlag) {
@@ -951,22 +1093,6 @@ bool Inter_v2::o2_palLoad(char &cmdCount, int16 &counter, int16 &retFlag) {
 	return false;
 }
 
-void Inter_v2::o2_setRenderFlags(void) {
-	int16 expr;
-
-	expr = _vm->_parse->parseValExpr();
-	
-	if (expr & 0x8000) {
-		_vm->_draw->_renderFlags |= expr & 0x3fff;
-	}
-	else {
-		if (expr & 0x4000)
-			_vm->_draw->_renderFlags &= expr & 0x3fff;
-		else
-			_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
-	}
-}
-
 bool Inter_v2::o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
 	char buf[20];
 	int8 size;
@@ -994,6 +1120,39 @@ bool Inter_v2::o2_loadTot(char &cmdCount, int16 &counter, int16 &retFlag) {
 	strcpy(_vm->_game->_totToLoad, buf);
 
 	return false;
+}
+
+bool Inter_v2::o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
+	int16 index;
+
+	index = load16();
+	if (_vm->_draw->_spritesArray[index] == 0)
+		return false;
+
+	_vm->_draw->freeSprite(index);
+
+	return false;
+}
+
+bool Inter_v2::o2_loadSound(char &cmdCount, int16 &counter, int16 &retFlag) {
+	loadSound(0);
+	return false;
+}
+
+void Inter_v2::o2_setRenderFlags(void) {
+	int16 expr;
+
+	expr = _vm->_parse->parseValExpr();
+	
+	if (expr & 0x8000) {
+		_vm->_draw->_renderFlags |= expr & 0x3fff;
+	}
+	else {
+		if (expr & 0x4000)
+			_vm->_draw->_renderFlags &= expr & 0x3fff;
+		else
+			_vm->_draw->_renderFlags = _vm->_parse->parseValExpr();
+	}
 }
 
 void Inter_v2::o2_initMult(void) {
@@ -1112,21 +1271,63 @@ void Inter_v2::o2_initMult(void) {
 	debug(4, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
 }
 
-bool Inter_v2::o2_freeSprite(char &cmdCount, int16 &counter, int16 &retFlag) {
-	int16 index;
-
-	index = load16();
-	if (_vm->_draw->_spritesArray[index] == 0)
-		return false;
-
-	_vm->_draw->freeSprite(index);
-
-	return false;
-}
-
 void Inter_v2::o2_loadCurLayer(void) {
 	_vm->_scenery->_curStatic = _vm->_parse->parseValExpr();
 	_vm->_scenery->_curStaticLayer = _vm->_parse->parseValExpr();
+}
+
+void Inter_v2::o2_playCDTrack(void) {
+	if ((_vm->_draw->_renderFlags & 0x200) == 0)
+		_vm->_draw->blitInvalidated();
+	evalExpr(NULL);
+	_vm->_cdrom->startTrack(_vm->_global->_inter_resStr);
+}
+
+void Inter_v2::o2_stopCD(void) {
+	_vm->_cdrom->stopPlaying();
+}
+
+void Inter_v2::o2_readLIC(void) {
+	byte result;
+	char path[40];
+	
+	result = evalExpr(NULL);
+	strcpy(path, _vm->_global->_inter_resStr);
+	strcat(path, ".LIC");
+
+	_vm->_cdrom->readLIC(path);
+}
+
+void Inter_v2::o2_freeLIC(void) {
+	_vm->_cdrom->freeLICbuffer();
+}
+
+void Inter_v2::o2_getCDTrackPos(void) {
+	int16 trackpospos;
+	int16 tracknamepos;
+	int32 trackpos;
+
+	_vm->_util->longDelay(1);
+
+	trackpospos = _vm->_parse->parseVarIndex();
+	// The currently playing trackname would be written there to
+	// notice trackbound overruns. Since we stop on trackend and
+	// CDROM::getTrackPos() returns -1 then anyway, we can ignore it.
+	tracknamepos = _vm->_parse->parseVarIndex();
+	trackpos = _vm->_cdrom->getTrackPos();
+	if (trackpos == -1)
+		trackpos = 32767;
+
+	WRITE_VAR(trackpospos >> 2, trackpos);
+}
+
+void Inter_v2::o2_playMult(void) {
+	int16 checkEscape;
+
+	checkEscape = load16();
+
+	_vm->_mult->setMultData(checkEscape >> 1);
+	_vm->_mult->playMult(VAR(57), -1, checkEscape & 0x1, 0);
 }
 
 } // End of namespace Gob

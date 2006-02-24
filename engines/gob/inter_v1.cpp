@@ -1973,7 +1973,7 @@ bool Inter_v1::o1_setBackDelta(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 bool Inter_v1::o1_loadSound(char &cmdCount, int16 &counter, int16 &retFlag) {
-	_vm->_game->interLoadSound(-1);
+	loadSound(-1);
 	return false;
 }
 
@@ -2687,6 +2687,31 @@ void Inter_v1::o1_initGoblin(int16 &extraData, int32 *retVarPtr, Goblin::Gob_Obj
 	_vm->_goblin->_itemIndInPocket = -1;
 	_vm->_goblin->_itemIdInPocket = -1;
 	_vm->_util->beep(50);
+}
+
+int16 Inter_v1::loadSound(int16 slot) {
+	char *dataPtr;
+	int16 id;
+
+	if (slot == -1)
+		slot = _vm->_parse->parseValExpr();
+
+	id = load16();
+	if (id == -1) {
+		_vm->_global->_inter_execPtr += 9;
+		return 0;
+	}
+
+	if (id >= 30000) {
+		dataPtr = _vm->_game->loadExtData(id, 0, 0);
+		_vm->_game->_soundFromExt[slot] = 1;
+	} else {
+		dataPtr = _vm->_game->loadTotResource(id);
+		_vm->_game->_soundFromExt[slot] = 0;
+	}
+
+	_vm->_game->loadSound(slot, dataPtr);
+	return 0;
 }
 
 } // End of namespace Gob
