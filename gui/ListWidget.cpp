@@ -307,7 +307,6 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void ListWidget::drawWidget(bool hilite) {
 	int i, pos, len = _list.size();
 	Common::String buffer;
-	int deltax;
 
 	// Draw a thin frame around the list.
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorder);
@@ -341,13 +340,11 @@ void ListWidget::drawWidget(bool hilite) {
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			adjustOffset();
-			deltax = -_editScrollOffset;
-			width = _w - r.left + deltax - 2;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left - deltax, y, _x + r.left - deltax + width, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
+			width = _w - r.left - 2;
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 1), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
-			deltax = 0;
 			if (_selectedItem != pos) {
 				width = g_gui.getStringWidth(buffer);
 				if (width > _w - r.left - 2)
