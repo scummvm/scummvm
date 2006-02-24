@@ -36,7 +36,7 @@ void addSpriteFilledToBGList(int16 idx) {
 	y = objectTable[idx].y;
 
 	width = animDataTable[objectTable[idx].frame].width;
-	height = animDataTable[objectTable[idx].frame].var2;
+	height = animDataTable[objectTable[idx].frame].height;
 
 	if (animDataTable[objectTable[idx].frame].ptr1) {
 		gfxFillSprite(animDataTable[objectTable[idx].frame].ptr1, width / 2, height, page2Raw, x, y);

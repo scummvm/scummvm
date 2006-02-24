@@ -211,8 +211,8 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 
 		animDataTable[i].width = width;
 		animDataTable[i].var1 = width >> 3;
-		animDataTable[i].field_4 = 4;
-		animDataTable[i].var2 = height;
+		animDataTable[i].bpp = 4;
+		animDataTable[i].height = height;
 
 		animDataTable[i].fileIdx = -1;
 		animDataTable[i].frameIdx = -1;
@@ -225,8 +225,8 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 
 		animDataTable[i].width = width;
 		animDataTable[i].var1 = width >> 3;
-		animDataTable[i].field_4 = 4;
-		animDataTable[i].var2 = height;
+		animDataTable[i].bpp = 4;
+		animDataTable[i].height = height;
 
 		animDataTable[i].fileIdx = -1;
 		animDataTable[i].frameIdx = -1;
@@ -275,9 +275,9 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 		animDataTable[i].var1 = width / 16;
 	}
 
-	animDataTable[i].field_4 = type;	// bbp ?
+	animDataTable[i].bpp = type;
 
-	animDataTable[i].var2 = height;
+	animDataTable[i].height = height;
 
 	animDataTable[i].fileIdx = -1;
 	animDataTable[i].frameIdx = -1;
@@ -319,9 +319,9 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 		animDataTable[i].var1 = width / 16;
 	}
 
-	animDataTable[i].field_4 = type;	// bbp ?
+	animDataTable[i].bpp = type;
 
-	animDataTable[i].var2 = height;
+	animDataTable[i].height = height;
 
 	animDataTable[i].fileIdx = -1;
 	animDataTable[i].frameIdx = -1;

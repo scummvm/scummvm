@@ -96,6 +96,13 @@ extern char *savePath;
 #include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
 
+enum {
+	VAR_MOUSE_X_MODE = 253,
+	VAR_MOUSE_X_POS = 249,
+	VAR_MOUSE_Y_MODE = 251,
+	VAR_MOUSE_Y_POS = 250
+};
+
 extern AdlibMusic *g_cine_adlib;
 
 #endif

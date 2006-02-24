@@ -79,7 +79,7 @@ void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
 
 void mainLoop(int bootScriptIdx) {
 	uint16 var_6;
-	uint16 var_2;
+	uint16 quitFlag;
 	uint16 i;
 	char *di;
 	uint16 mouseButton;
@@ -105,7 +105,7 @@ void mainLoop(int bootScriptIdx) {
 
 	gfxFuncGen2();
 
-	var_2 = 0;
+	quitFlag = 0;
 	allowPlayerInput = 0;
 	checkForPendingDataLoadSwitch = 0;
 
@@ -210,13 +210,13 @@ void mainLoop(int bootScriptIdx) {
 
 		if (di) {
 			if (!strcmp(di, "quit")) {
-				var_2 = 1;
+				quitFlag = 1;
 			}
 		}
 
 		manageEvents();
 
-	} while (!exitEngine && !var_2 && var21 != 7);
+	} while (!exitEngine && !quitFlag && var21 != 7);
 
 	hideMouse();
 	stopSample();

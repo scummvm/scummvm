@@ -25,17 +25,17 @@
 #ifndef CINE_REL_H_
 #define CINE_REL_H_
 
-typedef struct relData {
-	char *ptr0;
-	uint16 var4;
-	uint16 var6;
-	uint16 var8;
-	uint16 varA;
-} relStruct;
+struct RelObjectScript {
+	char *data;
+	uint16 size;
+	uint16 obj1Param1;
+	uint16 obj1Param2;
+	uint16 obj2Param;
+};
 
 #define NUM_MAX_REL 255
 
-extern relStruct relTable[NUM_MAX_REL];
+extern RelObjectScript relTable[NUM_MAX_REL];
 
 void releaseObjectScripts(void);
 void resetObjectScriptHead(void);

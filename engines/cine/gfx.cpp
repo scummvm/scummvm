@@ -58,20 +58,17 @@ uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
 
 	if (oriR < 0)
 		oriR = 0;
-
-	if (oriR > 7)
+	else if (oriR > 7)
 		oriR = 7;
 
 	if (oriG < 0)
 		oriG = 0;
-
-	if (oriG > 7)
+	else if (oriG > 7)
 		oriG = 7;
 
 	if (oriB < 0)
 		oriB = 0;
-
-	if (oriB > 7)
+	else if (oriB > 7)
 		oriB = 7;
 
 	return (oriR | (oriG << 4) | (oriB << 8));
@@ -111,12 +108,9 @@ void gfxFillSprite(uint8 *spritePtr, uint16 width, uint16 height, uint8 *page, i
 }
 
 void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page) {
-	int16 t;
 	if (x1 == x2) {
 		if (y1 > y2) {
-			t = y1;
-			y1 = y2;
-			y2 = t;
+			SWAP(y1, y2);
 		}
 		while (y1 <= y2) {
 			*(page + (y1 * 320 + x1)) = color;
@@ -124,9 +118,7 @@ void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *pag
 		}
 	} else {
 		if (x1 > x2) {
-			t = x1;
-			x1 = x2;
-			x2 = t;
+			SWAP(x1, x2);
 		}
 		while (x1 <= x2) {
 			*(page + (y1 * 320 + x1)) = color;
@@ -140,15 +132,11 @@ void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uin
 	int16 t;
 
 	if (x1 > x2) {
-		t = x1;
-		x1 = x2;
-		x2 = t;
+		SWAP(x1, x2);
 	}
 
 	if (y1 > y2) {
-		t = y1;
-		y1 = y2;
-		y2 = t;
+		SWAP(y1, y2);
 	}
 
 	t = x1;
@@ -180,78 +168,32 @@ void gfxResetRawPage(uint8 *pageRaw) {
 	memset(pageRaw, 0, 320 * 200);
 }
 
-void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 height) {
-	int x, y;
-	uint8 b1, b2, b3, b4, b5, b6, b7, b8, d1a, d1b, d2a, d2b, d3a, d3b, d4a, d4b;
+void gfxConvertSpriteToRaw(uint8 *dst, uint8 *src, uint16 width, uint16 height) {
+	int x, y, d, bit, plane;
 
+	width >>= 3;
 	for (y = 0; y < height; y++) {
-		for (x = 0; x < (width >> 3); x++) {
-			b4 = *(source++);
-			b8 = *(source++);
-			b3 = *(source++);
-			b7 = *(source++);
-			b2 = *(source++);
-			b6 = *(source++);
-			b1 = *(source++);
-			b5 = *(source++);
-
-			d1a = d1b = d2a = d2b = d3a = d3b = d4a = d4b = 0;
-
-			d1a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
-			d1b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
-			d2a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
-			d2b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
-
-			b1 >>= 4;
-			b2 >>= 4;
-			b3 >>= 4;
-			b4 >>= 4;
-
-			d3a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
-			d3b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
-			d4a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
-			d4b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
-
-			*(dest++) = d4b;
-			*(dest++) = d4a;
-			*(dest++) = d3b;
-			*(dest++) = d3a;
-			*(dest++) = d2b;
-			*(dest++) = d2a;
-			*(dest++) = d1b;
-			*(dest++) = d1a;
-
-			b1 = b5;
-			b2 = b6;
-			b3 = b7;
-			b4 = b8;
-
-			d1a = d1b = d2a = d2b = d3a = d3b = d4a = d4b = 0;
-
-			d1a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
-			d1b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
-			d2a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
-			d2b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
-
-			b1 >>= 4;
-			b2 >>= 4;
-			b3 >>= 4;
-			b4 >>= 4;
-
-			d3a |= (((b4 & 1) >> 0) | ((b3 & 1) << 1) | ((b2 & 1) << 2) | ((b1 & 1) << 3)) << 0;
-			d3b |= (((b4 & 2) >> 1) | ((b3 & 2) >> 0) | ((b2 & 2) << 1) | ((b1 & 2) << 2)) << 0;
-			d4a |= (((b4 & 4) >> 2) | ((b3 & 4) >> 1) | ((b2 & 4) >> 0) | ((b1 & 4) << 1)) << 0;
-			d4b |= (((b4 & 8) >> 3) | ((b3 & 8) >> 2) | ((b2 & 8) >> 1) | ((b1 & 8) >> 0)) << 0;
-
-			*(dest++) = d4b;
-			*(dest++) = d4a;
-			*(dest++) = d3b;
-			*(dest++) = d3a;
-			*(dest++) = d2b;
-			*(dest++) = d2a;
-			*(dest++) = d1b;
-			*(dest++) = d1a;
-
+		for (x = 0; x < width; x++) {
+			uint8 data[2][4];
+			data[0][0] = *src++;
+			data[1][0] = *src++;
+			data[0][1] = *src++;
+			data[1][1] = *src++;
+			data[0][2] = *src++;
+			data[1][2] = *src++;
+			data[0][3] = *src++;
+			data[1][3] = *src++;
+			for (d = 0; d < 2; ++d) {
+				for (bit = 0; bit < 8; ++bit) {
+					uint8 color = 0;
+					for (plane = 0; plane < 4; ++plane) {
+						if (data[d][plane] & (1 << (7 - bit))) {
+							color |= 1 << plane;
+						}
+					}
+					*dst++ = color;
+				}
+			}
 		}
 	}
 }

@@ -258,7 +258,7 @@ void snd_handlePattern(int channelNum, const uint8 *patternData) {
 	if (snd_mute != 0)
 		(*snd_driver.stopChannel)(channelNum);
 	else {
-		int16 freq = (int16)readU16BE(patternData);
+		int16 freq = (int16)READ_BE_UINT16(patternData);
 		if (freq > 0) {
 			(*snd_driver.stopChannel)(channelNum);
 			(*snd_driver.setChannelFrequency)(channelNum, freq);

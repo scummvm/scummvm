@@ -24,7 +24,7 @@
 
 #include "cine/cine.h"
 
-relStruct relTable[NUM_MAX_REL];
+RelObjectScript relTable[NUM_MAX_REL];
 
 void resetObjectScriptHead(void) {
 	objScriptList.next = NULL;
@@ -57,14 +57,10 @@ void loadRel(char *pRelName) {
 	checkDataDisk(-1);
 
 	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].ptr0) {
-			ASSERT_PTR(relTable[i].ptr0);
-
-			free(relTable[i].ptr0);
-
-			relTable[i].ptr0 = NULL;
-
-			relTable[i].var4 = 0;
+		if (relTable[i].data) {
+			free(relTable[i].data);
+			relTable[i].data = NULL;
+			relTable[i].size = 0;
 		}
 	}
 
@@ -72,38 +68,25 @@ void loadRel(char *pRelName) {
 
 	processPendingUpdates(1);
 
-	numEntry = *(uint16 *) ptr;
-	ptr += 2;
-	flipU16(&numEntry);
+	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 
 	ASSERT(numEntry <= NUM_MAX_REL);
 
 	for (i = 0; i < numEntry; i++) {
-		relTable[i].var4 = *(uint16 *)ptr;
-		ptr += 2;
-		flipU16(&relTable[i].var4);
-
-		relTable[i].var6 = *(uint16 *)ptr;
-		ptr += 2;
-		flipU16(&relTable[i].var6);
-
-		relTable[i].var8 = *(uint16 *)ptr;
-		ptr += 2;
-		flipU16(&relTable[i].var8);
-
-		relTable[i].varA = *(uint16 *)ptr;
-		ptr += 2;
-		flipU16(&relTable[i].varA);
+		relTable[i].size = READ_BE_UINT16(ptr); ptr += 2;
+		relTable[i].obj1Param1 = READ_BE_UINT16(ptr); ptr += 2;
+		relTable[i].obj1Param2 = READ_BE_UINT16(ptr); ptr += 2;
+		relTable[i].obj2Param = READ_BE_UINT16(ptr); ptr += 2;
 	}
 
 	for (i = 0; i < numEntry; i++) {
-		if (relTable[i].var4) {
-			relTable[i].ptr0 = (char *)malloc(relTable[i].var4);
+		if (relTable[i].size) {
+			relTable[i].data = (char *)malloc(relTable[i].size);
 
-			ASSERT_PTR(relTable[i].ptr0);
+			ASSERT_PTR(relTable[i].data);
 
-			memcpy(relTable[i].ptr0, ptr, relTable[i].var4);
-			ptr += relTable[i].var4;
+			memcpy(relTable[i].data, ptr, relTable[i].size);
+			ptr += relTable[i].size;
 		}
 	}
 
@@ -117,8 +100,7 @@ void loadRel(char *pRelName) {
 			if (relTable[i].var4) {
 				sprintf(buffer, "%s_%03d.txt", pRelName, i);
 
-				decompileScript(relTable[i].ptr0, NULL,
-				    relTable[i].var4, i);
+				decompileScript(relTable[i].data, NULL, relTable[i].size, i);
 				dumpScript(buffer);
 			}
 		}

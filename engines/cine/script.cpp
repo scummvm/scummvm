@@ -112,7 +112,7 @@ void addToBGList(int16 objIdx) {
 	y = objectTable[objIdx].y;
 
 	width = animDataTable[objectTable[objIdx].frame].var1;
-	height = animDataTable[objectTable[objIdx].frame].var2;
+	height = animDataTable[objectTable[objIdx].frame].height;
 
 	part = objectTable[objIdx].part;
 

@@ -40,18 +40,3 @@ void flipU32(uint32 * pVar) {
 
 	*pVar = (part2) | ((uint32) part1 << 16);
 }
-
-uint16 readU16LE(const void *ptr) {
-	const uint8 *b = (const uint8 *)ptr;
-	return (b[1] << 8) | b[0];
-}
-
-uint16 readU16BE(const void *ptr) {
-	const uint8 *b = (const uint8 *)ptr;
-	return (b[0] << 8) | b[1];
-}
-
-uint32 readU32BE(const void *ptr) {
-	const uint8 *b = (const uint8 *)ptr;
-	return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
-}

@@ -206,10 +206,10 @@ void runObjectScript(int16 entryIdx) {
 	pNewElement->compareResult = 0;
 	pNewElement->scriptPosition = 0;
 
-	pNewElement->scriptPtr = (byte *)relTable[entryIdx].ptr0;
+	pNewElement->scriptPtr = (byte *)relTable[entryIdx].data;
 	pNewElement->scriptIdx = entryIdx;
 
-	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].var4);
+	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].size);
 }
 
 int16 getRelEntryForObject(uint16 param1, uint16 param2,
@@ -218,11 +218,11 @@ int16 getRelEntryForObject(uint16 param1, uint16 param2,
 	int16 di = -1;
 
 	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].ptr0 && relTable[i].var6 == param1 && relTable[i].var8 == pSelectedObject->idx) {
+		if (relTable[i].data && relTable[i].obj1Param1 == param1 && relTable[i].obj1Param2 == pSelectedObject->idx) {
 			if (param2 == 1) {
 				di = i;
 			} else if (param2 == 2) {
-				if (relTable[i].varA == pSelectedObject->param) {
+				if (relTable[i].obj2Param == pSelectedObject->param) {
 					di = i;
 				}
 			}
@@ -263,7 +263,7 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 					treshold = animDataTable[frame].width / 2;
 				}
 
-				height = animDataTable[frame].var2;
+				height = animDataTable[frame].height;
 
 				xdif = x - objX;
 				ydif = y - objY;
@@ -368,7 +368,7 @@ void loadObjectScritpFromSave(Common::File *fHandle) {
 	fHandle->read(&newElement->scriptIdx, 2);
 	flipU16((uint16 *)&newElement->scriptIdx);
 
-	newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].ptr0;
+	newElement->scriptPtr = (byte *)relTable[newElement->scriptIdx].data;
 }
 
 void loadGlobalScritpFromSave(Common::File *fHandle) {
@@ -461,7 +461,7 @@ void setupObjectScriptList(void) {
 	prcLinkedListStruct *currentHead = objScriptList.next;
 
 	while (currentHead) {
-		currentHead->scriptPtr = (byte *)relTable[currentHead->scriptIdx].ptr0;
+		currentHead->scriptPtr = (byte *)relTable[currentHead->scriptIdx].data;
 		currentHead = currentHead->next;
 	}
 }
@@ -490,13 +490,13 @@ int16 makeLoad(char *saveName) {
 	closePart();
 
 	for (i = 0; i < NUM_MAX_REL; i++) {
-		if (relTable[i].ptr0) {
-			free(relTable[i].ptr0);
-			relTable[i].ptr0 = NULL;
-			relTable[i].var4 = 0;
-			relTable[i].var6 = 0;
-			relTable[i].var8 = 0;
-			relTable[i].varA = 0;
+		if (relTable[i].data) {
+			free(relTable[i].data);
+			relTable[i].data = NULL;
+			relTable[i].size = 0;
+			relTable[i].obj1Param1 = 0;
+			relTable[i].obj1Param2 = 0;
+			relTable[i].obj2Param = 0;
 		}
 	}
 
@@ -548,8 +548,8 @@ int16 makeLoad(char *saveName) {
 
 	strcpy(commandBuffer, "");
 
-	globalVars[249] = 0;
-	globalVars[250] = 0;
+	globalVars[VAR_MOUSE_X_POS] = 0;
+	globalVars[VAR_MOUSE_Y_POS] = 0;
 
 	fadeRequired = 0;
 
@@ -659,8 +659,8 @@ int16 makeLoad(char *saveName) {
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		flipU16(&animDataTable[i].width);
 		flipU16(&animDataTable[i].var1);
-		flipU16(&animDataTable[i].field_4);
-		flipU16(&animDataTable[i].var2);
+		flipU16(&animDataTable[i].bpp);
+		flipU16(&animDataTable[i].height);
 		flipU16((uint16 *)&animDataTable[i].fileIdx);
 		flipU16((uint16 *)&animDataTable[i].frameIdx);
 	}
@@ -812,8 +812,8 @@ void makeSave(char *saveFileName) {
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		flipU16(&animDataTable[i].width);
 		flipU16(&animDataTable[i].var1);
-		flipU16(&animDataTable[i].field_4);
-		flipU16(&animDataTable[i].var2);
+		flipU16(&animDataTable[i].bpp);
+		flipU16(&animDataTable[i].height);
 		flipU16((uint16 *)&animDataTable[i].fileIdx);
 		flipU16((uint16 *)&animDataTable[i].frameIdx);
 
@@ -821,8 +821,8 @@ void makeSave(char *saveFileName) {
 
 		flipU16(&animDataTable[i].width);
 		flipU16(&animDataTable[i].var1);
-		flipU16(&animDataTable[i].field_4);
-		flipU16(&animDataTable[i].var2);
+		flipU16(&animDataTable[i].bpp);
+		flipU16(&animDataTable[i].height);
 		flipU16((uint16 *)&animDataTable[i].fileIdx);
 		flipU16((uint16 *)&animDataTable[i].frameIdx);
 	}
@@ -1887,8 +1887,8 @@ uint16 executePlayerInput(void) {
 							strcpy(commandBuffer, "");
 						}
 					} else {
-						globalVars[249] = mouseX;
-						globalVars[250] = mouseY;
+						globalVars[VAR_MOUSE_X_POS] = mouseX;
+						globalVars[VAR_MOUSE_Y_POS] = mouseY;
 					}
 				}
 			} else {
@@ -1955,12 +1955,12 @@ uint16 executePlayerInput(void) {
 						int16 objIdx;
 						int16 relEntry;
 
-						globalVars[249] = mouseX;
+						globalVars[VAR_MOUSE_X_POS] = mouseX;
 						if (!mouseX) {
-							globalVars[249]++;
+							globalVars[VAR_MOUSE_X_POS]++;
 						}
 
-						globalVars[250] = mouseY;
+						globalVars[VAR_MOUSE_Y_POS] = mouseY;
 
 						objIdx = getObjectUnderCursor(mouseX, mouseY);
 
@@ -2017,7 +2017,7 @@ uint16 executePlayerInput(void) {
 	if (inputVar1 && allowPlayerInput) {	// use keyboard
 		inputVar1 = 0;
 
-		switch (globalVars[253]) {
+		switch (globalVars[VAR_MOUSE_X_MODE]) {
 		case 1:
 			{
 				mouseX = objectTable[1].x + 12;
@@ -2030,12 +2030,12 @@ uint16 executePlayerInput(void) {
 			}
 		default:
 			{
-				mouseX = globalVars[249];
+				mouseX = globalVars[VAR_MOUSE_X_POS];
 				break;
 			}
 		}
 
-		switch (globalVars[251]) {
+		switch (globalVars[VAR_MOUSE_Y_MODE]) {
 		case 1:
 			{
 				mouseY = objectTable[1].y + 34;
@@ -2048,7 +2048,7 @@ uint16 executePlayerInput(void) {
 			}
 		default:
 			{
-				mouseX = globalVars[250];
+				mouseY = globalVars[VAR_MOUSE_Y_POS];
 				break;
 			}
 		}
@@ -2056,27 +2056,27 @@ uint16 executePlayerInput(void) {
 		if (var_5E == bgVar0) {
 			var_5E = 0;
 
-			globalVars[249] = mouseX;
-			globalVars[250] = mouseY;
+			globalVars[VAR_MOUSE_X_POS] = mouseX;
+			globalVars[VAR_MOUSE_Y_POS] = mouseY;
 		} else {
 			if (inputVar2) {
 				if (inputVar2 == 2) {
-					globalVars[249] = 1;
+					globalVars[VAR_MOUSE_X_POS] = 1;
 				} else {
-					globalVars[249] = 320;
+					globalVars[VAR_MOUSE_X_POS] = 320;
 				}
 			} else {
-				globalVars[249] = mouseX;
+				globalVars[VAR_MOUSE_X_POS] = mouseX;
 			}
 
 			if (inputVar3) {
 				if (inputVar3 == 2) {
-					globalVars[250] = 1;
+					globalVars[VAR_MOUSE_Y_POS] = 1;
 				} else {
-					globalVars[250] = 200;
+					globalVars[VAR_MOUSE_Y_POS] = 200;
 				}
 			} else {
-				globalVars[250] = mouseY;
+				globalVars[VAR_MOUSE_Y_POS] = mouseY;
 			}
 		}
 
@@ -2184,7 +2184,7 @@ void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
 			maskSpriteIdx = objectTable[pCurrentOverlay->objIdx].frame;
 	 
 			maskWidth = animDataTable[maskSpriteIdx].width / 2;
-			maskHeight = animDataTable[maskSpriteIdx].var2;
+			maskHeight = animDataTable[maskSpriteIdx].height;
 	 
 			gfxSpriteFunc2(spritePtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, maskX - x,maskY - y, i++);
 		}
@@ -2429,7 +2429,7 @@ void drawOverlays(void) {
 						pPart = &animDataTable[objPtr->frame];
 
 						partVar1 = pPart->var1;
-						partVar2 = pPart->var2;
+						partVar2 = pPart->height;
 
 						if (pPart->ptr1) {
 							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
@@ -2445,7 +2445,7 @@ void drawOverlays(void) {
 						pPart = &animDataTable[objPtr->frame];
 
 						partVar1 = pPart->var1;
-						partVar2 = pPart->var2;
+						partVar2 = pPart->height;
 
 						if (pPart->ptr1) {
 							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr2, partVar1, partVar2, page1Raw, x, y);
@@ -2511,7 +2511,7 @@ void drawOverlays(void) {
 					pPart = &animDataTable[objPtr->frame];
 
 					partVar1 = pPart->width / 2;
-					partVar2 = pPart->var2;
+					partVar2 = pPart->height;
 
 					if (pPart->ptr1) {
 						gfxFillSprite(pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
@@ -2537,14 +2537,12 @@ void drawOverlays(void) {
 				if (objPtr->frame >= 0) {
 					if (var5 <= 8) {
 						if (additionalBgTable[var5]) {
-							if (animDataTable
-							    [objPtr->frame].
-							    field_4 == 1) {
+							if (animDataTable[objPtr->frame].bpp == 1) {
 								int16 x2;
 								int16 y2;
 
 								x2 = animDataTable[objPtr->frame].width / 2;
-								y2 = animDataTable[objPtr->frame].var2;
+								y2 = animDataTable[objPtr->frame].height;
 
 								if (animDataTable[objPtr->frame].ptr1) {
 									// drawSpriteRaw(animDataTable[objPtr->frame].ptr1, animDataTable[objPtr->frame].ptr1, x2, y2,
@@ -2898,8 +2896,8 @@ void processUnkListElement(unkListElementStruct *element) {
 		param2 = ptr1[2];
 
 		if (element->varC == 255) {
-			if (globalVars[249] || globalVars[250]) {
-				computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[249], globalVars[250]);
+			if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
+				computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
 			} else {
 				element->var16 = 0;
 				element->var14 = 0;
@@ -2921,14 +2919,14 @@ void processUnkListElement(unkListElementStruct *element) {
 			&& !addAni(3, element->var6, ptr1, element, 0, &var_4)) || (element->var16 == 2	&& !addAni(2, element->var6, ptr1, element, 0,
 			    &var_4))) {
 			if (element->varC == 255) {
-				globalVars[250] = 0;
+				globalVars[VAR_MOUSE_Y_POS] = 0;
 			}
 		}
 
 		if ((element->var14 == 1
 			&& !addAni(0, element->var6, ptr1, element, 1, &var_2))) {
 			if (element->varC == 255) {
-				globalVars[249] = 0;
+				globalVars[VAR_MOUSE_X_POS] = 0;
 
 				if (var_4 != -1) {
 					objectTable[element->var6].costume = var_4;
@@ -2938,7 +2936,7 @@ void processUnkListElement(unkListElementStruct *element) {
 
 		if ((element->var14 == 2 && !addAni(1, element->var6, ptr1, element, 1, &var_2))) {
 			if (element->varC == 255) {
-				globalVars[249] = 0;
+				globalVars[VAR_MOUSE_X_POS] = 0;
 
 				if (var_4 != -1) {
 					objectTable[element->var6].costume = var_4;

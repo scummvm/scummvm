@@ -27,8 +27,5 @@
 
 void flipU16(uint16 *);
 void flipU32(uint32 *);
-uint16 readU16LE(const void *ptr);
-uint16 readU16BE(const void *ptr);
-uint32 readU32BE(const void *ptr);
 
 #endif

@@ -217,10 +217,11 @@ static void initialize() {
 	}
 
 	for (i = 0; i < NUM_MAX_REL; i++) {
-		relTable[i].ptr0 = NULL;
-		relTable[i].var4 = 0;
-		relTable[i].var6 = 0;
-		relTable[i].var8 = 0;
+		relTable[i].data = NULL;
+		relTable[i].size = 0;
+		relTable[i].obj1Param1 = 0;
+		relTable[i].obj1Param2 = 0;
+		relTable[i].obj2Param = 0;
 	}
 
 	for (i = 0; i < NUM_MAX_PARTDATA; i++) {

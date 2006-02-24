@@ -94,44 +94,44 @@ static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int chan
 	if (fl == 0 || ch == 6) {
 		// vibrato
 		tmp = 0;
-		if (readU16LE(instrumentData + 18) != 0)
+		if (READ_LE_UINT16(instrumentData + 18) != 0)
 			tmp |= 0x80;
-		if (readU16LE(instrumentData + 20) != 0)
+		if (READ_LE_UINT16(instrumentData + 20) != 0)
 			tmp |= 0x40;
-		if (readU16LE(instrumentData + 10) != 0)
+		if (READ_LE_UINT16(instrumentData + 10) != 0)
 			tmp |= 0x20;
-		if (readU16LE(instrumentData + 22) != 0)
+		if (READ_LE_UINT16(instrumentData + 22) != 0)
 			tmp |= 0x10;
-		tmp |= (readU16LE(instrumentData + 2) & 0xF);
+		tmp |= (READ_LE_UINT16(instrumentData + 2) & 0xF);
 		snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_EG_KS + adlibOp1, tmp);
 
 		// key scaling
-		tmp = 0x3F - (readU16LE(instrumentData + 16) & 0x3F);
+		tmp = 0x3F - (READ_LE_UINT16(instrumentData + 16) & 0x3F);
 		tmp = snd_adlibChannelVolume[channelNum] * tmp;
 		tmp += tmp + 0x7F;
 		tmp = 0x3F - (tmp / 0xFE);
-		if (readU16LE(instrumentData + 24) != 0)
-			tmp = readU16LE(instrumentData + 16) & 0x3F;
-		tmp |= readU16LE(instrumentData) << 6;
+		if (READ_LE_UINT16(instrumentData + 24) != 0)
+			tmp = READ_LE_UINT16(instrumentData + 16) & 0x3F;
+		tmp |= READ_LE_UINT16(instrumentData) << 6;
 		snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + adlibOp1, tmp);
 
 		// attack/decay rates
-		tmp = (readU16LE(instrumentData + 6) << 4) | (readU16LE(instrumentData + 12) & 0xF);
+		tmp = (READ_LE_UINT16(instrumentData + 6) << 4) | (READ_LE_UINT16(instrumentData + 12) & 0xF);
 		snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE + adlibOp1, tmp);
 
 		// sustain/release rates
-		tmp = (readU16LE(instrumentData + 8) << 4) | (readU16LE(instrumentData + 14) & 0xF);
+		tmp = (READ_LE_UINT16(instrumentData + 8) << 4) | (READ_LE_UINT16(instrumentData + 14) & 0xF);
 		snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 + adlibOp1, tmp);
 
 		if (fl != 0) {
-			tmp = readU16LE(instrumentData + 4) * 2;
-			if (readU16LE(instrumentData + 24) == 0)
+			tmp = READ_LE_UINT16(instrumentData + 4) * 2;
+			if (READ_LE_UINT16(instrumentData + 24) == 0)
 				tmp |= 1;
 
 			snd_adlibWriteData(ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE + ch, tmp);
 		} else {
-			tmp = readU16LE(instrumentData + 4) * 2;
-			if (readU16LE(instrumentData + 24) == 0)
+			tmp = READ_LE_UINT16(instrumentData + 4) * 2;
+			if (READ_LE_UINT16(instrumentData + 24) == 0)
 				tmp |= 1;
 
 			snd_adlibWriteData(ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE + channelNum, tmp);
@@ -142,31 +142,31 @@ static void snd_adlibDriverSetupInstrument(const uint8 *instrumentData, int chan
 
 	// vibrato
 	tmp = 0;
-	if (readU16LE(instrumentData + 18) != 0)
+	if (READ_LE_UINT16(instrumentData + 18) != 0)
 		tmp |= 0x80;
-	if (readU16LE(instrumentData + 20) != 0)
+	if (READ_LE_UINT16(instrumentData + 20) != 0)
 		tmp |= 0x40;
-	if (readU16LE(instrumentData + 10) != 0)
+	if (READ_LE_UINT16(instrumentData + 10) != 0)
 		tmp |= 0x20;
-	if (readU16LE(instrumentData + 22) != 0)
+	if (READ_LE_UINT16(instrumentData + 22) != 0)
 		tmp |= 0x10;
-	tmp |= (readU16LE(instrumentData + 2) & 0xF);
+	tmp |= (READ_LE_UINT16(instrumentData + 2) & 0xF);
 	snd_adlibWriteData(ADLIB_REG_AM_VIBRATO_EG_KS + adlibOp2, tmp);
 
 	// key scaling
-	tmp = 0x3F - (readU16LE(instrumentData + 16) & 0x3F);
+	tmp = 0x3F - (READ_LE_UINT16(instrumentData + 16) & 0x3F);
 	tmp = snd_adlibChannelVolume[channelNum] * tmp;
 	tmp += tmp + 0x7F;
 	tmp = 0x3F - (tmp / 0xFE);
-	tmp |= readU16LE(instrumentData) << 6;
+	tmp |= READ_LE_UINT16(instrumentData) << 6;
 	snd_adlibWriteData(ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT + adlibOp2, tmp);
 
 	// attack/decay rates */
-	tmp =(readU16LE(instrumentData + 6) << 4) | (readU16LE(instrumentData + 12) & 0xF);
+	tmp =(READ_LE_UINT16(instrumentData + 6) << 4) | (READ_LE_UINT16(instrumentData + 12) & 0xF);
 	snd_adlibWriteData(ADLIB_REG_ATTACK_RATE_DECAY_RATE + adlibOp2, tmp);
 
 	// sustain/release rates */
-	tmp = (readU16LE(instrumentData + 8) << 4) | (readU16LE(instrumentData + 14) & 0xF);
+	tmp = (READ_LE_UINT16(instrumentData + 8) << 4) | (READ_LE_UINT16(instrumentData + 14) & 0xF);
 	snd_adlibWriteData(ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 + adlibOp2, tmp);
 	snd_adlibWriteData(ADLIB_REG_WAVE_SELECT + adlibOp2, waveSelect2);
 }

@@ -45,11 +45,8 @@ void loadTextData(const char *pFileName, uint8 *pDestinationBuffer) {
 
 	assert(pFileHandle.isOpen());
 
-	pFileHandle.read(&entrySize, 2);
-	flipU16(&entrySize);
-
-	pFileHandle.read(&numEntry, 2);
-	flipU16(&numEntry);
+	entrySize = pFileHandle.readUint16BE();
+	numEntry = pFileHandle.readUint16BE();
 
 	dataSize = numEntry * entrySize;
 	pFileHandle.read(pDestinationBuffer, numEntry * entrySize);

@@ -37,8 +37,8 @@ typedef struct {
 typedef struct {
 	uint16 width;
 	uint16 var1;
-	uint16 field_4;
-	uint16 var2;
+	uint16 bpp;
+	uint16 height;
 
 	uint8 *ptr1;
 	uint8 *ptr2;
