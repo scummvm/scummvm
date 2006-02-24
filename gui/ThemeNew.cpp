@@ -401,19 +401,19 @@ void ThemeNew::drawText(const Common::Rect &r, const Common::String &str, kState
 	if (!_initOk)
 		return;
 	Common::Rect r2(r.left, r.top, r.right, r.top+_font->getFontHeight());
+	uint32 color;
 
 	restoreBackground(r2);
 	r2.bottom += 4;
 
 	if (inverted) {
 		_screen.fillRect(r, _colors[kTextInvertedBackground]);
-		_font->drawString(&_screen, str, r.left, r.top, r.width(), _colors[kTextInvertedColor], convertAligment(align), deltax, useEllipsis);
-		addDirtyRect(r2);
-		return;
+		color = _colors[kTextInvertedColor];
 	} else {
-		_font->drawString(&_screen, str, r.left, r.top, r.width(), getColor(state), convertAligment(align), deltax, useEllipsis);
+		color = getColor(state);
 	}
 
+	_font->drawString(&_screen, str, r.left, r.top, r.width(), color, convertAligment(align), deltax, useEllipsis);
 	addDirtyRect(r2);
 }
 
