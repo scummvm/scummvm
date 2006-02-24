@@ -309,7 +309,7 @@ void ListWidget::drawWidget(bool hilite) {
 	Common::String buffer;
 
 	// Draw a thin frame around the list.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
 
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
@@ -322,7 +322,7 @@ void ListWidget::drawWidget(bool hilite) {
 			if (_hasFocus)
 				inverted = true;
 			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y + 1 + kLineHeight * i, _x + _w - 1, y + fontHeight - 1), _hints, Theme::kWidgetBackgroundBorderSmall);
+				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1), _hints, Theme::kWidgetBackgroundBorderSmall);
 		}
 
 		Common::Rect r(getEditRect());
