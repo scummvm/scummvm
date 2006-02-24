@@ -244,6 +244,10 @@ GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _gfx() {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kGraphicsWidget;
+	// HACK: Don't save the background. We want to be sure that redrawing
+	//       the widget updates the screen, even when there isn't any image
+	//       to draw.
+	_hints &= ~THEME_HINT_SAVE_BACKGROUND;
 }
 
 GraphicsWidget::~GraphicsWidget() {
