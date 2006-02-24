@@ -42,7 +42,7 @@ int16 Parse_v2::parseVarIndex() {
 	int16 val;
 
 	operation = *_vm->_global->_inter_execPtr++;
-	debug(5, "var parse = %d", operation);
+	debugC(5, DEBUG_PARSER, "var parse = %d", operation);
 	switch (operation) {
 	case 16:
 	case 26:
@@ -81,12 +81,12 @@ int16 Parse_v2::parseVarIndex() {
 	case 24:
 	case 25:
 		temp = _vm->_inter->load16() * 4;
-		debug(5, "oper = %d", (int16)*_vm->_global->_inter_execPtr);
+		debugC(5, DEBUG_PARSER, "oper = %d", (int16)*_vm->_global->_inter_execPtr);
 		if (operation == 25 && *_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
 			val = parseValExpr(12);
 			temp += val;
-			debug(5, "parse subscript = %d", val);
+			debugC(5, DEBUG_PARSER, "parse subscript = %d", val);
 		}
 		return temp;
 
@@ -330,7 +330,7 @@ int16 Parse_v2::parseValExpr(unsigned stopToken) {
 
 		if (operation != 10) {
 			if (operation != stopToken) {
-				debug(5, "stoptoken error: %d != %d", operation, stopToken);
+				debugC(5, DEBUG_PARSER, "stoptoken error: %d != %d", operation, stopToken);
 			}
 			flag = oldflag;
 			return values[0];

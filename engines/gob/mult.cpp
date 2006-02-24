@@ -434,7 +434,7 @@ void Mult::interLoadMult(void) {
 	int16 i;
 	char *lmultData;
 
-	debug(4, "interLoadMult: Loading...");
+	debugC(4, DEBUG_GAMEFLOW, "interLoadMult: Loading...");
 
 	_vm->_inter->evalExpr(&objIndex);
 	_vm->_inter->evalExpr(&val);

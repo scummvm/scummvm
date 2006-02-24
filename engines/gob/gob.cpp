@@ -143,6 +143,16 @@ GobEngine::GobEngine(GameDetector *detector, OSystem * syst, uint32 features)
 
 	_features = features;
 	_copyProtection = ConfMan.getBool("copy_protection");
+
+	Common::addSpecialDebugLevel(DEBUG_FUNCOP, "FuncOpcodes", "Script FuncOpcodes debug level");
+	Common::addSpecialDebugLevel(DEBUG_DRAWOP, "DrawOpcodes", "Script DrawOpcodes debug level");
+	Common::addSpecialDebugLevel(DEBUG_GOBOP, "GoblinOpcodes", "Script GoblinOpcodes debug level");
+	Common::addSpecialDebugLevel(DEBUG_MUSIC, "Music", "CD and adlib music debug level");
+	Common::addSpecialDebugLevel(DEBUG_PARSER, "Music", "Parser debug level");
+	Common::addSpecialDebugLevel(DEBUG_GAMEFLOW, "Gameflow", "Gameflow debug level");
+	Common::addSpecialDebugLevel(DEBUG_FILEIO, "FileIO", "File Input/Output debug level");
+	Common::addSpecialDebugLevel(DEBUG_GRAPHICS, "Graphics", "Graphics debug level");
+	Common::addSpecialDebugLevel(DEBUG_COLLISIONS, "Collisions", "Collisions debug level");
 }
 
 GobEngine::~GobEngine() {

@@ -28,10 +28,10 @@
 namespace Gob {
 
 void GTimer::enableTimer() {
-	debug(4, "STUB: GTimer::enableTimer()");
+	debugC(4, DEBUG_GAMEFLOW, "STUB: GTimer::enableTimer()");
 }
 
 void GTimer::disableTimer() {
-	debug(4, "STUB: GTimer::disableTimer()");
+	debugC(4, DEBUG_GAMEFLOW, "STUB: GTimer::disableTimer()");
 }
 }

@@ -114,7 +114,7 @@ int32 DataIO::readChunk(int16 handle, char *buf, int16 size) {
 		offset =
 		    _vm->_global->_chunkOffset[file * MAX_SLOT_COUNT + slot] +
 		    _vm->_global->_chunkPos[file * MAX_SLOT_COUNT + slot];
-		debug(7, "seek: %ld, %ld", _vm->_global->_chunkOffset[file * MAX_SLOT_COUNT + slot], _vm->_global->_chunkPos[file * MAX_SLOT_COUNT + slot]);
+		debugC(7, DEBUG_FILEIO, "seek: %ld, %ld", _vm->_global->_chunkOffset[file * MAX_SLOT_COUNT + slot], _vm->_global->_chunkPos[file * MAX_SLOT_COUNT + slot]);
 		file_getHandle(_vm->_global->_dataFileHandles[file])->seek(offset, SEEK_SET);
 	}
 
@@ -206,7 +206,7 @@ void DataIO::openDataFile(const char *src) {
 
 	_vm->_global->_numDataChunks[file] = file_getHandle(_vm->_global->_dataFileHandles[file])->readUint16LE();
 
-	debug(7, "DataChunks: %d [for %s]", _vm->_global->_numDataChunks[file], path);
+	debugC(7, DEBUG_FILEIO, "DataChunks: %d [for %s]", _vm->_global->_numDataChunks[file], path);
 
 	dataDesc = new ChunkDesc[_vm->_global->_numDataChunks[file]];
 	_vm->_global->_dataFiles[file] = dataDesc;
@@ -219,7 +219,7 @@ void DataIO::openDataFile(const char *src) {
 	}
 
 	for (i = 0; i < _vm->_global->_numDataChunks[file]; i++)
-		debug(7, "%d: %s %d", i, dataDesc[i].chunkName, dataDesc[i].size);
+		debugC(7, DEBUG_FILEIO, "%d: %s %d", i, dataDesc[i].chunkName, dataDesc[i].size);
 
 	for (i = 0; i < MAX_SLOT_COUNT; i++)
 		_vm->_global->_chunkPos[file * MAX_SLOT_COUNT + i] = -1;

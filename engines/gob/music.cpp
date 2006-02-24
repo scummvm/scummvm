@@ -144,7 +144,7 @@ void Music::premixerCall(int16 *buf, uint len) {
 }
 
 void Music::writeOPL(byte reg, byte val) {
-	debug(5, "writeOPL(%02X, %02X)", reg, val);
+	debugC(6, DEBUG_MUSIC, "writeOPL(%02X, %02X)", reg, val);
 	OPLWriteReg(_opl, reg, val);
 }
 
@@ -388,7 +388,6 @@ void Music::startPlay(void) {
 }
 
 void Music::playBgMusic(void) {
-	debug(2, "Music::playBgMusic()");
 	for (int i = 0; i < ARRAYSIZE(_tracks); i++)
 		if (!scumm_stricmp(_vm->_game->_curTotFile, _tracks[i][0])) {
 			playTrack(_tracks[i][1]);
@@ -399,7 +398,7 @@ void Music::playBgMusic(void) {
 void Music::playTrack(const char *trackname) {
 	if (_playing) return;
 	
-	debug(2, "Music::playTrack(%s)", trackname);
+	debugC(1, DEBUG_MUSIC, "Music::playTrack(%s)", trackname);
 	unloadMusic();
 	for (int i = 0; i < ARRAYSIZE(_tracksToFiles); i++)
 		if (!scumm_stricmp(trackname, _tracksToFiles[i][0])) {

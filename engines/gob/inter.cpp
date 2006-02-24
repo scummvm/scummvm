@@ -154,8 +154,6 @@ void Inter::funcBlock(int16 retFlag) {
 		_vm->_global->_inter_execPtr++;
 		counter++;
 
-//		debug(4, "funcBlock(%d, %d)", cmd2, cmd);
-
 		if (cmd2 == 0)
 			cmd >>= 4;
 

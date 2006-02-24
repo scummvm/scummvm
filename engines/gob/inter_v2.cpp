@@ -641,7 +641,7 @@ void Inter_v2::setupOpcodes(void) {
 }
 
 void Inter_v2::executeDrawOpcode(byte i) {
-	debug(4, "opcodeDraw %d (%s)", i, getOpcodeDrawDesc(i));
+	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d (%s)", i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcV2 op = _opcodesDrawV2[i].proc;
 
@@ -652,7 +652,7 @@ void Inter_v2::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debug(4, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
+	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -669,7 +669,7 @@ bool Inter_v2::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 }
 
 void Inter_v2::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debug(4, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
+	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcV2 op = NULL;
 
@@ -1242,19 +1242,9 @@ void Inter_v2::o2_initMult(void) {
 		}
 		if (_terminate)
 			return;
-
-/*		_vm->_anim->_animSurf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
-		    _vm->_anim->_areaWidth, _vm->_anim->_areaHeight, 0);
-
-		_vm->_draw->_spritesArray[22] = _vm->_anim->_animSurf;*/
 	}
 
 	_vm->_draw->adjustCoords(&_vm->_anim->_areaHeight, &_vm->_anim->_areaWidth, 1);
-
-/*	_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_anim->_animSurf,
-	    _vm->_anim->_areaLeft, _vm->_anim->_areaTop,
-	    _vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1,
-	    _vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1, 0, 0, 0);*/
 
 	_vm->_draw->_sourceSurface = 21;
 	_vm->_draw->_destSurface = 22;
@@ -1266,9 +1256,9 @@ void Inter_v2::o2_initMult(void) {
 	_vm->_draw->_destSpriteY = 0;
 	_vm->_draw->spriteOperation(0);
 
-	debug(4, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
+	debugC(4, DEBUG_GRAPHICS, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
-	debug(4, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
+	debugC(4, DEBUG_GRAPHICS, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
 }
 
 void Inter_v2::o2_loadCurLayer(void) {

@@ -1544,10 +1544,9 @@ void Inter_v1::o1_initMult(void) {
 	    _vm->_anim->_areaLeft + _vm->_anim->_areaWidth - 1,
 	    _vm->_anim->_areaTop + _vm->_anim->_areaHeight - 1, 0, 0, 0);
 
-	debug(4, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
+	debugC(4, DEBUG_GRAPHICS, "o1_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_anim->_areaLeft, _vm->_anim->_areaTop, _vm->_anim->_areaWidth, _vm->_anim->_areaHeight);
-	debug(4, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
-//	_vm->_mult->interInitMult();
+	debugC(4, DEBUG_GRAPHICS, "    _vm->_mult->_objCount = %d, animation data size = %d", _vm->_mult->_objCount, _vm->_global->_inter_animDataSize);
 }
 
 void Inter_v1::o1_multFreeMult(void) {
@@ -1636,7 +1635,7 @@ void Inter_v1::o1_freeFontToSprite(void) {
 }
 
 void Inter_v1::executeDrawOpcode(byte i) {
-	debug(4, "opcodeDraw %d (%s)", i, getOpcodeDrawDesc(i));
+	debugC(1, DEBUG_DRAWOP, "opcodeDraw %d (%s)", i, getOpcodeDrawDesc(i));
 
 	OpcodeDrawProcV1 op = _opcodesDrawV1[i].proc;
 
@@ -1647,7 +1646,7 @@ void Inter_v1::executeDrawOpcode(byte i) {
 }
 
 bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter, int16 &retFlag) {
-	debug(4, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
+	debugC(1, DEBUG_FUNCOP, "opcodeFunc %d.%d (%s)", i, j, getOpcodeFuncDesc(i, j));
 
 	if ((i > 4) || (j > 15)) {
 		warning("unimplemented opcodeFunc: %d.%d", i, j);
@@ -1664,7 +1663,7 @@ bool Inter_v1::executeFuncOpcode(byte i, byte j, char &cmdCount, int16 &counter,
 }
 
 void Inter_v1::executeGoblinOpcode(int i, int16 &extraData, int32 *retVarPtr, Goblin::Gob_Object *objDesc) {
-	debug(4, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
+	debugC(1, DEBUG_GOBOP, "opcodeGoblin %d (%s)", i, getOpcodeGoblinDesc(i));
 
 	OpcodeGoblinProcV1 op = NULL;
 
@@ -1708,12 +1707,12 @@ bool Inter_v1::o1_callSub(char &cmdCount, int16 &counter, int16 &retFlag) {
 //	_vm->_global->_inter_execPtr = (char *)_vm->_game->_totFileData + READ_LE_UINT16(_vm->_global->_inter_execPtr);
 
 	uint16 offset = READ_LE_UINT16(_vm->_global->_inter_execPtr);
-	debug(5, "tot = \"%s\", offset = %d", _vm->_game->_curTotFile, offset);
+	debugC(5, DEBUG_GAMEFLOW, "tot = \"%s\", offset = %d", _vm->_game->_curTotFile, offset);
 
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->_features & GF_GOB1) && (offset == 3905)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, "intro.tot")) {
-		debug(2, "Skipping copy protection screen");
+		debugC(2, DEBUG_GAMEFLOW, "Skipping copy protection screen");
 		_vm->_global->_inter_execPtr += 2;
 		return false;
 	}
@@ -1764,7 +1763,7 @@ bool Inter_v1::o1_callBool(char &cmdCount, int16 &counter, int16 &retFlag) {
 
 		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
-		debug(5, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
+		debugC(5, DEBUG_GAMEFLOW, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
 		cmd = (byte)(*_vm->_global->_inter_execPtr) >> 4;
 		_vm->_global->_inter_execPtr++;
 		if (cmd != 12)
@@ -1774,7 +1773,7 @@ bool Inter_v1::o1_callBool(char &cmdCount, int16 &counter, int16 &retFlag) {
 	} else {
 		_vm->_global->_inter_execPtr += READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 
-		debug(5, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
+		debugC(5, DEBUG_GAMEFLOW, "cmd = %d", (int16)*_vm->_global->_inter_execPtr);
 		cmd = (byte)(*_vm->_global->_inter_execPtr) >> 4;
 		_vm->_global->_inter_execPtr++;
 		if (cmd != 12)

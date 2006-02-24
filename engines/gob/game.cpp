@@ -118,15 +118,15 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 	if (pResWidth != 0) {
 		*pResWidth = item->width & 0x7fff;
 		*pResHeight = item->height;
-		debug(7, "loadExtData(%d, %d, %d)", itemId, *pResWidth, *pResHeight);
+		debugC(7, DEBUG_FILEIO, "loadExtData(%d, %d, %d)", itemId, *pResWidth, *pResHeight);
 	}
 
-	debug(7, "loadExtData(%d, 0, 0)", itemId);
+	debugC(7, DEBUG_FILEIO, "loadExtData(%d, 0, 0)", itemId);
 
 	if (item->height == 0)
 		size += (item->width & 0x7fff) << 16;
 
-	debug(7, "size: %d off: %d", size, offset);
+	debugC(7, DEBUG_FILEIO, "size: %d off: %d", size, offset);
 	if (offset >= 0) {
 		handle = _extHandle;
 	} else {
@@ -139,7 +139,7 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 		handle = commonHandle;
 	}
 
-	debug(7, "off: %ld size: %ld", offset, tableSize);
+	debugC(7, DEBUG_FILEIO, "off: %ld size: %ld", offset, tableSize);
 	_vm->_dataio->seekData(handle, offset + tableSize, SEEK_SET);
 	// CHECKME: is the below correct?
 	if (isPacked)
@@ -184,11 +184,11 @@ void Game::addNewCollision(int16 id, int16 left, int16 top, int16 right, int16 b
 	int16 i;
 	Collision *ptr;
 
-	debug(5, "addNewCollision");
-	debug(5, "id = %x", id);
-	debug(5, "left = %d, top = %d, right = %d, bottom = %d", left, top, right, bottom);
-	debug(5, "flags = %x, key = %x", flags, key);
-	debug(5, "funcEnter = %d, funcLeave = %d", funcEnter, funcLeave);
+	debugC(5, DEBUG_COLLISIONS, "addNewCollision");
+	debugC(5, DEBUG_COLLISIONS, "id = %x", id);
+	debugC(5, DEBUG_COLLISIONS, "left = %d, top = %d, right = %d, bottom = %d", left, top, right, bottom);
+	debugC(5, DEBUG_COLLISIONS, "flags = %x, key = %x", flags, key);
+	debugC(5, DEBUG_COLLISIONS, "funcEnter = %d, funcLeave = %d", funcEnter, funcLeave);
 
 	for (i = 0; i < 250; i++) {
 		if (_collisionAreas[i].left != -1)
@@ -223,7 +223,7 @@ void Game::pushCollisions(char all) {
 	Collision *destPtr;
 	int16 size;
 
-	debug(4, "pushCollisions");
+	debugC(1, DEBUG_COLLISIONS, "pushCollisions");
 	for (size = 0, srcPtr = _collisionAreas; srcPtr->left != -1;
 	    srcPtr++) {
 		if (all || (srcPtr->id & 0x8000))
@@ -248,7 +248,7 @@ void Game::popCollisions(void) {
 	Collision *destPtr;
 	Collision *srcPtr;
 
-	debug(4, "popCollision");
+	debugC(1, DEBUG_COLLISIONS, "popCollision");
 
 	_collStackSize--;
 	for (destPtr = _collisionAreas; destPtr->left != -1; destPtr++);
@@ -1158,7 +1158,7 @@ void Game::collisionsBlock(void) {
 		}
 		cmd &= 0x7f;
 
-		debug(4, "collisionsBlock(%d)", cmd);
+		debugC(1, DEBUG_COLLISIONS, "collisionsBlock(%d)", cmd);
 
 		switch (cmd) {
 		case 3:
@@ -1786,8 +1786,8 @@ void Game::playTot(int16 skipPlay) {
 			_curExtFile[strlen(_curExtFile) - 4] = 0;
 			strcat(_curExtFile, ".ext");
 
-			debug(4, "IMA: %s", _curImaFile);
-			debug(4, "EXT: %s", _curExtFile);
+			debugC(4, DEBUG_FILEIO, "IMA: %s", _curImaFile);
+			debugC(4, DEBUG_FILEIO, "EXT: %s", _curExtFile);
 
 			filePtr = (char *)_totFileData + 0x30;
 
