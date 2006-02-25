@@ -339,31 +339,31 @@ void ScummEngine::readIndexFile() {
 	if (_game.version <= 5) {
 		// Figure out the sizes of various resources
 		while (!_fileHandle->eof()) {
-			blocktype = fileReadDword();
+			blocktype = _fileHandle->readUint32BE();
 			itemsize = _fileHandle->readUint32BE();
 			if (_fileHandle->ioFailed())
 				break;
 			switch (blocktype) {
-			case MKID('DOBJ'):
+			case MKID_BE('DOBJ'):
 				_numGlobalObjects = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
-			case MKID('DROO'):
+			case MKID_BE('DROO'):
 				_numRooms = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKID('DSCR'):
+			case MKID_BE('DSCR'):
 				_numScripts = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKID('DCOS'):
+			case MKID_BE('DCOS'):
 				_numCostumes = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
 
-			case MKID('DSOU'):
+			case MKID_BE('DSOU'):
 				_numSounds = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
@@ -384,7 +384,7 @@ void ScummEngine::readIndexFile() {
 #endif
 
 	while (true) {
-		blocktype = fileReadDword();
+		blocktype = _fileHandle->readUint32BE();
 		itemsize = _fileHandle->readUint32BE();
 
 		if (_fileHandle->ioFailed())
@@ -441,7 +441,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int num;
 	char *ptr;
 	switch (blocktype) {
-	case MKID('ANAM'):		// Used by: The Dig, FT
+	case MKID_BE('ANAM'):		// Used by: The Dig, FT
 		debug(9, "found ANAM block, reading audio names");
 		num = _fileHandle->readUint16LE();
 		ptr = (char*)malloc(num * 9);
@@ -449,7 +449,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		_imuseDigital->setAudioNames(num, ptr);
 		break;
 
-	case MKID('DRSC'):		// Used by: COMI
+	case MKID_BE('DRSC'):		// Used by: COMI
 		readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
 		break;
 
@@ -463,37 +463,37 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
-	case MKID('DIRI'):
+	case MKID_BE('DIRI'):
 		readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
 		break;
 
-	case MKID('DIRM'):
+	case MKID_BE('DIRM'):
 		readResTypeList(rtImage, MKID('AWIZ'), "images");
 		break;
 
-	case MKID('DIRT'):
+	case MKID_BE('DIRT'):
 		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
 		break;
 
-	case MKID('DLFL'):
+	case MKID_BE('DLFL'):
 		i = _fileHandle->readUint16LE();
 		_fileHandle->seek(-2, SEEK_CUR);
 		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
 		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
 		break;
 
-	case MKID('DISK'):
+	case MKID_BE('DISK'):
 		i = _fileHandle->readUint16LE();
 		_heV7DiskOffsets = (byte *)calloc(i, 1);
 		_fileHandle->read(_heV7DiskOffsets, i);
 		break;
 
-	case MKID('SVER'):
+	case MKID_BE('SVER'):
 		// Index version number
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		break;
 
-	case MKID('INIB'):
+	case MKID_BE('INIB'):
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		debug(2, "INIB index block not yet handled, skipping");
 		break;
@@ -507,17 +507,17 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
-	case MKID('DCHR'):
-	case MKID('DIRF'):
+	case MKID_BE('DCHR'):
+	case MKID_BE('DIRF'):
 		readResTypeList(rtCharset, MKID('CHAR'), "charset");
 		break;
 
-	case MKID('DOBJ'):
+	case MKID_BE('DOBJ'):
 		debug(9, "found DOBJ block, reading object table");
 		readGlobalObjects();
 		break;
 
-	case MKID('RNAM'):
+	case MKID_BE('RNAM'):
 		// Names of rooms. Maybe we should put them into a table, for use by the debugger?
 		if (_game.heversion >= 80) {
 			for (int room; (room = _fileHandle->readUint16LE()); ) {
@@ -541,32 +541,32 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		}
 		break;
 
-	case MKID('DROO'):
-	case MKID('DIRR'):
+	case MKID_BE('DROO'):
+	case MKID_BE('DIRR'):
 		readResTypeList(rtRoom, MKID('ROOM'), "room");
 		break;
 
-	case MKID('DSCR'):
-	case MKID('DIRS'):
+	case MKID_BE('DSCR'):
+	case MKID_BE('DIRS'):
 		readResTypeList(rtScript, MKID('SCRP'), "script");
 		break;
 
-	case MKID('DCOS'):
-	case MKID('DIRC'):
+	case MKID_BE('DCOS'):
+	case MKID_BE('DIRC'):
 		readResTypeList(rtCostume, MKID('COST'), "costume");
 		break;
 
-	case MKID('MAXS'):
+	case MKID_BE('MAXS'):
 		readMAXS(itemsize);
 		allocateArrays();
 		break;
 
-	case MKID('DIRN'):
-	case MKID('DSOU'):
+	case MKID_BE('DIRN'):
+	case MKID_BE('DSOU'):
 		readResTypeList(rtSound, MKID('SOUN'), "sound");
 		break;
 
-	case MKID('AARY'):
+	case MKID_BE('AARY'):
 		readArrayFromIndexFile();
 		break;
 
@@ -1450,7 +1450,7 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 
 			_pos += size;
 			_ptr += size;
-		} while (READ_UINT32(result) != tag);
+		} while (READ_BE_UINT32(result) != tag);
 	}
 
 	return result;
@@ -1478,7 +1478,7 @@ const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
 	}
 
 	while (curpos < totalsize) {
-		if (READ_UINT32(searchin) == tag) {
+		if (READ_BE_UINT32(searchin) == tag) {
 			_resourceLastSearchBuf = searchin;
 			return searchin;
 		}
@@ -1530,31 +1530,31 @@ const byte *findResourceSmall(uint32 tag, const byte *searchin) {
 
 uint16 newTag2Old(uint32 newTag) {
 	switch (newTag) {
-	case (MKID('RMHD')):
+	case (MKID_BE('RMHD')):
 		return (0x4448);	// HD
-	case (MKID('IM00')):
+	case (MKID_BE('IM00')):
 		return (0x4D42);	// BM
-	case (MKID('EXCD')):
+	case (MKID_BE('EXCD')):
 		return (0x5845);	// EX
-	case (MKID('ENCD')):
+	case (MKID_BE('ENCD')):
 		return (0x4E45);	// EN
-	case (MKID('SCAL')):
+	case (MKID_BE('SCAL')):
 		return (0x4153);	// SA
-	case (MKID('LSCR')):
+	case (MKID_BE('LSCR')):
 		return (0x534C);	// LS
-	case (MKID('OBCD')):
+	case (MKID_BE('OBCD')):
 		return (0x434F);	// OC
-	case (MKID('OBIM')):
+	case (MKID_BE('OBIM')):
 		return (0x494F);	// OI
-	case (MKID('SMAP')):
+	case (MKID_BE('SMAP')):
 		return (0x4D42);	// BM
-	case (MKID('CLUT')):
+	case (MKID_BE('CLUT')):
 		return (0x4150);	// PA
-	case (MKID('BOXD')):
+	case (MKID_BE('BOXD')):
 		return (0x5842);	// BX
-	case (MKID('CYCL')):
+	case (MKID_BE('CYCL')):
 		return (0x4343);	// CC
-	case (MKID('EPAL')):
+	case (MKID_BE('EPAL')):
 		return (0x5053);	// SP
 	default:
 		return (0);

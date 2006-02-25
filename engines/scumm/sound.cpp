@@ -221,7 +221,7 @@ void Sound::playSound(int soundID) {
 	// Support for SFX in Monkey Island 1, Mac version
 	// This is rather hackish right now, but works OK. SFX are not sounding
 	// 100% correct, though, not sure right now what is causing this.
-	else if (READ_UINT32(ptr) == MKID('Mac1')) {
+	else if (READ_BE_UINT32(ptr) == MKID_BE('Mac1')) {
 		// Read info from the header
 		size = READ_BE_UINT32(ptr+0x60);
 		rate = READ_BE_UINT16(ptr+0x64);
@@ -235,7 +235,7 @@ void Sound::playSound(int soundID) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// WORKAROUND bug # 1311447
-	else if (READ_UINT32(ptr) == MKID(0x460e200d)) {
+	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
 		// This sound resource occurs in the Macintosh version of Monkey Island.
 		// I do now know whether it is used in any place other than the one
 		// mentioned in the bug report above; in case it is, I put a check here. 
@@ -257,7 +257,7 @@ void Sound::playSound(int soundID) {
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
-	else if (READ_UINT32(ptr) == MKID('SBL ')) {
+	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
 		debugC(DEBUG_SOUND, "Using SBL sound effect");
 
 		// SBL resources essentially contain VOC sound data.
@@ -327,9 +327,9 @@ void Sound::playSound(int soundID) {
 		memcpy(sound, ptr + 6, size);
 		_vm->_mixer->playRaw(NULL, sound, size, rate, flags, soundID);
 	}
-	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_UINT32(ptr) == MKID('SOUN') || READ_UINT32(ptr) == MKID('TOWS')) {
+	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
 
-		bool tows = READ_UINT32(ptr) == MKID('TOWS');
+		bool tows = READ_BE_UINT32(ptr) == MKID_BE('TOWS');
 		if (_vm->_game.version == 3) {
 			size = READ_LE_UINT32(ptr);
 		} else {
@@ -470,7 +470,7 @@ void Sound::playSound(int soundID) {
 			// Rather it seems that starting a new music is supposed to
 			// automatically stop the old song.
 			if (_vm->_imuse) {
-				if (READ_UINT32(ptr) != MKID('ASFX'))
+				if (READ_BE_UINT32(ptr) != MKID_BE('ASFX'))
 					_vm->_imuse->stopAllSounds();
 			}
 		}
@@ -1176,56 +1176,56 @@ int ScummEngine::readSoundResource(int type, int idx) {
 
 	_fileHandle->readUint32LE();
 	max_total_size = _fileHandle->readUint32BE() - 8;
-	basetag = fileReadDword();
+	basetag = _fileHandle->readUint32BE();
 	total_size = _fileHandle->readUint32BE();
 
-	debugC(DEBUG_RESOURCE, "  basetag: %s, total_size=%d", tag2str(TO_BE_32(basetag)), total_size);
+	debugC(DEBUG_RESOURCE, "  basetag: %s, total_size=%d", tag2str(basetag), total_size);
 
 	switch (basetag) {
-	case MKID('MIDI'):
-	case MKID('iMUS'):
+	case MKID_BE('MIDI'):
+	case MKID_BE('iMUS'):
 		if (_musicType != MDT_PCSPK) {
 			_fileHandle->seek(-8, SEEK_CUR);
 			_fileHandle->read(res.createResource(type, idx, total_size + 8), total_size + 8);
 			return 1;
 		}
 		break;
-	case MKID('SOU '):
+	case MKID_BE('SOU '):
 		best_pri = -1;
 		while (pos < total_size) {
-			tag = fileReadDword();
+			tag = _fileHandle->readUint32BE();
 			size = _fileHandle->readUint32BE() + 8;
 			pos += size;
 
 			pri = -1;
 
 			switch (tag) {
-			case MKID('TOWS'):
+			case MKID_BE('TOWS'):
 				pri = 16;
 				break;
-			case MKID('SBL '):
+			case MKID_BE('SBL '):
 				pri = 15;
 				break;
-			case MKID('ADL '):
+			case MKID_BE('ADL '):
 				pri = 1;
 				if (_musicType == MDT_ADLIB)
 					pri = 10;
 				break;
-			case MKID('AMI '):
+			case MKID_BE('AMI '):
 				pri = 3;
 				break;
-			case MKID('ROL '):
+			case MKID_BE('ROL '):
 				pri = 3;
 				if (_native_mt32)
 					pri = 5;
 				break;
-			case MKID('GMD '):
+			case MKID_BE('GMD '):
 				pri = 4;
 				break;
-			case MKID('MAC '):	// Occurs in Mac MI2, FOA
+			case MKID_BE('MAC '):	// Occurs in Mac MI2, FOA
 				pri = 2;
 				break;
-			case MKID('SPK '):
+			case MKID_BE('SPK '):
 				pri = -1;
 //				if (_musicType == MDT_PCSPK)
 //					pri = 11;
@@ -1235,7 +1235,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			if ((_musicType == MDT_PCSPK) && pri != 11)
 				pri = -1;
 
-			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(TO_BE_32(tag)), size, pri);
+			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
 
 
 			if (pri > best_pri) {
@@ -1255,7 +1255,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			return 1;
 		}
 		break;
-	case MKID('Mac0'):
+	case MKID_BE('Mac0'):
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE() - 8;
 		ptr = (byte *)calloc(total_size, 1);
@@ -1265,12 +1265,12 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		free(ptr);
 		return 1;
 
-	case MKID('Mac1'):
-	case MKID('RIFF'):
-	case MKID('TALK'):
-	case MKID('DIGI'):
-	case MKID('Crea'):
-	case MKID(0x460e200d):	// WORKAROUND bug # 1311447
+	case MKID_BE('Mac1'):
+	case MKID_BE('RIFF'):
+	case MKID_BE('TALK'):
+	case MKID_BE('DIGI'):
+	case MKID_BE('Crea'):
+	case 0x460e200d:	// WORKAROUND bug # 1311447
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE();
 		ptr = res.createResource(type, idx, total_size);
@@ -1278,7 +1278,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		//dumpResource("sound-", idx, ptr);
 		return 1;
 
-	case MKID('HSHD'):
+	case MKID_BE('HSHD'):
 		// HE sound type without SOUN header
 		_fileHandle->seek(-16, SEEK_CUR);
 		total_size = max_total_size + 8;
@@ -1287,7 +1287,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		//dumpResource("sound-", idx, ptr);
 		return 1;
 
-	case MKID('FMUS'): {
+	case MKID_BE('FMUS'): {
 		// Used in 3DO version of puttputt joins the parade and probably others
 		// Specifies a separate file to be used for music from what I gather.
 		int tmpsize;
@@ -1325,7 +1325,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		return 1;
 
 	default:
-		if (FROM_LE_32(basetag) == max_total_size) {
+		if (SWAP_BYTES_32(basetag) == max_total_size) {
 			_fileHandle->seek(-12, SEEK_CUR);
 			total_size = _fileHandle->readUint32BE();
 			_fileHandle->seek(-8, SEEK_CUR);
@@ -1334,7 +1334,7 @@ int ScummEngine::readSoundResource(int type, int idx) {
 			//dumpResource("sound-", idx, ptr);
 			return 1;
 		}
-		error("Unrecognized base tag 0x%08x in sound %d", TO_BE_32(basetag), idx);
+		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
 	res.roomoffs[type][idx] = 0xFFFFFFFF;
 	return 0;
@@ -1496,20 +1496,20 @@ static inline byte *writeVLQ(byte *ptr, int value) {
 static inline byte Mac0ToGMInstrument(uint32 type, int &transpose) {
 	transpose = 0;
 	switch (type) {
-	case MKID('MARI'): return 12;
-	case MKID('PLUC'): return 45;
-	case MKID('HARM'): return 22;
-	case MKID('PIPE'): return 19;
-	case MKID('TROM'): transpose = -12; return 57;
-	case MKID('STRI'): return 48;
-	case MKID('HORN'): return 60;
-	case MKID('VIBE'): return 11;
-	case MKID('SHAK'): return 77;
-	case MKID('PANP'): return 75;
-	case MKID('WHIS'): return 76;
-	case MKID('ORGA'): return 17;
-	case MKID('BONG'): return 115;
-	case MKID('BASS'): transpose = -24; return 35;
+	case MKID_BE('MARI'): return 12;
+	case MKID_BE('PLUC'): return 45;
+	case MKID_BE('HARM'): return 22;
+	case MKID_BE('PIPE'): return 19;
+	case MKID_BE('TROM'): transpose = -12; return 57;
+	case MKID_BE('STRI'): return 48;
+	case MKID_BE('HORN'): return 60;
+	case MKID_BE('VIBE'): return 11;
+	case MKID_BE('SHAK'): return 77;
+	case MKID_BE('PANP'): return 75;
+	case MKID_BE('WHIS'): return 76;
+	case MKID_BE('ORGA'): return 17;
+	case MKID_BE('BONG'): return 115;
+	case MKID_BE('BASS'): transpose = -24; return 35;
 	default:
 		error("Unknown Mac0 instrument %s found", tag2str(type));
 	}
@@ -1594,13 +1594,13 @@ void ScummEngine::convertMac0Resource(int type, int idx, byte *src_ptr, int size
 
 	// Parse the three channels
 	for (i = 0; i < 3; i++) {
-		assert(*((uint32*)src_ptr) == MKID('Chan'));
+		assert(READ_BE_UINT32(src_ptr) == MKID_BE('Chan'));
 		len = READ_BE_UINT32(src_ptr + 4);
 		track_len[i] = len - 24;
-		track_instr[i] = Mac0ToGMInstrument(*(uint32*)(src_ptr + 8), track_transpose[i]);
+		track_instr[i] = Mac0ToGMInstrument(READ_BE_UINT32(src_ptr + 8), track_transpose[i]);
 		track_data[i] = src_ptr + 12;
 		src_ptr += len;
-		looped = (*((uint32*)(src_ptr - 8)) == MKID('Loop'));
+		looped = (READ_BE_UINT32(src_ptr - 8) == MKID_BE('Loop'));
 
 		// For each note event, we need up to 6 bytes for the
 		// Note On (3 VLQ, 3 event), and 6 bytes for the Note

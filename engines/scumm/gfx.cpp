@@ -703,7 +703,7 @@ void ScummEngine::initBGBuffers(int height) {
 		gdi._numZBuffer = 2;
 	} else if (_game.features & GF_SMALL_HEADER) {
 		int off;
-		ptr = findResourceData(MKID('SMAP'), room);
+		ptr = findResourceData(MKID_BE('SMAP'), room);
 		gdi._numZBuffer = 0;
 
 		if (_game.features & GF_16COLOR)
@@ -718,13 +718,13 @@ void ScummEngine::initBGBuffers(int height) {
 		}
 	} else if (_game.version == 8) {
 		// in V8 there is no RMIH and num z buffers is in RMHD
-		ptr = findResource(MKID('RMHD'), room);
+		ptr = findResource(MKID_BE('RMHD'), room);
 		gdi._numZBuffer = READ_LE_UINT32(ptr + 24) + 1;
 	} else if (_game.heversion >= 70) {
-		ptr = findResource(MKID('RMIH'), room);
+		ptr = findResource(MKID_BE('RMIH'), room);
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	} else {
-		ptr = findResource(MKID('RMIH'), findResource(MKID('RMIM'), room));
+		ptr = findResource(MKID_BE('RMIH'), findResource(MKID_BE('RMIM'), room));
 		gdi._numZBuffer = READ_LE_UINT16(ptr + 8) + 1;
 	}
 	assert(gdi._numZBuffer >= 1 && gdi._numZBuffer <= 8);
@@ -1306,9 +1306,9 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	if ((_vm->_game.features & GF_SMALL_HEADER) || _vm->_game.version == 8)
 		zplane_list[0] = ptr;
 	else if (bmapImage)
-		zplane_list[0] = _vm->findResource(MKID('BMAP'), ptr);
+		zplane_list[0] = _vm->findResource(MKID_BE('BMAP'), ptr);
 	else
-		zplane_list[0] = _vm->findResource(MKID('SMAP'), ptr);
+		zplane_list[0] = _vm->findResource(MKID_BE('SMAP'), ptr);
 
 	if (_zbufferDisabled)
 		numzbuf = 0;
@@ -1349,11 +1349,11 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 			}
 		} else {
 			const uint32 zplane_tags[] = {
-				MKID('ZP00'),
-				MKID('ZP01'),
-				MKID('ZP02'),
-				MKID('ZP03'),
-				MKID('ZP04')
+				MKID_BE('ZP00'),
+				MKID_BE('ZP01'),
+				MKID_BE('ZP02'),
+				MKID_BE('ZP03'),
+				MKID_BE('ZP04')
 			};
 			
 			for (i = 1; i < numzbuf; i++) {
@@ -1406,7 +1406,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 		// Skip to the BSTR->WRAP->OFFS chunk
 		smap_ptr = ptr + 24;
 	} else
-		smap_ptr = _vm->findResource(MKID('SMAP'), ptr);
+		smap_ptr = _vm->findResource(MKID_BE('SMAP'), ptr);
 
 	assert(smap_ptr);
 
@@ -1414,7 +1414,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 	
 	const byte *tmsk_ptr = NULL;
 	if (_vm->_game.heversion >= 72) {
-		tmsk_ptr = _vm->findResource(MKID('TMSK'), ptr);
+		tmsk_ptr = _vm->findResource(MKID_BE('TMSK'), ptr);
 	}
 
 	bottom = y + height;
@@ -1614,7 +1614,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	byte *mask_ptr;
 	const byte *zplane_list[9];
 
-	const byte *bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
+	const byte *bmap_ptr = _vm->findResourceData(MKID_BE('BMAP'), ptr);
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
@@ -1674,7 +1674,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
 #ifndef DISABLE_HE
-	const byte *bmap_ptr = _vm->findResourceData(MKID('BMAP'), ptr);
+	const byte *bmap_ptr = _vm->findResourceData(MKID_BE('BMAP'), ptr);
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;

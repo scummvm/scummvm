@@ -247,7 +247,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			debug(0, "getObjectXYPos: Can't find object %d", object);
 			return;
 		}
-		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+		imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), ptr);
 		assert(imhd);
 		if (_game.version == 8) {
 			switch (FROM_LE_32(imhd->v8.version)) {
@@ -415,26 +415,6 @@ void ScummEngine::drawRoomObjects(int arg) {
 	}
 }
 
-static const uint32 IMxx_tags[] = {
-	MKID('IM00'),
-	MKID('IM01'),
-	MKID('IM02'),
-	MKID('IM03'),
-	MKID('IM04'),
-	MKID('IM05'),
-	MKID('IM06'),
-	MKID('IM07'),
-	MKID('IM08'),
-	MKID('IM09'),
-	MKID('IM0A'),
-	MKID('IM0B'),
-	MKID('IM0C'),
-	MKID('IM0D'),
-	MKID('IM0E'),
-	MKID('IM0F'),
-	MKID('IM10')
-};
-
 void ScummEngine::drawObject(int obj, int arg) {
 	if (_skipDrawObject)
 		return;
@@ -498,7 +478,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		    (_game.id == GID_FT && getClass(od.obj_nr, kObjectClassPlayer)))
 			flags |= Gdi::dbDrawMaskOnAll;
 
-		if (_game.heversion >= 70 && findResource(MKID('SMAP'), ptr) == NULL)
+		if (_game.heversion >= 70 && findResource(MKID_BE('SMAP'), ptr) == NULL)
 			gdi.drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
 			gdi.drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
@@ -591,12 +571,12 @@ void ScummEngine::loadRoomObjects() {
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
 
-		ptr = obcds.findNext(MKID('OBCD'));
+		ptr = obcds.findNext(MKID_BE('OBCD'));
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
 		od->OBCDoffset = ptr - rootptr;
-		cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), ptr);
+		cdhd = (const CodeHeader *)findResourceData(MKID_BE('CDHD'), ptr);
 
 		if (_game.version >= 7)
 			od->obj_nr = READ_LE_UINT16(&(cdhd->v7.obj_id));
@@ -608,7 +588,7 @@ void ScummEngine::loadRoomObjects() {
 		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
-			ptr = findResource(MKID('VERB'), ptr);
+			ptr = findResource(MKID_BE('VERB'), ptr);
 			dumpResource(buf, od->obj_nr, ptr);
 		}
 
@@ -617,7 +597,7 @@ void ScummEngine::loadRoomObjects() {
 	searchptr = room;
 	ResourceIterator	obims(room, false);
 	for (i = 0; i < _numObjectsInRoom; i++) {
-		ptr = obims.findNext(MKID('OBIM'));
+		ptr = obims.findNext(MKID_BE('OBIM'));
 		if (ptr == NULL)
 			error("Room %d missing image blocks(s)", _roomResource);
 
@@ -695,7 +675,7 @@ void ScummEngine_v4::loadRoomObjects() {
 	for (i = 0; i < _numObjectsInRoom; i++) {
 		od = &_objs[findLocalObjectSlot()];
 
-		ptr = obcds.findNext(MKID('OBCD'));
+		ptr = obcds.findNext(MKID_BE('OBCD'));
 		if (ptr == NULL)
 			error("Room %d missing object code block(s)", _roomResource);
 
@@ -710,7 +690,7 @@ void ScummEngine_v4::loadRoomObjects() {
 
 	ResourceIterator	obims(room, true);
 	for (i = 0; i < _numObjectsInRoom; i++) {
-		ptr = obims.findNext(MKID('OBIM'));
+		ptr = obims.findNext(MKID_BE('OBIM'));
 		if (ptr == NULL)
 			error("Room %d missing image blocks(s)", _roomResource);
 
@@ -801,11 +781,11 @@ void ScummEngine::setupRoomObject(ObjectData *od, const byte *room, const byte *
 			searchptr = room;
 	}
 
-	cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), searchptr + od->OBCDoffset);
+	cdhd = (const CodeHeader *)findResourceData(MKID_BE('CDHD'), searchptr + od->OBCDoffset);
 	if (cdhd == NULL)
 		error("Room %d missing CDHD blocks(s)", _roomResource);
 	if (od->OBIMoffset)
-		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), room + od->OBIMoffset);
+		imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), room + od->OBIMoffset);
 
 	od->flags = Gdi::dbAllowMaskOr;
 
@@ -1034,7 +1014,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 		return (objptr + offset);
 	}
 
-	return findResourceData(MKID('OBNA'), objptr);
+	return findResourceData(MKID_BE('OBNA'), objptr);
 }
 
 void ScummEngine::setObjectName(int obj) {
@@ -1110,7 +1090,7 @@ const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 
 	if (od.fl_object_index) {
 		ptr = getResourceAddress(rtFlObject, od.fl_object_index);
-		ptr = findResource(MKID('OBIM'), ptr);
+		ptr = findResource(MKID_BE('OBIM'), ptr);
 	} else {
 		ptr = getResourceAddress(rtRoom, _roomResource);
 		if (ptr)
@@ -1118,6 +1098,26 @@ const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 	}
 	return ptr;
 }
+
+static const uint32 IMxx_tags[] = {
+	MKID_BE('IM00'),
+	MKID_BE('IM01'),
+	MKID_BE('IM02'),
+	MKID_BE('IM03'),
+	MKID_BE('IM04'),
+	MKID_BE('IM05'),
+	MKID_BE('IM06'),
+	MKID_BE('IM07'),
+	MKID_BE('IM08'),
+	MKID_BE('IM09'),
+	MKID_BE('IM0A'),
+	MKID_BE('IM0B'),
+	MKID_BE('IM0C'),
+	MKID_BE('IM0D'),
+	MKID_BE('IM0E'),
+	MKID_BE('IM0F'),
+	MKID_BE('IM10')
+};
 
 const byte *ScummEngine::getObjectImage(const byte *ptr, int state) {
 	assert(ptr);
@@ -1129,15 +1129,15 @@ const byte *ScummEngine::getObjectImage(const byte *ptr, int state) {
 		// The OBIM contains an IMAG, which in turn contains a WRAP, which contains
 		// an OFFS chunk and multiple BOMP/SMAP chunks. To find the right BOMP/SMAP,
 		// we use the offsets in the OFFS chunk,
-		ptr = findResource(MKID('IMAG'), ptr);
+		ptr = findResource(MKID_BE('IMAG'), ptr);
 		if (!ptr)
 			return 0;
 
-		ptr = findResource(MKID('WRAP'), ptr);
+		ptr = findResource(MKID_BE('WRAP'), ptr);
 		if (!ptr)
 			return 0;
 
-		ptr = findResource(MKID('OFFS'), ptr);
+		ptr = findResource(MKID_BE('OFFS'), ptr);
 		if (!ptr)
 			return 0;
 
@@ -1160,7 +1160,7 @@ int ScummEngine::getObjectImageCount(int object) {
 		return 0;
 
 	ptr = getOBIMFromObjectData(_objs[objnum]);
-	imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), ptr);
+	imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), ptr);
 	if (!imhd)
 		return 0;
 
@@ -1177,7 +1177,7 @@ int ScummEngine::getObjectImageCount(int object) {
 int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
 	// In V8, IMHD has no obj_id, but rather a name string. We map the name
 	// back to an object id using a table derived from the DOBJ resource.
-	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), obim);
 	ObjectNameId *found = (ObjectNameId *)bsearch(imhd->v8.name, _objectIDMap, _objectIDMapSize,
 					sizeof(ObjectNameId), (int (*)(const void*, const void*))strcmp);
 	assert(found);
@@ -1185,7 +1185,7 @@ int ScummEngine_v8::getObjectIdFromOBIM(const byte *obim) {
 }
 
 int ScummEngine_v7::getObjectIdFromOBIM(const byte *obim) {
-	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), obim);
 	return READ_LE_UINT16(&imhd->v7.obj_id);
 }
 #endif
@@ -1194,7 +1194,7 @@ int ScummEngine::getObjectIdFromOBIM(const byte *obim) {
 	if (_game.features & GF_SMALL_HEADER)
 		return READ_LE_UINT16(obim + 6);
 
-	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+	const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), obim);
 	return READ_LE_UINT16(&imhd->old.obj_id);
 }
 
@@ -1247,7 +1247,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 		if (findWhat & foCodeHeader) {
 			fo->obcd = obcdptr = getOBCDFromObject(id);
 			assert(obcdptr);
-			fo->cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
+			fo->cdhd = (const CodeHeader *)findResourceData(MKID_BE('CDHD'), obcdptr);
 		}
 		if (findWhat & foImageHeader) {
 			fo->obim = obimptr = getOBIMFromObjectData(_objs[id2]);
@@ -1263,7 +1263,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	if (_game.features & GF_OLD_BUNDLE) {
 		numobj = roomptr[20];
 	} else {
-		const RoomHeader *roomhdr = (const RoomHeader *)findResourceData(MKID('RMHD'), roomptr);
+		const RoomHeader *roomhdr = (const RoomHeader *)findResourceData(MKID_BE('RMHD'), roomptr);
 
 		if (_game.version == 8)
 			numobj = READ_LE_UINT32(&(roomhdr->v8.numObjects));
@@ -1312,10 +1312,10 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 		assert(searchptr);
 		ResourceIterator	obcds(searchptr, (_game.features & GF_SMALL_HEADER) != 0);
 		for (i = 0; i < numobj; i++) {
-			obcdptr = obcds.findNext(MKID('OBCD'));
+			obcdptr = obcds.findNext(MKID_BE('OBCD'));
 			if (obcdptr == NULL)
 				error("findObjectInRoom: Not enough code blocks in room %d", room);
-			cdhd = (const CodeHeader *)findResourceData(MKID('CDHD'), obcdptr);
+			cdhd = (const CodeHeader *)findResourceData(MKID_BE('CDHD'), obcdptr);
 
 			if (_game.features & GF_SMALL_HEADER)
 				id2 = READ_LE_UINT16(obcdptr + 6);
@@ -1340,7 +1340,7 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	if (findWhat & foImageHeader) {
 		ResourceIterator	obims(roomptr, (_game.features & GF_SMALL_HEADER) != 0);
 		for (i = 0; i < numobj; i++) {
-			obimptr = obims.findNext(MKID('OBIM'));
+			obimptr = obims.findNext(MKID_BE('OBIM'));
 			if (obimptr == NULL)
 				error("findObjectInRoom: Not enough image blocks in room %d", room);
 			obim_id = getObjectIdFromOBIM(obimptr);
@@ -1600,7 +1600,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 		if (!img)
 			img = getObjectImage(ptr, 1);	// Backward compatibility with samnmax blast objects
 		assert(img);
-		bomp = findResourceData(MKID('BOMP'), img);
+		bomp = findResourceData(MKID_BE('BOMP'), img);
 	}
 
 	if (!bomp)
@@ -1732,7 +1732,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 		char buf[32];
 		const byte *ptr = foir.obcd;
 		sprintf(buf, "roomobj-%d-", room);
-		ptr = findResource(MKID('VERB'), ptr);
+		ptr = findResource(MKID_BE('VERB'), ptr);
 		dumpResource(buf, object, ptr);
 	}
 
@@ -1758,7 +1758,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	assert(flob);
 
 	// Copy object code + object image to floating object
-	((uint32 *)flob)[0] = MKID('FLOB');
+	((uint32 *)flob)[0] = MKID_BE('FLOB');
 	((uint32 *)flob)[1] = TO_BE_32(flob_size);
 
 	memcpy(flob + 8, foir.obcd, obcd_size);

@@ -742,7 +742,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 		imgh = (*(obim + size + 17)) / 8;
 		imptr = getObjectImage(obim, 1);
 	} else {
-		imhd = (const ImageHeader *)findResourceData(MKID('IMHD'), obim);
+		imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), obim);
 		if (_game.version >= 7) {
 			imgw = READ_LE_UINT16(&imhd->v7.width) / 8;
 			imgh = READ_LE_UINT16(&imhd->v7.height) / 8;

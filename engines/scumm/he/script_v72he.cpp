@@ -679,7 +679,7 @@ byte *ScummEngine_v70he::heFindResource(uint32 tag, byte *searchin) {
 	searchin += 4;
 
 	while (curpos < totalsize) {
-		if (READ_UINT32(searchin) == tag) {
+		if (READ_BE_UINT32(searchin) == tag) {
 			return searchin;
 		}
 
@@ -697,15 +697,15 @@ byte *ScummEngine_v70he::heFindResource(uint32 tag, byte *searchin) {
 }
 
 byte *ScummEngine_v70he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
-	if (READ_UINT32(ptr) == MKID('MULT')) {
+	if (READ_BE_UINT32(ptr) == MKID_BE('MULT')) {
 		byte *offs, *wrap;
 		uint32 size;
 
-		wrap = heFindResource(MKID('WRAP'), ptr);
+		wrap = heFindResource(MKID_BE('WRAP'), ptr);
 		if (wrap == NULL)
 			return NULL;
 
-		offs = heFindResourceData(MKID('OFFS'), wrap);
+		offs = heFindResourceData(MKID_BE('OFFS'), wrap);
 		if (offs == NULL)
 			return NULL;
 
@@ -718,7 +718,7 @@ byte *ScummEngine_v70he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool
 		if (offs)
 			return offs;
 
-		offs = heFindResourceData(MKID('DEFA'), ptr);
+		offs = heFindResourceData(MKID_BE('DEFA'), ptr);
 		if (offs == NULL)
 			return NULL;
 
@@ -2341,7 +2341,7 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 	case 0xE1:
 		{
 		byte *dataPtr = getResourceAddress(rtTalkie, pop());
-		byte *text = findWrappedBlock(MKID('TEXT'), dataPtr, 0, 0);
+		byte *text = findWrappedBlock(MKID_BE('TEXT'), dataPtr, 0, 0);
 		size = getResourceDataSize(text);
 		memcpy(name, text, size);
 		printString(m, name);

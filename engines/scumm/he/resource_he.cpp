@@ -1781,7 +1781,7 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 		if (!ptr)
 			return 0;
 
-		if (READ_UINT32(ptr) == MKID('RIFF')) {
+		if (READ_BE_UINT32(ptr) == MKID_BE('RIFF')) {
 			byte flags;
 			int rate;
 
@@ -1793,11 +1793,11 @@ int ScummEngine_v72he::getSoundResourceSize(int id) {
 			}
 		} else {
 			ptr += 8 + READ_BE_UINT32(ptr + 12);
-			if (READ_UINT32(ptr) == MKID('SBNG')) {
+			if (READ_BE_UINT32(ptr) == MKID_BE('SBNG')) {
 				ptr += READ_BE_UINT32(ptr + 4);
 			}
 
-			assert(READ_UINT32(ptr) == MKID('SDAT'));
+			assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
 			size = READ_BE_UINT32(ptr + 4) - 8;
 		}
 	}
@@ -1837,8 +1837,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			chan =  i;
 	}
 
-	sbng1Ptr = heFindResource(MKID('SBNG'), snd1Ptr);
-	sbng2Ptr = heFindResource(MKID('SBNG'), snd2Ptr);
+	sbng1Ptr = heFindResource(MKID_BE('SBNG'), snd1Ptr);
+	sbng2Ptr = heFindResource(MKID_BE('SBNG'), snd2Ptr);
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
 		if (chan != -1 && _sound->_heChannel[chan].codeOffs > 0) {
@@ -1881,9 +1881,9 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		}
 	}
 
-	sdat1Ptr = heFindResource(MKID('SDAT'), snd1Ptr);
+	sdat1Ptr = heFindResource(MKID_BE('SDAT'), snd1Ptr);
 	assert(sdat1Ptr);
-	sdat2Ptr = heFindResource(MKID('SDAT'), snd2Ptr);
+	sdat2Ptr = heFindResource(MKID_BE('SDAT'), snd2Ptr);
 	assert(sdat2Ptr);
 
 	sdat1size = READ_BE_UINT32(sdat1Ptr + 4) - 8 - _sndPtrOffs;

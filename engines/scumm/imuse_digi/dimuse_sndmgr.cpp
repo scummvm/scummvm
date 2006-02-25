@@ -125,7 +125,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, soundStruct *soun
 }
 
 void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
-	if (READ_UINT32(ptr) == MKID('Crea')) {
+	if (READ_BE_UINT32(ptr) == MKID_BE('Crea')) {
 		bool quit = false;
 		int len;
 
@@ -188,7 +188,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, soundStruct *sound) {
 			}
 			offset += len;
 		}
-	} else if (READ_UINT32(ptr) == MKID('iMUS')) {
+	} else if (READ_BE_UINT32(ptr) == MKID_BE('iMUS')) {
 		uint32 tag;
 		int32 size = 0;
 		byte *s_ptr = ptr;

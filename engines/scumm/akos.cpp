@@ -149,7 +149,7 @@ void AkosCostumeLoader::loadCostume(int id) {
 bool AkosCostumeLoader::hasManyDirections() {
 	const AkosHeader *akhd;
 
-	akhd = (const AkosHeader *)_vm->findResourceData(MKID('AKHD'), _akos);
+	akhd = (const AkosHeader *)_vm->findResourceData(MKID_BE('AKHD'), _akos);
 	return (akhd->flags & 2) != 0;
 }
 
@@ -173,12 +173,12 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	else
 		anim = newDirToOldDir(a->getFacing()) + frame * 4;
 
-	akhd = (const AkosHeader *)_vm->findResourceData(MKID('AKHD'), _akos);
+	akhd = (const AkosHeader *)_vm->findResourceData(MKID_BE('AKHD'), _akos);
 
 	if (anim >= READ_LE_UINT16(&akhd->num_anims))
 		return;
 
-	r = _vm->findResourceData(MKID('AKCH'), _akos);
+	r = _vm->findResourceData(MKID_BE('AKCH'), _akos);
 	assert(r);
 
 	offs = READ_LE_UINT16(r + anim * sizeof(uint16));
@@ -186,8 +186,8 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 		return;
 	r += offs;
 
-	const uint8 *akstPtr = _vm->findResourceData(MKID('AKST'), _akos);
-	const uint8 *aksfPtr = _vm->findResourceData(MKID('AKSF'), _akos);
+	const uint8 *akstPtr = _vm->findResourceData(MKID_BE('AKST'), _akos);
+	const uint8 *aksfPtr = _vm->findResourceData(MKID_BE('AKSF'), _akos);
 
 	i = 0;
 	mask = READ_LE_UINT16(r); r += 2;
@@ -330,20 +330,20 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 	akos = _vm->getResourceAddress(rtCostume, costume);
 	assert(akos);
 
-	akhd = (const AkosHeader *) _vm->findResourceData(MKID('AKHD'), akos);
-	akof = (const AkosOffset *) _vm->findResourceData(MKID('AKOF'), akos);
-	akci = _vm->findResourceData(MKID('AKCI'), akos);
-	aksq = _vm->findResourceData(MKID('AKSQ'), akos);
-	akcd = _vm->findResourceData(MKID('AKCD'), akos);
-	akpl = _vm->findResourceData(MKID('AKPL'), akos);
+	akhd = (const AkosHeader *) _vm->findResourceData(MKID_BE('AKHD'), akos);
+	akof = (const AkosOffset *) _vm->findResourceData(MKID_BE('AKOF'), akos);
+	akci = _vm->findResourceData(MKID_BE('AKCI'), akos);
+	aksq = _vm->findResourceData(MKID_BE('AKSQ'), akos);
+	akcd = _vm->findResourceData(MKID_BE('AKCD'), akos);
+	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
 	codec = READ_LE_UINT16(&akhd->codec);
-	akct = _vm->findResourceData(MKID('AKCT'), akos);
+	akct = _vm->findResourceData(MKID_BE('AKCT'), akos);
 
 	xmap = 0;
 	if (shadow) {
 		const uint8 *xmapPtr = _vm->getResourceAddress(rtImage, shadow);
 		assert(xmapPtr);
-		xmap = _vm->findResourceData(MKID('XMAP'), xmapPtr);
+		xmap = _vm->findResourceData(MKID_BE('XMAP'), xmapPtr);
 		assert(xmap);
 	}
 }
@@ -1343,8 +1343,8 @@ bool ScummEngine::akos_increaseAnims(const byte *akos, Actor *a) {
 	uint size;
 	bool result;
 
-	aksq = findResourceData(MKID('AKSQ'), akos);
-	akfo = findResourceData(MKID('AKFO'), akos);
+	aksq = findResourceData(MKID_BE('AKSQ'), akos);
+	akfo = findResourceData(MKID_BE('AKFO'), akos);
 
 	size = getResourceDataSize(akfo) / 2;
 

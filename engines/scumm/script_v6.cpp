@@ -3107,7 +3107,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 
 	ResourceIterator boxds(room, false);
 	for (i = 0; i < arg; i++)
-		boxd = boxds.findNext(MKID('BOXD'));
+		boxd = boxds.findNext(MKID_BE('BOXD'));
 
 	if (!boxd)
 		error("ScummEngine_v6::o6_setBoxSet: Can't find dboxes for set %d", arg);
@@ -3120,7 +3120,7 @@ void ScummEngine_v6::o6_setBoxSet() {
 
 	ResourceIterator boxms(room, false);
 	for (i = 0; i < arg; i++)
-		boxm = boxms.findNext(MKID('BOXM'));
+		boxm = boxms.findNext(MKID_BE('BOXM'));
 
 	if (!boxm)
 		error("ScummEngine_v6::o6_setBoxSet: Can't find mboxes for set %d", arg);

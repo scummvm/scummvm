@@ -395,12 +395,12 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	}
 
 	// Support for sound in later Backyard sports games
-	if (READ_UINT32(ptr) == MKID('RIFF') || READ_UINT32(ptr) == MKID('WSOU')) {
+	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF') || READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
 		uint16 type;
 		int blockAlign;
 		char *sound;
 
-		if (READ_UINT32(ptr) == MKID('WSOU'))
+		if (READ_BE_UINT32(ptr) == MKID_BE('WSOU'))
 			ptr += 8;
 
 		size = READ_LE_UINT32(ptr + 4);
@@ -426,7 +426,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
 	}
 	// Support for sound in Humongous Entertainment games
-	else if (READ_UINT32(ptr) == MKID('DIGI') || READ_UINT32(ptr) == MKID('TALK')) {
+	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
 		byte *sndPtr = ptr;
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
@@ -442,12 +442,12 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		int codeOffs = -1;
-		if (READ_UINT32(ptr) == MKID('SBNG')) {
+		if (READ_BE_UINT32(ptr) == MKID_BE('SBNG')) {
 			codeOffs = ptr - sndPtr + 8;
 			ptr += READ_BE_UINT32(ptr + 4);
 		}
 
-		assert(READ_UINT32(ptr) == MKID('SDAT'));
+		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
 		size = READ_BE_UINT32(ptr+4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			// Occurs when making fireworks in puttmoon
@@ -473,12 +473,12 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
-	else if (READ_UINT32(ptr) == MKID('MRAW')) {
+	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
 		priority = *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
 		ptr += 8 + READ_BE_UINT32(ptr+12);
 
-		assert(READ_UINT32(ptr) == MKID('SDAT'));
+		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
 		size = READ_BE_UINT32(ptr+4) - 8;
 
 		flags = Audio::Mixer::FLAG_AUTOFREE;
@@ -487,7 +487,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		_currentMusic = soundID;
 		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID);
 	}
-	else if (READ_UINT32(ptr) == MKID('MIDI')) {
+	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {
 			_vm->_imuse->stopSound(_currentMusic);
 			_currentMusic = soundID;

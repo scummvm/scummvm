@@ -164,7 +164,7 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 	else if (_game.features & GF_SMALL_HEADER)
 		verbptr = objptr + 19;
 	else
-		verbptr = findResource(MKID('VERB'), objptr);
+		verbptr = findResource(MKID_BE('VERB'), objptr);
 
 	assert(verbptr);
 
@@ -941,7 +941,7 @@ void ScummEngine::runExitScript() {
 		// be limiting ourselves to strictly reading the size from the header?
 		if (_game.id == GID_INDY3 && !(_game.features & GF_OLD_BUNDLE)) {
 			byte *roomptr = getResourceAddress(rtRoom, _roomResource);
-			const byte *excd = findResourceData(MKID('EXCD'), roomptr) - _resourceHeaderSize;
+			const byte *excd = findResourceData(MKID_BE('EXCD'), roomptr) - _resourceHeaderSize;
 			if (!excd || (getResourceDataSize(excd) < 1)) {
 				debug(2, "Exit-%d is empty", _roomResource);
 				return;

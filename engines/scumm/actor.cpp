@@ -1233,8 +1233,8 @@ void Actor::animateLimb(int limb, int f) {
 		byte *akos = _vm->getResourceAddress(rtCostume, _costume);
 		assert(akos);
 
-		aksq = _vm->findResourceData(MKID('AKSQ'), akos);
-		akfo = _vm->findResourceData(MKID('AKFO'), akos);
+		aksq = _vm->findResourceData(MKID_BE('AKSQ'), akos);
+		akfo = _vm->findResourceData(MKID_BE('AKFO'), akos);
 
 		size = _vm->getResourceDataSize(akfo) / 2;
 
@@ -1914,7 +1914,7 @@ void Actor::remapActorPaletteColor(int color, int new_color) {
 		return;
 	}
 
-	akpl = _vm->findResourceData(MKID('AKPL'), akos);
+	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
 	if (!akpl) {
 		debug(0, "Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
@@ -1952,7 +1952,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 		return;
 	}
 
-	akpl = _vm->findResourceData(MKID('AKPL'), akos);
+	akpl = _vm->findResourceData(MKID_BE('AKPL'), akos);
 	if (!akpl) {
 		debug(0, "Can't remap actor %d, costume %d doesn't contain an AKPL block", _number, _costume);
 		return;
@@ -1961,7 +1961,7 @@ void Actor::remapActorPalette(int r_fact, int g_fact, int b_fact, int threshold)
 	// Get the number palette entries
 	akpl_size = _vm->getResourceDataSize(akpl);
 
-	rgbs = _vm->findResourceData(MKID('RGBS'), akos);
+	rgbs = _vm->findResourceData(MKID_BE('RGBS'), akos);
 
 	if (!rgbs) {
 		debugC(DEBUG_ACTORS, "Can't remap actor %d costume %d doesn't contain an RGB block", _number, _costume);
@@ -2065,19 +2065,19 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 				int dy = a->_offsY + a->_pos.y - a->getElevation();
 				int dx = a->_offsX + a->_pos.x;
 
-				const uint8 *akax = findResource(MKID('AKAX'), cost);
+				const uint8 *akax = findResource(MKID_BE('AKAX'), cost);
 				assert(akax);
 				const uint8 *auxd = findPalInPals(akax, ae->subIndex) - _resourceHeaderSize;
 				assert(auxd);
-				const uint8 *frel = findResourceData(MKID('FREL'), auxd);
+				const uint8 *frel = findResourceData(MKID_BE('FREL'), auxd);
 				if (frel) {
 					error("unhandled FREL block");
 				}
-				const uint8 *disp = findResourceData(MKID('DISP'), auxd);
+				const uint8 *disp = findResourceData(MKID_BE('DISP'), auxd);
 				if (disp) {
 					error("unhandled DISP block");
 				}
-				const uint8 *axfd = findResourceData(MKID('AXFD'), auxd);
+				const uint8 *axfd = findResourceData(MKID_BE('AXFD'), auxd);
 				assert(axfd);
 
 				uint16 comp = READ_LE_UINT16(axfd);
@@ -2097,7 +2097,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 						error("unimplemented compression type %d", comp);
 					}
 				}
-				const uint8 *axur = findResourceData(MKID('AXUR'), auxd);
+				const uint8 *axur = findResourceData(MKID_BE('AXUR'), auxd);
 				if (axur) {
 					uint16 n = READ_LE_UINT16(axur); axur += 2;
 					while (n--) {
@@ -2109,7 +2109,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 						axur += 8;
 					}
 				}
-				const uint8 *axer = findResourceData(MKID('AXER'), auxd);
+				const uint8 *axer = findResourceData(MKID_BE('AXER'), auxd);
 				if (axer) {
 					a->_auxBlock.visible  = true;
 					a->_auxBlock.r.left   = (int16)READ_LE_UINT16(axer + 0) + dx;

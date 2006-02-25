@@ -120,22 +120,22 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr == NULL)
 		return false;
 
-	tag = *(((uint32 *)ptr) + 1);
+	tag = READ_BE_UINT32(ptr + 4);
 	switch (tag) {
-	case MKID('ADL '):
-	case MKID('ASFX'): // Special AD class for old Adlib sound effects
-	case MKID('SPK '):
+	case MKID_BE('ADL '):
+	case MKID_BE('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID_BE('SPK '):
 		return false;
 
-	case MKID('AMI '):
-	case MKID('ROL '):
+	case MKID_BE('AMI '):
+	case MKID_BE('ROL '):
 		return true;
 
-	case MKID('MAC '):	// Occurs in the Mac version of FOA and MI2
+	case MKID_BE('MAC '):	// Occurs in the Mac version of FOA and MI2
 		return true;
 
-	case MKID('GMD '):
-	case MKID('MIDI'):	// Occurs in Sam & Max
+	case MKID_BE('GMD '):
+	case MKID_BE('MIDI'):	// Occurs in Sam & Max
 		return false;
 	}
 
@@ -161,22 +161,22 @@ bool IMuseInternal::isMIDI(int sound) {
 	if (ptr == NULL)
 		return false;
 
-	tag = *(((uint32 *)ptr) + 1);
+	tag = READ_BE_UINT32(ptr + 4);
 	switch (tag) {
-	case MKID('ADL '):
-	case MKID('ASFX'): // Special AD class for old Adlib sound effects
-	case MKID('SPK '):
+	case MKID_BE('ADL '):
+	case MKID_BE('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID_BE('SPK '):
 		return false;
 
-	case MKID('AMI '):
-	case MKID('ROL '):
+	case MKID_BE('AMI '):
+	case MKID_BE('ROL '):
 		return true;
 
-	case MKID('MAC '):	// Occurs in the Mac version of FOA and MI2
+	case MKID_BE('MAC '):	// Occurs in the Mac version of FOA and MI2
 		return true;
 
-	case MKID('GMD '):
-	case MKID('MIDI'):	// Occurs in Sam & Max
+	case MKID_BE('GMD '):
+	case MKID_BE('MIDI'):	// Occurs in Sam & Max
 		return true;
 	}
 
