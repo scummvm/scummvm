@@ -771,7 +771,7 @@ int ScummEngine::loadResource(int type, int idx) {
 			return readSoundResource(type, idx);
 		}
 
-		tag = fileReadDword();
+		tag = _fileHandle->readUint32BE();
 
 		if (tag != res.tags[type] && _game.heversion < 70) {
 			error("%s %d not in room %d at %d+%d in file %s",
@@ -1353,28 +1353,28 @@ void ScummEngine::allocateArrays() {
 		_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 	}
 
-	allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID('AKOS') : MKID('COST'),
+	allocResTypeData(rtCostume, (_game.features & GF_NEW_COSTUMES) ? MKID_BE('AKOS') : MKID_BE('COST'),
 								_numCostumes, "costume", 1);
-	allocResTypeData(rtRoom, MKID('ROOM'), _numRooms, "room", 1);
-	allocResTypeData(rtRoomImage, MKID('RMIM'), _numRooms, "room image", 1);
-	allocResTypeData(rtRoomScripts, MKID('RMSC'), _numRooms, "room script", 1);
-	allocResTypeData(rtSound, MKID('SOUN'), _numSounds, "sound", 2);
-	allocResTypeData(rtScript, MKID('SCRP'), _numScripts, "script", 1);
-	allocResTypeData(rtCharset, MKID('CHAR'), _numCharsets, "charset", 1);
-	allocResTypeData(rtObjectName, MKID('NONE'), _numNewNames, "new name", 0);
-	allocResTypeData(rtInventory, MKID('NONE'), _numInventory, "inventory", 0);
-	allocResTypeData(rtTemp, MKID('NONE'), 10, "temp", 0);
-	allocResTypeData(rtScaleTable, MKID('NONE'), 5, "scale table", 0);
-	allocResTypeData(rtActorName, MKID('NONE'), _numActors, "actor name", 0);
-	allocResTypeData(rtVerb, MKID('NONE'), _numVerbs, "verb", 0);
-	allocResTypeData(rtString, MKID('NONE'), _numArray, "array", 0);
-	allocResTypeData(rtFlObject, MKID('NONE'), _numFlObject, "flobject", 0);
-	allocResTypeData(rtMatrix, MKID('NONE'), 10, "boxes", 0);
-	allocResTypeData(rtImage, MKID('AWIZ'), _numImages, "images", 1);
-	allocResTypeData(rtTalkie, MKID('TLKE'), _numTalkies, "talkie", 1);
+	allocResTypeData(rtRoom, MKID_BE('ROOM'), _numRooms, "room", 1);
+	allocResTypeData(rtRoomImage, MKID_BE('RMIM'), _numRooms, "room image", 1);
+	allocResTypeData(rtRoomScripts, MKID_BE('RMSC'), _numRooms, "room script", 1);
+	allocResTypeData(rtSound, MKID_BE('SOUN'), _numSounds, "sound", 2);
+	allocResTypeData(rtScript, MKID_BE('SCRP'), _numScripts, "script", 1);
+	allocResTypeData(rtCharset, MKID_BE('CHAR'), _numCharsets, "charset", 1);
+	allocResTypeData(rtObjectName, 0, _numNewNames, "new name", 0);
+	allocResTypeData(rtInventory, 0, _numInventory, "inventory", 0);
+	allocResTypeData(rtTemp, 0, 10, "temp", 0);
+	allocResTypeData(rtScaleTable, 0, 5, "scale table", 0);
+	allocResTypeData(rtActorName, 0, _numActors, "actor name", 0);
+	allocResTypeData(rtVerb, 0, _numVerbs, "verb", 0);
+	allocResTypeData(rtString, 0, _numArray, "array", 0);
+	allocResTypeData(rtFlObject, 0, _numFlObject, "flobject", 0);
+	allocResTypeData(rtMatrix, 0, 10, "boxes", 0);
+	allocResTypeData(rtImage, MKID_BE('AWIZ'), _numImages, "images", 1);
+	allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
 
 	if (_game.heversion >= 70) {
-		allocResTypeData(rtSpoolBuffer, MKID('NONE'), 9, "spool buffer", 0);
+		allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 0);
 	}
 }
 

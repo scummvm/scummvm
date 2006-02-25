@@ -1984,7 +1984,7 @@ int ScummEngine::init(GameDetector &detector) {
 		requestLoad(ConfMan.getInt("save_slot"));
 	}
 
-	allocResTypeData(rtBuffer, MKID('NONE'), 10, "buffer", 0);
+	allocResTypeData(rtBuffer, 0, 10, "buffer", 0);
 
 	setupScummVars();
 
@@ -3028,14 +3028,6 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 #pragma mark --- Miscellaneous ---
 #pragma mark -
 
-
-uint32 ScummEngine::fileReadDword() {
-#if defined(SCUMM_LITTLE_ENDIAN)
-	return _fileHandle->readUint32LE();
-#elif defined(SCUMM_BIG_ENDIAN)
-	return _fileHandle->readUint32BE();
-#endif
-}
 
 void ScummEngine::errorString(const char *buf1, char *buf2) {
 	if (_currentScript != 0xFF) {

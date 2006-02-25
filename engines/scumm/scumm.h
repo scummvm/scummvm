@@ -1229,8 +1229,6 @@ public:
 protected:
 	byte *_2byteFontPtr;
 
-	uint32 fileReadDword();
-
 public:
 
 	/* Scumm Vars */
