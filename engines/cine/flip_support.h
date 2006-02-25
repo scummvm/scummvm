@@ -25,6 +25,9 @@
 #ifndef CINE_FLIPSUPPORT_H_
 #define CINE_FLIPSUPPORT_H_
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 namespace Cine {
 
 void flipU16(uint16 *);

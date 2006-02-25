@@ -22,7 +22,12 @@
  *
  */
 
-#include "cine/cine.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+
+#include "cine/main_loop.h"
+#include "cine/various.h"
 
 namespace Cine {
 

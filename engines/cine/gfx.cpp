@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+#include "common/system.h"
+
 namespace Cine {
 
 byte *screenBuffer;

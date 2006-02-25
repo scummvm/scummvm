@@ -27,6 +27,8 @@
 #include "common/file.h"
 
 #include "cine/cine.h"
+#include "cine/sfx_player.h"
+#include "cine/sound_driver.h"
 
 namespace Cine {
 

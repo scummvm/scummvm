@@ -23,7 +23,10 @@
  */
 
 #include "cine/cine.h"
+#include "cine/flip_support.h"
+#include "cine/main_loop.h"
 #include "cine/font.h"
+#include "cine/sfx_player.h"
 
 namespace Cine {
 

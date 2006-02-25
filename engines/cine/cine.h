@@ -28,22 +28,17 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/system.h"
 
 #include "base/engine.h"
 #include "base/gameDetector.h"
 
 #include "cine/various.h"
-#include "cine/flip_support.h"
 #include "cine/texte.h"
 #include "cine/object.h"
 #include "cine/rel.h"
 #include "cine/script.h"
 #include "cine/part.h"
 #include "cine/prc.h"
-#include "cine/main_loop.h"
 #include "cine/resource.h"
 #include "cine/msg.h"
 #include "cine/bg.h"
@@ -52,10 +47,10 @@
 #include "cine/anim.h"
 #include "cine/unpack.h"
 #include "cine/bg_list.h"
-#include "cine/sfx_player.h"
-#include "cine/sound_driver.h"
 
 namespace Cine {
+
+class AdlibMusic;
 
 enum CineGameId {
 	GID_FW = 1,

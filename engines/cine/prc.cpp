@@ -24,6 +24,7 @@
 
 #include "cine/cine.h"
 #include "cine/auto00.h"
+#include "cine/flip_support.h"
 
 namespace Cine {
 

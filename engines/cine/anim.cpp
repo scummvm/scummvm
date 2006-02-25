@@ -23,6 +23,12 @@
  */
 
 #include "cine/cine.h"
+#include "cine/anim.h"
+#include "cine/flip_support.h"
+#include "cine/gfx.h"
+#include "cine/pal.h"
+#include "cine/part.h"
+#include "cine/various.h"
 
 namespace Cine {
 

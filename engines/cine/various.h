@@ -25,6 +25,9 @@
 #ifndef CINE_VARIOUS_H_
 #define CINE_VARIOUS_H_
 
+#include "common/stdafx.h"
+#include "common/file.h"
+
 #include "cine/cine.h"
 
 namespace Cine {

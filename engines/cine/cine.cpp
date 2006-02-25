@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "base/gameDetector.h"
 #include "base/plugins.h"
@@ -36,6 +37,8 @@
 #include "sound/mixer.h"
 
 #include "cine/cine.h"
+#include "cine/main_loop.h"
+#include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
 
 

@@ -23,12 +23,15 @@
  */
 
 #include "cine/cine.h"
+#include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
 
 #include "sound/mixer.h"
 #include "sound/fmopl.h"
 
 namespace Cine {
+
+extern AdlibMusic *g_cine_adlib;
 
 uint8 snd_useAdlib = 0;
 uint16 snd_fadeOutCounter = 0;
