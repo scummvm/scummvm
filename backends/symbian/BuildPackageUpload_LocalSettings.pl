@@ -65,7 +65,7 @@
 		#m Files\WinSCP3\;"C:\Program Files\Common Files\Microsoft Shared\VSA\8.0\VsaEnv\";"c:\Program Files\Microsoft Visual Stu
 		#dio 8\VC\bin";"C:\Program Files\UltraEdit-32"		
 	}
-	elsif ($ENV{'COMPUTERNAME'} eq "TSSLND0106")
+	elsif ($ENV{'COMPUTERNAME'} eq "OTHERCOMPUTER")
 	{
 #see previous section						
 		# now you can add $SDK_Variations only built on this PC here :)
