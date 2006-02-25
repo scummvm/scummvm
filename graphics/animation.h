@@ -32,14 +32,8 @@ class AudioStream;
 // #define USE_MPEG2_0_3_1
 
 #ifdef USE_MPEG2
-typedef int8 int8_t;
-typedef int16 int16_t;
-typedef int32 int32_t;
 
-typedef uint8 uint8_t;
-typedef uint16 uint16_t;
-typedef uint32 uint32_t;
-
+#include <inttypes.h>
 extern "C" {
 	#include <mpeg2dec/mpeg2.h>
 }
