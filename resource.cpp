@@ -254,22 +254,17 @@ LipSynch *ResourceLoader::loadLipSynch(const char *filename) {
 }
 
 Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
-	std::string fname = filename;
+	std::string fname = std::string(filename) + "@" + c.filename();
 	makeLower(fname);
 	CacheType::iterator i = _cache.find(fname);
 	if (i != _cache.end()) {
-		Material *material = dynamic_cast<Material *>(i->second);
-		
-		// if the colormap has changed then we need to reload the material!
-		if (material->_cmap == &c)
-			return material;
-		_cache.erase(i, i);
+		return dynamic_cast<Material *>(i->second);
 	}
 
 	Block *b = getFileBlock(filename);
 	if (b == NULL)
 		error("Could not find material %s\n", filename);
-	Material *result = new Material(filename, b->data(), b->len(), c);
+	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
 	delete b;
 	_cache[fname] = result;
 	return result;
