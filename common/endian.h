@@ -48,14 +48,13 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 			(((a) >>  8) & 0x0000FF00) | \
 			(((a) <<  8) & 0x00FF0000) | \
 			(((a) << 24) & 0xFF000000))
-	#define PROTO_MKID_BE(a) ((uint32)(a))
 
 	#if defined(INVERSE_MKID)
-	#  define MKID(a) PROTO_MKID_BE(a)
+	#  define MKID(a) ((uint32)(a))
 	#  define MKID_BE(a) PROTO_MKID(a)
 	#else
 	#  define MKID(a) PROTO_MKID(a)
-	#  define MKID_BE(a) PROTO_MKID_BE(a)
+	#  define MKID_BE(a) ((uint32)(a))
 	#endif
 
 	#define READ_UINT16(a) READ_LE_UINT16(a)
@@ -77,7 +76,6 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 
 	#define MKID(a) ((uint32)(a))
 	#define MKID_BE(a) ((uint32)(a))
-	//#define MKID_BE(a) SWAP_BYTES_32(a)
 
 	#define READ_UINT16(a) READ_BE_UINT16(a)
 	#define READ_UINT32(a) READ_BE_UINT32(a)
