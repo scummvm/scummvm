@@ -23,6 +23,8 @@
 
 #include "common/stdafx.h"
 
+#include "common/util.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -420,7 +422,7 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	while (h--) {
 		xoff = srcRect.left;
 		w = srcRect.width();
-		mask = 1 << (7 - dstRect.left);
+		mask = (0x80 >> (dstRect.left & 7));
 		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
 		dstPtrNext = dstPtr + dstw;
 		dataPtrNext = dataPtr + off;
