@@ -29,6 +29,10 @@
 // Endian conversion functions, macros etc., follow from here!
 //
 
+/**
+ * Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
+ * and vice versa.
+ */
 FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 	return ((a >> 24) & 0x000000FF) |
 		   ((a >>  8) & 0x0000FF00) |
@@ -36,26 +40,46 @@ FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 		   ((a << 24) & 0xFF000000);
 }
 
+/**
+ * Swap the bytes in a 16 bit word in order to convert LE encoded data to BE
+ * and vice versa.
+ */
 FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	return ((a >> 8) & 0x00FF) + ((a << 8) & 0xFF00);
 }
 
 
+/**
+ * A wrapper macro used around four character constants, like 'DATA', to
+ * ensure portability. Typical usage: MKID_BE('DATA').
+ *
+ * Why is this necessary? The C/C++ standard does not define the endianess to
+ * be used for character constants. Hence if one uses multi-byte character
+ * constants, a potential portability problem opens up. 
+ *
+ * Fortunately, a semi-standard has been established: On almost all systems
+ * and compilers, multi-byte character constants are encoded using the big
+ * endian convention (probably in analogy to the encoding of string constants).
+ * Still some systems differ. This is why we provide the MKID_BE macro. If
+ * you wrap your four character constants with it, the result will always be
+ * BE encoded, even on systems which differ from the default BE encoding.
+ *
+ * For the latter systems we provide the INVERSE_MKID override.
+ */
+#if defined(INVERSE_MKID)
+#define MKID_BE(a) ((uint32) \
+		(((a) >> 24) & 0x000000FF) | \
+		(((a) >>  8) & 0x0000FF00) | \
+		(((a) <<  8) & 0x00FF0000) | \
+		(((a) << 24) & 0xFF000000))
+
+#else
+#  define MKID_BE(a) ((uint32)(a))
+#endif
+
+
+
 #if defined(SCUMM_LITTLE_ENDIAN)
-
-	#define PROTO_MKID(a) ((uint32) \
-			(((a) >> 24) & 0x000000FF) | \
-			(((a) >>  8) & 0x0000FF00) | \
-			(((a) <<  8) & 0x00FF0000) | \
-			(((a) << 24) & 0xFF000000))
-
-	#if defined(INVERSE_MKID)
-	#  define MKID(a) ((uint32)(a))
-	#  define MKID_BE(a) PROTO_MKID(a)
-	#else
-	#  define MKID(a) PROTO_MKID(a)
-	#  define MKID_BE(a) ((uint32)(a))
-	#endif
 
 	#define READ_UINT16(a) READ_LE_UINT16(a)
 	#define READ_UINT32(a) READ_LE_UINT32(a)
@@ -95,6 +119,7 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 #else
 
 	#error No endianness defined
+
 
 #endif
 
