@@ -5,15 +5,17 @@
 #include "palmmad.h"
 #include "palmtremor.h"
 
-//#define __TWNEW_H__
+#define __TWNEW_H__
+
 #define PALMOS_ARM
 #define DISABLE_LIGHTSPEED
 
 #define USE_MAD
-#define USE_VORBIS
 #define USE_TREMOR
+//#define USE_VORBIS
+//#define USE_MPEG2
 
 // enable assert
-#define _DEBUG
+//#define _DEBUG
 
 #endif
