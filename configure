@@ -561,7 +561,20 @@ fi
 
 echocheck "compiler version"
 
-cxx_name=`( $cc -v ) 2>&1 | tail -1l | cut -d ' ' -f 1`
+case $_host_os in
+	# On Solaris, use Unix-compliant tail
+	solaris*)
+		tail=/usr/xpg4/bin/tail
+		;;
+
+	# All other OSes: use the tail in PATH
+	*)
+		tail=tail
+		;;
+esac
+
+
+cxx_name=`( $cc -v ) 2>&1 | $tail -n 1 | cut -d ' ' -f 1`
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
 	cxx_version="not found"
