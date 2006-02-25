@@ -25,8 +25,11 @@
 #ifndef __TIME_H__
 #define __TIME_H__
 
-
 #include "palmversion.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef UInt32 time_t;
 
@@ -44,5 +47,9 @@ struct tm {
 
 time_t time(time_t *tloc);
 struct tm *localtime(const time_t *timer);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

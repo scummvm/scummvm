@@ -350,12 +350,12 @@ Int32 ftell(FILE *stream) { // DONE
 }
 
 Int32 fprintf(FILE *stream, const Char *formatStr, ...) { // DONE
-	if (!stream->fileRef)
-		return 0;
-
 	UInt32 numBytesWritten;
 	Char buf[256];
 	va_list va;
+
+	if (!stream->fileRef)
+		return 0;
 
 	va_start(va, formatStr);
 	vsprintf(buf, formatStr, va);
@@ -366,12 +366,12 @@ Int32 fprintf(FILE *stream, const Char *formatStr, ...) { // DONE
 }
 
 Int32 printf(const Char *format, ...) { // DONE
-	if (!stdout->fileRef)
-		return 0;
-
 	UInt32 numBytesWritten;
 	Char buf[256];
 	va_list va;
+
+	if (!stdout->fileRef)
+		return 0;
 
 	va_start(va, format);
 	vsprintf(buf, format, va);

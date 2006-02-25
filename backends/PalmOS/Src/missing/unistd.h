@@ -27,8 +27,16 @@
 
 #include "palmversion.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern const Char *gUnistdCWD;
 
 Char *getcwd(Char *buf, UInt32 size); 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

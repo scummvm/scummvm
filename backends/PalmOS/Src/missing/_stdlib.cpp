@@ -25,7 +25,7 @@
 #include <stdlib.h>
 
 #define memNewChunkFlagAllowLarge	0x1000 
-extern "C" SysAppInfoPtr SysGetAppInfo(SysAppInfoPtr *uiAppPP, SysAppInfoPtr *actionCodeAppPP) SYS_TRAP(sysTrapSysGetAppInfo);
+SysAppInfoPtr SysGetAppInfo(SysAppInfoPtr *uiAppPP, SysAppInfoPtr *actionCodeAppPP) SYS_TRAP(sysTrapSysGetAppInfo);
 
 void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int (*compar)(const void *, const void *)) {
 #ifdef PALMOS_68K
@@ -33,7 +33,8 @@ void *bsearch(const void *key, const void *base, UInt32 nmemb, UInt32 size, int 
 	if (SysBinarySearch(base, nmemb, size, (SearchFuncPtr)compar, key, 0, &position, true))
 		return (void *)((UInt32)base + size * position);
 #else
-	for (int i = 0; i < nmemb; i++) 
+	int i;
+	for (i = 0; i < nmemb; i++) 
 		if (compar(key, (void*)((UInt32)base + size * i)) == 0)
 			return (void*)((UInt32)base + size * i);
 #endif
@@ -94,11 +95,13 @@ Err free(MemPtr memP) {
 }
 
 MemPtr realloc(MemPtr oldP, UInt32 size) {
+	MemPtr newP;
+
 	if (oldP != NULL)
 		if (MemPtrResize(oldP, size) == 0)
 			return oldP;
 
-	MemPtr	newP = malloc(size);	// was MemPtrNew
+	newP = malloc(size);	// was MemPtrNew
 
 	if (oldP!=NULL) {
 		MemMove(newP,oldP,MemPtrSize(oldP));

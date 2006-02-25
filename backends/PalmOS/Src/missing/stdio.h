@@ -28,6 +28,10 @@
 #include "palmversion.h"
 #include <stdarg.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*LedProc)(Boolean show);
 
 typedef struct {
@@ -87,5 +91,9 @@ void	StdioInit			(UInt16 volRefNum, const Char *output);
 void	StdioSetLedProc		(LedProc ledProc);
 void	StdioSetCacheSize	(UInt32 s);
 void	StdioRelease		();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

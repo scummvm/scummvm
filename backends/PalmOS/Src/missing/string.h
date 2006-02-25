@@ -27,6 +27,10 @@
 
 #include "palmversion.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define memcmp			MemCmp
 #define memcpy			MemMove
 #define memmove			MemMove
@@ -52,5 +56,9 @@ Char 	*strpbrk	(const Char *s1, const Char *s2);
 UInt32	 strspn		(const char *s1, const char *s2);
 
 #define StrTok			strtok
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
