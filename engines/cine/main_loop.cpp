@@ -27,6 +27,7 @@
 #include "common/system.h"
 
 #include "cine/main_loop.h"
+#include "cine/object.h"
 #include "cine/various.h"
 
 namespace Cine {

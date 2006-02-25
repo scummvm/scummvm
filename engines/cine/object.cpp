@@ -22,8 +22,16 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+#include "common/util.h"
+
 #include "cine/cine.h"
 #include "cine/flip_support.h"
+#include "cine/object.h"
+#include "cine/part.h"
+#include "cine/resource.h"
+#include "cine/various.h"
 
 namespace Cine {
 

@@ -22,7 +22,7 @@
  *
  */
 
-#include "cine/cine.h"
+#include "cine/resource.h"
 
 namespace Cine {
 

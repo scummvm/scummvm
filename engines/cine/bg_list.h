@@ -25,6 +25,9 @@
 #ifndef CINE_BGLIST_H_
 #define CINE_BGLIST_H_
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 namespace Cine {
 
 void addSpriteFilledToBGList(int16 idx);

@@ -22,7 +22,10 @@
  *
  */
 
-#include "cine/cine.h"
+#include "cine/bg_list.h"
+#include "cine/gfx.h"
+#include "cine/object.h"
+#include "cine/part.h"
 
 namespace Cine {
 

@@ -25,6 +25,9 @@
 #ifndef CINE_TEXTE_H_
 #define CINE_TEXTE_H_
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 namespace Cine {
 
 extern uint8 *textDataPtr;

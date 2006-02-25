@@ -27,14 +27,10 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
-#include "common/util.h"
 
 #include "base/engine.h"
-#include "base/gameDetector.h"
 
-#include "cine/various.h"
 #include "cine/texte.h"
-#include "cine/object.h"
 #include "cine/rel.h"
 #include "cine/script.h"
 #include "cine/part.h"
@@ -45,8 +41,6 @@
 #include "cine/pal.h"
 #include "cine/gfx.h"
 #include "cine/anim.h"
-#include "cine/unpack.h"
-#include "cine/bg_list.h"
 
 namespace Cine {
 

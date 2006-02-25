@@ -23,6 +23,7 @@
  */
 
 #include "cine/cine.h"
+#include "cine/various.h"
 
 #include "common/system.h"
 

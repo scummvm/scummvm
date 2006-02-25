@@ -38,8 +38,10 @@
 
 #include "cine/cine.h"
 #include "cine/main_loop.h"
+#include "cine/object.h"
 #include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
+#include "cine/various.h"
 
 
 namespace Cine {

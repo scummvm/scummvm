@@ -25,6 +25,9 @@
 #ifndef CINE_RESOURCE_H_
 #define CINE_RESOURCE_H_
 
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 namespace Cine {
 
 void checkDataDisk(int16 param);
