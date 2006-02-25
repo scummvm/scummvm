@@ -258,13 +258,13 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resou
 			if (_substResFileNameBundle.winName == 0) {
 				int substLastIndex = 0;
 
-				while (substLastIndex != -1) {
+				do {
 					if (file.openSubFile(name))
 						break;
 
-					substLastIndex = findSubstResFileName(_substResFileNameBundle, filename, substLastIndex + 1);
+					substLastIndex = findSubstResFileName(_substResFileNameBundle, filename, substLastIndex);
 					applySubstResFileName(_substResFileNameBundle, filename, name, sizeof(name));
-				}
+				} while (_substResFileNameBundle.winName != 0);
 
 				if (_substResFileNameBundle.winName != 0) {
 					debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, _substResFileNameBundle.winName);

@@ -996,7 +996,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 			int substLastIndex = 0;
 
-			while (substLastIndex != -1) {
+			do {
 				// Iterate over all files in the given directory
 				for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 					if (!file->isDirectory()) {
@@ -1166,9 +1166,9 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 					}
 				}
 
-				substLastIndex = findSubstResFileName(subst, tempName, substLastIndex + 1);
+				substLastIndex = findSubstResFileName(subst, tempName, substLastIndex);
 				applySubstResFileName(subst, tempName, detectName, sizeof(detectName));
-			}
+			} while (subst.winName != 0);
 		}
 	}
 
@@ -1272,7 +1272,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		strcpy(tempName, detectName);
 
 		int substLastIndex = 0;
-		while (substLastIndex != -1) {
+		do {
 			// FIXME: Repeatedly calling File::exists like this is a bad idea.
 			// Instead, use the fs.h code to get a list of all files in that 
 			// directory and simply check whether that filename is contained 
@@ -1282,11 +1282,12 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 				break;
 			}
 
-			substLastIndex = findSubstResFileName(subst, tempName, substLastIndex + 1);
+			substLastIndex = findSubstResFileName(subst, tempName, substLastIndex);
 			applySubstResFileName(subst, tempName, detectName, sizeof(detectName));
-		}
+		} while (subst.winName != 0);
+
 		if (found) {
-			if (substLastIndex != 0)
+			if (subst.winName != 0)
 				debug(5, "Generated filename substitute: %s -> %s", tempName, detectName);
 			break;
 		}

@@ -79,7 +79,6 @@ ScummEngine *g_scumm = 0;
 
 
 static SubstResFileNames substResFileNameTable[] = {
-	{ "Intentionally/left/blank", "", kGenMacNoParens },
 	{ "00.LFL", "Maniac Mansion (E).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
@@ -350,7 +349,7 @@ bool applySubstResFileName(const SubstResFileNames &subst, const char *filename,
 }
 
 int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index) {
-	if (index <= 0)
+	if (index < 0)
 		return -1;
 
 	size_t len = strlen(filename);
@@ -370,7 +369,7 @@ int findSubstResFileName(SubstResFileNames &subst, const char *filename, int ind
 	for (i = index; substResFileNameTable[i].winName; i++) {
 		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
 			subst = substResFileNameTable[i];
-			return i;
+			return i+1;
 		}
 	}
 	subst = substResFileNameTable[i];
