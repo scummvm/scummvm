@@ -25,7 +25,7 @@ MODULE_OBJS = \
 	various.o
 
 MODULE_DIRS += \
-	cine
+	engines/cine
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS
