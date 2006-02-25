@@ -394,8 +394,8 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	if (!calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, srcRect, dstRect)) {
 		return;
 	}
-	dstw = (dstw & 7) / 8;
-	dst += dstRect.top * dstw + ((dstRect.left & 7) / 8);
+	dstw = dstw / 8;
+	dst += dstRect.top * dstw + dstRect.left / 8;
 
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 *dstPtr, *dstPtrNext;
@@ -420,7 +420,7 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	while (h--) {
 		xoff = srcRect.left;
 		w = srcRect.width();
-		mask = 1 << (7 - (dstRect.left & 7));
+		mask = 1 << (7 - dstRect.left);
 		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
 		dstPtrNext = dstPtr + dstw;
 		dataPtrNext = dataPtr + off;
@@ -430,7 +430,6 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 				databit = code & 1;
 				code >>= 1;
 				if (databit) {
-					code >>= 1;
 					if (xoff > 0) {
 						xoff -= code;
 						if (xoff >= 0)
