@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	mixer.o \
 	mp3.o \
 	mpu401.o \
+	null.o \
 	rate.o \
 	voc.o \
 	vorbis.o \

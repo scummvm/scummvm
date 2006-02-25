@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	midi/morphos.o \
-	midi/null.o \
 	midi/quicktime.o \
 	midi/seq.o \
 	midi/windows.o
