@@ -39,6 +39,7 @@
 #define DISABLE_AWE
 #define DISABLE_GOB 
 #define DISABLE_LURE
+#define DISABLE_CINE
 
 #define DISABLE_HQ_SCALERS
 
