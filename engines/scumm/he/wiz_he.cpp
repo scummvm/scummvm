@@ -23,11 +23,10 @@
 
 #include "common/stdafx.h"
 
-#include "common/util.h"
-
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/util.h"
 #include "scumm/he/wiz_he.h"
 
 namespace Scumm {
@@ -400,9 +399,7 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	dst += dstRect.top * dstw + dstRect.left / 8;
 
 	const uint8 *dataPtr, *dataPtrNext;
-	uint8 *dstPtr, *dstPtrNext;
-	uint32 code;
-	uint8 databit, mask;
+	uint8 code, mask, *dstPtr, *dstPtrNext;
 	int h, w, xoff;
 	uint16 off;
 
@@ -422,16 +419,15 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	while (h--) {
 		xoff = srcRect.left;
 		w = srcRect.width();
-		mask = (0x80 >> (dstRect.left & 7));
+		mask = revBitMask(dstRect.left & 7);
 		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
 		dstPtrNext = dstPtr + dstw;
 		dataPtrNext = dataPtr + off;
 		if (off != 0) {
 			while (w > 0) {
 				code = *dataPtr++;
-				databit = code & 1;
-				code >>= 1;
-				if (databit) {
+				if (code & 1) {
+					code >>= 1;
 					if (xoff > 0) {
 						xoff -= code;
 						if (xoff >= 0)
@@ -441,40 +437,40 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 					}
 					decodeWizMask(dstPtr, mask, code, maskT);
 					w -= code;
-				} else {
-					databit = code & 1;
-					code = (code >> 1) + 1;
-
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
 					if (xoff > 0) {
 						xoff -= code;
-						if (databit) {
-							++dataPtr;
-							if (xoff >= 0)
-								continue;
+						++dataPtr;
+						if (xoff >= 0)
+							continue;
 
-							code = -xoff;
-							--dataPtr;
-						} else {
-							dataPtr += code;
-							if (xoff >= 0)
-								continue;
-
-							code = -xoff;
-							dataPtr += xoff;
-						}
+						code = -xoff;
+						--dataPtr;
 					}
-
 					w -= code;
 					if (w < 0) {
 						code += w;
 					}
-					if (databit) {
-						decodeWizMask(dstPtr, mask, code, maskP);
-						dataPtr++;
-					} else {
-						decodeWizMask(dstPtr, mask, code, maskP);
+					decodeWizMask(dstPtr, mask, code, maskP);
+					dataPtr++;
+				} else {
+					code = (code >> 2) + 1;
+					if (xoff > 0) {
+						xoff -= code;
 						dataPtr += code;
+						if (xoff >= 0)
+							continue;
+
+						code = -xoff;
+						dataPtr += xoff;
 					}
+					w -= code;
+					if (w < 0) {
+						code += w;
+					}
+					decodeWizMask(dstPtr, mask, code, maskP);
+					dataPtr += code;
 				}
 			}
 		}
@@ -579,9 +575,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 	}
 
 	const uint8 *dataPtr, *dataPtrNext;
-	uint8 *dstPtr, *dstPtrNext;
-	uint32 code;
-	uint8 databit;
+	uint8 code, *dstPtr, *dstPtrNext;
 	int h, w, xoff;
 	uint16 off;
 
@@ -615,9 +609,8 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 		if (off != 0) {
 			while (w > 0) {
 				code = *dataPtr++;
-				databit = code & 1;
-				code >>= 1;
-				if (databit) {
+				if (code & 1) {
+					code >>= 1;
 					if (xoff > 0) {
 						xoff -= code;
 						if (xoff >= 0)
@@ -628,52 +621,51 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const Common::Rect &dstRe
 
 					dstPtr += code;
 					w -= code;
-				} else {
-					databit = code & 1;
-					code = (code >> 1) + 1;
-
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
 					if (xoff > 0) {
 						xoff -= code;
-						if (databit) {
-							++dataPtr;
-							if (xoff >= 0)
-								continue;
+						++dataPtr;
+						if (xoff >= 0)
+							continue;
 
-							code = -xoff;
-							--dataPtr;
-						} else {
-							dataPtr += code;
-							if (xoff >= 0)
-								continue;
-
-							code = -xoff;
-							dataPtr += xoff;
-						}
+						code = -xoff;
+						--dataPtr;
 					}
-
 					w -= code;
 					if (w < 0) {
 						code += w;
 					}
-
-					if (databit) {
-						while (code--) {
-							if (xmapPtr) {
-								*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
-								dstPtr++;
-							} else {
-								*dstPtr++ = palPtr[*dataPtr];
-							}
+					while (code--) {
+						if (xmapPtr) {
+							*dstPtr = xmapPtr[palPtr[*dataPtr] * 256 + *dstPtr];
+							dstPtr++;
+						} else {
+							*dstPtr++ = palPtr[*dataPtr];
 						}
-						dataPtr++;
-					} else {
-						while (code--) {
-							if (xmapPtr) {
-								*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
-								dstPtr++;
-							} else {
-								*dstPtr++ = palPtr[*dataPtr++];
-							}
+					}
+					dataPtr++;
+				} else {
+					code = (code >> 2) + 1;
+					if (xoff > 0) {
+						xoff -= code;
+						dataPtr += code;
+						if (xoff >= 0)
+							continue;
+
+						code = -xoff;
+						dataPtr += xoff;
+					}
+					w -= code;
+					if (w < 0) {
+						code += w;
+					}
+					while (code--) {
+						if (xmapPtr) {
+							*dstPtr = xmapPtr[palPtr[*dataPtr++] * 256 + *dstPtr];
+							dstPtr++;
+						} else {
+							*dstPtr++ = palPtr[*dataPtr++];
 						}
 					}
 				}
@@ -771,65 +763,65 @@ uint8 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, ui
 }
 
 void Wiz::computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect &rCapt) {
-	int y = rCapt.top;
-	while (y != 0) {
+	int h = rCapt.top;
+	while (h--) {
 		data += READ_LE_UINT16(data) + 2;
-		--y;
 	}
-	int ih = rCapt.height();
-	while (ih--) {
+
+	h = rCapt.height();
+	while (h--) {
 		uint16 off = READ_LE_UINT16(data); data += 2;
 		if (off != 0) {
 			const uint8 *p = data;
-			int x1 = rCapt.left;
-			int x2 = rCapt.right;
+			int xoffs = rCapt.left;
+			int w = rCapt.width();
 			uint8 code;
-			while (x1 > 0) {
+			while (xoffs > 0) {
 				code = *p++;
 				if (code & 1) {
 					code >>= 1;
-					if (code > x1) {
-						code -= x1;
-						x2 -= code;
+					if (code > xoffs) {
+						code -= xoffs;
+						w -= code;
 						break;
 					}
-					x1 -= code;
+					xoffs -= code;
 				} else if (code & 2) {
 					code = (code >> 2) + 1;
-					if (code > x1) {
-						code -= x1;
+					if (code > xoffs) {
+						code -= xoffs;
 						goto dec_sub2;
 					}
-					x1 -= code;
-					++p;
+					xoffs -= code;
+					p++;
 				} else {
 					code = (code >> 2) + 1;
-					if (code > x1) {
-						code -= x1;
-						p += x1;
+					if (code > xoffs) {
+						code -= xoffs;
+						p += xoffs;
 						goto dec_sub3;
 					}
-					x1 -= code;
+					xoffs -= code;
 					p += code;
 				}
 			}
-			while (x2 > 0) {
+			while (w > 0) {
 				code = *p++;
 				if (code & 1) {
 					code >>= 1;
-					x2 -= code;
+					w -= code;
 				} else if (code & 2) {
 					code = (code >> 2) + 1;
-dec_sub2:			x2 -= code;
-					if (x2 < 0) {
-						code += x2;
+dec_sub2:				w -= code;
+					if (w < 0) {
+						code += w;
 					}
 					histogram[*p++] += code;
 				} else {
 					code = (code >> 2) + 1;
-dec_sub3:			x2 -= code;
-					if (x2 < 0) {
-						code += x2;
+dec_sub3:				w -= code;
+					if (w < 0) {
+						code += w;
 					}
 					int n = code;
 					while (n--) {
