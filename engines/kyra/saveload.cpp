@@ -41,7 +41,11 @@ void KyraEngine::loadGame(const char *fileName) {
 	}
 
 	uint32 type = in->readUint32BE();
-	if (type != MKID('KYRA')) {
+
+	// FIXME: The kyra savegame code used to be endian unsafe. Uncomment the
+	// following line to graciously handle old savegames from LE machines.
+	// if (type != MKID_BE('KYRA') && type != MKID_BE('ARYK')) {
+	if (type != MKID_BE('KYRA')) {
 		warning("No Kyrandia 1 savefile header");
 		delete in;
 		return;
@@ -233,7 +237,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	}
 
 	// Savegame version
-	out->writeUint32BE(MKID('KYRA'));
+	out->writeUint32BE(MKID_BE('KYRA'));
 	out->writeUint32BE(CURRENT_VERSION);
 	out->write(saveName, 31);
 	out->writeUint32BE(_features);
