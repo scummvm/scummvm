@@ -169,11 +169,9 @@ Boolean StartScummVM() {
 	UInt32 stackSize;
 	Boolean toLauncher, direct, isARM;
 	UInt8 engine;
-
-	UInt16 musicDriver = sysInvalidRefNum; // for launch call
-	UInt16 index = GamGetSelected();
-
 	Char num[6];
+
+	UInt16 index = GamGetSelected();
 
 	argvP = ArgsInit();
 	direct = false;
@@ -302,6 +300,7 @@ Boolean StartScummVM() {
 		// not a PC version
 		if (gameInfoP->setPlatform) {
 			static const char *platform[] = {
+				"3do",
 				"acorn",
 				"amiga",
 				"atari",
@@ -331,17 +330,14 @@ Boolean StartScummVM() {
 			ArgsAdd(&argvP[argc], "--tempo=", num, &argc);
 		}
 
-		if (engine == ENGINE_SCUMM || engine == ENGINE_SAGA) {
-			// talk speed
-			if (gameInfoP->talkSpeed) {
-				StrIToA(num, gameInfoP->talkValue);
-				ArgsAdd(&argvP[argc], "--talkspeed=", num, &argc);
-			}
+		// talk speed
+		if (gameInfoP->talkSpeed) {
+			StrIToA(num, gameInfoP->talkValue);
+			ArgsAdd(&argvP[argc], "--talkspeed=", num, &argc);
 		}
 
 		// music driver
-		musicDriver = gameInfoP->musicInfo.sound.music;
-		if (musicDriver) {
+		if (gameInfoP->musicInfo.sound.music) {
 			switch (gameInfoP->musicInfo.sound.drvMusic) {
 				case 0:	// NULL
 					ArgsAdd(&argvP[argc], "-e", "null", &argc);
@@ -372,9 +368,18 @@ Boolean StartScummVM() {
 					ArgsAdd(&argvP[argc], "-e", "pcspk", &argc);
 					break;
 			}		
-		}
-		else	// NULL as default
+
+			// output rate
+			UInt32 rates[] = {4000, 8000, 11025, 22050, 44100};
+			StrIToA(num, rates[gameInfoP->musicInfo.sound.rate]);
+			ArgsAdd(&argvP[argc], "--output-rate=", num, &argc);
+
+			// FM quality
+			gVars->fmQuality = gameInfoP->fmQuality;
+
+		} else {
 			ArgsAdd(&argvP[argc], "-e", "null", &argc);
+		}
 
 		// volume control
 		StrIToA(num, gameInfoP->musicInfo.volume.sfx);
@@ -384,24 +389,8 @@ Boolean StartScummVM() {
 		StrIToA(num, gameInfoP->musicInfo.volume.speech);
 		ArgsAdd(&argvP[argc], "-r", num, &argc);
 
-		// output rate
-		if (gameInfoP->musicInfo.sound.sfx) {
-			UInt32 rates[] = {4000, 8000, 11025, 22050, 44100};
-			StrIToA(num, rates[gameInfoP->musicInfo.sound.rate]);
-			ArgsAdd(&argvP[argc], "--output-rate=", num, &argc);
-		}
-
-		// FM quality
-		gVars->fmQuality = gameInfoP->fmQuality;
-
 		// game name
 		ArgsAdd(&argvP[argc], gameInfoP->gameP, NULL, &argc);
-
-		// use sound
-		if (!gameInfoP->musicInfo.sound.sfx) { // FIXME : not the good way to do it
-//			OPTIONS_RST(kOptSonyPa1LibAPI);
-//			OPTIONS_RST(kOptPalmSoundAPI);
-		}
 
 		// others globals data
 		gVars->CD.enable = gameInfoP->musicInfo.sound.CD;
@@ -410,7 +399,7 @@ Boolean StartScummVM() {
 		gVars->CD.volume = gameInfoP->musicInfo.volume.audiocd;
 		gVars->CD.defaultTrackLength = gameInfoP->musicInfo.sound.defaultTrackLength;
 		gVars->CD.firstTrack = gameInfoP->musicInfo.sound.firstTrack;
-		gVars->palmVolume = musicDriver ? gameInfoP->musicInfo.volume.palm : 0;
+		gVars->palmVolume = gameInfoP->musicInfo.sound.music ? gameInfoP->musicInfo.volume.palm : 0;
 
 		MemHandleUnlock(recordH);
 	} // end no game / game selected
@@ -428,18 +417,16 @@ Boolean StartScummVM() {
 		if (gPrefs->altIntro)
 			ArgsAdd(&argvP[argc], "--alt-intro", NULL, &argc);
 	}
-	
-	if (engine == ENGINE_SCUMM || engine == ENGINE_SAGA) {
-		// copy protection ?
-		if (gPrefs->copyProtection)
-			ArgsAdd(&argvP[argc], "--copy-protection", NULL, &argc);
-	}
-	
+		
 	if (engine == ENGINE_SCUMM) {
 		// demo mode ?
 		if (gPrefs->demoMode)
 			ArgsAdd(&argvP[argc], "--demo-mode", NULL, &argc);
 	}
+
+	// copy protection ?
+	if (gPrefs->copyProtection)
+		ArgsAdd(&argvP[argc], "--copy-protection", NULL, &argc);
 
 	// exceed max args ?
 	if (argc > MAX_ARG)
@@ -474,14 +461,14 @@ Boolean StartScummVM() {
 
 	if (gVars->vibrator)
 		HWR_SET(INIT_VIBRATOR);
-
+/* ????
 	if (	musicDriver == 1 ||
 			musicDriver == 3 ||
 			musicDriver == 4 ||
 			musicDriver == sysInvalidRefNum) {
 		HWR_SET(INIT_PA1LIB);
 	}
-
+*/
 	if (ModImport(gVars->VFS.volRefNum, engine, &isARM) != errNone) {
 		if (bDirectMode) {
 			// and force exit if nothing selected
