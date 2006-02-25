@@ -65,7 +65,6 @@ static Boolean MusicTabSave() {
 
 	gameInfoP->musicInfo.sound.music = CtlGetValue(cck1P);
 	gameInfoP->musicInfo.sound.multiMidi = CtlGetValue(cck2P);
-	gameInfoP->musicInfo.sound.sfx = 1;
 
 	gameInfoP->musicInfo.sound.drvMusic = LstGetSelection(list1P);
 	gameInfoP->musicInfo.sound.rate = LstGetSelection(list2P);
