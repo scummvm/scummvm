@@ -88,11 +88,11 @@ static void relocate(void)
     }
 }
 
-//
- // The following functions provide malloc/free support to Metrowerks
- // Standard Library (MSL). This feature requires the MSL library be
- // built with _MSL_OS_DIRECT_MALLOC enabled.
- //
+/*
+ * The following functions provide malloc/free support to Metrowerks
+ * Standard Library (MSL). This feature requires the MSL library be
+ * built with _MSL_OS_DIRECT_MALLOC enabled.
+ */
 void*
 __sys_alloc(size_t size)
 {

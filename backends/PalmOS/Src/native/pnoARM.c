@@ -49,9 +49,6 @@ unsigned long PNO_Main(const void *emulStateP, void *userData68KP, Call68KFuncTy
 	global.call68KFuncP = call68KFuncP;
 #endif
     twGlue = (struct TwGlue*) userData68KP;
-
-//	FrmCustomAlert(1200,"test",0,0);
-
 	return PilotMain(sysAppLaunchCmdNormalLaunch, userData68KP, 0);
 }
 

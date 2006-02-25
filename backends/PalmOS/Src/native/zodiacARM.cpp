@@ -88,7 +88,7 @@ static void Go() {
 #endif
 }
 
-/* stack size */
+/* Stack size */
 
 Int8 *g_newStack, *g_newStackPos;
 void *g_oldStack;
