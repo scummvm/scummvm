@@ -30,7 +30,15 @@
 
 namespace Cine {
 
-int decomp(uint8 *in, uint8 *out, int size);
+struct UnpackCtx {
+	int size, datasize;
+	uint32 crc;
+	uint32 chk;
+	uint8 *dst;
+	const uint8 *src;	
+};
+
+bool delphineUnpack(uint8 *dst, const uint8 *src, int len);
 
 } // End of namespace Cine
 

@@ -203,14 +203,10 @@ uint8 *readBundleFile(int16 foundFileIdx) {
 
 	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
 		uint8 *unpackBuffer;
-		uint16 realSize;
 
-		unpackBuffer = (uint8 *)malloc(partBuffer[foundFileIdx].packedSize + 500);
+		unpackBuffer = (uint8 *)malloc(partBuffer[foundFileIdx].packedSize);
 		readFromPart(foundFileIdx, unpackBuffer);
-
-		realSize = READ_BE_UINT32(unpackBuffer + partBuffer[foundFileIdx].packedSize - 4);
-
-		decomp(unpackBuffer + partBuffer[foundFileIdx].packedSize - 4, dataPtr + realSize, realSize);
+		delphineUnpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
 		free(unpackBuffer);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);

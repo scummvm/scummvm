@@ -117,7 +117,7 @@ static uint8 *snd_loadBasesonEntry(const char *entryName) {
 					if (tempData) {
 						snd_baseSndFile->seek(be->offset, SEEK_SET);
 						snd_baseSndFile->read(tempData, be->size);
-						decomp(tempData + be->size - 4, entryData + be->unpackedSize, be->unpackedSize);
+						delphineUnpack(entryData, tempData, be->size);
 						free(tempData);
 					}
 				} else {
