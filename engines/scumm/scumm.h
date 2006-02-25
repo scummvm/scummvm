@@ -334,6 +334,27 @@ struct ScummGameSettings {
 
 };
 
+
+enum GenMethods {
+	kGenMac,
+	kGenMacNoParens,
+	kGenPC,
+	kGenAsIs
+};
+
+struct SubstResFileNames {
+	const char *winName;
+	const char *macName;
+	GenMethods genMethod;
+};
+
+
+extern bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize);
+extern int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index);
+
+
+
+
 /**
  * The 'resource manager' class. Currently doesn't really deserve to be called
  * a 'class', at least until somebody gets around to OOfying this more.
@@ -432,7 +453,7 @@ protected:
 
 public:
 	// Constructor / Destructor
-	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 	virtual ~ScummEngine();
 
 	/** Startup function, main loop. */
@@ -575,9 +596,9 @@ public:
 	int _roomResource;  // FIXME - should be protected but Sound::pauseSounds uses it
 	bool _egoPositioned;	// Used by Actor::putActor, hence public
 
-	int generateSubstResFileName(const char *filename, char *buf, int bufsize, int index = -3);
-	int _substResFileNameIndex;
-	int _substResFileNameIndexBundle; // Used with Mac bundles
+	void generateSubstResFileName(const char *filename, char *buf, int bufsize);
+	SubstResFileNames _substResFileName;
+	SubstResFileNames _substResFileNameBundle; // Used with Mac bundles
 
 protected:
 	int _keyPressed;

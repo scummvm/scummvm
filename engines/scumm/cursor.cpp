@@ -93,8 +93,8 @@ static const byte default_v6_cursor[] = {
 	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, 0x00,0x0F,0x00, 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 };
 
-ScummEngine_v5::ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex)
- : ScummEngine(detector, syst, gs, md5sum, substResFileNameIndex) {
+ScummEngine_v5::ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
+ : ScummEngine(detector, syst, gs, md5sum, subst) {
 
 	for (int i = 0; i < 4; i++) {
 		memcpy(_cursorImages[i], default_cursor_images[i], 32);

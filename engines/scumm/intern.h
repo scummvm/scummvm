@@ -50,7 +50,7 @@ protected:
 	byte _cursorHotspots[2 * 4];
 
 public:
-	ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v5(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 protected:
 	virtual void setupOpcodes();
@@ -193,7 +193,7 @@ protected:
  */
 class ScummEngine_v4 : public ScummEngine_v5 {
 public:
-	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 protected:
 	virtual void readIndexFile();
@@ -210,7 +210,7 @@ protected:
  */
 class ScummEngine_v3 : public ScummEngine_v4 {
 public:
-	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v3(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 protected:
 	virtual void readRoomsOffsets();
@@ -222,7 +222,7 @@ protected:
  */
 class ScummEngine_v3old : public ScummEngine_v3 {
 public:
-	ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 protected:
 	virtual void readResTypeList(int id, const char *name);
@@ -255,7 +255,7 @@ protected:
 	int8 _mouseOverBoxV2;
 
 public:
-	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 	virtual void scummInit();
 
@@ -395,7 +395,7 @@ protected:
 	int _currentAction;
 	int _currentMode;
 public:
-	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 	virtual void scummInit();
 
@@ -535,7 +535,7 @@ protected:
 
 
 public:
-	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v6(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
 	virtual void scummInit();
 
@@ -764,7 +764,7 @@ protected:
 #ifndef DISABLE_SCUMM_7_8
 class ScummEngine_v7 : public ScummEngine_v6 {
 public:
-	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 	~ScummEngine_v7();
 
 	struct LangIndexNode {
@@ -844,7 +844,7 @@ protected:
 	ObjectNameId *_objectIDMap;
 
 public:
-	ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
+	ScummEngine_v8(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 	~ScummEngine_v8();
 
 protected:

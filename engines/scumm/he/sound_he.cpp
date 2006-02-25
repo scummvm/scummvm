@@ -160,7 +160,7 @@ void Sound::setupHEMusicFile() {
 
 	sprintf(buf, "%s.he4", _vm->getBaseName());
 
-	if (_vm->_substResFileNameIndex > 0) {
+	if (_vm->_substResFileName.winName != 0) {
 		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 		strcpy(buf, buf1);
 	}
@@ -352,7 +352,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		sprintf(buf, "%s.he4", _vm->getBaseName());
 
-		if (_vm->_substResFileNameIndex > 0) {
+		if (_vm->_substResFileName.winName != 0) {
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 			strcpy(buf, buf1);
 		}

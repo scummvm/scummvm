@@ -161,7 +161,7 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 	if (!_fileName[0]) { // We are running for the first time
 		snprintf(_fileName, 256, "%s.he3", _vm->getBaseName());
 
-		if (_vm->_substResFileNameIndex > 0) {
+		if (_vm->_substResFileName.winName != 0) {
 			char buf1[128];
 
 			_vm->generateSubstResFileName(_fileName, buf1, sizeof(buf1));
@@ -1290,7 +1290,7 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 	int size;
 
 	if (!_fileName[0]) // We are running for the first time
-		if (_vm->_substResFileNameIndex > 0) {
+		if (_vm->_substResFileName.winName != 0) {
 			char buf1[128];
 
 			snprintf(buf1, 128, "%s.he3", _vm->getBaseName());
