@@ -40,7 +40,7 @@ uint8 loadCt(const char *ctName) {
 	uint8 *ptr;
 	uint8 *currentPtr;
 	uint8 i;
-	uint16 header[0x20];
+	uint16 header[32];
 
 	///
 
@@ -64,10 +64,10 @@ uint8 loadCt(const char *ctName) {
 
 		ASSERT(strstr(ctName, ".NEO"));
 
-		memcpy(header, currentPtr, 0x20);
-		currentPtr += 0x20;
+		memcpy(header, currentPtr, 32);
+		currentPtr += 32;
 
-		for (i = 0; i < 0x20; i++) {
+		for (i = 0; i < 16; i++) {
 			flipU16(&header[i]);
 		}
 
@@ -109,7 +109,7 @@ uint8 loadBg(const char *bgName) {
 	currentPtr += 2;
 
 	memcpy(tempPalette, currentPtr, 32);
-	currentPtr += 0x20;
+	currentPtr += 32;
 
 	for (i = 0; i < 16; i++) {
 		flipU16(&tempPalette[i]);

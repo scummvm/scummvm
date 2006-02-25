@@ -57,16 +57,12 @@ void loadMsg(char *pMsgName) {
 
 	processPendingUpdates(1);
 
-	msgVar0 = *(uint16 *) ptr;
-	ptr += 2;
-	flipU16(&msgVar0);
+	msgVar0 = READ_BE_UINT16(ptr); ptr += 2;
 
 	ASSERT(msgVar0 <= NUM_MAX_MESSAGE);
 
 	for (i = 0; i < msgVar0; i++) {
-		messageTable[i].len = *(uint16 *) ptr;
-		ptr += 2;
-		flipU16(&messageTable[i].len);
+		messageTable[i].len = READ_BE_UINT16(ptr); ptr += 2;
 	}
 
 	for (i = 0; i < msgVar0; i++) {

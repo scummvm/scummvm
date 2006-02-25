@@ -660,9 +660,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				paramIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				newValue = *(int16 *)(currentScriptPtr + currentPosition);
+				newValue = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&newValue);
 
 				DEBUG_SCRIPT(currentLine, "modifyObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
 
@@ -703,9 +702,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				paramIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				newValue = *(int16 *)(currentScriptPtr + currentPosition);
+				newValue = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&newValue);
 
 				DEBUG_SCRIPT(currentLine, "addObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
 
@@ -725,9 +723,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				paramIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				newValue = *(int16 *)(currentScriptPtr + currentPosition);
+				newValue = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&newValue);
 
 				DEBUG_SCRIPT(currentLine, "subObjectParam(objIdx:%d,paramIdx:%d,newValue:%d)", objIdx, paramIdx, newValue);
 
@@ -747,9 +744,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				param1 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				param2 = *(int16 *) (currentScriptPtr + currentPosition);
+				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param2);
 
 				DEBUG_SCRIPT(currentLine, "compareObjectParam(objIdx:%d,type:%d,value:%d)", objIdx, param1, param2);
 
@@ -768,21 +764,17 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				objIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				param1 = *(int16 *)(currentScriptPtr + currentPosition);
+				param1 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param1);
 
-				param2 = *(int16 *)(currentScriptPtr + currentPosition);
+				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param2);
 
-				param3 = *(int16 *)(currentScriptPtr + currentPosition);
+				param3 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param3);
 
-				param4 = *(int16 *)(currentScriptPtr + currentPosition);
+				param4 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param4);
 
 				DEBUG_SCRIPT(currentLine, "setupObject(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
 
@@ -801,21 +793,17 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				objIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				param1 = *(int16 *)(currentScriptPtr + currentPosition);
+				param1 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param1);
 
-				param2 = *(int16 *)(currentScriptPtr + currentPosition);
+				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param2);
 
-				param3 = *(int16 *) (currentScriptPtr + currentPosition);
+				param3 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param3);
 
-				param4 = *(int16 *) (currentScriptPtr + currentPosition);
+				param4 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&param4);
 
 				DEBUG_SCRIPT(currentLine, "checkCollision(objIdx:%d,%d,%d,%d,%d)", objIdx, param1, param2, param3, param4);
 
@@ -880,13 +868,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					case 8:
 						{
 							DEBUG_SCRIPT(currentLine, "var[%d] = file[%d].packedSize", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = partBuffer[dataIdx].packed_size;
+							scriptElement->localVars[varIdx] = partBuffer[dataIdx].packedSize;
 							break;
 						}
 					case 9:
 						{
 							DEBUG_SCRIPT(currentLine, "var[%d] = file[%d].unpackedSize", varIdx, dataIdx);
-							scriptElement->localVars[varIdx] = partBuffer[dataIdx].unpacked_size;
+							scriptElement->localVars[varIdx] = partBuffer[dataIdx].unpackedSize;
 							break;
 						}
 					default:
@@ -897,9 +885,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					int16 newData;
 
-					newData = *(int16 *)(currentScriptPtr + currentPosition);
+					newData = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16((uint16 *)&newData);
 
 					DEBUG_SCRIPT(currentLine, "var[%d] = %d", varIdx, newData);
 
@@ -930,9 +917,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					int16 param2;
 
-					param2 = *(int16 *) (currentScriptPtr + currentPosition);
+					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16((uint16 *)&param2);
 
 					DEBUG_SCRIPT(currentLine, "var[%d] += %d", param1, param2);
 
@@ -964,9 +950,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					int16 param2;
 
-					param2 = *(int16 *)(currentScriptPtr + currentPosition);
+					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16((uint16 *)&param2);
 
 					DEBUG_SCRIPT(currentLine, "var[%d] -= %d", param1, param2);
 
@@ -998,9 +983,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					int16 param2;
 
-					param2 = *(int16 *)(currentScriptPtr + currentPosition);
+					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16((uint16 *)&param2);
 
 					DEBUG_SCRIPT(currentLine, "var[%d] *= %d", param1, param2);
 
@@ -1032,9 +1016,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					int16 param2;
 
-					param2 = *(int16 *) (currentScriptPtr + currentPosition);
+					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16((uint16 *)&param2);
 
 					DEBUG_SCRIPT(currentLine, "var[%d] /= %d", param1, param2);
 
@@ -1079,9 +1062,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					int16 value;
 
-					value = *(int16 *) (currentScriptPtr + currentPosition);
+					value = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16((uint16 *)&value);
 
 					DEBUG_SCRIPT(currentLine, "compare var[%d] and %d", varIdx, value);
 
@@ -1529,17 +1511,14 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				numColor = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				r = *(int16 *)(currentScriptPtr + currentPosition);
+				r = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&r);
 
-				g = *(int16 *)(currentScriptPtr + currentPosition);
+				g = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&g);
 
-				b = *(int16 *)(currentScriptPtr + currentPosition);
+				b = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&b);
 
 				DEBUG_SCRIPT(currentLine, "transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d) -> unimplemented", startColor, numColor, r, g, b);
 
@@ -1609,21 +1588,17 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				param1 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				param2 = *(int16 *)(currentScriptPtr + currentPosition);
+				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&param2);
 
-				param3 = *(int16 *)(currentScriptPtr + currentPosition);
+				param3 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&param3);
 
-				param4 = *(int16 *)(currentScriptPtr + currentPosition);
+				param4 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&param4);
 
-				param5 = *(int16 *)(currentScriptPtr + currentPosition);
+				param5 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&param5);
 
 				DEBUG_SCRIPT(currentLine, "message(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5);
 
@@ -1660,9 +1635,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					uint16 newData;
 
-					newData = *(int16 *)(currentScriptPtr + currentPosition);
+					newData = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16(&newData);
 
 					DEBUG_SCRIPT(currentLine, "globalVars[%d] = %d", idx, newData);
 
@@ -1694,9 +1668,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					uint16 newData;
 
-					newData = *(int16 *)(currentScriptPtr + currentPosition);
+					newData = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16(&newData);
 
 					DEBUG_SCRIPT(currentLine,
 					    "compare globalVars[%d] and %d",
@@ -1765,9 +1738,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				zoneIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				var = *(int16 *)(currentScriptPtr + currentPosition);
+				var = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&var);
 
 				DEBUG_SCRIPT(currentLine, "setZone[%d] = %d", zoneIdx, var);
 
@@ -1857,13 +1829,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				currentPosition++;
 
-				volume = *(int16 *) (currentScriptPtr + currentPosition);
+				volume = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16((uint16 *)&volume);
 
-				flag = *(uint16 *)(currentScriptPtr + currentPosition);
+				flag = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&flag);
 
 				if (volume > 63)
 					volume = 63;
@@ -1941,18 +1911,14 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				param4 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				param5 = *(int16 *)(currentScriptPtr + currentPosition);
+				param5 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
 
-				param6 = *(int16 *)(currentScriptPtr + currentPosition);
+				param6 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
 
-				param7 = *(int16 *)(currentScriptPtr + currentPosition);
+				param7 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-
-				flipU16(&param5);
-				flipU16(&param6);
-				flipU16(&param7);
 
 				DEBUG_SCRIPT(currentLine, "addUnkListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
 
@@ -2009,7 +1975,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (true)", labelIdx);
 					ASSERT(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, currentPosition, labelIdx,
-									scriptTable[scriptElement->scriptIdx].var4);
+									scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (false)", labelIdx);
 				}
@@ -2027,7 +1993,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (true)", labelIdx);
 					ASSERT(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, currentPosition, labelIdx,
-								    scriptTable[scriptElement->scriptIdx].var4);
+								    scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (false)", labelIdx);
 				}
@@ -2045,7 +2011,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (true)", labelIdx);
 					ASSERT(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-									currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].var4);
+									currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (false)", labelIdx);
 				}
@@ -2063,7 +2029,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (true)", labelIdx);
 					ASSERT(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].var4);
+								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (false)", labelIdx);
 				}
@@ -2081,7 +2047,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (true)", labelIdx);
 					ASSERT(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].var4);
+								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (false)", labelIdx);
 				}
@@ -2099,7 +2065,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (true)", labelIdx);
 					ASSERT(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
-								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].var4);
+								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (false)", labelIdx);
 				}
@@ -2226,9 +2192,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				} else {
 					uint16 param2;
 
-					param2 = *(int16 *)(currentScriptPtr + currentPosition);
+					param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 					currentPosition += 2;
-					flipU16(&param2);
 
 					DEBUG_SCRIPT(currentLine, "additionalBgVScroll = %d", param2);
 
@@ -2242,13 +2207,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				uint16 param1;
 				uint16 param2;
 
-				param1 = *(int16 *)(currentScriptPtr + currentPosition);
+				param1 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&param1);
 
-				param2 = *(int16 *)(currentScriptPtr + currentPosition);
+				param2 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
-				flipU16(&param2);
 
 				DEBUG_SCRIPT(currentLine, "addGfxElementA0(%d,%d)", param1, param2);
 
@@ -2400,10 +2363,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *) (localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
 
 				sprintf(lineBuffer, "obj[%d]%s = %d\n", param1, getObjPramName(param2), param3);
 
@@ -2439,10 +2400,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
 
 				sprintf(lineBuffer, "obj[%d]%s+=%d\n", param1, getObjPramName(param2), param3);
 
@@ -2460,10 +2419,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *) (localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
 
 				sprintf(lineBuffer, "obj[%d]%s-=%d\n", param1, getObjPramName(param2), param3);
 
@@ -2481,10 +2438,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
 
 				sprintf(lineBuffer, "obj[%d]%s+=obj[%d]%s\n", param1, getObjPramName(param2), param3, getObjPramName(param2));
 
@@ -2502,10 +2457,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
 
 				sprintf(lineBuffer, "obj[%d]%s-=obj[%d]%s\n", param1, getObjPramName(param2), param3, getObjPramName(param2));
 
@@ -2523,10 +2476,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
 
 				sprintf(compareString1, "obj[%d]%s", param1, getObjPramName(param2));
 				sprintf(compareString2, "%d", param3);
@@ -2544,22 +2495,17 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param1 = *(localScriptPtr + position);
 				position++;
 
-				param2 = *(int16 *)(localScriptPtr + position);
+				param2 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param4 = *(int16 *)(localScriptPtr + position);
+				param4 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param2);
-				flipU16(&param3);
-				flipU16(&param4);
-				flipU16(&param5);
 
 				sprintf(lineBuffer, "setupObject(Idx:%d,X:%d,Y:%d,mask:%d,frame:%d)\n", param1, param2, param3, param4, param5);
 
@@ -2576,22 +2522,17 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param1 = *(localScriptPtr + position);
 				position++;
 
-				param2 = *(int16 *)(localScriptPtr + position);
+				param2 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param4 = *(int16 *)(localScriptPtr + position);
+				param4 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param2);
-				flipU16(&param3);
-				flipU16(&param4);
-				flipU16(&param5);
 
 				sprintf(lineBuffer, "checkCollision(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 
@@ -2630,10 +2571,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *) (localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(lineBuffer, "var[%d]=%d\n", param1, param3);
 				}
@@ -2661,10 +2600,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *) (localScriptPtr +  position);
+					param3 = READ_BE_UINT16(localScriptPtr +  position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(lineBuffer, "var[%d]+=%d\n", param1, param3);
 				}
@@ -2691,10 +2628,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *)(localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(lineBuffer, "var[%d]-=%d\n", param1, param3);
 				}
@@ -2721,10 +2656,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *) (localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(lineBuffer, "var[%d]*=%d\n", param1, param3);
 				}
@@ -2751,10 +2684,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *) (localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(lineBuffer, "var[%d]/=%d\n", param1, param3);
 				}
@@ -2790,10 +2721,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *)(localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(compareString1, "var[%d]", param1);
 					sprintf(compareString2, "%d", param3);
@@ -3121,18 +3050,14 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param4 = *(int16 *)(localScriptPtr + position);
+				param4 = READ_BE_UINT16)(localScriptPtr + position);
 				position += 2;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
-				flipU16(&param4);
-				flipU16(&param5);
 
 				sprintf(lineBuffer, "transformPaletteRange(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 
@@ -3171,22 +3096,17 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param1 = *(localScriptPtr + position);
 				position++;
 
-				param2 = *(int16 *)(localScriptPtr + position);
+				param2 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param4 = *(int16 *)(localScriptPtr + position);
+				param4 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param2);
-				flipU16(&param3);
-				flipU16(&param4);
-				flipU16(&param5);
 
 				sprintf(lineBuffer, "message(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 
@@ -3219,10 +3139,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *)(localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(lineBuffer, "globalVar[%d] = %d\n", param1, param3);
 				}
@@ -3257,10 +3175,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param3;
 
-					param3 = *(int16 *)(localScriptPtr + position);
+					param3 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-
-					flipU16(&param3);
 
 					sprintf(compareString1, "globalVar[%d]", param1);
 					sprintf(compareString2, "%d", param3);
@@ -3307,10 +3223,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param1 = *(localScriptPtr + position);
 				position++;
 
-				param2 = *(int16 *) (localScriptPtr + position);
+				param2 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param2);
 
 				sprintf(lineBuffer, "tableUnk1[%d] = %d\n", param1, param2);
 
@@ -3396,21 +3310,17 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
 				param4 = *(localScriptPtr + position);
 				position++;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param6 = *(int16 *)(localScriptPtr + position);
+				param6 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
-				flipU16(&param5);
-				flipU16(&param6);
 
 				sprintf(lineBuffer, "playSample(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 
@@ -3431,21 +3341,17 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
 				param4 = *(localScriptPtr + position);
 				position++;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param6 = *(int16 *)(localScriptPtr + position);
+				param6 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param3);
-				flipU16(&param5);
-				flipU16(&param6);
 
 				sprintf(lineBuffer, "OP_78(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 
@@ -3495,18 +3401,14 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param4 = *(localScriptPtr + position);
 				position++;
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param6 = *(int16 *)(localScriptPtr + position);
+				param6 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				param7 = *(int16 *)(localScriptPtr + position);
+				param7 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-
-				flipU16(&param5);
-				flipU16(&param6);
-				flipU16(&param7);
 
 				sprintf(lineBuffer, "OP_7F(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6, param7);
 
@@ -3541,13 +3443,11 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param3);
 
-				param4 = *(int16 *)(localScriptPtr + position);
+				param4 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param4);
 
 				param5 = *(localScriptPtr + position);
 				position++;
@@ -3615,37 +3515,29 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				int16 param7;
 				int16 param8;
 
-				param1 = *(int16 *)(localScriptPtr + position);
+				param1 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param1);
 
-				param2 = *(int16 *)(localScriptPtr + position);
+				param2 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param2);
 
-				param3 = *(int16 *)(localScriptPtr + position);
+				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param3);
 
-				param4 = *(int16 *)(localScriptPtr + position);
+				param4 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param4);
 
-				param5 = *(int16 *)(localScriptPtr + position);
+				param5 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param5);
 
-				param6 = *(int16 *)(localScriptPtr + position);
+				param6 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param6);
 
-				param7 = *(int16 *)(localScriptPtr + position);
+				param7 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param7);
 
-				param8 = *(int16 *)(localScriptPtr + position);
+				param8 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
-				flipU16(&param8);
 
 				sprintf(compareString1, "obj[%d]", param1);
 				sprintf(compareString2, "{%d,%d,%d,%d,%d,%d,%d}", param2, param3, param4, param5, param6, param7, param8);
@@ -3728,9 +3620,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				} else {
 					int16 param2;
 
-					param2 = *(int16 *)(localScriptPtr + position);
+					param2 = READ_BE_UINT16(localScriptPtr + position);
 					position += 2;
-					flipU16(&param2);
 
 					sprintf(lineBuffer, "OP_9E(%d,%d)\n", param, param2);
 				}

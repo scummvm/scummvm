@@ -385,11 +385,11 @@ void loadSpl(char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	entry = allocFrame((uint16) partBuffer[foundFileIdx].unpacked_size, 1, -1);
+	entry = allocFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, -1);
 
 	ASSERT(entry != -1);
 
-	memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpacked_size);
+	memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
 
 	animDataTable[entry].fileIdx = foundFileIdx;
 	animDataTable[entry].frameIdx = 0;
@@ -625,9 +625,7 @@ void loadSet(char *resourceName) {
 
 	ptr = dataPtr + 4;
 
-	numSpriteInAnim = *(uint16 *)ptr;
-	flipU16(&numSpriteInAnim);
-	ptr += 2;
+	numSpriteInAnim = READ_BE_UINT16(ptr); ptr += 2;
 
 	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
 
@@ -710,9 +708,7 @@ void loadSetAbs(char *resourceName, uint16 idx) {
 
 	ptr = dataPtr + 4;
 
-	numSpriteInAnim = *(uint16 *) ptr;
-	flipU16(&numSpriteInAnim);
-	ptr += 2;
+	numSpriteInAnim = READ_BE_UINT16(ptr); ptr += 2;
 
 	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
 
@@ -785,9 +781,9 @@ void loadSeq(char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	entry = allocFrame2((uint16) partBuffer[foundFileIdx].unpacked_size, 1, 0);
+	entry = allocFrame2((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0);
 
-	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpacked_size - 0x16);
+	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
 }
 
 void loadSeqAbs(char *resourceName, uint16 idx) {
@@ -798,9 +794,9 @@ void loadSeqAbs(char *resourceName, uint16 idx) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpacked_size, 1, 0, idx);
+	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
 
-	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpacked_size - 0x16);
+	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
 }
 
 void loadResource(char *resourceName) {
@@ -876,7 +872,7 @@ void loadResourcesFromSave() {
 
 			foundFileIdx = currentPtr->fileIdx;
 
-			strcpy(animName, partBuffer[foundFileIdx].part_name);
+			strcpy(animName, partBuffer[foundFileIdx].partName);
 
 			if (strstr(animName, ".SPL")) {
 				isSpl = 1;
@@ -893,7 +889,7 @@ void loadResourcesFromSave() {
 			}
 
 			if (isSpl) {
-				animHeader.frameWidth = (uint16) partBuffer[foundFileIdx].unpacked_size;
+				animHeader.frameWidth = (uint16) partBuffer[foundFileIdx].unpackedSize;
 				animHeader.frameHeight = 1;
 				animHeader.numFrames = 1;
 				isMask = -1;

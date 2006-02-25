@@ -27,12 +27,11 @@
 
 namespace Cine {
 
-struct partBufferStruct{
-	char part_name[10];
-	uint32 varA;		/* unused */
+struct partBufferStruct {
+	char partName[14];
 	uint32 offset;
-	uint32 packed_size;
-	uint32 unpacked_size;
+	uint32 packedSize;
+	uint32 unpackedSize;
 	uint32 var1A;		/* unused */
 };
 

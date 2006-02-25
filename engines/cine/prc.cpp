@@ -70,7 +70,7 @@ void loadPrc(const char *pPrcName) {
 			free(scriptTable[i].ptr);
 
 			scriptTable[i].ptr = NULL;
-			scriptTable[i].var4 = 0;
+			scriptTable[i].size = 0;
 		}
 	}
 
@@ -80,22 +80,18 @@ void loadPrc(const char *pPrcName) {
 
 		processPendingUpdates(1);
 
-		numEntry = *(unsigned short int *)readPtr;
-		readPtr += 2;
-		flipU16(&numEntry);
+		numEntry = READ_BE_UINT16(readPtr); readPtr += 2;
 
 		ASSERT(numEntry <= NUM_MAX_SCRIPT);
 
 		for (i = 0; i < numEntry; i++) {
-			scriptTable[i].var4 = *(unsigned short int *)readPtr;
-			readPtr += 2;
-			flipU16(&scriptTable[i].var4);
+			scriptTable[i].size = READ_BE_UINT16(readPtr); readPtr += 2;
 		}
 
 		for (i = 0; i < numEntry; i++) {
 			uint16 size;
 
-			size = scriptTable[i].var4;
+			size = scriptTable[i].size;
 
 			if (size) {
 				scriptTable[i].ptr = (byte *)malloc(size);
@@ -115,22 +111,18 @@ void loadPrc(const char *pPrcName) {
 
 		processPendingUpdates(1);
 
-		numEntry = *(uint16 *) ptr;
-		ptr += 2;
-		flipU16(&numEntry);
+		numEntry = READ_BE_UINT16(ptr); ptr += 2;
 
 		ASSERT(numEntry <= NUM_MAX_SCRIPT);
 
 		for (i = 0; i < numEntry; i++) {
-			scriptTable[i].var4 = *(uint16 *) ptr;
-			ptr += 2;
-			flipU16(&scriptTable[i].var4);
+			scriptTable[i].size = READ_BE_UINT16(ptr); ptr += 2;
 		}
 
 		for (i = 0; i < numEntry; i++) {
 			uint16 size;
 
-			size = scriptTable[i].var4;
+			size = scriptTable[i].size;
 
 			if (size) {
 				scriptTable[i].ptr = (byte *) malloc(size);

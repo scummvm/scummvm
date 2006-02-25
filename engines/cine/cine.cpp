@@ -219,7 +219,7 @@ static void initialize() {
 
 	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
 		scriptTable[i].ptr = NULL;
-		scriptTable[i].var4 = 0;
+		scriptTable[i].size = 0;
 	}
 
 	for (i = 0; i < NUM_MAX_MESSAGE; i++) {

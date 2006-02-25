@@ -38,13 +38,11 @@ partBufferStruct *partBuffer;
 void loadPart(const char *partName) {
 	uint16 i;
 
-	ASSERT(sizeof(partBufferStruct) == 0x1E);
-
 	for (i = 0; i < 255; i++) {
-		partBuffer[i].part_name[0] = 0;
+		partBuffer[i].partName[0] = 0;
 		partBuffer[i].offset = 0;
-		partBuffer[i].packed_size = 0;
-		partBuffer[i].unpacked_size = 0;
+		partBuffer[i].packedSize = 0;
+		partBuffer[i].unpackedSize = 0;
 		partBuffer[i].var1A = 0;
 	}
 
@@ -61,20 +59,19 @@ void loadPart(const char *partName) {
 
 	processPendingUpdates(-1);
 
-	partFileHandle.read(&numElementInPart, 2);
-	partFileHandle.read(&partVar1, 2);
+	numElementInPart = partFileHandle.readUint16BE();
+	partVar1 = partFileHandle.readUint16BE();
 
-	flipU16(&numElementInPart);
-	flipU16(&partVar1);
-
-	partFileHandle.read(partBuffer, numElementInPart * partVar1);
+	assert(partVar1 == 30);
 
 	strcpy(currentPartName, partName);
 
 	for (i = 0; i < numElementInPart; i++) {
-		flipU32(&partBuffer[i].offset);
-		flipU32(&partBuffer[i].packed_size);
-		flipU32(&partBuffer[i].unpacked_size);
+		partFileHandle.read(partBuffer[i].partName, 14);
+		partBuffer[i].offset = partFileHandle.readUint32BE();
+		partBuffer[i].packedSize = partFileHandle.readUint32BE();
+		partBuffer[i].unpackedSize = partFileHandle.readUint32BE();
+		partBuffer[i].var1A = partFileHandle.readUint32BE();
 	}
 
 	if (gameType == Cine::GID_FW)
@@ -167,7 +164,7 @@ int16 findFileInBundle(const char *fileName) {
 		uint16 j;
 
 		for (i = 0; i < numElementInPart; i++) {
-			if (!strcmp(fileName, partBuffer[i].part_name)) {
+			if (!strcmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -176,14 +173,14 @@ int16 findFileInBundle(const char *fileName) {
 			loadPart(bundleNames[j]);
 
 			for (i = 0; i < numElementInPart; i++) {
-				if (!strcmp(fileName, partBuffer[i].part_name)) {
+				if (!strcmp(fileName, partBuffer[i].partName)) {
 					return i;
 				}
 			}
 		}
 	} else {
 		for (i = 0; i < numElementInPart; i++) {
-			if (!strcmp(fileName, partBuffer[i].part_name)) {
+			if (!strcmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
 		}
@@ -195,26 +192,25 @@ void readFromPart(int16 idx, uint8 *dataPtr) {
 	processPendingUpdates(1);
 
 	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
-	partFileHandle.read(dataPtr, partBuffer[idx].packed_size);
+	partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
 }
 
 uint8 *readBundleFile(int16 foundFileIdx) {
 	uint8 *dataPtr;
 
-	dataPtr = (uint8 *) malloc(partBuffer[foundFileIdx].unpacked_size + 2);
-	memset(dataPtr, 0, partBuffer[foundFileIdx].unpacked_size + 2);
+	dataPtr = (uint8 *) malloc(partBuffer[foundFileIdx].unpackedSize);
+	memset(dataPtr, 0, partBuffer[foundFileIdx].unpackedSize);
 
-	if (partBuffer[foundFileIdx].unpacked_size != partBuffer[foundFileIdx].packed_size) {
+	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
 		uint8 *unpackBuffer;
 		uint16 realSize;
 
-		unpackBuffer = (uint8 *)malloc(partBuffer[foundFileIdx].packed_size + 500);
+		unpackBuffer = (uint8 *)malloc(partBuffer[foundFileIdx].packedSize + 500);
 		readFromPart(foundFileIdx, unpackBuffer);
 
-		realSize = *(uint16 *)(unpackBuffer + partBuffer[foundFileIdx].packed_size - 2);
-		flipU16(&realSize);
+		realSize = READ_BE_UINT32(unpackBuffer + partBuffer[foundFileIdx].packedSize - 4);
 
-		decomp(unpackBuffer + partBuffer[foundFileIdx].packed_size - 4, dataPtr + realSize, realSize);
+		decomp(unpackBuffer + partBuffer[foundFileIdx].packedSize - 4, dataPtr + realSize, realSize);
 		free(unpackBuffer);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);

@@ -31,7 +31,7 @@ namespace Cine {
 
 struct scriptStruct {
 	byte *ptr;
-	uint16 var4;
+	uint16 size;
 	int16 stack[SCRIPT_STACK_SIZE];
 };
 

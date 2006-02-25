@@ -512,7 +512,7 @@ int16 makeLoad(char *saveName) {
 		if (scriptTable[i].ptr) {
 			free(scriptTable[i].ptr);
 			scriptTable[i].ptr = NULL;
-			scriptTable[i].var4 = 0;
+			scriptTable[i].size = 0;
 		}
 	}
 
