@@ -36,8 +36,6 @@ struct animHeader2Struct {
 	uint16 field_E;
 };
 
-typedef struct animHeader2Struct animHeader2Struct;
-
 uint16 frameVar0 = 0;
 
 animHeaderStruct animHeader;

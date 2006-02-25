@@ -29,11 +29,11 @@ namespace Cine {
 
 #define SCRIPT_STACK_SIZE 50
 
-typedef struct {
+struct scriptStruct {
 	byte *ptr;
 	uint16 var4;
 	int16 stack[SCRIPT_STACK_SIZE];
-} scriptStruct;
+};
 
 #define NUM_MAX_SCRIPT 50
 

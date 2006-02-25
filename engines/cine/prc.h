@@ -37,8 +37,6 @@ struct prcLinkedListStruct {
 	int16 scriptIdx;
 };
 
-typedef struct prcLinkedListStruct prcLinkedListStruct;
-
 extern prcLinkedListStruct globalScriptsHead;
 extern prcLinkedListStruct objScriptList;
 

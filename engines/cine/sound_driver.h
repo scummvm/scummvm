@@ -46,12 +46,12 @@ namespace Cine {
 #define ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE 0xC0
 #define ADLIB_REG_WAVE_SELECT 0xE0
 
-typedef struct {
+struct sndDriverStruct {
 	void (*setupChannel) (int channelNum, const uint8 * data, int instrumentNum);
 	void (*setChannelFrequency) (int channelNum, int frequency);
 	void (*stopChannel) (int channelNum);
 	void (*playSound) (uint8 * data, int channelNum, int volume);
-} sndDriverStruct;
+};
 
 extern uint16 snd_fadeOutCounter, snd_songTicksCounter;
 extern uint8 *snd_adlibInstrumentsTable[4];

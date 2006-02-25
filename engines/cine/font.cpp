@@ -22,11 +22,14 @@
  *
  */
 
-#include "cine/cine.h"
+#include "common/stdafx.h"
+#include "common/scummsys.h"
+
+#include "cine/font.h"
 
 namespace Cine {
 
-const characterEntry fontParamTable[256] = {
+const CharacterEntry fontParamTable[256] = {
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},
 	{ 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0}, { 0, 0},

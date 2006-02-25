@@ -27,21 +27,21 @@
 
 namespace Cine {
 
-typedef struct {
+struct BasesonEntryStruct {
 	char name[14];
 	uint32 offset;
 	uint32 size;
 	uint32 unpackedSize;
-} BasesonEntryStruct;
+};
 
-typedef struct {
+struct sfxStateStruct {
 	uint8 *songData;
 	int currentInstrumentChannel[4];
 	uint8 *instruments[15];
 	int currentOrder;
 	int currentPos;
 	int numOrders;
-} sfxStateStruct;
+};
 
 extern uint16 snd_eventsDelay;
 extern int snd_songIsPlaying;

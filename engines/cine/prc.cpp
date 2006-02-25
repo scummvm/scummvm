@@ -23,6 +23,7 @@
  */
 
 #include "cine/cine.h"
+#include "cine/auto00.h"
 
 namespace Cine {
 

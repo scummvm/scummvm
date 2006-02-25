@@ -35,7 +35,6 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 
-#include "cine/font.h"
 #include "cine/various.h"
 #include "cine/flip_support.h"
 #include "cine/texte.h"
@@ -51,7 +50,6 @@
 #include "cine/pal.h"
 #include "cine/gfx.h"
 #include "cine/anim.h"
-#include "cine/auto00.h"
 #include "cine/unpack.h"
 #include "cine/bg_list.h"
 #include "cine/sfx_player.h"

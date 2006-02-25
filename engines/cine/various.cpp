@@ -23,6 +23,7 @@
  */
 
 #include "cine/cine.h"
+#include "cine/font.h"
 
 namespace Cine {
 

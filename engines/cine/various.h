@@ -38,10 +38,10 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 
 extern int16 allowSystemMenu;
 
-typedef struct {
+struct unk1Struct {
 	uint8 *ptr;
 	uint16 len;
-} unk1Struct;
+};
 
 #define NUM_MAX_MESSAGE 255
 
@@ -64,8 +64,6 @@ struct unkListElementStruct {
 	int16 var1C;
 	int16 var1E;
 };
-
-typedef struct unkListElementStruct unkListElementStruct;
 
 extern unkListElementStruct unkList;
 
@@ -162,8 +160,6 @@ struct selectedObjStruct {
 	int16 param;
 };
 
-typedef struct selectedObjStruct selectedObjStruct;
-
 extern uint16 defaultMenuBoxColor;
 extern uint16 defaultMenuBoxColor2;
 
@@ -180,8 +176,6 @@ struct mouseStatusStruct {
 	int X;
 	int Y;
 };
-
-typedef struct mouseStatusStruct mouseStatusStruct;
 
 extern int16 additionalBgVScroll;
 

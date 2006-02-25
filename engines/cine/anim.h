@@ -50,14 +50,10 @@ struct animHeaderStruct {
 	uint16 field_14;
 };
 
-typedef struct animHeaderStruct animHeaderStruct;
-
 struct animDataEntry {
 	char name[9];
 	uint8 param;
 };
-
-typedef struct animDataEntry animDataEntry;
 
 extern animDataEntry animData[];
 

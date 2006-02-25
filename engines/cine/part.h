@@ -27,16 +27,16 @@
 
 namespace Cine {
 
-typedef struct {
+struct partBufferStruct{
 	char part_name[10];
 	uint32 varA;		/* unused */
 	uint32 offset;
 	uint32 packed_size;
 	uint32 unpacked_size;
 	uint32 var1A;		/* unused */
-} partBufferStruct;
+};
 
-typedef struct {
+struct animDataStruct {
 	uint16 width;
 	uint16 var1;
 	uint16 bpp;
@@ -47,7 +47,7 @@ typedef struct {
 	int16 fileIdx;
 	int16 frameIdx;
 	char name[10];
-} animDataStruct;
+};
 
 #define NUM_MAX_PARTDATA 255
 #define NUM_MAX_ANIMDATA 255

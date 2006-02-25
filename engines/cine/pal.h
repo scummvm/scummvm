@@ -33,8 +33,6 @@ struct palEntryStruct {
 	uint8 pal2[16];
 };
 
-typedef struct palEntryStruct palEntryStruct;
-
 void loadPal(const char *fileName);
 
 extern uint16 tempPalette[256];

@@ -27,12 +27,12 @@
 
 namespace Cine {
 
-struct characterEntry {
+struct CharacterEntry {
 	uint8 characterIdx;
 	uint8 characterWidth;
 };
 
-extern const characterEntry fontParamTable[256];
+extern const CharacterEntry fontParamTable[256];
 
 } // End of namespace Cine
 

@@ -27,7 +27,7 @@
 
 namespace Cine {
 
-typedef struct {
+struct objectStruct {
 	int16 x;
 	int16 y;
 	uint16 mask;
@@ -35,7 +35,7 @@ typedef struct {
 	int16 costume;
 	char name[20];
 	uint16 part;
-} objectStruct;
+};
 
 struct overlayHeadElement {
 	struct overlayHeadElement *next;
@@ -47,8 +47,6 @@ struct overlayHeadElement {
 	int16 var10;
 	int16 var12;
 };
-
-typedef struct overlayHeadElement overlayHeadElement;
 
 #define NUM_MAX_OBJECT 255
 #define NUM_MAX_OBJECTDATA 255
