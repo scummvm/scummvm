@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 prcLinkedListStruct globalScriptsHead;
 prcLinkedListStruct objScriptList;
 
@@ -140,3 +142,5 @@ void loadPrc(const char *pPrcName) {
 		}
 	}
 }
+
+} // End of namespace Cine

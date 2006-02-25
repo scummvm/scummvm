@@ -25,9 +25,13 @@
 #ifndef CINE_TEXTE_H_
 #define CINE_TEXTE_H_
 
+namespace Cine {
+
 extern uint8 *textDataPtr;
 extern uint8 textTable[256][2][16 * 8];
 
 void loadTextData(const char *pFileName, uint8 *pDestinationBuffer);
+
+} // End of namespace Cine
 
 #endif

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint32 crc;			// variable at 5C5A
 uint32 bitbucket;			// dx:bx
 
@@ -149,3 +151,5 @@ int decomp(uint8 *in, uint8 *out, int size) {
 		return 0;
 	}
 }
+
+} // End of namespace Cine

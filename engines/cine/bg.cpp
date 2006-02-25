@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint16 bgVar0;
 
 void loadCtHigh(uint8 * currentPtr) {
@@ -147,3 +149,5 @@ void addBackground(char *bgName, uint16 bgIdx) {
 
 	gfxConvertSpriteToRaw(additionalBgTable[bgIdx], ptr + 0x22, 160, 200);
 }
+
+} // End of namespace Cine

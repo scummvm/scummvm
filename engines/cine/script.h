@@ -25,6 +25,8 @@
 #ifndef CINE_SCRIPT_H_
 #define CINE_SCRIPT_H_
 
+namespace Cine {
+
 #define SCRIPT_STACK_SIZE 50
 
 typedef struct {
@@ -59,5 +61,7 @@ void executeList0(void);
 
 void purgeList1(void);
 void purgeList0(void);
+
+} // End of namespace Cine
 
 #endif

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 void addGfxElementA0(int16 param1, int16 param2) {
 	overlayHeadElement *currentHead = &overlayHead;
 	overlayHeadElement *tempHead = currentHead;
@@ -3794,3 +3796,5 @@ void dumpScript(uint8 *dumpName) {
 }
 
 #endif
+
+} // End of namespace Cine

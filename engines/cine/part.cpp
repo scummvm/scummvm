@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint16 numElementInPart;
 uint16 partVar1;
 
@@ -217,3 +219,5 @@ uint8 *readBundleFile(int16 foundFileIdx) {
 
 	return dataPtr;
 }
+
+} // End of namespace Cine

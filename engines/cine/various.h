@@ -27,6 +27,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 extern int gameType;
 
 typedef char commandeType[20];
@@ -186,5 +188,7 @@ extern int16 additionalBgVScroll;
 void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
 void resetUnkList();
 void processUnkList(void);
+
+} // End of namespace Cine
 
 #endif

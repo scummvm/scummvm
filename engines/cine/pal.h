@@ -25,6 +25,8 @@
 #ifndef CINE_PAL_H_
 #define CINE_PAL_H_
 
+namespace Cine {
+
 struct palEntryStruct {
 	char name[10];
 	uint8 pal1[16];
@@ -40,5 +42,7 @@ extern uint8 colorMode256;
 extern uint8 palette256[256 * 3];
 
 void loadRelatedPalette(const char *fileName);
+
+} // End of namespace Cine
 
 #endif

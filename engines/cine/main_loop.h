@@ -25,7 +25,11 @@
 #ifndef CINE_MAINLOOP_H_
 #define CINE_MAINLOOP_H_
 
+namespace Cine {
+
 void mainLoop(int bootScriptIdx);
 void manageEvents(void);
+
+} // End of namespace Cine
 
 #endif

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 int16 allowSystemMenu = 0;
 
 int16 commandVar3[4];
@@ -2974,3 +2976,5 @@ void processUnkList(void) {
 		currentHead = tempHead->next;
 	}
 }
+
+} // End of namespace Cine

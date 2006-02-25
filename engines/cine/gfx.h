@@ -25,6 +25,8 @@
 #ifndef CINE_GFX_H_
 #define CINE_GFX_H_
 
+namespace Cine {
+
 void gfxDrawSprite(uint8 *src4, uint16 sw, uint16 sh, uint8 *dst4, int16 sx, int16 sy);
 
 extern unsigned char *page0;
@@ -65,5 +67,7 @@ void gfxFlipRawPage(uint8 *frontBuffer);
 void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height, uint8 *page, int16 x, int16 y);
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page);
 void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 height, uint8 *page, int16 x, int16 y);
+
+} // End of namespace Cine
 
 #endif

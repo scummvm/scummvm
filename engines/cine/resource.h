@@ -25,6 +25,10 @@
 #ifndef CINE_RESOURCE_H_
 #define CINE_RESOURCE_H_
 
+namespace Cine {
+
 void checkDataDisk(int16 param);
+
+} // End of namespace Cine
 
 #endif

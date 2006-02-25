@@ -35,45 +35,6 @@
 #include "base/engine.h"
 #include "base/gameDetector.h"
 
-namespace Cine {
-
-enum CineGameId {
-	GID_FW = 1,
-	GID_OS
-};
-
-class CineEngine : public ::Engine {
-	int _gameId;
-
-	void errorString(const char *buf_input, char *buf_output);
-
-protected:
-	int init(GameDetector & detector);
-	int go();
-	void shutdown();
-
-	const char *_dataPath;
-	const char *_savePath;
-
-public:
-	CineEngine(GameDetector *detector, OSystem *syst);
-	virtual ~CineEngine();
-	int getGameId() {
-		return _gameId;
-	}
-};
-
-}
-
-extern char *savePath;
-
-#define ASSERT_PTR assert
-#define ASSERT assert
-
-#pragma pack(1)
-
-#define BOOT_PRC_NAME "AUTO00.PRC"
-
 #include "cine/font.h"
 #include "cine/various.h"
 #include "cine/flip_support.h"
@@ -96,6 +57,41 @@ extern char *savePath;
 #include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
 
+namespace Cine {
+
+enum CineGameId {
+	GID_FW = 1,
+	GID_OS
+};
+
+class CineEngine : public Engine {
+	int _gameId;
+
+	void errorString(const char *buf_input, char *buf_output);
+
+protected:
+	int init(GameDetector & detector);
+	int go();
+	void shutdown();
+
+	const char *_dataPath;
+	const char *_savePath;
+
+public:
+	CineEngine(GameDetector *detector, OSystem *syst);
+	virtual ~CineEngine();
+	int getGameId() {
+		return _gameId;
+	}
+};
+
+extern char *savePath;
+
+#define ASSERT_PTR assert
+#define ASSERT assert
+
+#define BOOT_PRC_NAME "AUTO00.PRC"
+
 enum {
 	VAR_MOUSE_X_MODE = 253,
 	VAR_MOUSE_X_POS = 249,
@@ -104,5 +100,7 @@ enum {
 };
 
 extern AdlibMusic *g_cine_adlib;
+
+} // End of namespace Cine
 
 #endif

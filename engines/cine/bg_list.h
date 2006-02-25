@@ -25,6 +25,10 @@
 #ifndef CINE_BGLIST_H_
 #define CINE_BGLIST_H_
 
+namespace Cine {
+
 void addSpriteFilledToBGList(int16 idx);
+
+} // End of namespace Cine
 
 #endif

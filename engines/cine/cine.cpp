@@ -38,12 +38,19 @@
 #include "cine/cine.h"
 #include "cine/sound_driver.h"
 
+
+namespace Cine {
+
 Audio::Mixer * cine_g_mixer;
 AdlibMusic *g_cine_adlib;
 
 static void initialize();
 
 char *savePath;
+
+} // End of namespace Cine
+
+
 
 struct CINEGameSettings {
 	const char *name;
@@ -179,7 +186,6 @@ int CineEngine::go() {
 	return 0;
 }
 
-	}
 
 int gameType;
 
@@ -253,3 +259,5 @@ static void initialize() {
 
 	processPendingUpdates(0);
 }
+
+} // End of namespace Cine

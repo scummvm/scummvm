@@ -25,6 +25,8 @@
 #ifndef CINE_PRC_H_
 #define CINE_PRC_H_
 
+namespace Cine {
+
 struct prcLinkedListStruct {
 	struct prcLinkedListStruct *next;
 	int16 stack[SCRIPT_STACK_SIZE];
@@ -43,5 +45,7 @@ extern prcLinkedListStruct objScriptList;
 void resetglobalScriptsHead(void);
 void freePrcLinkedList(void);
 void loadPrc(const char *pPrcName);
+
+} // End of namespace Cine
 
 #endif

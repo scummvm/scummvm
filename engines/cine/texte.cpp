@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint8 *textDataPtr;
 
 uint8 textTable[256][2][16 * 8];
@@ -73,3 +75,5 @@ void loadTextData(const char *pFileName, uint8 *pDestinationBuffer) {
 
 	pFileHandle.close();
 }
+
+} // End of namespace Cine

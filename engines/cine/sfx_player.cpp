@@ -28,6 +28,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint16 snd_eventsDelay;
 int snd_songIsPlaying = 0;
 uint8 snd_nullInstrument[] = { 0, 0 };
@@ -265,3 +267,5 @@ void snd_handlePattern(int channelNum, const uint8 *patternData) {
 		}
 	}
 }
+
+} // End of namespace Cine

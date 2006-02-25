@@ -25,6 +25,8 @@
 #ifndef CINE_PART_H_
 #define CINE_PART_H_
 
+namespace Cine {
+
 typedef struct {
 	char part_name[10];
 	uint32 varA;		/* unused */
@@ -62,5 +64,7 @@ int16 findFileInBundle(const char *fileName);
 void readFromPart(int16 idx, uint8 *dataPtr);
 
 uint8 *readBundleFile(int16 foundFileIdx);
+
+} // End of namespace Cine
 
 #endif

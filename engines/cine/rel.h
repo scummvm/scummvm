@@ -25,6 +25,8 @@
 #ifndef CINE_REL_H_
 #define CINE_REL_H_
 
+namespace Cine {
+
 struct RelObjectScript {
 	char *data;
 	uint16 size;
@@ -41,5 +43,7 @@ void releaseObjectScripts(void);
 void resetObjectScriptHead(void);
 
 void loadRel(char *pRelName);
+
+} // End of namespace Cine
 
 #endif

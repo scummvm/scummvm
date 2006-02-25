@@ -25,7 +25,11 @@
 #ifndef CINE_FLIPSUPPORT_H_
 #define CINE_FLIPSUPPORT_H_
 
+namespace Cine {
+
 void flipU16(uint16 *);
 void flipU32(uint32 *);
+
+} // End of namespace Cine
 
 #endif

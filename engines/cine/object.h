@@ -25,6 +25,8 @@
 #ifndef CINE_OBJECT_H_
 #define CINE_OBJECT_H_
 
+namespace Cine {
+
 typedef struct {
 	int16 x;
 	int16 y;
@@ -72,5 +74,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param);
 void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
 void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
 uint8 compareObjectParam(uint8 objIdx, uint8 param1, int16 param2);
+
+} // End of namespace Cine
 
 #endif

@@ -25,6 +25,8 @@
 #ifndef CINE_BG_H_
 #define CINE_BG_H_
 
+namespace Cine {
+
 uint8 loadBg(const char *bgName);
 uint8 loadCt(const char *bgName);
 
@@ -35,5 +37,7 @@ extern uint8 currentAdditionalBgIdx2;
 void addBackground(char *bgName, uint16 bgIdx);
 
 extern uint16 bgVar0;
+
+} // End of namespace Cine
 
 #endif

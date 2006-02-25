@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 struct animHeader2Struct {
 	uint32 field_0;
 	uint16 width;
@@ -973,3 +975,5 @@ void loadResourcesFromSave() {
 
 	loadPart(part);
 }
+
+} // End of namespace Cine

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 void createVar9Element(int16 objIdx, int16 param);
 
 void addSpriteFilledToBGList(int16 idx) {
@@ -44,3 +46,5 @@ void addSpriteFilledToBGList(int16 idx) {
 
 	createVar9Element(idx, 1);
 }
+
+} // End of namespace Cine

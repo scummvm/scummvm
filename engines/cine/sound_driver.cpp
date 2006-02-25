@@ -28,6 +28,8 @@
 #include "sound/mixer.h"
 #include "sound/fmopl.h"
 
+namespace Cine {
+
 uint8 snd_useAdlib = 0;
 uint16 snd_fadeOutCounter = 0;
 uint16 snd_songTicksCounter = 0;
@@ -396,3 +398,5 @@ void AdlibMusic::setVolume(uint8 volume) {
 AdlibMusic::~AdlibMusic(void) {
 	_mixer->setupPremix(NULL);
 }
+
+} // End of namespace Cine

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 RelObjectScript relTable[NUM_MAX_REL];
 
 void resetObjectScriptHead(void) {
@@ -107,3 +109,5 @@ void loadRel(char *pRelName) {
 	}
 #endif
 }
+
+} // End of namespace Cine

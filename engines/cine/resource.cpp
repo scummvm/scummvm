@@ -24,5 +24,9 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 void checkDataDisk(int16 param) {
 }
+
+} // End of namespace Cine

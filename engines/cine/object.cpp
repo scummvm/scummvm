@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 objectStruct objectTable[NUM_MAX_OBJECT];
 uint16 globalVars[NUM_MAX_OBJECTDATA];
 overlayHeadElement overlayHead;
@@ -474,3 +476,5 @@ int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
 
 	return 0;
 }
+
+} // End of namespace Cine

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 byte *screenBuffer;
 
 uint16 c_palette[256];
@@ -288,3 +290,5 @@ void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 heigh
 		}
 	}
 }
+
+} // End of namespace Cine

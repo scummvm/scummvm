@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint16 msgVar0;
 
 void loadMsg(char *pMsgName) {
@@ -73,3 +75,5 @@ void loadMsg(char *pMsgName) {
 		}
 	}
 }
+
+} // End of namespace Cine

@@ -25,6 +25,8 @@
 #ifndef CINE_ANIM_H_
 #define CINE_ANIM_H_
 
+namespace Cine {
+
 extern uint16 frameVar0;
 
 struct animHeaderStruct {
@@ -62,5 +64,7 @@ extern animDataEntry animData[];
 void loadResource(char *animName);
 void loadAbs(char *resourceName, uint16 idx);
 void loadResourcesFromSave();
+
+} // End of namespace Cine
 
 #endif

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 uint16 tempPalette[256];
 
 uint8 colorMode256 = 0;
@@ -119,3 +121,5 @@ void loadRelatedPalette(const char *fileName) {
 		}
 	}
 }
+
+} // End of namespace Cine

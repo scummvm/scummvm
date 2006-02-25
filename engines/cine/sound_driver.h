@@ -25,6 +25,15 @@
 #ifndef CINE_SNDDRIVER_H_
 #define CINE_SNDDRIVER_H_
 
+#include "sound/audiostream.h"
+#include "sound/fmopl.h"
+
+namespace Audio {
+	class Mixer;
+}
+
+namespace Cine {
+
 #define ADLIB_REG_TIMER_1_DATA 2
 #define ADLIB_REG_TIMER_CONTROL_FLAGS 4
 #define ADLIB_REG_AM_VIBRATO_EG_KS 0x20
@@ -53,13 +62,6 @@ extern void snd_adlibDriverExit();
 extern void snd_adlibDriverStopSong();
 extern void snd_resetChannel(int channelNum);
 
-#include "sound/audiostream.h"
-#include "sound/fmopl.h"
-
-namespace Audio {
-	class Mixer;
-}
-
 class AdlibMusic : public AudioStream {
 public:
 	AdlibMusic(Audio::Mixer * pMixer);
@@ -86,5 +88,7 @@ private:
 
 	void premixerCall(int16 *buf, uint len);
 };
+
+} // End of namespace Cine
 
 #endif				/* CINE_SNDDRIVER_H_ */

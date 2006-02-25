@@ -25,6 +25,10 @@
 #ifndef CINE_UNPACK_H_
 #define CINE_UNPACK_H_
 
+namespace Cine {
+
 int decomp(uint8 *in, uint8 *out, int size);
+
+} // End of namespace Cine
 
 #endif

@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 void flipU16(uint16 * pVar) {
 	*pVar = (((*pVar) & 0xFF) << 8) | (((*pVar) & 0xFF00) >> 8);
 }
@@ -40,3 +42,5 @@ void flipU32(uint32 * pVar) {
 
 	*pVar = (part2) | ((uint32) part1 << 16);
 }
+
+} // End of namespace Cine

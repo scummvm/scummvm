@@ -25,8 +25,12 @@
 #ifndef CINE_AUTO00_H_
 #define CINE_AUTO00_H_
 
+namespace Cine {
+
 extern unsigned char AUT000[];
 
 #define AUT000_size sizeof(AUT000);
+
+} // End of namespace Cine
 
 #endif

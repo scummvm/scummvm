@@ -25,6 +25,8 @@
 #ifndef CINE_FONT_H_
 #define CINE_FONT_H_
 
+namespace Cine {
+
 struct characterEntry {
 	uint8 characterIdx;
 	uint8 characterWidth;
@@ -33,5 +35,7 @@ struct characterEntry {
 typedef struct characterEntry characterEntry;
 
 extern characterEntry fontParamTable[256];
+
+} // End of namespace Cine
 
 #endif

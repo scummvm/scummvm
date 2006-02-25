@@ -25,6 +25,8 @@
 #ifndef CINE_SFXPLAYER_H_
 #define CINE_SFXPLAYER_H_
 
+namespace Cine {
+
 typedef struct {
 	char name[14];
 	uint32 offset;
@@ -55,5 +57,7 @@ extern void snd_fadeOutSong();
 extern void snd_playSong();
 extern void snd_handleEvents();
 extern void snd_handlePattern(int channelNum, const uint8 *patternData);
+
+} // End of namespace Cine
 
 #endif				/* _SFXPLAYER_H_ */

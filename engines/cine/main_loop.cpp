@@ -24,6 +24,8 @@
 
 #include "cine/cine.h"
 
+namespace Cine {
+
 mouseStatusStruct mouseData;
 
 uint16 mouseRight = 0;
@@ -227,3 +229,5 @@ void mainLoop(int bootScriptIdx) {
 	closeEngine7();
 	closePart();
 }
+
+} // End of namespace Cine

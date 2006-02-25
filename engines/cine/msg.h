@@ -25,6 +25,10 @@
 #ifndef CINE_MSG_H_
 #define CINE_MSG_H_
 
+namespace Cine {
+
 void loadMsg(char *pMsgName);
+
+} // End of namespace Cine
 
 #endif
