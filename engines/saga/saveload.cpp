@@ -135,9 +135,12 @@ void SagaEngine::fillSaveList() {
 		if (_saveMarks[i]) {
 			name = calcSaveFileName(i);
 			if ((in = _saveFileMan->openForLoading(name)) != NULL) {
-				in->read(&_saveHeader, sizeof(_saveHeader));
+				_saveHeader.type = in->readUint32BE();
+				_saveHeader.size = in->readUint32LE();
+				_saveHeader.version = in->readUint32LE();
+				in->read(_saveHeader.name, sizeof(_saveHeader.name));
 
-				if (_saveHeader.type != MKID('SAGA')) {
+				if (_saveHeader.type != MKID_BE('SAGA')) {
 					error("SagaEngine::load wrong format");
 				}
 				strcpy(_saveFiles[_saveFilesCount].name, _saveHeader.name);
@@ -168,12 +171,17 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 		return;
 	}
 
-	_saveHeader.type = MKID('SAGA');
+	_saveHeader.type = MKID_BE('SAGA');
 	_saveHeader.size = 0;
-	_saveHeader.version = TO_LE_32(CURRENT_SAGA_VER);
+	_saveHeader.version = CURRENT_SAGA_VER;
 	strncpy(_saveHeader.name, saveName, SAVE_TITLE_SIZE);
 
 	out->write(&_saveHeader, sizeof(_saveHeader));
+
+	out->writeUint32BE(_saveHeader.type);
+	out->writeUint32LE(_saveHeader.size);
+	out->writeUint32LE(_saveHeader.version);
+	out->write(_saveHeader.name, sizeof(_saveHeader.name));
 
 	// Original game title
 	memset(title, 0, TITLESIZE);
@@ -221,18 +229,17 @@ void SagaEngine::load(const char *fileName) {
 		return;
 	}
 
-	in->read(&_saveHeader, sizeof(_saveHeader));
+	_saveHeader.type = in->readUint32BE();
+	_saveHeader.size = in->readUint32LE();
+	_saveHeader.version = in->readUint32LE();
+	in->read(_saveHeader.name, sizeof(_saveHeader.name));
 
-	_saveHeader.size = FROM_LE_32(_saveHeader.size);
-	_saveHeader.version = FROM_LE_32(_saveHeader.version);
-
-	// This save was written in native endianness (fix that, so warning will show up)
-	if (_saveHeader.version > CURRENT_SAGA_VER) {
-#ifdef SCUMM_LITTLE_ENDIAN
-		_saveHeader.version = TO_BE_32(_saveHeader.version);
-#else
-		_saveHeader.version = TO_LE_32(_saveHeader.version);
-#endif
+	// Some older saves were not written in an endian safe fashion.
+	// We try to detect this here by checking for extremly high version values.
+	// If found, we retry with the data swapped.
+	// FIXME: Maybe display a warning/error message instead?
+	if (_saveHeader.version > 0xFFFFFF) {
+		_saveHeader.version = SWAP_BYTES_32(_saveHeader.version);
 	}
 
 	debug(2, "Save version: %x", _saveHeader.version);
@@ -240,7 +247,7 @@ void SagaEngine::load(const char *fileName) {
 	if (_saveHeader.version < 4)
 		warning("This savegame is not endian-safe. There may be problems");
 
-	if (_saveHeader.type != MKID('SAGA')) {
+	if (_saveHeader.type != MKID_BE('SAGA')) {
 		error("SagaEngine::load wrong format");
 	}
 

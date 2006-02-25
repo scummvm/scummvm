@@ -102,11 +102,14 @@ bool ScummEngine::saveState(int slot, bool compat) {
 
 	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
 
-	hdr.type = MKID('SCVM');
+	hdr.type = MKID_BE('SCVM');
 	hdr.size = 0;
-	hdr.ver = TO_LE_32(CURRENT_VER);
+	hdr.ver = CURRENT_VER;
 
-	out->write(&hdr, sizeof(hdr));
+	out->writeUint32BE(hdr.type);
+	out->writeUint32LE(hdr.size);
+	out->writeUint32LE(hdr.ver);
+	out->write(hdr.name, sizeof(hdr.name));
 	saveThumbnail(out);
 	saveInfos(out);
 
@@ -123,6 +126,14 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	return true;
 }
 
+static bool loadSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hdr) {
+	hdr.type = in->readUint32BE();
+	hdr.size = in->readUint32LE();
+	hdr.ver = in->readUint32LE();
+	in->read(hdr.name, sizeof(hdr.name));
+	return !in->ioFailed() && hdr.type == MKID_BE('SCVM');
+}
+
 bool ScummEngine::loadState(int slot, bool compat) {
 	char filename[256];
 	Common::InSaveFile *in;
@@ -134,16 +145,16 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return false;
 
-	in->read(&hdr, sizeof(hdr));
-	if (hdr.type != MKID('SCVM')) {
+	if (!loadSaveGameHeader(in, hdr)) {
 		warning("Invalid savegame '%s'", filename);
 		delete in;
 		return false;
 	}
 
 	// In older versions of ScummVM, the header version was not endian safe.
-	// We account for that by retrying once with swapped byte order.
-	if (hdr.ver > CURRENT_VER)
+	// We account for that by retrying once with swapped byte order in case
+	// we see a version that is higher than anything we'd expect...
+	if (hdr.ver > 0xFFFFFF)
 		hdr.ver = SWAP_BYTES_32(hdr.ver);
 		
 	// Reject save games which are too old or too new. Note that
@@ -432,20 +443,19 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 	char filename[256];
 	Common::InSaveFile *in;
 	SaveGameHeader hdr;
-	int len;
 
 	makeSavegameName(filename, slot, false);
 	if (!(in = _saveFileMan->openForLoading(filename))) {
 		strcpy(desc, "");
 		return false;
 	}
-	len = in->read(&hdr, sizeof(hdr));
-	delete in;
 
-	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
+	if (!loadSaveGameHeader(in, hdr)) {
+		delete in;
 		strcpy(desc, "Invalid savegame");
 		return false;
 	}
+	delete in;
 
 	if (hdr.ver > CURRENT_VER)
 		hdr.ver = TO_LE_32(hdr.ver);
@@ -469,15 +479,13 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 	char filename[256];
 	Common::InSaveFile *in;
 	SaveGameHeader hdr;
-	int len;
 
 	makeSavegameName(filename, slot, false);
 	if (!(in = _saveFileMan->openForLoading(filename))) {
 		return 0;
 	}
-	len = in->read(&hdr, sizeof(hdr));
 
-	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
+	if (!loadSaveGameHeader(in, hdr)) {
 		delete in;
 		return 0;
 	}
@@ -499,15 +507,13 @@ bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 	char filename[256];
 	Common::InSaveFile *in;
 	SaveGameHeader hdr;
-	int len;
 
 	makeSavegameName(filename, slot, false);
 	if (!(in = _saveFileMan->openForLoading(filename))) {
 		return false;
 	}
-	len = in->read(&hdr, sizeof(hdr));
 
-	if (len != sizeof(hdr) || hdr.type != MKID('SCVM')) {
+	if (!loadSaveGameHeader(in, hdr)) {
 		delete in;
 		return false;
 	}
