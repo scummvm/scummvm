@@ -73,7 +73,7 @@ void loadPrc(const char *pPrcName) {
 
 	checkDataDisk(-1);
 	if ((gameType == Cine::GID_FW) && (!strcmp(pPrcName, "AUTO00.PRC"))) {
-		unsigned char *readPtr = AUT000;
+		const unsigned char *readPtr = AUT000;
 
 		processPendingUpdates(1);
 

@@ -27,7 +27,7 @@
 
 namespace Cine {
 
-extern unsigned char AUT000[];
+extern const unsigned char AUT000[];
 
 #define AUT000_size sizeof(AUT000);
 

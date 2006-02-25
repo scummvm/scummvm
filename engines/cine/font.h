@@ -32,9 +32,7 @@ struct characterEntry {
 	uint8 characterWidth;
 };
 
-typedef struct characterEntry characterEntry;
-
-extern characterEntry fontParamTable[256];
+extern const characterEntry fontParamTable[256];
 
 } // End of namespace Cine
 

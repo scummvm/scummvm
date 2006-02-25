@@ -103,7 +103,7 @@ void freePartRange(uint8 startIdx, uint8 numIdx) {
 void closePart(void) {
 }
 
-const char *bundleNames[] = {
+static const char *bundleNames[] = {
 	"EGOUBASE",
 	"LABYBASE",
 	"PROCEGOU",
