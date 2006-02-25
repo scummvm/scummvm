@@ -25,9 +25,10 @@
 #ifndef __GAMES_H__
 #define	__GAMES_H__
 
-#define curItemVersion sysMakeROMVersion(3,5,2,0,0)	// Added : Lure engine
+#define curItemVersion sysMakeROMVersion(3,5,3,0,0)	// Added : CinE engine and 3DO platform
 
 
+#define itemVersion_352 sysMakeROMVersion(3,5,2,0,0)	// Added : Lure engine
 #define itemVersion_351 sysMakeROMVersion(3,5,1,0,0)	// Added : Sega CD platform
 #define itemVersion_350 sysMakeROMVersion(3,5,0,0,0)
 #define itemVersion_340 sysMakeROMVersion(3,4,0,0,0)
@@ -101,11 +102,11 @@ typedef struct {
 	struct {
 		// midi
 		Boolean multiMidi;
-		Boolean music;
+		Boolean music;		// TODO : rename this, it is enable audio option
 		UInt8 drvMusic;
 		UInt8 tempo;
 		// sound FX
-		Boolean sfx;
+		Boolean sfx;		// TODO : remove this
 		UInt8 rate;
 		// CD audio
 		Boolean CD;
@@ -153,6 +154,7 @@ enum {
 	ENGINE_SKY = 0,
 	ENGINE_SWORD1,
 	ENGINE_SWORD2,
+	ENGINE_CINE,
 	ENGINE_QUEEN,
 	ENGINE_LURE,
 	ENGINE_GOB,
@@ -170,6 +172,7 @@ static const struct {
 	{ "sky",	"Beneath a Steel Sky" },
 	{ "sword1",	"Broken Sword 1" },
 	{ "sword2",	"Broken Sword 2" },
+	{ "cine",	"Delphine Cinematique v1.0" },
 	{ "queen",	"Flight of the Amazon Queen" },
 	{ "lure",	"Lure of the Tempress" },
 	{ "gob",	"Gobliiins" },

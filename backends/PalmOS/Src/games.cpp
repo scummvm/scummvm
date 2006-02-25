@@ -69,7 +69,8 @@ static Err GamUpdateList() {
 
 				MemSet(&gitCur, sizeof(GameInfoType), 0);
 
-				if (version == itemVersion_351 ||
+				if (version == itemVersion_352 ||
+					version == itemVersion_351 ||
 					version == itemVersion_350 ||
 					version == itemVersion_340 ||
 					version == itemVersion_330 ||
@@ -172,6 +173,13 @@ static Err GamUpdateList() {
 								gitCur.engine = ENGINE_SIMON;
 							else if (gitCur.engine == ENGINE_SIMON)
 								gitCur.engine = ENGINE_SCUMM;
+						}
+						
+						if (version <= itemVersion_352) {
+							if (gitCur.engine >= ENGINE_CINE)	// newly added engine
+								gitCur.engine++;
+							
+							gitCur.platform++;
 						}
 
 						if (gitCur.musicInfo.volume.palm > 100)
