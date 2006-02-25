@@ -1107,7 +1107,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ NULL, NULL, kGenAsIs }
 };
 
-static bool applySubstResFileName(const SubstResFileNames &subst, char *buf, int bufsize, const char *ext, int num) {
+static void applySubstResFileName(const SubstResFileNames &subst, char *buf, int bufsize, const char *ext, int num) {
 	switch (subst.genMethod) {
 	case kGenMac:
 	case kGenMacNoParens:
