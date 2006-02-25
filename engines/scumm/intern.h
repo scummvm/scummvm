@@ -225,7 +225,7 @@ public:
 	ScummEngine_v3old(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], int substResFileNameIndex);
 
 protected:
-	virtual void readResTypeList(int id, uint32 tag, const char *name);
+	virtual void readResTypeList(int id, const char *name);
 	virtual void readIndexFile();
 	virtual void loadRoomSubBlocks();
 	virtual void initRoomSubBlocks();

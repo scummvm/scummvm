@@ -450,7 +450,7 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		break;
 
 	case MKID_BE('DRSC'):		// Used by: COMI
-		readResTypeList(rtRoomScripts, MKID('RMSC'), "room script");
+		readResTypeList(rtRoomScripts, "room script");
 		break;
 
 	default:
@@ -464,15 +464,15 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
 	case MKID_BE('DIRI'):
-		readResTypeList(rtRoomImage, MKID('RMIM'), "room image");
+		readResTypeList(rtRoomImage, "room image");
 		break;
 
 	case MKID_BE('DIRM'):
-		readResTypeList(rtImage, MKID('AWIZ'), "images");
+		readResTypeList(rtImage, "images");
 		break;
 
 	case MKID_BE('DIRT'):
-		readResTypeList(rtTalkie, MKID('TLKE'), "talkie");
+		readResTypeList(rtTalkie, "talkie");
 		break;
 
 	case MKID_BE('DLFL'):
@@ -509,7 +509,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	switch (blocktype) {
 	case MKID_BE('DCHR'):
 	case MKID_BE('DIRF'):
-		readResTypeList(rtCharset, MKID('CHAR'), "charset");
+		readResTypeList(rtCharset, "charset");
 		break;
 
 	case MKID_BE('DOBJ'):
@@ -543,17 +543,17 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID_BE('DROO'):
 	case MKID_BE('DIRR'):
-		readResTypeList(rtRoom, MKID('ROOM'), "room");
+		readResTypeList(rtRoom, "room");
 		break;
 
 	case MKID_BE('DSCR'):
 	case MKID_BE('DIRS'):
-		readResTypeList(rtScript, MKID('SCRP'), "script");
+		readResTypeList(rtScript, "script");
 		break;
 
 	case MKID_BE('DCOS'):
 	case MKID_BE('DIRC'):
-		readResTypeList(rtCostume, MKID('COST'), "costume");
+		readResTypeList(rtCostume, "costume");
 		break;
 
 	case MKID_BE('MAXS'):
@@ -563,7 +563,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKID_BE('DIRN'):
 	case MKID_BE('DSOU'):
-		readResTypeList(rtSound, MKID('SOUN'), "sound");
+		readResTypeList(rtSound, "sound");
 		break;
 
 	case MKID_BE('AARY'):
@@ -580,11 +580,11 @@ void ScummEngine::readArrayFromIndexFile() {
 	error("readArrayFromIndexFile() not supported in pre-V6 games");
 }
 
-void ScummEngine::readResTypeList(int id, uint32 tag, const char *name) {
+void ScummEngine::readResTypeList(int id, const char *name) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s,%s,%s)", resTypeFromId(id), tag2str(TO_BE_32(tag)), name);
+	debug(9, "readResTypeList(%s,%s)", resTypeFromId(id), name);
 
 	if (_game.version == 8)
 		num = _fileHandle->readUint32LE();

@@ -100,19 +100,19 @@ void ScummEngine_v4::readIndexFile() {
 			break;
 
 		case 0x5230:	// 'R0'
-			readResTypeList(rtRoom, MKID('ROOM'), "room");
+			readResTypeList(rtRoom, "room");
 			break;
 
 		case 0x5330:	// 'S0'
-			readResTypeList(rtScript, MKID('SCRP'), "script");
+			readResTypeList(rtScript, "script");
 			break;
 
 		case 0x4E30:	// 'N0'
-			readResTypeList(rtSound, MKID('SOUN'), "sound");
+			readResTypeList(rtSound, "sound");
 			break;
 
 		case 0x4330:	// 'C0'
-			readResTypeList(rtCostume, MKID('COST'), "costume");
+			readResTypeList(rtCostume, "costume");
 			break;
 
 		case 0x4F30:	// 'O0'

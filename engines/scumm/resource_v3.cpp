@@ -30,11 +30,11 @@ namespace Scumm {
 
 extern const char *resTypeFromId(int id);
 
-void ScummEngine_v3old::readResTypeList(int id, uint32 tag, const char *name) {
+void ScummEngine_v3old::readResTypeList(int id, const char *name) {
 	int num;
 	int i;
 
-	debug(9, "readResTypeList(%s,%s,%s)", resTypeFromId(id), tag2str(TO_BE_32(tag)), name);
+	debug(9, "readResTypeList(%s,%s)", resTypeFromId(id), name);
 
 	num = _fileHandle->readByte();
 
@@ -86,10 +86,10 @@ void ScummEngine_v3old::readIndexFile() {
 
 	_fileHandle->readUint16LE(); /* version magic number */
 	readGlobalObjects();
-	readResTypeList(rtRoom, MKID('ROOM'), "room");
-	readResTypeList(rtCostume, MKID('COST'), "costume");
-	readResTypeList(rtScript, MKID('SCRP'), "script");
-	readResTypeList(rtSound, MKID('SOUN'), "sound");
+	readResTypeList(rtRoom, "room");
+	readResTypeList(rtCostume, "costume");
+	readResTypeList(rtScript, "script");
+	readResTypeList(rtSound, "sound");
 
 	closeRoom();
 }

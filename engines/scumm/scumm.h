@@ -745,7 +745,7 @@ protected:
 	bool openResourceFile(const char *filename, byte encByte);
 
 	void loadPtrToResource(int type, int i, const byte *ptr);
-	virtual void readResTypeList(int id, uint32 tag, const char *name);
+	virtual void readResTypeList(int id, const char *name);
 	void allocResTypeData(int id, uint32 tag, int num, const char *name, int mode);
 //	byte *createResource(int type, int index, uint32 size);
 	int loadResource(int type, int i);
