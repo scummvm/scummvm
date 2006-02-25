@@ -433,8 +433,8 @@ extern "C" int main(int argc, char *argv[]) {
 	}
 
 	// Quick preparse of command-line, looking for special debug flags
-	for (int i = argc - 1; i >= 1; i--) {
-		s = argv[i];
+	for (int ii = argc - 1; ii >= 1; ii--) {
+		s = argv[ii];
 		bool found = !strncmp(s, "--debugflags", 12);
 
 		if (found) {
