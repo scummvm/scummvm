@@ -165,12 +165,10 @@ bool ScummEngine::loadState(int slot, bool compat) {
 
 	// Since version 52 a thumbnail is saved directly after the header.
 	if (hdr.ver >= VER(52)) {
-		uint32 type;
-		in->read(&type, 4);
-
+		uint32 type = in->readUint32BE();
 		// Check for the THMB header. Also, work around a bug which caused
 		// the chunk type (incorrectly) to be written in LE on LE machines.
-		if (! (type == MKID('THMB') || (hdr.ver < VER(55) && type == MKID('BMHT')))){
+		if (! (type == MKID_BE('THMB') || (hdr.ver < VER(55) && type == MKID_BE('BMHT')))){
 			warning("Can not load thumbnail");
 			delete in;
 			return false;
@@ -521,12 +519,11 @@ bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 		return false;
 	}
 
-	uint32 type;
-	in->read(&type, 4);
+	uint32 type = in->readUint32BE();
 
 	// Check for the THMB header. Also, work around a bug which caused
 	// the chunk type (incorrectly) to be written in LE on LE machines.
-	if (! (type == MKID('THMB') || (hdr.ver < VER(55) && type == MKID('BMHT')))){
+	if (! (type == MKID_BE('THMB') || (hdr.ver < VER(55) && type == MKID_BE('BMHT')))){
 		delete in;
 		return false;
 	}
@@ -546,8 +543,8 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	memset(stuff, 0, sizeof(InfoStuff));
 
 	SaveInfoSection section;
-	file->read(&section.type, 4);
-	if (section.type != MKID('INFO')) {
+	section.type = file->readUint32BE();
+	if (section.type != MKID_BE('INFO')) {
 		return false;
 	}
 
@@ -594,7 +591,7 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 
 void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	SaveInfoSection section;
-	section.type = MKID('INFO');
+	section.type = MKID_BE('INFO');
 	section.version = INFOSECTION_VERSION;
 	section.size = sizeof(SaveInfoSection);
 
@@ -607,7 +604,7 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	section.date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
 	section.time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
 
-	file->write(&section.type, 4);
+	file->writeUint32BE(section.type);
 	file->writeUint32BE(section.version);
 	file->writeUint32BE(section.size);
 	file->writeUint32BE(section.timeTValue);

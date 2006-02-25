@@ -56,11 +56,12 @@ inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
 
 Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 	ThumbnailHeader header;
-	file->read(&header.type, 4);
+
+	header.type = file->readUint32BE();
 	// We also accept the bad 'BMHT' header here, for the sake of compatibility
 	// with some older savegames which were written incorrectly due to a bug in
 	// ScummVM which wrote the thumb header type incorrectly on LE systems.
-	if (header.type != MKID('THMB') && header.type != MKID('BMHT'))
+	if (header.type != MKID_BE('THMB') && header.type != MKID_BE('BMHT'))
 		return 0;
 
 	header.size = file->readUint32BE();
@@ -109,7 +110,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 		thumb.create(kThumbnailWidth, kThumbnailHeight2, sizeof(uint16));
 
 	ThumbnailHeader header;
-	header.type = MKID('THMB');
+	header.type = MKID_BE('THMB');
 #if defined(PALMOS_ARM) || defined(__GP32__)
 	// sizeof(header) is hardcoded here, because the compiler add padding to
 	// have a 4byte aligned struct and there is no easy way to pack it.
@@ -122,7 +123,7 @@ void ScummEngine::saveThumbnail(Common::OutSaveFile *file) {
 	header.height = thumb.h;
 	header.bpp = thumb.bytesPerPixel;
 
-	file->write(&header.type, 4);
+	file->writeUint32BE(header.type);
 	file->writeUint32BE(header.size);
 	file->writeByte(header.version);
 	file->writeUint16BE(header.width);
