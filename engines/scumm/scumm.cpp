@@ -1215,21 +1215,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Clean _substResFileNameBundle
 	memset(&_substResFileNameBundle, 0, sizeof(_substResFileNameBundle));
 
-	// Check for unknown MD5
-	char md5str[32+1];
-	for (int j = 0; j < 16; j++) {
-		sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
-	}
-	const MD5Table *elem;
-#ifdef PALMOS_68K
-	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
-#else
-	uint32 arraySize = ARRAYSIZE(md5table) - 1;
-#endif
-	elem = (const MD5Table *)bsearch(md5str, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
-	if (!elem)
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
-
 	_defaultFTSentenceScript = -1;
 	_buggyFTSentenceScript = -1;
 
@@ -3589,6 +3574,17 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	if (game.platform == Common::kPlatformFMTowns && game.version == 3) {
 		game.midi = MDT_TOWNS;
 	}
+
+	// Check for unknown MD5 checksums, and print a message if we encounter one.
+	const MD5Table *elem;
+#ifdef PALMOS_68K
+	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
+#else
+	uint32 arraySize = ARRAYSIZE(md5table) - 1;
+#endif
+	elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
+	if (!elem)
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
 
 	// Finally, we have massaged the GameSettings to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
