@@ -548,8 +548,8 @@ void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int 
 			}
 			palPtr = imagePal;
 		}
-		int h = r1.height() + 1;
-		int w = r1.width() + 1;
+		int h = r1.height();
+		int w = r1.width();
 		src += r1.left + r1.top * srcw;
 		dst += r2.left + r2.top * dstw;
 		while (h--) {
