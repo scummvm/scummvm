@@ -2,6 +2,7 @@
 #include "palmdefs.h"
 #include "args.h"
 #include "pace.h"
+#include "endianutils.h"
 
 Char **ArgsInit() {
 	// first 4 bytes keep the real address of the chunk
