@@ -1117,15 +1117,48 @@ void OSystem_SDL::setShakePos(int shake_pos) {
 void OSystem_SDL::showOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
+	int x, y;
+
+	if (_overlayVisible)
+		return;
+
 	_overlayVisible = true;
+
+	// Since resolution could change, put mouse to adjusted position
+	// Fixes bug #1349059
+	x = _mouseCurState.x * _overlayScale;
+	y = _mouseCurState.y * _overlayScale;
+
+	if (_adjustAspectRatio)
+		y = real2Aspect(y);
+
+	warpMouse(x, y);
+
 	clearOverlay();
 }
 
 void OSystem_SDL::hideOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
+	if (!_overlayVisible)
+		return;
+
+	int x, y;
+
 	_overlayVisible = false;
+
+	// Since resolution could change, put mouse to adjusted position
+	// Fixes bug #1349059
+	x = _mouseCurState.x / _overlayScale;
+	y = _mouseCurState.y / _overlayScale;
+
+	if (_adjustAspectRatio)
+		y = real2Aspect(y);
+
+	warpMouse(x, y);
+
 	clearOverlay();
+
 	_forceFull = true;
 }
 
