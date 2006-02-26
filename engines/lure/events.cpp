@@ -32,7 +32,7 @@ Mouse &Mouse::getReference() {
 	return *int_mouse; 
 }
 
-Mouse::Mouse(OSystem &system) : _system(system) {
+Mouse::Mouse() {
 	int_mouse = this;
 
 	_lButton = false; 
@@ -99,11 +99,12 @@ void Mouse::setPosition(int newX, int newY) {
 }
 
 void Mouse::waitForRelease() {
+	OSystem &system = System::getReference();
 	Events &e = Events::getReference();
 
 	do {
 		e.pollEvent();
-		_system.delayMillis(20);
+		system.delayMillis(20);
 	} while (!e.quitFlag && (lButton() || rButton()));
 }
 
@@ -111,7 +112,7 @@ void Mouse::waitForRelease() {
 
 static Events *int_events = NULL;
 
-Events::Events(OSystem &system) : _system(system) {
+Events::Events() {
 	int_events = this;
 	quitFlag = false;
 }
@@ -148,6 +149,7 @@ bool Events::pollEvent() {
 }
 
 void Events::waitForPress() {
+	OSystem &system = System::getReference();
 	bool keyButton = false;
 	while (!keyButton) {
 		if (pollEvent()) {
@@ -159,7 +161,7 @@ void Events::waitForPress() {
 				Mouse::getReference().waitForRelease();				
 			}
 		}
-		_system.delayMillis(20);
+		system.delayMillis(20);
 	}
 }
 

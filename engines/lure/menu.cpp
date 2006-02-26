@@ -412,6 +412,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				break;
 			}
 		}
+		system.delayMillis(20);
 	}
 
 	mouse.setPosition(oldX, oldY);

@@ -251,8 +251,8 @@ int LureEngine::init(GameDetector &detector) {
 	_resources = new Resources();
 	_strings = new StringData();
 	_screen = new Screen(*_system);
-	_mouse = new Mouse(*_system);
-	_events = new Events(*_system);
+	_mouse = new Mouse();
+	_events = new Events();
 	_menu = new Menu();
 	Surface::initialise();
 	_room = new Room();
