@@ -1254,12 +1254,6 @@ int ScummEngine::init(GameDetector &detector) {
 	scummInit();
 	initScummVars();
 
-	if (VAR_DEBUGMODE != 0xFF) {
-		VAR(VAR_DEBUGMODE) = _debugMode;
-		if (_game.heversion >= 80 && _debugMode)
-			VAR(85) = 1;
-	}
-
 	if (_imuse) {
 		_imuse->setBase(res.address[rtSound]);
 	}

@@ -726,6 +726,12 @@ void ScummEngine::initScummVars() {
 		VAR(VAR_ROOM_HEIGHT) = _screenHeight;
 	}
 
+	if (VAR_DEBUGMODE != 0xFF) {
+		VAR(VAR_DEBUGMODE) = _debugMode;
+		if (_game.heversion >= 80 && _debugMode)
+			VAR(85) = 1;
+	}
+
 	if (VAR_FADE_DELAY != 0xFF)
 		VAR(VAR_FADE_DELAY) = 3;
 
