@@ -711,15 +711,13 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 	if (!_initialized && (cmd || param))
 		return -1;
 
-#ifdef IMUSE_DEBUG
 	{
 		char string[128];
 		sprintf(string, "doCommand - %d (%d/%d)", a[0], (int)param, (int)cmd);
 		for (i = 1; i < numargs; ++i)
 			sprintf(string + strlen(string), ", %d", a[i]);
-		debug(0, string);
+		debugC(DEBUG_IMUSE, string);
 	}
-#endif
 
 	if (param == 0) {
 		switch (cmd) {

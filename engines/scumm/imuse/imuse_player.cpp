@@ -129,9 +129,7 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 		return false;
 	}
 
-#ifdef IMUSE_DEBUG
-	debug(0, "Starting music %d", sound);
-#endif
+	debugC(DEBUG_IMUSE, "Starting music %d", sound);
 	return true;
 }
 
@@ -153,10 +151,7 @@ bool Player::isFadingOut() const {
 void Player::clear() {
 	if (!_active)
 		return;
-
-#ifdef IMUSE_DEBUG
-	debug(0, "Stopping music %d", _id);
-#endif
+	debugC(DEBUG_IMUSE, "Stopping music %d", _id);
 
 	if (_parser) {
 		_parser->unloadMusic();
@@ -386,7 +381,6 @@ void Player::sysEx(byte *p, uint16 len) {
 	if (len >= sizeof(buf) * 2)
 		return;
 
-#ifdef IMUSE_DEBUG
 	if (!_scanning) {
 		for (a = 0; a < len + 1 && a < 19; ++a) {
 			sprintf((char *)&buf[a*3], " %02X", p[a]);
@@ -396,9 +390,8 @@ void Player::sysEx(byte *p, uint16 len) {
 			++a;
 		} // end if
 		buf[a*3] = '\0';
-		debug(0, "[%02d] SysEx:%s", _id, buf);
+		debugC(DEBUG_IMUSE, "[%02d] SysEx:%s", _id, buf);
 	}
-#endif
 
 	switch (code = *p++) {
 	case 0:
