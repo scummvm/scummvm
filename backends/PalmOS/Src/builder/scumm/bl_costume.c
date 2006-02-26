@@ -37,9 +37,8 @@ static void addCostume_smallCostumeScaleTable() {
 	0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE,
 	0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE
 };
-	writeRecord(smallCostumeScaleTable, sizeof(smallCostumeScaleTable), GBVARS_COSTSCALETABLE_INDEX , GBVARS_SCUMM);
+	writeRecord(smallCostumeScaleTable, sizeof(smallCostumeScaleTable), GBVARS_SMALLSCALETABLE_INDEX , GBVARS_SCUMM);
 }
-
 void addCostume() {
 	addCostume_smallCostumeScaleTable();
 }
