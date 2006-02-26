@@ -1252,7 +1252,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		return 0;
 	}
 
-	// We now want to alculate the MD5 of the games detection file, so that we
+	// We now want to calculate the MD5 of the games detection file, so that we
 	// can store it in savegames etc..
 	const char *gameid = g->gameid;
 	char detectName[256], tempName[256], gameMD5[32+1];
@@ -1305,19 +1305,18 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			game.platform = Common::kPlatformMacintosh;
 	}
 
-	// Compute the MD5 of the file, and (if we succeeded) store a hex version
-	// of it in gameMD5 (useful to print it to the user in messages).
-	if (Common::md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
-		for (int j = 0; j < 16; j++) {
-			sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
-		}
-	}
-
 	// Check if the MD5 was overwritten, if so, use that in the subsequent search
 	const char *md5;
 	if (ConfMan.hasKey("target_md5")) {
 		md5 = ConfMan.get("target_md5").c_str();
 	} else {
+		// Compute the MD5 of the file, and (if we succeeded) store a hex version
+		// of it in gameMD5 (useful to print it to the user in messages).
+		if (Common::md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+			for (int j = 0; j < 16; j++) {
+				sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
+			}
+		}
 		md5 = gameMD5;
 	}
 
