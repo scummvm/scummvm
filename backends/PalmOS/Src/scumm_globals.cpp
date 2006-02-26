@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,10 +14,9 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $URL$
- * $Id$
+ * $Header: /cvsroot/scummvm/scummvm/backends/PalmOS/Src/scumm_globals.cpp,v 1.10 2005/01/01 16:08:45 fingolfin Exp $
  *
  */
 #include <PalmOS.h>
@@ -32,15 +31,18 @@ static void GlbInitAll() {
 	}
 	if (gVars->globals[GBVARS_ENGINE]) {
 #ifndef DISABLE_SCUMM
+#	ifndef DISABLE_SCUMM_7_8
 		CALL_INIT(DimuseTables)
-		CALL_INIT(Akos)
 		CALL_INIT(DimuseCodecs)
 		CALL_INIT(Codec47)
+#	endif
+		CALL_INIT(Akos)
 		CALL_INIT(Gfx)
 		CALL_INIT(Dialogs)
 		CALL_INIT(Charset)
 		CALL_INIT(Costume)
 		CALL_INIT(PlayerV2)
+		CALL_INIT(Scumm_md5table)
 #endif
 #ifndef DISABLE_SIMON
 		CALL_INIT(Simon_Simon)
@@ -66,18 +68,22 @@ static void GlbInitAll() {
 static void GlbReleaseAll() {
 	if (gVars->globals[GBVARS_COMMON]) {
 		CALL_RELEASE(ScummFont)
+
 	}
 	if (gVars->globals[GBVARS_SCUMM]) {
 #ifndef DISABLE_SCUMM
+#	ifndef DISABLE_SCUMM_7_8
 		CALL_RELEASE(DimuseTables)
-		CALL_RELEASE(Akos)
 		CALL_RELEASE(DimuseCodecs)
 		CALL_RELEASE(Codec47)
+#	endif
+		CALL_RELEASE(Akos)
 		CALL_RELEASE(Gfx)
 		CALL_RELEASE(Dialogs)
 		CALL_RELEASE(Charset)
 		CALL_RELEASE(Costume)
 		CALL_RELEASE(PlayerV2)
+		CALL_RELEASE(Scumm_md5table)
 #endif
 #ifndef DISABLE_SIMON
 		CALL_RELEASE(Simon_Simon)
@@ -114,8 +120,8 @@ static DmOpenRef GlbOpenInternal(const Char *nameP) {
 }
 
 void GlbOpen() {
-	gVars->globals[GBVARS_COMMON]= GlbOpenInternal("Glbs::Common");
-	gVars->globals[GBVARS_SCUMM] = GlbOpenInternal("Glbs::Engine");
+	gVars->globals[GBVARS_COMMON] = GlbOpenInternal("Glbs::Common");
+	gVars->globals[GBVARS_ENGINE] = GlbOpenInternal("Glbs::Engine");
 	GlbInitAll();
 }
 

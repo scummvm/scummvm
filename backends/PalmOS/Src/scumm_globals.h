@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
  * Copyright (C) 2001  Ludvig Strigeus
- * Copyright (C) 2001-2006 The ScummVM project
+ * Copyright (C) 2001-2005 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,10 +14,9 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $URL$
- * $Id$
+ * $Header: /cvsroot/scummvm/scummvm/backends/PalmOS/Src/scumm_globals.h,v 1.15 2005/01/01 16:08:45 fingolfin Exp $
  *
  */
 
@@ -48,7 +47,6 @@ void GlbClose();
 
 // Common stuffs
 PROTO_GLOBALS(ScummFont)
-PROTO_GLOBALS(NewFont)
 
 // Scumm stuffs
 #ifndef DISABLE_SCUMM
@@ -61,6 +59,7 @@ PROTO_GLOBALS(Dialogs)
 PROTO_GLOBALS(Charset)
 PROTO_GLOBALS(Costume)
 PROTO_GLOBALS(PlayerV2)
+PROTO_GLOBALS(Scumm_md5table)
 #endif
 // Simon stuffs
 #ifndef DISABLE_SIMON
