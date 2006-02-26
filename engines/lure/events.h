@@ -32,11 +32,12 @@ namespace Lure {
 
 class Mouse {
 private:
+	OSystem &_system;
 	uint8 _cursorNum;
 	int16 _x, _y;
 	bool _lButton, _rButton;
 public:
-	Mouse();
+	Mouse(OSystem &system);
 	~Mouse();
 	static Mouse &getReference(); 
 	void handleEvent(OSystem::Event event);
@@ -56,11 +57,12 @@ public:
 
 class Events {
 private:
+	OSystem &_system;
 	OSystem::Event _event;
 public:
 	bool quitFlag;
 
-	Events();
+	Events(OSystem &system);
 	static Events &getReference();
 
 	bool pollEvent();
