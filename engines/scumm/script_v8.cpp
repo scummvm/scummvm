@@ -820,13 +820,6 @@ void ScummEngine_v8::o8_roomOps() {
 		a = pop();
 		setPalColor(d, a, b, c);
 		break;
-	case 0x55:		// SO_ROOM_INTENSITY Set room intensity
-		// Not used in CMI???
-		c = pop();
-		b = pop();
-		a = pop();
-		darkenPalette(a, a, a, b, c);
-		break;
 	case 0x57:		// SO_ROOM_FADE Fade room
 		a = pop();
 		if (a) {
@@ -850,10 +843,6 @@ void ScummEngine_v8::o8_roomOps() {
 		b = pop();
 		a = pop();
 		palManipulateInit(a, b, c, d);
-		break;
-	case 0x5A:		// SO_ROOM_CYCLE_SPEED Set palette cycling speed
-	case 0x5B:		// SO_ROOM_COPY_PALETTE Copy palette
-		error("o8_roomOps: unimplemented case %d", subOp);
 		break;
 	case 0x5C:		// SO_ROOM_NEW_PALETTE New palette
 		a = pop();
