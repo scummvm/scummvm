@@ -115,16 +115,16 @@ ErrJumpBuf stdlib_errJumpBuf;
 #define ERR_MAGIC	0xDADA
 
 void exit(Int16 status) {
-#if (defined(PALMOS_ARM) && defined(COMPILE_ZODIAC))
-	SysEventType event;
-	event.eType = sysEventKeyDownEvent;
-#else
 	EventType event;
 	event.eType = keyDownEvent;
-#endif
+
 	event.data.keyDown.chr = vchrLaunch;
 	event.data.keyDown.modifiers = commandKeyMask;
+#ifdef PALMOS_ARM
+	SysEventAddUniqueToQueue(&event, 0, true);
+#else
 	EvtAddUniqueEventToQueue(&event, 0, true);
+#endif
 
 	ErrLongJump(stdlib_errJumpBuf, status == 0 ? 0xDADA : status);
 }
