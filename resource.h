@@ -104,7 +104,7 @@ public:
 
 	ResourceLoader();
 	ResourceLoader(const ResourceLoader &);
-	~ResourceLoader() { }
+	~ResourceLoader();
 	const Lab *findFile(const char *filename) const;
 private:
 
