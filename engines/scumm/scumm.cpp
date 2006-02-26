@@ -1391,12 +1391,12 @@ void ScummEngine::scummInit() {
 		_verbs[i].key = 0;
 	}
 
-	if (_game.version == 7) {
+	if (_game.features & GF_NEW_CAMERA) {
 		VAR(VAR_CAMERA_THRESHOLD_X) = 100;
 		VAR(VAR_CAMERA_THRESHOLD_Y) = 70;
 		VAR(VAR_CAMERA_ACCEL_X) = 100;
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
-	} else if (!(_game.features & GF_NEW_CAMERA)) {
+	} else {
 		if (_game.platform == Common::kPlatformNES) {
 			camera._leftTrigger = 6;	// 6
 			camera._rightTrigger = 21;	// 25
