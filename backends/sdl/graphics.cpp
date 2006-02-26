@@ -1129,9 +1129,6 @@ void OSystem_SDL::showOverlay() {
 	x = _mouseCurState.x * _overlayScale;
 	y = _mouseCurState.y * _overlayScale;
 
-	if (_adjustAspectRatio)
-		y = real2Aspect(y);
-
 	warpMouse(x, y);
 
 	clearOverlay();
@@ -1151,9 +1148,6 @@ void OSystem_SDL::hideOverlay() {
 	// Fixes bug #1349059
 	x = _mouseCurState.x / _overlayScale;
 	y = _mouseCurState.y / _overlayScale;
-
-	if (_adjustAspectRatio)
-		y = real2Aspect(y);
 
 	warpMouse(x, y);
 
@@ -1296,6 +1290,9 @@ void OSystem_SDL::setMousePos(int x, int y) {
 }
 
 void OSystem_SDL::warpMouse(int x, int y) {
+	if (_adjustAspectRatio)
+		y = real2Aspect(y);
+
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (_overlayVisible)
 			SDL_WarpMouse(x * _scaleFactor / _overlayScale, y * _scaleFactor / _overlayScale);
