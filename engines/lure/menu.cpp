@@ -365,13 +365,13 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 			refreshFlag = false;
 		}
 
-		if (e.pollEvent()) {
+		while (e.pollEvent()) {
 			if (e.quitFlag) {
 				selectedIndex = 0xffff;
-				break;
+				goto bail_out;
 			}
 
-			if (e.type() == OSystem::EVENT_KEYDOWN) {
+			else if (e.type() == OSystem::EVENT_KEYDOWN) {
 				byte ch = e.event().kbd.ascii;
 				uint16 keycode = e.event().kbd.keycode;
 
@@ -383,38 +383,46 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					++selectedIndex;
 					refreshFlag = true;
 				} else if ((ch == '\xd') || (keycode == 0x10f)) {
-					break;
+					goto bail_out;
 				} else if (ch == '\x1b') {
 					selectedIndex = 0xffff;
-					break;
-				}
-
-			} else if (e.type() == OSystem::EVENT_MOUSEMOVE) {
-				if ((mouse.y() < yMiddle) && (selectedIndex > 0) && 
-					(yMiddle-mouse.y() >= POPMENU_CHANGE_SENSITIVITY)) {
-					--selectedIndex;
-					mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
-					refreshFlag = true;
-				} else if ((mouse.y() > yMiddle) && (selectedIndex < numEntries - 1) &&
-					(mouse.y()-yMiddle >= POPMENU_CHANGE_SENSITIVITY)) {
-					++selectedIndex;
-					mouse.setPosition(FULL_SCREEN_WIDTH/2, yMiddle);
-					refreshFlag = true;
+					goto bail_out;
 				}
 
 			} else if (e.type() == OSystem::EVENT_LBUTTONDOWN) {
 				mouse.waitForRelease();
-				break;
+				goto bail_out;
 
 			} else if (e.type() == OSystem::EVENT_RBUTTONDOWN) {
 				mouse.waitForRelease();
 				selectedIndex = 0xffff;
-				break;
+				goto bail_out;
 			}
 		}
+
+		// Warping the mouse to "neutral" even if the top/bottom menu
+		// entry has been reached has both pros and cons. It makes the
+		// menu behave a bit more sensibly, but it also makes it harder
+		// to move the mouse pointer out of the ScummVM window.
+
+		if (mouse.y() < yMiddle - POPMENU_CHANGE_SENSITIVITY) {
+			if (selectedIndex > 0) {
+				--selectedIndex;
+				refreshFlag = true;
+			}
+			mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
+		} else if (mouse.y() > yMiddle + POPMENU_CHANGE_SENSITIVITY) {
+			if (selectedIndex < numEntries - 1) {
+				++selectedIndex;
+				refreshFlag = true;
+			}
+			mouse.setPosition(FULL_SCREEN_WIDTH / 2, yMiddle);
+		}
+
 		system.delayMillis(20);
 	}
 
+bail_out:
 	mouse.setPosition(oldX, oldY);
 	mouse.cursorOn();
 	screen.update();
