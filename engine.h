@@ -104,6 +104,7 @@ public:
 		return _actors.end();
 	}
 	void registerActor(Actor *a) { _actors.push_back(a); }
+	void killActor(Actor *a) { _actors.remove(a); }
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *selectedActor() { return _selectedActor; }
 

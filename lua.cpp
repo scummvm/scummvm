@@ -32,6 +32,7 @@
 #include "font.h"
 #include "primitives.h"
 #include "savegame.h"
+#include "lipsynch.h"
 
 #include "imuse/imuse.h"
 
@@ -41,6 +42,8 @@
 
 extern Imuse *g_imuse;
 
+static int tagSTAT, tagACTR, tagCOLR, tagFONT, tagVBUF, tagPRIM, tagTEXT;
+
 #define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 #define DEBUG_FUNCTION()       debugFunction("Function", __FUNCTION__)
 
@@ -49,35 +52,35 @@ static void stubWarning(char *funcName);
 
 static inline bool isObject(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagSTAT)
 		return true;
 	return false;
 }
 
 static inline bool isActor(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('ACTR'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagACTR)
 		return true;
 	return false;
 }
 
 static inline bool isColor(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('COLR'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagCOLR)
 		return true;
 	return false;
 }
 
 static inline bool isFont(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('FONT'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagFONT)
 		return true;
 	return false;
 }
 
 static inline bool isBitmapObject(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('VBUF'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagVBUF)
 		return true;
 	return false;
 }
@@ -85,7 +88,7 @@ static inline bool isBitmapObject(int num) {
 // Helper functions to ensure the arguments we get are what we expect
 static inline ObjectState *check_object(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagSTAT)
 		return static_cast<ObjectState *>(lua_getuserdata(param));
 	luaL_argerror(num, "objectstate expected");
 	return NULL;
@@ -93,7 +96,7 @@ static inline ObjectState *check_object(int num) {
 
 static inline Actor *check_actor(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('ACTR'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagACTR)
 		return static_cast<Actor *>(lua_getuserdata(param));
 	luaL_argerror(num, "actor expected");
 	return NULL;
@@ -101,7 +104,7 @@ static inline Actor *check_actor(int num) {
 
 static inline Color *check_color(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('COLR'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagCOLR)
 		return static_cast<Color *>(lua_getuserdata(param));
 	luaL_argerror(num, "color expected");
 	return NULL;
@@ -109,7 +112,7 @@ static inline Color *check_color(int num) {
 
 static inline Font *check_font(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('FONT'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagFONT)
 		return static_cast<Font *>(lua_getuserdata(param));
 	luaL_argerror(num, "font expected");
 	return NULL;
@@ -117,7 +120,7 @@ static inline Font *check_font(int num) {
 
 static inline PrimitiveObject *check_primobject(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('PRIM'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagPRIM)
 		return static_cast<PrimitiveObject *>(lua_getuserdata(param));
 	luaL_argerror(num, "primitive (rectangle) expected");
 	return NULL;
@@ -125,7 +128,7 @@ static inline PrimitiveObject *check_primobject(int num) {
 
 static inline TextObject *check_textobject(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('TEXT'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagTEXT)
 		return static_cast<TextObject *>(lua_getuserdata(param));
 	luaL_argerror(num, "textobject expected");
 	return NULL;
@@ -133,7 +136,7 @@ static inline TextObject *check_textobject(int num) {
 
 static inline Bitmap *check_bitmapobject(int num) {
 	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('VBUF'))
+	if (lua_isuserdata(param) && lua_tag(param) == tagVBUF)
 		return static_cast<Bitmap *>(lua_getuserdata(param));
 	luaL_argerror(num, "image object expected");
 	return NULL;
@@ -292,6 +295,10 @@ static void CheckForFile() {
 
 // Color functions
 
+static void gc_color() {
+	delete check_color(1);
+}
+
 static unsigned char clamp_color(int c) {
 	if (c < 0)
 		return 0;
@@ -306,7 +313,7 @@ static void MakeColor() {
 	
 	DEBUG_FUNCTION();
 	c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
-	lua_pushusertag(c, MKID('COLR'));
+	lua_pushusertag(c, tagCOLR);
 }
 
 static void GetColorComponents() {
@@ -343,6 +350,12 @@ static void WriteRegistryValue() {
 
 // Actor functions
 
+static void gc_actor() {
+	Actor *actor = check_actor(1);
+	g_engine->killActor(actor);
+	delete actor;
+}
+
 static void LoadActor() {
 	const char *name;
 	
@@ -351,7 +364,7 @@ static void LoadActor() {
 		name = "<unnamed>";
 	else
 		name = luaL_check_string(1);
-	lua_pushusertag(new Actor(name), MKID('ACTR'));
+	lua_pushusertag(new Actor(name), tagACTR);
 }
 
 static void GetActorTimeScale() {
@@ -379,7 +392,7 @@ static void GetCameraActor() {
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: GetCameraActor");
 	act = g_engine->selectedActor();
-	lua_pushusertag(act, MKID('ACTR'));
+	lua_pushusertag(act, tagACTR);
 }
 
 static void SetSayLineDefaults() {
@@ -430,7 +443,7 @@ static void GetActorTalkColor() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	c = new Color(act->talkColor());
-	lua_pushusertag(c, MKID('COLR'));
+	lua_pushusertag(c, tagCOLR);
 }
 
 static void SetActorRestChore() {
@@ -1379,7 +1392,7 @@ static void GetVisibleThings() {
 		// Consider the active actor visible
 		if (sel == (*i) || sel->angleTo(*(*i)) < 90) {
 			lua_pushobject(result);
-			lua_pushusertag(*i, MKID('ACTR'));
+			lua_pushusertag(*i, tagACTR);
 			lua_pushnumber(1);
 			lua_settable();
 		}
@@ -2167,20 +2180,8 @@ void GetControlState() {
 		pushbool(g_driver->getControlState(num));
 }
 
-static void GetImage() {
-	char *bitmapName;
-	
-	DEBUG_FUNCTION();
-	bitmapName = luaL_check_string(1);
-	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
-	lua_pushusertag(image, MKID('VBUF'));
-}
-
-static void FreeImage() {
-	Bitmap *bitmap;
-
-	DEBUG_FUNCTION();
-	bitmap = check_bitmapobject(1);
+static void killBitmapPrimitives(Bitmap *bitmap)
+{
 	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
@@ -2188,8 +2189,33 @@ static void FreeImage() {
 			break;
 		}
 	}
+}
 
-	g_resourceloader->uncache(bitmap->getFilename());
+static void gc_bitmap() {
+	Bitmap *bitmap;
+
+	DEBUG_FUNCTION();
+	bitmap = check_bitmapobject(1);
+	killBitmapPrimitives(bitmap);
+	bitmap->luaGc();
+}
+
+static void GetImage() {
+	char *bitmapName;
+	
+	DEBUG_FUNCTION();
+	bitmapName = luaL_check_string(1);
+	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
+	image->luaRef();
+	lua_pushusertag(image, tagVBUF);
+}
+
+static void FreeImage() {
+	Bitmap *bitmap;
+
+	DEBUG_FUNCTION();
+	bitmap = check_bitmapobject(1);
+	killBitmapPrimitives(bitmap);
 }
 
 static void BlastImage() {
@@ -2268,6 +2294,12 @@ static void CleanBuffer() {
 static void Exit() {
 	DEBUG_FUNCTION();
 	g_driver->quit();
+}
+
+static void gc_textobject() {
+	TextObject *textObject = check_textobject(1);
+	g_engine->killTextObject(textObject);
+	delete textObject;
 }
 
 /* Check for an existing object by a certain name
@@ -2385,7 +2417,7 @@ static void MakeTextObject() {
 	textObject->createBitmap();
 	g_engine->registerTextObject(textObject);
          
-	lua_pushusertag(textObject, MKID('TEXT'));
+	lua_pushusertag(textObject, tagTEXT);
 	lua_pushnumber(textObject->getBitmapWidth());
 	lua_pushnumber(textObject->getBitmapHeight());
 }
@@ -2516,6 +2548,12 @@ static void PauseMovie() {
 	g_smush->pause(lua_isnil(lua_getparam(1)) != 0);
 }
 
+static void gc_primitive() {
+	PrimitiveObject *primitive = check_primobject(1);
+	g_engine->killPrimitiveObject(primitive);	
+	delete primitive;
+}
+
 static void PurgePrimitiveQueue() {
 	DEBUG_FUNCTION();
 	g_engine->killPrimitiveObjects();
@@ -2544,7 +2582,7 @@ static void DrawLine() {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
 		lua_Object colorObj = lua_gettable();
-		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == tagCOLR) {
 			color = static_cast<Color *>(lua_getuserdata(colorObj));
 		}
 	}
@@ -2552,7 +2590,7 @@ static void DrawLine() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createLine(x1, x2, y1, y2, color);
 	g_engine->registerPrimitiveObject(p);
-	lua_pushusertag(p, MKID('PRIM'));
+	lua_pushusertag(p, tagPRIM);
 }
 
 static void ChangePrimitive() {
@@ -2588,7 +2626,7 @@ static void ChangePrimitive() {
 	lua_pushobject(tableObj);
 	lua_pushstring("color");
 	lua_Object colorObj = lua_gettable();
-	if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+	if (lua_isuserdata(colorObj) && lua_tag(colorObj) == tagCOLR) {
 		color = static_cast<Color *>(lua_getuserdata(colorObj));
 		pmodify->setColor(color);
 	}
@@ -2621,7 +2659,7 @@ static void DrawRectangle() {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
 		lua_Object colorObj = lua_gettable();
-		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == tagCOLR) {
 			color = static_cast<Color *>(lua_getuserdata(colorObj));
 		}
 
@@ -2635,7 +2673,7 @@ static void DrawRectangle() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(x1, x2, y1, y2, color, filled);
 	g_engine->registerPrimitiveObject(p);
-	lua_pushusertag(p, MKID('PRIM'));
+	lua_pushusertag(p, tagPRIM);
 }
 
 static void BlastRect() {
@@ -2659,7 +2697,7 @@ static void BlastRect() {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
 		lua_Object colorObj = lua_gettable();
-		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID('COLR')) {
+		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == tagCOLR) {
 			color = static_cast<Color *>(lua_getuserdata(colorObj));
 		}
 
@@ -2700,6 +2738,12 @@ static void GetDiskFreeSpace() {
 }
 
 // Objectstate functions
+static void gc_object() {
+	ObjectState *state = check_object(1);
+	g_engine->currScene()->deleteObjectState(state);
+	delete state;
+}
+
 static void NewObjectState() {
 	ObjectState *state = NULL;
 	ObjectState::Position pos;
@@ -2719,7 +2763,7 @@ static void NewObjectState() {
 
 	state = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
 	g_engine->currScene()->addObjectState(state);
-	lua_pushusertag(state, MKID('STAT'));
+	lua_pushusertag(state, tagSTAT);
 }
 
 static void FreeObjectState() {
@@ -2735,7 +2779,7 @@ static void SendObjectToBack() {
 	
 	DEBUG_FUNCTION();
 	param = lua_getparam(1);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT')) {
+	if (lua_isuserdata(param) && lua_tag(param) == tagSTAT) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to top in list ?
 		g_engine->currScene()->moveObjectStateToFirst(state);
@@ -2747,7 +2791,7 @@ static void SendObjectToFront() {
 	
 	DEBUG_FUNCTION();
 	param = lua_getparam(1);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID('STAT')) {
+	if (lua_isuserdata(param) && lua_tag(param) == tagSTAT) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to last in list ?
 		g_engine->currScene()->moveObjectStateToLast(state);
@@ -2782,7 +2826,8 @@ static void ScreenShot() {
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
 	g_engine->setMode(mode);
 	if (screenshot) {
-		lua_pushusertag(screenshot, MKID('VBUF'));
+		screenshot->luaRef();
+		lua_pushusertag(screenshot, tagVBUF);
 	} else {
 		lua_pushnil();
 	}
@@ -2838,7 +2883,8 @@ static void GetSaveGameImage() {
 	savedState->readBlock(data, dataSize);
 	screenshot = new Bitmap(data, width, height, "screenshot");
 	if (screenshot) {
-		lua_pushusertag(screenshot, MKID('VBUF'));
+		screenshot->luaRef();
+		lua_pushusertag(screenshot, tagVBUF);
 	} else {
 		lua_pushnil();
 		error("Could not restore screenshot from file!");
@@ -2960,6 +3006,10 @@ static int RestoreCallback(int /*tag*/, int value, SaveGame * /*savedState*/) {
 	return value;
 }
 
+static void gc_font() {
+	check_font(1)->luaGc();
+}
+
 static void LockFont() {
 	lua_Object param1;
 	
@@ -2969,7 +3019,8 @@ static void LockFont() {
 		char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
-			lua_pushusertag(result, MKID('FONT'));
+			result->luaRef();
+			lua_pushusertag(result, tagFONT);
 		}
 	}
 }
@@ -3105,10 +3156,10 @@ static void debugFunction(char *debugMessage, const char *funcName) {
 		else if (lua_istable(lua_getparam(i)))
 			fprintf(output, "{...}");
 		else if (lua_isuserdata(lua_getparam(i))) {
-			if (lua_tag(lua_getparam(i)) == MKID('ACTR')) {
+			if (lua_tag(lua_getparam(i)) == tagACTR) {
 				Actor *a = check_actor(i);
 				fprintf(output, "<actor \"%s\">", a->name());
-			} else if (lua_tag(lua_getparam(i)) == MKID('COLR')) {
+			} else if (lua_tag(lua_getparam(i)) == tagCOLR) {
 				Color *c = check_color(i);
 				fprintf(output, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 			} else
@@ -3722,6 +3773,29 @@ void register_lua() {
 	lua_setglobal("SPECIAL");
 	lua_pushnumber(0x8000);
 	lua_setglobal("HOT");
+
+	// Create userdata tags, and set gc tagmethods
+	tagSTAT = lua_newtag();
+	tagACTR = lua_newtag();
+	tagCOLR = lua_newtag();
+	tagFONT = lua_newtag();
+	tagVBUF = lua_newtag();
+	tagPRIM = lua_newtag();
+	tagTEXT = lua_newtag();
+	lua_pushcfunction(gc_object);
+	lua_settagmethod(tagSTAT, "gc");
+	lua_pushcfunction(gc_actor);
+	lua_settagmethod(tagACTR, "gc");
+	lua_pushcfunction(gc_color);
+	lua_settagmethod(tagCOLR, "gc");
+	lua_pushcfunction(gc_font);
+	lua_settagmethod(tagFONT, "gc");
+	lua_pushcfunction(gc_bitmap);
+	lua_settagmethod(tagVBUF, "gc");
+	lua_pushcfunction(gc_primitive);
+	lua_settagmethod(tagPRIM, "gc");
+	lua_pushcfunction(gc_textobject);
+	lua_settagmethod(tagTEXT, "gc");
 
 	saveCallback = SaveCallback;
 	restoreCallback = RestoreCallback;
