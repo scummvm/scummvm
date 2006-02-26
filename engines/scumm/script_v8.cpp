@@ -717,9 +717,7 @@ void ScummEngine_v8::o8_cursorCommand() {
 		setCursorTransparency(pop());
 		break;
 	case 0xE7: {	// SO_CHARSET_SET
-		int charset = pop();
-		debugC(DEBUG_GENERAL, "Set userface charset to %d", charset);
-//		loadCharset(charset);
+		_verbCharset = pop();
 		break;
 	}
 	case 0xE8:		// SO_CHARSET_COLOR
@@ -1091,7 +1089,7 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->hicolor = 0;
 		vs->dimcolor = 8;
 		vs->type = kTextVerbType;
-		vs->charset_nr = _string[0]._default.charset;
+		vs->charset_nr = _verbCharset;
 		vs->curmode = 0;
 		vs->saveid = 0;
 		vs->key = 0;

@@ -1090,6 +1090,7 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 #ifndef DISABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
 	: ScummEngine_v6(detector, syst, gs, md5sum, subst) {
+	_verbCharset = 0;
 	_existLanguageFile = false;
 	_languageBuffer = NULL;
 	_languageIndex = NULL;
