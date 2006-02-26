@@ -58,7 +58,10 @@ public:
 	void playSample(SoundDesc *sndDesc, int16 repCount, int16 frequency);
 	void playComposition(Snd::SoundDesc ** samples, int16 *composit, int16 freqVal) {;}
 	void waitEndPlay(void) {;}
-	void freeSoundData(SoundDesc *sndDesc);
+
+	// This deletes sndDesc and stops playing the sample.
+	// If freedata is set, it also delete[]s the sample data.
+	void freeSoundDesc(SoundDesc *sndDesc, bool freedata=true);
 
 protected:
 	// TODO: This is a very primitive square wave generator. The only thing is

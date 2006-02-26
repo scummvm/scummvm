@@ -127,7 +127,7 @@ Snd::SoundDesc *Snd::loadSoundData(const char *path) {
 	return sndDesc;
 }
 
-void Snd::freeSoundData(Snd::SoundDesc *sndDesc) {
+void Snd::freeSoundDesc(Snd::SoundDesc *sndDesc, bool freedata) {
 	_vm->_mixer->stopHandle(sndDesc->handle);
 
 	for (int i = 0; i < ARRAYSIZE(_loopingSounds); i++) {
@@ -135,7 +135,9 @@ void Snd::freeSoundData(Snd::SoundDesc *sndDesc) {
 			_loopingSounds[i] = NULL;
 	}
 
-	delete[] sndDesc->data;
+	if (freedata) {
+		delete[] sndDesc->data;
+	}
 	delete sndDesc;
 }
 

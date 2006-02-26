@@ -1825,7 +1825,7 @@ void Goblin::freeObjects(void) {
 		if (_soundData[i] == 0)
 			continue;
 
-		_vm->_snd->freeSoundData(_soundData[i]);
+		_vm->_snd->freeSoundDesc(_soundData[i]);
 		_soundData[i] = 0;
 	}
 

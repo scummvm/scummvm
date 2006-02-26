@@ -413,13 +413,16 @@ void Game::freeSoundSlot(int16 slot) {
 	if (_soundSamples[slot] == 0)
 		return;
 
+	char* data = _soundSamples[slot]->data;
+
+	_vm->_snd->freeSoundDesc(_soundSamples[slot], false);
+	_soundSamples[slot] = 0;
+
 	if (_soundFromExt[slot] == 1) {
-		delete[] (_soundSamples[slot]->data - 6);
+		delete[] (data - 6);
 		_soundFromExt[slot] = 0;
 	}
 
-	delete _soundSamples[slot];
-	_soundSamples[slot] = 0;
 }
 
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY, int16 *pButtons, char handleMouse) {
