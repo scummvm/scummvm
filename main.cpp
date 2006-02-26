@@ -174,6 +174,8 @@ needshelp:
 	Bitmap *splash_bm = NULL;
 	if (!(g_flags & GF_DEMO))
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
+	if(splash_bm != NULL)
+		splash_bm->ref();
 
 	SDL_Event event;
 	
@@ -194,6 +196,8 @@ needshelp:
 		}
 	}
 #endif
+
+	splash_bm->deref();
 
 	lua_iolibopen();
 	lua_strlibopen();
@@ -240,13 +244,13 @@ void quit() {
 		delete g_localizer;
 		g_localizer = NULL;
 	}
-	if (g_resourceloader) {
-		delete g_resourceloader;
-		g_resourceloader = NULL;
-	}
 	if (g_engine) {
 		delete g_engine;
 		g_engine = NULL;
+	}
+	if (g_resourceloader) {
+		delete g_resourceloader;
+		g_resourceloader = NULL;
 	}
 	if (g_timer) {
 		delete g_timer;

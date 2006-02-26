@@ -25,6 +25,7 @@
 #include "smush.h"
 #include "driver.h"
 #include "savegame.h"
+#include "lipsynch.h"
 
 #include "imuse/imuse.h"
 
@@ -106,9 +107,15 @@ Engine::Engine() :
 Engine::~Engine()
 {
 	delete[] _controlsEnabled;
+	for(SceneListType::const_iterator i = _scenes.begin();
+	    i != _scenes.end(); i++)
+		delete (*i);
+	for(ActorListType::const_iterator i = _actors.begin();
+	    i != _actors.end(); i++)
+		delete (*i);
 }
 
-void Engine::handleButton(int operation, int key, int keyModifier, uint16 ascii) {
+void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 ascii) {
 	lua_Object handler, system_table, userPaintHandler;
 	
 	// If we're not supposed to handle the key then don't

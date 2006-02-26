@@ -74,10 +74,13 @@ int main() {
 
 	Bitmap *splash_bm = NULL;
 	splash_bm = g_resourceloader->loadBitmap("splash.bm");
+	splash_bm->ref();
 
 	g_driver->clearScreen();
 	splash_bm->draw();
 	g_driver->flipBuffer();
+
+	splash_bm->deref();
 
 	lua_iolibopen();
 	lua_strlibopen();
@@ -124,13 +127,13 @@ void quit() {
 		delete g_localizer;
 		g_localizer = NULL;
 	}
-	if (g_resourceloader) {
-		delete g_resourceloader;
-		g_resourceloader = NULL;
-	}
 	if (g_engine) {
 		delete g_engine;
 		g_engine = NULL;
+	}
+	if (g_resourceloader) {
+		delete g_resourceloader;
+		g_resourceloader = NULL;
 	}
 	if (g_timer) {
 		delete g_timer;
