@@ -61,8 +61,6 @@ typedef struct {
 	void *param;
 } SoundType, *SoundPtr;
 
-extern "C" void SysEventGet(EventType *, Int32);
-
 class OSystem_PalmBase : public OSystem {
 private:
 	virtual void int_initBackend() { }

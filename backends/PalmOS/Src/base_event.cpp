@@ -22,6 +22,9 @@
  *
  */
 
+#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
+#	include <System/EventPrv.h>
+#endif
 #include "be_base.h"
 
 void OSystem_PalmBase::timer_handler() {
@@ -59,7 +62,11 @@ void OSystem_PalmBase::battery_handler() {
 				event.eType = keyDownEvent;
 				event.data.keyDown.chr = vchrPowerOff;
 				event.data.keyDown.modifiers = commandKeyMask;
+#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
+				SysEventAddToQueue(&event);
+#else
 				EvtAddEventToQueue(&event);
+#endif
 			}
 		}
 

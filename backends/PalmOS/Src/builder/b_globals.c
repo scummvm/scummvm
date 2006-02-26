@@ -4,8 +4,8 @@
 
 //#define BUILD_COMMON
 //#define BUILD_SIMON
-//#define BUILD_SCUMM
-#define BUILD_SKY
+#define BUILD_SCUMM
+//#define BUILD_SKY
 //#define BUILD_QUEEN
 //#define BUILD_SWORD1
 
@@ -30,6 +30,7 @@ void writeRecord(MemPtr ptr, UInt32 size, UInt16 index, UInt16 dbID) {
 	DmReleaseRecord (dbP[dbID], index, 0);
 }
 ///////////////////////////////////////////////////////////////////
+
 void buildAll() {
 	Err err;
 	LocalID olddb;	
@@ -60,6 +61,7 @@ void buildAll() {
 	addCharset();
 	addCostume();
 	addPlayerV2();
+	addScummTables();
 
 #elif defined(BUILD_SIMON)
 	addSimon();

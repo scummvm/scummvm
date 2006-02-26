@@ -9,8 +9,10 @@ typedef UInt32 uint32;
 void writeRecord(MemPtr ptr, UInt32 size, UInt16 index, UInt16 dbID);
 void buildAll();
 
-void addDimuseTables();
 void addNewGui();
+void addGraphics();
+/////////////////////////////////
+void addDimuseTables();
 void addAkos();
 void addDimuseCodecs();
 void addCodec47();
@@ -19,6 +21,7 @@ void addDialogs();
 void addCharset();
 void addCostume();
 void addPlayerV2();
+void addScummTables();
 /////////////////////////////////
 void addSimon();
 void Simon_addCharset();
