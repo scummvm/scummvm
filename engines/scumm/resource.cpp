@@ -63,7 +63,6 @@ static bool checkTryMedia(BaseScummFile *handle);
 
 /* Open a room */
 void ScummEngine::openRoom(const int room) {
-	int room_offs;
 	bool result;
 	char buf[128];
 	char buf2[128] = "";
@@ -85,18 +84,16 @@ void ScummEngine::openRoom(const int room) {
 	}
 
 	const int diskNumber = (room == 0 ? 0 : res.roomno[rtRoom][room]);
+	const int room_offs = room ? res.roomoffs[rtRoom][room] : 0;
 
-	/* Either xxx.lfl or monkey.xxx file name */
-	while (1) {
-		room_offs = room ? res.roomoffs[rtRoom][room] : 0;
-
-		if (room_offs == -1)
-			break;
+	while (room_offs != -1) {
 
 		if (room_offs != 0 && room != 0 && _game.heversion < 98) {
 			_fileOffset = res.roomoffs[rtRoom][room];
 			return;
 		}
+
+		/* Either xxx.lfl or monkey.xxx file name */
 		if (_game.version <= 3) {
 			sprintf(buf, "%.2d.lfl", room);
 			// Maniac Mansion demo has .man instead of .lfl
@@ -164,8 +161,10 @@ void ScummEngine::openRoom(const int room) {
 			}
 		}
 
+		// Try to open the file with name 'buf'. If that fails, try buf2 (if
+		// specified).
 		result = openResourceFile(buf, encByte);
-		if ((result == false) && (buf2[0])) {
+		if (!result && buf2[0]) {
 			result = openResourceFile(buf2, encByte);
 			// We have .man files so set demo mode
 			if (_game.id == GID_MANIAC)
