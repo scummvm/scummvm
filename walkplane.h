@@ -27,6 +27,9 @@ class TextSplitter;
 
 class Sector { 
 public:
+	Sector() : _vertices(0) {}
+	~Sector() { if(_vertices) delete[] _vertices; }
+
 	void load(TextSplitter &ts);
 
 	void setVisible(bool visible);
