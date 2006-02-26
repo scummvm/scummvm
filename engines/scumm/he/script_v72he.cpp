@@ -1718,13 +1718,12 @@ void ScummEngine_v72he::o72_debugInput() {
 	byte string[255];
 
 	copyScriptString(string, sizeof(string));
-	int len = resStrLen(string) + 1;
+	debug(0,"o72_debugInput: String %s", string);
 
+	// TODO: Request input and store string result in array
 	writeVar(0, 0);
-	ArrayHeader *ah = defineArray(0, kStringArray, 0, 0, 0, len);
-	memcpy(ah->data, string, len);
+	defineArray(0, kStringArray, 0, 0, 0, 0);
 	push(readVar(0));
-	debug(1,"o72_debugInput: String %s", string);
 }
 
 void ScummEngine_v72he::o72_jumpToScript() {
