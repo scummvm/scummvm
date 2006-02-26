@@ -1,7 +1,7 @@
 [Project]
 FileName=scumm.dev
 Name=scumm
-UnitCount=134
+UnitCount=136
 Type=2
 Ver=1
 ObjFiles=
@@ -20,7 +20,7 @@ ObjectOutput=scumm
 OverrideOutput=0
 OverrideOutputName=scumm.a
 HostApplication=
-Folders=he,imuse_digi,insane,smush
+Folders=he,imuse,imuse_digi,insane,smush
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -628,46 +628,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit59]
-FileName=..\..\engines\scumm\imuse.cpp
-CompileCpp=1
-Folder=scumm
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit60]
-FileName=..\..\engines\scumm\imuse.h
-CompileCpp=1
-Folder=scumm
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit61]
-FileName=..\..\engines\scumm\imuse_internal.h
-CompileCpp=1
-Folder=scumm
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit62]
-FileName=..\..\engines\scumm\imuse_player.cpp
-CompileCpp=1
-Folder=scumm
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit63]
 FileName=..\..\engines\scumm\input.cpp
 CompileCpp=1
 Folder=scumm
@@ -677,27 +637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit64]
-FileName=..\..\engines\scumm\instrument.cpp
-CompileCpp=1
-Folder=scumm
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit65]
-FileName=..\..\engines\scumm\instrument.h
-CompileCpp=1
-Folder=scumm
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit66]
+[Unit60]
 FileName=..\..\engines\scumm\intern.h
 CompileCpp=1
 Folder=scumm
@@ -707,7 +647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit67]
+[Unit61]
 FileName=..\..\engines\scumm\midiparser_eup.cpp
 CompileCpp=1
 Folder=scumm
@@ -717,7 +657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit68]
+[Unit62]
 FileName=..\..\engines\scumm\midiparser_ro.cpp
 CompileCpp=1
 Folder=scumm
@@ -727,7 +667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit69]
+[Unit63]
 FileName=..\..\engines\scumm\music.h
 CompileCpp=1
 Folder=scumm
@@ -737,7 +677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
+[Unit64]
 FileName=..\..\engines\scumm\nut_renderer.cpp
 CompileCpp=1
 Folder=scumm
@@ -747,7 +687,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit71]
+[Unit65]
 FileName=..\..\engines\scumm\nut_renderer.h
 CompileCpp=1
 Folder=scumm
@@ -757,7 +697,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit66]
 FileName=..\..\engines\scumm\object.cpp
 CompileCpp=1
 Folder=scumm
@@ -767,7 +707,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit67]
 FileName=..\..\engines\scumm\object.h
 CompileCpp=1
 Folder=scumm
@@ -777,7 +717,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit68]
 FileName=..\..\engines\scumm\palette.cpp
 CompileCpp=1
 Folder=scumm
@@ -787,7 +727,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit75]
+[Unit69]
 FileName=..\..\engines\scumm\player_mod.cpp
 CompileCpp=1
 Folder=scumm
@@ -797,7 +737,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
+[Unit70]
 FileName=..\..\engines\scumm\player_mod.h
 CompileCpp=1
 Folder=scumm
@@ -807,7 +747,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
+[Unit71]
 FileName=..\..\engines\scumm\player_nes.cpp
 CompileCpp=1
 Folder=scumm
@@ -817,7 +757,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit78]
+[Unit72]
 FileName=..\..\engines\scumm\player_nes.h
 CompileCpp=1
 Folder=scumm
@@ -827,7 +767,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit73]
 FileName=..\..\engines\scumm\player_v1.cpp
 CompileCpp=1
 Folder=scumm
@@ -837,7 +777,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
+[Unit74]
 FileName=..\..\engines\scumm\player_v1.h
 CompileCpp=1
 Folder=scumm
@@ -847,7 +787,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit81]
+[Unit75]
 FileName=..\..\engines\scumm\player_v2.cpp
 CompileCpp=1
 Folder=scumm
@@ -857,7 +797,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit82]
+[Unit76]
 FileName=..\..\engines\scumm\player_v2.h
 CompileCpp=1
 Folder=scumm
@@ -867,7 +807,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit83]
+[Unit77]
 FileName=..\..\engines\scumm\player_v2a.cpp
 CompileCpp=1
 Folder=scumm
@@ -877,7 +817,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
+[Unit78]
 FileName=..\..\engines\scumm\player_v2a.h
 CompileCpp=1
 Folder=scumm
@@ -887,7 +827,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit85]
+[Unit79]
 FileName=..\..\engines\scumm\player_v3a.cpp
 CompileCpp=1
 Folder=scumm
@@ -897,7 +837,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit80]
 FileName=..\..\engines\scumm\player_v3a.h
 CompileCpp=1
 Folder=scumm
@@ -907,7 +847,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit81]
 FileName=..\..\engines\scumm\resource.cpp
 CompileCpp=1
 Folder=scumm
@@ -917,7 +857,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit82]
 FileName=..\..\engines\scumm\resource.h
 CompileCpp=1
 Folder=scumm
@@ -927,7 +867,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit83]
 FileName=..\..\engines\scumm\resource_v2.cpp
 CompileCpp=1
 Folder=scumm
@@ -937,7 +877,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit84]
 FileName=..\..\engines\scumm\resource_v3.cpp
 CompileCpp=1
 Folder=scumm
@@ -947,7 +887,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit85]
 FileName=..\..\engines\scumm\resource_v4.cpp
 CompileCpp=1
 Folder=scumm
@@ -957,7 +897,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit86]
 FileName=..\..\engines\scumm\room.cpp
 CompileCpp=1
 Folder=scumm
@@ -967,7 +907,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
+[Unit87]
 FileName=..\..\engines\scumm\saveload.cpp
 CompileCpp=1
 Folder=scumm
@@ -977,7 +917,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit94]
+[Unit88]
 FileName=..\..\engines\scumm\saveload.h
 CompileCpp=1
 Folder=scumm
@@ -987,7 +927,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit95]
+[Unit89]
 FileName=..\..\engines\scumm\script.cpp
 CompileCpp=1
 Folder=scumm
@@ -997,7 +937,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit96]
+[Unit90]
 FileName=..\..\engines\scumm\script.h
 CompileCpp=1
 Folder=scumm
@@ -1007,7 +947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit97]
+[Unit91]
 FileName=..\..\engines\scumm\script_c64.cpp
 CompileCpp=1
 Folder=scumm
@@ -1017,7 +957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit98]
+[Unit92]
 FileName=..\..\engines\scumm\script_v2.cpp
 CompileCpp=1
 Folder=scumm
@@ -1027,7 +967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit99]
+[Unit93]
 FileName=..\..\engines\scumm\script_v5.cpp
 CompileCpp=1
 Folder=scumm
@@ -1037,7 +977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit94]
 FileName=..\..\engines\scumm\script_v6.cpp
 CompileCpp=1
 Folder=scumm
@@ -1047,7 +987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
+[Unit95]
 FileName=..\..\engines\scumm\script_v8.cpp
 CompileCpp=1
 Folder=scumm
@@ -1057,7 +997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
+[Unit96]
 FileName=..\..\engines\scumm\scumm.cpp
 CompileCpp=1
 Folder=scumm
@@ -1067,7 +1007,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit103]
+[Unit97]
 FileName=..\..\engines\scumm\scumm.h
 CompileCpp=1
 Folder=scumm
@@ -1077,7 +1017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit104]
+[Unit98]
 FileName=..\..\engines\scumm\scumm-md5.h
 CompileCpp=1
 Folder=scumm
@@ -1087,7 +1027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit99]
 FileName=..\..\engines\scumm\sound.cpp
 CompileCpp=1
 Folder=scumm
@@ -1097,7 +1037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit100]
 FileName=..\..\engines\scumm\sound.h
 CompileCpp=1
 Folder=scumm
@@ -1107,7 +1047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit101]
 FileName=..\..\engines\scumm\string.cpp
 CompileCpp=1
 Folder=scumm
@@ -1117,7 +1057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit108]
+[Unit102]
 FileName=..\..\engines\scumm\thumbnail.cpp
 CompileCpp=1
 Folder=scumm
@@ -1127,7 +1067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit109]
+[Unit103]
 FileName=..\..\engines\scumm\usage_bits.cpp
 CompileCpp=1
 Folder=scumm
@@ -1137,7 +1077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit110]
+[Unit104]
 FileName=..\..\engines\scumm\usage_bits.h
 CompileCpp=1
 Folder=scumm
@@ -1147,7 +1087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit105]
 FileName=..\..\engines\scumm\util.cpp
 CompileCpp=1
 Folder=scumm
@@ -1157,7 +1097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
+[Unit106]
 FileName=..\..\engines\scumm\util.h
 CompileCpp=1
 Folder=scumm
@@ -1167,7 +1107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit107]
 FileName=..\..\engines\scumm\vars.cpp
 CompileCpp=1
 Folder=scumm
@@ -1177,7 +1117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit108]
 FileName=..\..\engines\scumm\verbs.cpp
 CompileCpp=1
 Folder=scumm
@@ -1187,7 +1127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit109]
 FileName=..\..\engines\scumm\verbs.h
 CompileCpp=1
 Folder=scumm
@@ -1197,7 +1137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
+[Unit110]
 FileName=..\..\engines\scumm\he\floodfill_he.cpp
 CompileCpp=1
 Folder=he
@@ -1207,7 +1147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit111]
 FileName=..\..\engines\scumm\he\floodfill_he.h
 CompileCpp=1
 Folder=he
@@ -1217,7 +1157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit112]
 FileName=..\..\engines\scumm\he\intern_he.h
 CompileCpp=1
 Folder=he
@@ -1227,7 +1167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
+[Unit113]
 FileName=..\..\engines\scumm\he\logic_he.cpp
 CompileCpp=1
 Folder=he
@@ -1237,7 +1177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit120]
+[Unit114]
 FileName=..\..\engines\scumm\he\logic_he.h
 CompileCpp=1
 Folder=he
@@ -1247,7 +1187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit121]
+[Unit115]
 FileName=..\..\engines\scumm\he\palette_he.cpp
 CompileCpp=1
 Folder=he
@@ -1257,7 +1197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit122]
+[Unit116]
 FileName=..\..\engines\scumm\he\resource_he.cpp
 CompileCpp=1
 Folder=he
@@ -1267,7 +1207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
+[Unit117]
 FileName=..\..\engines\scumm\he\resource_he.h
 CompileCpp=1
 Folder=he
@@ -1277,7 +1217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit118]
 FileName=..\..\engines\scumm\he\script_v60he.cpp
 CompileCpp=1
 Folder=he
@@ -1287,7 +1227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit119]
 FileName=..\..\engines\scumm\he\script_v70he.cpp
 CompileCpp=1
 Folder=he
@@ -1297,7 +1237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit120]
 FileName=..\..\engines\scumm\he\script_v72he.cpp
 CompileCpp=1
 Folder=he
@@ -1307,7 +1247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit121]
 FileName=..\..\engines\scumm\he\script_v80he.cpp
 CompileCpp=1
 Folder=he
@@ -1317,7 +1257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
+[Unit122]
 FileName=..\..\engines\scumm\he\script_v90he.cpp
 CompileCpp=1
 Folder=he
@@ -1327,7 +1267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit123]
 FileName=..\..\engines\scumm\he\script_v100he.cpp
 CompileCpp=1
 Folder=he
@@ -1337,7 +1277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit124]
 FileName=..\..\engines\scumm\he\sound_he.cpp
 CompileCpp=1
 Folder=he
@@ -1347,7 +1287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit125]
 FileName=..\..\engines\scumm\he\sprite_he.cpp
 CompileCpp=1
 Folder=he
@@ -1357,7 +1297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit126]
 FileName=..\..\engines\scumm\he\sprite_he.h
 CompileCpp=1
 Folder=he
@@ -1367,7 +1307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
+[Unit127]
 FileName=..\..\engines\scumm\he\wiz_he.cpp
 CompileCpp=1
 Folder=he
@@ -1377,10 +1317,90 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit128]
 FileName=..\..\engines\scumm\he\wiz_he.h
 CompileCpp=1
 Folder=he
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit129]
+FileName=..\..\engines\scumm\plugin.cpp
+CompileCpp=1
+Folder=scumm
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit130]
+FileName=..\..\engines\scumm\plugin.h
+CompileCpp=1
+Folder=scumm
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit131]
+FileName=..\..\engines\scumm\imuse\instrument.h
+CompileCpp=1
+Folder=imuse
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit132]
+FileName=..\..\engines\scumm\imuse\imuse.cpp
+CompileCpp=1
+Folder=imuse
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit133]
+FileName=..\..\engines\scumm\imuse\imuse.h
+CompileCpp=1
+Folder=imuse
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit134]
+FileName=..\..\engines\scumm\imuse\imuse_internal.h
+CompileCpp=1
+Folder=imuse
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit135]
+FileName=..\..\engines\scumm\imuse\imuse_player.cpp
+CompileCpp=1
+Folder=imuse
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit136]
+FileName=..\..\engines\scumm\imuse\instrument.cpp
+CompileCpp=1
+Folder=imuse
 Compile=1
 Link=1
 Priority=1000

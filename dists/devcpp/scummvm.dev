@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-Wno-multichar_@@_
-Linker=gob/gob.a_@@_kyra/kyra.a_@@_lure/lure.a_@@_queen/queen.a_@@_saga/saga.a_@@_scumm/scumm.a_@@_simon/simon.a_@@_sky/sky.a_@@_sword1/sword1.a_@@_sword2/sword2.a_@@_-lSDL.dll_@@_-lwinmm_@@_
+Linker=cine/cine.a_@@_gob/gob.a_@@_kyra/kyra.a_@@_lure/lure.a_@@_queen/queen.a_@@_saga/saga.a_@@_scumm/scumm.a_@@_simon/simon.a_@@_sky/sky.a_@@_sword1/sword1.a_@@_sword2/sword2.a_@@_-lSDL.dll_@@_-lwinmm_@@_
 IsCpp=1
 Icon=scummvm.ico
 ExeOutput=scummvm
@@ -20,7 +20,7 @@ ObjectOutput=scummvm
 OverrideOutput=0
 OverrideOutputName=scummvm.exe
 HostApplication=
-Folders=backends,backends/fs,backends/fs/windows,backends/midi,backends/sdl,base,common,common/scaler,graphics,gui,sound,sound/softsynth,sound/softsynth/mt32
+Folders=backends,backends/fs,backends/fs/windows,backends/midi,backends/sdl,base,common,graphics,graphics/fonts,graphics/scaler,gui,sound,sound/softsynth,sound/softsynth/mt32
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -30,16 +30,6 @@ CompilerSet=0
 CompilerSettings=0000000000000000000000
 
 [Unit4]
-FileName=..\..\backends\sdl\graphics.cpp
-CompileCpp=1
-Folder=backends/sdl
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit5]
 FileName=..\..\backends\sdl\sdl.cpp
 CompileCpp=1
 Folder=backends/sdl
@@ -49,7 +39,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit6]
+[Unit5]
 FileName=..\..\backends\sdl\sdl-common.h
 CompileCpp=1
 Folder=backends/sdl
@@ -59,8 +49,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit6]
+FileName=..\..\backends\intern.h
+CompileCpp=1
+Folder=backends
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit8]
-FileName=..\..\base\engine.cpp
+FileName=..\..\base\engine.h
 CompileCpp=1
 Folder=base
 Compile=1
@@ -70,16 +70,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=..\..\base\gameDetector.cpp
-CompileCpp=1
-Folder=base
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit11]
 FileName=..\..\base\gameDetector.h
 CompileCpp=1
 Folder=base
@@ -89,7 +79,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit12]
+[Unit11]
 FileName=..\..\base\internal_version.h
 CompileCpp=1
 Folder=base
@@ -99,7 +89,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit13]
+[Unit12]
 FileName=..\..\base\main.cpp
 CompileCpp=1
 Folder=base
@@ -109,7 +99,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
+[Unit13]
 FileName=..\..\base\plugins.cpp
 CompileCpp=1
 Folder=base
@@ -119,7 +109,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit15]
+[Unit14]
 FileName=..\..\base\plugins.h
 CompileCpp=1
 Folder=base
@@ -129,7 +119,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit15]
 FileName=..\..\base\version.h
 CompileCpp=1
 Folder=base
@@ -139,7 +129,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit16]
 FileName=..\..\common\array.h
 CompileCpp=1
 Folder=common
@@ -149,7 +139,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit17]
 FileName=..\..\common\config-file.cpp
 CompileCpp=1
 Folder=common
@@ -159,7 +149,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit18]
 FileName=..\..\common\config-file.h
 CompileCpp=1
 Folder=common
@@ -169,7 +159,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit19]
 FileName=..\..\common\config-manager.cpp
 CompileCpp=1
 Folder=common
@@ -179,7 +169,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit20]
 FileName=..\..\common\config-manager.h
 CompileCpp=1
 Folder=common
@@ -189,7 +179,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit21]
 FileName=..\..\common\debugger.cpp
 CompileCpp=1
 Folder=common
@@ -199,7 +189,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit22]
 FileName=..\..\common\debugger.h
 CompileCpp=1
 Folder=common
@@ -209,7 +199,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit23]
 FileName=..\..\common\endian.h
 CompileCpp=1
 Folder=common
@@ -219,7 +209,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit24]
 FileName=..\..\common\file.cpp
 CompileCpp=1
 Folder=common
@@ -229,7 +219,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit25]
 FileName=..\..\common\file.h
 CompileCpp=1
 Folder=common
@@ -239,7 +229,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit26]
 FileName=..\..\common\list.h
 CompileCpp=1
 Folder=common
@@ -249,7 +239,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit27]
 FileName=..\..\common\map.h
 CompileCpp=1
 Folder=common
@@ -259,7 +249,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit28]
 FileName=..\..\common\md5.cpp
 CompileCpp=1
 Folder=common
@@ -269,7 +259,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit29]
 FileName=..\..\common\md5.h
 CompileCpp=1
 Folder=common
@@ -279,7 +269,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit30]
 FileName=..\..\common\mutex.cpp
 CompileCpp=1
 Folder=common
@@ -289,7 +279,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit31]
 FileName=..\..\common\mutex.h
 CompileCpp=1
 Folder=common
@@ -299,7 +289,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit32]
 FileName=..\..\common\rect.h
 CompileCpp=1
 Folder=common
@@ -309,7 +299,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit33]
 FileName=..\..\common\savefile.cpp
 CompileCpp=1
 Folder=common
@@ -319,7 +309,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit34]
 FileName=..\..\common\savefile.h
 CompileCpp=1
 Folder=common
@@ -329,27 +319,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
-FileName=..\..\common\scaler.cpp
-CompileCpp=1
-Folder=common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit37]
-FileName=..\..\common\scaler.h
-CompileCpp=1
-Folder=common
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit38]
+[Unit35]
 FileName=..\..\common\scummsys.h
 CompileCpp=1
 Folder=common
@@ -359,7 +329,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit36]
 FileName=..\..\common\singleton.h
 CompileCpp=1
 Folder=common
@@ -369,7 +339,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit37]
 FileName=..\..\common\stack.h
 CompileCpp=1
 Folder=common
@@ -379,7 +349,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit41]
+[Unit38]
 FileName=..\..\common\stdafx.h
 CompileCpp=1
 Folder=common
@@ -389,7 +359,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit42]
+[Unit39]
 FileName=..\..\common\str.cpp
 CompileCpp=1
 Folder=common
@@ -399,7 +369,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit43]
+[Unit40]
 FileName=..\..\common\str.h
 CompileCpp=1
 Folder=common
@@ -409,7 +379,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit44]
+[Unit41]
 FileName=..\..\common\stream.cpp
 CompileCpp=1
 Folder=common
@@ -419,7 +389,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit45]
+[Unit42]
 FileName=..\..\common\stream.h
 CompileCpp=1
 Folder=common
@@ -429,7 +399,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit46]
+[Unit43]
 FileName=..\..\common\system.cpp
 CompileCpp=1
 Folder=common
@@ -439,7 +409,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit47]
+[Unit44]
 FileName=..\..\common\system.h
 CompileCpp=1
 Folder=common
@@ -449,7 +419,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit48]
+[Unit45]
 FileName=..\..\common\timer.cpp
 CompileCpp=1
 Folder=common
@@ -459,7 +429,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit49]
+[Unit46]
 FileName=..\..\common\timer.h
 CompileCpp=1
 Folder=common
@@ -469,7 +439,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit50]
+[Unit47]
 FileName=..\..\common\unzip.cpp
 CompileCpp=1
 Folder=common
@@ -479,7 +449,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit51]
+[Unit48]
 FileName=..\..\common\unzip.h
 CompileCpp=1
 Folder=common
@@ -489,7 +459,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit52]
+[Unit49]
 FileName=..\..\common\util.cpp
 CompileCpp=1
 Folder=common
@@ -499,7 +469,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit53]
+[Unit50]
 FileName=..\..\common\util.h
 CompileCpp=1
 Folder=common
@@ -509,147 +479,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit54]
-FileName=..\..\common\scaler\2xsai.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit55]
-FileName=..\..\common\scaler\aspect.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit56]
-FileName=..\..\common\scaler\hq2x.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit57]
-FileName=..\..\common\scaler\hq2x.h
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit58]
-FileName=..\..\common\scaler\hq3x.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit59]
-FileName=..\..\common\scaler\hq3x.h
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit60]
-FileName=..\..\common\scaler\intern.h
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit61]
-FileName=..\..\common\scaler\scale2x.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit62]
-FileName=..\..\common\scaler\scale2x.h
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit63]
-FileName=..\..\common\scaler\scale3x.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit64]
-FileName=..\..\common\scaler\scale3x.h
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit65]
-FileName=..\..\common\scaler\scalebit.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit66]
-FileName=..\..\common\scaler\scalebit.h
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit67]
-FileName=..\..\common\scaler\thumbnail.cpp
-CompileCpp=1
-Folder=common/scaler
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit68]
+[Unit51]
 FileName=..\..\graphics\animation.cpp
 CompileCpp=1
 Folder=graphics
@@ -659,7 +489,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit69]
+[Unit52]
 FileName=..\..\graphics\animation.h
 CompileCpp=1
 Folder=graphics
@@ -669,17 +499,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
-FileName=..\..\graphics\consolefont.cpp
-CompileCpp=1
-Folder=graphics
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit71]
+[Unit53]
 FileName=..\..\graphics\font.cpp
 CompileCpp=1
 Folder=graphics
@@ -689,7 +509,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit54]
 FileName=..\..\graphics\font.h
 CompileCpp=1
 Folder=graphics
@@ -699,7 +519,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit55]
 FileName=..\..\graphics\fontman.cpp
 CompileCpp=1
 Folder=graphics
@@ -709,7 +529,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit56]
 FileName=..\..\graphics\fontman.h
 CompileCpp=1
 Folder=graphics
@@ -719,7 +539,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit75]
+[Unit57]
 FileName=..\..\graphics\ilbm.cpp
 CompileCpp=1
 Folder=graphics
@@ -729,7 +549,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
+[Unit58]
 FileName=..\..\graphics\ilbm.h
 CompileCpp=1
 Folder=graphics
@@ -739,7 +559,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
+[Unit59]
 FileName=..\..\graphics\imagedec.cpp
 CompileCpp=1
 Folder=graphics
@@ -749,7 +569,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit78]
+[Unit60]
 FileName=..\..\graphics\imagedec.h
 CompileCpp=1
 Folder=graphics
@@ -759,7 +579,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit61]
 FileName=..\..\graphics\imageman.cpp
 CompileCpp=1
 Folder=graphics
@@ -769,7 +589,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
+[Unit62]
 FileName=..\..\graphics\imageman.h
 CompileCpp=1
 Folder=graphics
@@ -779,27 +599,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit81]
-FileName=..\..\graphics\newfont.cpp
-CompileCpp=1
-Folder=graphics
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit82]
-FileName=..\..\graphics\newfont_big.cpp
-CompileCpp=1
-Folder=graphics
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit83]
+[Unit63]
 FileName=..\..\graphics\primitives.cpp
 CompileCpp=1
 Folder=graphics
@@ -809,7 +609,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
+[Unit64]
 FileName=..\..\graphics\primitives.h
 CompileCpp=1
 Folder=graphics
@@ -819,17 +619,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit85]
-FileName=..\..\graphics\scummfont.cpp
-CompileCpp=1
-Folder=graphics
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit86]
+[Unit65]
 FileName=..\..\graphics\surface.cpp
 CompileCpp=1
 Folder=graphics
@@ -839,7 +629,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit66]
 FileName=..\..\graphics\surface.h
 CompileCpp=1
 Folder=graphics
@@ -849,7 +639,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit67]
 FileName=..\..\gui\about.cpp
 CompileCpp=1
 Folder=gui
@@ -859,7 +649,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit68]
 FileName=..\..\gui\about.h
 CompileCpp=1
 Folder=gui
@@ -869,7 +659,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit69]
 FileName=..\..\gui\Actions.cpp
 CompileCpp=1
 Folder=gui
@@ -879,7 +669,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit70]
 FileName=..\..\gui\Actions.h
 CompileCpp=1
 Folder=gui
@@ -889,7 +679,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit71]
 FileName=..\..\gui\browser.cpp
 CompileCpp=1
 Folder=gui
@@ -899,7 +689,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit93]
+[Unit72]
 FileName=..\..\gui\browser.h
 CompileCpp=1
 Folder=gui
@@ -909,7 +699,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit94]
+[Unit73]
 FileName=..\..\gui\chooser.cpp
 CompileCpp=1
 Folder=gui
@@ -919,7 +709,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit95]
+[Unit74]
 FileName=..\..\gui\chooser.h
 CompileCpp=1
 Folder=gui
@@ -929,7 +719,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit96]
+[Unit75]
 FileName=..\..\gui\console.cpp
 CompileCpp=1
 Folder=gui
@@ -939,7 +729,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit97]
+[Unit76]
 FileName=..\..\gui\console.h
 CompileCpp=1
 Folder=gui
@@ -949,7 +739,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit98]
+[Unit77]
 FileName=..\..\gui\credits.h
 CompileCpp=1
 Folder=gui
@@ -959,7 +749,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit99]
+[Unit78]
 FileName=..\..\gui\dialog.cpp
 CompileCpp=1
 Folder=gui
@@ -969,7 +759,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit79]
 FileName=..\..\gui\dialog.h
 CompileCpp=1
 Folder=gui
@@ -979,7 +769,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
+[Unit80]
 FileName=..\..\gui\editable.cpp
 CompileCpp=1
 Folder=gui
@@ -989,7 +779,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
+[Unit81]
 FileName=..\..\gui\editable.h
 CompileCpp=1
 Folder=gui
@@ -999,7 +789,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit103]
+[Unit82]
 FileName=..\..\gui\EditTextWidget.cpp
 CompileCpp=1
 Folder=gui
@@ -1009,7 +799,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit104]
+[Unit83]
 FileName=..\..\gui\EditTextWidget.h
 CompileCpp=1
 Folder=gui
@@ -1019,7 +809,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit84]
 FileName=..\..\gui\Key.cpp
 CompileCpp=1
 Folder=gui
@@ -1029,7 +819,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit85]
 FileName=..\..\gui\Key.h
 CompileCpp=1
 Folder=gui
@@ -1039,7 +829,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit86]
 FileName=..\..\gui\KeysDialog.cpp
 CompileCpp=1
 Folder=gui
@@ -1049,7 +839,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CPP) -c KeysDialog.cpp -o scummvm/KeysDialog.o $(CXXFLAGS)
 
-[Unit108]
+[Unit87]
 FileName=..\..\gui\KeysDialog.h
 CompileCpp=1
 Folder=gui
@@ -1059,7 +849,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit109]
+[Unit88]
 FileName=..\..\gui\launcher.cpp
 CompileCpp=1
 Folder=gui
@@ -1069,7 +859,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit110]
+[Unit89]
 FileName=..\..\gui\launcher.h
 CompileCpp=1
 Folder=gui
@@ -1079,7 +869,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit90]
 FileName=..\..\gui\ListWidget.cpp
 CompileCpp=1
 Folder=gui
@@ -1089,7 +879,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
+[Unit91]
 FileName=..\..\gui\ListWidget.h
 CompileCpp=1
 Folder=gui
@@ -1099,7 +889,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit92]
 FileName=..\..\gui\message.cpp
 CompileCpp=1
 Folder=gui
@@ -1109,7 +899,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit93]
 FileName=..\..\gui\message.h
 CompileCpp=1
 Folder=gui
@@ -1119,7 +909,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit94]
 FileName=..\..\gui\newgui.cpp
 CompileCpp=1
 Folder=gui
@@ -1129,7 +919,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
+[Unit95]
 FileName=..\..\gui\newgui.h
 CompileCpp=1
 Folder=gui
@@ -1139,7 +929,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit96]
 FileName=..\..\gui\object.h
 CompileCpp=1
 Folder=gui
@@ -1149,7 +939,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit97]
 FileName=..\..\gui\options.cpp
 CompileCpp=1
 Folder=gui
@@ -1159,7 +949,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CPP) -c ../../gui/options.cpp -o scummvm/options.o $(CXXFLAGS) -D_MSC_VER
 
-[Unit119]
+[Unit98]
 FileName=..\..\gui\options.h
 CompileCpp=1
 Folder=gui
@@ -1169,7 +959,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit120]
+[Unit99]
 FileName=..\..\gui\PopUpWidget.cpp
 CompileCpp=1
 Folder=gui
@@ -1179,7 +969,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit121]
+[Unit100]
 FileName=..\..\gui\PopUpWidget.h
 CompileCpp=1
 Folder=gui
@@ -1189,7 +979,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit122]
+[Unit101]
 FileName=..\..\gui\ScrollBarWidget.cpp
 CompileCpp=1
 Folder=gui
@@ -1199,7 +989,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
+[Unit102]
 FileName=..\..\gui\ScrollBarWidget.h
 CompileCpp=1
 Folder=gui
@@ -1209,7 +999,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit103]
 FileName=..\..\gui\TabWidget.cpp
 CompileCpp=1
 Folder=gui
@@ -1219,7 +1009,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit104]
 FileName=..\..\gui\TabWidget.h
 CompileCpp=1
 Folder=gui
@@ -1229,7 +1019,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit105]
 FileName=..\..\gui\theme.cpp
 CompileCpp=1
 Folder=gui
@@ -1239,7 +1029,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit106]
 FileName=..\..\gui\theme.h
 CompileCpp=1
 Folder=gui
@@ -1249,7 +1039,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
+[Unit107]
 FileName=..\..\gui\ThemeNew.cpp
 CompileCpp=1
 Folder=gui
@@ -1259,7 +1049,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit108]
 FileName=..\..\gui\widget.cpp
 CompileCpp=1
 Folder=gui
@@ -1269,7 +1059,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit109]
 FileName=..\..\gui\widget.h
 CompileCpp=1
 Folder=gui
@@ -1279,7 +1069,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit110]
 FileName=..\..\sound\adpcm.cpp
 CompileCpp=1
 Folder=sound
@@ -1289,7 +1079,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit111]
 FileName=..\..\sound\adpcm.h
 CompileCpp=1
 Folder=sound
@@ -1299,7 +1089,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
+[Unit112]
 FileName=..\..\sound\audiocd.cpp
 CompileCpp=1
 Folder=sound
@@ -1309,7 +1099,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit113]
 FileName=..\..\sound\audiocd.h
 CompileCpp=1
 Folder=sound
@@ -1319,7 +1109,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit114]
 FileName=..\..\sound\audiostream.cpp
 CompileCpp=1
 Folder=sound
@@ -1329,7 +1119,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit115]
 FileName=..\..\sound\audiostream.h
 CompileCpp=1
 Folder=sound
@@ -1339,7 +1129,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit116]
 FileName=..\..\sound\flac.cpp
 CompileCpp=1
 Folder=sound
@@ -1349,7 +1139,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit138]
+[Unit117]
 FileName=..\..\sound\flac.h
 CompileCpp=1
 Folder=sound
@@ -1359,7 +1149,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit139]
+[Unit118]
 FileName=..\..\sound\fmopl.cpp
 CompileCpp=1
 Folder=sound
@@ -1369,7 +1159,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit140]
+[Unit119]
 FileName=..\..\sound\fmopl.h
 CompileCpp=1
 Folder=sound
@@ -1379,7 +1169,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit141]
+[Unit120]
 FileName=..\..\sound\mididrv.cpp
 CompileCpp=1
 Folder=sound
@@ -1389,7 +1179,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit142]
+[Unit121]
 FileName=..\..\sound\mididrv.h
 CompileCpp=1
 Folder=sound
@@ -1399,7 +1189,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit143]
+[Unit122]
 FileName=..\..\sound\midiparser.cpp
 CompileCpp=1
 Folder=sound
@@ -1409,7 +1199,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit144]
+[Unit123]
 FileName=..\..\sound\midiparser.h
 CompileCpp=1
 Folder=sound
@@ -1419,7 +1209,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit145]
+[Unit124]
 FileName=..\..\sound\midiparser_smf.cpp
 CompileCpp=1
 Folder=sound
@@ -1429,7 +1219,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit146]
+[Unit125]
 FileName=..\..\sound\midiparser_xmidi.cpp
 CompileCpp=1
 Folder=sound
@@ -1439,7 +1229,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit147]
+[Unit126]
 FileName=..\..\sound\mixer.cpp
 CompileCpp=1
 Folder=sound
@@ -1449,7 +1239,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit148]
+[Unit127]
 FileName=..\..\sound\mixer.h
 CompileCpp=1
 Folder=sound
@@ -1459,7 +1249,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit149]
+[Unit128]
 FileName=..\..\sound\mp3.cpp
 CompileCpp=1
 Folder=sound
@@ -1469,7 +1259,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit150]
+[Unit129]
 FileName=..\..\sound\mp3.h
 CompileCpp=1
 Folder=sound
@@ -1479,7 +1269,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit151]
+[Unit130]
 FileName=..\..\sound\mpu401.cpp
 CompileCpp=1
 Folder=sound
@@ -1489,7 +1279,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit152]
+[Unit131]
 FileName=..\..\sound\mpu401.h
 CompileCpp=1
 Folder=sound
@@ -1499,7 +1289,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit153]
+[Unit132]
 FileName=..\..\sound\rate.cpp
 CompileCpp=1
 Folder=sound
@@ -1509,7 +1299,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit154]
+[Unit133]
 FileName=..\..\sound\rate.h
 CompileCpp=1
 Folder=sound
@@ -1519,7 +1309,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit155]
+[Unit134]
 FileName=..\..\sound\voc.cpp
 CompileCpp=1
 Folder=sound
@@ -1529,7 +1319,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit156]
+[Unit135]
 FileName=..\..\sound\voc.h
 CompileCpp=1
 Folder=sound
@@ -1539,7 +1329,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit157]
+[Unit136]
 FileName=..\..\sound\vorbis.cpp
 CompileCpp=1
 Folder=sound
@@ -1549,7 +1339,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit158]
+[Unit137]
 FileName=..\..\sound\vorbis.h
 CompileCpp=1
 Folder=sound
@@ -1559,7 +1349,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit159]
+[Unit138]
 FileName=..\..\sound\wave.cpp
 CompileCpp=1
 Folder=sound
@@ -1569,7 +1359,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit160]
+[Unit139]
 FileName=..\..\sound\wave.h
 CompileCpp=1
 Folder=sound
@@ -1579,7 +1369,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit161]
+[Unit140]
 FileName=..\..\sound\softsynth\adlib.cpp
 CompileCpp=1
 Folder=sound/softsynth
@@ -1589,7 +1379,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit162]
+[Unit141]
 FileName=..\..\sound\softsynth\emumidi.h
 CompileCpp=1
 Folder=sound/softsynth
@@ -1599,7 +1389,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit163]
+[Unit142]
 FileName=..\..\sound\softsynth\fluidsynth.cpp
 CompileCpp=1
 Folder=sound/softsynth
@@ -1609,7 +1399,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit164]
+[Unit143]
 FileName=..\..\sound\softsynth\mt32.cpp
 CompileCpp=1
 Folder=sound/softsynth
@@ -1619,7 +1409,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit165]
+[Unit144]
 FileName=..\..\sound\softsynth\ym2612.cpp
 CompileCpp=1
 Folder=sound/softsynth
@@ -1629,7 +1419,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit166]
+[Unit145]
 FileName=..\..\sound\softsynth\mt32\freeverb.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1639,7 +1429,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit167]
+[Unit146]
 FileName=..\..\sound\softsynth\mt32\freeverb.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1649,7 +1439,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit168]
+[Unit147]
 FileName=..\..\sound\softsynth\mt32\i386.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1659,7 +1449,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit169]
+[Unit148]
 FileName=..\..\sound\softsynth\mt32\i386.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1669,7 +1459,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit170]
+[Unit149]
 FileName=..\..\sound\softsynth\mt32\mt32_file.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1679,7 +1469,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit171]
+[Unit150]
 FileName=..\..\sound\softsynth\mt32\mt32_file.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1689,7 +1479,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit172]
+[Unit151]
 FileName=..\..\sound\softsynth\mt32\mt32emu.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1699,7 +1489,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit173]
+[Unit152]
 FileName=..\..\sound\softsynth\mt32\part.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1709,7 +1499,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit174]
+[Unit153]
 FileName=..\..\sound\softsynth\mt32\part.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1719,7 +1509,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit175]
+[Unit154]
 FileName=..\..\sound\softsynth\mt32\partial.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1729,7 +1519,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit176]
+[Unit155]
 FileName=..\..\sound\softsynth\mt32\partial.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1739,7 +1529,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit177]
+[Unit156]
 FileName=..\..\sound\softsynth\mt32\partialManager.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1749,7 +1539,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit178]
+[Unit157]
 FileName=..\..\sound\softsynth\mt32\partialManager.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1759,7 +1549,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit179]
+[Unit158]
 FileName=..\..\sound\softsynth\mt32\structures.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1769,7 +1559,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit180]
+[Unit159]
 FileName=..\..\sound\softsynth\mt32\synth.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1779,7 +1569,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit181]
+[Unit160]
 FileName=..\..\sound\softsynth\mt32\synth.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1789,7 +1579,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit182]
+[Unit161]
 FileName=..\..\sound\softsynth\mt32\tables.cpp
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1799,7 +1589,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit183]
+[Unit162]
 FileName=..\..\sound\softsynth\mt32\tables.h
 CompileCpp=1
 Folder=sound/softsynth/mt32
@@ -1809,17 +1599,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit184]
+[Unit163]
 FileName=..\..\scummvm.rc
 CompileCpp=1
-Folder=scummvm
+Folder=Resources
 Compile=1
 Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit185]
+[Unit164]
 FileName=..\..\backends\fs\fs.cpp
 CompileCpp=1
 Folder=backends/fs
@@ -1829,7 +1619,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit186]
+[Unit165]
 FileName=..\..\backends\fs\fs.h
 CompileCpp=1
 Folder=backends/fs
@@ -1839,10 +1629,220 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit187]
+[Unit166]
 FileName=..\..\backends\fs\windows\windows-fs.cpp
 CompileCpp=1
 Folder=backends/fs/windows
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit167]
+FileName=..\..\sound\null.cpp
+CompileCpp=1
+Folder=sound
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit168]
+FileName=..\..\graphics\fonts\consolefont.cpp
+CompileCpp=1
+Folder=graphics/fonts
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit169]
+FileName=..\..\graphics\fonts\newfont.cpp
+CompileCpp=1
+Folder=graphics/fonts
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit170]
+FileName=..\..\graphics\fonts\newfont_big.cpp
+CompileCpp=1
+Folder=graphics/fonts
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit171]
+FileName=..\..\graphics\fonts\scummfont.cpp
+CompileCpp=1
+Folder=graphics/fonts
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit172]
+FileName=..\..\graphics\scaler.cpp
+CompileCpp=1
+Folder=graphics
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit173]
+FileName=..\..\graphics\scaler.h
+CompileCpp=1
+Folder=graphics
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit174]
+FileName=..\..\graphics\scaler\2xsai.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit175]
+FileName=..\..\graphics\scaler\aspect.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit176]
+FileName=..\..\graphics\scaler\hq2x.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit177]
+FileName=..\..\graphics\scaler\hq2x.h
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit178]
+FileName=..\..\graphics\scaler\hq3x.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit179]
+FileName=..\..\graphics\scaler\hq3x.h
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit180]
+FileName=..\..\graphics\scaler\intern.h
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit181]
+FileName=..\..\graphics\scaler\scale2x.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit182]
+FileName=..\..\graphics\scaler\scale2x.h
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit183]
+FileName=..\..\graphics\scaler\scale3x.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit184]
+FileName=..\..\graphics\scaler\scale3x.h
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit185]
+FileName=..\..\graphics\scaler\scalebit.cpp
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit186]
+FileName=..\..\graphics\scaler\scalebit.h
+CompileCpp=1
+Folder=graphics/scaler
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit187]
+FileName=..\..\graphics\scaler\thumbnail.cpp
+CompileCpp=1
+Folder=graphics/scaler
 Compile=1
 Link=1
 Priority=1000
@@ -1918,7 +1918,7 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit9]
-FileName=..\..\base\engine.h
+FileName=..\..\base\gameDetector.cpp
 CompileCpp=1
 Folder=base
 Compile=1
@@ -1938,16 +1938,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit1]
-FileName=..\..\backends\midi\null.cpp
-CompileCpp=1
-Folder=backends/midi
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
 FileName=..\..\backends\midi\windows.cpp
 CompileCpp=1
 Folder=backends/midi
@@ -1957,7 +1947,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit2]
 FileName=..\..\backends\sdl\events.cpp
 CompileCpp=1
 Folder=backends/sdl
@@ -1967,10 +1957,20 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit7]
-FileName=..\..\backends\intern.h
+[Unit3]
+FileName=..\..\backends\sdl\graphics.cpp
 CompileCpp=1
-Folder=backends
+Folder=backends/sdl
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit7]
+FileName=..\..\base\engine.cpp
+CompileCpp=1
+Folder=base
 Compile=1
 Link=1
 Priority=1000

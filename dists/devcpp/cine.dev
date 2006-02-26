@@ -1,7 +1,7 @@
 [Project]
-FileName=gob.dev
-Name=gob
-UnitCount=50
+FileName=cine.dev
+Name=cine
+UnitCount=44
 Type=2
 Ver=1
 ObjFiles=
@@ -15,10 +15,10 @@ CppCompiler=-Wno-multichar_@@_
 Linker=
 IsCpp=1
 Icon=
-ExeOutput=gob
-ObjectOutput=gob
+ExeOutput=cine
+ObjectOutput=cine
 OverrideOutput=0
-OverrideOutputName=gob.a
+OverrideOutputName=cine.a
 HostApplication=
 Folders=
 CommandLine=
@@ -48,9 +48,9 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit1]
-FileName=..\..\engines\gob\anim.cpp
+FileName=..\..\engines\cine\various.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -58,9 +58,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=..\..\engines\gob\anim.h
+FileName=..\..\engines\cine\anim.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -68,9 +68,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=..\..\engines\gob\cdrom.cpp
+FileName=..\..\engines\cine\anim.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -78,9 +78,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=..\..\engines\gob\cdrom.h
+FileName=..\..\engines\cine\auto00.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -88,9 +88,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=..\..\engines\gob\dataio.cpp
+FileName=..\..\engines\cine\auto00.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -98,9 +98,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=..\..\engines\gob\dataio.h
+FileName=..\..\engines\cine\bg.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -108,9 +108,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=..\..\engines\gob\draw.cpp
+FileName=..\..\engines\cine\bg.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -118,9 +118,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=..\..\engines\gob\draw.h
+FileName=..\..\engines\cine\bg_list.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -128,9 +128,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=..\..\engines\gob\driver_vga.cpp
+FileName=..\..\engines\cine\bg_list.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -138,9 +138,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=..\..\engines\gob\driver_vga.h
+FileName=..\..\engines\cine\cine.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -148,9 +148,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=..\..\engines\gob\game.cpp
+FileName=..\..\engines\cine\cine.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -158,9 +158,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=..\..\engines\gob\game.h
+FileName=..\..\engines\cine\flip_support.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -168,9 +168,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=..\..\engines\gob\global.cpp
+FileName=..\..\engines\cine\flip_support.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -178,9 +178,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=..\..\engines\gob\global.h
+FileName=..\..\engines\cine\font.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -188,9 +188,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit15]
-FileName=..\..\engines\gob\gob.cpp
+FileName=..\..\engines\cine\font.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -198,9 +198,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=..\..\engines\gob\gob.h
+FileName=..\..\engines\cine\gfx.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -208,9 +208,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=..\..\engines\gob\goblin.cpp
+FileName=..\..\engines\cine\gfx.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -218,9 +218,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=..\..\engines\gob\goblin.h
+FileName=..\..\engines\cine\main_loop.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -228,9 +228,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=..\..\engines\gob\init.cpp
+FileName=..\..\engines\cine\main_loop.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -238,9 +238,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=..\..\engines\gob\init.h
+FileName=..\..\engines\cine\msg.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -248,9 +248,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=..\..\engines\gob\inter.cpp
+FileName=..\..\engines\cine\msg.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -258,9 +258,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=..\..\engines\gob\inter.h
+FileName=..\..\engines\cine\object.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -268,9 +268,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=..\..\engines\gob\inter_v1.cpp
+FileName=..\..\engines\cine\object.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -278,9 +278,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=..\..\engines\gob\inter_v2.cpp
+FileName=..\..\engines\cine\pal.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -288,9 +288,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=..\..\engines\gob\map.cpp
+FileName=..\..\engines\cine\pal.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -298,9 +298,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=..\..\engines\gob\map.h
+FileName=..\..\engines\cine\part.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -308,9 +308,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit27]
-FileName=..\..\engines\gob\mult.cpp
+FileName=..\..\engines\cine\part.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -318,9 +318,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit28]
-FileName=..\..\engines\gob\mult.h
+FileName=..\..\engines\cine\prc.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -328,9 +328,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit29]
-FileName=..\..\engines\gob\music.cpp
+FileName=..\..\engines\cine\prc.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -338,9 +338,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit30]
-FileName=..\..\engines\gob\music.h
+FileName=..\..\engines\cine\rel.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -348,9 +348,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=..\..\engines\gob\pack.cpp
+FileName=..\..\engines\cine\rel.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -358,9 +358,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit32]
-FileName=..\..\engines\gob\pack.h
+FileName=..\..\engines\cine\resource.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -368,9 +368,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=..\..\engines\gob\palanim.cpp
+FileName=..\..\engines\cine\resource.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -378,9 +378,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit34]
-FileName=..\..\engines\gob\palanim.h
+FileName=..\..\engines\cine\script.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -388,9 +388,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit35]
-FileName=..\..\engines\gob\parse.cpp
+FileName=..\..\engines\cine\script.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -398,9 +398,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=..\..\engines\gob\parse.h
+FileName=..\..\engines\cine\sfx_player.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -408,9 +408,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=..\..\engines\gob\parse_v1.cpp
+FileName=..\..\engines\cine\sfx_player.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -418,9 +418,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=..\..\engines\gob\parse_v2.cpp
+FileName=..\..\engines\cine\sound_driver.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -428,9 +428,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=..\..\engines\gob\scenery.cpp
+FileName=..\..\engines\cine\sound_driver.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -438,9 +438,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit40]
-FileName=..\..\engines\gob\scenery.h
+FileName=..\..\engines\cine\texte.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -448,9 +448,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit41]
-FileName=..\..\engines\gob\sound.cpp
+FileName=..\..\engines\cine\texte.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -458,9 +458,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=..\..\engines\gob\sound.h
+FileName=..\..\engines\cine\unpack.cpp
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -468,9 +468,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit43]
-FileName=..\..\engines\gob\timer.cpp
+FileName=..\..\engines\cine\unpack.h
 CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
@@ -478,69 +478,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=..\..\engines\gob\timer.h
+FileName=..\..\engines\cine\various.cpp
 CompileCpp=1
-Folder=gob
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit45]
-FileName=..\..\engines\gob\util.cpp
-CompileCpp=1
-Folder=gob
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit46]
-FileName=..\..\engines\gob\util.h
-CompileCpp=1
-Folder=gob
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit47]
-FileName=..\..\engines\gob\video.cpp
-CompileCpp=1
-Folder=gob
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit48]
-FileName=..\..\engines\gob\video.h
-CompileCpp=1
-Folder=gob
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit49]
-FileName=..\..\engines\gob\mult_v2.cpp
-CompileCpp=1
-Folder=gob
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit50]
-FileName=..\..\engines\gob\mult_v1.cpp
-CompileCpp=1
-Folder=gob
+Folder=cine
 Compile=1
 Link=1
 Priority=1000
