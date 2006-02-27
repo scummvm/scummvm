@@ -148,7 +148,7 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 
 	unsigned char buf [1024];
 	int position = 0;
-	byte *chr = msg;
+	const byte *chr = msg;
 
 	buf[position++] = SEQ_MIDIPUTC;
 	buf[position++] = 0xF0;
