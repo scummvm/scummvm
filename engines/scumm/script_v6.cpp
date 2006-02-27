@@ -2231,8 +2231,21 @@ void ScummEngine_v6::o6_wait() {
 			break;
 		return;
 	case 232:		// SO_WAIT_FOR_TURN
+		// FIXME: This opcode is really odd. It's used a lot in The Dig.
+		// But sometimes it receives the actor ID as params, and sometimes an
+		// angle. However in (almost?) all cases, just before calling it, _curActor
+		// is set, so we can use it. I tried to add code that detects if an angle
+		// is passed, and if so, wait till that angle is reached, but that leads to hangs.
+		// Disassembly doesn't show anything special for that opcode, though.
+		//
+		// For now, if the value passed in is divisible by 45, assume it is an
+		// angle, and use _curActor as the actor to wait for. See bug report #744441
 		offs = fetchScriptWordSigned();
-		actnum = pop();
+ 		actnum = pop();
+ 		if (_game.id == GID_DIG && actnum % 45 == 0) {
+			warning("Working around invalid actor num %d", actnum);
+			actnum = _curActor;
+		}
 		a = derefActor(actnum, "o6_wait:232b");
 		if (a->isInCurrentRoom() && a->_moving & MF_TURN)
 			break;
