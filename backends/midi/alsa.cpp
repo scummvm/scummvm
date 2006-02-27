@@ -76,6 +76,7 @@ private:
 MidiDriver_ALSA::MidiDriver_ALSA()
  : _isOpen(false), seq_handle(0), seq_client(0), seq_port(0), my_client(0), my_port(0)
 {
+	memset(&ev, 0, sizeof(ev));
 }
 
 int MidiDriver_ALSA::open() {
