@@ -343,7 +343,7 @@ void Player::send(uint32 b) {
 	return;
 }
 
-void Player::sysEx(byte *p, uint16 len) {
+void Player::sysEx(const byte *p, uint16 len) {
 	byte code;
 	byte a;
 	uint b;

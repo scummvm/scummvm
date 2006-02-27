@@ -68,7 +68,7 @@ void MidiChannel_MPU401::pitchBendFactor(byte value) {
 	_owner->setPitchBendRange(_channel, value);
 }
 
-void MidiChannel_MPU401::sysEx_customInstrument(uint32 type, byte *instr) {
+void MidiChannel_MPU401::sysEx_customInstrument(uint32 type, const byte *instr) {
 	_owner->sysEx_customInstrument(_channel, type, instr);
 }
 

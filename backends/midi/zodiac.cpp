@@ -35,7 +35,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 private:
 	TwMidiHandle _midiHandle;
@@ -109,7 +109,7 @@ void MidiDriver_Zodiac::send(uint32 b) {
 	}
 }
 
-void MidiDriver_Zodiac::sysEx(byte *msg, uint16 length) {
+void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
 	TwMidiSysEx(_midiHandle, 0, msg, length);
 }
 

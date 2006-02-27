@@ -185,9 +185,9 @@ public:
 		send(( 127  << 16) | (100 << 8) | (0xB0 | channel));
 	}
 
-	virtual void sysEx(byte *msg, uint16 length) { }
-	virtual void sysEx_customInstrument(byte channel, uint32 type, byte *instr) { }
-	virtual void metaEvent(byte type, byte*data, uint16 length) { }
+	virtual void sysEx(const byte *msg, uint16 length) { }
+	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
+	virtual void metaEvent(byte type, byte *data, uint16 length) { }
 
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback(void *timer_param, Common::Timer::TimerProc timer_proc) = 0;
@@ -230,7 +230,7 @@ public:
 	virtual void allNotesOff() { controlChange (123, 0); }
 
 	// SysEx messages
-	virtual void sysEx_customInstrument(uint32 type, byte *instr) = 0;
+	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;
 };
 
 

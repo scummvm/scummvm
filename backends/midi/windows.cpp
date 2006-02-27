@@ -46,7 +46,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx (byte *msg, uint16 length);
+	void sysEx (const byte *msg, uint16 length);
 };
 
 int MidiDriver_WIN::open() {
@@ -89,7 +89,7 @@ void MidiDriver_WIN::send(uint32 b) {
 	check_error(midiOutShortMsg(_mo, u.dwData));
 }
 
-void MidiDriver_WIN::sysEx(byte *msg, uint16 length) {
+void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 	if (!_isOpen)
 		return;
 

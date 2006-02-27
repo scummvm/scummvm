@@ -164,7 +164,7 @@ private:
 	} _instrument;
 
 public:
-	Instrument_Adlib (byte *data);
+	Instrument_Adlib (const byte *data);
 	Instrument_Adlib (Serializer *s);
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
@@ -239,7 +239,7 @@ private:
 	uint8 getEquivalentGM();
 
 public:
-	Instrument_Roland (byte *data);
+	Instrument_Roland (const byte *data);
 	Instrument_Roland (Serializer *s);
 	void saveOrLoad (Serializer *s);
 	void send (MidiChannel *mc);
@@ -272,7 +272,7 @@ void Instrument::program (byte prog, bool mt32) {
 	_instrument = new Instrument_Program (prog, mt32);
 }
 
-void Instrument::adlib (byte *instrument) {
+void Instrument::adlib (const byte *instrument) {
 	clear();
 	if (!instrument)
 		return;
@@ -280,7 +280,7 @@ void Instrument::adlib (byte *instrument) {
 	_instrument = new Instrument_Adlib (instrument);
 }
 
-void Instrument::roland (byte *instrument) {
+void Instrument::roland (const byte *instrument) {
 	clear();
 	if (!instrument)
 		return;
@@ -361,7 +361,7 @@ void Instrument_Program::send (MidiChannel *mc) {
 //
 ////////////////////////////////////////
 
-Instrument_Adlib::Instrument_Adlib (byte *data) {
+Instrument_Adlib::Instrument_Adlib (const byte *data) {
 	memcpy (&_instrument, data, sizeof (_instrument));
 }
 
@@ -389,7 +389,7 @@ void Instrument_Adlib::send (MidiChannel *mc) {
 //
 ////////////////////////////////////////
 
-Instrument_Roland::Instrument_Roland (byte *data) {
+Instrument_Roland::Instrument_Roland (const byte *data) {
 	memcpy (&_instrument, data, sizeof (_instrument));
 	memcpy (&_instrument_name, &_instrument.common.name, sizeof (_instrument.common.name));
 	_instrument_name[10] = '\0';

@@ -56,7 +56,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 private:
 	AUGraph _auGraph;
@@ -177,7 +177,7 @@ void MidiDriver_CORE::send(uint32 b) {
 	MusicDeviceMIDIEvent(_synth, status_byte, first_byte, second_byte, 0);
 }
 
-void MidiDriver_CORE::sysEx(byte *msg, uint16 length) {
+void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 	assert(_auGraph != NULL);
 
 	// Add SysEx frame if missing

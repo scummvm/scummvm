@@ -61,7 +61,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 private:
 	void send_event(int do_flush);
@@ -192,7 +192,7 @@ void MidiDriver_ALSA::send(uint32 b) {
 	}
 }
 
-void MidiDriver_ALSA::sysEx(byte *msg, uint16 length) {
+void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf[1024];
 
 	if (length > 254) {

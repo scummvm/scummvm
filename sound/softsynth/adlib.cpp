@@ -124,7 +124,7 @@ public:
 	void allNotesOff();
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, byte *instr);
+	void sysEx_customInstrument(uint32 type, const byte *instr);
 };
 
 // FYI (Jamieson630)
@@ -153,7 +153,7 @@ public:
 	void sustain(bool value) { }
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, byte *instr) { }
+	void sysEx_customInstrument(uint32 type, const byte *instr) { }
 };
 
 struct Struct10 {
@@ -553,7 +553,7 @@ public:
 	uint32 property(int prop, uint32 param);
 
 	void setPitchBendRange(byte channel, uint range);
-	void sysEx_customInstrument(byte channel, uint32 type, byte *instr);
+	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr);
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_percussion; } // Percussion partially supported
@@ -758,7 +758,7 @@ void AdlibPart::allNotesOff() {
 		_owner->mc_off(_voice);
 }
 
-void AdlibPart::sysEx_customInstrument(uint32 type, byte *instr) {
+void AdlibPart::sysEx_customInstrument(uint32 type, const byte *instr) {
 	if (type == 'ADL ') {
 		AdlibInstrument *i = &_part_instr;
 		memcpy(i, instr, sizeof(AdlibInstrument));
@@ -945,7 +945,7 @@ void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 	}
 }
 
-void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, byte *instr) {
+void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, const byte *instr) {
 	_parts[channel].sysEx_customInstrument(type, instr);
 }
 

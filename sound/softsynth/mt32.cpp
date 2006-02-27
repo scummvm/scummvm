@@ -64,7 +64,7 @@ public:
 	void close();
 	void send(uint32 b);
 	void setPitchBendRange (byte channel, uint range);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 	uint32 property(int prop, uint32 param);
 	MidiChannel *allocateChannel();
@@ -305,7 +305,7 @@ void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
 	sysEx(benderRangeSysex, 9);
 }
 
-void MidiDriver_MT32::sysEx(byte *msg, uint16 length) {
+void MidiDriver_MT32::sysEx(const byte *msg, uint16 length) {
 	if (msg[0] == 0xf0) {
 		_synth->playSysex(msg, length);
 	} else {
@@ -398,7 +398,7 @@ private:
 
 protected:
 	void send(uint32 b);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 public:
 	MidiDriver_ThreadedMT32(Audio::Mixer *mixer);
@@ -457,7 +457,7 @@ void MidiDriver_ThreadedMT32::send(uint32 b) {
 	pushMidiEvent(event);
 }
 
-void MidiDriver_ThreadedMT32::sysEx(byte *msg, uint16 length) {
+void MidiDriver_ThreadedMT32::sysEx(const byte *msg, uint16 length) {
 	MidiEvent_MT32 *event = new MidiEvent_MT32(0xFFFFFFFF, msg, length);
 	pushMidiEvent(event);
 }

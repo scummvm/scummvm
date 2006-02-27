@@ -50,7 +50,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 private:
 	MIDIClientRef	mClient;
@@ -149,7 +149,7 @@ void MidiDriver_CoreMIDI::send(uint32 b) {
 	MIDISend(mOutPort, mDest, &packetList);
 }
 
-void MidiDriver_CoreMIDI::sysEx(byte *msg, uint16 length) {
+void MidiDriver_CoreMIDI::sysEx(const byte *msg, uint16 length) {
 	assert(mOutPort != NULL);
 	assert(mDest != NULL);
 

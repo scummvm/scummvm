@@ -65,8 +65,8 @@ public:
 	void copy_to (Instrument *dest) { if (_instrument) _instrument->copy_to (dest); else dest->clear(); }
 
 	void program (byte program, bool mt32);
-	void adlib (byte *instrument);
-	void roland (byte *instrument);
+	void adlib (const byte *instrument);
+	void roland (const byte *instrument);
 
 	byte getType() { return _type; }
 	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }

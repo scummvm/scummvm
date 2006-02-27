@@ -59,7 +59,7 @@ public:
 	void pitchBendFactor (byte value);
 
 	// SysEx messages
-	void sysEx_customInstrument (uint32 type, byte *instr);
+	void sysEx_customInstrument (uint32 type, const byte *instr);
 
 	// Only to be called by the owner
 	void init (MidiDriver *owner, byte channel);

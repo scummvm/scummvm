@@ -46,7 +46,7 @@ public:
 	int open();
 	void close();
 	void send(uint32 b);
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 private:
 	bool _isOpen;
@@ -140,7 +140,7 @@ void MidiDriver_SEQ::send(uint32 b) {
 	write(device, buf, position);
 }
 
-void MidiDriver_SEQ::sysEx (byte *msg, uint16 length) {
+void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 	if (length > 254) {
 		warning ("Cannot send SysEx block - data too large");
 		return;

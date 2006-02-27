@@ -150,7 +150,7 @@ public:
 	void pitchBend(int16 value);
 	void controlChange(byte control, byte value);
 	void pitchBendFactor(byte value) { }
-	void sysEx_customInstrument(uint32 type, byte *instr);
+	void sysEx_customInstrument(uint32 type, const byte *instr);
 };
 
 class MidiDriver_YM2612 : public MidiDriver_Emulated {
@@ -179,7 +179,7 @@ public:
 	uint32 property(int prop, uint32 param) { return 0; }
 
 	void setPitchBendRange(byte channel, uint range) { }
-	void sysEx(byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length);
 
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
@@ -675,7 +675,7 @@ void MidiChannel_YM2612::controlChange(byte control, byte value) {
 	}
 }
 
-void MidiChannel_YM2612::sysEx_customInstrument(uint32 type, byte *fmInst) {
+void MidiChannel_YM2612::sysEx_customInstrument(uint32 type, const byte *fmInst) {
 	if (type != 'EUP ')
 		return;
 	Voice2612 *voice = new Voice2612;
@@ -798,7 +798,7 @@ void MidiDriver_YM2612::send(byte chan, uint32 b) {
 	}
 }
 
-void MidiDriver_YM2612::sysEx(byte *msg, uint16 length) {
+void MidiDriver_YM2612::sysEx(const byte *msg, uint16 length) {
 	if (msg[0] != 0x7C || msg[1] >= ARRAYSIZE(_channel))
 		return;
 	_channel[msg[1]]->sysEx_customInstrument('EUP ', &msg[2]);
