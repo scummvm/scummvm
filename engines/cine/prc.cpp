@@ -59,16 +59,15 @@ void freePrcLinkedList(void) {
 
 void loadPrc(const char *pPrcName) {
 	uint8 i;
-	uint16 numEntry;
+	uint16 numScripts;
+	const uint8 *scriptPtr;
 
 	ASSERT_PTR(pPrcName);
 
 	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
 		if (scriptTable[i].ptr) {
 			ASSERT_PTR(scriptTable[i].ptr);
-
 			free(scriptTable[i].ptr);
-
 			scriptTable[i].ptr = NULL;
 			scriptTable[i].size = 0;
 		}
@@ -76,64 +75,30 @@ void loadPrc(const char *pPrcName) {
 
 	checkDataDisk(-1);
 	if ((gameType == Cine::GID_FW) && (!strcmp(pPrcName, "AUTO00.PRC"))) {
-		const unsigned char *readPtr = AUT000;
-
-		processPendingUpdates(1);
-
-		numEntry = READ_BE_UINT16(readPtr); readPtr += 2;
-
-		ASSERT(numEntry <= NUM_MAX_SCRIPT);
-
-		for (i = 0; i < numEntry; i++) {
-			scriptTable[i].size = READ_BE_UINT16(readPtr); readPtr += 2;
-		}
-
-		for (i = 0; i < numEntry; i++) {
-			uint16 size;
-
-			size = scriptTable[i].size;
-
-			if (size) {
-				scriptTable[i].ptr = (byte *)malloc(size);
-
-				ASSERT_PTR(scriptTable[i].ptr);
-
-				memcpy(scriptTable[i].ptr, readPtr, size);
-				readPtr += size;
-
-				computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
-			}
-		}
+    // bypass protection
+		scriptPtr = AUT000;
 	} else {
-		uint8 *ptr = readBundleFile(findFileInBundle(pPrcName));
+		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
+    ASSERT_PTR(scriptPtr);
+	}
 
-		ASSERT_PTR(ptr);
+	processPendingUpdates(1);
 
-		processPendingUpdates(1);
+	numScripts = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
+	ASSERT(numScripts <= NUM_MAX_SCRIPT);
 
-		numEntry = READ_BE_UINT16(ptr); ptr += 2;
+	for (i = 0; i < numScripts; i++) {
+		scriptTable[i].size = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
+	}
 
-		ASSERT(numEntry <= NUM_MAX_SCRIPT);
-
-		for (i = 0; i < numEntry; i++) {
-			scriptTable[i].size = READ_BE_UINT16(ptr); ptr += 2;
-		}
-
-		for (i = 0; i < numEntry; i++) {
-			uint16 size;
-
-			size = scriptTable[i].size;
-
-			if (size) {
-				scriptTable[i].ptr = (byte *) malloc(size);
-
-				ASSERT_PTR(scriptTable[i].ptr);
-
-				memcpy(scriptTable[i].ptr, ptr, size);
-				ptr += size;
-
-				computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
-			}
+	for (i = 0; i < numScripts; i++) {
+		uint16 size = scriptTable[i].size;
+		if (size) {
+			scriptTable[i].ptr = (byte *) malloc(size);
+			ASSERT_PTR(scriptTable[i].ptr);
+			memcpy(scriptTable[i].ptr, scriptPtr, size);
+			scriptPtr += size;
+			computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
 		}
 	}
 }

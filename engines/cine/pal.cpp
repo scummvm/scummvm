@@ -32,12 +32,11 @@ uint16 tempPalette[256];
 uint8 colorMode256 = 0;
 uint8 palette256[256 * 3];
 
-uint16 palVar;
-uint16 palVar0;
+uint16 palEntriesCount;
 
 Common::File palFileHandle;
 
-palEntryStruct *palPtr;
+PalEntry *palPtr;
 
 uint8 paletteBuffer1[16];
 uint8 paletteBuffer2[16];
@@ -56,21 +55,22 @@ void loadPal(const char *fileName) {
 		palPtr = NULL;
 	}
 
-	palVar = 0;
-	palVar0 = 42;
+	palEntriesCount = 0;
 
 	palFileHandle.open(buffer);
 
 	ASSERT(palFileHandle.isOpen());
 
-	palFileHandle.read(&palVar, 2);	// endian: not fliped !
-	palFileHandle.read(&palVar0, 2);
-
-	palPtr = (palEntryStruct *) malloc(palVar * palVar0);
-
+	palEntriesCount = palFileHandle.readUint16LE();
+	palFileHandle.readUint16LE(); // entry size
+	
+	palPtr = (PalEntry *)malloc(palEntriesCount * sizeof(PalEntry));
 	ASSERT_PTR(palPtr);
-
-	palFileHandle.read(palPtr, palVar * palVar0);
+	for (int i = 0; i < palEntriesCount; ++i) {
+		palFileHandle.read(palPtr[i].name, 10);
+		palFileHandle.read(palPtr[i].pal1, 16);
+		palFileHandle.read(palPtr[i].pal2, 16);
+	}
 }
 
 int16 findPaletteFromName(const char *fileName) {
@@ -82,13 +82,13 @@ int16 findPaletteFromName(const char *fileName) {
 
 	while (position < strlen(fileName)) {
 		if (buffer[position] > 'a' && buffer[position] < 'z') {
-			buffer[position] += 0xE0;
+			buffer[position] += 'A' - 'a';
 		}
 
 		position++;
 	}
 
-	for (i = 0; i < palVar; i++) {
+	for (i = 0; i < palEntriesCount; i++) {
 		if (!strcmp(buffer, palPtr[i].name)) {
 			return i;
 		}
@@ -112,14 +112,9 @@ void loadRelatedPalette(const char *fileName) {
 			paletteBuffer1[i] = paletteBuffer2[i] = (i << 4) + i;
 		}
 	} else {
-		palEntryStruct *palEntryPtr = &palPtr[paletteIndex];
-
-		ASSERT_PTR(paletteBuffer2);
-
-		for (i = 0; i < 16; i++) {	// convert palette
-			paletteBuffer1[i] = palEntryPtr->pal1[i];
-			paletteBuffer2[i] = palEntryPtr->pal2[i];
-		}
+		assert(paletteIndex < palEntriesCount);
+		memcpy(paletteBuffer1, palPtr[paletteIndex].pal1, 16);
+		memcpy(paletteBuffer2, palPtr[paletteIndex].pal2, 16);
 	}
 }
 

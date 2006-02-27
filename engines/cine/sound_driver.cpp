@@ -37,7 +37,7 @@ uint8 snd_useAdlib = 0;
 uint16 snd_fadeOutCounter = 0;
 uint16 snd_songTicksCounter = 0;
 uint8 *snd_adlibInstrumentsTable[4];
-sndDriverStruct snd_driver;
+SoundDriver snd_driver;
 
 static uint8 snd_adlibVibrato = 0;
 static int16 snd_adlibChannelVolume[4];
@@ -318,7 +318,7 @@ static void snd_adlibDriverPlaySound(uint8 * data, int channelNum, int volume) {
 	}
 }
 
-static sndDriverStruct snd_adlibDriver = {
+static SoundDriver snd_adlibDriver = {
 	&snd_adlibDriverSetupChannel,
 	&snd_adlibDriverSetChannelFrequency,
 	&snd_adlibDriverStopChannel,

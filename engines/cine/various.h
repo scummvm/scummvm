@@ -50,8 +50,8 @@ struct unk1Struct {
 
 extern unk1Struct messageTable[NUM_MAX_MESSAGE];
 
-struct unkListElementStruct {
-	struct unkListElementStruct *next;
+struct SeqListElement {
+	struct SeqListElement *next;
 	int16 var4;
 	int16 var6;
 	int16 var8;
@@ -68,7 +68,7 @@ struct unkListElementStruct {
 	int16 var1E;
 };
 
-extern unkListElementStruct unkList;
+extern SeqListElement seqList;
 
 extern uint32 var6;
 extern uint32 var8;
@@ -182,9 +182,9 @@ struct mouseStatusStruct {
 
 extern int16 additionalBgVScroll;
 
-void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
-void resetUnkList();
-void processUnkList(void);
+void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
+void resetSeqList();
+void processSeqList(void);
 
 } // End of namespace Cine
 

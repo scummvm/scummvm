@@ -37,7 +37,7 @@ namespace Cine {
 uint16 snd_eventsDelay;
 int snd_songIsPlaying = 0;
 uint8 snd_nullInstrument[] = { 0, 0 };
-sfxStateStruct snd_sfxState;
+SfxState snd_sfxState;
 
 static uint8 snd_mute = 0;
 static char snd_songFileName[30];
@@ -45,7 +45,7 @@ static char snd_songFileName[30];
 /* LVDT specific */
 static Common::File *snd_baseSndFile = NULL;
 static uint16 snd_numBasesonEntries = 0;
-static BasesonEntryStruct *snd_basesonEntries = NULL;
+static BasesonEntry *snd_basesonEntries = NULL;
 
 int snd_loadBasesonEntries(const char *fileName) {
 	int i;
@@ -57,10 +57,10 @@ int snd_loadBasesonEntries(const char *fileName) {
 
 	snd_numBasesonEntries = snd_baseSndFile->readUint16BE();
 	snd_baseSndFile->readUint16BE();	/* entry_size */
-	snd_basesonEntries = (BasesonEntryStruct *)malloc(snd_numBasesonEntries * sizeof(BasesonEntryStruct));
+	snd_basesonEntries = (BasesonEntry *)malloc(snd_numBasesonEntries * sizeof(BasesonEntry));
 	if (snd_basesonEntries) {
 		for (i = 0; i < snd_numBasesonEntries; ++i) {
-			BasesonEntryStruct *be = &snd_basesonEntries[i];
+			BasesonEntry *be = &snd_basesonEntries[i];
 			snd_baseSndFile->read(be->name, 14);
 			be->offset = snd_baseSndFile->readUint32BE();
 			be->size = snd_baseSndFile->readUint32BE();
@@ -109,7 +109,7 @@ static uint8 *snd_loadBasesonEntry(const char *entryName) {
 	} else {
 		entryNum = snd_findBasesonEntry(entryName);
 		if (entryNum != -1 && entryNum < snd_numBasesonEntries) {
-			const BasesonEntryStruct *be = &snd_basesonEntries[entryNum];
+			const BasesonEntry *be = &snd_basesonEntries[entryNum];
 			entryData = (uint8 *)malloc(be->unpackedSize);
 			if (entryData) {
 				if (be->unpackedSize > be->size) {

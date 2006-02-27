@@ -27,14 +27,14 @@
 
 namespace Cine {
 
-struct BasesonEntryStruct {
+struct BasesonEntry {
 	char name[14];
 	uint32 offset;
 	uint32 size;
 	uint32 unpackedSize;
 };
 
-struct sfxStateStruct {
+struct SfxState {
 	uint8 *songData;
 	int currentInstrumentChannel[4];
 	uint8 *instruments[15];
@@ -46,7 +46,7 @@ struct sfxStateStruct {
 extern uint16 snd_eventsDelay;
 extern int snd_songIsPlaying;
 extern uint8 snd_nullInstrument[];
-extern sfxStateStruct snd_sfxState;
+extern SfxState snd_sfxState;
 
 extern int snd_loadBasesonEntries(const char *fileName);
 extern void snd_clearBasesonEntries();

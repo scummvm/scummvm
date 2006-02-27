@@ -70,31 +70,24 @@ void loadObject(char *pObjectName) {
 
 	processPendingUpdates(1);
 
-	numEntry = *(uint16 *) ptr;
-	ptr += 2;
-	flipU16(&numEntry);
+	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 
-	entrySize = *(uint16 *) ptr;
-	ptr += 2;
-	flipU16(&entrySize);
+	entrySize = READ_BE_UINT16(ptr); ptr += 2;
 
 	ASSERT(numEntry <= NUM_MAX_OBJECT);
-	ASSERT(entrySize == sizeof(objectStruct));	// carefull, it's directly read to memory
 
+	
 	for (i = 0; i < numEntry; i++) {
 		if (objectTable[i].costume != -2)	// flag is keep ?
 		{
-			memcpy(&objectTable[i], ptr, entrySize);
-
-			flipU16((uint16 *) & objectTable[i].x);
-			flipU16((uint16 *) & objectTable[i].y);
-			flipU16(&objectTable[i].mask);
-			flipU16((uint16 *) & objectTable[i].frame);
-			flipU16((uint16 *) & objectTable[i].costume);
-			flipU16(&objectTable[i].part);
+			objectTable[i].x = READ_BE_UINT16(ptr); ptr += 2;
+			objectTable[i].y = READ_BE_UINT16(ptr); ptr += 2;
+			objectTable[i].mask = READ_BE_UINT16(ptr); ptr += 2;
+			objectTable[i].frame = READ_BE_UINT16(ptr); ptr += 2;
+			objectTable[i].costume = READ_BE_UINT16(ptr); ptr += 2;
+			memcpy(objectTable[i].name, ptr, 20); ptr += 20;
+			objectTable[i].part = READ_BE_UINT16(ptr); ptr += 2;
 		}
-
-		ptr += entrySize;
 	}
 
 	if (!strcmp(pObjectName, "INTRO.OBJ")) {

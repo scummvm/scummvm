@@ -31,7 +31,7 @@
 
 namespace Cine {
 
-uint16 msgVar0;
+uint16 messageCount;
 
 void loadMsg(char *pMsgName) {
 	uint16 i;
@@ -39,7 +39,7 @@ void loadMsg(char *pMsgName) {
 
 	checkDataDisk(-1);
 
-	msgVar0 = 0;
+	messageCount = 0;
 
 	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
 		messageTable[i].len = 0;
@@ -57,15 +57,15 @@ void loadMsg(char *pMsgName) {
 
 	processPendingUpdates(1);
 
-	msgVar0 = READ_BE_UINT16(ptr); ptr += 2;
+	messageCount = READ_BE_UINT16(ptr); ptr += 2;
 
-	ASSERT(msgVar0 <= NUM_MAX_MESSAGE);
+	ASSERT(messageCount <= NUM_MAX_MESSAGE);
 
-	for (i = 0; i < msgVar0; i++) {
+	for (i = 0; i < messageCount; i++) {
 		messageTable[i].len = READ_BE_UINT16(ptr); ptr += 2;
 	}
 
-	for (i = 0; i < msgVar0; i++) {
+	for (i = 0; i < messageCount; i++) {
 		if (messageTable[i].len) {
 			messageTable[i].ptr = (uint8 *) malloc(messageTable[i].len);
 

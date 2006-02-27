@@ -825,7 +825,7 @@ void makeSave(char *saveFileName) {
 		flipU16((uint16 *)&animDataTable[i].fileIdx);
 		flipU16((uint16 *)&animDataTable[i].frameIdx);
 
-		fHandle.write(&animDataTable[i], sizeof(animDataStruct));
+		fHandle.write(&animDataTable[i], sizeof(AnimData));
 
 		flipU16(&animDataTable[i].width);
 		flipU16(&animDataTable[i].var1);
@@ -2433,7 +2433,7 @@ void drawOverlays(void) {
 					if (gameType == Cine::GID_OS) {
 						uint16 partVar1;
 						uint16 partVar2;
-						animDataStruct *pPart;
+						AnimData *pPart;
 						pPart = &animDataTable[objPtr->frame];
 
 						partVar1 = pPart->var1;
@@ -2445,7 +2445,7 @@ void drawOverlays(void) {
 					} else {
 						uint16 partVar1;
 						uint16 partVar2;
-						animDataStruct *pPart;
+						AnimData *pPart;
 						int16 part = objPtr->part;
 
 						ASSERT(part >= 0 && part <= NUM_MAX_PARTDATA);
@@ -2511,7 +2511,7 @@ void drawOverlays(void) {
 				if (objPtr->frame >= 0) {
 					uint16 partVar1;
 					uint16 partVar2;
-					animDataStruct *pPart;
+					AnimData *pPart;
 					int16 part = objPtr->part;
 
 					ASSERT(part >= 0 && part <= NUM_MAX_PARTDATA);
@@ -2679,12 +2679,12 @@ void addMessage(uint8 param1, int16 param2, int16 param3, int16 param4, int16 pa
 	currentHead->previous = newElement;
 }
 
-unkListElementStruct unkList;
+SeqListElement seqList;
 
-void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
-	unkListElementStruct *currentHead = &unkList;
-	unkListElementStruct *tempHead = currentHead;
-	unkListElementStruct *newElement;
+void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8) {
+	SeqListElement *currentHead = &seqList;
+	SeqListElement *tempHead = currentHead;
+	SeqListElement *newElement;
 
 	currentHead = tempHead->next;
 
@@ -2693,7 +2693,7 @@ void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, i
 		currentHead = tempHead->next;
 	}
 
-	newElement = (unkListElementStruct *)malloc(sizeof(unkListElementStruct));
+	newElement = (SeqListElement *)malloc(sizeof(SeqListElement));
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -2714,11 +2714,11 @@ void addUnkListElement(int16 param0, int16 param1, int16 param2, int16 param3, i
 	newElement->var1E = 0;
 }
 
-void resetUnkList() {
-	unkList.next = NULL;
+void resetSeqList() {
+	seqList.next = NULL;
 }
 
-void computeMove1(unkListElementStruct *element, int16 x, int16 y, int16 param1,
+void computeMove1(SeqListElement *element, int16 x, int16 y, int16 param1,
     int16 param2, int16 x2, int16 y2) {
 	element->var16 = 0;
 	element->var14 = 0;
@@ -2744,7 +2744,7 @@ void computeMove1(unkListElementStruct *element, int16 x, int16 y, int16 param1,
 	}
 }
 
-uint16 computeMove2(unkListElementStruct *element) {
+uint16 computeMove2(SeqListElement *element) {
 	int16 returnVar = 0;
 
 	if (element->var16 == 1) {
@@ -2834,7 +2834,7 @@ void resetGfxEntityEntry(uint16 objIdx) {
 #endif
 }
 
-uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, unkListElementStruct *element, uint16 param3, int16 *param4) {
+uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, SeqListElement *element, uint16 param3, int16 *param4) {
 	uint8 *currentPtr = ptr;
 	uint8 *ptrData;
 	uint8 *ptr2;
@@ -2877,7 +2877,7 @@ uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, unkListElementStruct *el
 	return 1;
 }
 
-void processUnkListElement(unkListElementStruct *element) {
+void processSeqListElement(SeqListElement *element) {
 	int16 x;
 	int16 y;
 	uint8 *ptr1;
@@ -2967,15 +2967,15 @@ void processUnkListElement(unkListElementStruct *element) {
 	}
 }
 
-void processUnkList(void) {
-	unkListElementStruct *currentHead = &unkList;
-	unkListElementStruct *tempHead = currentHead;
+void processSeqList(void) {
+	SeqListElement *currentHead = &seqList;
+	SeqListElement *tempHead = currentHead;
 
 	currentHead = tempHead->next;
 
 	while (currentHead) {
 		if (currentHead->var4 != -1) {
-			processUnkListElement(currentHead);
+			processSeqListElement(currentHead);
 		}
 
 		tempHead = currentHead;

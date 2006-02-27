@@ -27,7 +27,7 @@
 
 namespace Cine {
 
-struct palEntryStruct {
+struct PalEntry {
 	char name[10];
 	uint8 pal1[16];
 	uint8 pal2[16];

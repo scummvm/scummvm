@@ -30,10 +30,9 @@
 namespace Cine {
 
 uint16 numElementInPart;
-uint16 partVar1;
 
-animDataStruct animDataTable[NUM_MAX_PARTDATA];
-partBufferStruct *partBuffer;
+AnimData animDataTable[NUM_MAX_PARTDATA];
+PartBuffer *partBuffer;
 
 void loadPart(const char *partName) {
 	uint16 i;
@@ -43,11 +42,9 @@ void loadPart(const char *partName) {
 		partBuffer[i].offset = 0;
 		partBuffer[i].packedSize = 0;
 		partBuffer[i].unpackedSize = 0;
-		partBuffer[i].var1A = 0;
 	}
 
 	numElementInPart = 0;
-	partVar1 = 30;
 
 	partFileHandle.close();
 
@@ -60,9 +57,7 @@ void loadPart(const char *partName) {
 	processPendingUpdates(-1);
 
 	numElementInPart = partFileHandle.readUint16BE();
-	partVar1 = partFileHandle.readUint16BE();
-
-	assert(partVar1 == 30);
+	partFileHandle.readUint16BE(); // entry size
 
 	strcpy(currentPartName, partName);
 
@@ -71,7 +66,7 @@ void loadPart(const char *partName) {
 		partBuffer[i].offset = partFileHandle.readUint32BE();
 		partBuffer[i].packedSize = partFileHandle.readUint32BE();
 		partBuffer[i].unpackedSize = partFileHandle.readUint32BE();
-		partBuffer[i].var1A = partFileHandle.readUint32BE();
+		partFileHandle.readUint32BE(); // unused
 	}
 
 	if (gameType == Cine::GID_FW)

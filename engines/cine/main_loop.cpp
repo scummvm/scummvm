@@ -94,7 +94,7 @@ void mainLoop(int bootScriptIdx) {
 
 	closeEngine3();
 	resetMessageHead();
-	resetUnkList();
+	resetSeqList();
 	resetglobalScriptsHead();
 	resetObjectScriptHead();
 	mainLoopSub1();
@@ -154,7 +154,7 @@ void mainLoop(int bootScriptIdx) {
 			}
 		}
 
-		processUnkList();
+		processSeqList();
 		executeList1();
 		executeList0();
 

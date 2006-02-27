@@ -75,8 +75,8 @@ void addGfxElementA0(int16 param1, int16 param2) {
 }
 
 void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
-	unkListElementStruct *currentHead = &unkList;
-	unkListElementStruct *tempHead = currentHead;
+	SeqListElement *currentHead = &seqList;
+	SeqListElement *tempHead = currentHead;
 
 	while (currentHead && (currentHead->var6 != param1 || currentHead->var4 != param2 || currentHead->varE != param3)) {
 		tempHead = currentHead;
@@ -89,8 +89,8 @@ void removeSeq(uint16 param1, uint16 param2, uint16 param3) {
 }
 
 uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
-	unkListElementStruct *currentHead = &unkList;
-	unkListElementStruct *tempHead = currentHead;
+	SeqListElement *currentHead = &seqList;
+	SeqListElement *tempHead = currentHead;
 
 	while (currentHead && (currentHead->var6 != param1 || currentHead->var4 != param2 || currentHead->varE != param3)) {
 		tempHead = currentHead;
@@ -1920,9 +1920,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				param7 = READ_BE_UINT16(currentScriptPtr + currentPosition);
 				currentPosition += 2;
 
-				DEBUG_SCRIPT(currentLine, "addUnkListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
+				DEBUG_SCRIPT(currentLine, "addSeqListElement(%d,%d,%d,%d,%d)", param1, param2, param3, param4, param5, param6, param7);
 
-				addUnkListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
+				addSeqListElement(param1, 0, param2, param3, param4, param5, param6, 0, param7);
 
 				break;
 			}
@@ -2122,7 +2122,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				}
 
 				if (currentAdditionalBgIdx2 == temp) {
-					currentAdditionalBgIdx = 0;
+					currentAdditionalBgIdx2 = 0;
 				}
 
 				strcpy(currentBgName[temp], "");

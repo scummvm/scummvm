@@ -201,7 +201,7 @@ static void initialize() {
 
 	textDataPtr = (uint8 *)malloc(8000);
 
-	partBuffer = (partBufferStruct *)malloc(255 * sizeof(animDataStruct));
+	partBuffer = (PartBuffer *)malloc(255 * sizeof(PartBuffer));
 
 	loadTextData("texte.dat", textDataPtr);
 	snd_loadBasesonEntries("BASESON.SND");

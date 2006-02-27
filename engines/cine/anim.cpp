@@ -856,7 +856,7 @@ void loadResourcesFromSave() {
 	strcpy(part, currentPartName);
 
 	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim++) {
-		animDataStruct *currentPtr = &animDataTable[currentAnim];
+		AnimData *currentPtr = &animDataTable[currentAnim];
 		if (currentPtr->ptr1 && currentPtr->fileIdx != -1) {
 			int8 isMask = 0;
 			int8 isSpl = 0;

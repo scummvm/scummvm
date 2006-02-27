@@ -27,15 +27,14 @@
 
 namespace Cine {
 
-struct partBufferStruct {
+struct PartBuffer {
 	char partName[14];
 	uint32 offset;
 	uint32 packedSize;
 	uint32 unpackedSize;
-	uint32 var1A;		/* unused */
 };
 
-struct animDataStruct {
+struct AnimData {
 	uint16 width;
 	uint16 var1;
 	uint16 bpp;
@@ -51,8 +50,8 @@ struct animDataStruct {
 #define NUM_MAX_PARTDATA 255
 #define NUM_MAX_ANIMDATA 255
 
-extern animDataStruct animDataTable[NUM_MAX_ANIMDATA];
-extern partBufferStruct *partBuffer;
+extern AnimData animDataTable[NUM_MAX_ANIMDATA];
+extern PartBuffer *partBuffer;
 
 void loadPart(const char *partName);
 void freePartRange(uint8 startIdx, uint8 numIdx);
