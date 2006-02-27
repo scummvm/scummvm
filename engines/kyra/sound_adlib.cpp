@@ -50,9 +50,7 @@ public:
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
 		memset(buffer, 0, sizeof(int16)*numSamples);
-		lock();
 		YM3812UpdateOne(_adlib, buffer, numSamples);
-		unlock();
 		return numSamples;
 	}
 
@@ -335,7 +333,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_mixer->setupPremix(this);
 
 	// the interval should be around 13000 to 20000
-	Common::g_timer->installTimerProc(&AdlibTimerCall, 15000, this);
+	Common::g_timer->installTimerProc(&AdlibTimerCall, 17000, this);
 }
 
 AdlibDriver::~AdlibDriver() {
@@ -400,6 +398,7 @@ int AdlibDriver::snd_unkOpcode1(va_list &list) {
 int AdlibDriver::snd_startSong(va_list &list) {
 	int songId = va_arg(list, int);
 	_flags |= 8;
+	_flagTrigger = 1;
 	uint16 offset = READ_LE_UINT16(&_soundData[songId << 1]);
 	uint8 firstByte = *(_soundData + offset);
 
@@ -501,8 +500,8 @@ int AdlibDriver::snd_clearFlag(va_list &list) {
 
 void AdlibDriver::callback() {
 	lock();
-	//--_flagTrigger;
-	//if ((int8)_flagTrigger < 0)
+	--_flagTrigger;
+	if ((int8)_flagTrigger < 0)
 		_flags &= 0xFFF7;
 	callbackOutput();
 	callbackProcess();
@@ -558,6 +557,7 @@ void AdlibDriver::callbackProcess() {
 			table.unk1 = _unkTableByte1;
 		}
 
+		// TODO: check that
 		table.unk4 += table.unk1;
 		if (table.unk4 < 0) {
 			if (--table.unk5) {
