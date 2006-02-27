@@ -326,19 +326,27 @@ int KyraEngine::init(GameDetector &detector) {
 
 	// for now we prefer MIDI-to-Adlib conversion over native midi
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 	if (midiDriver == MD_ADLIB) {
-		// In this case we should play the Adlib tracks, but for now
-		// the automagic MIDI-to-Adlib conversion will do.
-	} else if (native_mt32) {
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-	}
+		_sound = new SoundAdlibPC(_mixer, this);
+		assert(_sound);
+	} else {
+		bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
-	_sound = new SoundPC(driver, _mixer, this);
-	assert(_sound);
-	static_cast<SoundPC*>(_sound)->hasNativeMT32(native_mt32);
+		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		assert(driver);
+		if (native_mt32) {
+			driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		}
+
+		SoundMidiPC *soundMidiPc = new SoundMidiPC(driver, _mixer, this);
+		_sound = soundMidiPc;
+		assert(_sound);
+		soundMidiPc->hasNativeMT32(native_mt32);
+	}
+	if (!_sound->init()) {
+		error("Couldn't init sound");
+	}
 	_sound->setVolume(255);
 	
 	_saveFileMan = _system->getSavefileManager();

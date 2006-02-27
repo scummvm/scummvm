@@ -814,20 +814,20 @@ KyraEngine::OpcodeProc KyraEngine::_opcodeTable[] = {
 
 const int KyraEngine::_opcodeTableSize = ARRAYSIZE(_opcodeTable);
 
-const char *KyraEngine::_xmidiFiles[] = {
-	"INTRO.XMI",
-	"KYRA1A.XMI",
-	"KYRA1B.XMI",
-	"KYRA2A.XMI",
-	"KYRA3A.XMI",
-	"KYRA4A.XMI",
-	"KYRA4B.XMI",
-	"KYRA5A.XMI",
-	"KYRA5B.XMI",
-	"KYRAMISC.XMI"
+const char *KyraEngine::_musicFiles[] = {
+	"INTRO",
+	"KYRA1A",
+	"KYRA1B",
+	"KYRA2A",
+	"KYRA3A",
+	"KYRA4A",
+	"KYRA4B",
+	"KYRA5A",
+	"KYRA5B",
+	"KYRAMISC"
 };
 
-const int KyraEngine::_xmidiFilesCount = ARRAYSIZE(_xmidiFiles);
+const int KyraEngine::_musicFilesCount = ARRAYSIZE(_musicFiles);
 
 const int8 KyraEngine::_charXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4

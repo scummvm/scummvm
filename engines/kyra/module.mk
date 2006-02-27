@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	script.o \
 	seqplayer.o \
 	sound.o \
+	sound_adlib.o \
 	staticres.o \
 	sprites.o \
 	wsamovie.o \

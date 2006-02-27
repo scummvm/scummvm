@@ -35,8 +35,58 @@
 
 namespace Kyra {
 
-SoundPC::SoundPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine) : Sound() {
-	_engine = engine;
+Sound::Sound(KyraEngine *engine, Audio::Mixer *mixer)
+	: _engine(engine), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle() {
+}
+
+Sound::~Sound() {
+}
+
+void Sound::voicePlay(const char *file) {
+	uint32 fileSize = 0;
+	byte *fileData = 0;
+	bool found = false;
+	char filenamebuffer[25];
+
+	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+		strcpy(filenamebuffer, file);
+		strcat(filenamebuffer, _supportedCodes[i].fileext);
+
+		_engine->resource()->fileHandle(filenamebuffer, &fileSize, _compressHandle);
+		if (!_compressHandle.isOpen())
+			continue;
+		
+		_currentVocFile = _supportedCodes[i].streamFunc(&_compressHandle, fileSize);
+		found = true;
+		break;
+	}
+
+	if (!found) {
+		strcpy(filenamebuffer, file);
+		strcat(filenamebuffer, ".VOC");
+		
+		fileData = _engine->resource()->fileData(filenamebuffer, &fileSize);
+		if (!fileData)
+			return;
+
+		Common::MemoryReadStream vocStream(fileData, fileSize);
+		_mixer->stopHandle(_vocHandle);
+		_currentVocFile = makeVOCStream(vocStream);
+	}
+
+	if (_currentVocFile)
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
+	delete [] fileData;
+	fileSize = 0;
+}
+
+bool Sound::voiceIsPlaying() {
+	return _mixer->isSoundHandleActive(_vocHandle);
+}
+
+#pragma mark -
+
+SoundMidiPC::SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine) : Sound(engine, mixer) {
 	_driver = driver;
 	_passThrough = false;
 	_eventFromMusic = false;
@@ -58,17 +108,14 @@ SoundPC::SoundPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine) : 
 	if (ret != MERR_ALREADY_OPEN && ret != 0) {
 		error("couldn't open midi driver");
 	}
-	
-	_currentVocFile = 0;
-	_mixer = mixer;
 }
 
-SoundPC::~SoundPC() {
+SoundMidiPC::~SoundMidiPC() {
 	_driver->setTimerCallback(NULL, NULL);
 	close();
 }
 
-void SoundPC::setVolume(int volume) {
+void SoundMidiPC::setVolume(int volume) {
 	if (volume < 0)
 		volume = 0;
 	else if (volume > 255)
@@ -89,7 +136,7 @@ void SoundPC::setVolume(int volume) {
 	}
 }
 
-int SoundPC::open() {
+int SoundMidiPC::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
@@ -102,13 +149,13 @@ int SoundPC::open() {
 	return 0;
 }
 
-void SoundPC::close() {
+void SoundMidiPC::close() {
 	if (_driver)
 		_driver->close();
 	_driver = 0;
 }
 
-void SoundPC::send(uint32 b) {
+void SoundMidiPC::send(uint32 b) {
 	if (_passThrough) {
 		if ((b & 0xFFF0) == 0x007BB0)
 			return;
@@ -152,7 +199,7 @@ void SoundPC::send(uint32 b) {
 		_channel[_virChannel[channel]]->send(b);
 }
 
-void SoundPC::metaEvent(byte type, byte *data, uint16 length) {
+void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:	// End of Track
 		if (_eventFromMusic) {
@@ -173,19 +220,22 @@ void SoundPC::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void SoundPC::playMusic(const char *file) {
+void SoundMidiPC::playMusic(const char *file) {
+	char filename[25];
+	sprintf(filename, "%s.XMI", file);
+
 	uint32 size;
-	uint8 *data = (_engine->resource())->fileData(file, &size);
+	uint8 *data = (_engine->resource())->fileData(filename, &size);
 
 	if (!data) {
-		warning("couldn't load '%s'", file);
+		warning("couldn't load '%s'", filename);
 		return;
 	}
 
 	playMusic(data, size);
 }
 
-void SoundPC::playMusic(uint8 *data, uint32 size) {
+void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 	stopMusic();
 
 	_parserSource = data;
@@ -205,19 +255,22 @@ void SoundPC::playMusic(uint8 *data, uint32 size) {
 	_parser->property(MidiParser::mpAutoLoop, false);
 }
 
-void SoundPC::loadSoundEffectFile(const char *file) {
+void SoundMidiPC::loadSoundEffectFile(const char *file) {
+	char filename[25];
+	sprintf(filename, "%s.XMI", file);
+
 	uint32 size;
-	uint8 *data = (_engine->resource())->fileData(file, &size);
+	uint8 *data = (_engine->resource())->fileData(filename, &size);
 
 	if (!data) {
-		warning("couldn't load '%s'", file);
+		warning("couldn't load '%s'", filename);
 		return;
 	}
 
 	loadSoundEffectFile(data, size);
 }
 
-void SoundPC::loadSoundEffectFile(uint8 *data, uint32 size) {
+void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 	stopSoundEffect();
 
 	_soundEffectSource = data;
@@ -237,7 +290,7 @@ void SoundPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 	_soundEffect->property(MidiParser::mpAutoLoop, false);
 }
 
-void SoundPC::stopMusic() {
+void SoundMidiPC::stopMusic() {
 	_isLooping = false;
 	_isPlaying = false;
 	if (_parser) {
@@ -253,7 +306,7 @@ void SoundPC::stopMusic() {
 	}
 }
 
-void SoundPC::stopSoundEffect() {
+void SoundMidiPC::stopSoundEffect() {
 	_sfxIsPlaying = false;
 	if (_soundEffect) {
 		_soundEffect->unloadMusic();
@@ -264,8 +317,8 @@ void SoundPC::stopSoundEffect() {
 	}
 }
 
-void SoundPC::onTimer(void *refCon) {
-	SoundPC *music = (SoundPC *)refCon;
+void SoundMidiPC::onTimer(void *refCon) {
+	SoundMidiPC *music = (SoundMidiPC *)refCon;
 
 	// this should be set to the fadeToBlack value
 	static const uint32 musicFadeTime = 2 * 1000;
@@ -307,7 +360,7 @@ void SoundPC::onTimer(void *refCon) {
 	}
 }
 
-void SoundPC::playTrack(uint8 track, bool loop) {
+void SoundMidiPC::playTrack(uint8 track, bool loop) {
 	if (_parser) {
 		_isPlaying = true;
 		_isLooping = loop;
@@ -318,7 +371,7 @@ void SoundPC::playTrack(uint8 track, bool loop) {
 	}
 }
 
-void SoundPC::playSoundEffect(uint8 track) {
+void SoundMidiPC::playSoundEffect(uint8 track) {
 	if (_soundEffect) {
 		_sfxIsPlaying = true;
 		_soundEffect->setTrack(track);
@@ -327,70 +380,30 @@ void SoundPC::playSoundEffect(uint8 track) {
 	}
 }
 
-void SoundPC::beginFadeOut() {
+void SoundMidiPC::beginFadeOut() {
 	// this should be something like fade out...
 	_fadeMusicOut = true;
 	_fadeStartTime = _engine->_system->getMillis();
 }
 
-void SoundPC::voicePlay(const char *file) {
-	uint32 fileSize = 0;
-	byte *fileData = 0;
-	bool found = false;
-	char filenamebuffer[25];
-
-	for (int i = 0; _supportedCodes[i].fileext; ++i) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodes[i].fileext);
-
-		_engine->resource()->fileHandle(filenamebuffer, &fileSize, _compressHandle);
-		if (!_compressHandle.isOpen())
-			continue;
-		
-		_currentVocFile = _supportedCodes[i].streamFunc(&_compressHandle, fileSize);
-		found = true;
-		break;
-	}
-
-	if (!found) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, ".VOC");
-		
-		fileData = _engine->resource()->fileData(filenamebuffer, &fileSize);
-		if (!fileData)
-			return;
-
-		Common::MemoryReadStream vocStream(fileData, fileSize);
-		_mixer->stopHandle(_vocHandle);
-		_currentVocFile = makeVOCStream(vocStream);
-	}
-
-	if (_currentVocFile)
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
-	delete [] fileData;
-	fileSize = 0;
-}
-
-bool SoundPC::voiceIsPlaying() {
-	return _mixer->isSoundHandleActive(_vocHandle);
-}
+#pragma mark -
 
 void KyraEngine::snd_playTheme(int file, int track) {
-	debugC(9, kDebugLevelMain, "KyraEngine::snd_playTheme(%d)", file);
-	assert(file < _xmidiFilesCount);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
+	assert(file < _musicFilesCount);
 	_curMusicTheme = _newMusicTheme = file;
-	_sound->playMusic(_xmidiFiles[file]);
+	_sound->playMusic(_musicFiles[file]);
 	_sound->playTrack(track, false);
 }
 
 void KyraEngine::snd_setSoundEffectFile(int file) {
-	debugC(9, kDebugLevelMain, "KyraEngine::snd_setSoundEffectFile(%d)", file);
-	assert(file < _xmidiFilesCount);
-	_sound->loadSoundEffectFile(_xmidiFiles[file]);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_setSoundEffectFile(%d)", file);
+	assert(file < _musicFilesCount);
+	_sound->loadSoundEffectFile(_musicFiles[file]);
 }
 
 void KyraEngine::snd_playSoundEffect(int track) {
-	debugC(9, kDebugLevelMain, "KyraEngine::snd_playSoundEffect(%d)", track);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
 	if (track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 	} else {
@@ -399,7 +412,7 @@ void KyraEngine::snd_playSoundEffect(int track) {
 }
 
 void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
-	debugC(9, kDebugLevelMain, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
 	static const int8 soundTable[] = {
 		-1,   0,  -1,   1,   0,   3,   0,   2,
 		 0,   4,   1,   2,   1,   3,   1,   4,
@@ -441,7 +454,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 }
 
 void KyraEngine::snd_playVoiceFile(int id) {
-	debugC(9, kDebugLevelMain, "KyraEngine::snd_playVoiceFile(%d)", id);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d", id);
@@ -449,7 +462,7 @@ void KyraEngine::snd_playVoiceFile(int id) {
 }
 
 void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
-	debugC(9, kDebugLevelMain, "KyraEngine::snd_voiceWaitForFinish(%d)", ingame);
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceWaitForFinish(%d)", ingame);
 	while (_sound->voiceIsPlaying() && !_skipFlag) {
 		if (ingame) {
 			delay(10, true);
@@ -461,7 +474,7 @@ void KyraEngine::snd_voiceWaitForFinish(bool ingame) {
 
 // static res
 
-const SoundPC::SpeechCodecs SoundPC::_supportedCodes[] = {
+const Sound::SpeechCodecs Sound::_supportedCodes[] = {
 #ifdef USE_MAD
 	{ ".VO3", makeMP3Stream },
 #endif // USE_MAD

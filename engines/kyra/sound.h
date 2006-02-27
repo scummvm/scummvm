@@ -41,14 +41,15 @@ namespace Kyra {
 
 class Sound {
 public:
-	Sound() {}
-	virtual ~Sound() {}
+	Sound(KyraEngine *engine, Audio::Mixer *mixer);
+	virtual ~Sound();
+
+	virtual bool init() = 0;
 	
 	virtual void setVolume(int volume) = 0;
 	virtual int getVolume() = 0;
 	
 	virtual void playMusic(const char *file) = 0;
-	virtual void playMusic(uint8 *data, uint32 size) = 0;
 	virtual void stopMusic() = 0;
 	
 	virtual void playTrack(uint8 track, bool looping = true) = 0;
@@ -56,7 +57,6 @@ public:
 	virtual void startTrack() = 0;
 	
 	virtual void loadSoundEffectFile(const char *file) = 0;
-	virtual void loadSoundEffectFile(uint8 *data, uint32 size) = 0;
 	virtual void stopSoundEffect() = 0;
 	
 	virtual void playSoundEffect(uint8 track) = 0;
@@ -64,16 +64,74 @@ public:
 	virtual void beginFadeOut() = 0;
 	virtual bool fadeOut() = 0;
 	
-	virtual void voicePlay(const char *file) = 0;
-	virtual void voiceUnload() = 0;
-	virtual bool voiceIsPlaying() = 0;
+	void voicePlay(const char *file);
+	void voiceUnload() {}
+	bool voiceIsPlaying();
+
+protected:
+	KyraEngine *_engine;
+	Audio::Mixer *_mixer;
+
+private:
+	AudioStream *_currentVocFile;
+	Audio::SoundHandle _vocHandle;
+	Common::File _compressHandle;
+	
+	struct SpeechCodecs {
+		const char *fileext;
+		AudioStream *(*streamFunc)(Common::File*, uint32);
+	};
+	
+	static const SpeechCodecs _supportedCodes[];
 };
 
-class SoundPC : public MidiDriver, public Sound {
+class AdlibDriver;
+
+class SoundAdlibPC : public Sound {
+public:
+	SoundAdlibPC(Audio::Mixer *mixer, KyraEngine *engine);
+	~SoundAdlibPC();
+
+	bool init();
+
+	void setVolume(int volume);
+	int getVolume();
+	
+	void playMusic(const char *file);
+	void stopMusic();
+	
+	void playTrack(uint8 track, bool looping);
+	void haltTrack();
+	void startTrack();
+	
+	void loadSoundEffectFile(const char *file);
+	void stopSoundEffect();
+	
+	void playSoundEffect(uint8 track);
+	
+	void beginFadeOut();
+	bool fadeOut();
+private:
+	void loadSoundFile(const char *file);
+
+	AdlibDriver *_driver;
+
+	uint8 _trackEntries[120];
+	uint8 *_soundDataPtr;
+	int _sfxPlayingSound;
+	Common::String _soundFileLoaded;
+
+	uint8 _sfxSecondByteOfSong;
+	uint8 _sfxFourthByteOfSong;
+};
+
+class SoundMidiPC : public MidiDriver, public Sound {
 public:
 
-	SoundPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine);
-	~SoundPC();
+	SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine);
+	~SoundMidiPC();
+
+	bool init() { return true; }
 
 	void setVolume(int volume);
 	int getVolume() { return _volume; }
@@ -98,10 +156,6 @@ public:
 
 	void beginFadeOut();
 	bool fadeOut() { return _fadeMusicOut; }
-	
-	void voicePlay(const char *file);
-	void voiceUnload() {};
-	bool voiceIsPlaying();
 
 	//MidiDriver interface implementation
 	int open();
@@ -116,7 +170,7 @@ public:
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
 
-protected:
+private:
 
 	static void onTimer(void *data);
 
@@ -137,19 +191,6 @@ protected:
 	byte *_parserSource;
 	MidiParser *_soundEffect;
 	byte *_soundEffectSource;
-	KyraEngine *_engine;
-	
-	Audio::Mixer *_mixer;
-	AudioStream *_currentVocFile;
-	Audio::SoundHandle _vocHandle;
-	Common::File _compressHandle;
-	
-	struct SpeechCodecs {
-		const char *fileext;
-		AudioStream *(*streamFunc)(Common::File*, uint32);
-	};
-	
-	static const SpeechCodecs _supportedCodes[];
 };
 } // end of namespace Kyra
 

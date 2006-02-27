@@ -938,8 +938,8 @@ protected:
 
 	Timer _timers[34];
 	uint32 _timerNextRun;	
-	static const char *_xmidiFiles[];
-	static const int _xmidiFilesCount;
+	static const char *_musicFiles[];
+	static const int _musicFilesCount;
 	
 	static const int8 _charXPosTable[];
 	static const int8 _addXPosTable[];
