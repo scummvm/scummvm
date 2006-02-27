@@ -1337,11 +1337,11 @@ void ScummEngine::scummInit() {
 		}
 	}
 
-	if (_game.version > 3 && _game.version < 8)
+	if (_game.version >= 4 && _game.version <= 7)
 		loadCharset(1);
 
 	if (_game.features & GF_OLD_BUNDLE)
-		loadCharset(0);	// FIXME - HACK ?
+		loadCharset(0);
 
 	setShake(0);
 	setupCursor();
