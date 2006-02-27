@@ -54,3 +54,9 @@
 #ifndef DISABLE_SWORD2
 	"Sword2 "
 #endif
+#ifndef DISABLE_CINE
+	"Cine "
+#endif
+#ifndef DISABLE_LURE
+	"Lure "
+#endif
