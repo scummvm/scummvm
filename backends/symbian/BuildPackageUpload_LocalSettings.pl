@@ -12,6 +12,7 @@
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
+		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 	";
 
 	##
@@ -209,7 +210,8 @@ if (0) # all regular combo's
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
 		//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-	";
+		MACRO			DISABLE_CINE	
+	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'saga_mini'} = "
 		//MACRO			USE_ZLIB			// LIB:zlib.lib
@@ -222,6 +224,7 @@ if (0) # all regular combo's
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		//MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+		MACRO			DISABLE_CINE	
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'scumm_no78he'} = "
@@ -237,6 +240,7 @@ if (0) # all regular combo's
 		MACRO			DISABLE_SCUMM_7_8
 		MACRO			DISABLE_SCUMM_HE
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
+		MACRO			DISABLE_CINE		
 	$DefaultBottomMacros";
 	
 #	$SDK_Variations{'ALL'}{'all_vorbis'} = "

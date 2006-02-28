@@ -16,6 +16,7 @@ chdir("../../");
 	"mmp/scummvm_sword1.mmp", 
 	"mmp/scummvm_sword2.mmp", 
 	"mmp/scummvm_lure.mmp", 
+	"mmp/scummvm_cine.mmp", 
 
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
@@ -83,6 +84,7 @@ ParseModule("_kyra",	"kyra",		\@section_empty);
 ParseModule("_sword1",	"sword1",	\@section_empty);
 ParseModule("_sword2",	"sword2",	\@section_empty);
 ParseModule("_lure",	"lure",		\@section_empty);
+ParseModule("_cine",	"cine",		\@section_empty);
 
 print "
 =======================================================================================
