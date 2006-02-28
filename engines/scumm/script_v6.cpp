@@ -2700,24 +2700,22 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 	int i;
 	int slot;
 	Actor *a;
+	VirtScreen *vs = &virtscr[0];
 
 	getStackList(args, ARRAYSIZE(args));
 
 	switch (args[0]) {
 	case 113:
-		// This is used for the Sam & Max paint-by-numbers mini-game
-		// to find out what color to change. I think that what we have
-		// the virtual mouse coordinates, because that's what used
-		// everywhere else in the script.
-
-		{
-			VirtScreen *vs = &virtscr[0];
-			if (args[1] < 0 || args[1] >= vs->w || args[2] < 0 || args[2] >= vs->h) {
-				// FIXME: Until we know what to do in this case...
-				debug(0, "o6_kernelGetFunctions:113: asking for pixel (%d, %d) outside of %dx%d screen", args[1], args[2], vs->w, vs->h);
-				push(0);
-			} else
-				push(*((byte *)vs->pixels + args[1] + args[2] * vs->pitch));
+		// WORKAROUND for bug #899249: The scripts used for screen savers
+		// in Sam & Max use hard coded values for the maximum height and width.
+		// This causes problems in rooms (ie. Credits) where their values are
+		// lower, so we set result to zero if out of bounds.
+		// scenes (ie Credits) where values are lower.
+		if (args[1] >= 0 && args[1] <= vs->w && args[2] >= 0 && args[2] <= vs->h) {
+			byte pixel = *vs->getPixels(args[1], args[2]);
+			push(pixel);
+		} else {
+			push(0);
 		}
 		break;
 	case 115:
@@ -3070,8 +3068,6 @@ void ScummEngine_v6::o6_getDateTime() {
 }
 
 void ScummEngine_v6::o6_getPixel() {
-	// This opcode is used to check fir ground area in the "Asteroid Lander"
-	// minigame in "The Dig"
 	int x, y;
 
 	if (_game.heversion == 61) {
@@ -3089,8 +3085,8 @@ void ScummEngine_v6::o6_getPixel() {
 		return;
 	}
 
-	byte area = *vs->getPixels(x, y - vs->topline);
-	push(area);
+	byte pixel = *vs->getPixels(x, y - vs->topline);
+	push(pixel);
 }
 
 void ScummEngine_v6::o6_setBoxSet() {
