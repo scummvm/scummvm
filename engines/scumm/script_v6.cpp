@@ -2710,7 +2710,6 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 		// in Sam & Max use hard coded values for the maximum height and width.
 		// This causes problems in rooms (ie. Credits) where their values are
 		// lower, so we set result to zero if out of bounds.
-		// scenes (ie Credits) where values are lower.
 		if (args[1] >= 0 && args[1] <= vs->w && args[2] >= 0 && args[2] <= vs->h) {
 			byte pixel = *vs->getPixels(args[1], args[2]);
 			push(pixel);
