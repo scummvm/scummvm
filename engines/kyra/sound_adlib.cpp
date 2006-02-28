@@ -449,14 +449,19 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 }
 
 int AdlibDriver::snd_readByte(va_list &list) {
-	uint8 *ptr = _soundData + READ_LE_UINT16(&_soundData[va_arg(list, int) << 1]) + va_arg(list, int);
+	int a = va_arg(list, int);
+	int b = va_arg(list, int);
+	uint8 *ptr = _soundData + READ_LE_UINT16(&_soundData[a << 1]) + b;
 	return *ptr;
 }
 
 int AdlibDriver::snd_writeByte(va_list &list) {
-	uint8 *ptr = _soundData + READ_LE_UINT16(&_soundData[va_arg(list, int) << 1]) + va_arg(list, int);
+	int a = va_arg(list, int);
+	int b = va_arg(list, int);
+	int c = va_arg(list, int);
+	uint8 *ptr = _soundData + READ_LE_UINT16(&_soundData[a << 1]) + b;
 	uint8 oldValue = *ptr;
-	*ptr = (uint8)va_arg(list, int);
+	*ptr = (uint8)c;
 	return oldValue;
 }
 
@@ -567,7 +572,7 @@ void AdlibDriver::callbackProcess() {
 					unkOutput1(table);
 			} else {
 				int8 opcode = 0;
-				while (1 && table.dataptr) {
+				while (table.dataptr) {
 					uint16 command = READ_LE_UINT16(table.dataptr);
 					table.dataptr += 2;
 					if (command & 0x0080) {
