@@ -53,7 +53,9 @@ public:
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
 		memset(buffer, 0, sizeof(int16)*numSamples);
+		lock();
 		YM3812UpdateOne(_adlib, buffer, numSamples);
+		unlock();
 		return numSamples;
 	}
 
@@ -336,7 +338,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_mixer->setupPremix(this);
 
 	// the interval should be around 13000 to 20000
-	Common::g_timer->installTimerProc(&AdlibTimerCall, 17000, this);
+	Common::g_timer->installTimerProc(&AdlibTimerCall, 19000, this);
 }
 
 AdlibDriver::~AdlibDriver() {
@@ -529,8 +531,7 @@ void AdlibDriver::callbackOutput() {
 		uint8 *ptr = _soundData;
 
 		ptr += READ_LE_UINT16(&ptr[_soundIdTable[_lastProcessed] << 1]);
-		uint8 index = *ptr++; // set nullvar
-
+		uint8 index = *ptr++;
 		OutputState &table = _outputTables[index];
 
 		int8 unk2 = *ptr++;
@@ -564,7 +565,6 @@ void AdlibDriver::callbackProcess() {
 			table.unk1 = _unkTableByte1;
 		}
 
-		// TODO: check that
 		table.unk4 += table.unk1;
 		if (table.unk4 < 0) {
 			if (--table.unk5) {
@@ -581,7 +581,6 @@ void AdlibDriver::callbackProcess() {
 						opcode = command & 0x7F;
 						if (opcode > 0x4A)
 							opcode = 0x4A;
-						//debug("'%s' (%d) (%d)", _parserOpcodeTable[opcode].name, opcode, _curTable);
 						opcode = (this->*(_parserOpcodeTable[opcode].function))(table.dataptr, table, (command & 0xFF00) >> 8);
 						--opcode;
 						if (opcode >= 0)
@@ -642,11 +641,7 @@ void AdlibDriver::waitLoops(int count) {
 }
 
 void AdlibDriver::initTable(OutputState &table) {
-	uint8 unk27BackUp = table.unk27;
-
-	memset(&table, 0, sizeof(OutputState));
-
-	table.unk27 = unk27BackUp;
+	memset(&table.dataptr, 0, sizeof(OutputState) - ((char*)&table.dataptr - (char*)&table));
 
 	table.unk1 = -1;
 	table.unk2 = 0;
@@ -700,19 +695,19 @@ uint16 AdlibDriver::updateUnk6Value() {
 	_unk6 += 0x9248;
 	uint16 lowBits = _unk6 & 7;
 	_unk6 >>= 3;
-	_unk6 |= lowBits << 12;
+	_unk6 |= lowBits << 13;
 	return _unk6;
 }
 
 void AdlibDriver::update1(uint8 unk1, OutputState &state) {
 	_continueFlag = unk1;
 	if (state.unk11) {
-		state.unk5 = (updateUnk6Value() & 0xFF) + (unk1 & state.unk11);
+		state.unk5 = unk1 + (updateUnk6Value() & state.unk11);
 		return;
 	}
 	uint8 value = unk1;
 	if (state.unk12) {
-		uint8 value2 = value;
+		uint8 value2 = 0;
 		uint8 add = value >> 3;
 		int loops = state.unk12;
 		while (loops--) {
@@ -746,7 +741,7 @@ void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
 	value = (value & 0xFF) | (unk2 << 8);
 
 	if (state.unk16 != 0) {
-		if (state.unk16 >= 0) {
+		if (state.unk16 > 0) {
 			const uint8 *table = _unkTables[(state.unk13 & 0x0F) + 2];
 			value += table[state.unk16];
 		} else {
@@ -824,9 +819,41 @@ void AdlibDriver::output1(OutputState &state) {
 
 void AdlibDriver::stateCallback1_1(OutputState &state) {
 	state.unk31 += state.unk29;
-	if ((int8)state.unk31 < 0)
+	if ((int8)state.unk31 >= 0)
 		return;
-	warning("stateCallback1_1 unimplemented");
+	uint16 unk1 = ((state.unkOutputValue1 & 3) << 8) | state.unk17;
+	uint16 unk2 = ((state.unkOutputValue1 & 0x20) << 8) | (state.unkOutputValue1 & 0x1C);
+	int16 unk3 = (int16)state.unk30;
+
+	if (unk3 >= 0) {
+		unk1 += unk3;
+		if (unk1 >= 734) {
+			unk1 >>= 1;
+			if (!(unk1 & 0x3FF))
+				++unk1;
+			unk2 += 4;
+			unk2 &= 0xFF1C;
+		}
+	} else {
+		unk1 += unk3;
+		if (unk1 < 388) {
+			unk1 <<= 1;
+			if (!(unk1 & 0x3FF))
+				--unk1;
+			unk2 -= 4;
+			unk2 &= 0xFF1C;
+		}
+	}
+	unk1 &= 0x3FF;
+
+	output0x388(((0xA0 + _curTable) << 8) | (unk1 & 0xFF));
+	state.unk17 = unk1 & 0xFF;
+
+	uint8 value = unk1 >> 8;
+	value |= (unk2 >> 8) & 0xFF;
+	value |= unk2 & 0xFF;
+	output0x388(((0xB0 + _curTable) << 8) | value);
+	state.unkOutputValue1 = value;
 }
 
 void AdlibDriver::stateCallback1_2(OutputState &state) {
@@ -878,11 +905,9 @@ uint8 AdlibDriver::calculateLowByte1(OutputState &state) {
 	}
 
 	if (value > 0x3F) {
-		if (value < 0)
-			value = 0;
-		else
-			value = 0x3F;
-	}
+		value = 0x3F;
+	} else if (value < 0)
+		value = 0;
 
 	return value | (state.unk24 & 0xC0);
 }
@@ -894,11 +919,9 @@ uint8 AdlibDriver::calculateLowByte2(OutputState &state) {
 	value += state.unk28;
 
 	if (value > 0x3F) {
-		if (value < 0)
-			value = 0;
-		else
-			value = 0x3F;
-	}
+		value = 0x3F;
+	} else if (value < 0)
+		value = 0;
 
 	return value | (state.unk25 & 0xC0);
 }
@@ -1018,7 +1041,7 @@ int AdlibDriver::updateCallback14(uint8 *&dataptr, OutputState &state, uint8 val
 }
 
 int AdlibDriver::updateCallback15(uint8 *&dataptr, OutputState &state, uint8 value) {
-	OutputState &state2 = _outputTables[_curTable];
+	OutputState &state2 = _outputTables[value];
 	state2.unk5 = 0;
 	state2.unk2 = 0;
 	state2.dataptr = 0;
@@ -1038,7 +1061,7 @@ int AdlibDriver::updateCallback16(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value) {
 	uint8 *ptr = _soundData;
-	ptr += READ_LE_UINT16(_soundData + value * 2 + 0x1F4);
+	ptr += READ_LE_UINT16(_soundData + (value << 1) + 0x1F4);
 	updateAndOutput2(_unkOutputByte1, ptr, state);
 	return 0;
 }
@@ -1641,78 +1664,115 @@ const AdlibDriver::OpcodeEntry AdlibDriver::_opcodeList[] = {
 };
 
 const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
+	// 0
 	COMMAND(updateCallback1),
 	COMMAND(updateCallback2),
 	COMMAND(updateCallback3),
 	COMMAND(updateCallback4),
+
+	// 4
 	COMMAND(updateCallback5),
 	COMMAND(updateCallbackPushDataPtr),
 	COMMAND(updateCallbackPopDataPtr),
 	COMMAND(updateCallback8),
+
+	// 8
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback10),
 	COMMAND(updateCallback11),
 	COMMAND(updateCallback12),
+
+	// 12
 	COMMAND(updateCallback13),
 	COMMAND(updateCallback14),
 	COMMAND(updateCallback15),
 	COMMAND(updateCallback16),
+
+	// 16
 	COMMAND(updateCallback17),
 	COMMAND(updateCallback18),
 	COMMAND(updateCallback19),
 	COMMAND(updateCallback20),
+
+	// 20
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback21),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
+
+	// 24
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback22),
 	COMMAND(updateCallback9),
+
+	// 28
 	COMMAND(updateCallback23),
 	COMMAND(updateCallback24),
 	COMMAND(updateCallback25),
 	COMMAND(updateCallback9),
+
+	// 32
 	COMMAND(updateCallback26),
 	COMMAND(updateCallback27),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
+
+	// 36
 	COMMAND(updateCallback28),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback29),
 	COMMAND(updateCallback30),
+
+	// 40
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback31),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback32),
+
+	// 44
 	COMMAND(updateCallback33),
 	COMMAND(updateCallback34),
 	COMMAND(updateCallback35),
 	COMMAND(updateCallback36),
+
+	// 48
 	COMMAND(updateCallback37),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback38),
+
+	// 52
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback39),
 	COMMAND(updateCallback40),
 	COMMAND(updateCallback9),
+
+	// 56
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback41),
 	COMMAND(updateCallback42),
 	COMMAND(updateCallback43),
+
+	// 60
 	COMMAND(updateCallback44),
 	COMMAND(updateCallback45),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback46),
+
+	// 64
 	COMMAND(updateCallback47),
 	COMMAND(updateCallback48),
 	COMMAND(updateCallback49),
 	COMMAND(updateCallback50),
+
+	// 68
 	COMMAND(updateCallback51),
 	COMMAND(updateCallback52),
 	COMMAND(updateCallback53),
 	COMMAND(updateCallback54),
+
+	// 72
 	COMMAND(updateCallback55),
 	COMMAND(updateCallback56),
 	COMMAND(updateCallback9)
@@ -1910,6 +1970,7 @@ void SoundAdlibPC::playTrack(uint8 track, bool looping) {
 }
 
 void SoundAdlibPC::haltTrack() {
+	playSoundEffect(0);
 }
 
 void SoundAdlibPC::startTrack() {
