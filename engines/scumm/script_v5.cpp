@@ -466,15 +466,7 @@ void ScummEngine_v5::o5_actorOps() {
 			a->setPalette(i, j);
 			break;
 		case 12:		// SO_TALK_COLOR
-
-			// Zak256 (and possibly other games) uses actor 0 to
-			// indicate that it's the default talk color that is
-			// to be changed.
-
-			if (act == 0)
-				_string[0].color = getVarOrDirectByte(PARAM_1);
-			else
-				a->_talkColor = getVarOrDirectByte(PARAM_1);
+			a->_talkColor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 13:		// SO_ACTOR_NAME
 			loadPtrToResource(rtActorName, a->_number, NULL);
@@ -1315,12 +1307,7 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
-
-		if (!cls) // FIXME: Ender can't remember why this is here,
-			b = false;  // but it fixes an oddball zak256 crash
-		else
-			b = getClass(act, cls);
-
+		b = getClass(act, cls);
 		if (cls & 0x80 && !b || !(cls & 0x80) && b)
 			cond = false;
 	}
