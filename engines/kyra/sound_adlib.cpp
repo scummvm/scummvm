@@ -37,6 +37,9 @@
 //   - check why the sfx sounds strange sometimes
 //   - implement stateCallback1_1
 
+// Basic Adlib Programming:
+// http://www.gamedev.net/reference/articles/article446.asp
+
 namespace Kyra {
 
 class AdlibDriver : public AudioStream {
@@ -610,8 +613,8 @@ void AdlibDriver::callbackProcess() {
 
 void AdlibDriver::resetAdlibState() {
 	_unk6 = 0x1234;
-	output0x388(0x120);
-	output0x388(0x800);
+	output0x388(0x0120);
+	output0x388(0x0800);
 	output0x388(0xBD00);
 	int loop = 10;
 	while (loop--) {
@@ -624,6 +627,8 @@ void AdlibDriver::resetAdlibState() {
 }
 
 void AdlibDriver::output0x388(uint16 word) {
+	// 0x388 - Adress/Status port (R/W)
+	// 0x389 - Data port          (W/O)
 	OPLWrite(_adlib, 0x388, (word >> 8) & 0xFF);
 	waitLoops(4);
 	OPLWrite(_adlib, 0x389, word & 0xFF);
@@ -656,8 +661,13 @@ void AdlibDriver::unkOutput1(OutputState &table) {
 		return;
 	if (_unk4 && _curTable >= 6)
 		return;
+
+	// Octave / F-Number / Key-On
 	uint16 output = (_curTable + 0xB0) << 8;
+
+	// This means the "Key On" bit will always be 0
 	table.unkOutputValue1 &= 0xDF;
+
 	output |= table.unkOutputValue1;
 	output0x388(output);
 }
@@ -668,10 +678,19 @@ void AdlibDriver::unkOutput2(uint8 num) {
 			return;
 
 	uint8 value = _outputTable[num];
+
+	// Clear the Attack Rate / Decay Rate for the channel
 	output0x388(((value + 0x60) << 8) | 0xFF);
 	output0x388(((value + 0x63) << 8) | 0xFF);
+
+	// Clear the Sustain Level / Release Rate for the channel
 	output0x388(((value + 0x80) << 8) | 0xFF);
 	output0x388(((value + 0x83) << 8) | 0xFF);
+
+	// Octave / F-Number / Key-On
+
+	// The purpose of this seems to be to first clear everything, and then
+	// set the octave.
 
 	output0x388(((num + 0xB0) << 8) | 0x00);
 	output0x388(((num + 0xB0) << 8) | 0x20);
@@ -739,37 +758,51 @@ void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
 	state.unkOutputValue1 = (state.unkOutputValue1 & 0x20) | ((value & 0xFF00) >> 8);
 	state.unk17 = value & 0xFF;
 
+	// Octave / F-Number / Key-On
 	output0x388(((0xA0 + _curTable) << 8) | state.unk17);
 	output0x388(((0xB0 + _curTable) << 8) | state.unkOutputValue1);
 }
 
 void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state) {
+	// Amplitude Modulation / Vibrato / Envelope Generator Type /
+	// Keyboard Scaling Rate / Modulator Frequency Multiple
 	output0x388(((0x20 + unk1) << 8) | *dataptr++);
 	output0x388(((0x23 + unk1) << 8) | *dataptr++);
 
 	uint8 temp = *dataptr++;
+
+	// Feedback / Algorithm
 	output0x388(((0xC0 + _curTable) << 8) | temp);
+
 	state.unk23 = temp & 1;
 
+	// Waveform Select
 	output0x388(((0xE0 + unk1) << 8) | *dataptr++);
 	output0x388(((0xE3 + unk1) << 8) | *dataptr++);
 
 	state.unk24 = *dataptr++;
-	output0x388(((0x40 + unk1) << 8) | calculateLowByte1(state));
-
 	state.unk25 = *dataptr++;
+
+	// Level Key Scaling / Total Level
+	output0x388(((0x40 + unk1) << 8) | calculateLowByte1(state));
 	output0x388(((0x43 + unk1) << 8) | calculateLowByte2(state));
 
+	// Attack Rate / Decay Rate
 	output0x388(((0x60 + unk1) << 8) | *dataptr++);
 	output0x388(((0x63 + unk1) << 8) | *dataptr++);
 
+	// Sustain Level / Release Rate
 	output0x388(((0x80 + unk1) << 8) | *dataptr++);
 	output0x388(((0x83 + unk1) << 8) | *dataptr++);
 }
 
 void AdlibDriver::updateAndOutput3(OutputState &state) {
+	// This sets a bit in the "Octave" field
 	state.unkOutputValue1 |= 0x20;
+
+	// Octave / F-Number / Key-On
 	output0x388(((0xB0 + _curTable) << 8) | state.unkOutputValue1);
+
 	int8 shift = 9 - state.unk33;
 	uint16 temp = state.unk17 | (state.unkOutputValue1 << 8);
 	state.unk37 = ((temp & 0x3FF) >> shift) & 0xFF;
@@ -778,9 +811,13 @@ void AdlibDriver::updateAndOutput3(OutputState &state) {
 
 void AdlibDriver::output1(OutputState &state) {
 	uint8 lowByte = calculateLowByte2(state);
+
+	// Level Key Scaling / Total Level
 	output0x388(((0x43 + _outputTable[_curTable]) << 8) | lowByte);
 	if (state.unk23) {
 		lowByte = calculateLowByte1(state);
+
+		// Level Key Scaling / Total Level
 		output0x388(((0x40 + _outputTable[_curTable]) << 8) | lowByte);
 	}
 }
@@ -814,6 +851,7 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 
 		state.unkOutputValue1 = (state.unkOutputValue1 & 0xFC) | (temp3 >> 8);
 
+		// Octave / F-Number / Key-On
 		output0x388(((0xA0 + _curTable) << 8) | state.unkOutputValue1);
 		output0x388(((0xB0 + _curTable) << 8) | state.unkOutputValue1);
 	}
@@ -1137,6 +1175,8 @@ int AdlibDriver::updateCallback35(uint8 *&dataptr, OutputState &state, uint8 val
 	value &= 1;
 	value <<= 7;
 	_unkOutputByte2 = (_unkOutputByte2 & 0x7F) | value;
+
+	// AM depth / Vibrato depth / Rhythm control
 	output0x388(0xBD00 | _unkOutputByte2);
 	return 0;
 }
@@ -1145,6 +1185,8 @@ int AdlibDriver::updateCallback36(uint8 *&dataptr, OutputState &state, uint8 val
 	value &= 1;
 	value <<= 6;
 	_unkOutputByte2 = (_unkOutputByte2 & 0xBF) | value;
+
+	// AM depth / Vibrato depth / Rhythm control
 	output0x388(0xBD00 | _unkOutputByte2);
 	return 0;
 }
@@ -1166,9 +1208,17 @@ int AdlibDriver::updateCallback38(uint8 *&dataptr, OutputState &state, uint8 val
 
 	if (value != 9) {
 		uint8 outValue = _outputTable[value];
+
+		// Feedback strength / Connection type
 		output0x388((0xC0 + _curTable) << 8);
+
+		// Key scaling level / Operator output level
 		output0x388(((0x43 + outValue) << 8) | 0x3F);
+
+		// Sustain Level / Release Rate
 		output0x388(((0x83 + outValue) << 8) | 0xFF);
+
+		// Key On / Octave / Frequency
 		output0x388((0xB0 + _curTable) << 8);
 	}
 
@@ -1185,7 +1235,10 @@ int AdlibDriver::updateCallback39(uint8 *&dataptr, OutputState &state, uint8 val
 	unk2 += unk;
 	unk2 |= ((state.unkOutputValue1 & 0x20) << 8);
 
+	// Frequency
 	output0x388(((0xA0 + _curTable) << 8) | (unk2 & 0xFF));
+
+	// Key On / Octave / Frequency
 	output0x388(((0xB0 + _curTable) << 8) | ((unk2 & 0xFF00) >> 8));
 
 	return 0;
@@ -1234,7 +1287,10 @@ int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 val
 	state.unkOutputValue1 = unk2 | (state.unkOutputValue1 & 0x20);
 	state.unk17 = unk1;
 
+	// Frequency
 	output0x388(((0xA0 + _curTable) << 8) | unk1);
+
+	// Key On / Octave / Frequency
 	output0x388(((0xB0 + _curTable) << 8) | state.unkOutputValue1);
 
 	return 0;
@@ -1275,6 +1331,7 @@ int AdlibDriver::updateCallback46(uint8 *&dataptr, OutputState &state, uint8 val
 	_tablePtr1 = _unkTable2[entry++];
 	_tablePtr2 = _unkTable2[entry];
 	if (value == 2) {
+		// Frequency
 		output0x388(0xA000 | _tablePtr2[0]);
 	}
 	return 0;
@@ -1320,6 +1377,8 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 	_unkValue10 = entry = *(ptr + 6);
 	updateAndOutput2(_unkOutputByte1, ptr, state);
 
+	// Octave / F-Number / Key-On for channels 6, 7 and 8
+
 	_outputTables[6].unkOutputValue1 = *ptr++ & 0x2F;
 	output0x388(0xB600 | _outputTables[6].unkOutputValue1);
 	output0x388(0xA600 | *ptr++);
@@ -1340,18 +1399,19 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 }
 
 int AdlibDriver::updateCallback49(uint8 *&dataptr, OutputState &state, uint8 value) {
-	OPLWrite(_adlib, 0x388, (value << 8) | 0xBD);
-	waitLoops(4);
-
-	OPLWrite(_adlib, 0x389, 0xBD00 | (((value & 0x1F) ^ 0xFF) & _unk4) | 0x20);
-	waitLoops(23);
+	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
+	output0x388(0xBD00 | (((value & 0x1F) ^ 0xFF) & _unk4) | 0x20);
 
 	value |= _unk4;
 	_unk4 = value;
 
 	value |= _unkOutputByte2;
 	value |= 0x20;
-	OPLWrite(_adlib, 0x389, 0xBD00 | value);
+
+	// Could maybe use output0x388() here as well, though perhaps that will
+	// affect timing.
+
+	OPLWrite(_adlib, 0x389, value);
 	waitLoops(23);
 
 	return 0;
@@ -1360,7 +1420,10 @@ int AdlibDriver::updateCallback49(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback50(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
 	_unk4 = 0;
+
+	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
 	output0x388(0xBD00 | (value & _unkOutputByte2));
+
 	return 0;
 }
 
@@ -1373,6 +1436,8 @@ int AdlibDriver::updateCallback51(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue7;
 		val += _unkValue11;
 		val += _unkValue12;
+
+		// Channel 2: Level Key Scaling / Total Level
 		output0x388(0x5100 | checkValue(val));
 	}
 
@@ -1382,6 +1447,8 @@ int AdlibDriver::updateCallback51(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue10;
 		val += _unkValue13;
 		val += _unkValue14;
+
+		// Channel 3: Level Key Scaling / Total Level
 		output0x388(0x5500 | checkValue(val));
 	}
 
@@ -1391,6 +1458,8 @@ int AdlibDriver::updateCallback51(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue9;
 		val += _unkValue16;
 		val += _unkValue15;
+
+		// Channel 3: Level Key Scaling / Total Level
 		output0x388(0x5200 | checkValue(val));
 	}
 
@@ -1400,6 +1469,8 @@ int AdlibDriver::updateCallback51(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue8;
 		val += _unkValue17;
 		val += _unkValue18;
+
+		// Channel 2: Level Key Scaling / Total Level
 		output0x388(0x5400 | checkValue(val));
 	}
 
@@ -1409,6 +1480,8 @@ int AdlibDriver::updateCallback51(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue6;
 		val += _unkValue19;
 		val += _unkValue20;
+
+		// Channel 1: Level Key Scaling / Total Level
 		output0x388(0x5300 | checkValue(val));
 	}
 
@@ -1423,6 +1496,8 @@ int AdlibDriver::updateCallback52(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue7;
 		val += _unkValue11;
 		val += _unkValue12;
+
+		// Channel 2: Level Key Scaling / Total Level
 		output0x388(0x5100 | checkValue(val));
 	}
 
@@ -1431,6 +1506,8 @@ int AdlibDriver::updateCallback52(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue10;
 		val += _unkValue13;
 		val += _unkValue14;
+
+		// Channel 3: Level Key Scaling / Total Level
 		output0x388(0x5500 | checkValue(val));
 	}
 
@@ -1439,6 +1516,8 @@ int AdlibDriver::updateCallback52(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue9;
 		val += _unkValue16;
 		val += _unkValue15;
+
+		// Channel 3: Level Key Scaling / Total Level
 		output0x388(0x5200 | checkValue(val));
 	}
 
@@ -1447,6 +1526,8 @@ int AdlibDriver::updateCallback52(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue8;
 		val += _unkValue17;
 		val += _unkValue18;
+
+		// Channel 2: Level Key Scaling / Total Level
 		output0x388(0x5400 | checkValue(val));
 	}
 
@@ -1455,6 +1536,8 @@ int AdlibDriver::updateCallback52(uint8 *&dataptr, OutputState &state, uint8 val
 		val += _unkValue6;
 		val += _unkValue19;
 		val += _unkValue20;
+
+		// Channel 1: Level Key Scaling / Total Level
 		output0x388(0x5300 | checkValue(val));
 	}
 
@@ -1469,6 +1552,8 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, OutputState &state, uint8 val
 		_unkValue11 = val;
 		val += _unkValue7;
 		val += _unkValue12;
+
+		// Channel 2: Level Key Scaling / Total Level
 		output0x388(0x5100 | checkValue(val));
 	}
 
@@ -1477,6 +1562,8 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, OutputState &state, uint8 val
 		_unkValue13 = val;
 		val += _unkValue10;
 		val += _unkValue14;
+
+		// Channel 3: Level Key Scaling / Total Level
 		output0x388(0x5500 | checkValue(val));
 	}
 
@@ -1485,6 +1572,8 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, OutputState &state, uint8 val
 		_unkValue16 = val;
 		val += _unkValue9;
 		val += _unkValue15;
+
+		// Channel 3: Level Key Scaling / Total Level
 		output0x388(0x5200 | checkValue(val));
 	}
 
@@ -1493,6 +1582,8 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, OutputState &state, uint8 val
 		_unkValue17 = val;
 		val += _unkValue8;
 		val += _unkValue18;
+
+		// Channel 2: Level Key Scaling / Total Level
 		output0x388(0x5400 | checkValue(val));
 	}
 
@@ -1501,6 +1592,8 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, OutputState &state, uint8 val
 		_unkValue19 = val;
 		val += _unkValue6;
 		val += _unkValue20;
+
+		// Channel 1: Level Key Scaling / Total Level
 		output0x388(0x5300 | checkValue(val));
 	}
 
