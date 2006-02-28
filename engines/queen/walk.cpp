@@ -428,10 +428,9 @@ int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
 }
 
 int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
-	// FIXME - in order to locate the nearest available area, the original
-	// algorithm computes the X (or Y) closest face distance for each available
-	// area. We simply added the case where the pointer is neither lying in the
-	// X range nor in the Y one.
+	// In order to locate the nearest available area, the original algorithm 
+	// computes the horizontal and vertical distances for each available area.
+	// Unlike the original, we also compute the diagonal distance.
 	// To get an example of this in action, in the room D1, make Joe walking
 	// to the wall at the right of the window (just above the radiator). On the
 	// original game, Joe will go to the left door...

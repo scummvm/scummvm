@@ -364,19 +364,18 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_vm->logic()->oldRoom(_initialRoom);
 
-	// FIXME - the first cutaway is played at the end of the command 0x178. This
-	// command setups some persons and associates bob slots to them. They should be
-	// hidden as their y coordinate is > 150, but they aren't ! A (temporary)
-	// workaround is to display the room with the panel area enabled. Same problem
-	// for cutaway c62c.
+	// FIXME - Cutaway c41f is played at the end of the command 0x178. This command
+	// setups some persons and associates bob slots to them. They should be hidden as
+	// their y coordinate is > 150, but they aren't ! As a workaround, we display the room
+	// with the panel area enabled. We do the same problem for cutaway c62c.
 	int16 comPanel = _comPanel;
 	if ((strcmp(_basename, "c41f") == 0 && _temporaryRoom == 106 && object.room == 41) ||
 		(strcmp(_basename, "c62c") == 0 && _temporaryRoom == 105 && object.room == 41)) {
 		comPanel = 1;
 	}
 
-	// FIXME - in the original engine, panel is hidden once the 'head room' is displayed, we
-	// do it before (ie before palette fading)
+	// Hide panel before displaying the 'head room' (ie. before palette fading). This doesn't
+	// match the original engine, but looks better to me.
 	if (object.room == FAYE_HEAD || object.room == AZURA_HEAD || object.room == FRANK_HEAD) {
 		comPanel = 2;
 	}

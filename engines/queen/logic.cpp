@@ -230,9 +230,9 @@ void Logic::initialise() {
 		_joeResponse.push_back(queen2jas.nextLine());
 	}
 
-	// FIXME - the spanish version adds some space characters (0x20) at the
-	// beginning and the end of the journal button captions. As we don't need
-	// that 'trick' to center horizontally the texts, we simply trim them.
+	// Spanish version adds some space characters (0x20) at the beginning
+	// and the end of the journal button captions. As the engine computes
+	// the text width to center it, we need to trim those strings.
 	if (_vm->resource()->getLanguage() == SPANISH) {
 		for (i = 30; i <= 35; i++) {
 			_joeResponse[i] = trim(_joeResponse[i]);
@@ -1265,7 +1265,7 @@ void Logic::handlePinnacleRoom() {
 
 	_newRoom = objectData(_entryObj)->room;
 
-	// FIXME - only a few commands can be triggered from this room :
+	// Only a few commands can be triggered from this room :
 	// piton -> crash  : 0x216 (obj1=0x2a, song=3)
 	// piton -> floda  : 0x217 (obj1=0x29, song=16)
 	// piton -> bob    : 0x219 (obj1=0x2f, song=6)

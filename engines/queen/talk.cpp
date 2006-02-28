@@ -795,9 +795,8 @@ void Talk::speakSegment(
 	char voiceFileName[MAX_STRING_SIZE];
 	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
 
-	// FIXME - it seems the french talkie version has a useless voice file ;
-	// the c30e_102 file is very similar to c30e_101, so there is no need to
-	// play it. This voice was used in room 30 (N8) when talking to Klunk.
+	// French talkie version has a useless voice file ;	c30e_102 file is the same as c30e_101,
+	// so there is no need to play it. This voice was used in room 30 (N8) when talking to Klunk.
 	if (!(_vm->resource()->getLanguage() == FRENCH && !strcmp(voiceFileName, "c30e_102"))
 		&& _vm->sound()->speechOn())
 		_vm->sound()->playSfx(voiceFileName, true);
