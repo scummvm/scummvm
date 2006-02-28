@@ -78,7 +78,16 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	killScriptsAndResources();
 	if (_game.version >= 4 && _game.heversion <= 61)
 		stopCycle(0);
-	_sound->processSound();
+
+	if (_game.id == GID_SAMNMAX) {
+		// WORKAROUND bug #85373 SAM: Overlapping music at Bigfoot convention
+		// Added sound queue processing between execution of exit
+		// script and entry script. In the case of this bug, the 
+		// entry script required that the iMuse state be fully up 
+		// to  date, including last-moment changes from the previous
+		// exit script.
+		_sound->processSound();
+	}
 
 	clearDrawQueues();
 
