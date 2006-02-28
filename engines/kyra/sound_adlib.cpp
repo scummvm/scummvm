@@ -549,7 +549,6 @@ void AdlibDriver::callbackOutput() {
 }
 
 void AdlibDriver::callbackProcess() {
-	_curTable = 9;
 	for (_curTable = 9; _curTable >= 0; --_curTable) {
 		if (!_outputTables[_curTable].dataptr) {
 			continue;
