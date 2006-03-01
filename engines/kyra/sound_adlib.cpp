@@ -96,7 +96,7 @@ private:
 		uint8 unk27;
 		uint8 *dataptr;
 		uint8 unk5;
-		uint8 unk9;
+		uint8 repeatCounter;
 		uint8 unk10;
 		int8 unk2;
 		uint8 dataptrStackPos;
@@ -936,13 +936,13 @@ uint8 AdlibDriver::calculateLowByte2(OutputState &state) {
 // parser opcodes
 
 int AdlibDriver::update_setRepeat(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk9 = value;
+	state.repeatCounter = value;
 	return 0;
 }
 
 int AdlibDriver::update_checkRepeat(uint8 *&dataptr, OutputState &state, uint8 value) {
 	++dataptr;
-	if (--state.unk9) {
+	if (--state.repeatCounter) {
 		int16 add = READ_LE_UINT16(dataptr - 2);
 		dataptr += add;
 	}
