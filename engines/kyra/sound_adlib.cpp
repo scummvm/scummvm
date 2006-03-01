@@ -1984,7 +1984,7 @@ void SoundAdlibPC::stopMusic() {
 void SoundAdlibPC::playTrack(uint8 track, bool looping) {
 	// snd_stopSound();
 	// snd_unk1();
-	//playSoundEffect(track);
+	playSoundEffect(track);
 }
 
 void SoundAdlibPC::haltTrack() {
