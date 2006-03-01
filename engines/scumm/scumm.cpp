@@ -2187,13 +2187,13 @@ int ScummEngine::runDialog(Dialog &dialog) {
 
 void ScummEngine::pauseDialog() {
 	if (!_pauseDialog)
-		_pauseDialog = new PauseDialog(this, 10);
+		_pauseDialog = new PauseDialog(this, 4);
 	runDialog(*_pauseDialog);
 }
 
 void ScummEngine::versionDialog() {
 	if (!_versionDialog)
-		_versionDialog = new PauseDialog(this, 11);
+		_versionDialog = new PauseDialog(this, 1);
 	runDialog(*_versionDialog);
 }
 
@@ -2204,7 +2204,7 @@ void ScummEngine::mainMenuDialog() {
 }
 
 void ScummEngine::confirmExitDialog() {
-	ConfirmDialog d(this, "Do you really want to quit (y/n)?");
+	ConfirmDialog d(this, 6);
 
 	if (runDialog(d)) {
 		_quit = true;
@@ -2212,7 +2212,7 @@ void ScummEngine::confirmExitDialog() {
 }
 
 void ScummEngine::confirmRestartDialog() {
-	ConfirmDialog d(this, "Do you really want to restart (y/n)?");
+	ConfirmDialog d(this, 5);
 
 	if (runDialog(d)) {
 		restart();

@@ -79,16 +79,25 @@ static ResString *string_map_table_v5;
 #else
 static ResString string_map_table_v7[] = {
 	{96, "game name and version"}, //that's how it's supposed to be
-	{77, "Select a game to LOAD"},
-	{76, "Name your SAVE game"},
-	{70, "save"}, //boot8
-	{71, "load"}, //boot9
-	{72, "play"}, //boot10
-	{73, "cancel"}, //boot11
-	{74, "quit"}, //boot12
-	{75, "ok"}, //boot13
-	{85, "game paused"}, // boot3
-	{96, "the dig v1.0"},
+	{83, "Unable to Find %s, (%c%d) Press Button."},
+	{84, "Error reading disk %c, (%c%d) Press Button."},
+	{85, "Game Paused.  Press SPACE to Continue."}, //BOOT.003
+	{86, "Are you sure you want to restart?  (Y/N)"}, //BOOT.004
+	{87, "Are you sure you want to quit?  (Y/N)"}, //BOOT.005
+	{70, "Save"}, //BOOT.008
+	{71, "Load"}, //BOOT.009
+	{72, "Play"}, //BOOT.010
+	{73, "Cancel"}, //BOOT.011
+	{74, "Quit"}, //BOOT.012
+	{75, "OK"}, //BOOT.013
+	{0, ""},
+	{78, "You must enter a name"}, //BOOT.014
+	{81, "The game was NOT saved (disk full?)"}, //BOOT.015
+	{82, "The game was NOT loaded"}, //BOOT.016
+	{79, "Saving '%s'"}, //BOOT.017
+	{80, "Loading '%s'"}, //BOOT.018
+	{76, "Name your SAVE game"}, //BOOT.019
+	{77, "Select a game to LOAD"} //BOOT.020
 
 	/* This is the complete string map for v7
 	{68, "c:\\dig"}, //BOOT.007
@@ -104,13 +113,13 @@ static ResString string_map_table_v7[] = {
 	{78, "You must enter a name"}, //BOOT.014
 	{79, "Saving '%s'"}, //BOOT.017
 	{80, "Loading '%s'"}, //BOOT.018
-	{81, "The game was NOT saved"}, //BOOT.015
+	{81, "The game was NOT saved (disk full?)"}, //BOOT.015
 	{82, "The game was NOT loaded"}, //BOOT.016
 	{83, "Unable to Find %s, (%c%d) Press Button."},
 	{84, "Error reading disk %c, (%c%d) Press Button."},
 	{85, "Game Paused.  Press SPACE to Continue."}, //BOOT.003
-	{86, "Are you sure you want to restart?"}, //BOOT.004
-	{87, "Are you sure you want to quit?"}, //BOOT.005
+	{86, "Are you sure you want to restart?  (Y/N)"}, //BOOT.004
+	{87, "Are you sure you want to quit?  (Y/N)"}, //BOOT.005
 	{90, "Music"}, //BOOT.022
 	{91, "Voice"}, //BOOT.023
 	{92, "Sfx"}, //BOOT.024
@@ -119,39 +128,62 @@ static ResString string_map_table_v7[] = {
 	{95, "Display Text"}, //BOOT.027
 	{96, "The Dig v1.0"},
 	{138, "Spooled Music"), // BOOT.028
-	{139, "Do you want to replace this saved game?"} //BOOT.029
+	{139, "Do you want to replace this saved game?  (Y/N)"} //BOOT.029
 	{141, "Voice Only"},
 	{142, "Voice and Text"},
-	{143, "Text Display Only"},
-*/
+	{143, "Text Display Only"}, */
 
 };
 
 static ResString string_map_table_v6[] = {
-	{117, "How may I serve you?"},
-	{109, "Select a game to LOAD"},
-	{108, "Name your SAVE game"},
+	{90, "Insert Disk %c and Press Button to Continue."},
+	{91, "Unable to Find %s, (%c%d) Press Button."},
+	{92, "Error reading disk %c, (%c%d) Press Button."},
+	{93, "Game Paused.  Press SPACE to Continue."},
+	{94, "Are you sure you want to restart?  (Y/N)"},
+	{95, "Are you sure you want to quit?  (Y/N)"},
 	{96, "Save"},
 	{97, "Load"},
 	{98, "Play"},
 	{99, "Cancel"},
 	{100, "Quit"},
 	{101, "OK"},
-	{93, "Game paused"},
+	{102, "Insert save/load game disk"},
+	{103, "You must enter a name"},
+	{104, "The game was NOT saved (disk full?)"},
+	{105, "The game was NOT loaded"},
+	{106, "Saving '%s'"},
+	{107, "Loading '%s'"},
+	{108, "Name your SAVE game"},
+	{109, "Select a game to LOAD"},
+	{117, "How may I serve you?"},
 	{210, "Game version"}
 };
 
-static ResString string_map_table_v5[] = {
-	{28, "How may I serve you?"},
-	{20, "Select a game to LOAD"},
-	{19, "Name your SAVE game"},
+static ResString string_map_table_v345[] = {
+	{1, "Insert Disk %c and Press Button to Continue."},
+	{2, "Unable to Find %s, (%c%d) Press Button."},
+	{3, "Error reading disk %c, (%c%d) Press Button."},
+	{4, "Game Paused.  Press SPACE to Continue."},
+	{5, "Are you sure you want to restart?  (Y/N)"},
+	{6, "Are you sure you want to quit?  (Y/N)"},
+
+	// Added in SCUMM4
 	{7, "Save"},
 	{8, "Load"},
 	{9, "Play"},
 	{10, "Cancel"},
 	{11, "Quit"},
 	{12, "OK"},
-	{4, "Game paused"}
+	{13, "Insert save/load game disk"},
+	{14, "You must enter a name"},
+	{15, "The game was NOT saved (disk full?)"},
+	{16, "The game was NOT loaded"},
+	{17, "Saving '%s'"},
+	{18, "Loading '%s'"},
+	{19, "Name your SAVE game"},
+	{20, "Select a game to LOAD"},
+	{28, "Game title"}
 };
 #endif
 
@@ -169,15 +201,15 @@ const Common::String ScummDialog::queryResString(int stringno) {
 	if (stringno == 0)
 		return String();
 
-	if (_vm->_game.version >= 7)
+	// TODO: For COMI and The Dig, use translated strings from the language file.
+	if (_vm->_game.version == 7)
 		result = _vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
 	else if (_vm->_game.version == 6)
 		result = _vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
-	else if (_vm->_game.version == 5)
-		result = _vm->getStringAddress(string_map_table_v5[stringno - 1].num);
+	else if (_vm->_game.version >= 3)
+		result = _vm->getStringAddress(string_map_table_v345[stringno - 1].num);
 	else
-		// TODO: For V8 games, maybe grab the strings from the language file?
-		return string_map_table_v5[stringno - 1].string;
+		return string_map_table_v345[stringno - 1].string;
 
 	if (result && *result == '/') {
 		_vm->translateText(result, buf);
@@ -185,7 +217,7 @@ const Common::String ScummDialog::queryResString(int stringno) {
 	}
 
 	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
-		return string_map_table_v5[stringno - 1].string;
+		return string_map_table_v345[stringno - 1].string;
 	}
 
 	// Convert to a proper string (take care of FF codes)
@@ -895,8 +927,8 @@ void PauseDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {
 		ScummDialog::handleKeyDown(ascii, keycode, modifiers);
 }
 
-ConfirmDialog::ConfirmDialog(ScummEngine *scumm, const String& message)
-	: InfoDialog(scumm, message) {
+ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
+	: InfoDialog(scumm, res) {
 }
 
 void ConfirmDialog::handleKeyDown(uint16 ascii, int keycode, int modifiers) {

@@ -172,7 +172,7 @@ public:
  */
 class ConfirmDialog : public InfoDialog {
 public:
-	ConfirmDialog(ScummEngine *scumm, const String& message);
+	ConfirmDialog(ScummEngine *scumm, int res);
 	virtual void handleKeyDown(uint16 ascii, int keycode, int modifiers);
 };
 
