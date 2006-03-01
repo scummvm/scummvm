@@ -90,7 +90,9 @@ private:
 	int16 _inTimerCount;
 	int16 _inTimerCountRedraw;
 #endif
-
+#ifdef __SYMBIAN32__
+	bool _closeOnTextTick;
+#endif
 	Common::Mutex _mutex;
 
 public:
