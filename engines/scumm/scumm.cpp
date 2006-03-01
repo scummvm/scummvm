@@ -786,6 +786,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_VERB_ALLOWED = 0xFF;
 	VAR_CLICK_AREA = 0xFF;
+	VAR_CLICK_VERB = 0xFF;
+	VAR_CLICK_OBJECT = 0xFF;
 
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
 	VAR_VOICE_MODE = 0xFF;
