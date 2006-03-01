@@ -1378,6 +1378,8 @@ public:
 	byte VAR_ACTIVE_OBJECT1;
 	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_CLICK_AREA;
+	byte VAR_CLICK_VERB;
+	byte VAR_CLICK_OBJECT;
 
 	// HE specific variables
 	byte VAR_REDRAW_ALL_ACTORS;		// Used in setActorRedrawFlags()

@@ -1115,10 +1115,10 @@ void ScummEngine::checkAndRunSentenceScript() {
 			return;
 
 	if (_game.version <= 2) {
-		_scummVars[VAR_ACTIVE_VERB] = _sentence[_sentenceNum].verb;
-		_scummVars[VAR_ACTIVE_OBJECT1] = _sentence[_sentenceNum].objectA;
-		_scummVars[VAR_ACTIVE_OBJECT2] = _sentence[_sentenceNum].objectB;
-		_scummVars[VAR_VERB_ALLOWED] = (0 != getVerbEntrypoint(_sentence[_sentenceNum].objectA, _sentence[_sentenceNum].verb));
+		VAR(VAR_ACTIVE_VERB) = _sentence[_sentenceNum].verb;
+		VAR(VAR_ACTIVE_OBJECT1) = _sentence[_sentenceNum].objectA;
+		VAR(VAR_ACTIVE_OBJECT2) = _sentence[_sentenceNum].objectB;
+		VAR(VAR_VERB_ALLOWED) = (0 != getVerbEntrypoint(_sentence[_sentenceNum].objectA, _sentence[_sentenceNum].verb));
 	} else {
 		localParamList[0] = _sentence[_sentenceNum].verb;
 		localParamList[1] = _sentence[_sentenceNum].objectA;
@@ -1147,13 +1147,13 @@ void ScummEngine::runInputScript(int a, int cmd, int mode) {
 
 	} else if (_game.version <= 2) {
 		verbScript = 4;
-		_scummVars[VAR_CLICK_AREA] = a;
+		VAR(VAR_CLICK_AREA) = a;
 		switch (a) {
 		case 1:		// Verb clicked
-			_scummVars[33] = cmd;
+			VAR(VAR_CLICK_VERB) = cmd;
 			break;
 		case 3:		// Inventory clicked
-			_scummVars[35] = cmd;
+			VAR(VAR_CLICK_OBJECT) = cmd;
 			break;
 		}
 	} else {
