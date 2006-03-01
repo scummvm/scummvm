@@ -195,7 +195,7 @@ private:
 	int updateCallback8(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback9(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback10(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback11(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_writeAdlib(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback12(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback13(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback14(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -1017,8 +1017,8 @@ int AdlibDriver::updateCallback10(uint8 *&dataptr, OutputState &state, uint8 val
 	return (_continueFlag != 0);
 }
 
-int AdlibDriver::updateCallback11(uint8 *&dataptr, OutputState &state, uint8 value) {
-	output0x388(*dataptr++);
+int AdlibDriver::update_writeAdlib(uint8 *&dataptr, OutputState &state, uint8 value) {
+	output0x388((value << 8) || *dataptr++);
 	return 0;
 }
 
@@ -1685,7 +1685,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 8
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback10),
-	COMMAND(updateCallback11),
+	COMMAND(update_writeAdlib),
 	COMMAND(updateCallback12),
 
 	// 12
