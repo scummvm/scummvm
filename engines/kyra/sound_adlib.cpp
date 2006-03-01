@@ -61,7 +61,7 @@ public:
 
 	bool isStereo() const { return false; }
 	bool endOfData() const { return false; }
-	int getRate() const { return 22050; }
+	int getRate() const { return _mixer->getOutputRate(); }
 
 private:
 	struct OpcodeEntry {
@@ -312,8 +312,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_mixer = mixer;
 
 	_flags = 0;
-	// TODO: use mixer sample rate
-	_adlib = makeAdlibOPL(22050);
+	_adlib = makeAdlibOPL(getRate());
 	assert(_adlib);
 
 	memset(_outputTables, 0, sizeof(_outputTables));
@@ -338,7 +337,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_mixer->setupPremix(this);
 
 	// the interval should be around 13000 to 20000
-	Common::g_timer->installTimerProc(&AdlibTimerCall, 19000, this);
+	Common::g_timer->installTimerProc(&AdlibTimerCall, 18000, this);
 }
 
 AdlibDriver::~AdlibDriver() {
@@ -581,6 +580,7 @@ void AdlibDriver::callbackProcess() {
 						opcode = command & 0x7F;
 						if (opcode > 0x4A)
 							opcode = 0x4A;
+						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curTable);
 						opcode = (this->*(_parserOpcodeTable[opcode].function))(table.dataptr, table, (command & 0xFF00) >> 8);
 						--opcode;
 						if (opcode >= 0)
@@ -611,6 +611,7 @@ void AdlibDriver::callbackProcess() {
 // 
 
 void AdlibDriver::resetAdlibState() {
+	debugC(9, kDebugLevelSound, "resetAdlibState()");
 	_unk6 = 0x1234;
 	output0x388(0x0120);
 	output0x388(0x0800);
@@ -648,6 +649,7 @@ void AdlibDriver::waitLoops(int count) {
 }
 
 void AdlibDriver::initTable(OutputState &table) {
+	debugC(9, kDebugLevelSound, "initTable(%d)", &table - _outputTables);
 	memset(&table.dataptr, 0, sizeof(OutputState) - ((char*)&table.dataptr - (char*)&table));
 
 	table.unk1 = -1;
@@ -659,6 +661,7 @@ void AdlibDriver::initTable(OutputState &table) {
 }
 
 void AdlibDriver::unkOutput1(OutputState &table) {
+	debugC(9, kDebugLevelSound, "unkOutput1(%d)", &table - _outputTables);
 	if (_curTable == 9)
 		return;
 	if (_unk4 && _curTable >= 6)
@@ -675,6 +678,7 @@ void AdlibDriver::unkOutput1(OutputState &table) {
 }
 
 void AdlibDriver::unkOutput2(uint8 num) {
+	debugC(9, kDebugLevelSound, "unkOutput2(%d)", num);
 	if (_unk4)
 		if (num >= 6)
 			return;
@@ -707,9 +711,10 @@ uint16 AdlibDriver::updateUnk6Value() {
 }
 
 void AdlibDriver::update1(uint8 unk1, OutputState &state) {
+	debugC(9, kDebugLevelSound, "update1(%d, %d)", unk1, &state - _outputTables);
 	_continueFlag = unk1;
 	if (state.unk11) {
-		state.unk5 = unk1 + (updateUnk6Value() & state.unk11);
+		state.unk5 = unk1 + (updateUnk6Value() & state.unk11 & 0xFF);
 		return;
 	}
 	uint8 value = unk1;
@@ -726,6 +731,7 @@ void AdlibDriver::update1(uint8 unk1, OutputState &state) {
 }
 
 void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
+	debugC(9, kDebugLevelSound, "updateAndOutput1(%d, %d)", unk1, &state - _outputTables);
 	state.unk13 = unk1;
 	uint8 unk2 = unk1 & 0xF0;
 	unk2 += state.unk10;
@@ -766,6 +772,7 @@ void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
 }
 
 void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state) {
+	debugC(9, kDebugLevelSound, "updateAndOutput2(%d, 0x%X, %d)", unk1, dataptr, &state - _outputTables);
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
 	// Keyboard Scaling Rate / Modulator Frequency Multiple
 	output0x388(((0x20 + unk1) << 8) | *dataptr++);
@@ -799,6 +806,7 @@ void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &stat
 }
 
 void AdlibDriver::updateAndOutput3(OutputState &state) {
+	debugC(9, kDebugLevelSound, "updateAndOutput3(%d)", &state - _outputTables);
 	// This sets a bit in the "Octave" field
 	state.unkOutputValue1 |= 0x20;
 
@@ -812,6 +820,7 @@ void AdlibDriver::updateAndOutput3(OutputState &state) {
 }
 
 void AdlibDriver::output1(OutputState &state) {
+	debugC(9, kDebugLevelSound, "output1(%d)", &state - _outputTables);
 	uint8 lowByte = calculateLowByte2(state);
 
 	// Level Key Scaling / Total Level
@@ -825,6 +834,7 @@ void AdlibDriver::output1(OutputState &state) {
 }
 
 void AdlibDriver::stateCallback1_1(OutputState &state) {
+	debugC(9, kDebugLevelSound, "Calling stateCallback1_1 (channel: %d)", _curTable);
 	state.unk31 += state.unk29;
 	if ((int8)state.unk31 >= 0)
 		return;
@@ -864,6 +874,7 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 }
 
 void AdlibDriver::stateCallback1_2(OutputState &state) {
+	debugC(9, kDebugLevelSound, "Calling stateCallback1_2 (channel: %d)", _curTable);
 	if (state.unk38) {
 		--state.unk38;
 		return;
@@ -892,6 +903,7 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 }
 
 void AdlibDriver::stateCallback2_1(OutputState &state) {
+	debugC(9, kDebugLevelSound, "Calling stateCallback2_1 (channel: %d)", _curTable);
 	state.unk18 += state.unk19;
 	if ((int8)state.unk18 < 0) {
 		if ((--state.unk21) & 0x80) {
@@ -1298,16 +1310,16 @@ int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 val
 	}
 
 	uint16 unk3 = _unkTable[unk2] + state.unk15;
-	unk1 >>= 1; unk1 &= 0x1C;
-	unk2 |= (unk3 >> 8);
+	unk1 >>= 2; unk1 &= 0x1C;
+	unk1 |= (unk3 >> 8);
 
-	uint16 unk4 = (unk2 << 8) | (unk3 & 0xFF);
+	uint16 unk4 = (unk1 << 8) | (unk3 & 0xFF);
 	if (state.unk16 >= 0) {
 		const uint8 *ptr = _unkTables[(state.unk13 & 0x0F) + 2];
 		unk4 += ptr[state.unk16];
 	} else {
 		const uint8 *ptr = _unkTables[state.unk13 & 0x0F];
-		unk4 += ptr[(state.unk16 ^ 0xFF) + 1];
+		unk4 -= ptr[(state.unk16 ^ 0xFF) + 1];
 	}
 
 	unk2 = unk4 >> 8;
@@ -1972,7 +1984,7 @@ void SoundAdlibPC::stopMusic() {
 void SoundAdlibPC::playTrack(uint8 track, bool looping) {
 	// snd_stopSound();
 	// snd_unk1();
-	playSoundEffect(track);
+	//playSoundEffect(track);
 }
 
 void SoundAdlibPC::haltTrack() {
