@@ -512,7 +512,7 @@ void AdlibDriver::callback() {
 	lock();
 	--_flagTrigger;
 	if ((int8)_flagTrigger < 0)
-		_flags &= 0xFFF7;
+		_flags &= ~8;
 	callbackOutput();
 	callbackProcess();
 
@@ -628,10 +628,17 @@ void AdlibDriver::resetAdlibState() {
 void AdlibDriver::output0x388(uint16 word) {
 	// 0x388 - Adress/Status port (R/W)
 	// 0x389 - Data port          (W/O)
+
+	// The "wait loops" are there to allow the hardware enough time to
+	// register that it has been written to. I don't think we do that in
+	// any of the other ScummVM Adlib players, so it might not be
+	// necessary. On the other hand, it shouldn't do any harm either, so
+	// let's keep it for now. Until the music works properly, at least.
+
 	OPLWrite(_adlib, 0x388, (word >> 8) & 0xFF);
 	waitLoops(4);
 	OPLWrite(_adlib, 0x389, word & 0xFF);
-	waitLoops(23);	
+	waitLoops(23);
 }
 
 void AdlibDriver::waitLoops(int count) {
