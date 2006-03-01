@@ -90,38 +90,40 @@ static ResString string_map_table_v7[] = {
 	{85, "game paused"}, // boot3
 	{96, "the dig v1.0"},
 
-	/* this is the almost complete string map for v7
-	{63, "how may I serve you?"},
-	{64, "the dig v1.0"}, //(game name/version)
-	{67, "text display only"},
-	{68, "c:\\dig"}, //boot007 (save path ?)
-	{69, "the dig"}, //boot21 (game name)
-	{70, "save"}, //boot8
-	{71, "load"}, //boot9
-	{72, "play"}, //boot10
-	{73, "cancel"}, //boot11
-	{74, "quit"}, //boot12
-	{75, "ok"}, //boot13
-	{76, "name your save game"}, //boot19
-	{77, "select a game to load"}, //boot20
-	{78, "you must enter a name"},//boot14
-	{79, "saving '%s'"}, //boot17
-	{80, "loading '%s'"}, //boot18
-	{81, "the game was NOT saved"}, //boot15
-	{82, "the game was NOT loaded"}, //boot16
-	{83, "how may I serve you?"},
-	{84, "how may I serve you?"},
-	{85, "game paused"}, // boot3
-	{86, "Are you sure you want to restart"},
-	{87, "Are you sure you want to quit?"}, //boot05
-	{89, "how may I serve you?"},
-	{90, "music"}, //boot22
-	{91, "voice"}, //boot23
-	{92, "sfx"}, //boot24
-	{93, "disabled"}, //boot25
-	{94, "text speed"}, //boot26
-	{95, "text display"}, //boot27
-	{96, "the dig v1.0"},*/
+	/* This is the complete string map for v7
+	{68, "c:\\dig"}, //BOOT.007
+	{69, "The Dig"}, //BOOT.021
+	{70, "Save"}, //BOOT.008
+	{71, "Load"}, //BOOT.009
+	{72, "Play"}, //BOOT.010
+	{73, "Cancel"}, //BOOT.011
+	{74, "Quit"}, //BOOT.012
+	{75, "OK"}, //BOOT.013
+	{76, "Name your SAVE game"}, //BOOT.019
+	{77, "Select a game to LOAD"}, //BOOT.020
+	{78, "You must enter a name"}, //BOOT.014
+	{79, "Saving '%s'"}, //BOOT.017
+	{80, "Loading '%s'"}, //BOOT.018
+	{81, "The game was NOT saved"}, //BOOT.015
+	{82, "The game was NOT loaded"}, //BOOT.016
+	{83, "Unable to Find %s, (%c%d) Press Button."},
+	{84, "Error reading disk %c, (%c%d) Press Button."},
+	{85, "Game Paused.  Press SPACE to Continue."}, //BOOT.003
+	{86, "Are you sure you want to restart?"}, //BOOT.004
+	{87, "Are you sure you want to quit?"}, //BOOT.005
+	{90, "Music"}, //BOOT.022
+	{91, "Voice"}, //BOOT.023
+	{92, "Sfx"}, //BOOT.024
+	{93, "disabled"}, //BOOT.025
+	{94, "Text speed"}, //BOOT.026
+	{95, "Display Text"}, //BOOT.027
+	{96, "The Dig v1.0"},
+	{138, "Spooled Music"), // BOOT.028
+	{139, "Do you want to replace this saved game?"} //BOOT.029
+	{141, "Voice Only"},
+	{142, "Voice and Text"},
+	{143, "Text Display Only"},
+*/
 
 };
 
