@@ -1123,10 +1123,10 @@ void Sprite::setRedrawFlags(bool checkZOrder) {
 		if (!(spi->flags & kSFNeedRedraw)) {
 			if ((!checkZOrder || spi->priority >= 0) && (spi->flags & kSFMarkDirty)) {
 				int32 lp = spi->bbox.left / 8;
-				lp = MAX(0L, lp);
+				lp = MAX((int)0L, lp);
 				lp = MIN(lp, _vm->gdi._numStrips);
 				int32 rp = (spi->bbox.right + 7) / 8;
-				rp = MAX(0L, rp);
+				rp = MAX((int)0L, rp);
 				rp = MIN(rp, _vm->gdi._numStrips);
 				for (; lp < rp; lp++) {
 					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
