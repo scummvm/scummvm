@@ -156,8 +156,7 @@ static ResString string_map_table_v6[] = {
 	{107, "Loading '%s'"},
 	{108, "Name your SAVE game"},
 	{109, "Select a game to LOAD"},
-	{117, "How may I serve you?"},
-	{210, "Game version"}
+	{117, "How may I serve you?"}
 };
 
 static ResString string_map_table_v345[] = {
