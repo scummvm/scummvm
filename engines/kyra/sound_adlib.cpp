@@ -220,7 +220,7 @@ private:
 	int updateCallback33(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback34(uint8 *&dataptr, OutputState &state, uint8 value);
 	int setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback36(uint8 *&dataptr, OutputState &state, uint8 value);
+	int setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback37(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback38(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback39(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -1212,12 +1212,13 @@ int AdlibDriver::setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
 	return 0;
 }
 
-int AdlibDriver::updateCallback36(uint8 *&dataptr, OutputState &state, uint8 value) {
-	value &= 1;
-	value <<= 6;
-	_unkOutputByte2 = (_unkOutputByte2 & 0xBF) | value;
+int AdlibDriver::setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
+	if (value & 1)
+		_unkOutputByte2 |= 0x40;
+	else
+		_unkOutputByte2 &= 0xBF;
 
-	// AM depth / Vibrato depth / Rhythm control
+	// The Vibrato Depth bit is set or cleared, the others remain unchanged
 	output0x388(0xBD00 | _unkOutputByte2);
 	return 0;
 }
@@ -1742,7 +1743,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback33),
 	COMMAND(updateCallback34),
 	COMMAND(setAMDepth),
-	COMMAND(updateCallback36),
+	COMMAND(setVibratoDepth),
 
 	// 48
 	COMMAND(updateCallback37),
