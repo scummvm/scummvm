@@ -87,6 +87,5 @@ SOURCEPATH ..\..\..\sound
 
 sourcepath ..\..\..
 // backend specific includes
-SOURCE backends\midi\null.cpp
 SOURCE backends\fs\fs.cpp
 // backend specific includes
