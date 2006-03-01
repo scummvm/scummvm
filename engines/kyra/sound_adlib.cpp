@@ -185,13 +185,13 @@ private:
 	static const ParserOpcode _parserOpcodeTable[];
 	static const int _parserOpcodeTableSize;
 
-	int updateCallback1(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback2(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setRepeat(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_checkRepeat(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback3(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback4(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback5(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallbackPushDataPtr(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallbackPopDataPtr(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_jump(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_jumpToSubroutine(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_returnFromSubroutine(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback8(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback9(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback10(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -219,8 +219,8 @@ private:
 	int updateCallback32(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback33(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback34(uint8 *&dataptr, OutputState &state, uint8 value);
-	int setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value);
-	int setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback37(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback38(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback39(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -935,18 +935,15 @@ uint8 AdlibDriver::calculateLowByte2(OutputState &state) {
 
 // parser opcodes
 
-int AdlibDriver::updateCallback1(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setRepeat(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk9 = value;
 	return 0;
 }
 
-int AdlibDriver::updateCallback2(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_checkRepeat(uint8 *&dataptr, OutputState &state, uint8 value) {
 	++dataptr;
 	if (--state.unk9) {
-		--dataptr;
-		--dataptr;
-		uint16 add = READ_LE_UINT16(dataptr);
-		dataptr += 2;
+		int16 add = READ_LE_UINT16(dataptr - 2);
 		dataptr += add;
 	}
 	return 0;
@@ -980,22 +977,22 @@ int AdlibDriver::updateCallback4(uint8 *&dataptr, OutputState &state, uint8 valu
 	return 0;
 }
 
-int AdlibDriver::updateCallback5(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_jump(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	uint16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	dataptr += add;
 	return 0;
 }
 
-int AdlibDriver::updateCallbackPushDataPtr(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_jumpToSubroutine(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	uint16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	state.dataptrStack[state.dataptrStackPos++] = dataptr;
 	dataptr += add;
 	return 0;
 }
 
-int AdlibDriver::updateCallbackPopDataPtr(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_returnFromSubroutine(uint8 *&dataptr, OutputState &state, uint8 value) {
 	dataptr = state.dataptrStack[--state.dataptrStackPos];
 	return 0;
 }
@@ -1201,7 +1198,7 @@ int AdlibDriver::updateCallback34(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
 	if (value & 1)
 		_unkOutputByte2 |= 0x80;
 	else
@@ -1212,7 +1209,7 @@ int AdlibDriver::setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
 	return 0;
 }
 
-int AdlibDriver::setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value) {
 	if (value & 1)
 		_unkOutputByte2 |= 0x40;
 	else
@@ -1674,15 +1671,15 @@ const AdlibDriver::OpcodeEntry AdlibDriver::_opcodeList[] = {
 
 const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 0
-	COMMAND(updateCallback1),
-	COMMAND(updateCallback2),
+	COMMAND(update_setRepeat),
+	COMMAND(update_checkRepeat),
 	COMMAND(updateCallback3),
 	COMMAND(updateCallback4),
 
 	// 4
-	COMMAND(updateCallback5),
-	COMMAND(updateCallbackPushDataPtr),
-	COMMAND(updateCallbackPopDataPtr),
+	COMMAND(update_jump),
+	COMMAND(update_jumpToSubroutine),
+	COMMAND(update_returnFromSubroutine),
 	COMMAND(updateCallback8),
 
 	// 8
@@ -1742,8 +1739,8 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 44
 	COMMAND(updateCallback33),
 	COMMAND(updateCallback34),
-	COMMAND(setAMDepth),
-	COMMAND(setVibratoDepth),
+	COMMAND(update_setAMDepth),
+	COMMAND(update_setVibratoDepth),
 
 	// 48
 	COMMAND(updateCallback37),
