@@ -1122,11 +1122,11 @@ void Sprite::setRedrawFlags(bool checkZOrder) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & kSFNeedRedraw)) {
 			if ((!checkZOrder || spi->priority >= 0) && (spi->flags & kSFMarkDirty)) {
-				int lp = spi->bbox.left / 8;
-				lp = MAX(0, lp);
+				int32 lp = spi->bbox.left / 8;
+				lp = MAX(0L, lp);
 				lp = MIN(lp, _vm->gdi._numStrips);
-				int rp = (spi->bbox.right + 7) / 8;
-				rp = MAX(0, rp);
+				int32 rp = (spi->bbox.right + 7) / 8;
+				rp = MAX(0L, rp);
 				rp = MIN(rp, _vm->gdi._numStrips);
 				for (; lp < rp; lp++) {
 					if (vs->tdirty[lp] < vs->h && spi->bbox.bottom >= vs->tdirty[lp] && spi->bbox.top <= vs->bdirty[lp]) {
