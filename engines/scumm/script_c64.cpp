@@ -162,7 +162,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_stopScript),
 		OPCODE(o_stopCurrentScript),
 		/* 64 */
-		OPCODE(o_ifActiveOBject),
+		OPCODE(o_ifActiveObject),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_getClosestObjActor),
 		OPCODE(o5_getActorFacing),
@@ -322,7 +322,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_stopScript),
 		OPCODE(o_stopCurrentScript),
 		/* E4 */
-		OPCODE(o_ifActiveOBject),
+		OPCODE(o_ifActiveObject),
 		OPCODE(o_loadRoomWithEgo),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_getActorFacing),
@@ -689,6 +689,7 @@ void ScummEngine_c64::o_badOpcode() {
 void ScummEngine_c64::o_nop() {
 }
 
+// TODO: Maybe translate actor flags in future.
 void ScummEngine_c64::o_setActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
@@ -708,7 +709,7 @@ void ScummEngine_c64::o_getActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 
-	Actor *a = derefActor(act, "o_setActorBitVar");
+	Actor *a = derefActor(act, "o_getActorBitVar");
 	setResult((a->_miscflags & mask) ? 1 : 0);
 
 	debug(0, "o_getActorBitVar(%d, %d, %d)", act, mask, (a->_miscflags & mask));
@@ -759,7 +760,7 @@ void ScummEngine_c64::o_unknown2() {
 	warning("STUB: o_unknown2(%d)", var1);
 }
 
-void ScummEngine_c64::o_ifActiveOBject() {
+void ScummEngine_c64::o_ifActiveObject() {
 	byte obj = fetchScriptByte();
 
 	if (obj == _activeObject)
