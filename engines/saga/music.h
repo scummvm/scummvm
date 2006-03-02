@@ -92,7 +92,7 @@ protected:
 
 	byte *_musicData;
 	uint16 *_buf;
-	uint32 _musicDataSize;
+	size_t _musicDataSize;
 };
 
 class Music {
@@ -138,6 +138,8 @@ private:
 	MidiParser *smfParser;
 
 	DigitalTrackInfo *_track;
+
+	byte *_midiMusicData;
 
 	static void musicVolumeGaugeCallback(void *refCon);
 	void musicVolumeGauge(void);

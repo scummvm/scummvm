@@ -305,6 +305,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	_songTable = 0;
 
 	_track = NULL;
+
+	_midiMusicData = NULL;
 }
 
 Music::~Music() {
@@ -316,6 +318,7 @@ Music::~Music() {
 	delete smfParser;
 
 	free(_songTable);
+	free(_midiMusicData);
 }
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
@@ -432,7 +435,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		flags = MUSIC_NORMAL;
 	}
 
-	// FIXME: Is resource_data ever freed?
 	// Load MIDI/XMI resource data
 
 	if (_vm->getGameType() == GType_ITE) {
@@ -506,6 +508,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		_player->setLoop(false);
 
 	_player->playMusic();
+	free(_midiMusicData);
+	_midiMusicData = resourceData;
 }
 
 void Music::pause(void) {

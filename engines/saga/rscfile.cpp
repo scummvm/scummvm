@@ -313,7 +313,7 @@ bool Resource::loadContext(ResourceContext *context) {
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
 		}
-
+		free(tableBuffer);
 	}
 
 	//process external patch files
