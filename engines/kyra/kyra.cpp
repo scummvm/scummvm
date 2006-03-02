@@ -143,7 +143,7 @@ GameList Engine_KYRA_gameIDList() {
 GameSettings Engine_KYRA_findGameID(const char *gameid) {
 	const GameSettings *g = kyra_list;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}

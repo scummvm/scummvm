@@ -100,7 +100,7 @@ GameSettings Engine_SIMON_findGameID(const char *gameid) {
 	// First search the list of supported game IDs.
 	const GameSettings *g = simonGames;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			return *g;
 		g++;
 	}
@@ -110,7 +110,7 @@ GameSettings Engine_SIMON_findGameID(const char *gameid) {
 	GameSettings gs = { 0, 0 };
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
-		if (0 == strcmp(gameid, o->from)) {
+		if (0 == scumm_stricmp(gameid, o->from)) {
 			gs.gameid = gameid;
 			gs.gameid = "Obsolete game ID";
 			return gs;

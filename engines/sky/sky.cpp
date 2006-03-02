@@ -87,7 +87,7 @@ GameList Engine_SKY_gameIDList() {
 }
 
 GameSettings Engine_SKY_findGameID(const char *gameid) {
-	if (0 == strcmp(gameid, skySetting.gameid))
+	if (0 == scumm_stricmp(gameid, skySetting.gameid))
 		return skySetting;
 	GameSettings dummy = { 0, 0 };
 	return dummy;

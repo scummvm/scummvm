@@ -292,7 +292,7 @@ GameList Engine_GOB_gameIDList() {
 GameSettings Engine_GOB_findGameID(const char *gameid) {
 	const GameSettings *g = gob_list;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
@@ -367,7 +367,7 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 		realGame = ConfMan.get("gameid");
 	else
 		realGame = detector->_targetName;
-	if (!strcmp(realGame.c_str(), "gob2"))
+	if (!scumm_stricmp(realGame.c_str(), "gob2"))
 		features = GF_GOB2;
 	else
 		features = GF_GOB1;

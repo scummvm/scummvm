@@ -97,7 +97,7 @@ GameList Engine_CINE_gameIDList() {
 GameSettings Engine_CINE_findGameID(const char *gameid) {
 	const GameSettings *g = cine_list;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}

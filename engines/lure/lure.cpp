@@ -87,7 +87,7 @@ GameList Engine_LURE_gameIDList() {
 GameSettings Engine_LURE_findGameID(const char *gameid) {
 	const GameSettings *g = lure_list;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}

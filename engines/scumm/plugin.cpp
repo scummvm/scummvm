@@ -853,7 +853,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 static const char *findDescriptionFromGameID(const char *gameid) {
 	const GameSettings *g = gameDescriptions;
 	while (g->gameid) {
-		if (!strcmp(g->gameid, gameid)) {
+		if (!scumm_stricmp(g->gameid, gameid)) {
 			return g->description;
 		}
 		g++;
@@ -892,7 +892,7 @@ GameSettings Engine_SCUMM_findGameID(const char *gameid) {
 	// First search the list of supported game IDs.
 	const GameSettings *g = gameDescriptions;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			return *g;
 		g++;
 	}
@@ -902,7 +902,7 @@ GameSettings Engine_SCUMM_findGameID(const char *gameid) {
 	GameSettings gs = { 0, 0 };
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
-		if (0 == strcmp(gameid, o->from)) {
+		if (0 == scumm_stricmp(gameid, o->from)) {
 			gs.gameid = gameid;
 			gs.gameid = "Obsolete game ID";
 			return gs;

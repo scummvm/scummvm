@@ -74,9 +74,9 @@ GameList Engine_SWORD1_gameIDList() {
 }
 
 GameSettings Engine_SWORD1_findGameID(const char *gameid) {
-	if (0 == strcmp(gameid, sword1FullSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameid))
 		return sword1FullSettings;
-	if (0 == strcmp(gameid, sword1DemoSettings.gameid))
+	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameid))
 		return sword1DemoSettings;
 	GameSettings dummy = { 0, 0 };
 	return dummy;

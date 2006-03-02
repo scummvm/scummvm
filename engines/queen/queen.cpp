@@ -69,7 +69,7 @@ GameList Engine_QUEEN_gameIDList() {
 }
 
 GameSettings Engine_QUEEN_findGameID(const char *gameid) {
-	if (0 == strcmp(gameid, queen_setting[0].gameid))
+	if (0 == scumm_stricmp(gameid, queen_setting[0].gameid))
 		return queen_setting[0];
 	GameSettings dummy = { 0, 0 };
 	return dummy;

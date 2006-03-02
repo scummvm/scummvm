@@ -76,7 +76,7 @@ GameList Engine_SWORD2_gameIDList() {
 GameSettings Engine_SWORD2_findGameID(const char *gameid) {
 	const Sword2GameSettings *g = sword2_settings;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}

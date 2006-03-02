@@ -77,7 +77,7 @@ GameList Engine_SAGA_gameIDList() {
 GameSettings Engine_SAGA_findGameID(const char *gameid) {
 	const GameSettings *g = saga_games;
 	while (g->gameid) {
-		if (0 == strcmp(gameid, g->gameid))
+		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
