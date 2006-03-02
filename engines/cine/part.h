@@ -26,13 +26,16 @@
 #define CINE_PART_H_
 
 namespace Cine {
+#if !defined(__GNUC__)
+	#pragma START_PACK_STRUCTS
+#endif
 
 struct PartBuffer {
 	char partName[14];
 	uint32 offset;
 	uint32 packedSize;
 	uint32 unpackedSize;
-};
+} GCC_PACK;
 
 struct AnimData {
 	uint16 width;
@@ -45,7 +48,11 @@ struct AnimData {
 	int16 fileIdx;
 	int16 frameIdx;
 	char name[10];
-};
+} GCC_PACK;
+
+#if !defined(__GNUC__)
+	#pragma END_PACK_STRUCTS
+#endif
 
 #define NUM_MAX_PARTDATA 255
 #define NUM_MAX_ANIMDATA 255
