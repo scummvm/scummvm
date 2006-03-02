@@ -336,6 +336,9 @@
 				RelativePath="..\..\sound\mpu401.h">
 			</File>
 			<File
+				RelativePath="..\..\sound\null.cpp">
+			</File>
+			<File
 				RelativePath="..\..\sound\rate.cpp">
 			</File>
 			<File
@@ -501,9 +504,6 @@
 			<Filter
 				Name="midi"
 				Filter="">
-				<File
-					RelativePath="..\..\backends\midi\null.cpp">
-				</File>
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp">
 				</File>
