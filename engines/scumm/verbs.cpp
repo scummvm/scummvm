@@ -521,13 +521,10 @@ void ScummEngine_c64::checkExecVerbs() {
 				return;
 			}
 
-			// HACK: Reset value
-			VAR(VAR_EGO) = 3;
-
 			int object = findObject(_virtualMouse.x, _virtualMouse.y);
 			if (object) {
 				_activeObject = object;
-				if (_currentMode == 3 && _activeVerb == 13) {
+				if (_currentMode == 3) {
 					int x, y, dir;
 					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
 					getObjectXYPos(object, x, y, dir);

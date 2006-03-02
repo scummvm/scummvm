@@ -73,7 +73,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_getActorBitVar),
 		/* 1C */
 		OPCODE(o5_startSound),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState04),
 		/* 20 */
@@ -98,7 +98,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifState08),
 		/* 30 */
 		OPCODE(o_loadActor),
-		OPCODE(o2_getBitVar),
+		OPCODE(o_getBitVar),
 		OPCODE(o2_setCameraAt),
 		OPCODE(o_lockScript),
 		/* 34 */
@@ -113,7 +113,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		/* 3C */
 		OPCODE(o5_stopSound),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState02),
 		/* 40 */
@@ -153,7 +153,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_getActorBitVar),
 		/* 5C */
 		OPCODE(o5_startSound),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState04),
 		/* 60 */
@@ -178,7 +178,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifState08),
 		/* 70 */
 		OPCODE(o_lights),
-		OPCODE(o2_getBitVar),
+		OPCODE(o_getBitVar),
 		OPCODE(o_nop),
 		OPCODE(o5_getObjectOwner),
 		/* 74 */
@@ -193,7 +193,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		/* 7C */
 		OPCODE(o5_isSoundRunning),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* 80 */
@@ -233,7 +233,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_getActorBitVar),
 		/* 9C */
 		OPCODE(o5_startSound),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState04),
 		/* A0 */
@@ -258,7 +258,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifNotState08),
 		/* B0 */
 		OPCODE(o_loadActor),
-		OPCODE(o2_getBitVar),
+		OPCODE(o_getBitVar),
 		OPCODE(o2_setCameraAt),
 		OPCODE(o_unlockScript),
 		/* B4 */
@@ -273,7 +273,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		/* BC */
 		OPCODE(o5_stopSound),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* C0 */
@@ -313,7 +313,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_getActorBitVar),
 		/* DC */
 		OPCODE(o5_startSound),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState04),
 		/* E0 */
@@ -338,7 +338,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_ifNotState08),
 		/* F0 */
 		OPCODE(o_lights),
-		OPCODE(o2_getBitVar),
+		OPCODE(o_getBitVar),
 		OPCODE(o_nop),
 		OPCODE(o5_getObjectOwner),
 		/* F4 */
@@ -353,7 +353,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_stopCurrentScript),
 		/* FC */
 		OPCODE(o5_isSoundRunning),
-		OPCODE(o2_setBitVar),
+		OPCODE(o_setBitVar),
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState02)
 	};
@@ -685,6 +685,29 @@ void ScummEngine_c64::o_getActorBitVar() {
 
 	setResult(0);
 	warning("STUB: o_getActorBitVar(%d, %d)", flag, mask);
+}
+
+void ScummEngine_c64::o_setBitVar() {
+	int var = getVarOrDirectByte(PARAM_1);
+	byte mask = getVarOrDirectByte(PARAM_2);
+	byte mod = getVarOrDirectByte(PARAM_3);
+
+	if (mod)
+		_scummVars[var] |= (1 << mask);
+	else
+		_scummVars[var] &= ~(1 << mask);
+
+	debug(0, "o_setBitVar (%d, %d %d)", var, mask, mod);
+}
+
+void ScummEngine_c64::o_getBitVar() {
+	getResultPos();
+	int var = getVarOrDirectByte(PARAM_1);
+	byte mask = getVarOrDirectByte(PARAM_2);
+
+	setResult((_scummVars[var] & (1 << mask)) ? 1 : 0);
+
+	debug(0, "o_getBitVar (%d, %d %d)", var, mask, _scummVars[var] & (1 << mask));
 }
 
 void ScummEngine_c64::o_print_c64() {

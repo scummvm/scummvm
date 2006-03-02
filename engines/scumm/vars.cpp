@@ -543,12 +543,13 @@ void ScummEngine_v8::setupScummVars() {
 }
 #endif
 
+void ScummEngine_c64::initScummVars() {
+	_activeVerb = 13;
+
+	VAR(VAR_EGO) = 3;
+}
+
 void ScummEngine_v2::initScummVars() {
-
-	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
-		VAR(VAR_EGO) = 3;
-	}
-
 	// This needs to be at least greater than 40 to get the more
 	// elaborate version of the EGA Zak into. I don't know where
 	// else it makes any difference.

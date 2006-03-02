@@ -412,6 +412,7 @@ protected:
 	virtual const char *getOpcodeDesc(byte i);
 
 	virtual void setupScummVars();
+	virtual void initScummVars();
 	virtual void decodeParseString();
 
 	void initC64Verbs();
@@ -453,6 +454,8 @@ protected:
 	void o_nop();
 	void o_getActorBitVar();
 	void o_setActorBitVar();
+	void o_getBitVar();
+	void o_setBitVar();
 	void o_doSentence();
 	void o_unknown2();
 	void o_unknown3();
