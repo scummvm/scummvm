@@ -146,6 +146,8 @@ void mainLoop(int bootScriptIdx) {
 
 	do {
 		mainLoopSub3();
+This is bad code. executePlayerInput returns an uint16, and we cast it to a char
+pointer. Yeah, right...
 		di = (char *)executePlayerInput();
 
 		if (var18 != 0) {
