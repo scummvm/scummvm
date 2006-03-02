@@ -601,29 +601,6 @@ void ScummEngine::writeVar(uint var, int value) {
 	if (!(var & 0xF000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");
 
-		if (var == VAR_SENTENCE_SCRIPT && _game.id == GID_FT && _defaultFTSentenceScript == -1) {
-			// WORKAROUND for bug #1407789. See checkAndRunSentenceScript()
-			// for the actual workaround.
-	
-			// FIXME: We do not yet have all necessary information, but the
-			// following is known:
-			//
-			// * The US PC version uses scripts 28 and 103.
-			// * The French PC version uses scripts 29 and 104.
-			// * The German Mac version uses scripts 29 and 104.
-			// * The German, Italian, Portuguese and Spanish PC versions
-			//   use script 29. The other script is not currently known.
-			// * The US Mac demo uses script 28.
-			//
-			// For now we assume that the very first time VAR_SENTENCE_SCRIPT
-			// is set, it is set to the default value (this happens in script 1).
-			// We furtermore assume that both scripts, if their IDs are shifted,
-			// are shifted by the same amount.
-
-			_defaultFTSentenceScript = value;
-			_buggyFTSentenceScript = 103 + (_defaultFTSentenceScript - 28);
-		}
-		
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
 			// Ignore default setting in HE72-73 games
 			if (_game.heversion <= 73 && vm.slot[_currentScript].number == 1)
@@ -1125,12 +1102,32 @@ void ScummEngine::checkAndRunSentenceScript() {
 		localParamList[1] = _sentence[_sentenceNum].objectA;
 		localParamList[2] = _sentence[_sentenceNum].objectB;
 
-		// WORKAROUND for bug #1407789. The buggy script clearly
-		// assumes that one of the two objects is an actor. If that's
-		// not the case, fall back on the default sentence script.
 
-		if (_game.id == GID_FT && sentenceScript == _buggyFTSentenceScript && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
-			sentenceScript = _defaultFTSentenceScript;
+		if (_game.id == GID_FT && !isValidActor(localParamList[1]) && !isValidActor(localParamList[2])) {
+			// WORKAROUND for bug #1407789. The buggy script clearly
+			// assumes that one of the two objects is an actor. If that's
+			// not the case, fall back on the default sentence script.
+
+			// FIXME: We do not yet have all necessary information, but the
+			// following is known:
+			//
+			// * The US PC version uses scripts 28 and 103 and has 456 scripts.
+			// * The French PC version uses scripts 29 and 104 and has 467 scripts.
+			// * The German Mac version uses scripts 29 and 104 and has 469 scripts.
+			// * The German, Italian, Portuguese and Spanish PC versions
+			//   use script 29. The other script is not currently known.
+			// * The US Mac demo uses script 28.
+			//
+			// For now we assume that if there are more than 460 scripts, then
+			// the pair 29/104 is used, else the pair 28/103.
+			
+			if (res.num[rtScript] > 460) {
+				if (sentenceScript == 104)
+					sentenceScript = 29;
+			} else {
+				if (sentenceScript == 103)
+					sentenceScript = 28;
+			}
 		}
 	}
 	_currentScript = 0xFF;

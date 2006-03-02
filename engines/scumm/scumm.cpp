@@ -393,9 +393,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Clean _substResFileNameBundle
 	memset(&_substResFileNameBundle, 0, sizeof(_substResFileNameBundle));
 
-	_defaultFTSentenceScript = -1;
-	_buggyFTSentenceScript = -1;
-
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
