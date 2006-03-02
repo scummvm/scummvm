@@ -27,6 +27,7 @@
 #include "common/util.h"
 
 #include "scumm/actor.h"
+#include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"
@@ -1137,28 +1138,35 @@ void ScummEngine::checkAndRunSentenceScript() {
 		runScript(sentenceScript, 0, 0, localParamList);
 }
 
+void ScummEngine_v2::runInputScript(int a, int cmd, int mode) {
+	int args[24];
+	int verbScript;
+
+	verbScript = 4;
+	VAR(VAR_CLICK_AREA) = a;
+	switch (a) {
+	case 1:		// Verb clicked
+		VAR(VAR_CLICK_VERB) = cmd;
+		break;
+	case 3:		// Inventory clicked
+		VAR(VAR_CLICK_OBJECT) = cmd;
+		break;
+	}
+
+	memset(args, 0, sizeof(args));
+	args[0] = a;
+	args[1] = cmd;
+	args[2] = mode;
+
+	if (verbScript)
+		runScript(verbScript, 0, 0, args);
+}
+
 void ScummEngine::runInputScript(int a, int cmd, int mode) {
 	int args[24];
 	int verbScript;
 
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
-		verbScript = 3;
-		//_scummVars[9] = cmd;
-
-	} else if (_game.version <= 2) {
-		verbScript = 4;
-		VAR(VAR_CLICK_AREA) = a;
-		switch (a) {
-		case 1:		// Verb clicked
-			VAR(VAR_CLICK_VERB) = cmd;
-			break;
-		case 3:		// Inventory clicked
-			VAR(VAR_CLICK_OBJECT) = cmd;
-			break;
-		}
-	} else {
-		verbScript = VAR(VAR_VERB_SCRIPT);
-	}
+	verbScript = VAR(VAR_VERB_SCRIPT);
 
 	memset(args, 0, sizeof(args));
 	args[0] = a;

@@ -306,6 +306,11 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 
 	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 
+	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+		// TODO
+		return;
+	}
+
 	if (object > 0) {
 		runInputScript(3, object, 0);
 	}
@@ -500,38 +505,49 @@ void ScummEngine_c64::checkExecVerbs() {
 	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
 		return;
 
-	if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
+	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
+		/* Check keypresses */
 		// TODO
-	} else if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
-		// Click into V2 inventory
-		checkV2Inventory(_mouse.x, _mouse.y);
-	} else {
-		int over = findVerbAtPos(_mouse.x, _mouse.y);
-		if (over) {
-			_currentAction = _verbs[over].verbid;
-			return;
-		}
-
-		// HACK: Reset value
-		VAR(VAR_EGO) = 3;
-
-		int object = findObject(_mouse.x, _mouse.y);
-		if (object) {
-			_activeObject = object;
-			if (_currentMode == 3) {
-				int x, y, dir;
-				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-				getObjectXYPos(object, x, y, dir);
-				a->startWalkActor(x, y, dir);
+	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
+		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
+			// TODO
+		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
+			// Click into V2 inventory
+			checkV2Inventory(_mouse.x, _mouse.y);
+		} else {
+			int over = findVerbAtPos(_mouse.x, _mouse.y);
+			if (over) {
+				_activeVerb = _verbs[over].verbid;
+				return;
 			}
 
-			int tmp = (_currentMode == 3) ? _currentAction : 15;
-			runObjectScript(object, tmp, false, false, NULL);
-		} else {
-			_activeObject = 0;
-			if (zone->number == kMainVirtScreen) {
-				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-				a->startWalkActor(_mouse.x, _mouse.y, -1);
+			// HACK: Reset value
+			VAR(VAR_EGO) = 3;
+
+			int object = findObject(_virtualMouse.x, _virtualMouse.y);
+			if (object) {
+				_activeObject = object;
+				if (_currentMode == 3 && _activeVerb == 13) {
+					int x, y, dir;
+					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+					getObjectXYPos(object, x, y, dir);
+					a->startWalkActor(x, y, dir);
+				}
+
+				int tmp = (_currentMode == 3) ? _activeVerb : 15;
+				if (getVerbEntrypoint(object, tmp) != 0) {
+					runObjectScript(object, tmp, false, false, NULL);
+				} else if (_activeVerb != 13 && _activeVerb != 15) {
+					VAR(9) = _activeVerb;
+					runScript(3, 0, 0, 0);
+				}
+			} else {
+				_activeObject = 0;
+				_activeVerb = 13;
+				if (zone->number == kMainVirtScreen) {
+					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+					a->startWalkActor(_virtualMouse.x, _virtualMouse.y, -1);
+				}
 			}
 		}
 	}

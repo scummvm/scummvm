@@ -278,6 +278,7 @@ protected:
 	virtual void readGlobalObjects();
 	virtual void loadCharset(int no);
 
+	virtual void runInputScript(int a, int cmd, int mode);
 	virtual void runInventoryScript(int i);
 
 	virtual int getVar();
@@ -377,6 +378,10 @@ protected:
 	byte VAR_SENTENCE_OBJECT2;
 	byte VAR_SENTENCE_PREPOSITION;
 	byte VAR_BACKUP_VERB;
+
+	byte VAR_CLICK_AREA;
+	byte VAR_CLICK_VERB;
+	byte VAR_CLICK_OBJECT;
 };
 
 /**
@@ -392,7 +397,7 @@ protected:
 
 	const OpcodeEntryC64 *_opcodesC64;
 
-	int _currentAction;
+	int _activeVerb;
 	int _currentMode;
 public:
 	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);

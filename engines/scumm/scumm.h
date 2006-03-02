@@ -893,7 +893,7 @@ protected:
 	void verbMouseOver(int verb);
 	int findVerbAtPos(int x, int y) const;
 	virtual void drawVerb(int verb, int mode);
-	void runInputScript(int a, int cmd, int mode);
+	virtual void runInputScript(int a, int cmd, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);
 	int getVerbSlot(int id, int mode) const;
@@ -1377,9 +1377,6 @@ public:
 	byte VAR_ACTIVE_VERB;
 	byte VAR_ACTIVE_OBJECT1;
 	byte VAR_ACTIVE_OBJECT2;
-	byte VAR_CLICK_AREA;
-	byte VAR_CLICK_VERB;
-	byte VAR_CLICK_OBJECT;
 
 	// HE specific variables
 	byte VAR_REDRAW_ALL_ACTORS;		// Used in setActorRedrawFlags()

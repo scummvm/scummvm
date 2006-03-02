@@ -785,9 +785,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	VAR_ACTIVE_OBJECT1 = 0xFF;
 	VAR_ACTIVE_OBJECT2 = 0xFF;
 	VAR_VERB_ALLOWED = 0xFF;
-	VAR_CLICK_AREA = 0xFF;
-	VAR_CLICK_VERB = 0xFF;
-	VAR_CLICK_OBJECT = 0xFF;
 
 	VAR_BLAST_ABOVE_TEXT = 0xFF;
 	VAR_VOICE_MODE = 0xFF;
@@ -970,12 +967,22 @@ ScummEngine_v3old::ScummEngine_v3old(GameDetector *detector, OSystem *syst, cons
 
 ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
 	: ScummEngine_v3old(detector, syst, gs, md5sum, subst) {
+
+	VAR_SENTENCE_VERB = 0xFF;
+	VAR_SENTENCE_OBJECT1 = 0xFF;
+	VAR_SENTENCE_OBJECT2 = 0xFF;
+	VAR_SENTENCE_PREPOSITION = 0xFF;
+	VAR_BACKUP_VERB = 0xFF;
+
+	VAR_CLICK_AREA = 0xFF;
+	VAR_CLICK_VERB = 0xFF;
+	VAR_CLICK_OBJECT = 0xFF;
 }
 
 ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
 	: ScummEngine_v2(detector, syst, gs, md5sum, subst) {
 
-	_currentAction = 0;
+	_activeVerb = 0;
 	_currentMode = 0;
 }
 
