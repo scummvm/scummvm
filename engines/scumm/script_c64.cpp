@@ -459,6 +459,100 @@ void ScummEngine_c64::ifNotStateCommon(byte type) {
 	}
 }
 
+void ScummEngine_c64::drawSentence() {
+	Common::Rect sentenceline;
+	static char sentence[256];
+	const byte *temp;
+	int sentencePrep = 0;
+
+	if (!(_userState & 32))
+		return;
+
+	if (getResourceAddress(rtVerb, _activeVerb)) {
+		strcpy(sentence, (char*)getResourceAddress(rtVerb, _activeVerb));
+	} else {
+		return;
+	}
+
+	if (_activeObject > 0) {
+		temp = getObjOrActorName(_activeObject);
+		if (temp) {
+			strcat(sentence, " ");
+			strcat(sentence, (const char*)temp);
+		}
+
+		if (_verbs[_activeVerb].prep == 0xFF) {
+			byte *ptr = getOBCDFromObject(_activeObject);
+			assert(ptr);
+			sentencePrep = (*(ptr + 11) >> 5);
+		} else {
+			sentencePrep = _verbs[_activeVerb].prep;
+		}
+	}
+
+	if (sentencePrep > 0 && sentencePrep <= 4) {
+		printf("sentencePrep is %d\n", sentencePrep);
+
+		// The prepositions, like the fonts, were hard code in the engine. Thus
+		// we have to do that, too, and provde localized versions for all the
+		// languages MM/Zak are available in.
+		//
+		// The order here matches the one defined in gameDetector.h
+		const char *prepositions[][5] = {
+			{ " ", " in", " with", " on", " to" },	// English
+			{ " ", " mit", " mit", " mit", " zu" },	// German
+			{ " ", " dans", " avec", " sur", " <" },// French
+			{ " ", " in", " con", " su", " a" },	// Italian
+			{ " ", " in", " with", " on", " to" },	// Portugese
+			{ " ", " en", " con", " en", " a" },	// Spanish
+			{ " ", " in", " with", " on", " to" },	// Japanese
+			{ " ", " in", " with", " on", " to" },	// Chinese
+			{ " ", " in", " with", " on", " to" }	// Korean
+			};
+		int lang = (_language <= 8) ? _language : 0;	// Default to english
+		strcat(sentence, prepositions[lang][sentencePrep]);
+	}
+
+	/* if (_activeObject2 > 0) {
+		temp = getObjOrActorName(_activeObject2);
+		if (temp) {
+			strcat(sentence, " ");
+			strcat(sentence, (const char*)temp);
+		}
+	} */
+
+	_string[2].charset = 1;
+	_string[2].ypos = virtscr[kVerbVirtScreen].topline;
+	_string[2].xpos = 0;
+	_string[2].color = 16;
+
+	byte string[80];
+	char *ptr = sentence;
+	int i = 0, len = 0;
+
+	// Maximum length of printable characters
+	int maxChars = 40;
+	while (*ptr) {
+		if (*ptr != '@')
+			len++;
+		if (len > maxChars) {
+			break;
+		}
+
+		string[i++] = *ptr++;
+
+	}
+	string[i] = 0;
+
+	sentenceline.top = virtscr[kVerbVirtScreen].topline;
+	sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
+	sentenceline.left = 0;
+	sentenceline.right = 319;
+	restoreBG(sentenceline);
+
+	drawString(2, (byte*)string);
+}
+
 void ScummEngine_c64::o_setState08() {
 	int obj = getObjectFlag();
 	putState(obj, getState(obj) | 0x08);

@@ -415,8 +415,10 @@ protected:
 	virtual void initScummVars();
 	virtual void decodeParseString();
 
-	void initC64Verbs();
 	virtual void checkExecVerbs();
+	virtual void handleMouseOver(bool updateInventory);
+	void initC64Verbs();
+	void drawSentence();
 
 	virtual int getVarOrDirectWord(byte mask);
 	virtual uint fetchScriptWord();

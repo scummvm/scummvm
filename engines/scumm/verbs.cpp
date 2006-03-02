@@ -42,26 +42,27 @@ struct VerbSettings {
 	int id;
 	int x_pos;
 	int y_pos;
+	int prep;
 	const char *name;
 };
 
 static const VerbSettings C64VerbTable[] =
 {
-	{ 1,  8, 0, "Open"},
-	{ 2,  8, 1, "Close"},
-	{ 3,  0, 2, "Give"},
-	{ 4, 32, 0, "Turn On"},
-	{ 5, 32, 1, "Turn Off"},
-	{ 6, 32, 2, "Fix"},
-	{ 7, 24, 0, "New Kid"},
-	{ 8, 24, 1, "Unlock"},
-	{ 9,  0, 0, "Push"},
-	{10,  0, 1, "Pull"},
-	{11, 24, 2, "Use"},
-	{12,  8, 2, "Read"},
-	{13, 15, 0, "Walk To"},
-	{14, 15, 1, "Pick Up"},
-	{15, 15, 2, "What Is"}
+	{ 1,  8, 0,   0, "Open"},
+	{ 2,  8, 1,   0, "Close"},
+	{ 3,  0, 2,   4, "Give"},
+	{ 4, 32, 0,   0, "Turn On"},
+	{ 5, 32, 1,   0, "Turn Off"},
+	{ 6, 32, 2,   2, "Fix"},
+	{ 7, 24, 0,   0, "New Kid"},
+	{ 8, 24, 1,   2, "Unlock"},
+	{ 9,  0, 0,   0, "Push"},
+	{10,  0, 1,   0, "Pull"},
+	{11, 24, 2, 255, "Use"},
+	{12,  8, 2,   0, "Read"},
+	{13, 15, 0,   0, "Walk To"},
+	{14, 15, 1,   0, "Pick Up"},
+	{15, 15, 2,   0, "What Is"}
 };
 
 void ScummEngine_c64::initC64Verbs() {
@@ -82,6 +83,7 @@ void ScummEngine_c64::initC64Verbs() {
 		vs->key = 0;
 		vs->center = 0;
 		vs->imgindex = 0;
+		vs->prep = C64VerbTable[i - 1].prep;
 
 		vs->curRect.left = C64VerbTable[i - 1].x_pos * 8;
 		vs->curRect.top = C64VerbTable[i - 1].y_pos * 8 + virt->topline + 8;
@@ -429,6 +431,12 @@ void ScummEngine_v2::handleMouseOver(bool updateInventory) {
 		redrawV2Inventory();
 	}
 	checkV2MouseOver(_mouse);
+}
+
+void ScummEngine_c64::handleMouseOver(bool updateInventory) {
+	ScummEngine_v2::handleMouseOver(updateInventory);
+
+	drawSentence();
 }
 
 void ScummEngine::checkExecVerbs() {
