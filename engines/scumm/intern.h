@@ -436,6 +436,7 @@ protected:
 	void o_getActorMoving();
 	void o_animateActor();
 	void o_putActorAtObject();
+	void o_pickupObject();
 	void o_lockSound();
 	void o_lockActor();
 	void o_loadActor();
@@ -446,7 +447,6 @@ protected:
 	void o_lockRoom();
 	void o_cursorCommand();
 	void o_lights();
-	void o_pickupObject();
 	void o_unlockActor();
 	void o_unlockScript();
 	void o_decrement();
@@ -458,7 +458,7 @@ protected:
 	void o_setBitVar();
 	void o_doSentence();
 	void o_unknown2();
-	void o_unknown3();
+	void o_ifActiveOBject();
 	void o_getClosestObjActor();
 	void o_printEgo_c64();
 	void o_print_c64();

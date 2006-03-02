@@ -987,7 +987,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
-	if (obj < _numActors)
+	if (obj < _numActors && !(_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC))
 		return derefActor(obj, "getObjOrActorName")->getActorName();
 
 	for (i = 0; i < _numNewNames; i++) {
@@ -1004,7 +1004,9 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	if (_game.features & GF_SMALL_HEADER) {
 		byte offset = 0;
 
-		if (_game.version <= 2)
+		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC)
+			offset = *(objptr + 13);
+		else if (_game.version <= 2)
 			offset = *(objptr + 14);
 		else if (_game.features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);

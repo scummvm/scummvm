@@ -162,7 +162,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_stopScript),
 		OPCODE(o_stopCurrentScript),
 		/* 64 */
-		OPCODE(o_unknown3),
+		OPCODE(o_ifActiveOBject),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_getClosestObjActor),
 		OPCODE(o5_getActorFacing),
@@ -217,7 +217,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_putActorAtObject),
 		OPCODE(o2_setState02),
 		/* 90 */
-		OPCODE(o2_pickupObject),
+		OPCODE(o_pickupObject),
 		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
 		OPCODE(o_unlockActor),
@@ -322,7 +322,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_stopScript),
 		OPCODE(o_stopCurrentScript),
 		/* E4 */
-		OPCODE(o_unknown3),
+		OPCODE(o_ifActiveOBject),
 		OPCODE(o_loadRoomWithEgo),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o5_getActorFacing),
@@ -387,6 +387,7 @@ const char *ScummEngine_c64::getOpcodeDesc(byte i) {
 int ScummEngine_c64::getObjectFlag() {
 	if (_opcode & 0x40)
 		return _activeObject;
+
 	return fetchScriptByte();
 }
 
@@ -656,6 +657,31 @@ void ScummEngine_c64::o_putActorAtObject() {
 	a->putActor(x, y, a->_room);
 }
 
+void ScummEngine_c64::o_pickupObject() {
+	int obj = fetchScriptByte();
+	if (obj == 0) {
+		obj = _activeObject;
+	}
+
+	if (obj < 1) {
+		error("pickupObject received invalid index %d (script %d)", obj, vm.slot[_currentScript].number);
+	}
+
+	if (getObjectIndex(obj) == -1)
+		return;
+
+	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
+		return;					/* object twice */
+
+	addObjectToInventory(obj, _roomResource);
+	markObjectRectAsDirty(obj);
+	putOwner(obj, VAR(VAR_EGO));
+	putState(obj, getState(obj) | 0xA);
+	clearDrawObjectQueue();
+
+	runInventoryScript(1);
+}
+
 void ScummEngine_c64::o_badOpcode() {
 	warning("Bad opcode 0x86 encountered");
 }
@@ -732,9 +758,13 @@ void ScummEngine_c64::o_unknown2() {
 	warning("STUB: o_unknown2(%d)", var1);
 }
 
-void ScummEngine_c64::o_unknown3() {
-	byte var1 = fetchScriptByte();
-	warning("STUB: o_unknown3(%d)", var1);
+void ScummEngine_c64::o_ifActiveOBject() {
+	byte obj = fetchScriptByte();
+
+	if (obj == _activeObject)
+		ScummEngine::fetchScriptWord();
+	else
+		o_jumpRelative();
 }
 
 void ScummEngine_c64::o_getClosestObjActor() {

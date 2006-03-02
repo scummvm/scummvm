@@ -1486,7 +1486,7 @@ void ScummEngine::scummInit() {
 }
 
 void ScummEngine_c64::scummInit() {
-	ScummEngine::scummInit();
+	ScummEngine_v2::scummInit();
 	initC64Verbs();
 }
 
