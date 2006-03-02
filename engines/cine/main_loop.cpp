@@ -89,7 +89,7 @@ void mainLoop(int bootScriptIdx) {
 	uint16 var_6;
 	uint16 quitFlag;
 	uint16 i;
-	char *di;
+	uint8 di;
 	uint16 mouseButton;
 
 	closeEngine3();
@@ -120,7 +120,7 @@ void mainLoop(int bootScriptIdx) {
 	fadeRequired = 0;
 	isDrawCommandEnabled = 0;
 	waitForPlayerClick = 0;
-	var16 = 0;
+	menuCommandLen = 0;
 
 	playerCommand = -1;
 	strcpy(commandBuffer, "");
@@ -146,9 +146,7 @@ void mainLoop(int bootScriptIdx) {
 
 	do {
 		mainLoopSub3();
-This is bad code. executePlayerInput returns an uint16, and we cast it to a char
-pointer. Yeah, right...
-		di = (char *)executePlayerInput();
+		di = executePlayerInput();
 
 		if (var18 != 0) {
 			if (var18 >= 100 || var19) {
@@ -219,8 +217,13 @@ pointer. Yeah, right...
 		}
 
 		if (di) {
-			if (!strcmp(di, "quit")) {
-				quitFlag = 1;
+			if ("quit"[menuCommandLen] == (char)di) {
+				++menuCommandLen;
+				if (menuCommandLen == 4) {
+					quitFlag = 1;
+				}
+			} else {
+				menuCommandLen = 0;
 			}
 		}
 

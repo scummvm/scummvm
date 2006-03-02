@@ -94,7 +94,7 @@ uint16 checkForPendingDataLoadSwitch;
 uint16 fadeRequired;
 uint16 isDrawCommandEnabled;
 uint16 waitForPlayerClick;
-uint16 var16;
+uint16 menuCommandLen;
 uint16 var17;
 uint16 var18;
 uint16 var19;

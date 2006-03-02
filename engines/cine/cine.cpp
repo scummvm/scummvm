@@ -215,7 +215,10 @@ static void initialize() {
 		globalVars[i] = 0;
 	}
 
-	globalVars[255] = 1;
+	// bypass protection
+	if (gameType == GID_OS) {
+		globalVars[255] = 1;
+	}
 
 	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
 		scriptTable[i].ptr = NULL;
