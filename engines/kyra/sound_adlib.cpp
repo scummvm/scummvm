@@ -116,8 +116,8 @@ private:
 		uint8 unk26;
 		uint8 unk7;
 		uint8 unk15;
-		int8 unk1;
-		int8 unk4;
+		uint8 unk1;
+		uint8 unk4;
 		uint8 unk17;
 		uint8 unkOutputValue1;
 		typedef void (AdlibDriver::*Callback)(OutputState&);
@@ -336,8 +336,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_mixer->setupPremix(this);
 
-	// the interval should be around 13000 to 20000
-	Common::g_timer->installTimerProc(&AdlibTimerCall, 18000, this);
+	Common::g_timer->installTimerProc(&AdlibTimerCall, 13888, this);
 }
 
 AdlibDriver::~AdlibDriver() {
@@ -538,8 +537,8 @@ void AdlibDriver::callbackOutput() {
 			initTable(table);
 			table.unk2 = unk2;
 			table.dataptr = ptr;
-			table.unk1 = -1;
-			table.unk4 = -1;
+			table.unk1 = 0xFF;
+			table.unk4 = 0xFF;
 			table.unk5 = 1;
 			if (index != 9) {
 				unkOutput2(index);
@@ -564,8 +563,9 @@ void AdlibDriver::callbackProcess() {
 			table.unk1 = _unkTableByte1;
 		}
 
+		uint16 temp = table.unk4 + table.unk1;
 		table.unk4 += table.unk1;
-		if (table.unk4 < 0) {
+		if (temp > 0xFF) {
 			if (--table.unk5) {
 				if (table.unk5 == table.unk7)
 					unkOutput1(table);
@@ -652,7 +652,7 @@ void AdlibDriver::initTable(OutputState &table) {
 	debugC(9, kDebugLevelSound, "initTable(%d)", &table - _outputTables);
 	memset(&table.dataptr, 0, sizeof(OutputState) - ((char*)&table.dataptr - (char*)&table));
 
-	table.unk1 = -1;
+	table.unk1 = 0xFF;
 	table.unk2 = 0;
 	// normally here are nullfuncs but we set 0 for now
 	table.callback1 = 0;
@@ -976,8 +976,8 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 valu
 		initTable(state2);
 		state2.unk2 = temp;
 		state2.dataptr = ptr;
-		state2.unk1 = -1;
-		state2.unk4 = -1;
+		state2.unk1 = 0xFF;
+		state2.unk4 = 0xFF;
 		state2.unk5 = 1;
 		unkOutput2(table);
 	}
