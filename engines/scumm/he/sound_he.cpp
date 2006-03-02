@@ -335,6 +335,13 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	int priority, rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
+	Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType;
+	if (soundID == 1)
+		type = Audio::Mixer::kSpeechSoundType;
+	else if (soundID > _vm->_numSounds)
+		type = Audio::Mixer::kMusicSoundType;
+
+
 	if (heChannel == -1)
 		heChannel = (_vm->VAR_RESERVED_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
 
@@ -374,7 +381,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID);
+			_vm->_mixer->playRaw(&_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID, 255, 0, 0,0, type);
 			return;
 		}
 	}
@@ -396,7 +403,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 	// Support for sound in later Backyard sports games
 	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF') || READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
-		uint16 type;
+		uint16 compType;
 		int blockAlign;
 		char *sound;
 
@@ -406,11 +413,11 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream stream(ptr, size);
 
-		if (!loadWAVFromStream(stream, size, rate, flags, &type, &blockAlign)) {
+		if (!loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
 			error("playSound: Not a valid WAV file");
 		}
 
-		if (type == 17) {
+		if (compType == 17) {
 			AudioStream *voxStream = new ADPCMInputStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			sound = (char *)malloc(size * 4);
@@ -423,7 +430,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			memcpy(sound, ptr + stream.pos(), size);
 		}
 		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID, 255, 0, 0,0, type);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
@@ -463,7 +470,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
 
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
@@ -485,7 +492,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID);
+		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {
