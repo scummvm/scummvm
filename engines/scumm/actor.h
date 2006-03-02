@@ -133,6 +133,9 @@ public:
 	uint16 _sound[32];
 	CostumeData _cost;
 
+	/* C64 maniac specific */
+	byte _miscflags;
+
 	/* HE specific */
 	bool _heNoTalkAnimation;
 	bool _heSkipLimbs;

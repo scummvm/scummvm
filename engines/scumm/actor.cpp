@@ -78,6 +78,7 @@ void Actor::initActor(int mode) {
 		_walkdata.point3.x = 32000;
 		_walkScript = 0;
 		memset(_heTalkQueue, 0, sizeof(_heTalkQueue));
+		_miscflags = 0;
 
 		mode = 1;
 	}

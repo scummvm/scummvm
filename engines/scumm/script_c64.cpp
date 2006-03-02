@@ -690,50 +690,51 @@ void ScummEngine_c64::o_nop() {
 }
 
 void ScummEngine_c64::o_setActorBitVar() {
-	byte flag = getVarOrDirectByte(PARAM_1);
+	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
 
-	//if (mod)
-	//	_miscFlags[flag] |= mask;
-	//else
-	//	_miscFlags[flag] &= ~mash;
+	Actor *a = derefActor(act, "o_setActorBitVar");
+	if (mod)
+		a->_miscflags |= mask;
+	else
+		a->_miscflags &= ~mask;
 
-	warning("STUB: o_setActorBitVar(%d, %d, %d)", flag, mask, mod);
+	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
 }
 
 void ScummEngine_c64::o_getActorBitVar() {
 	getResultPos();
-	byte flag = getVarOrDirectByte(PARAM_1);
+	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 
-	//setResult((_miscFlags[flag] & mask) ? 1 : 0);
+	Actor *a = derefActor(act, "o_setActorBitVar");
+	setResult((a->_miscflags & mask) ? 1 : 0);
 
-	setResult(0);
-	warning("STUB: o_getActorBitVar(%d, %d)", flag, mask);
+	debug(0, "o_getActorBitVar(%d, %d, %d)", act, mask, (a->_miscflags & mask));
 }
 
 void ScummEngine_c64::o_setBitVar() {
-	int var = getVarOrDirectByte(PARAM_1);
+	byte flag = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
 
 	if (mod)
-		_scummVars[var] |= (1 << mask);
+		_bitVars[flag] |= (1 << mask);
 	else
-		_scummVars[var] &= ~(1 << mask);
+		_bitVars[flag] &= ~(1 << mask);
 
-	debug(0, "o_setBitVar (%d, %d %d)", var, mask, mod);
+	debug(0, "o_setBitVar (%d, %d %d)", flag, mask, mod);
 }
 
 void ScummEngine_c64::o_getBitVar() {
 	getResultPos();
-	int var = getVarOrDirectByte(PARAM_1);
+	byte flag = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 
-	setResult((_scummVars[var] & (1 << mask)) ? 1 : 0);
+	setResult((_bitVars[flag] & (1 << mask)) ? 1 : 0);
 
-	debug(0, "o_getBitVar (%d, %d %d)", var, mask, _scummVars[var] & (1 << mask));
+	debug(0, "o_getBitVar (%d, %d %d)", flag, mask, _bitVars[flag] & (1 << mask));
 }
 
 void ScummEngine_c64::o_print_c64() {
