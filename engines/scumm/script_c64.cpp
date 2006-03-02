@@ -491,8 +491,6 @@ void ScummEngine_c64::drawSentence() {
 	}
 
 	if (sentencePrep > 0 && sentencePrep <= 4) {
-		printf("sentencePrep is %d\n", sentencePrep);
-
 		// The prepositions, like the fonts, were hard code in the engine. Thus
 		// we have to do that, too, and provde localized versions for all the
 		// languages MM/Zak are available in.
@@ -513,13 +511,13 @@ void ScummEngine_c64::drawSentence() {
 		strcat(sentence, prepositions[lang][sentencePrep]);
 	}
 
-	/* if (_activeObject2 > 0) {
-		temp = getObjOrActorName(_activeObject2);
+	if (_activeInventory > 0) {
+		temp = getObjOrActorName(_activeInventory);
 		if (temp) {
 			strcat(sentence, " ");
 			strcat(sentence, (const char*)temp);
 		}
-	} */
+	}
 
 	_string[2].charset = 1;
 	_string[2].ypos = virtscr[kVerbVirtScreen].topline;
@@ -586,13 +584,11 @@ void ScummEngine_c64::o_loadSound() {
 void ScummEngine_c64::o_lockSound() {
 	int resid = fetchScriptByte();
 	res.lock(rtSound, resid);
-	debug(0, "o_lockSound (%d)", resid);
 }
 
 void ScummEngine_c64::o_unlockSound() {
 	int resid = fetchScriptByte();
 	res.unlock(rtSound, resid);
-	debug(0, "o_unlockSound (%d)", resid);
 }
 
 void ScummEngine_c64::o_loadActor() {
@@ -615,13 +611,11 @@ void ScummEngine_c64::o_loadScript() {
 void ScummEngine_c64::o_lockScript() {
 	int resid = fetchScriptByte();
 	res.lock(rtScript, resid);
-	debug(0, "o_lockScript (%d)", resid);
 }
 
 void ScummEngine_c64::o_unlockScript() {
 	int resid = fetchScriptByte();
 	res.unlock(rtScript, resid);
-	debug(0, "o_unlockScript (%d)", resid);
 }
 
 void ScummEngine_c64::o_loadRoom() {
@@ -663,13 +657,11 @@ void ScummEngine_c64::o_loadRoomWithEgo() {
 void ScummEngine_c64::o_lockRoom() {
 	int resid = fetchScriptByte();
 	res.lock(rtRoom, resid);
-	debug(0, "o_lockRoom (%d)", resid);
 }
 
 void ScummEngine_c64::o_unlockRoom() {
 	int resid = fetchScriptByte();
 	res.unlock(rtRoom, resid);
-	debug(0, "o_unlockRoom (%d)", resid);
 }
 
 void ScummEngine_c64::o_cursorCommand() {
@@ -843,21 +835,22 @@ void ScummEngine_c64::o_printEgo_c64() {
 }
 
 void ScummEngine_c64::o_doSentence() {
-	byte var1 = fetchScriptByte();
-	byte var2 = fetchScriptByte();
-	byte var3 = fetchScriptByte();
-	warning("STUB: o_doSentence(%d, %d, %d)", var1, var2, var3);
+	byte entry = fetchScriptByte();
+	byte obj = fetchScriptByte();
+	fetchScriptByte();
+
+	runObjectScript(obj, entry, false, false, NULL);
 }
 
 void ScummEngine_c64::o_unknown2() {
 	byte var1 = fetchScriptByte();
-	warning("STUB: o_unknown2(%d)", var1);
+	error("STUB: o_unknown2(%d)", var1);
 }
 
 void ScummEngine_c64::o_ifActiveObject() {
 	byte obj = fetchScriptByte();
 
-	if (obj == _activeObject)
+	if (obj == _activeInventory)
 		ScummEngine::fetchScriptWord();
 	else
 		o_jumpRelative();
@@ -989,7 +982,11 @@ void ScummEngine_c64::o_jumpRelative() {
 	_scriptPointer += offset;
 }
 
-
+void ScummEngine_c64::resetSentence() {
+	_activeVerb = 0;
+	_activeInventory = 0;
+	_activeObject = 0;
+}
 
 #undef PARAM_1
 #undef PARAM_2

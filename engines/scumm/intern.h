@@ -293,7 +293,7 @@ protected:
 	virtual void setStateCommon(byte type);
 	virtual void clearStateCommon(byte type);
 
-	void resetSentence();
+	virtual void resetSentence();
 	void setUserState(byte state);
 
 	virtual void handleMouseOver(bool updateInventory);
@@ -427,6 +427,8 @@ protected:
 	virtual void ifNotStateCommon(byte type);
 	virtual void setStateCommon(byte type);
 	virtual void clearStateCommon(byte type);
+
+	virtual void resetSentence();
 
 	int getObjectFlag();
 

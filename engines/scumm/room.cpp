@@ -120,7 +120,6 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	res.increaseResourceCounter();
 
-	_activeObject = 0;
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
 

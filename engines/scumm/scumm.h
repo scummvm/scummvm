@@ -881,6 +881,7 @@ protected:
 	int8 _userPut;
 	uint16 _userState;
 
+	int _activeInventory;
 	int _activeObject;
 
 	virtual void handleMouseOver(bool updateInventory);

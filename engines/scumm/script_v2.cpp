@@ -1612,14 +1612,10 @@ void ScummEngine_v2::o2_switchCostumeSet() {
 }
 
 void ScummEngine_v2::resetSentence() {
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
-		// TODO
-	} else {
-		VAR(VAR_SENTENCE_VERB) = VAR(VAR_BACKUP_VERB);
-		VAR(VAR_SENTENCE_OBJECT1) = 0;
-		VAR(VAR_SENTENCE_OBJECT2) = 0;
-		VAR(VAR_SENTENCE_PREPOSITION) = 0;
-	}
+	VAR(VAR_SENTENCE_VERB) = VAR(VAR_BACKUP_VERB);
+	VAR(VAR_SENTENCE_OBJECT1) = 0;
+	VAR(VAR_SENTENCE_OBJECT2) = 0;
+	VAR(VAR_SENTENCE_PREPOSITION) = 0;
 }
 
 void ScummEngine_v2::runInventoryScript(int i) {

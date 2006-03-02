@@ -309,11 +309,8 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 
 	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
-		// TODO
-		return;
-	}
-
-	if (object > 0) {
+		_activeInventory = object;
+	} else if (object > 0) {
 		runInputScript(3, object, 0);
 	}
 }
@@ -547,6 +544,7 @@ void ScummEngine_c64::checkExecVerbs() {
 					runScript(3, 0, 0, 0);
 				}
 			} else {
+				_activeInventory = 0;
 				_activeObject = 0;
 				_activeVerb = 13;
 				if (zone->number == kMainVirtScreen) {
