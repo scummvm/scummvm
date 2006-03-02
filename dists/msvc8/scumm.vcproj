@@ -600,6 +600,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\plugin.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\plugin.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\resource.cpp"
 			>
 		</File>

@@ -247,6 +247,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_adlib.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sprites.cpp"
 			>
 		</File>
