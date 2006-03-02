@@ -1006,9 +1006,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int off = (offH << 8) + offL;
 
 	const byte *data = _loaded._baseptr + off;
-	const byte actorColors[] = {
-		0, 10, actorColorsMMC64[_actorID], 0
-	};
+	const byte palette[] = {0, 10, actorColorsMMC64[_actorID], 0};
 
 	int width = *data++;
 	int height = *data++;
@@ -1042,45 +1040,52 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	xpos += _actorX - (a->_width / 2) + 4;
 	ypos += _actorY - _loaded._maxHeight;
 
+	// This code is very similar to procC64()
 	if (flipped) {
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {
-				byte c = data[y*width+x];
-				byte b, d;
+				byte color = data[y * width + x];
+				byte pcolor;
 				int realX = 0;
 				if (offsetX == 0||offsetX == 1) {
 					realX = width-(x+1);
 				} else if (offsetX == 2) {
 					realX = width-(x+2);
 				}
-				byte *dest = &(((byte*)_out.pixels)[((y + ypos) * _out.pitch) + ((realX * 8) + xpos)]);
 
-				for (int i = 0; i <= 6; i += 2) {
-					if ((d = (c >> i) & 0x03)) {
-						b = actorColors[d];
-						*dest++ = b;
-						*dest++ = b;
-						continue;
+				int destY = y + ypos;
+				int destX = realX * 8 + xpos;
+				if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
+					byte *destPtr = &(((byte*)_out.pixels)[destY * _out.pitch + destX]);
+					for (int i = 0; i <= 6; i += 2) {
+						pcolor = (color >> i) & 3;
+						if (pcolor) {
+							destPtr[0] = palette[pcolor];
+							destPtr[1] = palette[pcolor];
+						}
+						destPtr += 2;
 					}
-					dest += 2;
 				}
 			}
 		}
 	} else {
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {
-				byte c = data[y*width+x];
-				byte b, d;
-				byte *dest = &(((byte*)_out.pixels)[((y + ypos) * _out.pitch) + ((x * 8) + xpos)]);
+				byte color = data[y * width + x];
+				byte pcolor;
 
-				for (int i = 6; i >= 0; i -= 2) {
-					if ((d = (c >> i) & 0x03)) {
-						b = actorColors[d];
-						*dest++ = b;
-						*dest++ = b;
-						continue;
+				int destY = y + ypos;
+				int destX = x * 8 + xpos;
+				if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
+					byte *destPtr = &(((byte*)_out.pixels)[destY * _out.pitch + destX]);
+					for (int i = 6; i >= 0; i -= 2) {
+						pcolor = (color >> i) & 3;
+						if (pcolor) {
+							destPtr[0] = palette[pcolor];
+							destPtr[1] = palette[pcolor];
+						}
+						destPtr += 2;
 					}
-					dest += 2;
 				}
 			}
 		}
