@@ -26,7 +26,6 @@
 #include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "sound/audiostream.h"
 
 class AudioStream;
 
@@ -35,38 +34,7 @@ enum typesADPCM {
 	kADPCMIma
 };
 
-// TODO: Switch from a SeekableReadStream to a plain ReadStream. This requires
-// some internal refactoring but is definitely possible and will increase the
-// flexibility of this code.
-class ADPCMInputStream : public AudioStream {
-private:
-	Common::SeekableReadStream *_stream;
-	uint32 _endpos;
-	int _channels;
-	typesADPCM _type;
-	uint32 _blockAlign;
+AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels = 2, uint32 blockAlign = 0);
 
-	struct adpcmStatus {
-		int32 last;
-		int32 stepIndex;
-	} _status;
-
-	int16 stepAdjust(byte);
-	int16 decodeOKI(byte);
-	int16 decodeMSIMA(byte);
-
-public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int channels = 2, uint32 blockAlign = 0);
-	~ADPCMInputStream() {};
-
-	int readBuffer(int16 *buffer, const int numSamples);
-	int readBufferOKI(int16 *buffer, const int numSamples);
-	int readBufferMSIMA1(int16 *buffer, const int numSamples);
-	int readBufferMSIMA2(int16 *buffer, const int numSamples);
-
-	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
-	bool isStereo() const	{ return false; }
-	int getRate() const	{ return 22050; }
-};
 
 #endif

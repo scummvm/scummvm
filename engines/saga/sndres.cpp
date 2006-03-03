@@ -217,7 +217,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.buffer = NULL;
 			free(soundResource);
 		} else {
-			voxStream = new ADPCMInputStream(&readS, soundResourceLength, kADPCMOki);
+			voxStream = makeADPCMStream(&readS, soundResourceLength, kADPCMOki);
 			buffer.buffer = (byte *)malloc(buffer.size);
 			voxSize = voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
 			if (voxSize != soundResourceLength * 2) {
