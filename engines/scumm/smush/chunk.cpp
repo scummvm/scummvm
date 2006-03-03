@@ -23,6 +23,7 @@
 #include "common/stdafx.h"
 #include "scumm/smush/chunk.h"
 #include "scumm/scumm.h"
+#include "scumm/file.h"
 
 #include "common/file.h"
 #include "common/str.h"

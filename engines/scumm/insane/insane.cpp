@@ -29,6 +29,7 @@
 
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
+#include "scumm/file.h"
 #include "scumm/sound.h"
 
 #include "scumm/imuse/imuse.h"

@@ -29,6 +29,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
+#include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #ifndef DISABLE_HE
@@ -36,7 +37,6 @@
 #endif
 #include "scumm/verbs.h"
 #include "scumm/sound.h"
-#include "scumm/util.h"
 
 namespace Scumm {
 

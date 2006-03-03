@@ -23,17 +23,21 @@
 #include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+
 #include "scumm/actor.h"
 #include "scumm/akos.h"
 #include "scumm/charset.h"
+#include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/util.h"
 #include "scumm/verbs.h"
 #include "scumm/smush/smush_player.h"
+
 #include "sound/mixer.h"
 
 namespace Scumm {

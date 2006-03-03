@@ -24,6 +24,7 @@
 #include "common/stdafx.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
+#include "scumm/file.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"
 

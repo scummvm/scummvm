@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
+#include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 
 namespace Scumm {

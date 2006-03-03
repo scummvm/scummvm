@@ -35,7 +35,6 @@
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/util.h"
 
 namespace Scumm {
 

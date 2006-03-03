@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	cursor.o \
 	debugger.o \
 	dialogs.o \
+	file.o \
 	gfx.o \
 	he/script_v60he.o \
 	he/sound_he.o \

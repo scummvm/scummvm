@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "scumm/util.h"
 
 namespace Scumm {
 

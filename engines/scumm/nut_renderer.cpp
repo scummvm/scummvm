@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "scumm/scumm.h"
+#include "scumm/file.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/util.h"
 

@@ -31,6 +31,7 @@
 #include "common/util.h"
 
 #include "scumm/bomp.h"
+#include "scumm/file.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
