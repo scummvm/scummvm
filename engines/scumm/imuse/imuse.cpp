@@ -135,8 +135,14 @@ bool IMuseInternal::isMT32(int sound) {
 		return true;
 
 	case MKID_BE('GMD '):
-	case MKID_BE('MIDI'):	// Occurs in Sam & Max
 		return false;
+
+	case MKID_BE('MIDI'):	// Occurs in Sam & Max
+		// HE games use Roland music
+		if (ptr[12] == 'H' && ptr[13] == 'S')
+			return true;
+		else
+			return false;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
