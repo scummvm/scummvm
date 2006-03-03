@@ -447,7 +447,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_fileHandle = new ScummNESFile();
 		_containerFile = tmpBuf;
 	} else if ((_game.platform == Common::kPlatformC64) && _substResFileName.winName) {
-		char *tmpBuf1, *tmpBuf2;
+		const char *tmpBuf1, *tmpBuf2;
 		if (_game.id == GID_MANIAC) {
 			tmpBuf1 = "maniac1.d64";
 			tmpBuf2 = "maniac2.d64";

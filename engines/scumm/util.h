@@ -142,7 +142,7 @@ private:
 	uint16 fileReadUint16LE();
 
 public:
-	ScummC64File(char *disk1, char *disk2, bool maniac);
+	ScummC64File(const char *disk1, const char *disk2, bool maniac);
 	void setEnc(byte value);
 
 	bool open(const char *filename, AccessMode mode = kFileReadMode);

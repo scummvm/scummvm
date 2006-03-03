@@ -1567,7 +1567,7 @@ static const int zakResourcesPerFile[59] = {
 };
 
 
-ScummC64File::ScummC64File(char *disk1, char *disk2, bool maniac) : _stream(0), _buf(0), _maniac(maniac) {
+ScummC64File::ScummC64File(const char *disk1, const char *disk2, bool maniac) : _stream(0), _buf(0), _maniac(maniac) {
 	_disk1 = disk1;
 	_disk2 = disk2;
 
