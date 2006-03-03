@@ -63,7 +63,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_lockActor),
 		/* 14 */
 		OPCODE(o_print_c64),
-		OPCODE(o2_actorFromPos),
+		OPCODE(o5_walkActorToActor),
 		OPCODE(o5_getRandomNr),
 		OPCODE(o_clearState08),
 		/* 18 */
@@ -143,7 +143,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_lockSound),
 		/* 54 */
 		OPCODE(o5_setObjectName),
-		OPCODE(o2_actorFromPos),
+		OPCODE(o5_walkActorToActor),
 		OPCODE(o_getActorMoving),
 		OPCODE(o_clearState08),
 		/* 58 */
