@@ -24,7 +24,6 @@
 
 #include "cine/cine.h"
 #include "cine/anim.h"
-#include "cine/flip_support.h"
 #include "cine/gfx.h"
 #include "cine/pal.h"
 #include "cine/part.h"
@@ -411,9 +410,9 @@ void loadMsk(char *resourceName) {
 	memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
 	ptr += sizeof(animHeaderStruct);
 
-	flipU16(&animHeader.frameWidth);
-	flipU16(&animHeader.frameHeight);
-	flipU16(&animHeader.numFrames);
+	animHeader.frameWidth = TO_BE_16(animHeader.frameWidth);
+	animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
+	animHeader.numFrames = TO_BE_16(animHeader.numFrames);
 
 	for (i = 0; i < animHeader.numFrames; i++) {
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 1);
@@ -446,9 +445,9 @@ void loadAni(char *resourceName) {
 	memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
 	ptr += sizeof(animHeaderStruct);
 
-	flipU16(&animHeader.frameWidth);
-	flipU16(&animHeader.frameHeight);
-	flipU16(&animHeader.numFrames);
+	animHeader.frameWidth = TO_BE_16(animHeader.frameWidth);
+	animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
+	animHeader.numFrames = TO_BE_16(animHeader.numFrames);
 
 	transparentColor = findAnimInHardcodedData(resourceName);
 
@@ -636,10 +635,10 @@ void loadSet(char *resourceName) {
 		memcpy(&header2, ptr, 0x10);
 		ptr += 0x10;
 
-		flipU32(&header2.field_0);
-		flipU16(&header2.width);
-		flipU16(&header2.height);
-		flipU16(&header2.type);
+		header2.field_0 = TO_BE_32(header2.field_0);
+		header2.width = TO_BE_16(header2.width);
+		header2.height = TO_BE_16(header2.height);
+		header2.type = TO_BE_16(header2.type);
 
 		fullSize = header2.width * header2.height;
 
@@ -719,10 +718,10 @@ void loadSetAbs(char *resourceName, uint16 idx) {
 		memcpy(&header2, ptr, 0x10);
 		ptr += 0x10;
 
-		flipU32(&header2.field_0);
-		flipU16(&header2.width);
-		flipU16(&header2.height);
-		flipU16(&header2.type);
+		header2.field_0 = TO_BE_32(header2.field_0);
+		header2.width = TO_BE_16(header2.width);
+		header2.height = TO_BE_16(header2.height);
+		header2.type = TO_BE_16(header2.type);
 
 		fullSize = header2.width * header2.height;
 
@@ -897,9 +896,9 @@ void loadResourcesFromSave() {
 				memcpy(&animHeader, ptr, sizeof(animHeaderStruct));
 				ptr += sizeof(animHeaderStruct);
 
-				flipU16(&animHeader.frameWidth);
-				flipU16(&animHeader.frameHeight);
-				flipU16(&animHeader.numFrames);
+				animHeader.frameWidth = TO_BE_16(animHeader.frameWidth);
+				animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
+				animHeader.numFrames = TO_BE_16(animHeader.numFrames);
 			}
 
 			{

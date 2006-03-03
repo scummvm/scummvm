@@ -23,7 +23,6 @@
  */
 
 #include "cine/cine.h"
-#include "cine/flip_support.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -68,7 +67,7 @@ uint8 loadCt(const char *ctName) {
 		currentPtr += 32;
 
 		for (i = 0; i < 16; i++) {
-			flipU16(&header[i]);
+			header[i] = TO_BE_16(header[i]);
 		}
 
 		gfxConvertSpriteToRaw(page3Raw, ptr + 0x80, 160, 200);
@@ -112,7 +111,7 @@ uint8 loadBg(const char *bgName) {
 	currentPtr += 32;
 
 	for (i = 0; i < 16; i++) {
-		flipU16(&tempPalette[i]);
+		tempPalette[i] = TO_BE_16(tempPalette[i]);
 	}
 
 	loadRelatedPalette(bgName);

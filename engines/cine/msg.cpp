@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 
 #include "cine/msg.h"
-#include "cine/flip_support.h"
 #include "cine/various.h"
 
 namespace Cine {

@@ -24,7 +24,6 @@
 
 #include "cine/cine.h"
 #include "cine/bg_list.h"
-#include "cine/flip_support.h"
 #include "cine/object.h"
 #include "cine/sfx_player.h"
 #include "cine/sound_driver.h"
