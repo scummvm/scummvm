@@ -50,7 +50,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ "Ogg Vorbis",		"ogg",  makeVorbisStream },
 #endif
 #ifdef USE_MAD
-	{ "Mpeg Layer 3",	"mp3",  makeMP3Stream },
+	{ "MPEG Layer 3",	"mp3",  makeMP3Stream },
 #endif
 
 	{ NULL, NULL, NULL } // Terminator

@@ -52,7 +52,7 @@ static const TrackFormat TRACK_FORMATS[] = {
 	{ "Ogg Vorbis",		getVorbisTrack },
 #endif
 #ifdef USE_MAD
-	{ "Mpeg Layer 3",	getMP3Track },
+	{ "MPEG Layer 3",	getMP3Track },
 #endif
 
 	{ NULL, NULL } // Terminator
