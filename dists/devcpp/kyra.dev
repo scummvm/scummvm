@@ -1,7 +1,7 @@
 [Project]
 FileName=kyra.dev
 Name=kyra
-UnitCount=30
+UnitCount=31
 Type=2
 Ver=1
 ObjFiles=
@@ -339,6 +339,16 @@ BuildCmd=
 
 [Unit30]
 FileName=..\..\engines\kyra\wsamovie.h
+CompileCpp=1
+Folder=kyra
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit31]
+FileName=..\..\engines\kyra\sound_adlib.cpp
 CompileCpp=1
 Folder=kyra
 Compile=1
