@@ -2041,7 +2041,7 @@ void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, 
  	}
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
-	if (ah->dim2start > dim2start || ah->dim2end < dim2end || ah->dim1start > dim1start || ah->dim1end < dim1end) {
+	if ((int)FROM_LE_32(ah->dim2start) > dim2start || (int)FROM_LE_32(ah->dim2end) < dim2end || (int)FROM_LE_32(ah->dim1start) > dim1start || (int)FROM_LE_32(ah->dim1end) < dim1end) {
 		error("Invalid array access (%d,%d,%d,%d) limit (%d,%d,%d,%d)", dim2start, dim2end, dim1start, dim1end, ah->dim2start, ah->dim2end, ah->dim1start, ah->dim1end);
 	}
 }
