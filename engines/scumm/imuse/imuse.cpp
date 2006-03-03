@@ -654,6 +654,12 @@ int IMuseInternal::terminate2() {
 	}
 
 	if (_midi_native) {
+		if (_native_mt32) {
+			// Reset the MT-32
+			_midi_native->sysEx((byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
+			g_system->delayMillis(250);
+		}
+
 		_midi_native->close();
 		delete _midi_native;
 		_midi_native = 0;
@@ -1228,9 +1234,17 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	int len;
 
 	// Reset the MT-32
-	memcpy(&buffer[0], "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
-	midi->sysEx(buffer, 9);
-	g_system->delayMillis(100);
+	midi->sysEx((byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
+	g_system->delayMillis(250);
+
+	// Setup master tune, reverb mode, reverb time, reverb level,
+	// channel mapping, partial reserve and master volume
+	midi->sysEx((byte *) "\x41\x10\x16\x12\x10\x00\x00\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64\x77", 31);
+	g_system->delayMillis(250);
+
+	// Map percussion to notes 24 - 34 without reverb
+	midi->sysEx((byte *) "\x41\x10\x16\x12\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 52);
+	g_system->delayMillis(250);
 
 	// Compute version string (truncated to 20 chars max.)
 	strcat(info, gScummVMVersion);
@@ -1239,7 +1253,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 		len = 20;
 
 	// Display a welcome message on MT-32 displays.
-	memcpy(&buffer[4], "\x20\x00\x00", 3);
+	memcpy(&buffer[0], "\x41\x10\x16\x12\x20\x00\x00", 7);
 	memcpy(&buffer[7], "                    ", 20);
 	memcpy(buffer + 7 +(20 - len) / 2, info, len);
 	byte checksum = 0;
@@ -1247,18 +1261,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 		checksum -= buffer[i];
 	buffer[27] = checksum & 0x7F;
 	midi->sysEx(buffer, 28);
-	g_system->delayMillis(500);
-
-	// Setup master tune, reverb mode, reverb time, reverb level,
-	// channel mapping, partial reserve and master volume
-	memcpy(&buffer[4], "\x10\x00\x00\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64\x77", 27);
-	midi->sysEx(buffer, 31);
-	g_system->delayMillis(250);
-
-	// Map percussion to notes 24 - 34 without reverb
-	memcpy(&buffer[4], "\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 48);
-	midi->sysEx(buffer, 52);
-	g_system->delayMillis(250);
+	g_system->delayMillis(1000);
 }
 
 void IMuseInternal::initGM(MidiDriver *midi) {
