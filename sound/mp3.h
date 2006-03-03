@@ -36,6 +36,12 @@ namespace Common {
 
 DigitalTrackInfo *getMP3Track(int track);
 
+/**
+ * Create a new AudioStream from the MP3 data in the given
+ * file. If you only want to play part of that file, then seek
+ * to the start position in file before passing it to this
+ * factory function, and specify the appropriate size.
+ */
 AudioStream *makeMP3Stream(Common::File *file, uint32 size);
 
 #endif
