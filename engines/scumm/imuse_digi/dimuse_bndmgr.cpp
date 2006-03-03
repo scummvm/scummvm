@@ -144,11 +144,13 @@ BundleMgr::BundleMgr(BundleDirCache *cache) {
 	_numCompItems = 0;
 	_curSample = -1;
 	_fileBundleId = -1;
+	_file = new ScummFile();
 	_compInput = NULL;
 }
 
 BundleMgr::~BundleMgr() {
 	close();
+	delete _file;
 }
 
 Common::File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &size) {
@@ -157,20 +159,20 @@ Common::File *BundleMgr::getFile(const char *filename, int32 &offset, int32 &siz
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
 			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
 	if (found) {
-		_file.seek(_bundleTable[found->index].offset, SEEK_SET);
+		_file->seek(_bundleTable[found->index].offset, SEEK_SET);
 		offset = _bundleTable[found->index].offset;
 		size = _bundleTable[found->index].size;
-		return &_file;
+		return _file;
 	}
 
 	return NULL;
 }
 
 bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
-	if (_file.isOpen())
+	if (_file->isOpen())
 		return true;
 
-	if (g_scumm->openFile(_file, filename) == false) {
+	if (g_scumm->openFile(*_file, filename) == false) {
 		if (errorFlag) {
 			error("BundleMgr::open() Can't open bundle file: %s", filename);
 		} else {
@@ -195,8 +197,8 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 }
 
 void BundleMgr::close() {
-	if (_file.isOpen()) {
-		_file.close();
+	if (_file->isOpen()) {
+		_file->close();
 		_bundleTable = NULL;
 		_numFiles = 0;
 		_numCompItems = 0;
@@ -212,11 +214,11 @@ void BundleMgr::close() {
 }
 
 bool BundleMgr::loadCompTable(int32 index) {
-	_file.seek(_bundleTable[index].offset, SEEK_SET);
-	uint32 tag = _file.readUint32BE();
-	_numCompItems = _file.readUint32BE();
+	_file->seek(_bundleTable[index].offset, SEEK_SET);
+	uint32 tag = _file->readUint32BE();
+	_numCompItems = _file->readUint32BE();
 	assert(_numCompItems > 0);
-	_file.seek(8, SEEK_CUR);
+	_file->seek(8, SEEK_CUR);
 
 	if (tag != MKID_BE('COMP')) {
 		error("BundleMgr::loadCompTable() Compressed sound %d invalid (%s)", index, tag2str(tag));
@@ -227,10 +229,10 @@ bool BundleMgr::loadCompTable(int32 index) {
 	assert(_compTable);
 	int32 maxSize = 0;
 	for (int i = 0; i < _numCompItems; i++) {
-		_compTable[i].offset = _file.readUint32BE();
-		_compTable[i].size = _file.readUint32BE();
-		_compTable[i].codec = _file.readUint32BE();
-		_file.seek(4, SEEK_CUR);
+		_compTable[i].offset = _file->readUint32BE();
+		_compTable[i].size = _file->readUint32BE();
+		_compTable[i].codec = _file->readUint32BE();
+		_file->seek(4, SEEK_CUR);
 		if (_compTable[i].size > maxSize)
 			maxSize = _compTable[i].size;
 	}
@@ -251,7 +253,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 
 	assert(0 <= index && index < _numFiles);
 
-	if (_file.isOpen() == false) {
+	if (_file->isOpen() == false) {
 		error("BundleMgr::decompressSampleByIndex() File is not open!");
 		return 0;
 	}
@@ -285,8 +287,8 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		if (_lastBlock != i) {
 			// CMI hack: one more zero byte at the end of input buffer
 			_compInput[_compTable[i].size] = 0;
-			_file.seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
-			_file.read(_compInput, _compTable[i].size);
+			_file->seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
+			_file->read(_compInput, _compTable[i].size);
 			_outputSize = BundleCodecs::decompressCodec(_compTable[i].codec, _compInput, _compOutput, _compTable[i].size);
 			if (_outputSize > 0x2000) {
 				error("_outputSize: %d", _outputSize);
@@ -328,7 +330,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside) {
 	int32 final_size = 0;
 
-	if (!_file.isOpen()) {
+	if (!_file->isOpen()) {
 		error("BundleMgr::decompressSampleByName() File is not open!");
 		return 0;
 	}
