@@ -977,10 +977,16 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 	return (a->_cost.curpos[slot] != oldframe);
 }
 
-static const byte actorColorsMMC64[] = {
-	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5,
-	4, 1, 0, 5, 4, 2, 2, 7, 7, 0, 6, 6, 6, 6, 6, 6
+static const byte actorColorsMMC64[25] = {
+	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
 };
+
+#define LINE(c,p) \
+	pcolor = (color >> c) & 3; \
+	if (pcolor) { \
+		dst[p] = palette[pcolor]; \
+		dst[p + 1] = palette[pcolor]; \
+	}
 
 byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (limb >= 8)
@@ -1006,7 +1012,16 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int off = (offH << 8) + offL;
 
 	const byte *data = _loaded._baseptr + off;
-	const byte palette[] = {0, 10, actorColorsMMC64[_actorID], 0};
+
+	// Set up the palette data
+	byte palette[4] = { 0, 0, 0, 0 };
+	if (!(_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+		palette[2] = 11;
+		palette[3] = 11;
+	} else {
+		palette[1] = 10;
+		palette[2] = actorColorsMMC64[_actorID];
+	}
 
 	int width = *data++;
 	int height = *data++;
@@ -1041,51 +1056,29 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	ypos += _actorY - _loaded._maxHeight;
 
 	// This code is very similar to procC64()
-	if (flipped) {
-		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x) {
-				byte color = data[y * width + x];
-				byte pcolor;
-				int realX = 0;
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			byte color = data[y * width + x];
+			byte pcolor;
+			int realX = 0;
+			if (flipped) {
 				if (offsetX == 0||offsetX == 1) {
 					realX = width-(x+1);
 				} else if (offsetX == 2) {
 					realX = width-(x+2);
 				}
-
-				int destY = y + ypos;
-				int destX = realX * 8 + xpos;
-				if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
-					byte *destPtr = &(((byte*)_out.pixels)[destY * _out.pitch + destX]);
-					for (int i = 0; i <= 6; i += 2) {
-						pcolor = (color >> i) & 3;
-						if (pcolor) {
-							destPtr[0] = palette[pcolor];
-							destPtr[1] = palette[pcolor];
-						}
-						destPtr += 2;
-					}
-				}
+			} else {
+				realX = x;
 			}
-		}
-	} else {
-		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x) {
-				byte color = data[y * width + x];
-				byte pcolor;
 
-				int destY = y + ypos;
-				int destX = x * 8 + xpos;
-				if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
-					byte *destPtr = &(((byte*)_out.pixels)[destY * _out.pitch + destX]);
-					for (int i = 6; i >= 0; i -= 2) {
-						pcolor = (color >> i) & 3;
-						if (pcolor) {
-							destPtr[0] = palette[pcolor];
-							destPtr[1] = palette[pcolor];
-						}
-						destPtr += 2;
-					}
+			int destY = y + ypos;
+			int destX = realX * 8 + xpos;
+			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
+				byte *dst = &(((byte*)_out.pixels)[destY * _out.pitch + destX]);
+				if (flipped) {
+					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
+				} else {
+					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
 				}
 			}
 		}
@@ -1099,6 +1092,8 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	return 0;
 }
+
+#undef LINE
 
 void C64CostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
