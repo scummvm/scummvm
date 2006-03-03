@@ -336,10 +336,10 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType;
-	if (soundID == 1)
-		type = Audio::Mixer::kSpeechSoundType;
-	else if (soundID > _vm->_numSounds)
+	if (soundID > _vm->_numSounds)
 		type = Audio::Mixer::kMusicSoundType;
+	else if (soundID == 1)
+		type = Audio::Mixer::kSpeechSoundType;
 
 
 	if (heChannel == -1)
@@ -492,7 +492,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		_vm->_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0, type);
+		_vm->_mixer->playRaw(NULL, ptr + 8, size, rate, flags, soundID, 255, 0, 0,0, Audio::Mixer::kMusicSoundType);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {
