@@ -154,6 +154,12 @@ Audio
   MidiDriver::createMidi() to use both that list and the list of
   'emulated' MIDI devices (Adlib, MT-32, PC Speaker, etc.) in an appropriate
   way.
+* The Audio CD Manager, and especially the DigitalTrackInfo class could
+  stand an overhaul. The system currently is not as easy to extend as one would
+  wish. In particular, it would be nice if arbitrary AudioStream classes could
+  be used here (this then would reduce code duplication and make it instantly
+  possible to use WAV/VOC encoded audio tracks, should we desire to support
+  those).
 
 Config Manager
 ==============
