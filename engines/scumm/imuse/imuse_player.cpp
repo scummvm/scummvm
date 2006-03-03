@@ -401,18 +401,26 @@ void Player::sysEx(const byte *p, uint16 len) {
 			// as follows:
 			//   BYTE 00: Channel #
 			//   BYTE 02: BIT 01(0x01): Part on?(1 = yes)
+			//            BIT 02(0x02): Reverb? (1 = yes) [bug #1088045]
 			//   BYTE 04: Priority adjustment [guessing]
 			//   BYTE 05: Volume(upper 4 bits) [guessing]
 			//   BYTE 06: Volume(lower 4 bits) [guessing]
+			//   BYTE 07: Pan(upper 4 bits) [bug #1088045]
+			//   BYTE 08: Pan(lower 4 bits) [bug #1088045]
 			//   BYTE 09: BIT 04(0x08): Percussion?(1 = yes)
+			//   BYTE 13: Pitchbend range(upper 4 bits) [bug #1088045]
+			//   BYTE 14: Pitchbend range(lower 4 bits) [bug #1088045]
 			//   BYTE 15: Program(upper 4 bits)
 			//   BYTE 16: Program(lower 4 bits)
 			part = getPart(p[0] & 0x0F);
 			if (part) {
 				part->set_onoff(p[2] & 0x01);
+				part->effectLevel ((p[2] & 0x02) ? 127 : 0);
 				part->set_pri(p[4]);
 				part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
+				part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
 				part->_percussion = _isMIDI ? ((p[9] & 0x08) > 0) : false;
+				part->pitchBendFactor ((p[13] & 0x0F) << 4 | (p[14] & 0x0F));
 				if (part->_percussion) {
 					if (part->_mc) {
 						part->off();
