@@ -442,8 +442,8 @@ protected:
 	void o_putActorAtObject();
 	void o_pickupObject();
 	void o_lockSound();
-	void o_lockActor();
-	void o_loadActor();
+	void o_lockCostume();
+	void o_loadCostume();
 	void o_loadRoom();
 	void o_loadRoomWithEgo();
 	void o_lockScript();
@@ -451,7 +451,7 @@ protected:
 	void o_lockRoom();
 	void o_cursorCommand();
 	void o_lights();
-	void o_unlockActor();
+	void o_unlockCostume();
 	void o_unlockScript();
 	void o_decrement();
 	void o_badOpcode();

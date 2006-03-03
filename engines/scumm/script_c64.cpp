@@ -59,7 +59,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_breakHere),
 		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o_lockActor),
+		OPCODE(o_lockCostume),
 		/* 14 */
 		OPCODE(o_print_c64),
 		OPCODE(o5_walkActorToActor),
@@ -96,7 +96,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_print_c64),
 		OPCODE(o2_ifState08),
 		/* 30 */
-		OPCODE(o_loadActor),
+		OPCODE(o_loadCostume),
 		OPCODE(o_getBitVar),
 		OPCODE(o2_setCameraAt),
 		OPCODE(o_lockScript),
@@ -219,7 +219,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_pickupObject),
 		OPCODE(o_animateActor),
 		OPCODE(o2_panCameraTo),
-		OPCODE(o_unlockActor),
+		OPCODE(o_unlockCostume),
 		/* 94 */
 		OPCODE(o5_print),
 		OPCODE(o2_actorFromPos),
@@ -256,7 +256,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o_print_c64),
 		OPCODE(o2_ifNotState08),
 		/* B0 */
-		OPCODE(o_loadActor),
+		OPCODE(o_loadCostume),
 		OPCODE(o_getBitVar),
 		OPCODE(o2_setCameraAt),
 		OPCODE(o_unlockScript),
@@ -590,16 +590,19 @@ void ScummEngine_c64::o_unlockSound() {
 	res.unlock(rtSound, resid);
 }
 
-void ScummEngine_c64::o_loadActor() {
-	debug(0, "o_loadActor (%d)", getVarOrDirectByte(PARAM_1));
+void ScummEngine_c64::o_loadCostume() {
+	int resid = getVarOrDirectByte(PARAM_1);
+	ensureResourceLoaded(rtCostume, resid);
 }
 
-void ScummEngine_c64::o_lockActor() {
-	debug(0, "o_lockActor (%d)", fetchScriptByte());
+void ScummEngine_c64::o_lockCostume() {
+	int resid = fetchScriptByte();
+	res.lock(rtCostume, resid);
 }
 
-void ScummEngine_c64::o_unlockActor() {
-	debug(0, "o_unlockActor (%d)", fetchScriptByte());
+void ScummEngine_c64::o_unlockCostume() {
+	int resid = fetchScriptByte();
+	res.unlock(rtCostume, resid);
 }
 
 void ScummEngine_c64::o_loadScript() {
