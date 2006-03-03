@@ -304,6 +304,13 @@ OSystem
   now before messing with it ;-)
 * Document key codes to be used for special keys, like F1-F15 etc.
 
+Streams
+=======
+* Add a Sub(Seekable)Stream wrapper class: You pass a (Seekable)Stream,
+  an offset and a size to it. It will pass all calls on to the wrapped
+  stream, but will restrict access to the specified byte range.
+  This then can be used in various places, e.g. in many of the AudioStream
+  classes, to simplify code.
 
 #######################################################################
 # Engines / frontends
@@ -357,6 +364,7 @@ Broken Sword 2
 * Maybe work around script bug which causes the mop to disappear briefly when
   trying to pick it up from the top of the boat at the London docks. (The event
   to hide the mop is sent too early.) See bug #1214168.
+* Unify some of the code with Broken Sword 1 (e.g. in router.cpp).
 
 #######################################################################
 # Backends
