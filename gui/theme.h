@@ -278,8 +278,8 @@ private:
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
 
 	void colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor = 1);
-	void drawRect(const Common::Rect &r, const Graphics::Surface *corner,
-				const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill, int alpha);
+	void drawRect(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
+				const Graphics::Surface *left, const Graphics::Surface *fill, int alpha, bool skipLastRow = false);
 	void drawRectMasked(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 						const Graphics::Surface *left, const Graphics::Surface *fill, int alpha,
 						OverlayColor start, OverlayColor end, uint factor = 1, bool skipLastRow = false);
@@ -296,7 +296,8 @@ private:
 
 	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);
 	void drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
-					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow = false);
+					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool full,
+					bool skipLastRow = false);
 	void drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
 						const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
 						int alpha, bool skipLastRow = false);
