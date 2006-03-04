@@ -385,10 +385,8 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 	if (!_initOk)
 		return;
 
-	Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
-	Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
-	Common::Rect r4(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2-1, r.bottom + _shadowBottomHeight/2-1);
-	
+	Common::Rect r2 = shadowRect(r, kShadowFull);
+
 	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		restoreBackground(r2, true);
 		return;
@@ -397,27 +395,12 @@ void ThemeNew::drawDialogBackground(const Common::Rect &r, uint16 hints, kState 
 	if (hints & THEME_HINT_MAIN_DIALOG) {
 		colorFade(r, _colors[kMainDialogStart], _colors[kMainDialogEnd], _gradientFactors[kMainDialogFactor]);
 	} else if (hints & THEME_HINT_SPECIAL_COLOR) {
-		// shadow
-		// TODO: implement a proper shadow drawing function
-		// currently we just use the background renderer for
-		// drawing the shadows
-		drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				kShadowTr1, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-		drawRectMasked(r3, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				kShadowTr2, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-		drawRectMasked(r4, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				kShadowTr3, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
+		drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowFull);
 
 		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				256, _colors[kMainDialogStart], _colors[kMainDialogEnd], _gradientFactors[kDialogSpecialFactor]);
+			256, _colors[kMainDialogStart], _colors[kMainDialogEnd], _gradientFactors[kDialogSpecialFactor]);
 	} else {
-		// shadow
-		drawRectMasked(r2, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				kShadowTr1, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-		drawRectMasked(r3, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				kShadowTr2, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-		drawRectMasked(r4, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
-				kShadowTr3, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
+		drawShadow(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd), kShadowFull);
 
 		drawRectMasked(r, surface(kDialogBkgdCorner), surface(kDialogBkgdTop), surface(kDialogBkgdLeft), surface(kDialogBkgd),
 				256, _colors[kDialogStart], _colors[kDialogEnd], _gradientFactors[kDialogFactor]);
@@ -458,9 +441,7 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 	if (!_initOk)
 		return;
 
-	Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
-	Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
-	Common::Rect r4(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+	Common::Rect r2;
 	
 	if ((hints & THEME_HINT_SAVE_BACKGROUND) && !(hints & THEME_HINT_FIRST_DRAW) && !_forceRedraw) {
 		restoreBackground((hints & THEME_HINT_USE_SHADOW) ? r2 : r);
@@ -469,14 +450,10 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 	
 	if (background == kWidgetBackgroundBorderSmall) {
 		if ((hints & THEME_HINT_USE_SHADOW)) {
-			restoreBackground(r2);	
+			r2 = shadowRect(r, kShadowSmall);
+			restoreBackground(r2);
 			// shadow
-			//drawRectMasked(r2, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
-			//				kShadowTr1, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-			drawRectMasked(r3, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
-							kShadowTr1, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-			drawRectMasked(r4, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
-							kShadowTr2, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
+			drawShadow(r, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd), kShadowSmall);
 		}
 
 		drawRectMasked(r, surface(kWidgetSmallBkgdCorner), surface(kWidgetSmallBkgdTop), surface(kWidgetSmallBkgdLeft), surface(kWidgetSmallBkgd),
@@ -484,14 +461,10 @@ void ThemeNew::drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidget
 						_gradientFactors[kWidgetSmallFactor]);
 	} else {
 		if ((hints & THEME_HINT_USE_SHADOW)) {
-			restoreBackground(r2);	
+			r2 = shadowRect(r, kShadowFull);
+			restoreBackground(r2);
 			// shadow
-			drawRectMasked(r2, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-							kShadowTr1, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-			drawRectMasked(r3, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-							kShadowTr2, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-			drawRectMasked(r4, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
-							kShadowTr3, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
+			drawShadow(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd), kShadowFull);
 		}
 
 		drawRectMasked(r, surface(kWidgetBkgdCorner), surface(kWidgetBkgdTop), surface(kWidgetBkgdLeft), surface(kWidgetBkgd),
@@ -506,14 +479,11 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	if (!_initOk)
 		return;
 	
-	Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
-	Common::Rect r3(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
-	restoreBackground(r2);	
+	Common::Rect r2 = shadowRect(r, kShadowButton);
+	restoreBackground(r2);
+
 	// shadow
-	drawRectMasked(r2, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
-					kShadowTr2, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-	drawRectMasked(r3, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
-					kShadowTr4, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
+	drawShadow(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd), kShadowButton);
 
 	if (state == kStateHighlight) {
 		drawRectMasked(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
@@ -589,13 +559,8 @@ void ThemeNew::drawSlider(const Common::Rect &r, int width, kState state) {
 		r2.right = r.right - 2;
 	}
 	
-	Common::Rect r3(r2.left - _shadowLeftWidth/2, r2.top - _shadowTopHeight/2, r2.right + _shadowRightWidth/2, r2.bottom + _shadowBottomHeight/2);
-	Common::Rect r4(r2.left - _shadowLeftWidth/2, r2.top - _shadowTopHeight/2, r2.right + _shadowRightWidth/2 - 1, r2.bottom + _shadowBottomHeight/2 - 1);
 	// shadow
-	drawRectMasked(r3, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
-					kShadowTr2, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
-	drawRectMasked(r4, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
-					kShadowTr3, _system->RGBToColor(0, 0, 0), _system->RGBToColor(0, 0, 0));
+	drawShadow(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd), kShadowSlider);
 
 	if (state == kStateHighlight) {
 		drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
@@ -857,7 +822,10 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 		return end;
 	} else if (!pos) {
 		return start;
+	} else if (start == end) {
+		return end;
 	}
+
 	if (gBitFormat == 565) {
 		return calcGradient<ColorMasks<565> >(start, end, pos, max);
 	} else {
@@ -959,6 +927,150 @@ void ThemeNew::drawRectMasked(const Common::Rect &r, const Graphics::Surface *co
 	}
 }
 
+Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
+	switch (shadowStyle) {
+	case kShadowButton:
+		return Common::Rect(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+		break;
+
+	default:
+		return Common::Rect(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
+		break;
+	}
+
+	return Common::Rect();
+}
+
+void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
+						const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle,
+						bool skipLastRow) {
+	switch (shadowStyle) {
+	case kShadowFull: {
+		Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 + 1, r.bottom + _shadowBottomHeight/2 + 1);
+		Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
+		Common::Rect r4(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2-1, r.bottom + _shadowBottomHeight/2-1);
+
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr1, skipLastRow);
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
+		} break;
+
+	case kShadowSmall: {
+		Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
+		Common::Rect r4(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2-1, r.bottom + _shadowBottomHeight/2-1);
+
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr1, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		} break;
+
+	case kShadowButton: {
+		Common::Rect r2(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+		Common::Rect r3(r.left - _shadowLeftWidth/2 + 1, r.top - _shadowTopHeight/2 + 1, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+	
+		drawShadowRect(r2, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr4, skipLastRow);
+		} break;
+
+	case kShadowSlider: {
+		Common::Rect r3(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2, r.bottom + _shadowBottomHeight/2);
+		Common::Rect r4(r.left - _shadowLeftWidth/2, r.top - _shadowTopHeight/2, r.right + _shadowRightWidth/2 - 1, r.bottom + _shadowBottomHeight/2 - 1);
+	
+		drawShadowRect(r3, r, corner, top, left, fill, kShadowTr2, skipLastRow);
+		drawShadowRect(r4, r, corner, top, left, fill, kShadowTr3, skipLastRow);
+		};
+
+	default:
+		break;
+	}
+}
+
+void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
+							const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
+							int alpha, bool skipLastRow) {
+	int drawWidth = MIN(corner->w, MIN(top->w, MIN(left->w, fill->w)));
+	int drawHeight = MIN(corner->h, MIN(top->h, MIN(left->h, fill->h)));
+	int partsH = r.height() / drawHeight;
+	int partsW = r.width() / drawWidth;
+	int yPos = r.top;
+
+	int yDrawTilesTop = 1 + (ABS(area.top - r.top) % drawHeight);
+	int xDrawTilesLeft = 1 + (ABS(area.left - r.left) % drawWidth);
+	int yDrawTilesBottom = 1 + (ABS(area.bottom - r.bottom) % drawHeight);
+	int xDrawTilesRight = 1 + (ABS(area.right - r.right) % drawWidth);
+
+	int specialHeight = 0;
+	int specialWidth = 0;
+
+	if (drawHeight*2 > r.height()) {
+		drawHeight = r.height() / 2;
+		partsH = 2;
+	} else {
+		specialHeight = r.height() % drawHeight;
+		if (specialHeight != 0)
+			++partsH;
+	}
+
+	if (drawWidth*2 > r.width()) {
+		drawWidth = r.width() / 2;
+		partsW = 2;
+	} else {
+		specialWidth = r.width() % drawWidth;
+		if (specialWidth != 0)
+			++partsW;
+	}
+
+	OverlayColor startCol = OSystem::instance().RGBToColor(0, 0, 0);
+	OverlayColor endCol = OSystem::instance().RGBToColor(0, 0, 0);
+
+	for (int y = 0; y < partsH; ++y) {
+		// calculate the correct drawing height
+		int usedHeight = drawHeight;
+		if (specialHeight && y == 1) {
+			usedHeight = specialHeight;
+		}
+
+		int xPos = r.left;
+		bool upDown = false;
+		if (y == partsH - 1)
+			upDown = true;
+
+		for (int i = 0; i < partsW; ++i) {
+
+			// calculate the correct drawing width
+			int usedWidth = drawWidth;
+			if (specialWidth && i == 1) {
+				usedWidth = specialWidth;
+			}
+
+			if (i >= xDrawTilesLeft && i <= partsW - xDrawTilesRight && y >= yDrawTilesTop && y <= partsH - yDrawTilesBottom) {
+				xPos += usedWidth;
+				continue;
+			}
+
+			// draw the right surface
+			if (!i) {
+				if (!y || (y == partsH - 1 && !skipLastRow)) {
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, false, alpha, startCol, endCol);
+				} else {
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, false, alpha, startCol, endCol);
+				}
+			} else if (i == partsW - 1) {
+				if (!y || (y == partsH - 1 && !skipLastRow)) {
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), corner, upDown, true, alpha, startCol, endCol);
+				} else {
+					drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), left, upDown, true, alpha, startCol, endCol);
+				}
+			} else if (!y || (y == partsH - 1 && !skipLastRow)) {
+				drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), top, upDown, false, alpha, startCol, endCol);
+			} else {
+				drawSurfaceMasked(Common::Rect(xPos, yPos, xPos+usedWidth, yPos+usedHeight), fill, upDown, false, alpha, startCol, endCol);
+			}
+			xPos += usedWidth;
+		}
+		yPos += usedHeight;
+	}
+}
+
 void ThemeNew::drawSurface(const Common::Rect &r, const Surface *surf, bool upDown, bool leftRight, int alpha) {
 	drawSurfaceMasked(r, surf, upDown, leftRight, alpha, _system->RGBToColor(255, 255, 255), _system->RGBToColor(255, 255, 255));
 }
@@ -991,52 +1103,84 @@ void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface 
 	if (upDown && !leftRight) {	// upsidedown
 		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
+
 		for (int i = 0; i < r.height(); ++i) {
+			if (dst < _screen.pixels) {
+				dst += _screen.w;
+				src -= surf->w;
+				continue;
+			}
+
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
-				if (src[x] != transparency && dst >= _screen.pixels) {
+				if (src[x] != transparency) {
 					dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
 				}
 			}
+
 			dst += _screen.w;
 			src -= surf->w;
 		}
 	} else if (upDown && leftRight) { // upsidedown + left right inverse
 		src = (const OverlayColor*)surf->pixels + (surf->h - 1) * surf->w;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
+
 		for (int i = 0; i < r.height(); ++i) {
+			if (dst < _screen.pixels) {
+				dst += _screen.w;
+				src -= surf->w;
+				continue;
+			}
+
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
-				if (src[drawWidth-x-1] != transparency && dst >= _screen.pixels) {
+				if (src[drawWidth-x-1] != transparency) {
 					dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
 				}
 			}
+
 			dst += _screen.w;
 			src -= surf->w;
 		}
 	} else if (!upDown && leftRight) { // left right inverse
 		src = (const OverlayColor*)surf->pixels;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
+
 		for (int i = 0; i < r.height(); ++i) {
+			if (dst < _screen.pixels) {
+				dst += _screen.w;
+				src += surf->w;
+				continue;
+			}
+
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
-				if (src[drawWidth-x-1] != transparency && dst >= _screen.pixels) {
+				if (src[drawWidth-x-1] != transparency) {
 					dst[x] = getColorAlpha(src[drawWidth-x-1] & rowColor, dst[x], alpha);
 				}
 			}
+
 			dst += _screen.w;
 			src += surf->w;
 		}
 	} else { // normal
 		src = (const OverlayColor*)surf->pixels;
 		int drawWidth = (r.width() < surf->w) ? r.width() : surf->w;
+
 		for (int i = 0; i < r.height(); ++i) {
+			if (dst < _screen.pixels) {
+				dst += _screen.w;
+				src += surf->w;
+				continue;
+			}
+
 			OverlayColor rowColor = calcGradient(start, end, i, r.height(), factor);
 			for (int x = 0; x < drawWidth; ++x) {
-				if (src[x] != transparency && dst >= _screen.pixels) {
+				if (src[x] != transparency) {
 					dst[x] = getColorAlpha(src[x] & rowColor, dst[x], alpha);
 				}
 			}
+
 			dst += _screen.w;
 			src += surf->w;
 		}

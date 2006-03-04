@@ -287,6 +287,20 @@ private:
 	void drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight, int alpha,
 							OverlayColor start, OverlayColor end, uint factor = 1);
 
+	enum kShadowStyles {
+		kShadowFull = 0,
+		kShadowSmall = 1,
+		kShadowButton = 2,
+		kShadowSlider = 3
+	};
+
+	Common::Rect shadowRect(const Common::Rect &r, uint32 shadowStyle);
+	void drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
+					const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle, bool skipLastRow = false);
+	void drawShadowRect(const Common::Rect &r, const Common::Rect &area, const Graphics::Surface *corner,
+						const Graphics::Surface *top, const Graphics::Surface *left, const Graphics::Surface *fill,
+						int alpha, bool skipLastRow = false);
+
 	int _shadowLeftWidth, _shadowRightWidth;
 	int _shadowTopHeight, _shadowBottomHeight;
 
