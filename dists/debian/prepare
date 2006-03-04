@@ -4,7 +4,7 @@
 # calls "make deb".  It adds a changelog entry to the top of debian/changelog
 # so that the version number is correct.
 
-VERSION=`sed -n -e 's/CVS//g' -e 's/^const char \*gScummVMVersion = "\(.*\)";/\1/p' base/main.cpp `-0cvs`date +%Y%m%d`
+VERSION=`sed -n -e 's/svn//g' -e 's/^#define SCUMMVM_VERSION "\(.*\)"/\1/p' base/internal_version.h`-0svn`date +%Y%m%d`
 USERNAME=`whoami`
 GECOS=`getent passwd $USERNAME | awk '-F[,:]' '{print $5}'`
 DOMAIN=`hostname --fqdn`
