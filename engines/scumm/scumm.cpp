@@ -79,7 +79,7 @@ namespace Scumm {
 ScummEngine *g_scumm = 0;
 
 
-static SubstResFileNames substResFileNameTable[] = {
+static const SubstResFileNames substResFileNameTable[] = {
 	// The first few entries for 00.LFL/01.LFL files are here for two reasons:
 	// 1) For the detector to detect these games
 	// 2) Because the ScummEngine constructor distinguishes between extracted
