@@ -1009,10 +1009,7 @@ ScummFile *Sound::openSfxFile() {
 	basename[1] = "monster";
 	
 	if (_vm->_substResFileName.almostGameID != 0) {
-
-		strcpy(buf, basename[0]);
-		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
-		strcpy(buf, buf1);
+		_vm->generateSubstResFileName(basename[0], buf1, sizeof(buf1));
 		basename[2] = buf1;
 	}
 
