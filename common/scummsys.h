@@ -70,6 +70,13 @@
 	typedef signed short int16;
 	typedef signed long int32;
 	
+	typedef int8 int8_t;
+	typedef int16 int16_t;
+	typedef int32 int32_t;
+	typedef uint8 uint8_t;
+	typedef uint16 uint16_t;
+	typedef uint32 uint32_t;
+
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS	 pack(pop)
 

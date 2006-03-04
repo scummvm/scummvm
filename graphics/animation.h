@@ -33,7 +33,10 @@ class AudioStream;
 
 #ifdef USE_MPEG2
 
+#if !defined(_MSC_VER)
 #include <inttypes.h>
+#endif
+
 extern "C" {
 	#include <mpeg2dec/mpeg2.h>
 }
