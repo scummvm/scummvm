@@ -80,6 +80,14 @@ ScummEngine *g_scumm = 0;
 
 
 static SubstResFileNames substResFileNameTable[] = {
+	// The first few entries for 00.LFL/01.LFL files are here for two reasons:
+	// 1) For the detector to detect these games
+	// 2) Because the ScummEngine constructor distinguishes between extracted
+	//    and non-extracted variants of these C64/NES games by the presence
+	//    or absence of a SubstResFileNames record.
+	// Use 1 will go away with the new detector code. Use 2 needs some more
+	// attention, but most likely should be solved by passing the name of the
+	// "detect file" to the contructor.
 	{ "00.LFL", "Maniac Mansion (E).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (F).prg", kGenAsIs },
 	{ "00.LFL", "Maniac Mansion (SW).prg", kGenAsIs },
@@ -89,6 +97,7 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
 	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
+
 	{ "atlantis", "Fate of Atlantis Data", kGenAsIs },
 	{ "atlantis", "fate", kGenPC },
 	{ "atlantis", "playfate", kGenPC },
