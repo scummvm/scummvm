@@ -408,7 +408,14 @@ SDL backend
   has the code which is used by all subclasses; and a "desktop" subclass,
   which implements the rest. Then WinCE/Symbian would only subclass the
   "base" SDL class.
-  
+* We implemented GFX transactions & commits some time ago -- but they are only
+  half the story. We are still missing a rollback system -- that is, check
+  whether the requested video mode works, if it doesn't, revert to the current
+  settings -- at least "if it makes sense". That is, if the transaction
+  only modified the scaler or aspect ratio, we can safely revert. Of course
+  if the screen size changed (e.g. from 320x200 -> 640x480) we can't just
+  revert to the old screen size -- unless we augment the API accordingly,
+  and update all engines to deal with this possibility.
 
 #######################################################################
 # Tools
