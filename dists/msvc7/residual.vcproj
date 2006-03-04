@@ -122,9 +122,6 @@
 				RelativePath="..\..\README">
 			</File>
 			<File
-				RelativePath="..\..\TODO">
-			</File>
-			<File
 				RelativePath="..\..\residual.rc">
 			</File>
 		</Filter>
