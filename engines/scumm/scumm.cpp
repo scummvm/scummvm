@@ -449,47 +449,57 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	}
 #endif
 
-	// We read data directly from NES ROM instead of extracting it with
-	// external tool
-	if ((_game.platform == Common::kPlatformNES) && _substResFileName.almostGameID) {
-		char tmpBuf[128];
-		generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
-		_fileHandle = new ScummNESFile();
-		_containerFile = tmpBuf;
-		_substResFileName.almostGameID = 0;
-	} else if ((_game.platform == Common::kPlatformC64) && _substResFileName.almostGameID) {
-		const char *tmpBuf1, *tmpBuf2;
-		if (_game.id == GID_MANIAC) {
-			tmpBuf1 = "maniac1.d64";
-			tmpBuf2 = "maniac2.d64";
-		} else {
-			tmpBuf1 = "zak1.d64";
-			tmpBuf2 = "zak2.d64";
-		}
 
-		_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
+	// The 	kGenAsIs method is only used for 'container files', i.e. files
+	// that contain the real game files bundled together in an archive format.
+	// This is the case of the NES, C64 and Mac versions of certain games.
+	// Note: All of these can also occur in 'extracted' form, in which case they
+	// are treated like any other SCUMM game.
+	if (_substResFileName.almostGameID && _substResFileName.genMethod == kGenAsIs) {
 
-		_containerFile = tmpBuf1;
-		_substResFileName.almostGameID = 0;
-	} else
-		_fileHandle = new ScummFile();
-
-	// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
-	// special meta (container) file format to store the actual SCUMM data
-	// files. The rescumm utility used to be used to extract those files. 
-	// While that is still possible, we now support reading those files 
-	// directly. The first step is to check whether one of them is present
-	// (we do that here); the rest is handled by the  ScummFile class and 
-	// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
-	// handling).
-	if (_game.version >= 5 && _game.heversion == 0 && _substResFileName.almostGameID &&
-		_game.platform == Common::kPlatformMacintosh && 
-		_substResFileName.genMethod == kGenAsIs) {
-		if (_fileHandle->open(_substResFileName.expandedName)) {
+		if (_game.platform == Common::kPlatformNES) {
+			// We read data directly from NES ROM instead of extracting it with
+			// external tool
+			char tmpBuf[128];
+			assert(_game.id == GID_MANIAC);
+			generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
+			_fileHandle = new ScummNESFile();
+			_containerFile = tmpBuf;
+		} else if (_game.platform == Common::kPlatformC64) {
+			// Read data from C64 disk images.
+			const char *tmpBuf1, *tmpBuf2;
+			assert(_game.id == GID_MANIAC || _game.id == GID_ZAK);
+			if (_game.id == GID_MANIAC) {
+				tmpBuf1 = "maniac1.d64";
+				tmpBuf2 = "maniac2.d64";
+			} else {
+				tmpBuf1 = "zak1.d64";
+				tmpBuf2 = "zak2.d64";
+			}
+	
+			_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
+			_containerFile = tmpBuf1;
+		} else if (_game.platform == Common::kPlatformMacintosh) {
+			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
+			// special meta (container) file format to store the actual SCUMM data
+			// files. The rescumm utility used to be used to extract those files. 
+			// While that is still possible, we now support reading those files 
+			// directly. The first step is to check whether one of them is present
+			// (we do that here); the rest is handled by the  ScummFile class and 
+			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
+			// handling).
+			assert(_game.version >= 5 && _game.heversion == 0);
+			_fileHandle = new ScummFile();
 			_containerFile = _substResFileName.expandedName;
-			_substResFileName.almostGameID = 0;
 		}
+		
+		// If a container file is used, we can turn of file name substitution.
+		_substResFileName.almostGameID = 0;
+	} else {
+		// Regular access, no container file involved
+		_fileHandle = new ScummFile();
 	}
+	
 
 	// Init all vars
 	_imuse = NULL;
