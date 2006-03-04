@@ -89,32 +89,32 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ "01.LFL", "maniac2.d64", kGenAsIs }, // swap
 	{ "00.LFL", "zak1.d64", kGenAsIs },    // these
 	{ "01.LFL", "zak2.d64", kGenAsIs },    // lines
-	{ "atlantis.000", "Fate of Atlantis Data", kGenAsIs },
+	{ "atlantis", "Fate of Atlantis Data", kGenAsIs },
 	{ "atlantis", "fate", kGenPC },
 	{ "atlantis", "playfate", kGenPC },
 	{ "atlantis", "indy4", kGenPC },
 	{ "atlantis", "indydemo", kGenPC },
-	{ "tentacle.000", "Day of the Tentacle Data", kGenAsIs },
+	{ "tentacle", "Day of the Tentacle Data", kGenAsIs },
 	{ "tentacle", "dottdemo", kGenPC },
-	{ "tentacle.000", "Day of the Tentacle Demo Data", kGenAsIs },
+	{ "tentacle", "Day of the Tentacle Demo Data", kGenAsIs },
 	{ "monkey", "monkey1", kGenPC },
 	{ "monkey", "monkeyk", kGenPC }, // FM-TOWNS Jap
 	{ "monkey", "game", kGenPC }, // SegaCD
 	{ "monkey2", "mi2demo", kGenPC },
-	{ "samnmax.000", "Sam & Max Data", kGenAsIs },
-	{ "samnmax.000", "Sam & Max Demo Data", kGenAsIs },
+	{ "samnmax", "Sam & Max Data", kGenAsIs },
+	{ "samnmax", "Sam & Max Demo Data", kGenAsIs },
 	{ "samnmax", "ramnmax", kGenPC }, // Used in some releases of Russian Sam'n'Max
 	{ "samnmax", "samdemo", kGenPC },
 	{ "samnmax", "snmdemo", kGenPC },
 	{ "samnmax", "snmidemo", kGenPC },
 	{ "samnmax", "sdemo", kGenPC },
 #ifndef DISABLE_SCUMM_7_8
-	{ "dig.la0", "The Dig Data", kGenAsIs },
-	{ "dig.la0", "The Dig Demo Data", kGenAsIs },
-	{ "ft.la0", "Full Throttle Data", kGenAsIs },
-	{ "ft.la0", "Full Throttle Demo Data", kGenAsIs },
-	{ "ft.la0", "Vollgas Data", kGenAsIs },
-	{ "ft.la0", "Vollgas Demo Data", kGenAsIs },
+	{ "dig", "The Dig Data", kGenAsIs },
+	{ "dig", "The Dig Demo Data", kGenAsIs },
+	{ "ft", "Full Throttle Data", kGenAsIs },
+	{ "ft", "Full Throttle Demo Data", kGenAsIs },
+	{ "ft", "Vollgas Data", kGenAsIs },
+	{ "ft", "Vollgas Demo Data", kGenAsIs },
 	{ "ft", "ftdemo", kGenPC },
 #endif
 	{ "fbear", "fbdemo", kGenPC },
