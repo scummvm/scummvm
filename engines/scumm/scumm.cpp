@@ -460,11 +460,9 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		if (_game.platform == Common::kPlatformNES) {
 			// We read data directly from NES ROM instead of extracting it with
 			// external tool
-			char tmpBuf[128];
 			assert(_game.id == GID_MANIAC);
-			generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
 			_fileHandle = new ScummNESFile();
-			_containerFile = tmpBuf;
+			_containerFile = _substResFileName.expandedName;
 		} else if (_game.platform == Common::kPlatformC64) {
 			// Read data from C64 disk images.
 			const char *tmpBuf1, *tmpBuf2;
