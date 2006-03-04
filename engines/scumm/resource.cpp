@@ -101,7 +101,7 @@ void ScummEngine::openRoom(const int room) {
 			if (_game.id == GID_MANIAC)
 				sprintf(buf2, "%.2d.man", room);
 			encByte = (_game.features & GF_USE_KEY) ? 0xFF : 0;
-		} else if (_game.features & GF_SMALL_HEADER) {
+		} else if (_game.version == 4) {
 			if (room == 0 || room >= 900) {
 				sprintf(buf, "%.3d.lfl", room);
 				encByte = 0;
