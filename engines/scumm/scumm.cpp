@@ -456,6 +456,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
 		_fileHandle = new ScummNESFile();
 		_containerFile = tmpBuf;
+		_substResFileName.almostGameID = 0;
 	} else if ((_game.platform == Common::kPlatformC64) && _substResFileName.almostGameID) {
 		const char *tmpBuf1, *tmpBuf2;
 		if (_game.id == GID_MANIAC) {
@@ -469,6 +470,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 		_fileHandle = new ScummC64File(tmpBuf1, tmpBuf2, _game.id == GID_MANIAC);
 
 		_containerFile = tmpBuf1;
+		_substResFileName.almostGameID = 0;
 	} else
 		_fileHandle = new ScummFile();
 
