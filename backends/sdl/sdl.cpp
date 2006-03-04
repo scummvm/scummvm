@@ -78,7 +78,7 @@ void OSystem_SDL::initBackend() {
 	_scaleFactor = 1;
 	_scalerProc = Normal1x;
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) &&  !defined(__MAEMO__)
 	_fullscreen = ConfMan.getBool("fullscreen");
 #else
 	_fullscreen = true;

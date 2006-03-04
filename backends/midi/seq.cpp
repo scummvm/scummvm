@@ -26,7 +26,7 @@
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
-#if defined(UNIX) && !defined(__BEOS__)
+#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
 
 #include "common/stdafx.h"
 #include "sound/mpu401.h"

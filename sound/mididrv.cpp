@@ -45,7 +45,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"alsa", "ALSA", MD_ALSA, MDT_MIDI},
 #endif
 
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) 
 	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
 #endif
 
@@ -243,7 +243,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #if defined(__MORPHOS__)
 	case MD_ETUDE:     return MidiDriver_ETUDE_create();
 #endif
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX)
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	case MD_SEQ:       return MidiDriver_SEQ_create();
 #endif
 #if defined(MACOSX)
