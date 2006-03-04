@@ -152,7 +152,7 @@ void ScummEngine::openRoom(const int room) {
 		}
 
 		// If we have substitute
-		if (_substResFileName.winName != 0 && !(_game.platform == Common::kPlatformNES || _game.platform == Common::kPlatformC64)) {
+		if (_substResFileName.almostGameID != 0 && !(_game.platform == Common::kPlatformNES || _game.platform == Common::kPlatformC64)) {
 			char tmpBuf[128];
 			generateSubstResFileName(buf, tmpBuf, sizeof(tmpBuf));
 			strcpy(buf, tmpBuf);
@@ -255,7 +255,7 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resou
 		// from target name. dottdemo.000 vs tentacle.000. So we should
 		// substitute those names too
 		if (resourceFile == true) {
-			if (_substResFileNameBundle.winName == 0) {
+			if (_substResFileNameBundle.almostGameID == 0) {
 				int substLastIndex = 0;
 
 				do {
@@ -264,14 +264,14 @@ bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resou
 
 					substLastIndex = findSubstResFileName(_substResFileNameBundle, filename, substLastIndex);
 					applySubstResFileName(_substResFileNameBundle, filename, name, sizeof(name));
-				} while (_substResFileNameBundle.winName != 0);
+				} while (_substResFileNameBundle.almostGameID != 0);
 
-				if (_substResFileNameBundle.winName != 0) {
-					debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, _substResFileNameBundle.winName);
+				if (_substResFileNameBundle.almostGameID != 0) {
+					debug(5, "Generated substitute in Mac bundle: [%s -> %s]", filename, _substResFileNameBundle.almostGameID);
 				}
 			}
 
-			if (_substResFileNameBundle.winName != 0)
+			if (_substResFileNameBundle.almostGameID != 0)
 				applySubstResFileName(_substResFileNameBundle, filename, name, sizeof(name));
 		}
 

@@ -343,8 +343,8 @@ enum GenMethods {
 };
 
 struct SubstResFileNames {
-	const char *winName;
-	const char *macName;
+	const char *almostGameID;
+	const char *expandedName;
 	GenMethods genMethod;
 };
 

@@ -292,30 +292,30 @@ static SubstResFileNames substResFileNameTable[] = {
 	{ NULL, NULL, kGenAsIs }
 };
 
-static void applySubstResFileName(const SubstResFileNames &subst, char *buf, int bufsize, const char *ext, int num) {
+static void applySubstResFileName(const SubstResFileNames &subst, char *buf, int bufsize, const char *ext, char num) {
 	switch (subst.genMethod) {
 	case kGenMac:
 	case kGenMacNoParens:
 		if (num == '3') { // special case for cursors
 			// For mac they're stored in game binary
-			strncpy(buf, subst.macName, bufsize);
+			strncpy(buf, subst.expandedName, bufsize);
 		} else {
 			if (subst.genMethod == kGenMac)
-				snprintf(buf, bufsize, "%s (%c)", subst.macName, num);
+				snprintf(buf, bufsize, "%s (%c)", subst.expandedName, num);
 			else
-				snprintf(buf, bufsize, "%s %c", subst.macName, num);
+				snprintf(buf, bufsize, "%s %c", subst.expandedName, num);
 		}
 		break;
 
 	case kGenPC:
 		if (ext)
-			snprintf(buf, bufsize, "%s%s", subst.macName, ext);
+			snprintf(buf, bufsize, "%s%s", subst.expandedName, ext);
 		else
-			strncpy(buf, subst.macName, bufsize);
+			strncpy(buf, subst.expandedName, bufsize);
 		break;
 
 	case kGenAsIs:
-		strncpy(buf, subst.macName, bufsize);
+		strncpy(buf, subst.expandedName, bufsize);
 		break;
 
 	default:
@@ -325,7 +325,7 @@ static void applySubstResFileName(const SubstResFileNames &subst, char *buf, int
 }
 
 bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize) {
-	if (subst.winName == 0)
+	if (subst.almostGameID == 0)
 		return false;
 
 	size_t len = strlen(filename);
@@ -341,7 +341,7 @@ bool applySubstResFileName(const SubstResFileNames &subst, const char *filename,
 	if (ext)
 		len = ext - filename;
 
-	if (!scumm_strnicmp(filename, subst.winName, len)) {
+	if (!scumm_strnicmp(filename, subst.almostGameID, len)) {
 		applySubstResFileName(subst, buf, bufsize, ext, num);
 		return true;
 	}
@@ -367,8 +367,8 @@ int findSubstResFileName(SubstResFileNames &subst, const char *filename, int ind
 		len = ext - filename;
 
 	int i;
-	for (i = index; substResFileNameTable[i].winName; i++) {
-		if (!scumm_strnicmp(filename, substResFileNameTable[i].winName, len)) {
+	for (i = index; substResFileNameTable[i].almostGameID; i++) {
+		if (!scumm_strnicmp(filename, substResFileNameTable[i].almostGameID, len)) {
 			subst = substResFileNameTable[i];
 			return i+1;
 		}
@@ -442,12 +442,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 
 	// We read data directly from NES ROM instead of extracting it with
 	// external tool
-	if ((_game.platform == Common::kPlatformNES) && _substResFileName.winName) {
+	if ((_game.platform == Common::kPlatformNES) && _substResFileName.almostGameID) {
 		char tmpBuf[128];
 		generateSubstResFileName("00.LFL", tmpBuf, sizeof(tmpBuf));
 		_fileHandle = new ScummNESFile();
 		_containerFile = tmpBuf;
-	} else if ((_game.platform == Common::kPlatformC64) && _substResFileName.winName) {
+	} else if ((_game.platform == Common::kPlatformC64) && _substResFileName.almostGameID) {
 		const char *tmpBuf1, *tmpBuf2;
 		if (_game.id == GID_MANIAC) {
 			tmpBuf1 = "maniac1.d64";
@@ -471,12 +471,12 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// (we do that here); the rest is handled by the  ScummFile class and 
 	// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 	// handling).
-	if (_game.version >= 5 && _game.heversion == 0 && _substResFileName.winName &&
+	if (_game.version >= 5 && _game.heversion == 0 && _substResFileName.almostGameID &&
 		_game.platform == Common::kPlatformMacintosh && 
 		_substResFileName.genMethod == kGenAsIs) {
-		if (_fileHandle->open(_substResFileName.macName)) {
-			_containerFile = _substResFileName.macName;
-			_substResFileName.winName = 0;
+		if (_fileHandle->open(_substResFileName.expandedName)) {
+			_containerFile = _substResFileName.expandedName;
+			_substResFileName.almostGameID = 0;
 		}
 	}
 

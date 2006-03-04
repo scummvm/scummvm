@@ -1008,7 +1008,7 @@ ScummFile *Sound::openSfxFile() {
 	basename[0] = _vm->getBaseName();
 	basename[1] = "monster";
 	
-	if (_vm->_substResFileName.winName != 0) {
+	if (_vm->_substResFileName.almostGameID != 0) {
 
 		strcpy(buf, basename[0]);
 		_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
@@ -1033,7 +1033,7 @@ ScummFile *Sound::openSfxFile() {
 			sprintf(buf, "%s.tlk", _vm->getBaseName());
 		}
 
-		if (_vm->_substResFileName.winName != 0) {
+		if (_vm->_substResFileName.almostGameID != 0) {
 			_vm->generateSubstResFileName(buf, buf1, sizeof(buf1));
 			strcpy(buf, buf1);
 		}

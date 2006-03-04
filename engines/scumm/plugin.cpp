@@ -1168,7 +1168,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 				substLastIndex = findSubstResFileName(subst, tempName, substLastIndex);
 				applySubstResFileName(subst, tempName, detectName, sizeof(detectName));
-			} while (subst.winName != 0);
+			} while (subst.almostGameID != 0);
 		}
 	}
 
@@ -1284,10 +1284,10 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 			substLastIndex = findSubstResFileName(subst, tempName, substLastIndex);
 			applySubstResFileName(subst, tempName, detectName, sizeof(detectName));
-		} while (subst.winName != 0);
+		} while (subst.almostGameID != 0);
 
 		if (found) {
-			if (subst.winName != 0)
+			if (subst.almostGameID != 0)
 				debug(5, "Generated filename substitute: %s -> %s", tempName, detectName);
 			break;
 		}
@@ -1299,7 +1299,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 
 	// Force game to have Mac platform if needed
-	if (subst.winName) {
+	if (subst.almostGameID) {
 		if (subst.genMethod == kGenMac ||
 			subst.genMethod == kGenMacNoParens)
 			game.platform = Common::kPlatformMacintosh;
