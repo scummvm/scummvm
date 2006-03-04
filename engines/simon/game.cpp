@@ -203,7 +203,7 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2DOS_RU,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2DOS_RU,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_SIMON2DOS2,      "604d04315935e77624bd356ac926e068", "game32", false },
+	{ GID_SIMON2DOS2,      "eb8bde3685842a8fd38f60bc476ef8e9", "game32", false },
 	{ GID_SIMON2DOS2,      "72096a62d36e6034ea9fecc13b2dbdab", "icon.dat", false},
 	{ GID_SIMON2DOS2,      "aa6840420899a31874204f90bb214108", "simon2.gme", false},
 	{ GID_SIMON2DOS2,      "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
