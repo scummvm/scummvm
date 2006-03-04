@@ -62,19 +62,21 @@ public:
 	void on_timer(MidiDriver *midi);
 	void pause(bool paused);
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
-	void setMusicVolume(int vol);
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAllSounds();
-	int getSoundStatus(int sound) const;
 	bool get_sound_active(int sound) const;
-	int getMusicTimer() const;
 	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 doCommand(int numargs, int args[]);
 	int clear_queue();
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
-	void terminate();
+
+	// MusicEngine base class methods
+	virtual void setMusicVolume(int vol);
+	virtual void startSound(int sound);
+	virtual void stopSound(int sound);
+	virtual void stopAllSounds();
+	virtual int getSoundStatus(int sound) const;
+	virtual int getMusicTimer() const;
+	virtual void terminate();
 
 	// Factory methods
 	static IMuse *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
