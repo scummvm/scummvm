@@ -139,6 +139,8 @@ void ScummEngine::openRoom(const int room) {
 					VAR(VAR_CURRENTDISK) = diskNumber;
 				sprintf(buf, "%s.la%d", _baseName.c_str(), diskNumber);
 
+				// FIXME: Which games use the following? Apparently, there is 
+				// an FT demo using it -- anything else?
 				sprintf(buf2, "%s.%.3d", _baseName.c_str(), diskNumber);
 			} else if (_game.heversion >= 60) {
 				sprintf(buf, "%s.he%.1d", _baseName.c_str(), diskNumber);
