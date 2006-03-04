@@ -1,7 +1,7 @@
 [Project]
 FileName=cine.dev
 Name=cine
-UnitCount=44
+UnitCount=42
 Type=2
 Ver=1
 ObjFiles=
@@ -158,26 +158,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=..\..\engines\cine\flip_support.cpp
-CompileCpp=1
-Folder=cine
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit13]
-FileName=..\..\engines\cine\flip_support.h
-CompileCpp=1
-Folder=cine
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit14]
 FileName=..\..\engines\cine\font.cpp
 CompileCpp=1
 Folder=cine
@@ -187,7 +167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit15]
+[Unit13]
 FileName=..\..\engines\cine\font.h
 CompileCpp=1
 Folder=cine
@@ -197,7 +177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit14]
 FileName=..\..\engines\cine\gfx.cpp
 CompileCpp=1
 Folder=cine
@@ -207,7 +187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit15]
 FileName=..\..\engines\cine\gfx.h
 CompileCpp=1
 Folder=cine
@@ -217,7 +197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit16]
 FileName=..\..\engines\cine\main_loop.cpp
 CompileCpp=1
 Folder=cine
@@ -227,7 +207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit17]
 FileName=..\..\engines\cine\main_loop.h
 CompileCpp=1
 Folder=cine
@@ -237,7 +217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit18]
 FileName=..\..\engines\cine\msg.cpp
 CompileCpp=1
 Folder=cine
@@ -247,7 +227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit19]
 FileName=..\..\engines\cine\msg.h
 CompileCpp=1
 Folder=cine
@@ -257,7 +237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit20]
 FileName=..\..\engines\cine\object.cpp
 CompileCpp=1
 Folder=cine
@@ -267,7 +247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit21]
 FileName=..\..\engines\cine\object.h
 CompileCpp=1
 Folder=cine
@@ -277,7 +257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit22]
 FileName=..\..\engines\cine\pal.cpp
 CompileCpp=1
 Folder=cine
@@ -287,7 +267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit23]
 FileName=..\..\engines\cine\pal.h
 CompileCpp=1
 Folder=cine
@@ -297,7 +277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit24]
 FileName=..\..\engines\cine\part.cpp
 CompileCpp=1
 Folder=cine
@@ -307,7 +287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit25]
 FileName=..\..\engines\cine\part.h
 CompileCpp=1
 Folder=cine
@@ -317,7 +297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit26]
 FileName=..\..\engines\cine\prc.cpp
 CompileCpp=1
 Folder=cine
@@ -327,7 +307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit27]
 FileName=..\..\engines\cine\prc.h
 CompileCpp=1
 Folder=cine
@@ -337,7 +317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit28]
 FileName=..\..\engines\cine\rel.cpp
 CompileCpp=1
 Folder=cine
@@ -347,7 +327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit29]
 FileName=..\..\engines\cine\rel.h
 CompileCpp=1
 Folder=cine
@@ -357,7 +337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit30]
 FileName=..\..\engines\cine\resource.cpp
 CompileCpp=1
 Folder=cine
@@ -367,7 +347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit31]
 FileName=..\..\engines\cine\resource.h
 CompileCpp=1
 Folder=cine
@@ -377,7 +357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit32]
 FileName=..\..\engines\cine\script.cpp
 CompileCpp=1
 Folder=cine
@@ -387,7 +367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit33]
 FileName=..\..\engines\cine\script.h
 CompileCpp=1
 Folder=cine
@@ -397,7 +377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit34]
 FileName=..\..\engines\cine\sfx_player.cpp
 CompileCpp=1
 Folder=cine
@@ -407,7 +387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit35]
 FileName=..\..\engines\cine\sfx_player.h
 CompileCpp=1
 Folder=cine
@@ -417,7 +397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit36]
 FileName=..\..\engines\cine\sound_driver.cpp
 CompileCpp=1
 Folder=cine
@@ -427,7 +407,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit37]
 FileName=..\..\engines\cine\sound_driver.h
 CompileCpp=1
 Folder=cine
@@ -437,7 +417,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit38]
 FileName=..\..\engines\cine\texte.cpp
 CompileCpp=1
 Folder=cine
@@ -447,7 +427,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit41]
+[Unit39]
 FileName=..\..\engines\cine\texte.h
 CompileCpp=1
 Folder=cine
@@ -457,8 +437,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit42]
+[Unit40]
 FileName=..\..\engines\cine\unpack.cpp
+CompileCpp=1
+Folder=cine
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit41]
+FileName=..\..\engines\cine\unpack.h
+CompileCpp=1
+Folder=cine
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit42]
+FileName=..\..\engines\cine\various.cpp
 CompileCpp=1
 Folder=cine
 Compile=1
