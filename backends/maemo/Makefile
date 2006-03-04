@@ -1,5 +1,6 @@
 # ScummVM Maemo MakeFile
-# $Header: /cvsroot/scummvm/scummvm/backends/psp/Makefile,v 1.6 2005/11/20 17:36:02 joostp Exp $
+# $URL$
+# $Id$
 
 #control build
 DISABLE_HQ_SCALERS = true
