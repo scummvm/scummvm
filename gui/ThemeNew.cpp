@@ -19,6 +19,8 @@
  * $Id$
  */
 
+#ifndef DISABLE_FANCY_THEMES
+
 #include "gui/theme.h"
 
 #include "graphics/imageman.h"
@@ -81,6 +83,33 @@ static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::Stri
 #define getExtraValueFromConfig(x, y, z, a) getValueFromConfig(x, "extra", y, z, a)
 
 namespace GUI {
+// some of this stuff is allready in graphics/scaler/intern.h
+// maybe use the structs in graphics/scaler/intern.h then and add
+// there kBlueMask
+template<int bitFormat>
+struct ColorMasks {
+};
+
+template<>
+struct ColorMasks<555> {
+	enum {
+		kRBMask = 0x7C1F,
+		kRedMask = 0x7C00,
+		kGreenMask = 0x03E0,
+		kBlueMask = 0x001F
+	};
+};
+
+template<>
+struct ColorMasks<565> {
+	enum {
+		kRBMask = 0xF81F,
+		kRedMask = 0xF800,
+		kGreenMask = 0x07E0,
+		kBlueMask = 0x001F
+	};
+};
+
 ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
 _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
 	_initOk = false;
@@ -812,46 +841,28 @@ bool ThemeNew::addDirtyRect(Common::Rect r, bool backup, bool special) {
 	return true;
 }
 
-inline uint8 calcGradient(uint8 start, uint8 end, int pos, int max) {
-	int diff = ((int)end - (int)start) * pos / max;
-	return start + diff;
+template<class T>
+inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max) {
+	OverlayColor output = 0;
+	output |= ((start & T::kRedMask) + (((((end & T::kRedMask) - (start & T::kRedMask))) * pos / max) & T::kRedMask)) & T::kRedMask;
+	output |= ((start & T::kGreenMask) + (((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos / max) & T::kGreenMask)) & T::kGreenMask;
+	output |= ((start & T::kBlueMask) + (((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos / max) & T::kBlueMask)) & T::kBlueMask;
+	return output;
 }
 
 OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
 	max /= factor;
 	pos *= factor;
 	if (pos > max) {
-		pos = max;
+		return end;
+	} else if (!pos) {
+		return start;
 	}
-	OverlayColor result = 0;
-	uint8 sr = 0, sg = 0, sb = 0;
-	uint8 er = 0, eg = 0, eb = 0;
 	if (gBitFormat == 565) {
-		sr = (start >> 11) & 0x1F;
-		sg = (start >> 5) & 0x3F;
-		sb = (start >> 0) & 0x1F;
-		
-		er = (end >> 11) & 0x1F;
-		eg = (end >> 5) & 0x3F;
-		eb = (end >> 0) & 0x1F;
+		return calcGradient<ColorMasks<565> >(start, end, pos, max);
 	} else {
-		sr = (start >> 10) & 0x1F;
-		sg = (start >> 5) & 0x1F;
-		sb = (start >> 0) & 0x1F;
-		
-		er = (end >> 10) & 0x1F;
-		eg = (end >> 5) & 0x1F;
-		eb = (end >> 0) & 0x1F;
+		return calcGradient<ColorMasks<555> >(start, end, pos, max);
 	}
-	uint8 cr = calcGradient(sr, er, pos, max);
-	uint8 cg = calcGradient(sg, eg, pos, max);
-	uint8 cb = calcGradient(sb, eb, pos, max);
-	if (gBitFormat == 565) {
-		result = ((int)(cr & 0x1F) << 11) | ((int)(cg & 0x3F) << 5) | (int)(cb & 0x1F);
-	} else {
-		result = ((int)(cr & 0x1F) << 10) | ((int)(cg & 0x1F) << 5) | (int)(cb & 0x1F);
-	}
-	return result;
 }
 
 void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor) {
@@ -952,19 +963,22 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Surface *surf, bool upDo
 	drawSurfaceMasked(r, surf, upDown, leftRight, alpha, _system->RGBToColor(255, 255, 255), _system->RGBToColor(255, 255, 255));
 }
 
-inline OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
-	if (alpha == 256) {
+template<class T>
+inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int alpha) {
+	OverlayColor output = 0;
+	output |= ((alpha * ((col1 & T::kRBMask) - (col2 & T::kRBMask)) >> 8) + (col2 & T::kRBMask)) & T::kRBMask;
+	output |= ((alpha * ((col1 & T::kGreenMask) - (col2 & T::kGreenMask)) >> 8) + (col2 & T::kGreenMask)) & T::kGreenMask;
+	return output;
+}
+
+OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
+	if (alpha >= 256)
 		return col1;
+	if (gBitFormat == 565) {
+		return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
+	} else {
+		return getColorAlphaImpl<ColorMasks<555> >(col1, col2, alpha);
 	}
-	uint8 r1, g1, b1;
-	uint8 r2, g2, b2;
-	OSystem::instance().colorToRGB(col1, r1, g1, b1);
-	OSystem::instance().colorToRGB(col2, r2, g2, b2);
-	uint8 r, g, b;
-	r = (alpha * (r1 - r2) >> 8) + r2;
-	g = (alpha * (g1 - g2) >> 8) + g2;
-	b = (alpha * (b1 - b2) >> 8) + b2;
-	return OSystem::instance().RGBToColor(r, g, b);
 }
 
 void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight,
@@ -1118,4 +1132,6 @@ void ThemeNew::setupColors() {
 	
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
 }
-} // end of namespace GUI 
+} // end of namespace GUI
+
+#endif

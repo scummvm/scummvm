@@ -233,6 +233,7 @@ private:
 	OverlayColor _textcolorhi;
 };
 
+#ifndef DISABLE_FANCY_THEMES
 class ThemeNew : public Theme {
 public:
 	ThemeNew(OSystem *system, Common::String stylefile);
@@ -448,6 +449,7 @@ private:
 	
 	uint _gradientFactors[kMaxGradientFactors];
 };
+#endif
 } // end of namespace GUI
 
 #endif // GUI_THEME_H
