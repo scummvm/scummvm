@@ -126,12 +126,6 @@
 			RelativePath="..\..\engines\cine\cine.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\cine\flip_support.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\flip_support.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\cine\font.cpp">
 		</File>
 		<File

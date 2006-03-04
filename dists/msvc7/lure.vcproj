@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="kyra"
-	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
+	Name="lure"
+	ProjectGUID="{C2D4D5BE-DB95-474F-8C60-75CCE6A9D6D2}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="kyra_Debug"
-			IntermediateDirectory="kyra_Debug"
+			OutputDirectory="lure_Debug"
+			IntermediateDirectory="lure_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/kyra.lib"/>
+				OutputFile="$(OutDir)/lure.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -53,8 +53,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="kyra_Release"
-			IntermediateDirectory="kyra_Release"
+			OutputDirectory="lure_Release"
+			IntermediateDirectory="lure_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
@@ -79,7 +79,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/kyra.lib"/>
+				OutputFile="$(OutDir)/lure.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -96,97 +96,133 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\engines\kyra\animator.cpp">
+			RelativePath="..\..\engines\lure\animseq.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\animator.h">
+			RelativePath="..\..\engines\lure\animseq.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\debugger.cpp">
+			RelativePath="..\..\engines\lure\debug-input.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\debugger.h">
+			RelativePath="..\..\engines\lure\debug-input.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\gui.cpp">
+			RelativePath="..\..\engines\lure\debug-methods.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\items.cpp">
+			RelativePath="..\..\engines\lure\debug-methods.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra.cpp">
+			RelativePath="..\..\engines\lure\decode.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\kyra.h">
+			RelativePath="..\..\engines\lure\decode.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\resource.cpp">
+			RelativePath="..\..\engines\lure\disk.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\resource.h">
+			RelativePath="..\..\engines\lure\disk.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\saveload.cpp">
+			RelativePath="..\..\engines\lure\events.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\scene.cpp">
+			RelativePath="..\..\engines\lure\events.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen.cpp">
+			RelativePath="..\..\engines\lure\game.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\screen.h">
+			RelativePath="..\..\engines\lure\game.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script.cpp">
+			RelativePath="..\..\engines\lure\hotspots.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script.h">
+			RelativePath="..\..\engines\lure\hotspots.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\script_v1.cpp">
+			RelativePath="..\..\engines\lure\intro.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\seqplayer.cpp">
+			RelativePath="..\..\engines\lure\intro.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\seqplayer.h">
+			RelativePath="..\..\engines\lure\lure.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sequences_v1.cpp">
+			RelativePath="..\..\engines\lure\lure.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound.cpp">
+			RelativePath="..\..\engines\lure\luredefs.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound.h">
+			RelativePath="..\..\engines\lure\memory.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sound_adlib.cpp">
+			RelativePath="..\..\engines\lure\memory.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sprites.cpp">
+			RelativePath="..\..\engines\lure\menu.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\sprites.h">
+			RelativePath="..\..\engines\lure\menu.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\staticres.cpp">
+			RelativePath="..\..\engines\lure\palette.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text.cpp">
+			RelativePath="..\..\engines\lure\palette.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\text.h">
+			RelativePath="..\..\engines\lure\res.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\timer.cpp">
+			RelativePath="..\..\engines\lure\res.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\wsamovie.cpp">
+			RelativePath="..\..\engines\lure\res_struct.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\kyra\wsamovie.h">
+			RelativePath="..\..\engines\lure\res_struct.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\room.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\room.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\screen.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\screen.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\scripts.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\scripts.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\strings.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\strings.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\surface.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\surface.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\system.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\lure\system.h">
 		</File>
 	</Files>
 	<Globals>

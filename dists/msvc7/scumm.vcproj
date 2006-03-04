@@ -355,6 +355,12 @@
 			RelativePath="..\..\engines\scumm\dialogs.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\file.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\file.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\gfx.cpp">
 		</File>
 		<File
@@ -431,6 +437,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\player_v3a.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\plugin.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\plugin.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\resource.cpp">
