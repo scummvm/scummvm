@@ -233,7 +233,7 @@ bool IMuseInternal::startSound(int sound) {
 	int i;
 	ImTrigger *trigger = _snm_triggers;
 	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trigger) {
-		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus(trigger->sound))
+		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus(trigger->sound,true))
 			return false;
 	}
 
@@ -766,7 +766,7 @@ int32 IMuseInternal::doCommand(int numargs, int a[]) {
 			}
 			return -1;
 		case 13:
-			return getSoundStatus(a[1]);
+			return getSoundStatus(a[1], true);
 		case 14:
 			// Sam and Max: Parameter fade
 			player = findActivePlayer(a[1]);
@@ -1003,7 +1003,7 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	// NOTE: We ONLY do this if the sound that will trigger the command is actually
 	// playing. Otherwise, there's a problem when exiting and re-entering the
 	// Bumpusville mansion. Ref Bug #780918.
-	if (trig->command[0] == 8 && getSoundStatus(trig->command[1]) && getSoundStatus(sound))
+	if (trig->command[0] == 8 && getSoundStatus(trig->command[1],true) && getSoundStatus(sound,true))
 		stopSound(trig->command[1]);
 	return 0;
 }

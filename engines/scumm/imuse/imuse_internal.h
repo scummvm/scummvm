@@ -456,7 +456,7 @@ public:
 	bool startSound(int sound);
 	int stopSound(int sound);
 	int stopAllSounds();
-	int getSoundStatus(int sound, bool ignoreFadeouts = true) const;
+	int getSoundStatus(int sound, bool ignoreFadeouts) const;
 	int getMusicTimer() const;
 	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
 	int32 doCommand (int numargs, int args[]);
