@@ -935,8 +935,10 @@ ScummEngine::~ScummEngine() {
 	}
 
 #ifndef DISABLE_SCUMM_7_8
-	_smixer->stop();
-	delete _smixer;
+	if (_smixer) {
+		_smixer->stop();
+		delete _smixer;
+	}
 #endif
 	_mixer->stopAll();
 
