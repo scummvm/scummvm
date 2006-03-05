@@ -1,7 +1,7 @@
 [Project]
 FileName=scumm.dev
 Name=scumm
-UnitCount=138
+UnitCount=139
 Type=2
 Ver=1
 ObjFiles=
@@ -1358,7 +1358,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit132]
-FileName=..\..\engines\scumm\imuse\imuse.cpp
+FileName=..\..\engines\scumm\imuse\imuse_part.cpp
 CompileCpp=1
 Folder=imuse
 Compile=1
@@ -1421,6 +1421,16 @@ BuildCmd=
 FileName=..\..\engines\scumm\file.h
 CompileCpp=1
 Folder=scumm
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit139]
+FileName=..\..\engines\scumm\imuse\imuse.cpp
+CompileCpp=1
+Folder=imuse
 Compile=1
 Link=1
 Priority=1000
