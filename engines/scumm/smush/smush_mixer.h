@@ -56,6 +56,7 @@ public:
 	void addChannel(SmushChannel *c);
 	bool handleFrame();
 	bool stop();
+	bool flush();
 	bool update();
 };
 

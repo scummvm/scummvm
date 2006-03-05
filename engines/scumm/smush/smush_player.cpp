@@ -265,6 +265,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v6 *scumm, int speed) {
 	_middleAudio = false;
 	_skipPalette = false;
 	_IACTstream = NULL;
+	_smixer = _vm->_smixer;
 #ifdef _WIN32_WCE
 	_inTimer = false;
 	_inTimerCount = 0;
@@ -297,7 +298,8 @@ void SmushPlayer::init() {
 	_vm->virtscr[0].pitch = _vm->virtscr[0].w;
 	_vm->gdi._numStrips = _vm->virtscr[0].w / 8;
 
-	_smixer = new SmushMixer(_vm->_mixer);
+	_vm->_smixer->stop();
+
 	Common::g_timer->installTimerProc(&timerCallback, 1000000 / _speed, this);
 
 	_initDone = true;
@@ -325,12 +327,6 @@ void SmushPlayer::release() {
 	delete _strings;
 	_strings = NULL;
 
-	if (_smixer)
-		_smixer->stop();
-
-	delete _smixer;
-	_smixer = NULL;
-
 	delete _base;
 	_base = NULL;
 
@@ -343,7 +339,7 @@ void SmushPlayer::release() {
 	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 
 	_vm->_mixer->stopHandle(_IACTchannel);
-	_IACTstream = 0;
+	_IACTstream = NULL;
 
 	_vm->_fullRedraw = true;
 
@@ -1371,8 +1367,10 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			debugC(DEBUG_SMUSH, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
+		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag) {
+			_smixer->stop();
 			break;
+		}
 		_vm->_system->delayMillis(10);
 	}
 

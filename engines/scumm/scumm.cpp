@@ -43,6 +43,7 @@
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
+#include "scumm/smush/smush_mixer.h"
 #include "scumm/insane/insane.h"
 #include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
@@ -502,6 +503,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	// Init all vars
 	_imuse = NULL;
 	_imuseDigital = NULL;
+	_smixer = NULL;
 	_musicEngine = NULL;
 	_verbs = NULL;
 	_objs = NULL;
@@ -932,6 +934,10 @@ ScummEngine::~ScummEngine() {
 		delete _musicEngine;
 	}
 
+#ifndef DISABLE_SCUMM_7_8
+	_smixer->stop();
+	delete _smixer;
+#endif
 	_mixer->stopAll();
 
 	delete [] _actors;
@@ -1649,6 +1655,7 @@ void ScummEngine::setupMusic(int midi) {
 	if (_game.features & GF_DIGI_IMUSE) {
 #ifndef DISABLE_SCUMM_7_8
 		_musicEngine = _imuseDigital = new IMuseDigital(this, 10);
+		_smixer = new SmushMixer(_mixer);
 #endif
 	} else if (_game.platform == Common::kPlatformC64) {
 		// TODO
@@ -2075,6 +2082,9 @@ load_game:
 		_imuseDigital->flushTracks();
 		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
 			_imuseDigital->refreshScripts();
+	}
+	if (_smixer) {
+		_smixer->flush();
 	}
 #endif
 

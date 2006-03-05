@@ -55,6 +55,7 @@ class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
 class Insane;
+class SmushMixer;
 class MusicEngine;
 class ScummEngine;
 class ScummDebugger;
@@ -429,6 +430,7 @@ public:
 	IMuseDigital *_imuseDigital;
 	MusicEngine *_musicEngine;
 	Sound *_sound;
+	SmushMixer *_smixer;
 
 	VerbSlot *_verbs;
 	ObjectData *_objs;

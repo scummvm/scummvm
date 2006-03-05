@@ -153,10 +153,29 @@ bool SmushMixer::stop() {
 			_channels[i].chan = NULL;
 			if (_channels[i].stream) {
 				_channels[i].stream->finish();
-				_channels[i].stream = 0;
+				_channels[i].stream = NULL;
 			}
 		}
 	}
+
+	return true;
+}
+
+bool SmushMixer::flush() {
+	Common::StackLock lock(_mutex);
+	debugC(DEBUG_SMUSH, "SmushMixer::flush()");
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		if (_channels[i].id != -1) {
+			if (_channels[i].stream->endOfStream()) {
+				_mixer->stopHandle(_channels[i].handle);
+				delete _channels[i].chan;
+				_channels[i].id = -1;
+				_channels[i].chan = NULL;
+				_channels[i].stream = NULL;
+			}
+		}
+	}
+
 	return true;
 }
 
