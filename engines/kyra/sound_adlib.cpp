@@ -248,7 +248,7 @@ private:
 	uint8 _unk5;
 	int _soundsPlaying;
 
-	uint16 _unk6;
+	uint16 _rnd;
 	uint8 _continueFlag;
 
 	uint8 _unkValue1;
@@ -320,7 +320,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_unkOutputByte2 = _unkOutputByte1 = 0;
 
 	_lastProcessed = _flagTrigger = _curTable = _unk4 = 0;
-	_unk6 = 0x1234;
+	_rnd = 0x1234;
 	_continueFlag = 0;
 
 	_unkTableByte1 = 0;
@@ -611,7 +611,7 @@ void AdlibDriver::callbackProcess() {
 
 void AdlibDriver::resetAdlibState() {
 	debugC(9, kDebugLevelSound, "resetAdlibState()");
-	_unk6 = 0x1234;
+	_rnd = 0x1234;
 
 	// Authorize the control of the waveforms
 	writeOPL(0x01, 0x20);
@@ -692,19 +692,23 @@ void AdlibDriver::unkOutput2(uint8 num) {
 	writeOPL(0xB0 + num, 0x20);
 }
 
-uint16 AdlibDriver::updateUnk6Value() {
-	_unk6 += 0x9248;
-	uint16 lowBits = _unk6 & 7;
-	_unk6 >>= 3;
-	_unk6 |= lowBits << 13;
-	return _unk6;
+// I believe this is a random number generator. It actually does seem to
+// generate an even distribution of almost all numbers from 0 through 65535,
+// though in my tests some numbers were never generated.
+
+uint16 AdlibDriver::getRandomNr() {
+	_rnd += 0x9248;
+	uint16 lowBits = _rnd & 7;
+	_rnd >>= 3;
+	_rnd |= (lowBits << 13);
+	return _rnd;
 }
 
 void AdlibDriver::update1(uint8 unk1, OutputState &state) {
 	debugC(9, kDebugLevelSound, "update1(%d, %d)", unk1, &state - _outputTables);
 	_continueFlag = unk1;
 	if (state.unk11) {
-		state.unk5 = unk1 + (updateUnk6Value() & state.unk11 & 0xFF);
+		state.unk5 = unk1 + (getRandomNr() & state.unk11 & 0xFF);
 		return;
 	}
 	uint8 value = unk1;
@@ -1259,7 +1263,7 @@ int AdlibDriver::updateCallback38(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback39(uint8 *&dataptr, OutputState &state, uint8 value) {
 	uint16 unk = *dataptr++;
 	unk |= value << 8;
-	unk &= updateUnk6Value();
+	unk &= getRandomNr();
 
 	uint16 unk2 = ((state.unkOutputValue1 & 0x1F) << 8) | state.unk17;
 	unk2 += unk;
