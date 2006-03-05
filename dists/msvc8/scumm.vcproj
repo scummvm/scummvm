@@ -403,6 +403,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_part.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp"
 				>
 			</File>
