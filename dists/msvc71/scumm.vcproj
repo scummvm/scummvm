@@ -238,6 +238,9 @@
 				RelativePath="..\..\engines\scumm\imuse\imuse_internal.h">
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_part.cpp">
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp">
 			</File>
 			<File
@@ -367,6 +370,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\dialogs.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\file.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\file.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\gfx.cpp">
