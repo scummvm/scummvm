@@ -33,10 +33,6 @@
 #include "scumm/imuse/instrument.h"
 #include "scumm/saveload.h"
 #include "scumm/scumm.h"
-#include "scumm/util.h"
-
-#include "sound/mididrv.h"
-
 
 namespace Scumm {
 
@@ -152,7 +148,7 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return false;
 
-	error("Unknown music type: '%s'", tag2str(tag));
+	error("Unknown music type: '%c%c%c%c'", (char)tag>>24, (char)tag>>16, (char)tag>>8, (char)tag);
 
 	return false;
 }
@@ -194,7 +190,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	if (ptr[8] == 'S' && ptr[9] == 'O')
 		return true;
 
-	error("Unknown music type: '%s'", tag2str(tag));
+	error("Unknown music type: '%c%c%c%c'", (char)tag>>24, (char)tag>>16, (char)tag>>8, (char)tag);
 
 	return false;
 }
