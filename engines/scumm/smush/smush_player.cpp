@@ -1367,10 +1367,12 @@ void SmushPlayer::play(const char *filename, int32 offset, int32 startFrame) {
 			debugC(DEBUG_SMUSH, "Smush stats: BackendUpdateScreen( %03d )", end_time - start_time);
 
 		}
-		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag) {
+		if (_vm->_quit || _vm->_saveLoadFlag) {
 			_smixer->stop();
 			break;
 		}
+		if (_vm->_smushVideoShouldFinish || _vm->_quit || _vm->_saveLoadFlag)
+			break;
 		_vm->_system->delayMillis(10);
 	}
 
