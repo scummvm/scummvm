@@ -300,6 +300,8 @@ protected:
 	void initV2MouseOver();
 	void initNESMouseOver();
 
+	void runObject(int obj, int entry);
+
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();
 	void o2_actorOps();
@@ -397,7 +399,6 @@ protected:
 
 	const OpcodeEntryC64 *_opcodesC64;
 
-	int _activeVerb;
 	int _currentMode;
 public:
 	ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
@@ -478,6 +479,7 @@ protected:
 	void o_notEqualZero();
 	void o_equalZero();
 	void o_jumpRelative();
+	void o_setOwnerOf();
 };
 
 class ScummEngine_v6 : public ScummEngine {

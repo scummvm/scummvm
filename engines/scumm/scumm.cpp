@@ -572,6 +572,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_userState = 0;
 	_activeInventory = 0;
 	_activeObject = 0;
+	_activeVerb = 0;
 	_resourceHeaderSize = 8;
 	_saveLoadFlag = 0;
 	_saveLoadSlot = 0;
@@ -1005,7 +1006,6 @@ ScummEngine_v2::ScummEngine_v2(GameDetector *detector, OSystem *syst, const Scum
 ScummEngine_c64::ScummEngine_c64(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst)
 	: ScummEngine_v2(detector, syst, gs, md5sum, subst) {
 
-	_activeVerb = 0;
 	_currentMode = 0;
 }
 

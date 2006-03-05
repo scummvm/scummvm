@@ -87,7 +87,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_getActorY),
 		/* 28 */
 		OPCODE(o_equalZero),
-		OPCODE(o2_setOwnerOf),
+		OPCODE(o_setOwnerOf),
 		OPCODE(o2_delay),
 		OPCODE(o_setActorBitVar),
 		/* 2C */
@@ -167,7 +167,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_getActorFacing),
 		/* 68 */
 		OPCODE(o5_isScriptRunning),
-		OPCODE(o2_setOwnerOf),
+		OPCODE(o_setOwnerOf),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_setActorBitVar),
 		/* 6C */
@@ -247,7 +247,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_getActorY),
 		/* A8 */
 		OPCODE(o_notEqualZero),
-		OPCODE(o2_setOwnerOf),
+		OPCODE(o_setOwnerOf),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_setActorBitVar),
 		/* AC */
@@ -327,7 +327,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_getActorFacing),
 		/* E8 */
 		OPCODE(o5_isScriptRunning),
-		OPCODE(o2_setOwnerOf),
+		OPCODE(o_setOwnerOf),
 		OPCODE(o_stopCurrentScript),
 		OPCODE(o_setActorBitVar),
 		/* EC */
@@ -984,10 +984,22 @@ void ScummEngine_c64::o_jumpRelative() {
 	_scriptPointer += offset;
 }
 
+void ScummEngine_c64::o_setOwnerOf() {
+	int obj, owner;
+
+	obj = getVarOrDirectWord(PARAM_1);
+	owner = getVarOrDirectByte(PARAM_2);
+
+	if (obj == 0)
+		obj = _activeInventory;
+
+	setOwnerOf(obj, owner);
+}
+
 void ScummEngine_c64::resetSentence() {
-	_activeVerb = 0;
 	_activeInventory = 0;
 	_activeObject = 0;
+	_activeVerb = 13;
 }
 
 #undef PARAM_1

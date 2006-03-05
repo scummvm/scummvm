@@ -883,6 +883,7 @@ protected:
 
 	int _activeInventory;
 	int _activeObject;
+	int _activeVerb;
 
 	virtual void handleMouseOver(bool updateInventory);
 	virtual void redrawVerbs();

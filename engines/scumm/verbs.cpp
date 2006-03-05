@@ -46,8 +46,7 @@ struct VerbSettings {
 	const char *name;
 };
 
-static const VerbSettings C64VerbTable[] =
-{
+static const VerbSettings C64VerbTable_English[] = {
 	{ 1,  8, 0,   0, "Open"},
 	{ 2,  8, 1,   0, "Close"},
 	{ 3,  0, 2,   4, "Give"},
@@ -65,6 +64,24 @@ static const VerbSettings C64VerbTable[] =
 	{15, 15, 2,   0, "What Is"}
 };
 
+static const VerbSettings C64VerbTable_German[] = {
+	{ 1,  6, 0,   0, "Zieh"},
+	{ 2,  6, 1,   0, "Druck"},
+	{ 3,  0, 2,   4, "Lies"},
+	{ 4, 29, 0,   0, "Schliess au"},
+	{ 5, 29, 1,   0, "Schalt ein"},
+	{ 6, 29, 2,   2, "Schalt aus"},
+	{ 7, 20, 0,   0, "Person"},
+	{ 8, 20, 1,   2, "Schliess"},
+	{ 9,  0, 0,   0, "Nimm"},
+	{10,  0, 1,   0, "Gib"},
+	{11, 20, 2, 255, "Reparier"},
+	{12,  6, 2,   0, "Offne"},
+	{13, 12, 0,   0, "Gehe zu"},
+	{14, 12, 1,   0, "Was ist"},
+	{15, 12, 2,   0, "Benutz"}
+};
+
 void ScummEngine_c64::initC64Verbs() {
 	VirtScreen *virt = &virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
@@ -72,7 +89,7 @@ void ScummEngine_c64::initC64Verbs() {
 
 	for (i = 1; i < 16; i++) {
 		vs = &_verbs[i];
-		vs->verbid = C64VerbTable[i - 1].id;
+		vs->verbid = C64VerbTable_English[i - 1].id;
 		vs->color = 5;
 		vs->hicolor = 7;
 		vs->dimcolor = 11;
@@ -83,12 +100,17 @@ void ScummEngine_c64::initC64Verbs() {
 		vs->key = 0;
 		vs->center = 0;
 		vs->imgindex = 0;
-		vs->prep = C64VerbTable[i - 1].prep;
+		vs->prep = C64VerbTable_English[i - 1].prep;
 
-		vs->curRect.left = C64VerbTable[i - 1].x_pos * 8;
-		vs->curRect.top = C64VerbTable[i - 1].y_pos * 8 + virt->topline + 8;
-
-		loadPtrToResource(rtVerb, i, (const byte*)C64VerbTable[i - 1].name);
+		if (_language == Common::DE_DEU) {
+			vs->curRect.left = C64VerbTable_German[i - 1].x_pos * 8;
+			vs->curRect.top = C64VerbTable_German[i - 1].y_pos * 8 + virt->topline + 8;
+			loadPtrToResource(rtVerb, i, (const byte*)C64VerbTable_German[i - 1].name);
+		} else {
+			vs->curRect.left = C64VerbTable_English[i - 1].x_pos * 8;
+			vs->curRect.top = C64VerbTable_English[i - 1].y_pos * 8 + virt->topline + 8;
+			loadPtrToResource(rtVerb, i, (const byte*)C64VerbTable_English[i - 1].name);
+		}
 	}
 }
 
@@ -308,10 +330,19 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 
 	object = findInventory(_scummVars[VAR_EGO], object + 1 + _inventoryOffset);
 
-	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
-		_activeInventory = object;
-	} else if (object > 0) {
-		runInputScript(3, object, 0);
+	if (object > 0) {
+		if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC) {
+			if (_activeInventory != object) {
+				_activeInventory = object;
+			} else if (_activeVerb != 3 && _activeVerb != 13) {
+				if (_activeObject)
+					runObject(_activeObject, _activeVerb);
+				else
+					runObject(_activeInventory, _activeVerb);
+			}
+		} else {
+			runInputScript(3, object, 0);
+		}
 	}
 }
 
@@ -503,6 +534,19 @@ void ScummEngine::checkExecVerbs() {
 	}
 }
 
+void ScummEngine_v2::runObject(int obj, int entry) {
+	if (getVerbEntrypoint(obj, entry) != 0) {
+		runObjectScript(obj, entry, false, false, NULL);
+	} else {
+		VAR(9) = entry;
+		runScript(3, 0, 0, 0);
+	}
+
+	_activeInventory = 0;
+	_activeObject = 0;
+	_activeVerb = 13;
+}
+
 void ScummEngine_c64::checkExecVerbs() {
 	Actor *a;
 	VirtScreen *zone = findVirtScreen(_mouse.y);
@@ -526,32 +570,35 @@ void ScummEngine_c64::checkExecVerbs() {
 				return;
 			}
 
-			int object = findObject(_virtualMouse.x, _virtualMouse.y);
-			if (object) {
-				_activeObject = object;
+			int act = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
+			int obj = findObject(_virtualMouse.x, _virtualMouse.y);
+			if (act != 0 && _activeVerb == 3 && _activeInventory != 0) {
+				VAR(5) = act;
+				runObject(_activeInventory, _activeVerb);
+			} else if (obj) {
+				if (_currentMode == 3 && _activeVerb != 13 && obj != _activeObject) {
+					_activeObject = obj;
+					return;
+				}
+
+				_activeObject = obj;
 				if (_currentMode == 3) {
 					int x, y, dir;
 					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-					getObjectXYPos(object, x, y, dir);
+					getObjectXYPos(obj, x, y, dir);
 					a->startWalkActor(x, y, dir);
 				}
 
-				int tmp = (_currentMode == 3) ? _activeVerb : 15;
-				if (getVerbEntrypoint(object, tmp) != 0) {
-					runObjectScript(object, tmp, false, false, NULL);
-				} else if (_activeVerb != 13 && _activeVerb != 15) {
-					VAR(9) = _activeVerb;
-					runScript(3, 0, 0, 0);
-				}
-			} else {
-				_activeInventory = 0;
-				_activeObject = 0;
-				_activeVerb = 13;
-				if (zone->number == kMainVirtScreen) {
-					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-					a->startWalkActor(_virtualMouse.x, _virtualMouse.y, -1);
-				}
+				int entry = (_currentMode == 3) ? _activeVerb : 15;
+				runObject(_activeObject, entry);
+			} else if (zone->number == kMainVirtScreen) {
+				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+				a->startWalkActor(_virtualMouse.x, _virtualMouse.y, -1);
 			}
+
+			_activeInventory = 0;
+			_activeObject = 0;
+			_activeVerb = 13;
 		}
 	}
 }
