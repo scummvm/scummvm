@@ -1380,20 +1380,18 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 	int tableBackUp = _curTable;
 	int outputByteBackUp = _unkOutputByte1;
 
-	uint8 entry = value * 2;
+	uint8 entry = value << 1;
+	uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
 
-	uint8 *ptr = _soundData;
 	_curTable = 6;
 	_unkOutputByte1 = _outputTable[6];
-
-	ptr += READ_LE_UINT16(_soundData + entry + 0x1F4);
 
 	_unkValue6 = *(ptr + 6);
 	updateAndOutput2(_unkOutputByte1, ptr, state);
 
-	entry = *ptr++ * 2;
+	entry = *dataptr++ << 1;
+	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
 
-	ptr = _soundData;
 	_curTable = 7;
 	_unkOutputByte1 = _outputTable[7];
 
@@ -1401,9 +1399,9 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 	_unkValue8 = entry = *(ptr + 6);
 	updateAndOutput2(_unkOutputByte1, ptr, state);
 
-	entry = *ptr++ * 2;
+	entry = *dataptr++ << 1;
+	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
 
-	ptr = _soundData;
 	_curTable = 8;
 	_unkOutputByte1 = _outputTable[8];
 
@@ -1413,17 +1411,17 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
-	_outputTables[6].unkOutputValue1 = *ptr++ & 0x2F;
+	_outputTables[6].unkOutputValue1 = *dataptr++ & 0x2F;
 	writeOPL(0xB6, _outputTables[6].unkOutputValue1);
-	writeOPL(0xA6, *ptr++);
+	writeOPL(0xA6, *dataptr++);
 
-	_outputTables[7].unkOutputValue1 = *ptr++ & 0x2F;
+	_outputTables[7].unkOutputValue1 = *dataptr++ & 0x2F;
 	writeOPL(0xB7, _outputTables[7].unkOutputValue1);
-	writeOPL(0xA7, *ptr++);
+	writeOPL(0xA7, *dataptr++);
 
-	_outputTables[8].unkOutputValue1 = *ptr++ & 0x2F;
+	_outputTables[8].unkOutputValue1 = *dataptr++ & 0x2F;
 	writeOPL(0xB8, _outputTables[8].unkOutputValue1);
-	writeOPL(0xA8, *ptr++);
+	writeOPL(0xA8, *dataptr++);
 
 	_unk4 = 0x20;
 
