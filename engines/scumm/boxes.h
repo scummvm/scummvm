@@ -28,6 +28,7 @@
 
 namespace Scumm {
 
+#define SIZEOF_BOX_C64 5
 #define SIZEOF_BOX_V2 8
 #define SIZEOF_BOX_V3 18
 #define SIZEOF_BOX 20

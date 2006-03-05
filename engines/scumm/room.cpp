@@ -715,26 +715,53 @@ void ScummEngine_v3old::initRoomSubBlocks() {
 	res.nukeResource(rtMatrix, 1);
 	res.nukeResource(rtMatrix, 2);
 
-	// TODO: Convert older walkbox format
-	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) 
-		return;
-
 	if (_game.version <= 2)
 		ptr = roomptr + *(roomptr + 0x15);
 	else
 		ptr = roomptr + READ_LE_UINT16(roomptr + 0x15);
 	if (ptr) {
-		byte numOfBoxes = *ptr;
+		byte numOfBoxes = 0;
 		int size;
-		if (_game.version <= 2)
-			size = numOfBoxes * SIZEOF_BOX_V2 + 1;
-		else
-			size = numOfBoxes * SIZEOF_BOX_V3 + 1;
 
-		res.createResource(rtMatrix, 2, size);
-		memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+		if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+			// Count number of boxes
+			while (*ptr != 0xFF) {
+				numOfBoxes++;
+				ptr += 5;
+			}
+			
+			ptr = roomptr + *(roomptr + 0x15);
+			size = numOfBoxes * SIZEOF_BOX_C64 + 1;
+
+			res.createResource(rtMatrix, 2, size + 1);
+			getResourceAddress(rtMatrix, 2)[0] = numOfBoxes;
+			memcpy(getResourceAddress(rtMatrix, 2) + 1, ptr, size);
+		} else {
+			numOfBoxes = *ptr;
+			if (_game.version <= 2)
+				size = numOfBoxes * SIZEOF_BOX_V2 + 1;
+			else
+				size = numOfBoxes * SIZEOF_BOX_V3 + 1;
+
+			res.createResource(rtMatrix, 2, size);
+			memcpy(getResourceAddress(rtMatrix, 2), ptr, size);
+		}
+
 		ptr += size;
-		if (_game.version <= 2) {
+		if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+			const byte *tmp = ptr;
+			size = 0;
+
+			// Compute matrix size
+			for (i = 0; i < numOfBoxes; i++) {
+				while (*tmp != 0xFF) {
+					size++;
+					tmp++;
+				}
+				size++;
+				tmp++;
+			}
+		} else if (_game.version <= 2) {
 			size = numOfBoxes * (numOfBoxes + 1);
 		} else {
 			// FIXME. This is an evil HACK!!!

@@ -38,6 +38,14 @@ namespace Scumm {
 struct Box {				/* Internal walkbox file format */
 	union {
 		struct {
+			byte x1;
+			byte x2;
+			byte y1;
+			byte y2;
+			byte flags;
+		} GCC_PACK c64;
+
+		struct {
 			byte uy;
 			byte ly;
 			byte ulx;
@@ -102,6 +110,9 @@ byte ScummEngine::getMaskFromBox(int box) {
 
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
+	else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+		// No mask?
+		return 0;
 	else if (_game.version <= 2)
 		return ptr->v2.mask;
 	else
@@ -393,7 +404,9 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 	    box--;
 
 	checkRange(ptr[0] - 1, 0, box, "Illegal box %d");
-	if (_game.version <= 2)
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+		return (Box *)(ptr + box * SIZEOF_BOX_C64 + 1);
+	else if (_game.version <= 2)
 		return (Box *)(ptr + box * SIZEOF_BOX_V2 + 1);
 	else if (_game.version == 3)
 		return (Box *)(ptr + box * SIZEOF_BOX_V3 + 1);
@@ -501,6 +514,16 @@ void ScummEngine::getBoxCoordinates(int boxnum, BoxCoords *box) {
 			SWAP(box->ul, box->ur);
 			SWAP(box->ll, box->lr);
 		}
+	} else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+		box->ul.x = bp->c64.x1 * 8;
+		box->ul.y = bp->c64.y1 * 2;
+		box->ur.x = bp->c64.x2 * 8;
+		box->ur.y = bp->c64.y1 * 2;
+
+		box->ll.x = bp->c64.x1 * 8;
+		box->ll.y = bp->c64.y2 * 2;
+		box->lr.x = bp->c64.x2 * 8;
+		box->lr.y = bp->c64.y2 * 2;
 	} else if (_game.version <= 2) {
 		box->ul.x = bp->v2.ulx * 8;
 		box->ul.y = bp->v2.uy * 2;
@@ -720,7 +743,23 @@ int ScummEngine::getPathToDestBox(byte from, byte to) {
 
 	boxm = getBoxMatrixBaseAddr();
 
-	if (_game.version <= 2) {
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
+		// Skip up to the matrix data for box 'from'
+		for (i = 0; i < from; i++) {
+			while (*boxm != 0xFF)
+				boxm++;
+			boxm++;
+		}
+
+		// Now search for the entry for box 'to'
+		while (boxm[0] != 0xFF) {
+			if (boxm[0] == to)
+				dest = (int8)boxm[0];
+			boxm++;
+		}
+
+		return dest;
+	} else if (_game.version <= 2) {
 		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
 		// The first numOfBoxes bytes contain indices to the start of the corresponding
 		// row (although that seems unnecessary to me - the value is easily computable.
