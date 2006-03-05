@@ -395,7 +395,7 @@ void Player::sysEx(const byte *p, uint16 len) {
 
 	switch (code = *p++) {
 	case 0:
-		if (g_scumm->_game.id != GID_SAMNMAX) {
+		if (_se->_game_id != GID_SAMNMAX) {
 			// There are 17 bytes of useful information beyond
 			// what we've read so far. All we know about them is
 			// as follows:

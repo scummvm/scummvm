@@ -1692,6 +1692,7 @@ void ScummEngine::setupMusic(int midi) {
 
 		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		if (_imuse) {
+			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);

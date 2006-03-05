@@ -876,11 +876,6 @@ void Sound::stopAllSounds() {
 	if (_vm->_musicEngine) {
 		_vm->_musicEngine->stopAllSounds();
 	}
-	if (_vm->_imuse) {
-		// FIXME: Maybe we could merge this call to clear_queue()
-		// into IMuse::stopAllSounds() ?
-		_vm->_imuse->clear_queue();
-	}
 
 	// Stop all SFX
 	if (!_vm->_imuseDigital) {

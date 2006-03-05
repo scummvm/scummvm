@@ -37,47 +37,41 @@ class IMuseInternal;
 class ScummEngine;
 class Serializer;
 
+/**
+ * iMuse implementation interface.
+ * MusicEngine derivative for state-tracked, interactive,
+ * persistent event-based music playback and control.
+ * This class serves as an interface to actual implementations
+ * so that client code is not exposed to the details of
+ * any specific implementation.
+ */
 class IMuse : public MusicEngine {
-private:
-	OSystem *_system;
-	IMuseInternal *_target;
-	mutable Common::MutexRef _mutex;
-
-	IMuse(OSystem *system, IMuseInternal *target);
-	void in() const;
-	void out() const;
-
 public:
-	~IMuse();
-
 	enum {
 		PROP_TEMPO_BASE,
 		PROP_NATIVE_MT32,
 		PROP_GS,
 		PROP_LIMIT_PLAYERS,
 		PROP_RECYCLE_PLAYERS,
-		PROP_DIRECT_PASSTHROUGH
+		PROP_DIRECT_PASSTHROUGH,
+		PROP_GAME_ID
 	};
 
-	void on_timer(MidiDriver *midi);
-	void pause(bool paused);
-	int save_or_load(Serializer *ser, ScummEngine *scumm);
-	bool get_sound_active(int sound) const;
-	int32 doCommand(int a, int b, int c, int d, int e, int f, int g, int h);
-	int32 doCommand(int numargs, int args[]);
-	int clear_queue();
-	void setBase(byte **base);
-	uint32 property(int prop, uint32 value);
+public:
+	virtual void on_timer(MidiDriver *midi) = 0;
+	virtual void pause(bool paused) = 0;
+	virtual int save_or_load(Serializer *ser, ScummEngine *scumm) = 0;
+	virtual bool get_sound_active(int sound) const = 0;
+	virtual int32 doCommand(int numargs, int args[]) = 0;
+	virtual int clear_queue() = 0;
+	virtual void setBase(byte **base) = 0;
+	virtual uint32 property(int prop, uint32 value) = 0;
 
-	// MusicEngine base class methods
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int getSoundStatus(int sound) const;
-	virtual int getMusicTimer() const;
-	virtual void terminate();
+public:
+	// MusicEngine base class methods.
+	// Not actually redefined here because none are implemented.
 
+public:
 	// Factory methods
 	static IMuse *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 };

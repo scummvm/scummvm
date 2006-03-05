@@ -24,6 +24,7 @@
 #define DEFINED_IMUSE_INTERNAL
 
 #include "common/scummsys.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/imuse/instrument.h"
 #include "scumm/saveload.h"
 #include "sound/mididrv.h"
@@ -32,10 +33,6 @@ class MidiParser;
 class OSystem;
 
 namespace Scumm {
-
-// Unremark this statement to activate some of
-// the most common iMuse diagnostic messages.
-// #define IMUSE_DEBUG
 
 struct ParameterFader;
 struct DeferredCommand;
@@ -96,6 +93,11 @@ inline int transpose_clamp(int a, int b, int c) {
 //
 //////////////////////////////////////////////////
 
+struct TimerCallbackInfo {
+	IMuseInternal *imuse;
+	MidiDriver *driver;
+};
+
 struct HookDatas {
 	byte _jump[2];
 	byte _transpose;
@@ -144,6 +146,14 @@ struct CommandQueue {
 	uint16 array[8];
 	CommandQueue() { memset(this, 0, sizeof(CommandQueue)); }
 };
+
+
+
+//////////////////////////////////////////////////
+//
+// Player class definition
+//
+//////////////////////////////////////////////////
 
 class Player : public MidiDriver {
 protected:
@@ -273,6 +283,14 @@ public:
 	MidiChannel *getPercussionChannel() { return 0; }
 };
 
+
+
+//////////////////////////////////////////////////
+//
+// Part pseudo-class definition
+//
+//////////////////////////////////////////////////
+
 struct Part : public Serializable {
 	IMuseInternal *_se;
 	int _slot;
@@ -341,10 +359,13 @@ struct Part : public Serializable {
 	void saveLoadWithSerializer(Serializer *ser);
 };
 
-// WARNING: This is the internal variant of the IMUSE class.
-// imuse.h contains a public version of the same class.
-// the public version, only contains a set of methods.
-class IMuseInternal {
+
+
+/**
+ * SCUMM implementation of IMuse.
+ * This class implements the IMuse mixin interface for the SCUMM environment.
+ */
+class IMuseInternal : public IMuse {
 	friend class Player;
 	friend struct Part;
 
@@ -354,8 +375,14 @@ protected:
 	bool _sc55;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
+	TimerCallbackInfo _timer_info_adlib;
+	TimerCallbackInfo _timer_info_native;
 
+	uint32 _game_id;
 	byte **_base_sounds;
+
+	OSystem *_system;
+	Common::Mutex _mutex;
 
 protected:
 	bool _paused;
@@ -391,13 +418,19 @@ protected:
 	DeferredCommand _deferredCommands[4];
 
 protected:
+	IMuseInternal();
+	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
+
+	static void midiTimerCallback (void *data);
+	void on_timer (MidiDriver *midi);
+
 	byte *findStartOfSound(int sound);
 	bool isMT32(int sound);
 	bool isMIDI(int sound);
 	int get_queue_sound_status(int sound) const;
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
-	void initMidiDriver(MidiDriver *midi);
+	void initMidiDriver (TimerCallbackInfo *info);
 	void initGM(MidiDriver *midi);
 	void initMT32(MidiDriver *midi);
 	void init_players();
@@ -419,6 +452,7 @@ protected:
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
+	int clear_queue();
 	int query_queue(int param);
 	Player *findActivePlayer(int id);
 
@@ -432,38 +466,43 @@ protected:
 
 	void fix_parts_after_load();
 	void fix_players_after_load(ScummEngine *scumm);
+	int setImuseMasterVolume(uint vol);
 
-	static void midiTimerCallback(void *data);
-
-public:
-	IMuseInternal();
-
-	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 	void reallocateMidiChannels(MidiDriver *midi);
 	void setGlobalAdlibInstrument(byte slot, byte *data);
 	void copyGlobalAdlibInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
 
-	// IMuse interface
+protected:
+	// Internal mutex-free versions of the IMuse and MusicEngine methods.
+	bool startSound_internal (int sound);
+	int stopSound_internal (int sound);
+	int stopAllSounds_internal();
+	int getSoundStatus_internal (int sound, bool ignoreFadeouts) const;
+	int32 doCommand_internal (int a, int b, int c, int d, int e, int f, int g, int h);
+	int32 doCommand_internal (int numargs, int args[]);
 
-	void on_timer(MidiDriver *midi);
+public:
+	// IMuse interface
 	void pause(bool paused);
-	int terminate1();
-	int terminate2();
 	int save_or_load(Serializer *ser, ScummEngine *scumm);
-	int setMusicVolume(uint vol);
-	int setImuseMasterVolume(uint vol);
-	bool startSound(int sound);
-	int stopSound(int sound);
-	int stopAllSounds();
-	int getSoundStatus(int sound, bool ignoreFadeouts) const;
-	int getMusicTimer() const;
-	int32 doCommand (int a, int b, int c, int d, int e, int f, int g, int h);
+	bool get_sound_active(int sound) const;
 	int32 doCommand (int numargs, int args[]);
-	int clear_queue();
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
 
+public:
+	// MusicEngine interface
+	void setMusicVolume(int vol);
+	void startSound(int sound);
+	void stopSound(int sound);
+	void stopAllSounds();
+	int getSoundStatus (int sound) const;
+	int getMusicTimer() const;
+	void terminate();
+
+public:
+	// Factory function
 	static IMuseInternal *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 };
 

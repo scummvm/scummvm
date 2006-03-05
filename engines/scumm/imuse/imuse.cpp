@@ -215,84 +215,6 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 	return driver;
 }
 
-bool IMuseInternal::startSound(int sound) {
-	Player *player;
-	void *ptr;
-
-	// Do not start a sound if it is already set to start on an ImTrigger
-	// event. This fixes carnival music problems where a sound has been set
-	// to trigger at the right time, but then is started up immediately
-	// anyway, only to be restarted later when the trigger occurs.
-	//
-	// However, we have to make sure the sound with the trigger is actually
-	// playing, otherwise the music may stop when Sam and Max are thrown
-	// out of Bumpusville, because entering the mansion sets up a trigger
-	// for a sound that isn't necessarily playing. This is somewhat related
-	// to bug #780918.
-
-	int i;
-	ImTrigger *trigger = _snm_triggers;
-	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trigger) {
-		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus(trigger->sound,true))
-			return false;
-	}
-
-	ptr = findStartOfSound(sound);
-	if (!ptr) {
-		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
-		return false;
-	}
-
-	// Check which MIDI driver this track should use.
-	// If it's NULL, it ain't something we can play.
-	MidiDriver *driver = getBestMidiDriver(sound);
-	if (!driver)
-		return false;
-
-	// If the requested sound is already playing, start it over
-	// from scratch. This was originally a hack to prevent Sam & Max
-	// iMuse messiness while upgrading the iMuse engine, but it
-	// is apparently necessary to deal with fade-and-restart
-	// race conditions that were observed in MI2. Reference
-	// Bug #590511 and Patch #607175 (which was reversed to fix
-	// an FOA regression: Bug #622606).
-	player = findActivePlayer(sound);
-	if (!player)
-		player = allocate_player(128);
-	if (!player)
-		return false;
-
-	// HACK: This is to work around a problem at the Dino Bungie Memorial.
-	// There are three pieces of music involved here:
-	//
-	// 80 - Main theme (looping)
-	// 81 - Music when entering Rex's and Wally's room (not looping)
-	// 82 - Music when listening to Rex or Wally
-	//
-	// When entering, tune 81 starts, tune 80 is faded down (not out) and
-	// a trigger is set in tune 81 to fade tune 80 back up.
-	//
-	// When listening to Rex or Wally, tune 82 is started, tune 81 is faded
-	// out and tune 80 is faded down even further.
-	//
-	// However, when tune 81 is faded out its trigger will cause tune 80 to
-	// fade back up, resulting in two tunes being played simultaneously at
-	// full blast. It's no use trying to keep tune 81 playing at volume 0.
-	// It doesn't loop, so eventually it will terminate on its own.
-	//
-	// I don't know how the original interpreter handled this - or even if
-	// it handled it at all - but it looks like sloppy scripting to me. Our
-	// workaround is to clear the trigger if the player listens to Rex or
-	// Wally before tune 81 has finished on its own.
-
-	if (g_scumm->_game.id == GID_SAMNMAX && sound == 82 && getSoundStatus(81, false))
-		ImClearTrigger(81, 1);
-
-	player->clear();
-	return player->startSound(sound, driver, _direct_passthrough);
-}
-
-
 Player *IMuseInternal::allocate_player(byte priority) {
 	Player *player = _players, *best = NULL;
 	int i;
@@ -335,7 +257,375 @@ void IMuseInternal::init_parts() {
 	}
 }
 
-int IMuseInternal::stopSound(int sound) {
+////////////////////////////////////////
+//
+// IMuse mixin interface methods
+//
+////////////////////////////////////////
+
+void IMuseInternal::on_timer(MidiDriver *midi) {
+	Common::StackLock lock(_mutex, "IMuseInternal::on_timer()");
+	if (_paused || !_initialized)
+		return;
+
+	if (midi == _midi_native || !_midi_native)
+		handleDeferredCommands(midi);
+	sequencer_timers(midi);
+}
+
+void IMuseInternal::pause(bool paused) {
+	Common::StackLock lock(_mutex, "IMuseInternal::pause()");
+	if (_paused == paused)
+		return;
+	int vol = _music_volume;
+	if (paused)
+		_music_volume = 0;
+	update_volumes();
+	_music_volume = vol;
+
+	// Fix for Bug #817871. The MT-32 apparently fails
+	// sometimes to respond to a channel volume message
+	// (or only uses it for subsequent note events).
+	// The result is hanging notes on pause. Reportedly
+	// happens in the original distro, too. To fix that,
+	// just send AllNotesOff to the channels.
+	if (_midi_native && _native_mt32) {
+		for (int i = 0; i < 16; ++i)
+			_midi_native->send(123 << 8 | 0xB0 | i);
+	}
+
+	_paused = paused;
+}
+
+int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
+	Common::StackLock lock(_mutex, "IMuseInternal::save_or_load()");
+	const SaveLoadEntry mainEntries[] = {
+		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
+		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER(8)),
+		MKLINE(IMuseInternal, _queue_sound, sleUint16, VER(8)),
+		MKLINE(IMuseInternal, _queue_adding, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _queue_marker, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _master_volume, sleByte, VER(8)),
+		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER(8)),
+		MKLINE(IMuseInternal, _snm_trigger_index, sleUint16, VER(54)),
+		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER(8)),
+		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER(8)),
+		MKEND()
+	};
+
+	const SaveLoadEntry cmdQueueEntries[] = {
+		MKARRAY(CommandQueue, array[0], sleUint16, 8, VER(23)),
+		MKEND()
+	};
+
+	// VolumeFader is obsolete.
+	const SaveLoadEntry volumeFaderEntries[] = {
+		MK_OBSOLETE(VolumeFader, player, sleUint16, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, active, sleUint8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, num_steps, sleUint16, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_hi, sleInt8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER(8), VER(16)),
+		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER(8), VER(16)),
+		MKEND()
+	};
+
+	const SaveLoadEntry snmTriggerEntries[] = {
+		MKLINE(ImTrigger, sound, sleInt16, VER(54)),
+		MKLINE(ImTrigger, id, sleByte, VER(54)),
+		MKLINE(ImTrigger, expire, sleUint16, VER(54)),
+		MKARRAY(ImTrigger, command[0], sleUint16, 8, VER(54)),
+		MKEND()
+	};
+
+	int i;
+
+	ser->saveLoadEntries(this, mainEntries);
+	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
+	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries);
+
+	// The players
+	for (i = 0; i < ARRAYSIZE(_players); ++i)
+		_players[i].saveLoadWithSerializer(ser);
+
+	// The parts
+	for (i = 0; i < ARRAYSIZE(_parts); ++i)
+		_parts[i].saveLoadWithSerializer(ser);
+
+	{ // Load/save the instrument definitions, which were revamped with V11.
+		Part *part = &_parts[0];
+		if (ser->getVersion() >= VER(11)) {
+			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
+				part->_instrument.saveOrLoad(ser);
+			}
+		} else {
+			for (i = ARRAYSIZE(_parts); i; --i, ++part)
+				part->_instrument.clear();
+		}
+	}
+
+	// VolumeFader has been replaced with the more generic ParameterFader.
+	// FIXME: replace this loop by something like
+	// if (loading && version <= 16)  ser->skip(XXX bytes);
+	for (i = 0; i < 8; ++i)
+		ser->saveLoadEntries(0, volumeFaderEntries);
+
+	if (ser->isLoading()) {
+		// Load all sounds that we need
+		fix_players_after_load(scumm);
+		fix_parts_after_load();
+		setImuseMasterVolume(_master_volume);
+
+		if (_midi_native)
+			reallocateMidiChannels(_midi_native);
+		if (_midi_adlib)
+			reallocateMidiChannels(_midi_adlib);
+	}
+
+	return 0;
+}
+
+bool IMuseInternal::get_sound_active(int sound) const {
+	Common::StackLock lock(_mutex, "IMuseInternal::get_sound_active()");
+	return getSoundStatus_internal (sound, false);
+}
+
+int32 IMuseInternal::doCommand(int numargs, int a[]) {
+	Common::StackLock lock(_mutex, "IMuseInternal::doCommand()");
+	return doCommand_internal (numargs, a);
+}
+
+void IMuseInternal::setBase(byte **base) {
+	Common::StackLock lock(_mutex, "IMuseInternal::setBase()");
+	_base_sounds = base;
+}
+
+uint32 IMuseInternal::property(int prop, uint32 value) {
+	Common::StackLock lock(_mutex, "IMuseInternal::property()");
+	switch (prop) {
+	case IMuse::PROP_TEMPO_BASE:
+		// This is a specified as a percentage of normal
+		// music speed. The number must be an integer
+		// ranging from 50 to 200(for 50% to 200% normal speed).
+		if (value >= 50 && value <= 200)
+			_tempoFactor = value;
+		break;
+
+	case IMuse::PROP_NATIVE_MT32:
+		_native_mt32 = (value > 0);
+		Instrument::nativeMT32(_native_mt32);
+		if (_midi_native && _native_mt32)
+			initMT32(_midi_native);
+		break;
+
+	case IMuse::PROP_GS:
+		_enable_gs = (value > 0);
+
+		// If True Roland MT-32 is not selected, run in GM or GS mode.
+		// If it is selected, change the Roland GS synth to MT-32 mode.
+		if (_midi_native && !_native_mt32)
+			initGM(_midi_native);
+		else if (_midi_native && _native_mt32 && _enable_gs) {
+			_sc55 = true;
+			initGM(_midi_native);
+		}
+		break;
+
+	case IMuse::PROP_LIMIT_PLAYERS:
+		if (value > 0 && value <= ARRAYSIZE(_players))
+			_player_limit = (int)value;
+		break;
+
+	case IMuse::PROP_RECYCLE_PLAYERS:
+		_recycle_players = (value != 0);
+		break;
+
+	case IMuse::PROP_DIRECT_PASSTHROUGH:
+		_direct_passthrough = (value != 0);
+		break;
+
+	case IMuse::PROP_GAME_ID:
+		_game_id = value;
+		break;
+	}
+
+	return 0;
+}
+
+////////////////////////////////////////
+//
+// MusicEngine interface methods
+//
+////////////////////////////////////////
+
+void IMuseInternal::setMusicVolume (int vol) {
+	Common::StackLock lock(_mutex, "IMuseInternal::setMusicVolume()");
+	if (vol > 255)
+		vol = 255;
+	if (_music_volume == vol)
+		return;
+	_music_volume = vol;
+	vol = _master_volume * _music_volume / 255;
+	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
+		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
+	}
+	if (!_paused)
+		update_volumes();
+}
+
+void IMuseInternal::startSound(int sound) {
+	Common::StackLock lock(_mutex, "IMuseInternal::startSound()");
+	startSound_internal (sound);
+}
+
+void IMuseInternal::stopSound(int sound) {
+	Common::StackLock lock(_mutex, "IMuseInternal::stopSound()");
+	stopSound_internal (sound);
+}
+
+void IMuseInternal::stopAllSounds() {
+	Common::StackLock lock(_mutex, "IMuseInternal::stopAllSounds()");
+	stopAllSounds_internal();
+}
+
+int IMuseInternal::getSoundStatus (int sound) const {
+	Common::StackLock lock(_mutex, "IMuseInternal::getSoundStatus()");
+	return getSoundStatus_internal (sound, true);
+}
+
+int IMuseInternal::getMusicTimer() const {
+	Common::StackLock lock(_mutex, "IMuseInternal::getMusicTimer()");
+	int best_time = 0;
+	const Player *player = _players;
+	for (int i = ARRAYSIZE(_players); i; i--, player++) {
+		if (player->isActive()) {
+			int timer = player->getMusicTimer();
+			if (timer > best_time)
+				best_time = timer;
+		}
+	}
+	return best_time;
+}
+
+void IMuseInternal::terminate() {
+	// Do just enough stuff inside the mutex to
+	// make sure any MIDI timing threads won't
+	// interrupt us, and then do the rest outside
+	// the mutex.
+	{
+		Common::StackLock lock(_mutex, "IMuseInternal::terminate()");
+		_initialized = false;
+		stopAllSounds_internal();
+	}
+
+	if (_midi_adlib) {
+		_midi_adlib->close();
+		delete _midi_adlib;
+		_midi_adlib = 0;
+	}
+
+	if (_midi_native) {
+		if (_native_mt32) {
+			// Reset the MT-32
+			_midi_native->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
+			_system->delayMillis(250);
+		}
+
+		_midi_native->close();
+		delete _midi_native;
+		_midi_native = 0;
+	}
+}
+
+////////////////////////////////////////
+//
+// Internal versions of the IMuse and
+// MusicEngine base class methods.
+// These methods assume the appropriate
+// mutex locks have already been set,
+// and may also have slightly different
+// semantics than the interface methods.
+//
+////////////////////////////////////////
+
+bool IMuseInternal::startSound_internal (int sound) {
+	// Do not start a sound if it is already set to start on an ImTrigger
+	// event. This fixes carnival music problems where a sound has been set
+	// to trigger at the right time, but then is started up immediately
+	// anyway, only to be restarted later when the trigger occurs.
+	//
+	// However, we have to make sure the sound with the trigger is actually
+	// playing, otherwise the music may stop when Sam and Max are thrown
+	// out of Bumpusville, because entering the mansion sets up a trigger
+	// for a sound that isn't necessarily playing. This is somewhat related
+	// to bug #780918.
+
+	int i;
+	ImTrigger *trigger = _snm_triggers;
+	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trigger) {
+		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus_internal (trigger->sound,true))
+			return false;
+	}
+
+	void *ptr = findStartOfSound(sound);
+	if (!ptr) {
+		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
+		return false;
+	}
+
+	// Check which MIDI driver this track should use.
+	// If it's NULL, it ain't something we can play.
+	MidiDriver *driver = getBestMidiDriver(sound);
+	if (!driver)
+		return false;
+
+	// If the requested sound is already playing, start it over
+	// from scratch. This was originally a hack to prevent Sam & Max
+	// iMuse messiness while upgrading the iMuse engine, but it
+	// is apparently necessary to deal with fade-and-restart
+	// race conditions that were observed in MI2. Reference
+	// Bug #590511 and Patch #607175 (which was reversed to fix
+	// an FOA regression: Bug #622606).
+	Player *player = findActivePlayer(sound);
+	if (!player)
+		player = allocate_player(128);
+	if (!player)
+		return false;
+
+	// HACK: This is to work around a problem at the Dino Bungie Memorial.
+	// There are three pieces of music involved here:
+	//
+	// 80 - Main theme (looping)
+	// 81 - Music when entering Rex's and Wally's room (not looping)
+	// 82 - Music when listening to Rex or Wally
+	//
+	// When entering, tune 81 starts, tune 80 is faded down (not out) and
+	// a trigger is set in tune 81 to fade tune 80 back up.
+	//
+	// When listening to Rex or Wally, tune 82 is started, tune 81 is faded
+	// out and tune 80 is faded down even further.
+	//
+	// However, when tune 81 is faded out its trigger will cause tune 80 to
+	// fade back up, resulting in two tunes being played simultaneously at
+	// full blast. It's no use trying to keep tune 81 playing at volume 0.
+	// It doesn't loop, so eventually it will terminate on its own.
+	//
+	// I don't know how the original interpreter handled this - or even if
+	// it handled it at all - but it looks like sloppy scripting to me. Our
+	// workaround is to clear the trigger if the player listens to Rex or
+	// Wally before tune 81 has finished on its own.
+
+	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal (81, false))
+		ImClearTrigger(81, 1);
+
+	player->clear();
+	return player->startSound(sound, driver, _direct_passthrough);
+}
+
+int IMuseInternal::stopSound_internal (int sound) {
 	int r = -1;
 	Player *player = findActivePlayer(sound);
 	if (player) {
@@ -345,40 +635,279 @@ int IMuseInternal::stopSound(int sound) {
 	return r;
 }
 
-int IMuseInternal::stopAllSounds() {
+int IMuseInternal::stopAllSounds_internal() {
 	Player *player = _players;
-	int i;
-
-	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
+	for (int i = ARRAYSIZE(_players); i; i--, player++) {
 		if (player->isActive())
 			player->clear();
 	}
 	return 0;
 }
 
-void IMuseInternal::on_timer(MidiDriver *midi) {
-	if (_paused || !_initialized)
-		return;
-
-	if (midi == _midi_native || !_midi_native)
-		handleDeferredCommands(midi);
-	sequencer_timers(midi);
-}
-
-int IMuseInternal::getMusicTimer() const {
-	int best_time = 0;
+int IMuseInternal::getSoundStatus_internal (int sound, bool ignoreFadeouts) const {
 	const Player *player = _players;
-	int i;
-
-	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
-		if (player->isActive()) {
-			int timer = player->getMusicTimer();
-			if (timer > best_time)
-				best_time = timer;
+	for (int i = ARRAYSIZE(_players); i; i--, player++) {
+		if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut())) {
+			if (sound == -1)
+				return player->getID();
+			else if (player->getID() == (uint16)sound)
+				return 1;
 		}
 	}
-	return best_time;
+	return (sound == -1) ? 0 : get_queue_sound_status(sound);
 }
+
+int32 IMuseInternal::doCommand_internal
+	(int a, int b, int c, int d, int e, int f, int g, int h)
+{
+	int args[8];
+	args[0] = a;
+	args[1] = b;
+	args[2] = c;
+	args[3] = d;
+	args[4] = e;
+	args[5] = f;
+	args[6] = g;
+	args[7] = h;
+	return doCommand_internal (8, args);
+}
+
+int32 IMuseInternal::doCommand_internal (int numargs, int a[]) {
+	if (numargs < 1)
+		return -1;
+
+	int i;
+	byte cmd = a[0] & 0xFF;
+	byte param = a[0] >> 8;
+	Player *player = NULL;
+
+	if (!_initialized && (cmd || param))
+		return -1;
+
+	{
+		char string[128];
+		sprintf(string, "doCommand - %d (%d/%d)", a[0], (int)param, (int)cmd);
+		for (i = 1; i < numargs; ++i)
+			sprintf(string + strlen(string), ", %d", a[i]);
+		debugC(DEBUG_IMUSE, string);
+	}
+
+	if (param == 0) {
+		switch (cmd) {
+		case 6:
+			if (a[1] > 127)
+				return -1;
+			else {
+				debug(0, "IMuse doCommand(6) - setImuseMasterVolume (%d)", a[1]);
+				return setImuseMasterVolume((a[1] << 1) | (a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
+			}
+		case 7:
+			debug(0, "IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
+			return _master_volume / 2; // Convert from 0-255 to 0-127
+		case 8:
+			return startSound_internal (a[1]) ? 0 : -1;
+		case 9:
+			return stopSound_internal (a[1]);
+		case 10: // FIXME: Sam and Max - Not sure if this is correct
+			return stopAllSounds_internal();
+		case 11:
+			return stopAllSounds_internal();
+		case 12:
+			// Sam & Max: Player-scope commands
+			player = findActivePlayer(a[1]);
+			if (player == NULL)
+				return -1;
+
+			switch (a[3]) {
+			case 6:
+				// Set player volume.
+				return player->setVolume(a[4]);
+			default:
+				error("IMuseInternal::doCommand(12) unsupported sub-command %d", a[3]);
+			}
+			return -1;
+		case 13:
+			return getSoundStatus_internal (a[1], true);
+		case 14:
+			// Sam and Max: Parameter fade
+			player = findActivePlayer(a[1]);
+			if (player)
+				return player->addParameterFader(a[3], a[4], a[5]);
+			return -1;
+
+		case 15:
+			// Sam & Max: Set hook for a "maybe" jump
+			player = findActivePlayer(a[1]);
+			if (player) {
+				player->setHook(0, a[3], 0);
+				return 0;
+			}
+			return -1;
+		case 16:
+			debug(0, "IMuse doCommand(16) - set_volchan (%d, %d)", a[1], a[2]);
+			return set_volchan(a[1], a[2]);
+		case 17:
+			if (_game_id != GID_SAMNMAX) {
+				debug(0, "IMuse doCommand(17) - set_channel_volume (%d, %d)", a[1], a[2]);
+				return set_channel_volume(a[1], a[2]);
+			} else {
+				if (a[4]) {
+					int b[16];
+					memset(b, 0, sizeof(b));
+					for (i = 0; i < numargs; ++i)
+						b[i] = a[i];
+					return ImSetTrigger(b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11]);
+				} else {
+					return ImClearTrigger(a[1], a[3]);
+				}
+			}
+		case 18:
+			if (_game_id != GID_SAMNMAX) {
+				return set_volchan_entry(a[1], a[2]);
+			} else {
+				// Sam & Max: ImCheckTrigger.
+				// According to Mike's notes to Ender,
+				// this function returns the number of triggers
+				// associated with a particular player ID and
+				// trigger ID.
+				a[0] = 0;
+				for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
+					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id &&
+					   (a[3] == -1 || _snm_triggers[i].id == a[3]))
+					{
+						++a[0];
+					}
+				}
+				return a[0];
+			}
+		case 19:
+			// Sam & Max: ImClearTrigger
+			// This should clear a trigger that's been set up
+			// with ImSetTrigger(cmd == 17). Seems to work....
+			return ImClearTrigger(a[1], a[3]);
+		case 20:
+			// Sam & Max: Deferred Command
+			addDeferredCommand(a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+			return 0;
+		case 2:
+		case 3:
+			return 0;
+		default:
+			error("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+		}
+	} else if (param == 1) {
+		if ((1 << cmd) & 0x783FFF) {
+			player = findActivePlayer(a[1]);
+			if (!player)
+				return -1;
+			if ((1 << cmd) & (1 << 11 | 1 << 22)) {
+				assert(a[2] >= 0 && a[2] <= 15);
+				player = (Player *)player->getPart(a[2]);
+				if (!player)
+					return -1;
+			}
+		}
+
+		switch (cmd) {
+		case 0:
+			if (_game_id == GID_SAMNMAX) {
+				if (a[3] == 1) // Measure number
+					return ((player->getBeatIndex() - 1) >> 2) + 1;
+				else if (a[3] == 2) // Beat number
+					return player->getBeatIndex();
+				return -1;
+			} else {
+				return player->getParam(a[2], a[3]);
+			}
+		case 1:
+			if (_game_id == GID_SAMNMAX) {
+				// FIXME: Could someone verify this?
+				//
+				// This jump instruction is known to be used in
+				// the following cases:
+				//
+				// 1) Going anywhere on the USA map
+				// 2) Winning the Wak-A-Rat game
+				// 3) Losing or quitting the Wak-A-Rat game
+				// 4) Conroy hitting Max with a golf club
+				//
+				// For all these cases the position parameters
+				// are always the same: 2, 1, 0, 0.
+				//
+				// 5) When leaving the bigfoot party. The
+				//    position parameters are: 3, 4, 300, 0
+				// 6) At Frog Rock, when the UFO appears. The
+				//    position parameters are: 10, 4, 400, 1
+				//
+				// The last two cases used to be buggy, so I
+				// have made a change to how the last two
+				// position parameters are handled. I still do
+				// not know if it's correct, but it sounds
+				// good to me at least.
+
+				debug(0, "doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d)", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+				player->jump(a[3] - 1, (a[4] - 1) * 4 + a[5], a[6] + ((a[7] * player->getTicksPerBeat()) >> 2));
+			} else
+				player->setPriority(a[2]);
+			return 0;
+		case 2:
+			return player->setVolume(a[2]);
+		case 3:
+			player->setPan(a[2]);
+			return 0;
+		case 4:
+			return player->setTranspose(a[2], a[3]);
+		case 5:
+			player->setDetune(a[2]);
+			return 0;
+		case 6:
+			player->setSpeed(a[2]);
+			return 0;
+		case 7:
+			return player->jump(a[2], a[3], a[4]) ? 0 : -1;
+		case 8:
+			return player->scan(a[2], a[3], a[4]);
+		case 9:
+			return player->setLoop(a[2], a[3], a[4], a[5], a[6]) ? 0 : -1;
+		case 10:
+			player->clearLoop();
+			return 0;
+		case 11:
+			((Part *)player)->set_onoff(a[3] != 0);
+			return 0;
+		case 12:
+			return player->setHook(a[2], a[3], a[4]);
+		case 13:
+			return player->addParameterFader(ParameterFader::pfVolume, a[2], a[3]);
+		case 14:
+			return enqueue_trigger(a[1], a[2]);
+		case 15:
+			return enqueue_command(a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+		case 16:
+			return clear_queue();
+		case 19:
+			return player->getParam(a[2], a[3]);
+		case 20:
+			return player->setHook(a[2], a[3], a[4]);
+		case 21:
+			return -1;
+		case 22:
+			((Part *)player)->volume(a[3]);
+			return 0;
+		case 23:
+			return query_queue(a[1]);
+		case 24:
+			return 0;
+		default:
+			error("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+			return -1;
+		}
+	}
+
+	return -1;
+}
+
+// mixin end
 
 void IMuseInternal::sequencer_timers(MidiDriver *midi) {
 	Player *player = _players;
@@ -431,7 +960,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 			break;
 		_queue_end = pos;
 
-		doCommand(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
+		doCommand_internal (p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0);
 
 		if (_queue_cleared)
 			return;
@@ -467,21 +996,6 @@ Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
 		debug(1, "Denying part request");
 	}
 	return best;
-}
-
-int IMuseInternal::getSoundStatus(int sound, bool ignoreFadeouts) const {
-	int i;
-	const Player *player = _players;
-
-	for (i = ARRAYSIZE(_players); i != 0; i--, player++) {
-		if (player->isActive() && (!ignoreFadeouts || !player->isFadingOut())) {
-			if (sound == -1)
-				return player->getID();
-			else if (player->getID() == (uint16)sound)
-				return 1;
-		}
-	}
-	return (sound == -1) ? 0 : get_queue_sound_status(sound);
 }
 
 int IMuseInternal::get_queue_sound_status(int sound) const {
@@ -613,21 +1127,6 @@ int IMuseInternal::query_queue(int param) {
 	}
 }
 
-int IMuseInternal::setMusicVolume(uint vol) {
-	if (vol > 255)
-		vol = 255;
-	if (_music_volume == vol)
-		return 0;
-	_music_volume = vol;
-	vol = _master_volume * _music_volume / 255;
-	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
-		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
-	}
-	if (!_paused)
-		update_volumes();
-	return 0;
-}
-
 int IMuseInternal::setImuseMasterVolume(uint vol) {
 	if (vol > 255)
 		vol = 255;
@@ -640,37 +1139,6 @@ int IMuseInternal::setImuseMasterVolume(uint vol) {
 	}
 	if (!_paused)
 		update_volumes();
-	return 0;
-}
-
-int IMuseInternal::terminate1() {
-	_initialized = false;
-	stopAllSounds();
-	return 0;
-}
-
-// This is the stuff that has to be done
-// outside the monitor's mutex, otherwise
-// a deadlock occurs.
-int IMuseInternal::terminate2() {
-	if (_midi_adlib) {
-		_midi_adlib->close();
-		delete _midi_adlib;
-		_midi_adlib = 0;
-	}
-
-	if (_midi_native) {
-		if (_native_mt32) {
-			// Reset the MT-32
-			_midi_native->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
-			g_system->delayMillis(250);
-		}
-
-		_midi_native->close();
-		delete _midi_native;
-		_midi_native = 0;
-	}
-
 	return 0;
 }
 
@@ -696,254 +1164,6 @@ int IMuseInternal::enqueue_trigger(int sound, int marker) {
 	_queue_sound = sound;
 	_queue_marker = marker;
 	return 0;
-}
-
-int32 IMuseInternal::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) {
-	int args[8];
-	args[0] = a;
-	args[1] = b;
-	args[2] = c;
-	args[3] = d;
-	args[4] = e;
-	args[5] = f;
-	args[6] = g;
-	args[7] = h;
-	return doCommand(8, args);
-}
-
-int32 IMuseInternal::doCommand(int numargs, int a[]) {
-	int i;
-
-	if (numargs < 1)
-		return -1;
-	byte cmd = a[0] & 0xFF;
-	byte param = a[0] >> 8;
-	Player *player = NULL;
-
-	if (!_initialized && (cmd || param))
-		return -1;
-
-	{
-		char string[128];
-		sprintf(string, "doCommand - %d (%d/%d)", a[0], (int)param, (int)cmd);
-		for (i = 1; i < numargs; ++i)
-			sprintf(string + strlen(string), ", %d", a[i]);
-		debugC(DEBUG_IMUSE, string);
-	}
-
-	if (param == 0) {
-		switch (cmd) {
-		case 6:
-			if (a[1] > 127)
-				return -1;
-			else {
-				debug(0, "IMuse doCommand(6) - setImuseMasterVolume (%d)", a[1]);
-				return setImuseMasterVolume((a[1] << 1) | (a[1] ? 0 : 1)); // Convert from 0-127 to 0-255
-			}
-		case 7:
-			debug(0, "IMuse doCommand(7) - getMasterVolume (%d)", a[1]);
-			return _master_volume / 2; // Convert from 0-255 to 0-127
-		case 8:
-			return startSound(a[1]) ? 0 : -1;
-		case 9:
-			return stopSound(a[1]);
-		case 10: // FIXME: Sam and Max - Not sure if this is correct
-			return stopAllSounds();
-		case 11:
-			return stopAllSounds();
-		case 12:
-			// Sam & Max: Player-scope commands
-			player = findActivePlayer(a[1]);
-			if (!player)
-				return -1;
-
-			switch (a[3]) {
-			case 6:
-				// Set player volume.
-				return player->setVolume(a[4]);
-			default:
-				error("IMuseInternal::doCommand(12) unsupported sub-command %d", a[3]);
-			}
-			return -1;
-		case 13:
-			return getSoundStatus(a[1], true);
-		case 14:
-			// Sam and Max: Parameter fade
-			player = findActivePlayer(a[1]);
-			if (player)
-				return player->addParameterFader(a[3], a[4], a[5]);
-			return -1;
-
-		case 15:
-			// Sam & Max: Set hook for a "maybe" jump
-			player = findActivePlayer(a[1]);
-			if (player) {
-				player->setHook(0, a[3], 0);
-				return 0;
-			}
-			return -1;
-		case 16:
-			debug(0, "IMuse doCommand(16) - set_volchan (%d, %d)", a[1], a[2]);
-			return set_volchan(a[1], a[2]);
-		case 17:
-			if (g_scumm->_game.id != GID_SAMNMAX) {
-				debug(0, "IMuse doCommand(17) - set_channel_volume (%d, %d)", a[1], a[2]);
-				return set_channel_volume(a[1], a[2]);
-			} else {
-				if (a[4]) {
-					int b[16];
-					memset(b, 0, sizeof(b));
-					for (i = 0; i < numargs; ++i)
-						b[i] = a[i];
-					return ImSetTrigger(b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11]);
-				} else {
-					return ImClearTrigger(a[1], a[3]);
-				}
-			}
-		case 18:
-			if (g_scumm->_game.id != GID_SAMNMAX) {
-				return set_volchan_entry(a[1], a[2]);
-			} else {
-				// Sam & Max: ImCheckTrigger.
-				// According to Mike's notes to Ender,
-				// this function returns the number of triggers
-				// associated with a particular player ID and
-				// trigger ID.
-				a[0] = 0;
-				for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
-					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id &&
-					   (a[3] == -1 || _snm_triggers[i].id == a[3]))
-					{
-						++a[0];
-					}
-				}
-				return a[0];
-			}
-		case 19:
-			// Sam & Max: ImClearTrigger
-			// This should clear a trigger that's been set up
-			// with ImSetTrigger(cmd == 17). Seems to work....
-			return ImClearTrigger(a[1], a[3]);
-		case 20:
-			// Sam & Max: Deferred Command
-			addDeferredCommand(a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-			return 0;
-		case 2:
-		case 3:
-			return 0;
-		default:
-			error("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-		}
-	} else if (param == 1) {
-		if ((1 << cmd) & 0x783FFF) {
-			player = findActivePlayer(a[1]);
-			if (!player)
-				return -1;
-			if ((1 << cmd) & (1 << 11 | 1 << 22)) {
-				assert(a[2] >= 0 && a[2] <= 15);
-				player = (Player *)player->getPart(a[2]);
-				if (!player)
-					return -1;
-			}
-		}
-
-		switch (cmd) {
-		case 0:
-			if (g_scumm->_game.id == GID_SAMNMAX) {
-				if (a[3] == 1) // Measure number
-					return ((player->getBeatIndex() - 1) >> 2) + 1;
-				else if (a[3] == 2) // Beat number
-					return player->getBeatIndex();
-				return -1;
-			} else {
-				return player->getParam(a[2], a[3]);
-			}
-		case 1:
-			if (g_scumm->_game.id == GID_SAMNMAX) {
-				// FIXME: Could someone verify this?
-				//
-				// This jump instruction is known to be used in
-				// the following cases:
-				//
-				// 1) Going anywhere on the USA map
-				// 2) Winning the Wak-A-Rat game
-				// 3) Losing or quitting the Wak-A-Rat game
-				// 4) Conroy hitting Max with a golf club
-				//
-				// For all these cases the position parameters
-				// are always the same: 2, 1, 0, 0.
-				//
-				// 5) When leaving the bigfoot party. The
-				//    position parameters are: 3, 4, 300, 0
-				// 6) At Frog Rock, when the UFO appears. The
-				//    position parameters are: 10, 4, 400, 1
-				//
-				// The last two cases used to be buggy, so I
-				// have made a change to how the last two
-				// position parameters are handled. I still do
-				// not know if it's correct, but it sounds
-				// good to me at least.
-
-				debug(0, "doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d)", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-				player->jump(a[3] - 1, (a[4] - 1) * 4 + a[5], a[6] + ((a[7] * player->getTicksPerBeat()) >> 2));
-			} else
-				player->setPriority(a[2]);
-			return 0;
-		case 2:
-			return player->setVolume(a[2]);
-		case 3:
-			player->setPan(a[2]);
-			return 0;
-		case 4:
-			return player->setTranspose(a[2], a[3]);
-		case 5:
-			player->setDetune(a[2]);
-			return 0;
-		case 6:
-			player->setSpeed(a[2]);
-			return 0;
-		case 7:
-			return player->jump(a[2], a[3], a[4]) ? 0 : -1;
-		case 8:
-			return player->scan(a[2], a[3], a[4]);
-		case 9:
-			return player->setLoop(a[2], a[3], a[4], a[5], a[6]) ? 0 : -1;
-		case 10:
-			player->clearLoop();
-			return 0;
-		case 11:
-			((Part *)player)->set_onoff(a[3] != 0);
-			return 0;
-		case 12:
-			return player->setHook(a[2], a[3], a[4]);
-		case 13:
-			return player->addParameterFader(ParameterFader::pfVolume, a[2], a[3]);
-		case 14:
-			return enqueue_trigger(a[1], a[2]);
-		case 15:
-			return enqueue_command(a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-		case 16:
-			return clear_queue();
-		case 19:
-			return player->getParam(a[2], a[3]);
-		case 20:
-			return player->setHook(a[2], a[3], a[4]);
-		case 21:
-			return -1;
-		case 22:
-			((Part *)player)->volume(a[3]);
-			return 0;
-		case 23:
-			return query_queue(a[1]);
-		case 24:
-			return 0;
-		default:
-			error("doCommand(%d [%d/%d], %d, %d, %d, %d, %d, %d, %d) unsupported", a[0], param, cmd, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-			return -1;
-		}
-	}
-
-	return -1;
 }
 
 int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d, int e, int f, int g, int h) {
@@ -1003,8 +1223,8 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	// NOTE: We ONLY do this if the sound that will trigger the command is actually
 	// playing. Otherwise, there's a problem when exiting and re-entering the
 	// Bumpusville mansion. Ref Bug #780918.
-	if (trig->command[0] == 8 && getSoundStatus(trig->command[1],true) && getSoundStatus(sound,true))
-		stopSound(trig->command[1]);
+	if (trig->command[0] == 8 && getSoundStatus_internal (trig->command[1],true) && getSoundStatus_internal (sound,true))
+		stopSound_internal (trig->command[1]);
 	return 0;
 }
 
@@ -1029,7 +1249,7 @@ int32 IMuseInternal::ImFireAllTriggers(int sound) {
 	for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
 		if (_snm_triggers[i].sound == sound) {
 			_snm_triggers[i].sound = _snm_triggers[i].id = 0;
-			doCommand(8, _snm_triggers[i].command);
+			doCommand_internal (8, _snm_triggers[i].command);
 			++count;
 		}
 	}
@@ -1141,57 +1361,6 @@ int IMuseInternal::get_volchan_entry(uint a) {
 	return -1;
 }
 
-uint32 IMuseInternal::property(int prop, uint32 value) {
-	switch (prop) {
-	case IMuse::PROP_TEMPO_BASE:
-		// This is a specified as a percentage of normal
-		// music speed. The number must be an integer
-		// ranging from 50 to 200(for 50% to 200% normal speed).
-		if (value >= 50 && value <= 200)
-			_tempoFactor = value;
-		break;
-
-	case IMuse::PROP_NATIVE_MT32:
-		_native_mt32 = (value > 0);
-		Instrument::nativeMT32(_native_mt32);
-		if (_midi_native && _native_mt32)
-			initMT32(_midi_native);
-		break;
-
-	case IMuse::PROP_GS:
-		_enable_gs = (value > 0);
-
-		// If True Roland MT-32 is not selected, run in GM or GS mode.
-		// If it is selected, change the Roland GS synth to MT-32 mode.
-		if (_midi_native && !_native_mt32)
-			initGM(_midi_native);
-		else if (_midi_native && _native_mt32 && _enable_gs) {
-			_sc55 = true;
-			initGM(_midi_native);
-		}
-		break;
-
-	case IMuse::PROP_LIMIT_PLAYERS:
-		if (value > 0 && value <= ARRAYSIZE(_players))
-			_player_limit = (int)value;
-		break;
-
-	case IMuse::PROP_RECYCLE_PLAYERS:
-		_recycle_players = (value != 0);
-		break;
-
-	case IMuse::PROP_DIRECT_PASSTHROUGH:
-		_direct_passthrough = (value != 0);
-		break;
-	}
-
-	return 0;
-}
-
-void IMuseInternal::setBase(byte **base) {
-	_base_sounds = base;
-}
-
 IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver) {
 	IMuseInternal *i = new IMuseInternal;
 	i->initialize(syst, nativeMidiDriver, adlibMidiDriver);
@@ -1201,12 +1370,19 @@ IMuseInternal *IMuseInternal::create(OSystem *syst, MidiDriver *nativeMidiDriver
 int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver *adlib_midi) {
 	int i;
 
+	_system = syst;
 	_midi_native = native_midi;
 	_midi_adlib = adlib_midi;
-	if (native_midi != NULL)
-		initMidiDriver(native_midi);
-	if (adlib_midi != NULL)
-		initMidiDriver(adlib_midi);
+	if (native_midi != NULL) {
+		_timer_info_native.imuse = this;
+		_timer_info_native.driver = native_midi;
+		initMidiDriver (&_timer_info_native);
+	}
+	if (adlib_midi != NULL) {
+		_timer_info_adlib.imuse = this;
+		_timer_info_adlib.driver = adlib_midi;
+		initMidiDriver (&_timer_info_adlib);
+	}
 
 	if (!_tempoFactor)
 		_tempoFactor = 100;
@@ -1224,14 +1400,14 @@ int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver
 	return 0;
 }
 
-void IMuseInternal::initMidiDriver(MidiDriver *midi) {
+void IMuseInternal::initMidiDriver (TimerCallbackInfo *info) {
 	// Open MIDI driver
-	int result = midi->open();
+	int result = info->driver->open();
 	if (result)
 		error("IMuse initialization - %s", MidiDriver::getErrorName(result));
 
 	// Connect to the driver's timer
-	midi->setTimerCallback(midi, &IMuseInternal::midiTimerCallback);
+	info->driver->setTimerCallback (info, &IMuseInternal::midiTimerCallback);
 }
 
 void IMuseInternal::initMT32(MidiDriver *midi) {
@@ -1241,16 +1417,16 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 
 	// Reset the MT-32
 	midi->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
-	g_system->delayMillis(250);
+	_system->delayMillis(250);
 
 	// Setup master tune, reverb mode, reverb time, reverb level,
 	// channel mapping, partial reserve and master volume
 	midi->sysEx((const byte *) "\x41\x10\x16\x12\x10\x00\x00\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64\x77", 31);
-	g_system->delayMillis(250);
+	_system->delayMillis(250);
 
 	// Map percussion to notes 24 - 34 without reverb
 	midi->sysEx((const byte *) "\x41\x10\x16\x12\x03\x01\x10\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00\x44", 52);
-	g_system->delayMillis(250);
+	_system->delayMillis(250);
 
 	// Compute version string (truncated to 20 chars max.)
 	strcat(info, gScummVMVersion);
@@ -1267,7 +1443,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 		checksum -= buffer[i];
 	buffer[27] = checksum & 0x7F;
 	midi->sysEx(buffer, 28);
-	g_system->delayMillis(1000);
+	_system->delayMillis(1000);
 }
 
 void IMuseInternal::initGM(MidiDriver *midi) {
@@ -1279,7 +1455,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 	memcpy(&buffer[0], "\xF0\x7E\x7F\x09\x01\xF7", 6);
 	midi->sysEx(buffer, 6);
 	debug(2, "GM SysEx: GM System On");
-	g_system->delayMillis(200);
+	_system->delayMillis(200);
 
 	if (_enable_gs) {
 
@@ -1297,7 +1473,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		memcpy(&buffer[5], "\x40\x00\x7F\x00\x41\xF7", 6);
 		midi->sysEx(buffer, 11);
 		debug(2, "GS SysEx: GS Reset");
-		g_system->delayMillis(200);
+		_system->delayMillis(200);
 
 		if (_sc55) {
 			// This mode is for GS devices that support an MT-32-compatible
@@ -1419,29 +1595,6 @@ void IMuseInternal::init_queue() {
 	_trigger_count = 0;
 }
 
-void IMuseInternal::pause(bool paused) {
-	if (_paused == paused)
-		return;
-	int vol = _music_volume;
-	if (paused)
-		_music_volume = 0;
-	update_volumes();
-	_music_volume = vol;
-
-	// Fix for Bug #817871. The MT-32 apparently fails
-	// sometimes to respond to a channel volume message
-	// (or only uses it for subsequent note events).
-	// The result is hanging notes on pause. Reportedly
-	// happens in the original distro, too. To fix that,
-	// just send AllNotesOff to the channels.
-	if (_midi_native && _native_mt32) {
-		for (int i = 0; i < 16; ++i)
-			_midi_native->send(123 << 8 | 0xB0 | i);
-	}
-
-	_paused = paused;
-}
-
 void IMuseInternal::handleDeferredCommands(MidiDriver *midi) {
 	uint32 advance = midi->getBaseTempo();
 
@@ -1451,7 +1604,7 @@ void IMuseInternal::handleDeferredCommands(MidiDriver *midi) {
 		if (!ptr->time_left)
 			continue;
 		if (ptr->time_left <= advance) {
-			doCommand(ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
+			doCommand_internal (ptr->a, ptr->b, ptr->c, ptr->d, ptr->e, ptr->f, 0, 0);
 			ptr->time_left = advance;
 		}
 		ptr->time_left -= advance;
@@ -1478,102 +1631,6 @@ void IMuseInternal::addDeferredCommand(int time, int a, int b, int c, int d, int
 		ptr->e = e;
 		ptr->f = f;
 	}
-}
-
-////////////////////////////////////////////////////////////
-//
-// IMuseInternal load/save implementation
-//
-////////////////////////////////////////////////////////////
-
-int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
-	const SaveLoadEntry mainEntries[] = {
-		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
-		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER(8)),
-		MKLINE(IMuseInternal, _queue_sound, sleUint16, VER(8)),
-		MKLINE(IMuseInternal, _queue_adding, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _queue_marker, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _master_volume, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER(8)),
-		MKLINE(IMuseInternal, _snm_trigger_index, sleUint16, VER(54)),
-		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER(8)),
-		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER(8)),
-		MKEND()
-	};
-
-	const SaveLoadEntry cmdQueueEntries[] = {
-		MKARRAY(CommandQueue, array[0], sleUint16, 8, VER(23)),
-		MKEND()
-	};
-
-	// VolumeFader is obsolete.
-	const SaveLoadEntry volumeFaderEntries[] = {
-		MK_OBSOLETE(VolumeFader, player, sleUint16, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, active, sleUint8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, num_steps, sleUint16, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_hi, sleInt8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER(8), VER(16)),
-		MKEND()
-	};
-
-	const SaveLoadEntry snmTriggerEntries[] = {
-		MKLINE(ImTrigger, sound, sleInt16, VER(54)),
-		MKLINE(ImTrigger, id, sleByte, VER(54)),
-		MKLINE(ImTrigger, expire, sleUint16, VER(54)),
-		MKARRAY(ImTrigger, command[0], sleUint16, 8, VER(54)),
-		MKEND()
-	};
-
-	int i;
-
-	ser->saveLoadEntries(this, mainEntries);
-	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
-	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries);
-
-	// The players
-	for (i = 0; i < ARRAYSIZE(_players); ++i)
-		_players[i].saveLoadWithSerializer(ser);
-	
-	// The parts
-	for (i = 0; i < ARRAYSIZE(_parts); ++i)
-		_parts[i].saveLoadWithSerializer(ser);
-
-	{ // Load/save the instrument definitions, which were revamped with V11.
-		Part *part = &_parts[0];
-		if (ser->getVersion() >= VER(11)) {
-			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
-				part->_instrument.saveOrLoad(ser);
-			}
-		} else {
-			for (i = ARRAYSIZE(_parts); i; --i, ++part)
-				part->_instrument.clear();
-		}
-	}
-
-	// VolumeFader has been replaced with the more generic ParameterFader.
-	// FIXME: replace this loop by something like
-	// if (loading && version <= 16)  ser->skip(XXX bytes);
-	for (i = 0; i < 8; ++i)
-		ser->saveLoadEntries(0, volumeFaderEntries);
-
-	if (ser->isLoading()) {
-		// Load all sounds that we need
-		fix_players_after_load(scumm);
-		fix_parts_after_load();
-		setImuseMasterVolume(_master_volume);
-
-		if (_midi_native)
-			reallocateMidiChannels(_midi_native);
-		if (_midi_adlib)
-			reallocateMidiChannels(_midi_adlib);
-	}
-
-	return 0;
 }
 
 void IMuseInternal::fix_parts_after_load() {
@@ -1606,10 +1663,9 @@ void IMuseInternal::fix_players_after_load(ScummEngine *scumm) {
 //
 ////////////////////////////////////////
 
-void IMuseInternal::midiTimerCallback(void *data) {
-	MidiDriver *driver = (MidiDriver *)data;
-	if (g_scumm->_imuse)
-		g_scumm->_imuse->on_timer(driver);
+void IMuseInternal::midiTimerCallback (void *data) {
+	TimerCallbackInfo *info = (TimerCallbackInfo *) data;
+	info->imuse->on_timer (info->driver);
 }
 
 void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
@@ -1666,60 +1722,20 @@ void IMuseInternal::copyGlobalAdlibInstrument(byte slot, Instrument *dest) {
 	_global_adlib_instruments[slot].copy_to(dest);
 }
 
-////////////////////////////////////////////////////////////
-//
-// IMuse implementation
-//
-// IMuse actually serves as a concurency monitor front-end
-// to IMuseInternal and ensures that only one thread
-// accesses the object at a time. This is necessary to
-// prevent scripts and the MIDI parser from yanking objects
-// out from underneath each other.
-//
-////////////////////////////////////////////////////////////
 
-IMuse::IMuse(OSystem *system, IMuseInternal *target)
-	: _system(system), _target(target) {
-	_mutex = system->createMutex();
-}
 
-IMuse::~IMuse() {
-	if (_mutex)
-		_system->deleteMutex(_mutex);
-	if (_target)
-		delete _target;
-}
-
-inline void IMuse::in() const {
-	_system->lockMutex(_mutex);
-}
-inline void IMuse::out() const {
-	_system->unlockMutex(_mutex);
-}
-
-void IMuse::on_timer(MidiDriver *midi) { in(); _target->on_timer(midi); out(); }
-void IMuse::pause(bool paused) { in(); _target->pause(paused); out(); }
-int IMuse::save_or_load(Serializer *ser, ScummEngine *scumm) { in(); int ret = _target->save_or_load(ser, scumm); out(); return ret; }
-void IMuse::setMusicVolume(int vol) { in(); _target->setMusicVolume(vol); out(); }
-void IMuse::startSound(int sound) { in(); _target->startSound(sound); out(); }
-void IMuse::stopSound(int sound) { in(); _target->stopSound(sound); out(); }
-void IMuse::stopAllSounds() { in(); _target->stopAllSounds(); out(); }
-int IMuse::getSoundStatus(int sound) const { in(); int ret = _target->getSoundStatus(sound, true); out(); return ret; }
-bool IMuse::get_sound_active(int sound) const { in(); bool ret = _target->getSoundStatus(sound, false) ? 1 : 0; out(); return ret; }
-int IMuse::getMusicTimer() const { in(); int ret = _target->getMusicTimer(); out(); return ret; }
-int32 IMuse::doCommand(int a, int b, int c, int d, int e, int f, int g, int h) { in(); int32 ret = _target->doCommand(a,b,c,d,e,f,g,h); out(); return ret; }
-int32 IMuse::doCommand(int numargs, int args[]) { in(); int32 ret = _target->doCommand(numargs, args); out(); return ret; }
-int IMuse::clear_queue() { in(); int ret = _target->clear_queue(); out(); return ret; }
-void IMuse::setBase(byte **base) { in(); _target->setBase(base); out(); }
-uint32 IMuse::property(int prop, uint32 value) { in(); uint32 ret = _target->property(prop, value); out(); return ret; }
-void IMuse::terminate() { in(); _target->terminate1(); out(); _target->terminate2(); }
-
-// The IMuse::create method provides a front-end factory
-// for creating IMuseInternal without exposing that class
-// to the client.
+/**
+ * IMuseInternal factory creation method.
+ * This method provides a means for creating an IMuse
+ * implementation without requiring that the details
+ * of that implementation be exposed to the client
+ * through a header file. This allows the internals
+ * of the implementation to be changed and updated
+ * without requiring a recompile of the client code.
+ */
 IMuse *IMuse::create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver) {
 	IMuseInternal *engine = IMuseInternal::create(syst, nativeMidiDriver, adlibMidiDriver);
-	return new IMuse(syst, engine);
+	return engine;
 }
 
 } // End of namespace Scumm
