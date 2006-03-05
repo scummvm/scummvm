@@ -595,7 +595,9 @@ bool IMuseInternal::startSound_internal (int sound) {
 	if (!player)
 		return false;
 
-	// HACK: This is to work around a problem at the Dino Bungie Memorial.
+	// WORKAROUND: This is to work around a problem at the Dino Bungie
+	// Memorial.
+	//
 	// There are three pieces of music involved here:
 	//
 	// 80 - Main theme (looping)
@@ -618,7 +620,7 @@ bool IMuseInternal::startSound_internal (int sound) {
 	// workaround is to clear the trigger if the player listens to Rex or
 	// Wally before tune 81 has finished on its own.
 
-	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal (81, false))
+	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal(81, false))
 		ImClearTrigger(81, 1);
 
 	player->clear();
