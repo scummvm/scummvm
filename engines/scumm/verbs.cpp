@@ -537,7 +537,7 @@ void ScummEngine::checkExecVerbs() {
 void ScummEngine_v2::runObject(int obj, int entry) {
 	if (getVerbEntrypoint(obj, entry) != 0) {
 		runObjectScript(obj, entry, false, false, NULL);
-	} else {
+	} else if (entry != 13 && entry != 15) {
 		VAR(9) = entry;
 		runScript(3, 0, 0, 0);
 	}
