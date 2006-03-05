@@ -160,7 +160,7 @@ private:
 	void updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state);
 	void updateAndOutput3(OutputState &state);
 
-	void output1(OutputState &state);
+	void adjustVolume(OutputState &state);
 
 	uint8 calculateLowByte1(OutputState &state);
 	uint8 calculateLowByte2(OutputState &state);
@@ -809,8 +809,8 @@ void AdlibDriver::updateAndOutput3(OutputState &state) {
 	state.unk38 = state.unk36;
 }
 
-void AdlibDriver::output1(OutputState &state) {
-	debugC(9, kDebugLevelSound, "output1(%d)", &state - _outputTables);
+void AdlibDriver::adjustVolume(OutputState &state) {
+	debugC(9, kDebugLevelSound, "adjustVolume(%d)", &state - _outputTables);
 	uint8 lowByte = calculateLowByte2(state);
 
 	// Level Key Scaling / Total Level
@@ -1134,7 +1134,7 @@ int AdlibDriver::updateCallback24(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback25(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk26 = value;
-	output1(state);
+	adjustVolume(state);
 	return 0;
 }
 
@@ -1181,7 +1181,7 @@ int AdlibDriver::updateCallback33(uint8 *&dataptr, OutputState &state, uint8 val
 	_curTable = value;
 	OutputState &state2 = _outputTables[value];
 	state2.unk27 = *dataptr++;
-	output1(state2);
+	adjustVolume(state2);
 
 	_curTable = tableBackup;
 	return 0;
@@ -1193,7 +1193,7 @@ int AdlibDriver::updateCallback34(uint8 *&dataptr, OutputState &state, uint8 val
 	_curTable = value;
 	OutputState &state2 = _outputTables[value];
 	state2.unk27 += *dataptr++;
-	output1(state2);
+	adjustVolume(state2);
 
 	_curTable = tableBackup;
 	return 0;
@@ -1223,7 +1223,7 @@ int AdlibDriver::update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uin
 
 int AdlibDriver::updateCallback37(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk26 += value;
-	output1(state);
+	adjustVolume(state);
 	return 0;
 }
 
