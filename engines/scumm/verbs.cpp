@@ -50,8 +50,8 @@ static const VerbSettings C64VerbTable_English[] = {
 	{ 1,  8, 0,   0, "Open"},
 	{ 2,  8, 1,   0, "Close"},
 	{ 3,  0, 2,   4, "Give"},
-	{ 4, 32, 0,   0, "Turn On"},
-	{ 5, 32, 1,   0, "Turn Off"},
+	{ 4, 32, 0,   0, "Turn on"},
+	{ 5, 32, 1,   0, "Turn off"},
 	{ 6, 32, 2,   2, "Fix"},
 	{ 7, 24, 0,   0, "New Kid"},
 	{ 8, 24, 1,   2, "Unlock"},
@@ -59,9 +59,9 @@ static const VerbSettings C64VerbTable_English[] = {
 	{10,  0, 1,   0, "Pull"},
 	{11, 24, 2, 255, "Use"},
 	{12,  8, 2,   0, "Read"},
-	{13, 15, 0,   0, "Walk To"},
-	{14, 15, 1,   0, "Pick Up"},
-	{15, 15, 2,   0, "What Is"}
+	{13, 15, 0,   0, "Walk to"},
+	{14, 15, 1,   0, "Pick up"},
+	{15, 15, 2,   0, "What is"}
 };
 
 static const VerbSettings C64VerbTable_German[] = {
