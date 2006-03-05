@@ -153,7 +153,7 @@ private:
 	void unkOutput1(OutputState &table);
 	void unkOutput2(uint8 num);
 
-	uint16 updateUnk6Value();
+	uint16 getRandomNr();
 	void update1(uint8 unk1, OutputState &state);
 
 	void updateAndOutput1(uint8 unk1, OutputState &state);
