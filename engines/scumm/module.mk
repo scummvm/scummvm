@@ -17,8 +17,9 @@ MODULE_OBJS := \
 	he/script_v60he.o \
 	he/sound_he.o \
 	help.o \
-	imuse/imuse_player.o \
 	imuse/imuse.o \
+	imuse/imuse_part.o \
+	imuse/imuse_player.o \
 	imuse/instrument.o \
 	input.o \
 	midiparser_eup.o \
