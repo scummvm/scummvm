@@ -132,6 +132,8 @@ void ScummEngine::setBoxFlags(int box, int val) {
 			return;
 		if (_game.version == 8)
 			ptr->v8.flags = TO_LE_32(val);
+		else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+			ptr->c64.flags = val;
 		else if (_game.version <= 2)
 			ptr->v2.flags = val;
 		else
@@ -145,6 +147,8 @@ byte ScummEngine::getBoxFlags(int box) {
 		return 0;
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.flags);
+	else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+		return ptr->c64.flags;
 	else if (_game.version <= 2)
 		return ptr->v2.flags;
 	else
