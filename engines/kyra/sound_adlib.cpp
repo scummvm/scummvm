@@ -212,7 +212,7 @@ private:
 	int updateCallback26(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback27(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback28(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback29(uint8 *&dataptr, OutputState &state, uint8 value);
+	int setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback30(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback32(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -282,7 +282,7 @@ private:
 
 	uint8 _unkOutputByte2;
 	uint8 _unkOutputByte1;
-	uint8 _unkTableByte1;
+	uint8 _tempo;
 
 	const uint8 *_tablePtr1;
 	const uint8 *_tablePtr2;
@@ -323,7 +323,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_rnd = 0x1234;
 	_continueFlag = 0;
 
-	_unkTableByte1 = 0;
+	_tempo = 0;
 
 	_unkValue3 = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
@@ -513,7 +513,7 @@ void AdlibDriver::callback() {
 	callbackOutput();
 	callbackProcess();
 
-	_unkValue3 += _unkTableByte1;
+	_unkValue3 += _tempo;
 	if ((int8)_unkValue3 < 0) {
 		if (!(--_unkValue2)) {
 			_unkValue2 = _unkValue1;
@@ -559,7 +559,7 @@ void AdlibDriver::callbackProcess() {
 		_unkOutputByte1 = _outputTable[_curTable];
 
 		if (table.unk6) {
-			table.unk1 = _unkTableByte1;
+			table.unk1 = _tempo;
 		}
 
 		uint16 temp = table.unk4 + table.unk1;
@@ -1151,8 +1151,8 @@ int AdlibDriver::updateCallback28(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback29(uint8 *&dataptr, OutputState &state, uint8 value) {
-	_unkTableByte1 = value;
+int AdlibDriver::setTempo(uint8 *&dataptr, OutputState &state, uint8 value) {
+	_tempo = value;
 	return 0;
 }
 
@@ -1325,7 +1325,7 @@ int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback42(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	state.unk1 = _unkTableByte1;
+	state.unk1 = _tempo;
 	return 0;
 }
 
@@ -1727,7 +1727,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 36
 	COMMAND(updateCallback28),
 	COMMAND(updateCallback9),
-	COMMAND(updateCallback29),
+	COMMAND(setTempo),
 	COMMAND(updateCallback30),
 
 	// 40
