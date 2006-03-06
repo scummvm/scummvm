@@ -711,17 +711,10 @@ void AdlibDriver::update1(uint8 unk1, OutputState &state) {
 		state.unk5 = unk1 + (getRandomNr() & state.unk11 & 0xFF);
 		return;
 	}
-	uint8 value = unk1;
 	if (state.unk12) {
-		uint8 value2 = 0;
-		uint8 add = value >> 3;
-		int loops = state.unk12;
-		while (loops--) {
-			value2 += add;
-		}
-		state.unk7 = value2;
+		state.unk7 = (unk1 >> 3) * state.unk12;
 	}
-	state.unk5 = value;
+	state.unk5 = unk1;
 }
 
 void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
