@@ -34,7 +34,11 @@ class AudioStream;
 #ifdef USE_MPEG2
 
 #if !defined(_MSC_VER)
-#include <inttypes.h>
+#ifndef PALMOS_MODE
+#	include <inttypes.h>
+#else
+#	include <stdint.h>
+#endif
 #endif
 
 extern "C" {
