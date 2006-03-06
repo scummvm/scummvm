@@ -116,8 +116,8 @@ private:
 		uint8 unk26;
 		uint8 unk7;
 		uint8 unk15;
-		uint8 unk1;
-		uint8 unk4;
+		int8 unk1;
+		int8 unk4;
 		uint8 unk17;
 		uint8 unkOutputValue1;
 		typedef void (AdlibDriver::*Callback)(OutputState&);
@@ -212,7 +212,7 @@ private:
 	int updateCallback26(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback27(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback28(uint8 *&dataptr, OutputState &state, uint8 value);
-	int setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback30(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback32(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -242,7 +242,7 @@ private:
 	int updateCallback56(uint8 *&dataptr, OutputState &state, uint8 value);
 private:
 	int _lastProcessed;
-	uint8 _flagTrigger;
+	int8 _flagTrigger;
 	int _curTable;
 	uint8 _unk4;
 	uint8 _unk5;
@@ -253,7 +253,7 @@ private:
 
 	uint8 _unkValue1;
 	uint8 _unkValue2;
-	uint8 _unkValue3;
+	int8 _unkValue3;
 	uint8 _unkValue4;
 	uint8 _unkValue5;
 	uint8 _unkValue6;
@@ -282,7 +282,7 @@ private:
 
 	uint8 _unkOutputByte2;
 	uint8 _unkOutputByte1;
-	uint8 _tempo;
+	int8 _tempo;
 
 	const uint8 *_tablePtr1;
 	const uint8 *_tablePtr2;
@@ -325,7 +325,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_tempo = 0;
 
-	_unkValue3 = 0xFF;
+	_unkValue3 = -1;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
 	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
 	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
@@ -508,13 +508,13 @@ int AdlibDriver::snd_clearFlag(va_list &list) {
 void AdlibDriver::callback() {
 	lock();
 	--_flagTrigger;
-	if ((int8)_flagTrigger < 0)
+	if (_flagTrigger < 0)
 		_flags &= ~8;
 	callbackOutput();
 	callbackProcess();
 
 	_unkValue3 += _tempo;
-	if ((int8)_unkValue3 < 0) {
+	if (_unkValue3 < 0) {
 		if (!(--_unkValue2)) {
 			_unkValue2 = _unkValue1;
 			++_unkValue4;
@@ -536,8 +536,8 @@ void AdlibDriver::callbackOutput() {
 			initTable(table);
 			table.unk2 = unk2;
 			table.dataptr = ptr;
-			table.unk1 = 0xFF;
-			table.unk4 = 0xFF;
+			table.unk1 = -1;
+			table.unk4 = -1;
 			table.unk5 = 1;
 			if (index != 9) {
 				unkOutput2(index);
@@ -562,9 +562,8 @@ void AdlibDriver::callbackProcess() {
 			table.unk1 = _tempo;
 		}
 
-		uint16 temp = table.unk4 + table.unk1;
 		table.unk4 += table.unk1;
-		if (temp > 0xFF) {
+		if (table.unk4 < 0) {
 			if (--table.unk5) {
 				if (table.unk5 == table.unk7)
 					unkOutput1(table);
@@ -645,7 +644,7 @@ void AdlibDriver::initTable(OutputState &table) {
 	debugC(9, kDebugLevelSound, "initTable(%d)", &table - _outputTables);
 	memset(&table.dataptr, 0, sizeof(OutputState) - ((char*)&table.dataptr - (char*)&table));
 
-	table.unk1 = 0xFF;
+	table.unk1 = -1;
 	table.unk2 = 0;
 	// normally here are nullfuncs but we set 0 for now
 	table.callback1 = 0;
@@ -962,8 +961,8 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 valu
 		initTable(state2);
 		state2.unk2 = temp;
 		state2.dataptr = ptr;
-		state2.unk1 = 0xFF;
-		state2.unk4 = 0xFF;
+		state2.unk1 = -1;
+		state2.unk4 = -1;
 		state2.unk5 = 1;
 		unkOutput2(table);
 	}
@@ -1107,7 +1106,7 @@ int AdlibDriver::updateCallback22(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback23(uint8 *&dataptr, OutputState &state, uint8 value) {
 	value >>= 1;
 	_unkValue1 = _unkValue2 = value;
-	_unkValue3 = 0xFF;
+	_unkValue3 = -1;
 	_unkValue4 = _unkValue5 = 0;
 	return 0;
 }
@@ -1151,8 +1150,8 @@ int AdlibDriver::updateCallback28(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::setTempo(uint8 *&dataptr, OutputState &state, uint8 value) {
-	_tempo = value;
+int AdlibDriver::update_setTempo(uint8 *&dataptr, OutputState &state, uint8 value) {
+	_tempo = (int8)value;
 	return 0;
 }
 
@@ -1163,7 +1162,7 @@ int AdlibDriver::updateCallback30(uint8 *&dataptr, OutputState &state, uint8 val
 }
 
 int AdlibDriver::updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk1 = value;
+	state.unk1 = (int8)value;
 	return 0;
 }
 
@@ -1349,7 +1348,7 @@ int AdlibDriver::updateCallback45(uint8 *&dataptr, OutputState &state, uint8 val
 		if ((int8)value < 0)
 			value = (uint8)-1;
 	}
-	state.unk1 = value;
+	state.unk1 = (int8)value;
 	return 0;
 }
 
@@ -1727,7 +1726,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 36
 	COMMAND(updateCallback28),
 	COMMAND(updateCallback9),
-	COMMAND(setTempo),
+	COMMAND(update_setTempo),
 	COMMAND(updateCallback30),
 
 	// 40
