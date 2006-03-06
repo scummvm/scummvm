@@ -273,7 +273,7 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 				return true;
 			
 			// num pad (indy fight mode)
-			} else if (key == 'n' && mask == KBD_CTRL|KBD_ALT && !_overlayVisible) {
+			} else if (key == 'n' && mask == (KBD_CTRL|KBD_ALT) && !_overlayVisible) {
 				_useNumPad = !_useNumPad;
 				draw_osd(kDrawFight, _screenDest.w - 34, _screenDest.h + 2, _useNumPad, 1);
 				displayMessageOnOSD(_useNumPad ? "Fight mode on." : "Fight mode off.");
