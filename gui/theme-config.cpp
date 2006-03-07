@@ -115,7 +115,8 @@ void Theme::processSingleLine(const String &section, const String name, const St
 								_evaluator->getVar(name + ".h"));
 	}
 
-	setSpecialAlias("prev", name);
+	if (npostfix != 0)
+		setSpecialAlias("prev", name);
 }
 
 
