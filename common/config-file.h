@@ -59,6 +59,8 @@ public:
 		String comment;
 	};
 
+	typedef List<KeyValue> SectionKeyList;
+
 	/** A section in a config file. I.e. corresponds to something like this:
 	 *   [mySection]
 	 *   key=value
@@ -75,7 +77,10 @@ public:
 		const KeyValue* getKey(const String &key) const;
 		void setKey(const String &key, const String &value);
 		void removeKey(const String &key);
+		const SectionKeyList getKeys() const { return keys; }
 	};
+
+	typedef List<Section> SectionList;
 
 public:
 	ConfigFile();
@@ -108,12 +113,14 @@ public:
 	void	setKey(const String &key, const String &section, const String &value);
 	void	removeKey(const String &key, const String &section);
 
+	const SectionList getSections() const { return _sections; }
+	const SectionKeyList getKeys(const String &section) const;
 
 	void listSections(StringSet &set);
 	void listKeyValues(StringMap &kv);
 
 private:
-	List<Section>	_sections;
+	SectionList _sections;
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;

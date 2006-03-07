@@ -165,7 +165,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	if (!section.name.isEmpty())
 		_sections.push_back(section);
 
-	return !stream.ioFailed();
+	return (!stream.ioFailed() || stream.eos());
 }
 
 bool ConfigFile::saveToFile(const String &filename) {
@@ -293,6 +293,12 @@ void ConfigFile::setKey(const String &key, const String &section, const String &
 	} else {
 		s->setKey(key, value);
 	}
+}
+
+const ConfigFile::SectionKeyList ConfigFile::getKeys(const String &section) const {
+	const Section *s = getSection(section);
+
+	return s->getKeys();
 }
 
 ConfigFile::Section *ConfigFile::getSection(const String &section) {
