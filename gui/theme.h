@@ -31,7 +31,11 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
+#include "gui/eval.h"
+
 namespace GUI {
+
+typedef Common::String String;
 
 // Hints to the theme engine that the widget is used in a non-standard way.
 
@@ -54,10 +58,17 @@ enum {
 	THEME_HINT_USE_SHADOW = 1 << 4
 };
 
+
 class Theme {
 public:
-	Theme() : _drawArea(), _configFile() {}
-	virtual ~Theme() {}
+	Theme() : _drawArea(), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
+		Common::MemoryReadStream s((const byte *)_defaultConfigINI, strlen(_defaultConfigINI));
+		_defaultConfig.loadFromStream(s);
+
+		_evaluator = new Eval();
+	}
+		
+	virtual ~Theme() { delete _evaluator;}
 
 	enum kTextAlign {
 		kTextAlignLeft,
@@ -158,9 +169,23 @@ public:
 		return kTextAlignCenter;
 	}
 
+	void processResSection(Common::ConfigFile &config, String name, bool skipDefs = false);
+	void processSingleLine(const String &section, const String name, const String str);
+	void setParent(const String &name);
+
+	bool isThemeLoadingRequired();
+	void loadTheme(Common::ConfigFile &config, bool reset = true);
+
 protected:
 	Common::Rect _drawArea;
 	Common::ConfigFile _configFile;
+	Common::ConfigFile _defaultConfig;
+
+	Eval *_evaluator;
+
+private:
+	static const char *_defaultConfigINI;
+	int _loadedThemeX, _loadedThemeY;
 };
 
 #define OLDGUI_TRANSPARENCY
@@ -186,21 +211,24 @@ public:
 	
 	void resetDrawArea();
 
+
+	typedef Common::String String;
+
 	const Graphics::Font *getFont() const { return _font; }
 	int getFontHeight() const { if (_initOk) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const Common::String &str) const { if (_initOk) return _font->getStringWidth(str); return 0; }
+	int getStringWidth(const String &str) const { if (_initOk) return _font->getStringWidth(str); return 0; }
 	int getCharWidth(byte c) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
-	void drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
+	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
-	void drawButton(const Common::Rect &r, const Common::String &str, kState state);
+	void drawButton(const Common::Rect &r, const String &str, kState state);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
 	void drawSlider(const Common::Rect &r, int width, kState state);
-	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state);
+	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
@@ -234,9 +262,10 @@ private:
 };
 
 #ifndef DISABLE_FANCY_THEMES
+
 class ThemeNew : public Theme {
 public:
-	ThemeNew(OSystem *system, Common::String stylefile);
+	ThemeNew(OSystem *system, String stylefile);
 	virtual ~ThemeNew();
 
 	bool init();
@@ -258,19 +287,19 @@ public:
 
 	const Graphics::Font *getFont() const { return _font; }
 	int getFontHeight() const { if (_font) return _font->getFontHeight(); return 0; }
-	int getStringWidth(const Common::String &str) const { if (_font) return _font->getStringWidth(str); return 0; }
+	int getStringWidth(const String &str) const { if (_font) return _font->getStringWidth(str); return 0; }
 	int getCharWidth(byte c) const { if (_font) return _font->getCharWidth(c); return 0; }
 
 	void drawDialogBackground(const Common::Rect &r, uint16 hints, kState state);
-	void drawText(const Common::Rect &r, const Common::String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
+	void drawText(const Common::Rect &r, const String &str, kState state, kTextAlign align, bool inverted, int deltax, bool useEllipsis);
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, kState state);
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
-	void drawButton(const Common::Rect &r, const Common::String &str, kState state);
+	void drawButton(const Common::Rect &r, const String &str, kState state);
 	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
 	void drawSlider(const Common::Rect &r, int width, kState state);
-	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state);
+	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
@@ -379,7 +408,7 @@ private:
 		kImageHandlesMax
 	};
 
-	const Common::String *_imageHandles;
+	const String *_imageHandles;
 	const Graphics::Surface **_images;
 	
 	enum kColorHandles {

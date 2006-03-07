@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	dialog.o \
 	editable.o \
 	EditTextWidget.o \
+	eval.o \
 	launcher.o \
 	ListWidget.o \
 	message.o \
@@ -18,7 +19,8 @@ MODULE_OBJS := \
 	TabWidget.o \
 	widget.o \
 	theme.o \
-	ThemeNew.o
+	ThemeNew.o \
+	theme-config.o
 
 MODULE_DIRS += \
 	gui

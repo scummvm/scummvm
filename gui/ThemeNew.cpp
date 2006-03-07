@@ -301,6 +301,11 @@ bool ThemeNew::init() {
 			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		}
 	}
+
+	if (isThemeLoadingRequired()) {
+		loadTheme(_defaultConfig);
+		loadTheme(_configFile, false); // Don't reset
+	}
 	
 	return true;
 }

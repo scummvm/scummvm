@@ -56,6 +56,10 @@ bool ThemeClassic::init() {
 			_font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		}
 	}
+
+	if (isThemeLoadingRequired())
+		loadTheme(_defaultConfig);
+
 	return true;
 }
 
