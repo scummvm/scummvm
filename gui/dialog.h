@@ -52,6 +52,7 @@ private:
 
 public:
 	Dialog(int x, int y, int w, int h);
+	Dialog(Common::String name);
 	virtual ~Dialog();
 
 	virtual int runModal();

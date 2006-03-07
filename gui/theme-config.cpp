@@ -120,7 +120,7 @@ void Theme::processSingleLine(const String &section, const String name, const St
 }
 
 
-void Theme::processResSection(Common::ConfigFile &config, String name, bool skipDefs) {
+void Theme::processResSection(Common::ConfigFile &config, String name, bool skipDefs, const String prefix) {
 	debug(3, "Reading section: [%s]", name.c_str());
 
 	const Common::ConfigFile::SectionKeyList &keys = config.getKeys(name);
@@ -128,16 +128,16 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 	Common::ConfigFile::SectionKeyList::const_iterator iterk;
 	for (iterk = keys.begin(); iterk != keys.end(); ++iterk) {
 		if (iterk->key == "set_parent") {
-			setSpecialAlias("parent", iterk->value);
+			setSpecialAlias("parent", prefix + iterk->value);
 			continue;
 		}
 		if (iterk->key.hasPrefix("set_")) {
-			_evaluator->setAlias(name, iterk->key, iterk->value);
+			_evaluator->setAlias(name, iterk->key, prefix + iterk->value);
 			continue;
 		}
 		if (iterk->key.hasPrefix("def_")) {
 			if (!skipDefs)
-				_evaluator->setVariable(name, iterk->key, iterk->value);
+				_evaluator->setVariable(name, prefix + iterk->key, iterk->value);
 			continue;
 		}
 		if (iterk->key == "use") {
@@ -148,7 +148,15 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 			processResSection(config, iterk->value, true);
 			continue;
 		}
-		processSingleLine(name, iterk->key, iterk->value);
+		if (iterk->key == "useWithPrefix") {
+			if (iterk->value == name)
+				error("Theme section [%s]: cannot use itself", name.c_str());
+			if (!config.hasSection(name))
+				error("Undefined use of section [%s]", name.c_str());
+			processResSection(config, iterk->value, true, iterk->value + "_");
+			continue;
+		}
+		processSingleLine(name, prefix + iterk->key, iterk->value);
 	}
 }
 

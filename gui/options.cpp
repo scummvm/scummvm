@@ -73,18 +73,34 @@ enum {
 
 
 OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h),
-	_domain(domain),
-	_enableGraphicSettings(false),
-	_gfxPopUp(0), _renderModePopUp(0), _fullscreenCheckbox(0), _aspectCheckbox(0),
-	_enableAudioSettings(false),
-	_subCheckbox(0),
-	_enableMIDISettings(false),
-	_multiMidiCheckbox(0), _mt32Checkbox(0), _enableGSCheckbox(0),
-	_enableVolumeSettings(false),
-	_musicVolumeSlider(0), _musicVolumeLabel(0),
-	_sfxVolumeSlider(0), _sfxVolumeLabel(0),
-	_speechVolumeSlider(0), _speechVolumeLabel(0) {
+	: Dialog(x, y, w, h), _domain(domain) {
+	init();
+}
+
+OptionsDialog::OptionsDialog(const String &domain, String name)
+	: Dialog(name), _domain(domain) {
+	init();
+}
+
+void OptionsDialog::init() {
+	_enableGraphicSettings = false;
+	_gfxPopUp = 0;
+	_renderModePopUp = 0;
+	_fullscreenCheckbox = 0;
+	_aspectCheckbox = 0;
+	_enableAudioSettings = false;
+	_subCheckbox = 0;
+	_enableMIDISettings = false;
+	_multiMidiCheckbox = 0;
+	_mt32Checkbox = 0;
+	_enableGSCheckbox = 0;
+	_enableVolumeSettings = false;
+	_musicVolumeSlider = 0;
+	_musicVolumeLabel = 0;
+	_sfxVolumeSlider = 0;
+	_sfxVolumeLabel = 0;
+	_speechVolumeSlider = 0;
+	_speechVolumeLabel = 0;
 }
 
 void OptionsDialog::open() {

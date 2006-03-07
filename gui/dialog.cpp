@@ -45,6 +45,12 @@ Dialog::Dialog(int x, int y, int w, int h)
 	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
+Dialog::Dialog(String name)
+	: GuiObject(name),
+	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _visible(false), _drawingHints(0) {
+	_drawingHints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
+}
+
 Dialog::~Dialog() {
 	delete _firstWidget;
 	_firstWidget = 0;

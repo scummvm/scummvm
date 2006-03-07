@@ -41,6 +41,9 @@ class OptionsDialog : public Dialog {
 	typedef Common::String String;
 public:
 	OptionsDialog(const String &domain, int x, int y, int w, int h);
+	OptionsDialog(const String &domain, String name);
+
+	void init();
 
 	void open();
 	void close();

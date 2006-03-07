@@ -169,7 +169,7 @@ public:
 		return kTextAlignCenter;
 	}
 
-	void processResSection(Common::ConfigFile &config, String name, bool skipDefs = false);
+	void processResSection(Common::ConfigFile &config, String name, bool skipDefs = false, const String prefix = "");
 	void processSingleLine(const String &section, const String name, const String str);
 	void setSpecialAlias(const String alias, const String &name);
 

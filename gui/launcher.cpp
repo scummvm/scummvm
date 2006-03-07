@@ -477,19 +477,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 #pragma mark -
 
-#define BEGIN_BUTTONS(numButtons, hSpace, top) \
-	{ \
-		const int space = hSpace; \
-		const int width = (_w - 2 * hBorder - space * (numButtons - 1)) / numButtons; \
-		int x = hBorder; \
-		const int y = top;
-
-#define ADD(name, cmd, hotkey) \
-	new ButtonWidget(this, x, y, width, buttonHeight, name, cmd, hotkey, ws); x += space + width
-
-#define END_BUTTONS \
-	}
-
 LauncherDialog::LauncherDialog(GameDetector &detector)
 	: Dialog(0, 0, 320, 200), _detector(detector) {
 	_drawingHints |= THEME_HINT_MAIN_DIALOG;
@@ -497,22 +484,15 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	const int hBorder = 10;
-
 	_w = screenW;
 	_h = screenH;
 
 	GUI::WidgetSize ws;
-	int buttonHeight;
-	int top;
 
-	if (screenW >= 400 && screenH >= 300) {
+	if (screenW >= 400 && screenH >= 300)
 		ws = GUI::kBigWidgetSize;
-		buttonHeight = kBigButtonHeight;
-	} else {
+	else
 		ws = GUI::kNormalWidgetSize;
-		buttonHeight = kButtonHeight;
-	}
 
 	// Show ScummVM version
 	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter, ws);
