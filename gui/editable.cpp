@@ -27,6 +27,15 @@ namespace GUI {
 
 EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
  : Widget(boss, x, y, w, h) {
+	init();
+}
+
+EditableWidget::EditableWidget(GuiObject *boss, String name, WidgetSize ws)
+ : Widget(boss, name) {
+	init();
+}
+
+void EditableWidget::init() {
 	_caretVisible = false;
 	_caretTime = 0;
 	_caretPos = 0;	// FIXME

@@ -63,7 +63,10 @@ protected:
 
 public:
 	ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
+	ListWidget(GuiObject *boss, String name, WidgetSize ws = kDefaultWidgetSize);
 	virtual ~ListWidget();
+
+	void init(GuiObject *boss, int w, WidgetSize ws);
 
 	void setList(const StringList& list);
 	const StringList& getList()	const			{ return _list; }

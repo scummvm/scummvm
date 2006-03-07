@@ -30,7 +30,17 @@ namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
 	: EditableWidget(boss, x, y, w, h, ws), CommandSender(boss) {
+	init(boss, w, ws);
+}
 
+ListWidget::ListWidget(GuiObject *boss, String name, WidgetSize ws)
+	: EditableWidget(boss, name, ws), CommandSender(boss) {
+	int w = g_gui.evaluator()->getVar(name + ".w");
+
+	init(boss, w, ws);
+}
+
+void ListWidget::init(GuiObject *boss, int w, WidgetSize ws) {
 	if (ws == kBigWidgetSize) {
 		_w = w - kBigScrollBarWidth;
 	} else {

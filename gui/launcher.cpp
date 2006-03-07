@@ -515,33 +515,27 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	}
 
 	// Show ScummVM version
-	new StaticTextWidget(this, hBorder, 8, _w - 2*hBorder, kLineHeight, gScummVMFullVersion, kTextAlignCenter, ws);
+	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter, ws);
 
 	// Add some buttons at the bottom
 	// TODO: Rearrange them a bit? In particular, we could put a slightly smaller space
 	// between About and Options, and in exchange remove those a bit from Quit and Start.
-	top = _h - 8 - buttonHeight;
-	BEGIN_BUTTONS(4, 8, top)
-		ADD("Quit", kQuitCmd, 'Q');
-		ADD("About", kAboutCmd, 'B');
-		ADD("Options", kOptionsCmd, 'O');
-		_startButton =
-		ADD("Start", kStartCmd, 'S');
-	END_BUTTONS
+	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q', ws);
+	new ButtonWidget(this, "launcher_about_button", "About", kAboutCmd, 'B', ws);
+	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O', ws);
+	_startButton =
+			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S', ws);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
-	top -= 2 * buttonHeight;
-	BEGIN_BUTTONS(3, 10, top)
-		ADD("Add Game...", kAddGameCmd, 'A');
-		_editButton =
-		ADD("Edit Game...", kEditGameCmd, 'E');
-		_removeButton =
-		ADD("Remove Game", kRemoveGameCmd, 'R');
-	END_BUTTONS
+	new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A', ws);
+	_editButton =
+		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E', ws);
+	_removeButton =
+		new ButtonWidget(this, "launcher_removeGame_button", "Remove Game", kRemoveGameCmd, 'R', ws);
 
 
 	// Add list with game titles
-	_list = new ListWidget(this, hBorder, kLineHeight + 16, _w - 2 * hBorder, top - kLineHeight - 20, ws);
+	_list = new ListWidget(this, "launcher_list", ws);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 

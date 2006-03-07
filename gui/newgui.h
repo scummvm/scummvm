@@ -34,6 +34,7 @@ class OSystem;
 namespace GUI {
 
 class Dialog;
+class Eval;
 
 #define g_gui	(GUI::NewGui::instance())
 
@@ -70,6 +71,7 @@ public:
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
 	Theme *theme() { return _theme; }
+	Eval *evaluator() { return _theme->_evaluator; }
 
 	const Graphics::Font &getFont() const { return *(_theme->getFont()); }
 	int getFontHeight() const { return _theme->getFontHeight(); }

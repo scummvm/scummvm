@@ -48,7 +48,10 @@ protected:
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kNormalWidgetSize);
+	EditableWidget(GuiObject *boss, String name, WidgetSize ws = kNormalWidgetSize);
 	virtual ~EditableWidget();
+
+	void init();
 
 	virtual void setEditString(const String &str);
 	virtual const String &getEditString() const		{ return _editString; }

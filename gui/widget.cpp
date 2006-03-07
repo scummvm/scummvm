@@ -31,6 +31,16 @@ namespace GUI {
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss),
 	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW), _hasFocus(false) {
+	init();
+}
+
+Widget::Widget(GuiObject *boss, String name)
+	: GuiObject(name), _type(0), _boss(boss),
+	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW), _hasFocus(false) {
+	init();
+}
+
+void Widget::init() {
 	// Insert into the widget list of the boss
 	_next = _boss->_firstWidget;
 	_boss->_firstWidget = this;
@@ -112,6 +122,13 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_label = text;
 }
 
+StaticTextWidget::StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align, WidgetSize ws)
+	: Widget(boss, name), _align(align), _ws(ws) {
+	_flags = WIDGET_ENABLED;
+	_type = kStaticTextWidget;
+	_label = text;
+}
+
 void StaticTextWidget::setValue(int value) {
 	char buf[256];
 	sprintf(buf, "%d", value);
@@ -144,6 +161,13 @@ void StaticTextWidget::drawWidget(bool hilite) {
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
 	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter, ws), CommandSender(boss),
+	  _cmd(cmd), _hotkey(hotkey) {
+	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
+	_type = kButtonWidget;
+}
+
+ButtonWidget::ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
+	: StaticTextWidget(boss, name, label, kTextAlignCenter, ws), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;

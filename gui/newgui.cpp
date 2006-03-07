@@ -56,6 +56,15 @@ enum {
 #define USE_AUTO_SCALING	false
 #endif
 
+// HACK. FIXME. This doesn't belong here. But otherwise it creates compulation problems
+GuiObject::GuiObject(Common::String name) : _firstWidget(0) {
+	_x = g_gui.evaluator()->getVar(name + ".x");
+	_y = g_gui.evaluator()->getVar(name + ".y");
+	_w = g_gui.evaluator()->getVar(name + ".w");
+	_h = g_gui.evaluator()->getVar(name + ".h");
+}
+
+
 // Constructor
 NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {

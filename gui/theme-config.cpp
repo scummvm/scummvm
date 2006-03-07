@@ -31,6 +31,24 @@ def_buttonHeight=kBigButtonHeight\n\
 def_kLineHeight=16\n\
 chooser_headline=10 6 (w - 2 * 16) (kLineHeight)\n\
 chooser_list=10 (6 + kLineHeight + 2) (w - 2 * 16) (h - self.y - buttonHeight - 12)\n\
+hBorder=10\n\
+launcher_version=hBorder 8 (w - 2 * hBorder) kLineHeight\n\
+top=(h - 8 - buttonHeight)\n\
+numButtons=4\n\
+space=8\n\
+buttonWidth=((w - 2 * hBorder - space * (numButtons - 1)) / numButtons)\n\
+launcher_quit_button=hBorder top buttonWidth buttonHeight\n\
+launcher_about_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+launcher_options_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+launcher_start_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+top=(top - buttonHeight * 2)\n\
+numButtons=3\n\
+space=10\n\
+buttonWidth=((w - 2 * hBorder - space * (numButtons - 1)) / numButtons)\n\
+launcher_addGame_button=hBorder top buttonWidth buttonHeight\n\
+launcher_editGame_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+launcher_removeGame_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+launcher_list=hBorder (kLineHeight + 16) (w - 2 * hBorder) (top - kLineHeight - 20)\n\
 ";
 
 using Common::String;
@@ -85,12 +103,14 @@ void Theme::processSingleLine(const String &section, const String name, const St
 		_evaluator->setVariable(name + "." + postfixes[npostfix], value);
 
 	// If we have all 4 parameters, set .x2 and .y2
-	if (npostfix == 4) {
-		_evaluator->setVariable(name + ".x2", _evaluator->lookupVar(name + ".x") + 
-								_evaluator->lookupVar(name + ".w"));
-		_evaluator->setVariable(name + ".y2", _evaluator->lookupVar(name + ".y") + 
-								_evaluator->lookupVar(name + ".h"));
+	if (npostfix == 3) {
+		_evaluator->setVariable(name + ".x2", _evaluator->getVar(name + ".x") + 
+								_evaluator->getVar(name + ".w"));
+		_evaluator->setVariable(name + ".y2", _evaluator->getVar(name + ".y") + 
+								_evaluator->getVar(name + ".h"));
 	}
+
+	setSpecialAlias("prev", name);
 }
 
 
@@ -102,7 +122,7 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 	Common::ConfigFile::SectionKeyList::const_iterator iterk;
 	for (iterk = keys.begin(); iterk != keys.end(); ++iterk) {
 		if (iterk->key == "set_parent") {
-			setParent(iterk->value);
+			setSpecialAlias("parent", iterk->value);
 			continue;
 		}
 		if (iterk->key.hasPrefix("set_")) {
@@ -126,14 +146,14 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 	}
 }
 
-void Theme::setParent(const String &name) {
+void Theme::setSpecialAlias(const String alias, const String &name) {
 	const char *postfixes[] = {"x", "y", "w", "h", "x2", "y2"};
 	int i;
 
 	for (i = 0; i < ARRAYSIZE(postfixes); i++) {
 		String from, to;
 
-		from = String("parent.") + postfixes[i];
+		from = alias + "." + postfixes[i];
 		to = name + "." + postfixes[i];
 
 		_evaluator->setAlias(from, to);

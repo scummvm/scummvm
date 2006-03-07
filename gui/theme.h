@@ -171,17 +171,17 @@ public:
 
 	void processResSection(Common::ConfigFile &config, String name, bool skipDefs = false);
 	void processSingleLine(const String &section, const String name, const String str);
-	void setParent(const String &name);
+	void setSpecialAlias(const String alias, const String &name);
 
 	bool isThemeLoadingRequired();
 	void loadTheme(Common::ConfigFile &config, bool reset = true);
+
+	Eval *_evaluator;
 
 protected:
 	Common::Rect _drawArea;
 	Common::ConfigFile _configFile;
 	Common::ConfigFile _defaultConfig;
-
-	Eval *_evaluator;
 
 private:
 	static const char *_defaultConfigINI;

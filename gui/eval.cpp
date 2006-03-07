@@ -127,7 +127,7 @@ void Eval::primitive(int *result) {
 
 	switch (_tokenType) {
 	case tVariable:
-		*result = lookupVar(_token);
+		*result = getVar(_token);
 		if (*result == EVAL_UNDEF_VAR)
 			exprError(eUndefVar);
 		getToken();
@@ -249,7 +249,7 @@ int Eval::getBuiltinVar(const char *s) {
 	return EVAL_UNDEF_VAR;
 }
 
-int Eval::lookupVar(const char *s, bool includeAliases) {
+int Eval::getVar(const char *s, bool includeAliases) {
 	int i;
 	int val;
 

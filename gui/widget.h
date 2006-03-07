@@ -101,7 +101,10 @@ public:
 
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h);
+	Widget(GuiObject *boss, Common::String name);
 	virtual ~Widget();
+
+	void init();
 
 	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
 	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
@@ -161,6 +164,7 @@ protected:
 	const WidgetSize		_ws;
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
+	StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
 	void setValue(int value);
 	void setLabel(const String &label);
 	const String &getLabel() const		{ return _label; }
@@ -179,6 +183,7 @@ protected:
 	uint8	_hotkey;
 public:
 	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
+	ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
