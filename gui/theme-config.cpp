@@ -149,11 +149,21 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 			continue;
 		}
 		if (iterk->key == "useWithPrefix") {
-			if (iterk->value == name)
-				error("Theme section [%s]: cannot use itself", name.c_str());
-			if (!config.hasSection(name))
-				error("Undefined use of section [%s]", name.c_str());
-			processResSection(config, iterk->value, true, iterk->value + "_");
+			const char *temp = iterk->value.c_str();
+            const char *pos = strrchr(temp, ' ');
+			String n, pref;
+
+			if (pos == NULL)
+				error("2 arguments required for useWithPrefix keyword");
+
+			n = String(temp, strchr(temp, ' ') - temp);
+			pref = String(pos + 1);
+
+			if (n == name)
+				error("Theme section [%s]: cannot use itself", n.c_str());
+			if (!config.hasSection(n))
+				error("Undefined use of section [%s]", n.c_str());
+			processResSection(config, n, true, pref);
 			continue;
 		}
 		processSingleLine(name, prefix + iterk->key, iterk->value);
