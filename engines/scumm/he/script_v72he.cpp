@@ -1987,11 +1987,11 @@ void ScummEngine_v72he::o72_redimArray() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 5:
-		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
-		break;
 	case 4:
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kByteArray);
+		break;
+	case 5:
+		redimArray(fetchScriptWord(), 0, newX, 0, newY, kIntArray);
 		break;
 	case 6:
 		redimArray(fetchScriptWord(), 0, newX, 0, newY, kDwordArray);
