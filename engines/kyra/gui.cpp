@@ -414,22 +414,24 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 	gui_fadePalette();
 
-	calcCoords(_menu[0]);
-	calcCoords(_menu[1]);
-	calcCoords(_menu[2]);
-	calcCoords(_menu[3]);
+	for ( int i = 0; i < 5; i++)
+		calcCoords(_menu[i]);
 
 	_menuRestoreScreen = true;
 
+	_toplevelMenu = 0;
 	if (_menuDirectlyToLoad)
 		gui_loadGameMenu(0);
 	else {
-		initMenu(_menu[0]);
+		if (!caller)
+			_toplevelMenu = 4;
+
+		initMenu(_menu[_toplevelMenu]);
 		processAllMenuButtons();
 	}
 
 	while (_displayMenu) {
-		gui_processHighlights(_menu[0]);
+		gui_processHighlights(_menu[_toplevelMenu]);
 		processButtonList(_menuButtonList);
 		gui_getInput();
 	}
@@ -723,7 +725,7 @@ int KyraEngine::gui_loadGameMenu(Button *button) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
 	if (_cancelSubMenu) {
-		initMenu(_menu[0]);
+		initMenu(_menu[_toplevelMenu]);
 		processAllMenuButtons();
 	} else {
 		gui_restorePalette();
@@ -854,7 +856,7 @@ int KyraEngine::gui_quitPlaying(Button *button) {
 	if (gui_quitConfirm("Are you sure you want to quit playing?"))
 		quitGame();
 	else {
-		initMenu(_menu[0]);
+		initMenu(_menu[_toplevelMenu]);
 		processAllMenuButtons();
 	}
 

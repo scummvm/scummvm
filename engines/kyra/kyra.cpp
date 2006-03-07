@@ -668,10 +668,13 @@ void KyraEngine::mainLoop() {
 		}
 		
 		if (_deathHandler != 0xFF) {
-			// this is only used until the original gui is implemented
-			GUI::MessageDialog dialog("Brandon is dead! Game over!", "Quit");
-			dialog.runModal();
-			break;
+			_deathHandler = 0xFF;
+			snd_playWanderScoreViaMap(0, 1);
+			// This causes a failed assert in playWanderScoreViaMap.
+			//snd_playSoundEffect(49);
+			// Playing the track directly instead.
+			_sound->playTrack(29);
+			buttonMenuCallback(0);
 		}
 		
 		if (_brandonStatusBit & 2) {
@@ -699,6 +702,8 @@ void KyraEngine::mainLoop() {
 }
 
 void KyraEngine::quitGame() {
+	debugC(9, kDebugLevelMain, "KyraEngine::quitGame()");
+
 	res_unloadResources(RES_ALL);
 
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
@@ -823,13 +828,15 @@ void KyraEngine::waitForEvent() {
 
 void KyraEngine::delayWithTicks(int ticks) {
 	uint32 nextTime = _system->getMillis() + ticks * _tickLength;
-	while (_system->getMillis() < nextTime && !_skipFlag) {
+	while (_system->getMillis() < nextTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
 		if (_currentCharacter->sceneId == 210) {
 			updateKyragemFading();
 			seq_playEnd();
 		}
+		if (_skipFlag)
+			break;
 	}
 }
 

@@ -79,13 +79,10 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 				direction = 2;
 		}
 
-		// Dirty way of hiding the debug console while the room entry scripts are running,
-		// otherwise the graphics didn't update.
 		_vm->_system->hideOverlay();
 		_vm->_currentCharacter->facing = direction;
 		
 		_vm->enterNewScene(room, _vm->_currentCharacter->facing, 0, 0, 1);
-		_vm->_system->showOverlay();
 		_vm->_screen->_mouseLockCount = 0;
 
 		_detach_now = true;

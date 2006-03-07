@@ -484,9 +484,12 @@ int KyraEngine::cmd_displayWSAFrame(ScriptState *script) {
 	_movieObjects[wsaIndex]->displayFrame(frame);
 	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-	while (_system->getMillis() < continueTime && !_skipFlag) {
+	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
+		if (_skipFlag)
+			break;
+
 		if (continueTime - _system->getMillis() >= 10)
 			delay(10);
 	}
@@ -719,6 +722,9 @@ int KyraEngine::cmd_displayWSAFrameOnHidPage(ScriptState *script) {
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
 		_animator->updateAllObjectShapes();
+		if (_skipFlag)
+			break;
+
 		if (continueTime - _system->getMillis() >= 10)
 			delay(10);
 	}
@@ -752,9 +758,12 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 				_movieObjects[wsaIndex]->displayFrame(frame);
 				_animator->_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				while (_system->getMillis() < continueTime && !_skipFlag) {
+				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
+					if (_skipFlag)
+						break;
+
 					if (continueTime - _system->getMillis() >= 10)
 						delay(10);
 				}
@@ -766,16 +775,19 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 				_movieObjects[wsaIndex]->displayFrame(frame);
 				_animator->_updateScreen = true;
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				while (_system->getMillis() < continueTime && !_skipFlag) {
+				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
+					if (_skipFlag)
+						break;
+
 					if (continueTime - _system->getMillis() >= 10)
 						delay(10);
 				}
 				--frame;
 			}
 		}
-		if (!_skipFlag)
+		if (_skipFlag)
 			break;
 		else
 			++curTime;

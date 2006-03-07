@@ -817,6 +817,7 @@ protected:
 	bool _menuRestoreScreen;
 	bool _displaySubMenu;
 	bool _cancelSubMenu;
+	uint8 _toplevelMenu;
 	int _savegameOffset;
 	int _gameToLoad;
 	char _savegameName[31];
