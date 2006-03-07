@@ -22,10 +22,12 @@
  *
  */
 
-#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
-#	include <System/EventPrv.h>
-#endif
 #include "be_base.h"
+
+#if defined(COMPILE_OS5) && defined(PALMOS_ARM)
+extern "C" void SysEventGet(EventType *eventP, Int32 timeout);
+extern "C" void SysEventAddToQueue (const EventType *eventP);
+#endif
 
 void OSystem_PalmBase::timer_handler() {
 	UInt32 msecs = getMillis();
@@ -83,14 +85,13 @@ bool OSystem_PalmBase::pollEvent(Event &event) {
 	battery_handler();
 	timer_handler();
 	sound_handler();
-		
+
 	for(;;) {
 #if defined(COMPILE_OS5) && defined(PALMOS_ARM)
 		SysEventGet(&ev, evtNoWait);
 #else
 		EvtGetEvent(&ev, evtNoWait);
 #endif
-
 		// check for hardkey repeat for mouse emulation
 		keyCurrentState = KeyCurrentState();
 		// check_hard_keys();
