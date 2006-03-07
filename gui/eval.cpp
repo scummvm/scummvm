@@ -236,6 +236,9 @@ static const BuiltinConsts builtinConsts[] = {
 	{"kBigButtonHeight", GUI::kBigButtonHeight},
 	{"kBigSliderWidth", GUI::kBigSliderWidth},
 	{"kBigSliderHeight", GUI::kBigSliderHeight},
+
+	{"false", 0},
+	{"true", 1},
 	{NULL, 0}
 };
 

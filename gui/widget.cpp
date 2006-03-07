@@ -113,6 +113,14 @@ Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
 	return w;
 }
 
+bool Widget::isVisible() const {
+	if (g_gui.evaluator()->getVar(_name + ".visible") == 0)
+		return false;
+
+	return !(_flags & WIDGET_INVISIBLE);
+}
+
+
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws)

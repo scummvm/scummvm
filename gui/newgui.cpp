@@ -62,6 +62,7 @@ GuiObject::GuiObject(Common::String name) : _firstWidget(0) {
 	_y = g_gui.evaluator()->getVar(name + ".y");
 	_w = g_gui.evaluator()->getVar(name + ".w");
 	_h = g_gui.evaluator()->getVar(name + ".h");
+	_name = name;
 }
 
 

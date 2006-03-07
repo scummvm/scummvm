@@ -59,11 +59,12 @@ class GuiObject : public CommandReceiver {
 protected:
 	int16		_x, _y;
 	uint16		_w, _h;
+	Common::String _name;
 
 	Widget		*_firstWidget;
 
 public:
-	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(0) { }
+	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(0), _name("") { }
 	GuiObject(Common::String name);
 
 	virtual int16	getAbsX() const		{ return _x; }

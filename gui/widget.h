@@ -137,7 +137,7 @@ public:
 
 	void setEnabled(bool e)		{ if (e) setFlags(WIDGET_ENABLED); else clearFlags(WIDGET_ENABLED); }
 	bool isEnabled() const		{ return _flags & WIDGET_ENABLED; }
-	bool isVisible() const		{ return !(_flags & WIDGET_INVISIBLE); }
+	bool isVisible() const;
 
 protected:
 	virtual void drawWidget(bool hilite) {}

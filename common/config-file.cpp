@@ -51,7 +51,7 @@ static char *rtrim(char *t) {
  */
 bool ConfigFile::isValidName(const Common::String &name) {
 	const char *p = name.c_str();
-	while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+	while (*p && (isalnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 		p++;
 	return *p == 0;
 }
