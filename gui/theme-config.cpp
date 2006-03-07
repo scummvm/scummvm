@@ -26,6 +26,11 @@ namespace GUI {
 
 const char *Theme::_defaultConfigINI = "\n\
 # Define our classic greenish theme here\n\
+[320xY]\n\
+def_buttonHeight=kButtonHeight\n\
+def_kLineHeight=12\n\
+use=XxY\n\
+\n\
 [XxY]\n\
 def_buttonHeight=kBigButtonHeight\n\
 def_kLineHeight=16\n\
