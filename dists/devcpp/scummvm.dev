@@ -1,7 +1,7 @@
 [Project]
 FileName=scummvm.dev
 Name=scummvm
-UnitCount=187
+UnitCount=190
 Type=1
 Ver=1
 ObjFiles=
@@ -1850,21 +1850,21 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit189]
-FileName=gob.dev
+FileName=..\..\gui\eval.cpp
 CompileCpp=1
-Folder=scummvm
-Compile=0
-Link=0
+Folder=gui
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
 [Unit190]
-FileName=kyra.dev
+FileName=..\..\gui\eval.h
 CompileCpp=1
-Folder=scummvm
-Compile=0
-Link=0
+Folder=gui
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
@@ -2008,6 +2008,16 @@ FileName=sword2.dev
 Folder=scummvm
 Compile=0
 Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit188]
+FileName=..\..\gui\theme-config.cpp
+CompileCpp=1
+Folder=gui
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
