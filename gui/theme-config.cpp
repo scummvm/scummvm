@@ -193,6 +193,10 @@ void Theme::loadTheme(Common::ConfigFile &config, bool reset) {
 	if (config.hasSection(name))
 		processResSection(config, name);
 
+	sprintf(name, "Xx%d", y);
+	if (config.hasSection(name))
+		processResSection(config, name);
+
 	sprintf(name, "%dx%d", x, y);
 	if (config.hasSection(name))
 		processResSection(config, name);
