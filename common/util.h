@@ -261,21 +261,20 @@ const Array<EngineDebugLevel> &listSpecialDebugLevels();
 }	// End of namespace Common
 
 
-
 #if defined(__GNUC__)
-void CDECL error(const char *s, ...) NORETURN;
+void CDECL error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
 #else
 void CDECL NORETURN error(const char *s, ...);
 #endif
 
-void CDECL warning(const char *s, ...);
+void CDECL warning(const char *s, ...) GCC_PRINTF(1, 2);
 
-void CDECL debug(int level, const char *s, ...);
-void CDECL debug(const char *s, ...);
-void CDECL debugN(int level, const char *s, ...);
+void CDECL debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
+void CDECL debug(const char *s, ...) GCC_PRINTF(1, 2);
+void CDECL debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
 void checkHeap();
 
-void CDECL debugC(int level, uint32 engine_level, const char *s, ...);
+void CDECL debugC(int level, uint32 engine_level, const char *s, ...) GCC_PRINTF(3, 4);
 
 extern int gDebugLevel;
 
