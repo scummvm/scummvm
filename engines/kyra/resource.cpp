@@ -336,6 +336,7 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	debugC( 9, kDebugLevelMain,"KyraEngine::copyBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
 	uint32 fileSize;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
+	assert(srcData);
 	uint8 compType = srcData[2];
 	uint32 imgSize = READ_LE_UINT32(srcData + 4);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
