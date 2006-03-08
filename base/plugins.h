@@ -47,6 +47,10 @@ struct DetectedGame {
 	Common::Language language;
 	Common::Platform platform;
 	DetectedGame() : language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {}
+	DetectedGame(const char *g, const char *d,
+	             Common::Language l = Common::UNK_LANG,
+	             Common::Platform p = Common::kPlatformUnknown)
+		: gameid(g), description(d), language(l), platform(p) {}
 	DetectedGame(const GameSettings &game,
 	             Common::Language l = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown)
