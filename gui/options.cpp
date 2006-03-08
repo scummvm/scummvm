@@ -462,17 +462,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(String name)
 }
 
 void GlobalOptionsDialog::init() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	GUI::WidgetSize ws;
-
-	if (screenW >= 400 && screenH >= 300) {
-		ws = GUI::kBigWidgetSize;
-	} else {
-		ws = GUI::kNormalWidgetSize;
-	}
-
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "globaloptions_tabwidget");
 	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
