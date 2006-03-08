@@ -27,38 +27,159 @@ namespace GUI {
 const char *Theme::_defaultConfigINI = "\n\
 # Define our classic greenish theme here\n\
 [320xY]\n\
+def_widgetSize=kNormalWidgetSize\n\
+def_buttonWidth=kButtonWidth\n\
 def_buttonHeight=kButtonHeight\n\
+def_sliderWidth=kSliderWidth\n\
+def_sliderHeight=kSliderHeight\n\
 def_kLineHeight=12\n\
+def_kFontHeight=10\n\
+def_globOptionsW=(w - 2 * 10)\n\
+def_globOptionsH=(h - 1 * 40)\n\
+def_tabPopupsLabelW=100\n\
+def_midiControlsSpacing=1\n\
 use=XxY\n\
 \n\
 [XxY]\n\
+def_widgetSize=kBigWidgetSize\n\
+def_buttonWidth=kBigButtonWidth\n\
 def_buttonHeight=kBigButtonHeight\n\
+def_sliderWidth=kBigSliderWidth\n\
+def_sliderHeight=kBigSliderHeight\n\
 def_kLineHeight=16\n\
+def_kFontHeight=14\n\
+def_globOptionsW=(w - 2 * 10)\n\
+def_globOptionsH=(h - 2 * 40)\n\
+def_tabPopupsLabelW=150\n\
+def_midiControlsSpacing=2\n\
 chooser_headline=10 6 (w - 2 * 16) (kLineHeight)\n\
 chooser_list=10 (6 + kLineHeight + 2) (w - 2 * 16) (h - self.y - buttonHeight - 12)\n\
+\n\
+## launcher\n\
 hBorder=10\n\
 launcher_version=hBorder 8 (w - 2 * hBorder) kLineHeight\n\
 top=(h - 8 - buttonHeight)\n\
 numButtons=4\n\
 space=8\n\
-buttonWidth=((w - 2 * hBorder - space * (numButtons - 1)) / numButtons)\n\
-launcher_quit_button=hBorder top buttonWidth buttonHeight\n\
-launcher_about_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
-launcher_options_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
-launcher_start_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+butWidth=((w - 2 * hBorder - space * (numButtons - 1)) / numButtons)\n\
+launcher_quit_button=hBorder top butWidth buttonHeight\n\
+launcher_about_button=(prev.x2 + space) top butWidth buttonHeight\n\
+launcher_options_button=(prev.x2 + space) top butWidth buttonHeight\n\
+launcher_start_button=(prev.x2 + space) top butWidth buttonHeight\n\
 top=(top - buttonHeight * 2)\n\
 numButtons=3\n\
 space=10\n\
-buttonWidth=((w - 2 * hBorder - space * (numButtons - 1)) / numButtons)\n\
-launcher_addGame_button=hBorder top buttonWidth buttonHeight\n\
-launcher_editGame_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
-launcher_removeGame_button=(prev.x2 + space) top buttonWidth buttonHeight\n\
+butWidth=((w - 2 * hBorder - space * (numButtons - 1)) / numButtons)\n\
+launcher_addGame_button=hBorder top butWidth buttonHeight\n\
+launcher_editGame_button=(prev.x2 + space) top butWidth buttonHeight\n\
+launcher_removeGame_button=(prev.x2 + space) top butWidth buttonHeight\n\
 launcher_list=hBorder (kLineHeight + 16) (w - 2 * hBorder) (top - kLineHeight - 20)\n\
+\n\
+# global options\n\
+globaloptions=10 40 globOptionsW globOptionsH\n\
+set_parent=globaloptions\n\
+vBorder=5\n\
+globaloptions_tabwidget=0, vBorder parent.w (parent.h - buttonHeight -8 - 2 * vBorder)\n\
+\n\
+# graphics tab\n\
+opYoffset=vBorder\n\
+opWidth=globOptionsW\n\
+useWithPrefix=graphicsControls globaloptions_\n\
+\n\
+# audio tab\n\
+opYoffset=vBorder\n\
+opWidth=globOptionsW\n\
+useWithPrefix=audioControls globaloptions_\n\
+useWithPrefix=volumeControls globaloptions_\n\
+\n\
+# MIDI tab\n\
+opYoffset=vBorder\n\
+opWidth=globOptionsW\n\
+useWithPrefix=midiControls globaloptions_\n\
+\n\
+# paths tab\n\
+yoffset=vBorder\n\
+globaloptions_savebutton=5 yoffset (buttonWidth + 5) buttonHeight\n\
+globaloptions_savepath=(prev.x2 + 20) (vBorder + 3) (parent.w - (5 + buttonWidth + 20) - 10) kLineHeight\n\
+yoffset=(yoffset + buttonHeight + 4)\n\
+globaloptions_extrabutton=5 yoffset (buttonWidth + 5) buttonHeight\n\
+globaloptions_extrapath=(prev.x2 + 20) (vBorder + 3) (parent.w - (5 + buttonWidth + 20) - 10) kLineHeight\n\
+yoffset=(yoffset + buttonHeight + 4)\n\
+globaloptions_keysbutton=5 yoffset buttonWidth buttonHeight\n\
+\n\
+globaloptions_ok=(parent.w - (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
+globaloptions_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
+\n\
+# game options\n\
+opYoffset=(vBorder + buttonHeight)\n\
+opWidth=globOptionsW\n\
+useWithPrefix=graphicsControls gameoptions_\n\
+\n\
+opYoffset=(vBorder + buttonHeight)\n\
+useWithPrefix=audioControls gameoptions_\n\
+\n\
+opYoffset=(vBorder + buttonHeight)\n\
+useWithPrefix=volumeControls gameoptions_\n\
+\n\
+opYoffset=(vBorder + buttonHeight)\n\
+useWithPrefix=midiControls gameoptions_\n\
+\n\
+### SCUMM game options\n\
+opYoffset=8\n\
+useWithPrefix=volumeControls scummoptions_\n\
+\n\
+[graphicsControls]\n\
+gcx=10\n\
+gcw=(opWidth - 2 * 10)\n\
+grModePopup=(gcx - 5) opYoffset (gcw + 5) kLineHeight\n\
+opYoffset=(opYoffset + kLineHeight + 4)\n\
+grRenderPopup=(gcx - 5) opYoffset (gcw + 5) kLineHeight\n\
+opYoffset=(opYoffset + kLineHeight + 4)\n\
+grFullscreenCheckbox=gcx opYoffset (kFontHeight + 10 + 96) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight)\n\
+grAspectCheckbox=gcx opYoffset (kFontHeight + 10 + 136) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight)\n\
+\n\
+[audioControls]\n\
+aux=10\n\
+auw=(opWidth - 2 * 10)\n\
+auMidiPopup=(aux - 5) opYoffset (auw + 5) kLineHeight\n\
+opYoffset=(opYoffset + kLineHeight + 4)\n\
+auSubtitlesCheckbox=aux opYoffset (kFontHeight + 10 + 102) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight + 18)\n\
+\n\
+[volumeControls]\n\
+vctextw=95\n\
+vcxoff=(vctextw + 15)\n\
+vcMusicText=10 (opYoffset + 2) vctextw kLineHeight\n\
+vcMusicSlider=vcxoff opYoffset sliderWidth sliderHeight\n\
+vcMusicLabel=(vcxoff + prev.w + 10) (opYoffset + 2) 24 kLineHeight\n\
+opYoffset=(opYoffset + sliderHeight + 4)\n\
+vcSfxText=10 (opYoffset + 2) vctextw kLineHeight\n\
+vcSfxSlider=vcxoff opYoffset sliderWidth sliderHeight\n\
+vcSfxLabel=(vcxoff + prev.w + 10) (opYoffset + 2) 24 kLineHeight\n\
+opYoffset=(opYoffset + sliderHeight + 4)\n\
+vcSpeechText=10 (opYoffset + 2) vctextw kLineHeight\n\
+vcSpeechSlider=vcxoff opYoffset sliderWidth sliderHeight\n\
+vcSpeechLabel=(vcxoff + prev.w + 10) (opYoffset + 2) 24 kLineHeight\n\
+opYoffset=(opYoffset + sliderHeight + 4)\n\
+\n\
+[midiControls]\n\
+mcx=10\n\
+mcFontButton=mcx opYoffset buttonWidth buttonHeight\n\
+mcFontPath=(prev.x2 + 20) (opYoffset + 3) (opWidth - (buttonWidth + 20) - 10) kLineHeight\n\
+opYoffset=(opYoffset + buttonHeight + 2 * midiControlsSpacing)\n\
+mcMixedCheckbox=mcx opYoffset (kFontHeight + 10 + 135) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n\
+mcMt32Checkbox=mcx opYoffset (kFontHeight + 10 + 256) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n\
+mcGSCheckbox=mcx opYoffset (kFontHeight + 10 + 142) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n\
 ";
 
 using Common::String;
 
-void Theme::processSingleLine(const String &section, const String name, const String str) {
+void Theme::processSingleLine(const String &section, const String prefix, const String name, const String str) {
 	int level = 0;
 	int start = 0;
 	uint i;
@@ -71,7 +192,7 @@ void Theme::processSingleLine(const String &section, const String name, const St
 		String from, to;
 
 		from = String("self.") + postfixes[i];
-		to = name + "." + postfixes[i];
+		to = prefix + name + "." + postfixes[i];
 
 		_evaluator->setAlias(from, to);
 		_evaluator->setVariable(to, EVAL_UNDEF_VAR);
@@ -80,7 +201,7 @@ void Theme::processSingleLine(const String &section, const String name, const St
 	for (i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) && level == 0) {
 			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name, start);
-			_evaluator->setVariable(name + "." + postfixes[npostfix++], value);
+			_evaluator->setVariable(prefix + name + "." + postfixes[npostfix++], value);
 			start = i + 1;
 		}
 		if (str[i] == '(')
@@ -105,18 +226,18 @@ void Theme::processSingleLine(const String &section, const String name, const St
 	if (npostfix == 0)
 		_evaluator->setVariable(name, value);
 	else
-		_evaluator->setVariable(name + "." + postfixes[npostfix], value);
+		_evaluator->setVariable(prefix + name + "." + postfixes[npostfix], value);
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
-		_evaluator->setVariable(name + ".x2", _evaluator->getVar(name + ".x") + 
-								_evaluator->getVar(name + ".w"));
-		_evaluator->setVariable(name + ".y2", _evaluator->getVar(name + ".y") + 
-								_evaluator->getVar(name + ".h"));
+		_evaluator->setVariable(prefix + name + ".x2", 
+			_evaluator->getVar(prefix + name + ".x") + _evaluator->getVar(prefix + name + ".w"));
+		_evaluator->setVariable(prefix + name + ".y2", 
+			_evaluator->getVar(prefix +name + ".y") + _evaluator->getVar(prefix + name + ".h"));
 	}
 
 	if (npostfix != 0)
-		setSpecialAlias("prev", name);
+		setSpecialAlias("prev", prefix + name);
 }
 
 
@@ -166,7 +287,7 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 			processResSection(config, n, true, pref);
 			continue;
 		}
-		processSingleLine(name, prefix + iterk->key, iterk->value);
+		processSingleLine(name, prefix, iterk->key, iterk->value);
 	}
 }
 

@@ -336,6 +336,16 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth, WidgetSize ws)
 	: Widget(boss, x, y - 1, w, h + 2), CommandSender(boss), _ws(ws), _label(label), _labelWidth(labelWidth) {
+	init();
+}
+
+PopUpWidget::PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth)
+	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
+	_ws = g_gui.getWidgetSize();
+	init();
+}
+
+void PopUpWidget::init() {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
 	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kPopUpWidget;

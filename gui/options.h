@@ -60,10 +60,10 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 
-	int addGraphicControls(GuiObject *boss, int yoffset, WidgetSize ws);
-	int addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws);
-	int addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws);
-	int addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws);
+	void addGraphicControls(GuiObject *boss, String prefix);
+	void addAudioControls(GuiObject *boss, String prefix);
+	void addMIDIControls(GuiObject *boss, String prefix);
+	void addVolumeControls(GuiObject *boss, String prefix);
 
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
@@ -115,8 +115,10 @@ class GlobalOptionsDialog : public OptionsDialog {
 	typedef Common::String String;
 public:
 	GlobalOptionsDialog();
+	GlobalOptionsDialog(String name);
 	~GlobalOptionsDialog();
 
+	void init();
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);

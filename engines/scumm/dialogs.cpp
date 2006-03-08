@@ -693,15 +693,18 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	GUI::WidgetSize ws;
 	int buttonWidth;
 	int buttonHeight;
+	int sliderHeight;
 
 	if (screenW >= 400 && screenH >= 300) {
 		ws = GUI::kBigWidgetSize;
 		buttonWidth = kBigButtonWidth;
 		buttonHeight = kBigButtonHeight;
+		sliderHeight = GUI::kBigSliderHeight;
 	} else {
 		ws = GUI::kNormalWidgetSize;
 		buttonWidth = kButtonWidth;
 		buttonHeight = kButtonHeight;
+		sliderHeight = GUI::kSliderHeight;
 	}
 
 	int yoffset = 8;
@@ -710,7 +713,8 @@ ConfigDialog::ConfigDialog(ScummEngine *scumm)
 	// Sound controllers
 	//
 
-	yoffset = addVolumeControls(this, yoffset, ws) + 4;
+	addVolumeControls(this, "scummoptions_");
+	yoffset += (sliderHeight + 4) * 8;
 
 	//
 	// Some misc options

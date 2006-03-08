@@ -130,8 +130,9 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_label = text;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align, WidgetSize ws)
-	: Widget(boss, name), _align(align), _ws(ws) {
+StaticTextWidget::StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align)
+	: Widget(boss, name), _align(align) {
+	_ws = g_gui.getWidgetSize();
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
@@ -174,8 +175,8 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const St
 	_type = kButtonWidget;
 }
 
-ButtonWidget::ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
-	: StaticTextWidget(boss, name, label, kTextAlignCenter, ws), CommandSender(boss),
+ButtonWidget::ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd, uint8 hotkey)
+	: StaticTextWidget(boss, name, label, kTextAlignCenter), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;
@@ -194,6 +195,12 @@ void ButtonWidget::drawWidget(bool hilite) {
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws), _state(false) {
+	_flags = WIDGET_ENABLED;
+	_type = kCheckboxWidget;
+}
+
+CheckboxWidget::CheckboxWidget(GuiObject *boss, String name, const String &label, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, name, label, cmd, hotkey), _state(false) {
 	_flags = WIDGET_ENABLED;
 	_type = kCheckboxWidget;
 }
@@ -222,6 +229,13 @@ void CheckboxWidget::drawWidget(bool hilite) {
 
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
 	: Widget(boss, x, y, w, h), CommandSender(boss),
+	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
+	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
+	_type = kSliderWidget;
+}
+
+SliderWidget::SliderWidget(GuiObject *boss, String name, uint32 cmd)
+	: Widget(boss, name), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
 	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
 	_type = kSliderWidget;

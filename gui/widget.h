@@ -161,10 +161,10 @@ protected:
 
 	String					_label;
 	TextAlignment			_align;
-	const WidgetSize		_ws;
+	WidgetSize				_ws;
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
-	StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
+	StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align);
 	void setValue(int value);
 	void setLabel(const String &label);
 	const String &getLabel() const		{ return _label; }
@@ -183,7 +183,7 @@ protected:
 	uint8	_hotkey;
 public:
 	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
-	ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
+	ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
@@ -202,6 +202,7 @@ protected:
 	bool	_state;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd = 0, uint8 hotkey = 0, WidgetSize ws = kDefaultWidgetSize);
+	CheckboxWidget(GuiObject *boss, String name, const String &label, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
@@ -225,6 +226,7 @@ protected:
 	uint	_labelWidth;
 public:
 	SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
+	SliderWidget(GuiObject *boss, Common::String name, uint32 cmd = 0);
 
 	void setCmd(uint32 cmd)		{ _cmd = cmd; }
 	uint32 getCmd() const		{ return _cmd; }

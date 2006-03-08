@@ -48,7 +48,7 @@ protected:
 
 public:
 	EditableWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kNormalWidgetSize);
-	EditableWidget(GuiObject *boss, String name, WidgetSize ws = kNormalWidgetSize);
+	EditableWidget(GuiObject *boss, String name);
 	virtual ~EditableWidget();
 
 	void init();

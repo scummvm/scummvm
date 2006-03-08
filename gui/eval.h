@@ -67,7 +67,7 @@ public:
 	void setVariable(const String name, int val) { _vars[name] = val; }
 	void setAlias(const String name, const String val) { _aliases[name] = val; }
 
-	int getVar(String s) { return getVar(s.c_str()); };
+	int getVar(String s) { return getVar_(s.c_str()); };
 
 	void reset();
 
@@ -84,7 +84,7 @@ private:
 	void arith(char op, int *r, int *h);
 	void unary(char op, int *r);
 	void exprError(int error);
-	int getVar(const char *s, bool includeAliases = true);
+	int getVar_(const char *s, bool includeAliases = true);
 	int getBuiltinVar(const char *s);
 
 	char _input[256];

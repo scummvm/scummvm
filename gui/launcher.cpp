@@ -257,7 +257,7 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 	_globalGraphicsOverride = addCheckbox(tab, x, yoffset, "Override global graphic settings", kCmdGlobalGraphicsOverride, 0, ws);
 	yoffset += _globalGraphicsOverride->getHeight();
 
-	yoffset = addGraphicControls(tab, yoffset, ws);
+	addGraphicControls(tab, "gameoptions_");
 
 	//
 	// 4) The audio tab
@@ -268,7 +268,7 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 	_globalAudioOverride = addCheckbox(tab, x, yoffset, "Override global audio settings", kCmdGlobalAudioOverride, 0, ws);
 	yoffset += _globalAudioOverride->getHeight();
 
-	yoffset = addAudioControls(tab, yoffset, ws);
+	addAudioControls(tab, "gameoptions_");
 
 	//
 	// 5) The MIDI tab
@@ -279,7 +279,7 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 	_globalMIDIOverride = addCheckbox(tab, x, yoffset, "Override global MIDI settings", kCmdGlobalMIDIOverride, 0, ws);
 	yoffset += _globalMIDIOverride->getHeight();
 
-	yoffset = addMIDIControls(tab, yoffset, ws);
+	addMIDIControls(tab, "gameoptions_");
 
 	//
 	// 6) The volume tab
@@ -290,7 +290,7 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 	_globalVolumeOverride = addCheckbox(tab, x, yoffset, "Override global volume settings", kCmdGlobalVolumeOverride, 0, ws);
 	yoffset += _globalVolumeOverride->getHeight();
 
-	yoffset = addVolumeControls(tab, yoffset, ws);
+	addVolumeControls(tab, "gameoptions_");
 
 
 	// Activate the first tab
@@ -487,35 +487,28 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	_w = screenW;
 	_h = screenH;
 
-	GUI::WidgetSize ws;
-
-	if (screenW >= 400 && screenH >= 300)
-		ws = GUI::kBigWidgetSize;
-	else
-		ws = GUI::kNormalWidgetSize;
-
 	// Show ScummVM version
-	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter, ws);
+	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
 
 	// Add some buttons at the bottom
 	// TODO: Rearrange them a bit? In particular, we could put a slightly smaller space
 	// between About and Options, and in exchange remove those a bit from Quit and Start.
-	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q', ws);
-	new ButtonWidget(this, "launcher_about_button", "About", kAboutCmd, 'B', ws);
-	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O', ws);
+	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q');
+	new ButtonWidget(this, "launcher_about_button", "About", kAboutCmd, 'B');
+	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');
 	_startButton =
-			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S', ws);
+			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
-	new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A', ws);
+	new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A');
 	_editButton =
-		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E', ws);
+		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E');
 	_removeButton =
-		new ButtonWidget(this, "launcher_removeGame_button", "Remove Game", kRemoveGameCmd, 'R', ws);
+		new ButtonWidget(this, "launcher_removeGame_button", "Remove Game", kRemoveGameCmd, 'R');
 
 
 	// Add list with game titles
-	_list = new ListWidget(this, "launcher_list", ws);
+	_list = new ListWidget(this, "launcher_list");
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
@@ -762,7 +755,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		editGame(item);
 		break;
 	case kOptionsCmd: {
-		GlobalOptionsDialog options;
+		GlobalOptionsDialog options("globaloptions");
 		options.runModal();
 		}
 		break;

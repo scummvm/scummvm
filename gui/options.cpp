@@ -325,22 +325,13 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_speechVolumeLabel->setEnabled(enabled);
 }
 
-int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize ws) {
-	const int x = 10;
-	const int w = _w - 2 * 10;
+void OptionsDialog::addGraphicControls(GuiObject *boss, String prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
-	int labelWidth;
-
-	if (ws == kBigWidgetSize) {
-		labelWidth = 150;
-	} else {
-		labelWidth = 100;
-	}
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// The GFX mode popup
-	_gfxPopUp = addPopUp(boss, x-5, yoffset, w+5, "Graphics mode: ", labelWidth, ws);
-	yoffset += _gfxPopUp->getHeight() + 4;
+	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode: ", labelWidth);
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
@@ -350,8 +341,7 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 	}
 
 	// RenderMode popup
-	_renderModePopUp = addPopUp(boss, x-5, yoffset, w+5, "Render mode: ", labelWidth, ws);
-	yoffset += _renderModePopUp->getHeight() + 4;
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode: ", labelWidth);
 	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -360,12 +350,10 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = addCheckbox(boss, x, yoffset, "Fullscreen mode", 0, 0, ws);
-	yoffset += _fullscreenCheckbox->getHeight();
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", "Fullscreen mode", 0, 0);
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = addCheckbox(boss, x, yoffset, "Aspect ratio correction", 0, 0, ws);
-	yoffset += _aspectCheckbox->getHeight();
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", "Aspect ratio correction", 0, 0);
 
 #ifdef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setState(TRUE);
@@ -374,25 +362,13 @@ int OptionsDialog::addGraphicControls(GuiObject *boss, int yoffset, WidgetSize w
 #endif
 
 	_enableGraphicSettings = true;
-
-	return yoffset;
 }
 
-int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws) {
-	const int x = 10;
-	const int w = _w - 20;
-
-	int labelWidth;
-
-	if (ws == kBigWidgetSize) {
-		labelWidth = 150;
-	} else {
-		labelWidth = 100;
-	}
+void OptionsDialog::addAudioControls(GuiObject *boss, String prefix) {
+	int labelWidth = g_gui.evaluator()->getVar("tabPopupsLabelW");
 
 	// The MIDI mode popup & a label
-	_midiPopUp = addPopUp(boss, x-5, yoffset, w+5, "Music driver: ", labelWidth, ws);
-	yoffset += _midiPopUp->getHeight() + 4;
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver: ", labelWidth);
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -402,99 +378,58 @@ int OptionsDialog::addAudioControls(GuiObject *boss, int yoffset, WidgetSize ws)
 	}
 
 	// Subtitles on/off
-	_subCheckbox = addCheckbox(boss, x, yoffset, "Display subtitles", 0, 0, ws);
-	yoffset += _subCheckbox->getHeight();
-
-	yoffset += 18;
+	_subCheckbox = new CheckboxWidget(boss, prefix + "auSubtitlesCheckbox", "Display subtitles", 0, 0);
 
 	_enableAudioSettings = true;
-
-	return yoffset;
 }
 
-int OptionsDialog::addMIDIControls(GuiObject *boss, int yoffset, WidgetSize ws) {
-	const int x = 10;
-	int spacing;
-	int buttonWidth, buttonHeight;
-
-	if (ws == kBigWidgetSize) {
-		buttonWidth = kBigButtonWidth;
-		buttonHeight = kBigButtonHeight;
-		spacing = 2;
-	} else {
-		buttonWidth = kButtonWidth;
-		buttonHeight = kButtonHeight;
-		spacing = 1;
-	}
-
+void OptionsDialog::addMIDIControls(GuiObject *boss, String prefix) {
 	// SoundFont
-	_soundFontButton = addButton(boss, x, yoffset, "SoundFont:", kChooseSoundFontCmd, 0, ws);
-	_soundFont = new StaticTextWidget(boss, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft, ws);
-	yoffset += buttonHeight + 2 * spacing;
+	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None", kTextAlignLeft);
 
 	// Multi midi setting
-	_multiMidiCheckbox = addCheckbox(boss, x, yoffset, "Mixed Adlib/MIDI mode", 0, 0, ws);
-	yoffset += _multiMidiCheckbox->getHeight() + spacing;
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed Adlib/MIDI mode", 0, 0);
 
 	// Native mt32 setting
-	_mt32Checkbox = addCheckbox(boss, x, yoffset, "True Roland MT-32 (disable GM emulation)", 0, 0, ws);
-	yoffset += _mt32Checkbox->getHeight() + spacing;
+	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", "True Roland MT-32 (disable GM emulation)", 0, 0);
 
 	// GS Extensions setting
-	_enableGSCheckbox = addCheckbox(boss, x, yoffset, "Enable Roland GS Mode", 0, 0, ws);
-	yoffset += _enableGSCheckbox->getHeight() + spacing;
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", "Enable Roland GS Mode", 0, 0);
 
 	_enableMIDISettings = true;
-
-	return yoffset;
 }
 
-int OptionsDialog::addVolumeControls(GuiObject *boss, int yoffset, WidgetSize ws) {
+void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
 	const char *slider_labels[] = {
 		"Music volume:",
 		"SFX volume:",
 		"Speech volume:"
 	};
 
-	int textwidth = 0;
-
-	for (int i = 0; i < ARRAYSIZE(slider_labels); i++) {
-		int width = g_gui.getStringWidth(slider_labels[i]);
-
-		if (width > textwidth)
-			textwidth = width;
-	}
-
-	int xoffset = textwidth + 15;
-
 	// Volume controllers
-	new StaticTextWidget(boss, 10, yoffset + 2, textwidth, kLineHeight, slider_labels[0], kTextAlignRight, ws);
-	_musicVolumeSlider = addSlider(boss, xoffset, yoffset, kMusicVolumeChanged, ws);
-	_musicVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
+	new StaticTextWidget(boss, prefix + "vcMusicText", slider_labels[0], kTextAlignRight);
+	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", kMusicVolumeChanged);
+	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%", kTextAlignLeft);
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += _musicVolumeSlider->getHeight() + 4;
 
-	new StaticTextWidget(boss, 10, yoffset + 2, textwidth, kLineHeight, slider_labels[1], kTextAlignRight, ws);
-	_sfxVolumeSlider = addSlider(boss, xoffset, yoffset, kSfxVolumeChanged, ws);
-	_sfxVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
+	new StaticTextWidget(boss, prefix + "vcSfxText", slider_labels[1], kTextAlignRight);
+	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", kSfxVolumeChanged);
+	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%", kTextAlignLeft);
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += _sfxVolumeSlider->getHeight() + 4;
 
-	new StaticTextWidget(boss, 10, yoffset + 2, textwidth, kLineHeight, slider_labels[2], kTextAlignRight, ws);
-	_speechVolumeSlider = addSlider(boss, xoffset, yoffset, kSpeechVolumeChanged, ws);
-	_speechVolumeLabel = new StaticTextWidget(boss, xoffset + _musicVolumeSlider->getWidth() + 10, yoffset + 2, 24, kLineHeight, "100%", kTextAlignLeft, ws);
+	new StaticTextWidget(boss, prefix + "vcSpeechText" , slider_labels[2], kTextAlignRight);
+	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", kSpeechVolumeChanged);
+	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%", kTextAlignLeft);
 	_speechVolumeSlider->setMinValue(0);
 	_speechVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
-	yoffset += _speechVolumeSlider->getHeight() + 4;
 
 	_enableVolumeSettings = true;
-
-	return yoffset;
 }
 
 #pragma mark -
@@ -506,80 +441,81 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	GUI::WidgetSize ws;
-	int buttonWidth, buttonHeight;
-
 	if (screenW >= 400 && screenH >= 300) {
-		ws = GUI::kBigWidgetSize;
-		buttonWidth = kBigButtonWidth;
-		buttonHeight = kBigButtonHeight;
 		_w = screenW - 2 * 10;
 		_h = screenH - 2 * 40;
 		_x = 10;
 		_y = 40;
 	} else {
-		ws = GUI::kNormalWidgetSize;
-		buttonWidth = kButtonWidth;
-		buttonHeight = kButtonHeight;
 		_w = screenW - 2 * 10;
 		_h = screenH - 1 * 20;
 		_x = 10;
 		_y = 20;
 	}
 
-	const int vBorder = 5;	// Tab border
-	int yoffset;
+	init();
+}
+
+GlobalOptionsDialog::GlobalOptionsDialog(String name)
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, name) {
+	init();
+}
+
+void GlobalOptionsDialog::init() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	GUI::WidgetSize ws;
+
+	if (screenW >= 400 && screenH >= 300) {
+		ws = GUI::kBigWidgetSize;
+	} else {
+		ws = GUI::kNormalWidgetSize;
+	}
 
 	// The tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - buttonHeight - 8 - 2 * vBorder, ws);
+	TabWidget *tab = new TabWidget(this, "globaloptions_tabwidget");
 	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The graphics tab
 	//
 	tab->addTab("Graphics");
-	yoffset = vBorder;
-	yoffset = addGraphicControls(tab, yoffset, ws);
+	addGraphicControls(tab, "globaloptions_");
 
 	//
 	// 2) The audio tab
 	//
 	tab->addTab("Audio");
-	yoffset = vBorder;
-	yoffset = addAudioControls(tab, yoffset, ws);
-	yoffset = addVolumeControls(tab, yoffset, ws);
+	addAudioControls(tab, "globaloptions_");
+	addVolumeControls(tab, "globaloptions_");
 	// TODO: cd drive setting
 
 	//
 	// 3) The MIDI tab
 	//
 	tab->addTab("MIDI");
-	yoffset = vBorder;
-	yoffset = addMIDIControls(tab, yoffset, ws);
+	addMIDIControls(tab, "globaloptions_");
 
 	//
 	// 4) The miscellaneous tab
 	//
 	tab->addTab("Paths");
-	yoffset = vBorder;
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, 5, yoffset, buttonWidth + 5, buttonHeight, "Save Path: ", kChooseSaveDirCmd, 0, ws);
-	_savePath = new StaticTextWidget(tab, 5 + buttonWidth + 20, yoffset + 3, _w - (5 + buttonWidth + 20) - 10, kLineHeight, "/foo/bar", kTextAlignLeft, ws);
-	yoffset += buttonHeight + 4;
+	new ButtonWidget(tab, "globaloptions_savebutton", "Save Path: ", kChooseSaveDirCmd, 0);
+	_savePath = new StaticTextWidget(tab, "globaloptions_savepath", "/foo/bar", kTextAlignLeft);
 
-	new ButtonWidget(tab, 5, yoffset, buttonWidth + 5, buttonHeight, "Extra Path:", kChooseExtraDirCmd, 0, ws);
-	_extraPath = new StaticTextWidget(tab, 5 + buttonWidth + 20, yoffset + 3, _w - (5 + buttonWidth + 20) - 10, kLineHeight, "None", kTextAlignLeft, ws);
-	yoffset += buttonHeight + 4;
+	new ButtonWidget(tab, "globaloptions_extrabutton", "Extra Path:", kChooseExtraDirCmd, 0);
+	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None", kTextAlignLeft);
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
-	addButton(tab, 5, yoffset, "Keys", kChooseKeyMappingCmd, 0, ws);
-	yoffset += buttonHeight + 4;
+	new ButtonWidget(tab, "globaloptions_keysbutton", "Keys", kChooseKeyMappingCmd, 0);
 #endif
 
 	// TODO: joystick setting
@@ -589,8 +525,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
+	new ButtonWidget(this, "globaloptions_cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "globaloptions_ok", "OK", kOKCmd, 0);
 
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();

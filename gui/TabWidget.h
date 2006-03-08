@@ -40,11 +40,14 @@ protected:
 	TabList _tabs;
 	int _tabWidth;
 	int _tabHeight;
-	const WidgetSize _ws;
+	WidgetSize _ws;
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws = kDefaultWidgetSize);
+	TabWidget(GuiObject *boss, String name);
 	~TabWidget();
+
+	void init();
 
 	virtual int16	getChildY() const;
 

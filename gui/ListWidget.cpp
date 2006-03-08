@@ -33,11 +33,11 @@ ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize w
 	init(boss, w, ws);
 }
 
-ListWidget::ListWidget(GuiObject *boss, String name, WidgetSize ws)
-	: EditableWidget(boss, name, ws), CommandSender(boss) {
+ListWidget::ListWidget(GuiObject *boss, String name)
+	: EditableWidget(boss, name), CommandSender(boss) {
 	int w = g_gui.evaluator()->getVar(name + ".w");
 
-	init(boss, w, ws);
+	init(boss, w, g_gui.getWidgetSize());
 }
 
 void ListWidget::init(GuiObject *boss, int w, WidgetSize ws) {

@@ -323,6 +323,8 @@ CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common:
 
 	w = g_gui.getFontHeight() + 10 + g_gui.getStringWidth(label);
 
+	debug(0, "%s: %d", label.c_str(), g_gui.getStringWidth(label));
+
 	return new CheckboxWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
 

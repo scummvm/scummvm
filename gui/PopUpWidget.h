@@ -49,7 +49,7 @@ class PopUpWidget : public Widget, public CommandSender {
 	};
 	typedef Common::Array<Entry> EntryList;
 protected:
-	const WidgetSize		_ws;
+	WidgetSize		_ws;
 	EntryList		_entries;
 	int				_selectedItem;
 
@@ -58,6 +58,9 @@ protected:
 
 public:
 	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint labelWidth = 0, WidgetSize ws = kDefaultWidgetSize);
+	PopUpWidget(GuiObject *boss, String name, const String &label, uint labelWidth = 0);
+
+	void init();
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 

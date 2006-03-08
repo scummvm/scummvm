@@ -38,7 +38,16 @@ enum {
 
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h, WidgetSize ws)
 	: Widget(boss, x, y, w, h), _ws(ws) {
+	init();
+}
 
+TabWidget::TabWidget(GuiObject *boss, String name)
+	: Widget(boss, name) {
+	_ws = g_gui.getWidgetSize();
+	init();
+}
+
+void TabWidget::init() {
 	_flags = WIDGET_ENABLED;
 	_type = kTabWidget;
 	_activeTab = -1;

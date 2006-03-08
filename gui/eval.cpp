@@ -127,7 +127,7 @@ void Eval::primitive(int *result) {
 
 	switch (_tokenType) {
 	case tVariable:
-		*result = getVar(_token);
+		*result = getVar_(_token);
 		if (*result == EVAL_UNDEF_VAR)
 			exprError(eUndefVar);
 		getToken();
@@ -237,6 +237,9 @@ static const BuiltinConsts builtinConsts[] = {
 	{"kBigSliderWidth", GUI::kBigSliderWidth},
 	{"kBigSliderHeight", GUI::kBigSliderHeight},
 
+	{"kNormalWidgetSize", GUI::kNormalWidgetSize},
+	{"kBigWidgetSize", GUI::kBigWidgetSize},
+
 	{"false", 0},
 	{"true", 1},
 	{NULL, 0}
@@ -252,7 +255,7 @@ int Eval::getBuiltinVar(const char *s) {
 	return EVAL_UNDEF_VAR;
 }
 
-int Eval::getVar(const char *s, bool includeAliases) {
+int Eval::getVar_(const char *s, bool includeAliases) {
 	int i;
 	int val;
 

@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
+#include "gui/widget.h"
 #include "gui/eval.h"
 
 namespace GUI {
@@ -170,7 +171,7 @@ public:
 	}
 
 	void processResSection(Common::ConfigFile &config, String name, bool skipDefs = false, const String prefix = "");
-	void processSingleLine(const String &section, const String name, const String str);
+	void processSingleLine(const String &section, const String prefix, const String name, const String str);
 	void setSpecialAlias(const String alias, const String &name);
 
 	bool isThemeLoadingRequired();

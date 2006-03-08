@@ -62,14 +62,14 @@ ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int
 	int yoffset = 6;
 
 	// Headline
-	new StaticTextWidget(this, "chooser_headline", title, kTextAlignCenter, ws);
+	new StaticTextWidget(this, "chooser_headline", title, kTextAlignCenter);
 
 	yoffset += kLineHeight + 2;
 
 	// Add choice list
 	// HACK: Subtracting -12 from the height makes the list look good when
 	// it's used to list savegames in the 320x200 version of the GUI.
-	_list = new ListWidget(this, "chooser_list", ws);
+	_list = new ListWidget(this, "chooser_list");
 	_list->setNumberingMode(kListNumberingOff);
 
 	// Buttons
