@@ -31,7 +31,7 @@ WSAMovieV1::WSAMovieV1(KyraEngine *vm) : Movie(vm) {}
 WSAMovieV1::~WSAMovieV1() { close(); }
 
 void WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::open('%s', %d, 0x%X)", filename, offscreenDecode, palBuf);
+	debugC(9, kDebugLevelMovie, "WSAMovieV1::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
 	close();
 
 	uint32 flags = 0;
@@ -191,7 +191,7 @@ void WSAMovieV1::displayFrame(int frameNum) {
 }
 
 void WSAMovieV1::processFrame(int frameNum, uint8 *dst) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::processFrame(%d, 0x%X)", frameNum, dst);
+	debugC(9, kDebugLevelMovie, "WSAMovieV1::processFrame(%d, %p)", frameNum, (const void *)dst);
 	if (!_opened)
 		return;
 	assert(frameNum <= _numFrames);

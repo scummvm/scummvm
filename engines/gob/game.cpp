@@ -139,7 +139,7 @@ char *Game::loadExtData(int16 itemId, int16 *pResWidth, int16 *pResHeight) {
 		handle = commonHandle;
 	}
 
-	debugC(7, DEBUG_FILEIO, "off: %ld size: %ld", offset, tableSize);
+	debugC(7, DEBUG_FILEIO, "off: %d size: %d", offset, tableSize);
 	_vm->_dataio->seekData(handle, offset + tableSize, SEEK_SET);
 	// CHECKME: is the below correct?
 	if (isPacked)

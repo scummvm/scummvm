@@ -321,7 +321,7 @@ uint32 PAKFile::getFileSize(const char* file) {
 }
 
 void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
-	debugC( 9, kDebugLevelMain, "KyraEngine::loadPalette('%s' 0x%X)", filename, palData);
+	debugC( 9, kDebugLevelMain, "KyraEngine::loadPalette('%s' %p)", filename, (void *)palData);
 	uint32 fileSize = 0;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 
@@ -333,7 +333,7 @@ void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
-	debugC( 9, kDebugLevelMain,"KyraEngine::copyBitmap('%s', %d, %d, 0x%X)", filename, tempPage, dstPage, palData);
+	debugC( 9, kDebugLevelMain,"KyraEngine::copyBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
 	uint32 fileSize;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 	uint8 compType = srcData[2];

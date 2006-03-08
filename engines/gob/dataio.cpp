@@ -114,7 +114,7 @@ int32 DataIO::readChunk(int16 handle, char *buf, int16 size) {
 		offset =
 		    _vm->_global->_chunkOffset[file * MAX_SLOT_COUNT + slot] +
 		    _vm->_global->_chunkPos[file * MAX_SLOT_COUNT + slot];
-		debugC(7, DEBUG_FILEIO, "seek: %ld, %ld", _vm->_global->_chunkOffset[file * MAX_SLOT_COUNT + slot], _vm->_global->_chunkPos[file * MAX_SLOT_COUNT + slot]);
+		debugC(7, DEBUG_FILEIO, "seek: %d, %d", _vm->_global->_chunkOffset[file * MAX_SLOT_COUNT + slot], _vm->_global->_chunkPos[file * MAX_SLOT_COUNT + slot]);
 		file_getHandle(_vm->_global->_dataFileHandles[file])->seek(offset, SEEK_SET);
 	}
 

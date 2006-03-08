@@ -168,7 +168,7 @@ void Parse::printExpr(char stopToken) {
 		if (operation >= 19 && operation <= 29) {
 			switch (operation) {
 			case 19:
-				debugN(5, "%l", READ_LE_UINT32(_vm->_global->_inter_execPtr));
+				debugN(5, "%d", READ_LE_UINT32(_vm->_global->_inter_execPtr));
 				_vm->_global->_inter_execPtr += 4;
 				break;
 
@@ -283,7 +283,7 @@ void Parse::printExpr(char stopToken) {
 			break;
 
 		case 7:
-			debugN(5, "%");
+			debugN(5, "%%");
 			break;
 
 		case 8:

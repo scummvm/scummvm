@@ -512,7 +512,7 @@ void ResourceManager::checkMemUsage() {
 			tmp->ptr = NULL;
 			_usedMem -= tmp->size;
 		} else {
-			warning("%d bytes of memory used, but cache list is empty!\n");
+			warning("%d bytes of memory used, but cache list is empty!\n", _usedMem);
 			return;
 		}
 	}

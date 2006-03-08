@@ -2128,7 +2128,7 @@ void ScummEngine_v72he::copyArrayHelper(ArrayHeader *ah, int idx2, int idx1, int
 		*data = ah->data + offset * 4;
 		break;
 	default:
-		error("Invalid array type", FROM_LE_32(ah->type));
+		error("Invalid array type %d", FROM_LE_32(ah->type));
 	}
 }
 

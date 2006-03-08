@@ -186,7 +186,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 			loadSceneResourceList(_sceneDescription.resourceListResourceId);
 			gDebugLevel = backUpDebugLevel;
 			debug(DUMP_SCENES_LEVEL, "Dump Scene: number %i, descriptor resourceId %i, resourceList resourceId %i", i, _sceneLUT[i], _sceneDescription.resourceListResourceId);
-			debug(DUMP_SCENES_LEVEL, "\tresourceListCount %i", _resourceListCount);
+			debug(DUMP_SCENES_LEVEL, "\tresourceListCount %i", (int)_resourceListCount);
 			for (j = 0; j < _resourceListCount; j++) {
 				if (_resourceList[j].resourceType >= typesCount) {
 					error("wrong resource type %i", _resourceList[j].resourceType);
@@ -509,7 +509,7 @@ int Scene::getBGMaskType(const Point &testPoint) {
 	}
 	offset = testPoint.x + testPoint.y * _bgMask.w;
 	if (offset >= _bgMask.buf_len) {
-		error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, _bgMask.buf_len);
+		error("Scene::getBGMaskType offset 0x%X exceed bufferLength 0x%X", offset, (int)_bgMask.buf_len);
 	}
 
 	return (_bgMask.buf[offset] >> 4) & 0x0f;
@@ -942,7 +942,7 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 
 		// Allocate memory for scene resource list
 		_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
-		debug(3, "Scene resource list contains %i entries", _resourceListCount);
+		debug(3, "Scene resource list contains %i entries", (int)_resourceListCount);
 		_resourceList = (SceneResourceData *)calloc(_resourceListCount, sizeof(*_resourceList));
 
 		// Load scene resource list from raw scene
@@ -1037,7 +1037,7 @@ void Scene::processSceneResources() {
 			_bgMask.w = MIN(_bgMask.w, _vm->getDisplayWidth());
 			_bgMask.h = MIN(_bgMask.h, getHeight());
 
-			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, _bgMask.buf_len);
+			debug(4, "BACKGROUND MASK width=%d height=%d length=%d", _bgMask.w, _bgMask.h, (int)_bgMask.buf_len);
 			break;
 		case SAGA_STRINGS:
 			debug(3, "Loading scene strings resource...");
@@ -1123,7 +1123,7 @@ void Scene::processSceneResources() {
 				byte *palPtr = resourceData;
 
 				if (resourceDataLength < 3 * PAL_ENTRIES)
-					error("Too small scene palette %i", resourceDataLength);
+					error("Too small scene palette %i", (int)resourceDataLength);
 
 				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
 					pal[c].red = *palPtr++;

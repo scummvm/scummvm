@@ -164,7 +164,6 @@ int Win32ResExtractor::extractResource_(const char *resType, char *resName, byte
 
 		if (_vm->_substResFileName.almostGameID != 0) {
 			char buf1[128];
-
 			_vm->generateSubstResFileName(_fileName, buf1, sizeof(buf1));
 			strcpy(_fileName, buf1);
 		}

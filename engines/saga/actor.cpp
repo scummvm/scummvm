@@ -332,7 +332,7 @@ bool Actor::loadActorResources(ActorData *actor) {
 		_vm->_resource->loadResource(_actorContext, actor->_frameListResourceId, resourcePointer, resourceLength);
 
 		framesCount = resourceLength / 16;
-		debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, resourceLength);
+		debug(9, "Frame resource contains %d frames (res length is %d)", framesCount, (int)resourceLength);
 
 		framesPointer = (ActorFrameSequence *)malloc(sizeof(ActorFrameSequence) * framesCount);
 		if (framesPointer == NULL && framesCount != 0) {

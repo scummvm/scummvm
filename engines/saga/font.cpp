@@ -83,7 +83,7 @@ void Font::loadFont(uint32 fontResourceId) {
 	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourcePointer, fontResourceLength);
 
 	if (fontResourceLength < FONT_DESCSIZE) {
-		error("Font::loadFont() Invalid font length (%i < %i)", fontResourceLength, FONT_DESCSIZE);
+		error("Font::loadFont() Invalid font length (%i < %i)", (int)fontResourceLength, FONT_DESCSIZE);
 	}
 
 	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, fontContext->isBigEndian);

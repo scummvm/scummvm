@@ -302,7 +302,7 @@ void KyraEngine::setCharacterPositionWithUpdate(int character) {
 }
 
 int KyraEngine::setCharacterPosition(int character, int *facingTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPosition(%d, 0x%X)", character, facingTable);
+	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPosition(%d, %p)", character, (const void *)facingTable);
 	if (character == 0) {
 		_currentCharacter->x1 += _charXPosTable[_currentCharacter->facing];
 		_currentCharacter->y1 += _charYPosTable[_currentCharacter->facing];
@@ -319,7 +319,7 @@ int KyraEngine::setCharacterPosition(int character, int *facingTable) {
 }
 
 void KyraEngine::setCharacterPositionHelper(int character, int *facingTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPositionHelper(%d, 0x%X)", character, facingTable);
+	debugC(9, kDebugLevelMain, "KyraEngine::setCharacterPositionHelper(%d, %p)", character, (const void *)facingTable);
 	Character *ch = &_characterList[character];
 	++ch->currentAnimFrame;
 	int facing = ch->facing;
@@ -936,7 +936,7 @@ int KyraEngine::handleSceneChange(int xpos, int ypos, int unk1, int frameReset) 
 }
 
 int KyraEngine::processSceneChange(int *table, int unk1, int frameReset) {
-	debugC(9, kDebugLevelMain, "KyraEngine::processSceneChange(0x%X, %d, %d)", table, unk1, frameReset);
+	debugC(9, kDebugLevelMain, "KyraEngine::processSceneChange(%p, %d, %d)", (const void *)table, unk1, frameReset);
 	if (queryGameFlag(0xEF)) {
 		unk1 = 0;
 	}
@@ -1191,7 +1191,7 @@ void KyraEngine::setCharactersPositions(int character) {
 #pragma mark -
 
 int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findWay(%d, %d, %d, %d, 0x%X, %d)", x, y, toX, toY, moveTable, moveTableSize);
+	debugC(9, kDebugLevelMain, "KyraEngine::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= 0xFFFC; toX &= 0xFFFC;
 	y &= 0xFFFE; toY &= 0xFFFE;
 	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
@@ -1307,7 +1307,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 }
 
 int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
-	debugC(9, kDebugLevelMain, "KyraEngine::findSubPath(%d, %d, %d, %d, 0x%X, %d, %d)", x, y, toX, toY, moveTable, start, end);
+	debugC(9, kDebugLevelMain, "KyraEngine::findSubPath(%d, %d, %d, %d, %p, %d, %d)", x, y, toX, toY, (const void *)moveTable, start, end);
 	// only used for debug specific code
 	//static uint16 unkTable[] = { 8, 5 };
 	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
@@ -1483,7 +1483,7 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 }
 
 int KyraEngine::getMoveTableSize(int *moveTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine::getMoveTableSize(0x%X)", moveTable);
+	debugC(9, kDebugLevelMain, "KyraEngine::getMoveTableSize(%p)", (const void *)moveTable);
 	int retValue = 0;
 	if (moveTable[0] == 8)
 		return 0;

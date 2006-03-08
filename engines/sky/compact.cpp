@@ -390,7 +390,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 		return ((uint8 *)fetchCpt(cpt->megaSet3.turnTableId) + turnTableOffsets[off]);
 	off -= TURNTABLE_SIZE;
 
-	error("Offset %X out of bounds of compact", off + COMPACT_SIZE + 4 * MEGASET_SIZE + 4 * TURNTABLE_SIZE);
+	error("Offset %X out of bounds of compact", (int)(off + COMPACT_SIZE + 4 * MEGASET_SIZE + 4 * TURNTABLE_SIZE));
 }
 
 uint8 *SkyCompact::createResetData(uint16 gameVersion) {

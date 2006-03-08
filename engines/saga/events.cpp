@@ -408,7 +408,7 @@ int Events::handleOneShot(Event *event) {
 		switch (event->op) {
 		case kEventExecBlocking:
 		case kEventExecNonBlocking:
-			debug(6, "Exec module number %d script entry number %d", event->param, event->param2);
+			debug(6, "Exec module number %ld script entry number %ld", event->param, event->param2);
 
 			sthread = _vm->_script->createThread(event->param, event->param2);
 			if (sthread == NULL) {

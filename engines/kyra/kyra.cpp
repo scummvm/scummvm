@@ -845,7 +845,7 @@ void KyraEngine::delayWithTicks(int ticks) {
 #pragma mark -
 
 void KyraEngine::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
-	debugC(9, kDebugLevelMain, "KyraEngine::setupShapes123(0x%X, startShape, flags)", shapeTable, endShape, flags);
+	debugC(9, kDebugLevelMain, "KyraEngine::setupShapes123(%p, %d, %d)", (const void *)shapeTable, endShape, flags);
 	for (int i = 123; i <= 172; ++i) {
 		_shapes[4+i] = NULL;
 	}

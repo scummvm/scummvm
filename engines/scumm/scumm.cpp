@@ -1606,7 +1606,9 @@ void ScummEngine_v99he::scummInit() {
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
 
 	// Array 129 is set to base name
-	int len = resStrLen((const byte *)_baseName.c_str()) + 1;
+	// FIXME: Of course, we probably would want to insert the value
+	// *after* applying the filename substitution here... ?
+	int len = _baseName.size() + 1;
 	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
 	memcpy(ah->data, _baseName.c_str(), len);
 

@@ -461,7 +461,7 @@ void SeqPlayer::s1_prefetchVocFile() {
 }
 
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
-	debugC( 9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(0x%X, %d)", seqData, skipSeq);
+	debugC( 9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(%p, %d)", (const void *)seqData, skipSeq);
 	assert(seqData);
 	
 	static SeqEntry floppySeqProcs[] = {

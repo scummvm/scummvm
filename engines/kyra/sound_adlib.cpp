@@ -758,7 +758,7 @@ void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
 }
 
 void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state) {
-	debugC(9, kDebugLevelSound, "updateAndOutput2(%d, 0x%X, %d)", unk1, dataptr, &state - _outputTables);
+	debugC(9, kDebugLevelSound, "updateAndOutput2(%d, %p, %d)", unk1, (const void *)dataptr, &state - _outputTables);
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
 	// Keyboard Scaling Rate / Modulator Frequency Multiple
 	writeOPL(0x20 + unk1, *dataptr++);

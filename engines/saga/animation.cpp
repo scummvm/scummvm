@@ -478,7 +478,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 #if 1
 #define VALIDATE_WRITE_POINTER \
 	if ((writePointer < buf) || (writePointer >= (buf + screenWidth * screenHeight))) { \
-		error("VALIDATE_WRITE_POINTER: writePointer=%x buf=%x", writePointer, buf); \
+		error("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
 	}
 #else
 #define VALIDATE_WRITE_POINTER

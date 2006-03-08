@@ -59,7 +59,7 @@ int SagaEngine::decodeBGImage(const byte *image_data, size_t image_size,
 	size_t out_buf_len;
 
 	if (image_size <= SAGA_IMAGE_DATA_OFFSET) {
-		error("decodeBGImage() Image size is way too small (%d)", image_size);
+		error("decodeBGImage() Image size is way too small (%d)", (int)image_size);
 	}
 
 	MemoryReadStreamEndian readS(image_data, image_size, isBigEndian());

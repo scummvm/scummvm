@@ -95,7 +95,7 @@ Script::Script(SagaEngine *vm) : _vm(vm) {
 	} else if (resourceLength % S_LUT_ENTRYLEN_ITEDISK == 0) {
 		_modulesLUTEntryLen = S_LUT_ENTRYLEN_ITEDISK;
 	} else {
-		error("Script::Script() Invalid script lookup table length (%i)", resourceLength);
+		error("Script::Script() Invalid script lookup table length (%i)", (int)resourceLength);
 	}
 
 	// Calculate number of entries

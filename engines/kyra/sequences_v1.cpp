@@ -1366,7 +1366,7 @@ int KyraEngine::handleBeadState() {
 }
 
 void KyraEngine::initBeadState(int x, int y, int x2, int y2, int unk, BeadState *ptr) {
-	debugC(9, kDebugLevelMain, "KyraEngine::initBeadState(%d, %d, %d, %d, %d, 0x%X)", x, y, x2, y2, unk, ptr);
+	debugC(9, kDebugLevelMain, "KyraEngine::initBeadState(%d, %d, %d, %d, %d, %p)", x, y, x2, y2, unk, (const void *)ptr);
 	ptr->unk9 = unk;
 	int xDiff = x2 - x;
 	int yDiff = y2 - y;
@@ -1401,7 +1401,7 @@ void KyraEngine::initBeadState(int x, int y, int x2, int y2, int unk, BeadState 
 }
 
 int KyraEngine::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
-	debugC(9, kDebugLevelMain, "KyraEngine::processBead(%d, %d, 0x%X, 0x%X, 0x%X)", x, y, &x2, &y2, ptr);
+	debugC(9, kDebugLevelMain, "KyraEngine::processBead(%d, %d, %p, %p, %p)", x, y, (const void *)&x2, (const void *)&y2, (const void *)ptr);
 	if (x == ptr->dstX && y == ptr->dstY) {
 		return 1;
 	}

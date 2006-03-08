@@ -1268,7 +1268,7 @@ void Debug::script(uint32 command, uint16 *scriptData) {
 			debug(6, " %d", READ_LE_UINT16(scriptData + i));
 		}
 	}
-	debug(6, "");
+	debug(6, " ");	// Print an empty line as separator
 }
 
 void Debug::mcode(uint32 mcode, uint32 a, uint32 b, uint32 c) {

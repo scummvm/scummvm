@@ -2303,7 +2303,7 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 		}
 		break;
 	default:
-		error("Invalid array type", FROM_LE_32(ah->type));
+		error("Invalid array type %d", FROM_LE_32(ah->type));
 	}
 }
 
