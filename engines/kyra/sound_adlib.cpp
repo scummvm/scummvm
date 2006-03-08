@@ -1994,7 +1994,8 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 		return;
 	soundId &= 0xFF;
 	while ((_driver->callback(16, 0) & 8)) {
-		_engine->delay(10);
+		// We call the system delay and not the game delay to avoid concurrency issues.
+		_engine->_system->delayMillis(10);
 	}
 	if (_sfxPlayingSound != -1) {
 		_driver->callback(10, _sfxPlayingSound, int(1), int(_sfxSecondByteOfSong));
