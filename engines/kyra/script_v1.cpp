@@ -44,9 +44,12 @@ int KyraEngine::cmd_characterSays(ScriptState *script) {
 	_skipFlag = false;
 	if (_features & GF_TALKIE) {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_characterSays(%p) (%d, '%s', %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3));
-		snd_voiceWaitForFinish();
-		snd_playVoiceFile(stackPos(0));
-		characterSays(stackPosString(1), stackPos(2), stackPos(3));
+		if (_configVoice == 1 || _configVoice == 2) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(stackPos(0));
+		}
+		if (_configVoice == 0 || _configVoice == 1)
+			characterSays(stackPosString(1), stackPos(2), stackPos(3));
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_characterSays(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
 		characterSays(stackPosString(0), stackPos(1), stackPos(2));
@@ -613,10 +616,14 @@ int KyraEngine::cmd_loadPageFromDisk(ScriptState *script) {
 int KyraEngine::cmd_customPrintTalkString(ScriptState *script) {
 	if (_features & GF_TALKIE) {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_customPrintTalkString(%p) (%d, '%s', %d, %d, %d)", (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF);
-		snd_voiceWaitForFinish();
-		snd_playVoiceFile(stackPos(0));
+
+		if (_configVoice == 1 || _configVoice == 2) {
+			snd_voiceWaitForFinish();
+			snd_playVoiceFile(stackPos(0));
+		}
 		_skipFlag = false;
-		_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
+		if (_configVoice == 0 || _configVoice == 1)
+			_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "cmd_customPrintTalkString(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3) & 0xFF);
 		_skipFlag = false;
@@ -1447,8 +1454,7 @@ int KyraEngine::cmd_totalItemsInScene(ScriptState *script) {
 
 int KyraEngine::cmd_restoreBrandonsMovementDelay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "cmd_restoreBrandonsMovementDelay(%p) ()", (const void *)script);
-	//TODO: Use movement set by menu, instead of 5.
-	setTimerDelay(5, 5);
+	setWalkspeed(_configWalkspeed);	
 	return 0;
 }
 

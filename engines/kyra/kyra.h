@@ -201,8 +201,8 @@ struct MenuItem {
 	int (KyraEngine::*callback)(Button*);
 	int16 field_1b;
 	const char *labelString;
-	uint16 field_21;
-	uint8 field_23;
+	uint16 labelX;
+	uint8 labelY;
 	uint8 field_24;
 	uint32 field_25;
 };
@@ -641,7 +641,8 @@ protected:
 	void updateAnimFlag2(int timerNum);
 	void drawAmulet();
 	void setTextFadeTimerCountdown(int16 countdown);
-	
+	void setWalkspeed(uint8 newSpeed);
+
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
 	int buttonMenuCallback(Button *caller);
@@ -663,6 +664,7 @@ protected:
 	int gui_resumeGame(Button *button);
 	int gui_loadGameMenu(Button *button);
 	int gui_saveGameMenu(Button *button);
+	int gui_gameControlsMenu(Button *button);
 	int gui_quitPlaying(Button *button);
 	int gui_quitConfirmYes(Button *button);
 	int gui_quitConfirmNo(Button *button);
@@ -672,6 +674,11 @@ protected:
 	int gui_cancelSubMenu(Button *button);
 	int gui_scrollUp(Button *button);
 	int gui_scrollDown(Button *button);
+	int gui_controlsChangeMusic(Button *button);
+	int gui_controlsChangeSounds(Button *button);
+	int gui_controlsChangeWalk(Button *button);
+	int gui_controlsChangeText(Button *button);
+	int gui_controlsChangeVoice(Button *button);
 
 	bool gui_quitConfirm(const char *str);
 	void gui_getInput();
@@ -682,6 +689,7 @@ protected:
 	void gui_redrawTextfield();
 	void gui_fadePalette();
 	void gui_restorePalette();
+	void gui_setupControls(Menu &menu);
 
 	uint8 _game;
 	bool _quitFlag;
@@ -781,8 +789,12 @@ protected:
 	int8 _startSentencePalIndex;
 	bool _fadeText;
 
-	uint8 _configTalkspeed;
-	
+	uint8 _configTextspeed;
+	uint8 _configWalkspeed;
+	bool _configMusic;
+	bool _configSounds;
+	uint8 _configVoice;
+
 	Common::String _targetName;
 	
 	int _curMusicTheme;

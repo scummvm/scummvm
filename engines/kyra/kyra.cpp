@@ -440,7 +440,12 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(_movFacingTable);
 	_movFacingTable[0] = 8;
 
-	_configTalkspeed = 1;
+	_configTextspeed = 1;
+	_configWalkspeed = 2;
+	_configMusic = true;
+	_configSounds = true;
+	_configVoice = 1;
+
 	_skipFlag = false;
 
 	_marbleVaseItem = -1;

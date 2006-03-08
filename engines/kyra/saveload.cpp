@@ -28,7 +28,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#define CURRENT_VERSION 3
+#define CURRENT_VERSION 4
 
 namespace Kyra {
 void KyraEngine::loadGame(const char *fileName) {
@@ -178,6 +178,14 @@ void KyraEngine::loadGame(const char *fileName) {
 			snd_playWanderScoreViaMap(_lastMusicCommand, 1);
 	}
 	
+	if (version >= 4) {
+		_configTextspeed = in->readByte();
+		_configWalkspeed = in->readByte();
+		_configMusic = in->readByte();
+		_configSounds = in->readByte();
+		_configVoice = in->readByte();
+	}
+
 	if (queryGameFlag(0x2D)) {
 		loadMainScreen(8);
 		loadBitmap("AMULET3.CPS", 10, 10, 0);
@@ -309,6 +317,12 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeUint16BE(0xFFFF);
 	
 	out->writeSint16BE(_lastMusicCommand);
+
+	out->writeByte(_configTextspeed);
+	out->writeByte(_configWalkspeed);
+	out->writeByte(_configMusic);
+	out->writeByte(_configSounds);
+	out->writeByte(_configVoice);
 
 	out->flush();
 

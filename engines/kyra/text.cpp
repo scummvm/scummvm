@@ -46,7 +46,7 @@ void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 ch
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
 
 	if (chatDuration != -1 ) {
-		switch (_configTalkspeed) {
+		switch (_configTextspeed) {
 			case 0: chatDuration *= 2;
 					break;
 			case 2: chatDuration /= 4;

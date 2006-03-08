@@ -414,10 +414,12 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 	gui_fadePalette();
 
-	for ( int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		calcCoords(_menu[i]);
 
 	_menuRestoreScreen = true;
+	_keyboardEvent.pending = 0;
+	_keyboardEvent.repeat = 0;
 
 	_toplevelMenu = 0;
 	if (_menuDirectlyToLoad)
@@ -500,22 +502,24 @@ void KyraEngine::initMenu(Menu menu) {
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bgcolor);
 		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
 
-		if (menu.item[i].field_12 != -1)
-			textX = x1 + menu.item[i].field_12 + 3;
-		else
-			textX = _text->getCenterStringX(menu.item[i].itemString, x1, x2);
+		if (menu.item[i].itemString) {
+			if (menu.item[i].field_12 != -1)
+				textX = x1 + menu.item[i].field_12 + 3;
+			else
+				textX = _text->getCenterStringX(menu.item[i].itemString, x1, x2);
 
-		textY = y1 + 2;
-		_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
+			textY = y1 + 2;
+			_text->printText(menu.item[i].itemString, textX - 1, textY + 1,  12, 0, 0);
 
-		if (i == menu.highlightedItem)
-			_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
-		else
-			_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].textColor, 0, 0);
+			if (i == menu.highlightedItem)
+				_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
+			else
+				_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].textColor, 0, 0);
 
-		if (menu.item[i].labelString) {
-			_text->printText(menu.item[i].labelString, menu.x + menu.item[i].field_21 - 1, menu.y + menu.item[i].field_23 + 1, 12, 0, 0);
-			_text->printText(menu.item[i].labelString, menu.x + menu.item[i].field_21, menu.y + menu.item[i].field_23, 253, 0, 0);
+			if (menu.item[i].labelString) {
+				_text->printText(menu.item[i].labelString, menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, 12, 0, 0);
+				_text->printText(menu.item[i].labelString, menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, 253, 0, 0);
+			}
 		}
 	}
 
@@ -799,8 +803,6 @@ int KyraEngine::gui_saveGame(Button *button) {
 	}
 	gui_redrawTextfield();
 
-	_keyboardEvent.pending = 0;
-	_keyboardEvent.repeat = 0;
 	while (_displaySubMenu) {
 		gui_getInput();
 		gui_updateSavegameString();
@@ -902,6 +904,181 @@ int KyraEngine::gui_quitConfirmNo(Button *button) {
 	_displaySubMenu = false;
 	_cancelSubMenu = true;
 
+	return 0;
+}
+
+int KyraEngine::gui_gameControlsMenu(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_gameControlsMenu()");
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	if (_features & GF_TALKIE) {
+		_menu[5].width = 230;
+
+		for (int i = 0; i < 5; i++) {
+			_menu[5].item[i].labelX = 24;
+			_menu[5].item[i].x = 115;
+			_menu[5].item[i].width = 94;
+		}
+
+		_menu[5].item[3].labelString = "Voice / Text ";
+		_menu[5].item[3].callback = &KyraEngine::gui_controlsChangeVoice;
+
+	} else {
+		_menu[5].height = 136;
+		_menu[5].item[5].y = 110;
+		_menu[5].item[4].enabled = 0;
+		_menu[5].item[3].labelString = "Text speed ";
+		_menu[5].item[3].callback = &KyraEngine::gui_controlsChangeText;
+	}
+
+	calcCoords(_menu[5]);
+	gui_setupControls(_menu[5]);
+
+	processAllMenuButtons();
+
+	_displaySubMenu = true;
+	_cancelSubMenu = false;
+
+	while (_displaySubMenu) {
+		gui_getInput();
+		gui_processHighlights(_menu[5]);
+		processButtonList(_menuButtonList);
+	}
+
+	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
+	_screen->savePageToDisk("SEENPAGE.TMP", 0);
+
+	if (_cancelSubMenu) {
+		initMenu(_menu[_toplevelMenu]);
+		processAllMenuButtons();
+	}
+	return 0;
+}
+
+void KyraEngine::gui_setupControls(Menu &menu) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_setupControls()");
+
+	if (_configMusic)
+		menu.item[0].itemString = "On";
+	else
+		menu.item[0].itemString = "Off";
+
+	if (_configSounds)
+		menu.item[1].itemString = "On";
+	else
+		menu.item[1].itemString = "Off";
+
+
+	switch (_configWalkspeed) {
+		case 0:
+			menu.item[2].itemString = "Slowest";
+			break;
+		case 1:
+			menu.item[2].itemString = "Slow";
+			break;
+		case 2:
+			menu.item[2].itemString = "Normal";
+			break;
+		case 3:
+			menu.item[2].itemString = "Fast";
+			break;
+		case 4:
+			menu.item[2].itemString = "Fastest";
+			break;
+		default:
+			menu.item[2].itemString = "ERROR";
+	}
+
+	int textControl = 3;
+	if (_features & GF_TALKIE) {
+		textControl = 4;
+
+		if (_configVoice == 0)
+			_menu[5].item[4].enabled = 1;
+		else
+			_menu[5].item[4].enabled = 0;
+
+		switch (_configVoice) {
+			case 0:
+				menu.item[3].itemString = "Text only";
+				break;
+			case 1:
+				menu.item[3].itemString = "Voice & Text";
+				break;
+			case 2:
+				menu.item[3].itemString = "Voice only";
+				break;
+			default:
+				menu.item[3].itemString = "ERROR";
+		}
+	}
+
+	switch (_configTextspeed) {
+		case 0:
+			menu.item[textControl].itemString = "Slow";
+			break;
+		case 1:
+			menu.item[textControl].itemString = "Normal";
+			break;
+		case 2:
+			menu.item[textControl].itemString = "Fast";
+			break;
+		case 3:
+			menu.item[textControl].itemString = "Clickable";
+			break;
+		default:
+			menu.item[textControl].itemString = "ERROR";
+	}
+
+
+	initMenu(menu);
+}
+
+int KyraEngine::gui_controlsChangeMusic(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsChangeMusic()");
+	processMenuButton(button);
+
+	_configMusic = !_configMusic;
+	gui_setupControls(_menu[5]);
+	return 0;
+}
+
+int KyraEngine::gui_controlsChangeSounds(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsChangeSounds()");
+	processMenuButton(button);
+
+	_configSounds = !_configSounds;
+	gui_setupControls(_menu[5]);
+	return 0;
+}
+
+int KyraEngine::gui_controlsChangeWalk(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsChangeWalk()");
+	processMenuButton(button);
+
+	_configWalkspeed = ++_configWalkspeed % 5;
+	setWalkspeed(_configWalkspeed);
+	gui_setupControls(_menu[5]);
+	return 0;
+}
+
+int KyraEngine::gui_controlsChangeText(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsChangeText()");
+	processMenuButton(button);
+
+	_configTextspeed = ++_configTextspeed % 4;
+	gui_setupControls(_menu[5]);
+	return 0;
+}
+
+int KyraEngine::gui_controlsChangeVoice(Button *button) {
+	debugC(9, kDebugLevelGUI, "KyraEngine::gui_controlsChangeVoice()");
+	processMenuButton(button);
+
+	_configVoice = ++_configVoice % 3;
+	gui_setupControls(_menu[5]);
 	return 0;
 }
 

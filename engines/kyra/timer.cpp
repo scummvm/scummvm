@@ -276,5 +276,14 @@ void KyraEngine::drawAmulet() {
 	}
 	_screen->showMouse();
 }
+
+void KyraEngine::setWalkspeed(uint8 newSpeed) {
+	debugC(9, kDebugLevelMain, "KyraEngine::setWalkspeed(%i)", newSpeed);
+	static const uint8 speeds[] = {11, 9, 6, 5, 3};
+
+	assert(newSpeed < ARRAYSIZE(speeds));
+	setTimerDelay(5, speeds[newSpeed]);
+}
+
 } // end of namespace Kyra
 
