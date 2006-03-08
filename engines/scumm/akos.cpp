@@ -220,7 +220,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								akst += 8;
 							}
 							if (!found) {
-								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
+								error("Sequence not found in actor %p costume %d", a, a->_costume);
 							}
 						}
 					}
@@ -251,7 +251,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								aksf += 6;
 							}
 							if (!found) {
-								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
+								error("Sequence not found in actor %p costume %d", a, a->_costume);
 							}							
 						}
 					}
@@ -275,7 +275,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								akst += 8;
 							}
 							if (!found) {
-								error("Sequence not found in actor 0x%X costume %d", a, a->_costume);
+								error("Sequence not found in actor %p costume %d", a, a->_costume);
 							}
 						}
 					}					
