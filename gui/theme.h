@@ -36,8 +36,6 @@
 
 namespace GUI {
 
-typedef Common::String String;
-
 // Hints to the theme engine that the widget is used in a non-standard way.
 
 enum {
@@ -61,6 +59,7 @@ enum {
 
 
 class Theme {
+	typedef Common::String String;
 public:
 	Theme() : _drawArea(), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
 		Common::MemoryReadStream s((const byte *)_defaultConfigINI, strlen(_defaultConfigINI));
@@ -265,6 +264,7 @@ private:
 #ifndef DISABLE_FANCY_THEMES
 
 class ThemeNew : public Theme {
+	typedef Common::String String;
 public:
 	ThemeNew(OSystem *system, String stylefile);
 	virtual ~ThemeNew();
@@ -494,7 +494,7 @@ private:
 	
 	uint _gradientFactors[kMaxGradientFactors];
 };
-#endif
+#endif // DISABLE_FANCY_THEMES
 } // end of namespace GUI
 
 #endif // GUI_THEME_H
