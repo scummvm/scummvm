@@ -67,20 +67,20 @@ GameList Engine_SWORD2_gameIDList() {
 	const Sword2GameSettings *g = sword2_settings;
 	GameList games;
 	while (g->gameid) {
-		games.push_back(toGameSettings(*g));
+		games.push_back(*g);
 		g++;
 	}
 	return games;
 }
 
-GameSettings Engine_SWORD2_findGameID(const char *gameid) {
+GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
 	const Sword2GameSettings *g = sword2_settings;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
-	return toGameSettings(*g);
+	return *g;
 }
 
 DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
@@ -99,7 +99,7 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 
 				if (0 == scumm_stricmp(g->detectname, gameName)) {
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(toDetectedGame(*g));
+					detectedGames.push_back(*g);
 					break;
 				}
 			}

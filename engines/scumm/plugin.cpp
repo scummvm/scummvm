@@ -55,7 +55,6 @@ enum {
 	kMD5FileSizeLimit = 1024 * 1024
 };
 
-
 struct ObsoleteGameID {
 	const char *from;
 	const char *to;
@@ -75,7 +74,7 @@ static const Common::Platform UNK = Common::kPlatformUnknown;
  * This table contains all game IDs supported by the SCUMM engine, and maps
  * them to the full humand readable game name.
  */
-static const GameSettings gameDescriptions[] = {
+static const PlainGameDescriptor gameDescriptions[] = {
 	{ "atlantis", "Indiana Jones and the Fate of Atlantis" },
 	{ "indy3", "Indiana Jones and the Last Crusade" },
 	{ "loom", "Loom" },
@@ -851,7 +850,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 
 static const char *findDescriptionFromGameID(const char *gameid) {
-	const GameSettings *g = gameDescriptions;
+	const PlainGameDescriptor *g = gameDescriptions;
 	while (g->gameid) {
 		if (!scumm_stricmp(g->gameid, gameid)) {
 			return g->description;
@@ -874,32 +873,32 @@ static int compareMD5Table(const void *a, const void *b) {
 
 
 GameList Engine_SCUMM_gameIDList() {
-	const GameSettings *g = gameDescriptions;
+	const PlainGameDescriptor *g = gameDescriptions;
 	GameList games;
 	while (g->gameid) {
-		games.push_back(*g);
+		games.push_back(GameDescriptor(g->gameid, g->description));
 		g++;
 	}
 	return games;
 }
 
-GameSettings Engine_SCUMM_findGameID(const char *gameid) {
+GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
 	// First search the list of supported game IDs.
-	const GameSettings *g = gameDescriptions;
+	const PlainGameDescriptor *g = gameDescriptions;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
-			return *g;
+			return GameDescriptor(g->gameid, g->description);
 		g++;
 	}
 
 	// If we didn't find the gameid in the main list, check if it
 	// is an obsolete game id.
-	GameSettings gs = { 0, 0 };
+	GameDescriptor gs;
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
 		if (0 == scumm_stricmp(gameid, o->from)) {
 			gs.gameid = gameid;
-			gs.gameid = "Obsolete game ID";
+			gs.description = "Obsolete game ID";
 			return gs;
 		}
 		o++;
@@ -1072,7 +1071,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								if we find something which has an unknown MD5, assume
 								that it is an (so far unknown) version of Indy3.
 
-								We can combin this with a look at the resource headers:
+								We can combine this with a look at the resource headers:
 
 								Indy3:
 								_numGlobalObjects 1000
@@ -1189,7 +1188,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 
 				const char *gameid = elem->gameid;
 
-				// Find the GameSettings for that gameid
+				// Find the GameDescriptor for that gameid
 				for (g = scumm_settings; g->gameid; ++g) {
 					if (0 == scumm_stricmp(g->gameid, gameid))
 							break;
@@ -1318,7 +1317,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 
 	// Now search our 'database' for the MD5; if a match is found, we use 
-	// the information in the 'database' to correct the GameSettings.
+	// the information in the 'database' to correct the GameDescriptor.
 	g = multiple_versions_md5_settings;
 	while (g->gameid) {
 		if (!scumm_stricmp(md5, g->gameid)) {
@@ -1366,7 +1365,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	if (!elem)
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
 
-	// Finally, we have massaged the GameSettings to our satisfaction, and can
+	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
 	switch (game.version) {
 	case 1:

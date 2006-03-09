@@ -239,7 +239,7 @@ void listGames() {
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (*iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameid, v->description);
+			printf("%-20s %s\n", v->gameid.c_str(), v->description.c_str());
 		}
 	}
 }
@@ -262,8 +262,8 @@ void listTargets() {
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
 			String gameid(name);
-			GameSettings g = GameDetector::findGame(gameid);
-			if (g.description)
+			GameDescriptor g = GameDetector::findGame(gameid);
+			if (g.description.size() > 0)
 				description = g.description;
 		}
 
@@ -271,15 +271,15 @@ void listTargets() {
 	}
 }
 
-GameSettings GameDetector::findGame(const String &gameName, const Plugin **plugin) {
-	// Find the GameSettings for this target
+GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plugin) {
+	// Find the GameDescriptor for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
-	GameSettings result = {NULL, NULL};
+	GameDescriptor result;
 
 	PluginList::const_iterator iter = plugins.begin();
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->findGame(gameName.c_str());
-		if (result.gameid) {
+		if (result.gameid.size() > 0) {
 			if (plugin)
 				*plugin = *iter;
 			break;
@@ -384,7 +384,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			// To verify this, check if there is either a game domain (i.e.
 			// a configured target) matching this argument, or if we can
 			// find any target with that name.
-			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).gameid)) {
+			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).gameid.size() > 0)) {
 				setTarget(s);
 			} else {
 				if (current_option == NULL)
@@ -641,15 +641,15 @@ bool GameDetector::detectMain() {
 		_gameid = _targetName;
 
 	printf("Looking for %s\n", _gameid.c_str());
-	GameSettings game = findGame(_gameid, &_plugin);
+	GameDescriptor game = findGame(_gameid, &_plugin);
 
-	if (!game.gameid) {
+	if (game.gameid.size() == 0) {
 		printf("Failed game detection\n");
 		warning("%s is an invalid target. Use the --list-targets option to list targets", _targetName.c_str());
 		return false;
 	}
 
-	printf("Trying to start game '%s'\n", game.description);
+	printf("Trying to start game '%s'\n", game.description.c_str());
 
 	String gameDataPath(ConfMan.get("path"));
 	if (gameDataPath.isEmpty()) {

@@ -77,7 +77,7 @@ extern bool isSmartphone(void);
  With apologies to the CD32 SteelSky file.
 */
 
-static const GameSettings skySetting =
+static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
 
 GameList Engine_SKY_gameIDList() {
@@ -86,11 +86,10 @@ GameList Engine_SKY_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_SKY_findGameID(const char *gameid) {
+GameDescriptor Engine_SKY_findGameID(const char *gameid) {
 	if (0 == scumm_stricmp(gameid, skySetting.gameid))
 		return skySetting;
-	GameSettings dummy = { 0, 0 };
-	return dummy;
+	return GameDescriptor();
 }
 
 DetectedGameList Engine_SKY_detectGames(const FSList &fslist) {

@@ -55,7 +55,7 @@ bool isSmartphone();
 #endif
 
 /* Flight of the Amazon Queen */
-static const GameSettings queen_setting[] = {
+static const PlainGameDescriptor queen_setting[] = {
 	{ "queen", "Flight of the Amazon Queen" },
 	{ "queen", "Flight of the Amazon Queen (Demo)" },
 	{ "queen", "Flight of the Amazon Queen (Interview)" },
@@ -68,15 +68,14 @@ GameList Engine_QUEEN_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_QUEEN_findGameID(const char *gameid) {
+GameDescriptor Engine_QUEEN_findGameID(const char *gameid) {
 	if (0 == scumm_stricmp(gameid, queen_setting[0].gameid))
 		return queen_setting[0];
-	GameSettings dummy = { 0, 0 };
-	return dummy;
+	return GameDescriptor();
 }
 
 
-GameSettings determineTarget(uint32 size) {
+GameDescriptor determineTarget(uint32 size) {
 	switch (size) {
 	case 3724538:	//regular demo
 	case 3732177:

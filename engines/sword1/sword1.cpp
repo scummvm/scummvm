@@ -48,9 +48,9 @@
 using namespace Sword1;
 
 /* Broken Sword 1 */
-static const GameSettings sword1FullSettings =
+static const PlainGameDescriptor sword1FullSettings =
 	{"sword1", "Broken Sword 1: The Shadow of the Templars"};
-static const GameSettings sword1DemoSettings =
+static const PlainGameDescriptor sword1DemoSettings =
 	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)"};
 
 // check these subdirectories (if present)
@@ -73,13 +73,12 @@ GameList Engine_SWORD1_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_SWORD1_findGameID(const char *gameid) {
+GameDescriptor Engine_SWORD1_findGameID(const char *gameid) {
 	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameid))
 		return sword1FullSettings;
 	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameid))
 		return sword1DemoSettings;
-	GameSettings dummy = { 0, 0 };
-	return dummy;
+	return GameDescriptor();
 }
 
 void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {

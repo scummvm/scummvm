@@ -56,7 +56,7 @@
 #include "saga/objectmap.h"
 #include "saga/resnames.h"
 
-static const GameSettings saga_games[] = {
+static const PlainGameDescriptor saga_games[] = {
 	{"ite", "Inherit the Earth"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
 	{0, 0}
@@ -64,7 +64,7 @@ static const GameSettings saga_games[] = {
 
 GameList Engine_SAGA_gameIDList() {
 	GameList games;
-	const GameSettings *g = saga_games;
+	const PlainGameDescriptor *g = saga_games;
 
 	while (g->gameid) {
 		games.push_back(*g);
@@ -74,8 +74,8 @@ GameList Engine_SAGA_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_SAGA_findGameID(const char *gameid) {
-	const GameSettings *g = saga_games;
+GameDescriptor Engine_SAGA_findGameID(const char *gameid) {
+	const PlainGameDescriptor *g = saga_games;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;

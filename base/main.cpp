@@ -291,8 +291,8 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
-	const char *desc = GameDetector::findGame(detector._gameid).description;
-	if (caption.isEmpty() && desc)
+	Common::String desc = GameDetector::findGame(detector._gameid).description;
+	if (caption.isEmpty() && !desc.isEmpty())
 		caption = desc;
 	if (caption.isEmpty())
 		caption = detector._targetName;

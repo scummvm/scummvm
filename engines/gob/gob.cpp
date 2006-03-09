@@ -118,7 +118,7 @@ static const GobGameSettings gob_games[] = {
 };
 
 // Keep list of different supported games
-static const GameSettings gob_list[] = {
+static const PlainGameDescriptor gob_list[] = {
 	{"gob1", "Gobliiins"},
 	{"gob2", "Gobliins 2"},
 	{0, 0}
@@ -275,7 +275,7 @@ using namespace Gob;
 
 GameList Engine_GOB_gameIDList() {
 	GameList games;
-	const GameSettings *g = gob_list;
+	const PlainGameDescriptor *g = gob_list;
 
 	while (g->gameid) {
 		games.push_back(*g);
@@ -285,8 +285,8 @@ GameList Engine_GOB_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_GOB_findGameID(const char *gameid) {
-	const GameSettings *g = gob_list;
+GameDescriptor Engine_GOB_findGameID(const char *gameid) {
+	const PlainGameDescriptor *g = gob_list;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
@@ -328,7 +328,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 		if (detectedGames.isEmpty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-			const GameSettings *g1 = gob_list;
+			const PlainGameDescriptor *g1 = gob_list;
 			while (g1->gameid) {
 				detectedGames.push_back(*g1);
 				g1++;

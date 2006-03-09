@@ -114,7 +114,7 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 public:
-	EditGameDialog(const String &domain, const char *desc);
+	EditGameDialog(const String &domain, const String &desc);
 
 	void open();
 	void close();
@@ -137,7 +137,7 @@ protected:
 	CheckboxWidget *_globalVolumeOverride;
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const char *desc)
+EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, 10, 40, 320 - 2 * 10, 140) {
 
 	const int screenW = g_system->getOverlayWidth();
@@ -176,7 +176,7 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.isEmpty() && desc) {
+	if (description.isEmpty() && !desc.isEmpty()) {
 		description = desc;
 	}
 
@@ -570,8 +570,8 @@ void LauncherDialog::updateListing() {
 		if (gameid.isEmpty())
 			gameid = iter->_key;
 		if (description.isEmpty()) {
-			GameSettings g = GameDetector::findGame(gameid);
-			if (g.description)
+			GameDescriptor g = GameDetector::findGame(gameid);
+			if (!g.description.isEmpty())
 				description = g.description;
 		}
 
@@ -667,17 +667,16 @@ void LauncherDialog::addGame() {
 
 			// Adapt the description string if custom platform/language is set
 			if (customLanguage || customPlatform) {
-				String desc = result.description;
-				desc += " (";
+				result.description += " (";
 				if (customLanguage)
-					desc += Common::getLanguageDescription(result.language);
+					result.description += Common::getLanguageDescription(result.language);
 				if (customLanguage && customPlatform)
-					desc += "/";
+					result.description += "/";
 				if (customPlatform)
-					desc += Common::getPlatformDescription(result.platform);
-				desc += ")";
+					result.description += Common::getPlatformDescription(result.platform);
+				result.description += ")";
 
-				ConfMan.set("description", desc, domain);
+				ConfMan.set("description", result.description, domain);
 			}
 
 			// Display edit dialog for the new entry

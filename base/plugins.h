@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "common/singleton.h"
 #include "common/util.h"
-#include "base/gameDetector.h"	// For GameSettings
+#include "base/gameDetector.h"	// For GameDescriptor
 
 class Engine;
 class FSList;
@@ -35,32 +35,26 @@ class GameDetector;
 class OSystem;
 
 /** List of games. */
-typedef Common::Array<GameSettings> GameList;
+typedef Common::Array<GameDescriptor> GameList;
 
 /**
- * A detected game. Carries the GameSettings, but also (optionally)
+ * A detected game. Carries the GameDescriptor, but also (optionally)
  * information about the language and platform of the detected game.
  */
-struct DetectedGame {
-	const char *gameid;
-	const char *description;
+struct DetectedGame : public GameDescriptor {
 	Common::Language language;
 	Common::Platform platform;
 	DetectedGame(const char *g = 0, const char *d = 0,
 	             Common::Language l = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown)
-		: gameid(g), description(d), language(l), platform(p) {}
-	DetectedGame(const GameSettings &game,
+		: GameDescriptor(g, d), language(l), platform(p) {}
+
+	template <class T>
+	DetectedGame(const T &game,
 	             Common::Language l = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown)
-		: gameid(game.gameid), description(game.description), language(l), platform(p) {}
+		: GameDescriptor(game.gameid, game.description), language(l), platform(p) {}
 };
-
-template <class T>
-DetectedGame toDetectedGame(const T &g) {
-	DetectedGame dummy(g.gameid, g.description);
-	return dummy;
-}
 
 
 /** List of detected games. */
@@ -83,7 +77,7 @@ public:
 	virtual int getVersion() const	{ return 0; }	// TODO!
 
 	virtual GameList getSupportedGames() const = 0;
-	virtual GameSettings findGame(const char *gameid) const = 0;
+	virtual GameDescriptor findGame(const char *gameid) const = 0;
 	virtual DetectedGameList detectGames(const FSList &fslist) const = 0;
 
 	virtual Engine *createInstance(GameDetector *detector, OSystem *syst) const = 0;
@@ -99,8 +93,8 @@ public:
  * Each plugin has to define the following functions:
  * - GameList Engine_##ID##_gameIDList()
  *   -> returns a list of gameid/desc pairs. Only used to implement '--list-games'.
- * - GameSettings Engine_##ID##_findGameID(const char *gameid)
- *   -> asks the Engine for a GameSettings matching the gameid. If that is not
+ * - GameDescriptor Engine_##ID##_findGameID(const char *gameid)
+ *   -> asks the Engine for a GameDescriptor matching the gameid. If that is not
  *      possible, the engine MUST set the gameid of the returned value to 0.
  *      Note: This MUST succeed for every gameID on the list returned by
  *      gameIDList(), but MAY also work for additional gameids (e.g. to support
@@ -130,7 +124,7 @@ public:
 	extern "C" { \
 		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
 		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
-		PLUGIN_EXPORT GameSettings PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
+		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
 		PLUGIN_EXPORT Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
 	}
@@ -144,7 +138,7 @@ public:
 class PluginRegistrator {
 	friend class StaticPlugin;
 public:
-	typedef GameSettings (*GameIDQueryFunc)(const char *gameid);
+	typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
 	typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 	typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 

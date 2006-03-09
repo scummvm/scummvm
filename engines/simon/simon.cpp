@@ -76,7 +76,7 @@ static const ObsoleteGameID obsoleteGameIDsTable[] = {
 	{NULL, NULL, Common::kPlatformUnknown}
 };
 
-static const GameSettings simonGames[] = {
+static const PlainGameDescriptor simonGames[] = {
 	// Simon the Sorcerer 1 & 2
 	{"feeble", "The Feeble Files"},
 	{"simon1", "Simon the Sorcerer 1"},
@@ -87,32 +87,32 @@ static const GameSettings simonGames[] = {
 
 GameList Engine_SIMON_gameIDList() {
 	GameList games;
-	const GameSettings *g = simonGames;
+	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
-		games.push_back(*g);
+		games.push_back(GameDescriptor(g->gameid, g->description));
 		g++;
 	}
 
 	return games;
 }
 
-GameSettings Engine_SIMON_findGameID(const char *gameid) {
+GameDescriptor Engine_SIMON_findGameID(const char *gameid) {
 	// First search the list of supported game IDs.
-	const GameSettings *g = simonGames;
+	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
-			return *g;
+			return GameDescriptor(g->gameid, g->description);
 		g++;
 	}
 
 	// If we didn't find the gameid in the main list, check if it
 	// is an obsolete game id.
-	GameSettings gs = { 0, 0 };
+	GameDescriptor gs;
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
 		if (0 == scumm_stricmp(gameid, o->from)) {
 			gs.gameid = gameid;
-			gs.gameid = "Obsolete game ID";
+			gs.description = "Obsolete game ID";
 			return gs;
 		}
 		o++;

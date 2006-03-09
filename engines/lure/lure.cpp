@@ -68,14 +68,14 @@ static const LureGameSettings lure_games[] = {
 
 // Keep list of different supported games
 
-static const GameSettings lure_list[] = {
+static const PlainGameDescriptor lure_list[] = {
 	{ "lure", "Lure of the Temptress" },
 	{ 0, 0 }
 };
 
 GameList Engine_LURE_gameIDList() {
 	GameList games;
-	const GameSettings *g = lure_list;
+	const PlainGameDescriptor *g = lure_list;
 
 	while (g->gameid) {
 		games.push_back(*g);
@@ -84,8 +84,8 @@ GameList Engine_LURE_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_LURE_findGameID(const char *gameid) {
-	const GameSettings *g = lure_list;
+GameDescriptor Engine_LURE_findGameID(const char *gameid) {
+	const PlainGameDescriptor *g = lure_list;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
@@ -125,13 +125,13 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		}
 		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(toDetectedGame(*g));
+				detectedGames.push_back(*g);
 			}
 		}
 		if (detectedGames.isEmpty()) {
 			debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-			const GameSettings *g1 = lure_list;
+			const PlainGameDescriptor *g1 = lure_list;
 			while (g1->gameid) {
 				detectedGames.push_back(*g1);
 				g1++;

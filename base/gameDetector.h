@@ -34,25 +34,32 @@ namespace Audio {
 	class Mixer;
 }
 
-struct GameSettings {
+struct PlainGameDescriptor {
 	const char *gameid;
 	const char *description;	// TODO: Rename this to "title" or so
 };
 
-/**
- * This template function allows to easily convert structs that mimic GameSettings
- * to a GameSettings instance.
- *
- * Normally, one would just subclass GameSettings to get this effect much easier.
- * However, subclassing a struct turns it into a non-POD type. One of the
- * consequences is that you can't have inline intialized arrays of that type.
- * But we heavily rely on those, hence we can't subclass GameSettings...
- */
-template <class T>
-GameSettings toGameSettings(const T &g) {
-	GameSettings dummy = { g.gameid, g.description };
-	return dummy;
-}
+struct GameDescriptor {
+	Common::String gameid;
+	Common::String description;	// TODO: Rename this to "title" or so
+	
+	GameDescriptor() {}
+	GameDescriptor(Common::String g, Common::String d) :
+		gameid(g), description(d) {}
+
+	/**
+	 * This template constructor allows to easily convert structs that mimic GameDescriptor
+	 * to a GameDescriptor instance.
+	 *
+	 * Normally, one would just subclass GameDescriptor to get this effect much easier.
+	 * However, subclassing a struct turns it into a non-POD type. One of the
+	 * consequences is that you can't have inline intialized arrays of that type.
+	 * But we heavily rely on those, hence we can't subclass GameDescriptor...
+	 */
+	template <class T>
+	GameDescriptor(const T &g) :
+		gameid(g.gameid), description(g.description) {}
+};
 
 
 class GameDetector {
@@ -78,7 +85,7 @@ public:
 
 	static Audio::Mixer *createMixer();
 
-	static GameSettings findGame(const String &gameName, const Plugin **plugin = NULL);
+	static GameDescriptor findGame(const String &gameName, const Plugin **plugin = NULL);
 
 //protected:
 	void setTarget(const String &name);	// TODO: This should be protected

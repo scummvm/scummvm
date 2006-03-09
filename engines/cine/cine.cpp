@@ -63,9 +63,8 @@ struct CINEGameSettings {
 	byte id;
 	uint32 features;
 	const char *detectname;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, description };
-		return dummy;
+	GameDescriptor toGameDescriptor() const {
+		return GameDescriptor(name, description);
 	}
 };
 
@@ -80,21 +79,21 @@ GameList Engine_CINE_gameIDList() {
 	const CINEGameSettings *g = cine_settings;
 
 	while (g->name) {
-		games.push_back(g->toGameSettings());
+		games.push_back(g->toGameDescriptor());
 		g++;
 	}
 
 	return games;
 }
 
-GameSettings Engine_CINE_findGameID(const char *gameid) {
+GameDescriptor Engine_CINE_findGameID(const char *gameid) {
 	const CINEGameSettings *g = cine_settings;
 	while (g->name) {
 		if (0 == scumm_stricmp(gameid, g->name))
 			break;
 		g++;
 	}
-	return g->toGameSettings();
+	return g->toGameDescriptor();
 }
 
 DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
@@ -109,7 +108,7 @@ DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 
 			if (0 == scumm_stricmp(g->detectname, gameName)) {
 				// Match found, add to list of candidates, then abort inner loop.
-				detectedGames.push_back(g->toGameSettings());
+				detectedGames.push_back(g->toGameDescriptor());
 				break;
 			}
 		}

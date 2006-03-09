@@ -96,7 +96,7 @@ static const KyraGameSettings kyra_games[] = {
 };
 
 // Keep list of different supported games
-static const GameSettings kyra_list[] = {
+static const PlainGameDescriptor kyra_list[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ 0, 0 }
 };
@@ -131,7 +131,7 @@ static Common::Language convertKyraLang(uint32 features) {
 
 GameList Engine_KYRA_gameIDList() {
 	GameList games;
-	const GameSettings *g = kyra_list;
+	const PlainGameDescriptor *g = kyra_list;
 
 	while (g->gameid) {
 		games.push_back(*g);
@@ -140,8 +140,8 @@ GameList Engine_KYRA_gameIDList() {
 	return games;
 }
 
-GameSettings Engine_KYRA_findGameID(const char *gameid) {
-	const GameSettings *g = kyra_list;
+GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
+	const PlainGameDescriptor *g = kyra_list;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
@@ -187,7 +187,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		if (detectedGames.isEmpty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
-			const GameSettings *g1 = kyra_list;
+			const PlainGameDescriptor *g1 = kyra_list;
 			while (g1->gameid) {
 				detectedGames.push_back(*g1);
 				g1++;

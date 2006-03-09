@@ -32,7 +32,7 @@
 typedef Engine *(*EngineFactory)(GameDetector *detector, OSystem *syst);
 
 typedef const char *(*NameFunc)();
-typedef GameSettings (*GameIDQueryFunc)(const char *gameid);
+typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
 typedef GameList (*GameIDListFunc)();
 typedef DetectedGameList (*DetectFunc)(const FSList &fslist);
 
@@ -93,7 +93,7 @@ public:
 
 	GameList getSupportedGames() const { return _plugin->_games; }
 
-	GameSettings findGame(const char *gameid) const {
+	GameDescriptor findGame(const char *gameid) const {
 		assert(_plugin->_qf);
 		return (*_plugin->_qf)(gameid);
 	}
@@ -134,7 +134,7 @@ public:
 
 	GameList getSupportedGames() const { return _games; }
 
-	GameSettings findGame(const char *gameid) const {
+	GameDescriptor findGame(const char *gameid) const {
 		assert(_qf);
 		return (*_qf)(gameid);
 	}
