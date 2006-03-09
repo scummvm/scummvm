@@ -620,6 +620,7 @@ begin_credits("Credits");
 	  begin_persons();
 		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
+		  add_person("David Jensen", "Tyst", "SVG logo conversion");
 		  add_person("Jean Marc", "", 'ScummVM logo');
 	  end_persons();
 	end_section();

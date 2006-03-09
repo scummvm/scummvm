@@ -168,6 +168,8 @@ static const char *credits[] = {
 "\\C\\c2""Website design",
 "\\C\\c0""Yaroslav Fedevych",
 "\\C\\c2""HTML/CSS for the website",
+"\\C\\c0""David Jensen",
+"\\C\\c2""SVG logo conversion",
 "\\C\\c0""Jean Marc",
 "\\C\\c2""ScummVM logo",
 "\\C\\c0""",
