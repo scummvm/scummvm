@@ -1133,29 +1133,30 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							}
 
 							// Match found, add to list of candidates, then abort inner loop.
-							const char *desc = findDescriptionFromGameID(g->gameid);
+							DetectedGame dg(g->gameid, findDescriptionFromGameID(g->gameid));
 							if (substLastIndex > 0 && // HE Mac versions.
 								(subst.genMethod == kGenMac ||
 								 subst.genMethod == kGenMacNoParens)) {
-								detectedGames.push_back(DetectedGame(g->gameid, desc,
-																	 Common::UNK_LANG,
-																	 Common::kPlatformMacintosh));
+								dg.platform = Common::kPlatformMacintosh;
 								fileSet[file->path()] = true;
 							} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
 									   (buf[0] == 0xbc || buf[0] == 0xa0)) {
-								detectedGames.push_back(DetectedGame(g->gameid, desc,
-																	 Common::UNK_LANG,
-																	 Common::kPlatformNES));
+								dg.platform = Common::kPlatformNES;
 							} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
 									   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
 										(buf[0] == 0xcd && buf[1] == 0xfe))) {
-								detectedGames.push_back(DetectedGame(g->gameid, desc,
-																	 Common::UNK_LANG,
-																	 Common::kPlatformC64));
+								dg.platform = Common::kPlatformC64;
 							} else {
-								detectedGames.push_back(DetectedGame(g->gameid, desc));
 								fileSet[file->path()] = false;
 							}
+							
+							// If known, add the platform to the description string
+							if (dg.platform != Common::kPlatformUnknown) {
+								dg.description += "(";
+								dg.description += Common::getPlatformDescription(dg.platform);
+								dg.description += ")";
+							}
+							detectedGames.push_back(dg);
 							break;
 						}
 					}
@@ -1194,12 +1195,31 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							break;
 				}
 				assert(g->gameid);
-				// Insert the 'enhanced' game data into the candidate list
-				const char *desc = findDescriptionFromGameID(g->gameid);
+				DetectedGame dg(g->gameid, findDescriptionFromGameID(g->gameid), elem->language);
 				if (iter->_value == true) // This was HE Mac game
-					detectedGames.push_back(DetectedGame(g->gameid, desc, elem->language, Common::kPlatformMacintosh));
+					dg.platform = Common::kPlatformMacintosh;
 				else
-					detectedGames.push_back(DetectedGame(g->gameid, desc, elem->language, elem->platform));
+					dg.platform = elem->platform;
+
+				const bool customLanguage = (dg.language != Common::UNK_LANG);
+				const bool customPlatform = (dg.platform != Common::kPlatformUnknown);
+
+				// Adapt the description string if custom platform/language is set.
+				// TODO: Also use the 'extra' information, like "Demo" etc.
+				if (customLanguage || customPlatform) {
+					dg.description += " (";
+					if (customLanguage)
+						dg.description += Common::getLanguageDescription(dg.language);
+					if (customLanguage && customPlatform)
+						dg.description += "/";
+					if (customPlatform)
+						dg.description += Common::getPlatformDescription(dg.platform);
+					dg.description += ")";
+				}
+				
+				// Insert the 'enhanced' game data into the candidate list
+				detectedGames.push_back(dg);
+
 				exactMatch = true;
 			}
 		}

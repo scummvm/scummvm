@@ -654,30 +654,13 @@ void LauncherDialog::addGame() {
 			ConfMan.set("gameid", result.gameid, domain);
 			ConfMan.set("path", dir.path(), domain);
 
-			const bool customLanguage = (result.language != Common::UNK_LANG);
-			const bool customPlatform = (result.platform != Common::kPlatformUnknown);
-
 			// Set language if specified
-			if (customLanguage)
+			if (result.language != Common::UNK_LANG)
 				ConfMan.set("language", Common::getLanguageCode(result.language), domain);
 
 			// Set platform if specified
-			if (customPlatform)
+			if (result.platform != Common::kPlatformUnknown)
 				ConfMan.set("platform", Common::getPlatformCode(result.platform), domain);
-
-			// Adapt the description string if custom platform/language is set
-			if (customLanguage || customPlatform) {
-				result.description += " (";
-				if (customLanguage)
-					result.description += Common::getLanguageDescription(result.language);
-				if (customLanguage && customPlatform)
-					result.description += "/";
-				if (customPlatform)
-					result.description += Common::getPlatformDescription(result.platform);
-				result.description += ")";
-
-				ConfMan.set("description", result.description, domain);
-			}
 
 			// Display edit dialog for the new entry
 			EditGameDialog editDialog(domain, result.description);
