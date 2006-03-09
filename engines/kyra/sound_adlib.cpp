@@ -150,7 +150,7 @@ private:
 	void resetAdlibState();
 	void writeOPL(byte reg, byte val);
 	void initTable(OutputState &table);
-	void unkOutput1(OutputState &table);
+	void noteOff(OutputState &table);
 	void unkOutput2(uint8 num);
 
 	uint16 getRandomNr();
@@ -442,7 +442,7 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 		table.unk2 = 0;
 		table.dataptr = 0;
 		if (value != 9) {
-			unkOutput1(table);
+			noteOff(table);
 		}
 		++value;
 	}
@@ -566,9 +566,9 @@ void AdlibDriver::callbackProcess() {
 		if (table.unk4 < 0) {
 			if (--table.unk5) {
 				if (table.unk5 == table.unk7)
-					unkOutput1(table);
+					noteOff(table);
 				if (table.unk5 == table.unk3 && _curTable != 9)
-					unkOutput1(table);
+					noteOff(table);
 			} else {
 				int8 opcode = 0;
 				while (table.dataptr) {
@@ -652,8 +652,8 @@ void AdlibDriver::initTable(OutputState &table) {
 	table.unk3 = 0x01;
 }
 
-void AdlibDriver::unkOutput1(OutputState &table) {
-	debugC(9, kDebugLevelSound, "unkOutput1(%d)", &table - _outputTables);
+void AdlibDriver::noteOff(OutputState &table) {
+	debugC(9, kDebugLevelSound, "noteOff(%d)", &table - _outputTables);
 	if (_curTable == 9)
 		return;
 	if (_unk4 && _curTable >= 6)
@@ -684,8 +684,9 @@ void AdlibDriver::unkOutput2(uint8 num) {
 
 	// Octave / F-Number / Key-On
 
-	// The purpose of this seems to be to first clear everything, and then
-	// set the octave.
+	// Turn the note off, then turn it on again. This could be a "note on"
+	// function, but it also clears the octave and the part of the
+	// frequency (F-Number) stored in this register. Weird.
 
 	writeOPL(0xB0 + num, 0x00);
 	writeOPL(0xB0 + num, 0x20);
@@ -793,7 +794,7 @@ void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &stat
 
 void AdlibDriver::updateAndOutput3(OutputState &state) {
 	debugC(9, kDebugLevelSound, "updateAndOutput3(%d)", &state - _outputTables);
-	// This sets a bit in the "Octave" field
+	// This sets the "note on" bit.
 	state.unkOutputValue1 |= 0x20;
 
 	// Octave / F-Number / Key-On
@@ -1002,7 +1003,7 @@ int AdlibDriver::updateCallback8(uint8 *&dataptr, OutputState &state, uint8 valu
 int AdlibDriver::updateCallback9(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk2 = 0;
 	if (_curTable != 9) {
-		unkOutput1(state);
+		noteOff(state);
 	}
 	dataptr = 0;
 	return 2;
@@ -1010,7 +1011,7 @@ int AdlibDriver::updateCallback9(uint8 *&dataptr, OutputState &state, uint8 valu
 
 int AdlibDriver::updateCallback10(uint8 *&dataptr, OutputState &state, uint8 value) {
 	update1(value, state);
-	unkOutput1(state);
+	noteOff(state);
 	return (_continueFlag != 0);
 }
 
