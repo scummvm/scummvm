@@ -115,10 +115,8 @@ class GlobalOptionsDialog : public OptionsDialog {
 	typedef Common::String String;
 public:
 	GlobalOptionsDialog();
-	GlobalOptionsDialog(String name);
 	~GlobalOptionsDialog();
 
-	void init();
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);

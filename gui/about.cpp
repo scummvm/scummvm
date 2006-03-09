@@ -83,17 +83,9 @@ AboutDialog::AboutDialog()
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	int outerBorder;
-
-	if (screenW >= 400 && screenH >= 300) {
-		xOff = 8;
-		yOff = 5;
-		outerBorder = 80;
-	} else {
-		xOff = 3;
-		yOff = 2;
-		outerBorder = 10;
-	}
+	xOff = g_gui.evaluator()->getVar("aboutXOff");;
+	yOff = g_gui.evaluator()->getVar("aboutYOff");;
+	int outerBorder = g_gui.evaluator()->getVar("aboutOuterBorder");;
 
 	_w = screenW - 2 * outerBorder;
 	_h = screenH - 2 * outerBorder;

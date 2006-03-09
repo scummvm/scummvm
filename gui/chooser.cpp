@@ -31,50 +31,21 @@ enum {
 	kChooseCmd = 'Chos'
 };
 
-ChooserDialog::ChooserDialog(const String &title, const String &buttonLabel, int height)
-	: Dialog(8, (200 - height) / 2, 320 - 2 * 8, height) {
-
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	GUI::WidgetSize ws;
-	int buttonWidth, buttonHeight;
-
-	if (screenW >= 400 && screenH >= 300) {
-		ws = GUI::kBigWidgetSize;
-		buttonHeight = kBigButtonHeight;
-		buttonWidth = kBigButtonWidth;
-	} else {
-		ws = GUI::kNormalWidgetSize;
-		buttonHeight = kButtonHeight;
-		buttonWidth = kButtonWidth;
-	}
-
-	// FIXME: This is an ugly hack. The 'height' parameter assumes a 200
-	// pixel tall screen, so try to scale that to something sensible.
-
-	_h = (screenH * height) / 200;
-	_w = screenW - 2 * 8;
-
-	_x = (screenW - _w) / 2;
-	_y = (screenH - _h) / 2;
-
-	int yoffset = 6;
+ChooserDialog::ChooserDialog(const String &title, String prefix, const String &buttonLabel)
+	: Dialog(prefix + "chooser") {
 
 	// Headline
-	new StaticTextWidget(this, "chooser_headline", title, kTextAlignCenter);
-
-	yoffset += kLineHeight + 2;
+	new StaticTextWidget(this, prefix + "chooser_headline", title, kTextAlignCenter);
 
 	// Add choice list
 	// HACK: Subtracting -12 from the height makes the list look good when
 	// it's used to list savegames in the 320x200 version of the GUI.
-	_list = new ListWidget(this, "chooser_list");
+	_list = new ListWidget(this, prefix + "chooser_list");
 	_list->setNumberingMode(kListNumberingOff);
 
 	// Buttons
-	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	_chooseButton = addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, buttonLabel, kChooseCmd, 0, ws);
+	new ButtonWidget(this, prefix + "chooser_cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new ButtonWidget(this, prefix + "chooser_ok", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 }
 

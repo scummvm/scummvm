@@ -65,7 +65,7 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 
 	// Add scrollbar
 	int scrollBarWidth;
-	if (screenW >= 400 && screenH >= 300)
+	if (g_gui.getWidgetSize() == kBigWidgetSize)
 		scrollBarWidth = kBigScrollBarWidth;
 	else
 		scrollBarWidth = kNormalScrollBarWidth;

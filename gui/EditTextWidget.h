@@ -36,6 +36,7 @@ protected:
 
 public:
 	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize);
+	EditTextWidget(GuiObject *boss, String name, const String &text);
 
 	void setEditString(const String &str);
 

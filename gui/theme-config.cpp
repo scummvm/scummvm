@@ -36,7 +36,12 @@ def_kLineHeight=12\n\
 def_kFontHeight=10\n\
 def_globOptionsW=(w - 2 * 10)\n\
 def_globOptionsH=(h - 1 * 40)\n\
+def_gameOptionsH=(h - 2 * 30)\n\
+def_gameOptionsLabelWidth=60\n\
 def_tabPopupsLabelW=100\n\
+def_aboutXOff=3\n\
+def_aboutYOff=2\n\
+def_aboutOuterBorder=10\n\
 def_scummmainHOffset=8\n\
 def_scummmainVSpace=5\n\
 def_scummmainVAddOff=2\n\
@@ -57,7 +62,12 @@ def_kLineHeight=16\n\
 def_kFontHeight=14\n\
 def_globOptionsW=(w - 2 * 10)\n\
 def_globOptionsH=(h - 2 * 40)\n\
+def_gameOptionsH=(h - 2 * 40)\n\
+def_gameOptionsLabelWidth=90\n\
 def_tabPopupsLabelW=150\n\
+def_aboutXOff=8\n\
+def_aboutYOff=5\n\
+def_aboutOuterBorder=80\n\
 def_scummmainHOffset=12\n\
 def_scummmainVSpace=7\n\
 def_scummmainVAddOff=3\n\
@@ -66,8 +76,22 @@ def_scummmainButtonHeight=28\n\
 def_scummhelpW=370\n\
 def_scummhelpX=((w - scummhelpW) / 2)\n\
 def_midiControlsSpacing=2\n\
-chooser_headline=10 6 (w - 2 * 16) (kLineHeight)\n\
-chooser_list=10 (6 + kLineHeight + 2) (w - 2 * 16) (h - self.y - buttonHeight - 12)\n\
+\n\
+###### chooser\n\
+opHeight=(h * 7 / 10)\n\
+useWithPrefix=chooser defaultChooser_\n\
+\n\
+##### browser\n\
+brW=((w * 7) / 8)\n\
+brH=((h * 9) / 10)\n\
+browser=((w - brW) / 2) ((h - brH) / 2) brW brH\n\
+set_parent=browser\n\
+browser_headline=10 kLineHeight (parent.w - 2 * 10) kLineHeight\n\
+browser_path=10 prev.y2 prev.w prev.h\n\
+browser_list=10 prev.y2 prev.w (parent.h - 3 * kLineHeight - buttonHeight - 14)\n\
+browser_up=10 (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
+browser_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
+browser_choose=(prev.x2 + 10) prev.y prev.w prev.h\n\
 \n\
 ##### launcher\n\
 hBorder=10\n\
@@ -93,22 +117,19 @@ launcher_list=hBorder (kLineHeight + 16) (w - 2 * hBorder) (top - kLineHeight - 
 globaloptions=10 40 globOptionsW globOptionsH\n\
 set_parent=globaloptions\n\
 vBorder=5\n\
-globaloptions_tabwidget=0, vBorder parent.w (parent.h - buttonHeight - 8 - 2 * vBorder)\n\
+globaloptions_tabwidget=0 vBorder parent.w (parent.h - buttonHeight - 8 - 2 * vBorder)\n\
 \n\
 # graphics tab\n\
 opYoffset=vBorder\n\
-opWidth=globOptionsW\n\
 useWithPrefix=graphicsControls globaloptions_\n\
 \n\
 # audio tab\n\
 opYoffset=vBorder\n\
-opWidth=globOptionsW\n\
 useWithPrefix=audioControls globaloptions_\n\
 useWithPrefix=volumeControls globaloptions_\n\
 \n\
 # MIDI tab\n\
 opYoffset=vBorder\n\
-opWidth=globOptionsW\n\
 useWithPrefix=midiControls globaloptions_\n\
 \n\
 # paths tab\n\
@@ -125,18 +146,66 @@ globaloptions_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeigh
 globaloptions_ok=(prev.x2 + 10) prev.y prev.w prev.h\n\
 \n\
 ### game options\n\
-opYoffset=(vBorder + buttonHeight)\n\
-opWidth=globOptionsW\n\
+gameoptions=10 40 (w - 2 * 10) gameOptionsH\n\
+set_parent=gameoptions\n\
+vBorder=5\n\
+gox=5\n\
+gow=(parent.w - 15)\n\
+\n\
+gameoptions_tabwidget=0 vBorder parent.w (parent.h - buttonHeight - 8 - 2 * vBorder)\n\
+\n\
+# game tab\n\
+opYoffset=vBorder\n\
+gameoptions_id=gox (opYoffset + 2) gameOptionsLabelWidth kLineHeight\n\
+gameoptions_domain=prev.x2 (prev.y - 1) (parent.w - gameOptionsLabelWidth - 10 - gox) (prev.h + 2)\n\
+opYoffset=(opYoffset + prev.h + 3)\n\
+gameoptions_name=gox (opYoffset + 2) gameOptionsLabelWidth kLineHeight\n\
+gameoptions_desc=prev.x2 (prev.y - 1) (parent.w - gameOptionsLabelWidth - 10 - gox) (prev.h + 2)\n\
+opYoffset=(opYoffset + prev.h + 3)\n\
+gameoptions_lang=gox (opYoffset - 1) gow (kLineHeight + 2)\n\
+opYoffset=(opYoffset + prev.h + 4)\n\
+gameoptions_platform=prev.x opYoffset prev.w prev.h\n\
+opYoffset=(opYoffset + prev.h + 4)\n\
+\n\
+# paths tab\n\
+opYoffset=vBorder\n\
+goOff=((buttonHeight - kLineHeight) / 2 + 2)\n\
+gameoptions_gamepath=gox opYoffset (buttonWidth + 5) buttonHeight\n\
+gameoptions_gamepathText=(prev.x2 + 20) (opYoffset + goOff) (parent.w - self.x - 10) kLineHeight\n\
+opYoffset=(opYoffset + buttonHeight + 4)\n\
+gameoptions_extrapath=gox opYoffset (buttonWidth + 5) buttonHeight\n\
+gameoptions_extrapathText=(prev.x2 + 20) (opYoffset + goOff) (parent.w - self.x - 10) kLineHeight\n\
+opYoffset=(opYoffset + buttonHeight + 4)\n\
+gameoptions_savepath=gox opYoffset (buttonWidth + 5) buttonHeight\n\
+gameoptions_savepathText=(prev.x2 + 20) (opYoffset + goOff) (parent.w - self.x - 10) kLineHeight\n\
+opYoffset=(opYoffset + buttonHeight + 4)\n\
+\n\
+# graphics tab\n\
+opYoffset=vBorder\n\
+gameoptions_graphicsCheckbox=gox opYoffset (kFontHeight + 10 + 192) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight)\n\
 useWithPrefix=graphicsControls gameoptions_\n\
 \n\
-opYoffset=(vBorder + buttonHeight)\n\
+# audio tab\n\
+opYoffset=vBorder\n\
+gameoptions_audioCheckbox=gox opYoffset (kFontHeight + 10 + 180) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight)\n\
 useWithPrefix=audioControls gameoptions_\n\
 \n\
-opYoffset=(vBorder + buttonHeight)\n\
+# midi tab\n\
+opYoffset=vBorder\n\
+gameoptions_midiCheckbox=gox opYoffset (kFontHeight + 10 + 174) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight)\n\
+useWithPrefix=midiControls gameoptions_\n\
+\n\
+# volume tab\n\
+opYoffset=vBorder\n\
+gameoptions_volumeCheckbox=gox opYoffset (kFontHeight + 10 + 189) buttonHeight\n\
+opYoffset=(opYoffset + buttonHeight)\n\
 useWithPrefix=volumeControls gameoptions_\n\
 \n\
-opYoffset=(vBorder + buttonHeight)\n\
-useWithPrefix=midiControls gameoptions_\n\
+gameoptions_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
+gameoptions_ok=(prev.x2 + 10) prev.y prev.w prev.h\n\
 \n\
 ### keys dialog\n\
 keysdialog=(w / 20) (h / 10) (w - w / 10) (h - h / 5)\n\
@@ -147,6 +216,8 @@ keysdialog_cancel=prev.x (prev.y2 + 4) prev.w prev.h\n\
 keysdialog_list=10 10 (prev.x - 20) (parent.h - kLineHeight * 4 - self.y)\n\
 keysdialog_action=prev.x (parent.h - kLineHeight * 3) (parent.w - self.x * 2) kLineHeight\n\
 keysdialog_mapping=prev.x (prev.y + kLineHeight) prev.w prev.h\n\
+\n\
+\n\
 \n\
 ##### SCUMM dialogs\n\
 scummDummyDialog=0 80 0 16\n\
@@ -216,14 +287,25 @@ scummsaveload_list=10 18 (parent.w - 2 * 10 - 180) (parent.h - 14 - buttonHeight
 scummsaveload_thumbnail=(parent.w - (kThumbnailWidth + 22)) 18\n\
 scummsaveload_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
 scummsaveload_choose=(prev.x2 + 10) prev.y prev.w prev.h\n\
+opHeight=(h * 9 / 10)\n\
+useWithPrefix=chooser scummsaveload_\n\
 \n\
 ############################################\n\
+[chooser]\n\
+chooserW=(w - 2 * 8)\n\
+chooser=((w - chooserW) / 2) ((h - opHeight) / 2) chooserW opHeight\n\
+chooser_headline=10 6 (chooserW - 2 * 10) (kLineHeight)\n\
+chooser_list=10 (6 + kLineHeight + 2) prev.w (h - self.y - buttonHeight - 12)\n\
+chooser_cancel=(chooserW - 2 * (buttonWidth + 10)) (opHeight - buttonHeight - 8) buttonWidth buttonHeight\n\
+chooser_ok=(prev.x2 + 10) prev.y prev.w prev.h\n\
+\n\
+\n\
 [graphicsControls]\n\
 gcx=10\n\
-gcw=(opWidth - 2 * 10)\n\
-grModePopup=(gcx - 5) opYoffset (gcw + 5) kLineHeight\n\
+gcw=(parent.w - 2 * 10)\n\
+grModePopup=(gcx - 5) (opYoffset - 1) (gcw + 5) (kLineHeight + 2)\n\
 opYoffset=(opYoffset + kLineHeight + 4)\n\
-grRenderPopup=prev.x opYoffset prev.w prev.h\n\
+grRenderPopup=prev.x (opYoffset - 1) prev.w prev.h\n\
 opYoffset=(opYoffset + kLineHeight + 4)\n\
 grFullscreenCheckbox=gcx opYoffset (kFontHeight + 10 + 96) buttonHeight\n\
 opYoffset=(opYoffset + buttonHeight)\n\
@@ -232,8 +314,8 @@ opYoffset=(opYoffset + buttonHeight)\n\
 \n\
 [audioControls]\n\
 aux=10\n\
-auw=(opWidth - 2 * 10)\n\
-auMidiPopup=(aux - 5) opYoffset (auw + 5) kLineHeight\n\
+auw=(parent.w - 2 * 10)\n\
+auMidiPopup=(aux - 5) (opYoffset - 1) (auw + 5) (kLineHeight + 2)\n\
 opYoffset=(opYoffset + kLineHeight + 4)\n\
 auSubtitlesCheckbox=aux opYoffset (kFontHeight + 10 + 102) buttonHeight\n\
 opYoffset=(opYoffset + buttonHeight + 18)\n\
@@ -257,7 +339,7 @@ opYoffset=(opYoffset + sliderHeight + 4)\n\
 [midiControls]\n\
 mcx=10\n\
 mcFontButton=mcx opYoffset buttonWidth buttonHeight\n\
-mcFontPath=(prev.x2 + 20) (opYoffset + 3) (opWidth - (buttonWidth + 20) - 10) kLineHeight\n\
+mcFontPath=(prev.x2 + 20) (opYoffset + 3) (parent.w - (buttonWidth + 20) - 10) kLineHeight\n\
 opYoffset=(opYoffset + buttonHeight + 2 * midiControlsSpacing)\n\
 mcMixedCheckbox=mcx opYoffset (kFontHeight + 10 + 135) buttonHeight\n\
 opYoffset=(opYoffset + buttonHeight + midiControlsSpacing)\n\

@@ -356,9 +356,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, String prefix) {
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", "Aspect ratio correction", 0, 0);
 
 #ifdef SMALL_SCREEN_DEVICE
-	_fullscreenCheckbox->setState(TRUE);
-	_fullscreenCheckbox->setEnabled(FALSE);
-	_aspectCheckbox->setEnabled(FALSE);
+	_fullscreenCheckbox->setState(true);
+	_fullscreenCheckbox->setEnabled(false);
+	_aspectCheckbox->setEnabled(false);
 #endif
 
 	_enableGraphicSettings = true;
@@ -436,32 +436,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
 
 
 GlobalOptionsDialog::GlobalOptionsDialog()
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, 10, 40, 320 - 2 * 10, 140) {
+	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "globaloptions") {
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	if (screenW >= 400 && screenH >= 300) {
-		_w = screenW - 2 * 10;
-		_h = screenH - 2 * 40;
-		_x = 10;
-		_y = 40;
-	} else {
-		_w = screenW - 2 * 10;
-		_h = screenH - 1 * 20;
-		_x = 10;
-		_y = 20;
-	}
-
-	init();
-}
-
-GlobalOptionsDialog::GlobalOptionsDialog(String name)
-	: OptionsDialog(Common::ConfigManager::kApplicationDomain, name) {
-	init();
-}
-
-void GlobalOptionsDialog::init() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "globaloptions_tabwidget");
 	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);

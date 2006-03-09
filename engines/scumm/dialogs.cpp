@@ -286,7 +286,7 @@ public:
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: GUI::ChooserDialog(title, buttonLabel, 182), _saveMode(saveMode) {
+	: GUI::ChooserDialog(title, "scummsaveload_", buttonLabel), _saveMode(saveMode) {
 
 	_list->setEditable(saveMode);
 	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);

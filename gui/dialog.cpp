@@ -312,40 +312,6 @@ ButtonWidget *Dialog::addButton(GuiObject *boss, int x, int y, const Common::Str
 	return new ButtonWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
 }
 
-CheckboxWidget *Dialog::addCheckbox(GuiObject *boss, int x, int y, const Common::String &label, uint32 cmd, char hotkey, WidgetSize ws) {
-	int w, h;
-
-	if (ws == kBigWidgetSize) {
-		h = kBigButtonHeight;
-	} else {
-		h = kButtonHeight;
-	}
-
-	w = g_gui.getFontHeight() + 10 + g_gui.getStringWidth(label);
-
-	debug(0, "%s: %d", label.c_str(), g_gui.getStringWidth(label));
-
-	return new CheckboxWidget(boss, x, y, w, h, label, cmd, hotkey, ws);
-}
-
-SliderWidget *Dialog::addSlider(GuiObject *boss, int x, int y, uint32 cmd, WidgetSize ws) {
-	int w, h;
-
-	if (ws == kBigWidgetSize) {
-		w = kBigSliderWidth;
-		h = kBigSliderHeight;
-	} else {
-		w = kSliderWidth;
-		h = kSliderHeight;
-	}
-
-	return new SliderWidget(boss, x, y, w, h, cmd);
-}
-
-PopUpWidget *Dialog::addPopUp(GuiObject *boss, int x, int y, int w, const Common::String &label, uint labelWidth, WidgetSize ws) {
-	return new PopUpWidget(boss, x, y, w, kLineHeight, label, labelWidth, ws);
-}
-
 uint32 GuiObject::getMillis() {
 	return g_system->getMillis();
 }

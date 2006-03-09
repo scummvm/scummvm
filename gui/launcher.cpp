@@ -80,8 +80,8 @@ enum {
  */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, WidgetSize ws = kNormalWidgetSize)
-		: EditTextWidget(boss, x, y, w, h, text, ws) {
+	DomainEditTextWidget(GuiObject *boss, String name, const String &text)
+		: EditTextWidget(boss, name, text) {
 	}
 
 protected:
@@ -138,36 +138,9 @@ protected:
 };
 
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
-	: OptionsDialog(domain, 10, 40, 320 - 2 * 10, 140) {
+	: OptionsDialog(domain, "gameoptions") {
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	_w = screenW - 2 * 10;
-
-	GUI::WidgetSize ws;
-	int buttonHeight;
-	int buttonWidth;
-	int labelWidth;
-
-	if (screenW >= 400 && screenH >= 300) {
-		ws = GUI::kBigWidgetSize;
-		_h = screenH - 2 * 40;	// TODO/FIXME
-		buttonHeight = kBigButtonHeight;
-		buttonWidth = kBigButtonWidth;
-		labelWidth = 90;
-	} else {
-		ws = GUI::kNormalWidgetSize;
-		_h = screenH - 2 * 30;	// TODO/FIXME
-		buttonHeight = kButtonHeight;
-		buttonWidth = kButtonWidth;
-		labelWidth = 60;
-	}
-
-	const int x = 5;
-	const int w = _w - 15;
-	const int vBorder = 5;	// Tab border
-	int yoffset;
+	int labelWidth = g_gui.evaluator()->getVar("gameOptionsLabelWidth");
 
 	// GAME: Path to game data (r/o), extra data (r/o), and save data (r/w)
 	String gamePath(ConfMan.get("path", _domain));
@@ -181,28 +154,24 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// GUI:  Add tab widget
-	TabWidget *tab = new TabWidget(this, 0, vBorder, _w, _h - buttonHeight - 8 - 2 * vBorder, ws);
+	TabWidget *tab = new TabWidget(this, "gameoptions_tabwidget");
 	tab->setHints(THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND);
 
 	//
 	// 1) The game tab
 	//
 	tab->addTab("Game");
-	yoffset = vBorder;
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
-	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, kLineHeight, _domain, ws);
-	yoffset += _domainWidget->getHeight() + 3;
+	new StaticTextWidget(tab, "gameoptions_id", "ID: ", kTextAlignRight);
+	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight);
-	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, kLineHeight, description, ws);
-	yoffset += _descriptionWidget->getHeight() + 3;
+	new StaticTextWidget(tab, "gameoptions_name", "Name: ", kTextAlignRight);
+	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
 
 	// Language popup
-	_langPopUp = addPopUp(tab, x, yoffset, w, "Language: ", labelWidth, ws);
-	yoffset += _langPopUp->getHeight() + 4;
+	_langPopUp = new PopUpWidget(tab, "gameoptions_lang", "Language: ", labelWidth);
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -211,8 +180,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = addPopUp(tab, x, yoffset, w, "Platform: ", labelWidth, ws);
-	yoffset += _platformPopUp->getHeight() + 4;
+	_platformPopUp = new PopUpWidget(tab, "gameoptions_platform", "Platform: ", labelWidth);
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -222,40 +190,34 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// 2) The 'Path' tab
 	tab->addTab("Paths");
-	yoffset = vBorder;
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Game Path: ", kCmdGameBrowser, 0, ws);
-	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft);
-	yoffset += buttonHeight + 4;
+	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
+	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath, kTextAlignLeft);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Extra Path:", kCmdExtraBrowser, 0, ws);
-	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft);
+	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
+	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath, kTextAlignLeft);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
-	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Save Path: ", kCmdSaveBrowser, 0, ws);
-	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft);
+	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
+	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath, kTextAlignLeft);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
-	yoffset += buttonHeight + 4;
 
 	//
 	// 3) The graphics tab
 	//
 	tab->addTab("Gfx");
-	yoffset = vBorder;
 
-	_globalGraphicsOverride = addCheckbox(tab, x, yoffset, "Override global graphic settings", kCmdGlobalGraphicsOverride, 0, ws);
-	yoffset += _globalGraphicsOverride->getHeight();
+	_globalGraphicsOverride = new CheckboxWidget(tab, "gameoptions_graphicsCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
 
 	addGraphicControls(tab, "gameoptions_");
 
@@ -263,10 +225,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// 4) The audio tab
 	//
 	tab->addTab("Audio");
-	yoffset = vBorder;
 
-	_globalAudioOverride = addCheckbox(tab, x, yoffset, "Override global audio settings", kCmdGlobalAudioOverride, 0, ws);
-	yoffset += _globalAudioOverride->getHeight();
+	_globalAudioOverride = new CheckboxWidget(tab, "gameoptions_audioCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
 
 	addAudioControls(tab, "gameoptions_");
 
@@ -274,10 +234,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// 5) The MIDI tab
 	//
 	tab->addTab("MIDI");
-	yoffset = vBorder;
 
-	_globalMIDIOverride = addCheckbox(tab, x, yoffset, "Override global MIDI settings", kCmdGlobalMIDIOverride, 0, ws);
-	yoffset += _globalMIDIOverride->getHeight();
+	_globalMIDIOverride = new CheckboxWidget(tab, "gameoptions_midiCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
 
 	addMIDIControls(tab, "gameoptions_");
 
@@ -285,10 +243,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// 6) The volume tab
 	//
 	tab->addTab("Volume");
-	yoffset = vBorder;
 
-	_globalVolumeOverride = addCheckbox(tab, x, yoffset, "Override global volume settings", kCmdGlobalVolumeOverride, 0, ws);
-	yoffset += _globalVolumeOverride->getHeight();
+	_globalVolumeOverride = new CheckboxWidget(tab, "gameoptions_volumeCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
 
 	addVolumeControls(tab, "gameoptions_");
 
@@ -297,8 +253,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->setActiveTab(0);
 
 	// Add OK & Cancel buttons
-	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "OK", kOKCmd, 0, ws);
+	new ButtonWidget(this, "gameoptions_cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "gameoptions_ok", "OK", kOKCmd, 0);
 }
 
 void EditGameDialog::open() {
@@ -737,7 +693,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		editGame(item);
 		break;
 	case kOptionsCmd: {
-		GlobalOptionsDialog options("globaloptions");
+		GlobalOptionsDialog options;
 		options.runModal();
 		}
 		break;

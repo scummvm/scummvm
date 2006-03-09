@@ -41,7 +41,7 @@ enum {
  */
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog(20, 10, 320 -2 * 20, 200 - 2 * 10) {
+	: Dialog("browser") {
 	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
 	_isDirBrowser = dirBrowser;
 }
@@ -131,49 +131,27 @@ int BrowserDialog::runModal() {
  */
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog(0, 0, 320, 200) {
-
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	GUI::WidgetSize ws;
-	int buttonHeight;
-	int buttonWidth;
-
-	_w = (screenW * 7) / 8;
-	_h = (screenH * 9) / 10;
-	_x = (screenW - _w) / 2;
-	_y = (screenH - _h) / 2;
-
-	if (screenW >= 400 && screenH >= 300) {
-		ws = GUI::kBigWidgetSize;
-		buttonWidth = kBigButtonWidth;
-		buttonHeight = kBigButtonHeight;
-	} else {
-		ws = GUI::kNormalWidgetSize;
-		buttonWidth = kButtonWidth;
-		buttonHeight = kButtonHeight;
-	}
+	: Dialog("browser") {
 
 	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, kLineHeight, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
+	new StaticTextWidget(this, "browser_headline", title, kTextAlignCenter);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, 10, 2 * kLineHeight, _w - 2 * 10, kLineHeight, "DUMMY", kTextAlignLeft);
+	_currentPath = new StaticTextWidget(this, "browser_path", "DUMMY", kTextAlignLeft);
 
 	// Add file list
-	_fileList = new ListWidget(this, 10, 3 * kLineHeight, _w - 2 * 10, _h - 3 * kLineHeight - buttonHeight - 14, ws);
+	_fileList = new ListWidget(this, "browser_list");
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
 	// Buttons
-	addButton(this, 10, _h - buttonHeight - 8, "Go up", kGoUpCmd, 0, ws);
-	addButton(this, _w - 2 * (buttonWidth + 10), _h - buttonHeight - 8, "Cancel", kCloseCmd, 0, ws);
-	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
+	new ButtonWidget(this, "browser_up", "Go up", kGoUpCmd, 0);
+	new ButtonWidget(this, "browser_cancel", "Cancel", kCloseCmd, 0);
+	new ButtonWidget(this, "browser_choose", "Choose", kChooseCmd, 0);
 }
 
 void BrowserDialog::open() {

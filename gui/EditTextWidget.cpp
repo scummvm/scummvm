@@ -34,6 +34,14 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	setEditString(text);
 }
 
+EditTextWidget::EditTextWidget(GuiObject *boss, String name, const String &text)
+	: EditableWidget(boss, name) {
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
+	_type = kEditTextWidget;
+
+	setEditString(text);
+}
+
 void EditTextWidget::setEditString(const String &str) {
 	EditableWidget::setEditString(str);
 	_backupString = str;
