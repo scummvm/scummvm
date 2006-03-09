@@ -42,7 +42,7 @@ class ScummEngine;
 
 class ScummDialog : public GUI::Dialog {
 public:
-	ScummDialog(ScummEngine *scumm, int x, int y, int w, int h);
+	ScummDialog(ScummEngine *scumm, Common::String name);
 
 protected:
 	typedef Common::String String;

@@ -83,7 +83,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], kTextAlignCenter, ws);
+								lines[i], kTextAlignCenter);
 	}
 
 	// FIXME - allow for more than two buttons, and return in runModal() which one

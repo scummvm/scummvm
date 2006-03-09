@@ -160,10 +160,10 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_currentPath = NULL;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, 10, kLineHeight, _w - 2 * 10, kLineHeight, title, kTextAlignCenter, ws);
+	new StaticTextWidget(this, 10, kLineHeight, _w - 2 * 10, kLineHeight, title, kTextAlignCenter);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, 10, 2 * kLineHeight, _w - 2 * 10, kLineHeight, "DUMMY", kTextAlignLeft, ws);
+	_currentPath = new StaticTextWidget(this, 10, 2 * kLineHeight, _w - 2 * 10, kLineHeight, "DUMMY", kTextAlignLeft);
 
 	// Add file list
 	_fileList = new ListWidget(this, 10, 3 * kLineHeight, _w - 2 * 10, _h - 3 * kLineHeight - buttonHeight - 14, ws);

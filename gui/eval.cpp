@@ -26,6 +26,8 @@
 #include "gui/widget.h"
 #include "gui/newgui.h"
 
+#include "graphics/scaler.h"
+
 namespace GUI {
 
 static bool isdelim(char c) {
@@ -45,7 +47,7 @@ Eval::~Eval() {
 int Eval::eval(const String &input, const String &section, const String &name, int startpos) {
 	int result;
 
-	debug(3, "<%s>", input.c_str());
+	debug(3, "%s=%s", name.c_str(), input.c_str());
 
 	strncpy(_input, input.c_str(), 256);
 	_section = section;
@@ -239,6 +241,8 @@ static const BuiltinConsts builtinConsts[] = {
 
 	{"kNormalWidgetSize", GUI::kNormalWidgetSize},
 	{"kBigWidgetSize", GUI::kBigWidgetSize},
+
+	{"kThumbnailWidth", kThumbnailWidth},
 
 	{"false", 0},
 	{"true", 1},

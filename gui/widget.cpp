@@ -123,8 +123,9 @@ bool Widget::isVisible() const {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws)
-	: Widget(boss, x, y, w, h), _align(align), _ws(ws) {
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align)
+	: Widget(boss, x, y, w, h), _align(align) {
+	_ws = g_gui.getWidgetSize();
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
@@ -169,7 +170,7 @@ void StaticTextWidget::drawWidget(bool hilite) {
 #pragma mark -
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const String &label, uint32 cmd, uint8 hotkey, WidgetSize ws)
-	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter, ws), CommandSender(boss),
+	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;

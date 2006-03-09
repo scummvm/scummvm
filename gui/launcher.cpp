@@ -191,12 +191,12 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 	yoffset = vBorder;
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight, ws);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "ID: ", kTextAlignRight);
 	_domainWidget = new DomainEditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, kLineHeight, _domain, ws);
 	yoffset += _domainWidget->getHeight() + 3;
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight, ws);
+	new StaticTextWidget(tab, x, yoffset + 2, labelWidth, kLineHeight, "Name: ", kTextAlignRight);
 	_descriptionWidget = new EditTextWidget(tab, x + labelWidth, yoffset, _w - labelWidth - 10 - x, kLineHeight, description, ws);
 	yoffset += _descriptionWidget->getHeight() + 3;
 
@@ -229,12 +229,12 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 
 	// GUI:  Button + Label for the game path
 	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Game Path: ", kCmdGameBrowser, 0, ws);
-	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft, ws);
+	_gamePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, gamePath, kTextAlignLeft);
 	yoffset += buttonHeight + 4;
 
 	// GUI:  Button + Label for the additional path
 	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Extra Path:", kCmdExtraBrowser, 0, ws);
-	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft, ws);
+	_extraPathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, extraPath, kTextAlignLeft);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
@@ -242,7 +242,7 @@ EditGameDialog::EditGameDialog(const String &domain, const char *desc)
 
 	// GUI:  Button + Label for the save path
 	new ButtonWidget(tab, x, yoffset, buttonWidth + 5, buttonHeight, "Save Path: ", kCmdSaveBrowser, 0, ws);
-	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft, ws);
+	_savePathWidget = new StaticTextWidget(tab, x + buttonWidth + 20, yoffset + 3, _w - (x + buttonWidth + 20) - 10, kLineHeight, savePath, kTextAlignLeft);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}

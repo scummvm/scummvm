@@ -163,7 +163,7 @@ protected:
 	TextAlignment			_align;
 	WidgetSize				_ws;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align, WidgetSize ws = kDefaultWidgetSize);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, TextAlignment align);
 	StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align);
 	void setValue(int value);
 	void setLabel(const String &label);
