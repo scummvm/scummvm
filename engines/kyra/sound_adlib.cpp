@@ -156,7 +156,7 @@ private:
 	uint16 getRandomNr();
 	void update1(uint8 unk1, OutputState &state);
 
-	void updateAndOutput1(uint8 unk1, OutputState &state);
+	void updateAndOutput1(uint8 rawNote, OutputState &state, bool flag = false);
 	void updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state);
 	void updateAndOutput3(OutputState &state);
 
@@ -717,7 +717,7 @@ void AdlibDriver::update1(uint8 unk1, OutputState &state) {
 	state.unk5 = unk1;
 }
 
-void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state) {
+void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state, bool flag) {
 	debugC(9, kDebugLevelSound, "updateAndOutput1(%d, %d)", rawNote, &state - _outputTables);
 
 	state.rawNote = rawNote;
@@ -736,12 +736,25 @@ void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state) {
 		octave--;
 	}
 
+	// The calculation of frequency looks quite different from the original
+	// disassembly at a first glance, but when you consider that the
+	// largest possible value would be 0x0246 + 0xFF + 0x47 (and that's if
+	// baseFreq turns out to be unsigned after all), freq is still a 10-bit
+	// value, just as it should be to fit in the Ax and Bx registers.
+	//
+	// If it were larger than that, it could have overflowed into the
+	// octave bits, and that could possibly have been used in some sound.
+	// But as it is now, I can't see any way it would happen.
+
 	uint16 freq = _unkTable[note] + state.baseFreq;
 
-	if (state.unk16) {
+	// When called from callback 41, the behaviour is slightly different:
+	// We adjust the frequency, even when state.unk16 is 0.
+
+	if (state.unk16 || flag) {
 		const uint8 *table;
 
-		if (state.unk16 > 0) {
+		if (state.unk16 >= 0) {
 			table = _unkTables[(state.rawNote & 0x0F) + 2];
 			freq += table[state.unk16];
 		} else {
@@ -1279,7 +1292,7 @@ int AdlibDriver::updateCallback40(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk16 = value;
-	updateAndOutput1(state.rawNote, state);
+	updateAndOutput1(state.rawNote, state, true);
 	return 0;
 }
 
