@@ -44,8 +44,8 @@ struct overlayHeadElement {
 	uint16 type;
 	int16 x;
 	int16 y;
-	int16 var10;
-	int16 var12;
+	int16 width;
+	int16 color;
 };
 
 #define NUM_MAX_OBJECT 255

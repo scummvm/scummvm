@@ -48,7 +48,7 @@ uint8 loadCt(const char *ctName) {
 	currentPtr = ptr = readBundleFile(findFileInBundle(ctName));
 
 	if (gameType == Cine::GID_OS) {
-		if (*(uint16 *) currentPtr == 0x800) {	// detect 256 color background
+		if (READ_BE_UINT16(currentPtr) == 8) { // detect 256 color background
 			loadCtHigh(currentPtr + 2);
 			return 0;
 		}
@@ -97,7 +97,7 @@ uint8 loadBg(const char *bgName) {
 
 	currentPtr = ptr = readBundleFile(fileIdx);
 
-	if (*(uint16 *) currentPtr == 0x800) {	// detect 256 color background
+	if (READ_BE_UINT16(currentPtr) == 8) { // detect 256 color background
 		loadBgHigh((char *)currentPtr + 2);
 		return 0;
 	}
@@ -139,7 +139,7 @@ void addBackground(char *bgName, uint16 bgIdx) {
 
 	additionalBgTable[bgIdx] = (uint8 *) malloc(320 * 200);
 
-	if (*(uint16 *) currentPtr == 0x800) {	// detect 256 color background
+	if (READ_BE_UINT16(currentPtr) == 8) { // detect 256 color background
 		memcpy(additionalBgTable[bgIdx], currentPtr + 2 + 3 * 256, 320 * 200);
 		return;
 	}

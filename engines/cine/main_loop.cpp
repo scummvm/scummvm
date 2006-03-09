@@ -93,14 +93,14 @@ void mainLoop(int bootScriptIdx) {
 	uint8 di;
 	uint16 mouseButton;
 
-	closeEngine3();
+	freeAnimDataTable();
 	resetMessageHead();
 	resetSeqList();
 	resetglobalScriptsHead();
 	resetObjectScriptHead();
 	mainLoopSub1();
 
-	mainLoopSub2(0, 0, 20, 200);
+	setTextWindow(0, 0, 20, 200);
 
 	errorVar = 0;
 
@@ -232,7 +232,7 @@ void mainLoop(int bootScriptIdx) {
 
 	hideMouse();
 	g_sfxPlayer->stop();
-	closeEngine3();
+	freeAnimDataTable();
 	unloadAllMasks();
 	freePrcLinkedList();
 	releaseObjectScripts();

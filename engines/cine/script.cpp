@@ -62,8 +62,8 @@ void addGfxElementA0(int16 param1, int16 param2) {
 
 	newElement->x = param2;
 	newElement->y = 0;
-	newElement->var10 = 0;
-	newElement->var12 = 0;
+	newElement->width = 0;
+	newElement->color = 0;
 
 	if (!currentHead)
 		currentHead = &overlayHead;

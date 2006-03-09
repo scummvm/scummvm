@@ -83,9 +83,9 @@ extern Common::File palFileHandle;
 extern Common::File partFileHandle;
 
 void processPendingUpdates(int16 param);
-void closeEngine3(void);
+void freeAnimDataTable(void);
 void mainLoopSub1(void);
-void mainLoopSub2(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
+void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern uint16 errorVar;
 extern uint8 menuVar;

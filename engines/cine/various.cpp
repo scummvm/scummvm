@@ -63,13 +63,13 @@ Common::File partFileHandle;
 void waitPlayerInput(void) {
 }
 
-void closeEngine3(void) {
+void freeAnimDataTable(void) {
 }
 
 void mainLoopSub1(void) {
 }
 
-void mainLoopSub2(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
+void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 }
 
 uint16 errorVar;
@@ -422,8 +422,8 @@ void loadOverlayFromSave(Common::File *fHandle) {
 	newElement->type = fHandle->readUint16BE();
 	newElement->x = fHandle->readSint16BE();
 	newElement->y = fHandle->readSint16BE();
-	newElement->var10 = fHandle->readSint16BE();
-	newElement->var12 = fHandle->readSint16BE();
+	newElement->width = fHandle->readSint16BE();
+	newElement->color = fHandle->readSint16BE();
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -472,7 +472,7 @@ int16 makeLoad(char *saveName) {
 	}
 
 	g_sfxPlayer->stop();
-	closeEngine3();
+	freeAnimDataTable();
 	unloadAllMasks();
 	freePrcLinkedList();
 	releaseObjectScripts();
@@ -861,8 +861,8 @@ void makeSave(char *saveFileName) {
 			fHandle.writeUint16BE(currentHead->type);
 			fHandle.writeSint16BE(currentHead->x);
 			fHandle.writeSint16BE(currentHead->y);
-			fHandle.writeSint16BE(currentHead->var10);
-			fHandle.writeSint16BE(currentHead->var12);
+			fHandle.writeSint16BE(currentHead->width);
+			fHandle.writeSint16BE(currentHead->color);
 
 			currentHead = currentHead->next;
 		}
@@ -2402,8 +2402,8 @@ void drawOverlays(void) {
 				messageIdx = currentOverlay->objIdx;
 				x = currentOverlay->x;
 				y = currentOverlay->y;
-				partVar1 = currentOverlay->var10;
-				partVar2 = currentOverlay->var12;
+				partVar1 = currentOverlay->width;
+				partVar2 = currentOverlay->color;
 
 				blitRawScreen(page1Raw);
 
@@ -2594,8 +2594,8 @@ void addMessage(uint8 param1, int16 param2, int16 param3, int16 param4, int16 pa
 
 	newElement->x = param2;
 	newElement->y = param3;
-	newElement->var10 = param4;
-	newElement->var12 = param5;
+	newElement->width = param4;
+	newElement->color = param5;
 
 	if (!currentHead)
 		currentHead = &overlayHead;
