@@ -234,23 +234,24 @@ void Surface::createDialog(bool blackFlag) {
 	byte *pDest = _data->data();
 	uint16 xCenter = _width - DIALOG_EDGE_SIZE * 2;
 	uint16 yCenter = _height - DIALOG_EDGE_SIZE * 2;
+	int y;
 
 	// Dialog top
-	for (int y = 0; y < 9; ++y) {
+	for (y = 0; y < 9; ++y) {
 		copyLine(pSrc, pDest, DIALOG_EDGE_SIZE - 2, xCenter + 2, DIALOG_EDGE_SIZE);
 		pSrc += (DIALOG_EDGE_SIZE - 2) + 1 + DIALOG_EDGE_SIZE;
 		pDest += _width;
 	}
 
 	// Dialog sides - note that the same source data gets used for all side lines
-	for (int y = 0; y < yCenter; ++y) {
+	for (y = 0; y < yCenter; ++y) {
 		copyLine(pSrc, pDest, DIALOG_EDGE_SIZE, xCenter, DIALOG_EDGE_SIZE);
 		pDest += _width;
 	}
 	pSrc += DIALOG_EDGE_SIZE * 2 + 1;
 
 	// Dialog bottom
-	for (int y = 0; y < 9; ++y) {
+	for (y = 0; y < 9; ++y) {
 		copyLine(pSrc, pDest, DIALOG_EDGE_SIZE, xCenter + 1, DIALOG_EDGE_SIZE - 1);
 		pSrc += DIALOG_EDGE_SIZE + 1 + (DIALOG_EDGE_SIZE - 1);
 		pDest += _width;

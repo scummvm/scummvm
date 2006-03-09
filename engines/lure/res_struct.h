@@ -184,6 +184,7 @@ struct TalkResponseResource {
 
 template <class T>
 class ManagedList: public Common::List<T> {
+	typedef typename Common::List<T> Common_List;
 public:
 	~ManagedList() {
 		clear();
@@ -191,14 +192,14 @@ public:
 
 	void clear() {
 		typename Common::List<T>::iterator i;
-		for (i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
+		for (i = Common_List::begin(); i != Common_List::end(); ++i)
 			delete *i;
-		Common::List<T>::clear();		
+		Common_List::clear();		
 	}
 
 	typename Common::List<T>::iterator erase(typename Common::List<T>::iterator pos) {
 		delete *pos;
-		return Common::List<T>::erase(pos);
+		return Common_List::erase(pos);
 	}
 
 	typename Common::List<T>::iterator erase(typename Common::List<T>::iterator first, 
@@ -206,7 +207,7 @@ public:
 		typename Common::List<T>::iterator i;
 		for (i = first; i != last; ++i)
 			delete *i;
-		return Common::List<T>::erase(first, last);
+		return Common_List::erase(first, last);
 	}
 };
 

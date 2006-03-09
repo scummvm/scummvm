@@ -36,14 +36,15 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 		Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT) {
 	loadScreen(screenId);	
 	byte *screenData = data().data();
+	int cellY;
 
 	// Reset all the cells to false
-	for (int cellY = 0; cellY < FULL_VERT_RECTS; ++cellY) 
+	for (cellY = 0; cellY < FULL_VERT_RECTS; ++cellY) 
 		for (int cellX = 0; cellX < FULL_HORIZ_RECTS; ++cellX) 
 			_cells[cellY][cellX] = false;
 
 	// Loop through each cell of the screen
-	for (int cellY = 0; cellY < NUM_VERT_RECTS; ++cellY) {
+	for (cellY = 0; cellY < NUM_VERT_RECTS; ++cellY) {
 		for (int cellX = 0; cellX < NUM_HORIZ_RECTS; ++cellX) {
 			bool hasPixels = false;
 
