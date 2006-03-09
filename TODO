@@ -301,7 +301,11 @@ Plugins
   and to display a list of supported game IDs. This leads to "-z" displaying
   e.g. the obsolete "zakTowns" target. So we should separate the two. There
   are multiple ways to do that, of course.
-  
+* split base/plugins.h into the part needed to implement a plugin, and the part
+  needed by client code. Maybe also move DetectedGame and GameSettings to a new
+  file base/game.h
+
+
 OSystem
 =======
 * Right now gBitFormat is part of common/scaler.cpp; we might want to move it
