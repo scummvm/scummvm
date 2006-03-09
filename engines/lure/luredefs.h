@@ -36,7 +36,6 @@ namespace Lure {
 
 enum {
 	GF_FLOPPY	= 1 <<  0,
-	GF_ENGLISH	= 1 <<  1,
 	GF_LNGUNK	= 1 << 15
 };
 

@@ -55,15 +55,22 @@ struct LureGameSettings {
 	const char *description;
 	byte id;
 	uint32 features;
+	Common::Language language;
 	const char *md5sum;
 	const char *checkFile;
 };
 
 //
 static const LureGameSettings lure_games[] = {
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_ENGLISH | GF_FLOPPY, 
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_USA,
 										"e45ea5d279a268c7d3c6524c2f63a2d2", "disk1.vga" },
-	{ 0, 0, 0, 0, 0, 0 }
+/*
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
+										"00469bde05e79e634c3dd3931d3a708a", "disk1.vga" },
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::FR_FRA,
+										"2e6c42dbc76ba4f329261f1ff7013309", "disk1.vga" },
+*/
+	{ 0, 0, 0, 0, Common::UNK_LANG, 0, 0 }
 };
 
 // Keep list of different supported games
@@ -125,10 +132,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		}
 		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				DetectedGame dg(*g);
-				if (g->features & GF_ENGLISH)
-					dg.language = Common::EN_USA;
-				
+				DetectedGame dg(*g, g->language);
 				dg.updateDesc((g->features & GF_FLOPPY) ? "Floppy" : 0);
 				detectedGames.push_back(dg);
 			}
