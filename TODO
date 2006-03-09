@@ -301,9 +301,14 @@ Plugins
   and to display a list of supported game IDs. This leads to "-z" displaying
   e.g. the obsolete "zakTowns" target. So we should separate the two. There
   are multiple ways to do that, of course.
-* split base/plugins.h into the part needed to implement a plugin, and the part
+* Split base/plugins.h into the part needed to implement a plugin, and the part
   needed by client code. Maybe also move DetectedGame and GameSettings to a new
   file base/game.h
+* Replace DetectedGame by a 'map' containing essentially the same data that the
+  config file would contain -- i.e. gameid, description, language, platform;
+  but also any further data, like e.g. basename, target_md5, or *anything*
+  the engine deems important.
+   -> far more flexible, and helps to simplify the launcher code, too.
 
 
 OSystem
