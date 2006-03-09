@@ -500,7 +500,7 @@ struct GameDescription {
 	const char *name;
 	SAGAGameType gameType;
 	GameIds gameId;
-	const char *title;
+	const char *extra;
 	GameDisplayInfo *gameDisplayInfo;
 	int startSceneNumber;
 	GameResourceDescription *resourceDescription;

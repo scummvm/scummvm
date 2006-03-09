@@ -943,7 +943,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_DEMO_G, // Game id
-		"Inherit the Earth: Quest for the Orb (DOS Demo)", // Game title
+		"Demo", // Game title
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE, // Starting scene number
 		&ITEDemo_Resources,
@@ -966,7 +966,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_MACDEMO2,
-		"Inherit the Earth: Quest for the Orb (MAC Demo)",
+		"Demo",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -989,7 +989,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_MACDEMO1,
-		"Inherit the Earth: Quest for the Orb (early MAC Demo)",
+		"early Demo",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1012,7 +1012,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_MACCD_G,
-		"Inherit the Earth: Quest for the Orb (MAC CD)",
+		"CD",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1035,7 +1035,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_MACCD,
-		"Inherit the Earth: Quest for the Orb (Wyrmkeep MAC CD)",
+		"Wyrmkeep CD",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1059,7 +1059,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_LINDEMO,
-		"Inherit the Earth: Quest for the Orb (Linux Demo)",
+		"Demo",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1082,7 +1082,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_WINDEMO2,
-		"Inherit the Earth: Quest for the Orb (Win32 Demo)",
+		"Demo",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1105,7 +1105,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_WINDEMO1,
-		"Inherit the Earth: Quest for the Orb (early Win32 Demo)",
+		"early Demo",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1128,7 +1128,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_MULTICD,
-		"Inherit the Earth: Quest for the Orb (Multi-OS CD Version)",
+		"Multi-OS CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1151,7 +1151,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_LINCD,
-		"Inherit the Earth: Quest for the Orb (Linux CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1174,7 +1174,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_WINCD,
-		"Inherit the Earth: Quest for the Orb (Win32 CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1197,7 +1197,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_CD_G,
-		"Inherit the Earth: Quest for the Orb (DOS CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1220,7 +1220,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_CD_G2,
-		"Inherit the Earth: Quest for the Orb (DOS CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1243,7 +1243,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_CD_DE,
-		"Inherit the Earth: Quest for the Orb (De DOS CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1266,7 +1266,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_CD_DE2,
-		"Inherit the Earth: Quest for the Orb (De DOS CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1289,7 +1289,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_CD,
-		"Inherit the Earth: Quest for the Orb (DOS CD Version)",
+		"CD Version",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1312,7 +1312,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_DISK_DE,
-		"Inherit the Earth: Quest for the Orb (De DOS Floppy)",
+		"Floppy",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1335,7 +1335,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_DISK_DE2,
-		"Inherit the Earth: Quest for the Orb (De DOS Floppy)",
+		"Floppy",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1358,7 +1358,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_DISK_G,
-		"Inherit the Earth: Quest for the Orb (DOS Floppy)",
+		"Floppy",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1381,7 +1381,7 @@ static GameDescription gameDescriptions[] = {
 		"ite",
 		GType_ITE,
 		GID_ITE_DISK_G2,
-		"Inherit the Earth: Quest for the Orb (DOS Floppy)",
+		"Floppy",
 		&ITE_DisplayInfo,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
@@ -1404,7 +1404,7 @@ static GameDescription gameDescriptions[] = {
 		"ihnm",
 		GType_IHNM,
 		GID_IHNM_DEMO,
-		"I Have No Mouth and I Must Scream (DOS Demo)",
+		"Demo",
 		&IHNM_DisplayInfo,
 		0,
 		&IHNM_Resources,
@@ -1427,7 +1427,7 @@ static GameDescription gameDescriptions[] = {
 		"ihnm",
 		GType_IHNM,
 		GID_IHNM_CD,
-		"I Have No Mouth and I Must Scream (DOS)",
+		"",
 		&IHNM_DisplayInfo,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -1450,7 +1450,7 @@ static GameDescription gameDescriptions[] = {
 		"ihnm",
 		GType_IHNM,
 		GID_IHNM_CD_DE,
-		"I Have No Mouth and I Must Scream (DE DOS)",
+		"",
 		&IHNM_DisplayInfo,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -1472,7 +1472,7 @@ static GameDescription gameDescriptions[] = {
 		"ihnm",
 		GType_IHNM,
 		GID_IHNM_CD_ES,
-		"I Have No Mouth and I Must Scream (Sp DOS)",
+		"",
 		&IHNM_DisplayInfo,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -1494,7 +1494,7 @@ static GameDescription gameDescriptions[] = {
 		"ihnm",
 		GType_IHNM,
 		GID_IHNM_CD_RU,
-		"I Have No Mouth and I Must Scream (Ru DOS)",
+		"",
 		&IHNM_DisplayInfo,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -1516,7 +1516,7 @@ static GameDescription gameDescriptions[] = {
 		"ihnm",
 		GType_IHNM,
 		GID_IHNM_CD_FR,
-		"I Have No Mouth and I Must Scream (Fr DOS)",
+		"",
 		&IHNM_DisplayInfo,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,
@@ -1567,7 +1567,7 @@ bool SagaEngine::initGame() {
 					 language != Common::UNK_LANG) ||
 					(gameDescriptions[matches[i]].platform != platform &&
 					 platform != Common::kPlatformUnknown)) {
-					debug(2, "Purged (pass 2) %s", gameDescriptions[matches[i]].title);
+					debug(2, "Purged (pass 2) %d (%s)", matches[i], gameDescriptions[matches[i]].extra);
 					matches[i] = -1;
 				}
 				else
@@ -1591,7 +1591,7 @@ bool SagaEngine::initGame() {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
 
-	debug(2, "Running %s", gameDescriptions[gameNumber].title);
+	debug(2, "Running %d (%s)", gameNumber, gameDescriptions[gameNumber].extra);
 
 	_gameNumber = gameNumber;
 	_gameDescription = &gameDescriptions[gameNumber];
@@ -1645,7 +1645,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
 					count++;
 			if (count < maxcount) {
-				debug(2, "Purged: %s", gameDescriptions[matches[i]].title);
+				debug(2, "Purged: %d (%s)", matches[i], gameDescriptions[matches[i]].extra);
 				matches[i] = -1;
 			}
 		}
@@ -1656,9 +1656,14 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 	for (i = 0; i < index; i++)
 		if (matches[i] != -1) {
 			GameDescription &g = gameDescriptions[matches[i]];
-			detectedGames.push_back(DetectedGame(g.name, g.title,
-							 g.language,
-							 g.platform));
+			const char *title = 0;
+			if (g.gameType == GType_ITE)
+				title = "Inherit the Earth: Quest for the Orb";
+			else if (g.gameType == GType_IHNM)
+				title = "I Have No Mouth and I Must Scream";
+			DetectedGame dg(g.name, title, g.language, g.platform);
+			dg.updateDesc(g.extra);
+			detectedGames.push_back(dg);
 		}
 		
 	if (retmatches) {
@@ -1757,7 +1762,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		} else {
 			bool match = true;
 
-			debug(2, "Probing game: %s", gameDescriptions[game_n].title);
+			debug(2, "Probing game: %d (%s)", game_n, gameDescriptions[game_n].extra);
 
 			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
@@ -1772,7 +1777,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			if (!match)
 				continue;
 
-			debug(2, "Found game: %s", gameDescriptions[game_n].title);
+			debug(2, "Found game: %d (%s)", game_n, gameDescriptions[game_n].extra);
 
 			return game_n;
 		}
