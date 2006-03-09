@@ -47,7 +47,7 @@
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE
-#include "KeysDialog.h"
+#include "gui/KeysDialog.h"
 #endif
 
 using GUI::CommandSender;

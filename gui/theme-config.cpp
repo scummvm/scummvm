@@ -119,7 +119,7 @@ yoffset=(yoffset + buttonHeight + 4)\n\
 globaloptions_extrabutton=5 yoffset (buttonWidth + 5) buttonHeight\n\
 globaloptions_extrapath=(prev.x2 + 20) (vBorder + 3) (parent.w - (prev.w + 20) - 10) kLineHeight\n\
 yoffset=(yoffset + buttonHeight + 4)\n\
-globaloptions_keysbutton=5 yoffset buttonWidth buttonHeight\n\
+globaloptions_keysbutton=5 yoffset (buttonWidth + 5) buttonHeight\n\
 \n\
 globaloptions_cancel=(parent.w - 2 * (buttonWidth + 10)) (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n\
 globaloptions_ok=(prev.x2 + 10) prev.y prev.w prev.h\n\
@@ -137,6 +137,16 @@ useWithPrefix=volumeControls gameoptions_\n\
 \n\
 opYoffset=(vBorder + buttonHeight)\n\
 useWithPrefix=midiControls gameoptions_\n\
+\n\
+### keys dialog\n\
+keysdialog=(w / 20) (h / 10) (w - w / 10) (h - h / 5)\n\
+set_parent=keysdialog\n\
+keysdialog_map=(parent.w - buttonWidth - 10) 20 buttonWidth buttonHeight\n\
+keysdialog_ok=prev.x (prev.y2 + 4) prev.w prev.h\n\
+keysdialog_cancel=prev.x (prev.y2 + 4) prev.w prev.h\n\
+keysdialog_list=10 10 (prev.x - 20) (parent.h - kLineHeight * 4 - self.y)\n\
+keysdialog_action=prev.x (parent.h - kLineHeight * 3) (parent.w - self.x * 2) kLineHeight\n\
+keysdialog_mapping=prev.x (prev.y + kLineHeight) prev.w prev.h\n\
 \n\
 ##### SCUMM dialogs\n\
 scummDummyDialog=0 80 0 16\n\
@@ -175,8 +185,8 @@ opYoffset=(opYoffset + buttonHeight)\n\
 scummconfig_speechCheckbox=prev.x opYoffset (kFontHeight + 10 + 85) buttonHeight\n\
 opYoffset=(opYoffset + buttonHeight + 4)\n\
 soWidth=(8 + 3 * buttonWidth + 4)\n\
-scummconfig_keys=(soWidth - 3 * (buttonWidth + 4) - 4) opYoffset buttonWidth buttonHeight\n\
-scummconfig_cancel=(prev.x2 + 4) prev.y prev.w prev.h\n\
+scummconfig_keys=(soWidth - 3 * (buttonWidth + 4) + 6) opYoffset (buttonWidth - 10) buttonHeight\n\
+scummconfig_cancel=(prev.x2 + 4) prev.y (prev.w + 10) prev.h\n\
 scummconfig_ok=(prev.x2 + 4) prev.y prev.w prev.h\n\
 opYoffset=(opYoffset + buttonHeight)\n\
 scummconfig=((w - soWidth) / 2) ((h - opYoffset) / 2) soWidth (opYoffset + 8)\n\

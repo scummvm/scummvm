@@ -20,10 +20,10 @@
  *
  */
 
-#include "stdafx.h"
+#include "common/stdafx.h"
 #include "gui/KeysDialog.h"
 #include "gui/Actions.h"
-#include <sdl_keyboard.h>
+#include <SDL_keyboard.h>
 
 #ifdef _WIN32_WCE
 #include "CEDevice.h"
@@ -48,22 +48,20 @@ enum {
 };
 
 KeysDialog::KeysDialog(const Common::String &title)
-	: GUI::Dialog(30, 20, 260, 160) {
-
-	GUI::WidgetSize ws = GUI::kNormalWidgetSize;
+	: GUI::Dialog("keysdialog") {
 
 //tmp
 //	addButton(this, _w - (buttonWidth + 10), _h - buttonHeight - 8, "Choose", kChooseCmd, 0, ws);
 //tmp
-	addButton(this, 160, 20, "Map", kMapCmd, 0, ws);					// Map
-	addButton(this, 160, 40, "OK", kOKCmd, 0, ws);						// OK
-	addButton(this, 160, 60, "Cancel", kCloseCmd, 0, ws);				// Cancel
+	new ButtonWidget(this, "keysdialog_map", "Map", kMapCmd, 0);
+	new ButtonWidget(this, "keysdialog_ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "keysdialog_cancel", "Cancel", kCloseCmd, 0);
 
-	_actionsList = new ListWidget(this, 10, 20, 140, 90);
+	_actionsList = new ListWidget(this, "keysdialog_list");
 	_actionsList->setNumberingMode(kListNumberingZero);
 
-	_actionTitle = new StaticTextWidget(this, 10, 120, 240, 16, title, kTextAlignCenter);
-	_keyMapping = new StaticTextWidget(this, 10, 140, 240, 16, "", kTextAlignCenter);
+	_actionTitle = new StaticTextWidget(this, "keysdialog_action", title, kTextAlignCenter);
+	_keyMapping = new StaticTextWidget(this, "keysdialog_mapping", "", kTextAlignCenter);
 
 	_actionTitle->setFlags(WIDGET_CLEARBG);
 	_keyMapping->setFlags(WIDGET_CLEARBG);
