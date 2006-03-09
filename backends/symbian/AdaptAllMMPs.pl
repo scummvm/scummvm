@@ -62,7 +62,6 @@ my @excludes_snd = (
 	"freeverb.cpp"
 ); 
 my @excludes_gui = ( 
-	"ThemeNew",
 ); 
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])

@@ -215,7 +215,7 @@ if ($count)
 		print "> $Error\n";
 	}
 	print "=======================================================================================\n";
-	print "\007\007\007";
+	print "\007\007";
 }
 
 # first clean up 'initial path' by removing possible old entries (in case of aborted builds)
@@ -274,7 +274,10 @@ my $header = "
 	if (-e $TargetFilePath) { unlink($TargetFilePath) or PrintErrorMessage("Removing $TargetFilePath"); }
 	
 	my $Redirection = "OUT:file, ERR:".($RedirectSTDERR ? "file" : "screen");
-	PrintMessage("Building $Target ($Redirection)");
+	my $Message = "Building $Target ($Redirection)";
+	PrintMessage($Message) if (!$ReallyQuiet);
+	print("  $Message\n")  if ($ReallyQuiet);
+
 	my $OldSize = (-s $build_log_err);
 	$Redirection = ($RedirectSTDERR ? "2>> $build_log_err" : "");
 	system("abld build armi urel $Redirection >> $build_log_out");
@@ -434,13 +437,15 @@ sub BuildVariation()
 	PrintErrorMessage("'abld clean armi urel' exited with value " . ($? >> 8)) if ($? >> 8);	
 	
 	my $Redirection = "OUT:file, ERR:".($RedirectSTDERR ? "file" : "screen");
-	PrintMessage("Building $Package ($Redirection)");
+	my $Message = "Building $Package ($Redirection)";
+	PrintMessage($Message) if (!$ReallyQuiet);
+	print("  $Message\n")  if ($ReallyQuiet);
 
 	my $OldSize = (-s $build_log_err);
 	$Redirection = ($RedirectSTDERR ? "2>> $build_log_err" : "");
 	system("abld build armi urel $Redirection >> $build_log_out");
 	$OK = 0 if ($? >> 8);
-	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err));
+	print "  STDERR: ".((-s $build_log_err)-$OldSize)." bytes output written to $build_log_err\n+--------------------------------------------------------------------------------------\n" if ($OldSize != (-s $build_log_err) && !$ReallyQuiet);
 	PrintErrorMessage("'abld build armi urel' exited with value " . ($? >> 8)) if ($? >> 8);
 	return 0 if (!$OK); # ABLD always returns ok :( grr	
 	PrintMessage("Done.") if (!$ReallyQuiet);
@@ -594,7 +599,7 @@ sub PrintErrorMessage()
 	print "+--------------------------------------------------------------------------------------\n";
 	PrintMessage("ERROR: $CurrentTarget: $msg");
 	print "\007" if (!$HaltOnError);
-	print "\007\007\007" if ($HaltOnError); # make more noise if halt-on-error
+	print "\007\007" if ($HaltOnError); # make more noise if halt-on-error
 }
 
 sub PrintMessage()
