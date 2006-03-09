@@ -181,7 +181,9 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 		}
 		for (g = kyra_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(DetectedGame(g->gameid, g->description, convertKyraLang(g->features), Common::kPlatformUnknown));
+				DetectedGame dg(*g, convertKyraLang(g->features));
+				dg.updateDesc();	// Append the language, if set, to the description.
+				detectedGames.push_back(dg);
 			}
 		}
 		if (detectedGames.isEmpty()) {

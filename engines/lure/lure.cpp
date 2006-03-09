@@ -61,7 +61,7 @@ struct LureGameSettings {
 
 //
 static const LureGameSettings lure_games[] = {
-	{ "lure", "Lure of the Temptress (Floppy, English)", GI_LURE, GF_ENGLISH | GF_FLOPPY, 
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_ENGLISH | GF_FLOPPY, 
 										"e45ea5d279a268c7d3c6524c2f63a2d2", "disk1.vga" },
 	{ 0, 0, 0, 0, 0, 0 }
 };
@@ -125,7 +125,12 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		}
 		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(*g);
+				DetectedGame dg(*g);
+				if (g->features & GF_ENGLISH)
+					dg.language = Common::EN_USA;
+				
+				dg.updateDesc((g->features & GF_FLOPPY) ? "Floppy" : 0);
+				detectedGames.push_back(dg);
 			}
 		}
 		if (detectedGames.isEmpty()) {
