@@ -371,7 +371,7 @@
 	#define NORETURN __attribute__((__noreturn__)) 
 	#define GCC_PRINTF(x,y) __attribute__((format(printf, x, y)))
 #else
-	#define GCC_PRINTF(x,y)
+	#define GCC_PACK(x,y)
 #endif
 
 
