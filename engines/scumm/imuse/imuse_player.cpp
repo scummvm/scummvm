@@ -456,10 +456,16 @@ void Player::sysEx(const byte *p, uint16 len) {
 		break;
 
 	case 1:
-		// This SysEx is used in Sam & Max for maybe_jump.
-		if (_scanning)
-			break;
-		maybe_jump(p[0], p[1] - 1, (READ_BE_UINT16(p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
+		if (_se->_game_id != GID_SAMNMAX) {
+			// Shut down a part. [Bug 1088045, comments]
+			part = getPart (p[0]);
+			if (part != NULL) part->uninit();
+		} else {
+			// Sam & Max: maybe_jump.
+			if (_scanning)
+				break;
+			maybe_jump(p[0], p[1] - 1, (READ_BE_UINT16(p + 2) - 1) * 4 + p[4], ((p[5] * TICKS_PER_BEAT) >> 2) + p[6]);
+		}
 		break;
 
 	case 2: // Start of song. Ignore for now.
