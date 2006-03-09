@@ -1150,12 +1150,8 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 								fileSet[file->path()] = false;
 							}
 							
-							// If known, add the platform to the description string
-							if (dg.platform != Common::kPlatformUnknown) {
-								dg.description += "(";
-								dg.description += Common::getPlatformDescription(dg.platform);
-								dg.description += ")";
-							}
+							dg.updateDesc();	// Append the platform, if set, to the description.
+
 							detectedGames.push_back(dg);
 							break;
 						}
@@ -1200,28 +1196,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 					dg.platform = Common::kPlatformMacintosh;
 				else
 					dg.platform = elem->platform;
-
-				const bool hasCustomLanguage = (dg.language != Common::UNK_LANG);
-				const bool hasCustomPlatform = (dg.platform != Common::kPlatformUnknown);
-				const bool hasExtraDesc = (elem->extra && elem->extra[0]);
-
-				// Adapt the description string if custom platform/language is set.
-				if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
-					dg.description += " (";
-					if (hasCustomLanguage)
-						dg.description += Common::getLanguageDescription(dg.language);
-					if (hasCustomPlatform) {
-						if (hasCustomLanguage)
-							dg.description += "/";
-						dg.description += Common::getPlatformDescription(dg.platform);
-					}
-					if (hasExtraDesc) {
-						if (hasCustomPlatform || hasCustomLanguage)
-							dg.description += "/";
-						dg.description += elem->extra;
-					}
-					dg.description += ")";
-				}
+				dg.updateDesc(elem->extra);	// Append extra information to the description.
 				
 				// Insert the 'enhanced' game data into the candidate list
 				detectedGames.push_back(dg);

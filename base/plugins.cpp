@@ -71,6 +71,37 @@ PluginRegistrator::PluginRegistrator(const char *name, GameList games, GameIDQue
 
 #pragma mark -
 
+
+void DetectedGame::updateDesc(const char *extra) {
+	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
+	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or
+	// the seperator (instead of '/' use ', ' or ' ').
+	const bool hasCustomLanguage = (language != Common::UNK_LANG);
+	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
+	const bool hasExtraDesc = (extra && extra[0]);
+
+	// Adapt the description string if custom platform/language is set.
+	if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
+		description += " (";
+		if (hasCustomLanguage)
+			description += Common::getLanguageDescription(language);
+		if (hasCustomPlatform) {
+			if (hasCustomLanguage)
+				description += "/";
+			description += Common::getPlatformDescription(platform);
+		}
+		if (hasExtraDesc) {
+			if (hasCustomPlatform || hasCustomLanguage)
+				description += "/";
+			description += extra;
+		}
+		description += ")";
+	}
+}
+
+
+#pragma mark -
+
 #ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
 	PluginRegistrator *_plugin;

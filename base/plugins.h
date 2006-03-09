@@ -54,6 +54,11 @@ struct DetectedGame : public GameDescriptor {
 	             Common::Language l = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown)
 		: GameDescriptor(game.gameid, game.description), language(l), platform(p) {}
+	
+	/**
+	 * Update the description string by appending (LANG/PLATFORM/EXTRA) to it.
+	 */
+	void updateDesc(const char *extra = 0);
 };
 
 
