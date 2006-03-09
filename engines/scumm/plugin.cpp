@@ -861,11 +861,6 @@ static const char *findDescriptionFromGameID(const char *gameid) {
 	error("Unknown gameid encountered in findDescriptionFromGameID");
 }
 
-static GameSettings toGameSettings(const ScummGameSettings &g) {
-	GameSettings dummy = { g.gameid, findDescriptionFromGameID(g.gameid) };
-	return dummy;
-}
-
 static int compareMD5Table(const void *a, const void *b) {
 	const char *key = (const char *)a;
 	const MD5Table *elem = (const MD5Table *)b;
@@ -1139,26 +1134,27 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 							}
 
 							// Match found, add to list of candidates, then abort inner loop.
+							const char *desc = findDescriptionFromGameID(g->gameid);
 							if (substLastIndex > 0 && // HE Mac versions.
 								(subst.genMethod == kGenMac ||
 								 subst.genMethod == kGenMacNoParens)) {
-								detectedGames.push_back(DetectedGame(toGameSettings(*g),
+								detectedGames.push_back(DetectedGame(g->gameid, desc,
 																	 Common::UNK_LANG,
 																	 Common::kPlatformMacintosh));
 								fileSet[file->path()] = true;
 							} else if (substLastIndex == 0 && g->id == GID_MANIAC &&
 									   (buf[0] == 0xbc || buf[0] == 0xa0)) {
-								detectedGames.push_back(DetectedGame(toGameSettings(*g),
+								detectedGames.push_back(DetectedGame(g->gameid, desc,
 																	 Common::UNK_LANG,
 																	 Common::kPlatformNES));
 							} else if ((g->id == GID_MANIAC || g->id == GID_ZAK) &&
 									   ((buf[0] == 0x31 && buf[1] == 0x0a) ||
 										(buf[0] == 0xcd && buf[1] == 0xfe))) {
-								detectedGames.push_back(DetectedGame(toGameSettings(*g),
+								detectedGames.push_back(DetectedGame(g->gameid, desc,
 																	 Common::UNK_LANG,
 																	 Common::kPlatformC64));
 							} else {
-								detectedGames.push_back(toGameSettings(*g));
+								detectedGames.push_back(DetectedGame(g->gameid, desc));
 								fileSet[file->path()] = false;
 							}
 							break;
@@ -1200,10 +1196,11 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				}
 				assert(g->gameid);
 				// Insert the 'enhanced' game data into the candidate list
+				const char *desc = findDescriptionFromGameID(g->gameid);
 				if (iter->_value == true) // This was HE Mac game
-					detectedGames.push_back(DetectedGame(toGameSettings(*g), elem->language, Common::kPlatformMacintosh));
+					detectedGames.push_back(DetectedGame(g->gameid, desc, elem->language, Common::kPlatformMacintosh));
 				else
-					detectedGames.push_back(DetectedGame(toGameSettings(*g), elem->language, elem->platform));
+					detectedGames.push_back(DetectedGame(g->gameid, desc, elem->language, elem->platform));
 				exactMatch = true;
 			}
 		}

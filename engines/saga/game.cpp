@@ -1654,10 +1654,12 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 
 	// and now push them into list of detected games
 	for (i = 0; i < index; i++)
-		if (matches[i] != -1)
-			detectedGames.push_back(DetectedGame(gameDescriptions[matches[i]].toGameSettings(),
-							 gameDescriptions[matches[i]].language,
-							 gameDescriptions[matches[i]].platform));
+		if (matches[i] != -1) {
+			GameDescription &g = gameDescriptions[matches[i]];
+			detectedGames.push_back(DetectedGame(g.name, g.title,
+							 g.language,
+							 g.platform));
+		}
 		
 	if (retmatches) {
 		*retmatches = (int *)calloc(ARRAYSIZE(gameDescriptions), sizeof(int));

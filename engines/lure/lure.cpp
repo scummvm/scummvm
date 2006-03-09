@@ -125,7 +125,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 		}
 		for (g = lure_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(toGameSettings(*g));
+				detectedGames.push_back(toDetectedGame(*g));
 			}
 		}
 		if (detectedGames.isEmpty()) {

@@ -516,11 +516,6 @@ struct GameDescription {
 	uint32 features;
 	Common::Language language;
 	Common::Platform platform;
-
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { name, title };
-		return dummy;
-	}
 };
 
 struct SaveFileData {

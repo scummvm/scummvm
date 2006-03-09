@@ -75,19 +75,12 @@ static const CINEGameSettings cine_settings[] = {
 	{NULL, NULL, 0, 0, NULL}
 };
 
-// Keep list of different supported games
-static const GameSettings cine_list[] = {
-	{"fw", "Future Wars"},
-	{"os", "Operation Stealth"},
-	{0, 0}
-};
-
 GameList Engine_CINE_gameIDList() {
 	GameList games;
-	const GameSettings *g = cine_list;
+	const CINEGameSettings *g = cine_settings;
 
-	while (g->gameid) {
-		games.push_back(*g);
+	while (g->name) {
+		games.push_back(g->toGameSettings());
 		g++;
 	}
 
@@ -95,13 +88,13 @@ GameList Engine_CINE_gameIDList() {
 }
 
 GameSettings Engine_CINE_findGameID(const char *gameid) {
-	const GameSettings *g = cine_list;
-	while (g->gameid) {
-		if (0 == scumm_stricmp(gameid, g->gameid))
+	const CINEGameSettings *g = cine_settings;
+	while (g->name) {
+		if (0 == scumm_stricmp(gameid, g->name))
 			break;
 		g++;
 	}
-	return *g;
+	return g->toGameSettings();
 }
 
 DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {

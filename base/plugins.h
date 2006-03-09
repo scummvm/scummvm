@@ -46,8 +46,7 @@ struct DetectedGame {
 	const char *description;
 	Common::Language language;
 	Common::Platform platform;
-	DetectedGame() : language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {}
-	DetectedGame(const char *g, const char *d,
+	DetectedGame(const char *g = 0, const char *d = 0,
 	             Common::Language l = Common::UNK_LANG,
 	             Common::Platform p = Common::kPlatformUnknown)
 		: gameid(g), description(d), language(l), platform(p) {}
@@ -56,6 +55,13 @@ struct DetectedGame {
 	             Common::Platform p = Common::kPlatformUnknown)
 		: gameid(game.gameid), description(game.description), language(l), platform(p) {}
 };
+
+template <class T>
+DetectedGame toDetectedGame(const T &g) {
+	DetectedGame dummy(g.gameid, g.description);
+	return dummy;
+}
+
 
 /** List of detected games. */
 typedef Common::Array<DetectedGame> DetectedGameList;

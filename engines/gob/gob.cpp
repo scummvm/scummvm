@@ -60,10 +60,6 @@ struct GobGameSettings {
 	const char *description;
 	uint32 features;
 	const char *md5sum;
-	GameSettings toGameSettings() const {
-		GameSettings dummy = { gameid, description };
-		return dummy;
-	}
 };
 
 static const GobGameSettings gob_games[] = {
@@ -326,7 +322,7 @@ DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 		}
 		for (g = gob_games; g->gameid; g++) {
 			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				detectedGames.push_back(g->toGameSettings());
+				detectedGames.push_back(DetectedGame(g->gameid, g->description));
 			}
 		}
 		if (detectedGames.isEmpty()) {

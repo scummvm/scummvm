@@ -99,7 +99,7 @@ DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 
 				if (0 == scumm_stricmp(g->detectname, gameName)) {
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(toGameSettings(*g));
+					detectedGames.push_back(toDetectedGame(*g));
 					break;
 				}
 			}
