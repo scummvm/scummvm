@@ -89,7 +89,7 @@ GameList Engine_SIMON_gameIDList() {
 	GameList games;
 	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
-		games.push_back(GameDescriptor(g->gameid, g->description));
+		games.push_back(*g);
 		g++;
 	}
 
@@ -101,7 +101,7 @@ GameDescriptor Engine_SIMON_findGameID(const char *gameid) {
 	const PlainGameDescriptor *g = simonGames;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
-			return GameDescriptor(g->gameid, g->description);
+			return *g;
 		g++;
 	}
 
