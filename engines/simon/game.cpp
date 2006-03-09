@@ -34,7 +34,119 @@
 #include "simon/simon.h"
 #include "simon/intern.h"
 
+
+namespace Simon {
+static DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
+}
+
 using Common::File;
+
+struct ObsoleteGameID {
+	const char *from;
+	const char *to;
+	Common::Platform platform;
+};
+
+/**
+ * Conversion table mapping old obsolete target names to the
+ * corresponding new target and platform combination.
+ *
+ */
+static const ObsoleteGameID obsoleteGameIDsTable[] = {
+	{"simon1acorn", "simon1", Common::kPlatformAcorn},
+	{"simon1amiga", "simon1", Common::kPlatformAmiga},
+	{"simon1cd32", "simon1", Common::kPlatformAmiga},
+	{"simon1dos", "simon1", Common::kPlatformPC},
+	{"simon1talkie", "simon1", Common::kPlatformPC},
+	{"simon1win", "simon1", Common::kPlatformWindows},
+	{"simon2dos", "simon2",  Common::kPlatformPC},
+	{"simon2talkie", "simon2", Common::kPlatformPC},
+	{"simon2mac", "simon2", Common::kPlatformMacintosh},
+	{"simon2win", "simon2",  Common::kPlatformWindows},
+	{NULL, NULL, Common::kPlatformUnknown}
+};
+
+static const PlainGameDescriptor simonGames[] = {
+	// Simon the Sorcerer 1 & 2
+	{"feeble", "The Feeble Files"},
+	{"simon1", "Simon the Sorcerer 1"},
+	{"simon2", "Simon the Sorcerer 2"},
+
+	{NULL, NULL}
+};
+
+static const char *findDescriptionFromGameID(const char *gameid) {
+	const PlainGameDescriptor *g = simonGames;
+	while (g->gameid) {
+		if (!scumm_stricmp(g->gameid, gameid)) {
+			return g->description;
+		}
+		g++;
+	}
+	error("Unknown gameid encountered in findDescriptionFromGameID");
+}
+
+GameList Engine_SIMON_gameIDList() {
+	GameList games;
+	const PlainGameDescriptor *g = simonGames;
+	while (g->gameid) {
+		games.push_back(*g);
+		g++;
+	}
+
+	return games;
+}
+
+GameDescriptor Engine_SIMON_findGameID(const char *gameid) {
+	// First search the list of supported game IDs.
+	const PlainGameDescriptor *g = simonGames;
+	while (g->gameid) {
+		if (0 == scumm_stricmp(gameid, g->gameid))
+			return *g;
+		g++;
+	}
+
+	// If we didn't find the gameid in the main list, check if it
+	// is an obsolete game id.
+	GameDescriptor gs;
+	const ObsoleteGameID *o = obsoleteGameIDsTable;
+	while (o->from) {
+		if (0 == scumm_stricmp(gameid, o->from)) {
+			gs.gameid = gameid;
+			gs.description = "Obsolete game ID";
+			return gs;
+		}
+		o++;
+	}
+	return gs;
+}
+
+DetectedGameList Engine_SIMON_detectGames(const FSList &fslist) {
+	return Simon::GAME_ProbeGame(fslist);
+}
+
+Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
+	const ObsoleteGameID *o = obsoleteGameIDsTable;
+	while (o->from) {
+		if (!scumm_stricmp(detector->_gameid.c_str(), o->from)) {
+			detector->_gameid = o->to;
+
+			ConfMan.set("gameid", o->to);
+
+			if (o->platform != Common::kPlatformUnknown)
+				ConfMan.set("platform", Common::getPlatformCode(o->platform));
+
+			warning("Target upgraded from %s to %s", o->from, o->to);
+			ConfMan.flushToDisk();
+			break;
+		}
+		o++;
+	}
+
+	return new Simon::SimonEngine(syst);
+}
+
+REGISTER_PLUGIN(SIMON, "Simon the Sorcerer")
 
 namespace Simon {
 
@@ -1071,14 +1183,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 	for (i = 0; i < index; i++)
 		if (matches[i] != -1) {
 			GameDescription &g = gameDescriptions[matches[i]];
-			const char *title = 0;
-			if (g.gameType == GType_SIMON1)
-				title = "Simon the Sorcerer 1";
-			else if (g.gameType == GType_SIMON2)
-				title = "Simon the Sorcerer 2";
-			else if (g.gameType == GType_FF)
-				title = "The Feeble Files";
-			DetectedGame dg(g.name, title, g.language, g.platform);
+			DetectedGame dg(g.name, findDescriptionFromGameID(g.name), g.language, g.platform);
 			dg.updateDesc(g.extra);
 			detectedGames.push_back(dg);
 		}

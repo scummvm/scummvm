@@ -25,8 +25,6 @@
 
 #include <stdio.h>
 #include "base/engine.h"
-#include "base/gameDetector.h"
-#include "base/plugins.h"
 #include "common/util.h"
 #include "simon/midi.h"
 #include "simon/sound.h"
@@ -127,8 +125,6 @@ struct GameDescription {
 	Common::Language language;
 	Common::Platform platform;
 };
-
-DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
 
 struct GameSpecificSettings;
 
