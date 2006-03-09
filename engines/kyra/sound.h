@@ -114,6 +114,9 @@ public:
 private:
 	void loadSoundFile(const char *file);
 
+	void unk1();
+	void unk2();
+
 	AdlibDriver *_driver;
 
 	uint8 _trackEntries[120];

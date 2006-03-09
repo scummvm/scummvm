@@ -303,7 +303,6 @@ public:
 	void enableTimer(uint8 timer);
 	void disableTimer(uint8 timer);
 
-	void waitTicks(int ticks);
 	void delayWithTicks(int ticks);
 	
 	void saveGame(const char *fileName, const char *saveName);

@@ -445,6 +445,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	if (command != 1) {
 		if (_lastMusicCommand != command) {
 			_lastMusicCommand = command;
+			_sound->haltTrack();
 			_sound->playTrack(soundTable[command*2+1], true);
 		}
 	} else {

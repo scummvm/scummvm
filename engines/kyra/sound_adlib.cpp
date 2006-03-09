@@ -115,7 +115,7 @@ private:
 		uint8 unk38;
 		uint8 unk26;
 		uint8 unk7;
-		int8 baseFreq;
+		uint8 baseFreq;
 		int8 unk1;
 		int8 unk4;
 		uint8 regAx;
@@ -723,7 +723,7 @@ void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state, bool flag)
 	state.rawNote = rawNote;
 
 	int8 note = (rawNote & 0x0F) + state.baseNote;
-	int8 octave = ((rawNote >> 4) & 0x0F) + state.baseOctave;
+	int8 octave = ((rawNote + state.baseOctave) >> 4) & 0x0F;
 
 	// There are only twelve notes. If we go outside that, we have to
 	// adjust the note and octave.
@@ -1946,17 +1946,17 @@ void SoundAdlibPC::playMusic(const char *file) {
 }
 
 void SoundAdlibPC::stopMusic() {
-	playSoundEffect(0);
+	//playSoundEffect(0);
 }
 
 void SoundAdlibPC::playTrack(uint8 track, bool looping) {
-	// snd_stopSound();
-	// snd_unk1();
 	playSoundEffect(track);
 }
 
 void SoundAdlibPC::haltTrack() {
-	playSoundEffect(0);
+	unk1();
+	unk2();
+	_engine->_system->delayMillis(3 * 60);
 }
 
 void SoundAdlibPC::startTrack() {
@@ -2002,6 +2002,7 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 }
 
 void SoundAdlibPC::beginFadeOut() {
+	playSoundEffect(1);
 }
 
 bool SoundAdlibPC::fadeOut() {
@@ -2011,6 +2012,10 @@ bool SoundAdlibPC::fadeOut() {
 void SoundAdlibPC::loadSoundFile(const char *file) {
 	if (_soundFileLoaded == file)
 		return;
+
+	if (_soundDataPtr) {
+		haltTrack();
+	}
 
 	uint8 *file_data = 0; uint32 file_size = 0;
 
@@ -2023,8 +2028,8 @@ void SoundAdlibPC::loadSoundFile(const char *file) {
 		return;
 	}
 
-	// snd_stopSound();
-	// snd_unk1();
+	unk2();
+	unk1();
 
 	_driver->callback(8, int(-1));
 	_soundDataPtr = 0;
@@ -2047,6 +2052,15 @@ void SoundAdlibPC::loadSoundFile(const char *file) {
 	_driver->callback(4, _soundDataPtr);
 
 	_soundFileLoaded = file;
+}
+
+void SoundAdlibPC::unk1() {
+	playSoundEffect(0);
+	//_engine->_system->delayMillis(5 * 60);
+}
+
+void SoundAdlibPC::unk2() {
+	playSoundEffect(0);
 }
 
 } // end of namespace Kyra
