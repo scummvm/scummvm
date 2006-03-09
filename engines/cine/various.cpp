@@ -153,10 +153,6 @@ commandeType defaultActionCommand[] = {
 
 selectedObjStruct currentSelectedObject;
 
-void stopSample(void) {
-	snd_stopSong();
-}
-
 void mainLoopSub3(void) {
 }
 
@@ -475,7 +471,7 @@ int16 makeLoad(char *saveName) {
 		return -1;
 	}
 
-	stopSample();
+	g_sfxPlayer->stop();
 	closeEngine3();
 	unloadAllMasks();
 	freePrcLinkedList();

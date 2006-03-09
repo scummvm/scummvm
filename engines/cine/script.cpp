@@ -1784,27 +1784,26 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 		case 0x6D:
 			{
 				DEBUG_SCRIPT(currentLine, "loadMusic(%s)", currentScriptPtr + currentPosition);
-				snd_loadSong((char *)(currentScriptPtr + currentPosition));
-
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition)) + 1;
+				g_sfxPlayer->load((const char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition)) + 1;
 				break;
 			}
 		case 0x6E:
 			{
 				DEBUG_SCRIPT(currentLine, "playMusic()");
-				snd_playSong();
+				g_sfxPlayer->play();
 				break;
 			}
 		case 0x6F:
 			{
 				DEBUG_SCRIPT(currentLine, "fadeOutMusic()");
-				snd_fadeOutSong();
+				g_sfxPlayer->fadeOut();
 				break;
 			}
 		case 0x70:
 			{
 				DEBUG_SCRIPT(currentLine, "stopSample()");
-				snd_stopSong();
+				g_sfxPlayer->stop();
 				break;
 			}
 		case 0x77:
@@ -1840,16 +1839,20 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					volume = 63;
 
 				if (animDataTable[anim].ptr1) {
-					if (channel >= 10)
+					if (channel >= 10) {
 						channel -= 10;
-					if (volume < 50)
+					}
+					if (volume < 50) {
 						volume = 50;
-					if (snd_songIsPlaying)
-						snd_stopSong();
-					if (flag == 0xFFFF)
-						(*snd_driver.playSound)(animDataTable[anim].ptr1, channel, volume);
-					else
-						snd_resetChannel(channel);
+					}
+						
+					g_sfxPlayer->stop();
+					
+					if (flag == 0xFFFF) {
+						g_soundDriver->playSound(animDataTable[anim].ptr1, channel, volume);
+					} else {
+						g_soundDriver->resetChannel(channel);
+					}
 				}
 				break;
 			}

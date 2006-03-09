@@ -27,36 +27,47 @@
 
 namespace Cine {
 
-struct BasesonEntry {
-	char name[14];
-	uint32 offset;
-	uint32 size;
-	uint32 unpackedSize;
+class SoundDriver;
+
+class SfxPlayer {
+public:
+
+	enum {
+		NUM_INSTRUMENTS = 15,
+		NUM_CHANNELS = 4
+	};
+	
+	SfxPlayer(SoundDriver *driver);
+	~SfxPlayer();
+
+	bool load(const char *song);
+	void play();
+	void stop();
+	void fadeOut();
+
+	static void updateCallback(void *ref);
+
+private:
+
+	void update();
+	void handleEvents();
+	void handlePattern(int channel, const uint8 *patternData);
+	void unload();
+
+	bool _playing;
+	int _currentPos;
+	int _currentOrder;
+	int _numOrders;
+	int _eventsDelay;
+	int _fadeOutCounter;
+	int _updateTicksCounter;
+	int _instrumentsChannelTable[NUM_CHANNELS];
+	uint8 *_sfxData;
+	uint8 *_instrumentsData[NUM_INSTRUMENTS];
+	SoundDriver *_driver;
 };
 
-struct SfxState {
-	uint8 *songData;
-	int currentInstrumentChannel[4];
-	uint8 *instruments[15];
-	int currentOrder;
-	int currentPos;
-	int numOrders;
-};
-
-extern uint16 snd_eventsDelay;
-extern int snd_songIsPlaying;
-extern uint8 snd_nullInstrument[];
-extern SfxState snd_sfxState;
-
-extern int snd_loadBasesonEntries(const char *fileName);
-extern void snd_clearBasesonEntries();
-extern void snd_stopSong();
-extern void snd_freeSong();
-extern int snd_loadSong(const char *songName);
-extern void snd_fadeOutSong();
-extern void snd_playSong();
-extern void snd_handleEvents();
-extern void snd_handlePattern(int channelNum, const uint8 *patternData);
+extern SfxPlayer *g_sfxPlayer; // TEMP
 
 } // End of namespace Cine
 

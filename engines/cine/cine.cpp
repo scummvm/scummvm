@@ -46,8 +46,8 @@
 
 namespace Cine {
 
-Audio::Mixer * cine_g_mixer;
-AdlibMusic *g_cine_adlib;
+SoundDriver *g_soundDriver;
+SfxPlayer *g_sfxPlayer;
 
 static void initialize();
 
@@ -131,7 +131,6 @@ CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 		warning("Sound initialization failed.");
 	}
 
-	cine_g_mixer = _mixer;
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
@@ -163,7 +162,12 @@ int CineEngine::init(GameDetector &detector) {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	g_cine_adlib = new AdlibMusic(_mixer);
+	if (gameType == GID_FW) {
+		g_soundDriver = new AdlibSoundDriverINS(_mixer);
+	} else {
+		g_soundDriver = new AdlibSoundDriverADL(_mixer);
+	}
+	g_sfxPlayer = new SfxPlayer(g_soundDriver);
 
 	initialize();
 
@@ -178,8 +182,8 @@ int CineEngine::go() {
 	if (gameType == Cine::GID_FW)
 		snd_clearBasesonEntries();
 
-	delete g_cine_adlib;
-
+	delete g_soundDriver;
+	delete g_sfxPlayer;
 	return 0;
 }
 
@@ -196,7 +200,8 @@ static void initialize() {
 	partBuffer = (PartBuffer *)malloc(255 * sizeof(PartBuffer));
 
 	loadTextData("texte.dat", textDataPtr);
-	snd_loadBasesonEntries("BASESON.SND");
+	if (gameType == Cine::GID_FW)
+		snd_loadBasesonEntries("BASESON.SND");
 
 	for (i = 0; i < NUM_MAX_OBJECT; i++) {
 		objectTable[i].part = 0;

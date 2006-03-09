@@ -28,6 +28,7 @@
 
 #include "cine/main_loop.h"
 #include "cine/object.h"
+#include "cine/sfx_player.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -142,17 +143,15 @@ void mainLoop(int bootScriptIdx) {
 	strcpy(currentCtName, "");
 	strcpy(currentPartName, "");
 
-	stopSample();
+	g_sfxPlayer->stop();
 
 	do {
 		mainLoopSub3();
 		di = executePlayerInput();
 
-		if (var18 != 0) {
-			if (var18 >= 100 || var19) {
-				stopSample();
-			}
-		}
+//		if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
+//			g_sfxPlayer->stop();
+//		}
 
 		processSeqList();
 		executeList1();
@@ -232,7 +231,7 @@ void mainLoop(int bootScriptIdx) {
 	} while (!exitEngine && !quitFlag && var21 != 7);
 
 	hideMouse();
-	stopSample();
+	g_sfxPlayer->stop();
 	closeEngine3();
 	unloadAllMasks();
 	freePrcLinkedList();

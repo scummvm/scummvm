@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef CINE_SNDDRIVER_H_
-#define CINE_SNDDRIVER_H_
+#ifndef CINE_SOUNDDRIVER_H_
+#define CINE_SOUNDDRIVER_H_
 
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
@@ -33,62 +33,111 @@ namespace Audio {
 }
 
 namespace Cine {
-
-#define ADLIB_REG_TIMER_1_DATA 2
-#define ADLIB_REG_TIMER_CONTROL_FLAGS 4
-#define ADLIB_REG_AM_VIBRATO_EG_KS 0x20
-#define ADLIB_REG_KEY_SCALING_OPERATOR_OUTPUT 0x40
-#define ADLIB_REG_ATTACK_RATE_DECAY_RATE 0x60
-#define ADLIB_REG_SUSTAIN_LEVEL_RELEASE_RATE_0 0x80
-#define ADLIB_REG_FREQUENCY_0 0xA0
-#define ADLIB_REG_KEY_ON_OCTAVE_FREQUENCY_0 0xB0
-#define ADLIB_REG_AM_VIBRATO_RHYTHM 0xBD
-#define ADLIB_REG_FEEDBACK_STRENGTH_CONNECTION_TYPE 0xC0
-#define ADLIB_REG_WAVE_SELECT 0xE0
-
-struct SoundDriver {
-	void (*setupChannel) (int channelNum, const uint8 * data, int instrumentNum);
-	void (*setChannelFrequency) (int channelNum, int frequency);
-	void (*stopChannel) (int channelNum);
-	void (*playSound) (uint8 * data, int channelNum, int volume);
-};
-
-extern uint16 snd_fadeOutCounter, snd_songTicksCounter;
-extern uint8 *snd_adlibInstrumentsTable[4];
-extern SoundDriver snd_driver;
-
-extern void snd_adlibDriverInit();
-extern void snd_adlibDriverExit();
-extern void snd_adlibDriverStopSong();
-extern void snd_resetChannel(int channelNum);
-
-class AdlibMusic : public AudioStream {
+	
+class SoundDriver {
 public:
-	AdlibMusic(Audio::Mixer * pMixer);
-	~AdlibMusic(void);
-	virtual void setVolume(uint8 volume);
+	typedef void (*UpdateCallback)(void *);
 
-	FM_OPL *getOPL() {
-		return _opl;
-	}
+	virtual void setupChannel(int channel, const uint8 *data, int instrument, int volume) = 0;
+	virtual void setChannelFrequency(int channel, int frequency) = 0;
+	virtual void stopChannel(int channel) = 0;
+	virtual void playSound(const uint8 *data, int channel, int volume) = 0;
+	virtual void stopSound() = 0;
+	virtual const char *getInstrumentExtension() const = 0;
+	
+	void setUpdateCallback(UpdateCallback upCb, void *ref);
+	void resetChannel(int channel);
+	void findNote(int freq, int *note, int *oct) const;
 
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		premixerCall(buffer, numSamples / 2);
-		return numSamples;
-	}
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+protected:
+	UpdateCallback _upCb;
+	void *_upRef;
 
-private:
-	FM_OPL *_opl;
-	Audio::Mixer * _mixer;
-	uint32 _sampleRate;
-
-	void premixerCall(int16 *buf, uint len);
+	static const int _noteTable[];
+	static const int _noteTableCount;
 };
+
+struct AdlibRegisterSoundInstrument {
+	uint16 vibrato;
+	uint16 attackDecay;
+	uint16 sustainRelease;
+	uint16 feedbackStrength;
+	uint16 keyScaling;
+	uint16 outputLevel;
+	uint16 freqMod;
+};
+
+struct AdlibSoundInstrument {
+	uint8 mode;
+	uint8 channel;
+	AdlibRegisterSoundInstrument regMod;
+	AdlibRegisterSoundInstrument regCar;
+	uint8 waveSelectMod;
+	uint8 waveSelectCar;
+	uint8 amDepth;
+};
+	
+class AdlibSoundDriver : public SoundDriver, AudioStream {
+public:
+	AdlibSoundDriver(Audio::Mixer *mixer);
+	virtual ~AdlibSoundDriver();
+
+	// SoundDriver interface
+	virtual void setupChannel(int channel, const uint8 *data, int instrument, int volume);
+	virtual void stopChannel(int channel);
+	virtual void stopSound();
+
+	// AudioStream interface
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return true; }
+	virtual bool endOfData() const { return false; }
+	virtual int getRate() const { return _sampleRate; }
+
+	void initCard();
+	void update(int16 *buf, int len);
+	void setupInstrument(const uint8 *data, int channel);
+	void loadRegisterInstrument(const uint8 *data, AdlibRegisterSoundInstrument *reg);
+	virtual void loadInstrument(const uint8 *data, AdlibSoundInstrument *asi) = 0;
+
+protected:
+	FM_OPL *_opl;
+	int _sampleRate;
+	Audio::Mixer *_mixer;
+
+	uint8 _vibrato;
+	int _channelsVolumeTable[4];
+	AdlibSoundInstrument _instrumentsTable[4];
+
+	static const int _freqTable[];
+	static const int _freqTableCount;
+	static const int _operatorsTable[];
+	static const int _operatorsTableCount;
+	static const int _voiceOperatorsTable[];
+	static const int _voiceOperatorsTableCount;
+};
+
+// Future Wars adlib driver
+class AdlibSoundDriverINS : public AdlibSoundDriver {
+public:
+	AdlibSoundDriverINS(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
+	virtual const char *getInstrumentExtension() const { return ".INS"; }
+	virtual void loadInstrument(const uint8 *data, AdlibSoundInstrument *asi);
+	virtual void setChannelFrequency(int channel, int frequency);
+	virtual void playSound(const uint8 *data, int channel, int volume);
+};
+
+// Operation Stealth adlib driver
+class AdlibSoundDriverADL : public AdlibSoundDriver {
+public:
+	AdlibSoundDriverADL(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
+	virtual const char *getInstrumentExtension() const { return ".ADL"; }
+	virtual void loadInstrument(const uint8 *data, AdlibSoundInstrument *asi);
+	virtual void setChannelFrequency(int channel, int frequency);
+	virtual void playSound(const uint8 *data, int channel, int volume);
+};
+
+extern SoundDriver *g_soundDriver; // TEMP
 
 } // End of namespace Cine
 
-#endif				/* CINE_SNDDRIVER_H_ */
+#endif /* CINE_SOUNDDRIVER_H_ */

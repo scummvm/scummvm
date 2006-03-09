@@ -24,7 +24,6 @@
 
 #include "common/stdafx.h"
 #include "common/system.h"
-#include "common/file.h"
 
 #include "cine/cine.h"
 #include "cine/sfx_player.h"
@@ -34,242 +33,161 @@
 
 namespace Cine {
 
-uint16 snd_eventsDelay;
-int snd_songIsPlaying = 0;
-uint8 snd_nullInstrument[] = { 0, 0 };
-SfxState snd_sfxState;
+SfxPlayer::SfxPlayer(SoundDriver *driver)
+	: _playing(false), _driver(driver) {
+	memset(_instrumentsData, 0, sizeof(_instrumentsData));
+	_sfxData = NULL;
+	_fadeOutCounter = 0;
+	_driver->setUpdateCallback(updateCallback, this);
+}
 
-static uint8 snd_mute = 0;
-static char snd_songFileName[30];
-
-/* LVDT specific */
-static Common::File *snd_baseSndFile = NULL;
-static uint16 snd_numBasesonEntries = 0;
-static BasesonEntry *snd_basesonEntries = NULL;
-
-int snd_loadBasesonEntries(const char *fileName) {
-	int i;
-
-	snd_baseSndFile = new Common::File();
-	snd_baseSndFile->open(fileName);
-	if (!snd_baseSndFile->isOpen())
-		return -1;
-
-	snd_numBasesonEntries = snd_baseSndFile->readUint16BE();
-	snd_baseSndFile->readUint16BE();	/* entry_size */
-	snd_basesonEntries = (BasesonEntry *)malloc(snd_numBasesonEntries * sizeof(BasesonEntry));
-	if (snd_basesonEntries) {
-		for (i = 0; i < snd_numBasesonEntries; ++i) {
-			BasesonEntry *be = &snd_basesonEntries[i];
-			snd_baseSndFile->read(be->name, 14);
-			be->offset = snd_baseSndFile->readUint32BE();
-			be->size = snd_baseSndFile->readUint32BE();
-			be->unpackedSize = snd_baseSndFile->readUint32BE();
-			snd_baseSndFile->readUint32BE();	/* unused */
-		}
+SfxPlayer::~SfxPlayer() {
+	_driver->setUpdateCallback(NULL, NULL);
+	if (_playing) {
+		stop();
 	}
-	return 0;
 }
 
-void snd_clearBasesonEntries() {
-	snd_baseSndFile->close();
-	delete snd_baseSndFile;
-	free(snd_basesonEntries);
-	snd_basesonEntries = NULL;
-	snd_numBasesonEntries = 0;
-}
+bool SfxPlayer::load(const char *song) {
+	debug(9, "SfxPlayer::load('%s')", song);
+	
+	/* stop (w/ fade out) the previous song */
+	while (_fadeOutCounter != 0 && _fadeOutCounter < 100) {
+		g_system->delayMillis(50);
+	}
+	_fadeOutCounter = 0;
 
-static int snd_findBasesonEntry(const char *entryName) {
-	int i;
-	char *p;
-	char basesonEntryName[20];
-
-	assert(strlen(entryName) < 20);
-	strcpy(basesonEntryName, entryName);
-	for (p = basesonEntryName; *p; ++p) {
-		if (*p >= 'a' && *p <= 'z')
-			*p += 'A' - 'a';
+	if (_playing) {
+		stop();
 	}
 
-	for (i = 0; i < snd_numBasesonEntries; ++i) {
-		if (strcmp(snd_basesonEntries[i].name, basesonEntryName) == 0)
-			return i;
-	}
-	return -1;
-}
-
-static uint8 *snd_loadBasesonEntry(const char *entryName) {
-	int entryNum;
-	uint8 *entryData = NULL;
-
-	if (gameType == Cine::GID_OS) {
-		entryNum = findFileInBundle((const char *)entryName);
-		if (entryNum != -1)
-			entryData = readBundleFile(entryNum);
-	} else {
-		entryNum = snd_findBasesonEntry(entryName);
-		if (entryNum != -1 && entryNum < snd_numBasesonEntries) {
-			const BasesonEntry *be = &snd_basesonEntries[entryNum];
-			entryData = (uint8 *)malloc(be->unpackedSize);
-			if (entryData) {
-				if (be->unpackedSize > be->size) {
-					uint8 *tempData = (uint8 *)malloc(be->size);
-					if (tempData) {
-						snd_baseSndFile->seek(be->offset, SEEK_SET);
-						snd_baseSndFile->read(tempData, be->size);
-						delphineUnpack(entryData, tempData, be->size);
-						free(tempData);
-					}
-				} else {
-					snd_baseSndFile->seek(be->offset, SEEK_SET);
-					snd_baseSndFile->read(entryData, be->size);
-				}
-			}
-		}
-	}
-
-	return entryData;
-}
-
-void snd_stopSong() {
-	int i;
-
-	snd_songFileName[0] = '\0';
-	snd_songIsPlaying = 0;
-	snd_fadeOutCounter = 0;
-
-	for (i = 0; i < 4; ++i)
-		(*snd_driver.stopChannel) (i);
-
-	snd_adlibDriverStopSong();
-	snd_freeSong();
-}
-
-void snd_freeSong() {
-	int i;
-
-	for (i = 0; i < 15; ++i) {
-		if (snd_sfxState.instruments[i] != snd_nullInstrument)
-			free(snd_sfxState.instruments[i]);
-	}
-	free(snd_sfxState.songData);
-	memset(&snd_sfxState, 0, sizeof(snd_sfxState));
-}
-
-int snd_loadSong(const char *songName) {
-	int i;
-
-	while (snd_fadeOutCounter != 0 && snd_fadeOutCounter < 100)
-		g_system->delayMillis(40);
-
-	snd_fadeOutCounter = 0;
-
-	if (snd_songIsPlaying)
-		snd_stopSong();
-
-	if ((gameType == Cine::GID_OS) && (strncmp(songName, "INTRO", 5) == 0))
+	/* like the original PC version, skip introduction song (file doesn't exist) */
+	if (gameType == Cine::GID_OS && strncmp(song, "INTRO", 5) == 0) {
 		return 0;
-
-	strcpy(snd_songFileName, songName);
-	if (gameType == Cine::GID_OS)
-		strcat(snd_songFileName, ".IST");
-
-	snd_sfxState.songData = snd_loadBasesonEntry(songName);
-	if (!snd_sfxState.songData)
+	}
+		
+	_sfxData = snd_loadBasesonEntry(song);
+	if (!_sfxData) {
+		warning("Unable to load soundfx module '%s'", song);
 		return 0;
+	}
 
-	for (i = 0; i < 15; ++i) {
-		char instrumentName[13];
-		memcpy(instrumentName, snd_sfxState.songData + 20 + i * 30, 12);
-		instrumentName[12] = '\0';
-
-		snd_sfxState.instruments[i] = snd_nullInstrument;
-		if (strlen(instrumentName) != 0) {
-			char *dot = strrchr(instrumentName, '.');
-			if (dot)
+	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
+		_instrumentsData[i] = NULL;
+		
+		char instrument[13];
+		memcpy(instrument, _sfxData + 20 + i * 30, 12);
+		instrument[12] = '\0';
+		
+		if (strlen(instrument) != 0) {
+			char *dot = strrchr(instrument, '.');
+			if (dot) {
 				*dot = '\0';
-
-			if (gameType == Cine::GID_OS)
-				strcat(instrumentName, ".ADL");
-			else
-				strcat(instrumentName, ".INS");
-
-			snd_sfxState.instruments[i] =
-			    snd_loadBasesonEntry(instrumentName);
+			}
+			strcat(instrument, _driver->getInstrumentExtension());
+			_instrumentsData[i] = snd_loadBasesonEntry(instrument);
+			if (!_instrumentsData[i]) {
+				warning("Unable to load soundfx instrument '%s'", instrument);
+			}
 		}
 	}
 	return 1;
 }
 
-void snd_fadeOutSong() {
-	if (snd_songIsPlaying) {
-		snd_songFileName[0] = '\0';
-		snd_songIsPlaying = 0;
-		snd_fadeOutCounter = 1;
+void SfxPlayer::play() {
+	debug(9, "SfxPlayer::play()");
+	if (_sfxData) {
+		for (int i = 0; i < NUM_CHANNELS; ++i) {
+			_instrumentsChannelTable[i] = -1;
+		}
+		_currentPos = 0;
+		_currentOrder = 0;
+		_numOrders = _sfxData[470];
+		_eventsDelay = (252 - _sfxData[471]) * 50 / 1060;
+		_updateTicksCounter = 0;
+		_playing = true;
 	}
 }
 
-void snd_playSong() {
-	if (strlen(snd_songFileName) != 0) {
-		snd_sfxState.currentInstrumentChannel[0] = -1;
-		snd_sfxState.currentInstrumentChannel[1] = -1;
-		snd_sfxState.currentInstrumentChannel[2] = -1;
-		snd_sfxState.currentInstrumentChannel[3] = -1;
-		snd_sfxState.currentOrder = 0;
-		snd_sfxState.currentPos = 0;
-		snd_sfxState.numOrders = snd_sfxState.songData[470];
-		snd_eventsDelay = (252 - snd_sfxState.songData[471]) * 25 * 2 / 1060;
-		snd_songTicksCounter = 0;
-		snd_songIsPlaying = 1;
+void SfxPlayer::stop() {
+	_fadeOutCounter = 0;
+	_playing = false;
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		_driver->stopChannel(i);
+	}
+	_driver->stopSound();
+	unload();
+}
+
+void SfxPlayer::fadeOut() {
+	if (_playing) {
+		_fadeOutCounter = 1;
+		_playing = false;
 	}
 }
 
-void snd_handleEvents() {
-	int i;
-	const uint8 *patternData = snd_sfxState.songData + 600;
-	const uint8 *orderTable = snd_sfxState.songData + 472;
-	uint16 patternNum = orderTable[snd_sfxState.currentOrder] * 1024;
+void SfxPlayer::updateCallback(void *ref) {
+	((SfxPlayer *)ref)->update();
+}
 
-	for (i = 0; i < 4; ++i) {
-		snd_handlePattern(i, patternData + patternNum + snd_sfxState.currentPos);
+void SfxPlayer::update() {
+	if (_playing || (_fadeOutCounter != 0 && _fadeOutCounter < 100)) {
+		++_updateTicksCounter;
+		if (_updateTicksCounter > _eventsDelay) {
+			handleEvents();
+			_updateTicksCounter = 0;
+		}
+	}
+}
+
+void SfxPlayer::handleEvents() {
+	const uint8 *patternData = _sfxData + 600;
+	const uint8 *orderTable = _sfxData + 472;
+	uint16 patternNum = orderTable[_currentOrder] * 1024;
+
+	for (int i = 0; i < 4; ++i) {
+		handlePattern(i, patternData + patternNum + _currentPos);
 		patternData += 4;
 	}
 
-	if (snd_fadeOutCounter != 0 && snd_fadeOutCounter < 100)
-		snd_fadeOutCounter += 4;
+	if (_fadeOutCounter != 0 && _fadeOutCounter < 100) {
+		_fadeOutCounter += 2;
+	}
+	_currentPos += 16;
+	if (_currentPos >= 1024) {
+		_currentPos = 0;
+		++_currentOrder;
+		if (_currentOrder == _numOrders) {
+			_currentOrder = 0;
+		}
+	}
+	debug(7, "_currentOrder=%d/%d _currentPos=%d", _currentOrder, _numOrders, _currentPos);
+}
 
-	snd_sfxState.currentPos += 16;
-	if (snd_sfxState.currentPos >= 1024) {
-		snd_sfxState.currentPos = 0;
-		++snd_sfxState.currentOrder;
-		if (snd_sfxState.currentOrder == snd_sfxState.numOrders)
-			snd_sfxState.currentOrder = 0;
+void SfxPlayer::handlePattern(int channel, const uint8 *patternData) {
+	int instrument = patternData[2] >> 4;
+	if (instrument != 0) {
+		--instrument;
+		if (_instrumentsChannelTable[channel] != instrument || _fadeOutCounter != 0) {
+			_instrumentsChannelTable[channel] = instrument;
+			const int volume = _sfxData[instrument] - _fadeOutCounter;
+			_driver->setupChannel(channel, _instrumentsData[instrument], instrument, volume);
+		}
+	}
+	int16 freq = (int16)READ_BE_UINT16(patternData);
+	if (freq > 0) {
+		_driver->stopChannel(channel);
+		_driver->setChannelFrequency(channel, freq);
 	}
 }
 
-void snd_handlePattern(int channelNum, const uint8 *patternData) {
-	uint16 instrNum = patternData[2] >> 4;
-	snd_adlibInstrumentsTable[channelNum] = snd_nullInstrument;
-	if (instrNum != 0) {
-		if (snd_sfxState.currentInstrumentChannel[channelNum] != instrNum) {
-			snd_sfxState.currentInstrumentChannel[channelNum] = instrNum;
-			(*snd_driver.setupChannel) (channelNum, snd_sfxState.instruments[instrNum - 1], instrNum - 1);
-		} else if (snd_fadeOutCounter != 0) {
-			instrNum = snd_sfxState.currentInstrumentChannel[channelNum];
-			if (instrNum != 0)
-				(*snd_driver.setupChannel)(channelNum, snd_sfxState.instruments[instrNum - 1], instrNum - 1);
-		}
-		snd_adlibInstrumentsTable[channelNum] = snd_sfxState.instruments[instrNum - 1];
+void SfxPlayer::unload() {
+	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
+		free(_instrumentsData[i]);
+		_instrumentsData[i] = NULL;
 	}
-	if (snd_mute != 0)
-		(*snd_driver.stopChannel)(channelNum);
-	else {
-		int16 freq = (int16)READ_BE_UINT16(patternData);
-		if (freq > 0) {
-			(*snd_driver.stopChannel)(channelNum);
-			(*snd_driver.setChannelFrequency)(channelNum, freq);
-		}
-	}
+	free(_sfxData);
+	_sfxData = NULL;
 }
 
 } // End of namespace Cine
