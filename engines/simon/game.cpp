@@ -382,7 +382,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1ACORNDEMO,
-		"Simon the Sorcerer 1 (English Acorn CD Demo)",
+		"CD Demo",
 		ARRAYSIZE(SIMON1ACORN_GameFiles),
 		SIMON1ACORN_GameFiles,
 		GF_TALKIE,
@@ -395,7 +395,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1ACORN,
-		"Simon the Sorcerer 1 (English Acorn CD)",
+		"CD",
 		ARRAYSIZE(SIMON1ACORN_GameFiles),
 		SIMON1ACORN_GameFiles,
 		GF_TALKIE,
@@ -408,7 +408,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1AMIGA,
-		"Simon the Sorcerer 1 (English Amiga AGA Floppy)",
+		"AGA Floppy",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
@@ -421,7 +421,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1AMIGA_FR,
-		"Simon the Sorcerer 1 (French Amiga AGA Floppy)",
+		"AGA Floppy",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
@@ -434,7 +434,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1AMIGA_DE,
-		"Simon the Sorcerer 1 (German Amiga AGA Floppy)",
+		"AGA Floppy",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
@@ -447,7 +447,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1AMIGADEMO,
-		"Simon the Sorcerer 1 (English Amiga ECS Demo)",
+		"ECS Demo",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
@@ -460,7 +460,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1CD32,
-		"Simon the Sorcerer 1 (English Amiga CD32)",
+		"CD32",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
@@ -473,7 +473,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1CD32_2,
-		"Simon the Sorcerer 1 (English Amiga CD32)",
+		"CD32",
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
@@ -486,7 +486,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DEMO,
-		"Simon the Sorcerer 1 (English DOS Floppy Demo)",
+		"Floppy Demo",
 		ARRAYSIZE(SIMON1DEMO_GameFiles),
 		SIMON1DEMO_GameFiles,
 		GF_OLD_BUNDLE,
@@ -499,7 +499,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS,
-		"Simon the Sorcerer 1 (English DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -512,7 +512,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_RU,
-		"Simon the Sorcerer 1 (Russian DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -525,7 +525,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_INF,
-		"Simon the Sorcerer 1 (English DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -538,7 +538,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_INF_RU,
-		"Simon the Sorcerer 1 (Russian DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -551,7 +551,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_FR,
-		"Simon the Sorcerer 1 (French DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -564,7 +564,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_DE,
-		"Simon the Sorcerer 1 (German DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -577,7 +577,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_IT,
-		"Simon the Sorcerer 1 (Italian DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -590,7 +590,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1DOS_ES,
-		"Simon the Sorcerer 1 (Spanish DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
@@ -603,7 +603,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE,
-		"Simon the Sorcerer 1 (English DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -616,7 +616,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE2,
-		"Simon the Sorcerer 1 (English DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -629,7 +629,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE_FR,
-		"Simon the Sorcerer 1 (French DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -642,7 +642,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE_DE,
-		"Simon the Sorcerer 1 (German DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -655,7 +655,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE_HB,
-		"Simon the Sorcerer 1 (Hebrew DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -668,7 +668,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE_IT,
-		"Simon the Sorcerer 1 (Italian DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -681,7 +681,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1TALKIE_ES,
-		"Simon the Sorcerer 1 (Spanish DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -694,7 +694,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1WIN,
-		"Simon the Sorcerer 1 (English Windows CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -707,7 +707,7 @@ static GameDescription gameDescriptions[] = {
 		"simon1",
 		GType_SIMON1,
 		GID_SIMON1WIN_DE,
-		"Simon the Sorcerer 1 (German Windows CD)",
+		"CD",
 		ARRAYSIZE(SIMON1_GameFiles),
 		SIMON1_GameFiles,
 		GF_TALKIE,
@@ -720,7 +720,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS,
-		"Simon the Sorcerer 2 (English DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
@@ -733,7 +733,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS_RU,
-		"Simon the Sorcerer 2 (Russian DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
@@ -746,7 +746,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS2,
-		"Simon the Sorcerer 2 (English DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
@@ -759,7 +759,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS2_RU,
-		"Simon the Sorcerer 2 (Russian DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
@@ -772,7 +772,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS_DE,
-		"Simon the Sorcerer 2 (German DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
@@ -785,7 +785,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DOS_IT,
-		"Simon the Sorcerer 2 (Italian DOS Floppy)",
+		"Floppy",
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
@@ -798,7 +798,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2DEMO,
-		"Simon the Sorcerer 2 (English DOS CD Demo)",
+		"CD Demo",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -811,7 +811,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE,
-		"Simon the Sorcerer 2 (English DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -825,7 +825,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE2,
-		"Simon the Sorcerer 2 (English DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -838,7 +838,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_FR,
-		"Simon the Sorcerer 2 (French DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -851,7 +851,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_DE,
-		"Simon the Sorcerer 2 (German DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -864,7 +864,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_DE2,
-		"Simon the Sorcerer 2 (German DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -877,7 +877,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_HB,
-		"Simon the Sorcerer 2 (Hebrew DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -890,7 +890,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_IT,
-		"Simon the Sorcerer 2 (Italian DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -904,7 +904,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2TALKIE_ES,
-		"Simon the Sorcerer 2 (Spanish DOS CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -917,7 +917,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2WIN,
-		"Simon the Sorcerer 2 (English Windows CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -930,7 +930,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2WIN_DE,
-		"Simon the Sorcerer 2 (German Windows CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -943,7 +943,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2WIN_DE2,
-		"Simon the Sorcerer 2 (German Windows CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -956,7 +956,7 @@ static GameDescription gameDescriptions[] = {
 		"simon2",
 		GType_SIMON2,
 		GID_SIMON2WIN_PL,
-		"Simon the Sorcerer 2 (Polish Windows CD)",
+		"CD",
 		ARRAYSIZE(SIMON2_GameFiles),
 		SIMON2_GameFiles,
 		GF_TALKIE,
@@ -969,7 +969,7 @@ static GameDescription gameDescriptions[] = {
 		"feeble",
 		GType_FF,
 		GID_FEEBLEFILES_2CD,
-		"The Feeble Files (English 2CD)",
+		"2CD",
 		ARRAYSIZE(FEEBLEFILES_GameFiles),
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
@@ -982,7 +982,7 @@ static GameDescription gameDescriptions[] = {
 		"feeble",
 		GType_FF,
 		GID_FEEBLEFILES_4CD,
-		"The Feeble Files (English 4CD)",
+		"4CD",
 		ARRAYSIZE(FEEBLEFILES_GameFiles),
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
@@ -995,7 +995,7 @@ static GameDescription gameDescriptions[] = {
 		"feeble",
 		GType_FF,
 		GID_FEEBLEFILES_DE,
-		"The Feeble Files (German 4CD)",
+		"4CD",
 		ARRAYSIZE(FEEBLEFILES_GameFiles),
 		FEEBLEFILES_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
@@ -1013,7 +1013,7 @@ bool SimonEngine::initGame(void) {
 		return false;
 	}
 
-	debug(0, "Running %s", gameDescriptions[gameNumber].title);
+	debug(0, "Running %d (%s)", gameNumber, gameDescriptions[gameNumber].extra);
 
 	_gameDescription = &gameDescriptions[gameNumber];
 
@@ -1060,7 +1060,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
 					count++;
 			if (count < maxcount) {
-				debug(2, "Purged: %s", gameDescriptions[matches[i]].title);
+				debug(2, "Purged: %d (%s)", matches[i], gameDescriptions[matches[i]].extra);
 				matches[i] = -1;
 			}
 		}
@@ -1071,9 +1071,16 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 	for (i = 0; i < index; i++)
 		if (matches[i] != -1) {
 			GameDescription &g = gameDescriptions[matches[i]];
-			detectedGames.push_back(DetectedGame(g.name, g.title,
-							 g.language,
-							 g.platform));
+			const char *title = 0;
+			if (g.gameType == GType_SIMON1)
+				title = "Simon the Sorcerer 1";
+			else if (g.gameType == GType_SIMON2)
+				title = "Simon the Sorcerer 2";
+			else if (g.gameType == GType_FF)
+				title = "The Feeble Files";
+			DetectedGame dg(g.name, title, g.language, g.platform);
+			dg.updateDesc(g.extra);
+			detectedGames.push_back(dg);
 		}
 		
 	if (retmatches) {
@@ -1172,7 +1179,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		} else {
 			bool match = true;
 
-			debug(0, "Probing game: %s", gameDescriptions[game_n].title);
+			debug(0, "Probing game: %d (%s)", game_n, gameDescriptions[game_n].extra);
 
 			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
@@ -1187,7 +1194,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			if (!match)
 				continue;
 
-			debug(0, "Found game: %s", gameDescriptions[game_n].title);
+			debug(0, "Found game: %d (%s)", game_n, gameDescriptions[game_n].extra);
 
 			return game_n;
 		}

@@ -120,7 +120,7 @@ struct GameDescription {
 	const char *name;
 	SimonTypes gameType;
 	GameIds gameId;
-	const char *title;
+	const char *extra;
 	int filesCount;
 	GameFileDescription *filesDescriptions;
 	uint32 features;
