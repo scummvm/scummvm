@@ -1788,10 +1788,21 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 const int AdlibDriver::_opcodesEntries = ARRAYSIZE(AdlibDriver::_opcodeList);
 const int AdlibDriver::_parserOpcodeTableSize = ARRAYSIZE(AdlibDriver::_parserOpcodeTable);
 
+// This table holds the register offset for operator 1 for each of the nine
+// channels. To get the register offset for operator 2, simply add 3.
+
 const uint8 AdlibDriver::_outputTable[] = {
 	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11,
 	0x12
 };
+
+// Given the size of this table, and the range of its values, it's probably the
+// F-Numbers (10 bits) for the notes of the 12-tone scale. However, it does not
+// match the table in the Adlib documentation I've seen.
+//
+// The values from this table is always added to state.unk15, which could make
+// unk15 a pitch bend factor of some kind, and updateCallback20() would then
+// be update_setPitchBend().
 
 const uint16 AdlibDriver::_unkTable[] = {
 	0x0134, 0x0147, 0x015A, 0x016F, 0x0184, 0x019C, 0x01B4, 0x01CE, 0x01E9,
