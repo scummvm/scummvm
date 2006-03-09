@@ -97,11 +97,11 @@ private:
 		uint8 *dataptr;
 		uint8 unk5;
 		uint8 repeatCounter;
-		uint8 unk10;
+		int8 baseOctave;
 		int8 unk2;
 		uint8 dataptrStackPos;
 		uint8 *dataptrStack[4];
-		uint8 unk14;
+		int8 baseNote;
 		uint8 unk29;
 		int8 unk31;
 		uint16 unk30;
@@ -115,11 +115,11 @@ private:
 		uint8 unk38;
 		uint8 unk26;
 		uint8 unk7;
-		uint8 unk15;
+		int8 baseFreq;
 		int8 unk1;
 		int8 unk4;
-		uint8 unk17;
-		uint8 unkOutputValue1;
+		uint8 regAx;
+		uint8 regBx;
 		typedef void (AdlibDriver::*Callback)(OutputState&);
 		Callback callback1;
 		Callback callback2;
@@ -139,7 +139,7 @@ private:
 		uint8 unk22;
 		uint16 offset;
 		uint8 unk6;
-		uint8 unk13;
+		uint8 rawNote;
 		int8 unk16;
 	};
 
@@ -191,19 +191,19 @@ private:
 	int update_jump(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_jumpToSubroutine(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_returnFromSubroutine(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback8(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setBaseOctave(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback9(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback10(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_writeAdlib(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback12(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback13(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setBaseNote(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback14(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback15(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback16(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback18(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback19(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback20(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setBaseFreq(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback21(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback22(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback23(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -660,10 +660,10 @@ void AdlibDriver::noteOff(OutputState &table) {
 		return;
 
 	// This means the "Key On" bit will always be 0
-	table.unkOutputValue1 &= 0xDF;
+	table.regBx &= 0xDF;
 
 	// Octave / F-Number / Key-On
-	writeOPL(0xB0 + _curTable, table.unkOutputValue1);
+	writeOPL(0xB0 + _curTable, table.regBx);
 }
 
 void AdlibDriver::unkOutput2(uint8 num) {
@@ -717,45 +717,45 @@ void AdlibDriver::update1(uint8 unk1, OutputState &state) {
 	state.unk5 = unk1;
 }
 
-void AdlibDriver::updateAndOutput1(uint8 unk1, OutputState &state) {
-	debugC(9, kDebugLevelSound, "updateAndOutput1(%d, %d)", unk1, &state - _outputTables);
-	state.unk13 = unk1;
-	uint8 unk2 = unk1 & 0xF0;
-	unk2 += state.unk10;
-	unk1 &= 0x0F;
-	unk1 += state.unk14;
+void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state) {
+	debugC(9, kDebugLevelSound, "updateAndOutput1(%d, %d)", rawNote, &state - _outputTables);
 
-	if ((int8)unk1 >= 0x0C) {
-		unk1 -= 0x0C;
-		unk2 += 0x10;
-	} else if ((int8)unk1 < 0) {
-		unk1 += 0x0C;
-		unk2 -= 0x10;
+	state.rawNote = rawNote;
+
+	int8 note = (rawNote & 0x0F) + state.baseNote;
+	int8 octave = ((rawNote >> 4) & 0x0F) + state.baseOctave;
+
+	// There are only twelve notes. If we go outside that, we have to
+	// adjust the note and octave.
+
+	if (note >= 12) {
+		note -= 12;
+		octave++;
+	} else if (note < 0) {
+		note += 12;
+		octave--;
 	}
 
-	uint16 value = _unkTable[unk1] + state.unk15;
+	uint16 freq = _unkTable[note] + state.baseFreq;
 
-	unk2 >>= 2;
-	unk2 &= 0x1C;
-	unk2 |= (value & 0xFF00) >> 8;
-	value = (value & 0xFF) | (unk2 << 8);
+	if (state.unk16) {
+		const uint8 *table;
 
-	if (state.unk16 != 0) {
 		if (state.unk16 > 0) {
-			const uint8 *table = _unkTables[(state.unk13 & 0x0F) + 2];
-			value += table[state.unk16];
+			table = _unkTables[(state.rawNote & 0x0F) + 2];
+			freq += table[state.unk16];
 		} else {
-			const uint8 *table = _unkTables[state.unk13 & 0x0F];
-			value -= table[(state.unk16 ^ 0xFF) + 1];
+			table = _unkTables[state.rawNote & 0x0F];
+			freq -= table[-state.unk16];
 		}
 	}
 
-	state.unkOutputValue1 = (state.unkOutputValue1 & 0x20) | ((value & 0xFF00) >> 8);
-	state.unk17 = value & 0xFF;
+	state.regAx = freq & 0xFF;
+	state.regBx = (state.regBx & 0x20) | (octave << 2) | ((freq >> 8) & 0x03);
 
-	// Octave / F-Number / Key-On
-	writeOPL(0xA0 + _curTable, state.unk17);
-	writeOPL(0xB0 + _curTable, state.unkOutputValue1);
+	// Keep the note on or off
+	writeOPL(0xA0 + _curTable, state.regAx);
+	writeOPL(0xB0 + _curTable, state.regBx);
 }
 
 void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state) {
@@ -795,13 +795,13 @@ void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &stat
 void AdlibDriver::updateAndOutput3(OutputState &state) {
 	debugC(9, kDebugLevelSound, "updateAndOutput3(%d)", &state - _outputTables);
 	// This sets the "note on" bit.
-	state.unkOutputValue1 |= 0x20;
+	state.regBx |= 0x20;
 
 	// Octave / F-Number / Key-On
-	writeOPL(0xB0 + _curTable, state.unkOutputValue1);
+	writeOPL(0xB0 + _curTable, state.regBx);
 
 	int8 shift = 9 - state.unk33;
-	uint16 temp = state.unk17 | (state.unkOutputValue1 << 8);
+	uint16 temp = state.regAx | (state.regBx << 8);
 	state.unk37 = ((temp & 0x3FF) >> shift) & 0xFF;
 	state.unk38 = state.unk36;
 }
@@ -825,8 +825,8 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 	state.unk31 += state.unk29;
 	if ((int8)state.unk31 >= 0)
 		return;
-	uint16 unk1 = ((state.unkOutputValue1 & 3) << 8) | state.unk17;
-	uint16 unk2 = ((state.unkOutputValue1 & 0x20) << 8) | (state.unkOutputValue1 & 0x1C);
+	uint16 unk1 = ((state.regBx & 3) << 8) | state.regAx;
+	uint16 unk2 = ((state.regBx & 0x20) << 8) | (state.regBx & 0x1C);
 	int16 unk3 = (int16)state.unk30;
 
 	if (unk3 >= 0) {
@@ -851,14 +851,14 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 	unk1 &= 0x3FF;
 
 	writeOPL(0xA0 + _curTable, unk1 & 0xFF);
-	state.unk17 = unk1 & 0xFF;
+	state.regAx = unk1 & 0xFF;
 
 	uint8 value = unk1 >> 8;
 	value |= (unk2 >> 8) & 0xFF;
 	value |= unk2 & 0xFF;
 
 	writeOPL(0xB0 + _curTable, value);
-	state.unkOutputValue1 = value;
+	state.regBx = value;
 }
 
 void AdlibDriver::stateCallback1_2(OutputState &state) {
@@ -878,15 +878,15 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 			state.unk34 = state.unk35;
 		}
 
-		uint16 temp3 = state.unk17 | (state.unkOutputValue1 << 8);
+		uint16 temp3 = state.regAx | (state.regBx << 8);
 		temp2 += temp3 & 0x3FF;
-		state.unk17 = temp2 & 0xFF;
+		state.regAx = temp2 & 0xFF;
 
-		state.unkOutputValue1 = (state.unkOutputValue1 & 0xFC) | (temp3 >> 8);
+		state.regBx = (state.regBx & 0xFC) | (temp3 >> 8);
 
 		// Octave / F-Number / Key-On
-		writeOPL(0xA0 + _curTable, state.unkOutputValue1);
-		writeOPL(0xB0 + _curTable, state.unkOutputValue1);
+		writeOPL(0xA0 + _curTable, state.regBx);
+		writeOPL(0xB0 + _curTable, state.regBx);
 	}
 }
 
@@ -995,8 +995,8 @@ int AdlibDriver::update_returnFromSubroutine(uint8 *&dataptr, OutputState &state
 	return 0;
 }
 
-int AdlibDriver::updateCallback8(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk10 = value;
+int AdlibDriver::update_setBaseOctave(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.baseOctave = value;
 	return 0;
 }
 
@@ -1027,8 +1027,8 @@ int AdlibDriver::updateCallback12(uint8 *&dataptr, OutputState &state, uint8 val
 	return (_continueFlag != 0);
 }
 
-int AdlibDriver::updateCallback13(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk14 = value;
+int AdlibDriver::update_setBaseNote(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.baseNote = value;
 	return 0;
 }
 
@@ -1083,8 +1083,8 @@ int AdlibDriver::updateCallback19(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback20(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk15 = value;
+int AdlibDriver::update_setBaseFreq(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.baseFreq = value;
 	return 0;
 }
 
@@ -1258,9 +1258,9 @@ int AdlibDriver::updateCallback39(uint8 *&dataptr, OutputState &state, uint8 val
 	unk |= value << 8;
 	unk &= getRandomNr();
 
-	uint16 unk2 = ((state.unkOutputValue1 & 0x1F) << 8) | state.unk17;
+	uint16 unk2 = ((state.regBx & 0x1F) << 8) | state.regAx;
 	unk2 += unk;
-	unk2 |= ((state.unkOutputValue1 & 0x20) << 8);
+	unk2 |= ((state.regBx & 0x20) << 8);
 
 	// Frequency
 	writeOPL(0xA0 + _curTable, unk2 & 0xFF);
@@ -1279,47 +1279,7 @@ int AdlibDriver::updateCallback40(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk16 = value;
-	int8 unk1 = 0, unk2 = 0;
-
-	unk1 = state.unk13 & 0xF0;
-	unk1 += state.unk10;
-
-	unk2 = state.unk13 & 0x0F;
-	unk2 += state.unk14;
-
-	if (unk2 >= 12) {
-		unk2 -= 12;
-		unk1 += 16;
-	} else if (unk2 < 0) {
-		unk2 += 12;
-		unk1 -= 16;
-	}
-
-	uint16 unk3 = _unkTable[unk2] + state.unk15;
-	unk1 >>= 2; unk1 &= 0x1C;
-	unk1 |= (unk3 >> 8);
-
-	uint16 unk4 = (unk1 << 8) | (unk3 & 0xFF);
-	if (state.unk16 >= 0) {
-		const uint8 *ptr = _unkTables[(state.unk13 & 0x0F) + 2];
-		unk4 += ptr[state.unk16];
-	} else {
-		const uint8 *ptr = _unkTables[state.unk13 & 0x0F];
-		unk4 -= ptr[(state.unk16 ^ 0xFF) + 1];
-	}
-
-	unk2 = unk4 >> 8;
-	unk1 = unk4 & 0xFF;
-
-	state.unkOutputValue1 = unk2 | (state.unkOutputValue1 & 0x20);
-	state.unk17 = unk1;
-
-	// Frequency
-	writeOPL(0xA0 + _curTable, unk1);
-
-	// Key On / Octave / Frequency
-	writeOPL(0xB0 + _curTable, state.unkOutputValue1);
-
+	updateAndOutput1(state.rawNote, state);
 	return 0;
 }
 
@@ -1404,16 +1364,16 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
-	_outputTables[6].unkOutputValue1 = *dataptr++ & 0x2F;
-	writeOPL(0xB6, _outputTables[6].unkOutputValue1);
+	_outputTables[6].regBx = *dataptr++ & 0x2F;
+	writeOPL(0xB6, _outputTables[6].regBx);
 	writeOPL(0xA6, *dataptr++);
 
-	_outputTables[7].unkOutputValue1 = *dataptr++ & 0x2F;
-	writeOPL(0xB7, _outputTables[7].unkOutputValue1);
+	_outputTables[7].regBx = *dataptr++ & 0x2F;
+	writeOPL(0xB7, _outputTables[7].regBx);
 	writeOPL(0xA7, *dataptr++);
 
-	_outputTables[8].unkOutputValue1 = *dataptr++ & 0x2F;
-	writeOPL(0xB8, _outputTables[8].unkOutputValue1);
+	_outputTables[8].regBx = *dataptr++ & 0x2F;
+	writeOPL(0xB8, _outputTables[8].regBx);
 	writeOPL(0xA8, *dataptr++);
 
 	_unk4 = 0x20;
@@ -1680,7 +1640,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_jump),
 	COMMAND(update_jumpToSubroutine),
 	COMMAND(update_returnFromSubroutine),
-	COMMAND(updateCallback8),
+	COMMAND(update_setBaseOctave),
 
 	// 8
 	COMMAND(updateCallback9),
@@ -1689,7 +1649,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback12),
 
 	// 12
-	COMMAND(updateCallback13),
+	COMMAND(update_setBaseNote),
 	COMMAND(updateCallback14),
 	COMMAND(updateCallback15),
 	COMMAND(updateCallback16),
@@ -1698,7 +1658,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback17),
 	COMMAND(updateCallback18),
 	COMMAND(updateCallback19),
-	COMMAND(updateCallback20),
+	COMMAND(update_setBaseFreq),
 
 	// 20
 	COMMAND(updateCallback9),
@@ -1799,10 +1759,6 @@ const uint8 AdlibDriver::_outputTable[] = {
 // Given the size of this table, and the range of its values, it's probably the
 // F-Numbers (10 bits) for the notes of the 12-tone scale. However, it does not
 // match the table in the Adlib documentation I've seen.
-//
-// The values from this table is always added to state.unk15, which could make
-// unk15 a pitch bend factor of some kind, and updateCallback20() would then
-// be update_setPitchBend().
 
 const uint16 AdlibDriver::_unkTable[] = {
 	0x0134, 0x0147, 0x015A, 0x016F, 0x0184, 0x019C, 0x01B4, 0x01CE, 0x01E9,
