@@ -1192,7 +1192,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				// Find the GameDescriptor for that gameid
 				for (g = scumm_settings; g->gameid; ++g) {
 					if (0 == scumm_stricmp(g->gameid, gameid))
-							break;
+						break;
 				}
 				assert(g->gameid);
 				DetectedGame dg(g->gameid, findDescriptionFromGameID(g->gameid), elem->language);
@@ -1201,19 +1201,25 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 				else
 					dg.platform = elem->platform;
 
-				const bool customLanguage = (dg.language != Common::UNK_LANG);
-				const bool customPlatform = (dg.platform != Common::kPlatformUnknown);
+				const bool hasCustomLanguage = (dg.language != Common::UNK_LANG);
+				const bool hasCustomPlatform = (dg.platform != Common::kPlatformUnknown);
+				const bool hasExtraDesc = (elem->extra && elem->extra[0]);
 
 				// Adapt the description string if custom platform/language is set.
-				// TODO: Also use the 'extra' information, like "Demo" etc.
-				if (customLanguage || customPlatform) {
+				if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
 					dg.description += " (";
-					if (customLanguage)
+					if (hasCustomLanguage)
 						dg.description += Common::getLanguageDescription(dg.language);
-					if (customLanguage && customPlatform)
-						dg.description += "/";
-					if (customPlatform)
+					if (hasCustomPlatform) {
+						if (hasCustomLanguage)
+							dg.description += "/";
 						dg.description += Common::getPlatformDescription(dg.platform);
+					}
+					if (hasExtraDesc) {
+						if (hasCustomPlatform || hasCustomLanguage)
+							dg.description += "/";
+						dg.description += elem->extra;
+					}
 					dg.description += ")";
 				}
 				
@@ -1345,17 +1351,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			// gameid (since we abused that field to store the MD5).
 			game = *g;
 			game.gameid = gameid;
-			if (game.extra) {
-				Common::String desc(findDescriptionFromGameID(gameid));
-				desc += " (";
-				desc += game.extra;
-				desc += ")";
-
-				// FIXME: Unconditionally setting the window caption here seems
-				// quite wrong. In particular, we override whatever custom
-				// description the user has set.
-				g_system->setWindowCaption(desc.c_str());
-			}
 			break;
 		}
 		g++;
