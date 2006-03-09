@@ -26,7 +26,6 @@
 #define SAGA_H
 
 #include "base/engine.h"
-#include "base/plugins.h"
 
 #include "common/stream.h"
 
@@ -562,8 +561,6 @@ inline uint16 objectIndexToId(int type, int index) {
 	return (type << OBJECT_TYPE_SHIFT) | (OBJECT_TYPE_MASK & index);
 }
 
-
-DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
 
 class SagaEngine : public Engine {
 	friend class Scene;

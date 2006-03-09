@@ -49,6 +49,48 @@
 #define IHNM_CONVERSE_TEXT_LINES	10
 
 namespace Saga {
+static DetectedGameList GAME_ProbeGame(const FSList &fslist, int **matches = NULL);
+}
+
+static const PlainGameDescriptor saga_games[] = {
+	{"ite", "Inherit the Earth: Quest for the Orb"},
+	{"ihnm", "I Have No Mouth and I Must Scream"},
+	{0, 0}
+};
+
+GameList Engine_SAGA_gameIDList() {
+	GameList games;
+	const PlainGameDescriptor *g = saga_games;
+
+	while (g->gameid) {
+		games.push_back(*g);
+		g++;
+	}
+
+	return games;
+}
+
+GameDescriptor Engine_SAGA_findGameID(const char *gameid) {
+	const PlainGameDescriptor *g = saga_games;
+	while (g->gameid) {
+		if (0 == scumm_stricmp(gameid, g->gameid))
+			break;
+		g++;
+	}
+	return *g;
+}
+
+DetectedGameList Engine_SAGA_detectGames(const FSList &fslist) {
+	return Saga::GAME_ProbeGame(fslist);
+}
+
+Engine *Engine_SAGA_create(GameDetector *detector, OSystem *syst) {
+	return new Saga::SagaEngine(detector, syst);
+}
+
+REGISTER_PLUGIN(SAGA, "SAGA Engine")
+
+namespace Saga {
 
 static int detectGame(const FSList &fslist, bool mode = false, int start = -1);
 
