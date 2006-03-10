@@ -739,8 +739,8 @@ void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state, bool flag)
 	// The calculation of frequency looks quite different from the original
 	// disassembly at a first glance, but when you consider that the
 	// largest possible value would be 0x0246 + 0xFF + 0x47 (and that's if
-	// baseFreq turns out to be unsigned after all), freq is still a 10-bit
-	// value, just as it should be to fit in the Ax and Bx registers.
+	// baseFreq is unsigned), freq is still a 10-bit value, just as it
+	// should be to fit in the Ax and Bx registers.
 	//
 	// If it were larger than that, it could have overflowed into the
 	// octave bits, and that could possibly have been used in some sound.
@@ -1846,6 +1846,13 @@ const uint8 AdlibDriver::_unkTable2_3[] = {
 	0x18, 0x18, 0x18, 0x17, 0x17, 0x17, 0x16, 0x16,
 	0x16, 0x15
 };
+
+// This table is used to modify the frequency of the notes, depending on the
+// note value and unk16. In theory, we could very well try to access memory
+// outside this table, but in reality that probably won't happen.
+//
+// This could be some sort of pitch bend, but I have yet to see it used for
+// anything so it's hard to say.
 
 // TODO: format this
 const uint8 AdlibDriver::_unkTables[][32] = {
