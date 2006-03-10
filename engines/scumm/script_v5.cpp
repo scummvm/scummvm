@@ -474,20 +474,6 @@ void ScummEngine_v5::o5_actorOps() {
 		case 14:		// SO_INIT_ANIMATION
 			a->_initFrame = getVarOrDirectByte(PARAM_1);
 			break;
-		case 15:		// SO_PALETTE_LIST
-			error("o5_actorOps:unk not implemented");
-#if 0
-			int args[16] =
-				{
-					0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-					0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-				};
-			getWordVararg(args);
-			for (i = 0; i < 16; i++)
-				if (args[i] != 0xFF)
-					a->_palette[i] = args[i];
-#endif
-			break;
 		case 16:		// SO_ACTOR_WIDTH
 			a->_width = getVarOrDirectByte(PARAM_1);
 			break;
