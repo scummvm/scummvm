@@ -272,6 +272,39 @@ private:
 	int updateCallback55(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback56(uint8 *&dataptr, OutputState &state, uint8 value);
 private:
+	// These variables have not yet been named, but some of them are partly
+	// known nevertheless:
+	//
+	// _unk4           - Unknown, but probably indicates that Adlib's
+	//                   rhythm section is active.
+	// _unk5           - Currently unused, except for updateCallback54()
+	// _unkValue1      - Unknown. Used for updating _unkValue2
+	// _unkValue2      - Unknown. Used for updating _unkValue4
+	// _unkValue3      - Unknown. Used for updating _unkValue2
+	// _unkValue4      - Unknown. Used for updating _unkValue5
+	// _unkValue5      - Unknown. Used for controlling updateCallback24().
+	// _unkValue6      - Unknown. Something to do with channel 1 volume?
+	// _unkValue7      - Unknown. Something to do with channel 2 volume?
+	// _unkValue8      - Unknown. Something to do with channel 2 volume?
+	// _unkValue9      - Unknown. Something to do with channel 3 volume?
+	// _unkValue10     - Unknown. Something to do with channel 3 volume?
+	// _unkValue11     - Unknown. Something to do with channel 2 volume?
+	// _unkValue12     - Unknown. Something to do with channel 2 volume?
+	// _unkValue13     - Unknown. Something to do with channel 3 volume?
+	// _unkValue14     - Unknown. Something to do with channel 3 volume?
+	// _unkValue15     - Unknown. Something to do with channel 3 volume?
+	// _unkValue16     - Unknown. Something to do with channel 3 volume?
+	// _unkValue17     - Unknown. Something to do with channel 2 volume?
+	// _unkValue18     - Unknown. Something to do with channel 2 volume?
+	// _unkValue19     - Unknown. Something to do with channel 1 volume?
+	// _unkValue20     - Unknown. Something to do with channel 1 volume?
+	// _unkOutputByte2 - Unknown. Something to do with the BD register.
+	// _unkTable[]     - Probably frequences for the 12-tone scale.
+	// _unkTable2[]    - Unknown. Currently only used by updateCallback46()
+	// _unkTable2_1[]  - One of the tables in _unkTable2[]
+	// _unkTable2_2[]  - One of the tables in _unkTable2[]
+	// _unkTable2_3[]  - One of the tables in _unkTable2[]
+
 	int _lastProcessed;
 	int8 _flagTrigger;
 	int _curTable;
@@ -689,8 +722,13 @@ void AdlibDriver::initTable(OutputState &table) {
 
 void AdlibDriver::noteOff(OutputState &table) {
 	debugC(9, kDebugLevelSound, "noteOff(%d)", &table - _outputTables);
+
+	// I believe that 9 is the percussion channel.
 	if (_curTable == 9)
 		return;
+
+	// I believe this has to do with channels 6, 7, and 8 being special
+	// when Adlib's rhythm section is enabled.
 	if (_unk4 && _curTable >= 6)
 		return;
 
@@ -703,9 +741,11 @@ void AdlibDriver::noteOff(OutputState &table) {
 
 void AdlibDriver::unkOutput2(uint8 num) {
 	debugC(9, kDebugLevelSound, "unkOutput2(%d)", num);
-	if (_unk4)
-		if (num >= 6)
-			return;
+
+	// I believe this has to do with channels 6, 7, and 8 being special
+	// when Adlib's rhythm section is enabled.
+	if (_unk4 && num >= 6)
+		return;
 
 	uint8 value = _outputTable[num];
 
@@ -1912,6 +1952,9 @@ const uint16 AdlibDriver::_unkTable[] = {
 	0x0134, 0x0147, 0x015A, 0x016F, 0x0184, 0x019C, 0x01B4, 0x01CE, 0x01E9,
 	0x0207, 0x0225, 0x0246
 };
+
+// These tables are currently only used by updateCallback46(), which only ever
+// uses the first element of one of the sub-tables.
 
 const uint8 *AdlibDriver::_unkTable2[] = {
 	AdlibDriver::_unkTable2_1,
