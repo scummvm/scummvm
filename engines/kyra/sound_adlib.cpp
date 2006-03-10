@@ -879,8 +879,8 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 	state.regBx = value;
 }
 
-// This is presumably used for some sound effects, e.g. Malcolm entering and
-// leaving Kallak's hut. Related functions and variables:
+// This is presumably only used for some sound effects, e.g. Malcolm entering
+// and leaving Kallak's hut. Related functions and variables:
 //
 // updateCallback21()
 //    - Initialises unk32, unk33, unk34, unk35 and unk36
@@ -901,7 +901,7 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 // unk35 - initialiser for unk34 countdown
 // unk36 - initialiser for unk38 countdown
 // unk37 - frequency
-// unk38 - countdown, stops playing on zero
+// unk38 - countdown, begins playing on zero
 // unk41 - determines how often the notes are played
 //
 // Note that unk41 is never initialised. Not that it should matter much, but it
