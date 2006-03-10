@@ -127,7 +127,7 @@ private:
 		uint8 unk24;
 		uint8 unk25;
 		uint8 unk28;
-		uint8 unk23;
+		uint8 algorithm;
 		uint8 unk39;	
 		uint8 unk40;
 		uint8 unk3;
@@ -157,7 +157,7 @@ private:
 	void update1(uint8 unk1, OutputState &state);
 
 	void updateAndOutput1(uint8 rawNote, OutputState &state, bool flag = false);
-	void updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state);
+	void setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &state);
 	void updateAndOutput3(OutputState &state);
 
 	void adjustVolume(OutputState &state);
@@ -771,38 +771,48 @@ void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state, bool flag)
 	writeOPL(0xB0 + _curTable, state.regBx);
 }
 
-void AdlibDriver::updateAndOutput2(uint8 unk1, uint8 *dataptr, OutputState &state) {
-	debugC(9, kDebugLevelSound, "updateAndOutput2(%d, %p, %d)", unk1, (const void *)dataptr, &state - _outputTables);
+void AdlibDriver::setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &state) {
+	debugC(9, kDebugLevelSound, "setInstrument(%d, %p, %d)", regOffset, (const void *)dataptr, &state - _outputTables);
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
 	// Keyboard Scaling Rate / Modulator Frequency Multiple
-	writeOPL(0x20 + unk1, *dataptr++);
-	writeOPL(0x23 + unk1, *dataptr++);
+	writeOPL(0x20 + regOffset, *dataptr++);
+	writeOPL(0x23 + regOffset, *dataptr++);
 
 	uint8 temp = *dataptr++;
 
 	// Feedback / Algorithm
+
+	// It is very likely that _curTable really does refer to the same
+	// channel as regOffset, but there's only one Cx register per channel.
+
 	writeOPL(0xC0 + _curTable, temp);
 
-	state.unk23 = temp & 1;
+	// The algorithm bit. I don't pretend to understand this fully, but
+	// "If set to 0, operator 1 modulates operator 2. In this case,
+	// operator 2 is the only one producing sound. If set to 1, both
+	// operators produce sound directly. Complex sounds are more easily
+	// created if the algorithm is set to 0."
+
+	state.algorithm = temp & 1;
 
 	// Waveform Select
-	writeOPL(0xE0 + unk1, *dataptr++);
-	writeOPL(0xE3 + unk1, *dataptr++);
+	writeOPL(0xE0 + regOffset, *dataptr++);
+	writeOPL(0xE3 + regOffset, *dataptr++);
 
 	state.unk24 = *dataptr++;
 	state.unk25 = *dataptr++;
 
 	// Level Key Scaling / Total Level
-	writeOPL(0x40 + unk1, calculateLowByte1(state));
-	writeOPL(0x43 + unk1, calculateLowByte2(state));
+	writeOPL(0x40 + regOffset, calculateLowByte1(state));
+	writeOPL(0x43 + regOffset, calculateLowByte2(state));
 
 	// Attack Rate / Decay Rate
-	writeOPL(0x60 + unk1, *dataptr++);
-	writeOPL(0x63 + unk1, *dataptr++);
+	writeOPL(0x60 + regOffset, *dataptr++);
+	writeOPL(0x63 + regOffset, *dataptr++);
 
 	// Sustain Level / Release Rate
-	writeOPL(0x80 + unk1, *dataptr++);
-	writeOPL(0x83 + unk1, *dataptr++);
+	writeOPL(0x80 + regOffset, *dataptr++);
+	writeOPL(0x83 + regOffset, *dataptr++);
 }
 
 void AdlibDriver::updateAndOutput3(OutputState &state) {
@@ -825,7 +835,7 @@ void AdlibDriver::adjustVolume(OutputState &state) {
 
 	// Level Key Scaling / Total Level
 	writeOPL(0x43 + _outputTable[_curTable], lowByte);
-	if (state.unk23) {
+	if (state.algorithm) {
 		lowByte = calculateLowByte1(state);
 
 		// Level Key Scaling / Total Level
@@ -916,7 +926,7 @@ void AdlibDriver::stateCallback2_1(OutputState &state) {
 
 uint8 AdlibDriver::calculateLowByte1(OutputState &state) {
 	int8 value = state.unk24 & 0x3F;
-	if (state.unk23) {
+	if (state.algorithm) {
 		value += state.unk26;
 		value += state.unk27;
 		value += state.unk28;
@@ -1077,7 +1087,7 @@ int AdlibDriver::updateCallback16(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value) {
 	uint8 *ptr = _soundData;
 	ptr += READ_LE_UINT16(_soundData + (value << 1) + 0x1F4);
-	updateAndOutput2(_unkOutputByte1, ptr, state);
+	setInstrument(_unkOutputByte1, ptr, state);
 	return 0;
 }
 
@@ -1353,7 +1363,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 	_unkOutputByte1 = _outputTable[6];
 
 	_unkValue6 = *(ptr + 6);
-	updateAndOutput2(_unkOutputByte1, ptr, state);
+	setInstrument(_unkOutputByte1, ptr, state);
 
 	entry = *dataptr++ << 1;
 	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
@@ -1363,7 +1373,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_unkValue7 = entry = *(ptr + 5);
 	_unkValue8 = entry = *(ptr + 6);
-	updateAndOutput2(_unkOutputByte1, ptr, state);
+	setInstrument(_unkOutputByte1, ptr, state);
 
 	entry = *dataptr++ << 1;
 	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
@@ -1373,7 +1383,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_unkValue9 = entry = *(ptr + 5);
 	_unkValue10 = entry = *(ptr + 6);
-	updateAndOutput2(_unkOutputByte1, ptr, state);
+	setInstrument(_unkOutputByte1, ptr, state);
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
