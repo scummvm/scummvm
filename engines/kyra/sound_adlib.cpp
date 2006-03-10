@@ -281,7 +281,7 @@ private:
 	OutputState _outputTables[10];
 
 	uint8 _unkOutputByte2;
-	uint8 _unkOutputByte1;
+	uint8 _curRegOffset;
 	int8 _tempo;
 
 	const uint8 *_tablePtr1;
@@ -317,7 +317,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	memset(_outputTables, 0, sizeof(_outputTables));
 	_soundData = 0;
 
-	_unkOutputByte2 = _unkOutputByte1 = 0;
+	_unkOutputByte2 = _curRegOffset = 0;
 
 	_lastProcessed = _flagTrigger = _curTable = _unk4 = 0;
 	_rnd = 0x1234;
@@ -556,7 +556,7 @@ void AdlibDriver::callbackProcess() {
 		}
 	
 		OutputState &table = _outputTables[_curTable];
-		_unkOutputByte1 = _outputTable[_curTable];
+		_curRegOffset = _outputTable[_curTable];
 
 		if (table.unk6) {
 			table.unk1 = _tempo;
@@ -991,7 +991,7 @@ void AdlibDriver::stateCallback2_1(OutputState &state) {
 		if (--state.unk21 < 0) {
 			state.unk21 = state.unk20;
 		}
-		writeOPL(state.unk22 + _unkOutputByte1, _soundData[state.offset + state.unk21]);
+		writeOPL(state.unk22 + _curRegOffset, _soundData[state.offset + state.unk21]);
 	}
 }
 
@@ -1168,7 +1168,7 @@ int AdlibDriver::updateCallback16(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value) {
 	uint8 *ptr = _soundData;
 	ptr += READ_LE_UINT16(_soundData + (value << 1) + 0x1F4);
-	setInstrument(_unkOutputByte1, ptr, state);
+	setInstrument(_curRegOffset, ptr, state);
 	return 0;
 }
 
@@ -1436,36 +1436,36 @@ int AdlibDriver::updateCallback47(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 value) {
 	int tableBackUp = _curTable;
-	int outputByteBackUp = _unkOutputByte1;
+	int regOffsetBackUp = _curRegOffset;
 
 	uint8 entry = value << 1;
 	uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
 
 	_curTable = 6;
-	_unkOutputByte1 = _outputTable[6];
+	_curRegOffset = _outputTable[6];
 
 	_unkValue6 = *(ptr + 6);
-	setInstrument(_unkOutputByte1, ptr, state);
+	setInstrument(_curRegOffset, ptr, state);
 
 	entry = *dataptr++ << 1;
 	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
 
 	_curTable = 7;
-	_unkOutputByte1 = _outputTable[7];
+	_curRegOffset = _outputTable[7];
 
 	_unkValue7 = entry = *(ptr + 5);
 	_unkValue8 = entry = *(ptr + 6);
-	setInstrument(_unkOutputByte1, ptr, state);
+	setInstrument(_curRegOffset, ptr, state);
 
 	entry = *dataptr++ << 1;
 	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
 
 	_curTable = 8;
-	_unkOutputByte1 = _outputTable[8];
+	_curRegOffset = _outputTable[8];
 
 	_unkValue9 = entry = *(ptr + 5);
 	_unkValue10 = entry = *(ptr + 6);
-	setInstrument(_unkOutputByte1, ptr, state);
+	setInstrument(_curRegOffset, ptr, state);
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
@@ -1483,7 +1483,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_unk4 = 0x20;
 
-	_unkOutputByte1 = outputByteBackUp;
+	_curRegOffset = regOffsetBackUp;
 	_curTable = tableBackUp;
 	return 0;
 }
