@@ -98,7 +98,7 @@ private:
 		uint8 unk5;
 		uint8 repeatCounter;
 		int8 baseOctave;
-		int8 unk2;
+		uint8 priority;
 		uint8 dataptrStackPos;
 		uint8 *dataptrStack[4];
 		int8 baseNote;
@@ -205,7 +205,7 @@ private:
 	int updateCallback19(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setBaseFreq(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback21(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback22(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setPriority(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback23(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback24(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel1(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -439,7 +439,7 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 	while (loop--) {
 		_curTable = value;
 		OutputState &table = _outputTables[_curTable];
-		table.unk2 = 0;
+		table.priority = 0;
 		table.dataptr = 0;
 		if (value != 9) {
 			noteOff(table);
@@ -531,10 +531,14 @@ void AdlibDriver::callbackOutput() {
 		uint8 index = *ptr++;
 		OutputState &table = _outputTables[index];
 
-		int8 unk2 = *ptr++;
-		if (unk2 >= table.unk2) {
+		uint8 priority = *ptr++;
+
+		// Only start this sound if its priority is higher than the one
+		// already playing.
+
+		if (priority >= table.priority) {
 			initTable(table);
-			table.unk2 = unk2;
+			table.priority = priority;
 			table.dataptr = ptr;
 			table.unk1 = -1;
 			table.unk4 = -1;
@@ -645,7 +649,7 @@ void AdlibDriver::initTable(OutputState &table) {
 	memset(&table.dataptr, 0, sizeof(OutputState) - ((char*)&table.dataptr - (char*)&table));
 
 	table.unk1 = -1;
-	table.unk2 = 0;
+	table.priority = 0;
 	// normally here are nullfuncs but we set 0 for now
 	table.callback1 = 0;
 	table.callback2 = 0;
@@ -1057,6 +1061,8 @@ int AdlibDriver::update_checkRepeat(uint8 *&dataptr, OutputState &state, uint8 v
 	return 0;
 }
 
+// This is similar to callbackOutput()
+
 int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 value) {
 	if (value >= 0xFF)
 		return 0;
@@ -1065,12 +1071,12 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 valu
 	uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + add);
 	uint8 table = *ptr++;
 	OutputState &state2 = _outputTables[table];
-	int8 temp = *((int8*)ptr); ++ptr;
-	if (temp >= (int8)state2.unk2) {
+	uint8 priority = *ptr++;
+	if (priority >= state2.priority) {
 		_flagTrigger = 1;
 		_flags |= 8;
 		initTable(state2);
-		state2.unk2 = temp;
+		state2.priority = priority;
 		state2.dataptr = ptr;
 		state2.unk1 = -1;
 		state2.unk4 = -1;
@@ -1111,7 +1117,7 @@ int AdlibDriver::update_setBaseOctave(uint8 *&dataptr, OutputState &state, uint8
 }
 
 int AdlibDriver::updateCallback9(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk2 = 0;
+	state.priority = 0;
 	if (_curTable != 9) {
 		noteOff(state);
 	}
@@ -1155,7 +1161,7 @@ int AdlibDriver::updateCallback14(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback15(uint8 *&dataptr, OutputState &state, uint8 value) {
 	OutputState &state2 = _outputTables[value];
 	state2.unk5 = 0;
-	state2.unk2 = 0;
+	state2.priority = 0;
 	state2.dataptr = 0;
 	return 0;
 }
@@ -1209,8 +1215,8 @@ int AdlibDriver::updateCallback21(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback22(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk2 = value;
+int AdlibDriver::update_setPriority(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.priority = value;
 	return 0;
 }
 
@@ -1340,7 +1346,7 @@ int AdlibDriver::updateCallback38(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_curTable = value;
 	OutputState &state2 = _outputTables[value];
-	state2.unk5 = state2.unk2 = 0;
+	state2.unk5 = state2.priority = 0;
 	state2.dataptr = 0;
 	state2.opExtraLevel2 = 0;
 
@@ -1780,7 +1786,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 24
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
-	COMMAND(updateCallback22),
+	COMMAND(update_setPriority),
 	COMMAND(updateCallback9),
 
 	// 28
