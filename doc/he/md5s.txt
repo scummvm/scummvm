@@ -1693,6 +1693,14 @@ c8538fa7fbb9c1b09bc4b833e04ce0dd PyjamaSKS.d32
 435437659b3c647c5a223e143e219846 PyjamaSKS.he4
 88084b7b68f19dc5ded4dc5a5a8c3c76 PyjamaSKS.w32
 
+(pajama3 cd russian)
+sev
+C:\HESystems\SPUTM\Src\SrcPWin\*.cpp
+20176076d708bf14407bcc9bdcd7a418 UKPajamaEAT.he0
+6c0b2725387fe0b0bc7bfe043714492b UKPajamaEAT.(a)
+eea6df70b4930c0d9e2ea69a1a193fc5 UKpajamaEAT.he2
+a7f5e841f72a72c0dec10d7d9fd74a51 UKpajamaEAT.HE4
+
 (pajama3 demo hfs dutch)
 joostp
 ???
@@ -1941,7 +1949,17 @@ e56b14495c0075850c900ca0999f90f4 puttrace.(b)
 1bb81a151d72f56b81b43b55b1de63e4 PUTTRACE.HE2
 3f368bd19438204b34db7d7ff8e5395d PUTTRACE.HE4
 
-(puttrace cd russian) ALL IN MD5
+(puttrace cd russian)
+sev
+C:\HESystems\SPUTM\Src\*.cpp
+cde08c76ce62dcb6081a3fb7dfd2bc89 UKPuttRace.(a)
+e348fe80ca1a40a30bd57ff9d08812c0 UKPuttRace.(b)
+62050da376483d8edcbd98cd26b6cb57 UKPuttRace.he0
+fdd32528084cd48078bb073ead02d2a9 UKPuttRace.he2
+4dfdf4303fa6769535eba7fed539002e UKPuttRace.he4
+91c0bc455b81e7e556646db1dacd461f UKPuttRace.w32
+
+(puttrace cd russian alt) ALL IN MD5
 sev
 D:\scummsys.98\sputm.98\*.c
 fe0cbe12588be2c8e509603821566a87 Puttrace.(a)

@@ -490,6 +490,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	en	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	de	All	-	-	-	Joachim Eberhard
+	20176076d708bf14407bcc9bdcd7a418	ru	Windows	-	-	-	sev
 
 	f08145577e4f13584cc90b3d6e9caa55	nl	All	-	Demo	-	joostp
 	a654fb60c3b67d6317a7894ffd9f25c5	en	All	-	Demo	-	sev
@@ -516,6 +517,7 @@ socks	Pajama Sam's Sock Works
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	en	All	HE 98	-	-	Kirben
 	055ffe4f47753e47594ac67823220c54	de	All	HE 99	-	-	Joachim Eberhard
+	62050da376483d8edcbd98cd26b6cb57	ru	Windows	HE 99	-	-	sev
 
 	6af2419fe3db5c2fdb091ae4e5833770	nl	All	HE 98.5	Demo	-	Kirben
 	aaa587701cde7e74692c68c1024b85eb	nl	All	HE 99	Demo	-	joostp

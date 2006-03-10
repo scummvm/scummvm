@@ -230,6 +230,7 @@ static const SubstResFileNames substResFileNameTable[] = {
 	{ "pajama3", "PjSamDemo", kGenPC },
 	{ "pajama3", "PyjamaSKS", kGenPC },
 	{ "pajama3", "PyjamaSKS", kGenMac },
+	{ "pajama3", "UKPajamaEAT", kGenPC }, // Russian
 	{ "pjgames", "PJGames", kGenMac },
 	{ "puttcircus", "circdemo", kGenPC },
 	{ "puttcircus", "Putt Circus Demo", kGenMac },
@@ -242,6 +243,7 @@ static const SubstResFileNames substResFileNameTable[] = {
 	{ "puttrace", "Putt Race", kGenMac },
 	{ "puttrace", "ToffRennen", kGenPC },
 	{ "puttrace", "ToffRennen", kGenMac },
+	{ "puttrace", "UKPuttRace", kGenPC }, // Russian
 	{ "PuttsFunShop", "Putt's FunShop", kGenMac },
 	{ "putttime", "PuttPuttTTT", kGenPC },
 	{ "putttime", "PuttPuttTTT", kGenMac },

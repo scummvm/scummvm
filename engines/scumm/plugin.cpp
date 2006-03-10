@@ -694,6 +694,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 
 	{"055ffe4f47753e47594ac67823220c54", "German", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ToffRennen
+	{"62050da376483d8edcbd98cd26b6cb57", "Russian", GID_PUTTRACE, 6, 99, MDT_NONE,
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // UKPuttRace
 	{"6af2419fe3db5c2fdb091ae4e5833770", "Dutch Demo", GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
 	{"aaa587701cde7e74692c68c1024b85eb", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
