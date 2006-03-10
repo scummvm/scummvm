@@ -817,10 +817,10 @@ void AdlibDriver::setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &st
 
 void AdlibDriver::updateAndOutput3(OutputState &state) {
 	debugC(9, kDebugLevelSound, "updateAndOutput3(%d)", &state - _outputTables);
-	// This sets the "note on" bit.
-	state.regBx |= 0x20;
 
-	// Octave / F-Number / Key-On
+	// The "note on" bit is set, and the current note is played.
+
+	state.regBx |= 0x20;
 	writeOPL(0xB0 + _curTable, state.regBx);
 
 	int8 shift = 9 - state.unk33;
@@ -878,6 +878,34 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 	writeOPL(0xB0 + _curTable, value);
 	state.regBx = value;
 }
+
+// This is presumably used for some sound effects, e.g. Malcolm entering and
+// leaving Kallak's hut. Related functions and variables:
+//
+// updateCallback21()
+//    - Initialises unk32, unk33, unk34, unk35 and unk36
+//    - unk32 is not further modified
+//    - unk33 is not further modified
+//    - unk34 is a countdown that gets reinitialised to unk35 on zero
+//    - unk35 is based on unk34 and not further modified
+//    - unk36 is not further modified
+//
+// updateAndOutput3()
+//    - Plays the current note
+//    - Updates unk37 with a new (lower?) frequency
+//    - Copies unk36 to unk38. The unk38 variable is a countdown.
+//
+// unk32 - determines how often the notes are played
+// unk33 - modifies the frequency
+// unk34 - countdown, updates frequency on zero
+// unk35 - initialiser for unk34 countdown
+// unk36 - initialiser for unk38 countdown
+// unk37 - frequency
+// unk38 - countdown, stops playing on zero
+// unk41 - determines how often the notes are played
+//
+// Note that unk41 is never initialised. Not that it should matter much, but it
+// is a bit sloppy.
 
 void AdlibDriver::stateCallback1_2(OutputState &state) {
 	debugC(9, kDebugLevelSound, "Calling stateCallback1_2 (channel: %d)", _curTable);
