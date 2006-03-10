@@ -93,7 +93,7 @@ private:
 	int snd_clearFlag(va_list &list);
 
 	struct OutputState {
-		uint8 unk27;
+		uint8 opExtraLevel2;
 		uint8 *dataptr;
 		uint8 unk5;
 		uint8 repeatCounter;
@@ -113,7 +113,7 @@ private:
 		uint8 unk32;
 		uint8 unk41;
 		uint8 unk38;
-		uint8 unk26;
+		uint8 opExtraLevel1;
 		uint8 unk7;
 		uint8 baseFreq;
 		int8 unk1;
@@ -124,9 +124,9 @@ private:
 		Callback callback1;
 		Callback callback2;
 		uint8 unk12;
-		uint8 unk24;
-		uint8 unk25;
-		uint8 unk28;
+		uint8 opLevel1;
+		uint8 opLevel2;
+		uint8 opExtraLevel3;
 		uint8 twoChan;
 		uint8 unk39;	
 		uint8 unk40;
@@ -162,8 +162,8 @@ private:
 
 	void adjustVolume(OutputState &state);
 
-	uint8 calculateLowByte1(OutputState &state);
-	uint8 calculateLowByte2(OutputState &state);
+	uint8 calculateOpLevel1(OutputState &state);
+	uint8 calculateOpLevel2(OutputState &state);
 
 	uint16 checkValue(int16 val) {
 		if (val < 0)
@@ -208,15 +208,15 @@ private:
 	int updateCallback22(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback23(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback24(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback25(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setExtraLevel1(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback26(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback27(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback28(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback30(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback32(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback33(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setExtraLevel3(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback34(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -799,12 +799,12 @@ void AdlibDriver::setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &st
 	writeOPL(0xE0 + regOffset, *dataptr++);
 	writeOPL(0xE3 + regOffset, *dataptr++);
 
-	state.unk24 = *dataptr++;
-	state.unk25 = *dataptr++;
+	state.opLevel1 = *dataptr++;
+	state.opLevel2 = *dataptr++;
 
 	// Level Key Scaling / Total Level
-	writeOPL(0x40 + regOffset, calculateLowByte1(state));
-	writeOPL(0x43 + regOffset, calculateLowByte2(state));
+	writeOPL(0x40 + regOffset, calculateOpLevel1(state));
+	writeOPL(0x43 + regOffset, calculateOpLevel2(state));
 
 	// Attack Rate / Decay Rate
 	writeOPL(0x60 + regOffset, *dataptr++);
@@ -831,16 +831,11 @@ void AdlibDriver::updateAndOutput3(OutputState &state) {
 
 void AdlibDriver::adjustVolume(OutputState &state) {
 	debugC(9, kDebugLevelSound, "adjustVolume(%d)", &state - _outputTables);
-	uint8 lowByte = calculateLowByte2(state);
-
 	// Level Key Scaling / Total Level
-	writeOPL(0x43 + _outputTable[_curTable], lowByte);
-	if (state.twoChan) {
-		lowByte = calculateLowByte1(state);
 
-		// Level Key Scaling / Total Level
-		writeOPL(0x40 + _outputTable[_curTable], lowByte);
-	}
+	writeOPL(0x43 + _outputTable[_curTable], calculateOpLevel2(state));
+	if (state.twoChan)
+		writeOPL(0x40 + _outputTable[_curTable], calculateOpLevel1(state));
 }
 
 void AdlibDriver::stateCallback1_1(OutputState &state) {
@@ -924,34 +919,44 @@ void AdlibDriver::stateCallback2_1(OutputState &state) {
 	}
 }
 
-uint8 AdlibDriver::calculateLowByte1(OutputState &state) {
-	int8 value = state.unk24 & 0x3F;
+uint8 AdlibDriver::calculateOpLevel1(OutputState &state) {
+	int8 value = state.opLevel1 & 0x3F;
+
 	if (state.twoChan) {
-		value += state.unk26;
-		value += state.unk27;
-		value += state.unk28;
+		value += state.opExtraLevel1;
+		value += state.opExtraLevel2;
+		value += state.opExtraLevel3;
 	}
 
+	// Don't allow the total level to overflow into the scaling level bits.
+
 	if (value > 0x3F) {
 		value = 0x3F;
 	} else if (value < 0)
 		value = 0;
 
-	return value | (state.unk24 & 0xC0);
+	// Preserve the scaling level bits from opLevel1
+
+	return value | (state.opLevel1 & 0xC0);
 }
 
-uint8 AdlibDriver::calculateLowByte2(OutputState &state) {
-	int8 value = state.unk25 & 0x3F;
-	value += state.unk26;
-	value += state.unk27;
-	value += state.unk28;
+uint8 AdlibDriver::calculateOpLevel2(OutputState &state) {
+	int8 value = state.opLevel2 & 0x3F;
+
+	value += state.opExtraLevel1;
+	value += state.opExtraLevel2;
+	value += state.opExtraLevel3;
+
+	// Don't allow the total level to overflow into the scaling level bits.
 
 	if (value > 0x3F) {
 		value = 0x3F;
 	} else if (value < 0)
 		value = 0;
 
-	return value | (state.unk25 & 0xC0);
+	// Preserve the scaling level bits from opLevel2
+
+	return value | (state.opLevel2 & 0xC0);
 }
 
 // parser opcodes
@@ -1152,8 +1157,8 @@ int AdlibDriver::updateCallback24(uint8 *&dataptr, OutputState &state, uint8 val
 	return 2;
 }
 
-int AdlibDriver::updateCallback25(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk26 = value;
+int AdlibDriver::update_setExtraLevel1(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.opExtraLevel1 = value;
 	adjustVolume(state);
 	return 0;
 }
@@ -1190,17 +1195,18 @@ int AdlibDriver::updateCallback31(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback32(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk28 = value;
+int AdlibDriver::update_setExtraLevel3(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.opExtraLevel3 = value;
 	return 0;
+
 }
 
-int AdlibDriver::updateCallback33(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value) {
 	int tableBackup = _curTable;
 
 	_curTable = value;
 	OutputState &state2 = _outputTables[value];
-	state2.unk27 = *dataptr++;
+	state2.opExtraLevel2 = *dataptr++;
 	adjustVolume(state2);
 
 	_curTable = tableBackup;
@@ -1212,7 +1218,7 @@ int AdlibDriver::updateCallback34(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_curTable = value;
 	OutputState &state2 = _outputTables[value];
-	state2.unk27 += *dataptr++;
+	state2.opExtraLevel2 += *dataptr++;
 	adjustVolume(state2);
 
 	_curTable = tableBackup;
@@ -1242,7 +1248,7 @@ int AdlibDriver::update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uin
 }
 
 int AdlibDriver::updateCallback37(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk26 += value;
+	state.opExtraLevel1 += value;
 	adjustVolume(state);
 	return 0;
 }
@@ -1254,7 +1260,7 @@ int AdlibDriver::updateCallback38(uint8 *&dataptr, OutputState &state, uint8 val
 	OutputState &state2 = _outputTables[value];
 	state2.unk5 = state2.unk2 = 0;
 	state2.dataptr = 0;
-	state2.unk27 = 0;
+	state2.opExtraLevel2 = 0;
 
 	if (value != 9) {
 		uint8 outValue = _outputTable[value];
@@ -1698,7 +1704,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 28
 	COMMAND(updateCallback23),
 	COMMAND(updateCallback24),
-	COMMAND(updateCallback25),
+	COMMAND(update_setExtraLevel1),
 	COMMAND(updateCallback9),
 
 	// 32
@@ -1717,10 +1723,10 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback31),
 	COMMAND(updateCallback9),
-	COMMAND(updateCallback32),
+	COMMAND(update_setExtraLevel3),
 
 	// 44
-	COMMAND(updateCallback33),
+	COMMAND(update_setExtraLevel2),
 	COMMAND(updateCallback34),
 	COMMAND(update_setAMDepth),
 	COMMAND(update_setVibratoDepth),
