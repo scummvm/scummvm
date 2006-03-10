@@ -127,7 +127,7 @@ private:
 		uint8 unk24;
 		uint8 unk25;
 		uint8 unk28;
-		uint8 algorithm;
+		uint8 twoChan;
 		uint8 unk39;	
 		uint8 unk40;
 		uint8 unk3;
@@ -793,7 +793,7 @@ void AdlibDriver::setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &st
 	// operators produce sound directly. Complex sounds are more easily
 	// created if the algorithm is set to 0."
 
-	state.algorithm = temp & 1;
+	state.twoChan = temp & 1;
 
 	// Waveform Select
 	writeOPL(0xE0 + regOffset, *dataptr++);
@@ -835,7 +835,7 @@ void AdlibDriver::adjustVolume(OutputState &state) {
 
 	// Level Key Scaling / Total Level
 	writeOPL(0x43 + _outputTable[_curTable], lowByte);
-	if (state.algorithm) {
+	if (state.twoChan) {
 		lowByte = calculateLowByte1(state);
 
 		// Level Key Scaling / Total Level
@@ -926,7 +926,7 @@ void AdlibDriver::stateCallback2_1(OutputState &state) {
 
 uint8 AdlibDriver::calculateLowByte1(OutputState &state) {
 	int8 value = state.unk24 & 0x3F;
-	if (state.algorithm) {
+	if (state.twoChan) {
 		value += state.unk26;
 		value += state.unk27;
 		value += state.unk28;
