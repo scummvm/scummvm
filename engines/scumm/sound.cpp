@@ -132,7 +132,6 @@ void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags
 void Sound::processSound() {
 	if (_vm->_game.heversion >= 60) {
 		processSoundQueues();
-		processSfxQueues();
 	} else {
 		processSfxQueues();
 

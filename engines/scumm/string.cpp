@@ -476,8 +476,13 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if ((_game.version <= 6 && _haveMsg == 1) || (_game.version == 7 && _haveMsg != 1) || (_game.version == 8 && VAR(VAR_HAVE_MSG))) {
-		if ((_sound->_sfxMode & 2) == 0)
-			stopTalk();
+		if (_game.heversion >= 60) {
+			if (_sound->isSoundRunning(1) == 0)
+				stopTalk();
+		} else {
+			if ((_sound->_sfxMode & 2) == 0)
+				stopTalk();
+		}
 		return;
 	}
 
