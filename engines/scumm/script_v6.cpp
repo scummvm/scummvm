@@ -3154,9 +3154,6 @@ void ScummEngine_v6::decodeParseString(int m, int n) {
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 73:		// SO_SAY_VOICE
-		error("decodeParseString: case 73");
-		break;
 	case 74:		// SO_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;

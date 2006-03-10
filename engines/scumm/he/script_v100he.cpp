@@ -133,7 +133,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_neq),
 		OPCODE(o100_dim2dim2Array),
 		/* 48 */
-		OPCODE(o6_setObjectName),
+		OPCODE(o6_invalid),
 		OPCODE(o100_redim2dimArray),
 		OPCODE(o6_not),
 		OPCODE(o6_invalid),

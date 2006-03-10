@@ -231,7 +231,7 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
-		OPCODE(o6_setObjectName),
+		OPCODE(o6_invalid),
 		/* 98 */
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),

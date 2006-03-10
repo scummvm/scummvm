@@ -230,7 +230,7 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o90_getPaletteData),
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
-		OPCODE(o6_setObjectName),
+		OPCODE(o6_invalid),
 		/* 98 */
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),

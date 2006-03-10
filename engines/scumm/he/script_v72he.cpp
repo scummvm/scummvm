@@ -234,7 +234,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_getVerbFromXY),
 		OPCODE(o6_beginOverride),
 		OPCODE(o6_endOverride),
-		OPCODE(o6_setObjectName),
+		OPCODE(o6_invalid),
 		/* 98 */
 		OPCODE(o6_isSoundRunning),
 		OPCODE(o6_setBoxFlags),
@@ -2323,9 +2323,6 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 	case 72:		// SO_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
-		break;
-	case 73:		// SO_SAY_VOICE
-		error("decodeParseString: case 73");
 		break;
 	case 74:		// SO_MUMBLE
 		_string[m].no_talk_anim = true;
