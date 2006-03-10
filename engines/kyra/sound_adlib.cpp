@@ -968,6 +968,12 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 // I don't know where this is used. The same operation is performed several
 // times on the current channel, using a chunk of the _soundData[] buffer for
 // parameters. The parameters are used starting at the end of the chunk.
+//
+// Since we use _curRegOffset to specify the final register, it's quite
+// unlikely that this function is ever used to play notes. It's probably only
+// used to modify the sound. Another thing that supports this idea is that it
+// can be combined with any of the effects callbacks above.
+//
 // Related functions and variables:
 //
 // updateCallback14()
