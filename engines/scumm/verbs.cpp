@@ -47,8 +47,8 @@ struct VerbSettings {
 };
 
 static const VerbSettings C64VerbTable_English[] = {
-	{ 1,  7, 0,   0, "Open"},
-	{ 2,  7, 1,   0, "Close"},
+	{ 1,  8, 0,   0, "Open"},
+	{ 2,  8, 1,   0, "Close"},
 	{ 3,  0, 2,   4, "Give"},
 	{ 4, 32, 0,   0, "Turn on"},
 	{ 5, 32, 1,   0, "Turn off"},
@@ -58,12 +58,13 @@ static const VerbSettings C64VerbTable_English[] = {
 	{ 9,  0, 0,   0, "Push"},
 	{10,  0, 1,   0, "Pull"},
 	{11, 24, 2, 255, "Use"},
-	{12,  7, 2,   0, "Read"},
+	{12,  8, 2,   0, "Read"},
 	{13, 15, 0,   0, "Walk to"},
 	{14, 15, 1,   0, "Pick up"},
 	{15, 15, 2,   0, "What is"}
 };
 
+// FIXME: Replace * with the correct character
 static const VerbSettings C64VerbTable_German[] = {
 	{ 1,  0, 1,   0, "Ziehe"},
 	{ 2,  0, 0,   0, "Dr[cke"},
