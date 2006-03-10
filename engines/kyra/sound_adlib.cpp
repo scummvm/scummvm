@@ -838,18 +838,42 @@ void AdlibDriver::adjustVolume(OutputState &state) {
 		writeOPL(0x40 + _outputTable[_curTable], calculateOpLevel1(state));
 }
 
+// This is presumably only used for some sound effects, e.g. Malcolm blowing up
+// the trees in the intro (but not the effect where he "booby-traps" the big
+// tree) and turning Kallak to stone. Related functions and variables:
+//
+// updateCallback18()
+//    - Initialises unk29, unk30 and unk31
+//    - unk29 is not further modified
+//    - unk30 is not further modified, except by updateCallback19()
+//
+// updateCallback19()
+//    - Deinitialises unk30
+//
+// unk29 - determines how often the notes are played
+// unk30 - modifies the frequency
+// unk31 - determines how often the notes are played
+
 void AdlibDriver::stateCallback1_1(OutputState &state) {
 	debugC(9, kDebugLevelSound, "Calling stateCallback1_1 (channel: %d)", _curTable);
 	state.unk31 += state.unk29;
-	if ((int8)state.unk31 >= 0)
+	if (state.unk31 >= 0)
 		return;
+
+	// Initialise unk1 to the current frequency
 	uint16 unk1 = ((state.regBx & 3) << 8) | state.regAx;
+
+	// This is presumably to shift the "note on" bit so far to the left
+	// that it won't be affected by any of the calculations below.
 	uint16 unk2 = ((state.regBx & 0x20) << 8) | (state.regBx & 0x1C);
+
 	int16 unk3 = (int16)state.unk30;
 
 	if (unk3 >= 0) {
 		unk1 += unk3;
 		if (unk1 >= 734) {
+			// The new frequency is too high. Shift it down and go
+			// up one octave.
 			unk1 >>= 1;
 			if (!(unk1 & 0x3FF))
 				++unk1;
@@ -859,6 +883,8 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 	} else {
 		unk1 += unk3;
 		if (unk1 < 388) {
+			// The new frequency is too low. Shift it up and go
+			// down one octave.
 			unk1 <<= 1;
 			if (!(unk1 & 0x3FF))
 				--unk1;
@@ -866,11 +892,14 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 			unk2 &= 0xFF1C;
 		}
 	}
+
+	// Make sure that the new frequency is still a 10-bit value.
 	unk1 &= 0x3FF;
 
 	writeOPL(0xA0 + _curTable, unk1 & 0xFF);
 	state.regAx = unk1 & 0xFF;
 
+	// Shift down the "note on" bit again.
 	uint8 value = unk1 >> 8;
 	value |= (unk2 >> 8) & 0xFF;
 	value |= unk2 & 0xFF;
