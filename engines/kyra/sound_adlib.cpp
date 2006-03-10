@@ -92,6 +92,37 @@ private:
 	int snd_setFlag(va_list &list);
 	int snd_clearFlag(va_list &list);
 
+	// These variables have not yet been named, but some of them are partly
+	// known nevertheless:
+	//
+	// unk1  - Unknown. Used for updating unk4.
+	// unk3  - Unknown. Used for turning off some notes.
+	// unk4  - Unknown. Related to sound timing?
+	// unk5  - Unknown. Used for turning off some notes.
+	// unk6  - Unknown. Used to indicate unk1 should be reset to _tempo.
+	// unk7  - Unknown. Used for turning off some notes.
+	// unk11 - Unknown. Used for updating unk5.
+	// unk12 - Unknown. Used for updating unk7.
+	// unk16 - Sound-related. Possibly some sort of pitch bend.
+	// unk18 - Sound-effect. Used for stateCallback2_1()
+	// unk19 - Sound-effect. Used for stateCallback2_1()
+	// unk20 - Sound-effect. Used for stateCallback2_1()
+	// unk21 - Sound-effect. Used for stateCallback2_1()
+	// unk22 - Sound-effect. Used for stateCallback2_1()
+	// unk29 - Sound-effect. Used for stateCallback1_1()
+	// unk30 - Sound-effect. Used for stateCallback1_1()
+	// unk31 - Sound-effect. Used for stateCallback1_1()
+	// unk32 - Sound-effect. Used for stateCallback1_2()
+	// unk33 - Sound-effect. Used for stateCallback1_2()
+	// unk34 - Sound-effect. Used for stateCallback1_2()
+	// unk35 - Sound-effect. Used for stateCallback1_2()
+	// unk36 - Sound-effect. Used for stateCallback1_2()
+	// unk37 - Sound-effect. Used for stateCallback1_2()
+	// unk38 - Sound-effect. Used for stateCallback1_2()
+	// unk39 - Currently unused, except for updateCallback56()
+	// unk40 - Currently unused, except for updateCallback56()
+	// unk41 - Sound-effect. Used for stateCallback1_2()
+
 	struct OutputState {
 		uint8 opExtraLevel2;
 		uint8 *dataptr;
