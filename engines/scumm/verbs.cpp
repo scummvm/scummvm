@@ -47,8 +47,8 @@ struct VerbSettings {
 };
 
 static const VerbSettings C64VerbTable_English[] = {
-	{ 1,  8, 0,   0, "Open"},
-	{ 2,  8, 1,   0, "Close"},
+	{ 1,  7, 0,   0, "Open"},
+	{ 2,  7, 1,   0, "Close"},
 	{ 3,  0, 2,   4, "Give"},
 	{ 4, 32, 0,   0, "Turn on"},
 	{ 5, 32, 1,   0, "Turn off"},
@@ -58,28 +58,28 @@ static const VerbSettings C64VerbTable_English[] = {
 	{ 9,  0, 0,   0, "Push"},
 	{10,  0, 1,   0, "Pull"},
 	{11, 24, 2, 255, "Use"},
-	{12,  8, 2,   0, "Read"},
+	{12,  7, 2,   0, "Read"},
 	{13, 15, 0,   0, "Walk to"},
 	{14, 15, 1,   0, "Pick up"},
 	{15, 15, 2,   0, "What is"}
 };
 
 static const VerbSettings C64VerbTable_German[] = {
-	{ 1,  6, 0,   0, "Zieh"},
-	{ 2,  6, 1,   0, "Druck"},
-	{ 3,  0, 2,   4, "Lies"},
-	{ 4, 29, 0,   0, "Schliess au"},
-	{ 5, 29, 1,   0, "Schalt ein"},
-	{ 6, 29, 2,   2, "Schalt aus"},
-	{ 7, 20, 0,   0, "Person"},
-	{ 8, 20, 1,   2, "Schliess"},
-	{ 9,  0, 0,   0, "Nimm"},
-	{10,  0, 1,   0, "Gib"},
-	{11, 20, 2, 255, "Reparier"},
-	{12,  6, 2,   0, "Offne"},
-	{13, 12, 0,   0, "Gehe zu"},
-	{14, 12, 1,   0, "Was ist"},
-	{15, 12, 2,   0, "Benutz"}
+	{ 1,  0, 1,   0, "Ziehe"},
+	{ 2,  0, 0,   0, "Dr[cke"},
+	{ 3,  7, 2,   4, "Lese"},
+	{ 4, 23, 0,   0, "Schlie*e auf"},
+	{ 5, 37, 1,   0, "Ein"},
+	{ 6, 37, 0,   0, "Aus"},
+	{ 7, 34, 2,   0, "Person"},
+	{ 8, 13, 1,   2, "Schlie*e"},
+	{ 9,  7, 1,   0, "Nimm"},
+	{10,  0, 2,   0, "Gebe"},
+	{11, 23, 1, 255, "Repariere"},
+	{12,  7, 0,   0, "}ffne"},
+	{13, 13, 0,   0, "Gehe zu"},
+	{14, 13, 2,   0, "Was ist"},
+	{15, 23, 2,   0, "Benutz"}
 };
 
 void ScummEngine_c64::initC64Verbs() {
