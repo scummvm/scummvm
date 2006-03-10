@@ -133,9 +133,9 @@ private:
 		uint8 unk3;
 		uint8 unk11;
 		uint8 unk19;
-		uint8 unk18;
-		uint8 unk20;
-		uint8 unk21;
+		int8 unk18;
+		int8 unk20;
+		int8 unk21;
 		uint8 unk22;
 		uint16 offset;
 		uint8 unk6;
@@ -965,11 +965,30 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 	}
 }
 
+// I don't know where this is used. The same operation is performed several
+// times on the current channel, using a chunk of the _soundData[] buffer for
+// parameters. The parameters are used starting at the end of the chunk.
+// Related functions and variables:
+//
+// updateCallback14()
+//    - Initialies unk18, unk19, unk20, unk21, unk22 and offset
+//    - unk19 is not further modified
+//    - unk20 is not further modified
+//    - unk22 is not further modified
+//    - offset is not further modified
+//
+// unk18 -  determines how often the operation is performed
+// unk19 -  determines how often the operation is performed
+// unk20 -  the start index into the data chunk
+// unk21 -  the current index into the data chunk
+// unk22 -  the operation to perform
+// offset - the offset to the data chunk
+
 void AdlibDriver::stateCallback2_1(OutputState &state) {
 	debugC(9, kDebugLevelSound, "Calling stateCallback2_1 (channel: %d)", _curTable);
 	state.unk18 += state.unk19;
-	if ((int8)state.unk18 < 0) {
-		if ((--state.unk21) & 0x80) {
+	if (state.unk18 < 0) {
+		if (--state.unk21 < 0) {
 			state.unk21 = state.unk20;
 		}
 		writeOPL(state.unk22 + _unkOutputByte1, _soundData[state.offset + state.unk21]);
