@@ -2215,16 +2215,16 @@ void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 	if (dim2start && *dim2start == -1) {
-		*dim2start = ah->dim2start;
+		*dim2start = FROM_LE_32(ah->dim2start);
 	}
 	if (dim2end && *dim2end == -1) {
-		*dim2end = ah->dim2end;
+		*dim2end = FROM_LE_32(ah->dim2end);
 	}
 	if (dim1start && *dim1start == -1) {
-		*dim1start = ah->dim1start;
+		*dim1start = FROM_LE_32(ah->dim1start);
 	}
 	if (dim1end && *dim1end == -1) {
-		*dim1end = ah->dim1end;
+		*dim1end = FROM_LE_32(ah->dim1end);
 	}
 }
 
