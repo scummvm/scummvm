@@ -228,14 +228,14 @@ private:
 	int update_writeAdlib(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback12(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setBaseNote(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback14(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setupSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback15(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback16(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback18(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback19(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setupPrimaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_removePrimaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setBaseFreq(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback21(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setupPrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setPriority(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback23(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback24(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -244,17 +244,17 @@ private:
 	int updateCallback27(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback28(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback30(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_removeSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel3(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback34(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_changeExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setAMDepth(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback37(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_changeExtraLevel1(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback38(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback39(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback40(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_removePrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback41(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback42(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback43(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -917,12 +917,12 @@ void AdlibDriver::adjustVolume(OutputState &state) {
 // the trees in the intro (but not the effect where he "booby-traps" the big
 // tree) and turning Kallak to stone. Related functions and variables:
 //
-// updateCallback18()
+// update_setupPrimaryEffect1()
 //    - Initialises unk29, unk30 and unk31
 //    - unk29 is not further modified
-//    - unk30 is not further modified, except by updateCallback19()
+//    - unk30 is not further modified, except by update_removePrimaryEffect1()
 //
-// updateCallback19()
+// update_removePrimaryEffect1()
 //    - Deinitialises unk30
 //
 // unk29 - determines how often the notes are played
@@ -986,7 +986,7 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 // This is presumably only used for some sound effects, e.g. Malcolm entering
 // and leaving Kallak's hut. Related functions and variables:
 //
-// updateCallback21()
+// update_setupPrimaryEffect2()
 //    - Initialises unk32, unk33, unk34, unk35 and unk36
 //    - unk32 is not further modified
 //    - unk33 is not further modified
@@ -1051,7 +1051,7 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 //
 // Related functions and variables:
 //
-// updateCallback14()
+// update_setupSecondaryEffect()
 //    - Initialies unk18, unk19, unk20, unk21, unk22 and offset
 //    - unk19 is not further modified
 //    - unk20 is not further modified
@@ -1219,7 +1219,7 @@ int AdlibDriver::update_setBaseNote(uint8 *&dataptr, OutputState &state, uint8 v
 	return 0;
 }
 
-int AdlibDriver::updateCallback14(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setupSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk18 = value;
 	state.unk19 = value;
 	state.unk20 = state.unk21 = *dataptr++;
@@ -1255,15 +1255,16 @@ int AdlibDriver::updateCallback17(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback18(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk29 = value;
-	state.unk30 = READ_BE_UINT16(dataptr); dataptr += 2;
+	state.unk30 = READ_BE_UINT16(dataptr);
+	dataptr += 2;
 	state.callback1 = &AdlibDriver::stateCallback1_1;
 	state.unk31 = -1;
 	return 0;
 }
 
-int AdlibDriver::updateCallback19(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_removePrimaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
 	state.callback1 = 0;
 	state.unk30 = 0;
@@ -1275,7 +1276,7 @@ int AdlibDriver::update_setBaseFreq(uint8 *&dataptr, OutputState &state, uint8 v
 	return 0;
 }
 
-int AdlibDriver::updateCallback21(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk32 = value;
 	state.unk33 = *dataptr++;
 	uint8 temp = *dataptr++;
@@ -1343,7 +1344,7 @@ int AdlibDriver::update_setTempo(uint8 *&dataptr, OutputState &state, uint8 valu
 	return 0;
 }
 
-int AdlibDriver::updateCallback30(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_removeSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
 	state.callback2 = 0;
 	return 0;
@@ -1357,7 +1358,6 @@ int AdlibDriver::updateCallback31(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::update_setExtraLevel3(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.opExtraLevel3 = value;
 	return 0;
-
 }
 
 int AdlibDriver::update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value) {
@@ -1372,7 +1372,7 @@ int AdlibDriver::update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint
 	return 0;
 }
 
-int AdlibDriver::updateCallback34(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_changeExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value) {
 	int tableBackup = _curTable;
 
 	_curTable = value;
@@ -1406,7 +1406,7 @@ int AdlibDriver::update_setVibratoDepth(uint8 *&dataptr, OutputState &state, uin
 	return 0;
 }
 
-int AdlibDriver::updateCallback37(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_changeExtraLevel1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.opExtraLevel1 += value;
 	adjustVolume(state);
 	return 0;
@@ -1459,7 +1459,7 @@ int AdlibDriver::updateCallback39(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback40(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_removePrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
 	state.callback1 = 0;
 	return 0;
@@ -1838,19 +1838,19 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 12
 	COMMAND(update_setBaseNote),
-	COMMAND(updateCallback14),
+	COMMAND(update_setupSecondaryEffect),
 	COMMAND(updateCallback15),
 	COMMAND(updateCallback16),
 
 	// 16
 	COMMAND(updateCallback17),
-	COMMAND(updateCallback18),
-	COMMAND(updateCallback19),
+	COMMAND(update_setupPrimaryEffect1),
+	COMMAND(update_removePrimaryEffect1),
 	COMMAND(update_setBaseFreq),
 
 	// 20
 	COMMAND(updateCallback9),
-	COMMAND(updateCallback21),
+	COMMAND(update_setupPrimaryEffect2),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
 
@@ -1876,7 +1876,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback28),
 	COMMAND(updateCallback9),
 	COMMAND(update_setTempo),
-	COMMAND(updateCallback30),
+	COMMAND(update_removeSecondaryEffect),
 
 	// 40
 	COMMAND(updateCallback9),
@@ -1886,12 +1886,12 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 44
 	COMMAND(update_setExtraLevel2),
-	COMMAND(updateCallback34),
+	COMMAND(update_changeExtraLevel2),
 	COMMAND(update_setAMDepth),
 	COMMAND(update_setVibratoDepth),
 
 	// 48
-	COMMAND(updateCallback37),
+	COMMAND(update_changeExtraLevel1),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback38),
@@ -1899,7 +1899,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 52
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback39),
-	COMMAND(updateCallback40),
+	COMMAND(update_removePrimaryEffect2),
 	COMMAND(updateCallback9),
 
 	// 56
