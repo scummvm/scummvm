@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/imuse/imuse_sysex.h"
 #include "scumm/imuse/instrument.h"
 #include "scumm/saveload.h"
 #include "sound/mididrv.h"
