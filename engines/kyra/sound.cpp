@@ -250,7 +250,7 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 	_parser->setTrack(0);
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(getBaseTempo());
-	_parser->property(MidiParser::mpAutoLoop, false);
+	_parser->property(MidiParser::mpAutoLoop, true);
 }
 
 void SoundMidiPC::loadSoundEffectFile(const char *file) {
@@ -323,7 +323,7 @@ void SoundMidiPC::onTimer(void *refCon) {
 	if (music->_fadeMusicOut && music->_fadeStartTime + musicFadeTime > music->_engine->_system->getMillis()) {
 		byte volume = (byte)((musicFadeTime - (music->_engine->_system->getMillis() - music->_fadeStartTime)) * 255 / musicFadeTime);
 		music->setVolume(volume);
-	} else if(music->_fadeStartTime) {
+	} else if (music->_fadeStartTime) {
 		music->setVolume(255);
 		music->_fadeStartTime = 0;
 		music->_fadeMusicOut = false;
@@ -359,7 +359,22 @@ void SoundMidiPC::onTimer(void *refCon) {
 void SoundMidiPC::playTrack(uint8 track) {
 	if (_parser) {
 		_isPlaying = true;
+		_fadeMusicOut = false;
+		_fadeStartTime = 0;
+		setVolume(255);
 		_parser->setTrack(track);
+		_parser->jumpToTick(0);
+		_parser->setTempo(1);
+	}
+}
+
+void SoundMidiPC::haltTrack() {
+	if (_parser) {
+		_isPlaying = false;
+		_fadeMusicOut = false;
+		_fadeStartTime = 0;
+		setVolume(255);
+		_parser->setTrack(0);
 		_parser->jumpToTick(0);
 		_parser->setTempo(1);
 	}
@@ -375,7 +390,6 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 }
 
 void SoundMidiPC::beginFadeOut() {
-	// this should be something like fade out...
 	_fadeMusicOut = true;
 	_fadeStartTime = _engine->_system->getMillis();
 }

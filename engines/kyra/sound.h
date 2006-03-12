@@ -130,7 +130,7 @@ public:
 	void loadMusicFile(const char *file);
 	
 	void playTrack(uint8 track);
-	void haltTrack() { _isPlaying = false; }
+	void haltTrack();
 	
 	void playSoundEffect(uint8 track);
 
