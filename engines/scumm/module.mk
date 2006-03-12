@@ -21,6 +21,8 @@ MODULE_OBJS := \
 	imuse/imuse_part.o \
 	imuse/imuse_player.o \
 	imuse/instrument.o \
+	imuse/sysex_samnmax.o \
+	imuse/sysex_scumm.o \
 	input.o \
 	midiparser_eup.o \
 	midiparser_ro.o \
