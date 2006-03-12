@@ -160,8 +160,8 @@ private:
 		uint8 regAx;
 		uint8 regBx;
 		typedef void (AdlibDriver::*Callback)(OutputState&);
-		Callback callback1;
-		Callback callback2;
+		Callback primaryEffect;
+		Callback secondaryEffect;
 		uint8 unk12;
 		uint8 opLevel1;
 		uint8 opLevel2;
@@ -716,10 +716,10 @@ void AdlibDriver::callbackProcess() {
 			}
 		}
 
-		if (table.callback1)
-			(this->*(table.callback1))(table);
-		if (table.callback2)
-			(this->*(table.callback2))(table);
+		if (table.primaryEffect)
+			(this->*(table.primaryEffect))(table);
+		if (table.secondaryEffect)
+			(this->*(table.secondaryEffect))(table);
 	}
 }
 
@@ -764,8 +764,8 @@ void AdlibDriver::initTable(OutputState &table) {
 	table.tempo = -1;
 	table.priority = 0;
 	// normally here are nullfuncs but we set 0 for now
-	table.callback1 = 0;
-	table.callback2 = 0;
+	table.primaryEffect = 0;
+	table.secondaryEffect = 0;
 	table.unk3 = 0x01;
 }
 
@@ -1283,7 +1283,7 @@ int AdlibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, OutputState &stat
 	state.unk20 = state.unk21 = *dataptr++;
 	state.unk22 = *dataptr++;
 	state.offset = READ_LE_UINT16(dataptr); dataptr += 2;
-	state.callback2 = &AdlibDriver::secondaryEffect1;
+	state.secondaryEffect = &AdlibDriver::secondaryEffect1;
 	return 0;
 }
 
@@ -1317,14 +1317,14 @@ int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, OutputState &state,
 	state.unk29 = value;
 	state.unk30 = READ_BE_UINT16(dataptr);
 	dataptr += 2;
-	state.callback1 = &AdlibDriver::primaryEffect1;
+	state.primaryEffect = &AdlibDriver::primaryEffect1;
 	state.unk31 = -1;
 	return 0;
 }
 
 int AdlibDriver::update_removePrimaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	state.callback1 = 0;
+	state.primaryEffect = 0;
 	state.unk30 = 0;
 	return 0;
 }
@@ -1341,7 +1341,7 @@ int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, OutputState &state,
 	state.unk34 = temp + 1;
 	state.unk35 = temp << 1;
 	state.unk36 = *dataptr++;
-	state.callback1 = &AdlibDriver::primaryEffect2;
+	state.primaryEffect = &AdlibDriver::primaryEffect2;
 	return 0;
 }
 
@@ -1404,7 +1404,7 @@ int AdlibDriver::update_setTempo(uint8 *&dataptr, OutputState &state, uint8 valu
 
 int AdlibDriver::update_removeSecondaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	state.callback2 = 0;
+	state.secondaryEffect = 0;
 	return 0;
 }
 
@@ -1519,7 +1519,7 @@ int AdlibDriver::updateCallback39(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::update_removePrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	state.callback1 = 0;
+	state.primaryEffect = 0;
 	return 0;
 }
 
