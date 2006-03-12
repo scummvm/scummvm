@@ -46,9 +46,21 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
-		memset(buffer, 0, sizeof(int16)*numSamples);
+		int samplesLeft = numSamples;
+		memset(buffer, 0, sizeof(int16) * numSamples);
 		lock();
-		YM3812UpdateOne(_adlib, buffer, numSamples);
+		while (samplesLeft) {
+			if (!_samplesTillCallback) {
+				callback();
+				_samplesTillCallback = _samplesPerCallback;
+			}
+
+			int32 render = MIN(samplesLeft, _samplesTillCallback);
+			samplesLeft -= render;
+			_samplesTillCallback -= render;
+			YM3812UpdateOne(_adlib, buffer, render);
+			buffer += render;
+		}
 		unlock();
 		return numSamples;
 	}
@@ -299,6 +311,9 @@ private:
 	// _unkTable2_2[]  - One of the tables in _unkTable2[]
 	// _unkTable2_3[]  - One of the tables in _unkTable2[]
 
+	int32 _samplesPerCallback;
+	int32 _samplesTillCallback;
+
 	int _lastProcessed;
 	int8 _flagTrigger;
 	int _curTable;
@@ -360,11 +375,6 @@ private:
 	void unlock() { _mutex.unlock(); }
 };
 
-void AdlibTimerCall(void *refCon) {
-	AdlibDriver *driver = (AdlibDriver*)refCon;
-	driver->callback();
-}
-
 AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_mixer = mixer;
 
@@ -393,11 +403,12 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_mixer->setupPremix(this);
 
-	Common::g_timer->installTimerProc(&AdlibTimerCall, 13888, this);
+	// FIXME: Handle the rounding error?
+	_samplesPerCallback = getRate() / 72;
+	_samplesTillCallback = 0;
 }
 
 AdlibDriver::~AdlibDriver() {
-	Common::g_timer->removeTimerProc(&AdlibTimerCall);
 	_mixer->setupPremix(0);
 	OPLDestroy(_adlib);
 	_adlib = 0;
