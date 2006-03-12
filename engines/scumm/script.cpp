@@ -516,16 +516,6 @@ int ScummEngine::fetchScriptDWordSigned() {
 int ScummEngine::readVar(uint var) {
 	int a;
 
-	// Putt Zoo
- 	if (var == 450)
- 		printf("Found HolyMoley\n");
- 
- 	if (_game.features & GF_16BIT_COLOR && var == 89) {
- 		error("Reading the video color depth");
- 	}
- 
- 
- 
 	debugC(DEBUG_VARS, "readvar(%d)", var);
 
 	if ((var & 0x2000) && (_game.version <= 5)) {
@@ -607,47 +597,6 @@ int ScummEngine::readVar(uint var) {
 
 void ScummEngine::writeVar(uint var, int value) {
 	debugC(DEBUG_VARS, "writeVar(%d, %d)", var, value);
-
-	// Used as mini game loads in spyfox2
-	if (_game.heversion >= 99 && var == 126) {
-		warning("Video method was set to %d", value);
-	}
-
-	// Used when chase loads level
-	if (_game.heversion >= 90 && var == 121) {
-		warning("Resource unknown set to %d", value);
-	}
-
-
-
-
-	if (_game.heversion >= 72 && var == 40 && value != 0) {
-		printf("Set script VAR40 to %d\n", value);
-	}
-
-	if (_game.heversion >= 80 && var == 90 && value != 0) {
-		printf("Set msg VAR90 to %s\n", getStringAddress(90));
-	}
-
-	if (_game.heversion >= 80 && var == 93) {
-		error("Set the default background color to %d", value);
-	}
-
-	if (_game.heversion >= 80 && var == 94) {
-		error("Set the default actor color to %d", value);
-	}
-
-	if (_game.heversion >= 80 && var == 87) {
-		error("Sound Script was set to %d", value);
-	}
-
-	if (_game.heversion >= 100 && var == 138) {
-		error("Main Script 2 was set to %d", value);
-	}
-
-	if (_game.heversion >= 100 && var == 139) {
-		error("Sprite bit was set to %d", value);
-	}
 
 	if (!(var & 0xF000)) {
 		checkRange(_numVariables - 1, 0, var, "Variable %d out of range(w)");

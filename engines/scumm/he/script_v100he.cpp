@@ -2640,11 +2640,9 @@ void ScummEngine_v100he::o100_getSpriteInfo() {
 
 	byte subOp = fetchScriptByte();
 
-	printf("o100_getSpriteInfo: subOp %d\n", subOp);
 	switch (subOp) {
 	case 3:
 		spriteId = pop();
-		printf("spriteId is %d\n", spriteId);
 		if (spriteId)
 			push(_sprite->getSpriteFlagAutoAnim(spriteId));
 		else

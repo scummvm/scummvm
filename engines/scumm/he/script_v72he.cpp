@@ -621,8 +621,6 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = resStrLen(string) + 1;
 	}
 
-	printf("String %s\n", string);
-
 	// Decode string
 	num = 0;
 	val = 0;
