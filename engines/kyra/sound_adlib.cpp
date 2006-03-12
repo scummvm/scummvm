@@ -707,6 +707,7 @@ void AdlibDriver::callbackProcess() {
 							break;
 						continue;
 					} else {
+						debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", command & 0xFF, (command >> 8) & 0xFF, _curTable);
 						opcode = 0;
 						setupNote(command & 0xFF, table);
 						noteOn(table);
