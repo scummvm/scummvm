@@ -108,9 +108,8 @@ private:
 	//
 	// unk3  - Unknown. Used for turning off some notes.
 	// unk4  - Unknown. Related to sound timing?
-	// unk5  - Unknown. Used for turning off some notes.
 	// unk7  - Unknown. Used for turning off some notes.
-	// unk11 - Unknown. Used for updating unk5.
+	// unk11 - Unknown. Used for updating random durations.
 	// unk12 - Unknown. Used for updating unk7.
 	// unk16 - Sound-related. Possibly some sort of pitch bend.
 	// unk18 - Sound-effect. Used for secondaryEffect1()
@@ -135,7 +134,7 @@ private:
 	struct OutputState {
 		uint8 opExtraLevel2;
 		uint8 *dataptr;
-		uint8 unk5;
+		uint8 duration;
 		uint8 repeatCounter;
 		int8 baseOctave;
 		uint8 priority;
@@ -157,7 +156,7 @@ private:
 		uint8 unk7;
 		uint8 baseFreq;
 		int8 tempo;
-		int8 unk4;
+		int8 position;
 		uint8 regAx;
 		uint8 regBx;
 		typedef void (AdlibDriver::*Callback)(OutputState&);
@@ -617,8 +616,8 @@ void AdlibDriver::callbackOutput() {
 			table.priority = priority;
 			table.dataptr = ptr;
 			table.tempo = -1;
-			table.unk4 = -1;
-			table.unk5 = 1;
+			table.position = -1;
+			table.duration = 1;
 			if (index != 9) {
 				unkOutput2(index);
 			}
@@ -631,23 +630,24 @@ void AdlibDriver::callbackOutput() {
 
 // A few words on opcode parsing and timing:
 //
-// We have a timer callback that is called every 13888 us.
+// First of all, We simulate a timer callback 72 times per second. Each timeout
+// we update each channel that has something to play.
 //
-// Each channel appears to have its own individual tempo, unk1, which is added
-// to unk4. If this causes unk4 to wrap around to negative, something happens.
+// Each channel has its own individual tempo, which is added to its position.
+// This will frequently cause the position to "wrap around" but that is
+// intentional. In fact, it's the signal to go ahead and do more stuff with
+// that channel.
 //
-// When "something happens", unk5 is decreased. If unk5 is still non-zero,
-// nothing much happens. Notes may be turned off depending on unk3 and unk7,
-// but other than that no new commands are issued.
-//
-// If unk5 reaches zero, a new set of music opcodes are executed. In effect,
-// unk5 is the duration of the channel's most recent opcode. Either a note or
-// a pause, presumably.
+// Each channel also has a duration, indicating how much time is left on the
+// its current task. This duration is decreased by one. As long as it still has
+// not reached zero, the only thing that can happen is that depending on unk3
+// and unk7 the current note may be stopped. Once the duration reaches zero, a
+// new set of musical opcodes are executed.
 //
 // An opcode is one byte, followed by a variable number of parameters. Since
 // most opcodes have at least one one-byte parameter, we read that as well. Any
-// opcode that doesn't have that one parameter is responsible for backing the
-// data pointer.
+// opcode that doesn't have that one parameter is responsible for moving the
+// data pointer back again.
 //
 // If the most significant bit of the opcode is 1, it's a function; call it. If
 // it returns something greater than zero, it's the last opcode in the current
@@ -663,26 +663,6 @@ void AdlibDriver::callbackOutput() {
 // Finally, most of the times that the callback is called, it will invoke the
 // effects callbacks. The final opcode in a set can prevent this, if it's a
 // function and it returns anything other than 1.
-//
-// To summarize:
-//
-// unk1 is the channel tempo, assisted by unk4
-// unk5 is the duration of the last opcode (probably a note) of a set
-// unk3 and unk7 can turn off notes prematurely; to implement staccatto?
-//
-// Some possible sources of tempo bugs:
-//
-// The timer has a 10 ms resolution. Over time it will be pretty accurate, but
-// individual calls may be a bit off. The only notes that are this short are
-// the ones played by the effects callbacks, so it shouldn't matter much.
-//
-// Adding unk1 to a negative unk4 does not necessarily take it out of the
-// negative range, so it may trigger twice in a row. Again, this shouldn't
-// matter much.
-//
-// The unk5 variable (duration) may be incorrectly set.
-//
-// An opcode function may be returning the wrong value.
 
 void AdlibDriver::callbackProcess() {
 	for (_curTable = 9; _curTable >= 0; --_curTable) {
@@ -697,13 +677,13 @@ void AdlibDriver::callbackProcess() {
 			table.tempo = _tempo;
 		}
 
-		int8 backup = table.unk4;
-		table.unk4 += table.tempo;
-		if (table.unk4 < backup) {
-			if (--table.unk5) {
-				if (table.unk5 == table.unk7)
+		int8 backup = table.position;
+		table.position += table.tempo;
+		if (table.position < backup) {
+			if (--table.duration) {
+				if (table.duration == table.unk7)
 					noteOff(table);
-				if (table.unk5 == table.unk3 && _curTable != 9)
+				if (table.duration == table.unk3 && _curTable != 9)
 					noteOff(table);
 			} else {
 				int8 opcode = 0;
@@ -852,13 +832,13 @@ void AdlibDriver::setupDuration(uint8 duration, OutputState &state) {
 	debugC(9, kDebugLevelSound, "setupDuration(%d, %d)", duration, &state - _outputTables);
 	_continueFlag = duration;
 	if (state.unk11) {
-		state.unk5 = duration + (getRandomNr() & state.unk11);
+		state.duration = duration + (getRandomNr() & state.unk11);
 		return;
 	}
 	if (state.unk12) {
 		state.unk7 = (duration >> 3) * state.unk12;
 	}
-	state.unk5 = duration;
+	state.duration = duration;
 }
 
 // This function may or may not play the note. It's usually followed by a call
@@ -1228,8 +1208,8 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 valu
 		state2.priority = priority;
 		state2.dataptr = ptr;
 		state2.tempo = -1;
-		state2.unk4 = -1;
-		state2.unk5 = 1;
+		state2.position = -1;
+		state2.duration = 1;
 		unkOutput2(table);
 	}
 	return 0;
@@ -1309,7 +1289,7 @@ int AdlibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, OutputState &stat
 
 int AdlibDriver::updateCallback15(uint8 *&dataptr, OutputState &state, uint8 value) {
 	OutputState &state2 = _outputTables[value];
-	state2.unk5 = 0;
+	state2.duration = 0;
 	state2.priority = 0;
 	state2.dataptr = 0;
 	return 0;
@@ -1391,7 +1371,7 @@ int AdlibDriver::updateCallback24(uint8 *&dataptr, OutputState &state, uint8 val
 	}
 
 	dataptr -= 2;
-	state.unk5 = 1;
+	state.duration = 1;
 	return 2;
 }
 
@@ -1495,7 +1475,7 @@ int AdlibDriver::updateCallback38(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_curTable = value;
 	OutputState &state2 = _outputTables[value];
-	state2.unk5 = state2.priority = 0;
+	state2.duration = state2.priority = 0;
 	state2.dataptr = 0;
 	state2.opExtraLevel2 = 0;
 
