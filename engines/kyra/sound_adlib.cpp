@@ -35,7 +35,6 @@
 //   - check how the sounds are stopped (doesn't work atm whyever)
 //   - implement music pausing + stop and fadeing
 //   - check why the sfx sounds strange sometimes
-//   - implement stateCallback1_1
 
 // Basic Adlib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp
@@ -104,24 +103,24 @@ private:
 	// unk11 - Unknown. Used for updating unk5.
 	// unk12 - Unknown. Used for updating unk7.
 	// unk16 - Sound-related. Possibly some sort of pitch bend.
-	// unk18 - Sound-effect. Used for stateCallback2_1()
-	// unk19 - Sound-effect. Used for stateCallback2_1()
-	// unk20 - Sound-effect. Used for stateCallback2_1()
-	// unk21 - Sound-effect. Used for stateCallback2_1()
-	// unk22 - Sound-effect. Used for stateCallback2_1()
-	// unk29 - Sound-effect. Used for stateCallback1_1()
-	// unk30 - Sound-effect. Used for stateCallback1_1()
-	// unk31 - Sound-effect. Used for stateCallback1_1()
-	// unk32 - Sound-effect. Used for stateCallback1_2()
-	// unk33 - Sound-effect. Used for stateCallback1_2()
-	// unk34 - Sound-effect. Used for stateCallback1_2()
-	// unk35 - Sound-effect. Used for stateCallback1_2()
-	// unk36 - Sound-effect. Used for stateCallback1_2()
-	// unk37 - Sound-effect. Used for stateCallback1_2()
-	// unk38 - Sound-effect. Used for stateCallback1_2()
+	// unk18 - Sound-effect. Used for secondaryEffect1()
+	// unk19 - Sound-effect. Used for secondaryEffect1()
+	// unk20 - Sound-effect. Used for secondaryEffect1()
+	// unk21 - Sound-effect. Used for secondaryEffect1()
+	// unk22 - Sound-effect. Used for secondaryEffect1()
+	// unk29 - Sound-effect. Used for primaryEffect1()
+	// unk30 - Sound-effect. Used for primaryEffect1()
+	// unk31 - Sound-effect. Used for primaryEffect1()
+	// unk32 - Sound-effect. Used for primaryEffect2()
+	// unk33 - Sound-effect. Used for primaryEffect2()
+	// unk34 - Sound-effect. Used for primaryEffect2()
+	// unk35 - Sound-effect. Used for primaryEffect2()
+	// unk36 - Sound-effect. Used for primaryEffect2()
+	// unk37 - Sound-effect. Used for primaryEffect2()
+	// unk38 - Sound-effect. Used for primaryEffect2()
 	// unk39 - Currently unused, except for updateCallback56()
 	// unk40 - Currently unused, except for updateCallback56()
-	// unk41 - Sound-effect. Used for stateCallback1_2()
+	// unk41 - Sound-effect. Used for primaryEffect2()
 
 	struct OutputState {
 		uint8 opExtraLevel2;
@@ -174,9 +173,9 @@ private:
 		int8 unk16;
 	};
 
-	void stateCallback1_1(OutputState &state);
-	void stateCallback1_2(OutputState &state);
-	void stateCallback2_1(OutputState& state);
+	void primaryEffect1(OutputState &state);
+	void primaryEffect2(OutputState &state);
+	void secondaryEffect1(OutputState& state);
 
 	void resetAdlibState();
 	void writeOPL(byte reg, byte val);
@@ -185,11 +184,11 @@ private:
 	void unkOutput2(uint8 num);
 
 	uint16 getRandomNr();
-	void update1(uint8 unk1, OutputState &state);
+	void setupDuration(uint8 duration, OutputState &state);
 
-	void updateAndOutput1(uint8 rawNote, OutputState &state, bool flag = false);
-	void setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &state);
-	void updateAndOutput3(OutputState &state);
+	void setupNote(uint8 rawNote, OutputState &state, bool flag = false);
+	void setupInstrument(uint8 regOffset, uint8 *dataptr, OutputState &state);
+	void noteOn(OutputState &state);
 
 	void adjustVolume(OutputState &state);
 
@@ -224,11 +223,11 @@ private:
 	int update_returnFromSubroutine(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setBaseOctave(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback9(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback10(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_playRest(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_writeAdlib(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback12(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setBaseNote(uint8 *&dataptr, OutputState &state, uint8 value);
-	int update_setupSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setupSecondaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback15(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback16(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -241,10 +240,10 @@ private:
 	int updateCallback24(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel1(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback26(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback27(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_playNote(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback28(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
-	int update_removeSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_removeSecondaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel3(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -709,9 +708,9 @@ void AdlibDriver::callbackProcess() {
 						continue;
 					} else {
 						opcode = 0;
-						updateAndOutput1(command & 0xFF, table);
-						updateAndOutput3(table);
-						update1((command & 0xFF00) >> 8, table);
+						setupNote(command & 0xFF, table);
+						noteOn(table);
+						setupDuration((command & 0xFF00) >> 8, table);
 						if (!_continueFlag)
 							continue;
 						break;
@@ -834,21 +833,24 @@ uint16 AdlibDriver::getRandomNr() {
 	return _rnd;
 }
 
-void AdlibDriver::update1(uint8 unk1, OutputState &state) {
-	debugC(9, kDebugLevelSound, "update1(%d, %d)", unk1, &state - _outputTables);
-	_continueFlag = unk1;
+void AdlibDriver::setupDuration(uint8 duration, OutputState &state) {
+	debugC(9, kDebugLevelSound, "setupDuration(%d, %d)", duration, &state - _outputTables);
+	_continueFlag = duration;
 	if (state.unk11) {
-		state.unk5 = unk1 + (getRandomNr() & state.unk11 & 0xFF);
+		state.unk5 = duration + (getRandomNr() & state.unk11 & 0xFF);
 		return;
 	}
 	if (state.unk12) {
-		state.unk7 = (unk1 >> 3) * state.unk12;
+		state.unk7 = (duration >> 3) * state.unk12;
 	}
-	state.unk5 = unk1;
+	state.unk5 = duration;
 }
 
-void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state, bool flag) {
-	debugC(9, kDebugLevelSound, "updateAndOutput1(%d, %d)", rawNote, &state - _outputTables);
+// This function may or may not play the note. It's usually followed by a call
+// to noteOn(), which will always play the current note.
+
+void AdlibDriver::setupNote(uint8 rawNote, OutputState &state, bool flag) {
+	debugC(9, kDebugLevelSound, "setupNote(%d, %d)", rawNote, &state - _outputTables);
 
 	state.rawNote = rawNote;
 
@@ -901,8 +903,8 @@ void AdlibDriver::updateAndOutput1(uint8 rawNote, OutputState &state, bool flag)
 	writeOPL(0xB0 + _curTable, state.regBx);
 }
 
-void AdlibDriver::setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &state) {
-	debugC(9, kDebugLevelSound, "setInstrument(%d, %p, %d)", regOffset, (const void *)dataptr, &state - _outputTables);
+void AdlibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, OutputState &state) {
+	debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %d)", regOffset, (const void *)dataptr, &state - _outputTables);
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
 	// Keyboard Scaling Rate / Modulator Frequency Multiple
 	writeOPL(0x20 + regOffset, *dataptr++);
@@ -945,8 +947,11 @@ void AdlibDriver::setInstrument(uint8 regOffset, uint8 *dataptr, OutputState &st
 	writeOPL(0x83 + regOffset, *dataptr++);
 }
 
-void AdlibDriver::updateAndOutput3(OutputState &state) {
-	debugC(9, kDebugLevelSound, "updateAndOutput3(%d)", &state - _outputTables);
+// Apart from playing the note, this function also updates the variables for
+// primary effect 2.
+
+void AdlibDriver::noteOn(OutputState &state) {
+	debugC(9, kDebugLevelSound, "noteOn(%d)", &state - _outputTables);
 
 	// The "note on" bit is set, and the current note is played.
 
@@ -984,8 +989,8 @@ void AdlibDriver::adjustVolume(OutputState &state) {
 // unk30 - modifies the frequency
 // unk31 - determines how often the notes are played
 
-void AdlibDriver::stateCallback1_1(OutputState &state) {
-	debugC(9, kDebugLevelSound, "Calling stateCallback1_1 (channel: %d)", _curTable);
+void AdlibDriver::primaryEffect1(OutputState &state) {
+	debugC(9, kDebugLevelSound, "Calling primaryEffect1 (channel: %d)", _curTable);
 	state.unk31 += state.unk29;
 	if (state.unk31 >= 0)
 		return;
@@ -1049,7 +1054,7 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 //    - unk35 is based on unk34 and not further modified
 //    - unk36 is not further modified
 //
-// updateAndOutput3()
+// noteOn()
 //    - Plays the current note
 //    - Updates unk37 with a new (lower?) frequency
 //    - Copies unk36 to unk38. The unk38 variable is a countdown.
@@ -1066,8 +1071,8 @@ void AdlibDriver::stateCallback1_1(OutputState &state) {
 // Note that unk41 is never initialised. Not that it should matter much, but it
 // is a bit sloppy.
 
-void AdlibDriver::stateCallback1_2(OutputState &state) {
-	debugC(9, kDebugLevelSound, "Calling stateCallback1_2 (channel: %d)", _curTable);
+void AdlibDriver::primaryEffect2(OutputState &state) {
+	debugC(9, kDebugLevelSound, "Calling primaryEffect2 (channel: %d)", _curTable);
 	if (state.unk38) {
 		--state.unk38;
 		return;
@@ -1106,7 +1111,7 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 //
 // Related functions and variables:
 //
-// update_setupSecondaryEffect()
+// update_setupSecondaryEffect1()
 //    - Initialies unk18, unk19, unk20, unk21, unk22 and offset
 //    - unk19 is not further modified
 //    - unk20 is not further modified
@@ -1120,8 +1125,8 @@ void AdlibDriver::stateCallback1_2(OutputState &state) {
 // unk22 -  the operation to perform
 // offset - the offset to the data chunk
 
-void AdlibDriver::stateCallback2_1(OutputState &state) {
-	debugC(9, kDebugLevelSound, "Calling stateCallback2_1 (channel: %d)", _curTable);
+void AdlibDriver::secondaryEffect1(OutputState &state) {
+	debugC(9, kDebugLevelSound, "Calling secondaryEffect1 (channel: %d)", _curTable);
 	state.unk18 += state.unk19;
 	if (state.unk18 < 0) {
 		if (--state.unk21 < 0) {
@@ -1251,8 +1256,8 @@ int AdlibDriver::updateCallback9(uint8 *&dataptr, OutputState &state, uint8 valu
 	return 2;
 }
 
-int AdlibDriver::updateCallback10(uint8 *&dataptr, OutputState &state, uint8 value) {
-	update1(value, state);
+int AdlibDriver::update_playRest(uint8 *&dataptr, OutputState &state, uint8 value) {
+	setupDuration(value, state);
 	noteOff(state);
 	return (_continueFlag != 0);
 }
@@ -1263,9 +1268,9 @@ int AdlibDriver::update_writeAdlib(uint8 *&dataptr, OutputState &state, uint8 va
 }
 
 int AdlibDriver::updateCallback12(uint8 *&dataptr, OutputState &state, uint8 value) {
-	updateAndOutput1(value, state);
+	setupNote(value, state);
 	value = *dataptr++;
-	update1(value, state);
+	setupDuration(value, state);
 	return (_continueFlag != 0);
 }
 
@@ -1274,13 +1279,13 @@ int AdlibDriver::update_setBaseNote(uint8 *&dataptr, OutputState &state, uint8 v
 	return 0;
 }
 
-int AdlibDriver::update_setupSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk18 = value;
 	state.unk19 = value;
 	state.unk20 = state.unk21 = *dataptr++;
 	state.unk22 = *dataptr++;
 	state.offset = READ_LE_UINT16(dataptr); dataptr += 2;
-	state.callback2 = &AdlibDriver::stateCallback2_1;
+	state.callback2 = &AdlibDriver::secondaryEffect1;
 	return 0;
 }
 
@@ -1306,7 +1311,7 @@ int AdlibDriver::updateCallback16(uint8 *&dataptr, OutputState &state, uint8 val
 int AdlibDriver::updateCallback17(uint8 *&dataptr, OutputState &state, uint8 value) {
 	uint8 *ptr = _soundData;
 	ptr += READ_LE_UINT16(_soundData + (value << 1) + 0x1F4);
-	setInstrument(_curRegOffset, ptr, state);
+	setupInstrument(_curRegOffset, ptr, state);
 	return 0;
 }
 
@@ -1314,7 +1319,7 @@ int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, OutputState &state,
 	state.unk29 = value;
 	state.unk30 = READ_BE_UINT16(dataptr);
 	dataptr += 2;
-	state.callback1 = &AdlibDriver::stateCallback1_1;
+	state.callback1 = &AdlibDriver::primaryEffect1;
 	state.unk31 = -1;
 	return 0;
 }
@@ -1338,7 +1343,7 @@ int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, OutputState &state,
 	state.unk34 = temp + 1;
 	state.unk35 = temp << 1;
 	state.unk36 = *dataptr++;
-	state.callback1 = &AdlibDriver::stateCallback1_2;
+	state.callback1 = &AdlibDriver::primaryEffect2;
 	return 0;
 }
 
@@ -1379,13 +1384,13 @@ int AdlibDriver::update_setExtraLevel1(uint8 *&dataptr, OutputState &state, uint
 }
 
 int AdlibDriver::updateCallback26(uint8 *&dataptr, OutputState &state, uint8 value) {
-	update1(value, state);
+	setupDuration(value, state);
 	return (_continueFlag != 0);
 }
 
-int AdlibDriver::updateCallback27(uint8 *&dataptr, OutputState &state, uint8 value) {
-	update1(value, state);
-	updateAndOutput3(state);
+int AdlibDriver::update_playNote(uint8 *&dataptr, OutputState &state, uint8 value) {
+	setupDuration(value, state);
+	noteOn(state);
 	return (_continueFlag != 0);
 }
 
@@ -1399,7 +1404,7 @@ int AdlibDriver::update_setTempo(uint8 *&dataptr, OutputState &state, uint8 valu
 	return 0;
 }
 
-int AdlibDriver::update_removeSecondaryEffect(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_removeSecondaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
 	state.callback2 = 0;
 	return 0;
@@ -1522,7 +1527,7 @@ int AdlibDriver::update_removePrimaryEffect2(uint8 *&dataptr, OutputState &state
 
 int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 value) {
 	state.unk16 = value;
-	updateAndOutput1(state.rawNote, state, true);
+	setupNote(state.rawNote, state, true);
 	return 0;
 }
 
@@ -1583,7 +1588,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 	_curRegOffset = _outputTable[6];
 
 	_unkValue6 = *(ptr + 6);
-	setInstrument(_curRegOffset, ptr, state);
+	setupInstrument(_curRegOffset, ptr, state);
 
 	entry = *dataptr++ << 1;
 	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
@@ -1593,7 +1598,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_unkValue7 = entry = *(ptr + 5);
 	_unkValue8 = entry = *(ptr + 6);
-	setInstrument(_curRegOffset, ptr, state);
+	setupInstrument(_curRegOffset, ptr, state);
 
 	entry = *dataptr++ << 1;
 	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
@@ -1603,7 +1608,7 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, OutputState &state, uint8 val
 
 	_unkValue9 = entry = *(ptr + 5);
 	_unkValue10 = entry = *(ptr + 6);
-	setInstrument(_curRegOffset, ptr, state);
+	setupInstrument(_curRegOffset, ptr, state);
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
@@ -1887,13 +1892,13 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 8
 	COMMAND(updateCallback9),
-	COMMAND(updateCallback10),
+	COMMAND(update_playRest),
 	COMMAND(update_writeAdlib),
 	COMMAND(updateCallback12),
 
 	// 12
 	COMMAND(update_setBaseNote),
-	COMMAND(update_setupSecondaryEffect),
+	COMMAND(update_setupSecondaryEffect1),
 	COMMAND(updateCallback15),
 	COMMAND(updateCallback16),
 
@@ -1923,7 +1928,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 32
 	COMMAND(updateCallback26),
-	COMMAND(updateCallback27),
+	COMMAND(update_playNote),
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback9),
 
@@ -1931,7 +1936,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback28),
 	COMMAND(updateCallback9),
 	COMMAND(update_setTempo),
-	COMMAND(update_removeSecondaryEffect),
+	COMMAND(update_removeSecondaryEffect1),
 
 	// 40
 	COMMAND(updateCallback9),
