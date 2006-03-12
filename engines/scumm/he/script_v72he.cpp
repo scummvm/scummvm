@@ -621,6 +621,8 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		len = resStrLen(string) + 1;
 	}
 
+	printf("String %s\n", string);
+
 	// Decode string
 	num = 0;
 	val = 0;
@@ -1423,6 +1425,8 @@ void ScummEngine_v72he::o72_findObject() {
 	int y = pop();
 	int x = pop();
 	int r = findObject(x, y, 0, 0);
+
+	printf("o72_findObject: result is %d\n", r);
 	push(r);
 }
 

@@ -46,6 +46,11 @@
 namespace Scumm {
 
 void Sound::stopSoundChannel(int chan) {
+	if (_heChannel[chan].sound == 1) {
+		_vm->_haveMsg = 3;
+		_vm->_talkDelay = 0;
+	}
+
 	_vm->_mixer->stopHandle(_heSoundChannels[chan]);
 
 	_heChannel[chan].sound = 0;
@@ -92,7 +97,7 @@ int Sound::isSoundCodeUsed(int sound) {
 			chan = i;
 	}
 
-	if (chan != -1) {
+	if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
 		return _heChannel[chan].sbngBlock;
 	} else {
 		return 0;
@@ -106,7 +111,7 @@ int Sound::getSoundPos(int sound) {
 			chan = i;
 	}
 
-	if (chan != -1) {
+	if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
 		int time =  _vm->getHETimer(chan + 4) * 11025 / 1000;
 		return time;
 	} else {
@@ -127,7 +132,7 @@ int Sound::getSoundVar(int sound, int var) {
 			chan = i;
 	}
 
-	if (chan != -1) {
+	if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
 		debug(5, "getSoundVar: sound %d var %d result %d", sound, var, _heChannel[chan].soundVars[var]);
 		return _heChannel[chan].soundVars[var];
 	} else {

@@ -856,6 +856,12 @@ void Sound::stopSound(int sound) {
 			_soundQue2[i].flags = 0;
 		}
 	}
+
+	if (_vm->_game.heversion >= 70 && sound == 1) {
+		_vm->_haveMsg = 3;
+		_vm->_talkDelay = 0;
+	}
+
 }
 
 void Sound::stopAllSounds() {

@@ -411,6 +411,11 @@ void ScummEngine::CHARSET_1() {
 	}
 #endif
 
+	if (_game.heversion >= 70 && _haveMsg == 3) {
+		stopTalk();
+		return;
+	}
+
 	if (!_haveMsg)
 		return;
 

@@ -929,6 +929,7 @@ public:
 	int _sentenceNum;
 	SentenceTab _sentence[NUM_SENTENCE];
 	StringTab _string[6];
+	byte _haveMsg;
 	int16 _talkDelay;
 	int _NES_lastTalkingActor;
 	int _NES_talkColor;
@@ -1153,7 +1154,6 @@ protected:
 	byte *_palManipPalette;
 	byte *_palManipIntermediatePal;
 
-	byte _haveMsg;
 	bool _haveActorSpeechMsg;
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
