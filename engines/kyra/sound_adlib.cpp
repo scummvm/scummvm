@@ -617,6 +617,61 @@ void AdlibDriver::callbackOutput() {
 	}
 }
 
+// A few words on opcode parsing and timing:
+//
+// We have a timer callback that is called every 13888 us.
+//
+// Each channel appears to have its own individual tempo, unk1, which is added
+// to unk4. If this causes unk4 to wrap around to negative, something happens.
+//
+// When "something happens", unk5 is decreased. If unk5 is still non-zero,
+// nothing much happens. Notes may be turned off depending on unk3 and unk7,
+// but other than that no new commands are issued.
+//
+// If unk5 reaches zero, a new set of music opcodes are executed. In effect,
+// unk5 is the duration of the channel's most recent opcode. Either a note or
+// a pause, presumably.
+//
+// An opcode is one byte, followed by a variable number of parameters. Since
+// most opcodes have at least one one-byte parameter, we read that as well. Any
+// opcode that doesn't have that one parameter is responsible for backing the
+// data pointer.
+//
+// If the most significant bit of the opcode is 1, it's a function; call it. If
+// it returns something greater than zero, it's the last opcode in the current
+// set of opcodes. An opcode can also make itself the last one by setting the
+// data pointer to NULL.
+//
+// If the most significant bit of the opcode is 0, it's a note, and the first
+// parameter is its duration. (There are cases where the duration is modified
+// but that's an exception.) This duration is also assigned to _continueFlag,
+// which affects the return value from several of the opcode functions. If the
+// duration is non-zero, it's the last opcode in the current set of opcodes.
+//
+// Finally, most of the times that the callback is called, it will invoke the
+// effects callbacks. The final opcode in a set can prevent this, if it's a
+// function and it returns anything other than 1.
+//
+// To summarize:
+//
+// unk1 is the channel tempo, assisted by unk4
+// unk5 is the duration of the last opcode (probably a note) of a set
+// unk3 and unk7 can turn off notes prematurely; to implement staccatto?
+//
+// Some possible sources of tempo bugs:
+//
+// The timer has a 10 ms resolution. Over time it will be pretty accurate, but
+// individual calls may be a bit off. The only notes that are this short are
+// the ones played by the effects callbacks, so it shouldn't matter much.
+//
+// Adding unk1 to a negative unk4 does not necessarily take it out of the
+// negative range, so it may trigger twice in a row. Again, this shouldn't
+// matter much.
+//
+// The unk5 variable (duration) may be incorrectly set.
+//
+// An opcode function may be returning the wrong value.
+
 void AdlibDriver::callbackProcess() {
 	for (_curTable = 9; _curTable >= 0; --_curTable) {
 		if (!_outputTables[_curTable].dataptr) {
