@@ -1607,12 +1607,19 @@ void ScummEngine_v99he::scummInit() {
 	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
 	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
 
+	byte basename[256];
+	char buf1[128];
+
+	strcpy((char *)basename, _baseName.c_str());
+	if (_substResFileName.almostGameID != 0) {
+		generateSubstResFileName((char *)basename, buf1, sizeof(buf1));
+		strcpy((char *)basename, buf1);
+	}
+
 	// Array 129 is set to base name
-	// FIXME: Of course, we probably would want to insert the value
-	// *after* applying the filename substitution here... ?
-	int len = _baseName.size() + 1;
+	int len = resStrLen(basename);
 	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
-	memcpy(ah->data, _baseName.c_str(), len);
+	memcpy(ah->data, basename, len);
 
 }
 #endif
