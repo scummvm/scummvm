@@ -154,6 +154,16 @@ struct CommandQueue {
 //////////////////////////////////////////////////
 
 class Player : public MidiDriver {
+/*
+ * External SysEx handler functions shall each be defined in
+ * a separate file. This header file shall be included at the
+ * top of the file immediately following this special #define:
+ * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
+ */
+#ifdef SYSEX_CALLBACK_FUNCTION
+	friend void SYSEX_CALLBACK_FUNCTION (Player *, const byte *, uint16);
+#endif
+
 protected:
 	// Moved from IMuseInternal.
 	// This is only used by one player at a time.
@@ -367,6 +377,16 @@ class IMuseInternal : public IMuse {
 	friend class Player;
 	friend struct Part;
 
+/*
+ * External SysEx handler functions shall each be defined in
+ * a separate file. This header file shall be included at the
+ * top of the file immediately following this special #define:
+ * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
+ */
+#ifdef SYSEX_CALLBACK_FUNCTION
+	friend void SYSEX_CALLBACK_FUNCTION (Player *, const byte *, uint16);
+#endif
+
 protected:
 	bool _native_mt32;
 	bool _enable_gs;
@@ -378,6 +398,12 @@ protected:
 
 	uint32 _game_id;
 	byte **_base_sounds;
+
+	// Plug-in SysEx handling. Right now this only supports one
+	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
+	// manufacturer code. TODO: Expand this to support multiple
+	// SysEx handlers for client-specified manufacturer codes.
+	sysexfunc _sysex;
 
 	OSystem *_system;
 	Common::Mutex _mutex;
@@ -488,6 +514,7 @@ public:
 	int32 doCommand (int numargs, int args[]);
 	void setBase(byte **base);
 	uint32 property(int prop, uint32 value);
+	virtual void addSysexHandler (byte mfgID, sysexfunc handler);
 
 public:
 	// MusicEngine interface

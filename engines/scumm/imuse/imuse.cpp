@@ -46,9 +46,10 @@ IMuseInternal::IMuseInternal() :
 _native_mt32(false),
 _enable_gs(false),
 _sc55(false),
-_midi_adlib(0),
-_midi_native(0),
-_base_sounds(0),
+_midi_adlib(NULL),
+_midi_native(NULL),
+_base_sounds(NULL),
+_sysex(NULL),
 _paused(false),
 _initialized(false),
 _tempoFactor(0),
@@ -450,6 +451,15 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	return 0;
 }
+
+void IMuseInternal::addSysexHandler (byte mfgID, sysexfunc handler) {
+	// TODO: Eventually support multiple sysEx handlers and pay
+	// attention to the client-supplied manufacturer ID.
+	Common::StackLock lock(_mutex, "IMuseInternal::property()");
+	_sysex = handler;
+}
+
+
 
 ////////////////////////////////////////
 //

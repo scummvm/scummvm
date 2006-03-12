@@ -34,8 +34,11 @@ class OSystem;
 namespace Scumm {
 
 class IMuseInternal;
+class Player;
 class ScummEngine;
 class Serializer;
+
+typedef void (*sysexfunc) (Player *, const byte *, uint16);
 
 /**
  * iMuse implementation interface.
@@ -66,6 +69,7 @@ public:
 	virtual int clear_queue() = 0;
 	virtual void setBase(byte **base) = 0;
 	virtual uint32 property(int prop, uint32 value) = 0;
+	virtual void addSysexHandler (byte mfgID, sysexfunc handler) = 0;
 
 public:
 	// MusicEngine base class methods.

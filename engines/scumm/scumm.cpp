@@ -56,6 +56,7 @@
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
+#include "scumm/imuse/sysex.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
@@ -1703,6 +1704,9 @@ void ScummEngine::setupMusic(int midi) {
 
 		_musicEngine = _imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
 		if (_imuse) {
+			_imuse->addSysexHandler
+				(/*IMUSE_SYSEX_ID*/ 0x7D,
+				 (_game.id == GID_SAMNMAX) ? sysexHandler_SamNMax : sysexHandler_Scumm);
 			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
