@@ -529,11 +529,22 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 	debug(1, "convertFilePath: original filePath is %s", dst);
 
-	// Switch all \ to / for portablity
 	int len = resStrLen(dst) + 1;
-	for (int i = 0; i < len; i++) {
-		if (dst[i] == '\\')
-			dst[i] = '/';
+	if (dst[0] == ':') {
+		// Switch all : to / for portablity
+		int j = 0;
+		for (int i = 1; i < len; i++) {
+			if (dst[i] == ':')
+				dst[j++] = '/';
+			else
+				dst[j++] = dst[i];
+		}
+	} else {
+		// Switch all \ to / for portablity
+		for (int i = 0; i < len; i++) {
+			if (dst[i] == '\\')
+				dst[i] = '/';
+		}
 	}
 
 	// Strip path
@@ -1747,22 +1758,6 @@ void ScummEngine_v72he::o72_openFile() {
 	copyScriptString(filename, sizeof(filename));
 
 	debug(1,"Original filename %s", filename);
-
-	// There are Macintosh specific versions of HE7.2 games.
-	if (_game.heversion >= 80 && _game.platform == Common::kPlatformMacintosh) {
-		// Work around for filename difference in HE7 file, needs to
-		// open 'Water (7)' instead of 'Water Worries (7)'.
-		if (_game.id == GID_WATER && _game.heversion == 99 && !strcmp((char *)filename, "Water.he7")) {
-			strcpy((char *)filename, "Water (7)");
-		} else {
-			char buf1[128];
-			buf1[0] = '\0';
-			generateSubstResFileName((char *)filename, buf1, sizeof(buf1));
-			if (buf1[0]) {
-				strcpy((char *)filename, buf1);
-			}
-		}
-	}
 
 	int r = convertFilePath(filename);
 	debug(1,"Final filename to %s", filename + r);

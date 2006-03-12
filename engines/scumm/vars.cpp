@@ -622,7 +622,7 @@ void ScummEngine_v72he::initScummVars() {
 void ScummEngine_v80he::initScummVars() {
 	ScummEngine_v72he::initScummVars();
 
-	VAR(VAR_PLATFORM) = 1;
+	VAR(VAR_PLATFORM) = (_game.platform == Common::kPlatformMacintosh) ? 2 : 1;
 	VAR(VAR_WINDOWS_VERSION) = 40;
 	VAR(VAR_COLOR_DEPTH) = 256;
 }
