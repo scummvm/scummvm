@@ -82,7 +82,7 @@ void KyraEngine::seq_demo() {
 	_screen->fadeFromBlack();
 	delay(60 * _tickLength);
 	_screen->fadeToBlack();
-	_sound->stopMusic();
+	_sound->haltTrack();
 }
 
 void KyraEngine::seq_intro() {
@@ -110,7 +110,6 @@ void KyraEngine::seq_intro() {
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
 	snd_playTheme(MUSIC_INTRO, 2);
- 	snd_setSoundEffectFile(MUSIC_INTRO);
 	_text->setTalkCoords(144);
 	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
 		(this->*introProcTable[i])();
@@ -118,7 +117,7 @@ void KyraEngine::seq_intro() {
 	_text->setTalkCoords(136);
 	delay(30 * _tickLength);
 	_seq->setCopyViewOffs(false);
-	_sound->stopMusic();
+	_sound->haltTrack();
 	if (_features & GF_TALKIE) {
 		_res->unloadPakFile("INTRO.VRM");
 	}

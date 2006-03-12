@@ -92,7 +92,7 @@ SoundMidiPC::SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *en
 	_eventFromMusic = false;
 	_fadeMusicOut = _sfxIsPlaying = false;
 	_fadeStartTime = 0;
-	_isPlaying = _isLooping = _nativeMT32 = false;
+	_isPlaying = _nativeMT32 = false;
 	_soundEffect = _parser = 0;
 	_soundEffectSource = _parserSource = 0;
 
@@ -203,9 +203,6 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:	// End of Track
 		if (_eventFromMusic) {
-			if (!_isLooping) {
-				_isPlaying = false;
-			}
 			// remap all channels
 			for (int i = 0; i < 16; ++i) {
 				_virChannel[i] = i;
@@ -220,7 +217,7 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void SoundMidiPC::playMusic(const char *file) {
+void SoundMidiPC::loadMusicFile(const char *file) {
 	char filename[25];
 	sprintf(filename, "%s.XMI", file);
 
@@ -233,6 +230,7 @@ void SoundMidiPC::playMusic(const char *file) {
 	}
 
 	playMusic(data, size);
+	loadSoundEffectFile(file);
 }
 
 void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
@@ -291,7 +289,6 @@ void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 }
 
 void SoundMidiPC::stopMusic() {
-	_isLooping = false;
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
@@ -330,7 +327,6 @@ void SoundMidiPC::onTimer(void *refCon) {
 		music->setVolume(255);
 		music->_fadeStartTime = 0;
 		music->_fadeMusicOut = false;
-		music->_isLooping = false;
 		music->_isPlaying = false;
 		
 		music->_eventFromMusic = true;
@@ -360,14 +356,12 @@ void SoundMidiPC::onTimer(void *refCon) {
 	}
 }
 
-void SoundMidiPC::playTrack(uint8 track, bool loop) {
+void SoundMidiPC::playTrack(uint8 track) {
 	if (_parser) {
 		_isPlaying = true;
-		_isLooping = loop;
 		_parser->setTrack(track);
 		_parser->jumpToTick(0);
 		_parser->setTempo(1);
-		_parser->property(MidiParser::mpAutoLoop, loop);
 	}
 }
 
@@ -392,14 +386,8 @@ void KyraEngine::snd_playTheme(int file, int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
 	assert(file < _musicFilesCount);
 	_curMusicTheme = _newMusicTheme = file;
-	_sound->playMusic(_musicFiles[file]);
-	_sound->playTrack(track, false);
-}
-
-void KyraEngine::snd_setSoundEffectFile(int file) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_setSoundEffectFile(%d)", file);
-	assert(file < _musicFilesCount);
-	_sound->loadSoundEffectFile(_musicFiles[file]);
+	_sound->loadMusicFile(_musicFiles[file]);
+	_sound->playTrack(track);
 }
 
 void KyraEngine::snd_playSoundEffect(int track) {
@@ -416,18 +404,18 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	static const int8 soundTable[] = {
 		-1,   0,  -1,   1,   0,   3,   0,   2,
 		 0,   4,   1,   2,   1,   3,   1,   4,
-		 1, 0x5C,   1,   6,   1,   7,   2,   2,
+		 1,  92,   1,   6,   1,   7,   2,   2,
 		 2,   3,   2,   4,   2,   5,   2,   6,
 		 2,   7,   3,   3,   3,   4,   1,   8,
 		 1,   9,   4,   2,   4,   3,   4,   4,
 		 4,   5,   4,   6,   4,   7,   4,   8,
-		 1, 0x0B,   1, 0x0C,   1, 0x0E,   1, 0x0D,
-		 4,   9,   5, 0x0C,   6,   2,   6,   6,
+		 1,  11,   1,  12,   1,  14,   1,  13,
+		 4,   9,   5,  12,   6,   2,   6,   6,
 		 6,   7,   6,   8,   6,   9,   6,   3,
 		 6,   4,   6,   5,   7,   2,   7,   3,
 		 7,   4,   7,   5,   7,   6,   7,   7,
 		 7,   8,   7,   9,   8,   2,   8,   3,
-		 8,   4,   8,   5,   6, 0x0B,   5, 0x0B
+		 8,   4,   8,   5,   6,  11,   5,  11
 	};
 	//if (!_disableSound) {
 	//	XXX
@@ -446,7 +434,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 		if (_lastMusicCommand != command) {
 			_lastMusicCommand = command;
 			_sound->haltTrack();
-			_sound->playTrack(soundTable[command*2+1], true);
+			_sound->playTrack(soundTable[command*2+1]);
 		}
 	} else {
 		_lastMusicCommand = 1;

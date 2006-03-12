@@ -587,8 +587,6 @@ protected:
 	void seq_playCredits();
 	void updateKyragemFading();
 	
-	void snd_setSoundEffectFile(int file);
-	
 	static OpcodeProc _opcodeTable[];
 	static const int _opcodeTableSize;
 	

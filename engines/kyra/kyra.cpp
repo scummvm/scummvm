@@ -646,8 +646,6 @@ void KyraEngine::startup() {
 		error("Could not load \"_NPC.EMC\" script");
 	}
 	
-	snd_playTheme(1);
-	snd_setSoundEffectFile(1);
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	
 	if (_abortIntroFlag && _skipFlag) {

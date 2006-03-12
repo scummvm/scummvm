@@ -49,20 +49,14 @@ public:
 	virtual void setVolume(int volume) = 0;
 	virtual int getVolume() = 0;
 	
-	virtual void playMusic(const char *file) = 0;
-	virtual void stopMusic() = 0;
+	virtual void loadMusicFile(const char *file) = 0;
 	
-	virtual void playTrack(uint8 track, bool looping = true) = 0;
+	virtual void playTrack(uint8 track) = 0;
 	virtual void haltTrack() = 0;
-	virtual void startTrack() = 0;
-	
-	virtual void loadSoundEffectFile(const char *file) = 0;
-	virtual void stopSoundEffect() = 0;
 	
 	virtual void playSoundEffect(uint8 track) = 0;
 	
 	virtual void beginFadeOut() = 0;
-	virtual bool fadeOut() = 0;
 	
 	void voicePlay(const char *file);
 	void voiceUnload() {}
@@ -97,20 +91,14 @@ public:
 	void setVolume(int volume);
 	int getVolume();
 	
-	void playMusic(const char *file);
-	void stopMusic();
+	void loadMusicFile(const char *file);
 	
-	void playTrack(uint8 track, bool looping);
+	void playTrack(uint8 track);
 	void haltTrack();
-	void startTrack();
-	
-	void loadSoundEffectFile(const char *file);
-	void stopSoundEffect();
 	
 	void playSoundEffect(uint8 track);
 	
 	void beginFadeOut();
-	bool fadeOut();
 private:
 	void loadSoundFile(const char *file);
 
@@ -139,26 +127,14 @@ public:
 	void setVolume(int volume);
 	int getVolume() { return _volume; }
 
-	void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
-	bool isMT32() { return _nativeMT32; }
-
-	void playMusic(const char *file);
-	void playMusic(uint8 *data, uint32 size);
-	void stopMusic();
-
-	void playTrack(uint8 track, bool looping);
+	void loadMusicFile(const char *file);
+	
+	void playTrack(uint8 track);
 	void haltTrack() { _isPlaying = false; }
-	void startTrack() { _isPlaying = true; }
-	void setPassThrough(bool b)	{ _passThrough = b; }
-
-	void loadSoundEffectFile(const char *file);
-	void loadSoundEffectFile(uint8 *data, uint32 size);
-	void stopSoundEffect();
-
+	
 	void playSoundEffect(uint8 track);
 
 	void beginFadeOut();
-	bool fadeOut() { return _fadeMusicOut; }
 
 	//MidiDriver interface implementation
 	int open();
@@ -172,8 +148,19 @@ public:
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
+	
+	void setPassThrough(bool b)	{ _passThrough = b; }
+	
+	void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
+	bool isMT32() { return _nativeMT32; }
 
 private:
+	void playMusic(uint8 *data, uint32 size);
+	void stopMusic();
+	void loadSoundEffectFile(const char *file);
+	void loadSoundEffectFile(uint8 *data, uint32 size);
+	
+	void stopSoundEffect();
 
 	static void onTimer(void *data);
 
@@ -188,7 +175,6 @@ private:
 	bool _sfxIsPlaying;
 	uint32 _fadeStartTime;
 	bool _fadeMusicOut;
-	bool _isLooping;
 	bool _eventFromMusic;
 	MidiParser *_parser;
 	byte *_parserSource;

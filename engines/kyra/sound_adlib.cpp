@@ -31,11 +31,6 @@
 #include "sound/fmopl.h"
 #include "sound/audiostream.h"
 
-// TODO:
-//   - check how the sounds are stopped (doesn't work atm whyever)
-//   - implement music pausing + stop and fadeing
-//   - check why the sfx sounds strange sometimes
-
 // Basic Adlib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp
 
@@ -175,7 +170,7 @@ private:
 
 	void primaryEffect1(OutputState &state);
 	void primaryEffect2(OutputState &state);
-	void secondaryEffect1(OutputState& state);
+	void secondaryEffect1(OutputState &state);
 
 	void resetAdlibState();
 	void writeOPL(byte reg, byte val);
@@ -2187,32 +2182,18 @@ int SoundAdlibPC::getVolume() {
 	return 0;
 }
 
-void SoundAdlibPC::playMusic(const char *file) {
+void SoundAdlibPC::loadMusicFile(const char *file) {
 	loadSoundFile(file);
 }
 
-void SoundAdlibPC::stopMusic() {
-	//playSoundEffect(0);
-}
-
-void SoundAdlibPC::playTrack(uint8 track, bool looping) {
+void SoundAdlibPC::playTrack(uint8 track) {
 	playSoundEffect(track);
 }
 
 void SoundAdlibPC::haltTrack() {
 	unk1();
 	unk2();
-	_engine->_system->delayMillis(3 * 60);
-}
-
-void SoundAdlibPC::startTrack() {
-}
-
-void SoundAdlibPC::loadSoundEffectFile(const char *file) {
-	loadSoundFile(file);
-}
-
-void SoundAdlibPC::stopSoundEffect() {
+	//_engine->_system->delayMillis(3 * 60);
 }
 
 void SoundAdlibPC::playSoundEffect(uint8 track) {
@@ -2249,10 +2230,6 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 
 void SoundAdlibPC::beginFadeOut() {
 	playSoundEffect(1);
-}
-
-bool SoundAdlibPC::fadeOut() {
-	return false;
 }
 
 void SoundAdlibPC::loadSoundFile(const char *file) {

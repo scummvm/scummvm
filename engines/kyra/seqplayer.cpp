@@ -404,11 +404,10 @@ void SeqPlayer::s1_playTrack() {
 			break;
 		}
 	} else {*/
-		if (msg == 0) {
-			// nothing to do here...
-		} else if (msg == 1) {
+		if (msg == 1) {
 			_sound->beginFadeOut();
 		} else {
+			_sound->haltTrack();
 			_sound->playTrack(msg);
 		}
 //	}
