@@ -106,11 +106,9 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// unk1  - Unknown. Used for updating unk4.
 	// unk3  - Unknown. Used for turning off some notes.
 	// unk4  - Unknown. Related to sound timing?
 	// unk5  - Unknown. Used for turning off some notes.
-	// unk6  - Unknown. Used to indicate unk1 should be reset to _tempo.
 	// unk7  - Unknown. Used for turning off some notes.
 	// unk11 - Unknown. Used for updating unk5.
 	// unk12 - Unknown. Used for updating unk7.
@@ -158,7 +156,7 @@ private:
 		uint8 opExtraLevel1;
 		uint8 unk7;
 		uint8 baseFreq;
-		int8 unk1;
+		int8 tempo;
 		int8 unk4;
 		uint8 regAx;
 		uint8 regBx;
@@ -180,7 +178,7 @@ private:
 		int8 unk21;
 		uint8 unk22;
 		uint16 offset;
-		uint8 unk6;
+		uint8 tempoReset;
 		uint8 rawNote;
 		int8 unk16;
 	};
@@ -256,7 +254,7 @@ private:
 	int updateCallback28(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setTempo(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_removeSecondaryEffect1(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setChannelTempo(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel3(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_setExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_changeExtraLevel2(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -267,7 +265,7 @@ private:
 	int updateCallback39(uint8 *&dataptr, OutputState &state, uint8 value);
 	int update_removePrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback41(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback42(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_resetToGlobalTempo(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback43(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback44(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback45(uint8 *&dataptr, OutputState &state, uint8 value);
@@ -280,7 +278,7 @@ private:
 	int updateCallback52(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback53(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback54(uint8 *&dataptr, OutputState &state, uint8 value);
-	int updateCallback55(uint8 *&dataptr, OutputState &state, uint8 value);
+	int update_setTempoReset(uint8 *&dataptr, OutputState &state, uint8 value);
 	int updateCallback56(uint8 *&dataptr, OutputState &state, uint8 value);
 private:
 	// These variables have not yet been named, but some of them are partly
@@ -590,8 +588,9 @@ void AdlibDriver::callback() {
 	callbackOutput();
 	callbackProcess();
 
+	int8 temp = _unkValue3;
 	_unkValue3 += _tempo;
-	if (_unkValue3 < 0) {
+	if (_unkValue3 < temp) {
 		if (!(--_unkValue2)) {
 			_unkValue2 = _unkValue1;
 			++_unkValue4;
@@ -617,7 +616,7 @@ void AdlibDriver::callbackOutput() {
 			initTable(table);
 			table.priority = priority;
 			table.dataptr = ptr;
-			table.unk1 = -1;
+			table.tempo = -1;
 			table.unk4 = -1;
 			table.unk5 = 1;
 			if (index != 9) {
@@ -694,12 +693,13 @@ void AdlibDriver::callbackProcess() {
 		OutputState &table = _outputTables[_curTable];
 		_curRegOffset = _outputTable[_curTable];
 
-		if (table.unk6) {
-			table.unk1 = _tempo;
+		if (table.tempoReset) {
+			table.tempo = _tempo;
 		}
 
-		table.unk4 += table.unk1;
-		if (table.unk4 < 0) {
+		int8 backup = table.unk4;
+		table.unk4 += table.tempo;
+		if (table.unk4 < backup) {
 			if (--table.unk5) {
 				if (table.unk5 == table.unk7)
 					noteOff(table);
@@ -781,7 +781,7 @@ void AdlibDriver::initTable(OutputState &table) {
 	debugC(9, kDebugLevelSound, "initTable(%d)", &table - _outputTables);
 	memset(&table.dataptr, 0, sizeof(OutputState) - ((char*)&table.dataptr - (char*)&table));
 
-	table.unk1 = -1;
+	table.tempo = -1;
 	table.priority = 0;
 	// normally here are nullfuncs but we set 0 for now
 	table.callback1 = 0;
@@ -1006,8 +1006,9 @@ void AdlibDriver::adjustVolume(OutputState &state) {
 
 void AdlibDriver::primaryEffect1(OutputState &state) {
 	debugC(9, kDebugLevelSound, "Calling primaryEffect1 (channel: %d)", _curTable);
+	int8 temp = state.unk31;
 	state.unk31 += state.unk29;
-	if (state.unk31 >= 0)
+	if (state.unk31 >= temp)
 		return;
 
 	// Initialise unk1 to the current frequency
@@ -1093,8 +1094,9 @@ void AdlibDriver::primaryEffect2(OutputState &state) {
 		return;
 	}
 
+	int8 temp = state.unk41;
 	state.unk41 += state.unk32;
-	if (state.unk41 < 0) {
+	if (state.unk41 < temp) {
 		uint16 unk1 = state.unk37;
 		if (!(--state.unk34)) {
 			unk1 ^= 0xFFFF;
@@ -1142,8 +1144,9 @@ void AdlibDriver::primaryEffect2(OutputState &state) {
 
 void AdlibDriver::secondaryEffect1(OutputState &state) {
 	debugC(9, kDebugLevelSound, "Calling secondaryEffect1 (channel: %d)", _curTable);
+	int8 temp = state.unk18;
 	state.unk18 += state.unk19;
-	if (state.unk18 < 0) {
+	if (state.unk18 < temp) {
 		if (--state.unk21 < 0) {
 			state.unk21 = state.unk20;
 		}
@@ -1210,7 +1213,7 @@ int AdlibDriver::update_checkRepeat(uint8 *&dataptr, OutputState &state, uint8 v
 // This is similar to callbackOutput()
 
 int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 value) {
-	if (value >= 0xFF)
+	if (value == 0xFF)
 		return 0;
 
 	uint16 add = value << 1;
@@ -1224,7 +1227,7 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, OutputState &state, uint8 valu
 		initTable(state2);
 		state2.priority = priority;
 		state2.dataptr = ptr;
-		state2.unk1 = -1;
+		state2.tempo = -1;
 		state2.unk4 = -1;
 		state2.unk5 = 1;
 		unkOutput2(table);
@@ -1425,8 +1428,8 @@ int AdlibDriver::update_removeSecondaryEffect1(uint8 *&dataptr, OutputState &sta
 	return 0;
 }
 
-int AdlibDriver::updateCallback31(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk1 = (int8)value;
+int AdlibDriver::update_setChannelTempo(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.tempo = (int8)value;
 	return 0;
 }
 
@@ -1546,9 +1549,9 @@ int AdlibDriver::updateCallback41(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback42(uint8 *&dataptr, OutputState &state, uint8 value) {
+int AdlibDriver::update_resetToGlobalTempo(uint8 *&dataptr, OutputState &state, uint8 value) {
 	--dataptr;
-	state.unk1 = _tempo;
+	state.tempo = _tempo;
 	return 0;
 }
 
@@ -1564,15 +1567,16 @@ int AdlibDriver::updateCallback44(uint8 *&dataptr, OutputState &state, uint8 val
 
 int AdlibDriver::updateCallback45(uint8 *&dataptr, OutputState &state, uint8 value) {
 	if (value & 0x80) {
-		value += state.unk1;
-		if ((int8)value >= (int8)state.unk1)
+		value += state.tempo;
+		if ((int8)value >= (int8)state.tempo)
 			value = 1;
 	} else {
-		value += state.unk1;
-		if ((int8)value < 0)
+		int8 temp = value;
+		value += state.tempo;
+		if (value < temp)
 			value = (uint8)-1;
 	}
-	state.unk1 = (int8)value;
+	state.tempo = (int8)value;
 	return 0;
 }
 
@@ -1857,8 +1861,8 @@ int AdlibDriver::updateCallback54(uint8 *&dataptr, OutputState &state, uint8 val
 	return 0;
 }
 
-int AdlibDriver::updateCallback55(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk6 = value;
+int AdlibDriver::update_setTempoReset(uint8 *&dataptr, OutputState &state, uint8 value) {
+	state.tempoReset = value;
 	return 0;
 }
 
@@ -1955,7 +1959,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 40
 	COMMAND(updateCallback9),
-	COMMAND(updateCallback31),
+	COMMAND(update_setChannelTempo),
 	COMMAND(updateCallback9),
 	COMMAND(update_setExtraLevel3),
 
@@ -1980,7 +1984,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 56
 	COMMAND(updateCallback9),
 	COMMAND(updateCallback41),
-	COMMAND(updateCallback42),
+	COMMAND(update_resetToGlobalTempo),
 	COMMAND(updateCallback43),
 
 	// 60
@@ -2002,7 +2006,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback54),
 
 	// 72
-	COMMAND(updateCallback55),
+	COMMAND(update_setTempoReset),
 	COMMAND(updateCallback56),
 	COMMAND(updateCallback9)
 };
