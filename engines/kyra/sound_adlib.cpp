@@ -844,7 +844,7 @@ void AdlibDriver::setupDuration(uint8 duration, OutputState &state) {
 	debugC(9, kDebugLevelSound, "setupDuration(%d, %d)", duration, &state - _outputTables);
 	_continueFlag = duration;
 	if (state.unk11) {
-		state.unk5 = duration + (getRandomNr() & state.unk11 & 0xFF);
+		state.unk5 = duration + (getRandomNr() & state.unk11);
 		return;
 	}
 	if (state.unk12) {
@@ -1666,7 +1666,7 @@ int AdlibDriver::updateCallback50(uint8 *&dataptr, OutputState &state, uint8 val
 	_unk4 = 0;
 
 	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
-	writeOPL(0xBD, value & _unkOutputByte2);
+	writeOPL(0xBD, _unkOutputByte2 & 0xC0);
 
 	return 0;
 }
