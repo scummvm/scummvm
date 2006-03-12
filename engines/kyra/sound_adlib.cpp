@@ -152,8 +152,8 @@ private:
 		uint8 unk34;
 		uint8 unk35;
 		uint8 unk36;
-		uint8 unk32;
-		uint8 unk41;
+		int8 unk32;
+		int8 unk41;
 		uint8 unk38;
 		uint8 opExtraLevel1;
 		uint8 unk7;
@@ -1094,23 +1094,23 @@ void AdlibDriver::primaryEffect2(OutputState &state) {
 	}
 
 	state.unk41 += state.unk32;
-	if ((int8)state.unk41 < 0) {
-		uint16 temp2 = state.unk37;
+	if (state.unk41 < 0) {
+		uint16 unk1 = state.unk37;
 		if (!(--state.unk34)) {
-			temp2 ^= 0xFFFF;
-			++temp2;
-			state.unk37 = temp2;
+			unk1 ^= 0xFFFF;
+			++unk1;
+			state.unk37 = unk1;
 			state.unk34 = state.unk35;
 		}
 
-		uint16 temp3 = state.regAx | (state.regBx << 8);
-		temp2 += temp3 & 0x3FF;
-		state.regAx = temp2 & 0xFF;
-
-		state.regBx = (state.regBx & 0xFC) | (temp3 >> 8);
+		uint16 unk2 = (state.regAx | (state.regBx << 8)) & 0x3FF;
+		unk2 += unk1;
+		
+		state.regAx = unk2 & 0xFF;
+		state.regBx = (state.regBx & 0xFC) | (unk2 >> 8);
 
 		// Octave / F-Number / Key-On
-		writeOPL(0xA0 + _curTable, state.regBx);
+		writeOPL(0xA0 + _curTable, state.regAx);
 		writeOPL(0xB0 + _curTable, state.regBx);
 	}
 }
@@ -1352,7 +1352,7 @@ int AdlibDriver::update_setBaseFreq(uint8 *&dataptr, OutputState &state, uint8 v
 }
 
 int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, OutputState &state, uint8 value) {
-	state.unk32 = value;
+	state.unk32 = (int8)value;
 	state.unk33 = *dataptr++;
 	uint8 temp = *dataptr++;
 	state.unk34 = temp + 1;
