@@ -34,6 +34,8 @@
 // Basic Adlib Programming:
 // http://www.gamedev.net/reference/articles/article446.asp
 
+#define CALLBACKS_PER_SECOND 72
+
 namespace Kyra {
 
 class AdlibDriver : public AudioStream {
@@ -48,11 +50,15 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples) {
 		int samplesLeft = numSamples;
 		memset(buffer, 0, sizeof(int16) * numSamples);
-		lock();
 		while (samplesLeft) {
 			if (!_samplesTillCallback) {
 				callback();
 				_samplesTillCallback = _samplesPerCallback;
+				_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
+				if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
+					_samplesTillCallback++;
+					_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
+				}
 			}
 
 			int32 render = MIN(samplesLeft, _samplesTillCallback);
@@ -61,7 +67,6 @@ public:
 			YM3812UpdateOne(_adlib, buffer, render);
 			buffer += render;
 		}
-		unlock();
 		return numSamples;
 	}
 
@@ -312,7 +317,9 @@ private:
 	// _unkTable2_3[]  - One of the tables in _unkTable2[]
 
 	int32 _samplesPerCallback;
+	int32 _samplesPerCallbackRemainder;
 	int32 _samplesTillCallback;
+	int32 _samplesTillCallbackRemainder;
 
 	int _lastProcessed;
 	int8 _flagTrigger;
@@ -403,9 +410,10 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_mixer->setupPremix(this);
 
-	// FIXME: Handle the rounding error?
-	_samplesPerCallback = getRate() / 72;
+	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
+	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
 	_samplesTillCallback = 0;
+	_samplesTillCallbackRemainder = 0;
 }
 
 AdlibDriver::~AdlibDriver() {
