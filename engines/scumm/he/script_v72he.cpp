@@ -1423,8 +1423,6 @@ void ScummEngine_v72he::o72_findObject() {
 	int y = pop();
 	int x = pop();
 	int r = findObject(x, y, 0, 0);
-
-	printf("o72_findObject: result is %d\n", r);
 	push(r);
 }
 
