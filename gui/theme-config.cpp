@@ -295,7 +295,7 @@ const char *Theme::_defaultConfigINI =
 "chooserW=(w - 2 * 8)\n"
 "chooser=((w - chooserW) / 2) ((h - opHeight) / 2) chooserW opHeight\n"
 "chooser_headline=10 6 (chooserW - 2 * 10) (kLineHeight)\n"
-"chooser_list=10 (6 + kLineHeight + 2) prev.w (h - self.y - buttonHeight - 12)\n"
+"chooser_list=10 (6 + kLineHeight + 2) prev.w (opHeight - self.y - buttonHeight - 12)\n"
 "chooser_cancel=(chooserW - 2 * (buttonWidth + 10)) (opHeight - buttonHeight - 8) buttonWidth buttonHeight\n"
 "chooser_ok=(prev.x2 + 10) prev.y prev.w prev.h\n"
 "\n"
