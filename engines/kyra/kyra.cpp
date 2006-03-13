@@ -785,11 +785,12 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
-		if (update)
+		if (update) {
 			_sprites->updateSceneAnims();
 			_animator->updateAllObjectShapes();
+		}
 
-		if (_currentCharacter && _currentCharacter->sceneId == 210) {
+		if (_currentCharacter && _currentCharacter->sceneId == 210 && update) {
 			updateKyragemFading();
 		}
 

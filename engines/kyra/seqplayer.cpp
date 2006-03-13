@@ -225,7 +225,7 @@ void SeqPlayer::s1_loopInc() {
 
 void SeqPlayer::s1_skip() {
 	uint8 a = *_seqData++;
-	warning("STUB: s1_skip(%d)\n", a);
+	warning("STUB: s1_skip(%d)", a);
 }
 
 void SeqPlayer::s1_loadPalette() {
