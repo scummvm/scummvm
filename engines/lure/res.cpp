@@ -55,7 +55,7 @@ void Resources::freeData() {
 	delete _paletteSubset;
 	delete _scriptData;
 	delete _script2Data;
-	delete _hotspotScriptData;
+	free(_hotspotScriptData);
 	delete _messagesData;
 	delete _cursors;
 }

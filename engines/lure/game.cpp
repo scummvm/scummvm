@@ -69,7 +69,7 @@ void Game::nextFrame() {
 			hotspot->tick();
 	}
 
-	delete idList;
+	delete[] idList;
 	Screen::getReference().update();
 }
 

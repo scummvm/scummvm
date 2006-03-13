@@ -76,6 +76,7 @@ Room::Room(): _screen(Screen::getReference()) {
 
 	_roomData = NULL;
 	_talkDialog = NULL;
+	_hotspotId = 0;
 	_hotspotName[0] = '\0';
 	for (int ctr = 0; ctr < MAX_NUM_LAYERS; ++ctr) _layers[ctr] = NULL;
 	_numLayers = 0;

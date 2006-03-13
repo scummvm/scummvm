@@ -58,7 +58,7 @@ MenuRecord::MenuRecord(uint16 hsxstartVal, uint16 hsxendVal, uint16 xstartVal,
 }
 
 MenuRecord::~MenuRecord() {
-	delete _entries[0];	// Delete string data for all the menu items
+	free(_entries[0]);	// Delete string data for all the menu items
 	free(_entries);		// Free the list
 }
 
