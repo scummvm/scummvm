@@ -326,7 +326,6 @@ private:
 	int _soundsPlaying;
 
 	uint16 _rnd;
-	uint8 _continueFlag;
 
 	uint8 _unkValue1;
 	uint8 _unkValue2;
@@ -393,7 +392,6 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_lastProcessed = _flagTrigger = _curChannel = _unk4 = 0;
 	_rnd = 0x1234;
-	_continueFlag = 0;
 
 	_tempo = 0;
 
@@ -649,16 +647,14 @@ void AdlibDriver::callbackOutput() {
 // opcode that doesn't have that one parameter is responsible for moving the
 // data pointer back again.
 //
-// If the most significant bit of the opcode is 1, it's a function; call it. If
-// it returns something greater than zero, it's the last opcode in the current
-// set of opcodes. An opcode can also make itself the last one by setting the
-// data pointer to NULL.
+// If the most significant bit of the opcode is 1, it's a function; call it.
+// The opcode functions return either 0 (continue), 1 (stop) or 2 (stop, and do
+// not run the effects callbacks).
 //
 // If the most significant bit of the opcode is 0, it's a note, and the first
 // parameter is its duration. (There are cases where the duration is modified
-// but that's an exception.) This duration is also assigned to _continueFlag,
-// which affects the return value from several of the opcode functions. If the
-// duration is non-zero, it's the last opcode in the current set of opcodes.
+// but that's an exception.) The note opcode is assumed to return 1, and is the
+// last opcode unless its duration is zero.
 //
 // Finally, most of the times that the callback is called, it will invoke the
 // effects callbacks. The final opcode in a set can prevent this, if it's a
@@ -666,6 +662,8 @@ void AdlibDriver::callbackOutput() {
 
 void AdlibDriver::callbackProcess() {
 	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
+		int result = 1;
+
 		if (!_channels[_curChannel].dataptr) {
 			continue;
 		}
@@ -686,40 +684,36 @@ void AdlibDriver::callbackProcess() {
 				if (channel.duration == channel.unk3 && _curChannel != 9)
 					noteOff(channel);
 			} else {
-				int8 opcode = 0;
 				while (channel.dataptr) {
-					uint16 command = READ_LE_UINT16(channel.dataptr);
-					channel.dataptr += 2;
-					if (command & 0x0080) {
-						opcode = command & 0x7F;
-						if (opcode > 0x4A)
-							opcode = 0x4A;
+					uint8 opcode = *channel.dataptr++;
+					uint8 param = *channel.dataptr++;
+
+					if (opcode & 0x80) {
+						opcode &= 0x7F;
+						if (opcode >= _parserOpcodeTableSize)
+							opcode = _parserOpcodeTableSize - 1;
 						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
-						opcode = (this->*(_parserOpcodeTable[opcode].function))(channel.dataptr, channel, (command & 0xFF00) >> 8);
-						--opcode;
-						if (opcode >= 0)
+						result = (this->*(_parserOpcodeTable[opcode].function))(channel.dataptr, channel, param);
+						if (result)
 							break;
-						continue;
 					} else {
-						debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", command & 0xFF, (command >> 8) & 0xFF, _curChannel);
-						opcode = 0;
-						setupNote(command & 0xFF, channel);
+						debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
+						setupNote(opcode, channel);
 						noteOn(channel);
-						setupDuration((command & 0xFF00) >> 8, channel);
-						if (!_continueFlag)
-							continue;
-						break;
+						setupDuration(param, channel);
+						if (param)
+							break;
 					}
 				}
-				if (opcode)
-					continue;
 			}
 		}
 
-		if (channel.primaryEffect)
-			(this->*(channel.primaryEffect))(channel);
-		if (channel.secondaryEffect)
-			(this->*(channel.secondaryEffect))(channel);
+		if (result == 1) {
+			if (channel.primaryEffect)
+				(this->*(channel.primaryEffect))(channel);
+			if (channel.secondaryEffect)
+				(this->*(channel.secondaryEffect))(channel);
+		}
 	}
 }
 
@@ -830,7 +824,6 @@ uint16 AdlibDriver::getRandomNr() {
 
 void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 	debugC(9, kDebugLevelSound, "setupDuration(%d, %d)", duration, &channel - _channels);
-	_continueFlag = duration;
 	if (channel.unk11) {
 		channel.duration = duration + (getRandomNr() & channel.unk11);
 		return;
@@ -1257,7 +1250,7 @@ int AdlibDriver::updateCallback9(uint8 *&dataptr, Channel &channel, uint8 value)
 int AdlibDriver::update_playRest(uint8 *&dataptr, Channel &channel, uint8 value) {
 	setupDuration(value, channel);
 	noteOff(channel);
-	return (_continueFlag != 0);
+	return (value != 0);
 }
 
 int AdlibDriver::update_writeAdlib(uint8 *&dataptr, Channel &channel, uint8 value) {
@@ -1269,7 +1262,7 @@ int AdlibDriver::updateCallback12(uint8 *&dataptr, Channel &channel, uint8 value
 	setupNote(value, channel);
 	value = *dataptr++;
 	setupDuration(value, channel);
-	return (_continueFlag != 0);
+	return (value != 0);
 }
 
 int AdlibDriver::update_setBaseNote(uint8 *&dataptr, Channel &channel, uint8 value) {
@@ -1383,13 +1376,13 @@ int AdlibDriver::update_setExtraLevel1(uint8 *&dataptr, Channel &channel, uint8 
 
 int AdlibDriver::updateCallback26(uint8 *&dataptr, Channel &channel, uint8 value) {
 	setupDuration(value, channel);
-	return (_continueFlag != 0);
+	return (value != 0);
 }
 
 int AdlibDriver::update_playNote(uint8 *&dataptr, Channel &channel, uint8 value) {
 	setupDuration(value, channel);
 	noteOn(channel);
-	return (_continueFlag != 0);
+	return (value != 0);
 }
 
 int AdlibDriver::updateCallback28(uint8 *&dataptr, Channel &channel, uint8 value) {
