@@ -48,7 +48,7 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
-		int samplesLeft = numSamples;
+		int32 samplesLeft = numSamples;
 		memset(buffer, 0, sizeof(int16) * numSamples);
 		while (samplesLeft) {
 			if (!_samplesTillCallback) {
