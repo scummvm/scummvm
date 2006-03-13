@@ -1599,12 +1599,36 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 				}
 			}
 		}
+
+#if 0
+		// HACK: blit mask(s) onto normal screen. Useful to debug masking
+		for (i = 0; i < numzbuf; i++) {
+			byte *dst1, *dst2;
+
+			dst1 = dst2 = (byte *)vs->pixels + y * vs->pitch + (x + k) * 8;
+			if (vs->hasTwoBuffers)
+				dst2 = vs->backBuf + y * vs->pitch + (x + k) * 8;
+			mask_ptr = getMaskBuffer(x + k, y, i);
+
+			for (int h = 0; h < height; h++) {
+				int maskbits = *mask_ptr;
+				for (int j = 0; j < 8; j++) {
+					if (maskbits & 0x80)
+						dst1[j] = dst2[j] = 12 + i;
+					maskbits <<= 1;
+				}
+				dst1 += vs->pitch;
+				dst2 += vs->pitch;
+				mask_ptr += _numStrips;
+			}
+		}
+#endif
 	}
 }
 
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
- * used throughout in 7.2+ HE versions.
+ * used throughout in 71+ HE versions.
  *
  * @note This function essentially is a stripped down & special cased version of
  * the generic Gdi::drawBitmap() method.
@@ -1657,7 +1681,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 		return;
 
 	uint32 offs;
-	for (int stripnr = 0; stripnr < _numStrips; stripnr++)
+	for (int stripnr = 0; stripnr < _numStrips; stripnr++) {
 		for (int i = 1; i < numzbuf; i++) {
 			if (!zplane_list[i])
 				continue;
@@ -1670,6 +1694,28 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 				decompressMaskImg(mask_ptr, z_plane_ptr, vs->h);
 			}
 		}
+
+#if 0
+		// HACK: blit mask(s) onto normal screen. Useful to debug masking
+		for (int i = 0; i < numzbuf; i++) {
+			byte *dst1 = (byte *)vs->pixels + stripnr * 8;
+			byte *dst2 = vs->backBuf + stripnr * 8;
+
+			mask_ptr = getMaskBuffer(stripnr, 0, i);
+			for (int h = 0; h < vs->h; h++) {
+				int maskbits = *mask_ptr;
+				for (int j = 0; j < 8; j++) {
+					if (maskbits & 0x80)
+						dst1[j] = dst2[j] = 12 + i;
+					maskbits <<= 1;
+				}
+				dst1 += vs->pitch;
+				dst2 += vs->pitch;
+				mask_ptr += _numStrips;
+			}
+		}
+#endif
+	}
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
