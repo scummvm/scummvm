@@ -981,11 +981,15 @@ static const byte actorColorsMMC64[25] = {
 	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
 };
 
+#define MASK_AT(xoff) \
+	(mask && (mask[((destX + xoff) / 8)] & revBitMask((destX + xoff) & 7)))
 #define LINE(c,p) \
 	pcolor = (color >> c) & 3; \
 	if (pcolor) { \
-		dst[p] = palette[pcolor]; \
-		dst[p + 1] = palette[pcolor]; \
+		if (!MASK_AT(p)) \
+			dst[p] = palette[pcolor]; \
+		if (!MASK_AT(p + 1)) \
+			dst[p + 1] = palette[pcolor]; \
 	}
 
 byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
@@ -1074,7 +1078,8 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 			int destY = y + ypos;
 			int destX = realX * 8 + xpos;
 			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
-				byte *dst = &(((byte*)_out.pixels)[destY * _out.pitch + destX]);
+				byte *dst = (byte *)_out.pixels + destY * _out.pitch + destX;
+				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
 				if (flipped) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
@@ -1094,6 +1099,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 }
 
 #undef LINE
+#undef MASK_AT
 
 void C64CostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);

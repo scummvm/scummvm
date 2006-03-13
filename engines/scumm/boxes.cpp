@@ -42,7 +42,7 @@ struct Box {				/* Internal walkbox file format */
 			byte x2;
 			byte y1;
 			byte y2;
-			byte flags;
+			byte mask;
 		} GCC_PACK c64;
 
 		struct {
@@ -111,8 +111,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.mask);
 	else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
-		// No mask?
-		return 0;
+		return ptr->c64.mask;
 	else if (_game.version <= 2)
 		return ptr->v2.mask;
 	else
@@ -132,8 +131,6 @@ void ScummEngine::setBoxFlags(int box, int val) {
 			return;
 		if (_game.version == 8)
 			ptr->v8.flags = TO_LE_32(val);
-		else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
-			ptr->c64.flags = val;
 		else if (_game.version <= 2)
 			ptr->v2.flags = val;
 		else
@@ -148,7 +145,7 @@ byte ScummEngine::getBoxFlags(int box) {
 	if (_game.version == 8)
 		return (byte) FROM_LE_32(ptr->v8.flags);
 	else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
-		return ptr->c64.flags;
+		return 0;
 	else if (_game.version <= 2)
 		return ptr->v2.flags;
 	else
