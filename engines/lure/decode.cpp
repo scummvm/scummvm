@@ -187,7 +187,7 @@ void AnimationDecoder::decode_data_2(byte *&pSrc, uint16 &currData, uint16 &bitC
 uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32 srcPos) {
 	byte *pSrc = src->data() + srcPos;
 	byte *pDest = dest->data();
-	byte v;
+	uint16 v;
 	bool carry = false;
 	uint16 currData, bitCtr, dx;
 	byte tableOffset;
