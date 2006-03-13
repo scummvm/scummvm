@@ -141,7 +141,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o_lockSound),
 		/* 54 */
-		OPCODE(o5_setObjectName),
+		OPCODE(o_setObjectName),
 		OPCODE(o5_walkActorToActor),
 		OPCODE(o_getActorMoving),
 		OPCODE(o_clearState08),
@@ -203,7 +203,7 @@ void ScummEngine_c64::setupOpcodes() {
 		/* 84 */
 		OPCODE(o_isGreaterEqual),
 		OPCODE(o_stopCurrentScript),
-		OPCODE(o_badOpcode),
+		OPCODE(o_nop),
 		OPCODE(o5_getActorRoom),
 		/* 88 */
 		OPCODE(o_isNotEqual),
@@ -301,7 +301,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o5_actorFollowCamera),
 		OPCODE(o_unlockSound),
 		/* D4 */
-		OPCODE(o5_setObjectName),
+		OPCODE(o_setObjectName),
 		OPCODE(o2_actorFromPos),
 		OPCODE(o_getActorMoving),
 		OPCODE(o_setState08),
@@ -770,8 +770,9 @@ void ScummEngine_c64::o_pickupObject() {
 	runInventoryScript(1);
 }
 
-void ScummEngine_c64::o_badOpcode() {
-	warning("Bad opcode 0x86 encountered");
+void ScummEngine_c64::o_setObjectName() {
+	int obj = fetchScriptByte();
+	setObjectName(obj);
 }
 
 void ScummEngine_c64::o_nop() {

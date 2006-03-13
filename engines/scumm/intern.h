@@ -442,6 +442,7 @@ protected:
 	void o_animateActor();
 	void o_putActorAtObject();
 	void o_pickupObject();
+	void o_setObjectName();
 	void o_lockSound();
 	void o_lockCostume();
 	void o_loadCostume();
@@ -455,7 +456,6 @@ protected:
 	void o_unlockCostume();
 	void o_unlockScript();
 	void o_decrement();
-	void o_badOpcode();
 	void o_nop();
 	void o_getActorBitVar();
 	void o_setActorBitVar();
