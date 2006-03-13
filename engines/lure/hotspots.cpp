@@ -171,7 +171,15 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	MemoryBlock &mDest = _frames->data();
 
 	for (uint16 frameCtr = 0; frameCtr < _numFrames; ++frameCtr, ++headerEntry) {
-		
+
+		if ((newRecord->flags & PIXELFLAG_HAS_TABLE) != 0) {
+			// For animations with an offset table, set the source point for each frame
+			uint16 frameOffset = *((uint16 *) (src->data() + ((frameCtr + 1) * sizeof(uint16)))) + 0x40;
+			if (frameOffset + _height * (_width / 2) > dest->size()) 
+				error("Invalid frame offset in animation %x", newRecord->animRecordId);
+			pSrc = dest->data() + frameOffset;
+		}
+
 		// Copy over the frame, applying the colour offset to each nibble
 		for (uint16 yPos = 0; yPos < _height; ++yPos) {
 			pDest = mDest.data() + (yPos * _numFrames + frameCtr) * _width;

@@ -202,6 +202,9 @@ enum Action {
 // Misc constants
 #define VOICE_ANIM_ID 0x5810
 
+// Pixel record flags
+#define PIXELFLAG_HAS_TABLE 4
+
 } // End of namespace Lure
 
 #endif
