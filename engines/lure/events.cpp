@@ -38,6 +38,8 @@ Mouse::Mouse() {
 	_lButton = false; 
 	_rButton = false;
 	_cursorNum = 0;
+	_x = 0;
+	_y = 0;
 	setCursorNum(0);
 }
 
