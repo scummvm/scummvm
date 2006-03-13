@@ -1759,13 +1759,6 @@ void ScummEngine_v72he::o72_openFile() {
 
 	debug(1,"Original filename %s", filename);
 
-	// WORKAROUND: For filename difference in Macintosh version of water.
-	// Uses HE7 filename of 'Water (7)' instead of 'Water Worries (7)'.
-	if (_game.id == GID_WATER && _game.heversion == 99 && _game.platform == Common::kPlatformMacintosh &&
-		!strcmp((char *)filename, "Water Worries (7)")) {
-		strcpy((char *)filename, "Water (7)");
-	}
-
 	int r = convertFilePath(filename);
 	debug(1,"Final filename to %s", filename + r);
 
