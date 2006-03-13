@@ -757,7 +757,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 	// normally here are nullfuncs but we set 0 for now
 	channel.primaryEffect = 0;
 	channel.secondaryEffect = 0;
-	channel.spacing1 = 0x01;
+	channel.spacing1 = 1;
 }
 
 void AdlibDriver::noteOff(Channel &channel) {
@@ -784,26 +784,34 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 
 	// I believe this has to do with channels 6, 7, and 8 being special
 	// when Adlib's rhythm section is enabled.
+
 	if (_unk4 && chan >= 6)
 		return;
 
 	uint8 offset = _regOffset[chan];
 
-	// Clear the Attack Rate / Decay Rate for the channel
+	// The channel is cleared: First the attack/delay rate, then the
+	// sustain/release rate, and finally the note is turned off.
+
 	writeOPL(0x60 + offset, 0xFF);
 	writeOPL(0x63 + offset, 0xFF);
 
-	// Clear the Sustain Level / Release Rate for the channel
 	writeOPL(0x80 + offset, 0xFF);
 	writeOPL(0x83 + offset, 0xFF);
 
-	// Octave / F-Number / Key-On
-
-	// Turn the note off, then turn it on again. This could be a "note on"
-	// function, but it also clears the octave and the part of the
-	// frequency (F-Number) stored in this register. Weird.
-
 	writeOPL(0xB0 + chan, 0x00);
+
+	// FIXME!
+	//
+	// ...and then the note is turned on again, with whatever value is
+	// still lurking in the A0 + chan register, but everything else -
+	// including the two most significant frequency bit, and the octave -
+	// set to zero.
+	//
+	// This is very strange behaviour, and appears to be the cause of the
+	// bug where low-frequent notes are played at the beginning of a new
+	// sound. However, this is what the original does here...
+
 	writeOPL(0xB0 + chan, 0x20);
 }
 
