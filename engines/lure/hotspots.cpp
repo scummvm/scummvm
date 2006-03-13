@@ -175,7 +175,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 		if ((newRecord->flags & PIXELFLAG_HAS_TABLE) != 0) {
 			// For animations with an offset table, set the source point for each frame
 			uint16 frameOffset = *((uint16 *) (src->data() + ((frameCtr + 1) * sizeof(uint16)))) + 0x40;
-			if (frameOffset + _height * (_width / 2) > dest->size()) 
+			if ((uint32) frameOffset + _height * (_width / 2) > dest->size()) 
 				error("Invalid frame offset in animation %x", newRecord->animRecordId);
 			pSrc = dest->data() + frameOffset;
 		}
