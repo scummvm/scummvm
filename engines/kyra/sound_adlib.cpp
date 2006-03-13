@@ -810,7 +810,11 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 	//
 	// This is very strange behaviour, and appears to be the cause of the
 	// bug where low-frequent notes are played at the beginning of a new
-	// sound. However, this is what the original does here...
+	// sound. However, this is what the original does, and the bug does not
+	// seem to happen with current versions of the FMOPL code.
+	//
+	// Unfortunately, we cannot use more recent versions because of license
+	// incompatibilities.
 
 	writeOPL(0xB0 + chan, 0x20);
 }
