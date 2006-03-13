@@ -193,8 +193,9 @@ RH_TABLE_ENTRY_SIZE       equ  9
 PIXEL_DISK_ID             equ   0
 PIXEL_FLAGS               equ   2
 PIXEL_DATA_SEGMENT        equ   3
-PIXEL_OFFSETS_SEGMENT     equ   4
+PIXEL_DATA_SIZE           equ   5
 PIXEL_FRAME_SIZE          equ   7
+PIXELFLAG_HAS_TABLE       equ   4
 
 NOONE_HOTSPOT_ID          equ   3E7h
 PLAYER_HOTSPOT_ID         equ  3E8h
@@ -17854,17 +17855,17 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:7804  F9                                   stc                             ; Set carry flag
 273F:7805  C3                                   retn
 273F:7806                       loc_1517:                                       ;  xref 273F:7802
-273F:7806  89 0E 4D04                           mov     word ptr ds:[4D04h],cx
-273F:780A  89 0E 4D06                           mov     word ptr ds:[4D06h],cx
+273F:7806  89 0E 4D04                           mov     anim_src_segment2, cx
+273F:780A  89 0E 4D06                           mov     anim_src_segment, cx
 273F:780E  8B 07                                mov     ax,[bx]                 ; Get anim resource id
 273F:7810  33 D2                                xor     dx,dx                   ; Read into cx:dx
 273F:7812  53                                   push    bx
 273F:7813  E8 8AFE                              call    read_entry
-273F:7816  01 16 4D06                           add     word ptr ds:[4D06h],dx  ; Save end of animation
+273F:7816  01 16 4D06                           add     anim_src_segment, dx    ; Save end of animation
 273F:781A  1E                                   push    ds
-273F:781B  A1 4D06                              mov     ax,word ptr ds:[4D06h]
+273F:781B  A1 4D06                              mov     ax, anim_src_segment
 273F:781E  8E C0                                mov     es,ax
-273F:7820  A1 4D04                              mov     ax,word ptr ds:[4D04h]  ; (273F:4D04=0B957h)
+273F:7820  A1 4D04                              mov     ax, anim_src_segment2
 273F:7823  8E D8                                mov     ds,ax
 273F:7825  8B 0E 0000                           mov     cx,ds:[0]               ; Get in # table entries
 273F:7829  26: 89 0E 0000                       mov     es:[0], cx              ; Store # entries
@@ -17905,27 +17906,25 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:786D                       loc_1520:                                       
 273F:786D  A1 4D00                              mov     ax, buffer_segment
 273F:7870  8E C0                                mov     es,ax
-273F:7872  8B 16 4D04                           mov     dx,word ptr ds:[4D04h]
+273F:7872  8B 16 4D04                           mov     dx, anim_src_segment2
 273F:7876  E8 FABB                              call    animation_decode_inner
 273F:7879  5E                                   pop     si                      ; Retrieve anim rec ptr
-273F:787A  89 7C 05                             mov     [si+5],di               ; Store size of decoded rsc?
-273F:787D  83 6C 05 40                          sub     word ptr [si+5],40h     ; ???
-273F:7881  33 FF                                xor     di,di                  
-273F:7883  F6 44 02 04                          test    byte ptr [si+2],4
-273F:7887  74 34                                jz      loc_1523                ; Jump if zero
+273F:787A  89 7C 05                             mov     [si+PIXEL_DATA_SIZE], di ; Store size of decoded rsc?
+273F:787D  83 6C 05 40                          sub     word ptr [si+PIXEL_DATA_SIZE], 40h  ; ???
+273F:7881  33 FF                                xor     di, di
+273F:7883  F6 44 02 04                          test    byte ptr [si+PIXEL_FLAGS], PIXELFLAG_HAS_TABLE
+273F:7887  74 34                                jz      loc_1523                ; Skip if not
 273F:7889  56                                   push    si
 273F:788A  1E                                   push    ds
 273F:788B  8A 16 0742                           mov     dl, video_style
-273F:788F  A1 4D06                              mov     ax,word ptr ds:[4D06h]  ; (273F:4D06=28h)
-273F:7892  8E D8                                mov     ds,ax
+273F:788F  A1 4D06                              mov     ax, anim_src_segment
+273F:7892  8E D8                                mov     ds, ax
 273F:7894 úBE 0002                              mov     si, 2                   ; Offset of 1st header entry
-273F:7897  8B 0E 0000                           mov     cx, ds:[0]
-273F:789B  8B E9                                mov     bp,cx
-273F:789D  D1 E5                                shl     bp,1
+273F:7897  8B 0E 0000                           mov     cx, ds:[0]              ; Get number of entries
+273F:789B  8B E9                                mov     bp, cx
+273F:789D  D1 E5                                shl     bp, 1
 
-; bp=first byte after header, dl=0 or 1, si=2, di=0
-
-273F:789F                       locloop_1521:                                   
+273F:789F                       locloop_1521:
 273F:789F  26: 89 2D                            mov     es:[di],bp
 273F:78A2  83 C7 02                             add     di,2
 273F:78A5  8B 04                                mov     ax,[si]
@@ -17982,7 +17981,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:78FE                       loc_1524:
 273F:78FE  8B 2E 4D00                           mov     bp, buffer_segment
 273F:7902  01 16 4D00                           add     buffer_segment, dx
-273F:7906  A1 4D06                              mov     ax,word ptr ds:[4D06h]  ; Get ptr to copy of
+273F:7906  A1 4D06                              mov     ax, anim_src_segment    ; Get ptr to copy of
 273F:7909  8E C0                                mov     es,ax                   ;   anim table header
 273F:790B  26: A1 0002                          mov     ax,es:[2]               ; Get 1st entry
 273F:790F  D1 E8                                shr     ax,1                    
@@ -18006,7 +18005,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:7935  01 06 4D00                           add     buffer_segment, ax  
 273F:7939  D1 E9                                shr     cx,1                    ; Shift w/zeros fill
 273F:793B  06                                   push    es
-273F:793C  A1 4D06                              mov     ax,word ptr ds:[4D06h]  ; (273F:4D06=28h)
+273F:793C  A1 4D06                              mov     ax, anim_src_segment
 273F:793F  8E C0                                mov     es,ax
 273F:7941  26: A1 0002                          mov     ax,es:data_67e          ; (0028:0002=0)
 273F:7945  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
@@ -18026,8 +18025,8 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:7964  5F                                   pop     di
 273F:7965  1F                                   pop     ds
 273F:7966  1E                                   push    ds
-273F:7967  A1 4D06                              mov     ax,word ptr ds:[4D06h]  ; (273F:4D06=28h)
-273F:796A  8E D8                                mov     ds,ax
+273F:7967  A1 4D06                              mov     ax, anim_src_segment
+273F:796A  8E D8                                mov     ds, ax
 273F:796C  8B 0E 0000                           mov     cx,ds:data_66e          ; (0028:0000=0)
 273F:7970 úBE 0002                              mov     si,data_67e             ; (0028:0002=0)
 273F:7973  83 EF 01                             sub     di,1
@@ -26315,7 +26314,9 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 31E4:4D00  0000               buffer_segment    dw      0
 31E4:4D02  0000           buffer_segment_end    dw      0
 
-31E4:4D04  000C[00]                             db      12 dup (0)
+31E4:4D04  0000            anim_src_segment2    dw      0
+31E4:4D06  0000             anim_src_segment    dw      0
+31E4:4D08  0008[00]                             db      8 dup (0)
 31E4:4D10  42 4E 1B 4E 63 4E                    db       42h, 4Eh, 1Bh, 4Eh, 63h, 4Eh
 31E4:4D16  AC 4E 00 00 00 00                    db      0ACh, 4Eh, 00h, 00h, 00h, 00h
 31E4:4D1C  AC 4E AC 4E AC 4E                    db      0ACh, 4Eh,0ACh, 4Eh,0ACh, 4Eh
