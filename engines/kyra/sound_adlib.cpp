@@ -791,7 +791,7 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 	uint8 offset = _regOffset[chan];
 
 	// The channel is cleared: First the attack/delay rate, then the
-	// sustain/release rate, and finally the note is turned off.
+	// sustain level/release rate, and finally the note is turned off.
 
 	writeOPL(0x60 + offset, 0xFF);
 	writeOPL(0x63 + offset, 0xFF);
