@@ -419,7 +419,7 @@ void ScummEngine::CHARSET_1() {
 	if (!_haveMsg)
 		return;
 
-	if (!(_game.features & GF_NEW_CAMERA) && !(_game.id == GID_ZAK && (_game.platform == Common::kPlatformFMTowns) && getTalkingActor() == 0xFF)) {
+	if (_game.version >= 4 && _game.version <= 6) {
 		if ((camera._dest.x / 8) != (camera._cur.x / 8) || camera._cur.x != camera._last.x)
 			return;
 	}
