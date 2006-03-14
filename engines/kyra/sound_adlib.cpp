@@ -815,6 +815,11 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 	//
 	// Unfortunately, we cannot use more recent versions because of license
 	// incompatibilities.
+	//
+	// Ken Silverman's Adlib emulator (which can be found on his Web page -
+	// http://www.advsys.net/ken - and as part of AdPlug) also seems to be
+	// proof against this particular bug, but is apparently not as feature
+	// complete as MAME's.
 
 	writeOPL(0xB0 + chan, 0x20);
 }
