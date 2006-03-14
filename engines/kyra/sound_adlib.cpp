@@ -808,18 +808,17 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 	// including the two most significant frequency bit, and the octave -
 	// set to zero.
 	//
-	// This is very strange behaviour, and appears to be the cause of the
-	// bug where low-frequent notes are played at the beginning of a new
-	// sound. However, this is what the original does, and the bug does not
-	// seem to happen with current versions of the FMOPL code.
+	// This is very strange behaviour, and causes problems with the ancient
+	// FMOPL code we borrowed from AdPlug. I've added a workaround. See
+	// fmopl.cpp for more details.
 	//
-	// Unfortunately, we cannot use more recent versions because of license
-	// incompatibilities.
+	// More recent versions of the MAME FMOPL don't seem to have this
+	// problem, but cannot currently be used because of licensing and
+	// performance issues.
 	//
 	// Ken Silverman's Adlib emulator (which can be found on his Web page -
 	// http://www.advsys.net/ken - and as part of AdPlug) also seems to be
-	// proof against this particular bug, but is apparently not as feature
-	// complete as MAME's.
+	// immune, but is apparently not as feature complete as MAME's.
 
 	writeOPL(0xB0 + chan, 0x20);
 }

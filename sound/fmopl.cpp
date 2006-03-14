@@ -304,12 +304,41 @@ inline void OPL_KEYON(OPL_SLOT *SLOT) {
 inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
 	if( SLOT->evm > ENV_MOD_RR) {
 		/* set envelope counter from envleope output */
-		SLOT->evm = ENV_MOD_RR;
-		if( !(SLOT->evc & EG_DST) )
+
+		// WORKAROUND: The Kyra engine does something very strange when
+		// starting a new song. For each channel:
+		//
+		// * The release rate is set to "fastest".
+		// * Any note is keyed off.
+		// * A very low-frequency note is keyed on.
+		//
+		// Usually, what happens next is that the real notes is keyed
+		// on immediately, in which case there's no problem.
+		//
+		// However, if the note is again keyed off (because the channel
+		// begins on a rest rather than a note), the envelope counter
+		// was moved from the very lowest point on the attack curve to
+		// the very highest point on the release curve.
+		//
+		// Again, this might not be a problem, if the release rate is
+		// still set to "fastest". But in many cases, it had already
+		// been increased. And, possibly because of inaccuracies in the
+		// envelope generator, that would cause the note to "fade out"
+		// for quite a long time.
+		//
+		// What we really need is a way to find the correct starting
+		// point for the envelope counter, and that may be what the
+		// commented-out line below is meant to do. For now, simply
+		// handle the pathological case.
+
+		if (SLOT->evm == ENV_MOD_AR && SLOT->evc == EG_AST)
+			SLOT->evc = EG_DED;
+		else if( !(SLOT->evc & EG_DST) )
 			//SLOT->evc = (ENV_CURVE[SLOT->evc>>ENV_BITS]<<ENV_BITS) + EG_DST;
 			SLOT->evc = EG_DST;
 		SLOT->eve = EG_DED;
 		SLOT->evs = SLOT->evsr;
+		SLOT->evm = ENV_MOD_RR;
 	}
 }
 
