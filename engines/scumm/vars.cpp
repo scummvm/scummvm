@@ -546,7 +546,7 @@ void ScummEngine_c64::initScummVars() {
 	VAR(VAR_EGO) = 3;
 
 	// Setup light
-	_currentLights = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
+	_currentLights = LIGHTMODE_actor_use_base_palette | LIGHTMODE_actor_use_colors | LIGHTMODE_room_lights_on;
 }
 
 void ScummEngine_v2::initScummVars() {
@@ -564,7 +564,7 @@ void ScummEngine_v5::initScummVars() {
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
 	// Setup light
-	VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
+	VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_use_base_palette | LIGHTMODE_actor_use_colors | LIGHTMODE_room_lights_on;
 
 	if (_game.id == GID_MONKEY)
 		_scummVars[74] = 1225;

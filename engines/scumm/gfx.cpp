@@ -1179,13 +1179,13 @@ int ScummEngine::getCurrentLights() const {
 	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
 		return _currentLights;
 	else if (_game.version >= 6)
-		return LIGHTMODE_screen | LIGHTMODE_actor_color;
+		return LIGHTMODE_room_lights_on | LIGHTMODE_actor_use_colors;
 	else
 		return VAR(VAR_CURRENT_LIGHTS);
 }
 
 bool ScummEngine::isLightOn() const {
-	return (getCurrentLights() & LIGHTMODE_screen);
+	return (getCurrentLights() & LIGHTMODE_room_lights_on);
 }
 
 void ScummEngine::setShake(int mode) {

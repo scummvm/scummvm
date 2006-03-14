@@ -2060,8 +2060,8 @@ load_game:
 		setActorRedrawFlags();
 		resetActorBgs();
 
-		if (!(getCurrentLights() & LIGHTMODE_screen) &&
-		      getCurrentLights() & LIGHTMODE_flashlight) {
+		if (!(getCurrentLights() & LIGHTMODE_room_lights_on) &&
+		      getCurrentLights() & LIGHTMODE_flashlight_on) {
 			drawFlashlight();
 			setActorRedrawFlags();
 		}

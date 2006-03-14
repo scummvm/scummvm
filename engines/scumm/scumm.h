@@ -176,11 +176,36 @@ struct VerbSlot;
 struct ObjectData;
 
 enum {
-	LIGHTMODE_dark			= 0,
-	LIGHTMODE_actor_base	= 1,
-	LIGHTMODE_screen		= 2,
-	LIGHTMODE_flashlight	= 4,
-	LIGHTMODE_actor_color	= 8
+	/**
+	 * Lighting flag that indicates whether the normal palette, or the 'dark'
+	 * palette shall be used to draw actors.
+	 * Apparantly only used in very old games (so far only NESCostumeRenderer
+	 * checks it).
+	 */
+	LIGHTMODE_actor_use_base_palette	= 1 << 0,
+
+	/**
+	 * Lighting flag that indicates whether the room is currently lit. Normally
+	 * always on. Used for rooms in which the light can be switched "off".
+	 */
+	LIGHTMODE_room_lights_on			= 1 << 1,
+
+	/**
+	 * Lighting flag that indicates whether a flashlight like device is active.
+	 * Used in Loom (flashlight follows the actor) and Indy 3 (flashlight
+	 * follows the mouse). Only has any effect if the room lights are off.
+	 */
+	LIGHTMODE_flashlight_on				= 1 << 2,
+
+	/**
+	 * Lighting flag that indicates whether actors are to be drawn with their
+	 * own custom palette, or using a fixed 'dark' palette. This is the
+	 * modern successor of LIGHTMODE_actor_use_base_palette.
+	 * Note: It is tempting to 'merge' these two flags, but since flags can
+	 * check their values, this is probably not a good idea.
+	 */
+	LIGHTMODE_actor_use_colors	= 1 << 3
+	//
 };
 
 enum {
