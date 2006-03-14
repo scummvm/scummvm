@@ -363,7 +363,7 @@ void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
-	debug("KyraEngine::loadBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
+	debugC(9, kDebugLevelMain, "KyraEngine::loadBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
 	uint32 fileSize;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 	assert(srcData);
