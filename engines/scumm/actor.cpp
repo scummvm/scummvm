@@ -810,18 +810,17 @@ void Actor::showActor() {
 
 	_vm->ensureResourceLoaded(rtCostume, _costume);
 
-	if (_costumeNeedsInit) {
-		startAnimActor(_initFrame);
-		if (_vm->_game.version <= 2) {
-			startAnimActor(_standFrame);
-			startAnimActor(_talkStopFrame);
-		}
-		_costumeNeedsInit = false;
-	}
-
-	// FIXME: Evil hack to work around bug #770717
-	if (!_moving && _vm->_game.version <= 2)
+	if (_vm->_game.version <= 2) {
+		_cost.reset();
 		startAnimActor(_standFrame);
+		startAnimActor(_initFrame);
+		startAnimActor(_talkStopFrame);
+	} else {
+		if (_costumeNeedsInit) {
+				startAnimActor(_initFrame);
+			_costumeNeedsInit = false;
+		}
+	}
 
 	stopActorMoving();
 	_visible = true;
