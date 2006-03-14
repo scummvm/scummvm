@@ -39,7 +39,6 @@ namespace Scumm {
 extern void sysexHandler_Scumm (Player *, const byte *, uint16);
 
 void sysexHandler_SamNMax (Player *player, const byte *msg, uint16 len) {
-	Part *part;
 	byte a;
 
 	IMuseInternal *se = player->_se;
