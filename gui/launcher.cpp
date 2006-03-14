@@ -443,9 +443,6 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	_w = screenW;
 	_h = screenH;
 
-	// Show ScummVM version
-	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
-
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
 		GraphicsWidget *logo = new GraphicsWidget(this, "launcher_logo");
@@ -453,7 +450,13 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 		logo->useTransparency(true);
 
 		logo->setGfx(th->getImageSurface(th->kThemeLogo));
-	}
+
+		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate, kTextAlignRight);
+	} else
+		new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
+#else
+	// Show ScummVM version
+	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
 #endif
 
 	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q');
