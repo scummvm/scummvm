@@ -541,6 +541,7 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 
 	if (transparency) {
 		drawSurface(rect, &surface, false, false, 256);
+		addDirtyRect(r);
 		return;
 	}
 
