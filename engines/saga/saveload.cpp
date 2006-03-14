@@ -185,14 +185,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Original game title
 	memset(title, 0, TITLESIZE);
-	// TODO: This used to include the full title. I (Fingolfin) don't understand
-	// the purpose of saving this information here, which is why I am not
-	// changing it at the moment (it seems to *only* be used in a debug() call
-	// when loading). If desired, the full description string could be saved here
-	// again (as it used to be), ideally by computing it once and storing it in
-	// a member variable.
-	// If desired, I can implement it, it just didn't seem worth the effort.
-	strncpy(title, getGameDescription()->extra, TITLESIZE);
+	strncpy(title, _gameTitle.c_str(), TITLESIZE);
 	out->write(title, TITLESIZE);
 
 	// Surrounding scene

@@ -679,6 +679,7 @@ public:
 //current game description
 	int _gameNumber;
 	GameDescription *_gameDescription;
+	Common::String _gameTitle;
 	Common::Rect _displayClip;
 
 protected:

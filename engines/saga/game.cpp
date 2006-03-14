@@ -1577,6 +1577,18 @@ static GameDescription gameDescriptions[] = {
 	},
 };
 
+
+static DetectedGame toDetectedGame(const GameDescription &g) {
+	const char *title = 0;
+	if (g.gameType == GType_ITE)
+		title = "Inherit the Earth: Quest for the Orb";
+	else if (g.gameType == GType_IHNM)
+		title = "I Have No Mouth and I Must Scream";
+	DetectedGame dg(g.name, title, g.language, g.platform);
+	dg.updateDesc(g.extra);
+	return dg;
+}
+
 bool SagaEngine::initGame() {
 	uint16 gameCount = ARRAYSIZE(gameDescriptions);
 	int gameNumber = -1;
@@ -1609,7 +1621,7 @@ bool SagaEngine::initGame() {
 					 language != Common::UNK_LANG) ||
 					(gameDescriptions[matches[i]].platform != platform &&
 					 platform != Common::kPlatformUnknown)) {
-					debug(2, "Purged (pass 2) %d (%s)", matches[i], gameDescriptions[matches[i]].extra);
+					debug(2, "Purged (pass 2) %s", toDetectedGame(gameDescriptions[matches[i]]).description.c_str());
 					matches[i] = -1;
 				}
 				else
@@ -1633,7 +1645,8 @@ bool SagaEngine::initGame() {
 		error("SagaEngine::loadGame wrong gameNumber");
 	}
 
-	debug(2, "Running %d (%s)", gameNumber, gameDescriptions[gameNumber].extra);
+	_gameTitle = toDetectedGame(gameDescriptions[gameNumber]).description;
+	debug(2, "Running %s", _gameTitle.c_str());
 
 	_gameNumber = gameNumber;
 	_gameDescription = &gameDescriptions[gameNumber];
@@ -1687,7 +1700,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
 					count++;
 			if (count < maxcount) {
-				debug(2, "Purged: %d (%s)", matches[i], gameDescriptions[matches[i]].extra);
+				debug(2, "Purged: %s", toDetectedGame(gameDescriptions[matches[i]]).description.c_str());
 				matches[i] = -1;
 			}
 		}
@@ -1697,15 +1710,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 	// and now push them into list of detected games
 	for (i = 0; i < index; i++)
 		if (matches[i] != -1) {
-			GameDescription &g = gameDescriptions[matches[i]];
-			const char *title = 0;
-			if (g.gameType == GType_ITE)
-				title = "Inherit the Earth: Quest for the Orb";
-			else if (g.gameType == GType_IHNM)
-				title = "I Have No Mouth and I Must Scream";
-			DetectedGame dg(g.name, title, g.language, g.platform);
-			dg.updateDesc(g.extra);
-			detectedGames.push_back(dg);
+			detectedGames.push_back(toDetectedGame(gameDescriptions[matches[i]]));
 		}
 		
 	if (retmatches) {
@@ -1804,7 +1809,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		} else {
 			bool match = true;
 
-			debug(2, "Probing game: %d (%s)", game_n, gameDescriptions[game_n].extra);
+			debug(2, "Probing game: %s", toDetectedGame(gameDescriptions[game_n]).description.c_str());
 
 			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
@@ -1819,7 +1824,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			if (!match)
 				continue;
 
-			debug(2, "Found game: %d (%s)", game_n, gameDescriptions[game_n].extra);
+			debug(2, "Found game: %s", toDetectedGame(gameDescriptions[game_n]).description.c_str());
 
 			return game_n;
 		}
