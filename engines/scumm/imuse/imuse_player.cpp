@@ -344,9 +344,7 @@ void Player::send(uint32 b) {
 }
 
 void Player::sysEx(const byte *p, uint16 len) {
-	byte code;
 	byte a;
-	uint b;
 	byte buf[128];
 	Part *part;
 
