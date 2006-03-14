@@ -139,21 +139,21 @@ private:
 		uint8 *dataptrStack[4];
 		int8 baseNote;
 		uint8 unk29;
-		int8 unk31;
+		uint8 unk31;
 		uint16 unk30;
 		uint16 unk37;
 		uint8 unk33;
 		uint8 unk34;
 		uint8 unk35;
 		uint8 unk36;
-		int8 unk32;
-		int8 unk41;
+		uint8 unk32;
+		uint8 unk41;
 		uint8 unk38;
 		uint8 opExtraLevel1;
 		uint8 spacing2;
 		uint8 baseFreq;
-		int8 tempo;
-		int8 position;
+		uint8 tempo;
+		uint8 position;
 		uint8 regAx;
 		uint8 regBx;
 		typedef void (AdlibDriver::*Callback)(Channel&);
@@ -169,7 +169,7 @@ private:
 		uint8 spacing1;
 		uint8 unk11;
 		uint8 unk19;
-		int8 unk18;
+		uint8 unk18;
 		int8 unk20;
 		int8 unk21;
 		uint8 unk22;
@@ -326,7 +326,7 @@ private:
 
 	uint8 _unkValue1;
 	uint8 _unkValue2;
-	int8 _unkValue3;
+	uint8 _unkValue3;
 	uint8 _unkValue4;
 	uint8 _unkValue5;
 	uint8 _unkValue6;
@@ -355,7 +355,7 @@ private:
 
 	uint8 _unkOutputByte2;
 	uint8 _curRegOffset;
-	int8 _tempo;
+	uint8 _tempo;
 
 	const uint8 *_tablePtr1;
 	const uint8 *_tablePtr2;
@@ -392,7 +392,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_tempo = 0;
 
-	_unkValue3 = -1;
+	_unkValue3 = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
 	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
 	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
@@ -582,7 +582,7 @@ void AdlibDriver::callback() {
 	callbackOutput();
 	callbackProcess();
 
-	int8 temp = _unkValue3;
+	uint8 temp = _unkValue3;
 	_unkValue3 += _tempo;
 	if (_unkValue3 < temp) {
 		if (!(--_unkValue2)) {
@@ -610,8 +610,8 @@ void AdlibDriver::callbackOutput() {
 			initChannel(channel);
 			channel.priority = priority;
 			channel.dataptr = ptr;
-			channel.tempo = -1;
-			channel.position = -1;
+			channel.tempo = 0xFF;
+			channel.position = 0xFF;
 			channel.duration = 1;
 			if (chan != 9) {
 				unkOutput2(chan);
@@ -672,7 +672,7 @@ void AdlibDriver::callbackProcess() {
 			channel.tempo = _tempo;
 		}
 
-		int8 backup = channel.position;
+		uint8 backup = channel.position;
 		channel.position += channel.tempo;
 		if (channel.position < backup) {
 			if (--channel.duration) {
@@ -752,7 +752,7 @@ void AdlibDriver::initChannel(Channel &channel) {
 	debugC(9, kDebugLevelSound, "initChannel(%d)", &channel - _channels);
 	memset(&channel.dataptr, 0, sizeof(Channel) - ((char*)&channel.dataptr - (char*)&channel));
 
-	channel.tempo = -1;
+	channel.tempo = 0xFF;
 	channel.priority = 0;
 	// normally here are nullfuncs but we set 0 for now
 	channel.primaryEffect = 0;
@@ -993,7 +993,7 @@ void AdlibDriver::adjustVolume(Channel &channel) {
 
 void AdlibDriver::primaryEffect1(Channel &channel) {
 	debugC(9, kDebugLevelSound, "Calling primaryEffect1 (channel: %d)", _curChannel);
-	int8 temp = channel.unk31;
+	uint8 temp = channel.unk31;
 	channel.unk31 += channel.unk29;
 	if (channel.unk31 >= temp)
 		return;
@@ -1015,7 +1015,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
 			unk1 >>= 1;
 			if (!(unk1 & 0x3FF))
 				++unk1;
-			unk2 += 4;
+			unk2 = (unk2 & 0xFF00) | ((unk2 + 4) & 0xFF);
 			unk2 &= 0xFF1C;
 		}
 	} else {
@@ -1026,7 +1026,7 @@ void AdlibDriver::primaryEffect1(Channel &channel) {
 			unk1 <<= 1;
 			if (!(unk1 & 0x3FF))
 				--unk1;
-			unk2 -= 4;
+			unk2 = (unk2 & 0xFF00) | ((unk2 - 4) & 0xFF);
 			unk2 &= 0xFF1C;
 		}
 	}
@@ -1081,7 +1081,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 		return;
 	}
 
-	int8 temp = channel.unk41;
+	uint8 temp = channel.unk41;
 	channel.unk41 += channel.unk32;
 	if (channel.unk41 < temp) {
 		uint16 unk1 = channel.unk37;
@@ -1131,7 +1131,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 
 void AdlibDriver::secondaryEffect1(Channel &channel) {
 	debugC(9, kDebugLevelSound, "Calling secondaryEffect1 (channel: %d)", _curChannel);
-	int8 temp = channel.unk18;
+	uint8 temp = channel.unk18;
 	channel.unk18 += channel.unk19;
 	if (channel.unk18 < temp) {
 		if (--channel.unk21 < 0) {
@@ -1214,8 +1214,8 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, Channel &channel, uint8 value)
 		initChannel(channel2);
 		channel2.priority = priority;
 		channel2.dataptr = ptr;
-		channel2.tempo = -1;
-		channel2.position = -1;
+		channel2.tempo = 0xFF;
+		channel2.position = 0xFF;
 		channel2.duration = 1;
 		unkOutput2(chan);
 	}
@@ -1325,7 +1325,7 @@ int AdlibDriver::update_setupPrimaryEffect1(uint8 *&dataptr, Channel &channel, u
 	channel.unk30 = READ_BE_UINT16(dataptr);
 	dataptr += 2;
 	channel.primaryEffect = &AdlibDriver::primaryEffect1;
-	channel.unk31 = -1;
+	channel.unk31 = 0xFF;
 	return 0;
 }
 
@@ -1342,7 +1342,7 @@ int AdlibDriver::update_setBaseFreq(uint8 *&dataptr, Channel &channel, uint8 val
 }
 
 int AdlibDriver::update_setupPrimaryEffect2(uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.unk32 = (int8)value;
+	channel.unk32 = value;
 	channel.unk33 = *dataptr++;
 	uint8 temp = *dataptr++;
 	channel.unk34 = temp + 1;
@@ -1360,7 +1360,7 @@ int AdlibDriver::update_setPriority(uint8 *&dataptr, Channel &channel, uint8 val
 int AdlibDriver::updateCallback23(uint8 *&dataptr, Channel &channel, uint8 value) {
 	value >>= 1;
 	_unkValue1 = _unkValue2 = value;
-	_unkValue3 = -1;
+	_unkValue3 = 0xFF;
 	_unkValue4 = _unkValue5 = 0;
 	return 0;
 }
@@ -1405,7 +1405,7 @@ int AdlibDriver::update_setFractionalNoteSpacing(uint8 *&dataptr, Channel &chann
 }
 
 int AdlibDriver::update_setTempo(uint8 *&dataptr, Channel &channel, uint8 value) {
-	_tempo = (int8)value;
+	_tempo = value;
 	return 0;
 }
 
@@ -1416,7 +1416,7 @@ int AdlibDriver::update_removeSecondaryEffect1(uint8 *&dataptr, Channel &channel
 }
 
 int AdlibDriver::update_setChannelTempo(uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.tempo = (int8)value;
+	channel.tempo = value;
 	return 0;
 }
 
@@ -1555,15 +1555,15 @@ int AdlibDriver::updateCallback44(uint8 *&dataptr, Channel &channel, uint8 value
 int AdlibDriver::updateCallback45(uint8 *&dataptr, Channel &channel, uint8 value) {
 	if (value & 0x80) {
 		value += channel.tempo;
-		if ((int8)value >= (int8)channel.tempo)
+		if (value >= channel.tempo)
 			value = 1;
 	} else {
-		int8 temp = value;
+		uint8 temp = value;
 		value += channel.tempo;
 		if (value < temp)
-			value = (uint8)-1;
+			value = 0xFF;
 	}
-	channel.tempo = (int8)value;
+	channel.tempo = value;
 	return 0;
 }
 
