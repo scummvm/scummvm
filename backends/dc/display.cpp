@@ -25,7 +25,7 @@
 
 #include <common/stdafx.h>
 #include <common/scummsys.h>
-#include <common/scaler/intern.h>
+#include <graphics/scaler/intern.h>
 #include <graphics/surface.h>
 #include "dc.h"
 
