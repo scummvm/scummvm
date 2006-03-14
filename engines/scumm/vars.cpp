@@ -120,11 +120,11 @@ void ScummEngine_c64::setupScummVars() {
 	VAR_CHARCOUNT = 10;
 
 	// FIXME: Should be removed
-	VAR_CURRENT_LIGHTS = 12;
-	VAR_CURSORSTATE = 21;
-	VAR_CAMERA_MIN_X = 23;
-	VAR_CAMERA_MAX_X = 24;
-	VAR_TIMER_NEXT = 25;
+	VAR_CURRENT_LIGHTS = 256;
+	VAR_CURSORSTATE = 257;
+	VAR_CAMERA_MIN_X = 258;
+	VAR_CAMERA_MAX_X = 259;
+	VAR_TIMER_NEXT = 260;
 }
 
 void ScummEngine_v2::setupScummVars() {
