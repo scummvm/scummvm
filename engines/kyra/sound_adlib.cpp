@@ -1649,16 +1649,10 @@ int AdlibDriver::updateCallback49(uint8 *&dataptr, Channel &channel, uint8 value
 	value |= _unkOutputByte2;
 	value |= 0x20;
 
-	// FIXME: This could probably be replaced with writeOPL(0xBD, value),
-	//        but to make it easier to compare the output to DOSbox, write
-	//        directly to the data port and do the probably unnecessary
-	//        delay loop.
+	// The original only wrote to the data port here, but that shouldn't
+	// make any real difference.
 
-	OPLWrite(_adlib, 0x389, value);
-
-	for (int i = 0; i < 23;  i++)
-		OPLRead(_adlib, 0x388);
-
+	writeOPL(0xBD, value);
 	return 0;
 }
 
