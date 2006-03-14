@@ -1180,7 +1180,7 @@ int ScummEngine::getCurrentLights() const {
 }
 
 bool ScummEngine::isLightOn() const {
-	return (VAR_CURRENT_LIGHTS == 0xFF) || (getCurrentLights() & LIGHTMODE_screen);
+	return (_game.version >= 6) || (getCurrentLights() & LIGHTMODE_screen);
 }
 
 void ScummEngine::setShake(int mode) {
