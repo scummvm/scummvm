@@ -446,9 +446,16 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 	// Show ScummVM version
 	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
 
-	// Add some buttons at the bottom
-	// TODO: Rearrange them a bit? In particular, we could put a slightly smaller space
-	// between About and Options, and in exchange remove those a bit from Quit and Start.
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.evaluator()->getVar("launcher_logo.visible") == 1) {
+		GraphicsWidget *logo = new GraphicsWidget(this, "launcher_logo");
+		ThemeNew *th = (ThemeNew *)g_gui.theme();
+		logo->useTransparency(true);
+
+		logo->setGfx(th->getImageSurface(th->kThemeLogo));
+	}
+#endif
+
 	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q');
 	new ButtonWidget(this, "launcher_about_button", "About", kAboutCmd, 'B');
 	new ButtonWidget(this, "launcher_options_button", "Options", kOptionsCmd, 'O');

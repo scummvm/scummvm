@@ -229,6 +229,8 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 	_configFile.getKey("button_top", "pixmaps", imageHandlesTable[kButtonBkgdTop]);
 	_configFile.getKey("button_left", "pixmaps", imageHandlesTable[kButtonBkgdLeft]);
 	_configFile.getKey("button_bkgd", "pixmaps", imageHandlesTable[kButtonBkgd]);
+
+	_configFile.getKey("theme_logo", "pixmaps", imageHandlesTable[kThemeLogo]);
 	
 	// load the colors from the config file
 	setupColors();
@@ -525,9 +527,10 @@ void ThemeNew::drawButton(const Common::Rect &r, const Common::String &str, kSta
 	addDirtyRect(r2);
 }
 
-void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state) {
+void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, bool transparency) {
 	if (!_initOk)
 		return;
+
 	Common::Rect rect(r.left, r.top, r.left + surface.w, r.top + surface.h);
 	rect.clip(_screen.w, _screen.h);
 
@@ -535,6 +538,11 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Graphics::Surface &surfa
 		return;
 	
 	assert(surface.bytesPerPixel == sizeof(OverlayColor));
+
+	if (transparency) {
+		drawSurface(rect, &surface, false, false, 256);
+		return;
+	}
 
 	OverlayColor *src = (OverlayColor *)surface.pixels;
 	OverlayColor *dst = (OverlayColor *)_screen.getBasePtr(rect.left, rect.top);

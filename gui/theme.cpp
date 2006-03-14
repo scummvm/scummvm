@@ -216,7 +216,7 @@ void ThemeClassic::drawButton(const Common::Rect &r, const Common::String &str, 
 	addDirtyRect(r);
 }
 
-void ThemeClassic::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state) {
+void ThemeClassic::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, bool transparency) {
 	if (!_initOk)
 		return;
 

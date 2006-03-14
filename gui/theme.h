@@ -129,7 +129,7 @@ public:
 
 	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background = kWidgetBackgroundPlain, kState state = kStateEnabled) = 0;
 	virtual void drawButton(const Common::Rect &r, const Common::String &str, kState state = kStateEnabled) = 0;
-	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state = kStateEnabled) = 0;
+	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state = kStateEnabled, bool transparency = false) = 0;
 	virtual void drawSlider(const Common::Rect &r, int width, kState state = kStateEnabled) = 0;
 	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, kState state = kStateEnabled) = 0;
 	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state = kStateEnabled) = 0;
@@ -225,7 +225,7 @@ public:
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
 	void drawButton(const Common::Rect &r, const String &str, kState state);
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, bool transparency);
 	void drawSlider(const Common::Rect &r, int width, kState state);
 	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
@@ -297,13 +297,15 @@ public:
 
 	void drawWidgetBackground(const Common::Rect &r, uint16 hints, kWidgetBackground background, kState state);
 	void drawButton(const Common::Rect &r, const String &str, kState state);
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, kState state, bool transparency);
 	void drawSlider(const Common::Rect &r, int width, kState state);
 	void drawCheckbox(const Common::Rect &r, const String &str, bool checked, kState state);
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<String> &tabs, int active, uint16 hints, kState state);
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, kScrollbarState, kState state);
 	void drawCaret(const Common::Rect &r, bool erase, kState state);
 	void drawLineSeparator(const Common::Rect &r, kState state);
+    const Graphics::Surface *getImageSurface(int n) { return _images[n]; }
+
 private:
 	bool addDirtyRect(Common::Rect r, bool backup = false, bool special = false);
 
@@ -355,6 +357,7 @@ private:
 
 	const Graphics::Font *_font;
 
+public:
 	enum kImageHandles {
 		kDialogBkgdCorner = 0,
 		kDialogBkgdTop = 1,
@@ -405,10 +408,13 @@ private:
 		kWidgetSmallBkgdTop = 36,
 		kWidgetSmallBkgdLeft = 37,
 		kWidgetSmallBkgd = 38,
+
+		kThemeLogo = 39,
 		
 		kImageHandlesMax
 	};
 
+private:
 	const String *_imageHandles;
 	const Graphics::Surface **_images;
 	

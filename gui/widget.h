@@ -256,13 +256,18 @@ protected:
 class GraphicsWidget : public Widget {
 public:
 	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h);
+	GraphicsWidget(GuiObject *boss, Common::String name);
 	~GraphicsWidget();
 
 	void setGfx(const Graphics::Surface *gfx);
+
+	void useTransparency(bool state) { _transparency = state; }
+
 protected:
 	void drawWidget(bool hilite);
 
 	Graphics::Surface _gfx;
+	bool _transparency;
 };
 
 } // End of namespace GUI

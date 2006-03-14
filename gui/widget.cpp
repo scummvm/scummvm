@@ -288,7 +288,17 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h), _gfx() {
+	: Widget(boss, x, y, w, h), _gfx(), _transparency(false) {
+	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	_type = kGraphicsWidget;
+	// HACK: Don't save the background. We want to be sure that redrawing
+	//       the widget updates the screen, even when there isn't any image
+	//       to draw.
+	_hints &= ~THEME_HINT_SAVE_BACKGROUND;
+}
+
+GraphicsWidget::GraphicsWidget(GuiObject *boss, String name)
+	: Widget(boss, name), _gfx(), _transparency(false) {
 	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
 	_type = kGraphicsWidget;
 	// HACK: Don't save the background. We want to be sure that redrawing
@@ -314,7 +324,7 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 
 void GraphicsWidget::drawWidget(bool hilite) {
 	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
-		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx);
+		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, Theme::kStateEnabled,  _transparency);
 	}
 }
 
