@@ -37,8 +37,10 @@ extern "C" {
 //       condition here
 
 #ifndef _WIN32
+#ifndef MACOSX
 #define RGBtoYUV _RGBtoYUV
 #define LUT16to32 _LUT16to32
+#endif
 #endif
 
 #endif

@@ -29,7 +29,9 @@
 extern "C" {
 
 #ifndef _WIN32
+#ifndef MACOSX
 #define hq2x_16 _hq2x_16
+#endif
 #endif
 
 void hq2x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
