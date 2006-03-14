@@ -676,10 +676,7 @@ void KyraEngine::mainLoop() {
 		if (_deathHandler != 0xFF) {
 			_deathHandler = 0xFF;
 			snd_playWanderScoreViaMap(0, 1);
-			// This causes a failed assert in playWanderScoreViaMap.
-			//snd_playSoundEffect(49);
-			// Playing the track directly instead.
-			_sound->playTrack(29);
+			snd_playSoundEffect(49);
 			buttonMenuCallback(0);
 		}
 		

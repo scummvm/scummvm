@@ -406,11 +406,7 @@ void KyraEngine::snd_playTheme(int file, int track) {
 
 void KyraEngine::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
-	if (track == 49) {
-		snd_playWanderScoreViaMap(56, 1);
-	} else {
-		_sound->playSoundEffect(track);
-	}
+	_sound->playSoundEffect(track);
 }
 
 void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
