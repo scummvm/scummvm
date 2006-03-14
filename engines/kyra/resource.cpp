@@ -46,6 +46,25 @@ Resource::Resource(KyraEngine *engine) {
 		"WSA6.PAK", 0
 	};
 
+	/*static const char *kyra1AmigaFilelist[] = {
+		"alchemy.pak",  "chasm.pak",    "finale1.pak",   "gen_cav.pak",  "mix.pak",      "spring.pak",
+		"algae.pak",    "cliff.pak",    "finale2.pak",   "genhall.pak",  "mooncav.pak",  "square.pak",
+		"altar.pak",    "darms.pak",    "fnorth.pak",    "glade.pak",    "ncliffb.pak",  "startup.pak",
+		"arch.pak",     "dead.pak",     "foresta.pak",   "grave.pak",    "ncliff.pak",   "stump.pak",
+		"balcony.pak",  "dnstair.pak",  "forestb.pak",   "grthall.pak",  "nwclifb.pak",  "temple.pak",
+		"belroom.pak",  "dragon.pak",   "forestc.pak",   "healer.pak",   "nwcliff.pak",  "trunk.pak",
+		"bonkbg.pak",   "drgnwsa.pak",  "fountn.pak",    "herman.pak",   "oaks.pak",     "upstair.pak",
+		"bridge.pak",   "edgeb.pak",    "foyer.pak",     "intro1.pak",   "plateau.pak",  "well.pak",
+		"brins.pak",    "edge.pak",     "frstawsa.pak",  "kitchen.pak",  "pltcave.pak",  "willow.pak",
+		"broken.pak",   "emcav.pak",    "fsouthb.pak",   "kyragem.pak",  "potion.pak",   "wise.pak",
+		"burn.pak",     "enter.pak",    "fsouth.pak",    "lagoon.pak",   "potwsa.pak",   "xedgeb.pak",
+		"castle.pak",   "extheal.pak",  "fwststh.pak",   "landing.pak",  "ruby.pak",     "xedgec.pak",
+		"catacom.pak",  "extpot.pak",   "gatecv.pak",    "lava.pak",     "sickwil.pak",  "xedge.pak",
+		"caveb.pak",    "extspel.pak",  "gemcut.pak",    "lephole.pak",  "song.pak",     "zrock.pak",
+		"cave.pak",     "falls.pak",    "gem.pak",       "library.pak",  "sorrow.pak",
+		"cgate.pak",    "fgowest.pak",  "gencavb.pak",   "misc.pak",     "spell.pak", 0
+	};*/
+
 	static const char *kyra1CDFilelist[] = {
 		"ALTAR.APK", "BELROOM.APK", "BONKBG.APK", "BROKEN.APK", "CASTLE.APK", "CAVE.APK", "CGATE.APK",
 		"DEAD.APK", "DNSTAIR.APK", "DRAGON1.APK", "DRAGON2.APK", "EXTPOT.APK", "FORESTA.APK", "FORESTB.APK",
@@ -74,7 +93,9 @@ Resource::Resource(KyraEngine *engine) {
 
 	const char **usedFilelist = 0;
 
-	if (_engine->features() & GF_FLOPPY)
+	/*if (_engine->features() & GF_AMIGA)
+		usedFilelist = kyra1AmigaFilelist;
+	else*/ if (_engine->features() & GF_FLOPPY)
 		usedFilelist = kyra1Filelist;
 	else if (_engine->features() & GF_TALKIE)
 		usedFilelist = kyra1CDFilelist;
@@ -83,15 +104,15 @@ Resource::Resource(KyraEngine *engine) {
 
 	for (uint32 tmp = 0; usedFilelist[tmp]; ++tmp) {
 		// prefetch file
-		PAKFile *file = new PAKFile(usedFilelist[tmp]);
+		PAKFile *file = new PAKFile(usedFilelist[tmp], (_engine->features() & GF_AMIGA) != 0);
 		assert(file);
 
 		PakFileEntry newPak;
 		newPak._file = file;
 		strncpy(newPak._filename, usedFilelist[tmp], 32);
-		if (file->isOpen() && file->isValid())
+		if (file->isOpen() && file->isValid()) {
 			_pakfiles.push_back(newPak);
-		else {
+		} else {
 			delete file;
 			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
 		}
@@ -203,8 +224,9 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
-PAKFile::PAKFile(const Common::String& file) {
+PAKFile::PAKFile(const Common::String& file, bool amiga) {
 	_filename = 0;
+	_amiga = amiga;
 
 	Common::File pakfile;
 	uint8 *buffer = 0;
@@ -225,7 +247,11 @@ PAKFile::PAKFile(const Common::String& file) {
 	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
 
-	startoffset = READ_LE_UINT32(buffer + pos);
+	if (!_amiga) {
+		startoffset = READ_LE_UINT32(buffer + pos);
+	} else {
+		startoffset = READ_BE_UINT32(buffer + pos);
+	}
 	pos += 4;
 
 	while (pos < filesize) {
@@ -240,7 +266,11 @@ PAKFile::PAKFile(const Common::String& file) {
 		if (!(*chunk->_name))
 			break;
 
-		endoffset = READ_LE_UINT32(buffer + pos);
+		if (!_amiga) {
+			endoffset = READ_LE_UINT32(buffer + pos);
+		} else {
+			endoffset = READ_BE_UINT32(buffer + pos);
+		}
 		pos += 4;
 
 		if (endoffset == 0) {
@@ -321,19 +351,19 @@ uint32 PAKFile::getFileSize(const char* file) {
 }
 
 void KyraEngine::loadPalette(const char *filename, uint8 *palData) {
-	debugC( 9, kDebugLevelMain, "KyraEngine::loadPalette('%s' %p)", filename, (void *)palData);
+	debugC(9, kDebugLevelMain, "KyraEngine::loadPalette('%s' %p)", filename, (void *)palData);
 	uint32 fileSize = 0;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 
 	if (palData && fileSize) {
-		debugC( 9, kDebugLevelMain,"Loading a palette of size %i from '%s'", fileSize, filename);
+		debugC(9, kDebugLevelMain,"Loading a palette of size %i from '%s'", fileSize, filename);
 		memcpy(palData, srcData, fileSize);
 	}
 	delete [] srcData;
 }
 
 void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData) {
-	debugC( 9, kDebugLevelMain,"KyraEngine::copyBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
+	debug("KyraEngine::loadBitmap('%s', %d, %d, %p)", filename, tempPage, dstPage, (void *)palData);
 	uint32 fileSize;
 	uint8 *srcData = _res->fileData(filename, &fileSize);
 	assert(srcData);
@@ -341,7 +371,7 @@ void KyraEngine::loadBitmap(const char *filename, int tempPage, int dstPage, uin
 	uint32 imgSize = READ_LE_UINT32(srcData + 4);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 	if (palData && palSize) {
-		debugC( 9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
+		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
 		memcpy(palData, srcData + 10, palSize);		
 	}
 	uint8 *srcPtr = srcData + 10 + palSize;

@@ -43,7 +43,7 @@ class PAKFile {
 
 public:
 
-	PAKFile(const Common::String &file);
+	PAKFile(const Common::String &file, bool amiga = false);
 	~PAKFile();
 
 	uint8* getFile(const char *file);
@@ -56,6 +56,7 @@ public:
 private:
 
 	bool _open;
+	bool _amiga;
 	char *_filename;
 	Common::List<PakChunk*> _files; // the entries
 };

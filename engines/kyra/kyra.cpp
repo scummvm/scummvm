@@ -84,6 +84,8 @@ static const KyraGameSettings kyra_games[] = {
 										"8909b41596913b3f5deaf3c9f1017b01", "GEMCUT.EMC"},
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_SPANISH | GF_FLOPPY, // floppy 1.8 from clemmy
 										"747861d2a9c643c59fdab570df5b9093", "GEMCUT.EMC"},
+	//{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_AMIGA | GF_FLOPPY | GF_ENGLISH,
+	//									"2bd1da653eaefd691e050e4a9eb68a64", "GEMCUT.PAK" },
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_TALKIE, 
 										"fac399fe62f98671e56a005c5e94e39f", "GEMCUT.PAK" },
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_GERMAN | GF_TALKIE, 
@@ -554,7 +556,7 @@ int KyraEngine::go() {
 	uint32 sz;
 
 	res_loadResources();
-	if (_features & GF_FLOPPY) {
+	if (_features & GF_FLOPPY && !(_features & GF_AMIGA)) {
 		_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
 	}
 	_screen->loadFont(Screen::FID_8_FNT, _res->fileData("8FAT.FNT", &sz));
