@@ -1172,15 +1172,20 @@ void ScummEngine::drawFlashlight() {
 
 // C64 Maniac doesn't have a ScummVar for VAR_CURRENT_LIGHTS, and just uses
 // an internal variable. Emulate this to prevent overwriting script vars...
+// And V6 games do not use the "lights" at all. There, the whole screen is
+// always visible, and actors are always colored, so we fake the correct
+// light value for it.
 int ScummEngine::getCurrentLights() const {
 	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
 		return _currentLights;
+	else if (_game.version >= 6)
+		return LIGHTMODE_screen | LIGHTMODE_actor_color;
 	else
 		return VAR(VAR_CURRENT_LIGHTS);
 }
 
 bool ScummEngine::isLightOn() const {
-	return (_game.version >= 6) || (getCurrentLights() & LIGHTMODE_screen);
+	return (getCurrentLights() & LIGHTMODE_screen);
 }
 
 void ScummEngine::setShake(int mode) {
