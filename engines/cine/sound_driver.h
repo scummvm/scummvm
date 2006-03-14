@@ -38,6 +38,8 @@ class SoundDriver {
 public:
 	typedef void (*UpdateCallback)(void *);
 
+	virtual ~SoundDriver() {}
+
 	virtual void setupChannel(int channel, const uint8 *data, int instrument, int volume) = 0;
 	virtual void setChannelFrequency(int channel, int frequency) = 0;
 	virtual void stopChannel(int channel) = 0;
