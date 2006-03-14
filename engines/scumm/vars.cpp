@@ -91,14 +91,12 @@ void ScummEngine::setupScummVars() {
 	}
 
 	if (_game.version >= 5) {
-		VAR_SOUNDPARAM = 64;
-		VAR_SOUNDPARAM2 = 65;
-		VAR_SOUNDPARAM3 = 66;
-	}
-	if (_game.version >= 5) {
 		VAR_SOUNDRESULT = 56;
 		VAR_TALKSTOP_KEY = 57;
 		VAR_FADE_DELAY = 59;
+		VAR_SOUNDPARAM = 64;
+		VAR_SOUNDPARAM2 = 65;
+		VAR_SOUNDPARAM3 = 66;
 		VAR_MOUSEPRESENT = 67;
 		VAR_MEMORY_PERFORMANCE = 68;
 		VAR_VIDEO_PERFORMANCE = 69;
