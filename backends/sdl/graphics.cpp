@@ -373,7 +373,7 @@ void OSystem_SDL::loadGFXMode() {
 		// in place of the member vars, do everything etc. etc.. In case
 		// of a failure, rollback is trivial. Only if everything worked fine
 		// do we "commit" the changed values to the member vars.
-		warning("SDL_SetVideoMode says we can't switch to that mode");
+		warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
 		quit();
 	}
 
