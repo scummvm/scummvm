@@ -359,8 +359,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 			palette[1] = v1MMActorPalatte1[actor];
 			palette[2] = v1MMActorPalatte2[actor];
 		} else {
-			// FIXME: Fingolfin asks: Can we ever see kPlatformC64 here?
-			// After all, we already have C64CostumeRenderer, right?
+			// Adjust for C-64 version of Zak McKracken
 			palette[1] = (_vm->_game.platform == Common::kPlatformC64) ? 10 : 8;
 			palette[2] = _palette[actor];
 		}
