@@ -636,7 +636,7 @@ void ScummEngine_v3old::loadRoomObjects() {
 	else
 		ptr = room + 29;
 
-	// Default pointer of objects without image, in C-64 verison of Maniac Mansion
+	// Default pointer of objects without image, in C64 verison of Maniac Mansion
 	int defaultPtr = READ_LE_UINT16(ptr + 2 * _numObjectsInRoom);
 
 	for (i = 0; i < _numObjectsInRoom; i++) {
@@ -1097,7 +1097,7 @@ byte *ScummEngine::getOBCDFromObject(int obj) {
 const byte *ScummEngine::getOBIMFromObjectData(const ObjectData &od) {
 	const byte *ptr;
 
-	// For objects without image in C-64 version of Maniac Mansion
+	// For objects without image in C64 version of Maniac Mansion
 	if (_game.platform == Common::kPlatformC64 && _game.id == GID_MANIAC && od.OBIMoffset == 0)
 		return NULL;
 
