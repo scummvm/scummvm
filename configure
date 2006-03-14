@@ -347,7 +347,6 @@ Optional Libraries:
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
-  --disable-altivec        disable altivec optimizations [autodetect]
 
 Some influential environment variables:
   LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
