@@ -119,8 +119,8 @@ typedef struct fm_opl_f {
 	uint8 rythm;		/* Rythm mode , key flag */
 
 	/* time tables */
-	int AR_TABLE[75];	/* atttack rate tables				*/
-	int DR_TABLE[75];	/* decay rate tables				*/
+	int AR_TABLE[76];	/* atttack rate tables				*/
+	int DR_TABLE[76];	/* decay rate tables				*/
 	uint FN_TABLE[1024];/* fnumber -> increment counter		*/
 
 	/* LFO */
