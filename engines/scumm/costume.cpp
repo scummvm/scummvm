@@ -354,7 +354,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 
 	// Set up the palette data
 	byte palette[4] = { 0, 0, 0, 0 };
-	if (!(_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+	if (!(_vm->getCurrentLights() & LIGHTMODE_actor_color)) {
 		palette[2] = 11;
 		palette[3] = 11;
 	} else if (_vm->_game.id == GID_MANIAC) {
@@ -614,7 +614,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (cost.curpos[limb] == 0xFFFF)
 		return 0;
 
-	if (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_base)
+	if (_vm->getCurrentLights() & LIGHTMODE_actor_base)
 		palette = _vm->_NESPalette[1];
 	else
 		palette = darkpalette;
@@ -837,7 +837,7 @@ void ClassicCostumeRenderer::setPalette(byte *palette) {
 	if (_loaded._format == 0x57) {
 		memcpy(_palette, palette, 13);
 	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
-		if ((_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+		if ((_vm->getCurrentLights() & LIGHTMODE_actor_color)) {
 			memcpy(_palette, palette, 16);
 		} else {
 			memset(_palette, 8, 16);
@@ -845,7 +845,7 @@ void ClassicCostumeRenderer::setPalette(byte *palette) {
 		}
 		_palette[_loaded._palette[0]] = _palette[0];
 	} else {
-		if ((_vm->VAR_CURRENT_LIGHTS == 0xFF) || (_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+		if (_vm->_game.version >= 6 || (_vm->getCurrentLights() & LIGHTMODE_actor_color)) {
 			for (i = 0; i < _loaded._numColors; i++) {
 				color = palette[i];
 				if (color == 255)
@@ -1019,7 +1019,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	// Set up the palette data
 	byte palette[4] = { 0, 0, 0, 0 };
-	if (!(_vm->VAR(_vm->VAR_CURRENT_LIGHTS) & LIGHTMODE_actor_color)) {
+	if (!(_vm->getCurrentLights() & LIGHTMODE_actor_color)) {
 		palette[2] = 11;
 		palette[3] = 11;
 	} else {

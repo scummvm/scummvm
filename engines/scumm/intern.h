@@ -469,6 +469,8 @@ protected:
 	void o_print_c64();
 	void o_unlockRoom();
 	void o_unlockSound();
+	void o_cutscene();
+	void o_endCutscene();
 	void o_beginOverride();
 	void o_isEqual();
 	void o_isGreater();

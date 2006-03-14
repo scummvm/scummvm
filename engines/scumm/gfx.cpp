@@ -1170,8 +1170,17 @@ void ScummEngine::drawFlashlight() {
 	_flashlight.isDrawn = true;
 }
 
+// C64 Maniac doesn't have a ScummVar for VAR_CURRENT_LIGHTS, and just uses
+// an internal variable. Emulate this to prevent overwriting script vars...
+int ScummEngine::getCurrentLights() const {
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64)
+		return _currentLights;
+	else
+		return VAR(VAR_CURRENT_LIGHTS);
+}
+
 bool ScummEngine::isLightOn() const {
-	return (VAR_CURRENT_LIGHTS == 0xFF) || (VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen);
+	return (VAR_CURRENT_LIGHTS == 0xFF) || (getCurrentLights() & LIGHTMODE_screen);
 }
 
 void ScummEngine::setShake(int mode) {

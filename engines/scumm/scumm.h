@@ -1007,6 +1007,9 @@ protected:
 public:
 	bool isLightOn() const;
 
+	byte _currentLights;
+	int getCurrentLights() const;
+
 protected:
 	void initScreens(int b, int h);
 	void initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs, bool scrollable);

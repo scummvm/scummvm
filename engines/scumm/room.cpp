@@ -156,8 +156,10 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		VAR(VAR_ROOM_HEIGHT) = _roomHeight;
 	}
 
-	VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
-	VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
+	if (VAR_CAMERA_MIN_X != 0xFF)
+		VAR(VAR_CAMERA_MIN_X) = _screenWidth / 2;
+	if (VAR_CAMERA_MAX_X != 0xFF)
+		VAR(VAR_CAMERA_MAX_X) = _roomWidth - (_screenWidth / 2);
 
 	if (_game.features & GF_NEW_CAMERA) {
 		VAR(VAR_CAMERA_MIN_Y) = _screenHeight / 2;

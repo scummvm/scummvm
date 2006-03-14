@@ -43,10 +43,10 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 	}
 	camera._dest.x = pos_x;
 
-	if (camera._cur.x < VAR(VAR_CAMERA_MIN_X))
+	if (VAR_CAMERA_MIN_X != 0xFF && camera._cur.x < VAR(VAR_CAMERA_MIN_X))
 		camera._cur.x = (short) VAR(VAR_CAMERA_MIN_X);
 
-	if (camera._cur.x > VAR(VAR_CAMERA_MAX_X))
+	if (VAR_CAMERA_MAX_X != 0xFF && camera._cur.x > VAR(VAR_CAMERA_MAX_X))
 		camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
 
 	if (VAR_SCROLL_SCRIPT != 0xFF && VAR(VAR_SCROLL_SCRIPT)) {
@@ -106,7 +106,7 @@ void ScummEngine::moveCamera() {
 
 	camera._cur.x &= 0xFFF8;
 
-	if (camera._cur.x < VAR(VAR_CAMERA_MIN_X)) {
+	if (VAR_CAMERA_MIN_X != 0xFF && camera._cur.x < VAR(VAR_CAMERA_MIN_X)) {
 		if (VAR_CAMERA_FAST_X != 0xFF && VAR(VAR_CAMERA_FAST_X))
 			camera._cur.x = (short) VAR(VAR_CAMERA_MIN_X);
 		else
@@ -115,7 +115,7 @@ void ScummEngine::moveCamera() {
 		return;
 	}
 
-	if (camera._cur.x > VAR(VAR_CAMERA_MAX_X)) {
+	if (VAR_CAMERA_MAX_X != 0xFF && camera._cur.x > VAR(VAR_CAMERA_MAX_X)) {
 		if (VAR_CAMERA_FAST_X != 0xFF && VAR(VAR_CAMERA_FAST_X))
 			camera._cur.x = (short) VAR(VAR_CAMERA_MAX_X);
 		else
@@ -146,10 +146,10 @@ void ScummEngine::moveCamera() {
 		camera._dest.x = a->_pos.x;
 	}
 
-	if (camera._dest.x < VAR(VAR_CAMERA_MIN_X))
+	if (VAR_CAMERA_MIN_X != 0xFF && camera._dest.x < VAR(VAR_CAMERA_MIN_X))
 		camera._dest.x = (short) VAR(VAR_CAMERA_MIN_X);
 
-	if (camera._dest.x > VAR(VAR_CAMERA_MAX_X))
+	if (VAR_CAMERA_MAX_X != 0xFF && camera._dest.x > VAR(VAR_CAMERA_MAX_X))
 		camera._dest.x = (short) VAR(VAR_CAMERA_MAX_X);
 
 	if (VAR_CAMERA_FAST_X != 0xFF && VAR(VAR_CAMERA_FAST_X)) {

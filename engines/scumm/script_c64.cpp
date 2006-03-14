@@ -116,7 +116,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifState02),
 		/* 40 */
-		OPCODE(o2_cutscene),
+		OPCODE(o_cutscene),
 		OPCODE(o2_putActor),
 		OPCODE(o2_startScript),
 		OPCODE(o_doSentence),
@@ -276,7 +276,7 @@ void ScummEngine_c64::setupOpcodes() {
 		OPCODE(o2_walkActorTo),
 		OPCODE(o2_ifNotState02),
 		/* C0 */
-		OPCODE(o2_endCutscene),
+		OPCODE(o_endCutscene),
 		OPCODE(o2_putActor),
 		OPCODE(o2_startScript),
 		OPCODE(o_doSentence),
@@ -699,11 +699,11 @@ void ScummEngine_c64::o_lights() {
 	// 1 Flashlight
 	// 2 Lighted area
 	if (a == 2)
-		VAR(VAR_CURRENT_LIGHTS) = 11;
+		_currentLights = 11;
 	else if (a == 1)
-		VAR(VAR_CURRENT_LIGHTS) = 4;
+		_currentLights = 4;
 	else
-		VAR(VAR_CURRENT_LIGHTS) = 0;
+		_currentLights = 0;
 
 	_fullRedraw = true;
 }
@@ -884,6 +884,39 @@ void ScummEngine_c64::o_getClosestObjActor() {
 	} while (--obj);
 
 	setResult(closest_obj);
+}
+
+void ScummEngine_c64::o_cutscene() {
+	vm.cutSceneData[0] = _userState | (_userPut ? 16 : 0);
+	vm.cutSceneData[2] = _currentRoom;
+	vm.cutSceneData[3] = camera._mode;
+
+	// Hide inventory, freeze scripts, hide cursor
+	setUserState(15);
+
+	_sentenceNum = 0;
+	stopScript(SENTENCE_SCRIPT);
+	resetSentence();
+
+	vm.cutScenePtr[0] = 0;
+}
+
+void ScummEngine_c64::o_endCutscene() {
+	vm.cutSceneStackPointer = 0;
+
+	VAR(VAR_OVERRIDE) = 0;
+	vm.cutSceneScript[0] = 0;
+	vm.cutScenePtr[0] = 0;
+
+	// Reset user state to values before cutscene
+	setUserState(vm.cutSceneData[0] | 7);
+
+	camera._mode = (byte) vm.cutSceneData[3];
+	if (camera._mode == kFollowActorCameraMode) {
+		actorFollowCamera(VAR(VAR_EGO));
+	} else if (vm.cutSceneData[2] != _currentRoom) {
+		startScene(vm.cutSceneData[2], 0, 0);
+	}
 }
 
 void ScummEngine_c64::o_beginOverride() {

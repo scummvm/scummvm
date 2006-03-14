@@ -118,13 +118,6 @@ void ScummEngine_c64::setupScummVars() {
 	//VAR_IS_SOUND_RUNNING = 8;
 	//VAR_ACTIVE_VERB = 9;
 	VAR_CHARCOUNT = 10;
-
-	// FIXME: Should be removed
-	VAR_CURRENT_LIGHTS = 256;
-	VAR_CURSORSTATE = 257;
-	VAR_CAMERA_MIN_X = 258;
-	VAR_CAMERA_MAX_X = 259;
-	VAR_TIMER_NEXT = 260;
 }
 
 void ScummEngine_v2::setupScummVars() {
@@ -551,6 +544,9 @@ void ScummEngine_c64::initScummVars() {
 	_activeVerb = 13;
 
 	VAR(VAR_EGO) = 3;
+
+	// Setup light
+	_currentLights = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 }
 
 void ScummEngine_v2::initScummVars() {
@@ -567,10 +563,8 @@ void ScummEngine_v5::initScummVars() {
 	if (_game.version >= 4 && _game.version <= 5)
 		VAR(VAR_V5_TALK_STRING_Y) = -0x50;
 
-	if (VAR_CURRENT_LIGHTS != 0xFF) {
-		// Setup light
-		VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
-	}
+	// Setup light
+	VAR(VAR_CURRENT_LIGHTS) = LIGHTMODE_actor_base | LIGHTMODE_actor_color | LIGHTMODE_screen;
 
 	if (_game.id == GID_MONKEY)
 		_scummVars[74] = 1225;

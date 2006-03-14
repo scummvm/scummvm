@@ -636,6 +636,7 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	_scrollBuffer = NULL;
 
 	_doEffect = false;
+	_currentLights = 0;
 	memset(&_flashlight, 0, sizeof(_flashlight));
 	_bompActorPalettePtr = NULL;
 	_shakeEnabled = false;
@@ -1454,7 +1455,7 @@ void ScummEngine::scummInit() {
 
 	virtscr[0].xstart = 0;
 
-	if (VAR_CURRENT_LIGHTS != 0xFF) {
+	if (_game.version <= 5) {
 		// Setup light
 		_flashlight.xStrips = 7;
 		_flashlight.yStrips = 7;
@@ -2059,9 +2060,9 @@ load_game:
 		setActorRedrawFlags();
 		resetActorBgs();
 
-		if (VAR_CURRENT_LIGHTS != 0xFF &&
-		    !(VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_screen) &&
-		      VAR(VAR_CURRENT_LIGHTS) & LIGHTMODE_flashlight) {
+		if (_game.version <= 5 &&
+		    !(getCurrentLights() & LIGHTMODE_screen) &&
+		      getCurrentLights() & LIGHTMODE_flashlight) {
 			drawFlashlight();
 			setActorRedrawFlags();
 		}
@@ -2128,7 +2129,7 @@ load_game:
 
 	if (VAR_TIMER != 0xFF)
 		VAR(VAR_TIMER) = 0;
-	return VAR(VAR_TIMER_NEXT);
+	return (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 
 }
 
