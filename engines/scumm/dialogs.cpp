@@ -355,6 +355,8 @@ public:
 SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
 	: Dialog("scummsaveload"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _scumm(engine) {
 
+	_drawingHints |= GUI::THEME_HINT_MAIN_DIALOG;
+
 	new StaticTextWidget(this, "scummsaveload_title", title, kTextAlignCenter);
 
 	// Add choice list
