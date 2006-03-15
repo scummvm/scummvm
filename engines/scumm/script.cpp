@@ -923,7 +923,7 @@ void ScummEngine::runAllScripts() {
 }
 
 void ScummEngine::runExitScript() {
-	if (_game.version > 2 && VAR(VAR_EXIT_SCRIPT))
+	if (VAR_EXIT_SCRIPT != 0xFF && VAR(VAR_EXIT_SCRIPT))
 		runScript(VAR(VAR_EXIT_SCRIPT), 0, 0, 0);
 	if (_EXCD_offs) {
 		int slot = getScriptSlot();
@@ -952,12 +952,12 @@ void ScummEngine::runExitScript() {
 		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
-	if (_game.version > 2 && VAR(VAR_EXIT_SCRIPT2))
+	if (VAR_EXIT_SCRIPT2 != 0xFF && VAR(VAR_EXIT_SCRIPT2))
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, 0);
 }
 
 void ScummEngine::runEntryScript() {
-	if (_game.version > 2 && VAR(VAR_ENTRY_SCRIPT))
+	if (VAR_ENTRY_SCRIPT != 0xFF && VAR(VAR_ENTRY_SCRIPT))
 		runScript(VAR(VAR_ENTRY_SCRIPT), 0, 0, 0);
 	if (_ENCD_offs) {
 		int slot = getScriptSlot();
@@ -973,7 +973,7 @@ void ScummEngine::runEntryScript() {
 		initializeLocals(slot, 0);
 		runScriptNested(slot);
 	}
-	if (_game.version > 2 && VAR(VAR_ENTRY_SCRIPT2))
+	if (VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
 		runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, 0);
 }
 
