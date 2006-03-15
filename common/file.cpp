@@ -102,24 +102,6 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	}
 #endif
 
-// If all else fails, try looking inside the application bundle on MacOS for the lowercase file.
-#ifdef MACOSX
-	if (!file) {
-		ptr = buf + offsetToFileName;
-		while (*ptr) {
-			*ptr = tolower(*ptr);
-			ptr++;
-		}
-
-		CFStringRef fileName = CFStringCreateWithBytes(NULL, (const UInt8 *)buf, strlen(buf), kCFStringEncodingASCII, false);
-		CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), fileName, NULL, NULL);
-		if (fileUrl) {
-			if (CFURLGetFileSystemRepresentation(fileUrl, true, (UInt8 *)buf, sizeof(buf)))
-				file = fopen(buf, mode);
-		}
-	}
-#endif
-
 	return file;
 }
 
@@ -185,6 +167,21 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		// Last resort: try the current directory
 		if (_handle == NULL)
 			_handle = fopenNoCase(filename, "", modeStr);
+
+		// Last last (really) resort: try looking inside the application bundle on MacOS for the lowercase file.
+#ifdef MACOSX
+		if (!_handle) {
+			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename, strlen(filename), kCFStringEncodingASCII, false);
+			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);
+			if (fileUrl) {
+				UInt8 buf[256];
+				if (CFURLGetFileSystemRepresentation(fileUrl, false, (UInt8 *)buf, 256)) {
+					_handle = fopen((char *)buf, modeStr);
+				}
+			}
+		}
+#endif
+
 	}
 
 	if (_handle == NULL) {
