@@ -756,8 +756,6 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
-				// Unnecessary in the SDL backend, but perhaps
-				// needed in others.
 				_system->updateScreen();
 				break;
 			case OSystem::EVENT_QUIT:
