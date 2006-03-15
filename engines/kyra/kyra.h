@@ -163,7 +163,7 @@ struct Button {
 	uint8 process2;
 	// uint8 unk
 	uint16 flags;
-	typedef int (KyraEngine::*ButtonCallback)(Button*);	
+	typedef int (KyraEngine::*ButtonCallback)(Button*);
 	// using 6 pointers instead of 3 as in the orignal here (safer for use with classes)
 	uint8 *process0PtrShape;
 	uint8 *process1PtrShape;
@@ -698,6 +698,7 @@ protected:
 	bool _abortWalkFlag;
 	bool _abortWalkFlag2;
 	bool _mousePressFlag;
+	int8 _mouseWheel;
 	uint8 _flagsTable[53];
 	uint8 *_shapes[377];
 	uint16 _gameSpeed;
@@ -966,6 +967,8 @@ protected:
 	static Button _menuButtonData[];
 	static Button _scrollUpButton;
 	static Button _scrollDownButton;
+
+	bool _haveScrollButtons;
 
 	static Menu _menu[];
 

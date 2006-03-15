@@ -220,6 +220,12 @@ int KyraEngine::buttonAmuletCallback(Button *caller) {
 }
 
 void KyraEngine::processButtonList(Button *list) {
+	if (_haveScrollButtons) {
+		if (_mouseWheel < 0)
+			gui_scrollUp(&_scrollUpButton);
+		else if (_mouseWheel > 0)
+			gui_scrollDown(&_scrollDownButton);
+	}
 	while (list) {
 		if (list->flags & 8) {
 			list = list->nextButton;
@@ -524,6 +530,8 @@ void KyraEngine::initMenu(Menu menu) {
 	}
 
 	if (menu.scrollUpBtnX != -1) {
+		_haveScrollButtons = true;
+
 		_scrollUpButton.x = menu.scrollUpBtnX + menu.x;
 		_scrollUpButton.y = menu.scrollUpBtnY + menu.y;
 		_scrollUpButton.buttonCallback = &KyraEngine::gui_scrollUp;
@@ -537,7 +545,8 @@ void KyraEngine::initMenu(Menu menu) {
 		_scrollDownButton.nextButton = 0;
 		_menuButtonList = initButton(_menuButtonList, &_scrollDownButton);
 		processMenuButton(&_scrollDownButton);
-	}
+	} else
+		_haveScrollButtons = false;
 
 	_screen->showMouse();
 	_screen->updateScreen();
@@ -561,6 +570,7 @@ void KyraEngine::gui_getInput() {
 	uint32 now = _system->getMillis();
 
 	_mousePressFlag = false;
+	_mouseWheel = 0;
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
 			case OSystem::EVENT_QUIT:
@@ -573,6 +583,12 @@ void KyraEngine::gui_getInput() {
 				_mouseX = event.mouse.x;
 				_mouseY = event.mouse.y;
 				_system->updateScreen();
+				break;
+			case OSystem::EVENT_WHEELUP:
+				_mouseWheel = -1;
+				break;
+			case OSystem::EVENT_WHEELDOWN:
+				_mouseWheel = 1;
 				break;
 			case OSystem::EVENT_KEYDOWN:
 				_keyboardEvent.pending = true;
