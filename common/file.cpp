@@ -23,6 +23,10 @@
 #include "common/file.h"
 #include "common/util.h"
 
+#ifdef MACOSX
+#include "CoreFoundation/CoreFoundation.h"
+#endif
+
 namespace Common {
 
 StringList File::_defaultDirectories;
@@ -95,6 +99,24 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	//
 	if (file) {
 		setvbuf(file, NULL, _IOFBF, 8192);
+	}
+#endif
+
+// If all else fails, try looking inside the application bundle on MacOS for the lowercase file.
+#ifdef MACOSX
+	if (!file) {
+		ptr = buf + offsetToFileName;
+		while (*ptr) {
+			*ptr = tolower(*ptr);
+			ptr++;
+		}
+
+		CFStringRef fileName = CFStringCreateWithBytes(NULL, (const UInt8 *)buf, strlen(buf), kCFStringEncodingASCII, false);
+		CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), fileName, NULL, NULL);
+		if (fileUrl) {
+			if (CFURLGetFileSystemRepresentation(fileUrl, true, (UInt8 *)buf, sizeof(buf)))
+				file = fopen(buf, mode);
+		}
 	}
 #endif
 

@@ -94,6 +94,8 @@ bundle: scummvm-static
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/scummvm.icns $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/gui/themes/default-theme.ini $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/gui/themes/default-theme.zip $(bundle_name)/Contents/Resources/
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	strip $(bundle_name)/Contents/MacOS/scummvm

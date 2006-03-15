@@ -28,11 +28,10 @@
 
 extern "C" {
 
-#ifndef _WIN32
-#ifndef MACOSX
+#if !defined(_WIN32) && !defined(MACOSX)
 #define hq3x_16 _hq3x_16
 #endif
-#endif
+
 
 void hq3x_16(const byte *, byte *, uint32, uint32, uint32, uint32);
 

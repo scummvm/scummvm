@@ -36,11 +36,9 @@ extern "C" {
 // NOTE: if your compiler uses different mangled names, add another
 //       condition here
 
-#ifndef _WIN32
-#ifndef MACOSX
+#if !defined(_WIN32) && !defined(MACOSX)
 #define RGBtoYUV _RGBtoYUV
 #define LUT16to32 _LUT16to32
-#endif
 #endif
 
 #endif
