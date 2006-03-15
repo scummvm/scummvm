@@ -67,7 +67,7 @@ void loadObject(char *pObjectName) {
 
 	ptr = readBundleFile(findFileInBundle(pObjectName));
 
-	processPendingUpdates(1);
+	setMouseCursor(1);
 
 	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 

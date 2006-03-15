@@ -55,9 +55,6 @@ void blitRawScreen(uint8 *frontBuffer) {
 	gfxFlipRawPage(frontBuffer);
 }
 
-void processPendingUpdates(int16 param) {
-}
-
 Common::File partFileHandle;
 
 void waitPlayerInput(void) {
@@ -678,7 +675,7 @@ int16 makeLoad(char *saveName) {
 	loadResourcesFromSave();
 	//reincrustAllBg();
 
-	processPendingUpdates(0);
+	setMouseCursor(0);
 
 	if (strlen(currentDatName)) {
 /*		i = saveVar2;
@@ -872,7 +869,7 @@ void makeSave(char *saveFileName) {
 
 	fHandle.close();
 
-	processPendingUpdates(0);
+	setMouseCursor(0);
 }
 
 void makeSystemMenu(void) {

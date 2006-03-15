@@ -53,7 +53,7 @@ void loadPart(const char *partName) {
 
 	ASSERT(partFileHandle.isOpen());
 
-	processPendingUpdates(-1);
+	setMouseCursor(-1);
 
 	numElementInPart = partFileHandle.readUint16BE();
 	partFileHandle.readUint16BE(); // entry size
@@ -183,7 +183,7 @@ int16 findFileInBundle(const char *fileName) {
 }
 
 void readFromPart(int16 idx, uint8 *dataPtr) {
-	processPendingUpdates(1);
+	setMouseCursor(1);
 
 	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
 	partFileHandle.read(dataPtr, partBuffer[idx].packedSize);

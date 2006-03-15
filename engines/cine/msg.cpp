@@ -54,7 +54,7 @@ void loadMsg(char *pMsgName) {
 
 	ptr = readBundleFile(findFileInBundle(pMsgName));
 
-	processPendingUpdates(1);
+	setMouseCursor(1);
 
 	messageCount = READ_BE_UINT16(ptr); ptr += 2;
 

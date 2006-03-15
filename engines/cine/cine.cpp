@@ -182,8 +182,8 @@ int CineEngine::go() {
 	if (gameType == Cine::GID_FW)
 		snd_clearBasesonEntries();
 
-	delete g_soundDriver;
 	delete g_sfxPlayer;
+	delete g_soundDriver;
 	return 0;
 }
 
@@ -262,7 +262,7 @@ static void initialize() {
 	loadPrc(BOOT_PRC_NAME);
 	strcpy(currentPrcName, BOOT_PRC_NAME);
 
-	processPendingUpdates(0);
+	setMouseCursor(0);
 }
 
 } // End of namespace Cine

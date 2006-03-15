@@ -161,9 +161,9 @@ void mainLoop(int bootScriptIdx) {
 		purgeList0();
 
 		if (playerCommand == -1) {
-			processPendingUpdates(0);
+			setMouseCursor(0);
 		} else {
-			processPendingUpdates(2);
+			setMouseCursor(2);
 		}
 
 		drawOverlays();

@@ -81,7 +81,7 @@ void loadPrc(const char *pPrcName) {
     ASSERT_PTR(scriptPtr);
 	}
 
-	processPendingUpdates(1);
+	setMouseCursor(1);
 
 	numScripts = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
 	ASSERT(numScripts <= NUM_MAX_SCRIPT);

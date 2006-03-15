@@ -69,7 +69,7 @@ void loadRel(char *pRelName) {
 
 	ptr = readBundleFile(findFileInBundle(pRelName));
 
-	processPendingUpdates(1);
+	setMouseCursor(1);
 
 	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 

@@ -35,7 +35,7 @@ extern unsigned char *page2;
 extern unsigned char *page3;
 
 void init_video();
-
+void setMouseCursor(int cursor);
 void convertGfx(uint8 *source, uint8 *dest, const uint16 width, const uint16 height);
 void convertGfx2(uint8 *source, uint8 *dest, const uint16 width, const uint16 height);
 void gfxCopyPage(uint8 *source, uint8 *dest);
