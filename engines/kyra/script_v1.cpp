@@ -1671,7 +1671,8 @@ int KyraEngine::cmd_setPlayingLoop(ScriptState *script) {
 }
 
 int KyraEngine::cmd_brandonToStoneSequence(ScriptState *script) {
-	warning("STUB: cmd_brandonToStoneSequence");
+	debugC(3, kDebugLevelScriptFuncs, "cmd_brandonToStoneSequence(%p) ()", (const void *)script);
+	seq_brandonToStone();
 	return 0;
 }
 
@@ -1687,7 +1688,10 @@ int KyraEngine::cmd_protectCommandLine(ScriptState *script) {
 }
 
 int KyraEngine::cmd_pauseMusicSeconds(ScriptState *script) {
-	warning("STUB: cmd_pauseMusicSeconds");
+	debugC(3, kDebugLevelScriptFuncs, "cmd_pauseMusicSeconds(%p) ()", (const void *)script);
+	// if music disabled
+	//     return
+	cmd_pauseSeconds(script);
 	return 0;
 }
 
