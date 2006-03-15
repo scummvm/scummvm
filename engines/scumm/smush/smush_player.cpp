@@ -177,7 +177,7 @@ public:
 };
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
-	debugC(DEBUG_SMUSH, "trying to read text ressources from %s", file);
+	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
 	ScummFile theFile;
 
 	vm->openFile(theFile, file);
