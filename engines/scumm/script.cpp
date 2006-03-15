@@ -1365,8 +1365,8 @@ void ScummEngine::beginOverride() {
 	fetchScriptByte();
 	fetchScriptWord();
 
-	// This is based on disassembly
-	VAR(VAR_OVERRIDE) = 0;
+	if (_game.version >= 5)
+		VAR(VAR_OVERRIDE) = 0;
 }
 
 void ScummEngine::endOverride() {
@@ -1376,7 +1376,7 @@ void ScummEngine::endOverride() {
 	vm.cutScenePtr[idx] = 0;
 	vm.cutSceneScript[idx] = 0;
 
-	if (_game.version > 3)
+	if (_game.version >= 4)
 		VAR(VAR_OVERRIDE) = 0;
 }
 
