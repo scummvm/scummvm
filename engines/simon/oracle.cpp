@@ -37,7 +37,7 @@ void SimonEngine::hyperLinkOn(uint16 x)
 	_hyperLink = x;
 	_variableArray[50] = _textWindow->textColumn+_textWindow->x;
 	_variableArray[51] = _textWindow->textRow+_textWindow->y+
-						(_oracleMaxScrollY - _textWindow->scrollY) * 15;
+						(_oracleMaxScrollY - _textWindow->textColumnOffset) * 15;
 }
 
 
