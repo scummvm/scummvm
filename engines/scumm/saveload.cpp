@@ -1198,6 +1198,14 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	}
 }
 
+void ScummEngine_c64::saveOrLoad(Serializer *s) {
+	ScummEngine::saveOrLoad(s);
+
+	// TODO: Save additional variables
+	// _currentMode
+	// _currentLights
+}
+
 void ScummEngine_v5::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 

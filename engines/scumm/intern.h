@@ -416,6 +416,8 @@ protected:
 	virtual void initScummVars();
 	virtual void decodeParseString();
 
+	virtual void saveOrLoad(Serializer *s);
+
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
 	void initC64Verbs();
