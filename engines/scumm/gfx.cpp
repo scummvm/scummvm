@@ -1642,7 +1642,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int wi
 
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
- * used throughout in 71+ HE versions.
+ * used throughout HE71+ versions.
  *
  * @note This function essentially is a stripped down & special cased version of
  * the generic Gdi::drawBitmap() method.
