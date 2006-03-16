@@ -777,7 +777,7 @@ void KyraEngine::initSceneObjectList(int brandonAlive) {
 		}
 		curAnimState->height = _sprites->_anims[i].height;
 		curAnimState->height2 = _sprites->_anims[i].height2;
-		curAnimState->width = _sprites->_anims[i].width + 1;
+		curAnimState->width = _sprites->_anims[i].width;
 		curAnimState->width2 = _sprites->_anims[i].width2;
 		curAnimState->drawY = _sprites->_anims[i].drawY;
 		curAnimState->x1 = curAnimState->x2 = _sprites->_anims[i].x;

@@ -762,9 +762,9 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 		if (endFrame >= startFrame) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
+				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame);
 				_animator->_updateScreen = true;
-				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();
@@ -779,9 +779,9 @@ int KyraEngine::cmd_displayWSASequentialFrames(ScriptState *script) {
 		} else {
 			int frame = startFrame;
 			while (endFrame <= frame) {
+				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame);
 				_animator->_updateScreen = true;
-				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				while (_system->getMillis() < continueTime) {
 					_sprites->updateSceneAnims();
 					_animator->updateAllObjectShapes();

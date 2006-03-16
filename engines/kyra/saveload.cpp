@@ -205,7 +205,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	}
 	
 	createMouseItem(_itemInHand);
-	_animator->setBrandonAnimSeqSize(5, 48);
+	_animator->setBrandonAnimSeqSize(3, 48);
 	_animator->_noDrawShapesFlag = 1;
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	_animator->_noDrawShapesFlag = 0;
