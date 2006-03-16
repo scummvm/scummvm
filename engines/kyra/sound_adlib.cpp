@@ -204,9 +204,22 @@ private:
 	uint16 checkValue(int16 val) {
 		if (val < 0)
 			val = 0;
-		if (val > 0x3F)
+		else if (val > 0x3F)
 			val = 0x3F;
 		return val;
+	}
+
+	// The sound data has at least two lookup tables:
+	//
+	// * One for programs, starting at offset 0.
+	// * One for instruments, starting at offset 500.
+
+	uint8 *getProgram(int progId) {
+		return _soundData + READ_LE_UINT16(_soundData + 2 * progId);
+	}
+
+	uint8 *getInstrument(int instrumentId) {
+		return _soundData + READ_LE_UINT16(_soundData + 500 + 2 * instrumentId);
 	}
 
 	void setupPrograms();
@@ -235,7 +248,7 @@ private:
 	int update_setBaseNote(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_stopOtherChannel(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback16(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupInstrument(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupPrimaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removePrimaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -468,11 +481,12 @@ int AdlibDriver::snd_startSong(va_list &list) {
 	int songId = va_arg(list, int);
 	_flags |= 8;
 	_flagTrigger = 1;
-	uint16 offset = READ_LE_UINT16(&_soundData[songId << 1]);
-	uint8 firstByte = *(_soundData + offset);
+
+	uint8 *ptr = getProgram(songId);
+	uint8 chan = *ptr;
 
 	if ((songId << 1) != 0) {
-		if (firstByte == 9) {
+		if (chan == 9) {
 			if (_flags & 2)
 				return 0;
 		} else {
@@ -593,8 +607,7 @@ void AdlibDriver::callback() {
 
 void AdlibDriver::setupPrograms() {
 	while (_lastProcessed != _soundsPlaying) {
-		uint16 add = _soundIdTable[_lastProcessed] << 1;
-		uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + add);
+		uint8 *ptr = getProgram(_soundIdTable[_lastProcessed]);
 		uint8 chan = *ptr++;
 		uint8 priority = *ptr++;
 
@@ -1152,16 +1165,9 @@ uint8 AdlibDriver::calculateOpLevel1(Channel &channel) {
 		value += channel.opExtraLevel3;
 	}
 
-	// Don't allow the total level to overflow into the scaling level bits.
-
-	if (value > 0x3F) {
-		value = 0x3F;
-	} else if (value < 0)
-		value = 0;
-
 	// Preserve the scaling level bits from opLevel1
 
-	return value | (channel.opLevel1 & 0xC0);
+	return checkValue(value) | (channel.opLevel1 & 0xC0);
 }
 
 uint8 AdlibDriver::calculateOpLevel2(Channel &channel) {
@@ -1171,16 +1177,9 @@ uint8 AdlibDriver::calculateOpLevel2(Channel &channel) {
 	value += channel.opExtraLevel2;
 	value += channel.opExtraLevel3;
 
-	// Don't allow the total level to overflow into the scaling level bits.
-
-	if (value > 0x3F) {
-		value = 0x3F;
-	} else if (value < 0)
-		value = 0;
-
 	// Preserve the scaling level bits from opLevel2
 
-	return value | (channel.opLevel2 & 0xC0);
+	return checkValue(value) | (channel.opLevel2 & 0xC0);
 }
 
 // parser opcodes
@@ -1203,8 +1202,7 @@ int AdlibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 	if (value == 0xFF)
 		return 0;
 
-	uint16 add = value << 1;
-	uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + add);
+	uint8 *ptr = getProgram(value);
 	uint8 chan = *ptr++;
 	uint8 priority = *ptr++;
 
@@ -1304,21 +1302,20 @@ int AdlibDriver::update_stopOtherChannel(uint8 *&dataptr, Channel &channel, uint
 	return 0;
 }
 
-int AdlibDriver::updateCallback16(uint8 *&dataptr, Channel &channel, uint8 value) {
-	uint8 *ptr = _soundData;
-	ptr += READ_LE_UINT16(&_soundData[value << 1]);
-	Channel &channel2 = _channels[*ptr];
-	if (!channel2.dataptr) {
+int AdlibDriver::update_waitForEndOfProgram(uint8 *&dataptr, Channel &channel, uint8 value) {
+	uint8 *ptr = getProgram(value);
+	uint8 chan = *ptr;
+
+	if (!_channels[chan].dataptr) {
 		return 0;
 	}
+
 	dataptr -= 2;
 	return 2;
 }
 
 int AdlibDriver::update_setupInstrument(uint8 *&dataptr, Channel &channel, uint8 value) {
-	uint8 *ptr = _soundData;
-	ptr += READ_LE_UINT16(_soundData + (value << 1) + 0x1F4);
-	setupInstrument(_curRegOffset, ptr, channel);
+	setupInstrument(_curRegOffset, getInstrument(value), channel);
 	return 0;
 }
 
@@ -1592,34 +1589,25 @@ int AdlibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, ui
 	int channelBackUp = _curChannel;
 	int regOffsetBackUp = _curRegOffset;
 
-	uint8 entry = value << 1;
-	uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
-
 	_curChannel = 6;
 	_curRegOffset = _regOffset[6];
 
-	_unkValue6 = *(ptr + 6);
-	setupInstrument(_curRegOffset, ptr, channel);
-
-	entry = *dataptr++ << 1;
-	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
+	setupInstrument(_curRegOffset, getInstrument(value), channel);
+	_unkValue6 = channel.opLevel2;
 
 	_curChannel = 7;
 	_curRegOffset = _regOffset[7];
 
-	_unkValue7 = entry = *(ptr + 5);
-	_unkValue8 = entry = *(ptr + 6);
-	setupInstrument(_curRegOffset, ptr, channel);
-
-	entry = *dataptr++ << 1;
-	ptr = _soundData + READ_LE_UINT16(_soundData + entry + 0x1F4);
+	setupInstrument(_curRegOffset, getInstrument(*dataptr++), channel);
+	_unkValue7 = channel.opLevel1;
+	_unkValue8 = channel.opLevel2;
 
 	_curChannel = 8;
 	_curRegOffset = _regOffset[8];
 
-	_unkValue9 = entry = *(ptr + 5);
-	_unkValue10 = entry = *(ptr + 6);
-	setupInstrument(_curRegOffset, ptr, channel);
+	setupInstrument(_curRegOffset, getInstrument(*dataptr++), channel);
+	_unkValue9 = channel.opLevel1;
+	_unkValue10 = channel.opLevel2;
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
@@ -1905,7 +1893,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_setBaseNote),
 	COMMAND(update_setupSecondaryEffect1),
 	COMMAND(update_stopOtherChannel),
-	COMMAND(updateCallback16),
+	COMMAND(update_waitForEndOfProgram),
 
 	// 16
 	COMMAND(update_setupInstrument),
