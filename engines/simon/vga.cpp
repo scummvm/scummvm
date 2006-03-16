@@ -707,17 +707,18 @@ void SimonEngine::vc10_draw() {
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.palette);
+	// Check if image is compressed
 	if (getGameType() == GType_FF) {
 		if (flags & 0x80) {
-			state.flags |= 0x8;
+			state.flags |= kDFCompressed;
 		}
 	} else {
-		if (flags & 0x80 && !(state.flags & 0x10)) {
-			if (state.flags & 1) {
-				state.flags &= ~1;
-				state.flags |= 0x10;
+		if (flags & 0x80 && !(state.flags & kDFCompressedFlip)) {
+			if (state.flags & kDFFlip) {
+				state.flags &= ~kDFFlip;
+				state.flags |= kDFCompressedFlip;
 			} else {
-				state.flags |= 0x8;
+				state.flags |= kDFCompressed;
 			}
 		}
 	}
@@ -760,9 +761,9 @@ void SimonEngine::vc10_draw() {
 	}
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		if (state.flags & 0x10) {
+		if (state.flags & kDFCompressedFlip) {
 			state.depack_src = vc10_uncompressFlip(state.depack_src, width, height);
-		} else if (state.flags & 1) {
+		} else if (state.flags & kDFFlip) {
 			state.depack_src = vc10_flip(state.depack_src, width, height);
 		}
 	}
@@ -845,8 +846,8 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 }
 
 void SimonEngine::drawImages_Feeble(VC10_state *state) {
-	if (state->flags & 0x8) {
-		if (state->flags & 0x40) {
+	if (state->flags & kDFCompressed) {
+		if (state->flags & kDFScaled) {
 			state->surf_addr = dx_lock_scaled();
 			state->surf_pitch = _dxSurfacePitch;
 
@@ -885,7 +886,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			} else {
 				scaleClip(state->height, state->width, state->y, state->x, _scrollY);
 			}
-		} else 	if (state->flags & 0x10) {
+		} else 	if (state->flags & kDFOverlayed) {
 			state->surf_addr = dx_lock_scaled();
 			state->surf_pitch = _dxSurfacePitch;
 			state->surf_addr += state->x + state->y * state->surf_pitch;
@@ -931,7 +932,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			uint w, h;
 			byte *src, *dst, *dst_org;
 
-			if (state->flags & 0x20) {
+			if (state->flags & kDFMasked) {
 				if (vcGetBit(81) == false) {
 					if (state->x  > _feebleRect.right)
 						return;
@@ -983,7 +984,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 					h = 0;
 					do {
 						color = *src;
-						if ((state->flags & 2) || color != 0)
+						if ((state->flags & kDFNonTrans) || color != 0)
 							*dst = color;
 						dst += _screenWidth;
 						src++;
@@ -1010,7 +1011,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				byte color;
 				color = src[count + state->x_skip];
 				if (color) {
-					if ((state->flags & 0x80) && color == 220)
+					if ((state->flags & kDFShaded) && color == 220)
 						color = 244;
 
 					dst[count] = color;
@@ -1078,7 +1079,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 	state->surf2_addr += offs + offs2 * state->surf2_pitch;
 	state->surf_addr += offs + offs2 * state->surf_pitch;
 
-	if (state->flags & 0x20) {
+	if (state->flags & kDFMasked) {
 		byte *mask, *src, *dst;
 		byte h;
 		uint w;
@@ -1131,13 +1132,13 @@ void SimonEngine::drawImages(VC10_state *state) {
 		byte *dst;
 		uint h, i;
 
-		if (!(state->flags & 8)) {
+		if (!(state->flags & kDFCompressed)) {
 			src = state->depack_src + (state->width * state->y_skip * 16) + (state->x_skip * 8);
 			dst = state->surf_addr;
 
 			state->draw_width *= 2;
 
-			if (state->flags & 2) {
+			if (state->flags & kDFNonTrans) {
 				/* no transparency */
 				h = state->draw_height;
 				do {
@@ -1164,7 +1165,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 			 * aaaaabbb bbcccccd ddddeeee efffffgg ggghhhhh
 			 */
 
-			if (state->flags & 2) {
+			if (state->flags & kDFNonTrans) {
 				/* no transparency */
 				do {
 					uint count = state->draw_width / 4;
@@ -1242,7 +1243,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 			state->surf_pitch = state->surf2_pitch;
 		}
 
-		if (state->flags & 0x8) {
+		if (state->flags & kDFCompressed) {
 			uint w, h;
 			byte *src, *dst, *dst_org;
 
@@ -1253,7 +1254,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 
 			vc10_skip_cols(state);
 
-			if (state->flags & 2) {
+			if (state->flags & kDFNonTrans) {
 				dst_org = state->surf_addr;
 				w = 0;
 				do {
@@ -1304,7 +1305,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 			src = state->depack_src + (state->width * state->y_skip) * 8;
 			dst = state->surf_addr;
 			state->x_skip *= 4;
-			if (state->flags & 2) {
+			if (state->flags & kDFNonTrans) {
 				do {
 					for (count = 0; count != state->draw_width; count++) {
 						dst[count * 2] = (src[count + state->x_skip] / 16) | state->palette;

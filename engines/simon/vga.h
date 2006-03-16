@@ -97,6 +97,19 @@ struct AnimationHeader_Simon {
 	#pragma END_PACK_STRUCTS
 #endif
 
+enum DrawFlags {
+	kDFFlip           = 0x1,
+	kDFNonTrans       = 0x2,
+	kDFCompressed     = 0x8,
+	kDFCompressedFlip = 0x10,
+	kDFMasked         = 0x20,
+
+	// Feeble specific
+	kDFOverlayed      = 0x10,
+	kDFScaled         = 0x40,
+	kDFShaded         = 0x80
+};
+
 struct VC10_state {
 	int image;
 	uint16 flags;
