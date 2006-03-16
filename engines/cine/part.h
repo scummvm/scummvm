@@ -57,7 +57,7 @@ struct AnimData {
 #define NUM_MAX_PARTDATA 255
 #define NUM_MAX_ANIMDATA 255
 
-extern AnimData animDataTable[NUM_MAX_ANIMDATA];
+extern AnimData *animDataTable;
 extern PartBuffer *partBuffer;
 
 void loadPart(const char *partName);

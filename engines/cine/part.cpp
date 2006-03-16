@@ -30,13 +30,13 @@ namespace Cine {
 
 uint16 numElementInPart;
 
-AnimData animDataTable[NUM_MAX_PARTDATA];
+AnimData *animDataTable;
 PartBuffer *partBuffer;
 
 void loadPart(const char *partName) {
 	uint16 i;
 
-	for (i = 0; i < 255; i++) {
+	for (i = 0; i < NUM_MAX_PARTDATA; i++) {
 		partBuffer[i].partName[0] = 0;
 		partBuffer[i].offset = 0;
 		partBuffer[i].packedSize = 0;
@@ -53,7 +53,7 @@ void loadPart(const char *partName) {
 
 	ASSERT(partFileHandle.isOpen());
 
-	setMouseCursor(-1);
+	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	numElementInPart = partFileHandle.readUint16BE();
 	partFileHandle.readUint16BE(); // entry size
@@ -183,7 +183,7 @@ int16 findFileInBundle(const char *fileName) {
 }
 
 void readFromPart(int16 idx, uint8 *dataPtr) {
-	setMouseCursor(1);
+	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
 	partFileHandle.read(dataPtr, partBuffer[idx].packedSize);

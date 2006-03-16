@@ -52,13 +52,13 @@ struct animHeaderStruct {
 
 struct animDataEntry {
 	char name[9];
-	uint8 param;
+	uint8 color;
 };
 
 extern animDataEntry animData[];
 
-void loadResource(char *animName);
-void loadAbs(char *resourceName, uint16 idx);
+void loadResource(const char *animName);
+void loadAbs(const char *resourceName, uint16 idx);
 void loadResourcesFromSave();
 
 } // End of namespace Cine

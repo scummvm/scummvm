@@ -197,8 +197,10 @@ static void initialize() {
 
 	textDataPtr = (uint8 *)malloc(8000);
 
-	partBuffer = (PartBuffer *)malloc(255 * sizeof(PartBuffer));
+	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
 
+	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
+	
 	loadTextData("texte.dat", textDataPtr);
 	if (gameType == Cine::GID_FW)
 		snd_loadBasesonEntries("BASESON.SND");
@@ -235,7 +237,7 @@ static void initialize() {
 		relTable[i].obj2Param = 0;
 	}
 
-	for (i = 0; i < NUM_MAX_PARTDATA; i++) {
+	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		animDataTable[i].ptr1 = NULL;
 		animDataTable[i].ptr2 = NULL;
 	}
@@ -262,7 +264,7 @@ static void initialize() {
 	loadPrc(BOOT_PRC_NAME);
 	strcpy(currentPrcName, BOOT_PRC_NAME);
 
-	setMouseCursor(0);
+	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }
 
 } // End of namespace Cine

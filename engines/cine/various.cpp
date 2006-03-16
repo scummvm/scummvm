@@ -675,7 +675,7 @@ int16 makeLoad(char *saveName) {
 	loadResourcesFromSave();
 	//reincrustAllBg();
 
-	setMouseCursor(0);
+	setMouseCursor(MOUSE_CURSOR_NORMAL);
 
 	if (strlen(currentDatName)) {
 /*		i = saveVar2;
@@ -869,7 +869,7 @@ void makeSave(char *saveFileName) {
 
 	fHandle.close();
 
-	setMouseCursor(0);
+	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }
 
 void makeSystemMenu(void) {
@@ -2371,7 +2371,7 @@ void drawOverlays(void) {
 						AnimData *pPart;
 						int16 part = objPtr->part;
 
-						ASSERT(part >= 0 && part <= NUM_MAX_PARTDATA);
+						ASSERT(part >= 0 && part <= NUM_MAX_ANIMDATA);
 
 						pPart = &animDataTable[objPtr->frame];
 
@@ -2437,7 +2437,7 @@ void drawOverlays(void) {
 					AnimData *pPart;
 					int16 part = objPtr->part;
 
-					ASSERT(part >= 0 && part <= NUM_MAX_PARTDATA);
+					ASSERT(part >= 0 && part <= NUM_MAX_ANIMDATA);
 
 					pPart = &animDataTable[objPtr->frame];
 

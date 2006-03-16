@@ -34,7 +34,7 @@ extern uint8 *additionalBgTable[9];
 extern uint8 currentAdditionalBgIdx;
 extern uint8 currentAdditionalBgIdx2;
 
-void addBackground(char *bgName, uint16 bgIdx);
+void addBackground(const char *bgName, uint16 bgIdx);
 
 extern uint16 bgVar0;
 

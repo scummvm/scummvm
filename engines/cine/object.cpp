@@ -67,7 +67,7 @@ void loadObject(char *pObjectName) {
 
 	ptr = readBundleFile(findFileInBundle(pObjectName));
 
-	setMouseCursor(1);
+	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 

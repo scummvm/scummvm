@@ -1385,9 +1385,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			{
 				DEBUG_SCRIPT(currentLine, "loadResource(\"%s\")", currentScriptPtr + currentPosition);
 
-				loadResource((char *)(currentScriptPtr + currentPosition));
+				loadResource((const char *)(currentScriptPtr + currentPosition));
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 
 				break;
 			}
@@ -1395,9 +1395,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			{
 				DEBUG_SCRIPT(currentLine, "loadBg(\"%s\")", currentScriptPtr + currentPosition);
 
-				loadBg((char *)(currentScriptPtr + currentPosition));
+				loadBg((const char *)(currentScriptPtr + currentPosition));
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 
 				closeEngine7();
 
@@ -1409,9 +1409,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			{
 				DEBUG_SCRIPT(currentLine, "loadCt(\"%s\")", currentScriptPtr + currentPosition);
 
-				loadCt((char *)(currentScriptPtr + currentPosition));
+				loadCt((const char *)(currentScriptPtr + currentPosition));
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 
 				break;
 			}
@@ -1420,9 +1420,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				DEBUG_SCRIPT(currentLine, "loadPart(\"%s\")", currentScriptPtr + currentPosition);
 
 				if (gameType == Cine::GID_FW)
-					loadPart((char *)(currentScriptPtr + currentPosition));
+					loadPart((const char *)(currentScriptPtr + currentPosition));
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 				break;
 			}
 		case 0x40:
@@ -1446,30 +1446,30 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				case 0:
 					{
 						DEBUG_SCRIPT(currentLine, "loadPrc(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newPrcName, (char *)(currentScriptPtr + currentPosition));
+						strcpy(newPrcName, (const char *)(currentScriptPtr + currentPosition));
 						break;
 					}
 				case 1:
 					{
 						DEBUG_SCRIPT(currentLine, "loadRel(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newRelName, (char *)(currentScriptPtr + currentPosition));
+						strcpy(newRelName, (const char *)(currentScriptPtr + currentPosition));
 						break;
 					}
 				case 2:
 					{
 						DEBUG_SCRIPT(currentLine, "loadObject(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newObjectName, (char *)(currentScriptPtr + currentPosition));
+						strcpy(newObjectName, (const char *)(currentScriptPtr + currentPosition));
 						break;
 					}
 				case 3:
 					{
 						DEBUG_SCRIPT(currentLine, "loadMsg(\"%s\")", currentScriptPtr + currentPosition);
-						strcpy(newMsgName, (char *)(currentScriptPtr + currentPosition));
+						strcpy(newMsgName, (const char *)(currentScriptPtr + currentPosition));
 						break;
 					}
 				}
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition)) + 1;
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition)) + 1;
 				break;
 			}
 		case 0x42:
@@ -1687,7 +1687,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			{
 				DEBUG_SCRIPT(currentLine, "comment(%s)", currentScriptPtr + currentPosition);
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 				break;
 			}
 		case 0x5A:
@@ -1701,7 +1701,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				numIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(startIdx + numIdx <= NUM_MAX_PARTDATA);
+				ASSERT(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
 				DEBUG_SCRIPT(currentLine, "freePartRange(%d,%d)", startIdx, numIdx);
 
@@ -1824,7 +1824,6 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition += 2;
 
 				/* unused */
-
 				currentPosition++;
 
 				volume = READ_BE_UINT16(currentScriptPtr + currentPosition);
@@ -2101,9 +2100,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				DEBUG_SCRIPT(currentLine, "addBackground(%s,%d)", currentScriptPtr + currentPosition, temp);
 
-				addBackground((char *)(currentScriptPtr + currentPosition), temp);
+				addBackground((const char *)(currentScriptPtr + currentPosition), temp);
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 				break;
 			}
 		case 0x8F:
@@ -2138,9 +2137,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				DEBUG_SCRIPT(currentLine, "loadABS(%d,%s)", temp, currentScriptPtr + currentPosition);
 
-				loadAbs((char *)(currentScriptPtr + currentPosition), temp);
+				loadAbs((const char *)(currentScriptPtr + currentPosition), temp);
 
-				currentPosition += strlen((char *)(currentScriptPtr + currentPosition));
+				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 
 				break;
 			}

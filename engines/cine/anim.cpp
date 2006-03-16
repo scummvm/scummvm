@@ -179,33 +179,29 @@ animDataEntry animData[] = {
 	{"FIN", 0x9},
 };
 
-#define NUM_ANIM_DATA (sizeof(animData)/sizeof(animDataEntry))
-
-uint8 findAnimInHardcodedData(char *animName) {
+uint8 getAnimTransparentColor(const char *animName) {
 	char name[15];
-	uint16 i;
 
 	removeExtention(name, animName);
 
-	for (i = 0; i < NUM_ANIM_DATA; i++) {
+	for (int i = 0; i < ARRAYSIZE(animData); i++) {
 		if (!strcmp(name, animData[i].name)) {
-			return (animData[i].param);
+			return animData[i].color;
 		}
 	}
-
-	return (0);
+	return 0;
 }
 
 int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 	uint16 i;
 	uint32 frameSize;
 
-	for (i = 0; i < NUM_MAX_PARTDATA; i++) {
+	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		if (!animDataTable[i].ptr1)
 			break;
 	}
 
-	if (i == NUM_MAX_PARTDATA)
+	if (i == NUM_MAX_ANIMDATA)
 		return -1;
 
 	if (!isMask) {		// sprite + generated mask
@@ -246,12 +242,12 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 	uint16 i;
 	uint32 frameSize;
 
-	for (i = 0; i < NUM_MAX_PARTDATA; i++) {
+	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		if (!animDataTable[i].ptr1)
 			break;
 	}
 
-	if (i == NUM_MAX_PARTDATA)
+	if (i == NUM_MAX_ANIMDATA)
 		return -1;
 
 	frameSize = width * height;
@@ -376,7 +372,7 @@ void convert4BBP(uint8 * dest, uint8 * source, int16 width, int16 height) {
 	}
 }
 
-void loadSpl(char *resourceName) {
+void loadSpl(const char *resourceName) {
 	int16 foundFileIdx;
 	uint8 *dataPtr;
 	int16 entry;
@@ -395,7 +391,7 @@ void loadSpl(char *resourceName) {
 	strcpy(animDataTable[entry].name, currentPartName);
 }
 
-void loadMsk(char *resourceName) {
+void loadMsk(const char *resourceName) {
 	int16 foundFileIdx;
 	uint8 *dataPtr;
 	int16 entry;
@@ -428,7 +424,7 @@ void loadMsk(char *resourceName) {
 	}
 }
 
-void loadAni(char *resourceName) {
+void loadAni(const char *resourceName) {
 	int16 foundFileIdx;
 	uint8 *dataPtr;
 	int16 entry;
@@ -449,7 +445,7 @@ void loadAni(char *resourceName) {
 	animHeader.frameHeight = TO_BE_16(animHeader.frameHeight);
 	animHeader.numFrames = TO_BE_16(animHeader.numFrames);
 
-	transparentColor = findAnimInHardcodedData(resourceName);
+	transparentColor = getAnimTransparentColor(resourceName);
 
 	fullSize = animHeader.frameWidth * animHeader.frameHeight;
 
@@ -606,7 +602,7 @@ void convert8BBP2(uint8 * dest, uint8 * source, int16 width, int16 height) {
 	}
 }
 
-void loadSet(char *resourceName) {
+void loadSet(const char *resourceName) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
 	uint8 *dataPtr;
@@ -689,7 +685,7 @@ void loadSet(char *resourceName) {
 	}
 }
 
-void loadSetAbs(char *resourceName, uint16 idx) {
+void loadSetAbs(const char *resourceName, uint16 idx) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
 	uint8 *dataPtr;
@@ -772,7 +768,7 @@ void loadSetAbs(char *resourceName, uint16 idx) {
 	}
 }
 
-void loadSeq(char *resourceName) {
+void loadSeq(const char *resourceName) {
 	int16 foundFileIdx;
 	uint8 *dataPtr;
 	int16 entry;
@@ -785,7 +781,7 @@ void loadSeq(char *resourceName) {
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
 }
 
-void loadSeqAbs(char *resourceName, uint16 idx) {
+void loadSeqAbs(const char *resourceName, uint16 idx) {
 	int16 foundFileIdx;
 	uint8 *dataPtr;
 	int16 entry;
@@ -798,7 +794,7 @@ void loadSeqAbs(char *resourceName, uint16 idx) {
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
 }
 
-void loadResource(char *resourceName) {
+void loadResource(const char *resourceName) {
 	/* uint8 isMask = 0; */
 	/* uint8 isSpl = 0; */
 
@@ -825,7 +821,7 @@ void loadResource(char *resourceName) {
 	ASSERT(0);
 }
 
-void loadAbs(char *resourceName, uint16 idx) {
+void loadAbs(const char *resourceName, uint16 idx) {
 	/* uint8 isMask = 0; */
 	/* uint8 isSpl = 0; */
 
@@ -910,7 +906,7 @@ void loadResourcesFromSave() {
 
 				loadRelatedPalette(animName);
 
-				transparentColor = findAnimInHardcodedData(animName);
+				transparentColor = getAnimTransparentColor(animName);
 
 				for (i = 0; i < animHeader.numFrames; i++) { // load all the frames
 					int16 entry;

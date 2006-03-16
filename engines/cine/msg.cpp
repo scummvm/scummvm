@@ -54,7 +54,7 @@ void loadMsg(char *pMsgName) {
 
 	ptr = readBundleFile(findFileInBundle(pMsgName));
 
-	setMouseCursor(1);
+	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	messageCount = READ_BE_UINT16(ptr); ptr += 2;
 

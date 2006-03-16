@@ -161,9 +161,9 @@ void mainLoop(int bootScriptIdx) {
 		purgeList0();
 
 		if (playerCommand == -1) {
-			setMouseCursor(0);
+			setMouseCursor(MOUSE_CURSOR_NORMAL);
 		} else {
-			setMouseCursor(2);
+			setMouseCursor(MOUSE_CURSOR_CROSS);
 		}
 
 		drawOverlays();

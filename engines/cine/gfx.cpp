@@ -97,28 +97,27 @@ void init_video() {
 
 void setMouseCursor(int cursor) {
 	static int currentMouseCursor = -1;
-	if (cursor >= 0 && cursor < 3) {
-		if (currentMouseCursor != cursor) {
-			uint8 mouseCursor[16 * 16];
-			const MouseCursor *mc = &mouseCursors[cursor];
-			const uint8 *src = mc->bitmap;
-			for (int i = 0; i < 32; ++i) {
-				int offs = i * 8;
-				for (uint8 mask = 0x80; mask != 0; mask >>= 1) {
-					if (src[0] & mask) {
-						mouseCursor[offs] = 2;
-					} else if (src[32] & mask) {
-						mouseCursor[offs] = 0;
-					} else {
-						mouseCursor[offs] = 0xFF;
-					}
-					++offs;
+	assert(cursor >= 0 && cursor < 3);
+	if (currentMouseCursor != cursor) {
+		uint8 mouseCursor[16 * 16];
+		const MouseCursor *mc = &mouseCursors[cursor];
+		const uint8 *src = mc->bitmap;
+		for (int i = 0; i < 32; ++i) {
+			int offs = i * 8;
+			for (uint8 mask = 0x80; mask != 0; mask >>= 1) {
+				if (src[0] & mask) {
+					mouseCursor[offs] = 2;
+				} else if (src[32] & mask) {
+					mouseCursor[offs] = 0;
+				} else {
+					mouseCursor[offs] = 0xFF;
 				}
-				++src;
+				++offs;
 			}
-			g_system->setMouseCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
-			currentMouseCursor = cursor;
+			++src;
 		}
+		g_system->setMouseCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
+		currentMouseCursor = cursor;
 	}
 }
 

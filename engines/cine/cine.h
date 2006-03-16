@@ -27,6 +27,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/util.h"
 
 #include "base/engine.h"
 
@@ -43,8 +44,6 @@
 #include "cine/anim.h"
 
 namespace Cine {
-
-class AdlibMusic;
 
 enum CineGameId {
 	GID_FW = 1,
@@ -86,7 +85,11 @@ enum {
 	VAR_MOUSE_Y_POS = 250
 };
 
-extern AdlibMusic *g_cine_adlib;
+enum {
+	MOUSE_CURSOR_NORMAL = 0,
+	MOUSE_CURSOR_DISK,
+	MOUSE_CURSOR_CROSS
+};
 
 } // End of namespace Cine
 

@@ -81,7 +81,7 @@ void loadPrc(const char *pPrcName) {
     ASSERT_PTR(scriptPtr);
 	}
 
-	setMouseCursor(1);
+	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	numScripts = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
 	ASSERT(numScripts <= NUM_MAX_SCRIPT);
