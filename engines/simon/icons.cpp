@@ -191,7 +191,6 @@ void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) 
 		decompress_icon(dst, src, 20, 10, 0xD0, _dxSurfacePitch);
 	}
 
-	dx_unlock_2();
 	_lockWord &= ~0x8000;
 }
 

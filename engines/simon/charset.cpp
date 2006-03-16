@@ -1242,8 +1242,6 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 		dst += _dxSurfacePitch;
 	} while (--h);
 
-	dx_unlock_2();
-
 	_lockWord &= ~0x8000;
 }
 

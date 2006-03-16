@@ -756,8 +756,6 @@ void SimonEngine::vc10_draw() {
 			src += 4;
 		}
 
-		dx_unlock_attached();
-
 		return;
 	}
 
@@ -783,9 +781,6 @@ void SimonEngine::vc10_draw() {
 	} else {
 		drawImages(&state);
 	}
-
-	dx_unlock_2();
-	dx_unlock_attached();
 }
 
 bool SimonEngine::drawImages_clip(VC10_state *state) {

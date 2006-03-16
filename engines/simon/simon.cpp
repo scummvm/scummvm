@@ -1971,8 +1971,6 @@ void SimonEngine::f10_key() {
 				dst[b+7] = color;
 				b += _dxSurfacePitch;
 				dst[b+4] = color;
-
-				dx_unlock_attached();
 			}
 		} while (ha++, --count);
 
@@ -2756,12 +2754,8 @@ void SimonEngine::timer_vga_sprites_helper() {
 	src = _scrollImage + x * 4;
 	decodeStripA(dst, src + READ_BE_UINT32(src), _scrollHeight);
 
-	dx_unlock_2();
-
-
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
 	dx_copy_from_attached_to_3(_scrollHeight);
-
 
 	_scrollX += _scrollFlag;
 
@@ -3115,7 +3109,6 @@ void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
 		dst += _dxSurfacePitch;
 	} while (--h);
 
-	dx_unlock_2();
 	_lockWord &= ~0x8000;
 }
 
@@ -3292,8 +3285,6 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 		src += _dxSurfacePitch;
 	} while (--h);
 
-
-	dx_unlock_2();
 	_lockWord &= ~0x8000;
 }
 
@@ -3804,8 +3795,6 @@ void SimonEngine::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 		dst += _dxSurfacePitch;
 		src += _dxSurfacePitch;
 	}
-
-	dx_unlock_2();
 }
 
 void SimonEngine::dx_clear_surfaces(uint num_lines) {
@@ -4186,24 +4175,18 @@ byte *SimonEngine::dx_lock_2() {
 	return _sdl_buf;
 }
 
-void SimonEngine::dx_unlock_2() {
-}
-
 byte *SimonEngine::dx_lock_attached() {
 	_dxSurfacePitch = _screenWidth;
 	return _dxUse3Or4ForLock ? _sdl_buf_3 : _sdl_buf_attached;
 }
 
-void SimonEngine::dx_unlock_attached() {
+byte *SimonEngine::dx_lock_scaled() {
+	_dxSurfacePitch = _screenWidth;
+	return _sdl_buf_scaled;
 }
 
 void SimonEngine::set_volume(int volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-}
-
-byte *SimonEngine::dx_lock_scaled() {
-	_dxSurfacePitch = _screenWidth;
-	return _sdl_buf_scaled;
 }
 
 byte SimonEngine::getByte() {
