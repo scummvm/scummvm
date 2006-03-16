@@ -178,10 +178,10 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	int x = 0, y = 0, width = obj->width << 3, height = obj->height;
 	
 	if (restore) {
-		x = obj->x2 >> 3;
+		x = obj->x2;
 		y = obj->y2;
 	} else {
-		x = obj->x1 >> 3;
+		x = obj->x1;
 		y = obj->y1;
 	}
 	
@@ -202,9 +202,9 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	}
 
 	if (restore) {
-		_screen->copyBlockToPage(_screen->_curPage, x << 3, y, width, height, obj->background);
+		_screen->copyBlockToPage(_screen->_curPage, x, y, width, height, obj->background);
 	} else {
-		_screen->copyRegionToBuffer(_screen->_curPage, x << 3, y, width, height, obj->background);
+		_screen->copyRegionToBuffer(_screen->_curPage, x, y, width, height, obj->background);
 	}
 }
 
@@ -373,13 +373,10 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {
 				int xpos = 0, ypos = 0, width = 0, height = 0;
-				xpos = (curObject->x1>>3) - (curObject->width2>>3) - 1;
+				xpos = curObject->x1 - curObject->width2 - 8;
 				ypos = curObject->y1 - curObject->height2;
-				width = curObject->width + (curObject->width2>>3) + 2;
+				width = (curObject->width<<3) + curObject->width2 + 16;
 				height = curObject->height + curObject->height2*2;
-				
-				xpos <<= 3;
-				width <<= 3;
 				
 				if (xpos < 8) {
 					xpos = 8;
