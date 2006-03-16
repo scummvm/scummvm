@@ -299,21 +299,21 @@ private:
 	// _unkValue3      - Unknown. Used for updating _unkValue2
 	// _unkValue4      - Unknown. Used for updating _unkValue5
 	// _unkValue5      - Unknown. Used for controlling updateCallback24().
-	// _unkValue6      - Unknown. Something to do with channel 1 volume?
-	// _unkValue7      - Unknown. Something to do with channel 2 volume?
-	// _unkValue8      - Unknown. Something to do with channel 2 volume?
-	// _unkValue9      - Unknown. Something to do with channel 3 volume?
-	// _unkValue10     - Unknown. Something to do with channel 3 volume?
-	// _unkValue11     - Unknown. Something to do with channel 2 volume?
-	// _unkValue12     - Unknown. Something to do with channel 2 volume?
-	// _unkValue13     - Unknown. Something to do with channel 3 volume?
-	// _unkValue14     - Unknown. Something to do with channel 3 volume?
-	// _unkValue15     - Unknown. Something to do with channel 3 volume?
-	// _unkValue16     - Unknown. Something to do with channel 3 volume?
-	// _unkValue17     - Unknown. Something to do with channel 2 volume?
-	// _unkValue18     - Unknown. Something to do with channel 2 volume?
-	// _unkValue19     - Unknown. Something to do with channel 1 volume?
-	// _unkValue20     - Unknown. Something to do with channel 1 volume?
+	// _unkValue6      - Unknown. Rhythm section volume?
+	// _unkValue7      - Unknown. Rhythm section volume?
+	// _unkValue8      - Unknown. Rhythm section volume?
+	// _unkValue9      - Unknown. Rhythm section volume?
+	// _unkValue10     - Unknown. Rhythm section volume?
+	// _unkValue11     - Unknown. Rhythm section volume?
+	// _unkValue12     - Unknown. Rhythm section volume?
+	// _unkValue13     - Unknown. Rhythm section volume?
+	// _unkValue14     - Unknown. Rhythm section volume?
+	// _unkValue15     - Unknown. Rhythm section volume?
+	// _unkValue16     - Unknown. Rhythm section volume?
+	// _unkValue17     - Unknown. Rhythm section volume?
+	// _unkValue18     - Unknown. Rhythm section volume?
+	// _unkValue19     - Unknown. Rhythm section volume?
+	// _unkValue20     - Unknown. Rhythm section volume?
 	// _unkOutputByte2 - Unknown. Something to do with the BD register.
 	// _unkTable[]     - Probably frequences for the 12-tone scale.
 	// _unkTable2[]    - Unknown. Currently only used by updateCallback46()
@@ -1658,173 +1658,123 @@ int AdlibDriver::update_removeRhythmSection(uint8 *&dataptr, Channel &channel, u
 }
 
 int AdlibDriver::updateCallback51(uint8 *&dataptr, Channel &channel, uint8 value) {
-	uint16 temp = (value << 8) | *dataptr++;
+	uint8 value2 = *dataptr++;
 
 	if (value & 1) {
-		uint8 val = temp & 0xFF;
-		_unkValue12 = val;
-		val += _unkValue7;
-		val += _unkValue11;
-		val += _unkValue12;
+		_unkValue12 = value2;
 
-		// Channel 2: Level Key Scaling / Total Level
-		writeOPL(0x51, checkValue(val));
+		// Channel 7, op1: Level Key Scaling / Total Level
+		writeOPL(0x51, checkValue(value2 + _unkValue7 + _unkValue11 + _unkValue12));
 	}
 
 	if (value & 2) {
-		uint8 val = temp & 0xFF;
-		_unkValue14 = val;
-		val += _unkValue10;
-		val += _unkValue13;
-		val += _unkValue14;
+		_unkValue14 = value2;
 
-		// Channel 3: Level Key Scaling / Total Level
-		writeOPL(0x55, checkValue(val));
+		// Channel 8, op2: Level Key Scaling / Total Level
+		writeOPL(0x55, checkValue(value2 + _unkValue10 + _unkValue13 + _unkValue14));
 	}
 
 	if (value & 4) {
-		uint8 val = temp & 0xFF;
-		_unkValue15 = val;
-		val += _unkValue9;
-		val += _unkValue16;
-		val += _unkValue15;
+		_unkValue15 = value2;
 
-		// Channel 3: Level Key Scaling / Total Level
-		writeOPL(0x52, checkValue(val));
+		// Channel 8, op1: Level Key Scaling / Total Level
+		writeOPL(0x52, checkValue(value2 + _unkValue9 + _unkValue16 + _unkValue15));
 	}
 
 	if (value & 8) {
-		uint8 val = temp & 0xFF;
-		_unkValue18 = val;
-		val += _unkValue8;
-		val += _unkValue17;
-		val += _unkValue18;
+		_unkValue18 = value2;
 
-		// Channel 2: Level Key Scaling / Total Level
-		writeOPL(0x54, checkValue(val));
+		// Channel 7, op2: Level Key Scaling / Total Level
+		writeOPL(0x54, checkValue(value2 + _unkValue8 + _unkValue17 + _unkValue18));
 	}
 
 	if (value & 16) {
-		uint8 val = temp & 0xFF;
-		_unkValue20 = val;
-		val += _unkValue6;
-		val += _unkValue19;
-		val += _unkValue20;
+		_unkValue20 = value2;
 
-		// Channel 1: Level Key Scaling / Total Level
-		writeOPL(0x53, checkValue(val));
+		// Channel 6, op2: Level Key Scaling / Total Level
+		writeOPL(0x53, checkValue(value2 + _unkValue6 + _unkValue19 + _unkValue20));
 	}
 
 	return 0;
 }
 
 int AdlibDriver::updateCallback52(uint8 *&dataptr, Channel &channel, uint8 value) {
-	uint16 temp = (value << 8) | *dataptr++;
+	uint8 value2 = *dataptr++;
 
 	if (value & 1) {
-		uint8 val = temp & 0xFF;
-		val += _unkValue7;
-		val += _unkValue11;
-		val += _unkValue12;
+		_unkValue11 = checkValue(value2 + _unkValue7 + _unkValue11 + _unkValue12);
 
-		// Channel 2: Level Key Scaling / Total Level
-		writeOPL(0x51, checkValue(val));
+		// Channel 7, op1: Level Key Scaling / Total Level
+		writeOPL(0x51, _unkValue11);
 	}
 
 	if (value & 2) {
-		uint8 val = temp & 0xFF;
-		val += _unkValue10;
-		val += _unkValue13;
-		val += _unkValue14;
+		_unkValue13 = checkValue(value2 + _unkValue10 + _unkValue13 + _unkValue14);
 
-		// Channel 3: Level Key Scaling / Total Level
-		writeOPL(0x55, checkValue(val));
+		// Channel 8, op2: Level Key Scaling / Total Level
+		writeOPL(0x55, _unkValue13);
 	}
 
 	if (value & 4) {
-		uint8 val = temp & 0xFF;
-		val += _unkValue9;
-		val += _unkValue16;
-		val += _unkValue15;
+		_unkValue16 = checkValue(value2 + _unkValue9 + _unkValue16 + _unkValue15);
 
-		// Channel 3: Level Key Scaling / Total Level
-		writeOPL(0x52, checkValue(val));
+		// Channel 8, op1: Level Key Scaling / Total Level
+		writeOPL(0x52, _unkValue16);
 	}
 
 	if (value & 8) {
-		uint8 val = temp & 0xFF;
-		val += _unkValue8;
-		val += _unkValue17;
-		val += _unkValue18;
+		_unkValue17 = checkValue(value2 + _unkValue8 + _unkValue17 + _unkValue18);
 
-		// Channel 2: Level Key Scaling / Total Level
-		writeOPL(0x54, checkValue(val));
+		// Channel 7, op2: Level Key Scaling / Total Level
+		writeOPL(0x54, _unkValue17);
 	}
 
 	if (value & 16) {
-		uint8 val = temp & 0xFF;
-		val += _unkValue6;
-		val += _unkValue19;
-		val += _unkValue20;
+		_unkValue19 = checkValue(value2 + _unkValue6 + _unkValue19 + _unkValue20);
 
-		// Channel 1: Level Key Scaling / Total Level
-		writeOPL(0x53, checkValue(val));
+		// Channel 6, op2: Level Key Scaling / Total Level
+		writeOPL(0x53, _unkValue19);
 	}
 
 	return 0;
 }
 
 int AdlibDriver::updateCallback53(uint8 *&dataptr, Channel &channel, uint8 value) {
-	uint16 temp = (value << 8) | *dataptr++;
+	uint8 value2 = *dataptr++;
 
 	if (value & 1) {
-		uint8 val = temp & 0xFF;
-		_unkValue11 = val;
-		val += _unkValue7;
-		val += _unkValue12;
+		_unkValue11 = value2;
 
-		// Channel 2: Level Key Scaling / Total Level
-		writeOPL(0x51, checkValue(val));
+		// Channel 7, op1: Level Key Scaling / Total Level
+		writeOPL(0x51, checkValue(value2 + _unkValue7 + _unkValue12));
 	}
 
 	if (value & 2) {
-		uint8 val = temp & 0xFF;
-		_unkValue13 = val;
-		val += _unkValue10;
-		val += _unkValue14;
+		_unkValue13 = value2;
 
-		// Channel 3: Level Key Scaling / Total Level
-		writeOPL(0x55, checkValue(val));
+		// Channel 8, op2: Level Key Scaling / Total Level
+		writeOPL(0x55, checkValue(value2 + _unkValue10 + _unkValue14));
 	}
 
 	if (value & 4) {
-		uint8 val = temp & 0xFF;
-		_unkValue16 = val;
-		val += _unkValue9;
-		val += _unkValue15;
+		_unkValue16 = value2;
 
-		// Channel 3: Level Key Scaling / Total Level
-		writeOPL(0x52, checkValue(val));
+		// Channel 8, op1: Level Key Scaling / Total Level
+		writeOPL(0x52, checkValue(value2 + _unkValue9 + _unkValue15));
 	}
 
 	if (value & 8) {
-		uint8 val = temp & 0xFF;
-		_unkValue17 = val;
-		val += _unkValue8;
-		val += _unkValue18;
+		_unkValue17 = value2;
 
-		// Channel 2: Level Key Scaling / Total Level
-		writeOPL(0x54, checkValue(val));
+		// Channel 7, op2: Level Key Scaling / Total Level
+		writeOPL(0x54, checkValue(value2 + _unkValue8 + _unkValue18));
 	}
 
 	if (value & 16) {
-		uint8 val = temp & 0xFF;
-		_unkValue19 = val;
-		val += _unkValue6;
-		val += _unkValue20;
+		_unkValue19 = value2;
 
-		// Channel 1: Level Key Scaling / Total Level
-		writeOPL(0x53, checkValue(val));
+		// Channel 6, op2: Level Key Scaling / Total Level
+		writeOPL(0x53, checkValue(value2 + _unkValue6 + _unkValue20));
 	}
 
 	return 0;
