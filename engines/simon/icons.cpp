@@ -160,7 +160,7 @@ void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) 
 	byte *src;
 
 	_lockWord |= 0x8000;
-	dst = dx_lock_2();
+	dst = getBackBuf();
 
 	if (!(getGameType() == GType_SIMON2)) {
 		// Simon 1

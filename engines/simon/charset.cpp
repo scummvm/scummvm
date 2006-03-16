@@ -1196,7 +1196,7 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 
 	_lockWord |= 0x8000;
 
-	dst = dx_lock_2();
+	dst = getBackBuf();
 	dst += y * _dxSurfacePitch + x * 8 + fcs->textColumnOffset;
 
 	switch(_language) {

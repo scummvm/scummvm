@@ -748,7 +748,7 @@ void SimonEngine::vc10_draw() {
 
 		vcWriteVar(251, _scrollX);
 
-		dst = dx_lock_attached();
+		dst = getFrontBuf();
 		src = state.depack_src + _scrollX * 4;
 
 		for (w = 0; w < 40; w++) {
@@ -771,10 +771,10 @@ void SimonEngine::vc10_draw() {
 	state.width = state.draw_width = width;	/* cl */
 	state.height = state.draw_height = height;	/* ch */
 
-	state.surf2_addr = dx_lock_2();
+	state.surf2_addr = getBackBuf();
 	state.surf2_pitch = _dxSurfacePitch;
 
-	state.surf_addr = dx_lock_attached();
+	state.surf_addr = getFrontBuf();
 	state.surf_pitch = _dxSurfacePitch;
 
 	if (getGameType() == GType_FF) {
@@ -848,7 +848,7 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 void SimonEngine::drawImages_Feeble(VC10_state *state) {
 	if (state->flags & kDFCompressed) {
 		if (state->flags & kDFScaled) {
-			state->surf_addr = dx_lock_scaled();
+			state->surf_addr = getScaleBuf();
 			state->surf_pitch = _dxSurfacePitch;
 
 			uint w, h;
@@ -887,7 +887,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				scaleClip(state->height, state->width, state->y, state->x, _scrollY);
 			}
 		} else 	if (state->flags & kDFOverlayed) {
-			state->surf_addr = dx_lock_scaled();
+			state->surf_addr = getScaleBuf();
 			state->surf_pitch = _dxSurfacePitch;
 			state->surf_addr += state->x + state->y * state->surf_pitch;
 
@@ -1238,7 +1238,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 		}
 		/* vc10_helper_4 */
 	} else {
-		if (getGameType() == GType_SIMON2 && state->flags & 0x4 && _bitArray[10] & 0x800) {
+		if (getGameType() == GType_SIMON2 && state->flags & kDFUseBackBuf && _bitArray[10] & 0x800) {
 			state->surf_addr = state->surf2_addr;
 			state->surf_pitch = state->surf2_pitch;
 		}

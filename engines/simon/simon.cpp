@@ -1935,7 +1935,7 @@ void SimonEngine::f10_key() {
 				if (x_ >= 311)
 					continue;
 
-				dst = dx_lock_attached();
+				dst = getFrontBuf();
 
 				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
 
@@ -2386,7 +2386,6 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 	_lockWord |= 0x20;
 
 	if (vga_res_id == 0) {
-
 		if (getGameType() == GType_SIMON1) {
 			_unkPalFlag = true;
 		} else {
@@ -2734,7 +2733,7 @@ void SimonEngine::timer_vga_sprites() {
 }
 
 void SimonEngine::timer_vga_sprites_helper() {
-	byte *dst = dx_lock_2();
+	byte *dst = getBackBuf();
 	const byte *src;
 	uint x;
 
@@ -3100,7 +3099,7 @@ void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
 
 	_lockWord |= 0x8000;
 
-	dst = dx_lock_2();
+	dst = getBackBuf();
 	dst += _dxSurfacePitch * fcs->y + fcs->x * 8;
 
 	h = fcs->height * 8;
@@ -3257,7 +3256,7 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 	uint w, h, i;
 
 	_lockWord |= 0x8000;
-	src = dx_lock_2() + ha->y * _dxSurfacePitch + ha->x;
+	src = getBackBuf() + ha->y * _dxSurfacePitch + ha->x;
 
 	w = ha->width;
 	h = ha->height;
@@ -3782,7 +3781,7 @@ void SimonEngine::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 
-	dst = dx_lock_2();
+	dst = getBackBuf();
 	src = _sdl_buf_3;
 
 	dst += y * _dxSurfacePitch;
@@ -4170,17 +4169,17 @@ void SimonEngine::loadMusic(uint music) {
 	}
 }
 
-byte *SimonEngine::dx_lock_2() {
+byte *SimonEngine::getBackBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _sdl_buf;
 }
 
-byte *SimonEngine::dx_lock_attached() {
+byte *SimonEngine::getFrontBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _dxUse3Or4ForLock ? _sdl_buf_3 : _sdl_buf_attached;
 }
 
-byte *SimonEngine::dx_lock_scaled() {
+byte *SimonEngine::getScaleBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _sdl_buf_scaled;
 }

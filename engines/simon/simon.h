@@ -814,9 +814,9 @@ protected:
 
 	void dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x);
 
-	byte *dx_lock_2();
-	byte *dx_lock_attached();
-	byte *dx_lock_scaled();
+	byte *getBackBuf();
+	byte *getFrontBuf();
+	byte *getScaleBuf();
 
 	byte *read_vga_from_datfile_2(uint id, uint type);
 
