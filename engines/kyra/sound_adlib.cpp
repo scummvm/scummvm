@@ -209,8 +209,8 @@ private:
 		return val;
 	}
 
-	void callbackOutput();
-	void callbackProcess();
+	void setupPrograms();
+	void executePrograms();
 
 	struct ParserOpcode {
 		typedef int (AdlibDriver::*POpcode)(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -222,7 +222,7 @@ private:
 
 	int update_setRepeat(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_checkRepeat(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback3(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setNoteSpacing(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_jump(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_jumpToSubroutine(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -267,9 +267,9 @@ private:
 	int updateCallback45(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback46(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop2(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback48(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback49(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback50(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setupRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_playRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_removeRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback51(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback52(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback53(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -280,8 +280,6 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// _unk4           - Unknown, but probably indicates that Adlib's
-	//                   rhythm section is active.
 	// _unk5           - Currently unused, except for updateCallback54()
 	// _unkValue1      - Unknown. Used for updating _unkValue2
 	// _unkValue2      - Unknown. Used for updating _unkValue4
@@ -318,7 +316,7 @@ private:
 	int _lastProcessed;
 	int8 _flagTrigger;
 	int _curChannel;
-	uint8 _unk4;
+	uint8 _rhythmSection;
 	uint8 _unk5;
 	int _soundsPlaying;
 
@@ -387,7 +385,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 
 	_unkOutputByte2 = _curRegOffset = 0;
 
-	_lastProcessed = _flagTrigger = _curChannel = _unk4 = 0;
+	_lastProcessed = _flagTrigger = _curChannel = _rhythmSection = 0;
 	_rnd = 0x1234;
 
 	_tempo = 0;
@@ -579,8 +577,8 @@ void AdlibDriver::callback() {
 	--_flagTrigger;
 	if (_flagTrigger < 0)
 		_flags &= ~8;
-	callbackOutput();
-	callbackProcess();
+	setupPrograms();
+	executePrograms();
 
 	uint8 temp = _unkValue3;
 	_unkValue3 += _tempo;
@@ -593,7 +591,7 @@ void AdlibDriver::callback() {
 	unlock();
 }
 
-void AdlibDriver::callbackOutput() {
+void AdlibDriver::setupPrograms() {
 	while (_lastProcessed != _soundsPlaying) {
 		uint16 add = _soundIdTable[_lastProcessed] << 1;
 		uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + add);
@@ -654,7 +652,7 @@ void AdlibDriver::callbackOutput() {
 // effects callbacks. The final opcode in a set can prevent this, if it's a
 // function and it returns anything other than 1.
 
-void AdlibDriver::callbackProcess() {
+void AdlibDriver::executePrograms() {
 	// Each channel runs its own program. There are ten channels: One for
 	// each Adlib channel (0-8), plus one "control channel" (9) which is
 	// the one that tells the other channels what to do. 
@@ -771,7 +769,7 @@ void AdlibDriver::noteOff(Channel &channel) {
 
 	// When the rhythm section is enabled, channels 6, 7 and 8 are special.
 
-	if (_unk4 && _curChannel >= 6)
+	if (_rhythmSection && _curChannel >= 6)
 		return;
 
 	// This means the "Key On" bit will always be 0
@@ -792,7 +790,7 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 	// I believe this has to do with channels 6, 7, and 8 being special
 	// when Adlib's rhythm section is enabled.
 
-	if (_unk4 && chan >= 6)
+	if (_rhythmSection && chan >= 6)
 		return;
 
 	uint8 offset = _regOffset[chan];
@@ -1201,9 +1199,7 @@ int AdlibDriver::update_checkRepeat(uint8 *&dataptr, Channel &channel, uint8 val
 	return 0;
 }
 
-// This is similar to callbackOutput()
-
-int AdlibDriver::updateCallback3(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 value) {
 	if (value == 0xFF)
 		return 0;
 
@@ -1592,7 +1588,7 @@ int AdlibDriver::update_nop2(uint8 *&dataptr, Channel &channel, uint8 value) {
 	return 0;
 }
 
-int AdlibDriver::updateCallback48(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value) {
 	int channelBackUp = _curChannel;
 	int regOffsetBackUp = _curRegOffset;
 
@@ -1639,19 +1635,19 @@ int AdlibDriver::updateCallback48(uint8 *&dataptr, Channel &channel, uint8 value
 	writeOPL(0xB8, _channels[8].regBx);
 	writeOPL(0xA8, *dataptr++);
 
-	_unk4 = 0x20;
+	_rhythmSection = 0x20;
 
 	_curRegOffset = regOffsetBackUp;
 	_curChannel = channelBackUp;
 	return 0;
 }
 
-int AdlibDriver::updateCallback49(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_playRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value) {
 	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
-	writeOPL(0xBD, (((value & 0x1F) ^ 0xFF) & _unk4) | 0x20);
+	writeOPL(0xBD, (((value & 0x1F) ^ 0xFF) & _rhythmSection) | 0x20);
 
-	value |= _unk4;
-	_unk4 = value;
+	value |= _rhythmSection;
+	_rhythmSection = value;
 
 	value |= _unkOutputByte2;
 	value |= 0x20;
@@ -1663,9 +1659,9 @@ int AdlibDriver::updateCallback49(uint8 *&dataptr, Channel &channel, uint8 value
 	return 0;
 }
 
-int AdlibDriver::updateCallback50(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_removeRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
-	_unk4 = 0;
+	_rhythmSection = 0;
 
 	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
 	writeOPL(0xBD, _unkOutputByte2 & 0xC0);
@@ -1890,7 +1886,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	// 0
 	COMMAND(update_setRepeat),
 	COMMAND(update_checkRepeat),
-	COMMAND(updateCallback3),
+	COMMAND(update_setupProgram),
 	COMMAND(update_setNoteSpacing),
 
 	// 4
@@ -1985,9 +1981,9 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 64
 	COMMAND(update_nop2),
-	COMMAND(updateCallback48),
-	COMMAND(updateCallback49),
-	COMMAND(updateCallback50),
+	COMMAND(update_setupRhythmSection),
+	COMMAND(update_playRhythmSection),
+	COMMAND(update_removeRhythmSection),
 
 	// 68
 	COMMAND(updateCallback51),
