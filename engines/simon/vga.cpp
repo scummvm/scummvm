@@ -707,8 +707,6 @@ void SimonEngine::vc10_draw() {
 	if (_dumpImages)
 		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
 											 state.palette);
-	// TODO::Add support for image overlay and scaling in Feeble Files
-
 	if (getGameType() == GType_FF) {
 		if (flags & 0x80) {
 			state.flags |= 0x8;
@@ -854,11 +852,80 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 void SimonEngine::drawImages_Feeble(VC10_state *state) {
 	if (state->flags & 0x8) {
 		if (state->flags & 0x40) {
-			// TODO::Add support for image scaling in Feeble Files
+			state->surf_addr = dx_lock_scaled();
+			state->surf_pitch = _dxSurfacePitch;
 
+			uint w, h;
+			byte *src, *dst, *dst_org;
+
+			state->dl = state->width;
+			state->dh = state->height;
+
+			vc10_skip_cols(state);
+
+			dst_org = state->surf_addr;
+			w = 0;
+			do {
+				byte color;
+
+				src = vc10_depack_column(state);
+				dst = dst_org;
+
+				h = 0;
+				do {
+					color = *src;
+					*dst = color;
+					dst += _screenWidth;
+					src++;
+				} while (++h != state->draw_height);
+				dst_org++;
+			} while (++w != state->draw_width);
+
+			_vgaCurSpritePriority /= 10;
+			if (_vgaCurSpritePriority != 900) {
+				_scaleX = state->x;
+				_scaleY = state->y;
+				_scaleWidth = state->width;
+				_scaleHeight = state->width;
+			} else {
+				scaleClip(state->height, state->width, state->y, state->x, _scrollY);
+			}
 		} else 	if (state->flags & 0x10) {
-			// TODO::Add support for image overlay in Feeble Files
+			state->surf_addr = dx_lock_scaled();
+			state->surf_pitch = _dxSurfacePitch;
+			state->surf_addr += state->x + state->y * state->surf_pitch;
 
+			uint w, h;
+			byte *src, *dst, *dst_org;
+
+			state->dl = state->width;
+			state->dh = state->height;
+
+			vc10_skip_cols(state);
+
+			dst_org = state->surf_addr;
+			w = 0;
+			do {
+				byte color;
+
+				src = vc10_depack_column(state);
+				dst = dst_org;
+
+				h = 0;
+				do {
+					color = *src;
+					if (color != 0)
+						*dst = color;
+					dst += _screenWidth;
+					src++;
+				} while (++h != state->draw_height);
+				dst_org++;
+			} while (++w != state->draw_width);
+
+			_vgaCurSpritePriority /= 10;
+			if (_vgaCurSpritePriority != 900) {
+				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scrollY);
+			}
 		} else {
 			if (drawImages_clip(state) == 0)
 				return;
@@ -871,7 +938,14 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 			if (state->flags & 0x20) {
 				if (vcGetBit(81) == false) {
-				// TODO: Compare Feeble rect
+					if (state->x  > _feebleRect.right)
+						return;
+					if (state->y > _feebleRect.bottom)
+						return;
+					if (state->x + state->width < _feebleRect.left)
+						return;
+					if (state->y + state->height < _feebleRect.top)
+						return;
 				}
 
 				state->dl = state->width;
@@ -951,6 +1025,42 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			src += state->width;
 		} while (--state->draw_height);
 	} 
+}
+
+void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
+	Common::Rect srcRect, dstRect;
+	float factor, xscale;
+
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.right = w;
+	srcRect.bottom = h;
+
+	if (scrollY > _baseY)
+		factor= 1+ ((scrollY - _baseY) * _scale);
+	else
+		factor= 1 - ((_baseY - scrollY) * _scale);
+
+	xscale = ((w * factor) / 2);
+
+	dstRect.left   = (int16)(x - xscale);
+	if (dstRect.left > 639)
+		return;
+	dstRect.top    = (int16)(y - (h * factor));
+	if (dstRect.top > 479)
+		return;
+
+	dstRect.right  = (int16)(x + xscale);
+	dstRect.bottom = y;
+
+	_feebleRect = dstRect;
+
+	_variableArray[20] = _feebleRect.top;
+	_variableArray[21] = _feebleRect.left;
+	_variableArray[22] = _feebleRect.bottom;
+	_variableArray[23] = _feebleRect.right;
+
+	// TODO
 }
 
 void SimonEngine::drawImages(VC10_state *state) {

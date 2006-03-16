@@ -100,11 +100,10 @@ struct AnimationHeader_Simon {
 struct VC10_state {
 	int image;
 	uint16 flags;
-	int x, y;
-
 	byte palette;
 
-	uint width, height;
+	int x, y;
+	int width, height;
 	uint draw_width, draw_height;
 	uint x_skip, y_skip;
 

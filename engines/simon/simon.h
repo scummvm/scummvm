@@ -24,8 +24,12 @@
 #define SIMON_H
 
 #include <stdio.h>
+
 #include "base/engine.h"
+
+#include "common/rect.h"
 #include "common/util.h"
+
 #include "simon/midi.h"
 #include "simon/sound.h"
 #include "simon/vga.h"
@@ -340,9 +344,12 @@ protected:
 	uint16 _vgaCurFile2;
 	uint16 _vgaWaitFor, _vgaCurFileId;
 	uint16 _vgaCurSpriteId;
+	uint16 _vgaCurSpritePriority;
 
 	int16 _baseY;
 	float _scale;
+	Common::Rect _feebleRect;
+	int _scaleX, _scaleY, _scaleWidth, _scaleHeight;
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
 
@@ -424,6 +431,7 @@ protected:
 	byte *_sdl_buf_3;
 	byte *_sdl_buf;
 	byte *_sdl_buf_attached;
+	byte *_sdl_buf_scaled;
 
 	Common::RandomSource _rnd;
 
@@ -766,6 +774,7 @@ protected:
 	void drawImages(VC10_state *state);
 	void drawImages_Feeble(VC10_state *state);
 	bool drawImages_clip(VC10_state *state);
+	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
 
 	void delete_vga_timer(VgaTimerEntry * vte);
 	void vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
@@ -810,6 +819,8 @@ protected:
 
 	byte *dx_lock_attached();
 	void dx_unlock_attached();
+
+	byte *dx_lock_scaled();
 
 	byte *read_vga_from_datfile_2(uint id, uint type);
 

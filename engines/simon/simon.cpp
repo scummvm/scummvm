@@ -357,6 +357,20 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_vgaWaitFor = 0;
 	_vgaCurFileId = 0;
 	_vgaCurSpriteId = 0;
+	_vgaCurSpritePriority = 0;
+
+	_baseY = 0;
+	_scale = 0;
+
+	_feebleRect.left = 0;
+	_feebleRect.right = 0;
+	_feebleRect.top = 0;
+	_feebleRect.bottom = 0;
+
+	_scaleX = 0;
+	_scaleY = 0;
+	_scaleWidth = 0;
+	_scaleHeight = 0;
 
 	_nextVgaTimerToProcess = 0;
 
@@ -429,6 +443,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_sdl_buf_3 = 0;
 	_sdl_buf = 0;
 	_sdl_buf_attached = 0;
+	_sdl_buf_scaled = 0;
 
 	_vc10BasePtrOld = 0;
 	memcpy (_hebrew_char_widths,
@@ -2694,6 +2709,7 @@ void SimonEngine::timer_vga_sprites() {
 		_curSfxFile = vpe->sfxFile;
 		_windowNum = vsp->windowNum;
 		_vgaCurSpriteId = vsp->id;
+		_vgaCurSpritePriority = vsp->priority;
 
 		params[0] = readUint16Wrapper(&vsp->image);
 		params[1] = readUint16Wrapper(&vsp->palette);
@@ -3912,6 +3928,7 @@ int SimonEngine::go() {
 	_sdl_buf_3 = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_sdl_buf = (byte *)calloc(_screenWidth * _screenHeight, 1);
 	_sdl_buf_attached = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	_sdl_buf_scaled = (byte *)calloc(_screenWidth * _screenHeight, 1);
 
 	allocItemHeap();
 	allocTablesHeap();
@@ -4182,6 +4199,11 @@ void SimonEngine::dx_unlock_attached() {
 
 void SimonEngine::set_volume(int volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+}
+
+byte *SimonEngine::dx_lock_scaled() {
+	_dxSurfacePitch = _screenWidth;
+	return _sdl_buf_scaled;
 }
 
 byte SimonEngine::getByte() {
