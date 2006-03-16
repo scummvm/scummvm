@@ -1656,8 +1656,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
-	int scrX = _vm->_screenStartStrip * 8;
-	byte *dst = (byte *)_vm->virtscr[0].backBuf + scrX;
+	byte *dst = vs->getBackPixels(0, 0);
 
 	// The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
