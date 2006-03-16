@@ -112,7 +112,7 @@ private:
 	int _sfxPlayingSound;
 	Common::String _soundFileLoaded;
 
-	uint8 _sfxSecondByteOfSong;
+	uint8 _sfxPriority;
 	uint8 _sfxFourthByteOfSong;
 };
 

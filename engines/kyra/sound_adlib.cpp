@@ -534,7 +534,7 @@ int AdlibDriver::snd_unkOpcode3(va_list &list) {
 int AdlibDriver::snd_readByte(va_list &list) {
 	int a = va_arg(list, int);
 	int b = va_arg(list, int);
-	uint8 *ptr = _soundData + READ_LE_UINT16(&_soundData[a << 1]) + b;
+	uint8 *ptr = getProgram(a) + b;
 	return *ptr;
 }
 
@@ -542,7 +542,7 @@ int AdlibDriver::snd_writeByte(va_list &list) {
 	int a = va_arg(list, int);
 	int b = va_arg(list, int);
 	int c = va_arg(list, int);
-	uint8 *ptr = _soundData + READ_LE_UINT16(&_soundData[a << 1]) + b;
+	uint8 *ptr = getProgram(a) + b;
 	uint8 oldValue = *ptr;
 	*ptr = (uint8)c;
 	return oldValue;
@@ -2162,22 +2162,33 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 		_engine->_system->delayMillis(10);
 	}
 	if (_sfxPlayingSound != -1) {
-		_driver->callback(10, _sfxPlayingSound, int(1), int(_sfxSecondByteOfSong));
+		// Restore the sounds's normal values.
+		_driver->callback(10, _sfxPlayingSound, int(1), int(_sfxPriority));
 		_driver->callback(10, _sfxPlayingSound, int(3), int(_sfxFourthByteOfSong));
 		_sfxPlayingSound = -1;
 	}
 
-	int firstByteOfSong = _driver->callback(9, soundId, int(0));
+	int chan = _driver->callback(9, soundId, int(0));
 
-	if (firstByteOfSong != 9) {
+	if (chan != 9) {
 		_sfxPlayingSound = soundId;
-		_sfxSecondByteOfSong = _driver->callback(9, soundId, int(1));
+		_sfxPriority = _driver->callback(9, soundId, int(1));
 		_sfxFourthByteOfSong = _driver->callback(9, soundId, int(3));
 
+		// In the cases I've seen, the mysterious fourth byte has been
+		// the parameter for the update_setExtraLevel3() callback.
+		//
+		// The extra level is part of the channels "total level", which
+		// is a six-bit value where larger values means softer volume.
+		//
+		// So what seems to be happening here is that sounds which are
+		// started by this function are given a slightly lower priority
+		// and a slightly higher (i.e. softer) extra level 3 than they
+		// would have if they were started from anywhere else. Strange.
+
 		int newVal = ((((-_sfxFourthByteOfSong) + 63) * 0xFF) >> 8) & 0xFF;
-		newVal = -newVal + 63;
 		_driver->callback(10, soundId, int(3), newVal);
-		newVal = ((_sfxSecondByteOfSong * 0xFF) >> 8) & 0xFF;
+		newVal = ((_sfxPriority * 0xFF) >> 8) & 0xFF;
 		_driver->callback(10, soundId, int(1), newVal);
 	}
 
