@@ -282,11 +282,11 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_lastHitArea3 = 0;
 	_leftButtonDown = 0;
 	_hitAreaSubjectItem = 0;
-	_hitAreaPtr5 = 0;
+	_currentVerbBox = 0;
 	_hitAreaPtr7 = 0;
 	_needHitAreaRecalc = 0;
 	_verbHitArea = 0;
-	_hitAreaUnk4 = 0;
+	_defaultVerb = 0;
 	_mouseHideCount = 0;
 
 	_windowNum = 0;
@@ -1522,10 +1522,10 @@ void SimonEngine::setup_cond_c_helper() {
 
 	if (getGameType() == GType_SIMON2) {
 		_mouseCursor = 0;
-		if (_hitAreaUnk4 != 999) {
+		if (_defaultVerb != 999) {
 			_mouseCursor = 9;
 			_needHitAreaRecalc++;
-			_hitAreaUnk4 = 0;
+			_defaultVerb = 0;
 		}
 	}
 
@@ -1635,12 +1635,12 @@ void SimonEngine::handle_mouse_moved() {
 	if (_mouseY >= _screenHeight - 1)
 		_mouseY = _screenHeight - 1;
 
-	if (_hitAreaUnk4) {
+	if (_defaultVerb) {
 		uint id = 101;
 		if (_mouseY >= 136)
 			id = 102;
-		if (_hitAreaUnk4 != id)
-			hitarea_proc_1();
+		if (_defaultVerb != id)
+			resetVerbs();
 	}
 
 	if (getGameType() == GType_FF) {
@@ -1994,7 +1994,7 @@ void SimonEngine::hitarea_stuff() {
 	_hitAreaSubjectItem = NULL;
 	_hitAreaObjectItem = NULL;
 
-	hitarea_proc_1();
+	resetVerbs();
 
 startOver:
 	for (;;) {
@@ -2022,8 +2022,8 @@ startOver:
 			handle_downarrow_hitarea(ha->fcs);
 		} else if (ha->id >= 101 && ha->id < 113) {
 			_verbHitArea = ha->verb;
-			handle_verb_hitarea(ha);
-			_hitAreaUnk4 = 0;
+			setVerb(ha);
+			_defaultVerb = 0;
 		} else {
 			if ((_verbHitArea != 0 || _hitAreaSubjectItem != ha->item_ptr && ha->flags & 0x80) &&
 					ha->item_ptr) {

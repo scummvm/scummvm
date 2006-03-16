@@ -278,10 +278,10 @@ protected:
 	HitArea *_lastHitArea3;
 	byte _leftButtonDown;
 	Item *_hitAreaSubjectItem;
-	HitArea *_hitAreaPtr5, *_hitAreaPtr7;
+	HitArea *_currentVerbBox, *_hitAreaPtr7;
 	uint _needHitAreaRecalc;
 	uint _verbHitArea;
-	uint16 _hitAreaUnk4;
+	uint16 _defaultVerb;
 	uint _mouseHideCount;
 
 	uint16 _windowNum;
@@ -545,8 +545,8 @@ protected:
 	void delete_hitarea(uint hitarea);
 	void addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr);
 	HitArea *findEmptyHitArea();
-	void hitarea_proc_1();
-	void handle_verb_hitarea(HitArea * ha);
+	void resetVerbs();
+	void setVerb(HitArea * ha);
 	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 

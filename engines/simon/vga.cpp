@@ -862,17 +862,13 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			dst_org = state->surf_addr;
 			w = 0;
 			do {
-				byte color;
-
 				src = vc10_depack_column(state);
 				dst = dst_org;
 
 				h = 0;
 				do {
-					color = *src;
-					*dst = color;
+					*dst = *src++;
 					dst += _screenWidth;
-					src++;
 				} while (++h != state->draw_height);
 				dst_org++;
 			} while (++w != state->draw_width);
@@ -882,7 +878,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				_scaleX = state->x;
 				_scaleY = state->y;
 				_scaleWidth = state->width;
-				_scaleHeight = state->width;
+				_scaleHeight = state->height;
 			} else {
 				scaleClip(state->height, state->width, state->y, state->x, _scrollY);
 			}
