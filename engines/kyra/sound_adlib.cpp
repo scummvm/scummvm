@@ -612,9 +612,7 @@ void AdlibDriver::callbackOutput() {
 			channel.tempo = 0xFF;
 			channel.position = 0xFF;
 			channel.duration = 1;
-			if (chan != 9) {
-				unkOutput2(chan);
-			}
+			unkOutput2(chan);
 		}
 
 		++_lastProcessed;
@@ -785,6 +783,11 @@ void AdlibDriver::noteOff(Channel &channel) {
 
 void AdlibDriver::unkOutput2(uint8 chan) {
 	debugC(9, kDebugLevelSound, "unkOutput2(%d)", chan);
+
+	// The control channel has no corresponding Adlib channel
+
+	if (chan >= 9)
+		return;
 
 	// I believe this has to do with channels 6, 7, and 8 being special
 	// when Adlib's rhythm section is enabled.
