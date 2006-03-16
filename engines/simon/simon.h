@@ -68,8 +68,8 @@ struct HitArea {
 	uint16 id;
 	FillOrCopyStruct *fcs;
 	Item *item_ptr;
-	uint16 unk3;
-	uint16 layer;
+	uint16 verb;
+	uint16 priority;
 	HitArea() { memset(this, 0, sizeof(*this)); }
 };
 
@@ -253,7 +253,7 @@ protected:
 	byte _mouseCursor;
 	bool _vgaVar9;
 	int16 _scriptUnk1;
-	bool _vgaVar6;
+	bool _restoreWindow6;
 	int _scrollX, _scrollXMax, _scrollHeight;
 	int _scrollY, _scrollYMax, _scrollWidth;
 	int _scrollCount, _scrollFlag;
@@ -540,7 +540,7 @@ protected:
 	void closeWindow(uint a);
 	void clear_hitarea_bit_0x40(uint hitarea);
 	void set_hitarea_bit_0x40(uint hitarea);
-	void set_hitarea_x_y(uint hitarea, int x, int y);
+	void moveBox(uint hitarea, int x, int y);
 	bool is_hitarea_0x40_clear(uint hitarea);
 	void delete_hitarea(uint hitarea);
 	void addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr);
@@ -562,7 +562,7 @@ protected:
 	void killAllTimers();
 
 	uint getOffsetOfChild2Param(Child2 *child, uint prop);
-	void o_unk_160(uint a);
+	void o_setTextColor(uint color);
 	void o_playSFX(uint a);
 	void o_lockZone();
 	void o_unlockZone();
@@ -617,7 +617,7 @@ protected:
 
 	void showActionString(uint x, const byte *string);
 	void video_putchar(FillOrCopyStruct *fcs, byte c, byte b = 0);
-	void video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs);
+	void clearWindow(FillOrCopyStruct *fcs);
 	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
 	void read_vga_from_datfile_1(uint vga_id);
@@ -801,18 +801,16 @@ protected:
 
 	bool isSpriteLoaded(uint16 id, uint16 fileId);
 
-	void fcs_setTextColor(FillOrCopyStruct *fcs, uint value);
-
 	void video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs);
 	void delete_hitarea_by_index(uint index);
 
 	void removeArrows(FillOrCopyStruct *fcs, uint fcs_index);
 	void fcs_putchar(uint a);
 
-	void copy_img_from_3_to_2(FillOrCopyStruct *fcs);
-	void video_erase(FillOrCopyStruct *fcs);
+	void restoreWindow(FillOrCopyStruct *fcs);
+	void colorWindow(FillOrCopyStruct *fcs);
 
-	void dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x);
+	void restoreBlock(uint b, uint r, uint y, uint x);
 
 	byte *getBackBuf();
 	byte *getFrontBuf();

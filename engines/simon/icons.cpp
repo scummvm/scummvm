@@ -208,8 +208,8 @@ uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uin
 		ha->height = 24;
 		ha->flags = 0xB0;
 		ha->id = 0x7FFD;
-		ha->layer = 100;
-		ha->unk3 = 0xD0;
+		ha->priority = 100;
+		ha->verb = 0xD0;
 	} else {
 		ha->x = x + 110;
 		ha->y = fcs->y + y;
@@ -218,8 +218,8 @@ uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uin
 		ha->height = 20;
 		ha->flags = 0xB0;
 		ha->id = 0x7FFD;
-		ha->layer = 100;
-		ha->unk3 = 0xD0;
+		ha->priority = 100;
+		ha->verb = 0xD0;
 	}
 
 	return ha - _hitAreas;

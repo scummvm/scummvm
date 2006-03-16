@@ -251,7 +251,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_mouseCursor = 0;
 	_vgaVar9 = 0;
 	_scriptUnk1 = 0;
-	_vgaVar6 = 0;
+	_restoreWindow6 = 0;
 	_scrollX = 0;
 	_scrollY = 0;
 	_scrollXMax = 0;
@@ -1824,9 +1824,9 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->height = 17;
 		ha->flags = 0x24;
 		ha->id = 0x7FFB;
-		ha->layer = 100;
+		ha->priority = 100;
 		ha->fcs = fcs;
-		ha->unk3 = 1;
+		ha->verb = 1;
 	} else {
 		ha->x = 81;
 		ha->y = 158;
@@ -1834,9 +1834,9 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->height = 26;
 		ha->flags = 36;
 		ha->id = 0x7FFB;
-		ha->layer = 100;
+		ha->priority = 100;
 		ha->fcs = fcs;
-		ha->unk3 = 1;
+		ha->verb = 1;
 	}
 
 	ha = findEmptyHitArea();
@@ -1849,9 +1849,9 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->height = 17;
 		ha->flags = 0x24;
 		ha->id = 0x7FFC;
-		ha->layer = 100;
+		ha->priority = 100;
 		ha->fcs = fcs;
-		ha->unk3 = 1;
+		ha->verb = 1;
 
 		// Simon1 specific
 		o_kill_sprite_simon1(128);
@@ -1863,9 +1863,9 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->height = 26;
 		ha->flags = 36;
 		ha->id = 0x7FFC;
-		ha->layer = 100;
+		ha->priority = 100;
 		ha->fcs = fcs;
-		ha->unk3 = 1;
+		ha->verb = 1;
 	}
 }
 
@@ -2021,7 +2021,7 @@ startOver:
 		} else if (ha->id == 0x7FFC) {
 			handle_downarrow_hitarea(ha->fcs);
 		} else if (ha->id >= 101 && ha->id < 113) {
-			_verbHitArea = ha->unk3;
+			_verbHitArea = ha->verb;
 			handle_verb_hitarea(ha);
 			_hitAreaUnk4 = 0;
 		} else {
@@ -2038,12 +2038,12 @@ startOver:
 					break;
 			} else {
 				// else 1
-				if (ha->unk3 == 0) {
+				if (ha->verb == 0) {
 					if (ha->item_ptr)
 						goto if_1;
 				} else {
-					_verbHitArea = ha->unk3 & 0xBFFF;
-					if (ha->unk3 & 0x4000) {
+					_verbHitArea = ha->verb & 0xBFFF;
+					if (ha->verb & 0x4000) {
 						_hitAreaSubjectItem = ha->item_ptr;
 						break;
 					}
@@ -2390,7 +2390,7 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 			_unkPalFlag = true;
 		} else {
 			_dxUse3Or4ForLock = true;
-			_vgaVar6 = true;
+			_restoreWindow6 = true;
 		}
 	}
 
@@ -2857,10 +2857,6 @@ void SimonEngine::timer_callback() {
 	}
 }
 
-void SimonEngine::fcs_setTextColor(FillOrCopyStruct *fcs, uint value) {
-	fcs->text_color = value;
-}
-
 void SimonEngine::o_vga_reset() {
 	_lockWord |= 0x8000;
 	vc27_resetSprite();
@@ -3063,11 +3059,11 @@ void SimonEngine::fcs_putchar(uint a) {
 }
 
 // ok
-void SimonEngine::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
+void SimonEngine::clearWindow(FillOrCopyStruct *fcs) {
 	if (fcs->flags & 0x10)
-		copy_img_from_3_to_2(fcs);
+		restoreWindow(fcs);
 	else
-		video_erase(fcs);
+		colorWindow(fcs);
 
 	fcs->textColumn = 0;
 	fcs->textRow = 0;
@@ -3076,24 +3072,24 @@ void SimonEngine::video_fill_or_copy_from_3_to_2(FillOrCopyStruct *fcs) {
 }
 
 // ok
-void SimonEngine::copy_img_from_3_to_2(FillOrCopyStruct *fcs) {
+void SimonEngine::restoreWindow(FillOrCopyStruct *fcs) {
 	_lockWord |= 0x8000;
 
 	if (getGameType() == GType_SIMON1) {
-		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		restoreBlock(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	} else {
-		if (_vgaVar6 && _windowArray[2] == fcs) {
+		if (_restoreWindow6 && _windowArray[2] == fcs) {
 			fcs = _windowArray[6];
-			_vgaVar6 = 0;
+			_restoreWindow6 = 0;
 		}
 
-		dx_copy_rgn_from_3_to_2(fcs->y + fcs->height * 8, (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		restoreBlock(fcs->y + fcs->height * 8, (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	}
 
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::video_erase(FillOrCopyStruct *fcs) {
+void SimonEngine::colorWindow(FillOrCopyStruct *fcs) {
 	byte *dst;
 	uint h;
 
@@ -3289,7 +3285,7 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 
 void SimonEngine::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
 	if (fcs->flags & 8)
-		copy_img_from_3_to_2(fcs);
+		restoreWindow(fcs);
 	fcs->mode = 0;
 }
 
@@ -3777,7 +3773,7 @@ void SimonEngine::runSubroutine101() {
 	startUp_helper_2();
 }
 
-void SimonEngine::dx_copy_rgn_from_3_to_2(uint b, uint r, uint y, uint x) {
+void SimonEngine::restoreBlock(uint b, uint r, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 

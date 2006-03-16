@@ -590,7 +590,7 @@ int SimonEngine::runScript() {
 				uint flags = 0;
 				uint id = getVarOrWord();
 				uint params = id / 1000;
-				uint x, y, w, h, unk3;
+				uint x, y, w, h, verb;
 				Item *item;
 
 				id = id % 1000;
@@ -611,12 +611,12 @@ int SimonEngine::runScript() {
 				w = getVarOrWord();
 				h = getVarOrWord();
 				item = getNextItemPtrStrange();
-				unk3 = getVarOrWord();
+				verb = getVarOrWord();
 				if (x >= 1000) {
-					unk3 += 0x4000;
+					verb += 0x4000;
 					x -= 1000;
 				}
-				addNewHitArea(id, x, y, w, h, flags, unk3, item);
+				addNewHitArea(id, x, y, w, h, flags, verb, item);
 			}
 			break;
 
@@ -639,7 +639,7 @@ int SimonEngine::runScript() {
 				uint hitarea_id = getVarOrWord();
 				uint x = getVarOrWord();
 				uint y = getVarOrWord();
-				set_hitarea_x_y(hitarea_id, x, y);
+				moveBox(hitarea_id, x, y);
 			}
 			break;
 
@@ -930,7 +930,7 @@ int SimonEngine::runScript() {
 			break;
 
 		case 160:{
-				o_unk_160(getVarOrByte());
+				o_setTextColor(getVarOrByte());
 			}
 			break;
 
@@ -1649,8 +1649,11 @@ void SimonEngine::o_playSFX(uint sound_id) {
 		_sound->playEffects(sound_id);
 }
 
-void SimonEngine::o_unk_160(uint a) {
-	fcs_setTextColor(_windowArray[_curWindow], a);
+void SimonEngine::o_setTextColor(uint color) {
+	FillOrCopyStruct *fcs;
+
+	fcs = _windowArray[_curWindow];
+	fcs->text_color = color;
 }
 
 void SimonEngine::o_unk_103() {

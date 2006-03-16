@@ -301,7 +301,7 @@ void SimonEngine::hitareaChangedHelper() {
 
 	fcs = _windowArray[1];
 	if (fcs != NULL && fcs->text_color != 0)
-		video_fill_or_copy_from_3_to_2(fcs);
+		clearWindow(fcs);
 
 	_lastHitArea2Ptr = NULL;
 	_hitAreaPtr7 = NULL;
@@ -345,7 +345,7 @@ void SimonEngine::set_hitarea_bit_0x40(uint hitarea) {
 	}
 }
 
-void SimonEngine::set_hitarea_x_y(uint hitarea, int x, int y) {
+void SimonEngine::moveBox(uint hitarea, int x, int y) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->x = x;
@@ -370,7 +370,7 @@ bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
 	return (ha->flags & 0x40) == 0;
 }
 
-void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr) {
+void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
 	HitArea *ha;
 	delete_hitarea(id);
 
@@ -380,8 +380,8 @@ void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int
 	ha->width = width;
 	ha->height = height;
 	ha->flags = flags | 0x20;
-	ha->id = ha->layer = id;
-	ha->unk3 = unk3;
+	ha->id = ha->priority = id;
+	ha->verb = verb;
 	ha->item_ptr = item_ptr;
 
 	_needHitAreaRecalc++;
@@ -409,7 +409,7 @@ void SimonEngine::hitarea_proc_1() {
 		_hitAreaUnk4 = 999;
 		_hitAreaPtr5 = NULL;
 	} else {
-		_verbHitArea = ha->unk3;
+		_verbHitArea = ha->verb;
 		handle_verb_hitarea(ha);
 	}
 }
@@ -483,7 +483,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	HitArea *best_ha;
 	HitArea *ha = _hitAreas;
 	uint count = ARRAYSIZE(_hitAreas);
-	uint16 layer = 0;
+	uint16 priority = 0;
 	uint16 x_ = x;
 	const uint16 y_ = y;
 
@@ -499,8 +499,8 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 		if (ha->flags & 0x20) {
 			if (!(ha->flags & 0x40)) {
 				if (x_ >= ha->x && y_ >= ha->y &&
-						x_ - ha->x < ha->width && y_ - ha->y < ha->height && layer <= ha->layer) {
-					layer = ha->layer;
+						x_ - ha->x < ha->width && y_ - ha->y < ha->height && priority <= ha->priority) {
+					priority = ha->priority;
 					best_ha = ha;
 				} else {
 					if (ha->flags & 2) {

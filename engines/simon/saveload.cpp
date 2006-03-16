@@ -340,7 +340,7 @@ get_out:;
 	_base_time = time(NULL) - save_time + _base_time;
 	_copyPartialMode = 0;
 
-	dx_copy_rgn_from_3_to_2(94, 208, 46, 80);
+	restoreBlock(94, 208, 46, 80);
 
 	i = _timer4;
 	do {
@@ -383,7 +383,7 @@ void SimonEngine::o_fileError(FillOrCopyStruct *fcs, bool save_error) {
 	ha->height = 8;
 	ha->flags = 0x20;
 	ha->id = 0x7FFF;
-	ha->layer = 0x3EF;
+	ha->priority = 0x3EF;
 
 loop:;
 	_lastHitArea = _lastHitArea3 = 0;

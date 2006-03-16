@@ -299,7 +299,7 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 	byte width = 6;
 
 	if (c == 0xC) {
-		video_fill_or_copy_from_3_to_2(fcs);
+		clearWindow(fcs);
 	} else if (c == 0xD || c == 0xA) {
 		video_putchar_newline(fcs);
 	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
