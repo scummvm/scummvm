@@ -595,16 +595,15 @@ void AdlibDriver::callback() {
 
 void AdlibDriver::callbackOutput() {
 	while (_lastProcessed != _soundsPlaying) {
-		uint8 *ptr = _soundData;
-
-		ptr += READ_LE_UINT16(&ptr[_soundIdTable[_lastProcessed] << 1]);
+		uint16 add = _soundIdTable[_lastProcessed] << 1;
+		uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + add);
 		uint8 chan = *ptr++;
-		Channel &channel = _channels[chan];
-
 		uint8 priority = *ptr++;
 
 		// Only start this sound if its priority is higher than the one
 		// already playing.
+
+		Channel &channel = _channels[chan];
 
 		if (priority >= channel.priority) {
 			initChannel(channel);
@@ -658,6 +657,10 @@ void AdlibDriver::callbackOutput() {
 // function and it returns anything other than 1.
 
 void AdlibDriver::callbackProcess() {
+	// Each channel runs its own program. There are ten channels: One for
+	// each Adlib channel (0-8), plus one "control channel" (9) which is
+	// the one that tells the other channels what to do. 
+
 	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
 		int result = 1;
 
@@ -763,12 +766,13 @@ void AdlibDriver::initChannel(Channel &channel) {
 void AdlibDriver::noteOff(Channel &channel) {
 	debugC(9, kDebugLevelSound, "noteOff(%d)", &channel - _channels);
 
-	// I believe that 9 is the percussion channel.
-	if (_curChannel == 9)
+	// The control channel has no corresponding Adlib channel
+
+	if (_curChannel >= 9)
 		return;
 
-	// I believe this has to do with channels 6, 7, and 8 being special
-	// when Adlib's rhythm section is enabled.
+	// When the rhythm section is enabled, channels 6, 7 and 8 are special.
+
 	if (_unk4 && _curChannel >= 6)
 		return;
 
@@ -801,8 +805,6 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 
 	writeOPL(0xB0 + chan, 0x00);
 
-	// FIXME!
-	//
 	// ...and then the note is turned on again, with whatever value is
 	// still lurking in the A0 + chan register, but everything else -
 	// including the two most significant frequency bit, and the octave -
@@ -1205,8 +1207,10 @@ int AdlibDriver::updateCallback3(uint8 *&dataptr, Channel &channel, uint8 value)
 	uint16 add = value << 1;
 	uint8 *ptr = _soundData + READ_LE_UINT16(_soundData + add);
 	uint8 chan = *ptr++;
-	Channel &channel2 = _channels[chan];
 	uint8 priority = *ptr++;
+
+	Channel &channel2 = _channels[chan];
+
 	if (priority >= channel2.priority) {
 		_flagTrigger = 1;
 		_flags |= 8;
