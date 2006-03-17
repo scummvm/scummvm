@@ -2200,6 +2200,7 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 		// would have if they were started from anywhere else. Strange.
 
 		int newVal = ((((-_sfxFourthByteOfSong) + 63) * 0xFF) >> 8) & 0xFF;
+		newVal = -newVal + 63;
 		_driver->callback(10, soundId, int(3), newVal);
 		newVal = ((_sfxPriority * 0xFF) >> 8) & 0xFF;
 		_driver->callback(10, soundId, int(1), newVal);
