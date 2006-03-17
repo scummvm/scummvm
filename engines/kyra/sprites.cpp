@@ -76,8 +76,8 @@ void Sprites::setupSceneAnims() {
 			_anims[i].unk2 = READ_LE_UINT16(data);
 			data += 4;
 
-			if (_engine->_northExitHeight & 0xFF > READ_LE_UINT16(data))
-				_anims[i].drawY = _engine->_northExitHeight;
+			if ((_engine->_northExitHeight & 0xFF) > READ_LE_UINT16(data))
+				_anims[i].drawY = _engine->_northExitHeight & 0xFF;
 			else
 				_anims[i].drawY = READ_LE_UINT16(data);
 			data += 4;
