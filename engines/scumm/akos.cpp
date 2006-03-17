@@ -1709,7 +1709,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 	int code2 = aksq[curpos];
 	if (code2 & 0x80)
-		code2 = (code2 << 8) | aksq[curpos + 1];
+		code2 = READ_BE_UINT16(aksq + curpos);
 
 	assert((code2 & 0xC000) != 0xC000 || code2 == AKC_ComplexChan || code2 == AKC_Return || code2 == AKC_EndSeq || code2 == AKC_C08E || code2 == AKC_ComplexChan2 || code2 == AKC_C021 || code2 == AKC_C022);
 
