@@ -69,6 +69,18 @@ char_face_up/char_face_down/char_face_left/char_face_right - Faces the character
      Input:  si = Hotspot record
              di = Animation slot
 
+character_change_room - Changes the current room for a given character
+     Input:  current_hotspot = Character hotspot Id
+             dx = New room number
+             cx = New X position
+             bx = New Y position
+
+character_check_room_change - Checks whether the given character is within the
+              bounds of a room exit, and if so, handles moving the player to
+              the new room
+    Input:  si = Character hotspot Id
+            di = Chracter animation slot
+
 character_update_frame - Handles updating a character's current frame
    Input:  ?
   Output:  ax = 1 for end of ?? list, 0 = frame successfully changed
@@ -359,7 +371,7 @@ set_upper_vga_palette - Sets the last 16 palette entries of the VGA palette to a
 sequence_execute - Outer execution method for handling a sequence of script instructions.
      Input: ax = Pointer to script set. See tables section for instruction formats
     Output: ax = sequence result value
-            zf = set if the result value is zero 
+            zf = set if the result value is zero
 
 sequence_execute_inner - Inner handling method for script instructions
      Input:  si = Pointer to script set
@@ -372,6 +384,13 @@ show_disk_cursor  - Shows the disk cursor
 
 show_startup - Shows the starting screens of the game, and then calls the
                show_introduction method to show the animated introduction sequence
+
+skorl_caught_check - Checks to see if the Skorl is close enough to the player
+              for it to 'catch' the player
+     Input:  bx = Player hotspot record
+             si = Skorl hotspot record
+             di = Skorl animation slot
+    Output:  ax = 1 -> Skorl is close to player, 0 -> Skorl is not
 
 skorl_knockout - Runs the animation sequence of a Skorl knocking out the player
 
@@ -664,6 +683,9 @@ The format of hotspots are as follows:
            17h     2    Tick handler proc offset
            19h     2    Copy of hotspot width
            1Bh     2    Copy of hotspot height
+           1Dh     2    Y correction. Currently only known use is as a Y
+                        correction factor when checking if a character is in
+                        an exit region
            1fh     2    Timeout decrement value for frame change
            21h     2    Pointer to memory containing disk resource Id for the
                         pixel data for the hotspot's animation (or possibly
@@ -781,8 +803,15 @@ aren't necessarily animated.
                         sets this back to zero
             11h    2    Tick handler proc offset - called every frame for hotspots
                         loaded into the animation table where [0Ch] is non-zero
-            13h    2    ??? Copy of the animation width
-            15h    2    ??? Copy of the animation height
+            13h    2    Copy of the animation width - this the height copy are
+                        used in some areas to, for example, varying the strict
+                        Y ordering of objects in a scene (for example, Ratpouch
+                        has a larger height copy to make him appear on top of
+                        the rack rather than behind it).
+            15h    2    Copy of the animation height
+            17h    2    Y correction. Currently only known use is as a Y
+                        correction factor when checking if a character is in
+                        an exit region
             19h    2    Offset of the original resource record used to load this
                         animation entry.
             1Bh    2    Hotspot Id of the entry. Can also be 0ffffh, which seems

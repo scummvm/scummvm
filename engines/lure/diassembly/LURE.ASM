@@ -135,13 +135,14 @@ ANIM_CAN_UNLOAD           equ  10h
 ANIM_TICK_PROC            equ  11h
 ANIM_WIDTH_COPY           equ  13h
 ANIM_HEIGHT_COPY          equ  15h
+ANIM_Y_CORRECTION         equ  17h
 ANIM_HOTSPOT_OFFSET       equ  19h
 ANIM_HOTSPOT_ID           equ  1Bh
 ANIM_LAYER1_SKIP          equ  1Dh
 ANIM_VOICE_CHAR_ID        equ  1Eh
 ANIM_VOICE_CTR            equ  24h
 ANIM_DIRECTION            equ  26h
-ANIM_UNKOWN1              equ  27h
+ANIM_UNKNOWN1              equ  27h
 ANIM_START_COLOUR         equ  28h
 
 ; Hotspot header record constants
@@ -166,6 +167,8 @@ HS_HEIGHT                 equ  13h
 HS_LAYER                  equ  15h
 HS_TICK_PROC              equ  17h
 HS_WIDTH_COPY             equ  19h
+HS_HEIGHT_COPY            equ  1Bh
+HS_Y_CORRECTION           equ  1Dh
 HS_FRAME_CTR              equ  1Fh
 HS_PIXEL_OFFSET           equ  21h
 HS_START_COLOUR           equ  23h
@@ -185,11 +188,6 @@ HS_DEST_Y                 equ  56h
 HS_MOMENT_SRC_OFFSET      equ  5Ah
 HS_ACTION_OFFSET          equ  61h
 HS_FIRST_ACTION_OFFSET    equ  63h
-
-; Room header record constants
-RH_ROOM_NUM               equ  2
-RH_DESC_ID                equ  4
-RH_TABLE_ENTRY_SIZE       equ  9
 
 ; Pixel record constants
 PIXEL_DISK_ID             equ   0
@@ -222,6 +220,11 @@ REHS_HOTSPOT_2            equ  6
 REHS_HOTSPOT_2            equ  8
 REHS_EXIT_BLOCKED         equ  12
 
+; Room header record constants
+RH_ROOM_NUM               equ  2
+RH_DESC_ID                equ  4
+RH_TABLE_ENTRY_SIZE       equ  9
+
 ; Room record constants
 ROOM_NUM_LAYERS           equ  8
 ROOM_FIRST_LAYER          equ  9
@@ -230,6 +233,16 @@ ROOM_ENTRY_TIME           equ  13h
 ROOM_X_START              equ  19h
 ROOM_X_END                equ  1Bh
 ROOM_EXITS_START          equ  1Dh
+
+; Room exit constants for room exit list within room records
+ROOMREC_EXIT_X_START          equ  0
+ROOMREC_EXIT_X_END            equ  2
+ROOMREC_EXIT_Y_START          equ  4
+ROOMREC_EXIT_Y_END            equ  6
+ROOMREC_EXIT_SEQUENCE         equ  8
+ROOMREC_EXIT_ROOM_NUM         equ  10
+ROOMREC_EXIT_NEW_X            equ  12
+ROOMREC_EXIT_NEW_Y            equ  14
 
 ; Room number constants
 ROOMNUM_TOWN_HALL         equ  1fh
@@ -2769,7 +2782,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:10E8 ˙BF B14E                              mov     di,offset animation_table
 273F:10EB  B9 002D                              mov     cx, NUM_ANIMATION_SLOTS
 
-273F:10EE                       locloop_157:                     ; Check if hotspot can be unloaded
+273F:10EE                       locloop_157:                                    ; Check if hotspot can be unloaded
 273F:10EE  F6 45 10 FF                          test    byte ptr [di+ANIM_CAN_UNLOAD],0FFh
 273F:10F2  74 11                                jz      loc_159                 ; If no, then skip
 
@@ -2798,7 +2811,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:110D  8B 55 0E                             mov     dx, [di+ANIM_ROOM_NUM]
 273F:1110 ˙BE B14E                              mov     si, offset animation_table
 273F:1113  B9 002D                              mov     cx, NUM_ANIMATION_SLOTS
-273F:1116 ˙BB 10C0                              mov     bx, 10C0h 
+273F:1116 ˙BB 10C0                              mov     bx, offset data_616
 273F:1119  C7 06 10BE 0000                      mov     data_615, 0
 273F:111F  8B 05                                mov     ax, [di]
 273F:1121  A3 10E6                              mov     word ptr ds:[10E6h],ax  ; (273F:10E6=0C329h)
@@ -2875,72 +2888,78 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 
 273F:11B5                       sub_41          proc    near
 273F:11B5  53                                   push    bx
-273F:11B6 ˙BB 10C0                              mov     bx,10C0h                ; (273F:10C0=3)
-273F:11B9  C7 06 10EE 0000                      mov     word ptr ds:[10EEh],0   ; (273F:10EE=45F6h)
-273F:11BF                       loc_163:                                        ;  xref 273F:11F9, 126F
-273F:11BF ˙8B 07                                mov     ax,[bx]
-273F:11C1  83 C3 02                             add     bx,2
-273F:11C4  0B C0                                or      ax,ax                   ; Zero ?
+273F:11B6 ˙BB 10C0                              mov     bx, offset data_616
+273F:11B9  C7 06 10EE 0000                      mov     data_617, 0
+273F:11BF                       loc_163:
+
+273F:11BF ˙8B 07                                mov     ax, [bx]                ; Get character Id
+273F:11C1  83 C3 02                             add     bx, 2
+273F:11C4  0B C0                                or      ax, ax                  ; Is it zero?
 273F:11C6  75 05                                jnz     loc_164                 ; Jump if not zero
-273F:11C8  A1 10EE                              mov     ax,word ptr ds:[10EEh]  ; (273F:10EE=45F6h)
+273F:11C8  A1 10EE                              mov     ax, data_617
 273F:11CB  5B                                   pop     bx
 273F:11CC  C3                                   retn
-273F:11CD                       loc_164:                                        ;  xref 273F:11C6
-273F:11CD  8B EB                                mov     bp,bx
+273F:11CD                       loc_164:
+
+273F:11CD  8B EB                                mov     bp,bx                   ; Store current table offset
 273F:11CF  50                                   push    ax
 273F:11D0  56                                   push    si
-273F:11D1  E8 FB16                              call    get_room_resource_pointer2
-273F:11D4  8B DE                                mov     bx,si
-273F:11D6  03 5C 61                             add     bx,[si+61h]
-273F:11D9  83 C3 63                             add     bx,63h
-273F:11DC  8A 1F                                mov     bl,[bx]
+273F:11D1  E8 FB16                              call    get_room_resource_pointer2 ;Get hotspot resource
+273F:11D4  8B DE                                mov     bx, si
+273F:11D6  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
+273F:11D9  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
+273F:11DC  8A 1F                                mov     bl, [bx]                ; bl = char's current action
 273F:11DE  5E                                   pop     si
 273F:11DF  58                                   pop     ax
-273F:11E0  80 FB 03                             cmp     bl,3
-273F:11E3  74 12                                je      loc_166                 ; Jump if equal
+273F:11E0  80 FB 03                             cmp     bl, PLAYER_ACTION_EXEC_SCRIPT ; Char in animation sequence?
+273F:11E3  74 12                                je      loc_166                 ; Jump if yes
 
 273F:11E5  BB B0AE                              mov     bx, offset hotspot_action_list
 273F:11E8  B9 0014                              mov     cx, NUM_HOTSPOT_ACTION_SLOTS
 273F:11EB  8B 55 1B                             mov     dx, [di+ANIM_HOTSPOT_ID]
 
 273F:11EE                       locloop_165:
-273F:11EE  3B 17                                cmp     dx, [bx]
-273F:11F0  75 09                                jne     loc_167                 ; Jump if not equal
-273F:11F2  3B 47 02                             cmp     ax, [bx+2]
+273F:11EE  3B 17                                cmp     dx, [bx]                ; Source char in list?
+273F:11F0  75 09                                jne     loc_167                 ; Jump if not
+273F:11F2  3B 47 02                             cmp     ax, [bx+2]              ; List char Id in list?
 273F:11F5  75 04                                jne     loc_167                 ; Jump if not equal
-273F:11F7                       loc_166:                                        ;  xref 273F:11E3
-273F:11F7  8B DD                                mov     bx,bp
-273F:11F9  EB C4                                jmp     short loc_163           ; (11BF)
-273F:11FB                       loc_167:                                        ;  xref 273F:11F0, 11F5
+273F:11F7                       loc_166:
+273F:11F7  8B DD                                mov     bx,bp                   ; Restore cached table offset
+273F:11F9  EB C4                                jmp     short loc_163           ; Check next entry
+273F:11FB                       loc_167:
 273F:11FB  83 C3 08                             add     bx, HOTSPOT_ACTION_SLOT_SIZE
-273F:11FE  E2 EE                                loop    locloop_165             ; Loop if cx > 0
+273F:11FE  E2 EE                                loop    locloop_165             ; Loop remaining action list
 
-273F:1200  8B D8                                mov     bx,ax
+; At this point we've found a character in the data_616 list that isn't currently
+; blocked to execute a hotspot animation, and doesn't have a cross reference
+; against the calling character (such as the player) in the hotspot action list
+
+273F:1200  8B D8                                mov     bx, ax
 273F:1202  57                                   push    di
-273F:1203  8B FE                                mov     di,si
+273F:1203  8B FE                                mov     di, si
 273F:1205  E8 FAE0                              call    get_room_resource_pointer
-273F:1208  87 F7                                xchg    si,di
-273F:120A  8B C3                                mov     ax,bx
-273F:120C  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
-273F:120F  75 0F                                jne     loc_168                 ; Jump if not equal
-273F:1211  F6 45 49 FF                          test    byte ptr [di+49h],0FFh
+273F:1208  87 F7                                xchg    si, di                  ;di=list hotspot rec, si=caller rec
+273F:120A  8B C3                                mov     ax, bx
+273F:120C  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID   ; Is caller Id the player?
+273F:120F  75 0F                                jne     loc_168                 ; Jump if not
+273F:1211  F6 45 49 FF                          test    byte ptr [di+49h], 0FFh ; ???
 273F:1215  75 09                                jnz     loc_168                 ; Jump if not zero
 273F:1217  5F                                   pop     di
-273F:1218  E8 314B                              call    sub_93                  ; (4366)
+273F:1218  E8 314B                              call    sub_93
 273F:121B  5B                                   pop     bx
-273F:121C  B8 0001                              mov     ax,1
+273F:121C  B8 0001                              mov     ax, 1
 273F:121F  C3                                   retn
-273F:1220                       loc_168:                                        ;  xref 273F:120F, 1215
 
+273F:1220                       loc_168:
 273F:1220  BB B0AE                              mov     bx, offset hotspot_action_list
-273F:1223                       loc_169:                                        ;  xref 273F:122C
-273F:1223 ˙F7 07 FFFF                           test    word ptr [bx],0FFFFh
-273F:1227  74 05                                jz      loc_170                 ; Jump if zero
+273F:1223                       loc_169:                                        ; Scan for end of list
+273F:1223 ˙F7 07 FFFF                           test    word ptr [bx], 0FFFFh
+273F:1227  74 05                                jz      loc_170
 273F:1229  83 C3 08                             add     bx, HOTSPOT_ACTION_SLOT_SIZE
-273F:122C  EB F5                                jmp     short loc_169           ; (1223)
-273F:122E                       loc_170:                                        ;  xref 273F:1227
-273F:122E  89 17                                mov     [bx],dx
-273F:1230  89 47 02                             mov     [bx+2],ax
+273F:122C  EB F5                                jmp     short loc_169
+273F:122E                       loc_170:                                        ; Inject entry into hotspot action list
+273F:122E  89 17                                mov     [bx], dx
+273F:1230  89 47 02                             mov     [bx+2], ax
 273F:1233  C7 47 04 000F                        mov     word ptr [bx+4],0Fh
 273F:1238  89 7F 06                             mov     [bx+6],di
 273F:123B  C6 44 4C 01                          mov     byte ptr [si+4Ch],1
@@ -2953,20 +2972,20 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:1251  75 09                                jnz     loc_172                 ; Jump if not zero
 273F:1253  F6 45 44 FF                          test    byte ptr [di+44h],0FFh
 273F:1257  75 03                                jnz     loc_172                 ; Jump if not zero
-273F:1259                       loc_171:                                        ;  xref 273F:124A
-273F:1259  89 55 47                             mov     [di+47h],dx
-273F:125C                       loc_172:                                        ;  xref 273F:1251, 1257
-273F:125C  C7 45 4A 000F                        mov     word ptr [di+4Ah],0Fh
-273F:1261                       loc_173:                                        ;  xref 273F:1242
-273F:1261  C7 06 10EE 0002                      mov     word ptr ds:[10EEh],2   ; (273F:10EE=45F6h)
+273F:1259                       loc_171:
+273F:1259  89 55 47                             mov     [di+47h], dx
+273F:125C                       loc_172:
+273F:125C  C7 45 4A 000F                        mov     word ptr [di+4Ah], 0Fh
+273F:1261                       loc_173:
+273F:1261  C7 06 10EE 0002                      mov     data_617, 2
 273F:1267  5F                                   pop     di
 273F:1268  5B                                   pop     bx
-273F:1269  C6 07 01                             mov     byte ptr [bx],1
+273F:1269  C6 07 01                             mov     byte ptr [bx], 1
 273F:126C  53                                   push    bx
 273F:126D  8B DD                                mov     bx,bp
-273F:126F  E9 FF4D                              jmp     loc_163                 ; (11BF)
-                                sub_41          endp
+273F:126F  E9 FF4D                              jmp     loc_163
 
+                                sub_41          endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -10040,14 +10059,14 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:4199  B9 002D                              mov     cx, NUM_ANIMATION_SLOTS
 
 273F:419C                       locloop_822:
-273F:419C  F6 45 0C FF                          test    byte ptr [di+0Ch],0FFh
+273F:419C  F6 45 0C FF                          test    byte ptr [di+0Ch], 0FFh
 273F:41A0  74 16                                jz      loc_823
 
-273F:41A2  8B 45 1B                             mov     ax,[di+1Bh]
+273F:41A2  8B 45 1B                             mov     ax, [di+ANIM_HOTSPOT_ID]
 273F:41A5  A3 BA17                              mov     current_hotspot, ax
 273F:41A8  89 3E 1927                           mov     active_animation_offset, di
-273F:41AC  8B 45 11                             mov     ax,[di+11h]             ; ax = handler offset
-273F:41AF  8B 75 19                             mov     si,[di+19h]             ; si = hotspot rsc
+273F:41AC  8B 45 11                             mov     ax, [di+ANIM_TICK_PROC]
+273F:41AF  8B 75 19                             mov     si, [di+ANIM_HOTSPOT_OFFSET]
 273F:41B2  57                                   push    di
 273F:41B3  51                                   push    cx
 273F:41B4  FF D0                                call    ax                      ; Call entry's handler proc
@@ -10189,65 +10208,69 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
                                 ;         Called from:   273F:5242
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:4288                       sub_91          proc    near
-273F:4288                       loc_833:                                        ;  xref 273F:6036
+                 character_check_room_change    proc    near
 273F:4288 ˙56                                   push    si
 273F:4289  8B 45 0E                             mov     ax, [di+ANIM_ROOM_NUM]
-273F:428C  E8 CA5B                              call    get_room_resource_pointer2
-273F:428F  83 C6 1D                             add     si, 1Dh                 ; Move to list start
-273F:4292  8B 05                                mov     ax, [di]                ; get X start
-273F:4294  8B 4D 13                             mov     cx, [di+13h]            ; Get animation width?
-273F:4297  D1 E9                                shr     cx,1
-273F:4299  03 C1                                add     ax,cx
-273F:429B  8B 55 02                             mov     dx,[di+ANIM_Y]
-273F:429E  03 55 15                             add     dx,[di+ANIM_HEIGHT_COPY]
-273F:42A1  8B 4D 17                             mov     cx,[di+17h]
+273F:428C  E8 CA5B                              call    get_room_resource_pointer2 ; Get room resource
+273F:428F  83 C6 1D                             add     si, ROOM_EXITS_START    ; Get pointer to room exits list
+273F:4292  8B 05                                mov     ax, [di+ANIM_X]         ; get X start
+273F:4294  8B 4D 13                             mov     cx, [di+ANIM_WIDTH_COPY]; Get animation width
+273F:4297  D1 E9                                shr     cx, 1
+273F:4299  03 C1                                add     ax, cx
+273F:429B  8B 55 02                             mov     dx, [di+ANIM_Y]
+273F:429E  03 55 15                             add     dx, [di+ANIM_HEIGHT_COPY]
+273F:42A1  8B 4D 17                             mov     cx, [di+ANIM_Y_CORRECTION]
 273F:42A4  D1 E9                                shr     cx,1
 273F:42A6  2B D1                                sub     dx,cx                   ; ax=x, dx=y
 
 273F:42A8                       loc_834:
 273F:42A8 ˙83 3C FF                             cmp     word ptr [si],0FFFFh    ; End of list reached?
 273F:42AB  74 3A                                je      loc_837                 ; Jump if yes
-273F:42AD  3B 04                                cmp     ax, [si]                ; Bounds x left
-273F:42AF  72 27                                jb      loc_836
-273F:42B1  3B 44 02                             cmp     ax, [si+2]              ; Bounds x right
+273F:42AD  3B 04                                cmp     ax, [si+ROOMREC_EXIT_X_START] ; Check bounds of the
+273F:42AF  72 27                                jb      loc_836                 ;  room exit against character
+273F:42B1  3B 44 02                             cmp     ax, [si+ROOMREC_EXIT_X_END]
 273F:42B4  73 22                                jae     loc_836
-273F:42B6  3B 54 04                             cmp     dx, [si+4]              ; Bounds y start
+273F:42B6  3B 54 04                             cmp     dx, [si+ROOMREC_EXIT_Y_START]
 273F:42B9  72 1D                                jb      loc_836
-273F:42BB  3B 54 06                             cmp     dx, [si+6]              ; Bounds y end
+273F:42BB  3B 54 06                             cmp     dx, [si+ROOMREC_EXIT_Y_END]
 273F:42BE  73 18                                jae     loc_836
-273F:42C0  8B 44 08                             mov     ax, [si+8]
+273F:42C0  8B 44 08                             mov     ax, [si+ROOMREC_EXIT_SEQUENCE]
 273F:42C3  3D FFFF                              cmp     ax, 0FFFFh              ; Any sequence to run?
-273F:42C6  74 04                                je      loc_835                 ; If no, go set room
+273F:42C6  74 04                                je      loc_835                 ; If no, go set room directly
 273F:42C8  5E                                   pop     si
 273F:42C9  E9 FB68                              jmp     sequence_execute
 273F:42CC                       loc_835:                                        ;  xref 273F:42C6
-273F:42CC  8B 54 0A                             mov     dx, [si+0Ah]            ; Get new room #
-273F:42CF  8B 4C 0C                             mov     cx, [si+0Ch]            ; Get new X
-273F:42D2  8B 5C 0E                             mov     bx, [si+0Eh]            ; Get new Y
+273F:42CC  8B 54 0A                             mov     dx, [si+ROOMREC_EXIT_ROOM_NUM] ; Get new room #
+273F:42CF  8B 4C 0C                             mov     cx, [si+ROOMREC_EXIT_NEW_X]    ; Get new X
+273F:42D2  8B 5C 0E                             mov     bx, [si+ROOMREC_EXIT_NEW_Y]    ; Get new Y
 273F:42D5  5E                                   pop     si
-273F:42D6  EB 11                                jmp     sub_92                  ; Set room and exit
+273F:42D6  EB 11                                jmp     character_change_room
 273F:42D8                       loc_836:
-273F:42D8  8B 5C 08                             mov     bx,[si+8]
-273F:42DB  83 C6 0A                             add     si,0Ah                  ; Move to next entry?
-273F:42DE  0B DB                                or      bx,bx                   ; Was it a script entry?
-273F:42E0  79 C6                                jns     loc_834                 ; If yes, check next rec
-273F:42E2  83 C6 06                             add     si,6                    ; Skip over room/x/y vals
+273F:42D8  8B 5C 08                             mov     bx, [si+ROOMREC_EXIT_SEQUENCE] ; Get sequence Id
+273F:42DB  83 C6 0A                             add     si, 0Ah                 ; Move to next entry
+273F:42DE  0B DB                                or      bx, bx                  ; Did entry have a script?
+273F:42E0  79 C6                                jns     loc_834                 ; If not, go check next record
+273F:42E2  83 C6 06                             add     si, 6                   ; Skip over room/x/y vals
 273F:42E5  EB C1                                jmp     short loc_834           ; Check next record
-273F:42E7                       loc_837:                                        
+273F:42E7                       loc_837:
 273F:42E7  5E                                   pop     si
 273F:42E8  C3                                   retn
+                 character_check_room_change    endp
 
-                                ;ﬂﬂﬂﬂ External Entry into Subroutine ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
+                                ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
+                                ;                              SUBROUTINE
                                 ;
                                 ;         Called from:   273F:960F, 9628
+                                ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:42E9                       sub_92:
+                      character_change_room     proc    near
 273F:42E9  A1 BA17                              mov     ax, current_hotspot
-273F:42EC  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
-273F:42EF  75 2E                                jne     loc_840                 ; Jump if not equal
-273F:42F1  F6 06 9834 FF                        test    byte ptr data_427,0FFh  ; (273F:9834=0F9h)
+273F:42EC  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID   ; Is character the player?
+273F:42EF  75 2E                                jne     loc_840                 ; Jump if not
+273F:42F1  F6 06 9834 FF                        test    byte ptr data_427, 0FFh
 273F:42F6  75 26                                jnz     loc_ret_839             ; Jump if not zero
+
+; Room change code for the player
 273F:42F8 ˙BE 6CEF                              mov     si, offset player_hotspot_rec
 273F:42FB  88 74 50                             mov     [si+50h],dh
 273F:42FE  C6 44 51 00                          mov     byte ptr [si+51h],0
@@ -10259,12 +10282,12 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:4313  E8 1D23                              call    sub_136                 ; (6039)
 273F:4316  75 06                                jnz     loc_ret_839             ; Jump if not zero
 273F:4318  C7 06 982C 0000                      mov     new_room_number_2, 0
+273F:431E                       loc_ret_839:    retn
 
-273F:431E                       loc_ret_839:                                    ;  xref 273F:42F6, 4316
-273F:431E  C3                                   retn
-273F:431F                       loc_840:                                        ;  xref 273F:42EF
+; Room change code for other characters
+273F:431F                       loc_840:
 273F:431F  8B 3E 1927                           mov     di, active_animation_offset
-273F:4323  8B 75 19                             mov     si,[di+19h]
+273F:4323  8B 75 19                             mov     si, [di+ANIM_HOTSPOT_OFFSET]
 273F:4326  53                                   push    bx
 273F:4327  51                                   push    cx
 273F:4328  52                                   push    dx
@@ -10277,23 +10300,23 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:4333  E8 01F2                              call    sub_104                 ; (4528)
 273F:4336  C3                                   retn
 273F:4337                       loc_841:                                        ;  xref 273F:432F
-273F:4337  83 E1 F8                             and     cx,0FFF8h
-273F:433A  83 C9 05                             or      cx,5
-273F:433D  89 0D                                mov     [di],cx
-273F:433F  89 4C 0D                             mov     [si+0Dh],cx
-273F:4342  8A CE                                mov     cl,dh
-273F:4344  32 F6                                xor     dh,dh                   ; Zero register
-273F:4346  89 55 0E                             mov     [di+0Eh],dx
-273F:4349  89 54 06                             mov     [si+6],dx
-273F:434C  2B 5C 1B                             sub     bx,[si+1Bh]
-273F:434F  83 E3 F8                             and     bx,0FFF8h
-273F:4352  89 5D 02                             mov     [di+2],bx
-273F:4355  89 5C 0F                             mov     [si+0Fh],bx
-273F:4358  8B DE                                mov     bx,si
-273F:435A  03 5C 61                             add     bx,[si+61h]
-273F:435D  83 C3 63                             add     bx,63h
-273F:4360  E9 0EE3                              jmp     loc_1067                ; (5246)
-                                sub_91          endp
+273F:4337  83 E1 F8                             and     cx, 0FFF8h
+273F:433A  83 C9 05                             or      cx, 5
+273F:433D  89 0D                                mov     [di+ANIM_X], cx
+273F:433F  89 4C 0D                             mov     [si+HS_X], cx
+273F:4342  8A CE                                mov     cl, dh
+273F:4344  32 F6                                xor     dh, dh                  ; Zero register
+273F:4346  89 55 0E                             mov     [di+ANIM_ROOM_NUM], dx
+273F:4349  89 54 06                             mov     [si+HS_ROOM_NUM], dx
+273F:434C  2B 5C 1B                             sub     bx, [si+HS_HEIGHT_COPY]
+273F:434F  83 E3 F8                             and     bx, 0FFF8h
+273F:4352  89 5D 02                             mov     [di+ANIM_Y], bx
+273F:4355  89 5C 0F                             mov     [si+HS_Y], bx
+273F:4358  8B DE                                mov     bx, si
+273F:435A  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
+273F:435D  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
+273F:4360  E9 0EE3                              jmp     character_change_room_2
+                      character_change_room     endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              JUMP POINT
@@ -10548,7 +10571,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:44C1  75 0A                                jne     loc_859                 ; Jump if not equal
 273F:44C3  53                                   push    bx
 273F:44C4  8B 5F 19                             mov     bx,[bx+19h]
-273F:44C7  E8 10D7                              call    sub_131                 ; (55A1)
+273F:44C7  E8 10D7                              call    skorl_caught_check
 273F:44CA  5B                                   pop     bx
 273F:44CB  75 09                                jnz     loc_860                 ; Jump if not zero
 273F:44CD                       loc_859:                                        ;  xref 273F:44B6, 44BC, 44C1
@@ -12104,17 +12127,18 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
                                 ;
+                                ; Contains all the standard handling for characters, such as the Skorl
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:4F82                       loc_1021:                                       ;  xref 273F:7C8B, 7C98, 7D37
+                standard_character_tick_proc    proc    near
 273F:4F82 ˙8B DE                                mov     bx, si
-273F:4F84  03 5C 61                             add     bx, [si+61h]
-273F:4F87  83 C3 63                             add     bx, 63h
+273F:4F84  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
+273F:4F87  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
 273F:4F8A  E8 11EB                              call    talk_countdown_handler
-273F:4F8D  F7 44 2F FFFF                        test    word ptr [si+2Fh],0FFFFh
+273F:4F8D  F7 44 2F FFFF                        test    word ptr [si+2Fh], 0FFFFh
 273F:4F92  74 1F                                jz      loc_1023                ; Jump if zero
-273F:4F94  8B 44 2B                             mov     ax,[si+2Bh]
-273F:4F97  3D 002A                              cmp     ax,2Ah
+273F:4F94  8B 44 2B                             mov     ax, [si+2Bh]
+273F:4F97  3D 002A                              cmp     ax, 2Ah
 273F:4F9A  74 03                                je      loc_1022                ; Jump if equal
 273F:4F9C  E9 F3C7                              jmp     loc_843                 ; (4366)
 273F:4F9F                       loc_1022:                                       ;  xref 273F:4F9A
@@ -12133,10 +12157,10 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:4FBF  E8 C149                              call    sub_40                  ; (110B)
 273F:4FC2  F6 45 1D FF                          test    byte ptr [di+1Dh],0FFh
 273F:4FC6  74 4C                                jz      loc_1028                ; Jump if zero
-273F:4FC8  F7 06 10BE FFFF                      test    data_615, 0FFFFh 
+273F:4FC8  F7 06 10BE FFFF                      test    data_615, 0FFFFh
 273F:4FCE  74 40                                jz      loc_1027                ; Jump if zero
 273F:4FD0  56                                   push    si
-273F:4FD1 ˙BE 10C0                              mov     si,10C0h                ; (273F:10C0=3)
+273F:4FD1 ˙BE 10C0                              mov     si, offset data_616
 273F:4FD4                       loc_1025:                                       ;  xref 273F:4FDC
 273F:4FD4  AD                                   lodsw                           ; String [si] to ax
 273F:4FD5  0B C0                                or      ax,ax                   ; Zero ?
@@ -12220,7 +12244,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:5095  8B 44 06                             mov     ax,[si+6]
 273F:5098  3B 47 06                             cmp     ax,[bx+6]
 273F:509B  75 0B                                jne     loc_1038                ; Jump if not equal
-273F:509D  E8 0501                              call    sub_131                 ; (55A1)
+273F:509D  E8 0501                              call    skorl_caught_check
 273F:50A0  74 06                                jz      loc_1038                ; Jump if zero
 273F:50A2                       loc_1035:                                       ;  xref 273F:5089
 273F:50A2  83 6C 42 01                          sub     word ptr [si+42h],1
@@ -12247,7 +12271,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:50C8                       loc_1040:                                       ;  xref 273F:505A
 273F:50C8  F7 44 58 FFFF                        test    word ptr [si+58h],0FFFFh
 273F:50CD  74 0F                                jz      loc_1041                ; Jump if zero
-273F:50CF  F6 06 6D52 FF                        test    player_action_state, 0FFh 
+273F:50CF  F6 06 6D52 FF                        test    player_action_state, 0FFh
 273F:50D4  74 08                                jz      loc_1041                ; Jump if zero
 273F:50D6  C6 44 2A C7                          mov     byte ptr [si+2Ah],0C7h
 273F:50DA  C6 07 02                             mov     byte ptr [bx],2
@@ -12336,7 +12360,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:518B  C3                                   retn
 273F:518C                       loc_1054:                                       ;  xref 273F:5166
 273F:518C  53                                   push    bx
-273F:518D ˙BB 10C0                              mov     bx,10C0h                ; (273F:10C0=3)
+273F:518D ˙BB 10C0                              mov     bx, offset data_616
 273F:5190                       loc_1055:                                       ;  xref 273F:519C
 273F:5190  8B 07                                mov     ax,[bx]
 273F:5192  0B C0                                or      ax,ax                   ; Zero ?
@@ -12350,6 +12374,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:51A6  C3                                   retn
 273F:51A7                       loc_1056:                                       ;  xref 273F:5194
 273F:51A7  5B                                   pop     bx
+                standard_character_tick_proc    endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -12415,49 +12440,60 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:521E  F6 44 49 FF                          test    byte ptr [si+49h],0FFh
 273F:5222  74 03                                jz      loc_1063                ; Jump if zero
 273F:5224  E8 F160                              call    sub_94                  ; (4387)
-273F:5227                       loc_1063:                                       ;  xref 273F:5222
+273F:5227                       loc_1063:
 273F:5227  8B DE                                mov     bx,si
 273F:5229  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
 273F:522C  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
 273F:522F  E8 BC7E                              call    character_update_frame
-273F:5232  0A C0                                or      al,al                   ; Zero ?
+273F:5232  0A C0                                or      al, al                  ; Zero ?
 273F:5234  75 02                                jnz     loc_1064                ; Jump if not zero
-273F:5236  EB 03                                jmp     short loc_1065          ; (523B)
-273F:5238                       loc_1064:                                       ;  xref 273F:5234
-273F:5238  C6 07 02                             mov     byte ptr [bx],2
-273F:523B                       loc_1065:                                       ;  xref 273F:5236
-273F:523B  F7 44 52 FFFF                        test    [si+HS_DEST_HOTSPOT], 0FFFFh
-273F:5240  74 03                                jz      loc_ret_1066            ; Jump if zero
-273F:5242  E8 F043                              call    sub_91                  ; (4288)
+273F:5236  EB 03                                jmp     short loc_1065
+273F:5238                       loc_1064:
+273F:5238  C6 07 02                             mov     byte ptr [bx], PLAYER_ACTION_DISPATCH_ACTION
+273F:523B                       loc_1065:
+273F:523B  F7 44 52 FFFF                        test    [si+HS_DEST_HOTSPOT], 0FFFFh ; Walking to exit?
+273F:5240  74 03                                jz      loc_ret_1066            ; If not then return
+273F:5242  E8 F043                              call    character_check_room_change ; Room change check
 
-273F:5245                       loc_ret_1066:                                   ;  xref 273F:5240
+273F:5245                       loc_ret_1066:
 273F:5245  C3                                   retn
-273F:5246                       loc_1067:                                       ;  xref 273F:4360
-273F:5246  80 25 F8                             and     byte ptr [di],0F8h
-273F:5249  80 64 0D F8                          and     byte ptr [si+0Dh],0F8h
-273F:524D  80 0D 05                             or      byte ptr [di],5
-273F:5250  80 4C 0D 05                          or      byte ptr [si+0Dh],5
-273F:5254  C6 44 60 00                          mov     byte ptr [si+60h],0
-273F:5258  C6 45 1D 2A                          mov     byte ptr [di+1Dh],2Ah   ; '*'
-273F:525C  C6 07 02                             mov     byte ptr [bx],2
-273F:525F  F6 C1 FF                             test    cl,0FFh
-273F:5262  74 12                                jz      loc_ret_1068            ; Jump if zero
-273F:5264  F6 C1 80                             test    cl,80h
-273F:5267  75 0E                                jnz     loc_1069                ; Jump if not zero
-273F:5269  F6 C1 40                             test    cl,40h                  ; '@'
-273F:526C  75 0C                                jnz     loc_1070                ; Jump if not zero
-273F:526E  F6 C1 20                             test    cl,20h                  ; ' '
-273F:5271  75 0A                                jnz     loc_1071                ; Jump if not zero
+
+                                ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
+                                ;                              JUMP POINT
+                                ;
+                                ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
+
+                     character_change_room_2:
+273F:5246  80 25 F8                             and     byte ptr [di+ANIM_X], 0F8h
+273F:5249  80 64 0D F8                          and     byte ptr [si+HS_X], 0F8h
+273F:524D  80 0D 05                             or      byte ptr [di+ANIM_X], 5
+273F:5250  80 4C 0D 05                          or      byte ptr [si+HS_X], 5
+273F:5254  C6 44 60 00                          mov     byte ptr [si+60h], 0
+273F:5258  C6 45 1D 2A                          mov     byte ptr [di+ANIM_LAYER1_SKIP], 2Ah
+273F:525C  C6 07 02                             mov     byte ptr [bx], PLAYER_ACTION_DISPATCH_ACTION
+273F:525F  F6 C1 FF                             test    cl, 0FFh                ; Any direction specified?
+273F:5262  74 12                                jz      loc_ret_1068            ; Exit if not
+273F:5264  F6 C1 80                             test    cl, 80h
+273F:5267  75 0E                                jnz     loc_1069                ; Face up
+273F:5269  F6 C1 40                             test    cl, 40h
+273F:526C  75 0C                                jnz     loc_1070                ; Face down
+273F:526E  F6 C1 20                             test    cl, 20h
+273F:5271  75 0A                                jnz     loc_1071                ; Face left
 273F:5273  E9 F296                              jmp     char_face_right
 
-273F:5276                       loc_ret_1068:                                   ;  xref 273F:5262
+273F:5276                       loc_ret_1068:
 273F:5276  C3                                   retn
-273F:5277                       loc_1069:                                       ;  xref 273F:5267
+273F:5277                       loc_1069:
 273F:5277  E9 F25F                              jmp     char_face_up
-273F:527A                       loc_1070:                                       ;  xref 273F:526C
+273F:527A                       loc_1070:
 273F:527A  E9 F26D                              jmp     char_face_down
-273F:527D                       loc_1071:                                       ;  xref 273F:5271
+273F:527D                       loc_1071:
 273F:527D  E9 F27B                              jmp     char_face_left
+
+                                ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
+                                ;                              SUBROUTINE
+                                ;
+                                ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
 
                                                                                 ;* No entry point to code
 273F:5280  F6 06 6D52 FF                        test    player_action_state, 0FFh
@@ -12885,41 +12921,42 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
                                 ;         Called from:   273F:44C7, 509D, 7F5D
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:55A1                       sub_131         proc    near
-273F:55A1  8B 47 0D                             mov     ax,[bx+0Dh]
-273F:55A4  03 47 19                             add     ax,[bx+19h]
-273F:55A7  05 0004                              add     ax,4
-273F:55AA  3B 44 0D                             cmp     ax,[si+0Dh]
+                          skorl_caught_check    proc    near
+273F:55A1  8B 47 0D                             mov     ax, [bx+HS_X]
+273F:55A4  03 47 19                             add     ax, [bx+HS_WIDTH_COPY]
+273F:55A7  05 0004                              add     ax, 4
+273F:55AA  3B 44 0D                             cmp     ax, [si+HS_X]
 273F:55AD  72 44                                jb      loc_1104                ; Jump if below
-273F:55AF  8B 44 0D                             mov     ax,[si+0Dh]
-273F:55B2  03 44 19                             add     ax,[si+19h]
-273F:55B5  05 0004                              add     ax,4
-273F:55B8  3B 47 0D                             cmp     ax,[bx+0Dh]
+273F:55AF  8B 44 0D                             mov     ax, [si+HS_X]
+273F:55B2  03 44 19                             add     ax, [si+HS_WIDTH_COPY]
+273F:55B5  05 0004                              add     ax, 4
+273F:55B8  3B 47 0D                             cmp     ax, [bx+HS_X]
 273F:55BB  72 36                                jb      loc_1104                ; Jump if below
-273F:55BD  8B 44 0F                             mov     ax,[si+0Fh]
-273F:55C0  03 44 1B                             add     ax,[si+1Bh]
-273F:55C3  2B 44 1D                             sub     ax,[si+1Dh]
-273F:55C6  2D 0002                              sub     ax,2
-273F:55C9  8B 4F 0F                             mov     cx,[bx+0Fh]
-273F:55CC  03 4F 1B                             add     cx,[bx+1Bh]
-273F:55CF  83 C1 02                             add     cx,2
-273F:55D2  3B C1                                cmp     ax,cx
+
+273F:55BD  8B 44 0F                             mov     ax, [si+HS_Y]
+273F:55C0  03 44 1B                             add     ax, [si+HS_HEIGHT_COPY]
+273F:55C3  2B 44 1D                             sub     ax, [si+HS_Y_CORRECTION]
+273F:55C6  2D 0002                              sub     ax, 2
+273F:55C9  8B 4F 0F                             mov     cx, [bx+HS_Y]
+273F:55CC  03 4F 1B                             add     cx, [bx+HS_HEIGHT_COPY]
+273F:55CF  83 C1 02                             add     cx, 2
+273F:55D2  3B C1                                cmp     ax, cx
 273F:55D4  73 1D                                jae     loc_1104                ; Jump if above or =
-273F:55D6  8B 44 0F                             mov     ax,[si+0Fh]
-273F:55D9  03 44 1B                             add     ax,[si+1Bh]
-273F:55DC  05 0002                              add     ax,2
-273F:55DF  8B 4F 0F                             mov     cx,[bx+0Fh]
-273F:55E2  03 4F 1B                             add     cx,[bx+1Bh]
-273F:55E5  2B 4F 1D                             sub     cx,[bx+1Dh]
-273F:55E8  83 E9 02                             sub     cx,2
-273F:55EB  3B C1                                cmp     ax,cx
+273F:55D6  8B 44 0F                             mov     ax, [si+HS_Y]
+273F:55D9  03 44 1B                             add     ax, [si+HS_HEIGHT_COPY]
+273F:55DC  05 0002                              add     ax, 2
+273F:55DF  8B 4F 0F                             mov     cx, [bx+HS_Y]
+273F:55E2  03 4F 1B                             add     cx, [bx+HS_HEIGHT_COPY]
+273F:55E5  2B 4F 1D                             sub     cx, [bx+HS_Y_CORRECTION]
+273F:55E8  83 E9 02                             sub     cx, 2
+273F:55EB  3B C1                                cmp     ax, cx
 273F:55ED  72 04                                jb      loc_1104                ; Jump if below
 273F:55EF  0D 0001                              or      ax,1
 273F:55F2  C3                                   retn
 273F:55F3                       loc_1104:                                       ;  xref 273F:55AD, 55BB, 55D4, 55ED
 273F:55F3  33 C0                                xor     ax,ax                   ; Zero register
 273F:55F5  C3                                   retn
-                                sub_131         endp
+                          skorl_caught_check    endp
 
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -14177,7 +14214,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:5F08  8B 44 FD                             mov     ax,[si-3]
 273F:5F0B  89 44 56                             mov     [si+HS_DEST_Y], ax
 273F:5F0E  C6 07 01                             mov     byte ptr [bx], PLAYER_ACTION_START_WALK
-273F:5F11  C6 45 27 00                          mov     byte ptr [di+ANIM_UNKOWN1], 0
+273F:5F11  C6 45 27 00                          mov     byte ptr [di+ANIM_UNKNOWN1], 0
 
 273F:5F15                       loc_ret_1207:                                   ;  xref 273F:5EFC
 273F:5F15  C3                                   retn
@@ -14247,7 +14284,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:5F86                       loc_1215:
 273F:5F86  3D 0001                              cmp     ax,1
 273F:5F89  74 42                                je      loc_1218                ; Jump if equal
-273F:5F8B  F6 45 27 01                          test    byte ptr [di+ANIM_UNKOWN1], 1
+273F:5F8B  F6 45 27 01                          test    byte ptr [di+ANIM_UNKNOWN1], 1
 273F:5F8F  75 05                                jnz     loc_1216                ; Jump if not zero
 273F:5F91  3D 0002                              cmp     ax,2
 273F:5F94  74 37                                je      loc_1218                ; Jump if equal
@@ -14322,7 +14359,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:6033                       loc_1223:                                       ;  xref 273F:5FDB, 6027
 273F:6033  C6 07 02                             mov     byte ptr [bx], PLAYER_ACTION_DISPATCH_ACTION
 273F:6036                       loc_1224:                                       ;  xref 273F:6015
-273F:6036  E9 E24F                              jmp     loc_833                 ; (4288)
+273F:6036  E9 E24F                              jmp     character_check_room_change
 
                              action_look_3      endp
 
@@ -16810,25 +16847,25 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:717E  8B 44 0F                             mov     ax, [si+HS_Y]           ; Copy over Y start
 273F:7181  89 45 02                             mov     [di+ANIM_Y], ax
 273F:7184  8B 44 0D                             mov     ax, [si+HS_X]           ; Copy over X start
-273F:7187  89 05                                mov     [di], ax
+273F:7187  89 05                                mov     [di+ANIM_X], ax
 273F:7189  8B 44 11                             mov     ax, [si+HS_WIDTH]       ; Copy over width
 273F:718C  89 45 04                             mov     [di+ANIM_WIDTH], ax
 273F:718F  8B 44 13                             mov     ax, [si+HS_HEIGHT]      ; Copy over height
 273F:7192  89 45 06                             mov     [di+ANIM_HEIGHT], ax
 273F:7195  8A 44 15                             mov     al, [si+HS_LAYER]       ; Copy layer
 273F:7198  88 45 0C                             mov     [di+ANIM_LAYER], al
-273F:719B  8A 44 16                             mov     al, [si+16h]            ; Flags byte?
-273F:719E  88 45 0D                             mov     [di+0Dh], al
+273F:719B  8A 44 16                             mov     al, [si+16h] 
+273F:719E  88 45 0D                             mov     [di+ANIM_FLAGS], al
 273F:71A1  C6 45 10 01                          mov     byte ptr [di+ANIM_CAN_UNLOAD], 1
 273F:71A5  8B 44 17                             mov     ax, [si+HS_TICK_PROC]   ; Copy tick handler proc
 273F:71A8  89 45 11                             mov     [di+ANIM_TICK_PROC], ax
-273F:71AB  8B 44 19                             mov     ax, [si+19h]
-273F:71AE  89 45 13                             mov     [di+13h],ax
-273F:71B1  8B 44 1B                             mov     ax,[si+1Bh]
-273F:71B4  89 45 15                             mov     [di+15h],ax
-273F:71B7  8B 44 1D                             mov     ax, [si+1Dh]
-273F:71BA  89 45 17                             mov     [di+17h], ax
-273F:71BD  C7 45 1E 0000                        mov     word ptr [di+1Eh], 0    ; Hotspot Id?
+273F:71AB  8B 44 19                             mov     ax, [si+HS_WIDTH_COPY]
+273F:71AE  89 45 13                             mov     [di+ANIM_WIDTH_COPY], ax
+273F:71B1  8B 44 1B                             mov     ax, [si+HS_HEIGHT_COPY]
+273F:71B4  89 45 15                             mov     [di+ANIM_HEIGHT_COPY], ax
+273F:71B7  8B 44 1D                             mov     ax, [si+HS_Y_CORRECTION] ; Y correction
+273F:71BA  89 45 17                             mov     [di+ANIM_Y_CORRECTION], ax
+273F:71BD  C7 45 1E 0000                        mov     word ptr [di+ANIM_VOICE_CHAR_ID], 0
 273F:71C2  8B 44 06                             mov     ax, [si+HS_ROOM_NUM]    ; Copy room number
 273F:71C5  89 45 0E                             mov     [di+ANIM_ROOM_NUM], ax
 273F:71C8  8A 44 23                             mov     al, [si+HS_START_COLOUR] ; Copy colour offset
@@ -16838,13 +16875,13 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:71D1  8B 47 03                             mov     ax, [bx+PIXEL_DATA_SEGMENT] ; Get pixel data segment
 273F:71D4  89 45 0A                             mov     [di+ANIM_SEGMENT], ax   ; Set it in animation
 273F:71D7  33 C9                                xor     cx,cx
-273F:71D9  F6 47 02 04                          test    byte ptr [bx+PIXEL_FLAGS], 4
+273F:71D9  F6 47 02 04                          test    byte ptr [bx+PIXEL_FLAGS], PIXELFLAG_HAS_TABLE
 273F:71DD  74 07                                jz      loc_1422                ; Jump if zero
 273F:71DF  8E C0                                mov     es, ax
 273F:71E1  26: 8B 0E 0000                       mov     cx, es:[0]
 273F:71E6                       loc_1422:
 273F:71E6  89 4D 08                             mov     [di+ANIM_FRAME_OFFSET], cx ; Set frame
-273F:71E9  C6 45 27 01                          mov     byte ptr [di+ANIM_UNKOWN1], 1
+273F:71E9  C6 45 27 01                          mov     byte ptr [di+ANIM_UNKNOWN1], 1
 273F:71ED  C3                                   retn
                           animation_load        endp
 
@@ -18503,13 +18540,13 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:7C7F  C6 07 02                             mov     byte ptr [bx],2
 273F:7C82  C7 47 03 0007                        mov     word ptr [bx+3],7
 273F:7C87  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
-273F:7C8B  E9 D2F4                              jmp     loc_1021                ; (4F82)
+273F:7C8B  E9 D2F4                              jmp     standard_character_tick_proc
 273F:7C8E                       loc_1549:                                       ;  xref 273F:7C68
 273F:7C8E  F6 44 FF FF                          test    byte ptr [si-1],0FFh
 273F:7C92  74 07                                jz      loc_1551                ; Jump if zero
 273F:7C94  80 6C FF 01                          sub     byte ptr [si-1],1
 273F:7C98                       loc_1550:                                       ;  xref 273F:7C61
-273F:7C98  E9 D2E7                              jmp     loc_1021                ; (4F82)
+273F:7C98  E9 D2E7                              jmp     standard_character_tick_proc
 273F:7C9B                       loc_1551:                                       ;  xref 273F:7C92
 273F:7C9B  8B 5C 06                             mov     bx,[si+6]
 273F:7C9E  83 EB 01                             sub     bx,1
@@ -18571,7 +18608,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:7D32  F7 E1                                mul     cx                      ; dx:ax = reg * ax
 273F:7D34  88 54 FF                             mov     [si-1],dl
 273F:7D37                       loc_1557:                                       ;  xref 273F:7CD4, 7CE2
-273F:7D37  E9 D248                              jmp     loc_1021                ; (4F82)
+273F:7D37  E9 D248                              jmp     standard_character_tick_proc
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -18915,18 +18952,19 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
                              skorl_tick_proc    proc    near
 273F:7EFA  F7 06 BA2B FFFF                      TEST    data_1130, 0FFFFh
 273F:7F00  74 22                                jz      vskorl_2
-273F:7F02  F6 45 1D FF                          test    byte ptr [DI+1D], 0FFh
+273F:7F02  F6 45 1D FF                          test    byte ptr [di+ANIM_LAYER1_SKIP], 0FFh
 273F:7F06  75 1C                                jnz     vskorl_2
 273F:7F08  F6 06 1926 FF                        test    data_669, 0FFh
 273F:7F0D  75 15                                jnz     vskorl_2
 273F:7F0F  BB 6CEF                              mov     bx, offset player_hotspot_rec
-273F:7F12  8B 44 06                             mov     ax, [si+06]
-273F:7F15  3B 47 06                             cmp     ax, [bx+06]
-273F:7F18  75 0A                                jnz     vskorl_2
-273F:7F1A  E8 84 D6                             call    55A1
+273F:7F12  8B 44 06                             mov     ax, [si+HS_ROOM_NUM]    ; Is Skorl in the same
+273F:7F15  3B 47 06                             cmp     ax, [bx+HS_ROOM_NUM]    ; room as the player?
+273F:7F18  75 0A                                jnz     vskorl_2                ; No, so skip
+273F:7F1A  E8 84 D6                             call    skorl_caught_check      ; Check if Skorl has 'caught' player
 273F:7F1D  74 05                                jz      vskorl_2
-273F:7F1F  80 0E 073D 70                        or      status_flags2, 70h
-273F:7F24  E9 5B D0               vskorl_2:     jmp     loc_1021
+273F:7F1F  80 0E 073D 70                        or      status_flags2, FLAG_RESTART || FLAG_CAUGHT || FLAG_RESTORERESTART
+
+273F:7F24  E9 5B D0               vskorl_2:     jmp     standard_character_tick_proc
                              skorl_tick_proc    endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -18977,7 +19015,7 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 273F:7F54  F6 44 2A FF                          test    byte ptr [si+2Ah],0FFh
 273F:7F58  75 0D                                jnz     loc_1598                ; Jump if not zero
 273F:7F5A ˙BB 6CEF                              mov     bx, offset player_hotspot_rec
-273F:7F5D  E8 D641                              call    sub_131                 ; (55A1)
+273F:7F5D  E8 D641                              call    skorl_caught_check
 273F:7F60  74 04                                jz      loc_ret_1597            ; Jump if zero
 273F:7F62  80 44 2A 01                          add     byte ptr [si+2Ah],1
 
@@ -25004,8 +25042,9 @@ PLAYER_ACTION_CONTINUE_WALK    equ  5
 
 31E4:10B5  4C 6F 6F 6B 20 61    look_at_str     db      'Look at ', 0           ;  xref 273F:136B
 31E4:10BB  74 20 00
-31E4:10BE  0000                 data_615        dw      0                       ;  xref 273F:60EA
-31E4:10C0  0030[00]                             db      48 dup (0)
+31E4:10BE  0000                    data_615     dw      0
+31E4:10C0  002E[00]                data_616     db      48 dup (0)
+31E4:10EE  0000                    data_617     dw      0
 31E4:10F0  00               animation_table2    db      0                       ;  xref 273F:1556, 273F:1598
                                                                                 ;       273F:15C3
 31E4:10F1  00CF[00]                             db      207 dup (0)
