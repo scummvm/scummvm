@@ -76,7 +76,7 @@ void Sprites::setupSceneAnims() {
 			_anims[i].unk2 = READ_LE_UINT16(data);
 			data += 4;
 
-			if (_engine->_northExitHeight > READ_LE_UINT16(data))
+			if (_engine->_northExitHeight & 0xFF > READ_LE_UINT16(data))
 				_anims[i].drawY = _engine->_northExitHeight;
 			else
 				_anims[i].drawY = READ_LE_UINT16(data);
@@ -108,13 +108,13 @@ void Sprites::setupSceneAnims() {
 
 			_anims[i].script = data;
 
-			int bkgdWidth = _anims[i].width << 3;
+			int bkgdWidth = _anims[i].width;
 			int bkgdHeight = _anims[i].height;
 
-			if (_anims[i].width2)
-				bkgdWidth += _anims[i].width2 << 3;
+			if (_anims[i].width2 > 0)
+				bkgdWidth += (_anims[i].width2 >> 3) + 1;
 
-			if (_anims[i].height2)
+			if (_anims[i].height2 > 0)
 				bkgdHeight += _anims[i].height2;
 
 			_anims[i].background = (uint8 *)malloc(_screen->getRectSize(bkgdWidth + 1, bkgdHeight));

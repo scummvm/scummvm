@@ -175,13 +175,13 @@ void ScreenAnimator::preserveAnyChangedBackgrounds() {
 
 void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::preserveOrRestoreBackground(%p, %d)", (const void *)obj, restore);
-	int x = 0, y = 0, width = obj->width << 3, height = obj->height;
+	int x = 0, y = 0, width = obj->width, height = obj->height;
 	
 	if (restore) {
-		x = obj->x2;
+		x = obj->x2 >> 3;
 		y = obj->y2;
 	} else {
-		x = obj->x1;
+		x = obj->x1 >> 3;
 		y = obj->y1;
 	}
 	
@@ -193,8 +193,8 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	int temp;
 	
 	temp = x + width;
-	if (temp >= 319) {
-		x = 319 - width;
+	if (temp >= 40) {
+		x = 39 - width;
 	}
 	temp = y + height;
 	if (temp >= 136) {
@@ -202,9 +202,9 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 	}
 
 	if (restore) {
-		_screen->copyBlockToPage(_screen->_curPage, x, y, width, height, obj->background);
+		_screen->copyBlockToPage(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
 	} else {
-		_screen->copyRegionToBuffer(_screen->_curPage, x, y, width, height, obj->background);
+		_screen->copyRegionToBuffer(_screen->_curPage, x << 3, y, width << 3, height, obj->background);
 	}
 }
 
@@ -373,24 +373,24 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {
 				int xpos = 0, ypos = 0, width = 0, height = 0;
-				xpos = curObject->x1 - curObject->width2 - 8;
+				xpos = (curObject->x1>>3) - (curObject->width2>>3) - 1;
 				ypos = curObject->y1 - curObject->height2;
-				width = (curObject->width<<3) + curObject->width2 + 16;
+				width = curObject->width + (curObject->width2>>3) + 2;
 				height = curObject->height + curObject->height2*2;
 				
-				if (xpos < 8) {
-					xpos = 8;
-				} else if (xpos + width > 312) {
-					width = 312 - xpos;
+				if (xpos < 1) {
+					xpos = 1;
+				} else if (xpos + width > 39) {
+					width = width - (xpos + width - 39);
 				}
 				
 				if (ypos < 8) {
 					ypos = 8;
-				} else if (ypos + height > 136) {
-					height = 136 - ypos;
+				} else if (ypos + height > 135) {
+					height = height - (ypos + height - 136);
 				}
 				
-				_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, 2, 0, Screen::CR_CLIPPED);
+				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0, Screen::CR_CLIPPED);
 				curObject->refreshFlag = 0;
 				_updateScreen = true;
 			}
