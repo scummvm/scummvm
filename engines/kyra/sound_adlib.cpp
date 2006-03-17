@@ -693,16 +693,26 @@ void AdlibDriver::executePrograms() {
 				if (channel.duration == channel.spacing1 && _curChannel != 9)
 					noteOff(channel);
 			} else {
-				while (channel.dataptr) {
-					uint8 opcode = *channel.dataptr++;
-					uint8 param = *channel.dataptr++;
+				// An opcode is not allowed to modify its own
+				// data pointer except through the 'dataptr'
+				// parameter. To enforce that, we have to work
+				// on a copy of the data pointer.
+				//
+				// This fixes a subtle music bug where the
+				// wrong music would play when getting the
+				// quill in Kyra 1.
+				uint8 *dataptr = channel.dataptr;
+				while (dataptr) {
+					uint8 opcode = *dataptr++;
+					uint8 param = *dataptr++;
 
 					if (opcode & 0x80) {
 						opcode &= 0x7F;
 						if (opcode >= _parserOpcodeTableSize)
 							opcode = _parserOpcodeTableSize - 1;
 						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
-						result = (this->*(_parserOpcodeTable[opcode].function))(channel.dataptr, channel, param);
+						result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+						channel.dataptr = dataptr;
 						if (result)
 							break;
 					} else {
@@ -710,8 +720,10 @@ void AdlibDriver::executePrograms() {
 						setupNote(opcode, channel);
 						noteOn(channel);
 						setupDuration(param, channel);
-						if (param)
+						if (param) {
+							channel.dataptr = dataptr;
 							break;
+						}
 					}
 				}
 			}
@@ -1219,6 +1231,7 @@ int AdlibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 		channel2.duration = 1;
 		unkOutput2(chan);
 	}
+
 	return 0;
 }
 
