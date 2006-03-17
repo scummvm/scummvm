@@ -386,7 +386,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 	code = p[0];
 	if (code & 0x80)
-		code = (code << 8) | p[1];
+		code = READ_BE_UINT16(p);
 
 	if (code == AKC_C021 || code == AKC_C022) {
 		uint16 s = cost.curpos[limb] + 4;
@@ -448,8 +448,8 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		for (i = 0; i != extra; i++) {
 			code = p[4];
 			if (code & 0x80)
-				code = ((code & 0xF) << 8) | (p[5] & 0xFFF);
-			off = akof + code;
+				code = READ_BE_UINT16(p + 4);
+			off = akof + (code & 0xFFF);
 
 			_srcptr = akcd + READ_LE_UINT32(&off->akcd);
 			costumeInfo = (const CostumeInfo *) (akci + READ_LE_UINT16(&off->akci));
@@ -1377,7 +1377,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 		code = aksq[curpos];
 		if (code & 0x80)
-			code = (code << 8) | aksq[curpos + 1];
+			code = READ_BE_UINT16(aksq + curpos);
 
 		switch (active) {
 		case 6:
@@ -1492,7 +1492,7 @@ bool ScummEngine::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const 
 
 		code = aksq[curpos];
 		if (code & 0x80)
-			code = (code << 8) | aksq[curpos + 1];
+			code = READ_BE_UINT16(aksq + curpos);
 
 		if (flag_value && code != AKC_ClearFlag)
 			continue;
