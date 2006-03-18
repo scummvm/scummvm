@@ -139,10 +139,35 @@ void Inter::funcBlock(int16 retFlag) {
 		return;
 	}
 
+	int startaddr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
+
 	counter = 0;
 	do {
 		if (_terminate)
 			break;
+
+		// WORKAROUND:
+		// The EGA version of gob1 doesn't add a delay after showing
+		// images between levels. We manually add it here.
+		if ((_vm->_features & GF_GOB1) && (_vm->_features & GF_EGA)) {
+			int addr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
+			if ((startaddr == 0x18B4 && addr == 0x1A7F && // Zombie
+				 !strncmp(_vm->_game->_curTotFile, "avt005.tot", 10)) ||
+				(startaddr == 0x1299 && addr == 0x139A && // Dungeon
+				 !strncmp(_vm->_game->_curTotFile, "avt006.tot", 10)) ||
+				(startaddr == 0x11C0 && addr == 0x12C9 && // Cauldron
+				 !strncmp(_vm->_game->_curTotFile, "avt012.tot", 10)) ||
+				(startaddr == 0x09F2 && addr == 0x0AF3 && // Statue
+				 !strncmp(_vm->_game->_curTotFile, "avt016.tot", 10)) ||
+				(startaddr == 0x0B92 && addr == 0x0C93 && // Castle
+				 !strncmp(_vm->_game->_curTotFile, "avt019.tot", 10)) ||
+				(startaddr == 0x17D9 && addr == 0x18DA && // Finale
+				 !strncmp(_vm->_game->_curTotFile, "avt022.tot", 10)))
+			{
+				_vm->_util->longDelay(5000);
+			}
+		}
+		// (end workaround)
 
 		cmd = (byte)*_vm->_global->_inter_execPtr;
 		if ((cmd >> 4) >= 12) {

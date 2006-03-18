@@ -64,8 +64,8 @@ struct GobGameSettings {
 
 static const GobGameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1, "82aea70ef26f41fa963dfae270993e49"},
-	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1, "1f499458837008058b8ba6ae07057214"},
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, "82aea70ef26f41fa963dfae270993e49"},
+	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, "1f499458837008058b8ba6ae07057214"},
 	{"gob1", "Gobliiins (Windows)", GF_GOB1, "8a5e850c49d7cacdba5f5eb1fcc77b89"},
 
 	// Supplied by Theruler76 in bug report #1201233

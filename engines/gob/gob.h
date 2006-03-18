@@ -64,14 +64,15 @@ enum {
 	GF_GOB3 = 1 << 2,
 	GF_WOODRUFF = 1 << 3,
 	GF_CD = 1 << 4,
-	GF_MAC = 1 << 5
+	GF_MAC = 1 << 5,
+	GF_EGA = 1 << 6
 };
 
 enum {
 	DEBUG_FUNCOP = 1 << 0,
 	DEBUG_DRAWOP = 1 << 1,
 	DEBUG_GOBOP = 1 << 2,
-  DEBUG_MUSIC = 1 << 3,     // CD and adlib music
+	DEBUG_MUSIC = 1 << 3,     // CD and adlib music
 	DEBUG_PARSER = 1 << 4,
 	DEBUG_GAMEFLOW = 1 << 5,
 	DEBUG_FILEIO = 1 << 6,
