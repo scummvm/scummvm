@@ -50,7 +50,7 @@ public:
 	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
-	void printCharacterText(char *text, int8 charNum, int charX);
+	void printCharacterText(const char *text, int8 charNum, int charX);
 
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;

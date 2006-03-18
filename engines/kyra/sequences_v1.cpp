@@ -121,7 +121,6 @@ void KyraEngine::seq_intro() {
 	if (_features & GF_TALKIE) {
 		_res->unloadPakFile("INTRO.VRM");
 	}
-	res_unloadResources(RES_INTRO | RES_OUTRO);
 }
 
 void KyraEngine::seq_introLogos() {
@@ -982,8 +981,6 @@ void KyraEngine::seq_brandonToStone() {
 void KyraEngine::seq_playEnding() {
 	debugC(9, kDebugLevelMain, "KyraEngine::seq_playEnding()");
 	_screen->hideMouse();
-	res_unloadResources(RES_INGAME);
-	res_loadResources(RES_OUTRO);
 	loadBitmap("REUNION.CPS", 3, 3, _screen->_currentPalette);
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_curPage = 0;

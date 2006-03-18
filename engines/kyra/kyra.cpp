@@ -228,7 +228,8 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	_thePoison_Size = _fluteString_Size = _wispJewelStrings_Size = 0;
 	_magicJewelString_Size = _flaskFull_Size = _fullFlask_Size = 0;
 	
-	_defaultShapeTable = _healingShapeTable = _healingShape2Table = 0;
+	_defaultShapeTable = 0;
+	_healingShapeTable = _healingShape2Table = 0;
 	_defaultShapeTableSize = _healingShapeTableSize = _healingShape2TableSize = 0;
 	_posionDeathShapeTable = _fluteAnimShapeTable = 0;
 	_posionDeathShapeTableSize = _fluteAnimShapeTableSize = 0;
@@ -236,6 +237,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	_winterScrollTableSize = _winterScroll1TableSize = _winterScroll2TableSize = 0;
 	_drinkAnimationTable = _brandonToWispTable = _magicAnimationTable = _brandonStoneTable = 0;
 	_drinkAnimationTableSize = _brandonToWispTableSize = _magicAnimationTableSize = _brandonStoneTableSize = 0;
+	memset(&_specialPalettes, 0, sizeof(_specialPalettes));
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -369,6 +371,10 @@ int KyraEngine::init(GameDetector &detector) {
 	assert(*_animator);
 	_text = new TextDisplayer(_screen);
 	assert(_text);
+	_staticres = new StaticResource(this);
+	assert(_staticres);
+	assert(_staticres->init());
+	initStaticResource();
 	
 	_paletteChanged = 1;
 	_currentCharacter = 0;
@@ -482,7 +488,6 @@ int KyraEngine::init(GameDetector &detector) {
 	_kyragemFadingState.gOffset = 0x13;
 	_kyragemFadingState.bOffset = 0x13;
 
-	memset(_specialPalettes, 0, sizeof(_specialPalettes));
 	_mousePressFlag = false;
 	
 	 _targetName = detector._targetName;
@@ -555,7 +560,6 @@ int KyraEngine::go() {
 	_quitFlag = false;
 	uint32 sz;
 
-	res_loadResources();
 	if (_features & GF_FLOPPY && !(_features & GF_AMIGA)) {
 		_screen->loadFont(Screen::FID_6_FNT, _res->fileData("6.FNT", &sz));
 	}
@@ -708,8 +712,6 @@ void KyraEngine::mainLoop() {
 
 void KyraEngine::quitGame() {
 	debugC(9, kDebugLevelMain, "KyraEngine::quitGame()");
-
-	res_unloadResources(RES_ALL);
 
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
 		_movieObjects[i]->close();

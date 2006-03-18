@@ -42,6 +42,7 @@ class Debugger;
 class ScreenAnimator;
 class TextDisplayer;
 class KyraEngine;
+class StaticResource;
 
 struct ScriptState;
 struct ScriptData;
@@ -255,6 +256,7 @@ public:
 	ScreenAnimator *animator() { return _animator; }
 	TextDisplayer *text() { return _text; }
 	Sound *sound() { return _sound; }
+	StaticResource *staticres() { return _staticres; }
 	uint32 tickLength() const { return _tickLength; }
 	Movie *createWSAMovie();
 
@@ -273,13 +275,13 @@ public:
 	typedef void (KyraEngine::*IntroProc)();
 	typedef int (KyraEngine::*OpcodeProc)(ScriptState *script);
 
-	const char **seqWSATable() { return const_cast<const char **>(_seq_WSATable); }
-	const char **seqCPSTable() { return const_cast<const char **>(_seq_CPSTable); }
-	const char **seqCOLTable() { return const_cast<const char **>(_seq_COLTable); }
-	const char **seqTextsTable() { return const_cast<const char **>(_seq_textsTable); }
+	const char **seqWSATable() { return _seq_WSATable; }
+	const char **seqCPSTable() { return _seq_CPSTable; }
+	const char **seqCOLTable() { return _seq_COLTable; }
+	const char **seqTextsTable() { return _seq_textsTable; }
 	
-	const uint8 **palTable1() { return const_cast<const uint8 **>(&_specialPalettes[0]); }
-	const uint8 **palTable2() { return const_cast<const uint8 **>(&_specialPalettes[29]); }
+	const uint8 **palTable1() { return &_specialPalettes[0]; }
+	const uint8 **palTable2() { return &_specialPalettes[29]; }
 
 	bool seq_skipSequence() const;
 	void delay(uint32 millis, bool update = false, bool mainLoop = false);
@@ -292,8 +294,8 @@ public:
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
 
-	void drawSentenceCommand(char *sentence, int unk1);
-	void updateSentenceCommand(char *str1, char *str2, int unk1);
+	void drawSentenceCommand(const char *sentence, int unk1);
+	void updateSentenceCommand(const char *str1, const char *str2, int unk1);
 	void updateTextFade();
 
 	void updateGameTimers();
@@ -483,8 +485,8 @@ protected:
 	void backupChatPartnerAnimFrame(int8 charNum);
 	void restoreChatPartnerAnimFrame(int8 charNum);
 	void endCharacterChat(int8 charNum, int16 arg_4);
-	void waitForChatToFinish(int16 chatDuration, char *str, uint8 charNum);
-	void characterSays(char *chatStr, int8 charNum, int8 chatDuration);
+	void waitForChatToFinish(int16 chatDuration, const char *str, uint8 charNum);
+	void characterSays(const char *chatStr, int8 charNum, int8 chatDuration);
 
 	void setCharactersPositions(int character);
 	int setGameFlag(int flag);
@@ -590,21 +592,6 @@ protected:
 	
 	static OpcodeProc _opcodeTable[];
 	static const int _opcodeTableSize;
-	
-	enum {
-		RES_ALL = 0,
-		RES_INTRO = (1 << 0),
-		RES_INGAME = (1 << 1),
-		RES_OUTRO = (1 << 2)
-	};
-	
-	void res_loadResources(int type = RES_ALL);
-	void res_unloadResources(int type = RES_ALL);
-	void res_loadLangTable(const char *filename, PAKFile *res, byte ***loadTo, int *size, bool nativ);
-	void res_loadTable(const byte *src, byte ***loadTo, int *size);
-	void res_loadRoomTable(const byte *src, Room **loadTo, int *size);
-	void res_loadShapeTable(const byte *src, Shape **loadTo, int *size);
-	void res_freeLangTable(char ***sting, int *size);
 	
 	void waitForEvent();
 	void loadPalette(const char *filename, uint8 *palData);
@@ -809,6 +796,7 @@ protected:
 	TextDisplayer *_text;
 	ScriptHelper *_scriptInterpreter;
 	Debugger *_debugger;
+	StaticResource *_staticres;
 	Common::SaveFileManager *_saveFileMan;
 
 	ScriptState *_scriptMain;
@@ -843,46 +831,50 @@ protected:
 		uint32 timerCount;
 	} _kyragemFadingState;
 
-	uint8 *_seq_Forest;
-	uint8 *_seq_KallakWriting;
-	uint8 *_seq_KyrandiaLogo;
-	uint8 *_seq_KallakMalcolm;
-	uint8 *_seq_MalcolmTree;
-	uint8 *_seq_WestwoodLogo;
-	uint8 *_seq_Demo1;
-	uint8 *_seq_Demo2;
-	uint8 *_seq_Demo3;
-	uint8 *_seq_Demo4;
-	uint8 *_seq_Reunion;
+	// TODO: get rid of all variables having pointers to the static resources if possible
+	// i.e. let them directly use the _staticres functions
+	void initStaticResource();
+
+	const uint8 *_seq_Forest;
+	const uint8 *_seq_KallakWriting;
+	const uint8 *_seq_KyrandiaLogo;
+	const uint8 *_seq_KallakMalcolm;
+	const uint8 *_seq_MalcolmTree;
+	const uint8 *_seq_WestwoodLogo;
+	const uint8 *_seq_Demo1;
+	const uint8 *_seq_Demo2;
+	const uint8 *_seq_Demo3;
+	const uint8 *_seq_Demo4;
+	const uint8 *_seq_Reunion;
 	
-	char **_seq_WSATable;
-	char **_seq_CPSTable;
-	char **_seq_COLTable;
-	char **_seq_textsTable;
+	const char **_seq_WSATable;
+	const char **_seq_CPSTable;
+	const char **_seq_COLTable;
+	const char **_seq_textsTable;
 	
 	int _seq_WSATable_Size;
 	int _seq_CPSTable_Size;
 	int _seq_COLTable_Size;
 	int _seq_textsTable_Size;
 	
-	char **_itemList;
-	char **_takenList;
-	char **_placedList;
-	char **_droppedList;
-	char **_noDropList;
-	char **_putDownFirst;
-	char **_waitForAmulet;
-	char **_blackJewel;
-	char **_poisonGone;
-	char **_healingTip;
-	char **_thePoison;
-	char **_fluteString;
-	char **_wispJewelStrings;
-	char **_magicJewelString;
-	char **_flaskFull;
-	char **_fullFlask;
-	char **_veryClever;
-	char **_homeString;
+	const char **_itemList;
+	const char **_takenList;
+	const char **_placedList;
+	const char **_droppedList;
+	const char **_noDropList;
+	const char **_putDownFirst;
+	const char **_waitForAmulet;
+	const char **_blackJewel;
+	const char **_poisonGone;
+	const char **_healingTip;
+	const char **_thePoison;
+	const char **_fluteString;
+	const char **_wispJewelStrings;
+	const char **_magicJewelString;
+	const char **_flaskFull;
+	const char **_fullFlask;
+	const char **_veryClever;
+	const char **_homeString;
 	
 	int _itemList_Size;
 	int _takenList_Size;
@@ -903,50 +895,50 @@ protected:
 	int _veryClever_Size;
 	int _homeString_Size;
 	
-	char **_characterImageTable;
+	const char **_characterImageTable;
 	int _characterImageTableSize;
 	
 	Shape *_defaultShapeTable;
 	int _defaultShapeTableSize;
 	
-	Shape *_healingShapeTable;
+	const Shape *_healingShapeTable;
 	int  _healingShapeTableSize;
-	Shape *_healingShape2Table;
+	const Shape *_healingShape2Table;
 	int  _healingShape2TableSize;
 	
-	Shape *_posionDeathShapeTable;
+	const Shape *_posionDeathShapeTable;
 	int _posionDeathShapeTableSize;
 	
-	Shape *_fluteAnimShapeTable;
+	const Shape *_fluteAnimShapeTable;
 	int _fluteAnimShapeTableSize;
 	
-	Shape *_winterScrollTable;
+	const Shape *_winterScrollTable;
 	int _winterScrollTableSize;
-	Shape *_winterScroll1Table;
+	const Shape *_winterScroll1Table;
 	int _winterScroll1TableSize;
-	Shape *_winterScroll2Table;
+	const Shape *_winterScroll2Table;
 	int _winterScroll2TableSize;
 	
-	Shape *_drinkAnimationTable;
+	const Shape *_drinkAnimationTable;
 	int _drinkAnimationTableSize;
 	
-	Shape *_brandonToWispTable;
+	const Shape *_brandonToWispTable;
 	int _brandonToWispTableSize;
 	
-	Shape *_magicAnimationTable;
+	const Shape *_magicAnimationTable;
 	int _magicAnimationTableSize;
 	
-	Shape *_brandonStoneTable;
+	const Shape *_brandonStoneTable;
 	int _brandonStoneTableSize;
 	
 	Room *_roomTable;
-	int _roomTableSize;	
-	char **_roomFilenameTable;
+	int _roomTableSize;
+	const char **_roomFilenameTable;
 	int _roomFilenameTableSize;
 	
-	uint8 *_amuleteAnim;
+	const uint8 *_amuleteAnim;
 	
-	uint8 *_specialPalettes[33];
+	const uint8 **_specialPalettes;
 
 	Timer _timers[34];
 	uint32 _timerNextRun;	

@@ -117,6 +117,11 @@ Resource::Resource(KyraEngine *engine) {
 			debug(3, "couldn't load file '%s' correctly", usedFilelist[tmp]);
 		}
 	}
+
+	// we're loading KYRA.DAT here too
+	if (!loadPakFile("KYRA.DAT")) {
+		error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
+	}
 }
 
 Resource::~Resource() {
@@ -133,7 +138,8 @@ bool Resource::loadPakFile(const char *filename) {
 		return true;
 	PAKFile *file = new PAKFile(filename);
 	if (!file) {
-		error("couldn't load file: '%s'", filename);
+		warning("couldn't load file: '%s'", filename);
+		return false;
 	}
 	PakFileEntry newPak;
 	newPak._file = file;

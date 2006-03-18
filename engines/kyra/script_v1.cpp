@@ -1221,7 +1221,7 @@ int KyraEngine::cmd_setFireberryGlowPalette(ScriptState *script) {
 			palIndex = 14;
 		}
 	}
-	uint8 *palette = _specialPalettes[palIndex];
+	const uint8 *palette = _specialPalettes[palIndex];
 	memcpy(&_screen->_currentPalette[684], palette, 44);
 	_screen->setScreenPalette(_screen->_currentPalette);
 	return 0;

@@ -32,14 +32,6 @@ namespace Kyra {
 #define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_AUDIOCD)
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_LNGUNK)
 
-byte *getFile(PAKFile &res, const char *filename) {
-	uint32 size = 0;
-	size = res.getFileSize(filename);
-	if (!size)
-		return 0;
-	return res.getFile(filename);
-}
-
 struct LanguageTypes {
 	uint32 flags;
 	const char *ext;
@@ -53,34 +45,107 @@ static LanguageTypes languages[] = {
 	{ 0, 0 }
 };
 
-void KyraEngine::res_loadResources(int type) {
-	debugC(9, kDebugLevelMain, "KyraEngine::res_loadResources(%d)", type);
-	PAKFile resFile("KYRA.DAT");
-	if (!resFile.isValid() || !resFile.isOpen()) {
-		error("couldn't open Kyrandia resource file ('KYRA.DAT') make sure you got one file for your version");
-	}
-	
-	uint32 version = 0;
-	uint32 gameID = 0;
-	uint32 featuresValue = 0;
-	bool loadNativeLanguage = true;
-	
-	byte *temp = 0;
-	
-	if (_features & GF_TALKIE) {
-		temp = getFile(resFile, "INDEX.CD");
-	} else if (_features & GF_DEMO) {
-		temp = getFile(resFile, "INDEX.DEM");
+bool StaticResource::init() {
+#define proc(x) &StaticResource::x
+	static const FileType fileTypeTable[] = {
+		{ kLanguageList, proc(loadLanguageTable), proc(freeStringTable) },
+		{ kStringList, proc(loadStringTable), proc(freeStringTable) },
+		{ StaticResource::kRoomList, proc(loadRoomTable), proc(freeRoomTable) },
+		{ kShapeList, proc(loadShapeTable), proc(freeShapeTable) },
+		{ kRawData, proc(loadRawData), proc(freeRawData) },
+		{ kPaletteTable, proc(loadPaletteTable), proc(freePaletteTable) },
+		{ 0, 0, 0 }
+	};
+#undef proc
+	_fileLoader = fileTypeTable;
+
+	// Kyrandia 1 Filenames
+	static const FilenameTable kyra1StaticRes[] = {
+		// INTRO / OUTRO sequences
+		{ kForestSeq, kRawData, "FOREST.SEQ" },
+		{ kKallakWritingSeq, kRawData, "KALLAK-WRITING.SEQ" },
+		{ kKyrandiaLogoSeq, kRawData, "KYRANDIA-LOGO.SEQ" },
+		{ kKallakMalcolmSeq, kRawData, "KALLAK-MALCOLM.SEQ" },
+		{ kMalcolmTreeSeq, kRawData, "MALCOLM-TREE.SEQ" },
+		{ kWestwoodLogoSeq, kRawData, "WESTWOOD-LOGO.SEQ" },
+		{ kDemo1Seq, kRawData, "DEMO1.SEQ" },
+		{ kDemo2Seq, kRawData, "DEMO2.SEQ" },
+		{ kDemo3Seq, kRawData, "DEMO3.SEQ" },
+		{ kDemo4Seq, kRawData, "DEMO4.SEQ" },
+		{ kOutroReunionSeq, kRawData, "REUNION.SEQ" },
+
+		// INTRO / OUTRO strings
+		{ kIntroCPSStrings, kStringList, "INTRO-CPS.TXT" },
+		{ kIntroCOLStrings, kStringList, "INTRO-COL.TXT" },
+		{ kIntroWSAStrings, kStringList, "INTRO-WSA.TXT" },
+		{ kIntroStrings, kLanguageList, "INTRO-STRINGS." },
+		{ kOutroHomeString, kLanguageList, "HOME." },
+
+		// INGAME strings
+		{ kItemNames, kLanguageList, "ITEMLIST." },
+		{ kTakenStrings, kLanguageList, "TAKEN." },
+		{ kPlacedStrings, kLanguageList, "PLACED." },
+		{ kDroppedStrings, kLanguageList, "DROPPED." },
+		{ kNoDropStrings, kLanguageList, "NODROP." },
+		{ kPutDownString, kLanguageList, "PUTDOWN." },
+		{ kWaitAmuletString, kLanguageList, "WAITAMUL." },
+		{ kBlackJewelString, kLanguageList, "BLACKJEWEL." },
+		{ kPoisonGoneString, kLanguageList, "POISONGONE." },
+		{ kHealingTipString, kLanguageList, "HEALINGTIP." },
+		{ kThePoisonStrings, kLanguageList, "THEPOISON." },
+		{ kFluteStrings, kLanguageList, "FLUTE." },
+		{ kWispJewelStrings, kLanguageList, "WISPJEWEL." },
+		{ kMagicJewelStrings, kLanguageList, "MAGICJEWEL." },
+		{ kFlaskFullString, kLanguageList, "FLASKFULL." },
+		{ kFullFlaskString, kLanguageList, "FULLFLASK." },
+		{ kVeryCleverString, kLanguageList, "VERYCLEVER." },
+
+		// ROOM table/filenames
+		{ Kyra::kRoomList, StaticResource::kRoomList, "ROOM-TABLE.ROOM" },
+		{ kRoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
+
+		// SHAPE tables
+		{ kDefaultShapes, kShapeList, "SHAPES-DEFAULT.SHP" },
+		{ kHealing1Shapes, kShapeList, "HEALING.SHP" },
+		{ kHealing2Shapes, kShapeList, "HEALING2.SHP" },
+		{ kPoisonDeathShapes, kShapeList, "POISONDEATH.SHP" },
+		{ kFluteShapes, kShapeList, "FLUTE.SHP" },
+		{ kWinter1Shapes, kShapeList, "WINTER1.SHP" },
+		{ kWinter2Shapes, kShapeList, "WINTER2.SHP" },
+		{ kWinter3Shapes, kShapeList, "WINTER3.SHP" },
+		{ kDrinkShapes, kShapeList, "DRINK.SHP" },
+		{ kWispShapes, kShapeList, "WISP.SHP" },
+		{ kMagicAnimShapes, kShapeList, "MAGICANIM.SHP" },
+		{ kBranStoneShapes, kShapeList, "BRANSTONE.SHP" },
+
+		// IMAGE filename table
+		{ kCharacterImageFilenames, kStringList, "CHAR-IMAGE.TXT" },
+
+		// AMULET anim
+		{ kAmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
+
+		// PALETTE table
+		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
+
+		{ 0, 0, 0 }
+	};
+
+	if (_engine->game() == GI_KYRA1) {
+		_builtIn = 0;
+		_filenameTable = kyra1StaticRes;
 	} else {
-		temp = getFile(resFile, "INDEX");
+		error("unknown game ID");
 	}
+
+	int tempSize = 0;
+	uint8 *temp = getFile("INDEX", tempSize);
 	if (!temp) {
 		error("no matching INDEX file found");
 	}
 	
-	version = READ_BE_UINT32(temp);
-	gameID = READ_BE_UINT32((temp+4));
-	featuresValue = READ_BE_UINT32((temp+8));
+	uint32 version = READ_BE_UINT32(temp);
+	uint32 gameID = READ_BE_UINT32((temp+4));
+	uint32 featuresValue = READ_BE_UINT32((temp+8));
 	
 	delete [] temp;
 	temp = 0;
@@ -88,370 +153,467 @@ void KyraEngine::res_loadResources(int type) {
 	if (version < RESFILE_VERSION) {
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
 	}
-	if (gameID != _game) {
+	if (gameID != _engine->game()) {
 		error("invalid game id (%d)", gameID);
 	}
-	if ((featuresValue & GAME_FLAGS) != (_features & GAME_FLAGS)) {
-		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), (_features & GAME_FLAGS));
-	}
-	
-	if (!((featuresValue & LANGUAGE_FLAGS) & (_features & LANGUAGE_FLAGS))) {
-		char buffer[240];
-		sprintf(buffer, "your data file has support for:");
-		if (featuresValue & GF_ENGLISH) {
-			sprintf(buffer + strlen(buffer), " English");
-		}		
-		if (featuresValue & GF_FRENCH) {
-			sprintf(buffer + strlen(buffer), " French");
-		}		
-		if (featuresValue & GF_GERMAN) {
-			sprintf(buffer + strlen(buffer), " German");
-		}
-		if (featuresValue & GF_SPANISH) {
-			sprintf(buffer + strlen(buffer), " Spanish");
-		}
-		sprintf(buffer + strlen(buffer), " but not your language (");		
-		if (_features & GF_ENGLISH) {
-			sprintf(buffer + strlen(buffer), "English");
-		} else if (_features & GF_FRENCH) {
-			sprintf(buffer + strlen(buffer), "French");
-		} else if (_features & GF_GERMAN) {
-			sprintf(buffer + strlen(buffer), "German");
-		} else if (_features & GF_SPANISH) {
-			sprintf(buffer + strlen(buffer), "Spanish");
-		} else {
-			sprintf(buffer + strlen(buffer), "unknown");
-		}
-		sprintf(buffer + strlen(buffer), ")");		
-		warning(buffer);
-		loadNativeLanguage = false;
-	}
-	
-#define getFileEx(x, y) \
-	if (_features & GF_TALKIE) { \
-		temp = getFile(x, y ".CD"); \
-	} else if (_features & GF_DEMO) { \
-		temp = getFile(x, y ".DEM"); \
-	} else { \
-		temp = getFile(x, y); \
-	}
-#define loadRawFile(x, y, z) \
-	getFileEx(x, y) \
-	if (temp) { \
-		z = temp; \
-		temp = 0; \
-	}
-#define loadTable(x, y, z, a) \
-	getFileEx(x, y) \
-	if (temp) { \
-		res_loadTable(temp, z, a); \
-		delete [] temp; \
-		temp = 0; \
-	}
-#define loadRooms(x, y, z, a) \
-	getFileEx(x, y) \
-	if (temp) { \
-		res_loadRoomTable(temp, z, a); \
-		delete [] temp; \
-		temp = 0; \
-	}
-#define loadShapes(x, y, z, a) \
-	getFileEx(x, y) \
-	if (temp) { \
-		res_loadShapeTable(temp, z, a); \
-		delete [] temp; \
-		temp = 0; \
-	}
-	
-	
-	if ((type & RES_INTRO) || (type & RES_OUTRO) || type == RES_ALL) {
-		loadRawFile(resFile, "FOREST.SEQ", _seq_Forest);
-		loadRawFile(resFile, "KALLAK-WRITING.SEQ", _seq_KallakWriting);
-		loadRawFile(resFile, "KYRANDIA-LOGO.SEQ", _seq_KyrandiaLogo);
-		loadRawFile(resFile, "KALLAK-MALCOLM.SEQ", _seq_KallakMalcolm);
-		loadRawFile(resFile, "MALCOLM-TREE.SEQ", _seq_MalcolmTree);
-		loadRawFile(resFile, "WESTWOOD-LOGO.SEQ", _seq_WestwoodLogo);
-		loadRawFile(resFile, "DEMO1.SEQ", _seq_Demo1);
-		loadRawFile(resFile, "DEMO2.SEQ", _seq_Demo2);
-		loadRawFile(resFile, "DEMO3.SEQ", _seq_Demo3);
-		loadRawFile(resFile, "DEMO4.SEQ", _seq_Demo4);
-		
-		loadTable(resFile, "INTRO-CPS.TXT", (byte***)&_seq_CPSTable, &_seq_CPSTable_Size);
-		loadTable(resFile, "INTRO-COL.TXT", (byte***)&_seq_COLTable, &_seq_COLTable_Size);
-		loadTable(resFile, "INTRO-WSA.TXT", (byte***)&_seq_WSATable, &_seq_WSATable_Size);
-		
-		res_loadLangTable("INTRO-STRINGS.", &resFile, (byte***)&_seq_textsTable, &_seq_textsTable_Size, loadNativeLanguage);
-		
-		loadRawFile(resFile, "REUNION.SEQ", _seq_Reunion);
-		
-		res_loadLangTable("HOME.", &resFile, (byte***)&_homeString, &_homeString_Size, loadNativeLanguage);
-	}
-	
-	if ((type & RES_INGAME) || type == RES_ALL) {
-		loadTable(resFile, "ROOM-FILENAMES.TXT", (byte***)&_roomFilenameTable, &_roomFilenameTableSize);
-		loadRooms(resFile, "ROOM-TABLE.ROOM", &_roomTable, &_roomTableSize);
-		
-		loadTable(resFile, "CHAR-IMAGE.TXT", (byte***)&_characterImageTable, &_characterImageTableSize);
-		
-		loadShapes(resFile, "SHAPES-DEFAULT.SHP", &_defaultShapeTable, &_defaultShapeTableSize);
-		
-		res_loadLangTable("ITEMLIST.", &resFile, (byte***)&_itemList, &_itemList_Size, loadNativeLanguage);
-		res_loadLangTable("TAKEN.", &resFile, (byte***)&_takenList, &_takenList_Size, loadNativeLanguage);
-		res_loadLangTable("PLACED.", &resFile, (byte***)&_placedList, &_placedList_Size, loadNativeLanguage);
-		res_loadLangTable("DROPPED.", &resFile, (byte***)&_droppedList, &_droppedList_Size, loadNativeLanguage);
-		res_loadLangTable("NODROP.", &resFile, (byte***)&_noDropList, &_noDropList_Size, loadNativeLanguage);
-		
-		loadRawFile(resFile, "AMULETEANIM.SEQ", _amuleteAnim);
-		
-		for (int i = 1; i <= 33; ++i) {
-			char buffer[32];
-			sprintf(buffer, "PALTABLE%d.PAL", i);
-			if (_features & GF_TALKIE) {
-				strcat(buffer, ".CD");
-			} else if (_features & GF_DEMO) {
-				strcat(buffer, ".DEM");
-			}
-			temp = getFile(resFile, buffer);
-			if (temp) {
-				_specialPalettes[i-1] = temp;
-				temp = 0;
-			}
-		}
-		
-		res_loadLangTable("PUTDOWN.", &resFile, (byte***)&_putDownFirst, &_putDownFirst_Size, loadNativeLanguage);
-		res_loadLangTable("WAITAMUL.", &resFile, (byte***)&_waitForAmulet, &_waitForAmulet_Size, loadNativeLanguage);
-		res_loadLangTable("BLACKJEWEL.", &resFile, (byte***)&_blackJewel, &_blackJewel_Size, loadNativeLanguage);
-		res_loadLangTable("POISONGONE.", &resFile, (byte***)&_poisonGone, &_poisonGone_Size, loadNativeLanguage);
-		res_loadLangTable("HEALINGTIP.", &resFile, (byte***)&_healingTip, &_healingTip_Size, loadNativeLanguage);
-		
-		loadShapes(resFile, "HEALING.SHP", &_healingShapeTable, &_healingShapeTableSize);
-		loadShapes(resFile, "HEALING2.SHP", &_healingShape2Table, &_healingShape2TableSize);
-		
-		res_loadLangTable("THEPOISON.", &resFile, (byte***)&_thePoison, &_thePoison_Size, loadNativeLanguage);
-		res_loadLangTable("FLUTE.", &resFile, (byte***)&_fluteString, &_fluteString_Size, loadNativeLanguage);
-		
-		loadShapes(resFile, "POISONDEATH.SHP", &_posionDeathShapeTable, &_posionDeathShapeTableSize);
-		loadShapes(resFile, "FLUTE.SHP", &_fluteAnimShapeTable, &_fluteAnimShapeTableSize);
-		
-		loadShapes(resFile, "WINTER1.SHP", &_winterScrollTable, &_winterScrollTableSize);
-		loadShapes(resFile, "WINTER2.SHP", &_winterScroll1Table, &_winterScroll1TableSize);
-		loadShapes(resFile, "WINTER3.SHP", &_winterScroll2Table, &_winterScroll2TableSize);
-		loadShapes(resFile, "DRINK.SHP", &_drinkAnimationTable, &_drinkAnimationTableSize);
-		loadShapes(resFile, "WISP.SHP", &_brandonToWispTable, &_brandonToWispTableSize);
-		loadShapes(resFile, "MAGICANIM.SHP", &_magicAnimationTable, &_magicAnimationTableSize);
-		loadShapes(resFile, "BRANSTONE.SHP", &_brandonStoneTable, &_brandonStoneTableSize);
-		
-		res_loadLangTable("WISPJEWEL.", &resFile, (byte***)&_wispJewelStrings, &_wispJewelStrings_Size, loadNativeLanguage);
-		res_loadLangTable("MAGICJEWEL.", &resFile, (byte***)&_magicJewelString, &_magicJewelString_Size, loadNativeLanguage);
-		
-		res_loadLangTable("FLASKFULL.", &resFile, (byte***)&_flaskFull, &_fullFlask_Size, loadNativeLanguage);
-		res_loadLangTable("FULLFLASK.", &resFile, (byte***)&_fullFlask, &_fullFlask_Size, loadNativeLanguage);
-		
-		res_loadLangTable("VERYCLEVER.", &resFile, (byte***)&_veryClever, &_veryClever_Size, loadNativeLanguage);
+	if ((featuresValue & GAME_FLAGS) != (_engine->features() & GAME_FLAGS)) {
+		error("your data file has a different game flags (0x%.08X has the data and your version has 0x%.08X)", (featuresValue & GAME_FLAGS), (_engine->features() & GAME_FLAGS));
 	}
 
-#undef loadRooms
-#undef loadTable
-#undef loadRawFile
-#undef getFileEx
+	// load all tables for now
+	if (!prefetchId(-1)) {
+		error("couldn't load all needed resources from 'KYRA.DAT'");
+	}
+	return true;
 }
 
-void KyraEngine::res_unloadResources(int type) {
-	debugC(9, kDebugLevelMain, "KyraEngine::res_unloadResources(%d)", type);
-	if ((type & RES_INTRO) || (type & RES_OUTRO) || type & RES_ALL) {
-		res_freeLangTable(&_seq_WSATable, &_seq_WSATable_Size);
-		res_freeLangTable(&_seq_CPSTable, &_seq_CPSTable_Size);
-		res_freeLangTable(&_seq_COLTable, &_seq_COLTable_Size);
-		res_freeLangTable(&_seq_textsTable, &_seq_textsTable_Size);
-		
-		delete [] _seq_Forest; _seq_Forest = 0;
-		delete [] _seq_KallakWriting; _seq_KallakWriting = 0;
-		delete [] _seq_KyrandiaLogo; _seq_KyrandiaLogo = 0;
-		delete [] _seq_KallakMalcolm; _seq_KallakMalcolm = 0;
-		delete [] _seq_MalcolmTree; _seq_MalcolmTree = 0;
-		delete [] _seq_WestwoodLogo; _seq_WestwoodLogo = 0;
-		delete [] _seq_Demo1; _seq_Demo1 = 0;
-		delete [] _seq_Demo2; _seq_Demo2 = 0;
-		delete [] _seq_Demo3; _seq_Demo3 = 0;
-		delete [] _seq_Demo4; _seq_Demo4 = 0;
-		
-		delete [] _seq_Reunion; _seq_Reunion = 0;
-		res_freeLangTable(&_homeString, &_homeString_Size);
-	}
-	
-	if ((type & RES_INGAME) || type & RES_ALL) {
-		res_freeLangTable(&_roomFilenameTable, &_roomFilenameTableSize);
-				
-		delete [] _roomTable; _roomTable = 0;
-		_roomTableSize = 0;
-		
-		res_freeLangTable(&_characterImageTable, &_characterImageTableSize);
-				
-		delete [] _defaultShapeTable;
-		_defaultShapeTable = 0;
-		_defaultShapeTableSize = 0;
-		
-		res_freeLangTable(&_itemList, &_itemList_Size);
-		res_freeLangTable(&_takenList, &_takenList_Size);
-		res_freeLangTable(&_placedList, &_placedList_Size);
-		res_freeLangTable(&_droppedList, &_droppedList_Size);
-		res_freeLangTable(&_noDropList, &_noDropList_Size);
-				
-		delete [] _amuleteAnim;
-		_amuleteAnim = 0;
-		
-		for (int i = 0; i < 33; ++i) {
-			delete [] _specialPalettes[i];
-			_specialPalettes[i] = 0;
+void StaticResource::deinit() {
+	unloadId(-1);
+}
+
+const char **StaticResource::loadStrings(int id, int &strings) {
+	const char **temp = (const char**)getData(id, kStringList, strings);
+	if (temp)
+		return temp;
+	return (const char**)getData(id, kLanguageList, strings);
+}
+
+const uint8 *StaticResource::loadRawData(int id, int &size) {
+	return (const uint8*)getData(id, kRawData, size);
+}
+
+const Shape *StaticResource::loadShapeTable(int id, int &entries) {
+	return (const Shape*)getData(id, kShapeList, entries);
+}
+
+const Room *StaticResource::loadRoomTable(int id, int &entries) {
+	return (const Room*)getData(id, StaticResource::kRoomList, entries);
+}
+
+const uint8 **StaticResource::loadPaletteTable(int id, int &entries) {
+	return (const uint8**)getData(id, kPaletteTable, entries);
+}
+
+bool StaticResource::prefetchId(int id) {
+	if (id == -1) {
+		for (int i = 0; _filenameTable[i].filename; ++i) {
+			prefetchId(_filenameTable[i].id);
 		}
-		
-		res_freeLangTable(&_putDownFirst, &_putDownFirst_Size);
-		res_freeLangTable(&_waitForAmulet, &_waitForAmulet_Size);
-		res_freeLangTable(&_blackJewel, &_blackJewel_Size);
-		res_freeLangTable(&_poisonGone, &_poisonGone_Size);
-		res_freeLangTable(&_healingTip, &_healingTip_Size);
-		
-		delete [] _healingShapeTable;
-		_healingShapeTable = 0;
-		_healingShapeTableSize = 0;
-		
-		delete [] _healingShape2Table;
-		_healingShape2Table = 0;
-		_healingShape2TableSize = 0;
-		
-		res_freeLangTable(&_thePoison, &_thePoison_Size);
-		res_freeLangTable(&_fluteString, &_fluteString_Size);
-		
-		delete [] _posionDeathShapeTable;
-		_posionDeathShapeTable = 0;
-		_posionDeathShapeTableSize = 0;
-		
-		delete [] _fluteAnimShapeTable;
-		_fluteAnimShapeTable = 0;
-		_fluteAnimShapeTableSize = 0;
-		
-		delete [] _winterScrollTable;
-		_winterScrollTable = 0;
-		_winterScrollTableSize = 0;
-		
-		delete [] _winterScroll1Table;
-		_winterScroll1Table = 0;
-		_winterScroll1TableSize = 0;
-		
-		delete [] _winterScroll2Table;
-		_winterScroll2Table = 0;
-		_winterScroll2TableSize = 0;
-		
-		delete [] _drinkAnimationTable;
-		_drinkAnimationTable = 0;
-		_drinkAnimationTableSize = 0;
-		
-		delete [] _brandonToWispTable;
-		_brandonToWispTable = 0;
-		_brandonToWispTableSize = 0;
-		
-		delete [] _magicAnimationTable;
-		_magicAnimationTable = 0;
-		_magicAnimationTableSize = 0;
-		
-		delete [] _brandonStoneTable;
-		_brandonStoneTable = 0;
-		_brandonStoneTableSize = 0;
-		
-		res_freeLangTable(&_flaskFull, &_flaskFull_Size);
-		res_freeLangTable(&_fullFlask, &_fullFlask_Size);
-		
-		res_freeLangTable(&_veryClever, &_veryClever_Size);
+		return true;
+	}
+	const void *ptr = 0;
+	int type = -1, size = -1;
+
+	if (checkResList(id, type, ptr, size)) {
+		return true;
+	}
+
+	if (checkForBuiltin(id, type, size)) {
+		return true;
+	}
+
+	const FilenameTable *filename = searchFile(id);
+	if (!filename)
+		return false;
+	const FileType *filetype = getFiletype(filename->type);
+	if (!filetype)
+		return false;
+
+	ResData data;
+	data.id = id;
+	data.type = filetype->type;
+	if (!(this->*(filetype->load))(filename->filename, data.data, data.size)) {
+		return false;
+	}
+	_resList.push_back(data);
+
+	return true;
+}
+
+void StaticResource::unloadId(int id) {
+	Common::List<ResData>::iterator pos = _resList.begin();
+	for (; pos != _resList.end(); ++pos) {
+		if (pos->id == id || id == -1) {
+			const FileType *filetype = getFiletype(pos->type);
+			(this->*(filetype->free))(pos->data, pos->size);
+			if (id != -1)
+				break;
+		}
 	}
 }
 
-void KyraEngine::res_loadLangTable(const char *filename, PAKFile *res, byte ***loadTo, int *size, bool nativ) {
-	char file[36];
+bool StaticResource::checkResList(int id, int &type, const void *&ptr, int &size) {
+	Common::List<ResData>::iterator pos = _resList.begin();
+	for (; pos != _resList.end(); ++pos) {
+		if (pos->id == id) {
+			size = pos->size;
+			type = pos->type;
+			ptr = pos->data;
+			return true;
+		}
+	}
+	return false;
+}
+
+const void *StaticResource::checkForBuiltin(int id, int &type, int &size) {
+	if (!_builtIn)
+		return 0;
+
+	for (int i = 0; _builtIn[i].data; ++i) {
+		if (_builtIn[i].id == id) {
+			size = _builtIn[i].size;
+			type = _builtIn[i].type;
+			return _builtIn[i].data;
+		}
+	}
+
+	return 0;
+}
+
+const StaticResource::FilenameTable *StaticResource::searchFile(int id) {
+	if (!_filenameTable)
+		return 0;
+
+	for (int i = 0; _filenameTable[i].filename; ++i) {
+		if (_filenameTable[i].id == id)
+			return &_filenameTable[i];
+	}
+
+	return 0;
+}
+
+const StaticResource::FileType *StaticResource::getFiletype(int type) {
+	if (!_fileLoader)
+		return 0;
+
+	for (int i = 0; _fileLoader[i].load; ++i) {
+		if (_fileLoader[i].type == type) {
+			return &_fileLoader[i];
+		}
+	}
+
+	return 0;
+}
+
+const void *StaticResource::getData(int id, int requesttype, int &size) {
+	const void *ptr = 0;
+	int type = -1;
+
+	if (checkResList(id, type, ptr, size)) {
+		if (type == requesttype)
+			return ptr;
+		return 0;
+	}
+
+	ptr = checkForBuiltin(id, type, size);
+	if (ptr) {
+		if (type == requesttype)
+			return ptr;
+		return 0;
+	}
+
+	if (!prefetchId(id))
+		return 0;
+
+	if (checkResList(id, type, ptr, size)) {
+		if (type == requesttype)
+			return ptr;
+	}
+
+	return 0;
+}
+
+bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
+	char file[64];
 	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].flags != (_features & LANGUAGE_FLAGS) && nativ) {
-			continue; 
+		if (languages[i].flags != (_engine->features() & LANGUAGE_FLAGS)) {
+			continue;
 		}
 			
 		strcpy(file, filename);
 		strcat(file, languages[i].ext);
-		if (_features & GF_TALKIE) {
-			strcat(file, ".CD");
-		} else if (_features & GF_DEMO) {
-			strcat(file, ".DEM");
-		}
-		byte *temp = getFile(*res, file);
-		if (temp) {
-			res_loadTable(temp, loadTo, size);
-			delete [] temp;
-			temp = 0;
-		} else {
-			if (!nativ)
-				continue;
-		}
-		break;
+		if (loadStringTable(file, ptr, size))
+			return true;
 	}
+
+	strcpy(file, filename);
+	strcat(file, languages[0].ext);
+	if (loadStringTable(file, ptr, size)) {
+		warning("coudln't find specific language table for your version, using English now");
+		return true;
+	}
+
+	return false;
 }
 
-void KyraEngine::res_loadTable(const byte *src, byte ***loadTo, int *size) {
+bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size) {
+	uint8 *filePtr = getFile(filename, size);
+	if (!filePtr)
+		return false;
+	uint8 *src = filePtr;
+
 	uint32 count = READ_BE_UINT32(src); src += 4;
-	*size = count;
-	*loadTo = new byte*[count];
+	size = count;
+	char **output = new char*[count];
+	assert(output);
 		
 	const char *curPos = (const char*)src;
 	for (uint32 i = 0; i < count; ++i) {
 		int strLen = strlen(curPos);
-		(*loadTo)[i] = new byte[strLen+1];
-		memcpy((*loadTo)[i], curPos, strLen+1);
+		output[i] = new char[strLen+1];
+		assert(output[i]);
+		memcpy(output[i], curPos, strLen+1);
 		curPos += strLen+1;
 	}
+
+	delete [] filePtr;
+	ptr = output;
+
+	return true;
 }
 
-void KyraEngine::res_loadRoomTable(const byte *src, Room **loadTo, int *size) {
+bool StaticResource::loadRawData(const char *filename, void *&ptr, int &size) {
+	ptr = getFile(filename, size);
+	if (!ptr)
+		return false;
+	return true;
+}
+
+bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size) {
+	uint8 *filePtr = getFile(filename, size);
+	if (!filePtr)
+		return false;
+	uint8 *src = filePtr;
+
 	uint32 count = READ_BE_UINT32(src); src += 4;
-	*size = count;
-	*loadTo = new Room[count];
+	size = count;
+	Shape *loadTo = new Shape[count];
+	assert(loadTo);
 	
 	for (uint32 i = 0; i < count; ++i) {
-		(*loadTo)[i].nameIndex = *src++;
-		(*loadTo)[i].northExit = READ_BE_UINT16(src); src += 2;
-		(*loadTo)[i].eastExit = READ_BE_UINT16(src); src += 2;
-		(*loadTo)[i].southExit = READ_BE_UINT16(src); src += 2;
-		(*loadTo)[i].westExit = READ_BE_UINT16(src); src += 2;
-		memset(&(*loadTo)[i].itemsTable[0], 0xFF, sizeof(byte)*6);
-		memset(&(*loadTo)[i].itemsTable[6], 0, sizeof(byte)*6);
-		memset((*loadTo)[i].itemsXPos, 0, sizeof(uint16)*12);
-		memset((*loadTo)[i].itemsYPos, 0, sizeof(uint8)*12);
-		memset((*loadTo)[i].needInit, 0, sizeof((*loadTo)[i].needInit));
+		loadTo[i].imageIndex = *src++;
+		loadTo[i].x = *src++;
+		loadTo[i].y = *src++;
+		loadTo[i].w = *src++;
+		loadTo[i].h = *src++;
+		loadTo[i].xOffset = *src++;
+		loadTo[i].yOffset = *src++;
 	}
+
+	delete [] filePtr;
+	ptr = loadTo;
+
+	return true;
 }
 
-void KyraEngine::res_loadShapeTable(const byte *src, Shape **loadTo, int *size) {
+bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) {
+	uint8 *filePtr = getFile(filename, size);
+	if (!filePtr)
+		return false;
+	uint8 *src = filePtr;
+
 	uint32 count = READ_BE_UINT32(src); src += 4;
-	*size = count;
-	*loadTo = new Shape[count];
+	size = count;
+	Room *loadTo = new Room[count];
+	assert(loadTo);
 	
 	for (uint32 i = 0; i < count; ++i) {
-		(*loadTo)[i].imageIndex = *src++;
-		(*loadTo)[i].x = *src++;
-		(*loadTo)[i].y = *src++;
-		(*loadTo)[i].w = *src++;
-		(*loadTo)[i].h = *src++;
-		(*loadTo)[i].xOffset = *src++;
-		(*loadTo)[i].yOffset = *src++;
+		loadTo[i].nameIndex = *src++;
+		loadTo[i].northExit = READ_BE_UINT16(src); src += 2;
+		loadTo[i].eastExit = READ_BE_UINT16(src); src += 2;
+		loadTo[i].southExit = READ_BE_UINT16(src); src += 2;
+		loadTo[i].westExit = READ_BE_UINT16(src); src += 2;
+		memset(&loadTo[i].itemsTable[0], 0xFF, sizeof(byte)*6);
+		memset(&loadTo[i].itemsTable[6], 0, sizeof(byte)*6);
+		memset(loadTo[i].itemsXPos, 0, sizeof(uint16)*12);
+		memset(loadTo[i].itemsYPos, 0, sizeof(uint8)*12);
+		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
+
+	delete [] filePtr;
+	ptr = loadTo;
+
+	return true;
 }
 
-void KyraEngine::res_freeLangTable(char ***string, int *size) {
-	if (!string || !size)
-		return;
-	if (!*size || !*string)
-		return;
-	for (int i = 0; i < *size; ++i) {
-		delete [] (*string)[i];
+bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &size) {
+	const char *temp = filename;
+	int start = atoi(temp);
+	temp = strstr(temp, " ");
+	if (temp == NULL)
+		return false;
+	++temp;
+	int end = atoi(temp);
+
+	char **table = new char*[end-start+1];
+	assert(table);
+
+	char file[64];
+	temp = filename;
+	temp = strstr(temp, " ");
+	++temp;
+	temp = strstr(temp, " ");
+	if (temp == NULL)
+		return false;
+	++temp;
+	strncpy(file, temp, 64);
+
+	char name[64];
+	for (int i = start; i <= end; ++i) {
+		snprintf(name, 64, "%s%d.PAL", file, i);
+		table[(start != 0) ? (i-start) : i] = (char*)getFile(name, size);
+		if (!table[(start != 0) ? (i-start) : i]) {
+			delete [] table;
+			return false;
+		}
 	}
-	delete [] *string;
+
+	ptr = table;
+	size = end - start + 1;
+	return true;
+}
+
+void StaticResource::freeRawData(void *&ptr, int &size) {
+	uint8 *data = (uint8*)ptr;
+	delete [] data;
+	ptr = 0;
 	size = 0;
-	*string = 0;
+}
+
+void StaticResource::freeStringTable(void *&ptr, int &size) {
+	char **data = (char**)ptr;
+	while (size--) {
+		delete [] data[size];
+	}
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeShapeTable(void *&ptr, int &size) {
+	Shape *data = (Shape*)ptr;
+	delete [] data;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeRoomTable(void *&ptr, int &size) {
+	Room *data = (Room*)ptr;
+	delete [] data;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freePaletteTable(void *&ptr, int &size) {
+	uint8 **data = (uint8**)ptr;
+	while (size--) {
+		delete [] data[size];
+	}
+	ptr = 0;
+	size = 0;
+}
+
+uint8 *StaticResource::getFile(const char *name, int &size) {
+	char buffer[64];
+	const char *ext = "";
+	if (_engine->features() & GF_TALKIE) {
+		ext = ".CD";
+	} else if (_engine->features() & GF_DEMO) {
+		ext = ".DEM";
+	}
+	snprintf(buffer, 64, "%s%s", name, ext);
+	uint32 tempSize = 0;
+	uint8 *data = _engine->resource()->fileData(buffer, &tempSize);
+	size = tempSize;
+	return data;
+}
+
+#pragma mark -
+
+void KyraEngine::initStaticResource() {
+	int temp = 0;
+	_seq_Forest = _staticres->loadRawData(kForestSeq, temp);
+	_seq_KallakWriting = _staticres->loadRawData(kKallakWritingSeq, temp);
+	_seq_KyrandiaLogo = _staticres->loadRawData(kKyrandiaLogoSeq, temp);
+	_seq_KallakMalcolm = _staticres->loadRawData(kKallakMalcolmSeq, temp);
+	_seq_MalcolmTree = _staticres->loadRawData(kMalcolmTreeSeq, temp);
+	_seq_WestwoodLogo = _staticres->loadRawData(kWestwoodLogoSeq, temp);
+	_seq_Demo1 = _staticres->loadRawData(kDemo1Seq, temp);
+	_seq_Demo2 = _staticres->loadRawData(kDemo2Seq, temp);
+	_seq_Demo3 = _staticres->loadRawData(kDemo3Seq, temp);
+	_seq_Demo4 = _staticres->loadRawData(kDemo4Seq, temp);
+	_seq_Reunion = _staticres->loadRawData(kOutroReunionSeq, temp);
+
+	_seq_WSATable = _staticres->loadStrings(kIntroWSAStrings, _seq_WSATable_Size);
+	_seq_CPSTable = _staticres->loadStrings(kIntroCPSStrings, _seq_CPSTable_Size);
+	_seq_COLTable = _staticres->loadStrings(kIntroCOLStrings, _seq_COLTable_Size);
+	_seq_textsTable = _staticres->loadStrings(kIntroStrings, _seq_textsTable_Size);
+
+	_itemList = _staticres->loadStrings(kItemNames, _itemList_Size);
+	_takenList = _staticres->loadStrings(kTakenStrings, _takenList_Size);
+	_placedList = _staticres->loadStrings(kPlacedStrings, _placedList_Size);
+	_droppedList = _staticres->loadStrings(kDroppedStrings, _droppedList_Size);
+	_noDropList = _staticres->loadStrings(kNoDropStrings, _noDropList_Size);
+	_putDownFirst = _staticres->loadStrings(kPutDownString, _putDownFirst_Size);
+	_waitForAmulet = _staticres->loadStrings(kWaitAmuletString, _waitForAmulet_Size);
+	_blackJewel = _staticres->loadStrings(kBlackJewelString, _blackJewel_Size);
+	_poisonGone = _staticres->loadStrings(kPoisonGoneString, _poisonGone_Size);
+	_healingTip = _staticres->loadStrings(kHealingTipString, _healingTip_Size);
+	_thePoison = _staticres->loadStrings(kThePoisonStrings, _thePoison_Size);
+	_fluteString = _staticres->loadStrings(kFluteStrings, _fluteString_Size);
+	_wispJewelStrings = _staticres->loadStrings(kWispJewelStrings, _wispJewelStrings_Size);
+	_magicJewelString = _staticres->loadStrings(kMagicJewelStrings, _magicJewelString_Size);
+	_flaskFull = _staticres->loadStrings(kFlaskFullString, _flaskFull_Size);
+	_fullFlask = _staticres->loadStrings(kFullFlaskString, _fullFlask_Size);
+	_veryClever = _staticres->loadStrings(kVeryCleverString, _veryClever_Size);
+	_homeString = _staticres->loadStrings(kOutroHomeString, _homeString_Size);
+
+	_healingShapeTable = _staticres->loadShapeTable(kHealing1Shapes, _healingShapeTableSize);
+	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);	
+	_posionDeathShapeTable = _staticres->loadShapeTable(kPoisonDeathShapes, _posionDeathShapeTableSize);
+	_fluteAnimShapeTable = _staticres->loadShapeTable(kFluteShapes, _fluteAnimShapeTableSize);
+	_winterScrollTable = _staticres->loadShapeTable(kWinter1Shapes, _winterScrollTableSize);
+	_winterScroll1Table = _staticres->loadShapeTable(kWinter2Shapes, _winterScroll1TableSize);
+	_winterScroll2Table = _staticres->loadShapeTable(kWinter3Shapes, _winterScroll2TableSize);
+	_drinkAnimationTable = _staticres->loadShapeTable(kDrinkShapes, _drinkAnimationTableSize);
+	_brandonToWispTable = _staticres->loadShapeTable(kWispShapes, _brandonToWispTableSize);
+	_magicAnimationTable = _staticres->loadShapeTable(kMagicAnimShapes, _magicAnimationTableSize);
+	_brandonStoneTable = _staticres->loadShapeTable(kBranStoneShapes, _brandonStoneTableSize);
+
+	_characterImageTable = _staticres->loadStrings(kCharacterImageFilenames, _characterImageTableSize);
+
+	_roomFilenameTable = _staticres->loadStrings(kRoomFilenames, _roomFilenameTableSize);
+	
+	_amuleteAnim = _staticres->loadRawData(kAmuleteAnimSeq, temp);
+	
+	_specialPalettes = _staticres->loadPaletteTable(kPaletteList, temp);
+
+	// copied static res
+
+	// room list
+	const Room *tempRoomList = _staticres->loadRoomTable(kRoomList, _roomTableSize);
+
+	if (_roomTableSize > 0) {
+		_roomTable = new Room[_roomTableSize];
+		assert(_roomTable);
+
+		memcpy(_roomTable, tempRoomList, _roomTableSize*sizeof(Room));
+		tempRoomList = 0;
+
+		_staticres->unloadId(kRoomList);
+	}
+
+	// default shape table
+	const Shape *tempShapeTable = _staticres->loadShapeTable(kDefaultShapes, _defaultShapeTableSize);
+
+	if (_defaultShapeTableSize > 0) {
+		_defaultShapeTable = new Shape[_defaultShapeTableSize];
+		assert(_defaultShapeTable);
+
+		memcpy(_defaultShapeTable, tempShapeTable, _defaultShapeTableSize*sizeof(Shape));
+		tempShapeTable = 0;
+
+		_staticres->unloadId(kDefaultShapes);
+	}
 }
 
 void KyraEngine::loadMouseShapes() {

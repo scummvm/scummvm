@@ -32,7 +32,7 @@
 
 namespace Kyra {
 
-void KyraEngine::waitForChatToFinish(int16 chatDuration, char *chatStr, uint8 charNum) {
+void KyraEngine::waitForChatToFinish(int16 chatDuration, const char *chatStr, uint8 charNum) {
 	debugC(9, kDebugLevelMain, "KyraEngine::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum); 
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
@@ -229,7 +229,7 @@ int KyraEngine::initCharacterChat(int8 charNum) {
 	return 1;
 }
 
-void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
+void KyraEngine::characterSays(const char *chatStr, int8 charNum, int8 chatDuration) {
 	debugC(9, kDebugLevelMain, "KyraEngine::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
@@ -302,7 +302,7 @@ void KyraEngine::characterSays(char *chatStr, int8 charNum, int8 chatDuration) {
 	endCharacterChat(charNum, convoInitialized);
 }
 
-void KyraEngine::drawSentenceCommand(char *sentence, int color) {
+void KyraEngine::drawSentenceCommand(const char *sentence, int color) {
 	debugC(9, kDebugLevelMain, "KyraEngine::drawSentenceCommand('%s', %i)", sentence, color);
 	_screen->hideMouse();
 	_screen->fillRect(8, 143, 311, 152, 12);
@@ -322,7 +322,7 @@ void KyraEngine::drawSentenceCommand(char *sentence, int color) {
 	_fadeText = false;
 }
 
-void KyraEngine::updateSentenceCommand(char *str1, char *str2, int color) {
+void KyraEngine::updateSentenceCommand(const char *str1, const char *str2, int color) {
 	debugC(9, kDebugLevelMain, "KyraEngine::updateSentenceCommand('%s', '%s', %i)", str1, str2, color);
 	char sentenceCommand[500];
 	strncpy(sentenceCommand, str1, 500);
@@ -551,7 +551,7 @@ void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1,
 	_screen->setFont(curFont);
 }
 
-void TextDisplayer::printCharacterText(char *text, int8 charNum, int charX) {
+void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {
 	debugC(9, kDebugLevelMain, "TextDisplayer::printCharacterText('%s', %d, %d)", text, charNum, charX);
 	uint8 colorTable[] = {0x0F, 0x9, 0x0C9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
 	int top, left, x1, x2, w, x;
