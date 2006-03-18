@@ -50,7 +50,7 @@ enum evalErrors {
 };
 
 struct IgnoreCaseComparator {
-  int operator()(const String& x, const String& y) const { return scumm_stricmp(x.c_str(), y.c_str()); }
+  int operator()(const String& x, const String& y) const { return strcmp(x.c_str(), y.c_str()); }
 };
 
 class Eval {
