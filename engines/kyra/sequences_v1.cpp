@@ -787,9 +787,56 @@ void KyraEngine::seq_fillFlaskWithWater(int item, int type) {
 	characterSays(_fullFlask[type], 0, -2);
 }
 
-void KyraEngine::seq_playDrinkPotionAnim(int unk1, int unk2, int flags) {
-	debugC(9, kDebugLevelMain, "KyraEngine::seq_playDrinkPotionAnim(%d, %d, %d)", unk1, unk2, flags);
-	// XXX
+void KyraEngine::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
+	debugC(9, kDebugLevelMain, "KyraEngine::seq_playDrinkPotionAnim(%d, %d, %d)", item, unk2, flags);
+	uint8 red, green, blue;
+	
+	switch (item) {
+		case 60:
+		case 61:
+			red = 63;
+			green = blue = 6;
+			break;
+		case 62:
+		case 63:
+			red = green = 0;
+			blue = 67;
+			break;
+		case 64:
+		case 65:
+			red = 84;
+			green = 78;
+			blue = 14;
+			break;
+		case 66:
+			red = blue = 0;
+			green = 48;
+			break;
+		case 67:
+			red = 100;
+			green = 48;
+			blue = 23;
+			break;
+		case 68:
+			red = 73;
+			green = 0;
+			blue = 89;
+			break;
+		case 69:
+			red = green = 73;
+			blue = 86;
+			break;
+		default:
+			red = 33;
+			green = 66;
+			blue = 100;
+	}
+	red   = (uint8)((double)red   * 0.63);
+	green = (uint8)((double)green * 0.63);
+	blue  = (uint8)((double)blue  * 0.63);
+	
+	_screen->setPaletteIndex(0xFE, red, green, blue);
+	
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
 	_currentCharacter->facing = 5;
@@ -827,6 +874,7 @@ void KyraEngine::seq_playDrinkPotionAnim(int unk1, int unk2, int flags) {
 	_currentCharacter->currentAnimFrame = 7;
 	_animator->animRefreshNPC(0);
 	freeShapes123();
+	_screen->setPaletteIndex(0xFE, 30, 30, 30);
 	_screen->showMouse();
 }
 

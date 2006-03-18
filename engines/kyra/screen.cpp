@@ -234,6 +234,14 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 	}
 }
 
+void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
+	debugC(9, kDebugLevelScreen, "Screen::setPaletteIndex(%u, %u, %u, %u)", index, red, green, blue);
+	_currentPalette[index * 3 + 0] = red;
+	_currentPalette[index * 3 + 1] = green;
+	_currentPalette[index * 3 + 2] = blue;
+	setScreenPalette(_currentPalette);
+}
+
 void Screen::setScreenPalette(const uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 	memcpy(_screenPalette, palData, 768);

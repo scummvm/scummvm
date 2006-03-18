@@ -99,6 +99,7 @@ public:
 	void fadeToBlack();
 	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
 	void fadePalette(const uint8 *palData, int delay);
+	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	void setScreenPalette(const uint8 *palData);
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
 	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);

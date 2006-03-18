@@ -1331,7 +1331,8 @@ int KyraEngine::cmd_waitForConfirmationMouseClick(ScriptState *script) {
 		delay(10);
 	}
 	// }
-	// XXX processButtonList calls
+	processButtonList(_buttonList);
+	_skipFlag = false;
 	script->variables[1] = _mouseX;
 	script->variables[2] = _mouseY;
 	return 0;
