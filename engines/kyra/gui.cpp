@@ -409,7 +409,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 		return 0;
 	}
 	// XXX
-
+	_screen->setPaletteIndex(0xFE, 60, 60, 0);
 	for (int i = 0; i < 6; i++) {
 		_menuButtonData[i].process0 = _menuButtonData[i].process1 = _menuButtonData[i].process2 = 4;
 		_menuButtonData[i].process0PtrCallback = &KyraEngine::drawShadedBoxCallback;
