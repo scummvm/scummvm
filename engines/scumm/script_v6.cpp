@@ -1347,7 +1347,7 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 
 	if (_game.version == 6) {
 		camera._cur.x = camera._dest.x = a->_pos.x;
-		setCameraFollows(a);
+		setCameraFollows(a, (_game.heversion >= 60));
 	}
 
 	_fullRedraw = true;

@@ -1055,7 +1055,7 @@ protected:
 	void cameraMoved();
 	void setCameraAtEx(int at);
 	virtual void setCameraAt(int pos_x, int pos_y);
-	virtual void setCameraFollows(Actor *a);
+	virtual void setCameraFollows(Actor *a, bool setCamera = false);
 	virtual void moveCamera();
 	virtual void panCameraTo(int x, int y);
 	void clampCameraPos(Common::Point *pt);

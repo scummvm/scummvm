@@ -59,7 +59,7 @@ void ScummEngine::setCameraAt(int pos_x, int pos_y) {
 		stopTalk();
 }
 
-void ScummEngine::setCameraFollows(Actor *a) {
+void ScummEngine::setCameraFollows(Actor *a, bool setCamera) {
 
 	int t, i;
 
@@ -75,7 +75,7 @@ void ScummEngine::setCameraFollows(Actor *a) {
 
 	t = a->_pos.x / 8 - _screenStartStrip;
 
-	if (t < camera._leftTrigger || t  > camera._rightTrigger)
+	if (t < camera._leftTrigger || t  > camera._rightTrigger || setCamera == true)
 		setCameraAt(a->_pos.x, 0);
 
 	for (i = 1; i < _numActors; i++) {
@@ -250,7 +250,7 @@ void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
 	}
 }
 
-void ScummEngine_v7::setCameraFollows(Actor *a) {
+void ScummEngine_v7::setCameraFollows(Actor *a, bool setCamera) {
 
 	byte oldfollow = camera._follows;
 	int ax, ay;
