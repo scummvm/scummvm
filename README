@@ -332,8 +332,14 @@ the section on Reporting Bugs.
             game files being read from the CD. Please copy the game data to
             your harddrive to avoid this.
 
-     Monkey Island 1 (EGA):
+     FM-TOWNS versions:
+          - The Kanji versions require the FM-TOWNS Font ROM
+
+     Humongous Entertainment games:
+          - No support for printing images
+
      Loom (EGA):
+     Monkey Island 1 (EGA):
           - MIDI support requires the Roland update from LucasArts
 
      Beneath a Steel Sky:
@@ -366,8 +372,6 @@ the section on Reporting Bugs.
           - Only default language (English) in data files is supported
             in Amiga and Macintosh versions.
 
-     FM-TOWNS versions:
-          - The Kanji versions require the FM-TOWNS Font ROM
 
 4.0) Supported Platforms:
 ---- --------------------
