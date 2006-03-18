@@ -230,9 +230,9 @@ bool Resource::fileHandle(const char *file, uint32 *size, Common::File &filehand
 ///////////////////////////////////////////
 // Pak file manager
 #define PAKFile_Iterate Common::List<PakChunk*>::iterator start=_files.begin();start != _files.end(); ++start
-PAKFile::PAKFile(const Common::String& file, bool amiga) {
+PAKFile::PAKFile(const Common::String& file, bool isAmiga) {
 	_filename = 0;
-	_amiga = amiga;
+	_isAmiga = isAmiga;
 
 	Common::File pakfile;
 	uint8 *buffer = 0;
@@ -253,7 +253,7 @@ PAKFile::PAKFile(const Common::String& file, bool amiga) {
 	// works with the file
 	uint32 pos = 0, startoffset = 0, endoffset = 0;
 
-	if (!_amiga) {
+	if (!_isAmiga) {
 		startoffset = READ_LE_UINT32(buffer + pos);
 	} else {
 		startoffset = READ_BE_UINT32(buffer + pos);
@@ -272,7 +272,7 @@ PAKFile::PAKFile(const Common::String& file, bool amiga) {
 		if (!(*chunk->_name))
 			break;
 
-		if (!_amiga) {
+		if (!_isAmiga) {
 			endoffset = READ_LE_UINT32(buffer + pos);
 		} else {
 			endoffset = READ_BE_UINT32(buffer + pos);

@@ -43,7 +43,7 @@ class PAKFile {
 
 public:
 
-	PAKFile(const Common::String &file, bool amiga = false);
+	PAKFile(const Common::String &file, bool isAmiga = false);
 	~PAKFile();
 
 	uint8* getFile(const char *file);
