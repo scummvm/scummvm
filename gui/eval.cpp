@@ -205,8 +205,8 @@ void Eval::getToken() {
 	
 	if (!_tokenType && isdelim(_input[_pos])) {
 		*temp++ = _input[_pos++];
-		*temp = 0;                                                      
-		_tokenType = tDelimiter;                                
+		*temp = 0;
+		_tokenType = tDelimiter;
 	}
 }
 
