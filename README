@@ -1224,6 +1224,7 @@ The following keywords are recognized:
         path            string   The path to where a game's data files are
         read_only       bool     If true, ScummVM will never try to overwrite
                                  the configuration file.
+        autosave_period number   The seconds between autosaving (default: 300)
         save_slot       number   The save game number to load on startup.
         savepath        string   The path to where a game will store its
                                  savegames.
