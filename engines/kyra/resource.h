@@ -56,7 +56,7 @@ public:
 private:
 
 	bool _open;
-	bool _amiga;
+	bool _isAmiga;
 	char *_filename;
 	Common::List<PakChunk*> _files; // the entries
 };
