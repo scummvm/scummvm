@@ -488,6 +488,7 @@ begin_credits("Credits");
 	  begin_section("Gob");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Sven Hesse", "DrMcCoy", "");
+		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
