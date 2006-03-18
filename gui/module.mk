@@ -18,7 +18,7 @@ MODULE_OBJS := \
 	ScrollBarWidget.o \
 	TabWidget.o \
 	widget.o \
-	theme.o \
+	ThemeClassic.o \
 	ThemeNew.o \
 	theme-config.o
 
