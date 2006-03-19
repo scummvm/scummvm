@@ -1455,6 +1455,10 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 	if (y > 137) {
 		return false;
 	}
+
+	if (y < 0) {
+		y = 0;
+	}
 	
 	int ypos = 8;
 	if (_scaleMode) {
@@ -1464,8 +1468,6 @@ bool KyraEngine::lineIsPassable(int x, int y) {
 	}
 	
 	x -= (ypos >> 1);
-	if (y < 0)
-		y = 0;
 	
 	int xpos = x;
 	int xtemp = xpos + ypos - 1;
