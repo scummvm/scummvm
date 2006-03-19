@@ -164,14 +164,15 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 	if (!loadWAVFromStream(stream, size, rate, flags, &type))
 		return 0;
 
-	flags |= Audio::Mixer::FLAG_AUTOFREE;
-
 	if (type == 17) // IMA ADPCM
 		return makeADPCMStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);
 
 	byte *data = (byte *)malloc(size);
 	assert(data);
 	stream.read(data, size);
+
+	// Since we allocated our own buffer for the data, we must set the autofree flag.
+	flags |= Audio::Mixer::FLAG_AUTOFREE;
 
 	return makeLinearInputStream(rate, flags, data, size, 0, 0);
 }
