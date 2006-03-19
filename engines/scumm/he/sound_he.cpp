@@ -370,11 +370,11 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			strcpy(buf, buf1);
 		}
 		if (musicFile.open(buf) == false) {
-			warning("playSound: Can't open music file %s", buf);
+			warning("playHESound: Can't open music file %s", buf);
 			return;
 		}
 		if (!getHEMusicDetails(soundID, music_offs, size)) {
-			debug(0, "playSound: musicID %d not found", soundID);
+			debug(0, "playHESound: musicID %d not found", soundID);
 			return;
 		}
 
@@ -402,11 +402,6 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		return;
 	}
 
-	// TODO: Extra sound flags
-	if (heFlags & 1) {
-		flags |= Audio::Mixer::FLAG_LOOP;
-	}
-
 	// Support for sound in later Backyard sports games
 	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF') || READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
 		uint16 compType;
@@ -420,7 +415,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		Common::MemoryReadStream stream(ptr, size);
 
 		if (!loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
-			error("playSound: Not a valid WAV file");
+			error("playHESound: Not a valid WAV file (%d)", soundID);
 		}
 
 		if (compType == 17) {
@@ -435,6 +430,12 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			sound = (char *)malloc(size);
 			memcpy(sound, ptr + stream.pos(), size);
 		}
+
+		// TODO: Extra sound flags
+		if (heFlags & 1) {
+			flags |= Audio::Mixer::FLAG_LOOP;
+		}
+
 		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
 		_vm->_mixer->playRaw(&_heSoundChannels[heChannel], sound, size, rate, flags, soundID, 255, 0, 0,0, type);
 	}
@@ -466,7 +467,6 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		size = READ_BE_UINT32(ptr + 4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			// Occurs when making fireworks in puttmoon
-			debug(0, "playSound: Invalid sound offset (offset %d, size %d) in sound %d", heOffset, size, soundID);
 			heOffset = 0;
 		}
 		size -= heOffset;
@@ -475,6 +475,11 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			// Used by the piano in Fatty Bear's Birthday Surprise
 			rate = _overrideFreq;
 			_overrideFreq = 0;
+		}
+
+		// TODO: Extra sound flags
+		if (heFlags & 1) {
+			flags |= Audio::Mixer::FLAG_LOOP;
 		}
 
 		_vm->_mixer->stopHandle(_heSoundChannels[heChannel]);
