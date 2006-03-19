@@ -444,7 +444,9 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
-		ptr += 8 + READ_BE_UINT32(ptr + 12);
+
+		// Skip DIGI/TALK (8) and HSHD (24) blocks
+		ptr += 32;
 
 		if (_vm->_mixer->isSoundHandleActive(_heSoundChannels[heChannel])) {
 			int curSnd = _heChannel[heChannel].sound;
@@ -461,7 +463,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 		}
 
 		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
-		size = READ_BE_UINT32(ptr+4) - 8;
+		size = READ_BE_UINT32(ptr + 4) - 8;
 		if (heOffset < 0 || heOffset > size) {
 			// Occurs when making fireworks in puttmoon
 			debug(0, "playSound: Invalid sound offset (offset %d, size %d) in sound %d", heOffset, size, soundID);
@@ -489,10 +491,12 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
 		priority = *(ptr + 18);
 		rate = READ_LE_UINT16(ptr + 22);
-		ptr += 8 + READ_BE_UINT32(ptr+12);
+
+		// Skip DIGI (8) and HSHD (24) blocks
+		ptr += 32;
 
 		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
-		size = READ_BE_UINT32(ptr+4) - 8;
+		size = READ_BE_UINT32(ptr + 4) - 8;
 
 		flags = Audio::Mixer::FLAG_AUTOFREE;
 
