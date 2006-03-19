@@ -431,6 +431,7 @@ void Sound::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
 			memcpy(sound, ptr + stream.pos(), size);
 		}
 
+		flags |= Audio::Mixer::FLAG_AUTOFREE;
 		// TODO: Extra sound flags
 		if (heFlags & 1) {
 			flags |= Audio::Mixer::FLAG_LOOP;
