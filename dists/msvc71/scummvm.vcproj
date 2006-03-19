@@ -519,6 +519,12 @@
 				RelativePath="..\..\gui\about.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\Actions.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\Actions.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\browser.cpp">
 			</File>
 			<File
@@ -556,6 +562,18 @@
 			</File>
 			<File
 				RelativePath="..\..\gui\EditTextWidget.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\eval.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\eval.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\Key.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\Key.h">
 			</File>
 			<File
 				RelativePath="..\..\gui\launcher.cpp">
@@ -609,10 +627,13 @@
 				RelativePath="..\..\gui\TabWidget.h">
 			</File>
 			<File
-				RelativePath="..\..\gui\theme.cpp">
+				RelativePath="..\..\gui\theme-config.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\theme.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeClassic.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\ThemeNew.cpp">
