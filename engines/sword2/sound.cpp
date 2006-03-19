@@ -270,13 +270,6 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 		return RDERR_INVALIDWAV;
 	}
 
-	// The resource manager must have complete control over when resources
-	// are freed, or reference counting will break horribly. Besides, the
-	// data pointer is not valid for passing to free(). Why the hell is the
-	// AUTOFREE flag set by default anyway?
-
-	flags &= ~Audio::Mixer::FLAG_AUTOFREE;
-
 	if (isReverseStereo())
 		flags |= Audio::Mixer::FLAG_REVERSE_STEREO;
 

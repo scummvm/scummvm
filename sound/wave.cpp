@@ -111,7 +111,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// Prepare the return values.
 	rate = samplesPerSec;
 
-	flags = Audio::Mixer::FLAG_AUTOFREE;
+	flags = 0;
 	if (bitsPerSample == 8)		// 8 bit data is unsigned
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
@@ -163,6 +163,8 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 
 	if (!loadWAVFromStream(stream, size, rate, flags, &type))
 		return 0;
+
+	flags |= Audio::Mixer::FLAG_AUTOFREE;
 
 	if (type == 17) // IMA ADPCM
 		return makeADPCMStream(&stream, size, kADPCMIma, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1);

@@ -136,9 +136,11 @@ void WavSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
 		error("playSound: Not a valid WAV file");
 	}
 
+	flags |= Audio::Mixer::FLAG_AUTOFREE | wavFlags;
+
 	byte *buffer = (byte *)malloc(size);
 	_file->read(buffer, size);
-	_mixer->playRaw(handle, buffer, size, rate, flags | wavFlags);
+	_mixer->playRaw(handle, buffer, size, rate, flags);
 }
 
 void VocSound::playSound(uint sound, Audio::SoundHandle *handle, byte flags) {
