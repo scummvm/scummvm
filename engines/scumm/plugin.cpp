@@ -1027,8 +1027,11 @@ static const SubstResFileNames substResFileNameTable[] = {
 	{ "putttime", "ZeitDemo", kGenMac },
 	{ "putttime", "ZEITDEMO", kGenPC },
 	{ "puttzoo", "Puttzoo Demo", kGenMac },
-	{ "puttzoo", "PuttZoo", kGenMac },
-	{ "puttzoo", "T\xf6\xff-T\xf6\xff\x99 Zoo Demo", kGenMac },
+	{ "puttzoo", "PuttZoo", kGenMac }, 
+
+	{ "puttzoo", "T\xC3\xB6""ff-T\xC3\xB6""ff\xE2\x84\xA2 Zoo Demo", kGenMac },	// German Toeff-Toeff, UTF-8 encoding
+	{ "puttzoo", "T\xF6""ff-T""\xF6""ff\x99 Zoo Demo", kGenMac },	// German Toeff-Toeff, Windows encoding
+
 	{ "puttzoo", "zoodemo", kGenPC },
 	{ "puttzoo", "Zoo Demo", kGenMac },
 	{ "SamsFunShop", "Sam's FunShop", kGenMac },
