@@ -408,7 +408,7 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	_displayMenu = true;
 
 	// XXX setLabels
-	if (_currentCharacter->sceneId == 210) {
+	if (_currentCharacter->sceneId == 210 && _deathHandler == 0xFF) {
 		snd_playSoundEffect(0x36);
 		return 0;
 	}

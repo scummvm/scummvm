@@ -680,7 +680,6 @@ void KyraEngine::mainLoop() {
 		}
 		
 		if (_deathHandler != 0xFF) {
-			_deathHandler = 0xFF;
 			snd_playWanderScoreViaMap(0, 1);
 			snd_playSoundEffect(49);
 			_screen->hideMouse();
@@ -688,6 +687,7 @@ void KyraEngine::mainLoop() {
 			destroyMouseItem();
 			_screen->showMouse();
 			buttonMenuCallback(0);
+			_deathHandler = 0xFF;
 		}
 		
 		if (_brandonStatusBit & 2) {
