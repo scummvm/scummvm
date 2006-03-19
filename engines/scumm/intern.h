@@ -195,6 +195,8 @@ class ScummEngine_v4 : public ScummEngine_v5 {
 public:
 	ScummEngine_v4(GameDetector *detector, OSystem *syst, const ScummGameSettings &gs, uint8 md5sum[16], SubstResFileNames subst);
 
+	virtual void scummInit();
+
 protected:
 	virtual void readIndexFile();
 	virtual void loadCharset(int no);

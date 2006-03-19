@@ -2306,12 +2306,9 @@ void ScummEngine_v5::o5_stringOps() {
 		b = getVarOrDirectByte(PARAM_2);
 		c = getVarOrDirectByte(PARAM_3);
 		ptr = getResourceAddress(rtString, a);
-		if (!(_game.id == GID_LOOM && _game.version == 4)) {	/* FIXME - LOOM256 */
-			if (ptr == NULL)
-				error("String %d does not exist", a);
-			ptr[b] = c;
-		}
-
+		if (ptr == NULL)
+			error("String %d does not exist", a);
+		ptr[b] = c;
 		break;
 
 	case 4:											/* get string char */

@@ -1543,6 +1543,17 @@ void ScummEngine_v2::scummInit() {
 	_inventoryOffset = 0;
 }
 
+void ScummEngine_v4::scummInit() {
+	ScummEngine::scummInit();
+
+	// WORKAROUND for bug in boot script of Loom (CD)
+	// The boot script sets the characters of string 21, 
+	// before creating the string.resource.
+	if (_game.id == GID_LOOM) {
+		res.createResource(rtString, 21, 12);
+	}
+}
+
 void ScummEngine_v6::scummInit() {
 	ScummEngine::scummInit();
 	setDefaultCursor();
@@ -1623,7 +1634,6 @@ void ScummEngine_v99he::scummInit() {
 	int len = resStrLen(basename);
 	ArrayHeader *ah = defineArray(129, kStringArray, 0, 0, 0, len);
 	memcpy(ah->data, basename, len);
-
 }
 #endif
 
