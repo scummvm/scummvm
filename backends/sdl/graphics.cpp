@@ -1276,8 +1276,6 @@ bool OSystem_SDL::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 
-	updateScreen();
-
 	return last;
 }
 
@@ -1285,7 +1283,6 @@ void OSystem_SDL::setMousePos(int x, int y) {
 	if (x != _mouseCurState.x || y != _mouseCurState.y) {
 		_mouseCurState.x = x;
 		_mouseCurState.y = y;
-		updateScreen();
 	}
 }
 
