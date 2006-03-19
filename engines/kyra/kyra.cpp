@@ -683,6 +683,10 @@ void KyraEngine::mainLoop() {
 			_deathHandler = 0xFF;
 			snd_playWanderScoreViaMap(0, 1);
 			snd_playSoundEffect(49);
+			_screen->hideMouse();
+			_screen->setMouseCursor(1, 1, _shapes[4]);
+			destroyMouseItem();
+			_screen->showMouse();
 			buttonMenuCallback(0);
 		}
 		
@@ -727,7 +731,6 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 	char saveLoadSlot[20];
 	char savegameName[14];
 
-	_mousePressFlag = false;
 	uint32 start = _system->getMillis();
 	do {
 		while (_system->pollEvent(event)) {
@@ -765,6 +768,9 @@ void KyraEngine::delay(uint32 amount, bool update, bool isMainLoop) {
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				_mousePressFlag = true;
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+				_mousePressFlag = false;
 				if (_abortWalkFlag2) {
 					_abortWalkFlag = true;
 					_mouseX = event.mouse.x;

@@ -251,7 +251,9 @@ void KyraEngine::processButtonList(Button *list) {
 				if (_mousePressFlag) {
 					if (!(list->flags2 & 1)) {
 						list->flags2 |= 1;
+						list->flags2 |= 4;
 						processButton(list);
+						_screen->updateScreen();
 					}
 				} else {
 					if (list->flags2 & 1) {
@@ -275,6 +277,11 @@ void KyraEngine::processButtonList(Button *list) {
 			if (list->flags2 & 1) {
 				list->flags2 &= 0xFFFE;
 				processButton(list);
+			}
+			if (list->flags2 & 4) {
+				list->flags2 &= 0xFFFB;
+				processButton(list);
+				_screen->updateScreen();
 			}
 			list = list->nextButton;
 			continue;
@@ -353,8 +360,6 @@ void KyraEngine::processMenuButton(Button *button) {
 	if (!_displayMenu)
 		return;
 
-	//_screen->hideMouse();
-
 	if ( !button || (button->flags & 8))
 		return;
 
@@ -374,7 +379,6 @@ void KyraEngine::processMenuButton(Button *button) {
 
 	processButton(button);
 
-	//_screen->showMouse();
 }
 
 int KyraEngine::drawBoxCallback(Button *button) {
@@ -426,7 +430,8 @@ int KyraEngine::buttonMenuCallback(Button *caller) {
 	_menuRestoreScreen = true;
 	_keyboardEvent.pending = 0;
 	_keyboardEvent.repeat = 0;
-
+	_mousePressFlag = false;
+	
 	_toplevelMenu = 0;
 	if (_menuDirectlyToLoad)
 		gui_loadGameMenu(0);
@@ -569,15 +574,17 @@ void KyraEngine::gui_getInput() {
 	OSystem::Event event;
 	uint32 now = _system->getMillis();
 
-	_mousePressFlag = false;
 	_mouseWheel = 0;
 	while (_system->pollEvent(event)) {
 		switch (event.type) {
 			case OSystem::EVENT_QUIT:
 				quitGame();
 				break;
-			case OSystem::EVENT_LBUTTONUP:
+			case OSystem::EVENT_LBUTTONDOWN:
 				_mousePressFlag = true;
+				break;
+			case OSystem::EVENT_LBUTTONUP:
+				_mousePressFlag = false;
 				break;
 			case OSystem::EVENT_MOUSEMOVE:
 				_mouseX = event.mouse.x;
