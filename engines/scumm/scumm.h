@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "scumm/gfx.h"
+#include "scumm/plugin.h"
 #include "scumm/script.h"
 
 #include "sound/mididrv.h"
@@ -65,7 +66,6 @@ class Sound;
 struct Box;
 struct BoxCoords;
 struct FindObjectInRoom;
-struct ScummGameSettings;
 
 // Use g_scumm from error() ONLY
 extern ScummEngine *g_scumm;
@@ -345,39 +345,6 @@ enum ResTypes {
 	rtLast = 21,
 	rtNumTypes = 22
 };
-
-/**
- * Descriptor of a specific SCUMM game. Used internally to store
- * information about the tons of game variants that exist.
- */
-struct ScummGameSettings {
-	const char *gameid;
-	const char *extra;
-	byte id, version, heversion;
-	int midi; // MidiDriverFlags values
-	uint32 features;
-	Common::Platform platform;
-
-};
-
-
-enum GenMethods {
-	kGenMac,
-	kGenMacNoParens,
-	kGenPC,
-	kGenAsIs
-};
-
-struct SubstResFileNames {
-	const char *almostGameID;
-	const char *expandedName;
-	GenMethods genMethod;
-};
-
-
-extern bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize);
-extern int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index);
-
 
 
 

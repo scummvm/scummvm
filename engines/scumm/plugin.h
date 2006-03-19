@@ -24,4 +24,39 @@
 #ifndef SCUMM_PLUGIN_H
 #define SCUMM_PLUGIN_H
 
+#include "common/util.h"
+
+/**
+ * Descriptor of a specific SCUMM game. Used internally to store
+ * information about the tons of game variants that exist.
+ */
+struct ScummGameSettings {
+	const char *gameid;
+	const char *extra;
+	byte id, version, heversion;
+	int midi; // MidiDriverFlags values
+	uint32 features;
+	Common::Platform platform;
+
+};
+
+
+enum GenMethods {
+	kGenMac,
+	kGenMacNoParens,
+	kGenPC,
+	kGenAsIs
+};
+
+struct SubstResFileNames {
+	const char *almostGameID;
+	const char *expandedName;
+	GenMethods genMethod;
+};
+
+
+extern bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize);
+extern int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index);
+
+
 #endif
