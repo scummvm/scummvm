@@ -1212,7 +1212,12 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorLayer(0, 2, 25);
 		_actor[0].cursorX = 0;
 		_actor[0].kicking = false;
-		if (_actor[0].act[2].frame >= 18 ||
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+			if (_actor[0].act[2].frame >= 28) {
+					queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
+					_actor[0].act[2].state = 38;
+			}
+		} else if (_actor[0].act[2].frame >= 18 ||
 			(_actor[0].x < 50 && _actor[0].act[2].frame >= 10) ||
 			 (_actor[0].x > 270 && _actor[0].act[2].frame >= 10)) {
 			if (_currSceneId == 21) {

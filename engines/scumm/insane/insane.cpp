@@ -181,8 +181,8 @@ void Insane::initvars(void) {
 
 
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
-		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 63, "endcrshr.san",
-						 25, 15, 16, 26, 11, 3);
+		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 60, 0, INV_MACE, 63, "endcrshr.san",
+						 25, 15, 16, 26, 13, 3);
 	} else {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 160, 0, INV_MACE, 90, "wr2_rott.san",
 						 26, 16, 17, 27, 11, 3);
@@ -363,7 +363,10 @@ void Insane::initvars(void) {
 	init_scenePropStruct(138, 57, 0, 59, 134, 0xFF, 0xFF, 0xFF, 0, 30, 0);
 
 	_actor[0].damage = 0;
-	_actor[0].maxdamage = 80;
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		_actor[0].maxdamage = 60;
+	else
+		_actor[0].maxdamage = 80;
 	_actor[0].field_8 = 1;
 	_actor[0].frame = 0;
 	_actor[0].tilt = 0;
