@@ -402,8 +402,6 @@ General
 
 X11 backend
 ===========
-* Update it to support the latest OSystem changes
-* Make it work with multiple bitdepths
 * Add frills used by SDL backend like graphic filters usage and CD audio
 
 SDL backend
