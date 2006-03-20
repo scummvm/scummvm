@@ -171,7 +171,7 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 
 	Common::String temp = "";
 	_configFile.getKey("version", "theme", temp);
-	if (temp != "3") {
+	if (temp != "4") {
 		// TODO: improve this detection and handle it nicer
 		warning("Theme config uses a different version (you have: '%s', needed is: '%d')", temp.c_str(), 3);
 		return;
