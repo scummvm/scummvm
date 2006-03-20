@@ -607,9 +607,6 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 	} else if (_game.platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
-	} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		_screenWidth = 320;
-		_screenHeight = 200;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
