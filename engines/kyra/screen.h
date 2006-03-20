@@ -130,7 +130,9 @@ public:
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, int noXor);
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
-		
+
+	void shakeScreen(int times);
+
 	int getRectSize(int x, int y);
 	void hideMouse();
 	void showMouse();

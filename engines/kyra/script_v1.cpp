@@ -1371,7 +1371,15 @@ int KyraEngine::cmd_intPrint(ScriptState *script) {
 }
 
 int KyraEngine::cmd_shakeScreen(ScriptState *script) {
-	warning("STUB: cmd_shakeScreen");
+	debugC(3, kDebugLevelScriptFuncs, "cmd_shakeScreen(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	int waitTicks = stackPos(1);
+	int times = stackPos(0);
+
+	for (int i = 0; i < times; ++i) {
+		_screen->shakeScreen(1);
+		delay(waitTicks * _tickLength);
+	}
+
 	return 0;
 }
 
