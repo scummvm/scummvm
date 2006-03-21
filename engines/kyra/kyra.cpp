@@ -711,6 +711,8 @@ void KyraEngine::mainLoop() {
 		_handleInput = true;
 		delay((frameTime + _gameSpeed) - _system->getMillis(), true, true);
 		_handleInput = false;
+
+		_sound->process();
 	}
 }
 

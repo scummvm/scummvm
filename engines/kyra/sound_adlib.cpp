@@ -95,7 +95,7 @@ private:
 	int snd_unkOpcode3(va_list &list);
 	int snd_readByte(va_list &list);
 	int snd_writeByte(va_list &list);
-	int snd_setUnk5(va_list &list);
+	int snd_getSoundTrigger(va_list &list);
 	int snd_unkOpcode4(va_list &list);
 	int snd_dummy(va_list &list);
 	int snd_getNullvar4(va_list &list);
@@ -106,7 +106,6 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// unk4  - Unknown. Related to sound timing?
 	// unk11 - Unknown. Used for updating random durations.
 	// unk16 - Sound-related. Possibly some sort of pitch bend.
 	// unk18 - Sound-effect. Used for secondaryEffect1()
@@ -286,14 +285,13 @@ private:
 	int updateCallback51(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback52(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback53(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback54(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setSoundTrigger(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setTempoReset(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback56(uint8 *&dataptr, Channel &channel, uint8 value);
 private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// _unk5           - Currently unused, except for updateCallback54()
 	// _unkValue1      - Unknown. Used for updating _unkValue2
 	// _unkValue2      - Unknown. Used for updating _unkValue4
 	// _unkValue3      - Unknown. Used for updating _unkValue2
@@ -330,7 +328,7 @@ private:
 	int8 _flagTrigger;
 	int _curChannel;
 	uint8 _rhythmSection;
-	uint8 _unk5;
+	uint8 _soundTrigger;
 	int _soundsPlaying;
 
 	uint16 _rnd;
@@ -402,6 +400,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	_rnd = 0x1234;
 
 	_tempo = 0;
+	_soundTrigger = 0;
 
 	_unkValue3 = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
@@ -495,8 +494,7 @@ int AdlibDriver::snd_startSong(va_list &list) {
 		}
 	}
 
-	_soundIdTable[_soundsPlaying] = songId;
-	++_soundsPlaying;
+	_soundIdTable[_soundsPlaying++] = songId;
 	_soundsPlaying &= 0x0F;
 
 	return 0;
@@ -548,9 +546,8 @@ int AdlibDriver::snd_writeByte(va_list &list) {
 	return oldValue;
 }
 
-int AdlibDriver::snd_setUnk5(va_list &list) {
-	warning("unimplemented snd_setUnk5");
-	return 0;
+int AdlibDriver::snd_getSoundTrigger(va_list &list) {
+	return _soundTrigger;
 }
 
 int AdlibDriver::snd_unkOpcode4(va_list &list) {
@@ -1793,8 +1790,8 @@ int AdlibDriver::updateCallback53(uint8 *&dataptr, Channel &channel, uint8 value
 	return 0;
 }
 
-int AdlibDriver::updateCallback54(uint8 *&dataptr, Channel &channel, uint8 value) {
-	_unk5 = value;
+int AdlibDriver::update_setSoundTrigger(uint8 *&dataptr, Channel &channel, uint8 value) {
+	_soundTrigger = value;
 	return 0;
 }
 
@@ -1824,7 +1821,7 @@ const AdlibDriver::OpcodeEntry AdlibDriver::_opcodeList[] = {
 	COMMAND(snd_unkOpcode3),
 	COMMAND(snd_readByte),
 	COMMAND(snd_writeByte),
-	COMMAND(snd_setUnk5),
+	COMMAND(snd_getSoundTrigger),
 	COMMAND(snd_unkOpcode4),
 	COMMAND(snd_dummy),
 	COMMAND(snd_getNullvar4),
@@ -1940,7 +1937,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(updateCallback51),
 	COMMAND(updateCallback52),
 	COMMAND(updateCallback53),
-	COMMAND(updateCallback54),
+	COMMAND(update_setSoundTrigger),
 
 	// 72
 	COMMAND(update_setTempoReset),
@@ -2123,6 +2120,15 @@ const uint8 AdlibDriver::_unkTables[][32] = {
 
 #pragma mark -
 
+// At the time of writing, the only known case where Kyra 1 uses sound triggers
+// is in the castle, to cycle between three different songs.
+
+const int SoundAdlibPC::_kyra1SoundTriggers[] = {
+	0, 4, 5, 3
+};
+
+const int SoundAdlibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdlibPC::_kyra1SoundTriggers);
+
 SoundAdlibPC::SoundAdlibPC(Audio::Mixer *mixer, KyraEngine *engine)
 	: Sound(engine, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
@@ -2131,6 +2137,9 @@ SoundAdlibPC::SoundAdlibPC(Audio::Mixer *mixer, KyraEngine *engine)
 
 	_sfxPlayingSound = -1;
 	_soundFileLoaded = "";
+
+	_soundTriggers = _kyra1SoundTriggers;
+	_numSoundTriggers = _kyra1NumSoundTriggers;
 }
 
 SoundAdlibPC::~SoundAdlibPC() {
@@ -2142,6 +2151,21 @@ bool SoundAdlibPC::init() {
 	_driver->callback(2);
 	_driver->callback(16, int(4));
 	return true;
+}
+
+void SoundAdlibPC::process() {
+	uint8 trigger = _driver->callback(11);
+
+	if (trigger < _numSoundTriggers) {
+		int soundId = _soundTriggers[trigger];
+
+		if (soundId) {
+			playTrack(soundId);
+		}
+	} else {
+		warning("Unknown sound trigger %d", trigger);
+		// TODO: At this point, we really want to clear the trigger...
+	}
 }
 
 void SoundAdlibPC::setVolume(int volume) {

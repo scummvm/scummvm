@@ -45,19 +45,20 @@ public:
 	virtual ~Sound();
 
 	virtual bool init() = 0;
-	
+	virtual void process() {}
+
 	virtual void setVolume(int volume) = 0;
 	virtual int getVolume() = 0;
-	
+
 	virtual void loadMusicFile(const char *file) = 0;
-	
+
 	virtual void playTrack(uint8 track) = 0;
 	virtual void haltTrack() = 0;
-	
+
 	virtual void playSoundEffect(uint8 track) = 0;
-	
+
 	virtual void beginFadeOut() = 0;
-	
+
 	void voicePlay(const char *file);
 	void voiceUnload() {}
 	bool voiceIsPlaying();
@@ -70,12 +71,12 @@ private:
 	AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
 	Common::File _compressHandle;
-	
+
 	struct SpeechCodecs {
 		const char *fileext;
 		AudioStream *(*streamFunc)(Common::File*, uint32);
 	};
-	
+
 	static const SpeechCodecs _supportedCodes[];
 };
 
@@ -87,6 +88,7 @@ public:
 	~SoundAdlibPC();
 
 	bool init();
+	void process();
 
 	void setVolume(int volume);
 	int getVolume();
@@ -114,11 +116,16 @@ private:
 
 	uint8 _sfxPriority;
 	uint8 _sfxFourthByteOfSong;
+
+	int _numSoundTriggers;
+	const int *_soundTriggers;
+
+	static const int _kyra1NumSoundTriggers;
+	static const int _kyra1SoundTriggers[];
 };
 
 class SoundMidiPC : public MidiDriver, public Sound {
 public:
-
 	SoundMidiPC(MidiDriver *driver, Audio::Mixer *mixer, KyraEngine *engine);
 	~SoundMidiPC();
 
@@ -128,10 +135,10 @@ public:
 	int getVolume() { return _volume; }
 
 	void loadMusicFile(const char *file);
-	
+
 	void playTrack(uint8 track);
 	void haltTrack();
-	
+
 	void playSoundEffect(uint8 track);
 
 	void beginFadeOut();
@@ -148,9 +155,9 @@ public:
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
-	
+
 	void setPassThrough(bool b)	{ _passThrough = b; }
-	
+
 	void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
 	bool isMT32() { return _nativeMT32; }
 
@@ -159,7 +166,7 @@ private:
 	void stopMusic();
 	void loadSoundEffectFile(const char *file);
 	void loadSoundEffectFile(uint8 *data, uint32 size);
-	
+
 	void stopSoundEffect();
 
 	static void onTimer(void *data);
