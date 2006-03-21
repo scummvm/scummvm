@@ -36,6 +36,8 @@
 #define kShadowTr3 64
 #define kShadowTr4 128
 
+#define THEME_VERSION 4
+
 using Graphics::Surface;
 
 /** Specifies the currently active 16bit pixel format, 555 or 565. */
@@ -171,9 +173,9 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 
 	Common::String temp = "";
 	_configFile.getKey("version", "theme", temp);
-	if (temp != "4") {
+	if (atoi(temp.c_str()) != THEME_VERSION) {
 		// TODO: improve this detection and handle it nicer
-		warning("Theme config uses a different version (you have: '%s', needed is: '%d')", temp.c_str(), 4);
+		warning("Theme config uses a different version (you have: '%s', needed is: '%d')", temp.c_str(), THEME_VERSION);
 		return;
 	}
 	
