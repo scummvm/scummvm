@@ -128,6 +128,25 @@ uint16 SimonEngine::readUint16Wrapper(const void *src) {
 		return READ_BE_UINT16(src);
 }
 
+void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &srcSize, uint32 &dstSize) {
+	Common::File in;
+
+	int offsSize = (getPlatform() == Common::kPlatformAmiga) ? 16 : 12;
+
+	/* read offsets from index */
+	in.open(filename);
+	if (in.isOpen() == false) {
+		error("Can't open index file '%s'", filename);
+	}
+
+	in.seek(number * offsSize, SEEK_SET);
+	offset = in.readUint32LE();
+	dstSize = in.readUint32LE();
+	srcSize = in.readUint32LE();
+	file = in.readUint32LE();
+	in.close();
+}
+
 void SimonEngine::loadGamePcFile(const char *filename) {
 	Common::File in;
 	int num_inited_objects;

@@ -456,6 +456,7 @@ protected:
 	void readItemChildren(Common::File *in, Item *item, uint tmp);
 	void readItemFromGamePc(Common::File *in, Item *item);
 	void loadGamePcFile(const char *filename);
+	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 
 	void palette_fadeout(uint32 *pal_values, uint num);
 	

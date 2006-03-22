@@ -417,14 +417,42 @@ static GameMD5 gameMD5[] = {
 	{ GID_SIMON2WIN_PL,    "e229f84d46fa83f99b4a7115679f3fb6", "stripped.txt", false},
 	{ GID_SIMON2WIN_PL,    "2082f8d02075e590300478853a91ffd9", "tbllist", false},
 
-	{ GID_FEEBLEFILES_2CD, "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
-	{ GID_FEEBLEFILES_2CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+	{ GID_FEEBLEFILES_AMI_DE, "bcd76ac080003eee3649df18db25b60e", "game22", false },
+	{ GID_FEEBLEFILES_AMI_DE, "f550f7915c5ce3a68c9f870f507449c2", "gfxindex.dat", false},
+	{ GID_FEEBLEFILES_AMI_DE, "bdb4cf3eacfeffc3aed4f90bf87c5690", "sfxindex.dat", false},
+	{ GID_FEEBLEFILES_AMI_DE, "e0f9e91213e4b6f684e2a9a67d7a4660", "spindex.dat", false},
+	{ GID_FEEBLEFILES_AMI_DE, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
 
-	{ GID_FEEBLEFILES_4CD, "a8746407a5b20a7da0da0a14c380af1c", "game22", false },
-	{ GID_FEEBLEFILES_4CD, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+	{ GID_FEEBLEFILES_AMI_UK, "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
+	{ GID_FEEBLEFILES_AMI_UK, "f550f7915c5ce3a68c9f870f507449c2", "gfxindex.dat", false},
+	{ GID_FEEBLEFILES_AMI_UK, "bdb4cf3eacfeffc3aed4f90bf87c5690", "sfxindex.dat", false},
+	{ GID_FEEBLEFILES_AMI_UK, "e0f9e91213e4b6f684e2a9a67d7a4660", "spindex.dat", false},
+	{ GID_FEEBLEFILES_AMI_UK, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
 
-	{ GID_FEEBLEFILES_DE, "bcd76ac080003eee3649df18db25b60e", "game22", false },
-	{ GID_FEEBLEFILES_DE, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+	{ GID_FEEBLEFILES_MAC_DE, "bcd76ac080003eee3649df18db25b60e", "game22", false },
+	{ GID_FEEBLEFILES_MAC_DE, "11a4853cb35956846976e9473ee0e41e", "graphics.vga", false},
+	{ GID_FEEBLEFILES_MAC_DE, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_MAC_FR, "ba90b40a47726039671d9e91630dd7ed", "game22", false },
+	{ GID_FEEBLEFILES_MAC_FR, "11a4853cb35956846976e9473ee0e41e", "graphics.vga", false},
+	{ GID_FEEBLEFILES_MAC_FR, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_MAC_SP, "71d7d2d5e479b053c5a9757f1702c9c3", "game22", false },
+	{ GID_FEEBLEFILES_MAC_SP, "11a4853cb35956846976e9473ee0e41e", "graphics.vga", false},
+	{ GID_FEEBLEFILES_MAC_SP, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_MAC_UK, "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
+	{ GID_FEEBLEFILES_MAC_UK, "11a4853cb35956846976e9473ee0e41e", "graphics.vga", false},
+	{ GID_FEEBLEFILES_MAC_UK, "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_2CD,    "629762ea9ca9ee9ff85f4774d219f5c7", "game22", false },
+	{ GID_FEEBLEFILES_2CD,    "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_4CD,    "a8746407a5b20a7da0da0a14c380af1c", "game22", false },
+	{ GID_FEEBLEFILES_4CD,    "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
+
+	{ GID_FEEBLEFILES_DE,     "bcd76ac080003eee3649df18db25b60e", "game22", false },
+	{ GID_FEEBLEFILES_DE,     "0bbfee8e69739111eb36b0d138da8ddf", "tbllist", false},
 };
 
 // Simon the Sorcerer 1
@@ -485,6 +513,20 @@ static GameFileDescription SIMON2_GameFiles[] = {
 // The Feeble Files
 static GameFileDescription FEEBLEFILES_GameFiles[] = {
 	{"game22", GAME_BASEFILE},
+	{"tbllist", GAME_TBLFILE},
+};
+
+static GameFileDescription FEEBLEFILES_AMI_GameFiles[] = {
+	{"game22", GAME_BASEFILE},
+	{"gfxindex.dat", GAME_GFXIDXFILE},
+	{"sfxindex.dat", GAME_SFXIDXFILE},
+	{"spindex.dat", GAME_SPIDXFILE},
+	{"tbllist", GAME_TBLFILE},
+};
+
+static GameFileDescription FEEBLEFILES_MAC_GameFiles[] = {
+	{"game22", GAME_BASEFILE},
+	{"graphics.vga", GAME_GFXIDXFILE},
 	{"tbllist", GAME_TBLFILE},
 };
 
@@ -1076,7 +1118,85 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
-	// The Feeble Files - English 2CD
+	// The Feeble Files - English Amiga CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_AMI_UK,
+		"CD",
+		ARRAYSIZE(FEEBLEFILES_AMI_GameFiles),
+		FEEBLEFILES_AMI_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::EN_USA,
+		Common::kPlatformAmiga,
+	},
+
+	// The Feeble Files - German Amiga CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_AMI_DE,
+		"CD",
+		ARRAYSIZE(FEEBLEFILES_AMI_GameFiles),
+		FEEBLEFILES_AMI_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::DE_DEU,
+		Common::kPlatformAmiga,
+	},
+
+	// The Feeble Files - English Macintosh CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_MAC_UK,
+		"CD",
+		ARRAYSIZE(FEEBLEFILES_MAC_GameFiles),
+		FEEBLEFILES_MAC_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+	},
+
+	// The Feeble Files - French Macintosh CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_MAC_FR,
+		"CD",
+		ARRAYSIZE(FEEBLEFILES_MAC_GameFiles),
+		FEEBLEFILES_MAC_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::FR_FRA,
+		Common::kPlatformMacintosh,
+	},
+
+	// The Feeble Files - German Macintosh CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_MAC_DE,
+		"CD",
+		ARRAYSIZE(FEEBLEFILES_MAC_GameFiles),
+		FEEBLEFILES_MAC_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::DE_DEU,
+		Common::kPlatformMacintosh,
+	},
+
+	// The Feeble Files - Spanish Macintosh CD
+	{
+		"feeble",
+		GType_FF,
+		GID_FEEBLEFILES_MAC_SP,
+		"CD",
+		ARRAYSIZE(FEEBLEFILES_MAC_GameFiles),
+		FEEBLEFILES_MAC_GameFiles,
+		GF_OLD_BUNDLE | GF_TALKIE,
+		Common::ES_ESP,
+		Common::kPlatformMacintosh,
+	},
+
+	// The Feeble Files - English Windows 2CD
 	{
 		"feeble",
 		GType_FF,
@@ -1089,7 +1209,7 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
-	// The Feeble Files - English 4CD
+	// The Feeble Files - English Windows 4CD
 	{
 		"feeble",
 		GType_FF,
@@ -1102,7 +1222,7 @@ static GameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 	},
 
-	// The Feeble Files - German 4CD
+	// The Feeble Files - German Windows 4CD
 	{
 		"feeble",
 		GType_FF,

@@ -48,6 +48,10 @@ extern bool isSmartphone(void);
 #include "globals.h"
 #endif
 
+#ifdef USE_ZLIB
+#include <zlib.h>
+#endif
+
 using Common::File;
 
 namespace Simon {
@@ -456,6 +460,17 @@ int SimonEngine::init(GameDetector &detector) {
 	// Add default file directories for Acorn version
 	File::addDefaultDirectory(_gameDataPath + "execute/");
 	File::addDefaultDirectory(_gameDataPath + "EXECUTE/");
+
+	// Add default file directories for Amiga & Macintosh
+	// versions of The Feeble Files
+	File::addDefaultDirectory(_gameDataPath + "gfx/");
+	File::addDefaultDirectory(_gameDataPath + "GFX/");
+	File::addDefaultDirectory(_gameDataPath + "movies/");
+	File::addDefaultDirectory(_gameDataPath + "MOVIES/");
+	File::addDefaultDirectory(_gameDataPath + "sfx/");
+	File::addDefaultDirectory(_gameDataPath + "SFX/");
+	File::addDefaultDirectory(_gameDataPath + "speech/");
+	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
 
 	// Detect game
 	if (!initGame()) {
@@ -2250,7 +2265,10 @@ void SimonEngine::loadZone(uint vga_res) {
 
 	vpe->vgaFile1 = read_vga_from_datfile_2(vga_res * 2, 1);
 	vpe->vgaFile2 = read_vga_from_datfile_2(vga_res * 2 + 1, 2);
-	vpe->sfxFile = read_vga_from_datfile_2(vga_res * 2, 3);
+
+	vpe->sfxFile =  NULL;
+	if (getGameType() == GType_FF && getPlatform() == Common::kPlatformWindows)
+		read_vga_from_datfile_2(vga_res * 2, 3);
 
 }
 
@@ -3676,7 +3694,52 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 	// is base on: 2 (lines) * 320 (screen width) * 10 (textheight) -- olki
 	int extraBuffer = (id == 5 ? 6400 : 0);
 
-	if (getFeatures() & GF_OLD_BUNDLE) {
+	if (getGameType() == GType_FF && getPlatform() != Common::kPlatformWindows) {
+#ifdef USE_ZLIB
+		File in;
+		char buf[15];
+		byte *dst = NULL;
+
+		uint32 file, offset, srcSize, dstSize;
+		if (getPlatform() == Common::kPlatformAmiga) {
+			loadOffsets((const char*)"gfxindex.dat", id / 2 * 3 + type, file, offset, srcSize, dstSize);
+		} else {
+			loadOffsets((const char*)"graphics.vga", id / 2 * 3 + type, file, offset, srcSize, dstSize);
+		}
+
+		if (getPlatform() == Common::kPlatformAmiga)
+			sprintf(buf, "GFX%d.VGA", file);
+		else
+			sprintf(buf, "graphics.vga");
+
+		in.open(buf);
+		if (in.isOpen() == false)
+			error("read_vga_from_datfile_2: can't open %s", buf);
+
+		dst = setup_vga_destination(dstSize);
+
+		in.seek(offset, SEEK_SET);
+		if (srcSize != dstSize) {
+			byte *srcBuffer = (byte *)malloc(srcSize);
+
+			if (in.read(srcBuffer, srcSize) != srcSize)
+				error("read_vga_from_datfile_2: read failed");
+
+			unsigned long decompressedSize = dstSize;
+			int result = uncompress(dst, &decompressedSize, srcBuffer, srcSize);
+			if (result != Z_OK)
+				error("read_vga_from_datfile_2() Zlib uncompress error");
+			free(srcBuffer);
+		} else {
+			if (in.read(dst, dstSize) != dstSize)
+				error("read_vga_from_datfile_2: read failed");
+		}
+		in.close();
+#else
+		error("Zlib support is required for Amiga and Macintosh versions");
+#endif
+		return dst;
+	} else if (getFeatures() & GF_OLD_BUNDLE) {
 		File in;
 		char buf[15];
 		uint32 size;
