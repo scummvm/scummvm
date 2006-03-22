@@ -272,7 +272,8 @@ enum Language {
 	GERMAN   = 'G',
 	HEBREW   = 'H',
 	ITALIAN  = 'I',
-	SPANISH  = 'S'
+	SPANISH  = 'S',
+	RUSSIAN  = 'R'
 };
 
 

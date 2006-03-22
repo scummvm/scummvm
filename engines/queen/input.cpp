@@ -56,6 +56,7 @@ Input::Input(Language language, OSystem *system) :
 
 	switch (language) {
 	case ENGLISH:
+	case RUSSIAN:
 		_currentCommandKeys = _commandKeys[0];
 		break;
 	case GERMAN:

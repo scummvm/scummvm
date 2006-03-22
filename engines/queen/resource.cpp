@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/config-manager.h"
 #include "queen/resource.h"
 
 namespace Queen {
@@ -174,6 +175,8 @@ void Resource::checkJASVersion() {
 Language Resource::getLanguage() const {
 	switch (_versionString[1]) {
 	case 'E':
+		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS)
+			return RUSSIAN;
 		return ENGLISH;
 	case 'G':
 		return GERMAN;
