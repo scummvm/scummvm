@@ -325,13 +325,13 @@ void SimonEngine::vc3_loadSprite() {
 		vgaSpriteId = vcReadNextWord();	/* 2 */
 		fileId = vgaSpriteId / 100;
 	} else {
-		fileId = vcReadNextWord();		/* 0 */
+		fileId = vcReadNextWord();	/* 0 */
 		vgaSpriteId = vcReadNextWord();	/* 2 */
 	}
 
 	x = vcReadNextWord();			/* 4 */
 	y = vcReadNextWord();			/* 6 */
-	palette = vcReadNextWord();			/* 8 */
+	palette = vcReadNextWord();		/* 8 */
 
 	/* 2nd param ignored with simon1 */
 	if (isSpriteLoaded(vgaSpriteId, fileId))
@@ -1327,7 +1327,6 @@ void SimonEngine::drawImages(VC10_state *state) {
 			/* vc10_helper_7 */
 		}
 	}
-
 }
 
 void SimonEngine::vc11_clearPathFinder() {
@@ -2116,7 +2115,6 @@ void SimonEngine::vc62_fastFadeOut() {
 		if (_nextMusicToPlay != -1)
 			loadMusic(_nextMusicToPlay);
 	}
-
 }
 
 void SimonEngine::vc63_fastFadeIn() {
