@@ -879,7 +879,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				_scaleWidth = state->width;
 				_scaleHeight = state->height;
 			} else {
-				scaleClip(state->height, state->width, state->y, state->x, _scrollY);
+				scaleClip(state->height, state->width, state->y, state->x, state->y + _scrollY);
 			}
 		} else 	if (state->flags & kDFOverlayed) {
 			state->surf_addr = getScaleBuf();
@@ -913,7 +913,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 			_vgaCurSpritePriority /= 10;
 			if (_vgaCurSpritePriority != 900) {
-				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scrollY);
+				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scaleY + _scrollY);
 			}
 		} else {
 			if (drawImages_clip(state) == 0)
