@@ -768,8 +768,11 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	state.width = state.draw_width = width;	/* cl */
+	state.width = state.draw_width = width;		/* cl */
 	state.height = state.draw_height = height;	/* ch */
+
+	state.x_skip = 0;				/* colums to skip = bh */
+	state.y_skip = 0;				/* rows to skip   = bl */
 
 	state.surf2_addr = getBackBuf();
 	state.surf2_pitch = _dxSurfacePitch;
@@ -794,9 +797,6 @@ bool SimonEngine::drawImages_clip(VC10_state *state) {
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		state->draw_width = state->width * 2;
 	} 
-
-	state->x_skip = 0;				/* colums to skip = bh */
-	state->y_skip = 0;				/* rows to skip   = bl */
 
 	cur = state->x;
 	if (cur < 0) {
