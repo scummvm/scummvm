@@ -295,8 +295,8 @@ protected:
 
 	uint _base_time;
 
-	uint _mouseX, _mouseY;
-	uint _mouseXOld, _mouseYOld;
+	int _mouseX, _mouseY;
+	int _mouseXOld, _mouseYOld;
 
 	Item *_dummyItem1;
 	Item *_dummyItem2;
@@ -309,7 +309,7 @@ protected:
 	uint16 _videoVar7;
 	volatile uint16 _paletteColorCount;
 
-	uint _screenWidth, _screenHeight;
+	int _screenWidth, _screenHeight;
 
 	byte _videoVar4;
 	bool _videoVar5;

@@ -1640,12 +1640,12 @@ void SimonEngine::handle_mouse_moved() {
 	_system->showMouse(true);
 	pollMouseXY();
 
-	if (_mouseX >= 32768)
+	if (_mouseX <= 0)
 		_mouseX = 0;
 	if (_mouseX >= _screenWidth - 1)
 		_mouseX = _screenWidth - 1;
 
-	if (_mouseY >= 32768)
+	if (_mouseY <= 0)
 		_mouseY = 0;
 	if (_mouseY >= _screenHeight - 1)
 		_mouseY = _screenHeight - 1;
@@ -3266,7 +3266,7 @@ void SimonEngine::pause() {
 
 void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d) {
 	byte *src, color;
-	uint w, h, i;
+	int w, h, i;
 
 	_lockWord |= 0x8000;
 	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;

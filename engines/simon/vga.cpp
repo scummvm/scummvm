@@ -872,8 +872,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				dst_org++;
 			} while (++w != state->draw_width);
 
-			_vgaCurSpritePriority /= 10;
-			if (_vgaCurSpritePriority != 900) {
+			if (_vgaCurSpritePriority % 10 != 9) {
 				_scaleX = state->x;
 				_scaleY = state->y;
 				_scaleWidth = state->width;
@@ -911,8 +910,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 				dst_org++;
 			} while (++w != state->draw_width);
 
-			_vgaCurSpritePriority /= 10;
-			if (_vgaCurSpritePriority == 900) {
+			if (_vgaCurSpritePriority % 10 == 9) {
 				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scaleY + _scrollY);
 			}
 		} else {
@@ -1033,10 +1031,10 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	xscale = ((w * factor) / 2);
 
 	dstRect.left   = (int16)(x - xscale);
-	if (dstRect.left > 639)
+	if (dstRect.left > _screenWidth - 1)
 		return;
 	dstRect.top    = (int16)(y - (h * factor));
-	if (dstRect.top > 479)
+	if (dstRect.top > _screenHeight - 1)
 		return;
 
 	dstRect.right  = (int16)(x + xscale);
@@ -1049,49 +1047,28 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	_variableArray[22] = _feebleRect.bottom;
 	_variableArray[23] = _feebleRect.right;
 
-	// Oddly enough, _feebleRect is sometimes (always?) "inverted". I do
-	// not know what effect, in any, this has in DirectDraw. For now,
-	// simply un-invert it. It does make the preliminary clipping above
-	// look rather strange, so it could be a bug in our code.
-
-	int top, bottom, left, right;
-
-	if (_feebleRect.top < _feebleRect.bottom) {
-		top = _feebleRect.top;
-		bottom = _feebleRect.bottom;
-	} else {
-		top = _feebleRect.bottom;
-		bottom = _feebleRect.top;
-	}
-
-	if (_feebleRect.left < _feebleRect.right) {
-		left = _feebleRect.left;
-		right = _feebleRect.right;
-	} else {
-		left = _feebleRect.right;
-		right = _feebleRect.left;
-	}
+	debug(0, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
 
 	// Unlike normal rectangles in ScummVM, it seems that in the case of
 	// the destination rectangle the bottom and right coordinates are
 	// considered to be inside the rectangle. For the source rectangle,
 	// I believe that they are not.
 
-	int scaledW = right - left + 1;
-	int scaledH = bottom - top + 1;
+	int scaledW = dstRect.width() + 1;
+	int scaledH = dstRect.height() + 1;
 
 	byte *src = getScaleBuf();
 	byte *dst = getBackBuf();
 
-	dst = dst + _dxSurfacePitch * top + left;
+	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
 
 	for (int dstY = 0; dstY < h; dstY++) {
-		if (top + dstY >= 0 && top + dstY < 480) {
+		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
 			int srcY = (dstY * h) / scaledH;
 			byte *srcPtr = src + _dxSurfacePitch * srcY;
 			byte *dstPtr = dst + _dxSurfacePitch * dstY;
 			for (int dstX = 0; dstX < w; dstX++) {
-				if (left + dstX >= 0 && left + dstX < 640) {
+				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
 					int srcX = (dstX * w) / scaledW;
 					if (srcPtr[srcX])
 						dstPtr[dstX] = srcPtr[srcX];
