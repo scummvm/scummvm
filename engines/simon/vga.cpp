@@ -748,7 +748,7 @@ void SimonEngine::vc10_draw() {
 
 		vcWriteVar(251, _scrollX);
 
-		dst = getFrontBuf();
+		dst = getBackBuf();
 		src = state.depack_src + _scrollX * 4;
 
 		for (w = 0; w < 40; w++) {
@@ -774,10 +774,10 @@ void SimonEngine::vc10_draw() {
 	state.x_skip = 0;				/* colums to skip = bh */
 	state.y_skip = 0;				/* rows to skip   = bl */
 
-	state.surf2_addr = getBackBuf();
+	state.surf2_addr = getFrontBuf();
 	state.surf2_pitch = _dxSurfacePitch;
 
-	state.surf_addr = getFrontBuf();
+	state.surf_addr = getBackBuf();
 	state.surf_pitch = _dxSurfacePitch;
 
 	if (getGameType() == GType_FF) {
@@ -881,7 +881,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			} else {
 				scaleClip(state->height, state->width, state->y, state->x, state->y + _scrollY);
 			}
-		} else 	if (state->flags & kDFOverlayed) {
+		} else if (state->flags & kDFOverlayed) {
 			state->surf_addr = getScaleBuf();
 			state->surf_pitch = _dxSurfacePitch;
 			state->surf_addr += state->x + state->y * state->surf_pitch;
@@ -912,7 +912,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			} while (++w != state->draw_width);
 
 			_vgaCurSpritePriority /= 10;
-			if (_vgaCurSpritePriority != 900) {
+			if (_vgaCurSpritePriority == 900) {
 				scaleClip(_scaleHeight, _scaleWidth, _scaleY, _scaleX, _scaleY + _scrollY);
 			}
 		} else {
@@ -1136,7 +1136,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 		do {
 			mask = vc10_depack_column(state);	/* esi */
 			src = state->surf2_addr + w * 2;	/* ebx */
-			dst = state->surf_addr + w * 2;	/* edi */
+			dst = state->surf_addr + w * 2;		/* edi */
 
 			h = state->draw_height;
 			if ((getGameType() == GType_SIMON1) && vcGetBit(88)) {
@@ -1280,7 +1280,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 		}
 		/* vc10_helper_4 */
 	} else {
-		if (getGameType() == GType_SIMON2 && state->flags & kDFUseBackBuf && _bitArray[10] & 0x800) {
+		if (getGameType() == GType_SIMON2 && state->flags & kDFUseFrontBuf && _bitArray[10] & 0x800) {
 			state->surf_addr = state->surf2_addr;
 			state->surf_pitch = state->surf2_pitch;
 		}

@@ -1950,7 +1950,7 @@ void SimonEngine::f10_key() {
 				if (x_ >= 311)
 					continue;
 
-				dst = getFrontBuf();
+				dst = getBackBuf();
 
 				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
 
@@ -2750,7 +2750,7 @@ void SimonEngine::timer_vga_sprites() {
 }
 
 void SimonEngine::timer_vga_sprites_helper() {
-	byte *dst = getBackBuf();
+	byte *dst = getFrontBuf();
 	const byte *src;
 	uint x;
 
@@ -3112,7 +3112,7 @@ void SimonEngine::colorWindow(FillOrCopyStruct *fcs) {
 
 	_lockWord |= 0x8000;
 
-	dst = getBackBuf();
+	dst = getFrontBuf();
 	dst += _dxSurfacePitch * fcs->y + fcs->x * 8;
 
 	h = fcs->height * 8;
@@ -3269,7 +3269,7 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 	uint w, h, i;
 
 	_lockWord |= 0x8000;
-	src = getBackBuf() + ha->y * _dxSurfacePitch + ha->x;
+	src = getFrontBuf() + ha->y * _dxSurfacePitch + ha->x;
 
 	w = ha->width;
 	h = ha->height;
@@ -3839,7 +3839,7 @@ void SimonEngine::restoreBlock(uint b, uint r, uint y, uint x) {
 	byte *dst, *src;
 	uint i;
 
-	dst = getBackBuf();
+	dst = getFrontBuf();
 	src = _sdl_buf_3;
 
 	dst += y * _dxSurfacePitch;
@@ -4227,12 +4227,12 @@ void SimonEngine::loadMusic(uint music) {
 	}
 }
 
-byte *SimonEngine::getBackBuf() {
+byte *SimonEngine::getFrontBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _sdl_buf;
 }
 
-byte *SimonEngine::getFrontBuf() {
+byte *SimonEngine::getBackBuf() {
 	_dxSurfacePitch = _screenWidth;
 	return _dxUse3Or4ForLock ? _sdl_buf_3 : _sdl_buf_attached;
 }

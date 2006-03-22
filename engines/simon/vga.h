@@ -100,7 +100,7 @@ struct AnimationHeader_Simon {
 enum DrawFlags {
 	kDFFlip           = 0x1,
 	kDFNonTrans       = 0x2,
-	kDFUseBackBuf     = 0x4,
+	kDFUseFrontBuf    = 0x4,
 	kDFCompressed     = 0x8,
 	kDFCompressedFlip = 0x10,
 	kDFMasked         = 0x20,

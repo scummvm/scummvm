@@ -813,8 +813,8 @@ protected:
 
 	void restoreBlock(uint b, uint r, uint y, uint x);
 
-	byte *getBackBuf();
 	byte *getFrontBuf();
+	byte *getBackBuf();
 	byte *getScaleBuf();
 
 	byte *read_vga_from_datfile_2(uint id, uint type);
