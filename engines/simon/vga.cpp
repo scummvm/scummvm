@@ -857,8 +857,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			state->dl = state->width;
 			state->dh = state->height;
 
-			vc10_skip_cols(state);
-
 			dst_org = state->surf_addr;
 			w = 0;
 			do {
@@ -867,8 +865,9 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 				h = 0;
 				do {
-					*dst = *src++;
+					*dst = *src;
 					dst += _screenWidth;
+					src++;
 				} while (++h != state->draw_height);
 				dst_org++;
 			} while (++w != state->draw_width);
@@ -892,8 +891,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 			state->dl = state->width;
 			state->dh = state->height;
-
-			vc10_skip_cols(state);
 
 			dst_org = state->surf_addr;
 			w = 0;
