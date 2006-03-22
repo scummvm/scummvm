@@ -2266,10 +2266,9 @@ void SimonEngine::loadZone(uint vga_res) {
 	vpe->vgaFile1 = read_vga_from_datfile_2(vga_res * 2, 1);
 	vpe->vgaFile2 = read_vga_from_datfile_2(vga_res * 2 + 1, 2);
 
-	vpe->sfxFile =  NULL;
+	vpe->sfxFile = NULL;
 	if (getGameType() == GType_FF && getPlatform() == Common::kPlatformWindows)
-		read_vga_from_datfile_2(vga_res * 2, 3);
-
+		vpe->sfxFile = read_vga_from_datfile_2(vga_res * 2, 3);
 }
 
 byte *SimonEngine::setup_vga_destination(uint32 size) {
