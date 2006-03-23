@@ -3734,10 +3734,11 @@ byte *SimonEngine::read_vga_from_datfile_2(uint id, uint type) {
 				error("read_vga_from_datfile_2: read failed");
 		}
 		in.close();
+		return dst;
 #else
 		error("Zlib support is required for Amiga and Macintosh versions");
+		return NULL;
 #endif
-		return dst;
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
 		File in;
 		char buf[15];
