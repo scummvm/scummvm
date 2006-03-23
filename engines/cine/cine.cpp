@@ -215,7 +215,7 @@ static void initialize() {
 	}
 
 	// bypass protection
-	if (gameType == GID_OS) {
+	if (gameType == GID_OS && !ConfMan.getBool("copy_protection")) {
 		globalVars[255] = 1;
 	}
 

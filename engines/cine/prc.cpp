@@ -26,6 +26,8 @@
 #include "cine/auto00.h"
 #include "cine/various.h"
 
+#include "common/config-manager.h"
+
 namespace Cine {
 
 prcLinkedListStruct globalScriptsHead;
@@ -74,11 +76,13 @@ void loadPrc(const char *pPrcName) {
 
 	checkDataDisk(-1);
 	if ((gameType == Cine::GID_FW) && (!strcmp(pPrcName, "AUTO00.PRC"))) {
-    // bypass protection
-		scriptPtr = AUT000;
+		if (!ConfMan.getBool("copy_protection"))
+			scriptPtr = AUT000;
+		else
+			scriptPtr = readFile(pPrcName);
 	} else {
 		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
-    ASSERT_PTR(scriptPtr);
+		ASSERT_PTR(scriptPtr);
 	}
 
 	setMouseCursor(MOUSE_CURSOR_DISK);

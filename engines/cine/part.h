@@ -69,6 +69,7 @@ int16 findFileInBundle(const char *fileName);
 void readFromPart(int16 idx, uint8 *dataPtr);
 
 uint8 *readBundleFile(int16 foundFileIdx);
+uint8 *readFile(const char *filename);
 
 } // End of namespace Cine
 

@@ -134,6 +134,7 @@ static const char *bundleNames[] = {
 	"RSC16",
 	"RSC17",
 // english version
+#if 1
 	"SONS1",
 	"SONS2",
 	"SONS3",
@@ -143,12 +144,12 @@ static const char *bundleNames[] = {
 	"SONS7",
 	"SONS8",
 	"SONS9",
-/*
-"SONS31", // french version
-"SONS32",
-"SONS33",
-"SONS34"
-*/
+#else
+	"SONS31", // french version
+	"SONS32",
+	"SONS33",
+	"SONS34"
+#endif
 };
 
 int16 findFileInBundle(const char *fileName) {
@@ -205,6 +206,23 @@ uint8 *readBundleFile(int16 foundFileIdx) {
 	} else {
 		readFromPart(foundFileIdx, dataPtr);
 	}
+
+	return dataPtr;
+}
+
+uint8 *readFile(const char *filename) {
+	Common::File in;
+
+	in.open(filename);
+
+	if (!in.isOpen())
+		error("readFile(): Cannot open file %s", filename);
+
+	uint8 *dataPtr;
+	uint32 size = in.size();
+
+	dataPtr = (uint8 *)malloc(size);
+	in.read(dataPtr, size);
 
 	return dataPtr;
 }
