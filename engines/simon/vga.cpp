@@ -684,8 +684,6 @@ void SimonEngine::vc10_draw() {
 	if (state.image < 0)
 		state.image = vcReadVar(-state.image);
 
-	debug(1, "vc10_draw: image %d palette %d x %d y %d flags 0x0%x\n", state.image, state.palette, state.x, state.y, state.flags);
-
 	p2 = _curVgaFile2 + state.image * 8;
 	if (getGameType() == GType_FF) {
 		state.depack_src = _curVgaFile2 + READ_LE_UINT32(p2);
@@ -693,7 +691,8 @@ void SimonEngine::vc10_draw() {
 		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
 		flags = p2[5];
 
-		debug(1, "Width %d Height %d Flags 0x%x", width, height, flags);
+		debug(1, "vc10_draw: image %d palette %d x %d y %d drawFlags 0x0%x\n", state.image, state.palette, state.x, state.y, state.flags);
+		debug(1, "vc10_draw: width %d height %d flags 0x%x", width, height, flags);
 	} else {
 		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 		width = READ_BE_UINT16(p2 + 6) / 16;
@@ -917,11 +916,16 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			if (drawImages_clip(state) == 0)
 				return;
 
-			state->surf2_addr += state->x + state->y * state->surf2_pitch;
 			state->surf_addr += state->x + state->y * state->surf_pitch;
 
 			uint w, h;
 			byte *src, *dst, *dst_org;
+
+			state->dl = state->width;
+			state->dh = state->height;
+
+			vc10_skip_cols(state);
+
 
 			if (state->flags & kDFMasked) {
 				if (vcGetBit(81) == false) {
@@ -934,11 +938,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 					if (state->y + state->height < _feebleRect.top)
 						return;
 				}
-
-				state->dl = state->width;
-				state->dh = state->height;
-
-				vc10_skip_cols(state);
 
 				dst_org = state->surf_addr;
 				w = 0;
@@ -959,11 +958,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 					dst_org++;
 				} while (++w != state->draw_width);
 			} else {
-				state->dl = state->width;
-				state->dh = state->height;
-
-				vc10_skip_cols(state);
-
 				dst_org = state->surf_addr;
 				w = 0;
 				do {
@@ -988,7 +982,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 		if (drawImages_clip(state) == 0)
 			return;
 
-		state->surf2_addr += state->x + state->y * state->surf2_pitch;
 		state->surf_addr += state->x + state->y * state->surf_pitch;
 
 		const byte *src;
@@ -1047,7 +1040,7 @@ void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	_variableArray[22] = _feebleRect.bottom;
 	_variableArray[23] = _feebleRect.right;
 
-	debug(0, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
+	debug(1, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
 
 	// Unlike normal rectangles in ScummVM, it seems that in the case of
 	// the destination rectangle the bottom and right coordinates are
@@ -1616,6 +1609,9 @@ void SimonEngine::vc27_resetSprite() {
 
 	vcWriteVar(254, 0);
 
+	if (getGameType() == GType_FF)
+		vcWriteVar(42, 1);
+
 	_lockWord &= ~8;
 }
 
@@ -1870,12 +1866,12 @@ void SimonEngine::vc48_setPathFinder() {
 }
 
 void SimonEngine::vcSetBitTo(uint bit, bool value) {
-	uint16 *bits = &_bitArray[bit >> 4];
+	uint16 *bits = &_bitArray[bit / 16];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
 }
 
 bool SimonEngine::vcGetBit(uint bit) {
-	uint16 *bits = &_bitArray[bit >> 4];
+	uint16 *bits = &_bitArray[bit / 16];
 	return (*bits & (1 << (bit & 15))) != 0;
 }
 
@@ -2063,7 +2059,7 @@ void SimonEngine::vc61_setMaskImage() {
 
 	vsp->x += vcReadNextWord();
 	vsp->y += vcReadNextWord();
-	vsp->flags = 0x24;
+	vsp->flags = kDFMasked | 0x4;
 
 	_vgaSpriteChanged++;
 }
@@ -2269,13 +2265,25 @@ void SimonEngine::vc72_play_track_2() {
 }
 
 void SimonEngine::vc73_setMark() {
-	vcReadNextByte();
-	_marks |= 1 << vcReadNextByte();
+	uint16 bit;
+
+	if (getGameType() == GType_FF)
+		bit = vcReadNextWord();
+	else
+		bit = vcReadNextByte();
+
+	_marks |= 1 << bit;
 }
 
 void SimonEngine::vc74_clearMark() {
-	vcReadNextByte();
-	_marks &= ~(1 << vcReadNextByte());
+	uint16 bit;
+
+	if (getGameType() == GType_FF)
+		bit = vcReadNextWord();
+	else
+		bit = vcReadNextByte();
+
+	_marks &= ~(1 << bit);
 }
 
 int SimonEngine::getScale(int y, int x) {
@@ -2320,7 +2328,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 		// TODO: Scroll check
 	}
 
-	vsp->flags = 0x40;
+	vsp->flags = kDFScaled;
 }
 
 void SimonEngine::vc77_setScaleYOffs() {
@@ -2332,7 +2340,7 @@ void SimonEngine::vc77_setScaleYOffs() {
 
 	vsp->y += getScale(vsp->y, x);
 	_variableArray[var] = vsp->y;
-	vsp->flags = 0x40;
+	vsp->flags = kDFScaled;
 }
 
 void SimonEngine::vc78_computeXY() {
@@ -2379,7 +2387,7 @@ void SimonEngine::vc80_setOverlayImage() {
 
 	vsp->x += vcReadNextWord();
 	vsp->y += vcReadNextWord();
-	vsp->flags = 0x10;
+	vsp->flags = kDFOverlayed;
 
 	_vgaSpriteChanged++;
 }

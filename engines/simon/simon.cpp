@@ -327,7 +327,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_fastFadeOutFlag = 0;
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
-	_skipSpeech = 0;
+	_rightClick = 0;
 	_paletteFlag = 0;
 
 	_soundFileId = 0;
@@ -351,7 +351,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_curVgaFile2 = 0;
 	_curSfxFile = 0;
 
-	_timer1 = 0;
+	_syncCount = 0;
 	_timer5 = 0;
 	_timer4 = 0;
 
@@ -2655,11 +2655,11 @@ void SimonEngine::o_mouseOff() {
 
 void SimonEngine::o_waitForSync(uint a) {
 	_vgaWaitFor = a;
-	_timer1 = 0;
+	_syncCount = 0;
 	_exitCutscene = false;
-	_skipSpeech = false;
+	_rightClick = false;
 	while (_vgaWaitFor != 0) {
-		if (_skipSpeech && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
+		if (_rightClick && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
 			if (_vgaWaitFor == 200 && !vcGetBit(14)) {
 				skipSpeech();
 				break;
@@ -2676,11 +2676,11 @@ void SimonEngine::o_waitForSync(uint a) {
 		delay(10);
 
 		if (getGameType() == GType_SIMON2) {
-			if (_timer1 >= 1000) {
+			if (_syncCount >= 1000) {
 				warning("wait timed out");
 				break;
 			}
-		} else if (_timer1 >= 500) {
+		} else if (_syncCount >= 500) {
 			warning("wait timed out");
 			break;
 		}
@@ -2824,7 +2824,7 @@ void SimonEngine::timer_proc1() {
 	if (_lockWord & 0x80E9 || _lockWord & 2)
 		return;
 
-	_timer1++;
+	_syncCount++;
 
 	_lockWord |= 2;
 
@@ -4136,7 +4136,7 @@ void SimonEngine::delay(uint amount) {
 				if (getGameType() == GType_FF)
 					_bitArray[5] &= ~0x1000;
 				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
-					_skipSpeech = true;
+					_rightClick = true;
 				else
 					_exitCutscene = true;
 				break;

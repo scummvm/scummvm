@@ -316,7 +316,7 @@ protected:
 	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
 	bool _exitCutscene;
-	bool _skipSpeech;
+	bool _rightClick;
 	byte _paletteFlag;
 
 	uint _soundFileId;
@@ -337,7 +337,7 @@ protected:
 	byte *_curVgaFile2;
 	byte *_curSfxFile;
 
-	uint16 _timer1, _timer5, _timer4;
+	uint16 _syncCount, _timer5, _timer4;
 
 	uint16 _frameRate;
 
