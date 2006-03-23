@@ -25,12 +25,12 @@
 
 #include "common/stdafx.h"
 #include "common/str.h"
-#include "common/map.h"
+#include "common/assocarray.h"
 
 namespace GUI {
 
 using Common::String;
-using Common::Map;
+using Common::AssocArray;
 
 #define EVAL_UNDEF_VAR -13375
 
@@ -47,10 +47,6 @@ enum evalErrors {
 	eUnclosedBracket,
 	eBadExpr,
 	eUndefVar
-};
-
-struct IgnoreCaseComparator {
-  int operator()(const String& x, const String& y) const { return strcmp(x.c_str(), y.c_str()); }
 };
 
 class Eval {
@@ -71,8 +67,8 @@ public:
 
 	void reset();
 
-	typedef Map<String, int, IgnoreCaseComparator> VariablesMap;
-	typedef Map<String, String, IgnoreCaseComparator> AliasesMap;
+	typedef AssocArray<String, int> VariablesMap;
+	typedef AssocArray<String, String> AliasesMap;
 
 private:
 	void getToken();
