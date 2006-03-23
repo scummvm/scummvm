@@ -59,13 +59,13 @@ void loadPal(const char *fileName) {
 
 	palFileHandle.open(buffer);
 
-	ASSERT(palFileHandle.isOpen());
+	assert(palFileHandle.isOpen());
 
 	palEntriesCount = palFileHandle.readUint16LE();
 	palFileHandle.readUint16LE(); // entry size
 	
 	palPtr = (PalEntry *)malloc(palEntriesCount * sizeof(PalEntry));
-	ASSERT_PTR(palPtr);
+	assert(palPtr);
 	for (int i = 0; i < palEntriesCount; ++i) {
 		palFileHandle.read(palPtr[i].name, 10);
 		palFileHandle.read(palPtr[i].pal1, 16);

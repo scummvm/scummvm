@@ -53,7 +53,7 @@ uint8 loadCt(const char *ctName) {
 	} else {
 		loadRelatedPalette(ctName);
 
-		ASSERT(strstr(ctName, ".NEO"));
+		assert(strstr(ctName, ".NEO"));
 
 		memcpy(header, ptr, 32); ptr += 32;
 

@@ -73,9 +73,6 @@ public:
 
 extern char *savePath;
 
-#define ASSERT_PTR assert
-#define ASSERT assert
-
 #define BOOT_PRC_NAME "AUTO00.PRC"
 
 enum {

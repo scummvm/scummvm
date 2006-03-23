@@ -40,7 +40,7 @@ void releaseObjectScripts(void) {
 	while (currentHead) {
 		prcLinkedListStruct *temp;
 
-		ASSERT_PTR(currentHead);
+		assert(currentHead);
 
 		temp = currentHead->next;
 
@@ -73,7 +73,7 @@ void loadRel(char *pRelName) {
 
 	numEntry = READ_BE_UINT16(ptr); ptr += 2;
 
-	ASSERT(numEntry <= NUM_MAX_REL);
+	assert(numEntry <= NUM_MAX_REL);
 
 	for (i = 0; i < numEntry; i++) {
 		relTable[i].size = READ_BE_UINT16(ptr); ptr += 2;
@@ -86,7 +86,7 @@ void loadRel(char *pRelName) {
 		if (relTable[i].size) {
 			relTable[i].data = (char *)malloc(relTable[i].size);
 
-			ASSERT_PTR(relTable[i].data);
+			assert(relTable[i].data);
 
 			memcpy(relTable[i].data, ptr, relTable[i].size);
 			ptr += relTable[i].size;

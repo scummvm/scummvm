@@ -44,7 +44,7 @@ void loadMsg(char *pMsgName) {
 		messageTable[i].len = 0;
 
 		if (messageTable[i].ptr) {
-			ASSERT_PTR(messageTable[i].ptr);
+			assert(messageTable[i].ptr);
 
 			free(messageTable[i].ptr);
 		}
@@ -58,7 +58,7 @@ void loadMsg(char *pMsgName) {
 
 	messageCount = READ_BE_UINT16(ptr); ptr += 2;
 
-	ASSERT(messageCount <= NUM_MAX_MESSAGE);
+	assert(messageCount <= NUM_MAX_MESSAGE);
 
 	for (i = 0; i < messageCount; i++) {
 		messageTable[i].len = READ_BE_UINT16(ptr); ptr += 2;
@@ -68,7 +68,7 @@ void loadMsg(char *pMsgName) {
 		if (messageTable[i].len) {
 			messageTable[i].ptr = (uint8 *) malloc(messageTable[i].len);
 
-			ASSERT_PTR(messageTable[i].ptr);
+			assert(messageTable[i].ptr);
 
 			memcpy(messageTable[i].ptr, ptr, messageTable[i].len);
 			ptr += messageTable[i].len;

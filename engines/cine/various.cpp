@@ -182,14 +182,14 @@ void runObjectScript(int16 entryIdx) {
 	while (currentHead) {
 		tempHead = currentHead;
 
-		ASSERT_PTR(tempHead);
+		assert(tempHead);
 
 		currentHead = tempHead->next;
 	}
 
 	pNewElement = (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
 
-	ASSERT_PTR(pNewElement);
+	assert(pNewElement);
 
 	pNewElement->next = tempHead->next;
 	tempHead->next = pNewElement;
@@ -850,7 +850,7 @@ void makeSave(char *saveFileName) {
 		// actual save
 		currentHead = overlayHead.next;
 
-		ASSERT(sizeof(overlayHeadElement) == 0x14);
+		assert(sizeof(overlayHeadElement) == 0x14);
 		while (currentHead) {
 			fHandle.writeUint32BE(0);
 			fHandle.writeUint32BE(0);
@@ -1053,7 +1053,7 @@ int16 buildObjectListCommand(void) {
 	int16 i;
 	int16 j;
 
-	ASSERT(gameType == Cine::GID_FW);
+	assert(gameType == Cine::GID_FW);
 
 	for (i = 0; i < 20; i++) {
 		objectListCommand[i][0] = 0;
@@ -1076,7 +1076,7 @@ int16 buildObjectListCommand2(int16 param) {
 	int16 i;
 	int16 j;
 
-	ASSERT(gameType == Cine::GID_OS);
+	assert(gameType == Cine::GID_OS);
 
 	for (i = 0; i < 20; i++) {
 		objectListCommand[i][0] = 0;
@@ -1444,7 +1444,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	} while (!var_A);
 
 	if (needMouseSave) {
-		ASSERT(0);
+		assert(0);
 	}
 
 	var_4 = button;
@@ -1678,7 +1678,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 	} while (!var_A);
 
 	if (needMouseSave) {
-		ASSERT(0);
+		assert(0);
 	}
 
 	var_4 = button;
@@ -2345,7 +2345,7 @@ void drawOverlays(void) {
 				int16 x;
 				int16 y;
 
-				ASSERT(currentOverlay->objIdx <= NUM_MAX_OBJECT);
+				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
@@ -2371,7 +2371,7 @@ void drawOverlays(void) {
 						AnimData *pPart;
 						int16 part = objPtr->part;
 
-						ASSERT(part >= 0 && part <= NUM_MAX_ANIMDATA);
+						assert(part >= 0 && part <= NUM_MAX_ANIMDATA);
 
 						pPart = &animDataTable[objPtr->frame];
 
@@ -2424,7 +2424,7 @@ void drawOverlays(void) {
 				int16 x;
 				int16 y;
 
-				ASSERT(currentOverlay->objIdx <= NUM_MAX_OBJECT);
+				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
@@ -2437,7 +2437,7 @@ void drawOverlays(void) {
 					AnimData *pPart;
 					int16 part = objPtr->part;
 
-					ASSERT(part >= 0 && part <= NUM_MAX_ANIMDATA);
+					assert(part >= 0 && part <= NUM_MAX_ANIMDATA);
 
 					pPart = &animDataTable[objPtr->frame];
 
@@ -2458,7 +2458,7 @@ void drawOverlays(void) {
 
 				var5 = currentOverlay->x;
 
-				ASSERT(currentOverlay->objIdx <= NUM_MAX_OBJECT);
+				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
@@ -2763,15 +2763,15 @@ uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, SeqListElement *element,
 	uint8 *ptr2;
 	int16 di;
 
-	ASSERT_PTR(ptr);
-	ASSERT_PTR(element);
-	ASSERT_PTR(param4);
+	assert(ptr);
+	assert(element);
+	assert(param4);
 
 	dummyU16 = READ_BE_UINT16((currentPtr + param1 * 2) + 8);
 
 	ptrData = ptr + dummyU16;
 
-	ASSERT(*ptrData);
+	assert(*ptrData);
 
 	di = (objectTable[param2].costume + 1) % (*ptrData);
 	ptr2 = (ptrData + (di * 8)) + 1;
@@ -2833,7 +2833,7 @@ void processSeqListElement(SeqListElement *element) {
 				element->var14 = 0;
 			}
 		} else {
-			ASSERT(0);
+			assert(0);
 		}
 
 		var_10 = computeMove2(element);

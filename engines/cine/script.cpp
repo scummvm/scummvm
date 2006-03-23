@@ -161,8 +161,8 @@ uint16 computeScriptStackSub(uint8 mode, byte *scriptPtr, int16 *stackPtr, uint1
 	uint16 position;
 	uint16 di;
 
-	ASSERT_PTR(scriptPtr);
-	ASSERT_PTR(stackPtr);
+	assert(scriptPtr);
+	assert(stackPtr);
 
 	if (mode == 1) {
 		for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
@@ -442,21 +442,21 @@ void addScriptToList0(uint16 idx) {
 	prcLinkedListStruct *currentHead = &globalScriptsHead;
 	prcLinkedListStruct *tempHead = currentHead;
 
-	ASSERT(idx <= NUM_MAX_SCRIPT);
+	assert(idx <= NUM_MAX_SCRIPT);
 
 	currentHead = tempHead->next;
 
 	while (currentHead) {
 		tempHead = currentHead;
 
-		ASSERT_PTR(tempHead);
+		assert(tempHead);
 
 		currentHead = tempHead->next;
 	}
 
 	pNewElement =(prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
 
-	ASSERT_PTR(pNewElement);
+	assert(pNewElement);
 
 	pNewElement->next = tempHead->next;
 	tempHead->next = pNewElement;
@@ -497,7 +497,7 @@ int16 endScript0(uint16 scriptIdx) {
 	prcLinkedListStruct *currentHead = &globalScriptsHead;
 	prcLinkedListStruct *tempHead = currentHead;
 
-	//ASSERT(scriptIdx <= NUM_MAX_SCRIPT);
+	//assert(scriptIdx <= NUM_MAX_SCRIPT);
 
 	currentHead = tempHead->next;
 
@@ -585,7 +585,7 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 		 * idx = getZoneFromPosition(page3, lx + i, ly, 160);
 		 * } */
 
-		ASSERT(idx >= 0 && idx <= NUM_MAX_ZONE);
+		assert(idx >= 0 && idx <= NUM_MAX_ZONE);
 
 		if (zoneData[idx] == zoneIdx) {
 			return 1;
@@ -618,7 +618,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 	uint16 closeScript;
 	uint16 currentPosition;
 
-	ASSERT_PTR(scriptElement);
+	assert(scriptElement);
 
 	if (scriptElement->scriptIdx == -1) {
 		return;
@@ -626,7 +626,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 	currentScriptPtr = scriptElement->scriptPtr;
 
-	ASSERT_PTR(currentScriptPtr);
+	assert(currentScriptPtr);
 
 	currentPosition = scriptElement->scriptPosition;
 	closeScript = 0;
@@ -878,7 +878,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 						}
 					default:
 						{
-							ASSERT(0);
+							assert(0);
 						}
 					}
 				} else {
@@ -1047,14 +1047,14 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 					if (varType == 1) {
 						DEBUG_SCRIPT(currentLine, "compare var[%d] and var[%d]", varIdx, value);
 
-						ASSERT(varIdx < 50);
-						ASSERT(value < 50);
+						assert(varIdx < 50);
+						assert(value < 50);
 
 						scriptElement->compareResult = compareVars(scriptElement->localVars[varIdx], scriptElement->localVars[value]);
 					} else if (varType == 2) {
 						DEBUG_SCRIPT(currentLine, "compare var[%d] and globalVar[%d]", varIdx, value);
 
-						ASSERT(varIdx < 50);
+						assert(varIdx < 50);
 
 						scriptElement->compareResult = compareVars(scriptElement->localVars[varIdx], globalVars[value]);
 					}
@@ -1224,7 +1224,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				DEBUG_SCRIPT(currentLine, "goto label(%d)", labelIdx);
 
-				ASSERT(scriptElement->stack[labelIdx] != -1);
+				assert(scriptElement->stack[labelIdx] != -1);
 				currentPosition = scriptElement->stack[labelIdx];
 
 				break;
@@ -1238,7 +1238,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if ((scriptElement->compareResult & 2) && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(>) goto %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>) goto %d (false)", labelIdx);
@@ -1255,7 +1255,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (scriptElement->compareResult & 2 || scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto %d (false)",
@@ -1273,7 +1273,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if ((scriptElement->compareResult & 4) && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<) goto %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<) goto %d (false)", labelIdx);
@@ -1290,7 +1290,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if ((scriptElement->compareResult & 4) || (scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto %d (false)", labelIdx);
@@ -1307,7 +1307,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(==) goto %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(==) goto %d (false)", labelIdx);
@@ -1324,7 +1324,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (!(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto %d (false)", labelIdx);
@@ -1347,7 +1347,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (scriptElement->localVars[varIdx] >= 0) {
 					DEBUG_SCRIPT(currentLine, "loop(var[%]) goto %d (continue)", varIdx, labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = scriptElement->stack[labelIdx];
 				} else {
 					DEBUG_SCRIPT(currentLine, "loop(var[%]) goto %d (stop)", varIdx, labelIdx);
@@ -1362,7 +1362,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(param < NUM_MAX_SCRIPT);
+				assert(param < NUM_MAX_SCRIPT);
 
 				DEBUG_SCRIPT(currentLine, "startScript(%d)", param);
 
@@ -1440,7 +1440,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(param <= 3);
+				assert(param <= 3);
 
 				switch (param) {
 				case 0:
@@ -1701,7 +1701,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				numIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
-				ASSERT(startIdx + numIdx <= NUM_MAX_ANIMDATA);
+				assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
 				DEBUG_SCRIPT(currentLine, "freePartRange(%d,%d)", startIdx, numIdx);
 
@@ -1974,7 +1974,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				if ((scriptElement->compareResult & 2)
 				    && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(>) goto nearest %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, currentPosition, labelIdx,
 									scriptTable[scriptElement->scriptIdx].size);
 				} else {
@@ -1992,7 +1992,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (scriptElement->compareResult & 2 || scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(>=) goto nearest %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr, currentPosition, labelIdx,
 								    scriptTable[scriptElement->scriptIdx].size);
 				} else {
@@ -2010,7 +2010,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if ((scriptElement->compareResult & 4) && !(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<) goto nearest %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
 									currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
@@ -2028,7 +2028,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if ((scriptElement->compareResult & 4) || (scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(<=) goto nearest %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
 								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
@@ -2046,7 +2046,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (scriptElement->compareResult & 1) {
 					DEBUG_SCRIPT(currentLine, "if(==) goto nearest %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
 								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
@@ -2064,7 +2064,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				if (!(scriptElement->compareResult & 1)) {
 					DEBUG_SCRIPT(currentLine, "if(!=) goto nearest %d (true)", labelIdx);
-					ASSERT(scriptElement->stack[labelIdx] != -1);
+					assert(scriptElement->stack[labelIdx] != -1);
 					currentPosition = computeScriptStackFromScript(scriptElement->scriptPtr,
 								    currentPosition, labelIdx, scriptTable[scriptElement->scriptIdx].size);
 				} else {
@@ -2112,7 +2112,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				DEBUG_SCRIPT(currentLine, "removeBackground(%d)", temp);
 
-				ASSERT(temp);
+				assert(temp);
 				if (additionalBgTable[temp]) {
 					free(additionalBgTable[temp]);
 					additionalBgTable[temp] = NULL;
@@ -2150,7 +2150,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				DEBUG_SCRIPT(currentLine, "useBg(%d)", temp);
 
-				ASSERT(temp <= 8);
+				assert(temp <= 8);
 
 				if (additionalBgTable[temp]) {
 					currentAdditionalBgIdx = temp;
@@ -2167,7 +2167,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				DEBUG_SCRIPT(currentLine, "useBgScroll(%d)", temp);
 
-				ASSERT(temp <= 8);
+				assert(temp <= 8);
 
 				if (additionalBgTable[temp]) {
 					currentAdditionalBgIdx2 = temp;
@@ -2328,8 +2328,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 	uint16 exitScript;
 	uint32 position = 0;
 
-	ASSERT_PTR(scriptPtr);
-	// ASSERT_PTR(stackPtr);
+	assert(scriptPtr);
+	// assert(stackPtr);
 
 	exitScript = 0;
 
@@ -2567,7 +2567,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 					} else if (param2 == 5) {
 						sprintf(lineBuffer, "var[%d]=rand() mod %d\n", param1, param3);
 					} else {
-						ASSERT(0);
+						assert(0);
 					}
 				} else {
 					int16 param3;
@@ -2717,7 +2717,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 						sprintf(compareString1, "var[%d]", param1);
 						sprintf(compareString2, "globalVar[%d]", param3);
 					} else {
-						ASSERT(0);
+						assert(0);
 					}
 				} else {
 					int16 param3;
@@ -3135,7 +3135,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 					} else if (param2 == 2) {
 						sprintf(lineBuffer, "globalVar[%d] = globalVar[%d]\n", param1, param3);
 					} else {
-						ASSERT(0);
+						assert(0);
 					}
 				} else {
 					int16 param3;
@@ -3171,7 +3171,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 						sprintf(compareString1, "globalVar[%d]", param1);
 						sprintf(compareString2, "globalVar[%d]", param3);
 					} else {
-						ASSERT(0);
+						assert(0);
 					}
 				} else {
 					int16 param3;

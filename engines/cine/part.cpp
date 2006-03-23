@@ -51,7 +51,7 @@ void loadPart(const char *partName) {
 
 	partFileHandle.open(partName);
 
-	ASSERT(partFileHandle.isOpen());
+	assert(partFileHandle.isOpen());
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 

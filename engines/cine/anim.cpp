@@ -266,7 +266,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 
 	animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
 
-	ASSERT_PTR(animDataTable[i].ptr1);
+	assert(animDataTable[i].ptr1);
 
 	animDataTable[i].width = width;
 
@@ -310,7 +310,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 
 	animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
 
-	ASSERT_PTR(animDataTable[i].ptr1);
+	assert(animDataTable[i].ptr1);
 
 	animDataTable[i].width = width;
 
@@ -382,7 +382,7 @@ void loadSpl(const char *resourceName) {
 
 	entry = allocFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, -1);
 
-	ASSERT(entry != -1);
+	assert(entry != -1);
 
 	memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
 
@@ -413,7 +413,7 @@ void loadMsk(const char *resourceName) {
 	for (i = 0; i < animHeader.numFrames; i++) {
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 1);
 
-		ASSERT(entry != -1);
+		assert(entry != -1);
 
 		convertMask(animDataTable[entry].ptr1, ptr, animHeader.frameWidth, animHeader.frameHeight);
 		ptr += animHeader.frameWidth * animHeader.frameHeight;
@@ -454,7 +454,7 @@ void loadAni(const char *resourceName) {
 
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 0);
 
-		ASSERT(entry != -1);
+		assert(entry != -1);
 
 		// special case transparency handling
 		if (!strcmp(resourceName, "L2202.ANI")) {
@@ -616,7 +616,7 @@ void loadSet(const char *resourceName) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	ASSERT(!memcmp(dataPtr, "SET", 3));
+	assert(!memcmp(dataPtr, "SET", 3));
 
 	ptr = dataPtr + 4;
 
@@ -659,7 +659,7 @@ void loadSet(const char *resourceName) {
 			}
 		}
 
-		ASSERT(entry != -1);
+		assert(entry != -1);
 
 		dataPtr = startOfDataPtr + header2.field_0;
 
@@ -673,7 +673,7 @@ void loadSet(const char *resourceName) {
 			} else if (header2.type == 5) {
 				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 4) {
-				ASSERT(0);
+				assert(0);
 			} else {
 				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			}
@@ -699,7 +699,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
 
-	ASSERT(!memcmp(dataPtr, "SET", 3));
+	assert(!memcmp(dataPtr, "SET", 3));
 
 	ptr = dataPtr + 4;
 
@@ -742,7 +742,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 			}
 		}
 
-		ASSERT(entry != -1);
+		assert(entry != -1);
 
 		dataPtr = startOfDataPtr + header2.field_0;
 
@@ -756,7 +756,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 			} else if (header2.type == 5) {
 				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 4) {
-				ASSERT(0);
+				assert(0);
 			} else {
 				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			}
@@ -818,7 +818,7 @@ void loadResource(const char *resourceName) {
 		return;
 	}
 
-	ASSERT(0);
+	assert(0);
 }
 
 void loadAbs(const char *resourceName, uint16 idx) {
@@ -841,7 +841,7 @@ void loadAbs(const char *resourceName, uint16 idx) {
 		return;
 	}
 
-	ASSERT(0);
+	assert(0);
 }
 
 void loadResourcesFromSave() {
@@ -934,7 +934,7 @@ void loadResourcesFromSave() {
 
 					currentPtr->fileIdx = foundFileIdx;
 
-					ASSERT(entry != -1);
+					assert(entry != -1);
 
 					if (isSpl) {
 						memcpy(animDataTable[entry].ptr1, ptr, fullSize);

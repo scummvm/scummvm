@@ -73,7 +73,7 @@ void loadObject(char *pObjectName) {
 
 	entrySize = READ_BE_UINT16(ptr); ptr += 2;
 
-	ASSERT(numEntry <= NUM_MAX_OBJECT);
+	assert(numEntry <= NUM_MAX_OBJECT);
 
 	
 	for (i = 0; i < numEntry; i++) {
@@ -180,7 +180,7 @@ void loadOverlayElement(uint16 objIdx, uint16 param) {
 
 	pNewElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
 
-	ASSERT_PTR(pNewElement);
+	assert(pNewElement);
 
 	pNewElement->next = tempHead->next;
 	tempHead->next = pNewElement;
@@ -210,7 +210,7 @@ void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint
 void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	paramIdx--;
 
-	ASSERT(paramIdx <= 5);
+	assert(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:
@@ -253,7 +253,7 @@ void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	paramIdx--;
 
-	ASSERT(paramIdx <= 5);
+	assert(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:
@@ -296,7 +296,7 @@ void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	paramIdx--;
 
-	ASSERT(paramIdx <= 5);
+	assert(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:
@@ -436,11 +436,11 @@ uint8 compareObjectParam(uint8 objIdx, uint8 param1, int16 param2) {
 }
 
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx) {
-	ASSERT(objIdx <= NUM_MAX_OBJECT);
+	assert(objIdx <= NUM_MAX_OBJECT);
 
 	paramIdx--;
 
-	ASSERT(paramIdx <= 5);
+	assert(paramIdx <= 5);
 
 	switch (paramIdx) {
 	case 0:

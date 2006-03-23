@@ -46,7 +46,7 @@ void freePrcLinkedList(void) {
 	while (currentHead) {
 		prcLinkedListStruct *temp;
 
-		ASSERT_PTR(currentHead);
+		assert(currentHead);
 
 		temp = currentHead->next;
 
@@ -63,11 +63,11 @@ void loadPrc(const char *pPrcName) {
 	uint16 numScripts;
 	const uint8 *scriptPtr;
 
-	ASSERT_PTR(pPrcName);
+	assert(pPrcName);
 
 	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
 		if (scriptTable[i].ptr) {
-			ASSERT_PTR(scriptTable[i].ptr);
+			assert(scriptTable[i].ptr);
 			free(scriptTable[i].ptr);
 			scriptTable[i].ptr = NULL;
 			scriptTable[i].size = 0;
@@ -82,13 +82,13 @@ void loadPrc(const char *pPrcName) {
 			scriptPtr = readFile(pPrcName);
 	} else {
 		scriptPtr = readBundleFile(findFileInBundle(pPrcName));
-		ASSERT_PTR(scriptPtr);
+		assert(scriptPtr);
 	}
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	numScripts = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
-	ASSERT(numScripts <= NUM_MAX_SCRIPT);
+	assert(numScripts <= NUM_MAX_SCRIPT);
 
 	for (i = 0; i < numScripts; i++) {
 		scriptTable[i].size = READ_BE_UINT16(scriptPtr); scriptPtr += 2;
@@ -98,7 +98,7 @@ void loadPrc(const char *pPrcName) {
 		uint16 size = scriptTable[i].size;
 		if (size) {
 			scriptTable[i].ptr = (byte *) malloc(size);
-			ASSERT_PTR(scriptTable[i].ptr);
+			assert(scriptTable[i].ptr);
 			memcpy(scriptTable[i].ptr, scriptPtr, size);
 			scriptPtr += size;
 			computeScriptStack(scriptTable[i].ptr, scriptTable[i].stack, size);
