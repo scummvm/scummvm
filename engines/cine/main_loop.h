@@ -28,7 +28,7 @@
 namespace Cine {
 
 void mainLoop(int bootScriptIdx);
-void manageEvents(void);
+void manageEvents(int count = 10);
 
 } // End of namespace Cine
 

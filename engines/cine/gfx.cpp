@@ -316,8 +316,6 @@ void gfxFlipRawPage(uint8 *frontBuffer) {
 	}
 
 	g_system->copyRectToScreen(screenBuffer, 320, 0, 0, 320, 200);
-	g_system->updateScreen();
-	g_system->delayMillis(100);
 }
 
 void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height,

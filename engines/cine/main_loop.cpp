@@ -41,7 +41,7 @@ uint16 mouseLeft = 0;
 uint16 mouseUpdateStatus;
 uint16 dummyU16;
 
-void manageEvents(void) {
+void manageEvents(int count) {
 	OSystem::Event event;
 
 	while (g_system->pollEvent(event)) {
@@ -64,11 +64,20 @@ void manageEvents(void) {
 		}
 	}
 
-	mouseData.left = mouseLeft;
-	mouseData.right = mouseRight;
+	if (count) {
+		mouseData.left = mouseLeft;
+		mouseData.right = mouseRight;
+		mouseLeft = 0;
+		mouseRight = 0;
+	}
 
-	mouseLeft = 0;
-	mouseRight = 0;
+	int i;
+
+	for (i = 0; i < count; i++) {
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+		manageEvents(0);
+	}
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
