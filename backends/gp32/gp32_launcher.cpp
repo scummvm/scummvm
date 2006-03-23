@@ -39,10 +39,10 @@
 uint16 cpuSpeedTable[15] = {40, 66, 100, 120, 133, 144, 156, 160, 166, 172, 176, 180, 188, 192, 200};
 uint16 gammaTable[16] = {5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000};
 char *oplTable[3] = {"LOW", "MEDIUM", "HIGH"};
-uint16 sampleTable[3] = {11025, 22050, 44100};
+uint16 sampleTable[4] = {0, 11025, 22050, 44100};
 
 uint8 maxTable[5] = {15, 16, 3, 3, 2};
-uint8 currentSetting[5] = {2, 5, 1, 0, 0};
+uint8 currentSetting[5] = {2, 5, 1, 1, 0};
 
 void writeConfigVars() {
 	Common::File file;
@@ -107,9 +107,9 @@ void configMenu() {
 
 		gp_textOut(frameBuffer2, 100, 210, "OK         CANCEL", 0);
 
-		if (currentSelect == 4)
-			gp_textOut(frameBuffer2, 80, 210, "@", 0);
-		else
+		if (currentSelect == 4) {
+			gp_textOut(frameBuffer2, 80 + currentSetting[4] * 100, 210, "@", 0);
+		} else
 			gp_textOut(frameBuffer2, 20, (currentSelect + 1) * 40, "@", 0);
 
 		sprintf(text, "%d MHz", cpuSpeedTable[currentSetting[0]]);
@@ -117,7 +117,11 @@ void configMenu() {
 		sprintf(text, "%.2f", (float)gammaTable[currentSetting[1]] / 10000);
 		gp_textOut(frameBuffer2, 220, 80, text, 0);
 		gp_textOut(frameBuffer2, 220, 120, oplTable[currentSetting[2]], 0);
-		sprintf(text, "%d Hz", sampleTable[currentSetting[3]]);
+		if (sampleTable[currentSetting[3]] == 0) {
+			strcpy(text, "NO SOUND");
+		} else {
+			sprintf(text, "%d Hz", sampleTable[currentSetting[3]]);
+		}
 		gp_textOut(frameBuffer2, 220, 160, text, 0);
 
 		gp_flipScreen();

@@ -25,7 +25,6 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
-#include "common/scaler.h"
 #include "common/system.h"
 #include "backends/intern.h"
 

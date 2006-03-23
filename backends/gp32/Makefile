@@ -37,29 +37,24 @@ CXXFLAGS+= -Wwrite-strings -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor
 # GPSDK (SDK, Includes and Startup Files) base dir
 GPSDK			=	/usr/compat/gp32/share/sdk
 
+GPMAD_DIR		= gpmad
+GPTREMOR_DIR	= gptremor
+
 # Outputs
-EXEEXT			=	.elf
-MAPFILE			=	scummvm.map
-BIN			=	scummvm.gxb
-FXE			=	scummvm.fxe
+EXEEXT		= .elf
+MAPFILE		= scummvm.map
+BIN			= scummvm.gxb
+FXE			= scummvm.fxe
 
 # Stripped Build? (Smaller ELF, Minimal debug symbol information).
 # You MUST comment this out with a # if you wish to debug your code.
-# STRIP_DEBUG		=	-Wl,--strip-debug
+STRIP_DEBUG	= -Wl,--strip-debug
 
 # Plugins hack
-srcdir			=	./
+srcdir		= ./
 
 # GP32 Direct Execute Tool (i.e. pclink -e on Windows, gplink run on Linux)
 EXECUTE_TOOL	=	pclink -e
-#
-#	       		-ffast-math \
-#	       		-fshort-double \
-#
-#
-#
-
-				#-Wno-multichar \
 				# Remove the below from the above flags for Debug.
 CFLAGS		=	-marm -march=armv4t -mtune=arm920 -mapcs \
 	       		-finline-functions \
@@ -70,17 +65,22 @@ CFLAGS		=	-marm -march=armv4t -mtune=arm920 -mapcs \
 				-g \
 	       		-O2 \
 	       		-fomit-frame-pointer
+#	       		-ffast-math \
+#	       		-fshort-double \
+#				-Wno-multichar \
 
 CPPFLAGS	=	$(CFLAGS)
 
 DEFINES 	= 	-D__GP32__
 DEFINES		+=	-DNONSTANDARD_PORT
 
-# Support Vorbis Tremor Patches.
-#DEFINES	+=	-DVORBIS_TREMOR
+# Support libtremor.
+DEFINES		+=	-DUSE_VORBIS -DUSE_TREMOR
+LIBS		+=	-lgptremor
 
-# Support LIBMAD Patches.
-#DEFINES	+=	-DGP32_MADMP3
+# Support libmad.
+DEFINES		+=	-DUSE_MAD
+LIBS		+=	-lgpmad
 
 # Support for 8:3 save files names (The GP32 uses FAT12/16 (no vFAT) for the file system).
 DEFINES		+=	-DSHORT_SAVENAMES
@@ -90,7 +90,7 @@ DEFINES		+=	-DOUTPUT_UNSIGNED_AUDIO
 
 # Support for the GP32 (fmOPL derived) MIDI engine.
 #	-	NOT fully implemented yet.
-DEFINES		+=	-DUSE_GP32_FMOPL
+#DEFINES		+=	-DUSE_GP32_FMOPL
 
 LDSPECS		=	-specs=gp32_gpsdk.specs
 
@@ -143,27 +143,6 @@ $(FXE): $(BIN)
 $(BIN): scummvm$(EXEEXT)
 					$(OBJCOPY) -O binary $< $@
 
-#######################################################################
-# Compile options - you can modify these to tweak ScummVM compilation #
-#######################################################################
-
-# Uncomment this to activate the MAD lib for compressed sound files
-# DEFINES += -DUSE_MAD
-# LIBS    += -lmad
-
-# Uncomment this to activate the Ogg Vorbis lib for compressed sound files
-# You MUST use Tremor for Ogg Vorbis support on the GP32 port.
-# DEFINES += -DUSE_VORBIS
-# LIBS    += -lvorbisfile -lvorbis
-
-# Uncomment this to activate the ALSA lib for midi
-# DEFINES += -DUSE_ALSA
-# LIBS    += -lasound
-
-# Uncomment this to cause warnings to be treated as errors
-# CXXFLAGS+= -Werror
-
-# Uncomment this to use GCC 3.x specific dependency tracking (recommended)
 HAVE_GCC3 = 1
 
 #######################################################################
@@ -176,9 +155,10 @@ DISABLE_HQ_SCALERS = 1
 #DISABLE_SCUMM = 1
 #DISABLE_SCUMM_7_8 = 1
 DISABLE_HE = 1
-DISABLE_SIMON = 1
-DISABLE_SKY = 1
-DISABLE_QUEEN = 1
+#DISABLE_SIMON = 1
+#DISABLE_SKY = 1
+#DISABLE_QUEEN = 1
+#DISABLE_GOB = 1
 
 
 # The engines below are not supported on the GP32 port so there is
@@ -190,7 +170,6 @@ DISABLE_SWORD2 = 1
 # Disable for ALL release builds.
 DISABLE_SAGA = 1
 DISABLE_KYRA = 1
-DISABLE_GOB = 1
 
 #######################################################################
 # Misc stuff - you should normally never have to edit this            #

@@ -1,8 +1,12 @@
 	.ALIGN
 @	.ARM
 
-	.GLOBAL		cpu_speed
-	.GLOBAL		mmu_change
+	.GLOBAL cpu_speed
+	.GLOBAL mmu_change
+	.GLOBAL gp_enableIRQ
+	.GLOBAL gp_disableIRQ
+	.GLOBAL gp_installSWIIRQ
+	.GLOBAL gp_removeSWIIRQ
 
 cpu_speed:
 	stmdb	r13!, {r0-r12,lr}
@@ -15,11 +19,38 @@ cpu_speed:
 	nop
 
 mmu_change:
-        stmdb   r13!, {r0-r12,lr}
-        swi             #0x02
-        ldmia   r13!, {r0-r12,lr}
-        bx              lr
-        nop
+	stmdb   r13!, {r0-r12,lr}
+	swi             #0x02
+	ldmia   r13!, {r0-r12,lr}
+	bx              lr
+	nop
+
+gp_enableIRQ:
+	STMDB    r13!,{r0,lr}
+	MRS      r0,CPSR
+	BIC      r0,r0,#0x80
+	MSR      CPSR,r0
+	LDMIA    r13!,{r0,pc}
+	@MOV      pc,lr
+
+gp_disableIRQ:
+	STMDB    r13!,{r0,lr}
+	MRS      r0,CPSR
+	ORR      r0,r0,#0xc0
+	MSR      CPSR,r0
+	LDMIA    r13!,{r0,pc}
+	@MOV      pc,lr
+
+gp_installSWIIRQ:
+	STMDB    r13!,{r14}
+	SWI      0x9
+	LDMIA    r13!,{pc}
+
+gp_removeSWIIRQ:
+	STMDB    r13!,{r14}
+	SWI      0xa
+	LDMIA    r13!,{pc}
+
 
 @ ******** ASMFastSolidBlit(unsigned char *src4, unsigned char *dst4, int nbx, int nby, int height2, int trans, int coul) ********
 

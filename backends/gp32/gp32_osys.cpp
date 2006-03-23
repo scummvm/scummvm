@@ -652,12 +652,18 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 
 	ConfMan.set("FM_medium_quality", (g_vars.fmQuality == FM_QUALITY_MED));
 	ConfMan.set("FM_high_quality", (g_vars.fmQuality == FM_QUALITY_HI));
-	//ConfMan.set("sample_rate", (int)g_vars.sampleRate);
+	//ConfMan.set("output_rate", (int)g_vars.sampleRate);
 
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
+		
+	_samplesPerSec = (int)g_vars.sampleRate; //hack
+	
+	if (_samplesPerSec == 0) {
+		return false;
+	}
 
-	if (_samplesPerSec <= 0)
+	if (_samplesPerSec < 0)
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Originally, we always used 2048 samples. This loop will produce the
@@ -697,7 +703,8 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 
 void OSystem_GP32::clearSoundCallback() {
 	NP("OSys::clearSoundCallback()");
-	gp_soundBufStop();
+	if (_samplesPerSec != 0)
+		gp_soundBufStop();
 }
 
 int OSystem_GP32::getOutputSampleRate() const {
