@@ -938,7 +938,10 @@ int SimonEngine::runScript() {
 				TextLocation *tl = getTextLocation(getVarOrByte());
 
 				tl->x = getVarOrWord();
-				tl->y = getVarOrByte();
+				if (getGameType() == GType_FF)
+					tl->y = getVarOrWord();
+				else
+					tl->y = getVarOrByte();
 				tl->width = getVarOrWord();
 			}
 			break;
