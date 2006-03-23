@@ -48,14 +48,11 @@ FXE			= scummvm.fxe
 
 # Stripped Build? (Smaller ELF, Minimal debug symbol information).
 # You MUST comment this out with a # if you wish to debug your code.
-STRIP_DEBUG	= -Wl,--strip-debug
+# STRIP_DEBUG	= -Wl,--strip-debug
 
 # Plugins hack
 srcdir		= ./
 
-# GP32 Direct Execute Tool (i.e. pclink -e on Windows, gplink run on Linux)
-EXECUTE_TOOL	=	pclink -e
-				# Remove the below from the above flags for Debug.
 CFLAGS		=	-marm -march=armv4t -mtune=arm920 -mapcs \
 	       		-finline-functions \
 	       		-fshort-enums \
@@ -75,12 +72,12 @@ DEFINES 	= 	-D__GP32__
 DEFINES		+=	-DNONSTANDARD_PORT
 
 # Support libtremor.
-DEFINES		+=	-DUSE_VORBIS -DUSE_TREMOR
-LIBS		+=	-lgptremor
+#DEFINES		+=	-DUSE_VORBIS -DUSE_TREMOR
+#LIBS		+=	-lgptremor
 
 # Support libmad.
-DEFINES		+=	-DUSE_MAD
-LIBS		+=	-lgpmad
+#DEFINES		+=	-DUSE_MAD
+#LIBS		+=	-lgpmad
 
 # Support for 8:3 save files names (The GP32 uses FAT12/16 (no vFAT) for the file system).
 DEFINES		+=	-DSHORT_SAVENAMES
@@ -143,6 +140,7 @@ $(FXE): $(BIN)
 $(BIN): scummvm$(EXEEXT)
 					$(OBJCOPY) -O binary $< $@
 
+# Uncomment this to use GCC 3.x specific dependency tracking (recommended)
 HAVE_GCC3 = 1
 
 #######################################################################
@@ -160,16 +158,15 @@ DISABLE_HE = 1
 #DISABLE_QUEEN = 1
 #DISABLE_GOB = 1
 
+# In-development engines below.
+# Disable for ALL release builds.
+DISABLE_SAGA = 1
+DISABLE_KYRA = 1
 
 # The engines below are not supported on the GP32 port so there is
 # no point compiling support into the binary.
 DISABLE_SWORD1 = 1
 DISABLE_SWORD2 = 1
-
-# In-development engines below.
-# Disable for ALL release builds.
-DISABLE_SAGA = 1
-DISABLE_KYRA = 1
 
 #######################################################################
 # Misc stuff - you should normally never have to edit this            #
@@ -182,6 +179,3 @@ include Makefile.common
 dist:
 	$(RM) $(ZIPFILE)
 	$(ZIP) $(ZIPFILE) $(DISTFILES)
-
-install: $(FXE)
-		$(EXECUTE_TOOL) $(BIN)	
