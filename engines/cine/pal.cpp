@@ -29,8 +29,8 @@ namespace Cine {
 
 uint16 tempPalette[256];
 
-uint8 colorMode256 = 0;
-uint8 palette256[256 * 3];
+byte colorMode256 = 0;
+byte palette256[256 * 3];
 
 uint16 palEntriesCount;
 
@@ -38,8 +38,8 @@ Common::File palFileHandle;
 
 PalEntry *palPtr;
 
-uint8 paletteBuffer1[16];
-uint8 paletteBuffer2[16];
+byte paletteBuffer1[16];
+byte paletteBuffer2[16];
 
 void loadPal(const char *fileName) {
 	char buffer[20];
@@ -100,7 +100,7 @@ int16 findPaletteFromName(const char *fileName) {
 
 void loadRelatedPalette(const char *fileName) {
 	char localName[16];
-	uint8 i;
+	byte i;
 	int16 paletteIndex;
 
 	removeExtention(localName, fileName);

@@ -30,10 +30,10 @@
 
 namespace Cine {
 
-extern uint8 *textDataPtr;
-extern uint8 textTable[256][2][16 * 8];
+extern byte *textDataPtr;
+extern byte textTable[256][2][16 * 8];
 
-void loadTextData(const char *pFileName, uint8 *pDestinationBuffer);
+void loadTextData(const char *pFileName, byte *pDestinationBuffer);
 
 } // End of namespace Cine
 

@@ -179,7 +179,7 @@ animDataEntry animData[] = {
 	{"FIN", 0x9},
 };
 
-uint8 getAnimTransparentColor(const char *animName) {
+byte getAnimTransparentColor(const char *animName) {
 	char name[15];
 
 	removeExtention(name, animName);
@@ -207,8 +207,8 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 	if (!isMask) {		// sprite + generated mask
 		frameSize = width * height;
 
-		animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
-		animDataTable[i].ptr2 = (uint8 *)malloc(frameSize);
+		animDataTable[i].ptr1 = (byte *)malloc(frameSize);
+		animDataTable[i].ptr2 = (byte *)malloc(frameSize);
 
 		animDataTable[i].width = width;
 		animDataTable[i].var1 = width >> 3;
@@ -221,7 +221,7 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 		// mask
 		frameSize = width * height * 8;
 
-		animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
+		animDataTable[i].ptr1 = (byte *)malloc(frameSize);
 		animDataTable[i].ptr2 = NULL;
 
 		animDataTable[i].width = width;
@@ -264,7 +264,7 @@ int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
 
 	frameSize *= 2;
 
-	animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
+	animDataTable[i].ptr1 = (byte *)malloc(frameSize);
 
 	assert(animDataTable[i].ptr1);
 
@@ -308,7 +308,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 
 	frameSize *= 2;
 
-	animDataTable[i].ptr1 = (uint8 *)malloc(frameSize);
+	animDataTable[i].ptr1 = (byte *)malloc(frameSize);
 
 	assert(animDataTable[i].ptr1);
 
@@ -332,7 +332,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
 	return (i);
 }
 
-void generateMask(uint8 * sprite, uint8 * mask, uint16 size, uint8 transparency) {
+void generateMask(byte * sprite, byte * mask, uint16 size, byte transparency) {
 	uint16 i;
 
 	for (i = 0; i < size; i++) {
@@ -344,12 +344,12 @@ void generateMask(uint8 * sprite, uint8 * mask, uint16 size, uint8 transparency)
 	}
 }
 
-void convertMask(uint8 * dest, uint8 * source, int16 width, int16 height) {
+void convertMask(byte * dest, byte * source, int16 width, int16 height) {
 	int16 i;
 	int16 j;
 
 	for (i = 0; i < width * height; i++) {
-		uint8 maskEntry = *(source++);
+		byte maskEntry = *(source++);
 		for (j = 0; j < 8; j++) {
 			if (maskEntry & 0x80) {
 				*(dest++) = 0;
@@ -362,11 +362,11 @@ void convertMask(uint8 * dest, uint8 * source, int16 width, int16 height) {
 	}
 }
 
-void convert4BBP(uint8 * dest, uint8 * source, int16 width, int16 height) {
+void convert4BBP(byte * dest, byte * source, int16 width, int16 height) {
 	int16 i;
 
 	for (i = 0; i < width * height; i++) {
-		uint8 maskEntry = *(source++);
+		byte maskEntry = *(source++);
 		*(dest++) = (maskEntry & 0xF0) >> 4;
 		*(dest++) = (maskEntry & 0xF);
 	}
@@ -374,7 +374,7 @@ void convert4BBP(uint8 * dest, uint8 * source, int16 width, int16 height) {
 
 void loadSpl(const char *resourceName) {
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
 
 	foundFileIdx = findFileInBundle(resourceName);
@@ -393,9 +393,9 @@ void loadSpl(const char *resourceName) {
 
 void loadMsk(const char *resourceName) {
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
-	uint8 *ptr;
+	byte *ptr;
 	int16 i;
 
 	foundFileIdx = findFileInBundle(resourceName);
@@ -426,11 +426,11 @@ void loadMsk(const char *resourceName) {
 
 void loadAni(const char *resourceName) {
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
-	uint8 *ptr;
+	byte *ptr;
 	int16 i;
-	uint8 transparentColor;
+	byte transparentColor;
 	uint32 fullSize;
 
 	foundFileIdx = findFileInBundle(resourceName);
@@ -450,7 +450,7 @@ void loadAni(const char *resourceName) {
 	fullSize = animHeader.frameWidth * animHeader.frameHeight;
 
 	for (i = 0; i < animHeader.numFrames; i++) {
-		uint8 *animPtr;
+		byte *animPtr;
 
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 0);
 
@@ -473,7 +473,7 @@ void loadAni(const char *resourceName) {
 			}
 		}
 
-		animPtr = (uint8 *)malloc(fullSize);
+		animPtr = (byte *)malloc(fullSize);
 
 		memcpy(animPtr, ptr, fullSize);
 		ptr += fullSize;
@@ -490,34 +490,34 @@ void loadAni(const char *resourceName) {
 	}
 }
 
-void convert8BBP(uint8 * dest, uint8 * source, int16 width, int16 height) {
+void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
 	uint16 i;
-	uint8 table[16];
+	byte table[16];
 
 	memcpy(table, source, 16);
 	source += 16;
 
 	for (i = 0; i < width * height; i++) {
-		uint8 color = *(source++);
+		byte color = *(source++);
 
 		*(dest++) = table[color >> 4];
 		*(dest++) = table[color & 0xF];
 	}
 }
 
-void convert8BBP2(uint8 * dest, uint8 * source, int16 width, int16 height) {
+void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 	uint16 i;
 	uint16 j;
 
-	uint8 al;
-	uint8 ah;
-	uint8 bl;
-	uint8 bh;
-	uint8 cl;
-	uint8 ch;
-	uint8 dl;
-	uint8 dh;
-	uint8 color;
+	byte al;
+	byte ah;
+	byte bl;
+	byte bh;
+	byte cl;
+	byte ch;
+	byte dl;
+	byte dh;
+	byte color;
 
 	for (j = 0; j < (width * height) / 16; j++) {
 		al = *(source);
@@ -605,13 +605,13 @@ void convert8BBP2(uint8 * dest, uint8 * source, int16 width, int16 height) {
 void loadSet(const char *resourceName) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
-	uint8 *ptr;
+	byte *ptr;
 	int16 i;
 	uint32 fullSize;
 	uint16 numSpriteInAnim;
-	uint8 *startOfDataPtr;
+	byte *startOfDataPtr;
 
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
@@ -626,7 +626,7 @@ void loadSet(const char *resourceName) {
 
 	for (i = 0; i < numSpriteInAnim; i++) {
 		int16 typeParam;
-		uint8 table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 		memcpy(&header2, ptr, 0x10);
 		ptr += 0x10;
@@ -688,13 +688,13 @@ void loadSet(const char *resourceName) {
 void loadSetAbs(const char *resourceName, uint16 idx) {
 	animHeader2Struct header2;
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
-	uint8 *ptr;
+	byte *ptr;
 	int16 i;
 	uint32 fullSize;
 	uint16 numSpriteInAnim;
-	uint8 *startOfDataPtr;
+	byte *startOfDataPtr;
 
 	foundFileIdx = findFileInBundle(resourceName);
 	dataPtr = readBundleFile(foundFileIdx);
@@ -709,7 +709,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 
 	for (i = 0; i < numSpriteInAnim; i++) {
 		int16 typeParam;
-		uint8 table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 		memcpy(&header2, ptr, 0x10);
 		ptr += 0x10;
@@ -770,7 +770,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 
 void loadSeq(const char *resourceName) {
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
 
 	foundFileIdx = findFileInBundle(resourceName);
@@ -783,7 +783,7 @@ void loadSeq(const char *resourceName) {
 
 void loadSeqAbs(const char *resourceName, uint16 idx) {
 	int16 foundFileIdx;
-	uint8 *dataPtr;
+	byte *dataPtr;
 	int16 entry;
 
 	foundFileIdx = findFileInBundle(resourceName);
@@ -795,8 +795,8 @@ void loadSeqAbs(const char *resourceName, uint16 idx) {
 }
 
 void loadResource(const char *resourceName) {
-	/* uint8 isMask = 0; */
-	/* uint8 isSpl = 0; */
+	/* byte isMask = 0; */
+	/* byte isSpl = 0; */
 
 	if (strstr(resourceName, ".SPL")) {
 		loadSpl(resourceName);
@@ -822,8 +822,8 @@ void loadResource(const char *resourceName) {
 }
 
 void loadAbs(const char *resourceName, uint16 idx) {
-	/* uint8 isMask = 0; */
-	/* uint8 isSpl = 0; */
+	/* byte isMask = 0; */
+	/* byte isSpl = 0; */
 
 	if (strstr(resourceName, ".SET")) {
 		loadSetAbs(resourceName, idx);
@@ -856,8 +856,8 @@ void loadResourcesFromSave() {
 			int8 isMask = 0;
 			int8 isSpl = 0;
 			int16 foundFileIdx;
-			uint8 *dataPtr;
-			uint8 *ptr;
+			byte *dataPtr;
+			byte *ptr;
 			char animName[256];
 
 			if (strcmp(currentPartName, currentPtr->name)) {
@@ -900,7 +900,7 @@ void loadResourcesFromSave() {
 			{
 				uint16 fullSize;
 				uint16 i;
-				uint8 transparentColor;
+				byte transparentColor;
 
 				fullSize = animHeader.frameWidth * animHeader.frameHeight;
 
@@ -910,7 +910,7 @@ void loadResourcesFromSave() {
 
 				for (i = 0; i < animHeader.numFrames; i++) { // load all the frames
 					int16 entry;
-					uint8 *animPtr;
+					byte *animPtr;
 
 					// special case transparency handling
 					if (!strcmp(animName, "L2202.ANI")) {
@@ -941,7 +941,7 @@ void loadResourcesFromSave() {
 						ptr += fullSize;
 					} else {
 						if (!isMask) {
-							animPtr = (uint8 *)malloc(fullSize);
+							animPtr = (byte *)malloc(fullSize);
 							memcpy(animPtr, ptr, fullSize);
 							ptr += fullSize;
 

@@ -99,7 +99,7 @@ void mainLoop(int bootScriptIdx) {
 	uint16 var_6;
 	uint16 quitFlag;
 	uint16 i;
-	uint8 di;
+	byte di;
 	uint16 mouseButton;
 
 	freeAnimDataTable();

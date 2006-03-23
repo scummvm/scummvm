@@ -60,8 +60,8 @@ void unloadAllMasks(void);
 void resetMessageHead(void);
 
 void loadObject(char *pObjectName);
-void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
-void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
+void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4);
+void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue);
 
 void loadOverlayElement(uint16 objIdx, uint16 param);
 int8 removeOverlayElement(uint16 objIdx, uint16 param);
@@ -69,9 +69,9 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param);
 int16 getObjectParam(uint16 objIdx, uint16 paramIdx);
 int16 freeOverlay(uint16 objIdx, uint16 param);
 
-void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
-void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue);
-uint8 compareObjectParam(uint8 objIdx, uint8 param1, int16 param2);
+void addObjectParam(byte objIdx, byte paramIdx, int16 newValue);
+void subObjectParam(byte objIdx, byte paramIdx, int16 newValue);
+byte compareObjectParam(byte objIdx, byte param1, int16 param2);
 
 } // End of namespace Cine
 

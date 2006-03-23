@@ -51,7 +51,7 @@ private:
 
 	void update();
 	void handleEvents();
-	void handlePattern(int channel, const uint8 *patternData);
+	void handlePattern(int channel, const byte *patternData);
 	void unload();
 
 	bool _playing;
@@ -62,8 +62,8 @@ private:
 	int _fadeOutCounter;
 	int _updateTicksCounter;
 	int _instrumentsChannelTable[NUM_CHANNELS];
-	uint8 *_sfxData;
-	uint8 *_instrumentsData[NUM_INSTRUMENTS];
+	byte *_sfxData;
+	byte *_instrumentsData[NUM_INSTRUMENTS];
 	SoundDriver *_driver;
 };
 

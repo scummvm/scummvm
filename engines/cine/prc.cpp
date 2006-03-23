@@ -59,9 +59,9 @@ void freePrcLinkedList(void) {
 }
 
 void loadPrc(const char *pPrcName) {
-	uint8 i;
+	byte i;
 	uint16 numScripts;
-	const uint8 *scriptPtr;
+	const byte *scriptPtr;
 
 	assert(pPrcName);
 

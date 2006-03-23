@@ -195,7 +195,7 @@ static void initialize() {
 
 	init_video();
 
-	textDataPtr = (uint8 *)malloc(8000);
+	textDataPtr = (byte *)malloc(8000);
 
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
 

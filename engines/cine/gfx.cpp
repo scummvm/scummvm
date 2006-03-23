@@ -33,16 +33,16 @@ byte *screenBuffer;
 
 uint16 c_palette[256];
 
-unsigned char *page0;
-unsigned char *page1;
-unsigned char *page2;
-unsigned char *page3;
+byte *page0;
+byte *page1;
+byte *page2;
+byte *page3;
 
-uint8 page1Raw[320 * 200];
-uint8 page2Raw[320 * 200];
-uint8 page3Raw[320 * 200];
+byte page1Raw[320 * 200];
+byte page2Raw[320 * 200];
+byte page3Raw[320 * 200];
 
-static const uint8 mouseCursorNormal[] = {
+static const byte mouseCursorNormal[] = {
 	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
 	0x78, 0x00, 0x7C, 0x00, 0x7E, 0x00, 0x7F, 0x00,
 	0x7F, 0x80, 0x7C, 0x00, 0x6C, 0x00, 0x46, 0x00,
@@ -53,7 +53,7 @@ static const uint8 mouseCursorNormal[] = {
 	0xCF, 0x00, 0x07, 0x80, 0x07, 0x80, 0x03, 0x80
 };
 
-static const uint8 mouseCursorDisk[] = {
+static const byte mouseCursorDisk[] = {
 	0x7F, 0xFC, 0x9F, 0x12, 0x9F, 0x12, 0x9F, 0x12,
 	0x9F, 0x12, 0x9F, 0xE2, 0x80, 0x02, 0x9F, 0xF2,
 	0xA0, 0x0A, 0xA0, 0x0A, 0xA0, 0x0A, 0xA0, 0x0A,
@@ -64,7 +64,7 @@ static const uint8 mouseCursorDisk[] = {
 	0xFF, 0xFE, 0xFF, 0xFE, 0x7F, 0xFC, 0x00, 0x00
 };
 
-static const uint8 mouseCursorCross[] = {
+static const byte mouseCursorCross[] = {
 	0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00,
 	0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x7C, 0x7C,
 	0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00,
@@ -78,7 +78,7 @@ static const uint8 mouseCursorCross[] = {
 static const struct MouseCursor {
 	int hotspotX;
 	int hotspotY;
-	const uint8 *bitmap;
+	const byte *bitmap;
 } mouseCursors[] = {
 	{ 1, 1, mouseCursorNormal },
 	{ 0, 0, mouseCursorDisk },
@@ -89,22 +89,22 @@ void init_video() {
 	screenBuffer = (byte *)malloc(320 * 200 * 3);
 	assert(screenBuffer);
 
-	page0 = (unsigned char *)malloc(0x8000);
-	page1 = (unsigned char *)malloc(0x8000);
-	page2 = (unsigned char *)malloc(0x8000);
-	page3 = (unsigned char *)malloc(0x8000);
+	page0 = (byte *)malloc(0x8000);
+	page1 = (byte *)malloc(0x8000);
+	page2 = (byte *)malloc(0x8000);
+	page3 = (byte *)malloc(0x8000);
 }
 
 void setMouseCursor(int cursor) {
 	static int currentMouseCursor = -1;
 	assert(cursor >= 0 && cursor < 3);
 	if (currentMouseCursor != cursor) {
-		uint8 mouseCursor[16 * 16];
+		byte mouseCursor[16 * 16];
 		const MouseCursor *mc = &mouseCursors[cursor];
-		const uint8 *src = mc->bitmap;
+		const byte *src = mc->bitmap;
 		for (int i = 0; i < 32; ++i) {
 			int offs = i * 8;
-			for (uint8 mask = 0x80; mask != 0; mask >>= 1) {
+			for (byte mask = 0x80; mask != 0; mask >>= 1) {
 				if (src[0] & mask) {
 					mouseCursor[offs] = 2;
 				} else if (src[32] & mask) {
@@ -148,8 +148,8 @@ uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
 	return (oriR | (oriG << 4) | (oriB << 8));
 }
 
-void transformPaletteRange(uint8 startColor, uint8 stopColor, int8 r, int8 g, int8 b) {
-	uint8 i;
+void transformPaletteRange(byte startColor, byte stopColor, int8 r, int8 g, int8 b) {
+	byte i;
 
 	for (i = startColor; i <= stopColor; i++) {
 		c_palette[i] = transformColor(tempPalette[i], b, g, r);
@@ -157,12 +157,12 @@ void transformPaletteRange(uint8 startColor, uint8 stopColor, int8 r, int8 g, in
 	//gfxFlipPage(page2);
 }
 
-void gfxFillSprite(uint8 *spritePtr, uint16 width, uint16 height, uint8 *page, int16 x, int16 y) {
+void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
 	int16 i;
 	int16 j;
 
 	for (i = 0; i < height; i++) {
-		uint8 *destPtr = page + x + y * 320;
+		byte *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
@@ -181,7 +181,7 @@ void gfxFillSprite(uint8 *spritePtr, uint16 width, uint16 height, uint8 *page, i
 	}
 }
 
-void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page) {
+void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page) {
 	if (x1 == x2) {
 		if (y1 > y2) {
 			SWAP(y1, y2);
@@ -202,7 +202,7 @@ void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *pag
 
 }
 
-void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page) {
+void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page) {
 	int16 t;
 
 	if (x1 > x2) {
@@ -224,8 +224,8 @@ void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uin
 	}
 }
 
-int16 gfxGetBit(int16 x, int16 y, uint8 *ptr, int16 width) {
-	uint8 *ptrToData = (ptr) + y * width + x;
+int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width) {
+	byte *ptrToData = (ptr) + y * width + x;
 
 	if (x > width) {
 		return 0;
@@ -238,17 +238,17 @@ int16 gfxGetBit(int16 x, int16 y, uint8 *ptr, int16 width) {
 	return (1);
 }
 
-void gfxResetRawPage(uint8 *pageRaw) {
+void gfxResetRawPage(byte *pageRaw) {
 	memset(pageRaw, 0, 320 * 200);
 }
 
-void gfxConvertSpriteToRaw(uint8 *dst, uint8 *src, uint16 width, uint16 height) {
+void gfxConvertSpriteToRaw(byte *dst, byte *src, uint16 width, uint16 height) {
 	int x, y, d, bit, plane;
 
 	width >>= 3;
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
-			uint8 data[2][4];
+			byte data[2][4];
 			data[0][0] = *src++;
 			data[1][0] = *src++;
 			data[0][1] = *src++;
@@ -259,7 +259,7 @@ void gfxConvertSpriteToRaw(uint8 *dst, uint8 *src, uint16 width, uint16 height) 
 			data[1][3] = *src++;
 			for (d = 0; d < 2; ++d) {
 				for (bit = 0; bit < 8; ++bit) {
-					uint8 color = 0;
+					byte color = 0;
 					for (plane = 0; plane < 4; ++plane) {
 						if (data[d][plane] & (1 << (7 - bit))) {
 							color |= 1 << plane;
@@ -272,14 +272,14 @@ void gfxConvertSpriteToRaw(uint8 *dst, uint8 *src, uint16 width, uint16 height) 
 	}
 }
 
-void gfxCopyRawPage(uint8 *source, uint8 *dest) {
+void gfxCopyRawPage(byte *source, byte *dest) {
 	memcpy(dest, source, 320 * 200);
 }
 
-void gfxFlipRawPage(uint8 *frontBuffer) {
-	uint8 *page = frontBuffer;
+void gfxFlipRawPage(byte *frontBuffer) {
+	byte *page = frontBuffer;
 	int x, y;
-	uint8 *pixels = (uint8 *) screenBuffer;
+	byte *pixels = (byte *) screenBuffer;
 	byte c;
 
 	for (y = 0; y < 200; y++) {
@@ -318,13 +318,13 @@ void gfxFlipRawPage(uint8 *frontBuffer) {
 	g_system->copyRectToScreen(screenBuffer, 320, 0, 0, 320, 200);
 }
 
-void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height,
-				   uint8 *page, int16 x, int16 y) {
+void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
+				   byte *page, int16 x, int16 y) {
 	int16 i;
 	int16 j;
 
 	for (i = 0; i < height; i++) {
-		uint8 *destPtr = page + x + y * 320;
+		byte *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {
@@ -341,13 +341,13 @@ void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height,
 	}
 }
 
-void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 height,
-					uint8 *page, int16 x, int16 y) {
+void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height,
+					byte *page, int16 x, int16 y) {
 	int16 i;
 	int16 j;
 
 	for (i = 0; i < height; i++) {
-		uint8 *destPtr = page + x + y * 320;
+		byte *destPtr = page + x + y * 320;
 		destPtr += i * 320;
 
 		for (j = 0; j < width * 8; j++) {

@@ -43,8 +43,8 @@ struct AnimData {
 	uint16 bpp;
 	uint16 height;
 
-	uint8 *ptr1;
-	uint8 *ptr2;
+	byte *ptr1;
+	byte *ptr2;
 	int16 fileIdx;
 	int16 frameIdx;
 	char name[10];
@@ -61,15 +61,15 @@ extern AnimData *animDataTable;
 extern PartBuffer *partBuffer;
 
 void loadPart(const char *partName);
-void freePartRange(uint8 startIdx, uint8 numIdx);
+void freePartRange(byte startIdx, byte numIdx);
 void closePart(void);
 
 int16 findFileInBundle(const char *fileName);
 
-void readFromPart(int16 idx, uint8 *dataPtr);
+void readFromPart(int16 idx, byte *dataPtr);
 
-uint8 *readBundleFile(int16 foundFileIdx);
-uint8 *readFile(const char *filename);
+byte *readBundleFile(int16 foundFileIdx);
+byte *readFile(const char *filename);
 
 } // End of namespace Cine
 

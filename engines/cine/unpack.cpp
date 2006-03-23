@@ -45,7 +45,7 @@ static int nextChunk(UnpackCtx *uc) {
 	return CF;
 }
 
-static uint16 getCode(UnpackCtx *uc, uint8 numChunks) {
+static uint16 getCode(UnpackCtx *uc, byte numChunks) {
 	uint16 c = 0;
 	while (numChunks--) {
 		c <<= 1;
@@ -56,16 +56,16 @@ static uint16 getCode(UnpackCtx *uc, uint8 numChunks) {
 	return c;
 }
 
-static void unpackHelper1(UnpackCtx *uc, uint8 numChunks, uint8 addCount) {
+static void unpackHelper1(UnpackCtx *uc, byte numChunks, byte addCount) {
 	uint16 count = getCode(uc, numChunks) + addCount + 1;
 	uc->datasize -= count;
 	while (count--) {
-		*uc->dst = (uint8)getCode(uc, 8);
+		*uc->dst = (byte)getCode(uc, 8);
 		--uc->dst;
 	}
 }
 
-static void unpackHelper2(UnpackCtx *uc, uint8 numChunks) {
+static void unpackHelper2(UnpackCtx *uc, byte numChunks) {
 	uint16 i = getCode(uc, numChunks);
 	uint16 count = uc->size + 1;
 	uc->datasize -= count;
@@ -75,7 +75,7 @@ static void unpackHelper2(UnpackCtx *uc, uint8 numChunks) {
 	}
 }
 
-bool delphineUnpack(uint8 *dst, const uint8 *src, int len) {
+bool delphineUnpack(byte *dst, const byte *src, int len) {
 	UnpackCtx uc;
 	uc.src = src + len - 4;
 	uc.datasize = READ_BE_UINT32(uc.src); uc.src -= 4;

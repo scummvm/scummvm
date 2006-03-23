@@ -141,8 +141,8 @@ void SfxPlayer::update() {
 }
 
 void SfxPlayer::handleEvents() {
-	const uint8 *patternData = _sfxData + 600;
-	const uint8 *orderTable = _sfxData + 472;
+	const byte *patternData = _sfxData + 600;
+	const byte *orderTable = _sfxData + 472;
 	uint16 patternNum = orderTable[_currentOrder] * 1024;
 
 	for (int i = 0; i < 4; ++i) {
@@ -164,7 +164,7 @@ void SfxPlayer::handleEvents() {
 	debug(7, "_currentOrder=%d/%d _currentPos=%d", _currentOrder, _numOrders, _currentPos);
 }
 
-void SfxPlayer::handlePattern(int channel, const uint8 *patternData) {
+void SfxPlayer::handlePattern(int channel, const byte *patternData) {
 	int instrument = patternData[2] >> 4;
 	if (instrument != 0) {
 		--instrument;

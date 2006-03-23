@@ -61,7 +61,7 @@ void loadObject(char *pObjectName) {
 	uint16 numEntry;
 	uint16 entrySize;
 	uint16 i;
-	uint8 *ptr;
+	byte *ptr;
 
 	checkDataDisk(-1);
 
@@ -196,7 +196,7 @@ void loadOverlayElement(uint16 objIdx, uint16 param) {
 	currentHeadPtr->previous = pNewElement;
 }
 
-void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
+void setupObject(byte objIdx, uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 	objectTable[objIdx].x = param1;
 	objectTable[objIdx].y = param2;
 	objectTable[objIdx].mask = param3;
@@ -207,7 +207,7 @@ void setupObject(uint8 objIdx, uint16 param1, uint16 param2, uint16 param3, uint
 	}
 }
 
-void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
+void subObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	paramIdx--;
 
 	assert(paramIdx <= 5);
@@ -250,7 +250,7 @@ void subObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	}
 }
 
-void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
+void addObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	paramIdx--;
 
 	assert(paramIdx <= 5);
@@ -293,7 +293,7 @@ void addObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	}
 }
 
-void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
+void modifyObjectParam(byte objIdx, byte paramIdx, int16 newValue) {
 	paramIdx--;
 
 	assert(paramIdx <= 5);
@@ -340,8 +340,8 @@ void modifyObjectParam(uint8 objIdx, uint8 paramIdx, int16 newValue) {
 	}
 }
 
-uint8 compareObjectParam(uint8 objIdx, uint8 param1, int16 param2) {
-	uint8 compareResult = 0;
+byte compareObjectParam(byte objIdx, byte param1, int16 param2) {
+	byte compareResult = 0;
 
 	switch (param1 - 1) {
 	case 0:

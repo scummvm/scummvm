@@ -28,18 +28,18 @@
 
 namespace Cine {
 
-uint8 *textDataPtr;
+byte *textDataPtr;
 
-uint8 textTable[256][2][16 * 8];
+byte textTable[256][2][16 * 8];
 
-void generateMask(uint8 *sprite, uint8 *mask, uint16 size, uint8 transparency);
+void generateMask(byte *sprite, byte *mask, uint16 size, byte transparency);
 
-void loadTextData(const char *pFileName, uint8 *pDestinationBuffer) {
+void loadTextData(const char *pFileName, byte *pDestinationBuffer) {
 	Common::File pFileHandle;
 	uint16 entrySize;
 	uint16 numEntry;
 	uint16 i;
-	uint8 *tempBuffer;
+	byte *tempBuffer;
 	uint16 dataSize;
 
 	assert(pFileName);

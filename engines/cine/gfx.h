@@ -27,46 +27,46 @@
 
 namespace Cine {
 
-void gfxDrawSprite(uint8 *src4, uint16 sw, uint16 sh, uint8 *dst4, int16 sx, int16 sy);
+void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern unsigned char *page0;
-extern unsigned char *page1;
-extern unsigned char *page2;
-extern unsigned char *page3;
+extern byte *page0;
+extern byte *page1;
+extern byte *page2;
+extern byte *page3;
 
 void init_video();
 void setMouseCursor(int cursor);
-void convertGfx(uint8 *source, uint8 *dest, const uint16 width, const uint16 height);
-void convertGfx2(uint8 *source, uint8 *dest, const uint16 width, const uint16 height);
-void gfxCopyPage(uint8 *source, uint8 *dest);
+void convertGfx(byte *source, byte *dest, const uint16 width, const uint16 height);
+void convertGfx2(byte *source, byte *dest, const uint16 width, const uint16 height);
+void gfxCopyPage(byte *source, byte *dest);
 
-void transformPaletteRange(uint8 startColor, uint8 numColor, int8 r, int8 g, int8 b);
+void transformPaletteRange(byte startColor, byte numColor, int8 r, int8 g, int8 b);
 void gfxFlipPage(void);
 
-void gfxSpriteFunc1(uint8 *ptr, uint16 width, uint16 height, uint8 *page, int16 x, int16 y);
-void gfxFillSprite(uint8 *src4, uint16 sw, uint16 sh, uint8 *dst4, int16 sx, int16 sy);
+void gfxSpriteFunc1(byte *ptr, uint16 width, uint16 height, byte *page, int16 x, int16 y);
+void gfxFillSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-void gfxSpriteFunc2(uint8 *spritePtr, int16 width, int16 height, uint8 *maskPtr,
-    int16 maskWidth, int16 maskHeight, uint8 *bufferPtr, int16 x, int16 y, uint8 maskIdx);
+void gfxSpriteFunc2(byte *spritePtr, int16 width, int16 height, byte *maskPtr,
+    int16 maskWidth, int16 maskHeight, byte *bufferPtr, int16 x, int16 y, byte maskIdx);
 
-void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page);
-void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color);
+void gfxDrawLine(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
+void gfxDrawPlainBox(int16 x1, int16 y1, int16 x2, int16 y2, byte color);
 
-void gfxResetPage(uint8 *pagePtr);
+void gfxResetPage(byte *pagePtr);
 
-int16 gfxGetBit(int16 x, int16 y, uint8 *ptr, int16 width);
+int16 gfxGetBit(int16 x, int16 y, byte *ptr, int16 width);
 
-extern uint8 page1Raw[320 * 200];
-extern uint8 page2Raw[320 * 200];
-extern uint8 page3Raw[320 * 200];
+extern byte page1Raw[320 * 200];
+extern byte page2Raw[320 * 200];
+extern byte page3Raw[320 * 200];
 
-void gfxResetRawPage(uint8 *pageRaw);
-void gfxConvertSpriteToRaw(uint8 *dest, uint8 *source, uint16 width, uint16 height);
-void gfxCopyRawPage(uint8 *source, uint8 * dest);
-void gfxFlipRawPage(uint8 *frontBuffer);
-void drawSpriteRaw(uint8 *spritePtr, uint8 *maskPtr, int16 width, int16 height, uint8 *page, int16 x, int16 y);
-void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, uint8 color, uint8 *page);
-void drawSpriteRaw2(uint8 *spritePtr, uint8 transColor, int16 width, int16 height, uint8 *page, int16 x, int16 y);
+void gfxResetRawPage(byte *pageRaw);
+void gfxConvertSpriteToRaw(byte *dest, byte *source, uint16 width, uint16 height);
+void gfxCopyRawPage(byte *source, byte * dest);
+void gfxFlipRawPage(byte *frontBuffer);
+void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
+void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);
+void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
 
 } // End of namespace Cine
 

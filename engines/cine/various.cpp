@@ -41,17 +41,17 @@ unk1Struct messageTable[NUM_MAX_MESSAGE];
 
 uint32 var6;
 uint32 var8;
-uint8 *var9;
+byte *var9;
 
 uint16 var2;
 uint16 var3;
 uint16 var4;
 uint16 var5;
 
-void drawString(const char *string, uint8 param) {
+void drawString(const char *string, byte param) {
 }
 
-void blitRawScreen(uint8 *frontBuffer) {
+void blitRawScreen(byte *frontBuffer) {
 	gfxFlipRawPage(frontBuffer);
 }
 
@@ -70,12 +70,12 @@ void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 }
 
 uint16 errorVar;
-uint8 menuVar;
+byte menuVar;
 
-void gfxFuncGen1(uint8 *param1, uint8 *param2, uint8 *param3, uint8 *param4, int16 param5) {
+void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5) {
 }
 
-uint8 *page0c;
+byte *page0c;
 
 void ptrGfxFunc13(void) {
 }
@@ -95,7 +95,7 @@ uint16 var17;
 uint16 var18;
 uint16 var19;
 uint16 var20;
-uint8 var21;
+byte var21;
 
 int16 playerCommand;
 
@@ -119,11 +119,11 @@ char currentDatName[30];
 
 int16 saveVar2;
 
-uint8 isInPause = 0;
+byte isInPause = 0;
 
 uint16 defaultMenuBoxColor;
 
-uint8 inputVar1 = 0;
+byte inputVar1 = 0;
 
 uint16 inputVar2;
 uint16 inputVar3;
@@ -1231,8 +1231,8 @@ uint16 menuVar5 = 0;
 
 int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
     uint16 width) {
-	uint8 color = 2;
-	uint8 color2;
+	byte color = 2;
+	byte color2;
 	int16 paramY;
 	int16 currentX;
 	int16 currentY;
@@ -1277,15 +1277,15 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 		currentX = X + 4;
 
 		for (j = 0; j < strlen(commandList[i]); j++) {
-			uint8 currentChar = commandList[i][j];
+			byte currentChar = commandList[i][j];
 
 			if (currentChar == ' ') {
 				currentX += 5;
 			} else {
-				uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+				byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+					byte characterIdx = fontParamTable[currentChar].characterIdx;
 					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
 					currentX += characterWidth + 1;
 				}
@@ -1323,15 +1323,15 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	currentX = X + 4;
 
 	for (j = 0; j < strlen(commandList[currentSelection]); j++) {
-		uint8 currentChar = commandList[currentSelection][j];
+		byte currentChar = commandList[currentSelection][j];
 
 		if (currentChar == ' ') {
 			currentX += 5;
 		} else {
-			uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+			byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 			if (characterWidth) {
-				uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+				byte characterIdx = fontParamTable[currentChar].characterIdx;
 				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 				currentX += characterWidth + 1;
 			}
@@ -1396,15 +1396,15 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 			currentX = X + 4;
 
 			for (j = 0; j < strlen(commandList[oldSelection]); j++) {
-				uint8 currentChar = commandList[oldSelection][j];
+				byte currentChar = commandList[oldSelection][j];
 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+					byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						byte characterIdx = fontParamTable[currentChar].characterIdx;
 						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
@@ -1419,15 +1419,15 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 			for (j = 0; j < strlen(commandList[currentSelection]);
 			    j++) {
-				uint8 currentChar = commandList[currentSelection][j];
+				byte currentChar = commandList[currentSelection][j];
 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+					byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						byte characterIdx = fontParamTable[currentChar].characterIdx;
 						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
@@ -1465,8 +1465,8 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
     uint16 width) {
-	uint8 color = 2;
-	uint8 color2;
+	byte color = 2;
+	byte color2;
 	int16 paramY;
 	int16 currentX;
 	int16 currentY;
@@ -1511,15 +1511,15 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 		currentX = X + 4;
 
 		for (j = 0; j < strlen(commandList[i]); j++) {
-			uint8 currentChar = commandList[i][j];
+			byte currentChar = commandList[i][j];
 
 			if (currentChar == ' ') {
 				currentX += 5;
 			} else {
-				uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+				byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+					byte characterIdx = fontParamTable[currentChar].characterIdx;
 					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
 					currentX += characterWidth + 1;
 				}
@@ -1557,15 +1557,15 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 	currentX = X + 4;
 
 	for (j = 0; j < strlen(commandList[currentSelection]); j++) {
-		uint8 currentChar = commandList[currentSelection][j];
+		byte currentChar = commandList[currentSelection][j];
 
 		if (currentChar == ' ') {
 			currentX += 5;
 		} else {
-			uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+			byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 			if (characterWidth) {
-				uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+				byte characterIdx = fontParamTable[currentChar].characterIdx;
 				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 				currentX += characterWidth + 1;
 			}
@@ -1630,15 +1630,15 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 			currentX = X + 4;
 
 			for (j = 0; j < strlen(commandList[oldSelection]); j++) {
-				uint8 currentChar = commandList[oldSelection][j];
+				byte currentChar = commandList[oldSelection][j];
 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+					byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						byte characterIdx = fontParamTable[currentChar].characterIdx;
 						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
@@ -1653,15 +1653,15 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 
 			for (j = 0; j < strlen(commandList[currentSelection]);
 			    j++) {
-				uint8 currentChar = commandList[currentSelection][j];
+				byte currentChar = commandList[currentSelection][j];
 
 				if (currentChar == ' ') {
 					currentX += 5;
 				} else {
-					uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+					byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 					if (characterWidth) {
-						uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+						byte characterIdx = fontParamTable[currentChar].characterIdx;
 						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
 						currentX += characterWidth + 1;
 					}
@@ -1698,8 +1698,8 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 }
 
 void drawMenuBox(char *command, int16 x, int16 y) {
-	uint8 j;
-	uint8 lColor = 2;
+	byte j;
+	byte lColor = 2;
 
 	hideMouse();
 
@@ -1714,15 +1714,15 @@ void drawMenuBox(char *command, int16 x, int16 y) {
 	y += 2;
 
 	for (j = 0; j < strlen(command); j++) {
-		uint8 currentChar = command[j];
+		byte currentChar = command[j];
 
 		if (currentChar == ' ') {
 			x += 5;
 		} else {
-			uint8 characterWidth = fontParamTable[currentChar].characterWidth;
+			byte characterWidth = fontParamTable[currentChar].characterWidth;
 
 			if (characterWidth) {
-				uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+				byte characterIdx = fontParamTable[currentChar].characterIdx;
 				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page2Raw, x, y);
 				x += characterWidth + 1;
 			}
@@ -2088,11 +2088,11 @@ uint16 executePlayerInput(void) {
 	return var_5E;
 }
 
-void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
-				uint8 *maskPtr, uint16 width, uint16 height, uint8 *page, int16 x, int16 y) {
+void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
+				byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
 #if 0
-	uint8 *ptr = NULL;
-	uint8 i = 0;
+	byte *ptr = NULL;
+	byte i = 0;
 	uint16 si = 0;
 	overlayHeadElement *pCurrentOverlay = currentOverlay;
 
@@ -2105,7 +2105,7 @@ void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
 			uint16 maskSpriteIdx;
 	 
 			if (!si) {
-				ptr = (uint8 *)malloc(width * height);
+				ptr = (byte *)malloc(width * height);
 				si = 1;
 			}
 	 
@@ -2140,8 +2140,8 @@ void drawSprite(overlayHeadElement *currentOverlay, uint8 *spritePtr,
 int16 additionalBgVScroll = 0;
 
 void backupOverlayPage(void) {
-	uint8 *bgPage;
-	uint8 *scrollBg;
+	byte *bgPage;
+	byte *scrollBg;
 
 	bgPage = additionalBgTable[currentAdditionalBgIdx];
 
@@ -2165,8 +2165,8 @@ void backupOverlayPage(void) {
 	}
 }
 
-uint16 computeMessageLength(uint8 *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
-	uint8 *localPtr = ptr;
+uint16 computeMessageLength(byte *ptr, uint16 width, uint16 *numWords, uint16 *messageWidth, uint16 *lineResult) {
+	byte *localPtr = ptr;
 
 	uint16 var_2 = 0;
 	uint16 localLineResult = 0;
@@ -2179,7 +2179,7 @@ uint16 computeMessageLength(uint8 *ptr, uint16 width, uint16 *numWords, uint16 *
 	uint16 di = 0;
 
 	while (!finished) {
-		uint8 character = *(localPtr++);
+		byte character = *(localPtr++);
 
 		if (character == ' ') {
 			var_8 = var_16;
@@ -2226,9 +2226,9 @@ uint16 computeMessageLength(uint8 *ptr, uint16 width, uint16 *numWords, uint16 *
 	return (di);
 }
 
-void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 color) {
-	uint8 color2 = 2;
-	uint8 endOfMessageReached = 0;
+void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
+	byte color2 = 2;
+	byte endOfMessageReached = 0;
 	int16 localX;
 	int16 localY;
 	int16 localWidth;
@@ -2256,8 +2256,8 @@ void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 colo
 		uint16 fullLineWidth;
 		uint16 interWordSize;
 		uint16 interWordSizeRemain;
-		uint8 currentChar;
-		uint8 characterWidth;
+		byte currentChar;
+		byte characterWidth;
 
 		while (messagePtr[messageLength] == ' ') {
 			messageLength++;
@@ -2265,7 +2265,7 @@ void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 colo
 
 		messagePtr += messageLength;
 
-		messageLength = computeMessageLength((uint8 *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
+		messageLength = computeMessageLength((byte *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
 
 		endOfMessagePtr = messagePtr + messageLength;
 
@@ -2300,7 +2300,7 @@ void drawDialogueMessage(uint8 msgIdx, int16 x, int16 y, int16 width, int16 colo
 				characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					uint8 characterIdx = fontParamTable[currentChar].characterIdx;
+					byte characterIdx = fontParamTable[currentChar].characterIdx;
 					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
 					localX += characterWidth;
 				}
@@ -2387,7 +2387,7 @@ void drawOverlays(void) {
 			}
 		case 2:	// text
 			{
-				uint8 messageIdx;
+				byte messageIdx;
 				int16 x;
 				int16 y;
 				uint16 partVar1;
@@ -2552,11 +2552,11 @@ void closeEngine7(void) {
 }
 
 void removeExtention(char *dest, const char *source) {
-	uint8 *ptr;
+	byte *ptr;
 
 	strcpy(dest, source);
 
-	ptr = (uint8 *) strchr(dest, '.');
+	ptr = (byte *) strchr(dest, '.');
 
 	if (ptr) {
 		*ptr = 0;
@@ -2569,7 +2569,7 @@ uint16 defaultMenuBoxColor2;
 
 uint16 zoneData[NUM_MAX_ZONE];
 
-void addMessage(uint8 param1, int16 param2, int16 param3, int16 param4, int16 param5) {
+void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5) {
 	overlayHeadElement *currentHead = &overlayHead;
 	overlayHeadElement *tempHead = currentHead;
 	overlayHeadElement *newElement;
@@ -2690,11 +2690,11 @@ uint16 computeMove2(SeqListElement *element) {
 void resetGfxEntityEntry(uint16 objIdx) {
 #if 0
 	overlayHeadElement* tempHead = &overlayHead;
-	uint8* var_16 = NULL;
+	byte* var_16 = NULL;
 	uint16 var_10 = 0;
 	uint16 var_12 = 0;
 	overlayHeadElement* currentHead = tempHead->next;
-	uint8* var_1A = NULL;
+	byte* var_1A = NULL;
 	overlayHeadElement* var1E = &overlayHead;
 
 	while(currentHead) {
@@ -2757,10 +2757,10 @@ void resetGfxEntityEntry(uint16 objIdx) {
 #endif
 }
 
-uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, SeqListElement *element, uint16 param3, int16 *param4) {
-	uint8 *currentPtr = ptr;
-	uint8 *ptrData;
-	uint8 *ptr2;
+uint16 addAni(uint16 param1, uint16 param2, byte *ptr, SeqListElement *element, uint16 param3, int16 *param4) {
+	byte *currentPtr = ptr;
+	byte *ptrData;
+	byte *ptr2;
 	int16 di;
 
 	assert(ptr);
@@ -2802,7 +2802,7 @@ uint16 addAni(uint16 param1, uint16 param2, uint8 *ptr, SeqListElement *element,
 void processSeqListElement(SeqListElement *element) {
 	int16 x;
 	int16 y;
-	uint8 *ptr1;
+	byte *ptr1;
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;

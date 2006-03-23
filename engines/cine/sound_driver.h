@@ -40,10 +40,10 @@ public:
 
 	virtual ~SoundDriver() {}
 
-	virtual void setupChannel(int channel, const uint8 *data, int instrument, int volume) = 0;
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume) = 0;
 	virtual void setChannelFrequency(int channel, int frequency) = 0;
 	virtual void stopChannel(int channel) = 0;
-	virtual void playSound(const uint8 *data, int channel, int volume) = 0;
+	virtual void playSound(const byte *data, int channel, int volume) = 0;
 	virtual void stopSound() = 0;
 	virtual const char *getInstrumentExtension() const = 0;
 	
@@ -70,13 +70,13 @@ struct AdlibRegisterSoundInstrument {
 };
 
 struct AdlibSoundInstrument {
-	uint8 mode;
-	uint8 channel;
+	byte mode;
+	byte channel;
 	AdlibRegisterSoundInstrument regMod;
 	AdlibRegisterSoundInstrument regCar;
-	uint8 waveSelectMod;
-	uint8 waveSelectCar;
-	uint8 amDepth;
+	byte waveSelectMod;
+	byte waveSelectCar;
+	byte amDepth;
 };
 	
 class AdlibSoundDriver : public SoundDriver, AudioStream {
@@ -85,7 +85,7 @@ public:
 	virtual ~AdlibSoundDriver();
 
 	// SoundDriver interface
-	virtual void setupChannel(int channel, const uint8 *data, int instrument, int volume);
+	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
 	virtual void stopChannel(int channel);
 	virtual void stopSound();
 
@@ -97,16 +97,16 @@ public:
 
 	void initCard();
 	void update(int16 *buf, int len);
-	void setupInstrument(const uint8 *data, int channel);
-	void loadRegisterInstrument(const uint8 *data, AdlibRegisterSoundInstrument *reg);
-	virtual void loadInstrument(const uint8 *data, AdlibSoundInstrument *asi) = 0;
+	void setupInstrument(const byte *data, int channel);
+	void loadRegisterInstrument(const byte *data, AdlibRegisterSoundInstrument *reg);
+	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi) = 0;
 
 protected:
 	FM_OPL *_opl;
 	int _sampleRate;
 	Audio::Mixer *_mixer;
 
-	uint8 _vibrato;
+	byte _vibrato;
 	int _channelsVolumeTable[4];
 	AdlibSoundInstrument _instrumentsTable[4];
 
@@ -123,9 +123,9 @@ class AdlibSoundDriverINS : public AdlibSoundDriver {
 public:
 	AdlibSoundDriverINS(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".INS"; }
-	virtual void loadInstrument(const uint8 *data, AdlibSoundInstrument *asi);
+	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSound(const uint8 *data, int channel, int volume);
+	virtual void playSound(const byte *data, int channel, int volume);
 };
 
 // Operation Stealth adlib driver
@@ -133,9 +133,9 @@ class AdlibSoundDriverADL : public AdlibSoundDriver {
 public:
 	AdlibSoundDriverADL(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".ADL"; }
-	virtual void loadInstrument(const uint8 *data, AdlibSoundInstrument *asi);
+	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSound(const uint8 *data, int channel, int volume);
+	virtual void playSound(const byte *data, int channel, int volume);
 };
 
 extern SoundDriver *g_soundDriver; // TEMP

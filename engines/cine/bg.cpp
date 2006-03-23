@@ -29,16 +29,16 @@ namespace Cine {
 
 uint16 bgVar0;
 
-void loadCtHigh(uint8 * currentPtr) {
+void loadCtHigh(byte * currentPtr) {
 	memcpy(page3Raw, currentPtr, 320 * 200);
 }
 
-uint8 loadCt(const char *ctName) {
+byte loadCt(const char *ctName) {
 	uint16 header[32];
 
 	strcpy(currentCtName, ctName);
 
-	uint8 *ptr = readBundleFile(findFileInBundle(ctName));
+	byte *ptr = readBundleFile(findFileInBundle(ctName));
 
 	if (gameType == Cine::GID_OS) {
 		uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
@@ -76,11 +76,11 @@ void loadBgHigh(const char *currentPtr) {
 	colorMode256 = 1;
 }
 
-uint8 loadBg(const char *bgName) {
+byte loadBg(const char *bgName) {
 	strcpy(currentBgName[0], bgName);
 
-	uint8 fileIdx = findFileInBundle(bgName);
-	uint8 *ptr = readBundleFile(fileIdx);
+	byte fileIdx = findFileInBundle(bgName);
+	byte *ptr = readBundleFile(fileIdx);
 
 	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 	if (bpp == 8) {
@@ -102,17 +102,17 @@ uint8 loadBg(const char *bgName) {
 	return 0;
 }
 
-uint8 *additionalBgTable[9] = { page2Raw, NULL, NULL, NULL, NULL, NULL, NULL, NULL, page3Raw };
-uint8 currentAdditionalBgIdx = 0;
-uint8 currentAdditionalBgIdx2 = 0;
+byte *additionalBgTable[9] = { page2Raw, NULL, NULL, NULL, NULL, NULL, NULL, NULL, page3Raw };
+byte currentAdditionalBgIdx = 0;
+byte currentAdditionalBgIdx2 = 0;
 
 void addBackground(const char *bgName, uint16 bgIdx) {
 	strcpy(currentBgName[bgIdx], bgName);
 
-	uint8 fileIdx = findFileInBundle(bgName);
-	uint8 *ptr = readBundleFile(fileIdx);
+	byte fileIdx = findFileInBundle(bgName);
+	byte *ptr = readBundleFile(fileIdx);
 
-	additionalBgTable[bgIdx] = (uint8 *) malloc(320 * 200);
+	additionalBgTable[bgIdx] = (byte *) malloc(320 * 200);
 
 	uint16 bpp = READ_BE_UINT16(ptr); ptr += 2;
 	if (bpp == 8) {

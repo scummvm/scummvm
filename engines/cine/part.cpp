@@ -72,7 +72,7 @@ void loadPart(const char *partName) {
 		loadPal(partName);
 }
 
-void freePartEntry(uint8 idx) {
+void freePartEntry(byte idx) {
 	if (animDataTable[idx].ptr1) {
 		//free(animDataTable[idx].ptr1);
 
@@ -86,8 +86,8 @@ void freePartEntry(uint8 idx) {
 	}
 }
 
-void freePartRange(uint8 startIdx, uint8 numIdx) {
-	uint8 i;
+void freePartRange(byte startIdx, byte numIdx) {
+	byte i;
 
 	for (i = 0; i < numIdx; i++) {
 		freePartEntry(i + startIdx);
@@ -183,23 +183,23 @@ int16 findFileInBundle(const char *fileName) {
 	return -1;
 }
 
-void readFromPart(int16 idx, uint8 *dataPtr) {
+void readFromPart(int16 idx, byte *dataPtr) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	partFileHandle.seek(partBuffer[idx].offset, SEEK_SET);
 	partFileHandle.read(dataPtr, partBuffer[idx].packedSize);
 }
 
-uint8 *readBundleFile(int16 foundFileIdx) {
-	uint8 *dataPtr;
+byte *readBundleFile(int16 foundFileIdx) {
+	byte *dataPtr;
 
-	dataPtr = (uint8 *) malloc(partBuffer[foundFileIdx].unpackedSize);
+	dataPtr = (byte *) malloc(partBuffer[foundFileIdx].unpackedSize);
 	memset(dataPtr, 0, partBuffer[foundFileIdx].unpackedSize);
 
 	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
-		uint8 *unpackBuffer;
+		byte *unpackBuffer;
 
-		unpackBuffer = (uint8 *)malloc(partBuffer[foundFileIdx].packedSize);
+		unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
 		readFromPart(foundFileIdx, unpackBuffer);
 		delphineUnpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
 		free(unpackBuffer);
@@ -210,7 +210,7 @@ uint8 *readBundleFile(int16 foundFileIdx) {
 	return dataPtr;
 }
 
-uint8 *readFile(const char *filename) {
+byte *readFile(const char *filename) {
 	Common::File in;
 
 	in.open(filename);
@@ -218,10 +218,10 @@ uint8 *readFile(const char *filename) {
 	if (!in.isOpen())
 		error("readFile(): Cannot open file %s", filename);
 
-	uint8 *dataPtr;
+	byte *dataPtr;
 	uint32 size = in.size();
 
-	dataPtr = (uint8 *)malloc(size);
+	dataPtr = (byte *)malloc(size);
 	in.read(dataPtr, size);
 
 	return dataPtr;

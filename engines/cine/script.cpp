@@ -154,7 +154,7 @@ void stopGlobalScript(uint16 scriptIdx) {
 	currentHead->scriptIdx = -1;
 }
 
-uint16 computeScriptStackSub(uint8 mode, byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint8 param1, uint16 startOffset) {
+uint16 computeScriptStackSub(byte mode, byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, byte param1, uint16 startOffset) {
 	byte *localScriptPtr = scriptPtr;
 	uint16 exitScript;
 	uint16 i;
@@ -243,7 +243,7 @@ uint16 computeScriptStackSub(uint8 mode, byte *scriptPtr, int16 *stackPtr, uint1
 		case 0x52:
 		case 0x53:
 			{
-				uint8 param;
+				byte param;
 				position++;
 
 				param = *(localScriptPtr + position);
@@ -258,7 +258,7 @@ uint16 computeScriptStackSub(uint8 mode, byte *scriptPtr, int16 *stackPtr, uint1
 			}
 		case 0x9E:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -421,7 +421,7 @@ uint16 computeScriptStackFromScript(byte *scriptPtr, uint16 currentPosition, uin
 	return computeScriptStackSub(0, scriptPtr, (int16 *)&dummyU16, (uint16)scriptSize, labelIdx, currentPosition);
 }
 
-void palRotate(uint8 a, uint8 b, uint8 c) {
+void palRotate(byte a, byte b, byte c) {
 	int16 i;
 	uint16 currentColor;
 
@@ -543,9 +543,9 @@ int16 endScript1(uint16 scriptIdx) {
 	return (0);
 }
 
-int16 getZoneFromPosition(uint8 *page, int16 x, int16 y, int16 width) {
-	uint8 *ptr = page + (y * width) + x / 2;
-	uint8 zoneVar;
+int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
+	byte *ptr = page + (y * width) + x / 2;
+	byte zoneVar;
 
 	if (!(x % 2)) {
 		zoneVar = (*(ptr) >> 4) & 0xF;
@@ -556,9 +556,9 @@ int16 getZoneFromPosition(uint8 *page, int16 x, int16 y, int16 width) {
 	return (zoneVar);
 }
 
-int16 getZoneFromPositionRaw(uint8 *page, int16 x, int16 y, int16 width) {
-	uint8 *ptr = page + (y * width) + x;
-	uint8 zoneVar;
+int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
+	byte *ptr = page + (y * width) + x;
+	byte zoneVar;
 
 	zoneVar = (*(ptr)) & 0xF;
 
@@ -649,8 +649,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x0:	//OP_modifyObjectParam
 			{
-				uint8 objIdx;
-				uint8 paramIdx;
+				byte objIdx;
+				byte paramIdx;
 				int16 newValue;
 
 				objIdx = *(currentScriptPtr + currentPosition);
@@ -670,9 +670,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1:	//OP_getObjectParam
 			{
-				uint8 objIdx;
-				uint8 paramIdx;
-				uint8 newValue;
+				byte objIdx;
+				byte paramIdx;
+				byte newValue;
 
 				objIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -691,8 +691,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x2:
 			{
-				uint8 objIdx;
-				uint8 paramIdx;
+				byte objIdx;
+				byte paramIdx;
 				int16 newValue;
 
 				objIdx = *(currentScriptPtr + currentPosition);
@@ -712,8 +712,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x3:
 			{
-				uint8 objIdx;
-				uint8 paramIdx;
+				byte objIdx;
+				byte paramIdx;
 				int16 newValue;
 
 				objIdx = *(currentScriptPtr + currentPosition);
@@ -733,8 +733,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x6:
 			{
-				uint8 objIdx;
-				uint8 param1;
+				byte objIdx;
+				byte param1;
 				int16 param2;
 
 				objIdx = *(currentScriptPtr + currentPosition);
@@ -754,7 +754,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x7:
 			{
-				uint8 objIdx;
+				byte objIdx;
 				int16 param1;
 				int16 param2;
 				int16 param3;
@@ -783,7 +783,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8:
 			{
-				uint8 objIdx;
+				byte objIdx;
 				int16 param1;
 				int16 param2;
 				int16 param3;
@@ -812,8 +812,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x9:	// OP_loadVar
 			{
-				uint8 varIdx;
-				uint8 varType;
+				byte varIdx;
+				byte varType;
 
 				varIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -822,7 +822,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (varType) {
-					uint8 dataIdx;
+					byte dataIdx;
 
 					dataIdx = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -895,8 +895,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xA:	// OP_addVar
 			{
-				uint8 param1;
-				uint8 type;
+				byte param1;
+				byte type;
 
 				param1 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -905,7 +905,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (type) {
-					uint8 param2;
+					byte param2;
 
 					param2 = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -928,8 +928,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xB:	// OP_subVar
 			{
-				uint8 param1;
-				uint8 type;
+				byte param1;
+				byte type;
 
 				param1 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -938,7 +938,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (type) {
-					uint8 param2;
+					byte param2;
 
 					param2 = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -961,8 +961,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xC:	// OP_mulVar
 			{
-				uint8 param1;
-				uint8 type;
+				byte param1;
+				byte type;
 
 				param1 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -971,7 +971,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (type) {
-					uint8 param2;
+					byte param2;
 
 					param2 = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -994,8 +994,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xD:	// OP_modVar
 			{
-				uint8 param1;
-				uint8 type;
+				byte param1;
+				byte type;
 
 				param1 = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1004,7 +1004,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (type) {
-					uint8 param2;
+					byte param2;
 
 					param2 = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -1027,8 +1027,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xE:	// OP_ compareVar
 			{
-				uint8 varIdx;
-				uint8 varType;
+				byte varIdx;
+				byte varType;
 
 				varIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1037,7 +1037,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (varType) {
-					uint8 value;
+					byte value;
 
 					value = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -1073,9 +1073,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xF:	//OP_modifyObjectParam2
 			{
-				uint8 objIdx;
-				uint8 paramIdx;
-				uint8 newValue;
+				byte objIdx;
+				byte paramIdx;
+				byte newValue;
 
 				objIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1094,7 +1094,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x13:	// OP_loadV7Element
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1107,7 +1107,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x14:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1120,7 +1120,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x15:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1133,7 +1133,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x16:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1146,7 +1146,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x17:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1159,7 +1159,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x18:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1172,7 +1172,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x19:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1185,7 +1185,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1A:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1204,7 +1204,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1D:	// OP_label
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1217,7 +1217,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1E:	// OP_goto
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1231,7 +1231,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x1F:	// OP_gotoIfSup
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1248,7 +1248,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x20:	// OP_gotoIfSupEqu
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1266,7 +1266,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x21:	// OP_gotoIfInf
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1283,7 +1283,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x22:	// OP_gotoIfInfEqu
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1300,7 +1300,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x23:	// OP_gotoIfEqu
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1317,7 +1317,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x24:	// OP_gotoIfDiff
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1334,8 +1334,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x26:	// loop
 			{
-				uint8 varIdx;
-				uint8 labelIdx;
+				byte varIdx;
+				byte labelIdx;
 
 				varIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1357,7 +1357,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x31:	// OP_startScript
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1371,7 +1371,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x32:
 			{
-				uint8 scriptIdx;
+				byte scriptIdx;
 
 				scriptIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1435,7 +1435,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x41:	// OP_loadData
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1498,8 +1498,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x47:
 			{
-				uint8 startColor;
-				uint8 numColor;
+				byte startColor;
+				byte numColor;
 				uint16 r;
 				uint16 g;
 				uint16 b;
@@ -1527,9 +1527,9 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x4A:
 			{
-				uint8 a;
-				uint8 b;
-				uint8 c;
+				byte a;
+				byte b;
+				byte c;
 
 				a = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1578,7 +1578,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x51:
 			{
-				uint8 param1;
+				byte param1;
 				uint16 param2;
 				uint16 param3;
 				uint16 param4;
@@ -1607,8 +1607,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x52:	// OP_loadGlobalVar
 			{
-				uint8 idx;
-				uint8 type;
+				byte idx;
+				byte type;
 
 				idx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1617,7 +1617,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (type) {
-					uint8 idx2;
+					byte idx2;
 
 					idx2 = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -1646,8 +1646,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x53:	// OP_compareGlobalVar
 			{
-				uint8 idx;
-				uint8 type;
+				byte idx;
+				byte type;
 
 				idx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1656,7 +1656,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 
 				if (type) {
-					uint8 b;
+					byte b;
 
 					b = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -1692,8 +1692,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x5A:
 			{
-				uint8 startIdx;
-				uint8 numIdx;
+				byte startIdx;
+				byte numIdx;
 
 				startIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1719,7 +1719,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x65:
 			{
-				uint8 i;
+				byte i;
 
 				DEBUG_SCRIPT(currentLine, "initializeZoneData()");
 
@@ -1731,7 +1731,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x66:
 			{
-				uint8 zoneIdx;
+				byte zoneIdx;
 				uint16 var;
 
 				zoneIdx = *(currentScriptPtr + currentPosition);
@@ -1771,7 +1771,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x6B:	// OP_changeDataDisk
 			{
-				uint8 newDisk;
+				byte newDisk;
 
 				newDisk = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1810,7 +1810,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 		case 0x78:
 			{
 				DEBUG_SCRIPT(currentLine, "playSample()");
-				uint8 anim, channel;
+				byte anim, channel;
 				int16 volume;
 				uint16 flag;
 
@@ -1866,7 +1866,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x7A:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1879,7 +1879,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x7B:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1892,10 +1892,10 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x7F:
 			{
-				uint8 param1;
-				uint8 param2;
-				uint8 param3;
-				uint8 param4;
+				byte param1;
+				byte param2;
+				byte param3;
+				byte param4;
 				uint16 param5;
 				uint16 param6;
 				uint16 param7;
@@ -1929,8 +1929,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x80:
 			{
-				uint8 a;
-				uint8 b;
+				byte a;
+				byte b;
 
 				a = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1946,8 +1946,8 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x83:
 			{
-				uint8 a;
-				uint8 b;
+				byte a;
+				byte b;
 
 				a = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1966,7 +1966,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x84:	// OP_gotoIfSup nearest
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1985,7 +1985,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x85:	// OP_gotoIfSupEqu nearest
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -2003,7 +2003,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x86:	// OP_gotoIfInf nearest
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -2021,7 +2021,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x87:	// OP_gotoIfInfEqu nearest
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -2039,7 +2039,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x88:	// OP_gotoIfEqu nearest
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -2057,7 +2057,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x89:	// OP_gotoIfDiff nearest
 			{
-				uint8 labelIdx;
+				byte labelIdx;
 
 				labelIdx = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -2075,7 +2075,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8B:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "startObjectScript(%d,%d)", temp, currentScriptPtr + currentPosition);
@@ -2085,7 +2085,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8C:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "startObjectScript(%d,%d)", temp, currentScriptPtr + currentPosition);
@@ -2095,7 +2095,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8E:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "addBackground(%s,%d)", currentScriptPtr + currentPosition, temp);
@@ -2107,7 +2107,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x8F:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "removeBackground(%d)", temp);
@@ -2132,7 +2132,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x90:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "loadABS(%d,%s)", temp, currentScriptPtr + currentPosition);
@@ -2145,7 +2145,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x91:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "useBg(%d)", temp);
@@ -2162,7 +2162,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x9D:
 			{
-				uint8 temp = *(currentScriptPtr + currentPosition);
+				byte temp = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				DEBUG_SCRIPT(currentLine, "useBgScroll(%d)", temp);
@@ -2176,13 +2176,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0x9E:
 			{
-				uint8 type;
+				byte type;
 
 				type = *(currentScriptPtr + currentPosition);
 				currentPosition++;
 
 				if (type) {
-					uint8 param2;
+					byte param2;
 
 					param2 = *(currentScriptPtr + currentPosition);
 					currentPosition++;
@@ -2280,15 +2280,15 @@ void purgeList0(void) {
 
 #ifdef DUMP_SCRIPTS
 
-uint8 decompileBuffer[10000][1000];
+byte decompileBuffer[10000][1000];
 uint16 decompileBufferPosition = 0;
 
-uint8 bufferDec[256];
+byte bufferDec[256];
 
-uint8 compareString1[256];
-uint8 compareString2[256];
+byte compareString1[256];
+byte compareString2[256];
 
-uint8 *getObjPramName(uint8 paramIdx) {
+byte *getObjPramName(byte paramIdx) {
 	switch (paramIdx) {
 	case 1:
 		{
@@ -2322,9 +2322,9 @@ uint8 *getObjPramName(uint8 paramIdx) {
 	}
 }
 
-void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx) {
-	uint8 lineBuffer[256];
-	uint8 *localScriptPtr = scriptPtr;
+void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx) {
+	byte lineBuffer[256];
+	byte *localScriptPtr = scriptPtr;
 	uint16 exitScript;
 	uint32 position = 0;
 
@@ -2354,8 +2354,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x0:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 
 				param1 = *(localScriptPtr + position);
@@ -2373,9 +2373,9 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x1:
 			{
-				uint8 param1;
-				uint8 param2;
-				uint8 param3;
+				byte param1;
+				byte param2;
+				byte param3;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2391,8 +2391,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x2:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 
 				param1 = *(localScriptPtr + position);
@@ -2410,8 +2410,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x3:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 
 				param1 = *(localScriptPtr + position);
@@ -2429,8 +2429,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x4:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 
 				param1 = *(localScriptPtr + position);
@@ -2448,8 +2448,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x5:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 
 				param1 = *(localScriptPtr + position);
@@ -2467,8 +2467,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x6:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 
 				param1 = *(localScriptPtr + position);
@@ -2487,7 +2487,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x7:
 			{
-				uint8 param1;
+				byte param1;
 				int16 param2;
 				int16 param3;
 				int16 param4;
@@ -2514,7 +2514,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x8:
 			{
-				uint8 param1;
+				byte param1;
 				int16 param2;
 				int16 param3;
 				int16 param4;
@@ -2541,7 +2541,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x9:
 			{
-				uint8 param1;
+				byte param1;
 				int16 param2;
 
 				param1 = *(localScriptPtr + position);
@@ -2551,7 +2551,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -2582,8 +2582,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xA:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2592,7 +2592,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -2610,8 +2610,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xB:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2620,7 +2620,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -2638,8 +2638,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xC:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2648,7 +2648,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -2666,8 +2666,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xD:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2676,7 +2676,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -2694,8 +2694,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xE:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2704,7 +2704,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -2732,9 +2732,9 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xF:
 			{
-				uint8 param1;
-				uint8 param2;
-				uint8 param3;
+				byte param1;
+				byte param2;
+				byte param3;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2751,7 +2751,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x13:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2762,7 +2762,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x14:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2773,7 +2773,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x15:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2784,7 +2784,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x16:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2795,7 +2795,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x17:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2806,7 +2806,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x18:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2817,7 +2817,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x19:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2828,7 +2828,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x1A:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2844,7 +2844,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x1D:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2855,7 +2855,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x1E:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2866,7 +2866,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x1F:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2877,7 +2877,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x20:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2888,7 +2888,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x21:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2899,7 +2899,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x22:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2910,7 +2910,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x23:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2921,7 +2921,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x24:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2932,7 +2932,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x25:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2943,8 +2943,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x26:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -2957,7 +2957,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x31:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -2968,7 +2968,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x32:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3012,7 +3012,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case OP_loadNewPrcName:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3039,8 +3039,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x47:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
 				int16 param4;
 				int16 param5;
@@ -3066,7 +3066,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x49:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3088,7 +3088,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x51:
 			{
-				uint8 param1;
+				byte param1;
 				int16 param2;
 				int16 param3;
 				int16 param4;
@@ -3115,8 +3115,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x52:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3125,7 +3125,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -3149,8 +3149,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x53:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3159,7 +3159,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 				position++;
 
 				if (param2) {
-					uint8 param3;
+					byte param3;
 
 					param3 = *(localScriptPtr + position);
 					position++;
@@ -3193,8 +3193,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x5A:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3218,7 +3218,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x66:
 			{
-				uint8 param1;
+				byte param1;
 				int16 param2;
 
 				param1 = *(localScriptPtr + position);
@@ -3233,7 +3233,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x68:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3254,7 +3254,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case OP_changeDataDisk:
 			{
-				uint8 newDisk;
+				byte newDisk;
 
 				newDisk = *(localScriptPtr + position);
 				position++;
@@ -3287,7 +3287,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case OP_79:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3298,10 +3298,10 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x77:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
-				uint8 param4;
+				byte param4;
 				int16 param5;
 				int16 param6;
 
@@ -3329,10 +3329,10 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x78:
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				int16 param3;
-				uint8 param4;
+				byte param4;
 				int16 param5;
 				int16 param6;
 
@@ -3360,7 +3360,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x7A:
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3371,7 +3371,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x7B:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3382,10 +3382,10 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x7F:	// OS only
 			{
-				uint8 param1;
-				uint8 param2;
-				uint8 param3;
-				uint8 param4;
+				byte param1;
+				byte param2;
+				byte param3;
+				byte param4;
 				int16 param5;
 				int16 param6;
 				int16 param7;
@@ -3417,8 +3417,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x80:	// OS only
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3432,11 +3432,11 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x82:	// OS only
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 				uint16 param3;
 				uint16 param4;
-				uint8 param5;
+				byte param5;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3459,8 +3459,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x83:	// OS only
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3474,7 +3474,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x89:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3485,7 +3485,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x8B:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3496,7 +3496,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x8C:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3547,7 +3547,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x8E:	// OS only
 			{
-				uint8 param1;
+				byte param1;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3560,7 +3560,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x8F:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3571,7 +3571,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x90:	// OS only
 			{
-				uint8 param1;
+				byte param1;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3584,7 +3584,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x91:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3595,7 +3595,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x9D:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
@@ -3606,13 +3606,13 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0x9E:	// OS only
 			{
-				uint8 param;
+				byte param;
 
 				param = *(localScriptPtr + position);
 				position++;
 
 				if (param) {
-					uint8 param2;
+					byte param2;
 
 					param2 = *(localScriptPtr + position);
 					position++;
@@ -3631,8 +3631,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xA0:	// OS only
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3646,8 +3646,8 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 			}
 		case 0xA1:	// OS only
 			{
-				uint8 param1;
-				uint8 param2;
+				byte param1;
+				byte param2;
 
 				param1 = *(localScriptPtr + position);
 				position++;
@@ -3678,7 +3678,7 @@ void decompileScript(uint8 *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint1
 	} while (!exitScript);
 }
 
-void dumpScript(uint8 *dumpName) {
+void dumpScript(byte *dumpName) {
 	File *fHandle;
 	uint16 i;
 

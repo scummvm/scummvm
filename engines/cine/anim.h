@@ -30,29 +30,29 @@ namespace Cine {
 extern uint16 frameVar0;
 
 struct animHeaderStruct {
-	uint8 field_0;
-	uint8 field_1;
-	uint8 field_2;
-	uint8 field_3;
+	byte field_0;
+	byte field_1;
+	byte field_2;
+	byte field_3;
 	uint16 frameWidth;
 	uint16 frameHeight;
-	uint8 field_8;
-	uint8 field_9;
-	uint8 field_A;
-	uint8 field_B;
-	uint8 field_C;
-	uint8 field_D;
+	byte field_8;
+	byte field_9;
+	byte field_A;
+	byte field_B;
+	byte field_C;
+	byte field_D;
 	uint16 numFrames;
-	uint8 field_10;
-	uint8 field_11;
-	uint8 field_12;
-	uint8 field_13;
+	byte field_10;
+	byte field_11;
+	byte field_12;
+	byte field_13;
 	uint16 field_14;
 };
 
 struct animDataEntry {
 	char name[9];
-	uint8 color;
+	byte color;
 };
 
 extern animDataEntry animData[];

@@ -40,7 +40,7 @@ struct BasesonEntry {
 void checkDataDisk(int16 param);
 extern int snd_loadBasesonEntries(const char *fileName);
 extern void snd_clearBasesonEntries();
-extern uint8 *snd_loadBasesonEntry(const char *entryName);
+extern byte *snd_loadBasesonEntry(const char *entryName);
 
 } // End of namespace Cine
 

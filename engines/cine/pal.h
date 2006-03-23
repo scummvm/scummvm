@@ -29,15 +29,15 @@ namespace Cine {
 
 struct PalEntry {
 	char name[10];
-	uint8 pal1[16];
-	uint8 pal2[16];
+	byte pal1[16];
+	byte pal2[16];
 };
 
 void loadPal(const char *fileName);
 
 extern uint16 tempPalette[256];
-extern uint8 colorMode256;
-extern uint8 palette256[256 * 3];
+extern byte colorMode256;
+extern byte palette256[256 * 3];
 
 void loadRelatedPalette(const char *fileName);
 

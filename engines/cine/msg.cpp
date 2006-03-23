@@ -34,7 +34,7 @@ uint16 messageCount;
 
 void loadMsg(char *pMsgName) {
 	uint16 i;
-	uint8 *ptr;
+	byte *ptr;
 
 	checkDataDisk(-1);
 
@@ -66,7 +66,7 @@ void loadMsg(char *pMsgName) {
 
 	for (i = 0; i < messageCount; i++) {
 		if (messageTable[i].len) {
-			messageTable[i].ptr = (uint8 *) malloc(messageTable[i].len);
+			messageTable[i].ptr = (byte *) malloc(messageTable[i].len);
 
 			assert(messageTable[i].ptr);
 

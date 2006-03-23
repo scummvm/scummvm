@@ -90,9 +90,9 @@ static int snd_findBasesonEntry(const char *entryName) {
 	return -1;
 }
 
-uint8 *snd_loadBasesonEntry(const char *entryName) {
+byte *snd_loadBasesonEntry(const char *entryName) {
 	int entryNum;
-	uint8 *entryData = NULL;
+	byte *entryData = NULL;
 
 	if (gameType == Cine::GID_OS) {
 		entryNum = findFileInBundle((const char *)entryName);
@@ -102,10 +102,10 @@ uint8 *snd_loadBasesonEntry(const char *entryName) {
 		entryNum = snd_findBasesonEntry(entryName);
 		if (entryNum != -1 && entryNum < snd_numBasesonEntries) {
 			const BasesonEntry *be = &snd_basesonEntries[entryNum];
-			entryData = (uint8 *)malloc(be->unpackedSize);
+			entryData = (byte *)malloc(be->unpackedSize);
 			if (entryData) {
 				if (be->unpackedSize > be->size) {
-					uint8 *tempData = (uint8 *)malloc(be->size);
+					byte *tempData = (byte *)malloc(be->size);
 					if (tempData) {
 						snd_baseSndFile->seek(be->offset, SEEK_SET);
 						snd_baseSndFile->read(tempData, be->size);

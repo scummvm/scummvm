@@ -28,8 +28,8 @@
 namespace Cine {
 
 struct CharacterEntry {
-	uint8 characterIdx;
-	uint8 characterWidth;
+	byte characterIdx;
+	byte characterWidth;
 };
 
 extern const CharacterEntry fontParamTable[256];

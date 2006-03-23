@@ -27,12 +27,12 @@
 
 namespace Cine {
 
-uint8 loadBg(const char *bgName);
-uint8 loadCt(const char *bgName);
+byte loadBg(const char *bgName);
+byte loadCt(const char *bgName);
 
-extern uint8 *additionalBgTable[9];
-extern uint8 currentAdditionalBgIdx;
-extern uint8 currentAdditionalBgIdx2;
+extern byte *additionalBgTable[9];
+extern byte currentAdditionalBgIdx;
+extern byte currentAdditionalBgIdx2;
 
 void addBackground(const char *bgName, uint16 bgIdx);
 

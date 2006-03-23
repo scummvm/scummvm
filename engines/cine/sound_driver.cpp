@@ -64,7 +64,7 @@ AdlibSoundDriver::~AdlibSoundDriver() {
 	_mixer->setupPremix(NULL);
 }
 
-void AdlibSoundDriver::setupChannel(int channel, const uint8 *data, int instrument, int volume) {
+void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
 	assert(channel < 4);
 	if (data) {
 		if (volume > 80) {
@@ -170,7 +170,7 @@ void AdlibSoundDriver::update(int16 *buf, int len) {
 	}
 }
 
-void AdlibSoundDriver::setupInstrument(const uint8 *data, int channel) {
+void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
 	assert(channel < 4);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
 	loadInstrument(data, ins);
@@ -216,7 +216,7 @@ void AdlibSoundDriver::setupInstrument(const uint8 *data, int channel) {
 	OPLWriteReg(_opl, 0xE0 | car, ins->waveSelectCar);
 }
 
-void AdlibSoundDriver::loadRegisterInstrument(const uint8 *data, AdlibRegisterSoundInstrument *reg) {
+void AdlibSoundDriver::loadRegisterInstrument(const byte *data, AdlibRegisterSoundInstrument *reg) {
 	reg->vibrato = 0;
 	if (READ_LE_UINT16(data + 18)) { // amplitude vibrato
 		reg->vibrato |= 0x80;
@@ -248,7 +248,7 @@ void AdlibSoundDriver::loadRegisterInstrument(const uint8 *data, AdlibRegisterSo
 	reg->freqMod = READ_LE_UINT16(data + 24);
 }
 
-void AdlibSoundDriverINS::loadInstrument(const uint8 *data, AdlibSoundInstrument *asi) {
+void AdlibSoundDriverINS::loadInstrument(const byte *data, AdlibSoundInstrument *asi) {
 	asi->mode = *data++;
 	asi->channel = *data++;
 	loadRegisterInstrument(data, &asi->regMod); data += 26;
@@ -286,7 +286,7 @@ void AdlibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 	}
 }
 
-void AdlibSoundDriverINS::playSound(const uint8 *data, int channel, int volume) {
+void AdlibSoundDriverINS::playSound(const byte *data, int channel, int volume) {
 	assert(channel < 4);
 	_channelsVolumeTable[channel] = 127;
 	resetChannel(channel);
@@ -310,7 +310,7 @@ void AdlibSoundDriverINS::playSound(const uint8 *data, int channel, int volume) 
 	}
 }
 
-void AdlibSoundDriverADL::loadInstrument(const uint8 *data, AdlibSoundInstrument *asi) {
+void AdlibSoundDriverADL::loadInstrument(const byte *data, AdlibSoundInstrument *asi) {
 	asi->mode = *data++;
 	asi->channel = *data++;
 	asi->waveSelectMod = *data++ & 3;
@@ -358,7 +358,7 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	}
 }
 
-void AdlibSoundDriverADL::playSound(const uint8 *data, int channel, int volume) {
+void AdlibSoundDriverADL::playSound(const byte *data, int channel, int volume) {
 	assert(channel < 4);
 	_channelsVolumeTable[channel] = 127;
 	setupInstrument(data, channel);

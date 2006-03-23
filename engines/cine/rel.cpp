@@ -55,7 +55,7 @@ void releaseObjectScripts(void) {
 void loadRel(char *pRelName) {
 	uint16 numEntry;
 	uint16 i;
-	uint8 *ptr;
+	byte *ptr;
 
 	checkDataDisk(-1);
 
@@ -97,7 +97,7 @@ void loadRel(char *pRelName) {
 
 	{
 		uint16 i;
-		uint8 buffer[256];
+		byte buffer[256];
 
 		for (i = 0; i < numEntry; i++) {
 			if (relTable[i].var4) {

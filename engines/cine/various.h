@@ -42,7 +42,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 extern int16 allowSystemMenu;
 
 struct unk1Struct {
-	uint8 *ptr;
+	byte *ptr;
 	uint16 len;
 };
 
@@ -72,7 +72,7 @@ extern SeqListElement seqList;
 
 extern uint32 var6;
 extern uint32 var8;
-extern uint8 *var9;
+extern byte *var9;
 
 extern uint16 var2;
 extern uint16 var3;
@@ -87,12 +87,12 @@ void mainLoopSub1(void);
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern uint16 errorVar;
-extern uint8 menuVar;
+extern byte menuVar;
 
-void gfxFuncGen1(uint8 *param1, uint8 *param2, uint8 *param3, uint8 *param4, int16 param5);
+void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
 
-extern uint8 *page0;
-extern uint8 *page0c;
+extern byte *page0;
+extern byte *page0c;
 
 void ptrGfxFunc13(void);
 void gfxFuncGen2(void);
@@ -109,7 +109,7 @@ extern uint16 var17;
 extern uint16 var18;
 extern uint16 var19;
 extern uint16 var20;
-extern uint8 var21;
+extern byte var21;
 
 extern int16 playerCommand;
 
@@ -168,9 +168,9 @@ extern uint16 defaultMenuBoxColor2;
 #define NUM_MAX_ZONE 16
 extern uint16 zoneData[NUM_MAX_ZONE];
 
-void addMessage(uint8 param1, int16 param2, int16 param3, int16 param4, int16 param5);
+void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5);
 
-void blitScreen(uint8 *frontBuffer, uint8 *backbuffer);
+void blitScreen(byte *frontBuffer, byte *backbuffer);
 
 struct mouseStatusStruct {
 	int left;
