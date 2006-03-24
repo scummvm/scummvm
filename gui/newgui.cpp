@@ -65,6 +65,19 @@ GuiObject::GuiObject(Common::String name) : _firstWidget(0) {
 	_w = g_gui.evaluator()->getVar(name + ".w");
 	_h = g_gui.evaluator()->getVar(name + ".h");
 
+	if(_x < 0)
+		error("Widget <%s> has x < 0", name.c_str());
+	if(_x >= g_system->getOverlayWidth())
+		error("Widget <%s> has x > %d", name.c_str(), g_system->getOverlayWidth());
+	if(_x + _w >= g_system->getOverlayWidth())
+		error("Widget <%s> has x + w > %d", name.c_str(), g_system->getOverlayWidth());
+	if(_y < 0)
+		error("Widget <%s> has y < 0", name.c_str());
+	if(_y >= g_system->getOverlayWidth())
+		error("Widget <%s> has y > %d", name.c_str(), g_system->getOverlayHeight());
+	if(_y + _h >= g_system->getOverlayWidth())
+		error("Widget <%s> has y + h > %d", name.c_str(), g_system->getOverlayHeight());
+
 	_name = name;
 }
 
