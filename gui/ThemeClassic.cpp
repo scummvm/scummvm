@@ -303,7 +303,7 @@ void ThemeClassic::drawCheckbox(const Common::Rect &r, const Common::String &str
 	}
 
 	r2.left += checkBoxSize + 10;
-	_font->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignCenter, 0, true);
+	_font->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, true);
 
 	addDirtyRect(r);
 }

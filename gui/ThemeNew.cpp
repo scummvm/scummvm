@@ -605,7 +605,7 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	drawSurface(Common::Rect(r.left, r.top, r.left+checkBox->w, r.top+checkBox->h), checkBox, false, false, (state == kStateDisabled) ? 128 : 256);
 
 	r2.left += checkBoxSize + 5;
-	_font->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignCenter, 0, false);
+	_font->drawString(&_screen, str, r2.left, r2.top, r2.width(), getColor(state), Graphics::kTextAlignLeft, 0, false);
 
 	addDirtyRect(r);
 }

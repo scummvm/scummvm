@@ -185,7 +185,6 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const St
 ButtonWidget::ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, label), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
-	g_gui.evaluator()->setVar(name + ".align", kTextAlignCenter);
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;
 }
