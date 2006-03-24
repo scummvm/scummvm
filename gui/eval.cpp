@@ -37,8 +37,7 @@ static bool isdelim(char c) {
 	return false;
 }
 
-Eval::Eval()
- : _aliases(Common::String::emptyString), _vars(0) {
+Eval::Eval() {
 	loadConstants();
 }
 
