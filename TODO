@@ -160,6 +160,10 @@ Audio
   be used here (this then would reduce code duplication and make it instantly
   possible to use WAV/VOC encoded audio tracks, should we desire to support
   those).
+* Modify our audio stream classes (for MP3/Vorbis/FLAC/... playback) to use
+  SeekableReadStream instead of Files -> allow from-memory-playback.
+  And could take advantage of a new hypothetical "Sub(Seekable)Stream" class.
+  (See below for more info on that).
 
 Config Manager
 ==============
@@ -326,6 +330,11 @@ Streams
   stream, but will restrict access to the specified byte range.
   This then can be used in various places, e.g. in many of the AudioStream
   classes, to simplify code.
+* Add a "clone" method that makes a copy of the (seekable/readable) stream.
+  In the case of files, this would create a new file descriptor.
+  Purpose: Replace the Symbian hack in MP3InputStream and other places;
+  in particular, often we need two parts of code to access the same file
+  but in separate positions...
 
 #######################################################################
 # Engines / frontends
