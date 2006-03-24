@@ -107,8 +107,6 @@ private:
 	int lookup(const Key &index) const;
 	void expand_array(void);
 
-	int nele_val(void) const { return _nele; }
-
 public:
 
 	Val &operator [](const Key &index);
@@ -116,10 +114,20 @@ public:
 	AssocArray(Val default_value);
 	~AssocArray();
 	bool contains(const Key &index) const;
-	Key *new_all_keys(void) const;
-	Val *new_all_values(void) const;
 	Val queryVal(const Key &index) const;
 	void clear(bool shrinkArray = 0);
+
+	// The following two methods are used to return a list of
+	// all the keys / all the values (or rather, duplicates of them).
+	// Currently they aren't used, and I think a better appraoch
+	// is to add iterators, which allow the same in a more C++-style
+	// fashion, do not require making duplicates, and finally
+	// even allow in-place modifications of
+	Key *new_all_keys(void) const;
+	Val *new_all_values(void) const;
+	
+	
+	// TODO: There is no "remove(key)" method yet.
 };
 
 //-------------------------------------------------------
@@ -144,7 +152,6 @@ int AssocArray<Key, Val>::lookup(const Key &index) const {
 template <class Key, class Val>
 bool AssocArray<Key, Val>::contains(const Key &index) const {
 	int ctr = lookup(index);
-
 	return (_arr[ctr] != NULL);
 }
 
@@ -206,11 +213,10 @@ AssocArray<Key, Val>::AssocArray(Val default_value) : _default_value(default_val
 	int ctr;
 
 	_arr = new aa_ref_t <Key, Val> *[INIT_SIZE];
+	assert(_arr != NULL);
 
 	for (ctr = 0; ctr < INIT_SIZE; ctr++)
 		_arr[ctr] = NULL;
-
-	assert(_arr != NULL);
 
 	_arrsize = INIT_SIZE;
 	_nele = 0;
@@ -309,10 +315,7 @@ Val &AssocArray<Key, Val>::operator [](const Key &index) {
 
 		if (_nele > _arrsize / 2) {
 			expand_array();
-
-			return (*this)[index];
-		} else {
-			return _arr[ctr]->dat;
+			ctr = lookup(index);
 		}
 	}
 
@@ -322,11 +325,8 @@ Val &AssocArray<Key, Val>::operator [](const Key &index) {
 template <class Key, class Val>
 Val AssocArray<Key, Val>::queryVal(const Key &index) const {
 	int ctr = lookup(index);
-
-	if (_arr[ctr] == NULL)
-		return _default_value;
-	else
-		return _arr[ctr]->dat;
+	assert(_arr[ctr] != NULL);
+	return _arr[ctr]->dat;
 }
 
 }	// End of namespace Common
