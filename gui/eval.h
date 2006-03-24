@@ -56,11 +56,11 @@ public:
 
 	int eval(const String &input, const String &section, const String &name, int startpos);
 	void setAlias(const String &section, const String name, const String value);
-	void setVariable(const String &section, const String name, const String value);
+	void setVar(const String &section, const String name, const String value);
 
 	void setParent(const String name);
 
-	void setVariable(const String name, int val) { _vars[name] = val; }
+	void setVar(const String name, int val) { _vars[name] = val; }
 	void setAlias(const String name, const String val) { _aliases[name] = val; }
 
 	int getVar(String s) { return getVar_(s.c_str()); };
@@ -82,6 +82,7 @@ private:
 	void exprError(int error);
 	int getVar_(const char *s, bool includeAliases = true);
 	int getBuiltinVar(const char *s);
+	void loadConstants();
 
 	char _input[256];
 	String _section;

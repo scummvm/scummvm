@@ -163,11 +163,11 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("Game");
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "gameoptions_id", "ID: ", kTextAlignRight);
+	new StaticTextWidget(tab, "gameoptions_id", "ID: ");
 	_domainWidget = new DomainEditTextWidget(tab, "gameoptions_domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "gameoptions_name", "Name: ", kTextAlignRight);
+	new StaticTextWidget(tab, "gameoptions_name", "Name: ");
 	_descriptionWidget = new EditTextWidget(tab, "gameoptions_desc", description);
 
 	// Language popup
@@ -196,18 +196,18 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GUI:  Button + Label for the game path
 	new ButtonWidget(tab, "gameoptions_gamepath", "Game Path: ", kCmdGameBrowser, 0);
-	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath, kTextAlignLeft);
+	_gamePathWidget = new StaticTextWidget(tab, "gameoptions_gamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
 	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
-	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath, kTextAlignLeft);
+	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath);
 	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
 
 	// GUI:  Button + Label for the save path
 	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
-	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath, kTextAlignLeft);
+	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
 	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
@@ -451,12 +451,12 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 
 		logo->setGfx(th->getImageSurface(th->kThemeLogo));
 
-		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate, kTextAlignRight);
+		new StaticTextWidget(this, "launcher_version", gScummVMVersionDate);
 	} else
-		new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
+		new StaticTextWidget(this, "launcher_version", gScummVMFullVersion);
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion, kTextAlignCenter);
+	new StaticTextWidget(this, "launcher_version", gScummVMFullVersion);
 #endif
 
 	new ButtonWidget(this, "launcher_quit_button", "Quit", kQuitCmd, 'Q');

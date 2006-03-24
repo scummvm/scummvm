@@ -35,7 +35,7 @@ ChooserDialog::ChooserDialog(const String &title, String prefix, const String &b
 	: Dialog(prefix + "chooser") {
 
 	// Headline
-	new StaticTextWidget(this, prefix + "chooser_headline", title, kTextAlignCenter);
+	new StaticTextWidget(this, prefix + "chooser_headline", title);
 
 	// Add choice list
 	// HACK: Subtracting -12 from the height makes the list look good when

@@ -38,7 +38,6 @@ using GUI::WIDGET_CLEARBG;
 using GUI::kListSelectionChangedCmd;
 using GUI::kCloseCmd;
 using GUI::StaticTextWidget;
-using GUI::kTextAlignCenter;
 using GUI::CommandSender;
 */
 
@@ -60,8 +59,8 @@ KeysDialog::KeysDialog(const Common::String &title)
 	_actionsList = new ListWidget(this, "keysdialog_list");
 	_actionsList->setNumberingMode(kListNumberingZero);
 
-	_actionTitle = new StaticTextWidget(this, "keysdialog_action", title, kTextAlignCenter);
-	_keyMapping = new StaticTextWidget(this, "keysdialog_mapping", "", kTextAlignCenter);
+	_actionTitle = new StaticTextWidget(this, "keysdialog_action", title);
+	_keyMapping = new StaticTextWidget(this, "keysdialog_mapping", "");
 
 	_actionTitle->setFlags(WIDGET_CLEARBG);
 	_keyMapping->setFlags(WIDGET_CLEARBG);

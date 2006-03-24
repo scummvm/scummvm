@@ -131,12 +131,17 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_label = text;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, String name, const String &text, TextAlignment align)
-	: Widget(boss, name), _align(align) {
+StaticTextWidget::StaticTextWidget(GuiObject *boss, String name, const String &text)
+	: Widget(boss, name) {
 	_ws = g_gui.getWidgetSize();
 	_flags = WIDGET_ENABLED;
 	_type = kStaticTextWidget;
 	_label = text;
+
+	_align = (Graphics::TextAlignment)g_gui.evaluator()->getVar(name + ".align");
+
+	if (_align == EVAL_UNDEF_VAR)
+		_align = kTextAlignLeft;
 }
 
 void StaticTextWidget::setValue(int value) {
@@ -177,8 +182,9 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const St
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, String name, const String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, name, label, kTextAlignCenter), CommandSender(boss),
+	: StaticTextWidget(boss, name, label), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
+	g_gui.evaluator()->setVar(name + ".align", kTextAlignCenter);
 	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
 	_type = kButtonWidget;
 }

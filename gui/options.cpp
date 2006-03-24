@@ -386,7 +386,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, String prefix) {
 void OptionsDialog::addMIDIControls(GuiObject *boss, String prefix) {
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
-	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None", kTextAlignLeft);
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
 
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed Adlib/MIDI mode", 0, 0);
@@ -408,23 +408,23 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, String prefix) {
 	};
 
 	// Volume controllers
-	new StaticTextWidget(boss, prefix + "vcMusicText", slider_labels[0], kTextAlignRight);
+	new StaticTextWidget(boss, prefix + "vcMusicText", slider_labels[0]);
 	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", kMusicVolumeChanged);
-	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%", kTextAlignLeft);
+	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%");
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	new StaticTextWidget(boss, prefix + "vcSfxText", slider_labels[1], kTextAlignRight);
+	new StaticTextWidget(boss, prefix + "vcSfxText", slider_labels[1]);
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", kSfxVolumeChanged);
-	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%", kTextAlignLeft);
+	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%");
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	new StaticTextWidget(boss, prefix + "vcSpeechText" , slider_labels[2], kTextAlignRight);
+	new StaticTextWidget(boss, prefix + "vcSpeechText" , slider_labels[2]);
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", kSpeechVolumeChanged);
-	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%", kTextAlignLeft);
+	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%");
 	_speechVolumeSlider->setMinValue(0);
 	_speechVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
@@ -473,10 +473,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 	// Save game path
 	new ButtonWidget(tab, "globaloptions_savebutton", "Save Path: ", kChooseSaveDirCmd, 0);
-	_savePath = new StaticTextWidget(tab, "globaloptions_savepath", "/foo/bar", kTextAlignLeft);
+	_savePath = new StaticTextWidget(tab, "globaloptions_savepath", "/foo/bar");
 
 	new ButtonWidget(tab, "globaloptions_extrabutton", "Extra Path:", kChooseExtraDirCmd, 0);
-	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None", kTextAlignLeft);
+	_extraPath = new StaticTextWidget(tab, "globaloptions_extrapath", "None");
 #endif
 
 #ifdef SMALL_SCREEN_DEVICE

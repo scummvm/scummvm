@@ -87,6 +87,7 @@ const char *Theme::_defaultConfigINI =
 "browser=((w - brW) / 2) ((h - brH) / 2) brW brH\n"
 "set_parent=browser\n"
 "browser_headline=10 kLineHeight (parent.w - 2 * 10) kLineHeight\n"
+"browser_headline.align=kTextAlignCenter\n"
 "browser_path=10 prev.y2 prev.w prev.h\n"
 "browser_list=10 prev.y2 prev.w (parent.h - 3 * kLineHeight - buttonHeight - 14)\n"
 "browser_up=10 (parent.h - buttonHeight - 8) buttonWidth buttonHeight\n"
@@ -96,6 +97,7 @@ const char *Theme::_defaultConfigINI =
 "##### launcher\n"
 "hBorder=10\n"
 "launcher_version=hBorder 8 (w - 2 * hBorder) kLineHeight\n"
+"launcher_version.align=kTextAlignCenter\n"
 "top=(h - 8 - buttonHeight)\n"
 "numButtons=4\n"
 "space=8\n"
@@ -158,9 +160,11 @@ const char *Theme::_defaultConfigINI =
 "# game tab\n"
 "opYoffset=vBorder\n"
 "gameoptions_id=gox (opYoffset + 2) gameOptionsLabelWidth kLineHeight\n"
+"gameoptions_id.align=kTextAlignRight\n"
 "gameoptions_domain=prev.x2 (prev.y - 1) (parent.w - gameOptionsLabelWidth - 10 - gox) (prev.h + 2)\n"
 "opYoffset=(opYoffset + prev.h + 3)\n"
 "gameoptions_name=gox (opYoffset + 2) gameOptionsLabelWidth kLineHeight\n"
+"gameoptions_name.align=kTextAlignRight\n"
 "gameoptions_desc=prev.x2 (prev.y - 1) (parent.w - gameOptionsLabelWidth - 10 - gox) (prev.h + 2)\n"
 "opYoffset=(opYoffset + prev.h + 3)\n"
 "gameoptions_lang=gox (opYoffset - 1) gow (kLineHeight + 2)\n"
@@ -273,6 +277,7 @@ const char *Theme::_defaultConfigINI =
 "chooserW=(w - 2 * 8)\n"
 "chooser=((w - chooserW) / 2) ((h - opHeight) / 2) chooserW opHeight\n"
 "chooser_headline=10 6 (chooserW - 2 * 10) (kLineHeight)\n"
+"chooser_headline.align=kTextAlignCenter\n"
 "chooser_list=10 (6 + kLineHeight + 2) prev.w (opHeight - self.y - buttonHeight - 12)\n"
 "chooser_cancel=(chooserW - 2 * (buttonWidth + 10)) (opHeight - buttonHeight - 8) buttonWidth buttonHeight\n"
 "chooser_ok=(prev.x2 + 10) prev.y prev.w prev.h\n"
@@ -302,14 +307,17 @@ const char *Theme::_defaultConfigINI =
 "vctextw=95\n"
 "vcxoff=(vctextw + 15)\n"
 "vcMusicText=10 (opYoffset + 2) vctextw kLineHeight\n"
+"vcMusicText.align=kTextAlignRight\n"
 "vcMusicSlider=vcxoff opYoffset sliderWidth sliderHeight\n"
 "vcMusicLabel=(vcxoff + prev.w + 10) (opYoffset + 2) 24 kLineHeight\n"
 "opYoffset=(opYoffset + sliderHeight + 4)\n"
 "vcSfxText=10 (opYoffset + 2) vctextw kLineHeight\n"
+"vcSfxText.align=kTextAlignRight\n"
 "vcSfxSlider=vcxoff opYoffset sliderWidth sliderHeight\n"
 "vcSfxLabel=(vcxoff + prev.w + 10) (opYoffset + 2) 24 kLineHeight\n"
 "opYoffset=(opYoffset + sliderHeight + 4)\n"
 "vcSpeechText=10 (opYoffset + 2) vctextw kLineHeight\n"
+"vcSpeechText.align=kTextAlignRight\n"
 "vcSpeechSlider=vcxoff opYoffset sliderWidth sliderHeight\n"
 "vcSpeechLabel=(vcxoff + prev.w + 10) (opYoffset + 2) 24 kLineHeight\n"
 "opYoffset=(opYoffset + sliderHeight + 4)\n"
@@ -370,13 +378,13 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 		to = prefix + name + "." + postfixes[i];
 
 		_evaluator->setAlias(from, to);
-		_evaluator->setVariable(to, EVAL_UNDEF_VAR);
+		_evaluator->setVar(to, EVAL_UNDEF_VAR);
 	}
 
 	for (i = 0; i < str.size(); i++) {
 		if (isspace(str[i]) && level == 0) {
 			value = _evaluator->eval(String(&(str.c_str()[start]), i - start), section, name + "." + postfixes[npostfix], start);
-			_evaluator->setVariable(prefix + name + "." + postfixes[npostfix++], value);
+			_evaluator->setVar(prefix + name + "." + postfixes[npostfix++], value);
 			start = i + 1;
 		}
 		if (str[i] == '(')
@@ -399,15 +407,15 @@ void Theme::processSingleLine(const String &section, const String prefix, const 
 
 	// process VAR=VALUE construct
 	if (npostfix == 0)
-		_evaluator->setVariable(name, value);
+		_evaluator->setVar(name, value);
 	else
-		_evaluator->setVariable(prefix + name + "." + postfixes[npostfix], value);
+		_evaluator->setVar(prefix + name + "." + postfixes[npostfix], value);
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
-		_evaluator->setVariable(prefix + name + ".x2", 
+		_evaluator->setVar(prefix + name + ".x2", 
 			_evaluator->getVar(prefix + name + ".x") + _evaluator->getVar(prefix + name + ".w"));
-		_evaluator->setVariable(prefix + name + ".y2", 
+		_evaluator->setVar(prefix + name + ".y2", 
 			_evaluator->getVar(prefix +name + ".y") + _evaluator->getVar(prefix + name + ".h"));
 	}
 
@@ -433,7 +441,7 @@ void Theme::processResSection(Common::ConfigFile &config, String name, bool skip
 		}
 		if (iterk->key.hasPrefix("def_")) {
 			if (!skipDefs)
-				_evaluator->setVariable(name, prefix + iterk->key, iterk->value);
+				_evaluator->setVar(name, prefix + iterk->key, iterk->value);
 			continue;
 		}
 		if (iterk->key == "use") {

@@ -357,7 +357,7 @@ SaveLoadChooserEx::SaveLoadChooserEx(const String &title, const String &buttonLa
 
 	_drawingHints |= GUI::THEME_HINT_MAIN_DIALOG;
 
-	new StaticTextWidget(this, "scummsaveload_title", title, kTextAlignCenter);
+	new StaticTextWidget(this, "scummsaveload_title", title);
 
 	// Add choice list
 	_list = new GUI::ListWidget(this, "scummsaveload_list");
@@ -737,7 +737,7 @@ HelpDialog::HelpDialog(ScummEngine *scumm)
 
 	int lineHeight = g_gui.getFontHeight();
 
-	_title = new StaticTextWidget(this, "scummhelp_title", "", kTextAlignCenter);
+	_title = new StaticTextWidget(this, "scummhelp_title", "");
 	int keyX = g_gui.evaluator()->getVar("scummhelp_key.x");
 	int keyYoff = g_gui.evaluator()->getVar("scummhelp_key.yoffset");
 	int keyW = g_gui.evaluator()->getVar("scummhelp_key.w");

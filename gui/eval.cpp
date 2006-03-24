@@ -38,10 +38,12 @@ static bool isdelim(char c) {
 }
 
 Eval::Eval() {
+	loadConstants();
 }
 
 Eval::~Eval() {
-	reset();
+	_vars.clear();
+	_aliases.clear();
 }
 
 int Eval::eval(const String &input, const String &section, const String &name, int startpos) {
@@ -244,10 +246,21 @@ static const BuiltinConsts builtinConsts[] = {
 
 	{"kThumbnailWidth", kThumbnailWidth},
 
+	{"kTextAlignLeft", kTextAlignLeft},
+	{"kTextAlignRight", kTextAlignRight},
+	{"kTextAlignCenter", kTextAlignCenter},
+
 	{"false", 0},
 	{"true", 1},
 	{NULL, 0}
 };
+
+void Eval::loadConstants() {
+	int i;
+
+	for (i = 0; builtinConsts[i].name; i++)
+		_vars[builtinConsts[i].name] = builtinConsts[i].value;
+}
 
 int Eval::getBuiltinVar(const char *s) {
 	if (!strcmp(s, "w"))
@@ -260,12 +273,7 @@ int Eval::getBuiltinVar(const char *s) {
 }
 
 int Eval::getVar_(const char *s, bool includeAliases) {
-	int i;
 	int val;
-
-	for (i = 0; builtinConsts[i].name; i++)
-		if (!scumm_stricmp(s, builtinConsts[i].name))
-			return builtinConsts[i].value;
 
 	val = getBuiltinVar(s);
 
@@ -288,7 +296,7 @@ void Eval::setAlias(const String &section, const String name, const String value
 	_aliases[var] = value;
 }
 
-void Eval::setVariable(const String &section, const String name, const String value) {
+void Eval::setVar(const String &section, const String name, const String value) {
 	String var = String(&(name.c_str()[4]));
 
 	_vars[var] = eval(value, section, name, 0);
@@ -297,6 +305,7 @@ void Eval::setVariable(const String &section, const String name, const String va
 void Eval::reset() {
 	_vars.clear();
 	_aliases.clear();
+	loadConstants();
 }
 
 } // end of namespace GUI 
