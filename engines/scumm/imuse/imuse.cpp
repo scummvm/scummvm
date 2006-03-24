@@ -387,7 +387,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 
 bool IMuseInternal::get_sound_active(int sound) const {
 	Common::StackLock lock(_mutex, "IMuseInternal::get_sound_active()");
-	return getSoundStatus_internal (sound, false);
+	return getSoundStatus_internal (sound, false) != 0;
 }
 
 int32 IMuseInternal::doCommand(int numargs, int a[]) {
