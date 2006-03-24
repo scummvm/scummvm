@@ -199,14 +199,14 @@ inline Val *AssocArray <Key, Val>::new_all_values(void) const {
 
 template <class Key, class Val>
 inline AssocArray <Key, Val>::AssocArray(Val default_value) : _default_value(default_value) {
-//	int ctr;
+	int ctr;
 
 	_arr = new aa_ref_t <Key, Val> *[INIT_SIZE];
 
-//	for (ctr = 0; ctr < INIT_SIZE; ctr++)
-//		_arr[ctr] = NULL;
+	for (ctr = 0; ctr < INIT_SIZE; ctr++)
+		_arr[ctr] = NULL;
 
-//	assert(_arr != NULL);
+	assert(_arr != NULL);
 
 	_arrsize = INIT_SIZE;
 	_nele = 0;
