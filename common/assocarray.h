@@ -113,7 +113,7 @@ private:
 	uint _arrsize, _nele;
 	
 #ifdef DEBUG_HASH_COLLISIONS
-	mutable int _collisions;
+	mutable int _collisions, _lookups;
 #endif
 
 	int lookup(const Key &key) const;
@@ -154,13 +154,19 @@ int AssocArray<Key, Val>::lookup(const Key &key) const {
 
 	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->key, key)) {
 		ctr++;
+#ifdef DEBUG_HASH_COLLISIONS
+		_collisions++;
+#endif
 
 		if (ctr == _arrsize)
 			ctr = 0;
 	}
 	
 #ifdef DEBUG_HASH_COLLISIONS
-	fprintf(stderr, "collisions = %d in AssocArray %p\n", _collisions, (const void *)this);
+	_lookups++;
+	fprintf(stderr, "collisions %d, lookups %d, ratio %f in AssocArray %p; size %d num elements %d\n",
+		_collisions, _lookups, ((double) _collisions / (double)_lookups),
+		(const void *)this, _arrsize, _nele);
 #endif
 
 	return ctr;
@@ -239,6 +245,7 @@ AssocArray<Key, Val>::AssocArray() {
 	
 #ifdef DEBUG_HASH_COLLISIONS
 	_collisions = 0;
+	_lookups = 0;
 #endif
 }
 
@@ -303,9 +310,10 @@ void AssocArray<Key, Val>::expand_array(void) {
 //      (*this)[old_arr[ctr]->key] = old_arr[ctr]->dat;
 		dex = hashit(old_arr[ctr]->key, _arrsize);
 
-		while (_arr[dex] != NULL)
+		while (_arr[dex] != NULL) {
 			if (++dex == _arrsize)
 				dex = 0;
+		}
 
 		_arr[dex] = old_arr[ctr];
 		_nele++;
@@ -326,12 +334,6 @@ Val &AssocArray<Key, Val>::operator [](const Key &key) {
 		_arr[ctr] = new aa_ref_t(key);
 		_nele++;
 
-#ifdef DEBUG_HASH_COLLISIONS
-		if (ctr != hashit(key, _arrsize)) {
-			_collisions++;
-//			fprintf(stderr, "collisions = %d\n", _collisions);
-		}
-#endif
 		// Only fill array to fifty percent
 		if (_nele > _arrsize / 2) {
 			expand_array();
