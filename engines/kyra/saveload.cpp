@@ -181,8 +181,8 @@ void KyraEngine::loadGame(const char *fileName) {
 	if (version >= 4) {
 		_configTextspeed = in->readByte();
 		_configWalkspeed = in->readByte();
-		_configMusic = in->readByte();
-		_configSounds = in->readByte();
+		_configMusic = in->readByte() != 0;
+		_configSounds = in->readByte() != 0;
 		_configVoice = in->readByte();
 	}
 
