@@ -5,7 +5,6 @@ static const char *credits[] = {
 "\\C\\c1""Project Leaders",
 "\\C\\c0""James Brown",
 "\\C\\c0""Max Horn",
-"\\C\\c2""This is a long desc. A really, really long long description. No I really mean *long* like in 'very long'!",
 "\\C\\c0""",
 "\\C\\c1""Engine Teams",
 "\\C\\c1""SCUMM",

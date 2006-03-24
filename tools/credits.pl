@@ -435,7 +435,7 @@ begin_credits("Credits");
     begin_section("Project Leaders");
 	  begin_persons();
 		add_person('James Brown', 'ender', "");
-		add_person('Max Horn', 'Fingolfin', "This is a long desc. A really, really long long description. No I really mean *long* like in 'very long'!");
+		add_person('Max Horn', 'Fingolfin', "");
 	  end_persons();
     end_section();
 
