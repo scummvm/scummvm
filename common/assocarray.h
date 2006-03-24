@@ -100,33 +100,33 @@ struct aa_ref_t {
 template <class Key, class Val>
 class AssocArray {
 private:
-	aa_ref_t <Key, Val> **_arr;	// hashtable of size arrsize.
+	aa_ref_t<Key, Val> **_arr;	// hashtable of size arrsize.
 	Val _default_value;
 	int _arrsize, _nele;
 
-	inline void expand_array(void);
-	inline Val &subscript_helper(Key &index);	// like [], but never expands array
+	int lookup(const Key &index) const;
+	void expand_array(void);
 
-	inline int nele_val(void) const { return _nele; }
+	int nele_val(void) const { return _nele; }
 
 public:
 
-	inline Val &operator [](const Key &index);
-//	inline AssocArray(Val default_value = Val());
-	inline AssocArray(Val default_value);
-	inline ~AssocArray();
-	inline int contains(const Key &index) const;
-	inline Key *new_all_keys(void) const;
-	inline Val *new_all_values(void) const;
-	inline Val queryVal(const Key &index) const;
-	inline void clear(int shrinkArray = 0);
+	Val &operator [](const Key &index);
+//	AssocArray(Val default_value = Val());
+	AssocArray(Val default_value);
+	~AssocArray();
+	bool contains(const Key &index) const;
+	Key *new_all_keys(void) const;
+	Val *new_all_values(void) const;
+	Val queryVal(const Key &index) const;
+	void clear(bool shrinkArray = 0);
 };
 
 //-------------------------------------------------------
 // AssocArray functions
 
 template <class Key, class Val>
-inline int AssocArray <Key, Val>::contains(const Key &index) const {
+int AssocArray<Key, Val>::lookup(const Key &index) const {
 	int ctr;
 
 	ctr = hashit(index, _arrsize);
@@ -138,14 +138,18 @@ inline int AssocArray <Key, Val>::contains(const Key &index) const {
 			ctr = 0;
 	}
 
-	if (_arr[ctr] == NULL)
-		return 0;
-	else
-		return 1;
+	return ctr;
 }
 
 template <class Key, class Val>
-inline Key *AssocArray <Key, Val>::new_all_keys(void) const {
+bool AssocArray<Key, Val>::contains(const Key &index) const {
+	int ctr = lookup(index);
+
+	return (_arr[ctr] != NULL);
+}
+
+template <class Key, class Val>
+Key *AssocArray<Key, Val>::new_all_keys(void) const {
 	Key *all_keys;
 	int ctr, dex;
 
@@ -171,7 +175,7 @@ inline Key *AssocArray <Key, Val>::new_all_keys(void) const {
 }
 
 template <class Key, class Val>
-inline Val *AssocArray <Key, Val>::new_all_values(void) const {
+Val *AssocArray<Key, Val>::new_all_values(void) const {
 	Val *all_values;
 	int ctr, dex;
 
@@ -198,7 +202,7 @@ inline Val *AssocArray <Key, Val>::new_all_values(void) const {
 }
 
 template <class Key, class Val>
-inline AssocArray <Key, Val>::AssocArray(Val default_value) : _default_value(default_value) {
+AssocArray<Key, Val>::AssocArray(Val default_value) : _default_value(default_value) {
 	int ctr;
 
 	_arr = new aa_ref_t <Key, Val> *[INIT_SIZE];
@@ -213,7 +217,7 @@ inline AssocArray <Key, Val>::AssocArray(Val default_value) : _default_value(def
 }
 
 template <class Key, class Val>
-inline AssocArray <Key, Val>::~AssocArray() {
+AssocArray<Key, Val>::~AssocArray() {
 	int ctr;
 
 	for (ctr = 0; ctr < _arrsize; ctr++)
@@ -224,7 +228,7 @@ inline AssocArray <Key, Val>::~AssocArray() {
 }
 
 template <class Key, class Val>
-inline void AssocArray <Key, Val>::clear(int shrinkArray) {
+void AssocArray<Key, Val>::clear(bool shrinkArray) {
 	for (int ctr = 0; ctr < _arrsize; ctr++) {
 		if (_arr[ctr] != NULL) {
 			delete _arr[ctr];
@@ -232,7 +236,6 @@ inline void AssocArray <Key, Val>::clear(int shrinkArray) {
 		}
 	}
 
-	shrinkArray = 0;
 	if (shrinkArray && _arrsize > INIT_SIZE) {
 		delete _arr;
 
@@ -246,11 +249,8 @@ inline void AssocArray <Key, Val>::clear(int shrinkArray) {
 	_nele = 0;
 }
 
-static int is_odd(int x) {return x&1;}
-static int is_even(int x) {return !is_odd(x);}
-
 template <class Key, class Val>
-inline void AssocArray <Key, Val>::expand_array(void) {
+void AssocArray<Key, Val>::expand_array(void) {
 	aa_ref_t <Key, Val> **old_arr;
 	int old_arrsize, old_nele, ctr, dex;
 
@@ -262,8 +262,8 @@ inline void AssocArray <Key, Val>::expand_array(void) {
 	// allocate a new array 
 	_arrsize = 153 * old_arrsize / 100;
 
-	if (is_even(_arrsize))
-		_arrsize++;
+	// Ensure that _arrsize is odd.
+	_arrsize |= 1;
 
 	_arr = new aa_ref_t <Key, Val> *[_arrsize];
 
@@ -297,46 +297,9 @@ inline void AssocArray <Key, Val>::expand_array(void) {
 	return;
 }
 
-// like [], but never expands array.
-// Precond: index is a key that is already in the hash table.
 template <class Key, class Val>
-inline Val &AssocArray <Key, Val>::subscript_helper(Key &index) {
-	int ctr;
-
-	ctr = hashit(index, _arrsize);
-
-	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->index, index)) {
-		ctr++;
-
-		if (ctr == _arrsize)
-			ctr = 0;
-	}
-
-//  if (_arr[ctr] == NULL)
-//      {
-//      _arr[ctr] = new aa_ref_t<Val,Key>;
-//      _arr[ctr]->index = index;
-//      _arr[ctr]->dat = _default_value;
-//      _nele++;
-//      }
-
-	assert(_arr[ctr] != NULL);
-
-	return _arr[ctr]->dat;
-}
-
-template <class Key, class Val>
-inline Val &AssocArray <Key, Val>::operator [](const Key &index) {
-	int ctr;
-
-	ctr = hashit(index, _arrsize);
-
-	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->index, index)) {
-		ctr++;
-
-		if (ctr == _arrsize)
-			ctr = 0;
-	}
+Val &AssocArray<Key, Val>::operator [](const Key &index) {
+	int ctr = lookup(index);
 
 	if (_arr[ctr] == NULL) {
 		_arr[ctr] = new aa_ref_t <Key, Val>;
@@ -357,17 +320,8 @@ inline Val &AssocArray <Key, Val>::operator [](const Key &index) {
 }
 
 template <class Key, class Val>
-inline Val AssocArray <Key, Val>::queryVal(const Key &index) const {
-	int ctr;
-
-	ctr = hashit(index, _arrsize);
-
-	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->index, index)) {
-		ctr++;
-
-		if (ctr == _arrsize)
-			ctr = 0;
-	}
+Val AssocArray<Key, Val>::queryVal(const Key &index) const {
+	int ctr = lookup(index);
 
 	if (_arr[ctr] == NULL)
 		return _default_value;
