@@ -107,12 +107,13 @@ private:
 	inline void expand_array(void);
 	inline Val &subscript_helper(Key &index);	// like [], but never expands array
 
-public:
 	inline int nele_val(void) const { return _nele; }
-	inline Val defaultValue_val(void) const { return _default_value; }
+
+public:
 
 	inline Val &operator [](const Key &index);
-	inline AssocArray(Val default_value = NULL);
+//	inline AssocArray(Val default_value = Val());
+	inline AssocArray(Val default_value);
 	inline ~AssocArray();
 	inline int contains(const Key &index) const;
 	inline Key *new_all_keys(void) const;
@@ -198,19 +199,17 @@ inline Val *AssocArray <Key, Val>::new_all_values(void) const {
 
 template <class Key, class Val>
 inline AssocArray <Key, Val>::AssocArray(Val default_value) : _default_value(default_value) {
-	int ctr;
+//	int ctr;
 
 	_arr = new aa_ref_t <Key, Val> *[INIT_SIZE];
 
-	for (ctr = 0; ctr < INIT_SIZE; ctr++)
-		_arr[ctr] = NULL;
+//	for (ctr = 0; ctr < INIT_SIZE; ctr++)
+//		_arr[ctr] = NULL;
 
-	assert(_arr != NULL);
+//	assert(_arr != NULL);
 
 	_arrsize = INIT_SIZE;
 	_nele = 0;
-
-	return;
 }
 
 template <class Key, class Val>
