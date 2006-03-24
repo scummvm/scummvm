@@ -1185,7 +1185,7 @@ int ScummEngine::getCurrentLights() const {
 }
 
 bool ScummEngine::isLightOn() const {
-	return (getCurrentLights() & LIGHTMODE_room_lights_on);
+	return (getCurrentLights() & LIGHTMODE_room_lights_on) != 0;
 }
 
 void ScummEngine::setShake(int mode) {
