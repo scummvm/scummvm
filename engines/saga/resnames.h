@@ -178,6 +178,7 @@ namespace Saga {
 // MUSIC
 #define MUSIC_1 9
 #define MUSIC_2 10
+#define MUSIC_SUNSPOT 26
 
 // TODO: If the sound effects are numbered sequentially, we don't really need
 //       these constants. But for now they might be useful for debugging.

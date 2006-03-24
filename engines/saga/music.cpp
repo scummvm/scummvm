@@ -24,6 +24,7 @@
 #include "saga/saga.h"
 
 #include "saga/rscfile.h"
+#include "saga/resnames.h"
 #include "saga/music.h"
 #include "saga/stream.h"
 #include "sound/audiostream.h"
@@ -82,7 +83,7 @@ private:
 	}
 
 public:
-	RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping);
+	RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart);
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -91,7 +92,7 @@ public:
 	int getRate() const	{ return _musicInfo->frequency; }
 };
 
-RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping)
+RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart)
 	: _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
 
 	ResourceData * resourceData;
@@ -105,9 +106,11 @@ RAWInputStream::RAWInputStream(SagaEngine *vm, ResourceContext *context, uint32 
 	}
 
 	// Determine the end position
-	_startPos = resourceData->offset;
-	_endPos = _startPos + resourceData->size;
-	_filePos = _startPos;
+	_filePos = resourceData->offset;
+	_endPos = _filePos + resourceData->size;
+	_startPos = _filePos + loopStart;
+	if (_startPos >= _endPos)
+		_startPos = _filePos;
 
 	// Read in initial data
 	refill();
@@ -375,7 +378,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	MidiParser *parser;
 	ResourceContext *context;
 	byte *resourceData;
-	size_t resourceSize;
+	size_t resourceSize;	
+	uint32 loopStart;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
 
@@ -420,7 +424,13 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		if (resourceId >= 9 && resourceId <= 34) {
 			if (_musicContext != NULL) {
 				//TODO: check resource size
-				audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP);
+				loopStart = 0;
+				// fix ITE sunstatm score
+				if ((_vm->getGameType() == GType_ITE) && (resourceId == MUSIC_SUNSPOT)) {
+					loopStart = 4 * 18727;
+				}
+
+				audioStream = new RAWInputStream(_vm, _musicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
 			}
 		}
 	}
