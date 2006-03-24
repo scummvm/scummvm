@@ -32,9 +32,10 @@
 #include "graphics/fontman.h"
 
 #include "gui/widget.h"
-#include "gui/eval.h"
 
 namespace GUI {
+
+class Eval;
 
 // Hints to the theme engine that the widget is used in a non-standard way.
 
@@ -61,14 +62,9 @@ enum {
 class Theme {
 	typedef Common::String String;
 public:
-	Theme() : _drawArea(), _configFile(), _loadedThemeX(0), _loadedThemeY(0) {
-		Common::MemoryReadStream s((const byte *)_defaultConfigINI, strlen(_defaultConfigINI));
-		_defaultConfig.loadFromStream(s);
-
-		_evaluator = new Eval();
-	}
+	Theme();
 		
-	virtual ~Theme() { delete _evaluator;}
+	virtual ~Theme();
 
 	enum kTextAlign {
 		kTextAlignLeft,

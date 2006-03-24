@@ -78,9 +78,7 @@ public:
 	int getStringWidth(const Common::String &str) const { return _theme->getStringWidth(str); }
 	int getCharWidth(byte c) const { return _theme->getCharWidth(c); }
 
-	WidgetSize getWidgetSize() {
-		return (WidgetSize)(_theme->_evaluator->getVar("widgetSize"));
-	}
+	WidgetSize getWidgetSize();
 
 
 protected:

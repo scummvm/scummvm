@@ -35,6 +35,7 @@
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
+#include "gui/eval.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
 #include "gui/newgui.h"

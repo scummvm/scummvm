@@ -29,6 +29,7 @@
 
 #include "gui/about.h"
 #include "gui/chooser.h"
+#include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
 

@@ -24,6 +24,7 @@
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
+#include "gui/eval.h"
 #include "gui/newgui.h"
 
 namespace GUI {

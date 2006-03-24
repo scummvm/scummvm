@@ -24,6 +24,7 @@
 #include "graphics/fontman.h"
 #include "gui/widget.h"
 #include "gui/dialog.h"
+#include "gui/eval.h"
 #include "gui/newgui.h"
 
 namespace GUI {

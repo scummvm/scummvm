@@ -24,6 +24,7 @@
 #include "common/util.h"
 #include "gui/newgui.h"
 #include "gui/dialog.h"
+#include "gui/eval.h"
 
 #include "common/config-manager.h"
 
@@ -308,5 +309,10 @@ void NewGui::animateCursor() {
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
 	}
 }
+
+WidgetSize NewGui::getWidgetSize() {
+	return (WidgetSize)(_theme->_evaluator->getVar("widgetSize"));
+}
+
 
 } // End of namespace GUI
