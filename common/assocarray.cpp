@@ -60,57 +60,68 @@
 namespace Common {
 
 // int:
-int hashit(int x, int hashsize) {
+uint hashit(int x, uint hashsize) {
 	return x % hashsize;
 }
 
-int data_eq(int x, int y) {
+bool data_eq(int x, int y) {
 	return x == y;
 }
 
 #if 0
 // double:
-int hashit(double d, int hashsize) {
-	int hash, dex;
-	byte *p = (byte *)&d;
-
-	hash = 0;
-
-	for (dex = 0; dex < sizeof(double); dex++)
-		hash = ((hash << 8) + p[dex]) % hashsize;
-
-	return hash;
+uint hashit(double d, uint hashsize) {
+	TODO
 }
 #endif
 
-int data_eq(double d1, double d2) {
+bool data_eq(double d1, double d2) {
 	return (d1 == d2);
 }
 
 // const char *:
-int hashit(const char *str, int hashsize) {
+uint hashit(const char *str, uint hashsize) {
 	const byte *p = (const byte *)str;
-	int hash, dex;
+	uint hash;
+	char c;
 
+	// my31 algo
 	hash = 0;
+	while ((c = *p++))
+		hash = (hash * 31 + c);
 
-	for (dex = 0; p[dex] != 0; dex++)
-		hash = ((hash << 8) + p[dex]) % hashsize;
-
-	return hash;
+	return hash % hashsize;
 }
 
-int data_eq(const char *str1, const char *str2) {
+bool data_eq(const char *str1, const char *str2) {
 	return !strcmp(str1, str2);
 }
 
 // String:
-int hashit(const Common::String &str, int hashsize) {
+uint hashit(const Common::String &str, uint hashsize) {
 	return hashit(str.c_str(), hashsize);
 }
 
-int data_eq(const Common::String &str1, const String &str2) {
+bool data_eq(const Common::String &str1, const String &str2) {
 	return (str1 == str2);
 }
+
+// The following table is taken from the GNU ISO C++ Library's hashtable.h file.
+static const uint primes[] = {
+	53ul,         97ul,         193ul,       389ul,       769ul,
+	1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
+	49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
+	1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
+	50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul,
+	1610612741ul, 3221225473ul, 4294967291ul
+};
+
+uint nextTableSize(uint x) {
+	int i = 0;
+	while (x >= primes[i])
+		i++;
+	return primes[i];
+}
+
 
 }	// End of namespace Common

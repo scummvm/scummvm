@@ -64,8 +64,6 @@
 
 namespace Common {
 
-#define INIT_SIZE 11
-
 typedef Common::String String;
 
 // If aa is an AssocArray<Key,Val>, then space is allocated each
@@ -80,14 +78,25 @@ typedef Common::String String;
 // be considered equal. Also, we assume that "=" works
 // on Val's for assignment.
 
-int hashit(int x, int hashsize);
-int data_eq(int x, int y);
-int hashit(double x, int hashsize);
-int data_eq(double x, double y);
-int hashit(const char *str, int hashsize);
-int data_eq(const char *str1, const char *str2);
-int hashit(const String &str, int hashsize);
-int data_eq(const String &str1, const String &str2);
+uint hashit(int x, uint hashsize);
+bool data_eq(int x, int y);
+uint hashit(double x, uint hashsize);
+bool data_eq(double x, double y);
+uint hashit(const char *str, uint hashsize);
+bool data_eq(const char *str1, const char *str2);
+uint hashit(const String &str, uint hashsize);
+bool data_eq(const String &str1, const String &str2);
+
+
+// The table sizes ideally are primes. We use a helper function to find
+// suitable table sizes.
+uint nextTableSize(uint x);
+
+
+// Enable the following #define if you want to check how many collisions the
+// code produces (many collisions indicate either a bad hash function, or a
+// hash table that is too small).
+//#define DEBUG_HASH_COLLISIONS
 
 template <class Key, class Val>
 class AssocArray {
@@ -101,7 +110,11 @@ private:
 	};
 	
 	aa_ref_t **_arr;	// hashtable of size arrsize.
-	int _arrsize, _nele;
+	uint _arrsize, _nele;
+	
+#ifdef DEBUG_HASH_COLLISIONS
+	mutable int _collisions;
+#endif
 
 	int lookup(const Key &key) const;
 	void expand_array(void);
@@ -137,9 +150,7 @@ public:
 
 template <class Key, class Val>
 int AssocArray<Key, Val>::lookup(const Key &key) const {
-	int ctr;
-
-	ctr = hashit(key, _arrsize);
+	uint ctr = hashit(key, _arrsize);
 
 	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->key, key)) {
 		ctr++;
@@ -147,20 +158,24 @@ int AssocArray<Key, Val>::lookup(const Key &key) const {
 		if (ctr == _arrsize)
 			ctr = 0;
 	}
+	
+#ifdef DEBUG_HASH_COLLISIONS
+	fprintf(stderr, "collisions = %d in AssocArray %p\n", _collisions, (const void *)this);
+#endif
 
 	return ctr;
 }
 
 template <class Key, class Val>
 bool AssocArray<Key, Val>::contains(const Key &key) const {
-	int ctr = lookup(key);
+	uint ctr = lookup(key);
 	return (_arr[ctr] != NULL);
 }
 
 template <class Key, class Val>
 Key *AssocArray<Key, Val>::new_all_keys(void) const {
 	Key *all_keys;
-	int ctr, dex;
+	uint ctr, dex;
 
 	if (_nele == 0)
 		return NULL;
@@ -186,7 +201,7 @@ Key *AssocArray<Key, Val>::new_all_keys(void) const {
 template <class Key, class Val>
 Val *AssocArray<Key, Val>::new_all_values(void) const {
 	Val *all_values;
-	int ctr, dex;
+	uint ctr, dex;
 
 	if (_nele == 0)
 		return NULL;
@@ -212,21 +227,24 @@ Val *AssocArray<Key, Val>::new_all_values(void) const {
 
 template <class Key, class Val>
 AssocArray<Key, Val>::AssocArray() {
-	int ctr;
+	uint ctr;
 
-	_arr = new aa_ref_t *[INIT_SIZE];
+	_arrsize = nextTableSize(0);
+	_arr = new aa_ref_t *[_arrsize];
 	assert(_arr != NULL);
-
-	for (ctr = 0; ctr < INIT_SIZE; ctr++)
+	for (ctr = 0; ctr < _arrsize; ctr++)
 		_arr[ctr] = NULL;
 
-	_arrsize = INIT_SIZE;
 	_nele = 0;
+	
+#ifdef DEBUG_HASH_COLLISIONS
+	_collisions = 0;
+#endif
 }
 
 template <class Key, class Val>
 AssocArray<Key, Val>::~AssocArray() {
-	int ctr;
+	uint ctr;
 
 	for (ctr = 0; ctr < _arrsize; ctr++)
 		if (_arr[ctr] != NULL)
@@ -237,20 +255,20 @@ AssocArray<Key, Val>::~AssocArray() {
 
 template <class Key, class Val>
 void AssocArray<Key, Val>::clear(bool shrinkArray) {
-	for (int ctr = 0; ctr < _arrsize; ctr++) {
+	for (uint ctr = 0; ctr < _arrsize; ctr++) {
 		if (_arr[ctr] != NULL) {
 			delete _arr[ctr];
 			_arr[ctr] = NULL;
 		}
 	}
 
-	if (shrinkArray && _arrsize > INIT_SIZE) {
-		delete _arr;
+	if (shrinkArray && _arrsize > nextTableSize(0)) {
+		delete[] _arr;
 
-		_arr = new aa_ref_t *[INIT_SIZE];
-		_arrsize = INIT_SIZE;
-
-		for (int ctr = 0; ctr < _arrsize; ctr++)
+		_arrsize = nextTableSize(0);
+		_arr = new aa_ref_t *[_arrsize];
+		assert(_arr != NULL);
+		for (uint ctr = 0; ctr < _arrsize; ctr++)
 			_arr[ctr] = NULL;
 	}
 
@@ -260,19 +278,14 @@ void AssocArray<Key, Val>::clear(bool shrinkArray) {
 template <class Key, class Val>
 void AssocArray<Key, Val>::expand_array(void) {
 	aa_ref_t **old_arr;
-	int old_arrsize, old_nele, ctr, dex;
+	uint old_arrsize, old_nele, ctr, dex;
 
 	old_nele = _nele;
 	old_arr = _arr;
 	old_arrsize = _arrsize;
 
-    // GROWTH_FACTOR 1.531415936535
 	// allocate a new array 
-	_arrsize = 153 * old_arrsize / 100;
-
-	// Ensure that _arrsize is odd.
-	_arrsize |= 1;
-
+	_arrsize = nextTableSize(old_arrsize);
 	_arr = new aa_ref_t *[_arrsize];
 
 	assert(_arr != NULL);
@@ -307,12 +320,19 @@ void AssocArray<Key, Val>::expand_array(void) {
 
 template <class Key, class Val>
 Val &AssocArray<Key, Val>::operator [](const Key &key) {
-	int ctr = lookup(key);
+	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
 		_arr[ctr] = new aa_ref_t(key);
 		_nele++;
 
+#ifdef DEBUG_HASH_COLLISIONS
+		if (ctr != hashit(key, _arrsize)) {
+			_collisions++;
+//			fprintf(stderr, "collisions = %d\n", _collisions);
+		}
+#endif
+		// Only fill array to fifty percent
 		if (_nele > _arrsize / 2) {
 			expand_array();
 			ctr = lookup(key);
@@ -329,7 +349,7 @@ const Val &AssocArray<Key, Val>::operator [](const Key &key) const {
 
 template <class Key, class Val>
 const Val &AssocArray<Key, Val>::queryVal(const Key &key) const {
-	int ctr = lookup(key);
+	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->dat;
 }
