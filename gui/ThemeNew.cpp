@@ -131,12 +131,6 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 		}
 	}
 
-	if (ConfMan.hasKey("extrapath")) {
-		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
-	}
-	if (ConfMan.hasKey("themepath")) {
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
-	}
 	ImageMan.addArchive(stylefile + ".zip");
 
 	if (!_configFile.loadFromFile(stylefile + ".ini")) {

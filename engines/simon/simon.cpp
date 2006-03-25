@@ -453,9 +453,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	memcpy (_hebrew_char_widths,
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
-}
-
-int SimonEngine::init(GameDetector &detector) {
 
 	// Add default file directories for Acorn version
 	File::addDefaultDirectory(_gameDataPath + "execute/");
@@ -471,6 +468,9 @@ int SimonEngine::init(GameDetector &detector) {
 	File::addDefaultDirectory(_gameDataPath + "SFX/");
 	File::addDefaultDirectory(_gameDataPath + "speech/");
 	File::addDefaultDirectory(_gameDataPath + "SPEECH/");
+}
+
+int SimonEngine::init(GameDetector &detector) {
 
 	// Detect game
 	if (!initGame()) {
