@@ -1595,7 +1595,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			// Instead, use the fs.h code to get a list of all files in that 
 			// directory and simply check whether that filename is contained 
 			// in it. 
-			if (Common::File::exists(detectName, ConfMan.get("path").c_str())) {
+			if (Common::File::exists(detectName)) {
 				found = true;
 				break;
 			}
@@ -1630,7 +1630,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	} else {
 		// Compute the MD5 of the file, and (if we succeeded) store a hex version
 		// of it in gameMD5 (useful to print it to the user in messages).
-		if (Common::md5_file(detectName, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+		if (Common::md5_file(detectName, md5sum, NULL, kMD5FileSizeLimit)) {
 			for (int j = 0; j < 16; j++) {
 				sprintf(gameMD5 + j*2, "%02x", (int)md5sum[j]);
 			}

@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/util.h"
+#include "backends/fs/fs.h"
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"
@@ -30,6 +31,8 @@
 namespace Common {
 
 StringList File::_defaultDirectories;
+File::FilesMap File::_filesMap;
+bool File::_lockedDirectories;
 
 
 static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
@@ -105,16 +108,80 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	return file;
 }
 
-void File::addDefaultDirectory(const String &directory) {
+void File::addDefaultDirectory(const String &directory, bool lockDirectories) {
+	String lfn;
+
+	if (_lockedDirectories)
+		error("addDefaultDirectory is called too late. Move all calls to engine constructor");
+
+	_lockedDirectories = lockDirectories;
+
+	FilesystemNode dir(directory.c_str());
+
+	if (!dir.isDirectory())
+		return;
+
 	_defaultDirectories.push_back(directory);
+
+	FSList fslist(dir.listDir(FilesystemNode::kListFilesOnly));
+	
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		lfn = file->displayName();
+		lfn.toLowercase();
+		if (!_filesMap.contains(lfn))
+			_filesMap[lfn] = file->path();
+	}
+}
+
+void File::addDefaultDirectoryRecursive(const String &directory, int level, int baseLen) {
+	if (level > 4)
+		return;
+
+	String lfn;
+
+	if (_lockedDirectories)
+		error("addDefaultDirectoryRecursive is called too late. Move all calls to engine constructor");
+
+	FilesystemNode dir(directory.c_str());
+
+	if (!dir.isDirectory())
+		return;
+
+	_defaultDirectories.push_back(directory);
+
+	if (baseLen == 0) {
+		baseLen = directory.size();
+		if (directory.lastChar() != '/'
+#if defined(__MORPHOS__) || defined(__amigaos4__)
+					&& directory.lastChar() != ':'
+#endif
+					&& directory.lastChar() != '\\')
+			baseLen++;
+	}
+
+	FSList fslist(dir.listDir(FilesystemNode::kListAll));
+	
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory()) {
+			addDefaultDirectoryRecursive(file->path(), level + 1, baseLen);
+		} else {
+			lfn = String(file->path().c_str() + baseLen);
+			lfn.toLowercase();
+			if (!_filesMap.contains(lfn))
+				_filesMap[lfn] = file->path();
+		}
+	}
 }
 
 void File::resetDefaultDirectories() {
 	_defaultDirectories.clear();
+	_filesMap.clear();
+	_lockedDirectories = false;
 }
 
 File::File()
- : _handle(0), _ioFailed(false), _refcount(1) {
+	: _handle(0), _ioFailed(false), _refcount(1) {
+	_lockedDirectories = false;
 }
 
 //#define DEBUG_FILE_REFCOUNT
@@ -155,10 +222,18 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 
 	clearIOFailed();
 
+	String fname(filename);
+
+	fname.toLowercase();
+
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 	if (mode == kFileWriteMode || directory) {
 		_handle = fopenNoCase(filename, directory ? directory : "", modeStr);
+	} else if (_filesMap.contains(fname)) {
+		debug(3, "Opening hashed: %s", _filesMap[fname].c_str());
+		_handle = fopen(_filesMap[fname].c_str(), modeStr);
 	} else {
+
 		StringList::const_iterator x;
 		// Try all default directories
 		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {

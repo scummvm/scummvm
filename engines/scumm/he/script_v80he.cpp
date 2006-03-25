@@ -399,8 +399,14 @@ void ScummEngine_v80he::o80_createSound() {
 
 void ScummEngine_v80he::o80_getFileSize() {
 	byte filename[256];
+	uint i;
 
 	copyScriptString(filename, sizeof(filename));
+
+	for (i = 0; i < strlen((const char *)filename); i++) {
+		if (filename[i] == '\\')
+			filename[i] = '/';
+	}
 
 	Common::File f;
 	if (!f.open((char *)filename)) {

@@ -560,7 +560,7 @@ int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
 
 	if (setFilePath) {
 		char filePath[256];
-		sprintf(filePath, "%s%s", _gameDataPath.c_str(), dst + r);
+		sprintf(filePath, "%s", dst + r);
 		if (!Common::File::exists(filePath)) {
 			sprintf(filePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
 		}

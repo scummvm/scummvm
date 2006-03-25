@@ -221,7 +221,7 @@ void LureEngine::detectGame() {
 		if (!Common::File::exists(g->checkFile))
 			continue;
 
-		if (Common::md5_file(g->checkFile, md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+		if (Common::md5_file(g->checkFile, md5sum, NULL, kMD5FileSizeLimit)) {
 			for (int j = 0; j < 16; j++) {
 				sprintf(md5str + j * 2, "%02x", (int)md5sum[j]);
 			}

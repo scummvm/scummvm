@@ -343,7 +343,7 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 	uint8 md5sum[16];
 	char md5str[32 + 1];
 
-	if (Common::md5_file("intro.stk", md5sum, ConfMan.get("path").c_str(), kMD5FileSizeLimit)) {
+	if (Common::md5_file("intro.stk", md5sum, NULL, kMD5FileSizeLimit)) {
 		for (int j = 0; j < 16; j++) {
 			sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 		}

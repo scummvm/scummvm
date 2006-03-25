@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/assocarray.h"
 
 namespace Common {
 
@@ -44,8 +45,11 @@ protected:
 	/** The name of this file, for debugging. */
 	String _name;
 
+	typedef AssocArray<String, String> FilesMap;
 
 	static StringList _defaultDirectories;
+	static FilesMap _filesMap;
+	static bool _lockedDirectories;
 
 public:
 	enum AccessMode {
@@ -53,7 +57,8 @@ public:
 		kFileWriteMode = 2
 	};
 
-	static void addDefaultDirectory(const String &directory);
+	static void addDefaultDirectory(const String &directory, bool lockDirectories = false);
+	static void addDefaultDirectoryRecursive(const String &directory, int level = 0, int baseLen = 0);
 	static void resetDefaultDirectories();
 
 	File();
