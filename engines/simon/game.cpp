@@ -1236,6 +1236,19 @@ static GameDescription gameDescriptions[] = {
 	},
 };
 
+static DetectedGame toDetectedGame(const GameDescription &g) {
+	const char *title = 0;
+	if (g.gameType == GType_SIMON1)
+		title = "Simon the Sorcerer 1";
+	if (g.gameType == GType_SIMON2)
+		title = "Simon the Sorcerer 2";
+	if (g.gameType == GType_FF)
+		title = "The Feeble Files";
+	DetectedGame dg(g.name, title, g.language, g.platform);
+	dg.updateDesc(g.extra);
+	return dg;
+}
+
 bool SimonEngine::initGame(void) {
 	int gameNumber;
 	FSList dummy;
@@ -1245,7 +1258,7 @@ bool SimonEngine::initGame(void) {
 		return false;
 	}
 
-	debug(0, "Running %d (%s)", gameNumber, gameDescriptions[gameNumber].extra);
+	debug(2, "Running %s", toDetectedGame(gameDescriptions[gameNumber]).description.c_str());
 
 	_gameDescription = &gameDescriptions[gameNumber];
 
@@ -1292,7 +1305,7 @@ DetectedGameList GAME_ProbeGame(const FSList &fslist, int **retmatches) {
 				if (gameMD5[j].id == gameDescriptions[matches[i]].gameId)
 					count++;
 			if (count < maxcount) {
-				debug(2, "Purged: %d (%s)", matches[i], gameDescriptions[matches[i]].extra);
+				debug(2, "Purged: %s", toDetectedGame(gameDescriptions[matches[i]]).description.c_str());
 				matches[i] = -1;
 			}
 		}
@@ -1404,7 +1417,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		} else {
 			bool match = true;
 
-			debug(0, "Probing game: %d (%s)", game_n, gameDescriptions[game_n].extra);
+			debug(2, "Probing game: %s", toDetectedGame(gameDescriptions[game_n]).description.c_str());
 
 			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
@@ -1419,7 +1432,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			if (!match)
 				continue;
 
-			debug(0, "Found game: %d (%s)", game_n, gameDescriptions[game_n].extra);
+			debug(2, "Found game: %s", toDetectedGame(gameDescriptions[game_n]).description.c_str());
 
 			return game_n;
 		}
