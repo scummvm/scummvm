@@ -66,8 +66,11 @@ protected:
 	void redimArray(int arrayId, int newX, int newY, int d);
 	int readFileToArray(int slot, int32 size);
 	void writeFileFromArray(int slot, int resID);
+
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
+
+	int convertFilePath(byte *dst, bool setFilePath = false);
 	virtual void decodeParseString(int a, int b);
 	void swapObjects(int object1, int object2);
 
@@ -267,7 +270,6 @@ protected:
 	virtual void decodeParseString(int a, int b);
 	void decodeScriptString(byte *dst, bool scriptString = false);
 	void copyScriptString(byte *dst, int dstSize);
-	int convertFilePath(byte *dst, bool setFilePath = false);
 
 	int findObject(int x, int y, int num, int *args);
 	int getSoundResourceSize(int id);

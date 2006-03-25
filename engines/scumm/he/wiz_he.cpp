@@ -1873,8 +1873,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
-	char buf[512];
-	unsigned int i;
+	byte filename[260];
 
 	debug(2, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
@@ -1891,14 +1890,10 @@ void Wiz::processWizImage(const WizParameters *params) {
 		if (params->processFlags & kWPFUseFile) {
 			Common::File f;
 
-			// Convert Windows path separators to something more portable
-			strncpy(buf, (const char *)params->filename, 512);
-			for (i = 0; i < strlen(buf); i++) {
-				if (buf[i] == '\\')
-					buf[i] = '/';
-			}
+			memcpy(filename, params->filename, 260);
+			_vm->convertFilePath(filename);
 
-			if (f.open((const char *)buf, Common::File::kFileReadMode)) {
+			if (f.open((const char *)filename, Common::File::kFileReadMode)) {
 				uint32 id = f.readUint32BE();
 				if (id == MKID_BE('AWIZ') || id == MKID_BE('MULT')) {
 					uint32 size = f.readUint32BE();
@@ -1906,7 +1901,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 					byte *p = _vm->res.createResource(rtImage, params->img.resNum, size);
 					if (f.read(p, size) != size) {
 						_vm->res.nukeResource(rtImage, params->img.resNum);
-						error("i/o error when reading '%s'", buf);
+						error("i/o error when reading '%s'", filename);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
 						_vm->VAR(119) = -2;
 					} else {
@@ -1922,7 +1917,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 			} else {
 				_vm->VAR(_vm->VAR_GAME_LOADED) = -3;
 				_vm->VAR(119) = -3;
-				debug(0, "Unable to open for read '%s'", buf);
+				debug(0, "Unable to open for read '%s'", filename);
 			}
 		}
 		break;
@@ -1938,15 +1933,11 @@ void Wiz::processWizImage(const WizParameters *params) {
 				// TODO Write image to file
 				break;
 			case 0:
-				// Convert Windows path separators to something more portable
-				strncpy(buf, (const char *)params->filename, 512);
-				for (i = 0; i < strlen(buf); i++) {
-					if (buf[i] == '\\')
-						buf[i] = '/';
-				}
+				memcpy(filename, params->filename, 260);
+				_vm->convertFilePath(filename);
 
-				if (!f.open((const char *)buf, Common::File::kFileWriteMode)) {
-					debug(0, "Unable to open for write '%s'", buf);
+				if (!f.open((const char *)filename, Common::File::kFileWriteMode)) {
+					debug(0, "Unable to open for write '%s'", filename);
 					_vm->VAR(119) = -3;
 				} else {
 					byte *p = _vm->getResourceAddress(rtImage, params->img.resNum);

@@ -526,51 +526,6 @@ void ScummEngine_v72he::readArrayFromIndexFile() {
 	}
 }
 
-int ScummEngine_v72he::convertFilePath(byte *dst, bool setFilePath) {
-	debug(1, "convertFilePath: original filePath is %s", dst);
-
-	int len = resStrLen(dst) + 1;
-	if (dst[0] == ':') {
-		// Switch all : to / for portablity
-		int j = 0;
-		for (int i = 1; i < len; i++) {
-			if (dst[i] == ':')
-				dst[j++] = '/';
-			else
-				dst[j++] = dst[i];
-		}
-	} else {
-		// Switch all \ to / for portablity
-		for (int i = 0; i < len; i++) {
-			if (dst[i] == '\\')
-				dst[i] = '/';
-		}
-	}
-
-	// Strip path
-	int r = 0;
-	if (dst[0] == '.' && dst[1] == '/') {
-		r = 2;
-	} else if (dst[0] == 'c' && dst[1] == ':') {
-		for (r = len; r != 0; r--) {
-			if (dst[r - 1] == '/')
-				break;
-		}
-	}
-
-	if (setFilePath) {
-		char filePath[256];
-		sprintf(filePath, "%s", dst + r);
-		if (!Common::File::exists(filePath)) {
-			sprintf(filePath, "%s%s", _saveFileMan->getSavePath(), dst + r);
-		}
-		strcpy((char *)dst, filePath);
-		debug(1, "convertFilePath: filePath is %s", dst);
-	}
-
-	return r;
-}
-
 void ScummEngine_v72he::copyScriptString(byte *dst, int dstSize) {
 	byte string[1024];
 	byte chr;
