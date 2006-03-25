@@ -1344,7 +1344,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 	Common::File test_file;
 	bool file_missing;
 
-	Common::String tstr, tstr1;
+	Common::String tstr, tstr1, tstr2;
 	char md5str[32+1];
 	uint8 md5sum[16];
 
@@ -1352,11 +1352,16 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 	for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 		tstr = Common::String(gameMD5[i].filename);
 		tstr.toLowercase();
+		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
+		tstr2 = tstr + ".";
 
 		if (gameMD5[i].caseSensitive && !mode)
 			filesList[Common::String(gameMD5[i].filename)] = true;
-		else
+		else {
 			filesList[tstr] = true;
+			filesList[tstr2] = true;
+		}
 	}
 
 	if (mode) {
@@ -1368,14 +1373,17 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 				// makes tstr1 lowercase as well
 				tstr1 = Common::String(file->displayName().c_str());
 				tstr.toLowercase();
+				// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+				tstr2 = tstr + ".";
 
-				if (filesList.contains(tstr) || filesList.contains(tstr1)) {
+				if (filesList.contains(tstr) || filesList.contains(tstr1) || filesList.contains(tstr2)) {
 					if (Common::md5_file(file->path().c_str(), md5sum, NULL, FILE_MD5_BYTES)) {
 						for (int j = 0; j < 16; j++) {
 							sprintf(md5str + j*2, "%02x", (int)md5sum[j]);
 						}
 						filesMD5[tstr] = Common::String(md5str);
 						filesMD5[tstr1] = Common::String(md5str);
+						filesMD5[tstr2] = Common::String(md5str);
 					}
 				}
 			}
@@ -1403,8 +1411,10 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		// Try to open all files for this game
 		for (file_n = 0; file_n < file_count; file_n++) {
 			tstr = gameDescriptions[game_n].filesDescriptions[file_n].fileName;
+			// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+			tstr2 = tstr + ".";
 
-			if (!filesMD5.contains(tstr)) {
+			if (!filesMD5.contains(tstr) && !filesMD5.contains(tstr2)) {
 				file_missing = true;
 				break;
 			}
@@ -1422,8 +1432,10 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 			for (int i = 0; i < ARRAYSIZE(gameMD5); i++) {
 				if (gameMD5[i].id == gameDescriptions[game_n].gameId) {
 					tstr = gameMD5[i].filename;
+					// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+					tstr2 = tstr + ".";
 
-					if (strcmp(gameMD5[i].md5, filesMD5[tstr].c_str())) {
+					if (strcmp(gameMD5[i].md5, filesMD5[tstr].c_str()) && strcmp(gameMD5[i].md5, filesMD5[tstr2].c_str())) {
 						match = false;
 						break;
 					}

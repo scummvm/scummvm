@@ -221,6 +221,11 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 	} else if (_filesMap.contains(fname)) {
 		debug(3, "Opening hashed: %s", _filesMap[fname].c_str());
 		_handle = fopen(_filesMap[fname].c_str(), modeStr);
+	} else if (_filesMap.contains(fname + ".")) {
+		// WORKAROUND: Bug #1458388: "SIMON1: Game Detection fails"
+		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
+		debug(3, "Opening hashed: %s", _filesMap[fname].c_str());
+		_handle = fopen(_filesMap[fname].c_str(), modeStr);
 	} else {
 
 		StringList::const_iterator x;
