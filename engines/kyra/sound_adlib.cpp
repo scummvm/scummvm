@@ -106,7 +106,6 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// unk11 - Unknown. Used for updating random durations.
 	// unk16 - Sound-related. Possibly some sort of pitch bend.
 	// unk18 - Sound-effect. Used for secondaryEffect1()
 	// unk19 - Sound-effect. Used for secondaryEffect1()
@@ -166,7 +165,7 @@ private:
 		uint8 unk39;	
 		uint8 unk40;
 		uint8 spacing1;
-		uint8 unk11;
+		uint8 durationRandomness;
 		uint8 unk19;
 		uint8 unk18;
 		int8 unk20;
@@ -243,7 +242,7 @@ private:
 	int update_stopChannel(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_playRest(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_writeAdlib(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback12(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setupNoteAndDuration(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setBaseNote(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_stopOtherChannel(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -257,7 +256,7 @@ private:
 	int updateCallback23(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback24(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setExtraLevel1(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback26(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setupDuration(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_playNote(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setFractionalNoteSpacing(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setTempo(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -275,7 +274,7 @@ private:
 	int updateCallback41(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop1(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback44(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setDurationRandomness(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback45(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback46(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop2(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -862,8 +861,8 @@ uint16 AdlibDriver::getRandomNr() {
 
 void AdlibDriver::setupDuration(uint8 duration, Channel &channel) {
 	debugC(9, kDebugLevelSound, "setupDuration(%d, %d)", duration, &channel - _channels);
-	if (channel.unk11) {
-		channel.duration = duration + (getRandomNr() & channel.unk11);
+	if (channel.durationRandomness) {
+		channel.duration = duration + (getRandomNr() & channel.durationRandomness);
 		return;
 	}
 	if (channel.fractionalSpacing) {
@@ -1282,7 +1281,7 @@ int AdlibDriver::update_writeAdlib(uint8 *&dataptr, Channel &channel, uint8 valu
 	return 0;
 }
 
-int AdlibDriver::updateCallback12(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupNoteAndDuration(uint8 *&dataptr, Channel &channel, uint8 value) {
 	setupNote(value, channel);
 	value = *dataptr++;
 	setupDuration(value, channel);
@@ -1397,7 +1396,7 @@ int AdlibDriver::update_setExtraLevel1(uint8 *&dataptr, Channel &channel, uint8 
 	return 0;
 }
 
-int AdlibDriver::updateCallback26(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_setupDuration(uint8 *&dataptr, Channel &channel, uint8 value) {
 	setupDuration(value, channel);
 	return (value != 0);
 }
@@ -1556,8 +1555,8 @@ int AdlibDriver::update_nop1(uint8 *&dataptr, Channel &channel, uint8 value) {
 	return 0;
 }
 
-int AdlibDriver::updateCallback44(uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.unk11 = value;
+int AdlibDriver::update_setDurationRandomness(uint8 *&dataptr, Channel &channel, uint8 value) {
+	channel.durationRandomness = value;
 	return 0;
 }
 
@@ -1847,7 +1846,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_stopChannel),
 	COMMAND(update_playRest),
 	COMMAND(update_writeAdlib),
-	COMMAND(updateCallback12),
+	COMMAND(update_setupNoteAndDuration),
 
 	// 12
 	COMMAND(update_setBaseNote),
@@ -1880,7 +1879,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_stopChannel),
 
 	// 32
-	COMMAND(updateCallback26),
+	COMMAND(update_setupDuration),
 	COMMAND(update_playNote),
 	COMMAND(update_stopChannel),
 	COMMAND(update_stopChannel),
@@ -1922,7 +1921,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_nop1),
 
 	// 60
-	COMMAND(updateCallback44),
+	COMMAND(update_setDurationRandomness),
 	COMMAND(updateCallback45),
 	COMMAND(update_stopChannel),
 	COMMAND(updateCallback46),
