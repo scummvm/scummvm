@@ -109,7 +109,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 	FSList myList;
 
-	if (_isPseudoRoot) {
+	if (_isPseudoRoot && mode != kListAllNoRoot) {
 		// Drives enumeration
 		RFs fs = CEikonEnv::Static()->FsSession();
 		TInt driveNumber;

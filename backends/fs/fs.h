@@ -99,7 +99,8 @@ public:
 	typedef enum {
 		kListFilesOnly = 1,
 		kListDirectoriesOnly = 2,
-		kListAll = 3
+		kListAllNoRoot = 3,
+		kListAll = 4
 	} ListMode;
 
 	virtual ~AbstractFilesystemNode() {}
