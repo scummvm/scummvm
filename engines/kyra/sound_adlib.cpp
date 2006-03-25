@@ -275,7 +275,7 @@ private:
 	int update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop1(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setDurationRandomness(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback45(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_changeChannelTempo(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback46(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop2(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -1560,18 +1560,15 @@ int AdlibDriver::update_setDurationRandomness(uint8 *&dataptr, Channel &channel,
 	return 0;
 }
 
-int AdlibDriver::updateCallback45(uint8 *&dataptr, Channel &channel, uint8 value) {
-	if (value & 0x80) {
-		value += channel.tempo;
-		if (value >= channel.tempo)
-			value = 1;
-	} else {
-		uint8 temp = value;
-		value += channel.tempo;
-		if (value < temp)
-			value = 0xFF;
-	}
-	channel.tempo = value;
+int AdlibDriver::update_changeChannelTempo(uint8 *&dataptr, Channel &channel, uint8 value) {
+	int tempo = channel.tempo + (int8)value;
+
+	if (tempo <= 0)
+		tempo = 1;
+	else if (tempo > 255)
+		tempo = 255;
+
+	channel.tempo = tempo;
 	return 0;
 }
 
@@ -1922,7 +1919,7 @@ const AdlibDriver::ParserOpcode AdlibDriver::_parserOpcodeTable[] = {
 
 	// 60
 	COMMAND(update_setDurationRandomness),
-	COMMAND(updateCallback45),
+	COMMAND(update_changeChannelTempo),
 	COMMAND(update_stopChannel),
 	COMMAND(updateCallback46),
 
