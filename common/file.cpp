@@ -32,7 +32,6 @@ namespace Common {
 
 StringList File::_defaultDirectories;
 File::FilesMap File::_filesMap;
-bool File::_lockedDirectories;
 
 
 static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {
@@ -108,13 +107,8 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 	return file;
 }
 
-void File::addDefaultDirectory(const String &directory, bool lockDirectories) {
+void File::addDefaultDirectory(const String &directory) {
 	String lfn;
-
-	if (_lockedDirectories)
-		error("addDefaultDirectory is called too late. Move all calls to engine constructor");
-
-	_lockedDirectories = lockDirectories;
 
 	FilesystemNode dir(directory.c_str());
 
@@ -138,9 +132,6 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level, int 
 		return;
 
 	String lfn;
-
-	if (_lockedDirectories)
-		error("addDefaultDirectoryRecursive is called too late. Move all calls to engine constructor");
 
 	FilesystemNode dir(directory.c_str());
 
@@ -176,12 +167,10 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level, int 
 void File::resetDefaultDirectories() {
 	_defaultDirectories.clear();
 	_filesMap.clear();
-	_lockedDirectories = false;
 }
 
 File::File()
 	: _handle(0), _ioFailed(false), _refcount(1) {
-	_lockedDirectories = false;
 }
 
 //#define DEBUG_FILE_REFCOUNT

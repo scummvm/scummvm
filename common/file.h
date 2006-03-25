@@ -49,7 +49,6 @@ protected:
 
 	static StringList _defaultDirectories;
 	static FilesMap _filesMap;
-	static bool _lockedDirectories;
 
 public:
 	enum AccessMode {
@@ -57,7 +56,7 @@ public:
 		kFileWriteMode = 2
 	};
 
-	static void addDefaultDirectory(const String &directory, bool lockDirectories = false);
+	static void addDefaultDirectory(const String &directory);
 	static void addDefaultDirectoryRecursive(const String &directory, int level = 0, int baseLen = 0);
 	static void resetDefaultDirectories();
 

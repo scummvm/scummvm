@@ -314,13 +314,8 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
 
-	// Theme-related
-	if (ConfMan.hasKey("themepath")) {
-		Common::File::addDefaultDirectory(ConfMan.get("themepath"));
-	}
-
-	// As a last resort add current directory and lock further additions
-	Common::File::addDefaultDirectory(".", true);
+	// As a last resort add current directory
+	Common::File::addDefaultDirectory(".");
 
 	int result;
 
