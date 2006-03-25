@@ -483,7 +483,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 					if (_vm->_game.heversion >= 90 && cond == 0) {
 						decflag = 1;
 					} else if (type == 0x40000000) { // restored_bit
-						decflag = (a->_heCondMask & cond) ? 1 : 0;
+						decflag = (a->_heCondMask & cond) == cond ? 1 : 0;
 					} else if (type == 0x80000000) { // dirty_bit
 						decflag = (a->_heCondMask & cond) ? 0 : 1;
 					} else {

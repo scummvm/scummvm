@@ -418,6 +418,11 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 		}
 	} else if (!strcmp(argv[2], "name")) {
 		DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
+	} else if (!strcmp(argv[2], "condmask")) {
+		if (argc > 3) {
+			a->_heCondMask = value;
+		}
+		DebugPrintf("Actor[%d]._heCondMask = 0x%X\n", actnum, a->_heCondMask);
 	} else {
 		DebugPrintf("Unknown actor command '%s'\nUse <ignoreboxes |costume> as command\n", argv[2]);
 	}
