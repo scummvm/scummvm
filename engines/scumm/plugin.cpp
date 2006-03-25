@@ -107,7 +107,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "baseball2001", "Backyard Baseball 2001" },
 	{ "Baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
-	{ "BluesABCTimeDemo", "Blue's ABC Time (Demo)" },
+	{ "BluesABCTime", "Blue's ABC Time" },
 	{ "BluesBirthdayDemo", "Blue's Birthday Adventure (Demo)" },
 	{ "catalog", "Humongous Interactive Catalog" },
 	{ "chase", "SPY Fox in Cheese Chase" },
@@ -156,6 +156,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
  * We use an ugly macro 'UNK' here to make the following table more readable.
  */
 static const ObsoleteGameID obsoleteGameIDsTable[] = {
+	{"bluesabctimedemo", "bluesabctime", UNK},
 	{"comidemo", "comi", UNK},
 	{"digdemo", "dig", UNK},
 	{"digdemoMac", "dig", Common::kPlatformMacintosh},
@@ -321,7 +322,7 @@ static const ScummGameSettings scumm_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 	{"puttrace", 0, GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"BluesABCTimeDemo", 0, GID_HEGAME, 6, 98, MDT_NONE,
+	{"bluesabctime", 0, GID_HEGAME, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"soccer", 0, GID_SOCCER, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
@@ -914,7 +915,8 @@ static const SubstResFileNames substResFileNameTable[] = {
 	{ "baseball2001", "baseball 2001", kGenPC },
 	{ "Baseball2003", "Baseball 2003", kGenMac },
 	{ "basketball", "Basketball", kGenMac },
-	{ "BluesABCTimeDemo", "BluesABCTimeDemo", kGenMac },
+	{ "bluesabctime", "BluesABCTimeDemo", kGenPC },
+	{ "bluesabctime", "BluesABCTimeDemo", kGenMac },
 	{ "catalog", "catalog2", kGenPC },
 	{ "chase", "Cheese Chase", kGenMac },
 	{ "dog", "Dog on a Stick", kGenMac },
