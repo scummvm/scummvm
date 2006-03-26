@@ -1415,7 +1415,7 @@ void ScummEngine::allocateArrays() {
 	allocResTypeData(rtTalkie, MKID_BE('TLKE'), _numTalkies, "talkie", 1);
 
 	if (_game.heversion >= 70) {
-		allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 0);
+		allocResTypeData(rtSpoolBuffer, 0, 9, "spool buffer", 1);
 	}
 }
 

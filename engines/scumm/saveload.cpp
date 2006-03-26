@@ -1402,7 +1402,7 @@ void ScummEngine::saveLoadResource(Serializer *ser, int type, int idx) {
 void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 	assert(res.address[type][idx]);
 
-	if ((res.mode[type] == 0) || (_game.heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
+	if (res.mode[type] == 0) {
 		byte *ptr = res.address[type][idx];
 		uint32 size = ((MemBlkHeader *)ptr)->size;
 
@@ -1419,7 +1419,13 @@ void ScummEngine::saveResource(Serializer *ser, int type, int idx) {
 }
 
 void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
-	if ((res.mode[type] == 0) || (_game.heversion >= 60 && res.mode[type] == 2 && idx == 1)) {
+	if (_game.heversion >= 60 && ser->getVersion() <= VER(65) &&
+		((type == rtSound && idx == 1) || (type == rtSpoolBuffer))) {
+		uint32 size = ser->loadUint32();
+		assert(size);
+		res.createResource(type, idx, size);
+		ser->loadBytes(getResourceAddress(type, idx), size);
+	} else if (res.mode[type] == 0) {
 		uint32 size = ser->loadUint32();
 		assert(size);
 		res.createResource(type, idx, size);
@@ -1432,6 +1438,10 @@ void ScummEngine::loadResource(Serializer *ser, int type, int idx) {
 			_newNames[idx] = ser->loadUint16();
 		}
 	} else if (res.mode[type] == 2) {
+		// HE Games use sound resource 1 for speech
+		if (_game.heversion >= 60 && idx == 1)
+			return;
+
 		ensureResourceLoaded(type, idx);
 	}
 }
