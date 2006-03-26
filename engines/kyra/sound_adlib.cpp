@@ -311,7 +311,6 @@ private:
 	// _unkValue18     - Unknown. Rhythm section volume?
 	// _unkValue19     - Unknown. Rhythm section volume?
 	// _unkValue20     - Unknown. Rhythm section volume?
-	// _unkOutputByte2 - Unknown. Something to do with the BD register.
 	// _unkTable[]     - Probably frequences for the 12-tone scale.
 	// _unkTable2[]    - Unknown. Currently only used by updateCallback46()
 	// _unkTable2_1[]  - One of the tables in _unkTable2[]
@@ -326,7 +325,6 @@ private:
 	int _lastProcessed;
 	int8 _flagTrigger;
 	int _curChannel;
-	uint8 _rhythmSection;
 	uint8 _soundTrigger;
 	int _soundsPlaying;
 
@@ -361,7 +359,9 @@ private:
 	uint8 _soundIdTable[0x10];
 	Channel _channels[10];
 
-	uint8 _unkOutputByte2;
+	uint8 _vibratoAndAMDepthBits;
+	uint8 _rhythmSectionBits;
+
 	uint8 _curRegOffset;
 	uint8 _tempo;
 
@@ -393,9 +393,9 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer) {
 	memset(_channels, 0, sizeof(_channels));
 	_soundData = 0;
 
-	_unkOutputByte2 = _curRegOffset = 0;
+	_vibratoAndAMDepthBits = _curRegOffset = 0;
 
-	_lastProcessed = _flagTrigger = _curChannel = _rhythmSection = 0;
+	_lastProcessed = _flagTrigger = _curChannel = _rhythmSectionBits = 0;
 	_rnd = 0x1234;
 
 	_tempo = 0;
@@ -790,7 +790,7 @@ void AdlibDriver::noteOff(Channel &channel) {
 
 	// When the rhythm section is enabled, channels 6, 7 and 8 are special.
 
-	if (_rhythmSection && _curChannel >= 6)
+	if (_rhythmSectionBits && _curChannel >= 6)
 		return;
 
 	// This means the "Key On" bit will always be 0
@@ -811,7 +811,7 @@ void AdlibDriver::unkOutput2(uint8 chan) {
 	// I believe this has to do with channels 6, 7, and 8 being special
 	// when Adlib's rhythm section is enabled.
 
-	if (_rhythmSection && chan >= 6)
+	if (_rhythmSectionBits && chan >= 6)
 		return;
 
 	uint8 offset = _regOffset[chan];
@@ -1457,25 +1457,26 @@ int AdlibDriver::update_changeExtraLevel2(uint8 *&dataptr, Channel &channel, uin
 	return 0;
 }
 
+// Apart from initialising to zero, these two functions are the only ones that
+// modify _vibratoAndAMDepthBits.
+
 int AdlibDriver::update_setAMDepth(uint8 *&dataptr, Channel &channel, uint8 value) {
 	if (value & 1)
-		_unkOutputByte2 |= 0x80;
+		_vibratoAndAMDepthBits |= 0x80;
 	else
-		_unkOutputByte2 &= 0x7F;
+		_vibratoAndAMDepthBits &= 0x7F;
 
-	// The AM Depth bit is set or cleared, the others remain unchanged
-	writeOPL(0xBD, _unkOutputByte2);
+	writeOPL(0xBD, _vibratoAndAMDepthBits);
 	return 0;
 }
 
 int AdlibDriver::update_setVibratoDepth(uint8 *&dataptr, Channel &channel, uint8 value) {
 	if (value & 1)
-		_unkOutputByte2 |= 0x40;
+		_vibratoAndAMDepthBits |= 0x40;
 	else
-		_unkOutputByte2 &= 0xBF;
+		_vibratoAndAMDepthBits &= 0xBF;
 
-	// The Vibrato Depth bit is set or cleared, the others remain unchanged
-	writeOPL(0xBD, _unkOutputByte2);
+	writeOPL(0xBD, _vibratoAndAMDepthBits);
 	return 0;
 }
 
@@ -1629,7 +1630,7 @@ int AdlibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, ui
 	writeOPL(0xB8, _channels[8].regBx);
 	writeOPL(0xA8, *dataptr++);
 
-	_rhythmSection = 0x20;
+	_rhythmSectionBits = 0x20;
 
 	_curRegOffset = regOffsetBackUp;
 	_curChannel = channelBackUp;
@@ -1637,29 +1638,33 @@ int AdlibDriver::update_setupRhythmSection(uint8 *&dataptr, Channel &channel, ui
 }
 
 int AdlibDriver::update_playRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value) {
-	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
-	writeOPL(0xBD, (((value & 0x1F) ^ 0xFF) & _rhythmSection) | 0x20);
+	// Any instrument that we want to play, and which was already playing,
+	// is temporarily keyed off. Instruments that were off already, or
+	// which we don't want to play, retain their old on/off status. This is
+	// probably so that the instrument's envelope is played from its
+	// beginning again...
 
-	value |= _rhythmSection;
-	_rhythmSection = value;
+	writeOPL(0xBD, (_rhythmSectionBits & ~(value & 0x1F)) | 0x20);
 
-	value |= _unkOutputByte2;
-	value |= 0x20;
+	// ...but since we only set the rhythm instrument bits, and never clear
+	// them (until the entire rhythm section is disabled), I'm not sure how
+	// useful the cleverness above is. We could perhaps simply turn off all
+	// the rhythm instruments instead.
 
-	// The original only wrote to the data port here, but that shouldn't
-	// make any real difference.
+	_rhythmSectionBits |= value;
 
-	writeOPL(0xBD, value);
+	writeOPL(0xBD, _vibratoAndAMDepthBits | 0x20 | _rhythmSectionBits);
 	return 0;
 }
 
 int AdlibDriver::update_removeRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
-	_rhythmSection = 0;
+	_rhythmSectionBits = 0;
 
-	// Amplitude Modulation Depth / Vibrato Depth / Rhythm
-	writeOPL(0xBD, _unkOutputByte2 & 0xC0);
+	// All the rhythm bits are cleared. The AM and Vibrato depth bits
+	// remain unchanged.
 
+	writeOPL(0xBD, _vibratoAndAMDepthBits);
 	return 0;
 }
 
