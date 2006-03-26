@@ -1626,10 +1626,31 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 
 	// Check if the MD5 was overwritten, if so, use that in the subsequent search
-	const char *md5;
-	if (ConfMan.hasKey("target_md5")) {
+	Common::File target_md5F;
+
+	target_md5F.open("target_md5.txt");
+
+	const char *md5 = NULL;
+	char md5buf[33];
+	if (target_md5F.isOpen()) {
+		bool valid = true;
+
+		target_md5F.readLine(md5buf, 33);
+		for (int j = 0; j < 32; j++)
+			if (!((md5buf[j] >= '0' && md5buf[j] <= '9') || 
+				  (md5buf[j] >= 'A' && md5buf[j] <= 'F') ||
+				  (md5buf[j] >= 'a' && md5buf[j] <= 'f')))
+				valid = false;
+
+		if (valid)
+			md5 = md5buf;
+		else
+			target_md5F.close();
+	}
+
+	if (ConfMan.hasKey("target_md5") && !target_md5F.isOpen()) {
 		md5 = ConfMan.get("target_md5").c_str();
-	} else {
+	} else if (!target_md5F.isOpen()) {
 		// Compute the MD5 of the file, and (if we succeeded) store a hex version
 		// of it in gameMD5 (useful to print it to the user in messages).
 		if (Common::md5_file(detectName, md5sum, NULL, kMD5FileSizeLimit)) {
@@ -1638,6 +1659,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			}
 		}
 		md5 = gameMD5;
+	} else {
+		target_md5F.close();
 	}
 
 	// Now search our 'database' for the MD5; if a match is found, we use 
