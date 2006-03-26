@@ -711,7 +711,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// _charsetData grew from 10*16, to 15*16, to 23*16 bytes
 		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 10 * 16, VER(8), VER(9)),
 		MKARRAY_OLD(ScummEngine, _charsetData[0][0], sleByte, 15 * 16, VER(10), VER(66)),
-		MKARRAY(ScummEngine, _charsetData[0][0], sleByte, 23 * 16, VER(10)),
+		MKARRAY(ScummEngine, _charsetData[0][0], sleByte, 23 * 16, VER(67)),
 
 		MK_OBSOLETE(ScummEngine, _curExecScript, sleUint16, VER(8), VER(62)),
 
