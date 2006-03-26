@@ -820,6 +820,7 @@ bool Control::autoSaveExists(void) {
 uint16 Control::saveRestorePanel(bool allowSave) {
 
 	_keyPressed = 0;
+	_mouseWheel = 0;
 	buttonControl(NULL);
 	_text->drawToScreen(WITH_MASK); // flush text restore buffer
 
@@ -890,6 +891,18 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			handleKeyPress(_keyPressed, _selectedGame * MAX_TEXT_LEN + saveGameTexts);
 			refreshNames = true;
 			_keyPressed = 0;
+		}
+
+		if (_mouseWheel) {
+			if (_mouseWheel < 0)
+				clickRes = shiftUp(SLOW);
+			else if (_mouseWheel > 0)
+				clickRes = shiftDown(SLOW);
+			_mouseWheel = 0;
+			if (clickRes == SHIFTED) {
+				_selectedGame = _firstText;
+				refreshNames = true;
+			}
 		}
 
 		bool haveButton = false;
@@ -1547,6 +1560,12 @@ void Control::delay(unsigned int amount) {
 				_mouseClicked = false;
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
+				break;
+			case OSystem::EVENT_WHEELUP:
+				_mouseWheel = -1;
+				break;
+			case OSystem::EVENT_WHEELDOWN:
+				_mouseWheel = 1;
 				break;
 			case OSystem::EVENT_QUIT:
 				SkyEngine::_systemVars.quitGame = true;

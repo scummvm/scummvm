@@ -242,6 +242,7 @@ private:
 	int _mouseX, _mouseY;
 	bool _mouseClicked;
 	byte _keyPressed;
+	int _mouseWheel;
 
 	struct {
 		uint8 *controlPanel;
