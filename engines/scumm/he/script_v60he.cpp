@@ -1301,7 +1301,7 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)
-				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
+				_charsetColorMap[i] = _charsetData[_string[m]._default.charset][i] = (unsigned char)args[i];
 			_string[m].color = _charsetColorMap[0];
 		}
 		break;

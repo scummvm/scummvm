@@ -2937,7 +2937,7 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 			push(colors);
 			getStackList(args, ARRAYSIZE(args));
 			for (i = 0; i < 16; i++)
-				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
+				_charsetColorMap[i] = _charsetData[_string[m]._default.charset][i] = (unsigned char)args[i];
 			_string[m].color = _charsetColorMap[0];
 		}
 		break;
@@ -2975,7 +2975,7 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 			_actorToPrintStrFor = pop();
 			if (_actorToPrintStrFor != 0xFF) {
 				a = derefActor(_actorToPrintStrFor, "decodeParseString");
-				_string[0].color = a->_talkColor;
+				_string[m].color = a->_talkColor;
 			}
 		}
 		break;
