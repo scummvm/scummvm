@@ -1206,7 +1206,7 @@ public:
 	byte _charsetColorMap[16];
 protected:
 	byte _charsetColor;
-	byte _charsetData[15][16];
+	byte _charsetData[23][16];
 
 	int _charsetBufPos;
 	byte _charsetBuffer[512];
