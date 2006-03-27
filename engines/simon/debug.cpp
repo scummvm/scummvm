@@ -333,8 +333,11 @@ void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint3
 }
 
 void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
-								 byte base)
-{
+								 byte base) {
+
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+		w *= 16;
+
 	/* allocate */
 	byte *b = (byte *)malloc(w * h);
 	int i, j;
