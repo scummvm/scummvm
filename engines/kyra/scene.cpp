@@ -43,7 +43,8 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	_handleInput = false;
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
-	if (_currentCharacter->sceneId == 7 && sceneId == 24) {
+	// just used for cd audio version, it should only load the sfx music file there
+	/*if (_currentCharacter->sceneId == 7 && sceneId == 24) {
 		_newMusicTheme = 3;
 	} else if (_currentCharacter->sceneId == 25 && sceneId == 109) {
 		_newMusicTheme = 4;
@@ -60,7 +61,7 @@ void KyraEngine::enterNewScene(int sceneId, int facing, int unk1, int unk2, int 
 	}
 	if (_newMusicTheme != _curMusicTheme) {
 		snd_playTheme(_newMusicTheme);
-	}
+	}*/
 	
 	switch (_currentCharacter->sceneId) {
 		case 1:
