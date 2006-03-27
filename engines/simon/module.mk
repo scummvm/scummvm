@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	cursor.o \
 	debug.o \
 	debugger.o \
-	dxa_player.o \
 	game.o \
 	icons.o \
 	items.o \
