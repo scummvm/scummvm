@@ -191,7 +191,7 @@ HS_V42                    equ  42h
 HS_V44                    equ  44h
 HS_HOTSPOT2_SCRIPT_ID     equ  45h
 HS_USE2_HOTSPOT_ID        equ  47h
-HS_V49                    equ  49h
+HS_PATHFIND_COVERED       equ  49h
 HS_V4A                    equ  4Ah
 HS_V4C                    equ  4Ch
 HS_V4D                    equ  4Dh
@@ -3173,7 +3173,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:1387  8E C0                                mov     es,ax
 273F:1389  33 FF                                xor     di,di                   ; Zero register
 273F:138B  33 C9                                xor     cx,cx                   ; Zero register
-273F:138D  8B 1E 076E                           mov     bx, data_571       
+273F:138D  8B 1E 076E                           mov     bx, data_571
 273F:1391  8A 7F 04                             mov     bh,[bx+4]
 273F:1394  8B 2E 0748                           mov     bp, screen_width
 273F:1398 ˙BE 4B93                              mov     si, offset action_name
@@ -3193,7 +3193,9 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:13AD  8B 1E 1922                           mov     bx, dest_room_num
 273F:13B1  0B DB                                or      bx,bx                   ; Going to change room?
 273F:13B3  74 2C                                jz      loc_191                 ; No, so start in-room move
-273F:13B5  A1 6CF5                              mov     ax,data_896
+
+; Walking to another room
+273F:13B5  A1 6CF5                              mov     ax, player_room_number
 273F:13B8  E8 401F                              call    sub_126
 273F:13BB  81 E2 0FFF                           and     dx,0FFFh
 273F:13BF ˙BE 6CEF                              mov     si, offset player_hotspot_rec
@@ -3204,10 +3206,12 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:13CD  89 54 56                             mov     [si+HS_DEST_Y], dx
 273F:13D0  C7 44 52 FFFF                        mov     [si+HS_DEST_HOTSPOT], 0FFFFh
 273F:13D5  A1 1920                              mov     ax, room_exit_hotspot_id
-273F:13D8  0B C0                                or      ax, ax                   
+273F:13D8  0B C0                                or      ax, ax
 273F:13DA  74 2A                                jz      loc_192
 273F:13DC  89 44 52                             mov     [si+HS_DEST_HOTSPOT], ax
 273F:13DF  EB 25                                jmp     short loc_192           ; (1406)
+
+; In room walking
 273F:13E1                       loc_191:                                        ;  xref 273F:13B3
 273F:13E1 ˙BE 6CEF                              mov     si, offset player_hotspot_rec
 273F:13E4  8B DE                                mov     bx,si
@@ -4732,7 +4736,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:1D97  87 F7                                xchg    si,di
 273F:1D99  F6 45 0C FF                          test    byte ptr [di+REHS_EXIT_BLOCKED],0FFh  ; Is exit blocked?
 273F:1D9D  75 1F                                jnz     loc_451                 ; Jump if yes
-273F:1D9F                       loc_450:                                        
+273F:1D9F                       loc_450:
 273F:1D9F  8B 44 0A                             mov     ax,[si+ROOMEXIT_HOTSPOT_ID]
 273F:1DA2  A3 1920                              mov     room_exit_hotspot_id, ax
 273F:1DA5  8B 44 0C                             mov     ax,[si+ROOMEXIT_DEST_ROOM]
@@ -4750,10 +4754,10 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:1DC1  3A 06 11E1                           cmp     al, cursor_index
 273F:1DC5  74 15                                je      loc_ret_453             ; Jump if equal
 273F:1DC7  A2 11E1                              mov     cursor_index, al
-273F:1DCA  C6 06 11DF 00                        mov     byte ptr data_632,0     
+273F:1DCA  C6 06 11DF 00                        mov     cursor_centroid, 0     
 273F:1DCF  3C 0A                                cmp     al, CURSOR_CROSS
 273F:1DD1  75 05                                jne     loc_452                 ; Jump if not equal
-273F:1DD3  C6 06 11DF 07                        mov     byte ptr data_632,7
+273F:1DD3  C6 06 11DF 07                        mov     cursor_centroid, 7
 273F:1DD8                       loc_452:                                        ;  xref 273F:1DD1
 273F:1DD8  FF 16 075E                           call    word ptr [show_cursor_proc]
 
@@ -4974,7 +4978,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:1F5F  80 3E 11E1 01                        cmp     cursor_index, CURSOR_DISK
 273F:1F64  74 0E                                je      loc_ret_470             ; Jump if equal
 273F:1F66  C6 06 11E1 01                        mov     cursor_index, CURSOR_DISK
-273F:1F6B  C6 06 11DF 00                        mov     byte ptr data_632, 0
+273F:1F6B  C6 06 11DF 00                        mov     cursor_centroid, 0
 273F:1F70  FF 16 075E                           call    word ptr [show_cursor_proc]
 
 273F:1F74                       loc_ret_470:                                    ;  xref 273F:1F64, 1F7A
@@ -4992,7 +4996,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:1F75  80 3E 11E1 00                        cmp     cursor_index, CURSOR_ARROW
 273F:1F7A  74 F8                                je      loc_ret_470             ; Jump if equal
 273F:1F7C  C6 06 11E1 00                        mov     cursor_index, CURSOR_ARROW
-273F:1F81  C6 06 11DF 00                        mov     byte ptr data_632, 0     
+273F:1F81  C6 06 11DF 00                        mov     cursor_centroid, 0     
 273F:1F86  FF 16 075E                           call    word ptr [show_cursor_proc]
 273F:1F8A  C3                                   retn
                             show_arrow_cursor   endp
@@ -6775,7 +6779,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:2AD8  F6 06 11D0 01                        test    menubar_state, 1     ; (31E4:11D0=3)
 273F:2ADD  75 CE                                jnz     loc_602                 ; Jump if not zero
 273F:2ADF  A1 11D8                              mov     ax, mouse_y2  
-273F:2AE2  2B 06 11DF                           sub     ax, data_632 
+273F:2AE2  2B 06 11DF                           sub     ax, cursor_centroid 
 273F:2AE6  73 02                                jnc     loc_604                 ; Jump if carry=0
 273F:2AE8  33 C0                                xor     ax,ax                   ; Zero register
 273F:2AEA                       loc_604:                                        ;  xref 273F:2AE6
@@ -6787,7 +6791,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:2AF7                       loc_605:                                        ;  xref 273F:2AF2
 273F:2AF7  89 2E 11EC                           mov     data_640,bp             ; (31E4:11EC=0)
 273F:2AFB  8B 36 11D6                           mov     si, mouse_x2
-273F:2AFF  2B 36 11DF                           sub     si, data_632
+273F:2AFF  2B 36 11DF                           sub     si, cursor_centroid
 273F:2B03  73 02                                jnc     loc_606                 ; Jump if carry=0
 273F:2B05  33 F6                                xor     si,si                   ; Zero register
 273F:2B07                       loc_606:                                        ;  xref 273F:2B03
@@ -8497,7 +8501,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:36A8  F6 06 11D0 01                        test    menubar_state, 1   ; (273F:11D0=56h)
 273F:36AD  75 AF                                jnz     loc_712                 ; Jump if not zero
 273F:36AF  A1 11D8                              mov     ax, mouse_y2
-273F:36B2  2B 06 11DF                           sub     ax, data_632
+273F:36B2  2B 06 11DF                           sub     ax, cursor_centroid
 273F:36B6  73 02                                jnc     loc_715                 ; Jump if carry=0
 273F:36B8  33 C0                                xor     ax,ax                   ; Zero register
 273F:36BA                       loc_715:                                        ;  xref 273F:36B6
@@ -8509,7 +8513,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:36C7                       loc_716:                                        ;  xref 273F:36C2
 273F:36C7  89 16 11EC                           mov     word ptr ds:[11ECh],dx  ; (273F:11EC=1B55h)
 273F:36CB  8B 36 11D6                           mov     si, mouse_x2
-273F:36CF  2B 36 11DF                           sub     si, data_632
+273F:36CF  2B 36 11DF                           sub     si, cursor_centroid
 273F:36D3  73 02                                jnc     loc_717                 ; Jump if carry=0
 273F:36D5  33 F6                                xor     si,si                   ; Zero register
 273F:36D7                       loc_717:                                        ;  xref 273F:36D3
@@ -10370,9 +10374,9 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:4371  5B                                   pop     bx
 273F:4372  3C 03                                cmp     al, CHAR_ACTION_EXEC_SCRIPT
 273F:4374  74 10                                je      loc_ret_845             ; Exit if running script
-273F:4376  F6 44 49 FF                          test    byte ptr [si+HS_V49], 0FFh
+273F:4376  F6 44 49 FF                          test    byte ptr [si+HS_PATHFIND_COVERED], 0FFh
 273F:437A  75 07                                jnz     loc_844                 ; Jump if not zero
-273F:437C  C6 44 49 01                          mov     byte ptr [si+HS_V49], 1
+273F:437C  C6 44 49 01                          mov     byte ptr [si+HS_PATHFIND_COVERED], 1
 273F:4380  E8 2DAB                              call    pathfind_flag_covered_cells
 273F:4383                       loc_844:                                        ;  xref 273F:437A
 273F:4383  E9 032B                              jmp     character_reset_direction
@@ -10389,12 +10393,12 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
                                 ;                             7758
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:4387                       sub_94          proc    near
-273F:4387  F6 44 49 FF                          test    byte ptr [si+HS_V49], 0FFh
+                    character_pathfind_clear    proc    near
+273F:4387  F6 44 49 FF                          test    byte ptr [si+HS_PATHFIND_COVERED], 0FFh
 273F:438B  74 F9                                jz      loc_ret_845             ; Jump if zero
-273F:438D  C6 44 49 00                          mov     byte ptr [si+HS_V49], 0
+273F:438D  C6 44 49 00                          mov     byte ptr [si+HS_PATHFIND_COVERED], 0
 273F:4391  E9 2DAF                              jmp     pathfind_clear_covered_cells
-                                sub_94          endp
+                    character_pathfind_clear    endp
 
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -10430,7 +10434,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:43C7  8B 05                                mov     ax, [di+ANIM_X]
 273F:43C9  D3 E8                                shr     ax, cl
 273F:43CB  8B 55 13                             mov     dx, [di+ANIM_WIDTH_COPY]
-273F:43CE  D3 EA                                shr     dx, cl                  ; ax=left/8, dx=width/8
+273F:43CE  D3 EA                      `          shr     dx, cl                  ; ax=left/8, dx=width/8
 273F:43D0  75 03                                jnz     loc_846                 ; Is width < 8 pixels?
 273F:43D2  BA 0001                              mov     dx, 1                   ; Yes, default to 1 (8 pixels)
 273F:43D5                       loc_846:
@@ -10768,7 +10772,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
                                 ;                             5B96, 5C34, 5CB3, 5D7E, 5DAA, 89F0
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:45A7                       sub_107         proc    near
+                    hotspot_action_precheck     proc    near
 273F:45A7  3D 0420                              cmp     ax, 420h
 273F:45AA  74 0A                                je      loc_876                 ; Jump if equal
 273F:45AC  3D 0436                              cmp     ax, 436h
@@ -10789,7 +10793,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:45C6  87 F3                                xchg    si, bx
 273F:45C8                       loc_877:                                        ;  xref 273F:45F4, 4600
 273F:45C8  E9 00BB                              jmp     loc_888                 ; (4686)
-273F:45CB                       loc_878:                                 
+273F:45CB                       loc_878:
 273F:45CB  58                                   pop     ax
 273F:45CC  B8 0003                              mov     ax, 3                   ; Initial call for action
 273F:45CF  C3                                   retn                            ;  (prior to moving to it)
@@ -10803,10 +10807,10 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
                                 ;
                                 ;         Called from:   273F:58B0
 
-273F:45D7                       sub_108:
-273F:45D7  8B 44 06                             mov     ax, [si+HS_ROOM_NUM]
-273F:45DA  3B 47 06                             cmp     ax, [bx+HS_ROOM_NUM]
-273F:45DD  75 72                                jne     loc_884                 ; Jump if not equal
+                   hotspot_action_precheck_2:
+273F:45D7  8B 44 06                             mov     ax, [si+HS_ROOM_NUM]    ; Is object in same room
+273F:45DA  3B 47 06                             cmp     ax, [bx+HS_ROOM_NUM]    ;  as the character?
+273F:45DD  75 72                                jne     loc_884                 ; Jump if not
 273F:45DF  F6 44 2A FF                          test    byte ptr [si+HS_FRAME_NUM], 0FFh
 273F:45E3  75 46                                jnz     loc_883                 ; Jump if not zero
 273F:45E5  C6 44 2A 01                          mov     byte ptr [si+HS_FRAME_NUM], 1
@@ -10814,9 +10818,9 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:45EF  72 09                                jb      loc_881                 ; Jump if below
 273F:45F1                       loc_880:                                        ;  xref 273F:4606, 463B, 4641, 4647
                                                                                 ;            464F
-273F:45F1 ˙E8 0E95                              call    sub_127                 ; (5489)
+273F:45F1 ˙E8 0E95                              call    character_walking_check
 273F:45F4  75 D2                                jnz     loc_877                 ; Jump if not zero
-273F:45F6  B8 0003                              mov     ax,3
+273F:45F6  B8 0003                              mov     ax, 3                   ; Flag walking is required
 273F:45F9  C3                                   retn
 273F:45FA                       loc_881:                                        ;  xref 273F:45EF
 273F:45FA  8B 45 1B                             mov     ax, [di+ANIM_HOTSPOT_ID]
@@ -10851,18 +10855,18 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:464D  75 17                                jne     loc_886                 ; Jump if not equal
 273F:464F  EB A0                                jmp     short loc_880           ; (45F1)
 273F:4651                       loc_884:                                        ;  xref 273F:45DD
-273F:4651  F6 44 2A FF                          test    byte ptr [si+2Ah],0FFh  ; There a dest hotspot?
+273F:4651  F6 44 2A FF                          test    byte ptr [si+HS_FRAME_NUM],0FFh  ; char has frame set?
 273F:4655  75 07                                jnz     loc_885                 ; Jump if yes
-273F:4657  33 C0                                xor     ax,ax                   ; Zero register
+273F:4657  33 C0                                xor     ax, ax                  ; Zero register
 273F:4659  53                                   push    bx
 273F:465A  E8 1D54                              call    display_message_dialog_3
 273F:465D  5B                                   pop     bx
 273F:465E                       loc_885:
-273F:465E  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
-273F:4662  B8 0001                              mov     ax,1
+273F:465E  C6 44 2A 00                          mov     byte ptr [si+HS_FRAME_NUM], 0
+273F:4662  B8 0001                              mov     ax, 1
 273F:4665  C3                                   retn
 273F:4666                       loc_886:                                        ;  xref 273F:464D
-273F:4666  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
+273F:4666  C6 44 2A 00                          mov     byte ptr [si+HS_FRAME_NUM], 0
 273F:466A  B8 000E                              mov     ax,0Eh
 273F:466D  53                                   push    bx
 273F:466E  E8 1D40                              call    display_message_dialog_3
@@ -10870,25 +10874,25 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:4672  B8 0002                              mov     ax,2
 273F:4675  C3                                   retn
 273F:4676                       loc_887:                                        ;  xref 273F:4633
-273F:4676  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
-273F:467A  B8 000D                              mov     ax,0Dh
+273F:4676  C6 44 2A 00                          mov     byte ptr [si+HS_FRAME_NUM], 0
+273F:467A  B8 000D                              mov     ax, 0Dh
 273F:467D  53                                   push    bx
 273F:467E  E8 1D30                              call    display_message_dialog_3
 273F:4681  5B                                   pop     bx
 273F:4682  B8 0004                              mov     ax,4
 273F:4685  C3                                   retn
 273F:4686                       loc_888:                                        ;  xref 273F:45C8
-273F:4686  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
+273F:4686  C6 44 2A 00                          mov     byte ptr [si+HS_FRAME_NUM], 0
 273F:468A  81 3E BA1B 0408                      cmp     active_hotspot_id, 408h
 273F:4690  73 0F                                jae     loc_889                 ; Jump if above or =
 273F:4692  C6 47 44 08                          mov     byte ptr [bx+44h],8
 273F:4696  C7 47 42 001E                        mov     word ptr [bx+42h],1Eh
-273F:469B  8B 45 1B                             mov     ax,[di+1Bh]
+273F:469B  8B 45 1B                             mov     ax, [di+ANIM_HOTSPOT_ID]
 273F:469E  89 47 50                             mov     [bx+50h],ax
 273F:46A1                       loc_889:                                        ;  xref 273F:4690
 273F:46A1  33 C0                                xor     ax,ax                   ; Zero register
 273F:46A3  C3                                   retn
-                                sub_107         endp
+                    hotspot_action_precheck     endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -11045,7 +11049,7 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
 273F:4788  8B 07                                mov     ax,[bx]
 273F:478A  50                                   push    ax
 273F:478B  83 C5 02                             add     bp,2
-273F:478E  E8 0DF0                              call    sub_129                 ; (5581)
+273F:478E  E8 0DF0                              call    character_walking_end
 273F:4791  58                                   pop     ax
 273F:4792  E8 F69F                              call    sequence_execute
 273F:4795  C3                                   retn
@@ -11432,20 +11436,21 @@ TEMP_DEST_Y  equ  08h
 TEMP_X       equ  0Ch
 TEMP_Y       equ  0Ah
 TEMP_DEST_X2 equ  10h
+
                         character_pathfind      proc    near
-273F:49F6  89 26 3942                           mov     pathfind_sp, sp
+273F:49F6  89 26 3942                           mov     pathfind_sp, sp         ; Backup current SP
 273F:49FA  C7 06 3944 0FA0                      mov     pathfind_v2, 0FA0h
-273F:4A00  F6 06 3946 FF                        test    pathfind_v3, 0FFh
+273F:4A00  F6 06 3946 FF                        test    pathfind_in_progress, 0FFh
 273F:4A05  74 0E                                jz      loc_933                 ; Jump if zero
 273F:4A07  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
 273F:4A0A  74 03                                je      loc_932                 ; Jump if equal
 273F:4A0C  33 C0                                xor     ax,ax                   ; Zero register
 273F:4A0E  C3                                   retn
-273F:4A0F                       loc_932:                                        ;  xref 273F:4A0A
+273F:4A0F                       loc_932:
 273F:4A0F ˙BE 3983                              mov     si, offset player_pathfind_data
-273F:4A12  8B 24                                mov     sp, [si]
-273F:4A14  C3                                   retn
-273F:4A15                       loc_933:                                        ;  xref 273F:4A05
+273F:4A12  8B 24                                mov     sp, [si]                ; Get SP for restore point
+273F:4A14  C3                                   retn                            ; (ie. carry on where we left off)
+273F:4A15                       loc_933:
 273F:4A15  BE 3983                              mov     si, offset player_pathfind_data
 273F:4A18  BD 03E8                              mov     bp, PLAYER_HOTSPOT_ID
 273F:4A1B  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
@@ -11462,7 +11467,7 @@ TEMP_DEST_X2 equ  10h
 273F:4A34  8B 24                                mov     sp, [si]
 273F:4A36  C3                                   retn
 273F:4A37                       loc_935:                                        ;  xref 273F:4A1E
-273F:4A37  C6 06 3946 01                        mov     pathfind_v3, 1
+273F:4A37  C6 06 3946 01                        mov     pathfind_in_progress, 1
 273F:4A3C                       loc_936:                                        ;  xref 273F:4A2A
 273F:4A3C  88 54 04                             mov     [si+TEMP_HS4C], dl      ; Store HS[4Ch]
 273F:4A3F  89 44 02                             mov     [si+TEMP_CHARACTER_ID], ax ; Store character Id
@@ -11485,8 +11490,8 @@ TEMP_DEST_X2 equ  10h
 273F:4A5E  8B 6D 13                             mov     bp, [di+ANIM_WIDTH_COPY]
 273F:4A61  83 ED 01                             sub     bp, 1
 273F:4A64  B1 03                                mov     cl, 3
-273F:4A66  D3 ED                                shr     bp, cl                  ; bp=width/8
-273F:4A68  57                                   push    di
+273F:4A66  D3 ED                                shr     bp, cl                  ; bp=(width copy-1)/8
+273F:4A68  57                                   push    di                                         
 273F:4A69 ˙81 C6 08A2                           add     si, 8A2h
 273F:4A6D  8B 45 0E                             mov     ax, [di+ANIM_ROOM_NUM]
 273F:4A70  8B D8                                mov     bx, ax
@@ -11495,19 +11500,25 @@ TEMP_DEST_X2 equ  10h
 273F:4A76  2B C3                                sub     ax, bx
 273F:4A78  B1 03                                mov     cl, 3
 273F:4A7A  D3 E0                                shl     ax, cl                  ; ax=Room # * 120
-273F:4A7C  05 9849                              add     ax, offset pathfind_data
+273F:4A7C  05 9849                              add     ax, offset pathfind_data2 - 1
 273F:4A7F  1E                                   push    ds
 273F:4A80  07                                   pop     es
 273F:4A81  8B FE                                mov     di, si                  ; for player di=4225h
-273F:4A83  8B F0                                mov     si, ax                  ; si=room ? record offset
+273F:4A83  8B F0                                mov     si, ax                  ; si=end of pathfind layer for room
 273F:4A85  FD                                   std                             ; Set for reverse direction
 273F:4A86  33 C0                                xor     ax, ax
 273F:4A88  B9 002B                              mov     cx, 2Bh
 273F:4A8B  F3/ AB                               rep     stosw                   ; Clear area
 273F:4A8D  83 C7 01                             add     di, 1                   ; For player di=41D0h
+
+; Extract the bit-compressed data of the pathfinding data for the room into an
+; uncompressed array indicating whether each 8x8 pixel block can be traveled on
+; cx = bit number, dl = number of columns, dh = number of rows
+
 273F:4A90  B6 18                                mov     dh, 18h
 273F:4A92                       loc_939:
-273F:4A92  B2 05                                mov     dl,5
+273F:4A92  B2 05                                mov     dl, 5
+
 273F:4A94                       loc_940:
 273F:4A94  AC                                   lodsb                           ; ax=c6h, si=98c0h
 273F:4A95  86 E0                                xchg    ah, al
@@ -11516,22 +11527,22 @@ TEMP_DEST_X2 equ  10h
 
 273F:4A9C                       locloop_941:                                    ;  xref 273F:4AA2, 4AB3
 273F:4A9C  D0 EC                                shr     ah, 1                   ; Shift w/zeros fill
-273F:4A9E  72 06                                jc      loc_942                 ; Jump if carry Set
-273F:4AA0  AA                                   stosb                           ; Store al to es:[di]
-273F:4AA1  AA                                   stosb                           ; Store al to es:[di]
-273F:4AA2  E2 F8                                loop    locloop_941             ; Loop if cx > 0
+273F:4A9E  72 06                                jc      loc_942                 ; Jump if bit set (block occupied)
+273F:4AA0  AA                                   stosb                           ; Store 0 to es:[di]
+273F:4AA1  AA                                   stosb                           ; Store 0 to es:[di]
+273F:4AA2  E2 F8                                loop    locloop_941             ; Loop for remaining bits
 
-273F:4AA4  EB 33                                jmp     short loc_948           ; (4AD9)
-273F:4AA6                       loc_942:                                        ;  xref 273F:4A9E
+273F:4AA4  EB 33                                jmp     short loc_948
+273F:4AA6                       loc_942:                                        ; Handling for occupied blocks
 273F:4AA6  F6 D0                                not     al
-273F:4AA8  AA                                   stosb                           ; Store al to es:[di]
-273F:4AA9  AA                                   stosb                           ; Store al to es:[di]
+273F:4AA8  AA                                   stosb                           ; Store 0FFh to es:[di]
+273F:4AA9  AA                                   stosb                           ; Store 0FFh to es:[di]
 273F:4AAA  F6 D0                                not     al
-273F:4AAC  8B DD                                mov     bx,bp
-273F:4AAE  83 EB 01                             sub     bx,1
-273F:4AB1  73 1D                                jnc     loc_947                 ; Jump if carry=0
-273F:4AB3                       loc_943:                                        ;  xref 273F:4ACE
-273F:4AB3  E2 E7                                loop    locloop_941             ; Loop if cx > 0
+273F:4AAC  8B DD                                mov     bx, bp                  ; Get width/8 val
+273F:4AAE  83 EB 01                             sub     bx, 1
+273F:4AB1  73 1D                                jnc     loc_947                 ; Jump if width/8 val != 0
+273F:4AB3                       loc_943:
+273F:4AB3  E2 E7                                loop    locloop_941             ; Keep looping
 
 273F:4AB5  EB 22                                jmp     short loc_948           ; (4AD9)
 273F:4AB7                       loc_944:                                        ;  xref 273F:4AD5
@@ -11561,13 +11572,14 @@ TEMP_DEST_X2 equ  10h
 273F:4AD9                       loc_948:                                        ;  xref 273F:4AA4, 4AB5
 273F:4AD9  80 EA 01                             sub     dl,1
 273F:4ADC  75 B6                                jnz     loc_940                 ; Jump if not zero
-
-273F:4ADE                       loc_949:                                        ;  xref 273F:4AD7
+273F:4ADE                       loc_949:
 273F:4ADE  B9 0004                              mov     cx, 4
 273F:4AE1  F3/ AA                               rep     stosb                   ; Rep when cx >0 Store al to es:[di]
 273F:4AE3  B2 05                                mov     dl, 5
 273F:4AE5  80 EE 01                             sub     dh, 1
 273F:4AE8  75 A8                                jnz     loc_939                 ; Jump if not zero
+
+; End of decompression code for the path finding layer
 273F:4AEA  83 EF 01                             sub     di, 1
 273F:4AED  B9 0029                              mov     cx, 29h
 273F:4AF0  33 C0                                xor     ax, ax                  ; Zero register
@@ -11995,7 +12007,7 @@ TEMP_DEST_X2 equ  10h
 273F:4E96                       loc_1006:                                       ; End of pathfinding
 273F:4E96  C7 05 0000                           mov     word ptr [di], 0
 273F:4E9A  8B 26 3942                           mov     sp, pathfind_sp
-273F:4E9E  C6 06 3946 00                        mov     pathfind_v3, 0
+273F:4E9E  C6 06 3946 00                        mov     pathfind_in_progress, 0
 273F:4EA3  B8 0001                              mov     ax, 1
 273F:4EA6  02 45 05                             add     al, [di+5]
 273F:4EA9  50                                   push    ax
@@ -12070,9 +12082,9 @@ TEMP_DEST_X2 equ  10h
 273F:4F0D  55                                   push    bp
 273F:4F0E  1E                                   push    ds
 273F:4F0F  06                                   push    es
-273F:4F10  9C                                   pushf                           ; Push flags
-273F:4F11  E8 0034                              call    sub_122                 ; (4F48)
-273F:4F14  9D                                   popf                            ; Pop flags
+273F:4F10  9C                                   pushf
+273F:4F11  E8 0034                              call    pathfind_return_to_sp
+273F:4F14  9D                                   popf                         
 273F:4F15  07                                   pop     es
 273F:4F16  1F                                   pop     ds
 273F:4F17  5D                                   pop     bp
@@ -12128,13 +12140,13 @@ TEMP_DEST_X2 equ  10h
                                 ;         Called from:   273F:4F11
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:4F48                       sub_122         proc    near
-273F:4F48  89 25                                mov     [di],sp
-273F:4F4A  8B 26 3942                           mov     sp,word ptr ds:[3942h]  ; (273F:3942=5901h)
-273F:4F4E  33 C0                                xor     ax,ax                   ; Zero register
+                     pathfind_return_to_sp      proc    near
+273F:4F48  89 25                                mov     [di], sp
+273F:4F4A  8B 26 3942                           mov     sp, pathfind_sp
+273F:4F4E  33 C0                                xor     ax, ax
 273F:4F50  FC                                   cld                             ; Clear direction
 273F:4F51  C3                                   retn
-                                sub_122         endp
+                     pathfind_return_to_sp      endp
 
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -12148,7 +12160,7 @@ TEMP_DEST_X2 equ  10h
 273F:4F53  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
 273F:4F56  75 0E                                jne     loc_1019                ; Jump if not equal
 273F:4F58 ˙BB 3983                              mov     bx, offset player_pathfind_data
-273F:4F5B  C6 06 3946 00                        mov     pathfind_v3, 0
+273F:4F5B  C6 06 3946 00                        mov     pathfind_in_progress, 0
 273F:4F60  C7 07 0000                           mov     word ptr [bx], 0
 273F:4F64  5B                                   pop     bx
 273F:4F65  C3                                   retn
@@ -12265,7 +12277,7 @@ TEMP_DEST_X2 equ  10h
 273F:5045  C7 44 4A 0000                        mov     word ptr [si+HS_V4A], 0
 273F:504A  F6 44 44 FF                          test    byte ptr [si+HS_V4A], 0FFh
 273F:504E  75 04                                jnz     loc_1031                ; Jump if not zero
-273F:5050  E8 F334                              call    sub_94                  ; (4387)
+273F:5050  E8 F334                              call    character_pathfind_clear
 273F:5053  C3                                   retn
 273F:5054                       loc_1031:                                       ;  xref 273F:5031, 504E
 273F:5054  F6 44 44 FF                          test    byte ptr [si+HS_V44], 0FFh
@@ -12316,7 +12328,7 @@ TEMP_DEST_X2 equ  10h
 273F:50AA  89 44 50                             mov     [si+50h],ax
 273F:50AD  86 44 44                             xchg    [si+44h],al
 273F:50B0  50                                   push    ax
-273F:50B1  E8 F2D3                              call    sub_94                  ; (4387)
+273F:50B1  E8 F2D3                              call    character_pathfind_clear
 273F:50B4  58                                   pop     ax
 273F:50B5  3C 04                                cmp     al,4
 273F:50B7  74 04                                je      loc_1039                ; Jump if equal
@@ -12376,7 +12388,7 @@ TEMP_DEST_X2 equ  10h
 273F:5124  8B 45 1B                             mov     ax, [di+ANIM_HOTSPOT_ID]
 273F:5127  E8 FE28                              call    pathfind_reset
 273F:512A  C6 07 04                             mov     byte ptr [bx], CHAR_ACTION_PROCESSING_PATH
-273F:512D  E8 F257                              call    sub_94                  ; (4387)
+273F:512D  E8 F257                              call    character_pathfind_clear
 
 273F:5130                       loc_1049:                                       ; Processing walk path
 273F:5130  56                                   push    si
@@ -12505,7 +12517,7 @@ TEMP_DEST_X2 equ  10h
 273F:521C  75 F8                                jnz     loc_ret_1061            ; Jump if not zero
 273F:521E  F6 44 49 FF                          test    byte ptr [si+49h],0FFh
 273F:5222  74 03                                jz      loc_1063                ; Jump if zero
-273F:5224  E8 F160                              call    sub_94                  ; (4387)
+273F:5224  E8 F160                              call    character_pathfind_clear
 273F:5227                       loc_1063:
 273F:5227  8B DE                                mov     bx,si
 273F:5229  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
@@ -12721,14 +12733,14 @@ TEMP_DEST_X2 equ  10h
 273F:53DA  48                                   dec     ax
 273F:53DB  B9 0058                              mov     cx,58h
 273F:53DE  F7 E1                                mul     cx                      ; dx:ax = reg * ax
-273F:53E0  05 1929                              add     ax,1929h
-273F:53E3  03 D8                                add     bx,ax
-273F:53E5  8A 5F 23                             mov     bl,[bx+23h]
-273F:53E8  32 FF                                xor     bh,bh                   ; Zero register
-273F:53EA  03 D8                                add     bx,ax
-273F:53EC  8B 0F                                mov     cx,[bx]
-273F:53EE  8B 57 02                             mov     dx,[bx+2]
-273F:53F1  8B 47 04                             mov     ax,[bx+4]
+273F:53E0  05 1929                              add     ax, offset sub_129_list
+273F:53E3  03 D8                                add     bx, ax                  ; Move offset for indexing
+273F:53E5  8A 5F 23                             mov     bl, [bx+23h]
+273F:53E8  32 FF                                xor     bh, bh                  ; Zero register
+273F:53EA  03 D8                                add     bx, ax
+273F:53EC  8B 0F                                mov     cx, [bx]
+273F:53EE  8B 57 02                             mov     dx, [bx+2]
+273F:53F1  8B 47 04                             mov     ax, [bx+4]
 273F:53F4  C3                                   retn
                                 sub_126         endp
 
@@ -12745,16 +12757,16 @@ TEMP_DEST_X2 equ  10h
 273F:53F9  83 C5 02                             add     bp,2
 273F:53FC  A3 BA19                              mov     use_hotspot_id, ax
 273F:53FF  A3 BA1B                              mov     active_hotspot_id, ax
-273F:5402  E8 F1A2                              call    sub_107                 ; (45A7)
+273F:5402  E8 F1A2                              call    hotspot_action_precheck
 273F:5405  0B C0                                or      ax,ax                   ; Zero ?
 273F:5407  74 08                                jz      loc_1086                ; Jump if zero
 273F:5409  3D 0003                              cmp     ax,3
 273F:540C  74 4E                                je      loc_ret_1090            ; Jump if equal
-273F:540E  E9 0170                              jmp     sub_129
+273F:540E  E9 0170                              jmp     character_walking_end
 273F:5411                       loc_1086:                                       ;  xref 273F:5407
 273F:5411  E8 F2DA                              call    character_face_hotspot
 273F:5414  53                                   push    bx
-273F:5415  E8 0169                              call    sub_129
+273F:5415  E8 0169                              call    character_walking_end
 273F:5418  5B                                   pop     bx
 273F:5419  E8 01DA                              call    hotspot_get_action_sequence
 273F:541C  79 03                                jns     loc_1087                ; Jump if not sign
@@ -12801,7 +12813,7 @@ TEMP_DEST_X2 equ  10h
 273F:546F  A3 BA19                              mov     use_hotspot_id, ax
 273F:5472  A3 BA1B                              mov     active_hotspot_id, ax
 273F:5475  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
-273F:5478  72 0F                                jb      loc_1091                ; Jump if below
+273F:5478  72 0F                                jb      character_walking_check
 273F:547A  56                                   push    si
 273F:547B  E8 B86C                              call    get_room_resource_pointer2
 273F:547E  5B                                   pop     bx
@@ -12816,88 +12828,87 @@ TEMP_DEST_X2 equ  10h
                                 ;         Called from:   273F:45F1
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:5489                       sub_127         proc    near
-273F:5489                       loc_1091:                                       ;  xref 273F:5478
+                    character_walking_check     proc    near
 273F:5489  57                                   push    di
-273F:548A ˙BF BC4B                              mov     di,data_495e            ; (273F:BC4B=0)
+273F:548A ˙BF BC4B                              mov     di, offset hotspot_proximity_list
 273F:548D  A1 BA1B                              mov     ax, active_hotspot_id
 273F:5490                       loc_1092:                                       ;  xref 273F:549D
-273F:5490 ˙F7 05 FFFF                           test    word ptr [di],0FFFFh
-273F:5494  74 4F                                jz      loc_1094                ; Jump if zero
-273F:5496  3B 05                                cmp     ax,[di]
-273F:5498  74 05                                je      loc_1093                ; Jump if equal
-273F:549A  83 C7 06                             add     di,6
-273F:549D  EB F1                                jmp     short loc_1092          ; (5490)
-273F:549F                       loc_1093:                                       ;  xref 273F:5498
-273F:549F  8B 4D 02                             mov     cx,[di+2]
-273F:54A2  8B 55 04                             mov     dx,[di+4]
-273F:54A5  B0 01                                mov     al,1
-273F:54A7  F6 C6 80                             test    dh,80h
+273F:5490 ˙F7 05 FFFF                           test    word ptr [di], 0FFFFh   ; End of list reached?
+273F:5494  74 4F                                jz      loc_1094                ; Jump if yes
+273F:5496  3B 05                                cmp     ax, [di]                ; Found entry for active hotspot?
+273F:5498  74 05                                je      loc_1093                ; Jump if yes
+273F:549A  83 C7 06                             add     di, 6                   ; Move to next record
+273F:549D  EB F1                                jmp     short loc_1092
+273F:549F                       loc_1093:
+273F:549F  8B 4D 02                             mov     cx, [di+2]
+273F:54A2  8B 55 04                             mov     dx, [di+4]
+273F:54A5  B0 01                                mov     al, 1
+273F:54A7  F6 C6 80                             test    dh, 80h
 273F:54AA  74 47                                jz      loc_1095                ; Jump if zero
 273F:54AC  5F                                   pop     di
-273F:54AD  88 45 27                             mov     [di+27h],al
-273F:54B0  80 E6 7F                             and     dh,7Fh
-273F:54B3  8B 44 0D                             mov     ax,[si+0Dh]
-273F:54B6  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
-273F:54B8  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
-273F:54BA  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
+273F:54AD  88 45 27                             mov     [di+ANIM_UNKNOWN1], al
+273F:54B0  80 E6 7F                             and     dh, 7Fh
+273F:54B3  8B 44 0D                             mov     ax, [si+HS_X]
+273F:54B6  D1 E8                                shr     ax, 1
+273F:54B8  D1 E8                                shr     ax, 1
+273F:54BA  D1 E8                                shr     ax, 1                   ; ax = player X / 8
 273F:54BC  51                                   push    cx
-273F:54BD  D1 E9                                shr     cx,1                    ; Shift w/zeros fill
-273F:54BF  D1 E9                                shr     cx,1                    ; Shift w/zeros fill
-273F:54C1  D1 E9                                shr     cx,1                    ; Shift w/zeros fill
-273F:54C3  2B C1                                sub     ax,cx
+273F:54BD  D1 E9                                shr     cx, 1
+273F:54BF  D1 E9                                shr     cx, 1
+273F:54C1  D1 E9                                shr     cx, 1                   ; cx = list[2] / 8
+273F:54C3  2B C1                                sub     ax, cx                  ; ax -= cx
 273F:54C5  59                                   pop     cx
-273F:54C6  75 51                                jnz     loc_1098                ; Jump if not zero
-273F:54C8  8B 44 0F                             mov     ax,[si+0Fh]
-273F:54CB  03 44 1B                             add     ax,[si+1Bh]
-273F:54CE  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
-273F:54D0  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
-273F:54D2  D1 E8                                shr     ax,1                    ; Shift w/zeros fill
-273F:54D4  2D 0001                              sub     ax,1
+273F:54C6  75 51                                jnz     character_start_walking ; If NZ, jump to start walking
+273F:54C8  8B 44 0F                             mov     ax, [si+HS_Y]
+273F:54CB  03 44 1B                             add     ax, [si+HS_HEIGHT_COPY]
+273F:54CE  D1 E8                                shr     ax, 1
+273F:54D0  D1 E8                                shr     ax, 1
+273F:54D2  D1 E8                                shr     ax, 1
+273F:54D4  2D 0001                              sub     ax, 1                   ; ax = (HS+height)/8 - 1
 273F:54D7  52                                   push    dx
-273F:54D8  D1 EA                                shr     dx,1                    ; Shift w/zeros fill
-273F:54DA  D1 EA                                shr     dx,1                    ; Shift w/zeros fill
-273F:54DC  D1 EA                                shr     dx,1                    ; Shift w/zeros fill
-273F:54DE  2B C2                                sub     ax,dx
+273F:54D8  D1 EA                                shr     dx, 1
+273F:54DA  D1 EA                                shr     dx, 1
+273F:54DC  D1 EA                                shr     dx, 1
+273F:54DE  2B C2                                sub     ax, dx                  ; ax -= dx
 273F:54E0  5A                                   pop     dx
-273F:54E1  75 36                                jnz     loc_1098                ; Jump if not zero
-273F:54E3  EB 65                                jmp     short loc_1100          ; (554A)
+273F:54E1  75 36                                jnz     character_start_walking ; If NZ, jump to start walking
+273F:54E3  EB 65                                jmp     short loc_1100
+
 273F:54E5                       loc_1094:                                       ;  xref 273F:5494
-273F:54E5  8B 4F 0D                             mov     cx,[bx+0Dh]
-273F:54E8  8B 57 0F                             mov     dx,[bx+0Fh]
-273F:54EB  03 57 1B                             add     dx,[bx+1Bh]
-273F:54EE  83 EA 04                             sub     dx,4
-273F:54F1  B0 00                                mov     al,0
+273F:54E5  8B 4F 0D                             mov     cx, [bx+HS_X]
+273F:54E8  8B 57 0F                             mov     dx, [bx+HS_Y]
+273F:54EB  03 57 1B                             add     dx, [bx+HS_HEIGHT_COPY]
+273F:54EE  83 EA 04                             sub     dx, 4
+273F:54F1  B0 00                                mov     al, 0
 273F:54F3                       loc_1095:                                       ;  xref 273F:54AA
 273F:54F3  5F                                   pop     di
-273F:54F4  88 45 27                             mov     [di+27h],al
-273F:54F7  8B 44 0D                             mov     ax,[si+0Dh]
-273F:54FA  2B C1                                sub     ax,cx
+273F:54F4  88 45 27                             mov     [di+ANIM_UNKNOWN1], al
+273F:54F7  8B 44 0D                             mov     ax, [si+HS_X]
+273F:54FA  2B C1                                sub     ax, cx
 273F:54FC  73 02                                jnc     loc_1096                ; Jump if carry=0
 273F:54FE  F7 D8                                neg     ax
 273F:5500                       loc_1096:                                       ;  xref 273F:54FC
-273F:5500  3D 0008                              cmp     ax,8
-273F:5503  73 14                                jae     loc_1098                ; Jump if above or =
-273F:5505  8B 44 0F                             mov     ax,[si+0Fh]
-273F:5508  03 44 1B                             add     ax,[si+1Bh]
-273F:550B  2D 0001                              sub     ax,1
-273F:550E  2B C2                                sub     ax,dx
+273F:5500  3D 0008                              cmp     ax, 8
+273F:5503  73 14                                jae     character_start_walking ; If NZ, jump to start walking
+273F:5505  8B 44 0F                             mov     ax, [si+HS_Y]
+273F:5508  03 44 1B                             add     ax, [si+HS_HEIGHT_COPY]
+273F:550B  2D 0001                              sub     ax, 1
+273F:550E  2B C2                                sub     ax, dx
 273F:5510  73 02                                jnc     loc_1097                ; Jump if carry=0
 273F:5512  F7 D8                                neg     ax
 273F:5514                       loc_1097:                                       ;  xref 273F:5510
-273F:5514  3D 0013                              cmp     ax,13h
+273F:5514  3D 0013                              cmp     ax, 13h
 273F:5517  72 31                                jb      loc_1100                ; Jump if below
 
                                 ;ﬂﬂﬂﬂ External Entry into Subroutine ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;
                                 ;         Called from:   273F:8541
 
-273F:5519                       sub_128:
-273F:5519                       loc_1098:                                       ;  xref 273F:54C6, 54E1, 5503
+                    character_start_walking     proc    near
 273F:5519  81 FE 6CEF                           cmp     si, offset player_hotspot_rec
 273F:551D  75 17                                jne     loc_1099                ; Jump if not equal
-273F:551F  C7 06 11E1 0002                      mov     word ptr ds:[11E1h],2   ; (273F:11E1=3FBh)
-273F:5525  C6 06 11DF 00                        mov     byte ptr data_632, 0
+273F:551F  C7 06 11E1 0002                      mov     cursor_index, CURSOR_TIME_UP
+273F:5525  C6 06 11DF 00                        mov     cursor_centroid, 0
 273F:552A  56                                   push    si
 273F:552B  57                                   push    di
 273F:552C  51                                   push    cx
@@ -12919,7 +12930,8 @@ TEMP_DEST_X2 equ  10h
 273F:554A                       loc_1100:                                       ;  xref 273F:54E3, 5517
 273F:554A  0D 0001                              or      ax,1
 273F:554D  C3                                   retn
-                                sub_127         endp
+                    character_start_walking     endp
+                    character_walking_check     endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -12958,16 +12970,16 @@ TEMP_DEST_X2 equ  10h
                                 ;                             5968, 5ACE, 5B47, 5BA6, 5C15, 5C7A, 5D32
                                 ;‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 
-273F:5581                       sub_129         proc    near
+                       character_walking_end    proc    near
 273F:5581 ˙81 7D 1B 03E8                        cmp     word ptr [di+ANIM_HOTSPOT_ID], PLAYER_HOTSPOT_ID
-273F:5586  75 05                                jne     sub_130                 ; Jump if not player
+273F:5586  75 05                                jne     character_walking_end_2
 273F:5588  80 26 9834 02                        and     byte ptr data_1084, 2   ; (31E4:9834=0)
 
                                 ;ﬂﬂﬂﬂ External Entry into Subroutine ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;
 
-273F:558D                       sub_130:
-273F:558D ˙33 C0                                xor     ax,
+                     character_walking_end_2:
+273F:558D ˙33 C0                                xor     ax, ax
 273F:558F  89 45 24                             mov     [di+ANIM_VOICE_CTR], ax
 273F:5592  88 44 2A                             mov     [si+HS_FRAME_NUM], al
 273F:5595  8B DE                                mov     bx, si
@@ -12975,8 +12987,7 @@ TEMP_DEST_X2 equ  10h
 273F:559A  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
 273F:559D  89 6F 01                             mov     [bx+1], bp
 273F:55A0  C3                                   retn
-                                sub_129         endp
-
+                       character_walking_end    endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -13070,7 +13081,7 @@ TEMP_DEST_X2 equ  10h
 273F:5631  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
 273F:5634  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
 273F:5637  89 47 03                             mov     [bx+3], ax
-273F:563A  E9 FF44                              jmp     sub_129
+273F:563A  E9 FF44                              jmp     character_walking_end
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -13087,7 +13098,7 @@ TEMP_DEST_X2 equ  10h
 273F:564F  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
 273F:5652  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
 273F:5655  89 47 03                             mov     [bx+3], ax
-273F:5658  E9 FF26                              jmp     sub_129
+273F:5658  E9 FF26                              jmp     character_walking_end
                                 go_to_proc      endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -13217,15 +13228,15 @@ TEMP_DEST_X2 equ  10h
 273F:570F                       loc_1115:
 273F:570F  5E                                   pop     si
 273F:5710  A1 BA19                              mov     ax, use_hotspot_id
-273F:5713  E8 EE91                              call    sub_107                 ; (45A7)
+273F:5713  E8 EE91                              call    hotspot_action_precheck
 273F:5716  0B C0                                or      ax,ax                   ; Zero ?
 273F:5718  74 08                                jz      loc_1116                ; Jump if zero
 273F:571A  3D 0003                              cmp     ax,3
 273F:571D  74 47                                je      loc_ret_1119            ; Jump if equal
-273F:571F  E9 FE5F                              jmp     sub_129
+273F:571F  E9 FE5F                              jmp     character_walking_end
 273F:5722                       loc_1116:                                       ;  xref 273F:5718
 273F:5722  53                                   push    bx
-273F:5723  E8 FE5B                              call    sub_129                 ; (5581)
+273F:5723  E8 FE5B                              call    character_walking_end
 273F:5726  5B                                   pop     bx
 273F:5727  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
 273F:572B  E8 EFC0                              call    character_face_hotspot
@@ -13258,7 +13269,7 @@ TEMP_DEST_X2 equ  10h
 273F:5767  5E                                   pop     si
 273F:5768  B8 0004                              mov     ax,4
 273F:576B  E8 0C43                              call    display_message_dialog_3
-273F:576E  E9 FE10                              jmp     sub_129
+273F:576E  E9 FE10                              jmp     character_walking_end
 273F:5771                       loc_1121:                                       ;  xref 273F:5740
 273F:5771  F6 44 60 FF                          test    byte ptr [si+60h],0FFh
 273F:5775  74 04                                jz      loc_1122                ; Jump if zero
@@ -13289,18 +13300,18 @@ TEMP_DEST_X2 equ  10h
 273F:57A0 5E                                    pop     si
 273F:57A1 B80300                                mov     ax, 3
 273F:57A4 E80A0C                                call    display_message_dialog_3
-273F:57A7 E9D7FD                                jmp     sub_129
+273F:57A7 E9D7FD                                jmp     character_walking_end
 273F:57AA A119BA            close_proc_2:       mov     ax, use_hotspot_id
 273F:57AD 5E                                    pop     si
-273F:57AE E8F6ED                                call    sub_107
+273F:57AE E8F6ED                                call    hotspot_action_precheck
 273F:57B1 0BC0                                  or      ax, ax
 273F:57B3 7408                                  jz      loc_1123
 273F:57B5 3D0300                                cmp     AX, 3
 273F:57B8 7448                                  jz      loc_ret_1127
-273F:57BA E9C4FD                                jmp     sub_129
+273F:57BA E9C4FD                                jmp     character_walking_end
 273F:57BD                       loc_1123:
 273F:57BD  53                                   push    bx
-273F:57BE  E8 FDC0                              call    sub_129                 ; (5581)
+273F:57BE  E8 FDC0                              call    character_walking_end
 273F:57C1  5B                                   pop     bx
 273F:57C2  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
 273F:57C6  E8 EF25                              call    character_face_hotspot
@@ -13349,7 +13360,7 @@ TEMP_DEST_X2 equ  10h
 273F:580D  83 C5 02                             add     bp,2
 273F:5810  A3 BA19                              mov     use_hotspot_id, ax
 273F:5813  A3 BA1B                              mov     active_hotspot_id, ax
-273F:5816  E8 ED8E                              call    sub_107                 ; (45A7)
+273F:5816  E8 ED8E                              call    hotspot_action_precheck
 273F:5819  0B C0                                or      ax,ax                   ; Zero ?
 273F:581B  74 06                                jz      loc_1129                ; Jump if zero
 273F:581D  3C 03                                cmp     al,3
@@ -13406,7 +13417,7 @@ TEMP_DEST_X2 equ  10h
 273F:588B                       loc_1134:                                       ;  xref 273F:5821, 583B
 273F:588B  8B DD                                mov     bx,bp
 273F:588D  C7 07 0000                           mov     word ptr [bx],0
-273F:5891  E9 FCF9                              jmp     sub_130
+273F:5891  E9 FCF9                              jmp     character_walking_end_2
                                  tell_proc      endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -13428,12 +13439,12 @@ TEMP_DEST_X2 equ  10h
 273F:58A8  8B 47 06                             mov     ax, [bx+HS_ROOM_NUM]
 273F:58AB  3B 45 1B                             cmp     ax, [di+ANIM_HOTSPOT_ID] ; In player's inventory?
 273F:58AE  74 1B                                je      loc_1136                ; If yes then jump
-273F:58B0  E8 ED24                              call    sub_108
-273F:58B3  0B C0                                or      ax,ax                   ; Zero ?
+273F:58B0  E8 ED24                              call    hotspot_action_precheck_2
+273F:58B3  0B C0                                or      ax, ax                  ; Zero ?
 273F:58B5  74 08                                jz      loc_1135                ; Jump if zero
 273F:58B7  3D 0003                              cmp     ax,3
 273F:58BA  74 3E                                je      loc_ret_1139            ; Jump if equal
-273F:58BC  E9 FCC2                              jmp     sub_129
+273F:58BC  E9 FCC2                              jmp     character_walking_end
 273F:58BF                       loc_1135:                                       ;  xref 273F:58B5
 273F:58BF  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
 273F:58C3  E8 EE28                              call    character_face_hotspot
@@ -13442,7 +13453,7 @@ TEMP_DEST_X2 equ  10h
 273F:58CA  5D                                   pop     bp
 273F:58CB                       loc_1136:
 273F:58CB  53                                   push    bx
-273F:58CC  E8 FCB2                              call    sub_129                 ; (5581)
+273F:58CC  E8 FCB2                              call    character_walking_end
 273F:58CF  5B                                   pop     bx
 273F:58D0  E8 FD23                              call    hotspot_get_action_sequence
 273F:58D3  79 03                                jns     loc_1137                ; Jump if not sign
@@ -13494,16 +13505,16 @@ TEMP_DEST_X2 equ  10h
 273F:5900  83 C5 02                             add     bp,2
 273F:5903  A3 BA19                              mov     use_hotspot_id, ax
 273F:5906  A3 BA1B                              mov     active_hotspot_id, ax
-273F:5909  E8 EC9B                              call    sub_107                 ; (45A7)
+273F:5909  E8 EC9B                              call    hotspot_action_precheck
 273F:590C  0B C0                                or      ax,ax                   ; Zero ?
 273F:590E  74 08                                jz      loc_1141                ; Jump if zero
 273F:5910  3D 0003                              cmp     ax,3
 273F:5913  74 E6                                je      loc_ret_1140            ; Jump if equal
-273F:5915  E9 FC69                              jmp     sub_129
+273F:5915  E9 FC69                              jmp     character_walking_end
 273F:5918                       loc_1141:                                       ;  xref 273F:590E
 273F:5918  88 44 2A                             mov     [si+2Ah], al
 273F:591B  53                                   push    bx
-273F:591C  E8 FC62                              call    sub_129                 ; (5581)
+273F:591C  E8 FC62                              call    character_walking_end
 273F:591F  5B                                   pop     bx
 273F:5920  E8 EDCB                              call    character_face_hotspot
 273F:5923  E8 FCD0                              call    hotspot_get_action_sequence
@@ -13530,15 +13541,15 @@ TEMP_DEST_X2 equ  10h
 273F:593B  83 C5 02                             add     bp,2
 273F:593E  A3 BA19                              mov     use_hotspot_id, ax
 273F:5941  A3 BA1B                              mov     active_hotspot_id, ax
-273F:5944  E8 EC60                              call    sub_107                 ; (45A7)
+273F:5944  E8 EC60                              call    hotspot_action_precheck
 273F:5947  0B C0                                or      ax,ax                   ; Zero ?
 273F:5949  74 08                                jz      loc_1144                ; Jump if zero
 273F:594B  3D 0003                              cmp     ax,3
 273F:594E  74 AB                                je      loc_ret_1140            ; Jump if equal
-273F:5950  E9 FC2E                              jmp     sub_129
+273F:5950  E9 FC2E                              jmp     character_walking_end
 273F:5953                       loc_1144:                                       ;  xref 273F:5949
 273F:5953  53                                   push    bx
-273F:5954  E8 FC2A                              call    sub_129                 ; (5581)
+273F:5954  E8 FC2A                              call    character_walking_end
 273F:5957  5B                                   pop     bx
 273F:5958  E8 ED93                              call    character_face_hotspot
 273F:595B  E8 FC98                              call    hotspot_get_action_sequence
@@ -13557,7 +13568,7 @@ TEMP_DEST_X2 equ  10h
 
                               look_proc         proc    near
 
-273F:5968  E8 FC16                              call    sub_129                 ; (5581)
+273F:5968  E8 FC16                              call    character_walking_end
 273F:596B  8B 44 06                             mov     ax, [si+6]
 273F:596E  E8 B3B0                              call    get_room_resource_pointer4
 273F:5971  8B 5C 04                             mov     bx, [si+RH_DESC_ID]
@@ -13574,7 +13585,7 @@ TEMP_DEST_X2 equ  10h
 
                                status_proc      proc    near
 
-31E4:5978  E8 06 FC                             call    sub_129
+31E4:5978  E8 06 FC                             call    character_walking_end
 31E4:597B  80 0E 11D0 01                        or      menubar_state, 1
 31E4:5980  FF 16 075E                           call    [show_cursor_proc]
 31E4:5984  B0 09                                mov     al, 9
@@ -13691,7 +13702,7 @@ TEMP_DEST_X2 equ  10h
 273F:5A87  83 C3 63                             add     bx, HS_FIRST_ACTION_OFFSET
 273F:5A8A  8B 44 4E                             mov     ax, [si+HS_V4E]
 273F:5A8D  89 47 03                             mov     [bx+CURRENT_ACTION_ROOM_NUM], ax
-273F:5A90  E9 FAEE                              jmp     sub_129
+273F:5A90  E9 FAEE                              jmp     character_walking_end
                                return_proc      endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -13715,12 +13726,12 @@ TEMP_DEST_X2 equ  10h
 273F:5AB0  3B 45 1B                             cmp     ax,[di+1Bh]
 273F:5AB3  75 12                                jne     loc_1155                ; Jump if not equal
 273F:5AB5  A1 BA1B                              mov     ax, active_hotspot_id
-273F:5AB8  E8 EAEC                              call    sub_107                 ; (45A7)
+273F:5AB8  E8 EAEC                              call    hotspot_action_precheck
 273F:5ABB  0B C0                                or      ax,ax                   ; Zero ?
 273F:5ABD  74 0B                                jz      loc_1156                ; Jump if zero
 273F:5ABF  3C 03                                cmp     al,3
 273F:5AC1  74 03                                je      loc_ret_1154            ; Jump if equal
-273F:5AC3  E9 FABB                              jmp     sub_129
+273F:5AC3  E9 FABB                              jmp     character_walking_end
 
 273F:5AC6                       loc_ret_1154:                                   ;  xref 273F:5AC1, 5AF5, 5B3A
 273F:5AC6  C3                                   retn
@@ -13729,7 +13740,7 @@ TEMP_DEST_X2 equ  10h
 273F:5ACA                       loc_1156:                                       ;  xref 273F:5ABD
 273F:5ACA  E8 EC21                              call    character_face_hotspot
 273F:5ACD  53                                   push    bx
-273F:5ACE  E8 FAB0                              call    sub_129                 ; (5581)
+273F:5ACE  E8 FAB0                              call    character_walking_end
 273F:5AD1  5B                                   pop     bx
 273F:5AD2  81 7D 1B 03E9                        cmp     word ptr [di+1Bh],3E9h
 273F:5AD7  75 09                                jne     loc_1157                ; Jump if not equal
@@ -13782,17 +13793,17 @@ TEMP_DEST_X2 equ  10h
 273F:5B2C                       loc_1162:                                       ;  xref 273F:5B21
 273F:5B2C  5E                                   pop     si
 273F:5B2D  A1 BA19                              mov     ax, use_hotspot_id
-273F:5B30  E8 EA74                              call    sub_107                 ; (45A7)
+273F:5B30  E8 EA74                              call    hotspot_action_precheck
 273F:5B33  0B C0                                or      ax,ax                   ; Zero ?
 273F:5B35  74 08                                jz      loc_1163                ; Jump if zero
 273F:5B37  3D 0003                              cmp     ax,3
 273F:5B3A  74 8A                                je      loc_ret_1154            ; Jump if equal
-273F:5B3C  E9 FA42                              jmp     sub_129
+273F:5B3C  E9 FA42                              jmp     character_walking_end
 273F:5B3F                       loc_1163:                                       ;  xref 273F:5B14, 5B2A, 5B35
 273F:5B3F  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
 273F:5B43  E8 EBA8                              call    character_face_hotspot
 273F:5B46  53                                   push    bx
-273F:5B47  E8 FA37                              call    sub_129                 ; (5581)
+273F:5B47  E8 FA37                              call    character_walking_end
 273F:5B4A  5B                                   pop     bx
 273F:5B4B  E8 FAA8                              call    hotspot_get_action_sequence
 273F:5B4E  79 03                                jns     loc_1164                ; Jump if not sign
@@ -13837,15 +13848,15 @@ TEMP_DEST_X2 equ  10h
 273F:5B90  E9 0179                              jmp     loc_1187                ; (5D0C)
 273F:5B93                       loc_1168:                                       ;  xref 273F:5B8E
 273F:5B93  A1 BA1B                              mov     ax, active_hotspot_id
-273F:5B96  E8 EA0E                              call    sub_107                 ; (45A7)
+273F:5B96  E8 EA0E                              call    hotspot_action_precheck
 273F:5B99  0B C0                                or      ax,ax                   ; Zero ?
 273F:5B9B  74 08                                jz      loc_1169                ; Jump if zero
 273F:5B9D  3D 0003                              cmp     ax,3
 273F:5BA0  74 CE                                je      loc_ret_1167            ; Jump if equal
-273F:5BA2  E9 F9DC                              jmp     sub_129
+273F:5BA2  E9 F9DC                              jmp     character_walking_end
 273F:5BA5                       loc_1169:                                       ;  xref 273F:5B9B
 273F:5BA5  53                                   push    bx
-273F:5BA6  E8 F9D8                              call    sub_129                 ; (5581)
+273F:5BA6  E8 F9D8                              call    character_walking_end
 273F:5BA9  5B                                   pop     bx
 273F:5BAA  E8 EB41                              call    character_face_hotspot
 273F:5BAD  81 3E BA1B 0412                      cmp     active_hotspot_id, 412h
@@ -13903,7 +13914,7 @@ TEMP_DEST_X2 equ  10h
 273F:5C11  5B                                   pop     bx
 273F:5C12  87 DE                                xchg    bx,si
 273F:5C14  53                                   push    bx
-273F:5C15  E8 F969                              call    sub_129                 ; (5581)
+273F:5C15  E8 F969                              call    character_walking_end
 273F:5C18  5B                                   pop     bx
 273F:5C19  E8 F9DA                              call    hotspot_get_action_sequence
 273F:5C1C  75 03                                jnz     loc_1176                ; Jump if not zero
@@ -13928,12 +13939,12 @@ TEMP_DEST_X2 equ  10h
 273F:5C2B  A3 BA19                              mov     use_hotspot_id, ax
 273F:5C2E  A3 BA1B                              mov     active_hotspot_id, ax
 273F:5C31  83 C5 02                             add     bp,2
-273F:5C34  E8 E970                              call    sub_107                 ; (45A7)
+273F:5C34  E8 E970                              call    hotspot_action_precheck
 273F:5C37  0B C0                                or      ax,ax                   ; Zero ?
 273F:5C39  74 08                                jz      loc_1178                ; Jump if zero
 273F:5C3B  3D 0003                              cmp     ax,3
 273F:5C3E  74 E6                                je      loc_ret_1177            ; Jump if equal
-273F:5C40  E9 F93E                              jmp     sub_129
+273F:5C40  E9 F93E                              jmp     character_walking_end
 273F:5C43                       loc_1178:                                       ;  xref 273F:5C39
 273F:5C43  B8 014B                              mov     ax,14Bh
 273F:5C46  8B 16 BA1B                           mov     dx, active_hotspot_id
@@ -13958,7 +13969,7 @@ TEMP_DEST_X2 equ  10h
 273F:5C75  5B                                   pop     bx
 273F:5C76  E8 EA75                              call    character_face_hotspot
 273F:5C79  53                                   push    bx
-273F:5C7A  E8 F904                              call    sub_129                 ; (5581)
+273F:5C7A  E8 F904                              call    character_walking_end
 273F:5C7D  5B                                   pop     bx
 273F:5C7E  C6 44 2A 00                          mov     byte ptr [si+2Ah],0
 273F:5C82  E8 F971                              call    hotspot_get_action_sequence
@@ -13988,15 +13999,15 @@ TEMP_DEST_X2 equ  10h
 273F:5CAB  8B 07                                mov     ax,[bx]
 273F:5CAD  A3 BA1B                              mov     active_hotspot_id, ax
 273F:5CB0  83 C5 04                             add     bp,4
-273F:5CB3  E8 E8F1                              call    sub_107                 ; (45A7)
+273F:5CB3  E8 E8F1                              call    hotspot_action_precheck
 273F:5CB6  0B C0                                or      ax,ax                   ; Zero ?
 273F:5CB8  74 08                                jz      loc_1183                ; Jump if zero
 273F:5CBA  3D 0003                              cmp     ax,3
 273F:5CBD  74 4C                                je      loc_ret_1186            ; Jump if equal
-273F:5CBF  E9 F8BF                              jmp     sub_129
+273F:5CBF  E9 F8BF                              jmp     character_walking_end
 273F:5CC2                       loc_1183:                                       ;  xref 273F:5CB8
 273F:5CC2  53                                   push    bx
-273F:5CC3  E8 F8C7                              call    sub_130                 ; (558D)
+273F:5CC3  E8 F8C7                              call    character_walking_end_2
 273F:5CC6  5B                                   pop     bx
 273F:5CC7  E8 EA24                              call    character_face_hotspot
 273F:5CCA  BB 0009                              mov     bx,9
@@ -14039,7 +14050,7 @@ TEMP_DEST_X2 equ  10h
 273F:5D0C                       loc_1187:                                       ;  xref 273F:5AC7, 5B90, 5D2F
 273F:5D0C  B8 000F                              mov     ax,0Fh                  ; "What???"
 273F:5D0F  E8 069F                              call    display_message_dialog_3
-273F:5D12  E9 F86C                              jmp     sub_129
+273F:5D12  E9 F86C                              jmp     character_walking_end
 
                                drink_proc       proc    near
 273F:5D15  8B DD                                mov     bx,bp
@@ -14055,7 +14066,7 @@ TEMP_DEST_X2 equ  10h
 273F:5D2C  3B 47 06                             cmp     ax,[bx+HS_ROOM_NUM]     ; character's inventory
 273F:5D2F  75 DB                                jne     loc_1187                ; Jump if not equal
 273F:5D31  53                                   push    bx
-273F:5D32  E8 F84C                              call    sub_129                 ; (5581)
+273F:5D32  E8 F84C                              call    character_walking_end
 273F:5D35  5B                                   pop     bx
 273F:5D36  E8 F8BD                              call    hotspot_get_action_sequence
 273F:5D39  79 03                                jns     loc_1188                ; Jump if not sign
@@ -14105,10 +14116,10 @@ TEMP_DEST_X2 equ  10h
 273F:5D75  83 C5 04                             add     bp,4
 273F:5D78  A3 BA19                              mov     use_hotspot_id, ax
 273F:5D7B  A3 BA1B                              mov     active_hotspot_id, ax
-273F:5D7E  E8 E826                              call    sub_107                 ; (45A7)
+273F:5D7E  E8 E826                              call    hotspot_action_precheck
 273F:5D81  0B C0                                or      ax,ax                   ; Zero ?
 273F:5D83  75 03                                jnz     loc_1195                ; Jump if not zero
-273F:5D85  E9 F7F9                              jmp     sub_129
+273F:5D85  E9 F7F9                              jmp     character_walking_end
 273F:5D88                       loc_1195:                                       ;  xref 273F:5D83
 273F:5D88  3D 0003                              cmp     ax,3
 273F:5D8B  74 E3                                je      loc_ret_1194            ; Jump if equal
@@ -14125,13 +14136,13 @@ TEMP_DEST_X2 equ  10h
 273F:5DA2  8B 07                                mov     ax,[bx]
 273F:5DA4  A3 BA19                              mov     use_hotspot_id, ax
 273F:5DA7  A3 BA1B                              mov     active_hotspot_id, ax
-273F:5DAA  E8 E7FA                              call    sub_107                 ; (45A7)
+273F:5DAA  E8 E7FA                              call    hotspot_action_precheck
 273F:5DAD  0B C0                                or      ax,ax                   ; Zero ?
 273F:5DAF  74 0B                                jz      loc_1196                ; Jump if zero
 273F:5DB1  3D 0003                              cmp     ax,3
 273F:5DB4  74 AE                                je      loc_ret_1192            ; Jump if equal
 273F:5DB6  83 C5 0A                             add     bp,0Ah
-273F:5DB9  E9 F7C5                              jmp     sub_129
+273F:5DB9  E9 F7C5                              jmp     character_walking_end
 273F:5DBC                       loc_1196:                                       ;  xref 273F:5DAF
 273F:5DBC  A1 BA1B                              mov     ax, active_hotspot_id
 273F:5DBF  56                                   push    si
@@ -14164,7 +14175,7 @@ TEMP_DEST_X2 equ  10h
 273F:5DFC  5E                                   pop     si
 273F:5DFD                       loc_1198:                                       ;  xref 273F:5DF0
 273F:5DFD  83 C5 08                             add     bp,8
-273F:5E00  E9 F77E                              jmp     sub_129
+273F:5E00  E9 F77E                              jmp     character_walking_end
 
 273F:5E03                       loc_ret_1199:                                   ;  xref 273F:5DCB
 273F:5E03  C3                                   retn
@@ -14174,7 +14185,7 @@ TEMP_DEST_X2 equ  10h
 273F:5E09  89 44 42                             mov     [si+42h],ax
 273F:5E0C  C6 44 44 03                          mov     byte ptr [si+44h],3
 273F:5E10  83 C5 04                             add     bp,4
-273F:5E13  E9 F76B                              jmp     sub_129
+273F:5E13  E9 F76B                              jmp     character_walking_end
                                                                                 ;* No entry point to code
 273F:5E16  8B DE                                mov     bx, si
 273F:5E18  03 5C 61                             add     bx, [si+HS_ACTION_OFFSET]
@@ -14249,7 +14260,7 @@ TEMP_DEST_X2 equ  10h
 273F:5EB9  C7 44 4A 0000                        mov     word ptr [si+HS_V4A], 0
 273F:5EBE  F6 44 44 FF                          test    byte ptr [si+HS_V44], 0FFh
 273F:5EC2  75 07                                jnz     loc_1205                ; Jump if not zero
-273F:5EC4  E8 E4C0                              call    sub_94                  ; (4387)
+273F:5EC4  E8 E4C0                              call    character_pathfind_clear
 273F:5EC7  C3                                   retn
 273F:5EC8                       loc_1204:                                       ;  xref 273F:5EB7
 273F:5EC8  E9 E695                              jmp     loc_869                 ; (4560)
@@ -14268,7 +14279,7 @@ TEMP_DEST_X2 equ  10h
 273F:5EEC  83 6C 42 01                          sub     word ptr [si+HS_V42], 1
 273F:5EF0  C3                                   retn
 273F:5EF1                       loc_1206:                                       ;  xref 273F:5EE1
-273F:5EF1  E8 E493                              call    sub_94                  ; (4387)
+273F:5EF1  E8 E493                              call    character_pathfind_clear
 273F:5EF4  C6 44 44 00                          mov     byte ptr [si+HS_V44], 0
 273F:5EF8  F6 44 FF FF                          test    byte ptr [si-1],0FFh
 273F:5EFC  74 17                                jz      loc_ret_1207            ; Jump if zero
@@ -14320,7 +14331,7 @@ TEMP_DEST_X2 equ  10h
 273F:5F53  B8 03E8                              mov     ax, PLAYER_HOTSPOT_ID
 273F:5F56  E8 EFF9                              call    pathfind_reset
 273F:5F59  C6 07 04                             mov     byte ptr [bx], CHAR_ACTION_PROCESSING_PATH
-273F:5F5C  E8 E428                              call    sub_94                  ; (4387)
+273F:5F5C  E8 E428                              call    character_pathfind_clear
 
 ; Jump point here calculates one sequence of the path finding required to get
 ; the player to a given destination
@@ -14391,7 +14402,7 @@ TEMP_DEST_X2 equ  10h
 
 ; The buffer pointed to by HS[HS_MOVEMENT_SRC_OFFSET] now contains a set of
 ; direction numbers and steps necessary to get the player to the destination
-; they've clicked on - carry on to st
+; they've clicked on
 
 ; Code jumps to this point to handle the continual walking
 
@@ -17873,7 +17884,7 @@ TEMP_DEST_X2 equ  10h
 273F:7751  73 37                                jae     loc_1507                ; Jump if above or =
 273F:7753  8B 77 19                             mov     si,[bx+19h]
 273F:7756  8B FB                                mov     di,bx
-273F:7758  E8 CC2C                              call    sub_94                  ; (4387)
+273F:7758  E8 CC2C                              call    character_pathfind_clear
 273F:775B  C7 44 06 0018                        mov     word ptr [si+6],18h
 273F:7760  C7 47 0E 0018                        mov     word ptr [bx+0Eh],18h
 273F:7765  C7 44 0D 00C0                        mov     word ptr [si+0Dh],0C0h
@@ -19867,7 +19878,7 @@ TEMP_DEST_X2 equ  10h
 273F:8539  D1 E2                                shl     dx,1                    ; Shift w/zeros fill
 273F:853B  81 C2 0088                           add     dx,88h
 273F:853F  B0 01                                mov     al,1
-273F:8541  E8 CFD5                              call    sub_128                 ; (5519)
+273F:8541  E8 CFD5                              call    character_start_walking
 273F:8544  33 C9                                xor     cx,cx                   ; Zero register
 273F:8546  5B                                   pop     bx
 273F:8547  C3                                   retn
@@ -20290,7 +20301,7 @@ TEMP_DEST_X2 equ  10h
 273F:881C  81 3E 6CFE 00B4                      cmp     word ptr ds:[6CFEh],0B4h ; (273F:6CFE=76Eh)
 273F:8822  73 14                                jae     loc_ret_1689            ; Jump if above or =
 273F:8824  BD 706C                              mov     bp,706Ch
-273F:8827  E9 CD57                              jmp     sub_129
+273F:8827  E9 CD57                              jmp     character_walking_end
                                                                                 ;* No entry point to code
 273F:882A  E8 D94B                              call    talk_countdown_handler
 273F:882D  F7 44 1F FFFF                        test    word ptr [si+1Fh],0FFFFh
@@ -20495,7 +20506,7 @@ TEMP_DEST_X2 equ  10h
 273F:89B7  D1 E3                                shl     bx,1                    ; Shift w/zeros fill
 273F:89B9  8B 9F 5050                           mov     bx,word ptr ds:[5050h][bx] ; (273F:5050=34E8h)
 273F:89BD  E8 00C8                              call    sub_220                 ; (8A88)
-273F:89C0  E9 CBCA                              jmp     sub_130
+273F:89C0  E9 CBCA                              jmp     character_walking_end_2
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
                                 ;                              SUBROUTINE
@@ -20520,12 +20531,12 @@ TEMP_DEST_X2 equ  10h
 273F:89EB  74 13                                je      loc_1708                ; Jump if equal
 273F:89ED                       loc_1706:                                       ;  xref 273F:89E3
 273F:89ED  A1 BA19                              mov     ax, use_hotspot_id
-273F:89F0  E8 BBB4                              call    sub_107                 ; (45A7)
+273F:89F0  E8 BBB4                              call    hotspot_action_precheck
 273F:89F3  0B C0                                or      ax,ax                   ; Zero ?
 273F:89F5  74 09                                jz      loc_1708                ; Jump if zero
 273F:89F7  3D 0003                              cmp     ax,3
 273F:89FA  74 03                                je      loc_ret_1707            ; Jump if equal
-273F:89FC  E9 CB82                              jmp     sub_129
+273F:89FC  E9 CB82                              jmp     character_walking_end
 
 273F:89FF                       loc_ret_1707:                                   ;  xref 273F:89FA
 273F:89FF  C3                                   retn
@@ -20538,12 +20549,12 @@ TEMP_DEST_X2 equ  10h
 273F:8A0B  74 08                                jz      loc_1710                ; Jump if zero
 273F:8A0D  E8 B424                              call    sequence_execute
 273F:8A10  74 03                                jz      loc_1710                ; Jump if zero
-273F:8A12  E9 CB6C                              jmp     sub_129
+273F:8A12  E9 CB6C                              jmp     character_walking_end
 273F:8A15                       loc_1710:                                       ;  xref 273F:8A0B, 8A10
 273F:8A15  E8 0009                              call    sub_218                 ; (8A21)
 273F:8A18  E8 0026                              call    talk_get_record
 273F:8A1B  E8 006A                              call    sub_220                 ; (8A88)
-273F:8A1E  E9 CB6C                              jmp     sub_130
+273F:8A1E  E9 CB6C                              jmp     character_walking_end_2
                               talk_to_proc      endp
 
                                 ;ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
@@ -25137,7 +25148,7 @@ TEMP_DEST_X2 equ  10h
 31E4:11DA  00                 mouse_buttons2    db      0
 31E4:11DB  0000                 char_dest_x     dw      0
 31E4:11DD  0000                 char_dest_y     dw      0
-31E4:11DF  0000                 data_632        dw      0
+31E4:11DF  0000              cursor_centroid    dw      0
 31E4:11E1  0000                 cursor_index    dw      0
 31E4:11E3  00               cursor_index_new    db      0
 31E4:11E4  0000             hotspot_name_id2    dw      0
@@ -25412,8 +25423,9 @@ TEMP_DEST_X2 equ  10h
 31E4:1926  00                   data_669        db      0                       ;  xref 273F:47F3, 273F:4829
                                                                                 ;       273F:A00C
 31E4:1927  0000      active_animation_offset    dw      0
-31E4:1929  96 00 24 81 02 00                    db       96h, 00h, 24h, 81h, 02h, 00h
-31E4:192F  00                                   db       00h
+
+31E4:1929  96 00 24 81          sub_129_list    db       96h, 00h, 24h, 81h
+31E4:192D  02 00 00                             db       02h, 00h, 00h
 31E4:1930  0051[00]                             db      81 dup (0)
 31E4:1981  E3 00 DA 80 01 00                    db      0E3h, 00h,0DAh, 80h, 01h, 00h
 31E4:1987  44 01 DA 00 03 00                    db       44h, 01h,0DAh, 00h, 03h, 00h
@@ -26294,7 +26306,7 @@ TEMP_DEST_X2 equ  10h
 31E4:3940  0000         pathfind_buffer_end     dw      0
 31E4:3942  0000                 pathfind_sp     dw      0
 31E4:3944  0000                 pathfind_v2     dw      0
-31E4:3946  0000                 pathfind_v3     db      0
+31E4:3946  0000        pathfind_in_progress     db      0
 31E4:3947  003C[00]                             db      60 dup (0)
 31E4:3983  000A[00]    player_pathfind_data     dw      5 dup (0)
 
@@ -27670,7 +27682,7 @@ TEMP_DEST_X2 equ  10h
 
 31E4:6CEF  00             player_hotspot_rec    db      0
 31E4:6CF0  00 00 40 57 6D                       db       00h, 00h, 40h, 57h, 6Dh
-31E4:6CF5  0001                 data_896        dw      1                       ;  xref 273F:13B5
+31E4:6CF5  0001           player_room_number    dw      1
 31E4:6CF7  00 67 71                             db       00h, 67h, 71h
 31E4:6CFA  0000                 data_897        dw      0
 31E4:6CFC  0110                 data_898        dw      110h
@@ -31603,23 +31615,25 @@ TEMP_DEST_X2 equ  10h
 31E4:BC3D  06 00 00 00 00 00                    db       06h, 00h, 00h, 00h, 00h, 00h
 31E4:BC43  06 00 00 00 00 00                    db       06h, 00h, 00h, 00h, 00h, 00h
 31E4:BC49  00 00                 num_groats     dw       0
-31E4:BC4B  18 04 43 01                          db       18h, 04h, 43h, 01h
-31E4:BC4F  23 81 21 27 44 01                    db       23h, 81h, 21h, 27h, 44h, 01h
-31E4:BC55  FB 80 22 27 95 00                    db      0FBh, 80h, 22h, 27h, 95h, 00h
-31E4:BC5B  05 81 1F 27 AC 00                    db       05h, 81h, 1Fh, 27h,0ACh, 00h
-31E4:BC61  EB 80 20 27 AE 00                    db      0EBh, 80h, 20h, 27h,0AEh, 00h
-31E4:BC67  3A 81 1E 27 ED 00                    db       3Ah, 81h, 1Eh, 27h,0EDh, 00h
-31E4:BC6D  0C 81 3C 75 6D 01                    db       0Ch, 81h, 3Ch, 75h, 6Dh, 01h
-31E4:BC73  0E 01 21 04 12 01                    db       0Eh, 01h, 21h, 04h, 12h, 01h
-31E4:BC79  12 01 22 04 F0 00                    db       12h, 01h, 22h, 04h,0F0h, 00h
-31E4:BC7F  0A 01 3B 75 2A 01                    db       0Ah, 01h, 3Bh, 75h, 2Ah, 01h
-31E4:BC85  1B 81 1F 04 E6 00                    db       1Bh, 81h, 1Fh, 04h,0E6h, 00h
-31E4:BC8B  31 01 16 27 9C 00                    db       31h, 01h, 16h, 27h, 9Ch, 00h
-31E4:BC91  3A 81 11 27 E5 00                    db       3Ah, 81h, 11h, 27h,0E5h, 00h
-31E4:BC97  25 01 12 27 E4 00                    db       25h, 01h, 12h, 27h,0E4h, 00h
-31E4:BC9D  FA                                   db      0FAh
-31E4:BC9E                       loc_2353:                                       ;  xref 31E4:BCE2
-31E4:BC9E  00 5E 75                             add     [bp+75h],bl
+
+                      hotspot_proximity_list
+31E4:BC4B  0418 0143 8123                       dw       418h, 143h, 8123h
+31E4:BC51  2721 0144 80FB
+31E4:BC57  2722 0095 8105
+31E4:BC5D  271F 00AC 80EB
+31E4:BC63  2720 00AE 813A
+31E4:BC69  271E 00ED 810C
+31E4:BC6F  75#C 016D 010E
+31E4:BC75  0421 0112 0112
+31E4:BC7B  0422 00F0 010A
+31E4:BC81  753B 012A 811B
+31E4:BC87  041F 00E6 0131
+31E4:BC8D  2716 009C 813A
+31E4:BC93  2711 00E5 0125
+31E4:BC99  2712 00E4 00FA
+...more...
+
+31E4:BC9E  5E 75                             add     [bp+75h],bl
 31E4:BCA1  59                                   pop     cx
 31E4:BCA2  01 31                                add     [bx+di],si
 31E4:BCA4                       loc_2354:                                       ;  xref 31E4:BCE8

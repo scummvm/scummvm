@@ -93,20 +93,34 @@ character_find_impinging_chars - Scans through the animation list for any
               characters whose position is impinging that of the given character
     Input:  di = Character animation slot
 
+character_pathfind_clear - Checks the pathfinding set flag for the given hotspot,
+              and if it set (ie. the hotspot has it's covering cells in the
+              pathfinding layer for the room set), then clears the flag and
+              clears the accompanying pathfinding cells
+     Input:  ax = Character Id
+             bx = Destination X
+             cx = Destination Y
+             
+
 character_pathfind - Handles pathfinding a segment of a walking path to a
               given destination
     Input:  ax = character Id
             bx = Dest X Pos
             cx = Dest Y Pos
             dl = Hotspot[4Ch]
-   Output:  added segment to the line path in data Hotspot[HS_MOVEMENT_SRC_OFFSET]
+   Output:  bx = Pointer to list of walking segments that gets built
             ax = 1 => end of pathfinding reached, 0 => pathfinding still needed
 
 character_reset_direction - Rounds off the given character's position, and sets
               their current frame to the default frame for the character's
               current direction
-    Input:  si = Character hotspot Id
+    Input:  si = Character hotspot record
             di = Character animation slot
+
+character_start_walking - Starts the character walking towards a given position
+    Input:  si = Character hotspot record
+            cx = Destination X
+            dx = Destination Y
 
 character_translate_movements - Translates a set of instructions of movement
               instructions into a set of offsets to movement records
@@ -122,6 +136,14 @@ character_update_frame - Handles updating a character's current frame in a
            movement sequence each tick.
   Output:  ax = 1 => for end of the path finding list (ie. at destination),
                 0 => Some walking still remaining
+
+character_walking_check - Scans through a list for X/Y proximity for different
+              hotspots, and if the character is not within proximity, starts
+              the character walking to it
+     Input:  si = character hotspot record
+             di = character animation slot,
+             bx = used object hotspot record
+    Output:  ax => 1 = No movement was required, 0 = Wakling has started
 
 characters_impinging_check - Checks to see if the given character is close enough
               to the player
@@ -227,6 +249,13 @@ get_room_resource_pointer3/4 -  Gets a pointer to the header entry for a given
               hotspot or room
          Input:   bx = Id for _pointer3, ax = Id for _pointer4
          Output:  si = pointer to header entry
+
+hotspot_action_precheck - Does the common prechecking for hotspot actions,
+              such as whether the player needs to walk to it or not
+     Input:  ax = Hotspot Id to be used
+             si = Character hotspot record
+             di = Character animation slot
+    Output:  al = 3 => Player is starting to walk to hotspot
 
 hotspot_get_action_sequence - Returns a script offset for the given action on
               a hotspot
@@ -776,6 +805,9 @@ The format of hotspots are as follows:
            45h     2    Hotspot Script Id to use. I'm not yet sure why a
                         different field that 2Dh/2Fh to use
            47h     2    Hotspot Id to use.
+           49h     1    Flags whether the hotspot has currently got the cells
+                        of the pathfinding (walkable areas) layer that it's
+                        base occupies as covered
            50h     2    Character direction: 80h=up, 40h=down, 20h=left, 10h=right
            52h     2    Hotspot Id for selected hotspot
            54h     2    X ending position for character + 80h - 10h
@@ -898,8 +930,8 @@ aren't necessarily animated.
                         sets this back to zero
             11h    2    Tick handler proc offset - called every frame for hotspots
                         loaded into the animation table where [0Ch] is non-zero
-            13h    2    Copy of the animation width - this the height copy are
-                        used in some areas to, for example, varying the strict
+            13h    2    Copy of the animation width - this and the height copy are
+                        used in some areas to, for example, vary the strict
                         Y ordering of objects in a scene (for example, Ratpouch
                         has a larger height copy to make him appear on top of
                         the rack rather than behind it).
