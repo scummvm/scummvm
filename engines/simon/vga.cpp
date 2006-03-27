@@ -497,7 +497,6 @@ get_out:;
 }
 
 void vc10_skip_cols(VC10_state *vs) {
-	vs->depack_cont = -0x80;
 	while (vs->x_skip) {
 		vc10_depack_column(vs);
 		vs->x_skip--;
@@ -704,7 +703,7 @@ void SimonEngine::vc10_draw() {
 		return;
 
 	if (_dumpImages)
-		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width * 16, height,
+		dump_single_bitmap(_vgaCurFileId, state.image, state.depack_src, width, height,
 											 state.palette);
 	// Check if image is compressed
 	if (getGameType() == GType_FF) {
@@ -769,6 +768,8 @@ void SimonEngine::vc10_draw() {
 
 	state.width = state.draw_width = width;		/* cl */
 	state.height = state.draw_height = height;	/* ch */
+
+	state.depack_cont = -0x80;
 
 	state.x_skip = 0;				/* colums to skip = bh */
 	state.y_skip = 0;				/* rows to skip   = bl */
