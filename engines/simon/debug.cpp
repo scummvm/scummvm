@@ -332,7 +332,7 @@ void dump_bmp(const char *filename, int w, int h, const byte *bytes, const uint3
 	fclose(out);
 }
 
-static void dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
+void SimonEngine::dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette,
 								 byte base)
 {
 	/* allocate */
@@ -346,13 +346,22 @@ static void dump_bitmap(const char *filename, const byte *offs, int w, int h, in
 	state.dh = h;
 	state.y_skip = 0;
 
-	for (i = 0; i != w; i += 2) {
-		byte *c = vc10_depack_column(&state);
-		for (j = 0; j != h; j++) {
-			byte pix = c[j];
-			b[j * w + i] = (pix >> 4) | base;
-			b[j * w + i + 1] = (pix & 0xF) | base;
-
+	if (getGameType() == GType_FF) {
+		for (i = 0; i != w; i++) {
+			byte *c = vc10_depack_column(&state);
+			for (j = 0; j != h; j++) {
+				byte pix = c[j];
+				b[j * w + i] = pix;
+			}
+		}
+	} else {
+		for (i = 0; i != w; i += 2) {
+			byte *c = vc10_depack_column(&state);
+			for (j = 0; j != h; j++) {
+				byte pix = c[j];
+				b[j * w + i] = (pix >> 4) | base;
+				b[j * w + i + 1] = (pix & 0xF) | base;
+			}
 		}
 	}
 

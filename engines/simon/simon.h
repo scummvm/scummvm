@@ -840,6 +840,7 @@ protected:
 	void dump_vga_script_always(const byte *ptr, uint res, uint sprite_id);
 	void dump_vga_bitmaps(const byte *vga, byte *vga1, int res);
 	void dump_single_bitmap(int file, int image, const byte *offs, int w, int h, byte base);
+	void dump_bitmap(const char *filename, const byte *offs, int w, int h, int flags, const byte *palette, byte base);
 
 	void dx_clear_attached_from_top(uint lines);
 	void dx_copy_from_attached_to_2(uint x, uint y, uint w, uint h);

@@ -23,6 +23,7 @@
 // Item script opcodes for Simon1/Simon2
 
 #include "common/stdafx.h"
+#include "simon/dxa_player.h"
 #include "simon/simon.h"
 #include "simon/intern.h"
 
@@ -1079,6 +1080,12 @@ int SimonEngine::runScript() {
 
 		case 183:{									/* unload beard */
 				if (getGameType() == GType_FF) {
+					DXA_Player p;
+					if (p.open((const char *)"icetrench.dxa")) {
+						p.play();
+						p.close();
+					}
+
 					// Play video
 					debug(1, "Play video");
 				} else if (getGameType() == GType_SIMON2) {
