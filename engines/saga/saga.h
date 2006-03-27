@@ -28,6 +28,7 @@
 #include "base/engine.h"
 
 #include "common/stream.h"
+#include "base/plugins.h"
 
 #include "saga/gfx.h"
 #include "saga/list.h"
@@ -84,8 +85,8 @@ enum ERRORCODE {
 };
 
 enum SAGAGameType {
-	GType_ITE,
-	GType_IHNM
+	GType_ITE = 0,
+	GType_IHNM = 1
 };
 
 enum GameObjectTypes {
@@ -383,6 +384,7 @@ struct GameResourceDescription {
 struct GameFileDescription {
 	const char *fileName;
 	uint16 fileType;
+	const char *md5;
 };
 
 struct GamePatchDescription {
@@ -515,6 +517,8 @@ struct GameDescription {
 	uint32 features;
 	Common::Language language;
 	Common::Platform platform;
+
+	DetectedGame toDetectedGame();
 };
 
 struct SaveFileData {
