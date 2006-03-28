@@ -1,10 +1,10 @@
 MODULE := common
 
 MODULE_OBJS := \
-	assocarray.o \
 	config-file.o \
 	config-manager.o \
 	file.o \
+	hashmap.o \
 	md5.o \
 	mutex.o \
 	str.o \

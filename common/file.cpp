@@ -21,6 +21,7 @@
  */
 
 #include "common/file.h"
+#include "common/hashmap.h"
 #include "common/util.h"
 #include "backends/fs/fs.h"
 
@@ -30,8 +31,13 @@
 
 namespace Common {
 
-StringList File::_defaultDirectories;
-File::FilesMap File::_filesMap;
+typedef HashMap<String, String> FilesMap;
+
+// The following two objects could be turned into static members of class
+// File. However, then we would be forced to #include hashmap in file.h
+// which seems to be a high price just for a simple beautification...
+static StringList _defaultDirectories;
+static FilesMap _filesMap;
 
 
 static FILE *fopenNoCase(const char *filename, const char *directory, const char *mode) {

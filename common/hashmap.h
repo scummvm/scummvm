@@ -20,7 +20,8 @@
  *
  */
 
-// Code is based on:
+// The hash map (associative array) implementation in this file is
+// based on code by Andrew Y. Ng, 1996:
 
 /* 
  * Copyright (c) 1998-2003 Massachusetts Institute of Technology. 
@@ -47,36 +48,28 @@
  * OTHER DEALINGS IN THE SOFTWARE. 
  */
 
-/*************************************************
-
-  assocarray.h - Associative arrays
-
-  Andrew Y. Ng, 1996
-
-**************************************************/
-
 #include "common/stdafx.h"
 #include "common/str.h"
 #include "common/util.h"
 
-#ifndef COMMON_ASSOCARRAY_H
-#define COMMON_ASSOCARRAY_H
+#ifndef COMMON_HASHMAP_H
+#define COMMON_HASHMAP_H
 
 namespace Common {
 
 typedef Common::String String;
 
-// If aa is an AssocArray<Key,Val>, then space is allocated each
+// If aa is an HashMap<Key,Val>, then space is allocated each
 // time aa[key] is referenced, for a new key. To "see" the value
 // of aa[key] but without allocating new memory, use aa.queryVal(key)
 // instead.
 // 
-// An AssocArray<Key,Val> Maps type Key to type Val. For each 
-// Key, we need a int hashit(Key,int) that hashes Key and returns 
-// an integer from 0 to hashsize-1, and a int data_eq(Key,Key) 
-// that returns true if the 2 arguments it is passed are to
-// be considered equal. Also, we assume that "=" works
-// on Val's for assignment.
+// A HashMap<Key,Val> maps objects of type Key to objects of type Val.
+// For each used Key type, we need an "uint hashit(Key,uint)" function
+// that computes a hash for the given Key object and returns it as an
+// an integer from 0 to hashsize-1, and also a "bool data_eq(Key,Key) "
+// function that returns true if if its two arguments are to be considered
+// equal. Also, we assume that "=" works on Val objects for assignment.
 
 uint hashit(int x, uint hashsize);
 bool data_eq(int x, int y);
@@ -99,9 +92,9 @@ uint nextTableSize(uint x);
 //#define DEBUG_HASH_COLLISIONS
 
 template <class Key, class Val>
-class AssocArray {
+class HashMap {
 private:
-	// data structure used by AssocArray internally to keep
+	// data structure used by HashMap internally to keep
 	// track of what's mapped to what.
 	struct aa_ref_t {
 		Key key;
@@ -121,8 +114,8 @@ private:
 
 public:
 
-	AssocArray();
-	~AssocArray();
+	HashMap();
+	~HashMap();
 
 	bool contains(const Key &key) const;
 
@@ -153,10 +146,10 @@ public:
 };
 
 //-------------------------------------------------------
-// AssocArray functions
+// HashMap functions
 
 template <class Key, class Val>
-int AssocArray<Key, Val>::lookup(const Key &key) const {
+int HashMap<Key, Val>::lookup(const Key &key) const {
 	uint ctr = hashit(key, _arrsize);
 
 	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->key, key)) {
@@ -171,7 +164,7 @@ int AssocArray<Key, Val>::lookup(const Key &key) const {
 	
 #ifdef DEBUG_HASH_COLLISIONS
 	_lookups++;
-	fprintf(stderr, "collisions %d, lookups %d, ratio %f in AssocArray %p; size %d num elements %d\n",
+	fprintf(stderr, "collisions %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",
 		_collisions, _lookups, ((double) _collisions / (double)_lookups),
 		(const void *)this, _arrsize, _nele);
 #endif
@@ -180,13 +173,13 @@ int AssocArray<Key, Val>::lookup(const Key &key) const {
 }
 
 template <class Key, class Val>
-bool AssocArray<Key, Val>::contains(const Key &key) const {
+bool HashMap<Key, Val>::contains(const Key &key) const {
 	uint ctr = lookup(key);
 	return (_arr[ctr] != NULL);
 }
 
 template <class Key, class Val>
-Key *AssocArray<Key, Val>::new_all_keys(void) const {
+Key *HashMap<Key, Val>::new_all_keys(void) const {
 	Key *all_keys;
 	uint ctr, dex;
 
@@ -212,7 +205,7 @@ Key *AssocArray<Key, Val>::new_all_keys(void) const {
 }
 
 template <class Key, class Val>
-Val *AssocArray<Key, Val>::new_all_values(void) const {
+Val *HashMap<Key, Val>::new_all_values(void) const {
 	Val *all_values;
 	uint ctr, dex;
 
@@ -239,7 +232,7 @@ Val *AssocArray<Key, Val>::new_all_values(void) const {
 }
 
 template <class Key, class Val>
-AssocArray<Key, Val>::AssocArray() {
+HashMap<Key, Val>::HashMap() {
 	uint ctr;
 
 	_arrsize = nextTableSize(0);
@@ -257,7 +250,7 @@ AssocArray<Key, Val>::AssocArray() {
 }
 
 template <class Key, class Val>
-AssocArray<Key, Val>::~AssocArray() {
+HashMap<Key, Val>::~HashMap() {
 	uint ctr;
 
 	for (ctr = 0; ctr < _arrsize; ctr++)
@@ -268,7 +261,7 @@ AssocArray<Key, Val>::~AssocArray() {
 }
 
 template <class Key, class Val>
-void AssocArray<Key, Val>::clear(bool shrinkArray) {
+void HashMap<Key, Val>::clear(bool shrinkArray) {
 	for (uint ctr = 0; ctr < _arrsize; ctr++) {
 		if (_arr[ctr] != NULL) {
 			delete _arr[ctr];
@@ -290,7 +283,7 @@ void AssocArray<Key, Val>::clear(bool shrinkArray) {
 }
 
 template <class Key, class Val>
-void AssocArray<Key, Val>::expand_array(void) {
+void HashMap<Key, Val>::expand_array(void) {
 	aa_ref_t **old_arr;
 	uint old_arrsize, old_nele, ctr, dex;
 
@@ -334,7 +327,7 @@ void AssocArray<Key, Val>::expand_array(void) {
 }
 
 template <class Key, class Val>
-Val &AssocArray<Key, Val>::operator [](const Key &key) {
+Val &HashMap<Key, Val>::operator [](const Key &key) {
 	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
@@ -352,12 +345,12 @@ Val &AssocArray<Key, Val>::operator [](const Key &key) {
 }
 
 template <class Key, class Val>
-const Val &AssocArray<Key, Val>::operator [](const Key &key) const {
+const Val &HashMap<Key, Val>::operator [](const Key &key) const {
 	return queryVal(key);
 }
 
 template <class Key, class Val>
-const Val &AssocArray<Key, Val>::queryVal(const Key &key) const {
+const Val &HashMap<Key, Val>::queryVal(const Key &key) const {
 	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->dat;

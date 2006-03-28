@@ -20,7 +20,8 @@
  *
  */
 
-// Code is based on:
+// The hash map (associative array) implementation in this file is
+// based on code by Andrew Y. Ng, 1996:
 
 /* 
  * Copyright (c) 1998-2003 Massachusetts Institute of Technology. 
@@ -47,15 +48,7 @@
  * OTHER DEALINGS IN THE SOFTWARE. 
  */
 
-/*************************************************
-
-  assocarray.h - Associative arrays
-
-  Andrew Y. Ng, 1996
-
-**************************************************/
-
-#include "common/assocarray.h"
+#include "common/hashmap.h"
 
 namespace Common {
 

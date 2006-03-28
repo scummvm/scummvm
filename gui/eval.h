@@ -25,12 +25,12 @@
 
 #include "common/stdafx.h"
 #include "common/str.h"
-#include "common/assocarray.h"
+#include "common/hashmap.h"
 
 namespace GUI {
 
 using Common::String;
-using Common::AssocArray;
+using Common::HashMap;
 
 #define EVAL_UNDEF_VAR -13375
 
@@ -67,8 +67,8 @@ public:
 
 	void reset();
 
-	typedef AssocArray<String, int> VariablesMap;
-	typedef AssocArray<String, String> AliasesMap;
+	typedef HashMap<String, int> VariablesMap;
+	typedef HashMap<String, String> AliasesMap;
 
 private:
 	void getToken();
