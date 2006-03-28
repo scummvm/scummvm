@@ -330,7 +330,7 @@ int KyraEngine::init(GameDetector &detector) {
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	// for now we prefer MIDI-to-Adlib conversion over native midi
+	// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
 	if (midiDriver == MD_ADLIB) {
@@ -349,6 +349,18 @@ int KyraEngine::init(GameDetector &detector) {
 		_sound = soundMidiPc;
 		assert(_sound);
 		soundMidiPc->hasNativeMT32(native_mt32);
+		
+		// Unlike some SCUMM games, it's not that the MIDI sounds are
+		// missing. It's just that at least at the time of writing they
+		// decidedly inferior to the Adlib ones.
+
+		if (ConfMan.getBool("multi_midi")) {
+			SoundAdlibPC *adlib = new SoundAdlibPC(_mixer, this);
+			assert(adlib);
+			
+			_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
+			assert(_sound);
+		}
 	}
 	if (!_sound->init()) {
 		error("Couldn't init sound");

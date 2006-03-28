@@ -188,6 +188,30 @@ private:
 	MidiParser *_soundEffect;
 	byte *_soundEffectSource;
 };
+
+class MixedSoundDriver : public Sound {
+public:
+	MixedSoundDriver(KyraEngine *engine, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(engine, mixer), _music(music), _sfx(sfx) {}
+	~MixedSoundDriver() { delete _music; delete _sfx; }
+
+	bool init() { return _music->init() | _sfx->init(); }
+	void process() { _music->process(); _sfx->process(); }
+
+	void setVolume(int volume) { _music->setVolume(volume); _sfx->setVolume(volume); }
+	int getVolume() { return _music->getVolume(); }
+
+	void loadMusicFile(const char *file) { _music->loadMusicFile(file); _sfx->loadMusicFile(file); }
+
+	void playTrack(uint8 track) { _music->playTrack(track); }
+	void haltTrack() { _music->haltTrack(); }
+
+	void playSoundEffect(uint8 track) { _sfx->playSoundEffect(track); }
+
+	void beginFadeOut() { _music->beginFadeOut(); }
+private:
+	Sound *_music, *_sfx;
+};
+
 } // end of namespace Kyra
 
 #endif

@@ -247,9 +247,9 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 		return;
 	}
 
-	_parser->setTrack(0);
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(getBaseTempo());
+	_parser->setTempo(0);
 	_parser->property(MidiParser::mpAutoLoop, true);
 }
 
@@ -282,9 +282,9 @@ void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 		return;
 	}
 
-	_soundEffect->setTrack(0);
 	_soundEffect->setMidiDriver(this);
 	_soundEffect->setTimerRate(getBaseTempo());
+	_soundEffect->setTempo(0);
 	_soundEffect->property(MidiParser::mpAutoLoop, false);
 }
 
@@ -357,7 +357,7 @@ void SoundMidiPC::onTimer(void *refCon) {
 }
 
 void SoundMidiPC::playTrack(uint8 track) {
-	if (_parser) {
+	if (_parser && (track != 0 || _nativeMT32)) {
 		_isPlaying = true;
 		_fadeMusicOut = false;
 		_fadeStartTime = 0;
@@ -376,7 +376,7 @@ void SoundMidiPC::haltTrack() {
 		setVolume(255);
 		_parser->setTrack(0);
 		_parser->jumpToTick(0);
-		_parser->setTempo(1);
+		_parser->setTempo(0);
 	}
 }
 
@@ -385,6 +385,7 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 		_sfxIsPlaying = true;
 		_soundEffect->setTrack(track);
 		_soundEffect->jumpToTick(0);
+		_soundEffect->setTempo(1);
 		_soundEffect->property(MidiParser::mpAutoLoop, false);
 	}
 }
