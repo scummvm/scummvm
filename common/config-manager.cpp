@@ -86,7 +86,7 @@ const char *falseStr = "false";
 
 ConfigManager::ConfigManager() {
 	// Ensure the global domain(s) are setup.
-	_globalDomains.addKey(kApplicationDomain);
+	_globalDomains[kApplicationDomain];
 }
 
 
@@ -126,7 +126,7 @@ void ConfigManager::loadConfigFile(const String &filename) {
 	_transientDomain.clear();
 
 	// Ensure the global domain(s) are setup.
-	_globalDomains.addKey(kApplicationDomain);
+	_globalDomains[kApplicationDomain];
 
 	_filename = filename;
 	_domainSaveOrder.clear();
@@ -483,7 +483,7 @@ void ConfigManager::setActiveDomain(const String &domain) {
 	assert(!domain.empty());
 	assert(isValidDomainName(domain));
 	_activeDomain = domain;
-	_gameDomains.addKey(domain);
+	_gameDomains[domain];
 }
 
 void ConfigManager::removeGameDomain(const String &domain) {

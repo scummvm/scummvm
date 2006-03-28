@@ -157,15 +157,6 @@ public:
 		return (_root == 0);
 	}
 
-	Value &addKey(const Key &key) {
-		Node *node;
-		if (!_root)
-			node = _root = new Node(key, _header);
-		else
-			node = findOrCreateNode(_root, key);
-		return node->_value;
-	}
-
 	size_t erase(const Key &key) {
 		// TODO - implement efficiently. Indeed, maybe switch to using red-black trees?
 		// For now, just a lame, bad remove algorithm. Rule: don't remove elements
