@@ -26,6 +26,7 @@
 #include <stdio.h>
 
 #include "base/engine.h"
+#include "base/plugins.h"
 
 #include "common/rect.h"
 #include "common/util.h"
@@ -107,20 +108,21 @@ struct VgaTimerEntry {
 	VgaTimerEntry() { memset(this, 0, sizeof(*this)); }
 };
 
-enum SimonTypes {
-	GType_SIMON1,
-	GType_SIMON2,
-	GType_FF
+enum SIMONGameType {
+	GType_FF = 0,
+	GType_SIMON1 = 1,
+	GType_SIMON2 = 2
 };
 
 struct GameFileDescription {
 	const char *fileName;
 	uint16 fileType;
+	const char *md5;
 };
 
 struct GameDescription {
 	const char *name;
-	SimonTypes gameType;
+	SIMONGameType gameType;
 	GameIds gameId;
 	const char *extra;
 	int filesCount;
@@ -128,6 +130,8 @@ struct GameDescription {
 	uint32 features;
 	Common::Language language;
 	Common::Platform platform;
+
+	DetectedGame toDetectedGame();
 };
 
 struct GameSpecificSettings;

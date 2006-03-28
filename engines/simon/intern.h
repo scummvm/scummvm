@@ -161,9 +161,7 @@ enum GameFileTypes {
 	GAME_STRFILE  = 1 << 3,
 	GAME_TBLFILE  = 1 << 4,
 
-	GAME_GFXIDXFILE = 1 << 5,
-	GAME_SFXIDXFILE = 1 << 6,
-	GAME_SPIDXFILE  = 1 << 7
+	GAME_GFXIDXFILE = 1 << 5
 };
 
 enum GameIds {
