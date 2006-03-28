@@ -83,7 +83,7 @@ public:
 	Stack<T>() {}
 
 	bool empty() const {
-		return _stack.isEmpty();
+		return _stack.empty();
 	}
 	void clear() {
 		_stack.clear();

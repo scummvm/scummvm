@@ -122,7 +122,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			*p = 0;
 
 			// Previous section is finished now, store it.
-			if (!section.name.isEmpty())
+			if (!section.name.empty())
 				_sections.push_back(section);
 
 			section.name = buf + 1;
@@ -140,7 +140,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 				continue;
 
 			// If no section has been set, this config file is invalid!
-			if (section.name.isEmpty()) {
+			if (section.name.empty()) {
 				error("Config file buggy: Key/value pair found outside a section in line %d", lineno);
 			}
 
@@ -162,7 +162,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	}
 
 	// Save last section
-	if (!section.name.isEmpty())
+	if (!section.name.empty())
 		_sections.push_back(section);
 
 	return (!stream.ioFailed() || stream.eos());
@@ -179,7 +179,7 @@ bool ConfigFile::saveToFile(const String &filename) {
 bool ConfigFile::saveToStream(WriteStream &stream) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		// Write out the section comment, if any
-		if (! i->comment.isEmpty()) {
+		if (! i->comment.empty()) {
 			stream.writeString(i->comment);
 		}
 
@@ -192,7 +192,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 		// Write out the key/value pairs
 		for (List<KeyValue>::iterator kv = i->keys.begin(); kv != i->keys.end(); ++kv) {
 			// Write out the comment, if any
-			if (! kv->comment.isEmpty()) {
+			if (! kv->comment.empty()) {
 				stream.writeString(kv->comment);
 			}
 			// Write out the key/value pair

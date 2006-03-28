@@ -286,7 +286,7 @@ void ScummEngine::readRoomsOffsets() {
 bool ScummEngine::openFile(BaseScummFile &file, const char *filename, bool resourceFile) {
 	bool result = false;
 
-	if (!_containerFile.isEmpty()) {
+	if (!_containerFile.empty()) {
 		char name[128];
 
 		file.close();

@@ -140,9 +140,16 @@ public:
 	// even allow in-place modifications of
 	Key *new_all_keys(void) const;
 	Val *new_all_values(void) const;
+	//const_iterator	begin() const
+	//const_iterator	end() const
 	
-	
-	// TODO: There is no "remove(key)" method yet.
+	// TODO: There is no "remove" method yet.
+	//void remove(const Key &key);
+
+
+	bool empty() const {
+		return (_nele == 0);
+	}
 };
 
 //-------------------------------------------------------

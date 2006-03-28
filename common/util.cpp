@@ -131,7 +131,7 @@ const LanguageDescription g_languages[] = {
 };
 
 Language parseLanguage(const String &str) {
-	if (str.isEmpty())
+	if (str.empty())
 		return UNK_LANG;
 
 	const char *s = str.c_str();
@@ -189,7 +189,7 @@ const PlatformDescription g_platforms[] = {
 };
 
 Platform parsePlatform(const String &str) {
-	if (str.isEmpty())
+	if (str.empty())
 		return kPlatformUnknown;
 
 	const char *s = str.c_str();
@@ -245,7 +245,7 @@ const RenderModeDescription g_renderModes[] = {
 };
 
 RenderMode parseRenderMode(const String &str) {
-	if (str.isEmpty())
+	if (str.empty())
 		return kRenderDefault;
 
 	const char *s = str.c_str();

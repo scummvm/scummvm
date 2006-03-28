@@ -150,7 +150,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.isEmpty() && !desc.isEmpty()) {
+	if (description.empty() && !desc.empty()) {
 		description = desc;
 	}
 
@@ -202,14 +202,14 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// GUI:  Button + Label for the additional path
 	new ButtonWidget(tab, "gameoptions_extrapath", "Extra Path:", kCmdExtraBrowser, 0);
 	_extraPathWidget = new StaticTextWidget(tab, "gameoptions_extrapathText", extraPath);
-	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
+	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPathWidget->setLabel("None");
 	}
 
 	// GUI:  Button + Label for the save path
 	new ButtonWidget(tab, "gameoptions_savepath", "Save Path: ", kCmdSaveBrowser, 0);
 	_savePathWidget = new StaticTextWidget(tab, "gameoptions_savepathText", savePath);
-	if (savePath.isEmpty() || !ConfMan.hasKey("savepath", _domain)) {
+	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePathWidget->setLabel("Default");
 	}
 
@@ -318,15 +318,15 @@ void EditGameDialog::close() {
 			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
 		String gamePath = _gamePathWidget->getLabel();
-		if (!gamePath.isEmpty())
+		if (!gamePath.empty())
 			ConfMan.set("path", gamePath, _domain);
 
 		String extraPath = _extraPathWidget->getLabel();
-		if (!extraPath.isEmpty() && (extraPath != "None"))
+		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
 
 		String savePath = _savePathWidget->getLabel();
-		if (!savePath.isEmpty() && (savePath != "Default"))
+		if (!savePath.empty() && (savePath != "Default"))
 			ConfMan.set("savepath", savePath, _domain);
 
 		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
@@ -416,7 +416,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Write back changes made to config object
 		String newDomain(_domainWidget->getEditString());
 		if (newDomain != _domain) {
-			if (newDomain.isEmpty() || ConfMan.hasGameDomain(newDomain)) {
+			if (newDomain.empty() || ConfMan.hasGameDomain(newDomain)) {
 				MessageDialog alert("This game ID is already taken. Please choose another one.");
 				alert.runModal();
 				return;
@@ -495,7 +495,7 @@ LauncherDialog::LauncherDialog(GameDetector &detector)
 }
 
 void LauncherDialog::selectGame(const String &name) {
-	if (!name.isEmpty()) {
+	if (!name.empty()) {
 		int itemToSelect = 0;
 		StringList::const_iterator iter;
 		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
@@ -534,15 +534,15 @@ void LauncherDialog::updateListing() {
 		String gameid(iter->_value.get("gameid"));
 		String description(iter->_value.get("description"));
 
-		if (gameid.isEmpty())
+		if (gameid.empty())
 			gameid = iter->_key;
-		if (description.isEmpty()) {
+		if (description.empty()) {
 			GameDescriptor g = GameDetector::findGame(gameid);
-			if (!g.description.isEmpty())
+			if (!g.description.empty())
 				description = g.description;
 		}
 
-		if (!gameid.isEmpty() && !description.isEmpty()) {
+		if (!gameid.empty() && !description.empty()) {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
@@ -582,7 +582,7 @@ void LauncherDialog::addGame() {
 		DetectedGameList candidates(PluginManager::instance().detectGames(files));
 
 		int idx;
-		if (candidates.isEmpty()) {
+		if (candidates.empty()) {
 			// No game was found in the specified directory
 			MessageDialog alert("ScummVM could not find any game in the specified directory!");
 			alert.runModal();
@@ -675,7 +675,7 @@ void LauncherDialog::editGame(int item) {
 	// music support etc.
 	assert(item >= 0);
 	String gameId(ConfMan.get("gameid", _domains[item]));
-	if (gameId.isEmpty())
+	if (gameId.empty())
 		gameId = _domains[item];
 	EditGameDialog editDialog(_domains[item], GameDetector::findGame(gameId).description);
 	if (editDialog.runModal() > 0) {

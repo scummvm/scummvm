@@ -6,12 +6,12 @@
 class StringTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_isEmpty_clear( void )
+	void test_empty_clear( void )
 	{
 		Common::String str("test");
-		TS_ASSERT( !str.isEmpty() );
+		TS_ASSERT( !str.empty() );
 		str.clear();
-		TS_ASSERT( str.isEmpty() );
+		TS_ASSERT( str.empty() );
 	}
 
 	void test_lastChar( void )

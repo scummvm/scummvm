@@ -257,7 +257,7 @@ void listTargets() {
 		String name(iter->_key);
 		String description(iter->_value.get("description"));
 
-		if (description.isEmpty()) {
+		if (description.empty()) {
 			// FIXME: At this point, we should check for a "gameid" override
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
@@ -634,7 +634,7 @@ void GameDetector::setTarget(const String &target) {
 }
 
 bool GameDetector::detectMain() {
-	if (_targetName.isEmpty()) {
+	if (_targetName.empty()) {
 		warning("No game was specified...");
 		return false;
 	}
@@ -656,7 +656,7 @@ bool GameDetector::detectMain() {
 	printf("Trying to start game '%s'\n", game.description.c_str());
 
 	String gameDataPath(ConfMan.get("path"));
-	if (gameDataPath.isEmpty()) {
+	if (gameDataPath.empty()) {
 		warning("No path was provided. Assuming the data files are in the current directory");
 		gameDataPath = "./";
 	} else if (gameDataPath.lastChar() != '/'

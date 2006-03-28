@@ -150,7 +150,7 @@ public:
 		_root = 0;
 	}
 
-	bool isEmpty() const {
+	bool empty() const {
 		return (_root == 0);
 	}
 

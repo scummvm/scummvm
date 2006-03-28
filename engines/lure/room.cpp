@@ -206,7 +206,7 @@ uint8 Room::checkRoomExits() {
 	Resources &res = Resources::getReference();
 
 	RoomExitHotspotList &exits = _roomData->exitHotspots;
-	if (exits.isEmpty()) return CURSOR_ARROW;
+	if (exits.empty()) return CURSOR_ARROW;
 	RoomExitJoinData *join;
 	bool skipFlag;
 

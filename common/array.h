@@ -130,7 +130,7 @@ public:
 		_capacity = 0;
 	}
 
-	bool isEmpty() const {
+	bool empty() const {
 		return (_size == 0);
 	}
 

@@ -1599,7 +1599,7 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 		}
 	}
 
-	if (!filesMD5.isEmpty() && (matchedCount == 0)) {
+	if (!filesMD5.empty() && (matchedCount == 0)) {
 		printf("MD5s of your game version are unknown. Please, report following data to\n");
 		printf("ScummVM team along with your game name and version:\n");
 

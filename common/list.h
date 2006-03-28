@@ -230,7 +230,7 @@ public:
 		erase(begin(), end());
 	}
 	
-	bool isEmpty() const { 
+	bool empty() const { 
 		return (_anchor == _anchor->_next);
 	}
 

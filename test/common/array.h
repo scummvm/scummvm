@@ -6,15 +6,15 @@
 class ArrayTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_isEmpty_clear( void )
+	void test_empty_clear( void )
 	{
 		Common::Array<int> array;
-		TS_ASSERT( array.isEmpty() );
+		TS_ASSERT( array.empty() );
 		array.push_back(17);
 		array.push_back(33);
-		TS_ASSERT( !array.isEmpty() );
+		TS_ASSERT( !array.empty() );
 		array.clear();
-		TS_ASSERT( array.isEmpty() );
+		TS_ASSERT( array.empty() );
 	}
 
 	void test_iterator( void )

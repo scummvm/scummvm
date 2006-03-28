@@ -836,7 +836,7 @@ void Display::setTextCentered(uint16 y, const char *text, bool outlined) {
 void Display::drawTexts() {
 	for (int y = GAME_SCREEN_HEIGHT - 1; y > 0; --y) {
 		const TextSlot *pts = &_texts[y];
-		if (!pts->text.isEmpty()) {
+		if (!pts->text.empty()) {
 			drawText(pts->x, y, pts->color, pts->text.c_str(), pts->outlined);
 		}
 	}

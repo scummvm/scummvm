@@ -352,7 +352,7 @@ void PopUpWidget::init() {
 
 	_selectedItem = -1;
 
-	if (!_label.isEmpty() && _labelWidth == 0)
+	if (!_label.empty() && _labelWidth == 0)
 		_labelWidth = g_gui.getStringWidth(_label);
 }
 

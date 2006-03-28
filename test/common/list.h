@@ -6,15 +6,15 @@
 class ListTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_isEmpty_clear( void )
+	void test_empty_clear( void )
 	{
 		Common::List<int> list;
-		TS_ASSERT( list.isEmpty() );
+		TS_ASSERT( list.empty() );
 		list.push_back(17);
 		list.push_back(33);
-		TS_ASSERT( !list.isEmpty() );
+		TS_ASSERT( !list.empty() );
 		list.clear();
-		TS_ASSERT( list.isEmpty() );
+		TS_ASSERT( list.empty() );
 	}
 
 	void test_iterator( void )

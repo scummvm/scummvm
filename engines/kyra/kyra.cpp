@@ -188,7 +188,7 @@ DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 				detectedGames.push_back(dg);
 			}
 		}
-		if (detectedGames.isEmpty()) {
+		if (detectedGames.empty()) {
 			printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 			const PlainGameDescriptor *g1 = kyra_list;

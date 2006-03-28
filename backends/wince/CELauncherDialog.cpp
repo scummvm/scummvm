@@ -87,7 +87,7 @@ void CELauncherDialog::addCandidate(String &path, DetectedGameList &candidates) 
 	int idx = -1;
 	DetectedGame result;
 
-	if (candidates.isEmpty())
+	if (candidates.empty())
 		return;
 
 	if (candidates.size() == 1)

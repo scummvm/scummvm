@@ -137,7 +137,7 @@ DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 				detectedGames.push_back(dg);
 			}
 		}
-		if (detectedGames.isEmpty()) {
+		if (detectedGames.empty()) {
 			debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5str);
 
 			const PlainGameDescriptor *g1 = lure_list;

@@ -71,7 +71,7 @@ public:
 	const char *c_str() const		{ return _str ? _str : ""; }
 	uint size() const				{ return _len; }
 
-	bool isEmpty() const	{ return (_len == 0); }
+	bool empty() const	{ return (_len == 0); }
 	char lastChar() const	{ return (_len > 0) ? _str[_len-1] : 0; }
 
 	char operator [](int idx) const {

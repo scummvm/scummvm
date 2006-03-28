@@ -6,15 +6,15 @@
 class MapTestSuite : public CxxTest::TestSuite
 {
 	public:
-	void test_isEmpty_clear( void )
+	void test_empty_clear( void )
 	{
 		Common::Map<int, int> map;
-		TS_ASSERT( map.isEmpty() );
+		TS_ASSERT( map.empty() );
 		map[0] = 17;
 		map[1] = 33;
-		TS_ASSERT( !map.isEmpty() );
+		TS_ASSERT( !map.empty() );
 		map.clear();
-		TS_ASSERT( map.isEmpty() );
+		TS_ASSERT( map.empty() );
 	}
 	void test_contains( void )
 	{

@@ -514,7 +514,7 @@ void GlobalOptionsDialog::open() {
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 	Common::String soundFont(ConfMan.get("soundfont", _domain));
 
-	if (!dir.isEmpty()) {
+	if (!dir.empty()) {
 		_savePath->setLabel(dir);
 	} else {
 		// Default to the current directory...
@@ -523,13 +523,13 @@ void GlobalOptionsDialog::open() {
 		_savePath->setLabel(buf);
 	}
 
-	if (extraPath.isEmpty() || !ConfMan.hasKey("extrapath", _domain)) {
+	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
 		_extraPath->setLabel("None");
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
 
-	if (soundFont.isEmpty() || !ConfMan.hasKey("soundfont", _domain)) {
+	if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
 		_soundFont->setLabel("None");
 	} else {
 		_soundFont->setLabel(soundFont);
@@ -543,11 +543,11 @@ void GlobalOptionsDialog::close() {
 		ConfMan.set("savepath", _savePath->getLabel(), _domain);
 
 		String extraPath = _extraPath->getLabel();
-		if (!extraPath.isEmpty() && (extraPath != "None"))
+		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
 
 		String soundFont = _soundFont->getLabel();
-		if (!soundFont.isEmpty() && (soundFont != "None"))
+		if (!soundFont.empty() && (soundFont != "None"))
 			ConfMan.set("soundfont", soundFont, _domain);
 	}
 	OptionsDialog::close();

@@ -190,7 +190,7 @@ void Script::abortAllThreads(void) {
 void Script::completeThread(void) {
 	int limit = (_vm->getGameType() == GType_IHNM) ? 100 : 40;
 
-	for (int i = 0; i < limit && !_threadList.isEmpty(); i++)
+	for (int i = 0; i < limit && !_threadList.empty(); i++)
 		executeThreads(0);
 }
 

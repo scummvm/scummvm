@@ -189,7 +189,7 @@ MovementData::MovementData(MovementResource *rec) {
 
 bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange, 
 							   int16 &yChange, uint16 &nextFrame) {
-	if (isEmpty()) return false;
+	if (empty()) return false;
 	bool foundFlag = false;
 	iterator i;
 

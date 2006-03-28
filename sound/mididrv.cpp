@@ -112,7 +112,7 @@ const MidiDriverDescription *MidiDriver::getAvailableMidiDrivers() {
 }
 
 const MidiDriverDescription &MidiDriver::findMusicDriver(const Common::String &str) {
-	if (str.isEmpty())
+	if (str.empty())
 		return s_musicDrivers[0];
 
 	const char *s = str.c_str();

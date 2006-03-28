@@ -1450,7 +1450,7 @@ int detectGame(const FSList &fslist, bool mode, int start) {
 		}
 	}
 
-	if (!filesMD5.isEmpty() && start == -1) {
+	if (!filesMD5.empty() && start == -1) {
 		printf("MD5s of your game version are unknown. Please, report following data to\n");
 		printf("ScummVM team along with your game name and version:\n");
 

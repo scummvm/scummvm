@@ -297,11 +297,11 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	Common::String caption(ConfMan.get("description", detector._targetName));
 
 	Common::String desc = GameDetector::findGame(detector._gameid).description;
-	if (caption.isEmpty() && !desc.isEmpty())
+	if (caption.empty() && !desc.empty())
 		caption = desc;
-	if (caption.isEmpty())
+	if (caption.empty())
 		caption = detector._targetName;
-	if (!caption.isEmpty())	{
+	if (!caption.empty())	{
 		system.setWindowCaption(caption.c_str());
 	}
 
@@ -494,7 +494,7 @@ extern "C" int main(int argc, char *argv[]) {
 	system.setWindowCaption(gScummVMFullVersion);
 
 	// Unless a game was specified, show the launcher dialog
-	if (detector._targetName.isEmpty())
+	if (detector._targetName.empty())
 		running = launcherDialog(detector, system);
 	else
 		// Setup a dummy palette, for the mouse cursor, in case an error

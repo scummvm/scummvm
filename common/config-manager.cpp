@@ -198,7 +198,7 @@ void ConfigManager::loadFile(const String &filename) {
 					continue;
 
 				// If no domain has been set, this config file is invalid!
-				if (domain.isEmpty()) {
+				if (domain.empty()) {
 					error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
 				}
 
@@ -265,14 +265,14 @@ void ConfigManager::flushToDisk() {
 }
 
 void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &domain) {
-	if (domain.isEmpty())
+	if (domain.empty())
 		return;		// Don't bother writing empty domains.
 
 	String comment;
 
 	// Write domain comment (if any)
 	comment = domain.getDomainComment();
-	if (!comment.isEmpty())
+	if (!comment.empty())
 		fprintf(file, "%s", comment.c_str());
 
 	// Write domain start
@@ -282,7 +282,7 @@ void ConfigManager::writeDomain(FILE *file, const String &name, const Domain &do
 	Domain::const_iterator x;
 	for (x = domain.begin(); x != domain.end(); ++x) {
 		const String &value = x->_value;
-		if (!value.isEmpty()) {
+		if (!value.empty()) {
 			// Write comment (if any)
 			if (domain.hasKVComment(x->_key)) {
 				comment = domain.getKVComment(x->_key);
@@ -308,7 +308,7 @@ bool ConfigManager::hasKey(const String &key) const {
 	if (_transientDomain.contains(key))
 		return true;
 
-	if (!_activeDomain.isEmpty() && _gameDomains[_activeDomain].contains(key))
+	if (!_activeDomain.empty() && _gameDomains[_activeDomain].contains(key))
 		return true;
 
 	DomainMap::const_iterator iter;
@@ -321,7 +321,7 @@ bool ConfigManager::hasKey(const String &key) const {
 }
 
 bool ConfigManager::hasKey(const String &key, const String &dom) const {
-	assert(!dom.isEmpty());
+	assert(!dom.empty());
 	assert(isValidDomainName(dom));
 
 	if (dom == kTransientDomain)
@@ -335,7 +335,7 @@ bool ConfigManager::hasKey(const String &key, const String &dom) const {
 }
 
 void ConfigManager::removeKey(const String &key, const String &dom) {
-	assert(!dom.isEmpty());
+	assert(!dom.empty());
 	assert(isValidDomainName(dom));
 
 	if (dom == kTransientDomain)
@@ -361,12 +361,12 @@ const String & ConfigManager::get(const String &key, const String &domain) const
 	// 3) All global domains
 	// 4) The defaults
 
-	if ((domain.isEmpty() || domain == kTransientDomain) && _transientDomain.contains(key))
+	if ((domain.empty() || domain == kTransientDomain) && _transientDomain.contains(key))
 		return _transientDomain[key];
 
-	const String &dom = domain.isEmpty() ? _activeDomain : domain;
+	const String &dom = domain.empty() ? _activeDomain : domain;
 
-	if (!dom.isEmpty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
+	if (!dom.empty() && _gameDomains.contains(dom) && _gameDomains[dom].contains(key))
 		return _gameDomains[dom][key];
 
 	DomainMap::const_iterator iter;
@@ -385,7 +385,7 @@ int ConfigManager::getInt(const String &key, const String &dom) const {
 	// For now, be tolerant against missing config keys. Strictly spoken, it is
 	// a bug in the calling code to retrieve an int for a key which isn't even
 	// present... and a default value of 0 seems rather arbitrary.
-	if (value.isEmpty())
+	if (value.empty())
 		return 0;
 
 	int ivalue = (int)strtol(value.c_str(), &errpos, 10);
@@ -412,11 +412,11 @@ bool ConfigManager::getBool(const String &key, const String &dom) const {
 
 void ConfigManager::set(const String &key, const String &value, const String &dom) {
 	assert(isValidDomainName(dom));
-	if (dom.isEmpty()) {
+	if (dom.empty()) {
 		// Remove the transient domain value
 		_transientDomain.remove(key);
 
-		if (_activeDomain.isEmpty())
+		if (_activeDomain.empty())
 			_globalDomains[kApplicationDomain][key] = value;
 		else
 			_gameDomains[_activeDomain][key] = value;
@@ -428,7 +428,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 		else {
 			if (_globalDomains.contains(dom)) {
 				_globalDomains[dom][key] = value;
-				if (_activeDomain.isEmpty() || !_gameDomains[_activeDomain].contains(key))
+				if (_activeDomain.empty() || !_gameDomains[_activeDomain].contains(key))
 					_transientDomain.remove(key);
 			} else {
 				_gameDomains[dom][key] = value;
@@ -480,14 +480,14 @@ void ConfigManager::registerDefault(const String &key, bool value) {
 
 
 void ConfigManager::setActiveDomain(const String &domain) {
-	assert(!domain.isEmpty());
+	assert(!domain.empty());
 	assert(isValidDomainName(domain));
 	_activeDomain = domain;
 	_gameDomains.addKey(domain);
 }
 
 void ConfigManager::removeGameDomain(const String &domain) {
-	assert(!domain.isEmpty());
+	assert(!domain.empty());
 	assert(isValidDomainName(domain));
 	_gameDomains.remove(domain);
 }
@@ -496,8 +496,8 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 	if (oldName == newName)
 		return;
 
-	assert(!oldName.isEmpty());
-	assert(!newName.isEmpty());
+	assert(!oldName.empty());
+	assert(!newName.empty());
 	assert(isValidDomainName(oldName));
 	assert(isValidDomainName(newName));
 
@@ -507,7 +507,7 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 }
 
 bool ConfigManager::hasGameDomain(const String &domain) const {
-	assert(!domain.isEmpty());
+	assert(!domain.empty());
 	return isValidDomainName(domain) && _gameDomains.contains(domain);
 }
 

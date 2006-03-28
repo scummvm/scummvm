@@ -303,7 +303,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
-			if (_saveMode || !getResultString().isEmpty()) {
+			if (_saveMode || !getResultString().empty()) {
 				setResult(selItem);
 				close();
 			}
@@ -316,7 +316,7 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		// Disable button if nothing is selected, or (in load mode) if an empty
 		// list item is selected. We allow choosing an empty item in save mode
 		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().isEmpty()));
+		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().empty()));
 		_chooseButton->draw();
 		break;
 	default:
@@ -434,7 +434,7 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	case GUI::kListItemActivatedCmd:
 	case GUI::kListItemDoubleClickedCmd:
 		if (selItem >= 0) {
-			if (_saveMode || !getResultString().isEmpty()) {
+			if (_saveMode || !getResultString().empty()) {
 				_list->endEditMode();
 				setResult(selItem);
 				close();
@@ -498,7 +498,7 @@ void SaveLoadChooserEx::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		// Disable button if nothing is selected, or (in load mode) if an empty
 		// list item is selected. We allow choosing an empty item in save mode
 		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().isEmpty()));
+		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().empty()));
 		_chooseButton->draw();
 	} break;
 	case kCloseCmd:
@@ -608,10 +608,10 @@ void MainMenuDialog::save() {
 	_saveDialog->setList(generateSavegameList(_vm, true));
 	idx = _saveDialog->runModal();
 	if (idx >= 0) {
-		const String &result = _saveDialog->getResultString();
+		String result(_saveDialog->getResultString());
 		char buffer[20];
 		const char *str;
-		if (result.isEmpty()) {
+		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
 			sprintf(buffer, "Save %d", idx + 1);
 			str = buffer;
