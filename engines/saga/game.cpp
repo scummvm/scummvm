@@ -1503,8 +1503,6 @@ DetectedGame GameDescription::toDetectedGame() {
 	dg.updateDesc(extra);
 	return dg;
 }
-	Common::Language language = Common::UNK_LANG;
-	Common::Platform platform = Common::kPlatformUnknown;
 
 static int detectGame(const FSList *fslist, Common::Language language, Common::Platform platform, int*& returnMatches) {
 	int gamesCount = ARRAYSIZE(gameDescriptions);
