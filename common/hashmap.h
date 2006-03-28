@@ -110,7 +110,7 @@ private:
 #endif
 
 	int lookup(const Key &key) const;
-	void expand_array(void);
+	void expand_array(uint newsize);
 
 public:
 
@@ -233,13 +233,10 @@ Val *HashMap<Key, Val>::new_all_values(void) const {
 
 template <class Key, class Val>
 HashMap<Key, Val>::HashMap() {
-	uint ctr;
-
 	_arrsize = nextTableSize(0);
 	_arr = new aa_ref_t *[_arrsize];
 	assert(_arr != NULL);
-	for (ctr = 0; ctr < _arrsize; ctr++)
-		_arr[ctr] = NULL;
+	memset(_arr, 0, _arrsize * sizeof(aa_ref_t *));
 
 	_nele = 0;
 	
@@ -275,15 +272,15 @@ void HashMap<Key, Val>::clear(bool shrinkArray) {
 		_arrsize = nextTableSize(0);
 		_arr = new aa_ref_t *[_arrsize];
 		assert(_arr != NULL);
-		for (uint ctr = 0; ctr < _arrsize; ctr++)
-			_arr[ctr] = NULL;
+		memset(_arr, 0, _arrsize * sizeof(aa_ref_t *));
 	}
 
 	_nele = 0;
 }
 
 template <class Key, class Val>
-void HashMap<Key, Val>::expand_array(void) {
+void HashMap<Key, Val>::expand_array(uint newsize) {
+	assert(newsize > _arrsize);
 	aa_ref_t **old_arr;
 	uint old_arrsize, old_nele, ctr, dex;
 
@@ -292,13 +289,10 @@ void HashMap<Key, Val>::expand_array(void) {
 	old_arrsize = _arrsize;
 
 	// allocate a new array 
-	_arrsize = nextTableSize(old_arrsize);
+	_arrsize = newsize;
 	_arr = new aa_ref_t *[_arrsize];
-
 	assert(_arr != NULL);
-
-	for (ctr = 0; ctr < _arrsize; ctr++)
-		_arr[ctr] = NULL;
+	memset(_arr, 0, _arrsize * sizeof(aa_ref_t *));
 
 	_nele = 0;
 
@@ -319,6 +313,7 @@ void HashMap<Key, Val>::expand_array(void) {
 		_nele++;
 	}
 
+	// Perform a sanity check: Old number of elements should match the new one!
 	assert(_nele == old_nele);
 
 	delete[] old_arr;
@@ -334,9 +329,9 @@ Val &HashMap<Key, Val>::operator [](const Key &key) {
 		_arr[ctr] = new aa_ref_t(key);
 		_nele++;
 
-		// Only fill array to fifty percent
-		if (_nele > _arrsize / 2) {
-			expand_array();
+		// Keep the load factor below 75%.
+		if (_nele > _arrsize * 65 / 100) {
+			expand_array(nextTableSize(_arrsize));
 			ctr = lookup(key);
 		}
 	}
