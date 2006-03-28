@@ -312,7 +312,7 @@ Val &HashMap<Key, Val>::operator [](const Key &key) {
 		_nele++;
 
 		// Keep the load factor below 75%.
-		if (_nele > _arrsize * 65 / 100) {
+		if (_nele > _arrsize * 75 / 100) {
 			expand_array(nextTableSize(_arrsize));
 			ctr = lookup(key);
 		}
