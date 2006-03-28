@@ -339,11 +339,11 @@ void ConfigManager::removeKey(const String &key, const String &dom) {
 	assert(isValidDomainName(dom));
 
 	if (dom == kTransientDomain)
-		_transientDomain.remove(key);
+		_transientDomain.erase(key);
 	else if (_gameDomains.contains(dom))
-		_gameDomains[dom].remove(key);
+		_gameDomains[dom].erase(key);
 	else if (_globalDomains.contains(dom))
-		_globalDomains[dom].remove(key);
+		_globalDomains[dom].erase(key);
 	else
 		error("Removing key '%s' from non-existent domain '%s'", key.c_str(), dom.c_str());
 }
@@ -414,7 +414,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	assert(isValidDomainName(dom));
 	if (dom.empty()) {
 		// Remove the transient domain value
-		_transientDomain.remove(key);
+		_transientDomain.erase(key);
 
 		if (_activeDomain.empty())
 			_globalDomains[kApplicationDomain][key] = value;
@@ -429,11 +429,11 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 			if (_globalDomains.contains(dom)) {
 				_globalDomains[dom][key] = value;
 				if (_activeDomain.empty() || !_gameDomains[_activeDomain].contains(key))
-					_transientDomain.remove(key);
+					_transientDomain.erase(key);
 			} else {
 				_gameDomains[dom][key] = value;
 				if (dom == _activeDomain)
-					_transientDomain.remove(key);
+					_transientDomain.erase(key);
 			}
 		}
 	}
@@ -489,7 +489,7 @@ void ConfigManager::setActiveDomain(const String &domain) {
 void ConfigManager::removeGameDomain(const String &domain) {
 	assert(!domain.empty());
 	assert(isValidDomainName(domain));
-	_gameDomains.remove(domain);
+	_gameDomains.erase(domain);
 }
 
 void ConfigManager::renameGameDomain(const String &oldName, const String &newName) {
@@ -503,7 +503,7 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 
 	_gameDomains[newName].merge(_gameDomains[oldName]);
 
-	_gameDomains.remove(oldName);
+	_gameDomains.erase(oldName);
 }
 
 bool ConfigManager::hasGameDomain(const String &domain) const {
@@ -516,11 +516,14 @@ bool ConfigManager::hasGameDomain(const String &domain) const {
 
 
 const String &ConfigManager::Domain::get(const String &key) const {
-	Node *node = findNode(_root, key);
+	const_iterator iter(find(key));
+	if (iter != end())
+		return iter->_value;
+
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	return node ? node->_value : String::emptyString;
+	return String::emptyString;
 #else
-	return node ? node->_value : ConfMan._emptyString;
+	return ConfMan._emptyString;
 #endif
 }
 

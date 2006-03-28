@@ -166,13 +166,13 @@ public:
 		return node->_value;
 	}
 
-	void remove(const Key &key) {
+	size_t erase(const Key &key) {
 		// TODO - implement efficiently. Indeed, maybe switch to using red-black trees?
 		// For now, just a lame, bad remove algorithm. Rule: don't remove elements
 		// from one of our maps if you need to be efficient :-)
 		Node *node = findNode(_root, key);
 		if (!node)
-			return;
+			return 0; // key wasn't present, so no work has to be done
 
 		// Now we have to remove 'node'. There are two simple cases and one hard.
 		Node *parent = node->_parent;
@@ -206,8 +206,10 @@ public:
 
 		// Finally free the allocated memory
 		delete node;
-	}
 
+		return 1;
+	}
+	
 	void merge(const Map<Key, Value, Comparator> &map) {
 		merge(map._root);
 	}
@@ -224,6 +226,14 @@ public:
 	const_iterator	end() const {
 		return const_iterator();
 	}
+
+	const_iterator	find(const Key &key) const {
+		Node *node = findNode(_root, key);
+		if (node)
+			return const_iterator(node);
+		return end();
+	}
+	
 
 protected:
 	/** Merge the content of the given tree into this tree. */
