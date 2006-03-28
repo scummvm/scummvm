@@ -114,6 +114,36 @@ private:
 	void expand_array(uint newsize);
 
 public:
+	class const_iterator {
+		typedef const HashMap<Key, Val> * hashmap_t;
+		friend class HashMap<Key, Val>;
+	protected:
+		hashmap_t _hashmap;
+		uint _idx;
+		const_iterator(uint idx, hashmap_t hashmap) : _idx(idx), _hashmap(hashmap) {}
+
+		const BaseNode *deref() const {
+			assert(_hashmap != 0);
+			BaseNode *node(_hashmap->_arr[_idx]);
+			assert(node != 0);
+			return node;
+		}
+
+	public:
+		const_iterator() : _idx(0), _hashmap(0) {}
+
+		const BaseNode &operator *() const { return *deref(); }
+		const BaseNode *operator->() const { return deref(); }
+		bool operator !=(const const_iterator &iter) const { return _idx != iter._idx || _hashmap != iter._hashmap; }
+		void operator ++() {
+			assert(_hashmap);
+			do {
+				_idx++;
+			} while (_idx < _hashmap->_arrsize && _hashmap->_arr[_idx] == 0);
+			if (_idx >= _hashmap->_arrsize)
+				_idx = (uint)-1;
+		}
+	};
 
 	HashMap();
 	~HashMap();
@@ -126,18 +156,25 @@ public:
 
 	void clear(bool shrinkArray = 0);
 
-	// The following two methods are used to return a list of
-	// all the keys / all the values (or rather, duplicates of them).
-	// Currently they aren't used, and I think a better appraoch
-	// is to add iterators, which allow the same in a more C++-style
-	// fashion, do not require making duplicates, and finally
-	// even allow in-place modifications of
-	//const_iterator	begin() const
-	//const_iterator	end() const
-	
-	// TODO: There is no "remove" method yet.
-	//void remove(const Key &key);
+	size_t erase(const Key &key);
 
+	const_iterator	begin() const {
+		// TODO/FIXME: Fix this, entry 0 is not necessarily != NULL
+		return const_iterator(0, this);
+	}
+	const_iterator	end() const {
+		return const_iterator((uint)-1, this);
+	}
+	
+	const_iterator	find(const String &key) const {
+		uint ctr = lookup(key);
+		if (_arr[ctr])
+			return const_iterator(ctr, this);
+		return end();
+	}
+	
+	
+	// TODO: insert() method?
 
 	bool empty() const {
 		return (_nele == 0);
@@ -294,6 +331,28 @@ const Val &HashMap<Key, Val>::queryVal(const Key &key) const {
 	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->_value;
+}
+
+template <class Key, class Val>
+size_t HashMap<Key, Val>::erase(const Key &key) {
+	// This is based on code in the Wikipedia article on Hash tables.
+	uint i = lookup(key);
+	if (_arr[i] == NULL)
+		return 0; // key wasn't present, so no work has to be done
+	uint j = i;
+	while (true) {
+		j = (j + 1) % _arrsize;
+		if (_arr[j] == NULL)
+			break;
+		uint k = hashit(_arr[j]->_key, _arrsize);
+		if ((j > i && (k <= i || k > j)) ||
+		    (j < i && (k <= i && k > j)) ) {
+			_arr[i] = _arr[j];
+			i = j;
+		}
+	}
+	_arr[i] = NULL;
+	return 1;
 }
 
 }	// End of namespace Common
