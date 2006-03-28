@@ -96,13 +96,14 @@ class HashMap {
 private:
 	// data structure used by HashMap internally to keep
 	// track of what's mapped to what.
-	struct aa_ref_t {
-		Key key;
-		Val dat;
-		aa_ref_t(const Key& k) : key(k) {}
+	struct BaseNode {
+		Key _key;
+		Val _value;
+		BaseNode() {}
+		BaseNode(const Key &key) : _key(key) {}
 	};
 	
-	aa_ref_t **_arr;	// hashtable of size arrsize.
+	BaseNode **_arr;	// hashtable of size arrsize.
 	uint _arrsize, _nele;
 	
 #ifdef DEBUG_HASH_COLLISIONS
@@ -131,8 +132,6 @@ public:
 	// is to add iterators, which allow the same in a more C++-style
 	// fashion, do not require making duplicates, and finally
 	// even allow in-place modifications of
-	Key *new_all_keys(void) const;
-	Val *new_all_values(void) const;
 	//const_iterator	begin() const
 	//const_iterator	end() const
 	
@@ -149,94 +148,11 @@ public:
 // HashMap functions
 
 template <class Key, class Val>
-int HashMap<Key, Val>::lookup(const Key &key) const {
-	uint ctr = hashit(key, _arrsize);
-
-	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->key, key)) {
-		ctr++;
-#ifdef DEBUG_HASH_COLLISIONS
-		_collisions++;
-#endif
-
-		if (ctr == _arrsize)
-			ctr = 0;
-	}
-	
-#ifdef DEBUG_HASH_COLLISIONS
-	_lookups++;
-	fprintf(stderr, "collisions %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",
-		_collisions, _lookups, ((double) _collisions / (double)_lookups),
-		(const void *)this, _arrsize, _nele);
-#endif
-
-	return ctr;
-}
-
-template <class Key, class Val>
-bool HashMap<Key, Val>::contains(const Key &key) const {
-	uint ctr = lookup(key);
-	return (_arr[ctr] != NULL);
-}
-
-template <class Key, class Val>
-Key *HashMap<Key, Val>::new_all_keys(void) const {
-	Key *all_keys;
-	uint ctr, dex;
-
-	if (_nele == 0)
-		return NULL;
-
-	all_keys = new Key[_nele];
-
-	assert(all_keys != NULL);
-
-	dex = 0;
-	for (ctr = 0; ctr < _arrsize; ctr++) {
-		if (_arr[ctr] == NULL)
-			continue;
-		all_keys[dex++] = _arr[ctr]->key;
-
-		assert(dex <= _nele);
-	}
-
-	assert(dex == _nele);
-
-	return all_keys;
-}
-
-template <class Key, class Val>
-Val *HashMap<Key, Val>::new_all_values(void) const {
-	Val *all_values;
-	uint ctr, dex;
-
-	if (_nele == 0)
-		return NULL;
-
-	all_values = new Val[_nele];
-
-	assert(all_values != NULL);
-
-	dex = 0;
-	for (ctr = 0; ctr < _arrsize; ctr++) {
-		if (_arr[ctr] == NULL)
-			continue;
-
-		all_values[dex++] = _arr[ctr]->dat;
-
-		assert(dex <= _nele);
-	}
-
-	assert(dex == _nele);
-
-	return all_values;
-}
-
-template <class Key, class Val>
 HashMap<Key, Val>::HashMap() {
 	_arrsize = nextTableSize(0);
-	_arr = new aa_ref_t *[_arrsize];
+	_arr = new BaseNode *[_arrsize];
 	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(aa_ref_t *));
+	memset(_arr, 0, _arrsize * sizeof(BaseNode *));
 
 	_nele = 0;
 	
@@ -270,9 +186,9 @@ void HashMap<Key, Val>::clear(bool shrinkArray) {
 		delete[] _arr;
 
 		_arrsize = nextTableSize(0);
-		_arr = new aa_ref_t *[_arrsize];
+		_arr = new BaseNode *[_arrsize];
 		assert(_arr != NULL);
-		memset(_arr, 0, _arrsize * sizeof(aa_ref_t *));
+		memset(_arr, 0, _arrsize * sizeof(BaseNode *));
 	}
 
 	_nele = 0;
@@ -281,7 +197,7 @@ void HashMap<Key, Val>::clear(bool shrinkArray) {
 template <class Key, class Val>
 void HashMap<Key, Val>::expand_array(uint newsize) {
 	assert(newsize > _arrsize);
-	aa_ref_t **old_arr;
+	BaseNode **old_arr;
 	uint old_arrsize, old_nele, ctr, dex;
 
 	old_nele = _nele;
@@ -290,9 +206,9 @@ void HashMap<Key, Val>::expand_array(uint newsize) {
 
 	// allocate a new array 
 	_arrsize = newsize;
-	_arr = new aa_ref_t *[_arrsize];
+	_arr = new BaseNode *[_arrsize];
 	assert(_arr != NULL);
-	memset(_arr, 0, _arrsize * sizeof(aa_ref_t *));
+	memset(_arr, 0, _arrsize * sizeof(BaseNode *));
 
 	_nele = 0;
 
@@ -301,12 +217,13 @@ void HashMap<Key, Val>::expand_array(uint newsize) {
 		if (old_arr[ctr] == NULL)
 			continue;
 
-//      (*this)[old_arr[ctr]->key] = old_arr[ctr]->dat;
-		dex = hashit(old_arr[ctr]->key, _arrsize);
-
+		// Insert the element from the old table into the new table.
+		// Since we know that no key exists twice the old table, we
+		// can do this slightly better than by calling lookup, since we
+		// don't have to call data_eq().
+		dex = hashit(old_arr[ctr]->_key, _arrsize);
 		while (_arr[dex] != NULL) {
-			if (++dex == _arrsize)
-				dex = 0;
+			dex = (dex + 1) % _arrsize;
 		}
 
 		_arr[dex] = old_arr[ctr];
@@ -322,11 +239,39 @@ void HashMap<Key, Val>::expand_array(uint newsize) {
 }
 
 template <class Key, class Val>
+int HashMap<Key, Val>::lookup(const Key &key) const {
+	uint ctr = hashit(key, _arrsize);
+
+	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->_key, key)) {
+		ctr = (ctr + 1) % _arrsize;
+
+#ifdef DEBUG_HASH_COLLISIONS
+		_collisions++;
+#endif
+	}
+	
+#ifdef DEBUG_HASH_COLLISIONS
+	_lookups++;
+	fprintf(stderr, "collisions %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",
+		_collisions, _lookups, ((double) _collisions / (double)_lookups),
+		(const void *)this, _arrsize, _nele);
+#endif
+
+	return ctr;
+}
+
+template <class Key, class Val>
+bool HashMap<Key, Val>::contains(const Key &key) const {
+	uint ctr = lookup(key);
+	return (_arr[ctr] != NULL);
+}
+
+template <class Key, class Val>
 Val &HashMap<Key, Val>::operator [](const Key &key) {
 	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
-		_arr[ctr] = new aa_ref_t(key);
+		_arr[ctr] = new BaseNode(key);
 		_nele++;
 
 		// Keep the load factor below 75%.
@@ -336,7 +281,7 @@ Val &HashMap<Key, Val>::operator [](const Key &key) {
 		}
 	}
 
-	return _arr[ctr]->dat;
+	return _arr[ctr]->_value;
 }
 
 template <class Key, class Val>
@@ -348,7 +293,7 @@ template <class Key, class Val>
 const Val &HashMap<Key, Val>::queryVal(const Key &key) const {
 	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
-	return _arr[ctr]->dat;
+	return _arr[ctr]->_value;
 }
 
 }	// End of namespace Common

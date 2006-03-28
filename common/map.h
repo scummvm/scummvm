@@ -52,13 +52,17 @@ struct DefaultComparator {
 template <class Key, class Value, class Comparator = DefaultComparator<Key> >
 class Map {
 protected:
-	struct Node {
-		Node *_parent;
-		Node *_left, *_right;
+	struct BaseNode {
 		Key _key;
 		Value _value;
+		BaseNode() {}
+		BaseNode(const Key &key) : _key(key) {}
+	};
+	struct Node : BaseNode {
+		Node *_parent;
+		Node *_left, *_right;
 		Node() : _parent(0), _left(0), _right(0) {}
-		Node(const Key &key, Node *parent) : _parent(parent), _left(0), _right(0), _key(key) {}
+		Node(const Key &key, Node *parent) : BaseNode(key), _parent(parent), _left(0), _right(0) {}
 	};
 
 	Node *_root;
@@ -78,9 +82,8 @@ public:
 	public:
 		const_iterator() : _node(0) {}
 
-		Node &operator *() { assert(_node != 0); return *_node; }
-		const Node &operator *() const { assert(_node != 0); return *_node; }
-		const Node *operator->() const { assert(_node != 0); return _node; }
+		const BaseNode &operator *() const { assert(_node != 0); return *_node; }
+		const BaseNode *operator->() const { assert(_node != 0); return _node; }
 		bool operator !=(const const_iterator &iter) const { return _node != iter._node; }
 		void operator ++() {
 			if (!_node)
