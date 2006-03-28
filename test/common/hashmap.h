@@ -1,14 +1,14 @@
 #include <cxxtest/TestSuite.h>
 
 #include "common/stdafx.h"
-#include "common/map.h"
+#include "common/hashmap.h"
 
-class MapTestSuite : public CxxTest::TestSuite
+class HashMapTestSuite : public CxxTest::TestSuite
 {
 	public:
 	void test_empty_clear( void )
 	{
-		Common::Map<int, int> map;
+		Common::HashMap<int, int> map;
 		TS_ASSERT( map.empty() );
 		map[0] = 17;
 		map[1] = 33;
@@ -18,7 +18,7 @@ class MapTestSuite : public CxxTest::TestSuite
 	}
 	void test_contains( void )
 	{
-		Common::Map<int, int> map;
+		Common::HashMap<int, int> map;
 		map[0] = 17;
 		map[1] = 33;
 		TS_ASSERT( map.contains(0) );
@@ -29,7 +29,7 @@ class MapTestSuite : public CxxTest::TestSuite
 
 	void test_add_remove( void )
 	{
-		Common::Map<int, int> map;
+		Common::HashMap<int, int> map;
 		map[0] = 17;
 		map[1] = 33;
 		TS_ASSERT( map.contains(1) );
@@ -37,29 +37,6 @@ class MapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( !map.contains(1) );
 		map[1] = 42;
 		TS_ASSERT( map.contains(1) );
-	}
-
-	void test_merge( void )
-	{
-		Common::Map<int, int> mapA, mapB;
-		mapA[0] = 17;
-		mapA[1] = 33;
-		mapA[2] = 45;
-		mapA[3] = 12;
-
-		mapB[1] = -1;
-		mapB[4] = 96;
-
-		mapA.merge(mapB);
-
-		TS_ASSERT( mapA.contains(1) );
-		TS_ASSERT( mapA.contains(4) );
-
-		TS_ASSERT_EQUALS( mapA[0], 17 );
-		TS_ASSERT_EQUALS( mapA[1], -1 );
-		TS_ASSERT_EQUALS( mapA[2], 45 );
-		TS_ASSERT_EQUALS( mapA[3], 12 );
-		TS_ASSERT_EQUALS( mapA[4], 96 );
 	}
 
 	// TODO: Add test cases for iterators, find, ...
