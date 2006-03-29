@@ -68,23 +68,6 @@ deb:
 	debian/prepare
 	fakeroot debian/rules binary
 
-#######################################################################
-# Unit/regression tests                                               #
-# In order to use 'make test' you have to install cxxtest inside the  #
-# test/cxxtest dir. Get it from http://cxxtest.sourceforge.net.       #
-#######################################################################
-
-CXXTEST := test/cxxtest
-TESTS := test/common/*.h
-CPPFLAGS += -I$(CXXTEST)
-test: runner
-	./runner
-runner: runner.o common/libcommon.a
-	$(CXX) -o $@ $+
-runner.cpp: $(TESTS)
-	$(CXXTEST)/cxxtestgen.py --error-printer -o  $@ $+
-
-
 
 # Special target to create a application wrapper for Mac OS X
 bundle_name = ScummVM.app
@@ -159,4 +142,4 @@ win32dist: scummvm$(EXEEXT)
 	u2d $(WIN32PATH)/*.txt
 
 
-.PHONY: deb bundle test osxsnap win32dist dist install uninstall
+.PHONY: deb bundle osxsnap win32dist dist install uninstall

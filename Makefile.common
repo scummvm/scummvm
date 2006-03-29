@@ -31,7 +31,7 @@ DEPDIR := .deps
 # Module settings
 ######################################################################
 
-MODULES := tools base $(MODULES)
+MODULES := test tools base $(MODULES)
 
 -include $(srcdir)/engines/module.mk
 
