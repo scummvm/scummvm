@@ -173,6 +173,6 @@ namespace CxxTest
             return tracker().failedTests();
         }
     };
-};
+}
 
 #endif //__CXXTEST__GUI_H

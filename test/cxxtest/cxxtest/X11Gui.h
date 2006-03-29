@@ -322,6 +322,6 @@ namespace CxxTest
             XCloseDisplay( _display );
         }
     };
-};
+}
 
 #endif //__cxxtest__X11Gui_h__

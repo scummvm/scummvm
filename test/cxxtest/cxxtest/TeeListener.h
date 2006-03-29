@@ -176,7 +176,6 @@ namespace CxxTest
         TestListener *_first, *_second;
         TestListener _dummy;
     };
-};
-
+}
 
 #endif // __cxxtest__TeeListener_h__

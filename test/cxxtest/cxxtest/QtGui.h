@@ -266,6 +266,6 @@ namespace CxxTest
             _testsDone->setText( summary );
         }
     };
-};
+}
 
 #endif // __cxxtest__QtGui_h__

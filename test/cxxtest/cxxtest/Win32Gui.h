@@ -526,6 +526,6 @@ namespace CxxTest
             HeapFree( GetProcessHeap(), 0, data );
         }
     };
-};
+}
 
 #endif // __cxxtest__Win32Gui_h__
