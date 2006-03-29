@@ -190,8 +190,11 @@ int SimonEngine::runScript() {
 			break;
 
 		case 37:{
+				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
+					goto invalid_opcode;
+
 				getVarOrByte();
-				warning("STUB: script opcode 37");
+				_runScriptReturn1 = 1;
 			}
 			break;
 
