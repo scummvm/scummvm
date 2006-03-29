@@ -40,46 +40,60 @@
 #undef _MSC_VER
 #endif
 
+
+// In the following we configure various targets, in particular those
+// which can't use our "configure" tool and hence don't use config.h.
+//
+// Some #defines that occur here frequently:
+// SCUMM_LITTLE_ENDIAN
+//    - Define this on a little endian target
+// SCUMM_BIG_ENDIAN
+//    - Define this on a big endian target
+// SCUMM_NEED_ALIGNMENT
+//    - Define this if your system has problems reading e.g. an int32 from an odd address
+// SCUMMVM_USE_LONG_INT
+//    - Define this if your port needs to use 'long' for the int32 datatype
+//      (i.e. an integer with exactly 32 bits).
+// SMALL_SCREEN_DEVICE
+//    - ...
+// ...
+
 #if defined(_MSC_VER) && !defined(__SYMBIAN32__)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp _strnicmp
 	#define snprintf _snprintf
 
+	#define SCUMM_LITTLE_ENDIAN
+
+	// FIXME: Do you really need to use 'long' on this port? Please replace
+	// this comment with a new comment that states so, and ideally also
+	// explains the reasons briefly.
+	#define SCUMMVM_USE_LONG_INT
+
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
+
 	#if defined(CHECK_HEAP)
 	#undef CHECK_HEAP
 	#define CHECK_HEAP checkHeap();
 	#endif
 
-	#define SCUMM_LITTLE_ENDIAN
-
 	#define FORCEINLINE __forceinline
 	#define NORETURN _declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
-
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
-	
-	typedef int8 int8_t;
-	typedef int16 int16_t;
-	typedef int32 int32_t;
-	typedef uint8 uint8_t;
-	typedef uint16 uint16_t;
-	typedef uint32 uint32_t;
-
-	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS   pack(pop)
 
 	#if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define CDECL __cdecl
 	#define SMALL_SCREEN_DEVICE
 	#endif
+
+	typedef signed char int8_t;
+	typedef signed short int16_t;
+	typedef signed long int32_t;
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+	typedef unsigned long uint32_t;
 
 #elif defined(__MINGW32__)
 
@@ -88,23 +102,14 @@
 
 	#define SCUMM_LITTLE_ENDIAN
 
-	#ifndef _HEAPOK
-	#define _HEAPOK	(-2)
-	#endif
-
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned int uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed int int32;
-
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
 	#define PLUGIN_EXPORT __declspec(dllexport)
+
+	#ifndef _HEAPOK
+	#define _HEAPOK	(-2)
+	#endif
 
 #elif defined(UNIX)
 
@@ -134,17 +139,6 @@
 	// You need to set this manually if necessary
 //	#define SCUMM_NEED_ALIGNMENT
 
-	#ifndef HAVE_CONFIG_H
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned int uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed int int32;
-	#endif
-
 	#if defined(__DECCXX) // Assume alpha architecture
 	#define INVERSE_MKID
 	#define SCUMM_NEED_ALIGNMENT
@@ -157,12 +151,6 @@
 
 #elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
 
-	#include "palmversion.h"
-	#include "globals.h"
-	#include "extend.h"
-	
-	#define STRINGBUFLEN 256
-
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 
@@ -174,17 +162,19 @@
 
 	#define SCUMM_NEED_ALIGNMENT
 
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
-	
+	// FIXME: Do you really need to use 'long' on this port? Please replace
+	// this comment with a new comment that states so, and ideally also
+	// explains the reasons briefly.
+	#define SCUMMVM_USE_LONG_INT
+
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
+
+	#include "palmversion.h"
+	#include "globals.h"
+	#include "extend.h"
+	
+	#define STRINGBUFLEN 256
 
 	#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
 	#define NEWGUI_256
@@ -200,19 +190,16 @@
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
+	// FIXME: Do you really need to use 'long' on this port? Please replace
+	// this comment with a new comment that states so, and ideally also
+	// explains the reasons briefly.
+	#define SCUMMVM_USE_LONG_INT
 
 	#if !defined(__GNUC__)
 		#define START_PACK_STRUCTS pack (1)
 		#define END_PACK_STRUCTS   pack ()
 	#endif
+
 	#define main morphos_main
 
 #elif defined(__DC__)
@@ -223,14 +210,10 @@
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
+	// FIXME: Do you really need to use 'long' on this port? Please replace
+	// this comment with a new comment that states so, and ideally also
+	// explains the reasons briefly.
+	#define SCUMMVM_USE_LONG_INT
 
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
@@ -243,16 +226,10 @@
 	#define SCUMM_LITTLE_ENDIAN 
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define _HEAPOK 0
-
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
+	// FIXME: Do you really need to use 'long' on this port? Please replace
+	// this comment with a new comment that states so, and ideally also
+	// explains the reasons briefly.
+	#define SCUMMVM_USE_LONG_INT
 
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
@@ -264,15 +241,6 @@
 
 	#define SCUMM_LITTLE_ENDIAN 
 	#define SCUMM_NEED_ALIGNMENT
-
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned int uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed int int32;
 
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
@@ -302,21 +270,10 @@
 	#define	SCUMM_LITTLE_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned int uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed int int32;
-
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
 #elif defined(__amigaos4__)
-
-	#include <exec/types.h>
 
 	#define	scumm_stricmp strcasecmp
 	#define	scumm_strnicmp strncasecmp
@@ -324,10 +281,11 @@
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-	#ifndef	HAVE_CONFIG_H
-	typedef	unsigned char byte;
-	typedef	unsigned int uint;
-	#endif
+	// FIXME: Why is this here? If it does declare types int8 etc., and they
+	// are not compatible with our typedefs below, we need a proper fix.
+	// In general, though, you should avoid port specific includes in this
+	// header file, if possible.
+	#include <exec/types.h>
 
 #elif defined(__SYMBIAN32__)
 
@@ -337,23 +295,15 @@
 	#define SCUMM_LITTLE_ENDIAN	
 	#define SCUMM_NEED_ALIGNMENT
 
-	#define CDECL	
-	#define CHECK_HEAP
-	#define SMALL_SCREEN_DEVICE
-	#define FORCEINLINE inline
-	#define _HEAPOK 0
-
-	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef unsigned short int  uint16;
-	typedef unsigned long int uint32;
-	typedef unsigned int uint;
-	typedef signed char int8;
-	typedef signed short int int16;
-	typedef signed long int int32;
+	// FIXME: Do you really need to use 'long' on this port? Please replace
+	// this comment with a new comment that states so, and ideally also
+	// explains the reasons briefly.
+	#define SCUMMVM_USE_LONG_INT
 	
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
+
+	#define SMALL_SCREEN_DEVICE
 
 #else
 
@@ -410,6 +360,31 @@
 #ifndef PI
 #define PI 3.14159265358979323846
 #endif
+
+
+//
+// Typedef our system types unless they were already set by config.h
+//
+#ifndef HAVE_CONFIG_H
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short uint16;
+	typedef signed short int16;
+
+	#ifdef SCUMMVM_USE_LONG_INT
+	typedef unsigned long uint32;
+	typedef signed long int32;
+	typedef unsigned long uint;
+	#else
+	typedef unsigned int uint32;
+	typedef signed int int32;
+	typedef unsigned int uint;
+	#endif
+#endif
+
 
 
 //
