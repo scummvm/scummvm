@@ -243,6 +243,6 @@ namespace CxxTest
                 ++ _failedSuites;
         }
     }
-};
+}
 
 #endif // __cxxtest__TestTracker_cpp__

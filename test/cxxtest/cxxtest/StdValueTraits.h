@@ -222,7 +222,7 @@ namespace CxxTest
         }
     };
 #endif // _CXXTEST_PARTIAL_TEMPLATE_SPECIALIZATION
-};
+}
 
 #endif // CXXTEST_USER_VALUE_TRAITS
 

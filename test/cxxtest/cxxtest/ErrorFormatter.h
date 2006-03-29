@@ -276,6 +276,6 @@ namespace CxxTest
         const char *_preLine;
         const char *_postLine;
     };
-};
+}
 
 #endif // __cxxtest__ErrorFormatter_h__

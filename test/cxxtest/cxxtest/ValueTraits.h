@@ -338,7 +338,7 @@ namespace CxxTest
     CXXTEST_COPY_TRAITS( const float, const double );
     CXXTEST_COPY_CONST_TRAITS( float );
 #endif // !CXXTEST_USER_VALUE_TRAITS
-};
+}
 
 #ifdef _CXXTEST_HAVE_STD
 #   include <cxxtest/StdValueTraits.h>

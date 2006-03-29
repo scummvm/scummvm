@@ -53,6 +53,6 @@ namespace CxxTest
         return s;
     }
 #endif // _CXXTEST_FACTOR
-};
+}
 
 #endif // __cxxtest__Descriptions_cpp__

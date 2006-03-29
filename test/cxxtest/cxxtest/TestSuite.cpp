@@ -133,6 +133,6 @@ namespace CxxTest
         tracker().failedAssertThrowsNot( file, line, expression );
         TS_ABORT();
     }
-};
+}
 
 #endif // __cxxtest__TestSuite_cpp__

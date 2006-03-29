@@ -119,7 +119,7 @@ namespace CxxTest
     // For --no-static-init
     //
     void initialize();
-};
+}
 
 
 #endif // __cxxtest_TestRunner_h__

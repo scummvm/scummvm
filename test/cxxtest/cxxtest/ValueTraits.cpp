@@ -135,6 +135,6 @@ namespace CxxTest
         return numberToString<double>( t, s, BASE, skip, max );
     }
 #endif // !CXXTEST_USER_VALUE_TRAITS
-};
+}
 
 #endif // __cxxtest__ValueTraits_cpp__

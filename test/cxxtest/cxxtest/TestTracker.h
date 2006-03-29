@@ -109,6 +109,6 @@ namespace CxxTest
     };
 
     inline TestTracker &tracker() { return TestTracker::tracker(); }
-};
+}
 
 #endif // __cxxtest__TestTracker_h__
