@@ -797,12 +797,14 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
 	{"aa8a0cb65f3afbbe2c14c3f9f92775a3", "CD Fr", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Mac CD", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+
+	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Mac", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
+	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh},
+	{"b9ba19ce376efc69be78ef3baef8d2b9", "Mac", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh},
 
 	{"8eb84cee9b429314c7f0bdcf560723eb", "FM-TOWNS", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-
 	{"e17db1ddf91b39ca6bbc8ad3ed19e883", "FM-TOWNS Jp", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
 	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 

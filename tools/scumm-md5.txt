@@ -166,13 +166,14 @@ monkey	The Secret of Monkey Island
 	d0b531227a27c6662018d2bd05aac52a	de	DOS	VGA	VGA	4 disk	
 	66fd5ff9a810dfeb6d6bdada18221140	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
 	45152f7cf2ba8f43cf8a8ea2e740ae09	es	DOS	VGA	VGA	4 disk	
-	2ccd8891ce4d3f1a334d21bff6a88ca2	en	Mac	VGA	VGA	-	Lars N&aelig;sbye Christensen
 
 	2d1e891fe52df707c30185e52c50cd92	en	DOS	CD	CD	-	
 	aa8a0cb65f3afbbe2c14c3f9f92775a3	fr	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
 	305d3dd57c96c65b017bc70c8c7cfb5e	de	DOS	CD	CD	-	
 	da6269b18fcb08189c0aa9c95533cce2	it	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
 	f049e38c1f8302b5db6170f1872af89a	es	DOS	CD	CD	-	Andrej Sinicyn, Andrea Petrucci
+	2ccd8891ce4d3f1a334d21bff6a88ca2	en	Mac	Mac	-	-	Lars N&aelig;sbye Christensen
+	b9ba19ce376efc69be78ef3baef8d2b9	en	Mac	Mac	-	alt?	glo_kidd	
 	c13225cb1bbd3bc9fe578301696d8021	en	SEGA	SEGA	-	-	
 
 	8eb84cee9b429314c7f0bdcf560723eb	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
