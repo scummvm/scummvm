@@ -398,7 +398,4 @@
 	typedef int16 OverlayColor;
 #endif
 
-
-#include "common/endian.h"
-
 #endif

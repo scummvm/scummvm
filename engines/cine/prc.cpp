@@ -22,6 +22,9 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "cine/cine.h"
 #include "cine/auto00.h"
 #include "cine/various.h"

@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "sky/music/adlibmusic.h"
 #include "sky/music/adlibchannel.h"
 #include "sound/mixer.h"

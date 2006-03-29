@@ -21,8 +21,10 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
+
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"

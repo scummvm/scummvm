@@ -20,6 +20,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 

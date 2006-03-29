@@ -21,7 +21,9 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/system.h"
+
 #include "sky/disk.h"
 #include "sky/logic.h"
 #include "sky/screen.h"

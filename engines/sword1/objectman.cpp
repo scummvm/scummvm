@@ -21,9 +21,10 @@
  */
 
 #include "common/stdafx.h"
-#include "sword1/objectman.h"
-#include "common/scummsys.h"
+#include "common/endian.h"
 #include "common/util.h"
+
+#include "sword1/objectman.h"
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 #include "sword1/sword1.h"

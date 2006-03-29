@@ -23,6 +23,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/system.h"
 
 #include "cine/cine.h"

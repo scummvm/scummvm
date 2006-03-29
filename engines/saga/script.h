@@ -27,6 +27,8 @@
 #ifndef SAGA_SCRIPT_H
 #define SAGA_SCRIPT_H
 
+#include "common/endian.h"
+
 #include "saga/font.h"
 #include "saga/list.h"
 

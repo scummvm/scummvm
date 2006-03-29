@@ -21,9 +21,10 @@
  */
 
 #include "common/stdafx.h"
-#include "common/scummsys.h"
+#include "common/endian.h"
 #include "common/system.h"
 #include "common/util.h"
+
 #include "sword1/screen.h"
 #include "sword1/logic.h"
 #include "sword1/sworddefs.h"

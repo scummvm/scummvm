@@ -24,6 +24,7 @@
 #include "lure/res.h"
 #include "lure/game.h"
 #include "common/stack.h"
+#include "common/endian.h"
 
 namespace Lure {
 

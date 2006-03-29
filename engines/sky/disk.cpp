@@ -21,9 +21,10 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
-#include "common/scummsys.h"
+
 #include "sky/disk.h"
 #include "sky/rnc_deco.h"
 #include "sky/sky.h"

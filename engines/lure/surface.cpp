@@ -27,6 +27,7 @@
 #include "lure/screen.h"
 #include "lure/room.h"
 #include "lure/strings.h"
+#include "common/endian.h"
 
 namespace Lure {
 

@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/system.h"
 #include "kyra/screen.h"
 #include "kyra/kyra.h"

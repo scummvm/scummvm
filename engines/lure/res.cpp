@@ -24,6 +24,7 @@
 #include "lure/disk.h"
 #include "lure/scripts.h"
 #include "lure/screen.h"
+#include "common/endian.h"
 
 namespace Lure {
 

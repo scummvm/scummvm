@@ -20,6 +20,9 @@
  * $Id$
  *
  */
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/video.h"

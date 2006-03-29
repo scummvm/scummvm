@@ -21,14 +21,16 @@
  */
 
 #include "common/stdafx.h"
-#include "common/scummsys.h"
-#include "sword1/memman.h"
-#include "sword1/resman.h"
-#include "sword1/sworddefs.h"
-#include "base/engine.h"
+#include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "common/str.h"
+
+#include "base/engine.h"
+
+#include "sword1/memman.h"
+#include "sword1/resman.h"
+#include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 
 #include "gui/message.h"

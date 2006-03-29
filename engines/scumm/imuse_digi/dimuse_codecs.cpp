@@ -21,6 +21,7 @@
 
 #include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/endian.h"
 #include "common/util.h"
 
 namespace Scumm {

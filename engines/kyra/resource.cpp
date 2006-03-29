@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "kyra/resource.h"
 #include "kyra/script.h"

@@ -21,6 +21,8 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "queen/sound.h"
 
 #include "queen/input.h"

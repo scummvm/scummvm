@@ -23,7 +23,7 @@
  */
 
 #include "common/stdafx.h"
-#include "common/scummsys.h"
+#include "common/endian.h"
 
 #include "cine/msg.h"
 #include "cine/various.h"

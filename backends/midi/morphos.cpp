@@ -31,6 +31,7 @@
 #include <proto/etude.h>
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "sound/mpu401.h"
 #include "common/util.h"
 #include "morphos.h"

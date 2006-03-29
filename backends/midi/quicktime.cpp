@@ -23,6 +23,7 @@
 
 
 #include "sound/mpu401.h"
+#include "common/endian.h"
 #include "common/util.h"
 
 #if defined(MACOSX)

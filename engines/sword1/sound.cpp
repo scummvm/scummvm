@@ -21,8 +21,11 @@
  */
 
 #include "common/stdafx.h"
-#include "sword1/sound.h"
+#include "common/endian.h"
+
 #include "common/util.h"
+
+#include "sword1/sound.h"
 #include "sword1/resman.h"
 #include "sword1/logic.h"
 #include "sword1/sword1.h"

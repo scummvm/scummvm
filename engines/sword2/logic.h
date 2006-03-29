@@ -25,6 +25,7 @@
 #define SWORD2_LOGIC_H
 
 #include "sword2/memory.h"
+#include "common/endian.h"
 
 namespace Sword2 {
 

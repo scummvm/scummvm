@@ -26,6 +26,7 @@
 #define INCLUDED_MIDIPARSER
 
 #include "common/scummsys.h"
+#include "common/endian.h"
 
 class MidiParser;
 class MidiDriver;

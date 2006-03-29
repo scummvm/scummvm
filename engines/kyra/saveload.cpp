@@ -20,13 +20,15 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/endian.h"
+#include "common/savefile.h"
+#include "common/system.h"
+
 #include "kyra/kyra.h"
 #include "kyra/animator.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
-
-#include "common/savefile.h"
-#include "common/system.h"
 
 #define CURRENT_VERSION 4
 

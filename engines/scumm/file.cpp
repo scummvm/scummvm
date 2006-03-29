@@ -21,6 +21,7 @@
  */
 
 #include "scumm/file.h"
+#include "common/endian.h"
 #include "common/util.h"
 #include "common/md5.h"
 

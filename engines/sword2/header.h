@@ -23,6 +23,7 @@
 #define	SWORD2_HEADER_H
 
 #include "common/stream.h"
+#include "common/endian.h"
 
 namespace Sword2 {
 

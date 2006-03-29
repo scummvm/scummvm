@@ -22,6 +22,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
 

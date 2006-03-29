@@ -22,6 +22,8 @@
 #ifndef SWORD2_INTERPRETER_H
 #define SWORD2_INTERPRETER_H
 
+#include "common/endian.h"
+
 namespace Sword2 {
 
 // Interpreter return codes

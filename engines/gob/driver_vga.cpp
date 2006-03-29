@@ -20,6 +20,10 @@
  * $Id$
  *
  */
+
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "gob/driver_vga.h"
 #include "graphics/primitives.h"
 

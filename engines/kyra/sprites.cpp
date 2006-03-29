@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/stream.h"
 #include "common/util.h"
 #include "common/system.h"

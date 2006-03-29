@@ -22,6 +22,9 @@
  *
  */
 
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "cine/cine.h"
 #include "cine/sound_driver.h"
 

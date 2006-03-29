@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/util.h"
 #include "scumm/bomp.h"
 #include "scumm/smush/codec47.h"

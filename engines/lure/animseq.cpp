@@ -24,6 +24,7 @@
 #include "lure/palette.h"
 #include "lure/decode.h"
 #include "lure/events.h"
+#include "common/endian.h"
 
 namespace Lure {
 

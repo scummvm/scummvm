@@ -21,13 +21,12 @@
  */
 
 #include "common/stdafx.h"
-
-#include "sword1/music.h"
-
-#include "common/util.h"
+#include "common/endian.h"
 #include "common/file.h"
+#include "common/util.h"
 #include "common/system.h"
 
+#include "sword1/music.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
 #include "sound/vorbis.h"

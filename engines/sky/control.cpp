@@ -21,11 +21,13 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/util.h"
+
 #include "gui/message.h"
 #include "sky/compact.h"
 #include "sky/control.h"

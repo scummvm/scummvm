@@ -20,6 +20,10 @@
  * $Id$
  *
  */
+
+#include "common/stdafx.h"
+#include "common/endian.h"
+
 #include "gob/gob.h"
 #include "gob/pack.h"
 

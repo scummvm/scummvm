@@ -22,6 +22,8 @@
 
 #include "common/stdafx.h"
 
+#include "common/endian.h"
+
 #include "sound/adpcm.h"
 #include "sound/audiostream.h"
 

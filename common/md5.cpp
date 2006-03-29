@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/util.h"
+#include "common/endian.h"
 
 namespace Common {
 

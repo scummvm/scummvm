@@ -24,6 +24,7 @@
 #define QUEENSTRUCTS_H
 
 #include "queen/defs.h"
+#include "common/endian.h"
 
 namespace Queen {
 

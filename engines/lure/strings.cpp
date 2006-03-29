@@ -23,6 +23,7 @@
 #include "lure/strings.h"
 #include "lure/disk.h"
 #include "lure/room.h"
+#include "common/endian.h"
 
 namespace Lure {
 

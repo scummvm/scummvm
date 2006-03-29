@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 
 #include "scumm/smush/channel.h"
 #include "scumm/smush/chunk.h"

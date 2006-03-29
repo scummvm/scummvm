@@ -21,6 +21,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/endian.h"
 
 #include "sword1/credits.h"
 #include "sword1/screen.h"

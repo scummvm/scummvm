@@ -23,6 +23,7 @@
 #include "lure/decode.h"
 #include "lure/memory.h"
 #include "lure/luredefs.h"
+#include "common/endian.h"
 
 namespace Lure {
 
