@@ -35,10 +35,6 @@
 #include "config.h"
 #endif
 
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
-
 // make sure we really are compiling for WIN32
 #ifndef WIN32
 #undef _MSC_VER
@@ -78,19 +74,18 @@
 	typedef uint32 uint32_t;
 
 	#define START_PACK_STRUCTS pack(push, 1)
-	#define END_PACK_STRUCTS	 pack(pop)
+	#define END_PACK_STRUCTS   pack(pop)
 
-#if defined(_WIN32_WCE) && _WIN32_WCE < 300
-
+	#if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define CDECL __cdecl
 	#define SMALL_SCREEN_DEVICE
-
-#endif
+	#endif
 
 #elif defined(__MINGW32__)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
+
 	#define SCUMM_LITTLE_ENDIAN
 
 	#ifndef _HEAPOK
@@ -106,8 +101,8 @@
 	typedef signed short int16;
 	typedef signed int int32;
 
-	#define START_PACK_STRUCTS pack (push, 1)
-	#define END_PACK_STRUCTS	 pack(pop)
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
 
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
@@ -155,13 +150,13 @@
 	#define SCUMM_NEED_ALIGNMENT
 	#endif
 
-	#if defined(__GNUC__)
-	#else
+	#if !defined(__GNUC__)
 	#define START_PACK_STRUCTS pack (1)
-	#define END_PACK_STRUCTS	 pack ()
+	#define END_PACK_STRUCTS   pack ()
 	#endif
 
-#elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__) // PALMOS
+#elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
+
 	#include "palmversion.h"
 	#include "globals.h"
 	#include "extend.h"
@@ -171,11 +166,12 @@
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 
-#ifdef PALMOS_68K
+	#ifdef PALMOS_68K
 	#define SCUMM_BIG_ENDIAN
-#else
+	#else
 	#define SCUMM_LITTLE_ENDIAN
-#endif
+	#endif
+
 	#define SCUMM_NEED_ALIGNMENT
 
 	typedef unsigned char byte;
@@ -190,13 +186,14 @@
 	#define START_PACK_STRUCTS pack (1)
 	#define END_PACK_STRUCTS   pack ()
 
-#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
+	#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
 	#define NEWGUI_256
-#else
+	#else
 	#undef UNUSED
-#endif
+	#endif
 
 #elif defined(__MORPHOS__)
+
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
 
@@ -212,10 +209,9 @@
 	typedef signed short int16;
 	typedef signed long int32;
 
-	#if defined(__GNUC__)
-	#else
+	#if !defined(__GNUC__)
 		#define START_PACK_STRUCTS pack (1)
-		#define END_PACK_STRUCTS	 pack ()
+		#define END_PACK_STRUCTS   pack ()
 	#endif
 	#define main morphos_main
 
@@ -223,6 +219,7 @@
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
+
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
@@ -235,15 +232,16 @@
 	typedef signed short int16;
 	typedef signed long int32;
 
-	#define START_PACK_STRUCTS pack (push, 1)
-	#define END_PACK_STRUCTS	 pack(pop)
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
 
-#elif defined __GP32__ //ph0x
-	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN 
+#elif defined(__GP32__)
 
 	#define scumm_stricmp stricmp
 	#define scumm_strnicmp strnicmp
+
+	#define SCUMM_LITTLE_ENDIAN 
+	#define SCUMM_NEED_ALIGNMENT
 
 	#define _HEAPOK 0
 
@@ -256,14 +254,16 @@
 	typedef signed short int16;
 	typedef signed long int32;
 
-	#define START_PACK_STRUCTS pack (push, 1)
-	#define END_PACK_STRUCTS	 pack(pop)
-#elif defined __PLAYSTATION2__
-	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMM_LITTLE_ENDIAN 
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
+
+#elif defined(__PLAYSTATION2__)
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_LITTLE_ENDIAN 
+	#define SCUMM_NEED_ALIGNMENT
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -274,11 +274,8 @@
 	typedef signed short int16;
 	typedef signed int int32;
 
-	typedef unsigned long uint64;
-	typedef signed long int64;
-
-	#define START_PACK_STRUCTS pack (push, 1)
-	#define END_PACK_STRUCTS	 pack(pop)
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
 
 	#include "backends/ps2/fileio.h"
 
@@ -297,13 +294,13 @@
 	#define fprintf				ps2_fprintf
 	#define fsize(a)			ps2_fsize(a)
 
-	extern void ps2_disableHandleCaching(void);
-#elif defined (__PSP__)
-	#define	SCUMM_NEED_ALIGNMENT
-	#define	SCUMM_LITTLE_ENDIAN
+#elif defined(__PSP__)
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
+
+	#define	SCUMM_LITTLE_ENDIAN
+	#define	SCUMM_NEED_ALIGNMENT
 
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
@@ -314,39 +311,38 @@
 	typedef signed short int16;
 	typedef signed int int32;
 
-	typedef unsigned long uint64;
+	#define START_PACK_STRUCTS pack(push, 1)
+	#define END_PACK_STRUCTS   pack(pop)
 
-	#define START_PACK_STRUCTS pack (push, 1)
-	#define END_PACK_STRUCTS         pack(pop)
+#elif defined(__amigaos4__)
 
-#elif defined (__amigaos4__)
 	#include <exec/types.h>
 
 	#define	scumm_stricmp strcasecmp
 	#define	scumm_strnicmp strncasecmp
 
 	#define	SCUMM_BIG_ENDIAN
-
-	// You need to set this manually if necessary
 	#define	SCUMM_NEED_ALIGNMENT
 
 	#ifndef	HAVE_CONFIG_H
 	typedef	unsigned char byte;
 	typedef	unsigned int uint;
 	#endif
-#elif defined __SYMBIAN32__ // AnotherGuest / Sprawl / SumthinWicked
+
+#elif defined(__SYMBIAN32__)
 
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
 
-	#define CDECL	
-	#define SCUMM_NEED_ALIGNMENT
 	#define SCUMM_LITTLE_ENDIAN	
+	#define SCUMM_NEED_ALIGNMENT
+
+	#define CDECL	
 	#define CHECK_HEAP
 	#define SMALL_SCREEN_DEVICE
-
 	#define FORCEINLINE inline
 	#define _HEAPOK 0
+
 	typedef unsigned char byte;
 	typedef unsigned char uint8;
 	typedef unsigned short int  uint16;
@@ -356,10 +352,13 @@
 	typedef signed short int int16;
 	typedef signed long int int32;
 	
-	#define START_PACK_STRUCTS pack (push,1)
+	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
+
 #else
+
 	#error No system type defined
+
 #endif
 
 
@@ -406,6 +405,10 @@
 
 #ifndef STRINGBUFLEN
 #define STRINGBUFLEN 1024
+#endif
+
+#ifndef PI
+#define PI 3.14159265358979323846
 #endif
 
 
