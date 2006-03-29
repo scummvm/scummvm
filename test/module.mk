@@ -26,4 +26,9 @@ test/runner: test/runner.cpp $(TEST_LIBS)
 test/runner.cpp: $(TESTS)
 	test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
 
-.PHONY: test
+
+clean: clean-test
+clean-test:
+	-$(RM) test/runner.cpp test/runner
+
+.PHONY: test clean-test
