@@ -189,6 +189,12 @@ int SimonEngine::runScript() {
 			}
 			break;
 
+		case 37:{
+				getVarOrByte();
+				warning("STUB: script opcode 37");
+			}
+			break;
+
 		case 41:{									/* zero var */
 				writeNextVarContents(0);
 			}
@@ -761,6 +767,11 @@ int SimonEngine::runScript() {
 			}
 			break;
 
+		case 131:{
+				warning("STUB: script opcode 131");
+			}
+			break;
+
 		case 132:{									/* save game */
 				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 				o_saveGame();
@@ -1009,6 +1020,11 @@ int SimonEngine::runScript() {
 			}
 			break;
 
+		case 173:{
+				warning("STUB: script opcode 173");
+			}
+			break;
+
 		case 175:{									/* vga pointer op 1 */
 				o_lockZone();
 			}
@@ -1116,9 +1132,13 @@ int SimonEngine::runScript() {
 			break;
 
 		case 187:{									/* fade to black */
-				if (getGameType() == GType_SIMON2)
+				if (getGameType() == GType_FF) {
+					warning("STUB: script opcode 187");
+				} else if (getGameType() == GType_SIMON2) {
 					goto invalid_opcode;
-				o_fadeToBlack();
+				} else {
+					o_fadeToBlack();
+				}
 			}
 			break;
 
