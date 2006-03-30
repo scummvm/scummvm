@@ -1900,29 +1900,41 @@ void Insane::switchBenWeapon(void) {
 
 	switch (_actor[0].weapon) {
 	case INV_CHAIN:
-		smlayer_setActorCostume(0, 2, readArray(20));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(19));
+		else
+			smlayer_setActorCostume(0, 2, readArray(20));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_CHAINSAW:
-		smlayer_setActorCostume(0, 2, readArray(24));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(23));
+		else
+			smlayer_setActorCostume(0, 2, readArray(24));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_MACE:
-		smlayer_setActorCostume(0, 2, readArray(23));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(22));
+		else
+			smlayer_setActorCostume(0, 2, readArray(23));
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_2X4:
-		if (_currEnemy == EN_CAVEFISH)
-			smlayer_setActorCostume(0, 2, readArray(38));
-		else
-			smlayer_setActorCostume(0, 2, readArray(19));
-
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+			smlayer_setActorCostume(0, 2, readArray(18));
+		} else {
+			if (_currEnemy == EN_CAVEFISH)
+				smlayer_setActorCostume(0, 2, readArray(38));
+			else
+				smlayer_setActorCostume(0, 2, readArray(19));
+		}
 		smlayer_setActorFacing(0, 2, 18, 180);
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 34;

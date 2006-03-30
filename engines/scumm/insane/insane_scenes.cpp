@@ -639,7 +639,10 @@ void Insane::setSceneCostumes(int sceneId) {
 		return;
 		break;
 	case 2:
-		smlayer_setActorCostume(0, 2, readArray(10));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(9));
+		else
+			smlayer_setActorCostume(0, 2, readArray(10));
 		setupValues();
 		return;
 		break;

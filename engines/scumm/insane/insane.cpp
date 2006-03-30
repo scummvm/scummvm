@@ -959,8 +959,9 @@ bool Insane::actor1StateFlags(int state) {
 void Insane::escapeKeyHandler(void) {
 	struct fluConf *flu;
 
-	// Demos have just one scene
-	if (!_insaneIsRunning || _vm->_game.features & GF_DEMO) {
+	// The Macintosh demo has just one scene
+	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformMacintosh)) ||
+		!_insaneIsRunning) {
 		smush_setToFinish();
 		return;
 	}
@@ -971,8 +972,12 @@ void Insane::escapeKeyHandler(void) {
 	debugC(DEBUG_INSANE, "scene: %d", _currSceneId);
 	switch (_currSceneId) {
 	case 1:
-		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
-		writeArray(9, 0);
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
+		} else {
+			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
+			writeArray(9, 0);
+		}
 		break;
 	case 18:
 		queueSceneSwitch(17, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
@@ -980,8 +985,11 @@ void Insane::escapeKeyHandler(void) {
 		break;
 	case 2:
 		flu = &_fluConf[14 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-						 flu->startFrame, flu->numFrames);
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			queueSceneSwitch(4, 0, "tovista.san", 64, 0, 0, 0);
+		else
+			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
+							 flu->startFrame, flu->numFrames);
 		break;
 	case 3:
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame, 1300);
@@ -1031,12 +1039,18 @@ void Insane::escapeKeyHandler(void) {
 		break;
 	case 8:
 		flu = &_fluConf[7 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
+		else
+			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 7:
 		flu = &_fluConf[0 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
+		else
+			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
 						 flu->startFrame, flu->numFrames);
 		break;
 	case 23:
@@ -1052,7 +1066,10 @@ void Insane::escapeKeyHandler(void) {
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
 		break;
 	case 13:
-		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame, 1300);
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
+		else
+			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame, 1300);
 		break;
 	case 24:
 		queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
