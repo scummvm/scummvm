@@ -148,9 +148,7 @@ void Insane::runScene(int arraynum) {
 
 	_insaneIsRunning = false;
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
-		_currEnemy = EN_ROTT1;
-	} else {
+	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
 		writeArray(50, _actor[0].inventory[INV_CHAIN]);
 		writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
 		writeArray(52, _actor[0].inventory[INV_MACE]);
