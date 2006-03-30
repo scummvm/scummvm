@@ -324,9 +324,6 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags) {
 	_player->checkBlock(b, TYPE_IACT, 8);
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
-		return;
-
 	int16 par1, par2, par3, par4, par5;
 
 	par1 = b.getWord(); // edx

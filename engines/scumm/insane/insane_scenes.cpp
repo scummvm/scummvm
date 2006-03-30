@@ -62,7 +62,10 @@ void Insane::runScene(int arraynum) {
 	case 1:
 		initScene(1);
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(10));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(9));
+		else
+			smlayer_setActorCostume(0, 2, readArray(10));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		startVideo("minedriv.san", 1, 32, 12, 0);
 		break;
@@ -91,7 +94,10 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 3:
 		setupValues();
-		smlayer_setActorCostume(0, 2, readArray(11));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(10));
+		else
+			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		_mainRoadPos = readArray(2);
 		if (_mainRoadPos == _posBrokenTruck) {
@@ -142,7 +148,9 @@ void Insane::runScene(int arraynum) {
 
 	_insaneIsRunning = false;
 
-	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+		_currEnemy = EN_ROTT1;
+	} else {
 		writeArray(50, _actor[0].inventory[INV_CHAIN]);
 		writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
 		writeArray(52, _actor[0].inventory[INV_MACE]);
@@ -618,7 +626,10 @@ void Insane::setSceneCostumes(int sceneId) {
 
 	switch (sceneId) {
 	case 1:
-		smlayer_setActorCostume(0, 2, readArray(10));
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			smlayer_setActorCostume(0, 2, readArray(9));
+		else
+			smlayer_setActorCostume(0, 2, readArray(10));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 		smlayer_setFluPalette(_smush_roadrashRip, 0);
 		setupValues();
@@ -1000,7 +1011,10 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_firstBattle) {
 			smush_setToFinish();
 		} else {
-			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
+			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+				queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
+			else
+				queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
 							 _continueFrame, 1300);
 		}
 	}
@@ -1093,8 +1107,11 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if ((curFrame >= maxFrame) && !_needSceneSwitch) {
 		flu = &_fluConf[14 + _iactSceneId2];
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-						 flu->startFrame, flu->numFrames);
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			queueSceneSwitch(4, 0, "tovista.san", 64, 0, 0, 0);
+		else
+			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
+							 flu->startFrame, flu->numFrames);
 	}
 	_roadBranch = false;
 	_roadStop = false;
@@ -1133,10 +1150,7 @@ void Insane::postCase20(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::postCase3(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					   int32 setupsan13, int32 curFrame, int32 maxFrame) {
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
-		turnBen(false);
-	else
-		turnBen(true);
+	turnBen(true);
 
 	if (_actor[0].x >= 158 && _actor[0].x <= 168) {
 		if (!smlayer_isSoundRunning(86))
@@ -1220,9 +1234,12 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			flu = &_fluConf[7 + _iactSceneId2];
 		else
 			flu = &_fluConf[0 + _iactSceneId2];
-
-		queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
-						 flu->startFrame, flu->numFrames);
+	
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
+		else
+			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
+							 flu->startFrame, flu->numFrames);
 	}
 	_roadBranch = false;
 	_roadStop = false;
@@ -1237,11 +1254,15 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			queueSceneSwitch(13, _smush_minefiteFlu, "minefite.san", 64, 0,
 							 _continueFrame, 1300);
 		} else {
-			if (_currSceneId == 23) {
-				queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
+			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+				queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 			} else {
-				queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
+				if (_currSceneId == 23) {
+					queueSceneSwitch(21, 0, "rottfite.san", 64, 0, 0, 0);
+				} else {
+					queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
 							 _continueFrame, 1300);
+				}
 			}
 		}
  	}
