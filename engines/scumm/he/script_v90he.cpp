@@ -2347,7 +2347,10 @@ void ScummEngine_v90he::o90_getObjectData() {
 			push(_objs[_heObjectNum].height);
 		break;
 	case 4:
-		push(getObjectImageCount(_heObject));
+		if (_heObjectNum == -1)
+			push(0);
+		else
+			push(getObjectImageCount(_heObject));
 		break;
 	case 6:
 		if (_heObjectNum == -1)
