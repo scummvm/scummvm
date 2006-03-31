@@ -23,19 +23,9 @@
 #define COMMON_MAP_H
 
 #include "common/scummsys.h"
+#include "common/func.h"
 
 namespace Common {
-
-/**
- * Default comparison functor: compares to objects using their </==/> operators.
- * Comparison functors ('comparators') are used by the Map template to
- * compare keys. A non-standard comparator might e.g. be implemented to
- * compare strings, ignoring the case.
- */
-template <class T>
-struct DefaultComparator {
-  int operator()(const T& x, const T& y) const { return (x < y) ? -1 : (y < x) ? +1 : 0; }
-};
 
 
 /**
@@ -49,7 +39,7 @@ struct DefaultComparator {
  * @todo Having unit tests for this class would be very desirable. There are a
  *       big number of things which can go wrong in this code.
  */
-template <class Key, class Value, class Comparator = DefaultComparator<Key> >
+template <class Key, class Value, class Comparator = Less<Key> >
 class Map {
 protected:
 	struct BaseNode {
@@ -68,6 +58,8 @@ protected:
 	Node *_root;
 	Node *_header;
 
+	Comparator _cmp;
+
 private:
 	Map<Key, Value, Comparator>(const Map<Key, Value, Comparator> &map);
 	Map<Key, Value, Comparator> &operator =(const Map<Key, Value, Comparator> &map);
@@ -84,10 +76,11 @@ public:
 
 		const BaseNode &operator *() const { assert(_node != 0); return *_node; }
 		const BaseNode *operator->() const { assert(_node != 0); return _node; }
-		bool operator !=(const const_iterator &iter) const { return _node != iter._node; }
-		void operator ++() {
+		bool operator ==(const const_iterator &iter) const { return _node == iter._node; }
+		bool operator !=(const const_iterator &iter) const { return !(*this == iter); }
+		const_iterator operator ++() {
 			if (!_node)
-				return;
+				return *this;
 			if (_node->_right) {
 				_node = _node->_right;
 				while (_node->_left)
@@ -105,6 +98,8 @@ public:
 
 			if (_node->_parent == 0)
 				_node = 0;
+			
+			return *this;
 		}
 	};
 
@@ -238,35 +233,30 @@ protected:
 
 	/** Find and return the node matching the given key, if any. */
 	Node *findNode(Node *node, const Key &key) const {
-		Comparator cmp;
 		while (node) {
-			int val = cmp(key,node->_key);
-			if (val == 0)
-				return node;
-			else if (val < 0)
+			if (_cmp(key, node->_key))
 				node = node->_left;
-			else
+			else if (_cmp(node->_key, key))
 				node = node->_right;
+			else
+				return node;
 		}
 		return 0;
 	}
 
 	Node *findOrCreateNode(Node *node, const Key &key) {
-		Comparator cmp;
 		Node *prevNode = 0;
 		bool left = true;
 		while (node) {
-			int val = cmp(key, node->_key);
 			prevNode = node;
-			if (val == 0) {
-				return node;
-			} else if (val < 0) {
+			if (_cmp(key, node->_key)) {
 				left = true;
 				node = node->_left;
-			} else {
+			} else if (_cmp(node->_key, key)) {
 				left = false;
 				node = node->_right;
-			}
+			} else
+				return node;
 		}
 		node = new Node(key, prevNode);
 		if (left) {
