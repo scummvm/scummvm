@@ -51,7 +51,8 @@ namespace Common {
  */
 class ConfigFile {
 public:
-	typedef Map<String, bool, IgnoreCaseComparator> StringSet;
+	typedef Map<String, bool, IgnoreCase_Less> StringSet;
+	//typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
 
 	struct KeyValue {
 		String key;
