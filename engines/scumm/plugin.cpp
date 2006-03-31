@@ -605,6 +605,8 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	{"f1b0e0d587b85052de5534a3847e68fe", "Updated", GID_WATER, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
+	{"9b7452b5cd6d3ffb2b2f5118010af84f", "Mac Demo", GID_FT, 7, 0, MDT_NONE,
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
 	{"9d7b67be003fea60be4dcbd193611936", "Mac Demo", GID_FT, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
 	{"32a433dea56b86a55b59e4ff7d755711", "PC Demo", GID_FT, 7, 0, MDT_NONE,
