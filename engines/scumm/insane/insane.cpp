@@ -597,7 +597,8 @@ void Insane::readFileToMem(const char *name, byte **buf) {
 	ScummFile in;
 	uint32 len;
 
-	_vm->openFile(in, name);
+	if (!_vm->openFile(in, name))
+		error("Cannot open file %s", name);
 	len = in.size();
 	*buf = (byte *)malloc(len);
 	in.read(*buf, len);
