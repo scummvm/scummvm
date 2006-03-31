@@ -72,13 +72,8 @@ public:
 		}
 		// Postfix inc
 		Iterator<T2> operator++(int) {
-#if !defined (PALMOS_MODE) && !defined (__SYMBIAN32__)
-			Iterator<T2> tmp(_node);
-#else
 			Iterator tmp(_node);
-#endif
-			if (_node)
-				_node = _node->_next;
+			++(*this);
 			return tmp;
 		}
 		// Prefix dec
@@ -89,13 +84,8 @@ public:
 		}
 		// Postfix dec
 		Iterator<T2> operator--(int) {
-#ifndef PALMOS_MODE
-			Iterator<T2> tmp(_node);
-#else
 			Iterator tmp(_node);
-#endif
-			if (_node)
-				_node = _node->_prev;
+			--(*this);
 			return tmp;
 		}
 		T2& operator*() const {
