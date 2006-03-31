@@ -49,6 +49,7 @@
  */
 
 #include "common/stdafx.h"
+#include "common/func.h"
 #include "common/str.h"
 #include "common/util.h"
 
@@ -59,26 +60,16 @@ namespace Common {
 
 typedef Common::String String;
 
-// If aa is an HashMap<Key,Val>, then space is allocated each
-// time aa[key] is referenced, for a new key. To "see" the value
-// of aa[key] but without allocating new memory, use aa.queryVal(key)
-// instead.
-// 
-// A HashMap<Key,Val> maps objects of type Key to objects of type Val.
-// For each used Key type, we need an "uint hashit(Key,uint)" function
-// that computes a hash for the given Key object and returns it as an
-// an integer from 0 to hashsize-1, and also a "bool data_eq(Key,Key) "
-// function that returns true if if its two arguments are to be considered
-// equal. Also, we assume that "=" works on Val objects for assignment.
+uint hashit(const char *str);
+uint hashit_lower(const char *str);	// Generate a hash based on the lowercase version of the string
 
-uint hashit(int x, uint hashsize);
-bool data_eq(int x, int y);
-uint hashit(double x, uint hashsize);
-bool data_eq(double x, double y);
-uint hashit(const char *str, uint hashsize);
-bool data_eq(const char *str1, const char *str2);
-uint hashit(const String &str, uint hashsize);
-bool data_eq(const String &str1, const String &str2);
+// Specalization of the Hash functor for String objects.
+template <>
+struct Hash<String> {
+	uint operator()(const String& s) const {
+		return hashit(s.c_str());
+	}
+};
 
 
 // The table sizes ideally are primes. We use a helper function to find
@@ -89,9 +80,22 @@ uint nextTableSize(uint x);
 // Enable the following #define if you want to check how many collisions the
 // code produces (many collisions indicate either a bad hash function, or a
 // hash table that is too small).
-//#define DEBUG_HASH_COLLISIONS
+#define DEBUG_HASH_COLLISIONS
 
-template <class Key, class Val>
+/**
+ * HashMap<Key,Val> maps objects of type Key to objects of type Val.
+ * For each used Key type, we need an "uint hashit(Key,uint)" function
+ * that computes a hash for the given Key object and returns it as an
+ * an integer from 0 to hashsize-1, and also an "equality functor".
+ * that returns true if if its two arguments are to be considered
+ * equal. Also, we assume that "=" works on Val objects for assignment.
+ *
+ * If aa is an HashMap<Key,Val>, then space is allocated each time aa[key] is
+ * referenced, for a new key. If the object is const, then an assertion is
+ * triggered instead. Hence if you are not sure whether a key is contained in
+ * the map, use contains() first to check for its presence.
+ */ 
+template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
 private:
 	// data structure used by HashMap internally to keep
@@ -106,6 +110,9 @@ private:
 	BaseNode **_arr;	// hashtable of size arrsize.
 	uint _arrsize, _nele;
 	
+	HashFunc _hash;
+	EqualFunc _equal;
+	
 #ifdef DEBUG_HASH_COLLISIONS
 	mutable int _collisions, _lookups;
 #endif
@@ -115,8 +122,8 @@ private:
 
 public:
 	class const_iterator {
-		typedef const HashMap<Key, Val> * hashmap_t;
-		friend class HashMap<Key, Val>;
+		typedef const HashMap<Key, Val, HashFunc, EqualFunc> * hashmap_t;
+		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
 	protected:
 		hashmap_t _hashmap;
 		uint _idx;
@@ -134,14 +141,17 @@ public:
 
 		const BaseNode &operator *() const { return *deref(); }
 		const BaseNode *operator->() const { return deref(); }
-		bool operator !=(const const_iterator &iter) const { return _idx != iter._idx || _hashmap != iter._hashmap; }
-		void operator ++() {
+		bool operator ==(const const_iterator &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
+		bool operator !=(const const_iterator &iter) const { return !(*this == iter); }
+		const_iterator operator ++() {
 			assert(_hashmap);
 			do {
 				_idx++;
 			} while (_idx < _hashmap->_arrsize && _hashmap->_arr[_idx] == 0);
 			if (_idx >= _hashmap->_arrsize)
 				_idx = (uint)-1;
+			
+			return *this;
 		}
 	};
 
@@ -159,8 +169,12 @@ public:
 	size_t erase(const Key &key);
 
 	const_iterator	begin() const {
-		// TODO/FIXME: Fix this, entry 0 is not necessarily != NULL
-		return const_iterator(0, this);
+		// Find and return the first non-empty entry
+		for (uint ctr = 0; ctr < _arrsize; ++ctr) {
+			if (_arr[ctr])
+				return const_iterator(ctr, this);
+		}
+		return end();
 	}
 	const_iterator	end() const {
 		return const_iterator((uint)-1, this);
@@ -184,8 +198,8 @@ public:
 //-------------------------------------------------------
 // HashMap functions
 
-template <class Key, class Val>
-HashMap<Key, Val>::HashMap() {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() {
 	_arrsize = nextTableSize(0);
 	_arr = new BaseNode *[_arrsize];
 	assert(_arr != NULL);
@@ -199,8 +213,8 @@ HashMap<Key, Val>::HashMap() {
 #endif
 }
 
-template <class Key, class Val>
-HashMap<Key, Val>::~HashMap() {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 	uint ctr;
 
 	for (ctr = 0; ctr < _arrsize; ctr++)
@@ -210,8 +224,8 @@ HashMap<Key, Val>::~HashMap() {
 	delete[] _arr;
 }
 
-template <class Key, class Val>
-void HashMap<Key, Val>::clear(bool shrinkArray) {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 	for (uint ctr = 0; ctr < _arrsize; ctr++) {
 		if (_arr[ctr] != NULL) {
 			delete _arr[ctr];
@@ -231,8 +245,8 @@ void HashMap<Key, Val>::clear(bool shrinkArray) {
 	_nele = 0;
 }
 
-template <class Key, class Val>
-void HashMap<Key, Val>::expand_array(uint newsize) {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	assert(newsize > _arrsize);
 	BaseNode **old_arr;
 	uint old_arrsize, old_nele, ctr, dex;
@@ -257,8 +271,8 @@ void HashMap<Key, Val>::expand_array(uint newsize) {
 		// Insert the element from the old table into the new table.
 		// Since we know that no key exists twice the old table, we
 		// can do this slightly better than by calling lookup, since we
-		// don't have to call data_eq().
-		dex = hashit(old_arr[ctr]->_key, _arrsize);
+		// don't have to call _equal().
+		dex = _hash(old_arr[ctr]->_key) % _arrsize;
 		while (_arr[dex] != NULL) {
 			dex = (dex + 1) % _arrsize;
 		}
@@ -275,11 +289,11 @@ void HashMap<Key, Val>::expand_array(uint newsize) {
 	return;
 }
 
-template <class Key, class Val>
-int HashMap<Key, Val>::lookup(const Key &key) const {
-	uint ctr = hashit(key, _arrsize);
+template <class Key, class Val, class HashFunc, class EqualFunc>
+int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
+	uint ctr = _hash(key) % _arrsize;
 
-	while (_arr[ctr] != NULL && !data_eq(_arr[ctr]->_key, key)) {
+	while (_arr[ctr] != NULL && !_equal(_arr[ctr]->_key, key)) {
 		ctr = (ctr + 1) % _arrsize;
 
 #ifdef DEBUG_HASH_COLLISIONS
@@ -297,14 +311,14 @@ int HashMap<Key, Val>::lookup(const Key &key) const {
 	return ctr;
 }
 
-template <class Key, class Val>
-bool HashMap<Key, Val>::contains(const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
 	uint ctr = lookup(key);
 	return (_arr[ctr] != NULL);
 }
 
-template <class Key, class Val>
-Val &HashMap<Key, Val>::operator [](const Key &key) {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) {
 	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
@@ -321,20 +335,20 @@ Val &HashMap<Key, Val>::operator [](const Key &key) {
 	return _arr[ctr]->_value;
 }
 
-template <class Key, class Val>
-const Val &HashMap<Key, Val>::operator [](const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator [](const Key &key) const {
 	return queryVal(key);
 }
 
-template <class Key, class Val>
-const Val &HashMap<Key, Val>::queryVal(const Key &key) const {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+const Val &HashMap<Key, Val, HashFunc, EqualFunc>::queryVal(const Key &key) const {
 	uint ctr = lookup(key);
 	assert(_arr[ctr] != NULL);
 	return _arr[ctr]->_value;
 }
 
-template <class Key, class Val>
-size_t HashMap<Key, Val>::erase(const Key &key) {
+template <class Key, class Val, class HashFunc, class EqualFunc>
+size_t HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 	// This is based on code in the Wikipedia article on Hash tables.
 	uint i = lookup(key);
 	if (_arr[i] == NULL)
@@ -344,7 +358,7 @@ size_t HashMap<Key, Val>::erase(const Key &key) {
 		j = (j + 1) % _arrsize;
 		if (_arr[j] == NULL)
 			break;
-		uint k = hashit(_arr[j]->_key, _arrsize);
+		uint k = _hash(_arr[j]->_key) % _arrsize;
 		if ((j > i && (k <= i || k > j)) ||
 		    (j < i && (k <= i && k > j)) ) {
 			_arr[i] = _arr[j];

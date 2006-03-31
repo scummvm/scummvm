@@ -49,54 +49,30 @@
  */
 
 #include "common/hashmap.h"
+#include <ctype.h>
 
 namespace Common {
 
-// int:
-uint hashit(int x, uint hashsize) {
-	return x % hashsize;
-}
-
-bool data_eq(int x, int y) {
-	return x == y;
-}
-
-#if 0
-// double:
-uint hashit(double d, uint hashsize) {
-	TODO
-}
-#endif
-
-bool data_eq(double d1, double d2) {
-	return (d1 == d2);
-}
-
 // const char *:
-uint hashit(const char *str, uint hashsize) {
-	const byte *p = (const byte *)str;
-	uint hash;
-	char c;
+uint hashit(const char *p) {
+	uint hash = 0;
+	byte c;
 
-	// my31 algo
 	hash = 0;
 	while ((c = *p++))
 		hash = (hash * 31 + c);
 
-	return hash % hashsize;
+	return hash;
 }
 
-bool data_eq(const char *str1, const char *str2) {
-	return !strcmp(str1, str2);
-}
+uint hashit_lower(const char *p) {
+	uint hash = 0;
+	byte c;
 
-// String:
-uint hashit(const Common::String &str, uint hashsize) {
-	return hashit(str.c_str(), hashsize);
-}
+	while ((c = *p++))
+		hash = (hash * 31 + tolower(c));
 
-bool data_eq(const Common::String &str1, const String &str2) {
-	return (str1 == str2);
+	return hash;
 }
 
 // The following table is taken from the GNU ISO C++ Library's hashtable.h file.
