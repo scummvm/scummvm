@@ -168,6 +168,8 @@ public:
 
 	size_t erase(const Key &key);
 
+	uint size() { return _nele; }
+
 	const_iterator	begin() const {
 		// Find and return the first non-empty entry
 		for (uint ctr = 0; ctr < _arrsize; ++ctr) {

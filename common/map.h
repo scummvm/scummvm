@@ -60,6 +60,8 @@ protected:
 
 	Comparator _cmp;
 
+	uint _size;
+
 private:
 	Map<Key, Value, Comparator>(const Map<Key, Value, Comparator> &map);
 	Map<Key, Value, Comparator> &operator =(const Map<Key, Value, Comparator> &map);
@@ -104,7 +106,7 @@ public:
 	};
 
 public:
-	Map<Key, Value, Comparator>() : _root(0) {
+	Map<Key, Value, Comparator>() : _root(0), _size(0) {
 		_header = new Node();
 		_header->_right = _header->_left = _header;
 	}
@@ -118,6 +120,7 @@ public:
 		clearNodes(_root);
 		delete _header;
 		_root = _header = 0;
+		_size = 0;
 	}
 
 	/*
@@ -126,10 +129,12 @@ public:
 	 */
 	Value &operator [](const Key &key) {
 		Node *node;
-		if (!_root)
+		if (!_root) {
 			node = _root = new Node(key, _header);
-		else
+			_size++;
+		} else {
 			node = findOrCreateNode(_root, key);
+		}
 		return node->_value;
 	}
 
@@ -146,11 +151,14 @@ public:
 	void clear() {
 		clearNodes(_root);
 		_root = 0;
+		_size = 0;
 	}
 
 	bool empty() const {
 		return (_root == 0);
 	}
+
+	uint size() const { return _size; }
 
 	size_t erase(const Key &key) {
 		// TODO - implement efficiently. Indeed, maybe switch to using red-black trees?
@@ -259,6 +267,7 @@ protected:
 				return node;
 		}
 		node = new Node(key, prevNode);
+		_size++;
 		if (left) {
 			prevNode->_left = node;
 		} else {
