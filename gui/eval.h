@@ -65,6 +65,8 @@ public:
 
 	int getVar(String s) { return getVar_(s.c_str()); };
 
+	uint getNumVars() { return _vars.size(); }
+
 	void reset();
 
 	typedef HashMap<String, int> VariablesMap;

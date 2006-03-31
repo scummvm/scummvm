@@ -522,6 +522,8 @@ void Theme::loadTheme(Common::ConfigFile &config, bool reset) {
 	sprintf(name, "%dx%d", x, y);
 	if (config.hasSection(name))
 		processResSection(config, name);
+
+	debug(3, "Number of variables: %d", _evaluator->getNumVars());
 }
 
 } // End of namespace GUI

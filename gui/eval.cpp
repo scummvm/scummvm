@@ -49,7 +49,7 @@ Eval::~Eval() {
 int Eval::eval(const String &input, const String &section, const String &name, int startpos) {
 	int result;
 
-	debug(3, "%s=%s", name.c_str(), input.c_str());
+	debug(5, "%s=%s", name.c_str(), input.c_str());
 
 	strncpy(_input, input.c_str(), 256);
 	_section = section;
@@ -65,7 +65,7 @@ int Eval::eval(const String &input, const String &section, const String &name, i
 
 	level2(&result);
 
-	debug(3, "Result: %d", result);
+	debug(5, "Result: %d", result);
 
 	return result;
 }
