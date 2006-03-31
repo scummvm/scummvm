@@ -8,35 +8,68 @@ class HashMapTestSuite : public CxxTest::TestSuite
 	public:
 	void test_empty_clear( void )
 	{
-		Common::HashMap<int, int> map;
-		TS_ASSERT( map.empty() );
-		map[0] = 17;
-		map[1] = 33;
-		TS_ASSERT( !map.empty() );
-		map.clear();
-		TS_ASSERT( map.empty() );
+		Common::HashMap<int, int> container;
+		TS_ASSERT( container.empty() );
+		container[0] = 17;
+		container[1] = 33;
+		TS_ASSERT( !container.empty() );
+		container.clear();
+		TS_ASSERT( container.empty() );
 	}
+
 	void test_contains( void )
 	{
-		Common::HashMap<int, int> map;
-		map[0] = 17;
-		map[1] = 33;
-		TS_ASSERT( map.contains(0) );
-		TS_ASSERT( map.contains(1) );
-		TS_ASSERT( !map.contains(17) );
-		TS_ASSERT( !map.contains(-1) );
+		Common::HashMap<int, int> container;
+		container[0] = 17;
+		container[1] = 33;
+		TS_ASSERT( container.contains(0) );
+		TS_ASSERT( container.contains(1) );
+		TS_ASSERT( !container.contains(17) );
+		TS_ASSERT( !container.contains(-1) );
 	}
 
 	void test_add_remove( void )
 	{
-		Common::HashMap<int, int> map;
-		map[0] = 17;
-		map[1] = 33;
-		TS_ASSERT( map.contains(1) );
-		map.erase(1);
-		TS_ASSERT( !map.contains(1) );
-		map[1] = 42;
-		TS_ASSERT( map.contains(1) );
+		Common::HashMap<int, int> container;
+		container[0] = 17;
+		container[1] = 33;
+		TS_ASSERT( container.contains(1) );
+		container.erase(1);
+		TS_ASSERT( !container.contains(1) );
+		container[1] = 42;
+		TS_ASSERT( container.contains(1) );
+	}
+
+	void test_lookup( void )
+	{
+		Common::HashMap<int, int> container;
+		container[0] = 17;
+		container[1] = -1;
+		container[2] = 45;
+		container[3] = 12;
+		container[4] = 96;
+
+		TS_ASSERT_EQUALS( container[0], 17 );
+		TS_ASSERT_EQUALS( container[1], -1 );
+		TS_ASSERT_EQUALS( container[2], 45 );
+		TS_ASSERT_EQUALS( container[3], 12 );
+		TS_ASSERT_EQUALS( container[4], 96 );
+	}
+
+	void test_iterator_begin_end( void )
+	{
+		Common::HashMap<int, int> container;
+
+		// The container is initially empty ...
+		TS_ASSERT( container.begin() == container.end() );
+		
+		// ... then non-empty ...
+		container[324] = 33;
+		TS_ASSERT( container.begin() != container.end() );
+
+		// ... and again empty.
+		container.clear();
+		TS_ASSERT( container.begin() == container.end() );
 	}
 
 	// TODO: Add test cases for iterators, find, ...
