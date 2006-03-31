@@ -558,7 +558,8 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 3;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		smlayer_startSfx(63);
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
+			smlayer_startSfx(63);
 		break;
 	case 3:
 		smlayer_setActorLayer(0, 2, 4);
