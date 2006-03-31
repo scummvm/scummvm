@@ -66,8 +66,8 @@ struct WizParameters {
 	int fileWriteMode;
 	int angle;
 	int scale;
-	int field_164;
-	int field_168;
+	int polygonId1;
+	int polygonId2;
 	int resDefImgW;
 	int resDefImgH;
 	int sourceImage;

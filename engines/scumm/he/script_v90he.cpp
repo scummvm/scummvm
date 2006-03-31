@@ -718,8 +718,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 85: // HE99+
 		_wizParams.processFlags |= 0x1000 | 0x100 | 0x2;
 		_wizParams.processMode = 7;
-		_wizParams.field_168 = pop();
-		_wizParams.field_164 = pop();
+		_wizParams.polygonId2 = pop();
+		_wizParams.polygonId1 = pop();
 		_wizParams.compType = pop();
 		break;
 	case 87: // HE99+
@@ -800,7 +800,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	case 200:
 		_wizParams.processFlags |= kWPFNewFlags | kWPFSetPos | 2;
 		_wizParams.img.flags |= kWIFIsPolygon;
-		_wizParams.field_164 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
+		_wizParams.polygonId1 = _wizParams.img.y1 = _wizParams.img.x1 = pop();
 		break;
 	case 209:
 		if (_wizParams.img.resNum)
