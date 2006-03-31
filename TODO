@@ -175,7 +175,7 @@ Config Manager
   setting is changed, the code doing so has to updated the SoundMixer etc.
   That's cumbersome, and error prone. Would be much nicer if updating the
   volume config value automatically notifies the SoundMixer, iMuse etc.
-* Modify the config manager to make use of the config file class
+* Modify the ConfigManager to make use of the ConfigFile class.
 * Maybe even follow the pentagram (http://pentragram.sf.net) approach and have
   three classes:
   - SettingsManager (like our current ConfigManager)
