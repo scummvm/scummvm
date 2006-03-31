@@ -501,7 +501,12 @@ void ConfigManager::renameGameDomain(const String &oldName, const String &newNam
 	assert(isValidDomainName(oldName));
 	assert(isValidDomainName(newName));
 
-	_gameDomains[newName].merge(_gameDomains[oldName]);
+//	_gameDomains[newName].merge(_gameDomains[oldName]);
+	Domain &oldDom(_gameDomains[oldName]);
+	Domain &newDom(_gameDomains[newName]);
+	Domain::const_iterator iter;
+	for (iter = oldDom.begin(); iter != oldDom.end(); ++iter)
+		newDom[iter->_key] = iter->_value;
 
 	_gameDomains.erase(oldName);
 }
