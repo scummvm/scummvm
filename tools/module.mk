@@ -47,7 +47,7 @@ credits:
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > engines/scumm/scumm-md5.h
-	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../web/docs/md5.inc
+	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../../web/trunk/docs/md5.inc
 
 
 #
