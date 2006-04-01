@@ -58,37 +58,12 @@ bool Sword2Engine::initStartMenu() {
 	// extract the filenames
 
 	int start_ids[MAX_starts];
+	char buf[10];
 
-	while (1) {
-		bool done = false;
-
-		start_ids[_totalScreenManagers] = 0;
-
-		// Scan the string until the LF in CRLF
-
-		int b;
-
-		do {
-			b = fp.readByte();
-
-			if (fp.ioFailed()) {
-				done = true;
-				break;
-			}
-
-			if (isdigit(b)) {
-				start_ids[_totalScreenManagers] *= 10;
-				start_ids[_totalScreenManagers] += (b - '0');
-			}
-		} while (b != 10);
-
-		if (done)
-			break;
-
-		_totalScreenManagers++;
-
-		if (_totalScreenManagers == MAX_starts) {
-			warning("MAX_starts exceeded");
+	while (fp.readLine(buf, sizeof(buf))) {
+		start_ids[_totalScreenManagers] = atoi(buf);
+		if (++_totalScreenManagers >= MAX_starts) {
+			warning("Too many entries in startup.inf");
 			break;
 		}
 	}
