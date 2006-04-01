@@ -32,7 +32,7 @@
  */
 struct ScummGameSettings {
 	const char *gameid;
-	const char *extra;
+	const char *variant;
 	byte id, version, heversion;
 	int midi; // MidiDriverFlags values
 	uint32 features;

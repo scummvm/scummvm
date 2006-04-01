@@ -193,15 +193,15 @@ static const ScummGameSettings scumm_settings[] = {
 	/* Scumm Version 2 */
 
 	{"maniac", 0, GID_MANIAC, 2, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"zak", 0, GID_ZAK, 2, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 
 	/* Scumm Version 3 */
 	{"indy3", 0, GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"loom", 0, GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
+	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 
 	/* Scumm Version 4 */
 	{"pass", 0, GID_PASS, 4, 0, MDT_PCSPK | MDT_ADLIB,
@@ -214,27 +214,27 @@ static const ScummGameSettings scumm_settings[] = {
 
 	/* Scumm version 5 */
 	{"monkey2", 0, GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
-	 GF_USE_KEY, Common::kPlatformPC},
+	 GF_USE_KEY, UNK},
 
 	{"atlantis", 0, GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI,
-	 GF_USE_KEY, Common::kPlatformPC},
+	 GF_USE_KEY, UNK},
 
 	/* Scumm Version 6 */
 	{"tentacle", 0, GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
-	 GF_USE_KEY, Common::kPlatformPC},
+	 GF_USE_KEY, UNK},
 
 	{"samnmax", 0, GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI,
-	 GF_USE_KEY, Common::kPlatformPC},
+	 GF_USE_KEY, UNK},
 
 //	{"test", "Test demo game", GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_NEW_OPCODES, Common::kPlatformUnknown},
 
 #ifndef DISABLE_SCUMM_7_8
 	/* Scumm Version 7 */
 	{"ft", 0, GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, UNK},
 
 	{"dig", 0, GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, Common::kPlatformPC},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE, UNK},
 
 	/* Scumm Version 8 */
 	{"comi", 0, GID_CMI, 8, 0, MDT_NONE,
@@ -387,18 +387,18 @@ static const ScummGameSettings scumm_settings[] = {
 };
 
 
-#if 0
+#if 1
 // The following table is currently *unused*. It's work in progress for a refined detector;
 // the purpose of this particular table is to replace multiple_versions_md5_settings, 
 // and maybe also scumm_settings. 
 static const ScummGameSettings extra_versions[] = {
 	// The C64 version of MM is detected via the platform field and hence has no seperate entry in this list
-	{"maniac", "",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"maniac", "V2",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"maniac", "NES", GID_MANIAC, 1, 0, MDT_NONE,  GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
 	{"maniac", "V1",  GID_MANIAC, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 
 	// The C64 version of Zak is detected via the platform field and hence has no seperate entry in this list
-	{"zak", "",         GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
+	{"zak", "V2",         GID_ZAK, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
 	{"zak", "V1",       GID_ZAK, 1, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
 	{"zak", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS, GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
 
@@ -494,7 +494,9 @@ static const ScummGameSettings extra_versions[] = {
 	{"lost", "Updated", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 
 
-	// The following are meant to be generic HE game variants and as such do not specify a game ID
+	// The following are meant to be generic HE game variants and as such do
+	// not specify a game ID. Make sure that these are last in the table, else
+	// they'll override more specific entries that follow later on.
 	{"", "HE 70",   GID_HEGAME, 6,  70, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 71",   GID_HEGAME, 6,  71, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
 	{"", "HE 72",   GID_HEGAME, 6,  72, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, UNK},
@@ -529,7 +531,7 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
 
 	{"362c1d281fb9899254cda66ad246c66a", "Demo", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC},
+	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformUnknown},
 	{"cd9c05e755d7bf8e9b9590ad1ebe273e", "Demo Mac", GID_DIG, 7, 0, MDT_NONE,
 	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
 
@@ -1667,10 +1669,22 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 		target_md5F.close();
 	}
 
+
+	// Check for unknown MD5 checksums, and print a message if we encounter one.
+	const MD5Table *elem;
+#ifdef PALMOS_68K
+	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
+#else
+	uint32 arraySize = ARRAYSIZE(md5table) - 1;
+#endif
+	elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
+	if (!elem)
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
+
+
 	// Now search our 'database' for the MD5; if a match is found, we use 
 	// the information in the 'database' to correct the GameDescriptor.
-	g = multiple_versions_md5_settings;
-	while (g->gameid) {
+	for (g = multiple_versions_md5_settings; g->gameid; ++g) {
 		if (!scumm_stricmp(md5, g->gameid)) {
 			// Match found. Copy the data and ensure that we use the correct
 			// gameid (since we abused that field to store the MD5).
@@ -1678,8 +1692,63 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 			game.gameid = gameid;
 			break;
 		}
-		g++;
 	}
+
+#if 1
+	//
+	// Compute the ScummGameSettings using the extra_versions array.
+	// This will soon replace multiple_versions_md5_settings (which then
+	// will be removed).
+	//
+	if (elem) {
+		// The MD5 is known and was found in our md5table.
+		
+		// Sanity check: Make sure the gameids match
+		if (scumm_stricmp(elem->gameid, gameid)) {
+			error("MD5 %s implies gameid '%s', but gameid '%s' was used",
+					md5, elem->gameid, gameid);
+		}
+	
+		// Compute the precise game settings using 'extra_versions'.
+		ScummGameSettings game2(game);
+		for (g = extra_versions; g->gameid; ++g) {
+			if (g->gameid[0] == 0 || !scumm_stricmp(elem->gameid, g->gameid)) {
+				// The gameid either matches, or is empty (the latter indicates
+				// a generic entry, used currently for generic HE specifies.
+
+				if (g->variant == 0 || !scumm_stricmp(elem->variant, g->variant)) {
+					// Perfect match found, use it and stop the loop
+					game2 = *g;
+					game2.gameid = gameid;
+					if (elem->platform != Common::kPlatformUnknown)
+						game2.platform = elem->platform;
+					break;
+				}
+			}
+		}
+		
+		// Compare to the results obtained via multiple_versions_md5_settings.
+		const bool foo =
+			scumm_stricmp(game.gameid, game2.gameid) ||
+			game.id != game2.id ||
+			game.version != game2.version ||
+			game.heversion != game2.heversion ||
+			game.midi != game2.midi ||
+			game.features != game2.features;
+		if (foo || game.platform != game2.platform) {
+			warning("ScummGameSettings differ (MD5 %s):", md5);
+			warning("game 1: '%s', id %d, ver %d, he %d, midi %d, f %d, p %d",
+					game.gameid, game.id, game.version, game.heversion, game.midi, game.features, game.platform);
+			warning("game 2: '%s', id %d, ver %d, he %d, midi %d, f %d, p %d",
+					game2.gameid, game2.id, game2.version, game2.heversion, game2.midi, game2.features, game2.platform);
+			if (foo)
+				error("Aborting -- please report details to fingolfin...");
+		}
+	
+	}
+#endif
+
+
 
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in 
@@ -1693,17 +1762,6 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	if (game.platform == Common::kPlatformFMTowns && game.version == 3) {
 		game.midi = MDT_TOWNS;
 	}
-
-	// Check for unknown MD5 checksums, and print a message if we encounter one.
-	const MD5Table *elem;
-#ifdef PALMOS_68K
-	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
-#else
-	uint32 arraySize = ARRAYSIZE(md5table) - 1;
-#endif
-	elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
-	if (!elem)
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
