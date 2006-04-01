@@ -184,6 +184,8 @@ ScummEngine::ScummEngine(GameDetector *detector, OSystem *syst, const ScummGameS
 			assert(_game.version >= 5 && _game.heversion == 0);
 			_fileHandle = new ScummFile();
 			_containerFile = _substResFileName.expandedName;
+		} else {
+			error("kGenAsIs used with unsupported platform");
 		}
 		
 		// If a container file is used, we can turn of file name substitution.
