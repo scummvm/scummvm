@@ -336,6 +336,9 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	// Stop all sound processing now (this prevents some race conditions later on)
 	system.clearSoundCallback();
 
+	// Reset the file/directory mappings
+	Common::File::resetDefaultDirectories();
+
 	return result;
 }
 

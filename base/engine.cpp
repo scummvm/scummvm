@@ -49,8 +49,6 @@ Engine::Engine(OSystem *syst)
 }
 
 Engine::~Engine() {
-	Common::File::resetDefaultDirectories();
-
 	delete _mixer;
 	delete _saveFileMan;
 
