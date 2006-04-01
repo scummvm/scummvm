@@ -440,11 +440,6 @@ extern "C" int main(int argc, char *argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
-	if (!ConfMan.hasKey("autosave_period")) {
-		// By default, trigger autosave every 5 minutes
-		ConfMan.set("autosave_period", 5 * 60, Common::ConfigManager::kApplicationDomain);
-	}
-
 	// Quick preparse of command-line, looking for special debug flags
 	for (int ii = argc - 1; ii >= 1; ii--) {
 		s = argv[ii];

@@ -159,6 +159,7 @@ GameDetector::GameDetector() {
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("save_slot", -1);
+	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
 
 #if !defined(DISABLE_SCUMM) || !defined(DISABLE_SWORD2)
 	ConfMan.registerDefault("object_labels", true);
