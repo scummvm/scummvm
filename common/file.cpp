@@ -32,11 +32,12 @@
 namespace Common {
 
 typedef HashMap<String, String> FilesMap;
+typedef HashMap<String, int> StringIntMap;
 
 // The following two objects could be turned into static members of class
 // File. However, then we would be forced to #include hashmap in file.h
 // which seems to be a high price just for a simple beautification...
-static StringList _defaultDirectories;
+static StringIntMap _defaultDirectories;
 static FilesMap _filesMap;
 
 
@@ -114,55 +115,33 @@ static FILE *fopenNoCase(const char *filename, const char *directory, const char
 }
 
 void File::addDefaultDirectory(const String &directory) {
-	String lfn;
-
-	FilesystemNode dir(directory.c_str());
-
-	if (!dir.isDirectory())
-		return;
-
-	_defaultDirectories.push_back(directory);
-
-	FSList fslist(dir.listDir(FilesystemNode::kListFilesOnly));
-	
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		lfn = file->displayName();
-		lfn.toLowercase();
-		if (!_filesMap.contains(lfn))
-			_filesMap[lfn] = file->path();
-	}
+	addDefaultDirectoryRecursive(directory, 1);
 }
 
-void File::addDefaultDirectoryRecursive(const String &directory, int level, int baseLen) {
-	if (level > 4)
+void File::addDefaultDirectoryRecursive(const String &directory, int level) {
+	if (level <= 0)
 		return;
 
-	String lfn;
+	// Do not add directories multiple times, unless this time they are added
+	// with a bigger depth.
+	if (_defaultDirectories.contains(directory) && _defaultDirectories[directory] >= level)
+		return;
 
 	FilesystemNode dir(directory.c_str());
 
+	// ... and abort if this isn't a directory!
 	if (!dir.isDirectory())
 		return;
 
-	_defaultDirectories.push_back(directory);
-
-	if (baseLen == 0) {
-		baseLen = directory.size();
-		if (directory.lastChar() != '/'
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-					&& directory.lastChar() != ':'
-#endif
-					&& directory.lastChar() != '\\')
-			baseLen++;
-	}
+	_defaultDirectories[directory] = level;
 
 	FSList fslist(dir.listDir(FilesystemNode::kListAllNoRoot));
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->path(), level + 1, baseLen);
+			addDefaultDirectoryRecursive(file->path(), level - 1);
 		} else {
-			lfn = String(file->path().c_str() + baseLen);
+			String lfn = file->displayName();
 			lfn.toLowercase();
 			if (!_filesMap.contains(lfn))
 				_filesMap[lfn] = file->path();
@@ -234,10 +213,10 @@ bool File::open(const char *filename, AccessMode mode, const char *directory) {
 		_handle = fopen(_filesMap[fname].c_str(), modeStr);
 	} else {
 
-		StringList::const_iterator x;
+		StringIntMap::const_iterator x;
 		// Try all default directories
 		for (x = _defaultDirectories.begin(); _handle == NULL && x != _defaultDirectories.end(); ++x) {
-			_handle = fopenNoCase(filename, x->c_str(), modeStr);
+			_handle = fopenNoCase(filename, x->_key.c_str(), modeStr);
 		}
 		// Last resort: try the current directory
 		if (_handle == NULL)

@@ -51,7 +51,7 @@ public:
 	};
 
 	static void addDefaultDirectory(const String &directory);
-	static void addDefaultDirectoryRecursive(const String &directory, int level = 0, int baseLen = 0);
+	static void addDefaultDirectoryRecursive(const String &directory, int level = 4);
 	static void resetDefaultDirectories();
 
 	File();
