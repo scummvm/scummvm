@@ -66,9 +66,6 @@ public:
 	 */
 	virtual int go() = 0;
 
-	/** Get the path to the game data directory. */
-	virtual const char *getGameDataPath() const;
-
 	/** Specific for each engine: prepare error string. */
 	virtual void errorString(const char *buf_input, char *buf_output);
 

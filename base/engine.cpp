@@ -43,9 +43,6 @@ Engine::Engine(OSystem *syst)
 
 	_timer = Common::g_timer;
 
-	// Add default file directory
-	Common::File::addDefaultDirectory(_gameDataPath);
-
 	_saveFileMan = _system->getSavefileManager();
 
 	_autosavePeriod = ConfMan.getInt("autosave_period");
@@ -145,10 +142,6 @@ void Engine::checkCD() {
 bool Engine::shouldPerformAutoSave(int lastSaveTime) {
 	const int diff = _system->getMillis() - lastSaveTime;
 	return _autosavePeriod != 0 && diff > _autosavePeriod * 1000;
-}
-
-const char *Engine::getGameDataPath() const {
-	return _gameDataPath.c_str();
 }
 
 void Engine::errorString(const char *buf1, char *buf2) {
