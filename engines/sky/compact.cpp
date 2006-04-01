@@ -238,14 +238,18 @@ SkyCompact::SkyCompact(void) {
 SkyCompact::~SkyCompact(void) {
 	free(_rawBuf);
 	free(_asciiBuf);
+	free(_saveIds);
 	for (int i = 0; i < _numDataLists; i++) {
-		free(_compacts[i]);
 		free(_cptNames[i]);
 		free(_cptSizes[i]);
+		free(_cptTypes[i]);
+		free(_compacts[i]);
 	}
-	free(_compacts);
 	free(_cptNames);
+	free(_dataListLen);
 	free(_cptSizes);
+	free(_cptTypes);
+	free(_compacts);
 	_cptFile->close();
 	delete _cptFile;
 }
