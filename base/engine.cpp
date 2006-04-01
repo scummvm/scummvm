@@ -111,12 +111,12 @@ void Engine::checkCD() {
 	char buffer[MAXPATHLEN];
 	int i;
 
-	if (strlen(getGameDataPath()) == 0) {
+	if (strlen(_gameDataPath.c_str()) == 0) {
 		// That's it! I give up!
 		if (getcwd(buffer, MAXPATHLEN) == NULL)
 			return;
 	} else
-		strncpy(buffer, getGameDataPath(), MAXPATHLEN);
+		strncpy(buffer, _gameDataPath.c_str(), MAXPATHLEN);
 
 	for (i = 0; i < MAXPATHLEN - 1; i++) {
 		if (buffer[i] == '\\')
