@@ -89,7 +89,8 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	while (file.readLine(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
-		_totalClusters++;
+		if (++_totalClusters >= MAX_res_files)
+			error("Too many entries in resource.inf");
 	}
 
 	file.close();
