@@ -1547,7 +1547,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	Engine *engine;
 
 	// We start by checking whether the specified game ID is obsolete.
-	// If that is the case, we automaticlaly upgrade the target to use
+	// If that is the case, we automatically upgrade the target to use
 	// the correct new game ID (and platform, if specified).
 	const ObsoleteGameID *o = obsoleteGameIDsTable;
 	while (o->from) {
