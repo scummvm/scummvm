@@ -60,9 +60,6 @@ protected:
 	int go();
 	void shutdown();
 
-	const char *_dataPath;
-	const char *_savePath;
-
 public:
 	CineEngine(GameDetector *detector, OSystem *syst);
 	virtual ~CineEngine();

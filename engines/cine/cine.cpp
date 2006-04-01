@@ -134,11 +134,6 @@ CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_dataPath = getGameDataPath();
-	_savePath = _saveFileMan->getSavePath();
-
-	Common::File::addDefaultDirectory(_gameDataPath);
-
 	const CINEGameSettings *g;
 
 	for (g = cine_settings; g->name; ++g)
