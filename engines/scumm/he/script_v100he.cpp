@@ -634,6 +634,8 @@ void ScummEngine_v100he::o100_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
+		checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
+
 		tmp2 = 0;
 		while (dim2start <= dim2end) {
 			tmp = dim1start;
@@ -674,6 +676,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
+		checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
 
 		offs = (b >= c) ? 1 : -1;
 		tmp2 = c;

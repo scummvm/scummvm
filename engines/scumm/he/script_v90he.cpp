@@ -2320,6 +2320,7 @@ void ScummEngine_v90he::o90_sortArray() {
 			int dim2end = pop();
 			int dim2start = pop();
 			getArrayDim(array, &dim2start, &dim2end, &dim1start, &dim1end);
+			checkArrayLimits(array, dim2start, dim2end, dim1start, dim1end);
 			sortArray(array, dim2start, dim2end, dim1start, dim1end, sortOrder);
 		}
 		break;
