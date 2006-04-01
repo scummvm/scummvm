@@ -1957,9 +1957,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		}
 		break;
 	case 6:
-		if (params->processFlags & kWPFRemapPalette) {
-			remapWizImagePal(params);
-		}
+		remapWizImagePal(params);
 		break;
 	// HE 99+
 	case 7:

@@ -689,12 +689,11 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.processMode = 6;
 		if (_wizParams.remapNum == 0) {
 			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
-		} else {
-			assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
-			_wizParams.remapIndex[_wizParams.remapNum] = a;
-			_wizParams.remapColor[a] = b;
-			++_wizParams.remapNum;
 		}
+		assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
+		_wizParams.remapIndex[_wizParams.remapNum] = a;
+		_wizParams.remapColor[a] = b;
+		_wizParams.remapNum++;
 		break;
 	case 21:
 		_wizParams.processFlags |= kWPFClipBox;
