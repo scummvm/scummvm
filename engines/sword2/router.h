@@ -53,8 +53,7 @@ struct BarData {
 	int16 ymax;
 	int16 dx;	// x2 - x1
 	int16 dy;	// y2 - y1
-	int32 co;	// co = (y1 * dx) - (x1 * dy) from an equation for a
-			// line y * dx = x * dy + co
+	int32 co;	// co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
 };
 
 struct NodeData {
@@ -113,14 +112,9 @@ private:
 	int32 _nBars;
 	int32 _nNodes;
 
-	int32 _startX;
-	int32 _startY;
-	int32 _startDir;
-	int32 _targetX;
-	int32 _targetY;
-	int32 _targetDir;
-	int32 _scaleA;
-	int32 _scaleB;
+	int32 _startX, _startY, _startDir;
+	int32 _targetX, _targetY, _targetDir;
+	int32 _scaleA, _scaleB;
 
 	RouteData _route[O_ROUTE_SIZE];
 	PathData _smoothPath[O_ROUTE_SIZE];
@@ -189,7 +183,7 @@ private:
 	void slidyWalkAnimator(WalkData *walkAnim);
 
 #ifndef FORCE_SLIDY
-	int32 solidPath();
+	void solidPath();
 	int32 solidWalkAnimator(WalkData *walkAnim);
 #endif
 

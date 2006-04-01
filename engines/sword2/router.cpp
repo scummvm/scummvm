@@ -19,6 +19,19 @@
  * $Id$
  */
 
+#include "common/stdafx.h"
+#include "common/stream.h"
+
+#include "sword2/sword2.h"
+#include "sword2/defs.h"
+#include "sword2/header.h"
+#include "sword2/logic.h"
+#include "sword2/resman.h"
+#include "sword2/router.h"
+#include "sword2/screen.h"
+
+namespace Sword2 {
+
 // ---------------------------------------------------------------------------
 // ROUTER.CPP by James
 //
@@ -74,19 +87,6 @@
  *  THEN REINCARNATED BY JAMES FOR NEW MEGAS USING NEW SYSTEM
  *
  ****************************************************************************/
-
-#include "common/stdafx.h"
-#include "common/stream.h"
-
-#include "sword2/sword2.h"
-#include "sword2/defs.h"
-#include "sword2/header.h"
-#include "sword2/logic.h"
-#include "sword2/resman.h"
-#include "sword2/router.h"
-#include "sword2/screen.h"
-
-namespace Sword2 {
 
 //----------------------------------------------------------
 // (4) WALK-GRID FILES
@@ -220,18 +220,18 @@ int32 Router::routeFinder(byte *ob_mega, byte *ob_walkdata, int32 x, int32 y, in
 		// modularPath is normally set by extractRoute
 
 		_modularPath[0].dir = _startDir;
- 		_modularPath[0].num = 0;
- 		_modularPath[0].x = _startX;
- 		_modularPath[0].y = _startY;
+		_modularPath[0].num = 0;
+		_modularPath[0].x = _startX;
+		_modularPath[0].y = _startY;
 		_modularPath[1].dir = _targetDir;
- 		_modularPath[1].num = 0;
- 		_modularPath[1].x = _startX;
- 		_modularPath[1].y = _startY;
- 		_modularPath[2].dir = 9;
- 		_modularPath[2].num = ROUTE_END_FLAG;
+		_modularPath[1].num = 0;
+		_modularPath[1].x = _startX;
+		_modularPath[1].y = _startY;
+		_modularPath[2].dir = 9;
+		_modularPath[2].num = ROUTE_END_FLAG;
 
 		slidyWalkAnimator(walkAnim);
- 		routeFlag = 2;
+		routeFlag = 2;
 		break;
 	case 1:
 		// A normal route. Convert the route to an exact path
@@ -369,7 +369,7 @@ int32 Router::smoothestPath() {
 	int32 lastDir;
 	int32 tempturns[4];
 	int32 turns[4];
-	int32 turntable[NO_DIRECTIONS] = { 0, 1, 3, 5, 7, 5, 3, 1 };
+	const int32 turntable[NO_DIRECTIONS] = { 0, 1, 3, 5, 7, 5, 3, 1 };
 
 	// route.X route.Y and route.Dir start at far end
 
@@ -414,9 +414,7 @@ int32 Router::smoothestPath() {
 		if (dDS < 0)
 			dDS = dDS + NO_DIRECTIONS;
 
-		// Determine the amount of turning involved in each possible
-		// path
-
+		// Determine the amount of turning involved in each possible path
 		dS = turntable[dS];
 		dD = turntable[dD];
 		dSS = turntable[dSS];
@@ -424,17 +422,13 @@ int32 Router::smoothestPath() {
 		dSD = turntable[dSD];
 		dDS = turntable[dDS];
 
-		// get the best path out ie assume next section uses best
-		// direction
-
+		// get the best path out ie assume next section uses best direction
 		if (dSD < dSS)
 			dSS = dSD;
-
 		if (dDS < dDD)
 			dDD = dDS;
 
-		// Rate each option. Split routes look crap so weight against
-		// them
+		// Rate each option. Split routes look crap so weight against them
 		tempturns[0] = dS + dSS + 3;
 		turns[0] = 0;
 		tempturns[1] = dS + dDD;
@@ -445,7 +439,6 @@ int32 Router::smoothestPath() {
 		turns[3] = 3;
 
 		// set up turns as a sorted array of the turn values
-
 		for (i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (tempturns[j] > tempturns[j + 1]) {
@@ -495,6 +488,8 @@ int32 Router::smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
 	 * No longer checks the data it only creates the smoothPath array JPS
 	 *********************************************************************/
 
+	// FIXME: Using 'static' vars in a method is evil -- they should almost
+	// always be turned into member variables instead.
 	static int32 k;
 	int32 dsx, dsy;
 	int32 ddx, ddy;
@@ -687,7 +682,6 @@ void Router::slidyPath() {
 	_modularPath[slidy].y = _smoothPath[smooth - 1].y;
 	_modularPath[slidy].dir = 9;
 	_modularPath[slidy].num = ROUTE_END_FLAG;
-	slidy++;
 }
 
 // SLOW IN
@@ -727,7 +721,7 @@ void Router::earlySlowOut(byte *ob_mega, byte *ob_walkdata) {
 	debug(5, "_firstSlowOutFrame = %d", _firstSlowOutFrame);
 	debug(5, "********************************");
 
- 	walk_pc = obMega.getWalkPc();
+	walk_pc = obMega.getWalkPc();
 
 	walkAnim = getRouteMem();
 
@@ -805,7 +799,7 @@ void Router::addSlowOutFrames(WalkData *walkAnim) {
 	// if the mega did actually walk, we overwrite the last step (half a
 	// cycle) with slow-out frames + add any necessary stationary frames
 
- 	if (_walkData.usingSlowOutFrames && _lastCount >= _framesPerStep) {
+	if (_walkData.usingSlowOutFrames && _lastCount >= _framesPerStep) {
 		// place stop frames here
 		// slowdown at the end of the last walk
 
@@ -857,6 +851,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	 * produce a module list from the line data
 	 *********************************************************************/
 
+	// FIXME: Using 'static' vars in a method is evil -- they should almost
+	// always be turned into member variables instead.
 	static int32 left = 0;
 	int32 p;
 	int32 lastDir;
@@ -1069,9 +1065,9 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 							// closest
 							_stepCount -= _framesPerStep;
 							if (left == 0)
-						 		left = _framesPerStep;
+								left = _framesPerStep;
 							else
-							 	left = 0;
+								left = 0;
 						}
 					} else {
 						if (3 * ABS(lastErrorX) < ABS(errorX)) {
@@ -1079,9 +1075,9 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 							// closest
 							_stepCount -= _framesPerStep;
 							if (left == 0)
-						 		left = _framesPerStep;
+								left = _framesPerStep;
 							else
-							 	left = 0;
+								left = 0;
 						}
 					}
 				}
@@ -1294,7 +1290,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 // THE SOLID PATH ROUTINES
 
-int32 Router::solidPath() {
+void Router::solidPath() {
 	/*********************************************************************
 	 * SolidPath creates a path based on whole steps with no sliding to
 	 * get as near as possible to the target without any sliding this
@@ -1335,7 +1331,7 @@ int32 Router::solidPath() {
 		if (ABS(deltaX) >= ABS(stepX) && ABS(deltaY) >= ABS(stepY)) {
 			_modularPath[solid].x = _smoothPath[smooth].x;
 			_modularPath[solid].y = _smoothPath[smooth].y;
-		 	_modularPath[solid].dir = _smoothPath[smooth].dir;
+			_modularPath[solid].dir = _smoothPath[smooth].dir;
 			_modularPath[solid].num = 1;
 			solid++;
 		}
@@ -1360,8 +1356,6 @@ int32 Router::solidPath() {
 	_modularPath[solid].y = _smoothPath[smooth - 1].y;
 	_modularPath[solid].dir = 9;
 	_modularPath[solid].num = ROUTE_END_FLAG;
-
-	return 1;
 }
 
 int32 Router::solidWalkAnimator(WalkData *walkAnim) {
@@ -1504,9 +1498,9 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	// this ensures that we don't put in turn frames for the start
 	_currentDir = 99;
 
-	int32 p = 1;
+	int32 p;
 
-	do {
+	 for (p = 1; _modularPath[p].dir < NO_DIRECTIONS; ++p) {
 		while (_modularPath[p].num > 0) {
 			_currentDir = _modularPath[p].dir;
 			if (_currentDir < NO_DIRECTIONS) {
@@ -1618,12 +1612,11 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 				}
 			}
 		}
-		p++;
 		lastDir = _currentDir;
 
 		// can only be valid first time round
 		slowStart = false;
-	} while (_modularPath[p].dir < NO_DIRECTIONS);
+	}
 
 	// THE SLOW OUT
 
@@ -1658,13 +1651,10 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	debug(5, "routeFinder RouteSize is %d", _stepCount);
 	// now check the route
 
-	int i = 0;
-
-	do {
+	for (int i = 0; i < p - 1; ++i) {
 		if (!check(_modularPath[i].x, _modularPath[i].y, _modularPath[i + 1].x, _modularPath[i + 1].y))
 			p = 0;
-		i++;
-	} while (i < p - 1);
+	}
 
 	if (p != 0) {
 		_targetDir = _modularPath[p - 1].dir;
@@ -1698,7 +1688,7 @@ bool Router::scan(int32 level) {
 	int32 distance;
 	bool changed = false;
 
- 	// For all the nodes that have new values and a distance less than
+	// For all the nodes that have new values and a distance less than
 	// enddist, ie dont check for new routes from a point we checked
 	// before or from a point that is already further away than the best
 	// route so far.
@@ -1789,8 +1779,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		ldx = ldx * dirX;
 		ldy = 0;
 
-	 	// options are square, diagonal a code 1 route
-
+		// options are square, diagonal a code 1 route
 		step1 = check(x1, y1, x1 + ldx, y1);
 		if (step1 != 0) {
 			step2 = check(x1 + ldx, y1, x2, y2);
@@ -1801,7 +1790,6 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		}
 
 		// diagonal, square a code 2 route
-
 		if (steps == 0 || status == 1) {
 			step1 = check(x1, y1, x1 + dlx, y1 + dly);
 			if (step1 != 0) {
@@ -1814,7 +1802,6 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		}
 
 		// halfsquare, diagonal, halfsquare a code 0 route
-
 		if (steps == 0 || status == 1) {
 			step1 = check(x1, y1, x1 + ldx / 2, y1);
 			if (step1 != 0) {
@@ -1829,8 +1816,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 			}
 		}
 
-		//halfdiagonal, square, halfdiagonal a code 3 route
-
+		// halfdiagonal, square, halfdiagonal a code 3 route
 		if (steps == 0 || status == 1) {
 			step1 = check(x1, y1, x1 + dlx / 2, y1 + dly / 2);
 			if (step1 != 0) {
@@ -1855,8 +1841,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		ldy = ldy * dirY;
 		ldx = 0;
 
-	 	// options are square, diagonal a code 1 route
-
+		// options are square, diagonal a code 1 route
 		step1 = check(x1 ,y1, x1, y1 + ldy);
 		if (step1 != 0)	{
 			step2 = check(x1, y1 + ldy, x2, y2);
@@ -1867,7 +1852,6 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		}
 
 		// diagonal, square a code 2 route
-
 		if (steps == 0 || status == 1) {
 			step1 = check(x1, y1, x2, y1 + dly);
 			if (step1 != 0) {
@@ -1880,7 +1864,6 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		}
 
 		// halfsquare, diagonal, halfsquare a code 0 route
-
 		if (steps == 0 || status == 1) {
 			step1 = check(x1, y1, x1, y1 + ldy / 2);
 			if (step1 != 0) {
@@ -1896,7 +1879,6 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 		}
 
 		// halfdiagonal, square, halfdiagonal a code 3 route
-
 		if (steps == 0 || status == 1) {
 			step1 = check(x1, y1, x1 + dlx / 2, y1 + dly / 2);
 			if (step1 != 0) {
@@ -2069,8 +2051,7 @@ int32 Router::checkTarget(int32 x, int32 y) {
 		if (xmax >= _bars[i].xmin && xmin <= _bars[i].xmax && ymax >= _bars[i].ymin && ymin <= _bars[i].ymax) {
 			int32 xc, yc;
 
-			// okay this line overlaps the target calculate
-			// an y intercept for x
+			// okay this line overlaps the target calculate an y intercept for x
 
 			// vertical line so we know it overlaps y
 			if (_bars[i].dx == 0)
@@ -2227,14 +2208,14 @@ void Router::extractRoute() {
 	int32 prevy;
 	int32 last;
 	int32 point;
-	int32 p;
 	int32 dirx;
 	int32 diry;
 	int32 dir;
 	int32 ldx;
 	int32 ldy;
+	int32 p;
 
- 	// extract the route from the node data
+	// extract the route from the node data
 
 	prev = _nNodes;
 	last = prev;
@@ -2253,7 +2234,6 @@ void Router::extractRoute() {
 	} while (prev > 0);
 
 	// now shuffle route down in the buffer
-
 	_routeLength = 0;
 
 	do {
@@ -2266,10 +2246,7 @@ void Router::extractRoute() {
 	_routeLength--;
 
 	// okay the route exists as a series point now put in some directions
-
-	p = 0;
-
-	do {
+	for (p = 0; p < _routeLength; ++p) {
 		ldx = _route[p + 1].x - _route[p].x;
 		ldy = _route[p + 1].y - _route[p].y;
 		dirx = 1;
@@ -2309,12 +2286,10 @@ void Router::extractRoute() {
 			dir = dir + diry * dirx;
 			_route[p].dirD = dir;
 		}
-		p++;
-	} while (p < _routeLength);
+	}
 
 	// set the last dir to continue previous route unless specified
-
-	if (_targetDir == 8) {
+	if (_targetDir == NO_DIRECTIONS) {
 		// ANY direction
 		_route[p].dirS = _route[p - 1].dirS;
 		_route[p].dirD = _route[p - 1].dirD;

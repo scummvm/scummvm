@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BSOBJECT_H
-#define BSOBJECT_H
+#ifndef SWORD1_OBJECT_H
+#define SWORD1_OBJECT_H
 
 #include "common/scummsys.h"
 

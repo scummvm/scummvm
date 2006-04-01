@@ -20,40 +20,37 @@
  *
  */
 
-#ifndef BSROUTER_H
-#define BSROUTER_H
+#ifndef SWORD1_ROUTER_H
+#define SWORD1_ROUTER_H
 
-#include "common/scummsys.h"
 #include "sword1/object.h"
 
 namespace Sword1 {
-
-#define O_GRID_SIZE 200
 
 #if !defined(__GNUC__)
 	#pragma START_PACK_STRUCTS
 #endif
 
 struct BarData {
-	int16   x1;
-  	int16   y1;
-  	int16   x2;
-	int16   y2;
-	int16   xmin;
-	int16   ymin;
-	int16   xmax;
-	int16   ymax;
-	int16   dx;	   // x2 - x1
-	int16   dy;	   // y2 - y1
-	int32   co;	   // co = (y1 *dx)- (x1*dy) from an equation for a line y*dx = x*dy + co
+	int16 x1;
+  	int16 y1;
+  	int16 x2;
+	int16 y2;
+	int16 xmin;
+	int16 ymin;
+	int16 xmax;
+	int16 ymax;
+	int16 dx;	// x2 - x1
+	int16 dy;	// y2 - y1
+	int32 co;	// co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
 } GCC_PACK;
 
 struct NodeData {
-	int16   x;
-	int16   y;
-	int16	level;
-	int16   prev;
-	int16   dist;
+	int16 x;
+	int16 y;
+	int16 level;
+	int16 prev;
+	int16 dist;
 } GCC_PACK;
 
 #if !defined(__GNUC__)
@@ -68,23 +65,25 @@ struct FloorData {
 };
 
 struct RouteData {
-	int32	x;
-	int32	y;
-	int32	dirS;
-	int32	dirD;
+	int32 x;
+	int32 y;
+	int32 dirS;
+	int32 dirD;
 };
 
 struct PathData {
-	int32	x;
-	int32	y;
-	int32	dir;
-	int32	num;
+	int32 x;
+	int32 y;
+	int32 dir;
+	int32 num;
 };
 
-#define ROUTE_END_FLAG 255
-#define NO_DIRECTIONS 8
 #define MAX_FRAMES_PER_CYCLE 16
+#define NO_DIRECTIONS 8
 #define MAX_FRAMES_PER_CHAR (MAX_FRAMES_PER_CYCLE * NO_DIRECTIONS)
+#define ROUTE_END_FLAG 255
+
+#define O_GRID_SIZE 200
 #define O_ROUTE_SIZE 50
 
 class ObjectMan;
@@ -100,9 +99,12 @@ public:
 	void setPlayerTarget(int32 x, int32 y, int32 dir, int32 stance);
 
 	// these should be private but are read by Screen for debugging:
-	BarData   bars[O_GRID_SIZE];
-	NodeData  node[O_GRID_SIZE];
-	int32 nbars, nnodes;
+	BarData   _bars[O_GRID_SIZE];
+	NodeData  _node[O_GRID_SIZE];
+
+	int32 _nBars;
+	int32 _nNodes;
+
 private:
 	// when the player collides with another mega, we'll receive a ReRouteRequest here.
 	// that's why we need to remember the player's target coordinates
@@ -111,61 +113,55 @@ private:
 	ObjectMan *_objMan;
 	ResMan *_resMan;
 
-	/*uint8 _nWalkFrames, _nTurnFrames;
-	int32 _dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32 _dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32 _modX[NO_DIRECTIONS];
-	int32 _modY[NO_DIRECTIONS];
-	int32 _diagonalx, _diagonaly;*/
+	int32 _startX, _startY, _startDir;
+	int32 _targetX, _targetY, _targetDir;
+	int32 _scaleA, _scaleB;
 
-	int32 startX, startY, startDir;
-	int32 targetX, targetY, targetDir;
-	int32 scaleA, scaleB;
 	int32 megaId;
 
 	/*RouteData _route[O_ROUTE_SIZE];
 	//int32 _routeLength;
 	PathData  _smoothPath[O_ROUTE_SIZE];
 	PathData  _modularPath[O_ROUTE_SIZE];*/
-	RouteData			route[O_ROUTE_SIZE];
-	PathData			smoothPath[O_ROUTE_SIZE];
-	PathData			modularPath[O_ROUTE_SIZE];
-	int32   			routeLength;
+	RouteData			_route[O_ROUTE_SIZE];
+	PathData			_smoothPath[O_ROUTE_SIZE];
+	PathData			_modularPath[O_ROUTE_SIZE];
+	int32   			_routeLength;
 
-	int32		framesPerStep, framesPerChar;
-	uint8		nWalkFrames, nTurnFrames;
+	int32		_framesPerStep, _framesPerChar;
+	uint8		_nWalkFrames, _nTurnFrames;
 	int32		_dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
 	int32		_dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32		modX[NO_DIRECTIONS];
-	int32		modY[NO_DIRECTIONS];
-	int32		diagonalx, diagonaly;
+	int32		_modX[NO_DIRECTIONS];
+	int32		_modY[NO_DIRECTIONS];
+	int32		_diagonalx, _diagonaly;
 	int32		standFrames;
 	int32		turnFramesLeft, turnFramesRight;
 	int32		walkFramesLeft, walkFramesRight; // left/right walking turn
 	int32		slowInFrames, slowOutFrames;
 
 
-	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 targetDir);
-	int32 GetRoute(void);
-	int32 CheckTarget(int32 x, int32 y);
+	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 dir);
+	int32 getRoute(void);
+	int32 checkTarget(int32 x, int32 y);
 
-	int32 Scan(int32 level);
-	int32 NewCheck(int32 status, int32 x1, int32 x2, int32 y1, int32 y2);
-	int32 Check(int32 x1, int32 y1, int32 x2, int32 y2);
-	int32 HorizCheck(int32 x1, int32 y, int32 x2);
-	int32 VertCheck(int32 x, int32 y1, int32 y2);
-	int32 LineCheck(int32 x1, int32 y1, int32 x2, int32 y2);
+	bool scan(int32 level);
+	int32 newCheck(int32 status, int32 x1, int32 x2, int32 y1, int32 y2);
+	bool check(int32 x1, int32 y1, int32 x2, int32 y2);
+	bool horizCheck(int32 x1, int32 y, int32 x2);
+	bool vertCheck(int32 x, int32 y1, int32 y2);
+	bool lineCheck(int32 x1, int32 y1, int32 x2, int32 y2);
 
-	void ExtractRoute();
+	void extractRoute();
 
-	int32 SlidyPath();
-	void SlidyWalkAnimator(WalkData *walkAnim);
+	void slidyPath();
+	void slidyWalkAnimator(WalkData *walkAnim);
 
-	int32 SmoothestPath();
-	int32 SmoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
+	int32 smoothestPath();
+	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
 
-	int32 SolidPath();
-	int32 SolidWalkAnimator(WalkData *walkAnim);
+	void solidPath();
+	int32 solidWalkAnimator(WalkData *walkAnim);
 };
 
 } // End of namespace Sword1
