@@ -104,9 +104,6 @@ SagaEngine::SagaEngine(GameDetector *detector, OSystem *syst)
 	// the CD. The rest of the data files are in game/itedata
 	Common::File::addDefaultDirectory(_gameDataPath + "game/itedata/");
 
-	// Linux demo
-	Common::File::addDefaultDirectory(_gameDataPath + "itedata/");
-
 	// Mac CD Wyrmkeep
 	Common::File::addDefaultDirectory(_gameDataPath + "patch/");
 
