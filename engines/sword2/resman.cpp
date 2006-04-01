@@ -61,10 +61,13 @@ struct CdInf {
 };
 
 ResourceManager::ResourceManager(Sword2Engine *vm) {
+	uint32 i, j;
+
 	_vm = vm;
 
 	// Until proven differently, assume we're on CD 1. This is so the start
 	// dialog will be able to play any music at all.
+
 	setCD(1);
 
 	// We read in the resource info which tells us the names of the
@@ -73,8 +76,6 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	// wish to know what resource files there are and what is in each
 
 	Common::File file;
-	uint32 size;
-	byte *temp;
 
 	_totalClusters = 0;
 	_resConvTable = NULL;
@@ -82,58 +83,23 @@ ResourceManager::ResourceManager(Sword2Engine *vm) {
 	if (!file.open("resource.inf"))
 		error("Cannot open resource.inf");
 
-	size = file.size();
+	// The resource.inf file is a simple text file containing the names of
+	// all the resource files.
 
-	// Get some space for the incoming resource file - soon to be trashed
-	temp = (byte *)malloc(size);
-
-	if (file.read(temp, size) != size) {
-		file.close();
-		error("init cannot *READ* resource.inf");
+	while (file.readLine(_resFiles[_totalClusters].fileName, sizeof(_resFiles[_totalClusters].fileName))) {
+		_resFiles[_totalClusters].numEntries = -1;
+		_resFiles[_totalClusters].entryTab = NULL;
+		_totalClusters++;
 	}
 
 	file.close();
-
-	// Ok, we've loaded in the resource.inf file which contains a list of
-	// all the files now extract the filenames.
-
-	// Using this method the Gode generated resource.inf must have #0d0a on
-	// the last entry
-
-	uint32 i = 0;
-	uint32 j = 0;
-
-	do {
-		// item must have an #0d0a
-		while (temp[i] != 13) {
-			_resFiles[_totalClusters].fileName[j] = temp[i];
-			i++;
-			j++;
-		}
-
-		// NULL terminate our extracted string
-		_resFiles[_totalClusters].fileName[j] = '\0';
-		_resFiles[_totalClusters].numEntries = -1;
-		_resFiles[_totalClusters].entryTab = NULL;
-
-		// Reset position in current slot between entries, skip the
-		// 0x0a in the source and increase the number of clusters.
-
-		j = 0;
-		i += 2;
-		_totalClusters++;
-
-		// TODO: put overload check here
-	} while (i != size);
-
-	free(temp);
 
 	// Now load in the binary id to res conversion table
 	if (!file.open("resource.tab"))
 		error("Cannot open resource.tab");
 
 	// Find how many resources
-	size = file.size();
+	uint32 size = file.size();
 
 	_totalResFiles = size / 4;
 
