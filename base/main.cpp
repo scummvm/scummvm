@@ -143,11 +143,6 @@ const char *gScummVMFeatures = ""
 #endif
 	;
 
-#if defined(__amigaos4__)
-// Set the stack cookie, 640 KB should be enough for everyone
-const char* stackCookie = "$STACK: 655360\0";
-#endif
-
 /**
  * The debug level. Initially set to -1, indicating that no debug output
  * should be shown. Positive values usually imply an increasing number of
