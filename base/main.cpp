@@ -142,6 +142,49 @@ const char *gScummVMFeatures = ""
 #endif
 	;
 
+/** List all supported game IDs, i.e. all games which any loaded plugin supports. */
+void listGames() {
+	const PluginList &plugins = PluginManager::instance().getPlugins();
+
+	printf("Game ID              Full Title                                            \n"
+	       "-------------------- ------------------------------------------------------\n");
+
+	PluginList::const_iterator iter = plugins.begin();
+	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		GameList list = (*iter)->getSupportedGames();
+		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
+			printf("%-20s %s\n", v->gameid.c_str(), v->description.c_str());
+		}
+	}
+}
+
+/** List all targets which are configured in the config file. */
+void listTargets() {
+	using namespace Common;
+	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+
+	printf("Target               Description                                           \n"
+	       "-------------------- ------------------------------------------------------\n");
+
+	ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		String name(iter->_key);
+		String description(iter->_value.get("description"));
+
+		if (description.empty()) {
+			// FIXME: At this point, we should check for a "gameid" override
+			// to find the proper desc. In fact, the platform probably should
+			// be taken into account, too.
+			String gameid(name);
+			GameDescriptor g = GameDetector::findGame(gameid);
+			if (g.description.size() > 0)
+				description = g.description;
+		}
+
+		printf("%-20s %s\n", name.c_str(), description.c_str());
+	}
+}
+
 static void setupDummyPalette(OSystem &system) {
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
@@ -271,6 +314,7 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 extern "C" int scummvm_main(int argc, char *argv[]) {
 #endif
 	Common::String specialDebug;
+	Common::String command;
 	bool running = true;
 
 	// Verify that the backend has been initialized (i.e. g_system has been set).
@@ -279,7 +323,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Parse the command line
 	Common::StringMap settings;
-	GameDetector::parseCommandLine(settings, argc, argv);
+	command = GameDetector::parseCommandLine(settings, argc, argv);
 
 	// Load the config file (possibly overriden via command line):
 	if (settings.contains("config")) {
@@ -303,6 +347,22 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
+	
+	
+	// Handle commands passed via the command line (like --list-targets and
+	// --list-games). This must be done after the config file and the plugins
+	// have been loaded.
+	// FIXME: The way are are doing this is rather arbitrary at this time.
+	// E.g. --version and --help are very similar, but are still handled
+	// inside parseCommandLine. This should be unified.
+	if (command == "list-targets") {
+		listTargets();
+		exit(0);
+	} else if (command == "list-games") {
+		listGames();
+		exit(0);
+	}
+	
 
 	// Process the command line settings
 #ifndef _WIN32_WCE

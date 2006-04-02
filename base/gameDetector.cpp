@@ -252,49 +252,6 @@ GameDetector::GameDetector() {
 	_plugin = 0;
 }
 
-/** List all supported game IDs, i.e. all games which any loaded plugin supports. */
-void listGames() {
-	const PluginList &plugins = PluginManager::instance().getPlugins();
-
-	printf("Game ID              Full Title                                            \n"
-	       "-------------------- ------------------------------------------------------\n");
-
-	PluginList::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (*iter)->getSupportedGames();
-		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameid.c_str(), v->description.c_str());
-		}
-	}
-}
-
-/** List all targets which are configured in the config file. */
-void listTargets() {
-	using namespace Common;
-	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-
-	printf("Target               Description                                           \n"
-	       "-------------------- ------------------------------------------------------\n");
-
-	ConfigManager::DomainMap::const_iterator iter = domains.begin();
-	for (iter = domains.begin(); iter != domains.end(); ++iter) {
-		String name(iter->_key);
-		String description(iter->_value.get("description"));
-
-		if (description.empty()) {
-			// FIXME: At this point, we should check for a "gameid" override
-			// to find the proper desc. In fact, the platform probably should
-			// be taken into account, too.
-			String gameid(name);
-			GameDescriptor g = GameDetector::findGame(gameid);
-			if (g.description.size() > 0)
-				description = g.description;
-		}
-
-		printf("%-20s %s\n", name.c_str(), description.c_str());
-	}
-}
-
 GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plugin) {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = PluginManager::instance().getPlugins();
@@ -372,7 +329,7 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	}
 
 
-void GameDetector::parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
+Common::String GameDetector::parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
 	const char *s, *s2;
 	
 	// argv[0] contains the name of the executable.
@@ -415,13 +372,11 @@ void GameDetector::parseCommandLine(Common::StringMap &settings, int argc, char 
 			END_OPTION
 
 			DO_OPTION_CMD('t', "list-targets")
-				listTargets();
-				exit(0);
+				return "list-targets";
 			END_OPTION
 
 			DO_OPTION_CMD('z', "list-games")
-				listGames();
-				exit(0);
+				return "list-games";
 			END_OPTION
 
 
@@ -576,6 +531,9 @@ unknownOption:
 			usage("Unrecognized option '%s'", argv[i]);
 		}
 	}
+
+
+	return Common::String::emptyString;
 }
 
 
