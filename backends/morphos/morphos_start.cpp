@@ -434,6 +434,9 @@ int main()
 	if (ScummStory)
 		argv[argc++] = ScummStory;
 
+	g_system = OSystem_MorphOS_create();
+	assert(g_system);
+
 	return scummvm_main(argc, argv);
 }
 

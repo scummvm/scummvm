@@ -25,24 +25,6 @@
 
 #include "common/system.h"
 
-/* Factory functions. This means we don't have to include the headers for
- * all backends.
- */
-extern OSystem *OSystem_SDL_create();
-extern OSystem *OSystem_NULL_create();
-extern OSystem *OSystem_MorphOS_create();
-extern OSystem *OSystem_Dreamcast_create();
-extern OSystem *OSystem_WINCE3_create();
-extern OSystem *OSystem_X11_create();
-extern OSystem *OSystem_GP32_create();
-extern OSystem *OSystem_PALMOS_create();
-extern OSystem *OSystem_PS2_create();
-extern OSystem *OSystem_PSP_create();
-extern OSystem *OSystem_SymbianOS_create();
-
-extern OSystem *OSystem_PalmOS5_create();
-extern OSystem *OSystem_PalmZodiac_create();
-
 #ifdef _WIN32_WCE
 #define SAMPLES_PER_SEC 22050
 #define SAMPLES_PER_SEC_OLD 11025

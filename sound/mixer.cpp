@@ -104,7 +104,7 @@ public:
 
 
 Mixer::Mixer() {
-	_syst = &OSystem::instance();
+	_syst = g_system;
 
 	_handleSeed = 0;
 

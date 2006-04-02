@@ -71,5 +71,8 @@ void GpMain(void *arg) {
 
 	//scummvm_main(argc, argv);
 
+	g_system = new OSystem_GP32_create();
+	assert(g_system);
+
 	scummvm_main(1, NULL);
 }

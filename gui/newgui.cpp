@@ -87,7 +87,7 @@ GuiObject::GuiObject(Common::String name) : _firstWidget(0) {
 NewGui::NewGui() : _needRedraw(false),
 	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 
-	_system = &OSystem::instance();
+	_system = g_system;
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));

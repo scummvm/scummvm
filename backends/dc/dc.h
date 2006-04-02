@@ -188,9 +188,6 @@ class OSystem_Dreamcast : public OSystem {
   void mouseToSoftKbd(int x, int y, int &rx, int &ry) const;
 
 
-  static OSystem *create();
-
-
  private:
 
   SoftKeyboard _softkbd;

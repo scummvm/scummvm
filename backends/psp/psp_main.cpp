@@ -144,6 +144,9 @@ int main(void)
 	static char *argv[] = { "scummvm", "--force-1x-overlay", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
+	g_system = OSystem_PSP_create();
+	assert(g_system);
+
 	scummvm_main(argc, argv);
 	
 	sceKernelSleepThread();

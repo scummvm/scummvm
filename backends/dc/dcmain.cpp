@@ -36,14 +36,6 @@
 Icon icon;
 const char *gGameName;
 
-OSystem *OSystem_Dreamcast_create() {
-	return OSystem_Dreamcast::create();
-}
-
-OSystem *OSystem_Dreamcast::create() {
-	OSystem_Dreamcast *syst = new OSystem_Dreamcast();
-	return syst;
-}
 
 OSystem_Dreamcast::OSystem_Dreamcast()
   : _devpoll(0), screen(NULL), mouse(NULL), overlay(NULL), _softkbd(this),
@@ -210,6 +202,9 @@ int main()
 
   dc_init_hardware();
   initSound();
+
+  g_system = new OSystem_Dreamcast();
+  assert(g_system);
 
   scummvm_main(argc, argv);
 

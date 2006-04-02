@@ -47,7 +47,7 @@ extern int gBitFormat;
 static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::String &value, OverlayColor &color) {
 	Common::String temp;
 	if (!cfg.hasKey(value, "colors")) {
-		color = OSystem::instance().RGBToColor(0, 0, 0);
+		color = g_system->RGBToColor(0, 0, 0);
 		return;
 	}
 	cfg.getKey(value, "colors", temp);
@@ -59,7 +59,7 @@ static void getColorFromConfig(const Common::ConfigFile &cfg, const Common::Stri
 		rgb[cnt] = atoi(colors + pos);
 		pos = strchr(colors + pos, ' ') - colors + 1;
 	}
-	color = OSystem::instance().RGBToColor(rgb[0], rgb[1], rgb[2]);
+	color = g_system->RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
 static void getValueFromConfig(const Common::ConfigFile &cfg, const Common::String &section, const Common::String &value, uint &val, uint defaultVal) {
@@ -1027,7 +1027,7 @@ Common::Rect ThemeNew::shadowRect(const Common::Rect &r, uint32 shadowStyle) {
 void ThemeNew::drawShadow(const Common::Rect &r, const Graphics::Surface *corner, const Graphics::Surface *top,
 						const Graphics::Surface *left, const Graphics::Surface *fill, uint32 shadowStyle,
 						bool full, bool skipLastRow) {
-	OverlayColor col = OSystem::instance().RGBToColor(0, 0, 0);
+	OverlayColor col = g_system->RGBToColor(0, 0, 0);
 
 	switch (shadowStyle) {
 	case kShadowFull: {
@@ -1125,8 +1125,8 @@ void ThemeNew::drawShadowRect(const Common::Rect &r, const Common::Rect &area, c
 			++partsW;
 	}
 
-	OverlayColor startCol = OSystem::instance().RGBToColor(0, 0, 0);
-	OverlayColor endCol = OSystem::instance().RGBToColor(0, 0, 0);
+	OverlayColor startCol = g_system->RGBToColor(0, 0, 0);
+	OverlayColor endCol = g_system->RGBToColor(0, 0, 0);
 
 	for (int y = 0; y < partsH; ++y) {
 		// calculate the correct drawing height

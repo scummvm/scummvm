@@ -275,6 +275,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	char *s=NULL;//argv[1]; SumthinWicked says: cannot assume that argv!=NULL here! eg. Symbian's CEBasicAppUI::SDLStartL() calls as main(0,NULL), if you want to change plz #ifdef __SYMBIAN32__
 	bool running = true;
 
+	// Verify that the backend has been initialised (i.e. g_system has been set).
+	assert(g_system);
+	OSystem &system = *g_system;
+
+
 	// Quick preparse of command-line, looking for alt configfile path
 	for (int i = argc - 1; i >= 1; i--) {
 		s = argv[i];
@@ -341,10 +346,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// init keymap support here: we wanna move this somewhere else?
 	GUI::Actions::init(detector);
 #endif
-
-	// Ensure the system object exists (it may have already been created
-	// at an earlier point, though!)
-	OSystem &system = OSystem::instance();
 
 	detector.parseCommandLine(argc, argv);
 

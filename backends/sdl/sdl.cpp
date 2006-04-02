@@ -92,14 +92,14 @@ int main(int argc, char *argv[]) {
 #endif // defined(__SYMBIAN32__)
 
 
+	g_system = new OSystem_SDL();
+	assert(g_system);
+
 	// Invoke the actual ScummVM main entry point:
 	return scummvm_main(argc, argv);
 }
 #endif
 
-OSystem *OSystem_SDL_create() {
-	return new OSystem_SDL();
-}
 
 void OSystem_SDL::initBackend() {
 	assert(!_inited);

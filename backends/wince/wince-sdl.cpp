@@ -147,6 +147,8 @@ int SDL_main(int argc, char **argv) {
 	GUI::Actions::init(_gameDetector);
 
 	__try {
+		g_system = OSystem_WINCE3_create();
+		assert(g_system);
 		return scummvm_main(_gameDetector, argc, argv);
 	}
 	__except (handleException(GetExceptionInformation())) {

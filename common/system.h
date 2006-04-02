@@ -27,7 +27,6 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "common/rect.h"
-#include "common/singleton.h"
 
 namespace Graphics {
 	struct Surface;
@@ -47,10 +46,15 @@ namespace Common {
  * methods to create timers, to handle user input events,
  * control audio CD playback, and sound output.
  */
-class OSystem : public Common::Singleton<OSystem> {
+class OSystem {
+private:
+	// Prevent copying OSystem objects by accident.
+	OSystem(const OSystem&);
+	OSystem& operator= (const OSystem&);
+
 protected:
-	static OSystem *makeInstance();
-	friend class Common::Singleton<SingletonBaseType>;
+	OSystem() { }
+	virtual ~OSystem() { }
 
 public:
 
@@ -926,8 +930,8 @@ public:
 };
 
 
-/** The global OSystem instance. Inited in main(). */
-#define g_system	(&OSystem::instance())
+/** The global OSystem instance. Initialised in main(). */
+extern OSystem *g_system;
 
 
 #endif

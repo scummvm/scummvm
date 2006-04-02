@@ -28,6 +28,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_syswm.h>
 
+#include "backends/sdl/sdl-common.h"
 #include "base/main.h"
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
@@ -63,6 +64,10 @@ int main(int argc, char *argv[]) {
 	setpriority(PRIO_PROCESS, 0, 0);
 
 	set_doubling(0);
+
+	g_system = new OSystem_SDL();
+	assert(g_system);
+
 	scummvm_main(argc, argv);
 
     /* Deinitialize OSSO */

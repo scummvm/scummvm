@@ -72,8 +72,6 @@ static int g_MainWaitSema = -1, g_TimerWaitSema = -1;
 static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
 static volatile uint32 msecCount = 0;
 
-OSystem_PS2 *g_systemPs2 = NULL;
-
 int gBitFormat = 555;
 
 #define FOREVER 2147483647
@@ -91,12 +89,6 @@ void sioprintf(const char *zFormat, ...) {
 	va_end(ap);
 
 	sio_puts(resStr);
-}
-
-OSystem *OSystem_PS2_create(void) {
-	if (!g_systemPs2)
-		g_systemPs2 = new OSystem_PS2();
-	return g_systemPs2;
 }
 
 extern "C" int main(int argc, char *argv[]) {
@@ -137,7 +129,8 @@ extern "C" int main(int argc, char *argv[]) {
 	sioprintf("Creating system");
 	/* The OSystem has to be created before we enter ScummVM's main.
 	   It sets up the memory card, etc. */
-	OSystem_PS2_create();
+	g_system = new OSystem_PS2();
+	assert(g_system);
 
 	sioprintf("init done. starting ScummVM.");
 	return scummvm_main(argc, argv);

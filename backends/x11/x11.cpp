@@ -59,12 +59,11 @@
 #include <backends/x11/x11.h>
 
 int main(int argc, char *argv[]) {
+	g_system = OSystem_X11::create(0, 0);
+	assert(g_system);
+
 	// Invoke the actual ScummVM main entry point:
 	return scummvm_main(argc, argv);
-}
-
-OSystem *OSystem_X11_create() {
-	return OSystem_X11::create(0, 0);
 }
 
 OSystem *OSystem_X11::create(int gfx_mode, bool full_screen) {

@@ -123,7 +123,7 @@ Surface *BMPDecoder::decodeImage(Common::SeekableReadStream &stream) {
 			b = stream.readByte();
 			g = stream.readByte();
 			r = stream.readByte();
-			*curPixel = OSystem::instance().RGBToColor(r, g, b);
+			*curPixel = g_system->RGBToColor(r, g, b);
 			++curPixel;
 		}
 		stream.seek(pitchAdd, SEEK_CUR);

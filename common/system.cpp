@@ -34,44 +34,7 @@
 #include "common/system.h"
 #include "common/util.h"
 
-DECLARE_SINGLETON(OSystem);
-
-OSystem *OSystem::makeInstance() {
-	// Attention: Do not call parseGraphicsMode() here, nor any other function
-	// which needs to access the OSystem instance, else you get stuck in an
-	// endless loop.
-
-#if defined(USE_NULL_DRIVER)
-	return OSystem_NULL_create();
-#elif defined(__DC__)
-	return OSystem_Dreamcast_create();
-#elif defined(X11_BACKEND)
-	return OSystem_X11_create();
-#elif defined(__MORPHOS__)
-	return OSystem_MorphOS_create();
-#elif defined(_WIN32_WCE)
-	return OSystem_WINCE3_create();
-#elif defined(__GP32__)	// ph0x
-	return OSystem_GP32_create();
-#elif defined(PALMOS_MODE) //chrilith
-#	if defined(COMPILE_OS5)
-	return OSystem_PalmOS5_create();
-#	elif defined(COMPILE_ZODIAC)
-	return OSystem_PalmZodiac_create();
-#	else
-	return OSystem_PALMOS_create();	// old backend
-#	endif
-#elif defined(__PLAYSTATION2__)
-	return OSystem_PS2_create();
-#elif defined(__PSP__)
-	return OSystem_PSP_create();
-#elif defined(__SYMBIAN32__) // SumthinWicked / Sprawl
-	return OSystem_SymbianOS_create();
-#else
-	/* SDL is the default driver for now */
-	return OSystem_SDL_create();
-#endif
-}
+OSystem *g_system = 0;
 
 bool OSystem::setGraphicsMode(const char *name) {
 	if (!name)
