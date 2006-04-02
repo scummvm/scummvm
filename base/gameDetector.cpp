@@ -321,7 +321,8 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	if (isLongCmd ? (!memcmp(s, longCmd"=", sizeof(longCmd"=") - 1)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) \
 			s += sizeof(longCmd"=") - 1; \
-		const char *option = (*s != '\0') ? s : s2; \
+		const char *option = s; \
+		if (*s == '\0') { option = s2; i++; } \
 		if (!option) option = defaultVal; \
 		if (option) settings[longCmd] = option;
 
