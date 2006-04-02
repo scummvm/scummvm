@@ -148,12 +148,6 @@ const char *gScummVMFeatures = ""
 const char* stackCookie = "$STACK: 655360\0";
 #endif
 
-#if defined(WIN32) && defined(NO_CONSOLE)
-#include <cstdio>
-#define STDOUT_FILE	TEXT("stdout.txt")
-#define STDERR_FILE	TEXT("stderr.txt")
-#endif
-
 #if defined(UNIX)
 #include <signal.h>
 
@@ -341,51 +335,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	/* On Unix, do a quick endian / alignement check before starting */
 	do_memory_test();
 #endif
-
-// Code copied from SDL_main
-#if (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
-// Symbian does not like any output to the console through any *print* function
-#if defined(__SYMBIAN32__)
-	char STDOUT_FILE[255], STDERR_FILE[255]; // shhh, don't tell anybody :)
-	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
-	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
-	strcat(STDOUT_FILE, "scummvm.stdout.txt");
-	strcat(STDERR_FILE, "scummvm.stderr.txt");
-#endif
-
-	/* Flush the output in case anything is queued */
-	fclose(stdout);
-	fclose(stderr);
-
-	/* Redirect standard input and standard output */
-	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-	if (newfp == NULL) {	/* This happens on NT */
-#if !defined(stdout)
-		stdout = fopen(STDOUT_FILE, "w");
-#else
-		newfp = fopen(STDOUT_FILE, "w");
-		if (newfp) {
-			*stdout = *newfp;
-		}
-#endif
-	}
-	newfp = freopen(STDERR_FILE, "w", stderr);
-	if (newfp == NULL) {	/* This happens on NT */
-#if !defined(stderr)
-		stderr = fopen(STDERR_FILE, "w");
-#else
-		newfp = fopen(STDERR_FILE, "w");
-		if (newfp) {
-			*stderr = *newfp;
-		}
-#endif
-	}
-#ifndef __SYMBIAN32__ // fcn not supported on Symbian
-	setlinebuf(stdout);	/* Line buffered */
-#endif
-	setbuf(stderr, NULL);			/* No buffering */
-
-#endif // (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
 
 	// Quick preparse of command-line, looking for alt configfile path
 	for (int i = argc - 1; i >= 1; i--) {
