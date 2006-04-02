@@ -35,6 +35,7 @@
 #include "common/scummsys.h"
 #include "../intern.h"
 #include "base/engine.h"
+#include "base/main.h"
 #include "backends/ps2/systemps2.h"
 #include "backends/ps2/Gs2dScreen.h"
 #include "backends/ps2/ps2input.h"
@@ -97,8 +98,6 @@ OSystem *OSystem_PS2_create(void) {
 		g_systemPs2 = new OSystem_PS2();
 	return g_systemPs2;
 }
-
-extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
 	SifInitRpc(0);

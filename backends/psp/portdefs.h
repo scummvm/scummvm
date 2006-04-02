@@ -51,12 +51,6 @@
 //#define printf  pspDebugScreenPrintf
 #define exit(x) printf("exit() called\n"); sceKernelSleepThread();
 
-#undef main
-
-#ifndef REAL_MAIN
-#define main scummvm_main
-#endif
-
 #endif /* PORTDEFS_H */
 
 

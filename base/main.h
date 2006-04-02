@@ -1,6 +1,6 @@
 /* ScummVM - Scumm Interpreter
- * Dreamcast port
- * Copyright (C) 2002-2004  Marcus Comstedt
+ * Copyright (C) 2001  Ludvig Strigeus
+ * Copyright (C) 2001-2006 The ScummVM project
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,23 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
- * $Id$
+ * $Id: scummsys.h 21500 2006-03-29 15:59:37Z fingolfin $
  *
  */
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <assert.h>
-#include <ctype.h>
-#include <math.h>
-#ifndef RONIN_TIMER_ACCESS
-#define Timer ronin_Timer
+#ifndef BASE_MAIN_H
+#define BASE_MAIN_H
+
+#include "common/scummsys.h"
+
+//
+// The scummvm main entry point, to be invoked by ports
+//
+#ifdef _WIN32_WCE
+extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]);
+#else
+extern "C" int scummvm_main(int argc, char *argv[]);
 #endif
-#include <ronin/ronin.h>
-#ifdef Timer
-#undef Timer
+
 #endif

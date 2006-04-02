@@ -20,6 +20,7 @@
  * $Id$
  *
  */
+
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
@@ -199,8 +200,6 @@
 		#define START_PACK_STRUCTS pack (1)
 		#define END_PACK_STRUCTS   pack ()
 	#endif
-
-	#define main morphos_main
 
 #elif defined(__DC__)
 
@@ -386,7 +385,6 @@
 #endif
 
 
-
 //
 // Overlay color type (FIXME: shouldn't be declared here)
 //
@@ -397,5 +395,6 @@
 	// 15/16 bit color mode everywhere else...
 	typedef int16 OverlayColor;
 #endif
+
 
 #endif

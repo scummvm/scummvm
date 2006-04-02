@@ -28,10 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define	REAL_MAIN
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <base/engine.h>
+#include <base/main.h>
 #include <base/gameDetector.h>
 #include <base/plugins.h>
 
@@ -122,8 +122,6 @@ int SetupCallbacks(void)
 	return thid;
 }
 
-
-extern "C" int scummvm_main(int argc, char *argv[]);
 
 int main(void)
 {

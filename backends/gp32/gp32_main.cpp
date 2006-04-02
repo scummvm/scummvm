@@ -26,6 +26,8 @@
 
 #include "common/config-manager.h"
 
+#include "base/main.h"
+
 #include "backends/gp32/gp32std.h"
 #include "backends/gp32/gp32std_grap.h"
 
@@ -33,8 +35,6 @@
 #include "backends/gp32/globals.h"
 
 GlobalVars g_vars;
-
-extern "C" int scummvm_main(int argc, char *argv[]);
 
 void init() {
 	gp_setCpuSpeed(40); // Default CPU Speed

@@ -52,12 +52,6 @@ typedef signed int int32;
 /* Whether we should use i386 assembly routines */
 #undef USE_NASM
 
-#undef main
-
-#ifndef REAL_MAIN
-#define main scummvm_main
-#endif
-
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>

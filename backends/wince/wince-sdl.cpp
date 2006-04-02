@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "base/gameDetector.h"
 #include "base/engine.h"
+#include "base/main.h"
 #include "base/plugins.h"
 #include "common/timer.h"
 
@@ -118,8 +119,6 @@ bool isSmartphone() {
 // ********************************************************************************************
 
 // MAIN
-
-extern "C" int scummvm_main(GameDetector &gameDetector, int argc, char **argv);
 
 int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 	CEException::writeException(TEXT("\\scummvmCrash"), exceptionPointers);

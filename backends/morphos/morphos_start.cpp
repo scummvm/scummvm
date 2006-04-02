@@ -37,6 +37,7 @@
 #include "common/stdafx.h"
 #include "scumm/scumm.h"
 #include "base/gameDetector.h"
+#include "base/main.h"
 #include "common/scaler.h"
 #include "sound/mididrv.h"
 #include "morphos.h"
@@ -433,6 +434,6 @@ int main()
 	if (ScummStory)
 		argv[argc++] = ScummStory;
 
-	return morphos_main(argc, argv);
+	return scummvm_main(argc, argv);
 }
 

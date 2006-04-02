@@ -20,7 +20,6 @@
  *
  */
  
-#define	REAL_MAIN
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <X11/Xlib.h> 
@@ -29,6 +28,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_syswm.h>
 
+#include "base/main.h"
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
 #include <libosso.h>
@@ -47,8 +47,6 @@ void set_doubling(unsigned char enable) {
   SDL_GetWMInfo(&wminfo);
   XSPSetPixelDoubling(wminfo.info.x11.display, 0, enable);
 }
-
-extern "C" int scummvm_main(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
     osso_context_t *osso_context;

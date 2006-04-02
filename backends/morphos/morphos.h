@@ -226,8 +226,6 @@ class AutoLock
 #define AUTO_LOCK	 AutoLock cs(&CritSec);
 
 
-int morphos_main(int argc, char *argv[]);
-
 extern OSystem_MorphOS *TheSystem;
 
 #endif

@@ -155,12 +155,6 @@ const char* stackCookie = "$STACK: 655360\0";
 extern "C" int main(int argc, char *argv[]);
 #endif
 
-#if defined(MACOSX) || defined(QTOPIA) || defined(__SYMBIAN32__)
-#include <SDL.h>
-#elif !defined(__MORPHOS__) && !defined(__DC__) && !defined(__GP32__)
-#undef main
-#endif
-
 #if defined (ALLEGRO_BACKEND)
 #include "allegro.h"
 #endif
@@ -344,10 +338,8 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 
 #ifdef _WIN32_WCE
 extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
-#elif defined(__PLAYSTATION2__) || defined(__PSP__) || defined(__GP32__) || defined(__MAEMO__)
-extern "C" int scummvm_main(int argc, char *argv[]) {
 #else
-extern "C" int main(int argc, char *argv[]) {
+extern "C" int scummvm_main(int argc, char *argv[]) {
 #endif
 	char *cfgFilename = NULL;
 	Common::String specialDebug = "";

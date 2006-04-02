@@ -21,13 +21,11 @@
  *
  */
 
-
-#define REAL_MAIN
-
 #include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <base/engine.h>
 #include <base/gameDetector.h>
+#include <base/main.h>
 #include <base/plugins.h>
 #include "dc.h"
 #include "icon.h"
@@ -205,7 +203,6 @@ void dc_init_hardware()
   init_arm();
 }
 
-extern "C" int scummvm_main(int argc, char *argv[]);
 int main()
 {
   static char *argv[] = { "scummvm", NULL, };

@@ -24,6 +24,7 @@
 #include "backends/sdl/sdl-common.h"
 #include "common/config-manager.h"
 #include "common/util.h"
+#include "base/main.h"
 
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
@@ -31,6 +32,12 @@
 
 #include "scummvm.xpm"
 
+
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(__MAEMO__)
+int main(int argc, char *argv[]) {
+	return scummvm_main(argc, argv);
+}
+#endif
 
 OSystem *OSystem_SDL_create() {
 	return new OSystem_SDL();
