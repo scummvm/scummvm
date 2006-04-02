@@ -1,5 +1,5 @@
 Residual: A LucasArts 3D game interpreter           Version:      0.06a-CVS
-(C) 2003-2005 The ScummVM-Residual team             Last Updated: 12 Aug 2005
+(C) 2003-2005 The ScummVM-Residual team             Last Updated: 2 Apr 2006
 ------------------------------------------------------------------------------
 
 What is Residual?
@@ -41,9 +41,10 @@ the lines:
        good_times=TRUE
 
 Residual understands command-line options: 
-'-zbuffer' enables masking for hardware 3d rendering.
-'-showfps' display fps information.
+'-fps' display fps information.
+'-fullscreen' switch to full screen
 '-soft' switch to software 3d renderering.
+'-zbuffer' enables masking for hardware 3d rendering.
 
 It runs really slow when using -zbuffer!
 ----------------------------------------
