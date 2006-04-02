@@ -135,7 +135,18 @@ void NewGui::runLoop() {
 		didSaveState = true;
 	}
 
-	_theme->openDialog();
+	// small 'HACK': complete gui redraw (needed for new theme inactive dialog color change possibilities)
+	_theme->clearAll();
+
+	int i;
+
+	for (i = 0; i < _dialogStack.size() - 1; ++i) {
+		_theme->closeDialog();
+	}
+	for (i = 0; i < _dialogStack.size() - 1; i++) {
+		_theme->openDialog(false);
+	}
+	_theme->openDialog(true);
 
 	while (!_dialogStack.empty() && activeDialog == _dialogStack.top()) {
 		activeDialog->handleTickle();
@@ -145,13 +156,11 @@ void NewGui::runLoop() {
 			// This is necessary to get the blending right.
 			_theme->clearAll();
 
-			int i;
-
 			for (i = 0; i < _dialogStack.size(); ++i) {
 				_theme->closeDialog();
 			}
 			for (i = 0; i < _dialogStack.size(); i++) {
-				_theme->openDialog();
+				_theme->openDialog(i == (_dialogStack.size() - 1));
 				_dialogStack[i]->drawDialog();
 			}
 			_needRedraw = false;

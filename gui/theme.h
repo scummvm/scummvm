@@ -101,7 +101,7 @@ public:
 	virtual void enable() = 0;
 	virtual void disable() = 0;
 
-	virtual void openDialog() = 0;
+	virtual void openDialog(bool topDialog) = 0;
 	virtual void closeDialog() = 0;
 
 	virtual void clearAll() = 0;
@@ -199,7 +199,7 @@ public:
 	void enable();
 	void disable();
 
-	void openDialog();
+	void openDialog(bool topDialog);
 	void closeDialog();
 
 	void clearAll();
@@ -272,8 +272,8 @@ public:
 
 	void enable();
 	void disable();
-
-	void openDialog();
+	
+	void openDialog(bool topDialog);
 	void closeDialog();
 
 	void clearAll();
@@ -409,6 +409,34 @@ public:
 		
 		kImageHandlesMax
 	};
+
+private:
+	// inactive dialog effects
+	enum kShadingEffects {
+		kShadingEffectNothing = 0,
+		kShadingEffectLuminance = 1,
+		kShadingEffectDim = 2,
+		kShadingEffectCustom = 3
+	};
+
+	// used for the (yet) unimplemented cache file
+	int _shadingEffect;
+
+	int _dimPercentValue;
+	Common::String _shadingEpxressionR, _shadingEpxressionG, _shadingEpxressionB;
+	
+	uint _numCacheColors;
+	OverlayColor *_colorCacheTable;
+	void setupColorCache();
+	
+	typedef OverlayColor (ThemeNew::*InactiveDialogCallback)(OverlayColor col, bool cache);
+	
+	InactiveDialogCallback _dialogShadingCallback;
+	
+	// cache means input is 16 bpp mode
+	OverlayColor calcLuminance(OverlayColor col, bool cache);
+	OverlayColor calcDimColor(OverlayColor col, bool cache);
+	OverlayColor calcCustomColor(OverlayColor col, bool cache);
 
 private:
 	const String *_imageHandles;

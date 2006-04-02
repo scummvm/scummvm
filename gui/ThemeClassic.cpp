@@ -92,7 +92,7 @@ void ThemeClassic::disable() {
 	_system->hideOverlay();
 }
 
-void ThemeClassic::openDialog() {
+void ThemeClassic::openDialog(bool topDialog) {
 #ifdef OLDGUI_TRANSPARENCY
 	if (!_dialog) {
 		_dialog = new DialogState;

@@ -22,6 +22,7 @@
 #ifndef DISABLE_FANCY_THEMES
 
 #include "gui/theme.h"
+#include "gui/eval.h"
 
 #include "graphics/imageman.h"
 #include "graphics/imagedec.h"
@@ -36,7 +37,7 @@
 #define kShadowTr3 64
 #define kShadowTr4 128
 
-#define THEME_VERSION 6
+#define THEME_VERSION 7
 
 using Graphics::Surface;
 
@@ -111,6 +112,11 @@ struct ColorMasks<565> {
 		kBlueMask = 0x001F
 	};
 };
+
+OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha);
+OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor);
+
+#pragma mark -
 
 ThemeNew::ThemeNew(OSystem *system, Common::String stylefile) : Theme(), _system(system), _screen(), _initOk(false),
 _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0), _colors(), _gradientFactors() {
@@ -234,9 +240,6 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 
 	_configFile.getKey("theme_logo", "pixmaps", imageHandlesTable[kThemeLogo]);
 	
-	// load the colors from the config file
-	setupColors();
-	
 	// load the gradient factors from the config file
 	getFactorFromConfig(_configFile, "main_dialog", _gradientFactors[kMainDialogFactor]);
 	getFactorFromConfig(_configFile, "dialog", _gradientFactors[kDialogFactor]);
@@ -260,6 +263,70 @@ _lastUsedBitMask(0), _forceRedraw(false), _font(0), _imageHandles(0), _images(0)
 	getExtraValueFromConfig(_configFile, "shadow_right_width", _shadowRightWidth, 4);
 	getExtraValueFromConfig(_configFile, "shadow_top_height", _shadowTopHeight, 2);
 	getExtraValueFromConfig(_configFile, "shadow_bottom_height", _shadowBottomHeight, 4);
+	
+	// inactive dialog shading stuff
+	_numCacheColors = 0;
+	_colorCacheTable = 0;
+	_dialogShadingCallback = 0;
+	_shadingEpxressionR = _shadingEpxressionG = _shadingEpxressionB = "";
+	_shadingEffect = kShadingEffectNothing;
+	
+	if (_configFile.hasKey("inactive_dialog_shading", "extra")) {
+		_configFile.getKey("inactive_dialog_shading", "extra", temp);
+		bool createCacheTable = false;
+		
+		if (temp == "no_effect") {
+			// nothing
+		} else if (temp == "luminance") {
+			_dialogShadingCallback = &ThemeNew::calcLuminance;
+			_shadingEffect = kShadingEffectLuminance;
+			// don't cache colors for the luminance effect
+			//createCacheTable = true;
+		} else if (temp == "dim") {
+			if (!_configFile.hasKey("shading_dim_percent", "extra")) {
+				warning("no 'shading_dim_percent' specified");
+			} else {
+				getValueFromConfig(_configFile, "extra", "shading_dim_percent", _dimPercentValue, -1);
+				
+				if (_dimPercentValue < 0) {
+					_dimPercentValue = 0;
+				} else if (_dimPercentValue > 100) {
+					_dimPercentValue = 100;
+				}
+				
+				if (_dimPercentValue != 0) {
+					_dimPercentValue = 100 - _dimPercentValue;
+					_dialogShadingCallback = &ThemeNew::calcDimColor;
+					createCacheTable = true;
+					_shadingEffect = kShadingEffectDim;
+				}
+			}
+		} else if (temp == "custom") {
+			if (_configFile.hasKey("shading_custom_r", "extra") && _configFile.hasKey("shading_custom_g", "extra")
+				&& _configFile.hasKey("shading_custom_b", "extra")) {
+					_configFile.getKey("shading_custom_r", "extra", _shadingEpxressionR);
+					_configFile.getKey("shading_custom_g", "extra", _shadingEpxressionG);
+					_configFile.getKey("shading_custom_b", "extra", _shadingEpxressionB);
+
+					_dialogShadingCallback = &ThemeNew::calcCustomColor;
+					createCacheTable = true;
+					_shadingEffect = kShadingEffectCustom;
+			} else {
+				warning("not all custom shading expressions are defined, please check for 'shading_custom_r', 'shading_custom_g' and 'shading_custom_b'");
+			}
+		} else {
+			warning("no valid 'inactive_dialog_shading' specified");
+		}
+		
+		if (createCacheTable) {
+			_numCacheColors = 65536;
+			_colorCacheTable = new OverlayColor[_numCacheColors];
+			assert(_colorCacheTable);
+		}
+	}
+	
+	// load the colors from the config file
+	setupColors();
 
 	_imageHandles = imageHandlesTable;
 
@@ -340,14 +407,41 @@ void ThemeNew::disable() {
 	_system->hideOverlay();
 }
 
-void ThemeNew::openDialog() {
+void ThemeNew::openDialog(bool topDialog) {
 	if (!_dialog) {
 		_dialog = new DialogState;
 		assert(_dialog);
 		// first dialog
 		_dialog->screen.create(_screen.w, _screen.h, sizeof(OverlayColor));
 	}
+	
+	if (_colorCacheTable && topDialog) {
+		OverlayColor *col = (OverlayColor*)_screen.pixels;
+		uint8 r, g, b;
+		for (int y = 0; y < _screen.h; ++y) {
+			for (int x = 0; x < _screen.w; ++x) {
+				_system->colorToRGB(col[x], r, g, b);
+				r = (r >> 3) & 0x1F;
+				g = (g >> 2) & 0x3F;
+				b = (b >> 3) & 0x1F;
+				col[x] = _colorCacheTable[(r << 11) | (g << 5) | b];
+			}
+			col += _screen.w;
+		}
+	} else if (_dialogShadingCallback && topDialog) {
+		OverlayColor *col = (OverlayColor*)_screen.pixels;
+		for (int y = 0; y < _screen.h; ++y) {
+			for (int x = 0; x < _screen.w; ++x) {
+				col[x] = (this->*(_dialogShadingCallback))(col[x], false);
+			}
+			col += _screen.w;
+		}
+	}
+	
 	memcpy(_dialog->screen.pixels, _screen.pixels, _screen.pitch*_screen.h);
+	
+	if ((_colorCacheTable || _dialogShadingCallback) && topDialog)
+		addDirtyRect(Common::Rect(0, 0, _screen.w, _screen.h), false, false);
 }
 
 void ThemeNew::closeDialog() {
@@ -610,8 +704,6 @@ void ThemeNew::drawCheckbox(const Common::Rect &r, const Common::String &str, bo
 	addDirtyRect(r);
 }
 
-OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor);
-
 void ThemeNew::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, kState state) {
 	if (!_initOk)
 		return;
@@ -823,33 +915,6 @@ bool ThemeNew::addDirtyRect(Common::Rect r, bool backup, bool special) {
 		}
 	}
 	return true;
-}
-
-template<class T>
-inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max) {
-	OverlayColor output = 0;
-	output |= ((start & T::kRedMask) + (((((end & T::kRedMask) - (start & T::kRedMask))) * pos / max) & T::kRedMask)) & T::kRedMask;
-	output |= ((start & T::kGreenMask) + (((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos / max) & T::kGreenMask)) & T::kGreenMask;
-	output |= ((start & T::kBlueMask) + (((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos / max) & T::kBlueMask)) & T::kBlueMask;
-	return output;
-}
-
-OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
-	max /= factor;
-	pos *= factor;
-	if (pos > max) {
-		return end;
-	} else if (!pos) {
-		return start;
-	} else if (start == end) {
-		return end;
-	}
-
-	if (gBitFormat == 565) {
-		return calcGradient<ColorMasks<565> >(start, end, pos, max);
-	} else {
-		return calcGradient<ColorMasks<555> >(start, end, pos, max);
-	}
 }
 
 void ThemeNew::colorFade(const Common::Rect &r, OverlayColor start, OverlayColor end, uint factor) {
@@ -1116,24 +1181,6 @@ void ThemeNew::drawSurface(const Common::Rect &r, const Surface *surf, bool upDo
 	drawSurfaceMasked(r, surf, upDown, leftRight, alpha, _system->RGBToColor(255, 255, 255), _system->RGBToColor(255, 255, 255));
 }
 
-template<class T>
-inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int alpha) {
-	OverlayColor output = 0;
-	output |= ((alpha * ((col1 & T::kRBMask) - (col2 & T::kRBMask)) >> 8) + (col2 & T::kRBMask)) & T::kRBMask;
-	output |= ((alpha * ((col1 & T::kGreenMask) - (col2 & T::kGreenMask)) >> 8) + (col2 & T::kGreenMask)) & T::kGreenMask;
-	return output;
-}
-
-OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
-	if (alpha >= 256)
-		return col1;
-	if (gBitFormat == 565) {
-		return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
-	} else {
-		return getColorAlphaImpl<ColorMasks<555> >(col1, col2, alpha);
-	}
-}
-
 void ThemeNew::drawSurfaceMasked(const Common::Rect &r, const Graphics::Surface *surf, bool upDown, bool leftRight,
 								int alpha, OverlayColor start, OverlayColor end, uint factor) {
 	OverlayColor *dst = (OverlayColor*)_screen.getBasePtr(r.left, r.top);
@@ -1316,6 +1363,125 @@ void ThemeNew::setupColors() {
 	getColorFromConfig(_configFile, "scrollbar_slider_highlight_end", _colors[kScrollbarSliderHighlightEnd]);
 	
 	getColorFromConfig(_configFile, "caret_color", _colors[kCaretColor]);
+	
+	setupColorCache();
+}
+
+void ThemeNew::setupColorCache() {
+	// TODO: use file caches + show process bar
+
+	// inactive dialog cache
+	if (_colorCacheTable && _dialogShadingCallback) {
+		memset(_colorCacheTable, 0, sizeof(OverlayColor)*_numCacheColors);
+		for (uint i = 0; i < _numCacheColors; ++i) {
+			_colorCacheTable[i] = (this->*(_dialogShadingCallback))(i, true);
+		}
+	}
+}
+
+#pragma mark -
+
+OverlayColor ThemeNew::calcLuminance(OverlayColor col, bool cache) {
+	uint8 r, g, b;
+	if (cache) {
+		r = ((col & 0xF800) >> 11) << 3;
+		g = ((col & 0x07E0) >> 5) << 2;
+		b = (col & 0x001F) << 3;
+	} else {
+		_system->colorToRGB(col, r, g, b);
+	}
+
+	//uint lum = (76 * r / 0xFF);
+	//lum += (151 * g / 0xFF);
+	//lum += (28 * b / 0xFF);
+	uint lum = (r >> 2) + (g >> 1) + (b >> 3);
+	
+	return _system->RGBToColor(lum, lum, lum);
+}
+
+OverlayColor ThemeNew::calcDimColor(OverlayColor col, bool cache) {
+	uint8 r, g, b;
+	if (cache) {
+		r = ((col & 0xF800) >> 11) << 3;
+		g = ((col & 0x07E0) >> 5) << 2;
+		b = (col & 0x001F) << 3;
+	} else {
+		_system->colorToRGB(col, r, g, b);
+	}
+	
+	r = r * _dimPercentValue / 100;
+	g = g * _dimPercentValue / 100;
+	b = b * _dimPercentValue / 100;
+
+	return _system->RGBToColor(r, g, b);
+}
+
+OverlayColor ThemeNew::calcCustomColor(OverlayColor col, bool cache) {
+	uint8 r, g, b;
+	if (cache) {
+		r = ((col & 0xF800) >> 11) << 3;
+		g = ((col & 0x07E0) >> 5) << 2;
+		b = (col & 0x001F) << 3;
+	} else {
+		_system->colorToRGB(col, r, g, b);
+	}
+	
+	_evaluator->setVar("r", r);
+	_evaluator->setVar("g", g);
+	_evaluator->setVar("b", b);
+	
+	r = _evaluator->eval(_shadingEpxressionR, "extra", "shading_custom_r", 0);
+	g = _evaluator->eval(_shadingEpxressionG, "extra", "shading_custom_g", 0);
+	b = _evaluator->eval(_shadingEpxressionB, "extra", "shading_custom_b", 0);
+	
+	return _system->RGBToColor(r, g, b);
+}
+
+#pragma mark -
+
+template<class T>
+inline OverlayColor getColorAlphaImpl(OverlayColor col1, OverlayColor col2, int alpha) {
+	OverlayColor output = 0;
+	output |= ((alpha * ((col1 & T::kRBMask) - (col2 & T::kRBMask)) >> 8) + (col2 & T::kRBMask)) & T::kRBMask;
+	output |= ((alpha * ((col1 & T::kGreenMask) - (col2 & T::kGreenMask)) >> 8) + (col2 & T::kGreenMask)) & T::kGreenMask;
+	return output;
+}
+
+OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha) {
+	if (alpha >= 256)
+		return col1;
+	if (gBitFormat == 565) {
+		return getColorAlphaImpl<ColorMasks<565> >(col1, col2, alpha);
+	} else {
+		return getColorAlphaImpl<ColorMasks<555> >(col1, col2, alpha);
+	}
+}
+
+template<class T>
+inline OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max) {
+	OverlayColor output = 0;
+	output |= ((start & T::kRedMask) + (((((end & T::kRedMask) - (start & T::kRedMask))) * pos / max) & T::kRedMask)) & T::kRedMask;
+	output |= ((start & T::kGreenMask) + (((((end & T::kGreenMask) - (start & T::kGreenMask))) * pos / max) & T::kGreenMask)) & T::kGreenMask;
+	output |= ((start & T::kBlueMask) + (((((end & T::kBlueMask) - (start & T::kBlueMask))) * pos / max) & T::kBlueMask)) & T::kBlueMask;
+	return output;
+}
+
+OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor = 1) {
+	max /= factor;
+	pos *= factor;
+	if (pos > max) {
+		return end;
+	} else if (!pos) {
+		return start;
+	} else if (start == end) {
+		return end;
+	}
+
+	if (gBitFormat == 565) {
+		return calcGradient<ColorMasks<565> >(start, end, pos, max);
+	} else {
+		return calcGradient<ColorMasks<555> >(start, end, pos, max);
+	}
 }
 } // end of namespace GUI
 
