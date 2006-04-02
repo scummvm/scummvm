@@ -420,8 +420,10 @@ int TextDisplayer::dropCRIntoString(char *str, int offs) {
 
 char *TextDisplayer::preprocessString(const char *str) {
 	debugC(9, kDebugLevelMain, "TextDisplayer::preprocessString('%s')", str);
-	assert(strlen(str) < sizeof(_talkBuffer) - 1);
-	strcpy(_talkBuffer, str);
+	if (str != _talkBuffer) {
+		assert(strlen(str) < sizeof(_talkBuffer) - 1);
+		strcpy(_talkBuffer, str);
+	}
 	char *p = _talkBuffer;
 	while (*p) {
 		if (*p == '\r') {
