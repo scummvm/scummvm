@@ -40,16 +40,15 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "gui/newgui.h"
-#include "gui/launcher.h"
 #include "gui/message.h"
 #include "sound/mididrv.h"
 
-#ifdef _WIN32_WCE
+#if defined(_WIN32_WCE)
 #include "backends/wince/CELauncherDialog.h"
-#endif
-
-#ifdef __DC__
+#elif defined(__DC__)
 #include "backends/dc/DCLauncherDialog.h"
+#else
+#include "gui/launcher.h"
 #endif
 
 #ifdef PALMOS_68K
@@ -363,13 +362,13 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Set initial window caption
 	system.setWindowCaption(gScummVMFullVersion);
 
+	// Setup a dummy palette, for the mouse cursor, in case an error
+	// dialog has to be shown. See bug #1097467.
+	setupDummyPalette(system);
+
 	// Unless a game was specified, show the launcher dialog
 	if (detector._targetName.empty())
 		running = launcherDialog(detector, system);
-	else
-		// Setup a dummy palette, for the mouse cursor, in case an error
-		// dialog has to be shown. See bug #1097467.
-		setupDummyPalette(system);
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
