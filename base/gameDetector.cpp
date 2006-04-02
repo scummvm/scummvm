@@ -52,13 +52,20 @@
 #define DEFAULT_SAVE_PATH "Savegames"
 #endif
 
+static const char USAGE_STRING[] =
+	"%s: %s\n"
+	"Usage: %s [OPTIONS]... [GAME]\n"
+	"\n"
+	"Try '%s --help' for more options.\n"
+;
+
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #if defined(PALMOS_MODE) || defined(__SYMBIAN32__)
-static const char USAGE_STRING[] = "NoUsageString"; // save more data segment space
+static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
-static const char USAGE_STRING[] =
+static const char HELP_STRING[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
-	"Usage: scummvm [OPTIONS]... [GAME]\n"
+	"Usage: %s [OPTIONS]... [GAME]\n"
 	"  -v, --version            Display ScummVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
@@ -92,7 +99,7 @@ static const char USAGE_STRING[] =
 	"                           drive)\n"
 	"  --joystick[=NUM]         Enable input with joystick (default: 0 = first\n"
 	"                           joystick)\n"
-	"  --platform=WORD          Specify version of game (allowed values: 3do, acorn,\n"
+	"  --platform=WORD          Specify platform of game (allowed values: 3do, acorn,\n"
 	"                           amiga, atari, c64, fmtowns, nes, mac, pc, segacd,\n"
 	"                           windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
@@ -125,6 +132,19 @@ static const char USAGE_STRING[] =
 ;
 #endif
 
+static void usage(const char *appName, const char *s, ...) GCC_PRINTF(2, 3);
+
+static void usage(const char *appName, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+	printf(USAGE_STRING, appName, buf, appName, appName);
+	exit(1);
+}
 
 GameDetector::GameDetector() {
 
@@ -298,39 +318,39 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	if (isLongCmd ? (!memcmp(s, longCmd"=", sizeof(longCmd"=") - 1)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) \
 			s += sizeof(longCmd"=") - 1; \
-		if ((*s != '\0') && (current_option != NULL)) goto ShowHelpAndExit; \
-		char *option = (*s != '\0') ? s : current_option; \
-		current_option = NULL;
+		const char *option = (*s != '\0') ? s : s2;
 
 // Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd) \
-	if (option == NULL) goto ShowHelpAndExit;
+	if (option == NULL) usage(argv[0], "TODO 2");
 
 // Use this for options which have a required integer value
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION_OPT(shortCmd, longCmd) \
-	if (option == NULL) goto ShowHelpAndExit; \
+	if (option == NULL) usage(argv[0], "TODO 3"); \
 	char *endptr = 0; \
 	int intValue; intValue = (int)strtol(option, &endptr, 10); \
-	if (endptr == NULL || *endptr != 0) goto ShowHelpAndExit;
+	if (endptr == NULL || *endptr != 0) usage(argv[0], "--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s, longCmd) || !strcmp(s, "no-"longCmd)) : (shortCmdLower == shortCmd)) { \
+		bool boolValue = (shortCmdLower == s[1]); \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
 			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
 		} \
-		if ((*s != '\0') || (current_option != NULL)) goto ShowHelpAndExit;
+		if (*s != '\0') goto unknownOption;
+		const char *option = boolValue ? "true" : "false";
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_OPTION_CMD(shortCmd, longCmd) \
 	if (isLongCmd ? (!strcmp(s, longCmd)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) \
 			s += sizeof(longCmd) - 1; \
-		if ((*s != '\0') || (current_option != NULL)) goto ShowHelpAndExit;
+		if (*s != '\0') goto unknownOption;
 
 
 #define DO_LONG_OPTION_OPT(longCmd) 	DO_OPTION_OPT(0, longCmd)
@@ -347,61 +367,57 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 
 void GameDetector::parseCommandLine(int argc, char **argv) {
 	int i;
-	char *s;
-	char *current_option = NULL;
 	char shortCmdLower;
-	bool isLongCmd, boolValue;
+	bool isLongCmd;
 
-	// We store all command line settings in a string map, instead of
-	// immediately putting it into the config manager. We do that to
-	// make a potential future change to the config manager easier: In
-	// particular, right now there is only one transient config domain
-	// domain, in the future there might be two (one for the app, one
-	// for the active game). Since we only know after all params have
-	// been parsed whether a game is going to be started or whether we
-	// run the launcher, we need to delay putting things into the config
-	// manager until after parsing is complete.
+	// We store all command line settings into a string map.
 	Common::StringMap settings;
 
+	// Iterate over all command line arguments and parse them into our string map.
+	for (i = 1; i < argc; ++i) {
+		const char *s = argv[i];
+		const char *s2 = (i < argc-1) ? argv[i+1] : 0;
 
-	// The user can override the savepath with the SCUMMVM_SAVEPATH
-	// environment variable. This is weaker than a --savepath on the
-	// command line, but overrides the default savepath, hence it is
-	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE)
-	const char *dir = getenv("SCUMMVM_SAVEPATH");
-	if (dir && *dir && strlen(dir) < 1024) {
-		// TODO: Verify whether the path is valid
-		settings["savepath"] = dir;
-	}
-#endif
+		if (s[0] != '-') {
+			// The argument doesn't start with a dash, so it's not an option.
+			// Hence it must be the target name. We currently enforce that
+			// this always comes last.
+			if (i != argc - 1)
+				usage(argv[0], "Stray argument '%s'", s);
 
-	// Iterate over all command line arguments, backwards.
-	for (i = argc - 1; i >= 1; i--) {
-		s = argv[i];
-
-		if (s[0] != '-' || s[1] == '\0') {
-			// Last argument: this could be a target name.
-			// To verify this, check if there is either a game domain (i.e.
-			// a configured target) matching this argument, or if we can
-			// find any target with that name.
-			if (i == (argc - 1) && (ConfMan.hasGameDomain(s) || findGame(s).gameid.size() > 0)) {
-				setTarget(s);
-			} else {
-				if (current_option == NULL)
-					current_option = s;
-				else
-					goto ShowHelpAndExit;
-			}
+			// We defer checking whether this is a valid target to a later point
+			settings["target"] = s;
 		} else {
 
 			shortCmdLower = tolower(s[1]);
 			isLongCmd = (s[0] == '-' && s[1] == '-');
-			boolValue = (shortCmdLower == s[1]);
 			s += 2;
 
+			DO_OPTION_CMD('h', "help")
+				printf(HELP_STRING, argv[0]);
+				exit(0);
+			END_OPTION
+
+			DO_OPTION_CMD('v', "version")
+				printf("%s\n", gScummVMFullVersion);
+				printf("Features compiled in: %s\n", gScummVMFeatures);
+				exit(0);
+			END_OPTION
+
+			DO_OPTION_CMD('t', "list-targets")
+				listTargets();
+				exit(0);
+			END_OPTION
+
+			DO_OPTION_CMD('z', "list-games")
+				listGames();
+				exit(0);
+			END_OPTION
+
+
+
 			DO_OPTION('c', "config")
-				// Dummy
+				settings["config"] = option;
 			END_OPTION
 
 			DO_OPTION_INT('b', "boot-param")
@@ -414,16 +430,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION("debugflags")
-				// Dummy
+				settings["debugflags"] = option;
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
-				// TODO: Instead of just showing the generic help text,
-				// maybe print a message like:
-				// "'option' is not a supported music driver on this machine.
-				//  Available driver: ..."
 				if (MidiDriver::parseMusicDriver(option) < 0)
-					goto ShowHelpAndExit;
+					usage(argv[0], "Unrecognized music driver '%s'", option);
 				settings["music_driver"] = option;
 			END_OPTION
 
@@ -432,7 +444,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
-				settings["fullscreen"] = boolValue ? "true" : "false";
+				settings["fullscreen"] = option;
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
@@ -447,18 +459,9 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 						gm++;
 					}
 				}
-				// TODO: Instead of just showing the generic help text,
-				// maybe print a message like:
-				// "'option' is not a supported graphic mode on this machine.
-				//  Available graphic modes: ..."
 				if (!isValid)
-					goto ShowHelpAndExit;
+					usage(argv[0], "Unrecognized graphics mode '%s'", option);
 				settings["gfx_mode"] = option;
-			END_OPTION
-
-			DO_OPTION_CMD('h', "help")
-				printf(USAGE_STRING);
-				exit(0);
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")
@@ -466,7 +469,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_OPTION_BOOL('n', "subtitles")
-				settings["subtitles"] =  boolValue ? "true" : "false";
+				settings["subtitles"] =  option;
 			END_OPTION
 
 			DO_OPTION('p', "path")
@@ -476,7 +479,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 			DO_OPTION('q', "language")
 				if (Common::parseLanguage(option) == Common::UNK_LANG)
-					goto ShowHelpAndExit;
+					usage(argv[0], "Unrecognized language '%s'", option);
 				settings["language"] = option;
 			END_OPTION
 
@@ -492,28 +495,12 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 				settings["midi_gain"] = option;
 			END_OPTION
 
-			DO_OPTION_CMD('t', "list-targets")
-				listTargets();
-				exit(0);
-			END_OPTION
-
 			DO_OPTION_BOOL('u', "dump-scripts")
 				_dumpScripts = true;
 			END_OPTION
 
-			DO_OPTION_CMD('v', "version")
-				printf("%s\n", gScummVMFullVersion);
-				printf("Features compiled in: %s\n", gScummVMFeatures);
-				exit(0);
-			END_OPTION
-
 			DO_OPTION_OPT('x', "save-slot")
 				settings["save_slot"] = (option != NULL) ? option : "0";
-			END_OPTION
-
-			DO_OPTION_CMD('z', "list-games")
-				listGames();
-				exit(0);
 			END_OPTION
 
 			DO_LONG_OPTION_INT("cdrom")
@@ -527,7 +514,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			DO_LONG_OPTION("platform")
 				int platform = Common::parsePlatform(option);
 				if (platform == Common::kPlatformUnknown)
-					goto ShowHelpAndExit;
+					usage(argv[0], "Unrecognized platform '%s'", option);
 
 				settings["platform"] = option;
 			END_OPTION
@@ -538,29 +525,29 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
-				settings["disable_sdl_parachute"] = boolValue ? "true" : "false";
+				settings["disable_sdl_parachute"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
-				settings["multi_midi"] = boolValue ? "true" : "false";
+				settings["multi_midi"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("native-mt32")
-				settings["native_mt32"] = boolValue ? "true" : "false";
+				settings["native_mt32"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("enable-gs")
-				settings["enable_gs"] = boolValue ? "true" : "false";
+				settings["enable_gs"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
-				settings["aspect_ratio"] = boolValue ? "true" : "false";
+				settings["aspect_ratio"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION("render-mode")
 				int renderMode = Common::parseRenderMode(option);
 				if (renderMode == Common::kRenderDefault)
-					goto ShowHelpAndExit;
+					usage(argv[0], "Unrecognized render mode '%s'", option);
 
 				settings["render_mode"] = option;
 			END_OPTION
@@ -579,7 +566,7 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("copy-protection")
-				settings["copy_protection"] = boolValue ? "true" : "false";
+				settings["copy_protection"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION("gui-theme")
@@ -602,30 +589,60 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")
-				settings["demo_mode"] = boolValue ? "true" : "false";
+				settings["demo_mode"] = option;
 			END_OPTION
 #endif
 
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
-				settings["alt_intro"] = boolValue ? "true" : "false";
+				settings["alt_intro"] = option;
 			END_OPTION
 #endif
 
+unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
-			goto ShowHelpAndExit;
+			usage(argv[0], "Unrecognized option '%s'", argv[i]);
 		}
 	}
 
-	if (current_option) {
-ShowHelpAndExit:
-		printf(USAGE_STRING);
-		exit(1);
+	// If a target was specified, check whether there is either a game
+	// domain (i.e. a target) matching this argument, or alternatively
+	// whether there is a gameid matching that name.
+	if (settings.contains("target")) {
+		String str(settings["target"]);
+		if (ConfMan.hasGameDomain(str) || findGame(str).gameid.size() > 0) {
+			setTarget(str);
+		} else {
+			usage(argv[0], "Unrecognized game target '%s'", str.c_str());
+		}
 	}
+	
+	
+
+	// The user can override the savepath with the SCUMMVM_SAVEPATH
+	// environment variable. This is weaker than a --savepath on the
+	// command line, but overrides the default savepath, hence it is
+	// handled here, just before the command line gets parsed.
+#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE)
+	if (!settings.contains("savepath")) {
+		const char *dir = getenv("SCUMMVM_SAVEPATH");
+		if (dir && *dir && strlen(dir) < 1024) {
+			// TODO: Verify whether the path is valid
+			settings["savepath"] = dir;
+		}
+	}
+#endif
+
+	// The following options shouldn't get into ConfMan, so we remove them
+	settings.erase("config");
+	settings.erase("target");
+	settings.erase("debugflags");
+
 
 	// Finally, store the command line settings into the config manager.
-	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x)
+	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		ConfMan.set(x->_key, x->_value, Common::ConfigManager::kTransientDomain);
+	}
 
 }
 
