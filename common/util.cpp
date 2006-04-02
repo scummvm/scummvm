@@ -341,6 +341,68 @@ const Array<EngineDebugLevel> &listSpecialDebugLevels() {
 
 }	// End of namespace Common
 
+static void debugHelper(char *buf, bool caret = true) {
+#ifndef _WIN32_WCE
+	if (caret)
+		printf("%s\n", buf);
+	else
+		printf("%s", buf);
+#endif
+
+#if defined( USE_WINDBG )
+	if (caret)
+		strcat(buf, "\n");
+#if defined( _WIN32_WCE )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+#else
+	OutputDebugString(buf);
+#endif
+#endif
+
+	fflush(stdout);
+}
+
+void CDECL debug(int level, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	if (level > gDebugLevel)
+		return;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+	debugHelper(buf);
+}
+
+void CDECL debugN(int level, const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	if (level > gDebugLevel)
+		return;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+	debugHelper(buf, false);
+}
+
+void CDECL debug(const char *s, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, s);
+	vsnprintf(buf, STRINGBUFLEN, s, va);
+	va_end(va);
+
+	debugHelper(buf);
+}
+
 void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
@@ -352,6 +414,5 @@ void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	// pass it to debug for now
-	debug(level, buf);
+	debugHelper(buf);
 }
