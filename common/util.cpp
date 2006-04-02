@@ -341,6 +341,18 @@ const Array<EngineDebugLevel> &listSpecialDebugLevels() {
 
 }	// End of namespace Common
 
+
+
+/**
+ * The debug level. Initially set to -1, indicating that no debug output
+ * should be shown. Positive values usually imply an increasing number of
+ * debug output shall be generated, the higher the value, the more verbose the
+ * information (although the exact semantics are up to the engines).
+ */
+int gDebugLevel = -1;
+
+
+
 static void debugHelper(char *buf, bool caret = true) {
 #ifndef _WIN32_WCE
 	if (caret)

@@ -143,14 +143,6 @@ const char *gScummVMFeatures = ""
 #endif
 	;
 
-/**
- * The debug level. Initially set to -1, indicating that no debug output
- * should be shown. Positive values usually imply an increasing number of
- * debug output shall be generated, the higher the value, the more verbose the
- * information (although the exact semantics are up to the engines).
- */
-int gDebugLevel = -1;
-
 static void setupDummyPalette(OSystem &system) {
 	// FIXME - mouse cursors are currently always set via 8 bit data.
 	// Thus for now we need to setup a dummy palette. On the long run, we might
