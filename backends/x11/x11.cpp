@@ -58,6 +58,11 @@
 #include <sys/ioctl.h>
 #include <backends/x11/x11.h>
 
+int main(int argc, char *argv[]) {
+	// Invoke the actual ScummVM main entry point:
+	return scummvm_main(argc, argv);
+}
+
 OSystem *OSystem_X11_create() {
 	return OSystem_X11::create(0, 0);
 }

@@ -48,7 +48,6 @@ const char* stackCookie = "$STACK: 655360\0";
 
 int main(int argc, char *argv[]) {
 
-
 #if (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
 	//
 	// Set up redirects for stdout/stderr under Windows and Symbian.
