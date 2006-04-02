@@ -437,6 +437,9 @@ int main()
 	g_system = OSystem_MorphOS_create();
 	assert(g_system);
 
-	return scummvm_main(argc, argv);
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }
 

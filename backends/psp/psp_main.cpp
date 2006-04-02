@@ -147,10 +147,12 @@ int main(void)
 	g_system = OSystem_PSP_create();
 	assert(g_system);
 
-	scummvm_main(argc, argv);
+	int res = scummvm_main(argc, argv);
+
+	g_system->quit();	// TODO: Consider removing / replacing this!
 	
 	sceKernelSleepThread();
 
-	return 0;
+	return res;
 }
 

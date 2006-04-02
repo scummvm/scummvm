@@ -63,7 +63,9 @@ int main(int argc, char *argv[]) {
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
-	return scummvm_main(argc, argv);
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }
 
 OSystem *OSystem_X11::create(int gfx_mode, bool full_screen) {

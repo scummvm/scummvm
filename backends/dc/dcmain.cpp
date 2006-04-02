@@ -206,7 +206,7 @@ int main()
   g_system = new OSystem_Dreamcast();
   assert(g_system);
 
-  scummvm_main(argc, argv);
+  int res = scummvm_main(argc, argv);
 
   exit(0);
 }

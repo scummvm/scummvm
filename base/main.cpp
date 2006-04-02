@@ -398,11 +398,8 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		running = launcherDialog(detector, system);
 	}
 
-	// ...and quit (the return 0 should never be reached)
+	// Deinit the timer
 	delete Common::g_timer;
-	system.quit();
-
-	error("If you are seeing this, your OSystem backend is not working properly");
 
 	return 0;
 }

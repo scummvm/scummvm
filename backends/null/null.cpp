@@ -107,10 +107,13 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 int main(int argc, char *argv[]) {
-	// Invoke the actual ScummVM main entry point:
 	g_system = OSystem_NULL_create();
 	assert(g_system);
-	return scummvm_main(argc, argv);
+
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }
 
 OSystem_NULL::OSystem_NULL()

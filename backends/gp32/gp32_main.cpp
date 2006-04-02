@@ -74,5 +74,8 @@ void GpMain(void *arg) {
 	g_system = new OSystem_GP32_create();
 	assert(g_system);
 
-	scummvm_main(1, NULL);
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(1, NULL);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }

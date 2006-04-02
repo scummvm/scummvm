@@ -91,12 +91,14 @@ int main(int argc, char *argv[]) {
 
 #endif // defined(__SYMBIAN32__)
 
-
+	// Create our OSystem instance
 	g_system = new OSystem_SDL();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
-	return scummvm_main(argc, argv);
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }
 #endif
 

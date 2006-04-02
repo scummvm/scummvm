@@ -68,12 +68,14 @@ int main(int argc, char *argv[]) {
 	g_system = new OSystem_SDL();
 	assert(g_system);
 
-	scummvm_main(argc, argv);
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
 
     /* Deinitialize OSSO */
     //osso_deinitialize(osso_context);
 
 	set_doubling(0);
 	
-	return 0;
+	return res;
 }

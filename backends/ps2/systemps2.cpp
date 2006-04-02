@@ -133,7 +133,9 @@ extern "C" int main(int argc, char *argv[]) {
 	assert(g_system);
 
 	sioprintf("init done. starting ScummVM.");
-	return scummvm_main(argc, argv);
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }
 
 s32 timerInterruptHandler(s32 cause) {
