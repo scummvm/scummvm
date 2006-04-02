@@ -39,9 +39,9 @@
 bool ZBUFFER_GLOBAL, SHOWFPS_GLOBAL, TINYGL_GLOBAL;
 enDebugLevels debugLevel = DEBUG_NONE;
 
-#ifdef __MINGW32__
-int PASCAL WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-	return main(0, NULL);
+#if defined (WIN32)
+int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+    return main(__argc, __argv);
 }
 #endif
 
