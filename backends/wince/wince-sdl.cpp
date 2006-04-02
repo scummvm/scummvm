@@ -525,7 +525,7 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
 
 void OSystem_WINCE3::get_sample_rate() {
 	// Force at least medium quality FM synthesis for FOTAQ
-	if (_gameDetector._targetName == "queen") {
+	if (_gameDetector._gameid == "queen") {
 		if (!((ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) ||
 			(ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")))) {
 			ConfMan.set("FM_medium_quality", true);
@@ -534,9 +534,9 @@ void OSystem_WINCE3::get_sample_rate() {
 	}
 	// See if the output frequency is forced by the game
 	if ((_gameDetector._game.features & Scumm::GF_DIGI_IMUSE) ||
-		_gameDetector._targetName == "queen" ||
-		strncmp(_gameDetector._targetName.c_str(), "sword", 5) == 0 ||
-		strncmp(_gameDetector._targetName.c_str(), "sky", 3) == 0)
+		_gameDetector._gameid == "queen" ||
+		strncmp(_gameDetector._gameid.c_str(), "sword", 5) == 0 ||
+		strncmp(_gameDetector._gameid.c_str(), "sky", 3) == 0)
 			_sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
@@ -653,7 +653,7 @@ bool OSystem_WINCE3::setSoundCallback(SoundProc proc, void *param) {
 void OSystem_WINCE3::check_mappings() {
 		CEActionsPocket *instance;
 
-		if (!_gameDetector._targetName.size() || GUI_Actions::Instance()->initialized())
+		if (!_gameDetector._gameid.size() || GUI_Actions::Instance()->initialized())
 			return;
 
 		GUI_Actions::Instance()->initInstanceGame();
@@ -696,7 +696,7 @@ void OSystem_WINCE3::check_mappings() {
 		}
 
 		// Extra warning for Zak Mc Kracken
-		if (strncmp(_gameDetector._targetName.c_str(), "zak", 3) == 0 &&
+		if (strncmp(_gameDetector._gameid.c_str(), "zak", 3) == 0 &&
 			!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
 			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
 			alert.runModal();
@@ -706,7 +706,7 @@ void OSystem_WINCE3::check_mappings() {
 
 void OSystem_WINCE3::update_game_settings() {
 	// Finish panel initialization
-	if (!_panelInitialized && _gameDetector._targetName.size()) {
+	if (!_panelInitialized && _gameDetector._gameid.size()) {
 		Panel *panel;
 		_panelInitialized = true;
 		// Add the main panel
@@ -729,7 +729,7 @@ void OSystem_WINCE3::update_game_settings() {
 		_toolbarHandler.setVisible(true);
 
 		// Keyboard is active for Monkey 1 or 2 initial copy-protection
-		if (strncmp(_gameDetector._targetName.c_str(), "monkey", 6) == 0) {
+		if (strncmp(_gameDetector._gameid.c_str(), "monkey", 6) == 0) {
 			_monkeyKeyboard = true;
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 		}
