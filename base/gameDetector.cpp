@@ -342,7 +342,7 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 			boolValue = !strcmp(s, longCmd); \
 			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
 		} \
-		if (*s != '\0') goto unknownOption;
+		if (*s != '\0') goto unknownOption; \
 		const char *option = boolValue ? "true" : "false";
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
