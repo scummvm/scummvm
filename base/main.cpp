@@ -368,7 +368,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 #ifndef _WIN32_WCE
 	GameDetector detector;
 #endif
-	detector.processSettings(settings);
+	detector.processSettings(command, settings);
 
 #ifdef __SYMBIAN32__
 	// init keymap support here: we wanna move this somewhere else?

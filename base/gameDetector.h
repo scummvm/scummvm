@@ -70,7 +70,7 @@ public:
 	GameDetector();
 
 	static Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
-	void processSettings(Common::StringMap &settings);
+	void processSettings(Common::String &target, Common::StringMap &settings);
 	bool detectMain();
 
 	String _targetName;

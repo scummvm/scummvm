@@ -352,8 +352,8 @@ Common::String GameDetector::parseCommandLine(Common::StringMap &settings, int a
 			if (i != argc - 1)
 				usage("Stray argument '%s'", s);
 
-			// We defer checking whether this is a valid target to a later point
-			settings["target"] = s;
+			// We defer checking whether this is a valid target to a later point.
+			return s;
 		} else {
 
 			char shortCmdLower = tolower(s[1]);
@@ -537,19 +537,17 @@ unknownOption:
 }
 
 
-void GameDetector::processSettings(Common::StringMap &settings) {
+void GameDetector::processSettings(Common::String &target, Common::StringMap &settings) {
 
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
-	if (settings.contains("target")) {
-		String str(settings["target"]);
-		if (ConfMan.hasGameDomain(str) || findGame(str).gameid.size() > 0) {
-			setTarget(str);
+	if (!target.empty()) {
+		if (ConfMan.hasGameDomain(target) || findGame(target).gameid.size() > 0) {
+			setTarget(target);
 		} else {
-			usage("Unrecognized game target '%s'", str.c_str());
+			usage("Unrecognized game target '%s'", target.c_str());
 		}
-		settings.erase("target");	// This option should not be passed to ConfMan.
 	}
 	
 
