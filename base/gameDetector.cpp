@@ -132,9 +132,12 @@ static const char HELP_STRING[] =
 ;
 #endif
 
-static void usage(const char *appName, const char *s, ...) GCC_PRINTF(2, 3);
 
-static void usage(const char *appName, const char *s, ...) {
+static Common::String s_appName("scummvm");
+
+static void usage(const char *s, ...) GCC_PRINTF(1, 2);
+
+static void usage(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -142,7 +145,7 @@ static void usage(const char *appName, const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	printf(USAGE_STRING, appName, buf, appName, appName);
+	printf(USAGE_STRING, s_appName.c_str(), buf, s_appName.c_str(), s_appName.c_str());
 	exit(1);
 }
 
@@ -314,24 +317,26 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 //
 
 // Use this for options which have an *optional* value
-#define DO_OPTION_OPT(shortCmd, longCmd) \
+#define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
 	if (isLongCmd ? (!memcmp(s, longCmd"=", sizeof(longCmd"=") - 1)) : (shortCmdLower == shortCmd)) { \
 		if (isLongCmd) \
 			s += sizeof(longCmd"=") - 1; \
-		const char *option = (*s != '\0') ? s : s2;
+		const char *option = (*s != '\0') ? s : s2; \
+		if (!option) option = defaultVal; \
+		if (option) settings[longCmd] = option;
 
 // Use this for options which have a required (string) value
 #define DO_OPTION(shortCmd, longCmd) \
-	DO_OPTION_OPT(shortCmd, longCmd) \
-	if (option == NULL) usage(argv[0], "TODO 2");
+	DO_OPTION_OPT(shortCmd, longCmd, 0) \
+	if (!option) usage("Option '%s' requires an argument", argv[i]);
 
 // Use this for options which have a required integer value
 #define DO_OPTION_INT(shortCmd, longCmd) \
-	DO_OPTION_OPT(shortCmd, longCmd) \
-	if (option == NULL) usage(argv[0], "TODO 3"); \
+	DO_OPTION_OPT(shortCmd, longCmd, 0) \
+	if (!option) usage("Option '%s' requires an argument", argv[i]); \
 	char *endptr = 0; \
 	int intValue; intValue = (int)strtol(option, &endptr, 10); \
-	if (endptr == NULL || *endptr != 0) usage(argv[0], "--%s: Invalid number '%s'", longCmd, option);
+	if (endptr == NULL || *endptr != 0) usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
@@ -343,7 +348,8 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
 		} \
 		if (*s != '\0') goto unknownOption; \
-		const char *option = boolValue ? "true" : "false";
+		const char *option = boolValue ? "true" : "false"; \
+		settings[longCmd] = option;
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_OPTION_CMD(shortCmd, longCmd) \
@@ -353,7 +359,7 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 		if (*s != '\0') goto unknownOption;
 
 
-#define DO_LONG_OPTION_OPT(longCmd) 	DO_OPTION_OPT(0, longCmd)
+#define DO_LONG_OPTION_OPT(longCmd, d) 	DO_OPTION_OPT(0, longCmd, d)
 #define DO_LONG_OPTION(longCmd) 		DO_OPTION(0, longCmd)
 #define DO_LONG_OPTION_INT(longCmd) 	DO_OPTION_INT(0, longCmd)
 #define DO_LONG_OPTION_BOOL(longCmd) 	DO_OPTION_BOOL(0, longCmd)
@@ -365,32 +371,35 @@ GameDescriptor GameDetector::findGame(const String &gameName, const Plugin **plu
 	}
 
 
-void GameDetector::parseCommandLine(int argc, char **argv) {
-	int i;
-	char shortCmdLower;
-	bool isLongCmd;
+void GameDetector::parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
+	const char *s, *s2;
+	
+	// argv[0] contains the name of the executable.
+	if (argv && argv[0]) {
+		s = strchr(argv[0], '/');
+		s_appName = s ? s : argv[0];
+	}
 
 	// We store all command line settings into a string map.
-	Common::StringMap settings;
 
 	// Iterate over all command line arguments and parse them into our string map.
-	for (i = 1; i < argc; ++i) {
-		const char *s = argv[i];
-		const char *s2 = (i < argc-1) ? argv[i+1] : 0;
+	for (int i = 1; i < argc; ++i) {
+		s = argv[i];
+		s2 = (i < argc-1) ? argv[i+1] : 0;
 
 		if (s[0] != '-') {
 			// The argument doesn't start with a dash, so it's not an option.
 			// Hence it must be the target name. We currently enforce that
 			// this always comes last.
 			if (i != argc - 1)
-				usage(argv[0], "Stray argument '%s'", s);
+				usage("Stray argument '%s'", s);
 
 			// We defer checking whether this is a valid target to a later point
 			settings["target"] = s;
 		} else {
 
-			shortCmdLower = tolower(s[1]);
-			isLongCmd = (s[0] == '-' && s[1] == '-');
+			char shortCmdLower = tolower(s[1]);
+			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 			s += 2;
 
 			DO_OPTION_CMD('h', "help")
@@ -417,34 +426,26 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 
 
 			DO_OPTION('c', "config")
-				settings["config"] = option;
 			END_OPTION
 
 			DO_OPTION_INT('b', "boot-param")
-				settings["boot_param"] = option;
 			END_OPTION
 
-			DO_OPTION_OPT('d', "debuglevel")
-				gDebugLevel = option ? (int)strtol(option, 0, 10) : 0;
-				printf("Debuglevel (from command line): %d\n", gDebugLevel);
+			DO_OPTION_OPT('d', "debuglevel", "0")
 			END_OPTION
 
 			DO_LONG_OPTION("debugflags")
-				settings["debugflags"] = option;
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
 				if (MidiDriver::parseMusicDriver(option) < 0)
-					usage(argv[0], "Unrecognized music driver '%s'", option);
-				settings["music_driver"] = option;
+					usage("Unrecognized music driver '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
-				settings["output_rate"] = option;
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
-				settings["fullscreen"] = option;
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
@@ -460,121 +461,93 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 					}
 				}
 				if (!isValid)
-					usage(argv[0], "Unrecognized graphics mode '%s'", option);
-				settings["gfx_mode"] = option;
+					usage("Unrecognized graphics mode '%s'", option);
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")
-				settings["music_volume"] = option;
 			END_OPTION
 
 			DO_OPTION_BOOL('n', "subtitles")
-				settings["subtitles"] =  option;
 			END_OPTION
 
 			DO_OPTION('p', "path")
 				// TODO: Verify whether the path is valid
-				settings["path"] = option;
 			END_OPTION
 
 			DO_OPTION('q', "language")
 				if (Common::parseLanguage(option) == Common::UNK_LANG)
-					usage(argv[0], "Unrecognized language '%s'", option);
-				settings["language"] = option;
+					usage("Unrecognized language '%s'", option);
 			END_OPTION
 
 			DO_OPTION_INT('s', "sfx-volume")
-				settings["sfx_volume"] = option;
 			END_OPTION
 
 			DO_OPTION_INT('r', "speech-volume")
-				settings["speech_volume"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_INT("midi-gain")
-				settings["midi_gain"] = option;
 			END_OPTION
 
 			DO_OPTION_BOOL('u', "dump-scripts")
-				_dumpScripts = true;
 			END_OPTION
 
-			DO_OPTION_OPT('x', "save-slot")
-				settings["save_slot"] = (option != NULL) ? option : "0";
+			DO_OPTION_OPT('x', "save-slot", "0")
 			END_OPTION
 
 			DO_LONG_OPTION_INT("cdrom")
-				settings["cdrom"] = option;
 			END_OPTION
 
-			DO_LONG_OPTION_OPT("joystick")
-				settings["joystick_num"] = (option != NULL) ? option : "0";
+			DO_LONG_OPTION_OPT("joystick", "0")
 			END_OPTION
 
 			DO_LONG_OPTION("platform")
 				int platform = Common::parsePlatform(option);
 				if (platform == Common::kPlatformUnknown)
-					usage(argv[0], "Unrecognized platform '%s'", option);
-
-				settings["platform"] = option;
+					usage("Unrecognized platform '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
 				// TODO: Verify whether the path is valid
-				settings["soundfont"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
-				settings["disable_sdl_parachute"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("multi-midi")
-				settings["multi_midi"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("native-mt32")
-				settings["native_mt32"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("enable-gs")
-				settings["enable_gs"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
-				settings["aspect_ratio"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION("render-mode")
 				int renderMode = Common::parseRenderMode(option);
 				if (renderMode == Common::kRenderDefault)
-					usage(argv[0], "Unrecognized render mode '%s'", option);
-
-				settings["render_mode"] = option;
+					usage("Unrecognized render mode '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("force-1x-overlay")
-				_force1xOverlay = true;
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
 				// TODO: Verify whether the path is valid
-				settings["savepath"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_INT("talkspeed")
-				settings["talkspeed"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("copy-protection")
-				settings["copy_protection"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION("gui-theme")
-				settings["gui_theme"] = option;
 			END_OPTION
 
 			DO_LONG_OPTION("target-md5")
-				settings["target_md5"] = option;
 			END_OPTION
 
 #ifndef DISABLE_SCUMM
@@ -589,21 +562,23 @@ void GameDetector::parseCommandLine(int argc, char **argv) {
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("demo-mode")
-				settings["demo_mode"] = option;
 			END_OPTION
 #endif
 
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
-				settings["alt_intro"] = option;
 			END_OPTION
 #endif
 
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
-			usage(argv[0], "Unrecognized option '%s'", argv[i]);
+			usage("Unrecognized option '%s'", argv[i]);
 		}
 	}
+}
+
+
+void GameDetector::processSettings(Common::StringMap &settings) {
 
 	// If a target was specified, check whether there is either a game
 	// domain (i.e. a target) matching this argument, or alternatively
@@ -613,10 +588,10 @@ unknownOption:
 		if (ConfMan.hasGameDomain(str) || findGame(str).gameid.size() > 0) {
 			setTarget(str);
 		} else {
-			usage(argv[0], "Unrecognized game target '%s'", str.c_str());
+			usage("Unrecognized game target '%s'", str.c_str());
 		}
+		settings.erase("target");	// This option should not be passed to ConfMan.
 	}
-	
 	
 
 	// The user can override the savepath with the SCUMMVM_SAVEPATH
@@ -633,18 +608,44 @@ unknownOption:
 	}
 #endif
 
+
+	if (settings.contains("debuglevel")) {
+		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
+		printf("Debuglevel (from command line): %d\n", gDebugLevel);
+		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
+	}
+
+	if (settings.contains("dump-scripts")) {
+		_dumpScripts = (settings["dump-scripts"] == "true");
+		settings.erase("dump-scripts");	// This option should not be passed to ConfMan.
+	}
+
+	if (settings.contains("force-1x-overlay")) {
+		_force1xOverlay = (settings["force-1x-overlay"] == "true");
+		settings.erase("force-1x-overlay");	// This option should not be passed to ConfMan.
+	}
+
 	// The following options shouldn't get into ConfMan, so we remove them
 	settings.erase("config");
-	settings.erase("target");
 	settings.erase("debugflags");
+	settings.erase("target");
 
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
-		ConfMan.set(x->_key, x->_value, Common::ConfigManager::kTransientDomain);
-	}
+		String key(x->_key);
+		String value(x->_value);
 
+		// Replace any "-" in the key by "_" (e.g. change "save-slot" to "save_slot").
+		for (String::iterator c = key.begin(); c != key.end(); ++c)
+			if (*c == '-')
+				*c = '_';
+		
+		// Store it into ConfMan.
+		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
+	}
 }
+
 
 void GameDetector::setTarget(const String &target) {
 	_targetName = target;

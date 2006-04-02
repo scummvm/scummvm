@@ -347,7 +347,9 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	GUI::Actions::init(detector);
 #endif
 
-	detector.parseCommandLine(argc, argv);
+	Common::StringMap settings;
+	GameDetector::parseCommandLine(settings, argc, argv);
+	detector.processSettings(settings);
 
 #ifdef PALMOS_68K
 	ArgsFree(argv);

@@ -25,6 +25,7 @@
 #define GAMEDETECTOR_H
 
 #include "common/str.h"
+#include "common/config-manager.h"
 
 class Engine;
 class GameDetector;
@@ -68,7 +69,8 @@ class GameDetector {
 public:
 	GameDetector();
 
-	void parseCommandLine(int argc, char **argv);
+	static void parseCommandLine(Common::StringMap &settings, int argc, char **argv);
+	void processSettings(Common::StringMap &settings);
 	bool detectMain();
 
 	String _targetName;
