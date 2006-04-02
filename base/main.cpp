@@ -270,45 +270,24 @@ extern "C" int scummvm_main(GameDetector &detector, int argc, char *argv[]) {
 #else
 extern "C" int scummvm_main(int argc, char *argv[]) {
 #endif
-	char *cfgFilename = NULL;
-	Common::String specialDebug = "";
-	char *s=NULL;//argv[1]; SumthinWicked says: cannot assume that argv!=NULL here! eg. Symbian's CEBasicAppUI::SDLStartL() calls as main(0,NULL), if you want to change plz #ifdef __SYMBIAN32__
+	Common::String specialDebug;
 	bool running = true;
 
-	// Verify that the backend has been initialised (i.e. g_system has been set).
+	// Verify that the backend has been initialized (i.e. g_system has been set).
 	assert(g_system);
 	OSystem &system = *g_system;
 
+	// Parse the command line
+	Common::StringMap settings;
+	GameDetector::parseCommandLine(settings, argc, argv);
 
-	// Quick preparse of command-line, looking for alt configfile path
-	for (int i = argc - 1; i >= 1; i--) {
-		s = argv[i];
-		bool shortOpt = !scumm_strnicmp(s, "-c", 2);
-		bool longOpt = !strncmp(s, "--config", 8);
-
-		if (shortOpt || longOpt) {
-			if (longOpt) {
-				if (strlen(s) < 9)
-					continue;
-				s+=9;
-			}
-			if (shortOpt) {
-				if (strlen(s) < 2)
-					continue;
-				s+=2;
-			}
-
-			if (*s == '\0')
-				break;
-
-			cfgFilename = s;
-			break;
-		}
-	}
-	if (cfgFilename != NULL)
-		ConfMan.loadConfigFile(cfgFilename);
-	else
+	// Load the config file (possibly overriden via command line):
+	if (settings.contains("config")) {
+		ConfMan.loadConfigFile(settings["config"]);
+		settings.erase("config");
+	} else {
 		ConfMan.loadDefaultConfigFile();
+	}
 
 	if (ConfMan.hasKey("debuglevel"))
 		gDebugLevel = ConfMan.getInt("debuglevel");
@@ -316,28 +295,16 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
-	// Quick preparse of command-line, looking for special debug flags
-	for (int ii = argc - 1; ii >= 1; ii--) {
-		s = argv[ii];
-		bool found = !strncmp(s, "--debugflags", 12);
-
-		if (found) {
-			if (strlen(s) < 13)
-				continue;
-
-			s+=13;
-			if (*s == '\0')
-				break;
-
-			specialDebug = s;
-			break;
-		}
+	// Look for special debug flags
+	if (settings.contains("debugflags")) {
+		specialDebug = settings["debugflags"];
+		settings.erase("debugflags");
 	}
 
 	// Load the plugins
 	PluginManager::instance().loadPlugins();
 
-	// Parse the command line information
+	// Process the command line settings
 #ifndef _WIN32_WCE
 	GameDetector detector;
 #endif
@@ -347,8 +314,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	GUI::Actions::init(detector);
 #endif
 
-	Common::StringMap settings;
-	GameDetector::parseCommandLine(settings, argc, argv);
 	detector.processSettings(settings);
 
 #ifdef PALMOS_68K
