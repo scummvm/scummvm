@@ -37,31 +37,28 @@
 const char* stackCookie = "$STACK: 655360\0";
 #endif
 
-#if defined(WIN32) && defined(NO_CONSOLE)
-#include <cstdio>
-#define STDOUT_FILE	TEXT("stdout.txt")
-#define STDERR_FILE	TEXT("stderr.txt")
-#endif
-
-
 #if !defined(_WIN32_WCE) && !defined(__MAEMO__)
+
+#if defined (WIN32)
+int WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+    return main(__argc, __argv);
+}
+#endif
 
 int main(int argc, char *argv[]) {
 
-#if (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
+#if defined(__SYMBIAN32__)
 	//
 	// Set up redirects for stdout/stderr under Windows and Symbian.
 	// Code copied from SDL_main.
 	//
 	
 	// Symbian does not like any output to the console through any *print* function
-#if defined(__SYMBIAN32__)
 	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
 	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
 	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
 	strcat(STDOUT_FILE, "scummvm.stdout.txt");
 	strcat(STDERR_FILE, "scummvm.stderr.txt");
-#endif
 
 	/* Flush the output in case anything is queued */
 	fclose(stdout);
@@ -90,12 +87,9 @@ int main(int argc, char *argv[]) {
 		}
 #endif
 	}
-#ifndef __SYMBIAN32__ // fcn not supported on Symbian
-	setlinebuf(stdout);	/* Line buffered */
-#endif
 	setbuf(stderr, NULL);			/* No buffering */
 
-#endif // (defined(WIN32) && defined(NO_CONSOLE)) || defined(__SYMBIAN32__)
+#endif // defined(__SYMBIAN32__)
 
 
 	// Invoke the actual ScummVM main entry point:
