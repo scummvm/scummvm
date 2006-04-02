@@ -308,13 +308,12 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 #ifndef _WIN32_WCE
 	GameDetector detector;
 #endif
+	detector.processSettings(settings);
 
 #ifdef __SYMBIAN32__
 	// init keymap support here: we wanna move this somewhere else?
 	GUI::Actions::init(detector);
 #endif
-
-	detector.processSettings(settings);
 
 #ifdef PALMOS_68K
 	ArgsFree(argv);
