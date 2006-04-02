@@ -420,6 +420,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		assert(cacheListSema >= 0);
 	}
 	if (!tocManager.haveEntries() && g_engine) // read the TOC the first time the engine opens a file
+		// FIXME: Dear porter, you probably want to use  ConfMan.get("path") here to get the data path
 		tocManager.readEntries(g_engine->getGameDataPath());
 
 	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
