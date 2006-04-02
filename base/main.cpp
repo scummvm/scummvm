@@ -56,6 +56,10 @@
 #include "args.h"
 #endif
 
+#ifdef __SYMBIAN32__
+#include "gui/Actions.h"
+#endif
+
 /*
  * Version string and build date string. These can be used by anything that
  * wants to display this information to the user (e.g. about dialog).
@@ -148,19 +152,6 @@ const char* stackCookie = "$STACK: 655360\0";
 #include <cstdio>
 #define STDOUT_FILE	TEXT("stdout.txt")
 #define STDERR_FILE	TEXT("stderr.txt")
-#endif
-
-#if defined(QTOPIA)
-// FIXME - why exactly is this needed?
-extern "C" int main(int argc, char *argv[]);
-#endif
-
-#if defined (ALLEGRO_BACKEND)
-#include "allegro.h"
-#endif
-
-#ifdef __SYMBIAN32__
-#include "gui/Actions.h"
 #endif
 
 #if defined(UNIX)
@@ -526,10 +517,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	return 0;
 }
-// allegro needs this for some reason...
-#if defined(ALLEGRO_BACKEND)
-END_OF_MAIN();
-#endif
 
 static void debugHelper(char *buf, bool caret = true) {
 #ifndef _WIN32_WCE
