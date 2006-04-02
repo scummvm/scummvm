@@ -651,6 +651,11 @@ void GameDetector::processSettings(Common::StringMap &settings) {
 void GameDetector::setTarget(const String &target) {
 	_targetName = target;
 	ConfMan.setActiveDomain(target);
+
+	if (ConfMan.hasKey("gameid"))
+		_gameid = ConfMan.get("gameid");
+	else
+		_gameid = _targetName;
 }
 
 bool GameDetector::detectMain() {
@@ -658,11 +663,6 @@ bool GameDetector::detectMain() {
 		warning("No game was specified...");
 		return false;
 	}
-
-	if (ConfMan.hasKey("gameid"))
-		_gameid = ConfMan.get("gameid");
-	else
-		_gameid = _targetName;
 
 	printf("Looking for %s\n", _gameid.c_str());
 	GameDescriptor game = findGame(_gameid, &_plugin);
