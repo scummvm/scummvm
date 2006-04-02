@@ -576,11 +576,6 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 		settings.erase("force-1x-overlay");	// This option should not be passed to ConfMan.
 	}
 
-	// The following options shouldn't get into ConfMan, so we remove them
-	settings.erase("config");
-	settings.erase("debugflags");
-	settings.erase("target");
-
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {

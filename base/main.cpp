@@ -333,15 +333,15 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		ConfMan.loadDefaultConfigFile();
 	}
 
+	// Update the config file
+	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
+
 	if (settings.contains("debuglevel")) {
 		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
 		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
 		gDebugLevel = ConfMan.getInt("debuglevel");
-
-	// Update the config file
-	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
 	// Look for special debug flags
 	if (settings.contains("debugflags")) {
@@ -368,7 +368,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	}
 	
 
-	// Process the command line settings
+	// Process the remaining command line settings
 #ifndef _WIN32_WCE
 	GameDetector detector;
 #endif
