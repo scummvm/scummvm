@@ -333,7 +333,11 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 		ConfMan.loadDefaultConfigFile();
 	}
 
-	if (ConfMan.hasKey("debuglevel"))
+	if (settings.contains("debuglevel")) {
+		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
+		printf("Debuglevel (from command line): %d\n", gDebugLevel);
+		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
+	} else if (ConfMan.hasKey("debuglevel"))
 		gDebugLevel = ConfMan.getInt("debuglevel");
 
 	// Update the config file

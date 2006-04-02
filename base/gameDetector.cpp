@@ -566,12 +566,6 @@ void GameDetector::processSettings(Common::String &target, Common::StringMap &se
 #endif
 
 
-	if (settings.contains("debuglevel")) {
-		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
-		printf("Debuglevel (from command line): %d\n", gDebugLevel);
-		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
-	}
-
 	if (settings.contains("dump-scripts")) {
 		_dumpScripts = (settings["dump-scripts"] == "true");
 		settings.erase("dump-scripts");	// This option should not be passed to ConfMan.
