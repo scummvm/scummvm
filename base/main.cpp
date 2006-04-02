@@ -148,48 +148,6 @@ const char *gScummVMFeatures = ""
 const char* stackCookie = "$STACK: 655360\0";
 #endif
 
-#if defined(UNIX)
-#include <signal.h>
-
-#ifndef SCUMM_NEED_ALIGNMENT
-static void handle_errors(int sig_num) {
-	error("Your system does not support unaligned memory accesses. Please rebuild with SCUMM_NEED_ALIGNMENT (signal %d)", sig_num);
-}
-#endif
-
-/* This function is here to test if the endianness / alignement compiled it is matching
-   with the one at run-time. */
-static void do_memory_test(void) {
-	unsigned char test[8] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 };
-	unsigned int value;
-	/* First test endianness */
-#ifdef SCUMM_LITTLE_ENDIAN
-	if (*((int *) test) != 0x44332211) {
-		error("Compiled as LITTLE_ENDIAN on a big endian system. Please rebuild ");
-	}
-	value = 0x55443322;
-#else
-	if (*((int *) test) != 0x11223344) {
-		error("Compiled as BIG_ENDIAN on a little endian system. Please rebuild ");
-	}
-	value = 0x22334455;
-#endif
-	/* Then check if one really supports unaligned memory accesses */
-#ifndef SCUMM_NEED_ALIGNMENT
-	signal(SIGBUS, handle_errors);
-	signal(SIGABRT, handle_errors);
-	signal(SIGSEGV, handle_errors);
-	if (*((unsigned int *) ((char *) test + 1)) != value) {
-		error("Your system does not support unaligned memory accesses. Please rebuild with SCUMM_NEED_ALIGNMENT ");
-	}
-	signal(SIGBUS, SIG_DFL);
-	signal(SIGABRT, SIG_DFL);
-	signal(SIGSEGV, SIG_DFL);
-#endif
-}
-
-#endif
-
 /**
  * The debug level. Initially set to -1, indicating that no debug output
  * should be shown. Positive values usually imply an increasing number of
@@ -330,11 +288,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	Common::String specialDebug = "";
 	char *s=NULL;//argv[1]; SumthinWicked says: cannot assume that argv!=NULL here! eg. Symbian's CEBasicAppUI::SDLStartL() calls as main(0,NULL), if you want to change plz #ifdef __SYMBIAN32__
 	bool running = true;
-
-#if defined(UNIX)
-	/* On Unix, do a quick endian / alignement check before starting */
-	do_memory_test();
-#endif
 
 	// Quick preparse of command-line, looking for alt configfile path
 	for (int i = argc - 1; i >= 1; i--) {
