@@ -50,7 +50,6 @@ protected:
 public:
 	POSIXFilesystemNode();
 	POSIXFilesystemNode(const String &path);
-	POSIXFilesystemNode(const POSIXFilesystemNode *node);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -83,6 +82,7 @@ AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
 #ifndef __DC__
+	// FIXME: It is evil & slow to always call getcwd here
 	char buf[MAXPATHLEN];
 	getcwd(buf, MAXPATHLEN);
 
@@ -98,44 +98,17 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode(const String &p) {
-	int len = 0, offset = p.size();
-	struct stat st;
-
-	assert(offset > 0);
+	assert(p.size() > 0);
 
 	_path = p;
-
-	// Extract last component from path
-	const char *str = p.c_str();
-	while (offset > 0 && str[offset-1] == '/')
-		offset--;
-	while (offset > 0 && str[offset-1] != '/') {
-		len++;
-		offset--;
-	}
-	_displayName = String(str + offset, len);
-
-	// Check whether it is a directory, and whether the file actually exists
-#ifdef __DC__
+	_displayName = lastPathComponent(_path);
 	_isValid = true;
 	_isDirectory = true;
-#else
-	_isValid = (0 == stat(_path.c_str(), &st));
-	_isDirectory = S_ISDIR(st.st_mode);
-#endif
-}
-
-POSIXFilesystemNode::POSIXFilesystemNode(const POSIXFilesystemNode *node) {
-	_displayName = node->_displayName;
-	_isValid = node->_isValid;
-	_isDirectory = node->_isDirectory;
-	_path = node->_path;
 }
 
 FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 	DIR *dirp = opendir(_path.c_str());
-	struct stat st;
 
 	struct dirent *dp;
 	FSList myList;
@@ -149,20 +122,31 @@ FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 		if (dp->d_name[0] == '.')
 			continue;
 
-		POSIXFilesystemNode entry;
-		entry._displayName = dp->d_name;
-		entry._path = _path;
-		if (entry._path.lastChar() != '/')
-			entry._path += '/';
-		entry._path += dp->d_name;
+		String newPath(_path);
+		if (newPath.lastChar() != '/')
+			newPath += '/';
+		newPath += dp->d_name;
+
+		POSIXFilesystemNode entry(newPath);
 
 #ifdef __DC__
 		entry._isDirectory = dp->d_size < 0;
-#else
-		if (stat(entry._path.c_str(), &st))
-			continue;
+#elif defined(SYSTEM_NOT_SUPPORTING_D_TYPE)
+		// TODO: d_type is not part of POSIX, so it might not be supported
+		// on some of our targets. For those systems where it isn't supported,
+		// add this #elif case, which tries to use stat() instead.
+		struct stat st;
+		entry._isValid = (0 == stat(entry._path.c_str(), &st));
 		entry._isDirectory = S_ISDIR(st.st_mode);
+#else
+		entry._isValid = (dp->d_type == DT_DIR) || (dp->d_type == DT_REG);
+		entry._isDirectory = (dp->d_type == DT_DIR);
 #endif
+
+		// Skip files that are invalid for some reason (e.g. because we couldn't
+		// properly stat them).
+		if (!entry._isValid)
+			continue;
 
 		// Honor the chosen mode
 		if ((mode == kListFilesOnly && entry._isDirectory) ||
@@ -171,7 +155,7 @@ FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 
 		if (entry._isDirectory)
 			entry._path += "/";
-		myList.push_back(wrap(new POSIXFilesystemNode(&entry)));
+		myList.push_back(wrap(new POSIXFilesystemNode(entry)));
 	}
 	closedir(dirp);
 	return myList;
@@ -181,15 +165,10 @@ AbstractFilesystemNode *POSIXFilesystemNode::parent() const {
 	if (_path == "/")
 		return 0;
 
-	POSIXFilesystemNode *p = new POSIXFilesystemNode();
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 
-	p->_path = String(start, end - start);
-	p->_displayName = lastPathComponent(p->_path);
-
-	p->_isValid = true;
-	p->_isDirectory = true;
+	POSIXFilesystemNode *p = new POSIXFilesystemNode(String(start, end - start));
 
 	return p;
 }
