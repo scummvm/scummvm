@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	anims.o \
 	console.o \
 	controls.o \
-	d_draw.o \
 	debug.o \
 	events.o \
 	function.o \
@@ -20,7 +19,6 @@ MODULE_OBJS := \
 	music.o \
 	palette.o \
 	protocol.o \
-	rdwin.o \
 	render.o \
 	resman.o \
 	router.o \
