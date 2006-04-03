@@ -38,11 +38,14 @@ void FSList::sort() {
 
 
 FilesystemNode AbstractFilesystemNode::wrap(AbstractFilesystemNode *node) {
-	FilesystemNode wrapper;
-	wrapper._realNode = node;
+	FilesystemNode wrapper(node);
 	return wrapper;
 }
 
+FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
+	_realNode = realNode;
+	_refCount = new int(1);
+}
 
 FilesystemNode::FilesystemNode() {
 	_realNode = getRoot();
@@ -56,7 +59,7 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node)
 	++(*_refCount);
 }
 
-FilesystemNode::FilesystemNode(const String &p) {
+FilesystemNode::FilesystemNode(const Common::String &p) {
 	_realNode = getNodeForPath(p);
 	_refCount = new int(1);
 }
@@ -91,4 +94,24 @@ FilesystemNode FilesystemNode::getParent() const {
 	} else {
 		return AbstractFilesystemNode::wrap(node);
 	}
+}
+
+Common::String FilesystemNode::displayName() const {
+	return _realNode->displayName();
+}
+
+bool FilesystemNode::isValid() const {
+	return _realNode->isValid();
+}
+
+bool FilesystemNode::isDirectory() const {
+	return _realNode->isDirectory();
+}
+
+Common::String FilesystemNode::path() const {
+	return _realNode->path();
+}
+
+FSList FilesystemNode::listDir(ListMode mode) const {
+	return _realNode->listDir(mode);
 }

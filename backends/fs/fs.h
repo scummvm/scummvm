@@ -165,6 +165,8 @@ private:
 	AbstractFilesystemNode *_realNode;
 	int *_refCount;
 
+	FilesystemNode(AbstractFilesystemNode *realNode);
+
 	/**
 	 * Returns a special node representing the FS root. The starting point for
 	 * any file system browsing.
@@ -199,12 +201,12 @@ public:
 	FilesystemNode getParent() const;
 
 
-	virtual String displayName() const { return _realNode->displayName(); }
-	virtual bool isValid() const { return _realNode->isValid(); }
-	virtual bool isDirectory() const { return _realNode->isDirectory(); }
-	virtual String path() const { return _realNode->path(); }
+	virtual String displayName() const;
+	virtual bool isValid() const;
+	virtual bool isDirectory() const;
+	virtual String path() const;
 
-	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const { return _realNode->listDir(mode); }
+	virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 
 protected:
 	void decRefCount();
