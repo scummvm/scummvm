@@ -146,6 +146,7 @@ protected:
 	void appendSubstring(int dst, int src, int len2, int len);
 
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
+	virtual void setDefaultCursor();
 
 	virtual void clearDrawQueues();
 
@@ -463,9 +464,6 @@ protected:
 	void restoreHEPalette(int palSlot);
 	void copyHEPalette(int dstPalSlot, int srcPalSlot);
 	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor);
-
-
-	void setDefaultCursor();
 
 protected:
 	/* HE version 90 script opcodes */

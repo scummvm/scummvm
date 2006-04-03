@@ -1249,7 +1249,7 @@ void ScummEngine_v6::scummInit() {
 }
 
 void ScummEngine_v60he::scummInit() {
-	ScummEngine::scummInit();
+	ScummEngine_v6::scummInit();
 
 	// HACK cursor hotspot is wrong
 	// Original games used
@@ -1275,9 +1275,6 @@ void ScummEngine_v90he::scummInit() {
 
 	_sprite->resetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
-
-	if (_game.features & GF_HE_CURSORLESS)
-		setDefaultCursor();
 
 	if (_game.heversion >= 98) {
 		switch (_game.id) {

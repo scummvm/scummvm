@@ -319,7 +319,7 @@ static const ScummGameSettings scumm_settings[] = {
 	// these and later games can easily be identified by the .(a) file instead of a .he1
 	// and INIB chunk in the .he0
 	{"lost", 0, GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"puttrace", 0, GID_PUTTRACE, 6, 98, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"bluesabctime", 0, GID_HEGAME, 6, 98, MDT_NONE,
@@ -489,8 +489,8 @@ static const ScummGameSettings extra_versions[] = {
 	{"freddicove", "unenc",  GID_HEGAME, 6,  99, MDT_NONE,              GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 	{"freddicove", "HE 100", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
-	{"lost", "HE 99",  GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
-	{"lost", "HE 100", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+	{"lost", "HE 99",  GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
+	{"lost", "HE 100", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	// The following are meant to be generic HE game variants and as such do
 	// not specify a game ID. Make sure that these are last in the table, else
@@ -691,9 +691,9 @@ static const ScummGameSettings multiple_versions_md5_settings[] = {
 	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // PJP2DEMO
 
 	{"a2bb6aa0537402c1b3c2ea899ccef64b", "Test", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
 	{"055ffe4f47753e47594ac67823220c54", "German", GID_PUTTRACE, 6, 99, MDT_NONE,
 	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ToffRennen

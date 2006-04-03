@@ -184,7 +184,7 @@ void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 	_resExtractor->setCursor(img);
 }
 
-void ScummEngine_v90he::setDefaultCursor() {
+void ScummEngine_v70he::setDefaultCursor() {
 	const uint16 *src;
 	int i, j;
 	static byte palette[] = { 0xff, 0xff, 0xff, 0,

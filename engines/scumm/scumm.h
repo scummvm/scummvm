@@ -119,9 +119,6 @@ enum GameFeatures {
 	 */
 	GF_FEW_LOCALS          = 1 << 11,
 
-	/** HE games without cursor resources */
-	GF_HE_CURSORLESS       = 1 << 12,
-
 	/** HE games for which localized versions exist */
 	GF_HE_LOCALIZED        = 1 << 13,
 
