@@ -52,6 +52,19 @@ void SimonEngine::loadIconFile() {
 	in.close();
 }
 
+void SimonEngine::loadIconData() {
+	loadZone(8);
+	VgaPointersEntry *vpe = &_vgaBufferPointers[8];
+	byte *src = vpe->vgaFile2;
+
+	_iconFilePtr = (byte *)malloc(43 * 336);
+	if (_iconFilePtr == NULL)
+		error("Out of icon memory");
+
+	memcpy(_iconFilePtr, src, 43 * 336);
+	o_unfreezeBottom();
+}
+
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
 void decompress_icon_amiga (byte *dst, byte *src, byte base, uint pitch) {

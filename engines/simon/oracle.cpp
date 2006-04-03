@@ -52,4 +52,72 @@ void SimonEngine::hyperLinkOff()
 	_hyperLink = 0;
 }
 
+void SimonEngine::oracleLogo() {
+	Common::Rect srcRect, dstRect;
+	byte *src, *dst;
+	uint16 w, h;
+
+	dstRect.left = 16;
+	dstRect.top = 16;
+	dstRect.right = 58;
+	dstRect.bottom = 59;
+
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.right = 42;
+	srcRect.bottom = 43;
+
+	src = _iconFilePtr;
+	dst = getBackBuf() + _screenWidth * dstRect.top + dstRect.left;
+
+	for (h = 0; h < dstRect.height(); h++) {
+		for (w = 0; w < dstRect.width(); w++) {
+			if (src[w])
+				dst[w] = src[w];
+		}
+		src += 336;
+		dst += _screenWidth;
+	}
+}
+
+void SimonEngine::swapCharacterLogo() {
+	Common::Rect srcRect, dstRect;
+	byte *src, *dst;
+	uint16 w, h;
+	int x;
+
+	dstRect.left = 64;
+	dstRect.top = 16;
+	dstRect.right = 106;
+	dstRect.bottom = 59;
+
+	srcRect.top = 0;
+	srcRect.bottom = 43;
+
+	x = _variableArray[91];
+	if (x > _variableArray[90])
+		x--;
+	if( x < _variableArray[90])
+		x++;
+	_variableArray[91] = x;
+
+	x++;
+	x *= 42;
+
+	srcRect.left = x;
+	srcRect.right = srcRect.left + 42;
+
+	src = _iconFilePtr + srcRect.top * 336 + srcRect.left;
+	dst = getBackBuf() + _screenWidth * dstRect.top + dstRect.left;
+
+	for (h = 0; h < dstRect.height(); h++) {
+		for (w = 0; w < dstRect.width(); w++) {
+			if (src[w])
+				dst[w] = src[w];
+		}
+		src += 336;
+		dst += _screenWidth;
+	}
+}
+
 } // End of namespace Simon

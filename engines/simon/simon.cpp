@@ -2857,6 +2857,13 @@ void SimonEngine::timer_proc1() {
 	}
 
 	if (_updateScreen) {
+		if (getGameType() == GType_FF) {
+			if (vcGetBit(78) == false) {
+				oracleLogo();
+			} else if (vcGetBit(76) == true) {
+				swapCharacterLogo();
+			}
+		}
 		handle_mouse_moved();
 		dx_update_screen_and_palette();
 		_updateScreen = false;
@@ -3817,7 +3824,9 @@ void SimonEngine::openGameFile() {
 #endif
 	}
 
-	if (getGameType() != GType_FF)
+	if (getGameType() == GType_FF)
+		loadIconData();
+	else
 		loadIconFile();
 
 	vc34_setMouseOff();

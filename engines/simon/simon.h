@@ -589,7 +589,9 @@ protected:
 
  	void hyperLinkOn(uint16 x);
  	void hyperLinkOff();
- 
+	void oracleLogo();
+	void swapCharacterLogo();
+
 	void mouseOff();
 	void mouseOn();
 
@@ -647,6 +649,7 @@ protected:
 	uint setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number, Item *item_ptr);
 	void addArrows(FillOrCopyStruct *fcs, uint fcs_index);
 
+	void loadIconData();	
 	void loadIconFile();
 	void processSpecialKeys();
 	void hitarea_stuff_helper();
