@@ -82,7 +82,13 @@ AbstractFilesystemNode *FilesystemNode::getNodeForPath(const String &path) {
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
 #ifndef __DC__
-	// FIXME: It is evil & slow to always call getcwd here
+	// FIXME: It is evil & slow to always call getcwd here.
+	// The intention behind this hack was/is to be more user friendly
+	// in our save/load dialogs: Instead of starting at the FS root,
+	// we start at the current directory. However, that's just a hack.
+	// Proper solution would be to extend FilesystemNode by the concept
+	// of 'current' or 'default' directory, and then modify the
+	// save/load dialogs to explicitly use that as starting point.
 	char buf[MAXPATHLEN];
 	getcwd(buf, MAXPATHLEN);
 
