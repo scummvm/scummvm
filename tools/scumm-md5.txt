@@ -409,7 +409,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	All	All	-	-	-	Kirben, sev
 	b5298a5c15ffbe8b381d51ea4e26d35c	de	All	HE 99	-	-	Joachim Eberhard
 	14d48c95b43ddeb983254cf6c43851f1	nl	Windows	-	-	-	adutchguy
-	07b810e37be7489263f7bc7627d4765d	ru	Windows	-	-	-	sev
+	07b810e37be7489263f7bc7627d4765d	ru	Windows	unenc	Unencrypted	-	sev
 	78bd5f036ea35a878b74e4f47941f784	ru	Windows	HE 99	-	-	sev
 
 	7c2e76087027eeee9c8f8985f93a1cc5	en	All	-	Demo	-	khalek
@@ -421,10 +421,10 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	e03ed1474ec14de78359970e0457a820	en	Windows	HE 99	Demo	-	eriktorbjorn
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
-	590e6546aacd0d374b7f3a4f53013ab1	All	All	-	-	-	cyx
-	b8955d7d23b4972229060d1592489fef	nl	Windows	-	-	-	adutchguy
-	21abe302e1b1e2b66d6f5c12e241ebfd	ru	Windows	-	-	-	sev
-	4ce2d5b355964bbcb5e5ce73236ef868	ru	Windows	-	-	-	sev
+	590e6546aacd0d374b7f3a4f53013ab1	All	All	HE 100	-	-	cyx
+	b8955d7d23b4972229060d1592489fef	nl	Windows	HE 100	-	-	adutchguy
+	21abe302e1b1e2b66d6f5c12e241ebfd	ru	Windows	unenc	Unencrypted	-	sev
+	4ce2d5b355964bbcb5e5ce73236ef868	ru	Windows	HE 100	-	-	sev
 
 	6b257bb2827dd894b8109a50a1a18b5a	nl	All	-	Demo	-	Kirben, sev
 	45082a5c9f42ba14dacfe1fdeeba819d	en	All	-	Demo	-	sev
@@ -505,9 +505,9 @@ pjgames	Pajama Sam: Games to Play On Any Day
 	8a484262363a8e18be87112454f1456b	en	All	-	-	-	Kirben
 
 lost	Pajama Sam's Lost & Found
-	a561d2e2413cc1c71d5a1bf87bf493ea	en	All	-	-	-	Kirben
+	a561d2e2413cc1c71d5a1bf87bf493ea	en	All	HE 100	Updated	-	Kirben
 	ed361270102e355afe5236954216aba2	en	All	-	-	-	Kirben
-	a2bb6aa0537402c1b3c2ea899ccef64b	en	Windows	-	Demo	-	Kirben
+	a2bb6aa0537402c1b3c2ea899ccef64b	en	Windows	HE 99	Demo	-	Kirben
 
 SamsFunShop	Pajama Sam's One-Stop Fun Shop
 	68155a6bf082221525f431c2cbdac8ab	en	All	-	-	-	Kirben

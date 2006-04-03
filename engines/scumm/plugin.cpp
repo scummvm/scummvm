@@ -480,19 +480,17 @@ static const ScummGameSettings extra_versions[] = {
 	{"puttputt", "Demo",  GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 
-	{"freddi4", "Unencrypted Russian", GID_HEGAME, 6, 98, MDT_NONE, GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
+	// The folloowing is used for the unencrypted russian version.
+	// TODO: Get rid of GF_USE_KEY and detect XOR encryption on the fly.
+	{"freddi4", "unenc", GID_HEGAME, 6, 98, MDT_NONE, GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
 
+	// The folloowing is used for the unencrypted russian version.
+	// TODO: Get rid of GF_USE_KEY and detect XOR encryption on the fly.
+	{"freddicove", "unenc",  GID_HEGAME, 6,  99, MDT_NONE,              GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
+	{"freddicove", "HE 100", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
 
-	{"freddicove", "Updated Dutch",       GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FreddiDZZ
-	{"freddicove", "Updated Russian",     GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"freddicove", "Unencrypted Russian", GID_HEGAME, 6,  99, MDT_NONE,              GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"freddicove", "Updated Demo",        GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"freddicove", "Updated Dutch Demo",  GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FF5Demo
-
-
-	{"lost", "Test",    GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
-	{"lost", "Updated", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
-
+	{"lost", "HE 99",  GID_HEGAME, 6,  99, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
+	{"lost", "HE 100", GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_CURSORLESS, Common::kPlatformWindows},
 
 	// The following are meant to be generic HE game variants and as such do
 	// not specify a game ID. Make sure that these are last in the table, else
@@ -1680,7 +1678,8 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
 	if (!elem)
 		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
-
+	else
+		debug(5, "Using MD5 '%s'", md5);
 
 	// Now search our 'database' for the MD5; if a match is found, we use 
 	// the information in the 'database' to correct the GameDescriptor.
