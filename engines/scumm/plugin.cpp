@@ -450,17 +450,6 @@ static const ScummGameSettings extra_versions[] = {
 #endif
 
 
-	// TODO: Maybe the HE games (at least those which are using GID_HEGAME) should
-	// be using a seperate table: Most of them in the existing scumm_settings table
-	// could be realized by mapping to one of "HE NNN" entries found at the end
-	// of this table. This would both slightly reduce the executable's size as
-	// well as simplify maintanance.
-	// To do this, we could add an "alias" table that maps a game ID to another
-	// game/variant ID, but *only* internally (for purposes of setting up the
-	// version/heversion/features etc). In particular, no auto-upgrading of
-	// targets and no user visible differences to the current behavior.
-
-
 	{"fbear", "HE 61", GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformPC},
 	{"fbear", "HE 70", GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
 
