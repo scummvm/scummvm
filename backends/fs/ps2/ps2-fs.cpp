@@ -36,7 +36,6 @@ protected:
 
 public:
 	Ps2FilesystemNode(void);
-	Ps2FilesystemNode(const Ps2FilesystemNode *node);
 	Ps2FilesystemNode(const String &path);
 
 	virtual String displayName() const { return _displayName; }
@@ -76,13 +75,6 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
 	_isDirectory = true;
 }
 
-Ps2FilesystemNode::Ps2FilesystemNode(const Ps2FilesystemNode *node) {
-	_displayName = node->_displayName;
-	_isDirectory = node->_isDirectory;
-	_path = node->_path;
-	_isRoot = node->_isRoot;
-}
-
 FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
@@ -116,7 +108,7 @@ FSList Ps2FilesystemNode::listDir(ListMode mode) const {
 			dirEntry._path += tocEntries[fCnt].filename;
 
 			dirEntry._displayName = tocEntries[fCnt].filename;
-			myList.push_back(wrap(new Ps2FilesystemNode(&dirEntry)));
+			myList.push_back(wrap(new Ps2FilesystemNode(dirEntry)));
 		}
 	}
 	return myList;

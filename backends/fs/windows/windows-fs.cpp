@@ -43,7 +43,6 @@ protected:
 public:
 	WindowsFilesystemNode();
 	WindowsFilesystemNode(const String &path);
-	WindowsFilesystemNode(const WindowsFilesystemNode *node);
 
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
@@ -59,6 +58,17 @@ private:
 	static void addFile (FSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 };
 
+
+static const char *lastPathComponent(const Common::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+
+	while (cur > start && *cur != '\\') {
+		--cur;
+	}
+
+	return cur + 1;
+}
 
 char* WindowsFilesystemNode::toAscii(TCHAR *x) {
 
@@ -105,7 +115,7 @@ void WindowsFilesystemNode::addFile(FSList &list, ListMode mode, const char *bas
 	entry._isValid = true;
 	entry._isPseudoRoot = false;
 
-	list.push_back(wrap(new WindowsFilesystemNode(&entry)));
+	list.push_back(wrap(new WindowsFilesystemNode(entry)));
 }
 
 AbstractFilesystemNode *FilesystemNode::getRoot() {
@@ -161,14 +171,6 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	}
 }
 
-WindowsFilesystemNode::WindowsFilesystemNode(const WindowsFilesystemNode *node) {
-	_displayName = node->_displayName;
-	_isDirectory = node->_isDirectory;
-	_isValid = node->_isValid;
-	_isPseudoRoot = node->_isPseudoRoot;
-	_path = node->_path;
-}
-
 FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 
@@ -192,7 +194,7 @@ FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 				entry._isValid = true;
 				entry._isPseudoRoot = false;
 				entry._path = toAscii(current_drive);
-				myList.push_back(wrap(new WindowsFilesystemNode(&entry)));
+				myList.push_back(wrap(new WindowsFilesystemNode(entry)));
 		}
 #endif
 	}
@@ -215,17 +217,6 @@ FSList WindowsFilesystemNode::listDir(ListMode mode) const {
 	}
 
 	return myList;
-}
-
-const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur > start && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
 }
 
 AbstractFilesystemNode *WindowsFilesystemNode::parent() const {

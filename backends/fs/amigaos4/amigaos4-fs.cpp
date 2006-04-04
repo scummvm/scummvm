@@ -55,7 +55,6 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 
 	public:
 		AmigaOSFilesystemNode();
-		AmigaOSFilesystemNode(const AmigaOSFilesystemNode *pNode);
 		AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName = 0);
 		AmigaOSFilesystemNode(const String &p);
 
@@ -69,7 +68,6 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 		virtual FSList listVolumes(void) const;
 		virtual AbstractFilesystemNode *parent() const;
-		virtual AbstractFilesystemNode *clone() const { return new AmigaOSFilesystemNode(this); };
 };
 
 AbstractFilesystemNode *FilesystemNode::getRoot() {
@@ -308,7 +306,7 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 	if (_pFileLock == 0) {
 		//debug(6, "Root node\n");
 		LEAVE();
-		return clone();
+		return return new AmigaOSFilesystemNode(*this);
 	}
 
 	BPTR parentDir = IDOS->ParentDir( _pFileLock );

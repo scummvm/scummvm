@@ -45,7 +45,6 @@ protected:
 public:
 	SymbianFilesystemNode(bool aIsRoot);
 	SymbianFilesystemNode(const String &path);
-	SymbianFilesystemNode(const SymbianFilesystemNode *node);
 	virtual String displayName() const { return _displayName; }
 	virtual bool isValid() const { return _isValid; }
 	virtual bool isDirectory() const { return _isDirectory; }
@@ -97,14 +96,6 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 	_isDirectory = true;
 }
 
-SymbianFilesystemNode::SymbianFilesystemNode(const SymbianFilesystemNode *node) {
-	_displayName = node->_displayName;
-	_isValid = node->_isValid;
-	_isDirectory = node->_isDirectory;
-	_path = node->_path;
-	_isPseudoRoot = node->_isPseudoRoot;
-}
-
 FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 	assert(_isDirectory);
 	FSList myList;
@@ -144,7 +135,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 			entry._isValid = true;
 			entry._isPseudoRoot = false;
 			entry._path = path;
-			myList.push_back(wrap(new SymbianFilesystemNode(&entry)));
+			myList.push_back(wrap(new SymbianFilesystemNode(entry)));
 		}
 	} else {
 		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
@@ -173,7 +164,7 @@ FSList SymbianFilesystemNode::listDir(ListMode mode) const {
 				
 				if (entry._isDirectory)
 					entry._path += "\\";
-				myList.push_back(wrap(new SymbianFilesystemNode(&entry)));
+				myList.push_back(wrap(new SymbianFilesystemNode(entry)));
 			}
 			CleanupStack::PopAndDestroy(dirPtr);
 		}

@@ -43,7 +43,6 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 	public:
 		ABoxFilesystemNode();
 		ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name = NULL);
-		ABoxFilesystemNode(const ABoxFilesystemNode *node);
 		~ABoxFilesystemNode();
 
 		virtual String displayName() const { return _displayName; }
@@ -54,7 +53,6 @@ class ABoxFilesystemNode : public AbstractFilesystemNode {
 		virtual FSList listDir(ListMode mode = kListDirectoriesOnly) const;
 		static  FSList listRoot();
 		virtual AbstractFilesystemNode *parent() const;
-		virtual AbstractFilesystemNode *clone() const { return new ABoxFilesystemNode(this); }
 };
 
 
@@ -118,15 +116,6 @@ ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
 			_isValid = true;
 	}
 	FreeDosObject(DOS_FIB, fib);
-}
-
-ABoxFilesystemNode::ABoxFilesystemNode(const ABoxFilesystemNode *node)
-{
-	_displayName = node->_displayName;
-	_isValid = node->_isValid;
-	_isDirectory = node->_isDirectory;
-	_path = node->_path;
-	_lock = DupLock(node->_lock);
 }
 
 ABoxFilesystemNode::~ABoxFilesystemNode()
