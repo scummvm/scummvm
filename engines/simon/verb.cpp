@@ -442,6 +442,13 @@ void SimonEngine::setVerb(HitArea *ha) {
 	_currentVerbBox = ha;
 }
 
+void SimonEngine::setVerb_Feeble() {
+	if (_noRightClick)
+		return;
+
+	warning("STUB: setVerb_Feeble");
+}
+
 void SimonEngine::hitarea_leave(HitArea *ha) {
 	if (!(getGameType() == GType_SIMON2)) {
 		video_toggle_colors(ha, 0xdf, 0xd5, 0xda, 5);

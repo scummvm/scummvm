@@ -322,6 +322,7 @@ protected:
 	bool _unkPalFlag;
 	bool _exitCutscene;
 	bool _rightClick;
+	bool _noRightClick;
 	byte _paletteFlag;
 
 	uint _soundFileId;
@@ -553,6 +554,7 @@ protected:
 	HitArea *findEmptyHitArea();
 	void resetVerbs();
 	void setVerb(HitArea * ha);
+	void setVerb_Feeble();
 	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 

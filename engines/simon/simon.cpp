@@ -312,6 +312,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_mouseXOld = 0;
 	_mouseYOld = 0;
 
+	_noRightClick = false;
+
 	_dummyItem1 = new Item();
 	_dummyItem2 = new Item();
 	_dummyItem3 = new Item();
@@ -1676,6 +1678,11 @@ void SimonEngine::handle_mouse_moved() {
 					_variableArray[254] = 75;
 				}
 			}
+		}
+
+		if (_rightClick) {
+			_rightClick = false;
+			setVerb_Feeble();
 		}
 	}
 
