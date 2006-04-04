@@ -1273,6 +1273,8 @@ static bool generateDetectName(const ScummGameSettings *g, int method, char *det
 			return false;
 		strcpy(detectName, "00.MAN");
 		break;
+	default:
+		return false;
 	}
 
 	return true;
