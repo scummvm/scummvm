@@ -852,7 +852,7 @@ static GameFileDescription IHNM_CD_DE_GameFiles[] = {
 	{"voices2.res",	GAME_VOICEFILE,						"c270e0980782af43641a86e4a14e2a32"},
 	{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9"},
 	{"voices5.res",	GAME_VOICEFILE,						"c477443c52a0aa56e686ebd8d051e4ab"},
-	{"voices6.res",	GAME_VOICEFILE,						"8b09a196a52627cacb4eab13bfe0b2c3"}
+	{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4"}
 };
 
 static GameFileDescription IHNM_CD_FR_GameFiles[] = {
