@@ -55,7 +55,13 @@ void SimonEngine::loadIconFile() {
 void SimonEngine::loadIconData() {
 	loadZone(8);
 	VgaPointersEntry *vpe = &_vgaBufferPointers[8];
-	byte *src = vpe->vgaFile2;
+
+	// FIXME: For reasons unknown, the first 16 bytes are not part of the
+	// actual image data. This could be an indication of some deeper
+	// problem elsewhere. For now, adding 16 fixes the drawing of the
+	// Oracle icon.
+
+	byte *src = vpe->vgaFile2 + 16;
 
 	_iconFilePtr = (byte *)malloc(43 * 336);
 	if (_iconFilePtr == NULL)
