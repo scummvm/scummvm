@@ -332,7 +332,6 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_fastFadeOutFlag = 0;
 	_unkPalFlag = 0;
 	_exitCutscene = 0;
-	_rightClick = 0;
 	_paletteFlag = 0;
 
 	_soundFileId = 0;
@@ -1604,7 +1603,7 @@ void SimonEngine::setup_cond_c_helper() {
 		_leftButtonDown = 0;
 
 		do {
-			if (_exitCutscene && (_bitArray[0] & 0x200)) {
+			if (_exitCutscene && getBitFlag(9)) {
 				endCutscene();
 				goto out_of_here;
 			}
@@ -1726,8 +1725,8 @@ void SimonEngine::handle_mouse_moved() {
 			}
 		}
 
-		if (_rightClick) {
-			_rightClick = false;
+		if (_rightButtonDown) {
+			_rightButtonDown = false;
 			setVerb(NULL);
 		}
 	}
@@ -2714,9 +2713,9 @@ void SimonEngine::o_waitForSync(uint a) {
 	_vgaWaitFor = a;
 	_syncCount = 0;
 	_exitCutscene = false;
-	_rightClick = false;
+	_rightButtonDown = false;
 	while (_vgaWaitFor != 0) {
-		if (_rightClick && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
+		if (_rightButtonDown && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
 			if (_vgaWaitFor == 200 && !getBitFlag(14)) {
 				skipSpeech();
 				break;
@@ -2747,12 +2746,19 @@ void SimonEngine::o_waitForSync(uint a) {
 
 void SimonEngine::skipSpeech() {
 	_sound->stopVoice();
-	if (!(_bitArray[1] & 0x1000)) {
-		_bitArray[0] |= 0x4000;
-		_variableArray[100] = 5;
-		loadSprite(4, 1, 30, 0, 0, 0);
-		o_waitForSync(130);
-		o_kill_sprite_simon2(2, 1);
+	if (getBitFlag(28) == false) {
+		setBitFlag(14, true);
+		if (getGameType() == GType_FF) {
+			_variableArray[103] = 5;
+			loadSprite(4, 2, 13, 0, 0, 0);
+			o_waitForSync(213);
+			o_kill_sprite_simon2(2, 1);
+		} else {
+			_variableArray[100] = 5;
+			loadSprite(4, 1, 30, 0, 0, 0);
+			o_waitForSync(130);
+			o_kill_sprite_simon2(2, 1);
+		}
 	}
 }
 
@@ -4217,7 +4223,7 @@ void SimonEngine::delay(uint amount) {
 				if (getGameType() == GType_FF)
 					_bitArray[5] &= ~0x1000;
 				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
-					_rightClick = true;
+					_rightButtonDown++;
 				else
 					_exitCutscene = true;
 				break;

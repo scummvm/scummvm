@@ -283,6 +283,7 @@ protected:
 	HitArea *_lastHitArea2Ptr;
 	HitArea *_lastHitArea3;
 	byte _leftButtonDown;
+	byte _rightButtonDown;
 	Item *_hitAreaSubjectItem;
 	HitArea *_currentVerbBox, *_hitAreaPtr7;
 	uint _needHitAreaRecalc;
@@ -323,7 +324,6 @@ protected:
 	bool _fastFadeOutFlag;
 	bool _unkPalFlag;
 	bool _exitCutscene;
-	bool _rightClick;
 	bool _noRightClick;
 	byte _paletteFlag;
 
