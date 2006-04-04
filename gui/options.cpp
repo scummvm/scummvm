@@ -91,6 +91,7 @@ void OptionsDialog::init() {
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
 	_subCheckbox = 0;
+	_midiPopUp = 0;
 	_enableMIDISettings = false;
 	_multiMidiCheckbox = 0;
 	_mt32Checkbox = 0;
