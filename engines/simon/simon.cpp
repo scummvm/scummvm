@@ -2138,7 +2138,10 @@ void SimonEngine::startUp_helper_2() {
 		_curWindow = 0;
 		if (_windowArray[0] != 0) {
 			_textWindow = _windowArray[0];
-			showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+			if (getGameType() == GType_FF)
+				showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+			else
+				showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 		}
 		_mortalFlag = false;
 	}
@@ -2950,7 +2953,10 @@ void SimonEngine::changeWindow(uint a) {
 	showmessage_print_char(0);
 	_textWindow = _windowArray[a];
 
-	showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+	if (getGameType() == GType_FF)
+		showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+	else
+		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 }
 
 // OK
@@ -2973,6 +2979,7 @@ FillOrCopyStruct *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint f
 	fcs->textRow = 0;
 	fcs->textColumnOffset = 0;
 	fcs->textMaxLength = fcs->width * 8 / 6; // characters are 6 pixels
+	fcs->scrollY = 0;
 	return fcs;
 }
 

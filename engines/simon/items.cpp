@@ -569,14 +569,14 @@ int SimonEngine::runScript() {
 			break;
 
 		case 101:{
-				uint a = getVarOrByte();
-				uint b = getVarOrWord();
-				uint c = getVarOrWord();
-				uint d = getVarOrWord();
-				uint e = getVarOrWord();
-				uint f = getVarOrWord();
-				uint g = getVarOrWord();
-				o_defineWindow(a, b, c, d, e, f, g, 0);
+				uint num = getVarOrByte();
+				uint x = getVarOrWord();
+				uint y = getVarOrWord();
+				uint w = getVarOrWord();
+				uint h = getVarOrWord();
+				uint flags = getVarOrWord();
+				uint fill_color = getVarOrWord();
+				o_defineWindow(num, x, y, w, h, flags, fill_color, 0);
 			}
 			break;
 
@@ -1713,17 +1713,20 @@ void SimonEngine::o_kill_sprite_simon2(uint a, uint b) {
 }
 
 /* OK */
-void SimonEngine::o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h) {
-	a &= 7;
+void SimonEngine::o_defineWindow(uint num, uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
+	num &= 7;
 
-	if (_windowArray[a])
-		closeWindow(a);
+	if (_windowArray[num])
+		closeWindow(num);
 
-	_windowArray[a] = openWindow(b, c, d, e, f, g, h);
+	_windowArray[num] = openWindow(x, y, w, h, flags, fill_color, text_color);
 
-	if (a == _curWindow) {
-		_textWindow = _windowArray[a];
-		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
+	if (num == _curWindow) {
+		_textWindow = _windowArray[num];
+		if (getGameType() == GType_FF)
+			showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+		else
+			showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 	}
 }
 

@@ -588,6 +588,7 @@ protected:
 
 	void o_inventory_descriptions();
 
+	void checkLinkBox();
  	void hyperLinkOn(uint16 x);
  	void hyperLinkOff();
 	void linksUp();
@@ -598,6 +599,7 @@ protected:
 
 	void bltOracleText();
 	void oracleLogo();
+	void scrollOracle();
 	void scrollOracleUp();
 	void scrollOracleDown();
 	void swapCharacterLogo();

@@ -33,14 +33,41 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 		return;
 
 	while (len-- != 0) {
-		if (*src != 12 && _textWindow->fcs_data != NULL &&
-				_fcsData1[ind = get_fcs_ptr_3_index(_textWindow)] != 2) {
+		if (getGameType() == GType_FF) {
+			if ((_bitArray[5] & (1 << 13)) != 0) {
+				if (_curWindow == 3) {
+					if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
+						fcs_putchar(*src);
+					if (*src == '\n')		// Do two top lines of text only
+						_newLines++;
+					src++;
+				}
+			} else {
+				if ((_bitArray[5] & (1 << 14)) != 0) {
+					if (_curWindow == 3) {
+						if (_newLines == (_textWindow->scrollY + 7))
+							fcs_putchar(*src);
+						if (*src == '\n')	// Do two top lines of text only
+							_newLines++;
+						src++;
+					}
+				} else {
+					//if ((_bitArray[5] & (1 << 12)) != 0)
+					//	while(!_nextCharacter);
+					fcs_putchar(*src++);
+					//_nextCharacter = false;
+				}
+			}
+		} else {
+			if (*src != 12 && _textWindow->fcs_data != NULL &&
+					_fcsData1[ind = get_fcs_ptr_3_index(_textWindow)] != 2) {
+	
+				_fcsData1[ind] = 2;
+				_fcsData2[ind] = 1;
+			}
 
-			_fcsData1[ind] = 2;
-			_fcsData2[ind] = 1;
+			fcs_putchar(*src++);
 		}
-
-		fcs_putchar(*src++);
 	}
 }
 
@@ -218,6 +245,22 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 	}
 }
 
+static const byte fontSize[208] = {
+	8, 2, 5, 7, 8, 8, 8, 2, 4, 4, 8, 8, 3, 8, 2, 9,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 2, 3, 5, 8, 5, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 9, 4, 4, 9,
+	4, 8, 8, 8, 8, 8, 7, 8, 8, 4, 5, 7, 3, 8, 8, 8,
+	8, 8, 8, 7, 7, 8, 8, 8, 8, 8, 8, 5, 2, 5, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 2, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+};
+
 void SimonEngine::showMessageFormat(const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	char *str;
@@ -231,8 +274,10 @@ void SimonEngine::showMessageFormat(const char *s, ...) {
 		showmessage_helper_2();
 		if (!_showMessageFlag) {
 			_windowArray[0] = _textWindow;
-			showmessage_helper_3(_textWindow->textLength,
-                                 _textWindow->textMaxLength);
+			if (getGameType() == GType_FF)
+				showmessage_helper_3(_textWindow->textColumn, _textWindow->width);
+			else
+				showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 		}
 		_showMessageFlag = true;
 		_fcsData1[_curWindow] = 1;
@@ -286,21 +331,25 @@ void SimonEngine::showmessage_helper_2() {
 	if (_textWindow)
 		return;
 
-	_textWindow = openWindow(8, 0x90, 0x18, 6, 1, 0, 0xF);
+	if (getGameType() == GType_FF)
+		_textWindow = openWindow(64, 96, 384, 172, 1, 0, 15);
+	else
+		_textWindow = openWindow(8, 144, 24, 6, 1, 0, 15);
 }
 
 void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_printCharCurPos = a;
 	_printCharMaxPos = b;
 	_numLettersToPrint = 0;
+	_newLines = 0;
 }
 
 void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 	byte width = 6;
 
-	if (c == 0xC) {
+	if (c == 12) {
 		clearWindow(fcs);
-	} else if (c == 0xD || c == 0xA) {
+	} else if (c == 13 || c == 10) {
 		video_putchar_newline(fcs);
 	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
 		if (_language == Common::HB_ISR) { //Hebrew
@@ -328,6 +377,12 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 			}
 		}
 	} else if (c >= 0x20) {
+		if (getGameType() == GType_FF) {
+			video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, fcs->textRow + fcs->y, c);
+			fcs->textColumn += fontSize[c - 0x20];
+			return;
+		}
+
 		if (fcs->textLength == fcs->textMaxLength) {
 			video_putchar_newline(fcs);
 		} else if (fcs->textRow == fcs->height) {
@@ -343,10 +398,10 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 				fcs->textColumn++;
 				fcs->textColumnOffset += 8;
 			}
-			video_putchar_drawchar(fcs, fcs->width + fcs->x - fcs->textColumn, fcs->textRow * 8 + fcs->y, c);
+			video_putchar_drawchar(fcs, (fcs->width + fcs->x - fcs->textColumn) * 8, fcs->textRow * 8 + fcs->y, c);
 			fcs->textLength++;
 		} else {
-			video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, fcs->textRow * 8 + fcs->y, c);
+			video_putchar_drawchar(fcs, (fcs->textColumn + fcs->x) * 8, fcs->textRow * 8 + fcs->y, c);
 
 			fcs->textLength++;
 			fcs->textColumnOffset += 6;
@@ -362,12 +417,39 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 }
 
 void SimonEngine::video_putchar_newline(FillOrCopyStruct *fcs) {
+	if (getGameType() == GType_FF) {
+		if (_noOracleScroll == 0) {
+			if (fcs->textRow + 30 > fcs->height) {
+				if (vcGetBit(94) == false) {
+					_noOracleScroll = 1;
+					if (vcGetBit(92) == true) {
+						_noOracleScroll = 0;
+						checkLinkBox();
+						scrollOracle();
+						linksUp();
+						fcs->scrollY++;
+						_oracleMaxScrollY++;
+					} else {
+						_oracleMaxScrollY++;
+						checkLinkBox();
+					}
+				}
+			} else {
+				fcs->textRow += 15;
+				checkLinkBox();
+			}
+		} else {
+			_oracleMaxScrollY++;
+			checkLinkBox();
+		}
+	} else {
+		if (fcs->textRow != fcs->height)
+			fcs->textRow++;
+	}
+
 	fcs->textColumnOffset = 0;
 	fcs->textLength = 0;
 	fcs->textColumn = 0;
-
-	if (fcs->textRow != fcs->height)
-		fcs->textRow++;
 }
 
 #ifdef PALMOS_68K
@@ -1197,7 +1279,7 @@ void SimonEngine::video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, 
 	_lockWord |= 0x8000;
 
 	dst = getFrontBuf();
-	dst += y * _dxSurfacePitch + x * 8 + fcs->textColumnOffset;
+	dst += y * _dxSurfacePitch + x + fcs->textColumnOffset;
 
 	switch(_language) {
 	case Common::RU_RUS:
