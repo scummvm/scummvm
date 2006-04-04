@@ -73,14 +73,14 @@ void sort(T first, T last) {
 	// Simple selection sort
 	T i(first);
 	for (; i != last; ++i) {
-		T min(i);
+		T minElem(i);
 		T j(i);
 		++j;
 		for (; j != last; ++j)
-			if (*j < *min)
-				min = j;
-		if (min != i)
-			SWAP(*min, *i);
+			if (*j < *minElem)
+				minElem = j;
+		if (minElem != i)
+			SWAP(*minElem, *i);
 	}
 }
 
