@@ -27,14 +27,14 @@
 void FSList::sort() {
 	// Simple selection sort
 	for (iterator i = begin(); i != end(); ++i) {
-		iterator min(i);
+		iterator m(i);
 		iterator j(i);
 		++j;
 		for (; j != end(); ++j)
-			if (*j < *min)
-				min = j;
-		if (min != i)
-			SWAP(*min, *i);
+			if (*j < *m)
+				m = j;
+		if (m != i)
+			SWAP(*m, *i);
 	}
 }
 

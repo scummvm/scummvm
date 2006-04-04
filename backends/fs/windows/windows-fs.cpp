@@ -143,8 +143,6 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 }
 
 WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
-	int len = 0, offset = p.size();
-
 	assert(p.size() > 0);
 
 	_path = p;
