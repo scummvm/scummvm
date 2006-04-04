@@ -229,12 +229,11 @@ void BrowserDialog::updateListing() {
 
 	// Populate the ListWidget
 	Common::StringList list;
-	int size = _nodeContent.size();
-	for (int i = 0; i < size; i++) {
-		if (!_isDirBrowser && _nodeContent[i].isDirectory())
-			list.push_back(_nodeContent[i].displayName() + "/");
+	for (FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
+		if (!_isDirBrowser && i->isDirectory())
+			list.push_back(i->displayName() + "/");
 		else
-			list.push_back(_nodeContent[i].displayName());
+			list.push_back(i->displayName());
 	}
 	_fileList->setList(list);
 	_fileList->scrollTo(0);
