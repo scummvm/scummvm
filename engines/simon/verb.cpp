@@ -443,7 +443,7 @@ void SimonEngine::resetVerbs() {
 void SimonEngine::setVerb(HitArea *ha) {
 	if (getGameType() == GType_FF) {
 		int cursor = _mouseCursor;
-		if (!_noRightClick)
+		if (_noRightClick)
 			return;
 
 		if (cursor > 13)

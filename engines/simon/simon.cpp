@@ -1726,7 +1726,7 @@ void SimonEngine::handle_mouse_moved() {
 		}
 
 		if (_rightButtonDown) {
-			_rightButtonDown = false;
+			_rightButtonDown = 0;
 			setVerb(NULL);
 		}
 	}
