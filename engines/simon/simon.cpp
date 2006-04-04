@@ -2292,7 +2292,10 @@ void SimonEngine::o_printStr() {
 	if (getFeatures() & GF_TALKIE)
 		speech_id = (uint16)getNextWord();
 
-	tl = getTextLocation(vgaSpriteId);
+	if (getGameType() == GType_FF)
+		tl = getTextLocation(1);
+	else
+		tl = getTextLocation(vgaSpriteId);
 
 	if (_speech && speech_id != 0)
 		playSpeech(speech_id, vgaSpriteId);
