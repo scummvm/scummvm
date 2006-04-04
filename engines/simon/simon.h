@@ -255,6 +255,8 @@ protected:
 	bool _subtitles;
 	bool _fade;
 	byte _mouseCursor;
+	byte _mouseAnim;
+	byte _mouseAnimMax;
 	bool _vgaVar9;
 	int16 _scriptUnk1;
 	bool _restoreWindow6;
@@ -554,7 +556,6 @@ protected:
 	HitArea *findEmptyHitArea();
 	void resetVerbs();
 	void setVerb(HitArea * ha);
-	void setVerb_Feeble();
 	void hitarea_leave(HitArea * ha);
 	void leaveHitAreaById(uint hitarea_id);
 
@@ -630,8 +631,8 @@ protected:
 	void defocusHitarea();
 	void endCutscene();
 	void runSubroutine101();
-	void handle_uparrow_hitarea(FillOrCopyStruct *fcs);
-	void handle_downarrow_hitarea(FillOrCopyStruct *fcs);
+	void inventoryUp(FillOrCopyStruct *fcs);
+	void inventoryDown(FillOrCopyStruct *fcs);
 	void hitareaChangedHelper();
 	void focusVerb(uint hitarea_id);
 	HitArea *findHitAreaByID(uint hitarea_id);
@@ -816,8 +817,8 @@ protected:
 	void add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite, uint cur_file);
 	VgaSprite *findCurSprite();
 
-	bool vcGetBit(uint bit);
-	void vcSetBitTo(uint bit, bool value);
+	bool getBitFlag(uint bit);
+	void setBitFlag(uint bit, bool value);
 
 	void expire_vga_timers();
 

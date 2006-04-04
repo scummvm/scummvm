@@ -154,13 +154,13 @@ bool Debugger::Cmd_SetBit(int argc, const char **argv) {
 		bit = atoi(argv[1]);
 		value = atoi(argv[2]);
 		if (value <= 1) {
-			_vm->vcSetBitTo(bit, value != 0);
+			_vm->setBitFlag(bit, value != 0);
 			DebugPrintf("Set bit %d to %d\n", bit, value);
 		} else
 			DebugPrintf("Bit value out of range (0 - 1)\n");
 	} else if (argc > 1) {
 		bit = atoi(argv[1]);
-		value = _vm->vcGetBit(bit);
+		value = _vm->getBitFlag(bit);
 		DebugPrintf("Bit %d is %d\n", bit, value);
 	} else
 		DebugPrintf("Syntax: bit <bitnum> <value>\n");

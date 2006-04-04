@@ -929,7 +929,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 
 
 			if (state->flags & kDFMasked) {
-				if (vcGetBit(81) == false) {
+				if (getBitFlag(81) == false) {
 					if (state->x  > _feebleRect.right)
 						return;
 					if (state->y > _feebleRect.bottom)
@@ -1110,7 +1110,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 			dst = state->surf_addr + w * 2;		/* edi */
 
 			h = state->draw_height;
-			if ((getGameType() == GType_SIMON1) && vcGetBit(88)) {
+			if ((getGameType() == GType_SIMON1) && getBitFlag(88)) {
 				/* transparency */
 				do {
 					if (mask[0] & 0xF0) {
@@ -1768,13 +1768,13 @@ void SimonEngine::vc42_delayIfNotEQ() {
 }
 
 void SimonEngine::vc43_skipIfBitClear() {
-	if (!vcGetBit(vcReadNextWord())) {
+	if (!getBitFlag(vcReadNextWord())) {
 		vcSkipNextInstruction();
 	}
 }
 
 void SimonEngine::vc44_skipIfBitSet() {
-	if (vcGetBit(vcReadNextWord())) {
+	if (getBitFlag(vcReadNextWord())) {
 		vcSkipNextInstruction();
 	}
 }
@@ -1866,22 +1866,22 @@ void SimonEngine::vc48_setPathFinder() {
 	}
 }
 
-void SimonEngine::vcSetBitTo(uint bit, bool value) {
+void SimonEngine::setBitFlag(uint bit, bool value) {
 	uint16 *bits = &_bitArray[bit / 16];
 	*bits = (*bits & ~(1 << (bit & 15))) | (value << (bit & 15));
 }
 
-bool SimonEngine::vcGetBit(uint bit) {
+bool SimonEngine::getBitFlag(uint bit) {
 	uint16 *bits = &_bitArray[bit / 16];
 	return (*bits & (1 << (bit & 15))) != 0;
 }
 
 void SimonEngine::vc49_setBit() {
-	vcSetBitTo(vcReadNextWord(), true);
+	setBitFlag(vcReadNextWord(), true);
 }
 
 void SimonEngine::vc50_clearBit() {
-	vcSetBitTo(vcReadNextWord(), false);
+	setBitFlag(vcReadNextWord(), false);
 }
 
 void SimonEngine::vc51_clear_hitarea_bit_0x40() {
@@ -2361,8 +2361,8 @@ void SimonEngine::vc78_computeXY() {
 	_variableArray[16] = posy;
 	vsp->y = posy;
 
-	vcSetBitTo(85, false);
-	if (vcGetBit(74) == true) {
+	setBitFlag(85, false);
+	if (getBitFlag(74) == true) {
 		//centreScroll();
 	}
 }
@@ -2404,7 +2404,7 @@ void SimonEngine::vc82_getPathValue() {
 
 	uint16 var = vcReadNextWord();
 
-	if (vcGetBit(82) == true) {
+	if (getBitFlag(82) == true) {
 		val = _pathValues1[_GPVCount1++];
 	} else {
 		val = _pathValues[_GPVCount++];

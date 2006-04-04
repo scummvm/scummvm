@@ -388,65 +388,110 @@ void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int
 }
 
 void SimonEngine::resetVerbs() {
-	uint id;
-	HitArea *ha;
+	if (getGameType() == GType_FF) {
+		_verbHitArea = 300;
+		int cursor = 0;
+		int animMax = 16;
 
-	if (getGameType() == GType_SIMON2) {
-		id = 2;
-		if (!(_bitArray[4] & 0x8000))
+		if (getBitFlag(203)) {
+			cursor = 14;
+			animMax = 9;
+		} else if (getBitFlag(204)) {
+			cursor = 15;
+			animMax = 9;
+		} else if (getBitFlag(207)) {
+			cursor = 26;
+			animMax = 2;
+		}
+
+		_mouseCursor = cursor;
+		_mouseAnimMax = animMax;
+		_mouseAnim = 1;
+		_needHitAreaRecalc++;
+
+		if (getBitFlag(99)) {
+			setVerb(NULL);
+		}
+	} else {
+		uint id;
+		HitArea *ha;
+
+		if (getGameType() == GType_SIMON2) {
+			id = 2;
+			if (!(_bitArray[4] & 0x8000))
+				id = (_mouseY >= 136) ? 102 : 101;
+		} else {
 			id = (_mouseY >= 136) ? 102 : 101;
-	} else {
-		id = (_mouseY >= 136) ? 102 : 101;
-	}
+		}
 
-	_defaultVerb = id;
+		_defaultVerb = id;
 
-	ha = findHitAreaByID(id);
-	if (ha == NULL)
-		return;
+		ha = findHitAreaByID(id);
+		if (ha == NULL)
+			return;
 
-	if (ha->flags & 0x40) {
-		_defaultVerb = 999;
-		_currentVerbBox = NULL;
-	} else {
-		_verbHitArea = ha->verb;
-		setVerb(ha);
+		if (ha->flags & 0x40) {
+			_defaultVerb = 999;
+			_currentVerbBox = NULL;
+		} else {
+			_verbHitArea = ha->verb;
+			setVerb(ha);
+		}
 	}
 }
 
 void SimonEngine::setVerb(HitArea *ha) {
-	HitArea *tmp = _currentVerbBox;
+	if (getGameType() == GType_FF) {
+		int cursor = _mouseCursor;
+		if (!_noRightClick)
+			return;
 
-	if (ha == tmp)
-		return;
-
-	if (getGameType() == GType_SIMON1) {
-		if (tmp != NULL) {
-			tmp->flags |= 8;
-			video_toggle_colors(tmp, 0xd5, 0xd0, 0xd5, 0xA);
+		if (cursor > 13)
+			cursor = 0;
+		cursor++;
+		if (cursor == 5)
+			cursor = 1;
+		if (cursor == 4) {
+			if (getBitFlag(72)) {
+				cursor = 1;
+			}
+		} else if (cursor == 2) {
+			if (getBitFlag(99)) {
+				cursor = 3;
+			}
 		}
 
-		if (ha->flags & 2)
-			video_toggle_colors(ha, 0xda, 0xd5, 0xd5, 5);
-		else
-			video_toggle_colors(ha, 0xdf, 0xda, 0xda, 0xA);
-
-		ha->flags &= ~(2 + 8);
-
-	} else {
-		if (ha->id < 101)
-			return;
-		_mouseCursor = ha->id - 101;
+		_mouseCursor = cursor;
+		_mouseAnimMax = (cursor == 4) ? 14: 16;
+		_mouseAnim = 1;
 		_needHitAreaRecalc++;
+		_verbHitArea = cursor + 300;
+	} else {
+		HitArea *tmp = _currentVerbBox;
+
+		if (ha == tmp)
+			return;
+
+		if (getGameType() == GType_SIMON1) {
+			if (tmp != NULL) {
+				tmp->flags |= 8;
+				video_toggle_colors(tmp, 0xd5, 0xd0, 0xd5, 0xA);
+			}
+
+			if (ha->flags & 2)
+				video_toggle_colors(ha, 0xda, 0xd5, 0xd5, 5);
+			else
+				video_toggle_colors(ha, 0xdf, 0xda, 0xda, 0xA);
+
+			ha->flags &= ~(2 + 8);
+		} else {
+			if (ha->id < 101)
+				return;
+			_mouseCursor = ha->id - 101;
+			_needHitAreaRecalc++;
+		}
+		_currentVerbBox = ha;
 	}
-	_currentVerbBox = ha;
-}
-
-void SimonEngine::setVerb_Feeble() {
-	if (_noRightClick)
-		return;
-
-	warning("STUB: setVerb_Feeble");
 }
 
 void SimonEngine::hitarea_leave(HitArea *ha) {
@@ -463,7 +508,7 @@ void SimonEngine::leaveHitAreaById(uint hitarea_id) {
 		hitarea_leave(ha);
 }
 
-void SimonEngine::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
+void SimonEngine::inventoryUp(FillOrCopyStruct *fcs) {
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);
@@ -476,7 +521,7 @@ void SimonEngine::handle_uparrow_hitarea(FillOrCopyStruct *fcs) {
 	mouseOn();
 }
 
-void SimonEngine::handle_downarrow_hitarea(FillOrCopyStruct *fcs) {
+void SimonEngine::inventoryDown(FillOrCopyStruct *fcs) {
 	uint index;
 
 	index = get_fcs_ptr_3_index(fcs);

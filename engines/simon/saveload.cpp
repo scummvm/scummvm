@@ -127,7 +127,7 @@ void SimonEngine::quickLoadOrSave() {
 			drawIconArray(2, getItem1Ptr(), 0, 0);
 			mouseOn();
 			// Reset engine?
-			vcSetBitTo(97, true);
+			setBitFlag(97, true);
 			sub = getSubroutineByID(100);
 			startSubroutine(sub);
 		}

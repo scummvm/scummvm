@@ -253,6 +253,8 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_subtitles = true;
 	_fade = true;
 	_mouseCursor = 0;
+	_mouseAnim = 0;
+	_mouseAnimMax = 0;
 	_vgaVar9 = 0;
 	_scriptUnk1 = 0;
 	_restoreWindow6 = 0;
@@ -1538,6 +1540,48 @@ void SimonEngine::o_setup_cond_c() {
 void SimonEngine::setup_cond_c_helper() {
 	HitArea *last;
 
+	_noRightClick = 1;
+
+	if (getGameType() == GType_FF) {
+		int cursor = 5;
+		int animMax = 16;
+
+		if (getBitFlag(200)) {
+			cursor = 11;
+			animMax = 5;
+		} else if (getBitFlag(201)) {
+			cursor = 12;
+			animMax = 5;
+		} else if (getBitFlag(202)) {
+			cursor = 13;
+			animMax = 5;
+		} else if (getBitFlag(203)) {
+			cursor = 14;
+			animMax = 9;
+		} else if (getBitFlag(205)) {
+			cursor = 17;
+			animMax = 11;
+		} else if (getBitFlag(206)) {
+			cursor = 16;
+			animMax = 2;
+		} else if (getBitFlag(208)) {
+			cursor = 26;
+			animMax = 2;
+		} else if (getBitFlag(209)) {
+			cursor = 27;
+			animMax = 9;
+		} else if (getBitFlag(210)) {
+			cursor = 28;
+			animMax = 9;
+		}
+
+		//_animatePointer = 0;
+		_mouseCursor = cursor;
+		_mouseAnimMax = animMax;
+		_mouseAnim = 1;
+		_needHitAreaRecalc++;
+	}
+
 	if (getGameType() == GType_SIMON2) {
 		_mouseCursor = 0;
 		if (_defaultVerb != 999) {
@@ -1580,9 +1624,9 @@ void SimonEngine::setup_cond_c_helper() {
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {
-			handle_uparrow_hitarea(_lastHitArea->fcs);
+			inventoryUp(_lastHitArea->fcs);
 		} else if (_lastHitArea->id == 0x7FFC) {
-			handle_downarrow_hitarea(_lastHitArea->fcs);
+			inventoryDown(_lastHitArea->fcs);
 		} else if (_lastHitArea->item_ptr != NULL) {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
 			_variableArray[60] = (_lastHitArea->flags & 1) ? (_lastHitArea->flags / 256) : 0xFFFF;
@@ -1594,6 +1638,8 @@ out_of_here:
 	_lastHitArea3 = 0;
 	_lastHitArea = 0;
 	_lastHitArea2Ptr = NULL;
+	_mouseCursor = 0;
+	_noRightClick = 0;
 }
 
 void SimonEngine::endCutscene() {
@@ -1682,7 +1728,7 @@ void SimonEngine::handle_mouse_moved() {
 
 		if (_rightClick) {
 			_rightClick = false;
-			setVerb_Feeble();
+			setVerb(NULL);
 		}
 	}
 
@@ -2040,9 +2086,9 @@ startOver:
 
 		if (ha == NULL) {
 		} else if (ha->id == 0x7FFB) {
-			handle_uparrow_hitarea(ha->fcs);
+			inventoryUp(ha->fcs);
 		} else if (ha->id == 0x7FFC) {
-			handle_downarrow_hitarea(ha->fcs);
+			inventoryDown(ha->fcs);
 		} else if (ha->id >= 101 && ha->id < 113) {
 			_verbHitArea = ha->verb;
 			setVerb(ha);
@@ -2671,12 +2717,12 @@ void SimonEngine::o_waitForSync(uint a) {
 	_rightClick = false;
 	while (_vgaWaitFor != 0) {
 		if (_rightClick && (getGameType() == GType_SIMON2 || getGameType() == GType_FF)) {
-			if (_vgaWaitFor == 200 && !vcGetBit(14)) {
+			if (_vgaWaitFor == 200 && !getBitFlag(14)) {
 				skipSpeech();
 				break;
 			}
 		} else if (_exitCutscene) {
-			if (vcGetBit(9)) {
+			if (getBitFlag(9)) {
 				endCutscene();
 				break;
 			}
@@ -2869,9 +2915,9 @@ void SimonEngine::timer_proc1() {
 
 	if (_updateScreen) {
 		if (getGameType() == GType_FF) {
-			if (vcGetBit(78) == false) {
+			if (getBitFlag(78) == false) {
 				oracleLogo();
-			} else if (vcGetBit(76) == true) {
+			} else if (getBitFlag(76) == true) {
 				swapCharacterLogo();
 			}
 		}

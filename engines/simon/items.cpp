@@ -1327,7 +1327,7 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 
 void SimonEngine::o_83_helper() {
 		if (_exitCutscene) {
-			if (vcGetBit(9)) {
+			if (getBitFlag(9)) {
 				endCutscene();
 			}
 		} else {
@@ -1339,7 +1339,7 @@ void SimonEngine::o_waitForMark(uint i) {
 	_exitCutscene = false;
 	while (!(_marks & (1 << i))) {
 		if (_exitCutscene) {
-			if (vcGetBit(9)) {
+			if (getBitFlag(9)) {
 				endCutscene();
 				break;
 			}

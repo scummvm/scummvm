@@ -420,9 +420,9 @@ void SimonEngine::video_putchar_newline(FillOrCopyStruct *fcs) {
 	if (getGameType() == GType_FF) {
 		if (_noOracleScroll == 0) {
 			if (fcs->textRow + 30 > fcs->height) {
-				if (vcGetBit(94) == false) {
+				if (getBitFlag(94) == false) {
 					_noOracleScroll = 1;
-					if (vcGetBit(92) == true) {
+					if (getBitFlag(92) == true) {
 						_noOracleScroll = 0;
 						checkLinkBox();
 						scrollOracle();
