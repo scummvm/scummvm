@@ -27,6 +27,11 @@ NUM_VERT_RECTS     equ   6
 FULL_HORIZ_RECTS   equ  18
 FULL_VERT_RECTS    equ  14
 
+ROOM_PATHS_WIDTH      equ  40
+ROOM_PATHS_HEIGHT     equ  24
+DECODED_PATHS_WIDTH   equ  42
+DECODED_PATHS_HEIGHT  equ  26
+
 WRITE_BUFFER_SIZE  equ  0f010h
 FILE_BUFFER_SIZE   equ  0600h
 ENTRY_READ_BUFFER  equ  80h
@@ -296,8 +301,8 @@ FACING_RIGHT  equ   3
 
 FACING2_LEFT  equ   1
 FACING2_RIGHT equ   2
-FACING2_DOWN  equ   3
 FACING2_UP    equ   4
+FACING2_DOWN  equ   8
 
 ; Movement record constants
 MOVEMENT_FRAME_NUM  equ  0
@@ -330,6 +335,21 @@ CHAR_ACTION_EXEC_SCRIPT      equ  3
 CHAR_ACTION_PROCESSING_PATH  equ  4
 CHAR_ACTION_CONTINUE_WALK    equ  5
 
+PATHFIND_CHARACTER_ID   equ   2
+PATHFIND_HS4C           equ   4
+PATHFIND_DEST_STATE     equ   5
+PATHFIND_DEST_X         equ   6
+PATHFIND_DEST_Y         equ   8
+PATHFIND_X              equ  0Ch
+PATHFIND_Y              equ  0Ah
+PATHFIND_0E             equ  0Eh
+PATHFIND_DEST_X2        equ  10h
+PATHFIND_DEST_OCCUPIED  equ  12h
+PATHFIND_CELL_POPULATED equ  13h
+PATHFIND_X_CHANGE1      equ  14h
+PATHFIND_Y_CHANGE1      equ  16h
+PATHFIND_X_CHANGE2      equ  18h
+PATHFIND_Y_CHANGE2      equ  1Ah
 
                                 ; The following equates show data references outside the range of the program.
 
@@ -11422,24 +11442,9 @@ CHAR_ACTION_CONTINUE_WALK    equ  5
                                 ; ax=character Hotspot Id, bx=dest x, cx=dest y, dl=[4ch]
                                 ;ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 
-3983h/4227h = record
-  2 = ax hotspot Id
-  4 = HS[4Ch]
-  6 = dest x
-  8 = dest y
-end;
-
-TEMP_CHARACTER_ID equ 2
-TEMP_HS4C    equ  04h
-TEMP_DEST_X  equ  06h
-TEMP_DEST_Y  equ  08h
-TEMP_X       equ  0Ch
-TEMP_Y       equ  0Ah
-TEMP_DEST_X2 equ  10h
-
                         character_pathfind      proc    near
 273F:49F6  89 26 3942                           mov     pathfind_sp, sp         ; Backup current SP
-273F:49FA  C7 06 3944 0FA0                      mov     pathfind_v2, 0FA0h
+273F:49FA  C7 06 3944 0FA0                      mov     pathfind_countdown_ctr, 0FA0h
 273F:4A00  F6 06 3946 FF                        test    pathfind_in_progress, 0FFh
 273F:4A05  74 0E                                jz      loc_933                 ; Jump if zero
 273F:4A07  3D 03E8                              cmp     ax, PLAYER_HOTSPOT_ID
@@ -11469,8 +11474,8 @@ TEMP_DEST_X2 equ  10h
 273F:4A37                       loc_935:                                        ;  xref 273F:4A1E
 273F:4A37  C6 06 3946 01                        mov     pathfind_in_progress, 1
 273F:4A3C                       loc_936:                                        ;  xref 273F:4A2A
-273F:4A3C  88 54 04                             mov     [si+TEMP_HS4C], dl      ; Store HS[4Ch]
-273F:4A3F  89 44 02                             mov     [si+TEMP_CHARACTER_ID], ax ; Store character Id
+273F:4A3C  88 54 04                             mov     [si+PATHFIND_HS4C], dl
+273F:4A3F  89 44 02                             mov     [si+PATHFIND_CHARACTER_ID], ax ; Store character Id
 273F:4A42  8B E5                                mov     sp, bp
 
 ; Handle adjusting destination X for left & right screen edges to place it completely
@@ -11484,8 +11489,8 @@ TEMP_DEST_X2 equ  10h
 273F:4A53  72 03                                jb      loc_938                 ; Jump if below
 273F:4A55  83 C3 32                             add     bx, 50
 273F:4A58                       loc_938:
-273F:4A58  89 5C 06                             mov     [si+TEMP_DEST_X], bx    ; Store X
-273F:4A5B  89 4C 08                             mov     [si+TEMP_DEST_Y], cx    ; Store Y
+273F:4A58  89 5C 06                             mov     [si+PATHFIND_DEST_X], bx    ; Store X
+273F:4A5B  89 4C 08                             mov     [si+PATHFIND_DEST_Y], cx    ; Store Y
 
 273F:4A5E  8B 6D 13                             mov     bp, [di+ANIM_WIDTH_COPY]
 273F:4A61  83 ED 01                             sub     bp, 1
@@ -11493,6 +11498,8 @@ TEMP_DEST_X2 equ  10h
 273F:4A66  D3 ED                                shr     bp, cl                  ; bp=(width copy-1)/8
 273F:4A68  57                                   push    di                                         
 273F:4A69 ú81 C6 08A2                           add     si, 8A2h
+
+; Figure out the address for the bit-compressed data for screen walkable areas
 273F:4A6D  8B 45 0E                             mov     ax, [di+ANIM_ROOM_NUM]
 273F:4A70  8B D8                                mov     bx, ax
 273F:4A72  B1 04                                mov     cl, 4
@@ -11500,6 +11507,12 @@ TEMP_DEST_X2 equ  10h
 273F:4A76  2B C3                                sub     ax, bx
 273F:4A78  B1 03                                mov     cl, 3
 273F:4A7A  D3 E0                                shl     ax, cl                  ; ax=Room # * 120
+
+; Extract the bit-compressed data of the pathfinding data for the room into an
+; uncompressed 26*42 byte array indicating whether each 8x8 pixel block on screen
+; (and a surrounding column and row around the screen edge) can be traveled on
+; cx = bit number, dl = number of columns, dh = number of rows
+
 273F:4A7C  05 9849                              add     ax, offset pathfind_data2 - 1
 273F:4A7F  1E                                   push    ds
 273F:4A80  07                                   pop     es
@@ -11507,26 +11520,22 @@ TEMP_DEST_X2 equ  10h
 273F:4A83  8B F0                                mov     si, ax                  ; si=end of pathfind layer for room
 273F:4A85  FD                                   std                             ; Set for reverse direction
 273F:4A86  33 C0                                xor     ax, ax
-273F:4A88  B9 002B                              mov     cx, 2Bh
+273F:4A88  B9 002B                              mov     cx, 2Bh                 ; # cols + start col of row #2
 273F:4A8B  F3/ AB                               rep     stosw                   ; Clear area
 273F:4A8D  83 C7 01                             add     di, 1                   ; For player di=41D0h
 
-; Extract the bit-compressed data of the pathfinding data for the room into an
-; uncompressed array indicating whether each 8x8 pixel block can be traveled on
-; cx = bit number, dl = number of columns, dh = number of rows
-
-273F:4A90  B6 18                                mov     dh, 18h
+273F:4A90  B6 18                                mov     dh, 24                  ; Number of rows on-screen
 273F:4A92                       loc_939:
-273F:4A92  B2 05                                mov     dl, 5
+273F:4A92  B2 05                                mov     dl, 5                   ; Number of bytes horizontally
 
 273F:4A94                       loc_940:
-273F:4A94  AC                                   lodsb                           ; ax=c6h, si=98c0h
-273F:4A95  86 E0                                xchg    ah, al
-273F:4A97  32 C0                                xor     al, al                  ; ax=c600h
-273F:4A99  B9 0008                              mov     cx, 8
+273F:4A94  AC                                   lodsb                           ; Get next byte
+273F:4A95  86 E0                                xchg    ah, al                  ; Move it into AH
+273F:4A97  32 C0                                xor     al, al                  ; Reset AL to 0 for storage
+273F:4A99  B9 0008                              mov     cx, 8                   ; Number of bits in the byte
 
 273F:4A9C                       locloop_941:                                    ;  xref 273F:4AA2, 4AB3
-273F:4A9C  D0 EC                                shr     ah, 1                   ; Shift w/zeros fill
+273F:4A9C  D0 EC                                shr     ah, 1                   ; Move next bit for processing
 273F:4A9E  72 06                                jc      loc_942                 ; Jump if bit set (block occupied)
 273F:4AA0  AA                                   stosb                           ; Store 0 to es:[di]
 273F:4AA1  AA                                   stosb                           ; Store 0 to es:[di]
@@ -11579,25 +11588,26 @@ TEMP_DEST_X2 equ  10h
 273F:4AE5  80 EE 01                             sub     dh, 1
 273F:4AE8  75 A8                                jnz     loc_939                 ; Jump if not zero
 
-; End of decompression code for the path finding layer
 273F:4AEA  83 EF 01                             sub     di, 1
-273F:4AED  B9 0029                              mov     cx, 29h
-273F:4AF0  33 C0                                xor     ax, ax                  ; Zero register
-273F:4AF2  F3/ AB                               rep     stosw                   ; Rep when cx >0 Store ax to es:[di]
-273F:4AF4  83 EF 1A                             sub     di, 1Ah                 ; di=3983 again
+273F:4AED  B9 0029                              mov     cx, 29h                 ; Handle final off-screen row
+273F:4AF0  33 C0                                xor     ax, ax
+273F:4AF2  F3/ AB                               rep     stosw
 
+; End of decompression code for the path finding layer.
+
+273F:4AF4  83 EF 1A                             sub     di, 1Ah                 ; di=3983 again (skips local variables)
 273F:4AF7  5E                                   pop     si                      ; si=anim slot
 273F:4AF8  33 C0                                xor     ax, ax                  ; Zero register
-273F:4AFA  89 45 0A                             mov     [di+0Ah], ax
-273F:4AFD  89 45 0C                             mov     [di+0Ch], ax
-273F:4B00  89 45 10                             mov     [di+10h], ax
-273F:4B03  89 45 0E                             mov     [di+0Eh], ax
-273F:4B06  88 45 05                             mov     [di+5], al
-273F:4B09  81 2E 3944 02BC                      sub     pathfind_v2, 2BCh
+273F:4AFA  89 45 0A                             mov     [di+PATHFIND_Y], ax
+273F:4AFD  89 45 0C                             mov     [di+PATHFIND_X], ax
+273F:4B00  89 45 10                             mov     [di+PATHFIND_DEST_X2], ax
+273F:4B03  89 45 0E                             mov     [di+PATHFIND_0E], ax
+273F:4B06  88 45 05                             mov     [di+PATHFIND_DEST_STATE], al
+273F:4B09  81 2E 3944 02BC                      sub     pathfind_countdown_ctr, 2BCh       ; v2=0FA0h-2BCh=CE4h
 273F:4B0F  8B 04                                mov     ax, [si+ANIM_X]         ; Get current X
 273F:4B11  2D 0080                              sub     ax, 80h                 ; Subtract the 80h offset
 273F:4B14  73 05                                jnc     loc_950                 ; Jump if current X on-screen
-273F:4B16  89 45 0C                             mov     [di+TEMP_X], ax
+273F:4B16  89 45 0C                             mov     [di+PATHFIND_X], ax
 273F:4B19  33 C0                                xor     ax, ax                  ; Zero register
 273F:4B1B                       loc_950:                                        ; ax = max(0, X)
 273F:4B1B  BB 013F                              mov     bx, 319
@@ -11605,43 +11615,44 @@ TEMP_DEST_X2 equ  10h
 273F:4B21  3B C3                                cmp     ax, bx
 273F:4B23  72 07                                jb      loc_951                 ; X + full width on screen?
 273F:4B25  2B C3                                sub     ax, bx
-273F:4B27  89 45 0C                             mov     [di+TEMP_X], ax         ; X = min(X, 319 - width)
+273F:4B27  89 45 0C                             mov     [di+PATHFIND_X], ax         ; X = min(X, 319 - width)
 273F:4B2A  8B C3                                mov     ax, bx
 273F:4B2C                       loc_951:
 273F:4B2C  8B 5C 02                             mov     bx, [si+ANIM_Y]
 273F:4B2F  80 E3 F8                             and     bl, 0F8h
 273F:4B32  03 5C 15                             add     bx, [si+ANIM_HEIGHT_COPY]
 273F:4B35  83 EB 04                             sub     bx, 4
-273F:4B38  81 EB 0088                           sub     bx, 88h
-273F:4B3C  73 05                                jnc     loc_952                 ; Jump if carry=0
-273F:4B3E  89 5D 0A                             mov     [di+TEMP_Y], bx
+273F:4B38  81 EB 0088                           sub     bx, 88h                 ; bx=(Y&0F8h+height-4-8)
+273F:4B3C  73 05                                jnc     loc_952                 ; Jump if bx (y bottom) < 0
+273F:4B3E  89 5D 0A                             mov     [di+PATHFIND_Y], bx
 273F:4B41  33 DB                                xor     bx, bx                  ; Zero register
-273F:4B43                       loc_952:                                        ;  xref 273F:4B3C
-273F:4B43  81 FB 00C0                           cmp     bx, 192
+273F:4B43                       loc_952:
+273F:4B43  81 FB 00C0                           cmp     bx, 192                 ; Is it on-screen?
 273F:4B47  72 0A                                jb      loc_953                 ; Jump if below
 273F:4B49  81 EB 00BF                           sub     bx, 191
-273F:4B4D  89 5D 0A                             mov     [di+TEMP_Y], bx
+273F:4B4D  89 5D 0A                             mov     [di+PATHFIND_Y], bx
 273F:4B50  BB 00BF                              mov     bx, 191
-273F:4B53                       loc_953:                                        ;  xref 273F:4B47
-273F:4B53  8B 4D 06                             mov     cx, [di+TEMP_DEST_X]
+
+273F:4B53                       loc_953:
+273F:4B53  8B 4D 06                             mov     cx, [di+PATHFIND_DEST_X]
 273F:4B56  81 E9 0080                           sub     cx, 128
 273F:4B5A  73 05                                jnc     loc_954                 ; Jump if x >= 0
-273F:4B5C  89 4D 10                             mov     [di+TEMP_DEST_X2], cx   ; Store X (will be negative)
+273F:4B5C  89 4D 10                             mov     [di+PATHFIND_DEST_X2], cx   ; Store X (will be negative)
 273F:4B5F  33 C9                                xor     cx, cx
-273F:4B61                       loc_954:                                        
+273F:4B61                       loc_954:
 273F:4B61  BA 0140                              mov     dx, 320
 273F:4B64  2B 54 13                             sub     dx, [si+ANIM_WIDTH_COPY]
 273F:4B67  3B CA                                cmp     cx, dx
 273F:4B69  72 07                                jb      loc_955                 ; Jump if fully on screen
 273F:4B6B  2B CA                                sub     cx, dx
-273F:4B6D  89 4D 10                             mov     [di+TEMP_DEST_X2], cx
+273F:4B6D  89 4D 10                             mov     [di+PATHFIND_DEST_X2], cx
 273F:4B70  8B CA                                mov     cx, dx
-273F:4B72                       loc_955:                                        ;  xref 273F:4B69
-273F:4B72  8B 55 08                             mov     dx, [di+TEMP_DEST_Y]
+273F:4B72                       loc_955:
+273F:4B72  8B 55 08                             mov     dx, [di+PATHFIND_DEST_Y]
 273F:4B75  81 EA 0088                           sub     dx, 88h
-273F:4B79  73 02                                jnc     loc_956                 ; Jump if carry=0
+273F:4B79  73 02                                jnc     loc_956                 ; Jump if y >= 0
 273F:4B7B  33 D2                                xor     dx, dx                  ; Zero register
-273F:4B7D                       loc_956:                                        ;  xref 273F:4B79
+273F:4B7D                       loc_956:                                        
 273F:4B7D  81 FA 00C0                           cmp     dx, 192
 273F:4B81  72 03                                jb      loc_957                 ; Jump if below
 273F:4B83  BA 00BF                              mov     dx, 191
@@ -11650,18 +11661,23 @@ TEMP_DEST_X2 equ  10h
 
 ; current=(ax,bx), dest=(bp,dx). Check to see if a move of only a few pixels is required
 273F:4B88  B1 03                                mov     cl, 3
-273F:4B8A  D3 E8                                shr     ax, cl                  ; Shift w/zeros fill
-273F:4B8C  D3 EB                                shr     bx, cl                  ; Shift w/zeros fill
-273F:4B8E  D3 ED                                shr     bp, cl                  ; Shift w/zeros fill
-273F:4B90  D3 EA                                shr     dx, cl                  ; Shift w/zeros fill
-273F:4B92  3B C5                                cmp     ax, bp
-273F:4B94  75 2B                                jne     loc_961                 ; Jump if not equal
-273F:4B96  3B DA                                cmp     bx, dx
-273F:4B98  75 27                                jne     loc_961                 ; Jump if not equal
+273F:4B8A  D3 E8                                shr     ax, cl
+273F:4B8C  D3 EB                                shr     bx, cl
+273F:4B8E  D3 ED                                shr     bp, cl
+273F:4B90  D3 EA                                shr     dx, cl
+273F:4B92  3B C5                                cmp     ax, bp                  ; Is x/8=dest_x/8?
+273F:4B94  75 2B                                jne     loc_961                 ; Jump if not
+273F:4B96  3B DA                                cmp     bx, dx                  ; Is y/8=dest_y/8?
+273F:4B98  75 27                                jne     loc_961                 ; Jump if not
+
+; Destination is very close to source.
+; If (I think) the PATHFIND_DEST_X2 != 0 (ie. dest is partially off-screen), then
+; an initial walk entry is placed. Then irrespective, control jumps to loc_1003,
+; which puts another left/right walking entry to move the character to dest X
 
 273F:4B9A úBB 3940                              mov     bx, offset pathfind_buffer_end
 273F:4B9D  C7 07 0000                           mov     word ptr [bx], 0        ; Set end of pathfind sequence
-273F:4BA1  8B 45 10                             mov     ax, [di+TEMP_DEST_X2]
+273F:4BA1  8B 45 10                             mov     ax, [di+PATHFIND_DEST_X2]
 273F:4BA4  0B C0                                or      ax, ax                  ; Any partial off-screen move?
 273F:4BA6  74 16                                jz      loc_960                 ; Jump if zero
 273F:4BA8  78 07                                js      loc_958                 ; Jump if sign=1
@@ -11675,80 +11691,87 @@ TEMP_DEST_X2 equ  10h
 273F:4BBB  83 EB 04                             sub     bx, 4                   ; Move back for next record
 273F:4BBE                       loc_960:
 273F:4BBE  E9 02B3                              jmp     loc_1003
+
+; Destination isn't close, so here's where the actual pathfinding needs to be done
+; current=(ax,bx)/8, dest=(bp,dx)/8
+
 273F:4BC1                       loc_961:                                        ;  xref 273F:4B94, 4B98
 273F:4BC1  50                                   push    ax
 273F:4BC2  53                                   push    bx
 273F:4BC3  55                                   push    bp
 273F:4BC4  52                                   push    dx
-273F:4BC5  89 6D 06                             mov     [di+6],bp
-273F:4BC8  89 55 08                             mov     [di+8],dx
-273F:4BCB  D1 E0                                shl     ax,1                    ; Shift w/zeros fill
-273F:4BCD  8B F3                                mov     si,bx
-273F:4BCF  B1 02                                mov     cl,2
-273F:4BD1  D3 E3                                shl     bx,cl                   ; Shift w/zeros fill
-273F:4BD3  03 DE                                add     bx,si
-273F:4BD5  D3 E3                                shl     bx,cl                   ; Shift w/zeros fill
-273F:4BD7  03 DE                                add     bx,si
-273F:4BD9  D3 E3                                shl     bx,cl                   ; Shift w/zeros fill
-273F:4BDB  03 D8                                add     bx,ax
-273F:4BDD  83 C3 72                             add     bx,72h
-273F:4BE0  03 DF                                add     bx,di
-273F:4BE2  C7 07 0001                           mov     word ptr [bx],1
-273F:4BE6  D1 E5                                shl     bp,1                    ; Shift w/zeros fill
-273F:4BE8  8B F2                                mov     si,dx
-273F:4BEA  D3 E6                                shl     si,cl                   ; Shift w/zeros fill
-273F:4BEC  03 F2                                add     si,dx
-273F:4BEE  D3 E6                                shl     si,cl                   ; Shift w/zeros fill
-273F:4BF0  03 F2                                add     si,dx
-273F:4BF2  D3 E6                                shl     si,cl                   ; Shift w/zeros fill
-273F:4BF4  03 F5                                add     si,bp
-273F:4BF6  83 C6 72                             add     si,72h
-273F:4BF9  03 F7                                add     si,di
-273F:4BFB  C6 45 12 00                          mov     byte ptr [di+12h],0
-273F:4BFF  F6 04 FF                             test    byte ptr [si],0FFh
-273F:4C02  74 0C                                jz      loc_962                 ; Jump if zero
-273F:4C04  C7 04 0000                           mov     word ptr [si],0
-273F:4C08  C6 45 12 01                          mov     byte ptr [di+12h],1
-273F:4C0C  C6 45 05 01                          mov     byte ptr [di+5],1
-273F:4C10                       loc_962:                                        ;  xref 273F:4C02
-273F:4C10  F6 45 04 FF                          test    byte ptr [di+4],0FFh
-273F:4C14  74 00                                jz      $+2                     ; delay for I/O
+273F:4BC5  89 6D 06                             mov     [di+PATHFIND_DEST_X], bp    ; Store dest pos/8
+273F:4BC8  89 55 08                             mov     [di+PATHFIND_DEST_Y], dx
+
+273F:4BCB  D1 E0                                shl     ax, 1                   ; ax=sb_x*2
+273F:4BCD  8B F3                                mov     si, bx                  ; si=sb_y
+273F:4BCF  B1 02                                mov     cl, 2
+273F:4BD1  D3 E3                                shl     bx, cl                  ; bx=sb_y*4
+273F:4BD3  03 DE                                add     bx, si                  ; bx=sb_y*5
+273F:4BD5  D3 E3                                shl     bx, cl                  ; bx=sb_y*20
+273F:4BD7  03 DE                                add     bx, si                  ; bx=sb_y*21
+273F:4BD9  D3 E3                                shl     bx, cl                  ; bx=sb_y*84
+273F:4BDB  03 D8                                add     bx, ax                  ; bx=sb_y*84 + sb_x*2
+273F:4BDD  83 C3 72                             add     bx, 72h                 ; Add on buffer & blank line offset
+273F:4BE0  03 DF                                add     bx, di                  ; bx=source cell
+273F:4BE2  C7 07 0001                           mov     word ptr [bx],1         ; Flag source cell
+273F:4BE6  D1 E5                                shl     bp, 1
+273F:4BE8  8B F2                                mov     si, dx
+273F:4BEA  D3 E6                                shl     si, cl
+273F:4BEC  03 F2                                add     si, dx
+273F:4BEE  D3 E6                                shl     si, cl
+273F:4BF0  03 F2                                add     si, dx
+273F:4BF2  D3 E6                                shl     si, cl
+273F:4BF4  03 F5                                add     si, bp
+273F:4BF6  83 C6 72                             add     si, 72h
+273F:4BF9  03 F7                                add     si, di                  ; si=dest cell
+273F:4BFB  C6 45 12 00                          mov     byte ptr [di+PATHFIND_DEST_OCCUPIED], 0
+273F:4BFF  F6 04 FF                             test    byte ptr [si], 0FFh     ; Is dest cell blocked?
+273F:4C02  74 0C                                jz      loc_962                 ; Jump if clear
+273F:4C04  C7 04 0000                           mov     word ptr [si], 0        ; Mark dest cell as unblocked
+273F:4C08  C6 45 12 01                          mov     byte ptr [di+PATHFIND_DEST_OCCUPIED], 1
+273F:4C0C  C6 45 05 01                          mov     byte ptr [di+PATHFIND_DEST_STATE], 1 ; Dest occupied
+273F:4C10                       loc_962:
+273F:4C10  F6 45 04 FF                          test    byte ptr [di+PATHFIND_HS4C],0FFh
+273F:4C14  74 00                                jz      $+2
 273F:4C16  5A                                   pop     dx
 273F:4C17  59                                   pop     cx
 273F:4C18  5D                                   pop     bp
 273F:4C19  58                                   pop     ax
-273F:4C1A  3B C1                                cmp     ax,cx
-273F:4C1C  73 19                                jae     loc_964                 ; Jump if above or =
-273F:4C1E  0B C0                                or      ax,ax                   ; Zero ?
-273F:4C20  74 06                                jz      loc_963                 ; Jump if zero
-273F:4C22  2D 0001                              sub     ax,1
-273F:4C25  83 EB 02                             sub     bx,2
-273F:4C28                       loc_963:                                        ;  xref 273F:4C20
-273F:4C28  C7 45 14 0002                        mov     word ptr [di+14h],2
-273F:4C2D  B9 0028                              mov     cx,28h
-273F:4C30  2B C8                                sub     cx,ax
-273F:4C32  89 4D 18                             mov     [di+18h],cx
+
+; Source/8=(ax,bp), Dest/8=(cx,dx), si=source cell, bx=dest cell 
+273F:4C1A  3B C1                                cmp     ax,cx                   ; Start X against Dest X
+273F:4C1C  73 19                                jae     loc_964                 ; Jump if >=
+273F:4C1E  0B C0                                or      ax,ax                   ; Is Start X 0?
+273F:4C20  74 06                                jz      loc_963                 ; Jump if yes
+273F:4C22  2D 0001                              sub     ax, 1
+273F:4C25  83 EB 02                             sub     bx, 2
+273F:4C28                       loc_963:
+273F:4C28  C7 45 14 0002                        mov     word ptr [di+PATHFIND_X_CHANGE1], 2
+273F:4C2D  B9 0028                              mov     cx, 28h
+273F:4C30  2B C8                                sub     cx, ax
+273F:4C32  89 4D 18                             mov     [di+PATHFIND_X_CHANGE2], cx
 273F:4C35  EB 17                                jmp     short loc_966           ; (4C4E)
 273F:4C37                       loc_964:                                        ;  xref 273F:4C1C
-273F:4C37  3D 0027                              cmp     ax,27h
+273F:4C37  3D 0027                              cmp     ax, 27h
 273F:4C3A  74 06                                je      loc_965                 ; Jump if equal
-273F:4C3C  05 0001                              add     ax,1
-273F:4C3F  83 C3 02                             add     bx,2
+273F:4C3C  05 0001                              add     ax, 1
+273F:4C3F  83 C3 02                             add     bx, 2
 273F:4C42                       loc_965:                                        ;  xref 273F:4C3A
-273F:4C42  C7 45 14 FFFE                        mov     word ptr [di+14h],0FFFEh
-273F:4C47  89 45 18                             mov     [di+18h],ax
-273F:4C4A  83 45 18 01                          add     word ptr [di+18h],1
+273F:4C42  C7 45 14 FFFE                        mov     word ptr [di+PATHFIND_X_CHANGE1], 0FFFEh
+273F:4C47  89 45 18                             mov     [di+PATHFIND_X_CHANGE2],ax
+273F:4C4A  83 45 18 01                          add     word ptr [di+PATHFIND_X_CHANGE2], 1
 273F:4C4E                       loc_966:                                        ;  xref 273F:4C35
-273F:4C4E  3B EA                                cmp     bp,dx
+273F:4C4E  3B EA                                cmp     bp, dx
 273F:4C50  72 19                                jb      loc_968                 ; Jump if below
-273F:4C52  83 FD 17                             cmp     bp,17h
+273F:4C52  83 FD 17                             cmp     bp, 17h
 273F:4C55  74 06                                je      loc_967                 ; Jump if equal
-273F:4C57  83 C5 01                             add     bp,1
-273F:4C5A  83 C3 54                             add     bx,54h
+273F:4C57  83 C5 01                             add     bp, 1
+273F:4C5A  83 C3 54                             add     bx, DECODED_PATHS_WIDTH * 2
 273F:4C5D                       loc_967:                                        ;  xref 273F:4C55
-273F:4C5D  C7 45 16 FFAC                        mov     word ptr [di+16h],0FFACh
-273F:4C62  89 6D 1A                             mov     [di+1Ah],bp
-273F:4C65  83 45 1A 01                          add     word ptr [di+1Ah],1
+273F:4C5D  C7 45 16 FFAC                        mov     [di+PATHFIND_Y_CHANGE1], -DECODED_PATHS_WIDTH*2
+273F:4C62  89 6D 1A                             mov     [di+PATHFIND_Y_CHANGE2], bp
+273F:4C65  83 45 1A 01                          add     [di+PATHFIND_Y_CHANGE2], 1
 273F:4C69  EB 17                                jmp     short loc_970           ; (4C82)
 273F:4C6B                       loc_968:                                        ;  xref 273F:4C50
 273F:4C6B  0B ED                                or      bp,bp                   ; Zero ?
@@ -11756,159 +11779,179 @@ TEMP_DEST_X2 equ  10h
 273F:4C6F  83 ED 01                             sub     bp,1
 273F:4C72  83 EB 54                             sub     bx,54h
 273F:4C75                       loc_969:                                        ;  xref 273F:4C6D
-273F:4C75  C7 45 16 0054                        mov     word ptr [di+16h],54h
+273F:4C75  C7 45 16 0054                        mov     word ptr [di+PATHFIND_Y_CHANGE1], DECODED_PATHS_WIDTH * 2
 273F:4C7A  B9 0018                              mov     cx,18h
 273F:4C7D  2B CD                                sub     cx,bp
-273F:4C7F  89 4D 1A                             mov     [di+1Ah],cx
-273F:4C82                       loc_970:                                        ;  xref 273F:4C69
-273F:4C82  8B 55 14                             mov     dx,[di+14h]
+273F:4C7F  89 4D 1A                             mov     [di+PATHFIND_Y_CHANGE2], cx
+273F:4C82                       loc_970:
+
+; This next section populates the walkable sections of the decompressed array
+; with incrementing numbers indicating the number of cells away each cell is
+; from the destination. A walkable path can be later formed by following the
+; path of decrementing numbers from the source to the destination
+
+273F:4C82  8B 55 14                             mov     dx,[di+PATHFIND_X_CHANGE1]
 273F:4C85                       loc_971:                                        ;  xref 273F:4CC6, 4CCE, 4CDA
 273F:4C85 ú56                                   push    si
 273F:4C86  53                                   push    bx
-273F:4C87  8B 36 3944                           mov     si, pathfind_v2
-273F:4C8B  8B 4D 1A                             mov     cx, [di+1Ah]
+273F:4C87  8B 36 3944                           mov     si, pathfind_countdown_ctr
+273F:4C8B  8B 4D 1A                             mov     cx, [di+PATHFIND_Y_CHANGE2]
 
 273F:4C8E                       locloop_972:                                    ;  xref 273F:4C9F
 273F:4C8E  51                                   push    cx
 273F:4C8F  53                                   push    bx
-273F:4C90  8B 4D 18                             mov     cx, [di+18h]
+273F:4C90  8B 4D 18                             mov     cx, [di+PATHFIND_X_CHANGE2]
 
 273F:4C93                       locloop_973:                                    ;  xref 273F:4C98
-273F:4C93  E8 021A                              call    sub_120                 ; (4EB0)
-273F:4C96  03 DA                                add     bx,dx
+273F:4C93  E8 021A                              call    pathfind_populate_cells
+273F:4C96  03 DA                                add     bx, dx
 273F:4C98  E2 F9                                loop    locloop_973             ; Loop if cx > 0
 
 273F:4C9A  5B                                   pop     bx
 273F:4C9B  59                                   pop     cx
-273F:4C9C  03 5D 16                             add     bx,[di+16h]
+273F:4C9C  03 5D 16                             add     bx, [di+PATHFIND_Y_CHANGE1]
 273F:4C9F  E2 ED                                loop    locloop_972             ; Loop if cx > 0
 
-273F:4CA1  89 36 3944                           mov     pathfind_v2, si
+273F:4CA1  89 36 3944                           mov     pathfind_countdown_ctr, si
 273F:4CA5  5B                                   pop     bx
 273F:4CA6  5E                                   pop     si
-273F:4CA7  F7 04 FFFF                           test    word ptr [si],0FFFFh
-273F:4CAB  75 2F                                jnz     loc_977                 ; Jump if not zero
-273F:4CAD  80 7D 1A 18                          cmp     byte ptr [di+1Ah],18h
+273F:4CA7  F7 04 FFFF                           test    word ptr [si], 0FFFFh   ; Dest been filled in yet?
+273F:4CAB  75 2F                                jnz     loc_977                 ; Jump if yes
+
+273F:4CAD  80 7D 1A 18                          cmp     byte ptr [di+PATHFIND_Y_CHANGE2], ROOM_PATHS_HEIGHT
 273F:4CB1  75 08                                jne     loc_974                 ; Jump if not equal
-273F:4CB3  80 7D 18 28                          cmp     byte ptr [di+18h],28h   ; '('
+273F:4CB3  80 7D 18 28                          cmp     byte ptr [di+PATHFIND_X_CHANGE2], ROOM_PATHS_WIDTH
 273F:4CB7  74 17                                je      loc_976                 ; Jump if equal
-273F:4CB9  EB 07                                jmp     short loc_975           ; (4CC2)
+273F:4CB9  EB 07                                jmp     short loc_975
 273F:4CBB                       loc_974:                                        ;  xref 273F:4CB1
-273F:4CBB  2B 5D 16                             sub     bx,[di+16h]
-273F:4CBE  83 45 1A 01                          add     word ptr [di+1Ah],1
-273F:4CC2                       loc_975:                                        ;  xref 273F:4CB9
-273F:4CC2  80 7D 18 28                          cmp     byte ptr [di+18h],28h   ; '('
+273F:4CBB  2B 5D 16                             sub     bx, [di+PATHFIND_Y_CHANGE1]
+273F:4CBE  83 45 1A 01                          add     word ptr [di+PATHFIND_Y_CHANGE2], 1
+273F:4CC2                       loc_975:
+273F:4CC2  80 7D 18 28                          cmp     byte ptr [di+PATHFIND_X_CHANGE2], ROOM_PATHS_WIDTH
 273F:4CC6  74 BD                                je      loc_971                 ; Jump if equal
-273F:4CC8  2B DA                                sub     bx,dx
-273F:4CCA  83 45 18 01                          add     word ptr [di+18h],1
-273F:4CCE  EB B5                                jmp     short loc_971           ; (4C85)
-273F:4CD0                       loc_976:                                        ;  xref 273F:4CB7
-273F:4CD0  F6 45 13 FF                          test    byte ptr [di+13h],0FFh
-273F:4CD4  74 08                                jz      loc_978                 ; Jump if zero
-273F:4CD6  C6 45 13 00                          mov     byte ptr [di+13h],0
-273F:4CDA  EB A9                                jmp     short loc_971           ; (4C85)
-273F:4CDC                       loc_977:                                        ;  xref 273F:4CAB
-273F:4CDC  EB 66                                jmp     short loc_982           ; (4D44)
-273F:4CDE                       loc_978:                                        ;  xref 273F:4CD4
-273F:4CDE  C6 45 05 02                          mov     byte ptr [di+5],2
-273F:4CE2                       loc_979:                                        ;  xref 273F:4D48
-273F:4CE2  F6 45 12 FF                          test    byte ptr [di+12h],0FFh
+273F:4CC8  2B DA                                sub     bx, dx
+273F:4CCA  83 45 18 01                          add     word ptr [di+PATHFIND_X_CHANGE2], 1
+273F:4CCE  EB B5                                jmp     short loc_971
+
+273F:4CD0                       loc_976:
+273F:4CD0  F6 45 13 FF                          test    byte ptr [di+PATHFIND_CELL_POPULATED], 0FFh
+273F:4CD4  74 08                                jz      loc_978                 ; Jump if no cell populated
+273F:4CD6  C6 45 13 00                          mov     byte ptr [di+PATHFIND_CELL_POPULATED], 0
+273F:4CDA  EB A9                                jmp     short loc_971           ; Jump for another try
+273F:4CDC                       loc_977:
+273F:4CDC  EB 66                                jmp     short loc_982
+273F:4CDE                       loc_978:
+273F:4CDE  C6 45 05 02                          mov     byte ptr [di+PATHFIND_DEST_STATE], 2 ; No path to destination
+273F:4CE2                       loc_979:
+273F:4CE2  F6 45 12 FF                          test    byte ptr [di+PATHFIND_DEST_OCCUPIED], 0FFh
 273F:4CE6  74 08                                jz      loc_980                 ; Jump if zero
-273F:4CE8  C7 04 FFFF                           mov     word ptr [si],0FFFFh
-273F:4CEC  C6 45 12 00                          mov     byte ptr [di+12h],0
-273F:4CF0                       loc_980:                                        ;  xref 273F:4CE6
+273F:4CE8  C7 04 FFFF                           mov     word ptr [si], 0FFFFh   ; Restore destination occupied
+273F:4CEC  C6 45 12 00                          mov     byte ptr [di+PATHFIND_DEST_OCCUPIED], 0
+273F:4CF0                       loc_980:
+
+; Do a prescanning of the lines
 273F:4CF0  57                                   push    di
-273F:4CF1  8B EE                                mov     bp,si
-273F:4CF3  8B DE                                mov     bx,si
-273F:4CF5  B2 FF                                mov     dl,0FFh
-273F:4CF7  8B 4D 06                             mov     cx,[di+6]
-273F:4CFA  83 C1 01                             add     cx,1
-273F:4CFD  BF FFFE                              mov     di,0FFFEh
-273F:4D00  E8 0220                              call    sub_121                 ; (4F23)
+273F:4CF1  8B EE                                mov     bp, si
+273F:4CF3  8B DE                                mov     bx, si                  ; bx=bp=destination cell
+273F:4CF5  B2 FF                                mov     dl, 0FFh
+273F:4CF7  8B 4D 06                             mov     cx, [di+PATHFIND_DEST_X]
+273F:4CFA  83 C1 01                             add     cx, 1
+273F:4CFD  BF FFFE                              mov     di, 0FFFEh
+273F:4D00  E8 0220                              call    pathfind_scan_line
 273F:4D03  5F                                   pop     di
 273F:4D04  57                                   push    di
-273F:4D05  B9 0028                              mov     cx,28h
-273F:4D08  2B 4D 06                             sub     cx,[di+6]
-273F:4D0B  BF 0002                              mov     di,2
-273F:4D0E  E8 0212                              call    sub_121                 ; (4F23)
+273F:4D05  B9 0028                              mov     cx, ROOM_PATHS_WIDTH
+273F:4D08  2B 4D 06                             sub     cx, [di+PATHFIND_DEST_X]
+273F:4D0B  BF 0002                              mov     di, 2
+273F:4D0E  E8 0212                              call    pathfind_scan_line
 273F:4D11  5F                                   pop     di
 273F:4D12  57                                   push    di
-273F:4D13  8B 4D 08                             mov     cx,[di+8]
-273F:4D16  83 C1 01                             add     cx,1
-273F:4D19  BF FFAC                              mov     di,0FFACh
-273F:4D1C  E8 0204                              call    sub_121                 ; (4F23)
+273F:4D13  8B 4D 08                             mov     cx, [di+PATHFIND_DEST_Y]
+273F:4D16  83 C1 01                             add     cx, 1
+273F:4D19  BF FFAC                              mov     di, -DECODED_PATHS_WIDTH*2
+273F:4D1C  E8 0204                              call    pathfind_scan_line
 273F:4D1F  5F                                   pop     di
 273F:4D20  57                                   push    di
-273F:4D21  B9 0018                              mov     cx,18h
-273F:4D24  2B 4D 08                             sub     cx,[di+8]
-273F:4D27  BF 0054                              mov     di,54h
-273F:4D2A  E8 01F6                              call    sub_121                 ; (4F23)
+273F:4D21  B9 0018                              mov     cx, ROOM_PATHS_HEIGHT
+273F:4D24  2B 4D 08                             sub     cx, [di+PATHFIND_DEST_Y]
+273F:4D27  BF 0054                              mov     di, DECODED_PATHS_WIDTH*2
+273F:4D2A  E8 01F6                              call    pathfind_scan_line
 273F:4D2D  5F                                   pop     di
-273F:4D2E  8B F5                                mov     si,bp
-273F:4D30  3B DE                                cmp     bx,si
+273F:4D2E  8B F5                                mov     si, bp
+273F:4D30  3B DE                                cmp     bx, si
 273F:4D32  75 0E                                jne     loc_981                 ; Jump if not equal
-273F:4D34  C6 45 05 03                          mov     byte ptr [di+5],3
-273F:4D38 úBB 3940                              mov     bx,3940h                ; (273F:3940=0C7h)
-273F:4D3B  C7 07 0000                           mov     word ptr [bx],0
+273F:4D34  C6 45 05 03                          mov     byte ptr [di+PATHFIND_DEST_STATE], 3
+273F:4D38 úBB 3940                              mov     bx, offset pathfind_buffer_end
+273F:4D3B  C7 07 0000                           mov     word ptr [bx], 0
 273F:4D3F  E9 0132                              jmp     loc_1003                ; (4E74)
 273F:4D42                       loc_981:                                        ;  xref 273F:4D32
-273F:4D42  8B F3                                mov     si,bx
+273F:4D42  8B F3                                mov     si, bx
+
 273F:4D44                       loc_982:                                        ;  xref 273F:4CDC
-273F:4D44  F6 45 12 FF                          test    byte ptr [di+12h],0FFh
+273F:4D44  F6 45 12 FF                          test    byte ptr [di+PATHFIND_DEST_OCCUPIED], 0FFh
 273F:4D48  75 98                                jnz     loc_979                 ; Jump if not zero
+
+; end of cell population
+; Fill out any cells that are still blank (ie. anywhere that can't reach the
+; destination) as occupied
+
 273F:4D4A  FC                                   cld                             ; Clear direction
 273F:4D4B  57                                   push    di
-273F:4D4C  83 C7 1C                             add     di,1Ch
-273F:4D4F  B9 0445                              mov     cx,445h
-273F:4D52  33 C0                                xor     ax,ax                   ; Zero register
-273F:4D54                       loc_983:                                        ;  xref 273F:4D5F
-273F:4D54 úF2/ AF                               repne   scasw                   ; Rep zf=0+cx >0 Scan es:[di] for ax
-273F:4D56  0B C9                                or      cx,cx                   ; Zero ?
-273F:4D58  74 07                                jz      loc_984                 ; Jump if zero
-273F:4D5A  C7 45 FE FFFF                        mov     word ptr [di-2],0FFFFh
-273F:4D5F  EB F3                                jmp     short loc_983           ; (4D54)
-273F:4D61                       loc_984:                                        ;  xref 273F:4D58
+273F:4D4C  83 C7 1C                             add     di, 1Ch                 ; di=start of grid
+273F:4D4F  B9 0445                              mov     cx, DECODED_PATHS_WIDTH*DECODED_PATHS_HEIGHT+1 ;445h
+273F:4D52  33 C0                                xor     ax, ax
+273F:4D54                       loc_983:                              
+273F:4D54 úF2/ AF                               repne   scasw                   ; Scan for an empty cell
+273F:4D56  0B C9                                or      cx, cx                  ; Reached end of list?
+273F:4D58  74 07                                jz      loc_984                 ; Jump if yes
+273F:4D5A  C7 45 FE FFFF                        mov     word ptr [di-2], 0FFFFh ; Replace it with occupied state
+273F:4D5F  EB F3                                jmp     short loc_983
+           
+273F:4D61                       loc_984:                                        
 273F:4D61  5F                                   pop     di
-273F:4D62  33 D2                                xor     dx,dx                   ; Zero register
+273F:4D62  33 D2                                xor     dx, dx
 273F:4D64  B1 FF                                mov     cl,0FFh
-273F:4D66 úBB 3940                              mov     bx,3940h                ; (273F:3940=0C7h)
-273F:4D69  C7 07 0000                           mov     word ptr [bx],0
-273F:4D6D  F6 45 05 FF                          test    byte ptr [di+5],0FFh
+273F:4D66 úBB 3940                              mov     bx, offset pathfind_buffer_end
+273F:4D69  C7 07 0000                           mov     word ptr [bx], 0
+273F:4D6D  F6 45 05 FF                          test    byte ptr [di+PATHFIND_DEST_STATE], 0FFh
 273F:4D71  75 1D                                jnz     loc_987                 ; Jump if not zero
-273F:4D73  8B 45 10                             mov     ax,[di+10h]
+273F:4D73  8B 45 10                             mov     ax, [di+PATHFIND_DEST_X2]
 273F:4D76  0B C0                                or      ax,ax                   ; Zero ?
 273F:4D78  74 16                                jz      loc_987                 ; Jump if zero
 273F:4D7A  78 07                                js      loc_985                 ; Jump if sign=1
-273F:4D7C  C7 47 FE 0002                        mov     word ptr [bx-2],2
+273F:4D7C  C7 47 FE 0002                        mov     word ptr [bx-2], FACING2_RIGHT
 273F:4D81  EB 07                                jmp     short loc_986           ; (4D8A)
 273F:4D83                       loc_985:                                        ;  xref 273F:4D7A
-273F:4D83  C7 47 FE 0001                        mov     word ptr [bx-2],1
+273F:4D83  C7 47 FE 0001                        mov     word ptr [bx-2], FACING2_LEFT
 273F:4D88  F7 D8                                neg     ax
 273F:4D8A                       loc_986:                                        ;  xref 273F:4D81
-273F:4D8A  89 47 FC                             mov     [bx-4],ax
-273F:4D8D  83 EB 04                             sub     bx,4
+273F:4D8A  89 47 FC                             mov     [bx-4], ax              ; Save # steps
+273F:4D8D  83 EB 04                             sub     bx, 4
 273F:4D90                       loc_987:                                        ;  xref 273F:4D71, 4D78, 4E64, 4E6F
+
 273F:4D90 ú53                                   push    bx
 273F:4D91  56                                   push    si
-273F:4D92                       loc_988:                                        ;  xref 273F:4DE1, 4E06, 4E2B, 4E4F
-273F:4D92 ú8B 04                                mov     ax,[si]
-273F:4D94  2D 0001                              sub     ax,1
+
+; Form a set of steps starting at the source
+273F:4D92                       loc_988:
+273F:4D92 ú8B 04                                mov     ax, [si]                ; Get steps value from current pos
+273F:4D94  2D 0001                              sub     ax, 1
 273F:4D97  74 4A                                jz      loc_992                 ; Jump if zero
-273F:4D99  F6 C2 26                             test    dl,26h                  ; '&'
+273F:4D99  F6 C2 26                             test    dl, 38
 273F:4D9C  75 11                                jnz     loc_989                 ; Jump if not zero
-273F:4D9E  39 44 AC                             cmp     [si-54h],ax
+273F:4D9E  39 44 AC                             cmp     [si-DECODED_PATHS_WIDTH*2], ax
 273F:4DA1  74 67                                je      loc_996                 ; Jump if equal
-273F:4DA3  39 44 54                             cmp     [si+HS_DEST_X], ax
+273F:4DA3  39 44 54                             cmp     [si+DECODED_PATHS_WIDTH*2], ax
 273F:4DA6  74 60                                je      loc_995                 ; Jump if equal
-273F:4DA8  39 44 02                             cmp     [si+2],ax
+273F:4DA8  39 44 02                             cmp     [si+2], ax
 273F:4DAB  74 38                                je      loc_993                 ; Jump if equal
 273F:4DAD  EB 11                                jmp     short loc_990           ; (4DC0)
 273F:4DAF                       loc_989:                                        ;  xref 273F:4D9C
-273F:4DAF  39 44 02                             cmp     [si+2],ax
+273F:4DAF  39 44 02                             cmp     [si+2], ax
 273F:4DB2  74 31                                je      loc_993                 ; Jump if equal
-273F:4DB4  39 44 FE                             cmp     [si-2],ax
+273F:4DB4  39 44 FE                             cmp     [si-2], ax
 273F:4DB7  74 07                                je      loc_990                 ; Jump if equal
-273F:4DB9  39 44 54                             cmp     [si+HS_DEST_X], ax
+273F:4DB9  39 44 54                             cmp     [si+DECODED_PATHS_WIDTH*2], ax
 273F:4DBC  74 70                                je      loc_998                 ; Jump if equal
 273F:4DBE  EB 4A                                jmp     short loc_996           ; (4E0A)
 273F:4DC0                       loc_990:                                        ;  xref 273F:4DAD, 4DB7
@@ -11916,9 +11959,9 @@ TEMP_DEST_X2 equ  10h
 273F:4DC3  F6 C2 02                             test    dl,2
 273F:4DC6  75 10                                jnz     loc_991                 ; Jump if not zero
 273F:4DC8  80 C6 01                             add     dh,1
-273F:4DCB  C7 47 FE 0002                        mov     word ptr [bx-2],2
-273F:4DD0  C7 47 FC 0000                        mov     word ptr [bx-4],0
-273F:4DD5  83 EB 04                             sub     bx,4
+273F:4DCB  C7 47 FE 0002                        mov     word ptr [bx-2], FACING2_RIGHT
+273F:4DD0  C7 47 FC 0000                        mov     word ptr [bx-4], 0
+273F:4DD5  83 EB 04                             sub     bx, 4
 273F:4DD8                       loc_991:                                        ;  xref 273F:4DC6
 273F:4DD8  83 EE 02                             sub     si,2
 273F:4DDB  83 07 08                             add     word ptr [bx],8
@@ -11931,13 +11974,13 @@ TEMP_DEST_X2 equ  10h
 273F:4DE8  F6 C2 04                             test    dl,4
 273F:4DEB  75 10                                jnz     loc_994                 ; Jump if not zero
 273F:4DED  80 C6 01                             add     dh,1
-273F:4DF0  C7 47 FE 0001                        mov     word ptr [bx-2],1
-273F:4DF5  C7 47 FC 0000                        mov     word ptr [bx-4],0
-273F:4DFA  83 EB 04                             sub     bx,4
+273F:4DF0  C7 47 FE 0001                        mov     word ptr [bx-2], FACING2_LEFT
+273F:4DF5  C7 47 FC 0000                        mov     word ptr [bx-4], 0
+273F:4DFA  83 EB 04                             sub     bx, 4
 273F:4DFD                       loc_994:                                        ;  xref 273F:4DEB
-273F:4DFD  83 C6 02                             add     si,2
-273F:4E00  83 07 08                             add     word ptr [bx],8
-273F:4E03  80 CA 04                             or      dl,4
+273F:4DFD  83 C6 02                             add     si, 2
+273F:4E00  83 07 08                             add     word ptr [bx], 8        ; Add # steps
+273F:4E03  80 CA 04                             or      dl, 4
 273F:4E06  EB 8A                                jmp     short loc_988           ; (4D92)
 273F:4E08                       loc_995:                                        ;  xref 273F:4DA6
 273F:4E08  EB 24                                jmp     short loc_998           ; (4E2E)
@@ -11946,52 +11989,58 @@ TEMP_DEST_X2 equ  10h
 273F:4E0D  F6 C2 08                             test    dl,8
 273F:4E10  75 10                                jnz     loc_997                 ; Jump if not zero
 273F:4E12  80 C6 01                             add     dh,1
-273F:4E15  C7 47 FE 0008                        mov     word ptr [bx-2],8
-273F:4E1A  C7 47 FC 0000                        mov     word ptr [bx-4],0
-273F:4E1F  83 EB 04                             sub     bx,4
+273F:4E15  C7 47 FE 0008                        mov     word ptr [bx-2], FACING2_DOWN
+273F:4E1A  C7 47 FC 0000                        mov     word ptr [bx-4], 0
+273F:4E1F  83 EB 04                             sub     bx, 4
 273F:4E22                       loc_997:                                        ;  xref 273F:4E10
-273F:4E22  83 EE 54                             sub     si,54h
-273F:4E25  83 07 08                             add     word ptr [bx],8
-273F:4E28  80 CA 08                             or      dl,8
+273F:4E22  83 EE 54                             sub     si, DECODED_PATHS_WIDTH*2
+273F:4E25  83 07 08                             add     word ptr [bx], 8        ; Add # steps
+273F:4E28  80 CA 08                             or      dl, 8
 273F:4E2B  E9 FF64                              jmp     loc_988                 ; (4D92)
 273F:4E2E                       loc_998:                                        ;  xref 273F:4DBC, 4E08
 273F:4E2E  80 E2 11                             and     dl,11h
 273F:4E31  F6 C2 10                             test    dl,10h
 273F:4E34  75 10                                jnz     loc_999                 ; Jump if not zero
 273F:4E36  80 C6 01                             add     dh,1
-273F:4E39  C7 47 FE 0004                        mov     word ptr [bx-2],4
-273F:4E3E  C7 47 FC 0000                        mov     word ptr [bx-4],0
-273F:4E43  83 EB 04                             sub     bx,4
+273F:4E39  C7 47 FE 0004                        mov     word ptr [bx-2], FACING2_UP
+273F:4E3E  C7 47 FC 0000                        mov     word ptr [bx-4], 0
+273F:4E43  83 EB 04                             sub     bx, 4
 273F:4E46                       loc_999:                                        ;  xref 273F:4E34
-273F:4E46  83 C6 54                             add     si,54h
-273F:4E49  83 07 08                             add     word ptr [bx],8
-273F:4E4C  80 CA 10                             or      dl,10h
+273F:4E46  83 C6 54                             add     si, DECODED_PATHS_WIDTH*2
+273F:4E49  83 07 08                             add     word ptr [bx], 8        ; Add # steps
+273F:4E4C  80 CA 10                             or      dl, 10h
 273F:4E4F  E9 FF40                              jmp     loc_988                 ; (4D92)
-273F:4E52                       loc_1000:                                       ;  xref 273F:4DE3
-273F:4E52  F6 C2 01                             test    dl,1
-273F:4E55  75 1B                                jnz     loc_1002                ; Jump if not zero
-273F:4E57  F6 C1 80                             test    cl,80h
+
+; This post-check is used to go through the paths two times - the first two
+; tries the path using standard direction checks, the second using the alternate
+; checks. If the first run through was the shortest, redo the process a third
+; time to get the walking sequence that was obtained the first time
+273F:4E52                       loc_1000:
+273F:4E52  F6 C2 01                             test    dl, 1                   ; Test for exit flag
+273F:4E55  75 1B                                jnz     loc_1002                ; Jump if yes
+273F:4E57  F6 C1 80                             test    cl, 80h
 273F:4E5A  74 0B                                jz      loc_1001                ; Jump if zero
 273F:4E5C  5E                                   pop     si
 273F:4E5D  5B                                   pop     bx
-273F:4E5E  8A CE                                mov     cl,dh
-273F:4E60  32 F6                                xor     dh,dh                   ; Zero register
-273F:4E62  B2 20                                mov     dl,20h                  ; ' '
-273F:4E64  E9 FF29                              jmp     loc_987                 ; (4D90)
-273F:4E67                       loc_1001:                                       ;  xref 273F:4E5A
-273F:4E67  3A CE                                cmp     cl,dh
+273F:4E5E  8A CE                                mov     cl, dh                  ; Store number of steps
+273F:4E60  32 F6                                xor     dh, dh                  ; Reset counter
+273F:4E62  B2 20                                mov     dl, 20h                 ; Flag for alt direction check
+273F:4E64  E9 FF29                              jmp     loc_987                 ; Go get directions again
+273F:4E67                       loc_1001:
+273F:4E67  3A CE                                cmp     cl, dh
 273F:4E69  73 07                                jae     loc_1002                ; Jump if above or =
 273F:4E6B  5E                                   pop     si
 273F:4E6C  5B                                   pop     bx
-273F:4E6D  B2 01                                mov     dl,1
-273F:4E6F  E9 FF1E                              jmp     loc_987                 ; (4D90)
-273F:4E72                       loc_1002:                                       ;  xref 273F:4E55, 4E69
+273F:4E6D  B2 01                                mov     dl, 1                   ; Flag for exit after retry
+273F:4E6F  E9 FF1E                              jmp     loc_987
+
+273F:4E72                       loc_1002:
 273F:4E72  5E                                   pop     si
 273F:4E73  58                                   pop     ax
 
 273F:4E74                       loc_1003:
 273F:4E74  FC                                   cld                             ; Clear direction
-273F:4E75  8B 45 0C                             mov     ax, [di+TEMP_X]
+273F:4E75  8B 45 0C                             mov     ax, [di+PATHFIND_X]
 273F:4E78  A9 FFFF                              test    ax, 0FFFFh              ; Check X position
 273F:4E7B  74 19                                jz      loc_1006
 273F:4E7D  78 0A                                js      loc_1004                ; Move
@@ -12007,9 +12056,9 @@ TEMP_DEST_X2 equ  10h
 273F:4E96                       loc_1006:                                       ; End of pathfinding
 273F:4E96  C7 05 0000                           mov     word ptr [di], 0
 273F:4E9A  8B 26 3942                           mov     sp, pathfind_sp
-273F:4E9E  C6 06 3946 00                        mov     pathfind_in_progress, 0
-273F:4EA3  B8 0001                              mov     ax, 1
-273F:4EA6  02 45 05                             add     al, [di+5]
+273F:4E9E  C6 06 3946 00                        mov     pathfind_in_progress, 0 ; Reset in-progress flag
+273F:4EA3  B8 0001                              mov     ax, 1                   ; Set return value
+273F:4EA6  02 45 05                             add     al, [di+PATHFIND_DEST_STATE]
 273F:4EA9  50                                   push    ax
 273F:4EAA  53                                   push    bx
 273F:4EAB  06                                   push    es
@@ -12026,53 +12075,58 @@ TEMP_DEST_X2 equ  10h
                                 ;         Called from:   273F:4C93
                                 ;ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 
-273F:4EB0                       sub_120         proc    near
-273F:4EB0  F7 07 FFFF                           test    word ptr [bx],0FFFFh
-273F:4EB4  75 48                                jnz     loc_1013                ; Jump if not zero
-273F:4EB6  BD FFFF                              mov     bp,0FFFFh
-273F:4EB9  8B 47 AC                             mov     ax,[bx-54h]
-273F:4EBC  0B C0                                or      ax,ax                   ; Zero ?
-273F:4EBE  74 06                                jz      loc_1007                ; Jump if zero
-273F:4EC0  3B C5                                cmp     ax,bp
-273F:4EC2  73 02                                jae     loc_1007                ; Jump if above or =
-273F:4EC4  8B E8                                mov     bp,ax
-273F:4EC6                       loc_1007:                                       ;  xref 273F:4EBE, 4EC2
-273F:4EC6  8B 47 54                             mov     ax,[bx+HS_DEST_X]
-273F:4EC9  0B C0                                or      ax,ax                   ; Zero ?
-273F:4ECB  74 06                                jz      loc_1008                ; Jump if zero
-273F:4ECD  3B C5                                cmp     ax,bp
-273F:4ECF  73 02                                jae     loc_1008                ; Jump if above or =
-273F:4ED1  8B E8                                mov     bp,ax
-273F:4ED3                       loc_1008:                                       ;  xref 273F:4ECB, 4ECF
-273F:4ED3  8B 47 FE                             mov     ax,[bx-2]
-273F:4ED6  0B C0                                or      ax,ax                   ; Zero ?
-273F:4ED8  74 06                                jz      loc_1009                ; Jump if zero
-273F:4EDA  3B C5                                cmp     ax,bp
-273F:4EDC  73 02                                jae     loc_1009                ; Jump if above or =
-273F:4EDE  8B E8                                mov     bp,ax
-273F:4EE0                       loc_1009:                                       ;  xref 273F:4ED8, 4EDC
-273F:4EE0  8B 47 02                             mov     ax,[bx+2]
-273F:4EE3  0B C0                                or      ax,ax                   ; Zero ?
-273F:4EE5  74 06                                jz      loc_1010                ; Jump if zero
-273F:4EE7  3B C5                                cmp     ax,bp
-273F:4EE9  73 02                                jae     loc_1010                ; Jump if above or =
-273F:4EEB  8B E8                                mov     bp,ax
-273F:4EED                       loc_1010:                                       ;  xref 273F:4EE5, 4EE9
-273F:4EED  83 C5 01                             add     bp,1
-273F:4EF0  74 06                                jz      loc_1011                ; Jump if zero
-273F:4EF2  89 2F                                mov     [bx],bp
-273F:4EF4  C6 45 13 01                          mov     byte ptr [di+13h],1
+                     pathfind_populate_cells    proc    near
+273F:4EB0  F7 07 FFFF                           test    word ptr [bx], 0FFFFh   ; Is cell occupied?
+273F:4EB4  75 48                                jnz     loc_1013                ; Jump if it is
+273F:4EB6  BD FFFF                              mov     bp, 0FFFFh
+273F:4EB9  8B 47 AC                             mov     ax, [bx-(DECODED_PATHS_WIDTH*2)] ; Get cell from one line up
+273F:4EBC  0B C0                                or      ax, ax                  ; Is it occupied
+273F:4EBE  74 06                                jz      loc_1007                ; Jump if not
+273F:4EC0  3B C5                                cmp     ax, bp                  ; Is it standard occupied indicator?
+273F:4EC2  73 02                                jae     loc_1007
+273F:4EC4  8B E8                                mov     bp,ax                   ; Store loaded cell value
+273F:4EC6                       loc_1007:
+273F:4EC6  8B 47 54                             mov     ax, [bx+(DECODED_PATHS_WIDTH*2)] ; Get cell from next line
+273F:4EC9  0B C0                                or      ax, ax                  ; Is it occupied?
+273F:4ECB  74 06                                jz      loc_1008                ; Jump if not
+273F:4ECD  3B C5                                cmp     ax, bp
+273F:4ECF  73 02                                jae     loc_1008
+273F:4ED1  8B E8                                mov     bp, ax                  ; Store loaded cell value
+273F:4ED3                       loc_1008:
+273F:4ED3  8B 47 FE                             mov     ax, [bx-2]              ; Get cell from left
+273F:4ED6  0B C0                                or      ax, ax                  ; Is it occupied?
+273F:4ED8  74 06                                jz      loc_1009                ; Jump if not
+273F:4EDA  3B C5                                cmp     ax, bp
+273F:4EDC  73 02                                jae     loc_1009                ; Store loaded cell value
+273F:4EDE  8B E8                                mov     bp, ax
+273F:4EE0                       loc_1009:
+273F:4EE0  8B 47 02                             mov     ax, [bx+2]              ; Get cell from right
+273F:4EE3  0B C0                                or      ax, ax                  ; Is it occupied?
+273F:4EE5  74 06                                jz      loc_1010                ; Jump if not
+273F:4EE7  3B C5                                cmp     ax, bp
+273F:4EE9  73 02                                jae     loc_1010
+273F:4EEB  8B E8                                mov     bp, ax                  ; Store loaded cell value
+273F:4EED                       loc_1010:
+
+; At this point, bp contains the lowest value from the surrounding cells, not
+; counting entries with 0ffff (occupied). Below we will now add 1 to the value
+; and store it in the cell. By repeated calls processing the entire grid, we
+; can figure out a path to the destination by following sequential numbers
+273F:4EED  83 C5 01                             add     bp, 1
+273F:4EF0  74 06                                jz      loc_1011                ; If no vals found, skip save
+273F:4EF2  89 2F                                mov     [bx], bp                ; Store value
+273F:4EF4  C6 45 13 01                          mov     byte ptr [di+PATHFIND_CELL_POPULATED], 1
 273F:4EF8                       loc_1011:                                       ;  xref 273F:4EF0
-273F:4EF8  83 EE 03                             sub     si,3
-273F:4EFB  72 06                                jc      loc_1014                ; Jump if carry Set
+273F:4EF8  83 EE 03                             sub     si, 3                   ; Decrement countdown ctr
+273F:4EFB  72 06                                jc      loc_1014                ; Break if countdown ended
 
 273F:4EFD                       loc_ret_1012:                                   ;  xref 273F:4F01
 273F:4EFD  C3                                   retn
 273F:4EFE                       loc_1013:                                       ;  xref 273F:4EB4
-273F:4EFE  83 EE 01                             sub     si,1
-273F:4F01  73 FA                                jnc     loc_ret_1012            ; Jump if carry=0
-273F:4F03                       loc_1014:                                       ;  xref 273F:4EFB
-273F:4F03  89 36 3944                           mov     pathfind_v2, si
+273F:4EFE  83 EE 01                             sub     si, 1                   ; Decrement countdown ctr
+273F:4F01  73 FA                                jnc     loc_ret_1012            ; Don't break if countdown not ended
+273F:4F03                       loc_1014:                                       
+273F:4F03  89 36 3944                           mov     pathfind_countdown_ctr, si
 273F:4F07  50                                   push    ax
 273F:4F08  53                                   push    bx
 273F:4F09  51                                   push    cx
@@ -12084,7 +12138,7 @@ TEMP_DEST_X2 equ  10h
 273F:4F0F  06                                   push    es
 273F:4F10  9C                                   pushf
 273F:4F11  E8 0034                              call    pathfind_return_to_sp
-273F:4F14  9D                                   popf                         
+273F:4F14  9D                                   popf
 273F:4F15  07                                   pop     es
 273F:4F16  1F                                   pop     ds
 273F:4F17  5D                                   pop     bp
@@ -12094,9 +12148,9 @@ TEMP_DEST_X2 equ  10h
 273F:4F1B  59                                   pop     cx
 273F:4F1C  5B                                   pop     bx
 273F:4F1D  58                                   pop     ax
-273F:4F1E  8B 36 3944                           mov     si, pathfind_v2
+273F:4F1E  8B 36 3944                           mov     si, pathfind_countdown_ctr
 273F:4F22  C3                                   retn
-                                sub_120         endp
+                     pathfind_populate_cells    endp
 
 
                                 ;ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
@@ -12105,25 +12159,25 @@ TEMP_DEST_X2 equ  10h
                                 ;         Called from:   273F:4D00, 4D0E, 4D1C, 4D2A
                                 ;ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 
-273F:4F23                       sub_121         proc    near
-273F:4F23  8B F5                                mov     si,bp
-273F:4F25  32 F6                                xor     dh,dh                   ; Zero register
+                         pathfind_scan_line     proc    near
+273F:4F23  8B F5                                mov     si, bp
+273F:4F25  32 F6                                xor     dh, dh
 
 273F:4F27                       locloop_1015:                                   ;  xref 273F:4F45
-273F:4F27  03 F7                                add     si,di
+273F:4F27  03 F7                                add     si, di                  ; Add increment amount
 273F:4F29  80 C6 01                             add     dh,1
-273F:4F2C  F7 04 FFFF                           test    word ptr [si],0FFFFh
-273F:4F30  74 13                                jz      loc_1018                ; Jump if zero
-273F:4F32  78 11                                js      loc_1018                ; Jump if sign=1
-273F:4F34  3A D6                                cmp     dl,dh
-273F:4F36  72 0C                                jb      loc_ret_1017            ; Jump if below
-273F:4F38  75 06                                jnz     loc_1016                ; Jump if not zero
-273F:4F3A  8B 04                                mov     ax,[si]
-273F:4F3C  3B 07                                cmp     ax,[bx]
+273F:4F2C  F7 04 FFFF                           test    word ptr [si], 0FFFFh   ; Check cell
+273F:4F30  74 13                                jz      loc_1018                ; Skip if empty (unpopulated)
+273F:4F32  78 11                                js      loc_1018                ; Or if occupied
+273F:4F34  3A D6                                cmp     dl, dh                  ; Check ctr against max
+273F:4F36  72 0C                                jb      loc_ret_1017            ; Exit if below
+273F:4F38  75 06                                jnz     loc_1016                ; Jump if not equal
+273F:4F3A  8B 04                                mov     ax, [si]
+273F:4F3C  3B 07                                cmp     ax, [bx]
 273F:4F3E  73 04                                jae     loc_ret_1017            ; Jump if above or =
 273F:4F40                       loc_1016:                                       ;  xref 273F:4F38
 273F:4F40  8B DE                                mov     bx,si
-273F:4F42  8A D6                                mov     dl,dh
+273F:4F42  8A D6                                mov     dl, dh
 
 273F:4F44                       loc_ret_1017:                                   ;  xref 273F:4F36, 4F3E
 273F:4F44  C3                                   retn
@@ -12131,7 +12185,7 @@ TEMP_DEST_X2 equ  10h
 273F:4F45  E2 E0                                loop    locloop_1015            ; Loop if cx > 0
 
 273F:4F47  C3                                   retn
-                                sub_121         endp
+                         pathfind_scan_line     endp
 
 
                                 ;ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
@@ -26305,7 +26359,7 @@ TEMP_DEST_X2 equ  10h
 31E4:38B4  008D[00]                             db      140 dup (0)
 31E4:3940  0000         pathfind_buffer_end     dw      0
 31E4:3942  0000                 pathfind_sp     dw      0
-31E4:3944  0000                 pathfind_v2     dw      0
+31E4:3944  0000      pathfind_countdown_ctr     dw      0
 31E4:3946  0000        pathfind_in_progress     db      0
 31E4:3947  003C[00]                             db      60 dup (0)
 31E4:3983  000A[00]    player_pathfind_data     dw      5 dup (0)

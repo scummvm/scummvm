@@ -349,6 +349,26 @@ pathfind_get_cell - Returns the byte and bit index for the given animation's
              cx = Number of bits covering the width of the animation
              ZF = If set, animation is not onscreen
 
+pathfind_populate_cells - Helper method used by character_pathfind to populate
+              a decompressed array indicating which areas of a room are walkable
+              with incrementing numbers emnating from the destination. This is
+              later used to figure out a walkable path by going from cell to
+              cell in order of decrementing index to get from source to dest
+
+pathfind_scan_line - Support method for the character_pathfind, and is used to
+              scan in a given direction
+     Input:  bp = Starting position
+             bx = Destination position
+             cx = Number of loops
+             di = Change amount for each loop
+             dl = max value for comparison
+     Output: bx = New destination position
+             dl = New maximum
+
+pathfind_return_to_sp - Creates a breaking point during processing of the
+             character_pathfind method such that the next time character_pathfind
+             is called, it will pick up after the call to pathfind_return_to_sp 
+
 pause_for_input - Waits until either a key or a mouse button is pressed
 
 player_inc_inventory_items - Checks if the specified hotspot is the player,
@@ -808,6 +828,10 @@ The format of hotspots are as follows:
            49h     1    Flags whether the hotspot has currently got the cells
                         of the pathfinding (walkable areas) layer that it's
                         base occupies as covered
+           4Ch     1    Only known use so far is in character pathfinding, where
+                        if 0, introduces a jz $+2 delay at one point, that is not
+                        even inside of a loop. This flag may thus be an artefact
+                        of early code that was no longer used in the final build
            50h     2    Character direction: 80h=up, 40h=down, 20h=left, 10h=right
            52h     2    Hotspot Id for selected hotspot
            54h     2    X ending position for character + 80h - 10h
