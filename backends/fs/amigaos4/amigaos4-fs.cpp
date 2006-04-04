@@ -306,7 +306,7 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 	if (_pFileLock == 0) {
 		//debug(6, "Root node\n");
 		LEAVE();
-		return return new AmigaOSFilesystemNode(*this);
+		return new AmigaOSFilesystemNode(*this);
 	}
 
 	BPTR parentDir = IDOS->ParentDir( _pFileLock );
