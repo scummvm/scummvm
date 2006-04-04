@@ -1243,7 +1243,6 @@ static GameDescription gameDescriptions[] = {
 
 DetectedGame GameDescription::toDetectedGame() {
 	const char *title;
-	printf("gameType is %d\n", gameType);
 	title = simonGames[gameType].description;
 	DetectedGame dg(name, title, language, platform);
 	dg.updateDesc(extra);
