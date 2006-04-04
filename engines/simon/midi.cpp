@@ -485,7 +485,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 			in->read(&buf[2], 2);
 		}
 		if (memcmp(buf, "CAT ", 4)) {
-			warning("Could not find 'CAT ' tag to determine resource size!");
+			warning("Could not find 'CAT ' tag to determine resource size");
 			return;
 		}
 		size += 4 + in->readUint32BE();
@@ -493,7 +493,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 		p->data = (byte *) calloc(size, 1);
 		in->read(p->data, size);
 	} else {
-		warning("Expected 'FORM' tag but found '%c%c%c%c' instead!", buf[0], buf[1], buf[2], buf[3]);
+		warning("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 		return;
 	}
 
@@ -501,7 +501,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 	parser->setMidiDriver(this);
 	parser->setTimerRate(_driver->getBaseTempo());
 	if (!parser->loadMusic(p->data, size)) {
-		warning("Error reading track!");
+		warning("Error reading track");
 		delete parser;
 		parser = 0;
 	}
@@ -531,7 +531,7 @@ void MidiPlayer::loadS1D (Common::File *in, bool sfx) {
 	parser->setMidiDriver(this);
 	parser->setTimerRate(_driver->getBaseTempo());
 	if (!parser->loadMusic(p->data, size)) {
-		warning("Error reading track!");
+		warning("Error reading track");
 		delete parser;
 		parser = 0;
 	}

@@ -65,11 +65,11 @@ void KyraEngine::loadGame(const char *fileName) {
 	if (version >= 2) {
 		uint32 gameFlags = in->readUint32BE();
 		if ((gameFlags & GF_FLOPPY) && !(_features & GF_FLOPPY)) {
-			warning("can not load floppy savefile for this (non floppy) gameversion!");
+			warning("can not load floppy savefile for this (non floppy) gameversion");
 			delete in;
 			return;
 		} else if ((gameFlags & GF_TALKIE) && !(_features & GF_TALKIE)) {
-			warning("can not load cdrom savefile for this (non cdrom) gameversion!");
+			warning("can not load cdrom savefile for this (non cdrom) gameversion");
 			delete in;
 			return;
 		}

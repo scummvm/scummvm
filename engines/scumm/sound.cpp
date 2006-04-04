@@ -616,11 +616,11 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 													sizeof(MP3OffsetTable), compareMP3OffsetTable);
 
 			if (result == NULL) {
-				warning("startTalkSound: did not find sound at offset %d !", offset);
+				warning("startTalkSound: did not find sound at offset %d", offset);
 				return;
 			}
 			if (2 * num != result->num_tags) {
-				warning("startTalkSound: number of tags do not match (%d - %d) !", b,
+				warning("startTalkSound: number of tags do not match (%d - %d)", b,
 								result->num_tags);
 				num = result->num_tags;
 			}

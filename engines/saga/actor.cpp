@@ -1139,7 +1139,7 @@ void Actor::handleSpeech(int msec) {
 		if (_activeSpeech.slowModeCharIndex >= stringLength)
 			error("Wrong string index");
 
-		warning("Slow string encountered!");
+		warning("Slow string encountered");
 		_activeSpeech.playingTime = stringLength * 1000 / 4;
 
 	} else {

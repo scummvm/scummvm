@@ -1078,7 +1078,7 @@ bool Inter_v1::o1_strToLong(char &cmdCount, int16 &counter, int16 &retFlag) {
 }
 
 bool Inter_v1::o1_invalidate(char &cmdCount, int16 &counter, int16 &retFlag) {
-	warning("invalidate: 'bugged' function!");
+	warning("invalidate: 'bugged' function");
 	_vm->_draw->_destSurface = load16();
 	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
 	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();

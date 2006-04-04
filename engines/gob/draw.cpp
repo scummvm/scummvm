@@ -859,7 +859,7 @@ void Draw::printText(void) {
 
 	_renderFlags = savedFlags;
 	if (_renderFlags & 4) {
-		warning("printText: Input not supported!");
+		warning("printText: Input not supported");
 //              xor     ax, ax
 //              loc_436_1391:
 //              xor     dx, dx

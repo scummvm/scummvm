@@ -220,7 +220,7 @@ void Mult_v2::loadMult(int16 resId) {
 			}
 			if (i == j) {
 				warning("GOB2 Stub! Mult_Data.sndSlot");
-				warning("GOB2 Stub! Game::interLoadSound() differs!");
+				warning("GOB2 Stub! Game::interLoadSound() differs");
 				_multData2->sndSlot[_multData2->sndSlotsCount] = _vm->_inter->loadSound(1);
 				_vm->_inter->loadSound(1);
 				// _multData2->sndKeys[i].soundIndex = _multData2->sndSlot[_multData2->sndSlotsCount] & 0x7FFF;

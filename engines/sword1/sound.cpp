@@ -181,7 +181,7 @@ void Sound::playSample(QueueElement *elem) {
 
 bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 	if (_cowHeader == NULL) {
-		warning("Sound::startSpeech: COW file isn't open!");
+		warning("Sound::startSpeech: COW file isn't open");
 		return false;
 	}
 

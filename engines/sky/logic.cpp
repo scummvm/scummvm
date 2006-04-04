@@ -1551,7 +1551,7 @@ bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	}
 	uint16 *getToTable = (uint16*)_skyCompact->fetchCpt(cpt->getToTableId);
 	if (!getToTable) {
-		warning("Place compact's getToTable is NULL!");
+		warning("Place compact's getToTable is NULL");
 		return false;
 	}
 

@@ -343,7 +343,7 @@ void *gp_calloc(size_t nitems, size_t size) {
 	gp_memset(p, 0, nitems * size);
 
 //	if (*(uint8 *)p != 0)
-//		warning("%s: calloc doesn't clear!", __FUNCTION__);	//fixme: was error
+//		warning("%s: calloc doesn't clear", __FUNCTION__);	//fixme: was error
 
 	return p;
 }
@@ -359,12 +359,12 @@ void gp_free(void *block) {
 	np = ((uint32) block) - sizeof(uint32);
 	up = (uint32 *) np;
 	if (*up == 0x4321) {
-		warning("%s: double deallocation!", __FUNCTION__);
+		warning("%s: double deallocation", __FUNCTION__);
 		return;
 	}
 
 	if (*up != 0x1234) {
-		warning("%s: corrupt block!", __FUNCTION__);
+		warning("%s: corrupt block", __FUNCTION__);
 		return;
 	}
 	*up = 0x4321;

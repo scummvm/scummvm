@@ -41,7 +41,7 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 
 void Util::addKeyToBuffer(int16 key) {
 	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
-		warning("key buffer overflow!");
+		warning("key buffer overflow");
 		return;
 	}
 
@@ -395,7 +395,7 @@ void Util::listInsertBack(List * list, void *data) {
 	if (list->pHead != 0) {
 		if (list->pTail == 0) {
 			list->pTail = list->pHead;
-			warning("listInsertBack: Broken list!");
+			warning("listInsertBack: Broken list");
 		}
 
 		node = new ListNode;

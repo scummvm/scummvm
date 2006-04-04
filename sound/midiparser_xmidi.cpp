@@ -175,7 +175,7 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 
 				// Must be at least 2 bytes long
 				if (chunk_len < 2) {
-					warning("Invalid chunk length %d for 'INFO' block!", (int)chunk_len);
+					warning("Invalid chunk length %d for 'INFO' block", (int)chunk_len);
 					return false;
 				}
 

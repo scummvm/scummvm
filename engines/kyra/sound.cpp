@@ -241,7 +241,7 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 	assert(_parser);
 
 	if (!_parser->loadMusic(data, size)) {
-		warning("Error reading track!");
+		warning("Error reading track");
 		delete _parser;
 		_parser = 0;
 		return;
@@ -276,7 +276,7 @@ void SoundMidiPC::loadSoundEffectFile(uint8 *data, uint32 size) {
 	assert(_soundEffect);
 
 	if (!_soundEffect->loadMusic(data, size)) {
-		warning("Error reading track!");
+		warning("Error reading track");
 		delete _parser;
 		_parser = 0;
 		return;

@@ -643,7 +643,7 @@ int KyraEngine::getNextSavegameSlot() {
 			return i;
 		}
 	}
-	warning("Didn't save: Ran out of savegame filenames!");
+	warning("Didn't save: Ran out of savegame filenames");
 	return 0;
 }
 
