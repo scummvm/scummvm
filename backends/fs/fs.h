@@ -60,11 +60,10 @@ class FilesystemNode;
 
 /**
  * List of multiple file system nodes. E.g. the contents of a given directory.
+ * This is subclass instead of just a typedef so that we can use forward
+ * declarations of it in other places.
  */
-class FSList : public Common::Array<FilesystemNode> {
-public:
-	void sort();
-};
+class FSList : public Common::Array<FilesystemNode> {};
 
 
 /**

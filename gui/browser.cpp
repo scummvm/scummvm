@@ -27,6 +27,7 @@
 #include "backends/fs/fs.h"
 
 #include "common/system.h"
+#include "common/func.h"
 
 namespace GUI {
 
@@ -225,7 +226,7 @@ void BrowserDialog::updateListing() {
 		_nodeContent = _node.listDir(AbstractFilesystemNode::kListDirectoriesOnly);
 	else
 		_nodeContent = _node.listDir(AbstractFilesystemNode::kListAll);
-	_nodeContent.sort();
+	Common::sort(_nodeContent.begin(), _nodeContent.end());
 
 	// Populate the ListWidget
 	Common::StringList list;

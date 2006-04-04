@@ -24,21 +24,6 @@
 #include "backends/fs/fs.h"
 #include "common/util.h"
 
-void FSList::sort() {
-	// Simple selection sort
-	for (iterator i = begin(); i != end(); ++i) {
-		iterator m(i);
-		iterator j(i);
-		++j;
-		for (; j != end(); ++j)
-			if (*j < *m)
-				m = j;
-		if (m != i)
-			SWAP(*m, *i);
-	}
-}
-
-
 FilesystemNode AbstractFilesystemNode::wrap(AbstractFilesystemNode *node) {
 	FilesystemNode wrapper(node);
 	return wrapper;

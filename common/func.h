@@ -62,6 +62,28 @@ GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned long);
 #undef GENERATE_TRIVIAL_HASH_FUNCTOR
 
 
+// Simple sort function, modelled after std::sort.
+// Use it like this:  sort(container.begin(), container.end()).
+// Also work on plain old int arrays etc.
+template <typename T>
+void sort(T first, T last) {
+	if (first == last)
+		return;
+
+	// Simple selection sort
+	T i(first);
+	for (; i != last; ++i) {
+		T min(i);
+		T j(i);
+		++j;
+		for (; j != last; ++j)
+			if (*j < *min)
+				min = j;
+		if (min != i)
+			SWAP(*min, *i);
+	}
+}
+
 
 }	// End of namespace Common
 
