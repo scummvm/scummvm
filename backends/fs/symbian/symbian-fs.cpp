@@ -58,12 +58,12 @@ public:
 static const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
-	
+
 	while (cur > start && *cur != '\\') {
 		--cur;
 	}
-	
-	return cur+1;
+
+	return cur + 1;
 }
 
 AbstractFilesystemNode *FilesystemNode::getRoot() {
@@ -88,6 +88,9 @@ SymbianFilesystemNode::SymbianFilesystemNode(const String &path) {
 		_isPseudoRoot = true;
 	_path = path;
 	const char *dsplName = NULL, *pos = path.c_str();
+	// FIXME -- why is this code scanning for a slash '/' when the rest of
+	// the code in this file uses backslashes '\' ?
+	// TODO: Use lastPathComponent here.
 	while (*pos)
 		if (*pos++ == '/')
 			dsplName = pos;
