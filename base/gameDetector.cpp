@@ -34,10 +34,6 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#if defined(HAVE_CONFIG_H)
-#include "config.h"
-#endif
-
 #ifdef UNIX
 #include <errno.h>
 #include <sys/stat.h>

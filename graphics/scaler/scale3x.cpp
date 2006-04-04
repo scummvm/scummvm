@@ -32,13 +32,11 @@
  * - derivative works of the program are allowed.
  */
 
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 
 #include "graphics/scaler/intern.h"
-
-#include "scale3x.h"
+#include "graphics/scaler/scale3x.h"
 
 #include <assert.h>
 

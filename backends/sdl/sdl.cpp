@@ -26,10 +26,6 @@
 #include "common/util.h"
 #include "base/main.h"
 
-#if defined(HAVE_CONFIG_H)
-#include "config.h"
-#endif
-
 #include "scummvm.xpm"
 
 #if defined(__amigaos4__)

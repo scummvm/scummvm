@@ -33,14 +33,12 @@
  * - derivative works of the program are allowed.
  */
 
-#if defined(HAVE_CONFIG_H)
-#include <config.h>
-#endif
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 
 #include "graphics/scaler/intern.h"
-
-#include "scale2x.h"
-#include "scale3x.h"
+#include "graphics/scaler/scale2x.h"
+#include "graphics/scaler/scale3x.h"
 
 #if defined(HAVE_ALLOCA_H)
 #include <alloca.h>

@@ -19,9 +19,8 @@
  * $Id$
  */
 
-#if defined(HAVE_CONFIG_H)
-#include "config.h"
-#endif
+#include "common/stdafx.h"
+#include "common/scummsys.h"
 
 #ifdef USE_FLUIDSYNTH
 
