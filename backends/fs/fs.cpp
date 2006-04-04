@@ -26,13 +26,15 @@
 
 void FSList::sort() {
 	// Simple selection sort
-	for (int i = 0; i < _size-1; i++) {
-		int min = i;
-		for (int j = i+1; j < _size; j++)
-			if (_data[j] < _data[min])
+	for (iterator i = begin(); i != end(); ++i) {
+		iterator min(i);
+		iterator j(i);
+		++j;
+		for (; j != end(); ++j)
+			if (*j < *min)
 				min = j;
 		if (min != i)
-			SWAP(_data[min], _data[i]);
+			SWAP(*min, *i);
 	}
 }
 
