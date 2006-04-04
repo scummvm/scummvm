@@ -98,6 +98,10 @@ uint nextTableSize(uint x);
 template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
 private:
+#if defined (_WIN32_WCE) || defined (_MSC_VER) || defined (__SYMBIAN32__)
+//FIXME evc4, msvc6,msvc7 & GCC 2.9x doesn't like it as private member
+public:
+#endif
 	// data structure used by HashMap internally to keep
 	// track of what's mapped to what.
 	struct BaseNode {
@@ -131,7 +135,7 @@ public:
 
 		const BaseNode *deref() const {
 			assert(_hashmap != 0);
-			BaseNode *node(_hashmap->_arr[_idx]);
+			BaseNode *node = _hashmap->_arr[_idx];
 			assert(node != 0);
 			return node;
 		}

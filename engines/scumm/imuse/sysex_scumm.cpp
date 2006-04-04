@@ -45,7 +45,8 @@ void sysexHandler_Scumm (Player *player, const byte *msg, uint16 len) {
 	IMuseInternal *se = player->_se;
 	const byte *p = msg;
 
-	switch (byte code = *p++) {
+	byte code = 0;
+	switch (code = *p++) {
 	case 0:
 		// Allocate new part.
 		// There are 17 bytes of useful information here.
