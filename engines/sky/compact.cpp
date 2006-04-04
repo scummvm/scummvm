@@ -428,7 +428,7 @@ uint16 SkyCompact::findCptId(void *cpt) {
 			if (_compacts[listCnt][elemCnt] == cpt)
 				return (listCnt << 12) | elemCnt;
 	// not found
-	debug(1, "Id for Compact %p wasn't found!", cpt);
+	debug(1, "Id for Compact %p wasn't found", cpt);
 	return 0;
 }
 
@@ -439,7 +439,7 @@ uint16 SkyCompact::findCptId(const char *cptName) {
 				if (scumm_stricmp(cptName, _cptNames[listCnt][elemCnt]) == 0)
 					return (listCnt << 12) | elemCnt;
 	// not found
-	debug(1, "Id for Compact %s wasn't found!", cptName);
+	debug(1, "Id for Compact %s wasn't found", cptName);
 	return 0;
 }
 

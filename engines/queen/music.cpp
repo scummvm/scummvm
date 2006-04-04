@@ -214,7 +214,7 @@ void MusicPlayer::queueTuneList(int16 tuneList) {
 
 void MusicPlayer::playMusic() {
 	if (!_songQueue[0]) {
-		debug(5, "MusicPlayer::playMusic - Music queue is empty!");
+		debug(5, "MusicPlayer::playMusic - Music queue is empty");
 		return;
 	}
 

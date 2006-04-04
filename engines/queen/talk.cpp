@@ -728,7 +728,7 @@ void Talk::defaultAnimation(
 						_vm->bankMan()->overpack(head, startFrame, bankNum);
 					}
 				} else {
-					debug(6, "[Talk::defaultAnimation] Body action!");
+					debug(6, "[Talk::defaultAnimation] Body action");
 					// Just do a body action
 					_vm->bankMan()->overpack(parameters->body, startFrame, bankNum);
 				}

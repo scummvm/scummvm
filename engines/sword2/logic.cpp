@@ -150,7 +150,7 @@ int Logic::processSession() {
 					// Note that this really does happen a
 					// lot, so don't make it a warning.
 
-					debug(5, "object %d script 0 terminated!", id);
+					debug(5, "object %d script 0 terminated", id);
 
 					// reset to rerun, drop out for a cycle
 					_curObjectHub.setScriptPc(level, _curObjectHub.getScriptId(level) & 0xffff);

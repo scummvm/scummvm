@@ -461,7 +461,7 @@ void Sprites::loadDAT(const char *filename, SceneExits &exits) {
 					data += 2;
 				}
 				_anims[nextAnim].length = data - animstart;
-				//debugC(1, kDebugLevelSprites, "Found an anim script of length %i!", _anims[nextAnim].length);
+				//debugC(1, kDebugLevelSprites, "Found an anim script of length %i", _anims[nextAnim].length);
 				nextAnim++;
 				data += 2;
 				break;

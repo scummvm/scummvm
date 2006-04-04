@@ -169,7 +169,7 @@ int Input::checkKeys() {
 	case KEY_ESCAPE: // slip cutaway / dialogue
 		if (_canQuit) {
 			if (_cutawayRunning) {
-				debug(6, "[Input::checkKeys] Setting _cutawayQuit to true!");
+				debug(6, "[Input::checkKeys] Setting _cutawayQuit to true");
 				_cutawayQuit = true;
 			}
 			if (_dialogueRunning)

@@ -207,7 +207,7 @@ static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *rep
 		debug(1, "MT32emu: 3DNow! is avaliable");
 		break;
 	case MT32Emu::ReportType_using3DNow:
-		debug(1, "MT32emu: using 3DNow!");
+		debug(1, "MT32emu: using 3DNow! ");
 		break;
 	default:
 		break;

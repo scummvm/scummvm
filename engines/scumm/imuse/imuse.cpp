@@ -79,7 +79,7 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 		ptr = _base_sounds[sound];
 
 	if (ptr == NULL) {
-		debug(1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist!", sound);
+		debug(1, "IMuseInternal::findStartOfSound(): Sound %d doesn't exist", sound);
 		return NULL;
 	}
 
@@ -103,7 +103,7 @@ byte *IMuseInternal::findStartOfSound(int sound) {
 		++pos; // We could probably iterate more intelligently
 	}
 
-	debug(3, "IMuseInternal::findStartOfSound(): Failed to align on sound %d!", sound);
+	debug(3, "IMuseInternal::findStartOfSound(): Failed to align on sound %d", sound);
 	return 0;
 }
 
@@ -578,7 +578,7 @@ bool IMuseInternal::startSound_internal (int sound) {
 
 	void *ptr = findStartOfSound(sound);
 	if (!ptr) {
-		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d!", sound);
+		debug(2, "IMuseInternal::startSound(): Couldn't find sound %d", sound);
 		return false;
 	}
 

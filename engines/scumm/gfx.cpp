@@ -2183,7 +2183,7 @@ void Gdi::decodeNESGfx(const byte *room) {
 	}
 	_NES.hasmask = true;
 	if (mask != 1)
-		debug(0,"NES room %i has irregular mask count %i!",_vm->_currentRoom,mask);
+		debug(0,"NES room %i has irregular mask count %i",_vm->_currentRoom,mask);
 	int mwidth = *mdata++;
 	for (i = 0; i < 16; i++) {
 		n = 0;

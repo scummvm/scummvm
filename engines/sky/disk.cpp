@@ -191,7 +191,7 @@ uint8 *Disk::getFileInfo(uint16 fileNr) {
 
 	for (i = 0; i < _dinnerTableEntries; i++) {
 		if (READ_LE_UINT16(dnrTbl16Ptr) == fileNr) {
-			debug(2, "file %d found!", fileNr);
+			debug(2, "file %d found", fileNr);
 			return (uint8 *)dnrTbl16Ptr;
 		}
 		dnrTbl16Ptr += 4;
