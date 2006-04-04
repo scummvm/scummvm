@@ -3115,7 +3115,10 @@ void SimonEngine::restoreWindow(FillOrCopyStruct *fcs) {
 			_restoreWindow6 = 0;
 		}
 
-		restoreBlock(fcs->y + fcs->height * 8, (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		if (getGameType() == GType_FF)
+			restoreBlock(fcs->y + fcs->height, fcs->x + fcs->width, fcs->y, fcs->x);
+		else
+			restoreBlock(fcs->y + fcs->height * 8, (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
 	}
 
 	_lockWord &= ~0x8000;
@@ -3123,16 +3126,24 @@ void SimonEngine::restoreWindow(FillOrCopyStruct *fcs) {
 
 void SimonEngine::colorWindow(FillOrCopyStruct *fcs) {
 	byte *dst;
-	uint h;
+	uint h, w;
 
 	_lockWord |= 0x8000;
 
 	dst = getFrontBuf();
-	dst += _dxSurfacePitch * fcs->y + fcs->x * 8;
 
-	h = fcs->height * 8;
+	if (getGameType() == GType_FF) {
+		dst += _dxSurfacePitch * fcs->y + fcs->x;
+		h = fcs->height;
+		w = fcs->width;
+	} else {
+		dst += _dxSurfacePitch * fcs->y + fcs->x * 8;
+		h = fcs->height * 8;
+		w = fcs->width * 8;
+	}
+
 	do {
-		memset(dst, fcs->fill_color, fcs->width * 8);
+		memset(dst, fcs->fill_color, w);
 		dst += _dxSurfacePitch;
 	} while (--h);
 
