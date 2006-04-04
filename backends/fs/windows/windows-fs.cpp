@@ -145,19 +145,10 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 WindowsFilesystemNode::WindowsFilesystemNode(const String &p) {
 	int len = 0, offset = p.size();
 
-	assert(offset > 0);
+	assert(p.size() > 0);
 
 	_path = p;
-
-	// Extract last component from path
-	const char *str = p.c_str();
-	while (offset > 0 && str[offset-1] == '\\')
-		offset--;
-	while (offset > 0 && str[offset-1] != '\\') {
-		len++;
-		offset--;
-	}
-	_displayName = String(str + offset, len);
+	_displayName = lastPathComponent(_path);
 
 	// Check whether it is a directory, and whether the file actually exists
 	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));

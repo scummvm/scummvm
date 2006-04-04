@@ -69,7 +69,7 @@ static const char *lastPathComponent(const Common::String &str) {
 		--cur;
 	}
 
-	return cur+1;
+	return cur + 1;
 }
 
 AbstractFilesystemNode *FilesystemNode::getRoot() {

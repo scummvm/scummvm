@@ -62,7 +62,7 @@ static const char *lastPathComponent(const Common::String &str) {
 		--cur;
 	}
 
-	return cur+1;
+	return cur + 1;
 }
 
 void PalmOSFilesystemNode::addFile(FSList &list, ListMode mode, const char *base, FileInfoType* find_data) {
