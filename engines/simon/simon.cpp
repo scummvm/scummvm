@@ -283,6 +283,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_item1 = 0;
 
 	_currentBoxNumber = 0;
+	_iOverflow = 0;
 	_hitAreaObjectItem = 0;
 	_lastHitArea = 0;
 	_lastHitArea2Ptr = 0;

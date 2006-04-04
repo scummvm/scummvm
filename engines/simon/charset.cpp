@@ -34,7 +34,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 
 	while (len-- != 0) {
 		if (getGameType() == GType_FF) {
-			if ((_bitArray[5] & (1 << 13)) != 0) {
+			if (getBitFlag(93)) {
 				if (_curWindow == 3) {
 					if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
 						fcs_putchar(*src);
@@ -43,7 +43,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 					src++;
 				}
 			} else {
-				if ((_bitArray[5] & (1 << 14)) != 0) {
+				if (getBitFlag(94)) {
 					if (_curWindow == 3) {
 						if (_newLines == (_textWindow->scrollY + 7))
 							fcs_putchar(*src);
@@ -52,7 +52,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 						src++;
 					}
 				} else {
-					//if ((_bitArray[5] & (1 << 12)) != 0)
+					//if (getBitFlag(92))
 					//	while(!_nextCharacter);
 					fcs_putchar(*src++);
 					//_nextCharacter = false;
@@ -245,7 +245,7 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 	}
 }
 
-static const byte fontSize[208] = {
+static const byte feebleFontSize[208] = {
 	8, 2, 5, 7, 8, 8, 8, 2, 4, 4, 8, 8, 3, 8, 2, 9,
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 2, 3, 5, 8, 5, 8,
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8,
@@ -306,7 +306,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 				if (chr == 10)
 					_printCharCurPos = 0;
 				else if (chr != 0)
-					_printCharCurPos++;
+					_printCharCurPos += (getGameType() == GType_FF) ? feebleFontSize[chr - 32] : 1;
 			}
 		} else {
 			const byte newline_character = 10;
@@ -315,7 +315,7 @@ void SimonEngine::showmessage_print_char(byte chr) {
 			print_char_helper_1(_lettersToPrintBuf, _numLettersToPrint);
 			if (chr == ' ') {
 				print_char_helper_1(&chr, 1);
-				_printCharCurPos++;
+				_printCharCurPos += (getGameType() == GType_FF) ? feebleFontSize[chr - 32] : 1;
 			} else {
 				print_char_helper_1(&chr, 1);
 				_printCharCurPos = 0;
@@ -323,6 +323,8 @@ void SimonEngine::showmessage_print_char(byte chr) {
 		}
 		_numLettersToPrint = 0;
 	} else {
+		if (getGameType() == GType_FF)
+			_printCharCurPos += feebleFontSize[chr - 32];
 		_lettersToPrintBuf[_numLettersToPrint++] = chr;
 	}
 }
@@ -376,10 +378,10 @@ void SimonEngine::video_putchar(FillOrCopyStruct *fcs, byte c, byte b) {
 				}
 			}
 		}
-	} else if (c >= 0x20) {
+	} else if (c >= 32) {
 		if (getGameType() == GType_FF) {
 			video_putchar_drawchar(fcs, fcs->textColumn + fcs->x, fcs->textRow + fcs->y, c);
-			fcs->textColumn += fontSize[c - 0x20];
+			fcs->textColumn += feebleFontSize[c - 32];
 			return;
 		}
 

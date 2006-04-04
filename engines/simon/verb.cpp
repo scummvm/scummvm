@@ -508,27 +508,107 @@ void SimonEngine::leaveHitAreaById(uint hitarea_id) {
 		hitarea_leave(ha);
 }
 
+void SimonEngine::checkUp(FillOrCopyStruct *fcs) {
+	uint16 j, k;
+
+	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[31] > 52)) {
+		k = (((_variableArray[31] / 52) - 2) % 3);
+		j = k * 6;
+		if (!is_hitarea_0x40_clear(j + 201)) {
+			uint index = get_fcs_ptr_3_index(fcs);
+			drawIconArray(index, fcs->fcs_data->item_ptr, 0, fcs->fcs_data->unk2);
+			loadSprite(4, 9, k + 34, 0, 0, 0);	
+		}
+	}
+	if ((_variableArray[31] - _variableArray[30]) == 76) {
+		k = ((_variableArray[31] / 52) % 3);
+		j = k * 6;
+		if (is_hitarea_0x40_clear(j + 201)) {
+			loadSprite(4, 9, k + 31, 0, 0, 0);
+			delete_hitarea(j + 201);
+			delete_hitarea(j + 202);
+			delete_hitarea(j + 203);
+			delete_hitarea(j + 204);
+			delete_hitarea(j + 205);
+			delete_hitarea(j + 206);
+		}
+		_variableArray[31] -= 52;
+		_iOverflow = 1;
+	}
+}
+
+void SimonEngine::checkDown(FillOrCopyStruct *fcs) {
+	uint16 j, k;
+
+	if (((_variableArray[31] - _variableArray[30]) == 24) && (_iOverflow == 1)) {
+		uint index = get_fcs_ptr_3_index(fcs);
+		drawIconArray(index, fcs->fcs_data->item_ptr, 0, fcs->fcs_data->unk2);
+		k = ((_variableArray[31] / 52) % 3);
+		loadSprite(4, 9, k + 25, 0, 0, 0);	
+		_variableArray[31] += 52;
+	}
+	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[30] > 52)) {
+		k = (((_variableArray[31] / 52) + 1) % 3);
+		j = k * 6;
+		if (is_hitarea_0x40_clear(j + 201)) {
+			loadSprite(4, 9, k + 28, 0, 0, 0);
+			delete_hitarea(j + 201);
+			delete_hitarea(j + 202);
+			delete_hitarea(j + 203);
+			delete_hitarea(j + 204);
+			delete_hitarea(j + 205);
+			delete_hitarea(j + 206);
+		}
+	}
+}
+
 void SimonEngine::inventoryUp(FillOrCopyStruct *fcs) {
-	uint index;
+	if (getGameType() == GType_FF) {
+		_marks = 0;
+		checkUp(fcs);
+		loadSprite(4, 9 ,21 ,0 ,0, 0);	
+		while(1) {
+			if (_currentBoxNumber != 32763 || _leftButtonDown)
+				break;
+			checkUp(fcs);
+		}
+		o_waitForMark(2);
+		checkUp(fcs);
+		o_sync(922);
+		o_waitForMark(1);
+		checkUp(fcs);
+	} else {
+		if (fcs->fcs_data->unk1 == 0)
+			return;
 
-	index = get_fcs_ptr_3_index(fcs);
-
-	if (fcs->fcs_data->unk1 == 0)
-		return;
-
-	mouseOff();
-	drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
-	mouseOn();
+		mouseOff();
+		uint index = get_fcs_ptr_3_index(fcs);
+		drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
+		mouseOn();
+	}
 }
 
 void SimonEngine::inventoryDown(FillOrCopyStruct *fcs) {
-	uint index;
-
-	index = get_fcs_ptr_3_index(fcs);
-
-	mouseOff();
-	drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
-	mouseOn();
+	if (getGameType() == GType_FF) {
+		_marks = 0;
+		checkDown(fcs);
+		loadSprite(4, 9, 23, 0, 0, 0);	
+		while(1) {
+			if (_currentBoxNumber != 32764 || _leftButtonDown)
+				break;
+			checkDown(fcs);
+		}
+		o_waitForMark(2);
+		checkDown(fcs);
+		o_sync(924);
+		o_waitForMark(1);
+		checkDown(fcs);
+	} else {
+		mouseOff();
+		uint index = get_fcs_ptr_3_index(fcs);
+		drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
+		mouseOn();
+	}
 }
 
 void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {

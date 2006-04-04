@@ -167,26 +167,26 @@ void SimonEngine::listSaveGames(int n) {
 	j = maxFiles - n + 1;
 	k = maxFiles - j + 1;
 	z = maxFiles;
-	if ((_bitArray[5] & (1 << 15)) != 0) {
+	if (getBitFlag(95)) {
 		j++;
 		z++;
 	}
 
 	while(1) {
 		OK=1;
-		if ((_bitArray[5] & (3 << 13)) != 0) {
+		if (getBitFlag(93)) {
 			OK = 0;
 			if(j > z)
 				break;
 		}
 
-		if ((_bitArray[5] & (1 << 13)) != 0) {
+		if (getBitFlag(93)) {
 			if (((_newLines + 1) >= _textWindow->scrollY) && (
 						(_newLines + 1) < (_textWindow->scrollY + 3)))
 				OK = 1;
 		}
 
-		if ((_bitArray[5] & (1 << 14)) != 0) {
+		if (getBitFlag(94)) {
 			if ((_newLines + 1) == (_textWindow->scrollY + 7))
 				OK = 1;
 		}
@@ -281,7 +281,7 @@ void SimonEngine::swapCharacterLogo() {
 	x = _variableArray[91];
 	if (x > _variableArray[90])
 		x--;
-	if( x < _variableArray[90])
+	if (x < _variableArray[90])
 		x++;
 	_variableArray[91] = x;
 

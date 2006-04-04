@@ -291,6 +291,7 @@ protected:
 	uint16 _defaultVerb;
 	uint _mouseHideCount;
 	uint _currentBoxNumber;
+	uint _iOverflow;
 
 	uint16 _windowNum;
 
@@ -631,6 +632,8 @@ protected:
 	void defocusHitarea();
 	void endCutscene();
 	void runSubroutine101();
+	void checkUp(FillOrCopyStruct *fcs);
+	void checkDown(FillOrCopyStruct *fcs);
 	void inventoryUp(FillOrCopyStruct *fcs);
 	void inventoryDown(FillOrCopyStruct *fcs);
 	void hitareaChangedHelper();
