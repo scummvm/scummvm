@@ -135,7 +135,7 @@ void File::addDefaultDirectoryRecursive(const String &directory, int level) {
 
 	_defaultDirectories[directory] = level;
 
-	FSList fslist(dir.listDir(FilesystemNode::kListAllNoRoot));
+	const FSList fslist(dir.listDir(FilesystemNode::kListAllNoRoot));
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
