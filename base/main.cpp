@@ -244,7 +244,10 @@ static bool launcherDialog(GameDetector &detector, OSystem &system) {
 static int runGame(GameDetector &detector, OSystem &system, const Common::String &edebuglevels) {
 	// We add it here, so MD5-based detection will be able to
 	// read mixed case files
-	Common::File::addDefaultDirectory(ConfMan.get("path"));
+	if (ConfMan.hasKey("path"))
+		Common::File::addDefaultDirectory(ConfMan.get("path"));
+	else
+		Common::File::addDefaultDirectory(".");
 
 	// Create the game engine
 	Engine *engine = detector.createEngine(&system);
@@ -271,7 +274,10 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 		system.setWindowCaption(caption.c_str());
 	}
 
-	Common::File::addDefaultDirectoryRecursive(ConfMan.get("path"));
+	if (ConfMan.hasKey("path"))
+		Common::File::addDefaultDirectoryRecursive(ConfMan.get("path"));
+	else
+		Common::File::addDefaultDirectoryRecursive(".");
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
