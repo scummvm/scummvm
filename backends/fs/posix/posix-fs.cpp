@@ -146,7 +146,13 @@ FSList POSIXFilesystemNode::listDir(ListMode mode) const {
 		entry._isDirectory = S_ISDIR(st.st_mode);
 #else
 		entry._isValid = (dp->d_type == DT_DIR) || (dp->d_type == DT_REG) || (dp->d_type == DT_LNK);
-		entry._isDirectory = (dp->d_type == DT_DIR);
+		if (dp->d_type == DT_LNK) {
+			struct stat st;
+			stat(entry._path.c_str(), &st);
+			entry._isDirectory = S_ISDIR(st.st_mode);
+		} else {
+			entry._isDirectory = (dp->d_type == DT_DIR);
+		}
 #endif
 
 		// Skip files that are invalid for some reason (e.g. because we couldn't
