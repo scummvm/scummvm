@@ -264,7 +264,7 @@ protected:
 	const byte *_scrollImage;
 	byte _vgaVar8;
 
- 	uint16 _hyperLink;
+ 	uint16 _hyperLink, _newLines;
  	uint16 _oracleMaxScrollY, _noOracleScroll;
  
 	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
@@ -287,6 +287,7 @@ protected:
 	uint _verbHitArea;
 	uint16 _defaultVerb;
 	uint _mouseHideCount;
+	uint _currentBoxNumber;
 
 	uint16 _windowNum;
 
@@ -589,7 +590,16 @@ protected:
 
  	void hyperLinkOn(uint16 x);
  	void hyperLinkOff();
+	void linksUp();
+	void linksDown();
+	void listSaveGames(int n);
+	void oracleTextUp();
+	void oracleTextDown();
+
+	void bltOracleText();
 	void oracleLogo();
+	void scrollOracleUp();
+	void scrollOracleDown();
 	void swapCharacterLogo();
 
 	void mouseOff();

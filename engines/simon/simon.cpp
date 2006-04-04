@@ -280,6 +280,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_objectItem = 0;
 	_item1 = 0;
 
+	_currentBoxNumber = 0;
 	_hitAreaObjectItem = 0;
 	_lastHitArea = 0;
 	_lastHitArea2Ptr = 0;
@@ -1660,7 +1661,7 @@ void SimonEngine::handle_mouse_moved() {
 
 	if (getGameType() == GType_FF) {
 		if (_bitArray[6] & 0x8) { // Oracle
-			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseX <= 475) {
+			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
 				_bitArray[6] |= 0x4;
 			} else {
 				if (_bitArray[6] & 0x4) {
@@ -1668,7 +1669,7 @@ void SimonEngine::handle_mouse_moved() {
 				}
 			}
 		} else if (_bitArray[5] & 0x0100) { // Close Up
-			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseX <= 475) {
+			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
 				_bitArray[5] |= 0x80;
 			} else {
 				if (_bitArray[5] & 0x80) {

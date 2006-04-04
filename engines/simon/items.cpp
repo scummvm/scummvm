@@ -704,7 +704,7 @@ int SimonEngine::runScript() {
 				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
 					goto invalid_opcode;
 
-				warning("STUB: script opcode 122");
+				oracleTextDown();
 			}
 			break;
 
@@ -712,7 +712,7 @@ int SimonEngine::runScript() {
 				if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2)
 					goto invalid_opcode;
 
-				warning("STUB: script opcode 123");
+				oracleTextUp();
 			}
 			break;
 
@@ -795,7 +795,7 @@ int SimonEngine::runScript() {
 
 		case 134:{									/* dummy opcode? */
 				if (getGameType() == GType_FF) {
-					warning("STUB: script opcode 134");
+					listSaveGames(1);
 				} else {
 					midi.stop();
 					_lastMusicPlayed = -1;

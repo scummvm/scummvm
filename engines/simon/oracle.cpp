@@ -21,6 +21,9 @@
  */
 
 #include "common/stdafx.h"
+
+#include "common/savefile.h"
+
 #include "simon/simon.h"
 #include "simon/intern.h"
 #include "simon/vga.h"
@@ -29,8 +32,7 @@
 
 namespace Simon {
 
-void SimonEngine::hyperLinkOn(uint16 x)
-{
+void SimonEngine::hyperLinkOn(uint16 x) {
 	if ((_bitArray[3] & (1 << 3)) == 0)
 		return;
 
@@ -41,8 +43,7 @@ void SimonEngine::hyperLinkOn(uint16 x)
 }
 
 
-void SimonEngine::hyperLinkOff()
-{
+void SimonEngine::hyperLinkOff() {
 	if ((_bitArray[3] & (1 << 3)) == 0)
 		return;
 
@@ -50,6 +51,169 @@ void SimonEngine::hyperLinkOff()
 	addNewHitArea(_variableArray[53], _variableArray[50], _variableArray[51], _variableArray[52], 15, 145, 208, _dummyItem1);
 	_variableArray[53]++;
 	_hyperLink = 0;
+}
+
+void SimonEngine::oracleTextDown() {
+	Subroutine *sub;
+	int i = 0;
+	changeWindow(3);
+	_noOracleScroll = 0;
+
+	if(_textWindow->textColumnOffset > _oracleMaxScrollY) 		// For scroll up
+		_oracleMaxScrollY = _textWindow->textColumnOffset;
+
+	while(1) {
+		if(_textWindow->textColumnOffset == 0)
+			break;
+		for (i = 0; i < 5; i++) {
+			_newLines = 0;
+			_textWindow->textColumn = 0;
+			_textWindow->textRow = (i + 1) * 3;
+			if(i == 4) {
+				_textWindow->textColumnOffset -= 1;
+				_textWindow->textRow = 0;
+				linksDown();
+			}
+			scrollOracleDown();
+			_bitArray[5] |= (1 << 13);
+			sub = getSubroutineByID(_variableArray[104]);
+			if (sub)
+				startSubroutineEx(sub);
+			_bitArray[5] &= ~(1 << 13);
+			bltOracleText();
+		}
+		if (_currentBoxNumber != 600 || _leftButtonDown)
+			break;
+	}
+}
+
+void SimonEngine::oracleTextUp() {
+	Subroutine *sub;
+	int i = 0;
+	changeWindow(3);
+	_noOracleScroll = 0;
+
+	if(_textWindow->textColumnOffset > _oracleMaxScrollY) 		// For scroll up
+		_oracleMaxScrollY = _textWindow->textColumnOffset;
+
+	while(1) {
+		if(_textWindow->textColumnOffset == _oracleMaxScrollY)
+			break;
+		_textWindow->textRow = 105;
+		for (i = 0; i < 5; i++) {
+			_newLines = 0;
+			_textWindow->textColumn = 0;
+			_textWindow->textRow -= 3;
+			if(i == 2) {
+				_textWindow->textColumnOffset += 1;
+				_textWindow->textRow += 15;
+				linksUp();
+			}
+			scrollOracleUp();
+			_bitArray[5] |= (1 << 14);
+			sub = getSubroutineByID(_variableArray[104]);
+			if(sub)
+				startSubroutineEx(sub);
+			_bitArray[5] &= ~(1 << 14);
+			bltOracleText();
+		}
+		if (_currentBoxNumber != 600 || _leftButtonDown)
+			break;
+	}
+}
+
+void SimonEngine::linksUp() {	// Scroll Oracle Links
+	uint16 j;
+	for (j = 700; j < _variableArray[53]; j++) {
+		moveBox(j, 0, -15);
+	}
+}
+
+void SimonEngine::linksDown() {
+	uint16 i;
+	for (i = 700; i < _variableArray[53]; i++) {
+		moveBox(i,0, 15);
+	}
+}
+
+void SimonEngine::listSaveGames(int n) {
+	char b[108];
+	Common::InSaveFile *in;
+	uint16 j, k, z, maxFiles;
+	int OK;
+	memset(b, 0, 108);
+
+	maxFiles = countSaveGames();
+	j = maxFiles - n + 1;
+	k = maxFiles - j + 1;
+	z = maxFiles;
+	if ((_bitArray[5] & (1 << 15)) != 0) {
+		j++;
+		z++;
+	}
+
+	while(1) {
+		OK=1;
+		if ((_bitArray[5] & (3 << 13)) != 0) {
+			OK = 0;
+			if(j > z)
+				break;
+		}
+
+		if ((_bitArray[5] & (1 << 13)) != 0) {
+			if (((_newLines + 1) >= _textWindow->textColumnOffset) && (
+						(_newLines + 1) < (_textWindow->textColumnOffset + 3)))
+				OK = 1;
+		}
+
+		if ((_bitArray[5] & (1 << 14)) != 0) {
+			if ((_newLines + 1) == (_textWindow->textColumnOffset + 7))
+				OK = 1;
+		}
+
+
+		if (OK == 1) {
+			if (j == maxFiles + 1) {
+				showMessageFormat("\n");
+				hyperLinkOn(j + 400);
+				o_setTextColor(116);
+	    			showMessageFormat(" %d. ",1);
+				hyperLinkOff();
+				o_setTextColor(113);
+				k++;
+				j--;
+			}
+
+			if (!(in = _saveFileMan->openForLoading(gen_savename(j))))
+				break;
+			in->read(b, 100);
+			delete in;
+		}
+
+		showMessageFormat("\n");
+		hyperLinkOn(j + 400);
+		o_setTextColor(116);
+		if (k < 10)
+			showMessageFormat(" ");
+		showMessageFormat("%d. ",k);
+		o_setTextColor(113);
+		showMessageFormat("%s ",b);
+		hyperLinkOff();
+		j--;
+		k++;
+	}
+}
+
+void SimonEngine::scrollOracleUp() {
+	// TODO
+}
+
+void SimonEngine::scrollOracleDown() {
+	// TODO
+}
+
+void SimonEngine::bltOracleText() {
+	// TODO
 }
 
 void SimonEngine::oracleLogo() {

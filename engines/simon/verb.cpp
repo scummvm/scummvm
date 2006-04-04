@@ -519,6 +519,8 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 		return;
 	}
 
+	_currentBoxNumber = best_ha->id;
+
 	if (mode != 0 && mode != 3) {
 		_lastHitArea = best_ha;
 		_variableArray[1] = x;
