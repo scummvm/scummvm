@@ -2266,25 +2266,11 @@ void SimonEngine::vc72_play_track_2() {
 }
 
 void SimonEngine::vc73_setMark() {
-	uint16 bit;
-
-	if (getGameType() == GType_FF)
-		bit = vcReadNextWord();
-	else
-		bit = vcReadNextByte();
-
-	_marks |= 1 << bit;
+	_marks |= (1 << vcReadNextWord());
 }
 
 void SimonEngine::vc74_clearMark() {
-	uint16 bit;
-
-	if (getGameType() == GType_FF)
-		bit = vcReadNextWord();
-	else
-		bit = vcReadNextByte();
-
-	_marks &= ~(1 << bit);
+	_marks &= ~(1 << vcReadNextWord());
 }
 
 int SimonEngine::getScale(int y, int x) {
