@@ -1446,9 +1446,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 	} while (!var_A);
 
-	if (needMouseSave) {
-		assert(0);
-	}
+	assert(!needMouseSave);
 
 	var_4 = button;
 
@@ -1680,9 +1678,7 @@ int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X,
 
 	} while (!var_A);
 
-	if (needMouseSave) {
-		assert(0);
-	}
+	assert(!needMouseSave);
 
 	var_4 = button;
 
@@ -2828,15 +2824,13 @@ void processSeqListElement(SeqListElement *element) {
 		param1 = ptr1[1];
 		param2 = ptr1[2];
 
-		if (element->varC == 255) {
-			if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
-				computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
-			} else {
-				element->var16 = 0;
-				element->var14 = 0;
-			}
+		assert(element->varC == 255);
+
+		if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
+			computeMove1(element, ptr1[4] + x, ptr1[5] + y, param1, param2, globalVars[VAR_MOUSE_X_POS], globalVars[VAR_MOUSE_Y_POS]);
 		} else {
-			assert(0);
+			element->var16 = 0;
+			element->var14 = 0;
 		}
 
 		var_10 = computeMove2(element);

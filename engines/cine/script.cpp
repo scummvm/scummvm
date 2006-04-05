@@ -881,7 +881,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 						}
 					default:
 						{
-							assert(0);
+							error("executeScript: OP_loadVar: Unknown variable type %d", varType);
 						}
 					}
 				} else {
@@ -2570,7 +2570,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 					} else if (param2 == 5) {
 						sprintf(lineBuffer, "var[%d]=rand() mod %d\n", param1, param3);
 					} else {
-						assert(0);
+						error("decompileScript: 0x09: param2 = %d", param2);
 					}
 				} else {
 					int16 param3;
@@ -2720,7 +2720,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 						sprintf(compareString1, "var[%d]", param1);
 						sprintf(compareString2, "globalVar[%d]", param3);
 					} else {
-						assert(0);
+						error("decompileScript: 0x0E: param2 = %d", param2);
 					}
 				} else {
 					int16 param3;
@@ -3138,7 +3138,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 					} else if (param2 == 2) {
 						sprintf(lineBuffer, "globalVar[%d] = globalVar[%d]\n", param1, param3);
 					} else {
-						assert(0);
+						error("decompileScript: 0x52: param2 = %d", param2);
 					}
 				} else {
 					int16 param3;
@@ -3174,7 +3174,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 						sprintf(compareString1, "globalVar[%d]", param1);
 						sprintf(compareString2, "globalVar[%d]", param3);
 					} else {
-						assert(0);
+						error("decompileScript: 0x53: param2 = %d", param2);
 					}
 				} else {
 					int16 param3;

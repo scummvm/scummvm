@@ -676,7 +676,7 @@ void loadSet(const char *resourceName) {
 			} else if (header2.type == 5) {
 				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 4) {
-				assert(0);
+				error("loadSet: header2.type == 4");
 			} else {
 				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			}
@@ -759,7 +759,7 @@ void loadSetAbs(const char *resourceName, uint16 idx) {
 			} else if (header2.type == 5) {
 				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			} else if (header2.type == 4) {
-				assert(0);
+				error("loadSetAbs: header2.type == 4");
 			} else {
 				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
 			}
@@ -821,7 +821,7 @@ void loadResource(const char *resourceName) {
 		return;
 	}
 
-	assert(0);
+	error("loadResource: Cannot determine type for '%s'", resourceName);
 }
 
 void loadAbs(const char *resourceName, uint16 idx) {
@@ -844,7 +844,7 @@ void loadAbs(const char *resourceName, uint16 idx) {
 		return;
 	}
 
-	assert(0);
+	error("loadAbs: Cannot determine type for '%s'", resourceName);
 }
 
 void loadResourcesFromSave() {
