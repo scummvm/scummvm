@@ -299,13 +299,18 @@
 
 	#define SCUMM_LITTLE_ENDIAN	
 	#define SCUMM_NEED_ALIGNMENT
-	#define SCUMMVM_DONT_DEFINE_TYPES
 
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
 	#define SMALL_SCREEN_DEVICE
 
+	// Enable Symbians own datatypes
+	// This is done for two reasons
+	// a) uint is already defined by Symbians libc component
+	// b) Symbian is using its "own" datatyping, and the Scummvm port
+	//    should follow this to ensure the best compability possible.
+	#define SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
