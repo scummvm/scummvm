@@ -1251,7 +1251,7 @@ void SimonEngine::drawImages(VC10_state *state) {
 		}
 		/* vc10_helper_4 */
 	} else {
-		if (getGameType() == GType_SIMON2 && state->flags & kDFUseFrontBuf && _bitArray[10] & 0x800) {
+		if (getGameType() == GType_SIMON2 && state->flags & kDFUseFrontBuf && getBitFlag(171)) {
 			state->surf_addr = state->surf2_addr;
 			state->surf_pitch = state->surf2_pitch;
 		}
@@ -1704,7 +1704,7 @@ void SimonEngine::vc40() {
 	uint var = vcReadNextWord();
 	int16 value = vcReadVar(var) + vcReadNextWord();
 
-	if ((getGameType() == GType_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
+	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {
@@ -1733,7 +1733,7 @@ void SimonEngine::vc41() {
 	uint var = vcReadNextWord();
 	int16 value = vcReadVar(var) - vcReadNextWord();
 
-	if ((getGameType() == GType_SIMON2) && var == 15 && !(_bitArray[5] & 1)) {
+	if ((getGameType() == GType_SIMON2) && var == 15 && !getBitFlag(80)) {
 		int16 tmp;
 
 		if (_scrollCount != 0) {

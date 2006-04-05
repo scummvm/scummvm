@@ -890,20 +890,17 @@ int SimonEngine::runScript() {
 			break;
 
 		case 153:{									/* set bit */
-				uint bit = getVarOrByte();
-				_bitArray[bit / 16] |= 1 << (bit & 15);
+				setBitFlag(getVarOrByte(), true);
 				break;
 			}
 
 		case 154:{									/* clear bit */
-				uint bit = getVarOrByte();
-				_bitArray[bit / 16] &= ~(1 << (bit & 15));
+				setBitFlag(getVarOrByte(), false);
 				break;
 			}
 
 		case 155:{									/* is bit clear */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[bit / 16] & (1 << (bit & 15))) == 0;
+				condition = !getBitFlag(getVarOrByte());
 			}
 			break;
 
@@ -912,7 +909,7 @@ int SimonEngine::runScript() {
 				if (getGameType() == GType_SIMON1 && _subroutine == 2962 && bit == 63) {
 					bit = 50;
 				}
-				condition = (_bitArray[bit / 16] & (1 << (bit & 15))) != 0;
+				condition = getBitFlag(bit);
 			}
 			break;
 
@@ -984,26 +981,22 @@ int SimonEngine::runScript() {
 			} break;
 
 		case 166:{									/* set bit2 */
-				uint bit = getVarOrByte();
-				_bitArray[(bit / 16) + 16] |= 1 << (bit & 15);
+				setBitFlag(256 + getVarOrByte(), true);
 			}
 			break;
 
 		case 167:{									/* clear bit2 */
-				uint bit = getVarOrByte();
-				_bitArray[(bit / 16) + 16] &= ~(1 << (bit & 15));
+				setBitFlag(256 + getVarOrByte(), false);
 			}
 			break;
 
 		case 168:{									/* is bit2 clear */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit / 16) + 16] & (1 << (bit & 15))) == 0;
+				condition = !getBitFlag(256 + getVarOrByte());
 			}
 			break;
 
 		case 169:{									/* is bit2 set */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit / 16) + 16] & (1 << (bit & 15))) != 0;
+				condition = getBitFlag(256 + getVarOrByte());
 			}
 			break;
 
@@ -1174,7 +1167,7 @@ int SimonEngine::runScript() {
 
 		// Feeble opcodes
 		case 191:
-			if (_bitArray[5] & 0x0008) {
+			if (getBitFlag(83)) {
 				_PVCount1 = 0;
 				_GPVCount1 = 0;
 			} else {
@@ -1188,7 +1181,7 @@ int SimonEngine::runScript() {
 				uint8 b = getVarOrByte();
 				uint8 c = getVarOrByte();
 				uint8 d = getVarOrByte();
-				if (_bitArray[5] & 0x0008) {
+				if (getBitFlag(83)) {
 					_pathValues1[_PVCount1++] = a;
 					_pathValues1[_PVCount1++] = b;
 					_pathValues1[_PVCount1++] = c;
@@ -1223,26 +1216,22 @@ int SimonEngine::runScript() {
 			break;
 
 		case 196:{									/* set bit3 */
-				uint bit = getVarOrByte();
-				_bitArray[(bit / 16) + 32] |= 1 << (bit & 15);
+				setBitFlag(512 + getVarOrByte(), true);
 			}
 			break;
 
 		case 197:{									/* clear bit3 */
-				uint bit = getVarOrByte();
-				_bitArray[(bit / 16) + 32] &= ~(1 << (bit & 15));
+				setBitFlag(512 + getVarOrByte(), false);
 			}
 			break;
 
 		case 198:{									/* is bit3 clear */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit / 16) + 32] & (1 << (bit & 15))) == 0;
+				condition = !getBitFlag(512 + getVarOrByte());
 			}
 			break;
 
 		case 199:{									/* is bit3 set */
-				uint bit = getVarOrByte();
-				condition = (_bitArray[(bit / 16) + 32] & (1 << (bit & 15))) != 0;
+				condition = getBitFlag(512 + getVarOrByte());
 			}
 			break;
 

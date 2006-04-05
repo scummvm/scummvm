@@ -193,7 +193,7 @@ void SimonEngine::defocusHitarea() {
 	HitArea *ha;
 
 	if (getGameType() == GType_SIMON2) {
-		if (_bitArray[4] & 0x8000) {
+		if (getBitFlag(79)) {
 			o_sync(202);
 			_lastHitArea2Ptr = NULL;
 			return;
@@ -295,7 +295,7 @@ void SimonEngine::hitareaChangedHelper() {
 	FillOrCopyStruct *fcs;
 
 	if (getGameType() == GType_SIMON2) {
-		if (_bitArray[4] & 0x8000)
+		if (getBitFlag(79))
 			return;
 	}
 
@@ -418,7 +418,7 @@ void SimonEngine::resetVerbs() {
 
 		if (getGameType() == GType_SIMON2) {
 			id = 2;
-			if (!(_bitArray[4] & 0x8000))
+			if (!getBitFlag(79))
 				id = (_mouseY >= 136) ? 102 : 101;
 		} else {
 			id = (_mouseY >= 136) ? 102 : 101;
@@ -620,7 +620,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	const uint16 y_ = y;
 
 	if (getGameType() == GType_SIMON2) {
-		if (_bitArray[4] & 0x8000 || y < 134) {
+		if (getBitFlag(79) || y < 134) {
 			x_ += _scrollX * 8;
 		}
 	}
@@ -692,7 +692,7 @@ bool SimonEngine::hitarea_proc_2(uint a) {
 	const byte *string_ptr;
 
 	if (getGameType() == GType_SIMON2) {
-		if (_bitArray[4] & 0x8000) {
+		if (getBitFlag(79)) {
 			Subroutine *sub;
 			_variableArray[84] = a;
 			sub = getSubroutineByID(5003);

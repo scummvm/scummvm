@@ -45,7 +45,7 @@ void SimonEngine::checkLinkBox() {	// Check for boxes spilling over to next row 
 }
 
 void SimonEngine::hyperLinkOn(uint16 x) {
-	if ((_bitArray[3] & (1 << 3)) == 0)
+	if (!getBitFlag(51))
 		return;
 
 	_hyperLink = x;
@@ -55,7 +55,7 @@ void SimonEngine::hyperLinkOn(uint16 x) {
 
 
 void SimonEngine::hyperLinkOff() {
-	if ((_bitArray[3] & (1 << 3)) == 0)
+	if (!getBitFlag(51))
 		return;
 
 	_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];
@@ -110,11 +110,11 @@ void SimonEngine::oracleTextUp() {
 				linksUp();
 			}
 			scrollOracleUp();
-			_bitArray[5] |= (1 << 14);
+			setBitFlag(94, true);
 			sub = getSubroutineByID(_variableArray[104]);
 			if(sub)
 				startSubroutineEx(sub);
-			_bitArray[5] &= ~(1 << 14);
+			setBitFlag(94, false);
 			bltOracleText();
 		}
 		if (_currentBoxNumber != 600 || _leftButtonDown)
@@ -144,11 +144,11 @@ void SimonEngine::oracleTextDown() {
 				linksDown();
 			}
 			scrollOracleDown();
-			_bitArray[5] |= (1 << 13);
+			setBitFlag(93, true);
 			sub = getSubroutineByID(_variableArray[104]);
 			if (sub)
 				startSubroutineEx(sub);
-			_bitArray[5] &= ~(1 << 13);
+			setBitFlag(93, false);
 			bltOracleText();
 		}
 		if (_currentBoxNumber != 600 || _leftButtonDown)

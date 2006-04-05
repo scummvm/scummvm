@@ -1708,19 +1708,19 @@ void SimonEngine::handle_mouse_moved() {
 	}
 
 	if (getGameType() == GType_FF) {
-		if (_bitArray[6] & 0x8) { // Oracle
+		if (getBitFlag(99)) { // Oracle
 			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
-				_bitArray[6] |= 0x4;
+				setBitFlag(98, true);
 			} else {
-				if (_bitArray[6] & 0x4) {
+				if (getBitFlag(98)) {
 					_variableArray[254] = 63;
 				}
 			}
-		} else if (_bitArray[5] & 0x0100) { // Close Up
+		} else if (getBitFlag(88)) { // Close Up
 			if (_mouseX >= 10 && _mouseX <= 635 && _mouseY >= 5 && _mouseY <= 475) {
-				_bitArray[5] |= 0x80;
+				setBitFlag(87, true);
 			} else {
-				if (_bitArray[5] & 0x80) {
+				if (getBitFlag(87)) {
 					_variableArray[254] = 75;
 				}
 			}
@@ -1733,7 +1733,7 @@ void SimonEngine::handle_mouse_moved() {
 	}
 
 	if (getGameType() == GType_SIMON2) {
-		if (_bitArray[4] & 0x8000) {
+		if (getBitFlag(79)) {
 			if (!_vgaVar9) {
 				if (_mouseX >= 630 / 2 || _mouseX < 9)
 					goto get_out2;
@@ -2702,7 +2702,7 @@ void SimonEngine::add_vga_timer(uint num, const byte *code_ptr, uint cur_sprite,
 }
 
 void SimonEngine::o_mouseOn() {
-	if (getGameType() == GType_SIMON2 && _bitArray[4] & 0x8000)
+	if (getGameType() == GType_SIMON2 && getBitFlag(79))
 		_mouseCursor = 0;
 	_mouseHideCount = 0;
 }
@@ -3482,8 +3482,8 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 		if (speech_id == 9999) {
 			if (_subtitles)
 				return;
-			if (!(_bitArray[0] & 0x4000) && !(_bitArray[1] & 0x1000)) {
-				_bitArray[0] |= 0x4000;
+			if (!getBitFlag(14) && !getBitFlag(28)) {
+				setBitFlag(14, true);
 				_variableArray[100] = 15;
 				loadSprite(4, 1, 130, 0, 0, 0);
 				o_waitForSync(130);
@@ -3503,8 +3503,8 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 		if (speech_id == 0xFFFF) {
 			if (_subtitles)
 				return;
-			if (!(_bitArray[0] & 0x4000) && !(_bitArray[1] & 0x1000)) {
-				_bitArray[0] |= 0x4000;
+			if (!getBitFlag(14) && !getBitFlag(28)) {
+				setBitFlag(14, true);
 				_variableArray[100] = 5;
 				loadSprite(4, 1, 30, 0, 0, 0);
 				o_waitForSync(130);
@@ -3602,7 +3602,7 @@ void SimonEngine::printText(uint vgaSpriteId, uint color, const char *string, in
 		render_string(vgaSpriteId, color, width, height, convertedString);
 
 	int b = 4;
-	if (!(_bitArray[8] & 0x20))
+	if (!getBitFlag(133))
 		b = 3;
 
 	x /= 8;
@@ -4212,7 +4212,7 @@ void SimonEngine::delay(uint amount) {
 				break;
 			case OSystem::EVENT_LBUTTONDOWN:
 				if (getGameType() == GType_FF)
-					_bitArray[5] |= 0x0200;
+					setBitFlag(89, true);
 				_leftButtonDown++;
 #if defined (_WIN32_WCE) || defined(PALMOS_MODE)
 				_sdlMouseX = event.mouse.x;
@@ -4221,11 +4221,11 @@ void SimonEngine::delay(uint amount) {
 				break;
 			case OSystem::EVENT_LBUTTONUP:
 				if (getGameType() == GType_FF)
-					_bitArray[5] &= ~0x0200;
+					setBitFlag(89, false);
 				break;
 			case OSystem::EVENT_RBUTTONDOWN:
 				if (getGameType() == GType_FF)
-					_bitArray[5] &= ~0x1000;
+					setBitFlag(92, false);
 				if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 					_rightButtonDown++;
 				else
