@@ -55,9 +55,20 @@
 // SCUMMVM_USE_LONG_INT
 //    - Define this if your port needs to use 'long' for the int32 datatype
 //      (i.e. an integer with exactly 32 bits).
+// SCUMMVM_DONT_DEFINE_TYPES
+//    - Define this if you need to provide your own typedefs, e.g. because your
+//      system headers conflict with our typenames, or because you have odd
+//      type requirements.
 // SMALL_SCREEN_DEVICE
 //    - ...
 // ...
+
+// We define all types in config.h, so we don't want to typedef those types
+// here again!
+#ifdef HAVE_CONFIG_H
+#define SCUMMVM_DONT_DEFINE_TYPES
+#endif
+
 
 #if defined(_MSC_VER) && !defined(__SYMBIAN32__)
 
@@ -357,9 +368,9 @@
 
 
 //
-// Typedef our system types unless they were already set by config.h
+// Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
 //
-#ifndef HAVE_CONFIG_H
+#ifndef SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
