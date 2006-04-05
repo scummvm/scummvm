@@ -533,7 +533,9 @@ void OSystem_WINCE3::get_sample_rate() {
 		}
 	}
 	// See if the output frequency is forced by the game
-	if ((_gameDetector._game.features & Scumm::GF_DIGI_IMUSE) ||
+	if ((_gameDetector._gameid == "ft" ||
+		_gameDetector._gameid == "dig" ||
+		_gameDetector._gameid == "comi" ||
 		_gameDetector._gameid == "queen" ||
 		strncmp(_gameDetector._gameid.c_str(), "sword", 5) == 0 ||
 		strncmp(_gameDetector._gameid.c_str(), "sky", 3) == 0)
