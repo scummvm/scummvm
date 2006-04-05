@@ -298,16 +298,30 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 
 const commandeType systemMenu[] = {
 	"Pause",
+	"Restart Game",
+	"Quit",
+	"Backup Drive is A:",
+	"Restore game",
+	"Save game"
+// french
+/*
+	"Pause",
 	"Nouvelle partie",
 	"Quitter",
 	"Lecteur de Svg. A:",
 	"Charger une partie",
 	"Sauver la partie"
+*/
 };
 
 const commandeType confirmMenu[] = {
+	"Ok, go ahead ...",
+	"Absolutely Not!"
+// french
+/*
 	"Ok , Vas-y ...",
 	"Surtout Pas !"
+*/
 };
 
 commandeType currentSaveName[10];
