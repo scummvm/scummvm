@@ -299,16 +299,23 @@
 
 	#define SCUMM_LITTLE_ENDIAN	
 	#define SCUMM_NEED_ALIGNMENT
+	#define SCUMMVM_DONT_DEFINE_TYPES
 
-	// FIXME: Do you really need to use 'long' on this port? Please replace
-	// this comment with a new comment that states so, and ideally also
-	// explains the reasons briefly.
-	#define SCUMMVM_USE_LONG_INT
-	
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
 	#define SMALL_SCREEN_DEVICE
+
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned long int uint32;
+	typedef signed long int int32;
 
 #else
 
