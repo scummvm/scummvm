@@ -180,7 +180,7 @@ void SimonEngine::saveOrLoadDialog(bool load) {
 	int number_of_savegames;
 	int i;
 	int unk132_result;
-	FillOrCopyStruct *fcs;
+	WindowBlock *fcs;
 	char *name;
 	int name_len;
 	bool b;
@@ -350,7 +350,7 @@ get_out:;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void SimonEngine::o_fileError(FillOrCopyStruct *fcs, bool save_error) {
+void SimonEngine::o_fileError(WindowBlock *fcs, bool save_error) {
 	HitArea *ha;
 	const char *string, *string2;
 

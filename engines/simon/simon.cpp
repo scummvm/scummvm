@@ -417,7 +417,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	memset(_videoBuf1, 0, sizeof(_videoBuf1));
 
-	_fcs_list = new FillOrCopyStruct[16];
+	_fcs_list = new WindowBlock[16];
 
 	memset(_lettersToPrintBuf, 0, sizeof(_lettersToPrintBuf));
 
@@ -1083,7 +1083,7 @@ void SimonEngine::setItemParent(Item *item, Item *parent) {
 
 void SimonEngine::itemChildrenChanged(Item *item) {
 	int i;
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 
 	if (_noParentNotify)
 		return;
@@ -1091,13 +1091,13 @@ void SimonEngine::itemChildrenChanged(Item *item) {
 	mouseOff();
 
 	for (i = 0; i != 8; i++) {
-		fcs = _windowArray[i];
-		if (fcs && fcs->fcs_data && fcs->fcs_data->item_ptr == item) {
+		window = _windowArray[i];
+		if (window && window->iconPtr && window->iconPtr->itemRef == item) {
 			if (_fcsData1[i]) {
 				_fcsData2[i] = true;
 			} else {
 				_fcsData2[i] = false;
-				drawIconArray(i, item, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
+				drawIconArray(i, item, window->iconPtr->line, window->iconPtr->classMask);
 			}
 		}
 	}
@@ -1624,9 +1624,9 @@ void SimonEngine::setup_cond_c_helper() {
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {
-			inventoryUp(_lastHitArea->fcs);
+			inventoryUp(_lastHitArea->window);
 		} else if (_lastHitArea->id == 0x7FFC) {
-			inventoryDown(_lastHitArea->fcs);
+			inventoryDown(_lastHitArea->window);
 		} else if (_lastHitArea->item_ptr != NULL) {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
 			_variableArray[60] = (_lastHitArea->flags & 1) ? (_lastHitArea->flags / 256) : 0xFFFF;
@@ -1654,11 +1654,11 @@ void SimonEngine::endCutscene() {
 	_runScriptReturn1 = true;
 }
 
-uint SimonEngine::get_fcs_ptr_3_index(FillOrCopyStruct *fcs) {
+uint SimonEngine::get_fcs_ptr_3_index(WindowBlock *window) {
 	uint i;
 
 	for (i = 0; i != ARRAYSIZE(_windowArray); i++)
-		if (_windowArray[i] == fcs)
+		if (_windowArray[i] == window)
 			return i;
 
 	error("get_fcs_ptr_3_index: not found");
@@ -1776,9 +1776,9 @@ get_out:
 	_needHitAreaRecalc = 0;
 }
 
-void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int unk2) {
-	Item *item_ptr_org = item_ptr;
-	FillOrCopyStruct *fcs_ptr;
+void SimonEngine::drawIconArray(uint fcs_index, Item *itemRef, int line, int classMask) {
+	Item *item_ptr_org = itemRef;
+	WindowBlock *fcs_ptr;
 	uint width_div_3, height_div_3;
 	uint j, k, i, num_sibs_with_flag;
 	bool item_again;
@@ -1799,34 +1799,34 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 	if (fcs_ptr == NULL)
 		return;
 
-	if (fcs_ptr->fcs_data)
+	if (fcs_ptr->iconPtr)
 		removeIconArray(fcs_index);
 
-	fcs_ptr->fcs_data = (FillOrCopyData *) malloc(sizeof(FillOrCopyData));
-	fcs_ptr->fcs_data->item_ptr = item_ptr;
-	fcs_ptr->fcs_data->upArrow = -1;
-	fcs_ptr->fcs_data->downArrow = -1;
-	fcs_ptr->fcs_data->unk1 = unk1;
-	fcs_ptr->fcs_data->unk2 = unk2;
+	fcs_ptr->iconPtr = (IconBlock *) malloc(sizeof(IconBlock));
+	fcs_ptr->iconPtr->itemRef = itemRef;
+	fcs_ptr->iconPtr->upArrow = -1;
+	fcs_ptr->iconPtr->downArrow = -1;
+	fcs_ptr->iconPtr->line = line;
+	fcs_ptr->iconPtr->classMask = classMask;
 
-	item_ptr = derefItem(item_ptr->child);
+	itemRef = derefItem(itemRef->child);
 
-	while (item_ptr && unk1-- != 0) {
+	while (itemRef && line-- != 0) {
 		num_sibs_with_flag = 0;
-		while (item_ptr && width_div_3 > num_sibs_with_flag) {
-			if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr))
+		while (itemRef && width_div_3 > num_sibs_with_flag) {
+			if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef))
 				if (getGameType() == GType_SIMON1) {
 					num_sibs_with_flag++;
 				} else {
 					num_sibs_with_flag += 20;
 				}
-			item_ptr = derefItem(item_ptr->sibling);
+			itemRef = derefItem(itemRef->sibling);
 		}
 	}
 
-	if (item_ptr == NULL) {
-		fcs_ptr->fcs_data->unk1 = 0;
-		item_ptr = derefItem(item_ptr_org->child);
+	if (itemRef == NULL) {
+		fcs_ptr->iconPtr->line = 0;
+		itemRef = derefItem(item_ptr_org->child);
 	}
 
 	x_pos = 0;
@@ -1835,23 +1835,23 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 	k = 0;
 	j = 0;
 
-	while (item_ptr) {
-		if ((unk2 == 0 || item_ptr->classFlags & unk2) && has_item_childflag_0x10(item_ptr)) {
+	while (itemRef) {
+		if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef)) {
 			if (item_again == false) {
-				fcs_ptr->fcs_data->e[k].item = item_ptr;
+				fcs_ptr->iconPtr->iconArray[k].item = itemRef;
 				if (getGameType() == GType_SIMON1) {
-					draw_icon_c(fcs_ptr, item_get_icon_number(item_ptr), x_pos * 3, y_pos);
-					fcs_ptr->fcs_data->e[k].hit_area =
+					draw_icon_c(fcs_ptr, item_get_icon_number(itemRef), x_pos * 3, y_pos);
+					fcs_ptr->iconPtr->iconArray[k].boxCode =
 						setup_icon_hit_area(fcs_ptr, x_pos * 3, y_pos,
-																item_get_icon_number(item_ptr), item_ptr);
+																item_get_icon_number(itemRef), itemRef);
 				} else {
-					draw_icon_c(fcs_ptr, item_get_icon_number(item_ptr), x_pos, y_pos);
-					fcs_ptr->fcs_data->e[k].hit_area =
-						setup_icon_hit_area(fcs_ptr, x_pos, y_pos, item_get_icon_number(item_ptr), item_ptr);
+					draw_icon_c(fcs_ptr, item_get_icon_number(itemRef), x_pos, y_pos);
+					fcs_ptr->iconPtr->iconArray[k].boxCode =
+						setup_icon_hit_area(fcs_ptr, x_pos, y_pos, item_get_icon_number(itemRef), itemRef);
 				}
 				k++;
 			} else {
-				fcs_ptr->fcs_data->e[k].item = NULL;
+				fcs_ptr->iconPtr->iconArray[k].item = NULL;
 				j = 1;
 			}
 			x_pos += (getGameType() == GType_SIMON1) ? 1 : 20;
@@ -1864,24 +1864,24 @@ void SimonEngine::drawIconArray(uint fcs_index, Item *item_ptr, int unk1, int un
 					item_again = true;
 			}
 		}
-		item_ptr = derefItem(item_ptr->sibling);
+		itemRef = derefItem(itemRef->sibling);
 	}
 
-	fcs_ptr->fcs_data->e[k].item = NULL;
+	fcs_ptr->iconPtr->iconArray[k].item = NULL;
 
-	if (j != 0 || fcs_ptr->fcs_data->unk1 != 0) {
+	if (j != 0 || fcs_ptr->iconPtr->line != 0) {
 		addArrows(fcs_ptr, fcs_index);
 	}
 }
 
-void SimonEngine::addArrows(FillOrCopyStruct *fcs, uint fcs_index) {
-	setArrowHitAreas(fcs, fcs_index);
+void SimonEngine::addArrows(WindowBlock *window, uint fcs_index) {
+	setArrowHitAreas(window, fcs_index);
 
-	fcs->fcs_data->upArrow = _scrollUpHitArea;
-	fcs->fcs_data->downArrow = _scrollDownHitArea;
+	window->iconPtr->upArrow = _scrollUpHitArea;
+	window->iconPtr->downArrow = _scrollDownHitArea;
 }
 
-void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::setArrowHitAreas(WindowBlock *window, uint fcs_index) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
@@ -1894,7 +1894,7 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->flags = 0x24;
 		ha->id = 0x7FFB;
 		ha->priority = 100;
-		ha->fcs = fcs;
+		ha->window = window;
 		ha->verb = 1;
 	} else {
 		ha->x = 81;
@@ -1904,7 +1904,7 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->flags = 36;
 		ha->id = 0x7FFB;
 		ha->priority = 100;
-		ha->fcs = fcs;
+		ha->window = window;
 		ha->verb = 1;
 	}
 
@@ -1919,7 +1919,7 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->flags = 0x24;
 		ha->id = 0x7FFC;
 		ha->priority = 100;
-		ha->fcs = fcs;
+		ha->window = window;
 		ha->verb = 1;
 
 		// Simon1 specific
@@ -1933,7 +1933,7 @@ void SimonEngine::setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index) {
 		ha->flags = 36;
 		ha->id = 0x7FFC;
 		ha->priority = 100;
-		ha->fcs = fcs;
+		ha->window = window;
 		ha->verb = 1;
 	}
 }
@@ -2086,9 +2086,9 @@ startOver:
 
 		if (ha == NULL) {
 		} else if (ha->id == 0x7FFB) {
-			inventoryUp(ha->fcs);
+			inventoryUp(ha->window);
 		} else if (ha->id == 0x7FFC) {
-			inventoryDown(ha->fcs);
+			inventoryDown(ha->window);
 		} else if (ha->id >= 101 && ha->id < 113) {
 			_verbHitArea = ha->verb;
 			setVerb(ha);
@@ -3023,27 +3023,27 @@ void SimonEngine::changeWindow(uint a) {
 }
 
 // OK
-FillOrCopyStruct *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
-	FillOrCopyStruct *fcs;
+WindowBlock *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
+	WindowBlock *window;
 
-	fcs = _fcs_list;
-	while (fcs->mode != 0)
-		fcs++;
+	window = _fcs_list;
+	while (window->mode != 0)
+		window++;
 
-	fcs->mode = 2;
-	fcs->x = x;
-	fcs->y = y;
-	fcs->width = w;
-	fcs->height = h;
-	fcs->flags = flags;
-	fcs->fill_color = fill_color;
-	fcs->text_color = text_color;
-	fcs->textColumn = 0;
-	fcs->textRow = 0;
-	fcs->textColumnOffset = 0;
-	fcs->textMaxLength = fcs->width * 8 / 6; // characters are 6 pixels
-	fcs->scrollY = 0;
-	return fcs;
+	window->mode = 2;
+	window->x = x;
+	window->y = y;
+	window->width = w;
+	window->height = h;
+	window->flags = flags;
+	window->fill_color = fill_color;
+	window->text_color = text_color;
+	window->textColumn = 0;
+	window->textRow = 0;
+	window->textColumnOffset = 0;
+	window->textMaxLength = window->width * 8 / 6; // characters are 6 pixels
+	window->scrollY = 0;
+	return window;
 }
 
 Item *SimonEngine::derefItem(uint item) {
@@ -3102,43 +3102,43 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 
 // ok
 void SimonEngine::removeIconArray(uint fcs_index) {
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 	uint16 fcsunk1;
 	uint16 i;
 
-	fcs = _windowArray[fcs_index & 7];
+	window = _windowArray[fcs_index & 7];
 	fcsunk1 = _curWindow;
 
-	if (fcs == NULL || fcs->fcs_data == NULL)
+	if (window == NULL || window->iconPtr == NULL)
 		return;
 
 	changeWindow(fcs_index);
 	fcs_putchar(12);
 	changeWindow(fcsunk1);
 
-	for (i = 0; fcs->fcs_data->e[i].item != NULL; i++) {
-		delete_hitarea_by_index(fcs->fcs_data->e[i].hit_area);
+	for (i = 0; window->iconPtr->iconArray[i].item != NULL; i++) {
+		delete_hitarea_by_index(window->iconPtr->iconArray[i].boxCode);
 	}
 
-	if (fcs->fcs_data->upArrow != -1) {
-		delete_hitarea_by_index(fcs->fcs_data->upArrow);
+	if (window->iconPtr->upArrow != -1) {
+		delete_hitarea_by_index(window->iconPtr->upArrow);
 	}
 
-	if (fcs->fcs_data->downArrow != -1) {
-		delete_hitarea_by_index(fcs->fcs_data->downArrow);
+	if (window->iconPtr->downArrow != -1) {
+		delete_hitarea_by_index(window->iconPtr->downArrow);
 		if (getGameType() == GType_SIMON1)
-			removeArrows(fcs, fcs_index);
+			removeArrows(window, fcs_index);
 	}
 
-	free(fcs->fcs_data);
-	fcs->fcs_data = NULL;
+	free(window->iconPtr);
+	window->iconPtr = NULL;
 
 	_fcsData1[fcs_index] = 0;
 	_fcsData2[fcs_index] = 0;
 }
 
 // ok
-void SimonEngine::removeArrows(FillOrCopyStruct *fcs, uint fcs_index) {
+void SimonEngine::removeArrows(WindowBlock *window, uint fcs_index) {
 	o_kill_sprite_simon1(128);
 }
 
@@ -3154,40 +3154,40 @@ void SimonEngine::fcs_putchar(uint a) {
 }
 
 // ok
-void SimonEngine::clearWindow(FillOrCopyStruct *fcs) {
-	if (fcs->flags & 0x10)
-		restoreWindow(fcs);
+void SimonEngine::clearWindow(WindowBlock *window) {
+	if (window->flags & 0x10)
+		restoreWindow(window);
 	else
-		colorWindow(fcs);
+		colorWindow(window);
 
-	fcs->textColumn = 0;
-	fcs->textRow = 0;
-	fcs->textColumnOffset = 0;
-	fcs->textLength = 0;
+	window->textColumn = 0;
+	window->textRow = 0;
+	window->textColumnOffset = 0;
+	window->textLength = 0;
 }
 
 // ok
-void SimonEngine::restoreWindow(FillOrCopyStruct *fcs) {
+void SimonEngine::restoreWindow(WindowBlock *window) {
 	_lockWord |= 0x8000;
 
 	if (getGameType() == GType_SIMON1) {
-		restoreBlock(fcs->y + fcs->height * 8 + ((fcs == _windowArray[2]) ? 1 : 0), (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+		restoreBlock(window->y + window->height * 8 + ((window == _windowArray[2]) ? 1 : 0), (window->x + window->width) * 8, window->y, window->x * 8);
 	} else {
-		if (_restoreWindow6 && _windowArray[2] == fcs) {
-			fcs = _windowArray[6];
+		if (_restoreWindow6 && _windowArray[2] == window) {
+			window = _windowArray[6];
 			_restoreWindow6 = 0;
 		}
 
 		if (getGameType() == GType_FF)
-			restoreBlock(fcs->y + fcs->height, fcs->x + fcs->width, fcs->y, fcs->x);
+			restoreBlock(window->y + window->height, window->x + window->width, window->y, window->x);
 		else
-			restoreBlock(fcs->y + fcs->height * 8, (fcs->x + fcs->width) * 8, fcs->y, fcs->x * 8);
+			restoreBlock(window->y + window->height * 8, (window->x + window->width) * 8, window->y, window->x * 8);
 	}
 
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::colorWindow(FillOrCopyStruct *fcs) {
+void SimonEngine::colorWindow(WindowBlock *window) {
 	byte *dst;
 	uint h, w;
 
@@ -3196,17 +3196,17 @@ void SimonEngine::colorWindow(FillOrCopyStruct *fcs) {
 	dst = getFrontBuf();
 
 	if (getGameType() == GType_FF) {
-		dst += _dxSurfacePitch * fcs->y + fcs->x;
-		h = fcs->height;
-		w = fcs->width;
+		dst += _dxSurfacePitch * window->y + window->x;
+		h = window->height;
+		w = window->width;
 	} else {
-		dst += _dxSurfacePitch * fcs->y + fcs->x * 8;
-		h = fcs->height * 8;
-		w = fcs->width * 8;
+		dst += _dxSurfacePitch * window->y + window->x * 8;
+		h = window->height * 8;
+		w = window->width * 8;
 	}
 
 	do {
-		memset(dst, fcs->fill_color, w);
+		memset(dst, window->fill_color, w);
 		dst += _dxSurfacePitch;
 	} while (--h);
 
@@ -3389,10 +3389,10 @@ void SimonEngine::video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte
 	_lockWord &= ~0x8000;
 }
 
-void SimonEngine::video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs) {
-	if (fcs->flags & 8)
-		restoreWindow(fcs);
-	fcs->mode = 0;
+void SimonEngine::video_copy_if_flag_0x8_c(WindowBlock *window) {
+	if (window->flags & 8)
+		restoreWindow(window);
+	window->mode = 0;
 }
 
 void SimonEngine::loadSprite(uint windowNum, uint fileId, uint vgaSpriteId, uint x, uint y, uint palette) {

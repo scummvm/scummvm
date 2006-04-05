@@ -1505,12 +1505,12 @@ void SimonEngine::o_confirmQuit() {
 }
 
 void SimonEngine::o_restoreIconArray(uint fcs_index) {
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 
-	fcs = _windowArray[fcs_index & 7];
-	if (fcs->fcs_data == NULL)
+	window = _windowArray[fcs_index & 7];
+	if (window->iconPtr == NULL)
 		return;
-	drawIconArray(fcs_index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1, fcs->fcs_data->unk2);
+	drawIconArray(fcs_index, window->iconPtr->itemRef, window->iconPtr->line, window->iconPtr->classMask);
 }
 
 void SimonEngine::o_freezeBottom() {
@@ -1598,12 +1598,12 @@ void SimonEngine::o_unk_132_helper_3() {
 		set_hitarea_bit_0x40(i);
 }
 
-void SimonEngine::o_clearCharacter(FillOrCopyStruct *fcs, int x, byte b) {
+void SimonEngine::o_clearCharacter(WindowBlock *window, int x, byte b) {
 	byte old_text;
 
-	video_putchar(fcs, x, b);
-	old_text = fcs->text_color;
-	fcs->text_color = fcs->fill_color;
+	video_putchar(window, x, b);
+	old_text = window->text_color;
+	window->text_color = window->fill_color;
 
 	if (_language == Common::HB_ISR) { //Hebrew
 		x = 128;
@@ -1614,10 +1614,10 @@ void SimonEngine::o_clearCharacter(FillOrCopyStruct *fcs, int x, byte b) {
 
 	}
 
-	video_putchar(fcs, x);
+	video_putchar(window, x);
 
-	fcs->text_color = old_text;
-	video_putchar(fcs, 8);
+	window->text_color = old_text;
+	video_putchar(window, 8);
 }
 
 void SimonEngine::o_playMusic() {
@@ -1665,10 +1665,10 @@ void SimonEngine::o_playSFX(uint sound_id) {
 }
 
 void SimonEngine::o_setTextColor(uint color) {
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 
-	fcs = _windowArray[_curWindow];
-	fcs->text_color = color;
+	window = _windowArray[_curWindow];
+	window->text_color = color;
 }
 
 void SimonEngine::o_unk_103() {

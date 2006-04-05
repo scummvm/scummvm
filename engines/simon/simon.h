@@ -52,7 +52,7 @@ struct Child;
 struct Child2;
 
 struct Item;
-struct FillOrCopyStruct;
+struct WindowBlock;
 struct Subroutine;
 struct SubroutineLine;
 struct TimeEvent;
@@ -67,7 +67,7 @@ struct HitArea {
 	uint16 width, height;
 	uint16 flags;
 	uint16 id;
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 	Item *item_ptr;
 	uint16 verb;
 	uint16 priority;
@@ -273,7 +273,7 @@ protected:
 	int16 _scriptAdj1, _scriptAdj2;
 
 	uint16 _curWindow;
-	FillOrCopyStruct *_textWindow;
+	WindowBlock *_textWindow;
 
 	Item *_subjectItem, *_objectItem;
 	Item *_item1;
@@ -372,7 +372,7 @@ protected:
 	uint16 _bitArray[48];
 	int16 _variableArray[256];
 
-	FillOrCopyStruct *_windowArray[8];
+	WindowBlock *_windowArray[8];
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -406,7 +406,7 @@ protected:
 
 	VgaTimerEntry _vgaTimerList[95];
 
-	FillOrCopyStruct *_fcs_list;
+	WindowBlock *_fcs_list;
 
 	byte _lettersToPrintBuf[80];
 
@@ -611,7 +611,7 @@ protected:
 	void mouseOff();
 	void mouseOn();
 
-	void drawIconArray(uint i, Item *item_ptr, int unk1, int unk2);
+	void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
 
 	void loadTextIntoMem(uint string_id);
 	void loadTablesIntoMem(uint subr_id);
@@ -632,22 +632,22 @@ protected:
 	void defocusHitarea();
 	void endCutscene();
 	void runSubroutine101();
-	void checkUp(FillOrCopyStruct *fcs);
-	void checkDown(FillOrCopyStruct *fcs);
-	void inventoryUp(FillOrCopyStruct *fcs);
-	void inventoryDown(FillOrCopyStruct *fcs);
+	void checkUp(WindowBlock *window);
+	void checkDown(WindowBlock *window);
+	void inventoryUp(WindowBlock *window);
+	void inventoryDown(WindowBlock *window);
 	void hitareaChangedHelper();
 	void focusVerb(uint hitarea_id);
 	HitArea *findHitAreaByID(uint hitarea_id);
 
 	void showActionString(uint x, const byte *string);
-	void video_putchar(FillOrCopyStruct *fcs, byte c, byte b = 0);
-	void clearWindow(FillOrCopyStruct *fcs);
+	void video_putchar(WindowBlock *window, byte c, byte b = 0);
+	void clearWindow(WindowBlock *window);
 	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
 	void read_vga_from_datfile_1(uint vga_id);
 
-	uint get_fcs_ptr_3_index(FillOrCopyStruct *fcs);
+	uint get_fcs_ptr_3_index(WindowBlock *window);
 
 	void setup_hitarea_from_pos(uint x, uint y, uint mode);
 	void new_current_hitarea(HitArea * ha);
@@ -661,11 +661,11 @@ protected:
 	void drawMousePointer();
 
 	void removeIconArray(uint fcs_index);
-	void draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y);
+	void draw_icon_c(WindowBlock *window, uint icon, uint x, uint y);
 	bool has_item_childflag_0x10(Item *item);
 	uint item_get_icon_number(Item *item);
-	uint setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number, Item *item_ptr);
-	void addArrows(FillOrCopyStruct *fcs, uint fcs_index);
+	uint setup_icon_hit_area(WindowBlock *window, uint x, uint y, uint icon_number, Item *item_ptr);
+	void addArrows(WindowBlock *window, uint fcs_index);
 
 	void loadIconData();	
 	void loadIconFile();
@@ -688,12 +688,12 @@ protected:
 	void o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void playSpeech(uint speech_id, uint vga_sprite_id);
 	void printText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
-	FillOrCopyStruct *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
+	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
-	void setArrowHitAreas(FillOrCopyStruct *fcs, uint fcs_index);
+	void setArrowHitAreas(WindowBlock *window, uint fcs_index);
 
 	byte *setup_vga_destination(uint32 size);
 	void vga_buf_unk_proc3(byte *end);
@@ -827,14 +827,14 @@ protected:
 
 	bool isSpriteLoaded(uint16 id, uint16 fileId);
 
-	void video_copy_if_flag_0x8_c(FillOrCopyStruct *fcs);
+	void video_copy_if_flag_0x8_c(WindowBlock *window);
 	void delete_hitarea_by_index(uint index);
 
-	void removeArrows(FillOrCopyStruct *fcs, uint fcs_index);
+	void removeArrows(WindowBlock *window, uint fcs_index);
 	void fcs_putchar(uint a);
 
-	void restoreWindow(FillOrCopyStruct *fcs);
-	void colorWindow(FillOrCopyStruct *fcs);
+	void restoreWindow(WindowBlock *window);
+	void colorWindow(WindowBlock *window);
 
 	void restoreBlock(uint b, uint r, uint y, uint x);
 
@@ -873,7 +873,7 @@ protected:
 	void dx_copy_from_2_to_attached(uint x, uint y, uint w, uint h);
 
 	void print_char_helper_1(const byte *src, uint len);
-	void print_char_helper_5(FillOrCopyStruct *fcs);
+	void print_char_helper_5(WindowBlock *window);
 
 	void quickLoadOrSave();
 	void shutdown();
@@ -889,8 +889,8 @@ protected:
 	void showmessage_helper_2();
 	void print_char_helper_6(uint i);
 
-	void video_putchar_newline(FillOrCopyStruct *fcs);
-	void video_putchar_drawchar(FillOrCopyStruct *fcs, uint x, uint y, byte chr);
+	void video_putchar_newline(WindowBlock *window);
+	void video_putchar_drawchar(WindowBlock *window, uint x, uint y, byte chr);
 
 	void loadMusic(uint music);
 	void checkTimerCallback();
@@ -916,9 +916,9 @@ protected:
 	void saveOrLoadDialog(bool load);
 	void o_unk_132_helper_3();
 	int o_unk_132_helper(bool *b, char *buf);
-	void o_clearCharacter(FillOrCopyStruct *fcs, int x, byte b = 0);
+	void o_clearCharacter(WindowBlock *window, int x, byte b = 0);
 	void saveGameDialog(char *buf);
-	void o_fileError(FillOrCopyStruct *fcs, bool save_error);
+	void o_fileError(WindowBlock *window, bool save_error);
 
 	int countSaveGames();
 	int displaySaveGameList(int curpos, bool load, char *dst);

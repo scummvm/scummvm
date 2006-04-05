@@ -278,30 +278,30 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 }
 
 void SimonEngine::showActionString(uint x, const byte *string) {
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 
-	fcs = _windowArray[1];
-	if (fcs == NULL || fcs->text_color == 0)
+	window = _windowArray[1];
+	if (window == NULL || window->text_color == 0)
 		return;
 
-	fcs->textColumn = x >> 3;
-	fcs->textColumnOffset = x & 7;
+	window->textColumn = x >> 3;
+	window->textColumnOffset = x & 7;
 
 	for (; *string; string++)
-		video_putchar(fcs, *string);
+		video_putchar(window, *string);
 }
 
 void SimonEngine::hitareaChangedHelper() {
-	FillOrCopyStruct *fcs;
+	WindowBlock *window;
 
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79))
 			return;
 	}
 
-	fcs = _windowArray[1];
-	if (fcs != NULL && fcs->text_color != 0)
-		clearWindow(fcs);
+	window = _windowArray[1];
+	if (window != NULL && window->text_color != 0)
+		clearWindow(window);
 
 	_lastHitArea2Ptr = NULL;
 	_hitAreaPtr7 = NULL;
@@ -508,15 +508,15 @@ void SimonEngine::leaveHitAreaById(uint hitarea_id) {
 		hitarea_leave(ha);
 }
 
-void SimonEngine::checkUp(FillOrCopyStruct *fcs) {
+void SimonEngine::checkUp(WindowBlock *window) {
 	uint16 j, k;
 
 	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[31] > 52)) {
 		k = (((_variableArray[31] / 52) - 2) % 3);
 		j = k * 6;
 		if (!is_hitarea_0x40_clear(j + 201)) {
-			uint index = get_fcs_ptr_3_index(fcs);
-			drawIconArray(index, fcs->fcs_data->item_ptr, 0, fcs->fcs_data->unk2);
+			uint index = get_fcs_ptr_3_index(window);
+			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 			loadSprite(4, 9, k + 34, 0, 0, 0);	
 		}
 	}
@@ -537,12 +537,12 @@ void SimonEngine::checkUp(FillOrCopyStruct *fcs) {
 	}
 }
 
-void SimonEngine::checkDown(FillOrCopyStruct *fcs) {
+void SimonEngine::checkDown(WindowBlock *window) {
 	uint16 j, k;
 
 	if (((_variableArray[31] - _variableArray[30]) == 24) && (_iOverflow == 1)) {
-		uint index = get_fcs_ptr_3_index(fcs);
-		drawIconArray(index, fcs->fcs_data->item_ptr, 0, fcs->fcs_data->unk2);
+		uint index = get_fcs_ptr_3_index(window);
+		drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 		k = ((_variableArray[31] / 52) % 3);
 		loadSprite(4, 9, k + 25, 0, 0, 0);	
 		_variableArray[31] += 52;
@@ -562,51 +562,51 @@ void SimonEngine::checkDown(FillOrCopyStruct *fcs) {
 	}
 }
 
-void SimonEngine::inventoryUp(FillOrCopyStruct *fcs) {
+void SimonEngine::inventoryUp(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
-		checkUp(fcs);
+		checkUp(window);
 		loadSprite(4, 9 ,21 ,0 ,0, 0);	
 		while(1) {
 			if (_currentBoxNumber != 32763 || _leftButtonDown)
 				break;
-			checkUp(fcs);
+			checkUp(window);
 		}
 		o_waitForMark(2);
-		checkUp(fcs);
+		checkUp(window);
 		o_sync(922);
 		o_waitForMark(1);
-		checkUp(fcs);
+		checkUp(window);
 	} else {
-		if (fcs->fcs_data->unk1 == 0)
+		if (window->iconPtr->line == 0)
 			return;
 
 		mouseOff();
-		uint index = get_fcs_ptr_3_index(fcs);
-		drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 - 1, fcs->fcs_data->unk2);
+		uint index = get_fcs_ptr_3_index(window);
+		drawIconArray(index, window->iconPtr->itemRef, window->iconPtr->line - 1, window->iconPtr->classMask);
 		mouseOn();
 	}
 }
 
-void SimonEngine::inventoryDown(FillOrCopyStruct *fcs) {
+void SimonEngine::inventoryDown(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
-		checkDown(fcs);
+		checkDown(window);
 		loadSprite(4, 9, 23, 0, 0, 0);	
 		while(1) {
 			if (_currentBoxNumber != 32764 || _leftButtonDown)
 				break;
-			checkDown(fcs);
+			checkDown(window);
 		}
 		o_waitForMark(2);
-		checkDown(fcs);
+		checkDown(window);
 		o_sync(924);
 		o_waitForMark(1);
-		checkDown(fcs);
+		checkDown(window);
 	} else {
 		mouseOff();
-		uint index = get_fcs_ptr_3_index(fcs);
-		drawIconArray(index, fcs->fcs_data->item_ptr, fcs->fcs_data->unk1 + 1, fcs->fcs_data->unk2);
+		uint index = get_fcs_ptr_3_index(window);
+		drawIconArray(index, window->iconPtr->itemRef, window->iconPtr->line + 1, window->iconPtr->classMask);
 		mouseOn();
 	}
 }

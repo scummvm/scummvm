@@ -70,21 +70,20 @@ struct Subroutine {
 	Subroutine *next;							/* next subroutine in linked list */
 };
 
-struct FillOrCopyDataEntry {
+struct IconEntry {
 	Item *item;
-	uint16 hit_area;
-	uint16 xxx_1;
+	uint16 boxCode;
 };
 
-struct FillOrCopyData {
-	int16 unk1;
-	Item *item_ptr;
-	FillOrCopyDataEntry e[64];
+struct IconBlock {
+	int16 line;
+	Item *itemRef;
+	IconEntry iconArray[64];
 	int16 upArrow, downArrow;
-	uint16 unk2;
+	uint16 classMask;
 };
 
-struct FillOrCopyStruct {
+struct WindowBlock {
 	byte mode;
 	byte flags;
 	uint16 x, y;
@@ -92,9 +91,9 @@ struct FillOrCopyStruct {
 	uint16 textColumn, textRow;
 	uint16 textColumnOffset, textLength, textMaxLength;
 	uint16 scrollY;
-	uint8 fill_color, text_color, unk5;
-	FillOrCopyData *fcs_data;
-	FillOrCopyStruct() { memset(this, 0, sizeof(*this)); }
+	uint8 fill_color, text_color;
+	IconBlock *iconPtr;
+	WindowBlock() { memset(this, 0, sizeof(*this)); }
 };
 // note on text offset:
 // the actual x-coordinate is: textColumn * 8 + textColumnOffset

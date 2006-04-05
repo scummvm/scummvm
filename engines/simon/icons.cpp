@@ -73,7 +73,7 @@ void SimonEngine::loadIconData() {
 
 // Thanks to Stuart Caie for providing the original
 // C conversion upon which this function is based.
-void decompress_icon_amiga (byte *dst, byte *src, byte base, uint pitch) {
+void decompressIconAmiga (byte *dst, byte *src, byte base, uint pitch) {
 	byte icon_pln[288];
 	byte *i, *o, x, y;
 
@@ -114,7 +114,7 @@ void decompress_icon_amiga (byte *dst, byte *src, byte base, uint pitch) {
 	}
 }
 
-static void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base, uint pitch) {
+static void decompressIcon(byte *dst, byte *src, uint w, uint h_org, byte base, uint pitch) {
 	int8 reps;
 	byte color_1, color_2;
 	byte *dst_org = dst;
@@ -174,71 +174,71 @@ static void decompress_icon(byte *dst, byte *src, uint w, uint h_org, byte base,
 }
 
 
-void SimonEngine::draw_icon_c(FillOrCopyStruct *fcs, uint icon, uint x, uint y) {
+void SimonEngine::draw_icon_c(WindowBlock *window, uint icon, uint x, uint y) {
 	byte *dst;
 	byte *src;
 
 	_lockWord |= 0x8000;
 	dst = getFrontBuf();
 
-	if (!(getGameType() == GType_SIMON2)) {
+	if (getGameType() == GType_SIMON1) {
 		// Simon 1
-		dst += (x + fcs->x) * 8;
-		dst += (y * 25 + fcs->y) * _dxSurfacePitch;
+		dst += (x + window->x) * 8;
+		dst += (y * 25 + window->y) * _dxSurfacePitch;
 
 		if (getPlatform() == Common::kPlatformAmiga) {
 			src = _iconFilePtr;
 			src += READ_BE_UINT32(&((uint32 *)src)[icon]);
-			decompress_icon_amiga (dst, src, 0xE0, _dxSurfacePitch);
+			decompressIconAmiga (dst, src, 224, _dxSurfacePitch);
 		} else {
 			src = _iconFilePtr;
 			src += READ_LE_UINT16(&((uint16 *)src)[icon]);
-			decompress_icon(dst, src, 24, 12, 0xE0, _dxSurfacePitch);
+			decompressIcon(dst, src, 24, 12, 224, _dxSurfacePitch);
 		}
 	} else {
 		// Simon 2
 		dst += 110;
 		dst += x;
-		dst += (y + fcs->y) * _dxSurfacePitch;
+		dst += (y + window->y) * _dxSurfacePitch;
 
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 0]);
-		decompress_icon(dst, src, 20, 10, 0xE0, _dxSurfacePitch);
+		decompressIcon(dst, src, 20, 10, 224, _dxSurfacePitch);
 
 		src = _iconFilePtr;
 		src += READ_LE_UINT16(&((uint16 *)src)[icon * 2 + 1]);
-		decompress_icon(dst, src, 20, 10, 0xD0, _dxSurfacePitch);
+		decompressIcon(dst, src, 20, 10, 208, _dxSurfacePitch);
 	}
 
 	_lockWord &= ~0x8000;
 }
 
-uint SimonEngine::setup_icon_hit_area(FillOrCopyStruct *fcs, uint x, uint y, uint icon_number,
+uint SimonEngine::setup_icon_hit_area(WindowBlock *window, uint x, uint y, uint icon_number,
 																		 Item *item_ptr) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();
 
-	if (!(getGameType() == GType_SIMON2)) {
-		ha->x = (x + fcs->x) << 3;
-		ha->y = y * 25 + fcs->y;
+	if (getGameType() == GType_SIMON1) {
+		ha->x = (x + window->x) * 8;
+		ha->y = y * 25 + window->y;
 		ha->item_ptr = item_ptr;
 		ha->width = 24;
 		ha->height = 24;
 		ha->flags = 0xB0;
 		ha->id = 0x7FFD;
 		ha->priority = 100;
-		ha->verb = 0xD0;
+		ha->verb = 208;
 	} else {
 		ha->x = x + 110;
-		ha->y = fcs->y + y;
+		ha->y = window->y + y;
 		ha->item_ptr = item_ptr;
 		ha->width = 20;
 		ha->height = 20;
 		ha->flags = 0xB0;
 		ha->id = 0x7FFD;
 		ha->priority = 100;
-		ha->verb = 0xD0;
+		ha->verb = 208;
 	}
 
 	return ha - _hitAreas;

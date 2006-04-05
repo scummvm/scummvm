@@ -13,8 +13,8 @@ MODULE_OBJS := \
  	oracle.o \
 	res.o \
 	saveload.o \
-	sound.o \
 	simon.o \
+	sound.o \
 	verb.o \
 	vga.o \
 
