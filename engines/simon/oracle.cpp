@@ -28,8 +28,6 @@
 #include "simon/intern.h"
 #include "simon/vga.h"
 
-#include <sys/stat.h>
-
 namespace Simon {
 
 void SimonEngine::checkLinkBox() {	// Check for boxes spilling over to next row of text
