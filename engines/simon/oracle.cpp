@@ -174,7 +174,7 @@ void SimonEngine::listSaveGames(int n) {
 
 	while(1) {
 		OK=1;
-		if (getBitFlag(93)) {
+		if (getBitFlag(93) || getBitFlag(94)) {
 			OK = 0;
 			if(j > z)
 				break;
