@@ -2201,7 +2201,7 @@ uint16 computeMessageLength(byte *ptr, uint16 width, uint16 *numWords, uint16 *m
 			si = 0;
 		} else {
 			if (fontParamTable[character].characterWidth) {
-				uint16 var_C = fontParamTable[character].characterWidth;
+				uint16 var_C = fontParamTable[character].characterWidth + 1;
 
 				if (si + var_C < width) {
 					si += var_C;
@@ -2305,7 +2305,7 @@ void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color
 				if (characterWidth) {
 					byte characterIdx = fontParamTable[currentChar].characterIdx;
 					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
-					localX += characterWidth;
+					localX += characterWidth + 1;
 				}
 			}
 		} while ((messagePtr < endOfMessagePtr) && !endOfMessageReached);
