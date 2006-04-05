@@ -19,7 +19,7 @@
  * $Id$
  */
 
-#include "../fs.h"
+#include "backends/fs/fs.h"
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>

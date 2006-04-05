@@ -22,7 +22,7 @@
 #if defined(PALMOS_MODE)
 
 #include "common/stdafx.h"
-#include "fs/fs.h"
+#include "backends/fs/fs.h"
 #include <stdio.h>
 #include <stdlib.h>
 

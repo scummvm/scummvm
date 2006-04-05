@@ -23,7 +23,7 @@
 
 #include "common/stdafx.h"
 
-#include "../fs.h"
+#include "backends/fs/fs.h"
 
 #ifdef MACOSX
 #include <sys/types.h>

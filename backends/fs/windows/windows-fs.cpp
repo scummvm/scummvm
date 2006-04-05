@@ -22,7 +22,7 @@
 #ifdef WIN32
 
 #include "common/stdafx.h"
-#include "../fs.h"
+#include "backends/fs/fs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>

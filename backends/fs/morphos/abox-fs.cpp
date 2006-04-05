@@ -26,7 +26,7 @@
 #include <stdio.h>
 
 #include "base/engine.h"
-#include "../fs.h"
+#include "backends/fs/fs.h"
 
 /*
  * Implementation of the ScummVM file system API based on the MorphOS A-Box API.
