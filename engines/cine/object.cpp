@@ -76,18 +76,19 @@ void loadObject(char *pObjectName) {
 
 	assert(numEntry <= NUM_MAX_OBJECT);
 
-	
 	for (i = 0; i < numEntry; i++) {
-		if (objectTable[i].costume != -2)	// flag is keep ?
-		{
-			objectTable[i].x = READ_BE_UINT16(ptr); ptr += 2;
-			objectTable[i].y = READ_BE_UINT16(ptr); ptr += 2;
-			objectTable[i].mask = READ_BE_UINT16(ptr); ptr += 2;
-			objectTable[i].frame = READ_BE_UINT16(ptr); ptr += 2;
-			objectTable[i].costume = READ_BE_UINT16(ptr); ptr += 2;
-			memcpy(objectTable[i].name, ptr, 20); ptr += 20;
-			objectTable[i].part = READ_BE_UINT16(ptr); ptr += 2;
+		if (objectTable[i].costume != -2) {	// flag is keep ?
+			Common::MemoryReadStream readS(ptr, entrySize);
+
+			objectTable[i].x = readS.readSint16BE();
+			objectTable[i].y = readS.readSint16BE();
+			objectTable[i].mask = readS.readUint16BE();
+			objectTable[i].frame = readS.readSint16BE();
+			objectTable[i].costume = readS.readSint16BE();
+			readS.read(objectTable[i].name, 20);
+			objectTable[i].part = readS.readUint16BE();
 		}
+		ptr += entrySize;
 	}
 
 	if (!strcmp(pObjectName, "INTRO.OBJ")) {
