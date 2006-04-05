@@ -277,7 +277,7 @@ static int runGame(GameDetector &detector, OSystem &system, const Common::String
 	if (ConfMan.hasKey("path"))
 		Common::File::addDefaultDirectoryRecursive(ConfMan.get("path"));
 	else
-		Common::File::addDefaultDirectoryRecursive(".");
+		Common::File::addDefaultDirectory(".");
 
 	// Add extrapath (if any) to the directory search list
 	if (ConfMan.hasKey("extrapath"))
