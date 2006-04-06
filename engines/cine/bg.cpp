@@ -58,13 +58,13 @@ byte loadCt(const char *ctName) {
 
 		assert(strstr(ctName, ".NEO"));
 
-		memcpy(header, ptr, 32); ptr += 32;
+		memcpy(header, ptr, 32);
 
 		for (int i = 0; i < 16; i++) {
 			header[i] = TO_BE_16(header[i]);
 		}
 
-		gfxConvertSpriteToRaw(page3Raw, ptr + 0x80 - 0x22, 160, 200);
+		gfxConvertSpriteToRaw(page3Raw, ptr + 0x80, 160, 200);
 	}
 
 	return 0;
