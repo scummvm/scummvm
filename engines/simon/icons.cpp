@@ -434,7 +434,7 @@ void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
 		ha->y = 279;
 		ha->width = 30;
 		ha->height = 45;
-		ha->flags = 0x24;
+		ha->flags = kBFBoxInUse | kBFNoTouchName;
 		ha->id = 0x7FFB;
 		ha->priority = 100;
 		ha->window = window;
@@ -444,7 +444,7 @@ void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
 		ha->y = 158;
 		ha->width = 12;
 		ha->height = 26;
-		ha->flags = 36;
+		ha->flags = kBFBoxInUse | kBFNoTouchName;
 		ha->id = 0x7FFB;
 		ha->priority = 100;
 		ha->window = window;
@@ -454,7 +454,7 @@ void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
 		ha->y = 149;
 		ha->width = 12;
 		ha->height = 17;
-		ha->flags = 0x24;
+		ha->flags = kBFBoxInUse | kBFNoTouchName;
 		ha->id = 0x7FFB;
 		ha->priority = 100;
 		ha->window = window;
@@ -469,7 +469,7 @@ void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
 		ha->y = 324;
 		ha->width = 30;
 		ha->height = 44;
-		ha->flags = 0x24;
+		ha->flags = kBFBoxInUse | kBFNoTouchName;
 		ha->id = 0x7FFC;
 		ha->priority = 100;
 		ha->window = window;
@@ -479,7 +479,7 @@ void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
 		ha->y = 162;
 		ha->width = 12;
 		ha->height = 26;
-		ha->flags = 36;
+		ha->flags = kBFBoxInUse | kBFNoTouchName;
 		ha->id = 0x7FFC;
 		ha->priority = 100;
 		ha->window = window;
@@ -489,7 +489,7 @@ void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
 		ha->y = 176;
 		ha->width = 12;
 		ha->height = 17;
-		ha->flags = 0x24;
+		ha->flags = kBFBoxInUse | kBFNoTouchName;
 		ha->id = 0x7FFC;
 		ha->priority = 100;
 		ha->window = window;
@@ -511,7 +511,7 @@ uint SimonEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y
 		ha->item_ptr = item_ptr;
 		ha->width = 45;
 		ha->height = 44;
-		ha->flags = 0xA0;
+		ha->flags = kBFBoxInUse | kBFBoxItem;
 		ha->id = num;
 		ha->priority = 100;
 		ha->verb = 208;
@@ -521,7 +521,7 @@ uint SimonEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y
 		ha->item_ptr = item_ptr;
 		ha->width = 20;
 		ha->height = 20;
-		ha->flags = 0xB0;
+		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
 		ha->id = 0x7FFD;
 		ha->priority = 100;
 		ha->verb = 208;
@@ -531,7 +531,7 @@ uint SimonEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y
 		ha->item_ptr = item_ptr;
 		ha->width = 24;
 		ha->height = 24;
-		ha->flags = 0xB0;
+		ha->flags = kBFDragBox | kBFBoxInUse | kBFBoxItem;
 		ha->id = 0x7FFD;
 		ha->priority = 100;
 		ha->verb = 208;

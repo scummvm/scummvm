@@ -216,7 +216,7 @@ void SimonEngine::clearName() {
 	resetNameWindow();
 	_lastVerbOn = last;
 
-	if (last != NULL && (ha = findHitAreaByID(200)) && (ha->flags & 0x40) && !(last->flags & 0x40))
+	if (last != NULL && (ha = findHitAreaByID(200)) && (ha->flags & kBFBoxDead) && !(last->flags & kBFBoxDead))
 		printVerbOf(last->id);
 }
 
@@ -343,14 +343,14 @@ HitArea *SimonEngine::findEmptyHitArea() {
 void SimonEngine::clear_hitarea_bit_0x40(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL)
-		ha->flags &= ~0x40;
+		ha->flags &= ~kBFBoxDead;
 }
 
 void SimonEngine::set_hitarea_bit_0x40(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
-		ha->flags |= 0x40;
-		ha->flags &= ~2;
+		ha->flags |= kBFBoxDead;
+		ha->flags &= ~kBFBoxSelected;
 		if (hitarea == 102)
 			resetVerbs();
 	}
@@ -378,7 +378,7 @@ bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha == NULL)
 		return false;
-	return (ha->flags & 0x40) == 0;
+	return (ha->flags & kBFBoxDead) == 0;
 }
 
 void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
@@ -390,7 +390,7 @@ void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int
 	ha->y = y;
 	ha->width = width;
 	ha->height = height;
-	ha->flags = flags | 0x20;
+	ha->flags = flags | kBFBoxInUse;
 	ha->id = ha->priority = id;
 	ha->verb = verb;
 	ha->item_ptr = item_ptr;
@@ -441,7 +441,7 @@ void SimonEngine::resetVerbs() {
 		if (ha == NULL)
 			return;
 
-		if (ha->flags & 0x40) {
+		if (ha->flags & kBFBoxDead) {
 			_defaultVerb = 999;
 			_currentVerbBox = NULL;
 		} else {
@@ -485,16 +485,16 @@ void SimonEngine::setVerb(HitArea *ha) {
 
 		if (getGameType() == GType_SIMON1) {
 			if (tmp != NULL) {
-				tmp->flags |= 8;
+				tmp->flags |= kBFInvertTouch;
 				video_toggle_colors(tmp, 0xd5, 0xd0, 0xd5, 0xA);
 			}
 
-			if (ha->flags & 2)
+			if (ha->flags & kBFBoxSelected)
 				video_toggle_colors(ha, 0xda, 0xd5, 0xd5, 5);
 			else
 				video_toggle_colors(ha, 0xdf, 0xda, 0xda, 0xA);
 
-			ha->flags &= ~(2 + 8);
+			ha->flags &= ~(kBFBoxSelected + kBFInvertTouch);
 		} else {
 			if (ha->id < 101)
 				return;
@@ -643,20 +643,20 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	best_ha = NULL;
 
 	do {
-		if (ha->flags & 0x20) {
-			if (!(ha->flags & 0x40)) {
+		if (ha->flags & kBFBoxInUse) {
+			if (!(ha->flags & kBFBoxDead)) {
 				if (x_ >= ha->x && y_ >= ha->y &&
 						x_ - ha->x < ha->width && y_ - ha->y < ha->height && priority <= ha->priority) {
 					priority = ha->priority;
 					best_ha = ha;
 				} else {
-					if (ha->flags & 2) {
+					if (ha->flags & kBFBoxSelected) {
 						hitarea_leave(ha);
-						ha->flags &= ~2;
+						ha->flags &= ~kBFBoxSelected;
 					}
 				}
 			} else {
-				ha->flags &= ~2;
+				ha->flags &= ~kBFBoxSelected;
 			}
 		}
 	} while (ha++, --count);
@@ -676,15 +676,15 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 		_variableArray[2] = y;
 	}
 
-	if (best_ha->flags & 4) {
+	if (best_ha->flags & kBFNoTouchName) {
 		clearName();
 	} else if (best_ha != _lastNameOn) {
 		displayName(best_ha);
 	}
 
-	if (best_ha->flags & 8 && !(best_ha->flags & 2)) {
+	if (best_ha->flags & kBFInvertTouch && !(best_ha->flags & kBFBoxSelected)) {
 		hitarea_leave(best_ha);
-		best_ha->flags |= 2;
+		best_ha->flags |= kBFBoxSelected;
 	}
 
 	return;
@@ -694,8 +694,8 @@ void SimonEngine::displayName(HitArea *ha) {
 	bool result;
 
 	resetNameWindow();
-	if (ha->flags & 1) {
-		result = printTextOf(ha->flags >> 8);
+	if (ha->flags & kBFTextBox) {
+		result = printTextOf(ha->flags / 256);
 	} else {
 		result = printNameOf(ha->item_ptr);
 	}
@@ -725,16 +725,16 @@ bool SimonEngine::printTextOf(uint a) {
 }
 
 bool SimonEngine::printNameOf(Item *item) {
-	Child2 *child2;
+	SubObject *child2;
 
 	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
 		return false;
 
-	child2 = (Child2 *)findChildOfType(item, 2);
+	child2 = (SubObject *)findChildOfType(item, 2);
 	if (child2 == NULL)
 		return false;
 
-	showActionString(getStringPtrByID(child2->string_id));
+	showActionString(getStringPtrByID(child2->objectName));
 
 	return true;
 }

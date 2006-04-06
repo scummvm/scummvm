@@ -167,9 +167,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 28:{									/* item has prop */
-				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
+				SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 				byte num = getVarOrByte();
-				condition = child != NULL && (child->avail_props & (1 << num)) != 0;
+				condition = subObject != NULL && (subObject->objectFlags & (1 << num)) != 0;
 			} break;
 
 		case 31:{									/* set no parent */
@@ -300,18 +300,18 @@ int SimonEngine::runScript() {
 			break;
 
 		case 56:{									/* set child2 fr bit */
-				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
+				SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 				int value = getVarOrByte();
-				if (child != NULL && value >= 0x10)
-					child->avail_props |= 1 << value;
+				if (subObject != NULL && value >= 0x10)
+					subObject->objectFlags |= 1 << value;
 			}
 			break;
 
 		case 57:{									/* clear child2 fr bit */
-				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
+				SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 				int value = getVarOrByte();
-				if (child != NULL && value >= 0x10)
-					child->avail_props &= ~(1 << value);
+				if (subObject != NULL && value >= 0x10)
+					subObject->objectFlags &= ~(1 << value);
 			}
 			break;
 
@@ -375,24 +375,24 @@ int SimonEngine::runScript() {
 
 		case 66:{									/* set item name */
 				uint var = getVarOrByte();
-				uint string_id = getNextStringID();
+				uint stringId = getNextStringID();
 				if (var < 20)
-					_stringIdArray2[var] = string_id;
+					_stringIdArray2[var] = stringId;
 			}
 			break;
 
 		case 67:{									/* set item description */
 				uint var = getVarOrByte();
-				uint string_id = getNextStringID();
+				uint stringId = getNextStringID();
 				if (getFeatures() & GF_TALKIE) {
 					uint speechId = getNextWord();
 					if (var < 20) {
-						_stringIdArray3[var] = string_id;
+						_stringIdArray3[var] = stringId;
 						_speechIdArray4[var] = speechId;
 					}
 				} else {
 					if (var < 20) {
-						_stringIdArray3[var] = string_id;
+						_stringIdArray3[var] = stringId;
 					}
 				}
 			}
@@ -442,9 +442,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 79:{									/* childstruct fr2 is */
-				Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
-				uint string_id = getNextStringID();
-				condition = (child != NULL) && child->string_id == string_id;
+				SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+				uint stringId = getNextStringID();
+				condition = (subObject != NULL) && subObject->objectName == stringId;
 			}
 			break;
 
@@ -862,9 +862,9 @@ int SimonEngine::runScript() {
 			break;
 
 		case 143:{									/* start item sub */
-				Child1 *child = (Child1 *)findChildOfType(getNextItemPtr(), 1);
-				if (child != NULL) {
-					Subroutine *sub = getSubroutineByID(child->subroutine_id);
+				SubRoom *subRoom = (SubRoom *)findChildOfType(getNextItemPtr(), 1);
+				if (subRoom != NULL) {
+					Subroutine *sub = getSubroutineByID(subRoom->subroutine_id);
 					if (sub)
 						startSubroutine(sub);
 				}
@@ -915,12 +915,12 @@ int SimonEngine::runScript() {
 
 		case 157:{									/* get item int prop */
 				Item *item = getNextItemPtr();
-				Child2 *child = (Child2 *)findChildOfType(item, 2);
+				SubObject *subObject = (SubObject *)findChildOfType(item, 2);
 				uint prop = getVarOrByte();
 
-				if (child != NULL && child->avail_props & (1 << prop) && prop < 16) {
-					uint offs = getOffsetOfChild2Param(child, 1 << prop);
-					writeNextVarContents(child->array[offs]);
+				if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
+					uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
+					writeNextVarContents(subObject->objectFlagValue[offs]);
 				} else {
 					writeNextVarContents(0);
 				}
@@ -929,13 +929,13 @@ int SimonEngine::runScript() {
 
 		case 158:{									/* set item prop */
 				Item *item = getNextItemPtr();
-				Child2 *child = (Child2 *)findChildOfType(item, 2);
+				SubObject *subObject = (SubObject *)findChildOfType(item, 2);
 				uint prop = getVarOrByte();
 				int value = getVarOrWord();
 
-				if (child != NULL && child->avail_props & (1 << prop) && prop < 16) {
-					uint offs = getOffsetOfChild2Param(child, 1 << prop);
-					child->array[offs] = value;
+				if (subObject != NULL && subObject->objectFlags & (1 << prop) && prop < 16) {
+					uint offs = getOffsetOfChild2Param(subObject, 1 << prop);
+					subObject->objectFlagValue[offs] = value;
 				}
 			}
 			break;
@@ -1048,13 +1048,13 @@ int SimonEngine::runScript() {
 		case 179:{									/* conversation responses */
 				uint vgaSpriteId = getVarOrByte();				/* and room descriptions */
 				uint color = getVarOrByte();
-				uint string_id = getVarOrByte();
+				uint stringId = getVarOrByte();
 				uint speechId = 0;
 
-				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[string_id]);
+				const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[stringId]);
 				TextLocation *tl = getTextLocation(vgaSpriteId);
 				if (getFeatures() & GF_TALKIE)
-					speechId = _speechIdArray4[string_id];
+					speechId = _speechIdArray4[stringId];
 
 				if (_speech && speechId != 0)
 					playSpeech(speechId, vgaSpriteId);
@@ -1377,18 +1377,18 @@ void SimonEngine::o_inventory_descriptions() {
 	TextLocation *tl = NULL;
 	char buf[256];
 
-	Child2 *child = (Child2 *)findChildOfType(getNextItemPtr(), 2);
-	if (child != NULL && child->avail_props & 1) {
-		string_ptr = (const char *)getStringPtrByID(child->array[0]);
+	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
+	if (subObject != NULL && subObject->objectFlags & kOFText) {
+		string_ptr = (const char *)getStringPtrByID(subObject->objectFlagValue[0]);
 		tl = getTextLocation(vgaSpriteId);
 	}
 
 	if ((getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
-		if (child != NULL && child->avail_props & 0x200) {
-			uint speechId = child->array[getOffsetOfChild2Param(child, 0x200)];
+		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+			uint speechId = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFVoice)];
 
-			if (child->avail_props & 0x100) {
-				uint speechIdOffs = child->array[getOffsetOfChild2Param(child, 0x100)];
+			if (subObject->objectFlags & kOFNumber) {
+				uint speechIdOffs = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
 
 				if (speechId == 116)
 					speechId = speechIdOffs + 115;
@@ -1436,18 +1436,18 @@ void SimonEngine::o_inventory_descriptions() {
 		}
 
 	} else if (getFeatures() & GF_TALKIE) {
-		if (child != NULL && child->avail_props & 0x200) {
-			uint offs = getOffsetOfChild2Param(child, 0x200);
-			playSpeech(child->array[offs], vgaSpriteId);
-		} else if (child != NULL && child->avail_props & 0x100) {
-			uint offs = getOffsetOfChild2Param(child, 0x100);
-			playSpeech(child->array[offs] + 3550, vgaSpriteId);
+		if (subObject != NULL && subObject->objectFlags & kOFVoice) {
+			uint offs = getOffsetOfChild2Param(subObject, kOFVoice);
+			playSpeech(subObject->objectFlagValue[offs], vgaSpriteId);
+		} else if (subObject != NULL && subObject->objectFlags & kOFNumber) {
+			uint offs = getOffsetOfChild2Param(subObject, kOFNumber);
+			playSpeech(subObject->objectFlagValue[offs] + 3550, vgaSpriteId);
 		}
 	}
 
-	if (child != NULL && (child->avail_props & 1) && _subtitles) {
-		if (child->avail_props & 0x100) {
-			sprintf(buf, "%d%s", child->array[getOffsetOfChild2Param(child, 0x100)], string_ptr);
+	if (subObject != NULL && (subObject->objectFlags & kOFText) && _subtitles) {
+		if (subObject->objectFlags & kOFNumber) {
+			sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
 			string_ptr = buf;
 		}
 		if (string_ptr != NULL)

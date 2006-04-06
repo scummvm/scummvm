@@ -30,25 +30,25 @@ struct Child {
 	uint16 type;
 };
 
-struct Child1 : Child {
+struct SubRoom : Child {
 	uint16 subroutine_id;
-	uint16 fr2;
-	uint16 array[1];
+	uint16 roomExitStates;
+	uint16 roomExit[6];
 };
 
-struct Child2 : Child {
-	uint16 string_id;
-	uint32 avail_props;
-	int16 array[1];
+struct SubObject : Child {
+	uint16 objectName;
+	uint32 objectFlags;
+	int16 objectFlagValue[16];
 };
 
-struct Child9 : Child {
-	uint16 array[4];
+struct SubUserFlag : Child {
+	uint16 userFlags[4];
 };
 
 enum {
-	CHILD1_SIZE = sizeof(Child1) - sizeof(uint16),
-	CHILD2_SIZE = sizeof(Child2) - sizeof(int16)
+	SubRoom_SIZE = sizeof(SubRoom) - sizeof(uint16),
+	SubObject_SIZE = sizeof(SubObject) - sizeof(int16)
 };
 
 struct Item {
@@ -99,6 +99,31 @@ struct WindowBlock {
 // the actual x-coordinate is: textColumn * 8 + textColumnOffset
 // the actual y-coordinate is: textRow * 8
 
+
+enum BoxFlags {
+	kBFTextBox        = 0x1,
+	kBFBoxSelected    = 0x2,
+	kBFNoTouchName    = 0x4,
+	kBFInvertTouch    = 0x8,
+	kBFDragBox        = 0x10, // Simon 1/2
+	kBFHyperBox       = 0x10, // Feeble Files
+	kBFBoxInUse       = 0x20,
+	kBFBoxDead        = 0x40,
+	kBFBoxItem        = 0x80
+};
+
+enum SubObjectFlags {
+	kOFText           = 0x1,
+	kOFSize           = 0x2,
+	kOFWeight         = 0x4,
+	kOFVolume         = 0x8,
+	kOFIcon           = 0x10,
+	kOFKeyColor1      = 0x20,
+	kOFKeyColor2      = 0x40,
+	kOFMenu           = 0x80,
+	kOFNumber         = 0x100,
+	kOFVoice          = 0x200
+};
 
 enum {
 	SUBROUTINE_LINE_SMALL_SIZE = 2,

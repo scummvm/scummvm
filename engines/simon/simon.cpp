@@ -770,19 +770,19 @@ int SimonEngine::allocGamePcVars(File *in) {
 	return item_array_inited;
 }
 
-void SimonEngine::loginPlayerHelper(Item *item, int a, int b) {
-	Child9 *child;
+void SimonEngine::setUserFlag(Item *item, int a, int b) {
+	SubUserFlag *subUserFlag;
 
-	child = (Child9 *) findChildOfType(item, 9);
-	if (child == NULL) {
-		child = (Child9 *) allocateChildBlock(item, 9, sizeof(Child9));
+	subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+	if (subUserFlag == NULL) {
+		subUserFlag = (SubUserFlag *) allocateChildBlock(item, 9, sizeof(SubUserFlag));
 	}
 
 	if (a >= 0 && a <= 3)
-		child->array[a] = b;
+		subUserFlag->userFlags[a] = b;
 }
 
-void SimonEngine::loginPlayer() {
+void SimonEngine::createPlayer() {
 	Child *child;
 
 	_item1 = _itemArrayPtr[1];
@@ -793,7 +793,7 @@ void SimonEngine::loginPlayer() {
 	if (child == NULL)
 		error("player create failure");
 
-	loginPlayerHelper(_item1, 0, 0);
+	setUserFlag(_item1, 0, 0);
 }
 
 void SimonEngine::allocateStringTable(int num) {
@@ -923,11 +923,11 @@ bool SimonEngine::isObject(Item *item) {
 	return findChildOfType(item, 2) != NULL;
 }
 
-uint SimonEngine::getOffsetOfChild2Param(Child2 *child, uint prop) {
+uint SimonEngine::getOffsetOfChild2Param(SubObject *child, uint prop) {
 	uint m = 1;
 	uint offset = 0;
 	while (m != prop) {
-		if (child->avail_props & m)
+		if (child->objectFlags & m)
 			offset++;
 		m *= 2;
 	}
@@ -1167,16 +1167,16 @@ void SimonEngine::linkItem(Item *item, Item *parent) {
 	}
 }
 
-const byte *SimonEngine::getStringPtrByID(uint string_id) {
+const byte *SimonEngine::getStringPtrByID(uint stringId) {
 	const byte *string_ptr;
 	byte *dst;
 
 	_freeStringSlot ^= 1;
 
-	if (string_id < 0x8000) {
-		string_ptr = _stringTabPtr[string_id];
+	if (stringId < 0x8000) {
+		string_ptr = _stringTabPtr[stringId];
 	} else {
-		string_ptr = getLocalStringByID(string_id);
+		string_ptr = getLocalStringByID(stringId);
 	}
 
 	dst = _stringReturnBuffer[_freeStringSlot];
@@ -1184,14 +1184,14 @@ const byte *SimonEngine::getStringPtrByID(uint string_id) {
 	return dst;
 }
 
-const byte *SimonEngine::getLocalStringByID(uint string_id) {
-	if (string_id < _stringIdLocalMin || string_id >= _stringIdLocalMax) {
-		loadTextIntoMem(string_id);
+const byte *SimonEngine::getLocalStringByID(uint stringId) {
+	if (stringId < _stringIdLocalMin || stringId >= _stringIdLocalMax) {
+		loadTextIntoMem(stringId);
 	}
-	return _localStringtable[string_id - _stringIdLocalMin];
+	return _localStringtable[stringId - _stringIdLocalMin];
 }
 
-void SimonEngine::loadTextIntoMem(uint string_id) {
+void SimonEngine::loadTextIntoMem(uint stringId) {
 	byte *p;
 	char filename[30];
 	int i;
@@ -1212,7 +1212,7 @@ void SimonEngine::loadTextIntoMem(uint string_id) {
 		base_max = (p[0] * 256) | p[1];
 		p += 2;
 
-		if (string_id < base_max) {
+		if (stringId < base_max) {
 			_stringIdLocalMin = base_min;
 			_stringIdLocalMax = base_max;
 
@@ -1238,7 +1238,7 @@ void SimonEngine::loadTextIntoMem(uint string_id) {
 		base_min = base_max;
 	}
 
-	error("loadTextIntoMem: didn't find %d", string_id);
+	error("loadTextIntoMem: didn't find %d", stringId);
 }
 
 void SimonEngine::loadTablesIntoMem(uint subr_id) {
@@ -1785,19 +1785,19 @@ get_out:
 }
 
 bool SimonEngine::has_item_childflag_0x10(Item *item) {
-	Child2 *child = (Child2 *)findChildOfType(item, 2);
-	return child && (child->avail_props & 0x10) != 0;
+	SubObject *child = (SubObject *)findChildOfType(item, 2);
+	return child && (child->objectFlags & 0x10) != 0;
 }
 
 uint SimonEngine::itemGetIconNumber(Item *item) {
-	Child2 *child = (Child2 *)findChildOfType(item, 2);
+	SubObject *child = (SubObject *)findChildOfType(item, 2);
 	uint offs;
 
-	if (child == NULL || !(child->avail_props & 0x10))
+	if (child == NULL || !(child->objectFlags & 0x10))
 		return 0;
 
 	offs = getOffsetOfChild2Param(child, 0x10);
-	return child->array[offs];
+	return child->objectFlagValue[offs];
 }
 
 void SimonEngine::displayBoxStars() {
@@ -1823,10 +1823,10 @@ void SimonEngine::displayBoxStars() {
 		timer_vga_sprites();
 
 		do {
-			if (ha->id != 0 && ha->flags & 0x20 && !(ha->flags & 0x40)) {
+			if (ha->id != 0 && ha->flags & kBFBoxInUse && !(ha->flags & kBFBoxDead)) {
 
 				dha = _hitAreas;
-				if (ha->flags & 1) {
+				if (ha->flags & kBFTextBox) {
 					while (dha != ha && dha->flags != ha->flags)
 						++dha;
 					if (dha != ha && dha->flags == ha->flags)
@@ -1939,12 +1939,12 @@ startOver:
 			setVerb(ha);
 			_defaultVerb = 0;
 		} else {
-			if ((_verbHitArea != 0 || _hitAreaSubjectItem != ha->item_ptr && ha->flags & 0x80) &&
+			if ((_verbHitArea != 0 || _hitAreaSubjectItem != ha->item_ptr && ha->flags & kBFBoxItem) &&
 					ha->item_ptr) {
 			if_1:;
 				_hitAreaSubjectItem = ha->item_ptr;
 				id = 0xFFFF;
-				if (ha->flags & 1)
+				if (ha->flags & kBFTextBox)
 					id = ha->flags / 256;
 				_variableArray[60] = id;
 				displayName(ha);
@@ -2127,13 +2127,13 @@ TextLocation *SimonEngine::getTextLocation(uint a) {
 void SimonEngine::o_printStr() {
 	uint vgaSpriteId = getVarOrByte();
 	uint color = getVarOrByte();
-	uint string_id = getNextStringID();
+	uint stringId = getNextStringID();
 	const byte *string_ptr = NULL;
 	uint speech_id = 0;
 	TextLocation *tl;
 
-	if (string_id != 0xFFFF)
-		string_ptr = getStringPtrByID(string_id);
+	if (stringId != 0xFFFF)
+		string_ptr = getStringPtrByID(stringId);
 
 	if (getFeatures() & GF_TALKIE)
 		speech_id = (uint16)getNextWord();

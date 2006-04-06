@@ -167,7 +167,7 @@ void SimonEngine::loadGamePcFile(const char *filename) {
 
 	num_inited_objects = allocGamePcVars(&in);
 
-	loginPlayer();
+	createPlayer();
 	readGamePcText(&in);
 
 	for (i = 2; i < num_inited_objects; i++) {
@@ -259,42 +259,42 @@ void SimonEngine::readItemChildren(Common::File *in, Item *item, uint type) {
 		uint fr2 = in->readUint16BE();
 		uint i, size;
 		uint j, k;
-		Child1 *child;
+		SubRoom *subRoom;
 
-		size = CHILD1_SIZE;
+		size = SubRoom_SIZE;
 		for (i = 0, j = fr2; i != 6; i++, j >>= 2)
 			if (j & 3)
-				size += sizeof(child->array[0]);
+				size += sizeof(subRoom->roomExit[0]);
 
-		child = (Child1 *)allocateChildBlock(item, 1, size);
-		child->subroutine_id = fr1;
-		child->fr2 = fr2;
+		subRoom = (SubRoom *)allocateChildBlock(item, 1, size);
+		subRoom->subroutine_id = fr1;
+		subRoom->roomExitStates = fr2;
 
 		for (i = k = 0, j = fr2; i != 6; i++, j >>= 2)
 			if (j & 3)
-				child->array[k++] = (uint16)fileReadItemID(in);
+				subRoom->roomExit[k++] = (uint16)fileReadItemID(in);
 	} else if (type == 2) {
 		uint32 fr = in->readUint32BE();
 		uint i, k, size;
-		Child2 *child;
+		SubObject *subObject;
 
-		size = CHILD2_SIZE;
+		size = SubObject_SIZE;
 		for (i = 0; i != 16; i++)
 			if (fr & (1 << i))
-				size += sizeof(child->array[0]);
+				size += sizeof(subObject->objectFlagValue[0]);
 
-		child = (Child2 *)allocateChildBlock(item, 2, size);
-		child->avail_props = fr;
+		subObject = (SubObject *)allocateChildBlock(item, 2, size);
+		subObject->objectFlags = fr;
 
 		k = 0;
 		if (fr & 1) {
-			child->array[k++] = (uint16)in->readUint32BE();
+			subObject->objectFlagValue[k++] = (uint16)in->readUint32BE();
 		}
 		for (i = 1; i != 16; i++)
 			if (fr & (1 << i))
-				child->array[k++] = in->readUint16BE();
+				subObject->objectFlagValue[k++] = in->readUint16BE();
 
-		child->string_id = (uint16)in->readUint32BE();
+		subObject->objectName = (uint16)in->readUint32BE();
 	} else {
 		error("readItemChildren: invalid type %d", type);
 	}

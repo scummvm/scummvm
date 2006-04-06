@@ -530,27 +530,27 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 		f->writeUint16BE(item->state);
 		f->writeUint16BE(item->classFlags);
 
-		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
-		if (child1) {
-			f->writeUint16BE(child1->fr2);
+		SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
+		if (subRoom) {
+			f->writeUint16BE(subRoom->roomExitStates);
 		}
 
-		Child2 *child2 = (Child2 *)findChildOfType(item, 2);
-		if (child2) {
-			f->writeUint32BE(child2->avail_props);
-			i = child2->avail_props & 1;
+		SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+		if (subObject) {
+			f->writeUint32BE(subObject->objectFlags);
+			i = subObject->objectFlags & 1;
 
 			for (j = 1; j < 16; j++) {
-				if ((1 << j) & child2->avail_props) {
-					f->writeUint16BE(child2->array[i++]);
+				if ((1 << j) & subObject->objectFlags) {
+					f->writeUint16BE(subObject->objectFlagValue[i++]);
 				}
 			}
 		}
 
-		Child9 *child9 = (Child9 *)findChildOfType(item, 9);
-		if (child9) {
+		SubUserFlag *subUserFlag = (SubUserFlag *)findChildOfType(item, 9);
+		if (subUserFlag) {
 			for (i = 0; i != 4; i++) {
-				f->writeUint16BE(child9->array[i]);
+				f->writeUint16BE(subUserFlag->userFlags[i]);
 			}
 		}
 	}
@@ -659,27 +659,27 @@ bool SimonEngine::loadGame(uint slot) {
 		item->state = f->readUint16BE();
 		item->classFlags = f->readUint16BE();
 
-		Child1 *child1 = (Child1 *)findChildOfType(item, 1);
-		if (child1 != NULL) {
-			child1->fr2 = f->readUint16BE();
+		SubRoom *subRoom = (SubRoom *)findChildOfType(item, 1);
+		if (subRoom != NULL) {
+			subRoom->roomExitStates = f->readUint16BE();
 		}
 
-		Child2 *child2 = (Child2 *)findChildOfType(item, 2);
-		if (child2 != NULL) {
-			child2->avail_props = f->readUint32BE();
-			i = child2->avail_props & 1;
+		SubObject *subObject = (SubObject *)findChildOfType(item, 2);
+		if (subObject != NULL) {
+			subObject->objectFlags = f->readUint32BE();
+			i = subObject->objectFlags & 1;
 
 			for (j = 1; j < 16; j++) {
-				if ((1 << j) & child2->avail_props) {
-					child2->array[i++] = f->readUint16BE();
+				if ((1 << j) & subObject->objectFlags) {
+					subObject->objectFlagValue[i++] = f->readUint16BE();
 				}
 			}
 		}
 
-		Child9 *child9 = (Child9 *) findChildOfType(item, 9);
-		if (child9) {
+		SubUserFlag *subUserFlag = (SubUserFlag *) findChildOfType(item, 9);
+		if (subUserFlag) {
 			for (i = 0; i != 4; i++) {
-				child9->array[i] = f->readUint16BE();
+				subUserFlag->userFlags[i] = f->readUint16BE();
 			}
 		}
 	}

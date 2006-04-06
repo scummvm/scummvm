@@ -49,7 +49,7 @@ uint fileReadItemID(Common::File *in);
 #define NUM_PALETTE_FADEOUT 32
 
 struct Child;
-struct Child2;
+struct SubObject;
 
 struct Item;
 struct WindowBlock;
@@ -457,8 +457,8 @@ protected:
 	uint16 readUint16Wrapper(const void *src);
 
 	int allocGamePcVars(Common::File *in);
-	void loginPlayerHelper(Item *item, int a, int b);
-	void loginPlayer();
+	void setUserFlag(Item *item, int a, int b);
+	void createPlayer();
 	void allocateStringTable(int num);
 	void setupStringTable(byte *mem, int num);
 	void setupLocalStringTable(byte *mem, int num);
@@ -526,8 +526,8 @@ protected:
 	void setItemState(Item *item, int value);
 
 	void showMessageFormat(const char *s, ...);
-	const byte *getStringPtrByID(uint string_id);
-	const byte *getLocalStringByID(uint string_id);
+	const byte *getStringPtrByID(uint stringId);
+	const byte *getLocalStringByID(uint stringId);
 	uint getNextStringID();
 
 	void addTimeEvent(uint timeout, uint subroutine_id);
@@ -572,7 +572,7 @@ protected:
 	void o_freezeBottom();
 	void killAllTimers();
 
-	uint getOffsetOfChild2Param(Child2 *child, uint prop);
+	uint getOffsetOfChild2Param(SubObject *child, uint prop);
 	void o_setTextColor(uint color);
 	void o_playSFX(uint a);
 	void o_lockZone();
@@ -616,7 +616,7 @@ protected:
 	void drawIconArray_FF(uint i, Item *item_ptr, int line, int classMask);
 	void drawIconArray_Simon(uint i, Item *item_ptr, int line, int classMask);
 
-	void loadTextIntoMem(uint string_id);
+	void loadTextIntoMem(uint stringId);
 	void loadTablesIntoMem(uint subr_id);
 
 	uint loadTextFile(const char *filename, byte *dst);
