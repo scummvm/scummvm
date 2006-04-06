@@ -33,13 +33,13 @@ struct Child {
 struct SubRoom : Child {
 	uint16 subroutine_id;
 	uint16 roomExitStates;
-	uint16 roomExit[6];
+	uint16 roomExit[1];
 };
 
 struct SubObject : Child {
 	uint16 objectName;
 	uint32 objectFlags;
-	int16 objectFlagValue[16];
+	int16 objectFlagValue[1];
 };
 
 struct SubUserFlag : Child {
