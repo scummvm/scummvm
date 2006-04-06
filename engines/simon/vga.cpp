@@ -723,7 +723,31 @@ void SimonEngine::vc10_draw() {
 
 	if (getGameType() == GType_FF) {
 		if (width > 640) {
-			debug(0, "Horizontal scrolling not supported");
+			debug(0, "Horizontal scrolling");
+
+			const byte *src;
+			byte *dst;
+			uint w;
+
+			_scrollXMax = 640;
+			_scrollYMax = 0;
+			_scrollImage = state.depack_src;
+			_scrollHeight = height;
+			if (_variableArray[34] == -1)
+				state.x = _variableArray[251];
+
+			_scrollX = state.x;
+
+			vcWriteVar(251, _scrollX);
+
+			dst = getBackBuf();
+			src = state.depack_src + (_scrollX - 8) / 2;
+
+			for (w = 0; w < 80; w++) {
+				decodeStripA(dst, src + READ_LE_UINT32(src), height);
+				dst += 8;
+				src += 4;
+			}
 			return;
 		}
 		if (height > 480) {
@@ -1832,7 +1856,7 @@ void SimonEngine::vc48_setPathFinder() {
 
 		y = vsp->y;
 		vsp->y = y1;
-		//checkScrollY(y, diff);
+		checkScrollY(y1 - y);
 
 		_variableArray[11] = readUint16Wrapper(p);
 		_variableArray[13] = pos;
@@ -2311,9 +2335,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 	vsp->x += getScale(vsp->y, x);
 	_variableArray[var] = vsp->x;
 
-	if (_scrollXMax) {
-		// TODO: Scroll check
-	}
+	checkScrollX(x);
 
 	vsp->flags = kDFScaled;
 }
@@ -2322,11 +2344,14 @@ void SimonEngine::vc77_setScaleYOffs() {
 	VgaSprite *vsp = findCurSprite();
 
 	vsp->image = vcReadNextWord();
-	int16 x = vcReadNextWord();
+	int16 y = vcReadNextWord();
 	int var = vcReadNextWord();
 
-	vsp->y += getScale(vsp->y, x);
+	vsp->y += getScale(vsp->y, y);
 	_variableArray[var] = vsp->y;
+
+	checkScrollY(y);
+
 	vsp->flags = kDFScaled;
 }
 
@@ -2411,5 +2436,87 @@ void SimonEngine::vc84_stopSoundLoop() {
 	// Stop looping sound effect
 	debug(0, "STUB: vc84_stopSoundLoop");
 }
+
+// Scrolling functions for Feeble Files
+void SimonEngine::checkScrollX(int x) {
+	if (_scrollXMax == 0 || getBitFlag(80) || getBitFlag(82) || x == 0)
+		return;
+
+	int16 tmp;
+	if (x > 0) {
+		if (_scrollCount != 0) {
+			if (_scrollCount >= 0)
+				return;
+			_scrollCount = 0;
+		} else {
+			if (_scrollFlag != 0)
+				return;
+		}
+
+		if (x - _scrollX >= 480) {
+			_scrollCount = 320;
+			tmp = _scrollXMax - _scrollX;
+			if (tmp < 320)
+				_scrollCount = tmp;
+		}
+	} else {
+		if (_scrollCount != 0) {
+			if (_scrollCount < 0)
+				return;
+			_scrollCount = 0;
+		} else {
+			if (_scrollFlag != 0)
+				return;
+		}
+
+		if ((uint16)(x - _scrollX) < 161) {
+			_scrollCount = -320;
+			tmp = _scrollXMax - _scrollX;
+			if (_scrollX < 320)
+				_scrollCount = -_scrollX;
+		}
+	}
+}
+
+void SimonEngine::checkScrollY(int y) {
+	if (_scrollYMax == 0 || getBitFlag(80))
+		return;
+
+	int16 tmp;
+	if (y > 0) {
+		if (_scrollCount != 0) {
+			if (_scrollCount >= 0)
+				return;
+			_scrollCount = 0;
+		} else {
+			if (_scrollFlag != 0)
+				return;
+		}
+
+		if (y - _scrollY >= 440) {
+			_scrollCount = 240;
+			tmp = _scrollYMax - _scrollY;
+			if (tmp < 240)
+				_scrollCount = tmp;
+		}
+	} else {
+		if (_scrollCount != 0) {
+			if (_scrollCount < 0)
+				return;
+			_scrollCount = 0;
+		} else {
+			if (_scrollFlag != 0)
+				return;
+		}
+
+		if ((uint16)(y - _scrollY) < 100) {
+			_scrollCount = -240;
+			tmp = _scrollYMax - _scrollY;
+			if (_scrollY < 240)
+				_scrollCount = -_scrollY;
+		}
+	}
+}
+
 
 } // End of namespace Simon

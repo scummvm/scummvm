@@ -371,6 +371,7 @@ protected:
 
 	uint16 _bitArray[48];
 	int16 _variableArray[256];
+	int16 _variableArray2[256];
 
 	WindowBlock *_windowArray[8];
 
@@ -814,6 +815,8 @@ protected:
 	void vcSkipNextInstruction();
 
 	int getScale(int y, int x);
+	void checkScrollX(int x);
+	void checkScrollY(int y);
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);
@@ -901,7 +904,7 @@ protected:
 
 	void o_83_helper();
 	void o_waitForMark(uint i);
-	void timer_vga_sprites_helper();
+	void scrollEvent();
 
 	void decodeStripA(byte *dst, const byte *src, int height);
 	void scroll_timeout();

@@ -392,6 +392,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	memset(_bitArray, 0, sizeof(_bitArray));
 	memset(_variableArray, 0, sizeof(_variableArray));
+	memset(_variableArray2, 0, sizeof(_variableArray2));
 
 	memset(_windowArray, 0, sizeof(_windowArray));
 
@@ -1054,7 +1055,11 @@ uint SimonEngine::getNextVarContents() {
 uint SimonEngine::readVariable(uint variable) {
 	if (variable >= 255)
 		error("Variable %d out of range in read", variable);
-	return _variableArray[variable];
+
+	if (getGameType() == GType_FF && getBitFlag(83))
+		return _variableArray2[variable];
+	else
+		return _variableArray[variable];
 }
 
 void SimonEngine::writeNextVarContents(uint16 contents) {
@@ -1064,7 +1069,11 @@ void SimonEngine::writeNextVarContents(uint16 contents) {
 void SimonEngine::writeVariable(uint variable, uint16 contents) {
 	if (variable >= 256)
 		error("Variable %d out of range in write", variable);
-	_variableArray[variable] = contents;
+
+	if (getGameType() == GType_FF && getBitFlag(83))
+		_variableArray2[variable] = contents;
+	else
+		_variableArray[variable] = contents;
 }
 
 void SimonEngine::setItemParent(Item *item, Item *parent) {
@@ -2352,8 +2361,11 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_scrollCount = 0;
 		_scrollFlag = 0;
 		_scrollHeight = 134;
-		if (_variableArray[34] != -1)
+		if (_variableArray[34] != -1) {
+			if (getGameType() == GType_FF)
+				_variableArray[250] = 0;
 			_variableArray[251] = 0;
+		}
 	}
 
 	vc_ptr_org = _vcPtr;
@@ -2612,8 +2624,8 @@ void SimonEngine::timer_vga_sprites() {
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
 
-	if (getGameType() == GType_SIMON2 && _scrollFlag) {
-		timer_vga_sprites_helper();
+	if ((getGameType() == GType_SIMON2 || getGameType() == GType_FF) && _scrollFlag) {
+		scrollEvent();
 	}
 
 	vsp = _vgaSprites;
@@ -2653,7 +2665,7 @@ void SimonEngine::timer_vga_sprites() {
 	_vcPtr = vc_ptr_org;
 }
 
-void SimonEngine::timer_vga_sprites_helper() {
+void SimonEngine::scrollEvent() {
 	byte *dst = getFrontBuf();
 	const byte *src;
 	uint x;
@@ -2664,15 +2676,21 @@ void SimonEngine::timer_vga_sprites_helper() {
 		memmove(dst, dst + 8, _screenWidth * _scrollHeight - 8);
 	}
 
-	x = _scrollX - 1;
+	x = _scrollX;
+	x -= (getGameType() == GType_FF) ? 8 : 1;
 
 	if (_scrollFlag > 0) {
 		dst += _screenWidth - 8;
-		x += 41;
+		x += (getGameType() == GType_FF) ? 648 : 41;
 	}
 
-	src = _scrollImage + x * 4;
-	decodeStripA(dst, src + READ_BE_UINT32(src), _scrollHeight);
+	if (getGameType() == GType_FF) {
+		src = _scrollImage + x / 2;
+		decodeStripA(dst, src + READ_LE_UINT32(src), _scrollHeight);
+	} else {
+		src = _scrollImage + x * 4;
+		decodeStripA(dst, src + READ_BE_UINT32(src), _scrollHeight);
+	}
 
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
 	dx_copy_from_attached_to_3(_scrollHeight);
@@ -2905,6 +2923,11 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 	uint x_diff, y_diff;
 	uint best_i = 0, best_j = 0, best_dist = 0xFFFFFFFF;
 
+	if (getGameType() == GType_FF) {
+		x += _scrollX;
+		y += _scrollY;
+	}
+
 	if (getGameType() == GType_SIMON2) {
 		x += _scrollX * 8;
 	}
@@ -2933,8 +2956,13 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 		}
 	}
 
-	_variableArray[var_1] = best_i;
-	_variableArray[var_2] = best_j;
+	if (getGameType() == GType_FF && getBitFlag(83)) {
+		_variableArray[var_1] = best_i;
+		_variableArray[var_2] = best_j;
+	} else {
+		_variableArray[var_1] = best_i;
+		_variableArray[var_2] = best_j;
+	}
 }
 
 // ok
