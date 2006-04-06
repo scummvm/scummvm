@@ -612,6 +612,8 @@ protected:
 	void mouseOn();
 
 	void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+	void drawIconArray_FF(uint i, Item *item_ptr, int line, int classMask);
+	void drawIconArray_Simon(uint i, Item *item_ptr, int line, int classMask);
 
 	void loadTextIntoMem(uint string_id);
 	void loadTablesIntoMem(uint subr_id);
@@ -660,12 +662,12 @@ protected:
 	void pollMouseXY();
 	void drawMousePointer();
 
-	void removeIconArray(uint fcs_index);
+	void removeIconArray(uint num);
 	void draw_icon_c(WindowBlock *window, uint icon, uint x, uint y);
 	bool has_item_childflag_0x10(Item *item);
-	uint item_get_icon_number(Item *item);
-	uint setup_icon_hit_area(WindowBlock *window, uint x, uint y, uint icon_number, Item *item_ptr);
-	void addArrows(WindowBlock *window, uint fcs_index);
+	uint itemGetIconNumber(Item *item);
+	uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
+	void addArrows(WindowBlock *window, uint num);
 
 	void loadIconData();	
 	void loadIconFile();
@@ -693,7 +695,7 @@ protected:
 	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
-	void setArrowHitAreas(WindowBlock *window, uint fcs_index);
+	void setArrowHitAreas(WindowBlock *window, uint num);
 
 	byte *setup_vga_destination(uint32 size);
 	void vga_buf_unk_proc3(byte *end);
@@ -830,7 +832,7 @@ protected:
 	void video_copy_if_flag_0x8_c(WindowBlock *window);
 	void delete_hitarea_by_index(uint index);
 
-	void removeArrows(WindowBlock *window, uint fcs_index);
+	void removeArrows(WindowBlock *window, uint num);
 	void fcs_putchar(uint a);
 
 	void restoreWindow(WindowBlock *window);

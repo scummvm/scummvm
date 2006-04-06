@@ -654,9 +654,9 @@ int SimonEngine::runScript() {
 
 		case 114:{
 				Item *item = getNextItemPtr();
-				uint fcs_index = getVarOrByte();
+				uint num = getVarOrByte();
 				mouseOff();
-				drawIconArray(fcs_index, item, 0, 0);
+				drawIconArray(num, item, 0, 0);
 				mouseOn();
 			}
 			break;
@@ -734,10 +734,10 @@ int SimonEngine::runScript() {
 
 		case 126:{
 				Item *item = getNextItemPtr();
-				uint fcs_index = getVarOrByte();
+				uint num = getVarOrByte();
 				uint a = 1 << getVarOrByte();
 				mouseOff();
-				drawIconArray(fcs_index, item, 1, a);
+				drawIconArray(num, item, 1, a);
 				mouseOn();
 			}
 			break;
@@ -1504,13 +1504,13 @@ void SimonEngine::o_confirmQuit() {
 	}
 }
 
-void SimonEngine::o_restoreIconArray(uint fcs_index) {
+void SimonEngine::o_restoreIconArray(uint num) {
 	WindowBlock *window;
 
-	window = _windowArray[fcs_index & 7];
+	window = _windowArray[num & 7];
 	if (window->iconPtr == NULL)
 		return;
-	drawIconArray(fcs_index, window->iconPtr->itemRef, window->iconPtr->line, window->iconPtr->classMask);
+	drawIconArray(num, window->iconPtr->itemRef, window->iconPtr->line, window->iconPtr->classMask);
 }
 
 void SimonEngine::o_freezeBottom() {
