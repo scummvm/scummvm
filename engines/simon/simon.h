@@ -653,9 +653,9 @@ protected:
 	uint get_fcs_ptr_3_index(WindowBlock *window);
 
 	void setup_hitarea_from_pos(uint x, uint y, uint mode);
-	void new_current_hitarea(HitArea * ha);
-	bool hitarea_proc_2(uint a);
-	bool hitarea_proc_3(Item *item);
+	void displayName(HitArea * ha);
+	bool printTextOf(uint a);
+	bool printNameOf(Item *item);
 	void f10_key();
 	void hitarea_stuff();
 

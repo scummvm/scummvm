@@ -192,6 +192,14 @@ void SimonEngine::defocusHitarea() {
 	HitArea *last;
 	HitArea *ha;
 
+	if (getGameType() == GType_FF) {
+		if (getBitFlag(79)) {
+			o_sync(202);
+			_lastHitArea2Ptr = NULL;
+			return;
+		}
+	}
+
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
 			o_sync(202);
@@ -568,7 +576,7 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 		checkUp(window);
 		loadSprite(4, 9 ,21 ,0 ,0, 0);	
 		while(1) {
-			if (_currentBoxNumber != 32763 || _leftButtonDown)
+			if (_currentBoxNumber != 0x7FFB || !_leftButtonDown)
 				break;
 			checkUp(window);
 		}
@@ -594,7 +602,7 @@ void SimonEngine::inventoryDown(WindowBlock *window) {
 		checkDown(window);
 		loadSprite(4, 9, 23, 0, 0, 0);	
 		while(1) {
-			if (_currentBoxNumber != 32764 || _leftButtonDown)
+			if (_currentBoxNumber != 0x7FFC || !_leftButtonDown)
 				break;
 			checkDown(window);
 		}
@@ -646,6 +654,8 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 		}
 	} while (ha++, --count);
 
+	_currentBoxNumber = 0;
+
 	if (best_ha == NULL) {
 		defocusHitarea();
 		return;
@@ -662,7 +672,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	if (best_ha->flags & 4) {
 		defocusHitarea();
 	} else if (best_ha != _lastHitArea2Ptr) {
-		new_current_hitarea(best_ha);
+		displayName(best_ha);
 	}
 
 	if (best_ha->flags & 8 && !(best_ha->flags & 2)) {
@@ -673,21 +683,21 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	return;
 }
 
-void SimonEngine::new_current_hitarea(HitArea *ha) {
+void SimonEngine::displayName(HitArea *ha) {
 	bool result;
 
 	hitareaChangedHelper();
 	if (ha->flags & 1) {
-		result = hitarea_proc_2(ha->flags >> 8);
+		result = printTextOf(ha->flags >> 8);
 	} else {
-		result = hitarea_proc_3(ha->item_ptr);
+		result = printNameOf(ha->item_ptr);
 	}
 
 	if (result)
 		_lastHitArea2Ptr = ha;
 }
 
-bool SimonEngine::hitarea_proc_2(uint a) {
+bool SimonEngine::printTextOf(uint a) {
 	uint x;
 	const byte *string_ptr;
 
@@ -716,7 +726,7 @@ bool SimonEngine::hitarea_proc_2(uint a) {
 	return true;
 }
 
-bool SimonEngine::hitarea_proc_3(Item *item) {
+bool SimonEngine::printNameOf(Item *item) {
 	Child2 *child2;
 	uint x;
 	const byte *string_ptr;

@@ -1948,7 +1948,7 @@ startOver:
 				if (ha->flags & 1)
 					id = ha->flags / 256;
 				_variableArray[60] = id;
-				new_current_hitarea(ha);
+				displayName(ha);
 				if (_verbHitArea != 0)
 					break;
 			} else {
