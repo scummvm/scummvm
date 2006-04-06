@@ -483,6 +483,8 @@ int SimonEngine::init(GameDetector &detector) {
 		return -1;
 	}
 
+	setupOpcodes();
+
 	if (getGameType() == GType_FF) {
 		_screenWidth = 640;
 		_screenHeight = 480;
