@@ -506,8 +506,8 @@ uint SimonEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y
 	ha = findEmptyHitArea();
 
 	if (getGameType() == GType_FF) {
-		ha->x = x + window->x;
-		ha->y = y + window->y;
+		ha->x = x;
+		ha->y = y;
 		ha->item_ptr = item_ptr;
 		ha->width = 45;
 		ha->height = 44;
