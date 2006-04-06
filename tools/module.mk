@@ -39,7 +39,7 @@ tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
 
 credits:
 	$(srcdir)/tools/credits.pl --text > AUTHORS
-	$(srcdir)/tools/credits.pl --tex > doc/10.tex
+	$(srcdir)/tools/credits.pl --tex > doc/credits.tex
 	$(srcdir)/tools/credits.pl --rtf > Credits.rtf
 	$(srcdir)/tools/credits.pl --cpp > gui/credits.h
 	$(srcdir)/tools/credits.pl --html > ../../web/trunk/credits.inc
