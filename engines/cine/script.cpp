@@ -645,12 +645,20 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 		//printf("Op: %X\n", opcode - 1);
 
+		// Future Wars:       opcodes 0x00 - 0x7B
+		// Operation Stealth: opcodes 0x00 - 0xB6
+		//
+		// Both opcode tables have plenty of holes in them, though.
+		//
+		// 0x40: Future Wars only
+		// 0x48: Future Wars only
+
 		switch (opcode - 1) {
 		case -1:
 			{
 				break;
 			}
-		case 0x0:	//OP_modifyObjectParam
+		case 0x0:	// OP_modifyObjectParam
 			{
 				byte objIdx;
 				byte paramIdx;
@@ -671,7 +679,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x1:	//OP_getObjectParam
+		case 0x1:	// OP_getObjectParam
 			{
 				byte objIdx;
 				byte paramIdx;
@@ -692,7 +700,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x2:
+		case 0x2:	// OP_addObjectParam
 			{
 				byte objIdx;
 				byte paramIdx;
@@ -713,7 +721,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x3:
+		case 0x3:	// OP_subObjectParam
 			{
 				byte objIdx;
 				byte paramIdx;
@@ -734,7 +742,17 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x6:
+		case 0x4:	// OP_add2ObjectParam
+			{
+				warning("STUB: Opcode 0x4\n");
+				break;
+			}
+		case 0x5:	// OP_sub2ObjectParam
+			{
+				warning("STUB: Opcode 0x5\n");
+				break;
+			}
+		case 0x6:	// OP_compareObjectParam
 			{
 				byte objIdx;
 				byte param1;
@@ -755,7 +773,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x7:
+		case 0x7:	// OP_setupObject
 			{
 				byte objIdx;
 				int16 param1;
@@ -784,7 +802,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x8:
+		case 0x8:	// OP_checkCollision
 			{
 				byte objIdx;
 				int16 param1;
@@ -995,7 +1013,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0xD:	// OP_modVar
+		case 0xD:	// OP_divVar
 			{
 				byte param1;
 				byte type;
@@ -1028,7 +1046,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0xE:	// OP_ compareVar
+		case 0xE:	// OP_compareVar
 			{
 				byte varIdx;
 				byte varType;
@@ -1074,7 +1092,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0xF:	//OP_modifyObjectParam2
+		case 0xF:	// OP_modifyObjectParam2
 			{
 				byte objIdx;
 				byte paramIdx;
@@ -1095,7 +1113,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x13:	// OP_loadV7Element
+		case 0x13:	// OP_loadV7Element (OP_loadMask0?)
 			{
 				byte param;
 
@@ -1108,7 +1126,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x14:
+		case 0x14:	// OP_unloadMask0
 			{
 				byte param;
 
@@ -1134,7 +1152,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x16:
+		case 0x16:	// OP_loadMask1
 			{
 				byte param;
 
@@ -1147,7 +1165,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x17:
+		case 0x17:	// OP_unloadMask1
 			{
 				byte param;
 
@@ -1160,7 +1178,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x18:
+		case 0x18:	// OP_loadMask4
 			{
 				byte param;
 
@@ -1173,7 +1191,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x19:
+		case 0x19:	// OP_unloadMask4
 			{
 				byte param;
 
@@ -1335,7 +1353,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x26:	// loop
+		case 0x25:	// OP_removeLabel
+			{
+				warning("STUB: Opcode 0x25");
+				break;
+			}
+		case 0x26:	// OP_loop
 			{
 				byte varIdx;
 				byte labelIdx;
@@ -1358,7 +1381,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x31:	// OP_startScript
+		case 0x31:	// OP_startScript (OP_startGlobalScript?)
 			{
 				byte param;
 
@@ -1372,7 +1395,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				addScriptToList0(param);
 				break;
 			}
-		case 0x32:
+		case 0x32:	// OP_endGlobalScript
 			{
 				byte scriptIdx;
 
@@ -1384,7 +1407,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				stopGlobalScript(scriptIdx);
 				break;
 			}
-		case 0x3B:	// OP_loadResource
+		case 0x3B:	// OP_loadResource (OP_loadAnim?)
 			{
 				DEBUG_SCRIPT(currentLine, "loadResource(\"%s\")", currentScriptPtr + currentPosition);
 
@@ -1428,7 +1451,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 				break;
 			}
-		case 0x40:
+		case 0x40:	// OP_closePart
 			{
 				DEBUG_SCRIPT(currentLine, "closePart");
 
@@ -1436,7 +1459,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x41:	// OP_loadData
+		case 0x41:	// OP_loadData (OP_loadNewPrcName?)
 			{
 				byte param;
 
@@ -1475,13 +1498,13 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition)) + 1;
 				break;
 			}
-		case 0x42:
+		case 0x42:	// OP_requestCheckPendingDataLoad
 			{
 				DEBUG_SCRIPT(currentLine, "request data load");
 				checkForPendingDataLoadSwitch = 1;
 				break;
 			}
-		case 0x45:
+		case 0x45:	// OP_blitAndFade
 			{
 				DEBUG_SCRIPT(currentLine, "request fadein");
 				// TODO: use real code
@@ -1493,13 +1516,14 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				fadeRequired = 1;
 				break;
 			}
-		case 0x46:
+		case 0x46:	// OP_fadeToBlack
 			{
 				DEBUG_SCRIPT(currentLine, "request fadeout");
 				//fadeToBlack();
+				warning("STUB: Opcode 0x46");
 				break;
 			}
-		case 0x47:
+		case 0x47:	// OP_transformPaletteRange
 			{
 				byte startColor;
 				byte numColor;
@@ -1528,6 +1552,15 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
+		case 0x49:	// OP_setDefaultMenuColor2
+			{
+				defaultMenuBoxColor2 = *(currentScriptPtr + currentPosition);
+				currentPosition++;
+
+				DEBUG_SCRIPT(currentLine, "setDefaultMenuColor2(%d)", defaultMenuBoxColor2);
+
+				break;
+			}
 		case 0x4A:
 			{
 				byte a;
@@ -1548,21 +1581,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				palRotate(a, b, c);
 				break;
 			}
-		case 0x4F:	// break;
+		case 0x4F:	// OP_break;
 			{
 				DEBUG_SCRIPT(currentLine, "break");
 
 				scriptElement->scriptPosition = currentPosition;
 				closeScript = 1;
-				break;
-			}
-		case 0x49:
-			{
-				defaultMenuBoxColor2 = *(currentScriptPtr + currentPosition);
-				currentPosition++;
-
-				DEBUG_SCRIPT(currentLine, "setDefaultMenuColor2(%d)", defaultMenuBoxColor2);
-
 				break;
 			}
 		case 0x50:	// OP_endScript
@@ -1579,7 +1603,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x51:
+		case 0x51:	// OP_message
 			{
 				byte param1;
 				uint16 param2;
@@ -1686,14 +1710,14 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x59:
+		case 0x59:	// OP_declareFunctionName
 			{
 				DEBUG_SCRIPT(currentLine, "comment(%s)", currentScriptPtr + currentPosition);
 
 				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition));
 				break;
 			}
-		case 0x5A:
+		case 0x5A:	// OP_freePartRange
 			{
 				byte startIdx;
 				byte numIdx;
@@ -1712,7 +1736,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x5B:
+		case 0x5B:	// OP_unloadAllMasks
 			{
 				DEBUG_SCRIPT(currentLine, "unloadAllMasks()");
 
@@ -1720,7 +1744,17 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x65:
+		case 0x63:
+			{
+				warning("STUB: Opcode 0x63");
+				break;
+			}
+		case 0x64:
+			{
+				warning("STUB: Opcode 0x64");
+				break;
+			}
+		case 0x65:	// OP_initializeZoneData
 			{
 				byte i;
 
@@ -1732,7 +1766,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x66:
+		case 0x66:	// OP_setZoneDataEntry
 			{
 				byte zoneIdx;
 				uint16 var;
@@ -1749,7 +1783,12 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x68:
+		case 0x67:	// OP_getZoneDataEntry
+			{
+				warning("STUB: Opcode 0x67");
+				break;
+			}
+		case 0x68:	// OP_setDefaultMenuColor
 			{
 				defaultMenuBoxColor = *(currentScriptPtr + currentPosition);
 				currentPosition++;
@@ -1784,33 +1823,48 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				checkDataDisk(newDisk);
 				break;
 			}
-		case 0x6D:
+		case 0x6D:	// OP_loadMusic
 			{
 				DEBUG_SCRIPT(currentLine, "loadMusic(%s)", currentScriptPtr + currentPosition);
 				g_sfxPlayer->load((const char *)(currentScriptPtr + currentPosition));
 				currentPosition += strlen((const char *)(currentScriptPtr + currentPosition)) + 1;
 				break;
 			}
-		case 0x6E:
+		case 0x6E:	// OP_playMusic
 			{
 				DEBUG_SCRIPT(currentLine, "playMusic()");
 				g_sfxPlayer->play();
 				break;
 			}
-		case 0x6F:
+		case 0x6F:	// OP_fadeOutMusic
 			{
 				DEBUG_SCRIPT(currentLine, "fadeOutMusic()");
 				g_sfxPlayer->fadeOut();
 				break;
 			}
-		case 0x70:
+		case 0x70:	// OP_stopSample
 			{
 				DEBUG_SCRIPT(currentLine, "stopSample()");
 				g_sfxPlayer->stop();
 				break;
 			}
-		case 0x77:
-		case 0x78:
+		case 0x71:
+			{
+				warning("STUB: Opcode 0x71");
+				break;
+			}
+		case 0x72:
+			{
+				warning("STUB: Opcode 0x72");
+				break;
+			}
+		case 0x73:
+			{
+				warning("STUB: Opcode 0x73");
+				break;
+			}
+		case 0x77:	// OP_playSample
+		case 0x78:	// OP_playSample
 			{
 				DEBUG_SCRIPT(currentLine, "playSample()");
 				byte anim, channel;
@@ -1858,7 +1912,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				}
 				break;
 			}
-		case 0x79:
+		case 0x79:	// OP_allowSystemMenu
 			{
 				var22 = *(currentScriptPtr + currentPosition);
 
@@ -1867,7 +1921,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				currentPosition++;
 				break;
 			}
-		case 0x7A:
+		case 0x7A:	// OP_loadMask5
 			{
 				byte param;
 
@@ -1880,7 +1934,7 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
-		case 0x7B:
+		case 0x7B:	// OP_unloadMask5
 			{
 				byte param;
 
@@ -1945,6 +1999,16 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				removeSeq(a, 0, b);
 
+				break;
+			}
+		case 0x81:
+			{
+				warning("STUB: Opcode 0x81");
+				break;
+			}
+		case 0x82:
+			{
+				warning("STUB: Opcode 0x82");
 				break;
 			}
 		case 0x83:
@@ -2096,6 +2160,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				stopObjectScript(temp);
 				break;
 			}
+		case 0x8D:
+			{
+				warning("STUB: Opcode 0x8D");
+				break;
+			}
 		case 0x8E:
 			{
 				byte temp = *(currentScriptPtr + currentPosition);
@@ -2163,6 +2232,26 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 				}
 				break;
 			}
+		case 0x95:
+			{
+				warning("STUB: Opcode 0x95");
+				break;
+			}
+		case 0x9A:	// OP_wasZoneChecked
+			{
+				warning("STUB: Opcode 0x9A");
+				break;
+			}
+		case 0x9B:
+			{
+				warning("STUB: Opcode 0x9B");
+				break;
+			}
+		case 0x9C:
+			{
+				warning("STUB: Opcode 0x9C");
+				break;
+			}
 		case 0x9D:
 			{
 				byte temp = *(currentScriptPtr + currentPosition);
@@ -2206,6 +2295,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 				break;
 			}
+		case 0x9F:
+			{
+				warning("STUB: Opcode 0x9F");
+				break;
+			}
 		case 0xA0:
 			{
 				uint16 param1;
@@ -2224,17 +2318,35 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 			}
 		case 0xA1:
 			{
+				warning("STUB: Opcode 0xA1");
 				currentPosition += 4;
 				break;
 			}
 		case 0xA2:
 			{
+				warning("STUB: Opcode 0xA2");
 				currentPosition += 4;
 				break;
 			}
 		case 0xA3:
 			{
+				warning("STUB: Opcode 0xA3");
 				currentPosition += 4;
+				break;
+			}
+		case 0xA4:
+			{
+				warning("STUB: Opcode 0xA4");
+				break;
+			}
+		case 0xA5:
+			{
+				warning("STUB: Opcode 0xA5");
+				break;
+			}
+		case 0xB6:
+			{
+				warning("STUB: Opcode 0xB6");
 				break;
 			}
 		default:
