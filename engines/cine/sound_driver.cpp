@@ -113,11 +113,7 @@ void AdlibSoundDriver::stopSound() {
 }
 
 int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	update(buffer, numSamples / 2);
-	// convert mono to stereo
-	for (int i = numSamples / 2 - 1; i >= 0; i--) {
-		buffer[2 * i] = buffer[2 * i + 1] = buffer[i];
-	}
+	update(buffer, numSamples);
 	return numSamples;
 }
 

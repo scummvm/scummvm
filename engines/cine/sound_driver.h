@@ -91,7 +91,7 @@ public:
 
 	// AudioStream interface
 	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return true; }
+	virtual bool isStereo() const { return false; }
 	virtual bool endOfData() const { return false; }
 	virtual int getRate() const { return _sampleRate; }
 
