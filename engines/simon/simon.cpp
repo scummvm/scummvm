@@ -286,7 +286,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_iOverflow = 0;
 	_hitAreaObjectItem = 0;
 	_lastHitArea = 0;
-	_lastHitArea2Ptr = 0;
+	_lastNameOn = 0;
 	_lastHitArea3 = 0;
 	_leftButtonDown = 0;
 	_hitAreaSubjectItem = 0;
@@ -1603,9 +1603,9 @@ void SimonEngine::setup_cond_c_helper() {
 	_lastHitArea = 0;
 	_hitAreaObjectItem = NULL;
 
-	last = _lastHitArea2Ptr;
-	defocusHitarea();
-	_lastHitArea2Ptr = last;
+	last = _lastNameOn;
+	clearName();
+	_lastNameOn = last;
 
 	for (;;) {
 		_lastHitArea = NULL;
@@ -1646,7 +1646,7 @@ void SimonEngine::setup_cond_c_helper() {
 out_of_here:
 	_lastHitArea3 = 0;
 	_lastHitArea = 0;
-	_lastHitArea2Ptr = NULL;
+	_lastNameOn = NULL;
 	_mouseCursor = 0;
 	_noRightClick = 0;
 }

@@ -280,7 +280,7 @@ protected:
 
 	Item *_hitAreaObjectItem;
 	HitArea *_lastHitArea;
-	HitArea *_lastHitArea2Ptr;
+	HitArea *_lastNameOn;
 	HitArea *_lastHitArea3;
 	byte _leftButtonDown;
 	byte _rightButtonDown;
@@ -632,7 +632,7 @@ protected:
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();
 
-	void defocusHitarea();
+	void clearName();
 	void endCutscene();
 	void runSubroutine101();
 	void checkUp(WindowBlock *window);

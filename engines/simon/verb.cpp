@@ -188,22 +188,22 @@ static const char *const english_verb_prep_names[] = {
 	"", "", "", "to whom ?"
 };
 
-void SimonEngine::defocusHitarea() {
+void SimonEngine::clearName() {
 	HitArea *last;
 	HitArea *ha;
 
 	if (getGameType() == GType_FF) {
-		if (getBitFlag(79)) {
-			o_sync(202);
-			_lastHitArea2Ptr = NULL;
-			return;
-		}
+		o_kill_sprite_simon2(2, 6);
+		_lastNameOn = NULL;
+		//_animatePointer = 0;
+		_mouseAnim = 1;
+		return;
 	}
 
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
 			o_sync(202);
-			_lastHitArea2Ptr = NULL;
+			_lastNameOn = NULL;
 			return;
 		}
 	}
@@ -311,7 +311,7 @@ void SimonEngine::hitareaChangedHelper() {
 	if (window != NULL && window->text_color != 0)
 		clearWindow(window);
 
-	_lastHitArea2Ptr = NULL;
+	_lastNameOn = NULL;
 	_hitAreaPtr7 = NULL;
 }
 
@@ -365,8 +365,8 @@ void SimonEngine::delete_hitarea(uint hitarea) {
 	HitArea *ha = findHitAreaByID(hitarea);
 	if (ha != NULL) {
 		ha->flags = 0;
-		if (ha == _lastHitArea2Ptr)
-			defocusHitarea();
+		if (ha == _lastNameOn)
+			clearName();
 		_needHitAreaRecalc++;
 	}
 }
@@ -625,8 +625,12 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	uint count = ARRAYSIZE(_hitAreas);
 	uint16 priority = 0;
 	uint16 x_ = x;
-	const uint16 y_ = y;
+	uint16 y_ = y;
 
+	if (getGameType() == GType_FF) {
+		x_ += _scrollX;
+		y_ += _scrollY;
+	}
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79) || y < 134) {
 			x_ += _scrollX * 8;
@@ -657,7 +661,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	_currentBoxNumber = 0;
 
 	if (best_ha == NULL) {
-		defocusHitarea();
+		clearName();
 		return;
 	}
 
@@ -670,8 +674,8 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 	}
 
 	if (best_ha->flags & 4) {
-		defocusHitarea();
-	} else if (best_ha != _lastHitArea2Ptr) {
+		clearName();
+	} else if (best_ha != _lastNameOn) {
 		displayName(best_ha);
 	}
 
@@ -694,7 +698,7 @@ void SimonEngine::displayName(HitArea *ha) {
 	}
 
 	if (result)
-		_lastHitArea2Ptr = ha;
+		_lastNameOn = ha;
 }
 
 bool SimonEngine::printTextOf(uint a) {
