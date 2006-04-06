@@ -291,7 +291,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_leftButtonDown = 0;
 	_hitAreaSubjectItem = 0;
 	_currentVerbBox = 0;
-	_hitAreaPtr7 = 0;
+	_lastVerbOn = 0;
 	_needHitAreaRecalc = 0;
 	_verbHitArea = 0;
 	_defaultVerb = 0;
@@ -418,7 +418,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 
 	memset(_videoBuf1, 0, sizeof(_videoBuf1));
 
-	_fcs_list = new WindowBlock[16];
+	_windowList = new WindowBlock[16];
 
 	memset(_lettersToPrintBuf, 0, sizeof(_lettersToPrintBuf));
 
@@ -658,7 +658,7 @@ SimonEngine::~SimonEngine() {
 	delete _dummyItem2;
 	delete _dummyItem3;
 
-	delete [] _fcs_list;
+	delete [] _windowList;
 
 	delete _sound;
 	delete _debugger;
@@ -1687,7 +1687,7 @@ void SimonEngine::mouseOn() {
 	_lockWord &= ~1;
 }
 
-void SimonEngine::handle_mouse_moved() {
+void SimonEngine::handleMouseMoved() {
 	uint x;
 
 	if (_mouseHideCount) {
@@ -1740,16 +1740,15 @@ void SimonEngine::handle_mouse_moved() {
 			setVerb(NULL);
 		}
 	}
-
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
 			if (!_vgaVar9) {
-				if (_mouseX >= 630 / 2 || _mouseX < 9)
+				if (_mouseX >= 315 || _mouseX < 9)
 					goto get_out2;
 				_vgaVar9 = 1;
 			}
 			if (_scrollCount == 0) {
-				if (_mouseX >= 631 / 2) {
+				if (_mouseX >= 315) {
 					if (_scrollX != _scrollXMax)
 						_scrollFlag = 1;
 				} else if (_mouseX < 8) {
@@ -1801,7 +1800,7 @@ uint SimonEngine::itemGetIconNumber(Item *item) {
 	return child->array[offs];
 }
 
-void SimonEngine::f10_key() {
+void SimonEngine::displayBoxStars() {
 	HitArea *ha, *dha;
 	uint count;
 	uint y_, x_;
@@ -1918,7 +1917,7 @@ startOver:
 
 		for (;;) {
 			if (_keyPressed == 35)
-				f10_key();
+				displayBoxStars();
 			processSpecialKeys();
 			if (_lastHitArea3 == (HitArea *) -1)
 				goto startOver;
@@ -1981,7 +1980,7 @@ void SimonEngine::hitarea_stuff_helper() {
 			Subroutine *sub = getSubroutineByID(subr_id);
 			if (sub != NULL) {
 				startSubroutineEx(sub);
-				startUp_helper_2();
+				permitInput();
 			}
 			_variableArray[254] = 0;
 			_runScriptReturn1 = false;
@@ -1996,7 +1995,7 @@ void SimonEngine::hitarea_stuff_helper() {
 	if ((uint) cur_time != _lastTime) {
 		_lastTime = cur_time;
 		if (kickoffTimeEvents())
-			startUp_helper_2();
+			permitInput();
 	}
 }
 
@@ -2011,7 +2010,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 		if (sub != NULL) {
 			_variableArray[249] = 0;
 			startSubroutineEx(sub);
-			startUp_helper_2();
+			permitInput();
 		}
 		_variableArray[249] = 0;
 	}
@@ -2022,7 +2021,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 		if (sub != NULL) {
 			_variableArray[254] = 0;
 			startSubroutineEx(sub);
-			startUp_helper_2();
+			permitInput();
 		}
 		_variableArray[254] = 0;
 	}
@@ -2030,7 +2029,7 @@ void SimonEngine::hitarea_stuff_helper_2() {
 	_runScriptReturn1 = false;
 }
 
-void SimonEngine::startUp_helper_2() {
+void SimonEngine::permitInput() {
 	if (!_mortalFlag) {
 		_mortalFlag = true;
 		showmessage_print_char(0);
@@ -2051,7 +2050,7 @@ void SimonEngine::pollMouseXY() {
 	_mouseY = _sdlMouseY;
 }
 
-void SimonEngine::handle_verb_clicked(uint verb) {
+void SimonEngine::handleVerbClicked(uint verb) {
 	Subroutine *sub;
 	int result;
 
@@ -2106,7 +2105,7 @@ void SimonEngine::handle_verb_clicked(uint verb) {
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF)
 		_runScriptReturn1 = false;
 
-	startUp_helper_2();
+	permitInput();
 }
 
 TextLocation *SimonEngine::getTextLocation(uint a) {
@@ -2786,7 +2785,7 @@ void SimonEngine::timer_proc1() {
 				swapCharacterLogo();
 			}
 		}
-		handle_mouse_moved();
+		handleMouseMoved();
 		dx_update_screen_and_palette();
 		_updateScreen = false;
 	}
@@ -2847,7 +2846,6 @@ bool SimonEngine::vc_maybe_skip_proc_1(uint16 a, int16 b) {
 	return item->state == b;
 }
 
-// OK
 void SimonEngine::closeWindow(uint a) {
 	if (_windowArray[a] == NULL)
 		return;
@@ -2860,7 +2858,6 @@ void SimonEngine::closeWindow(uint a) {
 	}
 }
 
-// OK
 void SimonEngine::changeWindow(uint a) {
 	a &= 7;
 
@@ -2877,11 +2874,10 @@ void SimonEngine::changeWindow(uint a) {
 		showmessage_helper_3(_textWindow->textLength, _textWindow->textMaxLength);
 }
 
-// OK
 WindowBlock *SimonEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color) {
 	WindowBlock *window;
 
-	window = _fcs_list;
+	window = _windowList;
 	while (window->mode != 0)
 		window++;
 
@@ -2965,19 +2961,16 @@ void SimonEngine::o_pathfind(int x, int y, uint var_1, uint var_2) {
 	}
 }
 
-// ok
 void SimonEngine::delete_hitarea_by_index(uint index) {
 	CHECK_BOUNDS(index, _hitAreas);
 	_hitAreas[index].flags = 0;
 }
 
-// ok
-void SimonEngine::fcs_putchar(uint a) {
+void SimonEngine::windowPutChar(uint a) {
 	if (_textWindow != _windowArray[0])
-		video_putchar(_textWindow, a);
+		videoPutchar(_textWindow, a);
 }
 
-// ok
 void SimonEngine::clearWindow(WindowBlock *window) {
 	if (window->flags & 0x10)
 		restoreWindow(window);
@@ -2990,7 +2983,6 @@ void SimonEngine::clearWindow(WindowBlock *window) {
 	window->textLength = 0;
 }
 
-// ok
 void SimonEngine::restoreWindow(WindowBlock *window) {
 	_lockWord |= 0x8000;
 
@@ -3738,7 +3730,7 @@ void SimonEngine::openGameFile() {
 	vc34_setMouseOff();
 
 	runSubroutine101();
-	startUp_helper_2();
+	permitInput();
 }
 
 void SimonEngine::runSubroutine101() {
@@ -3748,7 +3740,7 @@ void SimonEngine::runSubroutine101() {
 	if (sub != NULL)
 		startSubroutineEx(sub);
 
-	startUp_helper_2();
+	permitInput();
 }
 
 void SimonEngine::restoreBlock(uint b, uint r, uint y, uint x) {
@@ -3940,7 +3932,7 @@ int SimonEngine::go() {
 
 	while (1) {
 		hitarea_stuff();
-		handle_verb_clicked(_verbHitArea);
+		handleVerbClicked(_verbHitArea);
 		delay(100);
 	}
 

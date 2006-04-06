@@ -37,7 +37,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 			if (getBitFlag(93)) {
 				if (_curWindow == 3) {
 					if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
-						fcs_putchar(*src);
+						windowPutChar(*src);
 					if (*src == '\n')		// Do two top lines of text only
 						_newLines++;
 					src++;
@@ -46,7 +46,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 				if (getBitFlag(94)) {
 					if (_curWindow == 3) {
 						if (_newLines == (_textWindow->scrollY + 7))
-							fcs_putchar(*src);
+							windowPutChar(*src);
 						if (*src == '\n')	// Do two top lines of text only
 							_newLines++;
 						src++;
@@ -54,7 +54,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 				} else {
 					//if (getBitFlag(92))
 					//	while(!_nextCharacter);
-					fcs_putchar(*src++);
+					windowPutChar(*src++);
 					//_nextCharacter = false;
 				}
 			}
@@ -66,7 +66,7 @@ void SimonEngine::print_char_helper_1(const byte *src, uint len) {
 				_fcsData2[ind] = 1;
 			}
 
-			fcs_putchar(*src++);
+			windowPutChar(*src++);
 		}
 	}
 }
@@ -346,7 +346,7 @@ void SimonEngine::showmessage_helper_3(uint a, uint b) {
 	_newLines = 0;
 }
 
-void SimonEngine::video_putchar(WindowBlock *window, byte c, byte b) {
+void SimonEngine::videoPutchar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
 
 	if (c == 12) {

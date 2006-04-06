@@ -553,7 +553,7 @@ void SimonEngine::removeIconArray(uint num) {
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		changeWindow(num);
-		fcs_putchar(12);
+		windowPutChar(12);
 		changeWindow(curWindow);
 	}
 

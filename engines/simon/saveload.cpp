@@ -180,7 +180,7 @@ void SimonEngine::saveOrLoadDialog(bool load) {
 	int number_of_savegames;
 	int i;
 	int unk132_result;
-	WindowBlock *fcs;
+	WindowBlock *window;
 	char *name;
 	int name_len;
 	bool b;
@@ -224,20 +224,20 @@ restart:;
 
 		// some code here
 
-		fcs = _windowArray[5];
+		window = _windowArray[5];
 
-		fcs->textRow = unk132_result;
+		window->textRow = unk132_result;
 
 		if (_language == Common::HB_ISR) { //Hebrew
 			// init x offset with a 2 character savegame number + a period (18 pix)
-			fcs->textColumn = 3;
-			fcs->textColumnOffset = 6;
-			fcs->textLength = 3;
+			window->textColumn = 3;
+			window->textColumnOffset = 6;
+			window->textLength = 3;
 		} else {
 			// init x offset with a 2 character savegame number + a period (18 pix)
-			fcs->textColumn = 2;
-			fcs->textColumnOffset = 2;
-			fcs->textLength = 3;
+			window->textColumn = 2;
+			window->textColumnOffset = 2;
+			window->textLength = 3;
 		}
 
 		name = buf + i * 18;
@@ -249,20 +249,20 @@ restart:;
 				byte width = 6;
 				if (name[name_len] >= 64 && name[name_len] < 91)
 					width = _hebrew_char_widths [name[name_len] - 64];
-				fcs->textLength++;
-				fcs->textColumnOffset -= width;
-				if (fcs->textColumnOffset < width) {
-					fcs->textColumnOffset += 8;
-					fcs->textColumn++;
+				window->textLength++;
+				window->textColumnOffset -= width;
+				if (window->textColumnOffset < width) {
+					window->textColumnOffset += 8;
+					window->textColumn++;
 				}
 			} else {
-				fcs->textLength++;
-				fcs->textColumnOffset += 6;
+				window->textLength++;
+				window->textColumnOffset += 6;
 				if (name[name_len] == 'i' || name[name_len] == 'l')
-					fcs->textColumnOffset -= 2;
-				if (fcs->textColumnOffset >= 8) {
-					fcs->textColumnOffset -= 8;
-					fcs->textColumn++;
+					window->textColumnOffset -= 2;
+				if (window->textColumnOffset >= 8) {
+					window->textColumnOffset -= 8;
+					window->textColumn++;
 				}
 			}
 			name_len++;
@@ -271,7 +271,7 @@ restart:;
 
 		// do_3_start
 		for (;;) {
-			video_putchar(fcs, 0x7f);
+			videoPutchar(window, 0x7f);
 
 			_saveLoadFlag = true;
 
@@ -322,7 +322,7 @@ restart:;
 			} else if (i >= 32 && name_len != 17) {
 				name[name_len++] = i;
 
-				video_putchar(_windowArray[5], i);
+				videoPutchar(_windowArray[5], i);
 			}
 		}
 
@@ -350,7 +350,94 @@ get_out:;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
-void SimonEngine::o_fileError(WindowBlock *fcs, bool save_error) {
+int SimonEngine::o_unk_132_helper(bool *b, char *buf) {
+	HitArea *ha;
+	*b = true;
+
+	if (!_saveLoadFlag) {
+	strange_jump:;
+		_saveLoadFlag = false;
+		saveGameDialog(buf);
+	}
+
+start_over:;
+	_keyPressed = 0;
+
+start_over_2:;
+	_lastHitArea = _lastHitArea3 = 0;
+
+	do {
+		if (_keyPressed != 0) {
+			if (_saveLoadFlag) {
+				*b = false;
+				return _keyPressed;
+			}
+			goto start_over;
+		}
+		delay(100);
+	} while (_lastHitArea3 == 0);
+
+	ha = _lastHitArea;
+
+	if (ha == NULL || ha->id < 205)
+		goto start_over_2;
+
+	if (ha->id == 205)
+		return ha->id;
+
+	if (ha->id == 206) {
+		if (_saveLoadRowCurPos == 1)
+			goto start_over_2;
+		if (_saveLoadRowCurPos < 7)
+			_saveLoadRowCurPos = 1;
+		else
+			_saveLoadRowCurPos -= 6;
+
+		goto strange_jump;
+	}
+
+	if (ha->id == 207) {
+		if (!_saveDialogFlag)
+			goto start_over_2;
+		_saveLoadRowCurPos += 6;
+		if (_saveLoadRowCurPos >= _numSaveGameRows)
+			_saveLoadRowCurPos = _numSaveGameRows;
+		goto strange_jump;
+	}
+
+	if (ha->id >= 214)
+		goto start_over_2;
+	return ha->id - 208;
+}
+
+void SimonEngine::o_unk_132_helper_3() {
+	for (int i = 208; i != 208 + 6; i++)
+		set_hitarea_bit_0x40(i);
+}
+
+void SimonEngine::o_clearCharacter(WindowBlock *window, int x, byte b) {
+	byte old_text;
+
+	videoPutchar(window, x, b);
+	old_text = window->text_color;
+	window->text_color = window->fill_color;
+
+	if (_language == Common::HB_ISR) { //Hebrew
+		x = 128;
+	} else {
+		x += 120;
+		if (x != 128)
+			x = 129;
+
+	}
+
+	videoPutchar(window, x);
+
+	window->text_color = old_text;
+	videoPutchar(window, 8);
+}
+
+void SimonEngine::o_fileError(WindowBlock *window, bool save_error) {
 	HitArea *ha;
 	const char *string, *string2;
 
@@ -362,23 +449,23 @@ void SimonEngine::o_fileError(WindowBlock *fcs, bool save_error) {
 		string2 = "\r     File not found.";
 	}
 
-	video_putchar(fcs, 0xC);
+	videoPutchar(window, 0xC);
 	for (; *string; string++)
-		video_putchar(fcs, *string);
+		videoPutchar(window, *string);
 	for (; *string2; string2++)
-		video_putchar(fcs, *string2);
+		videoPutchar(window, *string2);
 
-	fcs->textColumn = (fcs->width >> 1) - 3;
-	fcs->textRow = fcs->height - 1;
-	fcs->textLength = 0;
+	window->textColumn = (window->width / 2) - 3;
+	window->textRow = window->height - 1;
+	window->textLength = 0;
 
 	string = "[ OK ]";
 	for (; *string; string++)
-		video_putchar(fcs, *string);
+		videoPutchar(window, *string);
 
 	ha = findEmptyHitArea();
-	ha->x = ((fcs->width >> 1) + (fcs->x - 3)) << 3;
-	ha->y = (fcs->height << 3) + fcs->y - 8;
+	ha->x = ((window->width >> 1) + (window->x - 3)) * 8;
+	ha->y = (window->height << 3) + window->y - 8;
 	ha->width = 48;
 	ha->height = 8;
 	ha->flags = 0x20;

@@ -210,18 +210,17 @@ void SimonEngine::clearName() {
 
 	last = _currentVerbBox;
 
-	if (last == _hitAreaPtr7)
+	if (last == _lastVerbOn)
 		return;
 
-	hitareaChangedHelper();
-	_hitAreaPtr7 = last;
+	resetNameWindow();
+	_lastVerbOn = last;
 
 	if (last != NULL && (ha = findHitAreaByID(200)) && (ha->flags & 0x40) && !(last->flags & 0x40))
-		focusVerb(last->id);
+		printVerbOf(last->id);
 }
 
-void SimonEngine::focusVerb(uint hitarea_id) {
-	uint x;
+void SimonEngine::printVerbOf(uint hitarea_id) {
 	const char *txt;
 	const char * const *verb_names;
 	const char * const *verb_prep_names;
@@ -281,38 +280,42 @@ void SimonEngine::focusVerb(uint hitarea_id) {
 		CHECK_BOUNDS(hitarea_id, english_verb_names);
 		txt = verb_names[hitarea_id];
 	}
-	x = (53 - strlen(txt)) * 3;
-	showActionString(x, (const byte *)txt);
+	showActionString((const byte *)txt);
 }
 
-void SimonEngine::showActionString(uint x, const byte *string) {
+void SimonEngine::showActionString(const byte *string) {
 	WindowBlock *window;
+	uint x;
 
 	window = _windowArray[1];
 	if (window == NULL || window->text_color == 0)
 		return;
 
-	window->textColumn = x >> 3;
+	// Arisme : hack for long strings in the French version
+	if ((strlen((const char*)string) - 1) <= 53)
+		x = (53 - (strlen((const char *)string) - 1)) * 3;
+	else
+		x = 0;
+
+	window->textColumn = x / 8;
 	window->textColumnOffset = x & 7;
 
 	for (; *string; string++)
-		video_putchar(window, *string);
+		videoPutchar(window, *string);
 }
 
-void SimonEngine::hitareaChangedHelper() {
+void SimonEngine::resetNameWindow() {
 	WindowBlock *window;
 
-	if (getGameType() == GType_SIMON2) {
-		if (getBitFlag(79))
-			return;
-	}
+	if (getGameType() == GType_SIMON2 && getBitFlag(79))
+		return;
 
 	window = _windowArray[1];
 	if (window != NULL && window->text_color != 0)
 		clearWindow(window);
 
 	_lastNameOn = NULL;
-	_hitAreaPtr7 = NULL;
+	_lastVerbOn = NULL;
 }
 
 HitArea *SimonEngine::findHitAreaByID(uint hitarea_id) {
@@ -574,7 +577,7 @@ void SimonEngine::inventoryUp(WindowBlock *window) {
 	if (getGameType() == GType_FF) {
 		_marks = 0;
 		checkUp(window);
-		loadSprite(4, 9 ,21 ,0 ,0, 0);	
+		loadSprite(4, 9, 21, 0 ,0, 0);	
 		while(1) {
 			if (_currentBoxNumber != 0x7FFB || !_leftButtonDown)
 				break;
@@ -690,7 +693,7 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 void SimonEngine::displayName(HitArea *ha) {
 	bool result;
 
-	hitareaChangedHelper();
+	resetNameWindow();
 	if (ha->flags & 1) {
 		result = printTextOf(ha->flags >> 8);
 	} else {
@@ -702,9 +705,6 @@ void SimonEngine::displayName(HitArea *ha) {
 }
 
 bool SimonEngine::printTextOf(uint a) {
-	uint x;
-	const byte *string_ptr;
-
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
 			Subroutine *sub;
@@ -719,21 +719,13 @@ bool SimonEngine::printTextOf(uint a) {
 	if (a >= 20)
 		return false;
 
-	string_ptr = getStringPtrByID(_stringIdArray2[a]);
-	// Arisme : hack for long strings in the French version
-	if ((strlen((const char*)string_ptr) - 1) <= 53)
-		x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
-	else
-		x = 0;
-	showActionString(x, string_ptr);
+	showActionString(getStringPtrByID(_stringIdArray2[a]));
 
 	return true;
 }
 
 bool SimonEngine::printNameOf(Item *item) {
 	Child2 *child2;
-	uint x;
-	const byte *string_ptr;
 
 	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
 		return false;
@@ -742,13 +734,7 @@ bool SimonEngine::printNameOf(Item *item) {
 	if (child2 == NULL)
 		return false;
 
-	string_ptr = getStringPtrByID(child2->string_id);
-	// Arisme : hack for long strings in the French version
-	if ((strlen((const char*)string_ptr) - 1) <= 53)
-		x = (53 - (strlen((const char *)string_ptr) - 1)) * 3;
-	else
-		x = 0;
-	showActionString(x, string_ptr);
+	showActionString(getStringPtrByID(child2->string_id));
 
 	return true;
 }

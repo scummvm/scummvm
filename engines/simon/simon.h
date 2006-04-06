@@ -285,7 +285,7 @@ protected:
 	byte _leftButtonDown;
 	byte _rightButtonDown;
 	Item *_hitAreaSubjectItem;
-	HitArea *_currentVerbBox, *_hitAreaPtr7;
+	HitArea *_currentVerbBox, *_lastVerbOn;
 	uint _needHitAreaRecalc;
 	uint _verbHitArea;
 	uint16 _defaultVerb;
@@ -407,7 +407,7 @@ protected:
 
 	VgaTimerEntry _vgaTimerList[95];
 
-	WindowBlock *_fcs_list;
+	WindowBlock *_windowList;
 
 	byte _lettersToPrintBuf[80];
 
@@ -639,12 +639,12 @@ protected:
 	void checkDown(WindowBlock *window);
 	void inventoryUp(WindowBlock *window);
 	void inventoryDown(WindowBlock *window);
-	void hitareaChangedHelper();
-	void focusVerb(uint hitarea_id);
+	void resetNameWindow();
+	void printVerbOf(uint hitarea_id);
 	HitArea *findHitAreaByID(uint hitarea_id);
 
-	void showActionString(uint x, const byte *string);
-	void video_putchar(WindowBlock *window, byte c, byte b = 0);
+	void showActionString(const byte *string);
+	void videoPutchar(WindowBlock *window, byte c, byte b = 0);
 	void clearWindow(WindowBlock *window);
 	void video_toggle_colors(HitArea * ha, byte a, byte b, byte c, byte d);
 
@@ -656,10 +656,10 @@ protected:
 	void displayName(HitArea * ha);
 	bool printTextOf(uint a);
 	bool printNameOf(Item *item);
-	void f10_key();
+	void displayBoxStars();
 	void hitarea_stuff();
 
-	void handle_mouse_moved();
+	void handleMouseMoved();
 	void pollMouseXY();
 	void drawMousePointer();
 
@@ -675,11 +675,11 @@ protected:
 	void processSpecialKeys();
 	void hitarea_stuff_helper();
 
-	void startUp_helper_2();
+	void permitInput();
 	void showmessage_helper_3(uint a, uint b);
 	void showmessage_print_char(byte chr);
 
-	void handle_verb_clicked(uint verb);
+	void handleVerbClicked(uint verb);
 
 	void o_set_video_mode(uint mode, uint vga_res);
 	void set_video_mode_internal(uint mode, uint vga_res_id);
@@ -836,7 +836,7 @@ protected:
 	void delete_hitarea_by_index(uint index);
 
 	void removeArrows(WindowBlock *window, uint num);
-	void fcs_putchar(uint a);
+	void windowPutChar(uint a);
 
 	void restoreWindow(WindowBlock *window);
 	void colorWindow(WindowBlock *window);
