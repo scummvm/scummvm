@@ -24,6 +24,10 @@
 #include "backends/fs/fs.h"
 #include "common/util.h"
 
+
+static AbstractFilesystemNode *_rootNode = 0;
+static int *_rootRefCount = 0;
+
 FilesystemNode AbstractFilesystemNode::wrap(AbstractFilesystemNode *node) {
 	FilesystemNode wrapper(node);
 	return wrapper;
@@ -35,8 +39,13 @@ FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
 }
 
 FilesystemNode::FilesystemNode() {
-	_realNode = getRoot();
-	_refCount = new int(1);
+	if (_rootNode == 0) {
+		_rootNode = getRoot();
+		_rootRefCount = new int(1);
+	}
+	_realNode = _rootNode;
+	_refCount = _rootRefCount;
+	++(*_refCount);
 }
 
 FilesystemNode::FilesystemNode(const FilesystemNode &node)
