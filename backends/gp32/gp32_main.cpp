@@ -32,6 +32,7 @@
 #include "backends/gp32/gp32std_grap.h"
 
 #include "backends/gp32/gp32_launcher.h"
+#include "backends/gp32/gp32_osys.h"
 #include "backends/gp32/globals.h"
 
 GlobalVars g_vars;
@@ -69,12 +70,14 @@ void GpMain(void *arg) {
 	//char *argv[] = { "scummvm", "-enull", "-pgp:\\game\\dott\\", "tentacle" };
 	char *argv[] = { "scummvm", "-d9" };
 
-	g_system = new OSystem_GP32_create();
+	extern OSystem *OSystem_GP32_create();
+	g_system = OSystem_GP32_create();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
 	//int res = scummvm_main(argc, argv);
 	int res = scummvm_main(1, NULL);
 	g_system->quit();	// TODO: Consider removing / replacing this!
-	return res;
+	
+	//return res;
 }
