@@ -729,7 +729,7 @@ void SimonEngine::vc10_draw() {
 			byte *dst;
 			uint w;
 
-			_scrollXMax = 640;
+			_scrollXMax = width - 640;
 			_scrollYMax = 0;
 			_scrollImage = state.depack_src;
 			_scrollHeight = height;
@@ -741,13 +741,14 @@ void SimonEngine::vc10_draw() {
 			vcWriteVar(251, _scrollX);
 
 			dst = getBackBuf();
-			src = state.depack_src + (_scrollX - 8) / 2;
+			src = state.depack_src + _scrollX / 2;
 
 			for (w = 0; w < 80; w++) {
 				decodeStripA(dst, src + READ_LE_UINT32(src), height);
 				dst += 8;
 				src += 4;
 			}
+			
 			return;
 		}
 		if (height > 480) {
@@ -1856,7 +1857,7 @@ void SimonEngine::vc48_setPathFinder() {
 
 		y = vsp->y;
 		vsp->y = y1;
-		checkScrollY(y1 - y);
+		checkScrollY(y, y1);
 
 		_variableArray[11] = readUint16Wrapper(p);
 		_variableArray[13] = pos;
@@ -2335,7 +2336,7 @@ void SimonEngine::vc76_setScaleXOffs() {
 	vsp->x += getScale(vsp->y, x);
 	_variableArray[var] = vsp->x;
 
-	checkScrollX(x);
+	checkScrollX(x, vsp->x);
 
 	vsp->flags = kDFScaled;
 }
@@ -2350,7 +2351,7 @@ void SimonEngine::vc77_setScaleYOffs() {
 	vsp->y += getScale(vsp->y, y);
 	_variableArray[var] = vsp->y;
 
-	checkScrollY(y);
+	checkScrollY(y, vsp->y);
 
 	vsp->flags = kDFScaled;
 }
@@ -2438,7 +2439,7 @@ void SimonEngine::vc84_stopSoundLoop() {
 }
 
 // Scrolling functions for Feeble Files
-void SimonEngine::checkScrollX(int x) {
+void SimonEngine::checkScrollX(int x, int xpos) {
 	if (_scrollXMax == 0 || getBitFlag(80) || getBitFlag(82) || x == 0)
 		return;
 
@@ -2453,7 +2454,7 @@ void SimonEngine::checkScrollX(int x) {
 				return;
 		}
 
-		if (x - _scrollX >= 480) {
+		if (xpos - _scrollX >= 480) {
 			_scrollCount = 320;
 			tmp = _scrollXMax - _scrollX;
 			if (tmp < 320)
@@ -2469,7 +2470,7 @@ void SimonEngine::checkScrollX(int x) {
 				return;
 		}
 
-		if ((uint16)(x - _scrollX) < 161) {
+		if ((uint16)(xpos - _scrollX) < 161) {
 			_scrollCount = -320;
 			tmp = _scrollXMax - _scrollX;
 			if (_scrollX < 320)
@@ -2478,7 +2479,7 @@ void SimonEngine::checkScrollX(int x) {
 	}
 }
 
-void SimonEngine::checkScrollY(int y) {
+void SimonEngine::checkScrollY(int y, int ypos) {
 	if (_scrollYMax == 0 || getBitFlag(80))
 		return;
 
@@ -2493,7 +2494,7 @@ void SimonEngine::checkScrollY(int y) {
 				return;
 		}
 
-		if (y - _scrollY >= 440) {
+		if (ypos - _scrollY >= 440) {
 			_scrollCount = 240;
 			tmp = _scrollYMax - _scrollY;
 			if (tmp < 240)
@@ -2509,7 +2510,7 @@ void SimonEngine::checkScrollY(int y) {
 				return;
 		}
 
-		if ((uint16)(y - _scrollY) < 100) {
+		if ((uint16)(ypos - _scrollY) < 100) {
 			_scrollCount = -240;
 			tmp = _scrollYMax - _scrollY;
 			if (_scrollY < 240)

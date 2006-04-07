@@ -266,8 +266,8 @@ protected:
 	bool _vgaVar9;
 	int16 _scriptUnk1;
 	bool _restoreWindow6;
-	int _scrollX, _scrollXMax, _scrollHeight;
-	int _scrollY, _scrollYMax, _scrollWidth;
+	int _scrollX, _scrollXMax, _scrollWidth;
+	int _scrollY, _scrollYMax, _scrollHeight;
 	int _scrollCount, _scrollFlag;
 	const byte *_scrollImage;
 	byte _vgaVar8;
@@ -1000,8 +1000,8 @@ protected:
 	void vcSkipNextInstruction();
 
 	int getScale(int y, int x);
-	void checkScrollX(int x);
-	void checkScrollY(int y);
+	void checkScrollX(int x, int xpos);
+	void checkScrollY(int y, int ypos);
 
 	bool itemIsSiblingOf(uint16 val);
 	bool itemIsParentOf(uint16 a, uint16 b);

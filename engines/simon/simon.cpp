@@ -2359,7 +2359,9 @@ void SimonEngine::set_video_mode_internal(uint mode, uint vga_res_id) {
 		_usePaletteDelay = true;
 	} else {
 		_scrollX = 0;
+		_scrollY = 0;
 		_scrollXMax = 0;
+		_scrollYMax = 0;
 		_scrollCount = 0;
 		_scrollFlag = 0;
 		_scrollHeight = 134;
@@ -2491,21 +2493,35 @@ void SimonEngine::scroll_timeout() {
 	if (_scrollCount == 0)
 		return;
 
-	if (_scrollCount < 0) {
-		if (_scrollFlag != -1) {
-			_scrollFlag = -1;
-			if (++_scrollCount == 0)
-				return;
+	if (getGameType() == GType_FF) {
+		if (_scrollCount < 0) {
+			if (_scrollFlag != -8) {
+				_scrollFlag = -8;
+				_scrollCount += 8;
+			}
+		} else {
+			if (_scrollFlag != 8) {
+				_scrollFlag = 8;
+				_scrollCount -= 8;
+			}
 		}
 	} else {
-		if (_scrollFlag != 1) {
-			_scrollFlag = 1;
-			if (--_scrollCount == 0)
-				return;
+		if (_scrollCount < 0) {
+			if (_scrollFlag != -1) {
+				_scrollFlag = -1;
+				if (++_scrollCount == 0)
+					return;
+			}
+		} else {
+			if (_scrollFlag != 1) {
+				_scrollFlag = 1;
+				if (--_scrollCount == 0)
+					return;
+			}
 		}
-	}
 
-	add_vga_timer(6, NULL, 0, 0);
+		add_vga_timer(6, NULL, 0, 0);
+	}
 }
 
 void SimonEngine::vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite) {
@@ -2626,7 +2642,10 @@ void SimonEngine::timer_vga_sprites() {
 	if (_paletteFlag == 2)
 		_paletteFlag = 1;
 
-	if ((getGameType() == GType_SIMON2 || getGameType() == GType_FF) && _scrollFlag) {
+	if (getGameType() == GType_FF && _scrollCount) {
+		scroll_timeout();
+	}
+	if (getGameType() == GType_SIMON2 && _scrollFlag) {
 		scrollEvent();
 	}
 
@@ -3735,6 +3754,10 @@ void SimonEngine::dx_update_screen_and_palette() {
 	_system->updateScreen();
 
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
+
+	if (getGameType() == GType_FF && _scrollFlag) {
+		scrollEvent();
+	}
 
 	if (_paletteColorCount != 0) {
 		if (getGameType() == GType_SIMON1 && _usePaletteDelay) {
