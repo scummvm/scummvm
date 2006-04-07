@@ -91,18 +91,18 @@ void SimonEngine::oracleTextUp() {
 	changeWindow(3);
 	_noOracleScroll = 0;
 
-	if(_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
+	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
 
 	while(1) {
-		if(_textWindow->scrollY == _oracleMaxScrollY)
+		if (_textWindow->scrollY == _oracleMaxScrollY)
 			break;
 		_textWindow->textRow = 105;
 		for (i = 0; i < 5; i++) {
 			_newLines = 0;
 			_textWindow->textColumn = 0;
 			_textWindow->textRow -= 3;
-			if(i == 2) {
+			if (i == 2) {
 				_textWindow->scrollY += 1;
 				_textWindow->textRow += 15;
 				linksUp();
@@ -126,17 +126,17 @@ void SimonEngine::oracleTextDown() {
 	changeWindow(3);
 	_noOracleScroll = 0;
 
-	if(_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
+	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
 
 	while(1) {
-		if(_textWindow->scrollY == 0)
+		if (_textWindow->scrollY == 0)
 			break;
 		for (i = 0; i < 5; i++) {
 			_newLines = 0;
 			_textWindow->textColumn = 0;
 			_textWindow->textRow = (i + 1) * 3;
-			if(i == 4) {
+			if (i == 4) {
 				_textWindow->scrollY -= 1;
 				_textWindow->textRow = 0;
 				linksDown();

@@ -908,7 +908,7 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 		} else if (state->flags & kDFOverlayed) {
 			state->surf_addr = getScaleBuf();
 			state->surf_pitch = _dxSurfacePitch;
-			state->surf_addr += state->x + state->y * state->surf_pitch;
+			state->surf_addr += (state->x + _scrollX) + (state->y + _scrollY) * state->surf_pitch;
 
 			uint w, h;
 			byte *src, *dst, *dst_org;
