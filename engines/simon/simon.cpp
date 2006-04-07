@@ -1642,7 +1642,7 @@ void SimonEngine::setup_cond_c_helper() {
 			inventoryDown(_lastHitArea->window);
 		} else if (_lastHitArea->item_ptr != NULL) {
 			_hitAreaObjectItem = _lastHitArea->item_ptr;
-			_variableArray[60] = (_lastHitArea->flags & 1) ? (_lastHitArea->flags / 256) : 0xFFFF;
+			_variableArray[60] = (_lastHitArea->flags & kBFTextBox) ? (_lastHitArea->flags / 256) : 0xFFFF;
 			break;
 		}
 	}
@@ -1790,14 +1790,14 @@ get_out:
 
 bool SimonEngine::has_item_childflag_0x10(Item *item) {
 	SubObject *child = (SubObject *)findChildOfType(item, 2);
-	return child && (child->objectFlags & 0x10) != 0;
+	return child && (child->objectFlags & kOFIcon) != 0;
 }
 
 uint SimonEngine::itemGetIconNumber(Item *item) {
 	SubObject *child = (SubObject *)findChildOfType(item, 2);
 	uint offs;
 
-	if (child == NULL || !(child->objectFlags & 0x10))
+	if (child == NULL || !(child->objectFlags & kOFIcon))
 		return 0;
 
 	offs = getOffsetOfChild2Param(child, 0x10);
@@ -2705,13 +2705,11 @@ void SimonEngine::scrollEvent() {
 		x += (getGameType() == GType_FF) ? 648 : 41;
 	}
 
-	if (getGameType() == GType_FF) {
+	if (getGameType() == GType_FF)
 		src = _scrollImage + x / 2;
-		decodeStripA(dst, src + READ_LE_UINT32(src), _scrollHeight);
-	} else {
+	else
 		src = _scrollImage + x * 4;
-		decodeStripA(dst, src + READ_BE_UINT32(src), _scrollHeight);
-	}
+	decodeStripA(dst, src + readUint32Wrapper(src), _scrollHeight);
 
 	memcpy(_sdl_buf_attached, _sdl_buf, _screenWidth * _screenHeight);
 	dx_copy_from_attached_to_3(_scrollHeight);

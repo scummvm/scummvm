@@ -595,7 +595,7 @@ void SimonEngine::o1_oset() {
 	SubObject *subObject = (SubObject *)findChildOfType(getNextItemPtr(), 2);
 	int value = getVarOrByte();
 	if (subObject != NULL && value >= 0x10)
-		subObject->objectFlags |= 1 << value;
+		subObject->objectFlags |= (1 << value);
 }
 
 void SimonEngine::o1_oclear() {
@@ -881,13 +881,13 @@ void SimonEngine::o1_addBox() {
 	id = id % 1000;
 
 	if (params & 1)
-		flags |= 8;
+		flags |= kBFInvertTouch;
 	if (params & 2)
-		flags |= 4;
+		flags |= kBFNoTouchName;
 	if (params & 4)
-		flags |= 0x80;
+		flags |= kBFBoxItem;
 	if (params & 8)
-		flags |= 1;
+		flags |= kBFTextBox;
 	if (params & 16)
 		flags |= 0x10;
 

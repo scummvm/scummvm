@@ -684,13 +684,12 @@ void SimonEngine::vc10_draw() {
 		state.image = vcReadVar(-state.image);
 
 	p2 = _curVgaFile2 + state.image * 8;
+	state.depack_src = _curVgaFile2 + readUint32Wrapper(p2);
 	if (getGameType() == GType_FF) {
-		state.depack_src = _curVgaFile2 + READ_LE_UINT32(p2);
 		width = READ_LE_UINT16(p2 + 6);
 		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
 		flags = p2[5];
 	} else {
-		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 		width = READ_BE_UINT16(p2 + 6) / 16;
 		height = p2[5];
 		flags = p2[4];
@@ -1310,7 +1309,7 @@ void SimonEngine::verticalScroll(VC10_state *state) {
 	src = state->depack_src + _scrollY / 2;
 
 	for (h = 0; h < _screenHeight; h += 8) {
-		//decodeRow(dst, src + READ_BE_UINT32(src), state->width);
+		//decodeRow(dst, src + READ_LE_UINT32(src), state->width);
 		dst += 8;
 		src += 4;
 	}

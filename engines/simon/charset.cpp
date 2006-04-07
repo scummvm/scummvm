@@ -202,12 +202,11 @@ void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint 
 	if (getGameType() == GType_FF) {
 		WRITE_LE_UINT16(p + 4, height);
 		WRITE_LE_UINT16(p + 6, width);
-		dst += READ_LE_UINT32(p);
 	} else {
 		WRITE_BE_UINT16(p + 4, height);
 		WRITE_BE_UINT16(p + 6, width);
-		dst += READ_BE_UINT32(p);
 	}
+	dst += readUint32Wrapper(p);
 
 	memset(dst, 0, count);
 	if (_language == Common::HB_ISR)

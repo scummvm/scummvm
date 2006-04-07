@@ -468,7 +468,7 @@ void SimonEngine::o_fileError(WindowBlock *window, bool save_error) {
 	ha->y = (window->height << 3) + window->y - 8;
 	ha->width = 48;
 	ha->height = 8;
-	ha->flags = 0x20;
+	ha->flags = kBFBoxInUse;
 	ha->id = 0x7FFF;
 	ha->priority = 0x3EF;
 
@@ -541,7 +541,7 @@ bool SimonEngine::saveGame(uint slot, char *caption) {
 			i = subObject->objectFlags & 1;
 
 			for (j = 1; j < 16; j++) {
-				if ((1 << j) & subObject->objectFlags) {
+				if (subObject->objectFlags & (1 << j)) {
 					f->writeUint16BE(subObject->objectFlagValue[i++]);
 				}
 			}
@@ -670,7 +670,7 @@ bool SimonEngine::loadGame(uint slot) {
 			i = subObject->objectFlags & 1;
 
 			for (j = 1; j < 16; j++) {
-				if ((1 << j) & subObject->objectFlags) {
+				if (subObject->objectFlags & (1 << j)) {
 					subObject->objectFlagValue[i++] = f->readUint16BE();
 				}
 			}
