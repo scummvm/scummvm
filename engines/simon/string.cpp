@@ -53,19 +53,23 @@ static const byte charWidth[226] = {
  	0, 0, 0, 0, 0, 7
 };
 
-static int getPixelLength(const char *string, int16 width) {
-	int pixels = 0;
+const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels) {
+	pixels = 0;
+
 	while (*string != 0) {
 		byte chr = *string;
-		if ((pixels + charWidth[chr]) > width)
+		if ((pixels + charWidth[chr]) > maxWidth)
 			break;	
 		pixels += charWidth[chr];
+		string++;
 	}
-	return pixels;
+
+	return string;
 }
 
 bool SimonEngine::printTextOf(uint a, uint x, uint y) {
 	const byte *stringPtr;
+	uint16 pixels, w;
 
 	if (getGameType() == GType_SIMON2) {
 		if (getBitFlag(79)) {
@@ -84,7 +88,8 @@ bool SimonEngine::printTextOf(uint a, uint x, uint y) {
 
 	stringPtr = getStringPtrByID(_stringIdArray2[a]);
 	if (getGameType() == GType_FF) {
-		uint w = getPixelLength((const char *)stringPtr, 400) + 1;
+		getPixelLength((const char *)stringPtr, 400, pixels);
+		w = pixels + 1;
 		x -= w / 2;
 		printScreenText(6, 0, (const char *)stringPtr, x, y, w);
 	} else {
@@ -97,6 +102,7 @@ bool SimonEngine::printTextOf(uint a, uint x, uint y) {
 bool SimonEngine::printNameOf(Item *item, uint x, uint y) {
 	SubObject *subObject;
 	const byte *stringPtr;
+	uint16 pixels, w;
 
 	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
 		return false;
@@ -107,7 +113,8 @@ bool SimonEngine::printNameOf(Item *item, uint x, uint y) {
 
 	stringPtr = getStringPtrByID(subObject->objectName);
 	if (getGameType() == GType_FF) {
-		uint w = getPixelLength((const char *)stringPtr, 400) + 1;
+		getPixelLength((const char *)stringPtr, 400, pixels);
+		w = pixels + 1;
 		x -= w / 2;
 		printScreenText(6, 0, (const char *)stringPtr, x, y, w);
 	} else {
@@ -125,13 +132,10 @@ void SimonEngine::printInteractText(uint16 num, const char *string) {
 	const char *string2 = string;
 	uint16 height = 15;
 	uint16 w = 620;
-	uint16 b;
-	uint16 x;
-	int pixels = 0;
+	uint16 b, pixels, x;
 
 	while (1) {
-		pixels = getPixelLength(string, 620);
-		string2 += pixels;
+		string2 = getPixelLength(string, 620, pixels);
 		if (*string2 == 0x00) {
 			if (w == 620)
 				w = pixels;
@@ -202,12 +206,11 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 	assert(stringLength > 0);
 
 	if (getGameType() == GType_FF) {
-		uint16 b, spaces;
-		uint16 len = width, pixels = 0;
+		uint16 b, pixels, spaces;
+		uint16 curWdth = width;
 
 		while (1) {
-			pixels = getPixelLength(string, len);
-			string2 += pixels;
+			string2 = getPixelLength(string, curWdth, pixels);
 			if (*string2 == 0) {
 				spaces = (width - pixels) / 12;
 				if (spaces != 0)
@@ -239,7 +242,7 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 			y -= textHeight;
 			if (y < 2)
 			    y = 2;
-			len = pixels;
+			curWdth = pixels;
 			string = string2;
 		}
 	} else {

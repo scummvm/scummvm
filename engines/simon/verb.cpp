@@ -707,8 +707,8 @@ void SimonEngine::displayName(HitArea *ha) {
 		else
 			_animatePointer = 1;
 
-		if (!getBitFlag(99))
-			return;
+		//if (!getBitFlag(73))
+		//	return;
 
 		y = ha->y;
 		if (getBitFlag(99) && y > 288)

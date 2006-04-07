@@ -317,7 +317,7 @@ void SimonEngine::setupOpcodes() {
 		opcode_table[171] = &SimonEngine::o3_hyperLinkOn;
 		opcode_table[172] = &SimonEngine::o3_hyperLinkOff;
 		opcode_table[173] = &SimonEngine::o3_checkPaths;
-		opcode_table[181] = &SimonEngine::o2_mouseOff;
+		opcode_table[181] = &SimonEngine::o3_mouseOff;
 		opcode_table[182] = &SimonEngine::o3_loadSmack;
 		opcode_table[183] = &SimonEngine::o3_playSmack;
 		opcode_table[185] = NULL;
@@ -1450,6 +1450,12 @@ void SimonEngine::o3_hyperLinkOff(bool &cond, int &ret) {
 void SimonEngine::o3_checkPaths(bool &cond, int &ret) {
 	// 173
 	warning("STUB: script opcode 173");
+}
+
+void SimonEngine::o3_mouseOff(bool &cond, int &ret) {
+	// 181: force mouseOff
+	o_mouseOff();
+	clearName();
 }
 
 void SimonEngine::o3_loadSmack(bool &cond, int &ret) {
