@@ -1246,11 +1246,15 @@ void SimonEngine::o1_scnTxtLongText(bool &cond, int &ret) {
 	uint color = getVarOrByte();
 	uint stringId = getVarOrByte();
 	uint speechId = 0;
+	TextLocation *tl;
 
 	const char *string_ptr = (const char *)getStringPtrByID(_stringIdArray3[stringId]);
-	TextLocation *tl = getTextLocation(vgaSpriteId);
 	if (getFeatures() & GF_TALKIE)
 		speechId = _speechIdArray4[stringId];
+
+	if (getGameType() == GType_FF)
+		vgaSpriteId = 1;
+	tl = getTextLocation(vgaSpriteId);
 
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
