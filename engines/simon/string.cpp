@@ -283,7 +283,7 @@ void SimonEngine::printScreenText(uint vgaSpriteId, uint color, const char *stri
 		o_kill_sprite_simon2(2, vgaSpriteId);
 
 	if (getGameType() == GType_FF) {
-		renderStringAmiga(1, color, width, height, convertedString);
+		renderString(1, color, width, height, convertedString);
 	} else {
 		color = color * 3 + 192;
 		if (getPlatform() == Common::kPlatformAmiga)
