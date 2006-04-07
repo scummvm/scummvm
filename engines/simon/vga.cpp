@@ -689,9 +689,6 @@ void SimonEngine::vc10_draw() {
 		width = READ_LE_UINT16(p2 + 6);
 		height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
 		flags = p2[5];
-
-		debug(1, "vc10_draw: image %d palette %d x %d y %d drawFlags 0x0%x\n", state.image, state.palette, state.x, state.y, state.flags);
-		debug(1, "vc10_draw: width %d height %d flags 0x%x", width, height, flags);
 	} else {
 		state.depack_src = _curVgaFile2 + READ_BE_UINT32(p2);
 		width = READ_BE_UINT16(p2 + 6) / 16;
@@ -721,65 +718,21 @@ void SimonEngine::vc10_draw() {
 		}
 	}
 
-	if (getGameType() == GType_FF) {
-		if (width > 640) {
-			debug(0, "Horizontal scrolling");
+	state.width = state.draw_width = width;		/* cl */
+	state.height = state.draw_height = height;	/* ch */
 
-			const byte *src;
-			byte *dst;
-			uint w;
+	state.depack_cont = -0x80;
 
-			_scrollXMax = width - 640;
-			_scrollYMax = 0;
-			_scrollImage = state.depack_src;
-			_scrollHeight = height;
-			if (_variableArray[34] == -1)
-				state.x = _variableArray[251];
+	state.x_skip = 0;				/* colums to skip = bh */
+	state.y_skip = 0;				/* rows to skip   = bl */
 
-			_scrollX = state.x;
-
-			vcWriteVar(251, _scrollX);
-
-			dst = getBackBuf();
-			src = state.depack_src + _scrollX / 2;
-
-			for (w = 0; w < 80; w++) {
-				decodeStripA(dst, src + READ_LE_UINT32(src), height);
-				dst += 8;
-				src += 4;
-			}
-			
-			return;
-		}
-		if (height > 480) {
-			debug(0, "Vertical scrolling not supported");
-			return;
-		}
+	uint maxWidth = (getGameType() == GType_FF) ? 640 : 20;
+	if ((getGameType() == GType_SIMON2 || getGameType() == GType_FF) && width > maxWidth) {
+		horizontalScroll(&state);
+		return;
 	}
-	if (getGameType() == GType_SIMON2 && width > 20) {
-		const byte *src;
-		byte *dst;
-		uint w;
-
-		_scrollXMax = width * 2 - 40;
-		_scrollImage = state.depack_src;
-		_scrollHeight = height;
-		if (_variableArray[34] == -1)
-			state.x = _variableArray[251];
-
-		_scrollX = state.x;
-
-		vcWriteVar(251, _scrollX);
-
-		dst = getBackBuf();
-		src = state.depack_src + _scrollX * 4;
-
-		for (w = 0; w < 40; w++) {
-			decodeStripA(dst, src + READ_BE_UINT32(src), height);
-			dst += 8;
-			src += 4;
-		}
-
+	if (getGameType() == GType_FF && height > 480) {
+		verticalScroll(&state);
 		return;
 	}
 
@@ -790,14 +743,6 @@ void SimonEngine::vc10_draw() {
 			state.depack_src = vc10_flip(state.depack_src, width, height);
 		}
 	}
-
-	state.width = state.draw_width = width;		/* cl */
-	state.height = state.draw_height = height;	/* ch */
-
-	state.depack_cont = -0x80;
-
-	state.x_skip = 0;				/* colums to skip = bh */
-	state.y_skip = 0;				/* rows to skip   = bl */
 
 	state.surf2_addr = getFrontBuf();
 	state.surf2_pitch = _dxSurfacePitch;
@@ -1031,70 +976,6 @@ void SimonEngine::drawImages_Feeble(VC10_state *state) {
 			src += state->width;
 		} while (--state->draw_height);
 	} 
-}
-
-void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
-	Common::Rect srcRect, dstRect;
-	float factor, xscale;
-
-	srcRect.left = 0;
-	srcRect.top = 0;
-	srcRect.right = w;
-	srcRect.bottom = h;
-
-	if (scrollY > _baseY)
-		factor = 1 + ((scrollY - _baseY) * _scale);
-	else
-		factor = 1 - ((_baseY - scrollY) * _scale);
-
-	xscale = ((w * factor) / 2);
-
-	dstRect.left   = (int16)(x - xscale);
-	if (dstRect.left > _screenWidth - 1)
-		return;
-	dstRect.top    = (int16)(y - (h * factor));
-	if (dstRect.top > _screenHeight - 1)
-		return;
-
-	dstRect.right  = (int16)(x + xscale);
-	dstRect.bottom = y;
-
-	_feebleRect = dstRect;
-
-	_variableArray[20] = _feebleRect.top;
-	_variableArray[21] = _feebleRect.left;
-	_variableArray[22] = _feebleRect.bottom;
-	_variableArray[23] = _feebleRect.right;
-
-	debug(1, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
-
-	// Unlike normal rectangles in ScummVM, it seems that in the case of
-	// the destination rectangle the bottom and right coordinates are
-	// considered to be inside the rectangle. For the source rectangle,
-	// I believe that they are not.
-
-	int scaledW = dstRect.width() + 1;
-	int scaledH = dstRect.height() + 1;
-
-	byte *src = getScaleBuf();
-	byte *dst = getBackBuf();
-
-	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
-
-	for (int dstY = 0; dstY < h; dstY++) {
-		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
-			int srcY = (dstY * h) / scaledH;
-			byte *srcPtr = src + _dxSurfacePitch * srcY;
-			byte *dstPtr = dst + _dxSurfacePitch * dstY;
-			for (int dstX = 0; dstX < w; dstX++) {
-				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
-					int srcX = (dstX * w) / scaledW;
-					if (srcPtr[srcX])
-						dstPtr[dstX] = srcPtr[srcX];
-				}
-			}
-		}
-	}
 }
 
 void SimonEngine::drawImages(VC10_state *state) {
@@ -1370,6 +1251,131 @@ void SimonEngine::drawImages(VC10_state *state) {
 			}
 
 			/* vc10_helper_7 */
+		}
+	}
+}
+
+void SimonEngine::horizontalScroll(VC10_state *state) {
+	const byte *src;
+	byte *dst;
+	int w;
+
+	if (getGameType() == GType_FF)
+		_scrollXMax = state->width - 640;
+	else
+		_scrollXMax = state->width * 2 - 40;
+	_scrollYMax = 0;
+	_scrollImage = state->depack_src;
+	_scrollHeight = state->height;
+	if (_variableArray[34] == -1)
+		state->x = _variableArray[251];
+
+	_scrollX = state->x;
+
+	vcWriteVar(251, _scrollX);
+
+	dst = getBackBuf();
+
+	if (getGameType() == GType_FF)
+		src = state->depack_src + _scrollX / 2;
+	else
+		src = state->depack_src + _scrollX * 4;
+
+	for (w = 0; w < _screenWidth; w += 8) {
+		decodeStripA(dst, src + readUint32Wrapper(src), state->height);
+		dst += 8;
+		src += 4;
+	}
+}
+
+void SimonEngine::verticalScroll(VC10_state *state) {
+	debug(0, "Vertical scrolling not supported");
+
+	const byte *src;
+	byte *dst;
+	int h;
+
+	_scrollXMax = 0;
+	_scrollYMax = state->height - 480;
+	_scrollImage = state->depack_src;
+	_scrollWidth = state->width;
+	if (_variableArray[34] == -1)
+		state->y = _variableArray[250];
+
+	_scrollY = state->y;
+
+	vcWriteVar(250, _scrollY);
+
+	dst = getBackBuf();
+	src = state->depack_src + _scrollY / 2;
+
+	for (h = 0; h < _screenHeight; h += 8) {
+		//decodeRow(dst, src + READ_BE_UINT32(src), state->width);
+		dst += 8;
+		src += 4;
+	}
+}
+
+void SimonEngine::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
+	Common::Rect srcRect, dstRect;
+	float factor, xscale;
+
+	srcRect.left = 0;
+	srcRect.top = 0;
+	srcRect.right = w;
+	srcRect.bottom = h;
+
+	if (scrollY > _baseY)
+		factor = 1 + ((scrollY - _baseY) * _scale);
+	else
+		factor = 1 - ((_baseY - scrollY) * _scale);
+
+	xscale = ((w * factor) / 2);
+
+	dstRect.left   = (int16)(x - xscale);
+	if (dstRect.left > _screenWidth - 1)
+		return;
+	dstRect.top    = (int16)(y - (h * factor));
+	if (dstRect.top > _screenHeight - 1)
+		return;
+
+	dstRect.right  = (int16)(x + xscale);
+	dstRect.bottom = y;
+
+	_feebleRect = dstRect;
+
+	_variableArray[20] = _feebleRect.top;
+	_variableArray[21] = _feebleRect.left;
+	_variableArray[22] = _feebleRect.bottom;
+	_variableArray[23] = _feebleRect.right;
+
+	debug(1, "Left %d Right %d Top %d Bottom %d", dstRect.left, dstRect.right, dstRect.top, dstRect.bottom);
+
+	// Unlike normal rectangles in ScummVM, it seems that in the case of
+	// the destination rectangle the bottom and right coordinates are
+	// considered to be inside the rectangle. For the source rectangle,
+	// I believe that they are not.
+
+	int scaledW = dstRect.width() + 1;
+	int scaledH = dstRect.height() + 1;
+
+	byte *src = getScaleBuf();
+	byte *dst = getBackBuf();
+
+	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
+
+	for (int dstY = 0; dstY < h; dstY++) {
+		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
+			int srcY = (dstY * h) / scaledH;
+			byte *srcPtr = src + _dxSurfacePitch * srcY;
+			byte *dstPtr = dst + _dxSurfacePitch * dstY;
+			for (int dstX = 0; dstX < w; dstX++) {
+				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
+					int srcX = (dstX * w) / scaledW;
+					if (srcPtr[srcX])
+						dstPtr[dstX] = srcPtr[srcX];
+				}
+			}
 		}
 	}
 }
@@ -2518,6 +2524,5 @@ void SimonEngine::checkScrollY(int y, int ypos) {
 		}
 	}
 }
-
 
 } // End of namespace Simon

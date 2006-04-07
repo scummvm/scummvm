@@ -128,6 +128,13 @@ uint16 SimonEngine::readUint16Wrapper(const void *src) {
 		return READ_BE_UINT16(src);
 }
 
+uint32 SimonEngine::readUint32Wrapper(const void *src) {
+	if (getGameType() == GType_FF)
+		return READ_LE_UINT32(src);
+	else
+		return READ_BE_UINT32(src);
+}
+
 void SimonEngine::loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &srcSize, uint32 &dstSize) {
 	Common::File in;
 
