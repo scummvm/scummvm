@@ -125,6 +125,7 @@ loom	Loom
 	22f4ea88a09da12df9308ba30bcb7d0f	en	DOS	EGA	EGA	1.1 29 Mar 90	James Grosbeck
 	b886b0a5d909c7158a914e1d7c1c6c65	fr	DOS	EGA	EGA	-	Andrea Petrucci
 	6f8a22bfa397be1f7ed4b74aba0e397e	fr	DOS	EGA	EGA	1.2 26 Jun 90	Jorpho
+	470c45b636139bb40716daa1c7edaad0	de	DOS	EGA	EGA	1.2 7 Jun 90	Peter Eckerlein
 	fa127d7c4bb47d05bb1c33ddcaa9f767	de	DOS	EGA	EGA	-	
 	187d315f6b5168f68680dfe8c3d76a3e	hb	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	it	DOS	EGA	EGA	-	Andrea Petrucci
