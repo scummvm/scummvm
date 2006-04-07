@@ -252,6 +252,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_speech = true;
 	_subtitles = true;
 	_fade = true;
+	_animatePointer = 0;
 	_mouseCursor = 0;
 	_mouseAnim = 0;
 	_mouseAnimMax = 0;
@@ -444,6 +445,7 @@ SimonEngine::SimonEngine(OSystem *syst)
 	_saveLoadFlag = false;
 
 	_hyperLink = 0;
+	_interactY = 0;
 	_oracleMaxScrollY = 0;
 	_noOracleScroll = 0;
 
@@ -1586,7 +1588,7 @@ void SimonEngine::setup_cond_c_helper() {
 			animMax = 9;
 		}
 
-		//_animatePointer = 0;
+		_animatePointer = 0;
 		_mouseCursor = cursor;
 		_mouseAnimMax = animMax;
 		_mouseAnim = 1;
@@ -2151,7 +2153,7 @@ void SimonEngine::o_printStr() {
 		o_kill_sprite_simon2(2, vgaSpriteId + 2);
 
 	if (string_ptr != NULL && (speech_id == 0 || _subtitles))
-		printText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
+		printScreenText(vgaSpriteId, color, (const char *)string_ptr, tl->x, tl->y, tl->width);
 
 }
 
@@ -3343,94 +3345,6 @@ void SimonEngine::playSpeech(uint speech_id, uint vgaSpriteId) {
 			loadSprite(4, 2, vgaSpriteId + 2, 0, 0, 0);
 		}
 	}
-}
-
-void SimonEngine::printText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
-	// FIXME
-	if (getGameType() == GType_FF)
-		return;
-
-	char convertedString[320];
-	char *convertedString2 = convertedString;
-	int16 height, talkDelay;
-	int stringLength = strlen(string);
-	int padding, lettersPerRow, lettersPerRowJustified;
-	const int textHeight = 10;
-
-	height = textHeight;
-	lettersPerRow = width / 6;
-	lettersPerRowJustified = stringLength / (stringLength / lettersPerRow + 1) + 1;
-
-	talkDelay = (stringLength + 3) / 3;
-	if ((getGameType() == GType_SIMON1) && (getFeatures() & GF_TALKIE)) {
-		if (_variableArray[141] == 0)
-			_variableArray[141] = 9;
-		_variableArray[85] = _variableArray[141] * talkDelay;
-	} else {
-		if (_variableArray[86] == 0)
-			talkDelay /= 2;
-		if (_variableArray[86] == 2)
-			talkDelay *= 2;
-		_variableArray[85] = talkDelay * 5;
-	}
-
-	assert(stringLength > 0);
-	while (stringLength > 0) {
-		int pos = 0;
-		if (stringLength > lettersPerRow) {
-			int removeLastWord = 0;
-			if (lettersPerRow > lettersPerRowJustified) {
-				pos = lettersPerRowJustified;
-				while (string[pos] != ' ')
-					pos++;
-				if (pos > lettersPerRow)
-					removeLastWord = 1;
-			}
-			if (lettersPerRow <= lettersPerRowJustified || removeLastWord) {
-				pos = lettersPerRow;
-				while (string[pos] != ' ' && pos > 0)
-					pos--;
-			}
-			height += textHeight;
-			y -= textHeight;
-		} else
-			pos = stringLength;
-		padding = (lettersPerRow - pos) % 2 ?
-			(lettersPerRow - pos) / 2 + 1 : (lettersPerRow - pos) / 2;
-		while (padding--)
-			*convertedString2++ = ' ';
-		stringLength -= pos;
-		while (pos--)
-			*convertedString2++ = *string++;
-		*convertedString2++ = '\n';
-		string++; // skip space
-		stringLength--; // skip space
-	}
-	*(convertedString2 - 1) = '\0';
-
-	if (getGameType() == GType_SIMON1)
-		o_kill_sprite_simon1(vgaSpriteId + 199);
-	else
-		o_kill_sprite_simon2(2, vgaSpriteId);
-
-	color = color * 3 + 192;
-	if (getPlatform() == Common::kPlatformAmiga)
-		render_string_amiga(vgaSpriteId, color, width, height, convertedString);
-	else
-		render_string(vgaSpriteId, color, width, height, convertedString);
-
-	int b = 4;
-	if (!getBitFlag(133))
-		b = 3;
-
-	x /= 8;
-	if (y < 2)
-		y = 2;
-
-	if (getGameType() == GType_SIMON1)
-		loadSprite(b, 2, vgaSpriteId + 199, x, y, 12);
-	else
-		loadSprite(b, 2, vgaSpriteId, x, y, 12);
 }
 
 // Thanks to Stuart Caie for providing the original

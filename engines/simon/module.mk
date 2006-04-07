@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	saveload.o \
 	simon.o \
 	sound.o \
+	string.o \
 	verb.o \
 	vga.o \
 

@@ -89,7 +89,7 @@ void SimonEngine::print_char_helper_6(uint i) {
 	}
 }
 
-void SimonEngine::render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+void SimonEngine::renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *dst_org, chr;
 	uint count;
@@ -180,9 +180,10 @@ void SimonEngine::render_string_amiga(uint vga_sprite_id, uint color, uint width
 	}
 }
 
-void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
+void SimonEngine::renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt) {
 	VgaPointersEntry *vpe = &_vgaBufferPointers[2];
 	byte *src, *dst, *p, *dst_org, chr;
+	const int textHeight = (getGameType() == GType_FF) ? 15: 10;
 	uint count;
 
 	if (vga_sprite_id >= 100) {
@@ -198,10 +199,15 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 
 	p = dst + vga_sprite_id * 8;
 
-	WRITE_BE_UINT16(p + 4, height);
-	WRITE_BE_UINT16(p + 6, width);
-
-	dst += READ_BE_UINT32(p);
+	if (getGameType() == GType_FF) {
+		WRITE_LE_UINT16(p + 4, height);
+		WRITE_LE_UINT16(p + 6, width);
+		dst += READ_LE_UINT32(p);
+	} else {
+		WRITE_BE_UINT16(p + 4, height);
+		WRITE_BE_UINT16(p + 6, width);
+		dst += READ_BE_UINT32(p);
+	}
 
 	memset(dst, 0, count);
 	if (_language == Common::HB_ISR)
@@ -210,15 +216,26 @@ void SimonEngine::render_string(uint vga_sprite_id, uint color, uint width, uint
 	dst_org = dst;
 	while ((chr = *txt++) != 0) {
 		if (chr == 10) {
-			dst_org += width * 10;
+			dst_org += width * textHeight;
 			dst = dst_org;
 		} else if ((chr -= ' ') == 0) {
 			dst += (_language == Common::HB_ISR ? -6 : 6); // Hebrew moves to the left, all others to the right
 		} else {
-			byte *img_hdr = src + 48 + chr * 4;
-			uint img_height = img_hdr[2];
-			uint img_width = img_hdr[3], i;
-			byte *img = src + READ_LE_UINT16(img_hdr);
+			byte *img_hdr, *img;
+			uint i, img_width, img_height;
+
+			if (getGameType() == GType_FF) {
+				img_hdr = src + 96 + chr * 8;
+				img_height = READ_LE_UINT16(img_hdr + 4);
+				img_width = READ_LE_UINT16(img_hdr + 6);
+				img = src + READ_LE_UINT32(img_hdr);
+			} else {
+				img_hdr = src + 48 + chr * 4;
+				img_height = img_hdr[2];
+				img_width = img_hdr[3];
+				img = src + READ_LE_UINT16(img_hdr);
+			}
+
 			if (_language == Common::HB_ISR)
 				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;

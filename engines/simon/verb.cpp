@@ -195,7 +195,7 @@ void SimonEngine::clearName() {
 	if (getGameType() == GType_FF) {
 		o_kill_sprite_simon2(2, 6);
 		_lastNameOn = NULL;
-		//_animatePointer = 0;
+		_animatePointer = 0;
 		_mouseAnim = 1;
 		return;
 	}
@@ -692,51 +692,44 @@ void SimonEngine::setup_hitarea_from_pos(uint x, uint y, uint mode) {
 
 void SimonEngine::displayName(HitArea *ha) {
 	bool result;
+	int x = 0, y = 0;
 
-	resetNameWindow();
-	if (ha->flags & kBFTextBox) {
-		result = printTextOf(ha->flags / 256);
+	if (getGameType() == GType_FF) {
+		if (ha->flags & kBFHyperBox) {
+			_lastNameOn = ha;
+			return;
+		}
+		if (findHitAreaByID(50))
+			return;
+
+		if (getBitFlag(99))
+			_animatePointer = ((ha->flags & kBFTextBox) != 0);
+		else
+			_animatePointer = 1;
+
+		if (!getBitFlag(99))
+			return;
+
+		y = ha->y;
+		if (getBitFlag(99) && y > 288)
+			y = 288;
+		y -= 17;
+		if (y < 0)
+			y = 0;
+		y += 2;
+		x = ha->width / 2 + ha->x;
 	} else {
-		result = printNameOf(ha->item_ptr);
+		resetNameWindow();
+	}
+
+	if (ha->flags & kBFTextBox) {
+		result = printTextOf(ha->flags / 256, x, y);
+	} else {
+		result = printNameOf(ha->item_ptr, x, y);
 	}
 
 	if (result)
 		_lastNameOn = ha;
-}
-
-bool SimonEngine::printTextOf(uint a) {
-	if (getGameType() == GType_SIMON2) {
-		if (getBitFlag(79)) {
-			Subroutine *sub;
-			_variableArray[84] = a;
-			sub = getSubroutineByID(5003);
-			if (sub != NULL)
-				startSubroutineEx(sub);
-			return true;
-		}
-	}
-
-	if (a >= 20)
-		return false;
-
-	showActionString(getStringPtrByID(_stringIdArray2[a]));
-
-	return true;
-}
-
-bool SimonEngine::printNameOf(Item *item) {
-	SubObject *child2;
-
-	if (item == 0 || item == _dummyItem2 || item == _dummyItem3)
-		return false;
-
-	child2 = (SubObject *)findChildOfType(item, 2);
-	if (child2 == NULL)
-		return false;
-
-	showActionString(getStringPtrByID(child2->objectName));
-
-	return true;
 }
 
 } // End of namespace Simon

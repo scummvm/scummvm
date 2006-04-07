@@ -1255,7 +1255,7 @@ void SimonEngine::o1_scnTxtLongText(bool &cond, int &ret) {
 	if (_speech && speechId != 0)
 		playSpeech(speechId, vgaSpriteId);
 	if (string_ptr != NULL && _subtitles)
-		printText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+		printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 }
 
 void SimonEngine::o1_mouseOn(bool &cond, int &ret) {
@@ -1318,7 +1318,14 @@ void SimonEngine::o2_printLongText(bool &cond, int &ret) {
 
 void SimonEngine::o2_rescan(bool &cond, int &ret) {
 	// 83: restart subroutine
-	o_83_helper();
+	if (_exitCutscene) {
+		if (getBitFlag(9)) {
+			endCutscene();
+		}
+	} else {
+		processSpecialKeys();
+	}
+
 	ret = -10;
 }
 
@@ -1379,9 +1386,9 @@ void SimonEngine::o3_jumpOut(bool &cond, int &ret) {
 
 void SimonEngine::o3_printLongText(bool &cond, int &ret) {
 	// 70: show string from array
-	int tmp = getVarOrByte();
-	const char *str = (const char *)getStringPtrByID(_stringIdArray3[tmp]);
-	showMessageFormat("%d. %s\n", tmp, str);
+	int num = getVarOrByte();
+	const char *str = (const char *)getStringPtrByID(_stringIdArray3[num]);
+	printInteractText(num, str);
 }
 
 void SimonEngine::o3_oracleTextDown(bool &cond, int &ret) {
@@ -1644,16 +1651,6 @@ bool SimonEngine::checkIfToRunSubroutineLine(SubroutineLine *sl, Subroutine *sub
 	return true;
 }
 
-void SimonEngine::o_83_helper() {
-		if (_exitCutscene) {
-			if (getBitFlag(9)) {
-				endCutscene();
-			}
-		} else {
-			processSpecialKeys();
-		}
-}
-
 void SimonEngine::o_waitForMark(uint i) {
 	_exitCutscene = false;
 	while (!(_marks & (1 << i))) {
@@ -1781,7 +1778,7 @@ void SimonEngine::o_inventory_descriptions() {
 			string_ptr = buf;
 		}
 		if (string_ptr != NULL)
-			printText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
+			printScreenText(vgaSpriteId, color, string_ptr, tl->x, tl->y, tl->width);
 	}
 }
 

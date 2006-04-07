@@ -259,6 +259,7 @@ protected:
 	bool _speech;
 	bool _subtitles;
 	bool _fade;
+	byte _animatePointer;
 	byte _mouseCursor;
 	byte _mouseAnim;
 	byte _mouseAnimMax;
@@ -273,7 +274,8 @@ protected:
 
  	uint16 _hyperLink, _newLines;
  	uint16 _oracleMaxScrollY, _noOracleScroll;
- 
+ 	uint16 _interactY;
+
 	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
 	int16 _scriptAdj1, _scriptAdj2;
 
@@ -648,6 +650,7 @@ protected:
 	void printVerbOf(uint hitarea_id);
 	HitArea *findHitAreaByID(uint hitarea_id);
 
+	void printInteractText(uint16 num, const char *string);
 	void showActionString(const byte *string);
 	void videoPutchar(WindowBlock *window, byte c, byte b = 0);
 	void clearWindow(WindowBlock *window);
@@ -659,8 +662,8 @@ protected:
 
 	void setup_hitarea_from_pos(uint x, uint y, uint mode);
 	void displayName(HitArea * ha);
-	bool printTextOf(uint a);
-	bool printNameOf(Item *item);
+	bool printTextOf(uint a, uint x, uint y);
+	bool printNameOf(Item *item, uint x, uint y);
 	void displayBoxStars();
 	void hitarea_stuff();
 
@@ -695,11 +698,11 @@ protected:
 	void loadSprite(uint windowNum, uint vga_res, uint vga_sprite_id, uint x, uint y, uint palette);
 	void o_defineWindow(uint a, uint b, uint c, uint d, uint e, uint f, uint g, uint h);
 	void playSpeech(uint speech_id, uint vga_sprite_id);
-	void printText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
+	void printScreenText(uint vga_sprite_id, uint color, const char *string_ptr, int16 x, int16 y, int16 width);
 	WindowBlock *openWindow(uint x, uint y, uint w, uint h, uint flags, uint fill_color, uint text_color);
 
-	void render_string_amiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
-	void render_string(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
+	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
+	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 
 	void setArrowHitAreas(WindowBlock *window, uint num);
 
@@ -1082,7 +1085,6 @@ protected:
 	void delay(uint delay);
 	void pause();
 
-	void o_83_helper();
 	void o_waitForMark(uint i);
 	void scrollEvent();
 
