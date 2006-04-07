@@ -223,11 +223,60 @@ void SimonEngine::listSaveGames(int n) {
 }
 
 void SimonEngine::scrollOracleUp() {
-	// TODO
+	byte *src, *dst;
+	uint16 w, h;
+
+	dst = getFrontBuf() + 103 * _screenWidth + 136;
+	src = getFrontBuf() + 106 * _screenWidth + 136;
+
+	for (h = 0; h < 21; h++) {
+		for (w = 0; w < 360; w++) {
+			if (dst[w] == 0 || dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
+				dst[w] = src[w];
+		}
+		dst += _screenWidth;
+		src += _screenWidth;
+	}
+
+	for (h = 0; h < 80; h++) {
+		memcpy(dst, src, 360);
+		dst += _screenWidth;
+		src += _screenWidth;
+	}
+
+	for (h = 0; h < 3; h++) {
+		memset(dst, 0, 360);
+		dst += _screenWidth;
+		src += _screenWidth;
+	}
 }
 
 void SimonEngine::scrollOracleDown() {
-	// TODO
+	byte *src, *dst;
+	uint16 w, h;
+
+	src = getFrontBuf() + 203 * _screenWidth + 136;
+	dst = getFrontBuf() + 206 * _screenWidth + 136;
+
+	for (h = 0; h < 77; h++) {
+		memcpy(dst, src, 360);
+		dst -= _screenWidth;
+		src -= _screenWidth;
+	}
+
+	for (h = 0; h < 24; h++) {
+		for (w = 0; w < 360; w++) {
+			if (src[w] == 0)
+				dst[w] = src[w];
+
+			if (src[w] == 113  || src[w] == 116 || src[w] == 252) {
+				dst[w] = src[w];
+				src[w] = 0;
+			}
+		}
+		dst -= _screenWidth;
+		src -= _screenWidth;
+	}
 }
 
 void SimonEngine::bltOracleText() {
