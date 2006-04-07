@@ -387,10 +387,11 @@ static const ScummGameSettings scumm_settings[] = {
 };
 
 
-#if 1
-// The following table is currently *unused*. It's work in progress for a refined detector;
-// the purpose of this particular table is to replace multiple_versions_md5_settings, 
-// and maybe also scumm_settings. 
+// The following table contains information about variants of our various games.
+// We index into it with help of md5table (from scumm-md5.h), to find the correct
+// ScummGameSettings for a given game variant.
+//
+// Note: This will probably eventually be merged with the scumm_settings table.
 static const ScummGameSettings extra_versions[] = {
 	// The C64 version of MM is detected via the platform field and hence has no seperate entry in this list
 	{"maniac", "V2",    GID_MANIAC, 2, 0, MDT_PCSPK, GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, UNK},
@@ -495,347 +496,7 @@ static const ScummGameSettings extra_versions[] = {
 #endif
 	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, UNK}
 };
-#endif
 
-
-// This additional table is used for MD5-based search
-//
-// Use main table to specify default flags and this table to override defaults.
-//
-// Please, add new entries sorted alpabetically by string name
-static const ScummGameSettings multiple_versions_md5_settings[] = {
-#ifndef PALMOS_68K
-	{"2e85f7aa054930c692a5b1bed1dfc295", "Demo Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformUnknown}, // Football2002
-
-	{"037385a953789190298494d92b89b3d0", "Updated", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"8fec68383202d38c0d25e9e3b757c5df", "Demo", GID_CMI, 8, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformWindows},
-
-	{"362c1d281fb9899254cda66ad246c66a", "Demo", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformUnknown},
-	{"cd9c05e755d7bf8e9b9590ad1ebe273e", "Demo Mac", GID_DIG, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
-
-	{"179879b6e35c1ead0d93aab26db0951b", "Windows", GID_FBEAR, 6, 70, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"22c9eb04455440131ffc157aeb8d40a8", "Windows Demo", GID_FBEAR, 6, 70, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"cf8ef3a1fb483c5c4b1c584d1167b2c4", "Updated German", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"df047cc4792150f601290357566d36a6", "Updated", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"746e88c172a5b7a1ae89ac0ee3ee681a", "Updated Russian", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"507bb360688dc4180fdf0d7597352a69", "Updated Swedish", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"0855496dde35356b1a9691e22ba84cdc", "Demo", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"566165a7338fa11029e7c14d94fa70d0", "Demo", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"cf4ef315214c7d8cdab6302cdb7e50db", "German Demo", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"c8aac5e3e701874e2fa4117896f9e1b1", "Macintosh Demo", GID_HEGAME, 6, 73, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformMacintosh},
-
-	{"8ee63cafb1fe9d62aa0d5a23117e70e7", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
-	{"51305e929e330e24a75a0351c8f9975e", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"e41de1c2a15abbcdbf9977e2d7e8a340", "Updated Russian", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FreddiCHSH
-	{"d37c55388294b66e53e7ced3af88fa68", "Demo Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // FFHSDemo
-
-	{"83cedbe26aa8b58988e984e3d34cac8e", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"75bff95816b84672b877d22a911ab811", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"ed2b074bc3166087a747acb2a3c6abb0", "Updated German Demo", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Fritzi3demo
-
-	{"07b810e37be7489263f7bc7627d4765d", "Unencrypted Russian", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"b5298a5c15ffbe8b381d51ea4e26d35c", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"78bd5f036ea35a878b74e4f47941f784", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"16effd200aa6b8abe9c569c3e578814d", "Updated Dutch Demo", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ff4demo
-	{"499c958affc394f2a3868f1eb568c3ee", "Updated Dutch Demo", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ff4demo
-	{"ebd324dcf06a4c49e1ba5c231eee1060", "Updated Demo", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"e03ed1474ec14de78359970e0457a820", "Updated Demo", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"688328c5bdc4c8ec4145688dfa077bf2", "German Demo", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Ff4demo
-
-	{"b8955d7d23b4972229060d1592489fef", "Updated Dutch", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FreddiDZZ
-	{"4ce2d5b355964bbcb5e5ce73236ef868", "Updated Russian", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"21abe302e1b1e2b66d6f5c12e241ebfd", "Unencrypted Russian", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"45082a5c9f42ba14dacfe1fdeeba819d", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows},
-	{"6b257bb2827dd894b8109a50a1a18b5a", "Updated Dutch Demo", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_NOSUBTITLES | GF_HE_LOCALIZED | GF_16BIT_COLOR, Common::kPlatformWindows}, // FF5Demo
-
-	{"4dbff3787aedcd96b0b325f2d92d7ad9", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"f1b0e0d587b85052de5534a3847e68fe", "Updated", GID_WATER, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"9b7452b5cd6d3ffb2b2f5118010af84f", "Mac Demo", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
-	{"9d7b67be003fea60be4dcbd193611936", "Mac Demo", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformMacintosh},
-	{"32a433dea56b86a55b59e4ff7d755711", "PC Demo", GID_FT, 7, 0, MDT_NONE,
-	 GF_NEW_COSTUMES | GF_NEW_CAMERA | GF_DIGI_IMUSE | GF_DEMO, Common::kPlatformPC},
-
-	{"157367c3c21e0d03a0cba44361b4cf65", "AtariST", GID_INDY3, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"0f9c7a76657f0840b8f7ccb5bffeb9f4", "AtariST Fr", GID_INDY3, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"1dd7aa088e09f96d06818aa9a9deabe0", "Macintosh", GID_INDY3, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
-
-	{"1875b90fade138c9253a8e967007031a", "VGA", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"399b217b0c8d65d0398076da486363a9", "VGA De", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"17b5d5e6af4ae89d62631641d66d5a05", "VGA It", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-	{"3cce1913a3bc586b51a75c3892ff18dd", "VGA Ru", GID_INDY3, 3, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS, Common::kPlatformPC},
-
-	{"04687cdf7f975a89d2474929f7b80946", "FM-TOWNS", GID_INDY3, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"3a0c35f3c147b98a2bdf8d400cfc4ab5", "FM-TOWNS Jp", GID_INDY3, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_FEW_LOCALS | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-
-	{"86c9902b7bec1a17926d4dae85beaa45", "Demo", GID_HEGAME, 6, 71, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"bf8b52fdd9a69c67f34e8e9fec72661c", "Demo", GID_HEGAME, 6, 71, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"8d479e36f35e80257dfc102cf4b8a912", "Updated Demo", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"0557df19f046a84c2fdc63507c6616cb", "Updated Dutch Demo", GID_HEGAME, 6, 72, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"a0a7dea72003933b8b3f8b99b9f7ddeb", "AtariST", GID_LOOM, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"c24c490373aeb48fbd54caa8e7ae376d", "AtariST De", GID_LOOM, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"0e9b01430e31d9fcd94071d433bbc6bf", "AtariST Fr", GID_LOOM, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformAtariST},
-	{"6f0be328c64d689bb606d22a389e1b0f", "Macintosh", GID_LOOM, 3, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformMacintosh},
-
-	{"5d88b9d6a88e6f8e90cded9d01b7f082", "256 color CD version", GID_LOOM, 4, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"c5d10e190d4b4d59114b824f2fdbd00e", "FM-TOWNS", GID_LOOM, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"31b8fda4c8c7413fa6b39997e776eba4", "FM-TOWNS Jp", GID_LOOM, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-
-	{"3905799e081b80a61d4460b7b733c206", "NES E", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"81bbfa181184cb494e7a81dcfa94fbd9", "NES F", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"257f8c14d8c584f7ddd601bcb00920c7", "NES G", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"22d07d6c386c9c25aca5dac2a0c0d94b", "NES SW", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"d8d07efcb88f396bee0b402b10c3b1c9", "NES U", GID_MANIAC, 1, 0, MDT_NONE,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformNES},
-	{"7f45ddd6dbfbf8f80c0c0efea4c295bc", "v1", GID_MANIAC, 1, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-
-	{"898eaa21f79cf8d4f08db856244689ff", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"a095e33061606d231ff37dca4c64c8ac", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PYJAMA
-	{"37aed3f91c1ef959e0bd265f9b13781f", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaNHD
-	{"d7ab7cd6105546016e6a0d46fb36b964", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PJSamDemo
-
-	{"30ba1e825d4ad2b448143ae8df18482a", "Updated Dutch Demo", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // Pjs2demo
-	{"32709cbeeb3044b34129950860a83f14", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PajamaTAL
-	{"c6907d44f1166941d982864cd42cdc89", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // PyjamaDBMN
-	{"4521138d15d1fd7649c31fb981746231", "Updated German Demo", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // PJP2DEMO
-
-	{"a2bb6aa0537402c1b3c2ea899ccef64b", "Test", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"a561d2e2413cc1c71d5a1bf87bf493ea", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"055ffe4f47753e47594ac67823220c54", "German", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ToffRennen
-	{"62050da376483d8edcbd98cd26b6cb57", "Russian", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // UKPuttRace
-	{"6af2419fe3db5c2fdb091ae4e5833770", "Dutch Demo", GID_PUTTRACE, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows}, // 500demo
-	{"aaa587701cde7e74692c68c1024b85eb", "Updated Dutch Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"663743c03ae0c007f3d665cf631c0e6b", "German Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // Rennen
-	{"7c8100e360e8ef05f88069d4cfa0afd1", "UK Demo", GID_PUTTRACE, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"9c92eeaf517a31b7221ec2546ab669fd", "Windows", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"9c143c5905055d5df7a0f014ab379aee", "Windows Demo", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"0b3222aaa7efcf283eb621e0cefd26cc", "Russian", GID_HEGAME, 6, 60, MDT_ADLIB | MDT_MIDI,
-	 GF_USE_KEY, Common::kPlatformWindows},
-	{"31aa57f460a3d12429f0552a46a90b39", "Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
-	  GF_USE_KEY, Common::kPlatformPC},
-	{"f40a7f495f59188ca57a9d1d50301bb6", "Macintosh Demo", GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI,
-	  GF_USE_KEY, Common::kPlatformMacintosh},
-	{"6a30a07f353a75cdc602db27d73e1b42", "Windows", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"37ff1b308999c4cca7319edfcc1280a0", "Windows Demo", GID_HEGAME, 6, 70, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"92e7727e67f5cd979d8a1070e4eb8cb3", "Updated", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-
-	{"2108d83dcf09f8adb4bc524669c8cf51", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"d4aac997e2f4e15341f0bfbf905419bd", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"7c980a1b1596a93f26917318884f48f7", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"defb8cb9ec4b0f91acfb6b61c6129ad9", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"a525c1753c1db5011c00417da37887ef", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"fcb78ebecab2757264c590890c319cc5", "Updated Dutch", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"4e5867848ee61bc30d157e2c94eee9b4", "Demo", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"6b19d0e25cbf720d05822379b8b90ed9", "Dutch Demo", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"59d5cfcc5e672a6e07baae01328b918b", "French Demo", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // TEMPDEMO
-	{"fbb697d89d2beca87360a145f467bdae", "Updated German Demo", GID_HEGAME, 6, 90, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // ZEITDEMO
-	{"0ab19be9e2a3f6938226638b2a3744fe", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"d7b247c26bf1f01f8f7daf142be84de3", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"8e3241ddd6c8dadf64305e8740d45e13", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"d4b8ee426b1afd3e53bc0cf020418cf6", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"1d05cd189e4908f79b57e78a4402f292", "EGA", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"49210e124e4c2b30f1290a9ef6306301", "EGA", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"e98b982ceaf9d253d730bde8903233d6", "EGA De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"fc6b6148e80d67939d9a18697c0f626a", "EGA De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"ce6a4cef315b20fef58a95bc40a2d8d3", "EGA Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"aa7a07d94ae853f6460be4ce0a1bf530", "EGA Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"1dd3c11ea4439adfe681e4e405b624e1", "EGA Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"477dbafbd66a53c98416dc01aef019ad", "EGA It", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"910e31cffb28226bd68c569668a0d6b4", "EGA Sp", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"c666a998af90d81db447eccba9f72c8d", "Atari", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"927a764615c7fcdd72f591355e089d8c", "Atari De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"9e5e0fb43bd22f4628719b7501adb717", "Atari Fr", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"0a41311d462b6639fc45297b9044bf16", "Atari Sp", GID_MONKEY_EGA, 4, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformAtariST},
-	{"71523b539491527d9860f4407faf0411", "Demo", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-	{"771bc18ec6f93837b839c992b211904b", "Demo De", GID_MONKEY_EGA, 4, 0, MDT_PCSPK | MDT_ADLIB,
-	 GF_SMALL_HEADER | GF_USE_KEY | GF_16COLOR, Common::kPlatformPC},
-
-	{"2d1e891fe52df707c30185e52c50cd92", "CD", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"305d3dd57c96c65b017bc70c8c7cfb5e", "CD De", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"f049e38c1f8302b5db6170f1872af89a", "CD Sp", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"da6269b18fcb08189c0aa9c95533cce2", "CD It", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-	{"aa8a0cb65f3afbbe2c14c3f9f92775a3", "CD Fr", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformPC},
-
-	{"2ccd8891ce4d3f1a334d21bff6a88ca2", "Mac", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh},
-	{"b9ba19ce376efc69be78ef3baef8d2b9", "Mac", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformMacintosh},
-
-	{"8eb84cee9b429314c7f0bdcf560723eb", "FM-TOWNS", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"e17db1ddf91b39ca6bbc8ad3ed19e883", "FM-TOWNS Jp", GID_MONKEY, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-
-	{"c13225cb1bbd3bc9fe578301696d8021", "SegaCD", GID_MONKEY, 5, 0, MDT_NONE,
-	 GF_USE_KEY | GF_AUDIOTRACKS, Common::kPlatformSegaCD},
-
-	{"3de99ef0523f8ca7958faa3afccd035a", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"58436e634f4fae1d9973591c2ffa1fcb", "Updated", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"9bda5fee51d2fda5253d02c642016bf4", "Updated Dutch", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-	{"a28135a7ade38cc0208b04507c46efd1", "Updated German", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"72ac6bc980d5101c2142189d746bd62f", "Updated Russian", GID_HEGAME, 6, 99, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows}, // SPYFoxDC
-	{"9d4ab3e0e1d1ebc6ba8a6a4c470ed184", "Updated Demo", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-	{"4edbf9d03550f7ba01e7f34d69b678dd", "Updated Dutch Demo", GID_HEGAME, 6, 98, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES | GF_HE_985, Common::kPlatformWindows},
-
-	{"90c755e1c9b9b8a4129d37b2259d0655", "Updated", GID_HEGAME, 6, 100, MDT_NONE,
-	 GF_USE_KEY | GF_NEW_COSTUMES, Common::kPlatformWindows},
-
-	{"b23f7cd7c304d7dff08e92a96120d5b4", "v1", GID_ZAK, 1, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-	{"7020931d5a2be0a49d68e7a1882363e4", "v1", GID_ZAK, 1, 0, MDT_PCSPK,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_16COLOR | GF_USE_KEY | GF_OLD_BUNDLE, Common::kPlatformPC},
-
-	{"2d4536a56e01da4b02eb021e7770afa2", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"1ca86e2cf9aaa2068738a1e5ba477e60", "FM-TOWNS Jp", GID_ZAK, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-
-	{"2d388339d6050d8ccaa757b64633954e", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"77f5c9cc0986eb729c1a6b4c8823bbae", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-	{"3938ee1aa4433fca9d9308c9891172b1", "FM-TOWNS", GID_ZAK, 3, 0, MDT_TOWNS,
-	 GF_SMALL_HEADER | GF_NO_SCALING | GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns},
-#endif
-	{NULL, NULL, 0, 0, MDT_NONE, 0, 0, Common::kPlatformUnknown}
-};
 
 static const SubstResFileNames substResFileNameTable[] = {
 	// The first few entries for 00.LFL/01.LFL files are here for two reasons:
@@ -1656,48 +1317,30 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	}
 
 
-	// Check for unknown MD5 checksums, and print a message if we encounter one.
-	const MD5Table *elem;
+
+	// Now look up the MD5 in our lookup table (md5table).
 #ifdef PALMOS_68K
 	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
 #else
 	uint32 arraySize = ARRAYSIZE(md5table) - 1;
 #endif
-	elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
-	if (!elem)
-		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
-	else
-		debug(5, "Using MD5 '%s'", md5);
+	const MD5Table *elem = (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
 
-	// Now search our 'database' for the MD5; if a match is found, we use 
-	// the information in the 'database' to correct the GameDescriptor.
-	for (g = multiple_versions_md5_settings; g->gameid; ++g) {
-		if (!scumm_stricmp(md5, g->gameid)) {
-			// Match found. Copy the data and ensure that we use the correct
-			// gameid (since we abused that field to store the MD5).
-			game = *g;
-			game.gameid = gameid;
-			break;
-		}
-	}
 
-#if 1
-	//
-	// Compute the ScummGameSettings using the extra_versions array.
-	// This will soon replace multiple_versions_md5_settings (which then
-	// will be removed).
-	//
+	// If a match was found, we use the information obtained from the md5table
+	// to walk through the extra_versions array and find a match there.
+	// Otherwise, we print a warning about the MD5 being unknwon.
 	if (elem) {
 		// The MD5 is known and was found in our md5table.
+		debug(5, "Using MD5 '%s'", md5);
 		
-		// Sanity check: Make sure the gameids match
+		// Sanity check: Make sure the gameids match!
 		if (scumm_stricmp(elem->gameid, gameid)) {
 			error("MD5 %s implies gameid '%s', but gameid '%s' was used",
 					md5, elem->gameid, gameid);
 		}
 	
 		// Compute the precise game settings using 'extra_versions'.
-		ScummGameSettings game2(game);
 		for (g = extra_versions; g->gameid; ++g) {
 			if (g->gameid[0] == 0 || !scumm_stricmp(elem->gameid, g->gameid)) {
 				// The gameid either matches, or is empty (the latter indicates
@@ -1705,35 +1348,17 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 
 				if (g->variant == 0 || !scumm_stricmp(elem->variant, g->variant)) {
 					// Perfect match found, use it and stop the loop
-					game2 = *g;
-					game2.gameid = gameid;
+					game = *g;
+					game.gameid = gameid;
 					if (elem->platform != Common::kPlatformUnknown)
-						game2.platform = elem->platform;
+						game.platform = elem->platform;
 					break;
 				}
 			}
 		}
-		
-		// Compare to the results obtained via multiple_versions_md5_settings.
-		const bool foo =
-			scumm_stricmp(game.gameid, game2.gameid) ||
-			game.id != game2.id ||
-			game.version != game2.version ||
-			game.heversion != game2.heversion ||
-			game.midi != game2.midi ||
-			game.features != game2.features;
-		if (foo || game.platform != game2.platform) {
-			warning("ScummGameSettings differ (MD5 %s):", md5);
-			warning("game 1: '%s', id %d, ver %d, he %d, midi %d, f %d, p %d",
-					game.gameid, game.id, game.version, game.heversion, game.midi, game.features, game.platform);
-			warning("game 2: '%s', id %d, ver %d, he %d, midi %d, f %d, p %d",
-					game2.gameid, game2.id, game2.version, game2.heversion, game2.midi, game2.features, game2.platform);
-			if (foo)
-				error("Aborting -- please report details to fingolfin...");
-		}
-	
+	} else {
+		printf("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team\n", md5);
 	}
-#endif
 
 
 
