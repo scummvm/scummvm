@@ -307,9 +307,10 @@ void gfxFlipRawPage(byte *frontBuffer) {
 		g_system->setPalette(pal, 0, 256);
 	} else {
 		for (i = 0; i < 16; i++) {
-			pal[i * 4 + 2] = ((c_palette[i] & 0x00f) >> 0) * 255 / 7;
-			pal[i * 4 + 1] = ((c_palette[i] & 0x0f0) >> 4) * 255 / 7;
-			pal[i * 4 + 0] = ((c_palette[i] & 0xf00) >> 8) * 255 / 7;
+			// This seems to match the output from DOSbox.
+			pal[i * 4 + 2] = ((c_palette[i] & 0x00f) >> 0) * 32;
+			pal[i * 4 + 1] = ((c_palette[i] & 0x0f0) >> 4) * 32;
+			pal[i * 4 + 0] = ((c_palette[i] & 0xf00) >> 8) * 32;
 			pal[i * 4 + 3] = 0;
 		}
 		g_system->setPalette(pal, 0, 16);
