@@ -68,7 +68,7 @@ void readConfigVars() {
 		currentSetting[0] = 2;
 		currentSetting[1] = 5;
 		currentSetting[2] = 1;
-		currentSetting[3] = 0;
+		currentSetting[3] = 1;
 		writeConfigVars();
 	} else {
 		if (!file.open("scummvm.cfg", Common::File::kFileReadMode, "gp:\\gpetc\\")) {

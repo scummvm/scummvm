@@ -153,8 +153,8 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 		tmpBuf[i] = 0x8000;
 
 	// Frequency of the timer interrupt which polls the playing position
-	//soundBuf.pollfreq = 4 * (2 * soundBuf.freq) / soundBuf.samples;
-	soundBuf.pollfreq = (2 * soundBuf.freq) / soundBuf.samples;
+	// FIXME: This frequency should not be multiplied by 4.
+	soundBuf.pollfreq = 4 * (2 * soundBuf.freq) / soundBuf.samples;
 
 	// Set timer interrupt
 	if (GpTimerOptSet(GP32_TIMER_AUDIO_IDX, soundBuf.pollfreq, 0, soundTimer) == GPOS_ERR_ALREADY_USED) {

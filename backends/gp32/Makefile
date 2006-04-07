@@ -21,7 +21,20 @@ FXETOOL	:= b2fxec
 # Default compilation parameters. Normally don't edit these           #
 #######################################################################
 
-CXXFLAGS:= -g -O
+CFLAGS =	-marm -march=armv4t -mtune=arm920 -mapcs \
+			-finline-functions \
+			-fshort-enums \
+			-mstructure-size-boundary=32 \
+			-mno-thumb-interwork \
+			-I$(GPSDK)/include \
+			-g \
+			-O2 \
+			-fomit-frame-pointer
+#			-ffast-math \
+#			-fshort-double
+
+CPPFLAGS:= $(CFLAGS)
+CXXFLAGS:= $(CFLAGS)
 DEFINES :=
 LDFLAGS :=
 INCLUDES:= -I. -Icommon
@@ -34,11 +47,24 @@ CXXFLAGS+= -Wshadow -Wuninitialized -Wimplicit -Wundef
 CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 CXXFLAGS+= -Wwrite-strings -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor
 
-# GPSDK (SDK, Includes and Startup Files) base dir
-GPSDK			=	/usr/compat/gp32/share/sdk
+# Stripped Build? (Smaller ELF, Minimal debug symbol information).
+# You MUST comment this out with a # if you wish to debug your code.
+STRIP_DEBUG	= -Wl,--strip-debug
 
-GPMAD_DIR		= gpmad
-GPTREMOR_DIR	= gptremor
+# GPSDK (SDK, Includes and Startup Files) base dir
+GPSDK		=	/usr/compat/gp32/share/sdk
+
+LDSPECS		=	-specs=gp32_gpsdk.specs
+
+LDFLAGS 	= 	$(STRIP_DEBUG) -Wl,-Map,$(MAPFILE) $(LDSPECS) -Wl,--no-warn-mismatch
+
+LIBS		+=	-L$(GPSDK)/lib \
+				-lgpmem -lgpos -lgpstdio -lgpstdlib -lgpsound -lgpgraphic -lgpfont \
+				-lm -lc -lgcc
+
+INCLUDES	+=	-Ibackends/gp32 -Iengines -I$(GPSDK)/include
+
+MODULES		+=	backends/gp32
 
 # Outputs
 EXEEXT		= .elf
@@ -46,38 +72,29 @@ MAPFILE		= scummvm.map
 BIN			= scummvm.gxb
 FXE			= scummvm.fxe
 
-# Stripped Build? (Smaller ELF, Minimal debug symbol information).
-# You MUST comment this out with a # if you wish to debug your code.
-# STRIP_DEBUG	= -Wl,--strip-debug
-
 # Plugins hack
 srcdir		= ./
-
-CFLAGS		=	-marm -march=armv4t -mtune=arm920 -mapcs \
-	       		-finline-functions \
-	       		-fshort-enums \
-	       		-mstructure-size-boundary=32 \
-	       		-mno-thumb-interwork \
-				-I$(GPSDK)/include \
-				-g \
-	       		-O2 \
-	       		-fomit-frame-pointer
-#	       		-ffast-math \
-#	       		-fshort-double \
-#				-Wno-multichar \
-
-CPPFLAGS	=	$(CFLAGS)
 
 DEFINES 	= 	-D__GP32__
 DEFINES		+=	-DNONSTANDARD_PORT
 
+# Disable new themes. GP32 has LOW memory!
+DEFINES		+=	-DDISABLE_FANCY_THEMES
+
 # Support libtremor.
-#DEFINES		+=	-DUSE_VORBIS -DUSE_TREMOR
-#LIBS		+=	-lgptremor
+#DEFINES		+=	-DUSE_VORBIS -DUSE_TREMOR -DGP32_SDK
+#INCLUDES	+=	-Ibackends/gp32/gptremor
+#LIBS		+=	-Lbackends/gp32/gptremor -lgptremor
 
 # Support libmad.
 #DEFINES		+=	-DUSE_MAD
-#LIBS		+=	-lgpmad
+#INCLUDES	+=	-Ibackends/gp32/gpmad
+#LIBS		+=	-Lbackends/gp32/gpmad -lgpmad
+
+# Support libminilzo.
+#DEFINES		+=	-DUSE_MINILZO
+#INCLUDES	+=	-Ibackends/gp32/minilzo
+#LIBS		+=	-Lbackends/gp32/minilzo -lminilzo
 
 # Support for 8:3 save files names (The GP32 uses FAT12/16 (no vFAT) for the file system).
 DEFINES		+=	-DSHORT_SAVENAMES
@@ -89,19 +106,7 @@ DEFINES		+=	-DOUTPUT_UNSIGNED_AUDIO
 #	-	NOT fully implemented yet.
 #DEFINES		+=	-DUSE_GP32_FMOPL
 
-LDSPECS		=	-specs=gp32_gpsdk.specs
 
-LDFLAGS 	= 	$(STRIP_DEBUG) \
-				-Wl,-Map,$(MAPFILE) \
-				$(LDSPECS) -Wl,--no-warn-mismatch
-
-LIBS		+=	-L$(GPSDK)/lib \
-				-lgpmem -lgpos -lgpstdio -lgpstdlib -lgpsound -lgpgraphic -lgpfont \
-				-lm -lc -lgcc
-
-INCLUDES	+=	-Ibackends/gp32 -Iengines -I$(GPSDK)/include
-
-MODULES		+=	backends/gp32
 
 #GP32 Debug - Remove from Release builds
 #	This builds in the GP32 GDB USB Stub. Don't use it unless you know what your doing.
@@ -130,9 +135,6 @@ OBJS	+= 	backends/gp32/gp32_main.o \
 			backends/gp32/gp32_osys.o \
 			backends/gp32/gp-fs.o
 
-#install: all
-					#$(EXECUTE_TOOL) $(BIN)
-
 $(FXE): $(BIN)
 					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" $< $@
 #					$(FXETOOL) -f -a "The ScummVM Team" -t "ScummVM for the GP32" -b scummvm.bmp $< $@
@@ -151,12 +153,18 @@ DISABLE_SCALERS = 1
 DISABLE_HQ_SCALERS = 1
 
 #DISABLE_SCUMM = 1
-#DISABLE_SCUMM_7_8 = 1
+
+# We can play The Dig with GP32 -- without any movies/musics/voices. But who would do that?
+DISABLE_SCUMM_7_8 = 1
 DISABLE_HE = 1
-#DISABLE_SIMON = 1
-#DISABLE_SKY = 1
-#DISABLE_QUEEN = 1
-#DISABLE_GOB = 1
+
+# ???
+DISABLE_SIMON = 1
+DISABLE_SKY = 1
+DISABLE_QUEEN = 1
+DISABLE_GOB = 1
+DISABLE_LURE = 1
+DISABLE_CINE = 1
 
 # In-development engines below.
 # Disable for ALL release builds.

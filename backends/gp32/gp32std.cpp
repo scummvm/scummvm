@@ -25,6 +25,7 @@
 
 #include "stdafx.h"
 #include "common/scummsys.h"
+//#include "graphics/scaler.h"
 #include "common/system.h"
 #include "backends/intern.h"
 
@@ -36,6 +37,8 @@
 FILE *gp_stderr = NULL;
 FILE *gp_stdout = NULL;
 FILE *gp_stdin = NULL;
+
+//#define USE_CACHE
 
 #define DEBUG_MAX 4
 char debline[DEBUG_MAX][256];
@@ -63,6 +66,8 @@ void _dprintf(const char *s, ...) {
 	debnext++;
 	if (debnext == DEBUG_MAX)
 		debnext = 0;
+		
+	gp_delay(600);
 }
 
 //////////////////
@@ -190,10 +195,12 @@ int gp_fclose(GPFILE *stream) {
 	}
 */
 
+#ifdef USE_CACHE
 	if (stream->cachePos) {
 		GpFileWrite(stream->handle, (char *)stream->cacheData, stream->cachePos); // flush cache
 		stream->cachePos = 0;
 	}
+#endif
 
 	ERR_CODE err = GpFileClose(stream->handle);
 	free(stream);
@@ -233,6 +240,7 @@ size_t gp_fwrite(const void *ptr, size_t size, size_t n, GPFILE *stream) {
 		return 0;
 	}
 
+#ifdef USE_CACHE
 	if (stream->cachePos + len < FCACHE_SIZE) {
 		memcpy(stream->cacheData + stream->cachePos, ptr, len);
 		stream->cachePos += len;
@@ -242,12 +250,15 @@ size_t gp_fwrite(const void *ptr, size_t size, size_t n, GPFILE *stream) {
 			stream->cachePos = 0;
 		}
 
+#endif
 		ERR_CODE err = GpFileWrite(stream->handle, ptr, len);
 		if (!err)
 			return n;
 		else
 			return -err;
+#ifdef USE_CACHE
 	}
+#endif
 	return 0;
 }
 
@@ -605,7 +616,7 @@ void GPDEBUG(const char *fmt, ...) {
 }
 
 void NP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
@@ -618,7 +629,7 @@ void NP(const char *fmt, ...) {
 }
 
 void LP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
@@ -631,7 +642,7 @@ void LP(const char *fmt, ...) {
 }
 
 void SP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
@@ -644,7 +655,7 @@ void SP(const char *fmt, ...) {
 }
 
 void BP(const char *fmt, ...) {
-	return;
+//	return;
 	char s[256];
 	va_list marker;
 
