@@ -91,10 +91,9 @@ byte loadBg(const char *bgName) {
 	} else {
 		colorMode256 = 0;
 
-		memcpy(tempPalette, ptr, 32); ptr += 32;
-
 		for (int i = 0; i < 16; i++) {
-			tempPalette[i] = TO_BE_16(tempPalette[i]);
+			tempPalette[i] = READ_BE_UINT16(ptr);
+			ptr += 2;
 		}
 
 		loadRelatedPalette(bgName);
