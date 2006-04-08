@@ -26,6 +26,8 @@
 
 #include "common/util.h"
 
+namespace Scumm {
+
 /**
  * Descriptor of a specific SCUMM game. Used internally to store
  * information about the tons of game variants that exist.
@@ -39,7 +41,6 @@ struct GameSettings {
 	Common::Platform platform;
 
 };
-
 
 enum GenMethods {
 	kGenMac,
@@ -55,8 +56,10 @@ struct SubstResFileNames {
 };
 
 
-extern bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize);
-extern int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index);
+bool applySubstResFileName(const SubstResFileNames &subst, const char *filename, char *buf, int bufsize);
+int findSubstResFileName(SubstResFileNames &subst, const char *filename, int index);
+
+} // End of namespace Scumm
 
 
 #endif

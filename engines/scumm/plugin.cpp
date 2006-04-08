@@ -44,7 +44,7 @@
 #endif
 
 
-using namespace Scumm;
+namespace Scumm {
 
 #pragma mark -
 #pragma mark --- Data types & constants ---
@@ -838,10 +838,14 @@ int findSubstResFileName(SubstResFileNames &subst, const char *filename, int ind
 	return -1;
 }
 
+} // End of namespace Scumm
 
 #pragma mark -
 #pragma mark --- Plugin code ---
 #pragma mark -
+
+
+using namespace Scumm;
 
 
 GameList Engine_SCUMM_gameIDList() {
