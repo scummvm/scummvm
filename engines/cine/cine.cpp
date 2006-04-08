@@ -188,6 +188,7 @@ int gameType;
 static void initialize() {
 	uint16 i;
 
+	initLanguage(Common::parseLanguage(ConfMan.get("language")));
 	init_video();
 
 	textDataPtr = (byte *)malloc(8000);

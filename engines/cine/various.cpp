@@ -131,27 +131,77 @@ byte inputVar1 = 0;
 uint16 inputVar2;
 uint16 inputVar3;
 
-commandeType defaultActionCommand[] = {
-	"EXAMINE",
-	"TAKE",
-	"INVENTORY",
-	"USE",
-	"OPERATE",
-	"SPEAK",
-	"NOACTION"
-// french
-/*
-	"EXAMINER",
-	"PRENDRE",
-	"INVENTAIRE",
-	"UTILISER",
-	"ACTIONNER",
-	"PARLER",
-	"NOACTION"
-*/
-};
+const commandeType *defaultActionCommand;
+const commandeType *systemMenu;
+const commandeType *confirmMenu;
+const char *commandPrepositionOn;
 
 selectedObjStruct currentSelectedObject;
+
+void initLanguage(Common::Language lang) {
+	static const commandeType defaultActionCommand_EN[] = {
+		"EXAMINE",
+		"TAKE",
+		"INVENTORY",
+		"USE",
+		"OPERATE",
+		"SPEAK",
+		"NOACTION"
+	};
+
+	static const commandeType systemMenu_EN[] = {
+		"Pause",
+		"Restart Game",
+		"Quit",
+		"Backup Drive is A:",
+		"Restore game",
+		"Save game"
+	};
+
+	static const commandeType confirmMenu_EN[] = {
+		"Ok, go ahead ...",
+		"Absolutely Not!"
+	};
+
+	static const commandeType defaultActionCommand_FR[] = {
+		"EXAMINER",
+		"PRENDRE",
+		"INVENTAIRE",
+		"UTILISER",
+		"ACTIONNER",
+		"PARLER",
+		"NOACTION"
+	};
+
+	static const commandeType systemMenu_FR[] = {
+		"Pause",
+		"Nouvelle partie",
+		"Quitter",
+		"Lecteur de Svg. A:",
+		"Charger une partie",
+		"Sauver la partie"
+	};
+
+	static const commandeType confirmMenu_FR[] = {
+		"Ok , Vas-y ...",
+		"Surtout Pas !"
+	};
+
+	switch (lang) {
+	case Common::FR_FRA:
+		defaultActionCommand = defaultActionCommand_FR;
+		systemMenu = systemMenu_FR;
+		confirmMenu = confirmMenu_FR;
+		commandPrepositionOn = "sur";
+		break;
+	default:
+		defaultActionCommand = defaultActionCommand_EN;
+		systemMenu = systemMenu_EN;
+		confirmMenu = confirmMenu_EN;
+		commandPrepositionOn = "on";
+		break;
+	}
+}
 
 void mainLoopSub3(void) {
 }
@@ -295,34 +345,6 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 
 	return -1;
 }
-
-const commandeType systemMenu[] = {
-	"Pause",
-	"Restart Game",
-	"Quit",
-	"Backup Drive is A:",
-	"Restore game",
-	"Save game"
-// french
-/*
-	"Pause",
-	"Nouvelle partie",
-	"Quitter",
-	"Lecteur de Svg. A:",
-	"Charger une partie",
-	"Sauver la partie"
-*/
-};
-
-const commandeType confirmMenu[] = {
-	"Ok, go ahead ...",
-	"Absolutely Not!"
-// french
-/*
-	"Ok , Vas-y ...",
-	"Surtout Pas !"
-*/
-};
 
 commandeType currentSaveName[10];
 
@@ -1192,7 +1214,8 @@ void makeCommandLine(void) {
 
 			strcat(commandBuffer, " ");
 			strcat(commandBuffer, objectTable[commandVar3[0]].name);
-			strcat(commandBuffer, " sur");
+			strcat(commandBuffer, " ");
+			strcat(commandBuffer, commandPrepositionOn);
 		}
 	} else {
 		if (playerCommand == 2) {
