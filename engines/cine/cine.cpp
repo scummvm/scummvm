@@ -120,7 +120,7 @@ Engine *Engine_CINE_create(GameDetector *detector, OSystem *syst) {
 	return new Cine::CineEngine(detector, syst);
 }
 
-REGISTER_PLUGIN(CINE, "CINE Engine")
+REGISTER_PLUGIN(CINE, "CINE Engine");
 
 namespace Cine {
 

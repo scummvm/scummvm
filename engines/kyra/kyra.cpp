@@ -209,7 +209,7 @@ Engine *Engine_KYRA_create(GameDetector *detector, OSystem *system) {
 	return new KyraEngine(detector, system);
 }
 
-REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine")
+REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine");
 
 namespace Kyra {
 

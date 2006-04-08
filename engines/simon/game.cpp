@@ -133,7 +133,7 @@ Engine *Engine_SIMON_create(GameDetector *detector, OSystem *syst) {
 	return new Simon::SimonEngine(syst);
 }
 
-REGISTER_PLUGIN(SIMON, "Simon the Sorcerer")
+REGISTER_PLUGIN(SIMON, "Simon the Sorcerer");
 
 namespace Simon {
 

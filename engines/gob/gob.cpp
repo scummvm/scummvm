@@ -387,4 +387,4 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 	return new GobEngine(detector, syst, features);
 }
 
-REGISTER_PLUGIN(GOB, "Gob Engine")
+REGISTER_PLUGIN(GOB, "Gob Engine");

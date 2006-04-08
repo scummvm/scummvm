@@ -123,7 +123,8 @@ public:
 			Engine_##ID##_create, \
 			Engine_##ID##_detectGames \
 			);\
-	}
+	} \
+	void dummyFuncToAllowTrailingSemicolon()
 #else
 #define REGISTER_PLUGIN(ID,name) \
 	extern "C" { \
@@ -132,7 +133,8 @@ public:
 		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
 		PLUGIN_EXPORT Engine *PLUGIN_createEngine(GameDetector *detector, OSystem *syst) { return Engine_##ID##_create(detector, syst); } \
 		PLUGIN_EXPORT DetectedGameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
-	}
+	} \
+	void dummyFuncToAllowTrailingSemicolon()
 #endif
 
 #ifndef DYNAMIC_MODULES

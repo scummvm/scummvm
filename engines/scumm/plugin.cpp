@@ -1451,7 +1451,7 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 	return engine;
 }
 
-REGISTER_PLUGIN(SCUMM, "Scumm Engine")
+REGISTER_PLUGIN(SCUMM, "Scumm Engine");
 
 #ifdef PALMOS_68K
 #include "scumm_globals.h"

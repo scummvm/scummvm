@@ -159,7 +159,7 @@ Engine *Engine_LURE_create(GameDetector *detector, OSystem *system) {
 	return new LureEngine(system);
 }
 
-REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine")
+REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine");
 
 namespace Lure {
 

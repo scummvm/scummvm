@@ -133,7 +133,7 @@ Engine *Engine_QUEEN_create(GameDetector *detector, OSystem *syst) {
 	return new Queen::QueenEngine(syst);
 }
 
-REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen")
+REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen");
 
 namespace Queen {
 

@@ -116,7 +116,7 @@ Engine *Engine_SWORD2_create(GameDetector *detector, OSystem *syst) {
 	return new Sword2::Sword2Engine(detector, syst);
 }
 
-REGISTER_PLUGIN(SWORD2, "Broken Sword 2")
+REGISTER_PLUGIN(SWORD2, "Broken Sword 2");
 
 namespace Sword2 {
 
