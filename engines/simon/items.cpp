@@ -302,6 +302,7 @@ void SimonEngine::setupOpcodes() {
 		break;
 	case GType_FF:
 		opcode_table[37] = &SimonEngine::o3_jumpOut;
+		opcode_table[65] = &SimonEngine::o3_addTextBox;
 		opcode_table[70] = &SimonEngine::o3_printLongText;
 		opcode_table[83] = &SimonEngine::o2_rescan;
 		opcode_table[98] = &SimonEngine::o2_animate;
@@ -661,7 +662,7 @@ void SimonEngine::o1_addTextBox() {
 	int h = getVarOrWord();
 	int number = getVarOrByte();
 	if (number < 20)
-		addNewHitArea(id, x, y, w, h, (number << 8) + 129, 0xD0, _dummyItem2);
+		defineBox(id, x, y, w, h, (number << 8) + 129, 208, _dummyItem2);
 }
 
 void SimonEngine::o1_setShortText() {
@@ -901,7 +902,7 @@ void SimonEngine::o1_addBox() {
 		verb += 0x4000;
 		x -= 1000;
 	}
-	addNewHitArea(id, x, y, w, h, flags, verb, item);
+	defineBox(id, x, y, w, h, flags, verb, item);
 }
 
 void SimonEngine::o1_delBox() {
@@ -1402,6 +1403,27 @@ void SimonEngine::o3_jumpOut() {
 	// 37
 	getVarOrByte();
 	setScriptReturn(1);
+}
+
+void SimonEngine::o3_addTextBox() {
+	// 65: add hit area
+	uint flags = kBFTextBox | kBFBoxItem;
+	uint id = getVarOrWord();
+	uint params = id / 1000;
+	uint x, y, w, h, num;
+
+	id %= 1000;
+
+	if (params & 1)
+		flags |= kBFInvertTouch;
+
+	x = getVarOrWord();
+	y = getVarOrWord();
+	w = getVarOrWord();
+	h = getVarOrWord();
+	num = getVarOrByte();
+	if (num < 20)
+		defineBox(id, x, y, w, h, flags + (num << 8), 208, _dummyItem1);
 }
 
 void SimonEngine::o3_printLongText() {

@@ -1197,10 +1197,10 @@ static const char *const feeblefiles_opcode_name_table[256] = {
 	"BJ|IS_BIT2_CLEAR",
 	"BJ|IS_BIT2_SET",
 	NULL,
-	NULL,
+	"W|HYPERLINK_ON",
 	/* 172 */
-	NULL,
-	NULL,
+	"|HYPERLINK_OFF",
+	"|CHECK_PATHS",
 	NULL,
 	"|VGA_POINTER_OP_1",
 	/* 176 */

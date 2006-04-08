@@ -34,7 +34,7 @@ void SimonEngine::checkLinkBox() {	// Check for boxes spilling over to next row 
 	if (_hyperLink != 0) {
 		_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];
 		if (_variableArray[52] != 0) {
-			addNewHitArea(_variableArray[53], _variableArray[50], _variableArray[51], _variableArray[52], 15, 145, 208, _dummyItem1);
+			defineBox(_variableArray[53], _variableArray[50], _variableArray[51], _variableArray[52], 15, 145, 208, _dummyItem1);
 			_variableArray[53]++;
 		}
 		_variableArray[50] = _textWindow->x;
@@ -57,7 +57,7 @@ void SimonEngine::hyperLinkOff() {
 		return;
 
 	_variableArray[52] = _textWindow->x + _textWindow->textColumn - _variableArray[50];
-	addNewHitArea(_variableArray[53], _variableArray[50], _variableArray[51], _variableArray[52], 15, 145, 208, _dummyItem1);
+	defineBox(_variableArray[53], _variableArray[50], _variableArray[51], _variableArray[52], 15, 145, 208, _dummyItem1);
 	_variableArray[53]++;
 	_hyperLink = 0;
 }

@@ -223,19 +223,20 @@ void SimonEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask
 void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
-	uint width_div_3, height_div_3;
-	uint j, k, i, num_sibs_with_flag;
-	bool item_again;
+	uint width, height;
+	uint k, i, curWidth;
+	bool item_again, showArrows;
 	uint x_pos, y_pos;
+	const int iconSize = (getGameType() == GType_SIMON1) ? 1 : 20;
 
 	window = _windowArray[num & 7];
 
 	if (getGameType() == GType_SIMON1) {
-		width_div_3 = window->width / 3;
-		height_div_3 = window->height / 3;
+		width = window->width / 3;
+		height = window->height / 3;
 	} else {
-		width_div_3 = 100;
-		height_div_3 = 40;
+		width = 100;
+		height = 40;
 	}
 
 	i = 0;
@@ -256,14 +257,10 @@ void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int cla
 	itemRef = derefItem(itemRef->child);
 
 	while (itemRef && line-- != 0) {
-		num_sibs_with_flag = 0;
-		while (itemRef && width_div_3 > num_sibs_with_flag) {
+		curWidth = 0;
+		while (itemRef && width > curWidth) {
 			if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef))
-				if (getGameType() == GType_SIMON1) {
-					num_sibs_with_flag++;
-				} else {
-					num_sibs_with_flag += 20;
-				}
+				curWidth += iconSize;
 			itemRef = derefItem(itemRef->sibling);
 		}
 	}
@@ -275,9 +272,9 @@ void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int cla
 
 	x_pos = 0;
 	y_pos = 0;
-	item_again = false;
 	k = 0;
-	j = 0;
+	item_again = false;
+	showArrows = false;
 
 	while (itemRef) {
 		if ((classMask == 0 || itemRef->classFlags & classMask) && has_item_childflag_0x10(itemRef)) {
@@ -295,15 +292,14 @@ void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int cla
 				k++;
 			} else {
 				window->iconPtr->iconArray[k].item = NULL;
-				j = 1;
+				showArrows = 1;
 			}
-			x_pos += (getGameType() == GType_SIMON1) ? 1 : 20;
 
-			if (x_pos >= width_div_3) {
+			x_pos += iconSize;
+			if (x_pos >= width) {
 				x_pos = 0;
-
-				y_pos += (getGameType() == GType_SIMON1) ? 1 : 20;
-				if (y_pos >= height_div_3)
+				y_pos += iconSize;
+				if (y_pos >= height)
 					item_again = true;
 			}
 		}
@@ -312,8 +308,11 @@ void SimonEngine::drawIconArray_Simon(uint num, Item *itemRef, int line, int cla
 
 	window->iconPtr->iconArray[k].item = NULL;
 
-	if (j != 0 || window->iconPtr->line != 0) {
-		addArrows(window, num);
+	if (showArrows != 0 || window->iconPtr->line != 0) {
+		/* Plot arrows and add their boxes */
+		window->iconPtr->upArrow = _scrollUpHitArea;
+		window->iconPtr->downArrow = _scrollDownHitArea;
+		defineArrowBoxes(window);		
 	}
 }
 
@@ -414,17 +413,14 @@ l1:;		itemRef = derefItem(itemRef->sibling);
 		if ((xp == 188) && (yp == 358))
 			_variableArray[31] = 0;
 	}
-	addArrows(window, num);		/* Plot arrows and add their boxes */
-}
 
-void SimonEngine::addArrows(WindowBlock *window, uint num) {
-	setArrowHitAreas(window, num);
-
+	/* Plot arrows and add their boxes */
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
+	defineArrowBoxes(window);		
 }
 
-void SimonEngine::setArrowHitAreas(WindowBlock *window, uint num) {
+void SimonEngine::defineArrowBoxes(WindowBlock *window) {
 	HitArea *ha;
 
 	ha = findEmptyHitArea();

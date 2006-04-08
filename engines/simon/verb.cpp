@@ -381,7 +381,7 @@ bool SimonEngine::is_hitarea_0x40_clear(uint hitarea) {
 	return (ha->flags & kBFBoxDead) == 0;
 }
 
-void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
+void SimonEngine::defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr) {
 	HitArea *ha;
 	delete_hitarea(id);
 
@@ -394,6 +394,11 @@ void SimonEngine::addNewHitArea(int id, int x, int y, int width, int height, int
 	ha->id = ha->priority = id;
 	ha->verb = verb;
 	ha->item_ptr = item_ptr;
+
+	if (getGameType() == GType_FF && (ha->flags & kBFHyperBox)) {
+		// TODO
+		ha->priority = 50;
+	}
 
 	_needHitAreaRecalc++;
 }

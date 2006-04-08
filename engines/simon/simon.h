@@ -565,7 +565,7 @@ protected:
 	void moveBox(uint hitarea, int x, int y);
 	bool is_hitarea_0x40_clear(uint hitarea);
 	void delete_hitarea(uint hitarea);
-	void addNewHitArea(int id, int x, int y, int width, int height, int flags, int unk3, Item *item_ptr);
+	void defineBox(int id, int x, int y, int width, int height, int flags, int verb, Item *item_ptr);
 	HitArea *findEmptyHitArea();
 	void resetVerbs();
 	void setVerb(HitArea * ha);
@@ -623,10 +623,6 @@ protected:
 	void mouseOff();
 	void mouseOn();
 
-	void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
-	void drawIconArray_FF(uint i, Item *item_ptr, int line, int classMask);
-	void drawIconArray_Simon(uint i, Item *item_ptr, int line, int classMask);
-
 	void loadTextIntoMem(uint stringId);
 	void loadTablesIntoMem(uint subr_id);
 
@@ -646,10 +642,12 @@ protected:
 	void clearName();
 	void endCutscene();
 	void runSubroutine101();
+
 	void checkUp(WindowBlock *window);
 	void checkDown(WindowBlock *window);
 	void inventoryUp(WindowBlock *window);
 	void inventoryDown(WindowBlock *window);
+
 	void resetNameWindow();
 	void printVerbOf(uint hitarea_id);
 	HitArea *findHitAreaByID(uint hitarea_id);
@@ -672,12 +670,17 @@ protected:
 	void pollMouseXY();
 	void drawMousePointer();
 
-	void removeIconArray(uint num);
+	void defineArrowBoxes(WindowBlock *window);
+	void removeArrows(WindowBlock *window, uint num);
+
 	void draw_icon_c(WindowBlock *window, uint icon, uint x, uint y);
 	bool has_item_childflag_0x10(Item *item);
 	uint itemGetIconNumber(Item *item);
 	uint setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *item_ptr);
-	void addArrows(WindowBlock *window, uint num);
+	void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
+	void drawIconArray_FF(uint i, Item *item_ptr, int line, int classMask);
+	void drawIconArray_Simon(uint i, Item *item_ptr, int line, int classMask);
+	void removeIconArray(uint num);
 
 	void loadIconData();	
 	void loadIconFile();
@@ -708,8 +711,6 @@ protected:
 
 	void renderStringAmiga(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
 	void renderString(uint vga_sprite_id, uint color, uint width, uint height, const char *txt);
-
-	void setArrowHitAreas(WindowBlock *window, uint num);
 
 	byte *setup_vga_destination(uint32 size);
 	void vga_buf_unk_proc3(byte *end);
@@ -967,6 +968,7 @@ public:
 
 	// Opcodes, Feeble Files
 	void o3_jumpOut();
+	void o3_addTextBox();
 	void o3_printLongText();
 	void o3_oracleTextDown();
 	void o3_oracleTextUp();
@@ -1001,7 +1003,6 @@ protected:
 	void horizontalScroll(VC10_state *state);
 	void verticalScroll(VC10_state *state);
 
-
 	void delete_vga_timer(VgaTimerEntry * vte);
 	void vcResumeSprite(const byte *code_ptr, uint16 cur_file, uint16 cur_sprite);
 	int vcReadVarOrWord();
@@ -1032,7 +1033,6 @@ protected:
 	void video_copy_if_flag_0x8_c(WindowBlock *window);
 	void delete_hitarea_by_index(uint index);
 
-	void removeArrows(WindowBlock *window, uint num);
 	void windowPutChar(uint a);
 
 	void restoreWindow(WindowBlock *window);
