@@ -91,7 +91,7 @@ public:
  */
 enum Language {
 	UNK_LANG = -1,	// Use default language (i.e. none specified)
-	EN_ANY = 0,
+	EN_ANY = 0,     // Generic English (when only one game version exist)
 	EN_USA = 1,
 	DE_DEU = 2,
 	FR_FRA = 3,
