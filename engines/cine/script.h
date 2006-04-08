@@ -146,6 +146,7 @@ void o1_unloadMask5();
 void o2_loadPart();
 void o2_addSeqListElement();
 void o2_removeSeq();
+void o2_op78(); 
 void o2_op81();
 void o2_op82();
 void o2_isSeqRunning();
@@ -162,7 +163,6 @@ void o2_addBackground();
 void o2_removeBackground();
 void o2_loadAbs();
 void o2_loadBg();
-void o2_op95();
 void o2_wasZoneChecked();
 void o2_op9B();
 void o2_op9C();
@@ -173,9 +173,8 @@ void o2_addGfxElementA0();
 void o2_opA1();
 void o2_opA2();
 void o2_opA3();
-void o2_opA4();
-void o2_opA5();
-void o2_opA9();
+void o2_loadMask22();
+void o2_unloadMask22();
 
 } // End of namespace Cine
 

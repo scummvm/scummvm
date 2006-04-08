@@ -357,14 +357,14 @@ void setupOpcodes() {
 		o1_stopSample,
 		o1_op71,
 		o1_op72,
-		o1_op73,
+		o1_op72,
 		/* 74 */
 		NULL,
 		NULL,
 		NULL,
 		o1_playSample,
 		/* 78 */
-		o1_playSample,
+		o2_op78,
 		o1_allowSystemMenu,
 		o1_loadMask5,
 		o1_unloadMask5,
@@ -400,7 +400,7 @@ void setupOpcodes() {
 		NULL,
 		/* 94 */
 		NULL,
-		o2_op95,
+		o1_changeDataDisk,
 		NULL,
 		NULL,
 		/* 98 */
@@ -419,13 +419,13 @@ void setupOpcodes() {
 		o2_opA2,
 		o2_opA3,
 		/* A4 */
-		o2_opA4,
-		o2_opA5,
+		o2_loadMask22,
+		o2_unloadMask22,
 		NULL,
 		NULL,
 		/* A8 */
 		NULL,
-		o2_opA9
+		o1_changeDataDisk
 	};
 
 	if (gameType == Cine::GID_FW) {
@@ -1689,6 +1689,11 @@ void o1_unloadAllMasks() {
 
 void o1_op63() {
 	warning("STUB: o1_op63()");
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	// setupScreenParam
 }
 
 void o1_op64() {
@@ -1763,14 +1768,24 @@ void o1_stopSample() {
 
 void o1_op71() {
 	warning("STUB: o1_op71()");
+	getNextByte();
+	getNextWord();
 }
 
 void o1_op72() {
 	warning("STUB: o1_op72()");
+	getNextWord();
+	getNextByte();
+	getNextWord();
 }
 
 void o1_op73() {
+	// I believe this opcode is identical to o1_op72(). In fact, Operation
+	// Stealth doesn't even have it. It uses o1_op72() instead.
 	warning("STUB: o1_op73()");
+	getNextWord();
+	getNextByte();
+	getNextWord();
 }
 
 void o1_playSample() {
@@ -1839,6 +1854,12 @@ void o2_loadPart() {
 	DEBUG_SCRIPT(_currentLine, "loadPart(\"%s\")", param);
 }
 
+void o2_op78() {
+	warning("STUB: o2_op78()");
+	// This is probably wrong, but preserve the old behaviour for now.
+	o1_playSample();
+}
+
 void o2_addSeqListElement() {
 	byte param1 = getNextByte();
 	byte param2 = getNextByte();
@@ -1862,10 +1883,14 @@ void o2_removeSeq() {
 
 void o2_op81() {
 	warning("STUB: o2_op81()");
+	// freeUnkList();
 }
 
 void o2_op82() {
 	warning("STUB: o2_op82()");
+	getNextByte();
+	getNextByte();
+	getNextWord();
 }
 
 void o2_isSeqRunning() {
@@ -1975,6 +2000,15 @@ void o2_stopObjectScript() {
 
 void o2_op8D() {
 	warning("STUB: o2_op8D()");
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	// _currentScriptElement->compareResult = ...
 }
 
 void o2_addBackground() {
@@ -2031,20 +2065,28 @@ void o2_loadBg() {
 	}
 }
 
-void o2_op95() {
-	warning("STUB: o2_op95()");
-}
-
 void o2_wasZoneChecked() {
 	warning("STUB: o2_wasZoneChecked()");
 }
 
 void o2_op9B() {
-	warning("STUB: o2_9B()");
+	warning("STUB: o2_op9B()");
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
 }
 
 void o2_op9C() {
-	warning("STUB: o2_9C()");
+	warning("STUB: o2_op9C()");
+	getNextWord();
+	getNextWord();
+	getNextWord();
+	getNextWord();
 }
 
 void o2_useBgScroll() {
@@ -2077,6 +2119,8 @@ void o2_setAdditionalBgVScroll() {
 
 void o2_op9F() {
 	warning("o2_op9F()");
+	getNextWord();
+	getNextWord();
 }
 
 void o2_addGfxElementA0() {
@@ -2088,30 +2132,38 @@ void o2_addGfxElementA0() {
 }
 
 void o2_opA1() {
-	_currentPosition += 4;
 	warning("STUB: o2_opA1()");
+	getNextWord();
+	getNextWord();
+	// removeGfxElementA0( ... );
 }
 
 void o2_opA2() {
-	_currentPosition += 4;
 	warning("STUB: o2_opA2()");
+	getNextWord();
+	getNextWord();
+	// addGfxElementA2();
 }
 
 void o2_opA3() {
-	_currentPosition += 4;
 	warning("STUB: o2_opA3()");
+	getNextWord();
+	getNextWord();
+	// removeGfxElementA2();
 }
 
-void o2_opA4() {
-	warning("STUB: o2_opA4()");
+void o2_loadMask22() {
+	byte param = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "addOverlay22(%d)", param);
+	loadOverlayElement(param, 22);
 }
 
-void o2_opA5() {
-	warning("STUB: o2_opA5()");
-}
+void o2_unloadMask22() {
+	byte param = getNextByte();
 
-void o2_opA9() {
-	warning("STUB: o2_opA9()");
+	DEBUG_SCRIPT(_currentLine, "removeOverlay22(%d)", param);
+	freeOverlay(param, 22);
 }
 
 // ------------------------------------------------------------------------

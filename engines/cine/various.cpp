@@ -510,6 +510,9 @@ int16 makeLoad(char *saveName) {
 	g_sfxPlayer->stop();
 	freeAnimDataTable();
 	unloadAllMasks();
+	// if (gameType == Cine::GID_OS) {
+	// 	freeUnkList();
+	// }
 	freePrcLinkedList();
 	releaseObjectScripts();
 	closeEngine7();
