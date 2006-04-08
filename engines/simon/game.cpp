@@ -1253,10 +1253,10 @@ static int detectGame(const FSList *fslist, Common::Language language, Common::P
 	int gamesCount = ARRAYSIZE(gameDescriptions);
 	int filesCount;
 
-	typedef Common::Map<Common::String, bool> StringSet;
+	typedef Common::HashMap<Common::String, bool> StringSet;
 	StringSet filesList;
 
-	typedef Common::Map<Common::String, Common::String> StringMap;
+	typedef Common::HashMap<Common::String, Common::String> StringMap;
 	StringMap filesMD5;
 
 	Common::String tstr, tstr2;

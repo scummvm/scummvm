@@ -26,7 +26,6 @@
 
 #include "common/array.h"
 //#include "common/config-file.h"
-#include "common/map.h"
 #include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"
@@ -45,7 +44,6 @@ struct IgnoreCase_Hash {
   uint operator()(const String& x) const { return hashit_lower(x.c_str()); }
 };
 
-//typedef Map<String, String, IgnoreCase_Less> StringMap;
 typedef HashMap<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringMap;
 
 /**
@@ -76,7 +74,6 @@ public:
 		bool hasKVComment(const String &key) const;
 	};
 
-	//typedef Map<String, Domain, IgnoreCase_Less> DomainMap;
 	typedef HashMap<String, Domain, IgnoreCase_Hash, IgnoreCase_EqualTo> DomainMap;
 
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))

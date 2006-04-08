@@ -951,7 +951,7 @@ DetectedGameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	char tempName[128];
 	SubstResFileNames subst = { 0, 0, kGenAsIs };
 
-	typedef Common::Map<Common::String, bool> StringSet;
+	typedef Common::HashMap<Common::String, bool> StringSet;
 	StringSet fileSet;
 
 	for (g = scumm_settings; g->gameid; ++g) {

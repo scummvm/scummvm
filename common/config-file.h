@@ -25,7 +25,6 @@
 
 #include "common/config-manager.h"
 #include "common/list.h"
-#include "common/map.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -51,7 +50,6 @@ namespace Common {
  */
 class ConfigFile {
 public:
-	//typedef Map<String, bool, IgnoreCase_Less> StringSet;
 	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> StringSet;
 
 	struct KeyValue {
