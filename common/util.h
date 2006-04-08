@@ -26,18 +26,17 @@
 #include "common/str.h"
 #include "common/array.h"
 
-#if defined (__INNOTEK_LIBC__) || (defined (__amigaos4__) && defined(__NEWLIB__))
+#ifdef MIN
 #undef MIN
+#endif
+
+#ifdef MAX
 #undef MAX
 #endif
 
 template<typename T> inline T ABS (T x)			{ return (x>=0) ? x : -x; }
-#if !defined(MIN)
 template<typename T> inline T MIN (T a, T b)	{ return (a<b) ? a : b; }
-#endif
-#if !defined(MAX)
 template<typename T> inline T MAX (T a, T b)	{ return (a>b) ? a : b; }
-#endif
 
 /**
  * Template method which swaps the vaulues of its two parameters.
