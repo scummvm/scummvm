@@ -574,7 +574,40 @@ void ScummEngine_v7::initScummVars() {
 
 	if (_game.version == 8) {	// FIXME: How do we deal with non-cd installs?
 		VAR(VAR_CURRENTDISK) = 1;
-		VAR(VAR_LANGUAGE) = _language;
+
+		switch (_language) {
+		case Common::EN_ANY:
+		case Common::EN_USA:
+		case Common::EN_GRB:
+			VAR(VAR_LANGUAGE) = 0;
+			break;
+		case Common::DE_DEU:
+			VAR(VAR_LANGUAGE) = 1;
+			break;
+		case Common::FR_FRA:
+			VAR(VAR_LANGUAGE) = 2;
+			break;
+		case Common::IT_ITA:
+			VAR(VAR_LANGUAGE) = 3;
+			break;
+		case Common::PT_BRA:
+			VAR(VAR_LANGUAGE) = 4;
+			break;
+		case Common::ES_ESP:
+			VAR(VAR_LANGUAGE) = 5;
+			break;
+		case Common::JA_JPN:
+			VAR(VAR_LANGUAGE) = 6;
+			break;
+		case Common::ZH_TWN:
+			VAR(VAR_LANGUAGE) = 7;
+			break;
+		case Common::KO_KOR:
+			VAR(VAR_LANGUAGE) = 8;
+			break;
+		default:
+			VAR(VAR_LANGUAGE) = 0;	// Default to english
+		}
 	} else {
 		VAR(VAR_V6_EMSSPACE) = 10000;
 		VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;

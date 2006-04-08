@@ -879,11 +879,8 @@ int ScummEngine::init(GameDetector &detector) {
 	// Setup the music engine
 	setupMusic(_game.midi);
 
-	// TODO: We shouldn't rely on the global Language values matching those COMI etc. expect.
-	// Rather we should explicitly translate them.
-	_language = Common::parseLanguage(ConfMan.get("language"));
-
 	// Load localization data, if present
+	_language = Common::parseLanguage(ConfMan.get("language"));
 	loadLanguageBundle();
 
 	// Load CJK font, if present
