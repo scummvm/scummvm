@@ -294,12 +294,6 @@
 	#define	SCUMM_BIG_ENDIAN
 	#define	SCUMM_NEED_ALIGNMENT
 
-	// FIXME: Why is this here? If it does declare types int8 etc., and they
-	// are not compatible with our typedefs below, we need a proper fix.
-	// In general, though, you should avoid port specific includes in this
-	// header file, if possible.
-	#include <exec/types.h>
-
 #elif defined(__SYMBIAN32__)
 
 	#define scumm_stricmp strcasecmp

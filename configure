@@ -760,8 +760,8 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='long'
-			CXXFLAGS="$CFLAGS -newlib -mstrict-align -mcpu=750 -mtune=7400"
-			LDFLAGS="$LDFLAGS -newlib"
+			CXXFLAGS="$CFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
+			LDFLAGS="$LDFLAGS -mcrt=newlib"
 			;;
 		*)
 			echo "Cross-compiling to unknown target $_host, please add your target to configure."

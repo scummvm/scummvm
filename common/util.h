@@ -26,7 +26,7 @@
 #include "common/str.h"
 #include "common/array.h"
 
-#if defined (__INNOTEK_LIBC__)
+#if defined (__INNOTEK_LIBC__) || (defined (__amigaos4__) && defined(__NEWLIB__))
 #undef MIN
 #undef MAX
 #endif

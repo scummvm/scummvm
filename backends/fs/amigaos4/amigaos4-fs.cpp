@@ -34,7 +34,7 @@
 
 #include <common/stdafx.h>
 
-//#include "util.h"
+#include "common/util.h"
 
 #include "base/engine.h"
 #include "backends/fs/fs.h"
@@ -43,7 +43,7 @@
 #define LEAVE() /* debug(6, "Leave\n") */
 
 
-const uint32 ExAllBufferSize = 40960;
+const uint32 kExAllBufferSize = 40960; // TODO: is this okay for sure?
 
 class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 	protected:
@@ -58,7 +58,10 @@ class AmigaOSFilesystemNode : public AbstractFilesystemNode {
 		AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName = 0);
 		AmigaOSFilesystemNode(const String &p);
 
-		~AmigaOSFilesystemNode();
+	    // Note: Copy constructor is needed because it duplicates the file lock
+		AmigaOSFilesystemNode(const AmigaOSFilesystemNode &node);
+		
+		virtual ~AmigaOSFilesystemNode();
 
 		virtual String displayName() const { return _sDisplayName; };
 		virtual bool isValid() const { return _bIsValid; };
@@ -111,11 +114,13 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 	_sDisplayName = String(str + offset, len);
 
+	_pFileLock = 0;
+
 	// Check whether it is a directory, and whether the file actually exists
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		//debug(6, "fib == 0\n");
+		debug(6, "fib == 0\n");
 		LEAVE();
 		return;
 	}
@@ -145,12 +150,12 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName) {
 	ENTER();
-	int bufsize = 256;
+	int bufSize = MAXPATHLEN;
 	_pFileLock = 0;
 
 	while (1) {
-		char *name = new char[bufsize];
-		if (IDOS->NameFromLock(pLock, name, bufsize) != DOSFALSE) {
+		char *name = new char[bufSize];
+		if (IDOS->NameFromLock(pLock, name, bufSize) != DOSFALSE) {
 			_sPath = name;
 			_sDisplayName = pDisplayName ? pDisplayName : IDOS->FilePart(name);
 			delete [] name;
@@ -159,12 +164,12 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		if (IDOS->IoErr() != ERROR_LINE_TOO_LONG) {
 			_bIsValid = false;
-			//debug(6, "Error\n");
+			debug(6, "Error\n");
 			LEAVE();
 			delete [] name;
 			return;
 		}
-		bufsize *= 2;
+		bufSize *= 2;
 		delete [] name;
 	}
 
@@ -172,7 +177,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 	struct FileInfoBlock *fib = (struct	FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
-		//debug(6, "fib == 0\n");
+		debug(6, "fib == 0\n");
 		LEAVE();
 		return;
 	}
@@ -197,13 +202,14 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	LEAVE();
 }
 
-AmigaOSFilesystemNode::AmigaOSFilesystemNode(const AmigaOSFilesystemNode *node) {
+// We need the custom copy constructor because of DupLock()
+AmigaOSFilesystemNode::AmigaOSFilesystemNode(const AmigaOSFilesystemNode& node) {
 	ENTER();
-	_sDisplayName = node->_sDisplayName;
-	_bIsValid = node->_bIsValid;
-	_bIsDirectory = node->_bIsDirectory;
-	_sPath = node->_sPath;
-	_pFileLock = IDOS->DupLock(node->_pFileLock);
+	_sDisplayName = node._sDisplayName;
+	_bIsValid = node._bIsValid;
+	_bIsDirectory = node._bIsDirectory;
+	_sPath = node._sPath;
+	_pFileLock = IDOS->DupLock(node._pFileLock);
 	LEAVE();
 }
 
@@ -217,39 +223,36 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 	ENTER();
 
+	FSList myList;
+
 	if (!_bIsValid) {
-		//debug(6, "Invalid node\n");
+		debug(6, "Invalid node\n");
 		LEAVE();
-		//return 0;
+		return myList; // Empty list
 	}
 
 	if (!_bIsDirectory) {
-		//debug(6, "Not a directory\n");
+		debug(6, "Not a directory\n");
 		LEAVE();
-		//return 0;
+		return myList; // Empty list
 	}
 
 	if (_pFileLock == 0) {
-		//debug(6, "Root node\n");
+		debug(6, "Root node\n");
 		LEAVE();
 		return listVolumes();
 	}
 
 	//FSList *myList = new FSList();
-	FSList myList;
 
-	struct ExAllControl *eac;
-	struct ExAllData *data, *ead;
-	BOOL bExMore;
-
-	eac = (struct ExAllControl *)IDOS->AllocDosObject(DOS_EXALLCONTROL, 0);
+	struct ExAllControl *eac = (struct ExAllControl *)IDOS->AllocDosObject(DOS_EXALLCONTROL, 0);
 	if (eac) {
-		data = (struct ExAllData *)IExec->AllocVec(ExAllBufferSize, MEMF_ANY);
+		struct ExAllData *data = (struct ExAllData *)IExec->AllocVec(kExAllBufferSize, MEMF_ANY);
 		if (data) {
+			BOOL bExMore;
 			eac->eac_LastKey = 0;
 			do {
-				bExMore = IDOS->ExAll(_pFileLock, data,	ExAllBufferSize,
-					ED_TYPE, eac);
+				bExMore = IDOS->ExAll(_pFileLock, data,	kExAllBufferSize, ED_TYPE, eac);
 
 				LONG error = IDOS->IoErr();
 				if (!bExMore && error != ERROR_NO_MORE_ENTRIES)
@@ -258,22 +261,19 @@ FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 				if (eac->eac_Entries ==	0)
 					continue;
 
-				ead	= data;
+				struct ExAllData *ead = data;
 				do {
-					AmigaOSFilesystemNode *entry;
-					String full_path;
-					BPTR lock;
-
-					if ((ead->ed_Type > 0 && (mode & kListDirectoriesOnly)) ||
-						(ead->ed_Type < 0 && (mode & kListFilesOnly))) {
-						full_path = _sPath;
+					if ((mode == kListAll) || (EAD_IS_DRAWER(ead) && (mode == kListDirectoriesOnly)) ||
+						(EAD_IS_FILE(ead) && (mode == kListFilesOnly))) {
+						String full_path = _sPath;
 						full_path += (char*)ead->ed_Name;
-						lock = IDOS->Lock((char *)full_path.c_str(), SHARED_LOCK);
+
+						BPTR lock = IDOS->Lock((char *)full_path.c_str(), SHARED_LOCK);
 						if (lock) {
-							entry = new AmigaOSFilesystemNode(lock, (char *)ead->ed_Name);
+							AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(lock, (char *)ead->ed_Name);
 							if (entry) {
 								if (entry->isValid())
-									myList.push_back(wrap(entry));
+								    myList.push_back(wrap(entry));
 								else
 									delete entry;
 							}
@@ -289,25 +289,27 @@ FSList AmigaOSFilesystemNode::listDir(ListMode mode) const {
 
 		IDOS->FreeDosObject(DOS_EXALLCONTROL, eac);
 	}
+
 	LEAVE();
 	return myList;
 }
 
 AbstractFilesystemNode *AmigaOSFilesystemNode::parent() const {
 	ENTER();
-	AmigaOSFilesystemNode *node;
 
 	if (!_bIsDirectory) {
-		//debug(6, "No directory\n");
+		debug(6, "No directory\n");
 		LEAVE();
 		return 0;
 	}
 
 	if (_pFileLock == 0) {
-		//debug(6, "Root node\n");
+		debug(6, "Root node\n");
 		LEAVE();
 		return new AmigaOSFilesystemNode(*this);
 	}
+
+	AmigaOSFilesystemNode *node;
 
 	BPTR parentDir = IDOS->ParentDir( _pFileLock );
 	if (parentDir) {
@@ -326,14 +328,12 @@ FSList AmigaOSFilesystemNode::listVolumes(void)	const {
 	//FSList *myList = new FSList();
 	FSList myList;
 
-	struct DosList *dosList;
+	const uint32 kLockFlags = LDF_READ | LDF_VOLUMES;
+	char name[MAXPATHLEN];
 
-	const uint32 lockFlags = LDF_READ | LDF_VOLUMES;
-	char name[256];
-
-	dosList = IDOS->LockDosList(lockFlags);
+	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
-		//debug(6, "Cannot lock dos list\n");
+		debug(6, "Cannot lock dos list\n");
 		LEAVE();
 		return myList;
 	}
@@ -344,30 +344,29 @@ FSList AmigaOSFilesystemNode::listVolumes(void)	const {
 		if (dosList->dol_Type == DLT_VOLUME &&
 			dosList->dol_Name &&
 			dosList->dol_Task) {
-			AmigaOSFilesystemNode *entry;
-			const char *volname = (const char *)BADDR(dosList->dol_Name)+1;
-			const char *devname = (const char *)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
+			const char *volName = (const char *)BADDR(dosList->dol_Name)+1;
+			const char *devName = (const char *)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
 
-			strcpy(name, volname);
+			strcpy(name, volName);
 			strcat(name, ":");
 
-			BPTR volume_lock = IDOS->Lock(name,	SHARED_LOCK);
-			if (volume_lock) {
-				sprintf(name, "%s (%s)", volname, devname);
-				entry = new AmigaOSFilesystemNode(volume_lock, name);
+			BPTR volumeLock = IDOS->Lock(name, SHARED_LOCK);
+			if (volumeLock) {
+				sprintf(name, "%s (%s)", volName, devName);
+				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, name);
 				if (entry) {
 					if (entry->isValid())
 						myList.push_back(wrap(entry));
 					else
 						delete entry;
 				}
-				IDOS->UnLock(volume_lock);
+				IDOS->UnLock(volumeLock);
 			}
 		}
 		dosList	= IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	}
 
-	IDOS->UnLockDosList(lockFlags);
+	IDOS->UnLockDosList(kLockFlags);
 
 	LEAVE();
 	return myList;
