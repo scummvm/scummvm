@@ -50,7 +50,7 @@
 #include "kyra/text.h"
 #include "kyra/debugger.h"
 
-using namespace Kyra;
+namespace Kyra {
 
 enum {
 	// We only compute MD5 of the first megabyte of our data files.
@@ -58,7 +58,7 @@ enum {
 };
 
 // Kyra MD5 detection brutally ripped from the Gobliins engine.
-struct KyraGameSettings {
+struct GameSettings {
 	const char *gameid;
 	const char *description;
 	byte id;
@@ -69,7 +69,7 @@ struct KyraGameSettings {
 
 // We could get rid of md5 detection at least for kyra 1 since we can locate all
 // needed files for detecting the right language and version (Floppy, Talkie)
-static const KyraGameSettings kyra_games[] = {
+static const GameSettings kyra_games[] = {
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_FLOPPY, // english floppy 1.0 from Malice
 										"3c244298395520bb62b5edfe41688879", "GEMCUT.EMC" },
 	{ "kyra1", "The Legend of Kyrandia",		GI_KYRA1, GF_ENGLISH | GF_FLOPPY, 
@@ -118,6 +118,10 @@ static const KyraLanguageTable kyra_languages[] = {
 	{ 0, 0, Common::UNK_LANG }
 };
 
+} // End of namespace Kyra
+
+using namespace Kyra;
+
 static Common::Language convertKyraLang(uint32 features) {
 	if (features & GF_ENGLISH) {
 		return Common::EN_USA;
@@ -154,7 +158,7 @@ GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
 
 DetectedGameList Engine_KYRA_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const KyraGameSettings *g;
+	const GameSettings *g;
 	FSList::const_iterator file;
 
 	// Iterate over all files in the given directory
@@ -264,7 +268,7 @@ KyraEngine::KyraEngine(GameDetector *detector, OSystem *system)
 	uint8 md5sum[16];
 	char md5str[32 + 1];
 
-	const KyraGameSettings *g;
+	const GameSettings *g;
 	bool found = false;
 
 	// TODO
@@ -1266,4 +1270,5 @@ void KyraEngine::runNpcScript(int func) {
 		_scriptInterpreter->runScript(_npcScript);
 	}
 }
+
 } // End of namespace Kyra

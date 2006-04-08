@@ -44,14 +44,14 @@
 #include "lure/game.h"
 #include "lure/system.h"
 
-using namespace Lure;
+namespace Lure {
 
 enum {
 	// We only compute MD5 of the first megabyte of our data files.
 	kMD5FileSizeLimit = 1024 * 1024
 };
 
-struct LureGameSettings {
+struct GameSettings {
 	const char *gameid;
 	const char *description;
 	byte id;
@@ -62,7 +62,7 @@ struct LureGameSettings {
 };
 
 //
-static const LureGameSettings lure_games[] = {
+static const GameSettings lure_games[] = {
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_USA,
 										"e45ea5d279a268c7d3c6524c2f63a2d2", "disk1.vga" },
 /*
@@ -80,6 +80,10 @@ static const PlainGameDescriptor lure_list[] = {
 	{ "lure", "Lure of the Temptress" },
 	{ 0, 0 }
 };
+
+} // End of namespace Lure
+
+using namespace Lure;
 
 GameList Engine_LURE_gameIDList() {
 	GameList games;
@@ -104,7 +108,7 @@ GameDescriptor Engine_LURE_findGameID(const char *gameid) {
 
 DetectedGameList Engine_LURE_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const LureGameSettings *g;
+	const GameSettings *g;
 	FSList::const_iterator file;
 
 	// Iterate over all files in the given directory
@@ -213,7 +217,7 @@ void LureEngine::detectGame() {
 	
 	uint8 md5sum[16];
 	char md5str[32 + 1];
-	const LureGameSettings *g;
+	const GameSettings *g;
 	bool found = false;
 
 	*md5str = 0;

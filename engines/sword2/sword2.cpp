@@ -48,14 +48,16 @@
 extern bool isSmartphone();
 #endif
 
-struct Sword2GameSettings {
+namespace Sword2 {
+
+struct GameSettings {
 	const char *gameid;
 	const char *description;
 	uint32 features;
 	const char *detectname;
 };
 
-static const Sword2GameSettings sword2_settings[] = {
+static const GameSettings sword2_settings[] = {
 	/* Broken Sword 2 */
 	{"sword2", "Broken Sword 2: The Smoking Mirror", 0, "players.clu" },
 	{"sword2alt", "Broken Sword 2: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
@@ -63,8 +65,10 @@ static const Sword2GameSettings sword2_settings[] = {
 	{NULL, NULL, 0, NULL}
 };
 
+} // End of namespace Sword2
+
 GameList Engine_SWORD2_gameIDList() {
-	const Sword2GameSettings *g = sword2_settings;
+	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	GameList games;
 	while (g->gameid) {
 		games.push_back(*g);
@@ -74,7 +78,7 @@ GameList Engine_SWORD2_gameIDList() {
 }
 
 GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
-	const Sword2GameSettings *g = sword2_settings;
+	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
@@ -85,13 +89,13 @@ GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
 
 DetectedGameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const Sword2GameSettings *g;
+	const Sword2::GameSettings *g;
 
 	// TODO: It would be nice if we had code here which distinguishes
 	// between the 'sword2' and 'sword2demo' targets. The current code
 	// can't do that since they use the same detectname.
 
-	for (g = sword2_settings; g->gameid; ++g) {
+	for (g = Sword2::sword2_settings; g->gameid; ++g) {
 		// Iterate over all files in the given directory
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			if (!file->isDirectory()) {

@@ -55,14 +55,14 @@ enum {
 	kMD5FileSizeLimit = 1024 * 1024
 };
 
-struct GobGameSettings {
+struct GameSettings {
 	const char *gameid;
 	const char *description;
 	uint32 features;
 	const char *md5sum;
 };
 
-static const GobGameSettings gob_games[] = {
+static const GameSettings gob_games[] = {
 	// Supplied by Florian Zeitz on scummvm-devel
 	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, "82aea70ef26f41fa963dfae270993e49"},
 	{"gob1", "Gobliiins (DOS EGA)", GF_GOB1 | GF_EGA, "1f499458837008058b8ba6ae07057214"},
@@ -297,7 +297,7 @@ GameDescriptor Engine_GOB_findGameID(const char *gameid) {
 
 DetectedGameList Engine_GOB_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const GobGameSettings *g;
+	const GameSettings *g;
 	FSList::const_iterator file;
 
 	// Iterate over all files in the given directory
@@ -351,7 +351,7 @@ Engine *Engine_GOB_create(GameDetector * detector, OSystem *syst) {
 		error("Engine_GOB_create(): Cannot find intro.stk");
 	}
 
-	const GobGameSettings *g;
+	const GameSettings *g;
 	bool found = false;
 
 	// TODO

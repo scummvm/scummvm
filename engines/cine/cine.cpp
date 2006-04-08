@@ -57,7 +57,7 @@ char *savePath;
 
 
 
-struct CINEGameSettings {
+struct GameSettings {
 	const char *name;
 	const char *description;
 	byte id;
@@ -68,7 +68,7 @@ struct CINEGameSettings {
 	}
 };
 
-static const CINEGameSettings cine_settings[] = {
+static const GameSettings cine_settings[] = {
 	{"fw", "Future Wars", Cine::GID_FW, MDT_ADLIB, "AUTO00.PRC"},
 	{"os", "Operation Stealth", Cine::GID_OS, MDT_ADLIB, "PROCS00"},
 	{NULL, NULL, 0, 0, NULL}
@@ -76,7 +76,7 @@ static const CINEGameSettings cine_settings[] = {
 
 GameList Engine_CINE_gameIDList() {
 	GameList games;
-	const CINEGameSettings *g = cine_settings;
+	const GameSettings *g = cine_settings;
 
 	while (g->name) {
 		games.push_back(g->toGameDescriptor());
@@ -87,7 +87,7 @@ GameList Engine_CINE_gameIDList() {
 }
 
 GameDescriptor Engine_CINE_findGameID(const char *gameid) {
-	const CINEGameSettings *g = cine_settings;
+	const GameSettings *g = cine_settings;
 	while (g->name) {
 		if (0 == scumm_stricmp(gameid, g->name))
 			break;
@@ -98,7 +98,7 @@ GameDescriptor Engine_CINE_findGameID(const char *gameid) {
 
 DetectedGameList Engine_CINE_detectGames(const FSList &fslist) {
 	DetectedGameList detectedGames;
-	const CINEGameSettings *g;
+	const GameSettings *g;
 
 	for (g = cine_settings; g->name; ++g) {
 		// Iterate over all files in the given directory
@@ -134,7 +134,7 @@ CineEngine::CineEngine(GameDetector *detector, OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	const CINEGameSettings *g;
+	const GameSettings *g;
 
 	for (g = cine_settings; g->name; ++g)
 		if (!scumm_stricmp(g->name, detector->_targetName.c_str()))
