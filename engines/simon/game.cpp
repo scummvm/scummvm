@@ -545,7 +545,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1ACORNDEMO_GameFiles),
 		SIMON1ACORNDEMO_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAcorn,
 	},
 
@@ -558,7 +558,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1ACORN_GameFiles),
 		SIMON1ACORN_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAcorn,
 	},
 
@@ -571,7 +571,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1AMIGA_GameFiles),
 		SIMON1AMIGA_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAmiga,
 	},
 
@@ -610,7 +610,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1AMIGADEMO_GameFiles),
 		SIMON1AMIGADEMO_GameFiles,
 		GF_CRUNCHED | GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAmiga,
 	},
 
@@ -623,7 +623,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1CD32_GameFiles),
 		SIMON1CD32_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAmiga,
 	},
 
@@ -636,7 +636,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1CD32_2_GameFiles),
 		SIMON1CD32_2_GameFiles,
 		GF_TALKIE | GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAmiga,
 	},
 
@@ -649,7 +649,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1DEMO_GameFiles),
 		SIMON1DEMO_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -662,7 +662,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1DOS_GameFiles),
 		SIMON1DOS_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -688,7 +688,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1DOS_INF_GameFiles),
 		SIMON1DOS_INF_GameFiles,
 		GF_OLD_BUNDLE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -766,7 +766,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1TALKIE_GameFiles),
 		SIMON1TALKIE_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -779,7 +779,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1TALKIE2_GameFiles),
 		SIMON1TALKIE2_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -857,7 +857,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON1WIN_GameFiles),
 		SIMON1WIN_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 
@@ -883,7 +883,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON2DOS_GameFiles),
 		SIMON2DOS_GameFiles,
 		0,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -909,7 +909,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON2DOS2_GameFiles),
 		SIMON2DOS2_GameFiles,
 		0,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -961,7 +961,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON2DEMO_GameFiles),
 		SIMON2DEMO_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -974,7 +974,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON2TALKIE_GameFiles),
 		SIMON2TALKIE_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -988,7 +988,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON2TALKIE2_GameFiles),
 		SIMON2TALKIE2_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1080,7 +1080,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(SIMON2WIN_GameFiles),
 		SIMON2WIN_GameFiles,
 		GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 
@@ -1132,7 +1132,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(FEEBLEFILES_AMI_UK_GameFiles),
 		FEEBLEFILES_AMI_UK_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformAmiga,
 	},
 
@@ -1158,7 +1158,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(FEEBLEFILES_MAC_UK_GameFiles),
 		FEEBLEFILES_MAC_UK_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 	},
 
@@ -1210,7 +1210,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(FEEBLEFILES_2CD_GameFiles),
 		FEEBLEFILES_2CD_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 
@@ -1223,7 +1223,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(FEEBLEFILES_4CD_GameFiles),
 		FEEBLEFILES_4CD_GameFiles,
 		GF_OLD_BUNDLE | GF_TALKIE,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 

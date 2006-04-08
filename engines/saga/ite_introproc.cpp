@@ -42,7 +42,7 @@
 namespace Saga {
 
 using Common::UNK_LANG;
-using Common::EN_USA;
+using Common::EN_ANY;
 using Common::DE_DEU;
 
 LoadSceneParams ITE_IntroList[] = {
@@ -723,14 +723,14 @@ int Scene::ITEIntroValleyProc(int param) {
 	Event *q_event;
 
 	static const IntroCredit credits[] = {
-		{EN_USA, kITEAny, kCHeader, "Producer"},
+		{EN_ANY, kITEAny, kCHeader, "Producer"},
 		{DE_DEU, kITEAny, kCHeader, "Produzent"},
 		{UNK_LANG, kITEAny, kCText, "Walter Hochbrueckner"},
-		{EN_USA, kITEAny, kCHeader, "Executive Producer"},
+		{EN_ANY, kITEAny, kCHeader, "Executive Producer"},
 		{DE_DEU, kITEAny, kCHeader, "Ausf\201hrender Produzent"},
 		{UNK_LANG, kITEAny, kCText, "Robert McNally"},
 		{UNK_LANG, kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
-		{EN_USA, kITENotWyrmKeep, kCHeader, "Publisher"},
+		{EN_ANY, kITENotWyrmKeep, kCHeader, "Publisher"},
 		{DE_DEU, kITENotWyrmKeep, kCHeader, "Herausgeber"},
 		{UNK_LANG, kITEAny, kCText, "Jon Van Caneghem"}
 	};
@@ -829,13 +829,13 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	Event *q_event;
 
 	static const IntroCredit credits1[] = {
-		{EN_USA, kITEAny, kCHeader, "Game Design"},
+		{EN_ANY, kITEAny, kCHeader, "Game Design"},
 		{DE_DEU, kITEAny, kCHeader, "Spielentwurf"},
 		{UNK_LANG, kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
-		{EN_USA, kITEAny, kCText, "and Carolly Hauksdottir"},
+		{EN_ANY, kITEAny, kCText, "and Carolly Hauksdottir"},
 		{DE_DEU, kITEAny, kCText, "und Carolly Hauksdottir"},
-		{EN_USA, kITEAny, kCHeader, "Screenplay and Dialog"},
-		{EN_USA, kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
+		{EN_ANY, kITEAny, kCHeader, "Screenplay and Dialog"},
+		{EN_ANY, kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
 		{DE_DEU, kITEAny, kCHeader, "Geschichte und Dialoge"},
 		{DE_DEU, kITEAny, kCText, "Robert Leh, Len Wein und Bill Rotsler"}
 	};
@@ -845,17 +845,17 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	static const IntroCredit credits2[] = {
 		{UNK_LANG, kITEWyrmKeep, kCHeader, "Art Direction"},
 		{UNK_LANG, kITEWyrmKeep, kCText, "Allison Hershey"},
-		{EN_USA, kITEAny, kCHeader, "Art"},
+		{EN_ANY, kITEAny, kCHeader, "Art"},
 		{DE_DEU, kITEAny, kCHeader, "Grafiken"},
 		{UNK_LANG, kITEWyrmKeep, kCText, "Ed Lacabanne, Glenn Price, April Lee,"},
 		{UNK_LANG, kITENotWyrmKeep, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
 		{UNK_LANG, kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
-		{EN_USA, kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
+		{EN_ANY, kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
 		{DE_DEU, kITEWyrmKeep, kCText, "Allison Hershey und Talin"},
-		{EN_USA, kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
-		{EN_USA, kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
+		{EN_ANY, kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
+		{EN_ANY, kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
 		{DE_DEU, kITEAny, kCText, "Waller, Allison Hershey und Talin"},
-		{EN_USA, kITENotWyrmKeep, kCHeader, "Art Direction"},
+		{EN_ANY, kITENotWyrmKeep, kCHeader, "Art Direction"},
 		{DE_DEU, kITENotWyrmKeep, kCHeader, "Grafische Leitung"},
 		{UNK_LANG, kITENotWyrmKeep, kCText, "Allison Hershey"}
 	};
@@ -918,16 +918,16 @@ int Scene::ITEIntroFairePathProc(int param) {
 	Event *q_event;
 
 	static const IntroCredit credits1[] = {
-		{EN_USA, kITEAny, kCHeader, "Programming"},
+		{EN_ANY, kITEAny, kCHeader, "Programming"},
 		{DE_DEU, kITEAny, kCHeader, "Programmiert von"},
 		{UNK_LANG, kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
-		{EN_USA, kITEAny, kCText, "Joe Burks and Robert Wiggins"},
+		{EN_ANY, kITEAny, kCText, "Joe Burks and Robert Wiggins"},
 		{DE_DEU, kITEAny, kCText, "Joe Burks und Robert Wiggins"},
-		{EN_USA, kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
-		{EN_USA, kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
+		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
+		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
 		{UNK_LANG, kITEMac, kCHeader, "Macintosh Version"},
 		{UNK_LANG, kITEMac, kCText, "Michael McNally and Robert McNally"},
-		{EN_USA, kITEAny, kCHeader, "Music and Sound"},
+		{EN_ANY, kITEAny, kCHeader, "Music and Sound"},
 		{DE_DEU, kITEAny, kCHeader, "Musik und Sound"},
 		{UNK_LANG, kITEAny, kCText, "Matt Nathan"}
 	};
@@ -935,7 +935,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 	int n_credits1 = ARRAYSIZE(credits1);
 
 	static const IntroCredit credits2[] = {
-		{EN_USA, kITEAny, kCHeader, "Directed by"},
+		{EN_ANY, kITEAny, kCHeader, "Directed by"},
 		{DE_DEU, kITEAny, kCHeader, "Regie"},
 		{UNK_LANG, kITEAny, kCText, "Talin"}
 	};

@@ -918,7 +918,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		0, // features
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -941,7 +941,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 	},
 
@@ -964,7 +964,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 	},
 
@@ -987,7 +987,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		GF_BIG_ENDIAN_DATA | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 	},
 
@@ -1010,7 +1010,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 	},
 
@@ -1034,7 +1034,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformLinux,
 	},
 
@@ -1057,7 +1057,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWinPatch2_Files),
 		ITEWinPatch2_Files,
 		GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 
@@ -1080,7 +1080,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWinPatch1_Files),
 		ITEWinPatch1_Files,
 		GF_WYRMKEEP | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 
@@ -1103,7 +1103,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		GF_WYRMKEEP | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformUnknown,
 	},
 
@@ -1126,7 +1126,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITELinPatch_Files),
 		ITELinPatch_Files,
 		GF_WYRMKEEP | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformLinux,
 	},
 
@@ -1149,7 +1149,7 @@ static GameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWinPatch1_Files),
 		ITEWinPatch1_Files,
 		GF_WYRMKEEP | GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 	},
 
@@ -1172,7 +1172,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1195,7 +1195,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1264,7 +1264,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		GF_CD_FX,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1333,7 +1333,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		0,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1356,7 +1356,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		0,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1379,7 +1379,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		0,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 
@@ -1402,7 +1402,7 @@ static GameDescription gameDescriptions[] = {
 		0,
 		NULL,
 		0,
-		Common::EN_USA,
+		Common::EN_ANY,
 		Common::kPlatformPC,
 	},
 

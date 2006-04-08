@@ -110,7 +110,8 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 
 
 const LanguageDescription g_languages[] = {
-	{"en", "English (US)", EN_USA},
+	{"en", "English", EN_ANY},
+	{"us", "English (US)", EN_USA},
 	{"de", "German", DE_DEU},
 	{"fr", "French", FR_FRA},
 	{"it", "Italian", IT_ITA},

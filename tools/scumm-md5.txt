@@ -26,13 +26,13 @@ maniac	Maniac Mansion
 	c4a7f7398ac9ae588940f9912ea5fd8f	de	C64	-	-	-	
 	7f45ddd6dbfbf8f80c0c0efea4c295bc	en	DOS	V1	V1	-	
 
-	d8d07efcb88f396bee0b402b10c3b1c9	en	NES	NES	-	-	
-	3905799e081b80a61d4460b7b733c206	en	NES	NES	-	-	
+	d8d07efcb88f396bee0b402b10c3b1c9	us	NES	NES	-	-	
+	3905799e081b80a61d4460b7b733c206	gb	NES	NES	-	-	
 	81bbfa181184cb494e7a81dcfa94fbd9	fr	NES	NES	-	-	
 	257f8c14d8c584f7ddd601bcb00920c7	de	NES	NES	-	-	
 	22d07d6c386c9c25aca5dac2a0c0d94b	se	NES	NES	-	-	
-	17f7296f63c78642724f057fd8e736a7	en	NES	NES	extracted	-	
-	91d5db93187fab54d823f73bd6441cb6	en	NES	NES	extracted	-	
+	17f7296f63c78642724f057fd8e736a7	us	NES	NES	extracted	-	
+	91d5db93187fab54d823f73bd6441cb6	gb	NES	NES	extracted	-	
 	1c7e7db2cfab1ad62746ab680a634204	fr	NES	NES	extracted	-	
 	3a5ec90d556d4920976c5578bfbfaf79	de	NES	NES	extracted	-	
 	6b5a3fef241e90d4b2e77f1e222773ee	se	NES	NES	extracted	-	

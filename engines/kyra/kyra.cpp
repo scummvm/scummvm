@@ -110,8 +110,8 @@ struct KyraLanguageTable {
 };
 
 static const KyraLanguageTable kyra_languages[] = {
-	{ "MAIN15.CPS", GF_ENGLISH, Common::EN_USA },
-	{ "MAIN_ENG.CPS", GF_ENGLISH, Common::EN_USA },
+	{ "MAIN15.CPS", GF_ENGLISH, Common::EN_ANY },
+	{ "MAIN_ENG.CPS", GF_ENGLISH, Common::EN_ANY },
 	{ "MAIN_FRE.CPS", GF_FRENCH, Common::FR_FRA },
 	{ "MAIN_GER.CPS", GF_GERMAN, Common::DE_DEU },
 	{ "MAIN_SPA.CPS", GF_SPANISH, Common::ES_ESP },
@@ -124,7 +124,7 @@ using namespace Kyra;
 
 static Common::Language convertKyraLang(uint32 features) {
 	if (features & GF_ENGLISH) {
-		return Common::EN_USA;
+		return Common::EN_ANY;
 	} else if (features & GF_FRENCH) {
 		return Common::FR_FRA;
 	} else if (features & GF_GERMAN) {

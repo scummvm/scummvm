@@ -3888,7 +3888,7 @@ int SimonEngine::go() {
 
 	if (getFeatures() & GF_TALKIE) {
 		// English and German versions of Simon the Sorcerer 1 don't have full subtitles
-		if (getGameType() == GType_SIMON1 && (_language == Common::EN_USA || _language == Common::DE_DEU))
+		if (getGameType() == GType_SIMON1 && (_language == Common::EN_ANY || _language == Common::DE_DEU))
 			_subtitles = false;
 	} else {
 		_subtitles = true;

@@ -1329,7 +1329,7 @@ void SimonEngine::video_putchar_drawchar(WindowBlock *window, uint x, uint y, by
 	case Common::DE_DEU:
 		src = german_video_font + (chr - 0x20) * 8;
 		break;
-	case Common::EN_USA:
+	case Common::EN_ANY:
 		src = video_font + (chr - 0x20) * 8;
 		break;
 	default:

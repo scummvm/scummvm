@@ -63,7 +63,7 @@ struct GameSettings {
 
 //
 static const GameSettings lure_games[] = {
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_USA,
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_ANY,
 										"e45ea5d279a268c7d3c6524c2f63a2d2", "disk1.vga" },
 /*
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,

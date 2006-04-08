@@ -91,7 +91,9 @@ static const StringMap platformMap[] = {
 };
 
 static const StringMap langMap[] = {
-	{ "en",		"EN_USA" },
+	{ "en",		"EN_ANY" },
+	{ "us",		"EN_USA" },
+	{ "gb",		"EN_GRB" },
 	{ "de",		"DE_DEU" },
 	{ "fr",		"FR_FRA" },
 	{ "it",		"IT_ITA" },
