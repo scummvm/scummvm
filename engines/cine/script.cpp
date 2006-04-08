@@ -2127,13 +2127,11 @@ void executeScript(prcLinkedListStruct *scriptElement, uint16 params) {
 
 		byte opcode = getNextByte();
 
-		//printf("Op: %X\n", opcode - 1);
-
 		if (opcode && opcode < _numOpcodes) {
 			if (_opcodeTable[opcode - 1])
 				(_opcodeTable[opcode - 1]) ();
 			else
-				warning("Undefined opcode %X", opcode - 1);
+				warning("Undefined opcode 0x%02X", opcode - 1);
 		}
 	}
 }
