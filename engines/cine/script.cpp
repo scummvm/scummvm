@@ -1437,7 +1437,11 @@ void o1_gotoIfDiff() {
 }
 
 void o1_removeLabel() {
-	warning("STUB: o1_removeLabel()");
+	// TODO: verify this
+	byte labelIdx = getNextByte();
+
+	DEBUG_SCRIPT(_currentLine, "removeLabel(%d)", labelIdx);
+	_currentScriptElement->stack[labelIdx] = -1;
 }
 
 void o1_loop() {
