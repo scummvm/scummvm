@@ -424,15 +424,15 @@ static const GameSettings extra_versions[] = {
 
 
 	/* Scumm Version 5 */
-	{"monkey2", 0, GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+	{"monkey2", 0, GID_MONKEY2, 5, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
-	{"atlantis", 0, GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+	{"atlantis", 0, GID_INDY4, 5, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 
 	/* Scumm Version 6 */
-	{"tentacle", 0, GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+	{"tentacle", 0, GID_TENTACLE, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
-	{"samnmax", 0, GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
+	{"samnmax", 0, GID_SAMNMAX, 6, 0, /*MDT_PCSPK |*/ MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 
 #ifndef DISABLE_SCUMM_7_8
@@ -1352,8 +1352,12 @@ Engine *Engine_SCUMM_create(GameDetector *detector, OSystem *syst) {
 					// Perfect match found, use it and stop the loop
 					game = *g;
 					game.gameid = gameid;
-					if (elem->platform != Common::kPlatformUnknown)
+					if (elem->platform != Common::kPlatformUnknown) {
+						if (game.platform != Common::kPlatformUnknown && game.platform != elem->platform)
+							warning("Platform values differ for MD5 '%s': %d vs %d (please report to Fingolfin)",
+										md5, game.platform, elem->platform);
 						game.platform = elem->platform;
+					}
 					break;
 				}
 			}
