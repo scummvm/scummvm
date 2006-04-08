@@ -162,8 +162,8 @@ void SimonEngine::listSaveGames(int n) {
 	memset(b, 0, 108);
 
 	maxFiles = countSaveGames();
-	j = maxFiles - n + 1;
-	k = maxFiles - j + 1;
+	j = maxFiles - n;
+	k = maxFiles - j;
 	z = maxFiles;
 	if (getBitFlag(95)) {
 		j++;
@@ -179,8 +179,7 @@ void SimonEngine::listSaveGames(int n) {
 		}
 
 		if (getBitFlag(93)) {
-			if (((_newLines + 1) >= _textWindow->scrollY) && (
-						(_newLines + 1) < (_textWindow->scrollY + 3)))
+			if (((_newLines + 1) >= _textWindow->scrollY) && ((_newLines + 1) < (_textWindow->scrollY + 3)))
 				OK = 1;
 		}
 
@@ -202,6 +201,7 @@ void SimonEngine::listSaveGames(int n) {
 				j--;
 			}
 
+			printf("Opened saved game %s\n", gen_savename(j));
 			if (!(in = _saveFileMan->openForLoading(gen_savename(j))))
 				break;
 			in->read(b, 100);
