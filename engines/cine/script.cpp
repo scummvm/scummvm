@@ -34,6 +34,12 @@
 
 namespace Cine {
 
+enum {
+	kCmpEQ = (1 << 0),
+	kCmpGT = (1 << 1),
+	kCmpLT = (1 << 2)
+};
+
 prcLinkedListStruct *_currentScriptElement;
 byte *_currentScriptPtr;
 uint16 _currentScriptParams;
@@ -1017,15 +1023,15 @@ uint16 compareVars(int16 a, int16 b) {
 	uint16 flag = 0;
 
 	if (a == b) {
-		flag |= 1;
+		flag |= kCmpEQ;
 	}
 
 	if (a > b) {
-		flag |= 2;
+		flag |= kCmpGT;
 	}
 
 	if (a < b) {
-		flag |= 4;
+		flag |= kCmpLT;
 	}
 
 	return flag;
@@ -1355,7 +1361,7 @@ void o1_goto() {
 void o1_gotoIfSup() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 2) && !(_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult == kCmpGT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(>) goto %d (true)", labelIdx);
@@ -1368,7 +1374,7 @@ void o1_gotoIfSup() {
 void o1_gotoIfSupEqu() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 2) || (_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult & (kCmpGT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(>=) goto %d (true)", labelIdx);
@@ -1381,7 +1387,7 @@ void o1_gotoIfSupEqu() {
 void o1_gotoIfInf() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 4) && !(_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult == kCmpLT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(<) goto %d (true)", labelIdx);
@@ -1394,7 +1400,7 @@ void o1_gotoIfInf() {
 void o1_gotoIfInfEqu() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 4) || (_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult & (kCmpLT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(<=) goto %d (true)", labelIdx);
@@ -1407,7 +1413,7 @@ void o1_gotoIfInfEqu() {
 void o1_gotoIfEqu() {
 	byte labelIdx = getNextByte();
 
-	if (_currentScriptElement->compareResult & 1) {
+	if (_currentScriptElement->compareResult == kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(==) goto %d (true)", labelIdx);
@@ -1420,7 +1426,7 @@ void o1_gotoIfEqu() {
 void o1_gotoIfDiff() {
 	byte labelIdx = getNextByte();
 
-	if (!(_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult != kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(!=) goto %d (true)", labelIdx);
@@ -1874,7 +1880,7 @@ void o2_isSeqRunning() {
 void o2_gotoIfSupNearest() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 2) && !(_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult == kCmpGT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(>) goto nearest %d (true)", labelIdx);
@@ -1887,7 +1893,7 @@ void o2_gotoIfSupNearest() {
 void o2_gotoIfSupEquNearest() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 2) || (_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult & (kCmpGT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(>=) goto nearest %d (true)", labelIdx);
@@ -1900,7 +1906,7 @@ void o2_gotoIfSupEquNearest() {
 void o2_gotoIfInfNearest() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 4) && !(_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult == kCmpLT) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(<) goto nearest %d (true)", labelIdx);
@@ -1913,7 +1919,7 @@ void o2_gotoIfInfNearest() {
 void o2_gotoIfInfEquNearest() {
 	byte labelIdx = getNextByte();
 
-	if ((_currentScriptElement->compareResult & 4) || (_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult & (kCmpLT | kCmpEQ)) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(<=) goto nearest %d (true)", labelIdx);
@@ -1926,7 +1932,7 @@ void o2_gotoIfInfEquNearest() {
 void o2_gotoIfEquNearest() {
 	byte labelIdx = getNextByte();
 
-	if (_currentScriptElement->compareResult & 1) {
+	if (_currentScriptElement->compareResult == kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(==) goto nearest %d (true)", labelIdx);
@@ -1939,7 +1945,7 @@ void o2_gotoIfEquNearest() {
 void o2_gotoIfDiffNearest() {
 	byte labelIdx = getNextByte();
 
-	if (!(_currentScriptElement->compareResult & 1)) {
+	if (_currentScriptElement->compareResult != kCmpEQ) {
 		assert(_currentScriptElement->stack[labelIdx] != -1);
 
 		DEBUG_SCRIPT(_currentLine, "if(!=) goto nearest %d (true)", labelIdx);
